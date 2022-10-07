@@ -6,6 +6,7 @@
 # BystryPL, 2021
 # Julio Gonzalez Mejías <juliolokooo@gmail.com>, 2015-2016,2019
 # LaNyeR Blaskovich <lanyeracs@gmail.com>, 2019
+# rafal1137 <rafal1137@yahoo.pl>, 2022
 # v1rkes, 2022
 # v1rkes, 2022
 msgid ""
@@ -14,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: v1rkes, 2022\n"
+"Last-Translator: rafal1137 <rafal1137@yahoo.pl>, 2022\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4924,7 +4925,7 @@ msgstr "murió"
 #: src/cgame/cg_event.c:614
 #, c-format
 msgid "Picked up %s"
-msgstr "Has cogido %s"
+msgstr "Haz Tomado %s"
 
 #: src/cgame/cg_fireteamoverlay.c:475
 #, c-format
@@ -5936,19 +5937,19 @@ msgid "'s Landmine"
 msgstr " "
 
 msgid "'s Mobile MG 42"
-msgstr "y su MG 42 móvil"
+msgstr " con su MG 42 móvil"
 
 msgid "'s Mobile Browning"
-msgstr "y su Browning móvil"
+msgstr " con su Browning móvil"
 
 msgid "'s rifle grenade"
-msgstr "y su lanzagranadas "
+msgstr " con su lanzagranadas "
 
 msgid "'s support fire"
-msgstr "y su soporte de artillería"
+msgstr " con su soporte de artillería"
 
 msgid "'s crew-served MG"
-msgstr "y su crew-served MG"
+msgstr " con su crew-served MG"
 
 msgid "was thrown to his doom by"
 msgstr "fue lanzado a su suerte por"
@@ -5986,7 +5987,7 @@ msgid "got caught in"
 msgstr "fue atrapado por"
 
 msgid "'s construction madness"
-msgstr "y su locura por construir"
+msgstr " con su locura por construir"
 
 #: src/qcommon/download.c:244
 msgid "Need paks: %s\n"
@@ -5996,19 +5997,19 @@ msgid "Not enough players to start match!\n"
 msgstr "¡No hay suficientes jugadores para empezar la partida!\n"
 
 msgid "'s flamethrower"
-msgstr "y su lanzallamas"
+msgstr " con su lanzallamas"
 
 msgid "'s Satchel Charge"
-msgstr "y su carga Satchel"
+msgstr " con su carga Satchel"
 
 msgid "You cannot arm dynamite near a friendly objective!"
 msgstr "¡No puedes armar una dinamita cerca de un objetivo de tu equipo!"
 
 msgid "'s tank-mounted MG42"
-msgstr "y su MG42 montada en el tanque"
+msgstr " con su MG42 montada en el tanque"
 
 msgid "'s dynamite"
-msgstr "y su dinamita"
+msgstr " con su dinamita"
 
 msgid "Timelimit hit.\n"
 msgstr "Límite de tiempo alcanzado.\n"
@@ -6017,10 +6018,10 @@ msgid "Landmine revealed"
 msgstr "Mina descubierta"
 
 msgid "'s tank-mounted browning 30cal"
-msgstr "y su browning 30cal montada en el tanque"
+msgstr " con su browning 30cal montada en el tanque"
 
 msgid "'s grenade"
-msgstr "y su granada"
+msgstr " con su granada"
 
 msgid "Competition Settings Loaded!\n"
 msgstr "¡Ajustes de competición cargados!\n"
@@ -6335,46 +6336,46 @@ msgid "Vote cast.\n"
 msgstr "Resultado de la votación.\n"
 
 msgid "'s KA-BAR"
-msgstr "y su KA-BAR"
+msgstr " con su KA-BAR"
 
 msgid "'s knife arts"
-msgstr "y sus habilidades con el cuchillo"
+msgstr " con sus habilidades con el cuchillo"
 
 msgid "'s .45ACP 1911"
-msgstr "y su .45ACP 1911"
+msgstr " con su .45ACP 1911"
 
 msgid "'s Thompson"
-msgstr "y su Thompson"
+msgstr " con su Thompson"
 
 msgid "'s MP 40"
-msgstr "y su MP 40"
+msgstr " con su MP 40"
 
 msgid "'s knife"
-msgstr "y su cuchillo"
+msgstr " con su cuchillo"
 
 msgid "'s Luger 9mm"
-msgstr "y su Luger 9mm"
+msgstr " con su Luger 9mm"
 
 msgid "'s Panzerfaust"
-msgstr "y su Panzerfaust"
+msgstr " con su Panzerfaust"
 
 msgid "'s Garand"
-msgstr "y su Garand"
+msgstr " con su Garand"
 
 msgid "'s Sten"
-msgstr "y su Sten"
+msgstr " con su Sten"
 
 msgid "'s FG 42"
-msgstr "y su FG 42"
+msgstr " con su FG 42"
 
 msgid "'s K43"
-msgstr "y su K43"
+msgstr " con su K43"
 
 msgid "'s Bazooka"
-msgstr "y su Bazooka"
+msgstr " con su Bazooka"
 
 msgid "'s Akimbo .45ACP 1911s"
-msgstr "y su Akimbo .45ACP 1911s"
+msgstr " con su Akimbo .45ACP 1911s"
 
 msgid "Server disconnected"
 msgstr "Servidor desconectado"
@@ -6386,7 +6387,7 @@ msgid "Server disconnected for unknown reason"
 msgstr "Servidor desconectado por razones desconocidas."
 
 msgid "'s Akimbo Luger 9mms"
-msgstr "y su Akimbo Luger 9mms"
+msgstr " con su Akimbo Luger 9mms"
 
 msgid "Cheats are not enabled on this server.\n"
 msgstr "Trucos no activados en este servidor.\n"
@@ -6494,7 +6495,7 @@ msgid "^3moved to spectator for inactivity!\n"
 msgstr "^3movido a espectador por inactividad!\n"
 
 msgid "was killed by"
-msgstr "fue matado por"
+msgstr "fue asesiando por"
 
 msgid "was stabbed by"
 msgstr "fue apuñalado por"
@@ -6515,19 +6516,19 @@ msgid "never saw"
 msgstr "nunca vio a"
 
 msgid "'s mortar round coming"
-msgstr "y su ronda de mortero"
+msgstr " con su ronda de mortero"
 
 msgid "was perforated by"
 msgstr "fue perforado por"
 
 msgid "'s tank-mounted MG 42"
-msgstr "y su MG42 montada en el tanque"
+msgstr " con su MG42 montada en el tanque"
 
 msgid "was shelled by"
 msgstr "fue ametrallado por"
 
 msgid "'s artillery support"
-msgstr "y su soporte de artillería"
+msgstr " con su soporte de artillería"
 
 msgid "^2swapped places with^7"
 msgstr "^2se cambió de puesto con^7"
@@ -6548,7 +6549,7 @@ msgid "stood on"
 msgstr "permaneció en"
 
 msgid "'s airstrike marker"
-msgstr " y su señal de ataque aéreo."
+msgstr " con su señal de ataque aéreo."
 
 msgid "- Small Health"
 msgstr "- Botiquín Pequeño"
@@ -7119,11 +7120,11 @@ msgstr "PERFIL ACTUAL"
 
 #: src/cgame/cg_draw.c:1504
 msgid "%s^7's dynamite"
-msgstr "%s^7's y su dinamita"
+msgstr "%s^7 con su dinamita"
 
 #: src/cgame/cg_draw.c:1516
 msgid "%s^7's mine"
-msgstr "%s^7's y su mina"
+msgstr "%s^7 con su mina"
 
 msgid "You are frozen - ^3/kill^7 is disabled."
 msgstr "Estás congelado - ^3/kill^7 está desactivado."
