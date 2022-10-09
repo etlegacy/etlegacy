@@ -480,6 +480,7 @@ jobs:
 
       - name: Generate packages
         shell: bash
+        id: vars
         working-directory: build/
         run: |
           cpack
