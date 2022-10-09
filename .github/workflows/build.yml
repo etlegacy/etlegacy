@@ -478,7 +478,7 @@ jobs:
       - name: Generate packages
         shell: bash
         working-directory: build/
-        run: cpack --debug --trace-expand
+        run: cpack --trace
 
       - uses: actions/upload-artifact@v2
         with:
