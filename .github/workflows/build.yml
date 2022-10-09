@@ -481,10 +481,11 @@ jobs:
 
       - name: Generate packages
         shell: bash
+        id: vars
         working-directory: build/
         run: |
-          echo "ETLEGACY_VER=${echo git describe --tags --abbrev=7}"
-          mkdir /home/runner/work/etlegacy/etlegacy/build/_CPack_Packages/Linux/TGZ/etlegacy-$ETLEGACY_VER
+          echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
+          mkdir /home/runner/work/etlegacy/etlegacy/build/_CPack_Packages/Linux/TGZ/etlegacy-${{steps.vars.outputs.tag}}
           cpack
 
       - uses: actions/upload-artifact@v2
