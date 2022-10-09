@@ -478,7 +478,11 @@ jobs:
       - name: Generate packages
         shell: bash
         working-directory: build/
-        run: cpack --trace
+        run: |
+		  #$GITHUB_WORKSPACE
+		  echo "ETLEGACY_VER=${echo git describe --tags --abbrev=7}"
+		  mkdir /home/runner/work/etlegacy/etlegacy/build/_CPack_Packages/Linux/TGZ/etlegacy-$ETLEGACY_VER
+		  cpack
 
       - uses: actions/upload-artifact@v2
         with:
