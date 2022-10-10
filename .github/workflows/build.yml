@@ -485,7 +485,7 @@ jobs:
         working-directory: build/
         run: |
           echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
-          mkdir /home/runner/work/etlegacy/etlegacy/build/_CPack_Packages/Linux/TGZ/etlegacy-${{steps.vars.outputs.tag}}
+          mkdir -p /_CPack_Packages/Linux/TGZ/etlegacy-${{steps.vars.outputs.tag}}
           cpack
 
       - uses: actions/upload-artifact@v2
