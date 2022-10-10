@@ -488,7 +488,7 @@ jobs:
         shell: bash
         working-directory: build/
         run: |
-          sudo mkdir -p /_CPack_Packages/Linux/TGZ/etlegacy-${{steps.vars.outputs.tag}}
+          sudo mkdir -p /_CPack_Packages/Linux/TGZ/etlegacy-${{steps.vars.outputs.tag}}-arm64-v8a
           cpack
 
       - uses: actions/upload-artifact@v2
