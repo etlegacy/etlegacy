@@ -479,17 +479,11 @@ jobs:
         run: ls -R
         working-directory: build/legacy
 
-      - name: Get the version
-        id: vars
-        run: |
-          echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
-
       - name: Generate packages
         shell: bash
         working-directory: build/
         run: |
-          sudo mkdir -p /_CPack_Packages/Linux/TGZ/etlegacy-${{steps.vars.outputs.tag}}-arm64-v8a
-          cpack
+          sudo cpack
 
       - uses: actions/upload-artifact@v2
         with:
