@@ -478,9 +478,13 @@ jobs:
         run: ls -R
         working-directory: build/legacy
 
+      - name: Get the version
+        id: vars
+        run: |
+          echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
+
       - name: Generate packages
         shell: bash
-        id: vars
         working-directory: build/
         run: |
           cpack
