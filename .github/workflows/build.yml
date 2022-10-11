@@ -441,7 +441,7 @@ jobs:
 
   raspberry_pi:
     runs-on: ubuntu-18.04
-	needs: [ lnx32 ]
+    needs: [ lnx32 ]
     strategy:
       matrix:
         include:
@@ -670,7 +670,7 @@ jobs:
             osx-packages
             win-packages
             android-packages
-			raspberry_pi-packages
+            raspberry_pi-packages
             mod-zip
 
       - uses: geekyeggo/delete-artifact@v1
