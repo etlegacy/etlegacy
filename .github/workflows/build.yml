@@ -561,7 +561,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-20.04
-    needs: [ lnx32, lnx64, osx, win, android ]
+    needs: [ lnx32, lnx64, osx, win, raspberry_pi, android ]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v2
