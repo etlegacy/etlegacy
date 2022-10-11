@@ -480,6 +480,7 @@ jobs:
         working-directory: build/
         run: |
           sudo cpack
+          cat /home/runner/work/etlegacy/etlegacy/build/_CPack_Packages/Linux/TGZ/PreinstallOutput.log
 
       - uses: actions/upload-artifact@v2
         with:
