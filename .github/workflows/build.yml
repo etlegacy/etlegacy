@@ -465,7 +465,6 @@ jobs:
             libvorbisfile3 zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
             nasm autoconf git zip gcc cmake g++ libtool libxrandr-dev x11proto-randr-dev ninja-build
             git fetch --tags --force
-            sudo chown -R $USER:$USER /home/runner/work/etlegacy/etlegacy
             ./easybuild.sh build -RPI -ninja
 
       - uses: actions/download-artifact@v2
