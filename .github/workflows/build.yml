@@ -148,7 +148,7 @@ jobs:
              apt-get -y install build-essential libudev-dev automake zlib1g libx11-dev \
              nasm autoconf git cmake zip gcc g++ libtool ninja-build
              cd /opt/etlegacy
-             git fetch --tags --force --no-recurse-submodules
+             git fetch --tags --force
              ./easybuild.sh build -RPI -mod -ninja
 
       - uses: actions/upload-artifact@v3
@@ -469,7 +469,7 @@ jobs:
              apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
              nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build curl
              cd /opt/etlegacy
-             git fetch --tags --force --no-recurse-submodules
+             git fetch --tags --force
              ./easybuild.sh build -RPI -ninja
              cd build/legacy
              echo "ALLMODS_URL = $(curl -v -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip")"
