@@ -148,7 +148,7 @@ jobs:
              apt-get -y install build-essential libudev-dev automake zlib1g libx11-dev \
              nasm autoconf git cmake zip gcc g++ libtool ninja-build
              cd /opt/etlegacy
-             git fetch --tags --force
+             git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -mod -ninja
 
       - uses: actions/upload-artifact@v3
@@ -466,7 +466,7 @@ jobs:
              apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
              nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build
              cd /opt/etlegacy
-             git fetch --tags --force
+             git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
 
       - uses: actions/download-artifact@v2
