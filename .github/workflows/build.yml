@@ -143,8 +143,8 @@ jobs:
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
-             sudo apt-get update
-             sudo apt-get -y install build-essential libudev-dev automake zlib1g libraspberrypi0 \
+             apt-get update
+             apt-get -y install build-essential libudev-dev automake zlib1g libraspberrypi0 \
              libraspberrypi-bin libraspberrypi-dev libx11-dev \
              nasm autoconf git cmake zip gcc g++ libtool ninja-build
              cd /opt/etlegacy
@@ -459,8 +459,8 @@ jobs:
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
-             sudo apt-get update
-             sudo apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libraspberrypi0 \
+             apt-get update
+             apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libraspberrypi0 \
              libraspberrypi-bin libraspberrypi-dev libx11-dev libglew-dev libegl1-mesa-dev \
              nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build
              cd /opt/etlegacy
