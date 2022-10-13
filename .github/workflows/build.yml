@@ -127,7 +127,7 @@ jobs:
             build/legacy/qagame*.dll
 
   raspberry_pi-mod:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -444,7 +444,7 @@ jobs:
             build/etlegacy-*.zip
 
   raspberry_pi:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v2.1.0
