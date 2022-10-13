@@ -127,29 +127,29 @@ jobs:
             build/legacy/qagame*.dll
 
   raspberry_pi-mod:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        include:
-          - arch: aarch64
-            distro: buster
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
 
-      - uses: uraimo/run-on-arch-action@v2.3.0
-        name: Build on ${{ matrix.arch }}
+      - uses: pguyot/arm-runner-action@v2
         with:
-          arch: ${{ matrix.arch }}
-          distro: ${{ matrix.distro }}
-          run: |
-            apt-get update -q -y
-            apt-get -y install build-essential libudev-dev libwebp-dev automake zlib1g \
-            nasm autoconf cmake git zip gcc g++ libtool ninja-build
-            git fetch --tags --force
-            ./easybuild.sh build -RPI -mod -zip -ninja
+           image_additional_mb: 4096
+           base_image: raspi_4_bullseye:20220121
+           cpu: cortex-a53
+           cpu_info: cpuinfo/raspberrypi_4b
+           bind_mount_repository: /opt/etlegacy
+           optimize_image: no
+           commands: |
+             sudo apt-get update
+             sudo apt-get -y install build-essential libudev-dev automake zlib1g libraspberrypi0 \
+             libraspberrypi-bin libraspberrypi-dev libx11-dev \
+             nasm autoconf git cmake zip gcc g++ libtool ninja-build
+             cd /opt/etlegacy
+             git fetch --tags --force
+             ./easybuild.sh build -RPI -mod -ninja
 
       - uses: actions/upload-artifact@v3
         with:
@@ -446,34 +446,28 @@ jobs:
   raspberry_pi:
     runs-on: ubuntu-18.04
     needs: [ lnx32 ]
-    strategy:
-      matrix:
-        include:
-          - arch: aarch64
-            distro: buster
     steps:
       - uses: actions/checkout@v2.1.0
         with:
           submodules: true
           fetch-depth: 0
 
-      - uses: uraimo/run-on-arch-action@v2.0.5
-        name: Build on ${{ matrix.arch }}
+      - uses: pguyot/arm-runner-action@v2
         with:
-          arch: ${{ matrix.arch }}
-          distro: ${{ matrix.distro }}
-          run: |
-            apt-get update -q -y
-            apt-get -y install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
-            libasound2-dev libjpeg62-turbo-dev libwebp-dev automake libgl1-mesa-glx libjpeg62-turbo libogg0 libopenal1 libvorbis0a \
-            libvorbisfile3 zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
-            nasm autoconf git zip gcc cmake g++ libtool libxrandr-dev x11proto-randr-dev ninja-build
-            git fetch --tags --force
-            ./easybuild.sh build -RPI -ninja
-
-      - name: Set Permissions
-        run: |
-          sudo chmod -R 666 /home/runner/work/etlegacy/etlegacy/build
+           image_additional_mb: 4096
+           base_image: raspi_4_bullseye:20220121
+           cpu: cortex-a53
+           cpu_info: cpuinfo/raspberrypi_4b
+           bind_mount_repository: /opt/etlegacy
+           optimize_image: no
+           commands: |
+             sudo apt-get update
+             sudo apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libraspberrypi0 \
+             libraspberrypi-bin libraspberrypi-dev libx11-dev libglew-dev libegl1-mesa-dev \
+             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build
+             cd /opt/etlegacy
+             git fetch --tags --force
+             ./easybuild.sh build -RPI -ninja
 
       - uses: actions/download-artifact@v2
         with:
