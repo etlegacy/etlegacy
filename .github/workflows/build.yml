@@ -128,7 +128,7 @@ jobs:
   raspberry_pi-mod:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -443,7 +443,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ lnx32 ]
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
