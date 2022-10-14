@@ -34,7 +34,7 @@ jobs:
     container:
       image: etlegacy/lnx-build:latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -45,14 +45,14 @@ jobs:
           git fetch --tags --force
           ./easybuild.sh build -64 -mod
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lnx64-mod
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lnx64-qagame
           path: |
@@ -61,7 +61,7 @@ jobs:
   osx-mod:
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -85,14 +85,14 @@ jobs:
           git fetch --tags --force
           ./easybuild.sh build -64 -mod --osx=10.10 --osx-arc="x86_64;arm64"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: osx-mod
           path: |
             build/legacy/cgame_mac
             build/legacy/ui_mac
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: osx-qagame
           path: |
@@ -101,7 +101,7 @@ jobs:
   win-mod:
     runs-on: windows-2019
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -112,14 +112,14 @@ jobs:
           git fetch --tags --force
           call .\easybuild.bat build -mod
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: win-mod
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: win-qagame
           path: |
@@ -128,7 +128,7 @@ jobs:
   raspberry_pi-mod:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@v3.1.0
         with:
           submodules: true
           fetch-depth: 0
@@ -150,14 +150,14 @@ jobs:
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -mod -ninja
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: raspberry_pi-mod
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: raspberry_pi-qagame
           path: |
@@ -178,13 +178,13 @@ jobs:
           java-version: 1.8
 
       - name: Android Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Downloading NDK
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
@@ -199,7 +199,7 @@ jobs:
           ls -R
 
       - name: Upload arm64-v8a
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: android-mod
           path: |
@@ -223,7 +223,7 @@ jobs:
       image: etlegacy/lnx-build:latest
     needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -248,7 +248,7 @@ jobs:
         run: |
           echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           path: build/legacy
 
@@ -285,12 +285,12 @@ jobs:
         run: |
           zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: All-mods
           path: build/legacy/legacy_*.pk3
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: mod-zip
           path: build/legacy/etlegacy-mod-*.zip
@@ -300,7 +300,7 @@ jobs:
         working-directory: build/
         run: cpack
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lnx32-packages
           path: |
@@ -322,7 +322,7 @@ jobs:
     container:
       image: etlegacy/lnx-build:latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -339,7 +339,7 @@ jobs:
           git fetch --tags --force
           ./easybuild.sh build -64
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: All-mods
           path: build/legacy
@@ -353,7 +353,7 @@ jobs:
         working-directory: build/
         run: cpack
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lnx64-packages
           path: |
@@ -364,7 +364,7 @@ jobs:
     runs-on: macos-11
     needs: [ lnx32 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -383,7 +383,7 @@ jobs:
           git fetch --tags --force
           ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64"
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: All-mods
           path: build/legacy
@@ -396,7 +396,7 @@ jobs:
         shell: bash
         run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: osx-packages
           path: |
@@ -407,7 +407,7 @@ jobs:
     runs-on: windows-2019
     needs: [ lnx32 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -418,7 +418,7 @@ jobs:
           git fetch --tags --force
           call .\easybuild.bat build
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: All-mods
           path: build/legacy
@@ -432,7 +432,7 @@ jobs:
         working-directory: build
         run: cpack
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: win-packages
           path: |
@@ -443,7 +443,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ lnx32 ]
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@v3.1.0
         with:
           submodules: true
           fetch-depth: 0
@@ -469,7 +469,7 @@ jobs:
         run: |
           sudo chmod -R 666 /home/runner/work/etlegacy/etlegacy/build/legacy
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: All-mods
           path: build/legacy
@@ -484,7 +484,7 @@ jobs:
         run: |
           sudo cpack
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: raspberry_pi-packages
           path: |
@@ -507,18 +507,18 @@ jobs:
           java-version: 1.8
 
       - name: Android Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Downloading NDK
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: All-mods
           path: app/src/main/assets
@@ -541,7 +541,7 @@ jobs:
           for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
           ls app/build/outputs/apk/release
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: android-packages
 #          path: ${{steps.sign_app.outputs.signedReleaseFile}}
@@ -571,7 +571,7 @@ jobs:
         run: |
           echo ::set-output name=hash_exists::$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
           path: packages
@@ -602,11 +602,11 @@ jobs:
     # only run on master
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: false
           fetch-depth: 0
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: lnx64-packages
           path: build/package
