@@ -465,6 +465,10 @@ jobs:
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
 
+      - name: Set Permissions
+        run: |
+          sudo chmod -R 666 /home/runner/work/etlegacy/etlegacy/build/legacy
+
       - uses: actions/download-artifact@v2
         with:
           name: All-mods
