@@ -447,7 +447,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ lnx32 ]
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@v3.1.0
         with:
           submodules: true
           fetch-depth: 0
@@ -473,7 +473,7 @@ jobs:
         run: |
           sudo chmod -R 666 /home/runner/work/etlegacy/etlegacy/build/legacy
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: All-mods
           path: build/legacy
@@ -488,7 +488,7 @@ jobs:
         run: |
           sudo cpack
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: raspberry_pi-packages
           path: |
