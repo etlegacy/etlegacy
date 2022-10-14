@@ -30,7 +30,7 @@ jobs:
 #                              |___/
 
   lnx64-mod:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     container:
       image: etlegacy/lnx-build:latest
     steps:
@@ -59,7 +59,7 @@ jobs:
             build/legacy/qagame*.so
 
   osx-mod:
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
         with:
@@ -126,7 +126,7 @@ jobs:
             build/legacy/qagame*.dll
 
   raspberry_pi-mod:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2.1.0
         with:
@@ -164,7 +164,7 @@ jobs:
             build/legacy/qagame*.so
 
   android-mod:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
           SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
@@ -218,7 +218,7 @@ jobs:
 # Since lnx32 is installing the most, use it as the step that combines all the other steps mod files.
 # This step also generates the final packages for 32 bit lnx.
   lnx32:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     container:
       image: etlegacy/lnx-build:latest
     needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
@@ -317,7 +317,7 @@ jobs:
 #                                     |_|                                    |___/
 # Generate the final packages for 64lnx, Osx, Windows and RPI (armv7 only)
   lnx64:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: [ lnx32 ]
     container:
       image: etlegacy/lnx-build:latest
@@ -361,7 +361,7 @@ jobs:
             build/etlegacy-*.sh
 
   osx:
-    runs-on: macos-10.15
+    runs-on: macos-11
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v2
@@ -492,7 +492,7 @@ jobs:
             build/etlegacy-*.sh
 
   android:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
           SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
@@ -557,7 +557,7 @@ jobs:
 #           |_|                                                                                                         |_|
 
   upload:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: [ lnx32, lnx64, osx, win, raspberry_pi, android ]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
@@ -597,7 +597,7 @@ jobs:
           args: "<@&673533235887865879> Build from ETLegacy: ${{ github.sha }} has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
 
   docker:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: [ upload ] # only upload to docker if the upload to the site was successfully completed
     # only run on master
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
@@ -659,7 +659,7 @@ jobs:
           docker push etlegacy/server:latest-patch
 
   cleanup:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     if: always()
     needs: [ upload, docker ]
     steps:
