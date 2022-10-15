@@ -467,7 +467,7 @@ jobs:
 
       - name: Set Permissions
         run: |
-          chown -R root $GITHUB_WORKSPACE/build
+          sudo chown -R root $GITHUB_WORKSPACE/build
 
       - uses: actions/download-artifact@v3
         with:
