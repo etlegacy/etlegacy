@@ -471,7 +471,7 @@ jobs:
 
       - name: Set Permissions
         run: |
-          sudo chmod -R 666 /home/runner/work/etlegacy/etlegacy/build/legacy
+          chown -R root $GITHUB_WORKSPACE/build
 
       - uses: actions/download-artifact@v3
         with:
