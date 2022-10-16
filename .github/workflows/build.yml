@@ -128,6 +128,8 @@ jobs:
 
   raspberry_pi-mod:
     runs-on: ubuntu-20.04
+    container:
+      image: etlegacy/lnx-build:latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -444,7 +446,9 @@ jobs:
             build/etlegacy-*.zip
 
   raspberry_pi:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    container:
+      image: etlegacy/lnx-build:latest
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v3
