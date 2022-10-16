@@ -441,7 +441,6 @@ jobs:
 
   raspberry_pi:
     runs-on: ubuntu-latest
-    permissions: read-all|write-all
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v3
