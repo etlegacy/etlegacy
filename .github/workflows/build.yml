@@ -128,7 +128,7 @@ jobs:
   raspberry_pi-mod:
     runs-on: ubuntu-20.04
     container:
-      image: rafal1137/etl_android
+      image: etlegacy/lnx-build:latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -444,7 +444,7 @@ jobs:
   raspberry_pi:
     runs-on: ubuntu-20.04
     container:
-      image: rafal1137/etl_android
+      image: etlegacy/lnx-build:latest
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v3
