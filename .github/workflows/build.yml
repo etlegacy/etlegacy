@@ -221,6 +221,7 @@ jobs:
     runs-on: ubuntu-20.04
     container:
       image: etlegacy/lnx-build:latest
+      options: --user root
     needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
     steps:
       - uses: actions/checkout@v3
