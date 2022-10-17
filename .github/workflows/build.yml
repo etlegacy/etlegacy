@@ -446,6 +446,8 @@ jobs:
   raspberry_pi:
     runs-on: ubuntu-latest
     needs: [ lnx32 ]
+    container:
+      image: rafal1137/etl_android_test_sudo
     steps:
       - uses: actions/checkout@v3
         with:
