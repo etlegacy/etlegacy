@@ -478,7 +478,7 @@ jobs:
         shell: bash
         working-directory: build/
         run: |
-          cpack
+          sudo cpack
 
       - uses: actions/upload-artifact@v3
         with:
