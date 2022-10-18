@@ -465,10 +465,10 @@ jobs:
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: All-mods
-          path: build/legacy
+#      - uses: actions/download-artifact@v3
+#        with:
+#          name: All-mods
+#          path: build/legacy
 
       - name: Display structure of downloaded files
         run: ls -R
