@@ -337,6 +337,7 @@ parse_commandline() {
 			FEATURE_OMNIBOT=1
 			INSTALL_OMNIBOT=0
 		elif [ "$var" = "-ninja" ]; then
+			einfo "Will use Ninja instead of Unix Makefile"
 			MAKEFILE_GENERATOR=${MAKEFILE_GENERATOR:-Ninja}
 		elif [ "$var" = "-mod" ]; then
 			einfo "Will only build the mod"
