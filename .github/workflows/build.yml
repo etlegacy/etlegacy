@@ -464,6 +464,7 @@ jobs:
              cd /opt/etlegacy
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
+             cd build
              cpack
 
 #      - uses: actions/download-artifact@v3
