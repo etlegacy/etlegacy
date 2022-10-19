@@ -2030,7 +2030,7 @@ void *Hunk_Alloc(size_t size, ha_pref preference)
 	size += sizeof(hunkblock_t);
 #endif
 
-	// round to cacheline
+	// round to cache line
 	size = (size + 31) & ~31u;
 
 	if (hunk_low.temp + hunk_high.temp + size > s_hunkTotal)

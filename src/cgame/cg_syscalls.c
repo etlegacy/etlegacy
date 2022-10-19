@@ -1933,7 +1933,7 @@ void trap_R_Finish(void)
 // extension interface
 
 /**
- * @brief Entry point for additional system calls without breaking compatbility with other engines
+ * @brief Entry point for additional system calls without breaking compatibility with other engines
  * @param[out] value
  * @param[in] valueSize
  * @param[in] key
