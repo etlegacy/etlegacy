@@ -679,7 +679,6 @@ jobs:
             osx-packages
             win-packages
             android-packages
-            raspberry_pi-packages
             mod-zip
 
       - uses: geekyeggo/delete-artifact@v2
