@@ -534,6 +534,8 @@ static ID_INLINE float _vmf(intptr_t x)
 }
 #define VMF(x)  _vmf(args[x])
 
+typedef intptr_t (QDECL *VM_EntryPoint_t)( int, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t );
+
 /*
 ==============================================================
 CMD - Command text buffering and command execution
