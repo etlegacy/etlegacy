@@ -551,8 +551,8 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 	{
 		return;
 	}
-
-	if (!comp->style && !cg.zoomed && !cg.editingHud)
+    
+    if (!(comp->style & 1) && !cg.zoomed && !cg.editingHud)
 	{
 		// style '0' means only draw for scoped weapons, '1' means draw all the time
 		return;
@@ -584,8 +584,8 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 	{
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
-
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR, -1);
+    
+    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, comp->style >> 1, -1);
 }
 
 /**

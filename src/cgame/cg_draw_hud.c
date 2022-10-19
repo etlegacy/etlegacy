@@ -51,10 +51,10 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { 0                } },     // FIXME: outside cg_draw_hud
 	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,            { "Square"         } },
 	{ "compas",               offsetof(hudStucture_t,    compass),         qtrue, CG_DrawNewCompass, 0.19,{ "Square"         } },      // v2.78 backward compatibility
-	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon" } },
+	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon" } },
+	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon" } },
+	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon" } },
 	{ "weaponchangebar",      offsetof(hudStucture_t,    weaponchargebar), qtrue, CG_DrawWeapRecharge, 0.19,{ "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon" } }, // v2.78 backward compatibility
 	{ HUDF(healthtext),       CG_DrawPlayerHealth,       0.25f,            { "Gradiant Color" } },
 	{ HUDF(xptext),           CG_DrawXP,                 0.25f,            { 0                } },
@@ -68,7 +68,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(objectives),       CG_DrawObjectiveStatus,    0.19f,            { 0                } },
 	{ HUDF(hudhead),          CG_DrawPlayerStatusHead,   0.19f,            { 0                } },
 	{ HUDF(cursorhints),      CG_DrawCursorhint,         0.19f,            { 0                } },     // FIXME: outside cg_draw_hud
-	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,            { "Always"         } },     // FIXME: outside cg_draw_hud
+	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,            { "Always", "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon" } },     // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),        CG_DrawLivesLeft,          0.19f,            { 0                } },
 	{ HUDF(roundtimer),       CG_DrawRoundTimer,         0.19f,            { "Simple"         } },
 	{ HUDF(reinforcement),    CG_DrawRespawnTimer,       0.19f,            { 0                } },
@@ -98,7 +98,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(centerprint),      CG_DrawCenterString,       0.22f,            { 0                } },     // FIXME: outside cg_draw_hud
 	{ HUDF(banner),           CG_DrawBannerPrint,        0.23f,            { 0                } },     // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,            { "Full Color"     } },     // FIXME: outside cg_draw_hud
-	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon" } }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,            { "Kill", "Death", "Self Kill", "DmgGiven", "DmgRcvd"} },
 	{ NULL,                   0,                         qfalse,           NULL, 0.00,{ 0                } },
 };
@@ -166,7 +166,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->objectives       = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 14, 0.19f, CG_DrawObjectiveStatus);
 	hud->hudhead          = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 15, 0.19f, CG_DrawPlayerStatusHead);
 	hud->cursorhints      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 16, 0.19f, CG_DrawCursorhint);
-	hud->weaponstability  = CG_getComponent(50, 208, 10, 64, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 17, 0.19f, CG_DrawWeapStability);
+    hud->weaponstability  = CG_getComponent(50, 208, 10, 64, qtrue, (BAR_CENTER | BAR_VERT | BAR_LERP_COLOR) << 1, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 17, 0.19f, CG_DrawWeapStability);
 	hud->livesleft        = CG_getComponent(4, 360, 48, 24, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 18, 0.19f, CG_DrawLivesLeft);
 	hud->roundtimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 152, 57, 14, qtrue, 0, 100.f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 19, 0.19f, CG_DrawRoundTimer);
 	hud->reinforcement    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 70, 57, 14, qfalse, 0, 100.f, colorLtBlue, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 20, 0.19f, CG_DrawRespawnTimer);
@@ -1574,7 +1574,7 @@ void CG_DrawPlayerHealth(hudComponent_t *comp)
 		return;
 	}
 
-	if (comp->style)
+	if (comp->style & 1)
 	{
 		CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
 		color[3] = comp->colorText[3];
@@ -2107,7 +2107,7 @@ void CG_DrawDemoMessage(hudComponent_t *comp)
 		lastDemoScoreTime = cg.time + 5000; // 5 secs
 	}
 
-	if (!comp->style)
+	if (comp->style & 1)
 	{
 		if (cl_demorecording.integer)
 		{
@@ -2768,7 +2768,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(basex, basey, basew, baseh, 1, comp->colorBorder);
 	}
 
-	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style == 1);
+	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style & 1);
 }
 /**
  * @brief CG_DrawStatsDebug
@@ -2918,13 +2918,13 @@ void CG_DrawSpeed(hudComponent_t *comp)
 		break;
 	}
 
-	if (!comp->style)
+	if (comp->style & 1)
 	{
-		CG_DrawCompText(comp, s, comp->colorText, comp->styleText, &cgs.media.limboFont1);
+		CG_DrawCompMultilineText(comp, va("%s\n%s", s, s2), comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont1);
 	}
 	else
 	{
-		CG_DrawCompMultilineText(comp, va("%s\n%s", s, s2), comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont1);
+		CG_DrawCompText(comp, s, comp->colorText, comp->styleText, &cgs.media.limboFont1);
 	}
 }
 
@@ -3235,13 +3235,13 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 	{
 		CG_DrawShoutcastTimer();
 	}
-	else if (!comp->style)
+	else if (comp->style & 1)
 	{
-		CG_DrawRoundTimerNormal(comp);
+		CG_DrawRoundTimerSimple(comp);
 	}
 	else
 	{
-		CG_DrawRoundTimerSimple(comp);
+		CG_DrawRoundTimerNormal(comp);
 	}
 }
 

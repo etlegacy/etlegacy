@@ -1057,8 +1057,8 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			hcolor[3] = comp->colorBackground[3] * alphapercent;
 
 			trap_R_SetColor(hcolor);
-
-			if (!comp->style /*== STYLE_NORMAL*/)
+            
+            if (!(comp->style & 1))
 			{
 				flagOffsetX = 16.f * scale * 5;
 				if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
@@ -2382,7 +2382,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 			return;
 		}
 
-		if (!comp->style)
+		if (comp->style & 1)
 		{
 			// Draw them with full colors
 			s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
@@ -2916,8 +2916,8 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 	{
 		return;
 	}
-
-	if (!comp->style)
+    
+    if (!(comp->style & 1))
 	{
 		if (cgs.gametype == GT_WOLF_LMS)
 		{
