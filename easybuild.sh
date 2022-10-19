@@ -789,8 +789,8 @@ handle_download() {
 
 run_download() {
 	einfo "Downloading packages..."
-	mkdir -p ${MODMAIN}
-	cd ${MODMAIN}
+	mkdir -p "${MODMAIN}"
+	cd "${MODMAIN}"
 	handle_download "pak0.pk3"
 	handle_download "pak1.pk3"
 	handle_download "pak2.pk3"
