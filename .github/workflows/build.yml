@@ -293,13 +293,6 @@ jobs:
           name: All-mods
           path: build/legacy/legacy_*.pk3
 
-      - name: List of Arifacts
-        run: |
-          curl \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts
-
       - uses: actions/upload-artifact@v3
         with:
           name: mod-zip
