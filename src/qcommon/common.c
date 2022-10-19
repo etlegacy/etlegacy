@@ -3176,6 +3176,14 @@ void Com_WriteConfig_f(void)
 		return;
 	}
 
+	if (!FS_FilenameCompare(filename, "default.cfg")
+	    || !FS_FilenameCompare(filename, "default_left.cfg")
+	    || !FS_FilenameCompare(filename, "default_android.cfg"))
+	{
+		Com_Printf("Com_WriteConfig_f: filename '%s' is reserved.\n", filename);
+		return;
+	}
+
 	Com_Printf("Writing %s.\n", filename);
 	Com_WriteConfigToFile(filename);
 }
