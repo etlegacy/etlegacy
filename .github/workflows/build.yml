@@ -468,6 +468,7 @@ jobs:
              cd /opt/etlegacy
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
+             cpack
 
 #      - uses: actions/download-artifact@v3
 #        with:
@@ -477,12 +478,6 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: build/legacy
-
-      - name: Generate packages
-        shell: bash
-        working-directory: build/
-        run: |
-          cpack
 
       - uses: actions/upload-artifact@v3
         with:
