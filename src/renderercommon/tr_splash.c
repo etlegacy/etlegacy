@@ -47,7 +47,7 @@ static void LoadSplashImage(const char *name, byte *data, unsigned int width, un
 	}
 	else
 	{
-		splashImage = R_FindImageFile( name, qfalse, qfalse, qfalse, GL_CLAMP);
+		splashImage = R_FindImageFile( name, qfalse, qfalse, GL_CLAMP_TO_EDGE, qfalse);
 	}
 
 	if (!splashImage)
