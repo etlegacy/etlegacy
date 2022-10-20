@@ -471,7 +471,7 @@ jobs:
            commands: |
              apt-get update
              apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
-             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build
+             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build curl
              cd /opt/etlegacy
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
