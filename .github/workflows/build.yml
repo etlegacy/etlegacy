@@ -464,6 +464,7 @@ jobs:
              cd /opt/etlegacy
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
+             curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts
              cd build/legacy
              curl -O $(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip)
              cd ..
