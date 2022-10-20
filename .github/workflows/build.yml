@@ -34,7 +34,7 @@ jobs:
     container:
       image: etlegacy/lnx-build:latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -45,14 +45,14 @@ jobs:
           git fetch --tags --force
           ./easybuild.sh build -64 -mod
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lnx64-mod
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lnx64-qagame
           path: |
@@ -61,7 +61,7 @@ jobs:
   osx-mod:
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -85,14 +85,14 @@ jobs:
           git fetch --tags --force
           ./easybuild.sh build -64 -mod --osx=10.10 --osx-arc="x86_64;arm64"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: osx-mod
           path: |
             build/legacy/cgame_mac
             build/legacy/ui_mac
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: osx-qagame
           path: |
@@ -101,7 +101,7 @@ jobs:
   win-mod:
     runs-on: windows-2019
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -112,14 +112,14 @@ jobs:
           git fetch --tags --force
           call .\easybuild.bat build -mod
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: win-mod
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: win-qagame
           path: |
@@ -133,7 +133,7 @@ jobs:
           - arch: armv7
             distro: buster
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@3
         with:
           submodules: true
           fetch-depth: 0
@@ -150,14 +150,14 @@ jobs:
             git fetch --tags --force
             ./easybuild.sh build -RPI -mod
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: raspberry_pi-mod
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: raspberry_pi-qagame
           path: |
@@ -178,13 +178,13 @@ jobs:
           java-version: 1.8
 
       - name: Android Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Downloading NDK
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
@@ -199,7 +199,7 @@ jobs:
           ls -R
 
       - name: Upload arm64-v8a
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: android-mod
           path: |
@@ -223,7 +223,7 @@ jobs:
       image: etlegacy/lnx-build:latest
     needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -246,7 +246,7 @@ jobs:
       - name: Get the version
         id: vars
         run: |
-          echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
+          echo "tag=$(git describe --abbrev=7 2>/dev/null)" >> $GITHUB_OUTPUT
 
       - uses: actions/download-artifact@v2
         with:
@@ -259,7 +259,7 @@ jobs:
           zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
 
       - name: Remove the mod packages
-        uses: geekyeggo/delete-artifact@v1
+        uses: geekyeggo/delete-artifact@v2
         with:
           failOnError: false
           name: |
@@ -270,7 +270,7 @@ jobs:
             android-mod
 
       - name: Remove the qagame packages
-        uses: geekyeggo/delete-artifact@v1
+        uses: geekyeggo/delete-artifact@v2
         with:
           failOnError: false
           name: |
@@ -285,12 +285,12 @@ jobs:
         run: |
           zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: All-mods
           path: build/legacy/legacy_*.pk3
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: mod-zip
           path: build/legacy/etlegacy-mod-*.zip
@@ -300,7 +300,7 @@ jobs:
         working-directory: build/
         run: cpack
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lnx32-packages
           path: |
@@ -322,7 +322,7 @@ jobs:
     container:
       image: etlegacy/lnx-build:latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -353,7 +353,7 @@ jobs:
         working-directory: build/
         run: cpack
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lnx64-packages
           path: |
@@ -364,7 +364,7 @@ jobs:
     runs-on: macos-11
     needs: [ lnx32 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -396,7 +396,7 @@ jobs:
         shell: bash
         run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: osx-packages
           path: |
@@ -407,7 +407,7 @@ jobs:
     runs-on: windows-2019
     needs: [ lnx32 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -432,7 +432,7 @@ jobs:
         working-directory: build
         run: cpack
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: win-packages
           path: |
@@ -455,13 +455,13 @@ jobs:
           java-version: 1.8
 
       - name: Android Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Downloading NDK
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
@@ -489,7 +489,7 @@ jobs:
           for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
           ls app/build/outputs/apk/release
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: android-packages
 #          path: ${{steps.sign_app.outputs.signedReleaseFile}}
@@ -509,7 +509,7 @@ jobs:
     needs: [ lnx32, lnx64, osx, win, android ]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
           name: |
             All-mods
@@ -517,7 +517,7 @@ jobs:
       - name: Get version status
         id: vars
         run: |
-          echo ::set-output name=hash_exists::$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)
+          echo "hash_exists=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)" >> $GITHUB_OUTPUT
 
       - uses: actions/download-artifact@v2
         if: ${{ steps.vars.outputs.hash_exists == '404' }}
@@ -550,7 +550,7 @@ jobs:
     # only run on master
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: false
           fetch-depth: 0
@@ -577,9 +577,9 @@ jobs:
       - name: Get the version
         id: vars
         run: |
-          echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
-          echo ::set-output name=short_tag::$(git describe --abbrev=0 2>/dev/null)
-          echo ::set-output name=tag_exists::$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v1/repositories/etlegacy/server/tags/${{ steps.vars.outputs.tag }} 2>/dev/null)
+          echo "tag=$(git describe --abbrev=7 2>/dev/null)" >> $GITHUB_OUTPUT
+          echo "short_tag=$(git describe --abbrev=0 2>/dev/null)" >> $GITHUB_OUTPUT
+          echo "tag_exists=$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v1/repositories/etlegacy/server/tags/${{ steps.vars.outputs.tag }} 2>/dev/null)" >> $GITHUB_OUTPUT
 
       # Create weekly tag when scheduled and update when triggered on docker hub
       - name: Build and push the weekly Docker image
@@ -611,7 +611,7 @@ jobs:
     if: always()
     needs: [ upload, docker ]
     steps:
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
           failOnError: false
           name: |
@@ -622,7 +622,7 @@ jobs:
             android-packages
             mod-zip
 
-      - uses: geekyeggo/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v2
         with:
           failOnError: false
           name: |
