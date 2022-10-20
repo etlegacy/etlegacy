@@ -73,6 +73,9 @@ extern vec3_t bytedirs[NUMVERTEXNORMALS];
 #define SCREEN_WIDTH        640
 #define SCREEN_HEIGHT       480
 
+#define SCREEN_WIDTH_F      640.0f
+#define SCREEN_HEIGHT_F     480.0f
+
 #define SMALLCHAR_WIDTH     8
 #define SMALLCHAR_HEIGHT    16
 

@@ -54,7 +54,6 @@ static int gammaResetTime = 0;
 static int GLimp_CompareModes(const void *a, const void *b);
 
 SDL_Window           *main_window   = NULL;
-static SDL_Renderer  *main_renderer = NULL;
 static SDL_GLContext SDL_glContext  = NULL;
 static float         displayAspect  = 0.f;
 
@@ -384,12 +383,6 @@ static void GLimp_InitCvars(void)
 void GLimp_Shutdown(void)
 {
 	IN_Shutdown();
-
-	if (main_renderer)
-	{
-		SDL_DestroyRenderer(main_renderer);
-		main_renderer = NULL;
-	}
 
 	if (main_window)
 	{
@@ -1001,7 +994,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 	GLimp_DetectAvailableModes();
 
-	if (!main_window) //|| !main_renderer)
+	if (!main_window)
 	{
 		Com_Printf("Couldn't get a visual\n");
 		return RSERR_INVALID_MODE;
@@ -1075,45 +1068,6 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 #define R_MODE_FALLBACK 4 // 800 * 600
 
 /**
- * @brief GLimp_Splash
- * @param[in] glConfig
- * @return
- */
-void GLimp_Splash(glconfig_t *glConfig)
-{
-    const char *image_path = "regular.bmp";
-    SDL_Surface   *splashImage = NULL;
-    SDL_Texture *texture = NULL;
-
-    splashImage = SDL_LoadBMP(image_path);
-
-    if(splashImage == NULL)
-    {
-        Com_DPrintf(S_COLOR_YELLOW "Could not get image: %s\n", SDL_GetError());
-    }
-
-    SDL_Surface *surface = SDL_GetWindowSurface(main_window);
-    if (!surface)
-    {
-        // This happens on some platforms, most likely just the SDL build lacking renderers. Does not really matter tho.
-        // the user just wont see our awesome splash screen, but the renderer should boot up just fine.
-        // FIXME: maybe checkup on this later on if there's something we should change on the bundled sdl compile settings
-        Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError());
-    }
-
-    texture = SDL_CreateTextureFromSurface(main_renderer, surface);
-
-    if (!texture)
-    {
-        Com_DPrintf(S_COLOR_YELLOW "SDL_CreateTextureFromSurface failed - %s\n", SDL_GetError());
-    }
-    SDL_QueryTexture(texture, NULL, NULL, &glConfig->windowWidth, &glConfig->windowHeight);
-    //SDL_UpdateWindowSurface(main_window);
-
-	SDL_FreeSurface(splashImage);
-}
-
-/**
  * @brief This routine is responsible for initializing the OS specific portions of OpenGL
  * @param[in,out] glConfig
  * @param[in] context
@@ -1174,22 +1128,6 @@ success:
 	re.InitOpenGL();
 
 	Cvar_Get("r_availableModes", "", CVAR_ROM);
-
-#if defined(__APPLE__) && !defined(BUNDLED_SDL)
-	// When running on system SDL2 on OSX the cocoa driver causes
-	// the splash screen to stay on top of the rendering (at least when running from CLion)
-	// FIXME: clear the splash? Does not seem to happen with bundled SDL2.
-	const char *driver = SDL_GetCurrentVideoDriver();
-	if (Q_stricmpn("cocoa", driver, 5))
-	{
-		GLimp_Splash(glConfig);
-	}
-#else
-#ifndef __ANDROID__
-	// Display splash screen
-	GLimp_Splash(glConfig);
-#endif
-#endif
 
 	// This depends on SDL_INIT_VIDEO, hence having it here
 	IN_Init();
@@ -1335,4 +1273,26 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 	}
 
 	SDL_SetWindowGammaRamp(main_window, table[0], table[1], table[2]);
+}
+
+qboolean GLimp_SplashImage(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes))
+{
+	byte *data = Com_Allocate(SPLASH_DATA_SIZE);
+
+	if (!data)
+	{
+		return qfalse;
+	}
+
+	// decode splash image
+	SPLASH_IMAGE_RUN_LENGTH_DECODE(data,
+								   CLIENT_WINDOW_SPLASH.rle_pixel_data,
+								   CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
+								   CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+
+	LoadSplashImage(NULL, data, CLIENT_WINDOW_SPLASH.width, CLIENT_WINDOW_SPLASH.height, CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+
+	Com_Dealloc(data);
+
+	return qtrue;
 }

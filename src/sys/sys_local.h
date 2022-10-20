@@ -54,6 +54,7 @@ void GLimp_Init(glconfig_t *glConfig, windowContext_t *context);
 void GLimp_Shutdown(void);
 void GLimp_EndFrame(void);
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
+qboolean GLimp_SplashImage(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes));
 
 // Console
 void CON_Shutdown(void);

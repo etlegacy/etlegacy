@@ -1285,6 +1285,8 @@ void R_Init(void)
 
 	R_InitFreeType();
 
+	R_InitSplash();
+
 	err = glGetError();
 	if (err != GL_NO_ERROR)
 	{

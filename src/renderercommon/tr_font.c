@@ -63,13 +63,7 @@
  * [FreeType]:	http://www.freetype.org/	"FreeType"
  */
 
-#ifdef FEATURE_RENDERER2
-#include "../renderer2/tr_local.h"
-#elif defined FEATURE_RENDERER_GLES
-#include "../rendererGLES/tr_local.h"
-#else
-#include "../renderer/tr_local.h"
-#endif
+#include "tr_local_proxy.h"
 
 #include "../qcommon/qcommon.h"
 

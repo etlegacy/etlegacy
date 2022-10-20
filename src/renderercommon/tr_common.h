@@ -105,6 +105,10 @@ void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean
 double R_NoiseGet4f(double x, double y, double z, double t);
 void R_NoiseInit(void);
 
+#define LEGACY_SPLASH_NAME "legacy_splash_image"
+void R_InitSplash(void);
+void R_DrawSplash(void);
+
 // NOTE: These two variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
 // If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
 // the glconfig_t struct.

@@ -264,6 +264,9 @@ typedef struct
 	void (*GLimp_Shutdown)(void);
 	void (*GLimp_SwapFrame)(void);
 	void (*GLimp_SetGamma)(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
+
+	qboolean (*GLimp_SplashImage)(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes));
+
 } refimport_t;
 
 /// this is the only function actually exported at the linker level

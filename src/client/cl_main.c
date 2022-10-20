@@ -2878,10 +2878,11 @@ void CL_InitRef(void)
 	ri.IN_Restart  = IN_Restart;
 
 	// Glimp bindings
-	ri.GLimp_Init      = GLimp_Init;
-	ri.GLimp_Shutdown  = GLimp_Shutdown;
-	ri.GLimp_SwapFrame = GLimp_EndFrame;
-	ri.GLimp_SetGamma  = GLimp_SetGamma;
+	ri.GLimp_Init        = GLimp_Init;
+	ri.GLimp_Shutdown    = GLimp_Shutdown;
+	ri.GLimp_SwapFrame   = GLimp_EndFrame;
+	ri.GLimp_SetGamma    = GLimp_SetGamma;
+	ri.GLimp_SplashImage = GLimp_SplashImage;
 
 	//ri.ftol = Q_ftol;
 
