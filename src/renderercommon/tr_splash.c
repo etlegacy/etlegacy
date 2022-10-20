@@ -29,7 +29,8 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 /**
- * @file tr_local_proxy.h
+ * @file tr_splash.c
+ * @brief handles Splash screen drawing while the client is staring up the game code
  */
 
 #include "tr_local_proxy.h"
@@ -104,7 +105,7 @@ void R_DrawSplash(void)
 	}
 
 	tmp = (float)splashImage->height / (float)splashImage->width;
-	w = SCREEN_WIDTH_F * 0.4;
+	w = SCREEN_WIDTH_F * (glConfig.windowWidth > 1600 ? 0.2f : 0.4f);
 	h = tmp * w;
 
 	x = SCREEN_WIDTH_F / 2 - w / 2;
@@ -113,9 +114,7 @@ void R_DrawSplash(void)
 	R_Splash_AdjustFrom640(&x, &y, &w, &h);
 
 	RE_BeginFrame();
-
 	RE_SetColor(NULL);
-
 	RE_StretchPic(x, y, w, h, 0, 0, 1, 1, splashHandle);
 	RE_EndFrame(NULL, NULL);
 
