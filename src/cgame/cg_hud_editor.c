@@ -620,6 +620,33 @@ static panel_button_t *hudEditor[] =
 	NULL,
 };
 
+/**
+ * @brief Ccg_WideXAdjustFromWide
+ * @param x
+ * @param w
+ * @return
+ */
+static ID_INLINE float CG_AdjustXHud(float x, float w)
+{
+	if (Ccg_Is43Screen())
+	{
+		return x;
+	}
+	else if ((int)(x + w * .5f) >= (int)(320 * cgs.adr43) - 1 &&
+	         (int)(x + w * .5f) <= (int)(320 * cgs.adr43) + 1)
+	{
+		return (x - ((Ccg_WideX(w) * .5f) - w * 0.5)) / cgs.adr43;
+	}
+	else if (x <= (int)(320 * cgs.adr43))
+	{
+		return x / cgs.adr43;
+	}
+	else
+	{
+		return (x + w - Ccg_WideX(w)) / cgs.adr43;
+	}
+}
+
 void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hud)
 {
 	int  j;
@@ -664,7 +691,7 @@ void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hu
 			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\t"
 			       "%i\t%i\t%i\n",
 			       hudComponentFields[j].name,
-			       Ccg_Is43Screen() ? comp->location.x : comp->location.x / cgs.adr43, comp->location.y, comp->location.w, comp->location.h,
+			       CG_AdjustXHud(comp->location.x, comp->location.w), comp->location.y, comp->location.w, comp->location.h,
 			       comp->style, comp->visible,
 			       comp->scale,
 			       comp->colorText[0], comp->colorText[1], comp->colorText[2], comp->colorText[3],
@@ -1152,7 +1179,7 @@ static void CG_HudEditor_RenderCheckbox(panel_button_t *button)
 
 	if (textWidth >= (HUDEditorWidth * 0.5f) - CHECKBOX_SIZE * 1.5f)
 	{
-        scalex    = ((HUDEditorWidth * 0.5f) - CHECKBOX_SIZE * 1.5f) / CG_Text_Width_Ext(labelText, 1, 0, button->font->font) - 0.02f;
+		scalex    = ((HUDEditorWidth * 0.5f) - CHECKBOX_SIZE * 1.5f) / CG_Text_Width_Ext(labelText, 1, 0, button->font->font) - 0.02f;
 		textWidth = CG_Text_Width_Ext(labelText, scalex, 0, button->font->font);
 	}
 
