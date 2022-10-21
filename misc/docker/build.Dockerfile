@@ -28,7 +28,7 @@ RUN	wget https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz && tar -xvzf m4-1.4.19.tar.
 	wget https://ftp.gnu.org/gnu/automake/automake-1.15.tar.gz && tar -xvzf automake-1.15.tar.gz && cd automake-1.15 && ./configure --prefix=/usr/local && make && make install && cd .. && \
 	rm -Rf m4-1.4.19* libtool-2.4.7* autoconf-2.71* automake-1.15*
 
-RUN mkdir -p /opt/cmake && wget --no-check-certificate --quiet -O - https://cmake.org/files/v3.24/cmake-3.24.2-Linux-x86_64.tar.gz | tar --strip-components=1 -xz -C /opt/cmake
+RUN mkdir -p /opt/cmake && wget --no-check-certificate --quiet -O - https://cmake.org/files/v3.24/cmake-3.24.2-linux-x86_64.tar.gz | tar --strip-components=1 -xz -C /opt/cmake
 ENV PATH="/opt/cmake/bin:${PATH}"
 
 # RUN groupadd -g 2000 legacy && useradd -m -u 2001 -g legacy legacy && chmod -R 755 /opt/
