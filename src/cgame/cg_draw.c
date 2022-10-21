@@ -1057,8 +1057,8 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			hcolor[3] = comp->colorBackground[3] * alphapercent;
 
 			trap_R_SetColor(hcolor);
-            
-            if (!(comp->style & 1))
+
+			if (!(comp->style & 1))
 			{
 				flagOffsetX = 16.f * scale * 5;
 				if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
@@ -2081,24 +2081,24 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		return;
 	}
 
-    if (cg.editingHud)
-    {
-        // aim on self
-        cg.crosshairClientNum    = cg.snap->ps.clientNum;
-        cg.crosshairClientTime   = cg.time;
-        cg.identifyClientRequest = cg.crosshairClientNum;
-    }
-    else
-    {
-        // scan the known entities to see if the crosshair is sighted on one
-        dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
-    }
+	if (cg.editingHud)
+	{
+		// aim on self
+		cg.crosshairClientNum    = cg.snap->ps.clientNum;
+		cg.crosshairClientTime   = cg.time;
+		cg.identifyClientRequest = cg.crosshairClientNum;
+	}
+	else
+	{
+		// scan the known entities to see if the crosshair is sighted on one
+		dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
+	}
 
-    // world-entity or no-entity
-    if (cg.crosshairClientNum < 0)
-    {
-        return;
-    }
+	// world-entity or no-entity
+	if (cg.crosshairClientNum < 0)
+	{
+		return;
+	}
 
 	// draw the name of the player being looked at
 	color = CG_FadeColor(cg.crosshairClientTime, 1000);
@@ -2916,8 +2916,8 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 	{
 		return;
 	}
-    
-    if (!(comp->style & 1))
+
+	if (!(comp->style & 1))
 	{
 		if (cgs.gametype == GT_WOLF_LMS)
 		{
@@ -4510,34 +4510,31 @@ static void CG_NoiseGenerator()
 	CG_AddToTeamChat("Nunc viverra imperdiet enim", cg.snap->ps.clientNum);
 
 	// big popup messages kill
-	CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].rank)->names), rankicons[cgs.clientinfo[cg.clientNum].rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+	CG_AddPMItemBig(PM_DEBUG, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].rank)->names), rankicons[cgs.clientinfo[cg.clientNum].rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 
 	// small popup message
-	if (!(cg.time % 47))
+	if (!(cg.time % 107))
 	{
 		CG_AddPMItem(PM_MESSAGE, "Neque atque quid praeter sed.", " ", cgs.media.pmImages[PM_MESSAGE], 0, 0, colorWhite);
 	}
-	if (!(cg.time % 53))
+	if (!(cg.time % 109))
 	{
-		CG_AddPMItem(PM_CONSTRUCTION, "Sed ut tum ad senem senex de senectute", " ", cgs.media.pmImages[PM_CONSTRUCTION], 0, 0, colorWhite);
+		CG_AddPMItem(PM_DEATH, "Sed ut tum ad senem senex de senectute", " ", cgs.media.pmImages[PM_DEATH], 0, 0, colorWhite);
 	}
-	if (!(cg.time % 59))
+	if (!(cg.time % 113))
 	{
-		CG_AddPMItem(PM_MINES, "Nunc vero inanes flatus quorundam vile esse", " ", cgs.media.pmImages[PM_MINES], 0, 0, colorWhite);
+		CG_AddPMItem(PM_OBJECTIVE, "Nunc vero inanes flatus quorundam vile esse", " ", cgs.media.pmImages[PM_TEAM], 0, 0, colorWhite);
 	}
 
 	// powerups
 	cg.snap->ps.powerups[PW_REDFLAG]  = 1;
 	cg.snap->ps.powerups[PW_BLUEFLAG] = 1;
 
-	// objective indicator
-	cg.flagIndicator  |= (1 << PW_REDFLAG);
-	cg.flagIndicator  |= (1 << PW_BLUEFLAG);
-	cg.blueFlagCounter = 1;
-	cg.redFlagCounter  = 1;
+	// objective indicator simulation
+	cg.flagIndicator |= (1 << PW_NUM_POWERUPS);
 
 	// vote
-	cgs.voteTime = cg.time;
+	cgs.voteTime = cg.time - VOTE_TIME + 1;
 	Q_strncpyz(cgs.voteString, "Do you want cast a vote ?", sizeof(cgs.voteString));
 
 	// missile camera

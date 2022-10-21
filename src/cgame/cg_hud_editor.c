@@ -626,7 +626,7 @@ static panel_button_t *hudEditor[] =
  * @param w
  * @return
  */
-static ID_INLINE float CG_AdjustXHud(float x, float w)
+static ID_INLINE float CG_AdjustXToHUDFile(float x, float w)
 {
 	if (Ccg_Is43Screen())
 	{
@@ -635,7 +635,7 @@ static ID_INLINE float CG_AdjustXHud(float x, float w)
 	else if ((int)(x + w * .5f) >= (int)(320 * cgs.adr43) - 1 &&
 	         (int)(x + w * .5f) <= (int)(320 * cgs.adr43) + 1)
 	{
-		return (x - ((Ccg_WideX(w) * .5f) - w * 0.5)) / cgs.adr43;
+		return (x - (Ccg_WideX(w) - w) * .5f) / cgs.adr43;
 	}
 	else if (x <= (int)(320 * cgs.adr43))
 	{
@@ -691,7 +691,7 @@ void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hu
 			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\t"
 			       "%i\t%i\t%i\n",
 			       hudComponentFields[j].name,
-			       CG_AdjustXHud(comp->location.x, comp->location.w), comp->location.y, comp->location.w, comp->location.h,
+			       CG_AdjustXToHUDFile(comp->location.x, comp->location.w), comp->location.y, comp->location.w, comp->location.h,
 			       comp->style, comp->visible,
 			       comp->scale,
 			       comp->colorText[0], comp->colorText[1], comp->colorText[2], comp->colorText[3],
