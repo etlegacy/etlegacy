@@ -1,5 +1,5 @@
 FROM centos:7
-LABEL version="1.2"
+LABEL version="1.3"
 LABEL maintainer="mail@etlegacy.com"
 LABEL description="Linux build machine for the 32 and 64 bit linux releases"
 
@@ -22,13 +22,13 @@ RUN cd /tmp && \
 	rm -rf /var/cache/yum && \
 	rm -rf /var/tmp/yum-*
 
-RUN	wget http://ftp.gnu.org/gnu/m4/m4-1.4.18.tar.gz && tar -xvzf m4-1.4.18.tar.gz && cd m4-1.4.18 && ./configure --prefix=/usr/local && make && make install && cd .. && \
-	wget http://www.nic.funet.fi/pub/gnu/ftp.gnu.org/pub/gnu/libtool/libtool-2.4.6.tar.gz && tar -xvzf libtool-2.4.6.tar.gz && cd libtool-2.4.6 && ./configure --prefix=/usr/local && make && make install && cd .. && \
-	wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz && tar -xvzf autoconf-2.69.tar.gz && cd autoconf-2.69 && ./configure --prefix=/usr/local && make && make install && cd .. && \
-	wget http://ftp.gnu.org/gnu/automake/automake-1.15.tar.gz && tar -xvzf automake-1.15.tar.gz && cd automake-1.15 && ./configure --prefix=/usr/local && make && make install && cd .. && \
+RUN	wget https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz && tar -xvzf m4-1.4.19.tar.gz && cd m4-1.4.19 && ./configure --prefix=/usr/local && make && make install && cd .. && \
+	wget https://ftp.gnu.org/pub/gnu/libtool/libtool-2.4.7.tar.gz && tar -xvzf libtool-2.4.7.tar.gz && cd libtool-2.4.7 && ./configure --prefix=/usr/local && make && make install && cd .. && \
+	wget https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz && tar -xvzf autoconf-2.71.tar.gz && cd autoconf-2.71 && ./configure --prefix=/usr/local && make && make install && cd .. && \
+	wget https://ftp.gnu.org/gnu/automake/automake-1.16.tar.gz && tar -xvzf automake-1.16.tar.gz && cd automake-1.16 && ./configure --prefix=/usr/local && make && make install && cd .. && \
 	rm -Rf m4-1.4.18* libtool-2.4.6* autoconf-2.69* automake-1.15*
 
-RUN mkdir -p /opt/cmake && wget --no-check-certificate --quiet -O - https://cmake.org/files/v3.19/cmake-3.19.6-Linux-x86_64.tar.gz | tar --strip-components=1 -xz -C /opt/cmake
+RUN mkdir -p /opt/cmake && wget --no-check-certificate --quiet -O - https://cmake.org/files/v3.24/cmake-3.24.2-Linux-x86_64.tar.gz | tar --strip-components=1 -xz -C /opt/cmake
 ENV PATH="/opt/cmake/bin:${PATH}"
 
 # RUN groupadd -g 2000 legacy && useradd -m -u 2001 -g legacy legacy && chmod -R 755 /opt/
