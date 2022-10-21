@@ -300,8 +300,6 @@ jobs:
         working-directory: build/
         run: |
           cpack
-          curl -v -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L -o etlegacy_test.pk3 "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip"
-          ls -R
 
       - uses: actions/upload-artifact@v3
         with:
@@ -468,7 +466,8 @@ jobs:
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
              cd build/legacy
-             curl -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L -O "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip"
+             curl -v -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L -O "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip"
+             ls -R
              cd ..
              cpack
 
@@ -477,9 +476,9 @@ jobs:
 #          name: All-mods
 #          path: build/legacy
 
-      - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: build/legacy
+#      - name: Display structure of downloaded files
+#        run: ls -R
+#        working-directory: build/legacy
 
       - uses: actions/upload-artifact@v3
         with:
