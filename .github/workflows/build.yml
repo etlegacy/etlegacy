@@ -42,6 +42,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          git config --global --add safe.directory /__w/etlegacy/etlegacy
           git fetch --tags --force
           ./easybuild.sh build -64 -mod
 
@@ -240,6 +241,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          git config --global --add safe.directory /__w/etlegacy/etlegacy
           git fetch --tags --force
           ./easybuild.sh build -32
 
@@ -337,6 +339,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          git config --global --add safe.directory /__w/etlegacy/etlegacy
           git fetch --tags --force
           ./easybuild.sh build -64
 
