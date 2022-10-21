@@ -17,7 +17,7 @@ RUN cd /tmp && \
 	wayland-devel mesa-libEGL-devel mesa-libGLES-devel libxkbcommon-devel libXi-devel libXfixes-devel \
 	libXScrnSaver-devel libXcursor-devel libXinerama-devel libXrandr-devel libXvmc-devel && \
 	yum --assumeyes remove git && \
-	yum --assumeyes install git224 && \
+	yum --assumeyes install git236 && \
 	yum clean all && \
 	rm -rf /var/cache/yum && \
 	rm -rf /var/tmp/yum-*
