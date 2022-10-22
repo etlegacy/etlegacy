@@ -60,6 +60,7 @@ win_resource.aps
 
 # Visual Studio Code
 /.vscode/
+*.code-workspace
 
 # Do not under any circumstances ignore these
 !/easybuild.sh
