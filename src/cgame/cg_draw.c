@@ -4513,15 +4513,15 @@ static void CG_NoiseGenerator()
 	CG_AddPMItemBig(PM_DEBUG, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].rank)->names), rankicons[cgs.clientinfo[cg.clientNum].rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 
 	// small popup message
-	if (!(cg.time % 107))
+	if (!(cg.time % 507))
 	{
 		CG_AddPMItem(PM_MESSAGE, "Neque atque quid praeter sed.", " ", cgs.media.pmImages[PM_MESSAGE], 0, 0, colorWhite);
 	}
-	if (!(cg.time % 109))
+	if (!(cg.time % 509))
 	{
 		CG_AddPMItem(PM_DEATH, "Sed ut tum ad senem senex de senectute", " ", cgs.media.pmImages[PM_DEATH], 0, 0, colorWhite);
 	}
-	if (!(cg.time % 113))
+	if (!(cg.time % 513))
 	{
 		CG_AddPMItem(PM_OBJECTIVE, "Nunc vero inanes flatus quorundam vile esse", " ", cgs.media.pmImages[PM_TEAM], 0, 0, colorWhite);
 	}
