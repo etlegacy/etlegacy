@@ -90,17 +90,6 @@ typedef enum
 } serverState_t;
 
 /**
-* @struct svdemoPlayerStats_t
-* @brief Stores player stats during recording
-*/
-typedef struct svdemoPlayerStats_s
-{
-	char guid[9];
-	char name[MAX_NAME_LENGTH];
-	char stats[MAX_STRING_CHARS];
-} svdemoPlayerStats_t;
-
-/**
  * @struct server_t
  * @brief
  */
@@ -155,11 +144,11 @@ typedef struct
 	fileHandle_t demoFile;
 	demoState_t demoState;
 	char demoName[MAX_QPATH];
+	qboolean demoSupported;
 
 	// serverside demo recording - previous frame for delta compression
 	sharedEntity_t demoEntities[MAX_GENTITIES];
 	playerState_t demoPlayerStates[MAX_CLIENTS];
-	svdemoPlayerStats_t demoPlayerStats[100];
 
 	int lastAttackLogTime;                  ///< timestamp of latest attack log entry
 } server_t;
@@ -511,13 +500,7 @@ void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo);
 qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore);
 void SV_DemoStopAll(void);
 void SV_DemoInit(void);
-
-// sv_demo_ext.c
-//int SV_GentityGetHealthField(sharedEntity_t *gent);   // Test purpose
-//void SV_GentitySetHealthField(sharedEntity_t *gent, int value);   // Test purpose
-void SV_GentityUpdateHealthField(sharedEntity_t *gent, playerState_t *player);
-void SV_GentityUpdateItemField(sharedEntity_t *gent);
-void SV_GentityUpdateParentField(sharedEntity_t *gent, sharedEntity_t *parent);
+void SV_DemoSupport(void);
 
 // sv_main.c
 void SV_FinalCommand(const char *cmd, qboolean disconnect);   ///< added disconnect flag so map changes can use this function as well
@@ -620,7 +603,7 @@ void SV_RestartGameProgs(void);
 qboolean SV_inPVS(const vec3_t p1, const vec3_t p2);
 qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *orientation);
 int SV_LoadTag(const char *mod_name);
-void SV_GameSendServerCommand(int clientNum, const char *text, qboolean demoPlayback);
+void SV_GameSendServerCommand(int clientNum, const char *text);
 
 void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);
 

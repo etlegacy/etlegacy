@@ -1349,6 +1349,8 @@ typedef struct level_locals_s
 	int frameStartTime;
 
 	qboolean suddenDeath;
+	qboolean demoPlayback;
+	int      demoClientsNum;
 } level_locals_t;
 
 /**
@@ -1747,12 +1749,23 @@ qboolean G_DropItems(gentity_t *self);
 // g_main.c
 void FindIntermissionPoint(void);
 void G_RunThink(gentity_t *ent);
+void G_RunEntity(gentity_t *ent, int msec);
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void G_LogExit(const char *string);
 void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1, 2)));
+
+// extension interface
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+void trap_DemoSupport(void);
+extern int dll_com_trapGetValue;
+extern int dll_trap_DemoSupport;
+
+// g_demo_legacy.c
+void G_DemoPlaybackInit(qboolean demoPlayback, int demoClientsNum);
+void G_DemoRunFrame(void);
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);

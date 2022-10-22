@@ -809,3 +809,25 @@ messageStatus_t trap_MessageStatus(int clientNum)
 {
 	return (messageStatus_t)(SystemCall(G_MESSAGESTATUS, clientNum));
 }
+
+// extension interface
+
+/**
+* @brief Entry point for additional system calls without breaking compatbility with other engines
+* @param[out] value
+* @param[in] valueSize
+* @param[in] key
+* @return
+*/
+qboolean trap_GetValue(char *value, int valueSize, const char *key)
+{
+	return (qboolean)(SystemCall(dll_com_trapGetValue, value, valueSize, key));
+}
+
+/**
+* @brief Extension for informing engine about demo support
+*/
+void trap_DemoSupport(void)
+{
+	SystemCall(dll_trap_DemoSupport);
+}

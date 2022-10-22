@@ -1382,6 +1382,12 @@ static void SV_CalcPings(void)
 			ps->ping = cl->ping;
 			continue;
 		}
+		if (cl->demoClient)
+		{
+			ps       = SV_GameClientNum(i);
+			cl->ping = ps->ping;
+			continue;
+		}
 
 		total = 0;
 		count = 0;
@@ -1739,7 +1745,6 @@ void SV_Frame(int msec)
 		}
 		else if (sv.demoState == DS_PLAYBACK) // Play the next demo frame
 		{
-			Com_DPrintf("Playing back demo frame\n");
 			SV_DemoReadFrame();
 		}
 	}
