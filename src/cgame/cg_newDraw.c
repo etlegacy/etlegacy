@@ -770,6 +770,27 @@ void CG_MouseEvent(int x, int y)
 }
 
 /**
+ * @brief Clean up sample HUD elements spawned by HUD editor
+ */
+void CG_HudEditor_Cleanup(void)
+{
+    int i;
+
+	CG_InitPM();
+	cg.bannerPrintTime     = 0;
+	cg.centerPrintTime     = 0;
+	cgs.voteTime           = 0;
+	cg.cursorHintTime      = 0;
+	cg.crosshairClientTime = 0;
+	cg.oidPrintTime        = 0;
+
+	for (i = 0; i < cg_teamChatHeight.integer; i++)
+	{
+		cgs.teamChatMsgTimes[i] = 0;
+	}
+}
+
+/**
  * @brief CG_EventHandling
  * @param[in] type
  * @param[in] fForced
@@ -864,7 +885,8 @@ void CG_EventHandling(int type, qboolean fForced)
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
 		{
-			cg.editingHud = qfalse;
+			CG_HudEditor_Cleanup();
+            cg.editingHud = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{

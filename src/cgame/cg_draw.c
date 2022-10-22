@@ -4568,11 +4568,6 @@ void CG_DrawActive()
 		trap_R_RenderScene(cg.refdef_current);
 	}
 
-	if (cg.editingHud)
-	{
-		CG_NoiseGenerator();
-	}
-
 	if (!cg.showGameView)
 	{
 		// draw status bar and other floating elements
@@ -4585,6 +4580,7 @@ void CG_DrawActive()
 
 	if (cg.editingHud)
 	{
+		CG_NoiseGenerator();
 		CG_DrawHudEditor();
 	}
 }
