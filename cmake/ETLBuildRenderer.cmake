@@ -23,6 +23,9 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 
 	if(FEATURE_RENDERER_GLES)
 		add_library(${R1_NAME} ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
+		if (FEATURE_RENDERER_GLES)
+			target_compile_definitions(${R1_NAME} FEATURE_RENDERER_GLES)
+		endif()
 	else()
 		add_library(${R1_NAME} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
 	endif()
@@ -42,9 +45,9 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 	endif()
 
 	if(MSVC)
-		target_link_libraries(${R1_NAME} ${RENDERER_LIBRARIES})
+		target_link_libraries(${R1_NAME} renderer_libraries)
 	else()
-		target_link_libraries(${R1_NAME} ${RENDERER_LIBRARIES} 'm')
+		target_link_libraries(${R1_NAME} renderer_libraries 'm')
 	endif(MSVC)
 
 	# install the dynamic lib only
@@ -74,7 +77,7 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 	endif()
 
 	if(NOT RENDERER_DYNAMIC)
-		list(APPEND CLIENT_LIBRARIES ${R1_NAME})
+		target_link_libraries(client_libraries INTERFACE ${R1_NAME})
 	endif()
 endif()
 
@@ -133,9 +136,9 @@ if(FEATURE_RENDERER2)
 	endif()
 
 	if(MSVC)
-		target_link_libraries(${R2_NAME} ${RENDERER_LIBRARIES})
+		target_link_libraries(${R2_NAME} renderer_libraries)
 	else()
-		target_link_libraries(${R2_NAME} ${RENDERER_LIBRARIES} 'm')
+		target_link_libraries(${R2_NAME} renderer_libraries 'm')
 	endif(MSVC)
 
 	set_target_properties(${R2_NAME}
@@ -164,6 +167,6 @@ if(FEATURE_RENDERER2)
 	endif()
 
 	if(NOT RENDERER_DYNAMIC)
-		list(APPEND CLIENT_LIBRARIES ${R2_NAME})
+		target_link_libraries(client_libraries INTERFACE ${R2_NAME})
 	endif()
 endif(FEATURE_RENDERER2)

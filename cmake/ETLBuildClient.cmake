@@ -62,23 +62,15 @@ if(BUNDLED_CURL)
 	add_dependencies(etl bundled_curl)
 endif()
 
-if(BUNDLED_OGG_VORBIS)
-	add_dependencies(etl bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
-endif()
-
-if(BUNDLED_THEORA)
-	add_dependencies(bundled_theora bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
-	add_dependencies(etl bundled_theora)
-endif()
-
 if(BUNDLED_OPENAL)
 	add_dependencies(etl bundled_openal)
 endif()
 
 target_link_libraries(etl
-	${CLIENT_LIBRARIES}
+	client_libraries
+	engine_libraries
 	${SDL_LIBRARIES}
-	${OS_LIBRARIES} # Has to go after cURL and SDL
+	os_libraries # Has to go after cURL and SDL
 )
 
 if(FEATURE_WINDOWS_CONSOLE AND WIN32)

@@ -10,6 +10,13 @@ check_library_exists(m pow "" LIBM)
 # cgame
 #
 add_library(cgame MODULE ${CGAME_SRC})
+
+if(LIBM)
+	target_link_libraries(cgame PUBLIC cgame_libraries mod_libraries PRIVATE m)
+else()
+	target_link_libraries(cgame cgame_libraries mod_libraries)
+endif()
+
 set_target_properties(cgame
 	PROPERTIES
 	PREFIX ""
@@ -21,26 +28,24 @@ set_target_properties(cgame
 )
 target_compile_definitions(cgame PRIVATE CGAMEDLL=1 MODLIB=1)
 
-if(LIBM)
-	target_link_libraries(cgame PRIVATE m)
-endif()
-
 #
 # qagame
 #
 if(NOT ANDROID)
 	add_library(qagame MODULE ${QAGAME_SRC})
+	target_link_libraries(qagame qagame_libraries mod_libraries)
+
 	if(FEATURE_LUASQL AND FEATURE_DBMS)
 		target_compile_definitions(qagame PRIVATE FEATURE_DBMS FEATURE_LUASQL)
 
 		if(BUNDLED_SQLITE3)
 			add_dependencies(qagame bundled_sqlite3)
-			list(APPEND MOD_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
-			include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
+			target_link_libraries(qagame ${SQLITE3_BUNDLED_LIBRARIES})
+			target_include_directories(qagame PUBLIC "${SQLITE3_BUNDLED_INCLUDE_DIR}")
 		else() # BUNDLED_SQLITE3
 			find_package(SQLite3 REQUIRED)
-			list(APPEND MOD_LIBRARIES ${SQLITE3_LIBRARY})
-			include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
+			target_link_libraries(qagame ${SQLITE3_LIBRARY})
+			target_include_directories(qagame PUBLIC ${SQLITE3_INCLUDE_DIR})
 		endif()
 
 		FILE(GLOB LUASQL_SRC
@@ -55,7 +60,6 @@ if(NOT ANDROID)
 		if(BUNDLED_LUA)
 			add_dependencies(qagame bundled_lua)
 		endif(BUNDLED_LUA)
-		target_link_libraries(qagame ${MOD_LIBRARIES})
 	endif(FEATURE_LUA)
 
 	if(FEATURE_SERVERMDX)
@@ -82,6 +86,13 @@ endif()
 # ui
 #
 add_library(ui MODULE ${UI_SRC})
+
+if(LIBM)
+	target_link_libraries(ui PUBLIC ui_libraries mod_libraries PRIVATE m)
+else()
+	target_link_libraries(ui ui_libraries mod_libraries)
+endif()
+
 set_target_properties(ui
 	PROPERTIES
 	PREFIX ""
@@ -93,15 +104,11 @@ set_target_properties(ui
 )
 target_compile_definitions(ui PRIVATE UIDLL=1 MODLIB=1)
 
-if(LIBM)
-	target_link_libraries(ui PRIVATE m)
-endif()
-
 # Build both architectures on older xcode versions
 if(APPLE)
-    if (DEFINED CMAKE_OSX_ARCHITECTURES)
-        message(STATUS "Using the user provided osx architectures: ${CMAKE_OSX_ARCHITECTURES}")
-        set(OSX_MOD_ARCH "${CMAKE_OSX_ARCHITECTURES}")
+	if (DEFINED CMAKE_OSX_ARCHITECTURES)
+		message(STATUS "Using the user provided osx architectures: ${CMAKE_OSX_ARCHITECTURES}")
+		set(OSX_MOD_ARCH "${CMAKE_OSX_ARCHITECTURES}")
 	# Mojave was the last version to support 32 bit binaries and building.
 	# Newer SDK's just fail compilation
 	# TODO: maybe remove this whole thing after the next release.

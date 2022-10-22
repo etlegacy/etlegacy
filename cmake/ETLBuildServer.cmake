@@ -4,8 +4,9 @@
 
 add_executable(etlded ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
 target_link_libraries(etlded
-	${SERVER_LIBRARIES}
-	${OS_LIBRARIES}
+	server_libraries
+	engine_libraries
+	os_libraries
 )
 
 set_target_properties(etlded

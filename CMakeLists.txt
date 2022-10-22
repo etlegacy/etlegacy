@@ -137,6 +137,9 @@ include(cmake/ETLSources.cmake)
 # Git version header generation
 include(cmake/ETLVersion.cmake)
 
+# Dummy targets for library binding
+include(cmake/ETLTargets.cmake)
+
 # Use bundled libraries
 if(BUNDLED_LIBS)
 	include(cmake/ETLBundledLibs.cmake)
