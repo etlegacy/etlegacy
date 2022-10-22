@@ -56,7 +56,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
 	{ "weaponchangebar",      offsetof(hudStucture_t,    weaponchargebar), qtrue, CG_DrawWeapRecharge, 0.19,{ "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon" } }, // v2.78 backward compatibility
-	{ HUDF(healthtext),       CG_DrawPlayerHealth,       0.25f,            { "Gradiant Color" } },
+	{ HUDF(healthtext),       CG_DrawPlayerHealth,       0.25f,            { "Dynamic Color"  } },
 	{ HUDF(xptext),           CG_DrawXP,                 0.25f,            { 0                } },
 	{ HUDF(ranktext),         CG_DrawRank,               0.20f,            { 0                } },
 	{ HUDF(statsdisplay),     CG_DrawSkills,             0.25f,            { "Column"         } },
