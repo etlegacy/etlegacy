@@ -3017,9 +3017,7 @@ void CL_Init(void)
 	Cvar_Get("cg_popupLimboMenu", "1", CVAR_ARCHIVE);  // not used, kept for compatibility
 	Cvar_Get("cg_drawTeamOverlay", "2", CVAR_ARCHIVE); // not used, kept for compatibility
 	Cvar_Get("cg_drawGun", "1", CVAR_ARCHIVE);
-	Cvar_Get("cg_cursorHints", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_voiceSpriteTime", "6000", CVAR_ARCHIVE);
-	Cvar_Get("cg_crosshairSize", "48", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawCrosshair", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomDefaultSniper", "20", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomStepSniper", "2", CVAR_ARCHIVE);

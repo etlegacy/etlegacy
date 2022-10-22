@@ -55,7 +55,7 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 	// if weapon is still valid
 	if (IS_VALID_WEAPON(weap))
 	{
-		if (CG_GetActiveHUD()->popupmessages.style && cg_weapons[weap].weaponIcon[0])
+		if ((CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON_BIG) && cg_weapons[weap].weaponIcon[0])
 		{
 			*weaponShader = cg_weapons[weap].weaponIcon[0];
 			*scaleShader  = cg_weapons[weap].weaponIconScale;
@@ -169,7 +169,7 @@ static void CG_Obituary(entityState_t *ent)
 
 	if (message)
 	{
-		if (cg_graphicObituaries.integer)
+		if (CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON)
 		{
 			qhandle_t weaponShader;
 			int       scaleShader;
@@ -275,14 +275,14 @@ static void CG_Obituary(entityState_t *ent)
 
 		if (message)
 		{
-			if (cg_graphicObituaries.integer)
+			if (CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON)
 			{
 				qhandle_t weaponShader;
 				int       scaleShader;
 
 				CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader);
 
-				if (cg_graphicObituaries.integer == 1)
+				if (CG_GetActiveHUD()->popupmessages.style & POPUP_SWAP_VICTIM_KILLER)
 				{
 					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite));
 				}

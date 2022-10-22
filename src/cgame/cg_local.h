@@ -2108,11 +2108,14 @@ typedef struct oidInfo_s
 // Popup filters
 enum
 {
-	POPUP_FILTER_CONNECT  = BIT(0),
-	POPUP_FILTER_TEAMJOIN = BIT(1),
-	POPUP_FILTER_MISSION  = BIT(2),
-	POPUP_FILTER_PICKUP   = BIT(3),
-	POPUP_FILTER_DEATH    = BIT(4),
+	POPUP_FILTER_CONNECT     = BIT(0),
+	POPUP_FILTER_TEAMJOIN    = BIT(1),
+	POPUP_FILTER_MISSION     = BIT(2),
+	POPUP_FILTER_PICKUP      = BIT(3),
+	POPUP_FILTER_DEATH       = BIT(4),
+	POPUP_WEAPON_ICON        = BIT(5),
+	POPUP_WEAPON_ICON_BIG    = BIT(6),
+	POPUP_SWAP_VICTIM_KILLER = BIT(7),
 };
 
 // Big popup filters
@@ -2121,6 +2124,16 @@ enum
 	POPUP_BIG_FILTER_SKILL    = BIT(0),
 	POPUP_BIG_FILTER_RANK     = BIT(1),
 	POPUP_BIG_FILTER_PRESTIGE = BIT(2),
+};
+
+// Compass
+enum
+{
+	COMPASS_SQUARE               = BIT(0),
+	COMPASS_ITEM                 = BIT(1),
+	COMPASS_SECONDARY_OBJECTIVES = BIT(2),
+	COMPASS_PRIMARY_OBJECTIVES   = BIT(3),
+
 };
 
 /// Locations
@@ -2643,7 +2656,6 @@ extern vmCvar_t cg_drawSpectatorNames;
 extern vmCvar_t cg_useWeapsForZoom;
 extern vmCvar_t cg_weaponCycleDelay;
 extern vmCvar_t cg_cycleAllWeaps;
-extern vmCvar_t cg_crosshairHealth;
 extern vmCvar_t cg_drawStatus;
 extern vmCvar_t cg_animSpeed;
 extern vmCvar_t cg_debugAnim;
@@ -2662,7 +2674,6 @@ extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;
 extern vmCvar_t cg_drawGun;
 extern vmCvar_t cg_weapAnims;
-extern vmCvar_t cg_cursorHints;
 extern vmCvar_t cg_letterbox;
 extern vmCvar_t cg_tracerChance;
 extern vmCvar_t cg_tracerWidth;
@@ -2672,7 +2683,6 @@ extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
 extern vmCvar_t cg_drawEnvAwareness;
-extern vmCvar_t cg_drawCompassIcons;
 extern vmCvar_t cg_dynamicIcons;
 extern vmCvar_t cg_dynamicIconsDistance;
 extern vmCvar_t cg_dynamicIconsSize;
@@ -2740,7 +2750,6 @@ extern vmCvar_t cg_crosshairAlpha;
 extern vmCvar_t cg_crosshairAlphaAlt;
 extern vmCvar_t cg_crosshairColor;
 extern vmCvar_t cg_crosshairColorAlt;
-extern vmCvar_t cg_crosshairPulse;
 extern vmCvar_t cg_drawReinforcementTime;
 extern vmCvar_t cg_drawWeaponIconFlash;
 extern vmCvar_t cg_noAmmoAutoSwitch;
@@ -2823,15 +2832,10 @@ extern vmCvar_t cg_sharetimerText;
 
 extern vmCvar_t cg_automapZoom;
 
-extern vmCvar_t cg_drawTime;
-
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
 extern vmCvar_t cg_popupTime;
 extern vmCvar_t cg_numPopups;
-extern vmCvar_t cg_popupFilter;
-extern vmCvar_t cg_popupBigFilter;
-extern vmCvar_t cg_graphicObituaries;
 
 extern vmCvar_t cg_fontScaleSP;
 
@@ -2869,16 +2873,19 @@ extern vmCvar_t cg_customFont1;
 extern vmCvar_t cg_customFont2;
 
 // local clock flags
-#define LOCALTIME_ON                0x01
-#define LOCALTIME_SECOND            0x02
-#define LOCALTIME_12HOUR            0x04
+enum
+{
+	LOCALTIME_SECOND = BIT(0),
+	LOCALTIME_12HOUR = BIT(1),
+};
 
 // crosshair name flags
-#define CROSSHAIR_CLASS             0x01
-#define CROSSHAIR_RANK              0x02
-#ifdef FEATURE_PRESTIGE
-#define CROSSHAIR_PRESTIGE          0x04
-#endif
+enum
+{
+	CROSSHAIR_CLASS    = BIT(0),
+	CROSSHAIR_RANK     = BIT(1),
+	CROSSHAIR_PRESTIGE = BIT(2),
+};
 
 // projectile spawn effects at destination
 #define PS_FX_NONE   0

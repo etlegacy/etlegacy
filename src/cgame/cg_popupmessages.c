@@ -344,13 +344,13 @@ static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
 	switch (type)
 	{
 	case PM_CONNECT:
-		if (cg_popupFilter.integer & POPUP_FILTER_CONNECT)
+		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_CONNECT)
 		{
 			return qtrue;
 		}
 		break;
 	case PM_TEAM:
-		if (cg_popupFilter.integer & POPUP_FILTER_TEAMJOIN)
+		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_TEAMJOIN)
 		{
 			return qtrue;
 		}
@@ -361,7 +361,7 @@ static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
 	case PM_MINES:
 	case PM_OBJECTIVE:
 	case PM_DESTRUCTION:
-		if (cg_popupFilter.integer & POPUP_FILTER_MISSION)
+		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_MISSION)
 		{
 			return qtrue;
 		}
@@ -369,13 +369,13 @@ static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
 	case PM_AMMOPICKUP:
 	case PM_HEALTHPICKUP:
 	case PM_WEAPONPICKUP:
-		if (cg_popupFilter.integer & POPUP_FILTER_PICKUP)
+		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_PICKUP)
 		{
 			return qtrue;
 		}
 		break;
 	case PM_DEATH:
-		if (cg_popupFilter.integer & POPUP_FILTER_DEATH)
+		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_DEATH)
 		{
 			return qtrue;
 		}

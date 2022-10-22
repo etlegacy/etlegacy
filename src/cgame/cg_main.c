@@ -139,7 +139,6 @@ vmCvar_t cg_drawSpectatorNames;
 vmCvar_t cg_weaponCycleDelay;
 vmCvar_t cg_cycleAllWeaps;
 vmCvar_t cg_useWeapsForZoom;
-vmCvar_t cg_crosshairHealth;
 vmCvar_t cg_teamChatsOnly;
 vmCvar_t cg_voiceChats;
 vmCvar_t cg_voiceText;
@@ -158,7 +157,6 @@ vmCvar_t cg_brassTime;
 vmCvar_t cg_letterbox;
 vmCvar_t cg_drawGun;
 vmCvar_t cg_weapAnims;
-vmCvar_t cg_cursorHints;
 vmCvar_t cg_gun_frame;
 vmCvar_t cg_gun_x;
 vmCvar_t cg_gun_y;
@@ -190,7 +188,6 @@ vmCvar_t cg_paused;
 vmCvar_t cg_blood;
 vmCvar_t cg_predictItems;
 vmCvar_t cg_drawEnvAwareness;
-vmCvar_t cg_drawCompassIcons;
 vmCvar_t cg_dynamicIcons;
 vmCvar_t cg_dynamicIconsDistance;
 vmCvar_t cg_dynamicIconsSize;
@@ -239,7 +236,6 @@ vmCvar_t cg_crosshairAlpha;
 vmCvar_t cg_crosshairAlphaAlt;
 vmCvar_t cg_crosshairColor;
 vmCvar_t cg_crosshairColorAlt;
-vmCvar_t cg_crosshairPulse;
 vmCvar_t cg_drawReinforcementTime;
 vmCvar_t cg_drawWeaponIconFlash;
 vmCvar_t cg_noAmmoAutoSwitch;
@@ -326,15 +322,10 @@ vmCvar_t cg_simpleItemsScale;
 
 vmCvar_t cg_automapZoom;
 
-vmCvar_t cg_drawTime;
-
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
 vmCvar_t cg_popupTime;
 vmCvar_t cg_numPopups;
-vmCvar_t cg_popupFilter;
-vmCvar_t cg_popupBigFilter;
-vmCvar_t cg_graphicObituaries;
 
 vmCvar_t cg_fontScaleSP; // side print
 
@@ -384,7 +375,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawGun,                 "cg_drawGun",                 "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapAnims,               "cg_weapAnims",               "15",          CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_frame,               "cg_gun_frame",               "0",           CVAR_TEMP,                    0 },
-	{ &cg_cursorHints,             "cg_cursorHints",             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_zoomDefaultSniper,       "cg_zoomDefaultSniper",       "20",          CVAR_ARCHIVE,                 0 }, // changed per atvi req
 	{ &cg_zoomStepSniper,          "cg_zoomStepSniper",          "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fov,                     "cg_fov",                     "90",          CVAR_ARCHIVE,                 0 },
@@ -405,7 +395,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_useWeapsForZoom,         "cg_useWeapsForZoom",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weaponCycleDelay,        "cg_weaponCycleDelay",        "150",         CVAR_ARCHIVE,                 0 },
 	{ &cg_cycleAllWeaps,           "cg_cycleAllWeaps",           "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairHealth,         "cg_crosshairHealth",         "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_brassTime,               "cg_brassTime",               "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_markTime,                "cg_markTime",                "20000",       CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_x,                   "cg_gunX",                    "0",           CVAR_TEMP,                    0 },
@@ -414,7 +403,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_centertime,              "cg_centertime",              "5",           CVAR_ARCHIVE,                 0 }, // changed from 3 to 5
 	{ &cg_bobbing,                 "cg_bobbing",                 "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawEnvAwareness,        "cg_drawEnvAwareness",        "7",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCompassIcons,        "cg_drawCompassIcons",        "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIcons,            "cg_dynamicIcons",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIconsDistance,    "cg_dynamicIconsDistance",    "400",         CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIconsSize,        "cg_dynamicIconsSize",        "20",          CVAR_ARCHIVE,                 0 },
@@ -501,7 +489,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_crosshairAlphaAlt,       "cg_crosshairAlphaAlt",       "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairColor,          "cg_crosshairColor",          "White",       CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairColorAlt,       "cg_crosshairColorAlt",       "White",       CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairPulse,          "cg_crosshairPulse",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawReinforcementTime,   "cg_drawReinforcementTime",   "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawWeaponIconFlash,     "cg_drawWeaponIconFlash",     "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_noAmmoAutoSwitch,        "cg_noAmmoAutoSwitch",        "1",           CVAR_ARCHIVE,                 0 },
@@ -590,14 +577,10 @@ static cvarTable_t cvarTable[] =
 	{ &cg_simpleItems,             "cg_simpleItems",             "0",           CVAR_ARCHIVE,                 0 }, // Bugged atm
 	{ &cg_simpleItemsScale,        "cg_simpleItemsScale",        "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_automapZoom,             "cg_automapZoom",             "5.159",       CVAR_ARCHIVE,                 0 },
-	{ &cg_drawTime,                "cg_drawTime",                "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_popupFadeTime,           "cg_popupFadeTime",           "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_popupStayTime,           "cg_popupStayTime",           "2000",        CVAR_ARCHIVE,                 0 },
 	{ &cg_popupTime,               "cg_popupTime",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_numPopups,               "cg_numPopups",               "7",           CVAR_ARCHIVE,                 0 },
-	{ &cg_popupFilter,             "cg_popupFilter",             "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_popupBigFilter,          "cg_popupBigFilter",          "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_graphicObituaries,       "cg_graphicObituaries",       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,          "cg_weapaltReloads",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,         "cg_weapaltSwitches",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_sharetimerText,          "cg_sharetimerText",          "",            CVAR_ARCHIVE,                 0 },
@@ -1755,8 +1738,8 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.teamStatusBar = trap_R_RegisterShader("gfx/2d/colorbar.tga");
 
-	cgs.media.hudSprintBar = trap_R_RegisterShader("sprintbar");
-    cgs.media.hudSprintBarHorizontal = trap_R_RegisterShader("sprintbarhorizontal");
+	cgs.media.hudSprintBar           = trap_R_RegisterShader("sprintbar");
+	cgs.media.hudSprintBarHorizontal = trap_R_RegisterShader("sprintbarhorizontal");
 
 	cgs.media.hudAlliedHelmet = trap_R_RegisterShader("AlliedHelmet");
 	cgs.media.hudAxisHelmet   = trap_R_RegisterShader("AxisHelmet");
@@ -2751,7 +2734,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 		if (trap_GetValue(value, sizeof(value), "trap_SysFlashWindow_Legacy"))
 		{
 			dll_trap_SysFlashWindow = atoi(value);
-            flashWindowSupported    = qtrue;
+			flashWindowSupported    = qtrue;
 		}
 	}
 

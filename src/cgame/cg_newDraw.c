@@ -335,12 +335,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 {
 	float     *color;
 	qhandle_t icon;
-	float     scale, halfscale;
-
-	if (!cg_cursorHints.integer)
-	{
-		return;
-	}
+	float     scale = 0, halfscale = 0;
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -462,27 +457,22 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg_cursorHints.integer == 3)
+	// color
+	if (comp->style & 4)
 	{
 		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
 	}
 
-	// size
-	if (cg_cursorHints.integer >= 3)       // no size pulsing
+	// strobe
+	if (comp->style & 2)
 	{
-		scale = halfscale = 0;
+		scale     = (cg.cursorHintTime % 1000) / 100.0f; // one way size pulse
+		halfscale = scale * 0.5f;
 	}
-	else
+	// size
+	else if (comp->style & 1)
 	{
-		if (cg_cursorHints.integer == 2)
-		{
-			scale = (cg.cursorHintTime % 1000) / 100.0f;     // one way size pulse
-		}
-		else
-		{
-			scale = (float)(CURSORHINT_SCALE * (0.5 + 0.5 * sin(cg.time / 150.0)));     // sin pulse
-
-		}
+		scale     = (float)(CURSORHINT_SCALE * (0.5 + 0.5 * sin(cg.time / 150.0))); // sin pulse
 		halfscale = scale * 0.5f;
 	}
 
@@ -774,7 +764,7 @@ void CG_MouseEvent(int x, int y)
  */
 void CG_HudEditor_Cleanup(void)
 {
-    int i;
+	int i;
 
 	CG_InitPM();
 	cg.bannerPrintTime     = 0;
@@ -886,7 +876,7 @@ void CG_EventHandling(int type, qboolean fForced)
 		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
 		{
 			CG_HudEditor_Cleanup();
-            cg.editingHud = qfalse;
+			cg.editingHud = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{
