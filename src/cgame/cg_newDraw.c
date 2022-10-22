@@ -774,6 +774,8 @@ void CG_MouseEvent(int x, int y)
  */
 void CG_HudEditor_Cleanup(void)
 {
+    int i;
+
 	CG_InitPM();
 	cg.bannerPrintTime     = 0;
 	cg.centerPrintTime     = 0;
@@ -782,7 +784,6 @@ void CG_HudEditor_Cleanup(void)
 	cg.crosshairClientTime = 0;
 	cg.oidPrintTime        = 0;
 
-	int i;
 	for (i = 0; i < cg_teamChatHeight.integer; i++)
 	{
 		cgs.teamChatMsgTimes[i] = 0;
