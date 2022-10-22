@@ -130,7 +130,7 @@ static panel_button_text_t hudEditorHeaderFont =
 static panel_button_text_t hudEditorTextFont =
 {
 	0.24f,                   0.24f,
-	{ 1.f,                   1.f,  1.f,0.5f },
+	{ 1.f,                   1.f,  1.f,0.75f },
 	ITEM_TEXTSTYLE_SHADOWED, 0,
 	&cgs.media.limboFont2,
 };
@@ -2316,11 +2316,11 @@ static void CG_HudEditor_HelpDraw(void)
 
 		vec4_t bgColor;
 
-		VectorCopy(colorLtGrey, bgColor);
-		bgColor[3] = .5f;
+		VectorCopy(colorDkGrey, bgColor);
+		bgColor[3] = .90f;
 
 		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.1, SCREEN_HEIGHT * 0.6, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
-		                  bgColor, colorBlack, colorMdGrey, colorBlack,
+		                  bgColor, colorBlack, colorDkGrey, colorBlack,
 		                  &hudEditorHeaderFont, &hudEditorTextFont);
 	}
 }
