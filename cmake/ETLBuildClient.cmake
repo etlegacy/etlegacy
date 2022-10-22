@@ -69,7 +69,6 @@ endif()
 target_link_libraries(etl
 	client_libraries
 	engine_libraries
-	${SDL_LIBRARIES}
 	os_libraries # Has to go after cURL and SDL
 )
 

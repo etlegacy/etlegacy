@@ -40,10 +40,6 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 		add_dependencies(${R1_NAME} bundled_jpeg)
 	endif()
 
-	if(BUNDLED_FREETYPE)
-		add_dependencies(${R1_NAME} bundled_freetype)
-	endif()
-
 	if(MSVC)
 		target_link_libraries(${R1_NAME} renderer_libraries)
 	else()
@@ -129,10 +125,6 @@ if(FEATURE_RENDERER2)
 
 	if(BUNDLED_JPEG)
 		add_dependencies(${R2_NAME} bundled_jpeg)
-	endif()
-
-	if(BUNDLED_FREETYPE)
-		add_dependencies(${R2_NAME} bundled_freetype)
 	endif()
 
 	if(MSVC)

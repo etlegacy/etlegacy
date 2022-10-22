@@ -2,7 +2,6 @@
 
 # All client only libraries
 add_library(client_libraries INTERFACE)
-add_library(sdl_libraries INTERFACE)
 
 # All server only libraries
 add_library(server_libraries INTERFACE)
