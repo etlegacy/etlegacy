@@ -470,7 +470,7 @@ jobs:
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
              cd build/legacy
-             gh api -H "Accept: application/vnd.github+json" /repos/etlegacy/etlegacy/actions/artifacts/124384712/zip
+             curl -v -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L -o legacy_$(git describe --abbrev=7).pk3 "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip"
              ls -lha
              cd ..
              cpack
