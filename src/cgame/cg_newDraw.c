@@ -770,9 +770,9 @@ void CG_MouseEvent(int x, int y)
 }
 
 /**
- * @brief Clean up sample HUD elements when exiting HUD editor
+ * @brief Clean up sample HUD elements spawned by HUD editor
  */
-void CG_HudEditor_Exit(void)
+void CG_HudEditor_Cleanup(void)
 {
 	CG_InitPM();
 	cg.bannerPrintTime     = 0;
@@ -787,8 +787,6 @@ void CG_HudEditor_Exit(void)
 	{
 		cgs.teamChatMsgTimes[i] = 0;
 	}
-
-	cg.editingHud = qfalse;
 }
 
 /**
@@ -886,7 +884,8 @@ void CG_EventHandling(int type, qboolean fForced)
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
 		{
-			CG_HudEditor_Exit();
+			CG_HudEditor_Cleanup();
+            cg.editingHud = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{
