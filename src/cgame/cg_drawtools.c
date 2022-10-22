@@ -158,6 +158,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
 	float  x2 = x, y2 = y, w2 = w, h2 = h;
+	float  iconW, iconH;
 
 	if (frac > 1)
 	{
@@ -243,6 +244,9 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	// adjust for horiz/vertical and draw the fractional box
 	if (flags & BAR_VERT)
 	{
+		iconW = w2;
+		iconH = iconW;
+
 		if (flags & BAR_LEFT)        // TODO: remember to swap colors on the ends here
 		{
 			y += (h * (1 - frac));
@@ -265,21 +269,30 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		{
 			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBar);
 		}
-        
-        if (flags & BAR_ICON && icon > -1)
+
+		if (flags & BAR_ICON && icon > -1)
 		{
+			float offset = 4.0f;
+			if (icon == cgs.media.hudPowerIcon)
+			{
+				iconW *= .5f;
+				x2    += iconW * .5f;
+			}
 			if (flags & BAR_LEFT)
 			{
-				CG_DrawPic(x2, y2 + h2 + 4, w2, w2, icon);
+				CG_DrawPic(x2, y2 + h2 + offset, iconW, iconH, icon);
 			}
 			else
 			{
-				CG_DrawPic(x2, y2 - w2 - 4, w2, w2, icon);
+				CG_DrawPic(x2, y2 - w2 - offset, iconW, iconH, icon);
 			}
 		}
 	}
 	else
 	{
+		iconH = h2;
+		iconW = iconH;
+
 		if (flags & BAR_LEFT)        // TODO: remember to swap colors on the ends here
 		{
 			x += (w * (1 - frac));
@@ -305,13 +318,19 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 
 		if (flags & BAR_ICON && icon > -1)
 		{
+			float offset = 4.0f;
+			if (icon == cgs.media.hudPowerIcon)
+			{
+				iconW *= .5f;
+			}
+
 			if (flags & BAR_LEFT)
 			{
-				CG_DrawPic(x2 + w2 + 4, y2, h2, h2, icon);
+				CG_DrawPic(x2 + w2 + offset, y2, iconW, iconH, icon);
 			}
 			else
 			{
-                CG_DrawPic(x2 - h2 - 4, y2, h2, h2, icon);
+				CG_DrawPic(x2 - iconW - offset, y2, iconW, iconH, icon);
 			}
 		}
 	}
