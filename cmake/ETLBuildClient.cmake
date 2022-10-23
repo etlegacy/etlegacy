@@ -38,34 +38,6 @@ else()
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 endif()
 
-if(BUNDLED_SDL)
-	add_dependencies(etl bundled_sdl)
-endif()
-
-if(BUNDLED_ZLIB)
-	add_dependencies(etl bundled_zlib)
-endif()
-
-if(BUNDLED_MINIZIP)
-	add_dependencies(etl bundled_minizip)
-endif()
-
-if(BUNDLED_OPENSSL)
-	add_dependencies(etl bundled_openssl)
-endif()
-
-if(BUNDLED_WOLFSSL)
-	add_dependencies(etl bundled_wolfssl)
-endif()
-
-if(BUNDLED_CURL)
-	add_dependencies(etl bundled_curl)
-endif()
-
-if(BUNDLED_OPENAL)
-	add_dependencies(etl bundled_openal)
-endif()
-
 target_link_libraries(etl
 	client_libraries
 	engine_libraries

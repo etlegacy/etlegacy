@@ -39,9 +39,7 @@ if(NOT ANDROID)
 		target_compile_definitions(qagame PRIVATE FEATURE_DBMS FEATURE_LUASQL)
 
 		if(BUNDLED_SQLITE3)
-			add_dependencies(qagame bundled_sqlite3)
-			target_link_libraries(qagame ${SQLITE3_BUNDLED_LIBRARIES})
-			target_include_directories(qagame PUBLIC "${SQLITE3_BUNDLED_INCLUDE_DIR}")
+			target_link_libraries(qagame bundled_sqlite3)
 		else() # BUNDLED_SQLITE3
 			find_package(SQLite3 REQUIRED)
 			target_link_libraries(qagame ${SQLITE3_LIBRARY})
