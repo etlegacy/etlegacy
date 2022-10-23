@@ -98,7 +98,7 @@ if(BUILD_CLIENT)
 	if(NOT BUNDLED_JPEG)
 		find_package(JPEGTURBO)
 		if(JPEGTURBO_FOUND)
-			target_link_libraries(renderer_libraries ${JPEG_LIBRARIES})
+			target_link_libraries(renderer_libraries INTERFACE ${JPEG_LIBRARIES})
 			target_include_directories(renderer_libraries INTERFACE ${JPEG_INCLUDE_DIR})
 
 			# Check for libjpeg-turbo v1.3
@@ -109,7 +109,7 @@ if(BUILD_CLIENT)
 			check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
 		else()
 			find_package(JPEG 8 REQUIRED)
-			target_link_libraries(renderer_libraries ${JPEG_LIBRARIES})
+			target_link_libraries(renderer_libraries INTERFACE ${JPEG_LIBRARIES})
 			target_include_directories(renderer_libraries INTERFACE ${JPEG_INCLUDE_DIR})
 
 			# Check for libjpeg v8
@@ -182,6 +182,7 @@ if(BUILD_CLIENT)
 			target_link_libraries(renderer_libraries INTERFACE bundled_png_int)
 		endif()
 		target_compile_definitions(renderer_libraries INTERFACE FEATURE_PNG)
+        target_compile_definitions(client_libraries INTERFACE FEATURE_PNG)
 	endif(FEATURE_PNG)
 
 	if(FEATURE_OPENAL)
