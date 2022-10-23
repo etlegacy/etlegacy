@@ -10,7 +10,9 @@ cmake_minimum_required(VERSION 3.10.3 FATAL_ERROR)
 project(ETLEGACY C CXX)
 
 cmake_policy(SET CMP0121 NEW)
-cmake_policy(SET CMP0127 NEW)
+if(${CMAKE_VERSION} VERSION_GREATER "3.21.7")
+    cmake_policy(SET CMP0127 NEW)
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)
