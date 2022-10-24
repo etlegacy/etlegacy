@@ -62,7 +62,7 @@ jobs:
       - name: Install Dependencies and Build
         run: |
           sudo apt-get update
-          sudo apt-get install -y nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev libogg-dev
+          sudo apt-get install -y nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
           ./easybuild.sh -64
 
       - name: Perform CodeQL Analysis
