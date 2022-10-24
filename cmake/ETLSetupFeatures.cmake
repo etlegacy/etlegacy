@@ -76,7 +76,7 @@ if(BUILD_CLIENT)
 		target_include_directories(renderer_libraries INTERFACE ${OPENGL_INCLUDE_DIR})
 	else() # FEATURE_RENDERER_GLES
 		find_package(GLES REQUIRED)
-		target_link_libraries(renderer_libraries ${GLES_LIBRARY})
+		target_link_libraries(renderer_libraries INTERFACE ${GLES_LIBRARY})
 		target_include_directories(renderer_libraries INTERFACE ${GLES_INCLUDE_DIR})
 	endif()
 
