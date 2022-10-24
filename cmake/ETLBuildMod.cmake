@@ -54,12 +54,6 @@ if(NOT ANDROID)
 		set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
 	endif()
 
-	if(FEATURE_LUA)
-		if(BUNDLED_LUA)
-			add_dependencies(qagame bundled_lua)
-		endif(BUNDLED_LUA)
-	endif(FEATURE_LUA)
-
 	if(FEATURE_SERVERMDX)
 		target_compile_definitions(qagame PRIVATE FEATURE_SERVERMDX)
 	endif()
