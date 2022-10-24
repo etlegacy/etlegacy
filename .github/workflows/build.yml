@@ -472,7 +472,7 @@ jobs:
              git fetch --tags --force --no-recurse-submodules
              ./easybuild.sh build -RPI -ninja
              cd build/legacy
-             curl -v -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip" >> $ALLMODS_URL
+             echo "ALLMODS_URL = $(curl -v -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip")"
              curl -v -O $ALLMODS_URL
              ls -lha
              cd ..
