@@ -60,9 +60,8 @@ if(NOT ANDROID)
 
 	set_target_properties(qagame
 		PROPERTIES
-		# COMPILE_DEFINITIONS "${QAGAME_DEFINES}"
 		PREFIX ""
-		# C_STANDARD 90
+		C_STANDARD 90
 		OUTPUT_NAME "qagame${LIB_SUFFIX}${ARCH}"
 		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
 		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
@@ -98,23 +97,38 @@ target_compile_definitions(ui PRIVATE UIDLL=1 MODLIB=1)
 
 # Build both architectures on older xcode versions
 if(APPLE)
-	if (DEFINED CMAKE_OSX_ARCHITECTURES)
+
+	if (DEFINED CMAKE_OSX_ARCHITECTURES AND NOT ${CMAKE_OSX_ARCHITECTURES} STREQUAL "")
 		message(STATUS "Using the user provided osx architectures: ${CMAKE_OSX_ARCHITECTURES}")
 		set(OSX_MOD_ARCH "${CMAKE_OSX_ARCHITECTURES}")
-	# Mojave was the last version to support 32 bit binaries and building.
-	# Newer SDK's just fail compilation
-	# TODO: maybe remove this whole thing after the next release.
-	elseif(XCODE_SDK_VERSION LESS "10.14" AND CMAKE_OSX_DEPLOYMENT_TARGET LESS "10.14")
-		# Force universal mod on osx up to Mojave
-		message(STATUS "Enabling MacOS x86 and x86_64 builds on mods")
-		set(OSX_MOD_ARCH "i386;x86_64")
-	elseif(XCODE_SDK_VERSION GREATER_EQUAL "11.00")
-		message(STATUS "Enabling MacOS x86_64 and Arm builds on mods")
-		set(OSX_MOD_ARCH "x86_64;arm64")
 	else()
-		# 64bit mod only as of Catalina and higher
-		message(STATUS "Only doing MacOS x86_64 bit build")
-		set(OSX_MOD_ARCH "x86_64")
+
+		execute_process(
+			COMMAND uname -m
+			OUTPUT_VARIABLE ETL_OSX_NATIVE_ARCHITECTURE
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+		)
+
+		check_c_compiler_flag("-arch i386" i386Supported)
+		check_c_compiler_flag("-arch x86_64" x86_64Supported)
+		check_c_compiler_flag("-arch arm64" arm64Supported)
+
+		# Mojave was the last version to support 32 bit binaries and building.
+		# Newer SDK's just fail compilation
+		# TODO: maybe remove this whole thing after the next release.
+		if(XCODE_SDK_VERSION LESS "10.14" AND CMAKE_OSX_DEPLOYMENT_TARGET LESS "10.14" AND i386Supported AND x86_64Supported)
+			# Force universal mod on osx up to Mojave
+			message(STATUS "Enabling MacOS x86 and x86_64 builds on mods")
+			set(OSX_MOD_ARCH "i386;x86_64")
+		elseif(XCODE_SDK_VERSION GREATER_EQUAL "11.00" AND x86_64Supported AND arm64Supported)
+			message(STATUS "Enabling MacOS x86_64 and Arm builds on mods")
+			set(OSX_MOD_ARCH "x86_64;arm64")
+		else()
+			# Using only the native arch
+			message(STATUS "Only doing MacOS ${ETL_OSX_NATIVE_ARCHITECTURE} bit build")
+			set(OSX_MOD_ARCH "${ETL_OSX_NATIVE_ARCHITECTURE}")
+		endif()
+
 	endif()
 
 	set_target_properties(cgame PROPERTIES OSX_ARCHITECTURES "${OSX_MOD_ARCH}" )
