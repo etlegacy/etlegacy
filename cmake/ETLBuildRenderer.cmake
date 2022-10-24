@@ -43,7 +43,7 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 	if(MSVC)
 		target_link_libraries(${R1_NAME} renderer_libraries)
 	else()
-		target_link_libraries(${R1_NAME} renderer_libraries 'm')
+		target_link_libraries(${R1_NAME} renderer_libraries m)
 	endif(MSVC)
 
 	# install the dynamic lib only
@@ -130,7 +130,7 @@ if(FEATURE_RENDERER2)
 	if(MSVC)
 		target_link_libraries(${R2_NAME} renderer_libraries)
 	else()
-		target_link_libraries(${R2_NAME} renderer_libraries 'm')
+		target_link_libraries(${R2_NAME} renderer_libraries m)
 	endif(MSVC)
 
 	set_target_properties(${R2_NAME}

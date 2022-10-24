@@ -60,11 +60,26 @@ function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 	endif()
 
 	if(ETLEGACY_DO_DOWNLOAD)
+		message("Using download url: ${_URL}")
 		file(DOWNLOAD
 			${_URL}
 			"${_PATH}"
 			SHOW_PROGRESS TIMEOUT 30
+			STATUS STATUS_CODE
 		)
+
+		# Separate the returned status code, and error message.
+		list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+		list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+
+		# Check if download was successful.
+		if(${STATUS_CODE} EQUAL 0)
+			message(STATUS "Download completed successfully!")
+		else()
+			# Exit CMake if the download failed, printing the error message.
+			file(REMOVE "${_PATH}")
+			message(FATAL_ERROR "Error occurred during download: ${ERROR_MESSAGE}")
+		endif()
 
 		if(_EXTRACT AND _EXTRACT_RES)
 			LEG_EXTRACT("${_MSG}" "${_PATH}" "${_EXTRACT}" "${_EXTRACT_RES}")
