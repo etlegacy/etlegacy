@@ -65,7 +65,7 @@ function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 			${_URL}
 			"${_PATH}"
 			SHOW_PROGRESS TIMEOUT 30
-			STATUS STATUS_CODE
+			STATUS DOWNLOAD_STATUS
 		)
 
 		# Separate the returned status code, and error message.
