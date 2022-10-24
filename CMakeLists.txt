@@ -9,7 +9,9 @@ cmake_minimum_required(VERSION 3.10.3 FATAL_ERROR)
 
 project(ETLEGACY C CXX)
 
-cmake_policy(SET CMP0121 NEW)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.21")
+    cmake_policy(SET CMP0121 NEW)
+endif()
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.22")
 	cmake_policy(SET CMP0127 NEW)
 endif()

@@ -1,4 +1,4 @@
-# General macros & functios used by the build process
+# General macros & functions used by the build process
 
 function(LEG_BUNDLE _NAME _DESC)
 	# Cannot use ARGN directly with list() command.
