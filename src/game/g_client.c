@@ -284,7 +284,7 @@ void InitBodyQue(void)
 	gentity_t *ent;
 
 	// no need to init when dyn BQ is set
-	if (g_corpses.integer > 0)
+	if (g_corpses.integer)
 	{
 		return;
 	}
