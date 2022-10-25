@@ -1045,7 +1045,7 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color)
 	centity_t     *cent;
 	playerState_t *ps;
 	weapon_t      weap;
-    int maxAmmo = 0;
+	int           maxAmmo = 0;
 
 	*ammo = *clips = *akimboammo = -1;
 
@@ -1086,14 +1086,14 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color)
 		// current clip
 		*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex];
 
-        maxAmmo = GetWeaponTableData(weap)->maxClip;
+		maxAmmo = GetWeaponTableData(weap)->maxClip;
 	}
 	else
 	{
 		// some weapons don't draw ammo clip count text
 		*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex] + cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
 
-        maxAmmo = GetWeaponTableData(weap)->maxAmmo;
+		maxAmmo = GetWeaponTableData(weap)->maxAmmo;
 	}
 
 	// akimbo ammo clip
@@ -1101,7 +1101,7 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color)
 	{
 		*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
 
-        maxAmmo *= 2;
+		maxAmmo *= 2;
 	}
 	else
 	{
@@ -1116,7 +1116,7 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color)
 		}
 		else
 		{
-            maxAmmo = ExtractInt(cg.maxLandmines);
+			maxAmmo = ExtractInt(cg.maxLandmines);
 
 			if (cgs.clientinfo[ps->clientNum].team == TEAM_AXIS)
 			{
@@ -1131,21 +1131,24 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color)
 
 	if (color)
 	{
-        float totalAmmo = *ammo + (*akimboammo ? *akimboammo : 0);
-        float ammoLeft = maxAmmo ? totalAmmo * 100 / maxAmmo : 0;
+		float totalAmmo = *ammo + (*akimboammo ? *akimboammo : 0);
+		float ammoLeft  = maxAmmo ? totalAmmo * 100 / maxAmmo : 0;
+		float alpha     = (**color)[3];
 
-        if (ammoLeft <= 30.f)
+		if (ammoLeft <= 30.f)
 		{
 			*color = &colorRed;
 		}
-        else if (ammoLeft <= 40.f)
+		else if (ammoLeft <= 40.f)
 		{
 			*color = &colorOrange;
 		}
-        else if (ammoLeft <= 50.f)
+		else if (ammoLeft <= 50.f)
 		{
 			*color = &colorYellow;
 		}
+
+		(**color)[3] = alpha;
 	}
 }
 
@@ -1489,7 +1492,7 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 {
 	int    value, value2, value3;
 	char   buffer[16] = { 0 };
-	vec4_t *color = &comp->colorText;
+	vec4_t *color     = &comp->colorText;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -1523,7 +1526,7 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 		Com_sprintf(buffer, sizeof(buffer), "%i", value);
 	}
 
-    CG_DrawCompText(comp, buffer, *color, comp->styleText, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, buffer, *color, comp->styleText, &cgs.media.limboFont1);
 }
 
 /**
