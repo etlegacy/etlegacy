@@ -2104,6 +2104,7 @@ void G_UpdateCvars(void)
 		Info_SetValueForKey(cs, "w2", team_maxMachineguns.string);
 		Info_SetValueForKey(cs, "w3", team_maxRockets.string);
 		Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
+		Info_SetValueForKey(cs, "w5", team_maxLandmines.string);
 		Info_SetValueForKey(cs, "m", team_maxplayers.string);
 		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 	}
@@ -2404,6 +2405,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	Info_SetValueForKey(cs, "w2", team_maxMachineguns.string);
 	Info_SetValueForKey(cs, "w3", team_maxRockets.string);
 	Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
+	Info_SetValueForKey(cs, "w5", team_maxLandmines.string);
 	Info_SetValueForKey(cs, "m", team_maxplayers.string);
 	trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 

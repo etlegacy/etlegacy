@@ -1454,6 +1454,7 @@ typedef struct
 	char maxMachineguns[MAX_QPATH];
 	char maxRockets[MAX_QPATH];
 	char maxRiflegrenades[MAX_QPATH];
+    char maxLandmines[MAX_QPATH];
 	int maxPlayers;
 
 	int binocZoomTime;
@@ -3084,7 +3085,7 @@ float CG_CalculateReinfTime_Float(qboolean menu);
 int CG_CalculateShoutcasterReinfTime(team_t team);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo);
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color);
 
 //cg_shoutcastoverlay.c
 

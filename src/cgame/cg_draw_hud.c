@@ -48,7 +48,7 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { "Pulse",      "Dynamic Color"                } }, // FIXME: outside cg_draw_hud
+	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { "Pulse",      "Dynamic Color" } },                // FIXME: outside cg_draw_hud
 	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,            { "Square",     "Draw Item", "Draw Sec Obj", "Draw Prim Obj"} },
 	{ "compas",               offsetof(hudStucture_t,    compass),         qtrue, CG_DrawNewCompass, 0.19,{ "Square" } },              // v2.78 backward compatibility
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,            { "Left",       "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
@@ -61,19 +61,19 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(ranktext),         CG_DrawRank,               0.20f,            { 0 } },
 	{ HUDF(statsdisplay),     CG_DrawSkills,             0.25f,            { "Column" } },
 	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,            { 0 } },
-	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,            { 0 } },
+	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,            { "Dynamic Color" } },
 	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,            { "Latched Class" } },// FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),    CG_DrawPMItems,            0.22f,            { "No Connect", "No TeamJoin", "No Mission", "No Pickup", "No Death", "Weapon Icon", "Weap Icon Big", "Swap V<->K"} },      // FIXME: outside cg_draw_hud
 	{ HUDF(powerups),         CG_DrawPowerUps,           0.19f,            { 0 } },
 	{ HUDF(objectives),       CG_DrawObjectiveStatus,    0.19f,            { 0 } },
 	{ HUDF(hudhead),          CG_DrawPlayerStatusHead,   0.19f,            { 0 } },
-	{ HUDF(cursorhints),      CG_DrawCursorhint,         0.19f,            { "Size Pulse", "Strobe Pulse", "Alpha Pulse"  } },    // FIXME: outside cg_draw_hud
+	{ HUDF(cursorhints),      CG_DrawCursorhint,         0.19f,            { "Size Pulse", "Strobe Pulse", "Alpha Pulse"} },      // FIXME: outside cg_draw_hud
 	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,            { "Always",     "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },  // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),        CG_DrawLivesLeft,          0.19f,            { 0 } },
 	{ HUDF(roundtimer),       CG_DrawRoundTimer,         0.19f,            { "Simple" } },
 	{ HUDF(reinforcement),    CG_DrawRespawnTimer,       0.19f,            { 0 } },
 	{ HUDF(spawntimer),       CG_DrawSpawnTimer,         0.19f,            { 0 } },
-	{ HUDF(localtime),        CG_DrawLocalTime,          0.19f,            { "Second",     "12 Hours"                     } },
+	{ HUDF(localtime),        CG_DrawLocalTime,          0.19f,            { "Second",     "12 Hours"      } },
 	{ HUDF(votetext),         CG_DrawVote,               0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
 	{ HUDF(spectatortext),    CG_DrawSpectatorMessage,   0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
 	{ HUDF(limbotext),        CG_DrawLimboMessage,       0.22f,            { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
@@ -91,7 +91,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(disconnect),       CG_DrawDisconnect,         0.35f,            { 0 } },
 	{ HUDF(chat),             CG_DrawTeamInfo,           0.20f,            { "No Team Flag" } },// FIXME: outside cg_draw_hud
 	{ HUDF(spectatorstatus),  CG_DrawSpectator,          0.35f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig,         0.22f,            { "No Skill",   "No Rank", "No Prestige"       } }, // FIXME: outside cg_draw_hud
+	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig,         0.22f,            { "No Skill",   "No Rank", "No Prestige"} },        // FIXME: outside cg_draw_hud
 	{ HUDF(warmuptitle),      CG_DrawWarmupTitle,        0.35f,            { 0 } },        // FIXME: outside cg_draw_hud
 	{ HUDF(warmuptext),       CG_DrawWarmupText,         0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
 	{ HUDF(objectivetext),    CG_DrawObjectiveInfo,      0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
@@ -225,7 +225,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->centerprint      = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 378, 422, 24, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawCenterString);
 	hud->banner           = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 20, 422, 24, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.23f, CG_DrawBannerPrint);
 	hud->crosshairtext    = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 150, 300), 182, 300, 16, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairNames);
-    hud->crosshairbar     = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 65, 130), 199, 130, 10, qtrue, CROSSHAIR_CLASS | CROSSHAIR_RANK | CROSSHAIR_PRESTIGE | (BAR_BG << 3), 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
+	hud->crosshairbar     = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 65, 130), 199, 130, 10, qtrue, CROSSHAIR_CLASS | CROSSHAIR_RANK | CROSSHAIR_PRESTIGE | (BAR_BG << 3), 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
 	hud->stats            = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 291, 57, 62, qtrue, GAMESTATS_KILL | GAMESTATS_DEATH | GAMESTATS_SELFKILL, 100.f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawPlayerStats);
 }
 
@@ -1040,11 +1040,12 @@ void CG_DrawPlayerStatusHead(hudComponent_t *comp)
  * @param[out] clips - the total ammount of ammo in all clips (if using clip)
  * @param[out] akimboammo - the number of ammo left in the second pistol of akimbo (if using akimbo)
  */
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color)
 {
 	centity_t     *cent;
 	playerState_t *ps;
 	weapon_t      weap;
+    int maxAmmo = 0;
 
 	*ammo = *clips = *akimboammo = -1;
 
@@ -1084,17 +1085,23 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 
 		// current clip
 		*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex];
+
+        maxAmmo = GetWeaponTableData(weap)->maxClip;
 	}
 	else
 	{
 		// some weapons don't draw ammo clip count text
 		*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex] + cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
+
+        maxAmmo = GetWeaponTableData(weap)->maxAmmo;
 	}
 
 	// akimbo ammo clip
 	if (GetWeaponTableData(weap)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
+
+        maxAmmo *= 2;
 	}
 	else
 	{
@@ -1109,6 +1116,8 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		}
 		else
 		{
+            maxAmmo = ExtractInt(cg.maxLandmines);
+
 			if (cgs.clientinfo[ps->clientNum].team == TEAM_AXIS)
 			{
 				*ammo = cgs.gameManager->currentState.otherEntityNum;
@@ -1117,6 +1126,25 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 			{
 				*ammo = cgs.gameManager->currentState.otherEntityNum2;
 			}
+		}
+	}
+
+	if (color)
+	{
+        float totalAmmo = *ammo + (*akimboammo ? *akimboammo : 0);
+        float ammoLeft = maxAmmo ? totalAmmo * 100 / maxAmmo : 0;
+
+        if (ammoLeft <= 30.f)
+		{
+			*color = &colorRed;
+		}
+        else if (ammoLeft <= 40.f)
+		{
+			*color = &colorOrange;
+		}
+        else if (ammoLeft <= 50.f)
+		{
+			*color = &colorYellow;
 		}
 	}
 }
@@ -1459,8 +1487,9 @@ void CG_DrawGunIcon(hudComponent_t *comp)
  */
 void CG_DrawAmmoCount(hudComponent_t *comp)
 {
-	int  value, value2, value3;
-	char buffer[16] = { 0 };
+	int    value, value2, value3;
+	char   buffer[16] = { 0 };
+	vec4_t *color = &comp->colorText;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -1478,7 +1507,7 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 	}
 
 	// Draw ammo
-	CG_PlayerAmmoValue(&value, &value2, &value3);
+	CG_PlayerAmmoValue(&value, &value2, &value3, comp->style & 1 ? &color : NULL);
 
 	// .25f
 	if (value3 >= 0)
@@ -1494,7 +1523,7 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 		Com_sprintf(buffer, sizeof(buffer), "%i", value);
 	}
 
-	CG_DrawCompText(comp, buffer, comp->colorText, comp->styleText, &cgs.media.limboFont1);
+    CG_DrawCompText(comp, buffer, *color, comp->styleText, &cgs.media.limboFont1);
 }
 
 /**

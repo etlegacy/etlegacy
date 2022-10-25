@@ -903,6 +903,7 @@ void CG_TeamRestrictionsChanged(void)
 	Q_strncpyz(cg.maxMachineguns, Info_ValueForKey(info, "w2"), sizeof(cg.maxMachineguns));
 	Q_strncpyz(cg.maxRockets, Info_ValueForKey(info, "w3"), sizeof(cg.maxRockets));
 	Q_strncpyz(cg.maxRiflegrenades, Info_ValueForKey(info, "w4"), sizeof(cg.maxRiflegrenades));
+    Q_strncpyz(cg.maxLandmines, Info_ValueForKey(info, "w5"), sizeof(cg.maxLandmines));
 	cg.maxPlayers = Q_atoi(Info_ValueForKey(info, "m"));
 }
 

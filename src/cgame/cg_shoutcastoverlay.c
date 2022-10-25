@@ -677,7 +677,7 @@ void CG_DrawShoutcastPlayerStatus(void)
 	CG_DrawShoutcastPlayerStaminaBar(statsBoxX + (statsBoxWidth / 2), statsBoxY + statsBoxHeight, statsBoxWidth / 2, 2, BAR_BG | BAR_BGSPACING_X0Y0);
 
 	// draw ammo count
-	CG_PlayerAmmoValue(&ammo, &clip, &akimbo);
+	CG_PlayerAmmoValue(&ammo, &clip, &akimbo, NULL);
 
 	if (ammo > 0 || clip > 0)
 	{
