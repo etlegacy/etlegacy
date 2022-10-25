@@ -12,8 +12,8 @@ endif()
 
 if(RENDERER_DYNAMIC)
 	MESSAGE("Will build dynamic renderer libraries")
-    target_compile_definitions(client_libraries INTERFACE USE_RENDERER_DLOPEN)
-    target_compile_definitions(renderer_libraries INTERFACE USE_RENDERER_DLOPEN)
+	target_compile_definitions(client_libraries INTERFACE USE_RENDERER_DLOPEN)
+	target_compile_definitions(renderer_libraries INTERFACE USE_RENDERER_DLOPEN)
 	set(REND_LIBTYPE MODULE)
 	list(APPEND RENDERER_COMMON ${RENDERER_COMMON_DYNAMIC})
 else()
@@ -24,29 +24,21 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 
 	if(FEATURE_RENDERER_GLES)
 		add_library(renderer1 ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
-		if (FEATURE_RENDERER_GLES)
-			target_compile_definitions(renderer1 PRIVATE FEATURE_RENDERER_GLES)
-		endif()
+		target_compile_definitions(renderer1 PRIVATE FEATURE_RENDERER_GLES)
 	else()
 		add_library(renderer1 ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
-	endif()
-
-	if(NOT FEATURE_RENDERER_GLES)
-		if(BUNDLED_GLEW)
-			add_dependencies(renderer1 bundled_glew)
-		endif(BUNDLED_GLEW)
 	endif()
 
 	if(MSVC)
 		target_link_libraries(renderer1 renderer_libraries)
 	else()
 		target_link_libraries(renderer1 renderer_libraries m)
-    endif(MSVC)
+	endif(MSVC)
 
-    set_target_properties(renderer1
-        PROPERTIES
-        OUTPUT_NAME "${R1_NAME}"
-    )
+	set_target_properties(renderer1
+		PROPERTIES
+		OUTPUT_NAME "${R1_NAME}"
+	)
 
 	# install the dynamic lib only
 	if(RENDERER_DYNAMIC)
@@ -121,20 +113,16 @@ if(FEATURE_RENDERER2)
 	add_library(renderer2 ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
 	add_dependencies(renderer2 r2_shader_compile)
 
-	if(BUNDLED_GLEW)
-		add_dependencies(renderer2 bundled_glew)
-	endif()
-
 	if(MSVC)
 		target_link_libraries(renderer2 renderer_libraries)
 	else()
 		target_link_libraries(renderer2 renderer_libraries m)
-    endif(MSVC)
+	endif(MSVC)
 
 	set_target_properties(renderer2
 		PROPERTIES
-        OUTPUT_NAME "${R2_NAME}"
-        COMPILE_DEFINITIONS "FEATURE_RENDERER2"
+		OUTPUT_NAME "${R2_NAME}"
+		COMPILE_DEFINITIONS "FEATURE_RENDERER2"
 		LIBRARY_OUTPUT_DIRECTORY ""
 		LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
 		LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
