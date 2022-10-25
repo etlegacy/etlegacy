@@ -42,7 +42,8 @@ menuDef {
 // Movement //
 #define MOVEMENT_Y 112
 	SUBWINDOW(6, MOVEMENT_Y, (SUBWINDOW_WIDTH_L), 28, _("MOVEMENT"))
-	YESNO(8, MOVEMENT_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Bobbing effect:"), .2, 8, "cg_bobbing", _("Toggle bobbing"))
+	CVARFLOATLABEL(8, MOVEMENT_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_bobbing", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 8, MOVEMENT_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("View bobbing scale:"), .2, 8, "cg_bobbing" 0 0 5, _("Scale of view bobbing effect") )
 
 // Weapons //
 #define WEAPONS_Y 146

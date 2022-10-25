@@ -581,13 +581,20 @@ static void CG_ZoomSway(void)
 static void CG_OffsetFirstPersonView(void)
 {
 	//vec3_t forward;
-	float *origin;
-	float *angles;
-	float bob;
-	float delta;
-	float speed;
-	float f;
-	int   timeDelta;
+	float    *origin;
+	float    *angles;
+	float    bob;
+	float    delta;
+	float    speed;
+	float    f;
+	vec3_t   predictedVelocity;
+	int      timeDelta;
+	qboolean useLastValidBob = qfalse;
+	float    runPitch        = 0.002f * cg_bobbing.value;
+	float    runRoll         = 0.005f * cg_bobbing.value;
+	float    bobUp           = 0.005f * cg_bobbing.value;
+	float    bobPitch        = 0.002f * cg_bobbing.value;
+	float    bobRoll         = 0.002f * cg_bobbing.value;
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
@@ -660,47 +667,53 @@ static void CG_OffsetFirstPersonView(void)
 	angles[PITCH] += ratio * cg.fall_value;
 #endif
 
-	// add angles based on bob
-	if (cg_bobbing.integer)
+	// add angles based on velocity
+	VectorCopy(cg.predictedPlayerState.velocity, predictedVelocity);
+
+	delta          = DotProduct(predictedVelocity, cg.refdef_current->viewaxis[0]);
+	angles[PITCH] += delta * runPitch;
+
+	delta         = DotProduct(predictedVelocity, cg.refdef_current->viewaxis[1]);
+	angles[ROLL] -= delta * runRoll;
+
+	// make sure the bob is visible even at low speeds
+	speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
+
+	if (cg.bobfracsin == 0.f && cg.lastvalidBobfracsin > 0)
 	{
-		qboolean useLastValidBob = qfalse;
+		// 200 msec to get back to center from 1
+		// that's 1/200 per msec = 0.005 per msec
+		cg.lastvalidBobfracsin -= 0.005 * cg.frametime;
+		useLastValidBob         = qtrue;
+	}
 
-		// make sure the bob is visible even at low speeds
-		speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
+	delta  = useLastValidBob ? cg.lastvalidBobfracsin * speed : cg.bobfracsin * speed;
+	delta *= bobPitch;
 
-		if (cg.bobfracsin == 0.f && cg.lastvalidBobfracsin > 0)
-		{
-			// 200 msec to get back to center from 1
-			// that's 1/200 per msec = 0.005 per msec
-			cg.lastvalidBobfracsin -= 0.005 * cg.frametime;
-			useLastValidBob         = qtrue;
-		}
+	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
+	{
+		delta *= 3;     // crouching
+	}
 
-		delta = useLastValidBob ? cg.lastvalidBobfracsin * 0.002 * speed : cg.bobfracsin * 0.002 * speed;
-		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-		{
-			delta *= 3;     // crouching
-		}
-
-		angles[PITCH] += delta;
-		delta          = useLastValidBob ? cg.lastvalidBobfracsin * 0.002 * speed : cg.bobfracsin * 0.002 * speed;
-		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-		{
-			delta *= 3;     // crouching accentuates roll
-		}
-		if (useLastValidBob)
-		{
-			if (cg.lastvalidBobcycle & 1)
-			{
-				delta = -delta;
-			}
-		}
-		else if (cg.bobcycle & 1)
+	angles[PITCH] += delta;
+	delta          = useLastValidBob ? cg.lastvalidBobfracsin * speed : cg.bobfracsin * speed;
+	delta         *= bobRoll;
+	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
+	{
+		delta *= 3;     // crouching accentuates roll
+	}
+	if (useLastValidBob)
+	{
+		if (cg.lastvalidBobcycle & 1)
 		{
 			delta = -delta;
 		}
-		angles[ROLL] += delta;
 	}
+	else if (cg.bobcycle & 1)
+	{
+		delta = -delta;
+	}
+	angles[ROLL] += delta;
 
 //===================================
 
@@ -750,20 +763,9 @@ static void CG_OffsetFirstPersonView(void)
 	}
 
 	// add bob height
-	if (cg_bobbing.integer)
-	{
-		bob = cg.bobfracsin * cg.xyspeed * 0.005;
-		if (bob > 6)
-		{
-			bob = 6;
-		}
-		if (bob < 0)
-		{
-			bob = 0;
-		}
-
-		origin[2] += bob;
-	}
+	bob        = cg.bobfracsin * cg.xyspeed * bobUp;
+	bob        = Com_Clamp(0, 6, bob);
+	origin[2] += bob;
 
 	// add fall height
 	delta = cg.time - cg.landTime;
