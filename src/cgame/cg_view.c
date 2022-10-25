@@ -226,20 +226,13 @@ void CG_Letterbox(float xsize, float ysize, qboolean center)
 		ysize = lbheight;
 	}
 
-	// FIXME: this currently breaks cg_letterbox
-	if (cg.editingHud)
-	{
-		xsize *= 0.8f;
-		ysize *= 0.8f;
-	}
-
 	cg.refdef.width  = cgs.glconfig.vidWidth * xsize / 100;
 	cg.refdef.width &= ~1;
 
 	cg.refdef.height  = cgs.glconfig.vidHeight * ysize / 100;
 	cg.refdef.height &= ~1;
 
-	if (center && !cg.editingHud)
+	if (center)
 	{
 		cg.refdef.x = (cgs.glconfig.vidWidth - cg.refdef.width) / 2;
 		cg.refdef.y = (cgs.glconfig.vidHeight - cg.refdef.height) / 2;
@@ -276,7 +269,14 @@ static void CG_CalcVrect(void)
 		return;
 	}
 
-	CG_Letterbox(100, 100, qtrue);
+	if (cg.editingHud)
+	{
+		CG_Letterbox(80, 80, qfalse);
+	}
+	else
+	{
+		CG_Letterbox(100, 100, qtrue);
+	}
 }
 
 //==============================================================================
