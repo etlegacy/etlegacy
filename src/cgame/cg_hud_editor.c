@@ -1015,7 +1015,7 @@ static void CG_HudEditorScale_Finish(panel_button_t *button)
 }
 
 /**
-* @brief CG_HudEditorStyle_CheckboxKeyDown
+* @brief CG_HudEditorVisible_CheckboxKeyDown
 * @param button
 */
 static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int key)
