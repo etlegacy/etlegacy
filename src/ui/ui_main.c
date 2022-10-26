@@ -9207,7 +9207,6 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_brassTime,                       "cg_brassTime",                        "2500",                       CVAR_ARCHIVE,                   0 },
 	{ &ui_drawCrosshair,                   "cg_drawCrosshair",                    "1",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_drawCrosshairInfo,               "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_drawCrosshairPickups,            "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_drawSpectatorNames,              "cg_drawSpectatorNames",               "2",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_marks,                           "cg_markTime",                         "20000",                      CVAR_ARCHIVE,                   0 },
@@ -9260,8 +9259,6 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_drawGun",                          "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },

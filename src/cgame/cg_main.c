@@ -133,7 +133,6 @@ vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
 vmCvar_t cg_drawCrosshair;
-vmCvar_t cg_drawCrosshairInfo;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
 vmCvar_t cg_weaponCycleDelay;
@@ -389,7 +388,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawStatus,              "cg_drawStatus",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                 "cg_drawFPS",                 "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,           "cg_drawCrosshair",           "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCrosshairInfo,       "cg_drawCrosshairInfo",       "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,    "cg_drawCrosshairPickups",    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,      "cg_drawSpectatorNames",      "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,         "cg_useWeapsForZoom",         "1",           CVAR_ARCHIVE,                 0 },
