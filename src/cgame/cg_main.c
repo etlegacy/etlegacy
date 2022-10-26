@@ -3018,11 +3018,9 @@ char *CG_GetRealTime(void)
 	qtime_t tm;
 
 	trap_RealTime(&tm);
-	return va("%2i:%s%i:%s%i",
+	return va("%02i:%02i:%02i",
 	          tm.tm_hour,
-	          (tm.tm_min > 9 ? "" : "0"),  // minute padding
 	          tm.tm_min,
-	          (tm.tm_sec > 9 ? "" : "0"),  // second padding
 	          tm.tm_sec);
 }
 
