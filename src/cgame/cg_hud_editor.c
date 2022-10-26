@@ -103,7 +103,6 @@ static qboolean CG_HudEditoColorSelection_KeyDown(panel_button_t *button, int ke
 static void CG_HudEditorRender_Button(panel_button_t *button);
 static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int key);
 static void CG_HudEditor_RenderCheckbox(panel_button_t *button);
-static void CG_HudEditor_RenderCheckboxStyle(panel_button_t *button);
 static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, int key);
@@ -1215,7 +1214,7 @@ static void CG_HudEditor_UpdateCheckboxStyle(int style)
 	const hudComponentFields_t *hudCompField;
 
 	Com_Memset(styleCheckBox, 0, sizeof(styleCheckBox));
-	Com_Memset(styleCheckBoxPanel, 0, MAXSTYLES + 1);
+	Com_Memset(styleCheckBoxPanel, 0, sizeof(styleCheckBoxPanel));
 
 	if (!lastFocusComponent)
 	{
@@ -2114,6 +2113,10 @@ void CG_HudEditorSetup(void)
 
 	// clear last selected button
 	lastFocusComponent = NULL;
+
+	// clear style box
+	Com_Memset(styleCheckBox, 0, sizeof(styleCheckBox));
+	Com_Memset(styleCheckBoxPanel, 0, sizeof(styleCheckBoxPanel));
 
 	elementColorSelection = 0;
 }
