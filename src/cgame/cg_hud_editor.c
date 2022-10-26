@@ -2300,11 +2300,15 @@ static void CG_HudEditor_HelpDraw(void)
 			{ "K_UP",                "move down by 1px"                  },
 			{ "K_RIGHT",             "move right by 1px"                 },
 			{ NULL,                  NULL                                },
+			{ "K_MWHEELDOWN",        "enlarge by 1px"                    },
+			{ "K_MWHEELUP",          "shrink by 1px"                     },
+			{ NULL,                  NULL                                },
 			{ "K_RCTRL / K_LCTRL",   "hold to move by 0.1px"             },
 			{ "K_RSHIFT / K_LSHIFT", "hold to move by 5px"               },
 			{ NULL,                  NULL                                },
 			{ "K_RALT / K_LALT",     "hold to resize"                    },
 			{ NULL,                  NULL                                },
+			{ "K_INS",               "move to center"                    },
 			{ "K_PGUP",              "move from bottom -> middle -> top" },
 			{ "K_PGDN",              "move from top -> middle -> bottom" },
 			{ "K_HOME",              "move from left -> middle -> right" },
@@ -2319,7 +2323,7 @@ static void CG_HudEditor_HelpDraw(void)
 		VectorCopy(colorDkGrey, bgColor);
 		bgColor[3] = .90f;
 
-		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.1, SCREEN_HEIGHT * 0.6, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
+		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.1, SCREEN_HEIGHT * 0.5, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
 		                  bgColor, colorBlack, colorDkGrey, colorBlack,
 		                  &hudEditorHeaderFont, &hudEditorTextFont);
 	}
@@ -2487,20 +2491,43 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 			offset = 1;
 		}
 
+		if (trap_Key_IsDown(K_LEFTARROW))
+		{
+			pValue   = (changeSize ? &comp->location.w : &comp->location.x);
+			*pValue -= offset;
+		}
+
+		if (trap_Key_IsDown(K_RIGHTARROW))
+		{
+			pValue   = (changeSize ? &comp->location.w : &comp->location.x);
+			*pValue += offset;
+		}
+
+		if (trap_Key_IsDown(K_UPARROW))
+		{
+			pValue   = (changeSize ? &comp->location.h : &comp->location.y);
+			*pValue -= offset;
+		}
+
+		if (trap_Key_IsDown(K_DOWNARROW))
+		{
+			pValue   = (changeSize ? &comp->location.h : &comp->location.y);
+			*pValue += offset;
+		}
+
 		switch (key)
 		{
-		case K_LEFTARROW:  pValue           = (changeSize ? &comp->location.w : &comp->location.x); *pValue -= offset ; break;
-		case K_RIGHTARROW: pValue           = (changeSize ? &comp->location.w : &comp->location.x); *pValue += offset ; break;
-		case K_UPARROW:    pValue           = (changeSize ? &comp->location.h : &comp->location.y); *pValue -= offset ; break;
-		case K_DOWNARROW:  pValue           = (changeSize ? &comp->location.h : &comp->location.y); *pValue += offset ; break;
-		case K_PGUP:       comp->location.y = ((comp->location.y <= (SCREEN_HEIGHT - comp->location.h) / 2.f) ?
-			                                   0 : (SCREEN_HEIGHT - comp->location.h) / 2.f); break;
-		case K_PGDN:       comp->location.y = ((comp->location.y < (SCREEN_HEIGHT - comp->location.h) / 2.f) ?
-			                                   (SCREEN_HEIGHT - comp->location.h) / 2.f : SCREEN_HEIGHT - comp->location.h); break;
-		case K_HOME:       comp->location.x = (((int)comp->location.x <= (int)((Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f)) ?
-			                                   0 : (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f); break;
-		case K_END:        comp->location.x = ((comp->location.x < (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f) ?
-			                                   (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f: Ccg_WideX(SCREEN_WIDTH) - comp->location.w); break;
+		case K_PGUP:       comp->location.y = ((comp->location.y <= (SCREEN_HEIGHT - comp->location.h) * .5f) ?
+			                                   0 : (SCREEN_HEIGHT - comp->location.h) * .5f); break;
+		case K_PGDN:       comp->location.y = ((comp->location.y < (SCREEN_HEIGHT - comp->location.h) * .5f) ?
+			                                   (SCREEN_HEIGHT - comp->location.h) * .5f : SCREEN_HEIGHT - comp->location.h); break;
+		case K_HOME:       comp->location.x = (((int)comp->location.x <= (int)((Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f)) ?
+			                                   0 : (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f); break;
+		case K_END:        comp->location.x = ((comp->location.x < (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f) ?
+			                                   (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f: Ccg_WideX(SCREEN_WIDTH) - comp->location.w); break;
+		case K_INS:        comp->location.x  = (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f; comp->location.y = (SCREEN_HEIGHT - comp->location.h) * .5f; break;
+		case K_MWHEELDOWN: comp->location.x -= offset * .5f; comp->location.y -= offset * .5f; comp->location.w += offset; comp->location.h += offset; break;
+		case K_MWHEELUP:   comp->location.x += offset * .5f; comp->location.y += offset * .5f; comp->location.w -= offset; comp->location.h -= offset; break;
 		default: return;
 		}
 
