@@ -2651,7 +2651,6 @@ extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
 extern vmCvar_t cg_drawCrosshair;
-extern vmCvar_t cg_drawCrosshairInfo;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_drawSpectatorNames;
 extern vmCvar_t cg_useWeapsForZoom;
@@ -2752,7 +2751,6 @@ extern vmCvar_t cg_crosshairAlphaAlt;
 extern vmCvar_t cg_crosshairColor;
 extern vmCvar_t cg_crosshairColorAlt;
 extern vmCvar_t cg_drawReinforcementTime;
-extern vmCvar_t cg_drawWeaponIconFlash;
 extern vmCvar_t cg_noAmmoAutoSwitch;
 extern vmCvar_t cg_printObjectiveInfo;
 #ifdef FEATURE_MULTIVIEW

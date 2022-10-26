@@ -236,7 +236,6 @@ vmCvar_t cg_crosshairAlphaAlt;
 vmCvar_t cg_crosshairColor;
 vmCvar_t cg_crosshairColorAlt;
 vmCvar_t cg_drawReinforcementTime;
-vmCvar_t cg_drawWeaponIconFlash;
 vmCvar_t cg_noAmmoAutoSwitch;
 vmCvar_t cg_printObjectiveInfo;
 #ifdef FEATURE_MULTIVIEW
@@ -488,7 +487,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_crosshairColor,          "cg_crosshairColor",          "White",       CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairColorAlt,       "cg_crosshairColorAlt",       "White",       CVAR_ARCHIVE,                 0 },
 	{ &cg_drawReinforcementTime,   "cg_drawReinforcementTime",   "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawWeaponIconFlash,     "cg_drawWeaponIconFlash",     "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_noAmmoAutoSwitch,        "cg_noAmmoAutoSwitch",        "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_printObjectiveInfo,      "cg_printObjectiveInfo",      "1",           CVAR_ARCHIVE,                 0 },
 #ifdef FEATURE_MULTIVIEW

@@ -60,7 +60,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(xptext),           CG_DrawXP,                 0.25f,            { 0 } },
 	{ HUDF(ranktext),         CG_DrawRank,               0.20f,            { 0 } },
 	{ HUDF(statsdisplay),     CG_DrawSkills,             0.25f,            { "Column" } },
-	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,            { 0 } },
+	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,            { "Icon Flash" } },
 	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,            { "Dynamic Color" } },
 	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,            { "Latched Class" } },// FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),    CG_DrawPMItems,            0.22f,            { "No Connect", "No TeamJoin", "No Mission", "No Pickup", "No Death", "Weapon Icon", "Weap Icon Big", "Swap V<->K"} },      // FIXME: outside cg_draw_hud
@@ -187,7 +187,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->xptext           = CG_getComponent(CG_AdjustXFromHudFile(108, 57), 465, 57, 14, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
 	hud->ranktext         = CG_getComponent(CG_AdjustXFromHudFile(167, 57), 465, 57, 14, qfalse, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);   // disable
 	hud->statsdisplay     = CG_getComponent(CG_AdjustXFromHudFile(116, 42), 394, 42, 70, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawSkills);
-	hud->weaponicon       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 88, 60), SCREEN_HEIGHT - 52, 60, 32, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
+	hud->weaponicon       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 88, 60), SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
 	hud->weaponammo       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 82, 57), 458, 57, 14, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, CG_DrawAmmoCount);
 	hud->fireteam         = CG_getComponent(CG_AdjustXFromHudFile(10, 350), 10, 350, 100, qtrue, 1, 100.f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawFireTeamOverlay);
 	hud->popupmessages    = CG_getComponent(CG_AdjustXFromHudFile(4, 422), 245, 422, 96, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawPMItems);
@@ -1467,7 +1467,7 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 #ifdef FEATURE_MULTIVIEW
 		cg.mvTotalClients < 1 &&
 #endif
-		cg_drawWeaponIconFlash.integer == 0)
+        !(comp->style & 1))
 	{
 		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->colorText);
 	}
