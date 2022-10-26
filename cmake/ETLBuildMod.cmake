@@ -98,7 +98,7 @@ target_compile_definitions(ui PRIVATE UIDLL=1 MODLIB=1)
 # Build both architectures on older xcode versions
 if(APPLE)
 
-	if (DEFINED CMAKE_OSX_ARCHITECTURES AND NOT ${CMAKE_OSX_ARCHITECTURES} STREQUAL "")
+	if (DEFINED CMAKE_OSX_ARCHITECTURES AND NOT CMAKE_OSX_ARCHITECTURES STREQUAL "")
 		message(STATUS "Using the user provided osx architectures: ${CMAKE_OSX_ARCHITECTURES}")
 		set(OSX_MOD_ARCH "${CMAKE_OSX_ARCHITECTURES}")
 	else()
