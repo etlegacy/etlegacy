@@ -74,7 +74,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(reinforcement),    CG_DrawRespawnTimer,       0.19f,            { 0 } },
 	{ HUDF(spawntimer),       CG_DrawSpawnTimer,         0.19f,            { 0 } },
 	{ HUDF(localtime),        CG_DrawLocalTime,          0.19f,            { "Second",     "12 Hours"      } },
-	{ HUDF(votetext),         CG_DrawVote,               0.22f,            { "Complaint" } },        // FIXME: outside cg_draw_hud
+	{ HUDF(votetext),         CG_DrawVote,               0.22f,            { "Complaint" } },// FIXME: outside cg_draw_hud
 	{ HUDF(spectatortext),    CG_DrawSpectatorMessage,   0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
 	{ HUDF(limbotext),        CG_DrawLimboMessage,       0.22f,            { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
 	{ HUDF(followtext),       CG_DrawFollow,             0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
@@ -225,7 +225,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->centerprint      = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 378, 422, 24, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawCenterString);
 	hud->banner           = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 20, 422, 24, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.23f, CG_DrawBannerPrint);
 	hud->crosshairtext    = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 150, 300), 182, 300, 16, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairNames);
-	hud->crosshairbar     = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 65, 130), 199, 130, 10, qtrue, CROSSHAIR_CLASS | CROSSHAIR_RANK | CROSSHAIR_PRESTIGE | (BAR_BG << 3), 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
+	hud->crosshairbar     = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 55, 110), 199, 110, 10, qtrue, CROSSHAIR_CLASS | CROSSHAIR_RANK | (BAR_BG << 3), 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
 	hud->stats            = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 291, 57, 62, qtrue, GAMESTATS_KILL | GAMESTATS_DEATH | GAMESTATS_SELFKILL, 100.f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawPlayerStats);
 }
 
@@ -1467,7 +1467,7 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 #ifdef FEATURE_MULTIVIEW
 		cg.mvTotalClients < 1 &&
 #endif
-        !(comp->style & 1))
+		!(comp->style & 1))
 	{
 		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->colorText);
 	}
