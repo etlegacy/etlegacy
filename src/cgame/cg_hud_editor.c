@@ -2272,12 +2272,12 @@ static void CG_DrawHudEditor_ToolTip(panel_button_t *button)
 
 static int helpStatus = SHOW_ON;
 
-static void CG_HudEditor_ToogleShowLayout(void)
+static void CG_HudEditor_ToggleShowLayout(void)
 {
 	showAllLayout = !showAllLayout;
 }
 
-static void CG_HudEditor_ToogleHelp(void)
+static void CG_HudEditor_ToggleHelp(void)
 {
 	if (helpStatus != SHOW_ON)
 	{
@@ -2434,13 +2434,13 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 
 	if (key == 'l' && down)
 	{
-		CG_HudEditor_ToogleShowLayout();
+		CG_HudEditor_ToggleShowLayout();
 		return;
 	}
 
 	if (key == 'h' && down)
 	{
-		CG_HudEditor_ToogleHelp();
+		CG_HudEditor_ToggleHelp();
 		return;
 	}
 
