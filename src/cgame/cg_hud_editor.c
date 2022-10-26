@@ -2517,6 +2517,10 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 
 		switch (key)
 		{
+		case K_LEFTARROW:
+		case K_RIGHTARROW:
+		case K_UPARROW:
+		case K_DOWNARROW: break;    // do nothing so it reach update function
 		case K_PGUP:       comp->location.y = ((comp->location.y <= (SCREEN_HEIGHT - comp->location.h) * .5f) ?
 			                                   0 : (SCREEN_HEIGHT - comp->location.h) * .5f); break;
 		case K_PGDN:       comp->location.y = ((comp->location.y < (SCREEN_HEIGHT - comp->location.h) * .5f) ?
