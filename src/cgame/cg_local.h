@@ -1454,7 +1454,7 @@ typedef struct
 	char maxMachineguns[MAX_QPATH];
 	char maxRockets[MAX_QPATH];
 	char maxRiflegrenades[MAX_QPATH];
-    char maxLandmines[MAX_QPATH];
+	char maxLandmines[MAX_QPATH];
 	int maxPlayers;
 
 	int binocZoomTime;
@@ -2115,7 +2115,7 @@ enum
 	POPUP_FILTER_PICKUP      = BIT(3),
 	POPUP_FILTER_DEATH       = BIT(4),
 	POPUP_WEAPON_ICON        = BIT(5),
-	POPUP_WEAPON_ICON_BIG    = BIT(6),
+	POPUP_WEAPON_ICON_ALT    = BIT(6),
 	POPUP_SWAP_VICTIM_KILLER = BIT(7),
 };
 
