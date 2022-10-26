@@ -2309,7 +2309,11 @@ static void CG_HudEditor_HelpDraw(void)
 			{ "K_RCTRL / K_LCTRL",   "hold to move by 0.1px"             },
 			{ "K_RSHIFT / K_LSHIFT", "hold to move by 5px"               },
 			{ NULL,                  NULL                                },
+#ifdef __APPLE__
+			{ "K_COMMAND",           "hold to resize"                    },
+#else
 			{ "K_RALT / K_LALT",     "hold to resize"                    },
+#endif
 			{ NULL,                  NULL                                },
 			{ "K_INS",               "move to center"                    },
 			{ "K_PGUP",              "move from bottom -> middle -> top" },
@@ -2479,7 +2483,11 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		float          offset;
 		float          *pValue;
 
+#ifdef __APPLE__
+		changeSize = trap_Key_IsDown(K_COMMAND);
+#else
 		changeSize = (trap_Key_IsDown(K_RALT) || trap_Key_IsDown(K_LALT));
+#endif
 
 		if (trap_Key_IsDown(K_RCTRL) || trap_Key_IsDown(K_LCTRL))
 		{
