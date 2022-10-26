@@ -725,11 +725,11 @@ void CG_DrawPMItems(hudComponent_t *comp)
 			if (comp->alignText == ITEM_ALIGN_RIGHT)
 			{
 				x -= lineHeight;
-				CG_DrawPic(x, y - lineHeight, size, size, cg_pmWaitingList->shader);
+				CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
 			}
 			else
 			{
-				CG_DrawPic(x, y - lineHeight, size, size, cg_pmWaitingList->shader);
+				CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
 				x += lineHeight;
 			}
 
