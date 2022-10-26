@@ -605,7 +605,8 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	float        t;
 	int          i, w;
 	pmListItem_t *listItem  = cg_pmOldList;
-	float        lineHeight = comp->location.h / cg_numPopups.integer;
+	int          numPopups  = cg_numPopups.integer == -1 ? 7 : cg_numPopups.integer;
+	float        lineHeight = comp->location.h / numPopups;
 	float        size       = lineHeight - 2;
 	float        y          = comp->location.y + comp->location.h;
 	float        x          = (comp->alignText == ITEM_ALIGN_RIGHT) ? comp->location.x + comp->location.w : comp->location.x;
@@ -614,7 +615,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 
 	Vector4Copy(comp->colorText, colorText);
 
-	if (cg_numPopups.integer <= 0)
+	if (cg_numPopups.integer == 0)
 	{
 		return;
 	}
@@ -701,7 +702,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 		CG_Text_Paint_Ext(x + w + lineHeight * cg_pmWaitingList->scaleShader + 4, y - (lineHeight / 2) + 1, scale, scale, colorText, cg_pmWaitingList->message2, 0, 0, comp->styleText, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
 	}
 
-	for (i = 0; i < cg_numPopups.integer - 1 && listItem; i++, listItem = listItem->next)
+	for (i = 0; i < numPopups - 1 && listItem; i++, listItem = listItem->next)
 	{
 		x  = (comp->alignText == ITEM_ALIGN_RIGHT) ? comp->location.x + comp->location.w : comp->location.x;
 		y -= lineHeight;
