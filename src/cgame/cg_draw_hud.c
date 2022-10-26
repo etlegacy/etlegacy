@@ -60,7 +60,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(xptext),           CG_DrawXP,                 0.25f,            { 0 } },
 	{ HUDF(ranktext),         CG_DrawRank,               0.20f,            { 0 } },
 	{ HUDF(statsdisplay),     CG_DrawSkills,             0.25f,            { "Column" } },
-	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,            { 0 } },
+	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,            { "Icon Flash" } },
 	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,            { "Dynamic Color" } },
 	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,            { "Latched Class" } },// FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),    CG_DrawPMItems,            0.22f,            { "No Connect", "No TeamJoin", "No Mission", "No Pickup", "No Death", "Weapon Icon", "Weap Icon Big", "Swap V<->K"} },      // FIXME: outside cg_draw_hud
@@ -74,7 +74,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(reinforcement),    CG_DrawRespawnTimer,       0.19f,            { 0 } },
 	{ HUDF(spawntimer),       CG_DrawSpawnTimer,         0.19f,            { 0 } },
 	{ HUDF(localtime),        CG_DrawLocalTime,          0.19f,            { "Second",     "12 Hours"      } },
-	{ HUDF(votetext),         CG_DrawVote,               0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(votetext),         CG_DrawVote,               0.22f,            { "Complaint" } },        // FIXME: outside cg_draw_hud
 	{ HUDF(spectatortext),    CG_DrawSpectatorMessage,   0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
 	{ HUDF(limbotext),        CG_DrawLimboMessage,       0.22f,            { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
 	{ HUDF(followtext),       CG_DrawFollow,             0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
@@ -187,7 +187,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->xptext           = CG_getComponent(CG_AdjustXFromHudFile(108, 57), 465, 57, 14, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
 	hud->ranktext         = CG_getComponent(CG_AdjustXFromHudFile(167, 57), 465, 57, 14, qfalse, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);   // disable
 	hud->statsdisplay     = CG_getComponent(CG_AdjustXFromHudFile(116, 42), 394, 42, 70, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawSkills);
-	hud->weaponicon       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 88, 60), SCREEN_HEIGHT - 52, 60, 32, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
+	hud->weaponicon       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 88, 60), SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
 	hud->weaponammo       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 82, 57), 458, 57, 14, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, CG_DrawAmmoCount);
 	hud->fireteam         = CG_getComponent(CG_AdjustXFromHudFile(10, 350), 10, 350, 100, qtrue, 1, 100.f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawFireTeamOverlay);
 	hud->popupmessages    = CG_getComponent(CG_AdjustXFromHudFile(4, 422), 245, 422, 96, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawPMItems);
@@ -201,7 +201,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->reinforcement    = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), SCREEN_HEIGHT - 70, 57, 14, qfalse, 0, 100.f, colorLtBlue, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawRespawnTimer);
 	hud->spawntimer       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), SCREEN_HEIGHT - 60, 57, 14, qfalse, 0, 100.f, colorRed, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpawnTimer);
 	hud->localtime        = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 168, 57, 14, qtrue, 0, 100.f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLocalTime);
-	hud->votetext         = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 202, 278, 28, qtrue, 0, 100.f, colorYellow, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawVote);
+	hud->votetext         = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 202, 278, 28, qtrue, 1, 100.f, colorYellow, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawVote);
 	hud->spectatortext    = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 160, 278, 38, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawSpectatorMessage);
 	hud->limbotext        = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 124, 278, 38, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawLimboMessage);
 	hud->followtext       = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 124, 278, 24, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawFollow);
@@ -1467,7 +1467,7 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 #ifdef FEATURE_MULTIVIEW
 		cg.mvTotalClients < 1 &&
 #endif
-		cg_drawWeaponIconFlash.integer == 0)
+        !(comp->style & 1))
 	{
 		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->colorText);
 	}

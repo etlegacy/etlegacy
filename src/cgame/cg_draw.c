@@ -2450,8 +2450,8 @@ void CG_DrawVote(hudComponent_t *comp)
 {
 	const char *str = NULL;
 	char       str1[32], str2[32];
-
-	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
+    
+    if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient >= 0)
 	{
 		CG_GetBindingKeyForVote(str1, str2);
 
@@ -2626,7 +2626,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		return;
 	}
 
-	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient < 0)
+	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient < 0)
 	{
 		switch (cgs.complaintClient)
 		{

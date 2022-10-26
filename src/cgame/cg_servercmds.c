@@ -3417,7 +3417,7 @@ static void CG_ServerCommand(void)
 	case COMPLAINT_HASH:                                       // "complaint"
 		if (cgs.gamestate == GS_PLAYING)
 		{
-			if (cg_complaintPopUp.integer == 0)
+			if (!(CG_GetActiveHUD()->votetext.style & 1))
 			{
 				trap_SendClientCommand("vote no");
 			}

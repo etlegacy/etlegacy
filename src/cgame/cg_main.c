@@ -133,7 +133,6 @@ vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
 vmCvar_t cg_drawCrosshair;
-vmCvar_t cg_drawCrosshairInfo;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
 vmCvar_t cg_weaponCycleDelay;
@@ -231,13 +230,11 @@ vmCvar_t cg_autoReload;
 vmCvar_t cg_bloodDamageBlend;
 vmCvar_t cg_bloodFlash;
 vmCvar_t cg_bloodFlashTime;
-vmCvar_t cg_complaintPopUp;
 vmCvar_t cg_crosshairAlpha;
 vmCvar_t cg_crosshairAlphaAlt;
 vmCvar_t cg_crosshairColor;
 vmCvar_t cg_crosshairColorAlt;
 vmCvar_t cg_drawReinforcementTime;
-vmCvar_t cg_drawWeaponIconFlash;
 vmCvar_t cg_noAmmoAutoSwitch;
 vmCvar_t cg_printObjectiveInfo;
 #ifdef FEATURE_MULTIVIEW
@@ -389,7 +386,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawStatus,              "cg_drawStatus",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                 "cg_drawFPS",                 "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,           "cg_drawCrosshair",           "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCrosshairInfo,       "cg_drawCrosshairInfo",       "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,    "cg_drawCrosshairPickups",    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,      "cg_drawSpectatorNames",      "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,         "cg_useWeapsForZoom",         "1",           CVAR_ARCHIVE,                 0 },
@@ -484,13 +480,11 @@ static cvarTable_t cvarTable[] =
 	{ &cg_bloodDamageBlend,        "cg_bloodDamageBlend",        "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlash,              "cg_bloodFlash",              "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlashTime,          "cg_bloodFlashTime",          "1500",        CVAR_ARCHIVE,                 0 },
-	{ &cg_complaintPopUp,          "cg_complaintPopUp",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairAlpha,          "cg_crosshairAlpha",          "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairAlphaAlt,       "cg_crosshairAlphaAlt",       "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairColor,          "cg_crosshairColor",          "White",       CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairColorAlt,       "cg_crosshairColorAlt",       "White",       CVAR_ARCHIVE,                 0 },
 	{ &cg_drawReinforcementTime,   "cg_drawReinforcementTime",   "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawWeaponIconFlash,     "cg_drawWeaponIconFlash",     "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_noAmmoAutoSwitch,        "cg_noAmmoAutoSwitch",        "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_printObjectiveInfo,      "cg_printObjectiveInfo",      "1",           CVAR_ARCHIVE,                 0 },
 #ifdef FEATURE_MULTIVIEW
