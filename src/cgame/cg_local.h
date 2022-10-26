@@ -2745,7 +2745,6 @@ extern vmCvar_t cg_autoReload;
 extern vmCvar_t cg_bloodDamageBlend;
 extern vmCvar_t cg_bloodFlash;
 extern vmCvar_t cg_bloodFlashTime;
-extern vmCvar_t cg_complaintPopUp;
 extern vmCvar_t cg_crosshairAlpha;
 extern vmCvar_t cg_crosshairAlphaAlt;
 extern vmCvar_t cg_crosshairColor;
