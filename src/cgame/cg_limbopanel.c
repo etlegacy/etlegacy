@@ -3988,52 +3988,6 @@ int CG_LimboPanel_TeamCount(int weap)
 }
 
 /**
- * @brief Convert a string to an integer
- * @details Convert a string to an integer, with the same behavior that the engine converts
- * cvars to their integer representation:
- *   - Integer is obtained from concatenating all the integers in the string,
- *   regardless of the other characters present in the string ("-" is the exception,
- *   of there is a "-" before the first integer, the number is turned into a negative)
- *   - If there are no integers in the string, return 0
- * @param[in] src String to convert to an integer
- * @return Result of converted string to an integer
- * @note Originates from q_shared.c
- */
-int ExtractInt(const char *src)
-{
-	unsigned int i;
-	unsigned int srclen = strlen(src) + 1;
-	int          destIx = 0;
-	char         *tmp   = Com_Allocate(srclen);
-	int          result = 0;
-
-	// Go through all the characters in the source string
-	for (i = 0; i < srclen; i++)
-	{
-		// Pick out negative sign before first integer, or integers only
-		if (((src[i] == '-') && (destIx == 0)) || Q_isnumeric(src[i]))
-		{
-			tmp[destIx++] = src[i];
-		}
-	}
-
-	// put string terminator in temp var
-	tmp[destIx] = 0;
-
-	// convert temp var to integer
-	if (tmp[0] != 0)
-	{
-		int sign = 1;
-
-		result = sign * Q_atoi(tmp);
-	}
-
-	Com_Dealloc(tmp);
-
-	return result;
-}
-
-/**
  * @brief CG_LimboPanel_MaxCount
  * @param[in] playerCount
  * @param[in] variableString
