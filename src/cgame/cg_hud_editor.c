@@ -109,6 +109,7 @@ static qboolean CG_HudEditor_ComponentLists_KeyDown(panel_button_t *button, int 
 static qboolean CG_HudEditor_ComponentLists_KeyUp(panel_button_t *button, int key);
 static qboolean CG_HudEditorColor_KeyDown(panel_button_t *button, int key);
 static void CG_HudEditorColor_Render(panel_button_t *button);
+static void CG_HudEditor_Slider_Render(panel_button_t *button);
 
 // Font declaration
 
@@ -498,6 +499,19 @@ static panel_button_t hudEditorScale =
 	0
 };
 
+static panel_button_t hudEditorScaleSlider =
+{
+	NULL,
+	"hudeditor_S_Slider",
+	{ 0,                       HUDEDITOR_TEXT_Y + (HUDEDITOR_CONTROLS_SPACER_XY * 1),SLIDERS_WIDTH, SLIDERS_HEIGHT },
+	{ 0,                       0,                                     0,             0, 0, 0, 0, 1  },
+	&hudEditorTextFont,        // font
+	CG_HudEditorColor_KeyDown, // keyDown, borrowing color keydown func
+	CG_HudEditorPanel_KeyUp,   // keyUp
+	CG_HudEditor_Slider_Render,
+	0
+};
+
 static panel_button_t hudEditorStyleText =
 {
 	NULL,
@@ -599,18 +613,18 @@ static panel_button_t hudEditorComponentsList =
 
 static panel_button_t *hudEditor[] =
 {
-	&hudEditorPositionSizeTitle,  &hudEditorX,                    &hudEditorY,
-	&hudEditorColorsStyleTitle,   &hudEditorW,                    &hudEditorH,                       &hudEditorScale,
-	&hudEditorColorSelectionText, &hudEditorColorSelectionBorder, &hudEditorColorSelectionBackground,
-	&hudEditorColorR,             &hudEditorColorG,               &hudEditorColorB,                  &hudEditorColorA,
-	&hudEditorColorSliderR,       &hudEditorColorSliderG,         &hudEditorColorSliderB,            &hudEditorColorSliderA,
-	&hudEditorVisible,            &hudEditorAutoAdjust,           &hudEditorShowBackground,          &hudEditorShowBorder,
+	&hudEditorPositionSizeTitle, &hudEditorX,                  &hudEditorY,
+	&hudEditorColorsStyleTitle,  &hudEditorW,                  &hudEditorH,                   &hudEditorScale,
+	&hudEditorScaleSlider,       &hudEditorColorSelectionText, &hudEditorColorSelectionBorder,&hudEditorColorSelectionBackground,
+	&hudEditorColorR,            &hudEditorColorG,             &hudEditorColorB,              &hudEditorColorA,
+	&hudEditorColorSliderR,      &hudEditorColorSliderG,       &hudEditorColorSliderB,        &hudEditorColorSliderA,
+	&hudEditorVisible,           &hudEditorAutoAdjust,         &hudEditorShowBackground,      &hudEditorShowBorder,
 	&hudEditorTextTitle,
-	&hudEditorSave,               &hudEditorClone,                &hudEditorDelete,                  &hudEditorResetComp,
+	&hudEditorSave,              &hudEditorClone,              &hudEditorDelete,              &hudEditorResetComp,
 	&hudEditorComponentsList,
 
 	// Below here all components that should draw on top
-	&hudEditorHudDropdown,        &hudEditorAlignText,            &hudEditorStyleText,
+	&hudEditorHudDropdown,       &hudEditorAlignText,          &hudEditorStyleText,
 	NULL,
 };
 
@@ -1801,6 +1815,10 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	trap_Cvar_Set("hudeditor_S", buffer);
 	hudEditorScale.data[1] = button->data[0];
 
+	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->scale);
+	trap_Cvar_Set("hudeditor_S_Slider", buffer);
+	hudEditorScaleSlider.data[1] = button->data[0];
+
 	switch (elementColorSelection /*hudEditorColorSelection.data[3]*/)
 	{
 	case 0: compColor = &comp->colorText; break;
@@ -2034,6 +2052,32 @@ static void CG_HudEditorColor_Render(panel_button_t *button)
 	button->rect.x = HUDEditorCenterX - (Ccg_WideX(BUTTON_WIDTH) * 0.5f) + HUDEDITOR_CONTROLS_SPACER_XY * 2;
 
 	CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorBlack, *color, backG, offset, BAR_BORDER | BAR_LERP_COLOR, -1);
+}
+
+static void CG_HudEditor_Slider_Render(panel_button_t *button)
+{
+	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	vec4_t         backG = { 1, 1, 1, 0.3f };
+	vec4_t         sliderColor;
+	float          offset;
+
+	Vector4Copy(button->font->colour, sliderColor);
+
+	// update value continuously
+	if (lastFocusComponent && BG_PanelButtons_GetFocusButton() == button)
+	{
+		offset      = Com_Clamp(0, 1.0f, (cgs.cursorX - button->rect.x) / button->rect.w);
+		comp->scale = offset * 300.0f;
+		CG_HudEditorUpdateFields(lastFocusComponent);
+	}
+	else
+	{
+		offset = comp->scale / 300.0f;
+	}
+
+	button->rect.x = HUDEditorCenterX - (Ccg_WideX(BUTTON_WIDTH) * 0.5f) + HUDEDITOR_CONTROLS_SPACER_XY * 2;
+
+	CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, sliderColor, sliderColor, backG, offset, BAR_BORDER, -1);
 }
 
 static int QDECL CG_SortComponentByName(const void *a, const void *b)
