@@ -254,7 +254,7 @@ void CG_CameraEditorDraw(void)
 		int    bindingKey[2];
 		char   binding[2][32];
 		vec4_t colour;
-		float  x, y, w, h;
+		float  y;
 
 		VectorCopy(colorWhite, colour);
 		colour[3] = .8f;
@@ -284,7 +284,7 @@ void CG_CameraEditorDraw(void)
 		                  0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		// render crosshair
-        CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
+		CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
 	}
 	else
 	{

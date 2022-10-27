@@ -2250,7 +2250,7 @@ public:
 			//round end.
 			if (bot->client->ps.pm_flags & PMF_TIME_LOCKPLAYER)
 			{
-				Cmd_Kill_f(bot, NULL, 0);
+				Cmd_Kill_f(bot, 0, 0);
 			}
 			else if (!(bot->client->ps.pm_flags & PMF_LIMBO))
 			{
@@ -6245,7 +6245,7 @@ qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
 			{
 				if ((g_redlimbotime.integer - ((level.dwRedReinfOffset + level.timeCurrent - level.startTime) % g_redlimbotime.integer)) < 2000)
 				{
-					Cmd_Kill_f(ent, NULL, 0);
+					Cmd_Kill_f(ent, 0, 0);
 					ent->client->sess.botSuicide = qfalse;
 					return qtrue;
 				}
@@ -6254,7 +6254,7 @@ qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
 			{
 				if ((g_bluelimbotime.integer - ((level.dwBlueReinfOffset + level.timeCurrent - level.startTime) % g_bluelimbotime.integer)) < 2000)
 				{
-					Cmd_Kill_f(ent, NULL, 0);
+					Cmd_Kill_f(ent, 0, 0);
 					ent->client->sess.botSuicide = qfalse;
 					return qtrue;
 				}
