@@ -345,10 +345,10 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 				{
-					float ofs = style == ITEM_TEXTSTYLE_SHADOWEDMORE ? 2 : 1;
+					const float ofs = style == ITEM_TEXTSTYLE_SHADOWED ? TEXTSTYLE_SHADOWED_OFFSET : TEXTSTYLE_SHADOWEDMORE_OFFSET;
 					colorBlack[3] = newColor[3];
 					trap_R_SetColor(colorBlack);
-					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) + ofs, y - yadj + ofs, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) + ofs * scalex, y - yadj + ofs * scaley, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 					colorBlack[3] = 1.0f;
 					trap_R_SetColor(newColor);
 				}
@@ -357,9 +357,8 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 
 				if (style == ITEM_TEXTSTYLE_OUTLINED || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 				{
-					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) - 1, y - yadj - 1, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) - TEXTSTYLE_OUTLINED_OFFSET * scalex, y - yadj - TEXTSTYLE_OUTLINED_OFFSET * scaley, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 				}
-
 				x += (glyph->xSkip * scalex) + adjust;
 				s += Q_UTF8_Width(s);
 				count++;
@@ -428,11 +427,11 @@ void CG_Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, co
 
 			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 			{
-				int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+				const float ofs = style == ITEM_TEXTSTYLE_SHADOWED ? TEXTSTYLE_SHADOWED_OFFSET : TEXTSTYLE_SHADOWEDMORE_OFFSET;
 
 				colorBlack[3] = newColor[3];
 				trap_R_SetColor(colorBlack);
-				CG_Text_PaintChar(x + (glyph->pitch * useScale) + ofs, y - yadj + ofs,
+				CG_Text_PaintChar(x + (glyph->pitch * useScale) + ofs * useScale, y - yadj + ofs * useScale,
 				                  glyph->imageWidth,
 				                  glyph->imageHeight,
 				                  useScale,
@@ -2450,8 +2449,8 @@ void CG_DrawVote(hudComponent_t *comp)
 {
 	const char *str = NULL;
 	char       str1[32], str2[32];
-    
-    if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient >= 0)
+
+	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient >= 0)
 	{
 		CG_GetBindingKeyForVote(str1, str2);
 

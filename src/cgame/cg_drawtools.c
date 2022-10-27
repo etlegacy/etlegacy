@@ -1243,10 +1243,10 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 		if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 		{
-			float ofs = style == ITEM_TEXTSTYLE_SHADOWEDMORE ? 2 : 1;
+			const float ofs = style == ITEM_TEXTSTYLE_SHADOWED ? TEXTSTYLE_SHADOWED_OFFSET : TEXTSTYLE_SHADOWEDMORE_OFFSET;
 			colorBlack[3] = newColor[3];
 			trap_R_SetColor(colorBlack);
-			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) + ofs, lineY - yadj + ofs, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) + ofs * fontSizeX, lineY - yadj + ofs * fontSizeY, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 			colorBlack[3] = 1.0;
 			trap_R_SetColor(newColor);
 		}
@@ -1255,7 +1255,7 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 		if (style == ITEM_TEXTSTYLE_OUTLINED || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 		{
-			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) - 1, lineY - yadj - 1, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) - TEXTSTYLE_OUTLINED_OFFSET * fontSizeX, lineY - yadj - TEXTSTYLE_OUTLINED_OFFSET * fontSizeY, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 		}
 
 		lineX += (glyph->xSkip * fontSizeX) + adjust;
