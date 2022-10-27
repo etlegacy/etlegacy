@@ -1860,7 +1860,7 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 }
 
 /**
-* @brief CG_HudEditorRender draw borders for hud elements
+* @brief CG_HudEditor_Render draw borders for hud elements
 * @param[in] button
 */
 static void CG_HudEditor_Render(panel_button_t *button)
@@ -1874,7 +1874,7 @@ static void CG_HudEditor_Render(panel_button_t *button)
 	{
 		color = &colorYellow;
 	}
-	else if (showAllLayout || BG_CursorInRect(&button->rect))
+	else if (showAllLayout || (BG_CursorInRect(&button->rect) && !lastFocusComponentMoved))
 	{
 		color = comp->visible ? &colorMdGreen : &colorMdRed;
 	}
