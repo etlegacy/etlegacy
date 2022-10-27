@@ -1534,11 +1534,12 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
  * @param[in] headAngles
  * @param[in] viewHeight
  */
-void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int viewHeight)
+void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles)
 {
 	int   leaning = 0;          // -1 left, 1 right
 	float leanofs = 0;
 	int   time;
+	int   viewheight;
 
 	if (cent->currentState.constantLight & STAT_LEAN_LEFT)
 	{
@@ -1644,8 +1645,18 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 		vec3_t  start, end, tmins, tmaxs, right, viewangles;
 		trace_t trace;
 
+		if (cg.snap->ps.clientNum == cent->currentState.clientNum)
+		{
+			viewheight = cg.snap->ps.viewheight;
+		}
+		else
+		{
+			// we don't need to care about prone here since you can't lean while proning anyway
+			viewheight = cent->currentState.eFlags & EF_CROUCHING ? CROUCH_VIEWHEIGHT : DEFAULT_VIEWHEIGHT;
+		}
+
 		VectorCopy(cent->lerpOrigin, start);
-		start[2] += viewHeight;
+		start[2] += viewheight;
 
 		VectorCopy(cent->lerpAngles, viewangles);
 		viewangles[ROLL] += leanofs / 2.0f;
@@ -1655,7 +1666,7 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 		VectorSet(tmins, -8, -8, -7);   // ATVI Wolfenstein Misc #472, bumped from -4 to cover gun clipping issue
 		VectorSet(tmaxs, 8, 8, 4);
 
-		CG_Trace(&trace, start, tmins, tmaxs, end, cent->currentState.clientNum, MASK_PLAYERSOLID);
+		CG_TraceCapsule(&trace, start, tmins, tmaxs, end, cent->currentState.clientNum, MASK_PLAYERSOLID);
 
 		cent->pe.leanDirection *= trace.fraction;
 	}
@@ -1839,7 +1850,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		legsAngles[PITCH] += side;
 	}
 
-	CG_PredictLean(cent, torsoAngles, headAngles, cg.snap->ps.clientNum == cent->currentState.clientNum ? cg.snap->ps.viewheight :  (int)cent->pe.headRefEnt.origin[2]);
+	CG_PredictLean(cent, torsoAngles, headAngles);
 
 	// pain twitch
 	CG_AddPainTwitch(cent, torsoAngles);
