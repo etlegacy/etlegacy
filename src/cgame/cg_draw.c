@@ -1854,16 +1854,14 @@ void CG_ScanForCrosshairDyna(centity_t *cent)
 }
 
 /**
- * @brief Returns the distance to the entity
+ * @brief Scan for any entities we're currently aiming at
  * @param[out] zChange
  * @param[out] hitClient
- * @return Distance to the entity
  */
-static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
+static void CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 {
 	trace_t   trace;
 	vec3_t    start, end;
-	float     dist;
 	centity_t *cent;
 
 	// We haven't hit a client yet
@@ -1875,9 +1873,6 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 	cg.crosshairClientNoShoot = qfalse;
 
 	CG_Trace(&trace, start, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
-
-	// How far from start to end of trace?
-	dist = VectorDistance(start, trace.endpos);
 
 	// How far up or down are we looking?
 	*zChange = trace.endpos[2] - start[2];
@@ -1903,14 +1898,14 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 		// Default: We're not looking at a client
 		cg.crosshairNotLookingAtClient = qtrue;
 
-		return dist;
+		return;
 	}
 
 	cent = &cg_entities[trace.entityNum];
 
 	if (!cent->currentValid)
 	{
-		return dist;
+		return;
 	}
 
 	// Reset the draw time for the SP crosshair
@@ -1937,8 +1932,6 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 			cg.crosshairClientNoShoot = qtrue;
 		}
 	}
-
-	return dist;
 }
 
 /**
@@ -2057,7 +2050,6 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	vec4_t   bgcolor, c;
 	int      health, maxHealth;
 	float    barFrac;
-	float    dist;   // Distance to the entity under the crosshair
 	float    zChange;
 	qboolean hitClient = qfalse;
 	int      clientNum, class;
@@ -2091,7 +2083,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	else
 	{
 		// scan the known entities to see if the crosshair is sighted on one
-		dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
+		CG_ScanForCrosshairEntity(&zChange, &hitClient);
 	}
 
 	// world-entity or no-entity
@@ -2227,7 +2219,6 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 {
 	float      *color;
 	const char *s = NULL;
-	float      dist; // Distance to the entity under the crosshair
 	float      zChange;
 	qboolean   hitClient = qfalse;
 	int        clientNum = -1;
@@ -2289,7 +2280,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	else
 	{
 		// scan the known entities to see if the crosshair is sighted on one
-		dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
+		CG_ScanForCrosshairEntity(&zChange, &hitClient);
 	}
 
 	// world-entity or no-entity
@@ -2450,8 +2441,8 @@ void CG_DrawVote(hudComponent_t *comp)
 {
 	const char *str = NULL;
 	char       str1[32], str2[32];
-    
-    if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient >= 0)
+
+	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient >= 0)
 	{
 		CG_GetBindingKeyForVote(str1, str2);
 
@@ -4589,7 +4580,7 @@ void CG_DrawMissileCamera(hudComponent_t *comp)
 {
 	float     x, y, w, h;
 	refdef_t  refdef;
-	vec3_t    forward, delta, angles;
+	vec3_t    delta, angles;
 	centity_t *cent;
 
 	if (!cg.latestMissile || cgs.matchPaused)

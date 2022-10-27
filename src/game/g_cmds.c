@@ -4365,10 +4365,9 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
  */
 void Cmd_Activate2_f(gentity_t *ent)
 {
-	trace_t  tr;
-	vec3_t   end;
-	vec3_t   forward, right, up, offset;
-	qboolean pass2 = qfalse;
+	trace_t tr;
+	vec3_t  end;
+	vec3_t  forward, right, up, offset;
 
 	if (ent->health <= 0)
 	{
@@ -4389,7 +4388,6 @@ void Cmd_Activate2_f(gentity_t *ent)
 	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
 	{
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_TRIGGER));
-		pass2 = qtrue;
 	}
 
 	// don't allow constant shoving by holding down +activate

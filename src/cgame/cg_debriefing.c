@@ -1153,30 +1153,28 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			}
 
 			// display map description
-			CG_DrawVerticalScrollingString(&rect, button->font->colour, button->font->scalex, 100, 1, &descriptionScroll, button->font->font);
+			CG_DrawVerticalScrollingString(&rect, *colour, button->font->scalex, 100, 1, &descriptionScroll, button->font->font);
 
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
-			                  button->font->scaley, button->font->colour,
+			                  button->font->scaley, *colour,
 			                  va(CG_TranslateString("Last Played             : %s"),
 			                     (cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset] == -1 ? CG_TranslateString("Never") : va(CG_TranslateString("%d maps ago"),
 			                                                                                                                cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset]))),
 			                  0, 0, 0, button->font->font);
 			y2 += 12;
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
-			                  button->font->scaley, button->font->colour,
+			                  button->font->scaley, *colour,
 			                  va(CG_TranslateString("Total Accumulated Votes : %d"), cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
 			                  0, 0, 0, button->font->font);
 		}
 
 		CG_Text_Paint_Ext(DB_MAPNAME_X + 12 + cgs.wideXoffset, y, button->font->scalex,
-		                  button->font->scaley, button->font->colour,
+		                  button->font->scaley, *colour,
 		                  cgs.dbMapDispName[i + cgs.dbMapVoteListOffset],
 		                  0, 30, 0, button->font->font);
 
 		if (cg.snap->ps.eFlags & EF_VOTED)
 		{
-			vec4_t *colour = &button->font->colour;
-
 			// add gradient color to identify three most voted maps
 			for (j = 0; j < 3; j++)
 			{

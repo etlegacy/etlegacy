@@ -605,7 +605,6 @@ void CG_DrawShoutcastPlayerStatus(void)
 	gameStats_t   *gs     = &cgs.gamestats;
 	clientInfo_t  *player = &cgs.clientinfo[cg.snap->ps.clientNum];
 	playerState_t *ps     = &cg.snap->ps;
-	rectDef_t     rect;
 	vec4_t        hcolor;
 	float         nameBoxWidth = PLAYER_STATUS_NAMEBOX_WIDTH;
 	float         nameBoxHeight = PLAYER_STATUS_NAMEBOX_HEIGHT;
@@ -894,7 +893,7 @@ void CG_DrawShoutcastTimer(void)
 	}
 
 	vec4_t color = { .6f, .6f, .6f, 1.f };
-	char   *text, *rt, *rtAllies = "", *rtAxis = "", *round;
+	char   *text, *rtAllies = "", *rtAxis = "", *round;
 	int    tens;
 	int    msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	int    seconds = msec / 1000;
@@ -929,17 +928,8 @@ void CG_DrawShoutcastTimer(void)
 			rtAllies = va("^$%i", reinfTimeAl);
 			rtAxis   = va("^1%i", reinfTimeAx);
 		}
-		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
-		{
-			int  reinfTime = CG_CalculateReinfTime(qfalse);
-			char *c        = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
-
-			rt = va("%s%s%d", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : c, ((cgs.timelimit <= 0.0f) ? "" : " "), reinfTime);
-		}
 		else
 		{
-			rt       = "";
 			rtAllies = "";
 			rtAxis   = "";
 		}
