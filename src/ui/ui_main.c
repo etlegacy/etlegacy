@@ -619,12 +619,12 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 				{
-					int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+					const float ofs = style == ITEM_TEXTSTYLE_SHADOWED ? TEXTSTYLE_SHADOWED_OFFSET : TEXTSTYLE_SHADOWEDMORE_OFFSET;
 
 					colorBlack[3] = newColor[3];
 
 					trap_R_SetColor(colorBlack);
-					Text_PaintCharExt(x + (glyph->pitch * scalex) + ofs, y - yadj + ofs, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+					Text_PaintCharExt(x + (glyph->pitch * scalex) + ofs * scalex, y - yadj + ofs * scaley, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 					trap_R_SetColor(newColor);
 
 					colorBlack[3] = 1.0;
@@ -699,11 +699,11 @@ void Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, const
 
 			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 			{
-				int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+				const float ofs = style == ITEM_TEXTSTYLE_SHADOWED ? TEXTSTYLE_SHADOWED_OFFSET : TEXTSTYLE_SHADOWEDMORE_OFFSET;
 
 				colorBlack[3] = newColor[3];
 				trap_R_SetColor(colorBlack);
-				Text_PaintChar(x + (glyph->pitch * useScale) + ofs, y - yadj + ofs,
+				Text_PaintChar(x + (glyph->pitch * useScale) + ofs * useScale, y - yadj + ofs * useScale,
 				               glyph->imageWidth,
 				               glyph->imageHeight,
 				               useScale,
@@ -6384,10 +6384,10 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserModFilter", "0");
 			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
-        else if (Q_stricmp(name, "edithud") == 0)
-        {
-            trap_Cmd_ExecuteText(EXEC_APPEND, "edithud\n");
-        }
+		else if (Q_stricmp(name, "edithud") == 0)
+		{
+			trap_Cmd_ExecuteText(EXEC_APPEND, "edithud\n");
+		}
 		else if (Q_stricmp(name, "SetFontScale") == 0)
 		{
 			Com_Printf("^3WARNING: deprecated/unused %s\n", name);
