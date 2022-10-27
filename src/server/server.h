@@ -390,6 +390,9 @@ typedef struct
 	svstats_t stats;
 
 	download_t download;
+
+	// serverside demo recording
+	int autoDemoTime;
 } serverStatic_t;
 
 //=============================================================================

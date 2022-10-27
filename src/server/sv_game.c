@@ -735,14 +735,6 @@ static void SV_InitGameVM(qboolean restart)
 	// use the current msec count for a random seed
 	// init for this gamestate
 	VM_Call(gvm, GAME_INIT, svs.time, Com_Milliseconds(), restart, qtrue, ETLEGACY_VERSION_INT);
-
-	// start recording a demo
-	if (sv_autoDemo->integer)
-	{
-		// stop any demos
-		SV_DemoStopAll();
-		SV_DemoAutoDemoRecord();
-	}
 }
 
 /**

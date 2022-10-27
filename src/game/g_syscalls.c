@@ -39,7 +39,7 @@ static intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_
 /**
  * @brief dllEntry
  */
-Q_EXPORT void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...))
+Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
@@ -813,7 +813,7 @@ messageStatus_t trap_MessageStatus(int clientNum)
 // extension interface
 
 /**
-* @brief Entry point for additional system calls without breaking compatbility with other engines
+* @brief Entry point for additional system calls without breaking compatibility with other engines
 * @param[out] value
 * @param[in] valueSize
 * @param[in] key

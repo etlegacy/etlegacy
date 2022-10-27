@@ -1685,12 +1685,6 @@ void SV_Frame(int msec)
 		return;
 	}
 
-	// start recording a demo
-	if (sv_autoDemo->integer)
-	{
-		SV_DemoAutoDemoRecord();
-	}
-
 	// update infostrings if anything has been changed
 	if (cvar_modifiedFlags & CVAR_SERVERINFO)
 	{
@@ -1711,6 +1705,12 @@ void SV_Frame(int msec)
 	{
 		SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
 		cvar_modifiedFlags &= ~CVAR_WOLFINFO;
+	}
+
+	// start recording a demo
+	if (sv_autoDemo->integer)
+	{
+		SV_DemoAutoDemoRecord();
 	}
 
 	if (com_speeds->integer)
@@ -1739,7 +1739,7 @@ void SV_Frame(int msec)
 		{
 			SV_DemoWriteFrame();
 		}
-		else if (sv.demoState == DS_WAITINGPLAYBACK || sv_demoState->integer == DS_WAITINGPLAYBACK) // Launch again the playback of the demo (because we needed a restart in order to set some cvars such as sv_maxclients or fs_game)
+		else if (sv_demoState->integer == DS_WAITINGPLAYBACK) // Launch again the playback of the demo (because we needed a restart in order to set some cvars such as sv_maxclients or fs_game)
 		{
 			SV_DemoRestartPlayback();
 		}

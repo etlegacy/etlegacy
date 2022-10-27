@@ -1350,7 +1350,7 @@ typedef struct level_locals_s
 
 	qboolean suddenDeath;
 	qboolean demoPlayback;
-	int      demoClientsNum;
+	int demoClientsNum;
 } level_locals_t;
 
 /**

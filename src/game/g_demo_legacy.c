@@ -34,7 +34,7 @@
 
 #include "g_local.h"
 
- /**
+/**
  * @brief G_DemoPlaybackInit
  * @param[in] demoplayback
  * @param[in] demoClientsNum
@@ -43,6 +43,12 @@ void G_DemoPlaybackInit(qboolean demoPlayback, int demoClientsNum)
 {
 	level.demoPlayback   = demoPlayback;
 	level.demoClientsNum = demoClientsNum;
+
+	if (demoPlayback)
+	{
+		trap_Cvar_Set("g_customConfig", "");
+		trap_Cvar_Update(&g_customConfig);
+	}
 }
 
 /**
@@ -54,9 +60,9 @@ void G_DemoRunFrame(void)
 	static int oldGamestate = -1;
 	int        i;
 
-	trap_Cvar_Set("g_guidCheck", 0);
-	trap_Cvar_Set("g_allowVote", 0);
-	trap_Cvar_Set("vote_allow_map", 0);
+	trap_Cvar_Set("g_guidCheck", "0");
+	trap_Cvar_Set("g_allowVote", "0");
+	trap_Cvar_Set("vote_allow_map", "0");
 
 	if (g_gamestate.integer == GS_INTERMISSION && oldGamestate != GS_INTERMISSION)
 	{
