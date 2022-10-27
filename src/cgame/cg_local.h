@@ -3113,6 +3113,7 @@ int CG_GetPlayerMaxHealth(int clientNum, int class, int team);
 void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
+void CG_TraceCapsule(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
 void CG_PredictPlayerState(void);
 float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def);
 
