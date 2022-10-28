@@ -600,7 +600,8 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 	}
 	else
 	{
-		char   coord_char[3], coord_int;
+		char   coord_char[3];
+		signed char coord_int;
 		float  text_width, text_height;
 		vec2_t textOrigin;
 
