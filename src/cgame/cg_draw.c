@@ -1737,6 +1737,7 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		vec4_t hcolor;
 
 		CG_ColorForHealth(hcolor);
+		hcolor[3] = cg.xhairColor[3];
 		trap_R_SetColor(hcolor);
 	}
 	else
@@ -1776,7 +1777,16 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 
 		CG_AdjustFrom640(&x, &y, &w, &h);
 
+		// set color based on health
 		if (comp->style & 2)
+		{
+			vec4_t hcolor;
+
+			CG_ColorForHealth(hcolor);
+			hcolor[3] = cg.xhairColorAlt[3];
+			trap_R_SetColor(hcolor);
+		}
+		else
 		{
 			trap_R_SetColor(cg.xhairColorAlt);
 		}
