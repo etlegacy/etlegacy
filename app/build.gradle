@@ -1,4 +1,4 @@
-def buildAsLibrary = project.hasProperty('BUILD_AS_LIBRARY');
+def buildAsLibrary= project.hasProperty('BUILD_AS_LIBRARY');
 def buildAsApplication = !buildAsLibrary
 if (buildAsApplication) {
     apply plugin: 'com.android.application'
@@ -21,13 +21,13 @@ new File( 'VERSION.txt' ).eachLine { line ->
 println VERSION
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 29
     defaultConfig {
         if (buildAsApplication) {
             applicationId "org.etlegacy.app"
         }
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 29
         versionCode 1
         versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
         setProperty("archivesBaseName", "etlegacy-${getVersion}")
