@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -90,6 +91,11 @@ public class ETLMain extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+		}
 
         String etl_pak = new String();
         AssetManager assManager = getApplicationContext().getAssets();
