@@ -48,7 +48,7 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { "Pulse",      "Dynamic Color" } },                // FIXME: outside cg_draw_hud
+	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { "Pulse",      "Pulse Alt", "Dynamic Color", "Dynamic Color Alt", "Hide Main", "Hide Alt" } },                // FIXME: outside cg_draw_hud
 	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,            { "Square",     "Draw Item", "Draw Sec Obj", "Draw Prim Obj"} },
 	{ "compas",               offsetof(hudStucture_t,    compass),         qtrue, CG_DrawNewCompass, 0.19,{ "Square" } },              // v2.78 backward compatibility
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,            { "Left",       "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
@@ -177,7 +177,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	compIndex = 0;
 	// the Default hud
 	hud->hudnumber        = 0;
-	hud->crosshair        = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 24, 48), SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
+	hud->crosshair        = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 24, 48), SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
 	hud->compass          = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, 14, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 	hud->staminabar       = CG_getComponent(CG_AdjustXFromHudFile(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
 	hud->breathbar        = CG_getComponent(CG_AdjustXFromHudFile(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
@@ -225,7 +225,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->centerprint      = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 378, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawCenterString);
 	hud->banner           = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 20, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.23f, CG_DrawBannerPrint);
 	hud->crosshairtext    = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 150, 300), 182, 300, 16, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairNames);
-	hud->crosshairbar     = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 55, 110), 199, 110, 10, qtrue, CROSSHAIR_CLASS | CROSSHAIR_RANK | (BAR_BG << 3), 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
+	hud->crosshairbar     = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 55, 110), 199, 110, 10, qtrue, CROSSHAIR_BAR_CLASS | CROSSHAIR_BAR_RANK | (BAR_BG << 3), 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
 	hud->stats            = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 291, 57, 62, qtrue, GAMESTATS_KILL | GAMESTATS_DEATH | GAMESTATS_SELFKILL, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawPlayerStats);
 }
 

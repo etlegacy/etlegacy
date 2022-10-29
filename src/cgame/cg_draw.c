@@ -1731,20 +1731,6 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		return;
 	}
 
-	// set color based on health
-	if (comp->style & 2)
-	{
-		vec4_t hcolor;
-
-		CG_ColorForHealth(hcolor);
-		hcolor[3] = comp->colorMain[3];
-		trap_R_SetColor(hcolor);
-	}
-	else
-	{
-		trap_R_SetColor(comp->colorMain);
-	}
-
 	if (comp->showBackGround)
 	{
 		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
@@ -1755,30 +1741,49 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	// crosshair size represents aim spread
-	f = (float)(!(comp->style & 1) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
-	w = comp->location.w * (1 + f * 2.0f);
-	h = comp->location.h * (1 + f * 2.0f);
-	x = comp->location.x + (comp->location.w - w) * .5f;
-	y = comp->location.y + (comp->location.h - h) * .5f;
-
-	CG_AdjustFrom640(&x, &y, &w, &h);
-
-	hShader = cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS];
-
-	trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, hShader);
-
-	if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
+	if (!(comp->style & CROSSHAIR_HIDE_MAIN))
 	{
-		x = comp->location.x;
-		y = comp->location.y;
-		w = comp->location.w;
-		h = comp->location.h;
+		// crosshair size represents aim spread
+		f = (float)(!(comp->style & CROSSHAIR_PULSE) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
+		w = comp->location.w * (1 + f * 2.0f);
+		h = comp->location.h * (1 + f * 2.0f);
+		x = comp->location.x + (comp->location.w - w) * .5f;
+		y = comp->location.y + (comp->location.h - h) * .5f;
 
 		CG_AdjustFrom640(&x, &y, &w, &h);
 
 		// set color based on health
-		if (comp->style & 2)
+		if (comp->style & CROSSHAIR_DYNAMIC_COLOR)
+		{
+			vec4_t hcolor;
+
+			CG_ColorForHealth(hcolor);
+			hcolor[3] = comp->colorMain[3];
+			trap_R_SetColor(hcolor);
+		}
+		else
+		{
+			trap_R_SetColor(comp->colorMain);
+		}
+
+		hShader = cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS];
+
+		trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, hShader);
+	}
+
+	if (!(comp->style & CROSSHAIR_HIDE_ALT) && cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
+	{
+		// crosshair size represents aim spread
+		f = (float)(!(comp->style & CROSSHAIR_PULSE_ALT) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
+		w = comp->location.w * (1 + f * 2.0f);
+		h = comp->location.h * (1 + f * 2.0f);
+		x = comp->location.x + (comp->location.w - w) * .5f;
+		y = comp->location.y + (comp->location.h - h) * .5f;
+
+		CG_AdjustFrom640(&x, &y, &w, &h);
+
+		// set color based on health
+		if (comp->style & CROSSHAIR_DYNAMIC_COLOR_ALT)
 		{
 			vec4_t hcolor;
 
@@ -2155,7 +2160,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 			return;
 		}
 
-		if (comp->style & CROSSHAIR_CLASS)
+		if (comp->style & CROSSHAIR_BAR_CLASS)
 		{
 			CG_DrawPic(x, comp->location.y, comp->location.h, comp->location.h, cgs.media.skillPics[SkillNumForClass(class)]);
 			x += comp->location.h;
@@ -2163,7 +2168,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		}
 
 #ifdef FEATURE_PRESTIGE
-		if (cgs.prestige && cgs.clientinfo[clientNum].prestige > 0 && (comp->style & CROSSHAIR_PRESTIGE))
+		if (cgs.prestige && cgs.clientinfo[clientNum].prestige > 0 && (comp->style & CROSSHAIR_BAR_PRESTIGE))
 		{
 			char  *s = va("%d", cgs.clientinfo[clientNum].prestige);
 			float h;
@@ -2179,7 +2184,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		}
 #endif
 
-		if (cgs.clientinfo[clientNum].rank > 0 && (comp->style & CROSSHAIR_RANK))
+		if (cgs.clientinfo[clientNum].rank > 0 && (comp->style & CROSSHAIR_BAR_RANK))
 		{
 			w -= comp->location.h;
 			CG_DrawPic(x + w, comp->location.y, comp->location.h, comp->location.h, rankicons[cgs.clientinfo[clientNum].rank][cgs.clientinfo[clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
