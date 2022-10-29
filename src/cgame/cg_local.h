@@ -2871,12 +2871,23 @@ enum
 	LOCALTIME_12HOUR = BIT(1),
 };
 
-// crosshair name flags
+// crosshairs flags
 enum
 {
-	CROSSHAIR_CLASS    = BIT(0),
-	CROSSHAIR_RANK     = BIT(1),
-	CROSSHAIR_PRESTIGE = BIT(2),
+	CROSSHAIR_PULSE             = BIT(0),
+	CROSSHAIR_PULSE_ALT         = BIT(1),
+	CROSSHAIR_DYNAMIC_COLOR     = BIT(2),
+	CROSSHAIR_DYNAMIC_COLOR_ALT = BIT(3),
+	CROSSHAIR_HIDE_MAIN         = BIT(4),
+	CROSSHAIR_HIDE_ALT          = BIT(5),
+};
+
+// crosshair bar flags
+enum
+{
+	CROSSHAIR_BAR_CLASS    = BIT(0),
+	CROSSHAIR_BAR_RANK     = BIT(1),
+	CROSSHAIR_BAR_PRESTIGE = BIT(2),
 };
 
 // projectile spawn effects at destination
