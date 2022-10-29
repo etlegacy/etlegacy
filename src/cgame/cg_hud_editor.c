@@ -309,7 +309,7 @@ static panel_button_t hudEditorColorSelectionBorder =
 static panel_button_t hudEditorColorSelectionBackground =
 {
 	NULL,
-	"Background",
+	"Backgrnd",
 	{ 0,                      HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CONTROLS_SPACER_XY,BUTTON_WIDTH * 1.5f, BUTTON_HEIGHT },
 	{ 0,                      0,                                                                         0,                   5, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
