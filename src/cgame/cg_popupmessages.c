@@ -613,7 +613,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	vec4_t       colorText;
 	float        scale;
 
-	Vector4Copy(comp->colorText, colorText);
+	Vector4Copy(comp->colorMain, colorText);
 
 	if (cg_numPopups.integer == 0)
 	{
@@ -793,7 +793,7 @@ void CG_DrawPMItemsBig(hudComponent_t *comp)
 		return;
 	}
 
-	Vector4Copy(comp->colorText, colorText);
+	Vector4Copy(comp->colorMain, colorText);
 	Vector4Copy(comp->colorBackground, colorBackground);
 	Vector4Copy(comp->colorBorder, colorBorder);
 	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + cg_popupStayTime.value;

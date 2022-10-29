@@ -230,10 +230,6 @@ vmCvar_t cg_autoReload;
 vmCvar_t cg_bloodDamageBlend;
 vmCvar_t cg_bloodFlash;
 vmCvar_t cg_bloodFlashTime;
-vmCvar_t cg_crosshairAlpha;
-vmCvar_t cg_crosshairAlphaAlt;
-vmCvar_t cg_crosshairColor;
-vmCvar_t cg_crosshairColorAlt;
 vmCvar_t cg_drawReinforcementTime;
 vmCvar_t cg_noAmmoAutoSwitch;
 vmCvar_t cg_printObjectiveInfo;
@@ -480,10 +476,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_bloodDamageBlend,        "cg_bloodDamageBlend",        "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlash,              "cg_bloodFlash",              "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlashTime,          "cg_bloodFlashTime",          "1500",        CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairAlpha,          "cg_crosshairAlpha",          "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairAlphaAlt,       "cg_crosshairAlphaAlt",       "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairColor,          "cg_crosshairColor",          "White",       CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairColorAlt,       "cg_crosshairColorAlt",       "White",       CVAR_ARCHIVE,                 0 },
 	{ &cg_drawReinforcementTime,   "cg_drawReinforcementTime",   "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_noAmmoAutoSwitch,        "cg_noAmmoAutoSwitch",        "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_printObjectiveInfo,      "cg_printObjectiveInfo",      "1",           CVAR_ARCHIVE,                 0 },
@@ -654,8 +646,6 @@ void CG_RegisterCvars(void)
 
 	// um, here, why?
 	CG_setClientFlags();
-	BG_setCrosshair(cg_crosshairColor.string, cg.xhairColor, cg_crosshairAlpha.value, "cg_crosshairColor");
-	BG_setCrosshair(cg_crosshairColorAlt.string, cg.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 
 	cvarsLoaded = qtrue;
 }
@@ -690,14 +680,6 @@ void CG_UpdateCvars(void)
 				    cv->vmCvar == &cg_activateLean)
 				{
 					fSetFlags = qtrue;
-				}
-				else if (cv->vmCvar == &cg_crosshairColor || cv->vmCvar == &cg_crosshairAlpha)
-				{
-					BG_setCrosshair(cg_crosshairColor.string, cg.xhairColor, cg_crosshairAlpha.value, "cg_crosshairColor");
-				}
-				else if (cv->vmCvar == &cg_crosshairColorAlt || cv->vmCvar == &cg_crosshairAlphaAlt)
-				{
-					BG_setCrosshair(cg_crosshairColorAlt.string, cg.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 				}
 				else if (cv->vmCvar == &cg_rconPassword && *cg_rconPassword.string)
 				{

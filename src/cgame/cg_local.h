@@ -1424,8 +1424,6 @@ typedef struct
 	cg_window_t *topshotsWindow;
 	cg_window_t *windowCurrent;                     ///< Current window to update.. a bit of a hack :p
 	cg_windowHandler_t winHandler;
-	vec4_t xhairColor;
-	vec4_t xhairColorAlt;
 
 	// allow overriding of countdown sounds
 	char fiveMinuteSound_g[MAX_QPATH];
@@ -2745,10 +2743,6 @@ extern vmCvar_t cg_autoReload;
 extern vmCvar_t cg_bloodDamageBlend;
 extern vmCvar_t cg_bloodFlash;
 extern vmCvar_t cg_bloodFlashTime;
-extern vmCvar_t cg_crosshairAlpha;
-extern vmCvar_t cg_crosshairAlphaAlt;
-extern vmCvar_t cg_crosshairColor;
-extern vmCvar_t cg_crosshairColorAlt;
 extern vmCvar_t cg_drawReinforcementTime;
 extern vmCvar_t cg_noAmmoAutoSwitch;
 extern vmCvar_t cg_printObjectiveInfo;
@@ -4096,7 +4090,8 @@ typedef struct hudComponent_s
 	int visible;
 	int style;
 	float scale;
-	vec4_t colorText;
+	vec4_t colorMain;
+	vec4_t colorSecondary;
 	int showBackGround;
 	vec4_t colorBackground;
 	int showBorder;

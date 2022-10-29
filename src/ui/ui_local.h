@@ -94,10 +94,6 @@ extern vmCvar_t ui_currentCampaign;
 extern vmCvar_t ui_campaignIndex;
 extern vmCvar_t ui_currentCampaignCompleted;
 extern vmCvar_t ui_blackout;
-extern vmCvar_t ui_cg_crosshairAlpha;
-extern vmCvar_t ui_cg_crosshairAlphaAlt;
-extern vmCvar_t ui_cg_crosshairColor;
-extern vmCvar_t ui_cg_crosshairColorAlt;
 
 extern vmCvar_t cl_bypassMouseInput;
 
@@ -653,9 +649,6 @@ typedef struct
 
 	const char *glInfoLines[GLINFO_LINES];
 	int numGlInfoLines;
-
-	vec4_t xhairColor;
-	vec4_t xhairColorAlt;
 
 	qhandle_t passwordFilter;
 	qhandle_t friendlyFireFilter;

@@ -2933,9 +2933,8 @@ static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 
 	size = (rect->w / 96.0f) * ((size > 96.0f) ? 96.0f : ((size < 24.0f) ? 24.0f : size));
 
-	trap_R_SetColor(uiInfo.xhairColor);
+	trap_R_SetColor(colorWhite);
 	UI_DrawHandlePic(rect->x + (rect->w - size) / 2, rect->y + (rect->h - size) / 2, size, size, uiInfo.uiDC.Assets.crosshairShader[uiInfo.currentCrosshair]);
-	trap_R_SetColor(uiInfo.xhairColorAlt);
 	UI_DrawHandlePic(rect->x + (rect->w - size) / 2, rect->y + (rect->h - size) / 2, size, size, uiInfo.uiDC.Assets.crosshairAltShader[uiInfo.currentCrosshair]);
 
 	trap_R_SetColor(NULL);
@@ -9175,10 +9174,6 @@ vmCvar_t ui_currentCampaignCompleted;
 
 // cgame mappings
 vmCvar_t ui_blackout;       // For speclock
-vmCvar_t ui_cg_crosshairColor;
-vmCvar_t ui_cg_crosshairColorAlt;
-vmCvar_t ui_cg_crosshairAlpha;
-vmCvar_t ui_cg_crosshairAlphaAlt;
 
 vmCvar_t cl_bypassMouseInput;
 
@@ -9258,9 +9253,6 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_voiceSpriteTime",                  "6000",                       CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_drawGun",                          "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_coronafardist",                    "1536",                       CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "g_password",                          "none",                       CVAR_USERINFO,                  0 },
 	{ NULL,                                "g_antilag",                           "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE, 0 },
@@ -9279,10 +9271,6 @@ static cvarTable_t cvarTable[] =
 
 	// cgame mappings
 	{ &ui_blackout,                        "ui_blackout",                         "0",                          CVAR_ROM,                       0 },
-	{ &ui_cg_crosshairAlpha,               "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
 
 	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },
@@ -9389,8 +9377,6 @@ void UI_RegisterCvars(void)
 
 	// Always force this to 0 on init
 	trap_Cvar_Set("ui_blackout", "0");
-	BG_setCrosshair(ui_cg_crosshairColor.string, uiInfo.xhairColor, ui_cg_crosshairAlpha.value, "cg_crosshairColor");
-	BG_setCrosshair(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, ui_cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 }
 
 /**
@@ -9409,16 +9395,6 @@ void UI_UpdateCvars(void)
 			if (cv->modificationCount != cv->vmCvar->modificationCount)
 			{
 				cv->modificationCount = cv->vmCvar->modificationCount;
-
-				if (cv->vmCvar == &ui_cg_crosshairColor || cv->vmCvar == &ui_cg_crosshairAlpha)
-				{
-					BG_setCrosshair(ui_cg_crosshairColor.string, uiInfo.xhairColor, ui_cg_crosshairAlpha.value, "cg_crosshairColor");
-				}
-
-				if (cv->vmCvar == &ui_cg_crosshairColorAlt || cv->vmCvar == &ui_cg_crosshairAlphaAlt)
-				{
-					BG_setCrosshair(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, ui_cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
-				}
 			}
 		}
 	}
