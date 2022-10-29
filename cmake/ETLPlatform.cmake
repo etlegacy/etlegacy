@@ -170,7 +170,7 @@ if(UNIX)
 		set(LIB_SUFFIX "_mac")
 		set(CMAKE_SHARED_MODULE_SUFFIX "")
 	else()
-		target_link_libraries(os_libraries INTERFACE  m rt pthread)
+		target_link_libraries(os_libraries INTERFACE  m ${CMAKE_DL_LIBS} rt pthread)
 		set(LIB_SUFFIX ".mp.")
 	endif()
 
