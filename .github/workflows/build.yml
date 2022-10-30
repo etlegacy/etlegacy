@@ -134,6 +134,10 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: GitHub Fetch Tags
+        run: |
+          git fetch --tags --force
+
       - uses: pguyot/arm-runner-action@v2
         with:
            image_additional_mb: 4096
@@ -148,7 +152,6 @@ jobs:
              apt-get -y install build-essential libudev-dev automake zlib1g libx11-dev \
              nasm autoconf git cmake zip gcc g++ libtool ninja-build
              cd /opt/etlegacy
-             git fetch --tags --force
              ./easybuild.sh build -RPI -mod -ninja
 
       - uses: actions/upload-artifact@v3
