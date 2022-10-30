@@ -177,7 +177,7 @@ qboolean CG_CameraCheckExecKey(int key, qboolean down, qboolean doAction)
 		return qfalse;
 	}
 
-	// escape does escape stuff..
+	// Escape does escape stuff.
 	if (key == K_ESCAPE)
 	{
 		if (doAction && !down)

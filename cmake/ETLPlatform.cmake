@@ -55,11 +55,6 @@ if(ARM)
 	endif()
 endif(ARM)
 
-if(APPLE)
-	# The ioapi requires this since OSX already uses 64 fileapi (there is no fseek64 etc)
-	add_definitions(-DUSE_FILE32API)
-endif(APPLE)
-
 if(UNIX)
 	# optimization/debug flags
 	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
@@ -118,7 +113,12 @@ if(UNIX)
 	elseif(APPLE)
 		# TODO: use find package with the MacOs frameworks instead of direct linker flags..
 		target_link_libraries(os_libraries INTERFACE dl m objc)
-		target_link_libraries(os_libraries INTERFACE "-framework Cocoa" "-framework IOKit" "-framework CoreFoundation")
+
+		find_library(cocoa_libraries Cocoa REQUIRED)
+		find_library(iokit_libraries IOKit REQUIRED)
+		find_library(core_foundation_libraries CoreFoundation REQUIRED)
+
+		target_link_libraries(os_libraries INTERFACE ${cocoa_libraries} ${iokit_libraries} ${core_foundation_libraries})
 
 		if (DEFINED CMAKE_OSX_ARCHITECTURES)
 			list(LENGTH CMAKE_OSX_ARCHITECTURES ETL_ARCH_COUNT)
@@ -126,11 +126,13 @@ if(UNIX)
 
 		# new curl builds need the System Configuration framework
 		if (BUNDLED_CURL)
-			target_link_libraries(os_libraries INTERFACE "-framework SystemConfiguration")
+			find_library(system_configuration_library SystemConfiguration REQUIRED)
+			target_link_libraries(os_libraries INTERFACE ${system_configuration_library})
 		endif()
 
 		if(BUNDLED_CURL AND FEATURE_SSL AND (NOT BUNDLED_OPENSSL AND NOT BUNDLED_WOLFSSL))
-			target_link_libraries(os_libraries INTERFACE "-framework Security")
+			find_library(security_library Security REQUIRED)
+			target_link_libraries(os_libraries INTERFACE ${security_library})
 		endif()
 
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem") # These flags will cause error with older Xcode
@@ -160,11 +162,24 @@ if(UNIX)
 		set(CMAKE_CXX_FLAGS "-isysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
 
 		if(BUILD_CLIENT)
-			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AudioToolbox -framework AudioUnit -framework Carbon -framework CoreAudio -framework CoreVideo -framework ForceFeedback -framework OpenGL -liconv")
+			find_package(Iconv REQUIRED)
+			find_library(audio_toolbox_library AudioToolbox REQUIRED)
+			find_library(carbon_library Carbon REQUIRED)
+			find_library(core_audio_library CoreAudio REQUIRED)
+			find_library(core_video_library CoreVideo REQUIRED)
+			find_library(force_feedback_library ForceFeedback REQUIRED)
+			find_library(opengl_library OpenGL REQUIRED)
 
+			target_link_libraries(client_libraries INTERFACE
+					${audio_toolbox_library} ${carbon_library} ${core_audio_library}
+					${core_video_library} ${force_feedback_library} ${opengl_library}
+					Iconv::Iconv
+			)
 			# TODO: check if this breaks compatibility with pre macos 13.0 versions?
 			if (BUNDLED_SDL)
-				set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework CoreHaptics -framework GameController")
+				find_library(core_haptics_library CoreHaptics REQUIRED)
+				find_library(game_controller_library GameController REQUIRED)
+				target_link_libraries(client_libraries INTERFACE ${core_haptics_library} ${game_controller_library})
 			endif()
 		endif()
 		set(LIB_SUFFIX "_mac")
@@ -182,10 +197,10 @@ if(UNIX)
 		endif(SUPPORT_VISIBILITY)
 	endif(NOT MSYS)
 elseif(WIN32)
-	add_definitions(-DWINVER=0x601)
+	target_compile_definitions(shared_libraries INTERFACE WINVER=0x601)
 
 	if(ETL_WIN64)
-		add_definitions(-DC_ONLY)
+		target_compile_definitions(shared_libraries INTERFACE C_ONLY)
 	endif()
 
 	target_link_libraries(os_libraries INTERFACE  wsock32 ws2_32 psapi winmm)

@@ -1,5 +1,8 @@
 # This file will have the dummy and real targets setup
 
+# Shared libraries (client, server and mod bins)
+add_library(shared_libraries INTERFACE)
+
 # All client only libraries
 add_library(client_libraries INTERFACE)
 
@@ -23,3 +26,8 @@ add_library(ui_libraries INTERFACE)
 
 # Server mod libraries
 add_library(qagame_libraries INTERFACE)
+
+# Link the shared libraries to all output bins
+target_link_libraries(engine_libraries INTERFACE shared_libraries)
+target_link_libraries(renderer_libraries INTERFACE shared_libraries)
+target_link_libraries(mod_libraries INTERFACE shared_libraries)

@@ -138,6 +138,9 @@ include(cmake/ETLPrograms.cmake)
 # Setup some basic helper variables
 include(cmake/ETLCommon.cmake)
 
+# Dummy targets for library binding
+include(cmake/ETLTargets.cmake)
+
 # Platform specific compiler settings
 include(cmake/ETLPlatform.cmake)
 
@@ -146,9 +149,6 @@ include(cmake/ETLSources.cmake)
 
 # Git version header generation
 include(cmake/ETLVersion.cmake)
-
-# Dummy targets for library binding
-include(cmake/ETLTargets.cmake)
 
 # Use bundled libraries
 if(BUNDLED_LIBS)
