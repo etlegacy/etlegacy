@@ -454,6 +454,10 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: GitHub Fetch Tags
+        run: |
+          git fetch --tags --force
+
       - uses: pguyot/arm-runner-action@v2
         with:
            image_additional_mb: 4096
@@ -468,7 +472,6 @@ jobs:
              apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
              nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build curl
              cd /opt/etlegacy
-             git fetch --tags --force
              ./easybuild.sh build -RPI -ninja
              cd build/legacy
              echo "ALLMODS_URL = $(curl -v -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip")"
