@@ -462,6 +462,11 @@ jobs:
         run: |
           git fetch --tags --force
 
+      - uses: actions/download-artifact@v3
+        with:
+          name: All-mods
+          path: build/legacy
+
       - uses: pguyot/arm-runner-action@v2
         with:
            image_additional_mb: 4096
@@ -477,11 +482,7 @@ jobs:
              nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build curl
              cd /opt/etlegacy
              ./easybuild.sh build -RPI -ninja
-             cd build/legacy
-             echo "ALLMODS_URL = $(curl -v -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L "https://api.github.com/repos/etlegacy/etlegacy/actions/artifacts/124384712/zip")"
-             curl -v -O $ALLMODS_URL
-             ls -lha
-             cd ..
+             cd build
              cpack
 
 #      - uses: actions/download-artifact@v3
@@ -489,9 +490,9 @@ jobs:
 #          name: All-mods
 #          path: build/legacy
 
-#      - name: Display structure of downloaded files
-#        run: ls -R
-#        working-directory: build/legacy
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/legacy
 
       - uses: actions/upload-artifact@v3
         with:
