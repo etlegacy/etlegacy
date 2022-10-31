@@ -1741,37 +1741,34 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	if (!(comp->style & CROSSHAIR_HIDE_MAIN))
+	// crosshair size represents aim spread
+	f = (float)(!(comp->style & CROSSHAIR_PULSE) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
+	w = comp->location.w * (1 + f * 2.0f);
+	h = comp->location.h * (1 + f * 2.0f);
+	x = comp->location.x + (comp->location.w - w) * .5f;
+	y = comp->location.y + (comp->location.h - h) * .5f;
+
+	CG_AdjustFrom640(&x, &y, &w, &h);
+
+	// set color based on health
+	if (comp->style & CROSSHAIR_DYNAMIC_COLOR)
 	{
-		// crosshair size represents aim spread
-		f = (float)(!(comp->style & CROSSHAIR_PULSE) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
-		w = comp->location.w * (1 + f * 2.0f);
-		h = comp->location.h * (1 + f * 2.0f);
-		x = comp->location.x + (comp->location.w - w) * .5f;
-		y = comp->location.y + (comp->location.h - h) * .5f;
+		vec4_t hcolor;
 
-		CG_AdjustFrom640(&x, &y, &w, &h);
-
-		// set color based on health
-		if (comp->style & CROSSHAIR_DYNAMIC_COLOR)
-		{
-			vec4_t hcolor;
-
-			CG_ColorForHealth(hcolor);
-			hcolor[3] = comp->colorMain[3];
-			trap_R_SetColor(hcolor);
-		}
-		else
-		{
-			trap_R_SetColor(comp->colorMain);
-		}
-
-		hShader = cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS];
-
-		trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, hShader);
+		CG_ColorForHealth(hcolor);
+		hcolor[3] = comp->colorMain[3];
+		trap_R_SetColor(hcolor);
+	}
+	else
+	{
+		trap_R_SetColor(comp->colorMain);
 	}
 
-	if (!(comp->style & CROSSHAIR_HIDE_ALT) && cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
+	hShader = cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS];
+
+	trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, hShader);
+
+	if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
 	{
 		// crosshair size represents aim spread
 		f = (float)(!(comp->style & CROSSHAIR_PULSE_ALT) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);

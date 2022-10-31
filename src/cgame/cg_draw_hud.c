@@ -48,7 +48,7 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { "Pulse",      "Pulse Alt", "Dynamic Color", "Dynamic Color Alt", "Hide Main", "Hide Alt" } },                // FIXME: outside cg_draw_hud
+	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { "Pulse",      "Pulse Alt", "Dynamic Color", "Dynamic Color Alt" } },                // FIXME: outside cg_draw_hud
 	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,            { "Square",     "Draw Item", "Draw Sec Obj", "Draw Prim Obj"} },
 	{ "compas",               offsetof(hudStucture_t,    compass),         qtrue, CG_DrawNewCompass, 0.19,{ "Square" } },              // v2.78 backward compatibility
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,            { "Left",       "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
