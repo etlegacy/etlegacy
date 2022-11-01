@@ -485,11 +485,6 @@ jobs:
              cd build
              cpack
 
-#      - uses: actions/download-artifact@v3
-#        with:
-#          name: All-mods
-#          path: build/legacy
-
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: build/legacy
