@@ -1158,7 +1158,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	case K_F10:
 		if (DC->getCVarValue("developer") != 0.f)
 		{
-			DC->executeText(EXEC_APPEND, "ui_restart");
+			DC->executeText(EXEC_APPEND, "ui_restart\n");
 		}
 		break;
 	case K_F11:
