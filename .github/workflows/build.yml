@@ -482,7 +482,7 @@ jobs:
              CI=true
              ./easybuild.sh build -RPI -ninja
              cd build
-			 y | mv *.pk3 /legacy
+             y | mv *.pk3 /legacy
              cpack
 
       - name: Display structure of downloaded files
