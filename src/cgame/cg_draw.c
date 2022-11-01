@@ -4113,7 +4113,8 @@ static void CG_Draw2D(void)
 		return;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster || cg.demoPlayback || cgs.sv_cheats)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster
+	    || cg.demoPlayback || cgs.sv_cheats || cg_drawSpawnpoints.integer)
 	{
 		CG_DrawOnScreenLabels();
 		CG_DrawOnScreenBars();

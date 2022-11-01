@@ -363,6 +363,45 @@ void SP_trigger_objective_info(void)
 	cg.numOIDtriggers2++;
 }
 
+void CG_Spawnpoint(void)
+{
+	char            *classname;
+	cg_spawnpoint_t *spawnpoint;
+
+	spawnpoint = &cgs.spawnpointEnt[cg.numSpawnpointEnts++];
+
+	spawnpoint->isMajor = qfalse;
+	CG_SpawnString("classname", "", &classname);
+
+	if (!Q_stricmp(classname, "team_CTF_redspawn"))
+	{
+		VectorCopy(colorRed, spawnpoint->color);
+		spawnpoint->team = TEAM_AXIS;
+	}
+	else
+	{
+		VectorCopy(colorLtBlue, spawnpoint->color);
+		spawnpoint->team = TEAM_ALLIES;
+	}
+
+	CG_SpawnVector("origin", "0 0 0", spawnpoint->origin);
+	CG_SpawnInt("id", "", &spawnpoint->id);
+
+}
+
+void SP_team_WOLF_objective(void)
+{
+	cg_spawnpoint_t *spawnpoint;
+	char            *desc;
+
+	spawnpoint = &cgs.spawnpointEnt[cg.numSpawnpointEnts++];
+
+	spawnpoint->isMajor = qtrue;
+	CG_SpawnString("description", "WARNING: No objective description set", &desc);
+	Q_strncpyz(spawnpoint->name, desc, sizeof(spawnpoint->name));
+	CG_SpawnVector("origin", "0 0 0", spawnpoint->origin);
+}
+
 typedef struct
 {
 	const char *name;
@@ -379,6 +418,9 @@ spawn_t spawns[] =
 	{ "trigger_objective_info",    SP_trigger_objective_info },
 	{ "misc_gamemodel",            SP_misc_gamemodel         },
 	{ "corona",                    CG_corona                 },
+	{ "team_CTF_redspawn",         CG_Spawnpoint             },
+	{ "team_CTF_bluespawn",        CG_Spawnpoint             },
+	{ "team_WOLF_objective",       SP_team_WOLF_objective    },
 };
 
 #define NUMSPAWNS (int)(sizeof(spawns) / sizeof(spawn_t))
@@ -700,6 +742,7 @@ void CG_ParseEntitiesFromString(void)
 	cg.numSpawnVars      = 0;
 	cg.numMiscGameModels = 0;
 	cg.numCoronas        = 0;
+	cg.numSpawnpointEnts = 0;
 
 	// the worldspawn is not an actual entity, but it still
 	// has a "spawn" function to perform any global setup

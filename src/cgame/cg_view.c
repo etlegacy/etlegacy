@@ -2030,6 +2030,117 @@ extern int snapshotDelayTime;
 
 extern void CG_SetupDlightstyles(void);
 
+static void CG_DrawSpawnpoints(void)
+{
+	vec3_t start, end;
+	trace_t trace;
+	polyVert_t verts[4];
+	cg_spawnpoint_t *spawnpoint;
+	int i;
+	int majorSpawnCount = 0;
+
+	for (i = 0; i < cg.numSpawnpointEnts; i++)
+	{
+		spawnpoint = &cgs.spawnpointEnt[i];
+
+		// increment here, otherwise counter is inaccurate since
+		// we skip drawing if spawnpoint is not in PVS
+		if (spawnpoint->isMajor)
+		{
+			majorSpawnCount++;
+		}
+
+		if (!trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin))
+		{
+			continue;
+		}
+
+		// skip spawnpoints of other team, excluding major spawnpoints
+		// because we don't know if we can potentially spawn there
+		if (cgs.clientinfo[cg.clientNum].team != spawnpoint->team && !spawnpoint->isMajor)
+		{
+			continue;
+		}
+
+		// major spawnpoints only need a floating text
+		// FIXME: this might be in solid (e.g. Allied 1st in Oasis), should be nudged
+		if (spawnpoint->isMajor)
+		{
+			CG_AddOnScreenText(va("^7%s (^2%d^7)", spawnpoint->name, majorSpawnCount),
+			                   spawnpoint->origin, qfalse);
+		}
+		// minor spawnpoints
+		else
+		{
+			VectorCopy(spawnpoint->origin, start);
+			VectorCopy(spawnpoint->origin, end);
+			end[2] -= 128; // should be enough to always hit the ground
+
+			// trace down to find the surface
+			trap_CM_BoxTrace(&trace, start, end, NULL, NULL, 0, MASK_PLAYERSOLID);
+
+			// somehow we didn't find a ground plane, just use spawnpoint origin
+			if (trace.fraction == 1.0f)
+			{
+				VectorCopy(spawnpoint->origin, trace.endpos);
+			}
+			else
+			{
+				// offset from ground a bit
+				trace.endpos[2] += 1;
+			}
+
+			VectorCopy(trace.endpos, verts[0].xyz);
+			verts[0].xyz[0]     -= 18;
+			verts[0].xyz[1]     -= 18;
+			verts[0].st[0]       = 0;
+			verts[0].st[1]       = 0;
+			verts[0].modulate[0] = spawnpoint->color[0] * 255.0f;
+			verts[0].modulate[1] = spawnpoint->color[1] * 255.0f;
+			verts[0].modulate[2] = spawnpoint->color[2] * 255.0f;
+			verts[0].modulate[3] = 128;
+
+			VectorCopy(trace.endpos, verts[1].xyz);
+			verts[1].xyz[0]     -= 18;
+			verts[1].xyz[1]     += 18;
+			verts[1].st[0]       = 0;
+			verts[1].st[1]       = 1;
+			verts[1].modulate[0] = spawnpoint->color[0] * 255.0f;
+			verts[1].modulate[1] = spawnpoint->color[1] * 255.0f;
+			verts[1].modulate[2] = spawnpoint->color[2] * 255.0f;
+			verts[1].modulate[3] = 128;
+
+			VectorCopy(trace.endpos, verts[2].xyz);
+			verts[2].xyz[0]     += 18;
+			verts[2].xyz[1]     += 18;
+			verts[2].st[0]       = 1;
+			verts[2].st[1]       = 1;
+			verts[2].modulate[0] = spawnpoint->color[0] * 255.0f;
+			verts[2].modulate[1] = spawnpoint->color[1] * 255.0f;
+			verts[2].modulate[2] = spawnpoint->color[2] * 255.0f;
+			verts[2].modulate[3] = 128;
+
+			VectorCopy(trace.endpos, verts[3].xyz);
+			verts[3].xyz[0]     += 18;
+			verts[3].xyz[1]     -= 18;
+			verts[3].st[0]       = 1;
+			verts[3].st[1]       = 0;
+			verts[3].modulate[0] = spawnpoint->color[0] * 255.0f;
+			verts[3].modulate[1] = spawnpoint->color[1] * 255.0f;
+			verts[3].modulate[2] = spawnpoint->color[2] * 255.0f;
+			verts[3].modulate[3] = 128;
+
+			trap_R_AddPolyToScene(cgs.media.spawnpointMarker, 4, verts);
+
+			// draw id if the spawnpoint is assigned one
+			if (spawnpoint->id)
+			{
+				CG_AddOnScreenText(va("%i", spawnpoint->id), trace.endpos, qfalse);
+			}
+		}
+	}
+}
+
 /**
  * @brief Generates and draws a game scene and status information at the given time.
  * @param[in] serverTime
@@ -2263,6 +2374,12 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 			// particles
 			CG_AddParticles();
+
+			if (cg_drawSpawnpoints.integer
+			    && (cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_WARMUP_COUNTDOWN || cgs.sv_cheats))
+			{
+				CG_DrawSpawnpoints();
+			}
 
 			DEBUGTIME
 

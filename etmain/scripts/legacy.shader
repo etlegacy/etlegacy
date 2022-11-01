@@ -30,3 +30,14 @@ textures/sfx/shoutcast_landmine
 		tcMod scroll 0.025 -0.07625
 	}
 }
+
+textures/sfx/spawnpoint_marker
+{
+	cull none
+	noPicmip
+	{
+		clampMap ui/assets/gradientround.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
