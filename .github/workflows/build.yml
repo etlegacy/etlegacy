@@ -138,13 +138,14 @@ jobs:
         run: |
           git fetch --tags --force
 
-      - uses: pguyot/arm-runner-action@v2
+      - uses: pguyot/arm-runner-action@v2.5.1
         with:
            image_additional_mb: 4096
            base_image: raspi_4_bullseye:20220121
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
+           import_github_env: true
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
@@ -465,7 +466,7 @@ jobs:
           name: All-mods
           path: build
 
-      - uses: pguyot/arm-runner-action@v2
+      - uses: pguyot/arm-runner-action@v2.5.1
         with:
            image_additional_mb: 4096
            base_image: raspi_4_bullseye:20220121
@@ -482,7 +483,8 @@ jobs:
              cd /opt/etlegacy
              ./easybuild.sh build -RPI -ninja
              cd build
-             y | mv *.pk3 $GITHUB_WORKSPACE/build/legacy
+             ls -R
+             mv $GITHUB_WORKSPACE/build/*.pk3 $GITHUB_WORKSPACE/build/legacy
              cpack
 
       - name: Display structure of downloaded files
