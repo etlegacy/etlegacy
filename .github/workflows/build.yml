@@ -463,7 +463,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: All-mods
-          path: build/legacy
+          path: build
 
       - uses: pguyot/arm-runner-action@v2
         with:
