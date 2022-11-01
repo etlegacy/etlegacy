@@ -449,8 +449,6 @@ jobs:
 
   raspberry_pi:
     runs-on: ubuntu-latest
-    env:
-       ALLMODS_URL:
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v3
