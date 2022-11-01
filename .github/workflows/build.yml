@@ -472,6 +472,7 @@ jobs:
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
+           import_github_env: true
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
@@ -479,10 +480,9 @@ jobs:
              apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
              nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build curl
              cd /opt/etlegacy
-             CI=true
              ./easybuild.sh build -RPI -ninja
              cd build
-             y | mv *.pk3 /legacy
+             y | mv *.pk3 $GITHUB_WORKSPACE/build/legacy
              cpack
 
       - name: Display structure of downloaded files
