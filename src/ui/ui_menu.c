@@ -1155,6 +1155,12 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	// default handling
 	switch (key)
 	{
+	case K_F10:
+		if (DC->getCVarValue("developer") != 0.f)
+		{
+			DC->executeText(EXEC_APPEND, "ui_restart");
+		}
+		break;
 	case K_F11:
 		if (DC->getCVarValue("developer") != 0.f)
 		{
