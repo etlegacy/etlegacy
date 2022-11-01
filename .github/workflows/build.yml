@@ -450,6 +450,8 @@ jobs:
 
   raspberry_pi:
     runs-on: ubuntu-latest
+    env:
+      CI: true
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v3
@@ -484,7 +486,7 @@ jobs:
              ./easybuild.sh build -RPI -ninja
              cd build
              ls -R
-             mv $GITHUB_WORKSPACE/build/*.pk3 $GITHUB_WORKSPACE/build/legacy
+             mv /opt/etlegacy/build/*.pk3 /opt/etlegacy/build/legacy
              cpack
 
       - name: Display structure of downloaded files
