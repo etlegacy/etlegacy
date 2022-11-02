@@ -483,16 +483,11 @@ jobs:
              cd build
              cp *.pk3 /opt/etlegacy/build/legacy
              ls -R
+             cpack
 
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: build/legacy
-
-      - name: Generate packages
-        shell: bash
-        working-directory: build/
-        run: |
-          cpack
 
       - uses: actions/upload-artifact@v3
         with:
