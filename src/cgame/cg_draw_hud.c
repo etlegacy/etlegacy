@@ -1949,7 +1949,7 @@ void CG_DrawPowerUps(hudComponent_t *comp)
 	}
 
 	// draw treasure icon if we have the flag
-	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG])
+	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG] || cg.editingHud)
 	{
 		trap_R_SetColor(NULL);
 		CG_DrawPic(comp->location.x, comp->location.y, comp->location.w, comp->location.h, cgs.media.objectiveShader);
