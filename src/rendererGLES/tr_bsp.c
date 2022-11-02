@@ -108,7 +108,7 @@ static void HSVtoRGB(float h, float s, float v, float rgb[3])
  */
 static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 {
-	int r,g,b;
+	int r, g, b;
 	// shift the color data based on overbright range
 	int shift = r_mapOverBrightBits->integer - tr.overbrightBits;
 	// shift the data based on overbright range
@@ -2596,6 +2596,12 @@ void RE_LoadWorldMap(const char *name)
 	byte      *buffer;
 	byte      *startMarker;
 	size_t    nameLength;
+
+	// if we are in development mode we allow the cgame_restart command which also calls the load world map trap
+	if (tr.worldMapLoaded && ri.Cvar_VariableIntegerValue("developer") == 1)
+	{
+		return;
+	}
 
 	skyboxportal = 0;
 

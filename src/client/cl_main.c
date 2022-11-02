@@ -1207,6 +1207,32 @@ void CL_UI_Restart_f(void) // shutdown the UI
 }
 
 /**
+ * @brief Restart the ui subsystem
+ */
+void CL_CGame_Restart_f(void) // shutdown the UI
+{
+	if (com_developer->integer != 1)
+	{
+		Com_Printf(S_COLOR_YELLOW "Cgame restart only allowed in development mode.\n");
+		return;
+	}
+
+	if (!cls.cgameStarted)
+	{
+		Com_Printf(S_COLOR_YELLOW "Cgame is not running, nothing to do.\n");
+		return;
+	}
+
+	CL_ShutdownCGame();
+
+	Com_UpdateVarsClean(CLEAR_FLAGS);
+
+	cls.cgameStarted = qtrue;
+	// init the CGame
+	CL_InitCGame();
+}
+
+/**
  * @brief Restart the sound subsystem
  */
 void CL_Snd_Shutdown(void)
@@ -3052,6 +3078,7 @@ void CL_Init(void)
 	Cmd_AddCommand("snd_restart", CL_Snd_Restart_f, "Restarts the audio subsystem.");
 	Cmd_AddCommand("vid_restart", CL_Vid_Restart_f, "Restarts the video subsystem.");
 	Cmd_AddCommand("ui_restart", CL_UI_Restart_f, "Restarts the user interface.");
+	Cmd_AddCommand("cgame_restart", CL_CGame_Restart_f, "Restarts the client game.");
 	Cmd_AddCommand("disconnect", CL_Disconnect_f, "Disconnects from a server.");
 	Cmd_AddCommand("connect", CL_Connect_f, "Connects to a given server.");
 	Cmd_AddCommand("reconnect", CL_Reconnect_f, "Reconnects to last server.");
@@ -3175,6 +3202,8 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("userinfo");
 	Cmd_RemoveCommand("snd_restart");
 	Cmd_RemoveCommand("vid_restart");
+	Cmd_RemoveCommand("ui_restart");
+	Cmd_RemoveCommand("cgame_restart");
 	Cmd_RemoveCommand("disconnect");
 	Cmd_RemoveCommand("cinematic");
 	Cmd_RemoveCommand("connect");
