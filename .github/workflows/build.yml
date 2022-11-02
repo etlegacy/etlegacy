@@ -450,8 +450,6 @@ jobs:
 
   raspberry_pi:
     runs-on: ubuntu-latest
-    env:
-      CI: true
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v3
@@ -459,9 +457,9 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: GitHub Fetch Tags
-        run: |
-          git fetch --tags --force
+#      - name: GitHub Fetch Tags
+#        run: |
+#          git fetch --tags --force
 
       - uses: actions/download-artifact@v3
         with:
@@ -483,10 +481,11 @@ jobs:
              apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
              nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build curl
              cd /opt/etlegacy
+             git fetch --tags --force
              ./easybuild.sh build -RPI -ninja
              cd build
              ls -R
-             mv /opt/etlegacy/build/*.pk3 /opt/etlegacy/build/legacy
+             mv *.pk3 /legacy
              cpack
 
       - name: Display structure of downloaded files
