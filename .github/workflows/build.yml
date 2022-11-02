@@ -457,11 +457,6 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: All-mods
-          path: build
-
       - uses: pguyot/arm-runner-action@v2.5.1
         with:
            image_additional_mb: 4096
@@ -482,12 +477,21 @@ jobs:
              ./easybuild.sh build -RPI -ninja
              cd build
              ls -R
-             mv *.pk3 /legacy
-             cpack
+
+      - uses: actions/download-artifact@v3.0.1
+        with:
+          name: All-mods
+          path: build/legacy
 
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: build/legacy
+
+      - name: Generate packages
+        shell: bash
+        working-directory: build/
+        run: |
+          cpack
 
       - uses: actions/upload-artifact@v3
         with:
