@@ -1853,9 +1853,7 @@ void CG_DrawSkills(hudComponent_t *comp)
 			// text is drawn from bottom left, so skip to the very bottom of the current "box"
 			tempY += iconH + textH;
 
-			char  *text = va("%i", skillLvl);
-			float textW = CG_Text_Width_Ext_Float(text, scale, 0, &cgs.media.limboFont1);
-			CG_Text_Paint_Ext(comp->location.x + (comp->location.w * 0.5f) - (textW * 0.5f), tempY, scale, scale, comp->colorMain, text, 0, 0, comp->styleText, &cgs.media.limboFont1);
+			CG_Text_Paint_Centred_Ext(comp->location.x + (comp->location.w * 0.5f), tempY, scale, scale, comp->colorMain, va("%i", skillLvl), 0, 0, comp->styleText, &cgs.media.limboFont1);
 		}
 	}
 }
