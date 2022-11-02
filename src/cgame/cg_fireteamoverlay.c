@@ -563,7 +563,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(x, y, w, h * (i + 1), 1, comp->colorBorder);
 	}
 
-	CG_FillRect(x + 1, y + 1, w - 2, h - 1, comp->colorBackground);
+	CG_FillRect(x + 1, y + 1, w - 2, h - 1, comp->colorSecondary);
 
 	if (f->priv)
 	{
