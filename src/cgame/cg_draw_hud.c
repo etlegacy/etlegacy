@@ -1828,8 +1828,13 @@ void CG_DrawSkills(hudComponent_t *comp)
 		{
 			int   j        = 1;
 			int   skillLvl = 0;
-			float temp;
+			float tempY;
 			float scale;
+
+			// the display is divided into 3 "boxes", each containing an icon + text
+			// icon takes up 60% of the box height (results in roughly square icon at default size)
+			float iconH = (comp->location.h / 3) * 0.6f;
+			float textH = (comp->location.h / 3) * 0.4f;
 
 			for (; j < NUM_SKILL_LEVELS; ++j)
 			{
@@ -1839,13 +1844,18 @@ void CG_DrawSkills(hudComponent_t *comp)
 				}
 			}
 
-			temp = comp->location.y + (i * comp->location.w * 1.7f);
-
+			tempY = comp->location.y + (i * (iconH + textH));
 			scale = CG_ComputeScale(comp /*comp->location.h / 6.f, comp->scale, &cgs.media.limboFont2*/);
 
 			//CG_DrawPic
-			CG_DrawPicShadowed(comp->location.x, temp, comp->location.w, comp->location.w, cgs.media.skillPics[skill]);
-			CG_Text_Paint_Ext(comp->location.x + 3, temp + 24, scale, scale, comp->colorMain, va("%i", skillLvl), 0, 0, comp->styleText, &cgs.media.limboFont1);
+			CG_DrawPicShadowed(comp->location.x, tempY, comp->location.w, iconH, cgs.media.skillPics[skill]);
+
+			// text is drawn from bottom left, so skip to the very bottom of the current "box"
+			tempY += iconH + textH;
+
+			char  *text = va("%i", skillLvl);
+			float textW = CG_Text_Width_Ext_Float(text, scale, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(comp->location.x + (comp->location.w * 0.5f) - (textW * 0.5f), tempY, scale, scale, comp->colorMain, text, 0, 0, comp->styleText, &cgs.media.limboFont1);
 		}
 	}
 }
