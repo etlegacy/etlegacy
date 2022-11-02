@@ -40,7 +40,11 @@ menuDef {
 	MULTI(8, HUD_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7  }, _("Display objective icons on HUD"))
     CVARFLOATLABEL( 8, HUD_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
     SLIDER(8, HUD_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts") )
+#ifdef FUI
+    BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 100, 184, 14, _("HUD EDITOR"), .24, 11, open options_customise_hudeditor_fui)
+#else
     BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 100, 184, 14, _("HUD EDITOR"), .24, 11, uiScript edithud ; close options_customise_hud)
+#endif
 
 // Popup //
 #define POPUP_Y 152
