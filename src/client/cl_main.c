@@ -1196,20 +1196,21 @@ void CL_Vid_Restart_f(void)
 /**
  * @brief Restart the ui subsystem
  */
-void CL_UI_Restart_f(void) // shutdown the UI
+static void CL_UI_Restart_f(void) // shutdown the UI
 {
 	CL_ShutdownUI();
 
 	Com_UpdateVarsClean(CLEAR_FLAGS);
 
+	cls.uiStarted = qtrue;
 	// init the UI
 	CL_InitUI();
 }
 
 /**
- * @brief Restart the ui subsystem
+ * @brief Restart the cgame subsystem
  */
-void CL_CGame_Restart_f(void) // shutdown the UI
+static void CL_CGame_Restart_f(void)
 {
 	if (com_developer->integer != 1)
 	{

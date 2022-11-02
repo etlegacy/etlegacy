@@ -715,6 +715,7 @@ void SkipBracedSection(char **program);
 void SkipBracedSection_Depth(char **program, int depth);    ///< start at given depth if already
 void SkipRestOfLine(char **data);
 
+qboolean ParseKeyValue(char **buf_p, char *key, char *value, char separator);
 void Parse1DMatrix(char **buf_p, int x, float *m);
 void Parse2DMatrix(char **buf_p, int y, int x, float *m);
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m);

@@ -352,12 +352,15 @@ const char *punctuation[] =
 	NULL
 };
 
-static char com_token[MAX_TOKEN_CHARS];
-static char com_parsename[MAX_TOKEN_CHARS];
-static int  com_lines;
+static struct
+{
+	char com_token[MAX_TOKEN_CHARS];
+	char com_parsename[MAX_TOKEN_CHARS];
+	int com_lines;
 
-static int  backup_lines;
-static char *backup_text;
+	int backup_lines;
+	char *backup_text;
+} com_parser;
 
 /**
  * @brief COM_BeginParseSession
@@ -365,8 +368,8 @@ static char *backup_text;
  */
 void COM_BeginParseSession(const char *name)
 {
-	com_lines = 0;
-	Com_sprintf(com_parsename, sizeof(com_parsename), "%s", name);
+	com_parser.com_lines = 0;
+	Com_sprintf(com_parser.com_parsename, sizeof(com_parser.com_parsename), "%s", name);
 }
 
 /**
@@ -375,8 +378,8 @@ void COM_BeginParseSession(const char *name)
  */
 void COM_BackupParseSession(char **data_p)
 {
-	backup_lines = com_lines;
-	backup_text  = *data_p;
+	com_parser.backup_lines = com_parser.com_lines;
+	com_parser.backup_text  = *data_p;
 }
 
 /**
@@ -385,8 +388,8 @@ void COM_BackupParseSession(char **data_p)
  */
 void COM_RestoreParseSession(char **data_p)
 {
-	com_lines = backup_lines;
-	*data_p   = backup_text;
+	com_parser.com_lines = com_parser.backup_lines;
+	*data_p              = com_parser.backup_text;
 }
 
 /**
@@ -395,7 +398,7 @@ void COM_RestoreParseSession(char **data_p)
  */
 void COM_SetCurrentParseLine(int line)
 {
-	com_lines = line;
+	com_parser.com_lines = line;
 }
 
 /**
@@ -404,7 +407,7 @@ void COM_SetCurrentParseLine(int line)
  */
 int COM_GetCurrentParseLine(void)
 {
-	return com_lines;
+	return com_parser.com_lines;
 }
 
 /**
@@ -430,7 +433,7 @@ void COM_ParseError(const char *format, ...)
 	Q_vsnprintf(string, sizeof(string), format, argptr);
 	va_end(argptr);
 
-	Com_Printf("ERROR COM_ParseError: %s, line %d: %s\n", com_parsename, com_lines, string);
+	Com_Printf("ERROR COM_ParseError: %s, line %d: %s\n", com_parser.com_parsename, com_parser.com_lines, string);
 }
 
 /*
@@ -474,7 +477,7 @@ static char *SkipWhitespace(char *data, qboolean *hasNewLines)
 		}
 		if (c == '\n')
 		{
-			com_lines++;
+			com_parser.com_lines++;
 			*hasNewLines = qtrue;
 		}
 		data++;
@@ -596,13 +599,13 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 	qboolean hasNewLines = qfalse;
 	char     *data       = *data_p;
 
-	com_token[0] = 0;
+	com_parser.com_token[0] = 0;
 
 	// make sure incoming data is valid
 	if (!data)
 	{
 		*data_p = NULL;
-		return com_token;
+		return com_parser.com_token;
 	}
 
 	// backup the session data so we can unget easily
@@ -615,12 +618,12 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 		if (!data)
 		{
 			*data_p = NULL;
-			return com_token;
+			return com_parser.com_token;
 		}
 		if (hasNewLines && !allowLineBreaks)
 		{
 			*data_p = data;
-			return com_token;
+			return com_parser.com_token;
 		}
 
 		c = *data;
@@ -665,7 +668,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 				// string-in-string
 				if (len < MAX_TOKEN_CHARS - 1)
 				{
-					com_token[len] = '\"';
+					com_parser.com_token[len] = '\"';
 					len++;
 				}
 				data++;
@@ -676,15 +679,15 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 
 					if (!c)
 					{
-						com_token[len] = 0;
-						*data_p        = ( char * ) data;
+						com_parser.com_token[len] = 0;
+						*data_p                   = ( char * ) data;
 						break;
 					}
 					if ((c == '\\' && *(data) == '\"'))
 					{
 						if (len < MAX_TOKEN_CHARS - 1)
 						{
-							com_token[len] = '\"';
+							com_parser.com_token[len] = '\"';
 							len++;
 						}
 						data++;
@@ -693,20 +696,20 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 					}
 					if (len < MAX_TOKEN_CHARS - 1)
 					{
-						com_token[len] = c;
+						com_parser.com_token[len] = c;
 						len++;
 					}
 				}
 			}
 			if (c == '\"' || !c)
 			{
-				com_token[len] = 0;
-				*data_p        = ( char * ) data;
-				return com_token;
+				com_parser.com_token[len] = 0;
+				*data_p                   = ( char * ) data;
+				return com_parser.com_token;
 			}
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 		}
@@ -717,22 +720,22 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 	{
 		if (len < MAX_TOKEN_CHARS - 1)
 		{
-			com_token[len] = c;
+			com_parser.com_token[len] = c;
 			len++;
 		}
 		data++;
 		c = *data;
 		if (c == '\n')
 		{
-			com_lines++;
+			com_parser.com_lines++;
 		}
 	}
 	while (c > 32);
 
-	com_token[len] = 0;
+	com_parser.com_token[len] = 0;
 
 	*data_p = ( char * ) data;
-	return com_token;
+	return com_parser.com_token;
 }
 
 /**
@@ -766,13 +769,13 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 
 	data         = *data_p;
 	len          = 0;
-	com_token[0] = 0;
+	com_parser.com_token[0] = 0;
 
 	// make sure incoming data is valid
 	if (!data)
 	{
 		*data_p = NULL;
-		return com_token;
+		return com_parser.com_token;
 	}
 
 	// backup the session data so we can unget easily
@@ -785,12 +788,12 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		if (!data)
 		{
 			*data_p = NULL;
-			return com_token;
+			return com_parser.com_token;
 		}
 		if (hasNewLines && !allowLineBreaks)
 		{
 			*data_p = data;
-			return com_token;
+			return com_parser.com_token;
 		}
 
 		c = *data;
@@ -839,18 +842,18 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 			}
 			else if (c == '\"' || !c)
 			{
-				com_token[len] = 0;
+				com_parser.com_token[len] = 0;
 				*data_p        = (char *)data;
-				return com_token;
+				return com_parser.com_token;
 			}
 			else if (*data == '\n')
 			{
-				com_lines++;
+				com_parser.com_lines++;
 			}
 
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 		}
@@ -867,7 +870,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		{
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 			data++;
@@ -881,7 +884,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		{
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 			data++;
@@ -891,7 +894,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 			{
 				if (len < MAX_TOKEN_CHARS - 1)
 				{
-					com_token[len] = c;
+					com_parser.com_token[len] = c;
 					len++;
 				}
 				data++;
@@ -902,7 +905,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 			{
 				if (len < MAX_TOKEN_CHARS - 1)
 				{
-					com_token[len] = c;
+					com_parser.com_token[len] = c;
 					len++;
 				}
 				data++;
@@ -916,10 +919,10 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		{
 			len = 0;
 		}
-		com_token[len] = 0;
+		com_parser.com_token[len] = 0;
 
 		*data_p = (char *)data;
-		return com_token;
+		return com_parser.com_token;
 	}
 
 	// check for a regular word
@@ -936,7 +939,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		{
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 			data++;
@@ -961,10 +964,10 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		{
 			len = 0;
 		}
-		com_token[len] = 0;
+		com_parser.com_token[len] = 0;
 
 		*data_p = (char *)data;
-		return com_token;
+		return com_parser.com_token;
 	}
 
 	// check for multi-character punctuation token
@@ -983,21 +986,21 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		if (j == l)
 		{
 			// a valid multi-character punctuation
-			Com_Memcpy(com_token, *punc, l);
-			com_token[l] = 0;
+			Com_Memcpy(com_parser.com_token, *punc, l);
+			com_parser.com_token[l] = 0;
 			data        += l;
 			*data_p      = (char *)data;
-			return com_token;
+			return com_parser.com_token;
 		}
 	}
 
 	// single character punctuation
-	com_token[0] = *data;
-	com_token[1] = 0;
+	com_parser.com_token[0] = *data;
+	com_parser.com_token[1] = 0;
 	data++;
 	*data_p = (char *)data;
 
-	return com_token;
+	return com_parser.com_token;
 }
 // *INDENT-ON*
 
@@ -1090,12 +1093,60 @@ void SkipRestOfLine(char **data)
 		p++;
 		if (c == '\n')
 		{
-			com_lines++;
+			com_parser.com_lines++;
 			break;
 		}
 	}
 
 	*data = p;
+}
+
+/**
+ * @brief Parse value and key from the string
+ * @param buf_p
+ * @param key
+ * @param value
+ * @param separator
+ * @return true if key&value is valid
+ */
+qboolean ParseKeyValue(char **buf_p, char *key, char *value, char separator)
+{
+	char   *token;
+	size_t len;
+	byte   found = qfalse;
+
+	token = COM_Parse(buf_p);
+	len   = strlen(token);
+
+	if (!len)
+	{
+		return qfalse;
+	}
+
+	if (separator && token[len - 1] == separator)
+	{
+		token[len - 1] = '\0';
+		found          = qtrue;
+	}
+
+	Q_strcpy(key, token);
+
+	if (separator && !found)
+	{
+		token = COM_ParseExt(buf_p, qfalse);
+
+		if (!token || token[0] != separator || token[1] != 0)
+		{
+			COM_ParseError("Expected to find %c but found %s", separator, token);
+			key[0] = 0;
+			return qfalse;
+		}
+	}
+
+	token = COM_ParseExt(buf_p, qfalse);
+	Q_strcpy(value, token);
+
+	return qtrue;
 }
 
 
@@ -1855,7 +1906,7 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 {
 	size_t inLen     = strlen(inStr);
 	size_t outOffset = 0;
-	size_t inOffset = 0;
+	size_t inOffset  = 0;
 
 	if (outBufferLen < 3 || inStr == outStr)
 	{
@@ -2182,7 +2233,7 @@ float *tv(float x, float y, float z)
 	static vec3_t vecs[8];
 	float         *v;
 
-	// use an array so that multiple tempvectors won't collide for a while
+	// use an array so that multiple temp vectors won't collide for a while
 	v     = vecs[index];
 	index = (index + 1) & 7;
 
@@ -2272,7 +2323,7 @@ char *Info_ValueForKey(const char *s, const char *key)
 }
 
 /**
- * @brief Used to itterate through all the key/value pairs in an info string
+ * @brief Used to iterate through all the key/value pairs in an info string
  * @param[in] head
  * @param[out] key
  * @param[out] value
@@ -2854,34 +2905,34 @@ float Com_RoundFloatWithNDecimal(float value, unsigned int decimalCount)
  */
 int ExtractInt(const char *src)
 {
-    unsigned int i;
-    unsigned int srclen = strlen(src) + 1;
-    int          destIx = 0;
-    char         *tmp   = Com_Allocate(srclen);
-    int          result = 0;
-    
-    // Go through all the characters in the source string
-    for (i = 0; i < srclen; i++)
-    {
-        // Pick out negative sign before first integer, or integers only
-        if (((src[i] == '-') && (destIx == 0)) || Q_isnumeric(src[i]))
-        {
-            tmp[destIx++] = src[i];
-        }
-    }
-    
-    // put string terminator in temp var
-    tmp[destIx] = 0;
-    
-    // convert temp var to integer
-    if (tmp[0] != 0)
-    {
-        int sign = 1;
-        
-        result = sign * Q_atoi(tmp);
-    }
-    
-    Com_Dealloc(tmp);
-    
-    return result;
+	unsigned int i;
+	unsigned int srclen = strlen(src) + 1;
+	int          destIx = 0;
+	char         *tmp   = Com_Allocate(srclen);
+	int          result = 0;
+
+	// Go through all the characters in the source string
+	for (i = 0; i < srclen; i++)
+	{
+		// Pick out negative sign before first integer, or integers only
+		if (((src[i] == '-') && (destIx == 0)) || Q_isnumeric(src[i]))
+		{
+			tmp[destIx++] = src[i];
+		}
+	}
+
+	// put string terminator in temp var
+	tmp[destIx] = 0;
+
+	// convert temp var to integer
+	if (tmp[0] != 0)
+	{
+		int sign = 1;
+
+		result = sign * Q_atoi(tmp);
+	}
+
+	Com_Dealloc(tmp);
+
+	return result;
 }

@@ -336,12 +336,12 @@ static fileHandleData_t fsh[MAX_FILE_HANDLES];
 
 /**
  * @var fs_reordered
- * @brief wether we did a reorder on the current search path when joining the server
+ * @brief whether we did a reorder on the current search path when joining the server
  */
 static qboolean fs_reordered;
 
 // never load anything from pk3 files that are not present at the server when pure
-// ex: when fs_numServerPaks != 0, FS_FOpenFileRead won't load anything outside of pk3 except .cfg .menu .game .dat
+// ex: when fs_numServerPaks != 0, FS_FOpenFileRead won't load anything outside the pk3 except .cfg .menu .game .dat
 static int  fs_numServerPaks = 0;
 static int  fs_serverPaks[MAX_SEARCH_PATHS];                    ///< checksums
 static char *fs_serverPakNames[MAX_SEARCH_PATHS];               ///< pk3 names
@@ -665,16 +665,16 @@ qboolean FS_CreatePath(const char *OSPath)
 				{
 					// Thats propably due too ET: Legacy not being signed with Microsoft.
 					Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"\nRun a game with different fs_homepath or (recommended way) allow\nET: Legacy to access controlled folders in Windows Security",
-						path);
+					          path);
 				}
 				else
 				{
 					Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"",
-						path);
+					          path);
 				}
 #endif
 				Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"",
-					path);
+				          path);
 			}
 			*ofs = PATH_SEP;
 		}
