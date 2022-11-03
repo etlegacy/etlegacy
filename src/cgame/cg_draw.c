@@ -4528,10 +4528,6 @@ static void CG_NoiseGenerator()
 		CG_AddPMItem(PM_OBJECTIVE, "Nunc vero inanes flatus quorundam vile esse", " ", cgs.media.pmImages[PM_TEAM], 0, 0, colorWhite);
 	}
 
-	// powerups
-	cg.snap->ps.powerups[PW_REDFLAG]  = 1;
-	cg.snap->ps.powerups[PW_BLUEFLAG] = 1;
-
 	// objective indicator simulation
 	cg.flagIndicator |= (1 << PW_NUM_POWERUPS);
 
