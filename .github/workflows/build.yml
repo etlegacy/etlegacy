@@ -134,10 +134,6 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: GitHub Fetch Tags
-        run: |
-          git fetch --tags --force
-
       - uses: pguyot/arm-runner-action@v2.5.1
         with:
            image_additional_mb: 4096
