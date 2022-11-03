@@ -153,6 +153,7 @@ jobs:
              apt-get -y install build-essential libudev-dev automake zlib1g libx11-dev \
              nasm autoconf git cmake zip gcc g++ libtool ninja-build
              cd /opt/etlegacy
+             git fetch --tags --force
              ./easybuild.sh build -RPI -mod -ninja
 
       - uses: actions/upload-artifact@v3
@@ -227,7 +228,7 @@ jobs:
     runs-on: ubuntu-20.04
     container:
       image: etlegacy/lnx-build:latest
-    needs: [ lnx64-mod, osx-mod, win-mod, android-mod ]
+    needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
     steps:
       - uses: actions/checkout@v3
         with:
