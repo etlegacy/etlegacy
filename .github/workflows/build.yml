@@ -128,28 +128,29 @@ jobs:
 
   raspberry_pi-mod:
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        include:
-          - arch: armv7
-            distro: buster
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
 
-      - uses: uraimo/run-on-arch-action@v2.3.0
-        name: Build on ${{ matrix.arch }}
+      - uses: pguyot/arm-runner-action@v2.5.1
         with:
-          arch: ${{ matrix.arch }}
-          distro: ${{ matrix.distro }}
-          run: |
-            apt-get update -q -y
-            apt-get -y install build-essential libudev-dev libwebp-dev automake zlib1g \
-            nasm autoconf cmake git zip gcc g++ libtool
-            git fetch --tags --force
-            ./easybuild.sh build -RPI -mod
+           image_additional_mb: 4096
+           base_image: raspi_4_bullseye:20220121
+           cpu: cortex-a53
+           cpu_info: cpuinfo/raspberrypi_4b
+           bind_mount_repository: true
+           import_github_env: true
+           copy_repository_path: /opt/etlegacy
+           optimize_image: no
+           commands: |
+             apt-get update
+             apt-get -y install build-essential libudev-dev automake zlib1g libx11-dev \
+             nasm autoconf git cmake zip gcc g++ libtool ninja-build
+             cd /opt/etlegacy
+             git fetch --tags --force
+             ./easybuild.sh build -RPI -mod -ninja
 
       - uses: actions/upload-artifact@v3
         with:
@@ -301,7 +302,8 @@ jobs:
       - name: Generate packages
         shell: bash
         working-directory: build/
-        run: cpack
+        run: |
+          cpack
 
       - uses: actions/upload-artifact@v3
         with:
@@ -443,6 +445,54 @@ jobs:
             build/etlegacy-*.exe
             build/etlegacy-*.zip
 
+  raspberry_pi:
+    runs-on: ubuntu-latest
+    needs: [ lnx32 ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v3.0.1
+        with:
+          name: All-mods
+          path: build
+
+      - uses: pguyot/arm-runner-action@v2.5.1
+        with:
+           image_additional_mb: 4096
+           base_image: raspi_4_bullseye:20220121
+           cpu: cortex-a53
+           cpu_info: cpuinfo/raspberrypi_4b
+           bind_mount_repository: true
+           import_github_env: true
+           copy_repository_path: /opt/etlegacy
+           optimize_image: no
+           commands: |
+             apt-get update
+             apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
+             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build curl
+             cd /opt/etlegacy
+             export CI=true
+             git fetch --tags --force
+             ./easybuild.sh build -RPI -ninja
+             cd build
+             cp *.pk3 /opt/etlegacy/build/legacy
+             ls -R
+             cpack
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/legacy
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: raspberry_pi-packages
+          path: |
+            build/etlegacy-*.tar.gz
+            build/etlegacy-*.sh
+
   android:
     runs-on: ubuntu-20.04
     env:
@@ -511,7 +561,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-20.04
-    needs: [ lnx32, lnx64, osx, win, android ]
+    needs: [ lnx32, lnx64, osx, win, raspberry_pi, android ]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v2
@@ -539,6 +589,7 @@ jobs:
           find osx-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find win-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find android-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=andro64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find raspberry_pi-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=rpi64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=mod32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
@@ -624,6 +675,7 @@ jobs:
             lnx32-packages
             osx-packages
             win-packages
+            raspberry_pi-packages
             android-packages
             mod-zip
 

@@ -336,6 +336,12 @@ parse_commandline() {
 			FEATURE_PNG=0
 			FEATURE_OMNIBOT=1
 			INSTALL_OMNIBOT=0
+		elif [ "$var" = "-ninja" ]; then
+			einfo "Will use Ninja instead of Unix Makefile"
+			MAKEFILE_GENERATOR=${MAKEFILE_GENERATOR:-Ninja}
+		elif [ "$var" = "-nopk3" ]; then
+			einfo "Will disable building mod pk3 file"
+			BUILD_MOD_PK3=0
 		elif [ "$var" = "-mod" ]; then
 			einfo "Will only build the mod"
 			BUILD_CLIENT=0
@@ -849,7 +855,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -32, -debug, -clang, -nodb -nor2, -nodynamic, -nossl, -systemlibs, -noextra, -noupdate, -mod, -server"
+	ehead "-64, -32, -debug, -clang, -nodb -nor2, -nodynamic, -nossl, -systemlibs, -noextra, -noupdate, -mod, -server, -ninja, -nopk3"
 	ehead "--build=*, --prefix=*, --osx=* --osx-arc=*"
 	echo
 }
