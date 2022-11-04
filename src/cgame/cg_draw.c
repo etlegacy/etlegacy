@@ -4499,6 +4499,8 @@ void CG_Coronas(void)
  */
 static void CG_NoiseGenerator()
 {
+	trap_Cvar_Set("cl_noprint", "1");
+
 	// banner
 	CG_AddToBannerPrint("Iaculatores coniunctis: incesserit servitium castrensi post velut et deinde virgae.");
 
@@ -4540,6 +4542,8 @@ static void CG_NoiseGenerator()
 
 	// missile camera
 	cg.latestMissile = &cg_entities[cg.snap->ps.clientNum];
+
+	trap_Cvar_Set("cl_noprint", "0");
 }
 
 /**
