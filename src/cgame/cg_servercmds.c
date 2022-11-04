@@ -903,7 +903,7 @@ void CG_TeamRestrictionsChanged(void)
 	Q_strncpyz(cg.maxMachineguns, Info_ValueForKey(info, "w2"), sizeof(cg.maxMachineguns));
 	Q_strncpyz(cg.maxRockets, Info_ValueForKey(info, "w3"), sizeof(cg.maxRockets));
 	Q_strncpyz(cg.maxRiflegrenades, Info_ValueForKey(info, "w4"), sizeof(cg.maxRiflegrenades));
-    Q_strncpyz(cg.maxLandmines, Info_ValueForKey(info, "w5"), sizeof(cg.maxLandmines));
+	Q_strncpyz(cg.maxLandmines, Info_ValueForKey(info, "w5"), sizeof(cg.maxLandmines));
 	cg.maxPlayers = Q_atoi(Info_ValueForKey(info, "m"));
 }
 
@@ -1159,7 +1159,7 @@ void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 		return;
 	}
 
-    scale = CG_ComputeScale(&CG_GetActiveHUD()->chat /*CG_GetActiveHUD()->chat.location.h / ((cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) ? cg_teamChatHeight.integer : TEAMCHAT_HEIGHT), CG_GetActiveHUD()->chat.scale, &cgs.media.limboFont2*/);
+	scale = CG_ComputeScale(&CG_GetActiveHUD()->chat /*CG_GetActiveHUD()->chat.location.h / ((cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) ? cg_teamChatHeight.integer : TEAMCHAT_HEIGHT), CG_GetActiveHUD()->chat.scale, &cgs.media.limboFont2*/);
 
 	len       = 0;
 	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30
@@ -2934,14 +2934,15 @@ void CG_dumpStats(void)
 
 void CG_AddToBannerPrint(const char *str)
 {
-    int   maxLineChars;
-    float scale;
-    
-    scale        = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
-    maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
-    
-    CG_WordWrapString(str, maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
-    cg.bannerPrintTime = cg.time;
+	int   maxLineChars;
+	float scale, w;
+
+	scale = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
+	w     = CG_GetActiveHUD()->banner.location.w;
+
+	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
+	CG_WordWrapString(str, maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
+	cg.bannerPrintTime = cg.time;
 }
 
 #define ENTNFO_HASH         78985
@@ -3564,7 +3565,7 @@ static void CG_ServerCommand(void)
 		return;
 	case BP_HASH: // "bp"
 	{
-        CG_AddToBannerPrint(CG_Argv(1));
+		CG_AddToBannerPrint(CG_Argv(1));
 		break;
 	}
 	default:

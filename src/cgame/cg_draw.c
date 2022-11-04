@@ -1164,7 +1164,7 @@ void CG_CenterPrint(const char *str)
 void CG_PriorityCenterPrint(const char *str, int priority)
 {
 	int   maxLineChars;
-	float scale;
+	float scale, w;
 
 	// don't draw if this print message is less important
 	if (cg.centerPrintTime && priority < cg.centerPrintPriority)
@@ -1172,8 +1172,10 @@ void CG_PriorityCenterPrint(const char *str, int priority)
 		return;
 	}
 
-	scale        = CG_ComputeScale(&CG_GetActiveHUD()->centerprint /*CG_GetActiveHUD()->centerprint.location.h, CG_GetActiveHUD()->centerprint.scale, &cgs.media.limboFont2*/);
-	maxLineChars = CG_GetActiveHUD()->centerprint.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
+	scale = CG_ComputeScale(&CG_GetActiveHUD()->centerprint /*CG_GetActiveHUD()->centerprint.location.h, CG_GetActiveHUD()->centerprint.scale, &cgs.media.limboFont2*/);
+	w     = CG_GetActiveHUD()->centerprint.location.w;
+
+	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
 
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.centerPrint, sizeof(cg.centerPrint));
 	cg.centerPrintPriority = priority;
@@ -3628,11 +3630,12 @@ static void CG_DrawFlashBlendBehindHUD(void)
 void CG_ObjectivePrint(const char *str)
 {
 	int   maxLineChars;
-	float scale;
+	float scale, w;
 
-	scale        = CG_ComputeScale(&CG_GetActiveHUD()->objectivetext /*CG_GetActiveHUD()->objectivetext.location.h, CG_GetActiveHUD()->objectivetext.scale, &cgs.media.limboFont2*/);
-	maxLineChars = CG_GetActiveHUD()->objectivetext.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
+	scale = CG_ComputeScale(&CG_GetActiveHUD()->objectivetext /*CG_GetActiveHUD()->objectivetext.location.h, CG_GetActiveHUD()->objectivetext.scale, &cgs.media.limboFont2*/);
+	w     = CG_GetActiveHUD()->objectivetext.location.w;
 
+	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.oidPrint, sizeof(cg.oidPrint));
 	cg.oidPrintTime = cg.time;
 }
