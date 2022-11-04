@@ -1024,6 +1024,39 @@ void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_
 }
 
 /**
+ * @brief CG_GetMaxCharsPerLine returns maximum number of character that fit into given width
+ * @param[in]  str
+ * @param[in]  textScale
+ * @param[in]  font
+ * @param[in]  width
+ * @param[out] maxLineChars
+ */
+int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, float width)
+{
+	int maxLineChars = 0;
+	int limit        = 0;
+
+	while (str != NULL)
+	{
+		if (CG_Text_Width_Ext_Float(str, textScale, 0, font) < width)
+		{
+			maxLineChars = Q_PrintStrlen(str);
+			break;
+		}
+
+		limit++;
+		maxLineChars++;
+
+		if (CG_Text_Width_Ext_Float(str, textScale, limit, font) > width)
+		{
+			break;
+		}
+	}
+
+	return maxLineChars;
+}
+
+/**
  * @brief CG_WordWrapString breaks string onto lines respecting the maxLineChars
  * @param[in]  input
  * @param[in]  maxLineChars

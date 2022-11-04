@@ -2997,6 +2997,7 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
 void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, vec3_t origin);
 
+int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, float width);
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
 // draws multiline strings
