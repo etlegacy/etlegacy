@@ -867,7 +867,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 
 	if (comp->autoAdjust)
 	{
-		h2 = MIN(h2 + paddingH * lineNumber, comp->location.h);
+        h2 = MIN(h2 + paddingH * (lineNumber + 1), comp->location.h);
 		y += ((comp->location.h - h2) * .5f);
 	}
 
