@@ -648,12 +648,14 @@ void G_RunMissile(gentity_t *ent)
 
 	if (tr.fraction != 1.f)
 	{
-		if (ent->r.contents != CONTENTS_CORPSE && (tr.surfaceFlags & SURF_SKY))
+		if (ent->r.contents != CONTENTS_CORPSE && (tr.surfaceFlags & SURF_SKY)
+		    && tr.plane.normal[2] != 1) // don't go through horizontal, upwards facing skyboxes,
+		                                // e.g. karsiah_te2 axis 2nd spawn roof
 		{
 			// goes through sky
 			ent->count = 1;
 			// omit unlinking entity for missile camera
-			if (!g_cheats.integer && ent->s.weapon != WP_GRENADE_LAUNCHER && ent->s.weapon != WP_GRENADE_PINEAPPLE && ent->s.weapon != WP_GPG40 && ent->s.weapon != WP_M7 && ent->s.weapon != WP_MORTAR2_SET && ent->s.weapon != WP_MORTAR_SET && ent->s.weapon != WP_SMOKE_MARKER && ent->s.weapon != WP_SMOKE_BOMB)
+			if (!g_cheats.integer && GetWeaponFireTableData(ent->s.weapon)->eType != ET_MISSILE)
 			{
 				trap_UnlinkEntity(ent);
 			}
