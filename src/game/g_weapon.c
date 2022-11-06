@@ -2638,6 +2638,28 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 	}
 }
 
+
+/**
+ * @brief G_BombTrace ensures bombs from arty/airstrike are never spawned indoors
+ * @param[in] tr
+ * @param[in] start
+ * @param[in] end
+ * @param[out] tr
+ */
+trace_t G_BombTrace(trace_t tr, vec3_t start, vec3_t end, gentity_t *ent)
+{
+	trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, CONTENTS_SOLID);
+
+	// if we can't trace back to sky, we spawned indoors - redo trace from MAX_MAP_SIZE
+	if (!(tr.surfaceFlags & SURF_SKY))
+	{
+		start[2] = MAX_MAP_SIZE;
+		trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, CONTENTS_SOLID);
+	}
+
+	return tr;
+}
+
 #define NUMBOMBS 10
 #define BOMBSPREAD 150
 
@@ -2731,9 +2753,10 @@ void G_AirStrikeThink(gentity_t *ent)
 			float     ground = tr.endpos[2];
 
 			tmp[2] = MAX_MAP_SIZE;
-			trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
+			tr     = G_BombTrace(tr, tr.endpos, tmp, ent);
 
-			bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
+			bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos,
+			                    tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 
 			// overwrite
 			bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
@@ -3023,7 +3046,7 @@ void artillerySpotterThink(gentity_t *ent)
 		ground = tr.endpos[2];
 
 		tmp[2] = MAX_MAP_SIZE;
-		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
+		tr     = G_BombTrace(tr, tr.endpos, tmp, ent);
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 
@@ -3057,7 +3080,7 @@ void artillerySpotterThink(gentity_t *ent)
 		ground = tr.endpos[2];
 
 		tmp[2] = MAX_MAP_SIZE;
-		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
+		tr     = G_BombTrace(tr, tr.endpos, tmp, ent);
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 	}
