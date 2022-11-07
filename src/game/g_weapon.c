@@ -2650,12 +2650,6 @@ trace_t G_BombTrace(trace_t tr, vec3_t start, vec3_t end, gentity_t *ent)
 {
 	trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, CONTENTS_SOLID);
 
-	// found sky, return this trace
-	if (tr.surfaceFlags & SURF_SKY)
-	{
-		return tr;
-	}
-
 	// if we can't trace back to sky, we likely spawned indoors - keep nudging start position up until we find skybox
 	while (!(tr.surfaceFlags & SURF_SKY))
 	{
