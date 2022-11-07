@@ -524,7 +524,7 @@ jobs:
       - uses: pguyot/arm-runner-action@v2.5.1
         with:
            image_additional_mb: 4096
-           base_image: https://github.com/rafal1137/Raspberrypi_imager/releases/download/untagged-0c5b94e161b47195c6a8/rpi.img.xz
+           base_image: https://github.com/rafal1137/Raspberrypi_imager/releases/download/latest/rpi.img.xz
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
