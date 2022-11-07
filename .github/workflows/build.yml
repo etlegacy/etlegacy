@@ -164,7 +164,7 @@ jobs:
       - uses: pguyot/arm-runner-action@v2.5.1
         with:
            image_additional_mb: 4096
-           base_image: raspi_4_bullseye:20220121
+           base_image: https://github.com/rafal1137/Raspberrypi_imager/releases/download/untagged-0c5b94e161b47195c6a8/rpi.img.xz
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
@@ -172,9 +172,6 @@ jobs:
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
-             apt-get update
-             apt-get -y install build-essential libudev-dev automake zlib1g libx11-dev \
-             nasm autoconf git cmake zip gcc g++ libtool ninja-build
              cd /opt/etlegacy
              git fetch --tags --force
              ./easybuild.sh build -RPI -mod -ninja
@@ -527,7 +524,7 @@ jobs:
       - uses: pguyot/arm-runner-action@v2.5.1
         with:
            image_additional_mb: 4096
-           base_image: raspi_4_bullseye:20220121
+           base_image: https://github.com/rafal1137/Raspberrypi_imager/releases/download/untagged-0c5b94e161b47195c6a8/rpi.img.xz
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
@@ -535,16 +532,12 @@ jobs:
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
-             apt-get update
-             apt-get -y install build-essential libudev-dev automake libgl1-mesa-glx zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
-             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev ninja-build curl
              cd /opt/etlegacy
              export CI=true
              git fetch --tags --force
              ./easybuild.sh build -RPI -ninja
              cd build
              cp *.pk3 /opt/etlegacy/build/legacy
-             ls -R
              cpack
 
       - name: Display structure of downloaded files
