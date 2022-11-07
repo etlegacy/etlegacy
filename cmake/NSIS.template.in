@@ -26,7 +26,8 @@ BrandingText "ET: Legacy ${VERSION} | https://www.etlegacy.com"
 !define PRODUCT_DIR_REGKEY "SOFTWARE\ETLegacy"
 !define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ETLegacy"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" "InstallPath"
-InstallDir "$PROGRAMFILES\ETLegacy\"
+InstallDir "$PROGRAMFILES@CPACK_BITS@\ETLegacy\"
+SetRegView @CPACK_BITS@
 
 ; Header file
 !include MUI2.nsh

@@ -4,12 +4,15 @@
 
 message(STATUS "Installing Omni-Bot")
 # Note: used archive (20MB) doesn't contain incomplete nav- and other unwanted files
-if(UNIX)
+if(UNIX AND NOT APPLE)
 	set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-linux-latest.tar.gz")
 	set(ETLEGACY_OMNIBOT_ARCHIVE_URL "https://mirror.etlegacy.com/omnibot/omnibot-linux-latest.tar.gz")
 elseif(WIN32)
 	set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-windows-latest.zip")
 	set(ETLEGACY_OMNIBOT_ARCHIVE_URL "https://mirror.etlegacy.com/omnibot/omnibot-windows-latest.zip")
+else()
+	message(WARNING "Platform not supported for Omni-Bot")
+	return()
 endif()
 
 set(ETLEGACY_OMNIBOT_DL_URL "${ETLEGACY_OMNIBOT_ARCHIVE_URL}")

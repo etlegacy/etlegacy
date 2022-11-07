@@ -126,6 +126,33 @@ jobs:
           path: |
             build/legacy/qagame*.dll
 
+  win64-mod:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Build
+        shell: cmd
+        run: |
+          git fetch --tags --force
+          call .\easybuild.bat build -mod -64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: win64-mod
+          path: |
+            build/legacy/cgame*.dll
+            build/legacy/ui*.dll
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: win64-qagame
+          path: |
+            build/legacy/qagame*.dll
+
   raspberry_pi-mod:
     runs-on: ubuntu-20.04
     steps:
@@ -224,7 +251,7 @@ jobs:
     runs-on: ubuntu-20.04
     container:
       image: etlegacy/lnx-build:latest
-    needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
+    needs: [ lnx64-mod, osx-mod, win-mod, win64-mod, raspberry_pi-mod, android-mod ]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -260,7 +287,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
+          zip -rvj legacy_*.pk3 win-mod/*.dll win64-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
 
       - name: Remove the mod packages
         uses: geekyeggo/delete-artifact@v2
@@ -270,6 +297,7 @@ jobs:
             lnx64-mod
             osx-mod
             win-mod
+            win64-mod
             raspberry_pi-mod
             android-mod
 
@@ -281,13 +309,14 @@ jobs:
             lnx64-qagame
             osx-qagame
             win-qagame
+            win64-qagame
             raspberry_pi-qagame
 
       - name: Create mod zip
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
+          zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll win64-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
 
       - uses: actions/upload-artifact@v3
         with:
@@ -445,6 +474,42 @@ jobs:
             build/etlegacy-*.exe
             build/etlegacy-*.zip
 
+  win64:
+    runs-on: windows-2019
+    needs: [ lnx32 ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Build
+        shell: cmd
+        run: |
+          git fetch --tags --force
+          call .\easybuild.bat build -64
+
+      - uses: actions/download-artifact@v3.0.1
+        with:
+          name: All-mods
+          path: build/legacy
+
+      - name: Display structure of downloaded files
+        run: dir
+        working-directory: build/legacy
+
+      - name: Generate packages
+        shell: cmd
+        working-directory: build
+        run: cpack
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: win64-packages
+          path: |
+            build/etlegacy-*.exe
+            build/etlegacy-*.zip
+
   raspberry_pi:
     runs-on: ubuntu-latest
     needs: [ lnx32 ]
@@ -561,7 +626,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-20.04
-    needs: [ lnx32, lnx64, osx, win, raspberry_pi, android ]
+    needs: [ lnx32, lnx64, osx, win, win64, raspberry_pi, android ]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v2
@@ -588,6 +653,7 @@ jobs:
           find lnx32-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find osx-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find win-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find win64-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find android-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=andro64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find raspberry_pi-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=rpi64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=mod32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
@@ -687,9 +753,11 @@ jobs:
             lnx64-mod
             osx-mod
             win-mod
+            win64-mod
             raspberry_pi-mod
             android-mod
             lnx64-qagame
             osx-qagame
             win-qagame
+            win64-qagame
             raspberry_pi-qagame

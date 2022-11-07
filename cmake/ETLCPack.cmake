@@ -26,6 +26,13 @@ if(WIN32)
 	set(CPACK_PACKAGE_VERSION ${ETL_CMAKE_PROD_VERSION_STR})
 	string(TIMESTAMP CPACK_PACKAGE_YEAR "%Y" UTC)
 	set(CPACK_SOURCE_IGNORE_FILES "etl.ico")
+
+    if (ETL_64BITS)
+        set(CPACK_BITS 64)
+    else()
+        set(CPACK_BITS 32)
+    endif()
+
 	if(FEATURE_RENDERER2)
 		set(CPACK_RENDERER2_ACTIVE "1")
 	else()
