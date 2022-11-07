@@ -4642,6 +4642,80 @@ int BG_simpleHintsExpand(int hint, int val)
 }
 #endif
 
+// Only used locally
+typedef struct
+{
+    const char *colorname;
+    vec4_t *color;
+} colorTable_t;
+
+// Colors table
+const colorTable_t OSP_Colortable[] =
+    {
+        { "white",    &colorWhite    },
+        { "red",      &colorRed      },
+        { "green",    &colorGreen    },
+        { "blue",     &colorBlue     },
+        { "yellow",   &colorYellow   },
+        { "magenta",  &colorMagenta  },
+        { "cyan",     &colorCyan     },
+        { "orange",   &colorOrange   },
+        { "mdred",    &colorMdRed    },
+        { "mdgreen",  &colorMdGreen  },
+        { "dkgreen",  &colorDkGreen  },
+        { "mdcyan",   &colorMdCyan   },
+        { "mdyellow", &colorMdYellow },
+        { "mdorange", &colorMdOrange },
+        { "mdblue",   &colorMdBlue   },
+        { "ltgrey",   &colorLtGrey   },
+        { "mdgrey",   &colorMdGrey   },
+        { "dkgrey",   &colorDkGrey   },
+        { "black",    &colorBlack    },
+        { NULL,       NULL           }
+};
+
+/**
+ * @brief BG_parseColor
+ * @param[in] colString
+ * @param[in] col
+ * @param[in] alpha
+ */
+qboolean BG_parseColor(char *colString, float *col)
+{
+    char *s = colString;
+
+    if (*s == '0' && (*(s + 1) == 'x' || *(s + 1) == 'X'))
+    {
+        s += 2;
+        // parse rrggbb
+        if (Q_IsHexColorString(s))
+        {
+            col[0] = ((float)(gethex(*(s)) * 16.f + gethex(*(s + 1)))) / 255.00f;
+            col[1] = ((float)(gethex(*(s + 2)) * 16.f + gethex(*(s + 3)))) / 255.00f;
+            col[2] = ((float)(gethex(*(s + 4)) * 16.f + gethex(*(s + 5)))) / 255.00f;
+            return qtrue;
+        }
+    }
+    else
+    {
+        int i = 0;
+
+        while (OSP_Colortable[i].colorname != NULL)
+        {
+            if (Q_stricmp(s, OSP_Colortable[i].colorname) == 0)
+            {
+                col[0] = (*OSP_Colortable[i].color)[0];
+                col[1] = (*OSP_Colortable[i].color)[1];
+                col[2] = (*OSP_Colortable[i].color)[2];
+                return qtrue;
+            }
+            i++;
+        }
+    }
+
+    return qfalse;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 typedef struct locInfo_s

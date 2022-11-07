@@ -4197,6 +4197,13 @@ typedef struct
 
 } hudComponentFields_t;
 
+typedef struct
+{
+    char *name;
+    size_t offset;
+    qboolean (*parse)(int *argIndex, hudComponent_t *comp, int offset);
+} hudComponentMembersFields_t;
+
 hudStucture_t *CG_GetActiveHUD();
 hudStucture_t *CG_addHudToList(hudStucture_t *hud);
 hudStucture_t *CG_getHudByNumber(int number);
@@ -4253,6 +4260,12 @@ void CG_DrawDisconnect(hudComponent_t *comp);
 void CG_DrawPlayerStats(hudComponent_t *comp);
 void CG_DrawCrosshairNames(hudComponent_t *comp);
 void CG_DrawCrosshairHealthBar(hudComponent_t *comp);
+
+/**
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDMF(x) # x, offsetof(hudComponent_t, x)
+extern const hudComponentMembersFields_t hudComponentMembersFields[];
 
 /**
  * @brief Using the stringizing operator to save typing...
