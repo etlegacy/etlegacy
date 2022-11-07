@@ -2162,6 +2162,186 @@ static void CG_EditHud_f(void)
 	}
 }
 
+static qboolean CG_SetRectComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char      token[MAX_TOKEN_CHARS];
+	rectDef_t *value = (rectDef_t *)((char *)comp + offset);
+
+	if ((trap_Argc() - *argIndex) < 4)
+	{
+		CG_Printf("^1rect field component needs at least 4 arguments <x> <y> <w> <h>\n");
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+	value->x = atof(token);
+	trap_Argv(++*argIndex, token, sizeof(token));
+	value->y = atof(token);
+	trap_Argv(++*argIndex, token, sizeof(token));
+	value->w = atof(token);
+	trap_Argv(++*argIndex, token, sizeof(token));
+	value->h = atof(token);
+
+	return qtrue;
+}
+
+static qboolean CG_SetFloatComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char  token[MAX_TOKEN_CHARS];
+	float *value = (float *)((char *)comp + offset);
+
+	if ((trap_Argc() - *argIndex) < 1)
+	{
+		CG_Printf("^1float field component needs at least 1 argument <value>\n");
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	*value = atof(token);
+
+	return qtrue;
+}
+
+static qboolean CG_SetIntComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char token[MAX_TOKEN_CHARS];
+	int  *value = (int *)((char *)comp + offset);
+
+	if ((trap_Argc() - *argIndex) < 1)
+	{
+		CG_Printf("^1int field component needs at least 1 argument <value>\n");
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	*value = atoi(token);
+
+	return qtrue;
+}
+
+static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char   token[MAX_TOKEN_CHARS];
+	vec4_t *value = (vec4_t *)((char *)comp + offset);
+
+	if ((trap_Argc() - *argIndex) < 1)
+	{
+		CG_Printf("^1color field component needs at least 1 argument <colorname> / <#RRGGBB> or 3 argument <r> <g> <b>\n");
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!BG_parseColor(token, *value))
+	{
+		if ((trap_Argc() - *argIndex) < 3)
+		{
+			CG_Printf("^1invalid color input\n");
+			return qfalse;
+		}
+
+		*value[0] = atof(token);
+		trap_Argv(++*argIndex, token, sizeof(token));
+		*value[1] = atof(token);
+		trap_Argv(++*argIndex, token, sizeof(token));
+		*value[2] = atof(token);
+	}
+
+	return qtrue;
+}
+
+const hudComponentMembersFields_t hudComponentMembersFields[] =
+{
+	{ HUDMF(location),        CG_SetRectComponentFromCommand   },
+	{ "x",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, x), CG_SetFloatComponentFromCommand},
+	{ "y",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, y), CG_SetFloatComponentFromCommand},
+	{ "w",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, w), CG_SetFloatComponentFromCommand},
+	{ "h",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, h), CG_SetFloatComponentFromCommand},
+	{ HUDMF(visible),         CG_SetIntComponentFromCommand    },
+	{ HUDMF(style),           CG_SetIntComponentFromCommand    },
+	{ HUDMF(scale),           CG_SetFloatComponentFromCommand  },
+	{ HUDMF(colorMain),       CG_SetColorsComponentFromCommand },
+	{ "colorMainAlpha",       offsetof(hudComponent_t, colorMain) + sizeof(float) * 3, CG_SetFloatComponentFromCommand},
+	{ HUDMF(colorSecondary),  CG_SetColorsComponentFromCommand },
+	{ "colorSecondAlpha",     offsetof(hudComponent_t, colorSecondary) + sizeof(float) * 3, CG_SetFloatComponentFromCommand},
+	{ HUDMF(showBackGround),  CG_SetIntComponentFromCommand    },
+	{ HUDMF(colorBackground), CG_SetColorsComponentFromCommand },
+	{ "colorBackgroundAlpha", offsetof(hudComponent_t, colorBackground) + sizeof(float) * 3, CG_SetFloatComponentFromCommand},
+	{ HUDMF(showBorder),      CG_SetIntComponentFromCommand    },
+	{ HUDMF(colorBorder),     CG_SetIntComponentFromCommand    },
+	{ "colorBorderAlpha",     offsetof(hudComponent_t, colorBorder) + sizeof(float) * 3, CG_SetFloatComponentFromCommand},
+	{ HUDMF(styleText),       CG_SetIntComponentFromCommand    },
+	{ HUDMF(alignText),       CG_SetIntComponentFromCommand    },
+	{ HUDMF(autoAdjust),      CG_SetIntComponentFromCommand    },
+	{ NULL,                   0, NULL                          },
+};
+
+/**
+ * @brief CG_EditCoponent_f
+ */
+static void CG_EditComponent_f(void)
+{
+	char           token[MAX_TOKEN_CHARS];
+	hudComponent_t *comp = NULL;
+	int            i, j;
+	int            argc = trap_Argc();
+
+	if (argc < 3)
+	{
+		CG_Printf("^1edit component needs at least 3 arguments <compname> <field> <value> [ <field2> <value2> <field3> <value3> ... ]\n");
+		return;
+	}
+
+	trap_Argv(1, token, sizeof(token));
+
+	// find components name
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (!Q_stricmp(token, hudComponentFields[i].name))
+		{
+			comp = (hudComponent_t *)((char *)activehud + hudComponentFields[i].offset);
+			break;
+		}
+	}
+
+	if (!comp)
+	{
+		CG_Printf("^1 Cannot found %s component name\n", token);
+		return;
+	}
+
+	// parse command input arguments
+	for (i = 2; i < argc; i++)
+	{
+		qboolean fieldFound = qfalse;
+		trap_Argv(i, token, sizeof(token));
+
+		// find field name
+		for (j = 0; hudComponentMembersFields[j].name; j++)
+		{
+			if (!Q_stricmp(token, hudComponentMembersFields[j].name))
+			{
+				fieldFound = qtrue;
+
+				// try to parse the field arguments
+				if (!hudComponentMembersFields[j].parse(&i, comp, hudComponentMembersFields[j].offset))
+				{
+					CG_Printf("^1 Failed to parse %s field arguments\n", hudComponentMembersFields[j].name);
+					return;
+				}
+			}
+		}
+
+		if (!fieldFound)
+		{
+			CG_Printf("^1 Cannot found %s field name\n", token);
+			return;
+		}
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f              },
@@ -2291,6 +2471,7 @@ static consoleCommand_t commands[] =
 	{ "loc",                 CG_Location_f             },
 	{ "camera",              CG_Camera_f               },
 	{ "edithud",             CG_EditHud_f              },
+	{ "editcomponent",       CG_EditComponent_f        },
 	{ NULL,                  NULL                      }
 };
 
