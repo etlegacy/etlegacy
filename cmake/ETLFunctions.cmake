@@ -60,6 +60,13 @@ function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 	endif()
 
 	if(ETLEGACY_DO_DOWNLOAD)
+		file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
+		list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+		if(NOT (${STATUS_CODE} EQUAL 0))
+			message(WARNING "Downgrading https to http, possible remote certificate issue!")
+			string(REPLACE "https://" "http://" _URL ${_URL})
+		endif()
+
 		message("Using download url: ${_URL}")
 		file(DOWNLOAD
 			${_URL}
