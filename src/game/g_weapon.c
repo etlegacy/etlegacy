@@ -2657,7 +2657,7 @@ trace_t G_BombTrace(trace_t tr, vec3_t start, vec3_t end, gentity_t *ent)
 		trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, CONTENTS_SOLID);
 
 		// reached map limit and no sky found
-		if (start[2] > MAX_MAP_SIZE)
+		if (start[2] > MAX_MAP_SIZE || tr.fraction == 1.0f)
 		{
 			break;
 		}
