@@ -246,8 +246,8 @@ GOTO:EOF
 	set build_string=
 	CALL:GENERATECMAKE build_string
 	IF %build_64%==1 (
-		cmake !generator! !platform_toolset! -A Win64 %build_string% "%~2"
-		ECHO cmake !generator! !platform_toolset! -A Win64 %build_string% "%~2"
+		cmake !generator! !platform_toolset! %build_string% "%~2"
+		ECHO cmake !generator! !platform_toolset! %build_string% "%~2"
 	) ELSE (
 		cmake !generator! !platform_toolset! -A Win32 %build_string% "%~2"
 		ECHO cmake !generator! !platform_toolset! -A Win32 %build_string% "%~2"
