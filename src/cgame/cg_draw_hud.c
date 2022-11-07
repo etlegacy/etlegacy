@@ -721,7 +721,9 @@ void CG_ReadHudScripts(void)
 static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t icon)
 {
 	trap_R_SetColor(colorBlack);
-	CG_DrawPic(x + 2, y + 2, w, h, icon);
+	float ofsX = (w * 1.07f) - w;
+	float ofsY = (h * 1.07f) - h;
+	CG_DrawPic(x + ofsX, y + ofsY, w, h, icon);
 	trap_R_SetColor(NULL);
 	CG_DrawPic(x, y, w, h, icon);
 }
@@ -867,7 +869,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 
 	if (comp->autoAdjust)
 	{
-        h2 = MIN(h2 + paddingH * (lineNumber + 1), comp->location.h);
+		h2 = MIN(h2 + paddingH * (lineNumber + 1), comp->location.h);
 		y += ((comp->location.h - h2) * .5f);
 	}
 
