@@ -2271,6 +2271,34 @@ const hudComponentMembersFields_t hudComponentMembersFields[] =
 };
 
 /**
+ * @brief CG_ShowEditComponentHelp
+ */
+static void CG_ShowEditComponentHelp()
+{
+	int  i;
+	char *str = NULL;
+
+	CG_Printf("^3edit component needs at least 3 arguments <compname> <field> <value> "
+	          "[ <field2> <value2> <field3> <value3> ... ]");
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		str = va("%s%-16s%s", str ? str : "", hudComponentFields[i].name, !((i + 1) % 5) ? "\n" : "    ");
+	}
+
+	CG_Printf("\n\nAvailable ^3<compname> ^7:\n\n%s", str);
+
+	str = NULL;
+
+	for (i = 0; hudComponentMembersFields[i].name; i++)
+	{
+		str = va("%s%-16s%s", str ? str : "", hudComponentMembersFields[i].name, !((i + 1) % 5) ? "\n" : "    ");
+	}
+
+	CG_Printf("\n\nAvailable ^3<field> ^7:\n\n%s\n", str);
+}
+
+/**
  * @brief CG_EditCoponent_f
  */
 static void CG_EditComponent_f(void)
@@ -2282,11 +2310,17 @@ static void CG_EditComponent_f(void)
 
 	if (argc < 3)
 	{
-		CG_Printf("^1edit component needs at least 3 arguments <compname> <field> <value> [ <field2> <value2> <field3> <value3> ... ]\n");
+		CG_ShowEditComponentHelp();
 		return;
 	}
 
 	trap_Argv(1, token, sizeof(token));
+
+	if (!Q_stricmp(token, "?") || !Q_stricmp(token, "help"))
+	{
+		CG_ShowEditComponentHelp();
+		return;
+	}
 
 	// find components name
 	for (i = 0; hudComponentFields[i].name; i++)
