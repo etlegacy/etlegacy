@@ -2334,7 +2334,7 @@ static void CG_EditComponent_f(void)
 
 	if (!comp)
 	{
-		CG_Printf("^1 Cannot found %s component name\n", token);
+		CG_Printf("^1 Cannot find component name: %s\n", token);
 		return;
 	}
 
@@ -2362,7 +2362,7 @@ static void CG_EditComponent_f(void)
 
 		if (!fieldFound)
 		{
-			CG_Printf("^1 Cannot found %s field name\n", token);
+			CG_Printf("^1 Cannot find field name: %s\n", token);
 			return;
 		}
 	}
