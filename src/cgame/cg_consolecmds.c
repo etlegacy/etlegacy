@@ -2174,13 +2174,13 @@ static qboolean CG_SetRectComponentFromCommand(int *argIndex, hudComponent_t *co
 	}
 
 	trap_Argv(++*argIndex, token, sizeof(token));
-	value->x = atof(token);
+	value->x = Q_atof(token);
 	trap_Argv(++*argIndex, token, sizeof(token));
-	value->y = atof(token);
+	value->y = Q_atof(token);
 	trap_Argv(++*argIndex, token, sizeof(token));
-	value->w = atof(token);
+	value->w = Q_atof(token);
 	trap_Argv(++*argIndex, token, sizeof(token));
-	value->h = atof(token);
+	value->h = Q_atof(token);
 
 	return qtrue;
 }
@@ -2198,7 +2198,7 @@ static qboolean CG_SetFloatComponentFromCommand(int *argIndex, hudComponent_t *c
 
 	trap_Argv(++*argIndex, token, sizeof(token));
 
-	*value = atof(token);
+	*value = Q_atof(token);
 
 	return qtrue;
 }
@@ -2216,7 +2216,7 @@ static qboolean CG_SetIntComponentFromCommand(int *argIndex, hudComponent_t *com
 
 	trap_Argv(++*argIndex, token, sizeof(token));
 
-	*value = atoi(token);
+	*value = Q_atoi(token);
 
 	return qtrue;
 }
@@ -2242,11 +2242,11 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 			return qfalse;
 		}
 
-		*value[0] = atof(token);
+		*value[0] = Q_atof(token);
 		trap_Argv(++*argIndex, token, sizeof(token));
-		*value[1] = atof(token);
+		*value[1] = Q_atof(token);
 		trap_Argv(++*argIndex, token, sizeof(token));
-		*value[2] = atof(token);
+		*value[2] = Q_atof(token);
 	}
 
 	return qtrue;
