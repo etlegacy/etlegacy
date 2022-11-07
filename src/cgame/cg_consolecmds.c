@@ -2242,11 +2242,11 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 			return qfalse;
 		}
 
-		*value[0] = Q_atof(token);
+        (*value)[0] = Q_atof(token);
 		trap_Argv(++*argIndex, token, sizeof(token));
-		*value[1] = Q_atof(token);
+        (*value)[1] = Q_atof(token);
 		trap_Argv(++*argIndex, token, sizeof(token));
-		*value[2] = Q_atof(token);
+        (*value)[2] = Q_atof(token);
 	}
 
 	return qtrue;
