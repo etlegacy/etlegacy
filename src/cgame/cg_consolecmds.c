@@ -2228,7 +2228,7 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 
 	if ((trap_Argc() - *argIndex) < 1)
 	{
-		CG_Printf("^1color field component needs at least 1 argument <colorname> / <#RRGGBB> or 3 argument <r> <g> <b>\n");
+		CG_Printf("^1color field component needs at least 1 argument <colorname> / <0xRRGGBB> or 3 argument <r> <g> <b>\n");
 		return qfalse;
 	}
 
