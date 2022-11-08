@@ -46,7 +46,7 @@ else()
 endif()
 
 # FIXME: remove this crap
-if(NMAKE_BUILD OR NINJA_BUILD)
+if(NMAKE_BUILD OR MSVC)
 	set(VS_BUILD 1)
 else()
 	set(VS_BUILD 0)
