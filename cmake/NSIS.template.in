@@ -27,7 +27,6 @@ BrandingText "ET: Legacy ${VERSION} | https://www.etlegacy.com"
 !define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ETLegacy"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" "InstallPath"
 InstallDir "$PROGRAMFILES@CPACK_BITS@\ETLegacy\"
-SetRegView @CPACK_BITS@
 
 ; Header file
 !include MUI2.nsh
@@ -235,7 +234,6 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
 	var /GLOBAL tmp_path
 	var /GLOBAL vanilla
 
-	SetRegView 32
 	ReadRegStr $vanilla HKLM "Software\Activision\Wolfenstein - Enemy Territory" "InstallPath"
 
 	GOTO COPY_PAK0
@@ -499,3 +497,15 @@ SectionEND
 	!insertmacro MUI_DESCRIPTION_TEXT ${UNASSETS} $(DESC_Section18)
 	!insertmacro MUI_DESCRIPTION_TEXT ${WOLFETL} $(DESC_Section19)
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_END
+
+; ------------------------
+; Init callbacks
+; ------------------------
+; User for setting the registry access for 32 or 64 bit
+Function .onInit
+	SetRegView @CPACK_BITS@
+FunctionEnd
+
+Function un.onInit
+	SetRegView @CPACK_BITS@
+FunctionEnd
