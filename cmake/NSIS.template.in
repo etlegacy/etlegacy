@@ -234,7 +234,11 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
 	var /GLOBAL tmp_path
 	var /GLOBAL vanilla
 
+	; Need to read the Vanilla clients installation path from the 32bit registry
+	SetRegView 32
 	ReadRegStr $vanilla HKLM "Software\Activision\Wolfenstein - Enemy Territory" "InstallPath"
+	; Pop back in to the installer target registry
+	SetRegView @CPACK_BITS@
 
 	GOTO COPY_PAK0
 
