@@ -867,7 +867,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 
 	if (comp->autoAdjust)
 	{
-        h2 = MIN(h2 + paddingH * (lineNumber + 1), comp->location.h);
+		h2 = MIN(h2 + paddingH * (lineNumber + 1), comp->location.h);
 		y += ((comp->location.h - h2) * .5f);
 	}
 
@@ -3260,7 +3260,7 @@ static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 
 	blink = CG_SpawnTimersText(&s, &rt);
 
-	mt = va("%s%s", "^7", CG_RoundTimerText());
+	mt = va("%s", CG_RoundTimerText());
 
 	CG_DrawCompText(comp, mt, comp->colorMain, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
 }
@@ -3282,7 +3282,7 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 
 	blink = CG_SpawnTimersText(&s, &rt);
 
-	mt = va("%s%s", "^7", CG_RoundTimerText());
+	mt = va("%s%s", "^*", CG_RoundTimerText());
 
 	if (s)
 	{
