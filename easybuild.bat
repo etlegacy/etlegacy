@@ -353,6 +353,14 @@ GOTO :EOF
 		SET CROSSCOMP=YES
 	)
 
+	IF !wolf_ssl!==1 (
+		SET feature_ssl=1
+	) ELSE IF !open_ssl!==1 (
+		SET feature_ssl=1
+	) ELSE (
+		SET feature_ssl=0
+	)
+
 	SET local_build_string=-DBUNDLED_LIBS=YES ^
 	-DCMAKE_BUILD_TYPE=!build_type! ^
 	-DFEATURE_AUTOUPDATE=!use_autoupdate! ^
@@ -361,8 +369,8 @@ GOTO :EOF
 	-DRENDERER_DYNAMIC=!build_r2! ^
 	-DFEATURE_RENDERER2=!build_r2! ^
 	-DBUNDLED_WOLFSSL=!wolf_ssl! ^
-	-DBUNDLED_OPENSSL=!build_r2! ^
-	-DFEATURE_SSL=!open_ssl!
+	-DBUNDLED_OPENSSL=!open_ssl! ^
+	-DFEATURE_SSL=!feature_ssl!
 
 	IF !mod_only!==1 (
 		SET local_build_string=!local_build_string! ^
