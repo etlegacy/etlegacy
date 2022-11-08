@@ -2227,6 +2227,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 /**
  * @brief CG_GetCrosshairNameString returns a colorized or single color name string for crosshair info
  * @param[in] comp
+ * @param[out] s
  */
 const char *CG_GetCrosshairNameString(hudComponent_t *comp)
 {
@@ -3105,7 +3106,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 				}
 			}
 
-			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, comp->colorMain, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
 			y += lineHeight;
 		}
 

@@ -644,9 +644,11 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 }
 
 /**
- * @brief CG_FadeColor fade colors with support for variable starting alpha
+ * @brief CG_FadeColor_Ext fade colors with support for variable starting alpha
  * @param[in] startMsec
  * @param[in] totalMsec
+ * @param[in] alpha
+ * @param[out] color
  * @return
  */
 float *CG_FadeColor_Ext(int startMsec, int totalMsec, float alpha)
