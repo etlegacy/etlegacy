@@ -64,27 +64,28 @@ function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 
 		file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
 		list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
-		if(NOT (${STATUS_CODE} EQUAL 0))
-			message(WARNING "Downgrading https to http, possible remote certificate issue!")
-			string(REPLACE "https://" "http://" _URL ${_URL})
-        else()
-            # https download succeeded to just return now.
-			return()
-		endif()
-
-		file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
-
-		# Separate the returned status code, and error message.
-		list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
 		list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
 
-		# Check if download was successful.
-		if(${STATUS_CODE} EQUAL 0)
-			message(STATUS "Download completed successfully!")
+		if(NOT (${STATUS_CODE} EQUAL 0))
+			message(WARNING "Downgrading https to http, possible remote certificate issue: ${ERROR_MESSAGE}")
+			string(REPLACE "https://" "http://" _URL ${_URL})
+
+			file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
+
+			# Separate the returned status code, and error message.
+			list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+			list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+
+			# Check if download was successful.
+			if(${STATUS_CODE} EQUAL 0)
+				message(STATUS "Download completed successfully!")
+			else()
+				# Exit CMake if the download failed, printing the error message.
+				file(REMOVE "${_PATH}")
+				message(FATAL_ERROR "Error occurred during download: ${ERROR_MESSAGE}")
+			endif()
 		else()
-			# Exit CMake if the download failed, printing the error message.
-			file(REMOVE "${_PATH}")
-			message(FATAL_ERROR "Error occurred during download: ${ERROR_MESSAGE}")
+			message(STATUS "Download completed successfully!")
 		endif()
 
 		if(_EXTRACT AND _EXTRACT_RES)
