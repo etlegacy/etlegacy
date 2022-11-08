@@ -99,7 +99,7 @@ option(ENABLE_SSE				"Enable Streaming SIMD Extensions"						OFF)
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)
 cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON "FEATURE_DBMS" OFF)
 cmake_dependent_option(FEATURE_PRESTIGE	"Enable prestige support (mod)"					ON "FEATURE_DBMS" OFF)
-cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "(NOT MINGW AND WIN32) OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
+cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "( NOT MINGW AND WIN32 ) OR FORCE_OMNIBOT OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 
 option(INSTALL_EXTRA			"Install extra add-ons (omni-bot, geoip, wolfadmin)."	ON)
 
