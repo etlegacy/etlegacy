@@ -222,7 +222,8 @@ SectionEnd
 		DetailPrint "Hash '${hash}' does not match ${pak}"
 		;Delete "$EXEDIR\${pak}"
 		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section1) \
-		IDCANCEL USERCANCEL IDRETRY ${download}
+			/SD IDCANCEL \
+			IDCANCEL USERCANCEL IDRETRY ${download}
 	${EndIf}
 !macroend
 
@@ -261,7 +262,8 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
 		NSISdl::download "https://mirror.etlegacy.com/WolfET.exe" WolfET.exe
 		IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
 		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section2) \
-		IDCANCEL USERCANCEL IDRETRY GET_INSTALL
+			/SD IDCANCEL \
+			IDCANCEL USERCANCEL IDRETRY GET_INSTALL
 
 	CHECK_INSTALL:
 		md5dll::GetMD5File "$TEMP\WolfET.exe"
@@ -271,18 +273,19 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
 		${Else}
 		Delete "$TEMP\WolfET.exe"
 		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section3) \
-		IDCANCEL USERCANCEL IDRETRY GET_INSTALL
+			/SD IDCANCEL \
+			IDCANCEL USERCANCEL IDRETRY GET_INSTALL
 		${EndIf}
 
 	UNPACK_INSTALL:
-		MessageBox MB_ICONINFORMATION|MB_OK $(DESC_Section4)
+		MessageBox MB_ICONINFORMATION|MB_OK $(DESC_Section4) /SD IDOK
 		ExecWait "$TEMP\WolfET.exe /x $TEMP\etl_install"
 		IfFileExists "$TEMP\etl_install\pak0.pk3" +2
-		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section5)
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section5) /SD IDOK
 		CopyFiles "$TEMP\etl_install\pak0.pk3" "$INSTDIR\etmain"
 		IfFileExists "$INSTDIR\etmain\pak0.pk3" +1
 		GOTO COPY_PAK0
-		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section6)
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section6) /SD IDOK
 
 	GET_PATCH:
 		IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
@@ -294,7 +297,8 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
 		NSISdl::download "https://mirror.etlegacy.com/ET_Patch_2_60.exe" ET_Patch_2_60.exe
 		IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
 		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section7) \
-		IDCANCEL USERCANCEL IDRETRY GET_PATCH
+			/SD IDCANCEL \
+			IDCANCEL USERCANCEL IDRETRY GET_PATCH
 
 	CHECK_PATCH:
 		md5dll::GetMD5File "$TEMP\ET_Patch_2_60.exe"
@@ -304,7 +308,8 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
 		${Else}
 		Delete "$TEMP\ET_Patch_2_60.exe"
 		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section8) \
-		IDCANCEL USERCANCEL IDRETRY GET_PATCH
+			/SD IDCANCEL \
+			IDCANCEL USERCANCEL IDRETRY GET_PATCH
 		${EndIf}
 
 	UNPACK_PATCH:
@@ -312,7 +317,7 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
 		GOTO COPY_PAK1
 
 	USERCANCEL:
-		Messagebox MB_OK|MB_ICONEXCLAMATION $(DESC_Section10)
+		Messagebox MB_OK|MB_ICONEXCLAMATION $(DESC_Section10) /SD IDOK
 
 	END:
 SectionEnd
@@ -330,14 +335,15 @@ Section "Omni-bot" OMNIBOT
 		NSISdl::download "@OMNIBOT_ARCHIVE_URL@" @OMNIBOT_ARCHIVE@
 		IfFileExists "$TEMP\@OMNIBOT_ARCHIVE@" UNPACK_BOT
 		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section11) \
-		IDCANCEL END IDRETRY GET_BOT
+			/SD IDCANCEL \
+			IDCANCEL END IDRETRY GET_BOT
 
 	UNPACK_BOT:
 		; Lets not log the output, since it will actually slow down the unpacking
 		; nsisunz::UnzipToLog "$TEMP\@OMNIBOT_ARCHIVE@" "$INSTDIR\legacy"
 		nsisunz::Unzip "$TEMP\@OMNIBOT_ARCHIVE@" "$INSTDIR\legacy"
 		IfFileExists "$INSTDIR\legacy\omni-bot\*.*" END
-		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section12)
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section12) /SD IDOK
 
 	END:
 		SetOutPath $INSTDIR
@@ -358,13 +364,14 @@ Section "GeoIP" GEOIP
 		NSISdl::download "@GEOIP_ARCHIVE_URL@" @GEOIP_ARCHIVE@
 		IfFileExists "$TEMP\@GEOIP_ARCHIVE@" UNPACK_GEOIP
 		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section21) \
-		IDCANCEL END IDRETRY GET_GEOIP
+			/SD IDCANCEL \
+			IDCANCEL END IDRETRY GET_GEOIP
 
 	UNPACK_GEOIP:
 		untgz::extract "$TEMP\@GEOIP_ARCHIVE@"
 		CopyFiles GeoIP.dat "$INSTDIR\legacy"
 		IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
-		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section22)
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section22) /SD IDOK
 
 	END:
 SectionEnd
@@ -382,7 +389,8 @@ Section "WolfAdmin" WOLFADMIN
 		NSISdl::download "@WOLFADMIN_ARCHIVE_URL@" @WOLFADMIN_ARCHIVE@
 		IfFileExists "$TEMP\@WOLFADMIN_ARCHIVE@" UNPACK_WOLFADMIN
 		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section24) \
-		IDCANCEL END IDRETRY GET_WOLFADMIN
+			/SD IDCANCEL
+			IDCANCEL END IDRETRY GET_WOLFADMIN
 
 	UNPACK_WOLFADMIN:
 		untgz::extract "$TEMP\@WOLFADMIN_ARCHIVE@"
@@ -390,7 +398,7 @@ Section "WolfAdmin" WOLFADMIN
 		CopyFiles "wolfadmin\lualibs" "$INSTDIR\legacy"
 		CopyFiles "wolfadmin\config\*.toml" "$INSTDIR\legacy"
 		IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
-		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section25)
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section25) /SD IDOK
 
 	END:
 SectionEnd
@@ -410,19 +418,19 @@ Section -ETKEY
 	GOTO NOKEY
 
 	COPYAPPDATA:
-		MessageBox MB_YESNO "ETKEY found. Do you want to use it with ET: Legacy?" IDNO END
+		MessageBox MB_YESNO "ETKEY found. Do you want to use it with ET: Legacy?" /SD IDYES IDNO END
 		CreateDirectory `$DOCUMENTS\ETLegacy\etmain`
 		CopyFiles `$LOCALAPPDATA\Punkbuster\ET\etmain\etkey` `$DOCUMENTS\ETLegacy\etmain`
 		GOTO END
 
 	COPYETMAIN:
-		MessageBox MB_YESNO "ETKEY found. Do you want to use it with ET: Legacy?" IDNO END
+		MessageBox MB_YESNO "ETKEY found. Do you want to use it with ET: Legacy?" /SD IDYES IDNO END
 		CreateDirectory `$DOCUMENTS\ETLegacy\etmain`
 		CopyFiles `$1\etmain\etkey` `$DOCUMENTS\ETLegacy\etmain`
 		GOTO END
 
 	NOKEY:
-		Messagebox MB_OK|MB_ICONINFORMATION $(DESC_Section13)
+		Messagebox MB_OK|MB_ICONINFORMATION $(DESC_Section13) /SD IDOK
 		GOTO END
 
 	END:
