@@ -201,17 +201,17 @@ elseif(WIN32)
 
 	if(ETL_WIN64)
 		target_compile_definitions(shared_libraries INTERFACE C_ONLY)
-	endif()
+    endif()
 
-	target_link_libraries(os_libraries INTERFACE  wsock32 ws2_32 psapi winmm)
+    target_link_libraries(os_libraries INTERFACE wsock32 ws2_32 psapi winmm)
 
 	if(FEATURE_SSL)
-		target_link_libraries(os_libraries INTERFACE  Crypt32)
+		target_link_libraries(os_libraries INTERFACE Crypt32)
 	endif()
 
 	if(BUNDLED_SDL)
 		# Libraries for Win32 native and MinGW required by static SDL2 build
-		target_link_libraries(os_libraries INTERFACE  user32 gdi32 winmm imm32 ole32 oleaut32 version uuid hid setupapi)
+		target_link_libraries(os_libraries INTERFACE user32 gdi32 imm32 ole32 oleaut32 version uuid hid setupapi)
 	endif()
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
