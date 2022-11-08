@@ -2242,11 +2242,24 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 			return qfalse;
 		}
 
-        (*value)[0] = Q_atof(token);
+		(*value)[0] = Q_atof(token);
 		trap_Argv(++*argIndex, token, sizeof(token));
-        (*value)[1] = Q_atof(token);
+		(*value)[1] = Q_atof(token);
 		trap_Argv(++*argIndex, token, sizeof(token));
-        (*value)[2] = Q_atof(token);
+		(*value)[2] = Q_atof(token);
+
+		if ((trap_Argc() - *argIndex) >= 1)
+		{
+			trap_Argv(*argIndex + 1, token, sizeof(token));
+
+			// ensure we don't start reading the next field string
+			// which can't start with a numeric value
+			if (Q_isnumeric(token[0]))
+			{
+				++*argIndex;
+				(*value)[3] = Q_atof(token);
+			}
+		}
 	}
 
 	return qtrue;
@@ -2263,15 +2276,11 @@ const hudComponentMembersFields_t hudComponentMembersFields[] =
 	{ HUDMF(style),           CG_SetIntComponentFromCommand    },
 	{ HUDMF(scale),           CG_SetFloatComponentFromCommand  },
 	{ HUDMF(colorMain),       CG_SetColorsComponentFromCommand },
-	{ "colorMainAlpha",       offsetof(hudComponent_t, colorMain) + sizeof(float) * 3, CG_SetFloatComponentFromCommand},
 	{ HUDMF(colorSecondary),  CG_SetColorsComponentFromCommand },
-	{ "colorSecondAlpha",     offsetof(hudComponent_t, colorSecondary) + sizeof(float) * 3, CG_SetFloatComponentFromCommand},
 	{ HUDMF(showBackGround),  CG_SetIntComponentFromCommand    },
 	{ HUDMF(colorBackground), CG_SetColorsComponentFromCommand },
-	{ "colorBackgroundAlpha", offsetof(hudComponent_t, colorBackground) + sizeof(float) * 3, CG_SetFloatComponentFromCommand},
 	{ HUDMF(showBorder),      CG_SetIntComponentFromCommand    },
 	{ HUDMF(colorBorder),     CG_SetIntComponentFromCommand    },
-	{ "colorBorderAlpha",     offsetof(hudComponent_t, colorBorder) + sizeof(float) * 3, CG_SetFloatComponentFromCommand},
 	{ HUDMF(styleText),       CG_SetIntComponentFromCommand    },
 	{ HUDMF(alignText),       CG_SetIntComponentFromCommand    },
 	{ HUDMF(autoAdjust),      CG_SetIntComponentFromCommand    },
@@ -2313,7 +2322,7 @@ static void CG_EditComponent_f(void)
 {
 	char           token[MAX_TOKEN_CHARS];
 	hudComponent_t *comp = NULL;
-	int            i, j;
+	int            i;
 	int            argc = trap_Argc();
 
 	if (argc < 3)
@@ -2349,7 +2358,9 @@ static void CG_EditComponent_f(void)
 	// parse command input arguments
 	for (i = 2; i < argc; i++)
 	{
+		int      j;
 		qboolean fieldFound = qfalse;
+
 		trap_Argv(i, token, sizeof(token));
 
 		// find field name
