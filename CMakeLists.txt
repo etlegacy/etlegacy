@@ -170,9 +170,9 @@ if(BUILD_CLIENT)
 	include(cmake/ETLBuildClient.cmake)
 
 	#Since CMake 3.6 you are able to set the Visual Studio startup project
-	if(NOT ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 3.6)
-		set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT etl)
-	endif()
+    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6")
+        set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "etl")
+    endif()
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
