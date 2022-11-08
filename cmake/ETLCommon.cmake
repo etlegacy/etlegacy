@@ -34,7 +34,10 @@ else()
 	SET(NINJA_BUILD 0)
 endif()
 
-# message(FATAL_ERROR "Using buildgen: ${buildgen_upper} ${NINJA_BUILD}")
+# Since Clang is now a thing with Visual Studio
+if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND MSVC)
+    set(MSVC_CLANG 1)
+endif()
 
 if(MSVC AND NOT NMAKE_BUILD AND NOT NINJA_BUILD)
 	SET(VSTUDIO 1)
