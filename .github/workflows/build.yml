@@ -173,6 +173,7 @@ jobs:
            optimize_image: no
            commands: |
              cd /opt/etlegacy
+             export CI=true
              git fetch --tags --force
              ./easybuild.sh build -RPI -mod -ninja
 
