@@ -4693,6 +4693,11 @@ qboolean BG_parseColor(char *colString, float *col)
             col[0] = ((float)(gethex(*(s)) * 16.f + gethex(*(s + 1)))) / 255.00f;
             col[1] = ((float)(gethex(*(s + 2)) * 16.f + gethex(*(s + 3)))) / 255.00f;
             col[2] = ((float)(gethex(*(s + 4)) * 16.f + gethex(*(s + 5)))) / 255.00f;
+
+            if (Q_HexColorStringHasAlpha(s))
+            {
+                col[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
+            }
             return qtrue;
         }
     }
