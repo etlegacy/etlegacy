@@ -1195,15 +1195,14 @@ void CG_DrawCenterString(hudComponent_t *comp)
 		return;
 	}
 
-	color = CG_FadeColor(cg.centerPrintTime, (int)(1000 * cg_centertime.value));
+	Vector4Copy(comp->colorMain, textColor);
+	color = CG_FadeColor_Ext(cg.centerPrintTime, (int)(1000 * cg_centertime.value), textColor[3]);
 	if (!color)
 	{
 		cg.centerPrintTime     = 0;
 		cg.centerPrintPriority = 0;
 		return;
 	}
-
-	VectorCopy(comp->colorMain, textColor);
 	textColor[3] = color[3];
 
 	CG_DrawCompMultilineText(comp, cg.centerPrint, textColor, comp->alignText, comp->styleText, &cgs.media.limboFont2);
@@ -2226,11 +2225,38 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 }
 
 /**
+ * @brief CG_GetCrosshairNameString returns a colorized or single color name string for crosshair info
+ * @param[in] comp
+ * @param[out] s
+ */
+const char *CG_GetCrosshairNameString(hudComponent_t *comp)
+{
+	char *s;
+	char colorized[MAX_NAME_LENGTH + 2] = { 0 };
+
+	if (comp->style & 1)
+	{
+		// Draw them with full colors
+		s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
+	}
+	else
+	{
+		// Draw them with a single color
+		Q_ColorizeString('*', cgs.clientinfo[cg.crosshairClientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
+		s = va("%s", colorized);
+	}
+
+	return s;
+}
+
+/**
  * @brief CG_DrawCrosshairNames
+ * @param[in] comp
  */
 void CG_DrawCrosshairNames(hudComponent_t *comp)
 {
 	float      *color;
+	vec4_t     textColor;
 	const char *s = NULL;
 	float      zChange;
 	qboolean   hitClient = qfalse;
@@ -2246,10 +2272,14 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
+	Vector4Copy(comp->colorMain, textColor);
+
 	// dyna > mine
 	if (cg.crosshairDyna > -1)
 	{
-		color = CG_FadeColor(cg.crosshairDynaTime, 1000);
+		// FIXME: CG_ScanForCrosshairDyna isn't called from here,
+		// fade doens't work because cg.crosshairDynaTime isn't updated correctly
+		color = CG_FadeColor_Ext(cg.crosshairDynaTime, 1000, textColor[3]);
 
 		if (!color)
 		{
@@ -2257,9 +2287,11 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 			return;
 		}
 
-		s = va(CG_TranslateString("%s^7\'s dynamite"), cgs.clientinfo[cg.crosshairDyna].name);
+		textColor[3] = color[3];
 
-		CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
+		s = va(CG_TranslateString("%s^*\'s dynamite"), CG_GetCrosshairNameString(comp));
+
+		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 
 		cg.crosshairDyna = -1;
 		return;
@@ -2268,7 +2300,9 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	// mine id's
 	if (cg.crosshairMine > -1)
 	{
-		color = CG_FadeColor(cg.crosshairMineTime, 1000);
+		// FIXME: CG_ScanForCrosshairMine isn't called from here,
+		// fade doens't work because cg.crosshairMineTime isn't updated correctly
+		color = CG_FadeColor_Ext(cg.crosshairMineTime, 1000, textColor[3]);
 
 		if (!color)
 		{
@@ -2276,8 +2310,10 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 			return;
 		}
 
-		s = va(CG_TranslateString("%s^7\'s mine"), cgs.clientinfo[cg.crosshairMine].name);
-		CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
+		textColor[3] = *color;
+
+		s = va(CG_TranslateString("%s^*\'s mine"), CG_GetCrosshairNameString(comp));
+		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 
 		cg.crosshairMine = -1;
 		return;
@@ -2312,14 +2348,15 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 	if (cg.crosshairClientNum >= MAX_CLIENTS)
 	{
-		// draw the name of the player being looked at
-		color = CG_FadeColor(cg.crosshairClientTime, 1000);
+		color = CG_FadeColor_Ext(cg.crosshairClientTime, 1000, textColor[3]);
 
 		if (!color)
 		{
 			trap_R_SetColor(NULL);
 			return;
 		}
+
+		textColor[3] = color[3];
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
@@ -2334,7 +2371,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 			if (s && *s)
 			{
-				CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
+				CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 			}
 		}
 		return;
@@ -2351,8 +2388,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 		if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, SK_FIELDOPS_ENEMY_RECOGNITION) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
-			// draw the name of the player being looked at
-			color = CG_FadeColor(cg.crosshairClientTime, 1000);
+			color = CG_FadeColor_Ext(cg.crosshairClientTime, 1000, textColor[3]);
 
 			if (!color)
 			{
@@ -2360,8 +2396,10 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 				return;
 			}
 
+			textColor[3] = color[3];
+
 			s = CG_TranslateString("Disguised Enemy!");
-			CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
+			CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 			return;
 		}
 
@@ -2376,9 +2414,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	// draw the name of the player being looked at
 	if (clientNum != -1)
 	{
-		char colorized[MAX_NAME_LENGTH + 2] = { 0 };
-
-		color = CG_FadeColor(cg.crosshairClientTime, 1000);
+		color = CG_FadeColor_Ext(cg.crosshairClientTime, 1000, textColor[3]);
 
 		if (!color)
 		{
@@ -2386,19 +2422,10 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 			return;
 		}
 
-		if (comp->style & 1)
-		{
-			// Draw them with full colors
-			s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
-		}
-		else
-		{
-			// Draw them with a single color (white)
-			Q_ColorizeString('7', cgs.clientinfo[cg.crosshairClientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
-			s = colorized;
-		}
+		textColor[3] = color[3];
 
-		CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
+		s = CG_GetCrosshairNameString(comp);
+		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 	}
 
 	trap_R_SetColor(NULL);
@@ -2949,15 +2976,15 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 		// coloured respawn counter when deployment is close to bring attention to next respawn
 		if (reinfTime > 2)
 		{
-			str1 = va(CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
+			str1 = va(CG_TranslateString("Deploying in ^3%d ^*seconds"), reinfTime);
 		}
 		else if (reinfTime > 1)
 		{
-			str1 = va(CG_TranslateString("Deploying in %s%d ^7seconds"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
+			str1 = va(CG_TranslateString("Deploying in %s%d ^*seconds"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
 		}
 		else
 		{
-			str1 = va(CG_TranslateString("Deploying in %s%d ^7second"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
+			str1 = va(CG_TranslateString("Deploying in %s%d ^*second"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
 		}
 	}
 
@@ -3052,11 +3079,11 @@ void CG_DrawFollow(hudComponent_t *comp)
 
 					if (reinfDepTime > 1)
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7seconds"), reinfDepTime);
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^*seconds"), reinfDepTime);
 					}
 					else
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7second"), reinfDepTime);
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^*second"), reinfDepTime);
 					}
 				}
 				else
@@ -3071,15 +3098,15 @@ void CG_DrawFollow(hudComponent_t *comp)
 				// coloured respawn counter when deployment is close to bring attention to next respawn
 				if (reinfTime > 1)
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
+					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^*seconds"), reinfTime);
 				}
 				else
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
+					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^*second"), reinfTime);
 				}
 			}
 
-			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, comp->colorMain, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
 			y += lineHeight;
 		}
 
@@ -3105,7 +3132,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 				endRank = -charWidth;
 			}
 
-			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, va("(%s", follow), 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, comp->colorMain, va("(%s", follow), 0, 0, comp->styleText, &cgs.media.limboFont2);
 			CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
 			CG_Text_Paint_Ext(comp->location.x + startClass + startRank + endRank, y + heightTextOffset, scale, scale, colorWhite, ")", 0, 0, comp->styleText, &cgs.media.limboFont2);
 		}
@@ -3127,7 +3154,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 			CG_DrawPic(comp->location.x + startClass + startRank, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
-		CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, follow, 0, 0, comp->styleText, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, comp->colorMain, follow, 0, 0, comp->styleText, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
 	}
 }
@@ -3155,11 +3182,11 @@ void CG_DrawWarmupTitle(hudComponent_t *comp)
 
 		if (cgs.minclients > 0)
 		{
-			s = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
+			s = va(CG_TranslateString("^3WARMUP:^* Waiting on ^2%i^* %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
 		}
 		else
 		{
-			s = va("%s", CG_TranslateString("^3WARMUP:^7 All players ready!"));
+			s = va("%s", CG_TranslateString("^3WARMUP:^* All players ready!"));
 		}
 	}
 	else
@@ -3168,11 +3195,11 @@ void CG_DrawWarmupTitle(hudComponent_t *comp)
 
 		if (sec <= 0)
 		{
-			s = CG_TranslateString("^3WARMUP:^7 Match begins now!"); // " Timelimit at start: ^3%i min", cgs.timelimit
+			s = CG_TranslateString("^3WARMUP:^* Match begins now!"); // " Timelimit at start: ^3%i min", cgs.timelimit
 		}
 		else
 		{
-			s = va("%s %s%i", CG_TranslateString("^3WARMUP:^7 Match begins in"), sec  < 4 ? "^1" : "^2", sec);
+			s = va("%s %s%i", CG_TranslateString("^3WARMUP:^* Match begins in"), sec  < 4 ? "^1" : "^2", sec);
 		}
 
 		// pre start actions
@@ -3233,11 +3260,11 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 				Q_strncpyz(str1, Binding_FromName("notready"), 32);
 				if (!Q_stricmp(str1, "(?" "?" "?)"))
 				{
-					s2 = CG_TranslateString("Type ^3\\notready^7 in the console to unready");
+					s2 = CG_TranslateString("Type ^3\\notready^* in the console to unready");
 				}
 				else
 				{
-					s2 = va(CG_TranslateString("^7Press ^3%s^7 to unready"), str1);
+					s2 = va(CG_TranslateString("^7Press ^3%s^* to unready"), str1);
 					s2 = CG_TranslateString(s2);
 				}
 			}
@@ -3246,11 +3273,11 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 				Q_strncpyz(str1, Binding_FromName("ready"), 32);
 				if (!Q_stricmp(str1, "(?" "?" "?)"))
 				{
-					s2 = CG_TranslateString("Type ^3\\ready^7 in the console to start");
+					s2 = CG_TranslateString("Type ^3\\ready^* in the console to start");
 				}
 				else
 				{
-					s2 = va(CG_TranslateString("Press ^3%s^7 to start"), str1);
+					s2 = va(CG_TranslateString("Press ^3%s^* to start"), str1);
 					s2 = CG_TranslateString(s2);
 				}
 			}
@@ -3658,7 +3685,8 @@ void CG_DrawObjectiveInfo(hudComponent_t *comp)
 		return;
 	}
 
-	color = CG_FadeColor(cg.oidPrintTime, 250);
+	Vector4Copy(comp->colorMain, textColor);
+	color = CG_FadeColor_Ext(cg.oidPrintTime, 250, textColor[3]);
 
 	if (!color)
 	{
@@ -3666,7 +3694,6 @@ void CG_DrawObjectiveInfo(hudComponent_t *comp)
 		return;
 	}
 
-	VectorCopy(comp->colorMain, textColor);
 	textColor[3] = color[3];
 
 	CG_DrawCompMultilineText(comp, cg.oidPrint, textColor, comp->alignText, comp->styleText, &cgs.media.limboFont2);
@@ -4116,7 +4143,8 @@ static void CG_Draw2D(void)
 		return;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster || cg.demoPlayback || cgs.sv_cheats)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster
+	    || cg.demoPlayback || cgs.sv_cheats || cg_drawSpawnpoints.integer)
 	{
 		CG_DrawOnScreenLabels();
 		CG_DrawOnScreenBars();

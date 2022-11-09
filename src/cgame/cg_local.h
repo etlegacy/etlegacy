@@ -1384,6 +1384,7 @@ typedef struct
 
 	int numMiscGameModels;
 	int numCoronas;
+	int numSpawnpointEnts;
 
 	qboolean showCampaignBriefing;
 	qboolean showGameView;
@@ -1981,6 +1982,8 @@ typedef struct
 
 	qhandle_t countryFlags;         ///< GeoIP
 
+	qhandle_t spawnpointMarker;
+
 } cgMedia_t;
 
 /**
@@ -2042,6 +2045,21 @@ typedef struct cg_corona_s
 	vec3_t org;
 	vec3_t color;
 } cg_corona_t;
+
+/**
+ * @struct cg_spawnpoint_s
+ * @typedef cg_spawnpoint_t
+ * @brief
+ */
+typedef struct cg_spawnpoint_s
+{
+	vec3_t origin;
+	vec3_t color;
+	team_t team;
+	int id;
+	qboolean isMajor;
+	char name[MAX_QPATH];
+} cg_spawnpoint_t;
 
 /**
  * @struct cg_weaponstats_s
@@ -2509,6 +2527,7 @@ typedef struct cgs_s
 
 	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
 	cg_corona_t corona[MAX_GAMECORONAS];
+	cg_spawnpoint_t spawnpointEnt[MAX_GENTITIES];
 
 	vec2_t ccMenuPos;
 	qboolean ccMenuShowing;
@@ -2864,6 +2883,8 @@ extern vmCvar_t cg_drawBreathPuffs;
 extern vmCvar_t cg_customFont1;
 extern vmCvar_t cg_customFont2;
 
+extern vmCvar_t cg_drawSpawnpoints;
+
 // local clock flags
 enum
 {
@@ -2987,6 +3008,7 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
 
 float *CG_FadeColor(int startMsec, int totalMsec);
+float *CG_FadeColor_Ext(int startMsec, int totalMsec, float alpha);
 float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMsec, int attackMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
