@@ -644,6 +644,45 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 }
 
 /**
+ * @brief CG_FadeColor_Ext fade colors with support for variable starting alpha
+ * @param[in] startMsec
+ * @param[in] totalMsec
+ * @param[in] alpha
+ * @param[out] color
+ * @return
+ */
+float *CG_FadeColor_Ext(int startMsec, int totalMsec, float alpha)
+{
+	static vec4_t color;
+	int           t;
+
+	if (startMsec == 0)
+	{
+		return NULL;
+	}
+
+	t = cg.time - startMsec;
+
+	if (t >= totalMsec)
+	{
+		return NULL;
+	}
+
+	// fade out
+	if (totalMsec - t < FADE_TIME)
+	{
+		color[3] = (totalMsec - t) * alpha / FADE_TIME;
+	}
+	else
+	{
+		color[3] = alpha;
+	}
+	color[0] = color[1] = color[2] = alpha;
+
+	return color;
+}
+
+/**
  * @brief CG_LerpColorWithAttack, interpolates colors
  * @param[in] from
  * @param[in] to

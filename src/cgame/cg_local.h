@@ -3008,6 +3008,7 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
 
 float *CG_FadeColor(int startMsec, int totalMsec);
+float *CG_FadeColor_Ext(int startMsec, int totalMsec, float alpha);
 float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMsec, int attackMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);

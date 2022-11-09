@@ -3262,7 +3262,7 @@ static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 
 	blink = CG_SpawnTimersText(&s, &rt);
 
-	mt = va("%s%s", "^7", CG_RoundTimerText());
+	mt = va("%s", CG_RoundTimerText());
 
 	CG_DrawCompText(comp, mt, comp->colorMain, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
 }
@@ -3284,7 +3284,7 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 
 	blink = CG_SpawnTimersText(&s, &rt);
 
-	mt = va("%s%s", "^7", CG_RoundTimerText());
+	mt = va("%s%s", "^*", CG_RoundTimerText());
 
 	if (s)
 	{
