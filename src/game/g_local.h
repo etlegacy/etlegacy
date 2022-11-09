@@ -548,6 +548,8 @@ struct gentity_s
 #ifdef FEATURE_OMNIBOT
 	int numPlanted;                     ///< Omni-bot increment dyno count
 #endif
+
+	int lastSurfaceFlags;
 };
 
 /**
@@ -2892,7 +2894,7 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 typedef struct weapFireTable_t
 {
 	weapon_t weapon;
-	gentity_t *(*fire)(gentity_t * ent);  ///< -
+	gentity_t *(*fire)(gentity_t *ent);   ///< -
 	void (*think)(gentity_t *ent);        ///< -
 	void (*free)(gentity_t *ent);         ///< -
 	int eType;                            ///< -
