@@ -1,0 +1,29 @@
+# 2022 Legacy team
+name: AndroidBuildMachine
+
+on:
+  push:
+    paths:
+      - 'misc/docker/android.Dockerfile'
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ubuntu-22.04
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Get the version
+        id: vars
+        run: |
+          echo "tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+
+      - name: Build and push the latest Docker image
+        run: |
+          docker build misc/docker --file misc/docker/android.Dockerfile --tag etlegacy/android-build:latest --tag etlegacy/android-build:${{steps.vars.outputs.tag}}
+          docker push etlegacy/android-build:${{steps.vars.outputs.tag}}
+          docker push etlegacy/android-build:latest
