@@ -46,7 +46,7 @@
 /**
  * @brief DL_ContainerizePath target destination path to container if needed
  */
-const char* DL_ContainerizePath(const char *temp, const char *dest)
+const char *DL_ContainerizePath(const char *temp, const char *dest)
 {
 	char       hash[41] = { 0 };
 	const char *pakname = FS_Basename(dest);
@@ -147,7 +147,8 @@ static void Com_DownloadsComplete(void)
 #endif
 
 	// reset state for system issued downloads
-	if (dld.systemDownload) {
+	if (dld.systemDownload)
+	{
 		dld.bWWWDlDisconnected = qfalse;
 		Com_ClearStaticDownload();
 		return;
@@ -320,7 +321,7 @@ void Com_InitDownloads(void)
  */
 void Com_WWWDownload(void)
 {
-	const char *to_ospath;
+	const char      *to_ospath;
 	dlStatus_t      ret;
 	static qboolean bAbort = qfalse;
 
@@ -360,7 +361,7 @@ void Com_WWWDownload(void)
 		{
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"),
-									   DL_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
+			                           DL_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
 #else
 			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
 #endif
@@ -558,14 +559,15 @@ void Com_Download_f(void)
  */
 void Com_CheckCaCertStatus(void)
 {
-	const char *ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), CA_CERT_FILE, NULL);
-	qboolean downloadFile = qfalse;
+#if defined(USING_WOLFSSL) || defined(USING_OPENSSL)
+	const char *ospath      = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), CA_CERT_FILE, NULL);
+	qboolean   downloadFile = qfalse;
 
 	if (FS_SV_FileExists(CA_CERT_FILE, qfalse))
 	{
 		long age = FS_FileAge(ospath);
 
-		if(age <= 0)
+		if (age <= 0)
 		{
 			Com_DPrintf("CA file returned an age of: %li", age);
 			return;
@@ -586,5 +588,8 @@ void Com_CheckCaCertStatus(void)
 	{
 		Com_SetupDownloadRaw(MIRROR_SERVER_URL "/certificates", "", CA_CERT_FILE, CA_CERT_FILE TMP_FILE_EXTENSION, qtrue, qtrue);
 	}
+#else
+	Com_Printf("Using system ssl certificates\n");
+#endif
 }
 #endif
