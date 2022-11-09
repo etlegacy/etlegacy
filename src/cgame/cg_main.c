@@ -353,6 +353,8 @@ vmCvar_t cg_drawBreathPuffs;
 vmCvar_t cg_customFont1;
 vmCvar_t cg_customFont2;
 
+vmCvar_t cg_drawSpawnpoints;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -597,6 +599,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_activateLean,            "cg_activateLean",            "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawBreathPuffs,         "cg_drawBreathPuffs",         "1",           CVAR_ARCHIVE,                 0 },
+
+	{ &cg_drawSpawnpoints,         "cg_drawSpawnpoints",         "0",           CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -2162,6 +2166,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.cm_arrow_spec = trap_R_RegisterShaderNoMip("ui/assets/mp_arrow_spec");
 
 	cgs.media.fireteamIcon = trap_R_RegisterShaderNoMip("sprites/fireteam");
+
+	cgs.media.spawnpointMarker = trap_R_RegisterShaderNoMip("textures/sfx/spawnpoint_marker");
 
 	// NOTE: load smoke puff as last shader to always draw on top of other shaders
 	// because renderer order the draw depth level by register index
