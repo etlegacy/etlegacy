@@ -27,6 +27,11 @@ add_library(ui_libraries INTERFACE)
 # Server mod libraries
 add_library(qagame_libraries INTERFACE)
 
+# JSON library helper target
+add_library(etl_json INTERFACE)
+target_sources(etl_json INTERFACE "${PROJECT_SOURCE_DIR}/src/qcommon/json/json.c")
+target_include_directories(etl_json INTERFACE "${PROJECT_SOURCE_DIR}/src/qcommon/json/")
+
 # Link the shared libraries to all output bins
 target_link_libraries(engine_libraries INTERFACE shared_libraries)
 target_link_libraries(renderer_libraries INTERFACE shared_libraries)

@@ -1030,7 +1030,7 @@ void G_statsPrint(gentity_t *ent, int nType)
 
 	cmd = (nType == 0) ? "ws" : ((nType == 1) ? "wws" : "gstats");         // Yes, not the cleanest
 
-	// If requesting stats for self, its easy
+	// If requesting stats for self, it's easy
 	if (trap_Argc() < 2)
 	{
 		// Always send to everybody at end of match

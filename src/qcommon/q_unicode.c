@@ -887,7 +887,7 @@ size_t Q_EscapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 	// \u{num}
 	size_t width = 0;
 	char   *str  = fromStr;
-	int    l     = 0;
+	size_t l     = 0;
 
 	while (*str)
 	{
