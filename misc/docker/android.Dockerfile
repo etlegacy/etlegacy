@@ -7,7 +7,7 @@ LABEL description="Linux build machine for the android releases"
 # We will later decide which libs to install  
 RUN apt update \
 	apt upgrade -y \
-	apt-get autoremove --purge -y \
+	apt-get autopurge -y \
 	apt-get clean
 	
 # Image comes with availability of cmake 3.22 to be installed with but steal it from main build
