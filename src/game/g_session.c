@@ -37,6 +37,100 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
+#include "json.h"
+
+static void G_WriteClientSessionDataJson(gclient_t *client, qboolean restart)
+{
+	cJSON        *root;
+	fileHandle_t f;
+	char         fileName[MAX_QPATH] = { 0 };
+
+	Com_sprintf(fileName, sizeof(fileName), "session/client%02i.json", (int)(client - level.clients));
+	Com_Printf("Writing session file %s\n", fileName);
+
+	// stats reset check
+	if (level.fResetStats)
+	{
+		G_deleteStats(client - level.clients);
+	}
+
+	Q_JSONInit();
+
+	root = cJSON_CreateObject();
+	if (!root)
+	{
+		Com_Error(ERR_FATAL, "Could not allocate memory for session data\n");
+	}
+
+	cJSON_AddNumberToObject(root, "sessionTeam", client->sess.sessionTeam);
+	cJSON_AddNumberToObject(root, "spectatorTime", client->sess.spectatorTime);
+	cJSON_AddNumberToObject(root, "spectatorState", client->sess.spectatorState);
+	cJSON_AddNumberToObject(root, "spectatorClient", client->sess.spectatorClient);
+	cJSON_AddNumberToObject(root, "playerType", client->sess.playerType);
+	cJSON_AddNumberToObject(root, "playerWeapon", client->sess.playerWeapon);
+	cJSON_AddNumberToObject(root, "playerWeapon2", client->sess.playerWeapon2);
+	cJSON_AddNumberToObject(root, "latchPlayerType", client->sess.latchPlayerType);
+	cJSON_AddNumberToObject(root, "latchPlayerWeapon", client->sess.latchPlayerWeapon);
+	cJSON_AddNumberToObject(root, "latchPlayerWeapon2", client->sess.latchPlayerWeapon2);
+	cJSON_AddNumberToObject(root, "referee", client->sess.referee);
+	cJSON_AddNumberToObject(root, "shoutcaster", client->sess.shoutcaster);
+	cJSON_AddNumberToObject(root, "spec_invite", client->sess.spec_invite);
+	cJSON_AddNumberToObject(root, "spec_team", client->sess.spec_team);
+	cJSON_AddNumberToObject(root, "kills", client->sess.kills);
+	cJSON_AddNumberToObject(root, "deaths", client->sess.deaths);
+	cJSON_AddNumberToObject(root, "gibs", client->sess.gibs);
+	cJSON_AddNumberToObject(root, "self_kills", client->sess.self_kills);
+	cJSON_AddNumberToObject(root, "team_kills", client->sess.team_kills);
+	cJSON_AddNumberToObject(root, "team_gibs", client->sess.team_gibs);
+	cJSON_AddNumberToObject(root, "time_axis", client->sess.time_axis);
+	cJSON_AddNumberToObject(root, "time_allies", client->sess.time_allies);
+	cJSON_AddNumberToObject(root, "time_played", client->sess.time_played);
+
+#ifdef FEATURE_RATING
+	{
+		cJSON *ratingObj = cJSON_AddObjectToObject(root, "rating");
+		cJSON_AddNumberToObject(ratingObj, "mu", client->sess.mu);
+		cJSON_AddNumberToObject(ratingObj, "sigma", client->sess.sigma);
+		cJSON_AddNumberToObject(ratingObj, "oldmu", client->sess.oldmu);
+		cJSON_AddNumberToObject(ratingObj, "oldsigma", client->sess.oldsigma);
+	}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+	cJSON_AddNumberToObject(root, "prestige", client->sess.prestige);
+#endif
+
+#ifdef FEATURE_MULTIVIEW
+	{
+		int mvc = G_smvGenerateClientList(g_entities + (client - level.clients));
+		// FIXME: naming
+		cJSON *multiViewObj = cJSON_AddObjectToObject(root, "multiview");
+		cJSON_AddNumberToObject(multiViewObj, "mv1", (mvc & 0xFFFF));
+		cJSON_AddNumberToObject(multiViewObj, "mv2", ((mvc >> 16) & 0xFFFF));
+	}
+#endif
+
+	cJSON_AddNumberToObject(root, "muted", client->sess.muted);
+	cJSON_AddNumberToObject(root, "ignoreClients1", client->sess.ignoreClients[0]);
+	cJSON_AddNumberToObject(root, "ignoreClients2", client->sess.ignoreClients[1]);
+	cJSON_AddNumberToObject(root, "enterTime", client->pers.enterTime);
+	cJSON_AddNumberToObject(root, "userSpawnPointValue", restart ? client->sess.userSpawnPointValue : 0);
+	cJSON_AddNumberToObject(root, "userMinorSpawnPointValue", restart ? client->sess.userMinorSpawnPointValue : -1);
+	cJSON_AddNumberToObject(root, "uci", client->sess.uci);
+
+	// store the clients stats (7) and medals (7)
+	// addition: but only if it isn't a forced map_restart (done by someone on the console)
+	if (!(restart && !level.warmupTime))
+	{
+		cJSON *restartObj = cJSON_AddObjectToObject(root, "restart");
+		cJSON_AddItemToObject(restartObj, "skillpoints", cJSON_CreateFloatArray(client->sess.skillpoints, SK_NUM_SKILLS));
+		cJSON_AddItemToObject(restartObj, "medals", cJSON_CreateIntArray(client->sess.medals, SK_NUM_SKILLS));
+	}
+
+	trap_FS_FOpenFile(fileName, &f, FS_WRITE);
+	Q_FSWriteJSON(root, f);
+}
+
 /**
  * SESSION DATA
 */
@@ -48,10 +142,10 @@
  */
 void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 {
+	const char *s;
 #ifdef FEATURE_MULTIVIEW
 	int mvc = G_smvGenerateClientList(g_entities + (client - level.clients));
 #endif
-	const char *s;
 
 	// stats reset check
 	if (level.fResetStats)
@@ -168,6 +262,8 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	{
 		trap_Cvar_Set(va("wstats%i", (int)(client - level.clients)), G_createStats(&g_entities[client - level.clients]));
 	}
+
+	G_WriteClientSessionDataJson(client, restart);
 }
 
 /**
@@ -249,8 +345,8 @@ void G_CalcRank(gclient_t *client)
 	// rating values for rank levels
 	// lognormal(e, 2/e) for each 1/11th percentile
 	float rankRating[NUM_EXPERIENCE_LEVELS] = { 0.000001,
-	                                            5.674106,  7.766937,  9.712880,  11.724512, 13.933123,
-	                                            16.482425, 19.587310, 23.644035, 29.567854, 40.473632 };
+		                                        5.674106, 7.766937,   9.712880,  11.724512, 13.933123,
+		                                        16.482425,19.587310,  23.644035, 29.567854, 40.473632 };
 
 	if (g_skillRating.integer)
 	{
@@ -285,18 +381,18 @@ void G_CalcRank(gclient_t *client)
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		G_SetPlayerSkill(client, i);
-        
-        for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
-        {
-            if (GetSkillTableData(i)->skillLevels[j] >= 0 && client->sess.skillpoints[i] >= GetSkillTableData(i)->skillLevels[j])
-            {
-                if (j > highestskill)
-                {
-                    highestskill = j;
-                }
-                break;
-            }
-        }
+
+		for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+		{
+			if (GetSkillTableData(i)->skillLevels[j] >= 0 && client->sess.skillpoints[i] >= GetSkillTableData(i)->skillLevels[j])
+			{
+				if (j > highestskill)
+				{
+					highestskill = j;
+				}
+				break;
+			}
+		}
 	}
 
 	// set rank
@@ -467,19 +563,19 @@ void G_ReadSessionData(gclient_t *client)
 
 	test = (g_altStopwatchMode.integer != 0 || g_currentRound.integer == 1);
 
-	if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
+	        if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
 	{
 		G_ClientSwap(client);
 	}
 
-	if (g_swapteams.integer)
+	        if (g_swapteams.integer)
 	{
 		trap_Cvar_Set("g_swapteams", "0");
 		G_ClientSwap(client);
 	}
 
-	client->sess.startxptotal = 0;
-	for (j = 0; j < SK_NUM_SKILLS; j++)
+	        client->sess.startxptotal = 0;
+	        for (j = 0; j < SK_NUM_SKILLS; j++)
 	{
 		client->sess.startskillpoints[j] = client->sess.skillpoints[j];
 		client->sess.startxptotal += client->sess.skillpoints[j];
@@ -505,7 +601,7 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 	sess->latchPlayerWeapon = sess->playerWeapon = WP_NONE;
 	sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
 
-	sess->userSpawnPointValue      = 0;
+	sess->userSpawnPointValue = 0;
 	sess->userMinorSpawnPointValue = -1;
 
 	Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
@@ -552,7 +648,8 @@ void G_InitWorldSession(void)
 		char     *tmp = s;
 		qboolean test = (g_altStopwatchMode.integer != 0 || g_currentRound.integer == 1);
 
-#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = Q_atoi(++tmp);
+#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; \
+} x = Q_atoi(++tmp);
 
 		// Get team lock stuff
 		GETVAL(gt);
