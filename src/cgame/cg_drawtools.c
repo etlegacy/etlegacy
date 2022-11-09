@@ -1116,7 +1116,7 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
 	while (input[i] && (o + 1) < maxOutputSize)
 	{
 		// split line
-		if (lineWidth >= maxLineChars)
+		if (lineWidth > maxLineChars)
 		{
 			// line might end on certain line break characters
 			if (input[i] == ' ')
