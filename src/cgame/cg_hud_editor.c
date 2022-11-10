@@ -765,7 +765,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 	char          *s;
 	hudStucture_t *hud;
 
-	if (trap_FS_FOpenFile("hud.dat", &fh, FS_WRITE) < 0)
+	if (trap_FS_FOpenFile("hud-v2.dat", &fh, FS_WRITE) < 0)
 	{
 		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to save hud to 'hud.dat\n");
 		return qfalse;
@@ -850,7 +850,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 
 	trap_FS_FCloseFile(fh);
 
-	CG_Printf("Saved huds to 'hud.dat'\n");
+	CG_Printf("Saved huds to 'hud-v2.dat'\n");
 
 	return qtrue;
 }

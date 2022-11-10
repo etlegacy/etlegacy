@@ -703,7 +703,7 @@ void CG_ReadHudScripts(void)
 	}
 
 	// This needs to be a .dat file to go around the file extension restrictions of the engine.
-	CG_ReadHudFile("hud.dat");
+	CG_ReadHudFile("hud-v2.dat");
 
 	Com_Printf("...hud count: %i\n", hudCount);
 }
