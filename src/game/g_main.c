@@ -5380,6 +5380,11 @@ void G_RunFrame(int levelTime)
 	for (i = 0; i < level.num_entities; i++)
 	{
 		g_entities[i].runthisframe = qfalse;
+
+		if ((g_scriptDebug.integer || g_developer.integer) && !Q_stricmp(g_entities[i].classname, "func_fakebrush"))
+		{
+			G_RailBox(g_entities[i].s.origin, g_entities[i].r.mins, g_entities[i].r.maxs, colorRed, g_entities[i].s.number);
+		}
 	}
 
 	// go through all allocated objects
