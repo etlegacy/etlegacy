@@ -735,6 +735,7 @@ jobs:
             lnx32-packages
             osx-packages
             win-packages
+            win64-packages
             raspberry_pi-packages
             android-packages
             mod-zip
