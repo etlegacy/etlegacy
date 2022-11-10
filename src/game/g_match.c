@@ -35,6 +35,7 @@
 
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
+#include "json.h"
 
 /**
  * @brief G_initMatch
@@ -409,6 +410,118 @@ void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod)
 	}
 
 	attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].headshots++;
+}
+
+void G_createStatsJson(gentity_t *ent, void *target)
+{
+	unsigned int i;
+	gclient_t    *cl;
+	cJSON        *tmp, *tmp2;
+	qboolean     weapons = qfalse;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	cl = ent->client;
+
+	if (cl->pers.connected != CON_CONNECTED)
+	{
+		return;
+	}
+
+	cJSON_AddNumberToObject(target, "ent", (int)(ent - g_entities));
+	cJSON_AddNumberToObject(target, "rounds", ent->client->sess.rounds);
+#ifdef FEATURE_RATING
+	cJSON_AddNumberToObject(target, "rating1", ent->client->sess.mu - 3 * ent->client->sess.sigma);
+	cJSON_AddNumberToObject(target, "rating2", ent->client->sess.mu - 3 * ent->client->sess.sigma - (ent->client->sess.oldmu - 3 * ent->client->sess.oldsigma));
+#endif
+#ifdef FEATURE_PRESTIGE
+	cJSON_AddNumberToObject(target, "prestige", ent->client->sess.prestige);
+#endif
+
+	// workaround to always hide previous map stats in warmup
+	// Stats will be cleared correctly when the match actually starts
+	if ((g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN) &&
+	    !(g_gametype.integer == GT_WOLF_STOPWATCH))
+	{
+		return;
+	}
+
+	// Add weapon stats as necessary
+	// The client also expects stats when kills are above 0
+	tmp = cJSON_AddObjectToObject(target, "weapons");
+	for (i = WS_KNIFE; i < WS_MAX; i++)
+	{
+		if (ent->client->sess.aWeaponStats[i].atts || ent->client->sess.aWeaponStats[i].hits ||
+		    ent->client->sess.aWeaponStats[i].deaths || ent->client->sess.aWeaponStats[i].kills)
+		{
+			weapons = qtrue;
+			tmp2    = cJSON_AddObjectToObject(tmp, aWeaponInfo[i].pszCode);
+			cJSON_AddNumberToObject(tmp2, "hits", ent->client->sess.aWeaponStats[i].hits);
+			cJSON_AddNumberToObject(tmp2, "atts", ent->client->sess.aWeaponStats[i].atts);
+			cJSON_AddNumberToObject(tmp2, "kills", ent->client->sess.aWeaponStats[i].kills);
+			cJSON_AddNumberToObject(tmp2, "deaths", ent->client->sess.aWeaponStats[i].deaths);
+			cJSON_AddNumberToObject(tmp2, "headshots", ent->client->sess.aWeaponStats[i].headshots);
+		}
+	}
+
+	// Additional info
+	if (weapons)
+	{
+		tmp2 = cJSON_AddObjectToObject(tmp, "_shared");
+		cJSON_AddNumberToObject(tmp2, "damage_given", ent->client->sess.damage_given);
+		cJSON_AddNumberToObject(tmp2, "damage_received", ent->client->sess.damage_received);
+		cJSON_AddNumberToObject(tmp2, "team_damage_given", ent->client->sess.team_damage_given);
+		cJSON_AddNumberToObject(tmp2, "team_damage_received", ent->client->sess.team_damage_received);
+		cJSON_AddNumberToObject(tmp2, "gibs", ent->client->sess.gibs);
+		cJSON_AddNumberToObject(tmp2, "self_kills", ent->client->sess.self_kills);
+		cJSON_AddNumberToObject(tmp2, "team_kills", ent->client->sess.team_kills);
+		cJSON_AddNumberToObject(tmp2, "team_gibs", ent->client->sess.team_gibs);
+		cJSON_AddNumberToObject(tmp2, "play_time", (ent->client->sess.time_axis + ent->client->sess.time_allies) == 0 ? 0 : 100.0 * ent->client->sess.time_played / (ent->client->sess.time_axis + ent->client->sess.time_allies));
+	}
+
+
+	tmp = cJSON_AddObjectToObject(target, "skills");
+	// Add skill points as necessary
+	if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
+	    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+	    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
+	{
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		{
+			if (ent->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
+			{
+				cJSON_AddNumberToObject(tmp, skillTable[i].skillNames, (int)ent->client->sess.skillpoints[i]);
+			}
+		}
+	}
+#ifdef FEATURE_PRESTIGE
+	else if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
+	{
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		{
+			if (ent->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
+			{
+				tmp2 = cJSON_AddObjectToObject(tmp, skillTable[i].skillNames);
+				cJSON_AddNumberToObject(tmp2, "skillPoints", (int)ent->client->sess.skillpoints[i]);
+				cJSON_AddNumberToObject(tmp2, "diff", (int)(ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i]));
+			}
+		}
+	}
+#endif
+	else
+	{
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		{
+			// current map XPs only
+			if ((ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i]) != 0.f) // Skillpoints can be negative
+			{
+				cJSON_AddNumberToObject(tmp, skillTable[i].skillNames, (int)(ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i]));
+			}
+		}
+	}
 }
 
 /**

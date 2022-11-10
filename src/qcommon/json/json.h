@@ -45,15 +45,19 @@
 #endif
 
 /**
+ * Initialize the Json library memory functions
+ */
+void Q_JSONInit(void);
+
+cJSON *Q_FSReadJsonFrom(const char *path);
+
+qboolean Q_FSWriteJSONTo(cJSON *object, const char *path);
+
+/**
  * Serialise a JSON object and write it to the specified file
  * @param object cJson object which to print out
  * @param handle file handle to the already open file
  */
-void Q_FSWriteJSON(cJSON *object, fileHandle_t handle);
-
-/**
- * Initialize the Json library memory functions
- */
-void Q_JSONInit(void);
+qboolean Q_FSWriteJSON(cJSON *object, fileHandle_t handle);
 
 #endif

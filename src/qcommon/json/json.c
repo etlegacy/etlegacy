@@ -66,20 +66,94 @@ void Q_JSONInit(void)
 	initDone = qtrue;
 }
 
-void Q_FSWriteJSON(cJSON *object, fileHandle_t handle)
+cJSON *Q_FSReadJsonFrom(const char *path)
 {
+	fileHandle_t fileHandle;
+	int          len;
+	char         *buffer = NULL;
+	cJSON        *object = NULL;
+
+#if MODLIB
+	len = trap_FS_FOpenFile(path, &fileHandle, FS_READ);
+#else
+	len = FS_FOpenFile(path, &fileHandle, FS_READ);
+#endif
+
+	// if there is no file, or if the size is over 5 megs (which is a bit sus)
+	if (!fileHandle || !len || len > 5242880)
+	{
+#if MODLIB
+		trap_FS_FCloseFile(fileHandle);
+#else
+		FS_FCloseFile(fileHandle);
+#endif
+		return NULL;
+	}
+
+	buffer = (char *)Com_Allocate(len + 1);
+	if (!buffer)
+	{
+		return NULL;
+	}
+
+#if MODLIB
+	trap_FS_Read(buffer, len, fileHandle);
+	trap_FS_FCloseFile(fileHandle);
+#else
+	FS_Read(buffer, len, fileHandle);
+	FS_FCloseFile(fileHandle);
+#endif
+	buffer[len] = '\0';
+
+	// read buffer
+	object = cJSON_Parse(buffer);
+	Com_Dealloc(buffer);
+
+	return object;
+}
+
+qboolean Q_FSWriteJSONTo(cJSON *object, const char *path)
+{
+	int          len;
+	fileHandle_t fileHandle;
+#if MODLIB
+	len = trap_FS_FOpenFile(path, &fileHandle, FS_WRITE);
+#else
+	len = FS_FOpenFile(path, &fileHandle, FS_WRITE);
+#endif
+
+	// file handle failed
+	if (len < 0)
+	{
+		return qfalse;
+	}
+
+	return Q_FSWriteJSON(object, fileHandle);
+}
+
+qboolean Q_FSWriteJSON(cJSON *object, fileHandle_t handle)
+{
+	int  len, outLen;
 	char *serialised = NULL;
 
 	serialised = cJSON_Print(object);
+	len        = (int) strlen(serialised);
 
 #if MODLIB
-	trap_FS_Write(serialised, (int) strlen(serialised), handle);
+	outLen = trap_FS_Write(serialised, len, handle);
 	trap_FS_FCloseFile(handle);
 #else
-	FS_Write(serialised, (int) strlen(serialised), handle);
+	outLen = FS_Write(serialised, len, handle);
 	FS_FCloseFile(handle);
 #endif
 
+	if (len != outLen)
+	{
+		return qfalse;
+	}
+
 	Com_Dealloc(serialised);
 	cJSON_Delete(object);
+
+	return qtrue;
 }

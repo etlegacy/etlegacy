@@ -41,9 +41,8 @@
 
 static void G_WriteClientSessionDataJson(gclient_t *client, qboolean restart)
 {
-	cJSON        *root;
-	fileHandle_t f;
-	char         fileName[MAX_QPATH] = { 0 };
+	cJSON *root, *restartObj = NULL;
+	char  fileName[MAX_QPATH] = { 0 };
 
 	Com_sprintf(fileName, sizeof(fileName), "session/client%02i.json", (int)(client - level.clients));
 	Com_Printf("Writing session file %s\n", fileName);
@@ -122,13 +121,34 @@ static void G_WriteClientSessionDataJson(gclient_t *client, qboolean restart)
 	// addition: but only if it isn't a forced map_restart (done by someone on the console)
 	if (!(restart && !level.warmupTime))
 	{
-		cJSON *restartObj = cJSON_AddObjectToObject(root, "restart");
+		restartObj = cJSON_AddObjectToObject(root, "restart");
 		cJSON_AddItemToObject(restartObj, "skillpoints", cJSON_CreateFloatArray(client->sess.skillpoints, SK_NUM_SKILLS));
 		cJSON_AddItemToObject(restartObj, "medals", cJSON_CreateIntArray(client->sess.medals, SK_NUM_SKILLS));
+		restartObj = NULL;
+	}
+	else
+	{
+		// restore the restart info from the old session file
+		cJSON *tmp = Q_FSReadJsonFrom(fileName);
+		restartObj = cJSON_GetObjectItemCaseSensitive(tmp, "restart");
+		cJSON_AddItemReferenceToObject(root, "restart", restartObj);
 	}
 
-	trap_FS_FOpenFile(fileName, &f, FS_WRITE);
-	Q_FSWriteJSON(root, f);
+	// save weapon stats too
+	if (!level.fResetStats)
+	{
+		G_createStatsJson(&g_entities[client - level.clients], cJSON_AddObjectToObject(root, "wstats"));
+	}
+
+	if (!Q_FSWriteJSONTo(root, fileName))
+	{
+		Com_Error(ERR_FATAL, "Could not write session information\n");
+	}
+
+	if (restartObj)
+	{
+		cJSON_Delete(restartObj);
+	}
 }
 
 /**
