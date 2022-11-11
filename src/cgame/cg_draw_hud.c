@@ -49,59 +49,57 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { "Pulse",      "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },             // FIXME: outside cg_draw_hud
-	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,            { "Square",     "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj"     } },
-	{ "compas",               offsetof(hudStucture_t,    compass),         qtrue, CG_DrawNewCompass, 0.19,{ "Square" } },              // v2.78 backward compatibility
-	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,            { "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,            { "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,            { "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,            { "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
-	{ "weaponchangebar",      offsetof(hudStucture_t,    weaponchargebar), qtrue, CG_DrawWeapRecharge, 0.19,{ "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} }, // v2.78 backward compatibility
-	{ HUDF(healthtext),       CG_DrawPlayerHealth,       0.25f,            { "Dynamic Color" } },
-	{ HUDF(xptext),           CG_DrawXP,                 0.25f,            { 0 } },
-	{ HUDF(ranktext),         CG_DrawRank,               0.20f,            { 0 } },
-	{ HUDF(statsdisplay),     CG_DrawSkills,             0.25f,            { "Column" } },
-	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,            { "Icon Flash" } },
-	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,            { "Dynamic Color" } },
-	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,            { "Latched Class" } },// FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages),    CG_DrawPMItems,            0.22f,            { "No Connect", "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K"} },  // FIXME: outside cg_draw_hud
-	{ HUDF(powerups),         CG_DrawPowerUps,           0.19f,            { 0 } },
-	{ HUDF(objectives),       CG_DrawObjectiveStatus,    0.19f,            { 0 } },
-	{ HUDF(hudhead),          CG_DrawPlayerStatusHead,   0.19f,            { 0 } },
-	{ HUDF(cursorhints),      CG_DrawCursorhint,         0.19f,            { "Size Pulse", "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
-	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,            { "Always",     "Left",         "Center",        "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(livesleft),        CG_DrawLivesLeft,          0.19f,            { 0 } },
-	{ HUDF(roundtimer),       CG_DrawRoundTimer,         0.19f,            { "Simple" } },
-	{ HUDF(reinforcement),    CG_DrawRespawnTimer,       0.19f,            { 0 } },
-	{ HUDF(spawntimer),       CG_DrawSpawnTimer,         0.19f,            { 0 } },
-	{ HUDF(localtime),        CG_DrawLocalTime,          0.19f,            { "Second",     "12 Hours" } },
-	{ HUDF(votetext),         CG_DrawVote,               0.22f,            { "Complaint" } },// FIXME: outside cg_draw_hud
-	{ HUDF(spectatortext),    CG_DrawSpectatorMessage,   0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(limbotext),        CG_DrawLimboMessage,       0.22f,            { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
-	{ HUDF(followtext),       CG_DrawFollow,             0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(demotext),         CG_DrawDemoMessage,        0.22f,            { "Details" } },
-	{ HUDF(missilecamera),    CG_DrawMissileCamera,      0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(sprinttext),       CG_DrawPlayerSprint,       0.25f,            { 0 } },
-	{ HUDF(breathtext),       CG_DrawPlayerBreath,       0.25f,            { 0 } },
-	{ HUDF(weaponchargetext), CG_DrawWeaponCharge,       0.25f,            { 0 } },
-	{ HUDF(fps),              CG_DrawFPS,                0.19f,            { 0 } },
-	{ HUDF(snapshot),         CG_DrawSnapshot,           0.19f,            { 0 } },
-	{ HUDF(ping),             CG_DrawPing,               0.19f,            { 0 } },
-	{ HUDF(speed),            CG_DrawSpeed,              0.19f,            { "Max Speed" } },
-	{ HUDF(lagometer),        CG_DrawLagometer,          0.19f,            { 0 } },
-	{ HUDF(disconnect),       CG_DrawDisconnect,         0.35f,            { 0 } },
-	{ HUDF(chat),             CG_DrawTeamInfo,           0.20f,            { "No Team Flag" } },// FIXME: outside cg_draw_hud
-	{ HUDF(spectatorstatus),  CG_DrawSpectator,          0.35f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig,         0.22f,            { "No Skill",   "No Rank",      "No Prestige" } },// FIXME: outside cg_draw_hud
-	{ HUDF(warmuptitle),      CG_DrawWarmupTitle,        0.35f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(warmuptext),       CG_DrawWarmupText,         0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(objectivetext),    CG_DrawObjectiveInfo,      0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(centerprint),      CG_DrawCenterString,       0.22f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(banner),           CG_DrawBannerPrint,        0.23f,            { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,            { "Full Color" } },// FIXME: outside cg_draw_hud
-	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,            { "Class",      "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,            { "Kill",       "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
-	{ NULL,                   0,                         qfalse,           NULL, 0.00,{ 0 } },
+	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",      "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },                       // FIXME: outside cg_draw_hud
+	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",     "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj"     } },
+	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,  { "Left",       "Center",       "Vertical",      "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(healthtext),       CG_DrawPlayerHealth,       0.25f,  { "Dynamic Color" } },
+	{ HUDF(xptext),           CG_DrawXP,                 0.25f,  { 0 } },
+	{ HUDF(ranktext),         CG_DrawRank,               0.20f,  { 0 } },
+	{ HUDF(statsdisplay),     CG_DrawSkills,             0.25f,  { "Column" } },
+	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,  { "Icon Flash" } },
+	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,  { "Dynamic Color" } },
+	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,  { "Latched Class" } },// FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages),    CG_DrawPMItems,            0.22f,  { "No Connect", "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K"} },            // FIXME: outside cg_draw_hud
+	{ HUDF(powerups),         CG_DrawPowerUps,           0.19f,  { 0 } },
+	{ HUDF(objectives),       CG_DrawObjectiveStatus,    0.19f,  { 0 } },
+	{ HUDF(hudhead),          CG_DrawPlayerStatusHead,   0.19f,  { 0 } },
+	{ HUDF(cursorhints),      CG_DrawCursorhint,         0.19f,  { "Size Pulse", "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
+	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,  { "Always",     "Left",         "Center",        "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },           // FIXME: outside cg_draw_hud
+	{ HUDF(livesleft),        CG_DrawLivesLeft,          0.19f,  { 0 } },
+	{ HUDF(roundtimer),       CG_DrawRoundTimer,         0.19f,  { "Simple" } },
+	{ HUDF(reinforcement),    CG_DrawRespawnTimer,       0.19f,  { 0 } },
+	{ HUDF(spawntimer),       CG_DrawSpawnTimer,         0.19f,  { 0 } },
+	{ HUDF(localtime),        CG_DrawLocalTime,          0.19f,  { "Second",     "12 Hours" } },
+	{ HUDF(votetext),         CG_DrawVote,               0.22f,  { "Complaint" } },// FIXME: outside cg_draw_hud
+	{ HUDF(spectatortext),    CG_DrawSpectatorMessage,   0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(limbotext),        CG_DrawLimboMessage,       0.22f,  { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
+	{ HUDF(followtext),       CG_DrawFollow,             0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(demotext),         CG_DrawDemoMessage,        0.22f,  { "Details" } },
+	{ HUDF(missilecamera),    CG_DrawMissileCamera,      0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(sprinttext),       CG_DrawPlayerSprint,       0.25f,  { 0 } },
+	{ HUDF(breathtext),       CG_DrawPlayerBreath,       0.25f,  { 0 } },
+	{ HUDF(weaponchargetext), CG_DrawWeaponCharge,       0.25f,  { 0 } },
+	{ HUDF(fps),              CG_DrawFPS,                0.19f,  { 0 } },
+	{ HUDF(snapshot),         CG_DrawSnapshot,           0.19f,  { 0 } },
+	{ HUDF(ping),             CG_DrawPing,               0.19f,  { 0 } },
+	{ HUDF(speed),            CG_DrawSpeed,              0.19f,  { "Max Speed" } },
+	{ HUDF(lagometer),        CG_DrawLagometer,          0.19f,  { 0 } },
+	{ HUDF(disconnect),       CG_DrawDisconnect,         0.35f,  { 0 } },
+	{ HUDF(chat),             CG_DrawTeamInfo,           0.20f,  { "No Team Flag" } },// FIXME: outside cg_draw_hud
+	{ HUDF(spectatorstatus),  CG_DrawSpectator,          0.35f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig,         0.22f,  { "No Skill",   "No Rank",      "No Prestige" } },// FIXME: outside cg_draw_hud
+	{ HUDF(warmuptitle),      CG_DrawWarmupTitle,        0.35f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(warmuptext),       CG_DrawWarmupText,         0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(objectivetext),    CG_DrawObjectiveInfo,      0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(centerprint),      CG_DrawCenterString,       0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(banner),           CG_DrawBannerPrint,        0.23f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,  { "Full Color" } },// FIXME: outside cg_draw_hud
+	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",      "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },           // FIXME: outside cg_draw_hud
+	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",       "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
+	{ NULL,                   0,                         qfalse, NULL, 0.00,{ 0 } },
 };
 
 /**
