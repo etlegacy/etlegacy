@@ -197,7 +197,7 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
           SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
     container:
-      image: rafal1137/etl_android
+      image: etlegacy/android-build
     steps:
       - name: Setup JDK
         uses: actions/setup-java@v3
@@ -566,7 +566,7 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
     needs: [ lnx32 ]
     container:
-      image: rafal1137/etl_android
+      image: etlegacy/android-build
     steps:
       - name: Setup JDK
         uses: actions/setup-java@v3
