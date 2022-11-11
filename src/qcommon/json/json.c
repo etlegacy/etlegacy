@@ -44,7 +44,7 @@
 #include "../../game/g_local.h"
 #endif
 #else
-#include "../qcommoh.h"
+#include "../../qcommon.h"
 #endif
 
 void Q_JSONInit(void)
