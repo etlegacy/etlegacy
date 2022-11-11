@@ -720,7 +720,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	{
 		char buffer[MAX_OSPATH];
 		Com_sprintf(buffer, sizeof(buffer), "%s.dylib", fname);
-		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), gamedir, buffer);
+		fn = FS_BuildOSPath(base, gamedir, buffer);
 
 		Com_Printf("-- Trying dylib with extension... ");
 		libHandle = Sys_LoadLibrary(fn);
