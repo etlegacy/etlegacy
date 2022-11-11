@@ -345,9 +345,9 @@ typedef enum
 	OSS_MACOS_x86_64    = BIT(3),   ///< 8 - macOs (lets just assume for the sake of clarity that this is x86_64)
 	OSS_ANDROID_AARCH64 = BIT(4),   ///< 16 - Android aarch64
 	OSS_RPI_ARM         = BIT(5),   ///< 32 - Raspberry Pi arm
-	OSS_RPI_AARCH64     = BIT(7),   ///< 64 - Raspberry Pi aarch 64
-	OSS_MACOS_AARCH64   = BIT(8),   ///< 128 - macOS m1
-	OSS_WIN_X86_64      = BIT(9),   ///< 256 - Windows x86_64
+	OSS_RPI_AARCH64     = BIT(6),   ///< 64 - Raspberry Pi aarch 64
+	OSS_MACOS_AARCH64   = BIT(7),   ///< 128 - macOS m1
+	OSS_WIN_X86_64      = BIT(8),   ///< 256 - Windows x86_64
 } oss_t;
 
 // os support - this SERVERINFO cvar specifies supported client operating systems on server
