@@ -5,17 +5,16 @@
 # find libm where it exists and link game modules against it
 include(CheckLibraryExists)
 check_library_exists(m pow "" LIBM)
+if(LIBM)
+    target_link_libraries(cgame_libraries INTERFACE m)
+    target_link_libraries(ui_libraries INTERFACE m)
+endif()
 
 #
 # cgame
 #
 add_library(cgame MODULE ${CGAME_SRC})
-
-if(LIBM)
-	target_link_libraries(cgame PUBLIC cgame_libraries mod_libraries PRIVATE m)
-else()
-	target_link_libraries(cgame cgame_libraries mod_libraries)
-endif()
+target_link_libraries(cgame cgame_libraries mod_libraries)
 
 set_target_properties(cgame
 	PROPERTIES
@@ -77,12 +76,7 @@ endif()
 # ui
 #
 add_library(ui MODULE ${UI_SRC})
-
-if(LIBM)
-	target_link_libraries(ui PUBLIC ui_libraries mod_libraries PRIVATE m)
-else()
-	target_link_libraries(ui ui_libraries mod_libraries)
-endif()
+target_link_libraries(ui ui_libraries mod_libraries)
 
 set_target_properties(ui
 	PROPERTIES
