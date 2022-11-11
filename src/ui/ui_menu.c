@@ -1152,7 +1152,9 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	{
 		char buf[MAX_STRING_CHARS];
 		trap_Key_GetBindingBuf(key, buf, sizeof(buf));
-		if (buf[0] != 0)
+
+		// Do not allow +/- actions or vstr that can contain those
+		if (buf[0] != 0 && strstr(buf, "+") == NULL && strstr(buf, "vstr") == NULL)
 		{
 			DC->executeText(EXEC_APPEND, buf);
 		}
