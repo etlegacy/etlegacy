@@ -985,10 +985,16 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
  * @brief Menu_BindExecMode
  * @return
  */
-qboolean Menu_BindExecMode(void)
+static qboolean Menu_BindExecMode(int key)
 {
 	// only in main menu (fullscreen UI)
 	if (!Menus_AnyFullScreenVisible())
+	{
+		return qfalse;
+	}
+
+	// do not execute on the shift key itself
+	if (key == K_LSHIFT || key == K_RSHIFT)
 	{
 		return qfalse;
 	}
@@ -1142,7 +1148,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	}
 
 	// execute binds if shift is held
-	if (Menu_BindExecMode())
+	if (Menu_BindExecMode(key))
 	{
 		char buf[MAX_STRING_CHARS];
 		trap_Key_GetBindingBuf(key, buf, sizeof(buf));
@@ -1480,7 +1486,7 @@ void Menu_PaintAll(void)
 		DC->drawText(5, 20, .2f, v, va("mouse: %i %i", DC->cursorx, DC->cursory), 0, 0, 0);
 	}
 
-	if (Menu_BindExecMode())
+	if (Menu_BindExecMode(-1))
 	{
 		vec4_t     color;
 		float      x, w;
