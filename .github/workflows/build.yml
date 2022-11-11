@@ -281,11 +281,17 @@ jobs:
         with:
           path: build/legacy
 
+      - name: Create supported platform manifest
+        shell: bash
+        working-directory: build/legacy
+        run: |
+          echo "win_x86 win_x86_64 lnx_x86 lnx_x86_64 macos_x86_64 macos_aarch64 rpi_aarch64 android_aarch64" > platforms.manifest
+
       - name: Merge mod files
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_*.pk3 win-mod/*.dll win64-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
+          zip -rvj legacy_*.pk3 platforms.manifest win-mod/*.dll win64-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
 
       - name: Remove the mod packages
         uses: geekyeggo/delete-artifact@v2
