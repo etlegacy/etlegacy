@@ -1196,7 +1196,7 @@ static void IN_ProcessEvents(void)
 					Com_QueueEvent(lasttime, SE_CHAR, CTRL(key), 0, 0, NULL);
 				}
 #ifdef __APPLE__
-				// with MacOs we also support the command + c/v
+				// with macOS, we also support the command + c/v
 				else if ((keys[K_COMMAND].down) && (key == 'c' || key == 'v'))
 				{
 					Com_QueueEvent(lasttime, SE_CHAR, CTRL(key), 0, 0, NULL);

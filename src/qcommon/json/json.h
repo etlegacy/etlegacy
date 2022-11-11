@@ -44,6 +44,8 @@
 #include <cjson/cJSON.h>
 #endif
 
+#define Q_JsonError(...) Com_Printf(S_COLOR_RED "[JSON-ERROR] " __VA_ARGS__)
+
 /**
  * Initialize the Json library memory functions
  */
@@ -59,5 +61,22 @@ qboolean Q_FSWriteJSONTo(cJSON *object, const char *path);
  * @param handle file handle to the already open file
  */
 qboolean Q_FSWriteJSON(cJSON *object, fileHandle_t handle);
+
+#define Q_ReadIntValueJson(x, y) (int) Q_ReadNumberValueJson(x, y)
+#define Q_ReadFloatValueJson(x, y) (float) Q_ReadNumberValueJson(x, y)
+
+static inline double Q_ReadNumberValueJson(cJSON *object, const char *name)
+{
+	cJSON *tmp = cJSON_GetObjectItem(object, name);
+
+	if (tmp && cJSON_IsNumber(tmp))
+	{
+		return cJSON_GetNumberValue(tmp);
+	}
+
+	Q_JsonError("Missing field: %s\n", name);
+
+	return 0;
+}
 
 #endif
