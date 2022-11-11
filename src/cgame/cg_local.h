@@ -4134,7 +4134,7 @@ typedef struct hudComponent_s
 	int alignText;
 	int autoAdjust;
 	int offset;
-	float hardScale;
+	float hardScale; ///< Runtime computed value
 	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
 

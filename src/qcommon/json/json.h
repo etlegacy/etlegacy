@@ -44,7 +44,11 @@
 #include <cjson/cJSON.h>
 #endif
 
+#ifdef ETLEGACY_DEBUG
 #define Q_JsonError(...) Com_Printf(S_COLOR_RED "[JSON-ERROR] " __VA_ARGS__)
+#else
+#define Q_JsonError(...)
+#endif
 
 /**
  * Initialize the Json library memory functions
@@ -74,11 +78,11 @@ qboolean Q_FSWriteJSONTo(cJSON *object, const char *path);
  */
 qboolean Q_FSWriteJSON(cJSON *object, fileHandle_t handle);
 
-#define Q_ReadIntValueJson(x, y) (int) Q_ReadNumberValueJson(x, y)
-#define Q_ReadFloatValueJson(x, y) (float) Q_ReadNumberValueJson(x, y)
+#define Q_ReadIntValueJson(object, name) (int) Q_ReadNumberValueJson((object), (name))
+#define Q_ReadFloatValueJson(object, name) (float) Q_ReadNumberValueJson((object), (name))
 
 /**
- * Get field by name and return the number value is available (defaults to 0)
+ * Get field by name and return the number value if available (defaults to 0)
  * @param object json object which to fetch the field from
  * @param name field name
  * @return double value of the field
@@ -97,7 +101,16 @@ static ID_INLINE double Q_ReadNumberValueJson(cJSON *object, const char *name)
 	return 0;
 }
 
-static ID_INLINE char *Q_ReadStringValueJson(cJSON *object, const char *name)
+#define Q_ReadStringValueJson(object, name) Q_ReadStringValueJsonEx((object), (name), NULL)
+
+/**
+ * Get field by name and return the string value if available otherwise returns the given default value.
+ * @param object json object which to fetch the field from
+ * @param name field name
+ * @param defaultVal default value if field is not set
+ * @return string value found
+ */
+static ID_INLINE char *Q_ReadStringValueJsonEx(cJSON *object, const char *name, char *defaultVal)
 {
 	cJSON *tmp = cJSON_GetObjectItem(object, name);
 
@@ -108,10 +121,19 @@ static ID_INLINE char *Q_ReadStringValueJson(cJSON *object, const char *name)
 
 	Q_JsonError("Missing field: %s\n", name);
 
-	return 0;
+	return defaultVal;
 }
 
-static ID_INLINE qboolean Q_ReadBoolValueJson(cJSON *object, const char *name)
+#define Q_ReadBoolValueJson(object, name) Q_ReadBoolValueJsonEx((object), (name), qfalse)
+
+/**
+ * Get field by name and return the boolean value if available otherwise returns the given default value.
+ * @param object json object which to fetch the field from
+ * @param name field name
+ * @param defaultVal default value if field is not set
+ * @return boolean value found
+ */
+static ID_INLINE qboolean Q_ReadBoolValueJsonEx(cJSON *object, const char *name, qboolean defaultVal)
 {
 	cJSON *tmp = cJSON_GetObjectItem(object, name);
 
@@ -122,7 +144,7 @@ static ID_INLINE qboolean Q_ReadBoolValueJson(cJSON *object, const char *name)
 
 	Q_JsonError("Missing field: %s\n", name);
 
-	return 0;
+	return defaultVal;
 }
 
 #endif
