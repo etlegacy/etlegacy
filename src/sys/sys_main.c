@@ -132,59 +132,59 @@ char *Sys_ConsoleInput(void)
 #ifdef ETL_CLIENT
 dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char *title)
 {
-	int buttonId;
+	int                      buttonId;
 	SDL_MessageBoxButtonData buttons[2];
-	SDL_MessageBoxData data;
-	data.window = NULL;
+	SDL_MessageBoxData       data;
+	data.window      = NULL;
 	data.colorScheme = NULL;
-	data.buttons = buttons;
-	data.message = message;
-	data.title = title;
+	data.buttons     = buttons;
+	data.message     = message;
+	data.title       = title;
 
 	switch (type)
 	{
-		default:
-		case DT_INFO:
-			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[0].buttonid = DR_OK;
-			buttons[0].text = _("Ok");
-			data.numbuttons = 1;
-			data.flags = SDL_MESSAGEBOX_INFORMATION;
-			break;
-		case DT_WARNING:
-			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[0].buttonid = DR_OK;
-			buttons[0].text = _("Ok");
-			data.numbuttons = 1;
-			data.flags = SDL_MESSAGEBOX_WARNING;
-			break;
-		case DT_ERROR:
-			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[0].buttonid = DR_OK;
-			buttons[0].text = _("Ok");
-			data.numbuttons = 1;
-			data.flags = SDL_MESSAGEBOX_ERROR;
-			break;
-		case DT_YES_NO:
-			buttons[0].flags = 0;
-			buttons[0].buttonid = DR_NO;
-			buttons[0].text = _("No");
-			buttons[1].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[1].buttonid = DR_YES;
-			buttons[1].text = _("Yes");
-			data.numbuttons = 2;
-			data.flags = SDL_MESSAGEBOX_INFORMATION;
-			break;
-		case DT_OK_CANCEL:
-			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT;
-			buttons[0].buttonid = DR_CANCEL;
-			buttons[0].text = _("Cancel");
-			buttons[1].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[1].buttonid = DR_OK;
-			buttons[1].text = _("Ok");
-			data.numbuttons = 2;
-			data.flags = SDL_MESSAGEBOX_WARNING;
-			break;
+	default:
+	case DT_INFO:
+		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[0].buttonid = DR_OK;
+		buttons[0].text     = _("Ok");
+		data.numbuttons     = 1;
+		data.flags          = SDL_MESSAGEBOX_INFORMATION;
+		break;
+	case DT_WARNING:
+		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[0].buttonid = DR_OK;
+		buttons[0].text     = _("Ok");
+		data.numbuttons     = 1;
+		data.flags          = SDL_MESSAGEBOX_WARNING;
+		break;
+	case DT_ERROR:
+		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[0].buttonid = DR_OK;
+		buttons[0].text     = _("Ok");
+		data.numbuttons     = 1;
+		data.flags          = SDL_MESSAGEBOX_ERROR;
+		break;
+	case DT_YES_NO:
+		buttons[0].flags    = 0;
+		buttons[0].buttonid = DR_NO;
+		buttons[0].text     = _("No");
+		buttons[1].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[1].buttonid = DR_YES;
+		buttons[1].text     = _("Yes");
+		data.numbuttons     = 2;
+		data.flags          = SDL_MESSAGEBOX_INFORMATION;
+		break;
+	case DT_OK_CANCEL:
+		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT;
+		buttons[0].buttonid = DR_CANCEL;
+		buttons[0].text     = _("Cancel");
+		buttons[1].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[1].buttonid = DR_OK;
+		buttons[1].text     = _("Ok");
+		data.numbuttons     = 2;
+		data.flags          = SDL_MESSAGEBOX_WARNING;
+		break;
 	}
 
 	if (SDL_ShowMessageBox(&data, &buttonId) < 0)
@@ -278,8 +278,8 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 			{
 				// FIXME: delete even when outside of homepath
 				if (Sys_Remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
-				              PATH_SEP, Cvar_VariableString("fs_game"),
-				              PATH_SEP, Cvar_VariableString("com_pidfile"))) != 0)
+				                  PATH_SEP, Cvar_VariableString("fs_game"),
+				                  PATH_SEP, Cvar_VariableString("com_pidfile"))) != 0)
 				{
 					// This is thrown when game game crashes before PID file is created
 					// f.e. when pak files are missing
@@ -318,7 +318,7 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 void Sys_Quit(void)
 {
 #ifdef USE_WINDOWS_CONSOLE
-    Sys_DestroyConsole();
+	Sys_DestroyConsole();
 #endif
 	Sys_Exit(0);
 }
