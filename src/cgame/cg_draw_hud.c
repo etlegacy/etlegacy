@@ -35,6 +35,7 @@
  */
 
 #include "cg_local.h"
+#include "json.h"
 
 hudStucture_t *activehud;
 hudStucture_t hudlist[MAXHUDS];
@@ -692,18 +693,202 @@ static qboolean CG_ReadHudFile(const char *filename)
 	return qtrue;
 }
 
+static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, const char *s)
+{
+	if (Q_IsHexColorString(s))
+	{
+		vec[0] = ((float)(gethex(*(s)) * 16 + gethex(*(s + 1)))) / 255.00f;
+		vec[1] = ((float)(gethex(*(s + 2)) * 16 + gethex(*(s + 3)))) / 255.00f;
+		vec[2] = ((float)(gethex(*(s + 4)) * 16 + gethex(*(s + 5)))) / 255.00f;
+
+		if (Q_HexColorStringHasAlpha(s))
+		{
+			vec[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
+		}
+		else
+		{
+			vec[3] = 1.f;
+		}
+
+		return qtrue;
+	}
+
+	vec[0] = 0.f;
+	vec[1] = 0.f;
+	vec[2] = 0.f;
+	vec[3] = 0.f;
+
+	return qfalse;
+}
+
+static qboolean CG_ReadHudJsonFile(const char *filename)
+{
+	cJSON          *root, *huds, *hud, *comp, *tmp;
+	uint32_t       fileVersion = 0;
+	hudStucture_t  tmpHud;
+	hudStucture_t  *outHud;
+	hudComponent_t *component;
+	int            i, componentOffset;
+
+	root = Q_FSReadJsonFrom(filename);
+	if (!root)
+	{
+		return qfalse;
+	}
+
+	fileVersion = Q_ReadIntValueJson(root, "version");
+
+	// check version..
+	if (fileVersion != 1)
+	{
+		cJSON_Delete(root);
+		return qfalse;
+	}
+
+	huds = cJSON_GetObjectItem(root, "huds");
+	if (!huds || !cJSON_IsArray(huds))
+	{
+		Q_JsonError("Missing or huds element is not an array\n");
+		cJSON_Delete(root);
+		return qfalse;
+	}
+
+	cJSON_ArrayForEach(hud, huds)
+	{
+		// Sanity check. Only objects should be in the huds array.
+		if (!cJSON_IsObject(hud))
+		{
+			Com_Printf("Invalid item in the huds array\n");
+			cJSON_Delete(root);
+			return qfalse;
+		}
+
+		memset(&tmpHud, 0, sizeof(hudStucture_t));
+		for (i = 0; hudComponentFields[i].name; i++)
+		{
+			component         = (hudComponent_t *)((char * )&tmpHud + hudComponentFields[i].offset);
+			component->offset = 999;
+		}
+
+		componentOffset = 0;
+
+		tmpHud.hudnumber = Q_ReadIntValueJson(hud, "number");
+
+		// check that the hud number value was set
+		if (!CG_isHudNumberAvailable(tmpHud.hudnumber))
+		{
+			Com_Printf("Invalid hudnumber value: %i\n", tmpHud.hudnumber);
+			cJSON_Delete(root);
+			return qfalse;
+		}
+
+		// TODO: names?
+		// Q_strcpy(tmpHud.name, Q_ReadStringValueJson(hud, "name"));
+
+		for (i = 0; hudComponentFields[i].name; i++)
+		{
+			comp = cJSON_GetObjectItem(hud, hudComponentFields[i].name);
+
+			if (!comp)
+			{
+				continue;
+			}
+			component            = (hudComponent_t *)((char * )&tmpHud + hudComponentFields[i].offset);
+			component->offset    = componentOffset++;
+			component->hardScale = hudComponentFields[i].scale;
+			component->draw      = hudComponentFields[i].draw;
+
+			tmp = cJSON_GetObjectItem(comp, "rect");
+			if (tmp)
+			{
+				component->location.x = Q_ReadFloatValueJson(tmp, "x");
+				component->location.y = Q_ReadFloatValueJson(tmp, "y");
+				component->location.w = Q_ReadFloatValueJson(tmp, "w");
+				component->location.h = Q_ReadFloatValueJson(tmp, "h");
+			}
+
+			component->visible = Q_ReadBoolValueJson(comp, "visible");
+			component->scale   = Q_ReadFloatValueJson(comp, "scale");
+
+			tmp = cJSON_GetObjectItem(comp, "mainColor");
+			if (tmp && cJSON_IsString(tmp))
+			{
+				CG_ParseHexColor(component->colorMain, tmp->valuestring);
+			}
+
+			tmp = cJSON_GetObjectItem(comp, "secondaryColor");
+			if (tmp && cJSON_IsString(tmp))
+			{
+				CG_ParseHexColor(component->colorSecondary, tmp->valuestring);
+			}
+
+			tmp = cJSON_GetObjectItem(comp, "backgroundColor");
+			if (tmp && cJSON_IsString(tmp))
+			{
+				// component->showBackGround = qtrue;
+				CG_ParseHexColor(component->colorBackground, tmp->valuestring);
+
+			}
+			// FIXME: mby get rid of the extra booleans
+			component->showBackGround = Q_ReadBoolValueJson(comp, "showBackGround");
+
+			tmp = cJSON_GetObjectItem(comp, "borderColor");
+			if (tmp && cJSON_IsString(tmp))
+			{
+				// component->showBorder = qtrue;
+				CG_ParseHexColor(component->colorBorder, tmp->valuestring);
+			}
+			// FIXME: mby get rid of the extra booleans
+			component->showBorder = Q_ReadBoolValueJson(comp, "showBorder");
+
+			component->styleText  = Q_ReadIntValueJson(comp, "textStyle");
+			component->alignText  = Q_ReadIntValueJson(comp, "textAlign");
+			component->autoAdjust = Q_ReadIntValueJson(comp, "autoAdjust");
+			component->offset     = Q_ReadIntValueJson(comp, "offset");
+
+			outHud = CG_getHudByNumber(tmpHud.hudnumber);
+
+			if (!outHud)
+			{
+				CG_addHudToList(&tmpHud);
+				Com_Printf("...properties for hud %i have been read.\n", tmpHud.hudnumber);
+			}
+			else
+			{
+				Com_Memcpy(hud, &tmpHud, sizeof(tmpHud));
+				CG_HudComponentsFill(outHud);
+				Com_Printf("...properties for hud %i have been updated.\n", tmpHud.hudnumber);
+			}
+		}
+	}
+
+	cJSON_Delete(root);
+
+	return qtrue;
+}
+
+static qboolean CG_TryHudFile(const char *filename)
+{
+	if (!CG_ReadHudJsonFile(filename))
+	{
+		return CG_ReadHudFile(filename);
+	}
+
+	return qtrue;
+}
+
 /**
  * @brief CG_ReadHudScripts
  */
 void CG_ReadHudScripts(void)
 {
-	if (!CG_ReadHudFile("ui/huds.hud"))
+	if (!CG_TryHudFile("ui/huds.hud"))
 	{
 		Com_Printf("^1ERROR while reading hud file\n");
 	}
 
 	// This needs to be a .dat file to go around the file extension restrictions of the engine.
-	CG_ReadHudFile("hud.dat");
+	CG_TryHudFile("hud.dat");
 
 	Com_Printf("...hud count: %i\n", hudCount);
 }
