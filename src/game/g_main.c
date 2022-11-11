@@ -336,14 +336,23 @@ vmCvar_t g_voting;        // see VOTEF_ defines
 
 vmCvar_t g_corpses; // dynamic body que FIXME: limit max bodies by var value
 
+typedef enum
+{
+	OSS_DEFAULT         = 0,        ///< 0 - vanilla/unknown/ET:L auto setup
+	OSS_WIN_X86         = BIT(0),   ///< 1 - Windows x86
+	OSS_LNX_X86         = BIT(1),   ///< 2 - Linux x86
+	OSS_LNX_X86_64      = BIT(2),   ///< 4 - Linux x86_64
+	OSS_MACOS_x86_64    = BIT(3),   ///< 8 - macOs (lets just assume for the sake of clarity that this is x86_64)
+	OSS_ANDROID_AARCH64 = BIT(4),   ///< 16 - Android aarch64
+	OSS_RPI_ARM         = BIT(5),   ///< 32 - Raspberry Pi arm
+	OSS_RPI_AARCH64     = BIT(7),   ///< 64 - Raspberry Pi aarch 64
+	OSS_MACOS_AARCH64   = BIT(8),   ///< 128 - macOS m1
+	OSS_WIN_X86_64      = BIT(9),   ///< 256 - Windows x86_64
+} oss_t;
+
 // os support - this SERVERINFO cvar specifies supported client operating systems on server
-vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
-                //   1 - Windows
-                //   2 - Linux
-                //   4 - Linux 64
-                //   8 - Mac OS X
-                //  16 - Android
-                //  32 - Raspberry Pi
+// supported platforms are in the oss_t enum above
+vmCvar_t g_oss;
 
 vmCvar_t g_realHead; // b_realHead functionality from ETPro
 
