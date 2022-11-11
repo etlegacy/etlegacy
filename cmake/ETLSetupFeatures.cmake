@@ -382,6 +382,7 @@ endif()
 
 if(NOT BUNDLED_CJSON)
 	if(NOT ANDROID)
+		find_package(cJSON REQUIRED)
 		target_link_libraries(etl_json INTERFACE ${CJSON_LIBRARY})
 	else()
 		#It fails with linking CJSON_LIBRARY at Android NDK Path do it manually
