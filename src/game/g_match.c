@@ -703,6 +703,63 @@ void G_deleteStats(int nClient)
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));
 }
 
+/**
+ * @brief Parses weapon stat info for given ent
+ * The given string must be space delimited and contain only integers
+ *
+ * @param object json object that holds the data
+ */
+void G_parseStatsJson(void *object)
+{
+	gclient_t *cl;
+	cJSON     *tmp, *weapons;
+	int       i, dwClientID;
+	qboolean  weaponsFound = qfalse;
+
+	dwClientID = Q_ReadIntValueJson(object, "ent");
+
+	if (dwClientID > MAX_CLIENTS)
+	{
+		return;
+	}
+
+	cl = &level.clients[dwClientID];
+
+	cl->sess.rounds = Q_ReadIntValueJson(object, "rounds");
+
+	weapons = cJSON_GetObjectItem(object, "weapons");
+	for (i = WS_KNIFE; i < WS_MAX; i++)
+	{
+		tmp = cJSON_GetObjectItem(weapons, aWeaponInfo[i].pszCode);
+
+		if (tmp)
+		{
+			weaponsFound = qtrue;
+			cl->sess.aWeaponStats[i].hits = Q_ReadIntValueJson(tmp, "hits");
+			cl->sess.aWeaponStats[i].atts = Q_ReadIntValueJson(tmp, "atts");
+			cl->sess.aWeaponStats[i].kills = Q_ReadIntValueJson(tmp, "kills");
+			cl->sess.aWeaponStats[i].deaths = Q_ReadIntValueJson(tmp, "deaths");
+			cl->sess.aWeaponStats[i].headshots = Q_ReadIntValueJson(tmp, "headshots");
+		}
+	}
+
+	if (weaponsFound)
+	{
+		tmp = cJSON_GetObjectItem(weapons, "_shared");
+
+		if (tmp)
+		{
+			cl->sess.damage_given = Q_ReadIntValueJson(object, "damage_given");
+			cl->sess.damage_received = Q_ReadIntValueJson(object, "damage_received");
+			cl->sess.team_damage_given = Q_ReadIntValueJson(object, "team_damage_given");
+			cl->sess.team_damage_received = Q_ReadIntValueJson(object, "team_damage_received");
+		}
+		else
+		{
+			Q_JsonError("Missing _shared object\n");
+		}
+	}
+}
 
 /**
  * @brief Parses weapon stat info for given ent

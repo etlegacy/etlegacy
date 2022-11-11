@@ -2487,6 +2487,7 @@ void G_initMatch(void);
 void G_loadMatchGame(void);
 void G_matchInfoDump(unsigned int dwDumpType);
 void G_printMatchInfo(gentity_t *ent);
+void G_parseStatsJson(void *object);
 void G_parseStats(const char *pszStatsInfo);
 void G_printFull(const char *str, gentity_t *ent);
 void G_resetModeState(void);

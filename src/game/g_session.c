@@ -39,7 +39,16 @@
 
 #include "json.h"
 
-static void G_WriteClientSessionDataJson(gclient_t *client, qboolean restart)
+/**
+ * SESSION DATA
+*/
+
+/**
+ * @brief Called on game shutdown
+ * @param[in] client
+ * @param[in] restart
+ */
+void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 {
 	cJSON *root, *restartObj = NULL;
 	char  fileName[MAX_QPATH] = { 0 };
@@ -130,8 +139,11 @@ static void G_WriteClientSessionDataJson(gclient_t *client, qboolean restart)
 	{
 		// restore the restart info from the old session file
 		cJSON *tmp = Q_FSReadJsonFrom(fileName);
-		restartObj = cJSON_GetObjectItemCaseSensitive(tmp, "restart");
-		cJSON_AddItemReferenceToObject(root, "restart", restartObj);
+		if (tmp)
+		{
+			restartObj = cJSON_GetObjectItemCaseSensitive(tmp, "restart");
+			cJSON_AddItemReferenceToObject(root, "restart", restartObj);
+		}
 	}
 
 	// save weapon stats too
@@ -149,141 +161,6 @@ static void G_WriteClientSessionDataJson(gclient_t *client, qboolean restart)
 	{
 		cJSON_Delete(restartObj);
 	}
-}
-
-/**
- * SESSION DATA
-*/
-
-/**
- * @brief Called on game shutdown
- * @param[in] client
- * @param[in] restart
- */
-void G_WriteClientSessionData(gclient_t *client, qboolean restart)
-{
-	const char *s;
-#ifdef FEATURE_MULTIVIEW
-	int mvc = G_smvGenerateClientList(g_entities + (client - level.clients));
-#endif
-
-	// stats reset check
-	if (level.fResetStats)
-	{
-		G_deleteStats(client - level.clients);
-	}
-
-#ifdef FEATURE_MULTIVIEW
-#ifdef FEATURE_RATING
-#ifdef FEATURE_PRESTIGE
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i %i",
-#else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
-#endif
-#else
-#ifdef FEATURE_PRESTIGE
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
-#else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
-#endif
-#endif
-#else
-#ifdef FEATURE_RATING
-#ifdef FEATURE_PRESTIGE
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
-#else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i",
-#endif
-#else
-#ifdef FEATURE_PRESTIGE
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
-#else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
-#endif
-#endif
-#endif
-	       client->sess.sessionTeam,
-	       client->sess.spectatorTime,
-	       client->sess.spectatorState,
-	       client->sess.spectatorClient,
-	       client->sess.playerType,
-	       client->sess.playerWeapon,
-	       client->sess.playerWeapon2,
-	       client->sess.latchPlayerType,
-	       client->sess.latchPlayerWeapon,
-	       client->sess.latchPlayerWeapon2,
-
-	       client->sess.referee,
-	       client->sess.shoutcaster,
-	       client->sess.spec_invite,
-	       client->sess.spec_team,
-	       client->sess.kills,
-	       client->sess.deaths,
-	       client->sess.gibs,
-	       client->sess.self_kills,
-	       client->sess.team_kills,
-	       client->sess.team_gibs,
-
-	       client->sess.time_axis,
-	       client->sess.time_allies,
-	       client->sess.time_played,
-#ifdef FEATURE_RATING
-	       client->sess.mu,
-	       client->sess.sigma,
-	       client->sess.oldmu,
-	       client->sess.oldsigma,
-#endif
-#ifdef FEATURE_PRESTIGE
-	       client->sess.prestige,
-#endif
-#ifdef FEATURE_MULTIVIEW
-	       (mvc & 0xFFFF),
-	       ((mvc >> 16) & 0xFFFF),
-#endif
-	       // Damage and rounds played rolled in with weapon stats (below)
-	       client->sess.muted,
-
-	       client->sess.ignoreClients[0],
-	       client->sess.ignoreClients[1],
-	       client->pers.enterTime,
-	       restart ? client->sess.userSpawnPointValue : 0,
-	       restart ? client->sess.userMinorSpawnPointValue : -1,
-	       client->sess.uci
-	       );
-
-	trap_Cvar_Set(va("session%i", (int)(client - level.clients)), s);
-
-	// store the clients stats (7) and medals (7)
-	// addition: but only if it isn't a forced map_restart (done by someone on the console)
-	if (!(restart && !level.warmupTime))
-	{
-		s = va("%.2f %.2f %.2f %.2f %.2f %.2f %.2f %i %i %i %i %i %i %i",
-		       client->sess.skillpoints[0],
-		       client->sess.skillpoints[1],
-		       client->sess.skillpoints[2],
-		       client->sess.skillpoints[3],
-		       client->sess.skillpoints[4],
-		       client->sess.skillpoints[5],
-		       client->sess.skillpoints[6],
-		       client->sess.medals[0],
-		       client->sess.medals[1],
-		       client->sess.medals[2],
-		       client->sess.medals[3],
-		       client->sess.medals[4],
-		       client->sess.medals[5],
-		       client->sess.medals[6]
-		       );
-
-		trap_Cvar_Set(va("sessionstats%i", (int)(client - level.clients)), s);
-	}
-
-	// save weapon stats too
-	if (!level.fResetStats)
-	{
-		trap_Cvar_Set(va("wstats%i", (int)(client - level.clients)), G_createStats(&g_entities[client - level.clients]));
-	}
-
-	G_WriteClientSessionDataJson(client, restart);
 }
 
 /**
@@ -445,104 +322,95 @@ void G_CalcRank(gclient_t *client)
  */
 void G_ReadSessionData(gclient_t *client)
 {
-#ifdef FEATURE_MULTIVIEW
-	int mvc_l, mvc_h;
-#endif
-	int      j;
-	char     s[MAX_STRING_CHARS];
+	char     fileName[MAX_QPATH] = { 0 };
+	cJSON    *root = NULL, *wstats = NULL;
 	qboolean test;
+	int      i = 0;
 
-	trap_Cvar_VariableStringBuffer(va("session%i", (int)(client - level.clients)), s, sizeof(s));
+	Com_sprintf(fileName, sizeof(fileName), "session/client%02i.json", (int)(client - level.clients));
+	Com_Printf("Reading session file %s\n", fileName);
+
+	root = Q_FSReadJsonFrom(fileName);
+
+	client->sess.sessionTeam        = Q_ReadIntValueJson(root, "sessionTeam");
+	client->sess.spectatorTime      = Q_ReadIntValueJson(root, "spectatorTime");
+	client->sess.spectatorState     = Q_ReadIntValueJson(root, "spectatorState");
+	client->sess.spectatorClient    = Q_ReadIntValueJson(root, "spectatorClient");
+	client->sess.playerType         = Q_ReadIntValueJson(root, "playerType");
+	client->sess.playerWeapon       = Q_ReadIntValueJson(root, "playerWeapon");
+	client->sess.playerWeapon2      = Q_ReadIntValueJson(root, "playerWeapon2");
+	client->sess.latchPlayerType    = Q_ReadIntValueJson(root, "latchPlayerType");
+	client->sess.latchPlayerWeapon  = Q_ReadIntValueJson(root, "latchPlayerWeapon");
+	client->sess.latchPlayerWeapon2 = Q_ReadIntValueJson(root, "latchPlayerWeapon2");
+	client->sess.referee            = Q_ReadIntValueJson(root, "referee");
+	client->sess.shoutcaster        = Q_ReadIntValueJson(root, "shoutcaster");
+	client->sess.spec_invite        = Q_ReadIntValueJson(root, "spec_invite");
+	client->sess.spec_team          = Q_ReadIntValueJson(root, "spec_team");
+	client->sess.kills              = Q_ReadIntValueJson(root, "kills");
+	client->sess.deaths             = Q_ReadIntValueJson(root, "deaths");
+	client->sess.gibs               = Q_ReadIntValueJson(root, "gibs");
+	client->sess.self_kills         = Q_ReadIntValueJson(root, "self_kills");
+	client->sess.team_kills         = Q_ReadIntValueJson(root, "team_kills");
+	client->sess.team_gibs          = Q_ReadIntValueJson(root, "team_gibs");
+	client->sess.time_axis          = Q_ReadIntValueJson(root, "time_axis");
+	client->sess.time_allies        = Q_ReadIntValueJson(root, "time_allies");
+	client->sess.time_played        = Q_ReadIntValueJson(root, "time_played");
+
+#ifdef FEATURE_RATING
+	{
+		cJSON *ratingObj = cJSON_GetObjectItem(root, "rating");
+
+		if (ratingObj)
+		{
+			client->sess.mu       = Q_ReadFloatValueJson(ratingObj, "mu");
+			client->sess.sigma    = Q_ReadFloatValueJson(ratingObj, "sigma");
+			client->sess.oldmu    = Q_ReadFloatValueJson(ratingObj, "oldmu");
+			client->sess.oldsigma = Q_ReadFloatValueJson(ratingObj, "oldsigma");
+		}
+		else
+		{
+			Q_JsonError("Rating object missing\n");
+		}
+	}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+	client->sess.prestige = Q_ReadIntValueJson(root, "prestige");
+#endif
 
 #ifdef FEATURE_MULTIVIEW
-#ifdef FEATURE_RATING
-#ifdef FEATURE_PRESTIGE
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i %i",
-#else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
-#endif
-#else
-#ifdef FEATURE_PRESTIGE
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
-#else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
-#endif
-#endif
-#else
-#ifdef FEATURE_RATING
-#ifdef FEATURE_PRESTIGE
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
-#else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i",
-#endif
-#else
-#ifdef FEATURE_PRESTIGE
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
-#else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
-#endif
-#endif
-#endif
-	       (int *)&client->sess.sessionTeam,
-	       &client->sess.spectatorTime,
-	       (int *)&client->sess.spectatorState,
-	       &client->sess.spectatorClient,
-	       &client->sess.playerType,
-	       (int *)&client->sess.playerWeapon,
-	       (int *)&client->sess.playerWeapon2,
-	       &client->sess.latchPlayerType,
-	       (int *)&client->sess.latchPlayerWeapon,
-	       (int *)&client->sess.latchPlayerWeapon2,
+	{
+		cJSON *mvc = cJSON_GetObjectItem(root, "multiview");
 
-	       &client->sess.referee,
-	       &client->sess.shoutcaster,
-	       &client->sess.spec_invite,
-	       &client->sess.spec_team,
-	       &client->sess.kills,
-	       &client->sess.deaths,
-	       &client->sess.gibs,
-	       &client->sess.self_kills,
-	       &client->sess.team_kills,
-	       &client->sess.team_gibs,
+		if (mvc)
+		{
+			int mvc_l, mvc_h;
+			mvc_l = Q_ReadIntValueJson(mvc, "mv1");
+			mvc_h = Q_ReadIntValueJson(mvc, "mv2");
 
-	       &client->sess.time_axis,
-	       &client->sess.time_allies,
-	       &client->sess.time_played,
-#ifdef FEATURE_RATING
-	       &client->sess.mu,
-	       &client->sess.sigma,
-	       &client->sess.oldmu,
-	       &client->sess.oldsigma,
+			// reinstate MV clients
+			client->pers.mvReferenceList = (mvc_h << 16) | mvc_l;
+		}
+		else
+		{
+			Q_JsonError("Multiview object missing\n");
+		}
+	}
 #endif
-#ifdef FEATURE_PRESTIGE
-	       &client->sess.prestige,
-#endif
-#ifdef FEATURE_MULTIVIEW
-	       &mvc_l,
-	       &mvc_h,
-#endif
-	       // Damage and round count rolled in with weapon stats (below)
-	       (int *)&client->sess.muted,
 
-	       &client->sess.ignoreClients[0],
-	       &client->sess.ignoreClients[1],
-	       &client->pers.enterTime,
-	       &client->sess.userSpawnPointValue,
-	       &client->sess.userMinorSpawnPointValue,
-	       &client->sess.uci
-	       );
-
-#ifdef FEATURE_MULTIVIEW
-	// reinstate MV clients
-	client->pers.mvReferenceList = (mvc_h << 16) | mvc_l;
-#endif
+	client->sess.muted                    = Q_ReadIntValueJson(root, "muted");
+	client->sess.ignoreClients[0]         = Q_ReadIntValueJson(root, "ignoreClients1");
+	client->sess.ignoreClients[1]         = Q_ReadIntValueJson(root, "ignoreClients2");
+	client->pers.enterTime                = Q_ReadIntValueJson(root, "enterTime");
+	client->sess.userSpawnPointValue      = Q_ReadIntValueJson(root, "userSpawnPointValue");
+	client->sess.userMinorSpawnPointValue = Q_ReadIntValueJson(root, "userMinorSpawnPointValue");
+	client->sess.uci                      = Q_ReadIntValueJson(root, "uci");
 
 	// pull and parse weapon stats
-	*s = 0;
-	trap_Cvar_VariableStringBuffer(va("wstats%i", (int)(client - level.clients)), s, sizeof(s));
-	if (*s)
+	wstats = cJSON_GetObjectItem(root, "wstats");
+	if (wstats)
 	{
-		G_parseStats(s);
+		G_parseStatsJson(wstats);
 		if (g_gamestate.integer == GS_PLAYING)
 		{
 			client->sess.rounds++;
@@ -557,48 +425,59 @@ void G_ReadSessionData(gclient_t *client)
 	    !(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current == 0  || level.newCampaign)) &&
 	    !(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer == 0))
 	{
+		cJSON *restartObj = cJSON_GetObjectItem(root, "restart");
 
-		trap_Cvar_VariableStringBuffer(va("sessionstats%i", (int)(client - level.clients)), s, sizeof(s));
+		if (restartObj)
+		{
+			cJSON *tmp, *tmp2;
 
-		// read the clients stats (7) and medals (7)
-		sscanf(s, "%f %f %f %f %f %f %f %i %i %i %i %i %i %i",
-		       &client->sess.skillpoints[0],
-		       &client->sess.skillpoints[1],
-		       &client->sess.skillpoints[2],
-		       &client->sess.skillpoints[3],
-		       &client->sess.skillpoints[4],
-		       &client->sess.skillpoints[5],
-		       &client->sess.skillpoints[6],
-		       &client->sess.medals[0],
-		       &client->sess.medals[1],
-		       &client->sess.medals[2],
-		       &client->sess.medals[3],
-		       &client->sess.medals[4],
-		       &client->sess.medals[5],
-		       &client->sess.medals[6]
-		       );
+			i   = 0;
+			tmp = cJSON_GetObjectItem(restartObj, "skillpoints");
+			cJSON_ArrayForEach(tmp2, tmp)
+			{
+				if (i > SK_NUM_SKILLS)
+				{
+					Q_JsonError("Invalid number of skills\n");
+					break;
+				}
+				client->sess.skillpoints[i++] = (float) cJSON_GetNumberValue(tmp2);
+			}
+
+			i   = 0;
+			tmp = cJSON_GetObjectItem(restartObj, "medals");
+			cJSON_ArrayForEach(tmp2, tmp)
+			{
+				if (i > SK_NUM_SKILLS)
+				{
+					Q_JsonError("Invalid number of medals\n");
+					break;
+				}
+				client->sess.medals[i++] = (int) cJSON_GetNumberValue(tmp2);
+			}
+		}
 	}
+	cJSON_Delete(root);
 
 	G_CalcRank(client);
 
 	test = (g_altStopwatchMode.integer != 0 || g_currentRound.integer == 1);
 
-	        if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
+	if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
 	{
 		G_ClientSwap(client);
 	}
 
-	        if (g_swapteams.integer)
+	if (g_swapteams.integer)
 	{
 		trap_Cvar_Set("g_swapteams", "0");
 		G_ClientSwap(client);
 	}
 
-	        client->sess.startxptotal = 0;
-	        for (j = 0; j < SK_NUM_SKILLS; j++)
+	client->sess.startxptotal = 0;
+	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
-		client->sess.startskillpoints[j] = client->sess.skillpoints[j];
-		client->sess.startxptotal += client->sess.skillpoints[j];
+		client->sess.startskillpoints[i] = client->sess.skillpoints[i];
+		client->sess.startxptotal       += client->sess.skillpoints[i];
 	}
 }
 
@@ -615,13 +494,13 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 	sess->sessionTeam = TEAM_SPECTATOR;
 
 	sess->spectatorState = SPECTATOR_FREE;
-	sess->spectatorTime = level.time;
+	sess->spectatorTime  = level.time;
 
-	sess->latchPlayerType = sess->playerType = 0;
-	sess->latchPlayerWeapon = sess->playerWeapon = WP_NONE;
+	sess->latchPlayerType    = sess->playerType = 0;
+	sess->latchPlayerWeapon  = sess->playerWeapon = WP_NONE;
 	sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
 
-	sess->userSpawnPointValue = 0;
+	sess->userSpawnPointValue      = 0;
 	sess->userMinorSpawnPointValue = -1;
 
 	Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
@@ -631,13 +510,13 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 	Com_Memset(sess->skillpoints, 0, sizeof(sess->skillpoints));
 	Com_Memset(sess->startskillpoints, 0, sizeof(sess->startskillpoints));
 	Com_Memset(sess->medals, 0, sizeof(sess->medals));
-	sess->rank = 0;
+	sess->rank         = 0;
 	sess->startxptotal = 0;
 
 	// we set ref in ClientUserinfoChanged
-	sess->referee = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
+	sess->referee     = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
 	sess->spec_invite = 0;
-	sess->spec_team = 0;
+	sess->spec_team   = 0;
 
 	sess->uci = 0; // GeoIP
 
@@ -673,7 +552,7 @@ void G_InitWorldSession(void)
 
 		// Get team lock stuff
 		GETVAL(gt);
-		teamInfo[TEAM_AXIS].spec_lock = (gt & TEAM_AXIS) ? qtrue : qfalse;
+		teamInfo[TEAM_AXIS].spec_lock   = (gt & TEAM_AXIS) ? qtrue : qfalse;
 		teamInfo[TEAM_ALLIES].spec_lock = (gt & TEAM_ALLIES) ? qtrue : qfalse;
 
 		// See if we need to clear player stats
@@ -722,7 +601,7 @@ void G_InitWorldSession(void)
 		}
 		level.fireTeams[i].ident = j + 1;
 
-		p = Info_ValueForKey(s, "p");
+		p                       = Info_ValueForKey(s, "p");
 		level.fireTeams[i].priv = !Q_atoi(p) ? qfalse : qtrue;
 
 		p = Info_ValueForKey(s, "i");
@@ -741,9 +620,9 @@ void G_InitWorldSession(void)
 					break;
 				}
 				Q_strncpyz(str, c, l - c + 1);
-				str[l - c] = '\0';
+				str[l - c]                        = '\0';
 				level.fireTeams[i].joinOrder[j++] = Q_atoi(str);
-				c = l + 1;
+				c                                 = l + 1;
 			}
 		}
 
