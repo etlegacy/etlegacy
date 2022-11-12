@@ -80,7 +80,7 @@ extern vmCvar_t ui_browserModFilter;
 extern vmCvar_t ui_browserMapFilter;
 extern vmCvar_t ui_browserServerNameFilterCheckBox;
 
-extern vmCvar_t ui_browserOssFilter;
+extern vmCvar_t ui_disableOssFilter;
 
 extern vmCvar_t ui_serverStatusTimeOut;
 

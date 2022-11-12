@@ -33,6 +33,7 @@
  */
 
 #include "ui_local.h"
+#include "../qcommon/q_oss.h"
 
 uiInfo_t uiInfo;
 
@@ -6333,7 +6334,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
-			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
 		else if (Q_stricmp(name, "ResetInternet") == 0)
 		{
@@ -6349,7 +6349,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
-			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
 		else if (Q_stricmp(name, "ResetFavorites") == 0)
 		{
@@ -6365,7 +6364,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
-			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
 		else if (Q_stricmp(name, "ResetLocal") == 0)
 		{
@@ -6381,7 +6379,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
-			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
 		else if (Q_stricmp(name, "edithud") == 0)
 		{
@@ -6937,15 +6934,43 @@ static void UI_BuildServerDisplayList(qboolean force)
 				}
 			}
 
-			trap_Cvar_Update(&ui_browserOssFilter);
-			if (ui_browserOssFilter.integer)
+			if (!ui_disableOssFilter.integer)
 			{
 				int g_oss = Q_atoi(Info_ValueForKey(info, "g_oss"));
 
-				if ((ui_browserOssFilter.integer & 4) && !(g_oss & 4))
+				if (!g_oss)
 				{
+					const char *gamename = Info_ValueForKey(info, "game");
+					if (Q_stristr(gamename, "etrun"))
+					{
+						g_oss = OSS_WIN_X86 | OSS_WIN_X86_64 | OSS_LNX_X86 | OSS_MACOS_x86_64;
+					}
+					else if (Q_stristr(gamename, "etjump"))
+					{
+						g_oss = OSS_WIN_X86 | OSS_WIN_X86_64 | OSS_LNX_X86 | OSS_LNX_X86_64 | OSS_MACOS_x86_64 | OSS_MACOS_AARCH64;
+					}
+					else if (Q_stristr(gamename, "nitmod"))
+					{
+						g_oss = OSS_WIN_X86 | OSS_LNX_X86 | OSS_LNX_X86_64 | OSS_MACOS_x86_64;
+					}
+					else
+					{
+						// safe guesstimation
+						g_oss = OSS_DEFAULT_SUPPORTED;
+					}
+
+					Com_DPrintf(S_COLOR_YELLOW "[OSS] g_oss missing setting from server setting to: %i...\n", g_oss);
+				}
+
+				if (OSS_CURRENT_PLATFORM > 0 && g_oss > 0 && !(g_oss & OSS_CURRENT_PLATFORM))
+				{
+					Com_DPrintf(S_COLOR_YELLOW "[OSS] not matching bit %i - %i\n", OSS_CURRENT_PLATFORM, g_oss);
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
+				}
+				else
+				{
+					Com_DPrintf(S_COLOR_YELLOW "[OSS] passed with g_oss: %i and: %s\n", g_oss, info);
 				}
 			}
 
@@ -9151,7 +9176,7 @@ vmCvar_t ui_browserModFilter;
 vmCvar_t ui_browserMapFilter;
 vmCvar_t ui_browserServerNameFilterCheckBox;
 
-vmCvar_t ui_browserOssFilter;
+vmCvar_t ui_disableOssFilter;
 
 vmCvar_t ui_serverStatusTimeOut;
 
@@ -9234,7 +9259,7 @@ static cvarTable_t cvarTable[] =
 	{ &ui_browserMapFilter,                "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE,                   0 },
 	{ &ui_browserServerNameFilterCheckBox, "ui_browserServerNameFilterCheckBox",  "0",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_browserOssFilter,                "ui_browserOssFilter",                 "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_disableOssFilter,                "ui_disableOssFilter",                 "0",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_serverStatusTimeOut,             "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE,                   0 },
 

@@ -119,7 +119,7 @@ qboolean Q_FSWriteJSONTo(cJSON *object, const char *path)
 #if MODLIB
 	len = trap_FS_FOpenFile(path, &fileHandle, FS_WRITE);
 #else
-	len = FS_FOpenFile(path, &fileHandle, FS_WRITE);
+	len = FS_FOpenFileByMode(path, &fileHandle, FS_WRITE);
 #endif
 
 	// file handle failed

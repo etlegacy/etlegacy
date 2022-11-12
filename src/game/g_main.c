@@ -46,6 +46,9 @@
 #include "g_mdx.h"
 #endif
 
+#define Q_OSS_STR_INC
+#include "../qcommon/q_oss.h"
+
 level_locals_t level;
 
 typedef struct
@@ -336,22 +339,8 @@ vmCvar_t g_voting;        // see VOTEF_ defines
 
 vmCvar_t g_corpses; // dynamic body que FIXME: limit max bodies by var value
 
-typedef enum
-{
-	OSS_DEFAULT         = 0,        ///< 0 - vanilla/unknown/ET:L auto setup
-	OSS_WIN_X86         = BIT(0),   ///< 1 - Windows x86
-	OSS_LNX_X86         = BIT(1),   ///< 2 - Linux x86
-	OSS_LNX_X86_64      = BIT(2),   ///< 4 - Linux x86_64
-	OSS_MACOS_x86_64    = BIT(3),   ///< 8 - macOs (lets just assume for the sake of clarity that this is x86_64)
-	OSS_ANDROID_AARCH64 = BIT(4),   ///< 16 - Android aarch64
-	OSS_RPI_ARM         = BIT(5),   ///< 32 - Raspberry Pi arm
-	OSS_RPI_AARCH64     = BIT(6),   ///< 64 - Raspberry Pi aarch 64
-	OSS_MACOS_AARCH64   = BIT(7),   ///< 128 - macOS m1
-	OSS_WIN_X86_64      = BIT(8),   ///< 256 - Windows x86_64
-} oss_t;
-
 // os support - this SERVERINFO cvar specifies supported client operating systems on server
-// supported platforms are in the oss_t enum above
+// supported platforms are in the 'oss_t' enum
 vmCvar_t g_oss;
 
 vmCvar_t g_realHead; // b_realHead functionality from ETPro
@@ -411,7 +400,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_covertopsChargeTime,             "g_covertopsChargeTime",             "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
 	{ &g_landminetimeout,                 "g_landminetimeout",                 "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue  },
 
-	{ &g_oss,                             "g_oss",                             "31",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
+	{ &g_oss,                             "g_oss",                             "0",                          CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 
 	{ &g_maxclients,                      "sv_maxclients",                     "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
 	{ &g_maxGameClients,                  "g_maxGameClients",                  "0",                          CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
@@ -701,6 +690,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 void G_RunFrame(int levelTime);
 void G_ShutdownGame(int restart);
 void CheckExitRules(void);
+void G_ParsePlatformManifest(void);
 
 /**
  * @brief G_SnapshotCallback
@@ -745,6 +735,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	{
 		int time = trap_Milliseconds();
 		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+		G_ParsePlatformManifest();
 #ifdef FEATURE_OMNIBOT
 
 		Bot_Interface_InitHandles();
@@ -5642,6 +5633,57 @@ void G_MapVoteInfoRead()
 	}
 
 	Com_Dealloc(cnf2);
+}
 
-	return;
+void G_ParsePlatformManifest(void)
+{
+	fileHandle_t fileHandle;
+	char         *buffer, *token, *parse;
+	int          len, i;
+	unsigned int ossFlags = 0;
+
+	len = trap_FS_FOpenFile("platforms.manifest", &fileHandle, FS_READ);
+	if (len <= 0)
+	{
+		G_Printf(S_COLOR_RED "[G_OSS] no file found\n");
+		trap_FS_FCloseFile(fileHandle);
+		return;
+	}
+
+	buffer = Com_Allocate(len + 1);
+	if (!buffer)
+	{
+		G_Printf(S_COLOR_RED "[G_OSS] failed to allocate %i bytes\n", len + 1);
+		trap_FS_FCloseFile(fileHandle);
+		return;
+	}
+
+	trap_FS_Read(buffer, len, fileHandle);
+	buffer[len] = '\0';
+	parse       = buffer;
+
+	trap_FS_FCloseFile(fileHandle);
+
+	COM_BeginParseSession(__FUNCTION__);
+
+	token = COM_Parse(&parse);
+	while (token[0])
+	{
+		for (i = 0; i < OSS_KNOWN_COUNT; i++)
+		{
+			if (!strcmp(oss_str[i], token))
+			{
+				G_DPrintf(S_COLOR_CYAN "[G_OSS] enabling support for platform: %s -> %i\n", token, (int)BIT(i));
+				ossFlags |= (unsigned int) BIT(i);
+			}
+		}
+
+		token = COM_Parse(&parse);
+	}
+
+	G_DPrintf("[G_OSS] parsing done with flag value: %i\n", ossFlags);
+
+	trap_Cvar_Set("g_oss", va("%i", ossFlags));
+
+	Com_Dealloc(buffer);
 }

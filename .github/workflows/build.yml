@@ -285,7 +285,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          echo "win_x86 win_x86_64 lnx_x86 lnx_x86_64 macos_x86_64 macos_aarch64 rpi_aarch64 android_aarch64" > platforms.manifest
+          echo "win_x86 win_x86_64 lnx_x86 lnx_x86_64 macos_x86_64 macos_aarch64 lnx_armv8_64 android_aarch64" > platforms.manifest
 
       - name: Merge mod files
         shell: bash
