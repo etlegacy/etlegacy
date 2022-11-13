@@ -5081,7 +5081,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-	if (g_debugHitboxes.integer > 0)
+	if (g_debugHitboxes.integer > 0 || (g_debugHitboxes.string[0] && Q_isalpha(g_debugHitboxes.string[0])))
 	{
 		G_DrawEntBBox(ent);
 	}
@@ -5380,11 +5380,6 @@ void G_RunFrame(int levelTime)
 	for (i = 0; i < level.num_entities; i++)
 	{
 		g_entities[i].runthisframe = qfalse;
-
-		if ((g_scriptDebug.integer || g_developer.integer) && !Q_stricmp(g_entities[i].classname, "func_fakebrush"))
-		{
-			G_RailBox(g_entities[i].s.origin, g_entities[i].r.mins, g_entities[i].r.maxs, colorRed, g_entities[i].s.number);
-		}
 	}
 
 	// go through all allocated objects
