@@ -30,6 +30,7 @@ InstallDir "$PROGRAMFILES@CPACK_BITS@\ETLegacy\"
 
 ; Header file
 !include MUI2.nsh
+!include Sections.nsh
 
 ; Interface configuration
 !define MUI_ICON "${RESOURCE_PATH}\etl.ico"
@@ -436,7 +437,7 @@ Section -ETKEY
 	END:
 SectionEnd
 
-Section -Shortcuts
+Section -Shortcuts SHORTCUTS
 	SetOutPath $INSTDIR
 	CreateDirectory "$SMPROGRAMS\ETLegacy"
 	CreateShortCut "$SMPROGRAMS\ETLegacy\Visit ETLegacy Homepage.lnk" "https://www.etlegacy.com" "" "$INSTDIR\etl.exe" 0
@@ -444,7 +445,7 @@ Section -Shortcuts
 
 	; Do not add the Renderer 2 shortcut if we have not actually built it
 	${If} "@CPACK_RENDERER2_ACTIVE@" == "1"
-	CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy - Renderer2.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
+		CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy - Renderer2.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
 	${EndIf}
 
 	CreateShortCut "$SMPROGRAMS\ETLegacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.exe" 0
@@ -513,11 +514,96 @@ SectionEND
 ; ------------------------
 ; Init callbacks
 ; ------------------------
+
 ; User for setting the registry access for 32 or 64 bit
 Function .onInit
 	SetRegView @CPACK_BITS@
+
+	; Get parameters
+	var /GLOBAL cmdLineParams
+	Push $R0
+	${GetParameters} $cmdLineParams
+	; /? param (help)
+	ClearErrors
+	${GetOptions} $cmdLineParams '/?' $R0
+	IfErrors +3 0
+	MessageBox MB_OK "Available parameters are: /noassets /noomnibot /nogeoip /nowolfadmin /noshortcuts"
+	Abort
+	Pop $R0
+
+	; Initialise options
+	Var /GLOBAL option_noAssets
+	Var /GLOBAL option_noOmniBot
+	Var /GLOBAL option_noGeoIP
+	Var /GLOBAL option_noWolfAdmin
+	Var /GLOBAL option_noShortcuts
+
+	StrCpy $option_noAssets				0
+	StrCpy $option_noOmniBot			0
+	StrCpy $option_noGeoIP 				0
+	StrCpy $option_noWolfAdmin			0
+	StrCpy $option_noShortcuts			0
+
+	; Parse Parameters
+	Push $R0
+	Call parseParameters
+	Call processOptions
+	Pop $R0
 FunctionEnd
 
 Function un.onInit
 	SetRegView @CPACK_BITS@
+FunctionEnd
+
+; ------------------------
+; Functions
+; ------------------------
+
+Function parseParameters
+	; /noassets
+	${GetOptions} $cmdLineParams '/noassets' $R0
+	IfErrors +2 0
+	StrCpy $option_noAssets 1
+
+	; /noomnibot
+	${GetOptions} $cmdLineParams '/noomnibot' $R0
+	IfErrors +2 0
+	StrCpy $option_noOmniBot 1
+
+	; /nogeoip
+	${GetOptions} $cmdLineParams '/nogeoip' $R0
+	IfErrors +2 0
+	StrCpy $option_noGeoIP 1
+
+	; /nowolfadmin
+	${GetOptions} $cmdLineParams '/nowolfadmin' $R0
+	IfErrors +2 0
+	StrCpy $option_noWolfAdmin 1
+
+	; /noshortcuts
+	${GetOptions} $cmdLineParams '/noshortcuts' $R0
+	IfErrors +2 0
+	StrCpy $option_noShortcuts 1
+FunctionEnd
+
+Funcion processOptions
+	${If} $option_noAssets == "1"
+		!insertmacro UnselectSection ASSETS
+	${EndIf}
+
+	${If} $option_noOmniBot == "1"
+		!insertmacro UnselectSection OMNIBOT
+	${EndIf}
+
+	${If} $option_noGeoIP == "1"
+		!insertmacro UnselectSection GEOIP
+	${EndIf}
+
+	${If} $option_noWolfAdmin == "1"
+		!insertmacro UnselectSection WOLFADMIN
+	${EndIf}
+
+	${If} $option_noShortcuts == "1"
+		!insertmacro UnselectSection SHORTCUTS
+	${EndIf}
 FunctionEnd
