@@ -2295,8 +2295,10 @@ static void CG_ShowEditComponentHelp()
 	int  i;
 	char *str = NULL;
 
-	CG_Printf("^3edit component needs at least 3 arguments <compname> <field> <value> "
-	          "[ <field2> <value2> <field3> <value3> ... ]");
+	CG_Printf("^3edit component usage :\n"
+              "\"save\"\n"
+              "\"clone|delete\" <hudnumber>\n"
+              "<compname> <field> <value> [ <field2> <value2> <field3> <value3> ... ]");
 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
@@ -2325,7 +2327,7 @@ static void CG_EditComponent_f(void)
 	int            i;
 	int            argc = trap_Argc();
 
-	if (argc < 3)
+	if (argc < 2)
 	{
 		CG_ShowEditComponentHelp();
 		return;
@@ -2336,6 +2338,34 @@ static void CG_EditComponent_f(void)
 	if (!Q_stricmp(token, "?") || !Q_stricmp(token, "help"))
 	{
 		CG_ShowEditComponentHelp();
+		return;
+	}
+
+	if (!Q_stricmp(token, "save"))
+	{
+		CG_HudSave(-1, -1);
+		return;
+	}
+
+	if (argc < 3)
+	{
+		CG_ShowEditComponentHelp();
+		return;
+	}
+
+	if (!Q_stricmp(token, "clone"))
+	{
+		trap_Argv(2, token, sizeof(token));
+
+		CG_HudSave(Q_atoi(token), -1);
+		return;
+	}
+
+	if (!Q_stricmp(token, "delete"))
+	{
+		trap_Argv(2, token, sizeof(token));
+
+		CG_HudSave(-1, Q_atoi(token));
 		return;
 	}
 
