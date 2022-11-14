@@ -4277,6 +4277,7 @@ extern const hudComponentFields_t hudComponentFields[];
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);
 
+qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete);
 void CG_HudEditorSetup(void);
 void CG_DrawHudEditor(void);
 void CG_HudEditor_KeyHandling(int key, qboolean down);

@@ -311,7 +311,7 @@ static panel_button_t hudEditorColorSelectionBackground =
 	NULL,
 	"Backgrnd",
 	{ 0,                      HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CONTROLS_SPACER_XY,BUTTON_WIDTH * 1.5f, BUTTON_HEIGHT },
-	{ 0,                      0,                                                                         0,                   5, 0, 0, 0, 1 },
+	{ 0,                      0,                                                                           0,                   5, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
 	CG_HudEditoColorSelection_KeyDown,// keyDown
 	CG_HudEditorPanel_KeyUp,  // keyUp
@@ -838,6 +838,8 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 			// Back to default HUD
 			cg_altHud.integer = 0;
 			activehud         = CG_getHudByNumber(0);
+
+			CG_Printf("Delete hud %d. Back to default HUD\n", HUDToDelete);
 
 			continue;
 		}
