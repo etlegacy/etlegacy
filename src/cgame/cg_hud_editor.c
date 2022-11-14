@@ -35,6 +35,7 @@
  */
 
 #include "cg_local.h"
+#include "json.h"
 
 #define SOUNDEVENT(sound) trap_S_StartLocalSound(sound, CHAN_LOCAL_SOUND)
 
@@ -311,7 +312,7 @@ static panel_button_t hudEditorColorSelectionBackground =
 	NULL,
 	"Backgrnd",
 	{ 0,                      HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CONTROLS_SPACER_XY,BUTTON_WIDTH * 1.5f, BUTTON_HEIGHT },
-	{ 0,                      0,                                                                         0,                   5, 0, 0, 0, 1 },
+	{ 0,                      0,                                                                           0,                   5, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
 	CG_HudEditoColorSelection_KeyDown,// keyDown
 	CG_HudEditorPanel_KeyUp,  // keyUp
@@ -688,69 +689,55 @@ static ID_INLINE float CG_AdjustXToHUDFile(float x, float w)
 	}
 }
 
-void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hud)
+static ID_INLINE char *CG_ColorToHex(vec_t *vec)
 {
-	int  j;
-	char *s;
+	return va("%02x%02x%02x%02x", ((int) (vec[0] * 255.f)) & 0xff, ((int) (vec[1] * 255.f)) & 0xff, ((int) (vec[2] * 255.f)) & 0xff, ((int) (vec[3] * 255.f)) & 0xff);
+}
 
-	s = va("\thud {\n\t\thudnumber %d\n"
-	       "\t\t%-16s\t"
-	       "%-6.1s\t%-6.1s\t%-6.1s\t%-6.1s\t"
-	       "%-4s\t%s\t"
-	       "%-4.3s\t"
-	       "%-4.3s\t%-4.3s\t%-4.3s\t%-4.3s\t"
-	       "%-4.3s\t%-4.3s\t%-4.3s\t%-4.3s\t"
-	       "%s\t"
-	       "%-4.3s\t%-4.3s\t%-4.3s\t%-4.3s\t"
-	       "%s\t"
-	       "%-4.3s\t%-4.3s\t%-4.3s\t%-4.3s\t"
-	       "%s\t%s\t%s\n",
-	       hudNumber,
-	       "// name",
-	       "x", "y", "w", "h", "s",
-	       "v", "ss",
-	       "mr", "mg", "mb", "ma",
-	       "sr", "sg", "sb", "sa",
-	       "bg",
-	       "bgr", "bgg", "bgb", "bga",
-	       "b",
-	       "br", "bg", "bb", "ba",
-	       "ts", "ta", "aa");
-	trap_FS_Write(s, strlen(s), fh);
+static cJSON *CG_HUDSave_WriteComponent(int hudNumber, hudStucture_t *hud)
+{
+	int   j;
+	cJSON *compObj, *rectObj, *compsObj, *hudObj = cJSON_CreateObject();
+
+	cJSON_AddNumberToObject(hudObj, "number", hudNumber);
+	compsObj = cJSON_AddObjectToObject(hudObj, "components");
 
 	for (j = 0; hudComponentFields[j].name; j++)
 	{
 		if (!hudComponentFields[j].isAlias)
 		{
 			hudComponent_t *comp = (hudComponent_t *)((char *)hud + hudComponentFields[j].offset);
-			s = va("\t\t%-16s\t"
-			       "%-6.1f\t%-6.1f\t%-6.1f\t%-6.1f\t"
-			       "%-4i\t%i\t"
-			       "%-4.2f\t"
-			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\t"
-			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\t"
-			       "%i\t"
-			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\t"
-			       "%i\t"
-			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\t"
-			       "%i\t%i\t%i\n",
-			       hudComponentFields[j].name,
-			       CG_AdjustXToHUDFile(comp->location.x, comp->location.w), comp->location.y, comp->location.w, comp->location.h,
-			       comp->style, comp->visible,
-			       comp->scale,
-			       comp->colorMain[0], comp->colorMain[1], comp->colorMain[2], comp->colorMain[3],
-			       comp->colorSecondary[0], comp->colorSecondary[1], comp->colorSecondary[2], comp->colorSecondary[3],
-			       comp->showBackGround,
-			       comp->colorBackground[0], comp->colorBackground[1], comp->colorBackground[2], comp->colorBackground[3],
-			       comp->showBorder,
-			       comp->colorBorder[0], comp->colorBorder[1], comp->colorBorder[2], comp->colorBorder[3],
-			       comp->styleText, comp->alignText, comp->autoAdjust);
-			trap_FS_Write(s, strlen(s), fh);
+
+			compObj = cJSON_AddObjectToObject(compsObj, hudComponentFields[j].name);
+
+			rectObj = cJSON_AddObjectToObject(compObj, "rect");
+			{
+				cJSON_AddNumberToObject(rectObj, "x", CG_AdjustXToHUDFile(comp->location.x, comp->location.w));
+				cJSON_AddNumberToObject(rectObj, "y", comp->location.y);
+				cJSON_AddNumberToObject(rectObj, "w", comp->location.w);
+				cJSON_AddNumberToObject(rectObj, "h", comp->location.h);
+			}
+
+			cJSON_AddBoolToObject(compObj, "visible", comp->visible);
+			cJSON_AddNumberToObject(compObj, "scale", comp->scale);
+
+			cJSON_AddStringToObject(compObj, "mainColor", CG_ColorToHex(comp->colorMain));
+			cJSON_AddStringToObject(compObj, "secondaryColor", CG_ColorToHex(comp->colorSecondary));
+
+			cJSON_AddStringToObject(compObj, "backgroundColor", CG_ColorToHex(comp->colorBackground));
+			cJSON_AddBoolToObject(compObj, "showBackGround", comp->showBackGround);
+
+			cJSON_AddStringToObject(compObj, "borderColor", CG_ColorToHex(comp->colorBorder));
+			cJSON_AddBoolToObject(compObj, "showBorder", comp->showBorder);
+
+			cJSON_AddNumberToObject(compObj, "textStyle", comp->styleText);
+			cJSON_AddNumberToObject(compObj, "textAlign", comp->alignText);
+			cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
+			cJSON_AddNumberToObject(compObj, "offset", comp->offset);
 		}
 	}
 
-	s = "\t}\n";
-	trap_FS_Write(s, strlen(s), fh);
+	return hudObj;
 }
 
 /**
@@ -761,13 +748,13 @@ void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hu
 qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 {
 	int           i;
-	fileHandle_t  fh;
-	char          *s;
 	hudStucture_t *hud;
+	cJSON         *root, *huds, *hudObj;
 
-	if (trap_FS_FOpenFile("hud.dat", &fh, FS_WRITE) < 0)
+	root = cJSON_CreateObject();
+	if (!root)
 	{
-		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to save hud to 'hud.dat\n");
+		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to allocate root object\n");
 		return qfalse;
 	}
 
@@ -805,8 +792,8 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, num);
 	}
 
-	s = "hudDef {\n";
-	trap_FS_Write(s, strlen(s), fh);
+	cJSON_AddNumberToObject(root, "version", CURRENT_HUD_JSON_VERSION);
+	huds = cJSON_AddArrayToObject(root, "huds");
 
 	for (i = 1; i < hudCount; i++)
 	{
@@ -842,13 +829,20 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 			continue;
 		}
 
-		CG_HUDSave_WriteComponent(fh, hud->hudnumber, hud);
+		hudObj = CG_HUDSave_WriteComponent(hud->hudnumber, hud);
+		if (hudObj)
+		{
+			cJSON_AddItemToArray(huds, hudObj);
+		}
 	}
 
-	s = "}\n";
-	trap_FS_Write(s, strlen(s), fh);
+	if (!Q_FSWriteJSONTo(root, "hud.dat"))
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to save hud to 'hud.dat'\n");
+		cJSON_Delete(root);
 
-	trap_FS_FCloseFile(fh);
+		return qfalse;
+	}
 
 	CG_Printf("Saved huds to 'hud.dat'\n");
 

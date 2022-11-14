@@ -4203,6 +4203,7 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 16
+#define CURRENT_HUD_JSON_VERSION 1
 
 extern hudStucture_t hudlist[MAXHUDS];
 extern hudStucture_t *activehud;

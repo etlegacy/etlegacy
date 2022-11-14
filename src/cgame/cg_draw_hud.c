@@ -723,7 +723,7 @@ static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, const char *s)
 
 static qboolean CG_ReadHudJsonFile(const char *filename)
 {
-	cJSON          *root, *huds, *hud, *comp, *tmp;
+	cJSON          *root, *huds, *hud, *comps, *comp, *tmp;
 	uint32_t       fileVersion = 0;
 	hudStucture_t  tmpHud;
 	hudStucture_t  *outHud;
@@ -739,8 +739,9 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 	fileVersion = Q_ReadIntValueJson(root, "version");
 
 	// check version..
-	if (fileVersion != 1)
+	if (fileVersion != CURRENT_HUD_JSON_VERSION)
 	{
+		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);
 		cJSON_Delete(root);
 		return qfalse;
 	}
@@ -785,9 +786,17 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 		// TODO: names?
 		// Q_strcpy(tmpHud.name, Q_ReadStringValueJson(hud, "name"));
 
+		comps = cJSON_GetObjectItem(hud, "components");
+		if (!comps)
+		{
+			Com_Printf("Missing components object in hud definition: %i\n", tmpHud.hudnumber);
+			cJSON_Delete(root);
+			return qfalse;
+		}
+
 		for (i = 0; hudComponentFields[i].name; i++)
 		{
-			comp = cJSON_GetObjectItem(hud, hudComponentFields[i].name);
+			comp = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
 
 			if (!comp)
 			{
@@ -845,20 +854,20 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			component->alignText  = Q_ReadIntValueJson(comp, "textAlign");
 			component->autoAdjust = Q_ReadIntValueJson(comp, "autoAdjust");
 			component->offset     = Q_ReadIntValueJson(comp, "offset");
+		}
 
-			outHud = CG_getHudByNumber(tmpHud.hudnumber);
+		outHud = CG_getHudByNumber(tmpHud.hudnumber);
 
-			if (!outHud)
-			{
-				CG_addHudToList(&tmpHud);
-				Com_Printf("...properties for hud %i have been read.\n", tmpHud.hudnumber);
-			}
-			else
-			{
-				Com_Memcpy(hud, &tmpHud, sizeof(tmpHud));
-				CG_HudComponentsFill(outHud);
-				Com_Printf("...properties for hud %i have been updated.\n", tmpHud.hudnumber);
-			}
+		if (!outHud)
+		{
+			CG_addHudToList(&tmpHud);
+			Com_Printf("...properties for hud %i have been read.\n", tmpHud.hudnumber);
+		}
+		else
+		{
+			Com_Memcpy(outHud, &tmpHud, sizeof(tmpHud));
+			CG_HudComponentsFill(outHud);
+			Com_Printf("...properties for hud %i have been updated.\n", tmpHud.hudnumber);
 		}
 	}
 
