@@ -718,6 +718,7 @@ static cJSON *CG_HUDSave_WriteComponent(int hudNumber, hudStucture_t *hud)
 				cJSON_AddNumberToObject(rectObj, "h", comp->location.h);
 			}
 
+			cJSON_AddNumberToObject(compObj, "style", comp->style);
 			cJSON_AddBoolToObject(compObj, "visible", comp->visible);
 			cJSON_AddNumberToObject(compObj, "scale", comp->scale);
 

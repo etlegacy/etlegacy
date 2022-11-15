@@ -816,6 +816,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 				component->location.h = Q_ReadFloatValueJson(tmp, "h");
 			}
 
+			component->style   = Q_ReadIntValueJson(comp, "style");
 			component->visible = Q_ReadBoolValueJson(comp, "visible");
 			component->scale   = Q_ReadFloatValueJson(comp, "scale");
 
