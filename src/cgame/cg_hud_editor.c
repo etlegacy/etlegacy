@@ -663,85 +663,6 @@ static panel_button_t *hudEditor[] =
 };
 
 /**
- * @brief Ccg_WideXAdjustFromWide
- * @param x
- * @param w
- * @return
- */
-static ID_INLINE float CG_AdjustXToHUDFile(float x, float w)
-{
-	if (Ccg_Is43Screen())
-	{
-		return x;
-	}
-	else if ((int)(x + w * .5f) >= (int)(320 * cgs.adr43) - 1 &&
-	         (int)(x + w * .5f) <= (int)(320 * cgs.adr43) + 1)
-	{
-		return (x - (Ccg_WideX(w) - w) * .5f) / cgs.adr43;
-	}
-	else if (x <= (int)(320 * cgs.adr43))
-	{
-		return x / cgs.adr43;
-	}
-	else
-	{
-		return (x + w - Ccg_WideX(w)) / cgs.adr43;
-	}
-}
-
-static ID_INLINE char *CG_ColorToHex(vec_t *vec)
-{
-	return va("%02x%02x%02x%02x", ((int) (vec[0] * 255.f)) & 0xff, ((int) (vec[1] * 255.f)) & 0xff, ((int) (vec[2] * 255.f)) & 0xff, ((int) (vec[3] * 255.f)) & 0xff);
-}
-
-static cJSON *CG_HUDSave_WriteComponent(int hudNumber, hudStucture_t *hud)
-{
-	int   j;
-	cJSON *compObj, *rectObj, *compsObj, *hudObj = cJSON_CreateObject();
-
-	cJSON_AddNumberToObject(hudObj, "number", hudNumber);
-	compsObj = cJSON_AddObjectToObject(hudObj, "components");
-
-	for (j = 0; hudComponentFields[j].name; j++)
-	{
-		if (!hudComponentFields[j].isAlias)
-		{
-			hudComponent_t *comp = (hudComponent_t *)((char *)hud + hudComponentFields[j].offset);
-
-			compObj = cJSON_AddObjectToObject(compsObj, hudComponentFields[j].name);
-
-			rectObj = cJSON_AddObjectToObject(compObj, "rect");
-			{
-				cJSON_AddNumberToObject(rectObj, "x", CG_AdjustXToHUDFile(comp->location.x, comp->location.w));
-				cJSON_AddNumberToObject(rectObj, "y", comp->location.y);
-				cJSON_AddNumberToObject(rectObj, "w", comp->location.w);
-				cJSON_AddNumberToObject(rectObj, "h", comp->location.h);
-			}
-
-			cJSON_AddNumberToObject(compObj, "style", comp->style);
-			cJSON_AddBoolToObject(compObj, "visible", comp->visible);
-			cJSON_AddNumberToObject(compObj, "scale", comp->scale);
-
-			cJSON_AddStringToObject(compObj, "mainColor", CG_ColorToHex(comp->colorMain));
-			cJSON_AddStringToObject(compObj, "secondaryColor", CG_ColorToHex(comp->colorSecondary));
-
-			cJSON_AddStringToObject(compObj, "backgroundColor", CG_ColorToHex(comp->colorBackground));
-			cJSON_AddBoolToObject(compObj, "showBackGround", comp->showBackGround);
-
-			cJSON_AddStringToObject(compObj, "borderColor", CG_ColorToHex(comp->colorBorder));
-			cJSON_AddBoolToObject(compObj, "showBorder", comp->showBorder);
-
-			cJSON_AddNumberToObject(compObj, "textStyle", comp->styleText);
-			cJSON_AddNumberToObject(compObj, "textAlign", comp->alignText);
-			cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
-			cJSON_AddNumberToObject(compObj, "offset", comp->offset);
-		}
-	}
-
-	return hudObj;
-}
-
-/**
  * @brief CG_HudSave
  * @param[in] HUDToDuplicate
  * @param[in] HUDToDelete
@@ -750,14 +671,6 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 {
 	int           i;
 	hudStucture_t *hud;
-	cJSON         *root, *huds, *hudObj;
-
-	root = cJSON_CreateObject();
-	if (!root)
-	{
-		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to allocate root object\n");
-		return qfalse;
-	}
 
 	if (HUDToDelete == 0)
 	{
@@ -794,9 +707,6 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, num);
 	}
 
-	cJSON_AddNumberToObject(root, "version", CURRENT_HUD_JSON_VERSION);
-	huds = cJSON_AddArrayToObject(root, "huds");
-
 	for (i = 1; i < hudCount; i++)
 	{
 		hud = &hudlist[i];
@@ -828,28 +738,10 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 			trap_Cvar_Set("cg_altHud", "0");
 			cg_altHud.integer = 0;
 			activehud         = CG_getHudByNumber(0);
-
-			continue;
-		}
-
-		hudObj = CG_HUDSave_WriteComponent(hud->hudnumber, hud);
-		if (hudObj)
-		{
-			cJSON_AddItemToArray(huds, hudObj);
 		}
 	}
 
-	if (!Q_FSWriteJSONTo(root, "hud.dat"))
-	{
-		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to save hud to 'hud.dat'\n");
-		cJSON_Delete(root);
-
-		return qfalse;
-	}
-
-	CG_Printf("Saved huds to 'hud.dat'\n");
-
-	return qtrue;
+	return CG_SaveHudsToFile();
 }
 
 /**

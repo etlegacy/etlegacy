@@ -1640,11 +1640,19 @@ static void CG_TeamMenu_f(void)
 }
 
 /**
- * @brief CG_ReadHuds_f
+ * @brief read huds from the default files
  */
 static void CG_ReadHuds_f(void)
 {
-	CG_ReadHudScripts();
+	CG_ReadHudsFromFile();
+}
+
+/**
+ * @brief Save huds to the default file
+ */
+static void CG_WriteHuds_f(void)
+{
+	CG_SaveHudsToFile();
 }
 
 static void CG_ShareTimer_f(void)
@@ -2251,6 +2259,7 @@ static consoleCommand_t commands[] =
 	{ "classmenu",           CG_ClassMenu_f            },
 	{ "teammenu",            CG_TeamMenu_f             },
 	{ "readhuds",            CG_ReadHuds_f             },
+	{ "writehuds",           CG_WriteHuds_f            },
 	{ "sharetimer",          CG_ShareTimer_f           },
 	{ "sharetimer_buddy",    CG_ShareTimer_f           },
 #ifdef FEATURE_EDV

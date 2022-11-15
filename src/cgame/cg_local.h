@@ -3093,8 +3093,12 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
 // draws vertical scrolling string
 void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
 
+// cg_hud_io.c
+float CG_AdjustXFromHudFile(float x, float w);
+qboolean CG_SaveHudsToFile();
+void CG_ReadHudsFromFile(void);
+
 // cg_draw_hud.c
-void CG_ReadHudScripts(void);
 void CG_Hud_Setup(void);
 void CG_DrawUpperRight(void);
 void CG_SetHud(void);
@@ -4223,6 +4227,7 @@ typedef struct
 hudStucture_t *CG_GetActiveHUD();
 hudStucture_t *CG_addHudToList(hudStucture_t *hud);
 hudStucture_t *CG_getHudByNumber(int number);
+void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
 
 void CG_DrawNewCompass(hudComponent_t *comp);
