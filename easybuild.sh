@@ -32,8 +32,8 @@ x86_build=true
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
-easy_keys=(clean build generate package install download crust release project help)
-easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project print_help)
+easy_keys=(clean build generate package install download crust release project updatelicense help)
+easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate print_help)
 easy_count=`expr ${#easy_keys[*]} - 1`
 
 check_exit() {
@@ -840,6 +840,14 @@ run_default() {
 	run_install
 }
 
+run_license_year_udpate() {
+	einfo "Updating license year"
+	grep -El ".*Copyright \(C\) 2012-[0-9][0-9][0-9][0-9] ET\:Legacy team <mail@etlegacy\.com>.*" -R src/ | xargs sed -i "" -E "s/2012\-[0-9]{4}/2012-$(date '+%Y')/g"
+	grep -El ".*Copyright \(C\) 2012-[0-9][0-9][0-9][0-9] ET\:Legacy team <mail@etlegacy\.com>.*" -R etmain/ | xargs sed -i "" -E "s/2012\-[0-9]{4}/2012-$(date '+%Y')/g"
+	sed -i "" -E "s/2012\-[0-9]{4}/2012-$(date '+%Y')/g" README.md
+	sed -i "" -E "s/2012\-[0-9]{4}/2012-$(date '+%Y')/g" src/sys/win_resource.rc
+}
+
 print_help() {
 	ehead "ET: Legacy Easy Builder Help"
 	ehead "==============================="
@@ -852,6 +860,7 @@ print_help() {
 	ehead "crust - run the uncrustify to the source"
 	ehead "project - generate the project files for your platform"
 	ehead "release - run the entire release process"
+	ehead "updatelicense - update the lisence years for the current year"
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
