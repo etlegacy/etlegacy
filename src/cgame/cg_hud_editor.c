@@ -789,6 +789,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 
 		activehud         = CG_addHudToList(CG_getHudByNumber(HUDToDuplicate));
 		cg_altHud.integer = activehud->hudnumber = num;
+		trap_Cvar_Set("cg_altHud", va("%i", num));
 
 		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, num);
 	}
@@ -824,6 +825,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 			}
 
 			// Back to default HUD
+			trap_Cvar_Set("cg_altHud", "0");
 			cg_altHud.integer = 0;
 			activehud         = CG_getHudByNumber(0);
 
@@ -1492,6 +1494,7 @@ static qboolean CG_HudEditor_HudDropdown_KeyUp(panel_button_t *button, int key)
 
 				if (BG_CursorInRect(&rect))
 				{
+					trap_Cvar_Set("cg_altHud", va("%i", hud->hudnumber));
 					cg_altHud.integer = hud->hudnumber;
 					CG_SetHud();
 
