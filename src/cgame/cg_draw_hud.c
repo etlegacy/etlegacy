@@ -721,6 +721,82 @@ static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, const char *s)
 	return qfalse;
 }
 
+static ID_INLINE float CG_HudParseColorElement(cJSON *object, float defaultValue)
+{
+	if (!object)
+	{
+		return defaultValue;
+	}
+
+	if (!cJSON_IsNumber(object))
+	{
+		return defaultValue;
+	}
+
+	// check if the number is an integer
+	if (ceil(object->valuedouble) == floor(object->valuedouble))
+	{
+
+		return ((float) MIN(MAX(object->valuedouble, 0.0), 255.0) / 255.f);
+	}
+	else if (object->valuedouble <= 1.f && object->valuedouble >= 0.f)
+	{
+		return (float) object->valuedouble;
+	}
+	else
+	{
+		return defaultValue;
+	}
+}
+
+static ID_INLINE void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
+{
+	if (!object)
+	{
+		colorVec[0] = 0.f;
+		colorVec[1] = 0.f;
+		colorVec[2] = 0.f;
+		colorVec[3] = 1.f;
+
+		return;
+	}
+
+	if (cJSON_IsString(object))
+	{
+		CG_ParseHexColor(colorVec, object->valuestring);
+	}
+	else if (cJSON_IsObject(object))
+	{
+		colorVec[0] = CG_HudParseColorElement(cJSON_GetObjectItem(object, "r"), 0.f);
+		colorVec[1] = CG_HudParseColorElement(cJSON_GetObjectItem(object, "g"), 0.f);
+		colorVec[2] = CG_HudParseColorElement(cJSON_GetObjectItem(object, "b"), 0.f);
+		colorVec[3] = CG_HudParseColorElement(cJSON_GetObjectItem(object, "a"), 1.f);
+	}
+	else if (cJSON_IsArray(object))
+	{
+		int i, len = cJSON_GetArraySize(object);
+
+		for (i = 0; i < len && i < 4; i++)
+		{
+			colorVec[i] = CG_HudParseColorElement(cJSON_GetArrayItem(object, i), 0.f);
+		}
+
+		if (len < 4)
+		{
+			for (i = len; i < 3; i++)
+			{
+				colorVec[i] = 0.f;
+			}
+
+			colorVec[3] = 1.f;
+		}
+	}
+	else
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_HudParseColorObject: invalid color data\n");
+	}
+}
+
 static qboolean CG_ReadHudJsonFile(const char *filename)
 {
 	cJSON          *root, *huds, *hud, *comps, *comp, *tmp;
@@ -822,34 +898,15 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			component->visible = Q_ReadBoolValueJson(comp, "visible");
 			component->scale   = Q_ReadFloatValueJson(comp, "scale");
 
-			tmp = cJSON_GetObjectItem(comp, "mainColor");
-			if (tmp && cJSON_IsString(tmp))
-			{
-				CG_ParseHexColor(component->colorMain, tmp->valuestring);
-			}
+			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "mainColor"), component->colorMain);
 
-			tmp = cJSON_GetObjectItem(comp, "secondaryColor");
-			if (tmp && cJSON_IsString(tmp))
-			{
-				CG_ParseHexColor(component->colorSecondary, tmp->valuestring);
-			}
+			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "secondaryColor"), component->colorSecondary);
 
-			tmp = cJSON_GetObjectItem(comp, "backgroundColor");
-			if (tmp && cJSON_IsString(tmp))
-			{
-				// component->showBackGround = qtrue;
-				CG_ParseHexColor(component->colorBackground, tmp->valuestring);
-
-			}
+			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "backgroundColor"), component->colorBackground);
 			// FIXME: mby get rid of the extra booleans
 			component->showBackGround = Q_ReadBoolValueJson(comp, "showBackGround");
 
-			tmp = cJSON_GetObjectItem(comp, "borderColor");
-			if (tmp && cJSON_IsString(tmp))
-			{
-				// component->showBorder = qtrue;
-				CG_ParseHexColor(component->colorBorder, tmp->valuestring);
-			}
+			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "borderColor"), component->colorBorder);
 			// FIXME: mby get rid of the extra booleans
 			component->showBorder = Q_ReadBoolValueJson(comp, "showBorder");
 
