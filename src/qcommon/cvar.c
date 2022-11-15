@@ -1756,7 +1756,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 	// baseq3) sets both flags. We unset CVAR_ROM for such cvars.
 	//
 	// Update: We no longer do this for ETL
-	// All cvars containing both flags are obsolte/unused and deleted in legacy
+	// All cvars containing both flags are obsolete/unused and deleted in legacy
 	// We no longer unset CVAR_ROM - instead we just don't register
 	// Side note: ET mods/vanilla don't use affected cvars but they try to register (ui_botsFile, ui_spX ...)
 	if ((flags & (CVAR_ARCHIVE | CVAR_ROM)) == (CVAR_ARCHIVE | CVAR_ROM))

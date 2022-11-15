@@ -814,6 +814,8 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 				component->location.y = Q_ReadFloatValueJson(tmp, "y");
 				component->location.w = Q_ReadFloatValueJson(tmp, "w");
 				component->location.h = Q_ReadFloatValueJson(tmp, "h");
+
+				component->location.x = CG_AdjustXFromHudFile(component->location.x, component->location.w);
 			}
 
 			component->style   = Q_ReadIntValueJson(comp, "style");
