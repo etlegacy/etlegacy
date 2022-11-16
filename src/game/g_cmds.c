@@ -4302,6 +4302,12 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		return qfalse;
 	}
 
+	// if a player cannot move at this moment, don't allow him to get pushed..
+	if (victim->client->ps.pm_flags & PMF_TIME_LOCKPLAYER)
+	{
+		return qfalse;
+	}
+
 	// Don't allow pushing when player is using mg
 	if (victim->client->ps.persistant[PERS_HWEAPON_USE])
 	{
