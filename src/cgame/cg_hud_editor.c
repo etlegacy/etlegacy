@@ -741,7 +741,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		}
 	}
 
-	return CG_SaveHudsToFile();
+	return CG_WriteHudsToFile();
 }
 
 /**

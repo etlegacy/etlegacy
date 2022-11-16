@@ -32,7 +32,7 @@
  * @file cg_local.h
  *
  * The entire cgame module is unloaded and reloaded on each level change, so
- * there is NO persistant data between levels on the client side.
+ * there is NO persistent data between levels on the client side.
  * If you absolutely need something stored, it can either be kept by the server
  * in the server stored userinfos, or stashed in a cvar.
  */
@@ -3095,7 +3095,7 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
 
 // cg_hud_io.c
 float CG_AdjustXFromHudFile(float x, float w);
-qboolean CG_SaveHudsToFile();
+qboolean CG_WriteHudsToFile();
 void CG_ReadHudsFromFile(void);
 
 // cg_draw_hud.c
@@ -4139,12 +4139,15 @@ typedef struct hudComponent_s
 	int autoAdjust;
 	int offset;
 	float hardScale; ///< Runtime computed value
+	qboolean parsed; ///< Used to notify that the component has been setup via file
 	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
 
 typedef struct hudStructure_s
 {
+	char name[MAX_QPATH];
 	int hudnumber;
+	int parent;
 
 	hudComponent_t compass;
 	hudComponent_t staminabar;

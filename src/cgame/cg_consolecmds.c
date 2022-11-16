@@ -1652,7 +1652,7 @@ static void CG_ReadHuds_f(void)
  */
 static void CG_WriteHuds_f(void)
 {
-	CG_SaveHudsToFile();
+	CG_WriteHudsToFile();
 }
 
 static void CG_ShareTimer_f(void)

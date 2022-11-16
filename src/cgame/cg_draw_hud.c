@@ -136,7 +136,7 @@ static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float
 			                  showBackground, { colorBackground[0], colorBackground[1], colorBackground[2], colorBackground[3] },
 			                  showBorder, { colorBorder[0], colorBorder[1], colorBorder[2], colorBorder[3] },
 			                  styleText, alignText, autoAdjust,
-			                  compIndex++, hardScale, draw };
+			                  compIndex++, hardScale, qfalse, draw };
 }
 
 vec4_t HUD_Background    = { 0.16f, 0.2f, 0.17f, 0.5f };
