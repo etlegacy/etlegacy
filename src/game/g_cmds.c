@@ -4296,14 +4296,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		return qfalse;
 	}
 
-	// Prevent possible cheating, as well as annoying push after revive and spawning
-	if (ent->client->ps.powerups[PW_INVULNERABLE])
-	{
-		return qfalse;
-	}
-
-	// if a player cannot move at this moment, don't allow him to get pushed..
-	if (victim->client->ps.pm_flags & PMF_TIME_LOCKPLAYER)
+	// Prevent boosting players who have shield
+	if (victim->client->ps.powerups[PW_INVULNERABLE])
 	{
 		return qfalse;
 	}
