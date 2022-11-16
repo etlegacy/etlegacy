@@ -629,6 +629,9 @@ static qboolean CG_ParseHUD(int handle)
 		return CG_HUD_ParseError(handle, "Error while parsing hud");
 	}
 
+	// reset all the components, and set the offset value to 999 for sorting
+	Com_Memset(&tempHud, 0, sizeof(hudStucture_t));
+
 	// if the first parameter in the hud definition is a "no-defaults" line then no default values are set
 	// and the hud is plain (everything is hidden and no positions are set)
 	if (!Q_stricmp(token.string, "no-defaults"))
@@ -638,6 +641,8 @@ static qboolean CG_ParseHUD(int handle)
 	// its either no-defaults, parent or neither
 	else if (!Q_stricmp(token.string, "parent"))
 	{
+		loadDefaults = qfalse;
+
 		if (!PC_Int_Parse(handle, &tempHud.parent))
 		{
 			return CG_HUD_ParseError(handle, "expected integer value for parent");
@@ -648,8 +653,10 @@ static qboolean CG_ParseHUD(int handle)
 		trap_PC_UnReadToken(handle);
 	}
 
-	// reset all the components, and set the offset value to 999 for sorting
-	Com_Memset(&tempHud, 0, sizeof(hudStucture_t));
+	if (!parentHud && tempHud.parent >= 0)
+	{
+		parentHud = CG_getHudByNumber(tempHud.parent);
+	}
 
 	if (loadDefaults)
 	{
@@ -689,11 +696,6 @@ static qboolean CG_ParseHUD(int handle)
 
 		for (i = 0; hudComponentFields[i].name; i++)
 		{
-			if (!parentHud && tempHud.parent >= 0)
-			{
-				parentHud = CG_getHudByNumber(tempHud.parent);
-			}
-
 			if (!Q_stricmp(token.string, hudComponentFields[i].name))
 			{
 				hudComponent_t *component = (hudComponent_t *)((char * )&tempHud + hudComponentFields[i].offset);

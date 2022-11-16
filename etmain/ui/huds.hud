@@ -1,9 +1,9 @@
 hudDef {
 	// inside the hud element following keywords apply
 	// except for the hud number which tells the cg_althud variable value
-	// all the others work like the following : 
-	// 1:x 2: y 3: width 4: height 5: component style 6: visibility (boolean type) 
-	// 7: font scale 
+	// all the others work like the following :
+	// 1:x 2: y 3: width 4: height 5: component style 6: visibility (boolean type)
+	// 7: font scale
 	// 8: main red 9: main green 10: main blue 11: main alpha
 	// 12: secondary red 13: secondary green 14: secondary blue 15: secondary alpha
 	// 16: show background 17: background red 18: background green 19: background blue 20: background alpha
@@ -15,6 +15,7 @@ hudDef {
 	// color shoud be between 0 and 1
 	// style is a bitwise value
 	hud {
+		parent 0
 		hudnumber 1
 		// name         	x     	y     	w     	h     	s   	v	ss  	mr  	mg  	mb  	ma  	sr  	sg  	sb  	sa  	bg	bgr 	bgg 	bgb 	bga 	b	br  	bg  	bb  	ba  	ts	ta	aa
 		crosshair       	296.0 	216.0 	48.0  	48.0  	1   	1	100.00	1.00	1.00	1.00	1.00	1.00	1.00	1.00	1.00	0	0.16	0.20	0.17	0.50	0	0.50	0.50	0.50	0.50	3	1	0
@@ -69,6 +70,7 @@ hudDef {
 		stats           	580.0 	291.0 	57.0  	62.0  	7   	1	100.00	0.60	0.60	0.60	1.00	0.60	0.60	0.60	1.00	1	0.16	0.20	0.17	0.50	1	0.50	0.50	0.50	0.50	0	3	0
 	}
 	hud {
+		parent 1
 		hudnumber 2
 		// name         	x     	y     	w     	h     	s   	v	ss  	mr  	mg  	mb  	ma  	sr  	sg  	sb  	sa  	bg	bgr 	bgg 	bgb 	bga 	b	br  	bg  	bb  	ba  	ts	ta	aa
 		crosshair       	296.0 	216.0 	48.0  	48.0  	1   	1	100.00	1.00	1.00	1.00	1.00	1.00	1.00	1.00	1.00	0	0.16	0.20	0.17	0.50	0	0.50	0.50	0.50	0.50	3	1	0
@@ -123,6 +125,7 @@ hudDef {
 		stats           	580.0 	291.0 	57.0  	62.0  	7   	1	100.00	0.60	0.60	0.60	1.00	0.60	0.60	0.60	1.00	1	0.16	0.20	0.17	0.50	1	0.50	0.50	0.50	0.50	0	3	0
 	}
 	hud {
+		parent 2
 		hudnumber 3
 		// name         	x     	y     	w     	h     	s   	v	ss  	mr  	mg  	mb  	ma  	sr  	sg  	sb  	sa  	bg	bgr 	bgg 	bgb 	bga 	b	br  	bg  	bb  	ba  	ts	ta	aa
 		crosshair       	296.0 	216.0 	48.0  	48.0  	1   	1	100.00	1.00	1.00	1.00	1.00	1.00	1.00	1.00	1.00	0	0.16	0.20	0.17	0.50	0	0.50	0.50	0.50	0.50	3	1	0
@@ -177,6 +180,7 @@ hudDef {
 		stats           	580.0 	291.0 	57.0  	62.0  	7   	1	100.00	0.60	0.60	0.60	1.00	0.60	0.60	0.60	1.00	1	0.16	0.20	0.17	0.50	1	0.50	0.50	0.50	0.50	0	3	0
 	}
 	hud {
+		parent 3
 		hudnumber 4
 		// name         	x     	y     	w     	h     	s   	v	ss  	mr  	mg  	mb  	ma  	sr  	sg  	sb  	sa  	bg	bgr 	bgg 	bgb 	bga 	b	br  	bg  	bb  	ba  	ts	ta	aa
 		crosshair       	296.0 	216.0 	48.0  	48.0  	0   	1	100.00	1.00	1.00	1.00	1.00	1.00	1.00	1.00	1.00	0	0.16	0.20	0.17	0.50	0	0.50	0.50	0.50	0.50	3	1	0
