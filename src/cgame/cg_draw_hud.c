@@ -35,7 +35,6 @@
  */
 
 #include "cg_local.h"
-#include "json.h"
 
 hudStucture_t *activehud;
 hudStucture_t hudlist[MAXHUDS];

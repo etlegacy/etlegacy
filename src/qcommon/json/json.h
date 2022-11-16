@@ -78,8 +78,13 @@ qboolean Q_FSWriteJSONTo(cJSON *object, const char *path);
  */
 qboolean Q_FSWriteJSON(cJSON *object, fileHandle_t handle);
 
-#define Q_ReadIntValueJson(object, name) (int) Q_ReadNumberValueJson((object), (name))
-#define Q_ReadFloatValueJson(object, name) (float) Q_ReadNumberValueJson((object), (name))
+#define Q_ReadIntValueJson(object, name) (int) Q_ReadNumberValueJsonEx((object), (name), 0)
+#define Q_ReadIntValueJsonEx(object, name, def) (int) Q_ReadNumberValueJsonEx((object), (name), (double) (def))
+
+#define Q_ReadFloatValueJson(object, name) (float) Q_ReadFloatValueJsonEx((object), (name), 0.0f)
+#define Q_ReadFloatValueJsonEx(object, name, def) (float) Q_ReadNumberValueJsonEx((object), (name), (double) (def))
+
+#define Q_ReadNumberValueJson(object, name) (float) Q_ReadNumberValueJsonEx((object), (name), 0.0)
 
 /**
  * Get field by name and return the number value if available (defaults to 0)
@@ -87,7 +92,7 @@ qboolean Q_FSWriteJSON(cJSON *object, fileHandle_t handle);
  * @param name field name
  * @return double value of the field
  */
-static ID_INLINE double Q_ReadNumberValueJson(cJSON *object, const char *name)
+static ID_INLINE double Q_ReadNumberValueJsonEx(cJSON *object, const char *name, double defaultValue)
 {
 	cJSON *tmp = cJSON_GetObjectItem(object, name);
 
@@ -96,9 +101,12 @@ static ID_INLINE double Q_ReadNumberValueJson(cJSON *object, const char *name)
 		return cJSON_GetNumberValue(tmp);
 	}
 
-	Q_JsonError("Missing field: %s\n", name);
+	if (!defaultValue)
+	{
+		Q_JsonError("Missing field: %s\n", name);
+	}
 
-	return 0;
+	return defaultValue;
 }
 
 #define Q_ReadStringValueJson(object, name) Q_ReadStringValueJsonEx((object), (name), NULL)
@@ -119,7 +127,10 @@ static ID_INLINE char *Q_ReadStringValueJsonEx(cJSON *object, const char *name, 
 		return cJSON_GetStringValue(tmp);
 	}
 
-	Q_JsonError("Missing field: %s\n", name);
+	if (!defaultVal)
+	{
+		Q_JsonError("Missing field: %s\n", name);
+	}
 
 	return defaultVal;
 }
@@ -142,7 +153,10 @@ static ID_INLINE qboolean Q_ReadBoolValueJsonEx(cJSON *object, const char *name,
 		return cJSON_IsTrue(tmp) ? qtrue : qfalse;
 	}
 
-	Q_JsonError("Missing field: %s\n", name);
+	if (!defaultVal)
+	{
+		Q_JsonError("Missing field: %s\n", name);
+	}
 
 	return defaultVal;
 }

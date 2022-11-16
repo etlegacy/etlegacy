@@ -146,6 +146,7 @@ static ID_INLINE char *CG_ColorToHex(vec_t *vec)
 static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 {
 	int            j;
+	uint32_t       flags;
 	hudStucture_t  *parent = NULL;
 	hudComponent_t *comp, *parentComp;
 	cJSON          *compObj, *rectObj, *compsObj, *hudObj = cJSON_CreateObject();
@@ -169,6 +170,12 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 	if (hud->parent >= 0)
 	{
 		parent = CG_getHudByNumber(hud->parent);
+
+		// check that the parent hud still exists, otherwise mark the hud as "original" and write out all fields.
+		if (!parent)
+		{
+			hud->parent = -1;
+		}
 	}
 
 	for (j = 0; hudComponentFields[j].name; j++)
@@ -183,39 +190,89 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 		if (parent)
 		{
 			parentComp = CG_FindComponentByName(parent, hudComponentFields[j].name);
-			if (CG_CompareHudComponents(comp, parentComp))
+			flags      = CG_CompareHudComponents(comp, parentComp);
+			if (!flags)
 			{
 				continue;
 			}
 		}
+		else
+		{
+			flags = UINT32_MAX;
+		}
 
 		compObj = cJSON_AddObjectToObject(compsObj, hudComponentFields[j].name);
 
-		rectObj = cJSON_AddObjectToObject(compObj, "rect");
+		if (flags & BIT(0))
 		{
-			cJSON_AddNumberToObject(rectObj, "x", CG_AdjustXToHudFile(comp->location.x, comp->location.w));
-			cJSON_AddNumberToObject(rectObj, "y", comp->location.y);
-			cJSON_AddNumberToObject(rectObj, "w", comp->location.w);
-			cJSON_AddNumberToObject(rectObj, "h", comp->location.h);
+			rectObj = cJSON_AddObjectToObject(compObj, "rect");
+			{
+				cJSON_AddNumberToObject(rectObj, "x", CG_AdjustXToHudFile(comp->location.x, comp->location.w));
+				cJSON_AddNumberToObject(rectObj, "y", comp->location.y);
+				cJSON_AddNumberToObject(rectObj, "w", comp->location.w);
+				cJSON_AddNumberToObject(rectObj, "h", comp->location.h);
+			}
 		}
 
-		cJSON_AddNumberToObject(compObj, "style", comp->style);
-		cJSON_AddBoolToObject(compObj, "visible", comp->visible);
-		cJSON_AddNumberToObject(compObj, "scale", comp->scale);
+		if (flags & BIT(1))
+		{
+			cJSON_AddBoolToObject(compObj, "visible", comp->visible);
+		}
 
-		cJSON_AddStringToObject(compObj, "mainColor", CG_ColorToHex(comp->colorMain));
-		cJSON_AddStringToObject(compObj, "secondaryColor", CG_ColorToHex(comp->colorSecondary));
+		if (flags & BIT(2))
+		{
+			cJSON_AddNumberToObject(compObj, "style", comp->style);
+		}
 
-		cJSON_AddStringToObject(compObj, "backgroundColor", CG_ColorToHex(comp->colorBackground));
-		cJSON_AddBoolToObject(compObj, "showBackGround", comp->showBackGround);
+		if (flags & BIT(3))
+		{
+			cJSON_AddNumberToObject(compObj, "scale", comp->scale);
+		}
 
-		cJSON_AddStringToObject(compObj, "borderColor", CG_ColorToHex(comp->colorBorder));
-		cJSON_AddBoolToObject(compObj, "showBorder", comp->showBorder);
+		if (flags & BIT(4))
+		{
+			cJSON_AddStringToObject(compObj, "mainColor", CG_ColorToHex(comp->colorMain));
+		}
 
-		cJSON_AddNumberToObject(compObj, "textStyle", comp->styleText);
-		cJSON_AddNumberToObject(compObj, "textAlign", comp->alignText);
-		cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
-		cJSON_AddNumberToObject(compObj, "offset", comp->offset);
+		if (flags & BIT(5))
+		{
+			cJSON_AddStringToObject(compObj, "secondaryColor", CG_ColorToHex(comp->colorSecondary));
+		}
+
+		if (flags & BIT(6))
+		{
+			cJSON_AddBoolToObject(compObj, "showBackGround", comp->showBackGround);
+		}
+
+		if (flags & BIT(7))
+		{
+			cJSON_AddStringToObject(compObj, "backgroundColor", CG_ColorToHex(comp->colorBackground));
+		}
+
+		if (flags & BIT(8))
+		{
+			cJSON_AddBoolToObject(compObj, "showBorder", comp->showBorder);
+		}
+
+		if (flags & BIT(9))
+		{
+			cJSON_AddStringToObject(compObj, "borderColor", CG_ColorToHex(comp->colorBorder));
+		}
+
+		if (flags & BIT(10))
+		{
+			cJSON_AddNumberToObject(compObj, "textStyle", comp->styleText);
+		}
+
+		if (flags & BIT(11))
+		{
+			cJSON_AddNumberToObject(compObj, "textAlign", comp->alignText);
+		}
+
+		if (flags & BIT(12))
+		{
+			cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
+		}
 	}
 
 	return hudObj;
@@ -224,74 +281,75 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 #define vec4_cmp(v1, v2) ((v1)[0] == (v2)[0] && (v1)[1] == (v2)[1] && (v1)[2] == (v2)[2] && (v1)[3] == (v2)[3])
 #define rect_cmp(r1, r2) ((r1).x == (r2).x && (r1).y == (r2).y && (r1).w == (r2).w && (r1).h == (r2).h)
 
-static qboolean CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2)
+static uint32_t CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2)
 {
+	uint32_t flags = 0;
 	if (!rect_cmp(c1->location, c2->location))
 	{
-		return qfalse;
+		flags |= BIT(0);
 	}
 
 	if (c1->visible != c2->visible)
 	{
-		return qfalse;
+		flags |= BIT(1);
 	}
 
 	if (c1->style != c2->style)
 	{
-		return qfalse;
+		flags |= BIT(2);
 	}
 
 	if (c1->scale != c2->scale)
 	{
-		return qfalse;
+		flags |= BIT(3);
 	}
 
 	if (!vec4_cmp(c1->colorMain, c2->colorMain))
 	{
-		return qfalse;
+		flags |= BIT(4);
 	}
 
 	if (!vec4_cmp(c1->colorSecondary, c2->colorSecondary))
 	{
-		return qfalse;
+		flags |= BIT(5);
 	}
 
 	if (c1->showBackGround != c2->showBackGround)
 	{
-		return qfalse;
+		flags |= BIT(6);
 	}
 
 	if (!vec4_cmp(c1->colorBackground, c2->colorBackground))
 	{
-		return qfalse;
+		flags |= BIT(7);
 	}
 
 	if (c1->showBorder != c2->showBorder)
 	{
-		return qfalse;
+		flags |= BIT(8);
 	}
 
 	if (!vec4_cmp(c1->colorBorder, c2->colorBorder))
 	{
-		return qfalse;
+		flags |= BIT(9);
 	}
 
 	if (c1->styleText != c2->styleText)
 	{
-		return qfalse;
+		flags |= BIT(10);
 	}
 
 	if (c1->alignText != c2->alignText)
 	{
-		return qfalse;
+		flags |= BIT(11);
 	}
 
 	if (c1->autoAdjust != c2->autoAdjust)
 	{
-		return qfalse;
+		flags |= BIT(12);
 	}
 
-	return qtrue;
+	return flags;
 }
 
 qboolean CG_WriteHudsToFile()
@@ -857,6 +915,11 @@ static void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
 {
 	if (!object)
 	{
+		if (colorVec[0] != 0.f && colorVec[1] != 0.f && colorVec[2] != 0.f && colorVec[3] != 0.f)
+		{
+			return;
+		}
+
 		colorVec[0] = 0.f;
 		colorVec[1] = 0.f;
 		colorVec[2] = 0.f;
@@ -1019,13 +1082,13 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			component = (hudComponent_t *)((char * )&tmpHud + hudComponentFields[i].offset);
 			comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
 
+			if (parentHud)
+			{
+				CG_CloneHudComponent(parentHud, hudComponentFields[i].name, component);
+			}
+
 			if (!comp)
 			{
-				if (parentHud)
-				{
-					CG_CloneHudComponent(parentHud, hudComponentFields[i].name, component);
-				}
-
 				continue;
 			}
 			component->offset    = componentOffset++;
@@ -1044,9 +1107,9 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 				component->location.x = CG_AdjustXFromHudFile(component->location.x, component->location.w);
 			}
 
-			component->style   = Q_ReadIntValueJson(comp, "style");
-			component->visible = Q_ReadBoolValueJson(comp, "visible");
-			component->scale   = Q_ReadFloatValueJson(comp, "scale");
+			component->style   = Q_ReadIntValueJsonEx(comp, "style", component->style);
+			component->visible = Q_ReadBoolValueJsonEx(comp, "visible", component->visible);
+			component->scale   = Q_ReadFloatValueJsonEx(comp, "scale", component->scale);
 
 			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "mainColor"), component->colorMain);
 
@@ -1054,16 +1117,15 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 
 			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "backgroundColor"), component->colorBackground);
 			// FIXME: mby get rid of the extra booleans
-			component->showBackGround = Q_ReadBoolValueJson(comp, "showBackGround");
+			component->showBackGround = Q_ReadBoolValueJsonEx(comp, "showBackGround", component->showBackGround);
 
 			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "borderColor"), component->colorBorder);
 			// FIXME: mby get rid of the extra booleans
-			component->showBorder = Q_ReadBoolValueJson(comp, "showBorder");
+			component->showBorder = Q_ReadBoolValueJsonEx(comp, "showBorder", component->showBorder);
 
-			component->styleText  = Q_ReadIntValueJson(comp, "textStyle");
-			component->alignText  = Q_ReadIntValueJson(comp, "textAlign");
-			component->autoAdjust = Q_ReadIntValueJson(comp, "autoAdjust");
-			component->offset     = Q_ReadIntValueJson(comp, "offset");
+			component->styleText  = Q_ReadIntValueJsonEx(comp, "textStyle", component->styleText);
+			component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
+			component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
 		}
 
 		outHud = CG_getHudByNumber(tmpHud.hudnumber);

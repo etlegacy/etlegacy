@@ -35,7 +35,6 @@
  */
 
 #include "cg_local.h"
-#include "json.h"
 
 #define SOUNDEVENT(sound) trap_S_StartLocalSound(sound, CHAN_LOCAL_SOUND)
 
