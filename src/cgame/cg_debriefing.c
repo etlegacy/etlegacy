@@ -998,6 +998,57 @@ static panel_button_t charPanelEdit =
 static scrollText_t descriptionScroll;
 
 /**
+ * @brief CG_MapVoteList_ToogleVote
+ * @param[in] mapIndex
+ */
+static void CG_MapVoteList_ToogleVote(int mapIndex)
+{
+	if (cg.snap->ps.eFlags & EF_VOTED)
+	{
+		return;
+	}
+
+	if (!cgs.dbMapMultiVote)
+	{
+		if (cgs.dbMapVotedFor[0] == mapIndex)
+		{
+			cgs.dbMapVotedFor[0] = -1;
+		}
+		else if (cgs.dbMapVotedFor[0] == -1)
+		{
+			cgs.dbMapVotedFor[0] = mapIndex;
+		}
+	}
+	else
+	{
+		int i;
+		int emptyIndex = -1;
+
+		for (i = 0; i < 3; i++)
+		{
+			if (cgs.dbMapVotedFor[i] == -1 && emptyIndex == -1)
+			{
+				emptyIndex = i;
+				continue;
+			}
+
+			if (cgs.dbMapVotedFor[i] == mapIndex)
+			{
+				cgs.dbMapVotedFor[i] = -1;
+				return;
+			}
+		}
+
+		if (emptyIndex != -1)
+		{
+			cgs.dbMapVotedFor[emptyIndex] = mapIndex;
+		}
+	}
+}
+
+#define CHECKBOX_SIZE 10
+
+/**
  * @brief CG_MapVoteList_KeyDown
  * @param button - unused
  * @param[in] key
@@ -1014,7 +1065,16 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 			return qfalse;
 		}
 
-		if (pos != cgs.dbSelectedMap)
+		// 2 differents way to toogle vote :
+		// on selected line, click toogle the vote for the selected map
+		// on checkbox selection
+		if (pos == cgs.dbSelectedMap ||
+            (Ccg_WideX(cgs.cursorX) >= DB_MAPNAME_X + cgs.wideXoffset + 12
+             && Ccg_WideX(cgs.cursorX) <= DB_MAPNAME_X + cgs.wideXoffset + 12 + CHECKBOX_SIZE))
+		{
+			CG_MapVoteList_ToogleVote(pos);
+		}
+		else
 		{
 			fileHandle_t f;
 
@@ -1037,45 +1097,7 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 			Q_strncpyz(descriptionScroll.text, cgs.dbMapDescription[pos], sizeof(descriptionScroll.text));
 			descriptionScroll.length = strlen(descriptionScroll.text);
 		}
-		else if (!(cg.snap->ps.eFlags & EF_VOTED))
-		{
-			if (!cgs.dbMapMultiVote)
-			{
-				if (cgs.dbMapVotedFor[0] == cgs.dbSelectedMap)
-				{
-					cgs.dbMapVotedFor[0] = -1;
-				}
-				else if (cgs.dbMapVotedFor[0] == -1)
-				{
-					cgs.dbMapVotedFor[0] = cgs.dbSelectedMap;
-				}
-			}
-			else
-			{
-				int i;
-				int emptyIndex = -1;
 
-				for (i = 0; i < 3; i++)
-				{
-					if (cgs.dbMapVotedFor[i] == -1 && emptyIndex == -1)
-					{
-						emptyIndex = i;
-						continue;
-					}
-
-					if (cgs.dbMapVotedFor[i] == cgs.dbSelectedMap)
-					{
-						cgs.dbMapVotedFor[i] = -1;
-						return qtrue;
-					}
-				}
-
-				if (emptyIndex != -1)
-				{
-					cgs.dbMapVotedFor[emptyIndex] = cgs.dbSelectedMap;
-				}
-			}
-		}
 		return qtrue;
 	}
 	return qfalse;
@@ -1126,6 +1148,9 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			{
 				static const vec4_t clr = { 1.f, 1.f, 0.f, 0.1f };
 				CG_FillRect(button->rect.x, y - 10, 245, 12, clr);
+
+                CG_DrawPic(DB_MAPNAME_X + 12 + cgs.wideXoffset + 2, y - CHECKBOX_SIZE + 3, CHECKBOX_SIZE - 3, CHECKBOX_SIZE - 3, cgs.media.readyShader);
+                break;
 			}
 		}
 
@@ -1168,7 +1193,9 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			                  0, 0, 0, button->font->font);
 		}
 
-		CG_Text_Paint_Ext(DB_MAPNAME_X + 12 + cgs.wideXoffset, y, button->font->scalex,
+        CG_DrawRect_FixedBorder(DB_MAPNAME_X + 12 + cgs.wideXoffset, y - CHECKBOX_SIZE + 1, CHECKBOX_SIZE, CHECKBOX_SIZE, 2, colorMdGrey);
+
+		CG_Text_Paint_Ext(DB_MAPNAME_X + 12  + cgs.wideXoffset + CHECKBOX_SIZE + 2 , y, button->font->scalex,
 		                  button->font->scaley, *colour,
 		                  cgs.dbMapDispName[i + cgs.dbMapVoteListOffset],
 		                  0, 30, 0, button->font->font);
@@ -1813,7 +1840,7 @@ qboolean CG_Debriefing_Draw(void)
 		break;
 	case 3: // mapvote
 		BG_PanelButtonsRender(mapVoteButtons);
-		BG_PanelButtonsRender(chatPanelButtons);
+        BG_PanelButtonsRender(chatPanelButtons);
 		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 		break;
 	}
