@@ -701,6 +701,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 
 		activehud         = CG_addHudToList(CG_getHudByNumber(HUDToDuplicate));
 		cg_altHud.integer = activehud->hudnumber = num;
+		activehud->parent = HUDToDuplicate;
 		trap_Cvar_Set("cg_altHud", va("%i", num));
 
 		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, num);
