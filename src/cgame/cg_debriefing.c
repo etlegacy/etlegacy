@@ -1072,7 +1072,7 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
             (Ccg_WideX(cgs.cursorX) >= DB_MAPNAME_X + cgs.wideXoffset + 12
              && Ccg_WideX(cgs.cursorX) <= DB_MAPNAME_X + cgs.wideXoffset + 12 + CHECKBOX_SIZE))
 		{
-			CG_MapVoteList_ToogleVote(pos);
+			CG_MapVoteList_ToggleVote(pos);
 		}
 		else
 		{
