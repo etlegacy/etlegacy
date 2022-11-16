@@ -68,9 +68,9 @@ weaponDef
 			far		"sound/weapons/airstrike/airstrike_expl_far.wav"
 			water	"sound/weapons/grenade/gren_expl_water.wav"
 		}
-				impactMark {	// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-					default "gfx/damage/burn_med_mrk"
-				}
+		impactMark {	// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+			default "gfx/damage/burn_med_mrk"
+		}
 
 		firstPerson {
 			model	"models/multiplayer/smokegrenade/v_smokegrenade.md3"
