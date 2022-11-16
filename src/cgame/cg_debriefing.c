@@ -998,10 +998,10 @@ static panel_button_t charPanelEdit =
 static scrollText_t descriptionScroll;
 
 /**
- * @brief CG_MapVoteList_ToogleVote
+ * @brief CG_MapVoteList_ToggleVote
  * @param[in] mapIndex
  */
-static void CG_MapVoteList_ToogleVote(int mapIndex)
+static void CG_MapVoteList_ToggleVote(int mapIndex)
 {
 	if (cg.snap->ps.eFlags & EF_VOTED)
 	{
