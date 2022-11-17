@@ -1957,8 +1957,8 @@ void trap_SysFlashWindow(int state)
 }
 
 /**
- * @brief Extension for flashing the game window in taskbar
- * @param[in] state
+ * @brief Extension for sending command completion suggestion
+ * @param[in] value
  */
 void trap_CommandComplete(char *value)
 {
