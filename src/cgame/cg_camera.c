@@ -649,3 +649,8 @@ void CG_RenderCameraPoints(void)
 
 	cameraInfo.pointingCamera = closest;
 }
+
+void CG_CameraCommandComplete(void)
+{
+	trap_CommandComplete("derp");
+}

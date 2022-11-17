@@ -1950,5 +1950,20 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key)
  */
 void trap_SysFlashWindow(int state)
 {
-	SystemCall(dll_trap_SysFlashWindow, state);
+	if (dll_trap_SysFlashWindow)
+	{
+		SystemCall(dll_trap_SysFlashWindow, state);
+	}
+}
+
+/**
+ * @brief Extension for flashing the game window in taskbar
+ * @param[in] state
+ */
+void trap_CommandComplete(char *value)
+{
+	if (dll_trap_CommandComplete)
+	{
+		SystemCall(dll_trap_CommandComplete, value);
+	}
 }

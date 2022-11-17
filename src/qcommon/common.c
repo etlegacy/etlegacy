@@ -3966,6 +3966,38 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 	}
 }
 
+static qboolean modCompleteDone = qfalse;
+
+qboolean Field_CompleteMod()
+{
+	modCompleteDone = qfalse;
+
+	if (!CL_GameCompleteCommand())
+	{
+		return qfalse;
+	}
+	modCompleteDone = qtrue;
+
+	if (!Field_Complete())
+	{
+		CL_GameCompleteCommand();
+	}
+
+	return qtrue;
+}
+
+void Field_CompleteModSuggestion(char *value)
+{
+	if (modCompleteDone)
+	{
+		PrintMatches(value);
+	}
+	else
+	{
+		FindMatches(value);
+	}
+}
+
 /**
  * @brief Com_GetHunkInfo
  * @param[out] hunkused

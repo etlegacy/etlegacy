@@ -43,9 +43,9 @@ qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
 extern qboolean  g_waitingForKey;
 
-qboolean flashWindowSupported = qfalse;
-int      dll_com_trapGetValue;
-int      dll_trap_SysFlashWindow;
+int dll_com_trapGetValue;
+int dll_trap_SysFlashWindow;
+int dll_trap_CommandComplete;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -113,6 +113,8 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return (g_waitingForKey && g_bindItem) ? qtrue : qfalse;
 	case CG_MESSAGERECEIVED:
 		return -1;
+	case CG_CONSOLE_COMPLETE_ARGUMENT:
+		return CG_ConsoleCompleteArgument();
 	default:
 		CG_Error("vmMain: unknown command %li", (long)command);
 		break;
@@ -2619,6 +2621,32 @@ void CG_AssetCache(void)
 #define DEBUG_INITPROFILE_EXEC(f)
 #endif // ETLEGACY_DEBUG
 
+static ID_INLINE void CG_SetupExtensionTrap(char *value, int *trap, const char *name)
+{
+	if (trap_GetValue(value, sizeof(value), name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void CG_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+
+		CG_SetupExtensionTrap(value, &dll_trap_SysFlashWindow, "trap_SysFlashWindow_Legacy");
+		CG_SetupExtensionTrap(value, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
+	}
+}
+
 /**
  * @brief Called after every level change or subsystem restart
  * Will perform callbacks to make the loading info screen update.
@@ -2635,7 +2663,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	const char *s;
 	int        i;
 	char       versionString[128];
-	char       value[MAX_CVAR_VALUE_STRING];
 	DEBUG_INITPROFILE_INIT
 
 	//int startat = trap_Milliseconds();
@@ -2709,16 +2736,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.ccRequestedObjective  = -1;
 	cgs.ccCurrentCamObjective = -2;
 
-	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
-	if (value[0])
-	{
-		dll_com_trapGetValue = atoi(value);
-		if (trap_GetValue(value, sizeof(value), "trap_SysFlashWindow_Legacy"))
-		{
-			dll_trap_SysFlashWindow = atoi(value);
-			flashWindowSupported    = qtrue;
-		}
-	}
+	CG_SetupExtensions();
 
 	// Background images on the loading screen were not visible on the first call
 	trap_R_SetColor(NULL);

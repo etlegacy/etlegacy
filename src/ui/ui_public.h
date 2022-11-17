@@ -183,9 +183,8 @@ typedef enum
 	UI_CEIL,
 	UI_GETHUNKDATA,
 
-#if !defined(UIDLL) && !defined(CGAMEDLL)
+	///< engine extensions padding
 	UI_TRAP_GETVALUE = COM_TRAP_GETVALUE,
-#endif
 
 } uiImport_t;
 

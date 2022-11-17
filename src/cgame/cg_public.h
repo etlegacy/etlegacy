@@ -275,11 +275,12 @@ typedef enum
 
 	CG_R_FINISH,                ///< 179
 
-	CG_SYS_FLASHWINDOW,
-
-#ifndef CGAMEDLL
+	///< engine extensions padding
 	CG_TRAP_GETVALUE = COM_TRAP_GETVALUE,
-#endif
+
+	CG_SYS_FLASH_WINDOW,
+
+	CG_COMMAND_COMPLETE,
 
 } cgameImport_t;
 
@@ -337,6 +338,12 @@ typedef enum
 
 	CG_MESSAGERECEIVED,
 	///<  void (*CG_MessageReceived)( const char *buf, int buflen, int serverTime );
+
+	///< Added for Legacy (need to be activated via the extension system)
+	CG_LEGACY_CUSTOM = 1337, ///< Some padding
+
+	CG_CONSOLE_COMPLETE_ARGUMENT,
+	///<  qboolean (*CG_ConsoleCompleteArgument)( void );
 
 } cgameExport_t;
 

@@ -608,6 +608,20 @@ static int FloatAsInt(float f)
 	return fi.i;
 }
 
+typedef struct
+{
+	char *name;
+	int trapKey;
+	qboolean active;
+} trapKeys;
+
+static trapKeys cg_extensionTraps[] =
+{
+	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
+	{ "trap_CommandComplete_Legacy", CG_COMMAND_COMPLETE, qfalse },
+	{ NULL,                          -1,                  qfalse }
+};
+
 /**
  * @brief Get engine value
  * @param[out] value buffer
@@ -617,9 +631,16 @@ static int FloatAsInt(float f)
  */
 static qboolean CL_CG_GetValue(char *value, int valueSize, const char *key)
 {
-	if ( !Q_stricmp( key, "trap_SysFlashWindow_Legacy" ) ) {
-		Com_sprintf( value, valueSize, "%i", CG_SYS_FLASHWINDOW );
-		return qtrue;
+	int i;
+
+	for (i = 0; cg_extensionTraps[i].name; i++)
+	{
+		if (!Q_stricmp(key, cg_extensionTraps[i].name))
+		{
+			Com_sprintf(value, valueSize, "%i", cg_extensionTraps[i].trapKey);
+			cg_extensionTraps[i].active = qtrue;
+			return qtrue;
+		}
 	}
 
 	return qfalse;
@@ -1046,12 +1067,17 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_R_LIGHTFORPOINT: // re-added to avoid a crash when called - still in enum of cgameImport_t
 		return 0;
 
-	case CG_SYS_FLASHWINDOW:
+	///< extensions
+	case CG_TRAP_GETVALUE:
+		return CL_CG_GetValue(VMA(1), args[2], VMA(3));
+
+	case CG_SYS_FLASH_WINDOW:
 		GLimp_FlashWindow(args[1]);
 		return 0;
 
-	case CG_TRAP_GETVALUE:
-		return CL_CG_GetValue(VMA(1), args[2], VMA(3));
+	case CG_COMMAND_COMPLETE:
+		Field_CompleteModSuggestion(VMA(1));
+		return 0;
 
 	default:
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);
@@ -1177,7 +1203,7 @@ void CL_InitCGame(void)
 {
 	const char *info;
 	const char *mapname;
-	int        t1, t2;
+	int        t1, t2, i;
 
 	t1 = Sys_Milliseconds();
 
@@ -1188,6 +1214,12 @@ void CL_InitCGame(void)
 	info    = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SERVERINFO];
 	mapname = Info_ValueForKey(info, "mapname");
 	Com_sprintf(cl.mapname, sizeof(cl.mapname), "maps/%s.bsp", mapname);
+
+	// mark all extensions as inactive
+	for (i = 0; cg_extensionTraps[i].name; i++)
+	{
+		cg_extensionTraps[i].active = qfalse;
+	}
 
 	// load the dll
 	cgvm = VM_Create("cgame", qtrue, CL_CgameSystemCalls, VMI_NATIVE);
@@ -1248,6 +1280,21 @@ qboolean CL_GameCommand(void)
 	return (qboolean)(VM_Call(cgvm, CG_CONSOLE_COMMAND));
 }
 
+qboolean CL_GameCompleteCommand(void)
+{
+	if (!cgvm)
+	{
+		return qfalse;
+	}
+
+	if (!cg_extensionTraps[1].active)
+	{
+		return qfalse;
+	}
+
+	return (qboolean)(VM_Call(cgvm, CG_CONSOLE_COMPLETE_ARGUMENT));
+}
+
 /**
  * @brief CL_CGameRendering
  */
@@ -1273,7 +1320,7 @@ int CL_FindIncrementThreshold(void)
 	clFrameTime = cls.frametime;
 
 	// handles zero duration between frames (often happens on map change)
-	if(clFrameTime == 0 || svFrameTime == 0)
+	if (clFrameTime == 0 || svFrameTime == 0)
 	{
 		return 0;
 	}
@@ -1283,21 +1330,24 @@ int CL_FindIncrementThreshold(void)
 	int LCM = svFrameTime > clFrameTime ? svFrameTime : clFrameTime;
 	while (1)
 	{
-		if (LCM % clFrameTime == 0 && LCM % svFrameTime == 0) 
-			{
+		if (LCM % clFrameTime == 0 && LCM % svFrameTime == 0)
+		{
 			break;
 		}
 		++LCM;
 	}
 
-	int min = 0;
+	int min    = 0;
 	int clTime = 0;
 	// finds the worst amount of client over-run assuming no initial spare time
-	while(clTime <= LCM)
+	while (clTime <= LCM)
 	{
-		int svTime  = (clTime / svFrameTime) * svFrameTime;
+		int svTime    = (clTime / svFrameTime) * svFrameTime;
 		int spareTime = svTime - clTime;
-		if (spareTime < min) min = spareTime;
+		if (spareTime < min)
+		{
+			min = spareTime;
+		}
 
 		clTime += clFrameTime;
 	}
@@ -1328,8 +1378,8 @@ extern cvar_t *sv_fps;
  */
 void CL_AdjustTimeDelta(void)
 {
-	int newDelta;
-	int deltaDelta;
+	int  newDelta;
+	int  deltaDelta;
 	char *deltaMessage;
 
 	cl.newSnapshots = qfalse;
@@ -1346,17 +1396,23 @@ void CL_AdjustTimeDelta(void)
 	if (deltaDelta > RESET_TIME)
 	{
 		cl.baselineDelta = cl.serverTimeDelta = newDelta;
-		cl.oldServerTime   = cl.snap.serverTime; // FIXME: is this a problem for cgame?
-		cl.serverTime      = cl.snap.serverTime;
+		cl.oldServerTime = cl.snap.serverTime;   // FIXME: is this a problem for cgame?
+		cl.serverTime    = cl.snap.serverTime;
 
-		if (cl_showTimeDelta->integer) deltaMessage = "^1(reset";
+		if (cl_showTimeDelta->integer)
+		{
+			deltaMessage = "^1(reset";
+		}
 	}
 	else if (deltaDelta > HALVE_TIME)
 	{
 		// fast adjust, cut the difference in half
 		cl.serverTimeDelta = (cl.serverTimeDelta + newDelta) >> 1;
 
-		if (cl_showTimeDelta->integer) deltaMessage = "^1(halve";
+		if (cl_showTimeDelta->integer)
+		{
+			deltaMessage = "^1(halve";
+		}
 	}
 	else
 	{
@@ -1370,11 +1426,14 @@ void CL_AdjustTimeDelta(void)
 			if (cl.extrapolatedSnapshot)
 			{
 				cl.extrapolatedSnapshot = qfalse;
-				cl.serverTimeDelta -= 2;
+				cl.serverTimeDelta     -= 2;
 				// set a cmd packet flag so server is aware of delta decrease
 				cl.cgameFlags |= MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD;
 
-				if (cl_showTimeDelta->integer) deltaMessage = "^6(-2 ms";
+				if (cl_showTimeDelta->integer)
+				{
+					deltaMessage = "^6(-2 ms";
+				}
 			}
 			else
 			{
@@ -1388,11 +1447,12 @@ void CL_AdjustTimeDelta(void)
 				{
 					// must be done this way to avoid incorrect svFrameTime when on a slow client
 					svFrameTime = (cl.snapshots[(cl.snap.messageNum - 0) & PACKET_MASK].serverTime)
-								- (cl.snapshots[(cl.snap.messageNum - 1) & PACKET_MASK].serverTime);
+					              - (cl.snapshots[(cl.snap.messageNum - 1) & PACKET_MASK].serverTime);
 				}
-				
+
 				// find the new threshold if not set or client/server frametime has changed
-				if (threshold == -1 || svFrameTime != svOldFrameTime || clFrameTime != cls.frametime) {
+				if (threshold == -1 || svFrameTime != svOldFrameTime || clFrameTime != cls.frametime)
+				{
 					threshold = CL_FindIncrementThreshold();
 				}
 
@@ -1401,30 +1461,39 @@ void CL_AdjustTimeDelta(void)
 					- (cls.realtime + cl.serverTimeDelta) // client time
 					- cl_extrapolationMargin->integer;    // margin time
 
-				if( spareTime > threshold)
+				if (spareTime > threshold)
 				{
 					// move our sense of time forward to minimize total latency
 					cl.serverTimeDelta++;
 					// set a cmd packet flag so server is aware of delta increment
 					cl.cgameFlags |= MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD;
-					
-					if (cl_showTimeDelta->integer) deltaMessage = "^5(+1 ms";
+
+					if (cl_showTimeDelta->integer)
+					{
+						deltaMessage = "^5(+1 ms";
+					}
 				}
 				else
 				{
-					if (cl_showTimeDelta->integer) deltaMessage = "^o(none";
+					if (cl_showTimeDelta->integer)
+					{
+						deltaMessage = "^o(none";
+					}
 				}
 			}
 		}
 		else
 		{
-			if (cl_showTimeDelta->integer) deltaMessage = "^9(disabled";
+			if (cl_showTimeDelta->integer)
+			{
+				deltaMessage = "^9(disabled";
+			}
 		}
 	}
 
 	if (cl_showTimeDelta->integer)
 	{
-		int drift = cl.serverTimeDelta - cl.baselineDelta; // some negative drift is expected
+		int  drift      = cl.serverTimeDelta - cl.baselineDelta; // some negative drift is expected
 		char terminator = (cl_showTimeDelta->integer & 4) ? '\n' : ' ';
 
 		Com_Printf("%s | %i %i %i)%c", deltaMessage, cl.serverTimeDelta, deltaDelta, drift, terminator);
@@ -1444,8 +1513,8 @@ void CL_FirstSnapshot(void)
 	cls.state = CA_ACTIVE;
 
 	// set the timedelta so we are exactly on this first frame
-	cl.baselineDelta = cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;	
-	cl.oldServerTime   = cl.snap.serverTime;
+	cl.baselineDelta      = cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
+	cl.oldServerTime      = cl.snap.serverTime;
 	clc.demo.timeBaseTime = cl.snap.serverTime;
 
 	// if this is the first frame of active play,
@@ -1579,13 +1648,14 @@ void CL_SetCGameTime(void)
 			cl.extrapolatedSnapshot = qtrue;
 		}
 
-		if(cl_showTimeDelta->integer) {
+		if (cl_showTimeDelta->integer)
+		{
 			char colorCode;
 
 			if (spareTime > cl_extrapolationMargin->integer)
 			{
 				colorCode = '7'; // excess time to spare (white)
-			} 
+			}
 			else if (spareTime == cl_extrapolationMargin->integer)
 			{
 				colorCode = '2'; // exactly on target (green)
@@ -1597,13 +1667,13 @@ void CL_SetCGameTime(void)
 			else
 			{
 				colorCode = '1'; // margin exhausted (red)
-			}	
+			}
 
-			if(cl_showTimeDelta->integer & 2 || cl.newSnapshots) 
+			if (cl_showTimeDelta->integer & 2 || cl.newSnapshots)
 			{
 				Com_Printf("^%c%+03i ", colorCode, spareTime);
 			}
-		}	
+		}
 	}
 
 	// if we have gotten new snapshots, drift serverTimeDelta

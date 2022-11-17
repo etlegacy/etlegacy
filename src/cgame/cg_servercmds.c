@@ -373,10 +373,7 @@ static void CG_ParseWarmup(void)
 	{
 		if (cg.warmupCount >= 0)
 		{
-			if (flashWindowSupported)
-			{
-				trap_SysFlashWindow(2);
-			}
+			trap_SysFlashWindow(2);
 			Pri("^3All players ready!^7\nMatch starting...\n");
 			CPri("^3All players ready!^7\nMatch starting...");
 		}
