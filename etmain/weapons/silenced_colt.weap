@@ -2,78 +2,76 @@ weaponDef
 {
 	// This basically fills out weaponInfo_t
 	client {
-		//standModel		""										// weapon pickup 'stand' (do we still use this?)
-		//pickupModel		""
-		//pickupSound		"sound/misc/w_pkup.wav"
+		//standModel	""	// weapon pickup 'stand' (do we still use this?)
+		//pickupModel	""
+		//pickupSound	"sound/misc/w_pkup.wav"
 		
-		weaponConfig		"models/weapons2/colt/weapon.cfg"
-		handsModel			"models/multiplayer/silencedcolt/v_silencedcolt_hand.md3"
-		
+		weaponConfig	"models/weapons2/colt/weapon.cfg"
+		handsModel		"models/multiplayer/silencedcolt/v_silencedcolt_hand.md3"
+
 		flashDlightColor	1.0 0.6 0.23
-		flashSound			"sound/weapons/colt/colt_silence.wav"	// supports up to 4 flash sounds
-		//flashEchoSound	""										// supports up to 4 flash echo sounds
-		//lastShotSound		""										// supports up to 4 last shot sounds
+		flashSound		"sound/weapons/colt/colt_silence.wav"	// supports up to 4 flash sounds
+		//flashEchoSound	""									// supports up to 4 flash echo sounds
+		//lastShotSound	""										// supports up to 4 last shot sounds
 		
-		//readySound		""
-		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
-		//overheatSound		""
-		reloadSound			"sound/weapons/colt/colt_reload.wav"
-		reloadFastSound		"sound/weapons/colt/colt_reload_fast.wav"		// some weapons have fast reloads due to the skill system
-		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
-		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
-		switchSound			"sound/weapons/misc/silence_on.wav"	// allow overriding of weaponswitch sound
-		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
-		
-		weaponIcon			"icons/iconw_silencedcolt"
-		weaponIconScale		2
+		//readySound	""
+		//firingSound	""	// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound	""
+		reloadSound		"sound/weapons/colt/colt_reload.wav"
+		reloadFastSound		"sound/weapons/colt/colt_reload_fast.wav"	// some weapons have fast reloads due to the skill system
+		//spinupSound	""	// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound	""	// sound called if the above is running but player doesn't follow through and fire
+		switchSound	"sound/weapons/misc/silence_on.wav"	// allow overriding of weaponswitch sound
+		noAmmoSound	"sound/weapons/misc/fire_dry.wav"
+
+		weaponIcon		"icons/iconw_silencedcolt"
+		weaponIconScale	2
 		weaponSelectedIcon	"icons/iconw_silencedcolt_1_select"
 		//weaponSimpleIcon	""
 		//weaponSimpleIconScale 1 1
-		
-		weaponCardIcon      "gfx/limbo/weaponcard02"
-		weaponCardScale     0.5 1
-		weaponCardPointS    0 0.5
-		weaponCardPointT    0.125 0.25
-		
-		//missileModel		""
-		//missileSound		""
-		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
-		//missileDlight		0
-		//missileDlightColor	0 0 0							// do we still use this?
-		
-		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		ejectBrassOffset    24 -4 36
-                
-                adjustLean 1 1 1
-		
-		//modModel 1		""
-                
+
+		weaponCardIcon	"gfx/limbo/weaponcard02"
+		weaponCardScale	0.5 1
+		weaponCardPointS	0 0.5
+		weaponCardPointT	0.125 0.25
+
+		//missileModel	""
+		//missileSound	""
+		//missileTrailFunc	""	// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight	0
+		//missileDlightColor	0 0 0	// do we still use this?
+
+		ejectBrassFunc	"MachineGunEjectBrass"	// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		ejectBrassOffset	24 -4 36
+
+		adjustLean 1 1 1
+
+		//modModel 1	""
+
 		impactDurationCoeff 1
 		impactMarkMaxRange  384	// -1 infinite
-                impactParticle    "particles/bullet.particle" 
-                impactSoundVolume 64
-                impactMarkRadius  1.5
-                impactSound {                   // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default 5 "sound/weapons/impact/stone"
-                    wood    5 "sound/weapons/impact/wood"
-                    metal   5 "sound/weapons/impact/metal"
-                    roof    5 "sound/weapons/impact/metal"
-                    glass   5 "sound/weapons/impact/glass"
-                    water   5 "sound/weapons/impact/water"
-                    //flesh   5 "sound/weapons/impact/flesh"    // terrible sounds, stonehit is used instead
-                
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/bullet_mrk"
-                    wood    "gfx/damage/wood_mrk"
-                    metal   "gfx/damage/metal_mrk"
-                    glass   "gfx/damage/glass_mrk" 
-                }
-		
+		impactParticle    "particles/bullet.particle" 
+		impactSoundVolume 64
+		impactMarkRadius  1.5
+		impactSound {	// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+			default	5 "sound/weapons/impact/stone"
+			wood	5 "sound/weapons/impact/wood"
+			metal	5 "sound/weapons/impact/metal"
+			roof	5 "sound/weapons/impact/metal"
+			glass	5 "sound/weapons/impact/glass"
+			water	5 "sound/weapons/impact/water"
+			//flesh	5 "sound/weapons/impact/flesh"	// terrible sounds, stonehit is used instead
+		}
+		impactMark {	// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+			default "gfx/damage/bullet_mrk"
+			wood    "gfx/damage/wood_mrk"
+			metal   "gfx/damage/metal_mrk"
+			glass   "gfx/damage/glass_mrk" 
+		}
+
 		firstPerson {
 			model			"models/multiplayer/silencedcolt/v_silencedcolt.md3"
-			//flashModel		"models/weapons2/colt/v_colt_flash.mdc"
+			//flashModel	"models/weapons2/colt/v_colt_flash.mdc"
 
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
@@ -116,10 +114,9 @@ weaponDef
 				}
 			}
 		}
-		
 		thirdPerson {
 			model			"models/weapons2/colt/silenced.md3"
-			//flashmodel		"models/weapons2/colt/colt_flash.mdc"
+			//flashmodel	"models/weapons2/colt/colt_flash.mdc"
 		}
 	}
 }
