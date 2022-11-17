@@ -652,5 +652,19 @@ void CG_RenderCameraPoints(void)
 
 void CG_CameraCommandComplete(void)
 {
-	trap_CommandComplete("derp");
+	int count = trap_Argc();
+
+	if (count < 3)
+	{
+		trap_CommandComplete("open");
+		trap_CommandComplete("close");
+		trap_CommandComplete("add");
+		trap_CommandComplete("ct");
+		trap_CommandComplete("play");
+		trap_CommandComplete("clear");
+	}
+	else
+	{
+		trap_CommandComplete("derp");
+	}
 }
