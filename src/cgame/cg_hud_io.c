@@ -44,13 +44,13 @@ static qboolean CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2);
 
 static const char *CG_HudFilePath()
 {
-	static char filePath[MAX_QPATH] = { 0 };
+	static char filePath[MAX_OSPATH] = { 0 };
 
 	if (!filePath[0])
 	{
-		char tmp[MAX_QPATH];
-		trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_QPATH);
-		Com_sprintf(filePath, MAX_QPATH, HUDS_USER_PATH, tmp);
+		char tmp[MAX_OSPATH];
+		trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
+		Com_sprintf(filePath, MAX_OSPATH, HUDS_USER_PATH, tmp);
 	}
 
 	return filePath;
@@ -59,10 +59,10 @@ static const char *CG_HudFilePath()
 static void CG_HudBackFilePath(char *output, int len)
 {
 	qtime_t ct;
-	char    tmp[MAX_QPATH];
+	char    tmp[MAX_OSPATH];
 
 	output[0] = '\0';
-	trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_QPATH);
+	trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
 	trap_RealTime(&ct);
 	Com_sprintf(output, len, HUDS_USER_BACKUP_PATH, tmp, va("%d-%02d-%02d-%02d%02d%02d", 1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday, ct.tm_hour, ct.tm_min, ct.tm_sec));
 }
@@ -1214,9 +1214,9 @@ void CG_ReadHudsFromFile(void)
 		len = trap_FS_FOpenFile(hudFilePath, &tmp, FS_READ);
 		if (len > 0)
 		{
-			char path[MAX_QPATH];
+			char path[MAX_OSPATH];
 
-			CG_HudBackFilePath(path, MAX_QPATH);
+			CG_HudBackFilePath(path, MAX_OSPATH);
 
 			buffer = Com_Allocate(len + 1);
 			if (!buffer)
