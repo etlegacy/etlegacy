@@ -205,11 +205,11 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 }
 
 /**
- * @brief CG_getHudByNumber
+ * @brief CG_GetHudByNumber
  * @param[in] number
  * @return
  */
-hudStucture_t *CG_getHudByNumber(int number)
+hudStucture_t *CG_GetHudByNumber(int number)
 {
 	int           i;
 	hudStucture_t *hud;
@@ -3270,7 +3270,7 @@ void CG_Hud_Setup(void)
 
 	// Hud0 aka the Default hud
 	CG_setDefaultHudValues(&hud0);
-	activehud = CG_addHudToList(&hud0);
+	activehud = CG_AddHudToList(&hud0);
 
 	// Read the hud files
 	CG_ReadHudsFromFile();
@@ -3320,11 +3320,11 @@ void CG_SetHud(void)
 {
 	if (cg_altHud.integer && activehud->hudnumber != cg_altHud.integer)
 	{
-		activehud = CG_getHudByNumber(cg_altHud.integer);
+		activehud = CG_GetHudByNumber(cg_altHud.integer);
 		if (!activehud)
 		{
 			Com_Printf("^3WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
-			activehud = CG_getHudByNumber(0);
+			activehud = CG_GetHudByNumber(0);
 			trap_Cvar_Set("cg_altHud", "0");
 			return;
 		}
@@ -3337,7 +3337,7 @@ void CG_SetHud(void)
 	}
 	else if (!cg_altHud.integer && activehud->hudnumber)
 	{
-		activehud = CG_getHudByNumber(0);
+		activehud = CG_GetHudByNumber(0);
 	}
 }
 

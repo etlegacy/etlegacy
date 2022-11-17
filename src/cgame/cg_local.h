@@ -4228,8 +4228,8 @@ typedef struct
 } hudComponentFields_t;
 
 hudStucture_t *CG_GetActiveHUD();
-hudStucture_t *CG_addHudToList(hudStucture_t *hud);
-hudStucture_t *CG_getHudByNumber(int number);
+hudStucture_t *CG_AddHudToList(hudStucture_t *hud);
+hudStucture_t *CG_GetHudByNumber(int number);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
 

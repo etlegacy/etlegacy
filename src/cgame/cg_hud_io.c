@@ -56,7 +56,7 @@ static const char *CG_HudFilePath()
 	return filePath;
 }
 
-static void CG_HudBackFilePath(char *output, int len)
+static void CG_HudBackupFilePath(char *output, int len)
 {
 	qtime_t ct;
 	char    tmp[MAX_OSPATH];
@@ -68,10 +68,10 @@ static void CG_HudBackFilePath(char *output, int len)
 }
 
 /**
- * @brief CG_addHudToList
+ * @brief CG_AddHudToList
  * @param[in] hud
  */
-hudStucture_t *CG_addHudToList(hudStucture_t *hud)
+hudStucture_t *CG_AddHudToList(hudStucture_t *hud)
 {
 	hudStucture_t *out = NULL;
 
@@ -195,7 +195,7 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 
 	if (hud->parent >= 0)
 	{
-		parent = CG_getHudByNumber(hud->parent);
+		parent = CG_GetHudByNumber(hud->parent);
 
 		// check that the parent hud still exists, otherwise mark the hud as "original" and write out all fields.
 		if (!parent)
@@ -742,7 +742,7 @@ static qboolean CG_ParseHUD(int handle)
 
 	if (!parentHud && tempHud.parent >= 0)
 	{
-		parentHud = CG_getHudByNumber(tempHud.parent);
+		parentHud = CG_GetHudByNumber(tempHud.parent);
 	}
 
 	if (loadDefaults)
@@ -815,11 +815,11 @@ static qboolean CG_ParseHUD(int handle)
 		return CG_HUD_ParseError(handle, "Invalid hudnumber value: %i", tempHud.hudnumber);
 	}
 
-	hud = CG_getHudByNumber(tempHud.hudnumber);
+	hud = CG_GetHudByNumber(tempHud.hudnumber);
 
 	if (!hud)
 	{
-		CG_addHudToList(&tempHud);
+		CG_AddHudToList(&tempHud);
 		Com_Printf("...properties for hud %i have been read.\n", tempHud.hudnumber);
 	}
 	else
@@ -1075,7 +1075,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 
 		if (tmpHud.parent >= 0)
 		{
-			parentHud = CG_getHudByNumber(tmpHud.parent);
+			parentHud = CG_GetHudByNumber(tmpHud.parent);
 		}
 
 		tmpHud.hudnumber = Q_ReadIntValueJson(hud, "number");
@@ -1157,11 +1157,11 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
 		}
 
-		outHud = CG_getHudByNumber(tmpHud.hudnumber);
+		outHud = CG_GetHudByNumber(tmpHud.hudnumber);
 
 		if (!outHud)
 		{
-			CG_addHudToList(&tmpHud);
+			CG_AddHudToList(&tmpHud);
 			Com_Printf("...properties for hud %i have been read.\n", tmpHud.hudnumber);
 		}
 		else
@@ -1216,7 +1216,7 @@ void CG_ReadHudsFromFile(void)
 		{
 			char path[MAX_OSPATH];
 
-			CG_HudBackFilePath(path, MAX_OSPATH);
+			CG_HudBackupFilePath(path, MAX_OSPATH);
 
 			buffer = Com_Allocate(len + 1);
 			if (!buffer)
@@ -1240,6 +1240,8 @@ void CG_ReadHudsFromFile(void)
 				backupOk = qtrue;
 				CG_Printf(S_COLOR_CYAN "Backed up users custom hud data to '%s'\n", path);
 			}
+
+			Com_Dealloc(buffer);
 		}
 
 		if (len >= 0)
