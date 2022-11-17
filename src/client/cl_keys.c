@@ -218,7 +218,7 @@ keyname_t keynames[] =
 	{ "US_COMMA",        K_COMMA          },
 	{ "US_PERIOD",       K_PERIOD         },
 	{ "US_SLASH",        K_SLASH          },
-	{ "US_BACKSLASH",    K_NONUSBACKSLASH },
+	{ "K_NONUSBACKSLASH",    K_NONUSBACKSLASH },
 
 	{ "WINDOWS",         K_SUPER          },
 	{ "COMPOSE",         K_COMPOSE        },
