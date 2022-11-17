@@ -2,57 +2,57 @@ weaponDef
 {
 	// This basically fills out weaponInfo_t
 	client {
-		//standModel		""									// weapon pickup 'stand'
-		//pickupModel		""
-		//pickupSound		"sound/misc/w_pkup.wav"
-		
-		weaponConfig		"models/multiplayer/satchel_det/weapon.cfg"
-		handsModel			"models/multiplayer/satchel/v_satchel_hand.md3"
-		
+		//standModel	""	// weapon pickup 'stand'
+		//pickupModel	""
+		//pickupSound	"sound/misc/w_pkup.wav"
+
+		weaponConfig	"models/multiplayer/satchel_det/weapon.cfg"
+		handsModel		"models/multiplayer/satchel/v_satchel_hand.md3"
+
 		//flashDlightColor	0 0 0
-		//flashSound		""									// supports up to 4 flash sounds
-		//flashEchoSound	""									// supports up to 4 flash echo sounds
-		//lastShotSound		""									// supports up to 4 last shot sounds
-		
-		readySound			"sound/weapons/satchel/remote_hum.wav"
-		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
-		//overheatSound		""
-		//reloadSound		""
+		//flashSound	""		// supports up to 4 flash sounds
+		//flashEchoSound	""	// supports up to 4 flash echo sounds
+		//lastShotSound	""		// supports up to 4 last shot sounds
+
+		readySound		"sound/weapons/satchel/remote_hum.wav"
+		//firingSound	""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound	""
+		//reloadSound	""
 		//reloadFastSound	""									// some weapons have fast reloads due to the skill system
-		spinupSound			"sound/weapons/satchel/remote_fire.wav"		// sound started when fire button goes down, and stepped on when the first fire event happens
-		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
-		//switchSound		""									// allow overriding of weaponswitch sound
-		//noAmmoSound       ""
-		
-		weaponIcon			"icons/iconw_radio"
-		weaponIconScale		1
+		spinupSound		"sound/weapons/satchel/remote_fire.wav"	// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound	""									// sound called if the above is running but player doesn't follow through and fire
+		//switchSound	""									// allow overriding of weaponswitch sound
+		//noAmmoSound	""
+
+		weaponIcon		"icons/iconw_radio"
+		weaponIconScale	1
 		weaponSelectedIcon	"icons/iconw_radio_1_select"
 		//weaponSimpleIcon	""
 		//weaponSimpleIconScale 1 1
-		
-		//weaponCardIcon    ""
-		//weaponCardScale   0 0
-		//weaponCardPointS  0 0
-		//weaponCardPointT  0 0
-		
-		//missileModel		""
-		//missileSound		""
-		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
-		//missileDlight		0
-		//missileDlightColor	0 0 0							// do we still use this?
-		
-		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+
+		//weaponCardIcon	""
+		//weaponCardScale	0 0
+		//weaponCardPointS	0 0
+		//weaponCardPointT	0 0
+
+		//missileModel	""
+		//missileSound	""
+		//missileTrailFunc	""	// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight	0
+		//missileDlightColor	0 0 0	// do we still use this?
+
+		//ejectBrassFunc	""	// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
-                
-                adjustLean 1 1 1
-		
-		modModel 0			"models/multiplayer/satchel/light.md3"
-		modModel 1			"models/multiplayer/satchel/needle.md3"
-		modModel 2			"models/multiplayer/satchel/lightred_off"
-		modModel 3			"models/multiplayer/satchel/lightred_on"
-		modModel 4			"models/multiplayer/satchel/lightgreen_off"
-		modModel 5			"models/multiplayer/satchel/lightgreen_on"
-		
+
+		adjustLean 1 1 1
+
+		modModel 0	"models/multiplayer/satchel/light.md3"
+		modModel 1	"models/multiplayer/satchel/needle.md3"
+		modModel 2	"models/multiplayer/satchel/lightred_off"
+		modModel 3	"models/multiplayer/satchel/lightred_on"
+		modModel 4	"models/multiplayer/satchel/lightgreen_off"
+		modModel 5	"models/multiplayer/satchel/lightgreen_on"
+
 		firstPerson {
 			model			"models/multiplayer/satchel/v_satchel.md3"
 			//flashModel	""
@@ -73,7 +73,6 @@ weaponDef
 				}
 			}
 		}
-		
 		thirdPerson {
 			model			"models/multiplayer/satchel/radio.md3"
 			//flashmodel	""
