@@ -19,7 +19,7 @@ menuDef {
 	modal
 
 	fadeClamp	0.5
-	fadeAmount  0.075
+	fadeAmount	0.075
 
 	onOpen {
 		setitemcolor background backcolor 0 0 0 0 ;
