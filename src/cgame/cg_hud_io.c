@@ -411,7 +411,7 @@ qboolean CG_WriteHudsToFile()
 		}
 	}
 
-	if (!Q_FSWriteJSONTo(root, HUDS_USER_PATH))
+	if (!Q_FSWriteJSONTo(root, hudFilePath))
 	{
 		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to save hud to '%s'\n", hudFilePath);
 		cJSON_Delete(root);
