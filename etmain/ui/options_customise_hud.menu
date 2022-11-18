@@ -2,27 +2,27 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X        16
-#define WINDOW_Y        16
-#define WINDOW_WIDTH    608
-#define WINDOW_HEIGHT   448
-#define GROUP_NAME      "grpOptionsCustomiseHud"
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	448
+#define GROUP_NAME		"grpOptionsCustomiseHud"
 
 // Subwindows //
-#define SUBWINDOW_WIDTH_L       .50 * (WINDOW_WIDTH - 18)
-#define SUBWINDOW_WIDTH_R       .50 * (WINDOW_WIDTH - 18)
+#define SUBWINDOW_WIDTH_L	.50 * (WINDOW_WIDTH - 18)
+#define SUBWINDOW_WIDTH_R	.50 * (WINDOW_WIDTH - 18)
 
 // Customise View Menu //
 menuDef {
-	name        "options_customise_hud"
-	visible     0
-	fullscreen  0
+	name		"options_customise_hud"
+	visible		0
+	fullscreen	0
 	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style WINDOW_STYLE_FILLED
 
 	onESC {
 		close options_customise_hud ;
-		open  options
+		open options
 	}
 
 // Window //
@@ -38,23 +38,23 @@ menuDef {
 	MULTI(8, HUD_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Unit System:"), .2, 8, "cg_drawUnit", cvarFloatList { "Unit" 0 "Metric" 1 "Imperial" 2 }, _("Set unit system"))
 	MULTI(8, HUD_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switch between different HUD"))
 	MULTI(8, HUD_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7  }, _("Display objective icons on HUD"))
-    CVARFLOATLABEL( 8, HUD_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-    SLIDER(8, HUD_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts") )
+	CVARFLOATLABEL( 8, HUD_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER(8, HUD_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts") )
 #ifdef FUI
-    BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 100, 184, 14, _("HUD EDITOR"), .24, 11, open options_customise_hudeditor_fui)
+	BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 100, 184, 14, _("HUD EDITOR"), .24, 11, open options_customise_hudeditor_fui)
 #else
-    BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 100, 184, 14, _("HUD EDITOR"), .24, 11, uiScript edithud ; close options_customise_hud)
+	BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 100, 184, 14, _("HUD EDITOR"), .24, 11, uiScript edithud ; close options_customise_hud)
 #endif
 
 // Popup //
 #define POPUP_Y 152
-    SUBWINDOW( 6, POPUP_Y, (SUBWINDOW_WIDTH_L), 54, _("POPUPS AND BANNER") )
-    CVARFLOATLABEL( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-    SLIDER( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
-    CVARFLOATLABEL( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-    SLIDER( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Fade Time:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
-    CVARFLOATLABEL( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-    SLIDER( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
+	SUBWINDOW( 6, POPUP_Y, (SUBWINDOW_WIDTH_L), 54, _("POPUPS AND BANNER") )
+	CVARFLOATLABEL( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
+	CVARFLOATLABEL( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Fade Time:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
+	CVARFLOATLABEL( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
 
 // Gun Display //
 #define WEAPON_Y 212
@@ -96,16 +96,16 @@ menuDef {
 	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 66, _("CROSSHAIR"))
 
 	itemDef {
-		name        "crosshair_select"
-		group GROUP_NAME
-		rect        $evalfloat(6 + (SUBWINDOW_WIDTH_L * 1.5)+6 - 22) $evalfloat(CROSSHAIR_Y + 18) 44 44
-		style WINDOW_STYLE_FILLED
-		ownerdraw UI_CROSSHAIR
-		backcolor   .4 .4 .4 .9
-		border WINDOW_BORDER_FULL
-		bordercolor .6 .6 .6 1
-		visible     1
-		tooltip     _("Set crosshair type")
+		name	"crosshair_select"
+		group	GROUP_NAME
+		rect	$evalfloat(6 + (SUBWINDOW_WIDTH_L * 1.5)+6 - 22) $evalfloat(CROSSHAIR_Y + 18) 44 44
+		style	WINDOW_STYLE_FILLED
+		ownerdraw	UI_CROSSHAIR
+		backcolor	.4 .4 .4 .9
+		border	WINDOW_BORDER_FULL
+		bordercolor	.6 .6 .6 1
+		visible	1
+		tooltip	_("Set crosshair type")
 
 		mouseEnter
 		{
@@ -119,13 +119,13 @@ menuDef {
 
 // Shoutcast //
 #define SHOUTCAST_Y 254
-    SUBWINDOW( 6 + (SUBWINDOW_WIDTH_L)+6, SHOUTCAST_Y, (SUBWINDOW_WIDTH_L), 100, _("SHOUTCAST") )
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Display player lists") )
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades") )
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them") )
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Show team names:"), .2, 8, "cg_shoutcastDrawTeamNames", cvarFloatList { "Off" 0 "On" 1 }, _("Display team names") )
-    EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)") )
-    EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)") )
+	SUBWINDOW( 6 + (SUBWINDOW_WIDTH_L)+6, SHOUTCAST_Y, (SUBWINDOW_WIDTH_L), 100, _("SHOUTCAST") )
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Display player lists") )
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades") )
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them") )
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Show team names:"), .2, 8, "cg_shoutcastDrawTeamNames", cvarFloatList { "Off" 0 "On" 1 }, _("Display team names") )
+	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)") )
+	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)") )
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y + 88, (SUBWINDOW_WIDTH_R)-4, 10, _("Spectator Names:"), .2, 8, "cg_drawSpectatorNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Display player names when spectating"))
 
 // Buttons //
