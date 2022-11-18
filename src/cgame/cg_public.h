@@ -340,7 +340,7 @@ typedef enum
 	///<  void (*CG_MessageReceived)( const char *buf, int buflen, int serverTime );
 
 	///< Added for Legacy (need to be activated via the extension system)
-	CG_LEGACY_CUSTOM = 1337, ///< Some padding
+	CG_LEGACY_CUSTOM = MOD_EXPORT_PADDING, ///< Some padding
 
 	CG_CONSOLE_COMPLETE_ARGUMENT,
 	///<  qboolean (*CG_ConsoleCompleteArgument)( void );

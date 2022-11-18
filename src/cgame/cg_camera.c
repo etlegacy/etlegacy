@@ -663,8 +663,4 @@ void CG_CameraCommandComplete(void)
 		trap_CommandComplete("play");
 		trap_CommandComplete("clear");
 	}
-	else
-	{
-		trap_CommandComplete("derp");
-	}
 }

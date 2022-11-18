@@ -37,6 +37,16 @@
 #include "../sys/sys_local.h"
 #include "../botlib/botlib.h"
 
+#define TRAP_EXTENSIONS_LIST cg_extensionTraps
+#include "../qcommon/vm_ext.h"
+
+static ext_trap_keys_t cg_extensionTraps[] =
+{
+	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
+	{ "trap_CommandComplete_Legacy", CG_COMMAND_COMPLETE, qfalse },
+	{ NULL,                          -1,                  qfalse }
+};
+
 extern botlib_export_t *botlib_export;
 
 void Key_GetBindingBuf(int keynum, char *buf, int buflen);
@@ -608,44 +618,6 @@ static int FloatAsInt(float f)
 	return fi.i;
 }
 
-typedef struct
-{
-	char *name;
-	int trapKey;
-	qboolean active;
-} trapKeys;
-
-static trapKeys cg_extensionTraps[] =
-{
-	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
-	{ "trap_CommandComplete_Legacy", CG_COMMAND_COMPLETE, qfalse },
-	{ NULL,                          -1,                  qfalse }
-};
-
-/**
- * @brief Get engine value
- * @param[out] value buffer
- * @param[in] valueSize buffer size
- * @param[in] key to query
- * @return true if value for key is found
- */
-static qboolean CL_CG_GetValue(char *value, int valueSize, const char *key)
-{
-	int i;
-
-	for (i = 0; cg_extensionTraps[i].name; i++)
-	{
-		if (!Q_stricmp(key, cg_extensionTraps[i].name))
-		{
-			Com_sprintf(value, valueSize, "%i", cg_extensionTraps[i].trapKey);
-			cg_extensionTraps[i].active = qtrue;
-			return qtrue;
-		}
-	}
-
-	return qfalse;
-}
-
 /**
  * @brief The cgame module is making a system call
  * @param[in] args
@@ -1069,7 +1041,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 
 	///< extensions
 	case CG_TRAP_GETVALUE:
-		return CL_CG_GetValue(VMA(1), args[2], VMA(3));
+		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
 
 	case CG_SYS_FLASH_WINDOW:
 		GLimp_FlashWindow(args[1]);
@@ -1203,7 +1175,7 @@ void CL_InitCGame(void)
 {
 	const char *info;
 	const char *mapname;
-	int        t1, t2, i;
+	int        t1, t2;
 
 	t1 = Sys_Milliseconds();
 
@@ -1216,10 +1188,7 @@ void CL_InitCGame(void)
 	Com_sprintf(cl.mapname, sizeof(cl.mapname), "maps/%s.bsp", mapname);
 
 	// mark all extensions as inactive
-	for (i = 0; cg_extensionTraps[i].name; i++)
-	{
-		cg_extensionTraps[i].active = qfalse;
-	}
+	VM_Ext_ResetActive();
 
 	// load the dll
 	cgvm = VM_Create("cgame", qtrue, CL_CgameSystemCalls, VMI_NATIVE);
@@ -1287,7 +1256,7 @@ qboolean CL_GameCompleteCommand(void)
 		return qfalse;
 	}
 
-	if (!cg_extensionTraps[1].active)
+	if (!VM_Ext_IsActive(CG_COMMAND_COMPLETE))
 	{
 		return qfalse;
 	}

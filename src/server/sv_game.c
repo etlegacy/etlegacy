@@ -38,6 +38,9 @@
 
 botlib_export_t *botlib_export;
 
+#define TRAP_EXTENSIONS_LIST NULL
+#include "../qcommon/vm_ext.h"
+
 /**
 * @todo TODO: These functions must be used instead of pointer arithmetic, because
 * the game allocates gentities with private information after the server shared part
@@ -418,18 +421,6 @@ static int FloatAsInt(float f)
 	return fi.i;
 }
 
-/**
- * @brief Get engine value
- * @param[out] value buffer
- * @param[in] valueSize buffer size
- * @param[in] key to query
- * @return true if value for key is found
- */
-static qboolean SV_G_GetValue(char *value, int valueSize, const char *key)
-{
-	return qfalse;
-}
-
 extern int S_RegisterSound(const char *name, qboolean compressed);
 extern int S_GetSoundLength(sfxHandle_t sfxHandle);
 
@@ -695,7 +686,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return SV_BinaryMessageStatus(args[1]);
 
 	case G_TRAP_GETVALUE:
-		return SV_G_GetValue(VMA(1), args[2], VMA(3));
+		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
 
 	default:
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);
@@ -741,6 +732,9 @@ static void SV_InitGameVM(qboolean restart)
 	{
 		svs.clients[i].gentity = NULL;
 	}
+
+	// mark all extensions as inactive
+	VM_Ext_ResetActive();
 
 	// use the current msec count for a random seed
 	// init for this gamestate
