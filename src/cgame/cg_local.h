@@ -4099,7 +4099,7 @@ void CG_DeActivateCameraEditor(void);
 void CG_ClearCamera(void);
 void CG_CameraAddCurrentPoint(void);
 void CG_AddControlPoint(void);
-void CG_PlayCurrentCamera(int seconds);
+void CG_PlayCurrentCamera(unsigned int seconds);
 
 void CG_RunCamera(void);
 void CG_RenderCameraPoints(void);

@@ -377,10 +377,15 @@ void CG_AddControlPoint(void)
 
 }
 
-void CG_PlayCurrentCamera(int seconds)
+void CG_PlayCurrentCamera(unsigned int seconds)
 {
 	vec3_t        bezCt1, bezCt2;
 	cameraPoint_t *last = cameraInfo.currentCamera;
+
+    if (!seconds)
+    {
+        return;
+    }
 
 	cameraInfo.cameraTotalLength = 0.f;
 	while (last && last->next)
