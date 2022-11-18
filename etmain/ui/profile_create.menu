@@ -2,92 +2,92 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X        0
-#define WINDOW_Y        0
-#define WINDOW_WIDTH    __WINDOW_WIDTH
-#define WINDOW_HEIGHT   480
-#define GROUP_NAME      "grpProfileCreate"
+#define WINDOW_X		0
+#define WINDOW_Y		0
+#define WINDOW_WIDTH	__WINDOW_WIDTH
+#define WINDOW_HEIGHT	480
+#define GROUP_NAME		"grpProfileCreate"
 
 // Create Profile Menu //
-#define DEFAULT_SETTINGS    setcvar ui_cl_lang en ;                 \
-	setcvar ui_glCustom 1 ;                 \
-	setcvar ui_glPreset 0 ;                 \
-	setcvar ui_rate 25000 ;                 \
-	setcvar ui_sensitivity 5 ;              \
-	setcvar ui_profile_mousePitch 0 ;       \
-	setcvar ui_handedness 0 ;               \
-	uiScript glCustom                       \
-	uiScript glPreset                       \
+#define DEFAULT_SETTINGS setcvar ui_cl_lang en ;
+	setcvar ui_glCustom 1 ;
+	setcvar ui_glPreset 0 ;
+	setcvar ui_rate 25000 ; 
+	setcvar ui_sensitivity 5 ;
+	setcvar ui_profile_mousePitch 0 ;
+	setcvar ui_handedness 0 ;
+	uiScript glCustom
+	uiScript glPreset
 
-    menuDef {
-	name        "profile_create"
-	visible     0
-	fullscreen  0
+	menuDef {
+	name		"profile_create"
+	visible		0
+	fullscreen	0
 	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style WINDOW_STYLE_FILLED
 	popup
 
-	fadeClamp   0.5
-	fadeAmount  0.075
+	fadeClamp	0.5
+	fadeAmount	0.075
 
 	onOpen {
 		conditionalscript ui_profile_create_error 1
 		("clearcvar ui_profile_create_error ; abort")
-		    ("clearfocus")
+			("clearfocus")
 
 		setitemcolor background backcolor 0 0 0 0 ;
 		fadein background ;
 		setEditFocus "efleftProfile Name:" ;
-		uiScript  systemCvarsGet ;
-		setcvar   ui_rate "0" ;
+		uiScript systemCvarsGet ;
+		setcvar ui_rate "0" ;
 		clearcvar ui_profile ;
-		uiScript  profileCvarsGet ;
+		uiScript profileCvarsGet ;
 		DEFAULT_SETTINGS
 
 		conditionalscript com_recommendedSet 0
 		("clearfocus")
-		    ("abort")
+			("abort")
 
 		conditionalscript com_recommended 3
 		("setcvar ui_glPreset 0 ; uiScript update glPreset")
-		    ("copycvar com_recommended ui_glPreset ; uiScript update glPreset") "-1"
+			("copycvar com_recommended ui_glPreset ; uiScript update glPreset") "-1"
 	}
 
 	onESC {
-		close    profile_create ;
-		open     profile ;
+		close profile_create ;
+		open profile ;
 		uiScript systemCvarsReset ;
 		uiScript profileCvarsReset
 	}
 
 // Background //
 	itemDef {
-		name        "background"
-		rect        0 0 WINDOW_WIDTH 480
-		style WINDOW_STYLE_FILLED
-		background  "ui/assets/fadebox.tga"
-		backcolor   0 0 0 0
-		visible     1
+		name		"background"
+		rect		0 0 WINDOW_WIDTH 480
+		style	WINDOW_STYLE_FILLED
+		background	"ui/assets/fadebox.tga"
+		backcolor	0 0 0 0
+		visible		1
 		decoration
 	}
 
 // Subwindows //
-#define SUBWINDOW_WIDTH     354
-#define SUBWINDOW_HEIGHT    294
-#define SUBWINDOW_X         .5 * (WINDOW_WIDTH - SUBWINDOW_WIDTH)
-#define SUBWINDOW_Y         .5 * (WINDOW_HEIGHT - SUBWINDOW_HEIGHT)
+#define SUBWINDOW_WIDTH		354
+#define SUBWINDOW_HEIGHT	294
+#define SUBWINDOW_X		.5 * (WINDOW_WIDTH - SUBWINDOW_WIDTH)
+#define SUBWINDOW_Y		.5 * (WINDOW_HEIGHT - SUBWINDOW_HEIGHT)
 
 	SUBWINDOWBLACK(SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("CREATE PROFILE"))
 
 	LABEL(SUBWINDOW_X + 4, SUBWINDOW_Y + 16, (SUBWINDOW_WIDTH)-8, 10, _("Please choose your initial settings below. You can change these at any time and access more advanced options by visiting the Options Menu. Should more than one person wish to play ET: Legacy, you can create additional profiles by visiting the Profiles Menu."), .2, ITEM_ALIGN_LEFT, 0, 8)
 
 	itemDef {
-		name        "efleftbackPlayer Alias:"
-		group GROUP_NAME
-		rect        $evalfloat((SUBWINDOW_X + 4 + 32) + 80 + 6) $evalfloat(SUBWINDOW_Y + 112) $evalfloat((SUBWINDOW_WIDTH)-8 - 64 - 80 - 6) $evalfloat(10)
-		style WINDOW_STYLE_FILLED
-		backcolor   .5 .5 .5 .2
-		visible     1
+		name		"efleftbackPlayer Alias:"
+		group	GROUP_NAME
+		rect		$evalfloat((SUBWINDOW_X + 4 + 32) + 80 + 6) $evalfloat(SUBWINDOW_Y + 112) $evalfloat((SUBWINDOW_WIDTH)-8 - 64 - 80 - 6) $evalfloat(10)
+		style	WINDOW_STYLE_FILLED
+		backcolor	.5 .5 .5 .2
+		visible		1
 		decoration
 	}
 	EDITFIELDLEFT(SUBWINDOW_X + 4 + 32, SUBWINDOW_Y + 112, (SUBWINDOW_WIDTH)-8 - 64, 10, _("Player Alias:"), .2, 8, "ui_profile", 36, 23, _("Enter the alias here that you would like displayed to others on servers"))
@@ -113,35 +113,35 @@
 	MULTI(SUBWINDOW_X + 4, SUBWINDOW_Y + 224, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, _("Left or Right Handed? Set your default controls\nwhich you can modify later via the options menu"))
 
 	BUTTON((SUBWINDOW_X + 4) + .5 * ((SUBWINDOW_WIDTH)-174), SUBWINDOW_Y + 238, 174, 14, _("DEFAULT VIDEO SETTINGS"), .24, 11, DEFAULT_SETTINGS ;
-	       conditionalscript com_recommendedSet 0
-	       ("clearfocus")
-	           ("abort")
+		conditionalscript com_recommendedSet 0
+		("clearfocus")
+			("abort")
 
-	       conditionalscript com_recommended 3
-	       ("setcvar ui_glPreset 0 ; uiScript update ui_glPreset")
-	           ("copycvar com_recommended ui_glPreset ; uiScript update ui_glPreset") "-1")
+		conditionalscript com_recommended 3
+		("setcvar ui_glPreset 0 ; uiScript update ui_glPreset")
+			("copycvar com_recommended ui_glPreset ; uiScript update ui_glPreset") "-1")
 
 	BUTTON(SUBWINDOW_X + 6, SUBWINDOW_Y + SUBWINDOW_HEIGHT - 24, .5 * (SUBWINDOW_WIDTH - 18), 18, _("BACK"), .3, 14, close profile_create ; open profile)
 	BUTTON(SUBWINDOW_X + 6 + .5 * (SUBWINDOW_WIDTH - 18) + 6, SUBWINDOW_Y + SUBWINDOW_HEIGHT - 24, .5 * (SUBWINDOW_WIDTH - 18), 18, _("CREATE"), .3, 14,
-	       conditionalscript UIProfileValidName 2
-	       ("clearFocus")
-	           ("setcvar ui_profile_create_error \\\"Can't create profile. Please enter a valid player alias.\\\" ; open profile_create_error ; abort")
-	       conditionalscript ui_rate 0
-	       ("clearFocus")
-	           ("setcvar ui_profile_create_error \\\"Can't create profile. Please select your connection type. If you are unsure what to select, choose Modem.\\\" ; open profile_create_error ; abort")
-	       conditionalscript UIProfileAlreadyExists 2
-	       ("setcvar ui_profile_create_error \\\"Can't create profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort")
-	           ("clearFocus")
+		conditionalscript UIProfileValidName 2
+		("clearFocus")
+			("setcvar ui_profile_create_error \\\"Can't create profile. Please enter a valid player alias.\\\" ; open profile_create_error ; abort")
+		conditionalscript ui_rate 0
+		("clearFocus")
+			("setcvar ui_profile_create_error \\\"Can't create profile. Please select your connection type. If you are unsure what to select, choose Modem.\\\" ; open profile_create_error ; abort")
+		conditionalscript UIProfileAlreadyExists 2
+		("setcvar ui_profile_create_error \\\"Can't create profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort")
+			("clearFocus")
 
-	       close profile_create ;
-	       uiScript createProfile ;
-	       uiScript vidSave ;
-	       uiScript clearPID ;
-	       uiScript applyProfile ;
-	       execwolfconfig 1 ;
-	       uiScript systemCvarsApply ;
-	       uiScript profileCvarsApply ;
-	       setcvar ui_showtooltips 1 ;
-	       uiScript loadCachedServers ;
-	       exec vid_restart ; )
+	close profile_create ;
+	uiScript createProfile ;
+	uiScript vidSave ;
+	uiScript clearPID ;
+	uiScript applyProfile ;
+	execwolfconfig 1 ;
+	uiScript systemCvarsApply ;
+	uiScript profileCvarsApply ;
+	setcvar ui_showtooltips 1 ;
+	uiScript loadCachedServers ;
+	exec vid_restart ; )
 }
