@@ -363,17 +363,23 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 	char         *ptr;
 	char         temp[1024] = { 0 };
 
+	if (!str)
+	{
+		return;
+	}
+
 	Q_strncpyz(temp, str, 1024);
 
 	// count line number and max char legnth
 	ptr = strtok(temp, "\n");
-	while (ptr != NULL)
+	do
 	{
 		lineNumber++;
 		w   = MAX(CG_Text_Width_Ext_Float(ptr, 1.f, 0, font), w);
 		h  += CG_Text_Height_Ext(ptr, 1.f, 0, font);
 		ptr = strtok(NULL, "\n");
 	}
+	while (ptr != NULL);
 
 	scale = CG_ComputeScale(comp /*comp->location.h / lineNumber, comp->scale, font*/);
 
