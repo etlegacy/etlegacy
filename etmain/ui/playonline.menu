@@ -233,19 +233,19 @@ menuDef {
 	BUTTONEXT( SUBWINDOW_WIDTH-.16*FILTERS_WIDTH, 164, .16*(FILTERS_WIDTH-6), 12, _("REFRESH"), .20, 9, uiScript RefreshFilter, tooltip _("Refresh servers list"))
 
 	itemDef {
-		name       "serverFilterLabel"
-		group      GROUP_NAME
-		rect       $evalfloat(SUBWINDOW_WIDTH-.16*FILTERS_WIDTH-6) 165 584 12
-		type       ITEM_TYPE_TEXT
-		textfont   UI_FONT_ARIBLK_27
-		// textstyle  ITEM_TEXTSTYLE_SHADOWED
-		textscale  .19
-		textalign  ITEM_ALIGN_RIGHT
-		textalignx 0
-		textaligny 8
-		forecolor  .6 .6 .6 1
-		cvar       "ui_tmp_ServersFiltered"
-		visible    1
+		name	"serverFilterLabel"
+		group	GROUP_NAME
+		rect	$evalfloat(SUBWINDOW_WIDTH-.16*FILTERS_WIDTH-6) 165 584 12
+		type	ITEM_TYPE_TEXT
+		textfont	UI_FONT_ARIBLK_27
+		//textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_RIGHT
+		textalignx	0
+		textaligny	8
+		forecolor	.6 .6 .6 1
+		cvar		"ui_tmp_ServersFiltered"
+		visible	1
 		decoration
 		autowrapped
 	}
