@@ -3,95 +3,93 @@
 #define DEFAULT_TEXT_SCALE	0.25
 #define ORIGIN_QUICKMESSAGE	10 10
 #define QM_MENU_GRADIENT_START_OFFSET
-#define QM_MENU_START( WINDOWNAME )																				\
-																												\
-menuDef {																										\
-	name		WINDOWNAME																						\
-	visible		0																								\
-	fullscreen	0																								\
-	rect		0 100 __WINDOW_WIDTH 380																		\
-	onOpen		{ setCvar cl_bypassMouseInput "1" }																\
-	onClose		{ setCvar cl_bypassMouseInput "0" }																\
-	onEsc		{ closeAll }																					\
-																												\
-	itemDef {																									\
-		name		"window"																					\
-		rect		0 19 204 136																				\
-		origin		ORIGIN_QUICKMESSAGE																			\
-		style		WINDOW_STYLE_FILLED																			\
-		backcolor	0 0 0 .75																					\
-		border		WINDOW_BORDER_FULL																			\
-		bordercolor	.5 .5 .5 .5																					\
-		visible		1																							\
-		decoration																								\
-	}																											\
-																												\
-	itemDef {																									\
-		name		"windowtitle"																				\
-		rect		$evalfloat((0)+2) $evalfloat((19)+2) $evalfloat((204)-4) 12									\
-		origin		ORIGIN_QUICKMESSAGE																			\
-		text		_("MESSAGE")																				\
-		textfont	UI_FONT_ARIBLK_16																			\
-		textscale	.19																							\
-		textalignx	3																							\
-		textaligny	10																							\
-		style		WINDOW_STYLE_FILLED																			\
-		backcolor	.16 .2 .17 .8																				\
-		forecolor	.6 .6 .6 1																					\
-		visible		1																							\
-		decoration																								\
+#define QM_MENU_START( WINDOWNAME )												\
+																				\
+menuDef {																		\
+	name		WINDOWNAME														\
+	visible		0																\
+	fullscreen	0																\
+	rect		0 100 __WINDOW_WIDTH 380										\
+	onOpen		{ setCvar cl_bypassMouseInput "1" }								\
+	onClose		{ setCvar cl_bypassMouseInput "0" }								\
+	onEsc		{ closeAll }													\
+																				\
+	itemDef {																	\
+		name		"window"													\
+		rect		0 19 204 136												\
+		origin		ORIGIN_QUICKMESSAGE											\
+		style		WINDOW_STYLE_FILLED											\
+		backcolor	0 0 0 .75													\
+		border		WINDOW_BORDER_FULL											\
+		bordercolor	.5 .5 .5 .5													\
+		visible		1															\
+		decoration																\
+	}																			\
+																				\
+	itemDef {																	\
+		name		"windowtitle"												\
+		rect		$evalfloat((0)+2) $evalfloat((19)+2) $evalfloat((204)-4) 12	\
+		origin		ORIGIN_QUICKMESSAGE											\
+		text		_("MESSAGE")												\
+		textfont	UI_FONT_ARIBLK_16											\
+		textscale	.19															\
+		textalignx	3															\
+		textaligny	10															\
+		style		WINDOW_STYLE_FILLED											\
+		backcolor	.16 .2 .17 .8												\
+		forecolor	.6 .6 .6 1													\
+		visible		1															\
+		decoration																\
 	}
 
 	#define QM_MENU_END }
 
-	#define QM_MENU_ITEM( WINDOWTEXT, ACTION, KEY, POS )				\
-    itemDef {															\
-		name			"menuitem"##WINDOWTEXT							\
-		rect			6 $evalfloat( 35 + ( 12 * POS )) 128 10			\
-		origin			ORIGIN_QUICKMESSAGE								\
-		type			ITEM_TYPE_TEXT									\
-		text			WINDOWTEXT										\
-		textfont		UI_FONT_COURBD_21								\
-		textstyle		ITEM_TEXTSTYLE_SHADOWED							\
-		textscale		.2												\
-		textaligny		8												\
-		forecolor		.6 .6 .6 1										\
-		visible			1												\
-		decoration														\
-    }																	\
-    execKey KEY { ACTION }
+	#define QM_MENU_ITEM( WINDOWTEXT, ACTION, KEY, POS )		\
+	itemDef {													\
+		name			"menuitem"##WINDOWTEXT					\
+		rect			6 $evalfloat( 35 + ( 12 * POS )) 128 10	\
+		origin			ORIGIN_QUICKMESSAGE						\
+		type			ITEM_TYPE_TEXT							\
+		text			WINDOWTEXT								\
+		textfont		UI_FONT_COURBD_21						\
+		textstyle		ITEM_TEXTSTYLE_SHADOWED					\
+		textscale		.2										\
+		textaligny		8										\
+		forecolor		.6 .6 .6 1								\
+		visible			1										\
+		decoration												\
+	}															\
+	execKey KEY { ACTION }
 
-	#define QM_MENU_ITEM_TEAM( WINDOWTEXT, ACTION, KEY, POS )			\
-    itemDef {															\
-		name			"menuitem"##WINDOWTEXT							\
-		rect			6 $evalfloat( 35 + ( 12 * POS )) 128 10			\
-		origin			ORIGIN_QUICKMESSAGE								\
-		type			ITEM_TYPE_TEXT									\
-		text			WINDOWTEXT										\
-		textfont		UI_FONT_COURBD_21								\
-		textstyle		ITEM_TEXTSTYLE_SHADOWED							\
-		textscale		.2												\
-		textaligny		8												\
-		forecolor		.6 .6 .6 1										\
-		visible			1												\
-		decoration														\
-    }																	\
+	#define QM_MENU_ITEM_TEAM( WINDOWTEXT, ACTION, KEY, POS )	\
+	itemDef {													\
+		name			"menuitem"##WINDOWTEXT					\
+		rect			6 $evalfloat( 35 + ( 12 * POS )) 128 10	\
+		origin			ORIGIN_QUICKMESSAGE						\
+		type			ITEM_TYPE_TEXT							\
+		text			WINDOWTEXT								\
+		textfont		UI_FONT_COURBD_21						\
+		textstyle		ITEM_TEXTSTYLE_SHADOWED					\
+		textscale		.2										\
+		textaligny		8										\
+		forecolor		.6 .6 .6 1								\
+		visible			1										\
+		decoration												\
+	}															\
 	execKey KEY { ACTION }
 
 QM_MENU_START( "wm_ftquickmessage" )
-
-	QM_MENU_ITEM_TEAM( 	_("S. Statements"), 	close wm_ftquickmessage; 		open wm_ftquickstatements, 	"s", 0 )
-	QM_MENU_ITEM_TEAM( 	_("R. Requests"), 		close wm_ftquickmessage; 		open wm_ftquickrequests, 	"r", 1 )
-	QM_MENU_ITEM_TEAM( 	_("C. Commands"), 		close wm_ftquickmessage; 		open wm_ftquickcommand, 	"c", 2 )
-	QM_MENU_ITEM_TEAM( 	_("T. Talk"),		 	close wm_ftquickmessage;	 	open wm_ftquickmisc, 		"t", 3 )
-	QM_MENU_ITEM( 		_("G. Global"),	 		close wm_ftquickmessage; 		open wm_ftquickglobal, 		"g", 4 )
-	QM_MENU_ITEM_TEAM( 	_("F. Function"), 		exec "wm_ftsayPlayerClass"; 	close wm_ftquickmessage,	"f", 5 )
-	QM_MENU_ITEM_TEAM( 	_("O. Objectives"), 	close wm_ftquickmessage; 		open wm_ftquickobjectives, 	"o", 6 )
+	QM_MENU_ITEM_TEAM( 	_("S. Statements"),	close wm_ftquickmessage;	open wm_ftquickstatements,	"s", 0 )
+	QM_MENU_ITEM_TEAM( 	_("R. Requests"),	close wm_ftquickmessage;	open wm_ftquickrequests,	"r", 1 )
+	QM_MENU_ITEM_TEAM( 	_("C. Commands"),	close wm_ftquickmessage;	open wm_ftquickcommand,		"c", 2 )
+	QM_MENU_ITEM_TEAM( 	_("T. Talk"),		close wm_ftquickmessage;	open wm_ftquickmisc,		"t", 3 )
+	QM_MENU_ITEM( 		_("G. Global"),		close wm_ftquickmessage;	open wm_ftquickglobal,		"g", 4 )
+	QM_MENU_ITEM_TEAM( 	_("F. Function"),	exec "wm_ftsayPlayerClass";	close wm_ftquickmessage,	"f", 5 )
+	QM_MENU_ITEM_TEAM( 	_("O. Objectives"),	close wm_ftquickmessage;	open wm_ftquickobjectives,	"o", 6 )
 
 QM_MENU_END
 
 QM_MENU_START( "wm_ftquickstatements" )
-
 	QM_MENU_ITEM_TEAM( _("P. Path Cleared."), 		exec "VoiceFireteamChat PathCleared"; 		close wm_ftquickstatements,	"p", 0 )
 	QM_MENU_ITEM_TEAM( _("W. Enemy Weak!"), 		exec "VoiceFireteamChat EnemyWeak"; 		close wm_ftquickstatements,	"w", 1 )
 	QM_MENU_ITEM_TEAM( _("C. All Clear"), 			exec "VoiceFireteamChat AllClear"; 			close wm_ftquickstatements,	"c", 2 )
@@ -106,7 +104,6 @@ QM_MENU_START( "wm_ftquickstatements" )
 QM_MENU_END
 
 QM_MENU_START( "wm_ftquickrequests" )
-
 	QM_MENU_ITEM_TEAM( _("M. Need Medic!"), 		exec "VoiceFireteamChat Medic"; 		close wm_ftquickrequests,	"m", 0 )
 	QM_MENU_ITEM_TEAM( _("A. Need Ammo!"), 			exec "VoiceFireteamChat NeedAmmo"; 		close wm_ftquickrequests,	"a", 1 )
 	QM_MENU_ITEM_TEAM( _("B. Need Backup!"), 		exec "VoiceFireteamChat NeedBackup"; 	close wm_ftquickrequests,	"b", 2 )
@@ -119,7 +116,6 @@ QM_MENU_START( "wm_ftquickrequests" )
 QM_MENU_END
 
 QM_MENU_START( "wm_ftquickcommand" )
-
 	QM_MENU_ITEM_TEAM( _("F. Follow Me!"), 			exec "VoiceFireteamChat FollowMe"; 			close wm_ftquickcommand, 	"f", 0 )
 	QM_MENU_ITEM_TEAM( _("G. Let's Go!"), 			exec "VoiceFireteamChat LetsGo"; 			close wm_ftquickcommand, 	"g", 1 )
 	QM_MENU_ITEM_TEAM( _("M. Move!"), 				exec "VoiceFireteamChat Move"; 				close wm_ftquickcommand, 	"m", 2 )
@@ -133,7 +129,6 @@ QM_MENU_START( "wm_ftquickcommand" )
 QM_MENU_END
 
 QM_MENU_START( "wm_ftquickmisc" )
-
 	QM_MENU_ITEM_TEAM( _("Y. Yes"),				exec "VoiceFireteamChat Affirmative"; 	close wm_ftquickmisc, "y", 0 )
 	QM_MENU_ITEM_TEAM( _("N. No"),				exec "VoiceFireteamChat Negative"; 		close wm_ftquickmisc, "n", 1 )
 	QM_MENU_ITEM_TEAM( _("T. Thanks"),			exec "VoiceFireteamChat Thanks"; 		close wm_ftquickmisc, "t", 2 )
@@ -144,31 +139,28 @@ QM_MENU_START( "wm_ftquickmisc" )
 QM_MENU_END
 
 QM_MENU_START( "wm_ftquickglobal" )
-
-	QM_MENU_ITEM( _("Y. Yes"),				exec "VoiceChat Affirmative"; 	close wm_ftquickglobal, 	"y", 0 )
-	QM_MENU_ITEM( _("N. No"),				exec "VoiceChat Negative"; 		close wm_ftquickglobal, 	"n", 1 )
-	QM_MENU_ITEM( _("W. Enemy Weak"),		exec "VoiceChat EnemyWeak";		close wm_ftquickglobal, 	"w", 2 )
-	QM_MENU_ITEM( _("H. Hi"),				exec "VoiceChat Hi"; 			close wm_ftquickglobal, 	"h", 3 )
-	QM_MENU_ITEM( _("B. Bye"),				exec "VoiceChat Bye"; 			close wm_ftquickglobal, 	"b", 4 )
-	QM_MENU_ITEM( _("S. Great Shot"),		exec "VoiceChat GreatShot"; 	close wm_ftquickglobal, 	"s", 5 )
-	QM_MENU_ITEM( _("C. Cheer"),			exec "VoiceChat Cheer"; 		close wm_ftquickglobal, 	"c", 6 )
-	QM_MENU_ITEM( _("G. More Globals"),		close wm_ftquickglobal;			open wm_ftquickglobal2, 	"g", 7 )
+	QM_MENU_ITEM( _("Y. Yes"),				exec "VoiceChat Affirmative";	close wm_ftquickglobal,	"y", 0 )
+	QM_MENU_ITEM( _("N. No"),				exec "VoiceChat Negative"; 		close wm_ftquickglobal,	"n", 1 )
+	QM_MENU_ITEM( _("W. Enemy Weak"),		exec "VoiceChat EnemyWeak";		close wm_ftquickglobal,	"w", 2 )
+	QM_MENU_ITEM( _("H. Hi"),				exec "VoiceChat Hi"; 			close wm_ftquickglobal,	"h", 3 )
+	QM_MENU_ITEM( _("B. Bye"),				exec "VoiceChat Bye"; 			close wm_ftquickglobal,	"b", 4 )
+	QM_MENU_ITEM( _("S. Great Shot"),		exec "VoiceChat GreatShot"; 	close wm_ftquickglobal,	"s", 5 )
+	QM_MENU_ITEM( _("C. Cheer"),			exec "VoiceChat Cheer"; 		close wm_ftquickglobal,	"c", 6 )
+	QM_MENU_ITEM( _("G. More Globals"),		close wm_ftquickglobal;			open wm_ftquickglobal2,	"g", 7 )
 
 QM_MENU_END
 
 QM_MENU_START( "wm_ftquickglobal2" )
-
-	QM_MENU_ITEM( _("T. Thanks"),		exec "VoiceChat Thanks";	close wm_ftquickglobal2, 	"t", 0 )
-	QM_MENU_ITEM( _("W. Welcome"),		exec "VoiceChat Welcome"; 	close wm_ftquickglobal2, 	"w", 1 )
-	QM_MENU_ITEM( _("O. Oops"),			exec "VoiceChat Oops"; 		close wm_ftquickglobal2, 	"o", 2 )
-	QM_MENU_ITEM( _("S. Sorry"),		exec "VoiceChat Sorry"; 	close wm_ftquickglobal2, 	"s", 3 )
-	QM_MENU_ITEM( _("H. Hold Fire!"),	exec "VoiceChat HoldFire";	close wm_ftquickglobal2, 	"h", 4 )
-	QM_MENU_ITEM( _("G. Good Game"),	exec "VoiceChat GoodGame";	close wm_ftquickglobal2, 	"g", 5 )
+	QM_MENU_ITEM( _("T. Thanks"),		exec "VoiceChat Thanks";	close wm_ftquickglobal2,	"t", 0 )
+	QM_MENU_ITEM( _("W. Welcome"),		exec "VoiceChat Welcome"; 	close wm_ftquickglobal2,	"w", 1 )
+	QM_MENU_ITEM( _("O. Oops"),			exec "VoiceChat Oops"; 		close wm_ftquickglobal2,	"o", 2 )
+	QM_MENU_ITEM( _("S. Sorry"),		exec "VoiceChat Sorry"; 	close wm_ftquickglobal2,	"s", 3 )
+	QM_MENU_ITEM( _("H. Hold Fire!"),	exec "VoiceChat HoldFire";	close wm_ftquickglobal2,	"h", 4 )
+	QM_MENU_ITEM( _("G. Good Game"),	exec "VoiceChat GoodGame";	close wm_ftquickglobal2,	"g", 5 )
 
 QM_MENU_END
 
 QM_MENU_START( "wm_ftquickobjectives" )
-
 	QM_MENU_ITEM_TEAM( _("A. Command Acknowledged"),		exec "VoiceFireteamChat CommandAcknowledged"; 		close wm_ftquickobjectives,	"a", 0 )
 	QM_MENU_ITEM_TEAM( _("D. Command Declined"),			exec "VoiceFireteamChat CommandDeclined";			close wm_ftquickobjectives,	"d", 1 )
 	QM_MENU_ITEM_TEAM( _("C. Command Completed"),			exec "VoiceFireteamChat CommandCompleted";			close wm_ftquickobjectives,	"c", 2 )
@@ -179,5 +171,4 @@ QM_MENU_START( "wm_ftquickobjectives" )
 	QM_MENU_ITEM_TEAM( _("R. Repair Vehicle"),				exec "VoiceFireteamChat RepairVehicle";				close wm_ftquickobjectives,	"r", 7 )
 	QM_MENU_ITEM_TEAM( _("V. Disable Vehicle"),				exec "VoiceFireteamChat DestroyVehicle";			close wm_ftquickobjectives,	"v", 8 )
 	QM_MENU_ITEM_TEAM( _("E. Escort Vehicle"),				exec "VoiceFireteamChat EscortVehicle";				close wm_ftquickobjectives,	"e", 9 )
-
 QM_MENU_END
