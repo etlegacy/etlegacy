@@ -168,13 +168,12 @@ jobs:
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
-           use_systemd_nspawn: true
-           systemd_nspawn_options: -E CI=${CI}
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
              cd /opt/etlegacy
              git fetch --tags --force
+             export CI=true
              ./easybuild.sh build -RPI -mod -ninja
 
       - uses: actions/upload-artifact@v3
@@ -536,13 +535,12 @@ jobs:
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
-           use_systemd_nspawn: true
-           systemd_nspawn_options: -E CI=${CI}
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
              cd /opt/etlegacy
              git fetch --tags --force
+             export CI=true
              ./easybuild.sh build -RPI -ninja
              cd build
              cp *.pk3 /opt/etlegacy/build/legacy
