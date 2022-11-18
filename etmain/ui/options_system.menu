@@ -2,20 +2,20 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X        16
-#define WINDOW_Y        16
-#define WINDOW_WIDTH    608
-#define WINDOW_HEIGHT   448
-#define GROUP_NAME      "grpOptionsSystem"
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	448
+#define GROUP_NAME		"grpOptionsSystem"
 
 // Subwindows //
-#define SUBWINDOW_WIDTH_L       .50 * (WINDOW_WIDTH - 18)
-#define SUBWINDOW_WIDTH_R       .50 * (WINDOW_WIDTH - 18)
+#define SUBWINDOW_WIDTH_L	.50 * (WINDOW_WIDTH - 18)
+#define SUBWINDOW_WIDTH_R	.50 * (WINDOW_WIDTH - 18)
 
 menuDef {
-	name        "options_system"
-	visible     0
-	fullscreen  0
+	name		"options_system"
+	visible		0
+	fullscreen	0
 	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style WINDOW_STYLE_FILLED
 
@@ -30,15 +30,15 @@ menuDef {
 	onESC {
 		uiScript systemCvarsReset ;
 		uiScript vidReset ;
-		close    options_system ;
-		open     options
+		close	options_system ;
+		open	options
 	}
 
 	WINDOW(_("SYSTEM"), 150)
 
 
 // ET: Legacy clients //
-// Left side          //
+// Left side		//
 
 // Simple graphics //
 #ifdef ETLEGACY
@@ -84,7 +84,7 @@ menuDef {
 	BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), GRAPHICSADVANCED_Y + 186, 184, 14, _("SET RECOMMENDED"), .24, 11, uiScript vidReset ; uiScript systemCvarsReset ; open rec_restart)
 
 #else
-// Other clients      //
+// Other clients	//
 #define GRAPHICS_Y 32
 	SUBWINDOW(6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 148, _("GRAPHICS"))
 	MULTIACTION(8, GRAPHICS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Set overall video quality"))
@@ -125,7 +125,7 @@ menuDef {
 #endif
 
 // ET: Legacy clients //
-// Right side         //
+// Right side	//
 #ifdef ETLEGACY
 // LANGUAGE //
 #define LANGUAGE_Y 32
@@ -179,7 +179,7 @@ menuDef {
 	NUMERICFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, IRC_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Reconnect time ms:"), .2, 8, "irc_reconnect_delay", 5, _("Set auto reconnect time in ms"))
 
 #else
-// Other clients      //
+// Other clients	//
 // Audio //
 #define AUDIO_Y 32
 	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, AUDIO_Y, (SUBWINDOW_WIDTH_R), 66, _("AUDIO"))
@@ -207,7 +207,7 @@ menuDef {
 // Buttons //
 	BUTTON(6, WINDOW_HEIGHT - 24, .5 * (WINDOW_WIDTH - 18), 18, _("BACK"), .3, 14, uiScript vidReset ; close options_system ; open options)
 	BUTTON(6 + .5 * (WINDOW_WIDTH - 18) + 6, WINDOW_HEIGHT - 24, .5 * (WINDOW_WIDTH - 18), 18, _("APPLY"), .3, 14,
-	       conditionalScript vidrestartIsRequired 2
-	       ("open vid_restart")
-	           ("uiScript systemCvarsApply ; close options_system ; open options"))
+		conditionalScript vidrestartIsRequired 2
+		("open vid_restart")
+			("uiScript systemCvarsApply ; close options_system ; open options"))
 }
