@@ -768,15 +768,16 @@ qboolean Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *
 	if (extended)
 	{
 		font->fontData = Com_Allocate(sizeof(fontInfo_extra_t));
+		Com_Memset(font->fontData, 0, sizeof(fontInfo_extra_t));
 		font->GetGlyph = &Q_UTF8_GetGlyphExtended;
 	}
 	else
 	{
 		font->fontData = Com_Allocate(sizeof(fontInfo_t));
+		Com_Memset(font->fontData, 0, sizeof(fontInfo_t));
 		font->GetGlyph = &Q_UTF8_GetGlyphVanilla;
 	}
 
-	Com_Memset(font->fontData, 0, sizeof(&font->fontData));
 	font_register(fontName, pointSize, font->fontData);
 
 	if (((fontInfo_t *)font->fontData)->glyphs[0].glyph == 0)
