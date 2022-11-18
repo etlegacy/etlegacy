@@ -1915,7 +1915,7 @@ static void CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 
 	cent = &cg_entities[trace.entityNum];
 
-	if (!cent->currentValid)
+	if (!cent || !cent->currentValid)
 	{
 		return;
 	}
@@ -1937,7 +1937,7 @@ static void CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 		cg.identifyClientRequest = cg.crosshairClientNum;
 	}
 
-	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
+	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 	{
 		if (cgs.clientinfo[cg.crosshairClientNum].team == cgs.clientinfo[cg.clientNum].team)
 		{
