@@ -49,6 +49,8 @@ static const char *CG_HudFilePath()
 	if (!filePath[0])
 	{
 		char tmp[MAX_OSPATH];
+
+		tmp[0] = '\0';
 		trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
 		Com_sprintf(filePath, MAX_OSPATH, HUDS_USER_PATH, tmp);
 	}
@@ -61,6 +63,7 @@ static void CG_HudBackupFilePath(char *output, int len)
 	qtime_t ct;
 	char    tmp[MAX_OSPATH];
 
+	tmp[0] = '\0';
 	output[0] = '\0';
 	trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
 	trap_RealTime(&ct);
@@ -1096,6 +1099,10 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 		if (name)
 		{
 			Q_strncpyz(tmpHud.name, name, MAX_QPATH);
+		}
+		else
+		{
+			tmpHud.name[0] = '\0';
 		}
 
 		comps = cJSON_GetObjectItem(hud, "components");

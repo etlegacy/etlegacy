@@ -152,6 +152,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	compIndex = 0;
 	// the Default hud
 	hud->hudnumber        = 0;
+	hud->name[0]          = '\0';
 	hud->crosshair        = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 24, 48), SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
 	hud->compass          = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, 14, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 	hud->staminabar       = CG_getComponent(CG_AdjustXFromHudFile(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
