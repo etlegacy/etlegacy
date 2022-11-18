@@ -6,22 +6,22 @@
 
 assetGlobalDef {
 	// font
-	font		UI_FONT_ARIBLK_16 "ariblk" 16
-	font		UI_FONT_ARIBLK_27 "ariblk" 27
-	font		UI_FONT_COURBD_21 "courbd" 21
-	font		UI_FONT_COURBD_30 "courbd" 30
+	font	UI_FONT_ARIBLK_16 "ariblk" 16
+	font	UI_FONT_ARIBLK_27 "ariblk" 27
+	font	UI_FONT_COURBD_21 "courbd" 21
+	font	UI_FONT_COURBD_30 "courbd" 30
 
 	cursor		"ui/assets/3_cursor3"			// cursor
 	gradientBar "ui/assets/gradientbar1.tga"	// gradient bar
 
 	// sound/misc/menu2.wav is not in path
-	// itemFocusSound "sound/misc/menu2.wav"		// sound for item getting focus (via keyboard or mouse )
+	// itemFocusSound "sound/misc/menu2.wav"	// sound for item getting focus (via keyboard or mouse )
 
-	fadeClamp	1.0							// sets the fadeup alpha
-	fadeCycle	1							// how often fade happens in milliseconds
-	fadeAmount	0.1							// amount to adjust alpha per cycle
+	fadeClamp	1.0	// sets the fadeup alpha
+	fadeCycle	1	// how often fade happens in milliseconds
+	fadeAmount	0.1	// amount to adjust alpha per cycle
 
-	shadowColor 0.1 0.1 0.1 0.25			// shadow color
+	shadowColor 0.1 0.1 0.1 0.25	// shadow color
 }
 
 menuDef {
@@ -95,12 +95,12 @@ menuDef {
 	alwaysontop
 
 	itemDef {
-      	name		"fadebox"
+		name		"fadebox"
 		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
-      	style		WINDOW_STYLE_FILLED
+		style		WINDOW_STYLE_FILLED
  		background	"ui/assets/fadebox.tga"
 		backcolor	0 0 0 0
-      	visible		1
+		visible		1
 		decoration
 	}
 }
