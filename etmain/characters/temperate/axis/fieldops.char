@@ -2,7 +2,7 @@ characterDef
 {
 	skin	"fieldops"
 
-	mesh			"models/players/temperate/axis/cvops/body.mdm"
+	mesh			"models/players/temperate/axis/fieldops/body.mdm"
 	animationgroup	"animations/human_base.anim"
 	animationscript	"animations/scripts/human_base.script"
 
