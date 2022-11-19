@@ -32,6 +32,9 @@ InstallDir "$PROGRAMFILES@CPACK_BITS@\ETLegacy\"
 !include MUI2.nsh
 !include Sections.nsh
 
+!include FileFunc.nsh
+!include LogicLib.nsh
+
 ; Interface configuration
 !define MUI_ICON "${RESOURCE_PATH}\etl.ico"
 !define MUI_UNICON "${RESOURCE_PATH}\etl.ico"
@@ -586,7 +589,7 @@ Function parseParameters
 	StrCpy $option_noShortcuts 1
 FunctionEnd
 
-Funcion processOptions
+Function processOptions
 	${If} $option_noAssets == "1"
 		!insertmacro UnselectSection ASSETS
 	${EndIf}

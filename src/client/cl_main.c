@@ -3037,7 +3037,7 @@ void CL_Init(void)
 	Cvar_Get("cl_maxPing", "800", CVAR_ARCHIVE_ND);
 
 	// ~ and `, as keys and characters
-	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60", CVAR_ARCHIVE);
+	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60 K_NONUSBACKSLASH", CVAR_ARCHIVE);
 
 	Cvar_Get("cg_drawNotifyText", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_quickMessageAlt", "1", CVAR_ARCHIVE);

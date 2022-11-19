@@ -534,7 +534,7 @@ static ID_INLINE float _vmf(intptr_t x)
 }
 #define VMF(x)  _vmf(args[x])
 
-typedef intptr_t (QDECL *VM_EntryPoint_t)( int, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t );
+typedef intptr_t (QDECL *VM_EntryPoint_t)(int, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
 
 /*
 ==============================================================
@@ -995,6 +995,8 @@ void Field_CompleteKeyname(void);
 void Field_CompleteFilenameMultiple(const char *dir, int numext, const char **ext, qboolean allowNonPureFilesOnDisk);
 void Field_CompleteFilename(const char *dir, const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk);
 void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars);
+qboolean Field_CompleteMod();
+void Field_CompleteModSuggestion(char *value);
 
 /*
 ==============================================================
@@ -1185,6 +1187,7 @@ void CL_Disconnect(qboolean showMainMenu);
 void CL_Shutdown(void);
 void CL_Frame(int msec);
 qboolean CL_GameCommand(void);
+qboolean CL_GameCompleteCommand(void);
 void CL_KeyEvent(int key, qboolean down, unsigned time);
 
 void CL_CharEvent(int key);

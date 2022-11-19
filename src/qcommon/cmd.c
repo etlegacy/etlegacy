@@ -680,9 +680,9 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 		while (qtrue)
 		{
 			uint32_t point1 = Q_UTF8_CodePoint(text);
-			int width = Q_UTF8_Width(text);
+			int      width  = Q_UTF8_Width(text);
 
-			if(point1 <= ' ')
+			if (point1 <= ' ')
 			{
 				break;
 			}
@@ -969,6 +969,10 @@ void Cmd_CompleteArgument(const char *command, char *args, int argNum)
 			{
 				cmd->complete(args, argNum);
 			}
+			else if (Field_CompleteMod())
+			{
+				Com_DPrintf(S_COLOR_CYAN "Argument completed via CGAme\n");
+			}
 			return;
 		}
 	}
@@ -1101,7 +1105,7 @@ void Cmd_Init(void)
 {
 	// 'cmdlist' should have alias commands like 'help' or '?' but these are already used in mods :/
 	Cmd_AddCommand("cmdlist", Cmd_List_f, "Prints a list of all available commands.");
-	Cmd_AddCommand("exec", Cmd_Exec_f , "Executes a script file.", Cmd_CompleteCfgName);
+	Cmd_AddCommand("exec", Cmd_Exec_f, "Executes a script file.", Cmd_CompleteCfgName);
 	Cmd_AddCommand("execq", Cmd_Exec_f, "Executes a script file quietly.", Cmd_CompleteCfgName);
 	Cmd_AddCommand("vstr", Cmd_Vstr_f, "Inserts the current value of a variable as command text.", Cvar_CompleteCvarName);
 	Cmd_AddCommand("echo", Cmd_Echo_f, "Prints quoted text to the console and shows a notification if connected to a server.");

@@ -4891,7 +4891,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "RunDemo") == 0)
 		{
-			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
+			if (uiInfo.demos.index < uiInfo.demos.count)
 			{
 				// Is a folder selector
 				if (!uiInfo.demos.items[uiInfo.demos.index].file)
@@ -4929,7 +4929,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "deleteDemo") == 0)
 		{
-			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
+			if (uiInfo.demos.index < uiInfo.demos.count)
 			{
 				if (uiInfo.demos.items[uiInfo.demos.index].file)
 				{

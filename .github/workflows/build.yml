@@ -168,13 +168,12 @@ jobs:
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
-           use_systemd_nspawn: true
-           systemd_nspawn_options: -E CI=${CI}
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
              cd /opt/etlegacy
              git fetch --tags --force
+             export CI=true
              ./easybuild.sh build -RPI -mod -ninja
 
       - uses: actions/upload-artifact@v3
@@ -222,6 +221,7 @@ jobs:
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
           echo "cmake.dir=/opt/cmake/" | tee -a local.properties
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
+          git config --global --add safe.directory $GITHUB_WORKSPACE
           git fetch --tags --force
           ./gradlew clean build
           ls -R
@@ -535,13 +535,12 @@ jobs:
            cpu: cortex-a53
            cpu_info: cpuinfo/raspberrypi_4b
            bind_mount_repository: true
-           use_systemd_nspawn: true
-           systemd_nspawn_options: -E CI=${CI}
            copy_repository_path: /opt/etlegacy
            optimize_image: no
            commands: |
              cd /opt/etlegacy
              git fetch --tags --force
+             export CI=true
              ./easybuild.sh build -RPI -ninja
              cd build
              cp *.pk3 /opt/etlegacy/build/legacy
@@ -600,6 +599,7 @@ jobs:
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
           echo "cmake.dir=/opt/cmake/" | tee -a local.properties
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
+          git config --global --add safe.directory $GITHUB_WORKSPACE
           git fetch --tags --force
           ./gradlew clean assembleRelease
           ls -R

@@ -152,6 +152,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	compIndex = 0;
 	// the Default hud
 	hud->hudnumber        = 0;
+	hud->name[0]          = '\0';
 	hud->crosshair        = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 24, 48), SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
 	hud->compass          = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, 14, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 	hud->staminabar       = CG_getComponent(CG_AdjustXFromHudFile(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
@@ -205,11 +206,11 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 }
 
 /**
- * @brief CG_getHudByNumber
+ * @brief CG_GetHudByNumber
  * @param[in] number
  * @return
  */
-hudStucture_t *CG_getHudByNumber(int number)
+hudStucture_t *CG_GetHudByNumber(int number)
 {
 	int           i;
 	hudStucture_t *hud;
@@ -363,17 +364,23 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 	char         *ptr;
 	char         temp[1024] = { 0 };
 
+	if (!str)
+	{
+		return;
+	}
+
 	Q_strncpyz(temp, str, 1024);
 
 	// count line number and max char legnth
 	ptr = strtok(temp, "\n");
-	while (ptr != NULL)
+	do
 	{
 		lineNumber++;
 		w   = MAX(CG_Text_Width_Ext_Float(ptr, 1.f, 0, font), w);
 		h  += CG_Text_Height_Ext(ptr, 1.f, 0, font);
 		ptr = strtok(NULL, "\n");
 	}
+	while (ptr != NULL);
 
 	scale = CG_ComputeScale(comp /*comp->location.h / lineNumber, comp->scale, font*/);
 
@@ -3270,7 +3277,7 @@ void CG_Hud_Setup(void)
 
 	// Hud0 aka the Default hud
 	CG_setDefaultHudValues(&hud0);
-	activehud = CG_addHudToList(&hud0);
+	activehud = CG_AddHudToList(&hud0);
 
 	// Read the hud files
 	CG_ReadHudsFromFile();
@@ -3320,11 +3327,11 @@ void CG_SetHud(void)
 {
 	if (cg_altHud.integer && activehud->hudnumber != cg_altHud.integer)
 	{
-		activehud = CG_getHudByNumber(cg_altHud.integer);
+		activehud = CG_GetHudByNumber(cg_altHud.integer);
 		if (!activehud)
 		{
 			Com_Printf("^3WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
-			activehud = CG_getHudByNumber(0);
+			activehud = CG_GetHudByNumber(0);
 			trap_Cvar_Set("cg_altHud", "0");
 			return;
 		}
@@ -3337,7 +3344,7 @@ void CG_SetHud(void)
 	}
 	else if (!cg_altHud.integer && activehud->hudnumber)
 	{
-		activehud = CG_getHudByNumber(0);
+		activehud = CG_GetHudByNumber(0);
 	}
 }
 

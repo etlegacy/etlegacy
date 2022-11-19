@@ -37,15 +37,44 @@
 #include "json.h"
 
 #define HUDS_DEFAULT_PATH "ui/huds.hud"
-#define HUDS_USER_PATH "hud.dat"
+#define HUDS_USER_PATH "profiles/%s/hud.dat"
+#define HUDS_USER_BACKUP_PATH "profiles/%s/hud_backup(%s).dat"
 
 static qboolean CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2);
 
+static const char *CG_HudFilePath()
+{
+	static char filePath[MAX_OSPATH] = { 0 };
+
+	if (!filePath[0])
+	{
+		char tmp[MAX_OSPATH];
+
+		tmp[0] = '\0';
+		trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
+		Com_sprintf(filePath, MAX_OSPATH, HUDS_USER_PATH, tmp);
+	}
+
+	return filePath;
+}
+
+static void CG_HudBackupFilePath(char *output, int len)
+{
+	qtime_t ct;
+	char    tmp[MAX_OSPATH];
+
+	tmp[0] = '\0';
+	output[0] = '\0';
+	trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
+	trap_RealTime(&ct);
+	Com_sprintf(output, len, HUDS_USER_BACKUP_PATH, tmp, va("%d-%02d-%02d-%02d%02d%02d", 1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday, ct.tm_hour, ct.tm_min, ct.tm_sec));
+}
+
 /**
- * @brief CG_addHudToList
+ * @brief CG_AddHudToList
  * @param[in] hud
  */
-hudStucture_t *CG_addHudToList(hudStucture_t *hud)
+hudStucture_t *CG_AddHudToList(hudStucture_t *hud)
 {
 	hudStucture_t *out = NULL;
 
@@ -169,7 +198,7 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 
 	if (hud->parent >= 0)
 	{
-		parent = CG_getHudByNumber(hud->parent);
+		parent = CG_GetHudByNumber(hud->parent);
 
 		// check that the parent hud still exists, otherwise mark the hud as "original" and write out all fields.
 		if (!parent)
@@ -357,6 +386,9 @@ qboolean CG_WriteHudsToFile()
 	int           i;
 	hudStucture_t *hud;
 	cJSON         *root, *huds, *hudObj;
+	const char    *hudFilePath;
+
+	hudFilePath = CG_HudFilePath();
 
 	root = cJSON_CreateObject();
 	if (!root)
@@ -379,15 +411,15 @@ qboolean CG_WriteHudsToFile()
 		}
 	}
 
-	if (!Q_FSWriteJSONTo(root, HUDS_USER_PATH))
+	if (!Q_FSWriteJSONTo(root, hudFilePath))
 	{
-		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to save hud to '" HUDS_USER_PATH "'\n");
+		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to save hud to '%s'\n", hudFilePath);
 		cJSON_Delete(root);
 
 		return qfalse;
 	}
 
-	CG_Printf("Saved huds to '" HUDS_USER_PATH "'\n");
+	CG_Printf("Saved huds to '%s'\n", hudFilePath);
 
 	return qtrue;
 }
@@ -713,7 +745,7 @@ static qboolean CG_ParseHUD(int handle)
 
 	if (!parentHud && tempHud.parent >= 0)
 	{
-		parentHud = CG_getHudByNumber(tempHud.parent);
+		parentHud = CG_GetHudByNumber(tempHud.parent);
 	}
 
 	if (loadDefaults)
@@ -786,11 +818,11 @@ static qboolean CG_ParseHUD(int handle)
 		return CG_HUD_ParseError(handle, "Invalid hudnumber value: %i", tempHud.hudnumber);
 	}
 
-	hud = CG_getHudByNumber(tempHud.hudnumber);
+	hud = CG_GetHudByNumber(tempHud.hudnumber);
 
 	if (!hud)
 	{
-		CG_addHudToList(&tempHud);
+		CG_AddHudToList(&tempHud);
 		Com_Printf("...properties for hud %i have been read.\n", tempHud.hudnumber);
 	}
 	else
@@ -1046,7 +1078,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 
 		if (tmpHud.parent >= 0)
 		{
-			parentHud = CG_getHudByNumber(tmpHud.parent);
+			parentHud = CG_GetHudByNumber(tmpHud.parent);
 		}
 
 		tmpHud.hudnumber = Q_ReadIntValueJson(hud, "number");
@@ -1067,6 +1099,10 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 		if (name)
 		{
 			Q_strncpyz(tmpHud.name, name, MAX_QPATH);
+		}
+		else
+		{
+			tmpHud.name[0] = '\0';
 		}
 
 		comps = cJSON_GetObjectItem(hud, "components");
@@ -1128,11 +1164,11 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
 		}
 
-		outHud = CG_getHudByNumber(tmpHud.hudnumber);
+		outHud = CG_GetHudByNumber(tmpHud.hudnumber);
 
 		if (!outHud)
 		{
-			CG_addHudToList(&tmpHud);
+			CG_AddHudToList(&tmpHud);
 			Com_Printf("...properties for hud %i have been read.\n", tmpHud.hudnumber);
 		}
 		else
@@ -1163,13 +1199,69 @@ static qboolean CG_TryReadHudFromFile(const char *filename)
  */
 void CG_ReadHudsFromFile(void)
 {
+	const char *hudFilePath;
+
+	hudFilePath = CG_HudFilePath();
+
 	if (!CG_TryReadHudFromFile(HUDS_DEFAULT_PATH))
 	{
 		Com_Printf("^1ERROR while reading hud file\n");
 	}
 
 	// This needs to be a .dat file to go around the file extension restrictions of the engine.
-	CG_TryReadHudFromFile(HUDS_USER_PATH);
+	if (!CG_TryReadHudFromFile(hudFilePath))
+	{
+		// If the reading of the custom user hud file fails, then it's possible that the hud file is of "old" format
+		// back it up and then remove the file
+		fileHandle_t tmp, backup;
+		byte         *buffer;
+		int          len;
+		qboolean     backupOk = qfalse;
+
+		len = trap_FS_FOpenFile(hudFilePath, &tmp, FS_READ);
+		if (len > 0)
+		{
+			char path[MAX_OSPATH];
+
+			CG_HudBackupFilePath(path, MAX_OSPATH);
+
+			buffer = Com_Allocate(len + 1);
+			if (!buffer)
+			{
+				trap_FS_FCloseFile(tmp);
+				CG_Error("CG_ReadHudsFromFile: Failed to allocate buffer\n");
+				return;
+			}
+
+			trap_FS_Read(buffer, len, tmp);
+			buffer[len] = 0;
+
+			if (trap_FS_FOpenFile(path, &backup, FS_WRITE) < 0)
+			{
+				CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to save huds backup to '%s'\n", path);
+			}
+			else
+			{
+				trap_FS_Write(buffer, len, backup);
+				trap_FS_FCloseFile(backup);
+				backupOk = qtrue;
+				CG_Printf(S_COLOR_CYAN "Backed up users custom hud data to '%s'\n", path);
+			}
+
+			Com_Dealloc(buffer);
+		}
+
+		if (len >= 0)
+		{
+			trap_FS_FCloseFile(tmp);
+		}
+
+		if (backupOk)
+		{
+			trap_FS_Delete(hudFilePath);
+			CG_Printf(S_COLOR_RED "Removed users custom hud file due to invalid format '%s'\n", hudFilePath);
+		}
+	}
 
 	Com_Printf("...hud count: %i\n", hudCount);
 }

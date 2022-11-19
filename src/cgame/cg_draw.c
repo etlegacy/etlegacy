@@ -1915,7 +1915,7 @@ static void CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 
 	cent = &cg_entities[trace.entityNum];
 
-	if (!cent->currentValid)
+	if (!cent || !cent->currentValid)
 	{
 		return;
 	}
@@ -1937,7 +1937,7 @@ static void CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 		cg.identifyClientRequest = cg.crosshairClientNum;
 	}
 
-	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
+	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 	{
 		if (cgs.clientinfo[cg.crosshairClientNum].team == cgs.clientinfo[cg.clientNum].team)
 		{
@@ -2063,7 +2063,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	int      health, maxHealth;
 	float    barFrac;
 	float    zChange;
-	qboolean hitClient = qfalse;
+	qboolean hitClient;
 	int      clientNum, class;
 	float    x = comp->location.x, w = comp->location.w;
 
@@ -2091,17 +2091,18 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		cg.crosshairClientNum    = cg.snap->ps.clientNum;
 		cg.crosshairClientTime   = cg.time;
 		cg.identifyClientRequest = cg.crosshairClientNum;
+        hitClient = qtrue;
 	}
 	else
 	{
 		// scan the known entities to see if the crosshair is sighted on one
 		CG_ScanForCrosshairEntity(&zChange, &hitClient);
-	}
 
-	// world-entity or no-entity
-	if (cg.crosshairClientNum < 0)
-	{
-		return;
+		// world-entity or no-entity
+		if (cg.crosshairClientNum < 0)
+		{
+			return;
+		}
 	}
 
 	// draw the name of the player being looked at
@@ -2113,7 +2114,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.crosshairClientNum >= MAX_CLIENTS)
+	if (!hitClient)
 	{
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
@@ -2259,7 +2260,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	vec4_t     textColor;
 	const char *s = NULL;
 	float      zChange;
-	qboolean   hitClient = qfalse;
+	qboolean   hitClient;
 	int        clientNum = -1;
 
 	if (cg_drawCrosshair.integer < 0)
@@ -2325,17 +2326,18 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		cg.crosshairClientNum    = cg.snap->ps.clientNum;
 		cg.crosshairClientTime   = cg.time;
 		cg.identifyClientRequest = cg.crosshairClientNum;
+        hitClient = qtrue;
 	}
 	else
 	{
 		// scan the known entities to see if the crosshair is sighted on one
 		CG_ScanForCrosshairEntity(&zChange, &hitClient);
-	}
 
-	// world-entity or no-entity
-	if (cg.crosshairClientNum < 0)
-	{
-		return;
+		// world-entity or no-entity
+		if (cg.crosshairClientNum < 0)
+		{
+			return;
+		}
 	}
 
 	// don't draw crosshair names in shoutcast mode
@@ -2346,7 +2348,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.crosshairClientNum >= MAX_CLIENTS)
+	if (!hitClient)
 	{
 		color = CG_FadeColor_Ext(cg.crosshairClientTime, 1000, textColor[3]);
 

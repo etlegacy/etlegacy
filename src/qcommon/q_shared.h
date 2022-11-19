@@ -1940,6 +1940,7 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 
 // functional gate syscall number
 #define COM_TRAP_GETVALUE 700
+#define MOD_EXPORT_PADDING 1337
 
 #ifdef MODLIB
 // This is just a wrapper for getting the string noticed by xgettext

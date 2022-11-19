@@ -4504,6 +4504,11 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
+	if (!ent->client)
+	{
+		return;
+	}
+
 	trap_Argv(1, arg, sizeof(arg));
 	majorSpawn = Q_atoi(arg);
 
@@ -4513,10 +4518,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 		minorSpawn = Q_atoi(arg);
 	}
 
-	if (ent->client)
-	{
-		SetPlayerSpawn(ent, majorSpawn, minorSpawn, qtrue);
-	}
+	SetPlayerSpawn(ent, majorSpawn, minorSpawn, qtrue);
 
 	for (i = 0; i < level.numLimboCams; i++)
 	{
@@ -4525,8 +4527,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 		{
 			spawnPointState = &level.spawnPointStates[targetSpawnPoint];
 			// don't allow checking opposite team's spawn camp
-			if (ent->client &&
-			    ent->client->sess.sessionTeam != TEAM_SPECTATOR &&
+			if (ent->client->sess.sessionTeam != TEAM_SPECTATOR &&
 			    ent->client->sess.sessionTeam != spawnPointState->team)
 			{
 				break;

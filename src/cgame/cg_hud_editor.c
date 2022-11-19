@@ -699,7 +699,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 			}
 		}
 
-		activehud         = CG_addHudToList(CG_getHudByNumber(HUDToDuplicate));
+		activehud         = CG_AddHudToList(CG_GetHudByNumber(HUDToDuplicate));
 		cg_altHud.integer = activehud->hudnumber = num;
 		activehud->parent = HUDToDuplicate;
 		trap_Cvar_Set("cg_altHud", va("%i", num));
@@ -737,7 +737,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 			// Back to default HUD
 			trap_Cvar_Set("cg_altHud", "0");
 			cg_altHud.integer = 0;
-			activehud         = CG_getHudByNumber(0);
+			activehud         = CG_GetHudByNumber(0);
 		}
 	}
 
@@ -1574,7 +1574,7 @@ static void CG_ResetComponent()
 		hudComponent_t *defaultComp;
 
 		comp        = (hudComponent_t *)((char *)activehud + hudComponentFields[lastFocusComponent->data[0]].offset);
-		defaultComp = (hudComponent_t *)((char *)CG_getHudByNumber(0) + hudComponentFields[lastFocusComponent->data[0]].offset);
+		defaultComp = (hudComponent_t *)((char *) CG_GetHudByNumber(0) + hudComponentFields[lastFocusComponent->data[0]].offset);
 
 		Com_Memcpy(comp, defaultComp, sizeof(hudComponent_t));
 

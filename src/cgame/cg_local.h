@@ -3382,6 +3382,7 @@ char *CG_SpawnTimerText(void);
 // cg_consolecmds.c
 extern const char *aMonths[12];
 qboolean CG_ConsoleCommand(void);
+qboolean CG_ConsoleCompleteArgument(void);
 void CG_InitConsoleCommands(void);
 void CG_ScoresDown_f(void);
 void CG_ScoresUp_f(void);
@@ -3437,6 +3438,12 @@ typedef struct
 	const char *cmd;
 	void (*function)(void);
 } consoleCommand_t;
+
+typedef struct
+{
+	const char *cmd;
+	void (*complete)(void);
+} commandComplete_t;
 
 // cg_playerstate.c
 void CG_Respawn(qboolean revived);
@@ -3693,12 +3700,12 @@ int trap_R_GetTextureId(const char *name);
 void trap_R_Finish(void);
 
 // extension interface
-extern qboolean flashWindowSupported;
-
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_SysFlashWindow(int state);
+void trap_CommandComplete(char *value);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
+extern int dll_trap_CommandComplete;
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 
@@ -4092,10 +4099,12 @@ void CG_DeActivateCameraEditor(void);
 void CG_ClearCamera(void);
 void CG_CameraAddCurrentPoint(void);
 void CG_AddControlPoint(void);
-void CG_PlayCurrentCamera(int seconds);
+void CG_PlayCurrentCamera(unsigned int seconds);
 
 void CG_RunCamera(void);
 void CG_RenderCameraPoints(void);
+
+void CG_CameraCommandComplete(void);
 
 // hitsounds flags
 /**
@@ -4228,8 +4237,8 @@ typedef struct
 } hudComponentFields_t;
 
 hudStucture_t *CG_GetActiveHUD();
-hudStucture_t *CG_addHudToList(hudStucture_t *hud);
-hudStucture_t *CG_getHudByNumber(int number);
+hudStucture_t *CG_AddHudToList(hudStucture_t *hud);
+hudStucture_t *CG_GetHudByNumber(int number);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
 

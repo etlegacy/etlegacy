@@ -2963,13 +2963,15 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, const char 
 		*numfiles = 0;
 		return NULL;
 	}
+
 	if (!extension)
 	{
 		extension = "";
 	}
 
 	pathLength = strlen(path);
-	if (path[pathLength - 1] == '\\' || path[pathLength - 1] == '/')
+
+	if (pathLength > 0 && (path[pathLength - 1] == '\\' || path[pathLength - 1] == '/'))
 	{
 		pathLength--;
 	}

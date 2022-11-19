@@ -278,7 +278,7 @@ qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCo
 		return qfalse;
 	}
 
-	if (pszCommand && dwCommand >= 0 && dwCommand < ARRAY_LEN(aCommandInfo))
+	if (pszCommand && dwCommand < ARRAY_LEN(aCommandInfo))
 	{
 		CP(va("print \"\n^3%s%s\n\n\"", pszCommand, aCommandInfo[dwCommand].pszHelpInfo));
 		return qtrue;
@@ -329,7 +329,7 @@ void G_noTeamControls(gentity_t *ent)
  */
 void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	int i, rows, num_cmds;
+	unsigned int i, rows, num_cmds;
 
 	if (trap_Argc() > 1)
 	{

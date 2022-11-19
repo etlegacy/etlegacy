@@ -120,6 +120,15 @@ qboolean CL_GameCommand(void)
 }
 
 /**
+ * @brief CL_GameCompleteCommand
+ * @return
+ */
+qboolean CL_GameCompleteCommand(void)
+{
+	return qfalse;
+}
+
+/**
  * @brief CL_KeyEvent
  * @param key  - unused
  * @param down - unused

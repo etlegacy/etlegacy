@@ -170,12 +170,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 
 	// draw name limit 20 chars
 	Q_ColorizeString(player->health < 0 ? '9' : '7', player->cleanname, name, MAX_NAME_LENGTH + 2);
-	textWidth  = CG_Text_Width_Ext(name, 0.16f, 0, FONT_TEXT);
 	textHeight = CG_Text_Height_Ext(name, 0.16f, 0, FONT_TEXT);
-	if (textWidth > 116)
-	{
-		textWidth = 116;
-	}
 	CG_Text_Paint_Ext(x + PLAYER_LIST_STATUS_WIDTH + 1, y + (PLAYER_LIST_HEIGHT / 4) + (textHeight / 2), 0.16f, 0.16f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	// draw follow bind

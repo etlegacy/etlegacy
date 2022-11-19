@@ -2438,6 +2438,35 @@ qboolean CG_ConsoleCommand(void)
 	return qfalse;
 }
 
+static commandComplete_t completeFuncs[] =
+{
+	{ "camera", CG_CameraCommandComplete },
+	{ NULL,     NULL                     }
+};
+
+qboolean CG_ConsoleCompleteArgument(void)
+{
+	const char *baseCmd;
+	int        i;
+
+	baseCmd = CG_Argv(0);
+	if (baseCmd[0] == '\\' || baseCmd[0] == '/')
+	{
+		baseCmd++;
+	}
+
+	for (i = 0; completeFuncs[i].cmd; i++)
+	{
+		if (!Q_stricmp(baseCmd, completeFuncs[i].cmd))
+		{
+			completeFuncs[i].complete();
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
 /**
  * @brief Let the client system know about all of our commands so it can perform tab
  * completion
