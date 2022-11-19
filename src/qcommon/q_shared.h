@@ -118,7 +118,7 @@
 #define UNUSED_VAR
 #endif
 
-#if (defined _MSC_VER)
+#if (defined _MSC_VER) || (defined __MINGW32__) || (defined __MINGW64__)
 #define Q_EXPORT __declspec(dllexport)
 #elif (defined __SUNPRO_C)
 #define Q_EXPORT __global
