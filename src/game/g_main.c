@@ -49,6 +49,8 @@
 #define Q_OSS_STR_INC
 #include "../qcommon/q_oss.h"
 
+#include "json.h"
+
 level_locals_t level;
 
 typedef struct
@@ -80,6 +82,8 @@ const char *gameNames[] =
 	"Map Voting"            // GT_WOLF_MAPVOTE
 	// GT_MAX_GAME_TYPE
 };
+
+#define MAPVOTEINFO_FILE_NAME "mapvoteinfo.txt"
 
 #ifdef FEATURE_OMNIBOT
 vmCvar_t g_OmniBotPath;
@@ -5448,100 +5452,36 @@ void G_WriteConfigFileString(const char *s, fileHandle_t f)
  */
 void G_MapVoteInfoWrite()
 {
-	fileHandle_t f;
-	int          i, count = 0;
+	cJSON *root;
+	int   i, count = 0;
 
-	trap_FS_FOpenFile("mapvoteinfo.txt", &f, FS_WRITE);
+	Q_JSONInit();
+
+	root = cJSON_CreateObject();
+	if (!root)
+	{
+		Com_Error(ERR_FATAL, "G_MapVoteInfoWrite: Could not allocate memory for session data\n");
+	}
 
 	for (i = 0; i < MAX_VOTE_MAPS; ++i)
 	{
 		if (level.mapvoteinfo[i].bspName[0])
 		{
-			trap_FS_Write("[mapvoteinfo]\n", 14, f);
+			cJSON *map = cJSON_AddObjectToObject(root, level.mapvoteinfo[i].bspName);
 
-			trap_FS_Write("name             = ", 19, f);
-			G_WriteConfigFileString(level.mapvoteinfo[i].bspName, f);
-			trap_FS_Write("times_played     = ", 19, f);
-			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].timesPlayed), f);
-			trap_FS_Write("last_played      = ", 19, f);
-			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].lastPlayed), f);
-			trap_FS_Write("total_votes      = ", 19, f);
-			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].totalVotes), f);
-			trap_FS_Write("vote_eligible    = ", 19, f);
-			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].voteEligible), f);
-
-			trap_FS_Write("\n", 1, f);
+			cJSON_AddNumberToObject(map, "timesPlayed", level.mapvoteinfo[i].timesPlayed);
+			cJSON_AddNumberToObject(map, "lastPlayed", level.mapvoteinfo[i].lastPlayed);
+			cJSON_AddNumberToObject(map, "totalVotes", level.mapvoteinfo[i].totalVotes);
+			cJSON_AddNumberToObject(map, "voteEligible", level.mapvoteinfo[i].voteEligible);
 			count++;
 		}
 	}
-	G_Printf("mapvoteinfo: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
+	G_Printf("G_MapVoteInfoWrite: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
 
-	trap_FS_FCloseFile(f);
-}
-
-/**
- * @brief G_ReadConfigFileString
- * @param[in] cnf
- * @param[out] s
- * @param[in] size
- */
-void G_ReadConfigFileString(char **cnf, char *s, size_t size)
-{
-	char *t;
-
-	t = COM_ParseExt(cnf, qfalse);
-	if (!strcmp(t, "="))
+	if (!Q_FSWriteJSONTo(root, MAPVOTEINFO_FILE_NAME))
 	{
-		t = COM_ParseExt(cnf, qfalse);
+		Com_Error(ERR_FATAL, "G_MapVoteInfoWrite : Could not write map vote information\n");
 	}
-	else
-	{
-		G_Printf("G_ReadConfigFileString: warning missing = before "
-		         "\"%s\" on line %d\n",
-		         t,
-		         COM_GetCurrentParseLine());
-	}
-	s[0] = '\0';
-	while (t[0])
-	{
-		if ((s[0] == '\0' && strlen(t) <= size) ||
-		    (strlen(t) + strlen(s) < size))
-		{
-
-			Q_strcat(s, size, t);
-			Q_strcat(s, size, " ");
-		}
-		t = COM_ParseExt(cnf, qfalse);
-	}
-	// trim the trailing space
-	if (strlen(s) > 0 && s[strlen(s) - 1] == ' ')
-	{
-		s[strlen(s) - 1] = '\0';
-	}
-}
-
-/**
- * @brief G_ReadConfigFileInt
- * @param[in] cnf
- * @param[out] v
- */
-void G_ReadConfigFileInt(char **cnf, int *v)
-{
-	char *t;
-
-	t = COM_ParseExt(cnf, qfalse);
-	if (!strcmp(t, "="))
-	{
-		t = COM_ParseExt(cnf, qfalse);
-	}
-	else
-	{
-		G_Printf("G_ReadConfigFileInt: warning missing = before "
-		         "\"%s\" on line %d\n",
-		         t,
-		         COM_GetCurrentParseLine());
-	}
-	*v = Q_atoi(t);
 }
 
 /**
@@ -5549,90 +5489,37 @@ void G_ReadConfigFileInt(char **cnf, int *v)
  */
 void G_MapVoteInfoRead()
 {
-	fileHandle_t f;
-	int          i;
-	int          curMap = -1;
-	int          len;
-	char         *cnf, *cnf2;
-	char         *t;
-	char         bspName[128];
+	cJSON *root;
+	int   i = 0;
 
-	len = trap_FS_FOpenFile("mapvoteinfo.txt", &f, FS_READ) ;
+	root = Q_FSReadJsonFrom(MAPVOTEINFO_FILE_NAME);
 
-	if (len < 0)
+	if (!root)
 	{
-		trap_FS_FCloseFile(f);
-		G_Printf("G_MapVoteInfoRead: could not open mapvoteinfo.txt file\n");
+		G_Printf("G_MapVoteInfoRead: could not open %s file\n", MAPVOTEINFO_FILE_NAME);
 		return;
 	}
 
-	cnf = Com_Allocate(len + 1);
-
-	if (cnf == NULL)
+	for (i = 0; i < level.mapVoteNumMaps; i++)
 	{
-		trap_FS_FCloseFile(f);
-		G_Printf("G_MapVoteInfoRead: memory allocation error for mapvoteinfo.txt data\n");
-		return;
-	}
+		cJSON *map = cJSON_GetObjectItem(root, level.mapvoteinfo[i].bspName);
 
-	cnf2 = cnf;
-	trap_FS_Read(cnf, len, f);
-	*(cnf + len) = '\0';
-	trap_FS_FCloseFile(f);
-
-	COM_BeginParseSession("MapvoteinfoRead");
-
-	t = COM_Parse(&cnf);
-	while (t[0])
-	{
-		if (!Q_stricmp(t, "name"))
+		if (map)
 		{
-			G_ReadConfigFileString(&cnf, bspName, sizeof(bspName));
-			curMap = -1;
-			for (i = 0; i < level.mapVoteNumMaps; i++)
-			{
-				if (!Q_stricmp(bspName, level.mapvoteinfo[i].bspName))
-				{
-					curMap = i;
-					break;
-				}
-			}
+			level.mapvoteinfo[i].timesPlayed  = Q_ReadIntValueJson(map, "timesPlayed");
+			level.mapvoteinfo[i].lastPlayed   = Q_ReadIntValueJson(map, "lastPlayed");
+			level.mapvoteinfo[i].totalVotes   = Q_ReadIntValueJson(map, "totalVotes");
+			level.mapvoteinfo[i].voteEligible = Q_ReadIntValueJson(map, "voteEligible");
 		}
-		if (curMap != -1)
+		else
 		{
-			if (!Q_stricmp(t, "times_played"))
-			{
-				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].timesPlayed);
-			}
-			else if (!Q_stricmp(t, "last_played"))
-			{
-				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].lastPlayed);
-			}
-			else if (!Q_stricmp(t, "total_votes"))
-			{
-				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].totalVotes);
-			}
-			else if (!Q_stricmp(t, "vote_eligible"))
-			{
-				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].voteEligible);
-			}
-			else if (!Q_stricmp(t, "[mapvoteinfo]"))
-			{
-				// do nothing for the moment
-			}
-			else if (!t[0])
-			{
-				// do nothing for another moment (empty token)
-			}
-			else
-			{
-				G_Printf("G_MapVoteInfoRead: [mapvoteinfo] parse error near '%s' on line %i\n", t, COM_GetCurrentParseLine());
-			}
+			level.mapvoteinfo[i].timesPlayed  = 0;
+			level.mapvoteinfo[i].lastPlayed   = -1;
+			level.mapvoteinfo[i].totalVotes   = 0;
+			level.mapvoteinfo[i].voteEligible = 0;
 		}
-		t = COM_Parse(&cnf);
 	}
-
-	Com_Dealloc(cnf2);
+	cJSON_Delete(root);
 }
 
 void G_ParsePlatformManifest(void)
