@@ -5428,26 +5428,6 @@ void G_RunFrame(int levelTime)
 // MAPVOTE
 
 /**
- * @brief G_WriteConfigFileString
- * @param[in] s
- * @param[in] f
- */
-void G_WriteConfigFileString(const char *s, fileHandle_t f)
-{
-	if (s[0])
-	{
-		char buf[MAX_STRING_CHARS];
-
-		buf[0] = '\0';
-
-		//Q_strcat(buf, sizeof(buf), s);
-		Q_strncpyz(buf, s, sizeof(buf));
-		trap_FS_Write(buf, strlen(buf), f);
-	}
-	trap_FS_Write("\n", 1, f);
-}
-
-/**
  * @brief G_MapVoteInfoWrite
  */
 void G_MapVoteInfoWrite()
