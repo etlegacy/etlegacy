@@ -444,6 +444,20 @@ static long FS_HashFileName(const char *fname, int hashSize)
 	return hash;
 }
 
+static void FS_PrintOpenHandles_f(void)
+{
+	int i;
+
+	Com_Printf(S_COLOR_GREEN "Open file handles\n");
+	for (i = 0 ; i < MAX_FILE_HANDLES ; i++)
+	{
+		if (fsh[i].handleFiles.file.o != NULL)
+		{
+			Com_Printf(S_COLOR_MAGENTA "    handle %i: %s\n", i, fsh[i].name);
+		}
+	}
+}
+
 /**
  * @brief FS_HandleForFile
  * @return
@@ -459,6 +473,10 @@ static fileHandle_t FS_HandleForFile(void)
 			return i;
 		}
 	}
+#ifdef DEDICATED
+	FS_PrintOpenHandles_f();
+#endif
+
 	Com_Error(ERR_DROP, "FS_HandleForFile: none free");
 
 	return 0;
@@ -4470,6 +4488,7 @@ static void FS_Startup(const char *gameName)
 	Cmd_AddCommand("fdir", FS_NewDir_f, "Prints a filtered directory.");
 	Cmd_AddCommand("touchFile", FS_TouchFile_f, "Simulates the 'touch' unix command.");
 	Cmd_AddCommand("which", FS_Which_f, "Searches for a given file.");
+	Cmd_AddCommand("fs_printOpen", FS_PrintOpenHandles_f, "Dump a list of all open files.");
 
 	// reorder the pure pk3 files according to server order
 	FS_ReorderPurePaks();
