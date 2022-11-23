@@ -23,6 +23,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)
 include(CMakeDependentOption)
 
+include(cmake/ETLBanner.cmake)
+print_header()
+
 # We need to add the macros & Functions before any other includes
 include(cmake/ETLFunctions.cmake)
 
