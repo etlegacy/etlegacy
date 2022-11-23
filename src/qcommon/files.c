@@ -4263,6 +4263,7 @@ void FS_Shutdown(qboolean closemfp)
 	Cmd_RemoveCommand("fdir");
 	Cmd_RemoveCommand("touchFile");
 	Cmd_RemoveCommand("which");
+	Cmd_RemoveCommand("fs_printOpen");
 
 #ifdef FS_MISSING
 	if (closemfp)
