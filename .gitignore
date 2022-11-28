@@ -76,6 +76,7 @@ package-lock.json
 .gradle/
 .idea/
 app/.externalNativeBuild/
+app/.cxx
 app/build/
 build/
 gradle/
