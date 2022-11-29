@@ -2296,9 +2296,9 @@ static void CG_ShowEditComponentHelp()
 	char *str = NULL;
 
 	CG_Printf("^3edit component usage :\n"
-              "\"save\"\n"
-              "\"clone|delete\" <hudnumber>\n"
-              "<compname> <field> <value> [ <field2> <value2> <field3> <value3> ... ]");
+	          "\"save\"\n"
+	          "\"clone|delete\" <hudnumber>\n"
+	          "<compname> <field> <value> [ <field2> <value2> <field3> <value3> ... ]");
 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
@@ -2318,7 +2318,7 @@ static void CG_ShowEditComponentHelp()
 }
 
 /**
- * @brief CG_EditCoponent_f
+ * @brief CG_EditComponent_f
  */
 static void CG_EditComponent_f(void)
 {
@@ -2413,6 +2413,26 @@ static void CG_EditComponent_f(void)
 		{
 			CG_Printf("^1 Cannot find field name: %s\n", token);
 			return;
+		}
+	}
+}
+
+static void CG_EditHudComponentComplete(void)
+{
+	int i;
+	int count = trap_Argc();
+
+	if (count < 3)
+	{
+		trap_CommandComplete("help");
+		trap_CommandComplete("save");
+		trap_CommandComplete("clone");
+		trap_CommandComplete("delete");
+
+
+		for (i = 0; hudComponentFields[i].name; i++)
+		{
+			trap_CommandComplete(hudComponentFields[i].name);
 		}
 	}
 }
@@ -2696,8 +2716,9 @@ qboolean CG_ConsoleCommand(void)
 
 static commandComplete_t completeFuncs[] =
 {
-	{ "camera", CG_CameraCommandComplete },
-	{ NULL,     NULL                     }
+	{ "camera",        CG_CameraCommandComplete    },
+	{ "editcomponent", CG_EditHudComponentComplete },
+	{ NULL,            NULL                        }
 };
 
 qboolean CG_ConsoleCompleteArgument(void)
