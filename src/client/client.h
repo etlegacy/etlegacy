@@ -280,6 +280,7 @@ extern clientConnection_t clc;
 
 //==================================================================
 
+#ifdef __ANDROID__
 typedef struct
 {
 	JNIEnv *env;                                ///< Java Enviroment Entry
@@ -291,6 +292,7 @@ typedef struct
 	qboolean f_boolean;                         ///< In this case variable is boolean type and we change value of it
 
 } clientJavainterface_t;
+#endif
 
 //==================================================================
 
