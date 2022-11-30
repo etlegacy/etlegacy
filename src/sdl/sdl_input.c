@@ -37,9 +37,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef __ANDROID__
-#include <jni.h>
-#endif
 
 #include "../client/client.h"
 #include "../sys/sys_local.h"
@@ -1405,47 +1402,48 @@ void IN_Frame(void)
 
 #ifdef __ANDROID__
 
-	JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
+	clientJavainterface_t cjv;
+	cjv.env = (JNIEnv *) SDL_AndroidGetJNIEnv();
 
-	if (env == NULL)
+	if (cjv.env == NULL)
 	{
 		return;
 	}
 
-	jobject activity = (jobject)SDL_AndroidGetActivity();
+	cjv.activity = (jobject)SDL_AndroidGetActivity();
 
-	if (activity == NULL)
+	if (cjv.activity == NULL)
 	{
 		return;
 	}
 
-	jclass clazz = (*env)->GetObjectClass(env, activity);
+	cjv.clazz = (*cjv.env)->GetObjectClass(cjv.env, cjv.activity);
 
-	if (clazz == NULL)
+	if (cjv.clazz == NULL)
 	{
 		return;
 	}
 
-	jfieldID f_id      = (*env)->GetStaticFieldID(env, clazz, "UiMenu", "Z");
-	qboolean f_boolean = (*env)->GetStaticBooleanField(env, clazz, f_id);
+	cjv.f_id      = (*cjv.env)->GetStaticFieldID(cjv.env, cjv.clazz, "UiMenu", "Z");
+	cjv.f_boolean = (*cjv.env)->GetStaticBooleanField(cjv.env, cjv.clazz, cjv.f_id);
 
 	if (cls.state == CA_ACTIVE)
 	{
-		if (f_boolean != qtrue)
+		if (cjv.f_boolean != qtrue)
 		{
-			(*env)->SetStaticBooleanField(env, clazz, f_id, qtrue);
+			(*cjv.env)->SetStaticBooleanField(cjv.env, cjv.clazz, cjv.f_id, qtrue);
 		}
 	}
 	else
 	{
-		if (f_boolean != qfalse)
+		if (cjv.f_boolean != qfalse)
 		{
-			(*env)->SetStaticBooleanField(env, clazz, f_id, qfalse);
+			(*cjv.env)->SetStaticBooleanField(cjv.env, cjv.clazz, cjv.f_id, qfalse);
 		}
 	}
 
-	(*env)->DeleteLocalRef(env, clazz);
-	(*env)->DeleteLocalRef(env, activity);
+	(*cjv.env)->DeleteLocalRef(cjv.env, cjv.clazz);
+	(*cjv.env)->DeleteLocalRef(cjv.env, cjv.activity);
 
 #endif // __ANDROID__
 
