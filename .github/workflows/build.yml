@@ -231,8 +231,8 @@ jobs:
         with:
           name: android-mod
           path: |
-            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libcgame*.so
-            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libui*.so
+            app/build/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libcgame*.so
+            app/build/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libui*.so
 
 
 #   __  __                                                          _
