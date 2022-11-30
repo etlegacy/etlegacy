@@ -48,6 +48,10 @@
 	#include "../irc/irc_client.h"
 #endif
 
+#ifdef __ANDROID__
+#include <jni.h>
+#endif
+
 #define RETRANSMIT_TIMEOUT  3000    ///< time between connection packet retransmits
 
 #define LIMBOCHAT_WIDTH     140     ///< NOTE: buffer size indicator, not related to screen bbox
@@ -273,6 +277,20 @@ typedef struct
 } clientConnection_t;
 
 extern clientConnection_t clc;
+
+//==================================================================
+
+typedef struct
+{
+	JNIEnv *env;                                ///< Java Enviroment Entry
+	
+	jobject activity;                           ///< Activity object
+	jclass clazz;                               ///< Object Class
+	jfieldID f_id;                              ///< Variable field
+	
+	qboolean f_boolean;                         ///< In this case variable is boolean type and we change value of it
+
+} clientJavainterface_t;
 
 //==================================================================
 
