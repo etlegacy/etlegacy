@@ -63,11 +63,12 @@ void CL_GetGameState(gameState_t *gs)
 
 /**
  * @brief CL_GetGlconfig
- * @param[out] glconfig
+ * @param[out] config
  */
-void CL_GetGlconfig(glconfig_t *glconfig)
+void CL_GetGlconfig(glconfig_t *config)
 {
-	*glconfig = cls.glconfig;
+	// make sure we are only copying over vanilla data
+	memcpy(config, &cls.glconfig, offsetof(glconfig_t, smpActive) + sizeof(qboolean));
 }
 
 /**

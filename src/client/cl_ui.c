@@ -926,7 +926,8 @@ qboolean LAN_ServerIsInFavoriteList(int source, int n)
  */
 static void CL_GetGlconfig(glconfig_t *config)
 {
-	*config = cls.glconfig;
+	// make sure we are only copying over vanilla data
+	memcpy(config, &cls.glconfig, offsetof(glconfig_t, smpActive) + sizeof(qboolean));
 }
 
 /**
