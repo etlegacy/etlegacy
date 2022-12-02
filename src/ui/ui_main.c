@@ -8556,7 +8556,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 
 	trap_Cvar_Set("ui_menuFiles", "ui/menus.txt");   // we need to hardwire for wolfMP
 
-	// cache redundant calulations
+	// cache redundant calculations
 	trap_GetGlconfig(&uiInfo.uiDC.glconfig);
 
 	UI_ParseGLConfig();

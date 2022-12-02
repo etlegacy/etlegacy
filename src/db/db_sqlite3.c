@@ -68,21 +68,21 @@ qboolean isDBActive;
 
 const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 {
-		// version 1
-		"CREATE TABLE IF NOT EXISTS etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);"  // both
-		"CREATE TABLE IF NOT EXISTS rating_users (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, created TEXT, updated TEXT, UNIQUE (guid));"     // server table
-		"CREATE TABLE IF NOT EXISTS rating_match (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, time_axis INT, time_allies INT, UNIQUE (guid));" // server table
-		"CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));",                  // server table
-		// version 2
-		"CREATE TABLE IF NOT EXISTS prestige_users (guid TEXT PRIMARY KEY NOT NULL, prestige INT, streak INT, skill0 INT, skill1 INT, skill2 INT, skill3 INT, skill4 INT, skill5 INT, skill6 INT, created TEXT, updated TEXT, UNIQUE (guid));" // server table
-		"CREATE TABLE IF NOT EXISTS xpsave_users (guid TEXT PRIMARY KEY NOT NULL, skills BLOB NOT NULL, medals BLOB NOT NULL, created TEXT, updated TEXT, UNIQUE (guid));" // server table
+	// version 1
+	"CREATE TABLE IF NOT EXISTS etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);"      // both
+	"CREATE TABLE IF NOT EXISTS rating_users (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, created TEXT, updated TEXT, UNIQUE (guid));"         // server table
+	"CREATE TABLE IF NOT EXISTS rating_match (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, time_axis INT, time_allies INT, UNIQUE (guid));"     // server table
+	"CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));",                      // server table
+	// version 2
+	"CREATE TABLE IF NOT EXISTS prestige_users (guid TEXT PRIMARY KEY NOT NULL, prestige INT, streak INT, skill0 INT, skill1 INT, skill2 INT, skill3 INT, skill4 INT, skill5 INT, skill6 INT, created TEXT, updated TEXT, UNIQUE (guid));"     // server table
+	"CREATE TABLE IF NOT EXISTS xpsave_users (guid TEXT PRIMARY KEY NOT NULL, skills BLOB NOT NULL, medals BLOB NOT NULL, created TEXT, updated TEXT, UNIQUE (guid));"     // server table
 
-		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME);"
-		"CREATE INDEX IF NOT EXISTS client_servers_profile_idx ON client_servers(profile);"
-		"CREATE INDEX IF NOT EXISTS client_servers_address_idx ON client_servers(address);" // client table
+	"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME);"
+	"CREATE INDEX IF NOT EXISTS client_servers_profile_idx ON client_servers(profile);"
+	"CREATE INDEX IF NOT EXISTS client_servers_address_idx ON client_servers(address);"     // client table
 
-		// Version 3
-		// ...
+	// Version 3
+	// ...
 };
 
 /*
@@ -105,12 +105,12 @@ qboolean DB_Init(void)
 	char *to_ospath;
 	int  msec;
 
-	if(db)
-    {
-	    Com_Printf("Database has already been initialized but not closed properly. Closing now.\n");
-	    sqlite3_close(db);
-	    db = NULL;
-    }
+	if (db)
+	{
+		Com_Printf("Database has already been initialized but not closed properly. Closing now.\n");
+		sqlite3_close(db);
+		db = NULL;
+	}
 
 	Com_Printf("----- Database Initialization --\n");
 
@@ -175,7 +175,7 @@ qboolean DB_Init(void)
 			{
 				Com_Printf("... failed to share memory database - error: %s\n", sqlite3_errstr(result));
 				(void) sqlite3_close(db);
-                db = NULL;
+				db = NULL;
 				return qfalse;
 			}
 			else
@@ -233,7 +233,7 @@ qboolean DB_Init(void)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: SQLite3 ETL: update failed\n");
 		(void) sqlite3_close(db);
-        db = NULL;
+		db         = NULL;
 		isDBActive = qfalse;
 		return qfalse;
 	}
@@ -245,7 +245,7 @@ qboolean DB_Init(void)
 		{
 			Com_Printf(S_COLOR_YELLOW "WARNING: can't save memory database file\n");
 			(void) sqlite3_close(db);
-            db = NULL;
+			db         = NULL;
 			isDBActive = qfalse;
 			return qfalse;
 		}
@@ -287,7 +287,7 @@ static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
 		}
 		else
 		{
-			sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i', '%s', CURRENT_TIMESTAMP);", i + 1 , i + 1, sql_Version_Statements[i]);
+			sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i', '%s', CURRENT_TIMESTAMP);", i + 1, i + 1, sql_Version_Statements[i]);
 		}
 
 		result = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -316,7 +316,7 @@ static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
  */
 int DB_CallbackVersion(UNUSED_VAR void *NotUsed, int argc, char **argv, char **azColName)
 {
-	int       i;
+	int i;
 
 	for (i = 0; i < argc; i++)
 	{
@@ -333,7 +333,7 @@ int DB_CallbackVersion(UNUSED_VAR void *NotUsed, int argc, char **argv, char **a
  */
 qboolean DB_CheckUpdates(void)
 {
-	int version = 0;
+	int          version = 0;
 	char         *sql;
 	int          result;
 	sqlite3_stmt *res;
@@ -375,7 +375,7 @@ qboolean DB_CheckUpdates(void)
 			return qfalse;
 		}
 
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), va("%s%i.old", db_uri->string, version), "");
+		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), va("%s%i.old", db_uri->string, version), "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		result = DB_LoadOrSaveDb(db, to_ospath, 1);
@@ -402,7 +402,7 @@ qboolean DB_CheckUpdates(void)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: database update can't find a valid schema. Game and database are not in sync!\n");
 	}
-	else 	// downgrade case ... we can't ensure a working system
+	else    // downgrade case ... we can't ensure a working system
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: database update has detected an unknown schema #%i. Game and database are not in sync!\n", version);
 	}
@@ -470,7 +470,7 @@ qboolean DB_Create(void)
 			return qfalse;
 		}
 
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
+		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		result = sqlite3_open_v2(to_ospath, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), NULL);
@@ -529,7 +529,7 @@ qboolean DB_SaveMemDB(void)
 			return qfalse;
 		}
 
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
+		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		msec = Sys_Milliseconds();
@@ -576,7 +576,7 @@ qboolean DB_DeInit(void)
 	}
 
 	result     = sqlite3_close(db);
-    db         = NULL;
+	db         = NULL;
 	isDBActive = qfalse;
 
 	if (result != SQLITE_OK)
