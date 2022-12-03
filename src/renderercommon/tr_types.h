@@ -76,7 +76,7 @@
 
 #define RDF_UNDERWATER      (1 << 4)    ///< so the renderer knows to use underwater fog when the player is underwater
 #define RDF_DRAWINGSKY      (1 << 5)
-#define RDF_SNOOPERVIEW     (1 << 6)	// night vision device
+#define RDF_SNOOPERVIEW     (1 << 6)    // night vision device
 
 // renderer2 BEGIN
 #define REFENTITYNUM_BITS   10          ///< can't be increased without changing drawsurf bit packing
@@ -474,7 +474,7 @@ typedef struct
 	qboolean smpActive;                     ///< obsolete, kept for compatibility
 
 	// ------------------ Cutoff line for Vanilla glConfig, do not add anything above for compatibility. ------------
-
+#ifndef MODLIB
 	// OpenGL shading lang version
 	char shadingLanguageVersion[MAX_STRING_CHARS];
 	int glslMajorVersion;
@@ -485,6 +485,7 @@ typedef struct
 
 	// The real window width and height (without render scaling)
 	int windowWidth, windowHeight;
+#endif
 } glconfig_t;
 
 /**
