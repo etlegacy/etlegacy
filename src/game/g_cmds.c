@@ -4296,8 +4296,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		return qfalse;
 	}
 
-	// Prevent possible cheating, as well as annoying push after revive and spawning
-	if (ent->client->ps.powerups[PW_INVULNERABLE])
+	// Prevent boosting players who have shield
+	if (victim->client->ps.powerups[PW_INVULNERABLE])
 	{
 		return qfalse;
 	}
