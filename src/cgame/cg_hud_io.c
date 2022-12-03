@@ -36,7 +36,6 @@
 #include "cg_local.h"
 #include "json.h"
 
-#define HUDS_DEFAULT_PATH "ui/huds.hud"
 #define HUDS_USER_PATH "profiles/%s/hud.dat"
 #define HUDS_USER_BACKUP_PATH "profiles/%s/hud_backup(%s).dat"
 
@@ -1202,11 +1201,6 @@ void CG_ReadHudsFromFile(void)
 	const char *hudFilePath;
 
 	hudFilePath = CG_HudFilePath();
-
-	if (!CG_TryReadHudFromFile(HUDS_DEFAULT_PATH))
-	{
-		Com_Printf("^1ERROR while reading hud file\n");
-	}
 
 	// This needs to be a .dat file to go around the file extension restrictions of the engine.
 	if (!CG_TryReadHudFromFile(hudFilePath))
