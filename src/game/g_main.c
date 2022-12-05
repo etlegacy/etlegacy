@@ -3535,9 +3535,24 @@ void BeginIntermission(void)
 			maxMaps = level.mapVoteNumMaps;
 		}
 
-		for (i = 0; i < maxMaps; ++i)
+		for (i = 0; i < level.mapVoteNumMaps; ++i)
 		{
-			level.mapvoteinfo[level.sortedMaps[i]].voteEligible++;
+			int j;
+
+			// replace history map index by sorted index to ensure client
+			// will identify maps properly
+			for (j = 0; j < level.mapvotehistorycount; ++j)
+			{
+				if (level.sortedMaps[i] != -1 && level.sortedMaps[i] == level.mapvotehistoryindex[j])
+				{
+					level.mapvotehistorysortedindex[j] = i;
+				}
+			}
+
+			if (i < maxMaps)
+			{
+				level.mapvoteinfo[level.sortedMaps[i]].voteEligible++;
+			}
 		}
 	}
 
@@ -3645,19 +3660,19 @@ void ExitLevel(void)
 		{
 			level.mapsSinceLastXPReset++;
 		}
-		maxMaps = g_maxMapsVotedFor.integer;
-		if (maxMaps > level.mapVoteNumMaps)
-		{
-			maxMaps = level.mapVoteNumMaps;
-		}
+
+		maxMaps = Com_Clamp(0, level.mapVoteNumMaps, g_maxMapsVotedFor.integer);
+
 		for (i = 0; i < maxMaps; i++)
 		{
 			if (level.mapvoteinfo[level.sortedMaps[i]].lastPlayed != -1)
 			{
 				level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
 			}
+
 			curMapVotes = level.mapvoteinfo[level.sortedMaps[i]].numVotes;
 			curMapAge   = level.mapvoteinfo[level.sortedMaps[i]].lastPlayed;
+
 			if (curMapAge == -1)
 			{
 				curMapAge = 9999;   // -1 means never, so set suitably high
@@ -3673,12 +3688,16 @@ void ExitLevel(void)
 				highMapAge  = curMapAge;
 			}
 		}
+
 		if (highMapVote > 0 && level.mapvoteinfo[nextMap].bspName[0])
 		{
-			trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.mapvoteinfo[nextMap].bspName, g_nextmap.string));
+			Q_strncpyz(level.lastVotedMap, level.mapvoteinfo[nextMap].bspName, sizeof(level.lastVotedMap));
+
+			trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.lastVotedMap, g_nextmap.string));
 		}
 		else
 		{
+			memset(level.lastVotedMap, 0, sizeof(level.lastVotedMap));
 			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
 		}
 		break;
@@ -5432,8 +5451,11 @@ void G_RunFrame(int levelTime)
  */
 void G_MapVoteInfoWrite()
 {
-	cJSON *root;
-	int   i, count = 0;
+	// if the history is full and a vote has been done, skip the oldest map in history
+    int   i = (level.lastVotedMap[0] && (level.mapvotehistorycount == MAX_HISTORY_MAPS));
+	cJSON *root, *history;
+
+	int count = 0;
 
 	Q_JSONInit();
 
@@ -5441,6 +5463,20 @@ void G_MapVoteInfoWrite()
 	if (!root)
 	{
 		Com_Error(ERR_FATAL, "G_MapVoteInfoWrite: Could not allocate memory for session data\n");
+	}
+
+	history = cJSON_AddArrayToObject(root, "history");
+
+	// parse history array
+	for (; i < level.mapvotehistorycount; i++)
+	{
+		cJSON_AddItemToArray(history, cJSON_CreateString(level.mapvotehistory[i]));
+	}
+
+	// add last voted map
+	if (level.lastVotedMap[0])
+	{
+		cJSON_AddItemToArray(history, cJSON_CreateString(level.lastVotedMap));
 	}
 
 	for (i = 0; i < MAX_VOTE_MAPS; ++i)
@@ -5465,6 +5501,59 @@ void G_MapVoteInfoWrite()
 }
 
 /**
+ * @brief G_MapVoteInfoRead_ParseHistory
+ * @param history
+ */
+static void G_MapVoteInfoRead_ParseHistory(cJSON *history)
+{
+	unsigned int i;
+
+	for (i = 0; i < MAX_HISTORY_MAPS; i++)
+	{
+		Com_Memset(level.mapvotehistory[i], 0, 128);
+	}
+
+	Com_Memset(level.mapvotehistoryindex, -1, sizeof(level.mapvotehistoryindex));
+	Com_Memset(level.mapvotehistorysortedindex, -1, sizeof(level.mapvotehistorysortedindex));
+	level.mapvotehistorycount = 0;
+
+	// ensure history field exist
+	if (history && cJSON_IsArray(history))
+	{
+		int   j, len = cJSON_GetArraySize(history);
+		cJSON *map;
+
+		// parse history array
+		for (i = 0, j = 0; i < len && i < MAX_HISTORY_MAPS; i++)
+		{
+			int k;
+			map = cJSON_GetArrayItem(history, i);
+
+			// ensure the value is valid
+			if (!map || !cJSON_IsString(map))
+			{
+				break;
+			}
+
+			// find the related map name in map pool
+			for (k = 0; k < level.mapVoteNumMaps; k++)
+			{
+				Q_strncpyz(level.mapvotehistory[i], map->valuestring, 128);
+
+				if (!Q_strncmp(level.mapvoteinfo[k].bspName, map->valuestring, 128))
+				{
+					// fill history index array
+					level.mapvotehistoryindex[j] = k;
+					j++;
+				}
+			}
+		}
+
+		level.mapvotehistorycount = i;
+	}
+}
+
+/**
  * @brief G_MapVoteInfoRead
  */
 void G_MapVoteInfoRead()
@@ -5479,6 +5568,8 @@ void G_MapVoteInfoRead()
 		G_Printf("G_MapVoteInfoRead: could not open %s file\n", MAPVOTEINFO_FILE_NAME);
 		return;
 	}
+
+	G_MapVoteInfoRead_ParseHistory(cJSON_GetObjectItem(root, "history"));
 
 	for (i = 0; i < level.mapVoteNumMaps; i++)
 	{

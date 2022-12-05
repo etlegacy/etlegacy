@@ -1628,7 +1628,7 @@ void G_IntermissionMapVote(gentity_t *ent, unsigned int dwCommand, int value)
 void G_IntermissionMapList(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	int  i;
-	char mapList[MAX_STRING_CHARS];
+	char mapList[MAX_STRING_CHARS] = { 0 };
 	int  maxMaps;
 
 	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
@@ -1646,15 +1646,57 @@ void G_IntermissionMapList(gentity_t *ent, unsigned int dwCommand, int value)
 
 	for (i = 0; i < maxMaps; i++)
 	{
-		Q_strcat(mapList, MAX_STRING_CHARS,
-		         va("%s %d %d %d ",
-		            level.mapvoteinfo[level.sortedMaps[i]].bspName,
-		            level.sortedMaps[i],
-		            level.mapvoteinfo[level.sortedMaps[i]].lastPlayed,
-		            level.mapvoteinfo[level.sortedMaps[i]].totalVotes));
+#ifdef FEATURE_RATING
+		if (g_skillRating.integer)
+		{
+			Q_strcat(mapList, MAX_STRING_CHARS,
+			         va("%s %d %d %d %2.2f ",
+			            level.mapvoteinfo[level.sortedMaps[i]].bspName,
+			            level.sortedMaps[i],
+			            level.mapvoteinfo[level.sortedMaps[i]].lastPlayed,
+			            level.mapvoteinfo[level.sortedMaps[i]].timesPlayed,
+			            G_SkillRatingGetMapRating(level.mapvoteinfo[level.sortedMaps[i]].bspName)
+			            ));
+		}
+		else
+#endif
+		{
+			Q_strcat(mapList, MAX_STRING_CHARS,
+			         va("%s %d %d %d ",
+			            level.mapvoteinfo[level.sortedMaps[i]].bspName,
+			            level.sortedMaps[i],
+			            level.mapvoteinfo[level.sortedMaps[i]].lastPlayed,
+			            level.mapvoteinfo[level.sortedMaps[i]].timesPlayed
+			            ));
+		}
 	}
 
 	trap_SendServerCommand(ent - g_entities, mapList);
+	return;
+}
+
+/**
+ * @brief G_IntermissionMapList
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void G_IntermissionMapHistory(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	int  i;
+	char mapHistory[MAX_STRING_CHARS] = "immaphistory";
+
+	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
+	{
+		return;
+	}
+
+	for (i = 0; i < level.mapvotehistorycount; i++)
+	{
+		Q_strcat(mapHistory, MAX_STRING_CHARS, va(" %d", level.mapvotehistorysortedindex[i]));
+	}
+
+	trap_SendServerCommand(ent - g_entities, mapHistory);
 	return;
 }
 

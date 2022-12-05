@@ -2983,6 +2983,7 @@ void CG_AddToBannerPrint(const char *str)
 #define REQFORCESPAWN_HASH  176027
 #define SDBG_HASH           50109
 #define IMMAPLIST_HASH      120113
+#define IMMAPHISTORY_HASH   164261
 #define IMVOTETALLY_HASH    150058
 #define SETSPAWNPT_HASH     137482
 #define IMWA_HASH           51808
@@ -3451,6 +3452,9 @@ static void CG_ServerCommand(void)
 		return;
 	case IMMAPLIST_HASH: // MAPVOTE                         "immaplist"
 		CG_parseMapVoteListInfo();
+		return;
+	case IMMAPHISTORY_HASH: // MAPVOTE                      "immaphistory"
+		CG_parseMapVoteHistory();
 		return;
 	case IMVOTETALLY_HASH: // MAPVOTE                      "imvotetally"
 		CG_parseMapVoteTally();
