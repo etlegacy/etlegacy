@@ -2607,7 +2607,7 @@ typedef struct cgs_s
 
 	// MAPVOTE
 	int dbMapVoteListOffset;
-    int dbMapsHistoryCount;
+	int dbMapsHistoryCount;
 	int dbMapsHistoryCountList;
 	int dbMapsHistory[333];
 	int dbMapsHistoryList[32];
@@ -2621,7 +2621,7 @@ typedef struct cgs_s
 	int dbMapLastPlayed;
 	int dbMapLastPlayedList[MAX_VOTE_MAPS];
 	int dbMapTimesPlayed[MAX_VOTE_MAPS];
-    int dbMapBias[MAX_VOTE_MAPS];
+	int dbMapBias[MAX_VOTE_MAPS];
 	int dbSelectedMap;
 	int dbSelectedMapTime;
 	qhandle_t dbSelectedMapLevelShots;

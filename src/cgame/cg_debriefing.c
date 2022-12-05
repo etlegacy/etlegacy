@@ -1510,7 +1510,7 @@ static panel_button_t mapVoteSend =
 	NULL,
 	"^3SEND VOTE",
 	{ DB_MAPNAME_X + 10,     DB_MAPVOTE_Y + 8 + 16 * 15,        DB_MAPVOTE_X2 - 40 + 2 - 10, 16 },
-	{ 0,                     0,                                 0,   0, 0, 0, 0, 0},
+	{ 0,                     0,                                 0,                           0, 0, 0, 0, 0},
 	NULL,                    // font
 	CG_MapVote_VoteSend_KeyDown,// keyDown
 	NULL,                    // keyUp

@@ -1315,9 +1315,9 @@ typedef struct level_locals_s
 	mapVoteInfo_t mapvoteinfo[MAX_VOTE_MAPS];
 	char mapvotehistory[MAX_HISTORY_MAPS][128];
 	int mapvotehistoryindex[MAX_HISTORY_MAPS];
-    int mapvotehistorysortedindex[MAX_HISTORY_MAPS];
+	int mapvotehistorysortedindex[MAX_HISTORY_MAPS];
 	int mapvotehistorycount;
-    char lastVotedMap[MAX_VOTE_MAPS];
+	char lastVotedMap[MAX_VOTE_MAPS];
 	int mapVoteNumMaps;
 	int mapsSinceLastXPReset;
 	qboolean mapVotePlayersCount;
