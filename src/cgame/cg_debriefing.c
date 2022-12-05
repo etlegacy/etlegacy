@@ -1401,7 +1401,7 @@ void CG_MapVote_VoteSend_Draw(panel_button_t *button)
 	}
 	else
 	{
-		text = "^2VOTE DONE!";
+		text = "^2VOTED!";
 	}
 
 	textWidth = CG_Text_Width_Ext(text, .20f, 0, &cgs.media.limboFont2);
@@ -1509,7 +1509,7 @@ static panel_button_t mapVoteSend =
 {
 	NULL,
 	"^3SEND VOTE",
-	{ DB_MAPNAME_X + 10,     DB_MAPVOTE_Y + 8 + 16 * 15,        266, 16 },
+	{ DB_MAPNAME_X + 10,     DB_MAPVOTE_Y + 8 + 16 * 15,        DB_MAPVOTE_X2 - 40 + 2 - 10, 16 },
 	{ 0,                     0,                                 0,   0, 0, 0, 0, 0},
 	NULL,                    // font
 	CG_MapVote_VoteSend_KeyDown,// keyDown
@@ -3928,7 +3928,7 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 	{
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debriefing_WinStringForTeam(CG_Debriefing_FindWinningTeamForMap()), 0, 18, 0.25f, 16);
 
-		if (cgs.dbMapVotedFor[0] != -1 || cgs.dbMapVotedFor[1] != -1  || cgs.dbMapVotedFor[2] != -1)
+		if (cg.snap->ps.eFlags & EF_VOTED)
 		{
 			s = va("^2%s", CG_TranslateString("VOTED"));
 		}
