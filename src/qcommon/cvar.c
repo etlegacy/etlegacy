@@ -1188,8 +1188,9 @@ void Cvar_Reset_f(void)
  * @brief Appends lines containing "set variable value" for all variables
  * with the archive flag set to qtrue.
  * @param[in] f
+ * @param[in] nodefaults
  */
-void Cvar_WriteVariables(fileHandle_t f)
+void Cvar_WriteVariables(fileHandle_t f, qboolean nodefaults)
 {
 	cvar_t     *var;
 	char       buffer[1024];
@@ -1216,7 +1217,7 @@ void Cvar_WriteVariables(fileHandle_t f)
 				continue;
 			}
 
-			if ((var->flags & CVAR_NODEFAULT) && !Q_stricmp(value, var->resetString))
+			if (((var->flags & CVAR_NODEFAULT) || nodefaults) && !Q_stricmp(value, var->resetString))
 			{
 				continue;
 			}
