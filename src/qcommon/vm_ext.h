@@ -33,6 +33,9 @@
 #define VM_EXT_H
 
 #include "q_shared.h"
+#ifdef __aarch64__ // ARM definition seems to not work here
+#include <stddef.h>
+#endif
 
 typedef struct
 {
