@@ -167,6 +167,9 @@ typedef int intptr_t;
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef __aarch64__ // ARM definition seems to not work here
+#include <stddef.h>
+#endif
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
