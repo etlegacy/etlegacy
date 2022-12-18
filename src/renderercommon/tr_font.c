@@ -79,8 +79,8 @@
 #define FONT_SIZE 256
 #define DPI 72
 
-#define _FLOOR(x)  ((x) & - 64)
-#define _CEIL(x)   (((x) + 63) & - 64)
+#define _FLOOR(x)  ((x) & -64)
+#define _CEIL(x)   (((x) + 63) & -64)
 #define _TRUNC(x)  ((x) >> 6)
 
 FT_Library ftLibrary = NULL;
@@ -115,7 +115,7 @@ void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *
 	*top    = _CEIL(glyph->metrics.horiBearingY + 1);
 	*bottom = _FLOOR(glyph->metrics.horiBearingY - glyph->metrics.height - 1);
 	*height = _TRUNC(*top - *bottom);
-	*pitch  = (*width + 3) & - 4;
+	*pitch  = (*width + 3) & -4;
 }
 
 /**
@@ -301,7 +301,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 		glyph.s2          = glyph.s + (float)scaled_width / imageSize;
 		glyph.t2          = glyph.t + (float)scaled_height / imageSize;
 
-		// ET uses pitch as a horizontal BearingX so we need to change this at this point for the font to be usable in game
+		// ET uses pitch as a horizontal BearingX, so we need to change this at this point for the font to be usable in game
 		// Super stupid btw
 		glyph.pitch = _TRUNC(face->glyph->metrics.horiBearingX);
 

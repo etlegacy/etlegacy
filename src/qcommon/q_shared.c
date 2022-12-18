@@ -1813,7 +1813,7 @@ char *Q_TruncateStr(char *string, int limit)
 	}
 
 	limit++; // for null byte
-    s[limit] = '\0';
+	s[limit] = '\0';
 
 	return s;
 }

@@ -66,6 +66,8 @@ void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrik
 void Q_UTF8_Move(char *buffer, size_t dstOffset, size_t srcOffset, size_t size);
 qboolean Q_UTF8_ContByte(char c);
 uint32_t Q_UTF8_CodePoint(const char *str);
+glyphInfo_t *Q_UTF8_GetGlyphExtended(void *fontdata, unsigned long codepoint);
+glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint);
 qboolean Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font, qboolean extended, void (*font_register)(const char *, int, void *));
 void Q_UTF8_FreeFont(fontHelper_t *font);
 char *Q_UTF8_Encode(unsigned long codepoint);
