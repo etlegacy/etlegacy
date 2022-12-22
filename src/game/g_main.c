@@ -2304,6 +2304,31 @@ void G_GetMapXP(void)
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
 }
 
+static ID_INLINE void G_SetupExtensionTrap(char *value, int *trap, const char *name)
+{
+	if (trap_GetValue(value, sizeof(value), name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void G_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+
+		G_SetupExtensionTrap(value, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
+	}
+}
+
 /**
  * @brief G_InitGame
  * @param[in] levelTime
@@ -2318,7 +2343,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	char   cs[MAX_INFO_STRING];
 	time_t aclock;
 	char   timeFt[32];
-	char   value[MAX_CVAR_VALUE_STRING];
 
 	// mod version check
 	MOD_CHECK_ETLEGACY(etLegacyServer, serverVersion, level.etLegacyServer);
@@ -2377,16 +2401,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 		level.spawning = oldspawning;
 	}
 
-	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
-	if (value[0])
-	{
-		dll_com_trapGetValue = atoi(value);
-		if (trap_GetValue(value, sizeof(value), "trap_DemoSupport_Legacy"))
-		{
-			dll_trap_DemoSupport = atoi(value);
-			trap_DemoSupport();
-		}
-	}
+	G_SetupExtensions();
+	trap_DemoSupport();
 
 	level.time            = levelTime;
 	level.startTime       = levelTime;

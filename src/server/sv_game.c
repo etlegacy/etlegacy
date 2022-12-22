@@ -42,8 +42,14 @@
 
 botlib_export_t *botlib_export;
 
-#define TRAP_EXTENSIONS_LIST NULL
+#define TRAP_EXTENSIONS_LIST g_extensionTraps
 #include "../qcommon/vm_ext.h"
+
+static ext_trap_keys_t g_extensionTraps[] =
+{
+	{ "trap_DemoSupport_Legacy", G_DEMOSUPPORT, qfalse },
+	{ NULL,                      -1,            qfalse }
+};
 
 /**
 * @todo TODO: These functions must be used instead of pointer arithmetic, because
@@ -680,6 +686,10 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return SV_SendBinaryMessage(args[1], VMA(2), args[3]);
 	case G_MESSAGESTATUS:
 		return SV_BinaryMessageStatus(args[1]);
+
+	case G_DEMOSUPPORT:
+		SV_DemoSupport();
+		return 0;
 
 	case G_TRAP_GETVALUE:
 		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));

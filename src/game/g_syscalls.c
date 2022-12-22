@@ -829,5 +829,8 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key)
 */
 void trap_DemoSupport(void)
 {
-	SystemCall(dll_trap_DemoSupport);
+	if (dll_trap_DemoSupport)
+	{
+		SystemCall(dll_trap_DemoSupport);
+	}
 }
