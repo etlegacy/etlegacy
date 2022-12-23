@@ -503,7 +503,7 @@ void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo);
 qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore);
 void SV_DemoStopAll(void);
 void SV_DemoInit(void);
-void SV_DemoSupport(void);
+void SV_DemoSupport(char *commands);
 
 // sv_main.c
 void SV_FinalCommand(const char *cmd, qboolean disconnect);   ///< added disconnect flag so map changes can use this function as well

@@ -35,6 +35,20 @@
 
 #include "server.h"
 
+typedef struct gameCommands_s
+{
+	char commandToSave[MAX_QPATH];
+	char commandToSend[MAX_QPATH];
+	int commandToSaveLength;
+	int commandToSendLength;
+
+	char commands[MAX_CLIENTS][MAX_STRING_CHARS];
+} gameCommands_t;
+
+#define MAX_DEMO_GAMECOMMANDS 24
+static gameCommands_t gameCommands[MAX_DEMO_GAMECOMMANDS];
+int                   gameCommandsCount;
+
 // static function decl
 static void SV_DemoWriteClientConfigString(int clientNum, const char *cs_string);
 static void SV_DemoStartPlayback(void);
@@ -170,6 +184,58 @@ static char *SV_CleanStrCmd(char *string)
 	*d = '\0';
 
 	return string;
+}
+
+/**
+* @brief Store newest game commands during playback for reuse
+*
+* @param[in] cmd
+* @return
+*/
+static qboolean SV_DemoStoreGameCommand(const char *cmd)
+{
+	int i;
+	int index = Q_atoi(Cmd_ArgsFrom(1));
+
+	for (i = 0; i < gameCommandsCount; i++)
+	{
+		if (!Q_strncmp(gameCommands[i].commandToSave, cmd, gameCommands[i].commandToSaveLength))
+		{
+			Q_strncpyz(gameCommands[i].commands[index], cmd, MAX_STRING_CHARS);
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
+* @brief Send newest game commands during playback
+*
+* @param[in] client
+* @param[in] arg0
+* @param[in] arg1
+*/
+static qboolean SV_DemoSendStoredCommands(client_t *client, const char *arg0, const char *arg1)
+{
+	int      i;
+	int      index = Q_atoi(Cmd_ArgsFrom(1));
+	qboolean found = qfalse;
+
+	for (i = 0; i < gameCommandsCount; i++)
+	{
+		if (!Q_strncmp(gameCommands[i].commandToSend, arg0, gameCommands[i].commandToSendLength))
+		{
+			if (index >= 0 && index < MAX_CLIENTS && strlen(gameCommands[i].commands[index]))
+			{
+				SV_GameSendServerCommand(client - svs.clients, gameCommands[i].commands[index]);
+			}
+
+			found = qtrue;
+		}
+	}
+
+	return found;
 }
 
 /**
@@ -428,6 +494,11 @@ qboolean SV_DemoClientCommandCapture(client_t *client, const char *msg)
 			SV_SendServerCommand(client, "chat \"^3Can't join a team when a demo is replaying!\"");
 			// issue a chat message only to the player trying to join a team
 			SV_SendServerCommand(client, "cp \"^3Can't join a team when a demo is replaying!\"");
+			return qfalse;
+		}
+
+		if (SV_DemoSendStoredCommands(client, Cmd_Argv(0), Cmd_Argv(1)))
+		{
 			return qfalse;
 		}
 	}
@@ -1333,7 +1404,7 @@ static void SV_DemoReadServerCommand(msg_t *msg)
  * @details Game command management, such as prints/centerprint (cp) scores command, except chat/tchat (handled by clientCommand)
  *
  * Basically the same as demo_serverCommand (because sv_GameSendServerCommand uses SV_SendServerCommand,
- * but game commands are safe to be replayed to everyone (but shouldn't), while server commands may be unsafe such as disconnect)
+ * game commands are NOT safe to be replayed to everyone, server commands may be unsafe such as disconnect)
  *
  * @param[in] msg
  */
@@ -1350,7 +1421,7 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 	cmd       = MSG_ReadString(msg);
 
 	// FIXME:
-	// this is ugly fix for something that should be fixed in mod
+	// ugly fix for something that should be fixed in mod
 	// at least when intermission starts, mod starts sending various commands to clients with stats
 	// but those stats are sent in a loop in mod to every client and every command is saved and replayed,
 	// by sending 1 command with clientNum -1 from mod instead, server would replicate them to all clients while saving only 1 command to demo
@@ -1390,6 +1461,12 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 
 	if (SV_CheckLastCmd(cmd, qfalse) && clientNum < sv_maxclients->integer)
 	{
+		// store commands that should be sent per request
+		if (SV_DemoStoreGameCommand(cmd))
+		{
+			return;
+		}
+
 		// do not send game commands to democlients
 		for (i = sv_democlients->integer, client = svs.clients + sv_democlients->integer; i < sv_maxclients->integer; i++, client++)
 		{
@@ -2253,12 +2330,44 @@ void SV_DemoInit(void)
 /**
 * @brief SV_DemoSupport
 */
-void SV_DemoSupport(void)
+void SV_DemoSupport(char *commands)
 {
+	char key[BIG_INFO_KEY];
+	char value[BIG_INFO_VALUE];
+
 	sv.demoSupported = qtrue;
 
-	if (sv.demoState == DS_PLAYBACK || sv_demoState->integer == DS_WAITINGPLAYBACK)
+	if (sv_demoState->integer == DS_WAITINGPLAYBACK)
 	{
 		VM_Call(gvm, GAME_DEMOPLAYBACKINIT, qtrue, sv_democlients->integer);
+
+		if (!commands[0])
+		{
+			return;
+		}
+
+		Com_Memset(gameCommands, 0, MAX_DEMO_GAMECOMMANDS * sizeof(gameCommands_t));
+		gameCommandsCount = 0;
+
+		while (commands)
+		{
+			Info_NextPair(&commands, key, value);
+
+			if (!key[0])
+			{
+				break;
+			}
+
+			if (gameCommandsCount >= MAX_DEMO_GAMECOMMANDS)
+			{
+				break;
+			}
+
+			Q_strncpyz(gameCommands[gameCommandsCount].commandToSave, key, MAX_QPATH);
+			Q_strncpyz(gameCommands[gameCommandsCount].commandToSend, value, MAX_QPATH);
+			gameCommands[gameCommandsCount].commandToSaveLength = strlen(key);
+			gameCommands[gameCommandsCount].commandToSendLength = strlen(value);
+			gameCommandsCount++;
+		}
 	}
 }

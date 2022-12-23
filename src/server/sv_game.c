@@ -688,7 +688,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return SV_BinaryMessageStatus(args[1]);
 
 	case G_DEMOSUPPORT:
-		SV_DemoSupport();
+		SV_DemoSupport(VMA(1));
 		return 0;
 
 	case G_TRAP_GETVALUE:

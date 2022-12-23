@@ -2402,7 +2402,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	}
 
 	G_SetupExtensions();
-	trap_DemoSupport();
+	trap_DemoSupport("gstats\\sgstats\\sc0\\score\\sc1\\score");
 
 	level.time            = levelTime;
 	level.startTime       = levelTime;

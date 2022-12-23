@@ -827,10 +827,10 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key)
 /**
 * @brief Extension for informing engine about demo support
 */
-void trap_DemoSupport(void)
+void trap_DemoSupport(char *commands)
 {
 	if (dll_trap_DemoSupport)
 	{
-		SystemCall(dll_trap_DemoSupport);
+		SystemCall(dll_trap_DemoSupport, commands);
 	}
 }

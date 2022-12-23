@@ -1759,7 +1759,7 @@ void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1,
 
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
-void trap_DemoSupport(void);
+void trap_DemoSupport(char *commands);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
 
