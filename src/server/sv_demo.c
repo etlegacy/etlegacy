@@ -94,8 +94,8 @@ char            *savedCvars       = savedCvarsInfo;
 static qboolean restoreSavedCvars = qtrue;
 
 // for restarting playback
-static char savedPlaybackDemonameVal[MAX_QPATH] = "";
-static char *savedPlaybackDemoname              = savedPlaybackDemonameVal;
+static char savedPlaybackDemonameVal[MAX_OSPATH] = "";
+static char *savedPlaybackDemoname               = savedPlaybackDemonameVal;
 
 // "fixing" game commands spam
 char cmds[MAX_RELIABLE_COMMANDS][MAX_STRING_CHARS];
@@ -103,7 +103,7 @@ int  cmdsPerFrameCount = 1;
 
 // arbitrary limit
 #define MAX_DEMO_AUTOPLAY 10
-char demoAutoPlay[MAX_DEMO_AUTOPLAY][MAX_QPATH];
+char demoAutoPlay[MAX_DEMO_AUTOPLAY][MAX_OSPATH];
 
 /**
  * @brief Restores all CVARs
@@ -919,9 +919,9 @@ static qboolean SV_DemoAutoDemoRecordCheck(void)
 void SV_DemoAutoDemoRecord(void)
 {
 	qtime_t now;
-	char    demoname[MAX_QPATH];
+	char    demoname[MAX_OSPATH];
 
-	Com_Memset(demoname, 0, MAX_QPATH);
+	Com_Memset(demoname, 0, MAX_OSPATH);
 
 	if (!SV_DemoAutoDemoRecordCheck())
 	{
@@ -938,7 +938,7 @@ void SV_DemoAutoDemoRecord(void)
 	                        now.tm_min,
 	                        now.tm_sec,
 	                        SV_CleanFilename(Cvar_VariableString("mapname"))),
-	           MAX_QPATH);
+	           MAX_OSPATH);
 
 	// print a message
 	Com_Printf("DEMO: automatic recording server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
@@ -1205,7 +1205,7 @@ static void SV_DemoStartPlayback(void)
 
 		// we need to copy the value because since we may spawn a new server (if the demo is played client-side OR if we change fs_game), we will lose all sv. vars
 		// savedPlaybackDemoname is used to restart the playback
-		Q_strncpyz(savedPlaybackDemoname, Cmd_Cmd(), MAX_QPATH);
+		Q_strncpyz(savedPlaybackDemoname, Cmd_Cmd(), MAX_OSPATH);
 
 		// FIXME: game_restart is not implemented
 
@@ -2227,7 +2227,7 @@ static void SV_Demo_AutoPlay_f(void)
 		{
 			len = strlen(fileName);
 
-			Q_strncpyz(demoAutoPlay[i], va("%s%s", arg, fileName), MAX_QPATH);
+			Q_strncpyz(demoAutoPlay[i], va("%s%s", arg, fileName), MAX_OSPATH);
 
 			fileName += len + 1;
 		}

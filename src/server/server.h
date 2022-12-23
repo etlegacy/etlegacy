@@ -143,7 +143,7 @@ typedef struct
 	// serverside demo recording
 	fileHandle_t demoFile;
 	demoState_t demoState;
-	char demoName[MAX_QPATH];
+	char demoName[MAX_OSPATH];
 	qboolean demoSupported;
 
 	// serverside demo recording - previous frame for delta compression
