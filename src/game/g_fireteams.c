@@ -298,7 +298,10 @@ int G_FindFreeFireteamIdent(team_t team)
 	qboolean freeIdent[MAX_FIRETEAMS / 2];
 	int      i;
 
-	Com_Memset(freeIdent, qtrue, sizeof(freeIdent));
+	for (i = 0; i < (MAX_FIRETEAMS / 2); i++)
+	{
+		freeIdent[i] = qtrue;
+	}
 
 	for (i = 0; i < MAX_FIRETEAMS; i++)
 	{
