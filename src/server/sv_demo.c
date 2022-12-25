@@ -53,6 +53,7 @@ int                   gameCommandsCount;
 static void SV_DemoWriteClientConfigString(int clientNum, const char *cs_string);
 static void SV_DemoStartPlayback(void);
 static qboolean SV_DemoPlayNext(void);
+static void SV_DemoStateChanged(void);
 
 #define Q_IsColorStringGameCommand(p)      ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1)) // ^[anychar]
 //#define CEIL(VARIABLE) ((VARIABLE - (int)VARIABLE) == 0 ? (int)VARIABLE : (int)VARIABLE + 1) // UNUSED but can be useful
@@ -64,19 +65,20 @@ static qboolean SV_DemoPlayNext(void);
 // headers/markers for demo messages (events)
 typedef enum
 {
-	demo_endDemo,            ///< end of demo (close the demo)
-	demo_EOF,                ///< end of file/flux (end of event, separator, notify the demo parser to iterate to the next event of the _same_ frame)
-	demo_endFrame,           ///< player and gentity state marker (recorded each end of frame, hence the name) - at the same time marks the end of the demo frame
+	demo_endDemo,              ///< end of demo (close the demo)
+	demo_EOF,                  ///< end of file/flux (end of event, separator, notify the demo parser to iterate to the next event of the _same_ frame)
+	demo_endFrame,             ///< player and gentity state marker (recorded each end of frame, hence the name) - at the same time marks the end of the demo frame
 
-	demo_configString,       ///< config string setting event
-	demo_clientConfigString, ///< client config string setting event
-	demo_clientCommand,      ///< client command event
-	demo_serverCommand,      ///< server command event
-	demo_gameCommand,        ///< game command event
-	demo_clientUserinfo,     ///< client userinfo event (client_t management)
-	demo_entityState,        ///< entityState_t management
-	demo_entityShared,       ///< entityShared_t management
-	demo_playerState,        ///< players game state event (playerState_t management)
+	demo_configString,         ///< config string setting event
+	demo_clientConfigString,   ///< client config string setting event
+	demo_clientCommand,        ///< client command event
+	demo_serverCommand,        ///< server command event
+	demo_serverConsoleCommand, ///< server console command
+	demo_gameCommand,          ///< game command event
+	demo_clientUserinfo,       ///< client userinfo event (client_t management)
+	demo_entityState,          ///< entityState_t management
+	demo_entityShared,         ///< entityShared_t management
+	demo_playerState,          ///< players game state event (playerState_t management)
 
 	//demo_clientUsercmd,    ///< players commands/movements packets (usercmd_t management)
 } demo_ops_e;
@@ -532,6 +534,30 @@ void SV_DemoWriteServerCommand(const char *cmd)
 }
 
 /**
+* @brief Write a server console command to the demo file
+* @param[in] exec_when
+* @param[in] cmd
+*
+* Records map_restart commands so we can perform it at correct time
+*
+*/
+void SV_DemoWriteServerConsoleCommand(int exec_when, const char *cmd)
+{
+	msg_t msg;
+
+	if (Q_strncmp(cmd, "map_restart", 11))
+	{
+		return;
+	}
+
+	MSG_Init(&msg, buf, sizeof(buf));
+	MSG_WriteByte(&msg, demo_serverConsoleCommand);
+	MSG_WriteLong(&msg, exec_when);
+	MSG_WriteString(&msg, cmd);
+	SV_DemoWriteMessage(&msg);
+}
+
+/**
  * @brief Write a game command to the demo file
  * @param[in] clientNum
  * @param[in] cmd
@@ -979,7 +1005,14 @@ static qboolean SV_DemoPlayNext(void)
 			restoreSavedCvars = qfalse;
 			Com_sprintf(sv.demoName, sizeof(sv.demoName), demoAutoPlay[i]);
 			Com_Memset(demoAutoPlay[i], 0, sizeof(demoAutoPlay[i]));
-			Cbuf_AddText(va("demo_play %s", sv.demoName));
+
+			if (com_sv_running->integer)
+			{
+				Cbuf_AddText("map_restart 0\n");
+			}
+
+			Cbuf_AddText(va("demo_play \"%s\"\n", sv.demoName));
+
 			return qtrue;
 		}
 	}
@@ -994,20 +1027,6 @@ static void SV_DemoStopPlayback(const char *message)
 {
 	client_t *client;
 	int      i;
-
-	// unload democlients
-	if (sv_demoState->integer == DS_PLAYBACK)
-	{
-		for (i = 0; i < sv_democlients->integer; i++)
-		{
-			client = &svs.clients[i];
-			if (client->demoClient)
-			{
-				SV_DropClient(client, "disconnected");   // same as SV_Disconnect_f(client);
-				client->demoClient = qfalse;
-			}
-		}
-	}
 
 	FS_FCloseFile(sv.demoFile);
 
@@ -1030,14 +1049,27 @@ static void SV_DemoStopPlayback(const char *message)
 	}
 	else if (sv.demoState == DS_PLAYBACK)
 	{
-		// set a special state to say that we are waiting to stop (SV_DemoChangeMaxClients() will set to DS_NONE after moving the real clients to their correct slots)
-		sv.demoState = DS_NONE;
-		Cvar_SetValue("sv_demoState", DS_NONE);
 		if (!SV_DemoPlayNext())
 		{
 			Cvar_SetValue("sv_killserver", 1);
 			SV_DemoCvarsRestore();
 		}
+		else
+		{
+			// unload democlients
+			for (i = 0; i < sv_democlients->integer; i++)
+			{
+				client = &svs.clients[i];
+				if (client->demoClient)
+				{
+					SV_DropClient(client, "disconnected");   // same as SV_Disconnect_f(client);
+					client->demoClient = qfalse;
+				}
+			}
+		}
+
+		sv.demoState = DS_NONE;
+		Cvar_SetValue("sv_demoState", DS_NONE);
 	}
 }
 
@@ -1263,6 +1295,8 @@ static void SV_DemoStartPlayback(void)
 	// don't save values anymore: the next time we stop playback, we will restore previous values (unless we are in autoplay)
 	restoreSavedCvars = qtrue;
 
+	SV_DemoStateChanged();
+
 	// reading the first frame, which should contain some initialization events (eg: initial confistrings/userinfo when demo recording started, initial entities states and placement, etc..)
 	SV_DemoReadFrame();
 }
@@ -1333,6 +1367,8 @@ static void SV_DemoStartRecord(void)
 
 	sv.demoState = DS_RECORDING;
 	Cvar_SetValue("sv_demoState", DS_RECORDING);
+
+	SV_DemoStateChanged();
 }
 
 /**
@@ -1353,6 +1389,7 @@ static void SV_DemoStopRecord(void)
 	// change recording state
 	sv.demoState = DS_NONE;
 	Cvar_SetValue("sv_demoState", DS_NONE);
+	SV_DemoStateChanged();
 	// announce
 	Com_Printf("DEMO: Stopped recording server-side demo %s.\n", sv.demoName);
 	SV_SendServerCommand(NULL, "chat \"^3DEMO: Stopped recording server-side demo %s.\"", sv.demoName);
@@ -1396,6 +1433,23 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 
 	cmd = MSG_ReadString(msg);
 	SV_SendServerCommand(NULL, "%s", cmd);
+}
+
+/**
+* @brief SV_DemoReadServerConsoleCommand
+*
+* Replay a server console command (map_restart)
+*
+* @param[in] msg
+*/
+static void SV_DemoReadServerConsoleCommand(msg_t *msg)
+{
+	char *cmd;
+	int exec_when;
+
+	exec_when = MSG_ReadLong(msg);
+	cmd       = MSG_ReadString(msg);
+	Cbuf_ExecuteText(exec_when, cmd);
 }
 
 /**
@@ -1952,6 +2006,11 @@ read_next_demo_event: // used to read next demo event
 				SV_DemoReadServerCommand(&msg);
 				break;
 
+			// server console command management (map_restart)
+			case demo_serverConsoleCommand:
+				SV_DemoReadServerConsoleCommand(&msg);
+				break;
+
 			// game command management - such as prints/centerprint (cp) scores command - except chat/tchat (handled by clientCommand)
 			// basically the same as demo_serverCommand (because sv_GameSendServerCommand uses SV_SendServerCommand,
 			// but game commands are safe to be replayed to everyone, while server commands may be unsafe such as disconnect)
@@ -2183,7 +2242,6 @@ static void SV_Demo_AutoPlay_f(void)
 	char   path[MAX_OSPATH];
 	char   *arg, *fileName;
 	int    i, count;
-	size_t len;
 
 	if (sv.demoState != DS_NONE && sv.demoState != DS_WAITINGPLAYBACK && sv.demoState != DS_RESTART)
 	{
@@ -2225,11 +2283,9 @@ static void SV_Demo_AutoPlay_f(void)
 
 		for (i = 0; i < count; i++)
 		{
-			len = strlen(fileName);
-
 			Q_strncpyz(demoAutoPlay[i], va("%s%s", arg, fileName), MAX_OSPATH);
 
-			fileName += len + 1;
+			fileName += strlen(fileName) + 1;
 		}
 
 		qsort(demoAutoPlay, MAX_DEMO_AUTOPLAY, sizeof(demoAutoPlay[0]), SV_DemoSort);
@@ -2337,10 +2393,10 @@ void SV_DemoSupport(char *commands)
 
 	sv.demoSupported = qtrue;
 
+	SV_DemoStateChanged();
+
 	if (sv_demoState->integer == DS_WAITINGPLAYBACK)
 	{
-		VM_Call(gvm, GAME_DEMOPLAYBACKINIT, qtrue, sv_democlients->integer);
-
 		if (!commands[0])
 		{
 			return;
@@ -2370,4 +2426,9 @@ void SV_DemoSupport(char *commands)
 			gameCommandsCount++;
 		}
 	}
+}
+
+static void SV_DemoStateChanged(void)
+{
+	VM_Call(gvm, GAME_DEMOSTATECHANGED, sv_demoState->integer, sv_democlients->integer);
 }

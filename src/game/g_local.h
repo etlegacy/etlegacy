@@ -1349,8 +1349,10 @@ typedef struct level_locals_s
 	int frameStartTime;
 
 	qboolean suddenDeath;
-	qboolean demoPlayback;
-	int demoClientsNum;
+
+	demoState_t demoState;     ///< server demo state
+	int demoClientsNum;        ///< number of reserved slots for demo clients
+	int demoClientBotNum;      ///< clientNum of bot that collects stats during recording, optional
 } level_locals_t;
 
 /**
@@ -1762,10 +1764,11 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_DemoSupport(char *commands);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
+extern int dll_trap_DemoSaveGameCommand;
 
 // g_demo_legacy.c
-void G_DemoPlaybackInit(qboolean demoPlayback, int demoClientsNum);
-void G_DemoRunFrame(void);
+void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);
+qboolean G_DemoRunFrame(void);
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);

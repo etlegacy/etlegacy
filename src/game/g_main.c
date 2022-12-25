@@ -808,8 +808,8 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return G_SnapshotCallback(arg0, arg1);
 	case GAME_MESSAGERECEIVED:
 		return -1;
-	case GAME_DEMOPLAYBACKINIT:
-		G_DemoPlaybackInit((qboolean)arg0, arg1);
+	case GAME_DEMOSTATECHANGED:
+		G_DemoStateChanged((demoState_t)arg0, arg1);
 		return 0;
 	default:
 		G_Printf("Bad game export type: %ld\n", (long int) command);
@@ -5455,9 +5455,8 @@ void G_RunFrame(int levelTime)
 	// get any cvar changes
 	G_UpdateCvars();
 
-	if (level.demoPlayback)
+	if(G_DemoRunFrame())
 	{
-		G_DemoRunFrame();
 		return;
 	}
 

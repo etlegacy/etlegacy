@@ -125,16 +125,12 @@ sharedEntity_t *SV_GEntityForSvEntity(svEntity_t *svEnt)
  * @param[in] clientNum
  * @param[in] text
  */
-void SV_GameSendServerCommand(int clientNum, const char *text, qboolean demoPlayback)
+void SV_GameSendServerCommand(int clientNum, const char *text)
 {
 	// record the game server commands in demos
 	if (sv.demoState == DS_RECORDING)
 	{
 		SV_DemoWriteGameCommand(clientNum, text);
-	}
-	else if (sv.demoState == DS_PLAYBACK && !demoPlayback && !SV_CheckLastCmd(text, qtrue))
-	{
-		return; // block qagame game commands during playback
 	}
 
 	if (clientNum == -1)
@@ -461,6 +457,11 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		Cmd_ArgvBuffer(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_CONSOLE_COMMAND:
+		if (sv.demoState == DS_RECORDING)
+		{
+			SV_DemoWriteServerConsoleCommand(args[1], VMA(2));
+		}
+
 		Cbuf_ExecuteText(args[1], VMA(2));
 		return 0;
 	case G_FS_FOPEN_FILE:
@@ -490,7 +491,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		if (!Tracker_catchServerCommand(args[1], VMA(2)))
 #endif
 		{
-			SV_GameSendServerCommand(args[1], VMA(2), qfalse);
+			SV_GameSendServerCommand(args[1], VMA(2));
 		}
 		return 0;
 	case G_LINKENTITY:

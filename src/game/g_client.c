@@ -2040,7 +2040,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char reason[MAX_STRING_CHARS] = "";
 #endif
 	qboolean allowGeoIP = qtrue;
-	int      i;
+	int      i, tv;
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
@@ -2061,6 +2061,12 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		if (!Q_stricmp(cs_key, "cg_allowGeoIP") && cs_value[0])
 		{
 			allowGeoIP = cs_value[0] >= '1' ? qtrue : qfalse;
+			continue;
+		}
+
+		if (!Q_stricmp(cs_key, "tv"))
+		{
+			tv = Q_atoi(cs_value);
 			continue;
 		}
 
@@ -2322,6 +2328,10 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		ent->r.svFlags |= SVF_BOT;
 		ent->inuse      = qtrue;
 
+		if (tv & 1)
+		{
+			level.demoClientBotNum = clientNum;
+		}
 	}
 	else if (firstTime)
 	{
@@ -2349,7 +2359,10 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
 
 #ifdef FEATURE_OMNIBOT
-	Bot_Event_ClientConnected(clientNum, isBot);
+	if (!(tv & 1))
+	{
+		Bot_Event_ClientConnected(clientNum, isBot);
+	}
 #endif
 
 	G_UpdateCharacter(client);

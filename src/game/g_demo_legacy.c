@@ -35,34 +35,135 @@
 #include "g_local.h"
 
 /**
- * @brief G_DemoPlaybackInit
- * @param[in] demoplayback
+ * @brief G_DemoStateChanged
+ * @param[in] demoState
  * @param[in] demoClientsNum
  */
-void G_DemoPlaybackInit(qboolean demoPlayback, int demoClientsNum)
+void G_DemoStateChanged(demoState_t demoState, int demoClientsNum)
 {
-	level.demoPlayback   = demoPlayback;
+	char userinfo[MAX_INFO_STRING] = { 0 };
+	char *reason;
+	int  num;
+
+	level.demoState      = demoState;
 	level.demoClientsNum = demoClientsNum;
 
-	if (demoPlayback)
+	switch (demoState)
 	{
+
+	case DS_PLAYBACK:
+	case DS_WAITINGPLAYBACK:
 		trap_Cvar_Set("g_customConfig", "");
 		trap_Cvar_Update(&g_customConfig);
+		break;
+
+	case DS_RECORDING:
+		num = trap_BotAllocateClient(g_maxclients.integer - 1);
+
+		if (num < 0)
+		{
+			Com_Printf("Could not add ETLTV-BOT\n");
+			return;
+		}
+
+		Info_SetValueForKey(userinfo, "name", "ETLTV-BOT");
+		Info_SetValueForKey(userinfo, "rate", "25000");
+		Info_SetValueForKey(userinfo, "snaps", "20");
+		Info_SetValueForKey(userinfo, "ip", "localhost");
+		Info_SetValueForKey(userinfo, "cl_guid", "ETLTV-BOT");
+		Info_SetValueForKey(userinfo, "tv", "1"); // value 1 - atm only used so omnibot module will not handle this bot
+
+		trap_SetUserinfo(num, userinfo);
+
+		if ((reason = ClientConnect(num, qtrue, qtrue)) != 0)
+		{
+			Com_Printf(va("Could not connect ETLTV-BOT: %s\n", reason));
+			return;
+		}
+
+		SetTeam(&g_entities[num], "spectator", qtrue, WP_NONE, WP_NONE, qfalse);
+		break;
+
+	// called when demo record stops
+	case DS_NONE:
+		if (level.demoClientBotNum)
+		{
+			trap_DropClient(level.demoClientBotNum, "disconnected", 0);
+			level.demoClientBotNum = 0;
+		}
+		break;
+	default:
+		break;
 	}
 }
 
 /**
-* @brief G_DemoRunFrame
+* @brief G_DemoBotHandling
+*
+* Managing bot that collects stats during recording
 */
-void G_DemoRunFrame(void)
+static void G_DemoRequestStats(void)
 {
-	gentity_t  *client;
-	static int oldGamestate = -1;
+	gentity_t  *ent;
+	gclient_t  *cl;
+	usercmd_t  cmd;
+	char       buf[1024]       = { 0 };
+	static int lastRequestTime = 0;
 	int        i;
 
-	trap_Cvar_Set("g_guidCheck", "0");
-	trap_Cvar_Set("g_allowVote", "0");
-	trap_Cvar_Set("vote_allow_map", "0");
+	if (!level.demoClientBotNum)
+	{
+		return;
+	}
+
+	ent = &g_entities[level.demoClientBotNum];
+
+	if (lastRequestTime + 5000 <= level.time)
+	{
+		ent->r.svFlags &= ~SVF_BOT;
+
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			cl = level.clients + level.sortedClients[i];
+
+			if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam == TEAM_SPECTATOR)
+			{
+				continue;
+			}
+
+			// request weapon stats
+			trap_EA_Command(level.demoClientBotNum, va("sgstats %d", level.sortedClients[i]));
+		}
+
+		ent->r.svFlags |= SVF_BOT;
+
+		Com_Memset(&cmd, 0, sizeof(usercmd_t));
+		cmd.serverTime = level.time;
+
+		// request scoreboard stats (FEATURE_MULTIVIEW request (every 5s) in spectator endframe too)
+		//trap_EA_Command(level.demoClientBotNum, "score");
+		ent->client->wantsscore = qtrue;
+		trap_BotUserCommand(level.demoClientBotNum, &cmd);
+
+		lastRequestTime = level.time;
+	}
+
+	// imitating real client (this updates server client lastPacketTime so it doesn't get timeouted)
+	while (trap_BotGetServerCommand(level.demoClientBotNum, buf, sizeof(buf)))
+	{
+	}
+}
+
+/**
+* @brief G_DemoIntermission
+*
+* Handles moving clients that are watching server demo to intermission point
+*/
+static void G_DemoIntermission(void)
+{
+	gentity_t  *ent;
+	static int oldGamestate = -1;
+	int        i;
 
 	if (g_gamestate.integer == GS_INTERMISSION && oldGamestate != GS_INTERMISSION)
 	{
@@ -73,12 +174,12 @@ void G_DemoRunFrame(void)
 		// move all clients to the intermission point
 		for (i = level.demoClientsNum; i < level.maxclients; i++)
 		{
-			client = g_entities + i;
-			if (!client->inuse)
+			ent = g_entities + i;
+			if (!ent->inuse)
 			{
 				continue;
 			}
-			MoveClientToIntermission(client, qfalse);
+			MoveClientToIntermission(ent, qfalse);
 		}
 	}
 
@@ -86,6 +187,34 @@ void G_DemoRunFrame(void)
 	{
 		level.intermissiontime = 0;
 	}
+
+	oldGamestate = g_gamestate.integer;
+}
+
+/**
+* @brief G_DemoRunFrame
+*/
+qboolean G_DemoRunFrame(void)
+{
+	gentity_t *ent;
+	int i;
+
+	if (level.demoState == DS_RECORDING)
+	{
+		G_DemoRequestStats();
+		return qfalse;
+	}
+
+	if (level.demoState != DS_PLAYBACK && level.demoState != DS_WAITINGPLAYBACK)
+	{
+		return qfalse;
+	}
+
+	trap_Cvar_Set("g_guidCheck", "0");
+	trap_Cvar_Set("g_allowVote", "0");
+	trap_Cvar_Set("voteFlags", "0");
+
+	G_DemoIntermission();
 
 	// let entities initialize
 	if (level.framenum < 7)
@@ -104,13 +233,20 @@ void G_DemoRunFrame(void)
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
+		ent = &g_entities[level.sortedClients[i]];
+
 		if (level.sortedClients[i] < level.demoClientsNum)
 		{
+			ent->health = ent->client->ps.stats[STAT_HEALTH];
 			continue;
 		}
 
-		ClientEndFrame(&g_entities[level.sortedClients[i]]);
+		ClientEndFrame(ent);
 	}
 
-	oldGamestate = g_gamestate.integer;
+	CheckTeamStatus();
+
+	G_UpdateTeamMapData();
+
+	return qtrue;
 }

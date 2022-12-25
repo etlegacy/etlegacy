@@ -1698,7 +1698,7 @@ void SpectatorClientEndFrame(gentity_t *ent)
 {
 #ifdef FEATURE_MULTIVIEW
 	// specs periodically get score updates for useful demo playback info
-	if (/*ent->client->pers.mvCount > 0 &&*/ ent->client->pers.mvScoreUpdate < level.time)
+	if (/*ent->client->pers.mvCount > 0 &&*/ ent->client->pers.mvScoreUpdate < level.time && level.demoState != DS_PLAYBACK)
 	{
 		ent->client->pers.mvScoreUpdate = level.time + MV_SCOREUPDATE_INTERVAL;
 		ent->client->wantsscore         = qtrue;
