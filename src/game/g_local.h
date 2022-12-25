@@ -1764,7 +1764,6 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_DemoSupport(char *commands);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
-extern int dll_trap_DemoSaveGameCommand;
 
 // g_demo_legacy.c
 void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);

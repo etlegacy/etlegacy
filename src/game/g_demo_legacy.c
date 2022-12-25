@@ -197,7 +197,7 @@ static void G_DemoIntermission(void)
 qboolean G_DemoRunFrame(void)
 {
 	gentity_t *ent;
-	int i;
+	int       i;
 
 	if (level.demoState == DS_RECORDING)
 	{

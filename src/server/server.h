@@ -497,6 +497,7 @@ qboolean SV_DemoReadFrame(void);
 void SV_DemoWriteFrame(void);
 qboolean SV_DemoClientCommandCapture(client_t *client, const char *msg);
 void SV_DemoWriteServerCommand(const char *cmd);
+void SV_DemoWriteServerConsoleCommand(int exec_when, const char *cmd);
 void SV_DemoWriteGameCommand(int clientNum, const char *cmd);
 void SV_DemoWriteConfigString(int cs_index, const char *cs_string);
 void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo);

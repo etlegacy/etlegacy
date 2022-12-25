@@ -1445,7 +1445,7 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 static void SV_DemoReadServerConsoleCommand(msg_t *msg)
 {
 	char *cmd;
-	int exec_when;
+	int  exec_when;
 
 	exec_when = MSG_ReadLong(msg);
 	cmd       = MSG_ReadString(msg);
@@ -2238,10 +2238,10 @@ static int QDECL SV_DemoSort(const void *a, const void *b)
 */
 static void SV_Demo_AutoPlay_f(void)
 {
-	char   fileList[30000];
-	char   path[MAX_OSPATH];
-	char   *arg, *fileName;
-	int    i, count;
+	char fileList[30000];
+	char path[MAX_OSPATH];
+	char *arg, *fileName;
+	int  i, count;
 
 	if (sv.demoState != DS_NONE && sv.demoState != DS_WAITINGPLAYBACK && sv.demoState != DS_RESTART)
 	{

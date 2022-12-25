@@ -5455,7 +5455,7 @@ void G_RunFrame(int levelTime)
 	// get any cvar changes
 	G_UpdateCvars();
 
-	if(G_DemoRunFrame())
+	if (G_DemoRunFrame())
 	{
 		return;
 	}
