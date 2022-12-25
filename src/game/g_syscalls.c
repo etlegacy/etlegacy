@@ -826,6 +826,11 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key)
 
 /**
 * @brief Extension for informing engine about demo support
+*       and (optional) which commands should be saved and send only per request during plaback (imitating server generating those)
+*
+* Example: gstats\\sgstats\\sc0\\score\\sc1\\score  (send -> what player requests, save -> what is send after that request)
+*            |        |      |     |     |     |
+*          save      send   save send   save  send
 */
 void trap_DemoSupport(char *commands)
 {

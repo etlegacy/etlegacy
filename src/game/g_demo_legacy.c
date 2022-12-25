@@ -106,9 +106,8 @@ static void G_DemoRequestStats(void)
 {
 	gentity_t  *ent;
 	gclient_t  *cl;
-	usercmd_t  cmd;
-	char       buf[1024]       = { 0 };
-	static int lastRequestTime = 0;
+	char       buf[MAX_STRING_CHARS] = { 0 };
+	static int lastRequestTime       = 0;
 	int        i;
 
 	if (!level.demoClientBotNum)
@@ -137,13 +136,8 @@ static void G_DemoRequestStats(void)
 
 		ent->r.svFlags |= SVF_BOT;
 
-		Com_Memset(&cmd, 0, sizeof(usercmd_t));
-		cmd.serverTime = level.time;
-
 		// request scoreboard stats (FEATURE_MULTIVIEW request (every 5s) in spectator endframe too)
-		//trap_EA_Command(level.demoClientBotNum, "score");
-		ent->client->wantsscore = qtrue;
-		trap_BotUserCommand(level.demoClientBotNum, &cmd);
+		G_SendScore(ent);
 
 		lastRequestTime = level.time;
 	}

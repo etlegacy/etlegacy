@@ -2397,7 +2397,7 @@ void SV_DemoSupport(char *commands)
 
 	if (sv_demoState->integer == DS_WAITINGPLAYBACK)
 	{
-		if (!commands[0])
+		if (!commands || !commands[0])
 		{
 			return;
 		}
