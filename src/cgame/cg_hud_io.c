@@ -887,32 +887,22 @@ static qboolean CG_ReadHudFile(const char *filename)
 	return qtrue;
 }
 
-static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, const char *s)
+static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, char *s)
 {
-	if (Q_IsHexColorString(s))
+	qboolean res;
+
+	vec[3] = 1.f;
+	res    = BG_parseColor(s, vec);
+
+	if (!res)
 	{
-		vec[0] = ((float)(gethex(*(s)) * 16 + gethex(*(s + 1)))) / 255.00f;
-		vec[1] = ((float)(gethex(*(s + 2)) * 16 + gethex(*(s + 3)))) / 255.00f;
-		vec[2] = ((float)(gethex(*(s + 4)) * 16 + gethex(*(s + 5)))) / 255.00f;
-
-		if (Q_HexColorStringHasAlpha(s))
-		{
-			vec[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
-		}
-		else
-		{
-			vec[3] = 1.f;
-		}
-
-		return qtrue;
+		vec[0] = 0.f;
+		vec[1] = 0.f;
+		vec[2] = 0.f;
+		vec[3] = 0.f;
 	}
 
-	vec[0] = 0.f;
-	vec[1] = 0.f;
-	vec[2] = 0.f;
-	vec[3] = 0.f;
-
-	return qfalse;
+	return res;
 }
 
 static ID_INLINE float CG_HudParseColorElement(cJSON *object, float defaultValue)
