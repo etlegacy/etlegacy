@@ -1648,38 +1648,43 @@ static void CG_TeamMenu_f(void)
 }
 
 /**
- * @brief read huds from the default files
+ * @brief read huds from the default files or from a user provided path
  */
 static void CG_ReadHuds_f(void)
 {
-	char tmp[MAX_QPATH] = { 0 };
-	int  count          = trap_Argc();
+	int count = trap_Argc();
 
-	trap_Argv(0, tmp, MAX_QPATH);
-	if (strcmp(tmp, "readHuds") == 0)
+	if (count == 2)
 	{
-		CG_ReadHudsFromFile();
+		size_t len;
+		char   tmp[MAX_QPATH] = { 0 };
+		trap_Argv(1, tmp, MAX_QPATH);
+		len = strlen(tmp);
+
+		if (!tmp[0])
+		{
+			return;
+		}
+
+		if (len <= 4 || strcmp(tmp + len - 4, ".bin") != 0)
+		{
+			Q_strcat(tmp, MAX_QPATH, ".bin");
+		}
+
+		if (!CG_TryReadHudFromFile(tmp))
+		{
+			CG_Printf(S_COLOR_RED "^1ERROR while reading hud file: %s\n", tmp);
+		}
+
 		return;
 	}
-
-	if (count != 2)
+	else if (count > 2)
 	{
 		CG_Printf(S_COLOR_RED "^1ERROR invalid number of arguments\n");
 		return;
 	}
 
-	tmp[0] = '\0';
-	trap_Argv(1, tmp, MAX_QPATH);
-
-	if (!tmp[0])
-	{
-		return;
-	}
-
-	if (!CG_TryReadHudFromFile(tmp))
-	{
-		CG_Printf(S_COLOR_RED "^1ERROR while reading hud file: %s\n", tmp);
-	}
+	CG_ReadHudsFromFile();
 }
 
 /**
@@ -2572,7 +2577,6 @@ static consoleCommand_t commands[] =
 	{ "classmenu",           CG_ClassMenu_f            },
 	{ "teammenu",            CG_TeamMenu_f             },
 	{ "readHuds",            CG_ReadHuds_f             },
-	{ "readHud",             CG_ReadHuds_f             },
 	{ "writeHuds",           CG_WriteHuds_f            },
 	{ "sharetimer",          CG_ShareTimer_f           },
 	{ "sharetimer_buddy",    CG_ShareTimer_f           },
