@@ -353,10 +353,6 @@ void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 	{
 		rows++;
 	}
-	if (rows < 0)
-	{
-		return;
-	}
 
 	CP("print \"^5\nAvailable Game Commands:\n------------------------\n\"");
 	for (i = 0; i < rows; i++)
