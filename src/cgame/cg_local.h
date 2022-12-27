@@ -3096,6 +3096,7 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
 // cg_hud_io.c
 float CG_AdjustXFromHudFile(float x, float w);
 qboolean CG_WriteHudsToFile();
+qboolean CG_TryReadHudFromFile(const char *filename);
 void CG_ReadHudsFromFile(void);
 
 // cg_draw_hud.c
@@ -4238,9 +4239,9 @@ typedef struct
 
 typedef struct
 {
-    char *name;
-    size_t offset;
-    qboolean (*parse)(int *argIndex, hudComponent_t *comp, int offset);
+	char *name;
+	size_t offset;
+	qboolean (*parse)(int *argIndex, hudComponent_t *comp, int offset);
 } hudComponentMembersFields_t;
 
 hudStucture_t *CG_GetActiveHUD();

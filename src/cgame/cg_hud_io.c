@@ -63,7 +63,7 @@ static void CG_HudBackupFilePath(char *output, int len)
 	qtime_t ct;
 	char    tmp[MAX_OSPATH];
 
-	tmp[0] = '\0';
+	tmp[0]    = '\0';
 	output[0] = '\0';
 	trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
 	trap_RealTime(&ct);
@@ -947,16 +947,6 @@ static void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
 {
 	if (!object)
 	{
-		if (colorVec[0] != 0.f && colorVec[1] != 0.f && colorVec[2] != 0.f && colorVec[3] != 0.f)
-		{
-			return;
-		}
-
-		colorVec[0] = 0.f;
-		colorVec[1] = 0.f;
-		colorVec[2] = 0.f;
-		colorVec[3] = 1.f;
-
 		return;
 	}
 
@@ -1184,7 +1174,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 	return qtrue;
 }
 
-static qboolean CG_TryReadHudFromFile(const char *filename)
+qboolean CG_TryReadHudFromFile(const char *filename)
 {
 	if (!CG_ReadHudJsonFile(filename))
 	{
