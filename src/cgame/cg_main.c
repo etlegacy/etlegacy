@@ -2621,9 +2621,9 @@ void CG_AssetCache(void)
 #define DEBUG_INITPROFILE_EXEC(f)
 #endif // ETLEGACY_DEBUG
 
-static ID_INLINE void CG_SetupExtensionTrap(char *value, int *trap, const char *name)
+static ID_INLINE void CG_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
 {
-	if (trap_GetValue(value, sizeof(value), name))
+	if (trap_GetValue(value, valueSize, name))
 	{
 		*trap = Q_atoi(value);
 	}
@@ -2642,8 +2642,8 @@ static ID_INLINE void CG_SetupExtensions(void)
 	{
 		dll_com_trapGetValue = Q_atoi(value);
 
-		CG_SetupExtensionTrap(value, &dll_trap_SysFlashWindow, "trap_SysFlashWindow_Legacy");
-		CG_SetupExtensionTrap(value, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SysFlashWindow, "trap_SysFlashWindow_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
 	}
 }
 
