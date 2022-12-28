@@ -2095,6 +2095,12 @@ static int S_AL_SSSourceGet(void)
 	for (i = 0; i < MAX_STREAMING_SOUNDS && ssPlaying[i]; i++)
 		;
 
+	// No free source
+	if (i == MAX_STREAMING_SOUNDS)
+	{
+		return -1;
+	}
+
 	// Allocate a musicSource at high priority
 	ssSourceHandle[i] = S_AL_SrcAlloc(SRCPRI_STREAM, -2, 0);
 	if (ssSourceHandle[i] == -1)
