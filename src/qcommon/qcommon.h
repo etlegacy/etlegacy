@@ -571,9 +571,6 @@ typedef void (*completionFunc_t)(char *args, int argNum);
 
 void Cmd_Init(void);
 
-// We need to use EXPAND because the Microsoft MSVC preprocessor does not expand the va_args the same way as other preprocessors
-// http://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly
-#define EXPAND(x) x
 #define GET_MACRO(_1, _2, _3, _4, NAME, ...) NAME
 #define Cmd_AddCommand1(x) Cmd_AddSystemCommand(x, NULL, NULL, NULL)
 #define Cmd_AddCommand2(x, y) Cmd_AddSystemCommand(x, y, NULL, NULL)

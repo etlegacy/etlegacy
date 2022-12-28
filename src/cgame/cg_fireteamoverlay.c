@@ -159,9 +159,9 @@ void CG_ParseFireteams()
 
 		s = Info_ValueForKey(p, "c");
 		Q_strncpyz(hexbuffer + 2, s, 9);
-		sscanf(hexbuffer, "%x", &clnts[1]);
+		Q_sscanf(hexbuffer, "%x", &clnts[1]);
 		Q_strncpyz(hexbuffer + 2, s + 8, 9);
-		sscanf(hexbuffer, "%x", &clnts[0]);
+		Q_sscanf(hexbuffer, "%x", &clnts[0]);
 
 		cg.fireTeams[i].membersNumber = 0;
 

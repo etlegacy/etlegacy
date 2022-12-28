@@ -76,7 +76,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 			Ren_Warning("WARNING: missing vector element in shader '%s' - no token\n", shader.name);
 			return qfalse;
 		}
-		v[i] = atof(token);
+		v[i] = Q_atof(token);
 	}
 
 	token = COM_ParseExt(text, qfalse);
@@ -206,7 +206,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			tr.sunLight[0] = atof(token);
+			tr.sunLight[0] = Q_atof(token);
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
@@ -214,7 +214,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			tr.sunLight[1] = atof(token);
+			tr.sunLight[1] = Q_atof(token);
 
 
 			token = COM_ParseExt2(text, qfalse);
@@ -223,7 +223,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			tr.sunLight[2] = atof(token);
+			tr.sunLight[2] = Q_atof(token);
 
 			VectorNormalize(tr.sunLight);
 
@@ -233,7 +233,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			a = atof(token);
+			a = Q_atof(token);
 			VectorScale(tr.sunLight, a, tr.sunLight);
 
 			token = COM_ParseExt2(text, qfalse);
@@ -242,7 +242,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			a = atof(token);
+			a = Q_atof(token);
 			a = a / 180 * M_PI;
 
 			token = COM_ParseExt2(text, qfalse);
@@ -251,7 +251,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			b = atof(token);
+			b = Q_atof(token);
 			b = b / 180 * M_PI;
 
 			tr.sunDirection[0] = cos(a) * cos(b);
@@ -355,7 +355,7 @@ qboolean ParseShaderR1(char *_text)
 			token = COM_ParseExt(text, qfalse);
 			if (token[0])
 			{
-				shader.clampTime = atof(token);
+				shader.clampTime = Q_atof(token);
 			}
 			else
 			{
@@ -440,7 +440,7 @@ qboolean ParseShaderR1(char *_text)
 			}
 			else
 			{
-				shader.fogParms.depthForOpaque = atof(token);
+				shader.fogParms.depthForOpaque = Q_atof(token);
 				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
 			}
 			//shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
@@ -498,13 +498,13 @@ qboolean ParseShaderR1(char *_text)
 				continue;
 			}
 
-			if (atof(token) > 1)
+			if (Q_atof(token) > 1)
 			{
 				Ren_Warning("WARNING: last value for skyfogvars is 'density' which needs to be 0.0-1.0\n");
 				continue;
 			}
 
-			RE_SetFog(FOG_SKY, 0, 5, fogColor[0], fogColor[1], fogColor[2], atof(token));
+			RE_SetFog(FOG_SKY, 0, 5, fogColor[0], fogColor[1], fogColor[2], Q_atof(token));
 
 			continue;
 		}
@@ -526,7 +526,7 @@ qboolean ParseShaderR1(char *_text)
 				continue;
 			}
 
-			fogvar = atof(token);
+			fogvar = Q_atof(token);
 
 			// right now allow one water color per map.  I'm sure this will need
 			//          to change at some point, but I'm not sure how to track fog parameters
@@ -567,7 +567,7 @@ qboolean ParseShaderR1(char *_text)
 			// NOTE:   fogFar > 1 means the shader is setting the farclip, < 1 means setting
 			//         density (so old maps or maps that just need softening fog don't have to care about farclip)
 
-			fogDensity = atof(token);
+			fogDensity = Q_atof(token);
 			if (fogDensity > 1)
 			{                   // linear
 				fogFar = fogDensity;
@@ -608,9 +608,9 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing value for 'lightgrid ambient multiplier'\n");
 				continue;
 			}
-			if (atof(token) > 0)
+			if (Q_atof(token) > 0)
 			{
-				tr.lightGridMulAmbient = atof(token);
+				tr.lightGridMulAmbient = Q_atof(token);
 			}
 		}
 		else if (!Q_stricmp(token, "lightgridmuldir"))
@@ -622,9 +622,9 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing value for 'lightgrid directional multiplier'\n");
 				continue;
 			}
-			if (atof(token) > 0)
+			if (Q_atof(token) > 0)
 			{
-				tr.lightGridMulDirected = atof(token);
+				tr.lightGridMulDirected = Q_atof(token);
 			}
 		}
 		// light <value> determines flaring in xmap, not needed here
@@ -675,7 +675,7 @@ qboolean ParseShaderR1(char *_text)
 				}
 				else
 				{
-					shader.distanceCull[i] = atof(token);
+					shader.distanceCull[i] = Q_atof(token);
 				}
 			}
 
@@ -1220,7 +1220,7 @@ int ScanAndLoadShaderFilesR1()
 						Ren_Warning("WARNING: FUNCTABLE_SIZE hit\n");
 						break;
 					}
-					values[numValues++] = atof(token);
+					values[numValues++] = Q_atof(token);
 				}
 			}
 			while (depth && p);

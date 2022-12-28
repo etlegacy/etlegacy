@@ -189,7 +189,7 @@ static qboolean CG_ParsePatriclesConfig(void)
 			break;
 		}
 
-		shaderAnims[i].STRatio = (float)atof(token);
+		shaderAnims[i].STRatio = Q_atof(token);
 
 		// parse shader animation
 		for (j = 0; j < shaderAnims[i].counts; j++)
@@ -1710,13 +1710,13 @@ int CG_NewParticleArea(int num)
     for (i = 0; i < 3; i++)
     {
         token     = COM_Parse(&str);
-        origin[i] = (float)atof(token);
+        origin[i] = Q_atof(token);
     }
 
     for (i = 0; i < 3; i++)
     {
         token      = COM_Parse(&str);
-        origin2[i] = (float)atof(token);
+        origin2[i] = Q_atof(token);
     }
 
     token        = COM_Parse(&str);

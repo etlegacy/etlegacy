@@ -570,7 +570,7 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 		numDisplays = 1;
 	}
 
-	if (sscanf(r_windowLocation->string, "%d,%d,%d", &displayIndex, &tmpX, &tmpY) != 3)
+	if (!Q_sscanf(r_windowLocation->string, "%d,%d,%d", &displayIndex, &tmpX, &tmpY))
 	{
 		return;
 	}

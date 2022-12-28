@@ -623,12 +623,12 @@ static void CG_EP_ParseFloats(char *floatstr, float *f1, float *f2)
 	if (*middleptr)
 	{
 		*middleptr++ = 0;
-		*f1          = atof(floatstr);
-		*f2          = atof(middleptr);
+		*f1          = Q_atof(floatstr);
+		*f2          = Q_atof(middleptr);
 	}
 	else
 	{
-		*f1 = *f2 = atof(floatstr);
+		*f1 = *f2 = Q_atof(floatstr);
 	}
 }
 
@@ -650,12 +650,12 @@ static void CG_EP_ParseInts(char *intstr, int *i1, int *i2)
 	if (*middleptr)
 	{
 		*middleptr++ = 0;
-		*i1          = atof(intstr);
-		*i2          = atof(middleptr);
+		*i1          = Q_atoi(intstr);
+		*i2          = Q_atoi(middleptr);
 	}
 	else
 	{
-		*i1 = *i2 = atof(intstr);
+		*i1 = *i2 = Q_atoi(intstr);
 	}
 }
 

@@ -333,12 +333,12 @@ static void CG_Fade_f(void)
 		return;
 	}
 
-	r = (int) atof(CG_Argv(1));
-	g = (int) atof(CG_Argv(2));
-	b = (int) atof(CG_Argv(3));
-	a = (int) atof(CG_Argv(4));
+	r = Q_atoi(CG_Argv(1));
+	g = Q_atoi(CG_Argv(2));
+	b = Q_atoi(CG_Argv(3));
+	a = Q_atoi(CG_Argv(4));
 
-	duration = (int) (atof(CG_Argv(5)) * 1000);
+	duration = (int) (Q_atof(CG_Argv(5)) * 1000);
 
 	CG_Fade(r, g, b, a, cg.time, duration);
 }

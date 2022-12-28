@@ -648,7 +648,7 @@ void SP_trigger_hurt(gentity_t *self)
 	}
 
 	G_SpawnString("life", "0", &life);
-	dalife      = (float)(atof(life));
+	dalife      = Q_atof(life);
 	self->delay = dalife;
 }
 
@@ -1398,7 +1398,7 @@ void SP_trigger_flagonly(gentity_t *ent)
 	// inside of this field will add "score" to the right player team.  storing this
 	// in ent->accuracy since that's unused.
 	G_SpawnString("score", "20", &scorestring);
-	ent->accuracy = (float)(atof(scorestring));
+	ent->accuracy = Q_atof(scorestring);
 	ent->s.eType  = ET_TRIGGER_FLAGONLY;
 #ifdef VISIBLE_TRIGGERS
 	ent->r.svFlags &= ~SVF_NOCLIENT;
@@ -1433,7 +1433,7 @@ void SP_trigger_flagonly_multiple(gentity_t *ent)
 	//  inside of this field will add "score" to the right player team.  storing this
 	//  in ent->accuracy since that's unused.
 	G_SpawnString("score", "20", &scorestring);
-	ent->accuracy = (float)(atof(scorestring));
+	ent->accuracy = Q_atof(scorestring);
 	ent->s.eType  = ET_TRIGGER_FLAGONLY_MULTIPLE;
 #ifdef VISIBLE_TRIGGERS
 	ent->r.svFlags &= ~SVF_NOCLIENT;
@@ -1853,7 +1853,7 @@ void SP_trigger_objective_info(gentity_t *ent)
 	// inside of this field will add "score" to the right player team.  storing this
 	// in ent->accuracy since that's unused.
 	G_SpawnString("score", "0", &scorestring);
-	ent->accuracy = (float)(atof(scorestring));
+	ent->accuracy = Q_atof(scorestring);
 
 	trap_SetConfigstring(CS_OID_TRIGGERS + level.numOidTriggers, ent->track);
 

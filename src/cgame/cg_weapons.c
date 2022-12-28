@@ -862,7 +862,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			break;
 		}
 
-		fps = (float)atof(token);
+		fps = Q_atof(token);
 
 		if (fps == 0.f)
 		{

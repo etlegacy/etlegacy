@@ -2199,8 +2199,8 @@ void CG_Debriefing_ParseWeaponAccuracies(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].totalWeapAcc   = (float)atof(CG_Argv(i * 2 + 1));
-		cgs.clientinfo[i].totalWeapHSpct = (float)atof(CG_Argv(i * 2 + 2));
+		cgs.clientinfo[i].totalWeapAcc   = Q_atof(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].totalWeapHSpct = Q_atof(CG_Argv(i * 2 + 2));
 	}
 	cgs.dbAccuraciesReceived = qtrue;
 }
@@ -2334,7 +2334,7 @@ void CG_Debriefing_ParseAwards(void)
 
 		// value
 		token = COM_Parse(&cs);
-		value = atof(token);
+		value = Q_atof(token);
 
 		if (value > 0)
 		{

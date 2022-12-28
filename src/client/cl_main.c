@@ -3695,7 +3695,7 @@ void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 		if (serverStatus->print)
 		{
 			score = ping = 0;
-			sscanf(s, "%d %d", &score, &ping);
+			Q_sscanf(s, "%d %d", &score, &ping);
 			s = strchr(s, ' ');
 			if (s)
 			{
@@ -3709,7 +3709,7 @@ void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 			{
 				s = "unknown";
 			}
-			sscanf(s, "\"%[^\"]\"", name); // get player's name between double quotes
+			Q_sscanf(s, "\"%[^\"]\"", name); // get player's name between double quotes
 			Com_Printf("%-2d   %-3d    %-3d   \"%s^7\"\n", i, score, ping, name);
 		}
 	}

@@ -163,7 +163,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		{
 			const char *info = CG_ConfigString(CS_MODINFO);
 
-			cgs.mapProb = (float)atof(Info_ValueForKey(info, "M"));
+			cgs.mapProb = Q_atof(Info_ValueForKey(info, "M"));
 		}
 #endif
 

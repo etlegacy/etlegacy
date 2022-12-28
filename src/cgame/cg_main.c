@@ -2449,7 +2449,7 @@ float CG_Cvar_Get(const char *cvar)
 
 	Com_Memset(buff, 0, sizeof(buff));
 	trap_Cvar_VariableStringBuffer(cvar, buff, sizeof(buff));
-	return (float)atof(buff);
+	return Q_atof(buff);
 }
 
 /**

@@ -78,7 +78,7 @@ qboolean CG_SpawnFloat(const char *key, const char *defaultString, float *out)
 	qboolean present;
 
 	present = CG_SpawnString(key, defaultString, &s);
-	*out    = (float)atof(s);
+	*out    = Q_atof(s);
 	return present;
 }
 
@@ -112,7 +112,7 @@ qboolean CG_SpawnVector(const char *key, const char *defaultString, float *out)
 	qboolean present;
 
 	present = CG_SpawnString(key, defaultString, &s);
-	sscanf(s, "%f %f %f", &out[0], &out[1], &out[2]);
+	Q_sscanf(s, "%f %f %f", &out[0], &out[1], &out[2]);
 	return present;
 }
 
@@ -129,7 +129,7 @@ qboolean CG_SpawnVector2D(const char *key, const char *defaultString, float *out
 	qboolean present;
 
 	present = CG_SpawnString(key, defaultString, &s);
-	sscanf(s, "%f %f", &out[0], &out[1]);
+	Q_sscanf(s, "%f %f", &out[0], &out[1]);
 	return present;
 }
 

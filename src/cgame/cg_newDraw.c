@@ -700,13 +700,13 @@ void CG_MouseEvent(int x, int y)
 		m_filter = Q_atoi(buffer);
 
 		trap_Cvar_VariableStringBuffer("sensitivity", buffer, sizeof(buffer));
-		sensitivity = atof(buffer);
+		sensitivity = Q_atof(buffer);
 
 		trap_Cvar_VariableStringBuffer("m_pitch", buffer, sizeof(buffer));
-		m_pitch = atof(buffer);
+		m_pitch = Q_atof(buffer);
 
 		trap_Cvar_VariableStringBuffer("m_yaw", buffer, sizeof(buffer));
-		m_yaw = atof(buffer);
+		m_yaw = Q_atof(buffer);
 
 		if (m_filter)
 		{

@@ -141,7 +141,7 @@ void R_LoadModelShadow(model_t *mod)
 					mod->shadowShader = sh->index;
 				}
 			}
-			sscanf(shadowBits, "%f %f %f %f %f %f",
+            Q_sscanf(shadowBits, "%f %f %f %f %f %f",
 			       &mod->shadowParms[0], &mod->shadowParms[1], &mod->shadowParms[2],
 			       &mod->shadowParms[3], &mod->shadowParms[4], &mod->shadowParms[5]);
 		}

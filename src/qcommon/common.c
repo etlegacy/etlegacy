@@ -2636,7 +2636,7 @@ static void Com_Freeze_f(void)
 		Com_Printf("freeze <seconds>\n");
 		return;
 	}
-	s = (float)(atof(Cmd_Argv(1)));
+	s = Q_atof(Cmd_Argv(1));
 
 	start = Com_Milliseconds();
 
@@ -4214,6 +4214,6 @@ void Com_ParseUA(userAgent_t *ua, const char *string)
 	{
 		ua->compatible = 0x1; // basic level compatibility
 		// match version string, or leave it as zero
-		sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
+        Q_sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
 	}
 }

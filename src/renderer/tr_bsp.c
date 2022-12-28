@@ -2539,7 +2539,7 @@ void R_LoadEntities(lump_t *l)
 		// check for a different grid size
 		if (!Q_stricmp(keyname, "gridsize"))
 		{
-			sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
+            Q_sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
 			continue;
 		}
 	}

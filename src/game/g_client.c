@@ -1487,7 +1487,7 @@ const char *GetParsedIP(const char *ipadd)
 		return "localhost";
 	}
 
-	rc = sscanf(ipadd, "%3u.%3u.%3u.%3u:%u%c", &b1, &b2, &b3, &b4, &port, &c);
+	rc = Q_sscanf(ipadd, "%3u.%3u.%3u.%3u:%u%c", &b1, &b2, &b3, &b4, &port, &c);
 	if (rc < 4 || rc > 5)
 	{
 		return NULL;
@@ -1881,7 +1881,7 @@ void ClientUserinfoChanged(int clientNum)
 	{
 		if (cs_cg_uinfo[0])
 		{
-			sscanf(cs_cg_uinfo, "%u %u %u",
+			Q_sscanf(cs_cg_uinfo, "%u %u %u",
 			       &client->pers.clientFlags,
 			       &client->pers.clientTimeNudge,
 			       &client->pers.clientMaxPackets);

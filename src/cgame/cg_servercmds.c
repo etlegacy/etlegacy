@@ -43,12 +43,12 @@ static void CG_ParseSkillRating(int version)
 {
 	int i, r;
 	int argc = trap_Argc();
-	cg.axisProb   = (float)atof(CG_Argv(1));
-	cg.alliesProb = (float)atof(CG_Argv(2));
+	cg.axisProb   = Q_atof(CG_Argv(1));
+	cg.alliesProb = Q_atof(CG_Argv(2));
 
 	for (i = 0, r = 3; i < MAX_CLIENTS && r < argc; i++, r++)
 	{
-		cg.rating[i] = (float)atof(CG_Argv(r));
+		cg.rating[i] = Q_atof(CG_Argv(r));
 		// sr
 		if (version == 1)
 		{
@@ -70,7 +70,7 @@ static void CG_ParsePrestige()
 	s = CG_Argv(i);
 	while (*s)
 	{
-		cg.prestige[i] = (float)atof(CG_Argv(i + 1));
+		cg.prestige[i] = Q_atof(CG_Argv(i + 1));
 		i++;
 		s = CG_Argv(i);
 	}
@@ -211,7 +211,7 @@ void CG_ParseServerinfo(void)
 		trap_Cvar_Update(&cg_antilag);
 		trap_Cvar_Update(&cg_gameType);
 	}
-	cgs.timelimit  = (float)atof(Info_ValueForKey(info, "timelimit"));
+	cgs.timelimit  = Q_atof(Info_ValueForKey(info, "timelimit"));
 	cgs.maxclients = Q_atoi(Info_ValueForKey(info, "sv_maxclients"));
 	mapname        = Info_ValueForKey(info, "mapname");
 	Q_strncpyz(cgs.rawmapname, mapname, sizeof(cgs.rawmapname));
@@ -342,7 +342,7 @@ void CG_ParseModInfo(void)
 	cgs.skillRating = Q_atoi(Info_ValueForKey(info, "R"));
 	if (cgs.skillRating > 1)
 	{
-		cgs.mapProb = (float)atof(Info_ValueForKey(info, "M"));
+		cgs.mapProb = Q_atof(Info_ValueForKey(info, "M"));
 	}
 #endif
 #ifdef FEATURE_PRESTIGE
@@ -507,7 +507,7 @@ void CG_ParseWolfinfo(void)
 	info = CG_ConfigString(CS_WOLFINFO);
 
 	cgs.currentRound       = Q_atoi(Info_ValueForKey(info, "g_currentRound"));
-	cgs.nextTimeLimit      = (float)atof(Info_ValueForKey(info, "g_nextTimeLimit"));
+	cgs.nextTimeLimit      = Q_atof(Info_ValueForKey(info, "g_nextTimeLimit"));
 	cgs.gamestate          = (gamestate_t)(atoi(Info_ValueForKey(info, "gamestate")));
 	cgs.currentCampaign    = Info_ValueForKey(info, "g_currentCampaign");
 	cgs.currentCampaignMap = Q_atoi(Info_ValueForKey(info, "g_currentCampaignMap"));
@@ -591,14 +591,14 @@ void CG_ParseSpawns(void)
 		{
 			return;
 		}
-		cg.spawnCoordsUntransformed[i][0] = cg.spawnCoords[i][0] = (float)atof(s);
+		cg.spawnCoordsUntransformed[i][0] = cg.spawnCoords[i][0] = Q_atof(s);
 
 		s = Info_ValueForKey(info, "y");
 		if (!s || !strlen(s))
 		{
 			return;
 		}
-		cg.spawnCoordsUntransformed[i][1] = cg.spawnCoords[i][1] = (float)atof(s);
+		cg.spawnCoordsUntransformed[i][1] = cg.spawnCoords[i][1] = Q_atof(s);
 
 		if (cgs.ccLayers)
 		{
@@ -607,7 +607,7 @@ void CG_ParseSpawns(void)
 			{
 				return;
 			}
-			cg.spawnCoordsUntransformed[i][2] = cg.spawnCoords[i][2] = (float)atof(s);
+			cg.spawnCoordsUntransformed[i][2] = cg.spawnCoords[i][2] = Q_atof(s);
 		}
 
 		CG_TransformToCommandMapCoord(&cg.spawnCoords[i][0], &cg.spawnCoords[i][1]);
@@ -638,7 +638,7 @@ static void CG_ParseScreenFade(void)
 	info = CG_ConfigString(CS_SCREENFADE);
 
 	token         = COM_Parse((char **)&info);
-	cgs.fadeAlpha = (float)atof(token);
+	cgs.fadeAlpha = Q_atof(token);
 
 	token             = COM_Parse((char **)&info);
 	cgs.fadeStartTime = Q_atoi(token);
@@ -670,17 +670,17 @@ static void CG_ParseFog(void)
 	info = CG_ConfigString(CS_FOGVARS);
 
 	token   = COM_Parse((char **)&info);
-	ne      = (float)atof(token);
+	ne      = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	fa      = (float)atof(token);
+	fa      = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	density = (float)atof(token);
+	density = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	r       = (float)atof(token);
+	r       = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	g       = (float)atof(token);
+	g       = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	b       = (float)atof(token);
+	b       = Q_atof(token);
 	token   = COM_Parse((char **)&info);
 	time    = Q_atoi(token);
 
@@ -721,13 +721,13 @@ static void CG_ParseGlobalFog(void)
 		float r, g, b, depthForOpaque;
 
 		token          = COM_Parse((char **)&info);
-		r              = (float)atof(token);
+		r              = Q_atof(token);
 		token          = COM_Parse((char **)&info);
-		g              = (float)atof(token);
+		g              = Q_atof(token);
 		token          = COM_Parse((char **)&info);
-		b              = (float)atof(token);
+		b              = Q_atof(token);
 		token          = COM_Parse((char **)&info);
-		depthForOpaque = (float)atof(token);
+		depthForOpaque = Q_atof(token);
 
 		trap_R_SetGlobalFog(qfalse, duration, r, g, b, depthForOpaque);
 	}
@@ -1250,7 +1250,7 @@ void CG_AddToNotify(const char *str)
 	char  var[MAX_TOKEN_CHARS];
 
 	trap_Cvar_VariableStringBuffer("con_notifytime", var, sizeof(var));
-	notifytime = atof(var) * 1000;
+	notifytime = Q_atof(var) * 1000;
 
 	chatHeight = NOTIFY_HEIGHT;
 
@@ -2294,7 +2294,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			selfKills      = Q_atoi(CG_Argv(iArg++));
 			teamKills      = Q_atoi(CG_Argv(iArg++));
 			teamGibs       = Q_atoi(CG_Argv(iArg++));
-			ptRatio        = (float)atof(CG_Argv(iArg++));
+			ptRatio        = Q_atof(CG_Argv(iArg++));
 
 			htRatio = (totShots == 0) ? 0.0f : (float)(totHits * 100.0f / (float)totShots);
 			hsRatio = (totHits == 0) ? 0.0f : (float)(totHeadshots * 100.0f / (float)totHeadshotableHits);
@@ -3552,10 +3552,10 @@ static void CG_ServerCommand(void)
 		return;
 	}
 	case MU_FADE_HASH:                                 // "mu_fade"
-		trap_S_FadeBackgroundTrack(atof(CG_Argv(1)), Q_atoi(CG_Argv(2)), 0);
+		trap_S_FadeBackgroundTrack(Q_atof(CG_Argv(1)), Q_atoi(CG_Argv(2)), 0);
 		return;
 	case SND_FADE_HASH:                                // "snd_fade"
-		trap_S_FadeAllSound(atof(CG_Argv(1)), Q_atoi(CG_Argv(2)), Q_atoi(CG_Argv(3)));
+		trap_S_FadeAllSound(Q_atof(CG_Argv(1)), Q_atoi(CG_Argv(2)), Q_atoi(CG_Argv(3)));
 		return;
 	case ROCKANDROLL_HASH: // "rockandroll"
 		trap_S_FadeAllSound(1.0f, 1000, qfalse);      // fade sound up

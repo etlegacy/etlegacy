@@ -1166,7 +1166,7 @@ void Parse1DMatrix(char **buf_p, int x, float *m)
 	for (i = 0 ; i < x ; i++)
 	{
 		token = COM_Parse(buf_p);
-		m[i]  = (float)(atof(token));
+		m[i]  = Q_atof(token);
 	}
 
 	COM_MatchToken(buf_p, ")");
@@ -1972,7 +1972,7 @@ int Q_ParseColorRGBA(const char *inStr, vec4_t outColor)
 		return 0;
 	}
 
-	components = sscanf(inStr, "%f %f %f %f", &r, &g, &b, &a);
+	components = Q_sscanf(inStr, "%f %f %f %f", &r, &g, &b, &a);
 	Vector4Set(outColor, r, g, b, a);
 	ClampColor(outColor);
 

@@ -3606,7 +3606,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 	{
 		char buf[256];
 		trap_Cvar_VariableStringBuffer("showevents", buf, sizeof(buf));
-		if (atof(buf) != 0.0)
+		if (Q_atof(buf) != 0.0f)
 		{
 #ifdef QAGAME
 			Com_Printf(" game event svt %5d -> %5d: num = %20s parm %d\n", ps->pmove_framecount /*ps->commandTime*/, ps->eventSequence, newEvent < EV_MAX_EVENTS ? eventnames[newEvent] : "*unknown event*", eventParm);
