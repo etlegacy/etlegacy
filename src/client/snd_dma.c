@@ -1724,7 +1724,7 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 		ss = &streamingSounds[0];
 		if (param < 0)
 		{
-			if (intro && strlen(intro))
+			if (intro && *intro)
 			{
 				Q_strncpyz(ss->queueStream, intro, MAX_QPATH);
 				ss->queueStreamType = param;
@@ -1799,7 +1799,14 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 	}
 
 	// Set the name of the track
-	Q_strncpyz(ss->name, intro, MAX_QPATH);
+	if (intro && *intro)
+	{
+		Q_strncpyz(ss->name, intro, MAX_QPATH);
+	}
+	else
+	{
+		ss->name[0] = '\0';
+	}
 
 	// looping track passed to stream
 	if (loop)
@@ -1847,8 +1854,16 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 	{
 		S_CodecCloseStream(ss->stream);
 	}
+
 	// Open stream
-	ss->stream = S_CodecOpenStream(intro);
+	if (intro && *intro)
+	{
+		ss->stream = S_CodecOpenStream(intro);
+	}
+	else
+	{
+		ss->stream = NULL;
+	}
 
 	if (!ss->stream)
 	{

@@ -784,8 +784,8 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 {
 	if (!chksrc->local /*&& chksrc->entity != listenerNumber*/)
 	{
-		float  scaleFactor;
-		float  distance = 0.0f;
+		float scaleFactor;
+		float distance = 0.0f;
 
 		distance = vec3_distance(origin, lastListenerOrigin);
 
@@ -2750,7 +2750,7 @@ void S_AL_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTi
 	// Copy the loop over
 	Q_strncpyz(s_backgroundLoop, loop, sizeof(s_backgroundLoop));
 
-	if (!issame)
+	if (!issame && intro && *intro)
 	{
 		// Open the intro and don't mind whether it succeeds.
 		// The important part is the loop.
