@@ -2004,9 +2004,14 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 #define Q_atoi(str) (int) strtol(str, NULL, 10)
 
 // #define Q_sscanf(str, ...) sscanf(str, __VA_ARGS__)
-#define Q_sscanf(str, fmt, ...) Q_sscanfc(str, PP_NARG_FAST(__VA_ARGS__), fmt, __VA_ARGS__)
 
-static ID_INLINE qboolean Q_sscanfc(const char *str, int count, const char *fmt, ...)
+#ifdef ETLEGACY_DEBUG
+#define Q_sscanf(str, fmt, ...) Q_sscanfc(str, PP_NARG_FAST(__VA_ARGS__), __FILE__, __LINE__, fmt, __VA_ARGS__)
+static ID_INLINE int Q_sscanfc(const char *str, int count, const char *file, int line, const char *fmt, ...)
+#else
+#define Q_sscanf(str, fmt, ...) Q_sscanfc(str, PP_NARG_FAST(__VA_ARGS__), fmt, __VA_ARGS__)
+static ID_INLINE int Q_sscanfc(const char *str, int count, const char *fmt, ...)
+#endif
 {
 	int rc;
 	va_list args;
@@ -2018,11 +2023,11 @@ static ID_INLINE qboolean Q_sscanfc(const char *str, int count, const char *fmt,
 #ifdef ETLEGACY_DEBUG
 	if (count != rc)
 	{
-		Com_Printf("^1ERROR: Wrong number of elements in Q_sscanfc. Expected %i was %i\n", count, rc);
+		Com_Printf(S_COLOR_YELLOW "WARNING: Wrong number of elements in Q_sscanfc. Expected %i was %i in %s:%i\n", count, rc, file, line);
 	}
 #endif
 
-	return count == rc ? qtrue : qfalse;
+	return rc;
 }
 
 // functional gate syscall number
