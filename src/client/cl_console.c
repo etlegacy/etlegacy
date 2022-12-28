@@ -106,7 +106,7 @@ void Con_Clear_f(void)
 {
 	int i;
 
-	for (i = 0 ; i < CON_TEXTSIZE ; i++)
+	for (i = 0; i < CON_TEXTSIZE; i++)
 	{
 		con.text[i]      = ' ';
 		con.textColor[i] = ColorIndex(CONSOLE_COLOR);
@@ -154,10 +154,10 @@ void Con_Dump_f(void)
 	Com_Printf("Dumped console text to %s.\n", filename);
 
 	// skip empty lines
-	for (l = con.current - con.maxTotalLines + 1 ; l <= con.current ; l++)
+	for (l = con.current - con.maxTotalLines + 1; l <= con.current; l++)
 	{
 		line = con.text + (l % con.maxTotalLines) * con.linewidth;
-		for (x = 0 ; x < con.linewidth ; x++)
+		for (x = 0; x < con.linewidth; x++)
 			if (line[x] != ' ')
 			{
 				break;
@@ -178,12 +178,12 @@ void Con_Dump_f(void)
 
 	// write the remaining lines
 	buffer[bufferlen - 1] = 0;
-	for ( ; l <= con.current ; l++)
+	for (; l <= con.current; l++)
 	{
 		line = con.text + (l % con.maxTotalLines) * con.linewidth;
 		for (i = 0; i < con.linewidth; i++)
 			buffer[i] = line[i] & 0xff;
-		for (x = con.linewidth - 1 ; x >= 0 ; x--)
+		for (x = con.linewidth - 1; x >= 0; x--)
 		{
 			if (buffer[x] == ' ')
 			{
@@ -213,7 +213,7 @@ void Con_ClearNotify(void)
 {
 	int i;
 
-	for (i = 0 ; i < NUM_CON_TIMES ; i++)
+	for (i = 0; i < NUM_CON_TIMES; i++)
 	{
 
 		con.times[i] = 0;
@@ -288,9 +288,9 @@ void Con_CheckResize(void)
 			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
 
-		for (i = 0 ; i < numlines ; i++)
+		for (i = 0; i < numlines; i++)
 		{
-			for (j = 0 ; j < numchars ; j++)
+			for (j = 0; j < numchars; j++)
 			{
 				con.text[(con.maxTotalLines - 1 - i) * con.linewidth + j] =
 					tbuf[((con.current - i + oldtotalLines) %
@@ -337,7 +337,7 @@ void Con_Init(void)
 
 	Field_Clear(&g_consoleField);
 	g_consoleField.widthInChars = g_console_field_width / smallCharWidth - 2;
-	for (i = 0 ; i < COMMAND_HISTORY ; i++)
+	for (i = 0; i < COMMAND_HISTORY; i++)
 	{
 		Field_Clear(&historyEditLines[i]);
 		historyEditLines[i].widthInChars = g_console_field_width / smallCharWidth - 2;
@@ -461,7 +461,7 @@ void CL_ConsolePrint(char *txt)
 		}
 
 		// count word length
-		for (l = 0 ; l < con.linewidth ; l++)
+		for (l = 0; l < con.linewidth; l++)
 		{
 			if (txt[l] <= ' ')
 			{
@@ -545,7 +545,7 @@ void Con_DrawVersion(void)
 
 	i = strlen(version);
 
-	for (x = 0 ; x < i ; x++)
+	for (x = 0; x < i; x++)
 	{
 		if (x > strlen(ET_VERSION))
 		{
@@ -575,7 +575,7 @@ void Con_DrawClock(void)
 
 	i = strlen(clock);
 
-	for (x = 0 ; x < i ; x++)
+	for (x = 0; x < i; x++)
 	{
 		re.SetColor(g_color_table[ColorIndex(COLOR_MDGREY)]);
 
@@ -642,7 +642,7 @@ void Con_DrawNotify(void)
 
 	re.SetColor(g_color_table[currentColor]);
 
-	for (i = con.current - maxNotifies + 1 ; i <= con.current ; i++)
+	for (i = con.current - maxNotifies + 1; i <= con.current; i++)
 	{
 		if (i < 0)
 		{
@@ -671,7 +671,7 @@ void Con_DrawNotify(void)
 			continue;
 		}
 
-		for (x = 0 ; x < con.linewidth ; x++)
+		for (x = 0; x < con.linewidth; x++)
 		{
 			if ((text[x]) == ' ')
 			{
@@ -763,9 +763,18 @@ void Con_DrawSolidConsole(float frac)
 	}
 	else
 	{
-		if (Q_ParseColorRGBA(con_background->string, color))
+		static vec4_t consoleParsedBackgroundColor = { 0.f, 0.f, 0.f, 0.f };
+		static int    isParsed                     = qfalse;
+
+		if (con_background->modified)
 		{
-			SCR_FillRect(0, 0, SCREEN_WIDTH, y, color);
+			con_background->modified = qfalse;
+			isParsed                 = Q_ParseColorRGBA(con_background->string, consoleParsedBackgroundColor);
+		}
+
+		if (isParsed)
+		{
+			SCR_FillRect(0, 0, SCREEN_WIDTH, y, consoleParsedBackgroundColor);
 		}
 		else
 		{
@@ -839,7 +848,7 @@ void Con_DrawSolidConsole(float frac)
 	currentColor = 7;
 	re.SetColor(g_color_table[currentColor]);
 
-	for (i = 0 ; i < con.visibleLines; i++, y -= smallCharHeight, row--)
+	for (i = 0; i < con.visibleLines; i++, y -= smallCharHeight, row--)
 	{
 		if (row < 0)
 		{
@@ -855,7 +864,7 @@ void Con_DrawSolidConsole(float frac)
 		text      = con.text + (row % con.maxTotalLines) * con.linewidth;
 		textColor = con.textColor + (row % con.maxTotalLines) * con.linewidth;
 
-		for (x = 0 ; x < con.linewidth ; x++)
+		for (x = 0; x < con.linewidth; x++)
 		{
 			if (text[x] == ' ')
 			{
