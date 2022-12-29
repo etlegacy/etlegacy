@@ -2851,8 +2851,6 @@ int BG_simpleHintsExpand(int hint, int val);
 #endif
 int BG_simpleWeaponState(int ws);
 
-qboolean BG_parseColor(char *colString, float *col);
-
 // Voting
 #define VOTING_DISABLED     ((1 << numVotesAvailable) - 1)
 

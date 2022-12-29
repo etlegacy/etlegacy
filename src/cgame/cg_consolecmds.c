@@ -2277,7 +2277,7 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 
 	trap_Argv(++*argIndex, token, sizeof(token));
 
-	if (!BG_parseColor(token, *value))
+	if (!Q_ParseColor(token, *value))
 	{
 		if ((trap_Argc() - *argIndex) < 3)
 		{

@@ -892,7 +892,7 @@ static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, char *s)
 	qboolean res;
 
 	vec[3] = 1.f;
-	res    = BG_parseColor(s, vec);
+	res    = Q_ParseColor(s, vec);
 
 	if (!res)
 	{

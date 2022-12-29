@@ -763,13 +763,13 @@ void Con_DrawSolidConsole(float frac)
 	}
 	else
 	{
-		static vec4_t consoleParsedBackgroundColor = { 0.f, 0.f, 0.f, 0.f };
-		static int    isParsed                     = qfalse;
+		static vec4_t   consoleParsedBackgroundColor = { 0.f, 0.f, 0.f, 0.f };
+		static qboolean isParsed                     = qfalse;
 
 		if (con_background->modified)
 		{
 			con_background->modified = qfalse;
-			isParsed                 = Q_ParseColorRGBA(con_background->string, consoleParsedBackgroundColor);
+			isParsed                 = Q_ParseColor(con_background->string, consoleParsedBackgroundColor);
 		}
 
 		if (isParsed)

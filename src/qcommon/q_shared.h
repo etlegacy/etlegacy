@@ -892,8 +892,7 @@ char *Q_TrimStr(char *string);
 /// Encodes a plain un-colored string so that it'll be drawn with the given color code.
 void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen);
 
-// Parses normalized rgba color string
-int Q_ParseColorRGBA(const char *inStr, vec4_t outColor);
+qboolean Q_ParseColor(const char *colString, float *outColor);
 
 // #define Q_IsColorString(p) (*p == Q_COLOR_ESCAPE && *(p + 1) && *(p + 1) != Q_COLOR_ESCAPE && isgraph((*(p + 1))))
 // Checks if the string contains color coded text
@@ -2013,7 +2012,7 @@ static ID_INLINE int Q_sscanfc(const char *str, int count, const char *file, int
 static ID_INLINE int Q_sscanfc(const char *str, int count, const char *fmt, ...)
 #endif
 {
-	int rc;
+	int     rc;
 	va_list args;
 
 	va_start(args, fmt);
