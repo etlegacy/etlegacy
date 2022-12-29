@@ -1175,11 +1175,11 @@ void S_AddLoopSounds(void)
 
 			if (loop2->kill)
 			{
-				S_SpatializeOrigin(loop2->origin, 127, &left, &right, loop->range, qfalse);               // 3d
+				S_SpatializeOrigin(loop2->origin, 127, &left, &right, loop2->range, qfalse);               // 3d
 			}
 			else
 			{
-				S_SpatializeOrigin(loop2->origin, 90, &left, &right, loop->range, qfalse);                // sphere
+				S_SpatializeOrigin(loop2->origin, 90, &left, &right, loop2->range, qfalse);                // sphere
 			}
 
 			// adjust according to volume
