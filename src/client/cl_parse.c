@@ -653,7 +653,7 @@ void CL_SystemInfoChanged(void)
 	s = systemInfo;
 	while (s)
 	{
-		int cvar_flags;
+		cvarFlags_t cvar_flags;
 
 		Info_NextPair(&s, key, value);
 		if (!key[0])
@@ -673,7 +673,7 @@ void CL_SystemInfoChanged(void)
 			gameSet = qtrue;
 		}
 
-		if ((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT)
+		if ((cvar_flags = Cvar_Flags(key)) & CVAR_NONEXISTENT)
 		{
 			Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM);
 		}

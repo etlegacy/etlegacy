@@ -648,14 +648,14 @@ The are also occasionally used to communicated information between different
 modules of the program.
 */
 
-cvar_t *Cvar_Get(const char *varName, const char *value, int flags);
-cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, int flags, const char *description);
+cvar_t *Cvar_Get(const char *varName, const char *value, cvarFlags_t flags);
+cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, cvarFlags_t flags, const char *description);
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
 // if value is "", the value will not override a previously set value.
 
-void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags);
 // basically a slightly modified Cvar_Get for the interpreted modules
 
 void Cvar_Update(vmCvar_t *vmCvar);
@@ -687,7 +687,7 @@ void Cvar_VariableStringBuffer(const char *var_name, char *buffer, size_t bufsiz
 void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, size_t bufsize);
 // returns the latched value if there is one, else the normal one, empty string if not defined as usual
 
-int Cvar_Flags(const char *var_name);
+cvarFlags_t Cvar_Flags(const char *var_name);
 // returns CVAR_NONEXISTENT if cvar doesn't exist or the flags of that particular CVAR.
 
 void Cvar_CommandCompletion(void (*callback)(const char *s));

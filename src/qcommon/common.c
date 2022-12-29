@@ -604,7 +604,7 @@ void Com_StartupVariable(const char *match)
 		s = Cmd_Argv(1);
 		if (!match || !strcmp(s, match))
 		{
-			if (Cvar_Flags(s) == CVAR_NONEXISTENT)
+			if (Cvar_Flags(s) & CVAR_NONEXISTENT)
 			{
 				Cvar_Get(s, Cmd_ArgsFrom(2), CVAR_USER_CREATED);
 			}
@@ -4214,6 +4214,6 @@ void Com_ParseUA(userAgent_t *ua, const char *string)
 	{
 		ua->compatible = 0x1; // basic level compatibility
 		// match version string, or leave it as zero
-        Q_sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
+		Q_sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
 	}
 }

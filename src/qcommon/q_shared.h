@@ -980,6 +980,12 @@ default values.
 ==========================================================
 */
 
+#if defined(_WIN64) || defined(__LP64__)
+typedef uint64_t cvarFlags_t;
+#else
+typedef uint32_t cvarFlags_t;
+#endif
+
 #define CVAR_ARCHIVE        BIT(0)               ///< set to cause it to be saved to vars.rc
 ///< used for system variables, not for player
 ///< specific configurations
@@ -1023,7 +1029,7 @@ typedef struct cvar_s
 	char *string;
 	char *resetString;              ///< cvar_restart will reset to this value
 	char *latchedString;            ///< for CVAR_LATCH vars
-	int flags;
+	cvarFlags_t flags;
 	qboolean modified;              ///< set each time the cvar is changed
 	int modificationCount;          ///< incremented each time the cvar is changed
 	float value;                    ///< atof( string )
