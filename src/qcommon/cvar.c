@@ -36,9 +36,9 @@
 #include "q_shared.h"
 #include "qcommon.h"
 
-cvar_t *cvar_vars;
-cvar_t *cvar_cheats;
-int    cvar_modifiedFlags;
+cvar_t      *cvar_vars;
+cvar_t      *cvar_cheats;
+cvarFlags_t cvar_modifiedFlags;
 
 #define MAX_CVARS   2048
 cvar_t cvar_indexes[MAX_CVARS];
