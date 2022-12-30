@@ -439,7 +439,8 @@ void CL_ConsolePrint(char *txt)
 	// work around for text that shows up in console but not in notify
 	if (!Q_strncmp(txt, "[skipnotify]", 12))
 	{
-		txt += 12;
+		skipnotify = qtrue;
+		txt       += 12;
 	}
 
 	color = ColorIndex(CONSOLE_COLOR);
