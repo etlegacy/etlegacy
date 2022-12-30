@@ -1397,7 +1397,10 @@ void NET_LeaveMulticast6(void)
 		}
 		else
 		{
-			setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_LEAVE_GROUP, (char *) &curgroup, sizeof(curgroup));
+			if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_LEAVE_GROUP, (char *) &curgroup, sizeof(curgroup)) == SOCKET_ERROR)
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: NET_IP6Socket: setsockopt IPV6_LEAVE_GROUP: %s\n", NET_ErrorString());
+			}
 		}
 
 		multicast6_socket = INVALID_SOCKET;
