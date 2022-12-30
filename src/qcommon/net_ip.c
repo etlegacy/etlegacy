@@ -1371,7 +1371,7 @@ void NET_JoinMulticast6(void)
 		}
 	}
 
-	if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (char *) &curgroup, sizeof(curgroup)))
+	if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (char *) &curgroup, sizeof(curgroup)) == SOCKET_ERROR)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Couldn't join multicast group: %s\n", NET_ErrorString());
 
