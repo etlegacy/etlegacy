@@ -51,6 +51,7 @@ qboolean ccInitial = qtrue;
 #define FLAG_LEFTFRAC               0.1953125f // 25/128
 #define FLAG_TOPFRAC                0.7421875f // 95/128
 #define SPAWN_SIZEUPTIME            1000.f
+#define MARKSIZE                    32.f
 
 // shoutcaster minimap values
 #define AUTOMAP_PLAYER_ICON_SIZE_SC     20
@@ -59,6 +60,8 @@ qboolean ccInitial = qtrue;
 #define CONST_ICON_LANDMINE_SIZE_SC     8
 #define FLAGSIZE_EXPANDED_SC            98
 #define FLAGSIZE_NORMAL_SC              82
+#define MARKSIZE_EXPANDED_SC            17
+#define MARKSIZE_SC                     20
 
 /**
  * @brief CG_IsShoutcaster
@@ -2286,6 +2289,28 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 				point[1] = py + (((cg.mortarImpactPos[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 			}
 
+            if (scissor && CG_IsShoutcaster())
+            {
+                icon_extends[0] = MARKSIZE_SC;
+                icon_extends[1] = MARKSIZE_SC;
+            }
+            else
+            {
+                icon_extends[0] = MARKSIZE;
+                icon_extends[1] = MARKSIZE;
+            }
+
+            if (scissor)
+            {
+                icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+                icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+            }
+            else
+            {
+                icon_extends[0] *= cgs.ccZoomFactor;
+                icon_extends[1] *= cgs.ccZoomFactor;
+            }
+
 			// don't return if the marker is culled, just don't draw it
 			if (!(scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends)))
 			{
@@ -2352,6 +2377,28 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 				point[0] = px + (((cg.artilleryRequestPos[i][0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * pw);
 				point[1] = py + (((cg.artilleryRequestPos[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 			}
+
+            if (scissor && CG_IsShoutcaster())
+            {
+                icon_extends[0] = MARKSIZE_SC;
+                icon_extends[1] = MARKSIZE_SC;
+            }
+            else
+            {
+                icon_extends[0] = MARKSIZE;
+                icon_extends[1] = MARKSIZE;
+            }
+
+            if (scissor)
+            {
+                icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+                icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+            }
+            else
+            {
+                icon_extends[0] *= cgs.ccZoomFactor;
+                icon_extends[1] *= cgs.ccZoomFactor;
+            }
 
 			// don't return if the marker is culled, just skip it (so we draw the rest, if any)
 			if (scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends))
