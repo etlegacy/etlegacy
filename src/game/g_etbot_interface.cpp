@@ -6142,7 +6142,6 @@ const char *_GetEntityName(gentity_t *_ent)
 	//		return _ent->message;
 	//}
 	static char newentname[256];
-	char *name;
 
 	newentname[0] = '\0';
 
@@ -6179,20 +6178,18 @@ const char *_GetEntityName(gentity_t *_ent)
 			Q_strncpyz(newentname, _ent->message, sizeof(newentname));
 		}
 
-		name = newentname;
+		Q_CleanStr(newentname);
 
-		Q_CleanStr(name);
-		if (name)
+		if (*newentname)
 		{
 			char undschar[] = { '-', (char)NULL };
 			char skipchar[] = { '[', ']', '#', '!', '*', '`',
 				                '^', '&', '<', '>', '+', '=','|',  '\'', '%',
 				                '.', ':', '/', '(', ')', (char)NULL };
 			char *curchar = nullptr;
-			char *tmp;
-			char *tmpdst;
-			tmp = name;
-			tmpdst = name;
+			char *name = newentname;
+			char *tmp = name;
+			char *tmpdst = name;
 
 			while (*tmp)
 			{
