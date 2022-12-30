@@ -902,7 +902,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_MEMCPY:
 		return (intptr_t)Com_Memcpy(VMA(1), VMA(2), args[3]);
 	case CG_STRNCPY:
-		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);  // FIXME : replace by Q_strncpyz ?
+		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);
 	case CG_SIN:
 		return FloatAsInt(sin(VMF(1)));
 	case CG_COS:

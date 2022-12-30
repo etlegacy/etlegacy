@@ -645,7 +645,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return 0;
 
 	case TRAP_STRNCPY:
-		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);  // FIXME: replace by Q_strncpyz ?
+		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);
 
 	case TRAP_SIN:
 		return FloatAsInt(sin(VMF(1)));

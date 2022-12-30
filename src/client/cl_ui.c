@@ -1293,7 +1293,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_MEMCPY:
 		return (intptr_t)Com_Memcpy(VMA(1), VMA(2), args[3]);
 	case UI_STRNCPY:
-		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]); // FIXME : replace by Q_strncpyz ?
+		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);
 	case UI_SIN:
 		return FloatAsInt(sin(VMF(1)));
 	case UI_COS:
