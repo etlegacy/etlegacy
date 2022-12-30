@@ -222,8 +222,6 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 	animation_t   *anim;
 	int           i, j, k;
 	float         totalSpeed;
-	int           numSpeed;
-	int           low;
 	orientation_t o[2];
 
 	Com_Memset(&refent, 0, sizeof(refent));
@@ -240,7 +238,6 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 		}
 
 		totalSpeed = 0;
-		numSpeed   = 0;
 
 		// for each frame
 		for (j = 0; j < anim->numFrames; j++)
@@ -261,30 +258,16 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 			// find the contact foot
 			if (anim->flags & ANIMFL_LADDERANIM)
 			{
-				if (o[0].origin[0] > o[1].origin[0])
-				{
-					low = 0;
-				}
-				else
-				{
-					low = 1;
-				}
+				int low = (o[0].origin[0] <= o[1].origin[0]);
+
 				totalSpeed += Q_fabs(oldPos[low][2] - o[low].origin[2]);
 			}
 			else
 			{
-				if (o[0].origin[2] < o[1].origin[2])
-				{
-					low = 0;
-				}
-				else
-				{
-					low = 1;
-				}
+				int low = (o[0].origin[2] >= o[1].origin[2]);
+
 				totalSpeed += Q_fabs(oldPos[low][0] - o[low].origin[0]);
 			}
-
-			numSpeed++;
 
 			// save the positions
 			for (k = 0; k < 2; k++)
@@ -294,7 +277,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 		}
 
 		// record the speed
-		anim->moveSpeed = round(((totalSpeed / numSpeed) * 1000.0f / anim->frameLerp));
+		anim->moveSpeed = round(((totalSpeed / anim->numFrames) * 1000.0f / anim->frameLerp));
 	}
 }
 
