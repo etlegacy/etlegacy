@@ -2391,8 +2391,7 @@ void Item_Text_Wrapped_Paint(itemDef_t *item)
 	p     = strchr(textPtr, '\r');
 	while (p && *p)
 	{
-		strncpy(buff, start, p - start + 1);
-		buff[p - start] = '\0';
+		Q_strncpyz(buff, start, p - start + 1);
 		DC->drawText(x, y, item->textscale, color, buff, 0, 0, item->textStyle);
 		y     += height + 5;
 		start += p - start + 1;

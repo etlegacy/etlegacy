@@ -827,13 +827,13 @@ void CG_ShaderStateChanged(void)
 		n = strstr(o, "=");
 		if (n && *n)
 		{
-			strncpy(originalShader, o, n - o);
+			Q_strncpyz(originalShader, o, n - o);
 			originalShader[n - o] = 0;
 			n++;
 			t = strstr(n, ":");
 			if (t && *t)
 			{
-				strncpy(newShader, n, t - n);
+				Q_strncpyz(newShader, n, t - n);
 				newShader[t - n] = 0;
 			}
 			else
@@ -844,7 +844,7 @@ void CG_ShaderStateChanged(void)
 			o = strstr(t, "@");
 			if (o)
 			{
-				strncpy(timeOffset, t, o - t);
+				Q_strncpyz(timeOffset, t, o - t);
 				timeOffset[o - t] = 0;
 				o++;
 				trap_R_RemapShader(cgs.gameShaderNames[atoi(originalShader)],
@@ -2027,46 +2027,43 @@ const char *CG_LocalizeServerCommand(const char *buf)
 
 	for (i = 0; *s; i++, s++)
 	{
-		// line was: if ( *s == '[' && !Q_strncmp( s, "[lon]", 5 ) || !Q_strncmp( s, "[lof]", 5 ) ) {
-		// || prevails on &&, gcc warning was 'suggest parentheses around && within ||'
-		// modified to the correct behaviour
 		if (*s == '[' && (!Q_strncmp(s, "[lon]", 5) || !Q_strncmp(s, "[lof]", 5)))
 		{
-			if (togloc)
+			// ensure a previous localize string has been found
+			if (prev)
 			{
-				Com_Memset(temp, 0, sizeof(temp));
-				strncpy(temp, buf + prev, i - prev);
-				Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
-			}
-			else
-			{
-				strncat(token, buf + prev, i - prev);
-			}
-
-			if (s[3] == 'n')
-			{
-				togloc = qtrue;
-			}
-			else
-			{
-				togloc = qfalse;
+				if (togloc)
+				{
+					Com_Memset(temp, 0, sizeof(temp));
+					Q_strncpyz(temp, buf + prev, i - prev + 1);
+					Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
+				}
+				else
+				{
+					strncat(token, buf + prev, i - prev);
+				}
 			}
 
-			i   += 5;
-			s   += 5;
-			prev = i;
+			togloc = (s[3] == 'n');
+			i     += 5;
+			s     += 5;
+			prev   = i;
 		}
 	}
 
-	if (togloc)
+	// ensure a previous localize string has been found
+	if (prev != i)
 	{
-		Com_Memset(temp, 0, sizeof(temp));
-		strncpy(temp, buf + prev, i - prev);
-		Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
-	}
-	else
-	{
-		strncat(token, buf + prev, i - prev);
+		if (togloc)
+		{
+			Com_Memset(temp, 0, sizeof(temp));
+			Q_strncpyz(temp, buf + prev, i - prev + 1);
+			Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
+		}
+		else
+		{
+			strncat(token, buf + prev, i - prev);
+		}
 	}
 
 	return token;

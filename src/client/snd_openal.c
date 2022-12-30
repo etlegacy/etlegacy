@@ -2584,7 +2584,7 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 		{
 			if (intro && *intro)
 			{
-				strncpy(ssData[ss].queueStream, intro, MAX_QPATH);
+				Q_strncpyz(ssData[ss].queueStream, intro, MAX_QPATH);
 				ssData[ss].queueStreamType = param;
 				// Cvar for save game
 				if (param == -2)

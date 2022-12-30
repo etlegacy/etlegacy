@@ -4356,7 +4356,7 @@ qboolean CL_GetLimboString(int index, char *buf)
 		return qfalse;
 	}
 
-	strncpy(buf, cl.limboChatMsgs[index], 140);
+	Q_strncpyz(buf, cl.limboChatMsgs[index], LIMBOCHAT_WIDTH);
 	return qtrue;
 }
 

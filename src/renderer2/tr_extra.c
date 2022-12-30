@@ -796,8 +796,8 @@ qboolean Q_strreplace(char *dest, size_t destsize, const char *find, const char 
 		lfind    = strlen(find);
 		lreplace = strlen(replace);
 
-		strncpy(s, replace, destsize - lstart - 1);
-		strncpy(s + lreplace, backup + lstart + lfind, destsize - lstart - lreplace - 1);
+		Q_strncpyz(s, replace, destsize - lstart);
+		Q_strncpyz(s + lreplace, backup + lstart + lfind, destsize - lstart - lreplace);
 
 		return qtrue;
 	}
