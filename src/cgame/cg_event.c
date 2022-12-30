@@ -1860,7 +1860,7 @@ extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int dura
 
 static void CG_PlayHitSound(const int clientNum, const int hitSound)
 {
-	if (!hitSound)
+	if (hitSound == HIT_NONE)
 	{
 		return;
 	}
@@ -1885,8 +1885,6 @@ static void CG_PlayHitSound(const int clientNum, const int hitSound)
 
 	switch (hitSound)
 	{
-	case HIT_NONE:
-		break;
 	case HIT_TEAMSHOT:
 		if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
 		{
