@@ -217,7 +217,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 static void CG_CalcMoveSpeeds(bg_character_t *character)
 {
 	const char    *tags[2]  = { "tag_footleft", "tag_footright" };
-	vec3_t        oldPos[2] = { { 0, 0 } };
+	vec3_t        oldPos[2] = { { 0, 0, 0 }, { 0, 0, 0 } };
 	refEntity_t   refent;
 	animation_t   *anim;
 	int           i, j, k;
@@ -277,7 +277,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 		}
 
 		// record the speed
-		anim->moveSpeed = round(((totalSpeed / anim->numFrames) * 1000.0f / anim->frameLerp));
+		anim->moveSpeed = round((totalSpeed / anim->numFrames) * 1000.0f / anim->frameLerp);
 	}
 }
 
