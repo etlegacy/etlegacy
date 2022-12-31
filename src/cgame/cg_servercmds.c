@@ -828,13 +828,11 @@ void CG_ShaderStateChanged(void)
 		if (n && *n)
 		{
 			Q_strncpyz(originalShader, o, n - o);
-			originalShader[n - o] = 0;
 			n++;
 			t = strstr(n, ":");
 			if (t && *t)
 			{
 				Q_strncpyz(newShader, n, t - n);
-				newShader[t - n] = 0;
 			}
 			else
 			{
@@ -845,7 +843,6 @@ void CG_ShaderStateChanged(void)
 			if (o)
 			{
 				Q_strncpyz(timeOffset, t, o - t);
-				timeOffset[o - t] = 0;
 				o++;
 				trap_R_RemapShader(cgs.gameShaderNames[atoi(originalShader)],
 				                   cgs.gameShaderNames[atoi(newShader)],
