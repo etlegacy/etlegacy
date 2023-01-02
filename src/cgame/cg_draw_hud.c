@@ -3273,6 +3273,8 @@ void CG_Hud_Setup(void)
 {
 	hudStucture_t hud0;
 
+	Com_Memset(&hud0, 0, sizeof(hudStucture_t));
+
 	// Hud0 aka the Default hud
 	CG_setDefaultHudValues(&hud0);
 	activehud = CG_AddHudToList(&hud0);
