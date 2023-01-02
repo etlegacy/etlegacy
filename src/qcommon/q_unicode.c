@@ -113,7 +113,7 @@ qboolean Q_UTF8_ValidateSingle(const char *str)
 	size_t len     = strlen(str);
 	byte   current = str[0];
 
-	if (0x00 <= current && current <= 0x7F)
+	if (current <= 0x7F)
 	{
 		utfBytes = 0; // 0XXXXXXX
 	}
@@ -163,7 +163,7 @@ qboolean Q_UTF8_Validate(const char *str)
 	{
 		current = str[i];
 
-		if (0x00 <= current && current <= 0x7F)
+		if (current <= 0x7F)
 		{
 			utfBytes = 0; // 0XXXXXXX
 		}
