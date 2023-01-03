@@ -1356,61 +1356,74 @@ void CG_MapVote_VoteSend_Draw(panel_button_t *button)
 {
 	char *text;
 	int  textWidth;
+	int  usedVotes = 0;
+	int  maxVotes;
 
 	if (!cg.snap)
 	{
 		return;
 	}
 
+	if (!cgs.dbMapMultiVote)
+	{
+		maxVotes  = 1;
+		usedVotes = cgs.dbMapVotedFor[0] != -1;
+	}
+	else
+	{
+		int i;
+
+		// TODO: provide a cvar for vote numbers ?
+		maxVotes = 3;
+
+		for (i = 0; i < 3; i++)
+		{
+			if (cgs.dbMapVotedFor[i] != -1)
+			{
+				usedVotes++;
+			}
+		}
+	}
+
 	if (!(cg.snap->ps.eFlags & EF_VOTED))
 	{
-		int usedVotes = 0;
-		int maxVotes;
-
-		if (!cgs.dbMapMultiVote)
+		if (usedVotes)
 		{
-			maxVotes = 1;
-
-			if (cgs.dbMapVotedFor[0] != -1)
-			{
-				CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
-				usedVotes = 1;
-			}
+			CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
 		}
-		else
-		{
-			int i;
-
-			maxVotes = 3;
-
-			for (i = 0; i < 3; i++)
-			{
-				if (cgs.dbMapVotedFor[i] != -1)
-				{
-					usedVotes++;
-				}
-			}
-
-			if (usedVotes)
-			{
-				CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
-			}
-		}
-
-		text = va("^3%i/%i maps selected", usedVotes, maxVotes);
 	}
 	else
 	{
 		text = "^2VOTED!";
+
+		textWidth = CG_Text_Width_Ext(text, .20f, 0, &cgs.media.limboFont2);
+
+		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - textWidth) * 0.5,
+		                  button->rect.y + button->rect.h,
+		                  .20f, .20f, clrTxtBck,
+		                  text,
+		                  0, 0, 0, &cgs.media.limboFont2);
 	}
+
+	// draw numbers of map selected for vote
+	CG_Text_Paint_Ext(button->rect.x,
+	                  button->rect.y + button->rect.h + 12,
+	                  .20f, .20f, clrTxtBck,
+	                  va("^3%i/%i maps selected", usedVotes, maxVotes),
+	                  0, 0, 0, &cgs.media.limboFont2);
+
+	text = va("^3Participation: %3d%% (%i/%i)",
+	          (cgs.dbMapVoterCount / cgs.dbMapPlayerCount) * 100,
+	          cgs.dbMapVoterCount, cgs.dbMapPlayerCount);
 
 	textWidth = CG_Text_Width_Ext(text, .20f, 0, &cgs.media.limboFont2);
 
-	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - textWidth) * 0.5,
+	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - textWidth),
 	                  button->rect.y + button->rect.h + 12,
 	                  .20f, .20f, clrTxtBck,
 	                  text,
 	                  0, 0, 0, &cgs.media.limboFont2);
+
 }
 
 static panel_button_t mapVoteWindow =
@@ -1734,6 +1747,8 @@ void CG_Debriefing_Startup(void)
 	cgs.dbMapVotedFor[0]        = -1;
 	cgs.dbMapVotedFor[1]        = -1;
 	cgs.dbMapVotedFor[2]        = -1;
+	cgs.dbMapVoterCount         = -1;
+	cgs.dbMapPlayerCount        = -1;
 
 	cgs.dbAwardsParsed = qfalse;
 
@@ -4706,10 +4721,13 @@ void CG_parseMapVoteTally()
 	cgs.dbMapVotesSum = 0;
 	Com_Memset(cgs.dbSortedVotedMapsByTotal, -1, sizeof(cgs.dbSortedVotedMapsByTotal));
 
-	numMaps = (trap_Argc() - 1);
+	cgs.dbMapVoterCount  = Q_atoi(CG_Argv(1));
+	cgs.dbMapPlayerCount = Q_atoi(CG_Argv(2));
+
+	numMaps = (trap_Argc() - 3);
 	for (i = 0; i < numMaps; i++)
 	{
-		cgs.dbMapVotes[i]  = Q_atoi(CG_Argv(i + 1));
+		cgs.dbMapVotes[i]  = Q_atoi(CG_Argv(i + 3));
 		cgs.dbMapVotesSum += cgs.dbMapVotes[i];
 
 		// sort voted maps by total votes accumulated

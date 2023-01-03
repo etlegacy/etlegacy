@@ -1709,6 +1709,7 @@ void G_IntermissionVoteTally(gentity_t *ent)
 	int  i;
 	char voteTally[MAX_STRING_CHARS];
 	int  maxMaps;
+	int  voterCount;
 
 	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
 	{
@@ -1721,10 +1722,23 @@ void G_IntermissionVoteTally(gentity_t *ent)
 		maxMaps = level.mapVoteNumMaps;
 	}
 
-	Q_strncpyz(voteTally, "imvotetally ", MAX_STRING_CHARS);
+	Q_strncpyz(voteTally, "imvotetally", MAX_STRING_CHARS);
+
+	// count the numbers of players which casted a vote
+	for (i = 0, voterCount = 0; i < level.numConnectedClients; ++i)
+	{
+		if (level.clients[level.sortedClients[i]].ps.eFlags & EF_VOTED)
+		{
+			++voterCount;
+		}
+	}
+
+	Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", voterCount));
+	Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", level.numConnectedClients));
+
 	for (i = 0; i < maxMaps; i++)
 	{
-		Q_strcat(voteTally, MAX_STRING_CHARS, va("%d ", level.mapvoteinfo[level.sortedMaps[i]].numVotes));
+		Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", level.mapvoteinfo[level.sortedMaps[i]].numVotes));
 	}
 
 	// when argument "ent" == NULL, the votetally should be send to all players..
