@@ -473,6 +473,9 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 			ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
 		}
 
+		// Let medics know who they just revived
+		trap_SendServerCommand(ent - g_entities, va("cp \"You have revived [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(traceEnt->client->sess.sessionTeam, traceEnt->client->sess.rank)->names, traceEnt->client->pers.netname));
+
 		G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
 		if (!traceEnt->isProp) // flag for if they were teamkilled or not
