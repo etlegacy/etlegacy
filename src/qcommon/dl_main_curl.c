@@ -67,11 +67,16 @@
 #define APP_NAME        "ID_DOWNLOAD"
 #define APP_VERSION     "2.0"
 
-#define GET_BUFFER_SIZE 1024 * 256
+#define GET_BUFFER_SIZE (1024 * 256)
 
 #ifdef __linux__
 #define CA_CERT_DEFAULT "/etc/ssl/certs/ca-certificates.crt"
 #endif
+
+// Helper macro to output the possible error message to the shared log output
+#define ETL_curl_easy_setopt(status, handle, opt, param) \
+		if (((status) = curl_easy_setopt((handle), (opt), (param)))) \
+		Com_Printf(S_COLOR_YELLOW "WARNING: %s: curl_easy_setopt " #opt ": %s\n", __func__, curl_easy_strerror(status))
 
 /**
  * @var dl_initialized
@@ -258,108 +263,44 @@ static void DL_InitSSL(CURL *curl)
 	CURLcode status;
 
 #if defined(USING_SCHANNEL)
-	if ((status = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYHOST: %s\n", curl_easy_strerror(status));
-	}
-
-	if ((status = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYPEER: %s\n", curl_easy_strerror(status));
-	}
+	ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 1);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 1);
 #elif SSL_VERIFY
-	if ((rc = curl_easy_setopt(curl, CURLOPT_CAINFO, NULL)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_CAINFO: %s\n", curl_easy_strerror(rc));
-	}
-
-	if ((rc = curl_easy_setopt(curl, CURLOPT_CAPATH, NULL)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_CAPATH: %s\n", curl_easy_strerror(rc));
-	}
+	ETL_curl_easy_setopt(status, curl, CURLOPT_CAINFO, NULL);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_CAPATH, NULL);
 
 	if (FS_SV_FileExists(CA_CERT_FILE, qtrue))
 	{
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, DL_cb_Context)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_CTX_FUNCTION: %s\n", curl_easy_strerror(rc));
-		}
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_CTX_FUNCTION, DL_cb_Context);
 	}
 	else if (FS_FileInPathExists(Cvar_VariableString("dl_capath")))
 	{
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYHOST: %s\n", curl_easy_strerror(rc));
-		}
-
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYPEER: %s\n", curl_easy_strerror(rc));
-		}
-
-		if ((rc = curl_easy_setopt(curl, CURLOPT_CAINFO, Cvar_VariableString("dl_capath"))))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_CAINFO: %s\n", curl_easy_strerror(rc));
-		}
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_CAINFO, Cvar_VariableString("dl_capath"));
 	}
 #ifdef __linux__
 	else if (FS_FileInPathExists(CA_CERT_DEFAULT))
 	{
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYHOST: %s\n", curl_easy_strerror(rc));
-		}
-
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYPEER: %s\n", curl_easy_strerror(rc));
-		}
-
-		if ((rc = curl_easy_setopt(curl, CURLOPT_CAINFO, CA_CERT_DEFAULT)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_CAINFO: %s\n", curl_easy_strerror(rc));
-		}
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_CAINFO, CA_CERT_DEFAULT);
 	}
 #endif
 	else
 	{
 #if defined(_WIN32) && defined(USING_OPENSSL)
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYHOST: %s\n", curl_easy_strerror(rc));
-		}
-
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYPEER: %s\n", curl_easy_strerror(rc));
-		}
-
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_OPTIONS: %s\n", curl_easy_strerror(rc));
-		}
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 #else
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYHOST: %s\n", curl_easy_strerror(rc));
-		}
-
-		if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0)))
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYPEER: %s\n", curl_easy_strerror(rc));
-		}
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 0);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 	}
 #else
-	if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYHOST: %s\n", curl_easy_strerror(rc));
-	}
-
-	if ((rc = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_InitSSL: curl_easy_setopt CURLOPT_SSL_VERIFYPEER: %s\n", curl_easy_strerror(rc));
-	}
+	ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 0);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 #endif
 }
@@ -409,46 +350,17 @@ int DL_BeginDownload(const char *localName, const char *remoteName)
 	Q_strncpyz(referer + 5, Cvar_VariableString("cl_currentServerIP"), MAX_STRING_CHARS);
 
 	dl_request = curl_easy_init();
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()))))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_USERAGENT: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_REFERER, referer)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_REFERER: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_URL, remoteName)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_URL: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_WRITEFUNCTION, DL_cb_FWriteFile)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_WRITEFUNCTION: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_WRITEDATA, (void *)dl_file)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_WRITEDATA: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_PROGRESSFUNCTION, DL_cb_Progress)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_PROGRESSFUNCTION: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_NOPROGRESS, 0)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_NOPROGRESS: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_FAILONERROR, 1)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_FAILONERROR: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_FOLLOWLOCATION, 1)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_FOLLOWLOCATION: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(dl_request, CURLOPT_MAXREDIRS, 5)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_BeginDownload: curl_easy_setopt CURLOPT_MAXREDIRS: %s\n", curl_easy_strerror(status));
-	}
+
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_REFERER, referer);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_URL, remoteName);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_WRITEFUNCTION, DL_cb_FWriteFile);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_WRITEDATA, (void *)dl_file);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_PROGRESSFUNCTION, DL_cb_Progress);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_NOPROGRESS, 0);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_FAILONERROR, 1);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_FOLLOWLOCATION, 1);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_MAXREDIRS, 5);
 
 	DL_InitSSL(dl_request);
 
@@ -498,26 +410,11 @@ char *DL_GetString(const char *url)
 		write_result.data = data;
 	}
 
-	if ((status = curl_easy_setopt(curl, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()))))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_GetString: curl_easy_setopt CURLOPT_USERAGENT: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(curl, CURLOPT_URL, url)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_GetString: curl_easy_setopt CURLOPT_URL: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_GetString: curl_easy_setopt CURLOPT_FOLLOWLOCATION: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, DL_write_function)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_GetString: curl_easy_setopt CURLOPT_WRITEFUNCTION: %s\n", curl_easy_strerror(status));
-	}
-	if ((status = curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&write_result)))
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: DL_GetString: curl_easy_setopt CURLOPT_WRITEDATA: %s\n", curl_easy_strerror(status));
-	}
+	ETL_curl_easy_setopt(status, curl, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
+	ETL_curl_easy_setopt(status, curl, CURLOPT_URL, url);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_FOLLOWLOCATION, 1L);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_WRITEFUNCTION, DL_write_function);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_WRITEDATA, (void *)&write_result);
 
 	DL_InitSSL(curl);
 
