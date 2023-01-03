@@ -2074,29 +2074,32 @@ void ClientEndFrame(gentity_t *ent)
 {
 	int i, frames;
 
-	// count player time
-	if (g_gamestate.integer == GS_PLAYING && !(ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (ent->client->ps.pm_flags & PMF_LIMBO)))
+	if (g_gamestate.integer == GS_PLAYING && level.match_pause == PAUSE_NONE)
 	{
-		if (ent->client->sess.sessionTeam == TEAM_AXIS)
+		// count player time
+		if (!(ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (ent->client->ps.pm_flags & PMF_LIMBO)))
 		{
-			ent->client->sess.time_axis += level.frameTime;
+			if (ent->client->sess.sessionTeam == TEAM_AXIS)
+			{
+				ent->client->sess.time_axis += level.frameTime;
+			}
+			else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
+			{
+				ent->client->sess.time_allies += level.frameTime;
+			}
 		}
-		else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
-		{
-			ent->client->sess.time_allies += level.frameTime;
-		}
-	}
 
-	// don't count skulled player time
-	if (g_gamestate.integer == GS_PLAYING && !(ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & PMF_LIMBO) || ent->client->ps.stats[STAT_HEALTH] <= 0))
-	{
-		// ensure time played is always smaller or equal than time spent in teams
-		// work around for unreset data of slow connecters
-		if (ent->client->sess.time_played > (ent->client->sess.time_axis + ent->client->sess.time_allies))
+		// don't count skulled player time
+		if (!(ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & PMF_LIMBO) || ent->client->ps.stats[STAT_HEALTH] <= 0))
 		{
-			ent->client->sess.time_played = 0;
+			// ensure time played is always smaller or equal than time spent in teams
+			// work around for unreset data of slow connecters
+			if (ent->client->sess.time_played > (ent->client->sess.time_axis + ent->client->sess.time_allies))
+			{
+				ent->client->sess.time_played = 0;
+			}
+			ent->client->sess.time_played += level.frameTime;
 		}
-		ent->client->sess.time_played += level.frameTime;
 	}
 
 #ifdef FEATURE_RATING
