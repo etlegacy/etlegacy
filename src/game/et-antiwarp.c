@@ -193,7 +193,7 @@ void DoClientThinks(gentity_t *ent)
 		serverTime = cmd->serverTime;
 		totalDelta = latestTime - cmd->serverTime;
 
-		if (ent->client->pers.pmoveFixed)
+		if (pmove_fixed.integer || ent->client->pers.pmoveFixed)
 		{
 			serverTime = ((serverTime + pmove_msec.integer - 1) / pmove_msec.integer) * pmove_msec.integer;
 		}

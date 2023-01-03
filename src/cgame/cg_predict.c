@@ -1398,6 +1398,8 @@ void CG_PredictPlayerState(void)
 				// run the Pmove
 				Pmove(&cg_pmove);
 
+				moved = qtrue;
+
 				numPredicted++; // debug code
 
 				// record the last predicted command
@@ -1435,11 +1437,11 @@ void CG_PredictPlayerState(void)
 			// run the Pmove
 			Pmove(&cg_pmove);
 
+			moved = qtrue;
+
 			numPredicted++; // debug code
 		}
 		// unlagged - optimized prediction
-
-		moved = qtrue;
 
 		// add push trigger movement effects
 		CG_TouchTriggerPrediction();
