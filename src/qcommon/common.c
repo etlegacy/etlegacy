@@ -911,19 +911,21 @@ int Com_FilterPath(const char *filter, const char *name, int casesensitive)
 /**
  * @brief Com_RealTime
  * @param[out] qtime
- * @return
+ * @return 1 on sucess otherwise 0
  */
 int Com_RealTime(qtime_t *qtime)
 {
 	time_t    t;
 	struct tm *tms;
 
-	t = time(NULL);
 	if (!qtime)
 	{
-		return t;
+		return 0;
 	}
+
+	t   = time(NULL);
 	tms = localtime(&t);
+
 	if (tms)
 	{
 		qtime->tm_sec   = tms->tm_sec;
@@ -935,8 +937,10 @@ int Com_RealTime(qtime_t *qtime)
 		qtime->tm_wday  = tms->tm_wday;
 		qtime->tm_yday  = tms->tm_yday;
 		qtime->tm_isdst = tms->tm_isdst;
+
+		return 1;
 	}
-	return t;
+	return 0;
 }
 
 /**
