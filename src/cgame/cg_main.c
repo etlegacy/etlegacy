@@ -2753,9 +2753,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	if (cg_logFile.string[0])
 	{
-		trap_FS_FOpenFile(cg_logFile.string, &cg.logFile, FS_APPEND);
-
-		if (!cg.logFile)
+		if (trap_FS_FOpenFile(cg_logFile.string, &cg.logFile, FS_APPEND) < 0)
 		{
 			CG_Printf("^3WARNING: Couldn't open client log: %s\n", cg_logFile.string);
 		}

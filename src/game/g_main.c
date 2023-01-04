@@ -2447,16 +2447,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 
 	if (g_log.string[0])
 	{
-		if (g_logSync.integer)
-		{
-			trap_FS_FOpenFile(g_log.string, &level.logFile, FS_APPEND_SYNC);
-		}
-		else
-		{
-			trap_FS_FOpenFile(g_log.string, &level.logFile, FS_APPEND);
-		}
-
-		if (!level.logFile)
+		if (trap_FS_FOpenFile(g_log.string, &level.logFile, g_logSync.integer ? FS_APPEND_SYNC : FS_APPEND) < 0)
 		{
 			G_Printf("WARNING: Couldn't open logfile: %s\n", g_log.string);
 		}

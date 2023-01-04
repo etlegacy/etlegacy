@@ -2902,14 +2902,14 @@ void CG_dumpStats(void)
 	{
 		trap_FS_FCloseFile(cgs.dumpStatsFile);
 	}
-	trap_FS_FOpenFile(cgs.dumpStatsFileName, &cgs.dumpStatsFile, FS_APPEND);
 
-	CG_printFile(s);
-	CG_parseWeaponStats_cmd(CG_printFile);
-	if (cgs.dumpStatsFile == 0)
+	if (trap_FS_FOpenFile(cgs.dumpStatsFileName, &cgs.dumpStatsFile, FS_APPEND) < 0)
 	{
 		CG_Printf("[cgnotify]\n^3>>> %s: %s\n\n", CG_TranslateString("Could not create logfile"), cgs.dumpStatsFileName);
 	}
+
+	CG_printFile(s);
+	CG_parseWeaponStats_cmd(CG_printFile);
 
 	// Daisy-chain to scores info
 	//  -- we play a game here for a statsall dump:
@@ -3339,7 +3339,12 @@ static void CG_ServerCommand(void)
 
 		// just open the file so it gets copied to the build dir
 		//CG_FileTouchForBuild(CG_Argv(1));
-		trap_FS_FOpenFile(CG_Argv(1), &f, FS_READ);
+		if (trap_FS_FOpenFile(CG_Argv(1), &f, FS_READ) <= 0)
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Couldn't open into Build file %s\n", CG_Argv(1));
+			return;
+		}
+
 		trap_FS_FCloseFile(f);
 		return;
 	}

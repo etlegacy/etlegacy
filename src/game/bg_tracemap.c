@@ -459,7 +459,11 @@ void CG_GenerateTracemap(void)
 	}
 
 	// write tga
-	trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(cgs.rawmapname)), &f, FS_WRITE);
+	if (trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(cgs.rawmapname)), &f, FS_WRITE) < 0)
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_GenerateTracemap: Couldn't write '%s'\n", va("maps/%s_tracemap.tga", Q_strlwr(cgs.rawmapname)));
+		return;
+	}
 
 	// header
 	data = 0;
