@@ -749,10 +749,10 @@ void G_parseStatsJson(void *object)
 
 		if (tmp)
 		{
-			cl->sess.damage_given = Q_ReadIntValueJson(object, "damage_given");
-			cl->sess.damage_received = Q_ReadIntValueJson(object, "damage_received");
-			cl->sess.team_damage_given = Q_ReadIntValueJson(object, "team_damage_given");
-			cl->sess.team_damage_received = Q_ReadIntValueJson(object, "team_damage_received");
+			cl->sess.damage_given = Q_ReadIntValueJson(tmp, "damage_given");
+			cl->sess.damage_received = Q_ReadIntValueJson(tmp, "damage_received");
+			cl->sess.team_damage_given = Q_ReadIntValueJson(tmp, "team_damage_given");
+			cl->sess.team_damage_received = Q_ReadIntValueJson(tmp, "team_damage_received");
 		}
 		else
 		{
