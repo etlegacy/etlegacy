@@ -981,7 +981,7 @@ void CG_PredictPlayerState(void)
 {
 	int           cmdNum, current;
 	playerState_t oldPlayerState;
-	qboolean      moved;
+	qboolean      moved, predictError;
 	usercmd_t     oldestCmd;
 	usercmd_t     latestCmd;
 	vec3_t        deltaAngles;
@@ -1249,7 +1249,8 @@ void CG_PredictPlayerState(void)
 	// unlagged - optimized prediction
 
 	// run cmds
-	moved = qfalse;
+	moved        = qfalse;
+	predictError = qtrue;
 	for (cmdNum = current - CMD_BACKUP + 1 ; cmdNum <= current ; cmdNum++)
 	{
 		// get the command
@@ -1257,34 +1258,28 @@ void CG_PredictPlayerState(void)
 		// get the previous command
 		trap_GetUserCmd(cmdNum - 1, &cg_pmove.oldcmd);
 
-		//if (cg_pmove.pmove_fixed
-		//  && !BG_PlayerMounted(cg.snap->ps.eFlags) // don't update view angles - causes issues in 1st person view with weapons using special view
-		//  && cg.predictedPlayerState.weapon != WP_MOBILE_MG42_SET && cg.predictedPlayerState.weapon != WP_MOBILE_BROWNING_SET) // see cg_view.c fov_x = 55;
-		//{
-		// added tracemask
-		//  PM_UpdateViewAngles(cg_pmove.ps, cg_pmove.pmext, &cg_pmove.cmd, CG_Trace, cg_pmove.tracemask);
-		//}
-
-		// don't do anything if the time is before the snapshot player time
-		if (cg_pmove.cmd.serverTime <= cg.predictedPlayerState.commandTime)
-		{
-			continue;
-		}
-
-		// don't do anything if the command was from a previous map_restart
-		if (cg_pmove.cmd.serverTime > latestCmd.serverTime)
-		{
-			continue;
-		}
-
 		// check for a prediction error from last frame
 		// on a lan, this will often be the exact value
 		// from the snapshot, but on a wan we will have
 		// to predict several commands to get to the point
 		// we want to compare
-		if (cg.predictedPlayerState.commandTime == oldPlayerState.commandTime)
+
+		// this was moved here to fix pmove_fixed prediction error detection and
+		// subsequent error smoothing:
+		// when using pmove_fixed not all user commands will result in
+		// an actual move because commands are run for the duration of pmove_msec
+		// if commands are generated every 4ms (250fps) and pmove_msec is 8ms,
+		// only 1 out of those 2 commands will be run
+		// this will mean that in most situations, the check below would happen
+		// on 2nd user command which is not run, and the prediction error
+		// is not registered, causing more jittery game when miss prediction happens
+		// since there might be many user commands for same playerstate commandTime
+		// (as explained above) need to make sure it is only checked once per frame
+
+		if (cg.predictedPlayerState.commandTime == oldPlayerState.commandTime && predictError)
 		{
 			vec3_t delta;
+			predictError = qfalse;
 
 			if (BG_PlayerMounted(cg_pmove.ps->eFlags)) // TODO: clarify MG & Browning are locked in place too?
 			{
@@ -1354,6 +1349,19 @@ void CG_PredictPlayerState(void)
 			}
 		}
 
+		// don't do anything if the time is before the snapshot player time
+		if (cg_pmove.cmd.serverTime <= cg.predictedPlayerState.commandTime)
+		{
+			Com_Memcpy(&pmext, &oldpmext[cmdNum & CMD_MASK], sizeof(pmoveExt_t));
+			continue;
+		}
+
+		// don't do anything if the command was from a previous map_restart
+		if (cg_pmove.cmd.serverTime > latestCmd.serverTime)
+		{
+			continue;
+		}
+
 		if (cg_pmove.pmove_fixed)
 		{
 			cg_pmove.cmd.serverTime = ((cg_pmove.cmd.serverTime + pmove_msec.integer - 1) / pmove_msec.integer) * pmove_msec.integer;
@@ -1398,8 +1406,6 @@ void CG_PredictPlayerState(void)
 				// run the Pmove
 				Pmove(&cg_pmove);
 
-				moved = qtrue;
-
 				numPredicted++; // debug code
 
 				// record the last predicted command
@@ -1437,11 +1443,11 @@ void CG_PredictPlayerState(void)
 			// run the Pmove
 			Pmove(&cg_pmove);
 
-			moved = qtrue;
-
 			numPredicted++; // debug code
 		}
 		// unlagged - optimized prediction
+
+		moved = qtrue;
 
 		// add push trigger movement effects
 		CG_TouchTriggerPrediction();

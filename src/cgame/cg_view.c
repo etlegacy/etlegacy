@@ -2002,14 +2002,7 @@ static void CG_DemoRewindFixEffects(void)
 	trap_R_ClearDecals(); // bullet and explosion marks (cg_markTime) are on renderer side
 
 	// reset camera view effects
-	cg.damageTime        = 0;
-	cg.v_dmg_time        = 0;
-	cg.v_noFireTime      = 0;
-	cg.v_fireTime        = 0;
-	cg.cameraShakeScale  = 0;
-	cg.cameraShakeLength = 0;
-	cg.cameraShakeTime   = 0;
-	cg.cameraShakePhase  = 0;
+	CG_ResetTimers();
 
 	cgs.serverCommandSequence = cg.snap->serverCommandSequence;
 }
