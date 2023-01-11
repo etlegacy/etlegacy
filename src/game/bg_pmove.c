@@ -4874,27 +4874,9 @@ void PM_Sprint(void)
 		    && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE)
 		    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
 		{
-			if (pm->ps->powerups[PW_ADRENALINE])
+			if (pm->ps->powerups[PW_ADRENALINE] || pm->ps->powerups[PW_NOFATIGUE])
 			{
 				pm->pmext->sprintTime = SPRINTTIME;
-			}
-			else if (pm->ps->powerups[PW_NOFATIGUE])
-			{
-				// take time from powerup before taking it from sprintTime
-				pm->ps->powerups[PW_NOFATIGUE] -= 50;
-
-				// go ahead and continue to recharge stamina at double
-				// rate with stamina powerup even when exerting
-				pm->pmext->sprintTime += 10;
-				if (pm->pmext->sprintTime > SPRINTTIME)
-				{
-					pm->pmext->sprintTime = SPRINTTIME;
-				}
-
-				if (pm->ps->powerups[PW_NOFATIGUE] < 0)
-				{
-					pm->ps->powerups[PW_NOFATIGUE] = 0;
-				}
 			}
 			// sprint time tuned for multiplayer
 			else
@@ -4918,13 +4900,9 @@ void PM_Sprint(void)
 			// in multiplayer, recharge faster for top 75% of sprint bar
 			// (for people that *just* use it for jumping, not sprint) this code was
 			// mucked about with to eliminate client-side framerate-dependancy in wolf single player
-			if (pm->ps->powerups[PW_ADRENALINE])
+			if (pm->ps->powerups[PW_ADRENALINE] || pm->ps->powerups[PW_NOFATIGUE])
 			{
 				pm->pmext->sprintTime = SPRINTTIME;
-			}
-			else if (pm->ps->powerups[PW_NOFATIGUE])       // recharge at 2x with stamina powerup
-			{
-				pm->pmext->sprintTime += 10;
 			}
 			else
 			{

@@ -1061,6 +1061,8 @@ void Cmd_Nofatigue_f(gentity_t *ent, unsigned int dwCommand, int value)
 		msg = "nofatigue ON\n";
 	}
 
+	ent->client->ps.powerups[PW_NOFATIGUE] = ent->flags & FL_NOFATIGUE;
+
 	trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
 }
 
