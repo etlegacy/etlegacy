@@ -74,7 +74,7 @@ typedef struct particle_s
 	int shaderAnim;
 	int roll;
 
-	int accumroll;
+	float accumroll;
 
 } cparticle_t;
 
@@ -574,7 +574,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			vec3_t temp;
 
 			vectoangles(rforward, temp);
-			p->accumroll += p->roll;
+			p->accumroll += p->roll * cg.frametime / 8.0f;
 			temp[ROLL]   += p->accumroll * 0.1;
 			//temp[ROLL] += p->roll * 0.1;
 			AngleVectors(temp, NULL, rright2, rup2);
@@ -1039,7 +1039,7 @@ void CG_AddParticles(void)
 
 			if (p->rotate)
 			{
-				p->accumroll -= p->roll;
+				p->accumroll -= p->roll * cg.frametime / 8.0f;
 			}
 		}
 
