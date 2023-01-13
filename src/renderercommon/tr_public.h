@@ -205,7 +205,7 @@ typedef struct
 	void (*Free)(void *buf);
 	void (*Tag_Free)(void);
 
-	cvar_t *(*Cvar_Get)(const char *name, const char *value, int flags);
+	cvar_t *(*Cvar_Get)(const char *name, const char *value, cvarFlags_t flags);
 	void (*Cvar_Set)(const char *name, const char *value);
 	void (*Cvar_CheckRange)(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 	void (*Cvar_SetDescription)(cvar_t *cv, const char *description);
