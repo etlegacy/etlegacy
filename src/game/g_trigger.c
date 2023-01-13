@@ -106,7 +106,15 @@ void multi_trigger(gentity_t *ent, gentity_t *activator)
 		}
 	}
 
-	G_Script_ScriptEvent(ent, "activate", activator->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
+	// only pass in team if activator is a client
+	if (activator->client)
+	{
+		G_Script_ScriptEvent(ent, "activate", activator->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
+	}
+	else
+	{
+		G_Script_ScriptEvent(ent, "activate", NULL);
+	}
 
 	if (ent->nextthink)
 	{
