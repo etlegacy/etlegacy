@@ -1972,6 +1972,12 @@ static void CG_DemoRewindFixEffects(void)
 
 	trap_GetGameState(&cgs.gameState);
 
+	CG_ParseSysteminfo();
+	CG_ParseServerinfo();
+	CG_ParseWolfinfo();
+	CG_ParseServerToggles();
+	CG_SetConfigValues();
+
 	// fix player entities animations
 	Com_Memset(&cg.predictedPlayerEntity.pe, 0, sizeof(playerEntity_t));
 
