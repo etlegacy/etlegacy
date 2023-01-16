@@ -1963,9 +1963,7 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
 		19, 18, 17, 16, 15, 14, 13, 12, 11, 10, \
 		9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 
-#else
 #define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
-#endif
 
 /**
  * @def VM_CALL_END
