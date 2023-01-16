@@ -284,11 +284,11 @@ extern clientConnection_t clc;
 typedef struct
 {
 	JNIEnv *env;                                ///< Java Enviroment Entry
-	
+
 	jobject activity;                           ///< Activity object
 	jclass clazz;                               ///< Object Class
 	jfieldID f_id;                              ///< Variable field
-	
+
 	qboolean f_boolean;                         ///< In this case variable is boolean type and we change value of it
 
 } clientJavainterface_t;
@@ -397,6 +397,8 @@ typedef struct
 	// rendering info
 	glconfig_t glconfig;
 	qhandle_t charSetShader;
+	fontInfo_extra_t consoleFont;
+	fontInfo_t etIconFont;
 	qhandle_t whiteShader;
 	qhandle_t consoleShader;
 	//qhandle_t consoleShader2;

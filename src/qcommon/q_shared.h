@@ -1748,10 +1748,10 @@ typedef enum
 typedef struct
 {
 	int height;       ///< number of scan lines
-	int top;          ///< top of glyph in buffer
-	int bottom;       ///< bottom of glyph in buffer
-	int pitch;        ///< width for copying
-	int xSkip;        ///< x adjustment
+	int top;          ///< top of glyph in buffer (horiBearingY + 1)
+	int bottom;       ///< bottom of glyph in buffer (horiBearingY - height - 1)
+	int pitch;        ///< width for copying (horiBearingX + 1)
+	int xSkip;        ///< x adjustment (horiAdvance + 1)
 	int imageWidth;   ///< width of actual image
 	int imageHeight;  ///< height of actual image
 	float s;          ///< x offset in image where glyph starts
@@ -1963,10 +1963,6 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
 		19, 18, 17, 16, 15, 14, 13, 12, 11, 10, \
 		9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 
-//c99 issue pre 2013 VS do not have support for this
-#if defined(_MSC_VER) && (_MSC_VER < 1800)
-#define NUMARGSFAST PP_NARG_FAST
-#define NUMARGS PP_NARG
 #else
 #define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
 #endif

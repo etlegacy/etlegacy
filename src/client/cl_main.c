@@ -1470,6 +1470,28 @@ void CL_ExtendedCharsTest_f(void)
 {
 	Com_Printf("Output should be the same: t\xe4m\xe4? == t\xc3\xa4m\xc3\xa4?");
 }
+
+static void CL_ConsoleFont_f(void)
+{
+	if (Cmd_Argc() == 2)
+	{
+		const char *font = Cmd_Argv(1);
+		Com_Memset(&cls.consoleFont, 0, sizeof(cls.consoleFont));
+
+		if (font && font[0])
+		{
+			re.RegisterFont(font, SMALLCHAR_HEIGHT, &cls.consoleFont, qtrue);
+		}
+	}
+}
+
+static void CL_CompleteTTFFontName(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		Field_CompleteFilename("fonts", "ttf", qtrue, qtrue);
+	}
+}
 #endif
 
 /**
@@ -2672,12 +2694,24 @@ void CL_ShutdownRef(void)
  */
 void CL_InitRenderer(void)
 {
+	const char *fontName = Cvar_VariableString("con_fontName");
+
 	// this sets up the renderer and calls R_Init
 	re.BeginRegistration(&cls.glconfig);
 
 	// load character sets
 	cls.charSetShader = re.RegisterShader("gfx/2d/consolechars");
-	cls.whiteShader   = re.RegisterShader("white");
+
+	// try to load a Truetype if available
+	Com_Memset(&cls.consoleFont, 0, sizeof(cls.consoleFont));
+	if (fontName && fontName[0])
+	{
+		re.RegisterFont(fontName, SMALLCHAR_HEIGHT, &cls.consoleFont, qtrue);
+	}
+	Com_Memset(&cls.etIconFont, 0, sizeof(cls.etIconFont));
+	re.RegisterFont("ETL-icon-font", SMALLCHAR_HEIGHT, &cls.etIconFont, qfalse);
+
+	cls.whiteShader = re.RegisterShader("white");
 
 	cls.consoleShader = re.RegisterShader("console-16bit");    // shader works with 16bit
 	//cls.consoleShader2 = re.RegisterShader("console2-16bit");    // shader works with 16bit
@@ -3131,6 +3165,7 @@ void CL_Init(void)
 
 #ifdef ETLEGACY_DEBUG
 	Cmd_AddCommand("extendedCharsTest", CL_ExtendedCharsTest_f);
+	Cmd_AddCommand("cl_font", CL_ConsoleFont_f, "Switches console font", CL_CompleteTTFFontName);
 #endif
 
 	CIN_Init();
