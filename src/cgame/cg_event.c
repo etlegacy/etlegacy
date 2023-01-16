@@ -215,7 +215,7 @@ static void CG_Obituary(entityState_t *ent)
 			}
 			else
 			{
-				s = va("%s %s", CG_TranslateString("You killed ^1TEAMMATE^7"), targetName);
+				s = va("%s %s", CG_TranslateString("^1You killed teammate^7"), targetName);
 			}
 		}
 		else
@@ -237,7 +237,7 @@ static void CG_Obituary(entityState_t *ent)
 			}
 			else
 			{
-				s = va("%s %s %s", attackerName, CG_TranslateString("^7killed ^1TEAMMATE^7"), targetName);
+				s = va("%s %s %s", attackerName, CG_TranslateString("^1killed teammate^7"), targetName);
 			}
 		}
 		else
