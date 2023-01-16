@@ -1236,7 +1236,7 @@ void ClientThink_real(gentity_t *ent)
 
 	// zinx etpro antiwarp
 	client->pers.pmoveMsec = pmove_msec.integer;
-	if (!G_DoAntiwarp(ent) && (pmove_fixed.integer || client->pers.pmoveFixed))
+	if (pmove_fixed.integer || client->pers.pmoveFixed)
 	{
 		ucmd->serverTime = ((ucmd->serverTime + client->pers.pmoveMsec - 1) /
 		                    client->pers.pmoveMsec) * client->pers.pmoveMsec;

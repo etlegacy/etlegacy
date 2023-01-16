@@ -1429,9 +1429,7 @@ static void CG_MapRestart(void)
 	cg.latchVictorySound = qfalse;
 
 	// we really should clear more parts of cg here and stop sounds
-	cg.v_dmg_time   = 0;
-	cg.v_noFireTime = 0;
-	cg.v_fireTime   = 0;
+	CG_ResetTimers();
 
 	cg.filtercams = Q_atoi(CG_ConfigString(CS_FILTERCAMS)) ? qtrue : qfalse;
 
