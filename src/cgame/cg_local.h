@@ -3401,6 +3401,8 @@ void CG_autoScreenShot_f(void);
 void CG_keyOn_f(void);
 void CG_keyOff_f(void);
 void CG_dumpStats_f(void);
+void CG_AddGameConsoleCommand(void);
+void CG_RemoveGameConsoleCommand(void);
 
 void CG_ForceTapOut_f(void);
 

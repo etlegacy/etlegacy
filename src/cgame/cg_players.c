@@ -441,12 +441,16 @@ void CG_NewClientInfo(int clientNum)
 
 				trap_Cvar_Set("cg_ui_voteFlags", Info_ValueForKey(info, "voteFlags"));
 				CG_Printf("[cgnotify]^3*** You have been stripped of your referee status! ***\n");
+
+				CG_RemoveGameConsoleCommand();
 			}
 			else
 			{
 				trap_Cvar_Set("cg_ui_voteFlags", "0");
 				CG_Printf("[cgnotify]^2*** You have been authorized \"%s\" status ***\n", ((newInfo.refStatus == RL_RCON) ? "rcon" : "referee"));
 				CG_Printf("Type: ^3ref^7 (by itself) for a list of referee commands.\n");
+
+				CG_AddGameConsoleCommand();
 			}
 		}
 	}
