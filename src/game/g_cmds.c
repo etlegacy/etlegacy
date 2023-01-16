@@ -4358,6 +4358,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 	victim->client->ps.pm_time   = 100;
 	victim->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 
+	G_LogPrintf("Shove: %d %d\n", ent->client->ps.clientNum, victim->client->ps.clientNum);
+
 	return qtrue;
 }
 
