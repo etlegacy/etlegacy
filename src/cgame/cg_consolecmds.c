@@ -2205,25 +2205,53 @@ static void CG_EditHud_f(void)
 	}
 }
 
-static qboolean CG_SetRectComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+static qboolean CG_ParseFloatValueAtIndex(int *argIndex, float *value, char fieldLetter)
 {
-	char      token[MAX_TOKEN_CHARS];
-	rectDef_t *value = (rectDef_t *) ((char *) comp + offset);
+	char token[MAX_TOKEN_CHARS];
 
-	if ((trap_Argc() - *argIndex) < 4)
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!Q_isanumber(token))
 	{
-		CG_Printf("^1rect field component needs at least 4 arguments <x> <y> <w> <h>\n");
+		CG_Printf("^1Invalid ^3<%c> ^1argument, not a number\n", fieldLetter);
 		return qfalse;
 	}
 
-	trap_Argv(++*argIndex, token, sizeof(token));
-	value->x = Q_atof(token);
-	trap_Argv(++*argIndex, token, sizeof(token));
-	value->y = Q_atof(token);
-	trap_Argv(++*argIndex, token, sizeof(token));
-	value->w = Q_atof(token);
-	trap_Argv(++*argIndex, token, sizeof(token));
-	value->h = Q_atof(token);
+	*value = Q_atof(token);
+
+	return qtrue;
+}
+
+static qboolean CG_SetRectComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	rectDef_t *value = (rectDef_t *)((char *)comp + offset);
+
+	if ((trap_Argc() - *argIndex) <= 4)
+	{
+		CG_Printf("^3rect field component needs at least 4 arguments <x> <y> <w> <h>\n");
+		CG_Printf("^7Current value is %f %f %f %f\n", value->x, value->y, value->w, value->h);
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->x, 'x'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->y, 'y'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->w, 'w'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->h, 'h'))
+	{
+		return qfalse;
+	}
 
 	return qtrue;
 }
@@ -2233,13 +2261,20 @@ static qboolean CG_SetFloatComponentFromCommand(int *argIndex, hudComponent_t *c
 	char  token[MAX_TOKEN_CHARS];
 	float *value = (float *) ((char *) comp + offset);
 
-	if ((trap_Argc() - *argIndex) < 1)
+	if ((trap_Argc() - *argIndex) <= 1)
 	{
-		CG_Printf("^1float field component needs at least 1 argument <value>\n");
+		CG_Printf("^3float field component needs at least 1 argument <value>\n");
+		CG_Printf("^7Current value is %f\n", *value);
 		return qfalse;
 	}
 
 	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!Q_isanumber(token))
+	{
+		CG_Printf("^1Invalid ^3<float> ^1argument, not a number\n");
+		return qfalse;
+	}
 
 	*value = Q_atof(token);
 
@@ -2251,13 +2286,20 @@ static qboolean CG_SetIntComponentFromCommand(int *argIndex, hudComponent_t *com
 	char token[MAX_TOKEN_CHARS];
 	int  *value = (int *) ((char *) comp + offset);
 
-	if ((trap_Argc() - *argIndex) < 1)
+	if ((trap_Argc() - *argIndex) <= 1)
 	{
-		CG_Printf("^1int field component needs at least 1 argument <value>\n");
+		CG_Printf("^3int field component needs at least 1 argument <value>\n");
+		CG_Printf("^7Current value is %d\n", *value);
 		return qfalse;
 	}
 
 	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!Q_isanumber(token))
+	{
+		CG_Printf("^1Invalid ^3<int> ^1argument, not a number\n");
+		return qfalse;
+	}
 
 	*value = Q_atoi(token);
 
@@ -2269,9 +2311,10 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 	char   token[MAX_TOKEN_CHARS];
 	vec4_t *value = (vec4_t *) ((char *) comp + offset);
 
-	if ((trap_Argc() - *argIndex) < 1)
+	if ((trap_Argc() - *argIndex) <= 1)
 	{
-		CG_Printf("^1color field component needs at least 1 argument <colorname> / <0xRRGGBB> or 3 argument <r> <g> <b>\n");
+		CG_Printf("^3color field component needs at least 1 argument <colorname> / <0xRRGGBB[AA]> or 3-4 arguments <r> <g> <b> <a>\n");
+		CG_Printf("^7Current value is %f %f %f %f\n", (*value)[0], (*value)[1], (*value)[2], (*value)[3]);
 		return qfalse;
 	}
 
@@ -2279,17 +2322,25 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 
 	if (!Q_ParseColor(token, *value))
 	{
-		if ((trap_Argc() - *argIndex) < 3)
+		if ((trap_Argc() - *argIndex) <= 3)
 		{
-			CG_Printf("^1invalid color input\n");
 			return qfalse;
 		}
 
-		(*value)[0] = Q_atof(token);
-		trap_Argv(++*argIndex, token, sizeof(token));
-		(*value)[1] = Q_atof(token);
-		trap_Argv(++*argIndex, token, sizeof(token));
-		(*value)[2] = Q_atof(token);
+		if (!CG_ParseFloatValueAtIndex(argIndex, value[0], 'r'))
+		{
+			return qfalse;
+		}
+
+		if (!CG_ParseFloatValueAtIndex(argIndex, value[1], 'g'))
+		{
+			return qfalse;
+		}
+
+		if (!CG_ParseFloatValueAtIndex(argIndex, value[2], 'b'))
+		{
+			return qfalse;
+		}
 
 		if ((trap_Argc() - *argIndex) >= 1)
 		{
@@ -2299,8 +2350,10 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 			// which can't start with a numeric value
 			if (Q_isnumeric(token[0]))
 			{
-				++*argIndex;
-				(*value)[3] = Q_atof(token);
+				if (!CG_ParseFloatValueAtIndex(argIndex, value[3], 'a'))
+				{
+					return qfalse;
+				}
 			}
 		}
 	}
@@ -2360,15 +2413,36 @@ static void CG_ShowEditComponentHelp()
 	CG_Printf("\n\nAvailable ^3<field> ^7:\n\n%s\n", str);
 }
 
+static void CG_ShowEditComponentStyleHelp(const hudComponentFields_t *compField, int *value)
+{
+	int  i;
+	char *str = NULL;
+
+	for (i = 0; i < MAXSTYLES && compField->styles[i]; ++i)
+	{
+		str = va("%s%s%5d : %-16s%s", str ? str : "", ((*value) & 1 << i) ? "^2" : "^7", 1 << i, compField->styles[i], !((i + 1) % 3) ? "\n" : "    ");
+	}
+
+	if (str)
+	{
+		CG_Printf("Available ^3<style>^7 for %s :\n\n%s\n", compField->name, str);
+	}
+	else
+	{
+		CG_Printf("No ^3<style>^7 available for %s\n", compField->name);
+	}
+}
+
 /**
  * @brief CG_EditComponent_f
  */
 static void CG_EditComponent_f(void)
 {
-	char           token[MAX_TOKEN_CHARS];
-	hudComponent_t *comp = NULL;
-	int            i;
-	int            argc = trap_Argc();
+	char                       token[MAX_TOKEN_CHARS];
+	const hudComponentFields_t *compField = NULL;
+	hudComponent_t             *comp      = NULL;
+	int                        i;
+	int                        argc = trap_Argc();
 
 	if (argc < 2)
 	{
@@ -2393,6 +2467,7 @@ static void CG_EditComponent_f(void)
 	if (argc < 3)
 	{
 		CG_ShowEditComponentHelp();
+
 		return;
 	}
 
@@ -2417,7 +2492,8 @@ static void CG_EditComponent_f(void)
 	{
 		if (!Q_stricmp(token, hudComponentFields[i].name))
 		{
-			comp = (hudComponent_t *) ((char *) activehud + hudComponentFields[i].offset);
+			compField = &hudComponentFields[i];
+			comp      = (hudComponent_t *)((char *)activehud + compField->offset);
 			break;
 		}
 	}
@@ -2446,7 +2522,19 @@ static void CG_EditComponent_f(void)
 				// try to parse the field arguments
 				if (!hudComponentMembersFields[j].parse(&i, comp, hudComponentMembersFields[j].offset))
 				{
-					CG_Printf("^1 Failed to parse %s field arguments\n", hudComponentMembersFields[j].name);
+					// display specific help for style
+					if (!Q_stricmp(hudComponentMembersFields[j].name, "style"))
+					{
+						CG_ShowEditComponentStyleHelp(compField, (int *)((char *)comp + hudComponentMembersFields[j].offset));
+						return;
+					}
+
+					// in case there is not next argument, don't display an error as the user request help
+					if (++i != argc)
+					{
+						CG_Printf("^1Failed to parse ^3<%s> ^1field arguments\n", hudComponentMembersFields[j].name);
+					}
+
 					return;
 				}
 			}
@@ -2471,7 +2559,6 @@ static void CG_EditHudComponentComplete(void)
 		trap_CommandComplete("save");
 		trap_CommandComplete("clone");
 		trap_CommandComplete("delete");
-
 
 		for (i = 0; hudComponentFields[i].name; i++)
 		{
