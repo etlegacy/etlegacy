@@ -1760,6 +1760,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	else
 	{
 		float clampTolerance;
+		float swingSpeed = Com_Clamp(0.1f, 0.3f, cg_swingSpeed.value);
 
 		legsAngles[YAW] = headAngles[YAW] + cent->currentState.angles2[YAW];
 
@@ -1777,7 +1778,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		}
 
 		// torso
-		CG_SwingAngles(torsoAngles[YAW], 25, clampTolerance, cg_swingSpeed.value, &cent->pe.torso.yawAngle, &cent->pe.torso.yawing);
+		CG_SwingAngles(torsoAngles[YAW], 25, clampTolerance, swingSpeed, &cent->pe.torso.yawAngle, &cent->pe.torso.yawing);
 
 		// if the legs are yawing (facing heading direction), allow them to rotate a bit, so we don't keep calling
 		// the legs_turn animation while an AI is firing, and therefore his angles will be randomizing according to their accuracy
@@ -1787,7 +1788,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		if (BG_GetConditionBitFlag(ci->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_IDLE))
 		{
 			cent->pe.legs.yawing = qfalse; // set it if they really need to swing
-			CG_SwingAngles(legsAngles[YAW], 20, clampTolerance, 0.5f * cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
+			CG_SwingAngles(legsAngles[YAW], 20, clampTolerance, 0.5f * swingSpeed, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
 		}
 		else if (strstr(BG_GetAnimString(character->animModelInfo, legsSet), "strafe"))
 		{
@@ -1795,15 +1796,15 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 			//if    ( BG_GetConditionValue( ci->clientNum, ANIM_COND_MOVETYPE, qfalse ) & ((1<<ANIM_MT_STRAFERIGHT)|(1<<ANIM_MT_STRAFELEFT)) )
 			cent->pe.legs.yawing = qfalse; // set it if they really need to swing
 			legsAngles[YAW]      = headAngles[YAW];
-			CG_SwingAngles(legsAngles[YAW], 0, clampTolerance, cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
+			CG_SwingAngles(legsAngles[YAW], 0, clampTolerance, swingSpeed, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
 		}
 		else if (cent->pe.legs.yawing)
 		{
-			CG_SwingAngles(legsAngles[YAW], 0, clampTolerance, cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
+			CG_SwingAngles(legsAngles[YAW], 0, clampTolerance, swingSpeed, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
 		}
 		else
 		{
-			CG_SwingAngles(legsAngles[YAW], 40, clampTolerance, cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
+			CG_SwingAngles(legsAngles[YAW], 40, clampTolerance, swingSpeed, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
 		}
 
 		torsoAngles[YAW] = cent->pe.torso.yawAngle;
