@@ -389,14 +389,15 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	int            curWeap;
 	char           name[MAX_FIRETEAM_MEMBERS][MAX_NAME_LENGTH];
 	int            nameMaxLen;
-    float          scale;
+	float          scale;
 
 	// colors and fonts for overlays
-	vec4_t FT_select  = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
-	vec4_t iconColor  = { 1.0f, 1.0f, 1.0f, 1.0f };             // icon "color", used for alpha adjustments
-	vec4_t textWhite  = { 1.0f, 1.0f, 1.0f, 1.0f };             // regular text
-	vec4_t textYellow = { 1.0f, 1.0f, 0.0f, 1.0f };             // yellow text for health drawing
-	vec4_t textRed    = { 1.0f, 0.0f, 0.0f, 1.0f };             // red text for health drawing
+	vec4_t FT_select                = { 0.5f, 0.5f, 0.2f, 0.3f }; // selected member
+	vec4_t iconColor                = { 1.0f, 1.0f, 1.0f, 1.0f }; // icon "color", used for alpha adjustments
+	vec4_t iconColorSemitransparent = { 1.0f, 1.0f, 1.0f, 0.5f };
+	vec4_t textWhite                = { 1.0f, 1.0f, 1.0f, 1.0f }; // regular text
+	vec4_t textYellow               = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow text for health drawing
+	vec4_t textRed                  = { 1.0f, 0.0f, 0.0f, 1.0f }; // red text for health drawing
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -697,7 +698,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		// note: WP_NONE is excluded
 		if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 		{
-			trap_R_SetColor(iconColor);
+			trap_R_SetColor((cg_entities[ci->clientNum].currentValid || ci->clientNum == cg.clientNum) ? iconColor : iconColorSemitransparent);  // semitransparent white for weapon that is not currently being updated
 			CG_DrawPic(x, y + heightIconsOffset, cg_weapons[curWeap].weaponIconScale * heightText * 2, heightText * 2, cg_weapons[curWeap].weaponIcon[0]);
 		}
 		else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
