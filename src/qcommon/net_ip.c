@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -73,7 +73,7 @@ typedef unsigned short sa_family_t;
 
 #define socketError      WSAGetLastError()
 
-static WSADATA  winsockdata;
+static WSADATA winsockdata;
 static qboolean winsockInitialized = qfalse;
 
 #else // *NIX & APPLE
@@ -111,7 +111,7 @@ typedef int SOCKET;
 
 #endif
 
-static qboolean usingSocks        = qfalse;
+static qboolean usingSocks = qfalse;
 static qboolean networkingEnabled = qfalse;
 
 static cvar_t *net_enabled;
@@ -1306,7 +1306,7 @@ void NET_SetMulticast6(void)
 	if (!*net_mcast6addr->string || !Sys_StringToSockaddr(net_mcast6addr->string, (struct sockaddr *) &addr, sizeof(addr), AF_INET6))
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Incorrect multicast address given, "
-		           "please set cvar %s to a sane value.\n", net_mcast6addr->name);
+		                          "please set cvar %s to a sane value.\n", net_mcast6addr->name);
 
 		Cvar_SetValue(net_enabled->name, net_enabled->integer | NET_DISABLEMCAST);
 
@@ -1371,7 +1371,7 @@ void NET_JoinMulticast6(void)
 		}
 	}
 
-	if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (char *) &curgroup, sizeof(curgroup)))
+	if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (char *) &curgroup, sizeof(curgroup)) == SOCKET_ERROR)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Couldn't join multicast group: %s\n", NET_ErrorString());
 
@@ -1397,7 +1397,10 @@ void NET_LeaveMulticast6(void)
 		}
 		else
 		{
-			setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_LEAVE_GROUP, (char *) &curgroup, sizeof(curgroup));
+			if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_LEAVE_GROUP, (char *) &curgroup, sizeof(curgroup)) == SOCKET_ERROR)
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: NET_IP6Socket: setsockopt IPV6_LEAVE_GROUP: %s\n", NET_ErrorString());
+			}
 		}
 
 		multicast6_socket = INVALID_SOCKET;
@@ -1877,12 +1880,14 @@ static qboolean NET_GetCvars(void)
 	net_ip6->modified = qfalse;
 #endif
 
-	net_port           = Cvar_Get("net_port", va("%i", PORT_SERVER), CVAR_LATCH);
+	net_port = Cvar_Get("net_port", va("%i", PORT_SERVER), CVAR_LATCH);
+	Cvar_CheckRange(net_port, 0, 65535, qtrue);
 	modified          += net_port->modified;
 	net_port->modified = qfalse;
 
 #ifdef FEATURE_IPV6
-	net_port6           = Cvar_Get("net_port6", va("%i", PORT_SERVER), CVAR_LATCH);
+	net_port6 = Cvar_Get("net_port6", va("%i", PORT_SERVER), CVAR_LATCH);
+	Cvar_CheckRange(net_port6, 0, 65535, qtrue);
 	modified           += net_port6->modified;
 	net_port6->modified = qfalse;
 

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -811,6 +811,29 @@ void CL_KeyMove(usercmd_t *cmd)
 }
 
 /**
+ * @brief Scale the mouse event to match that of the windowing system
+ * @param[in] dx horizontal mouse movement in pixels
+ * @param[in] dy vertical mouse movement in pixels
+ * @param[out] mdx aspect ratio scaled horizontal mouse movement in game internal pixels
+ * @param[out] mdy aspect ratio scaled vertical mouse movement in game internal pixels
+ */
+static ID_INLINE void CL_MouseEventScale(int dx, int dy, float *mdx, float *mdy)
+{
+	static float mouseBuffer[2] = { 0, 0 };
+	float        ratio          = 1.f;
+
+	if (cls.glconfig.windowAspect > RATIO43)
+	{
+		ratio = cls.glconfig.windowAspect * RPRATIO43;
+	}
+
+	mouseBuffer[0] += (float) dx * (SCREEN_WIDTH_F / (float) cls.glconfig.windowWidth) * ratio;
+	mouseBuffer[1] += (float) dy * (SCREEN_HEIGHT_F / (float) cls.glconfig.windowHeight) * ratio;
+	mouseBuffer[0]  = modff(mouseBuffer[0], mdx);
+	mouseBuffer[1]  = modff(mouseBuffer[1], mdy);
+}
+
+/**
  * @brief CL_MouseEvent
  * @param[in] dx
  * @param[in] dy
@@ -818,6 +841,8 @@ void CL_KeyMove(usercmd_t *cmd)
  */
 void CL_MouseEvent(int dx, int dy, int time)
 {
+	float mdx, mdy;
+
 	if (cls.keyCatchers & KEYCATCH_UI)
 	{
 		// if we just want to pass it along to game
@@ -828,7 +853,8 @@ void CL_MouseEvent(int dx, int dy, int time)
 		}
 		else
 		{
-			VM_Call(uivm, UI_MOUSE_EVENT, dx, dy);
+			CL_MouseEventScale(dx, dy, &mdx, &mdy);
+			VM_Call(uivm, UI_MOUSE_EVENT, (int)mdx, (int)mdy);
 		}
 	}
 	else if (cls.keyCatchers & KEYCATCH_CGAME)
@@ -840,7 +866,8 @@ void CL_MouseEvent(int dx, int dy, int time)
 		}
 		else
 		{
-			VM_Call(cgvm, CG_MOUSE_EVENT, dx, dy);
+			CL_MouseEventScale(dx, dy, &mdx, &mdy);
+			VM_Call(cgvm, CG_MOUSE_EVENT, (int)mdx, (int)mdy);
 		}
 	}
 	else

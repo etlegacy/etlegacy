@@ -29,16 +29,16 @@ msgid "MOUSE2"
 msgstr "MOUSE2"
 
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 msgid "No"
-msgstr ""
+msgstr "Не"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ок"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Отмяна"
 
 msgid "SPACE"
 msgstr "SPACE"

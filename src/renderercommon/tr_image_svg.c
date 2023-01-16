@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -33,13 +33,7 @@
  * @brief SVG LOADING
  */
 
-#ifdef FEATURE_RENDERER2
-#include "../renderer2/tr_local.h"
-#elif defined FEATURE_RENDERER_GLES
-#include "../rendererGLES/tr_local.h"
-#else
-#include "../renderer/tr_local.h"
-#endif
+#include "tr_local_proxy.h"
 
 #include "tr_common.h"
 

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -62,7 +62,7 @@
 #define CONTENTS_DONOTENTER_LARGE   0x00400000  ///< unused in ETL
 #define CONTENTS_ORIGIN             0x01000000  ///< removed before bsping an entity
 #define CONTENTS_BODY               0x02000000  ///< should never be on a brush, only in game
-#define CONTENTS_CORPSE             0x04000000
+#define CONTENTS_CORPSE             0x04000000  ///< also assigned to landmines, dynamites, satchels and flamechunks
 #define CONTENTS_DETAIL             0x08000000  ///< brushes not used for the bsp
 
 #define CONTENTS_STRUCTURAL     0x10000000      ///< brushes used for the bsp

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -132,59 +132,59 @@ char *Sys_ConsoleInput(void)
 #ifdef ETL_CLIENT
 dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char *title)
 {
-	int buttonId;
+	int                      buttonId;
 	SDL_MessageBoxButtonData buttons[2];
-	SDL_MessageBoxData data;
-	data.window = NULL;
+	SDL_MessageBoxData       data;
+	data.window      = NULL;
 	data.colorScheme = NULL;
-	data.buttons = buttons;
-	data.message = message;
-	data.title = title;
+	data.buttons     = buttons;
+	data.message     = message;
+	data.title       = title;
 
 	switch (type)
 	{
-		default:
-		case DT_INFO:
-			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[0].buttonid = DR_OK;
-			buttons[0].text = _("Ok");
-			data.numbuttons = 1;
-			data.flags = SDL_MESSAGEBOX_INFORMATION;
-			break;
-		case DT_WARNING:
-			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[0].buttonid = DR_OK;
-			buttons[0].text = _("Ok");
-			data.numbuttons = 1;
-			data.flags = SDL_MESSAGEBOX_WARNING;
-			break;
-		case DT_ERROR:
-			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[0].buttonid = DR_OK;
-			buttons[0].text = _("Ok");
-			data.numbuttons = 1;
-			data.flags = SDL_MESSAGEBOX_ERROR;
-			break;
-		case DT_YES_NO:
-			buttons[0].flags = 0;
-			buttons[0].buttonid = DR_NO;
-			buttons[0].text = _("No");
-			buttons[1].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[1].buttonid = DR_YES;
-			buttons[1].text = _("Yes");
-			data.numbuttons = 2;
-			data.flags = SDL_MESSAGEBOX_INFORMATION;
-			break;
-		case DT_OK_CANCEL:
-			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT;
-			buttons[0].buttonid = DR_CANCEL;
-			buttons[0].text = _("Cancel");
-			buttons[1].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-			buttons[1].buttonid = DR_OK;
-			buttons[1].text = _("Ok");
-			data.numbuttons = 2;
-			data.flags = SDL_MESSAGEBOX_WARNING;
-			break;
+	default:
+	case DT_INFO:
+		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[0].buttonid = DR_OK;
+		buttons[0].text     = _("Ok");
+		data.numbuttons     = 1;
+		data.flags          = SDL_MESSAGEBOX_INFORMATION;
+		break;
+	case DT_WARNING:
+		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[0].buttonid = DR_OK;
+		buttons[0].text     = _("Ok");
+		data.numbuttons     = 1;
+		data.flags          = SDL_MESSAGEBOX_WARNING;
+		break;
+	case DT_ERROR:
+		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[0].buttonid = DR_OK;
+		buttons[0].text     = _("Ok");
+		data.numbuttons     = 1;
+		data.flags          = SDL_MESSAGEBOX_ERROR;
+		break;
+	case DT_YES_NO:
+		buttons[0].flags    = 0;
+		buttons[0].buttonid = DR_NO;
+		buttons[0].text     = _("No");
+		buttons[1].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[1].buttonid = DR_YES;
+		buttons[1].text     = _("Yes");
+		data.numbuttons     = 2;
+		data.flags          = SDL_MESSAGEBOX_INFORMATION;
+		break;
+	case DT_OK_CANCEL:
+		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT;
+		buttons[0].buttonid = DR_CANCEL;
+		buttons[0].text     = _("Cancel");
+		buttons[1].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+		buttons[1].buttonid = DR_OK;
+		buttons[1].text     = _("Ok");
+		data.numbuttons     = 2;
+		data.flags          = SDL_MESSAGEBOX_WARNING;
+		break;
 	}
 
 	if (SDL_ShowMessageBox(&data, &buttonId) < 0)
@@ -278,8 +278,8 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 			{
 				// FIXME: delete even when outside of homepath
 				if (Sys_Remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
-				              PATH_SEP, Cvar_VariableString("fs_game"),
-				              PATH_SEP, Cvar_VariableString("com_pidfile"))) != 0)
+				                  PATH_SEP, Cvar_VariableString("fs_game"),
+				                  PATH_SEP, Cvar_VariableString("com_pidfile"))) != 0)
 				{
 					// This is thrown when game game crashes before PID file is created
 					// f.e. when pak files are missing
@@ -318,7 +318,7 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 void Sys_Quit(void)
 {
 #ifdef USE_WINDOWS_CONSOLE
-    Sys_DestroyConsole();
+	Sys_DestroyConsole();
 #endif
 	Sys_Exit(0);
 }
@@ -720,7 +720,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	{
 		char buffer[MAX_OSPATH];
 		Com_sprintf(buffer, sizeof(buffer), "%s.dylib", fname);
-		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), gamedir, buffer);
+		fn = FS_BuildOSPath(base, gamedir, buffer);
 
 		Com_Printf("-- Trying dylib with extension... ");
 		libHandle = Sys_LoadLibrary(fn);
@@ -772,7 +772,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
  * @return libHandle or NULL
  */
 void *Sys_LoadGameDll(const char *name, qboolean extract,
-                      intptr_t(**entryPoint) (int, ...),
+                      VM_EntryPoint_t *entryPoint,
                       intptr_t (*systemcalls)(intptr_t, ...))
 {
 	void *libHandle;
@@ -882,7 +882,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	}
 
 	dllEntry    = (void(QDECL *)(intptr_t(QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
-	*entryPoint = (intptr_t(QDECL *)(int, ...))Sys_LoadFunction(libHandle, "vmMain");
+	*entryPoint = (VM_EntryPoint_t)Sys_LoadFunction(libHandle, "vmMain");
 
 	if (!*entryPoint || !dllEntry)
 	{

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -55,7 +55,7 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 	// if weapon is still valid
 	if (IS_VALID_WEAPON(weap))
 	{
-		if (CG_GetActiveHUD()->popupmessages.style && cg_weapons[weap].weaponIcon[0])
+		if ((CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON_ALT) && cg_weapons[weap].weaponIcon[0])
 		{
 			*weaponShader = cg_weapons[weap].weaponIcon[0];
 			*scaleShader  = cg_weapons[weap].weaponIconScale;
@@ -77,7 +77,6 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 
 		// FIXME:
 		//case MOD_UNKNOWN:
-		//case MOD_FALLING:
 		//case MOD_TRIGGER_HURT:
 		//case MOD_TELEFRAG:
 		//case MOD_TARGET_LASER:
@@ -99,6 +98,9 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 			break;
 		case MOD_CRUSH:
 			*weaponShader = cgs.media.pmImageCrush;
+			break;
+		case MOD_FALLING:
+			*weaponShader = cgs.media.pmImageFall;
 			break;
 		case MOD_SHOVE:
 			*weaponShader = cgs.media.pmImageShove;
@@ -167,7 +169,7 @@ static void CG_Obituary(entityState_t *ent)
 
 	if (message)
 	{
-		if (cg_graphicObituaries.integer)
+		if (CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON)
 		{
 			qhandle_t weaponShader;
 			int       scaleShader;
@@ -273,14 +275,14 @@ static void CG_Obituary(entityState_t *ent)
 
 		if (message)
 		{
-			if (cg_graphicObituaries.integer)
+			if (CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON)
 			{
 				qhandle_t weaponShader;
 				int       scaleShader;
 
 				CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader);
 
-				if (cg_graphicObituaries.integer == 1)
+				if (CG_GetActiveHUD()->popupmessages.style & POPUP_SWAP_VICTIM_KILLER)
 				{
 					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite));
 				}
@@ -1858,7 +1860,7 @@ extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int dura
 
 static void CG_PlayHitSound(const int clientNum, const int hitSound)
 {
-	if (!hitSound)
+	if (hitSound == HIT_NONE)
 	{
 		return;
 	}
@@ -1883,8 +1885,6 @@ static void CG_PlayHitSound(const int clientNum, const int hitSound)
 
 	switch (hitSound)
 	{
-	case HIT_NONE:
-		break;
 	case HIT_TEAMSHOT:
 		if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
 		{

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -64,6 +64,10 @@
 #define ITEM_TEXTSTYLE_OUTLINED         4   // drop shadow ( need a color for this )
 #define ITEM_TEXTSTYLE_OUTLINESHADOWED  5   // drop shadow ( need a color for this )
 #define ITEM_TEXTSTYLE_SHADOWEDMORE     6   // drop shadow ( need a color for this )
+
+#define TEXTSTYLE_SHADOWED_OFFSET         3.5f
+#define TEXTSTYLE_SHADOWEDMORE_OFFSET     7.0f
+#define TEXTSTYLE_OUTLINED_OFFSET         3.5f
 
 #define WINDOW_BORDER_NONE          0       // no border
 #define WINDOW_BORDER_FULL          1       // full border based on border color ( single pixel )

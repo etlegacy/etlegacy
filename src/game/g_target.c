@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1473,7 +1473,7 @@ void SP_target_rumble(gentity_t *self)
 	self->use = target_rumble_use;
 
 	G_SpawnString("pitch", "0", &pitch);
-	dapitch     = (float)(atof(pitch));
+	dapitch     = Q_atof(pitch);
 	self->delay = dapitch;
 	if (self->delay == 0.f)
 	{
@@ -1481,7 +1481,7 @@ void SP_target_rumble(gentity_t *self)
 	}
 
 	G_SpawnString("yaw", "0", &yaw);
-	dayaw        = (float)(atof(yaw));
+	dayaw        = Q_atof(yaw);
 	self->random = dayaw;
 	if (self->random == 0.f)
 	{

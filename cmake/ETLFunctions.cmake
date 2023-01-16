@@ -1,4 +1,4 @@
-# General macros & functios used by the build process
+# General macros & functions used by the build process
 
 function(LEG_BUNDLE _NAME _DESC)
 	# Cannot use ARGN directly with list() command.
@@ -60,11 +60,33 @@ function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 	endif()
 
 	if(ETLEGACY_DO_DOWNLOAD)
-		file(DOWNLOAD
-			${_URL}
-			"${_PATH}"
-			SHOW_PROGRESS TIMEOUT 30
-		)
+		message("Using download url: ${_URL}")
+
+		file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
+		list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+		list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+
+		if(NOT (${STATUS_CODE} EQUAL 0))
+			message(WARNING "Downgrading https to http, possible remote certificate issue: ${ERROR_MESSAGE}")
+			string(REPLACE "https://" "http://" _URL ${_URL})
+
+			file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
+
+			# Separate the returned status code, and error message.
+			list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+			list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+
+			# Check if download was successful.
+			if(${STATUS_CODE} EQUAL 0)
+				message(STATUS "Download completed successfully!")
+			else()
+				# Exit CMake if the download failed, printing the error message.
+				file(REMOVE "${_PATH}")
+				message(FATAL_ERROR "Error occurred during download: ${ERROR_MESSAGE}")
+			endif()
+		else()
+			message(STATUS "Download completed successfully!")
+		endif()
 
 		if(_EXTRACT AND _EXTRACT_RES)
 			LEG_EXTRACT("${_MSG}" "${_PATH}" "${_EXTRACT}" "${_EXTRACT_RES}")

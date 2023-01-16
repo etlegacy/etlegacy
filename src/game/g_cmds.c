@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1060,6 +1060,8 @@ void Cmd_Nofatigue_f(gentity_t *ent, unsigned int dwCommand, int value)
 	{
 		msg = "nofatigue ON\n";
 	}
+
+	ent->client->ps.powerups[PW_NOFATIGUE] = ent->flags & FL_NOFATIGUE;
 
 	trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
 }
@@ -4296,8 +4298,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		return qfalse;
 	}
 
-	// Prevent possible cheating, as well as annoying push after revive and spawning
-	if (ent->client->ps.powerups[PW_INVULNERABLE])
+	// Prevent boosting players who have shield
+	if (victim->client->ps.powerups[PW_INVULNERABLE])
 	{
 		return qfalse;
 	}
@@ -4365,10 +4367,9 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
  */
 void Cmd_Activate2_f(gentity_t *ent)
 {
-	trace_t  tr;
-	vec3_t   end;
-	vec3_t   forward, right, up, offset;
-	qboolean pass2 = qfalse;
+	trace_t tr;
+	vec3_t  end;
+	vec3_t  forward, right, up, offset;
 
 	if (ent->health <= 0)
 	{
@@ -4389,7 +4390,6 @@ void Cmd_Activate2_f(gentity_t *ent)
 	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
 	{
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_TRIGGER));
-		pass2 = qtrue;
 	}
 
 	// don't allow constant shoving by holding down +activate
@@ -4506,6 +4506,11 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
+	if (!ent->client)
+	{
+		return;
+	}
+
 	trap_Argv(1, arg, sizeof(arg));
 	majorSpawn = Q_atoi(arg);
 
@@ -4515,10 +4520,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 		minorSpawn = Q_atoi(arg);
 	}
 
-	if (ent->client)
-	{
-		SetPlayerSpawn(ent, majorSpawn, minorSpawn, qtrue);
-	}
+	SetPlayerSpawn(ent, majorSpawn, minorSpawn, qtrue);
 
 	for (i = 0; i < level.numLimboCams; i++)
 	{
@@ -4527,8 +4529,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 		{
 			spawnPointState = &level.spawnPointStates[targetSpawnPoint];
 			// don't allow checking opposite team's spawn camp
-			if (ent->client &&
-			    ent->client->sess.sessionTeam != TEAM_SPECTATOR &&
+			if (ent->client->sess.sessionTeam != TEAM_SPECTATOR &&
 			    ent->client->sess.sessionTeam != spawnPointState->team)
 			{
 				break;

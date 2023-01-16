@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -43,12 +43,12 @@ static void CG_ParseSkillRating(int version)
 {
 	int i, r;
 	int argc = trap_Argc();
-	cg.axisProb   = (float)atof(CG_Argv(1));
-	cg.alliesProb = (float)atof(CG_Argv(2));
+	cg.axisProb   = Q_atof(CG_Argv(1));
+	cg.alliesProb = Q_atof(CG_Argv(2));
 
 	for (i = 0, r = 3; i < MAX_CLIENTS && r < argc; i++, r++)
 	{
-		cg.rating[i] = (float)atof(CG_Argv(r));
+		cg.rating[i] = Q_atof(CG_Argv(r));
 		// sr
 		if (version == 1)
 		{
@@ -70,7 +70,7 @@ static void CG_ParsePrestige()
 	s = CG_Argv(i);
 	while (*s)
 	{
-		cg.prestige[i] = (float)atof(CG_Argv(i + 1));
+		cg.prestige[i] = Q_atof(CG_Argv(i + 1));
 		i++;
 		s = CG_Argv(i);
 	}
@@ -211,7 +211,7 @@ void CG_ParseServerinfo(void)
 		trap_Cvar_Update(&cg_antilag);
 		trap_Cvar_Update(&cg_gameType);
 	}
-	cgs.timelimit  = (float)atof(Info_ValueForKey(info, "timelimit"));
+	cgs.timelimit  = Q_atof(Info_ValueForKey(info, "timelimit"));
 	cgs.maxclients = Q_atoi(Info_ValueForKey(info, "sv_maxclients"));
 	mapname        = Info_ValueForKey(info, "mapname");
 	Q_strncpyz(cgs.rawmapname, mapname, sizeof(cgs.rawmapname));
@@ -342,7 +342,7 @@ void CG_ParseModInfo(void)
 	cgs.skillRating = Q_atoi(Info_ValueForKey(info, "R"));
 	if (cgs.skillRating > 1)
 	{
-		cgs.mapProb = (float)atof(Info_ValueForKey(info, "M"));
+		cgs.mapProb = Q_atof(Info_ValueForKey(info, "M"));
 	}
 #endif
 #ifdef FEATURE_PRESTIGE
@@ -373,10 +373,7 @@ static void CG_ParseWarmup(void)
 	{
 		if (cg.warmupCount >= 0)
 		{
-			if (flashWindowSupported)
-			{
-				trap_SysFlashWindow(2);
-			}
+			trap_SysFlashWindow(2);
 			Pri("^3All players ready!^7\nMatch starting...\n");
 			CPri("^3All players ready!^7\nMatch starting...");
 		}
@@ -510,7 +507,7 @@ void CG_ParseWolfinfo(void)
 	info = CG_ConfigString(CS_WOLFINFO);
 
 	cgs.currentRound       = Q_atoi(Info_ValueForKey(info, "g_currentRound"));
-	cgs.nextTimeLimit      = (float)atof(Info_ValueForKey(info, "g_nextTimeLimit"));
+	cgs.nextTimeLimit      = Q_atof(Info_ValueForKey(info, "g_nextTimeLimit"));
 	cgs.gamestate          = (gamestate_t)(atoi(Info_ValueForKey(info, "gamestate")));
 	cgs.currentCampaign    = Info_ValueForKey(info, "g_currentCampaign");
 	cgs.currentCampaignMap = Q_atoi(Info_ValueForKey(info, "g_currentCampaignMap"));
@@ -594,14 +591,14 @@ void CG_ParseSpawns(void)
 		{
 			return;
 		}
-		cg.spawnCoordsUntransformed[i][0] = cg.spawnCoords[i][0] = (float)atof(s);
+		cg.spawnCoordsUntransformed[i][0] = cg.spawnCoords[i][0] = Q_atof(s);
 
 		s = Info_ValueForKey(info, "y");
 		if (!s || !strlen(s))
 		{
 			return;
 		}
-		cg.spawnCoordsUntransformed[i][1] = cg.spawnCoords[i][1] = (float)atof(s);
+		cg.spawnCoordsUntransformed[i][1] = cg.spawnCoords[i][1] = Q_atof(s);
 
 		if (cgs.ccLayers)
 		{
@@ -610,7 +607,7 @@ void CG_ParseSpawns(void)
 			{
 				return;
 			}
-			cg.spawnCoordsUntransformed[i][2] = cg.spawnCoords[i][2] = (float)atof(s);
+			cg.spawnCoordsUntransformed[i][2] = cg.spawnCoords[i][2] = Q_atof(s);
 		}
 
 		CG_TransformToCommandMapCoord(&cg.spawnCoords[i][0], &cg.spawnCoords[i][1]);
@@ -641,7 +638,7 @@ static void CG_ParseScreenFade(void)
 	info = CG_ConfigString(CS_SCREENFADE);
 
 	token         = COM_Parse((char **)&info);
-	cgs.fadeAlpha = (float)atof(token);
+	cgs.fadeAlpha = Q_atof(token);
 
 	token             = COM_Parse((char **)&info);
 	cgs.fadeStartTime = Q_atoi(token);
@@ -673,17 +670,17 @@ static void CG_ParseFog(void)
 	info = CG_ConfigString(CS_FOGVARS);
 
 	token   = COM_Parse((char **)&info);
-	ne      = (float)atof(token);
+	ne      = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	fa      = (float)atof(token);
+	fa      = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	density = (float)atof(token);
+	density = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	r       = (float)atof(token);
+	r       = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	g       = (float)atof(token);
+	g       = Q_atof(token);
 	token   = COM_Parse((char **)&info);
-	b       = (float)atof(token);
+	b       = Q_atof(token);
 	token   = COM_Parse((char **)&info);
 	time    = Q_atoi(token);
 
@@ -724,13 +721,13 @@ static void CG_ParseGlobalFog(void)
 		float r, g, b, depthForOpaque;
 
 		token          = COM_Parse((char **)&info);
-		r              = (float)atof(token);
+		r              = Q_atof(token);
 		token          = COM_Parse((char **)&info);
-		g              = (float)atof(token);
+		g              = Q_atof(token);
 		token          = COM_Parse((char **)&info);
-		b              = (float)atof(token);
+		b              = Q_atof(token);
 		token          = COM_Parse((char **)&info);
-		depthForOpaque = (float)atof(token);
+		depthForOpaque = Q_atof(token);
 
 		trap_R_SetGlobalFog(qfalse, duration, r, g, b, depthForOpaque);
 	}
@@ -830,14 +827,12 @@ void CG_ShaderStateChanged(void)
 		n = strstr(o, "=");
 		if (n && *n)
 		{
-			strncpy(originalShader, o, n - o);
-			originalShader[n - o] = 0;
+			Q_strncpyz(originalShader, o, n - o);
 			n++;
 			t = strstr(n, ":");
 			if (t && *t)
 			{
-				strncpy(newShader, n, t - n);
-				newShader[t - n] = 0;
+				Q_strncpyz(newShader, n, t - n);
 			}
 			else
 			{
@@ -847,8 +842,7 @@ void CG_ShaderStateChanged(void)
 			o = strstr(t, "@");
 			if (o)
 			{
-				strncpy(timeOffset, t, o - t);
-				timeOffset[o - t] = 0;
+				Q_strncpyz(timeOffset, t, o - t);
 				o++;
 				trap_R_RemapShader(cgs.gameShaderNames[atoi(originalShader)],
 				                   cgs.gameShaderNames[atoi(newShader)],
@@ -903,6 +897,7 @@ void CG_TeamRestrictionsChanged(void)
 	Q_strncpyz(cg.maxMachineguns, Info_ValueForKey(info, "w2"), sizeof(cg.maxMachineguns));
 	Q_strncpyz(cg.maxRockets, Info_ValueForKey(info, "w3"), sizeof(cg.maxRockets));
 	Q_strncpyz(cg.maxRiflegrenades, Info_ValueForKey(info, "w4"), sizeof(cg.maxRiflegrenades));
+	Q_strncpyz(cg.maxLandmines, Info_ValueForKey(info, "w5"), sizeof(cg.maxLandmines));
 	cg.maxPlayers = Q_atoi(Info_ValueForKey(info, "m"));
 }
 
@@ -1126,13 +1121,14 @@ static void CG_ConfigStringModified(void)
  * @param[in] str
  * @param[in] clientnum
  */
-static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
+void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 {
 	int          len;
 	char         *p, *ls;
 	char         lastcolor;
 	int          chatHeight;
 	int          chatWidth;
+	float        scale;
 	fontHelper_t *font = &cgs.media.limboFont2;
 
 	// -1 is sent when console is chatting
@@ -1157,9 +1153,11 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 		return;
 	}
 
+	scale = CG_ComputeScale(&CG_GetActiveHUD()->chat /*CG_GetActiveHUD()->chat.location.h / ((cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) ? cg_teamChatHeight.integer : TEAMCHAT_HEIGHT), CG_GetActiveHUD()->chat.scale, &cgs.media.limboFont2*/);
+
 	len       = 0;
 	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30
-	                                               : (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * CG_GetActiveHUD()->chat.scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * CG_GetActiveHUD()->chat.scale * Q_UTF8_GlyphScale(font));
+	                                               : (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
 
 	p  = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
@@ -1249,7 +1247,7 @@ void CG_AddToNotify(const char *str)
 	char  var[MAX_TOKEN_CHARS];
 
 	trap_Cvar_VariableStringBuffer("con_notifytime", var, sizeof(var));
-	notifytime = atof(var) * 1000;
+	notifytime = Q_atof(var) * 1000;
 
 	chatHeight = NOTIFY_HEIGHT;
 
@@ -1431,9 +1429,7 @@ static void CG_MapRestart(void)
 	cg.latchVictorySound = qfalse;
 
 	// we really should clear more parts of cg here and stop sounds
-	cg.v_dmg_time   = 0;
-	cg.v_noFireTime = 0;
-	cg.v_fireTime   = 0;
+	CG_ResetTimers();
 
 	cg.filtercams = Q_atoi(CG_ConfigString(CS_FILTERCAMS)) ? qtrue : qfalse;
 
@@ -2026,46 +2022,43 @@ const char *CG_LocalizeServerCommand(const char *buf)
 
 	for (i = 0; *s; i++, s++)
 	{
-		// line was: if ( *s == '[' && !Q_strncmp( s, "[lon]", 5 ) || !Q_strncmp( s, "[lof]", 5 ) ) {
-		// || prevails on &&, gcc warning was 'suggest parentheses around && within ||'
-		// modified to the correct behaviour
 		if (*s == '[' && (!Q_strncmp(s, "[lon]", 5) || !Q_strncmp(s, "[lof]", 5)))
 		{
-			if (togloc)
+			// ensure a previous localize string has been found
+			if (prev)
 			{
-				Com_Memset(temp, 0, sizeof(temp));
-				strncpy(temp, buf + prev, i - prev);
-				Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
-			}
-			else
-			{
-				strncat(token, buf + prev, i - prev);
-			}
-
-			if (s[3] == 'n')
-			{
-				togloc = qtrue;
-			}
-			else
-			{
-				togloc = qfalse;
+				if (togloc)
+				{
+					Com_Memset(temp, 0, sizeof(temp));
+					Q_strncpyz(temp, buf + prev, i - prev + 1);
+					Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
+				}
+				else
+				{
+					strncat(token, buf + prev, i - prev);
+				}
 			}
 
-			i   += 5;
-			s   += 5;
-			prev = i;
+			togloc = (s[3] == 'n');
+			i     += 5;
+			s     += 5;
+			prev   = i;
 		}
 	}
 
-	if (togloc)
+	// ensure a previous localize string has been found
+	if (prev != i)
 	{
-		Com_Memset(temp, 0, sizeof(temp));
-		strncpy(temp, buf + prev, i - prev);
-		Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
-	}
-	else
-	{
-		strncat(token, buf + prev, i - prev);
+		if (togloc)
+		{
+			Com_Memset(temp, 0, sizeof(temp));
+			Q_strncpyz(temp, buf + prev, i - prev + 1);
+			Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
+		}
+		else
+		{
+			strncat(token, buf + prev, i - prev);
+		}
 	}
 
 	return token;
@@ -2293,7 +2286,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			selfKills      = Q_atoi(CG_Argv(iArg++));
 			teamKills      = Q_atoi(CG_Argv(iArg++));
 			teamGibs       = Q_atoi(CG_Argv(iArg++));
-			ptRatio        = (float)atof(CG_Argv(iArg++));
+			ptRatio        = Q_atof(CG_Argv(iArg++));
 
 			htRatio = (totShots == 0) ? 0.0f : (float)(totHits * 100.0f / (float)totShots);
 			hsRatio = (totHits == 0) ? 0.0f : (float)(totHeadshots * 100.0f / (float)totHeadshotableHits);
@@ -2907,14 +2900,14 @@ void CG_dumpStats(void)
 	{
 		trap_FS_FCloseFile(cgs.dumpStatsFile);
 	}
-	trap_FS_FOpenFile(cgs.dumpStatsFileName, &cgs.dumpStatsFile, FS_APPEND);
 
-	CG_printFile(s);
-	CG_parseWeaponStats_cmd(CG_printFile);
-	if (cgs.dumpStatsFile == 0)
+	if (trap_FS_FOpenFile(cgs.dumpStatsFileName, &cgs.dumpStatsFile, FS_APPEND) < 0)
 	{
 		CG_Printf("[cgnotify]\n^3>>> %s: %s\n\n", CG_TranslateString("Could not create logfile"), cgs.dumpStatsFileName);
 	}
+
+	CG_printFile(s);
+	CG_parseWeaponStats_cmd(CG_printFile);
 
 	// Daisy-chain to scores info
 	//  -- we play a game here for a statsall dump:
@@ -2926,6 +2919,19 @@ void CG_dumpStats(void)
 	{
 		trap_SendClientCommand("scores");
 	}
+}
+
+void CG_AddToBannerPrint(const char *str)
+{
+	int   maxLineChars;
+	float scale, w;
+
+	scale = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
+	w     = CG_GetActiveHUD()->banner.location.w;
+
+	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
+	CG_WordWrapString(str, maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
+	cg.bannerPrintTime = cg.time;
 }
 
 #define ENTNFO_HASH         78985
@@ -2969,6 +2975,7 @@ void CG_dumpStats(void)
 #define REQFORCESPAWN_HASH  176027
 #define SDBG_HASH           50109
 #define IMMAPLIST_HASH      120113
+#define IMMAPHISTORY_HASH   164261
 #define IMVOTETALLY_HASH    150058
 #define SETSPAWNPT_HASH     137482
 #define IMWA_HASH           51808
@@ -3331,7 +3338,12 @@ static void CG_ServerCommand(void)
 
 		// just open the file so it gets copied to the build dir
 		//CG_FileTouchForBuild(CG_Argv(1));
-		trap_FS_FOpenFile(CG_Argv(1), &f, FS_READ);
+		if (trap_FS_FOpenFile(CG_Argv(1), &f, FS_READ) <= 0)
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Couldn't open into Build file %s\n", CG_Argv(1));
+			return;
+		}
+
 		trap_FS_FCloseFile(f);
 		return;
 	}
@@ -3401,7 +3413,7 @@ static void CG_ServerCommand(void)
 	case COMPLAINT_HASH:                                       // "complaint"
 		if (cgs.gamestate == GS_PLAYING)
 		{
-			if (cg_complaintPopUp.integer == 0)
+			if (!(CG_GetActiveHUD()->votetext.style & 1))
 			{
 				trap_SendClientCommand("vote no");
 			}
@@ -3437,6 +3449,9 @@ static void CG_ServerCommand(void)
 		return;
 	case IMMAPLIST_HASH: // MAPVOTE                         "immaplist"
 		CG_parseMapVoteListInfo();
+		return;
+	case IMMAPHISTORY_HASH: // MAPVOTE                      "immaphistory"
+		CG_parseMapVoteHistory();
 		return;
 	case IMVOTETALLY_HASH: // MAPVOTE                      "imvotetally"
 		CG_parseMapVoteTally();
@@ -3538,22 +3553,17 @@ static void CG_ServerCommand(void)
 		return;
 	}
 	case MU_FADE_HASH:                                 // "mu_fade"
-		trap_S_FadeBackgroundTrack(atof(CG_Argv(1)), Q_atoi(CG_Argv(2)), 0);
+		trap_S_FadeBackgroundTrack(Q_atof(CG_Argv(1)), Q_atoi(CG_Argv(2)), 0);
 		return;
 	case SND_FADE_HASH:                                // "snd_fade"
-		trap_S_FadeAllSound(atof(CG_Argv(1)), Q_atoi(CG_Argv(2)), Q_atoi(CG_Argv(3)));
+		trap_S_FadeAllSound(Q_atof(CG_Argv(1)), Q_atoi(CG_Argv(2)), Q_atoi(CG_Argv(3)));
 		return;
 	case ROCKANDROLL_HASH: // "rockandroll"
 		trap_S_FadeAllSound(1.0f, 1000, qfalse);      // fade sound up
 		return;
 	case BP_HASH: // "bp"
 	{
-		int maxLineChars;
-
-		maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->banner.scale, 0, &cgs.media.limboFont2);
-
-		CG_WordWrapString(CG_Argv(1), maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
-		cg.bannerPrintTime = cg.time;
+		CG_AddToBannerPrint(CG_Argv(1));
 		break;
 	}
 	default:

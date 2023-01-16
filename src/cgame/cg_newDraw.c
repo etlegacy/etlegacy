@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -335,19 +335,25 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 {
 	float     *color;
 	qhandle_t icon;
-	float     scale, halfscale;
-
-	if (!cg_cursorHints.integer)
-	{
-		return;
-	}
+	float     scale = 0, halfscale = 0;
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
 	}
 
-	CG_CheckForCursorHints();
+	if (cg.editingHud)
+	{
+		// simulate cursor hint
+		cg.cursorHintTime  = cg.time;
+		cg.cursorHintFade  = 500;
+		cg.cursorHintIcon  = HINT_BREAKABLE;
+		cg.cursorHintValue = 128.f;
+	}
+	else
+	{
+		CG_CheckForCursorHints();
+	}
 
 	switch (cg.cursorHintIcon)
 	{
@@ -451,27 +457,22 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg_cursorHints.integer == 3)
+	// color
+	if (comp->style & 4)
 	{
 		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
 	}
 
-	// size
-	if (cg_cursorHints.integer >= 3)       // no size pulsing
+	// strobe
+	if (comp->style & 2)
 	{
-		scale = halfscale = 0;
+		scale     = (cg.cursorHintTime % 1000) / 100.0f; // one way size pulse
+		halfscale = scale * 0.5f;
 	}
-	else
+	// size
+	else if (comp->style & 1)
 	{
-		if (cg_cursorHints.integer == 2)
-		{
-			scale = (cg.cursorHintTime % 1000) / 100.0f;     // one way size pulse
-		}
-		else
-		{
-			scale = (float)(CURSORHINT_SCALE * (0.5 + 0.5 * sin(cg.time / 150.0)));     // sin pulse
-
-		}
+		scale     = (float)(CURSORHINT_SCALE * (0.5 + 0.5 * sin(cg.time / 150.0))); // sin pulse
 		halfscale = scale * 0.5f;
 	}
 
@@ -499,7 +500,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 
 		if (curValue > 0.01f)
 		{
-			CG_FilledBar(comp->location.x, comp->location.y + comp->location.h + 4, comp->location.w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
+			CG_FilledBar(comp->location.x, comp->location.y + comp->location.h + 4, comp->location.w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR, -1);
 		}
 	}
 }
@@ -541,9 +542,9 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 		return;
 	}
 
-	if (!comp->style && !cg.zoomed)
+	if (!(comp->style & 1) && !cg.zoomed && !cg.editingHud)
 	{
-		// style '0' means only draw for scoped weapons, '1' means draw all the time (for debugging)
+		// style '0' means only draw for scoped weapons, '1' means draw all the time
 		return;
 	}
 
@@ -574,7 +575,7 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR);
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, comp->style >> 1, -1);
 }
 
 /**
@@ -603,7 +604,7 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 
 	flags |= BAR_LERP_COLOR;
 
-	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, flags);
+	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, flags, -1);
 }
 
 #ifdef FEATURE_EDV
@@ -638,25 +639,27 @@ void CG_MouseEvent(int x, int y)
 		if (!cgs.demoCamera.renderingFreeCam)
 		{
 #endif
+		int hudEditorSafeX = SCREEN_WIDTH_SAFE * 1.25f;
+		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * 1.25f;
 
 		cgs.cursorX += x;
-		if (cgs.cursorX < 0)
+		if (cg.editingHud)
 		{
-			cgs.cursorX = 0;
+			cgs.cursorX = Com_Clamp(0, hudEditorSafeX, cgs.cursorX);
 		}
-		else if (cgs.cursorX > SCREEN_WIDTH_SAFE)
+		else
 		{
-			cgs.cursorX = SCREEN_WIDTH_SAFE;
+			cgs.cursorX = Com_Clamp(0, SCREEN_WIDTH_SAFE, cgs.cursorX);
 		}
 
 		cgs.cursorY += y;
-		if (cgs.cursorY < 0)
+		if (cg.editingHud)
 		{
-			cgs.cursorY = 0;
+			cgs.cursorY = Com_Clamp(0, hudEditorSafeY, cgs.cursorY);
 		}
-		else if (cgs.cursorY > SCREEN_HEIGHT_SAFE)
+		else
 		{
-			cgs.cursorY = SCREEN_HEIGHT_SAFE;
+			cgs.cursorY = Com_Clamp(0, SCREEN_HEIGHT_SAFE, cgs.cursorY);
 		}
 
 		if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)
@@ -697,13 +700,13 @@ void CG_MouseEvent(int x, int y)
 		m_filter = Q_atoi(buffer);
 
 		trap_Cvar_VariableStringBuffer("sensitivity", buffer, sizeof(buffer));
-		sensitivity = atof(buffer);
+		sensitivity = Q_atof(buffer);
 
 		trap_Cvar_VariableStringBuffer("m_pitch", buffer, sizeof(buffer));
-		m_pitch = atof(buffer);
+		m_pitch = Q_atof(buffer);
 
 		trap_Cvar_VariableStringBuffer("m_yaw", buffer, sizeof(buffer));
-		m_yaw = atof(buffer);
+		m_yaw = Q_atof(buffer);
 
 		if (m_filter)
 		{
@@ -753,6 +756,27 @@ void CG_MouseEvent(int x, int y)
 			return;
 		}
 		break;
+	}
+}
+
+/**
+ * @brief Clean up sample HUD elements spawned by HUD editor
+ */
+void CG_HudEditor_Cleanup(void)
+{
+	int i;
+
+	CG_InitPM();
+	cg.bannerPrintTime     = 0;
+	cg.centerPrintTime     = 0;
+	cgs.voteTime           = 0;
+	cg.cursorHintTime      = 0;
+	cg.crosshairClientTime = 0;
+	cg.oidPrintTime        = 0;
+
+	for (i = 0; i < cg_teamChatHeight.integer; i++)
+	{
+		cgs.teamChatMsgTimes[i] = 0;
 	}
 }
 
@@ -851,6 +875,7 @@ void CG_EventHandling(int type, qboolean fForced)
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
 		{
+			CG_HudEditor_Cleanup();
 			cg.editingHud = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)

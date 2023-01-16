@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -40,9 +40,6 @@
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "sys_local.h"
-#ifndef DEDICATED
-#include "../renderercommon/tr_common.h"
-#endif
 
 #include <signal.h>
 #include <sys/types.h>
@@ -191,7 +188,7 @@ int Sys_Milliseconds(void)
         #else
         Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC not found. Using CLOCK_REALTIME instead.\n");
 		#endif
-		
+
 		if(clock_gettime(clockid, &time) == -1)
 		{
 			Sys_Error("Sys_Milliseconds: clock_gettime failed: errno %d\n", errno);
@@ -202,7 +199,7 @@ int Sys_Milliseconds(void)
 	}
 
 	clock_gettime(clockid, &time);
-	
+
 	curtime = ( (time.tv_sec * 1000) + (time.tv_nsec / 1000000) ) - sys_timeBase;
 
 	return curtime;

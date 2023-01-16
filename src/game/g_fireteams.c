@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -298,7 +298,10 @@ int G_FindFreeFireteamIdent(team_t team)
 	qboolean freeIdent[MAX_FIRETEAMS / 2];
 	int      i;
 
-	Com_Memset(freeIdent, qtrue, sizeof(freeIdent));
+	for (i = 0; i < (MAX_FIRETEAMS / 2); i++)
+	{
+		freeIdent[i] = qtrue;
+	}
 
 	for (i = 0; i < MAX_FIRETEAMS; i++)
 	{

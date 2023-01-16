@@ -11,6 +11,8 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 # How many architectures are we buildin
 set(ETL_ARCH_COUNT 1)
 
+add_library(os_libraries INTERFACE)
+
 # Color diagnostics for build systems other than make
 if(APPLE OR UNIX)
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -42,21 +44,16 @@ endif()
 if(ARM)
 	if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "armv6l")
 		message(STATUS "ARMV6 build options set.")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -pipe -mfloat-abi=hard -mfpu=vfp -march=armv6zk -O2")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -pipe -mfloat-abi=hard -mfpu=vfp -mtune=arm1176jzf-s -march=armv6zk -O2")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -mfloat-abi=hard -mfpu=vfp -march=armv6zk -O2")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -mfloat-abi=hard -mfpu=vfp -mtune=arm1176jzf-s -march=armv6zk -O2")
 	elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "armv7l")
 		message(STATUS "ARMV7 build options set.")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
 	else()
 		message(STATUS "Unknown ARM processor detected !!!")
 	endif()
 endif(ARM)
-
-if(APPLE)
-	# The ioapi requires this since OSX already uses 64 fileapi (there is no fseek64 etc)
-	add_definitions(-DUSE_FILE32API)
-endif(APPLE)
 
 if(UNIX)
 	# optimization/debug flags
@@ -102,32 +99,40 @@ if(UNIX)
 	endif()
 
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
-		set(OS_LIBRARIES m pthread)
+		target_link_libraries(os_libraries INTERFACE m pthread)
 		set(LIB_SUFFIX ".mp.obsd.")
 	elseif(CMAKE_SYSTEM MATCHES "FreeBSD")
-		set(OS_LIBRARIES m pthread)
+		target_link_libraries(os_libraries INTERFACE m pthread)
 		set(LIB_SUFFIX ".mp.fbsd.")
 	elseif(CMAKE_SYSTEM MATCHES "NetBSD")
-		set(OS_LIBRARIES m pthread)
+		target_link_libraries(os_libraries INTERFACE m pthread)
 		set(LIB_SUFFIX ".mp.nbsd.")
 	elseif(ANDROID)
-		set(OS_LIBRARIES ifaddrs ogg vorbis android)
+		target_link_libraries(os_libraries INTERFACE ifaddrs ogg vorbis android)
 		set(LIB_SUFFIX ".mp.android.")
 	elseif(APPLE)
-		set(OS_LIBRARIES dl m)
-		set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
+		# TODO: use find package with the MacOs frameworks instead of direct linker flags..
+		target_link_libraries(os_libraries INTERFACE dl m objc)
 
-        if (DEFINED CMAKE_OSX_ARCHITECTURES)
-            list(LENGTH CMAKE_OSX_ARCHITECTURES ETL_ARCH_COUNT)
-        endif()
+		find_library(cocoa_libraries Cocoa REQUIRED)
+		find_library(iokit_libraries IOKit REQUIRED)
+		find_library(core_foundation_libraries CoreFoundation REQUIRED)
 
-        # new curl builds need the System Configuration framework
-        if (BUNDLED_CURL)
-            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework SystemConfiguration")
-        endif()
+		target_link_libraries(os_libraries INTERFACE ${cocoa_libraries} ${iokit_libraries} ${core_foundation_libraries})
+
+		if (DEFINED CMAKE_OSX_ARCHITECTURES)
+			list(LENGTH CMAKE_OSX_ARCHITECTURES ETL_ARCH_COUNT)
+		endif()
+
+		# new curl builds need the System Configuration framework
+		if (BUNDLED_CURL)
+			find_library(system_configuration_library SystemConfiguration REQUIRED)
+			target_link_libraries(os_libraries INTERFACE ${system_configuration_library})
+		endif()
 
 		if(BUNDLED_CURL AND FEATURE_SSL AND (NOT BUNDLED_OPENSSL AND NOT BUNDLED_WOLFSSL))
-			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Security")
+			find_library(security_library Security REQUIRED)
+			target_link_libraries(os_libraries INTERFACE ${security_library})
 		endif()
 
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem") # These flags will cause error with older Xcode
@@ -157,17 +162,30 @@ if(UNIX)
 		set(CMAKE_CXX_FLAGS "-isysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
 
 		if(BUILD_CLIENT)
-			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AudioToolbox -framework AudioUnit -framework Carbon -framework CoreAudio -framework CoreVideo -framework ForceFeedback -framework OpenGL -liconv")
+			find_package(Iconv REQUIRED)
+			find_library(audio_toolbox_library AudioToolbox REQUIRED)
+			find_library(carbon_library Carbon REQUIRED)
+			find_library(core_audio_library CoreAudio REQUIRED)
+			find_library(core_video_library CoreVideo REQUIRED)
+			find_library(force_feedback_library ForceFeedback REQUIRED)
+			find_library(opengl_library OpenGL REQUIRED)
 
-            # TODO: check if this breaks compatibility with pre macos 13.0 versions?
-            if (BUNDLED_SDL)
-                set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework CoreHaptics -framework GameController")
-            endif()
+			target_link_libraries(client_libraries INTERFACE
+					${audio_toolbox_library} ${carbon_library} ${core_audio_library}
+					${core_video_library} ${force_feedback_library} ${opengl_library}
+					Iconv::Iconv
+			)
+			# TODO: check if this breaks compatibility with pre macos 13.0 versions?
+			if (BUNDLED_SDL)
+				find_library(core_haptics_library CoreHaptics REQUIRED)
+				find_library(game_controller_library GameController REQUIRED)
+				target_link_libraries(client_libraries INTERFACE ${core_haptics_library} ${game_controller_library})
+			endif()
 		endif()
 		set(LIB_SUFFIX "_mac")
 		set(CMAKE_SHARED_MODULE_SUFFIX "")
 	else()
-		set(OS_LIBRARIES ${CMAKE_DL_LIBS} m rt pthread)
+		target_link_libraries(os_libraries INTERFACE  m ${CMAKE_DL_LIBS} rt pthread)
 		set(LIB_SUFFIX ".mp.")
 	endif()
 
@@ -179,21 +197,21 @@ if(UNIX)
 		endif(SUPPORT_VISIBILITY)
 	endif(NOT MSYS)
 elseif(WIN32)
-	add_definitions(-DWINVER=0x601)
+	target_compile_definitions(shared_libraries INTERFACE WINVER=0x601)
 
 	if(ETL_WIN64)
-		add_definitions(-DC_ONLY)
+		target_compile_definitions(shared_libraries INTERFACE C_ONLY)
 	endif()
 
-	set(OS_LIBRARIES wsock32 ws2_32 psapi winmm)
+	target_link_libraries(os_libraries INTERFACE wsock32 ws2_32 psapi winmm)
 
 	if(FEATURE_SSL)
-		list(APPEND OS_LIBRARIES Crypt32)
+		target_link_libraries(os_libraries INTERFACE Crypt32)
 	endif()
 
 	if(BUNDLED_SDL)
 		# Libraries for Win32 native and MinGW required by static SDL2 build
-		list(APPEND OS_LIBRARIES user32 gdi32 winmm imm32 ole32 oleaut32 version uuid hid setupapi)
+		target_link_libraries(os_libraries INTERFACE user32 gdi32 imm32 ole32 oleaut32 version uuid hid setupapi)
 	endif()
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)

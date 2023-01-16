@@ -13,8 +13,6 @@ FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
 	"src/qcommon/i18n_*"
-	"src/qcommon/json.c"
-	"src/qcommon/json_stubs.c"
 )
 
 LIST(REMOVE_ITEM COMMON_SRC ${COMMON_SRC_REMOVE})
@@ -98,6 +96,8 @@ FILE(GLOB QAGAME_SRC
 FILE(GLOB UI_SRC
 	"src/ui/*.c"
 	"src/ui/*.h"
+    "src/ui/lib/*.c"
+    "src/ui/lib/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 	"src/qcommon/q_unicode.c"

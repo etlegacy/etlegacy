@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -107,6 +107,7 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "imcollectpr",    CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionCollectPrestige_f,   ""                                                                                           },
 #endif
 	{ "immaplist",      CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionMapList,               ""                                                                                           },
+	{ "immaphistory",   CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionMapHistory,            ""                                                                                           },
 	{ "impkd",          CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPlayerKillsDeaths_f, ""                                                                                           },
 #ifdef FEATURE_PRESTIGE
 	{ "impr",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPrestige_f,          ""                                                                                           },
@@ -278,7 +279,7 @@ qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCo
 		return qfalse;
 	}
 
-	if (pszCommand && dwCommand >= 0 && dwCommand < ARRAY_LEN(aCommandInfo))
+	if (pszCommand && dwCommand < ARRAY_LEN(aCommandInfo))
 	{
 		CP(va("print \"\n^3%s%s\n\n\"", pszCommand, aCommandInfo[dwCommand].pszHelpInfo));
 		return qtrue;
@@ -329,7 +330,7 @@ void G_noTeamControls(gentity_t *ent)
  */
 void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	int i, rows, num_cmds;
+	unsigned int i, rows, num_cmds;
 
 	if (trap_Argc() > 1)
 	{
@@ -352,10 +353,6 @@ void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 	if (num_cmds % HELP_COLUMNS)
 	{
 		rows++;
-	}
-	if (rows < 0)
-	{
-		return;
 	}
 
 	CP("print \"^5\nAvailable Game Commands:\n------------------------\n\"");

@@ -3,10 +3,10 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * Daemon GPL Source Code
- * Copyright (C) 2012-2013 Unvanquished Developers
+ * Copyright (C) 2012-2023 Unvanquished Developers
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -66,6 +66,8 @@ void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrik
 void Q_UTF8_Move(char *buffer, size_t dstOffset, size_t srcOffset, size_t size);
 qboolean Q_UTF8_ContByte(char c);
 uint32_t Q_UTF8_CodePoint(const char *str);
+glyphInfo_t *Q_UTF8_GetGlyphExtended(void *fontdata, unsigned long codepoint);
+glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint);
 qboolean Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font, qboolean extended, void (*font_register)(const char *, int, void *));
 void Q_UTF8_FreeFont(fontHelper_t *font);
 char *Q_UTF8_Encode(unsigned long codepoint);

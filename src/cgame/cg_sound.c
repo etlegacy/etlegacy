@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2090,7 +2090,7 @@ void CG_SpeakerEditorDraw(void)
 		int    bindingkey[2];
 		char   binding[2][32];
 		vec4_t colour;
-		float  x, y, w, h;
+		float  y;
 
 		VectorCopy(colorWhite, colour);
 		colour[3] = .8f;
@@ -2146,8 +2146,8 @@ void CG_SpeakerEditorDraw(void)
 		}
 
 		// render crosshair
-        CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
-        
+		CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
+
 		if (editSpeaker)
 		{
 			// render interface

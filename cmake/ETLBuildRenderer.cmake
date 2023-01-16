@@ -12,7 +12,8 @@ endif()
 
 if(RENDERER_DYNAMIC)
 	MESSAGE("Will build dynamic renderer libraries")
-	add_definitions( "-DUSE_RENDERER_DLOPEN" )
+	target_compile_definitions(client_libraries INTERFACE USE_RENDERER_DLOPEN)
+	target_compile_definitions(renderer_libraries INTERFACE USE_RENDERER_DLOPEN)
 	set(REND_LIBTYPE MODULE)
 	list(APPEND RENDERER_COMMON ${RENDERER_COMMON_DYNAMIC})
 else()
@@ -22,34 +23,26 @@ endif()
 if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 
 	if(FEATURE_RENDERER_GLES)
-		add_library(${R1_NAME} ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
+		add_library(renderer1 ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
+		target_compile_definitions(renderer1 PRIVATE FEATURE_RENDERER_GLES)
 	else()
-		add_library(${R1_NAME} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
-	endif()
-
-	if(NOT FEATURE_RENDERER_GLES)
-		if(BUNDLED_GLEW)
-			add_dependencies(${R1_NAME} bundled_glew)
-		endif(BUNDLED_GLEW)
-	endif()
-
-	if(BUNDLED_JPEG)
-		add_dependencies(${R1_NAME} bundled_jpeg)
-	endif()
-
-	if(BUNDLED_FREETYPE)
-		add_dependencies(${R1_NAME} bundled_freetype)
+		add_library(renderer1 ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
 	endif()
 
 	if(MSVC)
-		target_link_libraries(${R1_NAME} ${RENDERER_LIBRARIES})
+		target_link_libraries(renderer1 renderer_libraries)
 	else()
-		target_link_libraries(${R1_NAME} ${RENDERER_LIBRARIES} 'm')
+		target_link_libraries(renderer1 renderer_libraries m)
 	endif(MSVC)
+
+	set_target_properties(renderer1
+		PROPERTIES
+		OUTPUT_NAME "${R1_NAME}"
+	)
 
 	# install the dynamic lib only
 	if(RENDERER_DYNAMIC)
-		set_target_properties(${R1_NAME}
+		set_target_properties(renderer1
 			PROPERTIES
 			LIBRARY_OUTPUT_DIRECTORY ""
 			LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
@@ -57,16 +50,16 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 		)
 
 		if(WIN32)
-			set_target_properties(${R1_NAME} PROPERTIES PREFIX "")
+			set_target_properties(renderer1 PROPERTIES PREFIX "")
 		endif(WIN32)
 
 		if(WIN32)
-			install(TARGETS ${R1_NAME}
+			install(TARGETS renderer1
 				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 			)
 		else()
-			install(TARGETS ${R1_NAME}
+			install(TARGETS renderer1
 				LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 				ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 			)
@@ -74,7 +67,7 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 	endif()
 
 	if(NOT RENDERER_DYNAMIC)
-		list(APPEND CLIENT_LIBRARIES ${R1_NAME})
+		target_link_libraries(client_libraries INTERFACE renderer1)
 	endif()
 endif()
 
@@ -117,53 +110,43 @@ if(FEATURE_RENDERER2)
 	set_target_properties(shdr2h PROPERTIES FOLDER Tools)
 	set_target_properties(r2_shader_compile PROPERTIES FOLDER Tools)
 
-	add_library(${R2_NAME} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
-	add_dependencies(${R2_NAME} r2_shader_compile)
-
-	if(BUNDLED_GLEW)
-		add_dependencies(${R2_NAME} bundled_glew)
-	endif()
-
-	if(BUNDLED_JPEG)
-		add_dependencies(${R2_NAME} bundled_jpeg)
-	endif()
-
-	if(BUNDLED_FREETYPE)
-		add_dependencies(${R2_NAME} bundled_freetype)
-	endif()
+	add_library(renderer2 ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
+	add_dependencies(renderer2 r2_shader_compile)
 
 	if(MSVC)
-		target_link_libraries(${R2_NAME} ${RENDERER_LIBRARIES})
+		target_link_libraries(renderer2 renderer_libraries)
 	else()
-		target_link_libraries(${R2_NAME} ${RENDERER_LIBRARIES} 'm')
+		target_link_libraries(renderer2 renderer_libraries m)
 	endif(MSVC)
 
-	set_target_properties(${R2_NAME}
-		PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2"
+	set_target_properties(renderer2
+		PROPERTIES
+		OUTPUT_NAME "${R2_NAME}"
+		COMPILE_DEFINITIONS "FEATURE_RENDERER2"
 		LIBRARY_OUTPUT_DIRECTORY ""
 		LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
 		LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
 	)
 
 	if(WIN32)
-		set_target_properties(${R2_NAME} PROPERTIES PREFIX "")
+		set_target_properties(renderer2 PROPERTIES PREFIX "")
 	endif(WIN32)
 
-	target_compile_definitions(${R2_NAME} PUBLIC USE_REFENTITY_ANIMATIONSYSTEM=1)
+	target_compile_definitions(renderer2 PUBLIC USE_REFENTITY_ANIMATIONSYSTEM=1)
 
 	if(WIN32)
-		install(TARGETS ${R2_NAME}
+		install(TARGETS renderer2
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 		)
 	else()
-		install(TARGETS ${R2_NAME}
+		install(TARGETS renderer2
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 		)
 	endif()
 
 	if(NOT RENDERER_DYNAMIC)
-		list(APPEND CLIENT_LIBRARIES ${R2_NAME})
+		target_link_libraries(client_libraries INTERFACE renderer2)
 	endif()
 endif(FEATURE_RENDERER2)

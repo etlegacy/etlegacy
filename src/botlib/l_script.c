@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -59,7 +59,7 @@ punctuation_t default_punctuations[] =
 	{ "<=",  P_LOGIC_LEQ,        NULL },
 	{ "==",  P_LOGIC_EQ,         NULL },
 	{ "!=",  P_LOGIC_UNEQ,       NULL },
-	// arithmatic operators
+	// arithmetic operators
 	{ "*=",  P_MUL_ASSIGN,       NULL },
 	{ "/=",  P_DIV_ASSIGN,       NULL },
 	{ "%=",  P_MOD_ASSIGN,       NULL },
@@ -78,7 +78,7 @@ punctuation_t default_punctuations[] =
 	// C++
 	{ "::",  P_CPP1,             NULL },
 	{ ".*",  P_CPP2,             NULL },
-	// arithmatic operators
+	// arithmetic operators
 	{ "*",   P_MUL,              NULL },
 	{ "/",   P_DIV,              NULL },
 	{ "%",   P_MOD,              NULL },
@@ -96,14 +96,14 @@ punctuation_t default_punctuations[] =
 	{ "<",   P_LOGIC_LESS,       NULL },
 	// reference operator
 	{ ".",   P_REF,              NULL },
-	// seperators
+	// separators
 	{ ",",   P_COMMA,            NULL },
 	{ ";",   P_SEMICOLON,        NULL },
 	// label indication
 	{ ":",   P_COLON,            NULL },
 	//if statement
 	{ "?",   P_QUESTIONMARK,     NULL },
-	// embracements
+	// emplacements
 	{ "(",   P_PARENTHESESOPEN,  NULL },
 	{ ")",   P_PARENTHESESCLOSE, NULL },
 	{ "{",   P_BRACEOPEN,        NULL },
@@ -358,7 +358,7 @@ int PS_ReadWhiteSpace(script_t *script)
  */
 int PS_ReadEscapeCharacter(script_t *script, char *ch)
 {
-	int c, val, i;
+	int c, val;
 
 	// step over the leading '\\'
 	script->script_p++;
@@ -379,7 +379,7 @@ int PS_ReadEscapeCharacter(script_t *script, char *ch)
 	case 'x':
 	{
 		script->script_p++;
-		for (i = 0, val = 0; ; i++, script->script_p++)
+		for (val = 0;; script->script_p++)
 		{
 			c = *script->script_p;
 			if (c >= '0' && c <= '9')
@@ -415,7 +415,7 @@ int PS_ReadEscapeCharacter(script_t *script, char *ch)
 		{
 			ScriptError(script, "unknown escape char");
 		}
-		for (i = 0, val = 0; ; i++, script->script_p++)
+		for (val = 0;; script->script_p++)
 		{
 			c = *script->script_p;
 			if (c >= '0' && c <= '9')
@@ -443,7 +443,7 @@ int PS_ReadEscapeCharacter(script_t *script, char *ch)
 	script->script_p++;
 	// store the escape character
 	*ch = (char)c;
-	// succesfully read escape character
+	// successfully read escape character
 	return 1;
 }
 
@@ -451,7 +451,7 @@ int PS_ReadEscapeCharacter(script_t *script, char *ch)
 /**
  * @brief Reads C-like string.
  *
- * @details Escape characters are interpretted.
+ * @details Escape characters are interpreted.
  * Quotes are included with the string.
  * Reads two strings with a white space between them as one string.
  *
@@ -459,7 +459,7 @@ int PS_ReadEscapeCharacter(script_t *script, char *ch)
  * @param[in,out] token	Buffer to store the string
  * @param[in] quote
  *
- * @return qtrue when a string was read succesfully
+ * @return qtrue when a string was read successfully
  */
 int PS_ReadString(script_t *script, token_t *token, int quote)
 {
@@ -511,7 +511,7 @@ int PS_ReadString(script_t *script, token_t *token, int quote)
 
 			tmpscript_p = script->script_p;
 			tmpline     = script->line;
-			// read unusefull stuff between possible two following strings
+			// read unuseful stuff between possible two following strings
 			if (!PS_ReadWhiteSpace(script))
 			{
 				script->script_p = tmpscript_p;
@@ -549,7 +549,7 @@ int PS_ReadString(script_t *script, token_t *token, int quote)
 	token->string[len++] = (char)quote;
 	// end string with a zero
 	token->string[len] = '\0';
-	// the sub type is the length of the string
+	// the subtype is the length of the string
 	token->subtype = len;
 	return 1;
 }
@@ -581,7 +581,7 @@ int PS_ReadName(script_t *script, token_t *token)
 	       (c >= '0' && c <= '9') ||
 	       c == '_');
 	token->string[len] = '\0';
-	// the sub type is the length of the name
+	// the subtype is the length of the name
 	token->subtype = len;
 	return 1;
 }
@@ -856,7 +856,7 @@ int PS_ReadLiteral(script_t *script, token_t *token)
     token->string[2] = *script->script_p++;
     // store trailing zero to end the string
     token->string[3] = '\0';
-    // the sub type is the integer literal value
+    // the subtype is the integer literal value
     token->subtype = token->string[1];
 
     return 1;
@@ -887,7 +887,7 @@ int PS_ReadPunctuation(script_t *script, token_t *token)
 #endif //PUNCTABLE
 		p   = punc->p;
 		len = strlen(p);
-		// if the script contains at least as much characters as the punctuation
+		// if the script contains at least as many characters as the punctuation
 		if (script->script_p + len <= script->end_p)
 		{
 			// if the script contains the punctuation
@@ -896,7 +896,7 @@ int PS_ReadPunctuation(script_t *script, token_t *token)
 				Q_strncpyz(token->string, p, MAX_TOKEN);
 				script->script_p += len;
 				token->type       = TT_PUNCTUATION;
-				// sub type is the number of the punctuation
+				// subtype is the number of the punctuation
 				token->subtype = punc->n;
 				return 1;
 			}
@@ -976,7 +976,7 @@ int PS_ReadToken(script_t *script, token_t *token)
 			return 0;
 		}
 	}
-	// if an literal
+	// if a literal
 	else if (*script->script_p == '\'')
 	{
 		//if (!PS_ReadLiteral(script, token)) return 0;
@@ -1018,7 +1018,7 @@ int PS_ReadToken(script_t *script, token_t *token)
 	}
 	// copy the token into the script structure
 	Com_Memcpy(&script->token, token, sizeof(token_t));
-	// succesfully read a token
+	// successfully read a token
 	return 1;
 }
 

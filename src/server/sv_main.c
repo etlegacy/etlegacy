@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -102,6 +102,7 @@ cvar_t *sv_protect;     // 0 - unprotected
                         // 2 - OpenWolf method
                         // 4 - prints attack info to console (when ioquake3 or OPenWolf method is set)
 cvar_t *sv_protectLog;  // name of log file
+cvar_t *sv_protectLogInterval; // how often to write attack log entries
 
 #ifdef FEATURE_ANTICHEAT
 cvar_t *sv_wh_active;

@@ -5,11 +5,17 @@
 # find libm where it exists and link game modules against it
 include(CheckLibraryExists)
 check_library_exists(m pow "" LIBM)
+if(LIBM)
+    target_link_libraries(cgame_libraries INTERFACE m)
+    target_link_libraries(ui_libraries INTERFACE m)
+endif()
 
 #
 # cgame
 #
 add_library(cgame MODULE ${CGAME_SRC})
+target_link_libraries(cgame cgame_libraries mod_libraries)
+
 set_target_properties(cgame
 	PROPERTIES
 	PREFIX ""
@@ -21,26 +27,22 @@ set_target_properties(cgame
 )
 target_compile_definitions(cgame PRIVATE CGAMEDLL=1 MODLIB=1)
 
-if(LIBM)
-	target_link_libraries(cgame PRIVATE m)
-endif()
-
 #
 # qagame
 #
 if(NOT ANDROID)
 	add_library(qagame MODULE ${QAGAME_SRC})
+	target_link_libraries(qagame qagame_libraries mod_libraries)
+
 	if(FEATURE_LUASQL AND FEATURE_DBMS)
 		target_compile_definitions(qagame PRIVATE FEATURE_DBMS FEATURE_LUASQL)
 
 		if(BUNDLED_SQLITE3)
-			add_dependencies(qagame bundled_sqlite3)
-			list(APPEND MOD_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
-			include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
+			target_link_libraries(qagame bundled_sqlite3)
 		else() # BUNDLED_SQLITE3
 			find_package(SQLite3 REQUIRED)
-			list(APPEND MOD_LIBRARIES ${SQLITE3_LIBRARY})
-			include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
+			target_link_libraries(qagame ${SQLITE3_LIBRARY})
+			target_include_directories(qagame PUBLIC ${SQLITE3_INCLUDE_DIR})
 		endif()
 
 		FILE(GLOB LUASQL_SRC
@@ -51,22 +53,14 @@ if(NOT ANDROID)
 		set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
 	endif()
 
-	if(FEATURE_LUA)
-		if(BUNDLED_LUA)
-			add_dependencies(qagame bundled_lua)
-		endif(BUNDLED_LUA)
-		target_link_libraries(qagame ${MOD_LIBRARIES})
-	endif(FEATURE_LUA)
-
 	if(FEATURE_SERVERMDX)
 		target_compile_definitions(qagame PRIVATE FEATURE_SERVERMDX)
 	endif()
 
 	set_target_properties(qagame
 		PROPERTIES
-		# COMPILE_DEFINITIONS "${QAGAME_DEFINES}"
 		PREFIX ""
-		# C_STANDARD 90
+		C_STANDARD 90
 		OUTPUT_NAME "qagame${LIB_SUFFIX}${ARCH}"
 		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
 		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
@@ -82,6 +76,8 @@ endif()
 # ui
 #
 add_library(ui MODULE ${UI_SRC})
+target_link_libraries(ui ui_libraries mod_libraries)
+
 set_target_properties(ui
 	PROPERTIES
 	PREFIX ""
@@ -93,29 +89,40 @@ set_target_properties(ui
 )
 target_compile_definitions(ui PRIVATE UIDLL=1 MODLIB=1)
 
-if(LIBM)
-	target_link_libraries(ui PRIVATE m)
-endif()
-
 # Build both architectures on older xcode versions
 if(APPLE)
-    if (DEFINED CMAKE_OSX_ARCHITECTURES)
-        message(STATUS "Using the user provided osx architectures: ${CMAKE_OSX_ARCHITECTURES}")
-        set(OSX_MOD_ARCH "${CMAKE_OSX_ARCHITECTURES}")
-	# Mojave was the last version to support 32 bit binaries and building.
-	# Newer SDK's just fail compilation
-	# TODO: maybe remove this whole thing after the next release.
-	elseif(XCODE_SDK_VERSION LESS "10.14" AND CMAKE_OSX_DEPLOYMENT_TARGET LESS "10.14")
-		# Force universal mod on osx up to Mojave
-		message(STATUS "Enabling MacOS x86 and x86_64 builds on mods")
-		set(OSX_MOD_ARCH "i386;x86_64")
-	elseif(XCODE_SDK_VERSION GREATER_EQUAL "11.00")
-		message(STATUS "Enabling MacOS x86_64 and Arm builds on mods")
-		set(OSX_MOD_ARCH "x86_64;arm64")
+
+	if (DEFINED CMAKE_OSX_ARCHITECTURES AND NOT CMAKE_OSX_ARCHITECTURES STREQUAL "")
+		message(STATUS "Using the user provided osx architectures: ${CMAKE_OSX_ARCHITECTURES}")
+		set(OSX_MOD_ARCH "${CMAKE_OSX_ARCHITECTURES}")
 	else()
-		# 64bit mod only as of Catalina and higher
-		message(STATUS "Only doing MacOS x86_64 bit build")
-		set(OSX_MOD_ARCH "x86_64")
+
+		execute_process(
+			COMMAND uname -m
+			OUTPUT_VARIABLE ETL_OSX_NATIVE_ARCHITECTURE
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+		)
+
+		check_c_compiler_flag("-arch i386" i386Supported)
+		check_c_compiler_flag("-arch x86_64" x86_64Supported)
+		check_c_compiler_flag("-arch arm64" arm64Supported)
+
+		# Mojave was the last version to support 32 bit binaries and building.
+		# Newer SDK's just fail compilation
+		# TODO: maybe remove this whole thing after the next release.
+		if(XCODE_SDK_VERSION LESS "10.14" AND CMAKE_OSX_DEPLOYMENT_TARGET LESS "10.14" AND i386Supported AND x86_64Supported)
+			# Force universal mod on osx up to Mojave
+			message(STATUS "Enabling MacOS x86 and x86_64 builds on mods")
+			set(OSX_MOD_ARCH "i386;x86_64")
+		elseif(XCODE_SDK_VERSION GREATER_EQUAL "11.00" AND x86_64Supported AND arm64Supported)
+			message(STATUS "Enabling MacOS x86_64 and Arm builds on mods")
+			set(OSX_MOD_ARCH "x86_64;arm64")
+		else()
+			# Using only the native arch
+			message(STATUS "Only doing MacOS ${ETL_OSX_NATIVE_ARCHITECTURE} bit build")
+			set(OSX_MOD_ARCH "${ETL_OSX_NATIVE_ARCHITECTURE}")
+		endif()
+
 	endif()
 
 	set_target_properties(cgame PROPERTIES OSX_ARCHITECTURES "${OSX_MOD_ARCH}" )

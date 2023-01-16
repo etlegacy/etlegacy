@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -46,6 +46,10 @@
 #include "../game/bg_public.h"
 #ifdef FEATURE_IRC_CLIENT
 	#include "../irc/irc_client.h"
+#endif
+
+#ifdef __ANDROID__
+#include <jni.h>
 #endif
 
 #define RETRANSMIT_TIMEOUT  3000    ///< time between connection packet retransmits
@@ -276,6 +280,22 @@ extern clientConnection_t clc;
 
 //==================================================================
 
+#ifdef __ANDROID__
+typedef struct
+{
+	JNIEnv *env;                                ///< Java Enviroment Entry
+
+	jobject activity;                           ///< Activity object
+	jclass clazz;                               ///< Object Class
+	jfieldID f_id;                              ///< Variable field
+
+	qboolean f_boolean;                         ///< In this case variable is boolean type and we change value of it
+
+} clientJavainterface_t;
+#endif
+
+//==================================================================
+
 /**
  * @struct ping_t
  * @brief
@@ -377,6 +397,8 @@ typedef struct
 	// rendering info
 	glconfig_t glconfig;
 	qhandle_t charSetShader;
+	fontInfo_extra_t consoleFont;
+	fontInfo_t etIconFont;
 	qhandle_t whiteShader;
 	qhandle_t consoleShader;
 	//qhandle_t consoleShader2;
@@ -583,9 +605,9 @@ typedef enum
  */
 enum cgameFlagsMaskEnum
 {
-    MASK_CGAMEFLAGS_SHOWGAMEVIEW             = 0x1, // 0b00000001
-    MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD  = 0x2, // 0b00000010
-    MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD = 0x4, // 0b00000100
+	MASK_CGAMEFLAGS_SHOWGAMEVIEW             = 0x1, // 0b00000001
+	MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD  = 0x2, // 0b00000010
+	MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD = 0x4, // 0b00000100
 };
 
 void CL_ClearKeys(void);
@@ -625,6 +647,9 @@ qboolean CL_UpdateVisiblePings_f(int source);
 #define NUM_CON_TIMES   10
 
 #define CON_TEXTSIZE    131072
+
+extern int smallCharWidth;      ///< SMALLCHAR_WIDTH with renderer scale accounted for
+extern int smallCharHeight;     ///< SMALLCHAR_HEIGHT with renderer scale accounted for
 
 /**
  * @struct console_t

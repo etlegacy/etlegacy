@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -551,10 +551,24 @@ void G_RunMissile(gentity_t *ent)
 					return;     // keep flying
 				}
 
+				// only re-enter through a skybox
+				if (!(tr.surfaceFlags & SURF_SKY))
+				{
+					gentity_t *tent;
+
+					tent              = G_TempEntity(ent->r.currentOrigin, EV_MORTAR_MISS);
+					tent->s.clientNum = ent->r.ownerNum;
+					tent->r.svFlags  |= SVF_BROADCAST;
+					tent->s.density   = 0; // direct
+
+					G_FreeEntity(ent);  // delete it
+					return;
+				}
+
 				tmp[2] = -MAX_MAP_SIZE;
 				trap_Trace(&tr, origin, NULL, NULL, tmp, ent->s.number, ent->clipmask);
 
-				// is ent go under the ground limit
+				// is ent under the ground limit
 				if (tr.fraction == 1.f)
 				{
 					gentity_t *tent;
@@ -564,8 +578,7 @@ void G_RunMissile(gentity_t *ent)
 					tent->r.svFlags  |= SVF_BROADCAST;
 					tent->s.density   = 0;  // direct
 
-					//G_ExplodeMissile(ent);  // play explode sound
-					G_FreeEntity(ent);      // and delete it
+					G_FreeEntity(ent);  // delete it
 					return;
 				}
 
@@ -643,12 +656,17 @@ void G_RunMissile(gentity_t *ent)
 	{
 		tr.fraction = 0;
 	}
+	// store the last surfaceflags in case missile is traveling through a 2-sided skybox brush
+	else
+	{
+		ent->lastSurfaceFlags = tr.surfaceFlags;
+	}
 
 	trap_LinkEntity(ent);
 
 	if (tr.fraction != 1.f)
 	{
-		if (ent->r.contents != CONTENTS_CORPSE && (tr.surfaceFlags & SURF_SKY))
+		if (ent->r.contents != CONTENTS_CORPSE && (tr.surfaceFlags & SURF_SKY || ent->lastSurfaceFlags & SURF_SKY))
 		{
 			// goes through sky
 			ent->count = 1;

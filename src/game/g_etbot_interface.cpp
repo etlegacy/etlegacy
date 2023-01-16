@@ -1,6 +1,6 @@
 /*
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2250,7 +2250,7 @@ public:
 			//round end.
 			if (bot->client->ps.pm_flags & PMF_TIME_LOCKPLAYER)
 			{
-				Cmd_Kill_f(bot, NULL, 0);
+				Cmd_Kill_f(bot, 0, 0);
 			}
 			else if (!(bot->client->ps.pm_flags & PMF_LIMBO))
 			{
@@ -6142,7 +6142,6 @@ const char *_GetEntityName(gentity_t *_ent)
 	//		return _ent->message;
 	//}
 	static char newentname[256];
-	char *name;
 
 	newentname[0] = '\0';
 
@@ -6179,20 +6178,18 @@ const char *_GetEntityName(gentity_t *_ent)
 			Q_strncpyz(newentname, _ent->message, sizeof(newentname));
 		}
 
-		name = newentname;
+		Q_CleanStr(newentname);
 
-		Q_CleanStr(name);
-		if (name)
+		if (*newentname)
 		{
 			char undschar[] = { '-', (char)NULL };
 			char skipchar[] = { '[', ']', '#', '!', '*', '`',
 				                '^', '&', '<', '>', '+', '=','|',  '\'', '%',
 				                '.', ':', '/', '(', ')', (char)NULL };
 			char *curchar = nullptr;
-			char *tmp;
-			char *tmpdst;
-			tmp = name;
-			tmpdst = name;
+			char *name = newentname;
+			char *tmp = name;
+			char *tmpdst = name;
 
 			while (*tmp)
 			{
@@ -6245,7 +6242,7 @@ qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
 			{
 				if ((g_redlimbotime.integer - ((level.dwRedReinfOffset + level.timeCurrent - level.startTime) % g_redlimbotime.integer)) < 2000)
 				{
-					Cmd_Kill_f(ent, NULL, 0);
+					Cmd_Kill_f(ent, 0, 0);
 					ent->client->sess.botSuicide = qfalse;
 					return qtrue;
 				}
@@ -6254,7 +6251,7 @@ qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
 			{
 				if ((g_bluelimbotime.integer - ((level.dwBlueReinfOffset + level.timeCurrent - level.startTime) % g_bluelimbotime.integer)) < 2000)
 				{
-					Cmd_Kill_f(ent, NULL, 0);
+					Cmd_Kill_f(ent, 0, 0);
 					ent->client->sess.botSuicide = qfalse;
 					return qtrue;
 				}

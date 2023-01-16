@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -80,7 +80,7 @@ extern vmCvar_t ui_browserModFilter;
 extern vmCvar_t ui_browserMapFilter;
 extern vmCvar_t ui_browserServerNameFilterCheckBox;
 
-extern vmCvar_t ui_browserOssFilter;
+extern vmCvar_t ui_disableOssFilter;
 
 extern vmCvar_t ui_serverStatusTimeOut;
 
@@ -94,10 +94,6 @@ extern vmCvar_t ui_currentCampaign;
 extern vmCvar_t ui_campaignIndex;
 extern vmCvar_t ui_currentCampaignCompleted;
 extern vmCvar_t ui_blackout;
-extern vmCvar_t ui_cg_crosshairAlpha;
-extern vmCvar_t ui_cg_crosshairAlphaAlt;
-extern vmCvar_t ui_cg_crosshairColor;
-extern vmCvar_t ui_cg_crosshairColorAlt;
 
 extern vmCvar_t cl_bypassMouseInput;
 
@@ -653,9 +649,6 @@ typedef struct
 
 	const char *glInfoLines[GLINFO_LINES];
 	int numGlInfoLines;
-
-	vec4_t xhairColor;
-	vec4_t xhairColorAlt;
 
 	qhandle_t passwordFilter;
 	qhandle_t friendlyFireFilter;

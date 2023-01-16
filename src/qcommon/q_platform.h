@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -353,6 +353,7 @@
 	  #undef ARCH_STRING
 	  #define ARCH_STRING "armeabi-v7a"
 #elif defined __aarch64__
+	  #undef ARCH_STRING
 	  #define ARCH_STRING "arm64-v8a"
 #endif
 

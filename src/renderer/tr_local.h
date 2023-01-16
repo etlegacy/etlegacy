@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -467,10 +467,10 @@ typedef struct shader_s
 	float sort;                         ///< lower numbered shaders draw before higher numbered
 
 	qboolean defaultShader;             ///< we want to return index 0 if the shader failed to
-										///< load for some reason, but R_FindShader should
-										///< still keep a name allocated for it, so if
-										///< something calls RE_RegisterShader again with
-										///< the same name, we don't try looking for it again
+	                                    ///< load for some reason, but R_FindShader should
+	                                    ///< still keep a name allocated for it, so if
+	                                    ///< something calls RE_RegisterShader again with
+	                                    ///< the same name, we don't try looking for it again
 
 	qboolean explicitlyDefined;         ///< found in a .shader file
 
@@ -633,7 +633,7 @@ typedef struct
  * enforce the maximum limit when reading skin files. It was possile to use more than 32
  * surfaces which accessed out of bounds memory past end of skin->surfaces hunk block.
  */
-#define MAX_SKIN_SURFACES	256
+#define MAX_SKIN_SURFACES   256
 
 /**
  * @struct trRefdef_t
@@ -1021,7 +1021,7 @@ typedef struct
 	foliageInstance_t *instances;
 } srfFoliage_t;
 
-extern void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *);
+extern void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *);
 
 /*
 ==============================================================================
@@ -1383,7 +1383,7 @@ typedef struct
 	int frameCount;                             ///< incremented every frame
 	int sceneCount;                             ///< incremented every scene
 	int viewCount;                              ///< incremented every view (twice a scene if portaled)
-												///< and every R_MarkFragments call
+	                                            ///< and every R_MarkFragments call
 
 	int frameSceneNum;                          ///< zeroed at RE_BeginFrame
 
@@ -1493,7 +1493,7 @@ void R_AddPolygonSurfaces(void);
 void R_AddPolygonBufferSurfaces(void);
 
 void R_DecomposeSort(unsigned sort, int *entityNum, shader_t **shader,
-					 int *fogNum, int *frontFace, int *dlightMap);
+                     int *fogNum, int *frontFace, int *dlightMap);
 
 void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int fogNum, int frontFace, int dlightMap);
 
@@ -1755,7 +1755,7 @@ CURVE TESSELATION
 #define PATCH_STITCHING
 
 srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
-									  drawVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE]);
+                                      drawVert_t points[MAX_PATCH_SIZE *MAX_PATCH_SIZE]);
 srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3_t point, float loderror);
 srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t point, float loderror);
 void R_FreeSurfaceGridMesh(srfGridMesh_t *grid);
@@ -1767,7 +1767,7 @@ MARKERS, POLYGON PROJECTION ON WORLD POLYGONS
 */
 
 int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
-					int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
+                    int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
 
 /*
 ============================================================
@@ -1780,7 +1780,7 @@ void RE_ClearDecals(void);
 
 void R_AddModelShadow(const refEntity_t *ent);
 
-void R_TransformDecalProjector(decalProjector_t * in, vec3_t axis[3], vec3_t origin, decalProjector_t * out);
+void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t origin, decalProjector_t *out);
 qboolean R_TestDecalBoundingBox(decalProjector_t *dp, vec3_t mins, vec3_t maxs);
 qboolean R_TestDecalBoundingSphere(decalProjector_t *dp, vec3_t center, float radius2);
 
@@ -1833,7 +1833,7 @@ int R_MDM_GetBoneTag(orientation_t *outTag, mdmHeader_t *mdm, int startTagIndex,
 =============================================================
 */
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix,
-							vec4_t eye, vec4_t dst);
+                            vec4_t eye, vec4_t dst);
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window);
 
 void RB_DeformTessGeometry(void);
@@ -1872,7 +1872,7 @@ RENDERER BACK END COMMAND QUEUE
 =============================================================
 */
 
-#define MAX_RENDER_COMMANDS (0x40000 * 2)
+#define MAX_RENDER_COMMANDS (0x40000 * 4)
 
 /**
  * @struct renderCommandList_t
@@ -2116,11 +2116,11 @@ void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs);
 
 void RE_SetColor(const float *rgba);
 void RE_StretchPic(float x, float y, float w, float h,
-				   float s1, float t1, float s2, float t2, qhandle_t hShader);
+                   float s1, float t1, float s2, float t2, qhandle_t hShader);
 void RE_RotatedPic(float x, float y, float w, float h,
-				   float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
+                   float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void RE_StretchPicGradient(float x, float y, float w, float h,
-						   float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
+                           float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
 void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader);
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
 void RE_BeginFrame(void);
@@ -2186,7 +2186,8 @@ void R_InitShaderPrograms(void);
 void R_ShutdownShaderPrograms(void);
 
 // tr_fbo.c
-typedef struct {
+typedef struct
+{
 	char name[MAX_QPATH];
 	GLuint fbo;
 
@@ -2205,13 +2206,15 @@ typedef struct {
 	uint8_t flags;
 } frameBuffer_t;
 
-typedef enum {
+typedef enum
+{
 	READ,
 	WRITE,
 	BOTH
 } fboBinding;
 
-typedef enum {
+typedef enum
+{
 	FBO_DEPTH = BIT(0),
 	FBO_ALPHA = BIT(1)
 }fboFlags;
@@ -2238,8 +2241,8 @@ void R_InitFBO(void);
 #define R_BindHudFBO() { R_BindFBO(hudFbo); }
 #define R_ClearHudFBO() { R_BindHudFBO(); glClearColor(1.f, 1.f, 1.f, 0.f); glClear(GL_COLOR_BUFFER_BIT); }
 #define R_DrawHudOnTop() { \
-GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA); \
-R_FboRenderTo(hudFbo, NULL); \
+		GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA); \
+		R_FboRenderTo(hudFbo, NULL); \
 }
 #else
 #define R_BindHudFBO()
@@ -2326,13 +2329,13 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
 extern cvar_t *r_ignoreFastPath;        ///< allows us to ignore our Tess fast paths
 
 extern cvar_t *r_textureBits;           ///< number of desired texture bits
-										///< 0 = use framebuffer depth
-										///< 16 = use 16-bit textures
-										///< 32 = use 32-bit textures
-										///< all else = error
+                                        ///< 0 = use framebuffer depth
+                                        ///< 16 = use 16-bit textures
+                                        ///< 32 = use 32-bit textures
+                                        ///< all else = error
 
 extern cvar_t *r_extMaxAnisotropy;      ///< FIXME: not used in GLES ! move it ?
-										///< FIXME: "extern int      maxAnisotropy" founded
+                                        ///< FIXME: "extern int      maxAnisotropy" founded
 
 extern cvar_t *r_lightMap;              ///< render lightmaps only
 

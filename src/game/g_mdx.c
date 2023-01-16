@@ -451,7 +451,7 @@ static void cachetag_resize(int oldcount)
  */
 static int mdx_read_int(const byte *data)
 {
-	return (data[0] << 0) | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+	return ((unsigned int)data[0] << 0) | ((unsigned int)data[1] << 8) | ((unsigned int)data[2] << 16) | ((unsigned int)data[3] << 24);
 }
 
 /**
@@ -472,7 +472,7 @@ static short mdx_read_short(const byte *data)
 static vec_t mdx_read_vec(const byte *data)
 {
 	// FIXME: depends on size of int
-	int int_val = (data[0] << 0) | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+	int int_val = ((unsigned int)data[0] << 0) | ((unsigned int)data[1] << 8) | ((unsigned int)data[2] << 16) | ((unsigned int)data[3] << 24);
 
 	return *(float *)&int_val;
 }
@@ -642,7 +642,7 @@ static void mdm_load(mdm_t *mdmModel, char *mem)
 	mdmModel->tag_count = tags;
 	mdmModel->tags      = Com_Allocate(mdmModel->tag_count * sizeof(struct tag));
 
-	mdmModel->tag_head       = -1;
+	mdmModel->tag_head = -1;
 
 /*
 	mdmModel->tag_armleft    = -1;  // elbow-left
@@ -655,8 +655,8 @@ static void mdm_load(mdm_t *mdmModel, char *mem)
 	mdmModel->tag_legleft    = -1;  // knee-left
 	mdmModel->tag_legright   = -1;  // knee-right
 */
-	mdmModel->tag_footleft   = -1;  // ankle-left
-	mdmModel->tag_footright  = -1;  // ankle-right
+	mdmModel->tag_footleft  = -1;   // ankle-left
+	mdmModel->tag_footright = -1;   // ankle-right
 
 #ifdef BONE_HITTESTS
 	mdmModel->cachetags = NULL;
@@ -1387,10 +1387,10 @@ qhandle_t mdx_RegisterHits(animModelInfo_t *animModelInfo, const char *filename)
  * @param[in] frameBone
  */
 static void mdx_calculate_bone(
-    vec3_t dest,
-    const struct bone *bone,
-    const struct frame_bone *frameBone
-    )
+	vec3_t dest,
+	const struct bone *bone,
+	const struct frame_bone *frameBone
+	)
 {
 	vec3_t tmp;
 	vec3_t axis[3];
@@ -1414,14 +1414,14 @@ static void mdx_calculate_bone(
  * @param[in] recursive
  */
 static void mdx_calculate_bone_lerp(
-    /*const*/ grefEntity_t *refent,
-    mdx_t *frameModel,
-    mdx_t *oldFrameModel,
-    mdx_t *torsoFrameModel,
-    mdx_t *oldTorsoFrameModel,
-    int i,
-    qboolean recursive
-    )
+	/*const*/ grefEntity_t *refent,
+	mdx_t *frameModel,
+	mdx_t *oldFrameModel,
+	mdx_t *torsoFrameModel,
+	mdx_t *oldTorsoFrameModel,
+	int i,
+	qboolean recursive
+	)
 {
 	mdx_t             *oldBoneFrameModel, *boneFrameModel;
 	int               oldFrame, frame;
@@ -1468,12 +1468,12 @@ static void mdx_calculate_bone_lerp(
 		if (recursive)
 		{
 			mdx_calculate_bone_lerp(
-			    refent,
-			    frameModel, oldFrameModel,
-			    torsoFrameModel, oldTorsoFrameModel,
-			    bone->parent_index,
-			    qtrue
-			    );
+				refent,
+				frameModel, oldFrameModel,
+				torsoFrameModel, oldTorsoFrameModel,
+				bone->parent_index,
+				qtrue
+				);
 		}
 	}
 
@@ -1518,12 +1518,12 @@ static void mdx_calculate_bones(/*const*/ grefEntity_t *refent)
 	for (i = 0; i < frameModel->bone_count; i++)
 	{
 		mdx_calculate_bone_lerp(
-		    refent,
-		    frameModel, oldFrameModel,
-		    torsoFrameModel, oldTorsoFrameModel,
-		    i,
-		    qfalse
-		    );
+			refent,
+			frameModel, oldFrameModel,
+			torsoFrameModel, oldTorsoFrameModel,
+			i,
+			qfalse
+			);
 	}
 }
 #endif // BONE_HITTESTS
@@ -1551,12 +1551,12 @@ void mdx_calculate_bones_single(/*const*/ grefEntity_t *refent, int i)
 #endif
 
 	mdx_calculate_bone_lerp(
-	    refent,
-	    frameModel, oldFrameModel,
-	    torsoFrameModel, oldTorsoFrameModel,
-	    i,
-	    qtrue
-	    );
+		refent,
+		frameModel, oldFrameModel,
+		torsoFrameModel, oldTorsoFrameModel,
+		i,
+		qtrue
+		);
 }
 
 /**
@@ -1568,9 +1568,9 @@ void mdx_calculate_bones_single(/*const*/ grefEntity_t *refent, int i)
  */
 static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t origin, vec3_t axis[3])
 {
-	mdx_t             *frameModel         = &mdx_models[QHANDLETOINDEX(refent->frameModel)];
-	mdx_t             *oldFrameModel      = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldframeModel, refent->frameModel)];
-	mdx_t             *torsoFrameModel    = &mdx_models[QHANDLETOINDEX(refent->torsoFrameModel)];
+	mdx_t             *frameModel = &mdx_models[QHANDLETOINDEX(refent->frameModel)];
+	mdx_t             *oldFrameModel = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldframeModel, refent->frameModel)];
+	mdx_t             *torsoFrameModel = &mdx_models[QHANDLETOINDEX(refent->torsoFrameModel)];
 	mdx_t             *oldTorsoFrameModel = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldTorsoFrameModel, refent->torsoFrameModel)];
 	mdx_t             *oldBoneFrameModel, *boneFrameModel;
 	struct bone       *bone;
@@ -2270,7 +2270,7 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 	anim = lf->animation;
 
 	// check for forcing last frame
-    // leave the last frame so we can do corpse animation just once
+	// leave the last frame so we can do corpse animation just once
 	if (ent->s.eType == ET_CORPSE)
 	{
 		lf->oldFrame      = lf->frame = anim->firstFrame + anim->numFrames - 1;
@@ -2524,12 +2524,12 @@ void mdx_PlayerAnimation(gentity_t *ent)
  * @return
  */
 static qboolean mdx_hit_warp(
-    const vec3_t start, const vec3_t end,
-    const vec3_t origin,
-    /*const*/ vec3_t axis[3],
-    const vec3_t scale,
-    vec3_t tangent, vec_t *fraction
-    )
+	const vec3_t start, const vec3_t end,
+	const vec3_t origin,
+	/*const*/ vec3_t axis[3],
+	const vec3_t scale,
+	vec3_t tangent, vec_t *fraction
+	)
 {
 	vec3_t unaxis[3];
 	vec3_t unstart, unend, undir;

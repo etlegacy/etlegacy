@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -105,6 +105,10 @@ void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean
 double R_NoiseGet4f(double x, double y, double z, double t);
 void R_NoiseInit(void);
 
+#define LEGACY_SPLASH_NAME "legacy_splash_image"
+void R_InitSplash(void);
+void R_DrawSplash(void);
+
 // NOTE: These two variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
 // If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
 // the glconfig_t struct.
@@ -134,9 +138,9 @@ extern cvar_t *r_lodScale;
 
 extern cvar_t *r_fastSky;                       ///< controls whether sky should be cleared or drawn
 extern cvar_t *r_drawSun;                       ///< controls drawing of sun quad
-												///< "0" no sun
-												///< "1" draw sun
-												///< "2" also draw lens flare effect centered on sun
+                                                ///< "0" no sun
+                                                ///< "1" draw sun
+                                                ///< "2" also draw lens flare effect centered on sun
 extern cvar_t *r_dynamicLight;                  ///< dynamic lights enabled/disabled
 
 extern cvar_t *r_noreFresh;                     ///< bypasses the ref rendering
@@ -247,11 +251,11 @@ typedef enum
 typedef struct
 {
 	char *ext;
-	void(*ImageLoader)(const char *, unsigned char **, int *, int *, byte);
+	void (*ImageLoader)(const char *, unsigned char **, int *, int *, byte);
 } imageExtToLoaderMap_t;
 
 extern imageExtToLoaderMap_t imageLoaders[];
-extern int numImageLoaders;
+extern int                   numImageLoaders;
 /*
 =============================================================
 IMAGE LOADERS
@@ -264,5 +268,12 @@ void R_LoadPCX(const char *name, byte **pic, int *width, int *height, byte alpha
 void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
 void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alphaByte);
 void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
+
+/*
+=============================================================
+IMAGE WRITERS
+=============================================================
+*/
+void RE_SaveTGA(const char *filename, byte *data, int width, int height, qboolean withAlpha);
 
 #endif  // INCLUDE_TR_COMMON_H

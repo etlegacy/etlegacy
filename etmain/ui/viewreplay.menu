@@ -30,7 +30,7 @@ menuDef {
 
 #ifdef ETLEGACY
 	// Pure "server" demo viewing. Maybe change this to something more pretty? Checkbox? //
-	YESNO( 160, 14, 40, 10, _("Pure Server:"), .2, 8, "sv_pure", _("Limit game content to that contained in PK3 files on both the client and server with matching CRCs") )
+	YESNO( 160, 14, 40, 10, _("Pure Server:"), .2, 8, "sv_pure", _("Limit game content to that contained in PK3 files\non both the client and server with matching CRCs") )
 #endif
 
 	// Demo List //
@@ -40,6 +40,7 @@ menuDef {
 		rect			6 32 596 386
 		type			ITEM_TYPE_LISTBOX
 		textfont		UI_FONT_COURBD_21
+		textstyle		ITEM_TEXTSTYLE_SHADOWED
 		textscale		.2
 		textaligny		-3
 		forecolor		.6 .6 .6 1

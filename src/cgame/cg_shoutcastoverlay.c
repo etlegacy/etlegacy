@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -148,7 +148,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
-	CG_FilledBar(topRowX + PLAYER_LIST_STATUS_WIDTH, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.75f, colorAxis, colorAxis, bg, fraction, BAR_BGSPACING_X0Y0);
+	CG_FilledBar(topRowX + PLAYER_LIST_STATUS_WIDTH, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.75f, colorAxis, colorAxis, bg, fraction, BAR_BGSPACING_X0Y0, -1);
 
 	// draw health
 	if (player->health > 0)
@@ -170,12 +170,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 
 	// draw name limit 20 chars
 	Q_ColorizeString(player->health < 0 ? '9' : '7', player->cleanname, name, MAX_NAME_LENGTH + 2);
-	textWidth  = CG_Text_Width_Ext(name, 0.16f, 0, FONT_TEXT);
 	textHeight = CG_Text_Height_Ext(name, 0.16f, 0, FONT_TEXT);
-	if (textWidth > 116)
-	{
-		textWidth = 116;
-	}
 	CG_Text_Paint_Ext(x + PLAYER_LIST_STATUS_WIDTH + 1, y + (PLAYER_LIST_HEIGHT / 4) + (textHeight / 2), 0.16f, 0.16f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	// draw follow bind
@@ -280,7 +275,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
-	CG_FilledBar(topRowX + 1, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.5f, colorAllies, colorAllies, bg, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT);
+	CG_FilledBar(topRowX + 1, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.5f, colorAllies, colorAllies, bg, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
 
 	topRowX += PLAYER_LIST_WIDTH;
 
@@ -509,7 +504,7 @@ static void CG_DrawShoutcastPlayerChargebar(float x, float y, int width, int hei
 		color[3] = 0.25f + barFrac * 0.5f;
 	}
 
-	CG_FilledBar(x, y, width, height, color, NULL, bg, barFrac, flags);
+	CG_FilledBar(x, y, width, height, color, NULL, bg, barFrac, flags, -1);
 }
 
 /**
@@ -548,14 +543,14 @@ static void CG_DrawShoutcastPlayerStaminaBar(float x, float y, int width, int he
 		color[1] = frac;
 	}
 
-	CG_FilledBar(x, y, width, height, color, NULL, bg, frac, flags);
+	CG_FilledBar(x, y, width, height, color, NULL, bg, frac, flags, -1);
 }
 
 /**
 * @brief CG_RequestPlayerStats (CG_StatsDown_f)
 * @param[in] clientNum
 */
-static void CG_RequestPlayerStats(int clientNum)
+void CG_RequestPlayerStats(int clientNum)
 {
 	if (cgs.gamestats.requestTime < cg.time)
 	{
@@ -569,7 +564,7 @@ static void CG_RequestPlayerStats(int clientNum)
 * @param[in] data
 * @param[in] i
 */
-static char *CG_ParseStats(char *data, int i)
+char *CG_ParseStats(char *data, int i)
 {
 	int  c;
 	int  stop = 0;
@@ -605,7 +600,6 @@ void CG_DrawShoutcastPlayerStatus(void)
 	gameStats_t   *gs     = &cgs.gamestats;
 	clientInfo_t  *player = &cgs.clientinfo[cg.snap->ps.clientNum];
 	playerState_t *ps     = &cg.snap->ps;
-	rectDef_t     rect;
 	vec4_t        hcolor;
 	float         nameBoxWidth = PLAYER_STATUS_NAMEBOX_WIDTH;
 	float         nameBoxHeight = PLAYER_STATUS_NAMEBOX_HEIGHT;
@@ -677,7 +671,7 @@ void CG_DrawShoutcastPlayerStatus(void)
 	CG_DrawShoutcastPlayerStaminaBar(statsBoxX + (statsBoxWidth / 2), statsBoxY + statsBoxHeight, statsBoxWidth / 2, 2, BAR_BG | BAR_BGSPACING_X0Y0);
 
 	// draw ammo count
-	CG_PlayerAmmoValue(&ammo, &clip, &akimbo);
+	CG_PlayerAmmoValue(&ammo, &clip, &akimbo, NULL);
 
 	if (ammo > 0 || clip > 0)
 	{
@@ -894,7 +888,7 @@ void CG_DrawShoutcastTimer(void)
 	}
 
 	vec4_t color = { .6f, .6f, .6f, 1.f };
-	char   *text, *rt, *rtAllies = "", *rtAxis = "", *round;
+	char   *text, *rtAllies = "", *rtAxis = "", *round;
 	int    tens;
 	int    msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	int    seconds = msec / 1000;
@@ -929,17 +923,8 @@ void CG_DrawShoutcastTimer(void)
 			rtAllies = va("^$%i", reinfTimeAl);
 			rtAxis   = va("^1%i", reinfTimeAx);
 		}
-		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
-		{
-			int  reinfTime = CG_CalculateReinfTime(qfalse);
-			char *c        = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
-
-			rt = va("%s%s%d", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : c, ((cgs.timelimit <= 0.0f) ? "" : " "), reinfTime);
-		}
 		else
 		{
-			rt       = "";
 			rtAllies = "";
 			rtAxis   = "";
 		}

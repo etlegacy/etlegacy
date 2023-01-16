@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -205,9 +205,9 @@ void trap_FS_Read(void *buffer, int len, fileHandle_t f)
  * @param[in] len
  * @param[in] f
  */
-void trap_FS_Write(const void *buffer, int len, fileHandle_t f)
+int trap_FS_Write(const void *buffer, int len, fileHandle_t f)
 {
-	SystemCall(CG_FS_WRITE, buffer, len, f);
+	return SystemCall(CG_FS_WRITE, buffer, len, f);
 }
 
 /**
@@ -1933,7 +1933,7 @@ void trap_R_Finish(void)
 // extension interface
 
 /**
- * @brief Entry point for additional system calls without breaking compatbility with other engines
+ * @brief Entry point for additional system calls without breaking compatibility with other engines
  * @param[out] value
  * @param[in] valueSize
  * @param[in] key
@@ -1950,5 +1950,20 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key)
  */
 void trap_SysFlashWindow(int state)
 {
-	SystemCall(dll_trap_SysFlashWindow, state);
+	if (dll_trap_SysFlashWindow)
+	{
+		SystemCall(dll_trap_SysFlashWindow, state);
+	}
+}
+
+/**
+ * @brief Extension for sending command completion suggestion
+ * @param[in] value
+ */
+void trap_CommandComplete(char *value)
+{
+	if (dll_trap_CommandComplete)
+	{
+		SystemCall(dll_trap_CommandComplete, value);
+	}
 }

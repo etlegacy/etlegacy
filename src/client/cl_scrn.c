@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -117,22 +117,66 @@ void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
  */
 static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 {
-	int   row, col;
-	float frow, fcol;
-	float size;
+	if (!cls.consoleFont.glyphScale || (!cls.etIconFont.glyphScale && ch < 32))
+	{
+		int   row, col;
+		float frow, fcol;
+		float size;
 
-	ch &= 255;
+		ch &= 255;
 
-	row = ch >> 4;
-	col = ch & 15;
+		row = ch >> 4;
+		col = ch & 15;
 
-	frow = row * 0.0625f;
-	fcol = col * 0.0625f;
-	size = 0.0625f;
+		frow = row * 0.0625f;
+		fcol = col * 0.0625f;
+		size = 0.0625f;
 
-	re.DrawStretchPic(x, y, w, h, fcol, frow,
-	                  fcol + size, frow + size,
-	                  cls.charSetShader);
+		re.DrawStretchPic(x, y, w, h, fcol, frow,
+		                  fcol + size, frow + size,
+		                  cls.charSetShader);
+	}
+	else
+	{
+		float       scaleX, scaleY, scale;
+		glyphInfo_t *info;
+
+		if (ch < 32)
+		{
+			info = Q_UTF8_GetGlyphVanilla(&cls.etIconFont, ch);
+		}
+		else
+		{
+			info = Q_UTF8_GetGlyphExtended(&cls.consoleFont, ch);
+		}
+
+		if (!info)
+		{
+			return;
+		}
+
+		scale = cls.consoleFont.glyphScale;
+
+		// FIXME: fix the magic numbers at some point
+		scaleX = 0.3f; // (float)w / (float)info->imageWidth;
+		scaleY = 0.3f; // (float)h / (float)info->imageHeight;
+
+		scaleX *= scale;
+		scaleY *= scale;
+
+		float xx = (float)x + ((float)info->pitch * scaleX);
+		float yy = (float)y - ((float)info->top * scaleY) + 12;
+		float ww = (float)info->imageWidth * scaleX;
+		float hh = (float)info->imageHeight * scaleY;
+
+		// Just squash the icon font to match
+		if (ch < 32)
+		{
+			ww = w;
+		}
+
+		re.DrawStretchPic(xx, yy, ww, hh, info->s, info->t, info->s2, info->t2, info->glyph);
+	}
 }
 
 /**
@@ -150,6 +194,10 @@ void SCR_DrawChar(int x, int y, float w, float h, int ch, qboolean nativeResolut
 	{
 		return;
 	}
+
+	// use scaled values to account for r_scale
+	w = smallCharWidth;
+	h = smallCharHeight;
 
 	if (y < -h)
 	{
@@ -194,6 +242,10 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 	const char *s;
 	int        xx;
 
+	// use scaled values to account for r_scale
+	w = smallCharWidth;
+	h = smallCharHeight;
+
 	if (dropShadow)
 	{
 		// draw the drop shadow
@@ -209,6 +261,7 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 				s += 2;
 				continue;
 			}
+
 			SCR_DrawChar(xx + 2, y + 2, w, h, Q_UTF8_CodePoint(s), nativeResolution);
 			xx += w;
 			s  += Q_UTF8_Width(s);
@@ -243,6 +296,7 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 				continue;
 			}
 		}
+
 		SCR_DrawChar(xx, y, w, h, Q_UTF8_CodePoint(s), nativeResolution);
 		xx += w;
 		s  += Q_UTF8_Width(s);

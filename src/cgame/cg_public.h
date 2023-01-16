@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -275,11 +275,12 @@ typedef enum
 
 	CG_R_FINISH,                ///< 179
 
-	CG_SYS_FLASHWINDOW,
-
-#ifndef CGAMEDLL
+	///< engine extensions padding
 	CG_TRAP_GETVALUE = COM_TRAP_GETVALUE,
-#endif
+
+	CG_SYS_FLASH_WINDOW,
+
+	CG_COMMAND_COMPLETE,
 
 } cgameImport_t;
 
@@ -337,6 +338,12 @@ typedef enum
 
 	CG_MESSAGERECEIVED,
 	///<  void (*CG_MessageReceived)( const char *buf, int buflen, int serverTime );
+
+	///< Added for Legacy (need to be activated via the extension system)
+	CG_LEGACY_CUSTOM = MOD_EXPORT_PADDING, ///< Some padding
+
+	CG_CONSOLE_COMPLETE_ARGUMENT,
+	///<  qboolean (*CG_ConsoleCompleteArgument)( void );
 
 } cgameExport_t;
 

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -35,6 +35,7 @@
 
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
+#include "json.h"
 
 /**
  * @brief G_initMatch
@@ -411,6 +412,118 @@ void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod)
 	attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].headshots++;
 }
 
+void G_createStatsJson(gentity_t *ent, void *target)
+{
+	unsigned int i;
+	gclient_t    *cl;
+	cJSON        *tmp, *tmp2;
+	qboolean     weapons = qfalse;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	cl = ent->client;
+
+	if (cl->pers.connected != CON_CONNECTED)
+	{
+		return;
+	}
+
+	cJSON_AddNumberToObject(target, "ent", (int)(ent - g_entities));
+	cJSON_AddNumberToObject(target, "rounds", ent->client->sess.rounds);
+#ifdef FEATURE_RATING
+	cJSON_AddNumberToObject(target, "rating1", ent->client->sess.mu - 3 * ent->client->sess.sigma);
+	cJSON_AddNumberToObject(target, "rating2", ent->client->sess.mu - 3 * ent->client->sess.sigma - (ent->client->sess.oldmu - 3 * ent->client->sess.oldsigma));
+#endif
+#ifdef FEATURE_PRESTIGE
+	cJSON_AddNumberToObject(target, "prestige", ent->client->sess.prestige);
+#endif
+
+	// workaround to always hide previous map stats in warmup
+	// Stats will be cleared correctly when the match actually starts
+	if ((g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN) &&
+	    !(g_gametype.integer == GT_WOLF_STOPWATCH))
+	{
+		return;
+	}
+
+	// Add weapon stats as necessary
+	// The client also expects stats when kills are above 0
+	tmp = cJSON_AddObjectToObject(target, "weapons");
+	for (i = WS_KNIFE; i < WS_MAX; i++)
+	{
+		if (ent->client->sess.aWeaponStats[i].atts || ent->client->sess.aWeaponStats[i].hits ||
+		    ent->client->sess.aWeaponStats[i].deaths || ent->client->sess.aWeaponStats[i].kills)
+		{
+			weapons = qtrue;
+			tmp2    = cJSON_AddObjectToObject(tmp, aWeaponInfo[i].pszCode);
+			cJSON_AddNumberToObject(tmp2, "hits", ent->client->sess.aWeaponStats[i].hits);
+			cJSON_AddNumberToObject(tmp2, "atts", ent->client->sess.aWeaponStats[i].atts);
+			cJSON_AddNumberToObject(tmp2, "kills", ent->client->sess.aWeaponStats[i].kills);
+			cJSON_AddNumberToObject(tmp2, "deaths", ent->client->sess.aWeaponStats[i].deaths);
+			cJSON_AddNumberToObject(tmp2, "headshots", ent->client->sess.aWeaponStats[i].headshots);
+		}
+	}
+
+	// Additional info
+	if (weapons)
+	{
+		tmp2 = cJSON_AddObjectToObject(tmp, "_shared");
+		cJSON_AddNumberToObject(tmp2, "damage_given", ent->client->sess.damage_given);
+		cJSON_AddNumberToObject(tmp2, "damage_received", ent->client->sess.damage_received);
+		cJSON_AddNumberToObject(tmp2, "team_damage_given", ent->client->sess.team_damage_given);
+		cJSON_AddNumberToObject(tmp2, "team_damage_received", ent->client->sess.team_damage_received);
+		cJSON_AddNumberToObject(tmp2, "gibs", ent->client->sess.gibs);
+		cJSON_AddNumberToObject(tmp2, "self_kills", ent->client->sess.self_kills);
+		cJSON_AddNumberToObject(tmp2, "team_kills", ent->client->sess.team_kills);
+		cJSON_AddNumberToObject(tmp2, "team_gibs", ent->client->sess.team_gibs);
+		cJSON_AddNumberToObject(tmp2, "play_time", (ent->client->sess.time_axis + ent->client->sess.time_allies) == 0 ? 0 : 100.0 * ent->client->sess.time_played / (ent->client->sess.time_axis + ent->client->sess.time_allies));
+	}
+
+
+	tmp = cJSON_AddObjectToObject(target, "skills");
+	// Add skill points as necessary
+	if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
+	    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+	    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
+	{
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		{
+			if (ent->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
+			{
+				cJSON_AddNumberToObject(tmp, skillTable[i].skillNames, (int)ent->client->sess.skillpoints[i]);
+			}
+		}
+	}
+#ifdef FEATURE_PRESTIGE
+	else if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
+	{
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		{
+			if (ent->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
+			{
+				tmp2 = cJSON_AddObjectToObject(tmp, skillTable[i].skillNames);
+				cJSON_AddNumberToObject(tmp2, "skillPoints", (int)ent->client->sess.skillpoints[i]);
+				cJSON_AddNumberToObject(tmp2, "diff", (int)(ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i]));
+			}
+		}
+	}
+#endif
+	else
+	{
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		{
+			// current map XPs only
+			if ((ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i]) != 0.f) // Skillpoints can be negative
+			{
+				cJSON_AddNumberToObject(tmp, skillTable[i].skillNames, (int)(ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i]));
+			}
+		}
+	}
+}
+
 /**
  * @brief Generates weapon stat info for given ent
  * @param[in] refEnt
@@ -590,18 +703,20 @@ void G_deleteStats(int nClient)
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));
 }
 
-
 /**
  * @brief Parses weapon stat info for given ent
  * The given string must be space delimited and contain only integers
  *
- * @param pszStatsInfo
+ * @param object json object that holds the data
  */
-void G_parseStats(const char *pszStatsInfo)
+void G_parseStatsJson(void *object)
 {
-	gclient_t  *cl;
-	const char *tmp = pszStatsInfo;
-	int        i, dwWeaponMask, dwClientID = Q_atoi(pszStatsInfo);
+	gclient_t *cl;
+	cJSON     *tmp, *weapons;
+	int       i, dwClientID;
+	qboolean  weaponsFound = qfalse;
+
+	dwClientID = Q_ReadIntValueJson(object, "ent");
 
 	if (dwClientID > MAX_CLIENTS)
 	{
@@ -610,30 +725,39 @@ void G_parseStats(const char *pszStatsInfo)
 
 	cl = &level.clients[dwClientID];
 
-#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } (x) = Q_atoi(++tmp);
+	cl->sess.rounds = Q_ReadIntValueJson(object, "rounds");
 
-	GETVAL(cl->sess.rounds);
-	GETVAL(dwWeaponMask);
+	weapons = cJSON_GetObjectItem(object, "weapons");
 	for (i = WS_KNIFE; i < WS_MAX; i++)
 	{
-		if (dwWeaponMask & (1 << i))
+		tmp = cJSON_GetObjectItem(weapons, aWeaponInfo[i].pszCode);
+
+		if (tmp)
 		{
-			GETVAL(cl->sess.aWeaponStats[i].hits);
-			GETVAL(cl->sess.aWeaponStats[i].atts);
-			GETVAL(cl->sess.aWeaponStats[i].kills);
-			GETVAL(cl->sess.aWeaponStats[i].deaths);
-			GETVAL(cl->sess.aWeaponStats[i].headshots);
+			weaponsFound = qtrue;
+			cl->sess.aWeaponStats[i].hits = Q_ReadIntValueJson(tmp, "hits");
+			cl->sess.aWeaponStats[i].atts = Q_ReadIntValueJson(tmp, "atts");
+			cl->sess.aWeaponStats[i].kills = Q_ReadIntValueJson(tmp, "kills");
+			cl->sess.aWeaponStats[i].deaths = Q_ReadIntValueJson(tmp, "deaths");
+			cl->sess.aWeaponStats[i].headshots = Q_ReadIntValueJson(tmp, "headshots");
 		}
 	}
 
-	// These only gets generated when there are some weapon stats.
-	// This is what the client expects.
-	if (dwWeaponMask != 0)
+	if (weaponsFound)
 	{
-		GETVAL(cl->sess.damage_given);
-		GETVAL(cl->sess.damage_received);
-		GETVAL(cl->sess.team_damage_given);
-		GETVAL(cl->sess.team_damage_received);
+		tmp = cJSON_GetObjectItem(weapons, "_shared");
+
+		if (tmp)
+		{
+			cl->sess.damage_given = Q_ReadIntValueJson(tmp, "damage_given");
+			cl->sess.damage_received = Q_ReadIntValueJson(tmp, "damage_received");
+			cl->sess.team_damage_given = Q_ReadIntValueJson(tmp, "team_damage_given");
+			cl->sess.team_damage_received = Q_ReadIntValueJson(tmp, "team_damage_received");
+		}
+		else
+		{
+			Q_JsonError("Missing _shared object\n");
+		}
 	}
 }
 
@@ -660,20 +784,20 @@ void G_printMatchInfo(gentity_t *ent)
 			continue;
 		}
 
-		tot_timex  = 0;
-		tot_timel  = 0;
-		tot_timep  = 0;
-		tot_kills  = 0;
+		tot_timex = 0;
+		tot_timel = 0;
+		tot_timep = 0;
+		tot_kills = 0;
 		tot_deaths = 0;
-		tot_gibs   = 0;
-		tot_sk     = 0;
-		tot_tk     = 0;
-		tot_tg     = 0;
-		tot_dg     = 0;
-		tot_dr     = 0;
-		tot_tdg    = 0;
-		tot_tdr    = 0;
-		tot_xp     = 0;
+		tot_gibs = 0;
+		tot_sk = 0;
+		tot_tk = 0;
+		tot_tg = 0;
+		tot_dg = 0;
+		tot_dr = 0;
+		tot_tdg = 0;
+		tot_tdr = 0;
+		tot_xp = 0;
 
 		CP("sc \"\n\"");
 #ifdef FEATURE_RATING
@@ -686,7 +810,7 @@ void G_printMatchInfo(gentity_t *ent)
 
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
-			cl     = level.clients + level.sortedClients[j];
+			cl = level.clients + level.sortedClients[j];
 			cl_ent = g_entities + level.sortedClients[j];
 
 			if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam != i)
@@ -708,21 +832,21 @@ void G_printMatchInfo(gentity_t *ent)
 			SanitizeString(cl->pers.netname, n2, qfalse);
 			n2[15] = 0;
 
-			ref         = "^7";
-			tot_timex  += cl->sess.time_axis;
-			tot_timel  += cl->sess.time_allies;
-			tot_timep  += cl->sess.time_played;
-			tot_kills  += cl->sess.kills;
+			ref = "^7";
+			tot_timex += cl->sess.time_axis;
+			tot_timel += cl->sess.time_allies;
+			tot_timep += cl->sess.time_played;
+			tot_kills += cl->sess.kills;
 			tot_deaths += cl->sess.deaths;
-			tot_gibs   += cl->sess.gibs;
-			tot_sk     += cl->sess.self_kills;
-			tot_tk     += cl->sess.team_kills;
-			tot_tg     += cl->sess.team_gibs;
-			tot_dg     += cl->sess.damage_given;
-			tot_dr     += cl->sess.damage_received;
-			tot_tdg    += cl->sess.team_damage_given;
-			tot_tdr    += cl->sess.team_damage_received;
-			tot_xp     += (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
+			tot_gibs += cl->sess.gibs;
+			tot_sk += cl->sess.self_kills;
+			tot_tk += cl->sess.team_kills;
+			tot_tg += cl->sess.team_gibs;
+			tot_dg += cl->sess.damage_given;
+			tot_dr += cl->sess.damage_received;
+			tot_tdg += cl->sess.team_damage_given;
+			tot_tdr += cl->sess.team_damage_received;
+			tot_xp += (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
 
 			eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
 			if (eff < 0)
@@ -766,7 +890,7 @@ void G_printMatchInfo(gentity_t *ent)
 			                                            cl->sess.damage_received,
 			                                            cl->sess.team_damage_given,
 			                                            cl->sess.team_damage_received,
-			                                            (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
+			                                            (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
 #ifdef FEATURE_RATING
 			                                            ,
 			                                            Com_RoundFloatWithNDecimal(cl->sess.mu - 3 * cl->sess.sigma, 2),
@@ -1030,7 +1154,7 @@ void G_statsPrint(gentity_t *ent, int nType)
 
 	cmd = (nType == 0) ? "ws" : ((nType == 1) ? "wws" : "gstats");         // Yes, not the cleanest
 
-	// If requesting stats for self, its easy
+	// If requesting stats for self, it's easy
 	if (trap_Argc() < 2)
 	{
 		// Always send to everybody at end of match

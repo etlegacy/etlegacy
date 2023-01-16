@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -284,7 +284,7 @@ void InitBodyQue(void)
 	gentity_t *ent;
 
 	// no need to init when dyn BQ is set
-	if (g_corpses.integer > 0)
+	if (g_corpses.integer)
 	{
 		return;
 	}
@@ -1487,7 +1487,7 @@ const char *GetParsedIP(const char *ipadd)
 		return "localhost";
 	}
 
-	rc = sscanf(ipadd, "%3u.%3u.%3u.%3u:%u%c", &b1, &b2, &b3, &b4, &port, &c);
+	rc = Q_sscanf(ipadd, "%3u.%3u.%3u.%3u:%u%c", &b1, &b2, &b3, &b4, &port, &c);
 	if (rc < 4 || rc > 5)
 	{
 		return NULL;
@@ -1881,7 +1881,7 @@ void ClientUserinfoChanged(int clientNum)
 	{
 		if (cs_cg_uinfo[0])
 		{
-			sscanf(cs_cg_uinfo, "%u %u %u",
+			Q_sscanf(cs_cg_uinfo, "%u %u %u",
 			       &client->pers.clientFlags,
 			       &client->pers.clientTimeNudge,
 			       &client->pers.clientMaxPackets);

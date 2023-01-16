@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -200,7 +200,7 @@ vec3_t bytedirs[NUMVERTEXNORMALS] =
  */
 int Q_rand(int *seed)
 {
-	*seed = (69069U * *seed + 1U);
+	*seed = (int)(69069U * *seed + 1U);
 	return *seed;
 }
 
@@ -211,7 +211,7 @@ int Q_rand(int *seed)
  */
 float Q_random(int *seed)
 {
-	return (Q_rand(seed) & 0xffff) / (float)0x10000;
+	return (float)(Q_rand(seed) & 0xffff) / (float)0x10000;
 }
 
 /**

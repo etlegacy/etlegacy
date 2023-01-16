@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -54,6 +54,17 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 	{
 		*x *= cgs.r43da;    // * ((4/3) / aspectratio);
 		*w *= cgs.r43da;    // * ((4/3) / aspectratio);
+	}
+
+	// when HUD editor is enabled, adjust virtual grid to not fill the entire screen,
+	// so HUD elements scale correctly to decreased viewport
+	// mouse movement is handled separately in CG_MouseEvent
+	if (cg.editingHud)
+	{
+		*x *= 0.8f;
+		*y *= 0.8f;
+		*w *= 0.8f;
+		*h *= 0.8f;
 	}
 }
 
@@ -143,9 +154,11 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
  * @param[in] frac
  * @param[in] flags
  */
-void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags)
+void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags, qhandle_t icon)
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
+	float  x2 = x, y2 = y, w2 = w, h2 = h;
+	float  iconW, iconH;
 
 	if (frac > 1)
 	{
@@ -163,7 +176,28 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 
 	if (flags & BAR_LERP_COLOR)
 	{
-		Vector4Average(startColor, endColor, frac, colorAtPos);
+		if (endColor)
+		{
+			Vector4Average(startColor, endColor, frac, colorAtPos);
+		}
+		else
+		{
+			Vector4Scale(startColor, frac, colorAtPos);
+		}
+	}
+
+	if (flags & BAR_DECOR)
+	{
+		if (flags & BAR_VERT)
+		{
+			y += (h * 0.1f);
+			h *= 0.84f;
+		}
+		else
+		{
+			x += (w * 0.1f);
+			w *= 0.84f;
+		}
 	}
 
 	// background
@@ -210,6 +244,9 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	// adjust for horiz/vertical and draw the fractional box
 	if (flags & BAR_VERT)
 	{
+		iconW = w2;
+		iconH = iconW;
+
 		if (flags & BAR_LEFT)        // TODO: remember to swap colors on the ends here
 		{
 			y += (h * (1 - frac));
@@ -227,9 +264,35 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		{
 			CG_FillRect(x, y, w, h * frac, startColor);
 		}
+
+		if (flags & BAR_DECOR)
+		{
+			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBar);
+		}
+
+		if (flags & BAR_ICON && icon > -1)
+		{
+			float offset = 4.0f;
+			if (icon == cgs.media.hudPowerIcon)
+			{
+				iconW *= .5f;
+				x2    += iconW * .5f;
+			}
+			if (flags & BAR_LEFT)
+			{
+				CG_DrawPic(x2, y2 + h2 + offset, iconW, iconH, icon);
+			}
+			else
+			{
+				CG_DrawPic(x2, y2 - w2 - offset, iconW, iconH, icon);
+			}
+		}
 	}
 	else
 	{
+		iconH = h2;
+		iconW = iconH;
+
 		if (flags & BAR_LEFT)        // TODO: remember to swap colors on the ends here
 		{
 			x += (w * (1 - frac));
@@ -246,6 +309,29 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		else
 		{
 			CG_FillRect(x, y, w * frac, h, startColor);
+		}
+
+		if (flags & BAR_DECOR)
+		{
+			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBarHorizontal);
+		}
+
+		if (flags & BAR_ICON && icon > -1)
+		{
+			float offset = 4.0f;
+			if (icon == cgs.media.hudPowerIcon)
+			{
+				iconW *= .5f;
+			}
+
+			if (flags & BAR_LEFT)
+			{
+				CG_DrawPic(x2 + w2 + offset, y2, iconW, iconH, icon);
+			}
+			else
+			{
+				CG_DrawPic(x2 - iconW - offset, y2, iconW, iconH, icon);
+			}
 		}
 	}
 }
@@ -265,7 +351,7 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 {
 	vec4_t bgcolor = { 0.5f, 0.5f, 0.5f, 0.3f },
 	       color   = { 1.0f, 1.0f, 1.0f, 0.3f };
-	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA);
+	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA, -1);
 }
 
 /**
@@ -553,6 +639,45 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 		color[3] = 1.0;
 	}
 	color[0] = color[1] = color[2] = 1.f;
+
+	return color;
+}
+
+/**
+ * @brief CG_FadeColor_Ext fade colors with support for variable starting alpha
+ * @param[in] startMsec
+ * @param[in] totalMsec
+ * @param[in] alpha
+ * @param[out] color
+ * @return
+ */
+float *CG_FadeColor_Ext(int startMsec, int totalMsec, float alpha)
+{
+	static vec4_t color;
+	int           t;
+
+	if (startMsec == 0)
+	{
+		return NULL;
+	}
+
+	t = cg.time - startMsec;
+
+	if (t >= totalMsec)
+	{
+		return NULL;
+	}
+
+	// fade out
+	if (totalMsec - t < FADE_TIME)
+	{
+		color[3] = (totalMsec - t) * alpha / FADE_TIME;
+	}
+	else
+	{
+		color[3] = alpha;
+	}
+	color[0] = color[1] = color[2] = alpha;
 
 	return color;
 }
@@ -938,6 +1063,39 @@ void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_
 }
 
 /**
+ * @brief CG_GetMaxCharsPerLine returns maximum number of character that fit into given width
+ * @param[in]  str
+ * @param[in]  textScale
+ * @param[in]  font
+ * @param[in]  width
+ * @param[out] maxLineChars
+ */
+int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, float width)
+{
+	int maxLineChars = 0;
+	int limit        = 0;
+
+	while (str != NULL)
+	{
+		if (CG_Text_Width_Ext_Float(str, textScale, 0, font) < width)
+		{
+			maxLineChars = Q_PrintStrlen(str);
+			break;
+		}
+
+		limit++;
+		maxLineChars++;
+
+		if (CG_Text_Width_Ext_Float(str, textScale, limit, font) > width)
+		{
+			break;
+		}
+	}
+
+	return maxLineChars;
+}
+
+/**
  * @brief CG_WordWrapString breaks string onto lines respecting the maxLineChars
  * @param[in]  input
  * @param[in]  maxLineChars
@@ -958,7 +1116,7 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
 	while (input[i] && (o + 1) < maxOutputSize)
 	{
 		// split line
-		if (lineWidth >= maxLineChars)
+		if (lineWidth > maxLineChars)
 		{
 			// line might end on certain line break characters
 			if (input[i] == ' ')
@@ -1042,8 +1200,10 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
 static float CG_ComputeLinePosX(float x, float scalex, const char *text, int align, fontHelper_t *font)
 {
 	float lineW;
+	char  *endLine;
 
-	lineW = CG_Text_Width_Ext_Float(text, scalex, 0, font);
+	endLine = strchr(text, '\n');
+	lineW   = CG_Text_Width_Ext_Float(text, scalex, endLine ? endLine - text : 0, font);
 
 	switch (align)
 	{
@@ -1069,7 +1229,7 @@ static float CG_ComputeLinePosX(float x, float scalex, const char *text, int ali
  * @param[in] align
  * @param[in] font
  */
-void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font)
+void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font)
 {
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
@@ -1155,10 +1315,10 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 		if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 		{
-			float ofs = style == ITEM_TEXTSTYLE_SHADOWEDMORE ? 2 : 1;
+			const float ofs = style == ITEM_TEXTSTYLE_SHADOWED ? TEXTSTYLE_SHADOWED_OFFSET : TEXTSTYLE_SHADOWEDMORE_OFFSET;
 			colorBlack[3] = newColor[3];
 			trap_R_SetColor(colorBlack);
-			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) + ofs, lineY - yadj + ofs, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) + ofs * fontSizeX, lineY - yadj + ofs * fontSizeY, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 			colorBlack[3] = 1.0;
 			trap_R_SetColor(newColor);
 		}
@@ -1167,7 +1327,7 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 		if (style == ITEM_TEXTSTYLE_OUTLINED || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 		{
-			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) - 1, lineY - yadj - 1, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) - TEXTSTYLE_OUTLINED_OFFSET * fontSizeX, lineY - yadj - TEXTSTYLE_OUTLINED_OFFSET * fontSizeY, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 		}
 
 		lineX += (glyph->xSkip * fontSizeX) + adjust;
@@ -1197,8 +1357,9 @@ void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float 
 	rectDef_t rect = { x, y, w, h };
 	vec4_t    colour;
 	float     textboxW;
-	int       offsetX;
+	int       offsetX, offsetY;
 
+	// dropdown arrow box is square so we can get the width reduction from that
 	textboxW = rect.w - rect.h;
 	rect.x  += textboxW;
 	rect.w   = rect.h;
@@ -1237,13 +1398,15 @@ void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float 
 	CG_DrawRect_FixedBorder(rect.x, rect.y, rect.w, rect.h, 1.0f, borderColour);
 
 	offsetX = CG_Text_Width_Ext("V", scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext("V", scaley, 0, font) + rect.h) * 0.5f;
 
 	//VectorCopy(font->colour, colour);
-	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, y + 7.0f, scalex, scaley, colour, "V", 0, 0, 0, font);
+	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, y + offsetY, scalex, scaley, colour, "V", 0, 0, 0, font);
 
 	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext(text, scalex, 0, font) + rect.h) * 0.5f;
 
-	CG_Text_Paint_Ext(x + (textboxW - offsetX) / 2.0f, y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+	CG_Text_Paint_Ext(x + (textboxW - offsetX) / 2.0f, y + offsetY, scalex, scaley, fontColour, text, 0, 0, style, font);
 }
 
 /**
@@ -1268,8 +1431,9 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 	rectDef_t rect = { x, y, w, h };
 	vec4_t    colour;
 	float     textboxW;
-	int       offsetX;
+	int       offsetX, offsetY;
 
+	// dropdown arrow box is square so we can get the width reduction from that
 	textboxW = rect.w - rect.h;
 
 	rect.y += h;
@@ -1288,8 +1452,9 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 	CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
 
 	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext(text, scaley, 0, font) + rect.h) * 0.5f;
 
-	CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+	CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + offsetY, scalex, scaley, fontColour, text, 0, 0, style, font);
 
 	return rect.y;
 }
@@ -1390,7 +1555,7 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 	int          len, maxlen = 0;
 	int          w, h;
 	char         format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
-	char         *lines[16];
+	char         *lines[32];
 	int          tSpacing = 9;      // Should derive from CG_Text_Height_Ext
 	vec4_t       bgColor         ;
 	vec4_t       bgColorTitle    ;
@@ -1496,4 +1661,15 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 			CG_Text_Paint_Ext(x, y, fontText->scalex, fontText->scaley, tColor, lines[i], 0.0f, 0, fontText->style, fontText->font);
 		}
 	}
+}
+
+/**
+ * @brief CG_ComputeScale
+ * @param[in] comp
+ * @return
+ */
+float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/)
+{
+	return comp->hardScale * (comp->scale / 100.f);
+	//return (height / (Q_UTF8_GlyphScale(font) * Q_UTF8_GetGlyph(font, "A")->height)) * (scale / 100.f);
 }

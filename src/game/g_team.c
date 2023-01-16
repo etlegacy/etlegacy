@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2360,7 +2360,7 @@ void G_UpdateSpawnPointStatePlayerCounts()
 void G_UpdateSpawnPointState(gentity_t *ent)
 {
 	static char cs[MAX_STRING_CHARS];
-	if (ent == NULL)
+	if (ent == NULL || !ent->count)
 	{
 		return;
 	}
@@ -2368,9 +2368,8 @@ void G_UpdateSpawnPointState(gentity_t *ent)
 	// update state
 	VectorCopy(ent->s.origin, spawnPointState->origin);
 	spawnPointState->team = (team_t)(ent->count2 & 0xF);
-	strncpy(spawnPointState->description, ent->message, 128);
-	spawnPointState->description[127] = 0;
-	spawnPointState->isActive         = (ent->entstate == STATE_DEFAULT) ? 1 : 0;
+	Q_strncpyz(spawnPointState->description, ent->message, sizeof(spawnPointState->description));
+	spawnPointState->isActive = (ent->entstate == STATE_DEFAULT) ? 1 : 0;
 	// and update configstring
 	trap_GetConfigstring(ent->count, cs, sizeof(cs));
 	Info_SetValueForKey(cs, "s", ent->message); // spawn_targ

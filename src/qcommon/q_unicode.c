@@ -3,10 +3,10 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * Daemon GPL Source Code
- * Copyright (C) 2012-2013 Unvanquished Developers
+ * Copyright (C) 2012-2023 Unvanquished Developers
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -113,7 +113,7 @@ qboolean Q_UTF8_ValidateSingle(const char *str)
 	size_t len     = strlen(str);
 	byte   current = str[0];
 
-	if (0x00 <= current && current <= 0x7F)
+	if (current <= 0x7F)
 	{
 		utfBytes = 0; // 0XXXXXXX
 	}
@@ -163,7 +163,7 @@ qboolean Q_UTF8_Validate(const char *str)
 	{
 		current = str[i];
 
-		if (0x00 <= current && current <= 0x7F)
+		if (current <= 0x7F)
 		{
 			utfBytes = 0; // 0XXXXXXX
 		}
@@ -768,15 +768,16 @@ qboolean Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *
 	if (extended)
 	{
 		font->fontData = Com_Allocate(sizeof(fontInfo_extra_t));
+		Com_Memset(font->fontData, 0, sizeof(fontInfo_extra_t));
 		font->GetGlyph = &Q_UTF8_GetGlyphExtended;
 	}
 	else
 	{
 		font->fontData = Com_Allocate(sizeof(fontInfo_t));
+		Com_Memset(font->fontData, 0, sizeof(fontInfo_t));
 		font->GetGlyph = &Q_UTF8_GetGlyphVanilla;
 	}
 
-	Com_Memset(font->fontData, 0, sizeof(&font->fontData));
 	font_register(fontName, pointSize, font->fontData);
 
 	if (((fontInfo_t *)font->fontData)->glyphs[0].glyph == 0)
@@ -887,7 +888,7 @@ size_t Q_EscapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 	// \u{num}
 	size_t width = 0;
 	char   *str  = fromStr;
-	int    l     = 0;
+	size_t l     = 0;
 
 	while (*str)
 	{

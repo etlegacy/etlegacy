@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -459,7 +459,11 @@ void CG_GenerateTracemap(void)
 	}
 
 	// write tga
-	trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(cgs.rawmapname)), &f, FS_WRITE);
+	if (trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(cgs.rawmapname)), &f, FS_WRITE) < 0)
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_GenerateTracemap: Couldn't write '%s'\n", va("maps/%s_tracemap.tga", Q_strlwr(cgs.rawmapname)));
+		return;
+	}
 
 	// header
 	data = 0;
@@ -616,22 +620,22 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 					switch (j)
 					{
 					case 0:
-						ground_min = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						ground_min = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 1:
-						ground_max = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						ground_max = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 2:
-						skyground_min = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						skyground_min = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 3:
-						skyground_max = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						skyground_max = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 4:
-						sky_min = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						sky_min = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 5:
-						sky_max = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						sky_max = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					}
 					tracemap.sky[TRACEMAP_SIZE - 1 - i][j]       = MAX_WORLD_HEIGHT;

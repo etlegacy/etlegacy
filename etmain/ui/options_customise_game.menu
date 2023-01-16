@@ -42,7 +42,8 @@ menuDef {
 // Movement //
 #define MOVEMENT_Y 112
 	SUBWINDOW(6, MOVEMENT_Y, (SUBWINDOW_WIDTH_L), 28, _("MOVEMENT"))
-	YESNO(8, MOVEMENT_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Bobbing effect:"), .2, 8, "cg_bobbing", _("Toggle bobbing"))
+	CVARFLOATLABEL(8, MOVEMENT_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_bobbing", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 8, MOVEMENT_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("View bobbing scale:"), .2, 8, "cg_bobbing" 0 0 5, _("Scale of view bobbing effect") )
 
 // Weapons //
 #define WEAPONS_Y 146
@@ -82,7 +83,7 @@ menuDef {
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo", _("Print important game messages to the console"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 40, (SUBWINDOW_WIDTH_R)-4, 10, _("Auto-Action:"), .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, _("Perform automatic actions at the start or end of a round"))
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 52, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI"))
-	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 64, (SUBWINDOW_WIDTH_R)-4, 10, _("Log File:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the log file (if empty logging is disabled)"))
+	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 64, (SUBWINDOW_WIDTH_R)-4, 10, _("Chat Log:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the chat log file (if empty logging is disabled)"))
 	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 76, (SUBWINDOW_WIDTH_R)-4, 10, _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 18, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables."))
 
 // Buttons //

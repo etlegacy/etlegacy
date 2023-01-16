@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -33,6 +33,7 @@
  */
 
 #include "ui_local.h"
+#include "../qcommon/q_oss.h"
 
 uiInfo_t uiInfo;
 
@@ -619,12 +620,12 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 				{
-					int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+					const float ofs = style == ITEM_TEXTSTYLE_SHADOWED ? TEXTSTYLE_SHADOWED_OFFSET : TEXTSTYLE_SHADOWEDMORE_OFFSET;
 
 					colorBlack[3] = newColor[3];
 
 					trap_R_SetColor(colorBlack);
-					Text_PaintCharExt(x + (glyph->pitch * scalex) + ofs, y - yadj + ofs, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+					Text_PaintCharExt(x + (glyph->pitch * scalex) + ofs * scalex, y - yadj + ofs * scaley, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 					trap_R_SetColor(newColor);
 
 					colorBlack[3] = 1.0;
@@ -699,11 +700,11 @@ void Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, const
 
 			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 			{
-				int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+				const float ofs = style == ITEM_TEXTSTYLE_SHADOWED ? TEXTSTYLE_SHADOWED_OFFSET : TEXTSTYLE_SHADOWEDMORE_OFFSET;
 
 				colorBlack[3] = newColor[3];
 				trap_R_SetColor(colorBlack);
-				Text_PaintChar(x + (glyph->pitch * useScale) + ofs, y - yadj + ofs,
+				Text_PaintChar(x + (glyph->pitch * useScale) + ofs * useScale, y - yadj + ofs * useScale,
 				               glyph->imageWidth,
 				               glyph->imageHeight,
 				               useScale,
@@ -2933,9 +2934,8 @@ static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 
 	size = (rect->w / 96.0f) * ((size > 96.0f) ? 96.0f : ((size < 24.0f) ? 24.0f : size));
 
-	trap_R_SetColor(uiInfo.xhairColor);
+	trap_R_SetColor(colorWhite);
 	UI_DrawHandlePic(rect->x + (rect->w - size) / 2, rect->y + (rect->h - size) / 2, size, size, uiInfo.uiDC.Assets.crosshairShader[uiInfo.currentCrosshair]);
-	trap_R_SetColor(uiInfo.xhairColorAlt);
 	UI_DrawHandlePic(rect->x + (rect->w - size) / 2, rect->y + (rect->h - size) / 2, size, size, uiInfo.uiDC.Assets.crosshairAltShader[uiInfo.currentCrosshair]);
 
 	trap_R_SetColor(NULL);
@@ -4891,7 +4891,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "RunDemo") == 0)
 		{
-			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
+			if (uiInfo.demos.index < uiInfo.demos.count)
 			{
 				// Is a folder selector
 				if (!uiInfo.demos.items[uiInfo.demos.index].file)
@@ -4929,7 +4929,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "deleteDemo") == 0)
 		{
-			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
+			if (uiInfo.demos.index < uiInfo.demos.count)
 			{
 				if (uiInfo.demos.items[uiInfo.demos.index].file)
 				{
@@ -6334,7 +6334,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
-			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
 		else if (Q_stricmp(name, "ResetInternet") == 0)
 		{
@@ -6350,7 +6349,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
-			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
 		else if (Q_stricmp(name, "ResetFavorites") == 0)
 		{
@@ -6366,7 +6364,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
-			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
 		else if (Q_stricmp(name, "ResetLocal") == 0)
 		{
@@ -6382,12 +6379,11 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
-			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
-        else if (Q_stricmp(name, "edithud") == 0)
-        {
-            trap_Cmd_ExecuteText(EXEC_APPEND, "edithud\n");
-        }
+		else if (Q_stricmp(name, "edithud") == 0)
+		{
+			trap_Cmd_ExecuteText(EXEC_APPEND, "edithud\n");
+		}
 		else if (Q_stricmp(name, "SetFontScale") == 0)
 		{
 			Com_Printf("^3WARNING: deprecated/unused %s\n", name);
@@ -6938,15 +6934,43 @@ static void UI_BuildServerDisplayList(qboolean force)
 				}
 			}
 
-			trap_Cvar_Update(&ui_browserOssFilter);
-			if (ui_browserOssFilter.integer)
+			if (!ui_disableOssFilter.integer)
 			{
 				int g_oss = Q_atoi(Info_ValueForKey(info, "g_oss"));
 
-				if ((ui_browserOssFilter.integer & 4) && !(g_oss & 4))
+				if (!g_oss)
 				{
+					const char *gamename = Info_ValueForKey(info, "game");
+					if (Q_stristr(gamename, "etrun"))
+					{
+						g_oss = OSS_WIN_X86 | OSS_WIN_X86_64 | OSS_LNX_X86 | OSS_MACOS_x86_64;
+					}
+					else if (Q_stristr(gamename, "etjump"))
+					{
+						g_oss = OSS_WIN_X86 | OSS_WIN_X86_64 | OSS_LNX_X86 | OSS_LNX_X86_64 | OSS_MACOS_x86_64 | OSS_MACOS_AARCH64;
+					}
+					else if (Q_stristr(gamename, "nitmod"))
+					{
+						g_oss = OSS_WIN_X86 | OSS_LNX_X86 | OSS_LNX_X86_64 | OSS_MACOS_x86_64;
+					}
+					else
+					{
+						// safe guesstimation
+						g_oss = OSS_DEFAULT_SUPPORTED;
+					}
+
+					Com_DPrintf(S_COLOR_YELLOW "[OSS] g_oss missing setting from server setting to: %i...\n", g_oss);
+				}
+
+				if (OSS_CURRENT_PLATFORM > 0 && g_oss > 0 && !(g_oss & OSS_CURRENT_PLATFORM))
+				{
+					Com_DPrintf(S_COLOR_YELLOW "[OSS] not matching bit %i - %i\n", OSS_CURRENT_PLATFORM, g_oss);
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
+				}
+				else
+				{
+					Com_DPrintf(S_COLOR_YELLOW "[OSS] passed with g_oss: %i and: %s\n", g_oss, info);
 				}
 			}
 
@@ -8532,7 +8556,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 
 	trap_Cvar_Set("ui_menuFiles", "ui/menus.txt");   // we need to hardwire for wolfMP
 
-	// cache redundant calulations
+	// cache redundant calculations
 	trap_GetGlconfig(&uiInfo.uiDC.glconfig);
 
 	UI_ParseGLConfig();
@@ -9152,7 +9176,7 @@ vmCvar_t ui_browserModFilter;
 vmCvar_t ui_browserMapFilter;
 vmCvar_t ui_browserServerNameFilterCheckBox;
 
-vmCvar_t ui_browserOssFilter;
+vmCvar_t ui_disableOssFilter;
 
 vmCvar_t ui_serverStatusTimeOut;
 
@@ -9175,10 +9199,6 @@ vmCvar_t ui_currentCampaignCompleted;
 
 // cgame mappings
 vmCvar_t ui_blackout;       // For speclock
-vmCvar_t ui_cg_crosshairColor;
-vmCvar_t ui_cg_crosshairColorAlt;
-vmCvar_t ui_cg_crosshairAlpha;
-vmCvar_t ui_cg_crosshairAlphaAlt;
 
 vmCvar_t cl_bypassMouseInput;
 
@@ -9207,8 +9227,6 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_brassTime,                       "cg_brassTime",                        "2500",                       CVAR_ARCHIVE,                   0 },
 	{ &ui_drawCrosshair,                   "cg_drawCrosshair",                    "1",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_drawCrosshairInfo,               "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_drawCrosshairNames,              "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_drawCrosshairPickups,            "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_drawSpectatorNames,              "cg_drawSpectatorNames",               "2",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_marks,                           "cg_markTime",                         "20000",                      CVAR_ARCHIVE,                   0 },
@@ -9241,7 +9259,7 @@ static cvarTable_t cvarTable[] =
 	{ &ui_browserMapFilter,                "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE,                   0 },
 	{ &ui_browserServerNameFilterCheckBox, "ui_browserServerNameFilterCheckBox",  "0",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_browserOssFilter,                "ui_browserOssFilter",                 "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_disableOssFilter,                "ui_disableOssFilter",                 "0",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_serverStatusTimeOut,             "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE,                   0 },
 
@@ -9258,16 +9276,8 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_zoomStepSniper",                   "2",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_voiceSpriteTime",                  "6000",                       CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_drawGun",                          "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_cursorHints",                      "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_coronafardist",                    "1536",                       CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "g_password",                          "none",                       CVAR_USERINFO,                  0 },
 	{ NULL,                                "g_antilag",                           "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE, 0 },
@@ -9286,10 +9296,6 @@ static cvarTable_t cvarTable[] =
 
 	// cgame mappings
 	{ &ui_blackout,                        "ui_blackout",                         "0",                          CVAR_ROM,                       0 },
-	{ &ui_cg_crosshairAlpha,               "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
 
 	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },
@@ -9396,8 +9402,6 @@ void UI_RegisterCvars(void)
 
 	// Always force this to 0 on init
 	trap_Cvar_Set("ui_blackout", "0");
-	BG_setCrosshair(ui_cg_crosshairColor.string, uiInfo.xhairColor, ui_cg_crosshairAlpha.value, "cg_crosshairColor");
-	BG_setCrosshair(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, ui_cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 }
 
 /**
@@ -9416,16 +9420,6 @@ void UI_UpdateCvars(void)
 			if (cv->modificationCount != cv->vmCvar->modificationCount)
 			{
 				cv->modificationCount = cv->vmCvar->modificationCount;
-
-				if (cv->vmCvar == &ui_cg_crosshairColor || cv->vmCvar == &ui_cg_crosshairAlpha)
-				{
-					BG_setCrosshair(ui_cg_crosshairColor.string, uiInfo.xhairColor, ui_cg_crosshairAlpha.value, "cg_crosshairColor");
-				}
-
-				if (cv->vmCvar == &ui_cg_crosshairColorAlt || cv->vmCvar == &ui_cg_crosshairAlphaAlt)
-				{
-					BG_setCrosshair(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, ui_cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
-				}
 			}
 		}
 	}

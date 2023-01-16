@@ -9,10 +9,10 @@ on:
 
 jobs:
   docker:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
@@ -20,7 +20,7 @@ jobs:
       - name: Get the version
         id: vars
         run: |
-          echo ::set-output name=tag::$(date +%Y%m%d%H%M%S)
+          echo "tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
 
       - name: Build and push the latest Docker image
         run: |

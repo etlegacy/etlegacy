@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -41,6 +41,8 @@
 #define DEFAULT_CONSOLE_WIDTH   158
 
 int g_console_field_width = DEFAULT_CONSOLE_WIDTH;
+int smallCharWidth;
+int smallCharHeight;
 
 console_t con;
 
@@ -82,7 +84,7 @@ void Con_ToggleConsole_f(void)
 		// short console
 		if (keys[K_LCTRL].down || keys[K_RCTRL].down)
 		{
-			con.desiredFrac = (4.0f * SMALLCHAR_HEIGHT) / cls.glconfig.vidHeight;
+			con.desiredFrac = (4.0f * smallCharHeight) / cls.glconfig.vidHeight;
 		}
 		// full console
 		else if (keys[K_LALT].down || keys[K_RALT].down)
@@ -92,7 +94,7 @@ void Con_ToggleConsole_f(void)
 		// normal half-screen console
 		else
 		{
-			con.desiredFrac = Com_Clamp((4.0f * SMALLCHAR_HEIGHT) / cls.glconfig.vidHeight, 1.0f, con_defaultHeight->value);
+			con.desiredFrac = Com_Clamp((4.0f * smallCharHeight) / cls.glconfig.vidHeight, 1.0f, con_defaultHeight->value);
 		}
 	}
 }
@@ -104,7 +106,7 @@ void Con_Clear_f(void)
 {
 	int i;
 
-	for (i = 0 ; i < CON_TEXTSIZE ; i++)
+	for (i = 0; i < CON_TEXTSIZE; i++)
 	{
 		con.text[i]      = ' ';
 		con.textColor[i] = ColorIndex(CONSOLE_COLOR);
@@ -152,10 +154,10 @@ void Con_Dump_f(void)
 	Com_Printf("Dumped console text to %s.\n", filename);
 
 	// skip empty lines
-	for (l = con.current - con.maxTotalLines + 1 ; l <= con.current ; l++)
+	for (l = con.current - con.maxTotalLines + 1; l <= con.current; l++)
 	{
 		line = con.text + (l % con.maxTotalLines) * con.linewidth;
-		for (x = 0 ; x < con.linewidth ; x++)
+		for (x = 0; x < con.linewidth; x++)
 			if (line[x] != ' ')
 			{
 				break;
@@ -176,12 +178,12 @@ void Con_Dump_f(void)
 
 	// write the remaining lines
 	buffer[bufferlen - 1] = 0;
-	for ( ; l <= con.current ; l++)
+	for (; l <= con.current; l++)
 	{
 		line = con.text + (l % con.maxTotalLines) * con.linewidth;
 		for (i = 0; i < con.linewidth; i++)
 			buffer[i] = line[i] & 0xff;
-		for (x = con.linewidth - 1 ; x >= 0 ; x--)
+		for (x = con.linewidth - 1; x >= 0; x--)
 		{
 			if (buffer[x] == ' ')
 			{
@@ -211,7 +213,7 @@ void Con_ClearNotify(void)
 {
 	int i;
 
-	for (i = 0 ; i < NUM_CON_TIMES ; i++)
+	for (i = 0; i < NUM_CON_TIMES; i++)
 	{
 
 		con.times[i] = 0;
@@ -228,9 +230,16 @@ void Con_CheckResize(void)
 	int  tbuf[CON_TEXTSIZE];
 	byte tbuff[CON_TEXTSIZE];
 
+	// might happen on early init
+	if (smallCharWidth == 0)
+	{
+		smallCharWidth  = SMALLCHAR_WIDTH;
+		smallCharHeight = SMALLCHAR_HEIGHT;
+	}
+
 	// wasn't allowing for larger consoles
 	// width = (SCREEN_WIDTH / SMALLCHAR_WIDTH) - 2;
-	width = (cls.glconfig.vidWidth / SMALLCHAR_WIDTH) - 2;
+	width = (cls.glconfig.vidWidth / smallCharWidth) - 2;
 
 	if (width == con.linewidth)
 	{
@@ -279,9 +288,9 @@ void Con_CheckResize(void)
 			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
 
-		for (i = 0 ; i < numlines ; i++)
+		for (i = 0; i < numlines; i++)
 		{
-			for (j = 0 ; j < numchars ; j++)
+			for (j = 0; j < numchars; j++)
 			{
 				con.text[(con.maxTotalLines - 1 - i) * con.linewidth + j] =
 					tbuf[((con.current - i + oldtotalLines) %
@@ -320,18 +329,20 @@ void Con_Init(void)
 {
 	int i;
 
-	con_notifytime    = Cvar_Get("con_notifytime", "7", 0); // increased per id req for obits
-	con_openspeed     = Cvar_Get("con_openspeed", "3", 0);
-	con_autoclear     = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE_ND);
+	con_notifytime = Cvar_Get("con_notifytime", "7", 0);    // increased per id req for obits
+	con_openspeed  = Cvar_Get("con_openspeed", "3", 0);
+	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE_ND);
+	Cvar_Get("con_fontName", "JetBrainsMono-SemiBold", CVAR_ARCHIVE_ND);
+
 	con_background    = Cvar_GetAndDescribe("con_background", "", CVAR_ARCHIVE, "Console background color in normalized RGBA format, eg. \"0.2 0.2 0.2 0.8\".");
 	con_defaultHeight = Cvar_GetAndDescribe("con_defaultHeight", "0.5", CVAR_ARCHIVE_ND, "Default console height without key modifiers.");
 
 	Field_Clear(&g_consoleField);
-	g_consoleField.widthInChars = g_console_field_width;
-	for (i = 0 ; i < COMMAND_HISTORY ; i++)
+	g_consoleField.widthInChars = g_console_field_width / smallCharWidth - 2;
+	for (i = 0; i < COMMAND_HISTORY; i++)
 	{
 		Field_Clear(&historyEditLines[i]);
-		historyEditLines[i].widthInChars = g_console_field_width;
+		historyEditLines[i].widthInChars = g_console_field_width / smallCharWidth - 2;
 	}
 
 	Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f, "Toggles the console.");
@@ -430,7 +441,8 @@ void CL_ConsolePrint(char *txt)
 	// work around for text that shows up in console but not in notify
 	if (!Q_strncmp(txt, "[skipnotify]", 12))
 	{
-		txt += 12;
+		skipnotify = qtrue;
+		txt       += 12;
 	}
 
 	color = ColorIndex(CONSOLE_COLOR);
@@ -452,7 +464,7 @@ void CL_ConsolePrint(char *txt)
 		}
 
 		// count word length
-		for (l = 0 ; l < con.linewidth ; l++)
+		for (l = 0; l < con.linewidth; l++)
 		{
 			if (txt[l] <= ' ')
 			{
@@ -536,15 +548,15 @@ void Con_DrawVersion(void)
 
 	i = strlen(version);
 
-	for (x = 0 ; x < i ; x++)
+	for (x = 0; x < i; x++)
 	{
 		if (x > strlen(ET_VERSION))
 		{
 			re.SetColor(g_color_table[ColorIndex(COLOR_GREEN)]);
 		}
 
-		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 1) * SMALLCHAR_WIDTH,
-		                  con.scanLines - 1.25f * SMALLCHAR_HEIGHT, version[x]);
+		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 1) * smallCharWidth,
+		                  con.scanLines - 1.25f * smallCharHeight, version[x]);
 	}
 }
 
@@ -566,11 +578,11 @@ void Con_DrawClock(void)
 
 	i = strlen(clock);
 
-	for (x = 0 ; x < i ; x++)
+	for (x = 0; x < i; x++)
 	{
 		re.SetColor(g_color_table[ColorIndex(COLOR_MDGREY)]);
 
-		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 3) * SMALLCHAR_WIDTH, 0.5f * SMALLCHAR_HEIGHT, clock[x]);
+		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 3) * smallCharWidth, 0.5f * smallCharHeight, clock[x]);
 	}
 }
 
@@ -586,27 +598,27 @@ void Con_DrawInput(void)
 		return;
 	}
 
-	y = con.scanLines - 1.25f * SMALLCHAR_HEIGHT;
+	y = con.scanLines - 1.25f * smallCharHeight;
 
-	// hightlight the current autocompleted part
+	// highlight the current autocompleted part
 	if (con.highlightOffset)
 	{
 		if (strlen(g_consoleField.buffer) > 0)
 		{
 			re.SetColor(console_highlightcolor);
-			re.DrawStretchPic((2 + con.highlightOffset) * SMALLCHAR_WIDTH,
+			re.DrawStretchPic((2 + con.highlightOffset) * smallCharWidth,
 			                  y + 2,
-			                  (strlen(g_consoleField.buffer) - con.highlightOffset) * SMALLCHAR_WIDTH,
-			                  SMALLCHAR_HEIGHT - 2, 0, 0, 0, 0, cls.whiteShader);
+			                  (strlen(g_consoleField.buffer) - con.highlightOffset) * smallCharWidth,
+			                  smallCharHeight - 2, 0, 0, 0, 0, cls.whiteShader);
 		}
 	}
 
 	re.SetColor(con.color);
 
-	SCR_DrawSmallChar(SMALLCHAR_WIDTH, y, ']');
+	SCR_DrawSmallChar(smallCharWidth, y, ']');
 
-	Field_Draw(&g_consoleField, 2 * SMALLCHAR_WIDTH, y,
-	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue, qtrue);
+	Field_Draw(&g_consoleField, 2 * smallCharWidth, y,
+	           smallCharWidth - 3 * smallCharWidth, qtrue, qtrue);
 }
 
 extern cvar_t *con_numNotifies;
@@ -633,7 +645,7 @@ void Con_DrawNotify(void)
 
 	re.SetColor(g_color_table[currentColor]);
 
-	for (i = con.current - maxNotifies + 1 ; i <= con.current ; i++)
+	for (i = con.current - maxNotifies + 1; i <= con.current; i++)
 	{
 		if (i < 0)
 		{
@@ -662,7 +674,7 @@ void Con_DrawNotify(void)
 			continue;
 		}
 
-		for (x = 0 ; x < con.linewidth ; x++)
+		for (x = 0; x < con.linewidth; x++)
 		{
 			if ((text[x]) == ' ')
 			{
@@ -678,7 +690,7 @@ void Con_DrawNotify(void)
 			SCR_DrawSmallChar(cl_conXOffset->integer + (x + 1) * SMALLCHAR_WIDTH, v, text[x]);
 		}
 
-		v += SMALLCHAR_HEIGHT;
+		v += smallCharHeight;
 	}
 
 	re.SetColor(NULL);
@@ -754,9 +766,18 @@ void Con_DrawSolidConsole(float frac)
 	}
 	else
 	{
-		if (Q_ParseColorRGBA(con_background->string, color))
+		static vec4_t   consoleParsedBackgroundColor = { 0.f, 0.f, 0.f, 0.f };
+		static qboolean isParsed                     = qfalse;
+
+		if (con_background->modified)
 		{
-			SCR_FillRect(0, 0, SCREEN_WIDTH, y, color);
+			con_background->modified = qfalse;
+			isParsed                 = Q_ParseColor(con_background->string, consoleParsedBackgroundColor);
+		}
+
+		if (isParsed)
+		{
+			SCR_FillRect(0, 0, SCREEN_WIDTH, y, consoleParsedBackgroundColor);
 		}
 		else
 		{
@@ -792,16 +813,16 @@ void Con_DrawSolidConsole(float frac)
 	// draw the input prompt, user text, and cursor
 	Con_DrawInput();
 	// draw scrollbar
-	Con_DrawScrollbar(y - SMALLCHAR_HEIGHT, SCREEN_WIDTH - 5, 3);
+	Con_DrawScrollbar(y - smallCharHeight, SCREEN_WIDTH - 5, 3);
 	// draw the version number
 	Con_DrawVersion();
 	// draw system clock
 	Con_DrawClock();
 
 	// draw text
-	con.visibleLines = (con.scanLines - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT - 1;  // rows of text to draw
+	con.visibleLines = (con.scanLines - smallCharHeight) / smallCharHeight - 1;  // rows of text to draw
 
-	y = con.scanLines - 3 * SMALLCHAR_HEIGHT;
+	y = con.scanLines - 3 * smallCharHeight;
 
 	// draw from the bottom up
 	if (con.scrollIndex < con.current - 1)
@@ -814,7 +835,7 @@ void Con_DrawSolidConsole(float frac)
 
 		for (x = 0; x < con.linewidth; x += 4)
 		{
-			SCR_DrawSmallChar((x + 1) * SMALLCHAR_WIDTH, y + 0.75f * SMALLCHAR_HEIGHT, '^');
+			SCR_DrawSmallChar((x + 1) * smallCharWidth, y + 0.75f * smallCharHeight, '^');
 		}
 
 		re.SetColor(NULL);
@@ -830,7 +851,7 @@ void Con_DrawSolidConsole(float frac)
 	currentColor = 7;
 	re.SetColor(g_color_table[currentColor]);
 
-	for (i = 0 ; i < con.visibleLines; i++, y -= SMALLCHAR_HEIGHT, row--)
+	for (i = 0; i < con.visibleLines; i++, y -= smallCharHeight, row--)
 	{
 		if (row < 0)
 		{
@@ -846,7 +867,7 @@ void Con_DrawSolidConsole(float frac)
 		text      = con.text + (row % con.maxTotalLines) * con.linewidth;
 		textColor = con.textColor + (row % con.maxTotalLines) * con.linewidth;
 
-		for (x = 0 ; x < con.linewidth ; x++)
+		for (x = 0; x < con.linewidth; x++)
 		{
 			if (text[x] == ' ')
 			{
@@ -858,7 +879,7 @@ void Con_DrawSolidConsole(float frac)
 				currentColor = textColor[x];
 				re.SetColor(g_color_table[currentColor]);
 			}
-			SCR_DrawSmallChar((x + 1) * SMALLCHAR_WIDTH, y, text[x]);
+			SCR_DrawSmallChar((x + 1) * smallCharWidth, y, text[x]);
 		}
 	}
 

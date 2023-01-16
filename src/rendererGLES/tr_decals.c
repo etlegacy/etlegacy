@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1015,22 +1015,30 @@ void R_CullDecalProjectors(void)
 			continue;
 		}
 
-		// put all active projectors at the beginning
-		if (tr.refdef.numDecalProjectors > MAX_USED_DECAL_PROJECTORS && dp != &tr.refdef.decalProjectors[numDecalProjectors])
+		if (tr.refdef.numDecalProjectors > MAX_USED_DECAL_PROJECTORS)
 		{
-			// swap them
-			temp                                          = tr.refdef.decalProjectors[numDecalProjectors];
-			tr.refdef.decalProjectors[numDecalProjectors] = *dp;
-			*dp                                           = temp;
+			// put all active projectors at the beginning
+			if (dp != &tr.refdef.decalProjectors[numDecalProjectors])
+			{
+				// swap them
+				temp                                          = tr.refdef.decalProjectors[numDecalProjectors];
+				tr.refdef.decalProjectors[numDecalProjectors] = *dp;
+				*dp                                           = temp;
+			}
+
+			decalBits |= (1 << numDecalProjectors);
+			numDecalProjectors++;
+
+			// bitmask limit
+			if (numDecalProjectors == MAX_USED_DECAL_PROJECTORS)
+			{
+				break;
+			}
 		}
-
-		decalBits |= (1 << numDecalProjectors);
-		numDecalProjectors++;
-
-		// bitmask limit
-		if (numDecalProjectors == MAX_USED_DECAL_PROJECTORS)
+		else
 		{
-			break;
+			decalBits |= (1 << i);
+			numDecalProjectors = i + 1;
 		}
 	}
 

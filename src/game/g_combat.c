@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -493,6 +493,47 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			{
 				// remove nade from weapon bank
 				COM_BitClear(self->client->ps.weapons, self->client->ps.weapon);
+			}
+		}
+
+		// reduce charge time
+		if (GetWeaponTableData(self->client->ps.weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
+		{
+			int index = BG_IsSkillAvailable(self->client->sess.skill,
+			                                GetWeaponTableData(self->client->ps.weapon)->skillBased,
+			                                GetWeaponTableData(self->client->ps.weapon)->chargeTimeSkill);
+
+			float coeff = GetWeaponTableData(self->client->ps.weapon)->chargeTimeCoeff[index];
+			int   chargeTime;
+
+			switch (GetWeaponTableData(self->client->ps.weapon)->skillBased)
+			{
+			case SK_EXPLOSIVES_AND_CONSTRUCTION:              chargeTime = level.engineerChargeTime[self->client->sess.sessionTeam - 1];  break;
+			case SK_FIRST_AID:                                chargeTime = level.medicChargeTime[self->client->sess.sessionTeam - 1];     break;
+			case SK_SIGNALS:                                  chargeTime = level.fieldopsChargeTime[self->client->sess.sessionTeam - 1];  break;
+			case SK_HEAVY_WEAPONS:                            chargeTime = level.soldierChargeTime[self->client->sess.sessionTeam - 1];   break;
+			case SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS: chargeTime = level.covertopsChargeTime[self->client->sess.sessionTeam - 1]; break;
+			case SK_BATTLE_SENSE:
+			case SK_LIGHT_WEAPONS:
+			case SK_NUM_SKILLS:
+			default:                                          chargeTime = -1; break;
+			}
+
+			if (chargeTime != -1)
+			{
+				if (coeff != 1.f)
+				{
+					if (level.time - self->client->ps.classWeaponTime > chargeTime)
+					{
+						self->client->ps.classWeaponTime = level.time - chargeTime;
+					}
+
+					self->client->ps.classWeaponTime += coeff * chargeTime;
+				}
+				else
+				{
+					self->client->ps.classWeaponTime = level.time;
+				}
 			}
 		}
 	}

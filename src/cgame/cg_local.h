@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -32,7 +32,7 @@
  * @file cg_local.h
  *
  * The entire cgame module is unloaded and reloaded on each level change, so
- * there is NO persistant data between levels on the client side.
+ * there is NO persistent data between levels on the client side.
  * If you absolutely need something stored, it can either be kept by the server
  * in the server stored userinfos, or stashed in a cvar.
  */
@@ -1384,6 +1384,7 @@ typedef struct
 
 	int numMiscGameModels;
 	int numCoronas;
+	int numSpawnpointEnts;
 
 	qboolean showCampaignBriefing;
 	qboolean showGameView;
@@ -1424,8 +1425,6 @@ typedef struct
 	cg_window_t *topshotsWindow;
 	cg_window_t *windowCurrent;                     ///< Current window to update.. a bit of a hack :p
 	cg_windowHandler_t winHandler;
-	vec4_t xhairColor;
-	vec4_t xhairColorAlt;
 
 	// allow overriding of countdown sounds
 	char fiveMinuteSound_g[MAX_QPATH];
@@ -1454,6 +1453,7 @@ typedef struct
 	char maxMachineguns[MAX_QPATH];
 	char maxRockets[MAX_QPATH];
 	char maxRiflegrenades[MAX_QPATH];
+	char maxLandmines[MAX_QPATH];
 	int maxPlayers;
 
 	int binocZoomTime;
@@ -1578,6 +1578,7 @@ typedef struct
 	qhandle_t whiteShader;
 
 	qhandle_t hudSprintBar;
+	qhandle_t hudSprintBarHorizontal;
 	qhandle_t hudAxisHelmet;
 	qhandle_t hudAlliedHelmet;
 	qhandle_t hudAdrenaline;
@@ -1963,6 +1964,7 @@ typedef struct
 	qhandle_t pmImageLava;
 	qhandle_t pmImageCrush;
 	qhandle_t pmImageShove;
+	qhandle_t pmImageFall;
 
 	qhandle_t hudDamagedStates[4];
 
@@ -1979,6 +1981,8 @@ typedef struct
 	qhandle_t fireteamIcon;
 
 	qhandle_t countryFlags;         ///< GeoIP
+
+	qhandle_t spawnpointMarker;
 
 } cgMedia_t;
 
@@ -2041,6 +2045,21 @@ typedef struct cg_corona_s
 	vec3_t org;
 	vec3_t color;
 } cg_corona_t;
+
+/**
+ * @struct cg_spawnpoint_s
+ * @typedef cg_spawnpoint_t
+ * @brief
+ */
+typedef struct cg_spawnpoint_s
+{
+	vec3_t origin;
+	vec3_t color;
+	team_t team;
+	int id;
+	qboolean isMajor;
+	char name[MAX_QPATH];
+} cg_spawnpoint_t;
 
 /**
  * @struct cg_weaponstats_s
@@ -2106,11 +2125,14 @@ typedef struct oidInfo_s
 // Popup filters
 enum
 {
-	POPUP_FILTER_CONNECT  = BIT(0),
-	POPUP_FILTER_TEAMJOIN = BIT(1),
-	POPUP_FILTER_MISSION  = BIT(2),
-	POPUP_FILTER_PICKUP   = BIT(3),
-	POPUP_FILTER_DEATH    = BIT(4),
+	POPUP_FILTER_CONNECT     = BIT(0),
+	POPUP_FILTER_TEAMJOIN    = BIT(1),
+	POPUP_FILTER_MISSION     = BIT(2),
+	POPUP_FILTER_PICKUP      = BIT(3),
+	POPUP_FILTER_DEATH       = BIT(4),
+	POPUP_WEAPON_ICON        = BIT(5),
+	POPUP_WEAPON_ICON_ALT    = BIT(6),
+	POPUP_SWAP_VICTIM_KILLER = BIT(7),
 };
 
 // Big popup filters
@@ -2119,6 +2141,16 @@ enum
 	POPUP_BIG_FILTER_SKILL    = BIT(0),
 	POPUP_BIG_FILTER_RANK     = BIT(1),
 	POPUP_BIG_FILTER_PRESTIGE = BIT(2),
+};
+
+// Compass
+enum
+{
+	COMPASS_SQUARE               = BIT(0),
+	COMPASS_ITEM                 = BIT(1),
+	COMPASS_SECONDARY_OBJECTIVES = BIT(2),
+	COMPASS_PRIMARY_OBJECTIVES   = BIT(3),
+
 };
 
 /// Locations
@@ -2160,6 +2192,17 @@ enum
 	BAR_LERP_COLOR     = BIT(7),
 	BAR_BORDER         = BIT(8),
 	BAR_BORDER_SMALL   = BIT(9),
+	BAR_DECOR          = BIT(10),
+	BAR_ICON           = BIT(11),
+};
+
+enum
+{
+	GAMESTATS_KILL           = BIT(0),
+	GAMESTATS_DEATH          = BIT(1),
+	GAMESTATS_SELFKILL       = BIT(2),
+	GAMESTATS_DAMAGEGIVEN    = BIT(3),
+	GAMESTATS_DAMAGERECEIVED = BIT(4),
 };
 
 /**
@@ -2484,6 +2527,7 @@ typedef struct cgs_s
 
 	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
 	cg_corona_t corona[MAX_GAMECORONAS];
+	cg_spawnpoint_t spawnpointEnt[MAX_GENTITIES];
 
 	vec2_t ccMenuPos;
 	qboolean ccMenuShowing;
@@ -2563,19 +2607,28 @@ typedef struct cgs_s
 
 	// MAPVOTE
 	int dbMapVoteListOffset;
+	int dbMapsHistoryCount;
+	int dbMapsHistoryCountList;
+	int dbMapsHistory[333];
+	int dbMapsHistoryList[32];
 	int dbNumMaps;
 	char dbMaps[MAX_VOTE_MAPS][MAX_QPATH];
 	char dbMapDispName[MAX_VOTE_MAPS][128];
 	char dbMapDescription[MAX_VOTE_MAPS][1024];
 	int dbMapVotes[MAX_VOTE_MAPS];
 	int dbMapVotesSum;
+	int dbMapVoterCount;
+	int dbMapPlayerCount;
 	int dbMapID[MAX_VOTE_MAPS];
-	int dbMapLastPlayed[MAX_VOTE_MAPS];
-	int dbMapTotalVotes[MAX_VOTE_MAPS];
+	int dbMapLastPlayed;
+	int dbMapLastPlayedList[MAX_VOTE_MAPS];
+	int dbMapTimesPlayed[MAX_VOTE_MAPS];
+	int dbMapBias[MAX_VOTE_MAPS];
 	int dbSelectedMap;
 	int dbSelectedMapTime;
 	qhandle_t dbSelectedMapLevelShots;
 	qboolean dbMapListReceived;
+	qboolean dbMapHistoryReceived;
 	qboolean dbVoteTallyReceived;
 	qboolean dbMapMultiVote;
 	int dbMapVotedFor[3];
@@ -2624,14 +2677,11 @@ extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
 extern vmCvar_t cg_drawCrosshair;
-extern vmCvar_t cg_drawCrosshairInfo;
-extern vmCvar_t cg_drawCrosshairNames;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_drawSpectatorNames;
 extern vmCvar_t cg_useWeapsForZoom;
 extern vmCvar_t cg_weaponCycleDelay;
 extern vmCvar_t cg_cycleAllWeaps;
-extern vmCvar_t cg_crosshairHealth;
 extern vmCvar_t cg_drawStatus;
 extern vmCvar_t cg_animSpeed;
 extern vmCvar_t cg_debugAnim;
@@ -2650,7 +2700,6 @@ extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;
 extern vmCvar_t cg_drawGun;
 extern vmCvar_t cg_weapAnims;
-extern vmCvar_t cg_cursorHints;
 extern vmCvar_t cg_letterbox;
 extern vmCvar_t cg_tracerChance;
 extern vmCvar_t cg_tracerWidth;
@@ -2660,7 +2709,6 @@ extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
 extern vmCvar_t cg_drawEnvAwareness;
-extern vmCvar_t cg_drawCompassIcons;
 extern vmCvar_t cg_dynamicIcons;
 extern vmCvar_t cg_dynamicIconsDistance;
 extern vmCvar_t cg_dynamicIconsSize;
@@ -2723,14 +2771,7 @@ extern vmCvar_t cg_autoReload;
 extern vmCvar_t cg_bloodDamageBlend;
 extern vmCvar_t cg_bloodFlash;
 extern vmCvar_t cg_bloodFlashTime;
-extern vmCvar_t cg_complaintPopUp;
-extern vmCvar_t cg_crosshairAlpha;
-extern vmCvar_t cg_crosshairAlphaAlt;
-extern vmCvar_t cg_crosshairColor;
-extern vmCvar_t cg_crosshairColorAlt;
-extern vmCvar_t cg_crosshairPulse;
 extern vmCvar_t cg_drawReinforcementTime;
-extern vmCvar_t cg_drawWeaponIconFlash;
 extern vmCvar_t cg_noAmmoAutoSwitch;
 extern vmCvar_t cg_printObjectiveInfo;
 #ifdef FEATURE_MULTIVIEW
@@ -2811,15 +2852,10 @@ extern vmCvar_t cg_sharetimerText;
 
 extern vmCvar_t cg_automapZoom;
 
-extern vmCvar_t cg_drawTime;
-
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
 extern vmCvar_t cg_popupTime;
 extern vmCvar_t cg_numPopups;
-extern vmCvar_t cg_popupFilter;
-extern vmCvar_t cg_popupBigFilter;
-extern vmCvar_t cg_graphicObituaries;
 
 extern vmCvar_t cg_fontScaleSP;
 
@@ -2856,17 +2892,33 @@ extern vmCvar_t cg_drawBreathPuffs;
 extern vmCvar_t cg_customFont1;
 extern vmCvar_t cg_customFont2;
 
-// local clock flags
-#define LOCALTIME_ON                0x01
-#define LOCALTIME_SECOND            0x02
-#define LOCALTIME_12HOUR            0x04
+extern vmCvar_t cg_drawSpawnpoints;
 
-// crosshair name flags
-#define CROSSHAIR_CLASS             0x01
-#define CROSSHAIR_RANK              0x02
-#ifdef FEATURE_PRESTIGE
-#define CROSSHAIR_PRESTIGE          0x04
-#endif
+// local clock flags
+enum
+{
+	LOCALTIME_SECOND = BIT(0),
+	LOCALTIME_12HOUR = BIT(1),
+};
+
+// crosshairs flags
+enum
+{
+	CROSSHAIR_PULSE             = BIT(0),
+	CROSSHAIR_PULSE_ALT         = BIT(1),
+	CROSSHAIR_DYNAMIC_COLOR     = BIT(2),
+	CROSSHAIR_DYNAMIC_COLOR_ALT = BIT(3),
+	CROSSHAIR_HIDE_MAIN         = BIT(4),
+	CROSSHAIR_HIDE_ALT          = BIT(5),
+};
+
+// crosshair bar flags
+enum
+{
+	CROSSHAIR_BAR_CLASS    = BIT(0),
+	CROSSHAIR_BAR_RANK     = BIT(1),
+	CROSSHAIR_BAR_PRESTIGE = BIT(2),
+};
 
 // projectile spawn effects at destination
 #define PS_FX_NONE   0
@@ -2956,7 +3008,7 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader);
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
-void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags);
+void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags, qhandle_t icon);
 void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
                         const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
 float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
@@ -2965,6 +3017,7 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
 
 float *CG_FadeColor(int startMsec, int totalMsec);
+float *CG_FadeColor_Ext(int startMsec, int totalMsec, float alpha);
 float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMsec, int attackMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
@@ -2975,10 +3028,11 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
 void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, vec3_t origin);
 
+int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, float width);
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
 // draws multiline strings
-void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
+void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
 // new hud stuff
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);
@@ -3048,8 +3102,13 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
 // draws vertical scrolling string
 void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
 
+// cg_hud_io.c
+float CG_AdjustXFromHudFile(float x, float w);
+qboolean CG_WriteHudsToFile();
+qboolean CG_TryReadHudFromFile(const char *filename);
+void CG_ReadHudsFromFile(void);
+
 // cg_draw_hud.c
-void CG_ReadHudScripts(void);
 void CG_Hud_Setup(void);
 void CG_DrawUpperRight(void);
 void CG_SetHud(void);
@@ -3065,7 +3124,7 @@ float CG_CalculateReinfTime_Float(qboolean menu);
 int CG_CalculateShoutcasterReinfTime(team_t team);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo);
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color);
 
 //cg_shoutcastoverlay.c
 
@@ -3073,6 +3132,8 @@ void CG_DrawShoutcastPlayerList(void);
 void CG_DrawShoutcastPlayerStatus(void);
 void CG_DrawShoutcastTimer(void);
 void CG_DrawShoutcastPowerups(void);
+void CG_RequestPlayerStats(int clientNum);
+char *CG_ParseStats(char *data, int i);
 
 void CG_ToggleShoutcasterMode(int shoutcaster);
 void CG_ShoutcastCheckKeyCatcher(int keycatcher);
@@ -3094,6 +3155,7 @@ int CG_GetPlayerMaxHealth(int clientNum, int class, int team);
 void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
+void CG_TraceCapsule(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
 void CG_PredictPlayerState(void);
 float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def);
 
@@ -3330,6 +3392,7 @@ char *CG_SpawnTimerText(void);
 // cg_consolecmds.c
 extern const char *aMonths[12];
 qboolean CG_ConsoleCommand(void);
+qboolean CG_ConsoleCompleteArgument(void);
 void CG_InitConsoleCommands(void);
 void CG_ScoresDown_f(void);
 void CG_ScoresUp_f(void);
@@ -3364,7 +3427,9 @@ void CG_TeamRestrictionsChanged(void);
 void CG_SkillLevelsChanged(void);
 void CG_LoadVoiceChats(void);
 void CG_PlayBufferedVoiceChats(void);
+void CG_AddToTeamChat(const char *str, int clientnum);
 void CG_AddToNotify(const char *str);
+void CG_AddToBannerPrint(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
@@ -3386,9 +3451,16 @@ typedef struct
 	void (*function)(void);
 } consoleCommand_t;
 
+typedef struct
+{
+	const char *cmd;
+	void (*complete)(void);
+} commandComplete_t;
+
 // cg_playerstate.c
 void CG_Respawn(qboolean revived);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
+void CG_ResetTimers(void);
 
 //===============================================
 
@@ -3422,7 +3494,7 @@ void trap_Args(char *buffer, int bufferLength);
 // returns length of file
 int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
 void trap_FS_Read(void *buffer, int len, fileHandle_t f);
-void trap_FS_Write(const void *buffer, int len, fileHandle_t f);
+int trap_FS_Write(const void *buffer, int len, fileHandle_t f);
 void trap_FS_FCloseFile(fileHandle_t f);
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
 int trap_FS_Delete(const char *filename);
@@ -3641,12 +3713,12 @@ int trap_R_GetTextureId(const char *name);
 void trap_R_Finish(void);
 
 // extension interface
-extern qboolean flashWindowSupported;
-
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_SysFlashWindow(int state);
+void trap_CommandComplete(char *value);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
+extern int dll_trap_CommandComplete;
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 
@@ -4040,10 +4112,12 @@ void CG_DeActivateCameraEditor(void);
 void CG_ClearCamera(void);
 void CG_CameraAddCurrentPoint(void);
 void CG_AddControlPoint(void);
-void CG_PlayCurrentCamera(int seconds);
+void CG_PlayCurrentCamera(unsigned int seconds);
 
 void CG_RunCamera(void);
 void CG_RenderCameraPoints(void);
+
+void CG_CameraCommandComplete(void);
 
 // hitsounds flags
 /**
@@ -4068,7 +4142,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 47
+#define HUD_COMPONENTS_NUM 50
 
 typedef struct hudComponent_s
 {
@@ -4076,20 +4150,27 @@ typedef struct hudComponent_s
 	int visible;
 	int style;
 	float scale;
-	vec4_t colorText;
+	vec4_t colorMain;
+	vec4_t colorSecondary;
 	int showBackGround;
 	vec4_t colorBackground;
 	int showBorder;
 	vec4_t colorBorder;
 	int styleText;
 	int alignText;
+	int autoAdjust;
 	int offset;
+	float hardScale; ///< Runtime computed value
+	qboolean parsed; ///< Used to notify that the component has been setup via file
 	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
 
 typedef struct hudStructure_s
 {
+	char name[MAX_QPATH];
 	int hudnumber;
+	int parent;
+
 	hudComponent_t compass;
 	hudComponent_t staminabar;
 	hudComponent_t breathbar;
@@ -4142,11 +4223,44 @@ typedef struct hudStructure_s
 	hudComponent_t centerprint;
 	hudComponent_t banner;
 	hudComponent_t crosshair;
+	hudComponent_t crosshairtext;
+	hudComponent_t crosshairbar;
+	hudComponent_t stats;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
 
+#define MAXHUDS 32
+#define MAXSTYLES 16
+#define CURRENT_HUD_JSON_VERSION 1
+
+extern hudStucture_t hudlist[MAXHUDS];
+extern hudStucture_t *activehud;
+extern int           hudCount;
+
+typedef struct
+{
+	char *name;
+	size_t offset;
+	qboolean isAlias;
+	void (*draw)(hudComponent_t *comp);
+	float scale;
+	char *styles[MAXSTYLES];
+
+} hudComponentFields_t;
+
+typedef struct
+{
+	char *name;
+	size_t offset;
+	qboolean (*parse)(int *argIndex, hudComponent_t *comp, int offset);
+} hudComponentMembersFields_t;
+
 hudStucture_t *CG_GetActiveHUD();
+hudStucture_t *CG_AddHudToList(hudStucture_t *hud);
+hudStucture_t *CG_GetHudByNumber(int number);
+void CG_setDefaultHudValues(hudStucture_t *hud);
+void CG_HudComponentsFill(hudStucture_t *hud);
 
 void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);
@@ -4168,9 +4282,55 @@ void CG_DrawWeapStability(hudComponent_t *comp);
 void CG_DrawCursorhint(hudComponent_t *comp);
 void CG_DrawCrosshair(hudComponent_t *comp);
 
+void CG_DrawPlayerStatusHead(hudComponent_t *comp);
+void CG_DrawGunIcon(hudComponent_t *comp);
+void CG_DrawAmmoCount(hudComponent_t *comp);
+void CG_DrawPowerUps(hudComponent_t *comp);
+void CG_DrawObjectiveStatus(hudComponent_t *comp);
+void CG_DrawPlayerHealthBar(hudComponent_t *comp);
+void CG_DrawStaminaBar(hudComponent_t *comp);
+void CG_DrawBreathBar(hudComponent_t *comp);
+void CG_DrawWeapRecharge(hudComponent_t *comp);
+void CG_DrawPlayerHealth(hudComponent_t *comp);
+void CG_DrawPlayerSprint(hudComponent_t *comp);
+void CG_DrawPlayerBreath(hudComponent_t *comp);
+void CG_DrawWeaponCharge(hudComponent_t *comp);
+void CG_DrawSkills(hudComponent_t *comp);
+void CG_DrawXP(hudComponent_t *comp);
+void CG_DrawRank(hudComponent_t *comp);
+void CG_DrawLivesLeft(hudComponent_t *comp);
+void CG_DrawRespawnTimer(hudComponent_t *comp);
+void CG_DrawSpawnTimer(hudComponent_t *comp);
+void CG_DrawLocalTime(hudComponent_t *comp);
+void CG_DrawRoundTimer(hudComponent_t *comp);
+void CG_DrawDemoMessage(hudComponent_t *comp);
+void CG_DrawFPS(hudComponent_t *comp);
+void CG_DrawSnapshot(hudComponent_t *comp);
+void CG_DrawPing(hudComponent_t *comp);
+void CG_DrawSpeed(hudComponent_t *comp);
+void CG_DrawLagometer(hudComponent_t *comp);
+void CG_DrawDisconnect(hudComponent_t *comp);
+void CG_DrawPlayerStats(hudComponent_t *comp);
+void CG_DrawCrosshairNames(hudComponent_t *comp);
+void CG_DrawCrosshairHealthBar(hudComponent_t *comp);
+
+/**
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDMF(x) # x, offsetof(hudComponent_t, x)
+extern const hudComponentMembersFields_t hudComponentMembersFields[];
+
+/**
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDF(x) # x, offsetof(hudStucture_t, x), qfalse
+extern const hudComponentFields_t hudComponentFields[];
+
+
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);
 
+qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete);
 void CG_HudEditorSetup(void);
 void CG_DrawHudEditor(void);
 void CG_HudEditor_KeyHandling(int key, qboolean down);
@@ -4185,5 +4345,7 @@ typedef struct
 void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const helpType_t *help, unsigned int cmdNumber,
                        const vec4_t bgColor, const vec4_t borderColor, const vec4_t bgColorTitle, const vec4_t borderColorTitle,
                        panel_button_text_t *fontHeader, panel_button_text_t *fontText);
+
+float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
 
 #endif // #ifndef INCLUDE_CG_LOCAL_H

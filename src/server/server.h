@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -161,6 +161,7 @@ typedef struct
 	playerState_t demoPlayerStates[MAX_CLIENTS];
 	svdemoPlayerStats_t demoPlayerStats[100];
 
+	int lastAttackLogTime;                  ///< timestamp of latest attack log entry
 } server_t;
 
 /**
@@ -471,6 +472,7 @@ extern cvar_t *sv_advert;
 
 extern cvar_t *sv_protect;
 extern cvar_t *sv_protectLog;
+extern cvar_t *sv_protectLogInterval;
 
 #ifdef FEATURE_ANTICHEAT
 extern cvar_t *sv_wh_active;

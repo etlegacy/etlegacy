@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -41,6 +41,9 @@
 #include "../botlib/botlib.h"
 
 extern botlib_export_t *botlib_export;
+
+#define TRAP_EXTENSIONS_LIST NULL
+#include "../qcommon/vm_ext.h"
 
 vm_t *uivm;
 
@@ -923,7 +926,8 @@ qboolean LAN_ServerIsInFavoriteList(int source, int n)
  */
 static void CL_GetGlconfig(glconfig_t *config)
 {
-	*config = cls.glconfig;
+	// make sure we are only copying over vanilla data
+	memcpy(config, &cls.glconfig, offsetof(glconfig_t, smpActive) + sizeof(qboolean));
 }
 
 /**
@@ -1052,18 +1056,6 @@ static int FloatAsInt(float f)
 
 	fi.f = f;
 	return fi.i;
-}
-
-/**
- * @brief Get engine value
- * @param[out] value buffer
- * @param[in] valueSize buffer size
- * @param[in] key to query
- * @return true if value for key is found
- */
-static qboolean CL_UI_GetValue(char *value, int valueSize, const char *key)
-{
-	return qfalse;
 }
 
 /**
@@ -1376,7 +1368,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_SET_PBSVSTATUS:
 		return 0;
 	case UI_TRAP_GETVALUE:
-		return CL_UI_GetValue(VMA(1), args[2], VMA(3));
+		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
 	default:
 		Com_Error(ERR_DROP, "Bad UI system trap: %ld", (long int) args[0]);
 	}
@@ -1406,6 +1398,9 @@ void CL_ShutdownUI(void)
 void CL_InitUI(void)
 {
 	int v;
+
+	// mark all extensions as inactive
+	VM_Ext_ResetActive();
 
 	uivm = VM_Create("ui", qtrue, CL_UISystemCalls, VMI_NATIVE);
 	if (!uivm)

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -3693,7 +3693,7 @@ void SP_props_decoration(gentity_t *ent)
 		}
 
 		G_SpawnString("high", "0", &high);
-		height = (float)atof(high);
+		height = Q_atof(high);
 
 		if (height == 0.f)
 		{
@@ -3701,7 +3701,7 @@ void SP_props_decoration(gentity_t *ent)
 		}
 
 		G_SpawnString("wide", "0", &wide);
-		width = (float)atof(wide);
+		width = Q_atof(wide);
 
 		if (width == 0.f)
 		{
@@ -3721,7 +3721,7 @@ void SP_props_decoration(gentity_t *ent)
 		ent->s.eType    = ET_MOVER;
 
 		G_SpawnString("frames", "0", &frames);
-		num_frames = (float)atof(frames);
+		num_frames = Q_atof(frames);
 
 		ent->count2 = (int)num_frames;
 
@@ -3736,7 +3736,7 @@ void SP_props_decoration(gentity_t *ent)
 	else if (!(ent->health) && (ent->spawnflags & 4))
 	{
 		G_SpawnString("frames", "0", &frames);
-		num_frames = (float)atof(frames);
+		num_frames = Q_atof(frames);
 
 		ent->count2 = (int)num_frames;
 		ent->use    = Use_props_decoration;
@@ -3870,7 +3870,7 @@ void SP_skyportal(gentity_t *ent)
 	float  fov_x;
 
 	G_SpawnString("fov", "90", &fov);
-	fov_x = (float)atof(fov);
+	fov_x = Q_atof(fov);
 
 	isfog += G_SpawnVector("fogcolor", "0 0 0", fogv);
 	isfog += G_SpawnInt("fognear", "0", &fogn);
@@ -4146,14 +4146,14 @@ void SP_props_statue(gentity_t *ent)
 	}
 
 	G_SpawnString("high", "0", &high);
-	height = (float)atof(high);
+	height = Q_atof(high);
 	if (height == 0.f)
 	{
 		height = 4;
 	}
 
 	G_SpawnString("wide", "0", &wide);
-	width = (float)atof(wide);
+	width = Q_atof(wide);
 
 	if (width == 0.f)
 	{
@@ -4173,7 +4173,7 @@ void SP_props_statue(gentity_t *ent)
 	ent->s.eType    = ET_MOVER;
 
 	G_SpawnString("frames", "0", &frames);
-	num_frames = (float)atof(frames);
+	num_frames = Q_atof(frames);
 
 	ent->count2 = (int)num_frames;
 
@@ -4767,7 +4767,7 @@ void SP_props_flamethrower(gentity_t *ent)
 	}
 
 	G_SpawnString("size", "0", &size);
-	dsize = (float)atof(size);
+	dsize = Q_atof(size);
 	if (dsize == 0.f)
 	{
 		dsize = 1;

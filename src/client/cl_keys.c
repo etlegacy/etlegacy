@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -194,7 +194,7 @@ keyname_t keynames[] =
 
 	{ "PAUSE",           K_PAUSE          },
 
-	{ "SEMICOLON",       ';'              }, // because a raw semicolon seperates commands
+	{ "SEMICOLON",       ';'              },  // because a raw semicolon seperates commands
 
 	{ "US_0",            K_0              },
 	{ "US_1",            K_1              },
@@ -218,8 +218,8 @@ keyname_t keynames[] =
 	{ "US_COMMA",        K_COMMA          },
 	{ "US_PERIOD",       K_PERIOD         },
 	{ "US_SLASH",        K_SLASH          },
-	{ "US_BACKSLASH",    K_NONUSBACKSLASH },
 
+	{ "NONUSBACKSLASH",  K_NONUSBACKSLASH },
 	{ "WINDOWS",         K_SUPER          },
 	{ "COMPOSE",         K_COMPOSE        },
 	{ "MODE",            K_MODE           },
@@ -336,7 +336,7 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
  */
 void Field_Draw(field_t *edit, int x, int y, int width, qboolean showCursor, qboolean noColorEscape)
 {
-	Field_VariableSizeDraw(edit, x, y, width, SMALLCHAR_WIDTH, showCursor, noColorEscape);
+	Field_VariableSizeDraw(edit, x, y, width, smallCharWidth, showCursor, noColorEscape);
 }
 
 /**
@@ -1573,8 +1573,8 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		{
 			if (key >= 200)
 			{
-				Com_Printf("%s (key %i) is unbound, use controls menu to set.\n"
-				           , Key_KeynumToString(key), key);
+				Com_DPrintf("%s (key %i) is unbound, use controls menu to set.\n"
+				            , Key_KeynumToString(key), key);
 			}
 		}
 		else if (kb[0] == '+')

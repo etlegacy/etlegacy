@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -43,9 +43,9 @@ qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
 extern qboolean  g_waitingForKey;
 
-qboolean flashWindowSupported = qfalse;
 int dll_com_trapGetValue;
 int dll_trap_SysFlashWindow;
+int dll_trap_CommandComplete;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -113,6 +113,8 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return (g_waitingForKey && g_bindItem) ? qtrue : qfalse;
 	case CG_MESSAGERECEIVED:
 		return -1;
+	case CG_CONSOLE_COMPLETE_ARGUMENT:
+		return CG_ConsoleCompleteArgument();
 	default:
 		CG_Error("vmMain: unknown command %li", (long)command);
 		break;
@@ -133,14 +135,11 @@ vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
 vmCvar_t cg_drawCrosshair;
-vmCvar_t cg_drawCrosshairInfo;
-vmCvar_t cg_drawCrosshairNames;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
 vmCvar_t cg_weaponCycleDelay;
 vmCvar_t cg_cycleAllWeaps;
 vmCvar_t cg_useWeapsForZoom;
-vmCvar_t cg_crosshairHealth;
 vmCvar_t cg_teamChatsOnly;
 vmCvar_t cg_voiceChats;
 vmCvar_t cg_voiceText;
@@ -159,7 +158,6 @@ vmCvar_t cg_brassTime;
 vmCvar_t cg_letterbox;
 vmCvar_t cg_drawGun;
 vmCvar_t cg_weapAnims;
-vmCvar_t cg_cursorHints;
 vmCvar_t cg_gun_frame;
 vmCvar_t cg_gun_x;
 vmCvar_t cg_gun_y;
@@ -191,7 +189,6 @@ vmCvar_t cg_paused;
 vmCvar_t cg_blood;
 vmCvar_t cg_predictItems;
 vmCvar_t cg_drawEnvAwareness;
-vmCvar_t cg_drawCompassIcons;
 vmCvar_t cg_dynamicIcons;
 vmCvar_t cg_dynamicIconsDistance;
 vmCvar_t cg_dynamicIconsSize;
@@ -235,14 +232,7 @@ vmCvar_t cg_autoReload;
 vmCvar_t cg_bloodDamageBlend;
 vmCvar_t cg_bloodFlash;
 vmCvar_t cg_bloodFlashTime;
-vmCvar_t cg_complaintPopUp;
-vmCvar_t cg_crosshairAlpha;
-vmCvar_t cg_crosshairAlphaAlt;
-vmCvar_t cg_crosshairColor;
-vmCvar_t cg_crosshairColorAlt;
-vmCvar_t cg_crosshairPulse;
 vmCvar_t cg_drawReinforcementTime;
-vmCvar_t cg_drawWeaponIconFlash;
 vmCvar_t cg_noAmmoAutoSwitch;
 vmCvar_t cg_printObjectiveInfo;
 #ifdef FEATURE_MULTIVIEW
@@ -327,15 +317,10 @@ vmCvar_t cg_simpleItemsScale;
 
 vmCvar_t cg_automapZoom;
 
-vmCvar_t cg_drawTime;
-
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
 vmCvar_t cg_popupTime;
 vmCvar_t cg_numPopups;
-vmCvar_t cg_popupFilter;
-vmCvar_t cg_popupBigFilter;
-vmCvar_t cg_graphicObituaries;
 
 vmCvar_t cg_fontScaleSP; // side print
 
@@ -370,6 +355,8 @@ vmCvar_t cg_drawBreathPuffs;
 vmCvar_t cg_customFont1;
 vmCvar_t cg_customFont2;
 
+vmCvar_t cg_drawSpawnpoints;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -385,7 +372,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawGun,                 "cg_drawGun",                 "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapAnims,               "cg_weapAnims",               "15",          CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_frame,               "cg_gun_frame",               "0",           CVAR_TEMP,                    0 },
-	{ &cg_cursorHints,             "cg_cursorHints",             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_zoomDefaultSniper,       "cg_zoomDefaultSniper",       "20",          CVAR_ARCHIVE,                 0 }, // changed per atvi req
 	{ &cg_zoomStepSniper,          "cg_zoomStepSniper",          "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fov,                     "cg_fov",                     "90",          CVAR_ARCHIVE,                 0 },
@@ -400,23 +386,19 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawStatus,              "cg_drawStatus",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                 "cg_drawFPS",                 "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,           "cg_drawCrosshair",           "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCrosshairInfo,       "cg_drawCrosshairInfo",       "7",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCrosshairNames,      "cg_drawCrosshairNames",      "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,    "cg_drawCrosshairPickups",    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,      "cg_drawSpectatorNames",      "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,         "cg_useWeapsForZoom",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weaponCycleDelay,        "cg_weaponCycleDelay",        "150",         CVAR_ARCHIVE,                 0 },
 	{ &cg_cycleAllWeaps,           "cg_cycleAllWeaps",           "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairHealth,         "cg_crosshairHealth",         "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_brassTime,               "cg_brassTime",               "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_markTime,                "cg_markTime",                "20000",       CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_x,                   "cg_gunX",                    "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_y,                   "cg_gunY",                    "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_z,                   "cg_gunZ",                    "0",           CVAR_TEMP,                    0 },
 	{ &cg_centertime,              "cg_centertime",              "5",           CVAR_ARCHIVE,                 0 }, // changed from 3 to 5
-	{ &cg_bobbing,                 "cg_bobbing",                 "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_bobbing,                 "cg_bobbing",                 "0.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawEnvAwareness,        "cg_drawEnvAwareness",        "7",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCompassIcons,        "cg_drawCompassIcons",        "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIcons,            "cg_dynamicIcons",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIconsDistance,    "cg_dynamicIconsDistance",    "400",         CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIconsSize,        "cg_dynamicIconsSize",        "20",          CVAR_ARCHIVE,                 0 },
@@ -498,14 +480,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_bloodDamageBlend,        "cg_bloodDamageBlend",        "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlash,              "cg_bloodFlash",              "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlashTime,          "cg_bloodFlashTime",          "1500",        CVAR_ARCHIVE,                 0 },
-	{ &cg_complaintPopUp,          "cg_complaintPopUp",          "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairAlpha,          "cg_crosshairAlpha",          "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairAlphaAlt,       "cg_crosshairAlphaAlt",       "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairColor,          "cg_crosshairColor",          "White",       CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairColorAlt,       "cg_crosshairColorAlt",       "White",       CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairPulse,          "cg_crosshairPulse",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawReinforcementTime,   "cg_drawReinforcementTime",   "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawWeaponIconFlash,     "cg_drawWeaponIconFlash",     "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_noAmmoAutoSwitch,        "cg_noAmmoAutoSwitch",        "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_printObjectiveInfo,      "cg_printObjectiveInfo",      "1",           CVAR_ARCHIVE,                 0 },
 #ifdef FEATURE_MULTIVIEW
@@ -592,14 +567,10 @@ static cvarTable_t cvarTable[] =
 	{ &cg_simpleItems,             "cg_simpleItems",             "0",           CVAR_ARCHIVE,                 0 }, // Bugged atm
 	{ &cg_simpleItemsScale,        "cg_simpleItemsScale",        "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_automapZoom,             "cg_automapZoom",             "5.159",       CVAR_ARCHIVE,                 0 },
-	{ &cg_drawTime,                "cg_drawTime",                "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_popupFadeTime,           "cg_popupFadeTime",           "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_popupStayTime,           "cg_popupStayTime",           "2000",        CVAR_ARCHIVE,                 0 },
 	{ &cg_popupTime,               "cg_popupTime",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_numPopups,               "cg_numPopups",               "7",           CVAR_ARCHIVE,                 0 },
-	{ &cg_popupFilter,             "cg_popupFilter",             "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_popupBigFilter,          "cg_popupBigFilter",          "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_graphicObituaries,       "cg_graphicObituaries",       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,          "cg_weapaltReloads",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,         "cg_weapaltSwitches",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_sharetimerText,          "cg_sharetimerText",          "",            CVAR_ARCHIVE,                 0 },
@@ -630,6 +601,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_activateLean,            "cg_activateLean",            "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawBreathPuffs,         "cg_drawBreathPuffs",         "1",           CVAR_ARCHIVE,                 0 },
+
+	{ &cg_drawSpawnpoints,         "cg_drawSpawnpoints",         "0",           CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -679,8 +652,6 @@ void CG_RegisterCvars(void)
 
 	// um, here, why?
 	CG_setClientFlags();
-	BG_setCrosshair(cg_crosshairColor.string, cg.xhairColor, cg_crosshairAlpha.value, "cg_crosshairColor");
-	BG_setCrosshair(cg_crosshairColorAlt.string, cg.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 
 	cvarsLoaded = qtrue;
 }
@@ -715,14 +686,6 @@ void CG_UpdateCvars(void)
 				    cv->vmCvar == &cg_activateLean)
 				{
 					fSetFlags = qtrue;
-				}
-				else if (cv->vmCvar == &cg_crosshairColor || cv->vmCvar == &cg_crosshairAlpha)
-				{
-					BG_setCrosshair(cg_crosshairColor.string, cg.xhairColor, cg_crosshairAlpha.value, "cg_crosshairColor");
-				}
-				else if (cv->vmCvar == &cg_crosshairColorAlt || cv->vmCvar == &cg_crosshairAlphaAlt)
-				{
-					BG_setCrosshair(cg_crosshairColorAlt.string, cg.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 				}
 				else if (cv->vmCvar == &cg_rconPassword && *cg_rconPassword.string)
 				{
@@ -1757,7 +1720,8 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.teamStatusBar = trap_R_RegisterShader("gfx/2d/colorbar.tga");
 
-	cgs.media.hudSprintBar = trap_R_RegisterShader("sprintbar");
+	cgs.media.hudSprintBar           = trap_R_RegisterShader("sprintbar");
+	cgs.media.hudSprintBarHorizontal = trap_R_RegisterShader("sprintbarhorizontal");
 
 	cgs.media.hudAlliedHelmet = trap_R_RegisterShader("AlliedHelmet");
 	cgs.media.hudAxisHelmet   = trap_R_RegisterShader("AxisHelmet");
@@ -2205,6 +2169,8 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.fireteamIcon = trap_R_RegisterShaderNoMip("sprites/fireteam");
 
+	cgs.media.spawnpointMarker = trap_R_RegisterShaderNoMip("textures/sfx/spawnpoint_marker");
+
 	// NOTE: load smoke puff as last shader to always draw on top of other shaders
 	// because renderer order the draw depth level by register index
 	// i.e: this allow smoke grenade to hide players icons over head
@@ -2483,7 +2449,7 @@ float CG_Cvar_Get(const char *cvar)
 
 	Com_Memset(buff, 0, sizeof(buff));
 	trap_Cvar_VariableStringBuffer(cvar, buff, sizeof(buff));
-	return (float)atof(buff);
+	return Q_atof(buff);
 }
 
 /**
@@ -2655,6 +2621,32 @@ void CG_AssetCache(void)
 #define DEBUG_INITPROFILE_EXEC(f)
 #endif // ETLEGACY_DEBUG
 
+static ID_INLINE void CG_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+{
+	if (trap_GetValue(value, valueSize, name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void CG_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SysFlashWindow, "trap_SysFlashWindow_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
+	}
+}
+
 /**
  * @brief Called after every level change or subsystem restart
  * Will perform callbacks to make the loading info screen update.
@@ -2671,7 +2663,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	const char *s;
 	int        i;
 	char       versionString[128];
-	char       value[MAX_CVAR_VALUE_STRING];
 	DEBUG_INITPROFILE_INIT
 
 	//int startat = trap_Milliseconds();
@@ -2745,16 +2736,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.ccRequestedObjective  = -1;
 	cgs.ccCurrentCamObjective = -2;
 
-	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
-	if (value[0])
-	{
-		dll_com_trapGetValue = atoi(value);
-		if (trap_GetValue(value, sizeof(value), "trap_SysFlashWindow_Legacy"))
-		{
-			dll_trap_SysFlashWindow = atoi(value);
-			flashWindowSupported = qtrue;
-		}
-	}
+	CG_SetupExtensions();
 
 	// Background images on the loading screen were not visible on the first call
 	trap_R_SetColor(NULL);
@@ -2771,9 +2753,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	if (cg_logFile.string[0])
 	{
-		trap_FS_FOpenFile(cg_logFile.string, &cg.logFile, FS_APPEND);
-
-		if (!cg.logFile)
+		if (trap_FS_FOpenFile(cg_logFile.string, &cg.logFile, FS_APPEND) < 0)
 		{
 			CG_Printf("^3WARNING: Couldn't open client log: %s\n", cg_logFile.string);
 		}
@@ -3036,11 +3016,9 @@ char *CG_GetRealTime(void)
 	qtime_t tm;
 
 	trap_RealTime(&tm);
-	return va("%2i:%s%i:%s%i",
+	return va("%02i:%02i:%02i",
 	          tm.tm_hour,
-	          (tm.tm_min > 9 ? "" : "0"),  // minute padding
 	          tm.tm_min,
-	          (tm.tm_sec > 9 ? "" : "0"),  // second padding
 	          tm.tm_sec);
 }
 

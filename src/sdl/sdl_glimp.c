@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -54,7 +54,6 @@ static int gammaResetTime = 0;
 static int GLimp_CompareModes(const void *a, const void *b);
 
 SDL_Window           *main_window   = NULL;
-static SDL_Renderer  *main_renderer = NULL;
 static SDL_GLContext SDL_glContext  = NULL;
 static float         displayAspect  = 0.f;
 
@@ -385,12 +384,6 @@ void GLimp_Shutdown(void)
 {
 	IN_Shutdown();
 
-	if (main_renderer)
-	{
-		SDL_DestroyRenderer(main_renderer);
-		main_renderer = NULL;
-	}
-
 	if (main_window)
 	{
 		int tmpX = SDL_WINDOWPOS_UNDEFINED, tmpY = SDL_WINDOWPOS_UNDEFINED;
@@ -577,7 +570,7 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 		numDisplays = 1;
 	}
 
-	if (sscanf(r_windowLocation->string, "%d,%d,%d", &displayIndex, &tmpX, &tmpY) != 3)
+	if (!Q_sscanf(r_windowLocation->string, "%d,%d,%d", &displayIndex, &tmpX, &tmpY))
 	{
 		return;
 	}
@@ -1001,7 +994,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 	GLimp_DetectAvailableModes();
 
-	if (!main_window) //|| !main_renderer)
+	if (!main_window)
 	{
 		Com_Printf("Couldn't get a visual\n");
 		return RSERR_INVALID_MODE;
@@ -1075,62 +1068,6 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 #define R_MODE_FALLBACK 4 // 800 * 600
 
 /**
- * @brief GLimp_Splash
- * @param[in] glConfig
- * @return
- */
-void GLimp_Splash(glconfig_t *glConfig)
-{
-	unsigned char splashData[SPLASH_DATA_SIZE]; // width * height * bytes_per_pixel
-	SDL_Surface   *splashImage = NULL;
-
-	// decode splash image
-	SPLASH_IMAGE_RUN_LENGTH_DECODE(splashData,
-	                               CLIENT_WINDOW_SPLASH.rle_pixel_data,
-	                               CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
-	                               CLIENT_WINDOW_SPLASH.bytes_per_pixel);
-
-	// get splash image
-	splashImage = SDL_CreateRGBSurfaceFrom(
-		(void *)splashData,
-		CLIENT_WINDOW_SPLASH.width,
-		CLIENT_WINDOW_SPLASH.height,
-		CLIENT_WINDOW_SPLASH.bytes_per_pixel * 8,
-		CLIENT_WINDOW_SPLASH.bytes_per_pixel * CLIENT_WINDOW_SPLASH.width,
-#ifdef Q3_LITTLE_ENDIAN
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
-#else
-		0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
-#endif
-		);
-
-	SDL_Rect dstRect;
-	dstRect.x = glConfig->windowWidth / 2 - splashImage->w / 2;
-	dstRect.y = glConfig->windowHeight / 2 - splashImage->h / 2;
-	dstRect.w = splashImage->w;
-	dstRect.h = splashImage->h;
-
-	SDL_Surface *surface = SDL_GetWindowSurface(main_window);
-	if (!surface)
-	{
-		// This happens on some platforms, most likely just the SDL build lacking renderers. Does not really matter tho.
-		// the user just wont see our awesome splash screen, but the renderer should boot up just fine.
-		// FIXME: maybe checkup on this later on if there's something we should change on the bundled sdl compile settings
-		Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError());
-	}
-	else if (SDL_BlitSurface(splashImage, NULL, surface, &dstRect) == 0) // apply image on surface
-	{
-		SDL_UpdateWindowSurface(main_window);
-	}
-	else
-	{
-		Com_Printf(S_COLOR_YELLOW "SDL_BlitSurface failed - %s\n", SDL_GetError());
-	}
-
-	SDL_FreeSurface(splashImage);
-}
-
-/**
  * @brief This routine is responsible for initializing the OS specific portions of OpenGL
  * @param[in,out] glConfig
  * @param[in] context
@@ -1191,22 +1128,6 @@ success:
 	re.InitOpenGL();
 
 	Cvar_Get("r_availableModes", "", CVAR_ROM);
-
-#if defined(__APPLE__) && !defined(BUNDLED_SDL)
-	// When running on system SDL2 on OSX the cocoa driver causes
-	// the splash screen to stay on top of the rendering (at least when running from CLion)
-	// FIXME: clear the splash? Does not seem to happen with bundled SDL2.
-	const char *driver = SDL_GetCurrentVideoDriver();
-	if (Q_stricmpn("cocoa", driver, 5))
-	{
-		GLimp_Splash(glConfig);
-	}
-#else
-#ifndef __ANDROID__
-	// Display splash screen
-	GLimp_Splash(glConfig);
-#endif
-#endif
 
 	// This depends on SDL_INIT_VIDEO, hence having it here
 	IN_Init();
@@ -1352,4 +1273,26 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 	}
 
 	SDL_SetWindowGammaRamp(main_window, table[0], table[1], table[2]);
+}
+
+qboolean GLimp_SplashImage(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes))
+{
+	byte *data = Com_Allocate(SPLASH_DATA_SIZE);
+
+	if (!data)
+	{
+		return qfalse;
+	}
+
+	// decode splash image
+	SPLASH_IMAGE_RUN_LENGTH_DECODE(data,
+								   CLIENT_WINDOW_SPLASH.rle_pixel_data,
+								   CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
+								   CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+
+	LoadSplashImage(NULL, data, CLIENT_WINDOW_SPLASH.width, CLIENT_WINDOW_SPLASH.height, CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+
+	Com_Dealloc(data);
+
+	return qtrue;
 }

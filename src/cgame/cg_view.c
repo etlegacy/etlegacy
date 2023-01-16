@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -89,7 +89,7 @@ void CG_TestModel_f(void)
 
 	if (trap_Argc() == 3)
 	{
-		cg.testModelEntity.backlerp = (float)atof(CG_Argv(2));
+		cg.testModelEntity.backlerp = Q_atof(CG_Argv(2));
 		cg.testModelEntity.frame    = 1;
 		cg.testModelEntity.oldframe = 0;
 	}
@@ -269,7 +269,14 @@ static void CG_CalcVrect(void)
 		return;
 	}
 
-	CG_Letterbox(100, 100, qtrue);
+	if (cg.editingHud)
+	{
+		CG_Letterbox(80, 80, qfalse);
+	}
+	else
+	{
+		CG_Letterbox(100, 100, qtrue);
+	}
 }
 
 //==============================================================================
@@ -533,7 +540,7 @@ void CG_KickAngles(void)
 	// only change cg_recoilPitch cvar when we need to
 	trap_Cvar_VariableStringBuffer("cg_recoilPitch", buf, sizeof(buf));
 
-	if (atof(buf) != cg.recoilPitchAngle)
+	if (Q_atof(buf) != cg.recoilPitchAngle)
 	{
 		// encode the kick angles into a 24bit number, for sending to the client exe
 		trap_Cvar_Set("cg_recoilPitch", va("%f", cg.recoilPitchAngle));
@@ -574,13 +581,20 @@ static void CG_ZoomSway(void)
 static void CG_OffsetFirstPersonView(void)
 {
 	//vec3_t forward;
-	float *origin;
-	float *angles;
-	float bob;
-	float delta;
-	float speed;
-	float f;
-	int   timeDelta;
+	float    *origin;
+	float    *angles;
+	float    bob;
+	float    delta;
+	float    speed;
+	float    f;
+	vec3_t   predictedVelocity;
+	int      timeDelta;
+	qboolean useLastValidBob = qfalse;
+	float    runPitch        = 0.002f * cg_bobbing.value;
+	float    runRoll         = 0.005f * cg_bobbing.value;
+	float    bobUp           = 0.005f * cg_bobbing.value;
+	float    bobPitch        = 0.002f * cg_bobbing.value;
+	float    bobRoll         = 0.002f * cg_bobbing.value;
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
@@ -653,47 +667,53 @@ static void CG_OffsetFirstPersonView(void)
 	angles[PITCH] += ratio * cg.fall_value;
 #endif
 
-	// add angles based on bob
-	if (cg_bobbing.integer)
+	// add angles based on velocity
+	VectorCopy(cg.predictedPlayerState.velocity, predictedVelocity);
+
+	delta          = DotProduct(predictedVelocity, cg.refdef_current->viewaxis[0]);
+	angles[PITCH] += delta * runPitch;
+
+	delta         = DotProduct(predictedVelocity, cg.refdef_current->viewaxis[1]);
+	angles[ROLL] -= delta * runRoll;
+
+	// make sure the bob is visible even at low speeds
+	speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
+
+	if (cg.bobfracsin == 0.f && cg.lastvalidBobfracsin > 0)
 	{
-		qboolean useLastValidBob = qfalse;
+		// 200 msec to get back to center from 1
+		// that's 1/200 per msec = 0.005 per msec
+		cg.lastvalidBobfracsin -= 0.005 * cg.frametime;
+		useLastValidBob         = qtrue;
+	}
 
-		// make sure the bob is visible even at low speeds
-		speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
+	delta  = useLastValidBob ? cg.lastvalidBobfracsin * speed : cg.bobfracsin * speed;
+	delta *= bobPitch;
 
-		if (cg.bobfracsin == 0.f && cg.lastvalidBobfracsin > 0)
-		{
-			// 200 msec to get back to center from 1
-			// that's 1/200 per msec = 0.005 per msec
-			cg.lastvalidBobfracsin -= 0.005 * cg.frametime;
-			useLastValidBob         = qtrue;
-		}
+	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
+	{
+		delta *= 3;     // crouching
+	}
 
-		delta = useLastValidBob ? cg.lastvalidBobfracsin * 0.002 * speed : cg.bobfracsin * 0.002 * speed;
-		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-		{
-			delta *= 3;     // crouching
-		}
-
-		angles[PITCH] += delta;
-		delta          = useLastValidBob ? cg.lastvalidBobfracsin * 0.002 * speed : cg.bobfracsin * 0.002 * speed;
-		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-		{
-			delta *= 3;     // crouching accentuates roll
-		}
-		if (useLastValidBob)
-		{
-			if (cg.lastvalidBobcycle & 1)
-			{
-				delta = -delta;
-			}
-		}
-		else if (cg.bobcycle & 1)
+	angles[PITCH] += delta;
+	delta          = useLastValidBob ? cg.lastvalidBobfracsin * speed : cg.bobfracsin * speed;
+	delta         *= bobRoll;
+	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
+	{
+		delta *= 3;     // crouching accentuates roll
+	}
+	if (useLastValidBob)
+	{
+		if (cg.lastvalidBobcycle & 1)
 		{
 			delta = -delta;
 		}
-		angles[ROLL] += delta;
 	}
+	else if (cg.bobcycle & 1)
+	{
+		delta = -delta;
+	}
+	angles[ROLL] += delta;
 
 //===================================
 
@@ -743,20 +763,9 @@ static void CG_OffsetFirstPersonView(void)
 	}
 
 	// add bob height
-	if (cg_bobbing.integer)
-	{
-		bob = cg.bobfracsin * cg.xyspeed * 0.005;
-		if (bob > 6)
-		{
-			bob = 6;
-		}
-		if (bob < 0)
-		{
-			bob = 0;
-		}
-
-		origin[2] += bob;
-	}
+	bob        = cg.bobfracsin * cg.xyspeed * bobUp;
+	bob        = Com_Clamp(0, 6, bob);
+	origin[2] += bob;
 
 	// add fall height
 	delta = cg.time - cg.landTime;
@@ -1489,13 +1498,13 @@ void CG_ParseSkyBox(void)
 	}
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[0]\n");
-	cg.skyboxViewOrg[0] = (float)atof(token);
+	cg.skyboxViewOrg[0] = Q_atof(token);
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[1]\n");
-	cg.skyboxViewOrg[1] = (float)atof(token);
+	cg.skyboxViewOrg[1] = Q_atof(token);
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[2]\n");
-	cg.skyboxViewOrg[2] = (float)atof(token);
+	cg.skyboxViewOrg[2] = Q_atof(token);
 
 	token            = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewFov\n");
 	cg.skyboxViewFov = Q_atoi(token);
@@ -1513,13 +1522,13 @@ void CG_ParseSkyBox(void)
 		int fogStart, fogEnd;
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[0]\n");
-		fogColor[0] = (float)atof(token);
+		fogColor[0] = Q_atof(token);
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[1]\n");
-		fogColor[1] = (float)atof(token);
+		fogColor[1] = Q_atof(token);
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[2]\n");
-		fogColor[2] = (float)atof(token);
+		fogColor[2] = Q_atof(token);
 
 		token    = COM_ParseExt(&cstr, qfalse);
 		fogStart = Q_atoi(token);
@@ -1961,11 +1970,20 @@ static void CG_DemoRewindFixEffects(void)
 {
 	int i;
 
+	trap_GetGameState(&cgs.gameState);
+
+	CG_ParseSysteminfo();
+	CG_ParseServerinfo();
+	CG_ParseWolfinfo();
+	CG_ParseServerToggles();
+	CG_SetConfigValues();
+
 	// fix player entities animations
 	Com_Memset(&cg.predictedPlayerEntity.pe, 0, sizeof(playerEntity_t));
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
+		CG_NewClientInfo(i);
 		Com_Memset(&cg_entities[i].pe, 0, sizeof(playerEntity_t));
 	}
 
@@ -1993,14 +2011,7 @@ static void CG_DemoRewindFixEffects(void)
 	trap_R_ClearDecals(); // bullet and explosion marks (cg_markTime) are on renderer side
 
 	// reset camera view effects
-	cg.damageTime        = 0;
-	cg.v_dmg_time        = 0;
-	cg.v_noFireTime      = 0;
-	cg.v_fireTime        = 0;
-	cg.cameraShakeScale  = 0;
-	cg.cameraShakeLength = 0;
-	cg.cameraShakeTime   = 0;
-	cg.cameraShakePhase  = 0;
+	CG_ResetTimers();
 
 	cgs.serverCommandSequence = cg.snap->serverCommandSequence;
 }
@@ -2020,6 +2031,117 @@ extern int snapshotDelayTime;
 #endif // ETLEGACY_DEBUG
 
 extern void CG_SetupDlightstyles(void);
+
+static void CG_DrawSpawnpoints(void)
+{
+	vec3_t start, end;
+	trace_t trace;
+	polyVert_t verts[4];
+	cg_spawnpoint_t *spawnpoint;
+	int i;
+	int majorSpawnCount = 0;
+
+	for (i = 0; i < cg.numSpawnpointEnts; i++)
+	{
+		spawnpoint = &cgs.spawnpointEnt[i];
+
+		// increment here, otherwise counter is inaccurate since
+		// we skip drawing if spawnpoint is not in PVS
+		if (spawnpoint->isMajor)
+		{
+			majorSpawnCount++;
+		}
+
+		if (!trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin))
+		{
+			continue;
+		}
+
+		// skip spawnpoints of other team, excluding major spawnpoints
+		// because we don't know if we can potentially spawn there
+		if (cgs.clientinfo[cg.clientNum].team != spawnpoint->team && !spawnpoint->isMajor)
+		{
+			continue;
+		}
+
+		// major spawnpoints only need a floating text
+		// FIXME: this might be in solid (e.g. Allied 1st in Oasis), should be nudged
+		if (spawnpoint->isMajor)
+		{
+			CG_AddOnScreenText(va("^7%s (^2%d^7)", spawnpoint->name, majorSpawnCount),
+			                   spawnpoint->origin, qfalse);
+		}
+		// minor spawnpoints
+		else
+		{
+			VectorCopy(spawnpoint->origin, start);
+			VectorCopy(spawnpoint->origin, end);
+			end[2] -= 128; // should be enough to always hit the ground
+
+			// trace down to find the surface
+			trap_CM_BoxTrace(&trace, start, end, NULL, NULL, 0, MASK_PLAYERSOLID);
+
+			// somehow we didn't find a ground plane, just use spawnpoint origin
+			if (trace.fraction == 1.0f)
+			{
+				VectorCopy(spawnpoint->origin, trace.endpos);
+			}
+			else
+			{
+				// offset from ground a bit
+				trace.endpos[2] += 1;
+			}
+
+			VectorCopy(trace.endpos, verts[0].xyz);
+			verts[0].xyz[0]     -= 18;
+			verts[0].xyz[1]     -= 18;
+			verts[0].st[0]       = 0;
+			verts[0].st[1]       = 0;
+			verts[0].modulate[0] = spawnpoint->color[0] * 255.0f;
+			verts[0].modulate[1] = spawnpoint->color[1] * 255.0f;
+			verts[0].modulate[2] = spawnpoint->color[2] * 255.0f;
+			verts[0].modulate[3] = 128;
+
+			VectorCopy(trace.endpos, verts[1].xyz);
+			verts[1].xyz[0]     -= 18;
+			verts[1].xyz[1]     += 18;
+			verts[1].st[0]       = 0;
+			verts[1].st[1]       = 1;
+			verts[1].modulate[0] = spawnpoint->color[0] * 255.0f;
+			verts[1].modulate[1] = spawnpoint->color[1] * 255.0f;
+			verts[1].modulate[2] = spawnpoint->color[2] * 255.0f;
+			verts[1].modulate[3] = 128;
+
+			VectorCopy(trace.endpos, verts[2].xyz);
+			verts[2].xyz[0]     += 18;
+			verts[2].xyz[1]     += 18;
+			verts[2].st[0]       = 1;
+			verts[2].st[1]       = 1;
+			verts[2].modulate[0] = spawnpoint->color[0] * 255.0f;
+			verts[2].modulate[1] = spawnpoint->color[1] * 255.0f;
+			verts[2].modulate[2] = spawnpoint->color[2] * 255.0f;
+			verts[2].modulate[3] = 128;
+
+			VectorCopy(trace.endpos, verts[3].xyz);
+			verts[3].xyz[0]     += 18;
+			verts[3].xyz[1]     -= 18;
+			verts[3].st[0]       = 1;
+			verts[3].st[1]       = 0;
+			verts[3].modulate[0] = spawnpoint->color[0] * 255.0f;
+			verts[3].modulate[1] = spawnpoint->color[1] * 255.0f;
+			verts[3].modulate[2] = spawnpoint->color[2] * 255.0f;
+			verts[3].modulate[3] = 128;
+
+			trap_R_AddPolyToScene(cgs.media.spawnpointMarker, 4, verts);
+
+			// draw id if the spawnpoint is assigned one
+			if (spawnpoint->id)
+			{
+				CG_AddOnScreenText(va("%i", spawnpoint->id), trace.endpos, qfalse);
+			}
+		}
+	}
+}
 
 /**
  * @brief Generates and draws a game scene and status information at the given time.
@@ -2254,6 +2376,12 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 			// particles
 			CG_AddParticles();
+
+			if (cg_drawSpawnpoints.integer
+			    && (cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_WARMUP_COUNTDOWN || cgs.sv_cheats))
+			{
+				CG_DrawSpawnpoints();
+			}
 
 			DEBUGTIME
 

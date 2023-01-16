@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -472,6 +472,9 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 		{
 			ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
 		}
+
+		// Let medics know who they just revived
+		trap_SendServerCommand(ent - g_entities, va("cp \"You have revived [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(traceEnt->client->sess.sessionTeam, traceEnt->client->sess.rank)->names, traceEnt->client->pers.netname));
 
 		G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
@@ -1569,7 +1572,16 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	muzzleTrace[2] += ent->client->ps.viewheight;
 
 	VectorMA(muzzleTrace, CH_MAX_DIST, forward, end);
+
+	if (ent->client->touchingTOI)
+	{
+		ent->client->touchingTOI->r.linked = qfalse;
+	}
 	trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
+	if (ent->client->touchingTOI)
+	{
+		ent->client->touchingTOI->r.linked = qtrue;
+	}
 
 	traceEnt = &g_entities[tr.entityNum];
 
@@ -1595,6 +1607,13 @@ weapengineergoto1:
 
 	if (VectorDistance(muzzleTrace, tr.endpos) > CH_BREAKABLE_DIST)
 	{
+		if (ent->client->touchingTOI)
+		{
+			if (TryConstructing(ent, ent->client->touchingTOI))
+			{
+				return NULL;
+			}
+		}
 		return NULL;
 	}
 
@@ -2622,6 +2641,34 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 	}
 }
 
+
+/**
+ * @brief G_BombTrace ensures bombs from arty/airstrike are never spawned indoors
+ * @param[in] tr
+ * @param[in] start
+ * @param[in] end
+ * @param[out] tr
+ */
+trace_t G_BombTrace(trace_t tr, vec3_t start, vec3_t end, gentity_t *ent)
+{
+	trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, CONTENTS_SOLID);
+
+	// if we can't trace back to sky, we likely spawned indoors - keep nudging start position up until we find skybox
+	while (!(tr.surfaceFlags & SURF_SKY))
+	{
+		start[2] += 64;
+		trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, CONTENTS_SOLID);
+
+		// reached map limit and no sky found
+		if (start[2] > MAX_MAP_SIZE || tr.fraction == 1.0f)
+		{
+			break;
+		}
+	}
+
+	return tr;
+}
+
 #define NUMBOMBS 10
 #define BOMBSPREAD 150
 
@@ -2715,9 +2762,10 @@ void G_AirStrikeThink(gentity_t *ent)
 			float     ground = tr.endpos[2];
 
 			tmp[2] = MAX_MAP_SIZE;
-			trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
+			tr     = G_BombTrace(tr, tr.endpos, tmp, ent);
 
-			bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
+			bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos,
+			                    tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 
 			// overwrite
 			bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
@@ -3007,7 +3055,7 @@ void artillerySpotterThink(gentity_t *ent)
 		ground = tr.endpos[2];
 
 		tmp[2] = MAX_MAP_SIZE;
-		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
+		tr     = G_BombTrace(tr, tr.endpos, tmp, ent);
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 
@@ -3041,7 +3089,7 @@ void artillerySpotterThink(gentity_t *ent)
 		ground = tr.endpos[2];
 
 		tmp[2] = MAX_MAP_SIZE;
-		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
+		tr     = G_BombTrace(tr, tr.endpos, tmp, ent);
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 	}
@@ -3524,7 +3572,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	// send bullet impact
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		fleshEnt = tent   = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
+		fleshEnt          = tent = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
 		tent->s.eventParm = traceEnt->s.number;
 		tent->s.weapon    = source->s.weapon;
 
@@ -3619,7 +3667,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		// send the hit sound info in the flesh hit event
 		if (hitType && fleshEnt)
 		{
-			fleshEnt->s.modelindex =  hitType;
+			fleshEnt->s.modelindex = hitType;
 		}
 
 		// allow bullets to "pass through" func_explosives if they break by taking another simultanious shot

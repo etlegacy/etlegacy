@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -89,7 +89,7 @@ qboolean G_SpawnFloatExt(const char *key, const char *defaultString, float *out,
 	qboolean present;
 
 	present = G_SpawnStringExt(key, defaultString, &s, file, line);
-	*out    = (float)atof(s);
+	*out    = Q_atof(s);
 	return present;
 }
 
@@ -127,7 +127,7 @@ qboolean G_SpawnVectorExt(const char *key, const char *defaultString, float *out
 	qboolean present;
 
 	present = G_SpawnStringExt(key, defaultString, &s, file, line);
-	sscanf(s, "%f %f %f", &out[0], &out[1], &out[2]);
+    Q_sscanf(s, "%f %f %f", &out[0], &out[1], &out[2]);
 	return present;
 }
 
@@ -146,7 +146,7 @@ qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *o
 	qboolean present;
 
 	present = G_SpawnStringExt(key, defaultString, &s, file, line);
-	sscanf(s, "%f %f", &out[0], &out[1]);
+    Q_sscanf(s, "%f %f", &out[0], &out[1]);
 	return present;
 }
 
@@ -757,7 +757,7 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent)
 				*( char ** )(b + f->ofs) = G_NewString(value);
 				break;
 			case F_VECTOR:
-				sscanf(value, "%f %f %f", &vec[0], &vec[1], &vec[2]);
+                Q_sscanf(value, "%f %f %f", &vec[0], &vec[1], &vec[2]);
 				(( float * )(b + f->ofs))[0] = vec[0];
 				(( float * )(b + f->ofs))[1] = vec[1];
 				(( float * )(b + f->ofs))[2] = vec[2];

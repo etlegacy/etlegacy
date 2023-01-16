@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -43,8 +43,8 @@ char *Binding_FromName(const char *cvar);
  */
 static void CG_Viewpos_f(void)
 {
-	CG_Printf("(%i %i %i) : %.0f %.0f %.0f\n", (int)cg.refdef.vieworg[0],
-	          (int)cg.refdef.vieworg[1], (int)cg.refdef.vieworg[2],
+	CG_Printf("(%i %i %i) : %.0f %.0f %.0f\n", (int) cg.refdef.vieworg[0],
+	          (int) cg.refdef.vieworg[1], (int) cg.refdef.vieworg[2],
 	          round(cg.refdefViewAngles[PITCH]), round(cg.refdefViewAngles[YAW]), round(cg.refdefViewAngles[ROLL]));
 }
 
@@ -96,7 +96,7 @@ static void CG_StatsDown_f(void)
 			int i =
 #ifdef FEATURE_MULTIVIEW
 				(cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
-#endif
+					#endif
 				cg.snap->ps.clientNum;
 
 			cgs.gamestats.requestTime = cg.time + 2000;
@@ -278,7 +278,7 @@ void CG_ScoresDown_f(void)
 
 		// we get periodic score updates if we are merging clients
 		if (!cg.demoPlayback
-#ifdef FEATURE_MULTIVIEW
+			#ifdef FEATURE_MULTIVIEW
 		    && cg.mvTotalClients < 1
 #endif
 		    )
@@ -292,7 +292,7 @@ void CG_ScoresDown_f(void)
 		{
 			cg.showScores = qtrue;
 			if (!cg.demoPlayback
-#ifdef FEATURE_MULTIVIEW
+				#ifdef FEATURE_MULTIVIEW
 			    && cg.mvTotalClients < 1
 #endif
 			    )
@@ -333,12 +333,12 @@ static void CG_Fade_f(void)
 		return;
 	}
 
-	r = (int)atof(CG_Argv(1));
-	g = (int)atof(CG_Argv(2));
-	b = (int)atof(CG_Argv(3));
-	a = (int)atof(CG_Argv(4));
+	r = Q_atoi(CG_Argv(1));
+	g = Q_atoi(CG_Argv(2));
+	b = Q_atoi(CG_Argv(3));
+	a = Q_atoi(CG_Argv(4));
 
-	duration = (int)(atof(CG_Argv(5)) * 1000);
+	duration = (int) (Q_atof(CG_Argv(5)) * 1000);
 
 	CG_Fade(r, g, b, a, cg.time, duration);
 }
@@ -664,11 +664,11 @@ static void CG_MessageSend_f(void)
 	{
 		trap_SendConsoleCommand(va("say_team \"%s\"\n", messageText));
 	}
-	else if (messageType == 3) // fireteam say
+	else if (messageType == 3)   // fireteam say
 	{
 		trap_SendConsoleCommand(va("say_buddy \"%s\"\n", messageText));
 	}
-	else // normal say
+	else   // normal say
 	{
 		trap_SendConsoleCommand(va("say \"%s\"\n", messageText));
 	}
@@ -709,13 +709,13 @@ static void CG_SelectBuddy_f(void)
 	case 7:
 		if (!CG_IsOnFireteam(cg.clientNum))
 		{
-			break;     // we aren't a leader, so dont allow selection
+			break;         // we aren't a leader, so dont allow selection
 		}
 
 		ci = CG_SortedFireTeamPlayerForPosition(pos);
 		if (!ci)
 		{
-			break;     // there was no-one in this position
+			break;         // there was no-one in this position
 		}
 
 		ci->selected ^= qtrue;
@@ -724,7 +724,7 @@ static void CG_SelectBuddy_f(void)
 	case -1:
 		if (!CG_IsOnFireteam(cg.clientNum))
 		{
-			break;     // we aren't a leader, so dont allow selection
+			break;         // we aren't a leader, so dont allow selection
 		}
 
 		for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -732,7 +732,7 @@ static void CG_SelectBuddy_f(void)
 			ci = CG_SortedFireTeamPlayerForPosition(i);
 			if (!ci)
 			{
-				break;     // there was no-one in this position
+				break;         // there was no-one in this position
 			}
 
 			ci->selected = qfalse;
@@ -742,7 +742,7 @@ static void CG_SelectBuddy_f(void)
 	case -2:
 		if (!CG_IsOnFireteam(cg.clientNum))
 		{
-			break;     // we aren't a leader, so dont allow selection
+			break;         // we aren't a leader, so dont allow selection
 		}
 
 		for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -750,7 +750,7 @@ static void CG_SelectBuddy_f(void)
 			ci = CG_SortedFireTeamPlayerForPosition(i);
 			if (!ci)
 			{
-				break;     // there was no-one in this position
+				break;         // there was no-one in this position
 			}
 
 			ci->selected = qtrue;
@@ -978,10 +978,10 @@ void CG_dumpStats_f(void)
 		trap_SendClientCommand(
 #ifdef FEATURE_MULTIVIEW
 			(cg.mvTotalClients < 1) ?
-#endif
+				#endif
 			"weaponstats"
-#ifdef FEATURE_MULTIVIEW
-			: "statsall"
+				#ifdef FEATURE_MULTIVIEW
+			                            : "statsall"
 #endif
 			);
 	}
@@ -1030,6 +1030,7 @@ void CG_wStatsUp_f(void)
 */
 
 #ifdef FEATURE_MULTIVIEW
+
 /**
  * @brief CG_toggleSpecHelp_f
  */
@@ -1047,6 +1048,7 @@ void CG_toggleSpecHelp_f(void)
 		}
 	}
 }
+
 #endif
 
 /**
@@ -1601,17 +1603,23 @@ static void CG_Class_f(void)
 	}
 
 	// Print out the selected class and weapon info
-	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG) && playerclass == PC_SOLDIER && !Q_stricmp(GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc))
+	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG) && playerclass == PC_SOLDIER &&
+	    !Q_stricmp(GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc))
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc), -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc),
+		                       -1);
 	}
 	else if (GetWeaponTableData(weapon2)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), -1);
+		CG_PriorityCenterPrint(
+			va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc,
+			   GetWeaponTableData(weapon2)->desc), -1);
 	}
 	else
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), -1);
+		CG_PriorityCenterPrint(
+			va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc,
+			   GetWeaponTableData(weapon2)->desc), -1);
 	}
 	// Send the switch command to the server
 	trap_SendClientCommand(va("class %s %i %i %i", classtype, playerclass, weapon1, weapon2));
@@ -1640,11 +1648,51 @@ static void CG_TeamMenu_f(void)
 }
 
 /**
- * @brief CG_ReadHuds_f
+ * @brief read huds from the default files or from a user provided path
  */
 static void CG_ReadHuds_f(void)
 {
-	CG_ReadHudScripts();
+	int count = trap_Argc();
+
+	if (count == 2)
+	{
+		size_t len;
+		char   tmp[MAX_QPATH] = { 0 };
+		trap_Argv(1, tmp, MAX_QPATH);
+		len = strlen(tmp);
+
+		if (!tmp[0])
+		{
+			return;
+		}
+
+		if (len <= 4 || strcmp(tmp + len - 4, ".bin") != 0)
+		{
+			Q_strcat(tmp, MAX_QPATH, ".bin");
+		}
+
+		if (!CG_TryReadHudFromFile(tmp))
+		{
+			CG_Printf(S_COLOR_RED "^1ERROR while reading hud file: %s\n", tmp);
+		}
+
+		return;
+	}
+	else if (count > 2)
+	{
+		CG_Printf(S_COLOR_RED "^1ERROR invalid number of arguments\n");
+		return;
+	}
+
+	CG_ReadHudsFromFile();
+}
+
+/**
+ * @brief Save huds to the default file
+ */
+static void CG_WriteHuds_f(void)
+{
+	CG_WriteHudsToFile();
 }
 
 static void CG_ShareTimer_f(void)
@@ -1694,6 +1742,7 @@ static void CG_ShareTimer_f(void)
 }
 
 #ifdef FEATURE_EDV
+
 /**
  * @brief CG_FreecamTurnLeftDown_f
  */
@@ -1847,11 +1896,11 @@ static void CG_FreecamGetPos_f(void)
 {
 	if (cg.demoPlayback)
 	{
-		CG_Printf("freecam origin: %.0f %.0f %.0f\n", (double)cgs.demoCamera.camOrigin[0], (double)cgs.demoCamera.camOrigin[1], (double)cgs.demoCamera.camOrigin[2]);
+		CG_Printf("freecam origin: %.0f %.0f %.0f\n", (double) cgs.demoCamera.camOrigin[0], (double) cgs.demoCamera.camOrigin[1], (double) cgs.demoCamera.camOrigin[2]);
 	}
 	else
 	{
-		CG_Printf("freecam origin: %.0f %.0f %.0f\n", (double)cg.refdef_current->vieworg[0], (double)cg.refdef_current->vieworg[1], (double)cg.refdef_current->vieworg[2]);
+		CG_Printf("freecam origin: %.0f %.0f %.0f\n", (double) cg.refdef_current->vieworg[0], (double) cg.refdef_current->vieworg[1], (double) cg.refdef_current->vieworg[2]);
 	}
 }
 
@@ -1950,6 +1999,7 @@ static void CG_NoClip_f(void)
 		CG_Printf("noclip %s\n", cgs.demoCamera.noclip ? "ON" : "OFF");
 	}
 }
+
 #endif
 
 static void CG_PrintObjectiveInfo_f(void)
@@ -1966,7 +2016,8 @@ static void CG_PrintObjectiveInfo_f(void)
 			// - customimageallies
 			// - customimageaxis
 			// - origin ?!
-			CG_Printf("[%2i] %-26s -> num: %3i - spawnflags: %3i - objflags: %3i\n", i + 1, cgs.oidInfo[i].name, cgs.oidInfo[i].entityNum, cgs.oidInfo[i].spawnflags, cgs.oidInfo[i].objflags);
+			CG_Printf("[%2i] %-26s -> num: %3i - spawnflags: %3i - objflags: %3i\n", i + 1, cgs.oidInfo[i].name, cgs.oidInfo[i].entityNum, cgs.oidInfo[i].spawnflags,
+			          cgs.oidInfo[i].objflags);
 		}
 		else
 		{
@@ -1992,7 +2043,7 @@ static void CG_ListSpawnPoints_f(void)
 		{
 			continue;
 		}
-		else if (cg.spawnTeams[i] & 256) // inactive
+		else if (cg.spawnTeams[i] & 256)   // inactive
 		{
 			CG_Printf("^9[%2i] %s %-26s\n", i, ((cg.spawnTeams[i] & 0xF) == TEAM_AXIS) ? "X" : "A", cg.spawnPoints[i]);
 		}
@@ -2154,6 +2205,368 @@ static void CG_EditHud_f(void)
 	}
 }
 
+static qboolean CG_ParseFloatValueAtIndex(int *argIndex, float *value, char fieldLetter)
+{
+	char token[MAX_TOKEN_CHARS];
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!Q_isanumber(token))
+	{
+		CG_Printf("^1Invalid ^3<%c> ^1argument, not a number\n", fieldLetter);
+		return qfalse;
+	}
+
+	*value = Q_atof(token);
+
+	return qtrue;
+}
+
+static qboolean CG_SetRectComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	rectDef_t *value = (rectDef_t *)((char *)comp + offset);
+
+	if ((trap_Argc() - *argIndex) <= 4)
+	{
+		CG_Printf("^3rect field component needs at least 4 arguments <x> <y> <w> <h>\n");
+		CG_Printf("^7Current value is %f %f %f %f\n", value->x, value->y, value->w, value->h);
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->x, 'x'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->y, 'y'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->w, 'w'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->h, 'h'))
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+static qboolean CG_SetFloatComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char  token[MAX_TOKEN_CHARS];
+	float *value = (float *) ((char *) comp + offset);
+
+	if ((trap_Argc() - *argIndex) <= 1)
+	{
+		CG_Printf("^3float field component needs at least 1 argument <value>\n");
+		CG_Printf("^7Current value is %f\n", *value);
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!Q_isanumber(token))
+	{
+		CG_Printf("^1Invalid ^3<float> ^1argument, not a number\n");
+		return qfalse;
+	}
+
+	*value = Q_atof(token);
+
+	return qtrue;
+}
+
+static qboolean CG_SetIntComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char token[MAX_TOKEN_CHARS];
+	int  *value = (int *) ((char *) comp + offset);
+
+	if ((trap_Argc() - *argIndex) <= 1)
+	{
+		CG_Printf("^3int field component needs at least 1 argument <value>\n");
+		CG_Printf("^7Current value is %d\n", *value);
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!Q_isanumber(token))
+	{
+		CG_Printf("^1Invalid ^3<int> ^1argument, not a number\n");
+		return qfalse;
+	}
+
+	*value = Q_atoi(token);
+
+	return qtrue;
+}
+
+static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char   token[MAX_TOKEN_CHARS];
+	vec4_t *value = (vec4_t *) ((char *) comp + offset);
+
+	if ((trap_Argc() - *argIndex) <= 1)
+	{
+		CG_Printf("^3color field component needs at least 1 argument <colorname> / <0xRRGGBB[AA]> or 3-4 arguments <r> <g> <b> <a>\n");
+		CG_Printf("^7Current value is %f %f %f %f\n", (*value)[0], (*value)[1], (*value)[2], (*value)[3]);
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!Q_ParseColor(token, *value))
+	{
+		if ((trap_Argc() - *argIndex) <= 3)
+		{
+			return qfalse;
+		}
+
+		if (!CG_ParseFloatValueAtIndex(argIndex, value[0], 'r'))
+		{
+			return qfalse;
+		}
+
+		if (!CG_ParseFloatValueAtIndex(argIndex, value[1], 'g'))
+		{
+			return qfalse;
+		}
+
+		if (!CG_ParseFloatValueAtIndex(argIndex, value[2], 'b'))
+		{
+			return qfalse;
+		}
+
+		if ((trap_Argc() - *argIndex) >= 1)
+		{
+			trap_Argv(*argIndex + 1, token, sizeof(token));
+
+			// ensure we don't start reading the next field string
+			// which can't start with a numeric value
+			if (Q_isnumeric(token[0]))
+			{
+				if (!CG_ParseFloatValueAtIndex(argIndex, value[3], 'a'))
+				{
+					return qfalse;
+				}
+			}
+		}
+	}
+
+	return qtrue;
+}
+
+const hudComponentMembersFields_t hudComponentMembersFields[] =
+{
+	{ HUDMF(location),        CG_SetRectComponentFromCommand   },
+	{ "x",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, x), CG_SetFloatComponentFromCommand},
+	{ "y",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, y), CG_SetFloatComponentFromCommand},
+	{ "w",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, w), CG_SetFloatComponentFromCommand},
+	{ "h",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, h), CG_SetFloatComponentFromCommand},
+	{ HUDMF(visible),         CG_SetIntComponentFromCommand    },
+	{ HUDMF(style),           CG_SetIntComponentFromCommand    },
+	{ HUDMF(scale),           CG_SetFloatComponentFromCommand  },
+	{ HUDMF(colorMain),       CG_SetColorsComponentFromCommand },
+	{ HUDMF(colorSecondary),  CG_SetColorsComponentFromCommand },
+	{ HUDMF(showBackGround),  CG_SetIntComponentFromCommand    },
+	{ HUDMF(colorBackground), CG_SetColorsComponentFromCommand },
+	{ HUDMF(showBorder),      CG_SetIntComponentFromCommand    },
+	{ HUDMF(colorBorder),     CG_SetIntComponentFromCommand    },
+	{ HUDMF(styleText),       CG_SetIntComponentFromCommand    },
+	{ HUDMF(alignText),       CG_SetIntComponentFromCommand    },
+	{ HUDMF(autoAdjust),      CG_SetIntComponentFromCommand    },
+	{ NULL,                   0, NULL                          },
+};
+
+/**
+ * @brief CG_ShowEditComponentHelp
+ */
+static void CG_ShowEditComponentHelp()
+{
+	int  i;
+	char *str = NULL;
+
+	CG_Printf("^3edit component usage :\n"
+	          "\"save\"\n"
+	          "\"clone|delete\" <hudnumber>\n"
+	          "<compname> <field> <value> [ <field2> <value2> <field3> <value3> ... ]");
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		str = va("%s%-16s%s", str ? str : "", hudComponentFields[i].name, !((i + 1) % 5) ? "\n" : "    ");
+	}
+
+	CG_Printf("\n\nAvailable ^3<compname> ^7:\n\n%s", str);
+
+	str = NULL;
+
+	for (i = 0; hudComponentMembersFields[i].name; i++)
+	{
+		str = va("%s%-16s%s", str ? str : "", hudComponentMembersFields[i].name, !((i + 1) % 5) ? "\n" : "    ");
+	}
+
+	CG_Printf("\n\nAvailable ^3<field> ^7:\n\n%s\n", str);
+}
+
+static void CG_ShowEditComponentStyleHelp(const hudComponentFields_t *compField, int *value)
+{
+	int  i;
+	char *str = NULL;
+
+	for (i = 0; i < MAXSTYLES && compField->styles[i]; ++i)
+	{
+		str = va("%s%s%5d : %-16s%s", str ? str : "", ((*value) & 1 << i) ? "^2" : "^7", 1 << i, compField->styles[i], !((i + 1) % 3) ? "\n" : "    ");
+	}
+
+	if (str)
+	{
+		CG_Printf("Available ^3<style>^7 for %s :\n\n%s\n", compField->name, str);
+	}
+	else
+	{
+		CG_Printf("No ^3<style>^7 available for %s\n", compField->name);
+	}
+}
+
+/**
+ * @brief CG_EditComponent_f
+ */
+static void CG_EditComponent_f(void)
+{
+	char                       token[MAX_TOKEN_CHARS];
+	const hudComponentFields_t *compField = NULL;
+	hudComponent_t             *comp      = NULL;
+	int                        i;
+	int                        argc = trap_Argc();
+
+	if (argc < 2)
+	{
+		CG_ShowEditComponentHelp();
+		return;
+	}
+
+	trap_Argv(1, token, sizeof(token));
+
+	if (!Q_stricmp(token, "?") || !Q_stricmp(token, "help"))
+	{
+		CG_ShowEditComponentHelp();
+		return;
+	}
+
+	if (!Q_stricmp(token, "save"))
+	{
+		CG_HudSave(-1, -1);
+		return;
+	}
+
+	if (argc < 3)
+	{
+		CG_ShowEditComponentHelp();
+
+		return;
+	}
+
+	if (!Q_stricmp(token, "clone"))
+	{
+		trap_Argv(2, token, sizeof(token));
+
+		CG_HudSave(Q_atoi(token), -1);
+		return;
+	}
+
+	if (!Q_stricmp(token, "delete"))
+	{
+		trap_Argv(2, token, sizeof(token));
+
+		CG_HudSave(-1, Q_atoi(token));
+		return;
+	}
+
+	// find components name
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (!Q_stricmp(token, hudComponentFields[i].name))
+		{
+			compField = &hudComponentFields[i];
+			comp      = (hudComponent_t *)((char *)activehud + compField->offset);
+			break;
+		}
+	}
+
+	if (!comp)
+	{
+		CG_Printf("^1 Cannot find component name: %s\n", token);
+		return;
+	}
+
+	// parse command input arguments
+	for (i = 2; i < argc; i++)
+	{
+		int      j;
+		qboolean fieldFound = qfalse;
+
+		trap_Argv(i, token, sizeof(token));
+
+		// find field name
+		for (j = 0; hudComponentMembersFields[j].name; j++)
+		{
+			if (!Q_stricmp(token, hudComponentMembersFields[j].name))
+			{
+				fieldFound = qtrue;
+
+				// try to parse the field arguments
+				if (!hudComponentMembersFields[j].parse(&i, comp, hudComponentMembersFields[j].offset))
+				{
+					// display specific help for style
+					if (!Q_stricmp(hudComponentMembersFields[j].name, "style"))
+					{
+						CG_ShowEditComponentStyleHelp(compField, (int *)((char *)comp + hudComponentMembersFields[j].offset));
+						return;
+					}
+
+					// in case there is not next argument, don't display an error as the user request help
+					if (++i != argc)
+					{
+						CG_Printf("^1Failed to parse ^3<%s> ^1field arguments\n", hudComponentMembersFields[j].name);
+					}
+
+					return;
+				}
+			}
+		}
+
+		if (!fieldFound)
+		{
+			CG_Printf("^1 Cannot find field name: %s\n", token);
+			return;
+		}
+	}
+}
+
+static void CG_EditHudComponentComplete(void)
+{
+	int i;
+	int count = trap_Argc();
+
+	if (count < 3)
+	{
+		trap_CommandComplete("help");
+		trap_CommandComplete("save");
+		trap_CommandComplete("clone");
+		trap_CommandComplete("delete");
+
+		for (i = 0; hudComponentFields[i].name; i++)
+		{
+			trap_CommandComplete(hudComponentFields[i].name);
+		}
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f              },
@@ -2250,7 +2663,8 @@ static consoleCommand_t commands[] =
 	{ "class",               CG_Class_f                },
 	{ "classmenu",           CG_ClassMenu_f            },
 	{ "teammenu",            CG_TeamMenu_f             },
-	{ "readhuds",            CG_ReadHuds_f             },
+	{ "readHuds",            CG_ReadHuds_f             },
+	{ "writeHuds",           CG_WriteHuds_f            },
 	{ "sharetimer",          CG_ShareTimer_f           },
 	{ "sharetimer_buddy",    CG_ShareTimer_f           },
 #ifdef FEATURE_EDV
@@ -2282,6 +2696,7 @@ static consoleCommand_t commands[] =
 	{ "loc",                 CG_Location_f             },
 	{ "camera",              CG_Camera_f               },
 	{ "edithud",             CG_EditHud_f              },
+	{ "editcomponent",       CG_EditComponent_f        },
 	{ NULL,                  NULL                      }
 };
 
@@ -2328,6 +2743,7 @@ static const char *gameCommand[] =
 	"imcollectpr",
 #endif
 	"immaplist",
+	"immaphistory",
 	"impkd",
 #ifdef FEATURE_PRESTIGE
 	"impr",
@@ -2507,11 +2923,41 @@ qboolean CG_ConsoleCommand(void)
 
 	cmd = CG_Argv(0);
 
-	for (i = 0 ; i < sizeof(commands) / sizeof(commands[0]) ; i++)
+	for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
 	{
 		if (!Q_stricmp(cmd, commands[i].cmd))
 		{
 			commands[i].function();
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+static commandComplete_t completeFuncs[] =
+{
+	{ "camera",        CG_CameraCommandComplete    },
+	{ "editcomponent", CG_EditHudComponentComplete },
+	{ NULL,            NULL                        }
+};
+
+qboolean CG_ConsoleCompleteArgument(void)
+{
+	const char *baseCmd;
+	int        i;
+
+	baseCmd = CG_Argv(0);
+	if (baseCmd[0] == '\\' || baseCmd[0] == '/')
+	{
+		baseCmd++;
+	}
+
+	for (i = 0; completeFuncs[i].cmd; i++)
+	{
+		if (!Q_stricmp(baseCmd, completeFuncs[i].cmd))
+		{
+			completeFuncs[i].complete();
 			return qtrue;
 		}
 	}

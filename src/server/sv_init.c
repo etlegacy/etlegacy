@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -953,19 +953,28 @@ void SV_SpawnServer(const char *server)
  */
 void SV_WriteAttackLog(const char *log)
 {
-	if (attHandle > 0)
-	{
-		char    string[512]; // 512 chars seem enough here
-		qtime_t time;
+	int now = Sys_Milliseconds();
 
-		Com_RealTime(&time);
-		Com_sprintf(string, sizeof(string), "%i/%i/%i %i:%i:%i %s", 1900 + time.tm_year, time.tm_mday, time.tm_mon + 1, time.tm_hour, time.tm_min, time.tm_sec, log);
-		(void) FS_Write(string, strlen(string), attHandle);
-	}
-
-	if (sv_protect->integer & SVP_CONSOLE)
+	if (now > sv.lastAttackLogTime + sv_protectLogInterval->integer)
 	{
-		Com_Printf("%s", log);
+		if (attHandle > 0)
+		{
+			char    string[512]; // 512 chars seem enough here
+			qtime_t time;
+
+			Com_RealTime(&time);
+			Com_sprintf(string, sizeof(string), "%i/%02i/%02i %02i:%02i:%02i %s",
+			            1900 + time.tm_year, time.tm_mday, time.tm_mon + 1,
+			            time.tm_hour, time.tm_min, time.tm_sec, log);
+			(void)FS_Write(string, strlen(string), attHandle);
+		}
+
+		if (sv_protect->integer & SVP_CONSOLE)
+		{
+			Com_Printf("%s", log);
+		}
+
+		sv.lastAttackLogTime = now;
 	}
 }
 
@@ -1163,8 +1172,9 @@ void SV_Init(void)
 
 	sv_advert = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
 
-	sv_protect    = Cvar_Get("sv_protect", "0", CVAR_ARCHIVE);
-	sv_protectLog = Cvar_Get("sv_protectLog", "", CVAR_ARCHIVE);
+	sv_protect            = Cvar_Get("sv_protect", "0", CVAR_ARCHIVE);
+	sv_protectLog         = Cvar_Get("sv_protectLog", "", CVAR_ARCHIVE);
+	sv_protectLogInterval = Cvar_Get("sv_protectLogInterval", "1000", CVAR_ARCHIVE);
 	SV_InitAttackLog();
 
 	// init the server side demo recording stuff

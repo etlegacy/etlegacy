@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1196,14 +1196,41 @@ void CL_Vid_Restart_f(void)
 /**
  * @brief Restart the ui subsystem
  */
-void CL_UI_Restart_f(void) // shutdown the UI
+static void CL_UI_Restart_f(void) // shutdown the UI
 {
 	CL_ShutdownUI();
 
 	Com_UpdateVarsClean(CLEAR_FLAGS);
 
+	cls.uiStarted = qtrue;
 	// init the UI
 	CL_InitUI();
+}
+
+/**
+ * @brief Restart the cgame subsystem
+ */
+static void CL_CGame_Restart_f(void)
+{
+	if (com_developer->integer != 1)
+	{
+		Com_Printf(S_COLOR_YELLOW "Cgame restart only allowed in development mode.\n");
+		return;
+	}
+
+	if (!cls.cgameStarted)
+	{
+		Com_Printf(S_COLOR_YELLOW "Cgame is not running, nothing to do.\n");
+		return;
+	}
+
+	CL_ShutdownCGame();
+
+	Com_UpdateVarsClean(CLEAR_FLAGS);
+
+	cls.cgameStarted = qtrue;
+	// init the CGame
+	CL_InitCGame();
 }
 
 /**
@@ -1442,6 +1469,28 @@ void CL_RebaseDrift_f(void)
 void CL_ExtendedCharsTest_f(void)
 {
 	Com_Printf("Output should be the same: t\xe4m\xe4? == t\xc3\xa4m\xc3\xa4?");
+}
+
+static void CL_ConsoleFont_f(void)
+{
+	if (Cmd_Argc() == 2)
+	{
+		const char *font = Cmd_Argv(1);
+		Com_Memset(&cls.consoleFont, 0, sizeof(cls.consoleFont));
+
+		if (font && font[0])
+		{
+			re.RegisterFont(font, SMALLCHAR_HEIGHT, &cls.consoleFont, qtrue);
+		}
+	}
+}
+
+static void CL_CompleteTTFFontName(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		Field_CompleteFilename("fonts", "ttf", qtrue, qtrue);
+	}
 }
 #endif
 
@@ -2645,12 +2694,24 @@ void CL_ShutdownRef(void)
  */
 void CL_InitRenderer(void)
 {
+	const char *fontName = Cvar_VariableString("con_fontName");
+
 	// this sets up the renderer and calls R_Init
 	re.BeginRegistration(&cls.glconfig);
 
 	// load character sets
 	cls.charSetShader = re.RegisterShader("gfx/2d/consolechars");
-	cls.whiteShader   = re.RegisterShader("white");
+
+	// try to load a Truetype if available
+	Com_Memset(&cls.consoleFont, 0, sizeof(cls.consoleFont));
+	if (fontName && fontName[0])
+	{
+		re.RegisterFont(fontName, SMALLCHAR_HEIGHT, &cls.consoleFont, qtrue);
+	}
+	Com_Memset(&cls.etIconFont, 0, sizeof(cls.etIconFont));
+	re.RegisterFont("ETL-icon-font", SMALLCHAR_HEIGHT, &cls.etIconFont, qfalse);
+
+	cls.whiteShader = re.RegisterShader("white");
 
 	cls.consoleShader = re.RegisterShader("console-16bit");    // shader works with 16bit
 	//cls.consoleShader2 = re.RegisterShader("console2-16bit");    // shader works with 16bit
@@ -2745,6 +2806,17 @@ int CL_ScaledMilliseconds(void)
 #ifndef USE_RENDERER_DLOPEN
 extern refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp);
 #endif
+
+
+/**
+ * @brief CL_SetScaling
+ * @return
+ */
+static void CL_SetScaling(float scale)
+{
+	smallCharWidth  = SMALLCHAR_WIDTH * scale;
+	smallCharHeight = SMALLCHAR_HEIGHT * scale;
+}
 
 /**
  * @brief CL_InitRef
@@ -2849,6 +2921,7 @@ void CL_InitRef(void)
 
 	ri.CL_VideoRecording     = CL_VideoRecording;
 	ri.CL_WriteAVIVideoFrame = CL_WriteAVIVideoFrame;
+	ri.CL_SetScaling         = CL_SetScaling;
 
 #ifdef FEATURE_PNG
 	ri.zlib_crc32    = crc32;
@@ -2866,10 +2939,11 @@ void CL_InitRef(void)
 	ri.IN_Restart  = IN_Restart;
 
 	// Glimp bindings
-	ri.GLimp_Init      = GLimp_Init;
-	ri.GLimp_Shutdown  = GLimp_Shutdown;
-	ri.GLimp_SwapFrame = GLimp_EndFrame;
-	ri.GLimp_SetGamma  = GLimp_SetGamma;
+	ri.GLimp_Init        = GLimp_Init;
+	ri.GLimp_Shutdown    = GLimp_Shutdown;
+	ri.GLimp_SwapFrame   = GLimp_EndFrame;
+	ri.GLimp_SetGamma    = GLimp_SetGamma;
+	ri.GLimp_SplashImage = GLimp_SplashImage;
 
 	//ri.ftol = Q_ftol;
 
@@ -2997,16 +3071,14 @@ void CL_Init(void)
 	Cvar_Get("cl_maxPing", "800", CVAR_ARCHIVE_ND);
 
 	// ~ and `, as keys and characters
-	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60", CVAR_ARCHIVE);
+	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60 NONUSBACKSLASH", CVAR_ARCHIVE);
 
 	Cvar_Get("cg_drawNotifyText", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_quickMessageAlt", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_popupLimboMenu", "1", CVAR_ARCHIVE);  // not used, kept for compatibility
 	Cvar_Get("cg_drawTeamOverlay", "2", CVAR_ARCHIVE); // not used, kept for compatibility
 	Cvar_Get("cg_drawGun", "1", CVAR_ARCHIVE);
-	Cvar_Get("cg_cursorHints", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_voiceSpriteTime", "6000", CVAR_ARCHIVE);
-	Cvar_Get("cg_crosshairSize", "48", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawCrosshair", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomDefaultSniper", "20", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomStepSniper", "2", CVAR_ARCHIVE);
@@ -3041,6 +3113,7 @@ void CL_Init(void)
 	Cmd_AddCommand("snd_restart", CL_Snd_Restart_f, "Restarts the audio subsystem.");
 	Cmd_AddCommand("vid_restart", CL_Vid_Restart_f, "Restarts the video subsystem.");
 	Cmd_AddCommand("ui_restart", CL_UI_Restart_f, "Restarts the user interface.");
+	Cmd_AddCommand("cgame_restart", CL_CGame_Restart_f, "Restarts the client game.");
 	Cmd_AddCommand("disconnect", CL_Disconnect_f, "Disconnects from a server.");
 	Cmd_AddCommand("connect", CL_Connect_f, "Connects to a given server.");
 	Cmd_AddCommand("reconnect", CL_Reconnect_f, "Reconnects to last server.");
@@ -3092,6 +3165,7 @@ void CL_Init(void)
 
 #ifdef ETLEGACY_DEBUG
 	Cmd_AddCommand("extendedCharsTest", CL_ExtendedCharsTest_f);
+	Cmd_AddCommand("cl_font", CL_ConsoleFont_f, "Switches console font", CL_CompleteTTFFontName);
 #endif
 
 	CIN_Init();
@@ -3164,6 +3238,8 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("userinfo");
 	Cmd_RemoveCommand("snd_restart");
 	Cmd_RemoveCommand("vid_restart");
+	Cmd_RemoveCommand("ui_restart");
+	Cmd_RemoveCommand("cgame_restart");
 	Cmd_RemoveCommand("disconnect");
 	Cmd_RemoveCommand("cinematic");
 	Cmd_RemoveCommand("connect");
@@ -3654,7 +3730,7 @@ void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 		if (serverStatus->print)
 		{
 			score = ping = 0;
-			sscanf(s, "%d %d", &score, &ping);
+			Q_sscanf(s, "%d %d", &score, &ping);
 			s = strchr(s, ' ');
 			if (s)
 			{
@@ -3668,7 +3744,7 @@ void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 			{
 				s = "unknown";
 			}
-			sscanf(s, "\"%[^\"]\"", name); // get player's name between double quotes
+			Q_sscanf(s, "\"%[^\"]\"", name); // get player's name between double quotes
 			Com_Printf("%-2d   %-3d    %-3d   \"%s^7\"\n", i, score, ping, name);
 		}
 	}
@@ -4315,7 +4391,7 @@ qboolean CL_GetLimboString(int index, char *buf)
 		return qfalse;
 	}
 
-	strncpy(buf, cl.limboChatMsgs[index], 140);
+	Q_strncpyz(buf, cl.limboChatMsgs[index], LIMBOCHAT_WIDTH);
 	return qtrue;
 }
 

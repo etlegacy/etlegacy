@@ -32,16 +32,16 @@ msgid "MOUSE2"
 msgstr "MYSZ2"
 
 msgid "Yes"
-msgstr ""
+msgstr "Tak"
 
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 msgid "SPACE"
 msgstr "SPACJA"

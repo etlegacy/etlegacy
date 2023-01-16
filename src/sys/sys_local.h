@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -54,6 +54,7 @@ void GLimp_Init(glconfig_t *glConfig, windowContext_t *context);
 void GLimp_Shutdown(void);
 void GLimp_EndFrame(void);
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
+qboolean GLimp_SplashImage(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes));
 
 // Console
 void CON_Shutdown(void);
@@ -80,7 +81,10 @@ void Sys_ErrorDialog(const char *error);
 void Sys_AnsiColorPrint(const char *msg);
 
 void *Sys_LoadDll(const char *name, qboolean useSystemLib);
-void *Sys_LoadGameDll(const char *name, qboolean extract, intptr_t(**entryPoint) (int, ...), intptr_t (*systemcalls)(intptr_t, ...));
+// NOTE: arm64 mac has a different calling convention for fixed parameters vs. variadic parameters.
+//       As the module entryPoints (vmMain) in jk2 use fixed arg0 to arg11 we can't use "..." around here or we end up with undefined behavior.
+//       See: https://developer.apple.com/documentation/apple-silicon/addressing-architectural-differences-in-your-macos-code
+void *Sys_LoadGameDll(const char *name, qboolean extract, VM_EntryPoint_t *entryPoint, intptr_t (*systemcalls)(intptr_t, ...));
 void Sys_UnloadDll(void *dllHandle);
 void Sys_ParseArgs(int argc, char **argv);
 void Sys_BuildCommandLine(int argc, char **argv, char *buffer, size_t bufferSize);

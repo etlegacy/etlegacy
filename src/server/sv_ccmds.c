@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -436,12 +436,11 @@ qboolean SV_TempBanIsBanned(netadr_t address)
 {
 	int i;
 
-	for (i = 0; i < MAX_TEMPBAN_ADDRESSES; i++)
-	{
-		if (svs.tempBanAddresses[i].endtime && svs.tempBanAddresses[i].endtime > svs.time)
-		{
-			if (NET_CompareAdr(address, svs.tempBanAddresses[i].adr))
-			{
+	for ( i = 0; i < MAX_TEMPBAN_ADDRESSES; i++ ) {
+		if ( svs.tempBanAddresses[ i ].endtime && svs.tempBanAddresses[ i ].endtime > svs.time )
+        {
+			if ( NET_CompareBaseAdr( address, svs.tempBanAddresses[ i ].adr ) )
+            {
 				return qtrue;
 			}
 		}

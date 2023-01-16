@@ -9,9 +9,22 @@ cmake_minimum_required(VERSION 3.10.3 FATAL_ERROR)
 
 project(ETLEGACY C CXX)
 
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.21")
+    cmake_policy(SET CMP0121 NEW)
+endif()
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.22")
+	cmake_policy(SET CMP0127 NEW)
+endif()
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.24")
+	cmake_policy(SET CMP0135 NEW)
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)
 include(CMakeDependentOption)
+
+include(cmake/ETLBanner.cmake)
+print_header()
 
 # We need to add the macros & Functions before any other includes
 include(cmake/ETLFunctions.cmake)
@@ -52,6 +65,7 @@ LEG_BUNDLE(OPENAL_INCLUDE OpenAL-OSX "APPLE")
 LEG_BUNDLE(GLEW Glew)
 LEG_BUNDLE(FREETYPE Freetype2)
 LEG_BUNDLE(SQLITE3 SQlite3)
+LEG_BUNDLE(CJSON cJSON)
 
 # no support for 32 bit binaries on OpenBSD/amd64 or Apple OSX anymore
 cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT APPLE AND NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
@@ -89,7 +103,7 @@ option(ENABLE_SSE				"Enable Streaming SIMD Extensions"						OFF)
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)
 cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON "FEATURE_DBMS" OFF)
 cmake_dependent_option(FEATURE_PRESTIGE	"Enable prestige support (mod)"					ON "FEATURE_DBMS" OFF)
-cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "( NOT MINGW AND WIN32 ) OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
+cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "( NOT MINGW AND WIN32 ) OR FORCE_OMNIBOT OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 
 option(INSTALL_EXTRA			"Install extra add-ons (omni-bot, geoip, wolfadmin)."	ON)
 
@@ -109,7 +123,7 @@ cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			
 #-----------------------------------------------------------------
 
 if (BUNDLED_OPENSSL AND BUNDLED_WOLFSSL)
-    message(FATAL_ERROR "Cannot enable both OpenSSL and WolfSSL at the same time.")
+	message(FATAL_ERROR "Cannot enable both OpenSSL and WolfSSL at the same time.")
 endif()
 
 # Group the VisualStudio projects
@@ -127,6 +141,9 @@ include(cmake/ETLPrograms.cmake)
 
 # Setup some basic helper variables
 include(cmake/ETLCommon.cmake)
+
+# Dummy targets for library binding
+include(cmake/ETLTargets.cmake)
 
 # Platform specific compiler settings
 include(cmake/ETLPlatform.cmake)
@@ -157,9 +174,9 @@ if(BUILD_CLIENT)
 	include(cmake/ETLBuildClient.cmake)
 
 	#Since CMake 3.6 you are able to set the Visual Studio startup project
-	if(NOT ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 3.6)
-		set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT etl)
-	endif()
+    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6")
+        set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "etl")
+    endif()
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)

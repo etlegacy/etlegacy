@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -51,9 +51,9 @@
 #if SSL_VERIFY
 
 #ifdef USING_WOLFSSL
-#	define OPENSSL_ALL 1
-#	include <wolfssl/options.h>
-#	include <wolfssl/ssl.h>
+#   define OPENSSL_ALL 1
+#   include <wolfssl/options.h>
+#   include <wolfssl/ssl.h>
 #endif
 
 #ifdef USING_OPENSSL
@@ -67,11 +67,16 @@
 #define APP_NAME        "ID_DOWNLOAD"
 #define APP_VERSION     "2.0"
 
-#define GET_BUFFER_SIZE 1024 * 256
+#define GET_BUFFER_SIZE (1024 * 256)
 
 #ifdef __linux__
 #define CA_CERT_DEFAULT "/etc/ssl/certs/ca-certificates.crt"
 #endif
+
+// Helper macro to output the possible error message to the shared log output
+#define ETL_curl_easy_setopt(status, handle, opt, param) \
+		if (((status) = curl_easy_setopt((handle), (opt), (param)))) \
+		Com_Printf(S_COLOR_YELLOW "WARNING: %s: curl_easy_setopt " #opt ": %s\n", __func__, curl_easy_strerror(status))
 
 /**
  * @var dl_initialized
@@ -96,12 +101,12 @@ typedef struct write_result_s
 static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 {
 	fileHandle_t certHandle;
-	int i;
+	int          i;
 	(void)curl;
 	(void)parm;
 
 	int len = (int) FS_SV_FOpenFileRead(CA_CERT_FILE, &certHandle);
-	if(len <= 0)
+	if (len <= 0)
 	{
 		FS_FCloseFile(certHandle);
 		goto callback_failed;
@@ -112,11 +117,11 @@ static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 	FS_Read(buffer, len, certHandle);
 	FS_FCloseFile(certHandle);
 
-	BIO *cbio = BIO_new_mem_buf(buffer, len);
-	X509_STORE  *cts = SSL_CTX_get_cert_store((SSL_CTX *)ssl_ctx);
-	STACK_OF(X509_INFO) *inf;
+	BIO        *cbio = BIO_new_mem_buf(buffer, len);
+	X509_STORE *cts  = SSL_CTX_get_cert_store((SSL_CTX *)ssl_ctx);
+	STACK_OF(X509_INFO) * inf;
 
-	if(!cts || !cbio)
+	if (!cts || !cbio)
 	{
 		Com_Dealloc(buffer);
 		goto callback_failed;
@@ -124,21 +129,21 @@ static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 
 	inf = PEM_X509_INFO_read_bio(cbio, NULL, NULL, NULL);
 
-	if(!inf)
+	if (!inf)
 	{
 		BIO_free(cbio);
 		Com_Dealloc(buffer);
 		goto callback_failed;
 	}
 
-	for(i = 0; i < sk_X509_INFO_num(inf); i++)
+	for (i = 0; i < sk_X509_INFO_num(inf); i++)
 	{
 		X509_INFO *itmp = sk_X509_INFO_value(inf, i);
-		if(itmp->x509)
+		if (itmp->x509)
 		{
 			X509_STORE_add_cert(cts, itmp->x509);
 		}
-		if(itmp->crl)
+		if (itmp->crl)
 		{
 			X509_STORE_add_crl(cts, itmp->crl);
 		}
@@ -255,46 +260,47 @@ void DL_Shutdown(void)
 static void DL_InitSSL(CURL *curl)
 {
 #if defined(FEATURE_SSL)
+	CURLcode status;
 
 #if defined(USING_SCHANNEL)
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 1);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 1);
 #elif SSL_VERIFY
-	curl_easy_setopt(curl, CURLOPT_CAINFO, NULL);
-	curl_easy_setopt(curl, CURLOPT_CAPATH, NULL);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_CAINFO, NULL);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_CAPATH, NULL);
 
 	if (FS_SV_FileExists(CA_CERT_FILE, qtrue))
 	{
-		curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, DL_cb_Context);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_CTX_FUNCTION, DL_cb_Context);
 	}
-	else if(FS_FileInPathExists(Cvar_VariableString("dl_capath")))
+	else if (FS_FileInPathExists(Cvar_VariableString("dl_capath")))
 	{
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_easy_setopt(curl, CURLOPT_CAINFO, Cvar_VariableString("dl_capath"));
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_CAINFO, Cvar_VariableString("dl_capath"));
 	}
 #ifdef __linux__
-	else if(FS_FileInPathExists(CA_CERT_DEFAULT))
+	else if (FS_FileInPathExists(CA_CERT_DEFAULT))
 	{
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_easy_setopt(curl, CURLOPT_CAINFO, CA_CERT_DEFAULT);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_CAINFO, CA_CERT_DEFAULT);
 	}
 #endif
 	else
 	{
 #if defined(_WIN32) && defined(USING_OPENSSL)
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 1);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 #else
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 0);
+		ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 	}
 #else
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYHOST, 0);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 #endif
 }
@@ -309,7 +315,8 @@ static void DL_InitSSL(CURL *curl)
  */
 int DL_BeginDownload(const char *localName, const char *remoteName)
 {
-	char referer[MAX_STRING_CHARS + 5 /*"et://"*/];
+	char     referer[MAX_STRING_CHARS + 5 /*"et://"*/];
+	CURLcode status;
 
 	if (dl_request)
 	{
@@ -343,16 +350,17 @@ int DL_BeginDownload(const char *localName, const char *remoteName)
 	Q_strncpyz(referer + 5, Cvar_VariableString("cl_currentServerIP"), MAX_STRING_CHARS);
 
 	dl_request = curl_easy_init();
-	curl_easy_setopt(dl_request, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
-	curl_easy_setopt(dl_request, CURLOPT_REFERER, referer);
-	curl_easy_setopt(dl_request, CURLOPT_URL, remoteName);
-	curl_easy_setopt(dl_request, CURLOPT_WRITEFUNCTION, DL_cb_FWriteFile);
-	curl_easy_setopt(dl_request, CURLOPT_WRITEDATA, (void *)dl_file);
-	curl_easy_setopt(dl_request, CURLOPT_PROGRESSFUNCTION, DL_cb_Progress);
-	curl_easy_setopt(dl_request, CURLOPT_NOPROGRESS, 0);
-	curl_easy_setopt(dl_request, CURLOPT_FAILONERROR, 1);
-	curl_easy_setopt(dl_request, CURLOPT_FOLLOWLOCATION, 1);
-	curl_easy_setopt(dl_request, CURLOPT_MAXREDIRS, 5);
+
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_REFERER, referer);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_URL, remoteName);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_WRITEFUNCTION, DL_cb_FWriteFile);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_WRITEDATA, (void *)dl_file);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_PROGRESSFUNCTION, DL_cb_Progress);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_NOPROGRESS, 0);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_FAILONERROR, 1);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_FOLLOWLOCATION, 1);
+	ETL_curl_easy_setopt(status, dl_request, CURLOPT_MAXREDIRS, 5);
 
 	DL_InitSSL(dl_request);
 
@@ -402,11 +410,11 @@ char *DL_GetString(const char *url)
 		write_result.data = data;
 	}
 
-	curl_easy_setopt(curl, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
-	curl_easy_setopt(curl, CURLOPT_URL, url);
-	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, DL_write_function);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&write_result);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
+	ETL_curl_easy_setopt(status, curl, CURLOPT_URL, url);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_FOLLOWLOCATION, 1L);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_WRITEFUNCTION, DL_write_function);
+	ETL_curl_easy_setopt(status, curl, CURLOPT_WRITEDATA, (void *)&write_result);
 
 	DL_InitSSL(curl);
 
@@ -469,7 +477,7 @@ dlStatus_t DL_DownloadLoop(void)
 		return DL_CONTINUE;
 	}
 
-	if(status > CURLM_OK)
+	if (status > CURLM_OK)
 	{
 		err = curl_multi_strerror(status);
 		goto curl_done;

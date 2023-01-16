@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -175,10 +175,10 @@ typedef struct
 typedef struct
 {
 	/// print message on the local console
-	void(QDECL * Printf)(int printLevel, const char *fmt, ...) _attribute ((format(printf, 2, 3)));
+	void(QDECL * Printf)(int printLevel, const char *fmt, ...) _attribute((format(printf, 2, 3)));
 
 	/// abort the game
-	void(QDECL * Error)(int errorLevel, const char *fmt, ...) _attribute ((noreturn, format(printf, 2, 3)));
+	void(QDECL * Error)(int errorLevel, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
 
 	/// milliseconds should only be used for profiling, never
 	/// for anything game related. Get time from the refdef
@@ -189,23 +189,23 @@ typedef struct
 	/// won't be freed
 	void (*Hunk_Clear)(void);
 #ifdef HUNK_DEBUG
-	void * (*Hunk_AllocDebug)(size_t size, ha_pref pref, char *label, char *file, int line);
+	void *(*Hunk_AllocDebug)(size_t size, ha_pref pref, char *label, char *file, int line);
 #else
-	void * (*Hunk_Alloc)(size_t size, ha_pref pref);
+	void *(*Hunk_Alloc)(size_t size, ha_pref pref);
 #endif
-	void * (*Hunk_AllocateTempMemory)(size_t size);
+	void *(*Hunk_AllocateTempMemory)(size_t size);
 	void (*Hunk_FreeTempMemory)(void *block);
 
 	/// dynamic memory allocator for things that need to be freed
 #ifdef ZONE_DEBUG
-	void * (*Z_MallocDebug)(int bytes, char *label, char *file, int line);
+	void *(*Z_MallocDebug)(int bytes, char *label, char *file, int line);
 #else
-	void * (*Z_Malloc)(int bytes);
+	void *(*Z_Malloc)(int bytes);
 #endif
 	void (*Free)(void *buf);
 	void (*Tag_Free)(void);
 
-	cvar_t * (*Cvar_Get)(const char *name, const char *value, int flags);
+	cvar_t *(*Cvar_Get)(const char *name, const char *value, cvarFlags_t flags);
 	void (*Cvar_Set)(const char *name, const char *value);
 	void (*Cvar_CheckRange)(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 	void (*Cvar_SetDescription)(cvar_t *cv, const char *description);
@@ -215,7 +215,7 @@ typedef struct
 	void (*Cmd_RemoveSystemCommand)(const char *name);
 
 	int (*Cmd_Argc)(void);
-	char * (*Cmd_Argv)(int i);
+	char *(*Cmd_Argv)(int i);
 
 	void (*Cmd_ExecuteText)(int exec_when, const char *text);
 
@@ -228,7 +228,7 @@ typedef struct
 	int (*FS_FileIsInPAK)(const char *name, int *pChecksum);
 	int (*FS_ReadFile)(const char *name, void **buf);
 	void (*FS_FreeFile)(void *buf);
-	char ** (*FS_ListFiles)(const char *name, const char *extension, int *numfilesfound);
+	char **(*FS_ListFiles)(const char *name, const char *extension, int *numfilesfound);
 	void (*FS_FreeFileList)(char **filelist);
 	void (*FS_WriteFile)(const char *qpath, const void *buffer, int size);
 	qboolean (*FS_FileExists)(const char *file);
@@ -244,10 +244,11 @@ typedef struct
 	/// avi output stuff
 	qboolean (*CL_VideoRecording)(void);
 	void (*CL_WriteAVIVideoFrame)(const byte *buffer, int size);
+	void (*CL_SetScaling)(float scale);
 
 #ifdef FEATURE_PNG
-	int (*zlib_compress) (Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
-	uLong (*zlib_crc32) (uLong crc, const Bytef *buf, uInt len);
+	int (*zlib_compress)(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
+	uLong (*zlib_crc32)(uLong crc, const Bytef *buf, uInt len);
 #endif
 
 	void (*Sys_GLimpSafeInit)(void);
@@ -263,13 +264,16 @@ typedef struct
 	void (*GLimp_Shutdown)(void);
 	void (*GLimp_SwapFrame)(void);
 	void (*GLimp_SetGamma)(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
+
+	qboolean (*GLimp_SplashImage)(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes));
+
 } refimport_t;
 
 /// this is the only function actually exported at the linker level
 /// If the module can't init to a valid rendering state, NULL will be
 /// returned.
 #ifdef USE_RENDERER_DLOPEN
-typedef refexport_t * (QDECL * GetRefAPI_t)(int apiVersion, refimport_t *rimp);
+typedef refexport_t *(QDECL *GetRefAPI_t)(int apiVersion, refimport_t *rimp);
 #else
 //refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp);
 #endif

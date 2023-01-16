@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -378,6 +378,23 @@ int Sys_RemoveDir(const char *path)
 	wchar_t w_path[MAX_OSPATH];
 	Sys_StringToWideCharArray(path, w_path, MAX_OSPATH);
 	return _wrmdir(w_path);
+}
+
+double Sys_GetWindowsVer(void)
+{
+	double ver = 0.0;
+	NTSTATUS(WINAPI * RtlGetVersion)(LPOSVERSIONINFOEXW);
+	OSVERSIONINFOEXW osInfo;
+
+	*(FARPROC*)&RtlGetVersion = GetProcAddress(GetModuleHandleA("ntdll"), "RtlGetVersion");
+
+	if (NULL != RtlGetVersion)
+	{
+		osInfo.dwOSVersionInfoSize = sizeof(osInfo);
+		RtlGetVersion(&osInfo);
+		ver = (double)osInfo.dwMajorVersion;
+	}
+	return ver;
 }
 
 int Sys_Stat(const char *path, void *stat)

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -985,10 +985,16 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
  * @brief Menu_BindExecMode
  * @return
  */
-qboolean Menu_BindExecMode(void)
+static qboolean Menu_BindExecMode(int key)
 {
 	// only in main menu (fullscreen UI)
 	if (!Menus_AnyFullScreenVisible())
+	{
+		return qfalse;
+	}
+
+	// do not execute on the shift key itself
+	if (key == K_LSHIFT || key == K_RSHIFT)
 	{
 		return qfalse;
 	}
@@ -1142,11 +1148,13 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	}
 
 	// execute binds if shift is held
-	if (Menu_BindExecMode())
+	if (Menu_BindExecMode(key))
 	{
 		char buf[MAX_STRING_CHARS];
 		trap_Key_GetBindingBuf(key, buf, sizeof(buf));
-		if (buf[0] != 0)
+
+		// Do not allow +/- actions or vstr that can contain those
+		if (buf[0] != 0 && strstr(buf, "+") == NULL && strstr(buf, "vstr") == NULL)
 		{
 			DC->executeText(EXEC_APPEND, buf);
 		}
@@ -1155,6 +1163,12 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	// default handling
 	switch (key)
 	{
+	case K_F10:
+		if (DC->getCVarValue("developer") != 0.f)
+		{
+			DC->executeText(EXEC_APPEND, "ui_restart\n");
+		}
+		break;
 	case K_F11:
 		if (DC->getCVarValue("developer") != 0.f)
 		{
@@ -1474,7 +1488,7 @@ void Menu_PaintAll(void)
 		DC->drawText(5, 20, .2f, v, va("mouse: %i %i", DC->cursorx, DC->cursory), 0, 0, 0);
 	}
 
-	if (Menu_BindExecMode())
+	if (Menu_BindExecMode(-1))
 	{
 		vec4_t     color;
 		float      x, w;

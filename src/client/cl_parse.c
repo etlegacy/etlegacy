@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -653,7 +653,7 @@ void CL_SystemInfoChanged(void)
 	s = systemInfo;
 	while (s)
 	{
-		int cvar_flags;
+		cvarFlags_t cvar_flags;
 
 		Info_NextPair(&s, key, value);
 		if (!key[0])
@@ -673,7 +673,7 @@ void CL_SystemInfoChanged(void)
 			gameSet = qtrue;
 		}
 
-		if ((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT)
+		if ((cvar_flags = Cvar_Flags(key)) & CVAR_NONEXISTENT)
 		{
 			Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM);
 		}

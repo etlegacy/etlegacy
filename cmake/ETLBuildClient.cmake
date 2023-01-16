@@ -38,47 +38,10 @@ else()
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 endif()
 
-if(BUNDLED_SDL)
-	add_dependencies(etl bundled_sdl)
-endif()
-
-if(BUNDLED_ZLIB)
-	add_dependencies(etl bundled_zlib)
-endif()
-
-if(BUNDLED_MINIZIP)
-	add_dependencies(etl bundled_minizip)
-endif()
-
-if(BUNDLED_OPENSSL)
-	add_dependencies(etl bundled_openssl)
-endif()
-
-if(BUNDLED_WOLFSSL)
-	add_dependencies(etl bundled_wolfssl)
-endif()
-
-if(BUNDLED_CURL)
-	add_dependencies(etl bundled_curl)
-endif()
-
-if(BUNDLED_OGG_VORBIS)
-	add_dependencies(etl bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
-endif()
-
-if(BUNDLED_THEORA)
-	add_dependencies(bundled_theora bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
-	add_dependencies(etl bundled_theora)
-endif()
-
-if(BUNDLED_OPENAL)
-	add_dependencies(etl bundled_openal)
-endif()
-
 target_link_libraries(etl
-	${CLIENT_LIBRARIES}
-	${SDL_LIBRARIES}
-	${OS_LIBRARIES} # Has to go after cURL and SDL
+	client_libraries
+	engine_libraries
+	os_libraries # Has to go after cURL and SDL
 )
 
 if(FEATURE_WINDOWS_CONSOLE AND WIN32)

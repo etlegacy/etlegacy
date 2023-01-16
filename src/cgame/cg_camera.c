@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -177,7 +177,7 @@ qboolean CG_CameraCheckExecKey(int key, qboolean down, qboolean doAction)
 		return qfalse;
 	}
 
-	// escape does escape stuff..
+	// Escape does escape stuff.
 	if (key == K_ESCAPE)
 	{
 		if (doAction && !down)
@@ -254,7 +254,7 @@ void CG_CameraEditorDraw(void)
 		int    bindingKey[2];
 		char   binding[2][32];
 		vec4_t colour;
-		float  x, y, w, h;
+		float  y;
 
 		VectorCopy(colorWhite, colour);
 		colour[3] = .8f;
@@ -284,7 +284,7 @@ void CG_CameraEditorDraw(void)
 		                  0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		// render crosshair
-        CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
+		CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
 	}
 	else
 	{
@@ -377,10 +377,15 @@ void CG_AddControlPoint(void)
 
 }
 
-void CG_PlayCurrentCamera(int seconds)
+void CG_PlayCurrentCamera(unsigned int seconds)
 {
 	vec3_t        bezCt1, bezCt2;
 	cameraPoint_t *last = cameraInfo.currentCamera;
+
+	if (!seconds)
+	{
+		return;
+	}
 
 	cameraInfo.cameraTotalLength = 0.f;
 	while (last && last->next)
@@ -648,4 +653,19 @@ void CG_RenderCameraPoints(void)
 	}
 
 	cameraInfo.pointingCamera = closest;
+}
+
+void CG_CameraCommandComplete(void)
+{
+	int count = trap_Argc();
+
+	if (count < 3)
+	{
+		trap_CommandComplete("open");
+		trap_CommandComplete("close");
+		trap_CommandComplete("add");
+		trap_CommandComplete("ct");
+		trap_CommandComplete("play");
+		trap_CommandComplete("clear");
+	}
 }

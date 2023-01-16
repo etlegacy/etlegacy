@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Peter McNeill <n27@bigpond.net.au>
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -114,7 +114,7 @@ static void HSVtoRGB(float h, float s, float v, float rgb[3])
  */
 static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 {
-	int r,g,b;
+	int r, g, b;
 	// shift the color data based on overbright range
 	int shift = r_mapOverBrightBits->integer - tr.overbrightBits;
 
@@ -798,13 +798,13 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 		}
 		else
 		{*/
-			for (j = 0; j < LIGHTMAP_SIZE * LIGHTMAP_SIZE; j++)
-			{
-				R_ColorShiftLightingBytes(&buf_p[j * 3], &data[j * 4]);
-				data[j * 4 + 3] = 255;
-			}
-			image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
-			Com_AddToGrowList(&tr.lightmaps, image);
+		for (j = 0; j < LIGHTMAP_SIZE * LIGHTMAP_SIZE; j++)
+		{
+			R_ColorShiftLightingBytes(&buf_p[j * 3], &data[j * 4]);
+			data[j * 4 + 3] = 255;
+		}
+		image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
+		Com_AddToGrowList(&tr.lightmaps, image);
 		//}
 	}
 }
@@ -844,7 +844,7 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 		Ren_Developer("...loading %i HDR lightmaps\n", numLightmaps);
 
 		if (r_hdrRendering->integer && r_hdrLightmap->integer && glConfig2.framebufferObjectAvailable &&
-			glConfig2.framebufferBlitAvailable && glConfig2.textureFloatAvailable && glConfig2.textureHalfFloatAvailable)
+		    glConfig2.framebufferBlitAvailable && glConfig2.textureFloatAvailable && glConfig2.textureHalfFloatAvailable)
 		{
 			int            width, height;
 			unsigned short *hdrImage = NULL;
@@ -869,18 +869,18 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 				//Q_strncpyz(image->name, );
 				image->type = GL_TEXTURE_2D;
 
-				image->width = width;
+				image->width  = width;
 				image->height = height;
 
-				image->bits = IF_NOPICMIP | IF_RGBA16F;
+				image->bits       = IF_NOPICMIP | IF_RGBA16F;
 				image->filterType = FT_NEAREST;
-				image->wrapType = WT_EDGE_CLAMP;
+				image->wrapType   = WT_EDGE_CLAMP;
 
 				GL_Bind(image);
 
 				image->internalFormat = GL_RGBA16F_ARB;
-				image->uploadWidth = width;
-				image->uploadHeight = height;
+				image->uploadWidth    = width;
+				image->uploadHeight   = height;
 
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F_ARB, width, height, 0, GL_RGB, GL_HALF_FLOAT_ARB, hdrImage);
 
@@ -920,7 +920,7 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 				LoadRGBEToBytes(va("%s/%s", mapName, lightmapFiles[i]), &ldrImage, &width, &height);
 
 				image = R_CreateImage(va("%s/%s", mapName, lightmapFiles[i]), (byte *)ldrImage, width, height,
-					IF_NOPICMIP | IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
+				                      IF_NOPICMIP | IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
 
 				Com_AddToGrowList(&tr.lightmaps, image);
 
@@ -929,7 +929,7 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 		}
 	}
 
-		/*if (tr.worldDeluxeMapping)
+	/*if (tr.worldDeluxeMapping)
 		{
 			// load deluxemaps
 			lightmapFiles = ri.FS_ListFiles(mapName, ".png", &numLightmaps);
@@ -960,31 +960,31 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 	}*/
 
 	//{
-		/*lightmapFiles = ri.FS_ListFiles(mapName, ".png", &numLightmaps);
+	/*lightmapFiles = ri.FS_ListFiles(mapName, ".png", &numLightmaps);
 
 		if (!lightmapFiles || !numLightmaps)
 		{*/
-			lightmapFiles = ri.FS_ListFiles(mapName, ".tga", &numLightmaps);
+	lightmapFiles = ri.FS_ListFiles(mapName, ".tga", &numLightmaps);
 
-			if (!lightmapFiles || !numLightmaps)
-			{
-				Ren_Warning("WARNING: no lightmap files found for %s\n", mapName);
-				return;
-			}
-		//}
+	if (!lightmapFiles || !numLightmaps)
+	{
+		Ren_Warning("WARNING: no lightmap files found for %s\n", mapName);
+		return;
+	}
+	//}
 
-		qsort(lightmapFiles, numLightmaps, sizeof(char *), LightmapNameCompare);
+	qsort(lightmapFiles, numLightmaps, sizeof(char *), LightmapNameCompare);
 
-		Ren_Developer("...loading %i lightmaps\n", numLightmaps);
+	Ren_Developer("...loading %i lightmaps\n", numLightmaps);
 
-		// we are about to upload textures
-		R_IssuePendingRenderCommands();
+	// we are about to upload textures
+	R_IssuePendingRenderCommands();
 
-		for (i = 0; i < numLightmaps; i++)
-		{
-			Ren_Developer("...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
+	for (i = 0; i < numLightmaps; i++)
+	{
+		Ren_Developer("...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
 
-			/*if (tr.worldDeluxeMapping)
+		/*if (tr.worldDeluxeMapping)
 			{
 				if (i % 2 == 0)
 				{
@@ -1001,10 +1001,10 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 			}
 			else
 			{*/
-				Ren_Developer("Loading lightmap\n");
-				image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP, NULL);
-				Com_AddToGrowList(&tr.lightmaps, image);
-		}
+		Ren_Developer("Loading lightmap\n");
+		image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP, NULL);
+		Com_AddToGrowList(&tr.lightmaps, image);
+	}
 
 
 }
@@ -3450,16 +3450,31 @@ static void R_CreateWorldVBO()
 	// assign the two nearest cubeProbes
 	if (tr.cubeProbes.currentElements > 0)
 	{
-		srfGeneric_t *srf;
+		srfGeneric_t   *srf;
 		cubemapProbe_t *cubeProbe1, *cubeProbe2;
-		float distance1, distance2;
+		float          distance1, distance2;
 		for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
 		{
-			if (*surface->data == SF_FACE) srf = (srfGeneric_t *)surface->data;
-			else if (*surface->data == SF_GRID) srf = (srfGeneric_t *)surface->data;
-			else if (*surface->data == SF_TRIANGLES) srf = (srfGeneric_t *)surface->data;
-			else if (*surface->data == SF_FOLIAGE) srf = (srfGeneric_t *)surface->data;
-			else continue;
+			if (*surface->data == SF_FACE)
+			{
+				srf = (srfGeneric_t *)surface->data;
+			}
+			else if (*surface->data == SF_GRID)
+			{
+				srf = (srfGeneric_t *)surface->data;
+			}
+			else if (*surface->data == SF_TRIANGLES)
+			{
+				srf = (srfGeneric_t *)surface->data;
+			}
+			else if (*surface->data == SF_FOLIAGE)
+			{
+				srf = (srfGeneric_t *)surface->data;
+			}
+			else
+			{
+				continue;
+			}
 
 			// find the two nearest cubeProbes
 			R_FindTwoNearestCubeMaps(srf->origin, &cubeProbe1, &cubeProbe2, &distance1, &distance2);
@@ -4740,9 +4755,9 @@ void R_LoadLightGrid(lump_t *l)
 
 		if (in->latLong[0] == 0x80 && in->latLong[1] == 0x00)
 		{
-			 gridPoint->direction[0] = 0.0f;
-			 gridPoint->direction[1] = 0.0f;
-			 gridPoint->direction[2] = -1.0f;
+			gridPoint->direction[0] = 0.0f;
+			gridPoint->direction[1] = 0.0f;
+			gridPoint->direction[2] = -1.0f;
 		}
 		else
 		{
@@ -4879,7 +4894,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 
 			if (!Q_stricmp(keyname, "origin"))
 			{
-				origin =  ri.Z_Malloc(strlen(value) + 1);
+				origin = ri.Z_Malloc(strlen(value) + 1);
 				strcpy(origin, value);
 			}
 		}
@@ -4900,7 +4915,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 		{
 			if (origin)
 			{
-				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
 				ri.Free(origin);
 			}
 			else
@@ -4957,7 +4972,7 @@ void resetRefLight(trRefLight_t *light)
 
 	light->shadowLOD = 0;
 
-	light->l.rlType  = RL_OMNI;
+	light->l.rlType = RL_OMNI;
 }
 
 /**
@@ -5208,7 +5223,7 @@ void R_LoadLights(char *lightDefs)
 			// check for origin
 			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin")) // ETL (origin)
 			{
-				sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
 			}
 			// check for origin
 			else if (!Q_stricmp(keyname, "spawnflags")) // ETL (spawnflags)
@@ -5219,29 +5234,29 @@ void R_LoadLights(char *lightDefs)
 			}
 			else if (!Q_stricmp(keyname, "angle")) // ETL (angle)
 			{
-				 // FIXME
+				// FIXME
 				int angle = Q_atoi(value);
 			}
 			// Falloff/radius adjustment value. Multiply the run of the slope by "fade" (1.0f default only valid for "Linear" lights wolf)
 			else if (!Q_stricmp(keyname, "fade")) // ETL (fade)
 			{
-				 // FIXME
+				// FIXME
 				float fade = Q_atoi(value);
 			}
 			// check for center
 			else if (!Q_stricmp(keyname, "light_center"))
 			{
-				sscanf(value, "%f %f %f", &light->l.center[0], &light->l.center[1], &light->l.center[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.center[0], &light->l.center[1], &light->l.center[2]);
 			}
 			// check for color - weighted RGB value of light color ('k' key)(default white - 1.0 1.0 1.0)
 			else if (!Q_stricmp(keyname, "_color")) // ETL
 			{
-				sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
 			}
 			// check for radius - overrides the default 64 unit radius of a spotlight at the target point
 			else if (!Q_stricmp(keyname, "light_radius") || !Q_stricmp(keyname, "radius")) // ETL (radius)
 			{
-				sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
 
 				//VectorScale();
 				light->l.radius[0] *= RADIUS_MULTIPLICATOR;
@@ -5251,7 +5266,7 @@ void R_LoadLights(char *lightDefs)
 			// check for light_target
 			else if (!Q_stricmp(keyname, "light_target"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
@@ -5277,28 +5292,28 @@ void R_LoadLights(char *lightDefs)
 			// check for light_right
 			else if (!Q_stricmp(keyname, "light_right"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projRight[0], &light->l.projRight[1], &light->l.projRight[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projRight[0], &light->l.projRight[1], &light->l.projRight[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_up
 			else if (!Q_stricmp(keyname, "light_up"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projUp[0], &light->l.projUp[1], &light->l.projUp[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projUp[0], &light->l.projUp[1], &light->l.projUp[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_start
 			else if (!Q_stricmp(keyname, "light_start"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projStart[0], &light->l.projStart[1], &light->l.projStart[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projStart[0], &light->l.projStart[1], &light->l.projStart[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_end
 			else if (!Q_stricmp(keyname, "light_end"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projEnd[0], &light->l.projEnd[1], &light->l.projEnd[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projEnd[0], &light->l.projEnd[1], &light->l.projEnd[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
@@ -5345,7 +5360,7 @@ void R_LoadLights(char *lightDefs)
 			{
 				mat4_t rotation;
 
-				sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
+				Q_sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
 				       &rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
 
 				quat_from_mat4(light->l.rotation, rotation);
@@ -5543,7 +5558,7 @@ void R_LoadEntities(lump_t *l)
 		// check for a different grid size
 		if (!Q_stricmp(keyname, "gridsize"))
 		{
-			sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
+			Q_sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
 			continue;
 		}
 		// check for ambient color
@@ -5551,8 +5566,8 @@ void R_LoadEntities(lump_t *l)
 		{
 
 
-				sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
-				       &tr.worldEntity.ambientLight[2]);
+			Q_sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
+			       &tr.worldEntity.ambientLight[2]);
 
 		}
 		// check for ambient scale constant
@@ -5564,14 +5579,13 @@ void R_LoadEntities(lump_t *l)
 		// check for fog color
 		else if (!Q_stricmp(keyname, "fogColor"))
 		{
-			sscanf(value, "%f %f %f", &tr.fogColor[0], &tr.fogColor[1], &tr.fogColor[2]);
+			Q_sscanf(value, "%f %f %f", &tr.fogColor[0], &tr.fogColor[1], &tr.fogColor[2]);
 		}
 		// check for fog density
 		else if (!Q_stricmp(keyname, "fogDensity"))
 		{
 			tr.fogDensity = atof(value);
 		}
-
 		// check for deluxe mapping support
 		/*if (!Q_stricmp(keyname, "deluxeMapping") && !Q_stricmp(value, "1"))
 		{
@@ -7862,8 +7876,8 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1
 	float          distance;
 	cubemapProbe_t *cubeProbe;
 #if 0
-	unsigned int   hash;
-	vertexHash_t   *vertexHash;
+	unsigned int hash;
+	vertexHash_t *vertexHash;
 #endif
 	Ren_LogComment("--- R_FindTwoNearestCubeMaps ---\n");
 
@@ -7878,7 +7892,7 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1
 		return;
 	}
 #if 0
-	hash        = VertexCoordGenerateHash(position);
+	hash = VertexCoordGenerateHash(position);
 #endif
 	*distance1 = *distance2 = 9999999.0f;
 
@@ -7896,15 +7910,15 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1
 		if (distance < *distance1)
 		{
 			*cubeProbe2 = *cubeProbe1;
-			*distance2 = *distance1;
+			*distance2  = *distance1;
 
 			*cubeProbe1 = cubeProbe;
-			*distance1 = distance;
+			*distance1  = distance;
 		}
 		else if (distance < *distance2) // && distance > *distance1)
 		{
 			*cubeProbe2 = cubeProbe;
-			*distance2 = distance;
+			*distance2  = distance;
 		}
 	}
 
@@ -7930,7 +7944,7 @@ void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int heig
 
 	buffer = (byte *)ri.Z_Malloc(fileBytes);
 	Com_Memset(buffer, 0, 18);
-	buffer[2]  = 2;     // Uncompressed, RGB images
+	buffer[2] = 2;      // Uncompressed, RGB images
 	//buffer[8] = 0 & 255; // X Origin: X coordinate of the lower left corner of the image
 	//buffer[9] = 0 >> 8;
 	//buffer[10] = (height-1) & 255; // X Origin: X coordinate of the lower left corner of the image
@@ -7939,7 +7953,7 @@ void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int heig
 	buffer[13] = width >> 8;
 	buffer[14] = height & 255;
 	buffer[15] = height >> 8;
-	buffer[16] = 32;	// Number of bits per pixel
+	buffer[16] = 32;    // Number of bits per pixel
 	//buffer[17] = 8;	// number of attribute bits associated with each pixel (alpha uses 8 bits)
 
 	// copy pixel data
@@ -7967,25 +7981,25 @@ void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int heig
  */
 qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6])
 {
-	static byte *buffer = NULL; // pointer to the file buffer (including the 18 byte long header)
-	byte *pixeldata     = NULL; // the pointer to the actual pixel colors
+	static byte *buffer    = NULL; // pointer to the file buffer (including the 18 byte long header)
+	byte        *pixeldata = NULL; // the pointer to the actual pixel colors
 
-	int i;
-	int totalPos = cubeProbeNum * 6;
-	int fileNum = totalPos / REF_CUBEMAPS_PER_FILE;    // divide by howmany images fit in one bigger image on file
-	int insidePos = totalPos % REF_CUBEMAPS_PER_FILE;  // the Nth image inside the big texture
-	int sidesFree = REF_CUBEMAPS_PER_FILE - insidePos; // current number of images that still can be fit into the current big texture
-	int cubeSidesInFile1 = (sidesFree >= 6) ? 6 : sidesFree;
-	int cubeSidesInFile2 = 6 - cubeSidesInFile1;
-	char *filename;
-	int bytesRead;
+	int        i;
+	int        totalPos         = cubeProbeNum * 6;
+	int        fileNum          = totalPos / REF_CUBEMAPS_PER_FILE; // divide by howmany images fit in one bigger image on file
+	int        insidePos        = totalPos % REF_CUBEMAPS_PER_FILE; // the Nth image inside the big texture
+	int        sidesFree        = REF_CUBEMAPS_PER_FILE - insidePos; // current number of images that still can be fit into the current big texture
+	int        cubeSidesInFile1 = (sidesFree >= 6) ? 6 : sidesFree;
+	int        cubeSidesInFile2 = 6 - cubeSidesInFile1;
+	char       *filename;
+	int        bytesRead;
 	static int lastFileNum = -1; // initialize with a value that fileNum will never have
 
 	if (fileNum != lastFileNum)
 	{
 		lastFileNum = fileNum;
-		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum);
-		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this lso closes he file after reading the full file into the buffer
+		filename    = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum);
+		bytesRead   = ri.FS_ReadFile(filename, (void **)&buffer); // this lso closes he file after reading the full file into the buffer
 		if (bytesRead <= 0)
 		{
 			//Ren_Print("loadCubeProbes: %s not found", filename);
@@ -7999,11 +8013,11 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6
 	{
 		// copy this cube map into buffer
 		R_SubImageCpy(pixeldata,
-			((insidePos + i) % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
-			REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-			cubeTemp[i],
-			REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
-			4, qfalse);
+		              ((insidePos + i) % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
+		              REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
+		              cubeTemp[i],
+		              REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+		              4, qfalse);
 	}
 	if (cubeProbeNum == totalCubeProbes)
 	{
@@ -8020,7 +8034,7 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6
 		}
 
 		lastFileNum = fileNum + 1;
-		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum + 1);
+		filename    = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum + 1);
 
 		if (ri.FS_FOpenFileRead(filename, NULL, qfalse) <= 0)
 		{
@@ -8041,11 +8055,11 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6
 		{
 			// copy this cube map into buffer
 			R_SubImageCpy(pixeldata,
-							(i % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, (i / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
-							REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-							tr.cubeTemp[cubeSidesInFile1 + i],
-							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
-							4, qfalse);
+			              (i % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, (i / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
+			              REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
+			              tr.cubeTemp[cubeSidesInFile1 + i],
+			              REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+			              4, qfalse);
 		}
 		if (cubeProbeNum == totalCubeProbes)
 		{
@@ -8072,19 +8086,19 @@ void R_BuildCubeMaps(void)
 	//byte           *dest;    // encode the pixel intensity into the alpha channel
 	//byte   r, g, b, best;    // encode the pixel intensity into the alpha channel
 
-	byte		*pixeldata	= NULL;
-	char		*fileName	= NULL;
-	int			fileCount	= 0; // the cm_ file numbering
-	int			sideX		= 0; // this cube side image is the Nth image from the left (in the bigger texture)
-	int			sideY		= 0; // this cube side image is the Nth image from the top (in the bigger texture)
-	qboolean	dirtyBuf	= qfalse; // true if there is something in the fileBuf, and the fileBuf has not been written to disk yet.
-	qboolean	createCM	= qfalse;
+	byte     *pixeldata = NULL;
+	char     *fileName  = NULL;
+	int      fileCount  = 0;     // the cm_ file numbering
+	int      sideX      = 0;     // this cube side image is the Nth image from the left (in the bigger texture)
+	int      sideY      = 0;     // this cube side image is the Nth image from the top (in the bigger texture)
+	qboolean dirtyBuf   = qfalse;     // true if there is something in the fileBuf, and the fileBuf has not been written to disk yet.
+	qboolean createCM   = qfalse;
 
 #if 1
 	// the "progressbar" is 50 characters long
 	// there are n cubeProbes    (n == tr.cubeProbes.currentElements)
 	float ticsPerProbe; // 50 / tr.cubeProbes.currentElements;
-	int tics = 0; // the current number of tics that have been written
+	int   tics = 0; // the current number of tics that have been written
 #else
 	size_t tics         = 0;
 	size_t nextTicCount = 0;
@@ -8192,7 +8206,7 @@ void R_BuildCubeMaps(void)
 			if (FindVertexInHashTable(tr.cubeHashTable, node->origin, CUBES_MINIMUM_DISTANCE) == NULL)
 			{
 	#else
-				isCubeOK = qtrue;
+			isCubeOK = qtrue;
 
 			for (p = 0; p < tr.cubeProbes.currentElements; p++)
 			{
@@ -8200,7 +8214,7 @@ void R_BuildCubeMaps(void)
 
 				if (Distance(node->origin, cubeProbe->origin) > CUBES_MINIMUM_DISTANCE)
 				{
-				continue;
+					continue;
 				}
 
 				isCubeOK = qfalse;
@@ -8222,10 +8236,10 @@ void R_BuildCubeMaps(void)
 	}
 	else // cubes based on lightgrid
 	{
-		int            numGridPoints, k;
+		int numGridPoints, k;
 		//bspGridPoint_t *gridPoint;
 		//int            gridStep[3];
-		float          posFloat[3];
+		float posFloat[3];
 
 		//gridStep[0] = 1;
 		//gridStep[1] = tr.world->lightGridBounds[0];
@@ -8349,7 +8363,7 @@ void R_BuildCubeMaps(void)
 		{
 			if (!pixeldata)
 			{
-                                pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
+				pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
 			}
 
 			// render the cubemap
@@ -8471,7 +8485,7 @@ void R_BuildCubeMaps(void)
 				}
 				}
 
-				tr.refdef.pixelTarget = tr.cubeTemp[i];
+				tr.refdef.pixelTarget       = tr.cubeTemp[i];
 				tr.refdef.pixelTargetWidth  = REF_CUBEMAP_SIZE;
 				tr.refdef.pixelTargetHeight = REF_CUBEMAP_SIZE;
 				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
@@ -8517,11 +8531,11 @@ void R_BuildCubeMaps(void)
 
 				// Copy this cube map into buffer
 				R_SubImageCpy(pixeldata,
-								sideX * REF_CUBEMAP_SIZE, sideY * REF_CUBEMAP_SIZE,
-								REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-								tr.cubeTemp[i],
-								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
-								4, qtrue);
+				              sideX * REF_CUBEMAP_SIZE, sideY * REF_CUBEMAP_SIZE,
+				              REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
+				              tr.cubeTemp[i],
+				              REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+				              4, qtrue);
 
 				dirtyBuf = qtrue;
 				// Increment counters, and write file if it's full
@@ -8584,7 +8598,7 @@ void R_BuildCubeMaps(void)
 	}
 	else
 	{
-		Ren_Print("Read %d cubemaps from files.\n", tr.cubeProbes.currentElements -1);
+		Ren_Print("Read %d cubemaps from files.\n", tr.cubeProbes.currentElements - 1);
 	}
 
 	if (pixeldata)
@@ -8667,6 +8681,12 @@ void RE_LoadWorldMap(const char *name)
 	byte      *buffer;
 	byte      *startMarker;
 
+	// if we are in development mode we allow the cgame_restart command which also calls the load world map trap
+	if (tr.worldMapLoaded && ri.Cvar_VariableIntegerValue("developer") == 1)
+	{
+		return;
+	}
+
 	if (tr.worldMapLoaded)
 	{
 		Ren_Drop("ERROR: attempted to redundantly load world map\n");
@@ -8721,7 +8741,7 @@ void RE_LoadWorldMap(const char *name)
 
 	// tr.worldDeluxeMapping will be set by R_LoadEntities()
 	//tr.worldDeluxeMapping = qfalse;
-	tr.worldHDR_RGBE      = qfalse;
+	tr.worldHDR_RGBE = qfalse;
 
 	Com_Memset(&s_worldData, 0, sizeof(s_worldData));
 	Q_strncpyz(s_worldData.name, name, sizeof(s_worldData.name));

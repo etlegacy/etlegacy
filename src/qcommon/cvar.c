@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -36,9 +36,9 @@
 #include "q_shared.h"
 #include "qcommon.h"
 
-cvar_t *cvar_vars;
-cvar_t *cvar_cheats;
-int    cvar_modifiedFlags;
+cvar_t      *cvar_vars;
+cvar_t      *cvar_cheats;
+cvarFlags_t cvar_modifiedFlags;
 
 #define MAX_CVARS   2048
 cvar_t cvar_indexes[MAX_CVARS];
@@ -202,7 +202,7 @@ void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, size_t
  * @param[in] var_name
  * @return
  */
-int Cvar_Flags(const char *var_name)
+cvarFlags_t Cvar_Flags(const char *var_name)
 {
 	cvar_t *var;
 
@@ -406,7 +406,7 @@ static const char *Cvar_Validate(cvar_t *cv, const char *value, qboolean warn)
  * @param[in] flags
  * @return
  */
-cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
+cvar_t *Cvar_Get(const char *varName, const char *value, cvarFlags_t flags)
 {
 	cvar_t *var;
 	long   hash;
@@ -612,7 +612,7 @@ cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
  * @param[in] description The description of this cvar
  * @return new cvar registered cvar instance
  */
-cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, int flags, const char *description)
+cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, cvarFlags_t flags, const char *description)
 {
 	cvar_t *tmp = Cvar_Get(varName, value, flags);
 	Cvar_SetDescription(tmp, description);
@@ -805,9 +805,9 @@ void Cvar_Set(const char *varName, const char *value)
  */
 void Cvar_SetSafe(const char *var_name, const char *value)
 {
-	int flags = Cvar_Flags(var_name);
+	cvarFlags_t flags = Cvar_Flags(var_name);
 
-	if ((flags != CVAR_NONEXISTENT) && (flags & CVAR_PROTECTED))
+	if (!(flags & CVAR_NONEXISTENT) && (flags & CVAR_PROTECTED))
 	{
 		if (value)
 		{
@@ -1188,8 +1188,9 @@ void Cvar_Reset_f(void)
  * @brief Appends lines containing "set variable value" for all variables
  * with the archive flag set to qtrue.
  * @param[in] f
+ * @param[in] nodefaults
  */
-void Cvar_WriteVariables(fileHandle_t f)
+void Cvar_WriteVariables(fileHandle_t f, qboolean nodefaults)
 {
 	cvar_t     *var;
 	char       buffer[1024];
@@ -1216,7 +1217,7 @@ void Cvar_WriteVariables(fileHandle_t f)
 				continue;
 			}
 
-			if ((var->flags & CVAR_NODEFAULT) && !Q_stricmp(value, var->resetString))
+			if (((var->flags & CVAR_NODEFAULT) || nodefaults) && !Q_stricmp(value, var->resetString))
 			{
 				continue;
 			}
@@ -1746,7 +1747,7 @@ void Cvar_SetDescription(cvar_t *cv, const char *varDescription)
  * @param[in] defaultValue
  * @param[in] flags
  */
-void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags)
+void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags)
 {
 	cvar_t *cv;
 
@@ -1756,7 +1757,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 	// baseq3) sets both flags. We unset CVAR_ROM for such cvars.
 	//
 	// Update: We no longer do this for ETL
-	// All cvars containing both flags are obsolte/unused and deleted in legacy
+	// All cvars containing both flags are obsolete/unused and deleted in legacy
 	// We no longer unset CVAR_ROM - instead we just don't register
 	// Side note: ET mods/vanilla don't use affected cvars but they try to register (ui_botsFile, ui_spX ...)
 	if ((flags & (CVAR_ARCHIVE | CVAR_ROM)) == (CVAR_ARCHIVE | CVAR_ROM))

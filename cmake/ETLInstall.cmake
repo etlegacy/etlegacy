@@ -49,6 +49,10 @@ if(UNIX AND NOT APPLE)
 		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.x86.desktop"
 			DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/applications"
 		)
+	elseif(ARM)
+		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.aarch64.desktop"
+			DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/application"
+		)
 	else()
 		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.x86_64.desktop"
 			DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/applications"

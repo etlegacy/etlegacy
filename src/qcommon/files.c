@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -336,12 +336,12 @@ static fileHandleData_t fsh[MAX_FILE_HANDLES];
 
 /**
  * @var fs_reordered
- * @brief wether we did a reorder on the current search path when joining the server
+ * @brief whether we did a reorder on the current search path when joining the server
  */
 static qboolean fs_reordered;
 
 // never load anything from pk3 files that are not present at the server when pure
-// ex: when fs_numServerPaks != 0, FS_FOpenFileRead won't load anything outside of pk3 except .cfg .menu .game .dat
+// ex: when fs_numServerPaks != 0, FS_FOpenFileRead won't load anything outside the pk3 except .cfg .menu .game .dat
 static int  fs_numServerPaks = 0;
 static int  fs_serverPaks[MAX_SEARCH_PATHS];                    ///< checksums
 static char *fs_serverPakNames[MAX_SEARCH_PATHS];               ///< pk3 names
@@ -444,6 +444,20 @@ static long FS_HashFileName(const char *fname, int hashSize)
 	return hash;
 }
 
+static void FS_PrintOpenHandles_f(void)
+{
+	int i;
+
+	Com_Printf(S_COLOR_GREEN "Open file handles\n");
+	for (i = 0 ; i < MAX_FILE_HANDLES ; i++)
+	{
+		if (fsh[i].handleFiles.file.o != NULL)
+		{
+			Com_Printf(S_COLOR_MAGENTA "    handle %i: %s\n", i, fsh[i].name);
+		}
+	}
+}
+
 /**
  * @brief FS_HandleForFile
  * @return
@@ -459,6 +473,10 @@ static fileHandle_t FS_HandleForFile(void)
 			return i;
 		}
 	}
+#ifdef DEDICATED
+	FS_PrintOpenHandles_f();
+#endif
+
 	Com_Error(ERR_DROP, "FS_HandleForFile: none free");
 
 	return 0;
@@ -659,6 +677,20 @@ qboolean FS_CreatePath(const char *OSPath)
 			*ofs = 0;
 			if (!Sys_Mkdir(path))
 			{
+#ifdef _WIN32
+				// Get Windows Version if its 10 and up let know user about know solutions
+				if (Sys_GetWindowsVer() >= 10.0)
+				{
+					// Thats propably due too ET: Legacy not being signed with Microsoft.
+					Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"\nRun a game with different fs_homepath or (recommended way) allow\nET: Legacy to access controlled folders in Windows Security",
+					          path);
+				}
+				else
+				{
+					Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"",
+					          path);
+				}
+#endif
 				Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"",
 				          path);
 			}
@@ -2949,13 +2981,15 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, const char 
 		*numfiles = 0;
 		return NULL;
 	}
+
 	if (!extension)
 	{
 		extension = "";
 	}
 
 	pathLength = strlen(path);
-	if (path[pathLength - 1] == '\\' || path[pathLength - 1] == '/')
+
+	if (pathLength > 0 && (path[pathLength - 1] == '\\' || path[pathLength - 1] == '/'))
 	{
 		pathLength--;
 	}
@@ -3790,7 +3824,7 @@ void FS_AddGameDirectory(const char *path, const char *dir, qboolean addBase)
 
 	// Get .pk3 files
 	pakfiles = Sys_ListFiles(curpath, ".pk3", NULL, &numfiles, qfalse);
-	
+
 	if (pakfiles)
 	{
 		qsort(pakfiles, numfiles, sizeof(char *), paksort);
@@ -4229,6 +4263,7 @@ void FS_Shutdown(qboolean closemfp)
 	Cmd_RemoveCommand("fdir");
 	Cmd_RemoveCommand("touchFile");
 	Cmd_RemoveCommand("which");
+	Cmd_RemoveCommand("fs_printOpen");
 
 #ifdef FS_MISSING
 	if (closemfp)
@@ -4454,6 +4489,7 @@ static void FS_Startup(const char *gameName)
 	Cmd_AddCommand("fdir", FS_NewDir_f, "Prints a filtered directory.");
 	Cmd_AddCommand("touchFile", FS_TouchFile_f, "Simulates the 'touch' unix command.");
 	Cmd_AddCommand("which", FS_Which_f, "Searches for a given file.");
+	Cmd_AddCommand("fs_printOpen", FS_PrintOpenHandles_f, "Dump a list of all open files.");
 
 	// reorder the pure pk3 files according to server order
 	FS_ReorderPurePaks();

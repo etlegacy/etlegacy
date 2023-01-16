@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -46,6 +46,11 @@
 #include "g_mdx.h"
 #endif
 
+#define Q_OSS_STR_INC
+#include "../qcommon/q_oss.h"
+
+#include "json.h"
+
 level_locals_t level;
 
 typedef struct
@@ -77,6 +82,8 @@ const char *gameNames[] =
 	"Map Voting"            // GT_WOLF_MAPVOTE
 	// GT_MAX_GAME_TYPE
 };
+
+#define MAPVOTEINFO_FILE_NAME "mapvoteinfo.txt"
 
 #ifdef FEATURE_OMNIBOT
 vmCvar_t g_OmniBotPath;
@@ -337,13 +344,8 @@ vmCvar_t g_voting;        // see VOTEF_ defines
 vmCvar_t g_corpses; // dynamic body que FIXME: limit max bodies by var value
 
 // os support - this SERVERINFO cvar specifies supported client operating systems on server
-vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
-                //   1 - Windows
-                //   2 - Linux
-                //   4 - Linux 64
-                //   8 - Mac OS X
-                //  16 - Android
-                //  32 - Raspberry Pi
+// supported platforms are in the 'oss_t' enum
+vmCvar_t g_oss;
 
 vmCvar_t g_realHead; // b_realHead functionality from ETPro
 
@@ -402,7 +404,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_covertopsChargeTime,             "g_covertopsChargeTime",             "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
 	{ &g_landminetimeout,                 "g_landminetimeout",                 "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue  },
 
-	{ &g_oss,                             "g_oss",                             "31",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
+	{ &g_oss,                             "g_oss",                             "0",                          CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 
 	{ &g_maxclients,                      "sv_maxclients",                     "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
 	{ &g_maxGameClients,                  "g_maxGameClients",                  "0",                          CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
@@ -692,6 +694,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 void G_RunFrame(int levelTime);
 void G_ShutdownGame(int restart);
 void CheckExitRules(void);
+void G_ParsePlatformManifest(void);
 
 /**
  * @brief G_SnapshotCallback
@@ -736,6 +739,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	{
 		int time = trap_Milliseconds();
 		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+		G_ParsePlatformManifest();
 #ifdef FEATURE_OMNIBOT
 
 		Bot_Interface_InitHandles();
@@ -1051,7 +1055,12 @@ void G_CheckForCursorHints(gentity_t *ent)
 	G_TempTraceRealHitBox(ent);
 	G_TempTraceIgnoreEntities(ent);
 
-	trace_contents = (CONTENTS_TRIGGER | CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE);
+	trace_contents = (CONTENTS_TRIGGER | CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_CORPSE);
+
+	if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC)
+	{
+		trace_contents |= CONTENTS_BODY;
+	}
 
 	trap_Trace(tr, offset, NULL, NULL, end, ps->clientNum, trace_contents);
 	if (tr->startsolid && tr->entityNum == ENTITYNUM_WORLD)
@@ -1093,19 +1102,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 	if (tr->fraction == 1.f || tr->entityNum == ENTITYNUM_WORLD || tr->entityNum < MAX_CLIENTS)
 	{
-		// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
-		if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
-		{
-			gentity_t *constructible;
-
-			if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
-			{
-				ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
-				ps->serverCursorHintVal = (int)constructible->s.angles2[0];
-				return;
-			}
-		}
-
 		// show medics a syringe if they can revive someone
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
@@ -1541,11 +1537,22 @@ void G_CheckForCursorHints(gentity_t *ent)
 		}
 	}
 
-	// set hint distance
-	if (dist <= Square(hintDist))
+	// set hint if we found ent that is in range
+	if (dist <= Square(hintDist) && hintType != HINT_NONE && hintType != HINT_FORCENONE)
 	{
 		ps->serverCursorHint    = hintType;
 		ps->serverCursorHintVal = hintVal;
+	}
+	// if hint is out of range or there is no hint then check for touchingTOI constructible hint
+	else if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER && hintType != HINT_CONSTRUCTIBLE)
+	{
+		gentity_t *constructible;
+
+		if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
+		{
+			ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+			ps->serverCursorHintVal = (int)constructible->s.angles2[0];
+		}
 	}
 }
 
@@ -2101,6 +2108,7 @@ void G_UpdateCvars(void)
 		Info_SetValueForKey(cs, "w2", team_maxMachineguns.string);
 		Info_SetValueForKey(cs, "w3", team_maxRockets.string);
 		Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
+		Info_SetValueForKey(cs, "w5", team_maxLandmines.string);
 		Info_SetValueForKey(cs, "m", team_maxplayers.string);
 		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 	}
@@ -2401,6 +2409,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	Info_SetValueForKey(cs, "w2", team_maxMachineguns.string);
 	Info_SetValueForKey(cs, "w3", team_maxRockets.string);
 	Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
+	Info_SetValueForKey(cs, "w5", team_maxLandmines.string);
 	Info_SetValueForKey(cs, "m", team_maxplayers.string);
 	trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 
@@ -2438,16 +2447,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 
 	if (g_log.string[0])
 	{
-		if (g_logSync.integer)
-		{
-			trap_FS_FOpenFile(g_log.string, &level.logFile, FS_APPEND_SYNC);
-		}
-		else
-		{
-			trap_FS_FOpenFile(g_log.string, &level.logFile, FS_APPEND);
-		}
-
-		if (!level.logFile)
+		if (trap_FS_FOpenFile(g_log.string, &level.logFile, g_logSync.integer ? FS_APPEND_SYNC : FS_APPEND) < 0)
 		{
 			G_Printf("WARNING: Couldn't open logfile: %s\n", g_log.string);
 		}
@@ -3526,9 +3526,24 @@ void BeginIntermission(void)
 			maxMaps = level.mapVoteNumMaps;
 		}
 
-		for (i = 0; i < maxMaps; ++i)
+		for (i = 0; i < level.mapVoteNumMaps; ++i)
 		{
-			level.mapvoteinfo[level.sortedMaps[i]].voteEligible++;
+			int j;
+
+			// replace history map index by sorted index to ensure client
+			// will identify maps properly
+			for (j = 0; j < level.mapvotehistorycount; ++j)
+			{
+				if (level.sortedMaps[i] != -1 && level.sortedMaps[i] == level.mapvotehistoryindex[j])
+				{
+					level.mapvotehistorysortedindex[j] = i;
+				}
+			}
+
+			if (i < maxMaps)
+			{
+				level.mapvoteinfo[level.sortedMaps[i]].voteEligible++;
+			}
 		}
 	}
 
@@ -3636,19 +3651,19 @@ void ExitLevel(void)
 		{
 			level.mapsSinceLastXPReset++;
 		}
-		maxMaps = g_maxMapsVotedFor.integer;
-		if (maxMaps > level.mapVoteNumMaps)
-		{
-			maxMaps = level.mapVoteNumMaps;
-		}
+
+		maxMaps = Com_Clamp(0, level.mapVoteNumMaps, g_maxMapsVotedFor.integer);
+
 		for (i = 0; i < maxMaps; i++)
 		{
 			if (level.mapvoteinfo[level.sortedMaps[i]].lastPlayed != -1)
 			{
 				level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
 			}
+
 			curMapVotes = level.mapvoteinfo[level.sortedMaps[i]].numVotes;
 			curMapAge   = level.mapvoteinfo[level.sortedMaps[i]].lastPlayed;
+
 			if (curMapAge == -1)
 			{
 				curMapAge = 9999;   // -1 means never, so set suitably high
@@ -3664,12 +3679,16 @@ void ExitLevel(void)
 				highMapAge  = curMapAge;
 			}
 		}
+
 		if (highMapVote > 0 && level.mapvoteinfo[nextMap].bspName[0])
 		{
-			trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.mapvoteinfo[nextMap].bspName, g_nextmap.string));
+			Q_strncpyz(level.lastVotedMap, level.mapvoteinfo[nextMap].bspName, sizeof(level.lastVotedMap));
+
+			trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.lastVotedMap, g_nextmap.string));
 		}
 		else
 		{
+			memset(level.lastVotedMap, 0, sizeof(level.lastVotedMap));
 			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
 		}
 		break;
@@ -5076,7 +5095,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-	if (g_debugHitboxes.integer > 0)
+	if (g_debugHitboxes.integer > 0 || (g_debugHitboxes.string[0] && Q_isalpha(g_debugHitboxes.string[0])))
 	{
 		G_DrawEntBBox(ent);
 	}
@@ -5419,124 +5438,110 @@ void G_RunFrame(int levelTime)
 // MAPVOTE
 
 /**
- * @brief G_WriteConfigFileString
- * @param[in] s
- * @param[in] f
- */
-void G_WriteConfigFileString(const char *s, fileHandle_t f)
-{
-	if (s[0])
-	{
-		char buf[MAX_STRING_CHARS];
-
-		buf[0] = '\0';
-
-		//Q_strcat(buf, sizeof(buf), s);
-		Q_strncpyz(buf, s, sizeof(buf));
-		trap_FS_Write(buf, strlen(buf), f);
-	}
-	trap_FS_Write("\n", 1, f);
-}
-
-/**
  * @brief G_MapVoteInfoWrite
  */
 void G_MapVoteInfoWrite()
 {
-	fileHandle_t f;
-	int          i, count = 0;
+	// if the history is full and a vote has been done, skip the oldest map in history
+    int   i = (level.lastVotedMap[0] && (level.mapvotehistorycount == MAX_HISTORY_MAPS));
+	cJSON *root, *history;
 
-	trap_FS_FOpenFile("mapvoteinfo.txt", &f, FS_WRITE);
+	int count = 0;
+
+	Q_JSONInit();
+
+	root = cJSON_CreateObject();
+	if (!root)
+	{
+		Com_Error(ERR_FATAL, "G_MapVoteInfoWrite: Could not allocate memory for session data\n");
+	}
+
+	history = cJSON_AddArrayToObject(root, "history");
+
+	// parse history array
+	for (; i < level.mapvotehistorycount; i++)
+	{
+		cJSON_AddItemToArray(history, cJSON_CreateString(level.mapvotehistory[i]));
+	}
+
+	// add last voted map
+	if (level.lastVotedMap[0])
+	{
+		cJSON_AddItemToArray(history, cJSON_CreateString(level.lastVotedMap));
+	}
 
 	for (i = 0; i < MAX_VOTE_MAPS; ++i)
 	{
 		if (level.mapvoteinfo[i].bspName[0])
 		{
-			trap_FS_Write("[mapvoteinfo]\n", 14, f);
+			cJSON *map = cJSON_AddObjectToObject(root, level.mapvoteinfo[i].bspName);
 
-			trap_FS_Write("name             = ", 19, f);
-			G_WriteConfigFileString(level.mapvoteinfo[i].bspName, f);
-			trap_FS_Write("times_played     = ", 19, f);
-			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].timesPlayed), f);
-			trap_FS_Write("last_played      = ", 19, f);
-			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].lastPlayed), f);
-			trap_FS_Write("total_votes      = ", 19, f);
-			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].totalVotes), f);
-			trap_FS_Write("vote_eligible    = ", 19, f);
-			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].voteEligible), f);
-
-			trap_FS_Write("\n", 1, f);
+			cJSON_AddNumberToObject(map, "timesPlayed", level.mapvoteinfo[i].timesPlayed);
+			cJSON_AddNumberToObject(map, "lastPlayed", level.mapvoteinfo[i].lastPlayed);
+			cJSON_AddNumberToObject(map, "totalVotes", level.mapvoteinfo[i].totalVotes);
+			cJSON_AddNumberToObject(map, "voteEligible", level.mapvoteinfo[i].voteEligible);
 			count++;
 		}
 	}
-	G_Printf("mapvoteinfo: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
+	G_Printf("G_MapVoteInfoWrite: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
 
-	trap_FS_FCloseFile(f);
+	if (!Q_FSWriteJSONTo(root, MAPVOTEINFO_FILE_NAME))
+	{
+		Com_Error(ERR_FATAL, "G_MapVoteInfoWrite : Could not write map vote information\n");
+	}
 }
 
 /**
- * @brief G_ReadConfigFileString
- * @param[in] cnf
- * @param[out] s
- * @param[in] size
+ * @brief G_MapVoteInfoRead_ParseHistory
+ * @param history
  */
-void G_ReadConfigFileString(char **cnf, char *s, size_t size)
+static void G_MapVoteInfoRead_ParseHistory(cJSON *history)
 {
-	char *t;
+	unsigned int i;
 
-	t = COM_ParseExt(cnf, qfalse);
-	if (!strcmp(t, "="))
+	for (i = 0; i < MAX_HISTORY_MAPS; i++)
 	{
-		t = COM_ParseExt(cnf, qfalse);
+		Com_Memset(level.mapvotehistory[i], 0, 128);
 	}
-	else
+
+	Com_Memset(level.mapvotehistoryindex, -1, sizeof(level.mapvotehistoryindex));
+	Com_Memset(level.mapvotehistorysortedindex, -1, sizeof(level.mapvotehistorysortedindex));
+	level.mapvotehistorycount = 0;
+
+	// ensure history field exist
+	if (history && cJSON_IsArray(history))
 	{
-		G_Printf("G_ReadConfigFileString: warning missing = before "
-		         "\"%s\" on line %d\n",
-		         t,
-		         COM_GetCurrentParseLine());
-	}
-	s[0] = '\0';
-	while (t[0])
-	{
-		if ((s[0] == '\0' && strlen(t) <= size) ||
-		    (strlen(t) + strlen(s) < size))
+		int   j, len = cJSON_GetArraySize(history);
+		cJSON *map;
+
+		// parse history array
+		for (i = 0, j = 0; i < len && i < MAX_HISTORY_MAPS; i++)
 		{
+			int k;
+			map = cJSON_GetArrayItem(history, i);
 
-			Q_strcat(s, size, t);
-			Q_strcat(s, size, " ");
+			// ensure the value is valid
+			if (!map || !cJSON_IsString(map))
+			{
+				break;
+			}
+
+			// find the related map name in map pool
+			for (k = 0; k < level.mapVoteNumMaps; k++)
+			{
+				Q_strncpyz(level.mapvotehistory[i], map->valuestring, 128);
+
+				if (!Q_strncmp(level.mapvoteinfo[k].bspName, map->valuestring, 128))
+				{
+					// fill history index array
+					level.mapvotehistoryindex[j] = k;
+					j++;
+				}
+			}
 		}
-		t = COM_ParseExt(cnf, qfalse);
-	}
-	// trim the trailing space
-	if (strlen(s) > 0 && s[strlen(s) - 1] == ' ')
-	{
-		s[strlen(s) - 1] = '\0';
-	}
-}
 
-/**
- * @brief G_ReadConfigFileInt
- * @param[in] cnf
- * @param[out] v
- */
-void G_ReadConfigFileInt(char **cnf, int *v)
-{
-	char *t;
-
-	t = COM_ParseExt(cnf, qfalse);
-	if (!strcmp(t, "="))
-	{
-		t = COM_ParseExt(cnf, qfalse);
+		level.mapvotehistorycount = i;
 	}
-	else
-	{
-		G_Printf("G_ReadConfigFileInt: warning missing = before "
-		         "\"%s\" on line %d\n",
-		         t,
-		         COM_GetCurrentParseLine());
-	}
-	*v = Q_atoi(t);
 }
 
 /**
@@ -5544,90 +5549,90 @@ void G_ReadConfigFileInt(char **cnf, int *v)
  */
 void G_MapVoteInfoRead()
 {
-	fileHandle_t f;
-	int          i;
-	int          curMap = -1;
-	int          len;
-	char         *cnf, *cnf2;
-	char         *t;
-	char         bspName[128];
+	cJSON *root;
+	int   i = 0;
 
-	len = trap_FS_FOpenFile("mapvoteinfo.txt", &f, FS_READ) ;
+	root = Q_FSReadJsonFrom(MAPVOTEINFO_FILE_NAME);
 
-	if (len < 0)
+	if (!root)
 	{
-		trap_FS_FCloseFile(f);
-		G_Printf("G_MapVoteInfoRead: could not open mapvoteinfo.txt file\n");
+		G_Printf("G_MapVoteInfoRead: could not open %s file\n", MAPVOTEINFO_FILE_NAME);
 		return;
 	}
 
-	cnf = Com_Allocate(len + 1);
+	G_MapVoteInfoRead_ParseHistory(cJSON_GetObjectItem(root, "history"));
 
-	if (cnf == NULL)
+	for (i = 0; i < level.mapVoteNumMaps; i++)
 	{
-		trap_FS_FCloseFile(f);
-		G_Printf("G_MapVoteInfoRead: memory allocation error for mapvoteinfo.txt data\n");
+		cJSON *map = cJSON_GetObjectItem(root, level.mapvoteinfo[i].bspName);
+
+		if (map)
+		{
+			level.mapvoteinfo[i].timesPlayed  = Q_ReadIntValueJson(map, "timesPlayed");
+			level.mapvoteinfo[i].lastPlayed   = Q_ReadIntValueJson(map, "lastPlayed");
+			level.mapvoteinfo[i].totalVotes   = Q_ReadIntValueJson(map, "totalVotes");
+			level.mapvoteinfo[i].voteEligible = Q_ReadIntValueJson(map, "voteEligible");
+		}
+		else
+		{
+			level.mapvoteinfo[i].timesPlayed  = 0;
+			level.mapvoteinfo[i].lastPlayed   = -1;
+			level.mapvoteinfo[i].totalVotes   = 0;
+			level.mapvoteinfo[i].voteEligible = 0;
+		}
+	}
+	cJSON_Delete(root);
+}
+
+void G_ParsePlatformManifest(void)
+{
+	fileHandle_t fileHandle;
+	char         *buffer, *token, *parse;
+	int          len, i;
+	unsigned int ossFlags = 0;
+
+	len = trap_FS_FOpenFile("platforms.manifest", &fileHandle, FS_READ);
+	if (len <= 0)
+	{
+		G_Printf(S_COLOR_RED "[G_OSS] no file found\n");
+		trap_FS_FCloseFile(fileHandle);
 		return;
 	}
 
-	cnf2 = cnf;
-	trap_FS_Read(cnf, len, f);
-	*(cnf + len) = '\0';
-	trap_FS_FCloseFile(f);
-
-	COM_BeginParseSession("MapvoteinfoRead");
-
-	t = COM_Parse(&cnf);
-	while (t[0])
+	buffer = Com_Allocate(len + 1);
+	if (!buffer)
 	{
-		if (!Q_stricmp(t, "name"))
-		{
-			G_ReadConfigFileString(&cnf, bspName, sizeof(bspName));
-			curMap = -1;
-			for (i = 0; i < level.mapVoteNumMaps; i++)
-			{
-				if (!Q_stricmp(bspName, level.mapvoteinfo[i].bspName))
-				{
-					curMap = i;
-					break;
-				}
-			}
-		}
-		if (curMap != -1)
-		{
-			if (!Q_stricmp(t, "times_played"))
-			{
-				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].timesPlayed);
-			}
-			else if (!Q_stricmp(t, "last_played"))
-			{
-				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].lastPlayed);
-			}
-			else if (!Q_stricmp(t, "total_votes"))
-			{
-				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].totalVotes);
-			}
-			else if (!Q_stricmp(t, "vote_eligible"))
-			{
-				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].voteEligible);
-			}
-			else if (!Q_stricmp(t, "[mapvoteinfo]"))
-			{
-				// do nothing for the moment
-			}
-			else if (!t[0])
-			{
-				// do nothing for another moment (empty token)
-			}
-			else
-			{
-				G_Printf("G_MapVoteInfoRead: [mapvoteinfo] parse error near '%s' on line %i\n", t, COM_GetCurrentParseLine());
-			}
-		}
-		t = COM_Parse(&cnf);
+		G_Printf(S_COLOR_RED "[G_OSS] failed to allocate %i bytes\n", len + 1);
+		trap_FS_FCloseFile(fileHandle);
+		return;
 	}
 
-	Com_Dealloc(cnf2);
+	trap_FS_Read(buffer, len, fileHandle);
+	buffer[len] = '\0';
+	parse       = buffer;
 
-	return;
+	trap_FS_FCloseFile(fileHandle);
+
+	COM_BeginParseSession(__FUNCTION__);
+
+	token = COM_Parse(&parse);
+	while (token[0])
+	{
+		for (i = 0; i < OSS_KNOWN_COUNT; i++)
+		{
+			if (!strcmp(oss_str[i], token))
+			{
+				G_DPrintf(S_COLOR_CYAN "[G_OSS] enabling support for platform: %s -> %i\n", token, (int)BIT(i));
+				ossFlags |= (unsigned int) BIT(i);
+			}
+		}
+
+		token = COM_Parse(&parse);
+	}
+
+	G_DPrintf("[G_OSS] parsing done with flag value: %i\n", ossFlags);
+
+	trap_Cvar_Set("g_oss", va("%i", ossFlags));
+
+	Com_Dealloc(buffer);
 }

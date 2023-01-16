@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -108,7 +108,7 @@ static void HSVtoRGB(float h, float s, float v, float rgb[3])
  */
 static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 {
-	int r,g,b;
+	int r, g, b;
 	// shift the color data based on overbright range
 	int shift = r_mapOverBrightBits->integer - tr.overbrightBits;
 
@@ -2539,7 +2539,7 @@ void R_LoadEntities(lump_t *l)
 		// check for a different grid size
 		if (!Q_stricmp(keyname, "gridsize"))
 		{
-			sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
+            Q_sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
 			continue;
 		}
 	}
@@ -2594,6 +2594,12 @@ void RE_LoadWorldMap(const char *name)
 	byte      *buffer;
 	byte      *startMarker;
 	size_t    nameLength;
+
+	// if we are in development mode we allow the cgame_restart command which also calls the load world map trap
+	if (tr.worldMapLoaded && ri.Cvar_VariableIntegerValue("developer") == 1)
+	{
+		return;
+	}
 
 	skyboxportal = 0;
 

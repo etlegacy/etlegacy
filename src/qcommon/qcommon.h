@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -534,6 +534,8 @@ static ID_INLINE float _vmf(intptr_t x)
 }
 #define VMF(x)  _vmf(args[x])
 
+typedef intptr_t (QDECL *VM_EntryPoint_t)(int, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
+
 /*
 ==============================================================
 CMD - Command text buffering and command execution
@@ -569,9 +571,6 @@ typedef void (*completionFunc_t)(char *args, int argNum);
 
 void Cmd_Init(void);
 
-// We need to use EXPAND because the Microsoft MSVC preprocessor does not expand the va_args the same way as other preprocessors
-// http://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly
-#define EXPAND(x) x
 #define GET_MACRO(_1, _2, _3, _4, NAME, ...) NAME
 #define Cmd_AddCommand1(x) Cmd_AddSystemCommand(x, NULL, NULL, NULL)
 #define Cmd_AddCommand2(x, y) Cmd_AddSystemCommand(x, y, NULL, NULL)
@@ -649,14 +648,14 @@ The are also occasionally used to communicated information between different
 modules of the program.
 */
 
-cvar_t *Cvar_Get(const char *varName, const char *value, int flags);
-cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, int flags, const char *description);
+cvar_t *Cvar_Get(const char *varName, const char *value, cvarFlags_t flags);
+cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, cvarFlags_t flags, const char *description);
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
 // if value is "", the value will not override a previously set value.
 
-void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags);
 // basically a slightly modified Cvar_Get for the interpreted modules
 
 void Cvar_Update(vmCvar_t *vmCvar);
@@ -688,7 +687,7 @@ void Cvar_VariableStringBuffer(const char *var_name, char *buffer, size_t bufsiz
 void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, size_t bufsize);
 // returns the latched value if there is one, else the normal one, empty string if not defined as usual
 
-int Cvar_Flags(const char *var_name);
+cvarFlags_t Cvar_Flags(const char *var_name);
 // returns CVAR_NONEXISTENT if cvar doesn't exist or the flags of that particular CVAR.
 
 void Cvar_CommandCompletion(void (*callback)(const char *s));
@@ -705,7 +704,7 @@ qboolean Cvar_Command(void);
 // command.  Returns true if the command was a variable reference that
 // was handled. (print or change)
 
-void Cvar_WriteVariables(fileHandle_t f);
+void Cvar_WriteVariables(fileHandle_t f, qboolean nodefaults);
 // writes lines containing "set variable value" for all variables
 // with the archive flag set to true.
 
@@ -724,7 +723,7 @@ void Cvar_Restart_f(void);
 
 void Cvar_CompleteCvarName(char *args, int argNum);
 
-extern int cvar_modifiedFlags;
+extern cvarFlags_t cvar_modifiedFlags;
 // whenever a cvar is modifed, its flags will be OR'd into this, so
 // a single check can determine if any CVAR_USERINFO, CVAR_SERVERINFO,
 // etc, variables have been modified since the last check.  The bit
@@ -993,6 +992,8 @@ void Field_CompleteKeyname(void);
 void Field_CompleteFilenameMultiple(const char *dir, int numext, const char **ext, qboolean allowNonPureFilesOnDisk);
 void Field_CompleteFilename(const char *dir, const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk);
 void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars);
+qboolean Field_CompleteMod();
+void Field_CompleteModSuggestion(char *value);
 
 /*
 ==============================================================
@@ -1183,6 +1184,7 @@ void CL_Disconnect(qboolean showMainMenu);
 void CL_Shutdown(void);
 void CL_Frame(int msec);
 qboolean CL_GameCommand(void);
+qboolean CL_GameCompleteCommand(void);
 void CL_KeyEvent(int key, qboolean down, unsigned time);
 
 void CL_CharEvent(int key);
@@ -1403,6 +1405,7 @@ qboolean Sys_Mkdir(const char *path);
 #ifdef _WIN32
 int Sys_Remove(const char *path);
 int Sys_RemoveDir(const char *path);
+double Sys_GetWindowsVer(void);
 
 #define sys_stat_t struct _stat
 int Sys_Stat(const char *path, void *stat);

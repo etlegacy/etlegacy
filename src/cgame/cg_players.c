@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -320,7 +320,7 @@ void CG_NewClientInfo(int clientNum)
 		{
 			CG_SoundPlaySoundScript(GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->soundNames, NULL, -1, qtrue);
 
-			if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_RANK))
+			if (!(CG_GetActiveHUD()->pmitemsbig.style & POPUP_BIG_FILTER_RANK))
 			{
 				CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->names), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 			}
@@ -358,7 +358,7 @@ void CG_NewClientInfo(int clientNum)
 					if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
 					{
-						if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
+						if (!(CG_GetActiveHUD()->pmitemsbig.style & POPUP_BIG_FILTER_SKILL))
 						{
 							CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
 						}
@@ -407,7 +407,7 @@ void CG_NewClientInfo(int clientNum)
 							}
 						}
 
-						if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_PRESTIGE))
+						if (!(CG_GetActiveHUD()->pmitemsbig.style & POPUP_BIG_FILTER_PRESTIGE))
 						{
 							if (cnt < SK_NUM_SKILLS)
 							{
@@ -1538,11 +1538,12 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
  * @param[in] headAngles
  * @param[in] viewHeight
  */
-void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int viewHeight)
+void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles)
 {
 	int   leaning = 0;          // -1 left, 1 right
 	float leanofs = 0;
 	int   time;
+	int   viewheight;
 
 	if (cent->currentState.constantLight & STAT_LEAN_LEFT)
 	{
@@ -1648,8 +1649,18 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 		vec3_t  start, end, tmins, tmaxs, right, viewangles;
 		trace_t trace;
 
+		if (cg.snap->ps.clientNum == cent->currentState.clientNum)
+		{
+			viewheight = cg.snap->ps.viewheight;
+		}
+		else
+		{
+			// we don't need to care about prone here since you can't lean while proning anyway
+			viewheight = cent->currentState.eFlags & EF_CROUCHING ? CROUCH_VIEWHEIGHT : DEFAULT_VIEWHEIGHT;
+		}
+
 		VectorCopy(cent->lerpOrigin, start);
-		start[2] += viewHeight;
+		start[2] += viewheight;
 
 		VectorCopy(cent->lerpAngles, viewangles);
 		viewangles[ROLL] += leanofs / 2.0f;
@@ -1659,7 +1670,7 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 		VectorSet(tmins, -8, -8, -7);   // ATVI Wolfenstein Misc #472, bumped from -4 to cover gun clipping issue
 		VectorSet(tmaxs, 8, 8, 4);
 
-		CG_Trace(&trace, start, tmins, tmaxs, end, cent->currentState.clientNum, MASK_PLAYERSOLID);
+		CG_TraceCapsule(&trace, start, tmins, tmaxs, end, cent->currentState.clientNum, MASK_PLAYERSOLID);
 
 		cent->pe.leanDirection *= trace.fraction;
 	}
@@ -1843,7 +1854,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		legsAngles[PITCH] += side;
 	}
 
-	CG_PredictLean(cent, torsoAngles, headAngles, cg.snap->ps.clientNum == cent->currentState.clientNum ? cg.snap->ps.viewheight :  (int)cent->pe.headRefEnt.origin[2]);
+	CG_PredictLean(cent, torsoAngles, headAngles);
 
 	// pain twitch
 	CG_AddPainTwitch(cent, torsoAngles);
