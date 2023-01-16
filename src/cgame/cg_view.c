@@ -1970,11 +1970,20 @@ static void CG_DemoRewindFixEffects(void)
 {
 	int i;
 
+	trap_GetGameState(&cgs.gameState);
+
+	CG_ParseSysteminfo();
+	CG_ParseServerinfo();
+	CG_ParseWolfinfo();
+	CG_ParseServerToggles();
+	CG_SetConfigValues();
+
 	// fix player entities animations
 	Com_Memset(&cg.predictedPlayerEntity.pe, 0, sizeof(playerEntity_t));
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
+		CG_NewClientInfo(i);
 		Com_Memset(&cg_entities[i].pe, 0, sizeof(playerEntity_t));
 	}
 
