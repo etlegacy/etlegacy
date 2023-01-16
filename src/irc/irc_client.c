@@ -5,7 +5,7 @@
  * Copyright (C) 2010 COR Entertainment, LLC.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1388,9 +1388,8 @@ static void IRC_Display(int event, const char *nick, const char *message)
 	}
 	else
 	{
-		strncpy(buffer, fmt_string, IRC_RECV_BUF_SIZE * 2 - 1);
+		Q_strncpyz(buffer, fmt_string, sizeof(buffer));
 	}
-	buffer[IRC_RECV_BUF_SIZE * 2 - 1] = 0;
 
 #ifdef DEDICATED
 	// FIXME: add filters for IRC_EventType?
@@ -1627,7 +1626,7 @@ static int IRCH_Nick()
 
 	if (!strcmp(IRC_String(pfx_nickOrServer), IRC_User.nick))
 	{
-		strncpy(IRC_User.nick, IRC_String(arg_values[0]), 15);
+		Q_strncpyz(IRC_User.nick, IRC_String(arg_values[0]), sizeof(IRC_User.nick));
 		Com_Printf("%s\n", IRC_User.nick);
 		event = IRC_MakeEvent(NICK_CHANGE, 1);
 	}
@@ -1901,7 +1900,7 @@ void IRC_Say()
 	}
 
 	Com_Memset(m_sendstring, 0, sizeof(m_sendstring));
-	strncpy(m_sendstring, Cmd_Args(), 479);
+	Q_strncpyz(m_sendstring, Cmd_Args(), sizeof(m_sendstring));
 	if (m_sendstring[0] == 0)
 	{
 		return;
@@ -2005,7 +2004,7 @@ static int IRC_ProcessData(void)
  */
 char *IRC_GetName(const char *name)
 {
-	int  i       = 0, j = 0, k = 0;
+	int  i = 0, j = 0, k = 0;
 	int  namelen = strlen(name);
 	char c;
 	char *retName;

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -205,7 +205,7 @@ typedef struct
 	void (*Free)(void *buf);
 	void (*Tag_Free)(void);
 
-	cvar_t *(*Cvar_Get)(const char *name, const char *value, int flags);
+	cvar_t *(*Cvar_Get)(const char *name, const char *value, cvarFlags_t flags);
 	void (*Cvar_Set)(const char *name, const char *value);
 	void (*Cvar_CheckRange)(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 	void (*Cvar_SetDescription)(cvar_t *cv, const char *description);

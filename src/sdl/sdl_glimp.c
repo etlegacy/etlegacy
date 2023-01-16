@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -570,7 +570,7 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 		numDisplays = 1;
 	}
 
-	if (sscanf(r_windowLocation->string, "%d,%d,%d", &displayIndex, &tmpX, &tmpY) != 3)
+	if (!Q_sscanf(r_windowLocation->string, "%d,%d,%d", &displayIndex, &tmpX, &tmpY))
 	{
 		return;
 	}

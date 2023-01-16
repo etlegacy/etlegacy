@@ -7,7 +7,15 @@ else {
     apply plugin: 'com.android.library'
 }
 
-def getVersion = 'git describe --tags --abbrev=7'.execute([], project.rootDir).text.trim()
+def getVersion() {
+    def out = new ByteArrayOutputStream();
+    exec {
+        executable = 'git'
+        args = ['describe', '--tags', '--abbrev=7']
+        standardOutput = out
+    }
+    return out.toString().replace('\n','')
+}
 
 def extractInt( String input ) {
   return input.replaceAll("[^0-9]", "")
@@ -30,7 +38,7 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
-        setProperty("archivesBaseName", "etlegacy-${getVersion}")
+        setProperty("archivesBaseName", "etlegacy-${getVersion()}")
         externalNativeBuild {
             cmake {
                 arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF", "-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_SSL=OFF"

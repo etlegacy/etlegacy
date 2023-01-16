@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -584,6 +584,8 @@ typedef struct pmoveExt_s
 	float bobCycle;                ///< used to fix framerate dependency
 
 	qboolean deadInSolid;          ///< true if legs or head start in solid when we die
+
+	int airTime;
 
 } pmoveExt_t;  ///< data used both in client and server - store it here
 ///< instead of playerstate to prevent different engine versions of playerstate between XP and MP
@@ -2850,8 +2852,6 @@ int BG_simpleHintsCollapse(int hint, int val);
 int BG_simpleHintsExpand(int hint, int val);
 #endif
 int BG_simpleWeaponState(int ws);
-
-qboolean BG_parseColor(char *colString, float *col);
 
 // Voting
 #define VOTING_DISABLED     ((1 << numVotesAvailable) - 1)

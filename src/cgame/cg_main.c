@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2449,7 +2449,7 @@ float CG_Cvar_Get(const char *cvar)
 
 	Com_Memset(buff, 0, sizeof(buff));
 	trap_Cvar_VariableStringBuffer(cvar, buff, sizeof(buff));
-	return (float)atof(buff);
+	return Q_atof(buff);
 }
 
 /**
@@ -2621,9 +2621,9 @@ void CG_AssetCache(void)
 #define DEBUG_INITPROFILE_EXEC(f)
 #endif // ETLEGACY_DEBUG
 
-static ID_INLINE void CG_SetupExtensionTrap(char *value, int *trap, const char *name)
+static ID_INLINE void CG_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
 {
-	if (trap_GetValue(value, sizeof(value), name))
+	if (trap_GetValue(value, valueSize, name))
 	{
 		*trap = Q_atoi(value);
 	}
@@ -2642,8 +2642,8 @@ static ID_INLINE void CG_SetupExtensions(void)
 	{
 		dll_com_trapGetValue = Q_atoi(value);
 
-		CG_SetupExtensionTrap(value, &dll_trap_SysFlashWindow, "trap_SysFlashWindow_Legacy");
-		CG_SetupExtensionTrap(value, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SysFlashWindow, "trap_SysFlashWindow_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
 	}
 }
 
@@ -2753,9 +2753,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	if (cg_logFile.string[0])
 	{
-		trap_FS_FOpenFile(cg_logFile.string, &cg.logFile, FS_APPEND);
-
-		if (!cg.logFile)
+		if (trap_FS_FOpenFile(cg_logFile.string, &cg.logFile, FS_APPEND) < 0)
 		{
 			CG_Printf("^3WARNING: Couldn't open client log: %s\n", cg_logFile.string);
 		}

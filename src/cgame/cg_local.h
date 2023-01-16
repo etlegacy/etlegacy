@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2607,19 +2607,28 @@ typedef struct cgs_s
 
 	// MAPVOTE
 	int dbMapVoteListOffset;
+	int dbMapsHistoryCount;
+	int dbMapsHistoryCountList;
+	int dbMapsHistory[333];
+	int dbMapsHistoryList[32];
 	int dbNumMaps;
 	char dbMaps[MAX_VOTE_MAPS][MAX_QPATH];
 	char dbMapDispName[MAX_VOTE_MAPS][128];
 	char dbMapDescription[MAX_VOTE_MAPS][1024];
 	int dbMapVotes[MAX_VOTE_MAPS];
 	int dbMapVotesSum;
+	int dbMapVoterCount;
+	int dbMapPlayerCount;
 	int dbMapID[MAX_VOTE_MAPS];
-	int dbMapLastPlayed[MAX_VOTE_MAPS];
-	int dbMapTotalVotes[MAX_VOTE_MAPS];
+	int dbMapLastPlayed;
+	int dbMapLastPlayedList[MAX_VOTE_MAPS];
+	int dbMapTimesPlayed[MAX_VOTE_MAPS];
+	int dbMapBias[MAX_VOTE_MAPS];
 	int dbSelectedMap;
 	int dbSelectedMapTime;
 	qhandle_t dbSelectedMapLevelShots;
 	qboolean dbMapListReceived;
+	qboolean dbMapHistoryReceived;
 	qboolean dbVoteTallyReceived;
 	qboolean dbMapMultiVote;
 	int dbMapVotedFor[3];
@@ -3096,6 +3105,7 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
 // cg_hud_io.c
 float CG_AdjustXFromHudFile(float x, float w);
 qboolean CG_WriteHudsToFile();
+qboolean CG_TryReadHudFromFile(const char *filename);
 void CG_ReadHudsFromFile(void);
 
 // cg_draw_hud.c
@@ -3448,6 +3458,7 @@ typedef struct
 // cg_playerstate.c
 void CG_Respawn(qboolean revived);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
+void CG_ResetTimers(void);
 
 //===============================================
 
@@ -4238,9 +4249,9 @@ typedef struct
 
 typedef struct
 {
-    char *name;
-    size_t offset;
-    qboolean (*parse)(int *argIndex, hudComponent_t *comp, int offset);
+	char *name;
+	size_t offset;
+	qboolean (*parse)(int *argIndex, hudComponent_t *comp, int offset);
 } hudComponentMembersFields_t;
 
 hudStucture_t *CG_GetActiveHUD();

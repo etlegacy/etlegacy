@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -224,6 +224,13 @@ qboolean DB_Init(void)
 		}
 	}
 
+	// a bit of sanity checking
+	if (!db)
+	{
+		Com_Printf(S_COLOR_RED "ERROR: database initialization has failed unexpectedly\n");
+		return qfalse;
+	}
+
 	// this has to be enabled here to perform DB_CheckUpdates
 	isDBActive = qtrue;
 
@@ -351,11 +358,18 @@ qboolean DB_CheckUpdates(void)
 			version = sqlite3_column_int(res, 0);
 		}
 	}
+	sqlite3_finalize(res);
+
+	// sanity checking, if someone has messed with the database.
+	if (version < 0)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING: database update can't find a valid schema. Game and database are not in sync!\n");
+		return qfalse;
+	}
 
 	if (version == SQL_DBMS_SCHEMA_VERSION) // we are done
 	{
 		Com_Printf("SQLite3 ETL: DB schema version #%i is up to date\n", version);
-		sqlite3_finalize(res);
 		return qtrue;
 	}
 	else if (version < SQL_DBMS_SCHEMA_VERSION)
@@ -363,8 +377,6 @@ qboolean DB_CheckUpdates(void)
 		char *to_ospath;
 
 		Com_Printf("SQLite3 ETL: Old DB schema #%i detected - performing backup and update ...\n", version);
-
-		sqlite3_finalize(res);
 
 		// backup old database file etl.dbX.old
 		// Make sure that we actually have the homepath available so we dont try to create a database file into a nonexisting path
@@ -398,16 +410,7 @@ qboolean DB_CheckUpdates(void)
 		return qtrue;
 	}
 
-	if (version == 0)
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: database update can't find a valid schema. Game and database are not in sync!\n");
-	}
-	else    // downgrade case ... we can't ensure a working system
-	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: database update has detected an unknown schema #%i. Game and database are not in sync!\n", version);
-	}
-
-	sqlite3_finalize(res);
+	Com_Printf(S_COLOR_YELLOW "WARNING: database update has detected an unknown schema #%i. Game and database are not in sync!\n", version);
 
 	return qfalse;
 }

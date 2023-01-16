@@ -3,7 +3,7 @@
 * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 *
 * ET: Legacy
-* Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+* Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
 *
 * This file is part of ET: Legacy - http://www.etlegacy.com
 *
@@ -322,6 +322,8 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 #define vec4_ma(v, s, b, o)       ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s), (o)[3] = (v)[3] + (b)[3] * (s))
 #define vec4_average(v, b, s, o)  ((o)[0] = ((v)[0] * (1 - (s))) + ((b)[0] * (s)), (o)[1] = ((v)[1] * (1 - (s))) + ((b)[1] * (s)), (o)[2] = ((v)[2] * (1 - (s))) + ((b)[2] * (s)), (o)[3] = ((v)[3] * (1 - (s))) + ((b)[3] * (s)))
 #define vec4_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); v[2] = ((int)(v[2])); v[3] = ((int)(v[3])); }
+
+#define vec4_isIntegral(v) ((int)(v)[0] == (v)[0] && (int)(v)[1] == (v)[1] && (int)(v)[2] == (v)[2] && (int)(v)[3] == (v)[3])
 
 /************************************************************************/
 /* Quaternion                                                           */

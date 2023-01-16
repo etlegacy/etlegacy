@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1166,7 +1166,7 @@ void Parse1DMatrix(char **buf_p, int x, float *m)
 	for (i = 0 ; i < x ; i++)
 	{
 		token = COM_Parse(buf_p);
-		m[i]  = (float)(atof(token));
+		m[i]  = Q_atof(token);
 	}
 
 	COM_MatchToken(buf_p, ")");
@@ -1953,30 +1953,98 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 	outStr[outOffset] = 0;
 }
 
-/**
- * @brief Parses normalized RGBA color string
- * @param[in] inStr input string to parse
- * @param[out] outColor output vector to set
- * @return Number of matched color components in the input string
- */
-int Q_ParseColorRGBA(const char *inStr, vec4_t outColor)
+// Colors table (Only used locally)
+const struct
 {
-	float r = 0.0f;
-	float g = 0.0f;
-	float b = 0.0f;
-	float a = 1.0f;
-	int   components;
+	const char *colorName;
+	vec4_t *color;
+} OSP_Colortable[] =
+{
+	{ "white",    &colorWhite    },
+	{ "red",      &colorRed      },
+	{ "green",    &colorGreen    },
+	{ "blue",     &colorBlue     },
+	{ "yellow",   &colorYellow   },
+	{ "magenta",  &colorMagenta  },
+	{ "cyan",     &colorCyan     },
+	{ "orange",   &colorOrange   },
+	{ "mdred",    &colorMdRed    },
+	{ "mdgreen",  &colorMdGreen  },
+	{ "dkgreen",  &colorDkGreen  },
+	{ "mdcyan",   &colorMdCyan   },
+	{ "mdyellow", &colorMdYellow },
+	{ "mdorange", &colorMdOrange },
+	{ "mdblue",   &colorMdBlue   },
+	{ "ltgrey",   &colorLtGrey   },
+	{ "mdgrey",   &colorMdGrey   },
+	{ "dkgrey",   &colorDkGrey   },
+	{ "black",    &colorBlack    },
+	{ NULL,       NULL           }
+};
 
-	if (!inStr || !inStr[0] || !outColor)
+/**
+ * @brief Q_ParseColor supports hex (rrggbb<aa>), float (0.0 - 1.0), int (0 - 255) and color name formats
+ * @param[in] colString string that contains the color info
+ * @param[out] outColor output vector to set
+ * @return true if the string was successfully parsed
+ */
+qboolean Q_ParseColor(const char *colString, float *outColor)
+{
+	vec4_t     temp = { 0, 0, 0, 1 };
+	const char *s   = colString;
+
+	if (!colString || !colString[0] || !outColor)
 	{
-		return 0;
+		return qfalse;
 	}
 
-	components = sscanf(inStr, "%f %f %f %f", &r, &g, &b, &a);
-	Vector4Set(outColor, r, g, b, a);
-	ClampColor(outColor);
+	// if there is a hex prefix
+	if (*s == '0' && (*(s + 1) == 'x' || *(s + 1) == 'X'))
+	{
+		s += 2;
+	}
 
-	return components;
+	// parse rrggbb
+	if (Q_IsHexColorString(s))
+	{
+		outColor[0] = ((float)(gethex(*(s)) * 16.f + gethex(*(s + 1)))) / 255.00f;
+		outColor[1] = ((float)(gethex(*(s + 2)) * 16.f + gethex(*(s + 3)))) / 255.00f;
+		outColor[2] = ((float)(gethex(*(s + 4)) * 16.f + gethex(*(s + 5)))) / 255.00f;
+
+		if (Q_HexColorStringHasAlpha(s))
+		{
+			outColor[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
+		}
+		return qtrue;
+	}
+	else if (Q_sscanf(s, "%f %f %f %f", &temp[0], &temp[1], &temp[2], &temp[3]) != 0)
+	{
+		if (vec4_isIntegral(temp) && (temp[0] > 1 || temp[1] > 1 || temp[2] > 1 || temp[3] > 1))
+		{
+			vec4_scale(temp, 1.0f / 255.00f, temp);
+		}
+		ClampColor(temp);
+		vec4_copy(temp, outColor);
+		return qtrue;
+	}
+	else
+	{
+		int i = 0;
+
+		while (OSP_Colortable[i].colorName != NULL)
+		{
+			if (Q_stricmp(s, OSP_Colortable[i].colorName) == 0)
+			{
+				outColor[0] = (*OSP_Colortable[i].color)[0];
+				outColor[1] = (*OSP_Colortable[i].color)[1];
+				outColor[2] = (*OSP_Colortable[i].color)[2];
+				return qtrue;
+			}
+			i++;
+		}
+	}
+
+	return qfalse;
 }
 
 /**

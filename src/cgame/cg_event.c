@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1860,7 +1860,7 @@ extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int dura
 
 static void CG_PlayHitSound(const int clientNum, const int hitSound)
 {
-	if (!hitSound)
+	if (hitSound == HIT_NONE)
 	{
 		return;
 	}
@@ -1885,8 +1885,6 @@ static void CG_PlayHitSound(const int clientNum, const int hitSound)
 
 	switch (hitSound)
 	{
-	case HIT_NONE:
-		break;
 	case HIT_TEAMSHOT:
 		if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
 		{

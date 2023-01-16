@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -89,7 +89,7 @@ void CG_TestModel_f(void)
 
 	if (trap_Argc() == 3)
 	{
-		cg.testModelEntity.backlerp = (float)atof(CG_Argv(2));
+		cg.testModelEntity.backlerp = Q_atof(CG_Argv(2));
 		cg.testModelEntity.frame    = 1;
 		cg.testModelEntity.oldframe = 0;
 	}
@@ -540,7 +540,7 @@ void CG_KickAngles(void)
 	// only change cg_recoilPitch cvar when we need to
 	trap_Cvar_VariableStringBuffer("cg_recoilPitch", buf, sizeof(buf));
 
-	if (atof(buf) != cg.recoilPitchAngle)
+	if (Q_atof(buf) != cg.recoilPitchAngle)
 	{
 		// encode the kick angles into a 24bit number, for sending to the client exe
 		trap_Cvar_Set("cg_recoilPitch", va("%f", cg.recoilPitchAngle));
@@ -1498,13 +1498,13 @@ void CG_ParseSkyBox(void)
 	}
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[0]\n");
-	cg.skyboxViewOrg[0] = (float)atof(token);
+	cg.skyboxViewOrg[0] = Q_atof(token);
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[1]\n");
-	cg.skyboxViewOrg[1] = (float)atof(token);
+	cg.skyboxViewOrg[1] = Q_atof(token);
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[2]\n");
-	cg.skyboxViewOrg[2] = (float)atof(token);
+	cg.skyboxViewOrg[2] = Q_atof(token);
 
 	token            = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewFov\n");
 	cg.skyboxViewFov = Q_atoi(token);
@@ -1522,13 +1522,13 @@ void CG_ParseSkyBox(void)
 		int fogStart, fogEnd;
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[0]\n");
-		fogColor[0] = (float)atof(token);
+		fogColor[0] = Q_atof(token);
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[1]\n");
-		fogColor[1] = (float)atof(token);
+		fogColor[1] = Q_atof(token);
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[2]\n");
-		fogColor[2] = (float)atof(token);
+		fogColor[2] = Q_atof(token);
 
 		token    = COM_ParseExt(&cstr, qfalse);
 		fogStart = Q_atoi(token);
@@ -1970,11 +1970,20 @@ static void CG_DemoRewindFixEffects(void)
 {
 	int i;
 
+	trap_GetGameState(&cgs.gameState);
+
+	CG_ParseSysteminfo();
+	CG_ParseServerinfo();
+	CG_ParseWolfinfo();
+	CG_ParseServerToggles();
+	CG_SetConfigValues();
+
 	// fix player entities animations
 	Com_Memset(&cg.predictedPlayerEntity.pe, 0, sizeof(playerEntity_t));
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
+		CG_NewClientInfo(i);
 		Com_Memset(&cg_entities[i].pe, 0, sizeof(playerEntity_t));
 	}
 
@@ -2002,14 +2011,7 @@ static void CG_DemoRewindFixEffects(void)
 	trap_R_ClearDecals(); // bullet and explosion marks (cg_markTime) are on renderer side
 
 	// reset camera view effects
-	cg.damageTime        = 0;
-	cg.v_dmg_time        = 0;
-	cg.v_noFireTime      = 0;
-	cg.v_fireTime        = 0;
-	cg.cameraShakeScale  = 0;
-	cg.cameraShakeLength = 0;
-	cg.cameraShakeTime   = 0;
-	cg.cameraShakePhase  = 0;
+	CG_ResetTimers();
 
 	cgs.serverCommandSequence = cg.snap->serverCommandSequence;
 }

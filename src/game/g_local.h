@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1073,6 +1073,8 @@ typedef struct limbo_cam_s
 #define VOTE_MAXSTRING           256     ///< Same value as MAX_STRING_TOKENS
 #define MAX_SCRIPT_ACCUM_BUFFERS 10      ///< increased from 8 to 10 for compatability with maps that relied on it before Project: Bug Fix #055
 
+#define MAX_HISTORY_MAPS 333     ///< (1024 - 2) / 3 ==> 340 (3 chars: 2 for map index (range [O-32]) + 1 space), down to 333 for convenience
+
 /**
  * @struct voteInfo_s
  * @typedef voteInfo_t
@@ -1311,6 +1313,11 @@ typedef struct level_locals_s
 	// MAPVOTE information
 	int sortedMaps[MAX_VOTE_MAPS];
 	mapVoteInfo_t mapvoteinfo[MAX_VOTE_MAPS];
+	char mapvotehistory[MAX_HISTORY_MAPS][128];
+	int mapvotehistoryindex[MAX_HISTORY_MAPS];
+	int mapvotehistorysortedindex[MAX_HISTORY_MAPS];
+	int mapvotehistorycount;
+	char lastVotedMap[MAX_VOTE_MAPS];
 	int mapVoteNumMaps;
 	int mapsSinceLastXPReset;
 	qboolean mapVotePlayersCount;
@@ -1439,6 +1446,7 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 // MAPVOTE
 void G_IntermissionMapVote(gentity_t *ent, unsigned int dwCommand, int value);
 void G_IntermissionMapList(gentity_t *ent, unsigned int dwCommand, int value);
+void G_IntermissionMapHistory(gentity_t *ent, unsigned int dwCommand, int value);
 void G_IntermissionVoteTally(gentity_t *ent);
 
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.

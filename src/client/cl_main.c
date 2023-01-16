@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -3730,7 +3730,7 @@ void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 		if (serverStatus->print)
 		{
 			score = ping = 0;
-			sscanf(s, "%d %d", &score, &ping);
+			Q_sscanf(s, "%d %d", &score, &ping);
 			s = strchr(s, ' ');
 			if (s)
 			{
@@ -3744,7 +3744,7 @@ void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 			{
 				s = "unknown";
 			}
-			sscanf(s, "\"%[^\"]\"", name); // get player's name between double quotes
+			Q_sscanf(s, "\"%[^\"]\"", name); // get player's name between double quotes
 			Com_Printf("%-2d   %-3d    %-3d   \"%s^7\"\n", i, score, ping, name);
 		}
 	}
@@ -4391,7 +4391,7 @@ qboolean CL_GetLimboString(int index, char *buf)
 		return qfalse;
 	}
 
-	strncpy(buf, cl.limboChatMsgs[index], 140);
+	Q_strncpyz(buf, cl.limboChatMsgs[index], LIMBOCHAT_WIDTH);
 	return qtrue;
 }
 

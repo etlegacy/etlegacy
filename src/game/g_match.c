@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -749,10 +749,10 @@ void G_parseStatsJson(void *object)
 
 		if (tmp)
 		{
-			cl->sess.damage_given = Q_ReadIntValueJson(object, "damage_given");
-			cl->sess.damage_received = Q_ReadIntValueJson(object, "damage_received");
-			cl->sess.team_damage_given = Q_ReadIntValueJson(object, "team_damage_given");
-			cl->sess.team_damage_received = Q_ReadIntValueJson(object, "team_damage_received");
+			cl->sess.damage_given = Q_ReadIntValueJson(tmp, "damage_given");
+			cl->sess.damage_received = Q_ReadIntValueJson(tmp, "damage_received");
+			cl->sess.team_damage_given = Q_ReadIntValueJson(tmp, "team_damage_given");
+			cl->sess.team_damage_received = Q_ReadIntValueJson(tmp, "team_damage_received");
 		}
 		else
 		{
@@ -846,7 +846,7 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_dr += cl->sess.damage_received;
 			tot_tdg += cl->sess.team_damage_given;
 			tot_tdr += cl->sess.team_damage_received;
-			tot_xp += (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
+			tot_xp += (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
 
 			eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
 			if (eff < 0)
@@ -890,7 +890,7 @@ void G_printMatchInfo(gentity_t *ent)
 			                                            cl->sess.damage_received,
 			                                            cl->sess.team_damage_given,
 			                                            cl->sess.team_damage_received,
-			                                            (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
+			                                            (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
 #ifdef FEATURE_RATING
 			                                            ,
 			                                            Com_RoundFloatWithNDecimal(cl->sess.mu - 3 * cl->sess.sigma, 2),

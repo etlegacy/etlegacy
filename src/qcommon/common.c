@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -604,7 +604,7 @@ void Com_StartupVariable(const char *match)
 		s = Cmd_Argv(1);
 		if (!match || !strcmp(s, match))
 		{
-			if (Cvar_Flags(s) == CVAR_NONEXISTENT)
+			if (Cvar_Flags(s) & CVAR_NONEXISTENT)
 			{
 				Cvar_Get(s, Cmd_ArgsFrom(2), CVAR_USER_CREATED);
 			}
@@ -911,19 +911,21 @@ int Com_FilterPath(const char *filter, const char *name, int casesensitive)
 /**
  * @brief Com_RealTime
  * @param[out] qtime
- * @return
+ * @return 1 on sucess otherwise 0
  */
 int Com_RealTime(qtime_t *qtime)
 {
 	time_t    t;
 	struct tm *tms;
 
-	t = time(NULL);
 	if (!qtime)
 	{
-		return t;
+		return 0;
 	}
+
+	t   = time(NULL);
 	tms = localtime(&t);
+
 	if (tms)
 	{
 		qtime->tm_sec   = tms->tm_sec;
@@ -935,8 +937,10 @@ int Com_RealTime(qtime_t *qtime)
 		qtime->tm_wday  = tms->tm_wday;
 		qtime->tm_yday  = tms->tm_yday;
 		qtime->tm_isdst = tms->tm_isdst;
+
+		return 1;
 	}
-	return t;
+	return 0;
 }
 
 /**
@@ -2636,7 +2640,7 @@ static void Com_Freeze_f(void)
 		Com_Printf("freeze <seconds>\n");
 		return;
 	}
-	s = (float)(atof(Cmd_Argv(1)));
+	s = Q_atof(Cmd_Argv(1));
 
 	start = Com_Milliseconds();
 
@@ -4214,6 +4218,6 @@ void Com_ParseUA(userAgent_t *ua, const char *string)
 	{
 		ua->compatible = 0x1; // basic level compatibility
 		// match version string, or leave it as zero
-		sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
+		Q_sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
 	}
 }

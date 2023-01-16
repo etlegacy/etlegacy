@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -142,7 +142,7 @@ qboolean Float_Parse(char **p, float *f)
 	token = COM_ParseExt(p, qfalse);
 	if (token && token[0] != 0)
 	{
-		*f = atof(token);
+		*f = Q_atof(token);
 		return qtrue;
 	}
 	else

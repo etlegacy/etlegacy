@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2391,8 +2391,7 @@ void Item_Text_Wrapped_Paint(itemDef_t *item)
 	p     = strchr(textPtr, '\r');
 	while (p && *p)
 	{
-		strncpy(buff, start, p - start + 1);
-		buff[p - start] = '\0';
+		Q_strncpyz(buff, start, p - start + 1);
 		DC->drawText(x, y, item->textscale, color, buff, 0, 0, item->textStyle);
 		y     += height + 5;
 		start += p - start + 1;

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -3606,7 +3606,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 	{
 		char buf[256];
 		trap_Cvar_VariableStringBuffer("showevents", buf, sizeof(buf));
-		if (atof(buf) != 0.0)
+		if (Q_atof(buf) != 0.0f)
 		{
 #ifdef QAGAME
 			Com_Printf(" game event svt %5d -> %5d: num = %20s parm %d\n", ps->pmove_framecount /*ps->commandTime*/, ps->eventSequence, newEvent < EV_MAX_EVENTS ? eventnames[newEvent] : "*unknown event*", eventParm);
@@ -3623,22 +3623,22 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 
 // NOTE: would like to just inline this but would likely break qvm support
 #define SETUP_MOUNTEDGUN_STATUS(ps)                           \
-	switch (ps->persistant[PERS_HWEAPON_USE]) {                \
-	case 1:                                                 \
-		ps->eFlags                    |= EF_MG42_ACTIVE;                       \
-		ps->eFlags                    &= ~EF_AAGUN_ACTIVE;                     \
-		ps->powerups[PW_OPS_DISGUISED] = 0;                 \
-		break;                                              \
-	case 2:                                                 \
-		ps->eFlags                    |= EF_AAGUN_ACTIVE;                      \
-		ps->eFlags                    &= ~EF_MG42_ACTIVE;                      \
-		ps->powerups[PW_OPS_DISGUISED] = 0;                 \
-		break;                                              \
-	default:                                                \
-		ps->eFlags &= ~EF_MG42_ACTIVE;                      \
-		ps->eFlags &= ~EF_AAGUN_ACTIVE;                     \
-		break;                                              \
-	}
+		switch (ps->persistant[PERS_HWEAPON_USE]) {                \
+		case 1:                                                 \
+			ps->eFlags                    |= EF_MG42_ACTIVE;                       \
+			ps->eFlags                    &= ~EF_AAGUN_ACTIVE;                     \
+			ps->powerups[PW_OPS_DISGUISED] = 0;                 \
+			break;                                              \
+		case 2:                                                 \
+			ps->eFlags                    |= EF_AAGUN_ACTIVE;                      \
+			ps->eFlags                    &= ~EF_MG42_ACTIVE;                      \
+			ps->powerups[PW_OPS_DISGUISED] = 0;                 \
+			break;                                              \
+		default:                                                \
+			ps->eFlags &= ~EF_MG42_ACTIVE;                      \
+			ps->eFlags &= ~EF_AAGUN_ACTIVE;                     \
+			break;                                              \
+		}
 
 /**
  * @brief This is done after each set of usercmd_t on the server,
@@ -4641,85 +4641,6 @@ int BG_simpleHintsExpand(int hint, int val)
 	return 0;
 }
 #endif
-
-// Only used locally
-typedef struct
-{
-    const char *colorname;
-    vec4_t *color;
-} colorTable_t;
-
-// Colors table
-const colorTable_t OSP_Colortable[] =
-    {
-        { "white",    &colorWhite    },
-        { "red",      &colorRed      },
-        { "green",    &colorGreen    },
-        { "blue",     &colorBlue     },
-        { "yellow",   &colorYellow   },
-        { "magenta",  &colorMagenta  },
-        { "cyan",     &colorCyan     },
-        { "orange",   &colorOrange   },
-        { "mdred",    &colorMdRed    },
-        { "mdgreen",  &colorMdGreen  },
-        { "dkgreen",  &colorDkGreen  },
-        { "mdcyan",   &colorMdCyan   },
-        { "mdyellow", &colorMdYellow },
-        { "mdorange", &colorMdOrange },
-        { "mdblue",   &colorMdBlue   },
-        { "ltgrey",   &colorLtGrey   },
-        { "mdgrey",   &colorMdGrey   },
-        { "dkgrey",   &colorDkGrey   },
-        { "black",    &colorBlack    },
-        { NULL,       NULL           }
-};
-
-/**
- * @brief BG_parseColor
- * @param[in] colString
- * @param[in] col
- * @param[in] alpha
- */
-qboolean BG_parseColor(char *colString, float *col)
-{
-    char *s = colString;
-
-    if (*s == '0' && (*(s + 1) == 'x' || *(s + 1) == 'X'))
-    {
-        s += 2;
-        // parse rrggbb
-        if (Q_IsHexColorString(s))
-        {
-            col[0] = ((float)(gethex(*(s)) * 16.f + gethex(*(s + 1)))) / 255.00f;
-            col[1] = ((float)(gethex(*(s + 2)) * 16.f + gethex(*(s + 3)))) / 255.00f;
-            col[2] = ((float)(gethex(*(s + 4)) * 16.f + gethex(*(s + 5)))) / 255.00f;
-
-            if (Q_HexColorStringHasAlpha(s))
-            {
-                col[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
-            }
-            return qtrue;
-        }
-    }
-    else
-    {
-        int i = 0;
-
-        while (OSP_Colortable[i].colorname != NULL)
-        {
-            if (Q_stricmp(s, OSP_Colortable[i].colorname) == 0)
-            {
-                col[0] = (*OSP_Colortable[i].color)[0];
-                col[1] = (*OSP_Colortable[i].color)[1];
-                col[2] = (*OSP_Colortable[i].color)[2];
-                return qtrue;
-            }
-            i++;
-        }
-    }
-
-    return qfalse;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 

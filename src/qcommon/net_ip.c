@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1371,7 +1371,7 @@ void NET_JoinMulticast6(void)
 		}
 	}
 
-	if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (char *) &curgroup, sizeof(curgroup)))
+	if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (char *) &curgroup, sizeof(curgroup)) == SOCKET_ERROR)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Couldn't join multicast group: %s\n", NET_ErrorString());
 
@@ -1397,7 +1397,10 @@ void NET_LeaveMulticast6(void)
 		}
 		else
 		{
-			setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_LEAVE_GROUP, (char *) &curgroup, sizeof(curgroup));
+			if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_LEAVE_GROUP, (char *) &curgroup, sizeof(curgroup)) == SOCKET_ERROR)
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: NET_IP6Socket: setsockopt IPV6_LEAVE_GROUP: %s\n", NET_ErrorString());
+			}
 		}
 
 		multicast6_socket = INVALID_SOCKET;

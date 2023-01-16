@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -141,7 +141,7 @@ void R_LoadModelShadow(model_t *mod)
 					mod->shadowShader = sh->index;
 				}
 			}
-			sscanf(shadowBits, "%f %f %f %f %f %f",
+            Q_sscanf(shadowBits, "%f %f %f %f %f %f",
 			       &mod->shadowParms[0], &mod->shadowParms[1], &mod->shadowParms[2],
 			       &mod->shadowParms[3], &mod->shadowParms[4], &mod->shadowParms[5]);
 		}

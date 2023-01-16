@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -472,6 +472,9 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 		{
 			ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
 		}
+
+		// Let medics know who they just revived
+		trap_SendServerCommand(ent - g_entities, va("cp \"You have revived [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(traceEnt->client->sess.sessionTeam, traceEnt->client->sess.rank)->names, traceEnt->client->pers.netname));
 
 		G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
