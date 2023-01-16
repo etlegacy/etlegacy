@@ -1397,6 +1397,10 @@ static void PM_WalkMove(void)
 			wishspeed = pm->ps->speed * pm->ps->crouchSpeedScale;
 		}
 	}
+	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED || pm->ps->eFlags & EF_ZOOMING)
+	{
+		wishspeed *= 0.625f;
+	}
 
 	// clamp the speed lower if wading or walking on the bottom
 	if (pm->waterlevel)
@@ -1866,6 +1870,14 @@ static void PM_GroundTrace(void)
 		PM_GroundTraceMissed();
 		pml.groundPlane = qfalse;
 		pml.walking     = qfalse;
+
+		if (((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) ||
+		     (pm->ps->eFlags & EF_ZOOMING)) &&
+		    !pm->pmext->airTime)
+		{
+			pm->pmext->airTime = pm->cmd.serverTime;
+		}
+
 		return;
 	}
 
@@ -1944,7 +1956,7 @@ static void PM_GroundTrace(void)
 	}
 
 	pm->ps->groundEntityNum = trace.entityNum;
-
+	pm->pmext->airTime      = 0;
 	// don't reset the z velocity for slopes
 	//pm->ps->velocity[2] = 0;
 
@@ -5189,28 +5201,32 @@ void PmoveSingle(pmove_t *pmove)
 			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 		}
 	}
-	else
+	else if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) || (pm->ps->eFlags & EF_ZOOMING))
 	{
-		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
+		// in air for too much time
+		if (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 250)
 		{
-			if (!(pm->ps->eFlags & EF_PRONE))
-			{
-				PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
-#ifdef CGAMEDLL
-				cg.weaponSelect = GetWeaponTableData(pm->ps->weapon)->weapAlts;
-#endif // CGAMEDLL
-			}
+			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 		}
-
-		if (pm->ps->weapon == WP_SATCHEL_DET)
+	}
+	else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
+	{
+		if (!(pm->ps->eFlags & EF_PRONE))
 		{
-			if (!(pm->ps->ammoclip[WP_SATCHEL_DET]))
-			{
-				PM_BeginWeaponChange(WP_SATCHEL_DET, WP_SATCHEL, qtrue);
+			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 #ifdef CGAMEDLL
-				cg.weaponSelect = WP_SATCHEL;
+			cg.weaponSelect = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 #endif // CGAMEDLL
-			}
+		}
+	}
+	else if (pm->ps->weapon == WP_SATCHEL_DET)
+	{
+		if (!(pm->ps->ammoclip[WP_SATCHEL_DET]))
+		{
+			PM_BeginWeaponChange(WP_SATCHEL_DET, WP_SATCHEL, qtrue);
+#ifdef CGAMEDLL
+			cg.weaponSelect = WP_SATCHEL;
+#endif // CGAMEDLL
 		}
 	}
 
