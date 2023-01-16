@@ -2169,7 +2169,8 @@ static qboolean CG_SetRectComponentFromCommand(int *argIndex, hudComponent_t *co
 
 	if ((trap_Argc() - *argIndex) <= 4)
 	{
-		CG_Printf("^1rect field component needs at least 4 arguments <x> <y> <w> <h>\n");
+		CG_Printf("^3rect field component needs at least 4 arguments <x> <y> <w> <h>\n");
+		CG_Printf("^7Current value is %f %f %f %f\n", value->x, value->y, value->w, value->h);
 		return qfalse;
 	}
 
@@ -2192,7 +2193,8 @@ static qboolean CG_SetFloatComponentFromCommand(int *argIndex, hudComponent_t *c
 
 	if ((trap_Argc() - *argIndex) <= 1)
 	{
-		CG_Printf("^1float field component needs at least 1 argument <value>\n");
+		CG_Printf("^3float field component needs at least 1 argument <value>\n");
+		CG_Printf("^7Current value is %f\n", *value);
 		return qfalse;
 	}
 
@@ -2210,7 +2212,8 @@ static qboolean CG_SetIntComponentFromCommand(int *argIndex, hudComponent_t *com
 
 	if ((trap_Argc() - *argIndex) <= 1)
 	{
-		CG_Printf("^1int field component needs at least 1 argument <value>\n");
+		CG_Printf("^3int field component needs at least 1 argument <value>\n");
+		CG_Printf("^7Current value is %d\n", *value);
 		return qfalse;
 	}
 
@@ -2228,7 +2231,8 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 
 	if ((trap_Argc() - *argIndex) <= 1)
 	{
-		CG_Printf("^1color field component needs at least 1 argument <colorname> / <0xRRGGBB> or 3 argument <r> <g> <b>\n");
+		CG_Printf("^3color field component needs at least 1 argument <colorname> / <0xRRGGBB[AA]> or 3-4 arguments <r> <g> <b> <a>\n");
+		CG_Printf("^7Current value is %f %f %f %f\n", (*value)[0], (*value)[1], (*value)[2], (*value)[3]);
 		return qfalse;
 	}
 
@@ -2317,14 +2321,14 @@ static void CG_ShowEditComponentHelp()
 	CG_Printf("\n\nAvailable ^3<field> ^7:\n\n%s\n", str);
 }
 
-static void CG_ShowEditComponentStyleHelp(const hudComponentFields_t *compField)
+static void CG_ShowEditComponentStyleHelp(const hudComponentFields_t *compField, int *value)
 {
 	int  i;
 	char *str = NULL;
 
 	for (i = 0; i < MAXSTYLES && compField->styles[i]; ++i)
 	{
-		str = va("%s%5d : %-16s%s", str ? str : "", 1 << i, compField->styles[i], !((i + 1) % 3) ? "\n" : "    ");
+        str = va("%s%s%5d : %-16s%s", str ? str : "", ((*value) & 1 << i) ? "^2" : "^7", 1 << i, compField->styles[i], !((i + 1) % 3) ? "\n" : "    ");
 	}
 
 	if (str)
@@ -2429,11 +2433,16 @@ static void CG_EditComponent_f(void)
 					// display specific help for style
 					if (!Q_stricmp(hudComponentMembersFields[j].name, "style"))
 					{
-						CG_ShowEditComponentStyleHelp(compField);
+						CG_ShowEditComponentStyleHelp(compField, (int *)((char *)comp + hudComponentMembersFields[j].offset));
 						return;
 					}
 
-					CG_Printf("^1 Failed to parse %s field arguments\n", hudComponentMembersFields[j].name);
+					// in case there is not next argument, don't display an error as the user request help
+					if (++i != argc)
+					{
+						CG_Printf("^1 Failed to parse %s field arguments\n", hudComponentMembersFields[j].name);
+					}
+
 					return;
 				}
 			}
@@ -2458,7 +2467,6 @@ static void CG_EditHudComponentComplete(void)
 		trap_CommandComplete("save");
 		trap_CommandComplete("clone");
 		trap_CommandComplete("delete");
-
 
 		for (i = 0; hudComponentFields[i].name; i++)
 		{
