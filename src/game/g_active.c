@@ -618,11 +618,6 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		trap_UnlinkEntity(ent);
 	}
 
-	if (ent->flags & FL_NOFATIGUE)
-	{
-		ent->client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
-	}
-
 	if (ent->flags & FL_NOSTAMINA)
 	{
 		ent->client->ps.classWeaponTime = 0;
@@ -1509,11 +1504,6 @@ void ClientThink_real(gentity_t *ent)
 	if (client->latched_buttons & BUTTON_ACTIVATE)
 	{
 		Cmd_Activate_f(ent);
-	}
-
-	if (ent->flags & FL_NOFATIGUE)
-	{
-		ent->client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
 	}
 
 	if (ent->flags & FL_NOSTAMINA)
