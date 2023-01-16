@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -778,14 +778,13 @@ static void S_AL_Gain(ALuint source, float gainval)
  * @brief Adapt the gain if necessary to get a quicker fadeout when the source is too far away.
  * @param[in,out] chksrc
  * @param[in] origin
- * @note unused - OpenaL internal linear gain computation is used instead
  */
 static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 {
 	if (!chksrc->local /*&& chksrc->entity != listenerNumber*/)
 	{
-		float  scaleFactor;
-		float  distance = 0.0f;
+		float scaleFactor;
+		float distance = 0.0f;
 
 		distance = vec3_distance(origin, lastListenerOrigin);
 
@@ -808,7 +807,7 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 			}
 		}
 
-		scaleFactor *= chksrc->curGain;
+		scaleFactor *= s_alGain->value * s_volume->value * chksrc->curGain;
 
 		if (chksrc->scaleGain != scaleFactor)
 		{
@@ -818,7 +817,7 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 	}
 	else if (chksrc->scaleGain != chksrc->curGain)
 	{
-		chksrc->scaleGain = chksrc->curGain;
+		chksrc->scaleGain = s_alGain->value * s_volume->value * chksrc->curGain;
 		S_AL_Gain(chksrc->alSource, chksrc->scaleGain);
 	}
 }
@@ -953,9 +952,10 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 {
 	ALuint buffer;
 	src_t  *curSource;
-	float  realVolume;
+	//float  realVolume;
 
 	// from SDL spatialization volume values
+	/*
 	switch (priority)
 	{
 	case SRCPRI_AMBIENT: realVolume = 90.0f; break;
@@ -965,6 +965,7 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 	case SRCPRI_LOCAL:
 	default:             realVolume = volume; break;
 	}
+	*/
 
 	// Mark the SFX as used, and grab the raw AL buffer
 	S_AL_BufferUse(sfx);
@@ -982,20 +983,20 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 	curSource->isLocked     = qfalse;
 	curSource->isLooping    = qfalse;
 	curSource->isTracking   = qfalse;
-	curSource->curGain      = (s_alGain->value * s_volume->value * realVolume / 255.0f);
-	curSource->scaleGain    = curSource->curGain;
+	curSource->curGain      = volume / 255.0f;
+	curSource->scaleGain    = s_alGain->value * s_volume->value * curSource->curGain;
 	curSource->local        = local;
 	curSource->range        = range;
 
 	// Set up OpenAL source
 	qalSourcei(curSource->alSource, AL_BUFFER, buffer);
 	qalSourcef(curSource->alSource, AL_PITCH, 1.0f);
-	S_AL_Gain(curSource->alSource, curSource->curGain);
+	S_AL_Gain(curSource->alSource, curSource->scaleGain);
 	qalSourcefv(curSource->alSource, AL_POSITION, vec3_origin);
 	qalSourcefv(curSource->alSource, AL_VELOCITY, vec3_origin);
 	qalSourcei(curSource->alSource, AL_LOOPING, AL_FALSE);
-	qalSourcef(curSource->alSource, AL_REFERENCE_DISTANCE, /*s_alMinDistance->value*/ range * 0.064f);
-	qalSourcef(curSource->alSource, AL_MAX_DISTANCE, range);
+	//qalSourcef(curSource->alSource, AL_REFERENCE_DISTANCE, /*s_alMinDistance->value*/ range/* * 0.064f*/);
+	//qalSourcef(curSource->alSource, AL_MAX_DISTANCE, range);
 
 	if (local)
 	{
@@ -1667,10 +1668,6 @@ static void S_AL_SrcUpdate(void)
 		}
 
 		// Update source parameters
-		//if ((s_alGain->modified) || (s_volume->modified))
-		//{
-		//	curSource->curGain = s_alGain->value * s_volume->value;
-		//}
 		if ((s_alRolloff->modified) && (!curSource->local))
 		{
 			qalSourcef(curSource->alSource, AL_ROLLOFF_FACTOR, s_alRolloff->value);
@@ -2094,6 +2091,12 @@ static int S_AL_SSSourceGet(void)
 	// Find a source not playing
 	for (i = 0; i < MAX_STREAMING_SOUNDS && ssPlaying[i]; i++)
 		;
+
+	// No free source
+	if (i == MAX_STREAMING_SOUNDS)
+	{
+		return -1;
+	}
 
 	// Allocate a musicSource at high priority
 	ssSourceHandle[i] = S_AL_SrcAlloc(SRCPRI_STREAM, -2, 0);
@@ -2581,7 +2584,7 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 		{
 			if (intro && *intro)
 			{
-				strncpy(ssData[ss].queueStream, intro, MAX_QPATH);
+				Q_strncpyz(ssData[ss].queueStream, intro, MAX_QPATH);
 				ssData[ss].queueStreamType = param;
 				// Cvar for save game
 				if (param == -2)
@@ -2750,7 +2753,7 @@ void S_AL_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTi
 	// Copy the loop over
 	Q_strncpyz(s_backgroundLoop, loop, sizeof(s_backgroundLoop));
 
-	if (!issame)
+	if (!issame && intro && *intro)
 	{
 		// Open the intro and don't mind whether it succeeds.
 		// The important part is the loop.

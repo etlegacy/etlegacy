@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -796,8 +796,8 @@ qboolean Q_strreplace(char *dest, size_t destsize, const char *find, const char 
 		lfind    = strlen(find);
 		lreplace = strlen(replace);
 
-		strncpy(s, replace, destsize - lstart - 1);
-		strncpy(s + lreplace, backup + lstart + lfind, destsize - lstart - lreplace - 1);
+		Q_strncpyz(s, replace, destsize - lstart);
+		Q_strncpyz(s + lreplace, backup + lstart + lfind, destsize - lstart - lreplace);
 
 		return qtrue;
 	}

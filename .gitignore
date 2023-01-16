@@ -51,6 +51,7 @@ win_resource.aps
 
 # Clion
 .idea/
+.run/
 /cmake-build-*
 
 # Visual Studio 2017

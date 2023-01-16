@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -616,11 +616,6 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 
 		G_TouchTriggers(ent);
 		trap_UnlinkEntity(ent);
-	}
-
-	if (ent->flags & FL_NOFATIGUE)
-	{
-		ent->client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
 	}
 
 	if (ent->flags & FL_NOSTAMINA)
@@ -1236,7 +1231,7 @@ void ClientThink_real(gentity_t *ent)
 
 	// zinx etpro antiwarp
 	client->pers.pmoveMsec = pmove_msec.integer;
-	if (!G_DoAntiwarp(ent) && (pmove_fixed.integer || client->pers.pmoveFixed))
+	if (pmove_fixed.integer || client->pers.pmoveFixed)
 	{
 		ucmd->serverTime = ((ucmd->serverTime + client->pers.pmoveMsec - 1) /
 		                    client->pers.pmoveMsec) * client->pers.pmoveMsec;
@@ -1509,11 +1504,6 @@ void ClientThink_real(gentity_t *ent)
 	if (client->latched_buttons & BUTTON_ACTIVATE)
 	{
 		Cmd_Activate_f(ent);
-	}
-
-	if (ent->flags & FL_NOFATIGUE)
-	{
-		ent->client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
 	}
 
 	if (ent->flags & FL_NOSTAMINA)
@@ -2074,29 +2064,32 @@ void ClientEndFrame(gentity_t *ent)
 {
 	int i, frames;
 
-	// count player time
-	if (g_gamestate.integer == GS_PLAYING && !(ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (ent->client->ps.pm_flags & PMF_LIMBO)))
+	if (g_gamestate.integer == GS_PLAYING && level.match_pause == PAUSE_NONE)
 	{
-		if (ent->client->sess.sessionTeam == TEAM_AXIS)
+		// count player time
+		if (!(ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (ent->client->ps.pm_flags & PMF_LIMBO)))
 		{
-			ent->client->sess.time_axis += level.frameTime;
+			if (ent->client->sess.sessionTeam == TEAM_AXIS)
+			{
+				ent->client->sess.time_axis += level.frameTime;
+			}
+			else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
+			{
+				ent->client->sess.time_allies += level.frameTime;
+			}
 		}
-		else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
-		{
-			ent->client->sess.time_allies += level.frameTime;
-		}
-	}
 
-	// don't count skulled player time
-	if (g_gamestate.integer == GS_PLAYING && !(ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & PMF_LIMBO) || ent->client->ps.stats[STAT_HEALTH] <= 0))
-	{
-		// ensure time played is always smaller or equal than time spent in teams
-		// work around for unreset data of slow connecters
-		if (ent->client->sess.time_played > (ent->client->sess.time_axis + ent->client->sess.time_allies))
+		// don't count skulled player time
+		if (!(ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & PMF_LIMBO) || ent->client->ps.stats[STAT_HEALTH] <= 0))
 		{
-			ent->client->sess.time_played = 0;
+			// ensure time played is always smaller or equal than time spent in teams
+			// work around for unreset data of slow connecters
+			if (ent->client->sess.time_played > (ent->client->sess.time_axis + ent->client->sess.time_allies))
+			{
+				ent->client->sess.time_played = 0;
+			}
+			ent->client->sess.time_played += level.frameTime;
 		}
-		ent->client->sess.time_played += level.frameTime;
 	}
 
 #ifdef FEATURE_RATING

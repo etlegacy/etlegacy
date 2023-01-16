@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -286,7 +286,7 @@ static void DrawTris(shaderCommands_t *input)
 			token = COM_Parse(&s);
 			if (token[0])
 			{
-				trisColor[i] = (float)atof(token);
+				trisColor[i] = Q_atof(token);
 			}
 			else
 			{

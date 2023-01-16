@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -163,7 +163,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		{
 			const char *info = CG_ConfigString(CS_MODINFO);
 
-			cgs.mapProb = (float)atof(Info_ValueForKey(info, "M"));
+			cgs.mapProb = Q_atof(Info_ValueForKey(info, "M"));
 		}
 #endif
 
@@ -276,52 +276,28 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			msec = mins = tens = seconds = 0;
 		}
 
-		if (cgs.gamestate != GS_PLAYING)
+		if (cgs.gamestate == GS_PLAYING)
 		{
-			msec = (int)(cgs.timelimit * 60000.f); // 60.f * 1000.f
-
-			seconds  = msec / 1000;
-			mins     = seconds / 60;
-			seconds -= mins * 60;
-			tens     = seconds / 10;
-			seconds -= tens * 10;
-
-			s = va("%s   ^7%2.f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);
-		}
-		else if (msec < 0 && cgs.timelimit > 0.0f)
-		{
-			if (cgs.gamestate == GS_WAITING_FOR_PLAYERS)
-			{
-				s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("GAME STOPPED"));
-			}
-			else
+			if (msec < 0 && cgs.timelimit > 0.0f)
 			{
 				s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("SUDDEN DEATH"));
 			}
+			else
+			{
+				s = va("%s   ^7%2.f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);
+				w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
+
+				t = va(" / %2.f:%i%i", (float)mins, tens, seconds);
+				CG_Text_Paint_Ext(x + w, y, 0.19f, 0.19f, SB_text, t, 0, 0, 0, FONT_HEADER);
+			}
+		}
+		else if (cgs.gamestate == GS_WAITING_FOR_PLAYERS)
+		{
+			s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("GAME STOPPED"));
 		}
 		else
 		{
 			s = va("%s   ^7%2.f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);
-			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
-
-			// time limit
-			if (cgs.timelimit > 0.0f)
-			{
-				msec = (int)(cgs.timelimit * 60000.f);
-
-				seconds  = msec / 1000;
-				mins     = seconds / 60;
-				seconds -= mins * 60;
-				tens     = seconds / 10;
-				seconds -= tens * 10;
-			}
-			else
-			{
-				msec = mins = tens = seconds = 0;
-			}
-
-			t = va(" / %2.f:%i%i", (float)mins, tens, seconds);
-			CG_Text_Paint_Ext(x + w, y, 0.19f, 0.19f, SB_text, t, 0, 0, 0, FONT_HEADER);
 		}
 
 		CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);

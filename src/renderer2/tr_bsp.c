@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Peter McNeill <n27@bigpond.net.au>
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -4915,7 +4915,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 		{
 			if (origin)
 			{
-				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
 				ri.Free(origin);
 			}
 			else
@@ -5223,7 +5223,7 @@ void R_LoadLights(char *lightDefs)
 			// check for origin
 			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin")) // ETL (origin)
 			{
-				sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
 			}
 			// check for origin
 			else if (!Q_stricmp(keyname, "spawnflags")) // ETL (spawnflags)
@@ -5246,17 +5246,17 @@ void R_LoadLights(char *lightDefs)
 			// check for center
 			else if (!Q_stricmp(keyname, "light_center"))
 			{
-				sscanf(value, "%f %f %f", &light->l.center[0], &light->l.center[1], &light->l.center[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.center[0], &light->l.center[1], &light->l.center[2]);
 			}
 			// check for color - weighted RGB value of light color ('k' key)(default white - 1.0 1.0 1.0)
 			else if (!Q_stricmp(keyname, "_color")) // ETL
 			{
-				sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
 			}
 			// check for radius - overrides the default 64 unit radius of a spotlight at the target point
 			else if (!Q_stricmp(keyname, "light_radius") || !Q_stricmp(keyname, "radius")) // ETL (radius)
 			{
-				sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
 
 				//VectorScale();
 				light->l.radius[0] *= RADIUS_MULTIPLICATOR;
@@ -5266,7 +5266,7 @@ void R_LoadLights(char *lightDefs)
 			// check for light_target
 			else if (!Q_stricmp(keyname, "light_target"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
@@ -5292,28 +5292,28 @@ void R_LoadLights(char *lightDefs)
 			// check for light_right
 			else if (!Q_stricmp(keyname, "light_right"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projRight[0], &light->l.projRight[1], &light->l.projRight[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projRight[0], &light->l.projRight[1], &light->l.projRight[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_up
 			else if (!Q_stricmp(keyname, "light_up"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projUp[0], &light->l.projUp[1], &light->l.projUp[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projUp[0], &light->l.projUp[1], &light->l.projUp[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_start
 			else if (!Q_stricmp(keyname, "light_start"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projStart[0], &light->l.projStart[1], &light->l.projStart[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projStart[0], &light->l.projStart[1], &light->l.projStart[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_end
 			else if (!Q_stricmp(keyname, "light_end"))
 			{
-				sscanf(value, "%f %f %f", &light->l.projEnd[0], &light->l.projEnd[1], &light->l.projEnd[2]);
+				Q_sscanf(value, "%f %f %f", &light->l.projEnd[0], &light->l.projEnd[1], &light->l.projEnd[2]);
 
 				light->l.rlType = RL_PROJ;
 			}
@@ -5360,7 +5360,7 @@ void R_LoadLights(char *lightDefs)
 			{
 				mat4_t rotation;
 
-				sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
+				Q_sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
 				       &rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
 
 				quat_from_mat4(light->l.rotation, rotation);
@@ -5558,7 +5558,7 @@ void R_LoadEntities(lump_t *l)
 		// check for a different grid size
 		if (!Q_stricmp(keyname, "gridsize"))
 		{
-			sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
+			Q_sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
 			continue;
 		}
 		// check for ambient color
@@ -5566,7 +5566,7 @@ void R_LoadEntities(lump_t *l)
 		{
 
 
-			sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
+			Q_sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
 			       &tr.worldEntity.ambientLight[2]);
 
 		}
@@ -5579,7 +5579,7 @@ void R_LoadEntities(lump_t *l)
 		// check for fog color
 		else if (!Q_stricmp(keyname, "fogColor"))
 		{
-			sscanf(value, "%f %f %f", &tr.fogColor[0], &tr.fogColor[1], &tr.fogColor[2]);
+			Q_sscanf(value, "%f %f %f", &tr.fogColor[0], &tr.fogColor[1], &tr.fogColor[2]);
 		}
 		// check for fog density
 		else if (!Q_stricmp(keyname, "fogDensity"))

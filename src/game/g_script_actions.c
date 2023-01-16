@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -368,7 +368,7 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 			G_Error("G_ScriptAction_FollowPath: followpath must have a speed\n");
 		}
 
-		speed = (float)(atof(token));
+		speed = Q_atof(token);
 
 		while (token[0])
 		{
@@ -841,7 +841,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 			G_Error("G_ScriptAction_FollowSpline: followspline must have a speed\n");
 		}
 
-		speed = (float)(atof(token)) * g_moverScale.value;
+		speed = Q_atof(token) * g_moverScale.value;
 
 		while (token[0])
 		{
@@ -1019,7 +1019,7 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetChargeTimeFactor: setchargetimefactor must have a factor\n");
 	}
 
-	factor = (float)atof(token);
+	factor = Q_atof(token);
 
 	if (factor < 0.f)
 	{
@@ -1353,7 +1353,7 @@ qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetGlobalFog: setglobalfog without restore flag must have a depth for opaque value\n");
 	}
 
-	depthForOpaque = (float)atof(token);
+	depthForOpaque = Q_atof(token);
 
 	trap_SetConfigstring(CS_GLOBALFOGVARS, va("0 %i %f %f %f %f", duration, color[0], color[1], color[2], depthForOpaque));
 
@@ -1454,7 +1454,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			G_Error("G_ScriptAction_GotoMarker: gotomarker must have a speed\n");
 		}
 
-		speed  = (float)atof(token);
+		speed  = Q_atof(token);
 		trType = TR_LINEAR_STOP;
 
 		while (token[0])
@@ -2078,7 +2078,7 @@ qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 	{
 		G_Error("G_ScriptAction_MusicFade: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}
-	targetVol = (float)atof(token);
+	targetVol = Q_atof(token);
 	if (targetVol < 0 || targetVol >= 1)
 	{
 		G_Error("G_ScriptAction_MusicFade: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
@@ -4341,7 +4341,7 @@ qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_ConstructibleChargeBarReq: \"constructible_chargebarreq\" must have a fraction value\n");
 	}
 
-	value = (float)atof(token);
+	value = Q_atof(token);
 
 	if (value < 0)
 	{
@@ -4816,7 +4816,7 @@ void G_ModifyTOI(gentity_t *ent)
 
 	if (G_SpawnString("score", "0", &scorestring))
 	{
-		ent->accuracy = (float)atof(scorestring);
+		ent->accuracy = Q_atof(scorestring);
 	}
 
 	trap_SetConfigstring(CS_OID_TRIGGERS + ent->s.teamNum, ent->track);
@@ -5043,7 +5043,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 			break;
 
 		case F_FLOAT:
-			valueFloat = (float)atof(value);
+			valueFloat = Q_atof(value);
 			while ((found = G_FindFloat(found, fields[i].ofs, valueFloat)) != NULL)
 			{
 				pass[found->s.number]++;
@@ -5059,7 +5059,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 			break;
 
 		case F_VECTOR:
-			sscanf(value, "%f %f %f", &valueVector[0], &valueVector[1], &valueVector[2]);
+            Q_sscanf(value, "%f %f %f", &valueVector[0], &valueVector[1], &valueVector[2]);
 			while ((found = G_FindVector(found, fields[i].ofs, valueVector)) != NULL)
 			{
 				pass[found->s.number]++;
@@ -5068,7 +5068,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 
 		case F_ANGLEHACK:
 			valueVector[0] = 0;
-			valueVector[1] = (float)atof(value);
+			valueVector[1] = Q_atof(value);
 			valueVector[2] = 0;
 			while ((found = G_FindVector(found, fields[i].ofs, valueVector)) != NULL)
 			{

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2850,8 +2850,6 @@ int BG_simpleHintsCollapse(int hint, int val);
 int BG_simpleHintsExpand(int hint, int val);
 #endif
 int BG_simpleWeaponState(int ws);
-
-qboolean BG_parseColor(char *colString, float *col);
 
 // Voting
 #define VOTING_DISABLED     ((1 << numVotesAvailable) - 1)

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -150,7 +150,9 @@ void CG_Respawn(qboolean revived)
 	cg.serverRespawning = qfalse;   // just in case
 
 	// no error decay on player movement
-	cg.thisFrameTeleport = qtrue;
+	cg.thisFrameTeleport  = qtrue;
+	cg.predictedErrorTime = 0;
+	VectorClear(cg.predictedError);
 
 	// need to reset client-side weapon animations
 	cg.predictedPlayerState.weapAnim    = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;      // reset weapon animations
@@ -208,7 +210,7 @@ void CG_Respawn(qboolean revived)
 		cg.pmext.silencedSideArm = 2;
 	}
 
-	cg.proneMovingTime = 0;
+	CG_ResetTimers();
 
 	// reset fog to world fog (if present)
 	trap_R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
@@ -456,12 +458,17 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 
 		// make sure we don't get any unwanted transition effects
 		*ops = *ps;
+		CG_ResetTimers();
 
 		// After Limbo, make sure and do a CG_Respawn
 		if (ps->clientNum == cg.clientNum)
 		{
 			ops->persistant[PERS_SPAWN_COUNT]--;
 		}
+	}
+	else
+	{
+		cg.thisFrameTeleport = qfalse;
 	}
 
 	if (ps->eFlags & EF_FIRING)
@@ -547,11 +554,30 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 	CG_CheckPlayerstateEvents(ps, ops);
 
 	// smooth the ducking viewheight change
-	if (ps->viewheight != ops->viewheight)
+	if (ps->viewheight != ops->viewheight && !cg.thisFrameTeleport)
 	{
 		cg.duckChange = ps->viewheight - ops->viewheight;
 		cg.duckTime   = cg.time;
 		cg.wasProne   = ops->eFlags & EF_PRONE;
 		VectorSubtract(ops->origin, ps->origin, cg.deltaProne);
 	}
+}
+
+/**
+* @brief CG_ResetTimers resets playerstate related timers
+*/
+void CG_ResetTimers(void)
+{
+	cg.cameraShakeScale  = 0;
+	cg.cameraShakeLength = 0;
+	cg.cameraShakeTime   = 0;
+	cg.cameraShakePhase  = 0;
+	cg.damageTime        = 0;
+	cg.stepTime          = 0;
+	cg.duckTime          = 0;
+	cg.landTime          = 0;
+	cg.proneMovingTime   = 0;
+	cg.v_dmg_time        = 0;
+	cg.v_noFireTime      = 0;
+	cg.v_fireTime        = 0;
 }

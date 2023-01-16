@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -63,7 +63,7 @@ static void CG_HudBackupFilePath(char *output, int len)
 	qtime_t ct;
 	char    tmp[MAX_OSPATH];
 
-	tmp[0] = '\0';
+	tmp[0]    = '\0';
 	output[0] = '\0';
 	trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
 	trap_RealTime(&ct);
@@ -887,32 +887,22 @@ static qboolean CG_ReadHudFile(const char *filename)
 	return qtrue;
 }
 
-static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, const char *s)
+static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, char *s)
 {
-	if (Q_IsHexColorString(s))
+	qboolean res;
+
+	vec[3] = 1.f;
+	res    = Q_ParseColor(s, vec);
+
+	if (!res)
 	{
-		vec[0] = ((float)(gethex(*(s)) * 16 + gethex(*(s + 1)))) / 255.00f;
-		vec[1] = ((float)(gethex(*(s + 2)) * 16 + gethex(*(s + 3)))) / 255.00f;
-		vec[2] = ((float)(gethex(*(s + 4)) * 16 + gethex(*(s + 5)))) / 255.00f;
-
-		if (Q_HexColorStringHasAlpha(s))
-		{
-			vec[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
-		}
-		else
-		{
-			vec[3] = 1.f;
-		}
-
-		return qtrue;
+		vec[0] = 0.f;
+		vec[1] = 0.f;
+		vec[2] = 0.f;
+		vec[3] = 0.f;
 	}
 
-	vec[0] = 0.f;
-	vec[1] = 0.f;
-	vec[2] = 0.f;
-	vec[3] = 0.f;
-
-	return qfalse;
+	return res;
 }
 
 static ID_INLINE float CG_HudParseColorElement(cJSON *object, float defaultValue)
@@ -947,16 +937,6 @@ static void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
 {
 	if (!object)
 	{
-		if (colorVec[0] != 0.f && colorVec[1] != 0.f && colorVec[2] != 0.f && colorVec[3] != 0.f)
-		{
-			return;
-		}
-
-		colorVec[0] = 0.f;
-		colorVec[1] = 0.f;
-		colorVec[2] = 0.f;
-		colorVec[3] = 1.f;
-
 		return;
 	}
 
@@ -1184,7 +1164,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 	return qtrue;
 }
 
-static qboolean CG_TryReadHudFromFile(const char *filename)
+qboolean CG_TryReadHudFromFile(const char *filename)
 {
 	if (!CG_ReadHudJsonFile(filename))
 	{

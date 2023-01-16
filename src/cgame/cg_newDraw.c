@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -700,13 +700,13 @@ void CG_MouseEvent(int x, int y)
 		m_filter = Q_atoi(buffer);
 
 		trap_Cvar_VariableStringBuffer("sensitivity", buffer, sizeof(buffer));
-		sensitivity = atof(buffer);
+		sensitivity = Q_atof(buffer);
 
 		trap_Cvar_VariableStringBuffer("m_pitch", buffer, sizeof(buffer));
-		m_pitch = atof(buffer);
+		m_pitch = Q_atof(buffer);
 
 		trap_Cvar_VariableStringBuffer("m_yaw", buffer, sizeof(buffer));
-		m_yaw = atof(buffer);
+		m_yaw = Q_atof(buffer);
 
 		if (m_filter)
 		{

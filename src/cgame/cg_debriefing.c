@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -989,11 +989,12 @@ static panel_button_t charPanelEdit =
 };
 
 // MAPVOTE
-#define DB_MAPNAME_X    15
-#define DB_MAPVOTE_X    (DB_MAPNAME_X + 200)
-#define DB_MAPVOTE_Y    (56 + 10)
-#define DB_MAPVOTE_X2   (620 - 192 - 96 - 20)
-#define DB_MAPVOTE_Y2   (286 + 30 - 192 - 16)
+#define DB_MAPNAME_X     15
+#define DB_MAPVOTE_X     (DB_MAPNAME_X + 220)
+#define DB_MAPHISTORIC_X (DB_MAPVOTE_X + 70)
+#define DB_MAPVOTE_Y     (56 + 10)
+#define DB_MAPVOTE_X2    (620 - 180 - 20)
+#define DB_MAPVOTE_Y2    (286 + 30 - 164)
 
 static scrollText_t descriptionScroll;
 
@@ -1069,8 +1070,8 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 		// on selected line, click toogle the vote for the selected map
 		// on checkbox selection
 		if (pos == cgs.dbSelectedMap ||
-            (Ccg_WideX(cgs.cursorX) >= DB_MAPNAME_X + cgs.wideXoffset + 12
-             && Ccg_WideX(cgs.cursorX) <= DB_MAPNAME_X + cgs.wideXoffset + 12 + CHECKBOX_SIZE))
+		    (Ccg_WideX(cgs.cursorX) >= DB_MAPNAME_X + cgs.wideXoffset + 12
+		     && Ccg_WideX(cgs.cursorX) <= DB_MAPNAME_X + cgs.wideXoffset + 12 + CHECKBOX_SIZE))
 		{
 			CG_MapVoteList_ToggleVote(pos);
 		}
@@ -1103,6 +1104,7 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
+#define NEW_MAP_PLAYED_COUNT_THRESOLD 4
 vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
@@ -1113,7 +1115,10 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 {
 	int   i;
 	float y  = button->rect.y + 12;
+	float x2 = DB_MAPVOTE_X2 + cgs.wideXoffset;
 	float y2 = DB_MAPVOTE_Y;
+	float w2 = 190.f;
+	float h2 = 20;
 
 	// display map number if server is configured
 	// to reset XP after certain number of maps
@@ -1141,25 +1146,36 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			break;
 		}
 
-		// add background color to identify voted map by self
-		for (j = 0; j < 3; j++)
+		if (cgs.dbMapsHistoryCountList)
 		{
-			if (cgs.dbMapVotedFor[j] == i + cgs.dbMapVoteListOffset)
+			if (i + cgs.dbMapVoteListOffset == cgs.dbMapLastPlayed)
 			{
-				static const vec4_t clr = { 1.f, 1.f, 0.f, 0.1f };
-				CG_FillRect(button->rect.x, y - 10, 245, 12, clr);
-
-                CG_DrawPic(DB_MAPNAME_X + 12 + cgs.wideXoffset + 2, y - CHECKBOX_SIZE + 3, CHECKBOX_SIZE - 3, CHECKBOX_SIZE - 3, cgs.media.readyShader);
-                break;
+				// last played map in list
+				CG_Text_Paint_Ext(DB_MAPHISTORIC_X + cgs.wideXoffset - 30, y, button->font->scalex,
+				                  button->font->scaley, colorYellow,
+				                  "LAST",
+				                  0, 30, 0, button->font->font);
 			}
+			else if (cgs.dbMapTimesPlayed[i + cgs.dbMapVoteListOffset] <= NEW_MAP_PLAYED_COUNT_THRESOLD)
+			{
+				// new maps or played less than defined thresold
+				CG_Text_Paint_Ext(DB_MAPHISTORIC_X + cgs.wideXoffset - 25, y, button->font->scalex,
+				                  button->font->scaley, colorCyan,
+				                  "NEW",
+				                  0, 30, 0, button->font->font);
+			}
+
+			CG_FilledBar(DB_MAPHISTORIC_X + cgs.wideXoffset, y - 8, 60, 10, (vec4_t) { 1.f, 0, 0, 0.85f }, (vec4_t) { 0, 1.f, 0, 0.85f }, NULL,
+			             (cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset]) / (float)cgs.dbMapsHistoryCountList,
+			             BAR_LERP_COLOR |   BAR_BGSPACING_X0Y0, -1);
 		}
 
 		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
 		{
-			rectDef_t           rect = { DB_MAPVOTE_X2 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 12 + (177.0f / 233.0f * 230), 230, 55 };
-			static const vec4_t clr  = { 1.f, 1.f, 1.f, 0.3f };
+			rectDef_t rect = { DB_MAPVOTE_X2 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 12 + (177.0f / 233.0f * w2), w2, 45 };
 
-			CG_FillRect(button->rect.x, y - 10, 245, 12, clr);
+			// highlight selected map line from list
+			CG_FillRect(button->rect.x, y - 10, 240, 12, (vec4_t) { 1.f, 1.f, 1.f, 0.3f });
 
 			// display the photograph image + the layout image..
 			if (cgs.dbSelectedMapLevelShots)
@@ -1173,7 +1189,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 				acolor[3] = (diff > 1000) ? 1.0f : (float)diff / 1000.f;
 
 				trap_R_SetColor(acolor);
-				CG_DrawPic(DB_MAPVOTE_X2 + 34 + cgs.wideXoffset, DB_MAPVOTE_Y2, 230, 177.0f / 233.0f * 230, cgs.dbSelectedMapLevelShots);
+				CG_DrawPic(DB_MAPVOTE_X2 + cgs.wideXoffset, DB_MAPVOTE_Y2, w2, 177.0f / 233.0f * w2, cgs.dbSelectedMapLevelShots);
 				trap_R_SetColor(NULL);
 			}
 
@@ -1182,24 +1198,67 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
 			                  button->font->scaley, *colour,
-			                  va(CG_TranslateString("Last Played             : %s"),
-			                     (cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset] == -1 ? CG_TranslateString("Never") : va(CG_TranslateString("%d maps ago"),
-			                                                                                                                cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset]))),
+			                  va(CG_TranslateString("Last Played  : %s"),
+			                     (cgs.dbMapLastPlayedList[i + cgs.dbMapVoteListOffset] == -1 ? CG_TranslateString("Never") : va(CG_TranslateString("%d maps ago"),
+			                                                                                                                    cgs.dbMapLastPlayedList[i + cgs.dbMapVoteListOffset]))),
 			                  0, 0, 0, button->font->font);
 			y2 += 12;
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
 			                  button->font->scaley, *colour,
-			                  va(CG_TranslateString("Total Accumulated Votes : %d"), cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
+			                  va(CG_TranslateString("Times Played : %d"), cgs.dbMapTimesPlayed[i + cgs.dbMapVoteListOffset]),
 			                  0, 0, 0, button->font->font);
+#ifdef FEATURE_RATING
+			if (cgs.skillRating)
+			{
+				y2 += 12;
+				CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
+				                  button->font->scaley, *colour,
+				                  va(CG_TranslateString("Map Bias     : %2.2f"), cgs.dbMapBias[i + cgs.dbMapVoteListOffset]),
+				                  0, 0, 0, button->font->font);
+			}
+#endif
+			y2 += 12;
+			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
+			                  button->font->scaley, *colour,
+			                  CG_TranslateString("History :"),
+			                  0, 0, 0, button->font->font);
+
+			y2 += 4;
+
+			CG_AdjustFrom640(&x2, &y2, &w2, &h2);
+
+			// draw history graph
+			for (j = 0; j < cgs.dbMapsHistoryCount; j++)
+			{
+				// highlight selected map by using different color
+				trap_R_SetColor(cgs.dbSelectedMap == cgs.dbMapsHistory[j] ? colorGreen : colorMdGrey);
+
+				trap_R_DrawStretchPic(x2 + j * (w2 / (float)cgs.dbMapsHistoryCount), y2, 1, h2, 0, 0, 0, 0, cgs.media.whiteShader);
+			}
+
+			trap_R_SetColor(NULL);
 		}
 
-        CG_DrawRect_FixedBorder(DB_MAPNAME_X + 12 + cgs.wideXoffset, y - CHECKBOX_SIZE + 1, CHECKBOX_SIZE, CHECKBOX_SIZE, 2, colorMdGrey);
+		// draw checkbox border
+		CG_DrawRect_FixedBorder(DB_MAPNAME_X + 12 + cgs.wideXoffset, y - CHECKBOX_SIZE + 1, CHECKBOX_SIZE, CHECKBOX_SIZE, 2, colorMdGrey);
 
-		CG_Text_Paint_Ext(DB_MAPNAME_X + 12  + cgs.wideXoffset + CHECKBOX_SIZE + 2 , y, button->font->scalex,
+		// draw check box tick depending of selected maps for vote
+		for (j = 0; j < 3; j++)
+		{
+			if (cgs.dbMapVotedFor[j] == i + cgs.dbMapVoteListOffset)
+			{
+				CG_DrawPic(DB_MAPNAME_X + 12 + cgs.wideXoffset + 2, y - CHECKBOX_SIZE + 3, CHECKBOX_SIZE - 3, CHECKBOX_SIZE - 3, cgs.media.readyShader);
+				break;
+			}
+		}
+
+		// draw map name in the list
+		CG_Text_Paint_Ext(DB_MAPNAME_X + 12 + cgs.wideXoffset + CHECKBOX_SIZE + 2, y - 1, button->font->scalex,
 		                  button->font->scaley, *colour,
 		                  cgs.dbMapDispName[i + cgs.dbMapVoteListOffset],
 		                  0, 30, 0, button->font->font);
 
+		// show vote results once the votes have been casted
 		if (cg.snap->ps.eFlags & EF_VOTED)
 		{
 			// add gradient color to identify three most voted maps
@@ -1212,22 +1271,19 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 				if (cgs.dbSortedVotedMapsByTotal[j].mapID == (i + cgs.dbMapVoteListOffset))
 				{
-					if (j == 0)
+					switch (j)
 					{
-						colour = &colorGreen;
+					case 0: colour = &colorGreen; break;
+					case 1: colour = &colorMdGreen; break;
+					case 2: colour = &colorDkGreen; break;
+					default: break;
 					}
-					else if (j == 1)
-					{
-						colour = &colorMdGreen;
-					}
-					else if (j == 2)
-					{
-						colour = &colorDkGreen;
-					}
+
+					break;
 				}
 			}
 
-			CG_Text_Paint_Ext(DB_MAPVOTE_X + cgs.wideXoffset, y, button->font->scalex,
+			CG_Text_Paint_Ext(DB_MAPVOTE_X + cgs.wideXoffset - 20, y - 1, button->font->scalex,
 			                  button->font->scaley, *colour,
 			                  va("%3d%% (%d)", cgs.dbMapVotesSum > 0 ? 100 * cgs.dbMapVotes[i + cgs.dbMapVoteListOffset] / cgs.dbMapVotesSum : 0,
 			                     cgs.dbMapVotes[i + cgs.dbMapVoteListOffset]),
@@ -1300,61 +1356,74 @@ void CG_MapVote_VoteSend_Draw(panel_button_t *button)
 {
 	char *text;
 	int  textWidth;
+	int  usedVotes = 0;
+	int  maxVotes;
 
 	if (!cg.snap)
 	{
 		return;
 	}
 
-	if (!(cg.snap->ps.eFlags & EF_VOTED))
+	if (!cgs.dbMapMultiVote)
 	{
-		int usedVotes = 0;
-		int maxVotes;
-
-		if (!cgs.dbMapMultiVote)
-		{
-			maxVotes = 1;
-
-			if (cgs.dbMapVotedFor[0] != -1)
-			{
-				CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
-				usedVotes = 1;
-			}
-		}
-		else
-		{
-			int i;
-
-			maxVotes = 3;
-
-			for (i = 0; i < 3; i++)
-			{
-				if (cgs.dbMapVotedFor[i] != -1)
-				{
-					usedVotes++;
-				}
-			}
-
-			if (usedVotes)
-			{
-				CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
-			}
-		}
-
-		text = va("^3%i/%i maps selected", usedVotes, maxVotes);
+		maxVotes  = 1;
+		usedVotes = cgs.dbMapVotedFor[0] != -1;
 	}
 	else
 	{
-		text = "^2VOTE DONE!";
+		int i;
+
+		// TODO: provide a cvar for vote numbers ?
+		maxVotes = 3;
+
+		for (i = 0; i < 3; i++)
+		{
+			if (cgs.dbMapVotedFor[i] != -1)
+			{
+				usedVotes++;
+			}
+		}
 	}
+
+	if (!(cg.snap->ps.eFlags & EF_VOTED))
+	{
+		if (usedVotes)
+		{
+			CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
+		}
+	}
+	else
+	{
+		text = "^2VOTED!";
+
+		textWidth = CG_Text_Width_Ext(text, .20f, 0, &cgs.media.limboFont2);
+
+		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - textWidth) * 0.5,
+		                  button->rect.y + button->rect.h,
+		                  .20f, .20f, clrTxtBck,
+		                  text,
+		                  0, 0, 0, &cgs.media.limboFont2);
+	}
+
+	// draw numbers of map selected for vote
+	CG_Text_Paint_Ext(button->rect.x,
+	                  button->rect.y + button->rect.h + 12,
+	                  .20f, .20f, clrTxtBck,
+	                  va("^3%i/%i maps selected", usedVotes, maxVotes),
+	                  0, 0, 0, &cgs.media.limboFont2);
+
+	text = va("^3Participation: %3d%% (%i/%i)",
+	          (cgs.dbMapVoterCount / cgs.dbMapPlayerCount) * 100,
+	          cgs.dbMapVoterCount, cgs.dbMapPlayerCount);
 
 	textWidth = CG_Text_Width_Ext(text, .20f, 0, &cgs.media.limboFont2);
 
-	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - textWidth) * 0.5,
+	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - textWidth),
 	                  button->rect.y + button->rect.h + 12,
 	                  .20f, .20f, clrTxtBck,
 	                  text,
 	                  0, 0, 0, &cgs.media.limboFont2);
+
 }
 
 static panel_button_t mapVoteWindow =
@@ -1407,6 +1476,20 @@ static panel_button_t mapVoteHeadingVotes =
 	0
 };
 
+static panel_button_t mapVoteHeadingPopularity =
+{
+	NULL,
+	"Popularity",
+	{ DB_MAPHISTORIC_X,        DB_MAPVOTE_Y,        0, 0 },
+	{ 0,                       0,                   0, 0, 0, 0, 0, 0},
+	&mapVoteFont,              // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
+	BG_PanelButtonsRender_Text,
+	NULL,
+	0
+};
+
 static panel_button_t mapVoteNamesList =
 {
 	NULL,
@@ -1425,8 +1508,8 @@ static panel_button_t mapVoteNamesListScroll =
 {
 	NULL,
 	NULL,
-	{ DB_MAPVOTE_X + 10 + 48,    DB_MAPVOTE_Y + 2,                      16, 16 * 15 },
-	{ 3,                         0,                                     0,  0, 0, 0, 0, 0},
+	{ DB_MAPVOTE_X2 - 24 - 16,   DB_MAPVOTE_Y + 2,                       16, 16 * 15 },
+	{ 3,                         0,                                      0,  0, 0, 0, 0, 0},
 	NULL,                        // font
 	CG_Debriefing_Scrollbar_KeyDown,// keyDown
 	CG_Debriefing_Scrollbar_KeyUp,// keyUp
@@ -1439,8 +1522,8 @@ static panel_button_t mapVoteSend =
 {
 	NULL,
 	"^3SEND VOTE",
-	{ DB_MAPNAME_X + 10,     DB_MAPVOTE_Y + 8 + 16 * 15,        266, 16 },
-	{ 0,                     0,                                 0,   0, 0, 0, 0, 0},
+	{ DB_MAPNAME_X + 10,     DB_MAPVOTE_Y + 8 + 16 * 15,        DB_MAPVOTE_X2 - 40 + 2 - 10, 16 },
+	{ 0,                     0,                                 0,                           0, 0, 0, 0, 0},
 	NULL,                    // font
 	CG_MapVote_VoteSend_KeyDown,// keyDown
 	NULL,                    // keyUp
@@ -1604,7 +1687,7 @@ static panel_button_t *chatPanelButtons[] =
 
 static panel_button_t *mapVoteButtons[] =
 {
-	&debriefTitleWindow,     &mapVoteWindow,    &mapVoteHeadingName, &mapVoteHeadingVotes,
+	&debriefTitleWindow,     &mapVoteWindow,    &mapVoteHeadingName, &mapVoteHeadingVotes, &mapVoteHeadingPopularity,
 	&mapVoteBorder1,         &mapVoteBorder2,   &mapVoteBorder3,
 	&mapVoteNamesListScroll, &mapVoteNamesList, &mapVoteSend,
 	NULL
@@ -1657,11 +1740,15 @@ void CG_Debriefing_Startup(void)
 	// mapvote
 	cgs.dbSelectedMap           = -1;
 	cgs.dbSelectedMapLevelShots = 0;
+	cgs.dbMapLastPlayed         = -1;
 	cgs.dbMapListReceived       = qfalse;
+	cgs.dbMapHistoryReceived    = qfalse;
 	cgs.dbVoteTallyReceived     = qfalse;
 	cgs.dbMapVotedFor[0]        = -1;
 	cgs.dbMapVotedFor[1]        = -1;
 	cgs.dbMapVotedFor[2]        = -1;
+	cgs.dbMapVoterCount         = -1;
+	cgs.dbMapPlayerCount        = -1;
 
 	cgs.dbAwardsParsed = qfalse;
 
@@ -1727,6 +1814,12 @@ void CG_Debriefing_InfoRequests(void)
 	if (!cgs.dbMapListReceived && cgs.gametype == GT_WOLF_MAPVOTE)
 	{
 		trap_SendClientCommand("immaplist");
+		return;
+	}
+
+	if (!cgs.dbMapHistoryReceived && cgs.gametype == GT_WOLF_MAPVOTE)
+	{
+		trap_SendClientCommand("immaphistory");
 		return;
 	}
 
@@ -1840,7 +1933,7 @@ qboolean CG_Debriefing_Draw(void)
 		break;
 	case 3: // mapvote
 		BG_PanelButtonsRender(mapVoteButtons);
-        BG_PanelButtonsRender(chatPanelButtons);
+		BG_PanelButtonsRender(chatPanelButtons);
 		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 		break;
 	}
@@ -2199,8 +2292,8 @@ void CG_Debriefing_ParseWeaponAccuracies(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].totalWeapAcc   = (float)atof(CG_Argv(i * 2 + 1));
-		cgs.clientinfo[i].totalWeapHSpct = (float)atof(CG_Argv(i * 2 + 2));
+		cgs.clientinfo[i].totalWeapAcc   = Q_atof(CG_Argv(i * 2 + 1));
+		cgs.clientinfo[i].totalWeapHSpct = Q_atof(CG_Argv(i * 2 + 2));
 	}
 	cgs.dbAccuraciesReceived = qtrue;
 }
@@ -2334,7 +2427,7 @@ void CG_Debriefing_ParseAwards(void)
 
 		// value
 		token = COM_Parse(&cs);
-		value = atof(token);
+		value = Q_atof(token);
 
 		if (value > 0)
 		{
@@ -3850,7 +3943,7 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 	{
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debriefing_WinStringForTeam(CG_Debriefing_FindWinningTeamForMap()), 0, 18, 0.25f, 16);
 
-		if (cgs.dbMapVotedFor[0] != -1 || cgs.dbMapVotedFor[1] != -1  || cgs.dbMapVotedFor[2] != -1)
+		if (cg.snap->ps.eFlags & EF_VOTED)
 		{
 			s = va("^2%s", CG_TranslateString("VOTED"));
 		}
@@ -4516,8 +4609,13 @@ void CG_Debriefing_TeamSkillXP_Draw(panel_button_t *button)
 void CG_parseMapVoteListInfo()
 {
 	int i;
+	int numArgs =
+#ifdef FEATURE_RATING
+		cgs.skillRating ? 5 :
+#endif
+		4;
 
-	cgs.dbNumMaps = (trap_Argc() - 2) / 4;
+	cgs.dbNumMaps = (trap_Argc() - 2) / numArgs;
 
 	if (atoi(CG_Argv(1)))
 	{
@@ -4528,12 +4626,20 @@ void CG_parseMapVoteListInfo()
 	{
 		char *s;
 
-		Q_strncpyz(cgs.dbMaps[i], CG_Argv((i * 4) + 2),
+		Q_strncpyz(cgs.dbMaps[i], CG_Argv((i * numArgs) + 2),
 		           sizeof(cgs.dbMaps[0]));
-		cgs.dbMapVotes[i]      = 0;
-		cgs.dbMapID[i]         = Q_atoi(CG_Argv((i * 4) + 3));
-		cgs.dbMapLastPlayed[i] = Q_atoi(CG_Argv((i * 4) + 4));
-		cgs.dbMapTotalVotes[i] = Q_atoi(CG_Argv((i * 4) + 5));
+		cgs.dbMapVotes[i]          = 0;
+		cgs.dbMapID[i]             = Q_atoi(CG_Argv((i * numArgs) + 3));
+		cgs.dbMapLastPlayedList[i] = Q_atoi(CG_Argv((i * numArgs) + 4));
+		cgs.dbMapTimesPlayed[i]    = Q_atoi(CG_Argv((i * numArgs) + 5));
+
+#ifdef FEATURE_RATING
+		if (cgs.skillRating)
+		{
+			cgs.dbMapBias[i] = Q_atoi(CG_Argv((i * numArgs) + 6));
+		}
+#endif
+
 		if (CG_FindArenaInfo(va("scripts/%s.arena", cgs.dbMaps[i]),
 		                     cgs.dbMaps[i], &cgs.arenaData))
 		{
@@ -4562,6 +4668,12 @@ void CG_parseMapVoteListInfo()
 			           "No description available",
 			           sizeof(cgs.dbMapDescription[i]));
 		}
+
+		if ((cgs.dbMapLastPlayed == -1 || cgs.dbMapLastPlayed > cgs.dbMapLastPlayedList[i])
+		    && cgs.dbMapLastPlayedList[i] != -1)
+		{
+			cgs.dbMapLastPlayed = i;
+		}
 	}
 
 	CG_LocateArena();
@@ -4569,6 +4681,34 @@ void CG_parseMapVoteListInfo()
 	cgs.dbMapListReceived = qtrue;
 
 	return;
+}
+
+/**
+ * @brief CG_parseMapVoteHistory
+ */
+void CG_parseMapVoteHistory()
+{
+	unsigned int i;
+
+	memset(cgs.dbMapsHistory, -1, sizeof(cgs.dbMapsHistory));
+	memset(cgs.dbMapsHistoryList, 0, sizeof(cgs.dbMapsHistoryList));
+
+	cgs.dbMapsHistoryCountList = 0;
+
+	cgs.dbMapsHistoryCount = trap_Argc() - 1;
+
+	for (i = 0; i < cgs.dbMapsHistoryCount && i < sizeof(cgs.dbMapsHistory); i++)
+	{
+		cgs.dbMapsHistory[i] = Q_atoi(CG_Argv(i + 1));
+
+		if (cgs.dbMapsHistory[i] != -1 && cgs.dbMapsHistory[i] < cgs.dbNumMaps)
+		{
+			++(cgs.dbMapsHistoryList[cgs.dbMapsHistory[i]]);
+			++cgs.dbMapsHistoryCountList;
+		}
+	}
+
+	cgs.dbMapHistoryReceived = qtrue;
 }
 
 /**
@@ -4581,10 +4721,13 @@ void CG_parseMapVoteTally()
 	cgs.dbMapVotesSum = 0;
 	Com_Memset(cgs.dbSortedVotedMapsByTotal, -1, sizeof(cgs.dbSortedVotedMapsByTotal));
 
-	numMaps = (trap_Argc() - 1);
+	cgs.dbMapVoterCount  = Q_atoi(CG_Argv(1));
+	cgs.dbMapPlayerCount = Q_atoi(CG_Argv(2));
+
+	numMaps = (trap_Argc() - 3);
 	for (i = 0; i < numMaps; i++)
 	{
-		cgs.dbMapVotes[i]  = Q_atoi(CG_Argv(i + 1));
+		cgs.dbMapVotes[i]  = Q_atoi(CG_Argv(i + 3));
 		cgs.dbMapVotesSum += cgs.dbMapVotes[i];
 
 		// sort voted maps by total votes accumulated

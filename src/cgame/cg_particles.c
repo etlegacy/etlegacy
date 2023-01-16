@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -74,7 +74,7 @@ typedef struct particle_s
 	int shaderAnim;
 	int roll;
 
-	int accumroll;
+	float accumroll;
 
 } cparticle_t;
 
@@ -189,7 +189,7 @@ static qboolean CG_ParsePatriclesConfig(void)
 			break;
 		}
 
-		shaderAnims[i].STRatio = (float)atof(token);
+		shaderAnims[i].STRatio = Q_atof(token);
 
 		// parse shader animation
 		for (j = 0; j < shaderAnims[i].counts; j++)
@@ -574,7 +574,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			vec3_t temp;
 
 			vectoangles(rforward, temp);
-			p->accumroll += p->roll;
+			p->accumroll += p->roll * cg.frametime / 8.0f;
 			temp[ROLL]   += p->accumroll * 0.1;
 			//temp[ROLL] += p->roll * 0.1;
 			AngleVectors(temp, NULL, rright2, rup2);
@@ -1039,7 +1039,7 @@ void CG_AddParticles(void)
 
 			if (p->rotate)
 			{
-				p->accumroll -= p->roll;
+				p->accumroll -= p->roll * cg.frametime / 8.0f;
 			}
 		}
 
@@ -1710,13 +1710,13 @@ int CG_NewParticleArea(int num)
     for (i = 0; i < 3; i++)
     {
         token     = COM_Parse(&str);
-        origin[i] = (float)atof(token);
+        origin[i] = Q_atof(token);
     }
 
     for (i = 0; i < 3; i++)
     {
         token      = COM_Parse(&str);
-        origin2[i] = (float)atof(token);
+        origin2[i] = Q_atof(token);
     }
 
     token        = COM_Parse(&str);

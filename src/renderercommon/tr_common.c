@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -91,7 +91,7 @@ static qboolean GLimp_InitOpenGLContext()
 #ifndef FEATURE_RENDERER_GLES
 	// get shading language version
 	Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig.shadingLanguageVersion));
-	sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
+	Q_sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
 #endif
 
 	Com_Printf("GL_VENDOR: %s\n", glConfig.vendor_string);
@@ -100,7 +100,7 @@ static qboolean GLimp_InitOpenGLContext()
 	Com_Printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glConfig.shadingLanguageVersion);
 
 	// get GL context version
-	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
+	Q_sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
 	glConfig.contextCombined = (GLmajor * 100) + (GLminor * 10);
 
 #ifdef FEATURE_RENDERER2
@@ -265,7 +265,7 @@ static void GLimp_InitExtensionsR2(void)
 	if (GLimp_CheckForVersionExtension("GL_ARB_shading_language_100", 210, qtrue, NULL))
 	{
 		Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig.shadingLanguageVersion));
-		sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
+		Q_sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
 	}
 	GL_CheckErrors();
 

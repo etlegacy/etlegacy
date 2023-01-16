@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -89,7 +89,7 @@
 
 // ET: Legacy specific - used by mod code
 #define MOD_CHECK_ETLEGACY(isETLegacy, versionNum, outputValue) outputValue = (isETLegacy == qtrue ? qtrue : qfalse); \
-	if (outputValue) { outputValue = versionNum; }
+		if (outputValue) { outputValue = versionNum; }
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4018) // signed/unsigned mismatch
@@ -167,6 +167,13 @@ typedef int intptr_t;
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
+
+#ifdef __aarch64__ // ARM definition seems to not work here
+
+#include <stddef.h>
+
+#endif
+
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
@@ -195,7 +202,9 @@ typedef unsigned __int8 uint8_t;
 // abstracting this to make it portable
 int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 #else // not using MSVC
+
 #include <stdint.h>
+
 #define Q_vsnprintf vsnprintf
 #endif // defined (_MSC_VER) && (_MSC_VER >= 1600)
 #endif // Q3_VM
@@ -389,7 +398,10 @@ typedef unsigned char byte;
  * @enum qboolean
  * @brief Boolean definition
  */
-typedef enum { qfalse, qtrue }    qboolean;
+typedef enum
+{
+	qfalse, qtrue
+} qboolean;
 
 /**
  * @union floatint_t
@@ -437,12 +449,16 @@ typedef int clipHandle_t;
 #define ENABLEBIT(x, y) x |= BIT(y)
 #define CLEARBIT(x, y) x  &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
-#define CHECKBIT(x, y) ((x) & BIT(y))
+#define CHECKBIT(x, y) ((x)&BIT(y))
 
 /**
  * @def Check whether input value is present or not in given bitwise.
  */
 #define CHECKBITWISE(x, y) (((x) & (y)) == (y))
+
+// We need to use EXPAND because the Microsoft MSVC preprocessor does not expand the va_args the same way as other preprocessors
+// http://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly
+#define EXPAND(x) x
 
 //#define   SND_NORMAL          0x000   ///< (default) Allow sound to be cut off only by the same sound on this channel
 #define     SND_OKTOCUT         0x001   ///< Allow sound to be cut off by any following sounds on this channel
@@ -527,7 +543,7 @@ typedef enum
 typedef enum
 {
 	EXEC_NOW,           ///< don't return until completed, a VM should NEVER use this,
-	                    ///< because some commands might cause the VM to be unloaded...
+	///< because some commands might cause the VM to be unloaded...
 	EXEC_INSERT,        ///< insert at current position, but don't run yet
 	EXEC_APPEND         ///< add to end of the command buffer (normal case)
 } cbufExec_t;
@@ -610,7 +626,9 @@ typedef enum
 
 #ifdef HUNK_DEBUG
 #define Hunk_Alloc(size, preference)              Hunk_AllocDebug(size, preference, # size, __FILE__, __LINE__)
+
 void *Hunk_AllocDebug(size_t size, ha_pref preference, char *label, char *file, int line);
+
 #else
 void *Hunk_Alloc(size_t size, ha_pref preference);
 #endif
@@ -652,34 +670,49 @@ qboolean Com_PowerOf2(int x);
 #define Com_ByteClamp(x) (((x) < 0) ? 0 : ((x) > 255) ? 255 : (x))
 #define Com_Clamp(min, max, value) (((value) < (min)) ? (min) : ((value) > (max)) ? (max) : (value))
 #define Com_Nelem(a) (int)(sizeof(a) / sizeof(a)[0])
+
 void *Com_AnyOf(void **ptr, int n);
 
 char *COM_SkipPath(char *pathname);
+
 void COM_FixPath(char *pathname);
+
 const char *COM_GetExtension(const char *name);
+
 void COM_StripExtension(const char *in, char *out, int destsize);
+
 qboolean COM_CompareExtension(const char *in, const char *ext);
+
 void COM_StripFilename(const char *in, char *out);
 
 void COM_DefaultExtension(char *path, size_t maxSize, const char *extension);
 
 void COM_BeginParseSession(const char *name);
+
 void COM_RestoreParseSession(char **data_p);
+
 void COM_SetCurrentParseLine(int line);
+
 int COM_GetCurrentParseLine(void);
+
 char *COM_Parse(char **data_p);
+
 char *COM_ParseExt(char **data_p, qboolean allowLineBreaks);
 
 /// added COM_Parse2 for having a Doom 3 style tokenizer.
 char *COM_Parse2(char **data_p);
+
 char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks);
 
 int COM_Compress(char *data_p);
+
 void COM_ParseError(const char *format, ...) _attribute((format(printf, 1, 2)));
 //void COM_ParseWarning(const char *format, ...) _attribute ((format(printf, 1, 2))); // Unused
 
 qboolean COM_BitCheck(const int array[], unsigned int bitNum);
+
 void COM_BitSet(int array[], unsigned int bitNum);
+
 void COM_BitClear(int array[], unsigned int bitNum);
 
 #define MAX_TOKENLENGTH     1024
@@ -714,17 +747,22 @@ typedef struct pc_token_s
 //void COM_MatchToken(char **buf_p, char *match);
 
 void SkipBracedSection(char **program);
+
 void SkipBracedSection_Depth(char **program, int depth);    ///< start at given depth if already
 void SkipRestOfLine(char **data);
 
 qboolean ParseKeyValue(char **buf_p, char *key, char *value, char separator);
+
 void Parse1DMatrix(char **buf_p, int x, float *m);
+
 void Parse2DMatrix(char **buf_p, int y, int x, float *m);
+
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m);
 
 int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...) _attribute((format(printf, 3, 4)));
 
 char *Com_SkipTokens(char *s, int numTokens, const char *sep);
+
 char *Com_SkipCharset(char *s, char *sep);
 
 /**
@@ -778,7 +816,7 @@ int Com_HexStrToInt(const char *str);
 #define COLOR_NULL      '*'
 
 #define COLOR_BITS  31
-#define ColorIndex(c)   (((c) - '0') & COLOR_BITS)
+#define ColorIndex(c)   (((c) - '0')&COLOR_BITS)
 
 #define S_COLOR_BLACK       "^0"
 #define S_COLOR_RED         "^1"
@@ -802,22 +840,36 @@ int Com_HexStrToInt(const char *str);
 #define S_COLOR_NULL        "^*"
 
 int Q_isprint(int c);
+
 int Q_islower(int c);
+
 int Q_isupper(int c);
+
 int Q_isalpha(int c);
+
 int Q_isnumeric(int c);
+
 int Q_isalphanumeric(int c);
+
 qboolean Q_isanumber(const char *s);
+
 qboolean Q_isintegral(float f);
+
 int Q_isforfilename(int c);
+
 void Q_SafeNetString(char *string, size_t len, qboolean strip);
 
 // portable case insensitive compare
 int Q_stricmp(const char *s1, const char *s2);
+
 int Q_strncmp(const char *s1, const char *s2, size_t n);
+
 int Q_stricmpn(const char *s1, const char *s2, size_t n);
+
 char *Q_strlwr(char *s1);
+
 char *Q_strupr(char *s1);
+
 const char *Q_stristr(const char *s, const char *find);
 
 #define Q_strcpy(dest, src) strcpy(dest, src)
@@ -840,8 +892,7 @@ char *Q_TrimStr(char *string);
 /// Encodes a plain un-colored string so that it'll be drawn with the given color code.
 void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen);
 
-// Parses normalized rgba color string
-int Q_ParseColorRGBA(const char *inStr, vec4_t outColor);
+qboolean Q_ParseColor(const char *colString, float *outColor);
 
 // #define Q_IsColorString(p) (*p == Q_COLOR_ESCAPE && *(p + 1) && *(p + 1) != Q_COLOR_ESCAPE && isgraph((*(p + 1))))
 // Checks if the string contains color coded text
@@ -894,21 +945,29 @@ float *tv(float x, float y, float z);
 char *QDECL va(const char *format, ...) _attribute((format(printf, 1, 2)));
 
 #define TRUNCATE_LENGTH 64
+
 void Com_TruncateLongString(char *buffer, const char *s);
 
 //=============================================
 
 // key / value info strings
 char *Info_ValueForKey(const char *s, const char *key);
+
 void Info_RemoveKey(char *s, const char *key);
+
 void Info_RemoveKey_big(char *s, const char *key);
+
 void Info_SetValueForKey(char *s, const char *key, const char *value);
+
 void Info_SetValueForKey_Big(char *s, const char *key, const char *value);
+
 qboolean Info_Validate(const char *s);
+
 qboolean Info_NextPair(const char **head, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
 void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
+
 void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 /*
@@ -921,17 +980,23 @@ default values.
 ==========================================================
 */
 
+#if defined(_WIN64) || defined(__LP64__)
+typedef uint64_t cvarFlags_t;
+#else
+typedef uint32_t cvarFlags_t;
+#endif
+
 #define CVAR_ARCHIVE        BIT(0)               ///< set to cause it to be saved to vars.rc
-                                                 ///< used for system variables, not for player
-                                                 ///< specific configurations
+///< used for system variables, not for player
+///< specific configurations
 #define CVAR_USERINFO       BIT(1)               ///< sent to server on connect or change
 #define CVAR_SERVERINFO     BIT(2)               ///< sent in response to front end requests
 #define CVAR_SYSTEMINFO     BIT(3)               ///< these cvars will be duplicated on all clients
 #define CVAR_INIT           BIT(4)               ///< don't allow change from console at all,
-                                                 ///< but can be set from the command line
+///< but can be set from the command line
 #define CVAR_LATCH          BIT(5)               ///< will only change when C code next does
-                                                 ///< a Cvar_Get(), so it can't be changed without proper initialization.
-                                                 ///< will be set, even though the value hasn't changed yet
+///< a Cvar_Get(), so it can't be changed without proper initialization.
+///< will be set, even though the value hasn't changed yet
 #define CVAR_ROM                    BIT(6)       ///< display only, cannot be set by user at all
 #define CVAR_USER_CREATED           BIT(7)       ///< created by a set command
 #define CVAR_TEMP                   BIT(8)       ///< can be set even when cheats are disabled, but is not archived
@@ -964,7 +1029,7 @@ typedef struct cvar_s
 	char *string;
 	char *resetString;              ///< cvar_restart will reset to this value
 	char *latchedString;            ///< for CVAR_LATCH vars
-	int flags;
+	cvarFlags_t flags;
 	qboolean modified;              ///< set each time the cvar is changed
 	int modificationCount;          ///< incremented each time the cvar is changed
 	float value;                    ///< atof( string )
@@ -1234,16 +1299,16 @@ typedef struct playerState_s
 	int weaponTime;
 	int weaponDelay;            ///< for weapons that don't fire immediately when 'fire' is hit (grenades, venom, ...)
 	int grenadeTimeLeft;        ///< for delayed grenade throwing.  this is set to a \#define for grenade
-	                            ///< lifetime when the attack button goes down, then when attack is released
-	                            ///< this is the amount of time left before the grenade goes off (or if it
-	                            ///< gets to 0 while in players hand, it explodes)
+	///< lifetime when the attack button goes down, then when attack is released
+	///< this is the amount of time left before the grenade goes off (or if it
+	///< gets to 0 while in players hand, it explodes)
 
 	int gravity;
 	float leanf;                ///< amount of 'lean' when player is looking around corner
 
 	int speed;
 	int delta_angles[3];        ///< add to command angles to get view direction
-	                            ///< changed by spawns, rotating objects, and teleporters
+	///< changed by spawns, rotating objects, and teleporters
 
 	int groundEntityNum;        ///< ENTITYNUM_NONE = in air
 
@@ -1254,9 +1319,9 @@ typedef struct playerState_s
 	int torsoAnim;              ///< mask off ANIM_TOGGLEBIT
 
 	int movementDir;            ///< a number 0 to 7 that represents the reletive angle
-	                            ///< of movement to the view angle (axial and diagonals)
-	                            ///< when at rest, the value will remain unchanged
-	                            ///< used to twist the legs during strafing
+	///< of movement to the view angle (axial and diagonals)
+	///< when at rest, the value will remain unchanged
+	///< used to twist the legs during strafing
 
 	int eFlags;                 ///< copied to entityState_t->eFlags
 
@@ -1343,10 +1408,10 @@ typedef struct playerState_s
 	qboolean releasedFire;
 
 	float aimSpreadScaleFloat;      ///< the server-side aimspreadscale that lets it track finer changes but still only
-	                                ///< transmit the 8bit int to the client
+	///< transmit the 8bit int to the client
 	int aimSpreadScale;             ///< 0 - 255 increases with angular movement. DOES get send over the network
 	int lastFireTime;               ///< used by server to hold last firing frame briefly when randomly releasing trigger (AI)
-	                                ///< Set, but never used?
+	///< Set, but never used?
 
 	int quickGrenTime;              ///< Unused
 	int leanStopDebounceTime;       ///< Unused
@@ -1563,8 +1628,8 @@ typedef enum
 	ET_AIRSTRIKE_PLANE,
 
 	ET_EVENTS                   ///< any of the EV_* events can be added freestanding
-	                            ///< by setting eType to ET_EVENTS + eventNum
-	                            ///< this avoids having to set eFlags and eventNum
+	///< by setting eType to ET_EVENTS + eventNum
+	///< this avoids having to set eFlags and eventNum
 } entityType_t;
 
 /**
@@ -1617,8 +1682,8 @@ typedef struct entityState_s
 	// for players
 	int powerups;           ///< bit flags. Used to store entState_t for non-player entities (so we know to draw them translucent clientsided)
 	int weapon;             ///< determines weapon and flash model, etc
-	                        ///< OR fps to animate with (misc_gamemodel ents)
-	                        ///< which is the time in ms the model is updated (20 fps = default)
+	///< OR fps to animate with (misc_gamemodel ents)
+	///< which is the time in ms the model is updated (20 fps = default)
 	int legsAnim;           ///< mask off ANIM_TOGGLEBIT
 	int torsoAnim;          ///< mask off ANIM_TOGGLEBIT
 
@@ -1729,6 +1794,7 @@ typedef struct
 typedef struct
 {
 	void *fontData;
+
 	glyphInfo_t *(*GetGlyph)(void *fontdata, unsigned long codepoint);
 
 } fontHelper_t;
@@ -1816,7 +1882,7 @@ typedef enum
 	GS_WARMUP_COUNTDOWN,
 	GS_WARMUP,
 	GS_INTERMISSION,
-	GS_WAITING_FOR_PLAYERS,
+	GS_WAITING_FOR_PLAYERS, /// FIXME: unused
 	GS_RESET
 } gamestate_t;
 
@@ -1868,34 +1934,39 @@ typedef struct userAgent_s
 } userAgent_t;
 
 void Com_ParseUA(userAgent_t *ua, const char *string);
+
 #define Com_IsCompatible(ua, flag) ((ua)->compatible & (flag))
 
-//c99 issue pre 2013 VS do not have support for this
-#if defined(_MSC_VER) && (_MSC_VER < 1800)
 // source http://smackerelofopinion.blogspot.fi/2011/10/determining-number-of-arguments-in-c.html
-#define NUMARGSFAST PP_NARG_FAST
-#define NUMARGS PP_NARG
 #define PP_NARG(...)  EXPAND((PP_NARG_(__VA_ARGS__, PP_RSEQ_N()) - (sizeof("" #__VA_ARGS__) == 1)))
+/**
+ * @brief Processor generates the count of arguments, but does not handle zero
+ */
 #define PP_NARG_FAST(...)  EXPAND(PP_NARG_(__VA_ARGS__, PP_RSEQ_N()))
 #define PP_NARG_(...)  EXPAND(PP_ARG_N(__VA_ARGS__))
 
 #define PP_ARG_N( \
-		_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, \
-		_11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
-		_21, _22, _23, _24, _25, _26, _27, _28, _29, _30, \
-		_31, _32, _33, _34, _35, _36, _37, _38, _39, _40, \
-		_41, _42, _43, _44, _45, _46, _47, _48, _49, _50, \
-		_51, _52, _53, _54, _55, _56, _57, _58, _59, _60, \
-		_61, _62, _63, N, ...) N
+			_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, \
+			_11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
+			_21, _22, _23, _24, _25, _26, _27, _28, _29, _30, \
+			_31, _32, _33, _34, _35, _36, _37, _38, _39, _40, \
+			_41, _42, _43, _44, _45, _46, _47, _48, _49, _50, \
+			_51, _52, _53, _54, _55, _56, _57, _58, _59, _60, \
+			_61, _62, _63, N, ...) N
 
 #define PP_RSEQ_N() \
-	63, 62, 61, 60,          \
-	59, 58, 57, 56, 55, 54, 53, 52, 51, 50, \
-	49, 48, 47, 46, 45, 44, 43, 42, 41, 40, \
-	39, 38, 37, 36, 35, 34, 33, 32, 31, 30, \
-	29, 28, 27, 26, 25, 24, 23, 22, 21, 20, \
-	19, 18, 17, 16, 15, 14, 13, 12, 11, 10, \
-	9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+		63, 62, 61, 60,          \
+		59, 58, 57, 56, 55, 54, 53, 52, 51, 50, \
+		49, 48, 47, 46, 45, 44, 43, 42, 41, 40, \
+		39, 38, 37, 36, 35, 34, 33, 32, 31, 30, \
+		29, 28, 27, 26, 25, 24, 23, 22, 21, 20, \
+		19, 18, 17, 16, 15, 14, 13, 12, 11, 10, \
+		9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+
+//c99 issue pre 2013 VS do not have support for this
+#if defined(_MSC_VER) && (_MSC_VER < 1800)
+#define NUMARGSFAST PP_NARG_FAST
+#define NUMARGS PP_NARG
 #else
 #define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
 #endif
@@ -1925,6 +1996,7 @@ typedef int (*cmpFunc_t)(const void *a, const void *b);
 void *Q_LinearSearch(const void *key, const void *ptr, size_t count, size_t size, cmpFunc_t cmp);
 
 int GetIPLength(char const *ip);
+
 qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 
 #define LERP(a, b, w) ((a) * (1.0 - (w)) + (b) * (w))
@@ -1936,7 +2008,32 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 //#define Q_atoi(str) atoi(str)
 #define Q_atoi(str) (int) strtol(str, NULL, 10)
 
-#define Q_sscanf(str, ...) sscanf(str, __VA_ARGS__)
+// #define Q_sscanf(str, ...) sscanf(str, __VA_ARGS__)
+
+#ifdef ETLEGACY_DEBUG
+#define Q_sscanf(str, fmt, ...) Q_sscanfc(str, PP_NARG_FAST(__VA_ARGS__), __FILE__, __LINE__, fmt, __VA_ARGS__)
+static ID_INLINE int Q_sscanfc(const char *str, int count, const char *file, int line, const char *fmt, ...)
+#else
+#define Q_sscanf(str, fmt, ...) Q_sscanfc(str, PP_NARG_FAST(__VA_ARGS__), fmt, __VA_ARGS__)
+static ID_INLINE int Q_sscanfc(const char *str, int count, const char *fmt, ...)
+#endif
+{
+	int     rc;
+	va_list args;
+
+	va_start(args, fmt);
+	rc = vsscanf(str, fmt, args);
+	va_end(args);
+
+#ifdef ETLEGACY_DEBUG
+	if (count != rc)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING: Wrong number of elements in Q_sscanfc. Expected %i was %i in %s:%i\n", count, rc, file, line);
+	}
+#endif
+
+	return rc;
+}
 
 // functional gate syscall number
 #define COM_TRAP_GETVALUE 700
@@ -1947,15 +2044,16 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 #define _(x) x
 
 #if defined(CGAMEDLL)
-	#define __(x) CG_TranslateString(x)
+#define __(x) CG_TranslateString(x)
 #elif defined(UIDLL)
-	#define __(x) UI_TranslateString(x)
+#define __(x) UI_TranslateString(x)
 #else
-	#define __(x) x
+#define __(x) x
 #endif
 #endif
 
 float Com_RoundFloatWithNDecimal(float value, unsigned int decimalCount);
+
 int ExtractInt(const char *src);
 
 #endif  // #ifndef INCLUDE_Q_SHARED_H
