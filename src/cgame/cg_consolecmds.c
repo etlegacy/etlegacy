@@ -2656,6 +2656,7 @@ static const char *gameCommand[] =
 	"imcollectpr",
 #endif
 	"immaplist",
+	"immaphistory",
 	"impkd",
 #ifdef FEATURE_PRESTIGE
 	"impr",

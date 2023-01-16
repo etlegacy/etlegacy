@@ -107,6 +107,7 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "imcollectpr",    CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionCollectPrestige_f,   ""                                                                                           },
 #endif
 	{ "immaplist",      CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionMapList,               ""                                                                                           },
+	{ "immaphistory",   CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionMapHistory,            ""                                                                                           },
 	{ "impkd",          CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPlayerKillsDeaths_f, ""                                                                                           },
 #ifdef FEATURE_PRESTIGE
 	{ "impr",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPrestige_f,          ""                                                                                           },

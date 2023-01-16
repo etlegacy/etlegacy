@@ -2607,19 +2607,28 @@ typedef struct cgs_s
 
 	// MAPVOTE
 	int dbMapVoteListOffset;
+	int dbMapsHistoryCount;
+	int dbMapsHistoryCountList;
+	int dbMapsHistory[333];
+	int dbMapsHistoryList[32];
 	int dbNumMaps;
 	char dbMaps[MAX_VOTE_MAPS][MAX_QPATH];
 	char dbMapDispName[MAX_VOTE_MAPS][128];
 	char dbMapDescription[MAX_VOTE_MAPS][1024];
 	int dbMapVotes[MAX_VOTE_MAPS];
 	int dbMapVotesSum;
+	int dbMapVoterCount;
+	int dbMapPlayerCount;
 	int dbMapID[MAX_VOTE_MAPS];
-	int dbMapLastPlayed[MAX_VOTE_MAPS];
-	int dbMapTotalVotes[MAX_VOTE_MAPS];
+	int dbMapLastPlayed;
+	int dbMapLastPlayedList[MAX_VOTE_MAPS];
+	int dbMapTimesPlayed[MAX_VOTE_MAPS];
+	int dbMapBias[MAX_VOTE_MAPS];
 	int dbSelectedMap;
 	int dbSelectedMapTime;
 	qhandle_t dbSelectedMapLevelShots;
 	qboolean dbMapListReceived;
+	qboolean dbMapHistoryReceived;
 	qboolean dbVoteTallyReceived;
 	qboolean dbMapMultiVote;
 	int dbMapVotedFor[3];
