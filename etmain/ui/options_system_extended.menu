@@ -26,19 +26,18 @@ menuDef {
 
 	WINDOW(_("SYSTEM EXTENDED"), 150)
 
-// ET: Legacy clients //
-// Left side          //
-
 // Simple graphics //
-#ifdef ETLEGACY
 #define GRAPHICS_Y 32
 	SUBWINDOW(6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 80, _("CONSOLE"))
-    CVARFLOATLABEL(8, GRAPHICS_Y + 16, (SUBWINDOW_WIDTH_L)-6, 10, "con_defaultHeight", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-    SLIDER(8, GRAPHICS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Default Heigh:"), .2, 8, "con_defaultHeight" 0.5 0 1, _("Specify custom console height ratio (0.0 to 1.0)."))
-    EDITFIELD(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Font Name:"), .2, 8, "con_fontName", 25, 18, _("Set the font console. Use listfonts commands in console to check available fonts."))
-    YESNO(8, GRAPHICS_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Auto Clear:"), .2, 8, "con_autoclear", _("Toogle persistent console input"))
+    YESNO(8, GRAPHICS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Auto Clear:"), .2, 8, "con_autoclear", _("Toogle persistent console input"))
+#ifdef ETLEGACY
+    CVARFLOATLABEL(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L)-6, 10, "con_defaultHeight", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
+    SLIDER(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Default Heigh:"), .2, 8, "con_defaultHeight" 0.5 0 1, _("Specify custom console height ratio (0.0 to 1.0)."))
+    EDITFIELD(8, GRAPHICS_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Font Name:"), .2, 8, "con_fontName", 25, 18, _("Set the font console. Use listfonts commands in console to check available fonts."))
     NUMERICFIELD(8, GRAPHICS_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Open Speed:"), .2, 8, "con_openspeed", 5, _("Specify the console open speed)"))
     EDITFIELD(8, GRAPHICS_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Background Color:"), .2, 8, "con_background", 25, 18, _("Specify the console background color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string"))
+#else
+    NUMERICFIELD(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Open Speed:"), .2, 8, "scr_conspeed ", 5, _("Specify the console open speed)"))
 #endif
 
 // Buttons //
