@@ -3409,6 +3409,7 @@ void CG_ForceTapOut_f(void);
 // MAPVOTE
 void CG_parseMapVoteListInfo(void);
 void CG_parseMapVoteTally(void);
+void CG_parseMapVoteHistory(void);
 
 // cg_servercmds.c
 void CG_ExecuteNewServerCommands(int latestSequence);
