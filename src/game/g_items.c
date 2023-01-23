@@ -1284,9 +1284,18 @@ void G_RunItem(gentity_t *ent)
 		}
 	}
 
-	if (level.match_pause != PAUSE_NONE && ent->s.pos.trType != TR_STATIONARY)
+	if (level.match_pause != PAUSE_NONE)
 	{
-		ent->s.pos.trTime += level.frameTime;
+		if (ent->s.pos.trType != TR_STATIONARY)
+		{
+			ent->s.pos.trTime += level.frameTime;
+		}
+
+		// simple items coloring
+		if (ent->item && ent->item->giType != IT_TEAM)
+		{
+			ent->s.time += level.frameTime;
+		}
 	}
 
 	if (ent->s.pos.trType == TR_STATIONARY) // check think function
