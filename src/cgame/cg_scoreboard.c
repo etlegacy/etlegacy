@@ -254,7 +254,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	// mission time & reinforce time
 	else
 	{
-		int msec, mins, seconds, tens, w;
+		int msec, mins, seconds, tens, w, rmsec, rmins, rseconds, rtens;
 
 		CG_FillRect(x - 5, y - 2, width + 5, 34, SB_bg);
 		CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 34, 1, SB_border);
@@ -270,6 +270,14 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			seconds -= mins * 60;
 			tens     = seconds / 10;
 			seconds -= tens * 10;
+
+			rmsec = (int)(cgs.timelimit * 60000.f);
+
+			rseconds  = rmsec / 1000;
+			rmins     = rseconds / 60;
+			rseconds -= rmins * 60;
+			rtens     = rseconds / 10;
+			rseconds -= rtens * 10;
 		}
 		else
 		{
@@ -287,13 +295,17 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				s = va("%s   ^7%2.f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);
 				w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
 
-				t = va(" / %2.f:%i%i", (float)mins, tens, seconds);
+				t = va(" / %2.f:%i%i", (float)rmins, rtens, rseconds);
 				CG_Text_Paint_Ext(x + w, y, 0.19f, 0.19f, SB_text, t, 0, 0, 0, FONT_HEADER);
 			}
 		}
 		else if (cgs.gamestate == GS_WAITING_FOR_PLAYERS)
 		{
 			s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("GAME STOPPED"));
+		}
+		else if (cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_WARMUP_COUNTDOWN)
+		{
+			s = va("%s   ^7%2.f:%i%i", CG_TranslateString("MISSION TIME:"), (float)rmins, rtens, rseconds);
 		}
 		else
 		{
