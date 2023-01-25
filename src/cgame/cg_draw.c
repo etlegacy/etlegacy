@@ -1094,7 +1094,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			// chat icons
 			if (flag)
 			{
-				CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 0.9f) * lineHeight - icon_height, icon_width, icon_height, flag);
+				CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - icon_height, icon_width, icon_height, flag);
 			}
 			CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, scale, scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, comp->styleText, &cgs.media.limboFont2);
 		}
@@ -2091,7 +2091,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		cg.crosshairClientNum    = cg.snap->ps.clientNum;
 		cg.crosshairClientTime   = cg.time;
 		cg.identifyClientRequest = cg.crosshairClientNum;
-        hitClient = qtrue;
+		hitClient                = qtrue;
 	}
 	else
 	{
@@ -2326,7 +2326,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		cg.crosshairClientNum    = cg.snap->ps.clientNum;
 		cg.crosshairClientTime   = cg.time;
 		cg.identifyClientRequest = cg.crosshairClientNum;
-        hitClient = qtrue;
+		hitClient                = qtrue;
 	}
 	else
 	{
