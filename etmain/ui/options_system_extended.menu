@@ -21,7 +21,7 @@ menuDef {
 
     onESC {
         close options_system_extended ;
-        open options_controls
+        open options_system
     }
 
 	WINDOW(_("SYSTEM EXTENDED"), 150)
