@@ -2653,7 +2653,7 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 		*s  = cgs.gametype == GT_WOLF_LMS ? va("%s", CG_TranslateString("WARMUP")) : va("%2.0i", limbotimeOwn / 1000);
 
 		// if hud editor is up, return qfalse since we want to see text style changes
-		return cg.editingHud ? qfalse : qtrue;
+		return !cg.editingHud;
 	}
 	else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 	{
