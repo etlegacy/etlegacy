@@ -98,7 +98,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,  { "Full Color" } },// FIXME: outside cg_draw_hud
 	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",      "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",       "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
-	{ NULL,                   0,                         qfalse,  NULL, 0.00,{ 0 } },
+	{ NULL,                   0,                         qfalse, NULL, 0.00,{ 0 } },
 };
 
 /**
@@ -2651,7 +2651,9 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 
 		*rt = va("%2.0i", limbotimeEnemy / 1000);
 		*s  = cgs.gametype == GT_WOLF_LMS ? va("%s", CG_TranslateString("WARMUP")) : va("%2.0i", limbotimeOwn / 1000);
-		return qtrue;
+
+		// if hud editor is up, return qfalse since we want to see text style changes
+		return cg.editingHud ? qfalse : qtrue;
 	}
 	else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 	{
