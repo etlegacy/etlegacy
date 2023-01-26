@@ -666,6 +666,12 @@ typedef struct
 	int damage_received;
 	int team_damage_given;
 	int team_damage_received;
+	int team_health_given;
+	int team_health_received;
+	int enemy_health_given;
+	int enemy_health_received;
+	int team_revive_given;
+	int team_revive_received;
 	int time_axis;
 	int time_allies;
 	int time_played;
@@ -2482,6 +2488,8 @@ qboolean G_isValidConfig(gentity_t *ent, const char *configname);
 void G_ReloadConfig(void);
 
 // g_match.c
+void G_addStatsMedicRevive(gentity_t *target, gentity_t *source);
+void G_addStatsMedicHealth(gentity_t *target, gentity_t *source, int value);
 void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t mod);
 void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod);
 int G_checkServerToggle(vmCvar_t *cv);

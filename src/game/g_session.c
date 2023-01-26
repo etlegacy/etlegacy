@@ -332,30 +332,35 @@ void G_ReadSessionData(gclient_t *client)
 
 	root = Q_FSReadJsonFrom(fileName);
 
-	client->sess.sessionTeam        = Q_ReadIntValueJson(root, "sessionTeam");
-	client->sess.spectatorTime      = Q_ReadIntValueJson(root, "spectatorTime");
-	client->sess.spectatorState     = Q_ReadIntValueJson(root, "spectatorState");
-	client->sess.spectatorClient    = Q_ReadIntValueJson(root, "spectatorClient");
-	client->sess.playerType         = Q_ReadIntValueJson(root, "playerType");
-	client->sess.playerWeapon       = Q_ReadIntValueJson(root, "playerWeapon");
-	client->sess.playerWeapon2      = Q_ReadIntValueJson(root, "playerWeapon2");
-	client->sess.latchPlayerType    = Q_ReadIntValueJson(root, "latchPlayerType");
-	client->sess.latchPlayerWeapon  = Q_ReadIntValueJson(root, "latchPlayerWeapon");
-	client->sess.latchPlayerWeapon2 = Q_ReadIntValueJson(root, "latchPlayerWeapon2");
-	client->sess.referee            = Q_ReadIntValueJson(root, "referee");
-	client->sess.shoutcaster        = Q_ReadIntValueJson(root, "shoutcaster");
-	client->sess.spec_invite        = Q_ReadIntValueJson(root, "spec_invite");
-	client->sess.spec_team          = Q_ReadIntValueJson(root, "spec_team");
-	client->sess.kills              = Q_ReadIntValueJson(root, "kills");
-	client->sess.deaths             = Q_ReadIntValueJson(root, "deaths");
-	client->sess.gibs               = Q_ReadIntValueJson(root, "gibs");
-	client->sess.self_kills         = Q_ReadIntValueJson(root, "self_kills");
-	client->sess.team_kills         = Q_ReadIntValueJson(root, "team_kills");
-	client->sess.team_gibs          = Q_ReadIntValueJson(root, "team_gibs");
-	client->sess.time_axis          = Q_ReadIntValueJson(root, "time_axis");
-	client->sess.time_allies        = Q_ReadIntValueJson(root, "time_allies");
-	client->sess.time_played        = Q_ReadIntValueJson(root, "time_played");
-
+	client->sess.sessionTeam           = Q_ReadIntValueJson(root, "sessionTeam");
+	client->sess.spectatorTime         = Q_ReadIntValueJson(root, "spectatorTime");
+	client->sess.spectatorState        = Q_ReadIntValueJson(root, "spectatorState");
+	client->sess.spectatorClient       = Q_ReadIntValueJson(root, "spectatorClient");
+	client->sess.playerType            = Q_ReadIntValueJson(root, "playerType");
+	client->sess.playerWeapon          = Q_ReadIntValueJson(root, "playerWeapon");
+	client->sess.playerWeapon2         = Q_ReadIntValueJson(root, "playerWeapon2");
+	client->sess.latchPlayerType       = Q_ReadIntValueJson(root, "latchPlayerType");
+	client->sess.latchPlayerWeapon     = Q_ReadIntValueJson(root, "latchPlayerWeapon");
+	client->sess.latchPlayerWeapon2    = Q_ReadIntValueJson(root, "latchPlayerWeapon2");
+	client->sess.referee               = Q_ReadIntValueJson(root, "referee");
+	client->sess.shoutcaster           = Q_ReadIntValueJson(root, "shoutcaster");
+	client->sess.spec_invite           = Q_ReadIntValueJson(root, "spec_invite");
+	client->sess.spec_team             = Q_ReadIntValueJson(root, "spec_team");
+	client->sess.kills                 = Q_ReadIntValueJson(root, "kills");
+	client->sess.deaths                = Q_ReadIntValueJson(root, "deaths");
+	client->sess.gibs                  = Q_ReadIntValueJson(root, "gibs");
+	client->sess.self_kills            = Q_ReadIntValueJson(root, "self_kills");
+	client->sess.team_kills            = Q_ReadIntValueJson(root, "team_kills");
+	client->sess.team_gibs             = Q_ReadIntValueJson(root, "team_gibs");
+	client->sess.time_axis             = Q_ReadIntValueJson(root, "time_axis");
+	client->sess.time_allies           = Q_ReadIntValueJson(root, "time_allies");
+	client->sess.time_played           = Q_ReadIntValueJson(root, "time_played");
+	client->sess.team_health_given     = Q_ReadIntValueJson(root, "team_health_given");
+	client->sess.team_health_received  = Q_ReadIntValueJson(root, "team_health_received");
+	client->sess.enemy_health_given    = Q_ReadIntValueJson(root, "enemy_health_given");
+	client->sess.enemy_health_received = Q_ReadIntValueJson(root, "enemy_health_received");
+	client->sess.team_revive_given     = Q_ReadIntValueJson(root, "team_revive_given");
+	client->sess.team_revive_received  = Q_ReadIntValueJson(root, "team_revive_received");
 #ifdef FEATURE_RATING
 	{
 		cJSON *ratingObj = cJSON_GetObjectItem(root, "rating");
