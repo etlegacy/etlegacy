@@ -2059,7 +2059,7 @@ void CG_CheckForCursorHints(void)
 void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 {
 	float    *color;
-	vec4_t   bgcolor, c;
+	vec4_t   bgcolor, bdcolor, c;
 	int      health, maxHealth;
 	float    barFrac;
 	float    zChange;
@@ -2218,9 +2218,12 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	c[1] = c[2] = barFrac;
 	c[3] = (0.25f + barFrac * 0.5f) * color[3];
 
-	Vector4Set(bgcolor, 1.f, 1.f, 1.f, .25f * color[3]);
+	Vector4Copy(comp->colorBackground, bgcolor);
+	bgcolor[3] *= color[3];
+	Vector4Copy(comp->colorBorder, bdcolor);
+	bdcolor[3] *= color[3];
 
-	CG_FilledBar(x, comp->location.y, w, comp->location.h, c, NULL, bgcolor, barFrac, comp->style >> 3, -1);
+	CG_FilledBar(x, comp->location.y, w, comp->location.h, c, NULL, bgcolor, bdcolor, barFrac, comp->style >> 3, -1);
 
 	trap_R_SetColor(NULL);
 }
@@ -3955,7 +3958,8 @@ void CG_DrawOnScreenBars(void)
 			continue;                           // no alpha = nothing to draw..
 		}
 
-		CG_FilledBar(specBar->x, specBar->y, specBar->w, specBar->h, specBar->colorStart, specBar->colorEnd, specBar->colorBack, specBar->fraction, BAR_BG, -1);
+		CG_FilledBar(specBar->x, specBar->y, specBar->w, specBar->h, specBar->colorStart, specBar->colorEnd,
+		             specBar->colorBack, specBar->colorBack, specBar->fraction, BAR_BG, -1);
 
 		// expect update next frame again
 		specBar->visible = qfalse;

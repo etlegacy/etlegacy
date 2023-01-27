@@ -3008,7 +3008,8 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader);
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
-void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags, qhandle_t icon);
+void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor,
+                  const float *bgColor, const float *bdColor, float frac, int flags, qhandle_t icon);
 void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
                         const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
 float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,

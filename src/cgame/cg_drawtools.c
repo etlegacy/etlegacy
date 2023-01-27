@@ -154,7 +154,8 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
  * @param[in] frac
  * @param[in] flags
  */
-void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags, qhandle_t icon)
+void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor,
+                  const float *bgColor, const float *bdColor, float frac, int flags, qhandle_t icon)
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
 	float  x2 = x, y2 = y, w2 = w, h2 = h;
@@ -230,11 +231,11 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			h -= (2 * indent);
 		}
 	}
-	else if ((flags & BAR_BORDER) || (flags & BAR_BORDER_SMALL))
+    else if (((flags & BAR_BORDER) || (flags & BAR_BORDER_SMALL)) && bdColor)
 	{
 		int indent = (flags & BAR_BORDER_SMALL) ? 1 : BAR_BORDERSIZE;
 
-		CG_DrawRect_FixedBorder(x, y, w, h, indent, bgColor);
+		CG_DrawRect_FixedBorder(x, y, w, h, indent, bdColor);
 		x += indent;
 		y += indent;
 		w -= (2 * indent);
@@ -351,7 +352,7 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 {
 	vec4_t bgcolor = { 0.5f, 0.5f, 0.5f, 0.3f },
 	       color   = { 1.0f, 1.0f, 1.0f, 0.3f };
-	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA, -1);
+	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA, -1);
 }
 
 /**

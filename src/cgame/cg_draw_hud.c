@@ -716,7 +716,7 @@ vec4_t bgcolor = { 1.f, 1.f, 1.f, .3f };    // bars backgound
  */
 void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 {
-	vec4_t colour;
+	vec4_t color;
 	float  frac;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
@@ -734,12 +734,13 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 		return;
 	}
 
-	CG_ColorForHealth(colour);
-	colour[3] = 0.5f;
+	CG_ColorForHealth(color);
+	color[3] = 0.5f;
 
 	frac = cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH];
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, colour, NULL, bgcolor, frac, comp->style, cgs.media.hudHealthIcon);
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
+                 comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.hudHealthIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -795,8 +796,9 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 		color[0] = 1.0f - frac;
 		color[1] = frac;
 	}
-
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL, bgcolor, frac, comp->style, cgs.media.hudSprintIcon);
+    
+    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
+                 comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.hudSprintIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -834,7 +836,8 @@ void CG_DrawBreathBar(hudComponent_t *comp)
 	color[0] = 1.0f - frac;
 	color[2] = frac;
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL, bgcolor, frac, comp->style, cgs.media.waterHintShader);
+    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
+                 comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.waterHintShader);
 
 	trap_R_SetColor(NULL);
 }
@@ -949,7 +952,8 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		}
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL, bgcolor, barFrac, comp->style, cgs.media.hudPowerIcon);
+    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
+                 comp->colorBackground, comp->colorBorder, barFrac, comp->style, cgs.media.hudPowerIcon);
 
 	trap_R_SetColor(NULL);
 }

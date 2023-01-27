@@ -1165,9 +1165,9 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 				                  0, 30, 0, button->font->font);
 			}
 
-			CG_FilledBar(DB_MAPHISTORIC_X + cgs.wideXoffset, y - 8, 60, 10, (vec4_t) { 1.f, 0, 0, 0.85f }, (vec4_t) { 0, 1.f, 0, 0.85f }, NULL,
-			             (cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset]) / (float)cgs.dbMapsHistoryCountList,
-			             BAR_LERP_COLOR |   BAR_BGSPACING_X0Y0, -1);
+			CG_FilledBar(DB_MAPHISTORIC_X + cgs.wideXoffset, y - 8, 60, 10, (vec4_t) { 1.f, 0, 0, 0.85f }, (vec4_t) { 0, 1.f, 0, 0.85f },
+                         NULL, NULL, (cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset]) / (float)cgs.dbMapsHistoryCountList,
+			             BAR_LERP_COLOR | BAR_BGSPACING_X0Y0, -1);
 		}
 
 		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
