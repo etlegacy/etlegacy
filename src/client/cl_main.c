@@ -1789,6 +1789,7 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 	server->antilag        = 0;
 	server->weaprestrict   = 0;
 	server->gameName[0]    = '\0';
+	server->oss            = 0;
 }
 
 #define MAX_SERVERSPERPACKET    256
