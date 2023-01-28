@@ -3717,7 +3717,7 @@ void trap_R_Finish(void);
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_SysFlashWindow(int state);
-void trap_CommandComplete(char *value);
+void trap_CommandComplete(const char *value);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 extern int dll_trap_CommandComplete;
