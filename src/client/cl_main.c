@@ -1604,7 +1604,7 @@ void CL_CheckForResend(void)
 			char info[MAX_INFO_STRING];
 			char data[MAX_INFO_STRING + 10];
 
-			// received and confirmed the challenge, now responding with a connect packet
+			// received and confirmed the challenge, now responding with a 'connect' packet
 			port = (int)(Cvar_VariableValue("net_qport"));
 
 			Q_strncpyz(info, Cvar_InfoString(CVAR_USERINFO), sizeof(info));
@@ -1705,7 +1705,7 @@ void CL_MotdPacket(netadr_t from)
 
 	// check challenge
 	challenge = Info_ValueForKey(info, "challenge");
-	if (strcmp(challenge, autoupdate.motdChallenge))
+	if (strcmp(challenge, autoupdate.motdChallenge) != 0)
 	{
 		return;
 	}

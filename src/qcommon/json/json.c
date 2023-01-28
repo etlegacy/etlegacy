@@ -44,7 +44,7 @@
 #include "../../game/g_local.h"
 #endif
 #else
-#include "../../qcommon.h"
+#include "../qcommon.h"
 #endif
 
 void Q_JSONInit(void)
@@ -76,7 +76,7 @@ cJSON *Q_FSReadJsonFrom(const char *path)
 #if MODLIB
 	len = trap_FS_FOpenFile(path, &fileHandle, FS_READ);
 #else
-	len = FS_FOpenFile(path, &fileHandle, FS_READ);
+	len = FS_FOpenFileByMode(path, &fileHandle, FS_READ);
 #endif
 
 	// if there is no file, or if the size is over 5 megs (which is a bit sus)
