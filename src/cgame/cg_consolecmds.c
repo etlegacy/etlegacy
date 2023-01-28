@@ -2471,6 +2471,30 @@ static qboolean CG_SetIntComponentFromCommand(int *argIndex, hudComponent_t *com
 	return qtrue;
 }
 
+static const char *colorsTable[] =
+{
+	"white",
+	"red",
+	"green",
+	"blue",
+	"yellow",
+	"magenta",
+	"cyan",
+	"orange",
+	"mdred",
+	"mdgreen",
+	"dkgreen",
+	"mdcyan",
+	"mdyellow",
+	"mdorange",
+	"mdblue",
+	"ltgrey",
+	"mdgrey",
+	"dkgrey",
+	"black",
+	NULL
+};
+
 static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
 {
 	char   token[MAX_TOKEN_CHARS];
@@ -2478,8 +2502,19 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 
 	if ((trap_Argc() - *argIndex) <= 1)
 	{
-		CG_Printf("^3color field component needs at least 1 argument <colorname> / <0xRRGGBB[AA]> or 3-4 arguments <r> <g> <b> <a>\n");
+		int  i;
+		char *str = NULL;
+
+		CG_Printf("^3color field component needs at least 1 argument <colorname> / <0xRRGGBB[AA]> or 3-4 arguments <r> <g> <b> [a]\n");
 		CG_Printf("^7Current value is %f %f %f %f\n", (*value)[0], (*value)[1], (*value)[2], (*value)[3]);
+
+		for (i = 0; colorsTable[i]; ++i)
+		{
+			str = va("%s%-9s%s", str ? str : "", colorsTable[i], !((i + 1) % 5) ? "\n" : "    ");
+		}
+
+		CG_Printf("\n\nAvailable ^3<colorname> ^7:\n\n%s", str);
+
 		return qfalse;
 	}
 
@@ -2715,13 +2750,129 @@ static void CG_EditComponent_f(void)
 	}
 }
 
+static qboolean CG_EditHudComponentFieldsComplete()
+{
+	int  i;
+	char token[MAX_TOKEN_CHARS];
+
+	// don't auto complete if previous arg is members field
+	trap_Argv(trap_Argc() - 1, token, MAX_TOKEN_CHARS);
+
+	for (i = 0; hudComponentMembersFields[i].name; i++)
+	{
+		if (!Q_strncmp(token, hudComponentMembersFields[i].name, MAX_TOKEN_CHARS))
+		{
+			return qfalse;
+		}
+	}
+
+	trap_Argv(1, token, MAX_TOKEN_CHARS);
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (!Q_strncmp(token, hudComponentFields[i].name, MAX_TOKEN_CHARS))
+		{
+			for (i = 0; hudComponentMembersFields[i].name; i++)
+			{
+				trap_CommandComplete(hudComponentMembersFields[i].name);
+			}
+
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+static qboolean CG_EditHudComponentMembersFieldsComplete()
+{
+	int  i;
+	char token[MAX_TOKEN_CHARS];
+
+	for (i = 1; i < 3; i++)
+	{
+		trap_Argv(trap_Argc() - i, token, MAX_TOKEN_CHARS);
+
+		// don't auto complete if previous arg is a position or a color value
+		if (i == 1)
+		{
+			int j;
+
+			for (j = 0; compPosition[j].name; j++)
+			{
+				if (!Q_strncmp(token, compPosition[j].name, MAX_TOKEN_CHARS))
+				{
+					return qfalse;
+				}
+			}
+
+			for (j = 0; colorsTable[j]; j++)
+			{
+				if (!Q_strncmp(token, colorsTable[j], MAX_TOKEN_CHARS))
+				{
+					return qfalse;
+				}
+			}
+		}
+
+		if (!Q_strncmp(token, "position", MAX_TOKEN_CHARS))
+		{
+			for (i = 0; compPosition[i].name; i++)
+			{
+				trap_CommandComplete(compPosition[i].name);
+			}
+
+			return qtrue;
+		}
+
+		if (!Q_strncmp(token, "colorMain", MAX_TOKEN_CHARS)
+		    || !Q_strncmp(token, "colorSecondary", MAX_TOKEN_CHARS)
+		    || !Q_strncmp(token, "colorBackground", MAX_TOKEN_CHARS)
+		    || !Q_strncmp(token, "colorBorder", MAX_TOKEN_CHARS))
+		{
+			for (i = 0; colorsTable[i]; i++)
+			{
+				trap_CommandComplete(colorsTable[i]);
+			}
+
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
 static void CG_EditHudComponentComplete(void)
 {
-	int i;
-	int count = trap_Argc();
-
-	if (count < 3)
+	if (trap_Argc() > 1)
 	{
+		if (CG_EditHudComponentMembersFieldsComplete())
+		{
+			return;
+		}
+
+		if (CG_EditHudComponentFieldsComplete())
+		{
+			return;
+		}
+	}
+
+	if (trap_Argc() < 3)
+	{
+		int  i;
+		char token[MAX_TOKEN_CHARS];
+
+		trap_Argv(trap_Argc() - 1, token, MAX_TOKEN_CHARS);
+
+		// don't auto complete if previous arg is members field
+		for (i = 0; hudComponentMembersFields[i].name; i++)
+		{
+			if (!Q_strncmp(token, hudComponentMembersFields[i].name, MAX_TOKEN_CHARS))
+			{
+				return;
+			}
+		}
+
 		trap_CommandComplete("help");
 		trap_CommandComplete("save");
 		trap_CommandComplete("clone");
