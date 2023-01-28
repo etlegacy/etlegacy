@@ -2954,7 +2954,7 @@ static void UI_BuildPlayerList(void)
 	trap_GetClientState(&cs);
 	trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
 	uiInfo.playerNumber = cs.clientNum;
-	uiInfo.teamLeader   = (qboolean)(atoi(Info_ValueForKey(info, "tl")));
+	uiInfo.teamLeader   = (qboolean)(Q_atoi(Info_ValueForKey(info, "tl")));
 	team                = Q_atoi(Info_ValueForKey(info, "t"));
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 	count              = Q_atoi(Info_ValueForKey(info, "sv_maxclients"));
@@ -5221,7 +5221,7 @@ void UI_RunMenuScript(char **args)
 			char info[MAX_INFO_STRING];
 
 			trap_GetConfigString(CS_SERVERTOGGLES, info, sizeof(info));
-			trap_Cvar_Set("ui_voteWarmupDamage", va("%d", ((atoi(info) & CV_SVS_WARMUPDMG) >> 2)));
+			trap_Cvar_Set("ui_voteWarmupDamage", va("%d", ((Q_atoi(info) & CV_SVS_WARMUPDMG) >> 2)));
 
 			trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 			trap_Cvar_Set("ui_voteTimelimit", va("%i", Q_atoi(Info_ValueForKey(info, "timelimit"))));
@@ -5954,7 +5954,7 @@ void UI_RunMenuScript(char **args)
 				skillLW  = skillStr[SK_LIGHT_WEAPONS];
 				skillHW  = skillStr[SK_HEAVY_WEAPONS];
 
-				if (atoi(&skillLW) >= 4)
+				if (Q_atoi(&skillLW) >= 4)
 				{
 					trap_Cvar_SetValue("cg_ui_secondary_lw", 1);
 				}
@@ -5963,7 +5963,7 @@ void UI_RunMenuScript(char **args)
 					trap_Cvar_SetValue("cg_ui_secondary_lw", 0);
 				}
 
-				if (atoi(&skillHW) >= 4)
+				if (Q_atoi(&skillHW) >= 4)
 				{
 					trap_Cvar_SetValue("cg_ui_secondary_hw", 1);
 				}

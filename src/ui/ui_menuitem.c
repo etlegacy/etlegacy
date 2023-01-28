@@ -203,26 +203,26 @@ qboolean Item_SettingShow(itemDef_t *item, qboolean fVoteTest)
 	if (fVoteTest)
 	{
 		trap_Cvar_VariableStringBuffer("cg_ui_voteFlags", info, sizeof(info));
-		return((atoi(info) & item->voteFlag) != item->voteFlag);
+		return((Q_atoi(info) & item->voteFlag) != item->voteFlag);
 	}
 
 	DC->getConfigString(CS_SERVERTOGGLES, info, sizeof(info));
 
 	if (item->settingFlags & SVS_ENABLED_SHOW)
 	{
-		return(atoi(info) & item->settingTest);
+		return(Q_atoi(info) & item->settingTest);
 	}
 
 	if (item->settingFlags & SVS_DISABLED_SHOW)
 	{
-		return(!(atoi(info) & item->settingTest));
+		return(!(Q_atoi(info) & item->settingTest));
 	}
 
 	return qtrue;
 }
 
 /**
- * @brief Will optionaly set focus to this item
+ * @brief Will optionally set focus to this item
  * @param[in] item
  * @param[in] x
  * @param[in] y
@@ -1669,8 +1669,8 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		{
 			if (item->type != ITEM_TYPE_NUMERICFIELD)
 			{
-				char clipbuff[1024];
-				uint32_t  clipbuff32[256];
+				char     clipbuff[1024];
+				uint32_t clipbuff32[256];
 
 				Com_Memset(clipbuff, 0, sizeof(clipbuff));
 				Com_Memset(clipbuff32, 0, sizeof(uint32_t) * 256);
@@ -1678,7 +1678,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				DC->getClipboardData(clipbuff, sizeof(clipbuff));
 				if (strlen(clipbuff))
 				{
-					int i = 0;
+					int    i       = 0;
 					size_t cliplen = 0;
 
 					Q_UTF8_ToUTF32(clipbuff, clipbuff32, &cliplen);

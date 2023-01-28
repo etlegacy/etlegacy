@@ -241,9 +241,9 @@ const char *UI_DownloadInfo(const char *downloadName)
 	dlText        = __("Downloading:");
 	etaText       = __("Estimated time left:");
 	xferText      = __("Transfer rate:");
-	downloadSize  = trap_Cvar_VariableValue("cl_downloadSize");
-	downloadCount = trap_Cvar_VariableValue("cl_downloadCount");
-	downloadTime  = trap_Cvar_VariableValue("cl_downloadTime");
+	downloadSize  = (int)trap_Cvar_VariableValue("cl_downloadSize");
+	downloadCount = (int)trap_Cvar_VariableValue("cl_downloadCount");
+	downloadTime  = (int)trap_Cvar_VariableValue("cl_downloadTime");
 
 	if (downloadSize > 0)
 	{

@@ -924,7 +924,7 @@ void SV_SpawnServer(const char *server)
 	// to all clients
 	sv.state = SS_GAME;
 
-	// send a heartbeat now so the master will get up to date info
+	// send a heartbeat now so the master will get up-to-date info
 	if (sv_advert->integer & SVA_MASTER)
 	{
 		SV_Heartbeat_f();

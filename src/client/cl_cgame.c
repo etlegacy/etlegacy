@@ -1107,7 +1107,7 @@ void CL_UpdateLevelHunkUsage(void)
 				token = COM_Parse(&buftrav); // read the size
 				if (token && token[0])
 				{
-					if (atoi(token) == memusage) // if it is the same, abort this process
+					if (Q_atoi(token) == memusage) // if it is the same, abort this process
 					{
 						Z_Free(buf);
 						Z_Free(outbuf);

@@ -2847,7 +2847,7 @@ void Com_Init(char *commandLine)
 	com_downloadURL  = Cvar_Get("com_downloadURL", DOWNLOAD_SERVER_URL, CVAR_INIT | CVAR_NOTABCOMPLETE);
 
 	// master servers
-	// moved here from SV_Init so they con't be overridden by config
+	// moved here from SV_Init, so they can't be overridden by config
 	Cvar_Get("sv_master1", "etmaster.idsoftware.com", CVAR_PROTECTED);
 	Cvar_Get("sv_master2", com_masterServer->string, CVAR_INIT);
 
@@ -4178,7 +4178,7 @@ void Field_AutoComplete(field_t *field)
 }
 
 /**
- * @brief fills string array with len radom bytes, peferably from the OS randomizer
+ * @brief fills string array with len random bytes, preferably from the OS randomizer
  * @author ioquake3
  *
  * @param[in,out] string

@@ -151,7 +151,7 @@ void G_voteHelp(gentity_t *ent, qboolean fShowVote)
 
 	for (i = 0; i < num_cmds; i++)
 	{
-		if (aVoteInfo[i].dwGameTypes & (1 << g_gametype.integer))
+		if (aVoteInfo[i].dwGameTypes & BIT(g_gametype.integer))
 		{
 			vi[rows++] = i;
 		}
@@ -1350,7 +1350,7 @@ int G_Timelimit_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 			G_voteCurrentSetting(ent, arg, g_timelimit.string);
 			return G_INVALID;
 		}
-		else if (atoi(arg2) < 0)
+		else if (Q_atoi(arg2) < 0)
 		{
 			G_refPrintf(ent, "Sorry, can't specify a timelimit < 0!");
 			return G_INVALID;

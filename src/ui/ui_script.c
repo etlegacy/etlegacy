@@ -706,7 +706,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 
 				trap_Cvar_VariableStringBuffer( "cg_ui_voteFlags", info, sizeof(info) );
 
-				if( (atoi(info) & item->voteFlag) != item->voteFlag ) {
+				if( (Q_atoi(info) & item->voteFlag) != item->voteFlag ) {
 				Item_RunScript( item, bAbort, script1 );
 				} else {
 				Item_RunScript( item, bAbort, script2 );

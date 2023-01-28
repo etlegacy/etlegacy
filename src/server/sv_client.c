@@ -104,7 +104,7 @@ void SV_GetChallenge(netadr_t from)
 		// this is the first time this client has asked for a challenge
 		challenge = &svs.challenges[oldest];
 
-		challenge->challenge = (((unsigned int) rand() << 16) ^ (unsigned int)rand()) ^ svs.time;
+		challenge->challenge = (int)(((unsigned int) rand() << 16) ^ (unsigned int)rand()) ^ svs.time;
 		challenge->adr       = from;
 		challenge->firstTime = svs.time;
 		challenge->firstPing = 0;
@@ -123,8 +123,6 @@ void SV_GetChallenge(netadr_t from)
 	{
 		NET_OutOfBandPrint(NS_SERVER, from, "challengeResponse %i", challenge->challenge);
 	}
-
-	return;
 }
 
 /**
@@ -1506,7 +1504,7 @@ static void SV_VerifyPaks_f(client_t *cl)
 		{
 			// we may get incoming cp sequences from a previous checksumFeed, which we need to ignore
 			// since serverId is a frame count, it always goes up
-			if (atoi(pArg) < sv.checksumFeedServerId)
+			if (Q_atoi(pArg) < sv.checksumFeedServerId)
 			{
 				Com_DPrintf("ignoring outdated cp command from client %s\n", rc(cl->name));
 				return;
