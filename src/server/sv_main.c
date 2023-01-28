@@ -848,11 +848,8 @@ static void SVC_Status(netadr_t from, qboolean force)
 void SVC_Info(netadr_t from)
 {
 	int  i, clients = 0, humans = 0;
-	char *gamedir;
+	char *tmpString;
 	char infostring[MAX_INFO_STRING];
-	char *antilag;
-	char *weaprestrict;
-	char *balancedteams;
 
 	if (sv_protect->integer & SVP_IOQ3)
 	{
@@ -921,10 +918,11 @@ void SVC_Info(netadr_t from)
 	{
 		Info_SetValueForKey(infostring, "maxPing", va("%i", sv_maxPing->integer));
 	}
-	gamedir = Cvar_VariableString("fs_game");
-	if (*gamedir)
+
+	tmpString = Cvar_VariableString("fs_game");
+	if (*tmpString)
 	{
-		Info_SetValueForKey(infostring, "game", gamedir);
+		Info_SetValueForKey(infostring, "game", tmpString);
 	}
 
 	Info_SetValueForKey(infostring, "friendlyFire", va("%i", sv_friendlyFire->integer));
@@ -932,22 +930,28 @@ void SVC_Info(netadr_t from)
 	Info_SetValueForKey(infostring, "needpass", va("%i", sv_needpass->integer ? 1 : 0));
 	Info_SetValueForKey(infostring, "gamename", GAMENAME_STRING);
 
-	antilag = Cvar_VariableString("g_antilag");
-	if (antilag)
+	tmpString = Cvar_VariableString("g_antilag");
+	if (*tmpString)
 	{
-		Info_SetValueForKey(infostring, "g_antilag", antilag);
+		Info_SetValueForKey(infostring, "g_antilag", tmpString);
 	}
 
-	weaprestrict = Cvar_VariableString("g_heavyWeaponRestriction");
-	if (weaprestrict)
+	tmpString = Cvar_VariableString("g_heavyWeaponRestriction");
+	if (*tmpString)
 	{
-		Info_SetValueForKey(infostring, "weaprestrict", weaprestrict);
+		Info_SetValueForKey(infostring, "weaprestrict", tmpString);
 	}
 
-	balancedteams = Cvar_VariableString("g_balancedteams");
-	if (balancedteams)
+	tmpString = Cvar_VariableString("g_balancedteams");
+	if (*tmpString)
 	{
-		Info_SetValueForKey(infostring, "balancedteams", balancedteams);
+		Info_SetValueForKey(infostring, "balancedteams", tmpString);
+	}
+
+	tmpString = Cvar_VariableString("g_oss");
+	if (*tmpString)
+	{
+		Info_SetValueForKey(infostring, "oss", tmpString);
 	}
 
 	NET_OutOfBandPrint(NS_SERVER, from, "infoResponse\n%s", infostring);

@@ -516,6 +516,7 @@ static void LAN_GetServerInfo(int source, int n, char *buf, size_t buflen)
 		Info_SetValueForKey(info, "g_antilag", va("%i", server->antilag));
 		Info_SetValueForKey(info, "weaprestrict", va("%i", server->weaprestrict));
 		Info_SetValueForKey(info, "balancedteams", va("%i", server->balancedteams));
+		Info_SetValueForKey(info, "g_oss", va("%i", server->oss));
 #ifdef _WIN64
 		if (buflen > 1024)
 		{

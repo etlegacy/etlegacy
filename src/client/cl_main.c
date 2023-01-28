@@ -3338,6 +3338,7 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 			server->antilag       = Q_atoi(Info_ValueForKey(info, "g_antilag"));
 			server->weaprestrict  = Q_atoi(Info_ValueForKey(info, "weaprestrict"));
 			server->balancedteams = Q_atoi(Info_ValueForKey(info, "balancedteams"));
+			server->oss           = Q_atoi(Info_ValueForKey(info, "oss"));
 		}
 		server->ping = ping;
 	}

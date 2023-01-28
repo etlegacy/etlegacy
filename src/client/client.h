@@ -337,6 +337,7 @@ typedef struct
 	int32_t antilag;
 	int32_t weaprestrict;
 	int32_t balancedteams;
+	uint32_t oss;
 	char gameName[MAX_NAME_LENGTH];
 } serverInfo_t;
 
