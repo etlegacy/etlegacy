@@ -2851,7 +2851,7 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 		         ,
 		         va(CG_TranslateString("Press %s to open Limbo Menu"), !Q_stricmp(strKey, "(openlimbomenu)") ? "ESCAPE" : strKey),
 		         va(CG_TranslateString("Press %s to follow %s"), Binding_FromName("+attack"), cgs.clientinfo[cg.crosshairClientNum].name),
-		         va(CG_TranslateString("Press %s to follow previous player"), Binding_FromName("weapalt"))
+		         va(CG_TranslateString("^*Press %s to follow previous player"), Binding_FromName("weapalt"))
 #ifdef FEATURE_MULTIVIEW
 		         , strMV ? strMV : ""
 #endif
