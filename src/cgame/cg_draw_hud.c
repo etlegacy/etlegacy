@@ -740,7 +740,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 	frac = cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH];
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
-                 comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.hudHealthIcon);
+	             comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.hudHealthIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -796,9 +796,9 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 		color[0] = 1.0f - frac;
 		color[1] = frac;
 	}
-    
-    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
-                 comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.hudSprintIcon);
+
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
+	             comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.hudSprintIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -836,8 +836,8 @@ void CG_DrawBreathBar(hudComponent_t *comp)
 	color[0] = 1.0f - frac;
 	color[2] = frac;
 
-    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
-                 comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.waterHintShader);
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
+	             comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.waterHintShader);
 
 	trap_R_SetColor(NULL);
 }
@@ -952,8 +952,8 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		}
 	}
 
-    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
-                 comp->colorBackground, comp->colorBorder, barFrac, comp->style, cgs.media.hudPowerIcon);
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
+	             comp->colorBackground, comp->colorBorder, barFrac, comp->style, cgs.media.hudPowerIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -2768,7 +2768,10 @@ void CG_DrawSpawnTimer(hudComponent_t *comp)
 		return;
 	}
 
-	blink = CG_SpawnTimersText(&s, &rt);
+	// note: pass reinforcement timer in as 's' to get the ENEMY reinforcement time
+	// FIXME: this should be refactored, this makes no sense... what even is 's'? and 'rt'?
+	//  spawntimer/reinforcement timer? but the function doesn't treat them as such...
+	blink = CG_SpawnTimersText(&rt, &s);
 
 	if (rt)
 	{
