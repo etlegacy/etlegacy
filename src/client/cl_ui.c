@@ -44,6 +44,7 @@ extern botlib_export_t *botlib_export;
 
 #define TRAP_EXTENSIONS_LIST NULL
 #include "../qcommon/vm_ext.h"
+#include "json.h"
 
 vm_t *uivm;
 
@@ -61,14 +62,26 @@ static void GetClientState(uiClientState_t *state)
 	state->clientNum = cl.snap.ps.clientNum;
 }
 
+static void CL_FavCacheFile(char *output, size_t len)
+{
+	// moved to mod/profiles dir
+	if (cl_profile->string[0])
+	{
+		Com_sprintf(output, len, "profiles/%s/favcache.json", cl_profile->string);
+	}
+	else
+	{
+		Q_strncpyz(output, "favcache.json", len);
+	}
+}
+
 /**
  * @brief LAN_LoadCachedServers
  */
 void LAN_LoadCachedServers(void)
 {
-	int32_t      size;
-	fileHandle_t fileIn;
-	char         filename[MAX_QPATH];
+	char  filename[MAX_QPATH];
+	cJSON *root = NULL;
 
 	cls.numglobalservers         = 0;
 	cls.numfavoriteservers       = 0;
@@ -78,44 +91,60 @@ void LAN_LoadCachedServers(void)
 	Com_Memset(&cls.favoriteServers, 0, sizeof(cls.favoriteServers));
 	Com_Memset(&cls.numGlobalServerAddresses, 0, sizeof(cls.numGlobalServerAddresses));
 
-	if (cl_profile->string[0])
-	{
 #ifdef FEATURE_DBMS
-		if (db_mode->integer > 0)
-		{
-			DB_LoadFavorites(cl_profile->string);
-
-			return; // don't load favcache.dat
-		}
+	if (cl_profile->string[0] && db_mode->integer > 0)
+	{
+		DB_LoadFavorites(cl_profile->string);
+		// don't load fav. cache from file
+		return;
+	}
 #endif
-		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
-	}
-	else
+
+	CL_FavCacheFile(filename, sizeof(filename));
+
+	root = Q_FSReadJsonFrom(filename);
+
+	if (!root)
 	{
-		Q_strncpyz(filename, "favcache.dat", sizeof(filename));
+		Com_Printf("Warning: can't read '%s' - no favorite servers restored.\n", filename);
+		return;
 	}
 
-	// moved to mod/profiles dir
-	if (FS_FOpenFileRead(filename, &fileIn, qtrue) > 0)
+	if (cJSON_IsArray(root))
 	{
-		FS_Read(&cls.numfavoriteservers, sizeof(int32_t), fileIn);
-		FS_Read(&size, sizeof(int32_t), fileIn);
-		if (size == sizeof(cls.favoriteServers))
+		cJSON *serverObj = NULL;
+		cJSON_ArrayForEach(serverObj, root)
 		{
-			FS_Read(&cls.favoriteServers, sizeof(cls.favoriteServers), fileIn);
+			if (!cJSON_IsObject(serverObj))
+			{
+				continue;
+			}
+
+			char *address = Q_ReadStringValueJsonEx(serverObj, "address", "");
+			char *name    = Q_ReadStringValueJsonEx(serverObj, "name", "");
+
+			if (*address && *name)
+			{
+				netadr_t addr;
+
+				NET_StringToAdr(address, &addr, NA_UNSPEC);
+				CL_InitServerInfo(&cls.favoriteServers[cls.numfavoriteservers], &addr);
+				Q_strncpyz(cls.favoriteServers[cls.numfavoriteservers].hostName, name, MAX_SERVER_NAME_LENGTH);
+
+				cls.favoriteServers[cls.numfavoriteservers].visible = qtrue;
+
+				cls.numfavoriteservers++;
+			}
 		}
-		else
-		{
-			cls.numfavoriteservers = 0;
-		}
-		FS_FCloseFile(fileIn);
 
 		Com_Printf("Total favorite servers restored: %i\n", cls.numfavoriteservers);
 	}
 	else
 	{
-		Com_Printf("Warning: can't read '%s' - no favorite servers restored.\n", filename);
+		Com_Printf("Warning: invalid file format in '%s' - no favorite servers restored.\n", filename);
 	}
+
+	cJSON_free(root);
 }
 
 /**
@@ -123,35 +152,32 @@ void LAN_LoadCachedServers(void)
  */
 void LAN_SaveServersToFile(void)
 {
-	int32_t      size;
-	fileHandle_t fileOut;
-	char         filename[MAX_QPATH];
+	int   i;
+	cJSON *root = NULL, *serverObj;
+	char  filename[MAX_QPATH];
 
-	// moved to mod/profiles dir
-	if (cl_profile->string[0])
+	CL_FavCacheFile(filename, sizeof(filename));
+
+	root = cJSON_CreateArray();
+
+	for (i = 0; i < cls.numfavoriteservers; i++)
 	{
-		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
+		serverObj = cJSON_CreateObject();
+		cJSON_AddStringToObject(serverObj, "address", NET_AdrToString(cls.favoriteServers[i].adr));
+		cJSON_AddStringToObject(serverObj, "name", cls.favoriteServers[i].hostName);
+		cJSON_AddStringToObject(serverObj, "game", cls.favoriteServers[i].game);
+
+		cJSON_AddItemToArray(root, serverObj);
+	}
+
+	if (!Q_FSWriteJSONTo(root, filename))
+	{
+		Com_Printf("Saving favorites failed: Can't open file to write\n");
 	}
 	else
 	{
-		Q_strncpyz(filename, "favcache.dat", sizeof(filename));
+		Com_Printf("Total favorite servers saved: %i\n", cls.numfavoriteservers);
 	}
-
-	if ((fileOut = FS_FOpenFileWrite(filename)) <= 0)
-	{
-		Com_Printf("Saving favorites failed: Can't open file to write\n");
-		return;
-	}
-
-	(void) FS_Write(&cls.numfavoriteservers, sizeof(int32_t), fileOut);
-
-	size = sizeof(cls.favoriteServers);
-
-	(void) FS_Write(&size, sizeof(int32_t), fileOut);
-	(void) FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
-	FS_FCloseFile(fileOut);
-
-	Com_Printf("Total favorite servers saved: %i\n", cls.numfavoriteservers);
 }
 
 /**

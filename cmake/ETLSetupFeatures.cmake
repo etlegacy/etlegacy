@@ -393,6 +393,7 @@ else()
 endif()
 target_link_libraries(qagame_libraries INTERFACE etl_json)
 target_link_libraries(cgame_libraries INTERFACE etl_json)
+target_link_libraries(engine_libraries INTERFACE etl_json)
 
 if(FEATURE_ANTICHEAT)
 	target_compile_definitions(server_libraries INTERFACE FEATURE_ANTICHEAT)
