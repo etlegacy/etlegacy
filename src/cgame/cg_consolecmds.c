@@ -2256,6 +2256,171 @@ static qboolean CG_SetRectComponentFromCommand(int *argIndex, hudComponent_t *co
 	return qtrue;
 }
 
+typedef enum compPositionIndex_s
+{
+	COMPPOS_CENTER,
+	COMPPOS_LEFT,
+	COMPPOS_RIGHT,
+	COMPPOS_TOP,
+	COMPPOS_BOTTOM,
+	COMPPOS_TOPLEFT,
+	COMPPOS_BOTTOMLEFT,
+	COMPPOS_TOPRIGHT,
+	COMPPOS_BOTTOMRIGHT,
+	COMPPOS_MAX,
+
+} compPositionIndex_t;
+
+typedef struct compPosition_s
+{
+	compPositionIndex_t index;
+	char *name;
+} compPosition_t;
+
+static compPosition_t compPosition[] =
+{
+	{ COMPPOS_CENTER,      "center"      },
+	{ COMPPOS_LEFT,        "left"        },
+	{ COMPPOS_RIGHT,       "right"       },
+	{ COMPPOS_TOP,         "top"         },
+	{ COMPPOS_BOTTOM,      "bottom"      },
+	{ COMPPOS_TOPLEFT,     "topleft"     },
+	{ COMPPOS_BOTTOMLEFT,  "bottomleft"  },
+	{ COMPPOS_TOPRIGHT,    "topright"    },
+	{ COMPPOS_BOTTOMRIGHT, "bottomright" },
+	{ COMPPOS_MAX,         NULL          },
+};
+
+static void CG_SetPositionComponentHelp(float x, float y)
+{
+	int  i;
+	char *str = NULL;
+
+	CG_Printf("^3pos field component needs at least 1 argument <posName> or 2 arguments <x> <y> or 3 arguments <posName> <offsetX> <offsetY>\n");
+	CG_Printf("^7Current value is %f %f\n", x, y);
+
+	for (i = 0; compPosition[i].name; ++i)
+	{
+		str = va("%s%-11s%s", str ? str : "", compPosition[i].name, !((i + 1) % 5) ? "\n" : "    ");
+	}
+
+	CG_Printf("\n\nAvailable ^3<posName> ^7:\n\n%s", str);
+}
+
+
+static qboolean CG_SetPositionComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char      token[MAX_TOKEN_CHARS];
+	rectDef_t *value = (rectDef_t *)((char *)comp + offset);
+
+	if ((trap_Argc() - *argIndex) <= 1)
+	{
+		CG_SetPositionComponentHelp(value->x, value->y);
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	// posName argument
+	if (!Q_isanumber(token))
+	{
+		int   i;
+		float x, y;
+
+		for (i = 0; compPosition[i].name; ++i)
+		{
+			if (!Q_strncmp(token, compPosition[i].name, MAX_TOKEN_CHARS))
+			{
+				break;
+			}
+		}
+
+		if (i == COMPPOS_MAX)
+		{
+			CG_Printf("^1Invalid ^3<%s> ^1argument, not a valid position name\n", token);
+			return qfalse;
+		}
+
+		switch (i)
+		{
+		case COMPPOS_CENTER:      value->x = (Ccg_WideX(SCREEN_WIDTH) - value->w) * .5f; value->y = (SCREEN_HEIGHT - value->h) * .5f; break;
+		case COMPPOS_LEFT:        value->x = 0; break;
+		case COMPPOS_RIGHT:       value->x = Ccg_WideX(SCREEN_WIDTH) - value->w; break;
+		case COMPPOS_TOP:         value->y = 0; break;
+		case COMPPOS_BOTTOM:      value->y = SCREEN_HEIGHT - value->h; break;
+		case COMPPOS_TOPLEFT:     value->x = 0; value->y = 0; break;
+		case COMPPOS_BOTTOMLEFT:  value->x = 0; value->y = SCREEN_HEIGHT - value->h; break;
+		case COMPPOS_TOPRIGHT:    value->x = Ccg_WideX(SCREEN_WIDTH) - value->w; value->y = 0; break;
+		case COMPPOS_BOTTOMRIGHT: value->x = Ccg_WideX(SCREEN_WIDTH) - value->w; value->y = SCREEN_HEIGHT - value->h; break;
+		default: break;     // should not be possible
+		}
+
+		// <x> <y> arguments for adding offset
+		if ((trap_Argc() - *argIndex) <= 2)
+		{
+			return qtrue;
+		}
+
+		if (!CG_ParseFloatValueAtIndex(argIndex, &x, 'x'))
+		{
+			return qfalse;
+		}
+
+		if (!CG_ParseFloatValueAtIndex(argIndex, &y, 'y'))
+		{
+			return qfalse;
+		}
+
+		value->x += x;
+		value->y += y;
+
+		return qtrue;
+	}
+
+	// <x> <y> arguments
+	if ((trap_Argc() - --*argIndex) <= 2)
+	{
+		CG_SetPositionComponentHelp(value->x, value->y);
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->x, 'x'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->y, 'y'))
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+static qboolean CG_SetSizeComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	rectDef_t *value = (rectDef_t *)((char *)comp + offset);
+
+	if ((trap_Argc() - *argIndex) <= 2)
+	{
+		CG_Printf("^3size field component needs at least 2 arguments <w> <h>\n");
+		CG_Printf("^7Current value is %f %f\n", value->w, value->h);
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->w, 'w'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->h, 'h'))
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 static qboolean CG_SetFloatComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
 {
 	char  token[MAX_TOKEN_CHARS];
@@ -2363,24 +2528,26 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 
 const hudComponentMembersFields_t hudComponentMembersFields[] =
 {
-	{ HUDMF(location),        CG_SetRectComponentFromCommand   },
+	{ HUDMF(location),        CG_SetRectComponentFromCommand     },
 	{ "x",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, x), CG_SetFloatComponentFromCommand},
 	{ "y",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, y), CG_SetFloatComponentFromCommand},
 	{ "w",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, w), CG_SetFloatComponentFromCommand},
 	{ "h",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, h), CG_SetFloatComponentFromCommand},
-	{ HUDMF(visible),         CG_SetIntComponentFromCommand    },
-	{ HUDMF(style),           CG_SetIntComponentFromCommand    },
-	{ HUDMF(scale),           CG_SetFloatComponentFromCommand  },
-	{ HUDMF(colorMain),       CG_SetColorsComponentFromCommand },
-	{ HUDMF(colorSecondary),  CG_SetColorsComponentFromCommand },
-	{ HUDMF(showBackGround),  CG_SetIntComponentFromCommand    },
-	{ HUDMF(colorBackground), CG_SetColorsComponentFromCommand },
-	{ HUDMF(showBorder),      CG_SetIntComponentFromCommand    },
-	{ HUDMF(colorBorder),     CG_SetIntComponentFromCommand    },
-	{ HUDMF(styleText),       CG_SetIntComponentFromCommand    },
-	{ HUDMF(alignText),       CG_SetIntComponentFromCommand    },
-	{ HUDMF(autoAdjust),      CG_SetIntComponentFromCommand    },
-	{ NULL,                   0, NULL                          },
+	{ "position",             offsetof(hudComponent_t, location), CG_SetPositionComponentFromCommand},
+	{ "size",                 offsetof(hudComponent_t, location), CG_SetSizeComponentFromCommand},
+	{ HUDMF(visible),         CG_SetIntComponentFromCommand      },
+	{ HUDMF(style),           CG_SetIntComponentFromCommand      },
+	{ HUDMF(scale),           CG_SetFloatComponentFromCommand    },
+	{ HUDMF(colorMain),       CG_SetColorsComponentFromCommand   },
+	{ HUDMF(colorSecondary),  CG_SetColorsComponentFromCommand   },
+	{ HUDMF(showBackGround),  CG_SetIntComponentFromCommand      },
+	{ HUDMF(colorBackground), CG_SetColorsComponentFromCommand   },
+	{ HUDMF(showBorder),      CG_SetIntComponentFromCommand      },
+	{ HUDMF(colorBorder),     CG_SetIntComponentFromCommand      },
+	{ HUDMF(styleText),       CG_SetIntComponentFromCommand      },
+	{ HUDMF(alignText),       CG_SetIntComponentFromCommand      },
+	{ HUDMF(autoAdjust),      CG_SetIntComponentFromCommand      },
+	{ NULL,                   0, NULL                            },
 };
 
 /**
