@@ -549,6 +549,7 @@ static void CL_GenerateETKey(void)
 
 	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
 	FS_FCloseFile(f);
+
 	if (len > 0)
 	{
 		Com_Printf("ETKEY found\n");
@@ -559,16 +560,16 @@ static void CL_GenerateETKey(void)
 		time_t    tt;
 		struct tm *t;
 		int       last;
-		char      buff[ETKEY_SIZE];
+		char      buff[ETKEY_SIZE + 1]; // we are using a null terminating string, but we won't write it out
 
 		buff[0] = '\0';
 		tt      = time(NULL);
 		t       = localtime(&tt);
 
 		Com_RandomBytes((byte *) &last, sizeof(int));
-		last = abs(last) % 1000;
+		last = abs(last) % 10000;
 
-		Com_sprintf(buff, sizeof(buff), "0000001002%04i%02i%02i%02i%02i%02i%03i", t->tm_year, t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, last);
+		Com_sprintf(buff, sizeof(buff), "0000001002%04i%02i%02i%02i%02i%02i%04i", t->tm_year, t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, last);
 
 		f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
 		if (!f)
@@ -576,7 +577,9 @@ static void CL_GenerateETKey(void)
 			Com_Printf(S_COLOR_RED "ERROR: Could not open %s for write\n", ETKEY_FILE);
 			return;
 		}
-		if (FS_Write(buff, sizeof(buff), f) > 0)
+
+		// only write the etkey bytes, not the terminating 0
+		if (FS_Write(buff, ETKEY_SIZE, f) > 0)
 		{
 			Com_Printf(S_COLOR_CYAN "ETKEY file generated\n");
 		}
