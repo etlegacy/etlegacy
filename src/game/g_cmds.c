@@ -638,20 +638,20 @@ int ClientNumberFromString(gentity_t *to, char *s)
 		idnum = Q_atoi(s);
 		if (idnum < 0 || idnum >= level.maxclients)
 		{
-			CPx(to - g_entities, va("print \"Bad client slot: [lof]%i\n\"", idnum));
+			CPx(to - g_entities, va("print \"[lon]Bad client slot: [lof]%i\n\"", idnum));
 			return -1;
 		}
 
 		cl = &level.clients[idnum];
 		if (cl->pers.connected != CON_CONNECTED)
 		{
-			CPx(to - g_entities, va("print \"Client[lof] %i [lon]is not active\n\"", idnum));
+			CPx(to - g_entities, va("print \"[lon]Client[lof] %i [lon]is not active\n\"", idnum));
 			return -1;
 		}
 		return(idnum);
 	}
 
-	CPx(to - g_entities, va("print \"User [lof]%s [lon]is not on the server\n\"", s));
+	CPx(to - g_entities, va("print \"[lon]User [lof]%s [lon]is not on the server\n\"", s));
 	return -1;
 }
 
@@ -5017,7 +5017,7 @@ void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 	if (cnum != MAX_CLIENTS)
 	{
 		COM_BitSet(ent->client->sess.ignoreClients, cnum);
-		trap_SendServerCommand(ent - g_entities, va("print \"You are ignoring [lof]%s[lon]^7.\n\"", level.clients[cnum].pers.netname));
+		trap_SendServerCommand(ent - g_entities, va("print \"[lon]You are ignoring [lof]%s[lon]^7.\n\"", level.clients[cnum].pers.netname));
 	}
 }
 
