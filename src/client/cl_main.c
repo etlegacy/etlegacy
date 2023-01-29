@@ -1790,33 +1790,16 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 	server->weaprestrict   = 0;
 	server->gameName[0]    = '\0';
 	server->oss            = 0;
+	server->blocked        = qfalse;
 }
 
 #define MAX_SERVERSPERPACKET    256
 
-/**
- * @brief CL_ServersResponsePacket
- * @param[in] from
- * @param[in,out] msg
- * @param[in] extended
- */
-void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extended)
+static unsigned int CL_ParseResponseServers(const netadr_t *from, msg_t *msg, netadr_t *addresses, size_t size, qboolean extended)
 {
 	unsigned int i, numservers = 0;
-	int          j, count, total;
-	netadr_t     addresses[MAX_SERVERSPERPACKET];
 	byte         *buffptr = msg->data;  // parse through server response string
 	byte         *buffend = buffptr + msg->cursize;
-
-	//Com_Printf("CL_ServersResponsePacket\n");
-
-	if (cls.numglobalservers == -1)
-	{
-		// state to detect lack of servers or lack of response
-		cls.numglobalservers         = 0;
-		cls.numGlobalServerAddresses = 0;
-		// don't memset above related arrays!
-	}
 
 	// advance to initial token
 	do
@@ -1870,7 +1853,7 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 		else
 		{
 			// syntax error!
-			Com_Printf("CL_ServersResponsePacket Warning: invalid data received\n");
+			Com_Printf("CL_ParseResponseServers Warning: invalid data received\n");
 			break;
 		}
 
@@ -1891,6 +1874,87 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 			break;
 		}
 	}
+
+	return numservers;
+}
+
+static void CL_MarkBlockedServers()
+{
+	int          count = 0, i, j;
+	serverInfo_t *server;
+	netadr_t     *addr;
+
+	// if the arrays are considered in a "reset" state then just skip
+	if (cls.numglobalservers == -1)
+	{
+		return;
+	}
+
+	// if the blocking list is over 5 minutes old then all servers get an out of jail card
+	if (cls.realtime - cls.blockedServersChecked > 300000)
+	{
+		return;
+	}
+
+	for (i = 0; i < cls.numBlockedServerAddresses; i++)
+	{
+		addr = &cls.blockedServerAddresses[i];
+
+		server = NULL;
+
+		for (j = 0; j < cls.numglobalservers; j++)
+		{
+			if (NET_CompareAdr(cls.globalServers[j].adr, *addr))
+			{
+				server = &cls.globalServers[j];
+				break;
+			}
+		}
+
+		if (!server && (cls.numglobalservers + 1) < MAX_GLOBAL_SERVERS)
+		{
+			server = &cls.globalServers[cls.numglobalservers++];
+			CL_InitServerInfo(server, addr);
+		}
+
+		if (!server)
+		{
+			continue;
+		}
+
+		server->blocked = qtrue;
+		count++;
+	}
+
+	if (count)
+	{
+		Com_DPrintf(S_COLOR_LTORANGE "Blocked %i servers\n", count);
+	}
+}
+
+/**
+ * @brief CL_ServersResponsePacket
+ * @param[in] from
+ * @param[in,out] msg
+ * @param[in] extended
+ */
+void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extended)
+{
+	unsigned int i, numservers = 0;
+	int          j, count, total;
+	netadr_t     addresses[MAX_SERVERSPERPACKET];
+
+	//Com_Printf("CL_ServersResponsePacket\n");
+
+	if (cls.numglobalservers == -1)
+	{
+		// state to detect lack of servers or lack of response
+		cls.numglobalservers         = 0;
+		cls.numGlobalServerAddresses = 0;
+		// don't memset above related arrays!
+	}
+
+	numservers = CL_ParseResponseServers(from, msg, addresses, MAX_SERVERSPERPACKET, extended);
 
 	count = cls.numglobalservers;
 
@@ -1935,6 +1999,29 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 	total                = count + cls.numGlobalServerAddresses;
 
 	Com_DPrintf("CL_ServersResponsePacket - server %s: %d game servers parsed (total %d)\n", NET_AdrToString(*from), numservers, total);
+	CL_MarkBlockedServers();
+}
+
+/**
+ * @brief CL_BlockedServersResponsePacket
+ * @param[in] from
+ * @param[in,out] msg
+ */
+void CL_BlockedServersResponsePacket(const netadr_t *from, msg_t *msg)
+{
+	if (!NET_CompareAdr(*from, cls.masterAddr))
+	{
+		return;
+	}
+
+	// old or fake
+	if (!cls.blockedServersChecked || cls.blockedServersChecked + 4000 < cls.realtime)
+	{
+		return;
+	}
+
+	cls.numBlockedServerAddresses = (int)CL_ParseResponseServers(from, msg, cls.blockedServerAddresses, MAX_GLOBAL_SERVERS, qtrue);
+	CL_MarkBlockedServers();
 }
 
 /**
@@ -2108,6 +2195,13 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	if (!Q_strncmp(c, "getserversExtResponse", 21))
 	{
 		CL_ServersResponsePacket(&from, msg, qtrue);
+		return;
+	}
+
+	// list of blocked servers sent back by a master server
+	if (!Q_strncmp(c, "getBlockedServersResponse", 25))
+	{
+		CL_BlockedServersResponsePacket(&from, msg);
 		return;
 	}
 
@@ -3120,6 +3214,7 @@ void CL_Init(void)
 	Cmd_AddCommand("reconnect", CL_Reconnect_f, "Reconnects to last server.");
 	Cmd_AddCommand("localservers", CL_LocalServers_f, "Scans the local network for servers.");
 	Cmd_AddCommand("globalservers", CL_GlobalServers_f, "Scans the global network for servers.");
+	Cmd_AddCommand("globalBlockedServers", CL_GlobalBlockedServers_f, "Scans the global network for servers.");
 	Cmd_AddCommand("rcon", CL_Rcon_f, "Remote console. Sending commands as an 'unconnected' command.", CL_CompleteRcon);
 	Cmd_AddCommand("ping", CL_Ping_f, "Sends a ping to server.");
 	Cmd_AddCommand("serverstatus", CL_ServerStatus_f, "Prints the server status.");
@@ -3247,6 +3342,7 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("reconnect");
 	Cmd_RemoveCommand("localservers");
 	Cmd_RemoveCommand("globalservers");
+	Cmd_RemoveCommand("globalBlockedServers");
 	Cmd_RemoveCommand("rcon");
 	Cmd_RemoveCommand("ping");
 	Cmd_RemoveCommand("serverstatus");
@@ -3831,6 +3927,10 @@ void CL_GlobalServers_f(void)
 		return;
 	}
 
+	// Request the blocked servers list too
+	Com_sprintf(command, sizeof(command), "globalBlockedServers %s\n", Cmd_Argv(2));
+	Cbuf_AddText(command);
+
 	// request from all master servers
 	if (masterNum == 0)
 	{
@@ -3916,6 +4016,41 @@ void CL_GlobalServers_f(void)
 	}
 
 	NET_OutOfBandPrint(NS_SERVER, to, "%s", command);
+}
+
+/**
+ * @brief Sends a request for server list to the chosen master server. 0 fetch all master servers and 1-5 request a single master server.
+ */
+void CL_GlobalBlockedServers_f(void)
+{
+	int i;
+	int tempTime = cls.realtime - cls.blockedServersChecked;
+
+	if (Cmd_Argc() != 2 || !com_masterServer->string || !com_masterServer->string[0])
+	{
+		Com_Printf("CL_GlobalBlockedServers_f Error: invalid master server set\n");
+		return;
+	}
+
+	if (cls.blockedServersChecked && tempTime < 30000)
+	{
+		return;
+	}
+
+	i = NET_StringToAdr(com_masterServer->string, &cls.masterAddr, NA_UNSPEC);
+
+	if (!i)
+	{
+		Com_Printf("CL_GlobalBlockedServers_f Error: could not resolve address of master %s\n", com_masterServer->string);
+		return;
+	}
+	else if (i == 2)
+	{
+		cls.masterAddr.port = BigShort(PORT_MASTER);
+	}
+
+	cls.blockedServersChecked = cls.realtime + 1;
+	NET_OutOfBandPrint(NS_SERVER, cls.masterAddr, "getBlockedServers %s", Cmd_Argv(1));
 }
 
 /**
