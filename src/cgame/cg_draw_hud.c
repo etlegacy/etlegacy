@@ -936,22 +936,6 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		color[3] = 0.25f + barFrac * 0.5f;
 	}
 
-	if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
-	{
-		if (cg.snap->ps.ammo[WP_ARTY] & NO_AIRSTRIKE && cg.snap->ps.ammo[WP_ARTY] & NO_ARTILLERY)
-		{
-			trap_R_SetColor(colorRed);
-		}
-		else if (cg.snap->ps.ammo[WP_ARTY] & NO_AIRSTRIKE)
-		{
-			trap_R_SetColor(colorOrange);
-		}
-		else if (cg.snap->ps.ammo[WP_ARTY] & NO_ARTILLERY)
-		{
-			trap_R_SetColor(colorYellow);
-		}
-	}
-
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
 	             comp->colorBackground, comp->colorBorder, barFrac, comp->style, cgs.media.hudPowerIcon);
 
