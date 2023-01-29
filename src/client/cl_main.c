@@ -2430,12 +2430,9 @@ void CL_Frame(int msec)
 	// if we haven't gotten a packet in a long time,
 	// drop the connection
 	CL_CheckTimeout();
-	//Com_Printf("[%i:dl%i:dc%i]", cls.state, cls.download.bWWWDl,cls.download.bWWWDlDisconnected);
-	// wwwdl download may survive a server disconnect
-	if ((cls.state == CA_CONNECTED && cls.download.bWWWDl) || cls.download.bWWWDlDisconnected)
-	{
-		Com_WWWDownload();
-	}
+
+	// let the download system run its loop quick if there are open sockets
+	Com_WebDownloadLoop();
 
 	// send intentions now
 	CL_SendCmd();

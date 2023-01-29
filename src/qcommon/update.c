@@ -400,7 +400,7 @@ qboolean Com_InitUpdateDownloads(void)
 				// TODO: add file size, so UI can show progress bar
 				//Cvar_SetValue("cl_downloadSize", clc.downloadSize);
 
-				if (!DL_BeginDownload(upd.downloadTempName, upd.downloadName))
+				if (!Com_BeginWebDownload(upd.downloadTempName, upd.downloadName))
 				{
 					Com_Error(ERR_AUTOUPDATE, "Could not download an update file: \"%s\"", upd.downloadName);
 					upd.bWWWDlAborting = qtrue; //TODO: never executed

@@ -307,8 +307,8 @@ typedef struct
 	fileHandle_t download;
 	int downloadNumber;
 	int downloadBlock;                          ///< block we are waiting for
-	int downloadCount;                          ///< how many bytes we got
-	int downloadSize;                           ///< how many bytes we got
+	int downloadCount;                          ///< how many bytes we have downloaded
+	int downloadSize;                           ///< target file size
 	int downloadFlags;                          ///< misc download behaviour flags sent by the server
 	char downloadList[MAX_INFO_STRING];         ///< list of paks we need to download
 
@@ -949,7 +949,7 @@ qboolean FS_MatchFileInPak(const char *filepath, const char *match);
 #define IsPathSep(X) ((X) == '\\' || (X) == '/' || (X) == PATH_SEP)
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-const char *DL_ContainerizePath(const char *temp, const char *dest);
+const char *Com_ContainerizePath(const char *temp, const char *dest);
 void FS_InitWhitelist(void);
 qboolean FS_IsWhitelisted(const char *pakName, const char *hash);
 #define FS_CONTAINER "dlcache"
@@ -1253,9 +1253,10 @@ void Com_Update_f(void);
 void Com_ClearDownload(void);
 void Com_ClearStaticDownload(void);
 
+unsigned int Com_BeginWebDownload(const char *localName, const char *remoteName);
 void Com_NextDownload(void);
 void Com_InitDownloads(void);
-void Com_WWWDownload(void);
+void Com_WebDownloadLoop(void);
 qboolean Com_WWWBadChecksum(const char *pakname);
 void Com_Download_f(void);
 
@@ -1409,7 +1410,7 @@ double Sys_GetWindowsVer(void);
 
 #define sys_stat_t struct _stat
 int Sys_Stat(const char *path, void *stat);
-#define Sys_S_IsDir(m) (m & _S_IFDIR)
+#define Sys_S_IsDir(m) ((m)&_S_IFDIR)
 
 int Sys_Rename(const char *from, const char *to);
 char *Sys_RealPath(const char *path);

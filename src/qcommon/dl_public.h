@@ -42,10 +42,44 @@ typedef enum
 	DL_FAILED
 } dlStatus_t;
 
-int DL_BeginDownload(const char *localName, const char *remoteName);
-char *DL_GetString(const char *url);
-dlStatus_t DL_DownloadLoop(void);
+struct webRequest_s;
 
+typedef void (*webCallbackFunc_t)(struct webRequest_s *request, qboolean reqOk);
+typedef int (*webProgressCallbackFunc_t)(struct webRequest_s *request, double current, double total);
+
+typedef struct
+{
+	char name[MAX_STRING_CHARS];
+	size_t requestLength;
+
+	FILE *fileHandle;
+
+	size_t bufferSize;
+	size_t bufferPos;
+	byte *buffer;
+} webRequestData_t;
+
+typedef struct webRequest_s
+{
+	unsigned int id;
+	char url[MAX_STRING_CHARS];
+
+	qboolean upload;
+	qboolean abort;
+
+	webCallbackFunc_t complete_clb;
+	webProgressCallbackFunc_t progress_clb;
+
+	webRequestData_t data;
+
+	void *rawHandle;
+	struct webRequest_s *next;
+} webRequest_t;
+
+unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress);
+int Web_GetRequest(const char *url);
+void DL_DownloadLoop(void);
+void DL_AbortAll(qboolean block, qboolean allowContinue);
 void DL_Shutdown(void);
 
 /**

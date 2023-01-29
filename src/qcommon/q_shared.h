@@ -438,6 +438,10 @@ typedef int clipHandle_t;
 #endif
 #endif
 
+#ifndef BITS
+#define BITS(x) (BIT((x)) - 1)
+#endif
+
 #define SIZE_KB(bytes) ((bytes) >> 10)
 #define SIZE_MB(bytes) ((bytes) >> 20)
 #define SIZE_GB(bytes) ((bytes) >> 30)

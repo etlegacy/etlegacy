@@ -44,9 +44,9 @@
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 /**
- * @brief DL_ContainerizePath target destination path to container if needed
+ * @brief Com_ContainerizePath target destination path to container if needed
  */
-const char *DL_ContainerizePath(const char *temp, const char *dest)
+const char *Com_ContainerizePath(const char *temp, const char *dest)
 {
 	char       hash[41] = { 0 };
 	const char *pakname = FS_Basename(dest);
@@ -195,158 +195,13 @@ void Com_BeginDownload(const char *localName, const char *remoteName)
 #endif
 }
 
-static void checkDownloadName(char *filename)
+static void Com_WebDownloadComplete(webRequest_t *request, qboolean requestOk)
 {
-	int i;
+	const char *to_ospath;
 
-	for (i = 0; i < strlen(filename); i++)
-	{
-		if (filename[i] <= 31 || filename[i] >= 127)
-		{
-			Cvar_Set("com_missingFiles", "");
-			Com_Error(ERR_DROP, "Disconnected from server.\n\nServer file name \"%s\" is containing an invalid character for the ET: Legacy file structure.\n\nDownloading file denied.", filename);
-		}
-	}
-}
+	Cvar_Set("ui_dl_running", "0");
 
-/**
- * @brief A download completed or failed
- */
-void Com_NextDownload(void)
-{
-	char *s;
-	char *remoteName, *localName;
-
-	// We are looking to start a download here
-	if (*dld.downloadList)
-	{
-		s = dld.downloadList;
-
-		// format is:
-		//  @remotename@localname@remotename@localname, etc.
-
-		if (*s == '@')
-		{
-			s++;
-		}
-		remoteName = s;
-
-		if ((s = strchr(s, '@')) == NULL)
-		{
-			Com_DownloadsComplete();
-			return;
-		}
-
-		*s++      = 0;
-		localName = s;
-		if ((s = strchr(s, '@')) != NULL)
-		{
-			*s++ = 0;
-		}
-		else
-		{
-			s = localName + strlen(localName);    // point at the nul byte
-
-		}
-
-		checkDownloadName(remoteName);
-
-		Com_BeginDownload(localName, remoteName);
-
-		dld.downloadRestart = qtrue;
-
-		// move over the rest
-		memmove(dld.downloadList, s, strlen(s) + 1);
-
-		return;
-	}
-
-	Com_DownloadsComplete();
-}
-
-/**
-* @brief After receiving a valid game state, we validate the cgame and
-* local zip files here and determine if we need to download them
-*/
-void Com_InitDownloads(void)
-{
-	char missingFiles[1024] = { '\0' };
-
-	// init some of the www dl data
-	dld.bWWWDl             = qfalse;
-	dld.bWWWDlAborting     = qfalse;
-	dld.bWWWDlDisconnected = qfalse;
-	Com_ClearStaticDownload();
-
-	if (!Com_InitUpdateDownloads())
-	{
-		// whatever auto download configuration, store missing files in a cvar, use later in the ui maybe
-		if (FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
-		{
-			Cvar_Set("com_missingFiles", missingFiles);
-		}
-		else
-		{
-			Cvar_Set("com_missingFiles", "");
-		}
-
-		// reset the redirect checksum tracking
-		dld.redirectedList[0] = '\0';
-
-#ifdef DEDICATED
-		Com_NextDownload();
-#else
-		if (cl_allowDownload->integer && FS_ComparePaks(dld.downloadList, sizeof(dld.downloadList), qtrue))
-		{
-			if (*dld.downloadList)
-			{
-				// if auto downloading is not enabled on the server
-				cls.state = CA_CONNECTED;
-				Com_NextDownload();
-				return;
-			}
-		}
-#endif
-	}
-	else
-	{
-		return;
-	}
-
-	Com_DownloadsComplete();
-}
-
-/**
- * @brief Com_WWWDownload
- */
-void Com_WWWDownload(void)
-{
-	const char      *to_ospath;
-	dlStatus_t      ret;
-	static qboolean bAbort = qfalse;
-
-	if (dld.bWWWDlAborting)
-	{
-		if (!bAbort)
-		{
-			Com_DPrintf("Com_WWWDownload: WWWDlAborting\n");
-			bAbort = qtrue;
-		}
-		return;
-	}
-	if (bAbort)
-	{
-		Com_DPrintf("Com_WWWDownload: WWWDlAborting done\n");
-		bAbort = qfalse;
-	}
-
-	ret = DL_DownloadLoop();
-
-	if (ret == DL_CONTINUE)
-	{
-		return;
-	}
-	else if (ret == DL_DONE)
+	if (requestOk)
 	{
 		// taken from CL_ParseDownload
 		// we work with OS paths
@@ -361,7 +216,7 @@ void Com_WWWDownload(void)
 		{
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"),
-			                           DL_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
+			                           Com_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
 #else
 			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
 #endif
@@ -440,6 +295,165 @@ void Com_WWWDownload(void)
 	Com_NextDownload();
 }
 
+static int Com_WebDownloadProgress(webRequest_t *request, double now, double total)
+{
+	Cvar_SetValue("cl_downloadCount", (float)now);
+	return 0;
+}
+
+unsigned int Com_BeginWebDownload(const char *localName, const char *remoteName)
+{
+	return DL_BeginDownload(localName, remoteName, &Com_WebDownloadComplete, &Com_WebDownloadProgress);
+}
+
+static void checkDownloadName(char *filename)
+{
+	int i;
+
+	for (i = 0; i < strlen(filename); i++)
+	{
+		if (filename[i] <= 31 || filename[i] >= 127)
+		{
+			Cvar_Set("com_missingFiles", "");
+			Com_Error(ERR_DROP, "Disconnected from server.\n\nServer file name \"%s\" is containing an invalid character for the ET: Legacy file structure.\n\nDownloading file denied.", filename);
+		}
+	}
+}
+
+/**
+ * @brief A download completed or failed
+ */
+void Com_NextDownload(void)
+{
+	char *s;
+	char *remoteName, *localName;
+
+	// We are looking to start a download here
+	if (*dld.downloadList)
+	{
+		s = dld.downloadList;
+
+		// format is:
+		//  @remotename@localname@remotename@localname, etc.
+
+		if (*s == '@')
+		{
+			s++;
+		}
+		remoteName = s;
+
+		if ((s = strchr(s, '@')) == NULL)
+		{
+			Com_DownloadsComplete();
+			return;
+		}
+
+		*s++      = 0;
+		localName = s;
+		if ((s = strchr(s, '@')) != NULL)
+		{
+			*s++ = 0;
+		}
+		else
+		{
+			s = localName + strlen(localName);    // point at the nul byte
+
+		}
+
+		checkDownloadName(remoteName);
+
+		Com_BeginDownload(localName, remoteName);
+
+		dld.downloadRestart = qtrue;
+
+		// move over the rest
+		memmove(dld.downloadList, s, strlen(s) + 1);
+
+		return;
+	}
+
+	Com_DownloadsComplete();
+}
+
+/**
+* @brief After receiving a valid game state, we validate the cgame and
+* local zip files here and determine if we need to download them
+*/
+void Com_InitDownloads(void)
+{
+	char missingFiles[1024] = { '\0' };
+
+	// init the www dl data
+	dld.bWWWDl             = qfalse;
+	dld.bWWWDlAborting     = qfalse;
+	dld.bWWWDlDisconnected = qfalse;
+	Com_ClearStaticDownload();
+
+	if (!Com_InitUpdateDownloads())
+	{
+		// whatever auto download configuration, store missing files in a cvar, use later in the ui maybe
+		if (FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
+		{
+			Cvar_Set("com_missingFiles", missingFiles);
+		}
+		else
+		{
+			Cvar_Set("com_missingFiles", "");
+		}
+
+		// reset the redirect checksum tracking
+		dld.redirectedList[0] = '\0';
+
+#ifdef DEDICATED
+		Com_NextDownload();
+#else
+		if (cl_allowDownload->integer && FS_ComparePaks(dld.downloadList, sizeof(dld.downloadList), qtrue))
+		{
+			if (*dld.downloadList)
+			{
+				// if auto downloading is not enabled on the server
+				cls.state = CA_CONNECTED;
+				Com_NextDownload();
+				return;
+			}
+		}
+#endif
+	}
+	else
+	{
+		return;
+	}
+
+	Com_DownloadsComplete();
+}
+
+/**
+ * @brief Com_WebDownloadLoop
+ */
+void Com_WebDownloadLoop(void)
+{
+	static qboolean bAbort = qfalse;
+
+	DL_DownloadLoop();
+
+	if (dld.bWWWDlAborting)
+	{
+		if (!bAbort)
+		{
+			Com_DPrintf("Com_WebDownloadLoop: WWWDlAborting\n");
+			bAbort = qtrue;
+			DL_AbortAll(qfalse, qfalse);
+		}
+		return;
+	}
+	if (bAbort)
+	{
+		DL_AbortAll(qtrue, qtrue);
+		Com_DPrintf("Com_WebDownloadLoop: WWWDlAborting done\n");
+		bAbort = qfalse;
+	}
+}
+
 /**
  * @brief FS code calls this when doing FS_ComparePaks
  * we can detect files that we got from a www dl redirect with a wrong checksum
@@ -486,7 +500,7 @@ static void Com_SetupDownloadRaw(const char *remote, const char *path, const cha
 	Q_strncpyz(dld.downloadName, va("%s/%s", remote, filename), sizeof(dld.downloadName));
 	Q_strncpyz(dld.downloadTempName, tempName, sizeof(dld.downloadTempName));
 
-	if (!DL_BeginDownload(dld.downloadTempName, dld.downloadName))
+	if (!Com_BeginWebDownload(dld.downloadTempName, dld.downloadName))
 	{
 		dld.bWWWDlAborting = qtrue;
 		Com_Error(ERR_DROP, "Could not download file: \"%s\"", dld.downloadName);
@@ -509,7 +523,7 @@ static void Com_SetupDownload(const char *remote, const char *filename)
 	Q_strncpyz(dld.downloadName, va("%s/%s", remote, filename), sizeof(dld.downloadName));
 	Q_strncpyz(dld.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), va("%s" TMP_FILE_EXTENSION, filename)), sizeof(dld.downloadTempName));
 
-	if (!DL_BeginDownload(dld.downloadTempName, dld.downloadName))
+	if (!Com_BeginWebDownload(dld.downloadTempName, dld.downloadName))
 	{
 		dld.bWWWDlAborting = qtrue;
 		Com_Error(ERR_DROP, "Could not download file: \"%s\"", dld.downloadName);

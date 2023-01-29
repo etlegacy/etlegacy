@@ -57,7 +57,7 @@ void DL_Shutdown(void)
  * @param remoteName - unused
  * @return
  */
-int DL_BeginDownload(const char *localName, const char *remoteName)
+unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
 	return 1;
 }
@@ -67,7 +67,7 @@ int DL_BeginDownload(const char *localName, const char *remoteName)
  * @param url - unused
  * @return
  */
-char *DL_GetString(const char *url)
+int Web_GetRequest(const char *url)
 {
 	return 0;
 }
@@ -78,7 +78,6 @@ char *DL_GetString(const char *url)
  *
  * @note Maybe this should be CL_DL_DownloadLoop
  */
-dlStatus_t DL_DownloadLoop(void)
+void DL_DownloadLoop(void)
 {
-	return DL_DONE;
 }
