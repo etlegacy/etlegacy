@@ -183,7 +183,7 @@ VIAddVersionKey /LANG=${LANG_POLISH} "FileVersion" "@FILE_VERSION@"
 ; Sections
 Section "ET: Legacy" FILES
 	SectionIn RO
-	SetOverwrite ifnewer
+	SetOverwrite on
 	SetOutPath $INSTDIR
 	File /r /x omni-bot /x GeoIP.dat /x lualibs /x luascripts /x *.toml "@CPACK_PACKAGE_FILE_NAME@\*"
 
