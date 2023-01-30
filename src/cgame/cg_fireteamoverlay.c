@@ -366,6 +366,12 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 
 // Main Functions
 
+vec4_t textWhite  = { 1.0f, 1.0f, 1.0f, 1.0f };               // regular text
+vec4_t textYellow = { 1.0f, 1.0f, 0.0f, 1.0f };               // yellow text for health drawing
+vec4_t textRed    = { 1.0f, 0.0f, 0.0f, 1.0f };               // red text for health drawing
+vec4_t textOrange = { 1.0f, 0.6f, 0.0f, 1.0f };               // orange text for health drawing
+
+
 /**
  * @brief Draw FireTeam overlay
  * @param[in] rect
@@ -395,9 +401,6 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	vec4_t FT_select                = { 0.5f, 0.5f, 0.2f, 0.3f }; // selected member
 	vec4_t iconColor                = { 1.0f, 1.0f, 1.0f, 1.0f }; // icon "color", used for alpha adjustments
 	vec4_t iconColorSemitransparent = { 1.0f, 1.0f, 1.0f, 0.5f };
-	vec4_t textWhite                = { 1.0f, 1.0f, 1.0f, 1.0f }; // regular text
-	vec4_t textYellow               = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow text for health drawing
-	vec4_t textRed                  = { 1.0f, 0.0f, 0.0f, 1.0f }; // red text for health drawing
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -462,7 +465,16 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			locwidth = 0;
 		}
 
-		Q_strncpyz(name[i], ci->name, sizeof(name[i]));
+		if (cg_fireteamNameColorless.integer || (cg_fireteamStatusColors.integer == 1 && (ci->health <= 0 || ci->ping >= 999)))
+		{
+			Q_strncpyz(name[i], ci->cleanname, sizeof(name[i]));
+		}
+		else
+		{
+			Q_strncpyz(name[i], ci->name, sizeof(name[i]));
+		}
+
+
 		// truncate name if max chars is set
 		if (cg_fireteamNameMaxChars.integer)
 		{
@@ -557,6 +569,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	textWhite[3]  *= comp->colorMain[3];
 	textYellow[3] *= comp->colorMain[3];
 	textRed[3]    *= comp->colorMain[3];
+	textOrange[3] *= comp->colorMain[3];
 
 	if (comp->showBackGround)
 	{
@@ -592,6 +605,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		x = lineX;
+        vec4_t nameColor;
 
 		if (i != 0 || !(comp->style & BIT(1)))
 		{
@@ -606,19 +620,28 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			break;
 		}
 
-		// highlight selected players
+		if (cg_fireteamStatusColors.integer)
+		{
+			fireteamMemberStatusEnum_t status = CG_FireTeamMemberStatus(ci);
+
+			Com_Memcpy(&nameColor, CG_FireTeamNameColor(status), sizeof(vec4_t));
+			if (cg_fireteamStatusColors.integer == 2 && status != NONE)
+			{
+				vec4_t rowColor;
+				Com_Memcpy(&rowColor, nameColor, sizeof(vec4_t));
+				rowColor[3] = comp->colorBackground[3];
+				CG_FillRect(x, y, w, h, rowColor);
+			}
+		}
+		else
+		{
+			Com_Memcpy(&nameColor, &textWhite, sizeof(vec4_t));
+		}
+
 		if (ci->selected)
 		{
-			// first member requires thicker highlight bar
-			//if (i == 0)
-			//{
-			//	CG_FillRect(x, y, w, h, FT_select);
-			//}
-			//// adjust y to account for the thicker highlight bar of first member
-			//else
-			{
-				CG_FillRect(x, y, w, h, FT_select);
-			}
+			// highlight selected players
+			CG_FillRect(x, y, w, h, FT_select);
 		}
 
 		x += spacing;
@@ -684,11 +707,11 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		// right align?
 		if (cg_fireteamNameAlign.integer > 0)
 		{
-			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + heightTextOffset, scale, scale, textWhite, name[i], 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + heightTextOffset, scale, scale, nameColor, name[i], 0, 0, comp->styleText, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, nameColor, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 
 		// add space
@@ -781,6 +804,42 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	}
 
 	trap_R_SetColor(NULL);
+}
+
+fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci)
+{
+	if (ci->ping >= 999)
+	{
+		return TIMEOUT;
+	}
+	else if (ci->health == 0)
+	{
+		return WOUNDED;
+	}
+	else if (ci->health < 0)
+	{
+		return DEAD;
+	}
+	else
+	{
+		return NONE;
+	}
+}
+
+vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
+{
+	switch (status)
+	{
+	case TIMEOUT:
+		return &textOrange;
+	case WOUNDED:
+		return &textYellow;
+	case DEAD:
+		return &textRed;
+	case NONE:
+	default:
+		return &textWhite;
+	}
 }
 
 /*

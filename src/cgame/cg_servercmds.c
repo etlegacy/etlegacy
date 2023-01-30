@@ -150,7 +150,7 @@ static void CG_ParseScore(team_t team)
 	}
 }
 
-#define TEAMINFOARGS 6
+#define TEAMINFOARGS 7
 
 /**
  * @brief CG_ParseTeamInfo
@@ -188,6 +188,7 @@ static void CG_ParseTeamInfo(void)
 		cgs.clientinfo[client].location[2] = Q_atoi(CG_Argv(i * TEAMINFOARGS + 5));
 		cgs.clientinfo[client].health      = Q_atoi(CG_Argv(i * TEAMINFOARGS + 6));
 		cgs.clientinfo[client].powerups    = Q_atoi(CG_Argv(i * TEAMINFOARGS + 7));
+		cgs.clientinfo[client].ping        = Q_atoi(CG_Argv(i * TEAMINFOARGS + 8));
 	}
 }
 
