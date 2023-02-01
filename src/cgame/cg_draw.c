@@ -1283,10 +1283,10 @@ static void CG_DrawScopedReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
+	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -1721,7 +1721,7 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg_drawCrosshair.integer < 0)     // moved down so it doesn't keep the scoped weaps from drawing reticles
+	if (cg_drawCrosshair.integer < 0)     // moved down, so it doesn't keep the scoped weapons from drawing reticles
 	{
 		return;
 	}

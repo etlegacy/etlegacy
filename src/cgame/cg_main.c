@@ -2706,8 +2706,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);
-	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0f;
-	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0f;
+	cgs.screenXScale = (float)cgs.glconfig.vidWidth / 640.0f;
+	cgs.screenYScale = (float)cgs.glconfig.vidHeight / 480.0f;
 
 	cgDC.etLegacyClient = cg.etLegacyClient;
 

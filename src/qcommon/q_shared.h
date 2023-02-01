@@ -1901,7 +1901,8 @@ typedef struct rectDef_s
 
 //typedef rectDef_t Rectangle;
 
-#define RectangleSet(rect, v1, v2, v3, v4) ((rect.x) = (v1), (rect.y) = (v2), (rect.w) = (v3), (rect.h) = (v4))
+#define rect_set(rect, v1, v2, v3, v4) (((rect).x) = (v1), ((rect).y) = (v2), ((rect).w) = (v3), ((rect).h) = (v4))
+#define rect_copy(a, b) ((b).x = (a).x, (b).y = (a).y, (b).w = (a).w, (b).h = (a).h)
 
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
 float rint(float v);

@@ -3003,6 +3003,10 @@ qboolean Ccg_Is43Screen(void);      // does this game-window have a 4:3 aspectra
 float Ccg_WideX(float x);           // convert an x-coordinate to a widescreen x-coordinate. (only if the game-window is non 4:3 aspectratio)
 float Ccg_WideXoffset(void);        // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
+static ID_INLINE void CG_AdjustRectFrom640(rectDef_t *rect)
+{
+	CG_AdjustFrom640(&rect->x, &rect->y, &rect->w, &rect->h);
+}
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent);
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
@@ -4143,12 +4147,36 @@ typedef enum
 extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
+struct hudComponent_s;
+
+typedef enum
+{
+	TOP_LEFT = 0,
+	TOP_MIDDLE,
+	TOP_RIGHT,
+	MIDDLE_RIGHT,
+	BOTTOM_RIGHT,
+	BOTTOM_MIDDLE,
+	BOTTOM_LEFT,
+	MIDDLE_LEFT,
+	CENTER
+} anchorPoint_t;
+
+typedef struct
+{
+	struct hudComponent_s *parent;
+	anchorPoint_t point;
+} anchor_t;
 
 #define HUD_COMPONENTS_NUM 50
 
 typedef struct hudComponent_s
 {
-	rectDef_t location;
+	rectDef_t location; ///< This used runtime to actually draw the component
+	rectDef_t internalLocation; ///< This is the value that is used to generate the runtime value (value is persisted to file) this is in 4/3 screen coords
+	byte computed; ///< Has the location been computed already for this component
+	anchorPoint_t anchorPoint;
+	anchor_t parentAnchor;
 	int visible;
 	int style;
 	float scale;

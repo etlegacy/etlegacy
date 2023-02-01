@@ -236,10 +236,10 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 		{
 			rectObj = cJSON_AddObjectToObject(compObj, "rect");
 			{
-				cJSON_AddNumberToObject(rectObj, "x", CG_AdjustXToHudFile(comp->location.x, comp->location.w));
-				cJSON_AddNumberToObject(rectObj, "y", comp->location.y);
-				cJSON_AddNumberToObject(rectObj, "w", comp->location.w);
-				cJSON_AddNumberToObject(rectObj, "h", comp->location.h);
+				cJSON_AddNumberToObject(rectObj, "x", comp->internalLocation.y);
+				cJSON_AddNumberToObject(rectObj, "y", comp->internalLocation.y);
+				cJSON_AddNumberToObject(rectObj, "w", comp->internalLocation.w);
+				cJSON_AddNumberToObject(rectObj, "h", comp->internalLocation.h);
 			}
 		}
 
@@ -542,7 +542,6 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
 			{
 				if (PC_Float_Parse(handle, &r->h))
 				{
-					r->x = CG_AdjustXFromHudFile(r->x, r->w);
 					return qtrue;
 				}
 			}
@@ -626,7 +625,7 @@ static qboolean CG_Vec4Parse(int handle, vec4_t v)
 static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 {
 	//PC_Rect_Parse
-	if (!CG_RectParse(handle, &comp->location))
+	if (!CG_RectParse(handle, &comp->internalLocation))
 	{
 		return qfalse;
 	}
@@ -1115,12 +1114,10 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			tmp = cJSON_GetObjectItem(comp, "rect");
 			if (tmp)
 			{
-				component->location.x = Q_ReadFloatValueJson(tmp, "x");
-				component->location.y = Q_ReadFloatValueJson(tmp, "y");
-				component->location.w = Q_ReadFloatValueJson(tmp, "w");
-				component->location.h = Q_ReadFloatValueJson(tmp, "h");
-
-				component->location.x = CG_AdjustXFromHudFile(component->location.x, component->location.w);
+				component->internalLocation.x = Q_ReadFloatValueJson(tmp, "x");
+				component->internalLocation.y = Q_ReadFloatValueJson(tmp, "y");
+				component->internalLocation.w = Q_ReadFloatValueJson(tmp, "w");
+				component->internalLocation.h = Q_ReadFloatValueJson(tmp, "h");
 			}
 
 			component->style   = Q_ReadIntValueJsonEx(comp, "style", component->style);
