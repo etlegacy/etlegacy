@@ -281,7 +281,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		}
 		else
 		{
-			msec = mins = tens = seconds = 0;
+			msec = mins = tens = seconds = rmsec = rmins = rtens = rseconds = 0;
 		}
 
 		if (cgs.gamestate == GS_PLAYING)
