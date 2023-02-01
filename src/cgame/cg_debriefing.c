@@ -4697,7 +4697,7 @@ void CG_parseMapVoteHistory()
 
 	cgs.dbMapsHistoryCount = trap_Argc() - 1;
 
-	for (i = 0; i < cgs.dbMapsHistoryCount && i < sizeof(cgs.dbMapsHistory); i++)
+	for (i = 0; i < cgs.dbMapsHistoryCount && i < MAX_HISTORY_MAPS; i++)
 	{
 		cgs.dbMapsHistory[i] = Q_atoi(CG_Argv(i + 1));
 

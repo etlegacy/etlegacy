@@ -2364,6 +2364,8 @@ typedef struct sampledStat_s
 	int samplesTotalElpased;
 } sampledStat_t;
 
+#define MAX_HISTORY_MAPS 333
+
 /**
  * @struct sortedVotedMapByTotal_s
  * @typedef sortedVotedMapByTotal_s
@@ -2609,7 +2611,7 @@ typedef struct cgs_s
 	int dbMapVoteListOffset;
 	int dbMapsHistoryCount;
 	int dbMapsHistoryCountList;
-	int dbMapsHistory[333];
+	int dbMapsHistory[MAX_HISTORY_MAPS];
 	int dbMapsHistoryList[32];
 	int dbNumMaps;
 	char dbMaps[MAX_VOTE_MAPS][MAX_QPATH];
