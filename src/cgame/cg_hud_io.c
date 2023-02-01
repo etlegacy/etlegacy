@@ -103,7 +103,7 @@ float CG_AdjustXFromHudFile(float x, float w)
 	{
 		return Ccg_WideX(x) + (Ccg_WideX(w) - w) * .5f;
 	}
-	else if (Ccg_WideX(x + w) - w <= (int)(320 * cgs.adr43))
+	else if (x <= 320)
 	{
 		return Ccg_WideX(x);
 	}
