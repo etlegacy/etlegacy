@@ -2364,6 +2364,8 @@ typedef struct sampledStat_s
 	int samplesTotalElpased;
 } sampledStat_t;
 
+#define MAX_HISTORY_MAPS 333
+
 /**
  * @struct sortedVotedMapByTotal_s
  * @typedef sortedVotedMapByTotal_s
@@ -2609,7 +2611,7 @@ typedef struct cgs_s
 	int dbMapVoteListOffset;
 	int dbMapsHistoryCount;
 	int dbMapsHistoryCountList;
-	int dbMapsHistory[333];
+	int dbMapsHistory[MAX_HISTORY_MAPS];
 	int dbMapsHistoryList[32];
 	int dbNumMaps;
 	char dbMaps[MAX_VOTE_MAPS][MAX_QPATH];
@@ -3721,7 +3723,7 @@ void trap_R_Finish(void);
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_SysFlashWindow(int state);
-void trap_CommandComplete(char *value);
+void trap_CommandComplete(const char *value);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 extern int dll_trap_CommandComplete;
