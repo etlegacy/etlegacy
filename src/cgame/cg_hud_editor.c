@@ -57,14 +57,14 @@
 
 #define HUDEDITOR_SELECTHUD_Y 6
 #define HUDEDITOR_SIZEPOS_Y (HUDEDITOR_SELECTHUD_Y + BUTTON_HEIGHT + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 2) + \
-	                         HUDEDITOR_CONTROLS_SPACER_XY + HUDEDITOR_CATEGORY_SPACER_Y)
+							 HUDEDITOR_CONTROLS_SPACER_XY + HUDEDITOR_CATEGORY_SPACER_Y)
 
 #define HUDEDITOR_TEXT_Y (HUDEDITOR_SIZEPOS_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CATEGORY_SPACER_Y + \
-	                      (INPUT_HEIGHT * 2) + HUDEDITOR_CONTROLS_SPACER_XY)
+						  (INPUT_HEIGHT * 2) + HUDEDITOR_CONTROLS_SPACER_XY)
 
 
 #define HUDEDITOR_COLORSSTYLE_Y (HUDEDITOR_TEXT_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CATEGORY_SPACER_Y + \
-	                             (INPUT_HEIGHT * 3) + HUDEDITOR_CONTROLS_SPACER_XY)
+								 (INPUT_HEIGHT * 3) + HUDEDITOR_CONTROLS_SPACER_XY)
 
 enum
 {
@@ -2563,6 +2563,13 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 
 			comp->location.x = x - offsetX;
 			comp->location.y = y - offsetY;
+
+			// adjust the internal x coordinate as well
+			// comp->internalLocation.x = CG_AdjustXToHudFile(comp->location.x, comp->location.w);
+			// comp->internalLocation.y = comp->location.y;
+			// comp->computed = qfalse;
+			CG_FindComponentClosestParentAnchor(comp);
+
 			CG_HudEditorUpdateFields(button);
 			return;
 		}

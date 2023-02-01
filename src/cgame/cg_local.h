@@ -3003,6 +3003,7 @@ void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t
 
 qboolean Ccg_Is43Screen(void);      // does this game-window have a 4:3 aspectratio. note: this is also true for a 800x600 windowed game on a widescreen monitor
 float Ccg_WideX(float x);           // convert an x-coordinate to a widescreen x-coordinate. (only if the game-window is non 4:3 aspectratio)
+float Ccg_WideXReverse(float x);
 float Ccg_WideXoffset(void);        // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 static ID_INLINE void CG_AdjustRectFrom640(rectDef_t *rect)
@@ -3111,6 +3112,7 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
 
 // cg_hud_io.c
 float CG_AdjustXFromHudFile(float x, float w);
+float CG_AdjustXToHudFile(float x, float w);
 qboolean CG_WriteHudsToFile();
 qboolean CG_TryReadHudFromFile(const char *filename);
 void CG_ReadHudsFromFile(void);
@@ -4153,6 +4155,14 @@ struct hudComponent_s;
 
 typedef enum
 {
+	TOP    = BIT(0),
+	RIGHT  = BIT(1),
+	BOTTOM = BIT(2),
+	LEFT   = BIT(3)
+} directions_t;
+
+typedef enum
+{
 	TOP_LEFT = 0,
 	TOP_MIDDLE,
 	TOP_RIGHT,
@@ -4293,6 +4303,7 @@ hudStucture_t *CG_AddHudToList(hudStucture_t *hud);
 hudStucture_t *CG_GetHudByNumber(int number);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
+void CG_FindComponentClosestParentAnchor(hudComponent_t *comp);
 
 void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);

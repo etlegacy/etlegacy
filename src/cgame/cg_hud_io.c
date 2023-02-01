@@ -88,7 +88,7 @@ hudStucture_t *CG_AddHudToList(hudStucture_t *hud)
 }
 
 /**
- * @brief Ccg_WideXAdjustFromWide
+ * @brief CG_AdjustXFromHudFile
  * @param x
  * @param w
  * @return
@@ -99,7 +99,8 @@ float CG_AdjustXFromHudFile(float x, float w)
 	{
 		return x;
 	}
-	else if ((int)(x + w * .5f) == 320)
+
+	if ((int)(x + w * .5f) == 320)
 	{
 		return Ccg_WideX(x) + (Ccg_WideX(w) - w) * .5f;
 	}
@@ -114,29 +115,30 @@ float CG_AdjustXFromHudFile(float x, float w)
 }
 
 /**
- * @brief Ccg_WideXAdjustFromWide
+ * @brief CG_AdjustXToHudFile
  * @param x
  * @param w
  * @return
  */
-static ID_INLINE float CG_AdjustXToHudFile(float x, float w)
+float CG_AdjustXToHudFile(float x, float w)
 {
+	float wideX = Ccg_WideX(320);
 	if (Ccg_Is43Screen())
 	{
 		return x;
 	}
-	else if ((int)(x + w * .5f) >= (int)(320 * cgs.adr43) - 1 &&
-	         (int)(x + w * .5f) <= (int)(320 * cgs.adr43) + 1)
+
+	if ((int)(x + w * .5f) == (int)wideX)
 	{
-		return (x - (Ccg_WideX(w) - w) * .5f) / cgs.adr43;
+		return Ccg_WideXReverse(x - ((Ccg_WideX(w) - w) / 0.5f));
 	}
-	else if (x <= (int)(320 * cgs.adr43))
+	else if (x <= wideX)
 	{
-		return x / cgs.adr43;
+		return Ccg_WideXReverse(x);
 	}
 	else
 	{
-		return (x + w - Ccg_WideX(w)) / cgs.adr43;
+		return Ccg_WideXReverse(x + w) - w;
 	}
 }
 
@@ -313,7 +315,7 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 static uint32_t CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2)
 {
 	uint32_t flags = 0;
-	if (!rect_cmp(c1->location, c2->location))
+	if (!rect_cmp(c1->internalLocation, c2->internalLocation))
 	{
 		flags |= BIT(0);
 	}

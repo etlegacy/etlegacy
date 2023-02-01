@@ -88,7 +88,17 @@ qboolean Ccg_Is43Screen(void)
  */
 float Ccg_WideX(float x)
 {
-	return (Ccg_Is43Screen()) ? x : x *cgs.adr43; // * (aspectratio / (4/3))
+	return (Ccg_Is43Screen()) ? x : x * cgs.adr43; // * (aspectratio / (4/3))
+}
+
+/**
+ * @brief Ccg_WideXReverse
+ * @param[in] x
+ * @return
+ */
+float Ccg_WideXReverse(float x)
+{
+	return (Ccg_Is43Screen()) ? x : x / cgs.adr43; // * (aspectratio / (4/3))
 }
 
 /**
@@ -231,7 +241,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			h -= (2 * indent);
 		}
 	}
-    else if (((flags & BAR_BORDER) || (flags & BAR_BORDER_SMALL)) && bdColor)
+	else if (((flags & BAR_BORDER) || (flags & BAR_BORDER_SMALL)) && bdColor)
 	{
 		int indent = (flags & BAR_BORDER_SMALL) ? 1 : BAR_BORDERSIZE;
 

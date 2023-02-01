@@ -3389,34 +3389,159 @@ static void CG_ComputeRectBasedOnPoint(rectDef_t *loc, anchorPoint_t point)
 	case TOP_LEFT:
 		break;
 	case TOP_MIDDLE:
-		loc->x -= (loc->w / 2);
+		loc->x += (loc->w / 2);
 		break;
 	case TOP_RIGHT:
-		loc->x -= loc->w;
+		loc->x += loc->w;
 		break;
 	case MIDDLE_RIGHT:
-		loc->x -= loc->w;
-		loc->y -= (loc->h / 2);
+		loc->x += loc->w;
+		loc->y += (loc->h / 2);
 		break;
 	case BOTTOM_RIGHT:
-		loc->x -= loc->w;
-		loc->y -= loc->h;
+		loc->x += loc->w;
+		loc->y += loc->h;
 		break;
 	case BOTTOM_MIDDLE:
-		loc->x -= (loc->w / 2);
-		loc->y -= loc->h;
+		loc->x += (loc->w / 2);
+		loc->y += loc->h;
 		break;
 	case BOTTOM_LEFT:
-		loc->y -= loc->h;
+		loc->y += loc->h;
 		break;
 	case MIDDLE_LEFT:
-		loc->y -= (loc->h / 2);
+		loc->y += (loc->h / 2);
 		break;
 	case CENTER:
-		loc->x -= (loc->w / 2);
-		loc->y -= (loc->h / 2);
+		loc->x += (loc->w / 2);
+		loc->y += (loc->h / 2);
 		break;
 	}
+}
+
+static int CG_FindFloatPointInRange(float value, float min, float max)
+{
+	float tmp;
+	float half = (max - min) / 2.f;
+	value = value - min;
+	max   = max - min;
+
+	tmp = half - value;
+
+	if (tmp < 0)
+	{
+		tmp = fabsf(tmp);
+		if (tmp >= (half / 2))
+		{
+			return 2;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+
+	if (tmp >= (half / 2))
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+void CG_FindComponentClosestParentAnchor(hudComponent_t *comp)
+{
+	int           x, y;
+	float         tmpX, tmpY;
+	rectDef_t     parentLoc, tmpLoc;
+	anchorPoint_t newPoint, oldPoint = comp->parentAnchor.point;
+
+	if (comp->parentAnchor.parent)
+	{
+		// FIXME: handle the parent anchoring....
+		return;
+	}
+
+	parentLoc.x = parentLoc.y = 0;
+	parentLoc.w = SCREEN_WIDTH_F;
+	parentLoc.h = SCREEN_HEIGHT_F;
+
+	x = CG_FindFloatPointInRange(comp->location.x, 0, Ccg_WideX(SCREEN_WIDTH_F));
+	y = CG_FindFloatPointInRange(comp->location.y, 0, SCREEN_HEIGHT_F);
+
+	switch (x)
+	{
+	case 0:
+		switch (y)
+		{
+		case 0:
+			newPoint = TOP_LEFT;
+			break;
+		case 1:
+			newPoint = MIDDLE_LEFT;
+			break;
+		case 2:
+			newPoint = BOTTOM_LEFT;
+			break;
+		}
+		break;
+	case 1:
+		switch (y)
+		{
+		case 0:
+			newPoint = TOP_MIDDLE;
+			break;
+		case 1:
+			newPoint = CENTER;
+			break;
+		case 2:
+			newPoint = BOTTOM_MIDDLE;
+			break;
+		}
+		break;
+	case 2:
+		switch (y)
+		{
+		case 0:
+			newPoint = TOP_RIGHT;
+			break;
+		case 1:
+			newPoint = MIDDLE_RIGHT;
+			break;
+		case 2:
+			newPoint = BOTTOM_RIGHT;
+			break;
+		}
+		break;
+	}
+
+	// newPoint = TOP_LEFT;
+
+	if (oldPoint != newPoint)
+	{
+		CG_DPrintf(S_COLOR_CYAN "Component parent anchor changed: %i -> %i\n", oldPoint, newPoint);
+	}
+
+	CG_ComputeRectBasedOnPoint(&parentLoc, newPoint);
+	parentLoc.x = Ccg_WideX(parentLoc.x);
+
+	rect_copy(comp->location, tmpLoc);
+	// tmpLoc.x = Ccg_WideXReverse(tmpLoc.x);
+
+	tmpX = tmpLoc.x - parentLoc.x;
+	tmpY = tmpLoc.y - parentLoc.y;
+
+	comp->internalLocation.x = CG_AdjustXToHudFile(tmpX, comp->location.w);
+	// comp->internalLocation.x = Ccg_WideXReverse(tmpX);
+	comp->internalLocation.y = tmpY;
+	comp->parentAnchor.point = newPoint;
+
+
+	// adjust the internal x coordinate as well
+	// comp->internalLocation.x = CG_AdjustXToHudFile(comp->location.x, comp->location.w);
+	// comp->internalLocation.y = comp->location.y;
+
+	comp->computed = qfalse;
 }
 
 static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
@@ -3431,7 +3556,7 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 	}
 
 	rect_copy(comp->internalLocation, comp->location);
-	comp->location.x = CG_AdjustXFromHudFile(comp->location.x, comp->location.w);
+	// comp->location.x = CG_AdjustXFromHudFile(comp->location.x, comp->location.w);
 
 	CG_ComputeRectBasedOnPoint(&comp->location, comp->anchorPoint);
 
@@ -3454,6 +3579,7 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 		parentLoc.x = parentLoc.y = 0;
 		parentLoc.w = SCREEN_WIDTH_F;
 		parentLoc.h = SCREEN_HEIGHT_F;
+		// parentLoc.x = CG_AdjustXFromHudFile(parentLoc.x, parentLoc.w);
 	}
 
 	// figure out the parent components anchor location
@@ -3462,7 +3588,11 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 	// final location
 	comp->location.x += parentLoc.x;
 	comp->location.y += parentLoc.y;
-	comp->computed    = qtrue;
+
+	comp->location.x = CG_AdjustXFromHudFile(comp->location.x, comp->location.w);
+	// comp->location.x = Ccg_WideX(comp->location.x);
+
+	comp->computed = qtrue;
 
 	return qtrue;
 }
@@ -3476,7 +3606,7 @@ static void CG_ComputeComponentPositions(void)
 	{
 		comp = activehud->components[i];
 
-		if (!comp->computed)
+		if (comp && !comp->computed)
 		{
 			if (!CG_ComputeComponentPosition(comp, 0))
 			{
