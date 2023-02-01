@@ -366,10 +366,21 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 
 // Main Functions
 
-vec4_t textWhite  = { 1.0f, 1.0f, 1.0f, 1.0f };               // regular text
-vec4_t textYellow = { 1.0f, 1.0f, 0.0f, 1.0f };               // yellow text for health drawing
-vec4_t textRed    = { 1.0f, 0.0f, 0.0f, 1.0f };               // red text for health drawing
-vec4_t textOrange = { 1.0f, 0.6f, 0.0f, 1.0f };               // orange text for health drawing
+static vec4_t textWhite  = { 1.0f, 1.0f, 1.0f, 1.0f };               // regular text
+static vec4_t textYellow = { 1.0f, 1.0f, 0.0f, 1.0f };               // yellow text for health drawing
+static vec4_t textRed    = { 1.0f, 0.0f, 0.0f, 1.0f };               // red text for health drawing
+static vec4_t textOrange = { 1.0f, 0.6f, 0.0f, 1.0f };               // orange text for health drawing
+
+typedef enum
+{
+    TIMEOUT,
+    WOUNDED,
+    DEAD,
+    NONE
+} fireteamMemberStatusEnum_t;
+
+static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci);
+static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status);
 
 
 /**
@@ -806,7 +817,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	trap_R_SetColor(NULL);
 }
 
-fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci)
+static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci)
 {
 	if (ci->ping >= 999)
 	{
@@ -826,7 +837,7 @@ fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci)
 	}
 }
 
-vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
+static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
 {
 	switch (status)
 	{

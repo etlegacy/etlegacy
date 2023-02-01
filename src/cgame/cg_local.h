@@ -648,7 +648,7 @@ typedef struct clientInfo_s
 	int breathPuffTime;
 	int cls;
 	int latchedcls;
-    int ping;
+	int ping;
 
 	int rank;
 
@@ -3818,20 +3818,10 @@ void CG_DrawUISelectedSoldier(void);
 void CG_UICurrentSquadSetup(void);
 void CG_CampaignBriefingSetup(void);
 
-typedef enum
-{
-    TIMEOUT,
-    WOUNDED,
-    DEAD,
-    NONE
-} fireteamMemberStatusEnum_t;
-
 // Fireteam stuff
 fireteamData_t *CG_IsOnFireteam(int clientNum);
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 fireteamData_t *CG_IsFireTeamLeader(int clientNum);
-fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t* ci);
-vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status);
 
 //clientInfo_t *CG_ClientInfoForPosition(int pos, int max);
 //fireteamData_t *CG_FireTeamForPosition(int pos, int max);
