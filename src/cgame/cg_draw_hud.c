@@ -289,12 +289,6 @@ void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fo
 		return;
 	}
 
-	// if (!cg.editingHud)
-	// {
-	//     x = Ccg_WideX(x);
-	//     w = Ccg_WideX(w);
-	// }
-
 	scale = CG_ComputeScale(comp /*comp->location.h , comp->scale, font*/);
 
 	w  = CG_Text_Width_Ext(str, scale, 0, font);
@@ -3427,7 +3421,7 @@ static void CG_ComputeRectBasedOnPoint(rectDef_t *loc, anchorPoint_t point)
 
 static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 {
-	rectDef_t tmp;
+	rectDef_t parentLoc;
 
 	// force quit this insanity
 	if (depth > 10 || depth < 0)
@@ -3438,9 +3432,6 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 
 	rect_copy(comp->internalLocation, comp->location);
 	comp->location.x = CG_AdjustXFromHudFile(comp->location.x, comp->location.w);
-	// comp->location.x = Ccg_WideX(comp->location.x);
-	// comp->location.w = Ccg_WideX(comp->location.w);
-	// CG_AdjustRectFrom640(&comp->location);
 
 	CG_ComputeRectBasedOnPoint(&comp->location, comp->anchorPoint);
 
@@ -3455,21 +3446,22 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 			}
 		}
 
-		// figure out the components location
-		Com_Memcpy(&tmp, &comp->parentAnchor.parent->location, sizeof(rectDef_t));
+		Com_Memcpy(&parentLoc, &comp->parentAnchor.parent->location, sizeof(rectDef_t));
 	}
 	else
 	{
 		// our parent is the screen, so fill it in
-		tmp.x = tmp.y = 0;
-		tmp.w = SCREEN_WIDTH_F;
-		tmp.h = SCREEN_HEIGHT_F;
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = SCREEN_WIDTH_F;
+		parentLoc.h = SCREEN_HEIGHT_F;
 	}
-	CG_ComputeRectBasedOnPoint(&tmp, comp->parentAnchor.point);
+
+	// figure out the parent components anchor location
+	CG_ComputeRectBasedOnPoint(&parentLoc, comp->parentAnchor.point);
 
 	// final location
-	comp->location.x += tmp.x;
-	comp->location.y += tmp.y;
+	comp->location.x += parentLoc.x;
+	comp->location.y += parentLoc.y;
 	comp->computed    = qtrue;
 
 	return qtrue;
