@@ -180,7 +180,7 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 	uint32_t       flags;
 	hudStucture_t  *parent = NULL;
 	hudComponent_t *comp, *parentComp;
-	cJSON          *compObj, *rectObj, *compsObj, *hudObj = cJSON_CreateObject();
+	cJSON          *compObj, *tmpObj, *compsObj, *hudObj = cJSON_CreateObject();
 
 	cJSON_AddStringToObject(hudObj, "name", hud->name);
 	cJSON_AddNumberToObject(hudObj, "number", hud->hudnumber);
@@ -236,12 +236,12 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 
 		if (flags & BIT(0))
 		{
-			rectObj = cJSON_AddObjectToObject(compObj, "rect");
+			tmpObj = cJSON_AddObjectToObject(compObj, "rect");
 			{
-				cJSON_AddNumberToObject(rectObj, "x", comp->internalLocation.y);
-				cJSON_AddNumberToObject(rectObj, "y", comp->internalLocation.y);
-				cJSON_AddNumberToObject(rectObj, "w", comp->internalLocation.w);
-				cJSON_AddNumberToObject(rectObj, "h", comp->internalLocation.h);
+				cJSON_AddNumberToObject(tmpObj, "x", comp->internalLocation.x);
+				cJSON_AddNumberToObject(tmpObj, "y", comp->internalLocation.y);
+				cJSON_AddNumberToObject(tmpObj, "w", comp->internalLocation.w);
+				cJSON_AddNumberToObject(tmpObj, "h", comp->internalLocation.h);
 			}
 		}
 
@@ -303,6 +303,24 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 		if (flags & BIT(12))
 		{
 			cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
+		}
+
+		if (comp->anchorPoint)
+		{
+			cJSON_AddNumberToObject(compObj, "anchor", comp->anchorPoint);
+		}
+
+		if (comp->parentAnchor.parent || comp->parentAnchor.point)
+		{
+			tmpObj = cJSON_AddObjectToObject(compObj, "parent");
+			{
+				cJSON_AddNumberToObject(tmpObj, "anchor", comp->parentAnchor.point);
+				if (comp->parentAnchor.parent)
+				{
+					// FIXME: todo figure out what component are we referring to
+					cJSON_AddStringToObject(tmpObj, "component", "");
+				}
+			}
 		}
 	}
 
@@ -1096,7 +1114,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 
 		for (i = 0; hudComponentFields[i].name; i++)
 		{
-			component = (hudComponent_t *)((char * )&tmpHud + hudComponentFields[i].offset);
+			component = (hudComponent_t *) ((char *) &tmpHud + hudComponentFields[i].offset);
 			comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
 
 			if (parentHud)
@@ -1141,6 +1159,15 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			component->styleText  = Q_ReadIntValueJsonEx(comp, "textStyle", component->styleText);
 			component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
 			component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
+
+			component->anchorPoint = Q_ReadIntValueJson(comp, "anchor");
+			tmp                    = cJSON_GetObjectItem(comp, "parent");
+			if (tmp)
+			{
+				component->parentAnchor.point = Q_ReadIntValueJson(tmp, "anchor");
+				char *compName = Q_ReadStringValueJson(tmp, "component");
+				// FIXME: figure out how to setup the component based on a name / identifier
+			}
 		}
 
 		outHud = CG_GetHudByNumber(tmpHud.hudnumber);

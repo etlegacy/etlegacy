@@ -2564,11 +2564,7 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 			comp->location.x = x - offsetX;
 			comp->location.y = y - offsetY;
 
-			// adjust the internal x coordinate as well
-			// comp->internalLocation.x = CG_AdjustXToHudFile(comp->location.x, comp->location.w);
-			// comp->internalLocation.y = comp->location.y;
-			// comp->computed = qfalse;
-			CG_FindComponentClosestParentAnchor(comp);
+			CG_CalculateComponentInternals(comp);
 
 			CG_HudEditorUpdateFields(button);
 			return;

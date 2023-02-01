@@ -4303,7 +4303,7 @@ hudStucture_t *CG_AddHudToList(hudStucture_t *hud);
 hudStucture_t *CG_GetHudByNumber(int number);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
-void CG_FindComponentClosestParentAnchor(hudComponent_t *comp);
+void CG_CalculateComponentInternals(hudComponent_t *comp);
 
 void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);
