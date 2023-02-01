@@ -575,12 +575,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	// fireteam alpha adjustments
 
 	// set background alpha first
-	FT_select[3]  *= comp->colorMain[3];
-	iconColor[3]  *= comp->colorMain[3];
-	textWhite[3]  *= comp->colorMain[3];
-	textYellow[3] *= comp->colorMain[3];
-	textRed[3]    *= comp->colorMain[3];
-	textOrange[3] *= comp->colorMain[3];
+	FT_select[3]   *= comp->colorMain[3];
+	iconColor[3]   *= comp->colorMain[3];
+	colorWhite[3]  *= comp->colorMain[3];
+	colorYellow[3] *= comp->colorMain[3];
+	colorRed[3]    *= comp->colorMain[3];
+	colorOrange[3] *= comp->colorMain[3];
 
 	if (comp->showBackGround)
 	{
@@ -646,7 +646,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 		else
 		{
-			Com_Memcpy(&nameColor, &textWhite, sizeof(vec4_t));
+			Com_Memcpy(&nameColor, &colorWhite, sizeof(vec4_t));
 		}
 
 		if (ci->selected)
@@ -765,27 +765,27 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		else if (ci->health >= 10)
 		{
 			x += spacing;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ci->health > 80 ? comp->colorMain : textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ci->health > 80 ? comp->colorMain : colorYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing * 2;
 		}
 		else if (ci->health > 0)
 		{
 			x += spacing * 2;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, colorYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing;
 		}
 		else if (ci->health == 0)
 		{
 			x += spacing;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? textWhite : textRed, "*", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? colorWhite : colorRed, "*", 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? textRed : textWhite, "0", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? colorRed : colorWhite, "0", 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing;
 		}
 		else
 		{
 			x += spacing * 2;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textRed, "0", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, colorRed, "0", 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing;
 		}
 
@@ -842,14 +842,14 @@ static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
 	switch (status)
 	{
 	case TIMEOUT:
-		return &textOrange;
+		return &colorOrange;
 	case WOUNDED:
-		return &textYellow;
+		return &colorYellow;
 	case DEAD:
-		return &textRed;
+		return &colorRed;
 	case NONE:
 	default:
-		return &textWhite;
+		return &colorWhite;
 	}
 }
 
