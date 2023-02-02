@@ -127,7 +127,7 @@ qboolean G_SpawnVectorExt(const char *key, const char *defaultString, float *out
 	qboolean present;
 
 	present = G_SpawnStringExt(key, defaultString, &s, file, line);
-    Q_sscanf(s, "%f %f %f", &out[0], &out[1], &out[2]);
+	Q_sscanf(s, "%f %f %f", &out[0], &out[1], &out[2]);
 	return present;
 }
 
@@ -146,7 +146,7 @@ qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *o
 	qboolean present;
 
 	present = G_SpawnStringExt(key, defaultString, &s, file, line);
-    Q_sscanf(s, "%f %f", &out[0], &out[1]);
+	Q_sscanf(s, "%f %f", &out[0], &out[1]);
 	return present;
 }
 
@@ -757,7 +757,7 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent)
 				*( char ** )(b + f->ofs) = G_NewString(value);
 				break;
 			case F_VECTOR:
-                Q_sscanf(value, "%f %f %f", &vec[0], &vec[1], &vec[2]);
+				Q_sscanf(value, "%f %f %f", &vec[0], &vec[1], &vec[2]);
 				(( float * )(b + f->ofs))[0] = vec[0];
 				(( float * )(b + f->ofs))[1] = vec[1];
 				(( float * )(b + f->ofs))[2] = vec[2];
@@ -1023,6 +1023,10 @@ void SP_func_fakebrush(gentity_t *ent)
 {
 	ent->s.eFlags |= EF_FAKEBMODEL;
 	G_SetOrigin(ent, ent->s.origin);
+
+	// repurpose origin2 and angles2 for client prediction
+	VectorCopy(ent->r.mins, ent->s.origin2);
+	VectorCopy(ent->r.maxs, ent->s.angles2);
 
 	return;
 }
