@@ -135,7 +135,7 @@ extern vec3_t axisDefault[3];
 
 #define nanmask (255 << 23)
 
-#define IS_NAN(x) (((*(int *)&x) & nanmask) == nanmask)
+#define IS_NAN(x) (((*(int *)&x)&nanmask) == nanmask)
 
 int Q_isnan(float x);
 
@@ -164,14 +164,14 @@ extern void(QDECL * Q_SnapVector)(vec3_t vec);
 // its address
 //#define Q_ftol lrintf
 #define Q_SnapVector(vec) \
-	do \
-	{ \
-		vec3_t *temp = (vec); \
+		do \
+		{ \
+			vec3_t *temp = (vec); \
 \
-		(*temp)[0] = round((*temp)[0]); \
-		(*temp)[1] = round((*temp)[1]); \
-		(*temp)[2] = round((*temp)[2]); \
-	} while (0)
+			(*temp)[0] = round((*temp)[0]); \
+			(*temp)[1] = round((*temp)[1]); \
+			(*temp)[2] = round((*temp)[2]); \
+		} while (0)
 #endif
 
 static ID_INLINE long Q_ftol(float f)
@@ -250,6 +250,10 @@ void ByteToDir(int b, vec3_t dir);
 /************************************************************************/
 #define vec2_set(v, x, y)         ((v)[0] = (x), (v)[1] = (y))
 #define vec2_copy(a, b)            ((b)[0] = (a)[0], (b)[1] = (a)[1])
+static ID_INLINE float vec2_length(const vec2_t v)
+{
+	return (float)sqrt((double)(v[0] * v[0] + v[1] * v[1]));
+}
 // Subtract
 #define vec2_sub(a, b, c)      ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1])
 #define vec2_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); }
@@ -372,15 +376,15 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
 /* Matrix3x3                                                            */
 /************************************************************************/
 #define mat3_mult(in1, in2, o)                                                                          \
-	o[0][0] = (in1)[0][0] * (in2)[0][0] + (in1)[0][1] * (in2)[1][0] + (in1)[0][2] * (in2)[2][0],        \
-	o[0][1] = (in1)[0][0] * (in2)[0][1] + (in1)[0][1] * (in2)[1][1] + (in1)[0][2] * (in2)[2][1],        \
-	o[0][2] = (in1)[0][0] * (in2)[0][2] + (in1)[0][1] * (in2)[1][2] + (in1)[0][2] * (in2)[2][2],        \
-	o[1][0] = (in1)[1][0] * (in2)[0][0] + (in1)[1][1] * (in2)[1][0] + (in1)[1][2] * (in2)[2][0],        \
-	o[1][1] = (in1)[1][0] * (in2)[0][1] + (in1)[1][1] * (in2)[1][1] + (in1)[1][2] * (in2)[2][1],        \
-	o[1][2] = (in1)[1][0] * (in2)[0][2] + (in1)[1][1] * (in2)[1][2] + (in1)[1][2] * (in2)[2][2],        \
-	o[2][0] = (in1)[2][0] * (in2)[0][0] + (in1)[2][1] * (in2)[1][0] + (in1)[2][2] * (in2)[2][0],        \
-	o[2][1] = (in1)[2][0] * (in2)[0][1] + (in1)[2][1] * (in2)[1][1] + (in1)[2][2] * (in2)[2][1],        \
-	o[2][2] = (in1)[2][0] * (in2)[0][2] + (in1)[2][1] * (in2)[1][2] + (in1)[2][2] * (in2)[2][2]
+		o[0][0] = (in1)[0][0] * (in2)[0][0] + (in1)[0][1] * (in2)[1][0] + (in1)[0][2] * (in2)[2][0],        \
+		o[0][1] = (in1)[0][0] * (in2)[0][1] + (in1)[0][1] * (in2)[1][1] + (in1)[0][2] * (in2)[2][1],        \
+		o[0][2] = (in1)[0][0] * (in2)[0][2] + (in1)[0][1] * (in2)[1][2] + (in1)[0][2] * (in2)[2][2],        \
+		o[1][0] = (in1)[1][0] * (in2)[0][0] + (in1)[1][1] * (in2)[1][0] + (in1)[1][2] * (in2)[2][0],        \
+		o[1][1] = (in1)[1][0] * (in2)[0][1] + (in1)[1][1] * (in2)[1][1] + (in1)[1][2] * (in2)[2][1],        \
+		o[1][2] = (in1)[1][0] * (in2)[0][2] + (in1)[1][1] * (in2)[1][2] + (in1)[1][2] * (in2)[2][2],        \
+		o[2][0] = (in1)[2][0] * (in2)[0][0] + (in1)[2][1] * (in2)[1][0] + (in1)[2][2] * (in2)[2][0],        \
+		o[2][1] = (in1)[2][0] * (in2)[0][1] + (in1)[2][1] * (in2)[1][1] + (in1)[2][2] * (in2)[2][1],        \
+		o[2][2] = (in1)[2][0] * (in2)[0][2] + (in1)[2][1] * (in2)[1][2] + (in1)[2][2] * (in2)[2][2]
 
 void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3]);
 
@@ -411,8 +415,8 @@ qboolean mat4_inverse_self(mat4_t matrix);
 void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
 
 #define SinCos(rad, s, c)     \
-	(s) = sin((rad));     \
-	(c) = cos((rad));
+		(s) = sin((rad));     \
+		(c) = cos((rad));
 
 #ifdef __LCC__
 #ifdef VectorCopy

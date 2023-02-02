@@ -3419,37 +3419,51 @@ static void CG_ComputeRectBasedOnPoint(rectDef_t *loc, anchorPoint_t point)
 	}
 }
 
-static int CG_FindFloatPointInRange(float value, float min, float max)
+typedef struct
 {
-	value = value - min;
-	max   = max - min;
+	anchorPoint_t self;
+	anchorPoint_t parent;
+} anchorPoints_t;
 
-	// dont ask
-	switch ((int)roundf((value / (max / 6))))
+static anchorPoints_t CG_ClosestAnchors(rectDef_t *self, rectDef_t *parent)
+{
+	rectDef_t      tmp, tmp2;
+	int            i, x;
+	float          length = FLT_MAX, tmpLen = 0;
+	vec2_t         tmpVec, tmpVec2;
+	anchorPoints_t ret = { TOP_LEFT, TOP_LEFT };
+
+	for (i = 0; i <= CENTER; i++)
 	{
-	case 0:
-	case 1:
-		return 0;
-	case 2:
-	case 3:
-	case 4:
-		return 1;
-	case 5:
-	case 6:
-	case 7:
-		return 2;
-	default:
-		CG_Printf(S_COLOR_RED "Something went wrong on %s:%i\n", __func__, __LINE__);
-		return -1;
+		rect_copy(*self, tmp);
+		CG_ComputeRectBasedOnPoint(&tmp, i);
+
+		for (x = 0; x <= CENTER; x++)
+		{
+			rect_copy(*parent, tmp2);
+			CG_ComputeRectBasedOnPoint(&tmp2, x);
+
+			vec2_set(tmpVec, tmp.x, tmp.y);
+			vec2_set(tmpVec2, tmp2.x, tmp2.y);
+			vec2_sub(tmpVec, tmpVec2, tmpVec);
+			tmpLen = vec2_length(tmpVec);
+
+			if (tmpLen < length)
+			{
+				ret.self   = i;
+				ret.parent = x;
+				length     = tmpLen;
+			}
+		}
 	}
+
+	return ret;
 }
 
 void CG_CalculateComponentInternals(hudComponent_t *comp)
 {
-	int           x, y;
-	float         tmpX, tmpY;
-	rectDef_t     parentLoc, tmpLoc;
-	anchorPoint_t newPoint, oldPoint = comp->parentAnchor.point;
+	rectDef_t      parentLoc, tmpLoc;
+	anchorPoints_t points;
 
 	if (comp->parentAnchor.parent)
 	{
@@ -3458,89 +3472,43 @@ void CG_CalculateComponentInternals(hudComponent_t *comp)
 	}
 
 	parentLoc.x = parentLoc.y = 0;
-	parentLoc.w = SCREEN_WIDTH_F;
+	parentLoc.w = Ccg_WideX(SCREEN_WIDTH_F);
 	parentLoc.h = SCREEN_HEIGHT_F;
-
-	x = CG_FindFloatPointInRange(comp->location.x, 0, Ccg_WideX(SCREEN_WIDTH_F));
-	y = CG_FindFloatPointInRange(comp->location.y, 0, SCREEN_HEIGHT_F);
-
-	switch (x)
-	{
-	case 0:
-		switch (y)
-		{
-		case 0:
-			newPoint = TOP_LEFT;
-			break;
-		case 1:
-			newPoint = MIDDLE_LEFT;
-			break;
-		case 2:
-			newPoint = BOTTOM_LEFT;
-			break;
-		default:
-			CG_Printf(S_COLOR_RED "Something went wrong on %s:%i x:%i y:%i\n", __func__, __LINE__, x, y);
-		}
-		break;
-	case 1:
-		switch (y)
-		{
-		case 0:
-			newPoint = TOP_MIDDLE;
-			break;
-		case 1:
-			newPoint = CENTER;
-			break;
-		case 2:
-			newPoint = BOTTOM_MIDDLE;
-			break;
-		default:
-			CG_Printf(S_COLOR_RED "Something went wrong on %s:%i x:%i y:%i\n", __func__, __LINE__, x, y);
-		}
-		break;
-	case 2:
-		switch (y)
-		{
-		case 0:
-			newPoint = TOP_RIGHT;
-			break;
-		case 1:
-			newPoint = MIDDLE_RIGHT;
-			break;
-		case 2:
-			newPoint = BOTTOM_RIGHT;
-			break;
-		default:
-			CG_Printf(S_COLOR_RED "Something went wrong on %s:%i x:%i y:%i\n", __func__, __LINE__, x, y);
-		}
-		break;
-	default:
-		CG_Printf(S_COLOR_RED "Something went wrong on %s:%i x:%i y:%i\n", __func__, __LINE__, x, y);
-	}
-
-	if (oldPoint != newPoint)
-	{
-		CG_DPrintf(S_COLOR_CYAN "Component parent anchor changed: %i -> %i\n", oldPoint, newPoint);
-	}
-
-	CG_ComputeRectBasedOnPoint(&parentLoc, newPoint);
-	parentLoc.x = Ccg_WideX(parentLoc.x);
 
 	rect_copy(comp->location, tmpLoc);
 
-	tmpX = tmpLoc.x - parentLoc.x;
-	tmpY = tmpLoc.y - parentLoc.y;
+	points = CG_ClosestAnchors(&comp->location, &parentLoc);
 
-	comp->internalLocation.x = CG_AdjustXToHudFile(tmpX, comp->location.w);
-	comp->internalLocation.y = tmpY;
-	comp->parentAnchor.point = newPoint;
+	if (points.self != comp->anchorPoint)
+	{
+		CG_Printf(S_COLOR_CYAN "Switched component anchor point: %i -> %i\n", comp->anchorPoint, points.self);
+	}
+	if (points.parent != comp->parentAnchor.point)
+	{
+		CG_Printf(S_COLOR_CYAN "Switched component anchor point: %i -> %i\n", comp->parentAnchor.point, points.parent);
+	}
+
+	if (points.self)
+	{
+		CG_ComputeRectBasedOnPoint(&tmpLoc, points.self);
+	}
+
+	CG_ComputeRectBasedOnPoint(&parentLoc, points.parent);
+
+	tmpLoc.x = tmpLoc.x - parentLoc.x;
+	tmpLoc.y = tmpLoc.y - parentLoc.y;
+
+	comp->internalLocation.x = CG_AdjustXToHudFile(tmpLoc.x, comp->location.w);
+	comp->internalLocation.y = tmpLoc.y;
+	comp->anchorPoint        = points.self;
+	comp->parentAnchor.point = points.parent;
 
 	comp->computed = qfalse;
 }
 
 static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 {
-	rectDef_t parentLoc;
+	rectDef_t parentLoc, tmpLoc;
 
 	// force quit this insanity
 	if (depth > 10 || depth < 0)
@@ -3551,7 +3519,15 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 
 	rect_copy(comp->internalLocation, comp->location);
 
-	CG_ComputeRectBasedOnPoint(&comp->location, comp->anchorPoint);
+	if (comp->anchorPoint)
+	{
+		rect_copy(comp->internalLocation, tmpLoc);
+		tmpLoc.x = tmpLoc.y = 0;
+		CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
+
+		comp->location.x -= tmpLoc.x;
+		comp->location.y -= tmpLoc.y;
+	}
 
 	// are we depending on a component?
 	if (comp->parentAnchor.parent)
