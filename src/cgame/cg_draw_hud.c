@@ -3460,52 +3460,6 @@ static anchorPoints_t CG_ClosestAnchors(rectDef_t *self, rectDef_t *parent)
 	return ret;
 }
 
-void CG_CalculateComponentInternals(hudComponent_t *comp)
-{
-	rectDef_t      parentLoc, tmpLoc;
-	anchorPoints_t points;
-
-	if (comp->parentAnchor.parent)
-	{
-		// FIXME: handle the parent anchoring....
-		return;
-	}
-
-	parentLoc.x = parentLoc.y = 0;
-	parentLoc.w = Ccg_WideX(SCREEN_WIDTH_F);
-	parentLoc.h = SCREEN_HEIGHT_F;
-
-	rect_copy(comp->location, tmpLoc);
-
-	points = CG_ClosestAnchors(&comp->location, &parentLoc);
-
-	if (points.self != comp->anchorPoint)
-	{
-		CG_Printf(S_COLOR_CYAN "Switched component anchor point: %i -> %i\n", comp->anchorPoint, points.self);
-	}
-	if (points.parent != comp->parentAnchor.point)
-	{
-		CG_Printf(S_COLOR_CYAN "Switched component anchor point: %i -> %i\n", comp->parentAnchor.point, points.parent);
-	}
-
-	if (points.self)
-	{
-		CG_ComputeRectBasedOnPoint(&tmpLoc, points.self);
-	}
-
-	CG_ComputeRectBasedOnPoint(&parentLoc, points.parent);
-
-	tmpLoc.x = tmpLoc.x - parentLoc.x;
-	tmpLoc.y = tmpLoc.y - parentLoc.y;
-
-	comp->internalLocation.x = CG_AdjustXToHudFile(tmpLoc.x, comp->location.w);
-	comp->internalLocation.y = tmpLoc.y;
-	comp->anchorPoint        = points.self;
-	comp->parentAnchor.point = points.parent;
-
-	comp->computed = qfalse;
-}
-
 static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 {
 	rectDef_t parentLoc, tmpLoc;
@@ -3581,6 +3535,54 @@ static void CG_ComputeComponentPositions(void)
 			}
 		}
 	}
+}
+
+void CG_CalculateComponentInternals(hudComponent_t *comp)
+{
+	rectDef_t      parentLoc, tmpLoc;
+	anchorPoints_t points;
+
+	if (comp->parentAnchor.parent)
+	{
+		// FIXME: handle the parent anchoring....
+		return;
+	}
+
+	parentLoc.x = parentLoc.y = 0;
+	parentLoc.w = SCREEN_WIDTH_F;
+	parentLoc.h = SCREEN_HEIGHT_F;
+
+	rect_copy(comp->location, tmpLoc);
+	tmpLoc.x = CG_AdjustXToHudFile(tmpLoc.x, comp->location.w);
+
+	points = CG_ClosestAnchors(&tmpLoc, &parentLoc);
+
+	if (points.parent != comp->parentAnchor.point)
+	{
+		CG_Printf(S_COLOR_CYAN "Switched parent anchor point: %i -> %i\n", comp->parentAnchor.point, points.parent);
+	}
+
+	if (points.self != comp->anchorPoint)
+	{
+		CG_Printf(S_COLOR_CYAN "Switched component anchor point: %i -> %i\n", comp->anchorPoint, points.self);
+	}
+
+	if (points.self)
+	{
+		CG_ComputeRectBasedOnPoint(&tmpLoc, points.self);
+	}
+
+	CG_ComputeRectBasedOnPoint(&parentLoc, points.parent);
+
+	tmpLoc.x = tmpLoc.x - parentLoc.x;
+	tmpLoc.y = tmpLoc.y - parentLoc.y;
+
+	comp->internalLocation.x = tmpLoc.x;
+	comp->internalLocation.y = tmpLoc.y;
+	comp->anchorPoint        = points.self;
+	comp->parentAnchor.point = points.parent;
+
+	comp->computed = qfalse;
 }
 
 /**

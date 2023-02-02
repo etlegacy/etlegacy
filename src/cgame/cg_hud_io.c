@@ -130,7 +130,7 @@ float CG_AdjustXToHudFile(float x, float w)
 
 	if ((int)(x + w * .5f) == (int)wideX)
 	{
-		return Ccg_WideXReverse(x - ((Ccg_WideX(w) - w) / 0.5f));
+		return Ccg_WideXReverse(x - ((Ccg_WideX(w) - w) * .5f));
 	}
 	else if (x <= wideX)
 	{

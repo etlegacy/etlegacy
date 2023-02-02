@@ -1729,6 +1729,9 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 
 	comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
 
+	// update the internal fields of the component
+	CG_CalculateComponentInternals(comp);
+
 	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->location.x);
 	trap_Cvar_Set("hudeditor_X", buffer);
 	hudEditorX.data[1] = button->data[0];
@@ -2563,8 +2566,6 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 
 			comp->location.x = x - offsetX;
 			comp->location.y = y - offsetY;
-
-			CG_CalculateComponentInternals(comp);
 
 			CG_HudEditorUpdateFields(button);
 			return;
