@@ -656,8 +656,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	             + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove);
 	scale = (float)pm->ps->speed * max / (127.0f * total);
 
-	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50
-	    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
+	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50)
 	{
 		scale *= pm->ps->sprintSpeedScale;
 	}
@@ -1397,10 +1396,6 @@ static void PM_WalkMove(void)
 			wishspeed = pm->ps->speed * pm->ps->crouchSpeedScale;
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED || pm->ps->eFlags & EF_ZOOMING)
-	{
-		wishspeed *= 0.625f;
-	}
 
 	// clamp the speed lower if wading or walking on the bottom
 	if (pm->waterlevel)
@@ -1872,7 +1867,7 @@ static void PM_GroundTrace(void)
 		pml.walking     = qfalse;
 
 		if (((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) ||
-		     (pm->ps->eFlags & EF_ZOOMING)) &&
+             (pm->ps->eFlags & EF_ZOOMING)) && !pm->waterlevel &&
 		    !pm->pmext->airTime)
 		{
 			pm->pmext->airTime = pm->cmd.serverTime;
@@ -4882,9 +4877,9 @@ void PM_Sprint(void)
 {
 	if (pm->waterlevel <= 1) // no sprint & no stamina recharge under water
 	{
-		if ((pm->cmd.buttons & BUTTON_SPRINT) && (pm->cmd.forwardmove || pm->cmd.rightmove)
-		    && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE)
-		    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
+        if (((pm->cmd.buttons & BUTTON_SPRINT && (pm->cmd.forwardmove || pm->cmd.rightmove))
+             || ((GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)) && (VectorLength(pm->ps->velocity) > 127)))
+		    && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE))
 		{
 			if (pm->ps->powerups[PW_ADRENALINE] || pm->ps->powerups[PW_NOFATIGUE])
 			{
@@ -5203,8 +5198,9 @@ void PmoveSingle(pmove_t *pmove)
 	}
 	else if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) || (pm->ps->eFlags & EF_ZOOMING))
 	{
-		// in air for too much time
-		if (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 250)
+		// sprinting or no more endurance or in air for too much time
+        if (pm->cmd.buttons & BUTTON_SPRINT || !pm->pmext->sprintTime
+            || (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 250))
 		{
 			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 		}

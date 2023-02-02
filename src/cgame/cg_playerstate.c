@@ -550,6 +550,18 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		}
 	}
 
+	// keep the vanilla behaviour on unscoping on walk velocity reach
+	// otherwise, it will drain the sprint bar until empty
+	if (cg_sniperAutoUnscope.integer)
+	{
+		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
+		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
+		if ((GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_SCOPED) && VectorLength(ps->velocity) > 127 && !cg.pmext.airTime)
+		{
+			CG_FinishWeaponChange(ps->weapon, GetWeaponTableData(ps->weapon)->weapAlts);
+		}
+	}
+
 	// run events
 	CG_CheckPlayerstateEvents(ps, ops);
 
