@@ -1303,6 +1303,7 @@ static void CG_TimerReset_f(void)
 		return;
 	}
 
+	trap_Cvar_Set("cg_spawnTimer_period", 0);
 	trap_Cvar_Set("cg_spawnTimer_set", va("%d", cg.time - cgs.levelStartTime));
 }
 
