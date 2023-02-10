@@ -949,6 +949,8 @@ void R_AddDecalSurface(decal_t *decal)
 		float fade = (float) (decal->fadeEndTime - tr.refdef.time) /
 		             (float) (decal->fadeEndTime - decal->fadeStartTime);
 
+		fade = Com_Clamp(0.0f, 1.0f, fade);
+
 		for (i = 0; i < decal->numVerts; i++)
 		{
 			decal->verts[i].modulate[0] *= fade;
@@ -1037,7 +1039,7 @@ void R_CullDecalProjectors(void)
 		}
 		else
 		{
-			decalBits |= (1 << i);
+			decalBits         |= (1 << i);
 			numDecalProjectors = i + 1;
 		}
 	}
