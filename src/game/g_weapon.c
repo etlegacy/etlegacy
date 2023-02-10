@@ -4019,6 +4019,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 
 	// flamethrower exploit fix
 	ent->client->flametime = level.time + 2500;
+	ent->r.svFlags        |= SVF_BROADCAST;
 
 	VectorCopy(forward, dir);
 	VectorNormalize(dir);
