@@ -692,7 +692,7 @@ static int G_SwitchBodyPartEntity(gentity_t *ent)
  */
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
-	if (!g_antilag.integer || !ent->client)
+	if (!g_antilag.integer || !ent->client || ent->r.svFlags & SVF_BOT)
 	{
 		G_Trace(ent, results, start, mins, maxs, end, passEntityNum, contentmask);
 		return;
@@ -711,8 +711,8 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
  */
 void G_HistoricalTraceBegin(gentity_t *ent)
 {
-	// don't do this with antilag off
-	if (!g_antilag.integer)
+	// don't do this with antilag off, or for bots
+	if (!g_antilag.integer || ent->r.svFlags & SVF_BOT)
 	{
 		return;
 	}
@@ -725,8 +725,8 @@ void G_HistoricalTraceBegin(gentity_t *ent)
  */
 void G_HistoricalTraceEnd(gentity_t *ent)
 {
-	// don't do this with antilag off
-	if (!g_antilag.integer)
+	// don't do this with antilag off, or for bots
+	if (!g_antilag.integer || ent->r.svFlags & SVF_BOT)
 	{
 		return;
 	}
@@ -785,7 +785,7 @@ void G_ResetClientHeight(void)
 		if (maxsBackup[level.sortedClients[i]] != 0.f)
 		{
 			gentity_t *client = &g_entities[level.sortedClients[i]];
-            
+
 			client->r.maxs[2] = maxsBackup[level.sortedClients[i]];
 
 			maxsBackup[level.sortedClients[i]] = 0;
