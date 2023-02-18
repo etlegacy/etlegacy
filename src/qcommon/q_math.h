@@ -234,6 +234,8 @@ float Q_fabs(float f);
 float Q_rsqrt(float f);         // reciprocal square root
 #endif
 
+int Q_FloatAsInt(float f);
+
 #define SQRTFAST(x) (1.0f / Q_rsqrt(x))
 
 signed char ClampChar(int i);

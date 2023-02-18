@@ -828,6 +828,19 @@ float Q_fabs(float f)
 }
 #endif
 
+/**
+ * @brief Q_FloatAsInt
+ * @param[in] f
+ * @return
+ */
+int Q_FloatAsInt(float f)
+{
+	floatint_t fi;
+
+	fi.f = f;
+	return fi.i;
+}
+
 //============================================================
 
 /**

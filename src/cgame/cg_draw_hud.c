@@ -3460,6 +3460,19 @@ static anchorPoints_t CG_ClosestAnchors(rectDef_t *self, rectDef_t *parent)
 	return ret;
 }
 
+static qboolean CG_IsFloatNegative(float value)
+{
+	floatint_t t;
+	t.f = value;
+
+	if (t.ui & BIT(31))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
 static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 {
 	rectDef_t parentLoc, tmpLoc;
@@ -3472,16 +3485,17 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 	}
 
 	rect_copy(comp->internalLocation, comp->location);
+	comp->location.x = comp->location.y = 0;
 
-	if (comp->anchorPoint)
-	{
-		rect_copy(comp->internalLocation, tmpLoc);
-		tmpLoc.x = tmpLoc.y = 0;
-		CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
-
-		comp->location.x -= tmpLoc.x;
-		comp->location.y -= tmpLoc.y;
-	}
+	// if (comp->anchorPoint)
+	// {
+	// 	rect_copy(comp->internalLocation, tmpLoc);
+	// 	tmpLoc.x = tmpLoc.y = 0;
+	// 	CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
+	//
+	// 	comp->location.x -= tmpLoc.x;
+	// 	comp->location.y -= tmpLoc.y;
+	// }
 
 	// are we depending on a component?
 	if (comp->parentAnchor.parent)
@@ -3495,6 +3509,89 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 		}
 
 		Com_Memcpy(&parentLoc, &comp->parentAnchor.parent->location, sizeof(rectDef_t));
+		// parentLoc.x = CG_To43(parentLoc.x, parentLoc.w);
+	}
+	else
+	{
+		// our parent is the screen, so fill it in
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = Ccg_WideX(SCREEN_WIDTH_F);
+		parentLoc.h = SCREEN_HEIGHT_F;
+	}
+
+	// figure out the parent components anchor location
+	CG_ComputeRectBasedOnPoint(&parentLoc, comp->parentAnchor.point);
+
+	// final location
+	// comp->location.x += parentLoc.x;
+	// comp->location.y += parentLoc.y;
+
+	// comp->location.x = CG_From43(comp->location.x, comp->location.w);
+
+	if (comp->anchorPoint)
+	{
+		rect_copy(comp->internalLocation, tmpLoc);
+		tmpLoc.x = tmpLoc.y = 0;
+		CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
+
+		comp->location.x -= tmpLoc.x;
+		comp->location.y -= tmpLoc.y;
+	}
+
+	// final location
+	float xAbs = Q_fabs(comp->internalLocation.x);
+
+	if (xAbs)
+	{
+		comp->location.x += Ccg_WideX(xAbs) * (CG_IsFloatNegative(comp->internalLocation.x) ? -1.f : 1.f) + parentLoc.x;
+	}
+	else
+	{
+		comp->location.x += parentLoc.x;
+	}
+
+	comp->location.y += comp->internalLocation.y + parentLoc.y;
+
+	comp->computed = qtrue;
+
+	return qtrue;
+}
+
+static void CG_GenerateComponentAnchors(hudComponent_t *comp, int depth, rectDef_t *out)
+{
+	rectDef_t      parentLoc, parentLocBackup, tmpCompLoc;
+	anchorPoints_t points;
+
+	// force quit this insanity
+	if (depth > 10 || depth < 0)
+	{
+		Com_Printf(S_COLOR_RED "Hud component recursive dependency is too deep, para-shooting out of this mess!\n");
+		return;
+	}
+
+	// if this components has already setup
+	// if (comp->anchorPoint || comp->parentAnchor.parent || comp->parentAnchor.point)
+	// {
+	//     return;
+	// }
+
+	rect_copy(comp->internalLocation, tmpCompLoc);
+
+	if (comp->anchorPoint)
+	{
+		rectDef_t tmpLoc;
+		rect_copy(comp->internalLocation, tmpLoc);
+		tmpLoc.x = tmpLoc.y = 0;
+		CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
+
+		tmpCompLoc.x -= tmpLoc.x;
+		tmpCompLoc.y -= tmpLoc.y;
+	}
+
+	// are we depending on a component?
+	if (comp->parentAnchor.parent)
+	{
+		CG_GenerateComponentAnchors(comp->parentAnchor.parent, depth + 1, &parentLoc);
 	}
 	else
 	{
@@ -3503,32 +3600,61 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 		parentLoc.w = SCREEN_WIDTH_F;
 		parentLoc.h = SCREEN_HEIGHT_F;
 	}
+	rect_copy(parentLoc, parentLocBackup);
 
 	// figure out the parent components anchor location
 	CG_ComputeRectBasedOnPoint(&parentLoc, comp->parentAnchor.point);
 
 	// final location
-	comp->location.x += parentLoc.x;
-	comp->location.y += parentLoc.y;
+	tmpCompLoc.x += parentLoc.x;
+	tmpCompLoc.y += parentLoc.y;
 
-	comp->location.x = CG_AdjustXFromHudFile(comp->location.x, comp->location.w);
+	if (out)
+	{
+		rect_copy(tmpCompLoc, *out);
+		return;
+	}
 
-	comp->computed = qtrue;
+	// find the closest valid anchors for the current locations
+	points = CG_ClosestAnchors(&tmpCompLoc, &parentLoc);
 
-	return qtrue;
+	if (points.self)
+	{
+		CG_ComputeRectBasedOnPoint(&tmpCompLoc, points.self);
+	}
+
+	// restore the parent backup
+	rect_copy(parentLocBackup, parentLoc);
+	CG_ComputeRectBasedOnPoint(&parentLoc, points.parent);
+
+	tmpCompLoc.x = tmpCompLoc.x - parentLoc.x;
+	tmpCompLoc.y = tmpCompLoc.y - parentLoc.y;
+
+	comp->internalLocation.x = tmpCompLoc.x;
+	comp->internalLocation.y = tmpCompLoc.y;
+	comp->anchorPoint        = points.self;
+	comp->parentAnchor.point = points.parent;
 }
 
-static void CG_ComputeComponentPositions(void)
+static void CG_ComputeComponentPositions(hudStucture_t *hud)
 {
 	unsigned int   i;
 	hudComponent_t *comp;
 
 	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
 	{
-		comp = activehud->components[i];
+		comp = hud->components[i];
 
 		if (comp && !comp->computed)
 		{
+
+			if (comp == &hud->fps)
+			{
+				Com_Printf("Jeps\n");
+			}
+
+			CG_GenerateComponentAnchors(comp, 0, NULL);
+
 			if (!CG_ComputeComponentPosition(comp, 0))
 			{
 				Com_Printf(S_COLOR_RED "Could not setup component\n");
@@ -3537,24 +3663,48 @@ static void CG_ComputeComponentPositions(void)
 	}
 }
 
+static void CG_CalculateParentRect(hudComponent_t *parent, rectDef_t *parentLoc)
+{
+	if (parent)
+	{
+		// FIXME: check if we actually need to do something else?
+		// FIXME: how to disconnect a component from parent on the editor?
+		rect_copy(parent->location, *parentLoc);
+		parentLoc->x = CG_To43(parentLoc->x, parentLoc->w);
+	}
+	else
+	{
+		parentLoc->x = parentLoc->y = 0;
+		parentLoc->w = SCREEN_WIDTH_F;
+		parentLoc->h = SCREEN_HEIGHT_F;
+	}
+}
+
 void CG_CalculateComponentInternals(hudComponent_t *comp)
 {
 	rectDef_t      parentLoc, tmpLoc;
 	anchorPoints_t points;
 
+	// At this point we go back to a virtual 4/3 screen
 	if (comp->parentAnchor.parent)
 	{
-		// FIXME: handle the parent anchoring....
-		return;
+		// FIXME: check if we actually need to do something else?
+		// FIXME: how to disconnect a component from parent on the editor?
+		rect_copy(comp->parentAnchor.parent->location, parentLoc);
+		parentLoc.x = CG_To43(parentLoc.x, parentLoc.w);
+	}
+	else
+	{
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = SCREEN_WIDTH_F;
+		parentLoc.h = SCREEN_HEIGHT_F;
 	}
 
-	parentLoc.x = parentLoc.y = 0;
-	parentLoc.w = SCREEN_WIDTH_F;
-	parentLoc.h = SCREEN_HEIGHT_F;
-
 	rect_copy(comp->location, tmpLoc);
-	tmpLoc.x = CG_AdjustXToHudFile(tmpLoc.x, comp->location.w);
+	// need to convert the components X to 4/3 coord
+	tmpLoc.x = CG_To43(tmpLoc.x, comp->location.w);
 
+	// find the closest valid anchors for the current locations
 	points = CG_ClosestAnchors(&tmpLoc, &parentLoc);
 
 	if (points.parent != comp->parentAnchor.point)
@@ -3593,7 +3743,7 @@ void CG_DrawActiveHud(void)
 	unsigned int   i;
 	hudComponent_t *comp;
 
-	CG_ComputeComponentPositions();
+	CG_ComputeComponentPositions(activehud);
 
 	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
 	{

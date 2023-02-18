@@ -611,14 +611,6 @@ void CL_ShutdownCGame(void)
 	cgvm = NULL;
 }
 
-static int FloatAsInt(float f)
-{
-	floatint_t fi;
-
-	fi.f = f;
-	return fi.i;
-}
-
 /**
  * @brief The cgame module is making a system call
  * @param[in] args
@@ -904,19 +896,19 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_STRNCPY:
 		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);
 	case CG_SIN:
-		return FloatAsInt(sin(VMF(1)));
+		return Q_FloatAsInt(sin(VMF(1)));
 	case CG_COS:
-		return FloatAsInt(cos(VMF(1)));
+		return Q_FloatAsInt(cos(VMF(1)));
 	case CG_ATAN2:
-		return FloatAsInt(atan2(VMF(1), VMF(2)));
+		return Q_FloatAsInt(atan2(VMF(1), VMF(2)));
 	case CG_SQRT:
-		return FloatAsInt(sqrt(VMF(1)));
+		return Q_FloatAsInt(sqrt(VMF(1)));
 	case CG_FLOOR:
-		return FloatAsInt(floor(VMF(1)));
+		return Q_FloatAsInt(floor(VMF(1)));
 	case CG_CEIL:
-		return FloatAsInt(ceil(VMF(1)));
+		return Q_FloatAsInt(ceil(VMF(1)));
 	case CG_ACOS:
-		return FloatAsInt(Q_acos(VMF(1)));
+		return Q_FloatAsInt(Q_acos(VMF(1)));
 
 	case CG_PC_ADD_GLOBAL_DEFINE:
 		return botlib_export->PC_AddGlobalDefine(VMA(1));

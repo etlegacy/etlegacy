@@ -68,10 +68,11 @@
 #define CONFIG_NAME             "etconfig_server.cfg"
 #else
 #define CONFIG_NAME             "etconfig.cfg"
+#endif
+
 // widescreen monitor support
 #define RATIO43     (4.0f / 3.0f)   ///< 4:3 aspectratio is the default for this game engine ...
 #define RPRATIO43   (1 / RATIO43)   ///<
-#endif
 
 #ifdef __ANDROID__
 #define CONFIG_NAME_DEFAULT      "default_android.cfg"
@@ -1903,6 +1904,8 @@ typedef struct rectDef_s
 
 #define rect_set(rect, v1, v2, v3, v4) (((rect).x) = (v1), ((rect).y) = (v2), ((rect).w) = (v3), ((rect).h) = (v4))
 #define rect_copy(a, b) ((b).x = (a).x, (b).y = (a).y, (b).w = (a).w, (b).h = (a).h)
+#define rect_clear(rect) rect_set((rect), 0, 0, 0, 0)
+#define rect_copySize(a, b) (rect_clear((b)); (b).w = (a).w, (b).h = (a).h)
 
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
 float rint(float v);
