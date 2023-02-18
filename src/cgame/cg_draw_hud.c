@@ -3460,10 +3460,12 @@ static anchorPoints_t CG_ClosestAnchors(rectDef_t *self, rectDef_t *parent)
 	return ret;
 }
 
-static qboolean CG_IsFloatNegative(float value)
+static ID_INLINE qboolean CG_IsFloatNegative(float value)
 {
 	floatint_t t;
 	t.f = value;
+
+	etl_assert(sizeof(float) == 4);
 
 	if (t.ui & BIT(31))
 	{
@@ -3486,16 +3488,6 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 
 	rect_copy(comp->internalLocation, comp->location);
 	comp->location.x = comp->location.y = 0;
-
-	// if (comp->anchorPoint)
-	// {
-	// 	rect_copy(comp->internalLocation, tmpLoc);
-	// 	tmpLoc.x = tmpLoc.y = 0;
-	// 	CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
-	//
-	// 	comp->location.x -= tmpLoc.x;
-	// 	comp->location.y -= tmpLoc.y;
-	// }
 
 	// are we depending on a component?
 	if (comp->parentAnchor.parent)
@@ -3521,12 +3513,6 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 
 	// figure out the parent components anchor location
 	CG_ComputeRectBasedOnPoint(&parentLoc, comp->parentAnchor.point);
-
-	// final location
-	// comp->location.x += parentLoc.x;
-	// comp->location.y += parentLoc.y;
-
-	// comp->location.x = CG_From43(comp->location.x, comp->location.w);
 
 	if (comp->anchorPoint)
 	{
@@ -3569,12 +3555,6 @@ static void CG_GenerateComponentAnchors(hudComponent_t *comp, int depth, rectDef
 		return;
 	}
 
-	// if this components has already setup
-	// if (comp->anchorPoint || comp->parentAnchor.parent || comp->parentAnchor.point)
-	// {
-	//     return;
-	// }
-
 	rect_copy(comp->internalLocation, tmpCompLoc);
 
 	if (comp->anchorPoint)
@@ -3615,6 +3595,8 @@ static void CG_GenerateComponentAnchors(hudComponent_t *comp, int depth, rectDef
 		return;
 	}
 
+	// At this point we know the components real location in the 4/3 screen space
+
 	// find the closest valid anchors for the current locations
 	points = CG_ClosestAnchors(&tmpCompLoc, &parentLoc);
 
@@ -3647,12 +3629,6 @@ static void CG_ComputeComponentPositions(hudStucture_t *hud)
 
 		if (comp && !comp->computed)
 		{
-
-			if (comp == &hud->fps)
-			{
-				Com_Printf("Jeps\n");
-			}
-
 			CG_GenerateComponentAnchors(comp, 0, NULL);
 
 			if (!CG_ComputeComponentPosition(comp, 0))
@@ -3660,23 +3636,6 @@ static void CG_ComputeComponentPositions(hudStucture_t *hud)
 				Com_Printf(S_COLOR_RED "Could not setup component\n");
 			}
 		}
-	}
-}
-
-static void CG_CalculateParentRect(hudComponent_t *parent, rectDef_t *parentLoc)
-{
-	if (parent)
-	{
-		// FIXME: check if we actually need to do something else?
-		// FIXME: how to disconnect a component from parent on the editor?
-		rect_copy(parent->location, *parentLoc);
-		parentLoc->x = CG_To43(parentLoc->x, parentLoc->w);
-	}
-	else
-	{
-		parentLoc->x = parentLoc->y = 0;
-		parentLoc->w = SCREEN_WIDTH_F;
-		parentLoc->h = SCREEN_HEIGHT_F;
 	}
 }
 
