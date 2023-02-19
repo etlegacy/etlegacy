@@ -357,8 +357,6 @@ vmCvar_t cg_customFont2;
 
 vmCvar_t cg_drawSpawnpoints;
 
-vmCvar_t cg_sniperAutoUnscope;
-
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -605,8 +603,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawBreathPuffs,         "cg_drawBreathPuffs",         "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawSpawnpoints,         "cg_drawSpawnpoints",         "0",           CVAR_ARCHIVE,                 0 },
-
-	{ &cg_sniperAutoUnscope,       "cg_sniperAutoUnscope",       "0",           CVAR_ARCHIVE,                 0 }
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

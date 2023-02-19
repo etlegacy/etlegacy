@@ -2896,8 +2896,6 @@ extern vmCvar_t cg_customFont2;
 
 extern vmCvar_t cg_drawSpawnpoints;
 
-extern vmCvar_t cg_sniperAutoUnscope;
-
 // local clock flags
 enum
 {

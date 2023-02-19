@@ -698,8 +698,15 @@ static float PM_CmdScale(usercmd_t *cmd)
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
-		// half move speed if weapon is scoped
-		scale *= 0.5f;
+		// reduce move speed if weapon is scoped
+		if (pm->cmd.buttons & BUTTON_WALKING)
+		{
+			scale *= 0.75;
+		}
+		else
+		{
+			scale *= 0.5f;
+		}
 	}
 
 	return scale;
@@ -1867,7 +1874,7 @@ static void PM_GroundTrace(void)
 		pml.walking     = qfalse;
 
 		if (((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) ||
-             (pm->ps->eFlags & EF_ZOOMING)) && !pm->waterlevel &&
+		     (pm->ps->eFlags & EF_ZOOMING)) && !pm->waterlevel &&
 		    !pm->pmext->airTime)
 		{
 			pm->pmext->airTime = pm->cmd.serverTime;
@@ -4877,9 +4884,9 @@ void PM_Sprint(void)
 {
 	if (pm->waterlevel <= 1) // no sprint & no stamina recharge under water
 	{
-        if (((pm->cmd.buttons & BUTTON_SPRINT && (pm->cmd.forwardmove || pm->cmd.rightmove))
-             || ((GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)) && (VectorLength(pm->ps->velocity) > 127)))
-		    && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE))
+		if ((pm->cmd.buttons & BUTTON_SPRINT) && (pm->cmd.forwardmove || pm->cmd.rightmove)
+		    && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE)
+		    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
 		{
 			if (pm->ps->powerups[PW_ADRENALINE] || pm->ps->powerups[PW_NOFATIGUE])
 			{
@@ -5198,9 +5205,11 @@ void PmoveSingle(pmove_t *pmove)
 	}
 	else if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) || (pm->ps->eFlags & EF_ZOOMING))
 	{
-		// sprinting or no more endurance or in air for too much time
-        if (pm->cmd.buttons & BUTTON_SPRINT || !pm->pmext->sprintTime
-            || (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 250))
+		// in air for too much time
+		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
+		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
+		if ((pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500)
+		    || (!pm->pmext->airTime && VectorLength(pm->ps->velocity) > 127))
 		{
 			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 		}
