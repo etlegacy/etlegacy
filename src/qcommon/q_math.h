@@ -235,6 +235,7 @@ float Q_rsqrt(float f);         // reciprocal square root
 #endif
 
 int Q_FloatAsInt(float f);
+qboolean CG_IsFloatNegative(float value);
 
 #define SQRTFAST(x) (1.0f / Q_rsqrt(x))
 

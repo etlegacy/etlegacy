@@ -98,7 +98,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,  { "Full Color" } },// FIXME: outside cg_draw_hud
 	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",      "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",       "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
-	{ NULL,                   0,                         qfalse, NULL, 0.00,{ 0 } },
+	{ NULL,                   0,                         qfalse, NULL, 0.00f,{ 0 } },
 };
 
 /**
@@ -220,7 +220,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->pmitemsbig       = CG_getComponent(tmp_adj(347, 290), 292, 290, 57, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPMItemsBig);
 	hud->warmuptitle      = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 120, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawWarmupTitle);
 	hud->warmuptext       = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 310, 422, 39, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawWarmupText);
-	hud->objectivetext    = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 351, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, (vec4_t) { 0, 0.5, 0.5, 0.25 }, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qtrue, 0.22f, CG_DrawObjectiveInfo);
+	hud->objectivetext    = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 351, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, (vec4_t) { 0, 0.5f, 0.5f, 0.25f }, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qtrue, 0.22f, CG_DrawObjectiveInfo);
 	hud->centerprint      = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 378, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawCenterString);
 	hud->banner           = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 20, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.23f, CG_DrawBannerPrint);
 	hud->crosshairtext    = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 150, 300), 182, 300, 16, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairNames);
@@ -3309,8 +3309,15 @@ void CG_Hud_Setup(void)
 
 	Com_Memset(&hud0, 0, sizeof(hudStucture_t));
 
+	Com_Memset(hudlist, 0, sizeof(hudStucture_t) * MAXHUDS);
+	hudCount = 0;
+
 	// Hud0 aka the Default hud
 	CG_setDefaultHudValues(&hud0);
+
+	// generate the default hud anchors
+	CG_GenerateHudAnchors(&hud0);
+
 	activehud = CG_AddHudToList(&hud0);
 
 	// Read the hud files
@@ -3460,10 +3467,9 @@ static anchorPoints_t CG_ClosestAnchors(rectDef_t *self, rectDef_t *parent)
 	return ret;
 }
 
-static void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *out)
+void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *out)
 {
-	rectDef_t      parentLoc, tmpCompLoc;
-	anchorPoints_t points;
+	rectDef_t parentLoc, tmpCompLoc;
 
 	// force quit this insanity
 	if (depth > 10 || depth < 0)
@@ -3515,6 +3521,7 @@ static anchorPoints_t CG_FindClosestAnchors(hudStucture_t *hud, hudComponent_t *
 	unsigned int   i;
 	hudComponent_t *comp;
 	rectDef_t      tmpParentRect, currentRect;
+	anchorPoints_t out = { TOP_LEFT, { NULL, TOP_LEFT } };
 
 	rect_clear(tmpParentRect);
 	rect_clear(currentRect);
@@ -3533,21 +3540,8 @@ static anchorPoints_t CG_FindClosestAnchors(hudStucture_t *hud, hudComponent_t *
 
 		CG_CalculateComponentLocation(comp, 0, &tmpParentRect);
 	}
-}
 
-static ID_INLINE qboolean CG_IsFloatNegative(float value)
-{
-	floatint_t t;
-	t.f = value;
-
-	etl_assert(sizeof(float) == 4);
-
-	if (t.ui & BIT(31))
-	{
-		return qtrue;
-	}
-
-	return qfalse;
+	return out;
 }
 
 static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
@@ -3676,6 +3670,9 @@ static void CG_GenerateComponentAnchors(hudStucture_t *hud, hudComponent_t *comp
 	// At this point we know the components real location in the 4/3 screen space
 	// CG_FindClosestAnchors(hud, comp);
 
+	// restore the parent backup
+	rect_copy(parentLocBackup, parentLoc);
+
 	// find the closest valid anchors for the current locations
 	points = CG_ClosestAnchors(&tmpCompLoc, &parentLoc);
 
@@ -3684,8 +3681,6 @@ static void CG_GenerateComponentAnchors(hudStucture_t *hud, hudComponent_t *comp
 		CG_ComputeRectBasedOnPoint(&tmpCompLoc, points.self);
 	}
 
-	// restore the parent backup
-	rect_copy(parentLocBackup, parentLoc);
 	CG_ComputeRectBasedOnPoint(&parentLoc, points.parent.point);
 
 	tmpCompLoc.x = tmpCompLoc.x - parentLoc.x;
@@ -3695,6 +3690,27 @@ static void CG_GenerateComponentAnchors(hudStucture_t *hud, hudComponent_t *comp
 	comp->internalLocation.y = tmpCompLoc.y;
 	comp->anchorPoint        = points.self;
 	comp->parentAnchor.point = points.parent.point;
+}
+
+void CG_GenerateHudAnchors(hudStucture_t *hud)
+{
+	unsigned int   i;
+	hudComponent_t *comp;
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (hudComponentFields[i].isAlias)
+		{
+			continue;
+		}
+
+		comp = (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
+
+		if (comp && !comp->computed)
+		{
+			CG_GenerateComponentAnchors(hud, comp, 0, NULL);
+		}
+	}
 }
 
 static void CG_ComputeComponentPositions(hudStucture_t *hud)
@@ -3708,8 +3724,6 @@ static void CG_ComputeComponentPositions(hudStucture_t *hud)
 
 		if (comp && !comp->computed)
 		{
-			CG_GenerateComponentAnchors(hud, comp, 0, NULL);
-
 			if (!CG_ComputeComponentPosition(comp, 0))
 			{
 				Com_Printf(S_COLOR_RED "Could not setup component\n");
@@ -3729,18 +3743,18 @@ void CG_CalculateComponentInternals(hudComponent_t *comp)
 		// FIXME: check if we actually need to do something else?
 		// FIXME: how to disconnect a component from parent on the editor?
 		rect_copy(comp->parentAnchor.parent->location, parentLoc);
-		parentLoc.x = CG_To43(parentLoc.x, parentLoc.w);
+		// parentLoc.x = CG_To43(parentLoc.x, parentLoc.w);
 	}
 	else
 	{
 		parentLoc.x = parentLoc.y = 0;
-		parentLoc.w = SCREEN_WIDTH_F;
+		parentLoc.w = Ccg_WideX(SCREEN_WIDTH_F);
 		parentLoc.h = SCREEN_HEIGHT_F;
 	}
 
 	rect_copy(comp->location, tmpLoc);
 	// need to convert the components X to 4/3 coord
-	tmpLoc.x = CG_To43(tmpLoc.x, comp->location.w);
+	// tmpLoc.x = CG_To43(tmpLoc.x, comp->location.w);
 
 	// find the closest valid anchors for the current locations
 	points = CG_ClosestAnchors(&tmpLoc, &parentLoc);
@@ -3765,7 +3779,7 @@ void CG_CalculateComponentInternals(hudComponent_t *comp)
 	tmpLoc.x = tmpLoc.x - parentLoc.x;
 	tmpLoc.y = tmpLoc.y - parentLoc.y;
 
-	comp->internalLocation.x = tmpLoc.x;
+	comp->internalLocation.x = Ccg_WideXReverse(Q_fabs(tmpLoc.x)) * (CG_IsFloatNegative(tmpLoc.x) ? -1.f : 1.f);
 	comp->internalLocation.y = tmpLoc.y;
 	comp->anchorPoint        = points.self;
 	comp->parentAnchor.point = points.parent.point;

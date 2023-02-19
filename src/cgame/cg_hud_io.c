@@ -153,7 +153,22 @@ static hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *na
 			continue;
 		}
 
-		return (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
+		return (hudComponent_t *)((byte * )hud + hudComponentFields[i].offset);
+	}
+
+	return NULL;
+}
+
+static const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp)
+{
+	int i;
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (comp == (hudComponent_t *)((byte * )hud + hudComponentFields[i].offset))
+		{
+			return hudComponentFields[i].name;
+		}
 	}
 
 	return NULL;
@@ -305,20 +320,20 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 			cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
 		}
 
-		if (comp->anchorPoint)
+		if (flags & BIT(0))
 		{
 			cJSON_AddNumberToObject(compObj, "anchor", comp->anchorPoint);
-		}
-
-		if (comp->parentAnchor.parent || comp->parentAnchor.point)
-		{
 			tmpObj = cJSON_AddObjectToObject(compObj, "parent");
 			{
 				cJSON_AddNumberToObject(tmpObj, "anchor", comp->parentAnchor.point);
 				if (comp->parentAnchor.parent)
 				{
 					// FIXME: todo figure out what component are we referring to
-					cJSON_AddStringToObject(tmpObj, "component", "");
+					cJSON_AddStringToObject(tmpObj, "component", hudComponentFields[j].name);
+				}
+				else
+				{
+					cJSON_AddNullToObject(tmpObj, "component");
 				}
 			}
 		}
@@ -334,6 +349,11 @@ static uint32_t CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2)
 {
 	uint32_t flags = 0;
 	if (!rect_cmp(c1->internalLocation, c2->internalLocation))
+	{
+		flags |= BIT(0);
+	}
+
+	if (c1->anchorPoint != c2->anchorPoint || c1->parentAnchor.parent != c2->parentAnchor.parent || c1->parentAnchor.point != c2->parentAnchor.point)
 	{
 		flags |= BIT(0);
 	}
@@ -644,6 +664,11 @@ static qboolean CG_Vec4Parse(int handle, vec4_t v)
  */
 static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 {
+	// old hud files do not have anchor data, so reset them.
+	comp->parentAnchor.point  = TOP_LEFT;
+	comp->parentAnchor.parent = NULL;
+	comp->anchorPoint         = TOP_LEFT;
+
 	//PC_Rect_Parse
 	if (!CG_RectParse(handle, &comp->internalLocation))
 	{
@@ -839,6 +864,8 @@ static qboolean CG_ParseHUD(int handle)
 
 	hud = CG_GetHudByNumber(tempHud.hudnumber);
 
+	CG_GenerateHudAnchors(&tempHud);
+
 	if (!hud)
 	{
 		CG_AddHudToList(&tempHud);
@@ -1004,6 +1031,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 	hudComponent_t *component;
 	char           *name;
 	int            i, componentOffset;
+	qboolean       calcAnchors = qfalse;
 
 	root = Q_FSReadJsonFrom(filename);
 	if (!root)
@@ -1014,8 +1042,14 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 	fileVersion = Q_ReadIntValueJson(root, "version");
 
 	// check version..
-	if (fileVersion != CURRENT_HUD_JSON_VERSION)
+	switch (fileVersion)
 	{
+	case CURRENT_HUD_JSON_VERSION:
+		break;
+	case 1: // 2.81 - version before anchors
+		calcAnchors = qtrue;
+		break;
+	default:
 		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);
 		cJSON_Delete(root);
 		return qfalse;
@@ -1120,6 +1154,22 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			if (parentHud)
 			{
 				CG_CloneHudComponent(parentHud, hudComponentFields[i].name, component);
+
+				if (calcAnchors)
+				{
+					// we need to calculate the parent components location in 4/3 space
+					rectDef_t      tmpParentRect;
+					hudComponent_t *parentComp = CG_FindComponentByName(parentHud, hudComponentFields[i].name);
+
+					rect_clear(tmpParentRect);
+
+					CG_CalculateComponentLocation(parentComp, 0, &tmpParentRect);
+
+					component->parentAnchor.point  = TOP_LEFT;
+					component->parentAnchor.parent = NULL;
+					component->anchorPoint         = TOP_LEFT;
+					rect_copy(tmpParentRect, component->internalLocation);
+				}
 			}
 
 			if (!comp)
@@ -1165,12 +1215,28 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			if (tmp)
 			{
 				component->parentAnchor.point = Q_ReadIntValueJson(tmp, "anchor");
-				char *compName = Q_ReadStringValueJson(tmp, "component");
-				// FIXME: figure out how to setup the component based on a name / identifier
+				if (cJSON_HasObjectItem(tmp, "component"))
+				{
+					// FIXME: figure out how to setup the component based on a name / identifier
+					char *compName = Q_ReadStringValueJson(tmp, "component");
+					if (compName && *compName)
+					{
+						component->parentAnchor.parent = CG_FindComponentByName(&tmpHud, compName);
+					}
+					else
+					{
+						component->parentAnchor.parent = NULL;
+					}
+				}
 			}
 		}
 
 		outHud = CG_GetHudByNumber(tmpHud.hudnumber);
+
+		if (calcAnchors)
+		{
+			CG_GenerateHudAnchors(&tmpHud);
+		}
 
 		if (!outHud)
 		{

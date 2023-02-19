@@ -4277,7 +4277,7 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 16
-#define CURRENT_HUD_JSON_VERSION 1
+#define CURRENT_HUD_JSON_VERSION 2
 
 extern hudStucture_t hudlist[MAXHUDS];
 extern hudStucture_t *activehud;
@@ -4307,6 +4307,8 @@ hudStucture_t *CG_GetHudByNumber(int number);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
 void CG_CalculateComponentInternals(hudComponent_t *comp);
+void CG_GenerateHudAnchors(hudStucture_t *hud);
+void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *out);
 
 void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);

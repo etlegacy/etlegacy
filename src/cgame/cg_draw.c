@@ -66,7 +66,7 @@ void CG_Text_SetActiveFont(int font)
  */
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
-	return CG_Text_Width_Ext_Float(text, scale, limit, font);
+	return (int) CG_Text_Width_Ext_Float(text, scale, limit, font);
 }
 
 /**
