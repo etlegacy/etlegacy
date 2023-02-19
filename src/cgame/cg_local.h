@@ -2895,6 +2895,13 @@ extern vmCvar_t cg_customFont1;
 extern vmCvar_t cg_customFont2;
 
 extern vmCvar_t cg_drawSpawnpoints;
+extern vmCvar_t cg_crosshairSize;
+extern vmCvar_t cg_crosshairAlpha;
+extern vmCvar_t cg_crosshairColor;  
+extern vmCvar_t cg_crosshairAlphaAlt;
+extern vmCvar_t cg_crosshairColorAlt;
+extern vmCvar_t cg_crosshairPulse;  
+extern vmCvar_t cg_crosshairHealth; 
 
 // local clock flags
 enum

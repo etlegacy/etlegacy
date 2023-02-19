@@ -3165,13 +3165,13 @@ static consoleCommand_t commands[] =
 	{ "editcomponent",        CG_EditComponent_f        },
 
 	// TODO: Implement "alias" system and create those as customizable alias command
-	{ "cg_crosshairSize",     CG_CrosshairSize_f        },
-	{ "cg_crosshairAlpha",    CG_CrosshairAlpha_f       },
-	{ "cg_crosshairColor",    CG_CrosshairColor_f       },
-	{ "cg_crosshairAlphaAlt", CG_CrosshairAlphaAlt_f    },
-	{ "cg_crosshairColorAlt", CG_CrosshairColorAlt_f    },
-	{ "cg_crosshairPulse",    CG_CrosshairPulse_f       },
-	{ "cg_crosshairHealth",   CG_CrosshairHealth_f      },
+	{ "cg_crosshairSize_f",     CG_CrosshairSize_f      },
+	{ "cg_crosshairAlpha_f",    CG_CrosshairAlpha_f     },
+	{ "cg_crosshairColor_f",    CG_CrosshairColor_f     },
+	{ "cg_crosshairAlphaAlt_f", CG_CrosshairAlphaAlt_f  },
+	{ "cg_crosshairColorAlt_f", CG_CrosshairColorAlt_f  },
+	{ "cg_crosshairPulse_f",    CG_CrosshairPulse_f     },
+	{ "cg_crosshairHealth_f",   CG_CrosshairHealth_f    },
 
 	{ NULL,                   NULL                      }
 };
@@ -3478,13 +3478,4 @@ void CG_InitConsoleCommands(void)
 	{
 		trap_RemoveCommand("configstrings");
 	}
-
-	// TODO: Implement "alias" system and remove this
-	trap_SendConsoleCommand("unset cg_crosshairSize\n");
-	trap_SendConsoleCommand("unset cg_crosshairAlpha\n");
-	trap_SendConsoleCommand("unset cg_crosshairColor\n");
-	trap_SendConsoleCommand("unset cg_crosshairAlphaAlt\n");
-	trap_SendConsoleCommand("unset cg_crosshairColorAlt\n");
-	trap_SendConsoleCommand("unset cg_crosshairPulse\n");
-	trap_SendConsoleCommand("unset cg_crosshairHealth\n");
 }
