@@ -96,15 +96,31 @@ static void CG_GenerateHudList()
 
 hudStucture_t *CG_GetFreeHud()
 {
-	unsigned int i;
+	unsigned int   i;
+	hudStucture_t  *tmpHud    = NULL;
+	hudComponent_t *component = NULL;
 
 	for (i = 0; i < MAXHUDS; i++)
 	{
 		if (!hudData.huds[i].active)
 		{
-			Com_Memset(&hudData.huds[i], 0, sizeof(hudStucture_t));
-			return &hudData.huds[i];
+			tmpHud = &hudData.huds[i];
+			break;
 		}
+	}
+
+	if (tmpHud)
+	{
+		Com_Memset(tmpHud, 0, sizeof(hudStucture_t));
+
+		// reset offsets
+		for (i = 0; hudComponentFields[i].name; i++)
+		{
+			component         = (hudComponent_t *)((char * )tmpHud + hudComponentFields[i].offset);
+			component->offset = 999;
+		}
+
+		return tmpHud;
 	}
 
 	CG_Error("All huds are already in use cannot register a new one!\n");
@@ -173,24 +189,6 @@ static qboolean CG_isHudNumberAvailable(int number)
 	}
 
 	return qtrue;
-}
-
-static int CG_getAvailableNumber()
-{
-	int           i, number = 1;
-	hudStucture_t *hud;
-
-	for (i = 0; i < hudData.count; i++)
-	{
-		hud = hudData.list[i];
-
-		if (hud->hudnumber && hud->hudnumber >= number)
-		{
-			number = hud->hudnumber + 1;
-		}
-	}
-
-	return number;
 }
 
 /**
@@ -907,14 +905,6 @@ static qboolean CG_ParseHUD(int handle)
 	{
 		CG_setDefaultHudValues(tempHud);
 	}
-	else
-	{
-		for (i = 0; hudComponentFields[i].name; i++)
-		{
-			hudComponent_t *component = (hudComponent_t *)((char * )tempHud + hudComponentFields[i].offset);
-			component->offset = 999;
-		}
-	}
 
 	componentOffset = 0;
 	while (qtrue)
@@ -1185,18 +1175,12 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 
 		tmpHud = CG_GetFreeHud();
 
-		for (i = 0; hudComponentFields[i].name; i++)
-		{
-			component         = (hudComponent_t *)((char * )tmpHud + hudComponentFields[i].offset);
-			component->offset = 999;
-		}
-
 		componentOffset = 0;
 
 		tmpHud->hudnumber = Q_ReadIntValueJson(hud, "number");
 		if (!tmpHud->hudnumber)
 		{
-			tmpHud->hudnumber = CG_getAvailableNumber();
+			tmpHud->hudnumber = CG_FindFreeHudNumber();
 		}
 
 		tmp = cJSON_GetObjectItem(hud, "parent");
@@ -1228,7 +1212,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 		tmpHud->hudnumber = Q_ReadIntValueJson(hud, "number");
 		if (!tmpHud->hudnumber)
 		{
-			tmpHud->hudnumber = CG_getAvailableNumber();
+			tmpHud->hudnumber = CG_FindFreeHudNumber();
 		}
 
 		// check that the hud number value was set
