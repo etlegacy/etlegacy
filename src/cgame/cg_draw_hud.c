@@ -229,7 +229,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 /**
  * @brief CG_GetHudByNumber
  * @param[in] number
- * @return
+ * @return found hud
  */
 hudStucture_t *CG_GetHudByNumber(int number)
 {
@@ -241,6 +241,29 @@ hudStucture_t *CG_GetHudByNumber(int number)
 		hud = hudData.list[i];
 
 		if (hud->hudnumber == number)
+		{
+			return hud;
+		}
+	}
+
+	return NULL;
+}
+
+/**
+ * @brief CG_GetHudByName
+ * @param[in] name
+ * @return found hud
+ */
+hudStucture_t *CG_GetHudByName(const char *name)
+{
+	int           i;
+	hudStucture_t *hud;
+
+	for (i = 0; i < hudData.count; i++)
+	{
+		hud = hudData.list[i];
+
+		if (!Q_stricmp(hud->name, name))
 		{
 			return hud;
 		}
@@ -3365,26 +3388,43 @@ static void CG_PrintHud(hudStucture_t *hud)
  */
 void CG_SetHud(void)
 {
-	if (cg_altHud.integer && hudData.active->hudnumber != cg_altHud.integer)
+	static int modCount = -1;
+
+	if (cg_altHud.modificationCount == modCount && hudData.active && hudData.active->active)
+	{
+		return;
+	}
+
+	if (Q_isanumber(cg_altHud.string))
 	{
 		hudData.active = CG_GetHudByNumber(cg_altHud.integer);
-		if (!hudData.active)
-		{
-			Com_Printf("^3WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
-			hudData.active = CG_GetHudByNumber(0);
-			trap_Cvar_Set("cg_altHud", "0");
-			return;
-		}
+	}
+	else
+	{
+		hudData.active = CG_GetHudByName(cg_altHud.string);
+	}
+
+	modCount = cg_altHud.modificationCount;
+
+	if (!hudData.active)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
+		hudData.active = CG_GetHudByNumber(0);
+		trap_Cvar_Set("cg_altHud", "0");
+		return;
+	}
 
 #ifdef ETLEGACY_DEBUG
-		CG_PrintHud(hudData.active);
+	CG_PrintHud(hudData.active);
 #endif
 
-		Com_Printf("Setting hud to: %i\n", cg_altHud.integer);
-	}
-	else if (!cg_altHud.integer && hudData.active->hudnumber)
+	if (hudData.active->name[0])
 	{
-		hudData.active = CG_GetHudByNumber(0);
+		Com_Printf("Setting hud to: '%s'\n", hudData.active->name);
+	}
+	else
+	{
+		Com_Printf("Setting hud to: %i\n", hudData.active->hudnumber);
 	}
 }
 

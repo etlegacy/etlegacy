@@ -4316,6 +4316,7 @@ void CG_CloneHud(hudStucture_t *source, hudStucture_t *target);
 void CG_FreeHud(hudStucture_t *hud);
 int CG_FindFreeHudNumber();
 hudStucture_t *CG_GetHudByNumber(int number);
+hudStucture_t *CG_GetHudByName(const char *name);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
 void CG_CalculateComponentInternals(hudComponent_t *comp);
