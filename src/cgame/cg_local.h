@@ -4212,6 +4212,7 @@ typedef struct hudComponent_s
 
 typedef struct hudStructure_s
 {
+	byte active;
 	char name[MAX_QPATH];
 	int hudnumber;
 	int parent;
@@ -4279,9 +4280,16 @@ typedef struct hudStructure_s
 #define MAXSTYLES 16
 #define CURRENT_HUD_JSON_VERSION 2
 
-extern hudStucture_t hudlist[MAXHUDS];
-extern hudStucture_t *activehud;
-extern int           hudCount;
+typedef struct
+{
+	hudStucture_t huds[MAXHUDS];
+	hudStucture_t *list[MAXHUDS];
+
+	hudStucture_t *active;
+	int count;
+} hudData_t;
+
+extern hudData_t hudData;
 
 typedef struct
 {
@@ -4302,7 +4310,11 @@ typedef struct
 } hudComponentMembersFields_t;
 
 hudStucture_t *CG_GetActiveHUD();
-hudStucture_t *CG_AddHudToList(hudStucture_t *hud);
+hudStucture_t *CG_GetFreeHud();
+void CG_RegisterHud(hudStucture_t *hud);
+void CG_CloneHud(hudStucture_t *source, hudStucture_t *target);
+void CG_FreeHud(hudStucture_t *hud);
+int CG_FindFreeHudNumber();
 hudStucture_t *CG_GetHudByNumber(int number);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);

@@ -669,7 +669,7 @@ static panel_button_t *hudEditor[] =
 qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 {
 	int           i;
-	hudStucture_t *hud;
+	hudStucture_t *hud, *hud2;
 
 	if (HUDToDelete == 0)
 	{
@@ -681,63 +681,38 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 	{
 		int num = 1;
 
-		if (hudCount == MAXHUDS)
+		if (hudData.count == MAXHUDS)
 		{
 			CG_Printf(S_COLOR_RED "ERROR CG_HudSave: no more free HUD slots for clone\n");
 			return qfalse;
 		}
 
-		// find a free number
-		for (i = 1; i < hudCount; i++)
-		{
-			hud = &hudlist[i];
+		num  = CG_FindFreeHudNumber();
+		hud  = CG_GetHudByNumber(HUDToDuplicate);
+		hud2 = CG_GetFreeHud();
+		CG_CloneHud(hud2, hud);
+		CG_RegisterHud(hud2);
 
-			if (hud->hudnumber == num)
-			{
-				num++;
-				i = 0;
-			}
-		}
-
-		activehud         = CG_AddHudToList(CG_GetHudByNumber(HUDToDuplicate));
-		cg_altHud.integer = activehud->hudnumber = num;
-		activehud->parent = HUDToDuplicate;
+		hudData.active         = hud2;
+		cg_altHud.integer      = hudData.active->hudnumber = num;
+		hudData.active->parent = HUDToDuplicate;
 		trap_Cvar_Set("cg_altHud", va("%i", num));
 
 		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, num);
 	}
 
-	for (i = 1; i < hudCount; i++)
+	if (HUDToDelete > 0)
 	{
-		hud = &hudlist[i];
-
-		if (hud->hudnumber == HUDToDelete)
+		while ((hud = CG_GetHudByNumber(HUDToDelete)))
 		{
-			int j;
-
-			// remove last element instead of erasing by moving memory
-			if (i == hudCount - 1)
+			if (hud == hudData.active)
 			{
-				Com_Memset(&hudlist[i], 0, sizeof(hudStucture_t));
-			}
-			else
-			{
-				memmove(&hudlist[i], &hudlist[i + 1], sizeof(hudStucture_t) * (hudCount - i - 1));
+				trap_Cvar_Set("cg_altHud", "0");
+				cg_altHud.integer = 0;
+				hudData.active    = CG_GetHudByNumber(0);
 			}
 
-			i--;
-			hudCount--;
-
-			// FIXME: found a more elegant way for keeping sorting
-			for (j = i; j < hudCount; j++)
-			{
-				CG_HudComponentsFill(&hudlist[j]);
-			}
-
-			// Back to default HUD
-			trap_Cvar_Set("cg_altHud", "0");
-			cg_altHud.integer = 0;
-			activehud         = CG_GetHudByNumber(0);
+			CG_FreeHud(hud);
 		}
 	}
 
@@ -758,7 +733,7 @@ static void CG_HudEditor_SetupTitleText(panel_button_t *button)
 static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key)
 {
 	// don't modify default HUD
-	if (!activehud->hudnumber)
+	if (!hudData.active->hudnumber)
 	{
 		return qfalse;
 	}
@@ -861,7 +836,7 @@ static void CG_HudEditor_RenderEdit(panel_button_t *button)
 */
 static void CG_HudEditorX_Finish(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 	char           buffer[MAX_EDITFIELD];
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
@@ -877,7 +852,7 @@ static void CG_HudEditorX_Finish(panel_button_t *button)
 */
 static void CG_HudEditorY_Finish(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 	char           buffer[MAX_EDITFIELD];
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
@@ -893,7 +868,7 @@ static void CG_HudEditorY_Finish(panel_button_t *button)
 */
 static void CG_HudEditorWidth_Finish(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 	char           buffer[MAX_EDITFIELD];
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
@@ -909,7 +884,7 @@ static void CG_HudEditorWidth_Finish(panel_button_t *button)
 */
 static void CG_HudEditorHeight_Finish(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 	char           buffer[MAX_EDITFIELD];
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
@@ -925,7 +900,7 @@ static void CG_HudEditorHeight_Finish(panel_button_t *button)
 */
 static void CG_HudEditorScale_Finish(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 	char           buffer[MAX_EDITFIELD];
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
@@ -941,10 +916,10 @@ static void CG_HudEditorScale_Finish(panel_button_t *button)
 */
 static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int key)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 	// don't modify default HUD
-	if (!activehud->hudnumber)
+	if (!hudData.active->hudnumber)
 	{
 		return qfalse;
 	}
@@ -964,9 +939,9 @@ static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int 
 */
 static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int key)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
-	if (!activehud->hudnumber)
+	if (!hudData.active->hudnumber)
 	{
 		return qfalse;
 	}
@@ -987,10 +962,10 @@ static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int ke
 */
 static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *button, int key)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 	// don't modify default HUD
-	if (!activehud->hudnumber)
+	if (!hudData.active->hudnumber)
 	{
 		return qfalse;
 	}
@@ -1010,10 +985,10 @@ static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *butto
 */
 static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, int key)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 	// don't modify default HUD
-	if (!activehud->hudnumber)
+	if (!hudData.active->hudnumber)
 	{
 		return qfalse;
 	}
@@ -1033,10 +1008,10 @@ static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, i
 */
 static qboolean CG_HudEditorAutoAdjust_CheckboxKeyDown(panel_button_t *button, int key)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((char *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 	// don't modify default HUD
-	if (!activehud->hudnumber)
+	if (!hudData.active->hudnumber)
 	{
 		return qfalse;
 	}
@@ -1188,7 +1163,7 @@ static void CG_HudEditor_HudRenderDropdown(panel_button_t *button)
 
 	button->rect.x += textWidth;
 	CG_DropdownMainBox(button->rect.x, button->rect.y, button->rect.w, button->rect.h,
-	                   button->font->scalex, button->font->scaley, colorBlack, va("%i", activehud->hudnumber),
+	                   button->font->scalex, button->font->scaley, colorBlack, va("%i", hudData.active->hudnumber),
 	                   button == BG_PanelButtons_GetFocusButton(), button->font->colour, button->font->style, button->font->font);
 
 	if (button == BG_PanelButtons_GetFocusButton())
@@ -1197,11 +1172,11 @@ static void CG_HudEditor_HudRenderDropdown(panel_button_t *button)
 		vec4_t colour;
 		int    i;
 
-		for (i = 0; i < hudCount; i++)
+		for (i = 0; i < hudData.count; i++)
 		{
-			hudStucture_t *hud = &hudlist[i];
+			hudStucture_t *hud = hudData.list[i];
 
-			if (hud->hudnumber == activehud->hudnumber)
+			if (hud->hudnumber == hudData.active->hudnumber)
 			{
 				continue;
 			}
@@ -1346,7 +1321,7 @@ static qboolean CG_HudEditor_Dropdown_KeyDown(panel_button_t *button, int key)
 		SOUND_SELECT;
 
 		// don't modify default HUD but allow selecting comp and hud
-		if (activehud->hudnumber || button == &hudEditorHudDropdown || button == &hudEditorCompDropdown)
+		if (hudData.active->hudnumber || button == &hudEditorHudDropdown || button == &hudEditorCompDropdown)
 		{
 			BG_PanelButtons_SetFocusButton(button);
 			return qtrue;
@@ -1373,11 +1348,11 @@ static qboolean CG_HudEditor_HudDropdown_KeyUp(panel_button_t *button, int key)
 
 			Com_Memcpy(&rect, &button->rect, sizeof(rect));
 
-			for (i = 0; i < hudCount; i++)
+			for (i = 0; i < hudData.count; i++)
 			{
-				hudStucture_t *hud = &hudlist[i];
+				hudStucture_t *hud = hudData.list[i];
 
-				if (hud->hudnumber == activehud->hudnumber)
+				if (hud->hudnumber == hudData.active->hudnumber)
 				{
 					continue;
 				}
@@ -1436,7 +1411,7 @@ static qboolean CG_HudEditor_StyleTextDropdown_KeyUp(panel_button_t *button, int
 
 				if (BG_CursorInRect(&rect))
 				{
-					hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+					hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 					comp->styleText = button->data[2] = i;
 					break;
@@ -1480,7 +1455,7 @@ static qboolean CG_HudEditor_AlignTextDropdown_KeyUp(panel_button_t *button, int
 
 				if (BG_CursorInRect(&rect))
 				{
-					hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+					hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 					comp->alignText = button->data[2] = i;
 					break;
@@ -1573,8 +1548,8 @@ static void CG_ResetComponent()
 		hudComponent_t *comp;
 		hudComponent_t *defaultComp;
 
-		comp        = (hudComponent_t *)((char *)activehud + hudComponentFields[lastFocusComponent->data[0]].offset);
-		defaultComp = (hudComponent_t *)((char *) CG_GetHudByNumber(0) + hudComponentFields[lastFocusComponent->data[0]].offset);
+		comp        = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+		defaultComp = (hudComponent_t *)((byte *) CG_GetHudByNumber(0) + hudComponentFields[lastFocusComponent->data[0]].offset);
 
 		Com_Memcpy(comp, defaultComp, sizeof(hudComponent_t));
 
@@ -1675,10 +1650,10 @@ static void CG_HudEditorRender_Button(panel_button_t *button)
 				CG_HudSave(-1, -1);
 				break;
 			case 1:
-				CG_HudSave(activehud->hudnumber, -1);
+				CG_HudSave(hudData.active->hudnumber, -1);
 				break;
 			case 2:
-				CG_HudSave(-1, activehud->hudnumber);
+				CG_HudSave(-1, hudData.active->hudnumber);
 				break;
 			case 3:
 				CG_ResetComponent();
@@ -1727,7 +1702,7 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	char           buffer[256];
 	vec4_t(*compColor) = NULL;
 
-	comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+	comp = (hudComponent_t *)((char *)hudData.active + hudComponentFields[button->data[0]].offset);
 
 	// update the internal fields of the component
 	CG_CalculateComponentInternals(comp);
@@ -1816,7 +1791,7 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 */
 static void CG_HudEditor_Render(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
 	vec4_t         *color;
 
 	button->rect = comp->location;
@@ -1847,7 +1822,7 @@ static qboolean CG_HudEditor_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+		hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
 
 		if (lastFocusComponent && BG_CursorInRect(&lastFocusComponent->rect))
 		{
@@ -1879,7 +1854,7 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+		hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
 
 		if (lastFocusComponent && lastFocusComponentMoved)
 		{
@@ -1911,7 +1886,7 @@ static panel_button_t hudComponents[HUD_COMPONENTS_NUM];
 */
 static void CG_HudEditorColor_Finish(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 	char           buffer[MAX_EDITFIELD];
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
@@ -1936,7 +1911,7 @@ static void CG_HudEditorColor_Finish(panel_button_t *button)
 static qboolean CG_HudEditorColor_KeyDown(panel_button_t *button, int key)
 {
 	// don't modify default HUD
-	if (activehud->hudnumber && key == K_MOUSE1)
+	if (hudData.active->hudnumber && key == K_MOUSE1)
 	{
 		BG_PanelButtons_SetFocusButton(button);
 
@@ -1948,7 +1923,7 @@ static qboolean CG_HudEditorColor_KeyDown(panel_button_t *button, int key)
 
 static void CG_HudEditorColor_Render(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 	vec4_t         backG = { 1, 1, 1, 0.3f };
 	vec4_t         *color;
 	float          offset;
@@ -1997,7 +1972,7 @@ static void CG_HudEditorColor_Render(panel_button_t *button)
 
 static void CG_HudEditor_Slider_Render(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 	vec4_t         backG = { 1, 1, 1, 0.3f };
 	vec4_t         sliderColor;
 	float          offset;
@@ -2058,7 +2033,7 @@ void CG_HudEditorSetup(void)
 			continue;
 		}
 
-		comp = (hudComponent_t *)((char *)activehud + hudComponentFields[i].offset);
+		comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[i].offset);
 
 		hudComponents[j].text      = hudComponentFields[i].name;
 		hudComponents[j].rect      = comp->location;
@@ -2125,7 +2100,7 @@ static void CG_DrawHudEditor_ComponentLists(panel_button_t *button)
 		float scalex = Ccg_WideX(button->font->scalex);
 		parsedButton = (*buttons);
 
-		comp = (hudComponent_t *)((char *)activehud + hudComponentFields[parsedButton->data[0]].offset);
+		comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[parsedButton->data[0]].offset);
 
 		CG_FillRect(x, y, w, COMPONENT_BUTTON_HEIGHT, lastFocusComponent == parsedButton ? (vec4_t) { 1, 1, 0, 0.4f } : (vec4_t) { 0.3f, 0.3f, 0.3f, 0.4f });
 
@@ -2339,7 +2314,7 @@ void CG_DrawHudEditor(void)
 	{
 		button = (*buttons);
 
-		comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+		comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
 
 		if (skip)
 		{
@@ -2365,7 +2340,7 @@ void CG_DrawHudEditor(void)
 	{
 		button = (*buttons);
 
-		comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+		comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
 
 		// early return
 		if (lastFocusComponent && lastFocusComponent == button)
@@ -2456,9 +2431,9 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	}
 
 	// don't modify default HUD
-	if (activehud->hudnumber && lastFocusComponent && down)
+	if (hudData.active->hudnumber && lastFocusComponent && down)
 	{
-		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[lastFocusComponent->data[0]].offset);
+		hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
 		qboolean       changeSize;
 		float          offset;
 		float          *pValue;
@@ -2554,9 +2529,9 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 		lastFocusComponentMoved = qtrue;
 
 		// don't modify default HUD
-		if (activehud->hudnumber)
+		if (hudData.active->hudnumber)
 		{
-			hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+			hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
 
 			if (!offsetX && !offsetY)
 			{

@@ -2695,7 +2695,7 @@ static void CG_EditComponent_f(void)
 		if (!Q_stricmp(token, hudComponentFields[i].name))
 		{
 			compField = &hudComponentFields[i];
-			comp      = (hudComponent_t *)((char *)activehud + compField->offset);
+			comp      = (hudComponent_t *)((byte *)hudData.active + compField->offset);
 			break;
 		}
 	}

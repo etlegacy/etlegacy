@@ -36,9 +36,7 @@
 
 #include "cg_local.h"
 
-hudStucture_t *activehud;
-hudStucture_t hudlist[MAXHUDS];
-int           hudCount = 0;
+hudData_t hudData;
 
 static lagometer_t lagometer;
 
@@ -107,7 +105,7 @@ const hudComponentFields_t hudComponentFields[] =
  */
 hudStucture_t *CG_GetActiveHUD()
 {
-	return activehud;
+	return hudData.active;
 }
 
 static int compIndex = 0;
@@ -238,9 +236,9 @@ hudStucture_t *CG_GetHudByNumber(int number)
 	int           i;
 	hudStucture_t *hud;
 
-	for (i = 0; i < hudCount; i++)
+	for (i = 0; i < hudData.count; i++)
 	{
-		hud = &hudlist[i];
+		hud = hudData.list[i];
 
 		if (hud->hudnumber == number)
 		{
@@ -3226,7 +3224,7 @@ void CG_DrawLagometer(hudComponent_t *comp)
 	// don't draw if a demo and we're running at a different timescale
 	if (!cg.demoPlayback)
 	{
-		CG_DrawDisconnect(&activehud->disconnect);
+		CG_DrawDisconnect(&hudData.active->disconnect);
 	}
 
 	// add snapshots/s in top-right corner of meter
@@ -3305,20 +3303,21 @@ void CG_DrawPlayerStats(hudComponent_t *comp)
  */
 void CG_Hud_Setup(void)
 {
-	hudStucture_t hud0;
+	hudStucture_t *hud0 = NULL;
 
-	Com_Memset(&hud0, 0, sizeof(hudStucture_t));
+	Com_Memset(&hudData, 0, sizeof(hudData_t));
 
-	Com_Memset(hudlist, 0, sizeof(hudStucture_t) * MAXHUDS);
-	hudCount = 0;
+	hud0 = CG_GetFreeHud();
 
 	// Hud0 aka the Default hud
-	CG_setDefaultHudValues(&hud0);
+	CG_setDefaultHudValues(hud0);
 
 	// generate the default hud anchors
-	CG_GenerateHudAnchors(&hud0);
+	CG_GenerateHudAnchors(hud0);
 
-	activehud = CG_AddHudToList(&hud0);
+	CG_RegisterHud(hud0);
+
+	hudData.active = hud0;
 
 	// Read the hud files
 	CG_ReadHudsFromFile();
@@ -3366,26 +3365,26 @@ static void CG_PrintHud(hudStucture_t *hud)
  */
 void CG_SetHud(void)
 {
-	if (cg_altHud.integer && activehud->hudnumber != cg_altHud.integer)
+	if (cg_altHud.integer && hudData.active->hudnumber != cg_altHud.integer)
 	{
-		activehud = CG_GetHudByNumber(cg_altHud.integer);
-		if (!activehud)
+		hudData.active = CG_GetHudByNumber(cg_altHud.integer);
+		if (!hudData.active)
 		{
 			Com_Printf("^3WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
-			activehud = CG_GetHudByNumber(0);
+			hudData.active = CG_GetHudByNumber(0);
 			trap_Cvar_Set("cg_altHud", "0");
 			return;
 		}
 
 #ifdef ETLEGACY_DEBUG
-		CG_PrintHud(activehud);
+		CG_PrintHud(hudData.active);
 #endif
 
 		Com_Printf("Setting hud to: %i\n", cg_altHud.integer);
 	}
-	else if (!cg_altHud.integer && activehud->hudnumber)
+	else if (!cg_altHud.integer && hudData.active->hudnumber)
 	{
-		activehud = CG_GetHudByNumber(0);
+		hudData.active = CG_GetHudByNumber(0);
 	}
 }
 
@@ -3795,11 +3794,11 @@ void CG_DrawActiveHud(void)
 	unsigned int   i;
 	hudComponent_t *comp;
 
-	CG_ComputeComponentPositions(activehud);
+	CG_ComputeComponentPositions(hudData.active);
 
 	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
 	{
-		comp = activehud->components[i];
+		comp = hudData.active->components[i];
 
 		if (comp && comp->visible && comp->draw)
 		{
