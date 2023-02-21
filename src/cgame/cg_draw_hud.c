@@ -3465,47 +3465,6 @@ static void CG_ComputeRectBasedOnPoint(rectDef_t *loc, anchorPoint_t point)
 	}
 }
 
-typedef struct
-{
-	anchorPoint_t self;
-	anchor_t parent;
-} anchorPoints_t;
-
-static anchorPoints_t CG_ClosestAnchors(rectDef_t *self, rectDef_t *parent)
-{
-	rectDef_t      tmp, tmp2;
-	int            i, x;
-	float          length = FLT_MAX, tmpLen = 0;
-	vec2_t         tmpVec, tmpVec2;
-	anchorPoints_t ret = { TOP_LEFT, { NULL, TOP_LEFT } };
-
-	for (i = 0; i <= CENTER; i++)
-	{
-		rect_copy(*self, tmp);
-		CG_ComputeRectBasedOnPoint(&tmp, i);
-
-		for (x = 0; x <= CENTER; x++)
-		{
-			rect_copy(*parent, tmp2);
-			CG_ComputeRectBasedOnPoint(&tmp2, x);
-
-			vec2_set(tmpVec, tmp.x, tmp.y);
-			vec2_set(tmpVec2, tmp2.x, tmp2.y);
-			vec2_sub(tmpVec, tmpVec2, tmpVec);
-			tmpLen = vec2_length(tmpVec);
-
-			if (tmpLen < length)
-			{
-				ret.self         = i;
-				ret.parent.point = x;
-				length           = tmpLen;
-			}
-		}
-	}
-
-	return ret;
-}
-
 void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *out)
 {
 	rectDef_t parentLoc, tmpCompLoc;
@@ -3554,22 +3513,97 @@ void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *o
 	rect_copy(tmpCompLoc, *out);
 }
 
-//FIXME: implement
+typedef struct
+{
+	anchorPoint_t self;
+	anchor_t parent;
+} anchorPoints_t;
+
+static anchorPoints_t CG_ClosestAnchors(rectDef_t *self, rectDef_t *parent, float *outLen)
+{
+	rectDef_t      tmp, tmp2;
+	int            i, x;
+	float          length = FLT_MAX, tmpLen = 0;
+	vec2_t         tmpVec, tmpVec2;
+	anchorPoints_t ret = { TOP_LEFT, { NULL, TOP_LEFT } };
+
+	for (i = 0; i <= CENTER; i++)
+	{
+		rect_copy(*self, tmp);
+		CG_ComputeRectBasedOnPoint(&tmp, i);
+
+		for (x = 0; x <= CENTER; x++)
+		{
+			rect_copy(*parent, tmp2);
+			CG_ComputeRectBasedOnPoint(&tmp2, x);
+
+			vec2_set(tmpVec, tmp.x, tmp.y);
+			vec2_set(tmpVec2, tmp2.x, tmp2.y);
+			vec2_sub(tmpVec, tmpVec2, tmpVec);
+			tmpLen = vec2_length(tmpVec);
+
+			if (tmpLen < length)
+			{
+				ret.self         = i;
+				ret.parent.point = x;
+				length           = tmpLen;
+			}
+		}
+	}
+
+	if (outLen)
+	{
+		*outLen = length;
+	}
+
+	return ret;
+}
+
+static ID_INLINE qboolean CG_CheckComponentParentDepth(hudComponent_t *target, hudComponent_t *possibleParent)
+{
+	unsigned int   i;
+	hudComponent_t *tmp = NULL;
+
+	for (i = 0; i < 10; i++)
+	{
+		tmp = possibleParent->parentAnchor.parent;
+
+		if (tmp == possibleParent || tmp == target)
+		{
+			return qfalse;
+		}
+		else if (!tmp)
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
 static anchorPoints_t CG_FindClosestAnchors(hudStucture_t *hud, hudComponent_t *current)
 {
 	unsigned int   i;
 	hudComponent_t *comp;
 	rectDef_t      tmpParentRect, currentRect;
+	float          length = FLT_MAX, tmpLen = 0;
+
 	anchorPoints_t out = { TOP_LEFT, { NULL, TOP_LEFT } };
+	anchorPoints_t tmpAnchors;
 
 	rect_clear(tmpParentRect);
 	rect_clear(currentRect);
 
 	CG_CalculateComponentLocation(current, 0, &currentRect);
 
-	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
+	for (i = 0; hudComponentFields[i].name; i++)
 	{
-		comp = hud->components[i];
+		if (hudComponentFields[i].isAlias)
+		{
+			continue;
+		}
+
+		comp = (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
 
 		// can't parent to self
 		if (comp == current)
@@ -3578,6 +3612,26 @@ static anchorPoints_t CG_FindClosestAnchors(hudStucture_t *hud, hudComponent_t *
 		}
 
 		CG_CalculateComponentLocation(comp, 0, &tmpParentRect);
+
+		tmpAnchors = CG_ClosestAnchors(&currentRect, &tmpParentRect, &tmpLen);
+		if (tmpLen < length && CG_CheckComponentParentDepth(current, comp))
+		{
+			out               = tmpAnchors;
+			out.parent.parent = comp;
+			length            = tmpLen;
+		}
+	}
+
+	rect_clear(tmpParentRect);
+	tmpParentRect.w = SCREEN_WIDTH_F;
+	tmpParentRect.h = SCREEN_HEIGHT_F;
+
+	tmpAnchors = CG_ClosestAnchors(&currentRect, &tmpParentRect, &tmpLen);
+	if (tmpLen < length)
+	{
+		out               = tmpAnchors;
+		out.parent.parent = NULL;
+		length            = tmpLen;
 	}
 
 	return out;
@@ -3651,7 +3705,7 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 	return qtrue;
 }
 
-static void CG_GenerateComponentAnchors(hudStucture_t *hud, hudComponent_t *comp, int depth, rectDef_t *out)
+static void CG_GenerateComponentAnchors(hudStucture_t *hud, hudComponent_t *comp, qboolean checkComponents, int depth, rectDef_t *out)
 {
 	rectDef_t      parentLoc, parentLocBackup, tmpCompLoc;
 	anchorPoints_t points;
@@ -3679,7 +3733,7 @@ static void CG_GenerateComponentAnchors(hudStucture_t *hud, hudComponent_t *comp
 	// are we depending on a component?
 	if (comp->parentAnchor.parent)
 	{
-		CG_GenerateComponentAnchors(hud, comp->parentAnchor.parent, depth + 1, &parentLoc);
+		CG_GenerateComponentAnchors(hud, comp->parentAnchor.parent, checkComponents, depth + 1, &parentLoc);
 	}
 	else
 	{
@@ -3706,29 +3760,45 @@ static void CG_GenerateComponentAnchors(hudStucture_t *hud, hudComponent_t *comp
 	comp->location.x = tmpCompLoc.x;
 	comp->location.y = tmpCompLoc.y;
 
-	// At this point we know the components real location in the 4/3 screen space
-	// CG_FindClosestAnchors(hud, comp);
-
 	// restore the parent backup
 	rect_copy(parentLocBackup, parentLoc);
 
-	// find the closest valid anchors for the current locations
-	points = CG_ClosestAnchors(&tmpCompLoc, &parentLoc);
+	// At this point we know the components real location in the 4/3 screen space
+	if (checkComponents)
+	{
+		points = CG_FindClosestAnchors(hud, comp);
+	}
+	else
+	{
+		// find the closest valid anchors for the current locations
+		points = CG_ClosestAnchors(&tmpCompLoc, &parentLoc, NULL);
+	}
 
 	if (points.self)
 	{
 		CG_ComputeRectBasedOnPoint(&tmpCompLoc, points.self);
 	}
 
+	if (points.parent.parent)
+	{
+		CG_CalculateComponentLocation(points.parent.parent, 0, &parentLoc);
+	}
+	else
+	{
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = SCREEN_WIDTH_F;
+		parentLoc.h = SCREEN_HEIGHT_F;
+	}
 	CG_ComputeRectBasedOnPoint(&parentLoc, points.parent.point);
 
 	tmpCompLoc.x = tmpCompLoc.x - parentLoc.x;
 	tmpCompLoc.y = tmpCompLoc.y - parentLoc.y;
 
-	comp->internalLocation.x = tmpCompLoc.x;
-	comp->internalLocation.y = tmpCompLoc.y;
-	comp->anchorPoint        = points.self;
-	comp->parentAnchor.point = points.parent.point;
+	comp->internalLocation.x  = tmpCompLoc.x;
+	comp->internalLocation.y  = tmpCompLoc.y;
+	comp->anchorPoint         = points.self;
+	comp->parentAnchor.point  = points.parent.point;
+	comp->parentAnchor.parent = points.parent.parent;
 }
 
 void CG_GenerateHudAnchors(hudStucture_t *hud)
@@ -3747,7 +3817,7 @@ void CG_GenerateHudAnchors(hudStucture_t *hud)
 
 		if (comp && !comp->computed)
 		{
-			CG_GenerateComponentAnchors(hud, comp, 0, NULL);
+			CG_GenerateComponentAnchors(hud, comp, qfalse, 0, NULL);
 		}
 	}
 }
@@ -3796,7 +3866,7 @@ void CG_CalculateComponentInternals(hudComponent_t *comp)
 	// tmpLoc.x = CG_To43(tmpLoc.x, comp->location.w);
 
 	// find the closest valid anchors for the current locations
-	points = CG_ClosestAnchors(&tmpLoc, &parentLoc);
+	points = CG_ClosestAnchors(&tmpLoc, &parentLoc, NULL);
 
 	if (points.parent.point != comp->parentAnchor.point)
 	{
