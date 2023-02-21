@@ -3890,6 +3890,8 @@ void CG_CalculateComponentInternals(hudComponent_t *comp)
 
 	comp->internalLocation.x = Ccg_WideXReverse(Q_fabs(tmpLoc.x)) * (CG_IsFloatNegative(tmpLoc.x) ? -1.f : 1.f);
 	comp->internalLocation.y = tmpLoc.y;
+	comp->internalLocation.w = tmpLoc.w;
+	comp->internalLocation.h = tmpLoc.h;
 	comp->anchorPoint        = points.self;
 	comp->parentAnchor.point = points.parent.point;
 
