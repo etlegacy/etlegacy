@@ -474,7 +474,7 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 				if (comp->parentAnchor.parent)
 				{
 					// FIXME: todo figure out what component are we referring to
-					cJSON_AddStringToObject(tmpObj, "component", hudComponentFields[j].name);
+					cJSON_AddStringToObject(tmpObj, "component", CG_FindComponentName(hud, comp->parentAnchor.parent));
 				}
 				else
 				{
