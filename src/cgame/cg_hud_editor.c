@@ -691,14 +691,15 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		hud  = CG_GetHudByNumber(HUDToDuplicate);
 		hud2 = CG_GetFreeHud();
 		CG_CloneHud(hud2, hud);
+		hud2->hudnumber = num;
+		hud2->parent    = HUDToDuplicate;
 		CG_RegisterHud(hud2);
 
-		hudData.active         = hud2;
-		cg_altHud.integer      = hudData.active->hudnumber = num;
-		hudData.active->parent = HUDToDuplicate;
-		trap_Cvar_Set("cg_altHud", va("%i", num));
+		hudData.active    = hud2;
+		cg_altHud.integer = hud2->hudnumber;
+		trap_Cvar_Set("cg_altHud", va("%i", hud2->hudnumber));
 
-		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, num);
+		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, hud2->hudnumber);
 	}
 
 	if (HUDToDelete > 0)

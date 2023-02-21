@@ -311,6 +311,9 @@ void CG_CloneHud(hudStucture_t *target, hudStucture_t *source)
 			}
 		}
 	}
+
+	// disable the cloned hud again..
+	target->active = qfalse;
 	CG_HudComponentsFill(target);
 }
 

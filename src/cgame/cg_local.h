@@ -4312,7 +4312,7 @@ typedef struct
 hudStucture_t *CG_GetActiveHUD();
 hudStucture_t *CG_GetFreeHud();
 void CG_RegisterHud(hudStucture_t *hud);
-void CG_CloneHud(hudStucture_t *source, hudStucture_t *target);
+void CG_CloneHud(hudStucture_t *target, hudStucture_t *source);
 void CG_FreeHud(hudStucture_t *hud);
 int CG_FindFreeHudNumber();
 hudStucture_t *CG_GetHudByNumber(int number);
