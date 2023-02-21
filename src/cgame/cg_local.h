@@ -3111,9 +3111,6 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
 void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
 
 // cg_hud_io.c
-#define CG_To43(x, w) Ccg_WideXReverse((x))
-#define CG_From43(x, w) Ccg_WideX((x));
-
 float CG_AdjustXFromHudFile(float x, float w);
 float CG_AdjustXToHudFile(float x, float w);
 qboolean CG_WriteHudsToFile();

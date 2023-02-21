@@ -3663,7 +3663,6 @@ static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 		}
 
 		Com_Memcpy(&parentLoc, &comp->parentAnchor.parent->location, sizeof(rectDef_t));
-		// parentLoc.x = CG_To43(parentLoc.x, parentLoc.w);
 	}
 	else
 	{
@@ -3852,7 +3851,6 @@ void CG_CalculateComponentInternals(hudComponent_t *comp)
 		// FIXME: check if we actually need to do something else?
 		// FIXME: how to disconnect a component from parent on the editor?
 		rect_copy(comp->parentAnchor.parent->location, parentLoc);
-		// parentLoc.x = CG_To43(parentLoc.x, parentLoc.w);
 	}
 	else
 	{
@@ -3862,8 +3860,6 @@ void CG_CalculateComponentInternals(hudComponent_t *comp)
 	}
 
 	rect_copy(comp->location, tmpLoc);
-	// need to convert the components X to 4/3 coord
-	// tmpLoc.x = CG_To43(tmpLoc.x, comp->location.w);
 
 	// find the closest valid anchors for the current locations
 	points = CG_ClosestAnchors(&tmpLoc, &parentLoc, NULL);
