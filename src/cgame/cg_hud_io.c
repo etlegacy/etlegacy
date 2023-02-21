@@ -286,9 +286,12 @@ static const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp
 void CG_CloneHud(hudStucture_t *target, hudStucture_t *source)
 {
 	unsigned int   i;
+	qboolean       hudActive;
 	hudComponent_t *tmp, *tmp2;
 
 	etl_assert(target && source);
+
+	hudActive = target->active;
 
 	Com_Memcpy(target, source, sizeof(hudStucture_t));
 
@@ -312,8 +315,8 @@ void CG_CloneHud(hudStucture_t *target, hudStucture_t *source)
 		}
 	}
 
-	// disable the cloned hud again..
-	target->active = qfalse;
+	// restore the active status to keep the registration in line..
+	target->active = hudActive;
 	CG_HudComponentsFill(target);
 }
 

@@ -668,7 +668,6 @@ static panel_button_t *hudEditor[] =
  */
 qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 {
-	int           i;
 	hudStucture_t *hud, *hud2;
 
 	if (HUDToDelete == 0)
@@ -692,7 +691,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		hud2 = CG_GetFreeHud();
 		CG_CloneHud(hud2, hud);
 		hud2->hudnumber = num;
-		hud2->parent    = HUDToDuplicate;
+		hud2->parent    = hud->hudnumber;
 		CG_RegisterHud(hud2);
 
 		hudData.active    = hud2;
