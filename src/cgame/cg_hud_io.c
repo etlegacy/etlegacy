@@ -40,7 +40,7 @@
 #define HUDS_USER_PATH "profiles/%s/hud.dat"
 #define HUDS_USER_BACKUP_PATH "profiles/%s/hud_backup(%s).dat"
 
-static qboolean CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2);
+static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
 
 static const char *CG_HudFilePath()
 {
@@ -250,6 +250,11 @@ static hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *na
 {
 	int i;
 
+	if (!hud || !name || !*name)
+	{
+		return NULL;
+	}
+
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
 		if (Q_stricmp(name, hudComponentFields[i].name))
@@ -266,6 +271,11 @@ static hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *na
 static const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp)
 {
 	int i;
+
+	if (!hud || !comp)
+	{
+		return NULL;
+	}
 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
@@ -387,7 +397,7 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 		if (parent)
 		{
 			parentComp = CG_FindComponentByName(parent, hudComponentFields[j].name);
-			flags      = CG_CompareHudComponents(comp, parentComp);
+			flags      = CG_CompareHudComponents(hud, comp, parent, parentComp);
 			if (!flags)
 			{
 				continue;
@@ -496,75 +506,80 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 #define vec4_cmp(v1, v2) ((v1)[0] == (v2)[0] && (v1)[1] == (v2)[1] && (v1)[2] == (v2)[2] && (v1)[3] == (v2)[3])
 #define rect_cmp(r1, r2) ((r1).x == (r2).x && (r1).y == (r2).y && (r1).w == (r2).w && (r1).h == (r2).h)
 
-static uint32_t CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2)
+static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp)
 {
 	uint32_t flags = 0;
-	if (!rect_cmp(c1->internalLocation, c2->internalLocation))
+	if (!rect_cmp(comp->internalLocation, parentComp->internalLocation))
 	{
 		flags |= BIT(0);
 	}
 
-	if (c1->anchorPoint != c2->anchorPoint || c1->parentAnchor.parent != c2->parentAnchor.parent || c1->parentAnchor.point != c2->parentAnchor.point)
+	if (comp->anchorPoint != parentComp->anchorPoint || comp->parentAnchor.point != parentComp->parentAnchor.point)
 	{
 		flags |= BIT(0);
 	}
 
-	if (c1->visible != c2->visible)
+	if (Q_stricmp(CG_FindComponentName(hud, comp->parentAnchor.parent), CG_FindComponentName(parentHud, parentComp->parentAnchor.parent)) != 0)
+	{
+		flags |= BIT(0);
+	}
+
+	if (comp->visible != parentComp->visible)
 	{
 		flags |= BIT(1);
 	}
 
-	if (c1->style != c2->style)
+	if (comp->style != parentComp->style)
 	{
 		flags |= BIT(2);
 	}
 
-	if (c1->scale != c2->scale)
+	if (comp->scale != parentComp->scale)
 	{
 		flags |= BIT(3);
 	}
 
-	if (!vec4_cmp(c1->colorMain, c2->colorMain))
+	if (!vec4_cmp(comp->colorMain, parentComp->colorMain))
 	{
 		flags |= BIT(4);
 	}
 
-	if (!vec4_cmp(c1->colorSecondary, c2->colorSecondary))
+	if (!vec4_cmp(comp->colorSecondary, parentComp->colorSecondary))
 	{
 		flags |= BIT(5);
 	}
 
-	if (c1->showBackGround != c2->showBackGround)
+	if (comp->showBackGround != parentComp->showBackGround)
 	{
 		flags |= BIT(6);
 	}
 
-	if (!vec4_cmp(c1->colorBackground, c2->colorBackground))
+	if (!vec4_cmp(comp->colorBackground, parentComp->colorBackground))
 	{
 		flags |= BIT(7);
 	}
 
-	if (c1->showBorder != c2->showBorder)
+	if (comp->showBorder != parentComp->showBorder)
 	{
 		flags |= BIT(8);
 	}
 
-	if (!vec4_cmp(c1->colorBorder, c2->colorBorder))
+	if (!vec4_cmp(comp->colorBorder, parentComp->colorBorder))
 	{
 		flags |= BIT(9);
 	}
 
-	if (c1->styleText != c2->styleText)
+	if (comp->styleText != parentComp->styleText)
 	{
 		flags |= BIT(10);
 	}
 
-	if (c1->alignText != c2->alignText)
+	if (comp->alignText != parentComp->alignText)
 	{
 		flags |= BIT(11);
 	}
 
-	if (c1->autoAdjust != c2->autoAdjust)
+	if (comp->autoAdjust != parentComp->autoAdjust)
 	{
 		flags |= BIT(12);
 	}
