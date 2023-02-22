@@ -1612,6 +1612,22 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
 {
 	int c1, c2;
 
+	if (s1 == NULL)
+	{
+		if (s2 == NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	else if (s2 == NULL)
+	{
+		return 1;
+	}
+
 	do
 	{
 		c1 = *s1++;
