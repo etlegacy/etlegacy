@@ -56,7 +56,10 @@
 #define HUDEDITOR_CATEGORY_SPACER_Y 8
 
 #define HUDEDITOR_SELECTHUD_Y 6
-#define HUDEDITOR_SIZEPOS_Y (HUDEDITOR_SELECTHUD_Y + BUTTON_HEIGHT + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 2) + \
+
+#define HUDEDITOR_HUD_NAME_Y (HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 2) + (HUDEDITOR_CONTROLS_SPACER_XY * 2))
+
+#define HUDEDITOR_SIZEPOS_Y (HUDEDITOR_SELECTHUD_Y + BUTTON_HEIGHT + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 3) + \
 							 HUDEDITOR_CONTROLS_SPACER_XY + HUDEDITOR_CATEGORY_SPACER_Y)
 
 #define HUDEDITOR_TEXT_Y (HUDEDITOR_SIZEPOS_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CATEGORY_SPACER_Y + \
@@ -96,6 +99,8 @@ static void CG_HudEditor_SetupTitleText(panel_button_t *button);
 static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorPanel_EditKeyUp(panel_button_t *button, int key);
 static qboolean CG_HudEditorPanel_KeyUp(panel_button_t *button, int key);
+static void CG_HudEditor_RenderEditName(panel_button_t *button);
+static void CG_HudEditorName_Finish(panel_button_t *button);
 static void CG_HudEditor_RenderEdit(panel_button_t *button);
 static void CG_HudEditorX_Finish(panel_button_t *button);
 static void CG_HudEditorY_Finish(panel_button_t *button);
@@ -175,6 +180,20 @@ static panel_button_t hudEditorHudDropdown =
 	CG_HudEditor_HudDropdown_KeyUp,// keyUp
 	CG_HudEditor_HudRenderDropdown,
 	NULL,
+	0,
+};
+
+static panel_button_t hudEditorHudName =
+{
+	NULL,
+	"hudeditor_name",
+	{ 0,                        HUDEDITOR_HUD_NAME_Y,INPUT_WIDTH * 2, INPUT_HEIGHT },
+	{ 0,                        0,        0,               0, 0, 0, 0, 1},
+	&hudEditorTextFont,         // font
+	CG_HudEditor_EditKeyDown,   // keyDown
+	CG_HudEditorPanel_EditKeyUp,// keyUp
+	CG_HudEditor_RenderEditName,
+	CG_HudEditorName_Finish,
 	0,
 };
 
@@ -654,7 +673,7 @@ static panel_button_t *hudEditor[] =
 	&hudEditorVisible,            &hudEditorAutoAdjust,              &hudEditorShowBackground,      &hudEditorShowBorder,
 	&hudEditorTextTitle,
 	&hudEditorSave,               &hudEditorClone,                   &hudEditorDelete,              &hudEditorResetComp,
-	&hudEditorComponentsList,
+	&hudEditorComponentsList,     &hudEditorHudName,
 
 	// Below here all components that should draw on top
 	&hudEditorHudDropdown,        &hudEditorAlignText,               &hudEditorStyleText,
@@ -764,7 +783,11 @@ static void CG_HudEditor_SetupEditPosition(panel_button_t *button, float totalWi
 	// calculation for every single editfield because client might be using
 	// proportional custom font, so totalWidth doesn't necessarily match between X and W for example
 
-	if (button == &hudEditorX)
+	if (button == &hudEditorHudName)
+	{
+		button->rect.x = HUDEditorX + (HUDEditorWidth * 0.25f) - (totalWidth * 0.25f);
+	}
+	else if (button == &hudEditorX)
 	{
 		button->rect.x = HUDEditorX + (HUDEditorWidth * 0.25f) - (totalWidth * 0.5f);
 	}
@@ -786,6 +809,50 @@ static void CG_HudEditor_SetupEditPosition(panel_button_t *button, float totalWi
 	{
 		button->rect.x = HUDEditorX + (HUDEditorWidth * 0.25f) - (totalWidth * 0.5f);
 	}
+}
+
+/**
+* @brief CG_HudEditor_RenderEditName
+* @param button
+*/
+static void CG_HudEditor_RenderEditName(panel_button_t *button)
+{
+	float      textWidth, textHeight, totalWidth;
+	const char *label = "Name: ";
+
+	textWidth  = CG_Text_Width_Ext(label, button->font->scalex, 0, button->font->font);
+	textHeight = CG_Text_Height_Ext(label, button->font->scaley, 0, button->font->font);
+	totalWidth = textWidth + button->rect.w;
+
+	CG_HudEditor_SetupEditPosition(button, totalWidth);
+
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + (button->rect.h * 0.5f) + (textHeight / 2),
+	                  button->font->scalex, button->font->scaley, colorWhite, label, 0, 0,
+	                  button->font->style, button->font->font);
+
+	button->rect.x += textWidth;
+	CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, colorBlack);
+
+	button->rect.x += 2; // for spacing
+	button->rect.y -= button->rect.h * 0.5f - (textHeight * 0.5f);
+	BG_PanelButton_RenderEdit(button);
+	button->rect.x -= 2;
+	button->rect.y += button->rect.h * 0.5f - (textHeight * 0.5f);
+}
+
+/**
+* @brief CG_HudEditorName_Finish
+* @param button
+*/
+static void CG_HudEditorName_Finish(panel_button_t *button)
+{
+	char buffer[MAX_EDITFIELD];
+
+	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
+
+	Q_strcpy(hudData.active->name, buffer);
+
+	BG_PanelButtons_SetFocusButton(NULL);
 }
 
 /**
@@ -2296,9 +2363,17 @@ static void CG_HudEditor_HelpDraw(void)
 */
 void CG_DrawHudEditor(void)
 {
+	static int altHud = -1;
+
 	panel_button_t **buttons = hudComponentsPanel;
 	panel_button_t *button;
 	hudComponent_t *comp;
+
+	if (altHud != hudData.active->hudnumber)
+	{
+		trap_Cvar_Set(hudEditorHudName.text, hudData.active->name);
+		altHud = hudData.active->hudnumber;
+	}
 
 	BG_PanelButtonsRender(hudComponentsPanel);
 	BG_PanelButtonsRender(styleCheckBoxPanel);

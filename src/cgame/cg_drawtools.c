@@ -1434,7 +1434,7 @@ void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float 
  * @param[in] fontColour
  * @param[in] style
  * @param[in] font
- * @return Next y coordinate for positionning next box
+ * @return Next y coordinate for positioning next box
  */
 float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
                      const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font)
