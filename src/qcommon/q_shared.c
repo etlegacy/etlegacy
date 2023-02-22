@@ -1640,7 +1640,7 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
  */
 int Q_stricmp(const char *s1, const char *s2)
 {
-	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
+	return Q_stricmpn(s1, s2, 99999);
 }
 
 /**
