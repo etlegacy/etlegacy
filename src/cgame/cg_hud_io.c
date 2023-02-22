@@ -1133,7 +1133,7 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 {
 	cJSON          *root, *huds, *hud, *comps, *comp, *tmp;
 	uint32_t       fileVersion = 0;
-	hudStucture_t  *outHud, *parentHud, *tmpHud;
+	hudStucture_t  *outHud, *tmpHud, *parentHud = NULL;
 	hudComponent_t *component;
 	char           *name;
 	int            i, componentOffset;
@@ -1311,11 +1311,11 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
 			component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
 
-			component->anchorPoint = Q_ReadIntValueJson(comp, "anchor");
+			component->anchorPoint = Q_ReadIntValueJsonEx(comp, "anchor", component->anchorPoint);
 			tmp                    = cJSON_GetObjectItem(comp, "parent");
 			if (tmp)
 			{
-				component->parentAnchor.point = Q_ReadIntValueJson(tmp, "anchor");
+				component->parentAnchor.point = Q_ReadIntValueJsonEx(tmp, "anchor", component->parentAnchor.point);
 				if (cJSON_HasObjectItem(tmp, "component"))
 				{
 					// FIXME: figure out how to setup the component based on a name / identifier
