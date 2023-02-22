@@ -3335,6 +3335,8 @@ void CG_Hud_Setup(void)
 	// Hud0 aka the Default hud
 	CG_setDefaultHudValues(hud0);
 
+	strcpy(hud0->name, "ETmain");
+
 	// generate the default hud anchors
 	CG_GenerateHudAnchors(hud0);
 
