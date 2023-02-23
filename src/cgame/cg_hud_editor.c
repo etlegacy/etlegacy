@@ -1772,7 +1772,7 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	comp = (hudComponent_t *)((char *)hudData.active + hudComponentFields[button->data[0]].offset);
 
 	// update the internal fields of the component
-	CG_CalculateComponentInternals(comp);
+	CG_CalculateComponentInternals(hudData.active, comp);
 
 	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->location.x);
 	trap_Cvar_Set("hudeditor_X", buffer);

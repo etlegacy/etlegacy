@@ -3842,8 +3842,35 @@ static void CG_ComputeComponentPositions(hudStucture_t *hud)
 	}
 }
 
-void CG_CalculateComponentInternals(hudComponent_t *comp)
+static ID_INLINE qboolean CG_Hud_HasParent(hudComponent_t *comp, hudComponent_t *has)
 {
+	hudComponent_t *tmp = comp;
+
+	if (!comp || !has)
+	{
+		return qfalse;
+	}
+
+	if (comp == has)
+	{
+		return qtrue;
+	}
+
+	while ((tmp = tmp->parentAnchor.parent))
+	{
+		if (tmp == has)
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+void CG_CalculateComponentInternals(hudStucture_t *hud, hudComponent_t *comp)
+{
+	unsigned int   i;
+	hudComponent_t *tmp;
 	rectDef_t      parentLoc, tmpLoc;
 	anchorPoints_t points;
 
@@ -3894,6 +3921,26 @@ void CG_CalculateComponentInternals(hudComponent_t *comp)
 	comp->parentAnchor.point = points.parent.point;
 
 	comp->computed = qfalse;
+
+	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
+	{
+		tmp = hud->components[i];
+
+		if (!tmp)
+		{
+			continue;
+		}
+
+		if (tmp == comp)
+		{
+			continue;
+		}
+
+		if (CG_Hud_HasParent(tmp, comp))
+		{
+			tmp->computed = qfalse;
+		}
+	}
 }
 
 /**

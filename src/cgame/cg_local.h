@@ -4316,7 +4316,7 @@ hudStucture_t *CG_GetHudByNumber(int number);
 hudStucture_t *CG_GetHudByName(const char *name);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
-void CG_CalculateComponentInternals(hudComponent_t *comp);
+void CG_CalculateComponentInternals(hudStucture_t *hud, hudComponent_t *comp);
 void CG_GenerateHudAnchors(hudStucture_t *hud);
 void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *out);
 
