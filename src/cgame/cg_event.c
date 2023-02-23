@@ -112,6 +112,35 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 	}
 }
 
+static ID_INLINE void CG_ColorObituaryEntName(clientInfo_t *ci, char *name, char force)
+{
+	clientInfo_t *self = &cgs.clientinfo[cg.clientNum];
+	Q_CleanStr(name);
+	memmove(name + 2, name, strlen(name) + 1);
+	name[0] = '^';
+
+	if (self->team != TEAM_SPECTATOR)
+	{
+		if (ci->team != self->team)
+		{
+			name[1] = '1';
+		}
+		else
+		{
+			name[1] = '2';
+		}
+	}
+	else
+	{
+		name[1] = '3';
+	}
+
+	if (force)
+	{
+		name[1] = force;
+	}
+}
+
 /**
  * @brief CG_Obituary
  * @param[in] ent
@@ -148,6 +177,10 @@ static void CG_Obituary(entityState_t *ent)
 	}
 
 	Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
+	if (CG_GetActiveHUD()->popupmessages.style & POPUP_FORCE_COLORS)
+	{
+		CG_ColorObituaryEntName(ci, targetName, ca && ca->team == ci->team ? '4': 0);
+	}
 	strcat(targetName, S_COLOR_WHITE);
 
 	// check for single client messages
@@ -195,6 +228,10 @@ static void CG_Obituary(entityState_t *ent)
 	else
 	{
 		Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
+		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FORCE_COLORS)
+		{
+			CG_ColorObituaryEntName(ca, attackerName, ca && ca->team == ci->team ? '4': 0);
+		}
 		strcat(attackerName, S_COLOR_WHITE);
 	}
 
@@ -323,7 +360,7 @@ extern int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
  */
 static void CG_ItemPickup(int itemNum)
 {
-	gitem_t            *item = BG_GetItem(itemNum);
+	gitem_t            *item  = BG_GetItem(itemNum);
 	int                itemid = item->giWeapon;
 	int                wpbank_cur, wpbank_pickup;
 	popupMessageType_t giType;

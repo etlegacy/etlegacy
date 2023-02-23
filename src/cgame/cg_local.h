@@ -2133,6 +2133,7 @@ enum
 	POPUP_WEAPON_ICON        = BIT(5),
 	POPUP_WEAPON_ICON_ALT    = BIT(6),
 	POPUP_SWAP_VICTIM_KILLER = BIT(7),
+	POPUP_FORCE_COLORS       = BIT(8),
 };
 
 // Big popup filters
@@ -2150,7 +2151,6 @@ enum
 	COMPASS_ITEM                 = BIT(1),
 	COMPASS_SECONDARY_OBJECTIVES = BIT(2),
 	COMPASS_PRIMARY_OBJECTIVES   = BIT(3),
-
 };
 
 /// Locations
