@@ -3040,7 +3040,7 @@ int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, 
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
 // draws multiline strings
-void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
+void CG_DrawMultilineText(float x, float y, float w, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
 // new hud stuff
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);
@@ -3073,6 +3073,7 @@ void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const 
 void CG_Text_SetActiveFont(int font);
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font);
 float CG_Text_Width_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font);
+float CG_Text_Line_Width_Ext_Float(const char *text, float scale, fontHelper_t *font);
 int CG_Text_Width(const char *text, float scale, int limit);
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Height(const char *text, float scale, int limit);

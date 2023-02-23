@@ -1208,20 +1208,20 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
  * @param[in] align
  * @param[in] font
  */
-static float CG_ComputeLinePosX(float x, float scalex, const char *text, int align, fontHelper_t *font)
+static float CG_ComputeLinePosX(float x, float w, float scalex, const char *text, int align, fontHelper_t *font)
 {
-	float lineW;
-	char  *endLine;
-
-	endLine = strchr(text, '\n');
-	lineW   = CG_Text_Width_Ext_Float(text, scalex, endLine ? endLine - text : 0, font);
+	float lineW = CG_Text_Line_Width_Ext_Float(text, scalex, font);
 
 	switch (align)
 	{
-	case ITEM_ALIGN_CENTER: return x - lineW * .5;
-	case ITEM_ALIGN_RIGHT: return x - lineW;
-	case ITEM_ALIGN_CENTER2: return x + lineW * .5;
-	default: return x;
+	case ITEM_ALIGN_CENTER2:
+		return x + (w * 0.5f);
+	case ITEM_ALIGN_CENTER:
+		return x + ((w * 0.5f) - (lineW * .5f));
+	case ITEM_ALIGN_RIGHT:
+		return x + w - lineW;
+	default:
+		return x;
 	}
 }
 
@@ -1240,7 +1240,7 @@ static float CG_ComputeLinePosX(float x, float scalex, const char *text, int ali
  * @param[in] align
  * @param[in] font
  */
-void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font)
+void CG_DrawMultilineText(float x, float y, float w, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font)
 {
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
@@ -1267,7 +1267,7 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 	if (align > ITEM_ALIGN_LEFT)
 	{
-		lineX = CG_ComputeLinePosX(x, scalex, text, align, font);
+		lineX = CG_ComputeLinePosX(x, w, scalex, text, align, font);
 	}
 
 	Vector4Copy(color, newColor);
@@ -1289,7 +1289,7 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 			if (align > ITEM_ALIGN_LEFT)
 			{
-				lineX = CG_ComputeLinePosX(x, scalex, s, align, font);
+				lineX = CG_ComputeLinePosX(x, w, scalex, s, align, font);
 			}
 			else
 			{

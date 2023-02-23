@@ -415,7 +415,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 
 	Q_strncpyz(temp, str, 1024);
 
-	// count line number and max char legnth
+	// count line number and max char length
 	ptr = strtok(temp, "\n");
 	do
 	{
@@ -443,7 +443,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 		y += ((comp->location.h - h2) * .5f);
 	}
 
-	switch (comp->alignText)
+	switch (align)
 	{
 	case ITEM_ALIGN_RIGHT:
 		x += (comp->location.w - w2);
@@ -503,16 +503,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 		}
 	}
 
-	switch (comp->alignText)
-	{
-	case ITEM_ALIGN_RIGHT:   x  = comp->location.x + comp->location.w - paddingW; break;
-	case ITEM_ALIGN_CENTER:  x  = comp->location.x + (comp->location.w * .5f); break;
-	case ITEM_ALIGN_CENTER2: x += paddingW; break;
-	case ITEM_ALIGN_LEFT:    x += paddingW; break;
-	default: break;
-	}
-
-	CG_DrawMultilineText(x, y + ((h2 + h) * .5f) / lineNumber, scale, scale, color, str,
+	CG_DrawMultilineText(comp->location.x + paddingW, y + ((h2 + h) * .5f) / lineNumber, comp->location.w - (paddingW * 2), scale, scale, color, str,
 	                     h2 / lineNumber, 0, 0, fontStyle, align, font);
 }
 
