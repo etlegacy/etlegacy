@@ -2019,6 +2019,11 @@ qboolean Q_ParseColor(const char *colString, float *outColor)
 	{
 		s += 2;
 	}
+	// web color style prefix
+	else if (*s == '#')
+	{
+		s += 1;
+	}
 
 	// parse rrggbb
 	if (Q_IsHexColorString(s))
