@@ -312,7 +312,7 @@ void CG_CloneHud(hudStucture_t *target, hudStucture_t *source)
 
 		if (tmp->parentAnchor.parent)
 		{
-			const char *parentName = CG_FindComponentName(source, tmp);
+			const char *parentName = CG_FindComponentName(source, tmp->parentAnchor.parent);
 			if (parentName && *parentName)
 			{
 				tmp2->parentAnchor.parent = CG_FindComponentByName(target, parentName);

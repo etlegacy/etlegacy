@@ -3856,6 +3856,13 @@ static ID_INLINE qboolean CG_Hud_HasParent(hudComponent_t *comp, hudComponent_t 
 		{
 			return qtrue;
 		}
+
+		if (tmp == tmp->parentAnchor.parent)
+		{
+			CG_Printf(S_COLOR_YELLOW "Circular component dependency!\n");
+			tmp->parentAnchor.parent = NULL;
+			return qfalse;
+		}
 	}
 
 	return qfalse;
