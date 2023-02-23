@@ -84,7 +84,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(ping),             CG_DrawPing,               0.19f,  { 0 } },
 	{ HUDF(speed),            CG_DrawSpeed,              0.19f,  { "Max Speed" } },
 	{ HUDF(lagometer),        CG_DrawLagometer,          0.19f,  { 0 } },
-	{ HUDF(disconnect),       CG_DrawDisconnect,         0.35f,  { 0 } },
+	{ HUDF(disconnect),       CG_DrawDisconnect,         0.35f,  { "No Text" } },
 	{ HUDF(chat),             CG_DrawTeamInfo,           0.20f,  { "No Team Flag" } },// FIXME: outside cg_draw_hud
 	{ HUDF(spectatorstatus),  CG_DrawSpectator,          0.35f,  { 0 } },        // FIXME: outside cg_draw_hud
 	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig,         0.22f,  { "No Skill",   "No Rank",      "No Prestige" } },// FIXME: outside cg_draw_hud
@@ -3052,9 +3052,12 @@ void CG_DrawDisconnect(hudComponent_t *comp)
 	scale = CG_ComputeScale(comp /*comp->location.h / 5.f, comp->scale, &cgs.media.limboFont2*/);
 
 	// also add text in center of screen
-	s = CG_TranslateString("Connection Interrupted");
-	w = CG_Text_Width_Ext(s, scale, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 100, scale, scale, comp->colorMain, s, 0, 0, comp->styleText, &cgs.media.limboFont2);
+	if (!(comp->style & BIT(0)))
+	{
+		s = CG_TranslateString("Connection Interrupted");
+		w = CG_Text_Width_Ext(s, scale, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 100, scale, scale, comp->colorMain, s, 0, 0, comp->styleText, &cgs.media.limboFont2);
+	}
 
 	// blink the icon
 	if ((cg.time >> 9) & 1)
