@@ -3875,6 +3875,10 @@ void CG_CalculateComponentInternals(hudStucture_t *hud, hudComponent_t *comp)
 	rectDef_t      parentLoc, tmpLoc;
 	anchorPoints_t points;
 
+	// FIXME: add support for anchor setting in the hud editor!
+	// we are just nuking the parent anchor here since the hud editor cannot set the anchors yet
+	comp->parentAnchor.parent = NULL;
+
 	// At this point we go back to a virtual 4/3 screen
 	if (comp->parentAnchor.parent)
 	{
