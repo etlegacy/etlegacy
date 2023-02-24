@@ -3320,7 +3320,8 @@ void CG_DrawPlayerStats(hudComponent_t *comp)
  */
 void CG_Hud_Setup(void)
 {
-	hudStucture_t *hud0 = NULL;
+	unsigned int  i;
+	hudStucture_t *hud0 = NULL, *tmp;
 
 	Com_Memset(&hudData, 0, sizeof(hudData_t));
 
@@ -3340,6 +3341,19 @@ void CG_Hud_Setup(void)
 
 	// Read the hud files
 	CG_ReadHudsFromFile();
+
+	// set the user hud
+	CG_SetHud();
+
+	// compute all huds positions
+	for (i = 0; i < hudData.count; i++)
+	{
+		tmp = hudData.list[i];
+		if (tmp)
+		{
+			CG_ComputeComponentPositions(tmp);
+		}
+	}
 }
 
 #ifdef ETLEGACY_DEBUG
@@ -3817,7 +3831,7 @@ void CG_GenerateHudAnchors(hudStucture_t *hud)
 	}
 }
 
-static void CG_ComputeComponentPositions(hudStucture_t *hud)
+void CG_ComputeComponentPositions(hudStucture_t *hud)
 {
 	unsigned int   i;
 	hudComponent_t *comp;
