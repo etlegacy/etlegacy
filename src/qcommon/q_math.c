@@ -828,6 +828,34 @@ float Q_fabs(float f)
 }
 #endif
 
+/**
+ * @brief Q_FloatAsInt
+ * @param[in] f
+ * @return
+ */
+int Q_FloatAsInt(float f)
+{
+	floatint_t fi;
+
+	fi.f = f;
+	return fi.i;
+}
+
+qboolean CG_IsFloatNegative(float value)
+{
+	floatint_t t;
+	t.f = value;
+
+	etl_assert(sizeof(float) == 4);
+
+	if (t.ui & BIT(31))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
 //============================================================
 
 /**

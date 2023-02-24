@@ -36,9 +36,7 @@
 
 #include "cg_local.h"
 
-hudStucture_t *activehud;
-hudStucture_t hudlist[MAXHUDS];
-int           hudCount = 0;
+hudData_t hudData;
 
 static lagometer_t lagometer;
 
@@ -48,36 +46,36 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",      "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },             // FIXME: outside cg_draw_hud
-	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",     "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj"     } },
-	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",       "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",       "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",       "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,  { "Left",       "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },          // FIXME: outside cg_draw_hud
+	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj"     } },
+	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthtext),       CG_DrawPlayerHealth,       0.25f,  { "Dynamic Color" } },
 	{ HUDF(xptext),           CG_DrawXP,                 0.25f,  { 0 } },
 	{ HUDF(ranktext),         CG_DrawRank,               0.20f,  { 0 } },
 	{ HUDF(statsdisplay),     CG_DrawSkills,             0.25f,  { "Column" } },
 	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,  { "Icon Flash" } },
 	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,  { "Dynamic Color" } },
-	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,  { "Latched Class" } },// FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages),    CG_DrawPMItems,            0.22f,  { "No Connect", "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K"} },  // FIXME: outside cg_draw_hud
+	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,  { "Latched Class", "No Header" } },// FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages),    CG_DrawPMItems,            0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(powerups),         CG_DrawPowerUps,           0.19f,  { 0 } },
 	{ HUDF(objectives),       CG_DrawObjectiveStatus,    0.19f,  { 0 } },
 	{ HUDF(hudhead),          CG_DrawPlayerStatusHead,   0.19f,  { 0 } },
-	{ HUDF(cursorhints),      CG_DrawCursorhint,         0.19f,  { "Size Pulse", "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
-	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,  { "Always",     "Left",         "Center",        "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(cursorhints),      CG_DrawCursorhint,         0.19f,  { "Size Pulse",    "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
+	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,  { "Always",        "Left",         "Center",        "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),        CG_DrawLivesLeft,          0.19f,  { 0 } },
 	{ HUDF(roundtimer),       CG_DrawRoundTimer,         0.19f,  { "Simple" } },
 	{ HUDF(reinforcement),    CG_DrawRespawnTimer,       0.19f,  { 0 } },
 	{ HUDF(spawntimer),       CG_DrawSpawnTimer,         0.19f,  { 0 } },
-	{ HUDF(localtime),        CG_DrawLocalTime,          0.19f,  { "Second",     "12 Hours" } },
-	{ HUDF(votetext),         CG_DrawVote,               0.22f,  { "Complaint" } },// FIXME: outside cg_draw_hud
-	{ HUDF(spectatortext),    CG_DrawSpectatorMessage,   0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(localtime),        CG_DrawLocalTime,          0.19f,  { "Second",        "12 Hours" } },
+	{ HUDF(votetext),         CG_DrawVote,               0.22f,  { "Complaint" } }, // FIXME: outside cg_draw_hud
+	{ HUDF(spectatortext),    CG_DrawSpectatorMessage,   0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(limbotext),        CG_DrawLimboMessage,       0.22f,  { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
-	{ HUDF(followtext),       CG_DrawFollow,             0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(followtext),       CG_DrawFollow,             0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(demotext),         CG_DrawDemoMessage,        0.22f,  { "Details" } },
-	{ HUDF(missilecamera),    CG_DrawMissileCamera,      0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(missilecamera),    CG_DrawMissileCamera,      0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(sprinttext),       CG_DrawPlayerSprint,       0.25f,  { 0 } },
 	{ HUDF(breathtext),       CG_DrawPlayerBreath,       0.25f,  { 0 } },
 	{ HUDF(weaponchargetext), CG_DrawWeaponCharge,       0.25f,  { 0 } },
@@ -86,19 +84,19 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(ping),             CG_DrawPing,               0.19f,  { 0 } },
 	{ HUDF(speed),            CG_DrawSpeed,              0.19f,  { "Max Speed" } },
 	{ HUDF(lagometer),        CG_DrawLagometer,          0.19f,  { 0 } },
-	{ HUDF(disconnect),       CG_DrawDisconnect,         0.35f,  { 0 } },
+	{ HUDF(disconnect),       CG_DrawDisconnect,         0.35f,  { "No Text" } },
 	{ HUDF(chat),             CG_DrawTeamInfo,           0.20f,  { "No Team Flag" } },// FIXME: outside cg_draw_hud
-	{ HUDF(spectatorstatus),  CG_DrawSpectator,          0.35f,  { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig,         0.22f,  { "No Skill",   "No Rank",      "No Prestige" } },// FIXME: outside cg_draw_hud
-	{ HUDF(warmuptitle),      CG_DrawWarmupTitle,        0.35f,  { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(warmuptext),       CG_DrawWarmupText,         0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(objectivetext),    CG_DrawObjectiveInfo,      0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(centerprint),      CG_DrawCenterString,       0.22f,  { 0 } },        // FIXME: outside cg_draw_hud
-	{ HUDF(banner),           CG_DrawBannerPrint,        0.23f,  { 0 } },        // FIXME: outside cg_draw_hud
+	{ HUDF(spectatorstatus),  CG_DrawSpectator,          0.35f,  { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig,         0.22f,  { "No Skill",      "No Rank",      "No Prestige" } },// FIXME: outside cg_draw_hud
+	{ HUDF(warmuptitle),      CG_DrawWarmupTitle,        0.35f,  { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(warmuptext),       CG_DrawWarmupText,         0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(objectivetext),    CG_DrawObjectiveInfo,      0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(centerprint),      CG_DrawCenterString,       0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(banner),           CG_DrawBannerPrint,        0.23f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,  { "Full Color" } },// FIXME: outside cg_draw_hud
-	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",      "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",       "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
-	{ NULL,                   0,                         qfalse, NULL, 0.00,{ 0 } },
+	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",         "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",          "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
+	{ NULL,                   0,                         qfalse, NULL, 0.00f,{ 0 } },
 };
 
 /**
@@ -107,7 +105,7 @@ const hudComponentFields_t hudComponentFields[] =
  */
 hudStucture_t *CG_GetActiveHUD()
 {
-	return activehud;
+	return hudData.active;
 }
 
 static int compIndex = 0;
@@ -128,12 +126,33 @@ static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float
                                                 int showBorder, const vec4_t colorBorder,
                                                 int styleText, int alignText, int autoAdjust, float hardScale, void (*draw)(hudComponent_t *comp))
 {
-	return (hudComponent_t) { { x, y, w, h }, visible, style,
-			                  scale, { colorMain[0], colorMain[1], colorMain[2], colorMain[3] }, { colorSecondary[0], colorSecondary[1], colorSecondary[2], colorSecondary[3] },
-			                  showBackground, { colorBackground[0], colorBackground[1], colorBackground[2], colorBackground[3] },
-			                  showBorder, { colorBorder[0], colorBorder[1], colorBorder[2], colorBorder[3] },
-			                  styleText, alignText, autoAdjust,
-			                  compIndex++, hardScale, qfalse, draw };
+	hudComponent_t tmp;
+	Com_Memset(&tmp, 0, sizeof(hudComponent_t));
+
+	rect_set(tmp.internalLocation, x, y, w, h);
+
+	tmp.visible = visible;
+	tmp.style   = style;
+	tmp.scale   = scale;
+
+	vec4_copy(colorMain, tmp.colorMain);
+	vec4_copy(colorSecondary, tmp.colorSecondary);
+
+	tmp.showBackGround = showBackground;
+	vec4_copy(colorBackground, tmp.colorBackground);
+
+	tmp.showBorder = showBorder;
+	vec4_copy(colorBorder, tmp.colorBorder);
+
+	tmp.styleText  = styleText;
+	tmp.alignText  = alignText;
+	tmp.autoAdjust = autoAdjust;
+	tmp.offset     = compIndex++;
+	tmp.hardScale  = hardScale;
+	tmp.parsed     = qfalse;
+	tmp.draw       = draw;
+
+	return tmp;
 }
 
 vec4_t HUD_Background    = { 0.16f, 0.2f, 0.17f, 0.5f };
@@ -149,75 +168,102 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	compIndex = 0;
 	// the Default hud
+
+// #define tmp_adj(x,y) CG_AdjustXFromHudFile((x),(y))
+#define tmp_adj(x, y) (x)
+
 	hud->hudnumber        = 0;
 	hud->name[0]          = '\0';
-	hud->crosshair        = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 24, 48), SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
-	hud->compass          = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, 14, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
-	hud->staminabar       = CG_getComponent(CG_AdjustXFromHudFile(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
-	hud->breathbar        = CG_getComponent(CG_AdjustXFromHudFile(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
-	hud->healthbar        = CG_getComponent(CG_AdjustXFromHudFile(24, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
-	hud->weaponchargebar  = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 16, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
-	hud->healthtext       = CG_getComponent(CG_AdjustXFromHudFile(47, 57), 465, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
-	hud->xptext           = CG_getComponent(CG_AdjustXFromHudFile(108, 57), 465, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
-	hud->ranktext         = CG_getComponent(CG_AdjustXFromHudFile(167, 57), 465, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);   // disable
-	hud->statsdisplay     = CG_getComponent(CG_AdjustXFromHudFile(116, 42), 394, 42, 70, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawSkills);
-	hud->weaponicon       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 88, 60), SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
-	hud->weaponammo       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 82, 57), 458, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, CG_DrawAmmoCount);
-	hud->fireteam         = CG_getComponent(CG_AdjustXFromHudFile(10, 350), 10, 350, 100, qtrue, 1, 100.f, colorWhite, HUD_Background, qtrue, HUD_BackgroundAlt, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawFireTeamOverlay);
-	hud->popupmessages    = CG_getComponent(CG_AdjustXFromHudFile(4, 422), 245, 422, 96, qtrue, 64, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawPMItems);
-	hud->powerups         = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH  - 40, 36), SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPowerUps);
-	hud->objectives       = CG_getComponent(CG_AdjustXFromHudFile(4, 36), SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawObjectiveStatus);
-	hud->hudhead          = CG_getComponent(CG_AdjustXFromHudFile(44, 62), SCREEN_HEIGHT - 92, 62, 80, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerStatusHead);
-	hud->cursorhints      = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 24, 48), 260, 48, 48, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCursorhint);
-	hud->weaponstability  = CG_getComponent(CG_AdjustXFromHudFile(50, 10), 208, 10, 64, qtrue, (BAR_CENTER | BAR_VERT | BAR_LERP_COLOR) << 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapStability);
-	hud->livesleft        = CG_getComponent(CG_AdjustXFromHudFile(4, 48), 360, 48, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLivesLeft);
-	hud->roundtimer       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 152, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawRoundTimer);
-	hud->reinforcement    = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), SCREEN_HEIGHT - 70, 57, 14, qfalse, 0, 100.f, colorLtBlue, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawRespawnTimer);
-	hud->spawntimer       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), SCREEN_HEIGHT - 60, 57, 14, qfalse, 0, 100.f, colorRed, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpawnTimer);
-	hud->localtime        = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 168, 57, 14, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLocalTime);
-	hud->votetext         = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 202, 278, 28, qtrue, 1, 100.f, colorYellow, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawVote);
-	hud->spectatortext    = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 160, 278, 38, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawSpectatorMessage);
-	hud->limbotext        = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 124, 278, 38, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawLimboMessage);
-	hud->followtext       = CG_getComponent(CG_AdjustXFromHudFile(4, 278), 124, 278, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawFollow);
-	hud->demotext         = CG_getComponent(CG_AdjustXFromHudFile(10, 57), 0, 57, 10, qtrue, 0, 100.f, colorRed, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawDemoMessage);
-	hud->missilecamera    = CG_getComponent(CG_AdjustXFromHudFile(4, 160), 120, 160, 120, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawMissileCamera);
-	hud->sprinttext       = CG_getComponent(CG_AdjustXFromHudFile(20, 57), SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerSprint);
-	hud->breathtext       = CG_getComponent(CG_AdjustXFromHudFile(20, 57), SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerBreath);
-	hud->weaponchargetext = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 16, 57), SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawWeaponCharge);
-	hud->fps              = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 184, 57, 14, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawFPS);
-	hud->snapshot         = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 305, 57, 38, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawSnapshot);
-	hud->ping             = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 200, 57, 14, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPing);
-	hud->speed            = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 275, 57, 14, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpeed);
-	hud->lagometer        = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 216, 57, 57, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLagometer);
-	hud->disconnect       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 216, 57, 57, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawDisconnect);
-	hud->chat             = CG_getComponent(CG_AdjustXFromHudFile(165, 364), 406, 364, 72, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.20f, CG_DrawTeamInfo);
-	hud->spectatorstatus  = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 70, 140), 421, 140, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawSpectator);
-	hud->pmitemsbig       = CG_getComponent(CG_AdjustXFromHudFile(347, 290), 292, 290, 57, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPMItemsBig);
-	hud->warmuptitle      = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 120, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawWarmupTitle);
-	hud->warmuptext       = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 310, 422, 39, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawWarmupText);
-	hud->objectivetext    = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 351, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, (vec4_t) { 0, 0.5, 0.5, 0.25 }, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qtrue, 0.22f, CG_DrawObjectiveInfo);
-	hud->centerprint      = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 378, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawCenterString);
-	hud->banner           = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 211, 422), 20, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.23f, CG_DrawBannerPrint);
-	hud->crosshairtext    = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 150, 300), 182, 300, 16, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairNames);
-	hud->crosshairbar     = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH * .5f - 55, 110), 199, 110, 10, qtrue, CROSSHAIR_BAR_CLASS | CROSSHAIR_BAR_RANK | (BAR_BG << 3), 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
-	hud->stats            = CG_getComponent(CG_AdjustXFromHudFile(SCREEN_WIDTH - 60, 57), 291, 57, 62, qtrue, GAMESTATS_KILL | GAMESTATS_DEATH | GAMESTATS_SELFKILL, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawPlayerStats);
+	hud->crosshair        = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 24, 48), SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
+	hud->compass          = CG_getComponent(tmp_adj(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, 14, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
+	hud->staminabar       = CG_getComponent(tmp_adj(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
+	hud->breathbar        = CG_getComponent(tmp_adj(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
+	hud->healthbar        = CG_getComponent(tmp_adj(24, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
+	hud->weaponchargebar  = CG_getComponent(tmp_adj(SCREEN_WIDTH - 16, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
+	hud->healthtext       = CG_getComponent(tmp_adj(47, 57), 465, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
+	hud->xptext           = CG_getComponent(tmp_adj(108, 57), 465, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
+	hud->ranktext         = CG_getComponent(tmp_adj(167, 57), 465, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);   // disable
+	hud->statsdisplay     = CG_getComponent(tmp_adj(116, 42), 394, 42, 70, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawSkills);
+	hud->weaponicon       = CG_getComponent(tmp_adj(SCREEN_WIDTH - 88, 60), SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
+	hud->weaponammo       = CG_getComponent(tmp_adj(SCREEN_WIDTH - 82, 57), 458, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, CG_DrawAmmoCount);
+	hud->fireteam         = CG_getComponent(tmp_adj(10, 350), 10, 350, 100, qtrue, 1, 100.f, colorWhite, HUD_Background, qtrue, HUD_BackgroundAlt, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawFireTeamOverlay);
+	hud->popupmessages    = CG_getComponent(tmp_adj(4, 422), 245, 422, 96, qtrue, 64, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawPMItems);
+	hud->powerups         = CG_getComponent(tmp_adj(SCREEN_WIDTH  - 40, 36), SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPowerUps);
+	hud->objectives       = CG_getComponent(tmp_adj(4, 36), SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawObjectiveStatus);
+	hud->hudhead          = CG_getComponent(tmp_adj(44, 62), SCREEN_HEIGHT - 92, 62, 80, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerStatusHead);
+	hud->cursorhints      = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 24, 48), 260, 48, 48, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCursorhint);
+	hud->weaponstability  = CG_getComponent(tmp_adj(50, 10), 208, 10, 64, qtrue, (BAR_CENTER | BAR_VERT | BAR_LERP_COLOR) << 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapStability);
+	hud->livesleft        = CG_getComponent(tmp_adj(4, 48), 360, 48, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLivesLeft);
+	hud->roundtimer       = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 152, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawRoundTimer);
+	hud->reinforcement    = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), SCREEN_HEIGHT - 70, 57, 14, qfalse, 0, 100.f, colorLtBlue, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawRespawnTimer);
+	hud->spawntimer       = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), SCREEN_HEIGHT - 60, 57, 14, qfalse, 0, 100.f, colorRed, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpawnTimer);
+	hud->localtime        = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 168, 57, 14, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLocalTime);
+	hud->votetext         = CG_getComponent(tmp_adj(4, 278), 202, 278, 28, qtrue, 1, 100.f, colorYellow, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawVote);
+	hud->spectatortext    = CG_getComponent(tmp_adj(4, 278), 160, 278, 38, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawSpectatorMessage);
+	hud->limbotext        = CG_getComponent(tmp_adj(4, 278), 124, 278, 38, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawLimboMessage);
+	hud->followtext       = CG_getComponent(tmp_adj(4, 278), 124, 278, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawFollow);
+	hud->demotext         = CG_getComponent(tmp_adj(10, 57), 0, 57, 10, qtrue, 0, 100.f, colorRed, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawDemoMessage);
+	hud->missilecamera    = CG_getComponent(tmp_adj(4, 160), 120, 160, 120, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawMissileCamera);
+	hud->sprinttext       = CG_getComponent(tmp_adj(20, 57), SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerSprint);
+	hud->breathtext       = CG_getComponent(tmp_adj(20, 57), SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerBreath);
+	hud->weaponchargetext = CG_getComponent(tmp_adj(SCREEN_WIDTH - 16, 57), SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawWeaponCharge);
+	hud->fps              = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 184, 57, 14, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawFPS);
+	hud->snapshot         = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 305, 57, 38, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawSnapshot);
+	hud->ping             = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 200, 57, 14, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPing);
+	hud->speed            = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 275, 57, 14, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpeed);
+	hud->lagometer        = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 216, 57, 57, qtrue, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLagometer);
+	hud->disconnect       = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 216, 57, 57, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawDisconnect);
+	hud->chat             = CG_getComponent(tmp_adj(165, 364), 406, 364, 72, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.20f, CG_DrawTeamInfo);
+	hud->spectatorstatus  = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 70, 140), 421, 140, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawSpectator);
+	hud->pmitemsbig       = CG_getComponent(tmp_adj(347, 290), 292, 290, 57, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPMItemsBig);
+	hud->warmuptitle      = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 120, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawWarmupTitle);
+	hud->warmuptext       = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 310, 422, 39, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawWarmupText);
+	hud->objectivetext    = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 351, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, (vec4_t) { 0, 0.5f, 0.5f, 0.25f }, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qtrue, 0.22f, CG_DrawObjectiveInfo);
+	hud->centerprint      = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 378, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawCenterString);
+	hud->banner           = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 211, 422), 20, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.23f, CG_DrawBannerPrint);
+	hud->crosshairtext    = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 150, 300), 182, 300, 16, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairNames);
+	hud->crosshairbar     = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 55, 110), 199, 110, 10, qtrue, CROSSHAIR_BAR_CLASS | CROSSHAIR_BAR_RANK | (BAR_BG << 3), 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
+	hud->stats            = CG_getComponent(tmp_adj(SCREEN_WIDTH - 60, 57), 291, 57, 62, qtrue, GAMESTATS_KILL | GAMESTATS_DEATH | GAMESTATS_SELFKILL, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawPlayerStats);
 }
 
 /**
  * @brief CG_GetHudByNumber
  * @param[in] number
- * @return
+ * @return found hud
  */
 hudStucture_t *CG_GetHudByNumber(int number)
 {
 	int           i;
 	hudStucture_t *hud;
 
-	for (i = 0; i < hudCount; i++)
+	for (i = 0; i < hudData.count; i++)
 	{
-		hud = &hudlist[i];
+		hud = hudData.list[i];
 
 		if (hud->hudnumber == number)
+		{
+			return hud;
+		}
+	}
+
+	return NULL;
+}
+
+/**
+ * @brief CG_GetHudByName
+ * @param[in] name
+ * @return found hud
+ */
+hudStucture_t *CG_GetHudByName(const char *name)
+{
+	int           i;
+	hudStucture_t *hud;
+
+	for (i = 0; i < hudData.count; i++)
+	{
+		hud = hudData.list[i];
+
+		if (!Q_stricmp(hud->name, name))
 		{
 			return hud;
 		}
@@ -369,7 +415,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 
 	Q_strncpyz(temp, str, 1024);
 
-	// count line number and max char legnth
+	// count line number and max char length
 	ptr = strtok(temp, "\n");
 	do
 	{
@@ -397,7 +443,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 		y += ((comp->location.h - h2) * .5f);
 	}
 
-	switch (comp->alignText)
+	switch (align)
 	{
 	case ITEM_ALIGN_RIGHT:
 		x += (comp->location.w - w2);
@@ -457,16 +503,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 		}
 	}
 
-	switch (comp->alignText)
-	{
-	case ITEM_ALIGN_RIGHT:   x  = comp->location.x + comp->location.w - paddingW; break;
-	case ITEM_ALIGN_CENTER:  x  = comp->location.x + (comp->location.w * .5f); break;
-	case ITEM_ALIGN_CENTER2: x += paddingW; break;
-	case ITEM_ALIGN_LEFT:    x += paddingW; break;
-	default: break;
-	}
-
-	CG_DrawMultilineText(x, y + ((h2 + h) * .5f) / lineNumber, scale, scale, color, str,
+	CG_DrawMultilineText(comp->location.x + paddingW, y + ((h2 + h) * .5f) / lineNumber, comp->location.w - (paddingW * 2), scale, scale, color, str,
 	                     h2 / lineNumber, 0, 0, fontStyle, align, font);
 }
 
@@ -3015,9 +3052,12 @@ void CG_DrawDisconnect(hudComponent_t *comp)
 	scale = CG_ComputeScale(comp /*comp->location.h / 5.f, comp->scale, &cgs.media.limboFont2*/);
 
 	// also add text in center of screen
-	s = CG_TranslateString("Connection Interrupted");
-	w = CG_Text_Width_Ext(s, scale, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 100, scale, scale, comp->colorMain, s, 0, 0, comp->styleText, &cgs.media.limboFont2);
+	if (!(comp->style & BIT(0)))
+	{
+		s = CG_TranslateString("Connection Interrupted");
+		w = CG_Text_Width_Ext(s, scale, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 100, scale, scale, comp->colorMain, s, 0, 0, comp->styleText, &cgs.media.limboFont2);
+	}
 
 	// blink the icon
 	if ((cg.time >> 9) & 1)
@@ -3201,7 +3241,7 @@ void CG_DrawLagometer(hudComponent_t *comp)
 	// don't draw if a demo and we're running at a different timescale
 	if (!cg.demoPlayback)
 	{
-		CG_DrawDisconnect(&activehud->disconnect);
+		CG_DrawDisconnect(&hudData.active->disconnect);
 	}
 
 	// add snapshots/s in top-right corner of meter
@@ -3280,16 +3320,40 @@ void CG_DrawPlayerStats(hudComponent_t *comp)
  */
 void CG_Hud_Setup(void)
 {
-	hudStucture_t hud0;
+	unsigned int  i;
+	hudStucture_t *hud0 = NULL, *tmp;
 
-	Com_Memset(&hud0, 0, sizeof(hudStucture_t));
+	Com_Memset(&hudData, 0, sizeof(hudData_t));
+
+	hud0 = CG_GetFreeHud();
 
 	// Hud0 aka the Default hud
-	CG_setDefaultHudValues(&hud0);
-	activehud = CG_AddHudToList(&hud0);
+	CG_setDefaultHudValues(hud0);
+
+	strcpy(hud0->name, "ETmain");
+
+	// generate the default hud anchors
+	CG_GenerateHudAnchors(hud0);
+
+	CG_RegisterHud(hud0);
+
+	hudData.active = hud0;
 
 	// Read the hud files
 	CG_ReadHudsFromFile();
+
+	// set the user hud
+	CG_SetHud();
+
+	// compute all huds positions
+	for (i = 0; i < hudData.count; i++)
+	{
+		tmp = hudData.list[i];
+		if (tmp)
+		{
+			CG_ComputeComponentPositions(tmp);
+		}
+	}
 }
 
 #ifdef ETLEGACY_DEBUG
@@ -3329,32 +3393,615 @@ static void CG_PrintHud(hudStucture_t *hud)
 }
 #endif
 
+static ID_INLINE void CG_HUD_LoadByName(const char *name)
+{
+	char tmp[MAX_QPATH] = { 0 };
+	int  len;
+
+	if (!name || !*name)
+	{
+		return;
+	}
+
+	len = strlen(name);
+
+	if (MAX_QPATH <= len)
+	{
+		return;
+	}
+
+	Q_strncpyz(tmp, name, MAX_QPATH);
+
+	if (len <= 4 || strcmp(tmp + len - 4, ".dat") != 0)
+	{
+		Q_strcat(tmp, MAX_QPATH, ".dat");
+	}
+
+	hudData.active = CG_ReadSingleHudJsonFile(tmp);
+
+	if (hudData.active)
+	{
+		CG_ComputeComponentPositions(hudData.active);
+	}
+}
+
 /**
  * @brief CG_SetHud
  */
 void CG_SetHud(void)
 {
-	if (cg_altHud.integer && activehud->hudnumber != cg_altHud.integer)
+	static int modCount = -1;
+
+	if (cg_altHud.modificationCount == modCount && hudData.active && hudData.active->active)
 	{
-		activehud = CG_GetHudByNumber(cg_altHud.integer);
-		if (!activehud)
+		return;
+	}
+
+	if (Q_isanumber(cg_altHud.string))
+	{
+		hudData.active = CG_GetHudByNumber(cg_altHud.integer);
+	}
+	else
+	{
+		hudData.active = CG_GetHudByName(cg_altHud.string);
+
+		if (!hudData.active)
 		{
-			Com_Printf("^3WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
-			activehud = CG_GetHudByNumber(0);
-			trap_Cvar_Set("cg_altHud", "0");
-			return;
+			CG_HUD_LoadByName(cg_altHud.string);
 		}
+	}
+
+	modCount = cg_altHud.modificationCount;
+
+	if (!hudData.active)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
+		hudData.active = CG_GetHudByNumber(0);
+		trap_Cvar_Set("cg_altHud", "0");
+		return;
+	}
 
 #ifdef ETLEGACY_DEBUG
-		CG_PrintHud(activehud);
+	CG_PrintHud(hudData.active);
 #endif
 
-		Com_Printf("Setting hud to: %i\n", cg_altHud.integer);
-	}
-	else if (!cg_altHud.integer && activehud->hudnumber)
+	if (hudData.active->name[0])
 	{
-		activehud = CG_GetHudByNumber(0);
+		Com_Printf("Setting hud to: '%s'\n", hudData.active->name);
 	}
+	else
+	{
+		Com_Printf("Setting hud to: %i\n", hudData.active->hudnumber);
+	}
+}
+
+static void CG_ComputeRectBasedOnPoint(rectDef_t *loc, anchorPoint_t point)
+{
+	switch (point)
+	{
+	case TOP_LEFT:
+		break;
+	case TOP_MIDDLE:
+		loc->x += (loc->w / 2);
+		break;
+	case TOP_RIGHT:
+		loc->x += loc->w;
+		break;
+	case MIDDLE_RIGHT:
+		loc->x += loc->w;
+		loc->y += (loc->h / 2);
+		break;
+	case BOTTOM_RIGHT:
+		loc->x += loc->w;
+		loc->y += loc->h;
+		break;
+	case BOTTOM_MIDDLE:
+		loc->x += (loc->w / 2);
+		loc->y += loc->h;
+		break;
+	case BOTTOM_LEFT:
+		loc->y += loc->h;
+		break;
+	case MIDDLE_LEFT:
+		loc->y += (loc->h / 2);
+		break;
+	case CENTER:
+		loc->x += (loc->w / 2);
+		loc->y += (loc->h / 2);
+		break;
+	}
+}
+
+void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *out)
+{
+	rectDef_t parentLoc, tmpCompLoc;
+
+	// force quit this insanity
+	if (depth > 10 || depth < 0)
+	{
+		Com_Printf(S_COLOR_RED "Hud component recursive dependency is too deep, para-shooting out of this mess!\n");
+		return;
+	}
+
+	rect_copy(comp->internalLocation, tmpCompLoc);
+
+	if (comp->anchorPoint)
+	{
+		rectDef_t tmpLoc;
+		rect_copy(comp->internalLocation, tmpLoc);
+		tmpLoc.x = tmpLoc.y = 0;
+		CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
+
+		tmpCompLoc.x -= tmpLoc.x;
+		tmpCompLoc.y -= tmpLoc.y;
+	}
+
+	// are we depending on a component?
+	if (comp->parentAnchor.parent)
+	{
+		CG_CalculateComponentLocation(comp->parentAnchor.parent, depth + 1, &parentLoc);
+	}
+	else
+	{
+		// our parent is the screen, so fill it in
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = SCREEN_WIDTH_F;
+		parentLoc.h = SCREEN_HEIGHT_F;
+	}
+
+	// figure out the parent components anchor location
+	CG_ComputeRectBasedOnPoint(&parentLoc, comp->parentAnchor.point);
+
+	// final location
+	tmpCompLoc.x += parentLoc.x;
+	tmpCompLoc.y += parentLoc.y;
+
+	etl_assert(out);
+	rect_copy(tmpCompLoc, *out);
+}
+
+typedef struct
+{
+	anchorPoint_t self;
+	anchor_t parent;
+} anchorPoints_t;
+
+static anchorPoints_t CG_ClosestAnchors(rectDef_t *self, rectDef_t *parent, float *outLen)
+{
+	rectDef_t      tmp, tmp2;
+	int            i, x;
+	float          length = FLT_MAX, tmpLen = 0;
+	vec2_t         tmpVec, tmpVec2;
+	anchorPoints_t ret = { TOP_LEFT, { NULL, TOP_LEFT } };
+
+	for (i = 0; i <= CENTER; i++)
+	{
+		rect_copy(*self, tmp);
+		CG_ComputeRectBasedOnPoint(&tmp, i);
+
+		for (x = 0; x <= CENTER; x++)
+		{
+			rect_copy(*parent, tmp2);
+			CG_ComputeRectBasedOnPoint(&tmp2, x);
+
+			vec2_set(tmpVec, tmp.x, tmp.y);
+			vec2_set(tmpVec2, tmp2.x, tmp2.y);
+			vec2_sub(tmpVec, tmpVec2, tmpVec);
+			tmpLen = vec2_length(tmpVec);
+
+			if (tmpLen < length)
+			{
+				ret.self         = i;
+				ret.parent.point = x;
+				length           = tmpLen;
+			}
+		}
+	}
+
+	if (outLen)
+	{
+		*outLen = length;
+	}
+
+	return ret;
+}
+
+static ID_INLINE qboolean CG_CheckComponentParentDepth(hudComponent_t *target, hudComponent_t *possibleParent)
+{
+	unsigned int   i;
+	hudComponent_t *tmp = NULL;
+
+	for (i = 0; i < 10; i++)
+	{
+		tmp = possibleParent->parentAnchor.parent;
+
+		if (tmp == possibleParent || tmp == target)
+		{
+			return qfalse;
+		}
+		else if (!tmp)
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+static anchorPoints_t CG_FindClosestAnchors(hudStucture_t *hud, hudComponent_t *current)
+{
+	unsigned int   i;
+	hudComponent_t *comp;
+	rectDef_t      tmpParentRect, currentRect;
+	float          length = FLT_MAX, tmpLen = 0;
+
+	anchorPoints_t out = { TOP_LEFT, { NULL, TOP_LEFT } };
+	anchorPoints_t tmpAnchors;
+
+	rect_clear(tmpParentRect);
+	rect_clear(currentRect);
+
+	CG_CalculateComponentLocation(current, 0, &currentRect);
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (hudComponentFields[i].isAlias)
+		{
+			continue;
+		}
+
+		comp = (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
+
+		// can't parent to self
+		if (comp == current)
+		{
+			continue;
+		}
+
+		CG_CalculateComponentLocation(comp, 0, &tmpParentRect);
+
+		tmpAnchors = CG_ClosestAnchors(&currentRect, &tmpParentRect, &tmpLen);
+		if (tmpLen < length && CG_CheckComponentParentDepth(current, comp))
+		{
+			out               = tmpAnchors;
+			out.parent.parent = comp;
+			length            = tmpLen;
+		}
+	}
+
+	rect_clear(tmpParentRect);
+	tmpParentRect.w = SCREEN_WIDTH_F;
+	tmpParentRect.h = SCREEN_HEIGHT_F;
+
+	tmpAnchors = CG_ClosestAnchors(&currentRect, &tmpParentRect, &tmpLen);
+	if (tmpLen < length)
+	{
+		out               = tmpAnchors;
+		out.parent.parent = NULL;
+		length            = tmpLen;
+	}
+
+	return out;
+}
+
+qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
+{
+	rectDef_t parentLoc, tmpLoc;
+
+	// force quit this insanity
+	if (depth > 10 || depth < 0)
+	{
+		Com_Printf(S_COLOR_RED "Hud component recursive dependency is too deep, para-shooting out of this mess!\n");
+		return qfalse;
+	}
+
+	rect_copy(comp->internalLocation, comp->location);
+	comp->location.x = comp->location.y = 0;
+
+	// are we depending on a component?
+	if (comp->parentAnchor.parent)
+	{
+		if (!comp->parentAnchor.parent->computed)
+		{
+			if (!CG_ComputeComponentPosition(comp->parentAnchor.parent, depth + 1))
+			{
+				return qfalse;
+			}
+		}
+
+		Com_Memcpy(&parentLoc, &comp->parentAnchor.parent->location, sizeof(rectDef_t));
+	}
+	else
+	{
+		// our parent is the screen, so fill it in
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = Ccg_WideX(SCREEN_WIDTH_F);
+		parentLoc.h = SCREEN_HEIGHT_F;
+	}
+
+	// figure out the parent components anchor location
+	CG_ComputeRectBasedOnPoint(&parentLoc, comp->parentAnchor.point);
+
+	if (comp->anchorPoint)
+	{
+		rect_copy(comp->internalLocation, tmpLoc);
+		tmpLoc.x = tmpLoc.y = 0;
+		CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
+
+		comp->location.x -= tmpLoc.x;
+		comp->location.y -= tmpLoc.y;
+	}
+
+	// final location
+	float xAbs = Q_fabs(comp->internalLocation.x);
+
+	if (xAbs)
+	{
+		comp->location.x += Ccg_WideX(xAbs) * (CG_IsFloatNegative(comp->internalLocation.x) ? -1.f : 1.f) + parentLoc.x;
+	}
+	else
+	{
+		comp->location.x += parentLoc.x;
+	}
+
+	comp->location.y += comp->internalLocation.y + parentLoc.y;
+
+	comp->computed = qtrue;
+
+	return qtrue;
+}
+
+static void CG_GenerateComponentAnchors(hudStucture_t *hud, hudComponent_t *comp, qboolean checkComponents, int depth, rectDef_t *out)
+{
+	rectDef_t      parentLoc, parentLocBackup, tmpCompLoc;
+	anchorPoints_t points;
+
+	// force quit this insanity
+	if (depth > 10 || depth < 0)
+	{
+		Com_Printf(S_COLOR_RED "Hud component recursive dependency is too deep, para-shooting out of this mess!\n");
+		return;
+	}
+
+	rect_copy(comp->internalLocation, tmpCompLoc);
+
+	if (comp->anchorPoint)
+	{
+		rectDef_t tmpLoc;
+		rect_copy(comp->internalLocation, tmpLoc);
+		tmpLoc.x = tmpLoc.y = 0;
+		CG_ComputeRectBasedOnPoint(&tmpLoc, comp->anchorPoint);
+
+		tmpCompLoc.x -= tmpLoc.x;
+		tmpCompLoc.y -= tmpLoc.y;
+	}
+
+	// are we depending on a component?
+	if (comp->parentAnchor.parent)
+	{
+		CG_GenerateComponentAnchors(hud, comp->parentAnchor.parent, checkComponents, depth + 1, &parentLoc);
+	}
+	else
+	{
+		// our parent is the screen, so fill it in
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = SCREEN_WIDTH_F;
+		parentLoc.h = SCREEN_HEIGHT_F;
+	}
+	rect_copy(parentLoc, parentLocBackup);
+
+	// figure out the parent components anchor location
+	CG_ComputeRectBasedOnPoint(&parentLoc, comp->parentAnchor.point);
+
+	// final location
+	tmpCompLoc.x += parentLoc.x;
+	tmpCompLoc.y += parentLoc.y;
+
+	if (out)
+	{
+		rect_copy(tmpCompLoc, *out);
+		return;
+	}
+
+	comp->location.x = tmpCompLoc.x;
+	comp->location.y = tmpCompLoc.y;
+
+	// restore the parent backup
+	rect_copy(parentLocBackup, parentLoc);
+
+	// At this point we know the components real location in the 4/3 screen space
+	if (checkComponents)
+	{
+		points = CG_FindClosestAnchors(hud, comp);
+	}
+	else
+	{
+		// find the closest valid anchors for the current locations
+		points = CG_ClosestAnchors(&tmpCompLoc, &parentLoc, NULL);
+	}
+
+	if (points.self)
+	{
+		CG_ComputeRectBasedOnPoint(&tmpCompLoc, points.self);
+	}
+
+	if (points.parent.parent)
+	{
+		CG_CalculateComponentLocation(points.parent.parent, 0, &parentLoc);
+	}
+	else
+	{
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = SCREEN_WIDTH_F;
+		parentLoc.h = SCREEN_HEIGHT_F;
+	}
+	CG_ComputeRectBasedOnPoint(&parentLoc, points.parent.point);
+
+	tmpCompLoc.x = tmpCompLoc.x - parentLoc.x;
+	tmpCompLoc.y = tmpCompLoc.y - parentLoc.y;
+
+	comp->internalLocation.x  = tmpCompLoc.x;
+	comp->internalLocation.y  = tmpCompLoc.y;
+	comp->anchorPoint         = points.self;
+	comp->parentAnchor.point  = points.parent.point;
+	comp->parentAnchor.parent = points.parent.parent;
+}
+
+void CG_GenerateHudAnchors(hudStucture_t *hud)
+{
+	unsigned int   i;
+	hudComponent_t *comp;
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (hudComponentFields[i].isAlias)
+		{
+			continue;
+		}
+
+		comp = (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
+
+		if (comp && !comp->computed)
+		{
+			CG_GenerateComponentAnchors(hud, comp, qfalse, 0, NULL);
+		}
+	}
+}
+
+void CG_ComputeComponentPositions(hudStucture_t *hud)
+{
+	unsigned int   i;
+	hudComponent_t *comp;
+
+	if (hud->computed)
+	{
+		return;
+	}
+
+	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
+	{
+		comp = hud->components[i];
+
+		if (comp && !comp->computed)
+		{
+			if (!CG_ComputeComponentPosition(comp, 0))
+			{
+				Com_Printf(S_COLOR_RED "Could not setup component\n");
+			}
+		}
+	}
+
+	hud->computed = qtrue;
+}
+
+static ID_INLINE qboolean CG_Hud_HasParent(hudComponent_t *comp, hudComponent_t *has)
+{
+	hudComponent_t *tmp = comp;
+
+	if (!comp || !has)
+	{
+		return qfalse;
+	}
+
+	if (comp == has)
+	{
+		return qtrue;
+	}
+
+	while ((tmp = tmp->parentAnchor.parent))
+	{
+		if (tmp == has)
+		{
+			return qtrue;
+		}
+
+		if (tmp == tmp->parentAnchor.parent)
+		{
+			CG_Printf(S_COLOR_YELLOW "Circular component dependency!\n");
+			tmp->parentAnchor.parent = NULL;
+			return qfalse;
+		}
+	}
+
+	return qfalse;
+}
+
+void CG_CalculateComponentInternals(hudStucture_t *hud, hudComponent_t *comp)
+{
+	unsigned int   i;
+	hudComponent_t *tmp;
+	rectDef_t      parentLoc, tmpLoc;
+	anchorPoints_t points;
+
+	// At this point we go back to a virtual 4/3 screen
+	if (comp->parentAnchor.parent)
+	{
+		// FIXME: check if we actually need to do something else?
+		// FIXME: how to disconnect a component from parent on the editor?
+		rect_copy(comp->parentAnchor.parent->location, parentLoc);
+	}
+	else
+	{
+		parentLoc.x = parentLoc.y = 0;
+		parentLoc.w = Ccg_WideX(SCREEN_WIDTH_F);
+		parentLoc.h = SCREEN_HEIGHT_F;
+	}
+
+	rect_copy(comp->location, tmpLoc);
+
+	// find the closest valid anchors for the current locations
+	points = CG_ClosestAnchors(&tmpLoc, &parentLoc, NULL);
+
+	if (points.parent.point != comp->parentAnchor.point)
+	{
+		CG_Printf(S_COLOR_CYAN "Switched parent anchor point: %i -> %i\n", comp->parentAnchor.point, points.parent.point);
+	}
+
+	if (points.self != comp->anchorPoint)
+	{
+		CG_Printf(S_COLOR_CYAN "Switched component anchor point: %i -> %i\n", comp->anchorPoint, points.self);
+	}
+
+	if (points.self)
+	{
+		CG_ComputeRectBasedOnPoint(&tmpLoc, points.self);
+	}
+
+	CG_ComputeRectBasedOnPoint(&parentLoc, points.parent.point);
+
+	tmpLoc.x = tmpLoc.x - parentLoc.x;
+	tmpLoc.y = tmpLoc.y - parentLoc.y;
+
+	comp->internalLocation.x = Ccg_WideXReverse(Q_fabs(tmpLoc.x)) * (CG_IsFloatNegative(tmpLoc.x) ? -1.f : 1.f);
+	comp->internalLocation.y = tmpLoc.y;
+	comp->internalLocation.w = tmpLoc.w;
+	comp->internalLocation.h = tmpLoc.h;
+	comp->anchorPoint        = points.self;
+	comp->parentAnchor.point = points.parent.point;
+
+	comp->computed = qfalse;
+
+	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
+	{
+		tmp = hud->components[i];
+
+		if (!tmp)
+		{
+			continue;
+		}
+
+		if (tmp == comp)
+		{
+			continue;
+		}
+
+		if (CG_Hud_HasParent(tmp, comp))
+		{
+			tmp->computed = qfalse;
+		}
+	}
+
+	hud->computed = qfalse;
 }
 
 /**
@@ -3365,9 +4012,11 @@ void CG_DrawActiveHud(void)
 	unsigned int   i;
 	hudComponent_t *comp;
 
+	CG_ComputeComponentPositions(hudData.active);
+
 	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
 	{
-		comp = activehud->components[i];
+		comp = hudData.active->components[i];
 
 		if (comp && comp->visible && comp->draw)
 		{

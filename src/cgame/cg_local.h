@@ -2133,6 +2133,7 @@ enum
 	POPUP_WEAPON_ICON        = BIT(5),
 	POPUP_WEAPON_ICON_ALT    = BIT(6),
 	POPUP_SWAP_VICTIM_KILLER = BIT(7),
+	POPUP_FORCE_COLORS       = BIT(8),
 };
 
 // Big popup filters
@@ -2150,7 +2151,6 @@ enum
 	COMPASS_ITEM                 = BIT(1),
 	COMPASS_SECONDARY_OBJECTIVES = BIT(2),
 	COMPASS_PRIMARY_OBJECTIVES   = BIT(3),
-
 };
 
 /// Locations
@@ -3003,8 +3003,13 @@ void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t
 
 qboolean Ccg_Is43Screen(void);      // does this game-window have a 4:3 aspectratio. note: this is also true for a 800x600 windowed game on a widescreen monitor
 float Ccg_WideX(float x);           // convert an x-coordinate to a widescreen x-coordinate. (only if the game-window is non 4:3 aspectratio)
+float Ccg_WideXReverse(float x);
 float Ccg_WideXoffset(void);        // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
+static ID_INLINE void CG_AdjustRectFrom640(rectDef_t *rect)
+{
+	CG_AdjustFrom640(&rect->x, &rect->y, &rect->w, &rect->h);
+}
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent);
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
@@ -3035,7 +3040,7 @@ int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, 
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
 // draws multiline strings
-void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
+void CG_DrawMultilineText(float x, float y, float w, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
 // new hud stuff
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);
@@ -3068,6 +3073,7 @@ void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const 
 void CG_Text_SetActiveFont(int font);
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font);
 float CG_Text_Width_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font);
+float CG_Text_Line_Width_Ext_Float(const char *text, float scale, fontHelper_t *font);
 int CG_Text_Width(const char *text, float scale, int limit);
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Height(const char *text, float scale, int limit);
@@ -3104,12 +3110,6 @@ typedef struct scrollText_s
 void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
 // draws vertical scrolling string
 void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
-
-// cg_hud_io.c
-float CG_AdjustXFromHudFile(float x, float w);
-qboolean CG_WriteHudsToFile();
-qboolean CG_TryReadHudFromFile(const char *filename);
-void CG_ReadHudsFromFile(void);
 
 // cg_draw_hud.c
 void CG_Hud_Setup(void);
@@ -4145,12 +4145,44 @@ typedef enum
 extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
+struct hudComponent_s;
+
+typedef enum
+{
+	TOP    = BIT(0),
+	RIGHT  = BIT(1),
+	BOTTOM = BIT(2),
+	LEFT   = BIT(3)
+} directions_t;
+
+typedef enum
+{
+	TOP_LEFT = 0,
+	TOP_MIDDLE,
+	TOP_RIGHT,
+	MIDDLE_RIGHT,
+	BOTTOM_RIGHT,
+	BOTTOM_MIDDLE,
+	BOTTOM_LEFT,
+	MIDDLE_LEFT,
+	CENTER
+} anchorPoint_t;
+
+typedef struct
+{
+	struct hudComponent_s *parent;
+	anchorPoint_t point;
+} anchor_t;
 
 #define HUD_COMPONENTS_NUM 50
 
 typedef struct hudComponent_s
 {
-	rectDef_t location;
+	rectDef_t location; ///< This used runtime to actually draw the component
+	rectDef_t internalLocation; ///< This is the value that is used to generate the runtime value (value is persisted to file) this is in 4/3 screen coords
+	byte computed; ///< Has the location been computed already for this component
+	anchorPoint_t anchorPoint;
+	anchor_t parentAnchor;
 	int visible;
 	int style;
 	float scale;
@@ -4171,6 +4203,8 @@ typedef struct hudComponent_s
 
 typedef struct hudStructure_s
 {
+	byte active;
+	byte computed;
 	char name[MAX_QPATH];
 	int hudnumber;
 	int parent;
@@ -4236,11 +4270,18 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 16
-#define CURRENT_HUD_JSON_VERSION 1
+#define CURRENT_HUD_JSON_VERSION 2
 
-extern hudStucture_t hudlist[MAXHUDS];
-extern hudStucture_t *activehud;
-extern int           hudCount;
+typedef struct
+{
+	hudStucture_t huds[MAXHUDS];
+	hudStucture_t *list[MAXHUDS];
+
+	hudStucture_t *active;
+	int count;
+} hudData_t;
+
+extern hudData_t hudData;
 
 typedef struct
 {
@@ -4260,11 +4301,32 @@ typedef struct
 	qboolean (*parse)(int *argIndex, hudComponent_t *comp, int offset);
 } hudComponentMembersFields_t;
 
+// cg_hud_io.c
+float CG_AdjustXFromHudFile(float x, float w);
+float CG_AdjustXToHudFile(float x, float w);
+hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *name);
+const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp);
+hudStucture_t *CG_ReadSingleHudJsonFile(const char *filename);
+qboolean CG_WriteHudsToFile();
+qboolean CG_TryReadHudFromFile(const char *filename);
+void CG_ReadHudsFromFile(void);
+
+// cg_draw_hud.c
 hudStucture_t *CG_GetActiveHUD();
-hudStucture_t *CG_AddHudToList(hudStucture_t *hud);
+hudStucture_t *CG_GetFreeHud();
+void CG_RegisterHud(hudStucture_t *hud);
+void CG_CloneHud(hudStucture_t *target, hudStucture_t *source);
+void CG_FreeHud(hudStucture_t *hud);
+int CG_FindFreeHudNumber();
 hudStucture_t *CG_GetHudByNumber(int number);
+hudStucture_t *CG_GetHudByName(const char *name);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
+void CG_CalculateComponentInternals(hudStucture_t *hud, hudComponent_t *comp);
+qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth);
+void CG_GenerateHudAnchors(hudStucture_t *hud);
+void CG_ComputeComponentPositions(hudStucture_t *hud);
+void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *out);
 
 void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);
