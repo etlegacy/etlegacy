@@ -1666,9 +1666,9 @@ static void CG_ReadHuds_f(void)
 			return;
 		}
 
-		if (len <= 4 || strcmp(tmp + len - 4, ".bin") != 0)
+		if (len <= 4 || strcmp(tmp + len - 4, ".dat") != 0)
 		{
-			Q_strcat(tmp, MAX_QPATH, ".bin");
+			Q_strcat(tmp, MAX_QPATH, ".dat");
 		}
 
 		if (!CG_TryReadHudFromFile(tmp))

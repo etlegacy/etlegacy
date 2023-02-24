@@ -3393,6 +3393,38 @@ static void CG_PrintHud(hudStucture_t *hud)
 }
 #endif
 
+static ID_INLINE void CG_HUD_LoadByName(const char *name)
+{
+	char tmp[MAX_QPATH] = { 0 };
+	int  len;
+
+	if (!name || !*name)
+	{
+		return;
+	}
+
+	len = strlen(name);
+
+	if (MAX_QPATH <= len)
+	{
+		return;
+	}
+
+	Q_strncpyz(tmp, name, MAX_QPATH);
+
+	if (len <= 4 || strcmp(tmp + len - 4, ".dat") != 0)
+	{
+		Q_strcat(tmp, MAX_QPATH, ".dat");
+	}
+
+	hudData.active = CG_ReadSingleHudJsonFile(tmp);
+
+	if (hudData.active)
+	{
+		CG_ComputeComponentPositions(hudData.active);
+	}
+}
+
 /**
  * @brief CG_SetHud
  */
@@ -3412,6 +3444,11 @@ void CG_SetHud(void)
 	else
 	{
 		hudData.active = CG_GetHudByName(cg_altHud.string);
+
+		if (!hudData.active)
+		{
+			CG_HUD_LoadByName(cg_altHud.string);
+		}
 	}
 
 	modCount = cg_altHud.modificationCount;

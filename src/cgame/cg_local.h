@@ -4306,6 +4306,7 @@ float CG_AdjustXFromHudFile(float x, float w);
 float CG_AdjustXToHudFile(float x, float w);
 hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *name);
 const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp);
+hudStucture_t *CG_ReadSingleHudJsonFile(const char *filename);
 qboolean CG_WriteHudsToFile();
 qboolean CG_TryReadHudFromFile(const char *filename);
 void CG_ReadHudsFromFile(void);

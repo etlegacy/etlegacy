@@ -40,6 +40,12 @@
 #define HUDS_USER_PATH "profiles/%s/hud.dat"
 #define HUDS_USER_BACKUP_PATH "profiles/%s/hud_backup(%s).dat"
 
+typedef struct
+{
+	qboolean invalid; // file is just plain invalid
+	qboolean calcAnchors; // added in version 2
+} hudFileUpgrades_t;
+
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
 
 static const char *CG_HudFilePath()
@@ -336,7 +342,10 @@ static ID_INLINE void CG_CloneHudComponent(hudStucture_t *hud, const char *name,
 
 	if (comp)
 	{
-		Com_Memcpy(out, comp, sizeof(*out));
+		Com_Memcpy(out, comp, sizeof(hudComponent_t));
+		Com_Memset(&out->location, 0, sizeof(rectDef_t));
+		out->computed = qfalse;
+
 		if (comp->parentAnchor.parent)
 		{
 			const char *parentName = CG_FindComponentName(hud, comp);
@@ -1144,21 +1153,193 @@ static void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
 	}
 }
 
-static qboolean CG_ReadHudJsonFile(const char *filename)
+static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr)
 {
-	cJSON          *root, *huds, *hud, *comps, *comp, *tmp;
-	uint32_t       fileVersion = 0;
-	hudStucture_t  *outHud, *tmpHud, *parentHud = NULL;
+	unsigned int   i     = 0;
+	char           *name = NULL;
+	cJSON          *tmp = NULL, *comps = NULL, *comp = NULL;
 	hudComponent_t *component;
-	char           *name;
-	int            i, componentOffset;
-	qboolean       calcAnchors = qfalse;
+	hudStucture_t  *tmpHud, *parentHud, *oldHud = NULL;
+	int            componentOffset = 0;
 
-	root = Q_FSReadJsonFrom(filename);
-	if (!root)
+	// Sanity check. Only objects should be in the huds array.
+	if (!cJSON_IsObject(hud))
 	{
-		return qfalse;
+		return NULL;
 	}
+
+	tmpHud = CG_GetFreeHud();
+
+	tmpHud->hudnumber = Q_ReadIntValueJson(hud, "number");
+	if (!tmpHud->hudnumber)
+	{
+		tmpHud->hudnumber = CG_FindFreeHudNumber();
+	}
+	// check that the hud number value was set
+	else if (!CG_isHudNumberAvailable(tmpHud->hudnumber))
+	{
+		int tmpI = CG_FindFreeHudNumber();
+		Com_Printf("Invalid hudnumber value: %i resetting to %i\n", tmpHud->hudnumber, tmpI);
+		tmpHud->hudnumber = tmpI;
+	}
+
+	tmp = cJSON_GetObjectItem(hud, "parent");
+	if (!tmp || cJSON_IsNull(tmp))
+	{
+		// default to hud 0 as parent
+		tmpHud->parent = 0;
+	}
+	else if (cJSON_IsFalse(tmp))
+	{
+		// No parent for this hud. Will not load defaults.
+		tmpHud->parent = -1;
+	}
+	else if (cJSON_IsNumber(tmp))
+	{
+		tmpHud->parent = tmp->valueint;
+	}
+	else
+	{
+		CG_Printf(S_COLOR_RED "Invalid parent value in hud data\n");
+		// return true here since this is not a catastrophic error, the other huds might be valid
+		return NULL;
+	}
+
+	if (tmpHud->parent >= 0)
+	{
+		parentHud = CG_GetHudByNumber(tmpHud->parent);
+	}
+
+	name = Q_ReadStringValueJson(hud, "name");
+	if (name)
+	{
+		Q_strncpyz(tmpHud->name, name, MAX_QPATH);
+	}
+	else
+	{
+		tmpHud->name[0] = '\0';
+	}
+
+	comps = cJSON_GetObjectItem(hud, "components");
+	if (!comps)
+	{
+		Com_Printf("Missing components object in hud definition: %i\n", tmpHud->hudnumber);
+		return NULL;
+	}
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
+		comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
+
+		if (parentHud)
+		{
+			CG_CloneHudComponent(parentHud, hudComponentFields[i].name, tmpHud, component);
+
+			if (upgr->calcAnchors)
+			{
+				// we need to calculate the parent components location in 4/3 space
+				rectDef_t      tmpParentRect;
+				hudComponent_t *parentComp = CG_FindComponentByName(parentHud, hudComponentFields[i].name);
+
+				rect_clear(tmpParentRect);
+
+				CG_CalculateComponentLocation(parentComp, 0, &tmpParentRect);
+
+				component->parentAnchor.point  = TOP_LEFT;
+				component->parentAnchor.parent = NULL;
+				component->anchorPoint         = TOP_LEFT;
+				rect_copy(tmpParentRect, component->internalLocation);
+			}
+		}
+
+		if (!comp)
+		{
+			continue;
+		}
+		component->offset    = componentOffset++;
+		component->hardScale = hudComponentFields[i].scale;
+		component->draw      = hudComponentFields[i].draw;
+		component->parsed    = qtrue;
+
+		tmp = cJSON_GetObjectItem(comp, "rect");
+		if (tmp)
+		{
+			component->internalLocation.x = Q_ReadFloatValueJson(tmp, "x");
+			component->internalLocation.y = Q_ReadFloatValueJson(tmp, "y");
+			component->internalLocation.w = Q_ReadFloatValueJson(tmp, "w");
+			component->internalLocation.h = Q_ReadFloatValueJson(tmp, "h");
+		}
+
+		component->style   = Q_ReadIntValueJsonEx(comp, "style", component->style);
+		component->visible = Q_ReadBoolValueJsonEx(comp, "visible", component->visible);
+		component->scale   = Q_ReadFloatValueJsonEx(comp, "scale", component->scale);
+
+		CG_HudParseColorObject(cJSON_GetObjectItem(comp, "mainColor"), component->colorMain);
+
+		CG_HudParseColorObject(cJSON_GetObjectItem(comp, "secondaryColor"), component->colorSecondary);
+
+		CG_HudParseColorObject(cJSON_GetObjectItem(comp, "backgroundColor"), component->colorBackground);
+		// FIXME: mby get rid of the extra booleans
+		component->showBackGround = Q_ReadBoolValueJsonEx(comp, "showBackGround", component->showBackGround);
+
+		CG_HudParseColorObject(cJSON_GetObjectItem(comp, "borderColor"), component->colorBorder);
+		// FIXME: mby get rid of the extra booleans
+		component->showBorder = Q_ReadBoolValueJsonEx(comp, "showBorder", component->showBorder);
+
+		component->styleText  = Q_ReadIntValueJsonEx(comp, "textStyle", component->styleText);
+		component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
+		component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
+
+		component->anchorPoint = Q_ReadIntValueJsonEx(comp, "anchor", component->anchorPoint);
+		tmp                    = cJSON_GetObjectItem(comp, "parent");
+		if (tmp)
+		{
+			component->parentAnchor.point = Q_ReadIntValueJsonEx(tmp, "anchor", component->parentAnchor.point);
+			if (cJSON_HasObjectItem(tmp, "component"))
+			{
+				// FIXME: figure out how to setup the component based on a name / identifier
+				char *compName = Q_ReadStringValueJson(tmp, "component");
+				if (compName && *compName)
+				{
+					component->parentAnchor.parent = CG_FindComponentByName(tmpHud, compName);
+				}
+				else
+				{
+					component->parentAnchor.parent = NULL;
+				}
+			}
+		}
+	}
+
+	oldHud = CG_GetHudByNumber(tmpHud->hudnumber);
+
+	if (upgr->calcAnchors)
+	{
+		CG_GenerateHudAnchors(tmpHud);
+	}
+
+	if (!oldHud)
+	{
+		CG_RegisterHud(tmpHud);
+		Com_Printf("...properties for hud %i have been read.\n", tmpHud->hudnumber);
+	}
+	else
+	{
+		// free the old hud since we are basically overwriting it
+		CG_FreeHud(oldHud);
+		CG_RegisterHud(tmpHud);
+		Com_Printf("...properties for hud %i have been updated.\n", tmpHud->hudnumber);
+	}
+
+	return tmpHud;
+}
+
+static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
+{
+	uint32_t fileVersion = 0;
+
+	memset(ret, 0, sizeof(hudFileUpgrades_t));
 
 	fileVersion = Q_ReadIntValueJson(root, "version");
 
@@ -1167,11 +1348,59 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 	{
 	case CURRENT_HUD_JSON_VERSION:
 		break;
-	case 1: // 2.81 - version before anchors
-		calcAnchors = qtrue;
+	case 1:         // 2.81 - version before anchors
+		ret->calcAnchors = qtrue;
 		break;
 	default:
 		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);
+		ret->invalid = qtrue;
+		break;
+	}
+}
+
+hudStucture_t *CG_ReadSingleHudJsonFile(const char *filename)
+{
+	cJSON             *root;
+	hudStucture_t     *hud = NULL;
+	hudFileUpgrades_t upgrades;
+
+	root = Q_FSReadJsonFrom(filename);
+	if (!root)
+	{
+		return NULL;
+	}
+
+	CG_CheckJsonFileUpgrades(root, &upgrades);
+
+	if (upgrades.invalid)
+	{
+		cJSON_Delete(root);
+		return NULL;
+	}
+
+	if (cJSON_GetObjectItem(root, "components"))
+	{
+		hud = CG_ReadHudJsonObject(root, &upgrades);
+	}
+	cJSON_Delete(root);
+	return hud;
+}
+
+static qboolean CG_ReadHudJsonFile(const char *filename)
+{
+	cJSON             *root, *huds, *hud;
+	hudFileUpgrades_t upgrades;
+
+	root = Q_FSReadJsonFrom(filename);
+	if (!root)
+	{
+		return qfalse;
+	}
+
+	CG_CheckJsonFileUpgrades(root, &upgrades);
+
+	if (upgrades.invalid)
+	{
 		cJSON_Delete(root);
 		return qfalse;
 	}
@@ -1179,6 +1408,16 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 	huds = cJSON_GetObjectItem(root, "huds");
 	if (!huds || !cJSON_IsArray(huds))
 	{
+		// if this is a single hud file, then the root object is the hud definition
+		if (cJSON_GetObjectItem(root, "components"))
+		{
+			if (CG_ReadHudJsonObject(root, &upgrades))
+			{
+				cJSON_Delete(root);
+				return qtrue;
+			}
+		}
+
 		Q_JsonError("Missing or huds element is not an array\n");
 		cJSON_Delete(root);
 		return qfalse;
@@ -1194,177 +1433,10 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			return qfalse;
 		}
 
-		tmpHud = CG_GetFreeHud();
-
-		componentOffset = 0;
-
-		tmpHud->hudnumber = Q_ReadIntValueJson(hud, "number");
-		if (!tmpHud->hudnumber)
+		if (!CG_ReadHudJsonObject(hud, &upgrades))
 		{
-			tmpHud->hudnumber = CG_FindFreeHudNumber();
-		}
-
-		tmp = cJSON_GetObjectItem(hud, "parent");
-		if (!tmp || cJSON_IsNull(tmp))
-		{
-			// default to hud 0 as parent
-			tmpHud->parent = 0;
-		}
-		else if (cJSON_IsFalse(tmp))
-		{
-			// No parent for this hud. Will not load defaults.
-			tmpHud->parent = -1;
-		}
-		else if (cJSON_IsNumber(tmp))
-		{
-			tmpHud->parent = tmp->valueint;
-		}
-		else
-		{
-			CG_Printf(S_COLOR_RED "Invalid parent value in hud data\n");
-			continue;
-		}
-
-		if (tmpHud->parent >= 0)
-		{
-			parentHud = CG_GetHudByNumber(tmpHud->parent);
-		}
-
-		tmpHud->hudnumber = Q_ReadIntValueJson(hud, "number");
-		if (!tmpHud->hudnumber)
-		{
-			tmpHud->hudnumber = CG_FindFreeHudNumber();
-		}
-
-		// check that the hud number value was set
-		if (!CG_isHudNumberAvailable(tmpHud->hudnumber))
-		{
-			Com_Printf("Invalid hudnumber value: %i\n", tmpHud->hudnumber);
 			cJSON_Delete(root);
 			return qfalse;
-		}
-
-		name = Q_ReadStringValueJson(hud, "name");
-		if (name)
-		{
-			Q_strncpyz(tmpHud->name, name, MAX_QPATH);
-		}
-		else
-		{
-			tmpHud->name[0] = '\0';
-		}
-
-		comps = cJSON_GetObjectItem(hud, "components");
-		if (!comps)
-		{
-			Com_Printf("Missing components object in hud definition: %i\n", tmpHud->hudnumber);
-			cJSON_Delete(root);
-			return qfalse;
-		}
-
-		for (i = 0; hudComponentFields[i].name; i++)
-		{
-			component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
-			comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
-
-			if (parentHud)
-			{
-				CG_CloneHudComponent(parentHud, hudComponentFields[i].name, tmpHud, component);
-
-				if (calcAnchors)
-				{
-					// we need to calculate the parent components location in 4/3 space
-					rectDef_t      tmpParentRect;
-					hudComponent_t *parentComp = CG_FindComponentByName(parentHud, hudComponentFields[i].name);
-
-					rect_clear(tmpParentRect);
-
-					CG_CalculateComponentLocation(parentComp, 0, &tmpParentRect);
-
-					component->parentAnchor.point  = TOP_LEFT;
-					component->parentAnchor.parent = NULL;
-					component->anchorPoint         = TOP_LEFT;
-					rect_copy(tmpParentRect, component->internalLocation);
-				}
-			}
-
-			if (!comp)
-			{
-				continue;
-			}
-			component->offset    = componentOffset++;
-			component->hardScale = hudComponentFields[i].scale;
-			component->draw      = hudComponentFields[i].draw;
-			component->parsed    = qtrue;
-
-			tmp = cJSON_GetObjectItem(comp, "rect");
-			if (tmp)
-			{
-				component->internalLocation.x = Q_ReadFloatValueJson(tmp, "x");
-				component->internalLocation.y = Q_ReadFloatValueJson(tmp, "y");
-				component->internalLocation.w = Q_ReadFloatValueJson(tmp, "w");
-				component->internalLocation.h = Q_ReadFloatValueJson(tmp, "h");
-			}
-
-			component->style   = Q_ReadIntValueJsonEx(comp, "style", component->style);
-			component->visible = Q_ReadBoolValueJsonEx(comp, "visible", component->visible);
-			component->scale   = Q_ReadFloatValueJsonEx(comp, "scale", component->scale);
-
-			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "mainColor"), component->colorMain);
-
-			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "secondaryColor"), component->colorSecondary);
-
-			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "backgroundColor"), component->colorBackground);
-			// FIXME: mby get rid of the extra booleans
-			component->showBackGround = Q_ReadBoolValueJsonEx(comp, "showBackGround", component->showBackGround);
-
-			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "borderColor"), component->colorBorder);
-			// FIXME: mby get rid of the extra booleans
-			component->showBorder = Q_ReadBoolValueJsonEx(comp, "showBorder", component->showBorder);
-
-			component->styleText  = Q_ReadIntValueJsonEx(comp, "textStyle", component->styleText);
-			component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
-			component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
-
-			component->anchorPoint = Q_ReadIntValueJsonEx(comp, "anchor", component->anchorPoint);
-			tmp                    = cJSON_GetObjectItem(comp, "parent");
-			if (tmp)
-			{
-				component->parentAnchor.point = Q_ReadIntValueJsonEx(tmp, "anchor", component->parentAnchor.point);
-				if (cJSON_HasObjectItem(tmp, "component"))
-				{
-					// FIXME: figure out how to setup the component based on a name / identifier
-					char *compName = Q_ReadStringValueJson(tmp, "component");
-					if (compName && *compName)
-					{
-						component->parentAnchor.parent = CG_FindComponentByName(tmpHud, compName);
-					}
-					else
-					{
-						component->parentAnchor.parent = NULL;
-					}
-				}
-			}
-		}
-
-		outHud = CG_GetHudByNumber(tmpHud->hudnumber);
-
-		if (calcAnchors)
-		{
-			CG_GenerateHudAnchors(tmpHud);
-		}
-
-		if (!outHud)
-		{
-			CG_RegisterHud(tmpHud);
-			Com_Printf("...properties for hud %i have been read.\n", tmpHud->hudnumber);
-		}
-		else
-		{
-			// free the old hud since we are basically overwriting it
-			CG_FreeHud(outHud);
-			CG_RegisterHud(tmpHud);
-			Com_Printf("...properties for hud %i have been updated.\n", tmpHud->hudnumber);
 		}
 	}
 
