@@ -2256,6 +2256,22 @@ static qboolean CG_SetRectComponentFromCommand(int *argIndex, hudComponent_t *co
 	return qtrue;
 }
 
+static qboolean CG_SetInternalRectComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	if (!CG_SetRectComponentFromCommand(argIndex, comp, offset))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ComputeComponentPosition(comp, 0))
+	{
+		CG_Printf("^3component location could not be calculated\n");
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 typedef enum compPositionIndex_s
 {
 	COMPPOS_CENTER,
@@ -2656,6 +2672,7 @@ const hudComponentMembersFields_t hudComponentMembersFields[] =
 	{ HUDMF(styleText),        CG_SetIntComponentFromCommand          },
 	{ HUDMF(alignText),        CG_SetIntComponentFromCommand          },
 	{ HUDMF(autoAdjust),       CG_SetIntComponentFromCommand          },
+	{ HUDMF(internalLocation), CG_SetInternalRectComponentFromCommand },
 	{ HUDMF(anchorPoint),      CG_SetAnchorPointFromCommand           },
 	{ "parentAnchorPoint",     offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, point), CG_SetAnchorPointFromCommand},
 	{ "parentAnchorComponent", offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, parent), CG_SetAnchorParentComponentFromCommand},
