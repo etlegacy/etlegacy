@@ -2413,6 +2413,36 @@ static qboolean CG_SetPositionComponentFromCommand(int *argIndex, hudComponent_t
 	return qtrue;
 }
 
+static qboolean CG_SetInternalPositionComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	rectDef_t *value = (rectDef_t *)((char *)comp + offset);
+
+	// <x> <y> arguments
+	if ((trap_Argc() - *argIndex) <= 2)
+	{
+		CG_SetPositionComponentHelp(value->x, value->y);
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->x, 'x'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ParseFloatValueAtIndex(argIndex, &value->y, 'y'))
+	{
+		return qfalse;
+	}
+
+	if (!CG_ComputeComponentPosition(comp, 0))
+	{
+		CG_Printf("^3component location could not be calculated\n");
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 static qboolean CG_SetSizeComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
 {
 	rectDef_t *value = (rectDef_t *)((char *)comp + offset);
@@ -2653,30 +2683,31 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 
 const hudComponentMembersFields_t hudComponentMembersFields[] =
 {
-	{ HUDMF(location),         CG_SetRectComponentFromCommand         },
+	{ HUDMF(location),         CG_SetRectComponentFromCommand             },
 	{ "x",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, x), CG_SetFloatComponentFromCommand},
 	{ "y",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, y), CG_SetFloatComponentFromCommand},
 	{ "w",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, w), CG_SetFloatComponentFromCommand},
 	{ "h",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, h), CG_SetFloatComponentFromCommand},
 	{ "position",              offsetof(hudComponent_t, location), CG_SetPositionComponentFromCommand},
 	{ "size",                  offsetof(hudComponent_t, location), CG_SetSizeComponentFromCommand},
-	{ HUDMF(visible),          CG_SetIntComponentFromCommand          },
-	{ HUDMF(style),            CG_SetIntComponentFromCommand          },
-	{ HUDMF(scale),            CG_SetFloatComponentFromCommand        },
-	{ HUDMF(colorMain),        CG_SetColorsComponentFromCommand       },
-	{ HUDMF(colorSecondary),   CG_SetColorsComponentFromCommand       },
-	{ HUDMF(showBackGround),   CG_SetIntComponentFromCommand          },
-	{ HUDMF(colorBackground),  CG_SetColorsComponentFromCommand       },
-	{ HUDMF(showBorder),       CG_SetIntComponentFromCommand          },
-	{ HUDMF(colorBorder),      CG_SetIntComponentFromCommand          },
-	{ HUDMF(styleText),        CG_SetIntComponentFromCommand          },
-	{ HUDMF(alignText),        CG_SetIntComponentFromCommand          },
-	{ HUDMF(autoAdjust),       CG_SetIntComponentFromCommand          },
-	{ HUDMF(internalLocation), CG_SetInternalRectComponentFromCommand },
-	{ HUDMF(anchorPoint),      CG_SetAnchorPointFromCommand           },
+	{ HUDMF(visible),          CG_SetIntComponentFromCommand              },
+	{ HUDMF(style),            CG_SetIntComponentFromCommand              },
+	{ HUDMF(scale),            CG_SetFloatComponentFromCommand            },
+	{ HUDMF(colorMain),        CG_SetColorsComponentFromCommand           },
+	{ HUDMF(colorSecondary),   CG_SetColorsComponentFromCommand           },
+	{ HUDMF(showBackGround),   CG_SetIntComponentFromCommand              },
+	{ HUDMF(colorBackground),  CG_SetColorsComponentFromCommand           },
+	{ HUDMF(showBorder),       CG_SetIntComponentFromCommand              },
+	{ HUDMF(colorBorder),      CG_SetIntComponentFromCommand              },
+	{ HUDMF(styleText),        CG_SetIntComponentFromCommand              },
+	{ HUDMF(alignText),        CG_SetIntComponentFromCommand              },
+	{ HUDMF(autoAdjust),       CG_SetIntComponentFromCommand              },
+	{ HUDMF(internalLocation), CG_SetInternalRectComponentFromCommand     },
+	{ "internalPosition",      offsetof(hudComponent_t, internalLocation), CG_SetInternalPositionComponentFromCommand},
+	{ HUDMF(anchorPoint),      CG_SetAnchorPointFromCommand               },
 	{ "parentAnchorPoint",     offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, point), CG_SetAnchorPointFromCommand},
 	{ "parentAnchorComponent", offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, parent), CG_SetAnchorParentComponentFromCommand},
-	{ NULL,                    0, NULL                                },
+	{ NULL,                    0, NULL                                    },
 };
 
 /**
