@@ -855,6 +855,11 @@ void CG_AddAtmosphericEffects()
 		return;
 	}
 
+	if (cgs.matchPaused)
+	{
+		cg_atmFx.lastEffectTime = cg.time;
+	}
+
 	max = cg_atmosphericEffects.value < 1 ? cg_atmosphericEffects.value * cg_atmFx.numDrops : cg_atmFx.numDrops;
 
 	if (CG_EffectGustCurrent(currvec, &currweight, &currnum))
