@@ -293,8 +293,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
  */
 void G_ExplodeMissile(gentity_t *ent)
 {
-	vec3_t dir;
-	vec3_t origin;
+	vec3_t dir, origin;
 	int    etype;
 
 	etype        = ent->s.eType;
@@ -303,8 +302,6 @@ void G_ExplodeMissile(gentity_t *ent)
 	// splash damage
 	if (ent->splashDamage)
 	{
-		vec3_t origin;
-
 		VectorCopy(ent->r.currentOrigin, origin);
 
 		if (ent->s.weapon == WP_DYNAMITE)
@@ -325,9 +322,8 @@ void G_ExplodeMissile(gentity_t *ent)
 		}
 	}
 
-	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
-	SnapVector(origin);
-	G_SetOrigin(ent, origin);
+	SnapVector(ent->r.currentOrigin);
+	G_SetOrigin(ent, ent->r.currentOrigin);
 
 	// we don't have a valid direction, so just point straight up
 	dir[0] = dir[1] = 0;
