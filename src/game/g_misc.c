@@ -3032,16 +3032,7 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	VectorCopy(start, ent->s.pos.trBase);
 	VectorCopy(dir, ent->s.pos.trDelta);
 
-	// add velocity of player (:sigh: guess people don't like it)
-	//VectorAdd( bolt->s.pos.trDelta, self->s.pos.trDelta, bolt->s.pos.trDelta );
-
-	// add velocity of ground entity
-	if (ent->s.pos.trType == TR_GRAVITY && ent->s.groundEntityNum != ENTITYNUM_NONE && ent->s.groundEntityNum != ENTITYNUM_WORLD)
-	{
-		VectorAdd(ent->s.pos.trDelta, g_entities[ent->s.groundEntityNum].instantVelocity, ent->s.pos.trDelta);
-	}
-
-	SnapVector(ent->s.pos.trDelta);            // save net bandwidth
+	SnapVector(ent->s.pos.trDelta); // save net bandwidth
 }
 
 /**
