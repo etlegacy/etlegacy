@@ -3633,7 +3633,7 @@ static anchorPoints_t CG_FindClosestAnchors(hudStucture_t *hud, hudComponent_t *
 	return out;
 }
 
-static qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
+qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 {
 	rectDef_t parentLoc, tmpLoc;
 

@@ -2513,7 +2513,16 @@ static qboolean CG_SetAnchorPointFromCommand(int *argIndex, hudComponent_t *comp
 
 	if (tmpAnchorVal >= TOP_LEFT && tmpAnchorVal <= CENTER)
 	{
+		if (*anchor == tmpAnchorVal)
+		{
+			return qtrue;
+		}
+
 		*anchor = tmpAnchorVal;
+		if (!CG_ComputeComponentPosition(comp, 0))
+		{
+			CG_Printf("^3component location could not be calculated\n");
+		}
 	}
 	else
 	{
