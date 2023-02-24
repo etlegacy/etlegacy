@@ -1771,6 +1771,10 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 
 	comp = (hudComponent_t *)((char *)hudData.active + hudComponentFields[button->data[0]].offset);
 
+	// FIXME: add support for anchor setting in the hud editor!
+	// we are just nuking the parent anchor here since the hud editor cannot set the anchors yet
+	comp->parentAnchor.parent = NULL;
+
 	// update the internal fields of the component
 	CG_CalculateComponentInternals(hudData.active, comp);
 

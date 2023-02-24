@@ -2495,6 +2495,71 @@ static const char *colorsTable[] =
 	NULL
 };
 
+static qboolean CG_SetAnchorPointFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char          token[MAX_TOKEN_CHARS];
+	anchorPoint_t *anchor      = (anchorPoint_t *) ((char *) comp + offset);
+	int           tmpAnchorVal = -1;
+
+	if ((trap_Argc() - *argIndex) <= 1)
+	{
+		CG_Printf("^3point field component needs at least 1 argument <value>\n");
+		CG_Printf("^7Current value is %i\n", *anchor);
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+	tmpAnchorVal = Q_atoi(token);
+
+	if (tmpAnchorVal >= TOP_LEFT && tmpAnchorVal <= CENTER)
+	{
+		*anchor = tmpAnchorVal;
+	}
+	else
+	{
+		CG_Printf("^3point field component valid values are %i - %i\n", TOP_LEFT, CENTER);
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+static qboolean CG_SetAnchorParentComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
+{
+	char           token[MAX_TOKEN_CHARS];
+	hudComponent_t *tmp         = NULL;
+	hudComponent_t **parentComp = (hudComponent_t **) ((char *) comp + offset);
+
+	if ((trap_Argc() - *argIndex) <= 1)
+	{
+		const char *name = CG_FindComponentName(hudData.active, *parentComp);
+		CG_Printf("^3string field component needs at least 1 argument <value>\n");
+		CG_Printf("^7Current value is %s\n", name ? name : "empty");
+		return qfalse;
+	}
+
+	trap_Argv(++*argIndex, token, sizeof(token));
+
+	if (!Q_stricmp(token, "null") || !Q_stricmp(token, "empty"))
+	{
+		*parentComp = NULL;
+	}
+	else
+	{
+		tmp = CG_FindComponentByName(hudData.active, token);
+		if (!tmp)
+		{
+			CG_Printf("^3invalid component name given\n");
+		}
+		else
+		{
+			*parentComp = tmp;
+		}
+	}
+
+	return qtrue;
+}
+
 static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
 {
 	char   token[MAX_TOKEN_CHARS];
@@ -2563,26 +2628,29 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 
 const hudComponentMembersFields_t hudComponentMembersFields[] =
 {
-	{ HUDMF(location),        CG_SetRectComponentFromCommand     },
-	{ "x",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, x), CG_SetFloatComponentFromCommand},
-	{ "y",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, y), CG_SetFloatComponentFromCommand},
-	{ "w",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, w), CG_SetFloatComponentFromCommand},
-	{ "h",                    offsetof(hudComponent_t, location) + offsetof(rectDef_t, h), CG_SetFloatComponentFromCommand},
-	{ "position",             offsetof(hudComponent_t, location), CG_SetPositionComponentFromCommand},
-	{ "size",                 offsetof(hudComponent_t, location), CG_SetSizeComponentFromCommand},
-	{ HUDMF(visible),         CG_SetIntComponentFromCommand      },
-	{ HUDMF(style),           CG_SetIntComponentFromCommand      },
-	{ HUDMF(scale),           CG_SetFloatComponentFromCommand    },
-	{ HUDMF(colorMain),       CG_SetColorsComponentFromCommand   },
-	{ HUDMF(colorSecondary),  CG_SetColorsComponentFromCommand   },
-	{ HUDMF(showBackGround),  CG_SetIntComponentFromCommand      },
-	{ HUDMF(colorBackground), CG_SetColorsComponentFromCommand   },
-	{ HUDMF(showBorder),      CG_SetIntComponentFromCommand      },
-	{ HUDMF(colorBorder),     CG_SetIntComponentFromCommand      },
-	{ HUDMF(styleText),       CG_SetIntComponentFromCommand      },
-	{ HUDMF(alignText),       CG_SetIntComponentFromCommand      },
-	{ HUDMF(autoAdjust),      CG_SetIntComponentFromCommand      },
-	{ NULL,                   0, NULL                            },
+	{ HUDMF(location),         CG_SetRectComponentFromCommand         },
+	{ "x",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, x), CG_SetFloatComponentFromCommand},
+	{ "y",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, y), CG_SetFloatComponentFromCommand},
+	{ "w",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, w), CG_SetFloatComponentFromCommand},
+	{ "h",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, h), CG_SetFloatComponentFromCommand},
+	{ "position",              offsetof(hudComponent_t, location), CG_SetPositionComponentFromCommand},
+	{ "size",                  offsetof(hudComponent_t, location), CG_SetSizeComponentFromCommand},
+	{ HUDMF(visible),          CG_SetIntComponentFromCommand          },
+	{ HUDMF(style),            CG_SetIntComponentFromCommand          },
+	{ HUDMF(scale),            CG_SetFloatComponentFromCommand        },
+	{ HUDMF(colorMain),        CG_SetColorsComponentFromCommand       },
+	{ HUDMF(colorSecondary),   CG_SetColorsComponentFromCommand       },
+	{ HUDMF(showBackGround),   CG_SetIntComponentFromCommand          },
+	{ HUDMF(colorBackground),  CG_SetColorsComponentFromCommand       },
+	{ HUDMF(showBorder),       CG_SetIntComponentFromCommand          },
+	{ HUDMF(colorBorder),      CG_SetIntComponentFromCommand          },
+	{ HUDMF(styleText),        CG_SetIntComponentFromCommand          },
+	{ HUDMF(alignText),        CG_SetIntComponentFromCommand          },
+	{ HUDMF(autoAdjust),       CG_SetIntComponentFromCommand          },
+	{ HUDMF(anchorPoint),      CG_SetAnchorPointFromCommand           },
+	{ "parentAnchorPoint",     offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, point), CG_SetAnchorPointFromCommand},
+	{ "parentAnchorComponent", offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, parent), CG_SetAnchorParentComponentFromCommand},
+	{ NULL,                    0, NULL                                },
 };
 
 /**
@@ -2738,6 +2806,11 @@ static void CG_EditComponent_f(void)
 					}
 
 					return;
+				}
+				else
+				{
+					// update the component internals if needed
+					CG_CalculateComponentInternals(hudData.active, comp);
 				}
 			}
 		}

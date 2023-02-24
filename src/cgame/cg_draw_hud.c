@@ -3822,6 +3822,11 @@ static void CG_ComputeComponentPositions(hudStucture_t *hud)
 	unsigned int   i;
 	hudComponent_t *comp;
 
+	if (hud->computed)
+	{
+		return;
+	}
+
 	for (i = 0; i < HUD_COMPONENTS_NUM; i++)
 	{
 		comp = hud->components[i];
@@ -3834,6 +3839,8 @@ static void CG_ComputeComponentPositions(hudStucture_t *hud)
 			}
 		}
 	}
+
+	hud->computed = qtrue;
 }
 
 static ID_INLINE qboolean CG_Hud_HasParent(hudComponent_t *comp, hudComponent_t *has)
@@ -3874,10 +3881,6 @@ void CG_CalculateComponentInternals(hudStucture_t *hud, hudComponent_t *comp)
 	hudComponent_t *tmp;
 	rectDef_t      parentLoc, tmpLoc;
 	anchorPoints_t points;
-
-	// FIXME: add support for anchor setting in the hud editor!
-	// we are just nuking the parent anchor here since the hud editor cannot set the anchors yet
-	comp->parentAnchor.parent = NULL;
 
 	// At this point we go back to a virtual 4/3 screen
 	if (comp->parentAnchor.parent)
@@ -3946,6 +3949,8 @@ void CG_CalculateComponentInternals(hudStucture_t *hud, hudComponent_t *comp)
 			tmp->computed = qfalse;
 		}
 	}
+
+	hud->computed = qfalse;
 }
 
 /**

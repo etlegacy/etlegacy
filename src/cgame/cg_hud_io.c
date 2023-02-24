@@ -246,7 +246,7 @@ float CG_AdjustXToHudFile(float x, float w)
 	}
 }
 
-static hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *name)
+hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *name)
 {
 	int i;
 
@@ -268,7 +268,7 @@ static hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *na
 	return NULL;
 }
 
-static const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp)
+const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp)
 {
 	int i;
 

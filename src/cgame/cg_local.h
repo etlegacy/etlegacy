@@ -3111,13 +3111,6 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
 // draws vertical scrolling string
 void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
 
-// cg_hud_io.c
-float CG_AdjustXFromHudFile(float x, float w);
-float CG_AdjustXToHudFile(float x, float w);
-qboolean CG_WriteHudsToFile();
-qboolean CG_TryReadHudFromFile(const char *filename);
-void CG_ReadHudsFromFile(void);
-
 // cg_draw_hud.c
 void CG_Hud_Setup(void);
 void CG_DrawUpperRight(void);
@@ -4211,6 +4204,7 @@ typedef struct hudComponent_s
 typedef struct hudStructure_s
 {
 	byte active;
+	byte computed;
 	char name[MAX_QPATH];
 	int hudnumber;
 	int parent;
@@ -4307,6 +4301,16 @@ typedef struct
 	qboolean (*parse)(int *argIndex, hudComponent_t *comp, int offset);
 } hudComponentMembersFields_t;
 
+// cg_hud_io.c
+float CG_AdjustXFromHudFile(float x, float w);
+float CG_AdjustXToHudFile(float x, float w);
+hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *name);
+const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp);
+qboolean CG_WriteHudsToFile();
+qboolean CG_TryReadHudFromFile(const char *filename);
+void CG_ReadHudsFromFile(void);
+
+// cg_draw_hud.c
 hudStucture_t *CG_GetActiveHUD();
 hudStucture_t *CG_GetFreeHud();
 void CG_RegisterHud(hudStucture_t *hud);
