@@ -3588,7 +3588,7 @@ static void PM_Weapon(void)
 	// check for fire
 	// if not on fire button and there's not a delayed shot this frame...
 	// consider also leaning, with delayed attack reset
-	if ((!(pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.wbuttons & WBUTTON_ATTACK2) && !delayedFire) ||
+	if ((!(pm->cmd.buttons & BUTTON_ATTACK) && !delayedFire) ||
 	    (pm->ps->leanf != 0.f && !GetWeaponTableData(pm->ps->weapon)->grenadeTime))
 	{
 		pm->ps->weaponTime  = 0;
@@ -5059,7 +5059,6 @@ void PmoveSingle(pmove_t *pmove)
 		// don't clear if a weapon change is needed to prevent early weapon change
 		if (pm->ps->stats[STAT_HEALTH] > 0 &&
 		    !(pm->cmd.buttons & BUTTON_ATTACK) &&  // & (BUTTON_ATTACK /*| BUTTON_USE_HOLDABLE
-		    !(pm->cmd.wbuttons & WBUTTON_ATTACK2) &&
 		    (pm->ps->weapon == pm->cmd.weapon))       // bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
 		                                              // and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the
 		                                              // animation locking
