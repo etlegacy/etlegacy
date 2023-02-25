@@ -150,6 +150,26 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
 }
 */
 
+/**
+ * @brief CG_SetChargebarIconColor
+ * Sets correct charge bar icon for fieldops to indicate air support status
+ */
+void CG_SetChargebarIconColor(void)
+{
+	if (cg.snap->ps.ammo[WP_ARTY] & NO_AIRSTRIKE && cg.snap->ps.ammo[WP_ARTY] & NO_ARTILLERY)
+	{
+		trap_R_SetColor(colorRed);
+	}
+	else if (cg.snap->ps.ammo[WP_ARTY] & NO_AIRSTRIKE)
+	{
+		trap_R_SetColor(colorOrange);
+	}
+	else if (cg.snap->ps.ammo[WP_ARTY] & NO_ARTILLERY)
+	{
+		trap_R_SetColor(colorYellow);
+	}
+}
+
 #define BAR_BORDERSIZE 2
 
 /**
@@ -288,7 +308,13 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			{
 				iconW *= .5f;
 				x2    += iconW * .5f;
+
+				if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
+				{
+					CG_SetChargebarIconColor();
+				}
 			}
+
 			if (flags & BAR_LEFT)
 			{
 				CG_DrawPic(x2, y2 + h2 + offset, iconW, iconH, icon);
@@ -333,6 +359,11 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			if (icon == cgs.media.hudPowerIcon)
 			{
 				iconW *= .5f;
+
+				if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
+				{
+					CG_SetChargebarIconColor();
+				}
 			}
 
 			if (flags & BAR_LEFT)
