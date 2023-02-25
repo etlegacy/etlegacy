@@ -255,7 +255,7 @@ qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, unsigned int cm
  */
 void G_voteDisableMessage(gentity_t *ent, const char *cmd)
 {
-	G_refPrintf(ent, "Sorry, [lof]^3%s^7 [lon]voting has been disabled", cmd);
+	G_refPrintf(ent, "[lon]Sorry, [lof]^3%s^7 [lon]voting has been disabled", cmd);
 }
 
 /**
