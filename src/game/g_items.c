@@ -591,14 +591,14 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
  */
 int Pickup_Health(gentity_t *ent, gentity_t *other)
 {
+	int amount = ent->item->quantity;
+
 	if (ent->parent && ent->parent->client)
 	{
 		other->client->pers.lasthealth_client = ent->parent->s.clientNum;
 	}
 
 	// Calculate health amount picked up
-	int amount = ent->item->quantity;
-
 	// current + amount > max ?
 	if (other->health + amount > other->client->ps.stats[STAT_MAX_HEALTH])
 	{
