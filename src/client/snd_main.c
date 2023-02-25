@@ -821,6 +821,9 @@ void S_Init(void)
 	s_muteWhenMinimized = Cvar_Get("s_muteWhenMinimized", "1", CVAR_ARCHIVE);
 	s_muteWhenUnfocused = Cvar_Get("s_muteWhenUnfocused", "0", CVAR_ARCHIVE);
 
+	Cvar_CheckRange(s_volume, 0.0f, 1.0f, qfalse);
+	Cvar_CheckRange(s_musicVolume, 0.0f, 1.0f, qfalse);
+
 	if (!cv->integer)
 	{
 		Com_Printf("Sound disabled\n");
