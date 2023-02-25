@@ -2038,7 +2038,7 @@ qboolean Q_ParseColor(const char *colString, float *outColor)
 		}
 		return qtrue;
 	}
-	else if (Q_sscanf(s, "%f %f %f %f", &temp[0], &temp[1], &temp[2], &temp[3]) != 0)
+	else if (Q_sscanf(s, "%f %f %f %f", &temp[0], &temp[1], &temp[2], &temp[3]) >= 3)
 	{
 		if (vec4_isIntegral(temp) && (temp[0] > 1 || temp[1] > 1 || temp[2] > 1 || temp[3] > 1))
 		{
