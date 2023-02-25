@@ -711,6 +711,8 @@ void DL_DownloadLoop(void)
 			webRequest_t *req = *lst;
 			if (handle == req->rawHandle)
 			{
+				handle = NULL;
+
 				// do not care about callbacks if we are force cancelling
 				if (webSys.abort || req->abort)
 				{
@@ -738,6 +740,10 @@ void DL_DownloadLoop(void)
 			lst = &req->next;
 		}
 
-		curl_easy_cleanup(handle);
+		if (handle)
+		{
+			Com_Printf(S_COLOR_YELLOW "Download handle was not closed properly, closing it now.\n");
+			curl_easy_cleanup(handle);
+		}
 	}
 }
