@@ -78,9 +78,7 @@
 		if (((status) = curl_easy_setopt((handle), (opt), (param)))) \
 		Com_Printf(S_COLOR_YELLOW "WARNING: %s: curl_easy_setopt " #opt ": %s\n", __func__, curl_easy_strerror(status))
 
-//static CURLM *dl_multi   = NULL;
-//static CURL  *dl_request = NULL;
-//static FILE  *dl_file    = NULL;
+#define FILE_DOWNLOAD_ID 1
 
 static struct
 {
@@ -90,10 +88,8 @@ static struct
 	webRequest_t *requests;
 	unsigned int requestId;
 
-	dlStatus_t packDownloadStatus;
-	CURL *fHandle;          ///< file download handle which is just by the vanilla server download
 	CURLM *multiHandle;     ///< main curl multi request handle
-} webSys = { qfalse, qfalse, NULL, 0, DL_DONE, NULL, NULL };
+} webSys = { qfalse, qfalse, NULL, 0, NULL };
 
 #if defined(FEATURE_SSL) && SSL_VERIFY
 static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
@@ -258,7 +254,7 @@ size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *userp)
 /**
  * @brief DL_InitDownload
  */
-void DL_InitDownload(void)
+static void DL_InitDownload(void)
 {
 	if (webSys.initialized)
 	{
@@ -382,7 +378,7 @@ static unsigned int DL_GetRequestId()
 		unsigned int tmp = 1 + (++webSys.requestId);
 
 		// 0 is an invalid id, and 1 is reserved
-		if (tmp == 0 || tmp == 1)
+		if (tmp == 0 || tmp == FILE_DOWNLOAD_ID)
 		{
 			continue;
 		}
@@ -427,6 +423,23 @@ static webRequest_t *DL_CreateRequest()
 	webSys.requests = request;
 
 	return request;
+}
+
+static webRequest_t *DL_GetRequestById(unsigned int id)
+{
+	webRequest_t **lst = &webSys.requests;
+
+	while (*lst)
+	{
+		if ((*lst)->id == id)
+		{
+			return *lst;
+		}
+
+		lst = &(*lst)->next;
+	}
+
+	return NULL;
 }
 
 static void DL_FreeRequest(webRequest_t *request)
@@ -480,7 +493,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	CURLcode     status;
 	webRequest_t *request;
 
-	if (webSys.fHandle)
+	if (DL_GetRequestById(FILE_DOWNLOAD_ID))
 	{
 		Com_Printf(S_COLOR_RED "DL_BeginDownload: Error - called with a download request already active\n");
 		return 0;
@@ -499,7 +512,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	}
 
 	request     = DL_CreateRequest();
-	request->id = 1; // magical package download id
+	request->id = FILE_DOWNLOAD_ID; // magical package download id
 
 	request->data.fileHandle = Sys_FOpen(localName, "wb");
 	if (!request->data.fileHandle)
@@ -515,7 +528,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	strcpy(referer, "et://");
 	Q_strncpyz(referer + 5, Cvar_VariableString("cl_currentServerIP"), MAX_STRING_CHARS);
 
-	webSys.fHandle = request->rawHandle = curl_easy_init();
+	request->rawHandle = curl_easy_init();
 
 	request->complete_clb = complete;
 	request->progress_clb = progress;
@@ -639,7 +652,7 @@ static void DL_SetupContentLength(CURL *handle)
 					if (cl != -1)
 					{
 						req->data.requestLength = cl;
-						if (handle == webSys.fHandle)
+						if (req->id == FILE_DOWNLOAD_ID)
 						{
 							Cvar_SetValue("cl_downloadSize", (float) cl);
 						}
@@ -698,12 +711,6 @@ void DL_DownloadLoop(void)
 		{
 			err = curl_easy_strerror(msg->data.result);
 			Com_Printf(S_COLOR_RED "DL_DownloadLoop: Error - request terminated with failure status '%s'\n", err);
-		}
-
-		if (handle == webSys.fHandle)
-		{
-			webSys.packDownloadStatus = (requestOk ? DL_DONE : DL_FAILED);
-			webSys.fHandle            = NULL;
 		}
 
 		while (*lst)

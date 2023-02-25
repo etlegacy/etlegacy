@@ -35,13 +35,6 @@
 #ifndef INCLUDE_DL_PUBLIC_H
 #define INCLUDE_DL_PUBLIC_H
 
-typedef enum
-{
-	DL_CONTINUE,
-	DL_DONE,
-	DL_FAILED
-} dlStatus_t;
-
 struct webRequest_s;
 
 typedef void (*webCallbackFunc_t)(struct webRequest_s *request, qboolean reqOk);

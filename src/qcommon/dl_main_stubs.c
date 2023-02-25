@@ -38,13 +38,6 @@
 #include "dl_public.h"
 
 /**
- * @brief DL_InitDownload
- */
-void DL_InitDownload(void)
-{
-}
-
-/**
  * @brief DL_Shutdown
  */
 void DL_Shutdown(void)
