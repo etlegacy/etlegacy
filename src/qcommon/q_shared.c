@@ -1612,6 +1612,22 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
 {
 	int c1, c2;
 
+	if (s1 == NULL)
+	{
+		if (s2 == NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	else if (s2 == NULL)
+	{
+		return 1;
+	}
+
 	do
 	{
 		c1 = *s1++;
@@ -1640,7 +1656,7 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
  */
 int Q_stricmp(const char *s1, const char *s2)
 {
-	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
+	return Q_stricmpn(s1, s2, 99999);
 }
 
 /**
@@ -2003,6 +2019,11 @@ qboolean Q_ParseColor(const char *colString, float *outColor)
 	{
 		s += 2;
 	}
+	// web color style prefix
+	else if (*s == '#')
+	{
+		s += 1;
+	}
 
 	// parse rrggbb
 	if (Q_IsHexColorString(s))
@@ -2017,7 +2038,7 @@ qboolean Q_ParseColor(const char *colString, float *outColor)
 		}
 		return qtrue;
 	}
-	else if (Q_sscanf(s, "%f %f %f %f", &temp[0], &temp[1], &temp[2], &temp[3]) != 0)
+	else if (Q_sscanf(s, "%f %f %f %f", &temp[0], &temp[1], &temp[2], &temp[3]) >= 3)
 	{
 		if (vec4_isIntegral(temp) && (temp[0] > 1 || temp[1] > 1 || temp[2] > 1 || temp[3] > 1))
 		{

@@ -1499,6 +1499,38 @@ static void CL_CompleteTTFFontName(char *args, int argNum)
 #endif
 
 /**
+ * @brief CL_ListFonts_f
+ * Lists installed fonts
+ */
+void CL_ListFonts_f(void)
+{
+	int        numFonts, numFontsTotal = 0;
+	char       dirlist[8192];
+	char       *dirptr, fontname[MAX_QPATH];
+	int        i, j;
+	size_t     dirlen;
+	const char *fontTypes[] = { "ttf", "otf" };
+
+	Com_Printf("^2List of installed fonts\n\n");
+
+	for (i = 0; i < ARRAY_LEN(fontTypes); i++)
+	{
+		numFonts       = FS_GetFileList("fonts", va(".%s", fontTypes[i]), dirlist, sizeof(dirlist));
+		numFontsTotal += numFonts;
+		dirptr         = dirlist;
+		for (j = 0; j < numFonts; j++, dirptr += dirlen + 1)
+		{
+			dirlen = strlen(dirptr);
+			Q_strncpyz(fontname, dirptr, sizeof(fontname));
+			COM_StripExtension(fontname, fontname, sizeof(fontname));
+			Com_Printf("%s\n", fontname);
+		}
+	}
+
+	Com_Printf("\n%d fonts installed.\n", numFontsTotal);
+}
+
+/**
  * @brief CL_AddFavServer_f
  * DO NOT ACTIVATE UNTIL WE HAVE CLARIFIED SECURITY! (command execution vie ascripts)
 void CL_AddFavServer_f(void)
@@ -3169,6 +3201,7 @@ void CL_Init(void)
 	Cmd_AddCommand("extendedCharsTest", CL_ExtendedCharsTest_f);
 	Cmd_AddCommand("cl_font", CL_ConsoleFont_f, "Switches console font", CL_CompleteTTFFontName);
 #endif
+	Cmd_AddCommand("listfonts", CL_ListFonts_f, "Lists all installed fonts");
 
 	CIN_Init();
 

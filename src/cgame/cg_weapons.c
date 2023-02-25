@@ -6796,7 +6796,7 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
  * @param[in] waterfraction
  * @param[in] seed
  */
-void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
+void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, int seed)
 {
 	trace_t    trace, trace2;
 	vec3_t     dir;
@@ -7060,46 +7060,31 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 	{
 		if (CG_CalcMuzzlePoint(sourceEntityNum, start) || cg.snap->ps.persistant[PERS_HWEAPON_USE])
 		{
-			if (waterfraction != 0.f)
+			VectorSubtract(end, start, dir);
+			VectorNormalizeFast(dir);
+			VectorMA(end, 4, dir, end);
+
+			cg.bulletTrace = qtrue;
+			CG_Trace(&trace, start, NULL, NULL, end, 0, MASK_SHOT);
+
+			// water check
+			CG_Trace(&trace2, start, NULL, NULL, end, 0, MASK_WATER | MASK_SHOT);
+			cg.bulletTrace = qfalse;
+
+			if (trace.fraction != trace2.fraction)
 			{
-				vec3_t dist;
-				vec3_t end2;
-				vec3_t dir = { 0, 0, 1 };
-
-				VectorSubtract(end, start, dist);
-				VectorMA(start, waterfraction, dist, end2);
-
-				CG_MissileHitWall(weapon, PS_FX_WATER, end2, dir, 0, -1);
-				CG_MissileHitWall(weapon, PS_FX_COMMON, end, trace.plane.normal, 0, -1);
-			}
-			else
-			{
-				VectorSubtract(end, start, dir);
-				VectorNormalizeFast(dir);
-				VectorMA(end, 4, dir, end);
-
 				cg.bulletTrace = qtrue;
-				CG_Trace(&trace, start, NULL, NULL, end, 0, MASK_SHOT);
-
-				// water check
-				CG_Trace(&trace2, start, NULL, NULL, end, 0, MASK_WATER | MASK_SHOT);
+				CG_Trace(&trace2, start, NULL, NULL, end, -1, MASK_WATER);
 				cg.bulletTrace = qfalse;
 
-				if (trace.fraction != trace2.fraction)
-				{
-					cg.bulletTrace = qtrue;
-					CG_Trace(&trace2, start, NULL, NULL, end, -1, MASK_WATER);
-					cg.bulletTrace = qfalse;
-
-					CG_MissileHitWall(weapon, PS_FX_WATER, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags, -1);
-					return;
-				}
-
-				// better bullet marks
-				VectorSubtract(vec3_origin, dir, dir);
-
-				CG_MissileHitWall(weapon, PS_FX_COMMON, trace.endpos, dir, trace.surfaceFlags, -1);
+				CG_MissileHitWall(weapon, PS_FX_WATER, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags, -1);
+				return;
 			}
+
+			// better bullet marks
+			VectorSubtract(vec3_origin, dir, dir);
+
+			CG_MissileHitWall(weapon, PS_FX_COMMON, trace.endpos, dir, trace.surfaceFlags, -1);
 		}
 	}
 }

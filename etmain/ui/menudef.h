@@ -55,7 +55,7 @@
 #define ITEM_ALIGN_LEFT             0       // left alignment
 #define ITEM_ALIGN_CENTER           1       // center alignment
 #define ITEM_ALIGN_RIGHT            2       // right alignment
-#define ITEM_ALIGN_CENTER2          3       // center alignment
+#define ITEM_ALIGN_CENTER2          3       // left alignment relative to center alignment
 
 #define ITEM_TEXTSTYLE_NORMAL           0   // normal text
 #define ITEM_TEXTSTYLE_BLINK            1   // fast blinking
@@ -424,19 +424,19 @@
 #define CV_SVF_ANTILAG          16384
 #define CV_SVF_BALANCEDTEAMS    32768
 #define CV_SVF_MUTING           65536
-#define	CV_SVF_SURRENDER        131072
-#define	CV_SVF_RESTARTCAMPAIGN  262144
-#define	CV_SVF_NEXTCAMPAIGN     524288
-#define	CV_SVF_POLL             1048576
-#define	CV_SVF_MAPRESTART       2097152
-#define	CV_SVF_COINTOSS         4194304
+#define CV_SVF_SURRENDER        131072
+#define CV_SVF_RESTARTCAMPAIGN  262144
+#define CV_SVF_NEXTCAMPAIGN     524288
+#define CV_SVF_POLL             1048576
+#define CV_SVF_MAPRESTART       2097152
+#define CV_SVF_COINTOSS         4194304
 
 // referee level
 #define RL_NONE                 0
 #define RL_REFEREE              1
 #define RL_RCON                 2
 
-#define SCREEN_WIDTH			640
-#define SCREEN_HEIGHT			480
+#define SCREEN_WIDTH            640
+#define SCREEN_HEIGHT           480
 
 #endif // #ifndef INCLUDE_MENUDEF_H

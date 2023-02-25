@@ -323,8 +323,8 @@ static void SV_MapRestart_f(void)
 	// run a few frames to allow everything to settle
 	for (i = 0; i < GAME_INIT_FRAMES; i++)
 	{
-		svs.time += FRAMETIME;
 		VM_Call(gvm, GAME_RUN_FRAME, svs.time);
+		svs.time += FRAMETIME;
 	}
 
 	sv.state      = SS_GAME;
@@ -386,8 +386,8 @@ static void SV_MapRestart_f(void)
 	}
 
 	// run another frame to allow things to look at all the players
-	svs.time += FRAMETIME;
 	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
+	svs.time += FRAMETIME;
 }
 
 //===============================================================

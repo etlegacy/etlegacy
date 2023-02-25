@@ -408,19 +408,6 @@ void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int comm
 
 //==============================================
 
-/**
- * @brief FloatAsInt
- * @param[in] f
- * @return
- */
-static int FloatAsInt(float f)
-{
-	floatint_t fi;
-
-	fi.f = f;
-	return fi.i;
-}
-
 extern int S_RegisterSound(const char *name, qboolean compressed);
 extern int S_GetSoundLength(sfxHandle_t sfxHandle);
 
@@ -648,16 +635,16 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);
 
 	case TRAP_SIN:
-		return FloatAsInt(sin(VMF(1)));
+		return Q_FloatAsInt(sin(VMF(1)));
 
 	case TRAP_COS:
-		return FloatAsInt(cos(VMF(1)));
+		return Q_FloatAsInt(cos(VMF(1)));
 
 	case TRAP_ATAN2:
-		return FloatAsInt(atan2(VMF(1), VMF(2)));
+		return Q_FloatAsInt(atan2(VMF(1), VMF(2)));
 
 	case TRAP_SQRT:
-		return FloatAsInt(sqrt(VMF(1)));
+		return Q_FloatAsInt(sqrt(VMF(1)));
 
 	case TRAP_MATRIXMULTIPLY: // never called for real
 		_MatrixMultiply(VMA(1), VMA(2), VMA(3));
@@ -672,10 +659,10 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return 0;
 
 	case TRAP_FLOOR:
-		return FloatAsInt(floor(VMF(1)));
+		return Q_FloatAsInt(floor(VMF(1)));
 
 	case TRAP_CEIL:
-		return FloatAsInt(ceil(VMF(1)));
+		return Q_FloatAsInt(ceil(VMF(1)));
 
 	case PB_STAT_REPORT:
 		return 0;

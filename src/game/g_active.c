@@ -665,9 +665,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	{
 		Cmd_FollowCycle_f(ent, 1, (client->buttons & BUTTON_SPRINT));
 	}
-	// FIXME: WBUTTON_ATTACK2
-	else if ((client->wbuttons & WBUTTON_ATTACK2) && !(client->oldwbuttons & WBUTTON_ATTACK2) &&
-	         !(client->buttons & BUTTON_ACTIVATE))
+	else if (!(client->buttons & BUTTON_ACTIVATE))
 	{
 		Cmd_FollowCycle_f(ent, -1, (client->buttons & BUTTON_SPRINT));
 	}
@@ -734,7 +732,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 
 	// the client is still active?
 	if (client->pers.cmd.forwardmove || client->pers.cmd.rightmove || client->pers.cmd.upmove ||
-	    (client->pers.cmd.wbuttons & (WBUTTON_ATTACK2 | WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))  ||
+	    (client->pers.cmd.wbuttons & (WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))  ||
 	    (client->pers.cmd.buttons & BUTTON_ATTACK) ||
 	    BG_PlayerMounted(client->ps.eFlags) ||
 	    ((client->ps.eFlags & EF_PRONE) && (client->ps.weapon == WP_MOBILE_MG42_SET || client->ps.weapon == WP_MOBILE_BROWNING_SET)) ||
@@ -2220,7 +2218,7 @@ void ClientEndFrame(gentity_t *ent)
 	AddMedicTeamBonus(ent->client);
 
 	// all players are init in game, we can set properly starting health
-	if (level.startTime == level.time - ((GAME_INIT_FRAMES + 1) * FRAMETIME))
+	if (level.startTime == level.time - (GAME_INIT_FRAMES * FRAMETIME))
 	{
 		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 		{

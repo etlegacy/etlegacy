@@ -412,6 +412,8 @@ static void CL_DemoFastForward(double wantedTime)
 		return;
 	}
 
+	S_StopAllSounds();
+
 	DEMODEBUG("fastfowarding from %f to %f\n", (double)cl.serverTime + di.Overf, wantedTime);
 
 	loopCount = 0;
@@ -443,6 +445,7 @@ static void CL_DemoFastForward(double wantedTime)
 		if (cmd + MAX_RELIABLE_COMMANDS - 10 <= clc.lastExecutedServerCommand)
 		{
 			VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.snap.serverTime, 0, clc.demo.playing);
+			S_StopAllSounds();
 			cmd = clc.lastExecutedServerCommand;
 		}
 	}

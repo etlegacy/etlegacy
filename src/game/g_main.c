@@ -1860,7 +1860,7 @@ void G_UpdateCvars(void)
 
 				if (cv->trackChange && !(cv->cvarFlags & CVAR_LATCH))
 				{
-					trap_SendServerCommand(-1, va("print \"Server:[lof] %s [lon]changed to[lof] %s\n\"", cv->cvarName, cv->vmCvar->string));
+					trap_SendServerCommand(-1, va("print \"[lon]Server:[lof] %s [lon]changed to[lof] %s\n\"", cv->cvarName, cv->vmCvar->string));
 				}
 
 				if (cv->vmCvar == &g_filtercams)
@@ -5443,7 +5443,7 @@ void G_RunFrame(int levelTime)
 void G_MapVoteInfoWrite()
 {
 	// if the history is full and a vote has been done, skip the oldest map in history
-    int   i = (level.lastVotedMap[0] && (level.mapvotehistorycount == MAX_HISTORY_MAPS));
+	int   i = (level.lastVotedMap[0] && (level.mapvotehistorycount == MAX_HISTORY_MAPS));
 	cJSON *root, *history;
 
 	int count = 0;

@@ -697,18 +697,18 @@ static panel_button_t debriefPlayerInfoHitRegions =
 };
 
 #define PLAYERHEADER_SKILLS(number)           \
-	static panel_button_t debriefPlayerInfoSkills ## number = {      \
-		NULL,                                       \
-		NULL,                                       \
-		{ 24,                            136 + (number * 14), 12, 12 }, \
-		{ number,                        0,                   0,  0, 0, 0, 0, 0},  \
-		&debriefPlayerInfoFont,          /* font     */  \
-		NULL,                            /* keyDown  */  \
-		NULL,                            /* keyUp    */  \
-		CG_Debriefing_PlayerSkills_Draw,            \
-		NULL,                                       \
-		0,                                       \
-	}
+		static panel_button_t debriefPlayerInfoSkills ## number = {      \
+			NULL,                                       \
+			NULL,                                       \
+			{ 24,                            136 + (number * 14), 12, 12 }, \
+			{ number,                        0,                   0,  0, 0, 0, 0, 0},  \
+			&debriefPlayerInfoFont,          /* font     */  \
+			NULL,                            /* keyDown  */  \
+			NULL,                            /* keyUp    */  \
+			CG_Debriefing_PlayerSkills_Draw,            \
+			NULL,                                       \
+			0,                                       \
+		}
 
 PLAYERHEADER_SKILLS(0);
 PLAYERHEADER_SKILLS(1);
@@ -765,18 +765,18 @@ static panel_button_text_t teamDebriefTitle =
 };
 
 #define TDB_SKILL_TITLES_XP(number, title, x)             \
-	static panel_button_t teamDebriefSkillXPText_ ## number = {          \
-		NULL,                                                   \
-		title,                                                  \
-		{ 100 + (number * 65),      304 - (x * 12),                 20, 200 },      \
-		{ 0,                        0,                              0,  0, 0, 0, 0, 0},                             \
-		&teamDebriefTitleSmall,     /* font     */              \
-		NULL,                       /* keyDown  */                      \
-		NULL,                       /* keyUp    */                  \
-		BG_PanelButtonsRender_Text,                             \
-		NULL,                                                   \
-		0,                                                   \
-	}
+		static panel_button_t teamDebriefSkillXPText_ ## number = {          \
+			NULL,                                                   \
+			title,                                                  \
+			{ 100 + (number * 65),      304 - (x * 12),                 20, 200 },      \
+			{ 0,                        0,                              0,  0, 0, 0, 0, 0},                             \
+			&teamDebriefTitleSmall,     /* font     */              \
+			NULL,                       /* keyDown  */                      \
+			NULL,                       /* keyUp    */                  \
+			BG_PanelButtonsRender_Text,                             \
+			NULL,                                                   \
+			0,                                                   \
+		}
 
 TDB_SKILL_TITLES_XP(0, "Battle Sense", 0);
 TDB_SKILL_TITLES_XP(1, "Engineer", 1);
@@ -788,32 +788,32 @@ TDB_SKILL_TITLES_XP(6, "Covert Ops", 0);
 TDB_SKILL_TITLES_XP(7, "Total", 1);
 
 #define TDB_SKILL_AXIS_XP(number)                         \
-	static panel_button_t teamDebriefSkillXPText0_ ## number = {         \
-		NULL,                                                   \
-		NULL,                                                   \
-		{ 110 + (number * 65),             320,                  470, 200 },                \
-		{ 0,                               number,               0,   0, 0, 0, 0, 0},                        \
-		&teamDebriefTitle,                 /* font     */                  \
-		NULL,                              /* keyDown  */                      \
-		NULL,                              /* keyUp    */                  \
-		CG_TeamDebriefingTeamSkillXP_Draw,                      \
-		NULL,                                                   \
-		0,                                                   \
-	}
+		static panel_button_t teamDebriefSkillXPText0_ ## number = {         \
+			NULL,                                                   \
+			NULL,                                                   \
+			{ 110 + (number * 65),             320,                  470, 200 },                \
+			{ 0,                               number,               0,   0, 0, 0, 0, 0},                        \
+			&teamDebriefTitle,                 /* font     */                  \
+			NULL,                              /* keyDown  */                      \
+			NULL,                              /* keyUp    */                  \
+			CG_TeamDebriefingTeamSkillXP_Draw,                      \
+			NULL,                                                   \
+			0,                                                   \
+		}
 
 #define TDB_SKILL_ALLIES_XP(number)                       \
-	static panel_button_t teamDebriefSkillXPText1_ ## number = {         \
-		NULL,                                                   \
-		NULL,                                                   \
-		{ 110 + (number * 65),             340,                  470, 200 },                \
-		{ 1,                               number,               0,   0, 0, 0, 0, 0},                        \
-		&teamDebriefTitle,                 /* font     */                  \
-		NULL,                              /* keyDown  */                      \
-		NULL,                              /* keyUp    */                  \
-		CG_TeamDebriefingTeamSkillXP_Draw,                      \
-		NULL,                                                   \
-		0,                                                   \
-	}
+		static panel_button_t teamDebriefSkillXPText1_ ## number = {         \
+			NULL,                                                   \
+			NULL,                                                   \
+			{ 110 + (number * 65),             340,                  470, 200 },                \
+			{ 1,                               number,               0,   0, 0, 0, 0, 0},                        \
+			&teamDebriefTitle,                 /* font     */                  \
+			NULL,                              /* keyDown  */                      \
+			NULL,                              /* keyUp    */                  \
+			CG_TeamDebriefingTeamSkillXP_Draw,                      \
+			NULL,                                                   \
+			0,                                                   \
+		}
 
 TDB_SKILL_AXIS_XP(0);
 TDB_SKILL_AXIS_XP(1);
@@ -1166,7 +1166,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			}
 
 			CG_FilledBar(DB_MAPHISTORIC_X + cgs.wideXoffset, y - 8, 60, 10, (vec4_t) { 1.f, 0, 0, 0.85f }, (vec4_t) { 0, 1.f, 0, 0.85f },
-                         NULL, NULL, (cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset]) / (float)cgs.dbMapsHistoryCountList,
+			             NULL, NULL, (cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset]) / (float)cgs.dbMapsHistoryCountList,
 			             BAR_LERP_COLOR | BAR_BGSPACING_X0Y0, -1);
 		}
 
@@ -3064,7 +3064,7 @@ void CG_Debriefing_PlayerPrestige_Note(panel_button_t *button)
 
 	h = CG_Text_Height_Ext("A", button->font->scalex, 0, button->font->font);
 
-	CG_DrawMultilineText(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour,
+	CG_DrawMultilineText(button->rect.x, button->rect.y, button->rect.w, button->font->scalex, button->font->scaley, button->font->colour,
 	                     CG_TranslateString("You may now collect\na prestige point.\n\nCollection resets\nskill levels."),
 	                     2 * h, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, button->font->font);
 }
@@ -4697,7 +4697,7 @@ void CG_parseMapVoteHistory()
 
 	cgs.dbMapsHistoryCount = trap_Argc() - 1;
 
-	for (i = 0; i < cgs.dbMapsHistoryCount && i < sizeof(cgs.dbMapsHistory); i++)
+	for (i = 0; i < cgs.dbMapsHistoryCount && i < MAX_HISTORY_MAPS; i++)
 	{
 		cgs.dbMapsHistory[i] = Q_atoi(CG_Argv(i + 1));
 

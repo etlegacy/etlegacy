@@ -1703,11 +1703,11 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 	{
 		if (i)
 		{
-			RectangleSet(demoControlButtons[i]->rect, (x + (i * (w / 4)) - 15), y + 30, 30, 15);
+			rect_set(demoControlButtons[i]->rect, (x + (i * (w / 4)) - 15), y + 30, 30, 15);
 		}
 		else
 		{
-			RectangleSet(demoControlButtons[i]->rect, x + 2, y + 15, w - 4, 12);
+			rect_set(demoControlButtons[i]->rect, x + 2, y + 15, w - 4, 12);
 		}
 
 		demoControlButtons[i]->font = &demoControlTxt;

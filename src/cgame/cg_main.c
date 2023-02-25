@@ -357,6 +357,15 @@ vmCvar_t cg_customFont2;
 
 vmCvar_t cg_drawSpawnpoints;
 
+vmCvar_t cg_useCvarCrosshair;
+vmCvar_t cg_crosshairSize;
+vmCvar_t cg_crosshairAlpha;
+vmCvar_t cg_crosshairColor;
+vmCvar_t cg_crosshairAlphaAlt;
+vmCvar_t cg_crosshairColorAlt;
+vmCvar_t cg_crosshairPulse;
+vmCvar_t cg_crosshairHealth;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -603,6 +612,15 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawBreathPuffs,         "cg_drawBreathPuffs",         "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawSpawnpoints,         "cg_drawSpawnpoints",         "0",           CVAR_ARCHIVE,                 0 },
+
+	{ &cg_useCvarCrosshair,        "cg_useCvarCrosshair",        "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairSize,           "cg_crosshairSize",           "48",          CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairAlpha,          "cg_crosshairAlpha",          "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairColor,          "cg_crosshairColor",          "White",       CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairAlphaAlt,       "cg_crosshairAlphaAlt",       "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairColorAlt,       "cg_crosshairColorAlt",       "White",       CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairPulse,          "cg_crosshairPulse",          "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairHealth,         "cg_crosshairHealth",         "0",           CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -638,6 +656,15 @@ void CG_RegisterCvars(void)
 			if (cv->vmCvar == &cg_errorDecay)
 			{
 				cv->modificationCount = !cv->vmCvar->modificationCount;
+			}
+			else if (cg_useCvarCrosshair.integer
+			         && (cv->vmCvar == &cg_crosshairSize
+			             || cv->vmCvar == &cg_crosshairAlpha || cv->vmCvar == &cg_crosshairColor
+			             || cv->vmCvar == &cg_crosshairAlphaAlt || cv->vmCvar == &cg_crosshairColorAlt
+			             || cv->vmCvar == &cg_crosshairPulse || cv->vmCvar == &cg_crosshairHealth))
+			{
+				// force usage of crosshair values
+				cv->modificationCount = -1;
 			}
 			else
 			{
@@ -718,6 +745,22 @@ void CG_UpdateCvars(void)
 					else if (cg_errorDecay.value > 500.0f)
 					{
 						trap_Cvar_Set("cg_errorDecay", "500");
+					}
+				}
+				else if (cv->vmCvar == &cg_crosshairSize || cv->vmCvar == &cg_crosshairSize
+				         || cv->vmCvar == &cg_crosshairAlpha || cv->vmCvar == &cg_crosshairColor
+				         || cv->vmCvar == &cg_crosshairAlphaAlt || cv->vmCvar == &cg_crosshairColorAlt
+				         || cv->vmCvar == &cg_crosshairPulse || cv->vmCvar == &cg_crosshairHealth)
+				{
+					if (cg.clientFrame == 0)
+					{
+						// wait for the next frame, otherwise the hud load
+                        // will erase the forced value
+						cv->modificationCount = -1;
+					}
+					else
+					{
+						trap_SendConsoleCommand(va("%s_f %s\n", cv->cvarName, cv->vmCvar->string));
 					}
 				}
 			}
@@ -2706,8 +2749,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);
-	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0f;
-	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0f;
+	cgs.screenXScale = (float)cgs.glconfig.vidWidth / 640.0f;
+	cgs.screenYScale = (float)cgs.glconfig.vidHeight / 480.0f;
 
 	cgDC.etLegacyClient = cg.etLegacyClient;
 

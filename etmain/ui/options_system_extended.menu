@@ -1,0 +1,45 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define WINDOW_X        16
+#define WINDOW_Y        16
+#define WINDOW_WIDTH    608
+#define WINDOW_HEIGHT   448
+#define GROUP_NAME      "grpOptionsSystem"
+
+// Subwindows //
+#define SUBWINDOW_WIDTH_L       .50 * (WINDOW_WIDTH - 18)
+#define SUBWINDOW_WIDTH_R       .50 * (WINDOW_WIDTH - 18)
+
+menuDef {
+	name        "options_system_extended"
+	visible     0
+	fullscreen  0
+	rect        WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style       WINDOW_STYLE_FILLED
+
+    onESC {
+        close options_system_extended ;
+        open options_system
+    }
+
+	WINDOW(_("SYSTEM EXTENDED"), 150)
+
+// Simple graphics //
+#define GRAPHICS_Y 32
+	SUBWINDOW(6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 80, _("CONSOLE"))
+    YESNO(8, GRAPHICS_Y + 16, (SUBWINDOW_WIDTH_L) - 4, 10, _("Auto Clear:"), .2, 8, "con_autoclear", _("Toggle persistent console input."))
+#ifdef ETLEGACY
+    CVARFLOATLABEL(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L)-6, 10, "con_defaultHeight", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
+    SLIDER(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Default Height:"), .2, 8, "con_defaultHeight" 0.5 0 1, _("Specify custom console height ratio (0.0 to 1.0)."))
+    EDITFIELD(8, GRAPHICS_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Font Name:"), .2, 8, "con_fontName", 25, 18, _("Set the font console. Use listfonts commands in console to check available fonts."))
+    MULTI(8, GRAPHICS_Y + 52, (SUBWINDOW_WIDTH_L) - 4, 10, _("Open Speed:"), .2, 8, "con_openspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
+    EDITFIELD(8, GRAPHICS_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Background Color:"), .2, 8, "con_background", 25, 18, _("Specify the console background color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
+#else
+    MULTI(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L) - 4, 10, _("Open Speed:"), .2, 8, "scr_conspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
+#endif
+
+// Buttons //
+	BUTTON( 6, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_system_extended ; open options_system)
+}

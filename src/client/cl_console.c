@@ -332,7 +332,7 @@ void Con_Init(void)
 	con_notifytime = Cvar_Get("con_notifytime", "7", 0);    // increased per id req for obits
 	con_openspeed  = Cvar_Get("con_openspeed", "3", 0);
 	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE_ND);
-	Cvar_Get("con_fontName", "JetBrainsMono-SemiBold", CVAR_ARCHIVE_ND);
+    Cvar_Get("con_fontName", "JetBrainsMono-SemiBold", CVAR_LATCH | CVAR_ARCHIVE_ND);
 
 	con_background    = Cvar_GetAndDescribe("con_background", "", CVAR_ARCHIVE, "Console background color in normalized RGBA format, eg. \"0.2 0.2 0.2 0.8\".");
 	con_defaultHeight = Cvar_GetAndDescribe("con_defaultHeight", "0.5", CVAR_ARCHIVE_ND, "Default console height without key modifiers.");

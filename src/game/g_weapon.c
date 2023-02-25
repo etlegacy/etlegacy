@@ -394,7 +394,7 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	trap_LinkEntity(ent);
 
 	// Let the person being revived know about it
-	trap_SendServerCommand(traceEnt - g_entities, va("cp \"You have been revived by [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(ent->client->sess.sessionTeam, ent->client->sess.rank)->names, ent->client->pers.netname));
+	trap_SendServerCommand(traceEnt - g_entities, va("cp \"[lon]You have been revived by [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(ent->client->sess.sessionTeam, ent->client->sess.rank)->names, ent->client->pers.netname));
 
 	traceEnt->props_frame_state = ent->s.number;
 
@@ -474,7 +474,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 		}
 
 		// Let medics know who they just revived
-		trap_SendServerCommand(ent - g_entities, va("cp \"You have revived [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(traceEnt->client->sess.sessionTeam, traceEnt->client->sess.rank)->names, traceEnt->client->pers.netname));
+		trap_SendServerCommand(ent - g_entities, va("cp \"[lon]You have revived [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(traceEnt->client->sess.sessionTeam, traceEnt->client->sess.rank)->names, traceEnt->client->pers.netname));
 
 		G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
@@ -3603,7 +3603,6 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	}
 	else
 	{
-		trace_t tr2;
 		// bullet impact should reflect off surface
 		vec3_t reflect;
 		float  dot;
@@ -3632,21 +3631,6 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		}
 
 		tent = G_TempEntity(impactPos, EV_BULLET_HIT_WALL);
-
-		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT);
-
-		if ((tr.entityNum != tr2.entityNum && tr2.fraction != 1.f))
-		{
-			vec3_t v;
-
-			VectorSubtract(tr.endpos, start, v);
-
-			tent->s.origin2[0] = (8192 * tr2.fraction) / VectorLength(v);
-		}
-		else
-		{
-			tent->s.origin2[0] = 0;
-		}
 
 		dot = DotProduct(forward, tr.plane.normal);
 		VectorMA(forward, -2 * dot, tr.plane.normal, reflect);

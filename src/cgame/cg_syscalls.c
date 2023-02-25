@@ -1960,7 +1960,7 @@ void trap_SysFlashWindow(int state)
  * @brief Extension for sending command completion suggestion
  * @param[in] value
  */
-void trap_CommandComplete(char *value)
+void trap_CommandComplete(const char *value)
 {
 	if (dll_trap_CommandComplete)
 	{
