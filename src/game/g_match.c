@@ -265,8 +265,8 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner)
 
 /**
  * @brief Adds revive stats to the session
- * @param target client who got revived
- * @param source client who revived target
+ * @param[in,out] target client who got revived
+ * @param[in,out] source client who revived target
  */
 void G_addStatsMedicRevive(gentity_t *target, gentity_t *source)
 {
@@ -287,9 +287,9 @@ void G_addStatsMedicRevive(gentity_t *target, gentity_t *source)
 
 /**
  * @brief Adds amount healing done by medics, from medkits and revives
- * @param target client who received the health
- * @param source client who gave the health
- * @param value amount of health points
+ * @param[in,out] target client who received the health
+ * @param[in,out] source client who gave the health
+ * @param[in] value amount of health points
  */
 void G_addStatsMedicHealth(gentity_t *target, gentity_t *source, int value)
 {
