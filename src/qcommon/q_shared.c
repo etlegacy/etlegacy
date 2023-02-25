@@ -1612,6 +1612,22 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
 {
 	int c1, c2;
 
+	if (s1 == NULL)
+	{
+		if (s2 == NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	else if (s2 == NULL)
+	{
+		return 1;
+	}
+
 	do
 	{
 		c1 = *s1++;
@@ -1640,7 +1656,7 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
  */
 int Q_stricmp(const char *s1, const char *s2)
 {
-	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
+	return Q_stricmpn(s1, s2, 99999);
 }
 
 /**
@@ -2002,6 +2018,11 @@ qboolean Q_ParseColor(const char *colString, float *outColor)
 	if (*s == '0' && (*(s + 1) == 'x' || *(s + 1) == 'X'))
 	{
 		s += 2;
+	}
+	// web color style prefix
+	else if (*s == '#')
+	{
+		s += 1;
 	}
 
 	// parse rrggbb

@@ -1073,19 +1073,6 @@ static int GetConfigString(int index, char *buf, size_t size)
 }
 
 /**
- * @brief FloatAsInt
- * @param[in] f
- * @return
- */
-static int FloatAsInt(float f)
-{
-	floatint_t fi;
-
-	fi.f = f;
-	return fi.i;
-}
-
-/**
  * @brief The ui module is making a system call
  * @param[in] args
  * @return
@@ -1111,7 +1098,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		Cvar_SetSafe(VMA(1), VMA(2));
 		return 0;
 	case UI_CVAR_VARIABLEVALUE:
-		return FloatAsInt(Cvar_VariableValue(VMA(1)));
+		return Q_FloatAsInt(Cvar_VariableValue(VMA(1)));
 	case UI_CVAR_VARIABLESTRINGBUFFER:
 		Cvar_VariableStringBuffer(VMA(1), VMA(2), args[3]);
 		return 0;
@@ -1322,17 +1309,17 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_STRNCPY:
 		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);
 	case UI_SIN:
-		return FloatAsInt(sin(VMF(1)));
+		return Q_FloatAsInt(sin(VMF(1)));
 	case UI_COS:
-		return FloatAsInt(cos(VMF(1)));
+		return Q_FloatAsInt(cos(VMF(1)));
 	case UI_ATAN2:
-		return FloatAsInt(atan2(VMF(1), VMF(2)));
+		return Q_FloatAsInt(atan2(VMF(1), VMF(2)));
 	case UI_SQRT:
-		return FloatAsInt(sqrt(VMF(1)));
+		return Q_FloatAsInt(sqrt(VMF(1)));
 	case UI_FLOOR:
-		return FloatAsInt(floor(VMF(1)));
+		return Q_FloatAsInt(floor(VMF(1)));
 	case UI_CEIL:
-		return FloatAsInt(ceil(VMF(1)));
+		return Q_FloatAsInt(ceil(VMF(1)));
 	case UI_PC_ADD_GLOBAL_DEFINE:
 		return botlib_export->PC_AddGlobalDefine(VMA(1));
 	case UI_PC_REMOVE_ALL_GLOBAL_DEFINES:

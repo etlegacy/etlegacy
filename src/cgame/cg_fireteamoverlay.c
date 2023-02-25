@@ -421,9 +421,9 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		Com_Memset(name[i], 0, sizeof(char) * (MAX_NAME_LENGTH));
 	}
 
-    h = comp->location.h / (MAX_FIRETEAM_MEMBERS + 1);
+	h = comp->location.h / (MAX_FIRETEAM_MEMBERS + 1);
 
-    scale = CG_ComputeScale(comp /* h, comp->scale, FONT_TEXT*/);
+	scale = CG_ComputeScale(comp /* h, comp->scale, FONT_TEXT*/);
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -564,27 +564,35 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(x, y, w, h * (i + 1), 1, comp->colorBorder);
 	}
 
-	CG_FillRect(x + 1, y + 1, w - 2, h - 1, comp->colorSecondary);
 
-	if (f->priv)
+	if (!(comp->style & BIT(1)))
 	{
-		Com_sprintf(buffer, 64, CG_TranslateString("Private Fireteam: %s"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? bg_fireteamNamesAxis[f->ident] : bg_fireteamNamesAllies[f->ident]);
-	}
-	else
-	{
-		Com_sprintf(buffer, 64, CG_TranslateString("Fireteam: %s"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? bg_fireteamNamesAxis[f->ident] : bg_fireteamNamesAllies[f->ident]);
-	}
+		CG_FillRect(x + 1, y + 1, w - 2, h - 1, comp->colorSecondary);
 
-	Q_strupr(buffer);
-	heighTitle = CG_Text_Height_Ext(buffer, scale, 0, FONT_HEADER);
-	CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) * 0.5), scale, scale, comp->colorMain, buffer, 0, 0, 0, FONT_HEADER);
+		if (f->priv)
+		{
+			Com_sprintf(buffer, 64, CG_TranslateString("Private Fireteam: %s"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? bg_fireteamNamesAxis[f->ident] : bg_fireteamNamesAllies[f->ident]);
+		}
+		else
+		{
+			Com_sprintf(buffer, 64, CG_TranslateString("Fireteam: %s"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? bg_fireteamNamesAxis[f->ident] : bg_fireteamNamesAllies[f->ident]);
+		}
+
+		Q_strupr(buffer);
+		heighTitle = CG_Text_Height_Ext(buffer, scale, 0, FONT_HEADER);
+		CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) * 0.5), scale, scale, comp->colorMain, buffer, 0, 0, 0, FONT_HEADER);
+	}
 
 	lineX = (int)x;
 
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
-		x  = lineX;
-		y += h;
+		x = lineX;
+
+		if (i != 0 || !(comp->style & BIT(1)))
+		{
+			y += h;
+		}
 		// grab a pointer to the current player
 		ci = CG_SortedFireTeamPlayerForPosition(i);
 

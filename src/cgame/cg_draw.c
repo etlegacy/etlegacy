@@ -66,7 +66,7 @@ void CG_Text_SetActiveFont(int font)
  */
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
-	return CG_Text_Width_Ext_Float(text, scale, limit, font);
+	return (int) CG_Text_Width_Ext_Float(text, scale, limit, font);
 }
 
 /**
@@ -79,34 +79,77 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *fo
  */
 float CG_Text_Width_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font)
 {
-	float out = 0;
+	const char  *s = text;
+	glyphInfo_t *glyph;
+	int         count = 0;
+	int         len   = 0;
+	float       out   = 0;
 
-	if (text)
+	if (!text)
 	{
-		const char  *s = text;
-		glyphInfo_t *glyph;
-		int         count = 0;
-		int         len   = Q_UTF8_Strlen(text);
+		return 0;
+	}
 
-		if (limit > 0 && len > limit)
+	len = Q_UTF8_Strlen(text);
+
+	if (limit > 0 && len > limit)
+	{
+		len = limit;
+	}
+
+	while (s && *s && count < len)
+	{
+		if (Q_IsColorString(s))
 		{
-			len = limit;
+			s += 2;
+			continue;
 		}
-
-		while (s && *s && count < len)
+		else
 		{
-			if (Q_IsColorString(s))
-			{
-				s += 2;
-				continue;
-			}
-			else
-			{
-				glyph = Q_UTF8_GetGlyph(font, s);
-				out  += glyph->xSkip;
-				s    += Q_UTF8_Width(s);
-				count++;
-			}
+			glyph = Q_UTF8_GetGlyph(font, s);
+			out  += glyph->xSkip;
+			s    += Q_UTF8_Width(s);
+			count++;
+		}
+	}
+
+	return out * scale * Q_UTF8_GlyphScale(font);
+}
+
+/**
+ * @brief Calculates the point count for the string buffer until line end ('\n' or '\0')
+ * @param[in] text string buffer to count
+ * @param[in] scale font scale
+ * @param[in] font font to use
+ * @return string buffer point width
+ */
+float CG_Text_Line_Width_Ext_Float(const char *text, float scale, fontHelper_t *font)
+{
+	const char  *s = text;
+	glyphInfo_t *glyph;
+	float       out = 0;
+
+	if (!text)
+	{
+		return 0;
+	}
+
+	while (s && *s)
+	{
+		if (Q_IsColorString(s))
+		{
+			s += 2;
+			continue;
+		}
+		else if (*s == '\n')
+		{
+			break;
+		}
+		else
+		{
+			glyph = Q_UTF8_GetGlyph(font, s);
+			out  += glyph->xSkip;
+			s    += Q_UTF8_Width(s);
 		}
 	}
 
@@ -1283,10 +1326,10 @@ static void CG_DrawScopedReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
+	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -1721,7 +1764,7 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg_drawCrosshair.integer < 0)     // moved down so it doesn't keep the scoped weaps from drawing reticles
+	if (cg_drawCrosshair.integer < 0)     // moved down, so it doesn't keep the scoped weapons from drawing reticles
 	{
 		return;
 	}

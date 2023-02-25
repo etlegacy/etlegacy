@@ -40,7 +40,13 @@
 #define HUDS_USER_PATH "profiles/%s/hud.dat"
 #define HUDS_USER_BACKUP_PATH "profiles/%s/hud_backup(%s).dat"
 
-static qboolean CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2);
+typedef struct
+{
+	qboolean invalid; // file is just plain invalid
+	qboolean calcAnchors; // added in version 2
+} hudFileUpgrades_t;
+
+static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
 
 static const char *CG_HudFilePath()
 {
@@ -70,25 +76,129 @@ static void CG_HudBackupFilePath(char *output, int len)
 	Com_sprintf(output, len, HUDS_USER_BACKUP_PATH, tmp, va("%d-%02d-%02d-%02d%02d%02d", 1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday, ct.tm_hour, ct.tm_min, ct.tm_sec));
 }
 
-/**
- * @brief CG_AddHudToList
- * @param[in] hud
- */
-hudStucture_t *CG_AddHudToList(hudStucture_t *hud)
+static int QDECL CG_HudListSort(const void *a, const void *b)
 {
-	hudStucture_t *out = NULL;
+	return ((*(hudStucture_t **) a)->hudnumber - (*(hudStucture_t **) b)->hudnumber);
+}
 
-	hudlist[hudCount] = *hud;
-	out               = &hudlist[hudCount];
-	hudCount++;
+static void CG_GenerateHudList()
+{
+	unsigned int i, x = 0;
 
-	CG_HudComponentsFill(out);
+	Com_Memset(hudData.list, 0, sizeof(hudStucture_t *) * MAXHUDS);
 
-	return out;
+	for (i = 0; i < MAXHUDS; i++)
+	{
+		if (!hudData.huds[i].active)
+		{
+			continue;
+		}
+
+		hudData.list[x++] = &hudData.huds[i];
+	}
+
+	qsort(hudData.list, x, sizeof(hudStucture_t *), CG_HudListSort);
+}
+
+hudStucture_t *CG_GetFreeHud()
+{
+	unsigned int   i;
+	hudStucture_t  *tmpHud    = NULL;
+	hudComponent_t *component = NULL;
+
+	for (i = 0; i < MAXHUDS; i++)
+	{
+		if (!hudData.huds[i].active)
+		{
+			tmpHud = &hudData.huds[i];
+			break;
+		}
+	}
+
+	if (tmpHud)
+	{
+		Com_Memset(tmpHud, 0, sizeof(hudStucture_t));
+
+		// reset offsets
+		for (i = 0; hudComponentFields[i].name; i++)
+		{
+			component         = (hudComponent_t *)((char * )tmpHud + hudComponentFields[i].offset);
+			component->offset = 999;
+		}
+
+		return tmpHud;
+	}
+
+	CG_Error("All huds are already in use cannot register a new one!\n");
+	return NULL;
+}
+
+void CG_RegisterHud(hudStucture_t *hud)
+{
+	if (hud->active)
+	{
+		CG_Printf(S_COLOR_YELLOW "WARNING: trying to register a hud that is already registered!\n");
+		return;
+	}
+
+	hud->active = qtrue;
+	hudData.count++;
+	CG_HudComponentsFill(hud);
+	CG_GenerateHudList();
+}
+
+void CG_FreeHud(hudStucture_t *hud)
+{
+	if (!hud->active)
+	{
+		CG_Printf(S_COLOR_YELLOW "WARNING: trying to un-register a hud that is already un-registered!\n");
+		return;
+	}
+	hudData.count--;
+	hud->active = qfalse;
+	CG_GenerateHudList();
+}
+
+int CG_FindFreeHudNumber()
+{
+	hudStucture_t *hud;
+	unsigned int  i;
+	int           num = 1;
+
+	// find a free number
+	for (i = 1; i < hudData.count; i++)
+	{
+		hud = hudData.list[i];
+
+		if (hud->hudnumber == num)
+		{
+			num++;
+			i = 1;
+		}
+	}
+
+	return num;
 }
 
 /**
- * @brief Ccg_WideXAdjustFromWide
+ * @brief CG_isHudNumberAvailable checks if the hud by said number is available for use, 0 to 2 are forbidden.
+ * @param[in] number
+ * @return
+ */
+static qboolean CG_isHudNumberAvailable(int number)
+{
+	// values 0 is used by the default hud's
+	if (number <= 0 || number >= MAXHUDS)
+	{
+		Com_Printf(S_COLOR_RED "CG_isHudNumberAvailable: invalid HUD number %i, allowed values: 1 - %i\n", number, MAXHUDS);
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief CG_AdjustXFromHudFile
  * @param x
  * @param w
  * @return
@@ -99,7 +209,8 @@ float CG_AdjustXFromHudFile(float x, float w)
 	{
 		return x;
 	}
-	else if ((int)(x + w * .5f) == 320)
+
+	if ((int)(x + w * .5f) == 320)
 	{
 		return Ccg_WideX(x) + (Ccg_WideX(w) - w) * .5f;
 	}
@@ -114,35 +225,41 @@ float CG_AdjustXFromHudFile(float x, float w)
 }
 
 /**
- * @brief Ccg_WideXAdjustFromWide
+ * @brief CG_AdjustXToHudFile
  * @param x
  * @param w
  * @return
  */
-static ID_INLINE float CG_AdjustXToHudFile(float x, float w)
+float CG_AdjustXToHudFile(float x, float w)
 {
+	float wideX = Ccg_WideX(320);
 	if (Ccg_Is43Screen())
 	{
 		return x;
 	}
-	else if ((int)(x + w * .5f) >= (int)(320 * cgs.adr43) - 1 &&
-	         (int)(x + w * .5f) <= (int)(320 * cgs.adr43) + 1)
+
+	if ((int)(x + w * .5f) == (int)wideX)
 	{
-		return (x - (Ccg_WideX(w) - w) * .5f) / cgs.adr43;
+		return Ccg_WideXReverse(x - ((Ccg_WideX(w) - w) * .5f));
 	}
-	else if (x <= (int)(320 * cgs.adr43))
+	else if (x <= wideX)
 	{
-		return x / cgs.adr43;
+		return Ccg_WideXReverse(x);
 	}
 	else
 	{
-		return (x + w - Ccg_WideX(w)) / cgs.adr43;
+		return Ccg_WideXReverse(x + w) - w;
 	}
 }
 
-static hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *name)
+hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *name)
 {
 	int i;
+
+	if (!hud || !name || !*name)
+	{
+		return NULL;
+	}
 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
@@ -151,23 +268,93 @@ static hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *na
 			continue;
 		}
 
-		return (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
+		return (hudComponent_t *)((byte * )hud + hudComponentFields[i].offset);
 	}
 
 	return NULL;
 }
 
-static ID_INLINE void CG_CloneHudComponent(hudStucture_t *hud, const char *name, hudComponent_t *out)
+const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp)
+{
+	int i;
+
+	if (!hud || !comp)
+	{
+		return NULL;
+	}
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (comp == (hudComponent_t *)((byte * )hud + hudComponentFields[i].offset))
+		{
+			return hudComponentFields[i].name;
+		}
+	}
+
+	return NULL;
+}
+
+/**
+ * @brief Safely clone the hud structure and update the pointers to match the new source
+ * @param target
+ * @param source
+ */
+void CG_CloneHud(hudStucture_t *target, hudStucture_t *source)
+{
+	unsigned int   i;
+	qboolean       hudActive;
+	hudComponent_t *tmp, *tmp2;
+
+	etl_assert(target && source);
+
+	hudActive = target->active;
+
+	Com_Memcpy(target, source, sizeof(hudStucture_t));
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		tmp  = (hudComponent_t *)((byte * )source + hudComponentFields[i].offset);
+		tmp2 = (hudComponent_t *)((byte * )target + hudComponentFields[i].offset);
+
+		if (tmp->parentAnchor.parent)
+		{
+			const char *parentName = CG_FindComponentName(source, tmp->parentAnchor.parent);
+			if (parentName && *parentName)
+			{
+				tmp2->parentAnchor.parent = CG_FindComponentByName(target, parentName);
+			}
+			else
+			{
+				CG_Printf(S_COLOR_YELLOW "WARNING: could not find component name when cloning hud\n");
+				tmp2->parentAnchor.parent = NULL;
+			}
+		}
+	}
+
+	// restore the active status to keep the registration in line..
+	target->active = hudActive;
+	CG_HudComponentsFill(target);
+}
+
+static ID_INLINE void CG_CloneHudComponent(hudStucture_t *hud, const char *name, hudStucture_t *targetHud, hudComponent_t *out)
 {
 	hudComponent_t *comp = CG_FindComponentByName(hud, name);
 
 	if (comp)
 	{
-		Com_Memcpy(out, comp, sizeof(*out));
+		Com_Memcpy(out, comp, sizeof(hudComponent_t));
+		Com_Memset(&out->location, 0, sizeof(rectDef_t));
+		out->computed = qfalse;
+
+		if (comp->parentAnchor.parent)
+		{
+			const char *parentName = CG_FindComponentName(hud, comp);
+			out->parentAnchor.parent = CG_FindComponentByName(targetHud, parentName);
+		}
 	}
 }
 
-static ID_INLINE char *CG_ColorToHex(vec_t *vec)
+static ID_INLINE char *CG_ColorToHex(const vec_t *vec)
 {
 	return va("%02x%02x%02x%02x", ((int) (vec[0] * 255.f)) & 0xff, ((int) (vec[1] * 255.f)) & 0xff, ((int) (vec[2] * 255.f)) & 0xff, ((int) (vec[3] * 255.f)) & 0xff);
 }
@@ -178,7 +365,7 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 	uint32_t       flags;
 	hudStucture_t  *parent = NULL;
 	hudComponent_t *comp, *parentComp;
-	cJSON          *compObj, *rectObj, *compsObj, *hudObj = cJSON_CreateObject();
+	cJSON          *compObj, *tmpObj, *compsObj, *hudObj = cJSON_CreateObject();
 
 	cJSON_AddStringToObject(hudObj, "name", hud->name);
 	cJSON_AddNumberToObject(hudObj, "number", hud->hudnumber);
@@ -219,7 +406,7 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 		if (parent)
 		{
 			parentComp = CG_FindComponentByName(parent, hudComponentFields[j].name);
-			flags      = CG_CompareHudComponents(comp, parentComp);
+			flags      = CG_CompareHudComponents(hud, comp, parent, parentComp);
 			if (!flags)
 			{
 				continue;
@@ -234,12 +421,12 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 
 		if (flags & BIT(0))
 		{
-			rectObj = cJSON_AddObjectToObject(compObj, "rect");
+			tmpObj = cJSON_AddObjectToObject(compObj, "rect");
 			{
-				cJSON_AddNumberToObject(rectObj, "x", CG_AdjustXToHudFile(comp->location.x, comp->location.w));
-				cJSON_AddNumberToObject(rectObj, "y", comp->location.y);
-				cJSON_AddNumberToObject(rectObj, "w", comp->location.w);
-				cJSON_AddNumberToObject(rectObj, "h", comp->location.h);
+				cJSON_AddNumberToObject(tmpObj, "x", comp->internalLocation.x);
+				cJSON_AddNumberToObject(tmpObj, "y", comp->internalLocation.y);
+				cJSON_AddNumberToObject(tmpObj, "w", comp->internalLocation.w);
+				cJSON_AddNumberToObject(tmpObj, "h", comp->internalLocation.h);
 			}
 		}
 
@@ -302,6 +489,24 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 		{
 			cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
 		}
+
+		if (flags & BIT(0))
+		{
+			cJSON_AddNumberToObject(compObj, "anchor", comp->anchorPoint);
+			tmpObj = cJSON_AddObjectToObject(compObj, "parent");
+			{
+				cJSON_AddNumberToObject(tmpObj, "anchor", comp->parentAnchor.point);
+				if (comp->parentAnchor.parent)
+				{
+					// FIXME: todo figure out what component are we referring to
+					cJSON_AddStringToObject(tmpObj, "component", CG_FindComponentName(hud, comp->parentAnchor.parent));
+				}
+				else
+				{
+					cJSON_AddNullToObject(tmpObj, "component");
+				}
+			}
+		}
 	}
 
 	return hudObj;
@@ -310,70 +515,80 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 #define vec4_cmp(v1, v2) ((v1)[0] == (v2)[0] && (v1)[1] == (v2)[1] && (v1)[2] == (v2)[2] && (v1)[3] == (v2)[3])
 #define rect_cmp(r1, r2) ((r1).x == (r2).x && (r1).y == (r2).y && (r1).w == (r2).w && (r1).h == (r2).h)
 
-static uint32_t CG_CompareHudComponents(hudComponent_t *c1, hudComponent_t *c2)
+static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp)
 {
 	uint32_t flags = 0;
-	if (!rect_cmp(c1->location, c2->location))
+	if (!rect_cmp(comp->internalLocation, parentComp->internalLocation))
 	{
 		flags |= BIT(0);
 	}
 
-	if (c1->visible != c2->visible)
+	if (comp->anchorPoint != parentComp->anchorPoint || comp->parentAnchor.point != parentComp->parentAnchor.point)
+	{
+		flags |= BIT(0);
+	}
+
+	if (Q_stricmp(CG_FindComponentName(hud, comp->parentAnchor.parent), CG_FindComponentName(parentHud, parentComp->parentAnchor.parent)) != 0)
+	{
+		flags |= BIT(0);
+	}
+
+	if (comp->visible != parentComp->visible)
 	{
 		flags |= BIT(1);
 	}
 
-	if (c1->style != c2->style)
+	if (comp->style != parentComp->style)
 	{
 		flags |= BIT(2);
 	}
 
-	if (c1->scale != c2->scale)
+	if (comp->scale != parentComp->scale)
 	{
 		flags |= BIT(3);
 	}
 
-	if (!vec4_cmp(c1->colorMain, c2->colorMain))
+	if (!vec4_cmp(comp->colorMain, parentComp->colorMain))
 	{
 		flags |= BIT(4);
 	}
 
-	if (!vec4_cmp(c1->colorSecondary, c2->colorSecondary))
+	if (!vec4_cmp(comp->colorSecondary, parentComp->colorSecondary))
 	{
 		flags |= BIT(5);
 	}
 
-	if (c1->showBackGround != c2->showBackGround)
+	if (comp->showBackGround != parentComp->showBackGround)
 	{
 		flags |= BIT(6);
 	}
 
-	if (!vec4_cmp(c1->colorBackground, c2->colorBackground))
+	if (!vec4_cmp(comp->colorBackground, parentComp->colorBackground))
 	{
 		flags |= BIT(7);
 	}
 
-	if (c1->showBorder != c2->showBorder)
+	if (comp->showBorder != parentComp->showBorder)
 	{
 		flags |= BIT(8);
 	}
 
-	if (!vec4_cmp(c1->colorBorder, c2->colorBorder))
+	if (!vec4_cmp(comp->colorBorder, parentComp->colorBorder))
 	{
 		flags |= BIT(9);
 	}
 
-	if (c1->styleText != c2->styleText)
+	if (comp->styleText != parentComp->styleText)
 	{
 		flags |= BIT(10);
 	}
 
-	if (c1->alignText != c2->alignText)
+	if (comp->alignText != parentComp->alignText)
 	{
 		flags |= BIT(11);
 	}
 
-	if (c1->autoAdjust != c2->autoAdjust)
+	if (comp->autoAdjust != parentComp->autoAdjust)
 	{
 		flags |= BIT(12);
 	}
@@ -400,9 +615,9 @@ qboolean CG_WriteHudsToFile()
 	cJSON_AddNumberToObject(root, "version", CURRENT_HUD_JSON_VERSION);
 	huds = cJSON_AddArrayToObject(root, "huds");
 
-	for (i = 1; i < hudCount; i++)
+	for (i = 1; i < hudData.count; i++)
 	{
-		hud = &hudlist[i];
+		hud = hudData.list[i];
 
 		hudObj = CG_CreateHudObject(hud);
 		if (hudObj)
@@ -444,41 +659,6 @@ void CG_HudComponentsFill(hudStucture_t *hud)
 	}
 	// sort the components by their offset
 	qsort(hud->components, sizeof(hud->components) / sizeof(hudComponent_t *), sizeof(hudComponent_t *), CG_HudComponentSort);
-}
-
-/**
- * @brief CG_isHudNumberAvailable checks if the hud by said number is available for use, 0 to 2 are forbidden.
- * @param[in] number
- * @return
- */
-static qboolean CG_isHudNumberAvailable(int number)
-{
-	// values 0 is used by the default hud's
-	if (number <= 0 || number >= MAXHUDS)
-	{
-		Com_Printf(S_COLOR_RED "CG_isHudNumberAvailable: invalid HUD number %i, allowed values: 1 - %i\n", number, MAXHUDS);
-		return qfalse;
-	}
-
-	return qtrue;
-}
-
-static int CG_getAvailableNumber()
-{
-	int           i, number = 1;
-	hudStucture_t *hud;
-
-	for (i = 0; i < hudCount; i++)
-	{
-		hud = &hudlist[i];
-
-		if (hud->hudnumber && hud->hudnumber >= number)
-		{
-			number = hud->hudnumber + 1;
-		}
-	}
-
-	return number;
 }
 
 //  HUD SCRIPT FUNCTIONS BELLOW
@@ -542,7 +722,6 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
 			{
 				if (PC_Float_Parse(handle, &r->h))
 				{
-					r->x = CG_AdjustXFromHudFile(r->x, r->w);
 					return qtrue;
 				}
 			}
@@ -625,8 +804,13 @@ static qboolean CG_Vec4Parse(int handle, vec4_t v)
  */
 static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 {
+	// old hud files do not have anchor data, so reset them.
+	comp->parentAnchor.point  = TOP_LEFT;
+	comp->parentAnchor.parent = NULL;
+	comp->anchorPoint         = TOP_LEFT;
+
 	//PC_Rect_Parse
-	if (!CG_RectParse(handle, &comp->location))
+	if (!CG_RectParse(handle, &comp->internalLocation))
 	{
 		return qfalse;
 	}
@@ -705,8 +889,7 @@ static qboolean CG_ParseHUD(int handle)
 {
 	int           i, componentOffset = 0;
 	pc_token_t    token;
-	hudStucture_t tempHud;
-	hudStucture_t *hud, *parentHud = NULL;
+	hudStucture_t *tempHud, *hud, *parentHud = NULL;
 	qboolean      loadDefaults = qtrue;
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
@@ -720,7 +903,7 @@ static qboolean CG_ParseHUD(int handle)
 	}
 
 	// reset all the components, and set the offset value to 999 for sorting
-	Com_Memset(&tempHud, 0, sizeof(hudStucture_t));
+	tempHud = CG_GetFreeHud();
 
 	// if the first parameter in the hud definition is a "no-defaults" line then no default values are set
 	// and the hud is plain (everything is hidden and no positions are set)
@@ -733,7 +916,7 @@ static qboolean CG_ParseHUD(int handle)
 	{
 		loadDefaults = qfalse;
 
-		if (!PC_Int_Parse(handle, &tempHud.parent))
+		if (!PC_Int_Parse(handle, &tempHud->parent))
 		{
 			return CG_HUD_ParseError(handle, "expected integer value for parent");
 		}
@@ -743,22 +926,14 @@ static qboolean CG_ParseHUD(int handle)
 		trap_PC_UnReadToken(handle);
 	}
 
-	if (!parentHud && tempHud.parent >= 0)
+	if (!parentHud && tempHud->parent >= 0)
 	{
-		parentHud = CG_GetHudByNumber(tempHud.parent);
+		parentHud = CG_GetHudByNumber(tempHud->parent);
 	}
 
 	if (loadDefaults)
 	{
-		CG_setDefaultHudValues(&tempHud);
-	}
-	else
-	{
-		for (i = 0; hudComponentFields[i].name; i++)
-		{
-			hudComponent_t *component = (hudComponent_t *)((char * )&tempHud + hudComponentFields[i].offset);
-			component->offset = 999;
-		}
+		CG_setDefaultHudValues(tempHud);
 	}
 
 	componentOffset = 0;
@@ -776,7 +951,7 @@ static qboolean CG_ParseHUD(int handle)
 
 		if (!Q_stricmp(token.string, "hudnumber"))
 		{
-			if (!PC_Int_Parse(handle, &tempHud.hudnumber))
+			if (!PC_Int_Parse(handle, &tempHud->hudnumber))
 			{
 				return CG_HUD_ParseError(handle, "expected integer value for hudnumber");
 			}
@@ -788,11 +963,11 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!Q_stricmp(token.string, hudComponentFields[i].name))
 			{
-				hudComponent_t *component = (hudComponent_t *)((char * )&tempHud + hudComponentFields[i].offset);
+				hudComponent_t *component = (hudComponent_t *)((char * )tempHud + hudComponentFields[i].offset);
 
 				if (parentHud)
 				{
-					CG_CloneHudComponent(parentHud, hudComponentFields[i].name, component);
+					CG_CloneHudComponent(parentHud, hudComponentFields[i].name, tempHud, component);
 				}
 
 				component->offset    = componentOffset++;
@@ -813,23 +988,25 @@ static qboolean CG_ParseHUD(int handle)
 	}
 
 	// check that the hudnumber value was set
-	if (!CG_isHudNumberAvailable(tempHud.hudnumber))
+	if (!CG_isHudNumberAvailable(tempHud->hudnumber))
 	{
-		return CG_HUD_ParseError(handle, "Invalid hudnumber value: %i", tempHud.hudnumber);
+		return CG_HUD_ParseError(handle, "Invalid hudnumber value: %i", tempHud->hudnumber);
 	}
 
-	hud = CG_GetHudByNumber(tempHud.hudnumber);
+	hud = CG_GetHudByNumber(tempHud->hudnumber);
+
+	CG_GenerateHudAnchors(tempHud);
 
 	if (!hud)
 	{
-		CG_AddHudToList(&tempHud);
-		Com_Printf("...properties for hud %i have been read.\n", tempHud.hudnumber);
+		CG_RegisterHud(tempHud);
+		Com_Printf("...properties for hud %i have been read.\n", tempHud->hudnumber);
 	}
 	else
 	{
-		Com_Memcpy(hud, &tempHud, sizeof(tempHud));
-		CG_HudComponentsFill(hud);
-		Com_Printf("...properties for hud %i have been updated.\n", tempHud.hudnumber);
+		CG_FreeHud(hud);
+		CG_RegisterHud(tempHud);
+		Com_Printf("...properties for hud %i have been updated.\n", tempHud->hudnumber);
 	}
 
 	return qtrue;
@@ -976,15 +1153,243 @@ static void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
 	}
 }
 
+static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr)
+{
+	unsigned int   i     = 0;
+	char           *name = NULL;
+	cJSON          *tmp = NULL, *comps = NULL, *comp = NULL;
+	hudComponent_t *component;
+	hudStucture_t  *tmpHud, *parentHud, *oldHud = NULL;
+	int            componentOffset = 0;
+
+	// Sanity check. Only objects should be in the huds array.
+	if (!cJSON_IsObject(hud))
+	{
+		return NULL;
+	}
+
+	tmpHud = CG_GetFreeHud();
+
+	tmpHud->hudnumber = Q_ReadIntValueJson(hud, "number");
+	if (!tmpHud->hudnumber)
+	{
+		tmpHud->hudnumber = CG_FindFreeHudNumber();
+	}
+	// check that the hud number value was set
+	else if (!CG_isHudNumberAvailable(tmpHud->hudnumber))
+	{
+		int tmpI = CG_FindFreeHudNumber();
+		Com_Printf("Invalid hudnumber value: %i resetting to %i\n", tmpHud->hudnumber, tmpI);
+		tmpHud->hudnumber = tmpI;
+	}
+
+	tmp = cJSON_GetObjectItem(hud, "parent");
+	if (!tmp || cJSON_IsNull(tmp))
+	{
+		// default to hud 0 as parent
+		tmpHud->parent = 0;
+	}
+	else if (cJSON_IsFalse(tmp))
+	{
+		// No parent for this hud. Will not load defaults.
+		tmpHud->parent = -1;
+	}
+	else if (cJSON_IsNumber(tmp))
+	{
+		tmpHud->parent = tmp->valueint;
+	}
+	else
+	{
+		CG_Printf(S_COLOR_RED "Invalid parent value in hud data\n");
+		// return true here since this is not a catastrophic error, the other huds might be valid
+		return NULL;
+	}
+
+	if (tmpHud->parent >= 0)
+	{
+		parentHud = CG_GetHudByNumber(tmpHud->parent);
+	}
+
+	name = Q_ReadStringValueJson(hud, "name");
+	if (name)
+	{
+		Q_strncpyz(tmpHud->name, name, MAX_QPATH);
+	}
+	else
+	{
+		tmpHud->name[0] = '\0';
+	}
+
+	comps = cJSON_GetObjectItem(hud, "components");
+	if (!comps)
+	{
+		Com_Printf("Missing components object in hud definition: %i\n", tmpHud->hudnumber);
+		return NULL;
+	}
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
+		comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
+
+		if (parentHud)
+		{
+			CG_CloneHudComponent(parentHud, hudComponentFields[i].name, tmpHud, component);
+
+			if (upgr->calcAnchors)
+			{
+				// we need to calculate the parent components location in 4/3 space
+				rectDef_t      tmpParentRect;
+				hudComponent_t *parentComp = CG_FindComponentByName(parentHud, hudComponentFields[i].name);
+
+				rect_clear(tmpParentRect);
+
+				CG_CalculateComponentLocation(parentComp, 0, &tmpParentRect);
+
+				component->parentAnchor.point  = TOP_LEFT;
+				component->parentAnchor.parent = NULL;
+				component->anchorPoint         = TOP_LEFT;
+				rect_copy(tmpParentRect, component->internalLocation);
+			}
+		}
+
+		if (!comp)
+		{
+			continue;
+		}
+		component->offset    = componentOffset++;
+		component->hardScale = hudComponentFields[i].scale;
+		component->draw      = hudComponentFields[i].draw;
+		component->parsed    = qtrue;
+
+		tmp = cJSON_GetObjectItem(comp, "rect");
+		if (tmp)
+		{
+			component->internalLocation.x = Q_ReadFloatValueJson(tmp, "x");
+			component->internalLocation.y = Q_ReadFloatValueJson(tmp, "y");
+			component->internalLocation.w = Q_ReadFloatValueJson(tmp, "w");
+			component->internalLocation.h = Q_ReadFloatValueJson(tmp, "h");
+		}
+
+		component->style   = Q_ReadIntValueJsonEx(comp, "style", component->style);
+		component->visible = Q_ReadBoolValueJsonEx(comp, "visible", component->visible);
+		component->scale   = Q_ReadFloatValueJsonEx(comp, "scale", component->scale);
+
+		CG_HudParseColorObject(cJSON_GetObjectItem(comp, "mainColor"), component->colorMain);
+
+		CG_HudParseColorObject(cJSON_GetObjectItem(comp, "secondaryColor"), component->colorSecondary);
+
+		CG_HudParseColorObject(cJSON_GetObjectItem(comp, "backgroundColor"), component->colorBackground);
+		// FIXME: mby get rid of the extra booleans
+		component->showBackGround = Q_ReadBoolValueJsonEx(comp, "showBackGround", component->showBackGround);
+
+		CG_HudParseColorObject(cJSON_GetObjectItem(comp, "borderColor"), component->colorBorder);
+		// FIXME: mby get rid of the extra booleans
+		component->showBorder = Q_ReadBoolValueJsonEx(comp, "showBorder", component->showBorder);
+
+		component->styleText  = Q_ReadIntValueJsonEx(comp, "textStyle", component->styleText);
+		component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
+		component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
+
+		component->anchorPoint = Q_ReadIntValueJsonEx(comp, "anchor", component->anchorPoint);
+		tmp                    = cJSON_GetObjectItem(comp, "parent");
+		if (tmp)
+		{
+			component->parentAnchor.point = Q_ReadIntValueJsonEx(tmp, "anchor", component->parentAnchor.point);
+			if (cJSON_HasObjectItem(tmp, "component"))
+			{
+				// FIXME: figure out how to setup the component based on a name / identifier
+				char *compName = Q_ReadStringValueJson(tmp, "component");
+				if (compName && *compName)
+				{
+					component->parentAnchor.parent = CG_FindComponentByName(tmpHud, compName);
+				}
+				else
+				{
+					component->parentAnchor.parent = NULL;
+				}
+			}
+		}
+	}
+
+	oldHud = CG_GetHudByNumber(tmpHud->hudnumber);
+
+	if (upgr->calcAnchors)
+	{
+		CG_GenerateHudAnchors(tmpHud);
+	}
+
+	if (!oldHud)
+	{
+		CG_RegisterHud(tmpHud);
+		Com_Printf("...properties for hud %i have been read.\n", tmpHud->hudnumber);
+	}
+	else
+	{
+		// free the old hud since we are basically overwriting it
+		CG_FreeHud(oldHud);
+		CG_RegisterHud(tmpHud);
+		Com_Printf("...properties for hud %i have been updated.\n", tmpHud->hudnumber);
+	}
+
+	return tmpHud;
+}
+
+static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
+{
+	uint32_t fileVersion = 0;
+
+	memset(ret, 0, sizeof(hudFileUpgrades_t));
+
+	fileVersion = Q_ReadIntValueJson(root, "version");
+
+	// check version..
+	switch (fileVersion)
+	{
+	case CURRENT_HUD_JSON_VERSION:
+		break;
+	case 1:         // 2.81 - version before anchors
+		ret->calcAnchors = qtrue;
+		break;
+	default:
+		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);
+		ret->invalid = qtrue;
+		break;
+	}
+}
+
+hudStucture_t *CG_ReadSingleHudJsonFile(const char *filename)
+{
+	cJSON             *root;
+	hudStucture_t     *hud = NULL;
+	hudFileUpgrades_t upgrades;
+
+	root = Q_FSReadJsonFrom(filename);
+	if (!root)
+	{
+		return NULL;
+	}
+
+	CG_CheckJsonFileUpgrades(root, &upgrades);
+
+	if (upgrades.invalid)
+	{
+		cJSON_Delete(root);
+		return NULL;
+	}
+
+	if (cJSON_GetObjectItem(root, "components"))
+	{
+		hud = CG_ReadHudJsonObject(root, &upgrades);
+	}
+	cJSON_Delete(root);
+	return hud;
+}
+
 static qboolean CG_ReadHudJsonFile(const char *filename)
 {
-	cJSON          *root, *huds, *hud, *comps, *comp, *tmp;
-	uint32_t       fileVersion = 0;
-	hudStucture_t  tmpHud;
-	hudStucture_t  *outHud, *parentHud;
-	hudComponent_t *component;
-	char           *name;
-	int            i, componentOffset;
+	cJSON             *root, *huds, *hud;
+	hudFileUpgrades_t upgrades;
 
 	root = Q_FSReadJsonFrom(filename);
 	if (!root)
@@ -992,12 +1397,10 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 		return qfalse;
 	}
 
-	fileVersion = Q_ReadIntValueJson(root, "version");
+	CG_CheckJsonFileUpgrades(root, &upgrades);
 
-	// check version..
-	if (fileVersion != CURRENT_HUD_JSON_VERSION)
+	if (upgrades.invalid)
 	{
-		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);
 		cJSON_Delete(root);
 		return qfalse;
 	}
@@ -1005,6 +1408,16 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 	huds = cJSON_GetObjectItem(root, "huds");
 	if (!huds || !cJSON_IsArray(huds))
 	{
+		// if this is a single hud file, then the root object is the hud definition
+		if (cJSON_GetObjectItem(root, "components"))
+		{
+			if (CG_ReadHudJsonObject(root, &upgrades))
+			{
+				cJSON_Delete(root);
+				return qtrue;
+			}
+		}
+
 		Q_JsonError("Missing or huds element is not an array\n");
 		cJSON_Delete(root);
 		return qfalse;
@@ -1020,142 +1433,10 @@ static qboolean CG_ReadHudJsonFile(const char *filename)
 			return qfalse;
 		}
 
-		memset(&tmpHud, 0, sizeof(hudStucture_t));
-		for (i = 0; hudComponentFields[i].name; i++)
+		if (!CG_ReadHudJsonObject(hud, &upgrades))
 		{
-			component         = (hudComponent_t *)((char * )&tmpHud + hudComponentFields[i].offset);
-			component->offset = 999;
-		}
-
-		componentOffset = 0;
-
-		tmpHud.hudnumber = Q_ReadIntValueJson(hud, "number");
-		if (!tmpHud.hudnumber)
-		{
-			tmpHud.hudnumber = CG_getAvailableNumber();
-		}
-
-		tmp = cJSON_GetObjectItem(hud, "parent");
-		if (!tmp || cJSON_IsNull(tmp))
-		{
-			// default to hud 0 as parent
-			tmpHud.parent = 0;
-		}
-		else if (cJSON_IsFalse(tmp))
-		{
-			// No parent for this hud. Will not load defaults.
-			tmpHud.parent = -1;
-		}
-		else if (cJSON_IsNumber(tmp))
-		{
-			tmpHud.parent = tmp->valueint;
-		}
-		else
-		{
-			CG_Printf(S_COLOR_RED "Invalid parent value in hud data\n");
-			continue;
-		}
-
-		if (tmpHud.parent >= 0)
-		{
-			parentHud = CG_GetHudByNumber(tmpHud.parent);
-		}
-
-		tmpHud.hudnumber = Q_ReadIntValueJson(hud, "number");
-		if (!tmpHud.hudnumber)
-		{
-			tmpHud.hudnumber = CG_getAvailableNumber();
-		}
-
-		// check that the hud number value was set
-		if (!CG_isHudNumberAvailable(tmpHud.hudnumber))
-		{
-			Com_Printf("Invalid hudnumber value: %i\n", tmpHud.hudnumber);
 			cJSON_Delete(root);
 			return qfalse;
-		}
-
-		name = Q_ReadStringValueJson(hud, "name");
-		if (name)
-		{
-			Q_strncpyz(tmpHud.name, name, MAX_QPATH);
-		}
-		else
-		{
-			tmpHud.name[0] = '\0';
-		}
-
-		comps = cJSON_GetObjectItem(hud, "components");
-		if (!comps)
-		{
-			Com_Printf("Missing components object in hud definition: %i\n", tmpHud.hudnumber);
-			cJSON_Delete(root);
-			return qfalse;
-		}
-
-		for (i = 0; hudComponentFields[i].name; i++)
-		{
-			component = (hudComponent_t *)((char * )&tmpHud + hudComponentFields[i].offset);
-			comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
-
-			if (parentHud)
-			{
-				CG_CloneHudComponent(parentHud, hudComponentFields[i].name, component);
-			}
-
-			if (!comp)
-			{
-				continue;
-			}
-			component->offset    = componentOffset++;
-			component->hardScale = hudComponentFields[i].scale;
-			component->draw      = hudComponentFields[i].draw;
-			component->parsed    = qtrue;
-
-			tmp = cJSON_GetObjectItem(comp, "rect");
-			if (tmp)
-			{
-				component->location.x = Q_ReadFloatValueJson(tmp, "x");
-				component->location.y = Q_ReadFloatValueJson(tmp, "y");
-				component->location.w = Q_ReadFloatValueJson(tmp, "w");
-				component->location.h = Q_ReadFloatValueJson(tmp, "h");
-
-				component->location.x = CG_AdjustXFromHudFile(component->location.x, component->location.w);
-			}
-
-			component->style   = Q_ReadIntValueJsonEx(comp, "style", component->style);
-			component->visible = Q_ReadBoolValueJsonEx(comp, "visible", component->visible);
-			component->scale   = Q_ReadFloatValueJsonEx(comp, "scale", component->scale);
-
-			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "mainColor"), component->colorMain);
-
-			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "secondaryColor"), component->colorSecondary);
-
-			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "backgroundColor"), component->colorBackground);
-			// FIXME: mby get rid of the extra booleans
-			component->showBackGround = Q_ReadBoolValueJsonEx(comp, "showBackGround", component->showBackGround);
-
-			CG_HudParseColorObject(cJSON_GetObjectItem(comp, "borderColor"), component->colorBorder);
-			// FIXME: mby get rid of the extra booleans
-			component->showBorder = Q_ReadBoolValueJsonEx(comp, "showBorder", component->showBorder);
-
-			component->styleText  = Q_ReadIntValueJsonEx(comp, "textStyle", component->styleText);
-			component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
-			component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
-		}
-
-		outHud = CG_GetHudByNumber(tmpHud.hudnumber);
-
-		if (!outHud)
-		{
-			CG_AddHudToList(&tmpHud);
-			Com_Printf("...properties for hud %i have been read.\n", tmpHud.hudnumber);
-		}
-		else
-		{
-			Com_Memcpy(outHud, &tmpHud, sizeof(tmpHud));
-			CG_HudComponentsFill(outHud);
-			Com_Printf("...properties for hud %i have been updated.\n", tmpHud.hudnumber);
 		}
 	}
 
@@ -1243,5 +1524,5 @@ void CG_ReadHudsFromFile(void)
 		}
 	}
 
-	Com_Printf("...hud count: %i\n", hudCount);
+	Com_Printf("...hud count: %i\n", hudData.count);
 }

@@ -260,7 +260,7 @@ qboolean G_commandCheck(gentity_t *ent, const char *cmd)
 		}
 	}
 
-	trap_SendServerCommand(ent->s.clientNum, va("print \"unknown cmd[lof] %s\n\"", cmd));
+	trap_SendServerCommand(ent->s.clientNum, va("print \"[lon]unknown cmd[lof] %s\n\"", cmd));
 
 	return qfalse;
 }
