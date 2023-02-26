@@ -195,13 +195,13 @@ void Com_BeginDownload(const char *localName, const char *remoteName)
 #endif
 }
 
-static void Com_WebDownloadComplete(webRequest_t *request, qboolean requestOk)
+static void Com_WebDownloadComplete(webRequest_t *request, webRequestResult requestResult)
 {
 	const char *to_ospath;
 
 	Cvar_Set("ui_dl_running", "0");
 
-	if (!requestOk)
+	if (!requestResult)
 	{
 		if (dld.bWWWDlDisconnected)
 		{

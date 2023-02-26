@@ -230,16 +230,16 @@ static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ul
  * @param[out] stream
  * @return
  */
-size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *userp)
+size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	webRequest_t *request = (webRequest_t *)userp;
+	webRequest_t *request = (webRequest_t *)userdata;
 
 	if (webSys.abort || request->abort)
 	{
 		return -666;
 	}
 
-	if (request->data.bufferPos + size * nmemb >= GET_BUFFER_SIZE - 1)
+	if (request->data.bufferPos + size * nmemb >= request->data.bufferSize - 1)
 	{
 		Com_Printf(S_COLOR_RED  "DL_write_function: Error - buffer is too small");
 		return 0;
@@ -249,6 +249,27 @@ size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *userp)
 	request->data.bufferPos += size * nmemb;
 
 	return size * nmemb;
+}
+
+static size_t DL_read_function(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+	webUploadData_t *data = (webUploadData_t *)userdata;
+	size_t          max, count;
+
+	if (!data->fileHandle && !data->buffer)
+	{
+		return 0;
+	}
+	else if (data->fileHandle)
+	{
+		return fread(ptr, size, nmemb, data->fileHandle);
+	}
+
+	max   = size * nmemb;
+	count = MIN(data->bufferSize - data->bufferPos, max);
+	Com_Memcpy(ptr, data->buffer + data->bufferPos, count);
+	data->bufferPos += count;
+	return count;
 }
 
 /**
@@ -476,6 +497,12 @@ static void DL_FreeRequest(webRequest_t *request)
 		request->rawHandle = NULL;
 	}
 
+	if (request->cList)
+	{
+		curl_slist_free_all(request->cList);
+		request->cList = NULL;
+	}
+
 	Com_Dealloc(request);
 }
 
@@ -513,6 +540,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 
 	request     = DL_CreateRequest();
 	request->id = FILE_DOWNLOAD_ID; // magical package download id
+	Q_strncpyz(request->url, remoteName, ARRAY_LEN(request->url));
 
 	request->data.fileHandle = Sys_FOpen(localName, "wb");
 	if (!request->data.fileHandle)
@@ -553,7 +581,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 
 		if (request->complete_clb)
 		{
-			request->complete_clb(request, qfalse);
+			request->complete_clb(request, REQUEST_NOK);
 		}
 		DL_FreeRequest(request);
 		return 0;
@@ -567,19 +595,21 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 /**
  * @brief Web_CreateRequest
  * @param[in] url Full web url
- * @param[in] get Get or Post request
+ * @param[in] authToken authentication token
+ * @param[in] upload upload data (turns the request into a POST)
  * @param[in] complete complete callback function
  * @param[in] progress progress callback function
  * @return request creation successful
  *
  * @note Unused
  */
-int Web_CreateRequest(const char *url, qboolean get, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
+unsigned int Web_CreateRequest(const char *url, const char *authToken, webUploadData_t *upload, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
-	CURLcode     status;
-	webRequest_t *request;
+	CURLcode          status;
+	webRequest_t      *request;
+	struct curl_slist *headers = NULL;
 
-	if (!url)
+	if (!url || !*url)
 	{
 		Com_Printf(S_COLOR_RED "DL_GetString: Error - empty download URL\n");
 		return qfalse;
@@ -589,8 +619,12 @@ int Web_CreateRequest(const char *url, qboolean get, webCallbackFunc_t complete,
 
 	request = DL_CreateRequest();
 
+	Q_strncpyz(request->url, url, ARRAY_LEN(request->url));
+
+	request->userData     = userData;
 	request->complete_clb = complete;
 	request->progress_clb = progress;
+	request->uploadData   = upload;
 
 	request->rawHandle = curl_easy_init();
 
@@ -604,35 +638,58 @@ int Web_CreateRequest(const char *url, qboolean get, webCallbackFunc_t complete,
 
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_URL, url);
-	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FOLLOWLOCATION, 1L);
-	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_MAXREDIRS, 5);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_WRITEFUNCTION, DL_write_function);
-	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_WRITEDATA, (void *)&request);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_WRITEDATA, (void *)request);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_PROGRESSFUNCTION, DL_cb_Progress);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_PROGRESSDATA, (void *)request);
 
-	if (!get)
+	if (upload)
 	{
 		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POST, 1L);
+		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READFUNCTION, DL_read_function);
+		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READDATA, (void *)upload);
+
+		if (upload->contentType[0])
+		{
+			headers = curl_slist_append(headers, "Expect:");
+			headers = curl_slist_append(headers, va("Content-Type: %s", upload->contentType));
+		}
+	}
+
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FAILONERROR, 1);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FOLLOWLOCATION, 1);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_MAXREDIRS, 5);
+
+	if (authToken && *authToken)
+	{
+		headers = curl_slist_append(headers, va("X-ETL-KEY: %s", authToken));
+	}
+
+	if (headers)
+	{
+		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_HTTPHEADER, headers);
+		request->cList = headers;
 	}
 
 	DL_InitSSL(request->rawHandle);
 
 	if (curl_multi_add_handle(webSys.multiHandle, request->rawHandle) != CURLM_OK)
 	{
-		Com_Printf(S_COLOR_RED  "DL_GetString: Error - invalid handle.\n");
+		Com_Printf(S_COLOR_RED  "Web_CreateRequest: Error - invalid handle.\n");
 		goto error_get;
 	}
 
-	return qtrue;
+	return request->id;
 
 error_get:
 
 	if (request->complete_clb)
 	{
-		request->complete_clb(request, qfalse);
+		request->complete_clb(request, REQUEST_NOK);
 	}
 	DL_FreeRequest(request);
 
-	return qfalse;
+	return 0;
 }
 
 static void DL_SetupContentLength(CURL *handle)
@@ -700,14 +757,18 @@ void DL_DownloadLoop(void)
 			continue;
 		}
 
-		CURL         *handle   = msg->easy_handle;
-		webRequest_t **lst     = &webSys.requests;
-		qboolean     requestOk = msg->data.result == CURLE_OK;
+		long             code;
+		CURL             *handle = msg->easy_handle;
+		webRequest_t     **lst   = &webSys.requests;
+		webRequestResult result  = msg->data.result == CURLE_OK ? REQUEST_OK : REQUEST_NOK;
 
 		// before doing anything else, remove the request from the multi-handle
 		curl_multi_remove_handle(webSys.multiHandle, handle);
 
-		if (!requestOk)
+		// get the web response code
+		curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &code);
+
+		if (!result)
 		{
 			err = curl_easy_strerror(msg->data.result);
 			Com_Printf(S_COLOR_RED "DL_DownloadLoop: Error - request terminated with failure status '%s'\n", err);
@@ -720,12 +781,7 @@ void DL_DownloadLoop(void)
 			{
 				handle = NULL;
 
-				// do not care about callbacks if we are force cancelling
-				if (webSys.abort || req->abort)
-				{
-					DL_FreeRequest(req);
-					break;
-				}
+				req->httpCode = code;
 
 				// If we have been using a file handle then close it before calling the callback..
 				if (req->data.fileHandle)
@@ -736,7 +792,15 @@ void DL_DownloadLoop(void)
 
 				if (req->complete_clb)
 				{
-					req->complete_clb(req, requestOk);
+					// do not care about callbacks if we are force cancelling
+					if (webSys.abort || req->abort)
+					{
+						req->complete_clb(req, REQUEST_ABORT);
+					}
+					else
+					{
+						req->complete_clb(req, result);
+					}
 				}
 
 				DL_FreeRequest(req);
@@ -751,6 +815,7 @@ void DL_DownloadLoop(void)
 		{
 			Com_Printf(S_COLOR_YELLOW "Download handle was not closed properly, closing it now.\n");
 			curl_easy_cleanup(handle);
+			handle = NULL;
 		}
 	}
 }

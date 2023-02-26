@@ -36,13 +36,7 @@
  */
 
 #include "dl_public.h"
-
-/**
- * @brief DL_Shutdown
- */
-void DL_Shutdown(void)
-{
-}
+#include "q_shared.h"
 
 /**
  * @brief DL_BeginDownload
@@ -52,15 +46,10 @@ void DL_Shutdown(void)
  */
 unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
-	return 1;
+	return 0;
 }
 
-/**
- * @brief DL_GetString
- * @param url - unused
- * @return
- */
-int Web_GetRequest(const char *url)
+unsigned int Web_CreateRequest(const char *url, const char *authToken, webUploadData_t *upload, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
 	return 0;
 }
@@ -72,5 +61,16 @@ int Web_GetRequest(const char *url)
  * @note Maybe this should be CL_DL_DownloadLoop
  */
 void DL_DownloadLoop(void)
+{
+}
+
+void DL_AbortAll(qboolean block, qboolean allowContinue)
+{
+}
+
+/**
+ * @brief DL_Shutdown
+ */
+void DL_Shutdown(void)
 {
 }

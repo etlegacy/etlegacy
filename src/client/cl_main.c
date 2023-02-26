@@ -3207,10 +3207,6 @@ void CL_Init(void)
 
 	CL_DemoInit();
 
-#ifdef LEGACY_AUTH
-	CL_AuthInit();
-#endif
-
 	CL_InitRef();
 
 	SCR_Init();
@@ -3304,10 +3300,6 @@ void CL_Shutdown(void)
 #endif
 
 	CL_DemoShutdown();
-
-#ifdef LEGACY_AUTH
-	CL_AuthShutdown();
-#endif
 
 	Con_Shutdown();
 

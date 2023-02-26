@@ -1592,4 +1592,13 @@ extern qboolean doTranslateMod;
 #define __(x) x
 #endif
 
+// auth.c
+#ifdef LEGACY_AUTH
+void Auth_Server_VerifyResponse(const char *username, const char *challenge, const char *response);
+void Auth_Server_FetchChallenge(const char *username);
+void Auth_Client_FetchResponse(const char *challenge);
+void Auth_Init(void);
+void Auth_Shutdown(void);
+#endif
+
 #endif // #ifndef INCLUDE_QCOMMON_H

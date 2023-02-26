@@ -540,12 +540,6 @@ void CL_DemoRun(void);
 void CL_DemoInit(void);
 void CL_DemoShutdown(void);
 
-// cl_auth
-#ifdef LEGACY_AUTH
-void CL_AuthInit(void);
-void CL_AuthShutdown(void);
-#endif
-
 // cl_input
 
 /**

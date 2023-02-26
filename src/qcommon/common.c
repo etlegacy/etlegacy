@@ -478,7 +478,7 @@ void Com_Quit_f(void)
 ============================================================================
 COMMAND LINE FUNCTIONS
 
-+ characters seperate the commandLine string into multiple console
++ characters separate the commandLine string into multiple console
 command lines.
 
 All of these are valid:
@@ -511,7 +511,7 @@ void Com_ParseCommandLine(char *commandLine)
 		{
 			inq = !inq;
 		}
-		// look for a + seperating character
+		// look for a + separating character
 		// if commandLine came from a file, we might have real line seperators
 		if (*commandLine == '+' || *commandLine == '\n' || *commandLine == '\r')
 		{
@@ -3081,6 +3081,10 @@ void Com_Init(char *commandLine)
 	Com_Printf("Altivec support is %s\n", com_altivec->integer ? "enabled" : "disabled");
 #endif
 
+#ifdef LEGACY_AUTH
+	Auth_Init();
+#endif
+
 	// force recommendedSet and don't do vid_restart if in safe mode
 	if (!com_recommendedSet->integer && !safeMode)
 	{
@@ -3616,6 +3620,10 @@ void Com_Shutdown(qboolean badProfile)
 
 #ifdef FEATURE_DBMS
 	(void) DB_DeInit();
+#endif
+
+#ifdef LEGACY_AUTH
+	Auth_Shutdown();
 #endif
 
 #ifndef DEDICATED
