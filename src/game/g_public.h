@@ -265,7 +265,8 @@ typedef enum
 	G_MESSAGESTATUS,
 
 	///< engine extensions padding
-	G_TRAP_GETVALUE = COM_TRAP_GETVALUE
+	G_TRAP_GETVALUE = COM_TRAP_GETVALUE,
+	G_WAS_IN_PVS
 
 } gameImport_t;
 

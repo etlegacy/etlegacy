@@ -180,6 +180,7 @@ typedef struct
 	int messageSent;                    ///< time the message was transmitted
 	int messageAcked;                   ///< time the message was acked
 	int messageSize;                    ///< used to rate drop packets
+	unsigned int clientbits[2];         ///< bits of clients that were added to snapshot
 } clientSnapshot_t;
 
 /**
@@ -619,6 +620,8 @@ int SV_LoadTag(const char *mod_name);
 void SV_GameSendServerCommand(int clientNum, const char *text, qboolean demoPlayback);
 
 void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);
+
+qboolean SV_wasInPVS(int clientnum, int client);
 
 // sv_bot.c
 int SV_BotAllocateClient(int clientNum);

@@ -309,7 +309,7 @@ static int QDECL SV_QsortEntityNumbers(const void *a, const void *b)
  * @param[in] gEnt
  * @param[in,out] eNums
  */
-static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sharedEntity_t *gEnt, snapshotEntityNumbers_t *eNums)
+static void SV_AddEntToSnapshot(clientSnapshot_t *frame, sharedEntity_t *clientEnt, svEntity_t *svEnt, sharedEntity_t *gEnt, snapshotEntityNumbers_t *eNums)
 {
 	// if we have already added this entity to this snapshot, don't add again
 	if (svEnt->snapshotCounter == sv.snapshotCounter)
@@ -331,6 +331,12 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
 		{
 			return;
 		}
+	}
+
+	// add client bits for this frame
+	if (gEnt->s.number < MAX_CLIENTS)
+	{
+		frame->clientbits[gEnt->s.number < 32 ? 0 : 1] |= BIT(gEnt->s.number % 32);
 	}
 
 	eNums->snapshotEntities[eNums->numSnapshotEntities] = gEnt->s.number;
@@ -445,7 +451,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		// broadcast entities are always sent
 		if (ent->r.svFlags & SVF_BROADCAST)
 		{
-			SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+			SV_AddEntToSnapshot(frame, playerEnt, svEnt, ent, eNums);
 			continue;
 		}
 
@@ -456,7 +462,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		{
 			if (bitvector[svEnt->originCluster >> 3] & (1 << (svEnt->originCluster & 7)))
 			{
-				SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+				SV_AddEntToSnapshot(frame, playerEnt, svEnt, ent, eNums);
 			}
 
 			continue;
@@ -529,7 +535,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 					continue;
 				}
 
-				SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
+				SV_AddEntToSnapshot(frame, playerEnt, master, ment, eNums);
 			}
 
 			continue;   // master needs to be added, but not this dummy ent
@@ -580,7 +586,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 				if (ment->s.otherEntityNum == ent->s.number)
 				{
-					SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
+					SV_AddEntToSnapshot(frame, playerEnt, master, ment, eNums);
 				}
 			}
 
@@ -605,7 +611,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 				if (!SV_CanSee(frame->ps.clientNum, e))
 				{
 					SV_RandomizePos(frame->ps.clientNum, e);
-					SV_AddEntToSnapshot(client, svEnt, ent, eNums);
+					SV_AddEntToSnapshot(frame, client, svEnt, ent, eNums);
 					continue;
 				}
 			}
@@ -613,7 +619,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 #endif
 
 		// add it
-		SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+		SV_AddEntToSnapshot(frame, playerEnt, svEnt, ent, eNums);
 
 		// if its a portal entity, add everything visible from its camera position
 		if (ent->r.svFlags & SVF_PORTAL)
@@ -662,6 +668,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 	// clear everything in this snapshot
 	entityNumbers.numSnapshotEntities = 0;
 	Com_Memset(frame->areabits, 0, sizeof(frame->areabits));
+	Com_Memset(frame->clientbits, 0, sizeof(frame->clientbits));
 
 	frame->num_entities = 0;
 

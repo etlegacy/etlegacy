@@ -520,6 +520,12 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 
 		if (backwards)
 		{
+			// don't adjust if client wasn't in PVS at the time
+			if (!G_ClientWasInPVS(skip, list, qtrue))
+			{
+				continue;
+			}
+
 			G_AdjustSingleClientPosition(list, time);
 		}
 		else
@@ -616,7 +622,8 @@ static void G_AttachBodyParts(gentity_t *ent)
 		    (list != ent) &&
 		    list->r.linked &&
 		    !(list->client->ps.pm_flags & PMF_LIMBO) &&
-		    (list->client->ps.pm_type == PM_NORMAL || list->client->ps.pm_type == PM_DEAD)
+		    (list->client->ps.pm_type == PM_NORMAL || list->client->ps.pm_type == PM_DEAD) &&
+		    G_ClientWasInPVS(ent, list, qfalse)
 		    )
 		{
 			list->client->tempHead = G_BuildHead(list, &refent, qtrue);
@@ -692,7 +699,7 @@ static int G_SwitchBodyPartEntity(gentity_t *ent)
  */
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
-	if (!g_antilag.integer || !ent->client || ent->r.svFlags & SVF_BOT)
+	if (!g_antilag.integer || !ent->client || (ent->r.svFlags & SVF_BOT))
 	{
 		G_Trace(ent, results, start, mins, maxs, end, passEntityNum, contentmask);
 		return;
@@ -712,10 +719,11 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 void G_HistoricalTraceBegin(gentity_t *ent)
 {
 	// don't do this with antilag off, or for bots
-	if (!g_antilag.integer || ent->r.svFlags & SVF_BOT)
+	if (!g_antilag.integer || (ent->r.svFlags & SVF_BOT))
 	{
 		return;
 	}
+
 	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
 }
 
@@ -726,7 +734,7 @@ void G_HistoricalTraceBegin(gentity_t *ent)
 void G_HistoricalTraceEnd(gentity_t *ent)
 {
 	// don't do this with antilag off, or for bots
-	if (!g_antilag.integer || ent->r.svFlags & SVF_BOT)
+	if (!g_antilag.integer || (ent->r.svFlags & SVF_BOT))
 	{
 		return;
 	}
@@ -752,7 +760,8 @@ void G_AdjustClientHeight(gentity_t *ent)
 		    (client != ent) &&
 		    client->r.linked &&
 		    !(client->client->ps.pm_flags & PMF_LIMBO) &&
-		    (client->client->ps.pm_type == PM_NORMAL || client->client->ps.pm_type == PM_DEAD)
+		    (client->client->ps.pm_type == PM_NORMAL || client->client->ps.pm_type == PM_DEAD) &&
+		    G_ClientWasInPVS(ent, client, qfalse)
 		    )
 		{
 			maxsBackup[level.sortedClients[i]] = client->r.maxs[2];
@@ -823,6 +832,67 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	POSITION_READJUST
 
 	G_DettachBodyParts();
+}
+
+/**
+* @brief G_ClientIsInView check if client is in ent's view (scaled between 55-10 degree angle over 30-500 distance)
+* @param[in] ent perspective
+* @param[in] client to check
+* @return qtrue if client is in ent's view
+*/
+static qboolean G_ClientIsInView(gentity_t *ent, gentity_t *client)
+{
+	vec3_t      forward, diff;
+	const float angleCos55 = 0.573576f; // 55 degree angle
+	const float angleCos10 = 0.984808f; // 10 degree angle
+	float       angleScaled, distance, angle = angleCos10 - angleCos55;
+
+	AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
+	VectorSubtract(client->client->ps.origin, ent->client->ps.origin, diff);
+	VectorNormalize(diff);
+
+	distance    = VectorDistance(client->client->ps.origin, ent->client->ps.origin);
+	angleScaled = Com_Clamp(angleCos55, angleCos10, (distance - 30.0f) / (500.0f - 30.0f) * angle + angleCos55);
+
+	if (DotProduct(forward, diff) > angleScaled)
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+* @brief G_ClientWasInPVS check if client was in ent's PVS
+* @param[in] ent perspective
+* @param[in] client to check
+* @param[in] checkAngle should viewangle for visibility be checked
+* @return qfalse if it is safe to say client wasn't in PVS
+*/
+qboolean G_ClientWasInPVS(gentity_t *ent, gentity_t *client, qboolean checkAngle)
+{
+	// bots and non-player entities don't have snapshot history
+	if (!g_antilag.integer || (ent->r.svFlags & SVF_BOT) || !ent->client || client->s.number >= MAX_CLIENTS)
+	{
+		return qtrue;
+	}
+
+	if (trap_wasInPVS(ent - g_entities, client - g_entities))
+	{
+		return qtrue;
+	}
+
+	// client was not in PVS, but because of ping it cannot be blindly trusted for backward reconciliation (in some places)
+	// because client could be behind a corner and out of PVS for ent but already in PVS and past the corner on server
+	// which would mean client would get hit (because he wouldn't get put back in time)
+	// as a counter measure viewangle will be checked in front of the player
+	// to determine if player should be counted as in PVS regardless
+	if (checkAngle)
+	{
+		return G_ClientIsInView(ent, client);
+	}
+
+	return qfalse;
 }
 
 /**

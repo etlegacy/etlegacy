@@ -38,8 +38,14 @@
 
 botlib_export_t *botlib_export;
 
-#define TRAP_EXTENSIONS_LIST NULL
+#define TRAP_EXTENSIONS_LIST g_extensionTraps
 #include "../qcommon/vm_ext.h"
+
+static ext_trap_keys_t g_extensionTraps[] =
+{
+	{ "trap_wasInPVS_Legacy", G_WAS_IN_PVS, qfalse },
+	{ NULL,                   -1,           qfalse }
+};
 
 /**
 * @todo TODO: These functions must be used instead of pointer arithmetic, because
@@ -675,6 +681,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case G_TRAP_GETVALUE:
 		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
 
+	case G_WAS_IN_PVS:
+		return SV_wasInPVS(args[1], args[2]);
+
 	default:
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);
 		break;
@@ -817,4 +826,33 @@ qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_
 	}
 
 	return qfalse;
+}
+
+/**
+* @brief SV_wasInPVS check client bits in last acknowledged snapshot
+* @param[in] clientnum
+* @param[in] client
+* @return qtrue if client was in last acknowledged snapshot
+*/
+qboolean SV_wasInPVS(int clientnum, int client)
+{
+	client_t         *cl;
+	clientSnapshot_t *frame;
+
+	if (clientnum < 0 || clientnum >= sv_maxclients->integer)
+	{
+		Com_Printf("SV_wasInPVS: bad clientnum %i\n", clientnum);
+		return qtrue;
+	}
+
+	if (client < 0 || client >= sv_maxclients->integer)
+	{
+		Com_Printf("SV_wasInPVS: bad client %i\n", client);
+		return qtrue;
+	}
+
+	cl    = &svs.clients[clientnum];
+	frame = &cl->frames[cl->messageAcknowledge & PACKET_MASK];
+
+	return (frame->clientbits[client < 32 ? 0 : 1] & BIT(client % 32));
 }

@@ -71,6 +71,9 @@ g_campaignInfo_t g_campaigns[MAX_CAMPAIGNS];
 
 mapEntityData_Team_t mapEntityData[2];
 
+int dll_com_trapGetValue;
+int dll_trap_wasInPVS;
+
 const char *gameNames[] =
 {
 	"Single Player",        // Obsolete
@@ -2290,6 +2293,31 @@ void G_GetMapXP(void)
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
 }
 
+static ID_INLINE void G_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+{
+	if (trap_GetValue(value, valueSize, name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void G_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+
+		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_wasInPVS, "trap_wasInPVS_Legacy");
+	}
+}
+
 /**
  * @brief G_InitGame
  * @param[in] levelTime
@@ -2316,6 +2344,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	G_Printf("gamedate: %s\n", __DATE__);
 
 	srand(randomSeed);
+
+	G_SetupExtensions();
 
 	G_RegisterCvars();
 

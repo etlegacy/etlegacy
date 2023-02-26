@@ -2281,6 +2281,12 @@ void trap_SnapVector(float *v);
 qboolean trap_SendMessage(int clientNum, char *buf, int buflen);
 messageStatus_t trap_MessageStatus(int clientNum);
 
+// extension interface
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+qboolean trap_wasInPVS(int clientnum, int client);
+extern int dll_com_trapGetValue;
+extern int dll_trap_wasInPVS;
+
 void G_ExplodeMissile(gentity_t *ent);
 
 void Svcmd_StartMatch_f(void);
@@ -2296,6 +2302,8 @@ void G_HistoricalTraceBegin(gentity_t *ent);
 void G_HistoricalTraceEnd(gentity_t *ent);
 void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 void G_PredictPmove(gentity_t *ent, float frametime);
+
+qboolean G_ClientWasInPVS(gentity_t *ent, gentity_t *client, qboolean checkAngle);
 
 #define BODY_VALUE(ENT) ENT->watertype
 #define BODY_TEAM(ENT) ENT->s.modelindex
