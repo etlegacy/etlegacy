@@ -665,10 +665,6 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	{
 		Cmd_FollowCycle_f(ent, 1, (client->buttons & BUTTON_SPRINT));
 	}
-	else if (!(client->buttons & BUTTON_ACTIVATE))
-	{
-		Cmd_FollowCycle_f(ent, -1, (client->buttons & BUTTON_SPRINT));
-	}
 #ifdef ETLEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT
 	// activate button swaps places with bot
