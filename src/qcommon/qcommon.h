@@ -621,6 +621,8 @@ void Cmd_TokenizeString(const char *text);
 /// breaks the string up into arg tokens.
 void Cmd_TokenizeStringIgnoreQuotes(const char *text_in);
 
+void Cmd_TokenizeStringIncludeComments(const char *text);
+
 /// Parses a single line of text into arguments and tries to execute it
 /// as if it was typed at the console
 void Cmd_ExecuteString(const char *text);
@@ -1594,9 +1596,12 @@ extern qboolean doTranslateMod;
 
 // auth.c
 #ifdef LEGACY_AUTH
-void Auth_Server_VerifyResponse(const char *username, const char *challenge, const char *response);
-void Auth_Server_FetchChallenge(const char *username);
+void Auth_Server_Command_f(void);
+void Auth_Server_ClientLogout(void *data, const char *username);
+void Auth_Server_VerifyResponse(void *data, const char *username, const char *challenge, const char *response);
+void Auth_Server_FetchChallenge(void *data, const char *username);
 void Auth_Client_FetchResponse(const char *challenge);
+qboolean Auth_Active(void);
 void Auth_Init(void);
 void Auth_Shutdown(void);
 #endif

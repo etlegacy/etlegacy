@@ -33,15 +33,19 @@
  * @brief Handle central authentication for ET:Legacy
  */
 
-#ifdef DEDICATED
-#include "../server/server.h"
-#else
+#ifndef DEDICATED
 #include "../client/client.h"
 #endif
+#include "../server/server.h"
 
 #include "json.h"
 
-#define AUTH_TOKEN_FILE "auth-token.dat"
+#ifdef DEDICATED
+#define AUTH_TOKEN_FILE "sv-token.dat"
+#else
+#define AUTH_TOKEN_FILE "cl-token.dat"
+#endif
+
 #define AUTH_TOKEN_SIZE 65
 #define AUTH_USERNAME_SIZE 65
 
@@ -62,6 +66,57 @@ cvar_t *auth_server;
 
 #define A_URL(x) va("%s" x, auth_server->string)
 
+#ifndef DEDICATED
+static void Auth_SendToServer(const char *format, ...)
+{
+	static char string[128];
+	static char output[256];
+	va_list     argPtr;
+
+	if (cls.state < CA_AUTHORIZING || cls.state > CA_ACTIVE)
+	{
+		return;
+	}
+
+	va_start(argPtr, format);
+	Q_vsnprintf(string, 128, format, argPtr);
+	va_end(argPtr);
+
+	output[0] = '\0';
+	Q_strcat(output, 256, "cmd ");
+	Q_strcat(output, 256, string);
+
+	Cbuf_AddText(output);
+}
+#else
+#define Auth_SendToServer(...)
+#endif
+
+#define Auth_SendToClient(client, ...) SV_SendServerCommand((client), __VA_ARGS__)
+
+static void Auth_SV_ChallengeReceived(client_t *client, const char *challenge)
+{
+	if (!challenge || !*challenge)
+	{
+		// FIXME: message this..
+		return;
+	}
+
+	Q_strncpyz(client->loginChallenge, challenge, sizeof(client->loginChallenge));
+	Auth_SendToClient(client, "//auth-srv challenge %s", client->loginChallenge);
+}
+
+static void Auth_SV_ResponseVerify(client_t *client, qboolean match)
+{
+	client->loggedIn = match;
+	if (!match)
+	{
+		client->login[0]          = '\0';
+		client->loginChallenge[0] = '\0';
+	}
+	Auth_SendToClient(client, "//auth-srv verified %i", match);
+}
+
 static void Auth_FreeUploadBuffer(webRequest_t *request)
 {
 	if (request->uploadData)
@@ -75,6 +130,7 @@ static void Auth_FreeUploadBuffer(webRequest_t *request)
 	}
 }
 
+#ifndef DEDICATED
 static void Auth_WriteTokenToFile(const char *token)
 {
 	fileHandle_t f;
@@ -108,11 +164,17 @@ static void Auth_ClientLoginCallback(struct webRequest_s *request, webRequestRes
 
 	root = cJSON_Parse((char *)request->data.buffer);
 
-	if (cJSON_HasObjectItem(root, "token"))
+	if (cJSON_HasObjectItem(root, "token") && cJSON_HasObjectItem(root, "username"))
 	{
 		authData.authToken[0] = '\0';
 		Q_strncpyz(authData.authToken, cJSON_GetStringValue(cJSON_GetObjectItem(root, "token")), AUTH_TOKEN_SIZE);
+
+		authData.username[0] = '\0';
+		Q_strncpyz(authData.username, cJSON_GetStringValue(cJSON_GetObjectItem(root, "username")), AUTH_USERNAME_SIZE);
+
 		Auth_WriteTokenToFile(authData.authToken);
+
+		Auth_SendToServer("login %s", authData.username);
 	}
 
 	cJSON_free(root);
@@ -165,11 +227,12 @@ static void Auth_TestToken(void)
 {
 	Web_CreateRequest(A_URL(AUTH_CLIENT_LOGIN), authData.authToken, NULL, NULL, &Auth_ClientLoginTestCallback, NULL);
 }
+#endif
 
 static void Auth_ReadToken(void)
 {
-	long         len = 0;
-	fileHandle_t f   = 0;
+	long         len;
+	fileHandle_t f = 0;
 
 	Com_Memset(authData.authToken, 0, AUTH_TOKEN_SIZE);
 
@@ -191,6 +254,7 @@ static void Auth_ReadToken(void)
 	FS_FCloseFile(f);
 }
 
+#ifndef DEDICATED
 static void Auth_ClearToken(void)
 {
 	fileHandle_t f;
@@ -214,18 +278,26 @@ static void Auth_Cmd_f(void)
 	char *tmp  = NULL;
 	int  count = Cmd_Argc();
 
+	if (!Auth_Active())
+	{
+		Com_Printf("Requires arguments\n");
+		return;
+	}
+
 	if (count < 2)
 	{
 		Com_Printf("Requires arguments\n");
+		return;
 	}
 
 	tmp = Cmd_Argv(1);
 
 	if (!Q_stricmp(tmp, "login"))
 	{
-		if (*authData.authToken)
+		if (*authData.authToken && *authData.username)
 		{
-			Com_Printf("Already logged in\n");
+			Auth_SendToServer("login %s", authData.username);
+			// Com_Printf("Already logged in\n");
 			return;
 		}
 
@@ -240,10 +312,70 @@ static void Auth_Cmd_f(void)
 	else if (!Q_stricmp(tmp, "logout"))
 	{
 		Auth_ClearToken();
+		Auth_SendToServer("logout");
 	}
 	else
 	{
 		Com_Printf("Unknown command: %s\n", tmp);
+	}
+}
+
+void Auth_Server_Command_f(void)
+{
+	char *tmp  = NULL;
+	int  count = Cmd_Argc();
+
+	if (!Auth_Active())
+	{
+		return;
+	}
+
+	if (count < 2)
+	{
+		Com_Printf("Server auth missing arguments\n");
+	}
+
+	tmp = Cmd_Argv(1);
+
+	if (!Q_stricmp(tmp, "challenge"))
+	{
+		if (count != 3)
+		{
+			Com_Printf("Invalid server challenge message\n");
+			return;
+		}
+		Auth_Client_FetchResponse(Cmd_Argv(2));
+	}
+	else if (!Q_stricmp(tmp, "verified"))
+	{
+		int verStatus;
+
+		if (count != 3)
+		{
+			Com_Printf("Invalid server verified message\n");
+			return;
+		}
+
+		verStatus = Q_atoi(Cmd_Argv(2));
+
+		if (verStatus == 1)
+		{
+			Com_Printf(S_COLOR_CYAN "Logged in the server as %s\n", authData.username);
+		}
+		else
+		{
+			Com_Printf(S_COLOR_CYAN "Authentication failed as %s\n", authData.username);
+		}
+	}
+	else if (!Q_stricmp(tmp, "logout"))
+	{
+		if (count != 3)
+		{
+			Com_Printf("Invalid server logout message\n");
+			return;
+		}
+
+		Com_Printf(S_COLOR_CYAN "Logged out of the server as %s\n", Cmd_Argv(2));
 	}
 }
 
@@ -263,11 +395,12 @@ static void Auth_ClientChallengeCallback(struct webRequest_s *request, webReques
 	if (cJSON_HasObjectItem(root, "response"))
 	{
 		char *response = cJSON_GetStringValue(cJSON_GetObjectItem(root, "response"));
-		// FIXME: send this to the server
+		Auth_SendToServer("login-response %s", response);
 	}
 
 	cJSON_free(root);
 }
+#endif
 
 static void Auth_ServerChallengeCallback(struct webRequest_s *request, webRequestResult requestResult)
 {
@@ -285,7 +418,7 @@ static void Auth_ServerChallengeCallback(struct webRequest_s *request, webReques
 	if (cJSON_HasObjectItem(root, "challenge"))
 	{
 		char *challenge = cJSON_GetStringValue(cJSON_GetObjectItem(root, "challenge"));
-		// FIXME: send this to the client
+		Auth_SV_ChallengeReceived(request->userData, challenge);
 	}
 
 	cJSON_free(root);
@@ -307,16 +440,18 @@ static void Auth_ServerVerifyCallback(struct webRequest_s *request, webRequestRe
 	if (cJSON_HasObjectItem(root, "match"))
 	{
 		match = cJSON_GetObjectItem(root, "match");
-		if (cJSON_IsBool(match) && cJSON_IsTrue(match))
-		{
-			// FIXME: mark user as logged in..
-		}
+		Auth_SV_ResponseVerify(request->userData, cJSON_IsBool(match) && cJSON_IsTrue(match));
 	}
 
 	cJSON_free(root);
 }
 
-void Auth_Server_VerifyResponse(const char *username, const char *challenge, const char *response)
+void Auth_Server_ClientLogout(void *data, const char *username)
+{
+	Auth_SendToClient(data, "//auth-srv logout %s", username);
+}
+
+void Auth_Server_VerifyResponse(void *data, const char *username, const char *challenge, const char *response)
 {
 	cJSON *root;
 	char  *json;
@@ -337,10 +472,10 @@ void Auth_Server_VerifyResponse(const char *username, const char *challenge, con
 	upload->buffer     = (byte *)json;
 	upload->bufferSize = strlen(json);
 
-	Web_CreateRequest(A_URL(AUTH_SERVER_VERIFY), authData.authToken, upload, NULL, &Auth_ServerVerifyCallback, NULL);
+	Web_CreateRequest(A_URL(AUTH_SERVER_VERIFY), authData.authToken, upload, data, &Auth_ServerVerifyCallback, NULL);
 }
 
-void Auth_Server_FetchChallenge(const char *username)
+void Auth_Server_FetchChallenge(void *data, const char *username)
 {
 	cJSON *root;
 	char  *json;
@@ -359,9 +494,10 @@ void Auth_Server_FetchChallenge(const char *username)
 	upload->buffer     = (byte *)json;
 	upload->bufferSize = strlen(json);
 
-	Web_CreateRequest(A_URL(AUTH_SERVER_CHALLENGE), authData.authToken, upload, NULL, &Auth_ServerChallengeCallback, NULL);
+	Web_CreateRequest(A_URL(AUTH_SERVER_CHALLENGE), authData.authToken, upload, data, &Auth_ServerChallengeCallback, NULL);
 }
 
+#ifndef DEDICATED
 void Auth_Client_FetchResponse(const char *challenge)
 {
 	cJSON *root;
@@ -383,6 +519,16 @@ void Auth_Client_FetchResponse(const char *challenge)
 
 	Web_CreateRequest(A_URL(AUTH_CLIENT_CHALLENGE), authData.authToken, upload, NULL, &Auth_ClientChallengeCallback, NULL);
 }
+#endif
+
+qboolean Auth_Active(void)
+{
+	if (*authData.authToken && *authData.username)
+	{
+		return qtrue;
+	}
+	return qfalse;
+}
 
 void Auth_Init(void)
 {
@@ -395,16 +541,23 @@ void Auth_Init(void)
 		return;
 	}
 
+#ifndef DEDICATED
 	Cmd_AddCommand("auth", Auth_Cmd_f, "Authentication handler");
+#endif
 
 	Auth_ReadToken();
+
+#ifndef DEDICATED
 	if (*authData.authToken)
 	{
 		Auth_TestToken();
 	}
+#endif
 }
 
 void Auth_Shutdown(void)
 {
+#ifndef DEDICATED
 	Cmd_RemoveCommand("auth");
+#endif
 }

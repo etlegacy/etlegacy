@@ -291,6 +291,12 @@ typedef struct client_s
 	qboolean demoClient; ///< is this a demoClient?
 
 	userAgent_t agent;
+
+#ifdef LEGACY_AUTH
+	char login[64];
+	char loginChallenge[64];
+	qboolean loggedIn;
+#endif
 } client_t;
 
 //=============================================================================

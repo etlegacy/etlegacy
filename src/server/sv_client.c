@@ -1056,6 +1056,58 @@ void SV_WWWDownload_f(client_t *cl)
 	SV_DropClient(cl, va("SV_WWWDownload: unknown wwwdl subcommand '%s'", subcmd));
 }
 
+#if LEGACY_AUTH
+void SV_Login_f(client_t *cl)
+{
+	char *username;
+
+	if (!Auth_Active())
+	{
+		return;
+	}
+
+	username = Cmd_Argv(1);
+
+	if (!username | !*username)
+	{
+		return;
+	}
+
+	Q_strncpyz(cl->login, username, sizeof(cl->login));
+	Auth_Server_FetchChallenge(cl, username);
+}
+
+void SV_LoginResponse_f(client_t *cl)
+{
+	char *response;
+
+	if (!Auth_Active())
+	{
+		return;
+	}
+
+	response = Cmd_Argv(1);
+
+	if (!response | !*response)
+	{
+		return;
+	}
+	Auth_Server_VerifyResponse(cl, cl->login, cl->loginChallenge, response);
+}
+
+void SV_Logout_f(client_t *cl)
+{
+	if (!Auth_Active())
+	{
+		return;
+	}
+
+	Auth_Server_ClientLogout(cl, cl->login);
+	cl->login[0]          = '\0';
+	cl->loginChallenge[0] = '\0';
+}
+#endif
+
 /**
  * @brief Abort an attempted download
  * @param[in] cl
@@ -1819,16 +1871,21 @@ typedef struct
 
 static ucmd_t ucmds[] =
 {
-	{ "userinfo",   SV_UpdateUserinfo_f,  qfalse },
-	{ "disconnect", SV_Disconnect_f,      qtrue  },
-	{ "cp",         SV_VerifyPaks_f,      qfalse },
-	{ "vdr",        SV_ResetPureClient_f, qfalse },
-	{ "download",   SV_BeginDownload_f,   qfalse },
-	{ "nextdl",     SV_NextDownload_f,    qfalse },
-	{ "stopdl",     SV_StopDownload_f,    qfalse },
-	{ "donedl",     SV_DoneDownload_f,    qfalse },
-	{ "wwwdl",      SV_WWWDownload_f,     qfalse },
-	{ NULL,         NULL,                 qfalse }
+	{ "userinfo",       SV_UpdateUserinfo_f,  qfalse },
+	{ "disconnect",     SV_Disconnect_f,      qtrue  },
+	{ "cp",             SV_VerifyPaks_f,      qfalse },
+	{ "vdr",            SV_ResetPureClient_f, qfalse },
+	{ "download",       SV_BeginDownload_f,   qfalse },
+	{ "nextdl",         SV_NextDownload_f,    qfalse },
+	{ "stopdl",         SV_StopDownload_f,    qfalse },
+	{ "donedl",         SV_DoneDownload_f,    qfalse },
+	{ "wwwdl",          SV_WWWDownload_f,     qfalse },
+#if LEGACY_AUTH
+	{ "login",          SV_Login_f,           qtrue  },
+	{ "login-response", SV_LoginResponse_f,   qtrue  },
+	{ "logout",         SV_Logout_f,          qtrue  },
+#endif
+	{ NULL,             NULL,                 qfalse }
 };
 
 /**
