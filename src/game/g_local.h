@@ -1180,6 +1180,7 @@ typedef struct level_locals_s
 	qboolean restarted;                         ///< waiting for a map_restart to fire
 
 	int numConnectedClients;
+	int numHumanConnectedClients;
 	int numNonSpectatorClients;                 ///< includes connecting clients
 	int numPlayingClients;                      ///< connected, non-spectators
 	int sortedClients[MAX_CLIENTS];             ///< sorted by score
