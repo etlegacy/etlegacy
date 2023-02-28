@@ -71,7 +71,7 @@ static char homePath[MAX_OSPATH] = { 0 };
 size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len)
 {
 	size_t length = WideCharToMultiByte(CP_UTF8, 0, array, -1, NULL, 0, NULL, NULL);
-	if(length > len)
+	if (length > len)
 	{
 		return -1;
 	}
@@ -87,12 +87,12 @@ size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len)
  * @param [in] size of the output buffer
  * @return length of the string
  */
-size_t Sys_StringToWideCharArray(const char* string, wchar_t *output, size_t len)
+size_t Sys_StringToWideCharArray(const char *string, wchar_t *output, size_t len)
 {
 	size_t length = 0;
 
 	length = MultiByteToWideChar(CP_UTF8, 0, string, -1, NULL, 0);
-	if(length > len)
+	if (length > len)
 	{
 		return -1;
 	}
@@ -123,7 +123,7 @@ char *Sys_DefaultHomePath(void)
 		//        when real CSIDL_PERSONAL is on a mapped drive
 		// NOTE: SHGetFolderPath is marked as deprecated
 		found = SHGetFolderPathW(NULL, CSIDL_PERSONAL,
-		                        NULL, SHGFP_TYPE_CURRENT, w_szPath);
+		                         NULL, SHGFP_TYPE_CURRENT, w_szPath);
 
 		if (found != S_OK)
 		{
@@ -179,7 +179,7 @@ void Sys_SnapVector(float *v)
  * @param[in] len
  * @return
  */
-qboolean Sys_RandomBytes(byte *string, int len)
+qboolean Sys_RandomBytes(void *bytes, int len)
 {
 	HCRYPTPROV prov;
 
@@ -189,7 +189,7 @@ qboolean Sys_RandomBytes(byte *string, int len)
 		return qfalse;
 	}
 
-	if (!CryptGenRandom(prov, len, (BYTE *)string))
+	if (!CryptGenRandom(prov, len, (BYTE *)bytes))
 	{
 		CryptReleaseContext(prov, 0);
 		return qfalse;
@@ -205,9 +205,9 @@ qboolean Sys_RandomBytes(byte *string, int len)
  */
 char *Sys_GetCurrentUser(void)
 {
-	static wchar_t   w_userName[MAX_PATH];
-	static char   s_userName[MAX_PATH];
-	DWORD size = MAX_PATH;
+	static wchar_t w_userName[MAX_PATH];
+	static char    s_userName[MAX_PATH];
+	DWORD          size = MAX_PATH;
 
 	if (GetUserNameW(w_userName, &size))
 	{
@@ -328,7 +328,7 @@ char *Sys_RealPath(const char *path)
  */
 FILE *Sys_FOpen(const char *ospath, const char *mode)
 {
-	size_t length;
+	size_t  length;
 	wchar_t w_ospath[MAX_OSPATH];
 	wchar_t w_mode[10];
 
@@ -386,7 +386,7 @@ double Sys_GetWindowsVer(void)
 	NTSTATUS(WINAPI * RtlGetVersion)(LPOSVERSIONINFOEXW);
 	OSVERSIONINFOEXW osInfo;
 
-	*(FARPROC*)&RtlGetVersion = GetProcAddress(GetModuleHandleA("ntdll"), "RtlGetVersion");
+	*(FARPROC *)&RtlGetVersion = GetProcAddress(GetModuleHandleA("ntdll"), "RtlGetVersion");
 
 	if (NULL != RtlGetVersion)
 	{
@@ -419,7 +419,7 @@ int Sys_Rename(const char *from, const char *to)
 char *Sys_Cwd(void)
 {
 	static wchar_t w_cwd[MAX_OSPATH];
-	static char cwd[MAX_OSPATH];
+	static char    cwd[MAX_OSPATH];
 
 	if (_wgetcwd(w_cwd, MAX_OSPATH - 1) == NULL)
 	{
@@ -449,10 +449,10 @@ DIRECTORY SCANNING
  */
 void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char *filter, char **list, int *numfiles)
 {
-	char               search[MAX_OSPATH], newsubdirs[MAX_OSPATH];
-	wchar_t            w_search[MAX_OSPATH];
-	char               tmpFilename[MAX_OSPATH], filename[MAX_OSPATH];
-	intptr_t           findhandle;
+	char                search[MAX_OSPATH], newsubdirs[MAX_OSPATH];
+	wchar_t             w_search[MAX_OSPATH];
+	char                tmpFilename[MAX_OSPATH], filename[MAX_OSPATH];
+	intptr_t            findhandle;
 	struct _wfinddata_t findinfo;
 
 	if (*numfiles >= MAX_FOUND_FILES - 1)
@@ -557,18 +557,18 @@ static qboolean strgtr(const char *s0, const char *s1)
  */
 char **Sys_ListFiles(const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs)
 {
-	char               search[MAX_OSPATH];
-	wchar_t            w_search[MAX_OSPATH];
-	char               tmpFilename[MAX_OSPATH];
-	int                nfiles;
-	char               **listCopy;
-	char               *list[MAX_FOUND_FILES];
+	char                search[MAX_OSPATH];
+	wchar_t             w_search[MAX_OSPATH];
+	char                tmpFilename[MAX_OSPATH];
+	int                 nfiles;
+	char                **listCopy;
+	char                *list[MAX_FOUND_FILES];
 	struct _wfinddata_t findinfo;
-	intptr_t           findhandle;
-	int                flag;
-	int                i;
-	size_t             extLen;
-	qboolean           invalid;
+	intptr_t            findhandle;
+	int                 flag;
+	int                 i;
+	size_t              extLen;
+	qboolean            invalid;
 
 	if (filter)
 	{
@@ -960,7 +960,7 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
-	HWND wnd;
+	HWND    wnd;
 	wchar_t tmpUrl[MAX_PATH * 2];
 
 	static qboolean doexit_spamguard = qfalse;

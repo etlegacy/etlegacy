@@ -297,7 +297,7 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 		target_compile_definitions(engine_libraries INTERFACE FEATURE_AUTOUPDATE)
 	endif(FEATURE_AUTOUPDATE)
 
-	if (ENABLE_AUTH)
+	if (FEATURE_AUTH)
 		target_compile_definitions(engine_libraries INTERFACE LEGACY_AUTH)
 		target_sources(engine_libraries INTERFACE "${SRC}/qcommon/auth.c")
 	endif()

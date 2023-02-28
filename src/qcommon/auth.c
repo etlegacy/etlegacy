@@ -56,6 +56,7 @@ static struct
 } authData = { { 0 } };
 
 cvar_t *auth_server;
+cvar_t *sv_auth;
 
 #define AUTH_DEFAULT_SERVER ""
 
@@ -70,10 +71,9 @@ cvar_t *auth_server;
 static void Auth_SendToServer(const char *format, ...)
 {
 	static char string[128];
-	static char output[256];
 	va_list     argPtr;
 
-	if (cls.state < CA_AUTHORIZING || cls.state > CA_ACTIVE)
+	if (cls.state < CA_CONNECTED || cls.state > CA_ACTIVE)
 	{
 		return;
 	}
@@ -82,11 +82,7 @@ static void Auth_SendToServer(const char *format, ...)
 	Q_vsnprintf(string, 128, format, argPtr);
 	va_end(argPtr);
 
-	output[0] = '\0';
-	Q_strcat(output, 256, "cmd ");
-	Q_strcat(output, 256, string);
-
-	Cbuf_AddText(output);
+	CL_AddReliableCommand(string);
 }
 #else
 #define Auth_SendToServer(...)
@@ -106,15 +102,24 @@ static void Auth_SV_ChallengeReceived(client_t *client, const char *challenge)
 	Auth_SendToClient(client, "//auth-srv challenge %s", client->loginChallenge);
 }
 
-static void Auth_SV_ResponseVerify(client_t *client, qboolean match)
+static void Auth_SV_ResponseVerify(client_t *client, qboolean match, uint32_t userId)
 {
-	client->loggedIn = match;
 	if (!match)
 	{
 		client->login[0]          = '\0';
 		client->loginChallenge[0] = '\0';
+		client->loggedIn          = qfalse;
+		client->loginId           = 0;
+		Info_RemoveKey(client->userinfo, "auth");
+	}
+	else
+	{
+		Info_SetValueForKey(client->userinfo, "auth", client->login);
+		client->loggedIn = qtrue;
+		client->loginId  = userId;
 	}
 	Auth_SendToClient(client, "//auth-srv verified %i", match);
+	VM_Call(gvm, GAME_CLIENT_USERINFO_CHANGED, client - svs.clients);
 }
 
 static void Auth_FreeUploadBuffer(webRequest_t *request)
@@ -192,6 +197,7 @@ static void Auth_ClientLogin(const char *username, const char *password)
 	root = cJSON_CreateObject();
 	cJSON_AddStringToObject(root, "username", username);
 	cJSON_AddStringToObject(root, "password", password);
+	cJSON_AddStringToObject(root, "guid", Cvar_VariableString("cl_guid"));
 	tmp = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
 	Q_strcpy(upload->contentType, "application/json");
@@ -336,15 +342,32 @@ void Auth_Server_Command_f(void)
 	}
 
 	tmp = Cmd_Argv(1);
-
-	if (!Q_stricmp(tmp, "challenge"))
+	if (!Q_stricmp(tmp, "prompt"))
+	{
+		if (*authData.authToken && *authData.username)
+		{
+			Auth_SendToServer("login %s", authData.username);
+		}
+		else
+		{
+			Com_Printf("Need to send login info to the server\n");
+		}
+	}
+	else if (!Q_stricmp(tmp, "challenge"))
 	{
 		if (count != 3)
 		{
 			Com_Printf("Invalid server challenge message\n");
 			return;
 		}
-		Auth_Client_FetchResponse(Cmd_Argv(2));
+		if (*authData.authToken && *authData.username)
+		{
+			Auth_Client_FetchResponse(Cmd_Argv(2));
+		}
+		else
+		{
+			Com_Printf("Need to send challenge response to the server\n");
+		}
 	}
 	else if (!Q_stricmp(tmp, "verified"))
 	{
@@ -426,7 +449,9 @@ static void Auth_ServerChallengeCallback(struct webRequest_s *request, webReques
 
 static void Auth_ServerVerifyCallback(struct webRequest_s *request, webRequestResult requestResult)
 {
-	cJSON *root = NULL, *match = NULL;
+	cJSON    *root = NULL, *tmp = NULL;
+	qboolean match = qfalse;
+	uint32_t id    = 0;
 
 	Auth_FreeUploadBuffer(request);
 
@@ -439,9 +464,19 @@ static void Auth_ServerVerifyCallback(struct webRequest_s *request, webRequestRe
 
 	if (cJSON_HasObjectItem(root, "match"))
 	{
-		match = cJSON_GetObjectItem(root, "match");
-		Auth_SV_ResponseVerify(request->userData, cJSON_IsBool(match) && cJSON_IsTrue(match));
+		tmp   = cJSON_GetObjectItem(root, "match");
+		match = cJSON_IsBool(tmp) && cJSON_IsTrue(tmp);
 	}
+	if (cJSON_HasObjectItem(root, "userId"))
+	{
+		tmp = cJSON_GetObjectItem(root, "userId");
+		if (cJSON_IsNumber(tmp))
+		{
+			id = (uint32_t)cJSON_GetNumberValue(tmp);
+		}
+	}
+
+	Auth_SV_ResponseVerify(request->userData, match, id);
 
 	cJSON_free(root);
 }
@@ -497,6 +532,26 @@ void Auth_Server_FetchChallenge(void *data, const char *username)
 	Web_CreateRequest(A_URL(AUTH_SERVER_CHALLENGE), authData.authToken, upload, data, &Auth_ServerChallengeCallback, NULL);
 }
 
+void Auth_Server_RequestClientAuthentication(void *data)
+{
+	if (sv_auth->integer)
+	{
+		client_t *client = data;
+		client->loginRequested = svs.time;
+		Auth_SendToClient(data, "//auth-srv prompt");
+	}
+}
+
+qboolean Auth_Server_AuthenticationRequired(void)
+{
+	if (sv_auth->integer == 2)
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
 #ifndef DEDICATED
 void Auth_Client_FetchResponse(const char *challenge)
 {
@@ -510,6 +565,7 @@ void Auth_Client_FetchResponse(const char *challenge)
 
 	root = cJSON_CreateObject();
 	cJSON_AddStringToObject(root, "challenge", challenge);
+	cJSON_AddStringToObject(root, "guid", Cvar_VariableString("cl_guid"));
 	json = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
 
@@ -535,6 +591,7 @@ void Auth_Init(void)
 	Com_Memset(&authData, 0, sizeof(authData));
 
 	auth_server = Cvar_Get("auth_server", AUTH_DEFAULT_SERVER, CVAR_INIT | CVAR_PROTECTED | CVAR_NOTABCOMPLETE);
+	sv_auth     = Cvar_Get("sv_auth", "0", CVAR_ARCHIVE_ND);
 
 	if (!*auth_server->string)
 	{

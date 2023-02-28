@@ -50,6 +50,8 @@
 #define CLIENT_WINDOW_TITLE     PRODUCT_LABEL
 #define CLIENT_WINDOW_MIN_TITLE PRODUCT_LABEL
 
+#define ETL_VERSION(major, minor, patch, commit) ((unsigned int)((((major) & 255) << 24) ^ (((minor) & 255) << 16) ^ (((patch) & 255) << 8) ^ ((commit) & 255)))
+
 #define Q3_VERSION              PRODUCT_LABEL " " ETLEGACY_VERSION
 
 #ifdef ETLEGACY_DEBUG
@@ -1936,9 +1938,9 @@ typedef struct demoPlayInfo_s
  */
 typedef struct userAgent_s
 {
-	int compatible;      ///< is it compatible with the engine? note: this can be flag based in future.
-	char string[64];     ///< holds engine name and version string
-	char version[18];    ///< holds engine version
+	unsigned int compatible;  ///< is it compatible with the engine? note: this can be flag based in future.
+	char string[64];          ///< holds engine name and version string
+	char version[18];         ///< holds engine version
 } userAgent_t;
 
 void Com_ParseUA(userAgent_t *ua, const char *string);

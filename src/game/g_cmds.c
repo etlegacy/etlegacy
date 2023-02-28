@@ -382,12 +382,17 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 
 	if (cl->ps.eFlags & EF_READY)
 	{
-		miscFlags |= 1;
+		miscFlags |= BIT(0);
 	}
 
 	if (g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT)
 	{
-		miscFlags |= 2;
+		miscFlags |= BIT(1);
+	}
+
+	if (cl->loginName[0])
+	{
+		miscFlags |= BIT(2);
 	}
 
 	Com_sprintf(entry,

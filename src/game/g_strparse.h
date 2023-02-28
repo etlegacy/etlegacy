@@ -95,9 +95,10 @@ typedef enum
 	TOK_gs,                             ///< 46
 	TOK_mu,                             ///< 47
 	TOK_lsw,                            ///< 48
+	TOK_auth,                           ///< 49
 
 	//// Don't add anything below here
-	TOK_UNKNOWN                         ///< 49
+	TOK_UNKNOWN                         ///< 50
 } g_StringToken_t;
 
 extern g_StringToken_t G_GetTokenForString(char const *str);

@@ -391,7 +391,7 @@ rescan:
 	{
 		if (!strcmp(cmd, "//auth-srv"))
 		{
-			if (!clc.demo.playing)
+			if (clc.demo.playing)
 			{
 				return qfalse;
 			}

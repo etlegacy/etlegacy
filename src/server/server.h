@@ -294,7 +294,9 @@ typedef struct client_s
 
 #ifdef LEGACY_AUTH
 	char login[64];
+	uint32_t loginId;
 	char loginChallenge[64];
+	int loginRequested;
 	qboolean loggedIn;
 #endif
 } client_t;
@@ -334,13 +336,11 @@ typedef struct
 typedef struct
 {
 	netadr_t adr;
-	int challenge;
-	int clientChallenge;    ///< challenge number coming from the client
-	int time;               ///< time the last packet was sent to the autherize server
+	int32_t challenge;
+	int time;               ///< time the last packet was sent to the authorize server
 	int pingTime;           ///< time the challenge response was sent to client
 	int firstTime;          ///< time the adr was first used
 	int firstPing;          ///< Used for min and max ping checks
-	qboolean wasrefused;
 	qboolean connected;
 } challenge_t;
 

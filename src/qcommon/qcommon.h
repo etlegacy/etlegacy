@@ -1022,7 +1022,7 @@ int Com_Filter(char *filter, char *name, int casesensitive);
 int Com_FilterPath(const char *filter, const char *name, int casesensitive);
 int Com_RealTime(qtime_t *qtime);
 qboolean Com_SafeMode(void);
-void Com_RandomBytes(byte *string, int len);
+void Com_RandomBytes(void *bytes, int len);
 
 char *Com_MD5File(const char *fileName, int length, const char *prefix, int prefix_len);
 
@@ -1439,7 +1439,7 @@ const char *Sys_Basename(char *path);
 const char *Sys_Dirname(char *path);
 char *Sys_ConsoleInput(void);
 
-qboolean Sys_RandomBytes(byte *string, int len);
+qboolean Sys_RandomBytes(void *bytes, int len);
 
 char **Sys_ListFiles(const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs);
 void Sys_FreeFileList(char **list);
@@ -1600,6 +1600,8 @@ void Auth_Server_Command_f(void);
 void Auth_Server_ClientLogout(void *data, const char *username);
 void Auth_Server_VerifyResponse(void *data, const char *username, const char *challenge, const char *response);
 void Auth_Server_FetchChallenge(void *data, const char *username);
+void Auth_Server_RequestClientAuthentication(void *data);
+qboolean Auth_Server_AuthenticationRequired(void);
 void Auth_Client_FetchResponse(const char *challenge);
 qboolean Auth_Active(void);
 void Auth_Init(void);

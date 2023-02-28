@@ -104,7 +104,7 @@ void SV_GetChallenge(netadr_t from)
 		// this is the first time this client has asked for a challenge
 		challenge = &svs.challenges[oldest];
 
-		challenge->challenge = (int)(((unsigned int) rand() << 16) ^ (unsigned int)rand()) ^ svs.time;
+		Com_RandomBytes(&challenge->challenge, sizeof(int32_t));
 		challenge->adr       = from;
 		challenge->firstTime = svs.time;
 		challenge->firstPing = 0;
@@ -330,6 +330,7 @@ void SV_DirectConnect(netadr_t from)
 	Info_RemoveKey(userinfo, "challenge");
 	Info_RemoveKey(userinfo, "qport");
 	Info_RemoveKey(userinfo, "protocol");
+	Info_RemoveKey(userinfo, "auth");
 
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -475,7 +476,7 @@ void SV_DirectConnect(netadr_t from)
 		}
 	}
 
-	// if there is no free slot avalable we prefer human players over bots
+	// if there is no free slot available then we prefer human players to bots
 	// do a 2nd run and kick bots above startIndex slot
 	if (!newcl)
 	{
@@ -592,6 +593,10 @@ gotnewcl:
 
 	// check client's engine version
 	Com_ParseUA(&newcl->agent, Info_ValueForKey(userinfo, "etVersion"));
+
+#ifdef LEGACY_AUTH
+	Auth_Server_RequestClientAuthentication(&svs.clients[clientNum]);
+#endif
 }
 
 /**
@@ -1066,6 +1071,12 @@ void SV_Login_f(client_t *cl)
 		return;
 	}
 
+	if (cl->loggedIn)
+	{
+		Com_Printf("Client '%s' already logged in\n", cl->name);
+		return;
+	}
+
 	username = Cmd_Argv(1);
 
 	if (!username | !*username)
@@ -1083,6 +1094,13 @@ void SV_LoginResponse_f(client_t *cl)
 
 	if (!Auth_Active())
 	{
+		return;
+	}
+
+	if (!*cl->loginChallenge)
+	{
+		Com_Printf("Client '%s' trying to send challenge response when the login challenge has not been created\n", cl->name);
+		SV_DropClient(cl, "Stop doing stupid things\n");
 		return;
 	}
 
@@ -1105,6 +1123,10 @@ void SV_Logout_f(client_t *cl)
 	Auth_Server_ClientLogout(cl, cl->login);
 	cl->login[0]          = '\0';
 	cl->loginChallenge[0] = '\0';
+	cl->loginId           = 0;
+	cl->loggedIn          = qfalse;
+	Info_RemoveKey(cl->userinfo, "auth");
+	SV_UpdateUserinfo_f(cl);
 }
 #endif
 
@@ -2146,6 +2168,17 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 		cl->deltaMessage = -1;
 		return;
 	}
+
+#ifdef LEGACY_AUTH
+	if (!cl->loggedIn)
+	{
+		if (Auth_Server_AuthenticationRequired() && svs.time - cl->loginRequested > 10000)
+		{
+			SV_DropClient(cl, "Only authenticated clients allowed!");
+			return;
+		}
+	}
+#endif
 
 	// usually, the first couple commands will be duplicates
 	// of ones we have previously received, but the servertimes

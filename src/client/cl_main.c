@@ -566,7 +566,7 @@ static void CL_GenerateETKey(void)
 		tt      = time(NULL);
 		t       = localtime(&tt);
 
-		Com_RandomBytes((byte *) &last, sizeof(int));
+		Com_RandomBytes(&last, sizeof(int));
 		last = abs(last) % 10000;
 
 		Com_sprintf(buff, sizeof(buff), "0000001002%04i%02i%02i%02i%02i%02i%04i", t->tm_year, t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, last);

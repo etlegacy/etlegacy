@@ -496,6 +496,14 @@ static int WM_DrawClientScore_PlayerIcons(int x, int y, const clientInfo_t *ci, 
 		drawnIcons++;
 	}
 
+	// authenticated icon
+	if ((score->scoreflags & BIT(2)))
+	{
+		CG_DrawPic(x - 1, y - 9, 10, 10, cgs.media.authenticatedShader);
+		x += 12;
+		drawnIcons++;
+	}
+
 	// objective icon
 	if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)) && cgs.gamestate != GS_INTERMISSION)
 	{
@@ -754,7 +762,7 @@ static void WM_DrawClientScore_Player(int x, int y, float scaleX, float scaleY, 
  */
 static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolean livesleft)
 {
-	int          maxchars = 16;
+	int          maxchars  = 16;
 	int          rowHeight = 16;
 	float        scaleX = 0.24f, scaleY = 0.28f;
 	int          offsetY = 12;
@@ -808,7 +816,7 @@ const char *WM_TimeToString(float msec)
  */
 static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, qboolean livesleft)
 {
-	int          maxchars = 23;
+	int          maxchars  = 23;
 	int          rowHeight = 12;
 	float        scaleX = 0.20f, scaleY = 0.25f;
 	int          offsetY = 10;

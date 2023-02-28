@@ -1690,6 +1690,9 @@ void ClientUserinfoChanged(int clientNum)
 
 	client->ps.clientNum = clientNum;
 
+	// reset the authentication status since the userinfo should contain the auth name if valid
+	client->loginName[0] = '\0';
+
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
 	if (!(ent->r.svFlags & SVF_BOT))
@@ -1807,6 +1810,9 @@ void ClientUserinfoChanged(int clientNum)
 		case TOK_skill:
 			Q_strncpyz(cs_skill, cs_value, MAX_STRING_CHARS);
 			break;
+		case TOK_auth:
+			Q_strncpyz(client->loginName, cs_value, sizeof(client->loginName));
+			break;
 		default:
 			continue;
 		}
@@ -1882,9 +1888,9 @@ void ClientUserinfoChanged(int clientNum)
 		if (cs_cg_uinfo[0])
 		{
 			Q_sscanf(cs_cg_uinfo, "%u %u %u",
-			       &client->pers.clientFlags,
-			       &client->pers.clientTimeNudge,
-			       &client->pers.clientMaxPackets);
+			         &client->pers.clientFlags,
+			         &client->pers.clientTimeNudge,
+			         &client->pers.clientMaxPackets);
 		}
 		else
 		{
@@ -2883,11 +2889,15 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 
 	{
-		qboolean set = client->maxlivescalced;
+		// FIXME: this seems beyond silly
+		char     loginName[sizeof(client->loginName)] = { 0 };
+		qboolean set                                  = client->maxlivescalced;
+		strcpy(loginName, client->loginName);
 
 		Com_Memset(client, 0, sizeof(*client));
 
 		client->maxlivescalced = set;
+		strcpy(client->loginName, loginName);
 	}
 
 	client->pers              = savedPers;

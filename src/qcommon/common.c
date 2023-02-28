@@ -3044,7 +3044,7 @@ void Com_Init(char *commandLine)
 	Sys_Init();
 
 	// Pick a random port value
-	Com_RandomBytes((byte *)&qport, sizeof(int));
+	Com_RandomBytes(&qport, sizeof(int));
 	Netchan_Init(qport & 0xffff);
 
 	VM_Init();
@@ -4192,11 +4192,12 @@ void Field_AutoComplete(field_t *field)
  * @param[in,out] string
  * @param[in] len
  */
-void Com_RandomBytes(byte *string, int len)
+void Com_RandomBytes(void *bytes, int len)
 {
-	int i;
+	int  i;
+	byte *tmp = bytes;
 
-	if (Sys_RandomBytes(string, len))
+	if (Sys_RandomBytes(bytes, len))
 	{
 		return;
 	}
@@ -4206,7 +4207,7 @@ void Com_RandomBytes(byte *string, int len)
 	srand(time(NULL));
 	for (i = 0; i < len; i++)
 	{
-		string[i] = (unsigned char)(rand() % 256);
+		tmp[i] = (byte)(rand() % 255);
 	}
 }
 
@@ -4226,8 +4227,23 @@ void Com_ParseUA(userAgent_t *ua, const char *string)
 	// check for compatibility (only accept of own kind)
 	if (!Q_strncmp(string, PRODUCT_LABEL, strlen(PRODUCT_LABEL)))
 	{
-		ua->compatible = 0x1; // basic level compatibility
+		int          major = 0, minor = 0, patch = 0, commit = 0;
+		unsigned int versionInt = 0;
+
+		ua->compatible = BITS(1); // basic level compatibility
 		// match version string, or leave it as zero
 		Q_sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
+
+		if (*ua->version)
+		{
+			Q_sscanf(string, PRODUCT_LABEL " v%2i.%3i.%2i-%4i-*", &major, &minor, &patch, &commit);
+		}
+		versionInt = ETL_VERSION(major, minor, patch, commit);
+
+		// authentication was added around here
+		if (ETL_VERSION(2, 81, 0, 40) <= versionInt)
+		{
+			ua->compatible = BITS(2);
+		}
 	}
 }
