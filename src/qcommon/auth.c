@@ -579,7 +579,7 @@ void Auth_Client_FetchResponse(const char *challenge)
 
 qboolean Auth_Active(void)
 {
-	if (*authData.authToken && *authData.username)
+	if (*authData.authToken && *authData.username && *auth_server->string)
 	{
 		return qtrue;
 	}
