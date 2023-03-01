@@ -297,7 +297,7 @@ typedef struct client_s
 	uint32_t loginId;
 	char loginChallenge[64];
 	int loginRequested;
-	qboolean loggedIn;
+	login_status_t loginStatus;
 #endif
 } client_t;
 

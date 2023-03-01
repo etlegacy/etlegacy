@@ -90,6 +90,28 @@ static void Auth_SendToServer(const char *format, ...)
 
 #define Auth_SendToClient(client, ...) SV_SendServerCommand((client), __VA_ARGS__)
 
+qboolean Auth_SV_RemoveAuthFromUserinfo(char *userinfo)
+{
+	qboolean ret = qfalse;
+
+	if (Info_RemoveKey(userinfo, "auth"))
+	{
+		ret = qtrue;
+	}
+
+	if (Info_RemoveKey(userinfo, "authId"))
+	{
+		ret = qtrue;
+	}
+
+	return ret;
+}
+
+static void Auth_SV_UserInfoChanged(client_t *client)
+{
+	VM_Call(gvm, GAME_CLIENT_USERINFO_CHANGED, client - svs.clients);
+}
+
 static void Auth_SV_ChallengeReceived(client_t *client, const char *challenge)
 {
 	if (!challenge || !*challenge)
@@ -100,6 +122,7 @@ static void Auth_SV_ChallengeReceived(client_t *client, const char *challenge)
 
 	Q_strncpyz(client->loginChallenge, challenge, sizeof(client->loginChallenge));
 	Auth_SendToClient(client, "//auth-srv challenge %s", client->loginChallenge);
+	client->loginStatus = LOGIN_CLIENT_CHALLENGED;
 }
 
 static void Auth_SV_ResponseVerify(client_t *client, qboolean match, uint32_t userId)
@@ -108,18 +131,22 @@ static void Auth_SV_ResponseVerify(client_t *client, qboolean match, uint32_t us
 	{
 		client->login[0]          = '\0';
 		client->loginChallenge[0] = '\0';
-		client->loggedIn          = qfalse;
+		client->loginStatus       = LOGIN_NONE;
 		client->loginId           = 0;
-		Info_RemoveKey(client->userinfo, "auth");
+		if (Auth_SV_RemoveAuthFromUserinfo(client->userinfo))
+		{
+			Auth_SV_UserInfoChanged(client);
+		}
 	}
 	else
 	{
+		client->loginStatus = LOGIN_CLIENT_LOGGED_IN;
+		client->loginId     = userId;
 		Info_SetValueForKey(client->userinfo, "auth", client->login);
-		client->loggedIn = qtrue;
-		client->loginId  = userId;
+		Info_SetValueForKey(client->userinfo, "authId", va("%i", client->loginId));
+		Auth_SV_UserInfoChanged(client);
 	}
 	Auth_SendToClient(client, "//auth-srv verified %i", match);
-	VM_Call(gvm, GAME_CLIENT_USERINFO_CHANGED, client - svs.clients);
 }
 
 static void Auth_FreeUploadBuffer(webRequest_t *request)
@@ -483,7 +510,21 @@ static void Auth_ServerVerifyCallback(struct webRequest_s *request, webRequestRe
 
 void Auth_Server_ClientLogout(void *data, const char *username)
 {
-	Auth_SendToClient(data, "//auth-srv logout %s", username);
+	client_t *client = (client_t *)data;
+
+	if (client->loginStatus == LOGIN_CLIENT_LOGGED_IN)
+	{
+		Auth_SendToClient(data, "//auth-srv logout %s", username);
+	}
+
+	client->login[0]          = '\0';
+	client->loginChallenge[0] = '\0';
+	client->loginId           = 0;
+	client->loginStatus       = LOGIN_NONE;
+	if (Auth_SV_RemoveAuthFromUserinfo(client->userinfo))
+	{
+		Auth_SV_UserInfoChanged(client);
+	}
 }
 
 void Auth_Server_VerifyResponse(void *data, const char *username, const char *challenge, const char *response)
@@ -507,6 +548,8 @@ void Auth_Server_VerifyResponse(void *data, const char *username, const char *ch
 	upload->buffer     = (byte *)json;
 	upload->bufferSize = strlen(json);
 
+	((client_t *)data)->loginStatus = LOGIN_SERVER_VERIFY;
+
 	Web_CreateRequest(A_URL(AUTH_SERVER_VERIFY), authData.authToken, upload, data, &Auth_ServerVerifyCallback, NULL);
 }
 
@@ -529,6 +572,8 @@ void Auth_Server_FetchChallenge(void *data, const char *username)
 	upload->buffer     = (byte *)json;
 	upload->bufferSize = strlen(json);
 
+	((client_t *)data)->loginStatus = LOGIN_SERVER_CHALLENGED;
+
 	Web_CreateRequest(A_URL(AUTH_SERVER_CHALLENGE), authData.authToken, upload, data, &Auth_ServerChallengeCallback, NULL);
 }
 
@@ -538,6 +583,7 @@ void Auth_Server_RequestClientAuthentication(void *data)
 	{
 		client_t *client = data;
 		client->loginRequested = svs.time;
+		client->loginStatus    = LOGIN_SERVER_REQUESTED;
 		Auth_SendToClient(data, "//auth-srv prompt");
 	}
 }

@@ -2467,7 +2467,7 @@ qboolean Info_NextPair(const char **head, char *key, char *value)
  * @param[in,out] s
  * @param[in] key
  */
-void Info_RemoveKey(char *s, const char *key)
+qboolean Info_RemoveKey(char *s, const char *key)
 {
 	char *start;
 	char pkey[MAX_INFO_KEY];
@@ -2481,7 +2481,7 @@ void Info_RemoveKey(char *s, const char *key)
 
 	if (strchr(key, '\\'))
 	{
-		return;
+		return qfalse;
 	}
 
 	while (1)
@@ -2496,7 +2496,7 @@ void Info_RemoveKey(char *s, const char *key)
 		{
 			if (!*s)
 			{
-				return;
+				return qfalse;
 			}
 			*o++ = *s++;
 		}
@@ -2508,7 +2508,7 @@ void Info_RemoveKey(char *s, const char *key)
 		{
 			if (!*s)
 			{
-				return;
+				return qfalse;
 			}
 			*o++ = *s++;
 		}
@@ -2519,12 +2519,12 @@ void Info_RemoveKey(char *s, const char *key)
 			// rain - arguments to strcpy must not overlap
 			//strcpy (start, s);    // remove this part
 			memmove(start, s, strlen(s) + 1);     // remove this part
-			return;
+			return qtrue;
 		}
 
 		if (!*s)
 		{
-			return;
+			return qfalse;
 		}
 	}
 }

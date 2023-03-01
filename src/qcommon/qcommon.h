@@ -1596,7 +1596,18 @@ extern qboolean doTranslateMod;
 
 // auth.c
 #ifdef LEGACY_AUTH
+typedef enum login_status
+{
+	LOGIN_NONE = 0,
+	LOGIN_SERVER_REQUESTED,
+	LOGIN_SERVER_CHALLENGED,
+	LOGIN_CLIENT_CHALLENGED,
+	LOGIN_SERVER_VERIFY,
+	LOGIN_CLIENT_LOGGED_IN
+} login_status_t;
+
 void Auth_Server_Command_f(void);
+qboolean Auth_SV_RemoveAuthFromUserinfo(char *userinfo);
 void Auth_Server_ClientLogout(void *data, const char *username);
 void Auth_Server_VerifyResponse(void *data, const char *username, const char *challenge, const char *response);
 void Auth_Server_FetchChallenge(void *data, const char *username);

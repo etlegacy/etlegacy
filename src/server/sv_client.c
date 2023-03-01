@@ -330,7 +330,10 @@ void SV_DirectConnect(netadr_t from)
 	Info_RemoveKey(userinfo, "challenge");
 	Info_RemoveKey(userinfo, "qport");
 	Info_RemoveKey(userinfo, "protocol");
-	Info_RemoveKey(userinfo, "auth");
+
+#ifdef LEGACY_AUTH
+	Auth_SV_RemoveAuthFromUserinfo(userinfo);
+#endif
 
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -1071,9 +1074,9 @@ void SV_Login_f(client_t *cl)
 		return;
 	}
 
-	if (cl->loggedIn)
+	if (cl->loginStatus > LOGIN_SERVER_REQUESTED)
 	{
-		Com_Printf("Client '%s' already logged in\n", cl->name);
+		Com_Printf("Client '%s' login process already active\n", cl->name);
 		return;
 	}
 
@@ -1094,6 +1097,13 @@ void SV_LoginResponse_f(client_t *cl)
 
 	if (!Auth_Active())
 	{
+		return;
+	}
+
+	if (cl->loginStatus != LOGIN_CLIENT_CHALLENGED)
+	{
+		Com_Printf("Client '%s' invalid login status for login-response\n", cl->name);
+		// TODO: maybe drop the client?
 		return;
 	}
 
@@ -1120,13 +1130,12 @@ void SV_Logout_f(client_t *cl)
 		return;
 	}
 
+	if (cl->loginStatus == LOGIN_NONE)
+	{
+		return;
+	}
+
 	Auth_Server_ClientLogout(cl, cl->login);
-	cl->login[0]          = '\0';
-	cl->loginChallenge[0] = '\0';
-	cl->loginId           = 0;
-	cl->loggedIn          = qfalse;
-	Info_RemoveKey(cl->userinfo, "auth");
-	SV_UpdateUserinfo_f(cl);
 }
 #endif
 
@@ -2170,12 +2179,17 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	}
 
 #ifdef LEGACY_AUTH
-	if (!cl->loggedIn)
+	if (cl->loginStatus != LOGIN_CLIENT_LOGGED_IN)
 	{
 		if (Auth_Server_AuthenticationRequired() && svs.time - cl->loginRequested > 10000)
 		{
 			SV_DropClient(cl, "Only authenticated clients allowed!");
 			return;
+		}
+		else if (svs.time - cl->loginRequested > 10000)
+		{
+			// reset the login status since it has hung
+			cl->loginStatus = LOGIN_NONE;
 		}
 	}
 #endif
