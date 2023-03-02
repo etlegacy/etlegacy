@@ -620,7 +620,7 @@ const char *NET_AdrToStringNoPort(netadr_t a)
 		Com_sprintf(s, sizeof(s), "bot");
 		break;
 	case NA_IP:
-		Com_sprintf(s, sizeof(s), "%i.%i.%i.%i", a.ip[0], a.ip[1], a.ip[2], a.ip[3]);
+		Com_sprintf(s, sizeof(s), "%u.%u.%u.%u", a.ip[0], a.ip[1], a.ip[2], a.ip[3]);
 		break;
 #ifdef FEATURE_IPV6
 	case NA_IP6:
@@ -665,7 +665,7 @@ const char *NET_AdrToString(netadr_t a)
 		Com_sprintf(s, sizeof(s), "bot");
 		break;
 	case NA_IP:
-		Com_sprintf(s, sizeof(s), "%i.%i.%i.%i:%hu", a.ip[0], a.ip[1], a.ip[2], a.ip[3], BigShort(a.port));
+		Com_sprintf(s, sizeof(s), "%u.%u.%u.%u:%hu", a.ip[0], a.ip[1], a.ip[2], a.ip[3], BigShort(a.port));
 		break;
 #ifdef FEATURE_IPV6
 	case NA_IP6:
