@@ -390,11 +390,6 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 		miscFlags |= BIT(1);
 	}
 
-	if (cl->loginName[0])
-	{
-		miscFlags |= BIT(2);
-	}
-
 	Com_sprintf(entry,
 	            sizeof(entry),
 	            " %i %i %i %i %i %i %i",

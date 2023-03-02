@@ -42,12 +42,12 @@
 #line 5 "input_tokens.gperf"
 struct g_strtoken_t { char *name; g_StringToken_t index; };
 
-#define TOTAL_KEYWORDS 50
+#define TOTAL_KEYWORDS 51
 #define MIN_WORD_LENGTH 1
 #define MAX_WORD_LENGTH 20
 #define MIN_HASH_VALUE 1
-#define MAX_HASH_VALUE 82
-/* maximum key range = 82, duplicates = 0 */
+#define MAX_HASH_VALUE 87
+/* maximum key range = 87, duplicates = 0 */
 
 #ifdef __GNUC__
 __inline
@@ -61,19 +61,19 @@ hash(register const char *str, register unsigned int len)
 {
 	static const unsigned char asso_values[] =
 	{
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 83, 83, 83, 83, 83,
-		83, 83, 83, 83, 83, 5,  83, 0,  0,  5,
-		25, 30, 40, 20, 36, 1,  83, 0,  10, 0,
-		30, 83, 15, 83, 45, 15, 35, 0,  83, 50,
-		35, 83, 83, 83, 83, 83, 83, 83
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+		88, 88, 88, 88, 88, 5,  88, 0,  0,  5,
+		25, 35, 35, 20, 36, 11, 88, 0,  10, 60,
+		30, 88, 10, 88, 45, 15, 0,  20, 88, 50,
+		40, 88, 88, 88, 88, 88, 88, 88
 	};
 	register unsigned int hval = len;
 
@@ -95,14 +95,9 @@ in_word_set(register const char *str, register unsigned int len)
 	static const struct g_strtoken_t wordlist[] =
 	{
 		{ "" },
-#line 29 "input_tokens.gperf"
-		{ "m", 22},
-#line 54 "input_tokens.gperf"
-		{ "mu", 47},
-		{ "" },
-#line 56 "input_tokens.gperf"
-		{ "auth", 49},
-		{ "" },
+#line 25 "input_tokens.gperf"
+		{ "t", 18},
+		{ "" }, { "" }, { "" }, { "" },
 #line 26 "input_tokens.gperf"
 		{ "c", 19},
 #line 44 "input_tokens.gperf"
@@ -121,8 +116,8 @@ in_word_set(register const char *str, register unsigned int len)
 		{ "s", 23},
 #line 37 "input_tokens.gperf"
 		{ "lc", 30},
-#line 12 "input_tokens.gperf"
-		{ "ip", 5},
+#line 15 "input_tokens.gperf"
+		{ "password", 8},
 		{ "" },
 #line 22 "input_tokens.gperf"
 		{ "skill", 15},
@@ -130,13 +125,13 @@ in_word_set(register const char *str, register unsigned int len)
 		{ "g", 45},
 #line 14 "input_tokens.gperf"
 		{ "cl_guid", 7},
-#line 15 "input_tokens.gperf"
-		{ "password", 8},
+#line 12 "input_tokens.gperf"
+		{ "ip", 5},
+#line 56 "input_tokens.gperf"
+		{ "auth", 49},
 		{ "" },
-#line 20 "input_tokens.gperf"
-		{ "pmove_msec", 13},
-#line 19 "input_tokens.gperf"
-		{ "pmove_fixed", 12},
+#line 57 "input_tokens.gperf"
+		{ "authId", 50},
 #line 41 "input_tokens.gperf"
 		{ "bd", 34},
 #line 55 "input_tokens.gperf"
@@ -154,8 +149,8 @@ in_word_set(register const char *str, register unsigned int len)
 #line 13 "input_tokens.gperf"
 		{ "name", 6},
 		{ "" },
-#line 25 "input_tokens.gperf"
-		{ "t", 18},
+#line 28 "input_tokens.gperf"
+		{ "f", 21},
 #line 53 "input_tokens.gperf"
 		{ "gs", 46},
 		{ "" },
@@ -163,8 +158,7 @@ in_word_set(register const char *str, register unsigned int len)
 		{ "g_currentRound", 0},
 #line 8 "input_tokens.gperf"
 		{ "g_nextTimeLimit", 1},
-#line 28 "input_tokens.gperf"
-		{ "f", 21},
+		{ "" },
 #line 10 "input_tokens.gperf"
 		{ "g_currentCampaign", 3},
 #line 21 "input_tokens.gperf"
@@ -190,7 +184,9 @@ in_word_set(register const char *str, register unsigned int len)
 		{ "" }, { "" }, { "" },
 #line 32 "input_tokens.gperf"
 		{ "dn", 25},
-		{ "" }, { "" }, { "" }, { "" },
+		{ "" }, { "" }, { "" },
+#line 29 "input_tokens.gperf"
+		{ "m", 22},
 #line 36 "input_tokens.gperf"
 		{ "lw", 29},
 #line 42 "input_tokens.gperf"
@@ -198,14 +194,21 @@ in_word_set(register const char *str, register unsigned int len)
 		{ "" }, { "" }, { "" },
 #line 38 "input_tokens.gperf"
 		{ "sw", 31},
+		{ "" }, { "" }, { "" }, { "" },
+#line 34 "input_tokens.gperf"
+		{ "dr", 27},
 #line 50 "input_tokens.gperf"
 		{ "he", 43},
 		{ "" }, { "" }, { "" },
-#line 34 "input_tokens.gperf"
-		{ "dr", 27},
-		{ "" }, { "" }, { "" }, { "" },
 #line 40 "input_tokens.gperf"
 		{ "rn", 33},
+		{ "" }, { "" },
+#line 20 "input_tokens.gperf"
+		{ "pmove_msec", 13},
+#line 19 "input_tokens.gperf"
+		{ "pmove_fixed", 12},
+#line 54 "input_tokens.gperf"
+		{ "mu", 47},
 #line 39 "input_tokens.gperf"
 		{ "ref", 32},
 		{ "" }, { "" }, { "" },
@@ -229,4 +232,4 @@ in_word_set(register const char *str, register unsigned int len)
 	}
 	return 0;
 }
-#line 57 "input_tokens.gperf"
+#line 58 "input_tokens.gperf"

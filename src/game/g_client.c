@@ -1674,24 +1674,27 @@ void ClientUserinfoChanged(int clientNum)
 {
 	gentity_t  *ent    = g_entities + clientNum;
 	gclient_t  *client = ent->client;
-	int        i;
+	int        i, len = 0, infoLen = 0;
 	const char *userinfo_ptr                 = NULL;
 	char       cs_key[MAX_STRING_CHARS]      = "";
 	char       cs_value[MAX_STRING_CHARS]    = "";
 	char       cs_cg_uinfo[MAX_STRING_CHARS] = "";
 	char       cs_skill[MAX_STRING_CHARS]    = "";
 	char       *reason;
-	char       *s;
 	char       cs_name[MAX_NETNAME] = "";
 	char       oldname[MAX_NAME_LENGTH];
 	char       userinfo[MAX_INFO_STRING];
-	char       skillStr[16] = "";
-	char       medalStr[16] = "";
+	char       configStr[MAX_INFO_STRING] = { 0 };
+	char       skillStr[16]               = "";
+	char       medalStr[16]               = "";
 
 	client->ps.clientNum = clientNum;
 
+#ifdef LEGACY_AUTH
 	// reset the authentication status since the userinfo should contain the auth name if valid
-	client->loginName[0] = '\0';
+	client->sess.authName[0] = '\0';
+	client->sess.authId      = 0;
+#endif
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
@@ -1810,9 +1813,14 @@ void ClientUserinfoChanged(int clientNum)
 		case TOK_skill:
 			Q_strncpyz(cs_skill, cs_value, MAX_STRING_CHARS);
 			break;
+#ifdef LEGACY_AUTH
 		case TOK_auth:
-			Q_strncpyz(client->loginName, cs_value, sizeof(client->loginName));
+			Q_strncpyz(client->sess.authName, cs_value, sizeof(client->sess.authName));
 			break;
+		case TOK_authId:
+			client->sess.authId = Q_atoi(cs_value);
+			break;
+#endif
 		default:
 			continue;
 		}
@@ -1959,36 +1967,104 @@ void ClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
+	// TODO: is there a meaningful performance penalty doing this part by part?
+	/*
+	len = snprintf(configStr, sizeof(configStr), "n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\lsw\\%i\\mu\\%i\\ref\\%i\\sc\\%i\\u\\%u",
+	               client->pers.netname,
+	               client->sess.sessionTeam,
+	               client->sess.playerType,
+	               client->sess.latchPlayerType,
+	               client->sess.rank,
+	               medalStr,
+	               skillStr,
+	               client->disguiseClientNum,
+	               client->sess.playerWeapon,
+	               client->sess.latchPlayerWeapon,
+	               client->sess.playerWeapon2,
+	               client->sess.latchPlayerWeapon2,
+	               client->sess.muted ? 1 : 0,
+	               client->sess.referee,
+	               client->sess.shoutcaster,
+	               client->sess.uci
+	               );
+	*/
+
+	infoLen = sizeof(configStr);
+	len     = snprintf(configStr, infoLen - len, "n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s",
+	                   client->pers.netname,
+	                   client->sess.sessionTeam,
+	                   client->sess.playerType,
+	                   client->sess.latchPlayerType,
+	                   client->sess.rank,
+	                   medalStr,
+	                   skillStr
+	                   );
+
 #ifdef FEATURE_PRESTIGE
-	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\p\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\lsw\\%i\\mu\\%i\\ref\\%i\\sc\\%i\\u\\%u",
-#else
-	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\lsw\\%i\\mu\\%i\\ref\\%i\\sc\\%i\\u\\%u",
+	len += snprintf(configStr + len, infoLen - len, "\\p\\%i", client->sess.prestige);
 #endif
-	       client->pers.netname,
-	       client->sess.sessionTeam,
-	       client->sess.playerType,
-	       client->sess.latchPlayerType,
-	       client->sess.rank,
-#ifdef FEATURE_PRESTIGE
-	       client->sess.prestige,
+
+	if (client->disguiseClientNum)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\dn\\%i", client->disguiseClientNum);
+	}
+
+	if (client->sess.playerWeapon)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\w\\%i", client->sess.playerWeapon);
+	}
+
+	if (client->sess.latchPlayerWeapon)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\lw\\%i", client->sess.latchPlayerWeapon);
+	}
+
+	if (client->sess.playerWeapon2)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\sw\\%i", client->sess.playerWeapon2);
+	}
+
+	if (client->sess.latchPlayerWeapon2)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\lsw\\%i", client->sess.latchPlayerWeapon2);
+	}
+
+	if (client->sess.muted)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\mu\\%i", client->sess.muted ? 1 : 0);
+	}
+
+	if (client->sess.referee)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\ref\\%i", client->sess.referee);
+	}
+
+	if (client->sess.shoutcaster)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\sc\\%i", client->sess.shoutcaster);
+	}
+
+	if (client->sess.uci)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\u\\%u", client->sess.uci);
+	}
+
+#ifdef LEGACY_AUTH
+	if (*client->sess.authName)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\an\\%s", client->sess.authName);
+	}
+
+	if (client->sess.authId)
+	{
+		len += snprintf(configStr + len, infoLen - len, "\\ai\\%u", client->sess.authId);
+	}
 #endif
-	       medalStr,
-	       skillStr,
-	       client->disguiseClientNum,
-	       client->sess.playerWeapon,
-	       client->sess.latchPlayerWeapon,
-	       client->sess.playerWeapon2,
-	       client->sess.latchPlayerWeapon2,
-	       client->sess.muted ? 1 : 0,
-	       client->sess.referee,
-	       client->sess.shoutcaster,
-	       client->sess.uci
-	       );
 
 	trap_GetConfigstring(CS_PLAYERS + clientNum, oldname, sizeof(oldname));
-	trap_SetConfigstring(CS_PLAYERS + clientNum, s);
+	trap_SetConfigstring(CS_PLAYERS + clientNum, configStr);
 
-	if (!Q_stricmp(oldname, s)) // not changed
+	if (!Q_stricmp(oldname, configStr)) // not changed
 	{
 		return;
 	}
@@ -1999,8 +2075,8 @@ void ClientUserinfoChanged(int clientNum)
 	G_LuaHook_ClientUserinfoChanged(clientNum);
 #endif
 
-	G_LogPrintf("ClientUserinfoChanged: %i %s\n", clientNum, s);
-	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, s);
+	G_LogPrintf("ClientUserinfoChanged: %i %s\n", clientNum, configStr);
+	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, configStr);
 }
 
 extern const char *country_name[MAX_COUNTRY_NUM];
@@ -2890,14 +2966,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	{
 		// FIXME: this seems beyond silly
-		char     loginName[sizeof(client->loginName)] = { 0 };
-		qboolean set                                  = client->maxlivescalced;
-		strcpy(loginName, client->loginName);
-
+		qboolean set = client->maxlivescalced;
 		Com_Memset(client, 0, sizeof(*client));
-
 		client->maxlivescalced = set;
-		strcpy(client->loginName, loginName);
 	}
 
 	client->pers              = savedPers;
