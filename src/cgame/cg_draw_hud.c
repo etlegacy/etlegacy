@@ -2709,7 +2709,8 @@ static char *CG_RoundTimerText()
 
 /**
  * @brief CG_LocalTimeText
- * @return
+ * @param[in] style
+ * @return 
  */
 static char *CG_LocalTimeText(int style)
 {
@@ -2755,7 +2756,7 @@ static char *CG_LocalTimeText(int style)
 
 /**
  * @brief CG_DrawRespawnTimer
- * @param respawn
+ * @param[in] comp
  */
 void CG_DrawRespawnTimer(hudComponent_t *comp)
 {
@@ -2777,7 +2778,7 @@ void CG_DrawRespawnTimer(hudComponent_t *comp)
 
 /**
  * @brief CG_DrawSpawnTimer
- * @param respawn
+ * @param[in] comp
  */
 void CG_DrawSpawnTimer(hudComponent_t *comp)
 {
@@ -2792,17 +2793,17 @@ void CG_DrawSpawnTimer(hudComponent_t *comp)
 	// note: pass reinforcement timer in as 's' to get the ENEMY reinforcement time
 	// FIXME: this should be refactored, this makes no sense... what even is 's'? and 'rt'?
 	//  spawntimer/reinforcement timer? but the function doesn't treat them as such...
-	blink = CG_SpawnTimersText(&rt, &s);
+	blink = CG_SpawnTimersText(&s, &rt);
 
-	if (rt)
+	if (s)
 	{
-		CG_DrawCompText(comp, s, comp->colorMain, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
+		CG_DrawCompText(comp, rt, comp->colorMain, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
 	}
 }
 
 /**
  * @brief CG_DrawRoundTimerSimple
- * @param roundtimer
+ * @param[in] comp
  */
 static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 {
@@ -2822,9 +2823,8 @@ static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_DrawTimerNormal
- * @param[in] y
- * @return
+ * @brief CG_DrawRoundTimerNormal
+ * @param[in] comp
  */
 static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 {
@@ -2859,7 +2859,7 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 
 /**
  * @brief CG_DrawRoundTimer
- * @param comp
+ * @param[in] comp
  */
 void CG_DrawRoundTimer(hudComponent_t *comp)
 {
@@ -2879,8 +2879,7 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 
 /**
  * @brief CG_DrawLocalTime
- * @param[in] y
- * @return
+ * @param[in] comp
  */
 void CG_DrawLocalTime(hudComponent_t *comp)
 {
