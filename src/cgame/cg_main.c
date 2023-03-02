@@ -747,7 +747,7 @@ void CG_UpdateCvars(void)
 						trap_Cvar_Set("cg_errorDecay", "500");
 					}
 				}
-				else if (cv->vmCvar == &cg_crosshairSize || cv->vmCvar == &cg_crosshairSize
+				else if (cv->vmCvar == &cg_crosshairSize
 				         || cv->vmCvar == &cg_crosshairAlpha || cv->vmCvar == &cg_crosshairColor
 				         || cv->vmCvar == &cg_crosshairAlphaAlt || cv->vmCvar == &cg_crosshairColorAlt
 				         || cv->vmCvar == &cg_crosshairPulse || cv->vmCvar == &cg_crosshairHealth)
