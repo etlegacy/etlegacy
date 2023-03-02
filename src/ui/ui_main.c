@@ -8297,6 +8297,8 @@ static qboolean UI_FeederSelectionClick(itemDef_t *item)
 static qboolean GameType_Parse(char **p, qboolean join)
 {
 	char *token;
+	int  *counter;
+	int  index = 0;
 
 	token = COM_ParseExt(p, qtrue);
 
@@ -8308,10 +8310,12 @@ static qboolean GameType_Parse(char **p, qboolean join)
 	if (join)
 	{
 		uiInfo.numJoinGameTypes = 0;
+        counter = &(uiInfo.numJoinGameTypes);
 	}
 	else
 	{
 		uiInfo.numGameTypes = 0;
+        counter = &(uiInfo.numJoinGameTypes);
 	}
 
 	while (1)
@@ -8332,56 +8336,55 @@ static qboolean GameType_Parse(char **p, qboolean join)
 		{
 			if (join)
 			{
-				if (!String_Parse(p, &uiInfo.joinGameTypes[uiInfo.numJoinGameTypes].gameType) || !Int_Parse(p, &uiInfo.joinGameTypes[uiInfo.numJoinGameTypes].gtEnum))
+				if (!String_Parse(p, &uiInfo.joinGameTypes[index].gameType) || !Int_Parse(p, &uiInfo.joinGameTypes[index].gtEnum))
 				{
 					return qfalse;
 				}
 			}
 			else
 			{
-				if (!Int_Parse(p, &uiInfo.gameTypes[uiInfo.numGameTypes].gtEnum))
+				if (!Int_Parse(p, &uiInfo.gameTypes[index].gtEnum))
 				{
 					return qfalse;
 				}
 
-				if (!String_Parse(p, &uiInfo.gameTypes[uiInfo.numGameTypes].gameType))
+				if (!String_Parse(p, &uiInfo.gameTypes[index].gameType))
 				{
 					return qfalse;
 				}
 
-				if (!String_Parse(p, &uiInfo.gameTypes[uiInfo.numGameTypes].gameTypeShort))
+				if (!String_Parse(p, &uiInfo.gameTypes[index].gameTypeShort))
 				{
 					return qfalse;
 				}
 
-				if (!String_Parse(p, &uiInfo.gameTypes[uiInfo.numGameTypes].gameTypeDescription))
+				if (!String_Parse(p, &uiInfo.gameTypes[index].gameTypeDescription))
 				{
 					return qfalse;
 				}
 			}
 
-			if (join)
-			{
-				if (uiInfo.numJoinGameTypes < MAX_GAMETYPES)
-				{
-					uiInfo.numJoinGameTypes++;
-				}
-				else
-				{
-					Com_Printf("Too many net game types, last one replace!\n");
-				}
-			}
-			else
-			{
-				if (uiInfo.numGameTypes < MAX_GAMETYPES)
-				{
-					uiInfo.numGameTypes++;
-				}
-				else
-				{
-					Com_Printf("Too many game types, last one replace!\n");
-				}
-			}
+            if (*counter < MAX_GAMETYPES)
+            {
+                index = ++(*counter);
+
+                // don't over range
+                if (index == MAX_GAMETYPES)
+                {
+                    index -= 1;
+                }
+            }
+            else
+            {
+                if (join)
+                {
+                    Com_Printf("Too many net game types, last one replace!\n");
+                }
+                else
+                {
+                    Com_Printf("Too many game types, last one replace!\n");
+                }
+            }
 
 			token = COM_ParseExt(p, qtrue);
 			if (token[0] != '}')
