@@ -268,8 +268,14 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 			target_compile_definitions(engine_libraries INTERFACE USING_WOLFSSL)
 		endif()
 
+		if (FEATURE_AUTH)
+			target_compile_definitions(engine_libraries INTERFACE LEGACY_AUTH)
+			target_sources(engine_libraries INTERFACE "${SRC}/qcommon/auth.c")
+		endif()
+
 		target_compile_definitions(engine_libraries INTERFACE FEATURE_SSL)
-	else()
+	elseif(FEATURE_AUTH)
+		message(FATAL_ERROR "Authentication feature requires SSL to be enabled")
 	endif()
 
 	if(FEATURE_DBMS)
@@ -293,12 +299,6 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 	if(FEATURE_AUTOUPDATE)
 		target_compile_definitions(engine_libraries INTERFACE FEATURE_AUTOUPDATE)
 	endif(FEATURE_AUTOUPDATE)
-
-	if (FEATURE_AUTH)
-		target_compile_definitions(engine_libraries INTERFACE LEGACY_AUTH)
-		target_compile_definitions(mod_libraries INTERFACE LEGACY_AUTH)
-		target_sources(engine_libraries INTERFACE "${SRC}/qcommon/auth.c")
-	endif()
 endif()
 
 if(BUILD_SERVER)
@@ -350,6 +350,10 @@ if(BUILD_MOD)
 	if(FEATURE_EDV)
 		target_compile_definitions(cgame_libraries INTERFACE FEATURE_EDV)
 	endif(FEATURE_EDV)
+
+	if (FEATURE_AUTH)
+		target_compile_definitions(mod_libraries INTERFACE LEGACY_AUTH)
+	endif()
 endif(BUILD_MOD)
 
 #-----------------------------------------------------------------
