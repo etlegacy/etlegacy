@@ -8310,12 +8310,12 @@ static qboolean GameType_Parse(char **p, qboolean join)
 	if (join)
 	{
 		uiInfo.numJoinGameTypes = 0;
-        counter = &(uiInfo.numJoinGameTypes);
+		counter                 = &(uiInfo.numJoinGameTypes);
 	}
 	else
 	{
 		uiInfo.numGameTypes = 0;
-        counter = &(uiInfo.numJoinGameTypes);
+		counter             = &(uiInfo.numGameTypes);
 	}
 
 	while (1)
@@ -8364,27 +8364,27 @@ static qboolean GameType_Parse(char **p, qboolean join)
 				}
 			}
 
-            if (*counter < MAX_GAMETYPES)
-            {
-                index = ++(*counter);
+			if (*counter < MAX_GAMETYPES)
+			{
+				index = ++(*counter);
 
-                // don't over range
-                if (index == MAX_GAMETYPES)
-                {
-                    index -= 1;
-                }
-            }
-            else
-            {
-                if (join)
-                {
-                    Com_Printf("Too many net game types, last one replace!\n");
-                }
-                else
-                {
-                    Com_Printf("Too many game types, last one replace!\n");
-                }
-            }
+				// don't over range
+				if (index == MAX_GAMETYPES)
+				{
+					index -= 1;
+				}
+			}
+			else
+			{
+				if (join)
+				{
+					Com_Printf("Too many net game types, last one replace!\n");
+				}
+				else
+				{
+					Com_Printf("Too many game types, last one replace!\n");
+				}
+			}
 
 			token = COM_ParseExt(p, qtrue);
 			if (token[0] != '}')
