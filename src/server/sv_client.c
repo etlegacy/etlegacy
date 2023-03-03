@@ -1076,8 +1076,26 @@ void SV_Login_f(client_t *cl)
 
 	if (cl->loginStatus > LOGIN_SERVER_REQUESTED)
 	{
+		if (cl->loginStatus == LOGIN_CLIENT_LOGGED_IN)
+		{
+			Com_Printf("Client '%s' already logged in\n", cl->name);
+			return;
+		}
+
 		Com_Printf("Client '%s' login process already active\n", cl->name);
 		return;
+	}
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf(S_COLOR_RED "Invalid login command from client\n");
+		SV_DropClient(cl, "Stop doing stupid things\n");
+		return;
+	}
+
+	if (!cl->loginRequested)
+	{
+		cl->loginRequested = svs.time;
 	}
 
 	username = Cmd_Argv(1);
@@ -1103,7 +1121,14 @@ void SV_LoginResponse_f(client_t *cl)
 	if (cl->loginStatus != LOGIN_CLIENT_CHALLENGED)
 	{
 		Com_Printf("Client '%s' invalid login status for login-response\n", cl->name);
-		// TODO: maybe drop the client?
+		SV_DropClient(cl, "Stop doing stupid things\n");
+		return;
+	}
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf(S_COLOR_RED "Invalid login-response command from client\n");
+		SV_DropClient(cl, "Stop doing stupid things\n");
 		return;
 	}
 
@@ -1127,6 +1152,13 @@ void SV_Logout_f(client_t *cl)
 {
 	if (!Auth_Active())
 	{
+		return;
+	}
+
+	if (Cmd_Argc() != 1)
+	{
+		Com_Printf(S_COLOR_RED "Invalid logout command from client\n");
+		SV_DropClient(cl, "Stop doing stupid things\n");
 		return;
 	}
 
@@ -2179,17 +2211,24 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	}
 
 #ifdef LEGACY_AUTH
-	if (cl->loginStatus != LOGIN_CLIENT_LOGGED_IN)
+	// check if the client is not logged in, but the login has already been requested
+	if (cl->loginStatus != LOGIN_CLIENT_LOGGED_IN && cl->loginRequested)
 	{
-		if (Auth_Server_AuthenticationRequired() && svs.time - cl->loginRequested > 10000)
+		// If the client is using a non auth aware client, then give the player some extra time to handle authentication via WEB.
+		int allowedTimeout = cl->agent.compatible & BIT(2) ? 10000 : 30000;
+		if (svs.time - cl->loginRequested > allowedTimeout)
 		{
-			SV_DropClient(cl, "Only authenticated clients allowed!");
-			return;
-		}
-		else if (svs.time - cl->loginRequested > 10000)
-		{
-			// reset the login status since it has hung
-			cl->loginStatus = LOGIN_NONE;
+			if (Auth_Server_AuthenticationRequired())
+			{
+				SV_DropClient(cl, "Only authenticated clients allowed!");
+				return;
+			}
+			else
+			{
+				// reset the login status since it has hung
+				cl->loginStatus    = LOGIN_NONE;
+				cl->loginRequested = 0;
+			}
 		}
 	}
 #endif

@@ -2232,8 +2232,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	if (!g_extendedNames.integer)
 	{
-		unsigned int i;
-
 		// Avoid ext. ASCII chars in the CS
 		for (i = 0; i < strlen(cs_name); ++i)
 		{
@@ -2278,7 +2276,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			// check for a password
 			if (g_password.string[0] && Q_stricmp(g_password.string, "none") && strcmp(g_password.string, cs_password) != 0)
 			{
-				if (!sv_privatepassword.string[0] || strcmp(sv_privatepassword.string, cs_password))
+				if (!sv_privatepassword.string[0] || strcmp(sv_privatepassword.string, cs_password) != 0)
 				{
 					return "Invalid password";
 				}
@@ -2442,8 +2440,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #ifdef FEATURE_PRESTIGE
 	if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
 	{
-		int i;
-
 		G_GetClientPrestige(client);
 
 		for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -2455,7 +2451,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	if (firstTime && g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
-		int i;
 		G_XPSaver_Load(client);
 
 		for (i = 0; i < SK_NUM_SKILLS; i++)

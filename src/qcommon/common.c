@@ -4241,7 +4241,7 @@ void Com_ParseUA(userAgent_t *ua, const char *string)
 		versionInt = ETL_VERSION(major, minor, patch, commit);
 
 		// authentication was added around here
-		if (ETL_VERSION(2, 81, 0, 40) <= versionInt)
+		if (ETL_VERSION(2, 81, 1, 0) <= versionInt)
 		{
 			ua->compatible = BITS(2);
 		}

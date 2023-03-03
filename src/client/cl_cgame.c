@@ -365,7 +365,7 @@ rescan:
 	if (s && s[0] == '/' && s[1] == '/')
 	{
 		commentCommand = qtrue;
-		Cmd_TokenizeStringIncludeComments(s);
+		Cmd_TokenizeString(s + 2);
 	}
 	else
 	{
@@ -389,7 +389,7 @@ rescan:
 
 	if (commentCommand)
 	{
-		if (!strcmp(cmd, "//auth-srv"))
+		if (!strcmp(cmd, "auth-srv"))
 		{
 			if (clc.demo.playing)
 			{

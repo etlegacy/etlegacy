@@ -521,6 +521,7 @@ void Auth_Server_ClientLogout(void *data, const char *username)
 	client->loginChallenge[0] = '\0';
 	client->loginId           = 0;
 	client->loginStatus       = LOGIN_NONE;
+	client->loginRequested    = 0;
 	if (Auth_SV_RemoveAuthFromUserinfo(client->userinfo))
 	{
 		Auth_SV_UserInfoChanged(client);
@@ -579,12 +580,19 @@ void Auth_Server_FetchChallenge(void *data, const char *username)
 
 void Auth_Server_RequestClientAuthentication(void *data)
 {
-	if (sv_auth->integer)
+	client_t *client = data;
+
+	if (sv_auth->integer && !client->loginStatus)
 	{
-		client_t *client = data;
 		client->loginRequested = svs.time;
 		client->loginStatus    = LOGIN_SERVER_REQUESTED;
 		Auth_SendToClient(data, "//auth-srv prompt");
+
+		if (!(client->agent.compatible & BIT(2)))
+		{
+			// client is not authentication "aware" so we need to send a prompt instead
+			Auth_SendToClient(data, "authMsg \"^7You need to ^1authenticate ^7via ^3www.etlegacy.com\"");
+		}
 	}
 }
 
