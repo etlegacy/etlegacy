@@ -59,11 +59,7 @@ set_target_properties(etl PROPERTIES
 )
 
 if(UNIX AND NOT ARM AND NOT APPLE AND NOT ANDROID)
-	if (CROSS_COMPILE32)
-		set_target_properties(etl PROPERTIES SUFFIX ".x86")
-	else()
-		set_target_properties(etl PROPERTIES SUFFIX ".${ARCH}")
-	endif()
+	set_target_properties(etl PROPERTIES SUFFIX "${BIN_SUFFIX}")
 endif()
 
 target_compile_definitions(etl PRIVATE ETL_CLIENT=1)
