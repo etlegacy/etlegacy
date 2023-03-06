@@ -755,7 +755,7 @@ void CG_UpdateCvars(void)
 					if (cg.clientFrame == 0)
 					{
 						// wait for the next frame, otherwise the hud load
-                        // will erase the forced value
+						// will erase the forced value
 						cv->modificationCount = -1;
 					}
 					else
@@ -1742,10 +1742,12 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags");
 
-	cgs.media.slashShader    = trap_R_RegisterShaderNoMip("gfx/2d/numbers/slash");
-	cgs.media.compass2Shader = trap_R_RegisterShaderNoMip("gfx/2d/compass2.tga");
-	cgs.media.compassShader  = trap_R_RegisterShaderNoMip("gfx/2d/compass.tga");
-	cgs.media.buddyShader    = trap_R_RegisterShaderNoMip("sprites/buddy.tga");
+	cgs.media.slashShader             = trap_R_RegisterShaderNoMip("gfx/2d/numbers/slash");
+	cgs.media.compass2Shader          = trap_R_RegisterShaderNoMip("gfx/2d/compass2.tga");
+	cgs.media.compassShader           = trap_R_RegisterShaderNoMip("gfx/2d/compass.tga");
+	cgs.media.compassDirectionShader  = trap_R_RegisterShaderNoMip("gfx/2d/compassdirection");
+	cgs.media.compassCircleTickShader = trap_R_RegisterShaderNoMip("gfx/2d/compasscircletick");
+	cgs.media.buddyShader             = trap_R_RegisterShaderNoMip("sprites/buddy.tga");
 
 	for (i = 0 ; i < NUM_CROSSHAIRS ; i++)
 	{

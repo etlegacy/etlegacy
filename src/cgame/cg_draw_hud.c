@@ -47,7 +47,7 @@ static lagometer_t lagometer;
 const hudComponentFields_t hudComponentFields[] =
 {
 	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },          // FIXME: outside cg_draw_hud
-	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj"     } },
+	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts"     } },
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
@@ -175,7 +175,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->hudnumber        = 0;
 	hud->name[0]          = '\0';
 	hud->crosshair        = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 24, 48), SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
-	hud->compass          = CG_getComponent(tmp_adj(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, 14, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
+	hud->compass          = CG_getComponent(tmp_adj(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, COMPASS_ITEM | COMPASS_SECONDARY_OBJECTIVES | COMPASS_PRIMARY_OBJECTIVES | COMPASS_DECOR | COMPASS_CARDINAL_POINTS, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 	hud->staminabar       = CG_getComponent(tmp_adj(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
 	hud->breathbar        = CG_getComponent(tmp_adj(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
 	hud->healthbar        = CG_getComponent(tmp_adj(24, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
@@ -2395,7 +2395,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(basex, basey, basew, baseh, 1, comp->colorBorder);
 	}
 
-	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style & COMPASS_SQUARE);
+	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style);
 }
 /**
  * @brief CG_DrawStatsDebug

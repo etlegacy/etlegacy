@@ -603,10 +603,10 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 	}
 	else
 	{
-		char   coord_char[3];
+		char        coord_char[3];
 		signed char coord_int;
-		float  text_width, text_height;
-		vec2_t textOrigin;
+		float       text_width, text_height;
+		vec2_t      textOrigin;
 
 		dim_x[0] = cg.mapcoordsMins[0];
 		dim_x[1] = cg.mapcoordsMaxs[0];
@@ -1839,13 +1839,11 @@ void CG_DrawExpandedAutoMap(void)
  * @param[in] w
  * @param[in] h
  */
-void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean squareCompass)
+void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int style)
 {
 	int          i;
 	float        x = basex, y = basey, w = basew, h = baseh;
 	float        angle, diff;
-	static float lastangle  = 0;
-	static float anglespeed = 0;
 	mapScissor_t mapScissor;
 	vec2_t       automapTransformed;
 	snapshot_t   *snap;
@@ -1906,16 +1904,8 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean
 		w    = w - diff;
 		h    = h - diff;
 	}
-
-	if (squareCompass || CG_IsShoutcaster())
-	{
-		mapScissor.circular = qfalse;
-	}
-	else
-	{
-		mapScissor.circular = qtrue;
-	}
-
+    
+    mapScissor.circular   = !(style & COMPASS_SQUARE);
 	mapScissor.zoomFactor = cg_automapZoom.value;
 
 	mapScissor.tl[0] = mapScissor.tl[1] = 0;
@@ -1957,18 +1947,34 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean
 
 	if (mapScissor.circular)
 	{
-		CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compassShader);
-
-		angle       = (cg.predictedPlayerState.viewangles[YAW] + 180.f) / 360.f - (0.125f);
-		diff        = AngleSubtract(angle * 360, lastangle * 360) / 360.f;
-		anglespeed /= 1.08f;
-		anglespeed += diff * 0.01f;
-		if (Q_fabs(anglespeed) < 0.00001f)
+		if (style & COMPASS_DECOR)
 		{
-			anglespeed = 0;
+			CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compassShader);
 		}
-		lastangle += anglespeed;
-		CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compass2Shader, lastangle);
+		else if (style & COMPASS_DIRECTION)
+		{
+			CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compassDirectionShader);
+		}
+
+		if (style & COMPASS_CARDINAL_POINTS)
+		{
+			static float lastangle  = 0;
+			static float anglespeed = 0;
+
+			angle       = (cg.predictedPlayerState.viewangles[YAW] + 180.f) / 360.f - (0.125f);
+			diff        = AngleSubtract(angle * 360, lastangle * 360) / 360.f;
+			anglespeed /= 1.08f;
+			anglespeed += diff * 0.01f;
+			if (Q_fabs(anglespeed) < 0.00001f)
+			{
+				anglespeed = 0;
+			}
+			lastangle += anglespeed;
+
+			CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8,
+			                  style & COMPASS_DECOR ? cgs.media.compass2Shader : cgs.media.compassCircleTickShader,
+			                  lastangle);
+		}
 	}
 
 	if (!CG_IsShoutcaster())
@@ -2001,7 +2007,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean
 		}
 
 		// draw compass points for square map
-		if (!mapScissor.circular)
+		if (!mapScissor.circular && (style & COMPASS_CARDINAL_POINTS))
 		{
 			float        centerX   = x + (w * .5f);
 			float        centerY   = y + (h * .5f);
@@ -2289,27 +2295,27 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 				point[1] = py + (((cg.mortarImpactPos[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 			}
 
-            if (scissor && CG_IsShoutcaster())
-            {
-                icon_extends[0] = MARKSIZE_SC;
-                icon_extends[1] = MARKSIZE_SC;
-            }
-            else
-            {
-                icon_extends[0] = MARKSIZE;
-                icon_extends[1] = MARKSIZE;
-            }
+			if (scissor && CG_IsShoutcaster())
+			{
+				icon_extends[0] = MARKSIZE_SC;
+				icon_extends[1] = MARKSIZE_SC;
+			}
+			else
+			{
+				icon_extends[0] = MARKSIZE;
+				icon_extends[1] = MARKSIZE;
+			}
 
-            if (scissor)
-            {
-                icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-                icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-            }
-            else
-            {
-                icon_extends[0] *= cgs.ccZoomFactor;
-                icon_extends[1] *= cgs.ccZoomFactor;
-            }
+			if (scissor)
+			{
+				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			}
+			else
+			{
+				icon_extends[0] *= cgs.ccZoomFactor;
+				icon_extends[1] *= cgs.ccZoomFactor;
+			}
 
 			// don't return if the marker is culled, just don't draw it
 			if (!(scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends)))
@@ -2378,27 +2384,27 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 				point[1] = py + (((cg.artilleryRequestPos[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 			}
 
-            if (scissor && CG_IsShoutcaster())
-            {
-                icon_extends[0] = MARKSIZE_SC;
-                icon_extends[1] = MARKSIZE_SC;
-            }
-            else
-            {
-                icon_extends[0] = MARKSIZE;
-                icon_extends[1] = MARKSIZE;
-            }
+			if (scissor && CG_IsShoutcaster())
+			{
+				icon_extends[0] = MARKSIZE_SC;
+				icon_extends[1] = MARKSIZE_SC;
+			}
+			else
+			{
+				icon_extends[0] = MARKSIZE;
+				icon_extends[1] = MARKSIZE;
+			}
 
-            if (scissor)
-            {
-                icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-                icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-            }
-            else
-            {
-                icon_extends[0] *= cgs.ccZoomFactor;
-                icon_extends[1] *= cgs.ccZoomFactor;
-            }
+			if (scissor)
+			{
+				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			}
+			else
+			{
+				icon_extends[0] *= cgs.ccZoomFactor;
+				icon_extends[1] *= cgs.ccZoomFactor;
+			}
 
 			// don't return if the marker is culled, just skip it (so we draw the rest, if any)
 			if (scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends))
