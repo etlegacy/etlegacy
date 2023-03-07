@@ -532,7 +532,7 @@ void G_createStatsJson(gentity_t *ent, void *target)
 		cJSON_AddNumberToObject(tmp2, "gibs", ent->client->sess.gibs);
 		cJSON_AddNumberToObject(tmp2, "self_kills", ent->client->sess.self_kills);
 		cJSON_AddNumberToObject(tmp2, "team_kills", ent->client->sess.team_kills);
-
+		cJSON_AddNumberToObject(tmp2, "team_gibs", ent->client->sess.team_gibs);
 		cJSON_AddNumberToObject(tmp2, "team_health_given", ent->client->sess.team_health_given);
 		cJSON_AddNumberToObject(tmp2, "team_health_received", ent->client->sess.team_health_received);
 		cJSON_AddNumberToObject(tmp2, "enemy_health_given", ent->client->sess.enemy_health_given);
