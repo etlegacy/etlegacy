@@ -974,6 +974,7 @@ void Key_SetBinding(int keynum, const char *binding)
 	Q_strlwr(lcbinding);   // saves doing it on all the generateHashValues in Key_GetBindingByString
 
 	keys[keynum].hash = generateHashValue(lcbinding);
+	Z_Free(lcbinding);
 
 	// consider this like modifying an archived cvar, so the
 	// file write will be triggered at the next oportunity
