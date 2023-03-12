@@ -72,7 +72,7 @@ cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is
 
 # Optional features
 option(FEATURE_CURL				"Enable auto-download support using cURL (client)"		ON)
-option(FEATURE_SSL			    "Build SSL for curl and authentication"		            ON)
+option(FEATURE_SSL				"Build SSL for curl and authentication"					ON)
 option(FEATURE_OGG_VORBIS		"Enable OGG Vorbis support (client)"					ON)
 option(FEATURE_THEORA			"Enable Theora video support (client)"					ON)
 option(FEATURE_OPENAL			"Enable OpenAL sound backend (client)"					ON)
@@ -96,7 +96,7 @@ option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
 option(FEATURE_PAKISOLATION		"Enable custom pak isolation"							ON)
 option(FORCE_DEBUG				"Force enable legacy debug macros"						OFF)
 option(ENABLE_ASAN				"Enable AddressSanitizer on clang"						OFF)
-option(ENABLE_MULTI_BUILD			"Enable binary names to include arch"						ON)
+option(ENABLE_MULTI_BUILD		"Enable binary names to include arch"					ON)
 # TODO: implement this field on the libs as well
 option(FORCE_STATIC_VCRT		"Force static MSVC runtime linking"						ON)
 option(ENABLE_SSE				"Enable Streaming SIMD Extensions"						OFF)
