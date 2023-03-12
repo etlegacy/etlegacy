@@ -699,9 +699,12 @@ jobs:
       - name: Get the version
         id: vars
         run: |
-          echo "tag=$(git describe --abbrev=7 2>/dev/null)" >> $GITHUB_OUTPUT
+          git_tag=$(git describe --abbrev=7 2>/dev/null)
+          tag_missing=$(docker manifest inspect etlegacy/server:$git_tag > /dev/null ; echo $?)
+          echo "Current tag $git_tag is missing from Docker: $tag_missing"
+          echo "tag=$git_tag" >> $GITHUB_OUTPUT
           echo "short_tag=$(git describe --abbrev=0 2>/dev/null)" >> $GITHUB_OUTPUT
-          echo "tag_exists=$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v1/repositories/etlegacy/server/tags/${{ steps.vars.outputs.tag }} 2>/dev/null)" >> $GITHUB_OUTPUT
+          echo "tag_missing=$tag_mising" >> $GITHUB_OUTPUT
 
       # If we are on any build version then we create the latest-patch version
       - name: Build the server container
@@ -720,7 +723,7 @@ jobs:
 
       # If we are on a release tag, then also create the 'latest' tag on docker hub
       - name: Build and push the latest Docker image
-        if: steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_exists == '404' && github.event_name != 'schedule'
+        if: steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_missing == '1' && github.event_name != 'schedule'
         working-directory: build/package
         run: |
           docker tag etlegacy/server:latest-patch etlegacy/server:${{steps.vars.outputs.tag}}
