@@ -1,0 +1,12 @@
+[Unit]
+Description=ET: Legacy dedicated server @BIN_DESCRIBE@
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/xdg/etlegacy/etlegacy.conf
+User=etlegacy
+Group=etlegacy
+ExecStart=/usr/bin/etlded@BIN_SUFFIX@ +set fs_basepath $FS_BASEPATH + set fs_homepath $FS_HOMEPATH + set fs_game $FS_GAME +exec $EXEC
+
+[Install]
+WantedBy=multi-user.target

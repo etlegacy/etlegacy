@@ -96,6 +96,7 @@ option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
 option(FEATURE_PAKISOLATION		"Enable custom pak isolation"							ON)
 option(FORCE_DEBUG				"Force enable legacy debug macros"						OFF)
 option(ENABLE_ASAN				"Enable AddressSanitizer on clang"						OFF)
+option(ENABLE_MULTI_BUILD			"Enable binary names to include arch"						ON)
 # TODO: implement this field on the libs as well
 option(FORCE_STATIC_VCRT		"Force static MSVC runtime linking"						ON)
 option(ENABLE_SSE				"Enable Streaming SIMD Extensions"						OFF)
