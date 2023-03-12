@@ -1,5 +1,5 @@
 FROM centos:7
-LABEL version="1.3"
+LABEL version="1.4"
 LABEL maintainer="mail@etlegacy.com"
 LABEL description="Linux build machine for the 32 and 64 bit linux releases"
 
@@ -30,6 +30,17 @@ RUN	wget https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz && tar -xvzf m4-1.4.19.tar.
 
 RUN mkdir -p /opt/cmake && wget --no-check-certificate --quiet -O - https://cmake.org/files/v3.24/cmake-3.24.2-linux-x86_64.tar.gz | tar --strip-components=1 -xz -C /opt/cmake
 ENV PATH="/opt/cmake/bin:${PATH}"
+
+# SDL2 now requires a newer wayland version >= 1.18 (we still install the older packages for the dependencies) so remove the pre-installed one from the system and build new ones
+# compile 64 and 32 bit wayland
+RUN rpm -e --nodeps --allmatches libwayland-client libwayland-cursor libwayland-egl libwayland-server wayland-devel && \
+    yum --assumeyes install libffi-devel expat-devel libxml2-devel && rm -rf /var/cache/yum && rm -rf /var/tmp/yum-* && \
+    wget --quiet -O - https://wayland.freedesktop.org/releases/wayland-1.18.0.tar.xz | tar -xJ && cd wayland-1.18.0 && \
+    export PKG_CONFIG_PATH=/usr/lib64/pkgconfig && \
+    ./configure --prefix=/usr --disable-static --disable-documentation --libdir=/usr/lib64 && make && make install && \
+    make clean && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && \
+    ./configure --prefix=/usr --disable-static --disable-documentation --libdir=/usr/lib --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" && make && make install && \
+    cd .. && rm -Rf wayland-1.18.0 && unset PKG_CONFIG_PATH
 
 # RUN groupadd -g 2000 legacy && useradd -m -u 2001 -g legacy legacy && chmod -R 755 /opt/
 # USER legacy
