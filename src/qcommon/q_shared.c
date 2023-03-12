@@ -2163,7 +2163,7 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
 	{
 		if (ignoreCase)
 		{
-			letter = tolower(fname[i]);
+			letter = (char)tolower(fname[i]);
 		}
 		else
 		{
