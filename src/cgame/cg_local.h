@@ -1705,8 +1705,8 @@ typedef struct
 	qhandle_t slashShader;
 	qhandle_t compassShader;
 	qhandle_t compass2Shader;
-    qhandle_t compassDirectionShader;
-    qhandle_t compassCircleTickShader;
+	qhandle_t compassDirectionShader;
+	qhandle_t compassCircleTickShader;
 
 	qhandle_t snowShader;
 	qhandle_t oilParticle;
@@ -2161,9 +2161,9 @@ enum
 	COMPASS_ITEM                 = BIT(1),
 	COMPASS_SECONDARY_OBJECTIVES = BIT(2),
 	COMPASS_PRIMARY_OBJECTIVES   = BIT(3),
-    COMPASS_DECOR                = BIT(4),
-    COMPASS_DIRECTION            = BIT(5),
-    COMPASS_CARDINAL_POINTS      = BIT(6),
+	COMPASS_DECOR                = BIT(4),
+	COMPASS_DIRECTION            = BIT(5),
+	COMPASS_CARDINAL_POINTS      = BIT(6),
 };
 
 /// Locations

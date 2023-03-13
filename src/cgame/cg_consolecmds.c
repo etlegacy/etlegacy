@@ -2701,18 +2701,18 @@ const hudComponentMembersFields_t hudComponentMembersFields[] =
 	{ "h",                     offsetof(hudComponent_t, location) + offsetof(rectDef_t, h), CG_SetFloatComponentFromCommand},
 	{ "position",              offsetof(hudComponent_t, location), CG_SetPositionComponentFromCommand},
 	{ "size",                  offsetof(hudComponent_t, location), CG_SetSizeComponentFromCommand},
-	{ HUDMF(visible),          CG_SetIntComponentFromCommand      },
-	{ HUDMF(style),            CG_SetIntComponentFromCommand      },
-	{ HUDMF(scale),            CG_SetFloatComponentFromCommand    },
-	{ HUDMF(colorMain),        CG_SetColorsComponentFromCommand   },
-	{ HUDMF(colorSecondary),   CG_SetColorsComponentFromCommand   },
-	{ HUDMF(showBackGround),   CG_SetIntComponentFromCommand      },
-	{ HUDMF(colorBackground),  CG_SetColorsComponentFromCommand   },
-	{ HUDMF(showBorder),       CG_SetIntComponentFromCommand      },
-	{ HUDMF(colorBorder),      CG_SetColorsComponentFromCommand   },
-	{ HUDMF(styleText),        CG_SetIntComponentFromCommand      },
-	{ HUDMF(alignText),        CG_SetIntComponentFromCommand      },
-	{ HUDMF(autoAdjust),       CG_SetIntComponentFromCommand      },
+	{ HUDMF(visible),          CG_SetIntComponentFromCommand              },
+	{ HUDMF(style),            CG_SetIntComponentFromCommand              },
+	{ HUDMF(scale),            CG_SetFloatComponentFromCommand            },
+	{ HUDMF(colorMain),        CG_SetColorsComponentFromCommand           },
+	{ HUDMF(colorSecondary),   CG_SetColorsComponentFromCommand           },
+	{ HUDMF(showBackGround),   CG_SetIntComponentFromCommand              },
+	{ HUDMF(colorBackground),  CG_SetColorsComponentFromCommand           },
+	{ HUDMF(showBorder),       CG_SetIntComponentFromCommand              },
+	{ HUDMF(colorBorder),      CG_SetColorsComponentFromCommand           },
+	{ HUDMF(styleText),        CG_SetIntComponentFromCommand              },
+	{ HUDMF(alignText),        CG_SetIntComponentFromCommand              },
+	{ HUDMF(autoAdjust),       CG_SetIntComponentFromCommand              },
 	{ HUDMF(internalLocation), CG_SetInternalRectComponentFromCommand     },
 	{ "internalPosition",      offsetof(hudComponent_t, internalLocation), CG_SetInternalPositionComponentFromCommand},
 	{ HUDMF(anchorPoint),      CG_SetAnchorPointFromCommand               },
@@ -2880,8 +2880,8 @@ static void CG_EditComponent_f(void)
 					// update the component internals if needed
 					CG_CalculateComponentInternals(hudData.active, comp);
 				}
-        
-        break;
+
+				break;
 			}
 		}
 

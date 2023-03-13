@@ -263,7 +263,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	weapon_t  weap;
 	gclient_t *client;
 	int       contents = 0, i, killer = ENTITYNUM_WORLD;
-	char      *killerName = "<world>";
+	char      *killerName  = "<world>";
 	qboolean  killedintank = qfalse;
 	qboolean  attackerClient, dieFromSameTeam = qfalse;
 

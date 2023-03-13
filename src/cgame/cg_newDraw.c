@@ -495,12 +495,12 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	// draw status bar under the cursor hint
 	if (cg.cursorHintValue)
 	{
-		float  curValue = (float)cg.cursorHintValue / 255.0f;
+		float curValue = (float)cg.cursorHintValue / 255.0f;
 
 		if (curValue > 0.01f)
 		{
 			CG_FilledBar(comp->location.x, comp->location.y + comp->location.h + 4, comp->location.w, 8, colorRed, colorGreen,
-                         comp->colorBackground, comp->colorBorder, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR, -1);
+			             comp->colorBackground, comp->colorBorder, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR, -1);
 		}
 	}
 }
@@ -566,7 +566,7 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 	}
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
-                 comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, comp->style >> 1, -1);
+	             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, comp->style >> 1, -1);
 }
 
 /**
