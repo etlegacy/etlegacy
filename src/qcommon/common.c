@@ -3652,7 +3652,7 @@ void Field_Clear(field_t *field)
 	field->scroll = 0;
 }
 
-void Field_InsertChart(field_t *edit, int ch, qboolean overstrike)
+void Field_InsertChar(field_t *edit, int ch, qboolean overstrike)
 {
 	size_t len, stringLen;
 

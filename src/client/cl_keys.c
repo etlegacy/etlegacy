@@ -363,7 +363,7 @@ void Field_Paste(field_t *edit)
 
 	for (i = 0 ; i < pasteLen ; i++)
 	{
-		Field_InsertChart(edit, (int)chars[i], key_overstrikeMode);
+		Field_InsertChar(edit, (int) chars[i], key_overstrikeMode);
 	}
 	Com_Dealloc(chars);
 

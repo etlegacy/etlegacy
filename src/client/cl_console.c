@@ -380,8 +380,14 @@ static void Con_LoadConsoleHistory(void)
 			break;
 		}
 
-		Field_InsertChart(&historyEditLines[historyLine], (int)Q_UTF8_CodePoint(&buffer[i]), qfalse);
+		Field_InsertChar(&historyEditLines[historyLine], (int) Q_UTF8_CodePoint(&buffer[i]), qfalse);
 		i += width;
+	}
+
+	// if the history file did not end with a newline
+	if (*historyEditLines[historyLine].buffer)
+	{
+		historyLine++;
 	}
 	nextHistoryLine = historyLine;
 
