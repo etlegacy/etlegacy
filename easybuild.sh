@@ -860,7 +860,7 @@ print_help() {
 	ehead "crust - run the uncrustify to the source"
 	ehead "project - generate the project files for your platform"
 	ehead "release - run the entire release process"
-	ehead "updatelicense - update the lisence years for the current year"
+	ehead "updatelicense - update the licence years for the current year"
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
