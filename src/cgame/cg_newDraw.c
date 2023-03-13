@@ -495,7 +495,6 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	// draw status bar under the cursor hint
 	if (cg.cursorHintValue)
 	{
-		vec4_t backG    = { 1, 1, 1, 0.3f };
 		float  curValue = (float)cg.cursorHintValue / 255.0f;
 
 		if (curValue > 0.01f)

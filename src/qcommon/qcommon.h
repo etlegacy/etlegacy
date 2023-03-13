@@ -989,6 +989,7 @@ typedef struct
 void Console_RemoveHighlighted(field_t *field, int *completionOffset);
 void Console_AutoComplete(field_t *field, int *completionOffset);
 void Field_Clear(field_t *field);
+void Field_InsertChar(field_t *edit, int ch, qboolean overstrike);
 void Field_AutoComplete(field_t *field);
 void Field_CompleteKeyname(void);
 void Field_CompleteFilenameMultiple(const char *dir, int numext, const char **ext, qboolean allowNonPureFilesOnDisk);

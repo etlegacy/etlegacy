@@ -363,7 +363,7 @@ void Field_Paste(field_t *edit)
 
 	for (i = 0 ; i < pasteLen ; i++)
 	{
-		Field_CharEvent(edit, chars[i]);
+		Field_InsertChar(edit, (int) chars[i], key_overstrikeMode);
 	}
 	Com_Dealloc(chars);
 
@@ -690,6 +690,8 @@ void Console_Key(int key)
 
 		g_consoleField.widthInChars = g_console_field_width;
 
+		Con_SaveConsoleHistory();
+
 		if (cls.state == CA_DISCONNECTED)
 		{
 			SCR_UpdateScreen();     // force an update, because the command
@@ -944,7 +946,7 @@ char *Key_KeynumToString(int keynum)
 }
 
 #define BIND_HASH_SIZE 1024
-#define generateHashValue(fname) Q_GenerateHashValue(fname, BIND_HASH_SIZE, qtrue, qfalse)
+#define generateHashValue(fname) Q_GenerateHashValue(fname, BIND_HASH_SIZE, qtrue, qtrue)
 
 /**
  * @brief Key_SetBinding
@@ -953,10 +955,6 @@ char *Key_KeynumToString(int keynum)
  */
 void Key_SetBinding(int keynum, const char *binding)
 {
-	char *lcbinding;    // make a copy of our binding lowercase
-	                    // so name toggle scripts work again: bind x name BzZIfretn?
-	                    // resulted into bzzifretn?
-
 	if (keynum == -1)
 	{
 		return;
@@ -970,10 +968,7 @@ void Key_SetBinding(int keynum, const char *binding)
 
 	// allocate memory for new binding
 	keys[keynum].binding = CopyString(binding);
-	lcbinding            = CopyString(binding);
-	Q_strlwr(lcbinding);   // saves doing it on all the generateHashValues in Key_GetBindingByString
-
-	keys[keynum].hash = generateHashValue(lcbinding);
+	keys[keynum].hash    = generateHashValue(binding);
 
 	// consider this like modifying an archived cvar, so the
 	// file write will be triggered at the next oportunity

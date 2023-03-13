@@ -3660,6 +3660,69 @@ void Field_Clear(field_t *field)
 	field->scroll = 0;
 }
 
+void Field_InsertChar(field_t *edit, int ch, qboolean overstrike)
+{
+	size_t len, stringLen;
+
+	// ctrl-v is paste
+	if (ch == CTRL('v'))
+	{
+		return;
+	}
+
+	// ctrl-c clears the field
+	if (ch == CTRL('c'))
+	{
+		return;
+	}
+
+	// ctrl-h is backspace
+	if (ch == CTRL('h'))
+	{
+		return;
+	}
+
+	// ctrl-a is home
+	if (ch == CTRL('a'))
+	{
+		return;
+	}
+
+	// ctrl-e is end
+	if (ch == CTRL('e'))
+	{
+		return;
+	}
+
+	len       = strlen(edit->buffer);
+	stringLen = Q_UTF8_Strlen(edit->buffer);
+
+	// ignore any other non printable chars
+	if (ch < 32)
+	{
+		return;
+	}
+
+	// - 2 to leave room for the leading slash and trailing \0
+	if (len == MAX_EDIT_LINE - 2)
+	{
+		return; // all full
+	}
+
+	Q_UTF8_Insert(edit->buffer, (int)stringLen, edit->cursor, ch, overstrike);
+	edit->cursor++;
+
+	if (edit->cursor >= edit->widthInChars)
+	{
+		edit->scroll++;
+	}
+
+	if (edit->cursor == stringLen + 1)
+	{
+		edit->buffer[Q_UTF8_ByteOffset(edit->buffer, edit->cursor)] = 0;
+	}
+}
+
 static char completionString[MAX_TOKEN_CHARS];
 static char shortestMatch[MAX_TOKEN_CHARS];
 static int  matchCount;

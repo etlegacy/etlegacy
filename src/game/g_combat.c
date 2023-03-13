@@ -1575,6 +1575,13 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
 
+	if (g_antilag.integer)
+	{
+		// re-adjust now because we are changing eFlags and pm_flags
+		// and doing it later would overwrite them
+		G_ReAdjustSingleClientPosition(targ);
+	}
+
 	if ((targ->flags & FL_NO_KNOCKBACK) || (dflags & DAMAGE_NO_KNOCKBACK) ||
 	    (targ->client && g_friendlyFire.integer && (onSameTeam || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor)))))
 	{

@@ -1898,7 +1898,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
  */
 static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 {
-	clientInfo_t *ci = &cgs.clientinfo[cent->currentState.number];
+	clientInfo_t *ci;
 	vec3_t       up, forward;
 	int          contents;
 	vec3_t       mang, morg, maxis[3];
@@ -1929,6 +1929,8 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 	{
 		return;
 	}
+
+	ci = &cgs.clientinfo[cent->currentState.number];
 
 	if (cgs.matchPaused)
 	{

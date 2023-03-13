@@ -19,50 +19,38 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/"
 
 # misc adds
 if(INSTALL_OMNIBOT AND UNIX)
-	if(CROSS_COMPILE32)
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl_bot_x86.sh"
-			DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-			PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-		)
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlded_bot_x86.sh"
-			DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-			PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-		)
-	else()
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl_bot_x86_64.sh"
-			DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-			PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-			)
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlded_bot_x86_64.sh"
-			DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-			PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-			)
-	endif()
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/misc/etl_bot.sh.in"
+		       "${CMAKE_CURRENT_BINARY_DIR}/misc/etl_bot${BIN_SUFFIX}.sh" @ONLY)
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/misc/etlded_bot.sh.in"
+		       "${CMAKE_CURRENT_BINARY_DIR}/misc/etlded_bot${BIN_SUFFIX}.sh" @ONLY)
+	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/misc/etl_bot${BIN_SUFFIX}.sh"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+		PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/misc/etlded_bot${BIN_SUFFIX}.sh"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+		PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
 endif()
 
 # other adds
 if(UNIX AND NOT APPLE)
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.desktop.in"
+		       "${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy${BIN_SUFFIX}.desktop" @ONLY)
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml.in"
+			"${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml" @ONLY)
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.service.in"
+		       "${CMAKE_CURRENT_BINARY_DIR}/misc/etlegacy${BIN_SUFFIX}.service" @ONLY)
+
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.svg"
 		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/icons/hicolor/scalable/apps"
 	)
-	if (CROSS_COMPILE32)
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.x86.desktop"
-			DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/applications"
-		)
-	elseif(ARM)
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.aarch64.desktop"
-			DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/application"
-		)
-	else()
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.x86_64.desktop"
-			DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/applications"
-			)
-	endif()
+	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy${BIN_SUFFIX}.desktop"
+		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/applications"
+	)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
 		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/mime/packages"
 	)
-	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml.in"
-			"${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml" @ONLY)
 	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml"
 		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/metainfo"
 	)

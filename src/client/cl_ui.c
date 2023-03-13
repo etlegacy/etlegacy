@@ -543,6 +543,7 @@ static void LAN_GetServerInfo(int source, int n, char *buf, size_t buflen)
 		Info_SetValueForKey(info, "weaprestrict", va("%i", server->weaprestrict));
 		Info_SetValueForKey(info, "balancedteams", va("%i", server->balancedteams));
 		Info_SetValueForKey(info, "g_oss", va("%i", server->oss));
+		Info_SetValueForKey(info, "blocked", va("%i", server->blocked));
 #ifdef _WIN64
 		if (buflen > 1024)
 		{
@@ -596,6 +597,11 @@ static int LAN_GetServerPing(int source, int n)
 	}
 	if (server)
 	{
+		if (server->blocked)
+		{
+			return -2;
+		}
+
 		return server->ping;
 	}
 	return -1;

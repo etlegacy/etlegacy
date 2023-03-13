@@ -1026,6 +1026,21 @@ int G_refClientnumForName(gentity_t *ent, const char *name)
 		return MAX_CLIENTS;
 	}
 
+	// first, check for slot number
+	if (Q_isanumber(name))
+	{
+		int clientNum = Q_atoi(name);
+
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			if (clientNum == level.sortedClients[i])
+			{
+				return(level.sortedClients[i]);
+			}
+		}
+	}
+
+	// second, check for exact name match
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		Q_strncpyz(cleanName, level.clients[level.sortedClients[i]].pers.netname, sizeof(cleanName));

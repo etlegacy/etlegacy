@@ -3027,9 +3027,10 @@ void CalculateRanks(void)
 	gclient_t *cl;
 
 	level.numConnectedClients       = 0;
+	level.numHumanConnectedClients  = 0;
 	level.numNonSpectatorClients    = 0;
 	level.numPlayingClients         = 0;
-	level.voteInfo.numVotingClients = 0; // don't count bots
+	level.voteInfo.numVotingClients = 0;  // don't count bots
 
 	level.numFinalDead[0] = 0;
 	level.numFinalDead[1] = 0;
@@ -3054,6 +3055,11 @@ void CalculateRanks(void)
 
 			level.sortedClients[level.numConnectedClients] = i;
 			level.numConnectedClients++;
+
+			if (!(g_entities[i].r.svFlags & SVF_BOT))
+			{
+				++level.numHumanConnectedClients;
+			}
 
 			if (team != TEAM_SPECTATOR)
 			{
@@ -3412,8 +3418,8 @@ void BeginIntermission(void)
 					{
 						if (!Q_stricmp(mapVotePlayersCount[k].map, str))
 						{
-							if ((mapVotePlayersCount[k].min >= 0 && mapVotePlayersCount[k].min > level.numConnectedClients) ||
-							    (mapVotePlayersCount[k].max >= 0 && mapVotePlayersCount[k].max < level.numConnectedClients))
+							if ((mapVotePlayersCount[k].min >= 0 && mapVotePlayersCount[k].min > level.numHumanConnectedClients) ||
+							    (mapVotePlayersCount[k].max >= 0 && mapVotePlayersCount[k].max < level.numHumanConnectedClients))
 							{
 								isValid = qfalse;
 							}

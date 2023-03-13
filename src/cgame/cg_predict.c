@@ -215,23 +215,32 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 		}
 		else
 		{
-			// encoded bbox
-			x  = (ent->solid & 255);
-			zd = ((ent->solid >> 8) & 255);
-			zu = ((ent->solid >> 16) & 255) - 32;
-
-			bmins[0] = bmins[1] = -x;
-			bmaxs[0] = bmaxs[1] = x;
-			bmins[2] = -zd;
-
-			// client-side hitbox prediction code
-			if (ent->eType == ET_PLAYER && cg.bulletTrace)
+			if (ent->eFlags & EF_FAKEBMODEL)
 			{
-				bmaxs[2] = CG_ClientHitboxMaxZ(ent, zu);
+				// repurposed origin2 and angles2 to receive mins and maxs of func_fakebrush
+				VectorCopy(ent->origin2, bmins);
+				VectorCopy(ent->angles2, bmaxs);
 			}
 			else
 			{
-				bmaxs[2] = zu;
+				// encoded bbox
+				x  = (ent->solid & 255);
+				zd = ((ent->solid >> 8) & 255);
+				zu = ((ent->solid >> 16) & 255) - 32;
+
+				bmins[0] = bmins[1] = -x;
+				bmaxs[0] = bmaxs[1] = x;
+				bmins[2] = -zd;
+
+				// client-side hitbox prediction code
+				if (ent->eType == ET_PLAYER && cg.bulletTrace)
+				{
+					bmaxs[2] = CG_ClientHitboxMaxZ(ent, zu);
+				}
+				else
+				{
+					bmaxs[2] = zu;
+				}
 			}
 
 			//cmodel = trap_CM_TempCapsuleModel( bmins, bmaxs );

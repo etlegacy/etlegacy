@@ -1705,6 +1705,8 @@ typedef struct
 	qhandle_t slashShader;
 	qhandle_t compassShader;
 	qhandle_t compass2Shader;
+    qhandle_t compassDirectionShader;
+    qhandle_t compassCircleTickShader;
 
 	qhandle_t snowShader;
 	qhandle_t oilParticle;
@@ -2159,6 +2161,9 @@ enum
 	COMPASS_ITEM                 = BIT(1),
 	COMPASS_SECONDARY_OBJECTIVES = BIT(2),
 	COMPASS_PRIMARY_OBJECTIVES   = BIT(3),
+    COMPASS_DECOR                = BIT(4),
+    COMPASS_DIRECTION            = BIT(5),
+    COMPASS_CARDINAL_POINTS      = BIT(6),
 };
 
 /// Locations
@@ -3974,7 +3979,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
 void CG_DrawExpandedAutoMap(void);
-void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean squareCompass);
+void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int style);
 
 #define LIMBO_3D_X  287 //% 280
 #define LIMBO_3D_Y  382

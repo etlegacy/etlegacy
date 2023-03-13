@@ -338,6 +338,7 @@ typedef struct
 	int32_t weaprestrict;
 	int32_t balancedteams;
 	uint32_t oss;
+	qboolean blocked;
 	char gameName[MAX_NAME_LENGTH];
 } serverInfo_t;
 
@@ -390,6 +391,12 @@ typedef struct
 
 	int32_t numfavoriteservers;
 	serverInfo_t favoriteServers[MAX_FAVOURITE_SERVERS];
+
+	int numBlockedServerAddresses;
+	netadr_t blockedServerAddresses[MAX_GLOBAL_SERVERS];
+	netadr_t masterAddr;
+
+	int blockedServersChecked;      ///< last time the blocked servers were requested
 
 	int pingUpdateSource;           ///< source currently pinging or updating
 
@@ -635,6 +642,7 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg);
 void CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg);
 void CL_LocalServers_f(void);
 void CL_GlobalServers_f(void);
+void CL_GlobalBlockedServers_f(void);
 void CL_Ping_f(void);
 qboolean CL_UpdateVisiblePings_f(int source);
 
@@ -688,6 +696,7 @@ void Con_Clear_f(void);
 void Con_Dump_f(void);
 void Con_CheckResize(void);
 void Cmd_CompleteTxtName(char *args, int argNum);
+void Con_SaveConsoleHistory(void);
 void Con_Init(void);
 void Con_Shutdown(void);
 void Con_Linefeed(qboolean skipnotify);

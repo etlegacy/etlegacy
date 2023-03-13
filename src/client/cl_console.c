@@ -322,6 +322,115 @@ void Cmd_CompleteTxtName(char *args, int argNum)
 	}
 }
 
+#define ETL_CONSOLE_HISTORY_FILE "etl-history"
+#define ETL_CONSOLE_HISTORY_BUFFER_MAX 2048
+
+/**
+ * @brief Load console history from a local file
+ */
+static void Con_LoadConsoleHistory(void)
+{
+	fileHandle_t f;
+	long         size;
+	int          read, i, width;
+	char         *buffer;
+
+	size = FS_SV_FOpenFileRead(ETL_CONSOLE_HISTORY_FILE, &f);
+	if (!f)
+	{
+		Com_Printf("Couldn't read %s.\n", ETL_CONSOLE_HISTORY_FILE);
+		return;
+	}
+
+	if (size > ETL_CONSOLE_HISTORY_BUFFER_MAX * sizeof(char))
+	{
+		size = ETL_CONSOLE_HISTORY_BUFFER_MAX * sizeof(char);
+	}
+	else
+	{
+		size++;
+	}
+
+	buffer = Com_Allocate(size);
+	Com_Memset(buffer, 0, size);
+
+	read = FS_Read(buffer, (int)size - 1, f);
+
+	for (i = 0, historyLine = 0; i < read && historyLine < COMMAND_HISTORY;)
+	{
+		if (!buffer[i])
+		{
+			break;
+		}
+
+		if (buffer[i] == '\n')
+		{
+			// only increment the history line if the buffer is not empty
+			if (historyEditLines[historyLine].buffer[0])
+			{
+				historyLine++;
+			}
+			i++;
+			continue;
+		}
+
+		width = Q_UTF8_Width(&buffer[i]);
+		if (!width)
+		{
+			break;
+		}
+
+		Field_InsertChar(&historyEditLines[historyLine], (int) Q_UTF8_CodePoint(&buffer[i]), qfalse);
+		i += width;
+	}
+
+	// if the history file did not end with a newline
+	if (*historyEditLines[historyLine].buffer)
+	{
+		historyLine++;
+	}
+	nextHistoryLine = historyLine;
+
+	Com_Dealloc(buffer);
+	FS_FCloseFile(f);
+}
+
+/**
+ * @brief Persist console history to a local file
+ */
+void Con_SaveConsoleHistory(void)
+{
+	int          i;
+	fileHandle_t f;
+
+	f = FS_SV_FOpenFileWrite(ETL_CONSOLE_HISTORY_FILE);
+	if (!f)
+	{
+		Com_Printf("Couldn't write %s.\n", ETL_CONSOLE_HISTORY_FILE);
+		return;
+	}
+
+	for (i = 0; i < COMMAND_HISTORY; i++)
+	{
+		if (!*historyEditLines[i].buffer)
+		{
+			continue;
+		}
+
+		if (!FS_Write(historyEditLines[i].buffer, (int)strlen(historyEditLines[i].buffer), f))
+		{
+			Com_Printf("Couldn't write %s.\n", ETL_CONSOLE_HISTORY_FILE);
+		}
+
+		if (!FS_Write("\n", 1, f))
+		{
+			Com_Printf("Couldn't write %s.\n", ETL_CONSOLE_HISTORY_FILE);
+		}
+	}
+
+	FS_FCloseFile(f);
+}
+
 /**
  * @brief Initialize console
  */
@@ -332,7 +441,7 @@ void Con_Init(void)
 	con_notifytime = Cvar_Get("con_notifytime", "7", 0);    // increased per id req for obits
 	con_openspeed  = Cvar_Get("con_openspeed", "3", 0);
 	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE_ND);
-    Cvar_Get("con_fontName", "JetBrainsMono-SemiBold", CVAR_LATCH | CVAR_ARCHIVE_ND);
+	Cvar_Get("con_fontName", "JetBrainsMono-SemiBold", CVAR_LATCH | CVAR_ARCHIVE_ND);
 
 	con_background    = Cvar_GetAndDescribe("con_background", "", CVAR_ARCHIVE, "Console background color in normalized RGBA format, eg. \"0.2 0.2 0.2 0.8\".");
 	con_defaultHeight = Cvar_GetAndDescribe("con_defaultHeight", "0.5", CVAR_ARCHIVE_ND, "Default console height without key modifiers.");
@@ -344,6 +453,8 @@ void Con_Init(void)
 		Field_Clear(&historyEditLines[i]);
 		historyEditLines[i].widthInChars = g_console_field_width / smallCharWidth - 2;
 	}
+
+	Con_LoadConsoleHistory();
 
 	Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f, "Toggles the console.");
 	Cmd_AddCommand("clear", Con_Clear_f, "Clears console content.");

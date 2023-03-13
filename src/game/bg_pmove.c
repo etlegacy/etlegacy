@@ -656,8 +656,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	             + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove);
 	scale = (float)pm->ps->speed * max / (127.0f * total);
 
-	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50
-	    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
+	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50)
 	{
 		scale *= pm->ps->sprintSpeedScale;
 	}
@@ -699,8 +698,15 @@ static float PM_CmdScale(usercmd_t *cmd)
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
-		// half move speed if weapon is scoped
-		scale *= 0.5f;
+		// reduce move speed if weapon is scoped
+		if (pm->cmd.buttons & BUTTON_WALKING)
+		{
+			scale *= 0.75;
+		}
+		else
+		{
+			scale *= 0.5f;
+		}
 	}
 
 	return scale;
@@ -1397,10 +1403,6 @@ static void PM_WalkMove(void)
 			wishspeed = pm->ps->speed * pm->ps->crouchSpeedScale;
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED || pm->ps->eFlags & EF_ZOOMING)
-	{
-		wishspeed *= 0.625f;
-	}
 
 	// clamp the speed lower if wading or walking on the bottom
 	if (pm->waterlevel)
@@ -1872,7 +1874,7 @@ static void PM_GroundTrace(void)
 		pml.walking     = qfalse;
 
 		if (((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) ||
-		     (pm->ps->eFlags & EF_ZOOMING)) &&
+		     (pm->ps->eFlags & EF_ZOOMING)) && !pm->waterlevel &&
 		    !pm->pmext->airTime)
 		{
 			pm->pmext->airTime = pm->cmd.serverTime;
@@ -5203,7 +5205,10 @@ void PmoveSingle(pmove_t *pmove)
 	else if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) || (pm->ps->eFlags & EF_ZOOMING))
 	{
 		// in air for too much time
-		if (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 250)
+		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
+		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
+		if ((pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500)
+		    || (!pm->pmext->airTime && VectorLength(pm->ps->velocity) > 127))
 		{
 			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 		}

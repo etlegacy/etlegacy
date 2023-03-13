@@ -747,7 +747,7 @@ void CG_UpdateCvars(void)
 						trap_Cvar_Set("cg_errorDecay", "500");
 					}
 				}
-				else if (cv->vmCvar == &cg_crosshairSize || cv->vmCvar == &cg_crosshairSize
+				else if (cv->vmCvar == &cg_crosshairSize
 				         || cv->vmCvar == &cg_crosshairAlpha || cv->vmCvar == &cg_crosshairColor
 				         || cv->vmCvar == &cg_crosshairAlphaAlt || cv->vmCvar == &cg_crosshairColorAlt
 				         || cv->vmCvar == &cg_crosshairPulse || cv->vmCvar == &cg_crosshairHealth)
@@ -1742,10 +1742,12 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags");
 
-	cgs.media.slashShader    = trap_R_RegisterShaderNoMip("gfx/2d/numbers/slash");
-	cgs.media.compass2Shader = trap_R_RegisterShaderNoMip("gfx/2d/compass2.tga");
-	cgs.media.compassShader  = trap_R_RegisterShaderNoMip("gfx/2d/compass.tga");
-	cgs.media.buddyShader    = trap_R_RegisterShaderNoMip("sprites/buddy.tga");
+	cgs.media.slashShader             = trap_R_RegisterShaderNoMip("gfx/2d/numbers/slash");
+	cgs.media.compass2Shader          = trap_R_RegisterShaderNoMip("gfx/2d/compass2.tga");
+	cgs.media.compassShader           = trap_R_RegisterShaderNoMip("gfx/2d/compass.tga");
+	cgs.media.compassDirectionShader  = trap_R_RegisterShaderNoMip("gfx/2d/compassdirection");
+	cgs.media.compassCircleTickShader = trap_R_RegisterShaderNoMip("gfx/2d/compasscircletick");
+	cgs.media.buddyShader             = trap_R_RegisterShaderNoMip("sprites/buddy.tga");
 
 	for (i = 0 ; i < NUM_CROSSHAIRS ; i++)
 	{

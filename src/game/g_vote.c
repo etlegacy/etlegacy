@@ -1734,7 +1734,7 @@ void G_IntermissionVoteTally(gentity_t *ent)
 	}
 
 	Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", voterCount));
-	Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", level.numConnectedClients));
+	Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", level.numHumanConnectedClients));
 
 	for (i = 0; i < maxMaps; i++)
 	{

@@ -47,7 +47,7 @@ static lagometer_t lagometer;
 const hudComponentFields_t hudComponentFields[] =
 {
 	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },          // FIXME: outside cg_draw_hud
-	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj"     } },
+	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts"     } },
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
@@ -175,7 +175,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->hudnumber        = 0;
 	hud->name[0]          = '\0';
 	hud->crosshair        = CG_getComponent(tmp_adj(SCREEN_WIDTH * .5f - 24, 48), SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
-	hud->compass          = CG_getComponent(tmp_adj(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, 14, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
+	hud->compass          = CG_getComponent(tmp_adj(SCREEN_WIDTH - 136, 132), 0, 132, 132, qtrue, COMPASS_ITEM | COMPASS_SECONDARY_OBJECTIVES | COMPASS_PRIMARY_OBJECTIVES | COMPASS_DECOR | COMPASS_CARDINAL_POINTS, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 	hud->staminabar       = CG_getComponent(tmp_adj(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
 	hud->breathbar        = CG_getComponent(tmp_adj(4, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
 	hud->healthbar        = CG_getComponent(tmp_adj(24, 12), SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
@@ -2395,7 +2395,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(basex, basey, basew, baseh, 1, comp->colorBorder);
 	}
 
-	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style & COMPASS_SQUARE);
+	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style);
 }
 /**
  * @brief CG_DrawStatsDebug
@@ -2709,7 +2709,8 @@ static char *CG_RoundTimerText()
 
 /**
  * @brief CG_LocalTimeText
- * @return
+ * @param[in] style
+ * @return 
  */
 static char *CG_LocalTimeText(int style)
 {
@@ -2755,7 +2756,7 @@ static char *CG_LocalTimeText(int style)
 
 /**
  * @brief CG_DrawRespawnTimer
- * @param respawn
+ * @param[in] comp
  */
 void CG_DrawRespawnTimer(hudComponent_t *comp)
 {
@@ -2777,7 +2778,7 @@ void CG_DrawRespawnTimer(hudComponent_t *comp)
 
 /**
  * @brief CG_DrawSpawnTimer
- * @param respawn
+ * @param[in] comp
  */
 void CG_DrawSpawnTimer(hudComponent_t *comp)
 {
@@ -2792,17 +2793,17 @@ void CG_DrawSpawnTimer(hudComponent_t *comp)
 	// note: pass reinforcement timer in as 's' to get the ENEMY reinforcement time
 	// FIXME: this should be refactored, this makes no sense... what even is 's'? and 'rt'?
 	//  spawntimer/reinforcement timer? but the function doesn't treat them as such...
-	blink = CG_SpawnTimersText(&rt, &s);
+	blink = CG_SpawnTimersText(&s, &rt);
 
-	if (rt)
+	if (s)
 	{
-		CG_DrawCompText(comp, s, comp->colorMain, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
+		CG_DrawCompText(comp, rt, comp->colorMain, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
 	}
 }
 
 /**
  * @brief CG_DrawRoundTimerSimple
- * @param roundtimer
+ * @param[in] comp
  */
 static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 {
@@ -2822,9 +2823,8 @@ static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_DrawTimerNormal
- * @param[in] y
- * @return
+ * @brief CG_DrawRoundTimerNormal
+ * @param[in] comp
  */
 static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 {
@@ -2859,7 +2859,7 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 
 /**
  * @brief CG_DrawRoundTimer
- * @param comp
+ * @param[in] comp
  */
 void CG_DrawRoundTimer(hudComponent_t *comp)
 {
@@ -2879,8 +2879,7 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 
 /**
  * @brief CG_DrawLocalTime
- * @param[in] y
- * @return
+ * @param[in] comp
  */
 void CG_DrawLocalTime(hudComponent_t *comp)
 {

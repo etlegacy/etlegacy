@@ -49,6 +49,20 @@ menuDef {
 	BUTTONEXT( 6, 176, WINDOW_WIDTH-12, 18, _("DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect, tooltip _("Disconnect your connection from current server") )
 	BUTTONEXT( 6, 200, WINDOW_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit, tooltip _("Don't press this. Be warned!") )
 
+// Vanilla client warning //
+#ifdef OLD_CLIENT
+#define SECURITY_WIDTH	200
+	SUBWINDOW( __WINDOW_WIDTH/2-100-16, 240, SECURITY_WIDTH, 85, _("^1SECURITY INFORMATION") )
+	LABELWHITE( __WINDOW_WIDTH/2-100-16, 256, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	// Yeah we have a Legacy client, but its old.
+	#ifdef ETLEGACY
+		LABELWHITE( __WINDOW_WIDTH/2-100-16, 270, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your Legacy client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	#else
+		LABELWHITE( __WINDOW_WIDTH/2-100-16, 270, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	#endif
+	BUTTON( __WINDOW_WIDTH/2-100-16+6, 300, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
+#endif
+
 	itemDef {
 		name        "legacy_logo"
 		rect        15 220 128 64
