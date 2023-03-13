@@ -1697,8 +1697,8 @@ typedef struct
 	qhandle_t slashShader;
 	qhandle_t compassShader;
 	qhandle_t compass2Shader;
-    qhandle_t compassDirectionShader;
-    qhandle_t compassCircleTickShader;
+	qhandle_t compassDirectionShader;
+	qhandle_t compassCircleTickShader;
 
 	qhandle_t snowShader;
 	qhandle_t oilParticle;
@@ -2153,9 +2153,9 @@ enum
 	COMPASS_ITEM                 = BIT(1),
 	COMPASS_SECONDARY_OBJECTIVES = BIT(2),
 	COMPASS_PRIMARY_OBJECTIVES   = BIT(3),
-    COMPASS_DECOR                = BIT(4),
-    COMPASS_DIRECTION            = BIT(5),
-    COMPASS_CARDINAL_POINTS      = BIT(6),
+	COMPASS_DECOR                = BIT(4),
+	COMPASS_DIRECTION            = BIT(5),
+	COMPASS_CARDINAL_POINTS      = BIT(6),
 };
 
 /// Locations
@@ -2902,11 +2902,11 @@ extern vmCvar_t cg_customFont2;
 extern vmCvar_t cg_drawSpawnpoints;
 extern vmCvar_t cg_crosshairSize;
 extern vmCvar_t cg_crosshairAlpha;
-extern vmCvar_t cg_crosshairColor;  
+extern vmCvar_t cg_crosshairColor;
 extern vmCvar_t cg_crosshairAlphaAlt;
 extern vmCvar_t cg_crosshairColorAlt;
-extern vmCvar_t cg_crosshairPulse;  
-extern vmCvar_t cg_crosshairHealth; 
+extern vmCvar_t cg_crosshairPulse;
+extern vmCvar_t cg_crosshairHealth;
 
 // local clock flags
 enum

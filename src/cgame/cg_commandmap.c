@@ -1904,8 +1904,8 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 		w    = w - diff;
 		h    = h - diff;
 	}
-    
-    mapScissor.circular   = !(style & COMPASS_SQUARE);
+
+	mapScissor.circular   = !(style & COMPASS_SQUARE);
 	mapScissor.zoomFactor = cg_automapZoom.value;
 
 	mapScissor.tl[0] = mapScissor.tl[1] = 0;

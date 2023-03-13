@@ -47,7 +47,7 @@ static lagometer_t lagometer;
 const hudComponentFields_t hudComponentFields[] =
 {
 	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },          // FIXME: outside cg_draw_hud
-	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts"     } },
+	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts"} },
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
@@ -2710,7 +2710,7 @@ static char *CG_RoundTimerText()
 /**
  * @brief CG_LocalTimeText
  * @param[in] style
- * @return 
+ * @return
  */
 static char *CG_LocalTimeText(int style)
 {
