@@ -702,6 +702,7 @@ void Con_Clear_f(void);
 void Con_Dump_f(void);
 void Con_CheckResize(void);
 void Cmd_CompleteTxtName(char *args, int argNum);
+void Con_SaveConsoleHistory(void);
 void Con_Init(void);
 void Con_Shutdown(void);
 void Con_Linefeed(qboolean skipnotify);

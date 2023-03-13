@@ -363,7 +363,7 @@ void Field_Paste(field_t *edit)
 
 	for (i = 0 ; i < pasteLen ; i++)
 	{
-		Field_CharEvent(edit, chars[i]);
+		Field_InsertChart(edit, (int)chars[i], key_overstrikeMode);
 	}
 	Com_Dealloc(chars);
 
@@ -689,6 +689,8 @@ void Console_Key(int key)
 		Field_Clear(&g_consoleField);
 
 		g_consoleField.widthInChars = g_console_field_width;
+
+		Con_SaveConsoleHistory();
 
 		if (cls.state == CA_DISCONNECTED)
 		{

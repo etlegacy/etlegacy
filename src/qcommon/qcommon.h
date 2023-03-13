@@ -987,6 +987,7 @@ typedef struct
 void Console_RemoveHighlighted(field_t *field, int *completionOffset);
 void Console_AutoComplete(field_t *field, int *completionOffset);
 void Field_Clear(field_t *field);
+void Field_InsertChart(field_t *edit, int ch, qboolean overstrike);
 void Field_AutoComplete(field_t *field);
 void Field_CompleteKeyname(void);
 void Field_CompleteFilenameMultiple(const char *dir, int numext, const char **ext, qboolean allowNonPureFilesOnDisk);
@@ -1409,7 +1410,7 @@ double Sys_GetWindowsVer(void);
 
 #define sys_stat_t struct _stat
 int Sys_Stat(const char *path, void *stat);
-#define Sys_S_IsDir(m) (m & _S_IFDIR)
+#define Sys_S_IsDir(m) (m &_S_IFDIR)
 
 int Sys_Rename(const char *from, const char *to);
 char *Sys_RealPath(const char *path);
