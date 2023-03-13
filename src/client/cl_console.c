@@ -383,8 +383,7 @@ static void Con_LoadConsoleHistory(void)
 		Field_InsertChart(&historyEditLines[historyLine], (int)Q_UTF8_CodePoint(&buffer[i]), qfalse);
 		i += width;
 	}
-
-	nextHistoryLine = historyLine + 1;
+	nextHistoryLine = historyLine;
 
 	Com_Dealloc(buffer);
 	FS_FCloseFile(f);
