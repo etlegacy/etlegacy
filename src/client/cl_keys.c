@@ -688,7 +688,7 @@ void Console_Key(int key)
 
 		Field_Clear(&g_consoleField);
 
-		g_consoleField.widthInChars = g_console_field_width;
+		g_consoleField.widthInChars = Con_ConsoleFieldWidth();
 
 		Con_SaveConsoleHistory();
 
@@ -733,8 +733,9 @@ void Console_Key(int key)
 		{
 			historyLine--;
 		}
-		g_consoleField      = historyEditLines[historyLine % COMMAND_HISTORY];
-		con.highlightOffset = 0;
+		g_consoleField              = historyEditLines[historyLine % COMMAND_HISTORY];
+		g_consoleField.widthInChars = Con_ConsoleFieldWidth();
+		con.highlightOffset         = 0;
 		return;
 	}
 
@@ -748,8 +749,9 @@ void Console_Key(int key)
 			return;
 		}
 		historyLine++;
-		g_consoleField      = historyEditLines[historyLine % COMMAND_HISTORY];
-		con.highlightOffset = 0;
+		g_consoleField              = historyEditLines[historyLine % COMMAND_HISTORY];
+		g_consoleField.widthInChars = Con_ConsoleFieldWidth();
+		con.highlightOffset         = 0;
 		return;
 	}
 

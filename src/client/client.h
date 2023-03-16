@@ -114,8 +114,6 @@ typedef struct
 /// it can be un-deltad from the original
 #define MAX_PARSE_ENTITIES  2048
 
-extern int g_console_field_width;
-
 /**
  * @struct clientActive_t
  * @brief The clientActive_t structure is wiped completely at every
@@ -695,6 +693,7 @@ typedef struct
 
 extern console_t con;
 
+int Con_ConsoleFieldWidth(void);
 void Con_ToggleConsole_f(void);
 void Con_DrawNotify(void);
 void Con_ClearNotify(void);

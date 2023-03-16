@@ -2843,8 +2843,7 @@ void CL_InitRenderer(void)
 	cls.consoleShader = re.RegisterShader("console-16bit");    // shader works with 16bit
 	//cls.consoleShader2 = re.RegisterShader("console2-16bit");    // shader works with 16bit
 
-	g_console_field_width       = cls.glconfig.vidWidth / SMALLCHAR_WIDTH - 2;
-	g_consoleField.widthInChars = g_console_field_width;
+	g_consoleField.widthInChars = Con_ConsoleFieldWidth();
 }
 
 /**

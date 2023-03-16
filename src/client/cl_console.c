@@ -40,9 +40,9 @@
 #define CONSOLE_COLOR  COLOR_WHITE
 #define DEFAULT_CONSOLE_WIDTH   158
 
-int g_console_field_width = DEFAULT_CONSOLE_WIDTH;
-int smallCharWidth;
-int smallCharHeight;
+int smallCharWidth = SMALLCHAR_WIDTH;
+int        smallCharHeight  = SMALLCHAR_HEIGHT;
+static int versionStringLen = 0;
 
 console_t con;
 
@@ -53,6 +53,16 @@ cvar_t *con_background;
 cvar_t *con_defaultHeight;
 
 vec4_t console_highlightcolor = { 0.5f, 0.5f, 0.2f, 0.45f };
+
+int Con_ConsoleFieldWidth(void)
+{
+	if (!cls.glconfig.vidWidth)
+	{
+		return DEFAULT_CONSOLE_WIDTH;
+	}
+
+	return (cls.glconfig.vidWidth / smallCharWidth - 2) - (versionStringLen ? versionStringLen + 3 : 0);
+}
 
 /**
  * @brief Toggle console
@@ -73,7 +83,7 @@ void Con_ToggleConsole_f(void)
 		Field_Clear(&g_consoleField);
 	}
 
-	g_consoleField.widthInChars = g_console_field_width;
+	g_consoleField.widthInChars = Con_ConsoleFieldWidth();
 
 	Con_ClearNotify();
 
@@ -471,11 +481,11 @@ void Con_Init(void)
 	con_defaultHeight = Cvar_GetAndDescribe("con_defaultHeight", "0.5", CVAR_ARCHIVE_ND, "Default console height without key modifiers.");
 
 	Field_Clear(&g_consoleField);
-	g_consoleField.widthInChars = g_console_field_width / smallCharWidth - 2;
+	g_consoleField.widthInChars = Con_ConsoleFieldWidth();
 	for (i = 0; i < COMMAND_HISTORY; i++)
 	{
 		Field_Clear(&historyEditLines[i]);
-		historyEditLines[i].widthInChars = g_console_field_width / smallCharWidth - 2;
+		historyEditLines[i].widthInChars = g_consoleField.widthInChars;
 	}
 
 	Con_LoadConsoleHistory();
@@ -682,6 +692,13 @@ void Con_DrawVersion(void)
 	}
 
 	i = strlen(version);
+
+	// force update the width in chars if the versionStringLen has changed..
+	if (i != versionStringLen)
+	{
+		versionStringLen            = i;
+		g_consoleField.widthInChars = Con_ConsoleFieldWidth();
+	}
 
 	for (x = 0; x < i; x++)
 	{
