@@ -69,6 +69,13 @@ static void CG_Args(int offset, int count, char *buffer, int bufferLength)
 	}
 }
 
+static ID_INLINE const char * CG_ArgsStat(int offset, int count)
+{
+	static char buffer[MAX_TOKEN_CHARS];
+	CG_Args(offset, count, buffer, sizeof(buffer));
+	return buffer;
+}
+
 /**
  * @brief Debugging command to print the current position
  */
@@ -3040,23 +3047,11 @@ static void CG_CrosshairColor_f()
 {
 	if (trap_Argc() > 1)
 	{
-		const char *colString;
-		vec4_t     color;
+		const char *colString = CG_ArgsStat(1, 4);
 
-		if (trap_Argc() == 2)
+		if (!Q_ParseColor(colString, CG_GetActiveHUD()->crosshair.colorMain))
 		{
-			colString = CG_Argv(1);
-		}
-		else
-		{
-			colString = va("%s %s %s %f", CG_Argv(1), CG_Argv(2), CG_Argv(3), CG_GetActiveHUD()->crosshair.colorMain[3]);
-		}
-
-		if (Q_ParseColor(colString, color))
-		{
-			CG_GetActiveHUD()->crosshair.colorMain[0] = color[0];
-			CG_GetActiveHUD()->crosshair.colorMain[1] = color[1];
-			CG_GetActiveHUD()->crosshair.colorMain[2] = color[2];
+			CG_Printf("^1Invalid crosshair color args: (^3%s^1), not a color value (name/hex/float,3-4x/int,3-4x)\n", colString);
 		}
 	}
 }
@@ -3080,23 +3075,11 @@ static void CG_CrosshairColorAlt_f()
 {
 	if (trap_Argc() > 1)
 	{
-		const char *colString;
-		vec4_t     color;
+		const char *colString = CG_ArgsStat(1, 4);
 
-		if (trap_Argc() == 2)
+		if (!Q_ParseColor(colString, CG_GetActiveHUD()->crosshair.colorSecondary))
 		{
-			colString = CG_Argv(1);
-		}
-		else
-		{
-			colString = va("%s %s %s %f", CG_Argv(1), CG_Argv(2), CG_Argv(3), CG_GetActiveHUD()->crosshair.colorSecondary[3]);
-		}
-
-		if (Q_ParseColor(colString, color))
-		{
-			CG_GetActiveHUD()->crosshair.colorSecondary[0] = color[0];
-			CG_GetActiveHUD()->crosshair.colorSecondary[1] = color[1];
-			CG_GetActiveHUD()->crosshair.colorSecondary[2] = color[2];
+			CG_Printf("^1Invalid crosshair color args: (^3%s^1), not a color value (name/hex/float,3-4x/int,3-4x)\n", colString);
 		}
 	}
 }

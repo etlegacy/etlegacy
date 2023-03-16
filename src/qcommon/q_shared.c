@@ -2055,6 +2055,11 @@ int Q_ParseColor(const char *colString, float *outColor)
 		if (vec4_isIntegral(temp) && (temp[0] > 1 || temp[1] > 1 || temp[2] > 1 || temp[3] > 1))
 		{
 			vec4_scale(temp, 1.0f / 255.00f, temp);
+			// restore the alpha value since it might have been squashed via the integral scaling
+			if (count == 3)
+			{
+				temp[3] = outColor[3];
+			}
 		}
 		ClampColor(temp);
 		vec4_copy(temp, outColor);
