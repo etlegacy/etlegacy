@@ -2518,30 +2518,6 @@ static qboolean CG_SetIntComponentFromCommand(int *argIndex, hudComponent_t *com
 	return qtrue;
 }
 
-static const char *colorsTable[] =
-{
-	"white",
-	"red",
-	"green",
-	"blue",
-	"yellow",
-	"magenta",
-	"cyan",
-	"orange",
-	"mdred",
-	"mdgreen",
-	"dkgreen",
-	"mdcyan",
-	"mdyellow",
-	"mdorange",
-	"mdblue",
-	"ltgrey",
-	"mdgrey",
-	"dkgrey",
-	"black",
-	NULL
-};
-
 static qboolean CG_SetAnchorPointFromCommand(int *argIndex, hudComponent_t *comp, int offset)
 {
 	char          token[MAX_TOKEN_CHARS];
@@ -2671,9 +2647,9 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 		CG_Printf("^3color field component needs at least 1 argument <colorname> / <0xRRGGBB[AA]> or 3-4 arguments <r> <g> <b> [a]\n");
 		CG_Printf("^7Current value is %f %f %f %f\n", (*value)[0], (*value)[1], (*value)[2], (*value)[3]);
 
-		for (i = 0; colorsTable[i]; ++i)
+		for (i = 0; Q_GetColorString(i); ++i)
 		{
-			str = va("%s%-9s%s", str ? str : "", colorsTable[i], !((i + 1) % 5) ? "\n" : "    ");
+			str = va("%s%-9s%s", str ? str : "", Q_GetColorString(i), !((i + 1) % 5) ? "\n" : "    ");
 		}
 
 		CG_Printf("\n\nAvailable ^3<colorname> ^7:\n\n%s", str);
@@ -2949,9 +2925,9 @@ static qboolean CG_EditHudComponentMembersFieldsComplete()
 				}
 			}
 
-			for (j = 0; colorsTable[j]; j++)
+			for (j = 0; Q_GetColorString(j); j++)
 			{
-				if (!Q_strncmp(token, colorsTable[j], MAX_TOKEN_CHARS))
+				if (!Q_strncmp(token, Q_GetColorString(j), MAX_TOKEN_CHARS))
 				{
 					return qfalse;
 				}
@@ -2973,9 +2949,9 @@ static qboolean CG_EditHudComponentMembersFieldsComplete()
 		    || !Q_strncmp(token, "colorBackground", MAX_TOKEN_CHARS)
 		    || !Q_strncmp(token, "colorBorder", MAX_TOKEN_CHARS))
 		{
-			for (i = 0; colorsTable[i]; i++)
+			for (i = 0; Q_GetColorString(i); i++)
 			{
-				trap_CommandComplete(colorsTable[i]);
+				trap_CommandComplete(Q_GetColorString(i));
 			}
 
 			return qtrue;

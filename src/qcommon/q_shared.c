@@ -1997,6 +1997,17 @@ const struct
 	{ "black",    &colorBlack    },
 	{ NULL,       NULL           }
 };
+const int OSP_ColorTableSize = ARRAY_LEN(OSP_Colortable) - 1;
+
+const char *Q_GetColorString(unsigned int offset)
+{
+	if (offset >= OSP_ColorTableSize)
+	{
+		return NULL;
+	}
+
+	return OSP_Colortable[offset].colorName;
+}
 
 /**
  * @brief Q_ParseColor supports hex (rrggbb<aa>), float (0.0 - 1.0), int (0 - 255) and color name formats
