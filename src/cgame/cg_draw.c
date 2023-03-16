@@ -2284,8 +2284,8 @@ const char *CG_GetCrosshairNameString(hudComponent_t *comp)
 
 	// disguised covert ops, not in the same team
 	if ((cg_entities[cg.crosshairClientNum].currentState.powerups & (1 << PW_OPS_DISGUISED) &&
-		cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team) &&
-		cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR))
+	     cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team) &&
+	    cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
 	{
 		clientNum = cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum;
 	}
