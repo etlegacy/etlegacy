@@ -41,7 +41,8 @@
 #define DEFAULT_CONSOLE_WIDTH   158
 
 int smallCharWidth = SMALLCHAR_WIDTH;
-int        smallCharHeight  = SMALLCHAR_HEIGHT;
+int smallCharHeight = SMALLCHAR_HEIGHT;
+
 static int versionStringLen = 0;
 
 console_t con;
@@ -678,31 +679,45 @@ void CL_ConsolePrint(char *txt)
 #endif
 
 /**
+ * @brief Format console version string
+ * @param out buffer for the formatted string
+ * @param len buffer size
+ * @return string length
+ */
+static int Con_FormatVersionString(char *out, int len)
+{
+	if (!out)
+	{
+		return 0;
+	}
+
+	// draw update
+	if (com_updateavailable->integer)
+	{
+		Com_sprintf(out, len, _("%s (UPDATE AVAILABLE)"), ET_VERSION);
+	}
+	else
+	{
+		Q_strcat(out, len, ET_VERSION);
+	}
+
+	return (int)strlen(out);
+}
+
+/**
  * @brief Draw version text
  */
 void Con_DrawVersion(void)
 {
-	int  x, i;
-	char version[256] = ET_VERSION;
+	int  x, y, i;
+	char version[256] = { 0 };
 
-	// draw update
-	if (Cvar_VariableIntegerValue("com_updateavailable"))
-	{
-		Com_sprintf(version, sizeof(version), _("%s (UPDATE AVAILABLE)"), ET_VERSION);
-	}
-
-	i = strlen(version);
-
-	// force update the width in chars if the versionStringLen has changed..
-	if (i != versionStringLen)
-	{
-		versionStringLen            = i;
-		g_consoleField.widthInChars = Con_ConsoleFieldWidth();
-	}
+	i = Con_FormatVersionString(version, sizeof(version));
+	y = strlen(ET_VERSION);
 
 	for (x = 0; x < i; x++)
 	{
-		if (x > strlen(ET_VERSION))
+		if (x > y)
 		{
 			re.SetColor(g_color_table[ColorIndex(COLOR_GREEN)]);
 		}
@@ -1067,10 +1082,31 @@ void Con_DrawConsole(void)
 }
 
 /**
+ * @brief Count and update the version string length for the console input field
+ */
+static void Con_UpdateVersionStringLen()
+{
+	int  i;
+	char version[256] = { 0 };
+	i = Con_FormatVersionString(version, sizeof(version));
+	if (i != versionStringLen)
+	{
+		versionStringLen            = i;
+		g_consoleField.widthInChars = Con_ConsoleFieldWidth();
+	}
+}
+
+/**
  * @brief Scroll console up or down
  */
 void Con_RunConsole(void)
 {
+	if (com_updateavailable->modified)
+	{
+		com_updateavailable->modified = qfalse;
+		Con_UpdateVersionStringLen();
+	}
+
 	// decide on the destination height of the console
 	// short console support via shift+~
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
