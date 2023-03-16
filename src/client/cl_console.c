@@ -89,7 +89,7 @@ void Con_ToggleConsole_f(void)
 	Con_ClearNotify();
 
 	// We clear the keys here to the +/- actions can finnish before modifying the key catcher
-	Key_ClearStates();
+	Key_ClearKeys();
 
 	// multiple console size support
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)

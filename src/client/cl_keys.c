@@ -1344,7 +1344,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		{
 			if (keys[K_LALT].down || keys[K_RALT].down)
 			{
-				Key_ClearStates();
+				Key_ClearKeys();
 				if (Cvar_VariableIntegerValue("r_fullscreen"))
 				{
 					Com_Printf("Switching to windowed rendering\n");
@@ -1478,7 +1478,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	if (!down)
 	{
 		kb = keys[key].binding;
-		if (!cls.keyCatchers && kb && kb[0] == '+')
+		if (kb && kb[0] == '+')
 		{
 			// button commands add keynum and time as parms so that multiple
 			// sources can be discriminated and subframe corrected
@@ -1634,8 +1634,11 @@ void Key_ClearStates(void)
 		keys[i].down    = 0;
 		keys[i].repeats = 0;
 	}
+}
 
-	// also clear the action keys
+void Key_ClearKeys(void)
+{
+	Key_ClearStates();
 	CL_ClearKeys();
 }
 
@@ -1662,12 +1665,6 @@ void Key_SetCatcherVM(int catcher)
 	}
 	else
 	{
-		// if we are adding a new catcher to the existing catchers then clear the key states
-		if (cls.keyCatchers != catcher)
-		{
-			Key_ClearStates();
-		}
-
 		cls.keyCatchers = catcher;
 	}
 }
