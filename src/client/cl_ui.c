@@ -1018,32 +1018,6 @@ void Key_GetBindingBuf(int keynum, char *buf, size_t buflen)
 }
 
 /**
- * @brief Key_GetCatcher
- * @return
- */
-int Key_GetCatcher(void)
-{
-	return cls.keyCatchers;
-}
-
-/**
- * @brief Key_SetCatcher
- * @param[in] catcher
- */
-void Key_SetCatcher(int catcher)
-{
-	// console overrides everything
-	if (cls.keyCatchers & KEYCATCH_CONSOLE)
-	{
-		cls.keyCatchers = catcher | KEYCATCH_CONSOLE;
-	}
-	else
-	{
-		cls.keyCatchers = catcher;
-	}
-}
-
-/**
  * @brief GetConfigString
  * @param[in] index
  * @param[out] buf
@@ -1241,8 +1215,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_KEY_GETCATCHER:
 		return Key_GetCatcher();
 	case UI_KEY_SETCATCHER:
-		// Don't allow the ui module to close the console
-		Key_SetCatcher(args[1] | (Key_GetCatcher() & KEYCATCH_CONSOLE));
+		Key_SetCatcherVM(args[1]);
 		return 0;
 	case UI_GETCLIPBOARDDATA:
 		GetClipboardData(VMA(1), args[2]);

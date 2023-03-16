@@ -76,5 +76,8 @@ qboolean Key_GetOverstrikeMode(void);
 void Key_SetOverstrikeMode(qboolean state);
 void Key_ClearStates(void);
 int Key_GetKey(const char *binding);
+int Key_GetCatcher(void);
+void Key_SetCatcherVM(int catcher);
+void Key_SetCatcher(int catcher);
 
 #endif // #ifndef INCLUDE_CLIENT_H

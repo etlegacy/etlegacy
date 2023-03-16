@@ -1010,7 +1010,6 @@ void CL_CmdButtons(usercmd_t *cmd)
 	// figure button bits
 	// send a button bit even if the key was pressed and released in
 	// less than a frame
-
 	for (i = 0 ; i < 7 ; i++)
 	{
 		if (kb[KB_BUTTONS0 + i].active || kb[KB_BUTTONS0 + i].wasPressed)
@@ -1509,9 +1508,7 @@ void CL_InitInput(void)
 }
 
 /**
- * @brief CL_ClearKeys
- *
- * @note Unused
+ * @brief CL_ClearKeys clears any active action keys
  */
 void CL_ClearKeys(void)
 {

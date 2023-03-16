@@ -320,7 +320,7 @@ extern qboolean debugMode;
 
 #define SET_EDITITEM(x) g_editingField  = qtrue; g_editItem = x;
 #define CLEAR_EDITITEM() g_editingField = qfalse; g_editItem = NULL;
-#define IS_EDITMODE(x) ((x->window.flags & WINDOW_HASFOCUS) && g_editingField)
+#define IS_EDITMODE(x) ((x->window.flags &WINDOW_HASFOCUS) && g_editingField)
 #define COMBO_SELECTORCHAR "V"
 
 // ui_main.c
@@ -359,8 +359,12 @@ extern void UI_DrawConnectScreen(qboolean overlay);
 // ui_loadpanel.c
 extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 
-// Is this diffevent in other systems? OSX?
+// Is this different in other systems? OSX?
+#ifdef __APPLE__
+#define K_CLIPBOARD(x) (tolower(x) == 'v' && (DC->keyIsDown(K_LCTRL) || DC->keyIsDown(K_RCTRL) || DC->keyIsDown(K_COMMAND)))
+#else
 #define K_CLIPBOARD(x) (tolower(x) == 'v' && (DC->keyIsDown(K_LCTRL) || DC->keyIsDown(K_RCTRL)))
+#endif
 
 // new ui stuff
 #define MAX_HEADS 64

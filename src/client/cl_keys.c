@@ -1393,11 +1393,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 
 		Con_ToggleConsole_f();
 
-		if (!keys[K_LCTRL].down && !keys[K_RCTRL].down && !keys[K_LALT].down && !keys[K_RALT].down)
-		{
-			Key_ClearStates();
-		}
-
 		// the console key should never be used as a char
 		consoleButtonWasPressed = qtrue;
 		return;
@@ -1433,11 +1428,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			else
 			{
 				Con_ToggleConsole_f();
-
-				if (!keys[K_LCTRL].down && !keys[K_RCTRL].down && !keys[K_LALT].down && !keys[K_RALT].down)
-				{
-					Key_ClearStates();
-				}
 			}
 
 			return;
@@ -1486,7 +1476,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	if (!down)
 	{
 		kb = keys[key].binding;
-		if (kb && kb[0] == '+')
+		if (!cls.keyCatchers && kb && kb[0] == '+')
 		{
 			// button commands add keynum and time as parms so that multiple
 			// sources can be discriminated and subframe corrected
@@ -1642,4 +1632,49 @@ void Key_ClearStates(void)
 		keys[i].down    = 0;
 		keys[i].repeats = 0;
 	}
+
+	// also clear the action keys
+	CL_ClearKeys();
+}
+
+/**
+ * @brief CL_GetCatcher
+ * @return
+ */
+int Key_GetCatcher(void)
+{
+	return cls.keyCatchers;
+}
+
+/**
+ * @brief CL_SetCatcherVM
+ * @param[in] catcher
+ */
+void Key_SetCatcherVM(int catcher)
+{
+	// Don't allow the ui module to close the console
+	// console overrides everything
+	if (cls.keyCatchers & KEYCATCH_CONSOLE)
+	{
+		cls.keyCatchers = catcher | KEYCATCH_CONSOLE;
+	}
+	else
+	{
+		// if we are adding a new catcher to the existing catchers then clear the key states
+		if (cls.keyCatchers != catcher)
+		{
+			Key_ClearStates();
+		}
+
+		cls.keyCatchers = catcher;
+	}
+}
+
+/**
+ * @brief CL_SetCatcherVM
+ * @param[in] catcher
+ */
+void Key_SetCatcher(int catcher)
+{
+	cls.keyCatchers = catcher;
 }

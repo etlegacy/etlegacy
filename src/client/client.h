@@ -844,8 +844,6 @@ void CL_AdjustTimeDelta(void);
 
 void CL_InitUI(void);
 void CL_ShutdownUI(void);
-int Key_GetCatcher(void);
-void Key_SetCatcher(int catcher);
 void LAN_LoadCachedServers(void);
 void LAN_SaveServersToFile(void);
 //int LAN_AddServer(int source, const char *name, const char *address);

@@ -59,6 +59,12 @@ vec4_t console_highlightcolor = { 0.5f, 0.5f, 0.2f, 0.45f };
  */
 void Con_ToggleConsole_f(void)
 {
+	qboolean ctrl          = keys[K_LCTRL].down || keys[K_RCTRL].down;
+	qboolean alt           = keys[K_LALT].down || keys[K_RALT].down;
+	float    shortConsole  = (4.0f * smallCharHeight) / cls.glconfig.vidHeight;
+	float    normalConsole = Com_Clamp((4.0f * smallCharHeight) / cls.glconfig.vidHeight, 1.0f, con_defaultHeight->value);
+	float    fullConsole   = 1.0f;
+
 	con.highlightOffset = 0;
 
 	// persistent console input is more useful (added cvar)
@@ -71,30 +77,48 @@ void Con_ToggleConsole_f(void)
 
 	Con_ClearNotify();
 
+	// We clear the keys here to the +/- actions can finnish before modifying the key catcher
+	Key_ClearStates();
+
 	// multiple console size support
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
 	{
-		cls.keyCatchers &= ~KEYCATCH_CONSOLE;
-		con.desiredFrac  = 0.0f;
+		// check if the user wants to resize instead of close
+
+		// short console
+		if (ctrl && con.desiredFrac != shortConsole)
+		{
+			con.desiredFrac = shortConsole;
+		}
+		// full console
+		else if (alt && con.desiredFrac != fullConsole)
+		{
+			con.desiredFrac = fullConsole;
+		}
+		else
+		{
+			cls.keyCatchers &= ~KEYCATCH_CONSOLE;
+			con.desiredFrac  = 0.0f;
+		}
 	}
 	else
 	{
 		cls.keyCatchers |= KEYCATCH_CONSOLE;
 
 		// short console
-		if (keys[K_LCTRL].down || keys[K_RCTRL].down)
+		if (ctrl)
 		{
-			con.desiredFrac = (4.0f * smallCharHeight) / cls.glconfig.vidHeight;
+			con.desiredFrac = shortConsole;
 		}
 		// full console
-		else if (keys[K_LALT].down || keys[K_RALT].down)
+		else if (alt)
 		{
-			con.desiredFrac = 1.0f;
+			con.desiredFrac = fullConsole;
 		}
 		// normal half-screen console
 		else
 		{
-			con.desiredFrac = Com_Clamp((4.0f * smallCharHeight) / cls.glconfig.vidHeight, 1.0f, con_defaultHeight->value);
+			con.desiredFrac = normalConsole;
 		}
 	}
 }
