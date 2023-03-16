@@ -39,6 +39,37 @@
 char *Binding_FromName(const char *cvar);
 
 /**
+ * @brief Concat multiple args from range into a single string
+ * @param offset start offset
+ * @param count how many token to add
+ * @param buffer output buffer
+ * @param bufferLength output buffer size
+ */
+static void CG_Args(int offset, int count, char *buffer, int bufferLength)
+{
+	static char tmp[MAX_TOKEN_CHARS];
+	int         i, total = trap_Argc();
+
+	buffer[0] = '\0';
+
+	if (count > 0 && total > offset + count)
+	{
+		total = offset + count;
+	}
+
+	for (i = offset; i < total; i++)
+	{
+		tmp[0] = '\0';
+		trap_Argv(i, tmp, MAX_TOKEN_CHARS);
+		Q_strcat(buffer, bufferLength, tmp);
+		if (i != total - 1)
+		{
+			Q_strcat(buffer, bufferLength, " ");
+		}
+	}
+}
+
+/**
  * @brief Debugging command to print the current position
  */
 static void CG_Viewpos_f(void)
@@ -2592,52 +2623,11 @@ static qboolean CG_SetAnchorParentComponentFromCommand(int *argIndex, hudCompone
 	return qtrue;
 }
 
-static qboolean CG_ParseColorValues(int *argIndex, float *value)
-{
-	char token[MAX_TOKEN_CHARS];
-
-	if ((trap_Argc() - *argIndex) <= 3)
-	{
-		return qfalse;
-	}
-
-	if (!CG_ParseFloatValueAtIndex(argIndex, &value[0], 'r'))
-	{
-		return qfalse;
-	}
-
-	if (!CG_ParseFloatValueAtIndex(argIndex, &value[1], 'g'))
-	{
-		return qfalse;
-	}
-
-	if (!CG_ParseFloatValueAtIndex(argIndex, &value[2], 'b'))
-	{
-		return qfalse;
-	}
-
-	if ((trap_Argc() - *argIndex) >= 1)
-	{
-		trap_Argv(*argIndex + 1, token, sizeof(token));
-
-		// ensure we don't start reading the next field string
-		// which can't start with a numeric value
-		if (Q_isnumeric(token[0]))
-		{
-			if (!CG_ParseFloatValueAtIndex(argIndex, &value[3], 'a'))
-			{
-				return qfalse;
-			}
-		}
-	}
-
-	return qtrue;
-}
-
 static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *comp, int offset)
 {
 	char   token[MAX_TOKEN_CHARS];
-	vec4_t *value = (vec4_t *) ((char *) comp + offset);
+	int    tokenCount = 0;
+	vec4_t *value     = (vec4_t *) ((char *) comp + offset);
 
 	if ((trap_Argc() - *argIndex) <= 1)
 	{
@@ -2657,15 +2647,20 @@ static qboolean CG_SetColorsComponentFromCommand(int *argIndex, hudComponent_t *
 		return qfalse;
 	}
 
-	trap_Argv(++*argIndex, token, sizeof(token));
+	CG_Args(*argIndex + 1, 4, token, sizeof(token));
 
-	if (!Q_ParseColor(token, *value))
+	tokenCount = Q_ParseColor(token, *value);
+	if (tokenCount)
 	{
-		--*argIndex;
-		return CG_ParseColorValues(argIndex, *value);
+		*argIndex += tokenCount;
+		return qtrue;
+	}
+	else
+	{
+		CG_Printf("^1Invalid argument: (^3%s^1), not a color value (name/hex/float,3-4x/int,3-4x)\n", token);
 	}
 
-	return qtrue;
+	return qfalse;
 }
 
 const hudComponentMembersFields_t hudComponentMembersFields[] =

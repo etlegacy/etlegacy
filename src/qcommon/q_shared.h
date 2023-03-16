@@ -895,7 +895,7 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 
 const char *Q_GetColorString(unsigned int offset);
 
-qboolean Q_ParseColor(const char *colString, float *outColor);
+int Q_ParseColor(const char *colString, float *outColor);
 
 // #define Q_IsColorString(p) (*p == Q_COLOR_ESCAPE && *(p + 1) && *(p + 1) != Q_COLOR_ESCAPE && isgraph((*(p + 1))))
 // Checks if the string contains color coded text
@@ -2024,6 +2024,14 @@ static ID_INLINE int Q_sscanfc(const char *str, int count, const char *fmt, ...)
 	va_start(args, fmt);
 	rc = vsscanf(str, fmt, args);
 	va_end(args);
+
+	if (rc == EOF)
+	{
+#ifdef ETLEGACY_DEBUG
+		Com_Printf(S_COLOR_YELLOW "WARNING: vsscanf returned EOF in Q_sscanfc for input string %s from %s:%i.\n", str, file, line);
+#endif
+		return 0;
+	}
 
 #ifdef ETLEGACY_DEBUG
 	if (count != rc)

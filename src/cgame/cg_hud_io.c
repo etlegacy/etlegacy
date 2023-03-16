@@ -1064,7 +1064,7 @@ static qboolean CG_ReadHudFile(const char *filename)
 	return qtrue;
 }
 
-static ID_INLINE qboolean CG_ParseHexColor(vec_t *vec, char *s)
+static ID_INLINE qboolean CG_ParseColorFromString(vec_t *vec, char *s)
 {
 	qboolean res;
 
@@ -1097,7 +1097,6 @@ static ID_INLINE float CG_HudParseColorElement(cJSON *object, float defaultValue
 	// check if the number is an integer
 	if (ceil(object->valuedouble) == floor(object->valuedouble))
 	{
-
 		return ((float) MIN(MAX(object->valuedouble, 0.0), 255.0) / 255.f);
 	}
 	else if (object->valuedouble <= 1.f && object->valuedouble >= 0.f)
@@ -1119,7 +1118,7 @@ static void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
 
 	if (cJSON_IsString(object))
 	{
-		CG_ParseHexColor(colorVec, object->valuestring);
+		CG_ParseColorFromString(colorVec, object->valuestring);
 	}
 	else if (cJSON_IsObject(object))
 	{

@@ -2013,12 +2013,13 @@ const char *Q_GetColorString(unsigned int offset)
  * @brief Q_ParseColor supports hex (rrggbb<aa>), float (0.0 - 1.0), int (0 - 255) and color name formats
  * @param[in] colString string that contains the color info
  * @param[out] outColor output vector to set
- * @return true if the string was successfully parsed
+ * @return count of tokens used for the color
  */
-qboolean Q_ParseColor(const char *colString, float *outColor)
+int Q_ParseColor(const char *colString, float *outColor)
 {
-	vec4_t     temp = { 0, 0, 0, 1 };
-	const char *s   = colString;
+	vec4_t     temp  = { 0, 0, 0, 1 };
+	const char *s    = colString;
+	int        count = 0;
 
 	if (!colString || !colString[0] || !outColor)
 	{
@@ -2047,9 +2048,9 @@ qboolean Q_ParseColor(const char *colString, float *outColor)
 		{
 			outColor[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
 		}
-		return qtrue;
+		return 1;
 	}
-	else if (Q_sscanf(s, "%f %f %f %f", &temp[0], &temp[1], &temp[2], &temp[3]) >= 3)
+	else if ((count = Q_sscanf(s, "%f %f %f %f", &temp[0], &temp[1], &temp[2], &temp[3])) >= 3)
 	{
 		if (vec4_isIntegral(temp) && (temp[0] > 1 || temp[1] > 1 || temp[2] > 1 || temp[3] > 1))
 		{
@@ -2057,7 +2058,7 @@ qboolean Q_ParseColor(const char *colString, float *outColor)
 		}
 		ClampColor(temp);
 		vec4_copy(temp, outColor);
-		return qtrue;
+		return count;
 	}
 	else
 	{
@@ -2070,13 +2071,13 @@ qboolean Q_ParseColor(const char *colString, float *outColor)
 				outColor[0] = (*OSP_Colortable[i].color)[0];
 				outColor[1] = (*OSP_Colortable[i].color)[1];
 				outColor[2] = (*OSP_Colortable[i].color)[2];
-				return qtrue;
+				return 1;
 			}
 			i++;
 		}
 	}
 
-	return qfalse;
+	return 0;
 }
 
 /**
