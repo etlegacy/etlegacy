@@ -2280,16 +2280,29 @@ const char *CG_GetCrosshairNameString(hudComponent_t *comp)
 {
 	char *s;
 	char colorized[MAX_NAME_LENGTH + 2] = { 0 };
+	int  clientNum;
+
+	// disguised covert ops, not in the same team
+	if ((cg_entities[cg.crosshairClientNum].currentState.powerups & (1 << PW_OPS_DISGUISED) &&
+		cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team) &&
+		cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR))
+	{
+		clientNum = cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum;
+	}
+	else
+	{
+		clientNum = cg.crosshairClientNum;
+	}
 
 	if (comp->style & 1)
 	{
 		// Draw them with full colors
-		s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
+		s = va("%s", cgs.clientinfo[clientNum].name);
 	}
 	else
 	{
 		// Draw them with a single color
-		Q_ColorizeString('*', cgs.clientinfo[cg.crosshairClientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
+		Q_ColorizeString('*', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
 		s = va("%s", colorized);
 	}
 
