@@ -650,8 +650,12 @@ run_generate() {
 run_build() {
 	run_generate
 	einfo "Build..."
-	make ${CMD_ARGS}
-	cmake --build . --config $RELEASE_TYPE
+	if [ -z "$CMD_ARGS" ]; then
+		cmake --build . --config $RELEASE_TYPE
+	else
+		# Pass the extra args to the build tool, what ever it might be
+		cmake --build . --config $RELEASE_TYPE -- ${CMD_ARGS}
+	fi
 	check_exit
 }
 
