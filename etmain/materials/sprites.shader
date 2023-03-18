@@ -210,6 +210,17 @@ sprites/voicechat
 	}
 }
 
+sprites/voicechat_orange
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/voicechat_orange.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 sprites/voicemedic
 {
 	nocompress
