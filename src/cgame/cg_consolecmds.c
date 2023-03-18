@@ -3008,7 +3008,7 @@ static void CG_EditHudComponentComplete(void)
 
 #define EDITCOMPONENT_CROSSHAIR_STRING "editcomponent crosshair"
 
-static void CG_CrosshairSize_f()
+static void CG_CrosshairSize_f(void)
 {
 	if (trap_Argc() > 1)
 	{
@@ -3028,7 +3028,7 @@ static void CG_CrosshairSize_f()
 	}
 }
 
-static void CG_CrosshairAlpha_f()
+static void CG_CrosshairAlpha_f(void)
 {
 	if (trap_Argc() > 1)
 	{
@@ -3043,7 +3043,7 @@ static void CG_CrosshairAlpha_f()
 	}
 }
 
-static void CG_CrosshairColor_f()
+static void CG_CrosshairColor_f(void)
 {
 	if (trap_Argc() > 1)
 	{
@@ -3056,7 +3056,7 @@ static void CG_CrosshairColor_f()
 	}
 }
 
-static void CG_CrosshairAlphaAlt_f()
+static void CG_CrosshairAlphaAlt_f(void)
 {
 	if (trap_Argc() > 1)
 	{
@@ -3071,7 +3071,7 @@ static void CG_CrosshairAlphaAlt_f()
 	}
 }
 
-static void CG_CrosshairColorAlt_f()
+static void CG_CrosshairColorAlt_f(void)
 {
 	if (trap_Argc() > 1)
 	{
@@ -3084,7 +3084,7 @@ static void CG_CrosshairColorAlt_f()
 	}
 }
 
-static void CG_CrosshairPulse_f()
+static void CG_CrosshairPulse_f(void)
 {
 	if (trap_Argc() > 1)
 	{
@@ -3099,7 +3099,7 @@ static void CG_CrosshairPulse_f()
 	}
 }
 
-static void CG_CrosshairHealth_f()
+static void CG_CrosshairHealth_f(void)
 {
 	if (trap_Argc() > 1)
 	{
