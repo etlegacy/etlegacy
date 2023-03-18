@@ -4342,7 +4342,7 @@ void CG_CalculateComponentLocation(hudComponent_t *comp, int depth, rectDef_t *o
 
 void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);
-void CG_DrawPMItems(hudComponent_t *comp);
+void CG_DrawPM(hudComponent_t *comp);
 void CG_DrawVote(hudComponent_t *comp);
 void CG_DrawSpectatorMessage(hudComponent_t *comp);
 void CG_DrawLimboMessage(hudComponent_t *comp);
