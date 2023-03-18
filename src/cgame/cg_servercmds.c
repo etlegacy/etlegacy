@@ -827,12 +827,12 @@ void CG_ShaderStateChanged(void)
 		n = strstr(o, "=");
 		if (n && *n)
 		{
-			Q_strncpyz(originalShader, o, n - o);
+			Q_strncpyz(originalShader, o, MIN(n - o + 1, MAX_QPATH));
 			n++;
 			t = strstr(n, ":");
 			if (t && *t)
 			{
-				Q_strncpyz(newShader, n, t - n);
+				Q_strncpyz(newShader, n, MIN(t - n + 1, MAX_QPATH));
 			}
 			else
 			{
@@ -2015,7 +2015,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	static char token[MAX_TOKEN_CHARS];
 	char        temp[MAX_TOKEN_CHARS];
 	qboolean    togloc = qtrue;
-	const char  *s = buf;
+	const char  *s     = buf;
 	int         i, prev = 0;
 
 	Com_Memset(token, 0, sizeof(token));
