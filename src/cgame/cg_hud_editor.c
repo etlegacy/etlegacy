@@ -60,14 +60,14 @@
 #define HUDEDITOR_HUD_NAME_Y (HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 2) + (HUDEDITOR_CONTROLS_SPACER_XY * 2))
 
 #define HUDEDITOR_SIZEPOS_Y (HUDEDITOR_SELECTHUD_Y + BUTTON_HEIGHT + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 3) + \
-							 HUDEDITOR_CONTROLS_SPACER_XY + HUDEDITOR_CATEGORY_SPACER_Y)
+	                         HUDEDITOR_CONTROLS_SPACER_XY + HUDEDITOR_CATEGORY_SPACER_Y)
 
 #define HUDEDITOR_TEXT_Y (HUDEDITOR_SIZEPOS_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CATEGORY_SPACER_Y + \
-						  (INPUT_HEIGHT * 2) + HUDEDITOR_CONTROLS_SPACER_XY)
+	                      (INPUT_HEIGHT * 2) + HUDEDITOR_CONTROLS_SPACER_XY)
 
 
 #define HUDEDITOR_COLORSSTYLE_Y (HUDEDITOR_TEXT_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CATEGORY_SPACER_Y + \
-								 (INPUT_HEIGHT * 3) + HUDEDITOR_CONTROLS_SPACER_XY)
+	                             (INPUT_HEIGHT * 3) + HUDEDITOR_CONTROLS_SPACER_XY)
 
 enum
 {
@@ -2315,6 +2315,11 @@ static void CG_HudEditor_ToggleHelp(void)
 	}
 }
 
+static void CG_HudEditor_ToggleNoiseGenerator(void)
+{
+	cg.generatingNoiseHud = !cg.generatingNoiseHud;
+}
+
 /**
  * @brief CG_HudEditor_HelpDraw
  */
@@ -2349,6 +2354,7 @@ static void CG_HudEditor_HelpDraw(void)
 			{ NULL,                  NULL                                },
 			{ "l",                   "show all layout on/off"            },
 			{ "h",                   "help on/off"                       },
+			{ "n",                   "noise generator"                   },
 		};
 
 		vec4_t bgColor;
@@ -2475,6 +2481,12 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	if (key == 'h' && down)
 	{
 		CG_HudEditor_ToggleHelp();
+		return;
+	}
+
+	if (key == 'n' && down)
+	{
+		CG_HudEditor_ToggleNoiseGenerator();
 		return;
 	}
 

@@ -1482,6 +1482,7 @@ typedef struct
 	qboolean editingLocations;
 	qboolean editingCameras;
 	qboolean editingHud;
+	qboolean generatingNoiseHud;
 
 	qboolean serverRespawning;
 

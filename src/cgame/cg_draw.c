@@ -2120,7 +2120,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.editingHud)
+	if (cg.generatingNoiseHud)
 	{
 		// aim on self
 		cg.crosshairClientNum    = cg.snap->ps.clientNum;
@@ -2354,7 +2354,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.editingHud)
+	if (cg.generatingNoiseHud)
 	{
 		// aim on self
 		cg.crosshairClientNum    = cg.snap->ps.clientNum;
@@ -2482,7 +2482,7 @@ void CG_DrawSpectator(hudComponent_t *comp)
 	}
 	else
 #endif
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.editingHud)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.generatingNoiseHud)
 	{
 		s = CG_TranslateString(va("%s", "SPECTATOR"));
 	}
@@ -2844,7 +2844,7 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 	}
 #endif
 
-	if (!((cg.snap->ps.pm_flags & PMF_LIMBO) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) && !cg.editingHud)
+	if (!((cg.snap->ps.pm_flags & PMF_LIMBO) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) && !cg.generatingNoiseHud)
 	{
 		return;
 	}
@@ -2969,12 +2969,12 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 	}
 #endif
 
-	if (cg.snap->ps.stats[STAT_HEALTH] > 0 && !cg.editingHud)
+	if (cg.snap->ps.stats[STAT_HEALTH] > 0 && !cg.generatingNoiseHud)
 	{
 		return;
 	}
 
-	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && !cg.editingHud)
+	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && !cg.generatingNoiseHud)
 	{
 		return;
 	}
@@ -3055,7 +3055,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 		return;
 	}
 
-	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && !cg.editingHud)
+	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && !cg.generatingNoiseHud)
 	{
 		return;
 	}
@@ -3204,9 +3204,9 @@ void CG_DrawWarmupTitle(hudComponent_t *comp)
 		// print message informing player the server is restarting with a new map
 		s = va("%s", CG_TranslateString("^3Server Restarting"));
 	}
-	else if (!cg.warmup || cg.editingHud)
+	else if (!cg.warmup || cg.generatingNoiseHud)
 	{
-		if (!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS && !cg.editingHud)
+		if (!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS && !cg.generatingNoiseHud)
 		{
 			return;
 		}
@@ -3267,9 +3267,9 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 {
 	const char *s = NULL, *s1 = NULL, *s2 = NULL;
 
-	if (!cg.warmup || cg.editingHud)
+	if (!cg.warmup || cg.generatingNoiseHud)
 	{
-		if ((!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS) && !cg.editingHud)
+		if ((!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS) && !cg.generatingNoiseHud)
 		{
 			return;
 		}
@@ -4559,6 +4559,11 @@ void CG_Coronas(void)
  */
 static void CG_NoiseGenerator()
 {
+	if (!cg.generatingNoiseHud)
+	{
+		return;
+	}
+
 	trap_Cvar_Set("cl_noprint", "1");
 
 	// banner

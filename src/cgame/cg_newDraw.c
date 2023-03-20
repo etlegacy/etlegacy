@@ -342,7 +342,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.editingHud)
+	if (cg.generatingNoiseHud)
 	{
 		// simulate cursor hint
 		cg.cursorHintTime  = cg.time;
@@ -542,7 +542,7 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 		return;
 	}
 
-	if (!(comp->style & 1) && !cg.zoomed && !cg.editingHud)
+	if (!(comp->style & 1) && !cg.zoomed && !cg.generatingNoiseHud)
 	{
 		// style '0' means only draw for scoped weapons, '1' means draw all the time
 		return;
@@ -867,7 +867,8 @@ void CG_EventHandling(int type, qboolean fForced)
 		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
 		{
 			CG_HudEditor_Cleanup();
-			cg.editingHud = qfalse;
+			cg.editingHud         = qfalse;
+			cg.generatingNoiseHud = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{
@@ -943,7 +944,8 @@ void CG_EventHandling(int type, qboolean fForced)
 	else if (type == CGAME_EVENT_HUDEDITOR)
 	{
 		CG_HudEditorSetup();
-		cg.editingHud = qtrue;
+		cg.editingHud         = qtrue;
+		cg.generatingNoiseHud = qfalse;
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
 	else

@@ -1508,7 +1508,7 @@ void CG_DrawPowerUps(hudComponent_t *comp)
 	}
 
 	// draw treasure icon if we have the flag
-	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG] || cg.editingHud)
+	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG] || cg.generatingNoiseHud)
 	{
 		trap_R_SetColor(NULL);
 		CG_DrawPic(comp->location.x, comp->location.y, comp->location.w, comp->location.h, cgs.media.objectiveShader);
@@ -1728,7 +1728,7 @@ void CG_DrawDemoMessage(hudComponent_t *comp)
 	char demostatus[128];
 	char wavestatus[128];
 
-	if (!cl_demorecording.integer && !cl_waverecording.integer && !cg.demoPlayback && !cg.editingHud)
+	if (!cl_demorecording.integer && !cl_waverecording.integer && !cg.demoPlayback && !cg.generatingNoiseHud)
 	{
 		return;
 	}
@@ -2698,7 +2698,7 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 		*s  = cgs.gametype == GT_WOLF_LMS ? va("%s", CG_TranslateString("WARMUP")) : va("%2.0i", limbotimeOwn / 1000);
 
 		// if hud editor is up, return qfalse since we want to see text style changes
-		return !cg.editingHud;
+		return !cg.generatingNoiseHud;
 	}
 	else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 	{
