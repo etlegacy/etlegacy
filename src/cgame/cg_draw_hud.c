@@ -47,7 +47,7 @@ static lagometer_t lagometer;
 const hudComponentFields_t hudComponentFields[] =
 {
 	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },          // FIXME: outside cg_draw_hud
-	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts"} },
+	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw"} },
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
@@ -2365,12 +2365,19 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	{
 		if (cg.time - cgs.autoMapExpandTime < 100.f)
 		{
-			CG_CompasMoveLocation(&basex, &basey, basew, qtrue);
+			if (!(comp->style & COMPASS_ALWAYS_DRAW))
+			{
+				CG_CompasMoveLocation(&basex, &basey, basew, qtrue);
+			}
 		}
 		else
 		{
 			CG_DrawExpandedAutoMap();
-			return;
+
+			if (!(comp->style & COMPASS_ALWAYS_DRAW))
+			{
+				return;
+			}
 		}
 	}
 	else
@@ -2378,11 +2385,18 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		if (cg.time - cgs.autoMapExpandTime <= 150.f)
 		{
 			CG_DrawExpandedAutoMap();
-			return;
+
+			if (!(comp->style & COMPASS_ALWAYS_DRAW))
+			{
+				return;
+			}
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
 		{
-			CG_CompasMoveLocation(&basex, &basey, basew, qfalse);
+			if (!(comp->style & COMPASS_ALWAYS_DRAW))
+			{
+				CG_CompasMoveLocation(&basex, &basey, basew, qfalse);
+			}
 		}
 	}
 

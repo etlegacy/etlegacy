@@ -2156,6 +2156,7 @@ enum
 	COMPASS_DECOR                = BIT(4),
 	COMPASS_DIRECTION            = BIT(5),
 	COMPASS_CARDINAL_POINTS      = BIT(6),
+	COMPASS_ALWAYS_DRAW          = BIT(7),
 };
 
 /// Locations
