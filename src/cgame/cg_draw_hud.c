@@ -59,7 +59,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,  { "Icon Flash" } },
 	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,  { "Dynamic Color" } },
 	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,  { "Latched Class", "No Header" } },// FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages),    CG_DrawPMItems,            0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages),    CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(powerups),         CG_DrawPowerUps,           0.19f,  { 0 } },
 	{ HUDF(objectives),       CG_DrawObjectiveStatus,    0.19f,  { 0 } },
 	{ HUDF(hudhead),          CG_DrawPlayerStatusHead,   0.19f,  { 0 } },
@@ -187,7 +187,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->weaponicon       = CG_getComponent(tmp_adj(SCREEN_WIDTH - 88, 60), SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
 	hud->weaponammo       = CG_getComponent(tmp_adj(SCREEN_WIDTH - 82, 57), 458, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, CG_DrawAmmoCount);
 	hud->fireteam         = CG_getComponent(tmp_adj(10, 350), 10, 350, 100, qtrue, 1, 100.f, colorWhite, HUD_Background, qtrue, HUD_BackgroundAlt, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawFireTeamOverlay);
-	hud->popupmessages    = CG_getComponent(tmp_adj(4, 422), 245, 422, 96, qtrue, 64, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawPMItems);
+	hud->popupmessages    = CG_getComponent(tmp_adj(4, 422), 245, 422, 96, qtrue, 64, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawPM);
 	hud->powerups         = CG_getComponent(tmp_adj(SCREEN_WIDTH  - 40, 36), SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPowerUps);
 	hud->objectives       = CG_getComponent(tmp_adj(4, 36), SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawObjectiveStatus);
 	hud->hudhead          = CG_getComponent(tmp_adj(44, 62), SCREEN_HEIGHT - 92, 62, 80, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerStatusHead);
@@ -1539,12 +1539,18 @@ void CG_DrawPowerUps(hudComponent_t *comp)
  */
 void CG_DrawObjectiveStatus(hudComponent_t *comp)
 {
-	playerState_t *ps = &cg.snap->ps;
+	playerState_t *ps                  = &cg.snap->ps;
+	float         flagIconWidth        = comp->location.w * 0.333f;
+	float         flagIconHeight       = comp->location.h * 0.222f;
+	float         flagIconHeightOffset = comp->location.h * 0.777f;
+	float         scale;
 
 	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		return;
 	}
+
+	scale = CG_ComputeScale(comp);
 
 	// draw objective status icon
 	if ((cg.flagIndicator & (1 << PW_REDFLAG) || cg.flagIndicator & (1 << PW_BLUEFLAG) || cg.flagIndicator & (1 << PW_NUM_POWERUPS)) && (!cgs.clientinfo[cg.clientNum].shoutcaster || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
@@ -1581,8 +1587,8 @@ void CG_DrawObjectiveStatus(hudComponent_t *comp)
 			// display team flag
 			color[3] = 1.f;
 			trap_R_SetColor(color);
-			CG_DrawPic(comp->location.x + comp->location.w / 2 - 20, comp->location.y + 28, 12, 8, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
-			CG_DrawPic(comp->location.x + comp->location.w / 2 + 8, comp->location.y + 28, 12, 8, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedFlag : cgs.media.axisFlag);
+			CG_DrawPic(comp->location.x, comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
+			CG_DrawPic(comp->location.x + comp->location.w - flagIconWidth, comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedFlag : cgs.media.axisFlag);
 
 			// clear debug flag
 			cg.flagIndicator &= ~(1 << PW_NUM_POWERUPS);
@@ -1602,7 +1608,7 @@ void CG_DrawObjectiveStatus(hudComponent_t *comp)
 			// display team flag
 			color[3] = 1.f;
 			trap_R_SetColor(color);
-			CG_DrawPic(comp->location.x + comp->location.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_AXIS ? 8 : -20), comp->location.y + 28, 12, 8, cgs.media.alliedFlag);
+			CG_DrawPic(comp->location.x + (ps->persistant[PERS_TEAM] == TEAM_AXIS ? comp->location.w - flagIconWidth : 0), comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, cgs.media.alliedFlag);
 		}
 		else if (cg.flagIndicator & (1 << PW_BLUEFLAG))
 		{
@@ -1619,17 +1625,17 @@ void CG_DrawObjectiveStatus(hudComponent_t *comp)
 			// display team flag
 			color[3] = 1.f;
 			trap_R_SetColor(color);
-			CG_DrawPic(comp->location.x + comp->location.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_ALLIES ? 8 : -20), comp->location.y + 28, 12, 8, cgs.media.axisFlag);
+			CG_DrawPic(comp->location.x + (ps->persistant[PERS_TEAM] == TEAM_ALLIES ? comp->location.w - flagIconWidth : 0), comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, cgs.media.axisFlag);
 		}
 
 		// display active flag counter
 		if (cg.redFlagCounter > 1)
 		{
-			CG_Text_Paint_Ext(comp->location.x + comp->location.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_ALLIES ? -16 : 12), comp->location.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.redFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(comp->location.x + (ps->persistant[PERS_TEAM] == TEAM_ALLIES ? flagIconWidth * 0.5f : comp->location.w - flagIconWidth * 0.5f), comp->location.y + comp->location.h, scale, scale, comp->colorMain, va("%i", cg.redFlagCounter), 0, 0, comp->styleText, &cgs.media.limboFont1);
 		}
 		if (cg.blueFlagCounter > 1)
 		{
-			CG_Text_Paint_Ext(comp->location.x + comp->location.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_AXIS ? -16 : 12), comp->location.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.blueFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(comp->location.x + (ps->persistant[PERS_TEAM] == TEAM_AXIS ? flagIconWidth * 0.5f : comp->location.w - flagIconWidth * 0.5f), comp->location.y + comp->location.h, scale, scale, comp->colorMain, va("%i", cg.blueFlagCounter), 0, 0, comp->styleText, &cgs.media.limboFont1);
 		}
 
 		trap_R_SetColor(NULL);
@@ -1646,7 +1652,7 @@ void CG_DrawObjectiveStatus(hudComponent_t *comp)
 			if (cg.redFlagCounter > 0 && cg.blueFlagCounter > 0)
 			{
 				// both team stole an enemy flags
-				CG_DrawPic(comp->location.x, comp->location.y, comp->location.w, comp->location.h, cgs.media.objectiveTeamShader);
+				CG_DrawPic(comp->location.x, comp->location.y, comp->location.w, comp->location.h, cgs.media.objectiveBothTEShader);
 			}
 			else if ((cg.redFlagCounter > 0 && !cg.blueFlagCounter) || (!cg.redFlagCounter && cg.blueFlagCounter > 0))
 			{
@@ -1689,22 +1695,22 @@ void CG_DrawObjectiveStatus(hudComponent_t *comp)
 
 		if (cg.flagIndicator & (1 << PW_REDFLAG))
 		{
-			CG_DrawPic(comp->location.x + comp->location.w / 2 + 8, comp->location.y + 28, 12, 8, cgs.media.alliedFlag);
+			CG_DrawPic(comp->location.x, comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, cgs.media.alliedFlag);
 		}
 
 		if (cg.flagIndicator & (1 << PW_BLUEFLAG))
 		{
-			CG_DrawPic(comp->location.x + comp->location.w / 2 - 20, comp->location.y + 28, 12, 8, cgs.media.axisFlag);
+			CG_DrawPic(comp->location.x + comp->location.w - flagIconWidth, comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, cgs.media.axisFlag);
 		}
 
 		// display active flag counter
 		if (cg.redFlagCounter > 1)
 		{
-			CG_Text_Paint_Ext(comp->location.x + comp->location.w / 2 + 12, comp->location.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.redFlagCounter), 0, 0, comp->styleText, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(comp->location.x + flagIconWidth * 0.5f, comp->location.y + comp->location.h, scale, scale, comp->colorMain, va("%i", cg.redFlagCounter), 0, 0, comp->styleText, &cgs.media.limboFont1);
 		}
 		if (cg.blueFlagCounter > 1)
 		{
-			CG_Text_Paint_Ext(comp->location.x + comp->location.w / 2 - 16, comp->location.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.blueFlagCounter), 0, 0, comp->styleText, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(comp->location.x + comp->location.w - flagIconWidth * 0.5f, comp->location.y + comp->location.h, scale, scale, comp->colorMain, va("%i", cg.blueFlagCounter), 0, 0, comp->styleText, &cgs.media.limboFont1);
 		}
 
 		trap_R_SetColor(NULL);

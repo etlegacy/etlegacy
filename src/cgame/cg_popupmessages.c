@@ -595,25 +595,98 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	}
 }
 
+static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float y, float lineHeight, float size)
+{
+	float  t;
+	int    w;
+	vec4_t colorText;
+	float  scale;
+	float  x = (comp->alignText == ITEM_ALIGN_RIGHT) ? comp->location.x + comp->location.w : comp->location.x;
+
+	Vector4Copy(comp->colorMain, colorText);
+	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
+
+	t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
+	if (cg.time > t)
+	{
+		colorText[3] *= 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
+	}
+
+	if (listItem->shader > 0)
+	{
+		// colorize
+		VectorCopy(listItem->color, colorText);
+		trap_R_SetColor(colorText);
+
+		if (comp->alignText == ITEM_ALIGN_RIGHT)
+		{
+			x -= lineHeight;
+			CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
+		}
+		else
+		{
+			CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
+			x += lineHeight;
+		}
+
+		// decolorize
+		VectorCopy(colorWhite, colorText);
+		trap_R_SetColor(NULL);
+	}
+
+	w = CG_Text_Width_Ext(listItem->message, scale, 0, &cgs.media.limboFont2);
+
+	if (comp->alignText == ITEM_ALIGN_RIGHT)
+	{
+		x -= w + 4;
+
+		if (listItem->weaponShader > 0)
+		{
+			x -= lineHeight * listItem->scaleShader;
+		}
+
+		if (listItem->message2[0])
+		{
+			x -= CG_Text_Width_Ext(listItem->message2, scale, 0, &cgs.media.limboFont2);
+		}
+	}
+
+	CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, scale, scale, colorText, listItem->message, 0, 0, comp->styleText, &cgs.media.limboFont2);
+
+	if (listItem->weaponShader > 0)
+	{
+		// colorize
+		VectorCopy(listItem->color, colorText);
+		trap_R_SetColor(colorText);
+
+		CG_DrawPic(x + w + 4, y - lineHeight, size * listItem->scaleShader, size, listItem->weaponShader);
+
+		// decolorize
+		VectorCopy(colorWhite, colorText);
+		trap_R_SetColor(NULL);
+	}
+
+	if (listItem->message2[0])
+	{
+		CG_Text_Paint_Ext(x + w + lineHeight * listItem->scaleShader + 4, y - (lineHeight / 2) + 1, scale, scale, colorText, listItem->message2, 0, 0, comp->styleText, &cgs.media.limboFont2);
+	}
+
+	return y - lineHeight;
+}
+
 /**
  * @brief CG_DrawPMItems
  * @param[in] rect
  * @param[in] style
  */
-void CG_DrawPMItems(hudComponent_t *comp)
+void CG_DrawPM(hudComponent_t *comp)
 {
-	float        t;
-	int          i, w;
+	int          i;
 	pmListItem_t *listItem  = cg_pmOldList;
 	int          numPopups  = cg_numPopups.integer == -1 ? 7 : cg_numPopups.integer;
 	float        lineHeight = comp->location.h / numPopups;
 	float        size       = lineHeight - 2;
 	float        y          = comp->location.y + comp->location.h;
-	float        x          = (comp->alignText == ITEM_ALIGN_RIGHT) ? comp->location.x + comp->location.w : comp->location.x;
-	vec4_t       colorText;
-	float        scale;
-
-	Vector4Copy(comp->colorMain, colorText);
 
 	if (cg_numPopups.integer == 0)
 	{
@@ -635,146 +708,11 @@ void CG_DrawPMItems(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	t = cg_pmWaitingList->time + cg_popupTime.integer + cg_popupStayTime.integer;
-	if (cg.time > t)
-	{
-		colorText[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
-	}
-
-	if (cg_pmWaitingList->shader > 0)
-	{
-		// colorize
-		VectorCopy(cg_pmWaitingList->color, colorText);
-		trap_R_SetColor(colorText);
-
-		if (comp->alignText == ITEM_ALIGN_RIGHT)
-		{
-			x -= lineHeight;
-			CG_DrawPic(x, y - lineHeight, size, size, cg_pmWaitingList->shader);
-		}
-		else
-		{
-			CG_DrawPic(x, y - lineHeight, size, size, cg_pmWaitingList->shader);
-			x += lineHeight;
-		}
-
-		// decolorize
-		VectorCopy(colorWhite, colorText);
-		trap_R_SetColor(NULL);
-	}
-
-	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
-
-	w = CG_Text_Width_Ext(cg_pmWaitingList->message, scale, 0, &cgs.media.limboFont2);
-
-	if (comp->alignText == ITEM_ALIGN_RIGHT)
-	{
-		x -= (w + 4);
-
-		if (cg_pmWaitingList->weaponShader > 0)
-		{
-			x -= lineHeight * cg_pmWaitingList->scaleShader;
-		}
-
-		if (cg_pmWaitingList->message2[0])
-		{
-			x -= CG_Text_Width_Ext(cg_pmWaitingList->message2, scale, 0, &cgs.media.limboFont2);
-		}
-	}
-
-	CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, scale, scale, colorText, cg_pmWaitingList->message, 0, 0, comp->styleText, &cgs.media.limboFont2); // 4 + size + 2
-
-	if (cg_pmWaitingList->weaponShader > 0)
-	{
-		// colorize
-		VectorCopy(cg_pmWaitingList->color, colorText);
-		trap_R_SetColor(colorText);
-
-		CG_DrawPic(x + w + 4, y - lineHeight, size * cg_pmWaitingList->scaleShader, size, cg_pmWaitingList->weaponShader); // 4 + size + 2 + w + 6
-
-		// decolorize
-		VectorCopy(colorWhite, colorText);
-		trap_R_SetColor(NULL);
-	}
-
-	if (cg_pmWaitingList->message2[0])
-	{
-		CG_Text_Paint_Ext(x + w + lineHeight * cg_pmWaitingList->scaleShader + 4, y - (lineHeight / 2) + 1, scale, scale, colorText, cg_pmWaitingList->message2, 0, 0, comp->styleText, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
-	}
+	y = CG_DrawPMItems(comp, cg_pmWaitingList, y, lineHeight, size);
 
 	for (i = 0; i < numPopups - 1 && listItem; i++, listItem = listItem->next)
 	{
-		x  = (comp->alignText == ITEM_ALIGN_RIGHT) ? comp->location.x + comp->location.w : comp->location.x;
-		y -= lineHeight;
-
-		t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
-		if (cg.time > t)
-		{
-			colorText[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
-		}
-		else
-		{
-			colorText[3] = 1.f;
-		}
-
-		if (listItem->shader > 0)
-		{
-			// colorize
-			VectorCopy(listItem->color, colorText);
-			trap_R_SetColor(colorText);
-
-			if (comp->alignText == ITEM_ALIGN_RIGHT)
-			{
-				x -= lineHeight;
-				CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
-			}
-			else
-			{
-				CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
-				x += lineHeight;
-			}
-
-			// decolorize
-			VectorCopy(colorWhite, colorText);
-			trap_R_SetColor(NULL);
-		}
-
-		w = CG_Text_Width_Ext(listItem->message, scale, 0, &cgs.media.limboFont2);
-
-		if (comp->alignText == ITEM_ALIGN_RIGHT)
-		{
-			x -= w + 4;
-
-			if (listItem->weaponShader > 0)
-			{
-				x -= lineHeight * listItem->scaleShader;
-			}
-
-			if (listItem->message2[0])
-			{
-				x -= CG_Text_Width_Ext(listItem->message2, scale, 0, &cgs.media.limboFont2);
-			}
-		}
-
-		CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, scale, scale, colorText, listItem->message, 0, 0, comp->styleText, &cgs.media.limboFont2);
-
-		if (listItem->weaponShader > 0)
-		{
-			// colorize
-			VectorCopy(listItem->color, colorText);
-			trap_R_SetColor(colorText);
-
-			CG_DrawPic(x + w + 4, y - lineHeight, size * listItem->scaleShader, size, listItem->weaponShader);
-
-			// decolorize
-			VectorCopy(colorWhite, colorText);
-			trap_R_SetColor(NULL);
-		}
-
-		if (listItem->message2[0])
-		{
-			CG_Text_Paint_Ext(x + w + lineHeight * listItem->scaleShader + 4, y - (lineHeight / 2) + 1, scale, scale, colorText, listItem->message2, 0, 0, comp->styleText, &cgs.media.limboFont2);
-		}
+		y = CG_DrawPMItems(comp, listItem, y, lineHeight, size);
 	}
 }
 
