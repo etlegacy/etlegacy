@@ -1326,10 +1326,10 @@ static void CG_DrawScopedReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
+	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -2110,14 +2110,6 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	int      clientNum, class;
 	float    x = comp->location.x, w = comp->location.w;
 
-	// don't draw crosshair names in shoutcast mode
-	// shoutcasters can see tank and truck health
-	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster &&
-	    cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER)
-	{
-		return;
-	}
-
 	if (cg_drawCrosshair.integer < 0)
 	{
 		return;
@@ -2148,12 +2140,19 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		}
 	}
 
+	// don't draw crosshair names in shoutcast mode
+	// shoutcasters can see tank and truck health
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster &&
+	    cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER)
+	{
+		return;
+	}
+
 	// draw the name of the player being looked at
 	color = CG_FadeColor(cg.crosshairClientTime, 1000);
 
 	if (!color)
 	{
-		trap_R_SetColor(NULL);
 		return;
 	}
 
@@ -2272,41 +2271,24 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_GetCrosshairNameString returns a colorized or single color name string for crosshair info
+ * @brief CG_GetCrosshairNameString
  * @param[in] comp
- * @param[out] s
+ * @param[in] clientNum
+ * @return a colorized or single color name string for crosshair info
  */
-const char *CG_GetCrosshairNameString(hudComponent_t *comp)
+static const char *CG_GetCrosshairNameString(hudComponent_t *comp, int clientNum)
 {
-	char *s;
 	char colorized[MAX_NAME_LENGTH + 2] = { 0 };
-	int  clientNum;
-
-	// disguised covert ops, not in the same team
-	if ((cg_entities[cg.crosshairClientNum].currentState.powerups & (1 << PW_OPS_DISGUISED) &&
-	     cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team) &&
-	    cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
-	{
-		clientNum = cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum;
-	}
-	else
-	{
-		clientNum = cg.crosshairClientNum;
-	}
 
 	if (comp->style & 1)
 	{
 		// Draw them with full colors
-		s = va("%s", cgs.clientinfo[clientNum].name);
-	}
-	else
-	{
-		// Draw them with a single color
-		Q_ColorizeString('*', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
-		s = va("%s", colorized);
+		return cgs.clientinfo[clientNum].name;
 	}
 
-	return s;
+	// Draw them with a single color
+	Q_ColorizeString('*', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
+	return va("%s", colorized);
 }
 
 /**
@@ -2327,11 +2309,6 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.renderingThirdPerson)
-	{
-		return;
-	}
-
 	Vector4Copy(comp->colorMain, textColor);
 
 	// dyna > mine
@@ -2343,13 +2320,12 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 		if (!color)
 		{
-			trap_R_SetColor(NULL);
 			return;
 		}
 
 		textColor[3] = color[3];
 
-		s = va(CG_TranslateString("%s^*\'s dynamite"), CG_GetCrosshairNameString(comp));
+		s = va(CG_TranslateString("%s^*\'s dynamite"), CG_GetCrosshairNameString(comp, cg.crosshairDyna));
 
 		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 
@@ -2366,13 +2342,12 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 		if (!color)
 		{
-			trap_R_SetColor(NULL);
 			return;
 		}
 
-		textColor[3] = *color;
+		textColor[3] = color[3];
 
-		s = va(CG_TranslateString("%s^*\'s mine"), CG_GetCrosshairNameString(comp));
+		s = va(CG_TranslateString("%s^*\'s mine"), CG_GetCrosshairNameString(comp, cg.crosshairMine));
 		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 
 		cg.crosshairMine = -1;
@@ -2413,7 +2388,6 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 		if (!color)
 		{
-			trap_R_SetColor(NULL);
 			return;
 		}
 
@@ -2453,7 +2427,6 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 			if (!color)
 			{
-				trap_R_SetColor(NULL);
 				return;
 			}
 
@@ -2479,17 +2452,14 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 		if (!color)
 		{
-			trap_R_SetColor(NULL);
 			return;
 		}
 
 		textColor[3] = color[3];
 
-		s = CG_GetCrosshairNameString(comp);
+		s = CG_GetCrosshairNameString(comp, clientNum);
 		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 	}
-
-	trap_R_SetColor(NULL);
 }
 
 //==============================================================================
