@@ -420,7 +420,7 @@ static void Con_LoadConsoleHistory(void)
 	}
 
 	// if the history file did not end with a newline
-	if (*historyEditLines[historyLine].buffer)
+	if (*historyEditLines[historyLine % COMMAND_HISTORY].buffer)
 	{
 		historyLine++;
 	}
