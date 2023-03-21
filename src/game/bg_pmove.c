@@ -1873,8 +1873,7 @@ static void PM_GroundTrace(void)
 		pml.groundPlane = qfalse;
 		pml.walking     = qfalse;
 
-		if (((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) ||
-		     (pm->ps->eFlags & EF_ZOOMING)) && !pm->waterlevel &&
+		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && !pm->waterlevel &&
 		    !pm->pmext->airTime)
 		{
 			pm->pmext->airTime = pm->cmd.serverTime;
@@ -5202,7 +5201,7 @@ void PmoveSingle(pmove_t *pmove)
 			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 		}
 	}
-	else if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) || (pm->ps->eFlags & EF_ZOOMING))
+	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		// in air for too much time
 		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
