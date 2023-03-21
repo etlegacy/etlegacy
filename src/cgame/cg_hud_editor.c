@@ -159,6 +159,14 @@ static panel_button_text_t hudEditorTextTitleFont =
 	&cgs.media.limboFont2,
 };
 
+static panel_button_text_t hudEditorTextWarningFont =
+{
+	0.3f,                    0.3f,
+	{ 1.f,                   0.f, 0.f,  1.f },
+	ITEM_TEXTSTYLE_SHADOWED, 0,
+	&cgs.media.limboFont2,
+};
+
 static panel_button_text_t hudEditorFont_Dropdown =
 {
 	0.24f,                   0.24f,
@@ -600,7 +608,7 @@ static panel_button_t hudEditorSave =
 	{ 0,                      0,                                              0,            0, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
 	CG_HudEditorButton_KeyDown,// keyDown
-	CG_HudEditorButton_KeyUp, // keyUp
+	NULL,                     // keyUp
 	CG_HudEditorRender_Button,
 	NULL,
 	0
@@ -648,6 +656,20 @@ static panel_button_t hudEditorResetComp =
 	0
 };
 
+static panel_button_t hudEditorWarningLabel =
+{
+	NULL,
+	"CANNOT MODIFY HUD 0",
+	{ 0,                            HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT * 2,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2), BUTTON_HEIGHT },
+	{ 0,                            0,                                                                    0,                                                       0, 0, 0, 0, 1 },
+	&hudEditorTextWarningFont,      // font
+	NULL,                           // keyDown
+	NULL,                           // keyUp
+	CG_HudEditor_SetupTitleText,
+	NULL,
+	0
+};
+
 static panel_button_t hudEditorComponentsList =
 {
 	NULL,
@@ -672,7 +694,7 @@ static panel_button_t *hudEditor[] =
 	&hudEditorColorSliderR,       &hudEditorColorSliderG,            &hudEditorColorSliderB,        &hudEditorColorSliderA,
 	&hudEditorVisible,            &hudEditorAutoAdjust,              &hudEditorShowBackground,      &hudEditorShowBorder,
 	&hudEditorTextTitle,
-	&hudEditorSave,               &hudEditorClone,                   &hudEditorDelete,              &hudEditorResetComp,
+	&hudEditorSave,               &hudEditorClone,                   &hudEditorDelete,              &hudEditorResetComp,                &hudEditorWarningLabel,
 	&hudEditorComponentsList,     &hudEditorHudName,
 
 	// Below here all components that should draw on top
@@ -744,7 +766,14 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 */
 static void CG_HudEditor_SetupTitleText(panel_button_t *button)
 {
-	float textWidth = CG_Text_Width_Ext(button->text, button->font->scalex, 0, button->font->font);
+	float textWidth;
+
+	// draw warning label only if HUD 0 is set
+	if (button == &hudEditorWarningLabel && hudData.active->hudnumber)
+	{
+		return;
+	}
+	textWidth      = CG_Text_Width_Ext(button->text, button->font->scalex, 0, button->font->font);
 	button->rect.x = HUDEditorCenterX - (textWidth * 0.5f);
 	BG_PanelButtonsRender_Text(button);
 }
@@ -1588,6 +1617,8 @@ static qboolean CG_HudEditorButton_KeyDown(panel_button_t *button, int key)
 
 		button->data[4] = cg.time;
 
+		CG_HudSave(-1, -1);
+
 		return qtrue;
 	}
 
@@ -1689,7 +1720,7 @@ static float CG_HudEditor_SetupButtonPosition(panel_button_t *button, float butt
 	return 0;
 }
 
-#define TIMER_KEYDOWN 750.f
+#define TIMER_KEYDOWN 500.f
 
 /**
  * @brief CG_PanelButtonsRender_Button
@@ -1700,21 +1731,38 @@ static void CG_HudEditorRender_Button(panel_button_t *button)
 	float    buttonW = Ccg_WideX(BUTTON_WIDTH);
 	qboolean buttonSelected;
 
+	// if default HUD, don't draw some component
+	if (!hudData.active->hudnumber)
+	{
+		if (button == &hudEditorSave || button == &hudEditorDelete || button == &hudEditorResetComp)
+		{
+			return;
+		}
+	}
+
 	CG_HudEditor_SetupButtonPosition(button, buttonW);
 
 	if (button->data[4])
 	{
-		vec4_t backG    = { 1, 1, 1, 0.3f };
-		float  curValue = (cg.time - button->data[4]) / TIMER_KEYDOWN;
+		float curValue = (cg.time - button->data[4]) / TIMER_KEYDOWN;
 
-		CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed, colorGreen, backG, backG, curValue, BAR_LERP_COLOR, -1);
+		if (button->data[3])
+		{
+			vec4_t backG = { 1, 1, 1, 0.3f };
+			CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed, colorGreen, backG, backG, curValue, BAR_LERP_COLOR, -1);
+		}
+		else
+		{
+			// HACK for save button, so it render dynamicly on pressing it
+			CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, (vec4_t) { 0, 1.f, 0, curValue });
+		}
 
 		if (curValue > 1.f)
 		{
 			switch (button->data[3])
 			{
 			case 0:
-				CG_HudSave(-1, -1);
+				//CG_HudSave(-1, -1);
 				break;
 			case 1:
 				CG_HudSave(hudData.active->hudnumber, -1);
