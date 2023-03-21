@@ -366,8 +366,6 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 
 // Main Functions
 
-#define FT_SPACING 4.f
-
 /**
  * @brief Draw FireTeam overlay
  * @param[in] rect
@@ -382,7 +380,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	int            bestLocWidth           = -1;
 	int            bestWeapIconWidthScale = -1;
 	char           buffer[64];
-	float          w, computedWidth, h, heighTitle, heightText, heightTextOffset, heightIconsOffset;
+	float          w, computedWidth, h;
+	float          heighTitle, heightText, iconsSize, weaponIconSize, heightTextOffset, heightIconsOffset, heightWeaponIconOffset;
 	clientInfo_t   *ci = NULL;
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
@@ -390,6 +389,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	char           name[MAX_FIRETEAM_MEMBERS][MAX_NAME_LENGTH];
 	int            nameMaxLen;
 	float          scale;
+	float          spacing;
 
 	// colors and fonts for overlays
 	vec4_t FT_select                = { 0.5f, 0.5f, 0.2f, 0.3f }; // selected member
@@ -423,7 +423,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 	h = comp->location.h / (MAX_FIRETEAM_MEMBERS + 1);
 
-	scale = CG_ComputeScale(comp /* h, comp->scale, FONT_TEXT*/);
+	scale   = CG_ComputeScale(comp /* h, comp->scale, FONT_TEXT*/);
+	spacing = CG_Text_Width_Ext_Float("_", scale, 0, FONT_TEXT);
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -448,7 +449,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			// cap max location length?
 			if (cg_locationMaxChars.integer)
 			{
-				locwidth  = CG_Text_Width_Ext_Float("_", scale, 0, FONT_TEXT);
+				locwidth  = spacing;
 				locwidth *= Com_Clamp(0, 128, cg_locationMaxChars.integer);     // 128 is max location length
 			}
 			else
@@ -471,7 +472,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			// if alignment is requested, keep a static width
 			if (cg_fireteamNameAlign.integer)
 			{
-				namewidth  = CG_Text_Width_Ext_Float("_", scale, 0, FONT_TEXT);
+				namewidth  = spacing;
 				namewidth *= Com_Clamp(0, MAX_NAME_LENGTH, cg_fireteamNameMaxChars.integer);
 			}
 			else
@@ -528,19 +529,22 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 	}
 
-	heightText        = CG_Text_Height_Ext("A", scale, 0, FONT_TEXT);
-	heightTextOffset  = (h + heightText) * 0.5;
-	heightIconsOffset = (h - heightText * 2) * 0.5;
+	heightText             = CG_Text_Height_Ext("A", scale, 0, FONT_TEXT);
+	iconsSize              = heightText * 2.5f;
+	weaponIconSize         = heightText * 2;
+	heightTextOffset       = (h + heightText) * 0.5f;
+	heightIconsOffset      = (h - iconsSize) * 0.5f;
+	heightWeaponIconOffset = (h - heightText * 2) * 0.5f;
 
 	// NOTE: terrible way to do it ... but work
-	computedWidth = FT_SPACING
-	                + heightText * 2 + FT_SPACING                           // class icons
-	                + FT_SPACING * 3 + heightText * 2 + FT_SPACING          // latched class
-	                + heightText * 2 + FT_SPACING                           // objective icon
-	                + FT_SPACING * 2 + bestNameWidth                        // player name
-	                + bestWeapIconWidthScale * heightText * 2 + FT_SPACING  // weapon icons
-	                + FT_SPACING * 3 + FT_SPACING * 2                       // health points
-	                + bestLocWidth;                                         // location name
+	computedWidth = spacing
+	                + iconsSize                                         // class icons
+	                + spacing * 2 + iconsSize + spacing                 // latched class
+	                + iconsSize + spacing                               // objective icon
+	                + spacing * 2 + bestNameWidth                       // player name
+	                + bestWeapIconWidthScale * weaponIconSize + spacing // weapon icons
+	                + spacing * 3 + spacing                             // health points
+	                + bestLocWidth;                                     // location name
 
 	// keep the best fit for the location text
 	w = MIN(computedWidth, comp->location.w);
@@ -617,12 +621,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			}
 		}
 
-		x += FT_SPACING;
+		x += spacing;
 
 		// draw class icon in fireteam overlay
 		trap_R_SetColor(iconColor);
-		CG_DrawPic(x, y + heightIconsOffset, heightText * 2, heightText * 2, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
-		x += heightText * 2 + FT_SPACING;
+		CG_DrawPic(x, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
+		x += iconsSize;
 
 		if (comp->style & 1)
 		{
@@ -630,18 +634,19 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			{
 				// draw the yellow arrow
 				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, "^3->", 0, 0, comp->styleText, FONT_TEXT);
-				x += FT_SPACING * 3;
+				x += spacing * 2;
 				// draw latched class icon in fireteam overlay
 				trap_R_SetColor(iconColor);
-				CG_DrawPic(x, y + heightIconsOffset, heightText * 2, heightText * 2, cgs.media.skillPics[SkillNumForClass(ci->latchedcls)]);
+				CG_DrawPic(x, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(ci->latchedcls)]);
+				x += iconsSize;
 			}
 			else
 			{
-				x += FT_SPACING * 3;
+				x += spacing * 2 + iconsSize;
 			}
 		}
 
-		x += heightText * 2 + FT_SPACING;
+		x += spacing;
 
 		// draw the mute-icon in the fireteam overlay..
 		//if ( ci->muted ) {
@@ -653,17 +658,17 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
 			trap_R_SetColor(iconColor);
-			CG_DrawPic(x, y + heightIconsOffset, heightText * 2, heightText * 2, cgs.media.objectiveShader);
-			x      += heightText * 2;
-			puwidth = heightText * 2;
+			CG_DrawPic(x, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.objectiveShader);
+			x      += iconsSize;
+			puwidth = iconsSize;
 		}
 		// or else draw the disguised icon in fireteam overlay
 		else if (ci->powerups & (1 << PW_OPS_DISGUISED))
 		{
 			trap_R_SetColor(iconColor);
-			CG_DrawPic(x, y + heightIconsOffset, heightText * 2, heightText * 2, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
-			x      += heightText * 2;
-			puwidth = heightText * 2;
+			CG_DrawPic(x, y + heightIconsOffset, iconsSize, iconsSize, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+			x      += iconsSize;
+			puwidth = iconsSize;
 		}
 		// otherwise draw rank icon in fireteam overlay
 		else
@@ -673,7 +678,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			puwidth = 0;
 		}
 
-		x += FT_SPACING;
+		x += spacing;
 
 		// draw the player's name
 		// right align?
@@ -687,7 +692,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 
 		// add space
-		x += FT_SPACING * 2 + bestNameWidth - puwidth;
+		x += spacing * 2 + bestNameWidth - puwidth;
 
 		// draw the player's weapon icon
 		if (cg_entities[ci->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
@@ -707,54 +712,54 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 		{
 			trap_R_SetColor((cg_entities[ci->clientNum].currentValid || ci->clientNum == cg.clientNum) ? iconColor : iconColorSemitransparent);  // semitransparent white for weapon that is not currently being updated
-			CG_DrawPic(x, y + heightIconsOffset, cg_weapons[curWeap].weaponIconScale * heightText * 2, heightText * 2, cg_weapons[curWeap].weaponIcon[0]);
+			CG_DrawPic(x, y + heightWeaponIconOffset, cg_weapons[curWeap].weaponIconScale * weaponIconSize, weaponIconSize, cg_weapons[curWeap].weaponIcon[0]);
 		}
 		else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 		{
 			trap_R_SetColor(iconColor);
-			CG_DrawPic(x, y + heightIconsOffset, cg_weapons[curWeap].weaponIconScale * heightText * 2, heightText * 2, cg_weapons[curWeap].weaponIcon[1]);
+			CG_DrawPic(x, y + heightWeaponIconOffset, cg_weapons[curWeap].weaponIconScale * weaponIconSize, weaponIconSize, cg_weapons[curWeap].weaponIcon[1]);
 		}
 
-		x += bestWeapIconWidthScale * heightText * 2 + FT_SPACING;
+		x += bestWeapIconWidthScale * heightText * 2 + spacing;
 
 		// draw the player's health
 		if (ci->health >= 100)
 		{
 			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
-			x += FT_SPACING * 3;
+			x += spacing * 3;
 		}
 		else if (ci->health >= 10)
 		{
-			x += FT_SPACING;
+			x += spacing;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ci->health > 80 ? comp->colorMain : textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
-			x += FT_SPACING * 2;
+			x += spacing * 2;
 		}
 		else if (ci->health > 0)
 		{
-			x += FT_SPACING * 2;
+			x += spacing * 2;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
-			x += FT_SPACING;
+			x += spacing;
 		}
 		else if (ci->health == 0)
 		{
-			x += FT_SPACING;
+			x += spacing;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? textWhite : textRed, "*", 0, 0, comp->styleText, FONT_TEXT);
-			x += FT_SPACING;
+			x += spacing;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? textRed : textWhite, "0", 0, 0, comp->styleText, FONT_TEXT);
-			x += FT_SPACING;
+			x += spacing;
 		}
 		else
 		{
-			x += FT_SPACING * 2;
+			x += spacing * 2;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textRed, "0", 0, 0, comp->styleText, FONT_TEXT);
-			x += FT_SPACING;
+			x += spacing;
 		}
 
 		// set hard limit on width
-		x += FT_SPACING * 2;
+		x += spacing;
 		if (cg_locations.integer & LOC_FTEAM)
 		{
-			float widthLocationLeft = w - (x - comp->location.x) - FT_SPACING;
+			float widthLocationLeft = w - (x - comp->location.x) - spacing;
 			int   lim               = widthLocationLeft / CG_Text_Width_Ext_Float("A", scale, 0, FONT_TEXT);
 
 			if (lim > 0)
