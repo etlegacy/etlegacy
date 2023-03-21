@@ -1665,7 +1665,7 @@ static void CG_DrawNoShootIcon(hudComponent_t *comp)
 	}
 	else if (cg.crosshairClientNoShoot)
 	{
-		float *color = CG_FadeColor(cg.crosshairClientTime, 1000);
+		float *color = CG_FadeColor(cg.crosshairClientTime, cg_drawCrosshairFade.integer);
 
 		if (!color)
 		{
@@ -2149,14 +2149,14 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	}
 
 	// draw the name of the player being looked at
-	color = CG_FadeColor(cg.crosshairClientTime, 1000);
+	color = CG_FadeColor(cg.crosshairClientTime, cg_drawCrosshairFade.integer);
 
 	if (!color)
 	{
 		return;
 	}
 
-	if (!hitClient)
+	if (cg.crosshairClientNum >= MAX_CLIENTS)
 	{
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
@@ -2316,7 +2316,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	{
 		// FIXME: CG_ScanForCrosshairDyna isn't called from here,
 		// fade doens't work because cg.crosshairDynaTime isn't updated correctly
-		color = CG_FadeColor_Ext(cg.crosshairDynaTime, 1000, textColor[3]);
+		color = CG_FadeColor_Ext(cg.crosshairDynaTime, cg_drawCrosshairFade.integer, textColor[3]);
 
 		if (!color)
 		{
@@ -2338,7 +2338,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	{
 		// FIXME: CG_ScanForCrosshairMine isn't called from here,
 		// fade doens't work because cg.crosshairMineTime isn't updated correctly
-		color = CG_FadeColor_Ext(cg.crosshairMineTime, 1000, textColor[3]);
+		color = CG_FadeColor_Ext(cg.crosshairMineTime, cg_drawCrosshairFade.integer, textColor[3]);
 
 		if (!color)
 		{
@@ -2382,9 +2382,9 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
-	if (!hitClient)
+	if (cg.crosshairClientNum >= MAX_CLIENTS)
 	{
-		color = CG_FadeColor_Ext(cg.crosshairClientTime, 1000, textColor[3]);
+		color = CG_FadeColor_Ext(cg.crosshairClientTime, cg_drawCrosshairFade.integer, textColor[3]);
 
 		if (!color)
 		{
@@ -2423,7 +2423,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 		if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, SK_FIELDOPS_ENEMY_RECOGNITION) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
-			color = CG_FadeColor_Ext(cg.crosshairClientTime, 1000, textColor[3]);
+			color = CG_FadeColor_Ext(cg.crosshairClientTime, cg_drawCrosshairFade.integer, textColor[3]);
 
 			if (!color)
 			{
@@ -2448,7 +2448,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	// draw the name of the player being looked at
 	if (clientNum != -1)
 	{
-		color = CG_FadeColor_Ext(cg.crosshairClientTime, 1000, textColor[3]);
+		color = CG_FadeColor_Ext(cg.crosshairClientTime, cg_drawCrosshairFade.integer, textColor[3]);
 
 		if (!color)
 		{

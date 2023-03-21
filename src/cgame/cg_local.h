@@ -2686,6 +2686,7 @@ extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
 extern vmCvar_t cg_drawCrosshair;
+extern vmCvar_t cg_drawCrosshairFade;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_drawSpectatorNames;
 extern vmCvar_t cg_useWeapsForZoom;
