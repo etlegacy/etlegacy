@@ -1862,11 +1862,7 @@ void CG_ScanForCrosshairMine(centity_t *cent)
 	    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
 	    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
 	{
-		if (cent->currentState.otherEntityNum >= MAX_CLIENTS)
-		{
-			cg.crosshairMine = -1;
-		}
-		else
+		if (cent->currentState.otherEntityNum < MAX_CLIENTS)
 		{
 			cg.crosshairMine     = cent->currentState.otherEntityNum;
 			cg.crosshairMineTime = cg.time;
@@ -1896,11 +1892,7 @@ void CG_ScanForCrosshairDyna(centity_t *cent)
 	    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
 	    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
 	{
-		if (cent->currentState.otherEntityNum >= MAX_CLIENTS)
-		{
-			cg.crosshairDyna = -1;
-		}
-		else
+		if (cent->currentState.otherEntityNum < MAX_CLIENTS)
 		{
 			cg.crosshairDyna     = cent->currentState.otherEntityNum;
 			cg.crosshairDynaTime = cg.time;
@@ -2117,7 +2109,22 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 
 	if (cg.crosshairDyna > -1 || cg.crosshairMine > -1)
 	{
-		return;
+		if (CG_FadeColor(cg.crosshairDynaTime, cg_drawCrosshairFade.integer))
+		{
+			return;
+		}
+
+		cg.crosshairDyna = -1;
+	}
+
+	if (cg.crosshairMine > -1)
+	{
+		if (CG_FadeColor(cg.crosshairMineTime, cg_drawCrosshairFade.integer))
+		{
+			return;
+		}
+
+		cg.crosshairMine = -1;
 	}
 
 	if (cg.generatingNoiseHud)
@@ -2314,41 +2321,34 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	// dyna > mine
 	if (cg.crosshairDyna > -1)
 	{
-		// FIXME: CG_ScanForCrosshairDyna isn't called from here,
-		// fade doens't work because cg.crosshairDynaTime isn't updated correctly
 		color = CG_FadeColor_Ext(cg.crosshairDynaTime, cg_drawCrosshairFade.integer, textColor[3]);
 
-		if (!color)
+		if (color)
 		{
+			textColor[3] = color[3];
+
+			s = va(CG_TranslateString("%s^*\'s dynamite"), CG_GetCrosshairNameString(comp, cg.crosshairDyna));
+
+			CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
+
 			return;
 		}
 
-		textColor[3] = color[3];
-
-		s = va(CG_TranslateString("%s^*\'s dynamite"), CG_GetCrosshairNameString(comp, cg.crosshairDyna));
-
-		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
-
 		cg.crosshairDyna = -1;
-		return;
 	}
 
 	// mine id's
 	if (cg.crosshairMine > -1)
 	{
-		// FIXME: CG_ScanForCrosshairMine isn't called from here,
-		// fade doens't work because cg.crosshairMineTime isn't updated correctly
 		color = CG_FadeColor_Ext(cg.crosshairMineTime, cg_drawCrosshairFade.integer, textColor[3]);
 
-		if (!color)
+		if (color)
 		{
-			return;
+			textColor[3] = color[3];
+
+			s = va(CG_TranslateString("%s^*\'s mine"), CG_GetCrosshairNameString(comp, cg.crosshairMine));
+			CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 		}
-
-		textColor[3] = color[3];
-
-		s = va(CG_TranslateString("%s^*\'s mine"), CG_GetCrosshairNameString(comp, cg.crosshairMine));
-		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 
 		cg.crosshairMine = -1;
 		return;
