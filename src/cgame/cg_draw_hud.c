@@ -604,17 +604,21 @@ void CG_DrawPlayerStatusHead(hudComponent_t *comp)
 }
 
 /**
+
+ */
+
+/**
  * @brief Get the current ammo and/or clip count of the holded weapon (if using ammo).
  * @param[out] ammo - the number of ammo left (in the current clip if using clip)
  * @param[out] clips - the total ammount of ammo in all clips (if using clip)
  * @param[out] akimboammo - the number of ammo left in the second pistol of akimbo (if using akimbo)
+ * @param[out] colorAmmo
  */
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color)
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/)
 {
 	centity_t     *cent;
 	playerState_t *ps;
 	weapon_t      weap;
-	int           maxAmmo = 0;
 
 	*ammo = *clips = *akimboammo = -1;
 
@@ -655,69 +659,112 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color)
 		// current clip
 		*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex];
 
-		maxAmmo = GetWeaponTableData(weap)->maxClip;
-	}
-	else
-	{
-		// some weapons don't draw ammo clip count text
-		*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex] + cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
-
-		maxAmmo = GetWeaponTableData(weap)->maxAmmo;
-	}
-
-	// akimbo ammo clip
-	if (GetWeaponTableData(weap)->attributes & WEAPON_ATTRIBUT_AKIMBO)
-	{
-		*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
-
-		maxAmmo *= 2;
-	}
-	else
-	{
-		*akimboammo = -1;
-	}
-
-	if (weap == WP_LANDMINE)
-	{
-		if (!cgs.gameManager)
+		// akimbo ammo clip
+		if (GetWeaponTableData(weap)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 		{
-			*ammo = 0;
+			*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
 		}
-		else
-		{
-			maxAmmo = ExtractInt(cg.maxLandmines);
 
-			if (cgs.clientinfo[ps->clientNum].team == TEAM_AXIS)
+		if (colorAmmo)
+		{
+            float maxClip   = GetWeaponTableData(weap)->maxClip * (*akimboammo != -1 ? 2 : 1);
+			float totalAmmo = *ammo + (*akimboammo != -1 ? *akimboammo : 0);
+			float ammoLeft  = maxClip ? totalAmmo * 100 / maxClip : 0;
+			float alpha     = (**colorAmmo)[3];
+
+			if (ammoLeft <= 30.f)
 			{
-				*ammo = cgs.gameManager->currentState.otherEntityNum;
+				*colorAmmo = &colorRed;
+			}
+			else if (ammoLeft <= 40.f)
+			{
+				*colorAmmo = &colorOrange;
+			}
+			else if (ammoLeft <= 50.f)
+			{
+				*colorAmmo = &colorYellow;
+			}
+
+			(**colorAmmo)[3] = alpha;
+		}
+
+		/*
+		if (colorClip)
+		{
+			float maxAmmo  = BG_MaxAmmoForWeapon(weap, cgs.clientinfo[cent->currentState.clientNum].skill, cgs.clientinfo[cent->currentState.clientNum].cls);
+			float ammoLeft = maxAmmo ? GetWeaponTableData(weap)->maxClip * (*akimboammo != -1 ? 2 : 1) * 100 / maxAmmo : 0;
+			float alpha    = (**colorClip)[3];
+
+			if (ammoLeft <= 30.f)
+			{
+				*colorClip = &colorRed;
+			}
+			else if (ammoLeft <= 40.f)
+			{
+				*colorClip = &colorOrange;
+			}
+			else if (ammoLeft <= 50.f)
+			{
+				*colorClip = &colorYellow;
+			}
+
+			(**colorClip)[3] = alpha;
+		}
+		*/
+	}
+	else
+	{
+		float maxAmmo = 0;
+
+		if (weap == WP_LANDMINE)
+		{
+			if (!cgs.gameManager)
+			{
+				*ammo = 0;
 			}
 			else
 			{
-				*ammo = cgs.gameManager->currentState.otherEntityNum2;
+				maxAmmo = ExtractInt(cg.maxLandmines);
+
+				if (cgs.clientinfo[ps->clientNum].team == TEAM_AXIS)
+				{
+					*ammo = cgs.gameManager->currentState.otherEntityNum;
+				}
+				else
+				{
+					*ammo = cgs.gameManager->currentState.otherEntityNum2;
+				}
 			}
 		}
-	}
+		else
+		{
+			// some weapons don't draw ammo clip count text
+			*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex] + cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
 
-	if (color)
-	{
-		float totalAmmo = *ammo + (*akimboammo ? *akimboammo : 0);
-		float ammoLeft  = maxAmmo ? totalAmmo * 100 / maxAmmo : 0;
-		float alpha     = (**color)[3];
-
-		if (ammoLeft <= 30.f)
-		{
-			*color = &colorRed;
-		}
-		else if (ammoLeft <= 40.f)
-		{
-			*color = &colorOrange;
-		}
-		else if (ammoLeft <= 50.f)
-		{
-			*color = &colorYellow;
+			maxAmmo = BG_MaxAmmoForWeapon(weap, cgs.clientinfo[cent->currentState.clientNum].skill, cgs.clientinfo[cent->currentState.clientNum].cls);
 		}
 
-		(**color)[3] = alpha;
+		if (colorAmmo)
+		{
+			float totalAmmo = *ammo + (*akimboammo != -1 ? *akimboammo : 0);
+			float ammoLeft  = maxAmmo ? totalAmmo * 100 / maxAmmo : 0;
+			float alpha     = (**colorAmmo)[3];
+
+			if (ammoLeft <= 30.f)
+			{
+				*colorAmmo = &colorRed;
+			}
+			else if (ammoLeft <= 40.f)
+			{
+				*colorAmmo = &colorOrange;
+			}
+			else if (ammoLeft <= 50.f)
+			{
+				*colorAmmo = &colorYellow;
+			}
+
+			(**colorAmmo)[3] = alpha;
+		}
 	}
 }
 

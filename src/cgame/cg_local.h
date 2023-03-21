@@ -3141,7 +3141,7 @@ float CG_CalculateReinfTime_Float(qboolean menu);
 int CG_CalculateShoutcasterReinfTime(team_t team);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **color);
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo/*, vec4_t **colorClip*/);
 
 //cg_shoutcastoverlay.c
 
