@@ -876,6 +876,33 @@ void Q_UTF32_ToUTF8(const uint32_t *charArray, size_t arraySize, char *string, s
 	*outLen = byteOffset;
 }
 
+static qboolean Q_EncodeUnicodeChar(const char *str, char *toStr, const size_t maxSize, size_t *l)
+{
+	// \u{num}
+	char     buffer[10];
+	size_t   bufferLen;
+	uint32_t cd = Q_UTF8_CodePoint(str);
+
+	toStr[(*l)++] = '\\';
+	toStr[(*l)++] = 'u';
+	toStr[(*l)++] = '{';
+
+	if (cd > 999999999)
+	{
+		return qfalse;
+	}
+
+	sprintf(buffer, "%d", cd);
+	bufferLen = strlen(buffer);
+
+	Q_strncpyz(&toStr[*l], buffer, maxSize - *l);
+	*l += bufferLen;
+
+	toStr[*l] = '}';
+
+	return qtrue;
+}
+
 /**
  * Escapes a string replacing all non ascii characters with '\u{code-point}' escapes.
  * @param fromStr source string which to escape
@@ -901,28 +928,20 @@ size_t Q_EscapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 
 		if (width > 1)
 		{
-			toStr[l++] = '\\';
-			toStr[l++] = 'u';
-			toStr[l++] = '{';
-			uint32_t cd = Q_UTF8_CodePoint(str);
-
-			if (cd > 999999999)
-			{
-				return 0;
-			}
-
-			char buffer[10];
-			sprintf(buffer, "%d", cd);
-			size_t bufferLen = strlen(buffer);
-
-			Q_strncpyz(&toStr[l], buffer, maxSize - l);
-			l += bufferLen;
-
-			toStr[l] = '}';
+			Q_EncodeUnicodeChar(str, toStr, maxSize, &l);
 		}
 		else
 		{
-			toStr[l] = str[0];
+			switch (*str)
+			{
+			case ';':
+			case '%':
+			case '\"':
+				Q_EncodeUnicodeChar(str, toStr, maxSize, &l);
+				break;
+			default:
+				toStr[l] = str[0];
+			}
 		}
 
 		l++;
