@@ -879,26 +879,27 @@ void Q_UTF32_ToUTF8(const uint32_t *charArray, size_t arraySize, char *string, s
 static qboolean Q_EncodeUnicodeChar(const char *str, char *toStr, const size_t maxSize, size_t *l)
 {
 	// \u{num}
-	char     buffer[10];
+	char     buffer[14] = { 0 };
 	size_t   bufferLen;
 	uint32_t cd = Q_UTF8_CodePoint(str);
 
-	toStr[(*l)++] = '\\';
-	toStr[(*l)++] = 'u';
-	toStr[(*l)++] = '{';
-
 	if (cd > 999999999)
 	{
+		toStr[*l] = '.';
 		return qfalse;
 	}
 
-	sprintf(buffer, "%d", cd);
+	sprintf(buffer, "\\u{%d}", cd);
 	bufferLen = strlen(buffer);
 
-	Q_strncpyz(&toStr[*l], buffer, maxSize - *l);
-	*l += bufferLen;
+	if (*l + bufferLen >= maxSize)
+	{
+		toStr[*l] = '.';
+		return qfalse;
+	}
 
-	toStr[*l] = '}';
+	Q_strncpyz(&toStr[*l], buffer, maxSize - *l);
+	*l += (bufferLen - 1);
 
 	return qtrue;
 }
