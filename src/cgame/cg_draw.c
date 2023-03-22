@@ -2107,6 +2107,11 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		return;
 	}
 
+	if (cg.renderingThirdPerson)
+	{
+		return;
+	}
+
 	if (cg.crosshairDyna > -1 || cg.crosshairMine > -1)
 	{
 		if (CG_FadeColor(cg.crosshairDynaTime, cg_drawCrosshairFade.integer))
@@ -2312,6 +2317,11 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	int        clientNum = -1;
 
 	if (cg_drawCrosshair.integer < 0)
+	{
+		return;
+	}
+
+	if (cg.renderingThirdPerson)
 	{
 		return;
 	}
