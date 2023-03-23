@@ -1873,8 +1873,8 @@ static void PM_GroundTrace(void)
 		pml.groundPlane = qfalse;
 		pml.walking     = qfalse;
 
-		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && !pm->waterlevel &&
-		    !pm->pmext->airTime)
+		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
+		    && !pm->waterlevel && !(pm->ps->pm_flags & PMF_LADDER) && !pm->pmext->airTime)
 		{
 			pm->pmext->airTime = pm->cmd.serverTime;
 		}
