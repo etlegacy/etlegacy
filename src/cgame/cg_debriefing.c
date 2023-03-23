@@ -1104,7 +1104,7 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-#define NEW_MAP_PLAYED_COUNT_THRESOLD 4
+#define NEW_MAP_PLAYED_COUNT_THRESOLD 3
 vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
@@ -1146,7 +1146,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			break;
 		}
 
-		if (cgs.dbMapsHistoryCountList)
+		if (cgs.dbMapMinAge)
 		{
 			if (i + cgs.dbMapVoteListOffset == cgs.dbMapLastPlayed)
 			{
@@ -1166,7 +1166,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			}
 
 			CG_FilledBar(DB_MAPHISTORIC_X + cgs.wideXoffset, y - 8, 60, 10, (vec4_t) { 1.f, 0, 0, 0.85f }, (vec4_t) { 0, 1.f, 0, 0.85f },
-			             NULL, NULL, (cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset]) / (float)cgs.dbMapsHistoryCountList,
+			             NULL, NULL, cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset] / (cgs.dbMapsHistoryCount / (float)cgs.dbMapMinAge),
 			             BAR_LERP_COLOR | BAR_BGSPACING_X0Y0, -1);
 		}
 
@@ -4693,8 +4693,6 @@ void CG_parseMapVoteHistory()
 	memset(cgs.dbMapsHistory, -1, sizeof(cgs.dbMapsHistory));
 	memset(cgs.dbMapsHistoryList, 0, sizeof(cgs.dbMapsHistoryList));
 
-	cgs.dbMapsHistoryCountList = 0;
-
 	cgs.dbMapsHistoryCount = trap_Argc() - 1;
 
 	for (i = 0; i < cgs.dbMapsHistoryCount && i < MAX_HISTORY_MAPS; i++)
@@ -4704,7 +4702,6 @@ void CG_parseMapVoteHistory()
 		if (cgs.dbMapsHistory[i] != -1 && cgs.dbMapsHistory[i] < cgs.dbNumMaps)
 		{
 			++(cgs.dbMapsHistoryList[cgs.dbMapsHistory[i]]);
-			++cgs.dbMapsHistoryCountList;
 		}
 	}
 
@@ -4723,8 +4720,9 @@ void CG_parseMapVoteTally()
 
 	cgs.dbMapVoterCount  = Q_atoi(CG_Argv(1));
 	cgs.dbMapPlayerCount = Q_atoi(CG_Argv(2));
+	cgs.dbMapMinAge      = Q_atoi(CG_Argv(3));
 
-	numMaps = (trap_Argc() - 3);
+	numMaps = (trap_Argc() - 4);
 	for (i = 0; i < numMaps; i++)
 	{
 		cgs.dbMapVotes[i]  = Q_atoi(CG_Argv(i + 3));

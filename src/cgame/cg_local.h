@@ -2617,7 +2617,6 @@ typedef struct cgs_s
 	// MAPVOTE
 	int dbMapVoteListOffset;
 	int dbMapsHistoryCount;
-	int dbMapsHistoryCountList;
 	int dbMapsHistory[MAX_HISTORY_MAPS];
 	int dbMapsHistoryList[32];
 	int dbNumMaps;
@@ -2628,6 +2627,7 @@ typedef struct cgs_s
 	int dbMapVotesSum;
 	int dbMapVoterCount;
 	int dbMapPlayerCount;
+    int dbMapMinAge;
 	int dbMapID[MAX_VOTE_MAPS];
 	int dbMapLastPlayed;
 	int dbMapLastPlayedList[MAX_VOTE_MAPS];
