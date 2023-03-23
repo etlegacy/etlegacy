@@ -1412,8 +1412,8 @@ void CG_MapVote_VoteSend_Draw(panel_button_t *button)
 	                  va("^3%i/%i maps selected", usedVotes, maxVotes),
 	                  0, 0, 0, &cgs.media.limboFont2);
 
-	text = va("^3Participation: %3d%% (%i/%i)",
-	          (cgs.dbMapVoterCount / cgs.dbMapPlayerCount) * 100,
+	text = va("^3Participation: %3.f%% (%i/%i)",
+	          (cgs.dbMapVoterCount * 100.f) / cgs.dbMapPlayerCount,
 	          cgs.dbMapVoterCount, cgs.dbMapPlayerCount);
 
 	textWidth = CG_Text_Width_Ext(text, .20f, 0, &cgs.media.limboFont2);
