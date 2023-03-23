@@ -4252,17 +4252,11 @@ static void CG_Draw2D(void)
 			CG_DrawActiveHud();
 		}
 	}
-	else
+	else if (cgs.eventHandling != CGAME_EVENT_NONE)
 	{
-		// keep drawing crossair
-		CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
-
-		if (cgs.eventHandling != CGAME_EVENT_NONE)
-		{
-			// draw cursor
-			trap_R_SetColor(NULL);
-			CG_DrawPic(cgDC.cursorx - 14, cgDC.cursory - 14, 32, 32, cgs.media.cursorIcon);
-		}
+		// draw cursor
+		trap_R_SetColor(NULL);
+		CG_DrawPic(cgDC.cursorx - 14, cgDC.cursory - 14, 32, 32, cgs.media.cursorIcon);
 	}
 
 	if (cg.showFireteamMenu)

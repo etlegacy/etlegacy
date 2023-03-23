@@ -1310,6 +1310,12 @@ qboolean CG_DrawScoreboard(void)
 		fade = fadeColor[3];
 	}
 
+	if (cg.predictedPlayerState.pm_type != PM_INTERMISSION)
+	{
+		// keep drawing crossair
+		CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
+	}
+
 	y = WM_DrawObjectives(x, y, width, fade);
 
 	if (cgs.gametype == GT_WOLF_STOPWATCH && cg.snap->ps.pm_type == PM_INTERMISSION)
