@@ -4674,16 +4674,7 @@ void PM_CheckLadderMove(void)
 		return;
 	}
 
-	if (pml.walking)
-	{
-		tracedist = 1.0;
-	}
-	else
-	{
-		tracedist = TRACE_LADDER_DIST;
-	}
-
-	wasOnLadder = ((pm->ps->pm_flags & PMF_LADDER) != 0);
+	wasOnLadder = (pm->ps->pm_flags & PMF_LADDER);
 
 	pml.ladder        = qfalse;
 	pm->ps->pm_flags &= ~PMF_LADDER;    // clear ladder bit
@@ -4702,6 +4693,8 @@ void PM_CheckLadderMove(void)
 	{
 		return;
 	}
+    
+    tracedist = pml.walking ? 1.0 : TRACE_LADDER_DIST;
 
 	// check for ladder
 	flatforward[0] = pml.forward[0];
@@ -4711,52 +4704,40 @@ void PM_CheckLadderMove(void)
 
 	VectorMA(pm->ps->origin, tracedist, flatforward, spot);
 	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, spot, pm->ps->clientNum, pm->tracemask);
+
 	if ((trace.fraction < 1) && (trace.surfaceFlags & SURF_LADDER))
 	{
-		pml.ladder = qtrue;
-	}
-
-	if (pml.ladder)
-	{
 		VectorCopy(trace.plane.normal, laddervec);
-	}
 
-	if (pml.ladder && !pml.walking && (trace.fraction * tracedist > 1.0f))
-	{
-		vec3_t mins;
 		// if we are only just on the ladder, don't do this yet, or it may throw us back off the ladder
-		pml.ladder = qfalse;
-		VectorCopy(pm->mins, mins);
-		mins[2] = -1;
-		VectorMA(pm->ps->origin, -tracedist, laddervec, spot);
-		pm->trace(&trace, pm->ps->origin, mins, pm->maxs, spot, pm->ps->clientNum, pm->tracemask);
-		if ((trace.fraction < 1) && (trace.surfaceFlags & SURF_LADDER))
+		if (!pml.walking && (trace.fraction * tracedist > 1.0f))
 		{
-			ladderforward     = qtrue;
-			pml.ladder        = qtrue;
-			pm->ps->pm_flags |= PMF_LADDER; // set ladder bit
+			vec3_t mins;
+
+			VectorCopy(pm->mins, mins);
+			mins[2] = -1;
+			VectorMA(pm->ps->origin, -tracedist, laddervec, spot);
+			pm->trace(&trace, pm->ps->origin, mins, pm->maxs, spot, pm->ps->clientNum, pm->tracemask);
+
+			if ((trace.fraction < 1) && (trace.surfaceFlags & SURF_LADDER))
+			{
+				ladderforward     = qtrue;
+				pml.ladder        = qtrue;
+				pm->ps->pm_flags |= PMF_LADDER; // set ladder bit
+			}
 		}
 		else
 		{
-			pml.ladder = qfalse;
+			pml.ladder        = qtrue;
+			pm->ps->pm_flags |= PMF_LADDER; // set ladder bit
 		}
-	}
-	else if (pml.ladder)
-	{
-		pm->ps->pm_flags |= PMF_LADDER; // set ladder bit
 	}
 
 	// create some up/down velocity if touching ladder
-	if (pml.ladder)
+	// we are currently on the ground, only go up and prevent X/Y if we are pushing forwards
+	if (pml.ladder && pml.walking && pm->cmd.forwardmove <= 0)
 	{
-		if (pml.walking)
-		{
-			// we are currently on the ground, only go up and prevent X/Y if we are pushing forwards
-			if (pm->cmd.forwardmove <= 0)
-			{
-				pml.ladder = qfalse;
-			}
-		}
+		pml.ladder = qfalse;
 	}
 
 	// if we have just dismounted the ladder at the top, play dismount
@@ -4764,6 +4745,7 @@ void PM_CheckLadderMove(void)
 	{
 		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_CLIMB_DISMOUNT, qfalse, qfalse);
 	}
+
 	// if we have just mounted the ladder
 	if (pml.ladder && !wasOnLadder && pm->ps->velocity[2] < 0)        // only play anim if going down ladder
 	{
