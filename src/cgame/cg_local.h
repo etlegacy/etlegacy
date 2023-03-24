@@ -2719,6 +2719,8 @@ extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
 extern vmCvar_t cg_drawEnvAwareness;
+extern vmCvar_t cg_drawEnvAwarenessScale;
+extern vmCvar_t cg_drawEnvAwarenessIconSize;
 extern vmCvar_t cg_dynamicIcons;
 extern vmCvar_t cg_dynamicIconsDistance;
 extern vmCvar_t cg_dynamicIconsSize;

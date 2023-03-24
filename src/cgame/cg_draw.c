@@ -4034,7 +4034,6 @@ void CG_DrawBannerPrint(hudComponent_t *comp)
 }
 
 #define MAX_DISTANCE 2000.f
-#define ICONS_SIZE 14
 
 /**
  * @brief CG_DrawEnvironmentalAwareness
@@ -4079,8 +4078,8 @@ static void CG_DrawEnvironmentalAwareness()
 
 	for (i = 0; i < snap->numEntities; ++i)
 	{
-		centity_t *cent                  = &cg_entities[snap->entities[i].number];
-		char      description[MAX_QPATH] = { 0 };
+		centity_t *cent = &cg_entities[snap->entities[i].number];
+		//char      description[MAX_QPATH] = { 0 };
 		qhandle_t icon;
 		vec3_t    dir;
 		float     len;
@@ -4101,7 +4100,7 @@ static void CG_DrawEnvironmentalAwareness()
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, cg_drawEnvAwareness.integer & 4, cg_drawEnvAwareness.integer & 2, cg_drawEnvAwareness.integer & 1, qfalse, NULL);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, cg_drawEnvAwareness.integer & 4, cg_drawEnvAwareness.integer & 2, cg_drawEnvAwareness.integer & 1, qfalse, NULL /*description*/);
 
 		if (icon)
 		{
@@ -4112,27 +4111,30 @@ static void CG_DrawEnvironmentalAwareness()
 			char  *distance;
 			float baseSize;
 
-			px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
-			py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
+			px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) * 0.5);
+			py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) * 0.5);
 
-			xc = SCREEN_WIDTH / 2.0f;
-			yc = SCREEN_HEIGHT / 2.0f;
+			xc = Ccg_WideX(SCREEN_WIDTH) * 0.5f;
+			yc = SCREEN_HEIGHT * 0.5f;
 
 			z = DotProduct(dir, cg.refdef.viewaxis[0]);
-			if (z < 0.1f)
-			{
-				z = 0.1f;
-			}
-			px *= z;
-			py *= z;
+
+			px *= Q_fabs(z);
+			py *= MAX(0.1f, z);
 
 			x = xc - (DotProduct(dir, cg.refdef.viewaxis[1]) * xc) / px;
 			y = yc - (DotProduct(dir, cg.refdef.viewaxis[2]) * yc) / py;
-			x = Ccg_WideX(x);
 
-			// do let the icons going outside the screen
-			x = Com_Clamp(0, Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE, x);
-			y = Com_Clamp(0, SCREEN_HEIGHT - (ICONS_SIZE + 12), y);
+			// don't let the icons going outside the screen
+			x = Com_Clamp(xc - xc * cg_drawEnvAwarenessScale.value,
+			              MIN(xc + xc * cg_drawEnvAwarenessScale.value,
+			                  Ccg_WideX(SCREEN_WIDTH) - cg_drawEnvAwarenessIconSize.integer),
+			              x);
+
+			y = Com_Clamp(yc - yc * cg_drawEnvAwarenessScale.value,
+			              MIN(yc + yc * cg_drawEnvAwarenessScale.value,
+			                  SCREEN_HEIGHT - (cg_drawEnvAwarenessIconSize.integer + 12)),
+			              y);
 
 			switch (cg_drawUnit.integer)
 			{
@@ -4148,11 +4150,11 @@ static void CG_DrawEnvironmentalAwareness()
 				break;
 			}
 
-			baseSize = ICONS_SIZE * (1 - Com_Clamp(0, .75f, len / MAX_DISTANCE));
+			baseSize = cg_drawEnvAwarenessIconSize.integer * (1 - Com_Clamp(0, .75f, len / MAX_DISTANCE));
 
-			CG_Text_Paint_Centred_Ext(x + baseSize / 2, y - baseSize + 8, 0.12f, 0.12f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
+			//CG_Text_Paint_Centred_Ext(x + baseSize * 0.5f, y - baseSize + 8, 0.12f, 0.12f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
 			CG_DrawPic(x, y, baseSize, baseSize, icon);
-			CG_Text_Paint_Centred_Ext(x + baseSize / 2, y + baseSize + 8, 0.12f, 0.12f, colorWhite, distance, 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Centred_Ext(x + baseSize * 0.5f, y + baseSize + 8, 0.12f, 0.12f, colorWhite, distance, 0, 0, 0, &cgs.media.limboFont2);
 		}
 	}
 }
