@@ -3441,7 +3441,7 @@ static const char *gameConsoleCommand[] =
  */
 void CG_AddGameConsoleCommand()
 {
-	if (cgs.localServer || cgs.clientinfo[cg.clientNum].refStatus == RL_RCON)
+	if (cgs.localServer || cgs.clientinfo[cg.clientNum].refStatus != RL_NONE)
 	{
 		int i;
 
@@ -3457,11 +3457,14 @@ void CG_AddGameConsoleCommand()
  */
 void CG_RemoveGameConsoleCommand()
 {
-	int i;
-
-	for (i = 0; gameConsoleCommand[i]; i++)
+	if (!cgs.localServer)
 	{
-		trap_RemoveCommand(gameConsoleCommand[i]);
+		int i;
+
+		for (i = 0; gameConsoleCommand[i]; i++)
+		{
+			trap_RemoveCommand(gameConsoleCommand[i]);
+		}
 	}
 }
 
