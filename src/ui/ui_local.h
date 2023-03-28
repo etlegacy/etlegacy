@@ -46,7 +46,6 @@
 
 extern vmCvar_t ui_brassTime;
 extern vmCvar_t ui_drawCrosshair;
-extern vmCvar_t ui_drawCrosshairNames;
 extern vmCvar_t ui_drawCrosshairPickups;
 extern vmCvar_t ui_drawSpectatorNames;
 extern vmCvar_t ui_marks;
@@ -94,6 +93,11 @@ extern vmCvar_t ui_currentCampaign;
 extern vmCvar_t ui_campaignIndex;
 extern vmCvar_t ui_currentCampaignCompleted;
 extern vmCvar_t ui_blackout;
+extern vmCvar_t ui_cg_crosshairColor;
+extern vmCvar_t ui_cg_crosshairColorAlt;
+extern vmCvar_t ui_cg_crosshairAlpha;
+extern vmCvar_t ui_cg_crosshairAlphaAlt;
+extern vmCvar_t ui_cg_crosshairSize;
 
 extern vmCvar_t cl_bypassMouseInput;
 
@@ -320,7 +324,7 @@ extern qboolean debugMode;
 
 #define SET_EDITITEM(x) g_editingField  = qtrue; g_editItem = x;
 #define CLEAR_EDITITEM() g_editingField = qfalse; g_editItem = NULL;
-#define IS_EDITMODE(x) ((x->window.flags &WINDOW_HASFOCUS) && g_editingField)
+#define IS_EDITMODE(x) ((x->window.flags & WINDOW_HASFOCUS) && g_editingField)
 #define COMBO_SELECTORCHAR "V"
 
 // ui_main.c
@@ -651,6 +655,9 @@ typedef struct
 
 	const char *glInfoLines[GLINFO_LINES];
 	int numGlInfoLines;
+
+	vec4_t xhairColor;
+	vec4_t xhairColorAlt;
 
 	qhandle_t passwordFilter;
 	qhandle_t friendlyFireFilter;

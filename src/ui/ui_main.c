@@ -2925,7 +2925,7 @@ static void UI_DrawRedBlue(rectDef_t *rect, float scale, vec4_t color, int textS
  */
 static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 {
-	float size = 96.0f;
+	float size = ui_cg_crosshairSize.integer;
 
 	if (uiInfo.currentCrosshair < 0 || uiInfo.currentCrosshair >= NUM_CROSSHAIRS)
 	{
@@ -2934,9 +2934,10 @@ static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 
 	size = (rect->w / 96.0f) * ((size > 96.0f) ? 96.0f : ((size < 24.0f) ? 24.0f : size));
 
-	trap_R_SetColor(colorWhite);
-	UI_DrawHandlePic(rect->x + (rect->w - size) / 2, rect->y + (rect->h - size) / 2, size, size, uiInfo.uiDC.Assets.crosshairShader[uiInfo.currentCrosshair]);
-	UI_DrawHandlePic(rect->x + (rect->w - size) / 2, rect->y + (rect->h - size) / 2, size, size, uiInfo.uiDC.Assets.crosshairAltShader[uiInfo.currentCrosshair]);
+	trap_R_SetColor(uiInfo.xhairColor);
+	UI_DrawHandlePic(rect->x + (rect->w - size) * 0.5f, rect->y + (rect->h - size) * 0.5f, size, size, uiInfo.uiDC.Assets.crosshairShader[uiInfo.currentCrosshair]);
+	trap_R_SetColor(uiInfo.xhairColorAlt);
+	UI_DrawHandlePic(rect->x + (rect->w - size) * 0.5f, rect->y + (rect->h - size) * 0.5f, size, size, uiInfo.uiDC.Assets.crosshairAltShader[uiInfo.currentCrosshair]);
 
 	trap_R_SetColor(NULL);
 }
@@ -9143,7 +9144,6 @@ typedef struct
 vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairInfo;
-vmCvar_t ui_drawCrosshairNames;
 vmCvar_t ui_drawCrosshairPickups;
 vmCvar_t ui_drawSpectatorNames;
 vmCvar_t ui_marks;
@@ -9201,6 +9201,11 @@ vmCvar_t ui_currentCampaignCompleted;
 
 // cgame mappings
 vmCvar_t ui_blackout;       // For speclock
+vmCvar_t ui_cg_crosshairColor;
+vmCvar_t ui_cg_crosshairColorAlt;
+vmCvar_t ui_cg_crosshairAlpha;
+vmCvar_t ui_cg_crosshairAlphaAlt;
+vmCvar_t ui_cg_crosshairSize;
 
 vmCvar_t cl_bypassMouseInput;
 
@@ -9298,6 +9303,14 @@ static cvarTable_t cvarTable[] =
 
 	// cgame mappings
 	{ &ui_blackout,                        "ui_blackout",                         "0",                          CVAR_ROM,                       0 },
+	{ NULL,                                "cg_useCvarCrosshair",                 "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairAlpha,               "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_crosshairHealth",                  "0",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },
@@ -9404,6 +9417,12 @@ void UI_RegisterCvars(void)
 
 	// Always force this to 0 on init
 	trap_Cvar_Set("ui_blackout", "0");
+
+	Q_ParseColor(ui_cg_crosshairColor.string, uiInfo.xhairColor);
+	uiInfo.xhairColor[3] = ui_cg_crosshairAlpha.value;
+
+	Q_ParseColor(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt);
+	uiInfo.xhairColorAlt[3] = ui_cg_crosshairAlphaAlt.value;
 }
 
 /**
@@ -9422,6 +9441,18 @@ void UI_UpdateCvars(void)
 			if (cv->modificationCount != cv->vmCvar->modificationCount)
 			{
 				cv->modificationCount = cv->vmCvar->modificationCount;
+
+				if (cv->vmCvar == &ui_cg_crosshairColor || cv->vmCvar == &ui_cg_crosshairAlpha)
+				{
+					Q_ParseColor(ui_cg_crosshairColor.string, uiInfo.xhairColor);
+					uiInfo.xhairColor[3] = ui_cg_crosshairAlpha.value;
+				}
+
+				if (cv->vmCvar == &ui_cg_crosshairColorAlt || cv->vmCvar == &ui_cg_crosshairAlphaAlt)
+				{
+					Q_ParseColor(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt);
+					uiInfo.xhairColorAlt[3] = ui_cg_crosshairAlphaAlt.value;
+				}
 			}
 		}
 	}
