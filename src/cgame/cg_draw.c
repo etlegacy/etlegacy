@@ -2669,7 +2669,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		{
 			if (cgs.clientinfo[cg.clientNum].team != TEAM_AXIS && cgs.clientinfo[cg.clientNum].team != TEAM_ALLIES)
 			{
-				str = va("%s\n%s\n%s", va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString),
+				str = va("%s\n^*%s\n%s", va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString),
 				         va(CG_TranslateString("YES:%i, NO:%i"), cgs.voteYes, cgs.voteNo),
 				         va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"));
 
@@ -2677,7 +2677,7 @@ void CG_DrawVote(hudComponent_t *comp)
 			}
 			else
 			{
-				str = va("%s\n%s",
+				str = va("%s\n^*%s",
 				         va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString),
 				         va(CG_TranslateString("YES(%s):%i, NO(%s):%i"), str1, cgs.voteYes, str2, cgs.voteNo));
 
@@ -2687,7 +2687,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		}
 		else
 		{
-			str = va("%s\n%s",
+			str = va("%s\n^*%s",
 			         va(CG_TranslateString("YOU VOTED ON: %s"), cgs.voteString),
 			         va(CG_TranslateString("Y:%i, N:%i"), cgs.voteYes, cgs.voteNo));
 
