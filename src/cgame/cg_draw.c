@@ -2738,7 +2738,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if (cgs.propositionEndTime > cg.time && cgs.propositionClient < 0)
 	{
-		switch (cgs.applicationClient)
+		switch (cgs.propositionClient)
 		{
 		case -1: str = CG_TranslateString("Your proposition has been submitted"); break;
 		case -2: str = CG_TranslateString("Your proposition was rejected"); break;
@@ -2756,7 +2756,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if (cgs.invitationEndTime > cg.time && cgs.invitationClient < 0)
 	{
-		switch (cgs.applicationClient)
+		switch (cgs.invitationClient)
 		{
 		case -1: str = CG_TranslateString("Your invitation has been submitted"); break;
 		case -2: str = CG_TranslateString("Your invitation was rejected"); break;
