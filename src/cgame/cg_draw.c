@@ -2528,7 +2528,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		CG_GetBindingKeyForVote(str1, str2);
 
 		str = va("%s\n%s",
-		         va(CG_TranslateString("File complaint against ^7%s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name),
+		         va(CG_TranslateString("File complaint against ^7%s^* for team-killing?"), cgs.clientinfo[cgs.complaintClient].name),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
 		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
@@ -2540,7 +2540,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		CG_GetBindingKeyForVote(str1, str2);
 
 		str = va("%s\n%s",
-		         va(CG_TranslateString("Accept %s^3's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name),
+		         va(CG_TranslateString("Accept ^7%s^*'s application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
 		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
@@ -2552,7 +2552,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		CG_GetBindingKeyForVote(str1, str2);
 
 		str = va("%s\n%s",
-		         va(CG_TranslateString("Accept %s^3's proposition to invite %s^3 to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name),
+		         va(CG_TranslateString("Accept ^7%s^*'s proposition to invite ^7%s^* to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
 		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
@@ -2564,7 +2564,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		CG_GetBindingKeyForVote(str1, str2);
 
 		str = va("%s\n%s",
-		         va(CG_TranslateString("Accept %s^3's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name),
+		         va(CG_TranslateString("Accept ^7%s^*'s invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
 		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
