@@ -2986,6 +2986,8 @@ void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
 int CG_RoundTime(qtime_t *qtime);
 
+void CG_HudEditor_Cleanup();
+
 qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation);
 qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *orientation);
 

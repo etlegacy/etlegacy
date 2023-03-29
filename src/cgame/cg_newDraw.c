@@ -866,9 +866,13 @@ void CG_EventHandling(int type, qboolean fForced)
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
 		{
-			CG_HudEditor_Cleanup();
-			cg.editingHud         = qfalse;
-			cg.generatingNoiseHud = qfalse;
+			if (cg.generatingNoiseHud)
+			{
+				CG_HudEditor_Cleanup();
+				cg.generatingNoiseHud = qfalse;
+			}
+
+			cg.editingHud = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{

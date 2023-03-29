@@ -660,11 +660,11 @@ static panel_button_t hudEditorWarningLabel =
 {
 	NULL,
 	"CANNOT MODIFY HUD 0",
-	{ 0,                            HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT * 2,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2), BUTTON_HEIGHT },
-	{ 0,                            0,                                                                    0,                                                       0, 0, 0, 0, 1 },
-	&hudEditorTextWarningFont,      // font
-	NULL,                           // keyDown
-	NULL,                           // keyUp
+	{ 0,                        HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT * 2,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2), BUTTON_HEIGHT },
+	{ 0,                        0,                                                   0,                                                       0, 0, 0, 0, 1 },
+	&hudEditorTextWarningFont,  // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_HudEditor_SetupTitleText,
 	NULL,
 	0
@@ -2366,6 +2366,7 @@ static void CG_HudEditor_ToggleHelp(void)
 static void CG_HudEditor_ToggleNoiseGenerator(void)
 {
 	cg.generatingNoiseHud = !cg.generatingNoiseHud;
+	CG_HudEditor_Cleanup();
 }
 
 /**
