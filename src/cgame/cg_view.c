@@ -269,7 +269,7 @@ static void CG_CalcVrect(void)
 		return;
 	}
 
-	if (cg.editingHud)
+	if (cg.editingHud && !cg.fullScreenHudEditor)
 	{
 		CG_Letterbox(80, 80, qfalse);
 	}

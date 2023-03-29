@@ -634,7 +634,7 @@ void CG_MouseEvent(int x, int y)
 		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * 1.25f;
 
 		cgs.cursorX += x;
-		if (cg.editingHud)
+		if (cg.editingHud && !cg.fullScreenHudEditor)
 		{
 			cgs.cursorX = Com_Clamp(0, hudEditorSafeX, cgs.cursorX);
 		}
@@ -644,7 +644,7 @@ void CG_MouseEvent(int x, int y)
 		}
 
 		cgs.cursorY += y;
-		if (cg.editingHud)
+		if (cg.editingHud && !cg.fullScreenHudEditor)
 		{
 			cgs.cursorY = Com_Clamp(0, hudEditorSafeY, cgs.cursorY);
 		}
@@ -872,7 +872,8 @@ void CG_EventHandling(int type, qboolean fForced)
 				cg.generatingNoiseHud = qfalse;
 			}
 
-			cg.editingHud = qfalse;
+			cg.editingHud          = qfalse;
+			cg.fullScreenHudEditor = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{
@@ -948,8 +949,9 @@ void CG_EventHandling(int type, qboolean fForced)
 	else if (type == CGAME_EVENT_HUDEDITOR)
 	{
 		CG_HudEditorSetup();
-		cg.editingHud         = qtrue;
-		cg.generatingNoiseHud = qfalse;
+		cg.editingHud          = qtrue;
+		cg.generatingNoiseHud  = qfalse;
+		cg.fullScreenHudEditor = qfalse;
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
 	else

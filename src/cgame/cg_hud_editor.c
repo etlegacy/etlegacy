@@ -2369,6 +2369,11 @@ static void CG_HudEditor_ToggleNoiseGenerator(void)
 	CG_HudEditor_Cleanup();
 }
 
+static void CG_HudEditor_ToggleFullScreen(void)
+{
+	cg.fullScreenHudEditor = !cg.fullScreenHudEditor;
+}
+
 /**
  * @brief CG_HudEditor_HelpDraw
  */
@@ -2403,7 +2408,8 @@ static void CG_HudEditor_HelpDraw(void)
 			{ NULL,                  NULL                                },
 			{ "l",                   "show all layout on/off"            },
 			{ "h",                   "help on/off"                       },
-			{ "n",                   "noise generator"                   },
+			{ "n",                   "noise generator on/off"            },
+			{ "f",                   "full screen on/off"                },
 		};
 
 		vec4_t bgColor;
@@ -2536,6 +2542,12 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	if (key == 'n' && down)
 	{
 		CG_HudEditor_ToggleNoiseGenerator();
+		return;
+	}
+
+	if (key == 'f' && down)
+	{
+		CG_HudEditor_ToggleFullScreen();
 		return;
 	}
 

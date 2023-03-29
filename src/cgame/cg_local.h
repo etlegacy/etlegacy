@@ -1483,6 +1483,7 @@ typedef struct
 	qboolean editingCameras;
 	qboolean editingHud;
 	qboolean generatingNoiseHud;
+	qboolean fullScreenHudEditor;
 
 	qboolean serverRespawning;
 
@@ -2627,7 +2628,7 @@ typedef struct cgs_s
 	int dbMapVotesSum;
 	int dbMapVoterCount;
 	int dbMapPlayerCount;
-    int dbMapMinAge;
+	int dbMapMinAge;
 	int dbMapID[MAX_VOTE_MAPS];
 	int dbMapLastPlayed;
 	int dbMapLastPlayedList[MAX_VOTE_MAPS];
@@ -3146,7 +3147,7 @@ float CG_CalculateReinfTime_Float(qboolean menu);
 int CG_CalculateShoutcasterReinfTime(team_t team);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo/*, vec4_t **colorClip*/);
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/);
 
 //cg_shoutcastoverlay.c
 
