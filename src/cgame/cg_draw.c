@@ -3288,7 +3288,7 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 
 		if (CG_ConfigString(CS_CONFIGNAME)[0])
 		{
-			s = va(CG_TranslateString("^3Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
+			s = va(CG_TranslateString("Config: ^7%s^*"), CG_ConfigString(CS_CONFIGNAME));
 		}
 
 		if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
@@ -3303,11 +3303,11 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 				Q_strncpyz(str1, Binding_FromName("notready"), 32);
 				if (!Q_stricmp(str1, "(?" "?" "?)"))
 				{
-					s2 = CG_TranslateString("Type ^3\\notready^* in the console to unready");
+					s2 = CG_TranslateString("^*Type ^3\\notready^* in the console to unready");
 				}
 				else
 				{
-					s2 = va(CG_TranslateString("^7Press ^3%s^* to unready"), str1);
+					s2 = va(CG_TranslateString("^*Press ^3%s^* to unready"), str1);
 					s2 = CG_TranslateString(s2);
 				}
 			}
@@ -3316,11 +3316,11 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 				Q_strncpyz(str1, Binding_FromName("ready"), 32);
 				if (!Q_stricmp(str1, "(?" "?" "?)"))
 				{
-					s2 = CG_TranslateString("Type ^3\\ready^* in the console to start");
+					s2 = CG_TranslateString("^*Type ^3\\ready^* in the console to start");
 				}
 				else
 				{
-					s2 = va(CG_TranslateString("Press ^3%s^* to start"), str1);
+					s2 = va(CG_TranslateString("^*Press ^3%s^* to start"), str1);
 					s2 = CG_TranslateString(s2);
 				}
 			}
