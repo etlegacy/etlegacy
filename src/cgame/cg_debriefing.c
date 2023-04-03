@@ -4636,7 +4636,7 @@ void CG_parseMapVoteListInfo()
 #ifdef FEATURE_RATING
 		if (cgs.skillRating)
 		{
-			cgs.dbMapBias[i] = Q_atoi(CG_Argv((i * numArgs) + 6));
+			cgs.dbMapBias[i] = Q_atof(CG_Argv((i * numArgs) + 6));
 		}
 #endif
 

@@ -2633,7 +2633,7 @@ typedef struct cgs_s
 	int dbMapLastPlayed;
 	int dbMapLastPlayedList[MAX_VOTE_MAPS];
 	int dbMapTimesPlayed[MAX_VOTE_MAPS];
-	int dbMapBias[MAX_VOTE_MAPS];
+	float dbMapBias[MAX_VOTE_MAPS];
 	int dbSelectedMap;
 	int dbSelectedMapTime;
 	qhandle_t dbSelectedMapLevelShots;
