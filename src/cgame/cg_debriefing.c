@@ -994,7 +994,7 @@ static panel_button_t charPanelEdit =
 #define DB_MAPHISTORIC_X (DB_MAPVOTE_X + 70)
 #define DB_MAPVOTE_Y     (56 + 10)
 #define DB_MAPVOTE_X2    (620 - 180 - 20)
-#define DB_MAPVOTE_Y2    (286 + 30 - 164)
+#define DB_MAPVOTE_Y2    (286 + 30 - 160)
 
 static scrollText_t descriptionScroll;
 
@@ -1114,11 +1114,7 @@ vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 void CG_MapVoteList_Draw(panel_button_t *button)
 {
 	int   i;
-	float y  = button->rect.y + 12;
-	float x2 = DB_MAPVOTE_X2 + cgs.wideXoffset;
-	float y2 = DB_MAPVOTE_Y;
-	float w2 = 190.f;
-	float h2 = 20;
+	float y = button->rect.y + 12;
 
 	// display map number if server is configured
 	// to reset XP after certain number of maps
@@ -1129,12 +1125,10 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 		s = va("Map %d of %d", cgs.mapVoteMapX + 1, cgs.mapVoteMapY);
 		w = CG_Text_Width_Ext(s, button->font->scalex, 0, button->font->font);
-		CG_Text_Paint_Ext(DB_MAPNAME_X + 10 + cgs.wideXoffset + DB_MAPVOTE_X * 0.5f - w * 0.5f, y2,
+		CG_Text_Paint_Ext(DB_MAPNAME_X + 10 + cgs.wideXoffset + DB_MAPVOTE_X * 0.5f - w * 0.5f, DB_MAPVOTE_Y,
 		                  button->font->scalex, button->font->scaley, button->font->colour,
 		                  s, 0, 0, 0, button->font->font);
 	}
-
-	y2 += 4;
 
 	for (i = 0; i + cgs.dbMapVoteListOffset < cgs.dbNumMaps && i < 16; i++)
 	{
@@ -1172,7 +1166,8 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
 		{
-			rectDef_t rect = { DB_MAPVOTE_X2 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 12 + (177.0f / 233.0f * w2), w2, 45 };
+			float x2 = DB_MAPVOTE_X2 + cgs.wideXoffset;
+			float y2 = DB_MAPVOTE_Y + 4;
 
 			// highlight selected map line from list
 			CG_FillRect(button->rect.x, y - 10, 240, 12, (vec4_t) { 1.f, 1.f, 1.f, 0.3f });
@@ -1189,21 +1184,22 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 				acolor[3] = (diff > 1000) ? 1.0f : (float)diff / 1000.f;
 
 				trap_R_SetColor(acolor);
-				CG_DrawPic(DB_MAPVOTE_X2 + cgs.wideXoffset, DB_MAPVOTE_Y2, w2, 177.0f / 233.0f * w2, cgs.dbSelectedMapLevelShots);
+				CG_DrawPic(x2, DB_MAPVOTE_Y2, 190, 177.0f / 233.0f * 190, cgs.dbSelectedMapLevelShots);
 				trap_R_SetColor(NULL);
 			}
 
 			// display map description
-			CG_DrawVerticalScrollingString(&rect, *colour, button->font->scalex, 100, 1, &descriptionScroll, button->font->font);
+			CG_DrawVerticalScrollingString(&(rectDef_t) { x2, DB_MAPVOTE_Y2 + 12 + (177.0f / 233.0f * 190), 190, 45 },
+			                               *colour, button->font->scalex, 100, 1, &descriptionScroll, button->font->font);
 
-			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
+			CG_Text_Paint_Ext(x2, y2, button->font->scalex,
 			                  button->font->scaley, *colour,
 			                  va(CG_TranslateString("Last Played  : %s"),
 			                     (cgs.dbMapLastPlayedList[i + cgs.dbMapVoteListOffset] == -1 ? CG_TranslateString("Never") : va(CG_TranslateString("%d maps ago"),
 			                                                                                                                    cgs.dbMapLastPlayedList[i + cgs.dbMapVoteListOffset]))),
 			                  0, 0, 0, button->font->font);
 			y2 += 12;
-			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
+			CG_Text_Paint_Ext(x2, y2, button->font->scalex,
 			                  button->font->scaley, *colour,
 			                  va(CG_TranslateString("Times Played : %d"), cgs.dbMapTimesPlayed[i + cgs.dbMapVoteListOffset]),
 			                  0, 0, 0, button->font->font);
@@ -1211,29 +1207,46 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			if (cgs.skillRating)
 			{
 				y2 += 12;
-				CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
+				CG_Text_Paint_Ext(x2, y2, button->font->scalex,
 				                  button->font->scaley, *colour,
 				                  va(CG_TranslateString("Map Bias     : %2.2f"), cgs.dbMapBias[i + cgs.dbMapVoteListOffset]),
 				                  0, 0, 0, button->font->font);
 			}
 #endif
 			y2 += 12;
-			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
+			CG_Text_Paint_Ext(x2, y2, button->font->scalex,
 			                  button->font->scaley, *colour,
 			                  CG_TranslateString("History :"),
 			                  0, 0, 0, button->font->font);
 
 			y2 += 4;
 
-			CG_AdjustFrom640(&x2, &y2, &w2, &h2);
+			CG_Text_Paint_Ext(x2, y2 + 2, button->font->scalex * 0.5f,
+			                  button->font->scaley * 0.5f, *colour,
+			                  va("%3d", j),
+			                  0, 0, 0, button->font->font);
+
+			x2 += 10;
 
 			// draw history graph
 			for (j = 0; j < cgs.dbMapsHistoryCount; j++)
 			{
-				// highlight selected map by using different color
-				trap_R_SetColor(cgs.dbSelectedMap == cgs.dbMapsHistory[j] ? colorGreen : colorMdGrey);
+				if (x2 >= DB_MAPVOTE_X2 + cgs.wideXoffset + 190)
+				{
+					x2 = DB_MAPVOTE_X2 + cgs.wideXoffset;
 
-				trap_R_DrawStretchPic(x2 + j * (w2 / (float)cgs.dbMapsHistoryCount), y2, 1, h2, 0, 0, 0, 0, cgs.media.whiteShader);
+					CG_Text_Paint_Ext(x2, y2 + 6, button->font->scalex * 0.5f,
+					                  button->font->scaley * 0.5f, *colour,
+					                  va("%3d", j),
+					                  0, 0, 0, button->font->font);
+					x2 += 10;
+					y2 += 3 + 1;
+				}
+
+				// highlight selected map by using different color
+				CG_FillRect(x2, y2, 3, 3, cgs.dbSelectedMap == cgs.dbMapsHistory[cgs.dbMapsHistoryCount - j - 1] ? colorGreen : colorMdGrey);
+
+				x2 += 3 + 1;
 			}
 
 			trap_R_SetColor(NULL);
