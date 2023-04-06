@@ -4738,7 +4738,7 @@ void CG_parseMapVoteTally()
 	numMaps = (trap_Argc() - 4);
 	for (i = 0; i < numMaps; i++)
 	{
-		cgs.dbMapVotes[i]  = Q_atoi(CG_Argv(i + 3));
+		cgs.dbMapVotes[i]  = Q_atoi(CG_Argv(i + 4));
 		cgs.dbMapVotesSum += cgs.dbMapVotes[i];
 
 		// sort voted maps by total votes accumulated
