@@ -667,7 +667,7 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAm
 
 		if (colorAmmo)
 		{
-            float maxClip   = GetWeaponTableData(weap)->maxClip * (*akimboammo != -1 ? 2 : 1);
+			float maxClip   = GetWeaponTableData(weap)->maxClip * (*akimboammo != -1 ? 2 : 1);
 			float totalAmmo = *ammo + (*akimboammo != -1 ? *akimboammo : 0);
 			float ammoLeft  = maxClip ? totalAmmo * 100 / maxClip : 0;
 			float alpha     = (**colorAmmo)[3];
@@ -1032,6 +1032,8 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
  */
 void CG_DrawGunIcon(hudComponent_t *comp)
 {
+	vec4_t color;
+
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		return;
@@ -1060,22 +1062,8 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 	// Draw weapon icon and overheat bar
 	CG_DrawWeapHeat(&comp->location, HUD_HORIZONTAL);
 
-	// drawn the common white icon, usage of mounted weapons don't change cg.snap->ps.weapon for real
-	if (BG_PlayerMounted(cg.snap->ps.eFlags))
-	{
-		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, comp->alignText, &comp->colorMain);
-		return;
-	}
-
-	if (
-#ifdef FEATURE_MULTIVIEW
-		cg.mvTotalClients < 1 &&
-#endif
-		!(comp->style & 1))
-	{
-		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, comp->alignText, &comp->colorMain);
-	}
-	else
+	// weapon flash color
+	if (comp->style & 1)
 	{
 		int ws =
 #ifdef FEATURE_MULTIVIEW
@@ -1083,8 +1071,28 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 #endif
 			BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
-		CG_DrawPlayerWeaponIcon(&comp->location, (qboolean)(ws != WSTATE_IDLE), comp->alignText, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &comp->colorMain));
+		if (ws == WSTATE_SWITCH || ws == WSTATE_RELOAD)
+		{
+			VectorCopy(colorYellow, color);
+		}
+		else if (ws == WSTATE_FIRE)
+		{
+			VectorCopy(colorRed, color);
+		}
+		else
+		{
+			VectorCopy(comp->colorMain, color);
+		}
+
+		// keep custom alpha value
+		color[3] = comp->colorMain[3];
 	}
+	else
+	{
+		Vector4Copy(comp->colorMain, color);
+	}
+
+	CG_DrawPlayerWeaponIcon(&comp->location, comp->alignText, &color);
 }
 
 /**

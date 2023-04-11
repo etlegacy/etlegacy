@@ -3141,7 +3141,7 @@ void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, flo
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader);
 
 void CG_DrawWeapHeat(rectDef_t *rect, int align);
-void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor);
+void CG_DrawPlayerWeaponIcon(rectDef_t *rect, int align, vec4_t *refcolor);
 int CG_CalculateReinfTime(qboolean menu);
 float CG_CalculateReinfTime_Float(qboolean menu);
 int CG_CalculateShoutcasterReinfTime(team_t team);

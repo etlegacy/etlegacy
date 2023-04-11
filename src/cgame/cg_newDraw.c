@@ -229,25 +229,13 @@ void CG_FitTextToWidth_SingleLine(char *instr, float scale, float w, int size)
  * @param[in] align
  * @param[in] refcolor
  */
-void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor)
+void CG_DrawPlayerWeaponIcon(rectDef_t *rect, int align, vec4_t *refcolor)
 {
-	int       realweap;
-	qhandle_t icon;
-	vec4_t    hcolor;
-
-	VectorCopy(*refcolor, hcolor);
-	hcolor[3] = 1.f;
+	int realweap;
 
 	if (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
 	{
-		if (IS_MOUNTED_TANK_BROWNING(cg.snap->ps.clientNum))
-		{
-			realweap = WP_MOBILE_BROWNING;
-		}
-		else
-		{
-			realweap = WP_MOBILE_MG42;
-		}
+		realweap = IS_MOUNTED_TANK_BROWNING(cg.snap->ps.clientNum) ? WP_MOBILE_BROWNING : WP_MOBILE_MG42;
 	}
 	else if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE) || (cg.predictedPlayerEntity.currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
@@ -258,18 +246,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 		realweap = cg.predictedPlayerState.weapon;
 	}
 
-	// we don't have icon[0];
-	//if (drawHighlighted)
-	//{
-	//icon = cg_weapons[realweap].weaponIcon[0];
-	//}
-	//else
-	//{
-	//	icon = cg_weapons[realweap].weaponIcon[1];
-	//}
-	icon = cg_weapons[realweap].weaponIcon[1];
-
-	if (icon)
+	if (cg_weapons[realweap].weaponIcon[1])
 	{
 		float size = MIN(rect->w, rect->h);
 		float x    = rect->x;
@@ -302,8 +279,8 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 			h += scale;
 		}
 
-		trap_R_SetColor(hcolor);
-		CG_DrawPic(x, y, w, h, icon);
+		trap_R_SetColor(*refcolor);
+		CG_DrawPic(x, y, w, h, cg_weapons[realweap].weaponIcon[1]);
 		trap_R_SetColor(NULL);
 	}
 }

@@ -862,7 +862,7 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	rect.h                                  = 25;
 	cg.predictedPlayerState.grenadeTimeLeft = 0;
 	cg.predictedPlayerState.weapon          = cent->currentState.weapon;
-	CG_DrawPlayerWeaponIcon(&rect, (ci->weaponState > WSTATE_IDLE), ITEM_ALIGN_RIGHT,
+	CG_DrawPlayerWeaponIcon(&rect, ITEM_ALIGN_RIGHT,
 	                        ((ci->weaponState == WSTATE_SWITCH || ci->weaponState == WSTATE_RELOAD) ? &colorYellow : (ci->weaponState == WSTATE_FIRE) ? &colorRed : &colorWhite));
 
 	// Sprint charge info
