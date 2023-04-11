@@ -233,7 +233,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 {
 	int       realweap;
 	qhandle_t icon;
-	float     scale, halfScale;
 	vec4_t    hcolor;
 
 	VectorCopy(*refcolor, hcolor);
@@ -270,51 +269,42 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	//}
 	icon = cg_weapons[realweap].weaponIcon[1];
 
-	// pulsing grenade icon to help the player 'count' in their head
-	if (cg.predictedPlayerState.grenadeTimeLeft)
-	{
-		scale     = (float)((cg.predictedPlayerState.grenadeTimeLeft) % 1000) / 100.0f;
-		halfScale = scale * 0.5f;
-	}
-	else
-	{
-		scale = halfScale = 0;
-	}
-
 	if (icon)
 	{
-		float x, y, w, h;
+		float size = MIN(rect->w, rect->h);
+		float x    = rect->x;
+		float y    = rect->y;
+		float w    = MIN(size * cg_weapons[realweap].weaponIconScale, rect->w);
+		float h    = size;
 
-		if (IS_VALID_WEAPON(realweap) && cg_weapons[realweap].weaponIconScale == 1)     // draw half width to match the icon asset
-		{   // start at left
-			x = rect->x - halfScale;
-			y = rect->y - halfScale;
-			w = rect->w / 2 + scale;
-			h = rect->h + scale;
-
-			switch (align)
-			{
-			case ITEM_ALIGN_CENTER:
-				x += rect->w / 4;
-				break;
-			case ITEM_ALIGN_RIGHT:
-				x += rect->w / 2;
-				break;
-			case ITEM_ALIGN_LEFT:
-			default:
-				break;
-			}
-		}
-		else
+		switch (align)
 		{
-			x = rect->x - halfScale;
-			y = rect->y - halfScale;
-			w = rect->w + scale;
-			h = rect->h + scale;
+		case ITEM_ALIGN_CENTER:
+		case ITEM_ALIGN_CENTER2:
+			x += (rect->w - w) * 0.5f;
+			break;
+		case ITEM_ALIGN_RIGHT:
+			x += (rect->w - w);
+			break;
+		case ITEM_ALIGN_LEFT:
+		default:
+			break;
+		}
+
+		// pulsing grenade icon to help the player 'count' in their head
+		if (cg.predictedPlayerState.grenadeTimeLeft)
+		{
+			float scale = (float)((cg.predictedPlayerState.grenadeTimeLeft) % 1000) / 100.0f;
+
+			x -= scale * 0.5f;
+			y -= scale * 0.5f;
+			w += scale;
+			h += scale;
 		}
 
 		trap_R_SetColor(hcolor);
 		CG_DrawPic(x, y, w, h, icon);
+		trap_R_SetColor(NULL);
 	}
 }
 

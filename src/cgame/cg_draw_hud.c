@@ -1063,7 +1063,7 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 	// drawn the common white icon, usage of mounted weapons don't change cg.snap->ps.weapon for real
 	if (BG_PlayerMounted(cg.snap->ps.eFlags))
 	{
-		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->colorMain);
+		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, comp->alignText, &comp->colorMain);
 		return;
 	}
 
@@ -1073,7 +1073,7 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 #endif
 		!(comp->style & 1))
 	{
-		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->colorMain);
+		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, comp->alignText, &comp->colorMain);
 	}
 	else
 	{
@@ -1083,7 +1083,7 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 #endif
 			BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
-		CG_DrawPlayerWeaponIcon(&comp->location, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &comp->colorMain));
+		CG_DrawPlayerWeaponIcon(&comp->location, (qboolean)(ws != WSTATE_IDLE), comp->alignText, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &comp->colorMain));
 	}
 }
 
