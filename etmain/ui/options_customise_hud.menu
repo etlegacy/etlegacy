@@ -30,24 +30,37 @@ menuDef {
 
 // Hud Display //
 #define HUD_Y 32
-	SUBWINDOW(6, HUD_Y, (SUBWINDOW_WIDTH_L), 116, _("HUD DISPLAY"))
-	CVARFLOATLABEL(8, HUD_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-	SLIDER(8, HUD_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Auto Map Zoom:"), .2, 8, "cg_automapZoom" 5.159 1 7.43, _("Set Zoom Level Automatically When Map Loads"))
-	MULTI(8, HUD_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Coordinates Only" 0 "Fireteam Overlay" 1 "Team and Fireteam Chat" 2 "Chat + FT Overlay" 3 }, _("Display locations in fireteam"))
-	MULTI(8, HUD_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Icon Flash:"), .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { "Off" 0 "On" 1 }, _("Flash weapon icon when firing, reloading, or switching"))
-	MULTI(8, HUD_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Unit System:"), .2, 8, "cg_drawUnit", cvarFloatList { "Unit" 0 "Metric" 1 "Imperial" 2 }, _("Set unit system"))
-	MULTI(8, HUD_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switch between different HUD"))
-	MULTI(8, HUD_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7  }, _("Display objective icons on HUD"))
-    CVARFLOATLABEL( 8, HUD_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-    SLIDER(8, HUD_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts") )
+	SUBWINDOW(6, HUD_Y, (SUBWINDOW_WIDTH_L), 104, _("HUD DISPLAY"))
+	MULTI(8, HUD_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Coordinates Only" 0 "Fireteam Overlay" 1 "Team and Fireteam Chat" 2 "Chat + FT Overlay" 3 }, _("Display locations in fireteam"))
+	MULTI(8, HUD_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Icon Flash:"), .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { "Off" 0 "On" 1 }, _("Flash weapon icon when firing, reloading, or switching"))
+	MULTI(8, HUD_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Unit System:"), .2, 8, "cg_drawUnit", cvarFloatList { "Unit" 0 "Metric" 1 "Imperial" 2 }, _("Set unit system"))
+	MULTI(8, HUD_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switch between different HUD"))
+	MULTI(8, HUD_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7  }, _("Display objective icons on HUD"))
+    CVARFLOATLABEL( 8, HUD_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+    SLIDER(8, HUD_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts") )
 #ifdef FUI
-    BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 100, 184, 14, _("HUD EDITOR"), .24, 11, open options_customise_hudeditor_fui)
+    BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 88, 184, 14, _("HUD EDITOR"), .24, 11, open options_customise_hudeditor_fui)
 #else
-    BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 100, 184, 14, _("HUD EDITOR"), .24, 11, uiScript edithud ; close options_customise_hud)
+    BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 88, 184, 14, _("HUD EDITOR"), .24, 11, uiScript edithud ; close options_customise_hud)
 #endif
 
+// Compass //
+#define COMPASS_Y 140
+	SUBWINDOW(6, COMPASS_Y, (SUBWINDOW_WIDTH_L), 88, _("COMPASS"))
+	CVARFLOATLABEL(8, COMPASS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
+	SLIDER(8, COMPASS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Auto Map Zoom:"), .2, 8, "cg_automapZoom" 5.159 1 7.43, _("Set Zoom Level Automatically When Map Loads"))
+	YESNO(8, COMPASS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Icons:"), .2, 8, "cg_dynamicIcons", _("Adjust dynamicly icons size on compass"))
+	CVARFLOATLABEL(8, COMPASS_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_dynamicIconsDistance", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
+	SLIDER(8, COMPASS_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Icons Distance:"), .2, 8, "cg_dynamicIconsDistance" 400 0 1000, _("Set the require distance between icon to start rescale"))
+	CVARFLOATLABEL(8, COMPASS_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, "cg_dynamicIconsSize", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
+	SLIDER(8, COMPASS_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Icons Size:"), .2, 8, "cg_dynamicIconsSize" 20 0 100, _("Set the default icon size"))
+	CVARFLOATLABEL(8, COMPASS_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, "cg_dynamicIconsMaxScale", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
+	SLIDER(8, COMPASS_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Icons Max Scale:"), .2, 8, "cg_dynamicIconsMaxScale" 1 0 1, _("Clamp the maximum icon rescale"))
+	CVARFLOATLABEL(8, COMPASS_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, "cg_dynamicIconsMinScale", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
+	SLIDER(8, COMPASS_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Icons Min Scale:"), .2, 8, "cg_dynamicIconsMinScale" 0.5 0 1, _("Clamp the minimum icon rescale"))
+
 // Popup //
-#define POPUP_Y 152
+#define POPUP_Y 232
     SUBWINDOW( 6, POPUP_Y, (SUBWINDOW_WIDTH_L), 54, _("POPUPS AND BANNER") )
     CVARFLOATLABEL( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
     SLIDER( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
@@ -57,20 +70,20 @@ menuDef {
     SLIDER( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
 
 // Gun Display //
-#define WEAPON_Y 212
+#define WEAPON_Y 290
 	SUBWINDOW(6, WEAPON_Y, (SUBWINDOW_WIDTH_L), 40, _("WEAPONS DISPLAY"))
 	MULTI(8, WEAPON_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Draw Gun:"), .2, 8, "cg_drawGun", cvarFloatList { "Off" 0 "On" 1 "Hide Weapons Only" 2 }, _("Show gun model on-screen"))
 	MULTI(8, WEAPON_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Animations:"), .2, 8, "cg_weapAnims", cvarFloatList { "None" 0 "Move" 1 "Firing" 2 "Reload" 4 "Switch" 8 "Move + Firing" 3 "Move + Reload" 5 "Move + Switch" 9 "Move + Firing + Reload" 7 "Move + Firing + Switch" 11 "Move + Reload + Switch" 13 "Firing + Reload" 6 "Firing + Switch" 10 "Firing + Reload + Switch" 14 "Reload + Switch" 12 "All" 15 }, _("Set which weapon animations to play"))
 
 // Items //
-#define ITEMS_Y 256
+#define ITEMS_Y 334
 	SUBWINDOW(6, ITEMS_Y, (SUBWINDOW_WIDTH_L), 40, _("ITEMS"))
 	MULTI(8, ITEMS_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", cvarFloatList { "No" 0 "Yes except objectives" 1 "Yes" 2 }, _("Draw simple items"))
 	CVARFLOATLABEL(8, ITEMS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_simpleItemsScale", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
 	SLIDER(8, ITEMS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Simple Items Scale:"), .2, 8, "cg_simpleItemsScale" 1.0 0.25 1.5, _("Set scale of simple items"))
 
 // Geolocation //
-#define GEOLOCATION_Y 300
+#define GEOLOCATION_Y 380
 	SUBWINDOW(6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_L), 42, _("GEOLOCATION"))
 	YESNO(8, GEOLOCATION_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Display players country flags in score board"))
 	YESNO(8, GEOLOCATION_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Display your own location in score board"))
