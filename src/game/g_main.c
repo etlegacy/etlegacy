@@ -4210,13 +4210,18 @@ qboolean ScoreIsTied(void)
  */
 qboolean DynamiteOnObjective(void)
 {
-	int       e;
+	int       e, winner;
 	gentity_t *ent;
+	char      cs[MAX_STRING_CHARS];
+
+	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
+	winner = Q_atoi(Info_ValueForKey(cs, "w")) + 1;
 
 	for (e = 0; e < MAX_GENTITIES; e++)
 	{
 		ent = &g_entities[e];
-		if (ent->s.weapon == WP_DYNAMITE && ent->onobjective)
+		// only select a dynamite if it was not planted by defenders
+		if (ent->s.weapon == WP_DYNAMITE && ent->onobjective && ent->s.teamNum != winner)
 		{
 			return qtrue;
 		}
