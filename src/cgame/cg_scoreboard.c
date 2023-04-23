@@ -560,6 +560,21 @@ static void WM_DrawClientScore_Medals(int x, int y, float scaleX, float scaleY, 
 	}
 }
 
+/**
+ * @brief Shortens a score like "4560000" to "4.56M" for the scoreboard.
+ * @param[in] int
+ * @return
+ */
+static char *AbbreviateScore(int score) {
+    if (score > 1000000) {
+        return va("^7%6gM", Com_RoundFloatWithNDecimal(((float) score) / ((float) 1000000), 2));
+    }
+    if (score > 1000) {
+        return va("^7%6gK", Com_RoundFloatWithNDecimal(((float) score) / ((float) 1000), 2));
+    }
+    return va("^7%6i", score);
+}
+
 static void WM_DrawClientScore_Score(int x, int y, float scaleX, float scaleY, const score_t *score)
 {
 #ifdef FEATURE_RATING
@@ -577,7 +592,7 @@ static void WM_DrawClientScore_Score(int x, int y, float scaleX, float scaleY, c
 	else
 #endif
 	{
-		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, AbbreviateScore(score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 }
 
