@@ -562,6 +562,7 @@ static void WM_DrawClientScore_Medals(int x, int y, float scaleX, float scaleY, 
 
 /**
  * @brief Shortens a score like "4560000" to "4.56M" for the scoreboard.
+ * @details Two decimal places are used, unless the displayed digits after the decimal would be zeros.
  * @param[in] int
  * @return
  */
