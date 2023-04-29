@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +24,6 @@ import org.libsdl.app.*;
 public class ETLActivity extends SDLActivity implements JoyStickListener {
 
     static volatile boolean UiMenu = false;
-	int fixdpi;
     ImageButton btn;
 
     /**
@@ -47,7 +45,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         // This needs some refactoring
         final ImageButton btn2 = new ImageButton(getApplicationContext());
         btn2.setId(2);
-		btn2.setImageResource(R.drawable.ic_shoot);
+        btn2.setImageResource(R.drawable.ic_shoot);
         btn2.setBackgroundResource(0);
 
         final ImageButton btn_reload = new ImageButton(getApplicationContext());
@@ -77,6 +75,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
             public void run() {
 
                 if (getUiMenu() == true) {
+
                     btn2.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -125,17 +124,15 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     });
 
                     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-							ViewGroup.LayoutParams.WRAP_CONTENT,
-							ViewGroup.LayoutParams.WRAP_CONTENT);
+                            pxToDp(450),
+                            pxToDp(350));
 
-					Log.v("ETL", String.valueOf(fixdpi));
-					lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     lp.addRule(RelativeLayout.CENTER_VERTICAL);
-                    lp.rightMargin = pxToDp(400 * fixdpi);
+                    lp.rightMargin = pxToDp(300);
 
-                    if (btn2.getParent() == null) {
-						etl_linearLayout.addView(btn2, lp);
-					}
+                    if (btn2.getParent() == null)
+                        etl_linearLayout.addView(btn2, lp);
 
                     btn_reload.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -284,9 +281,14 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
      * @return dp
      */
     public static int pxToDp(int px) {
-		//Log.v("ETL", String.valueOf(Resources.getSystem().getDisplayMetrics().density));
-		//Log.v("ETL", String.valueOf(Resources.getSystem().getDisplayMetrics().densityDpi));
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    @Override
+    protected String[] getArguments() {
+        String[] etl_param = new String[15];
+        etl_param[0] = "vid_restart";
+        return etl_param;
     }
 
     @Override
@@ -298,25 +300,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 		}
 
-		// FIXME: WTF IT DOES NOT SEEMS TO WORK AS INTENDED
-		switch ((int) Resources.getSystem().getDisplayMetrics().densityDpi) {
-			case DisplayMetrics.DENSITY_LOW:
-			case DisplayMetrics.DENSITY_MEDIUM:
-				fixdpi = (int) 1.0;
-				break;
-			case DisplayMetrics.DENSITY_HIGH:
-			case DisplayMetrics.DENSITY_XHIGH:
-				fixdpi = (int) 2.0;
-				break;
-			case DisplayMetrics.DENSITY_XXHIGH:
-				fixdpi = (int) 3.0;
-				break;
-			case DisplayMetrics.DENSITY_XXXHIGH:
-				fixdpi = (int) 4.0;
-				break;
-			default:
-				fixdpi = 0;
-		}
 	}
 
     @Override
