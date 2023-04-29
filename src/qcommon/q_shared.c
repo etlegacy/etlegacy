@@ -2998,6 +2998,26 @@ float Com_RoundFloatWithNDecimal(float value, unsigned int decimalCount)
 }
 
 /**
+ * @brief Shortens a values by thousands and keeping wanted decimal values (i.e  "4560000" to "4.56M")
+ * @param[in] value The number to shorten
+ * @param[in] decimalCount The number of decimal to be displayed
+ * @return Down scaled value string with suffixed unit
+ */
+char *Com_ScaleNumberPerThousand(float value, unsigned int decimalCount)
+{
+	static const char *units[] = { "", "k", "M", "G", "T" };
+	unsigned int      i        = 0;
+
+	while (value > 1000 && i < sizeof(units))
+	{
+		value /= 1000;
+		++i;
+	}
+
+	return va("%g%s", Com_RoundFloatWithNDecimal(value, decimalCount), units[i]);
+}
+
+/**
  * @brief Convert a string to an integer
  * @details Convert a string to an integer, with the same behavior that the engine converts
  * cvars to their integer representation:

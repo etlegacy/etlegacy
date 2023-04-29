@@ -2061,6 +2061,7 @@ static ID_INLINE int Q_sscanfc(const char *str, int count, const char *fmt, ...)
 #endif
 
 float Com_RoundFloatWithNDecimal(float value, unsigned int decimalCount);
+char *Com_ScaleNumberPerThousand(float value, unsigned int decimalCount);
 
 int ExtractInt(const char *src);
 
