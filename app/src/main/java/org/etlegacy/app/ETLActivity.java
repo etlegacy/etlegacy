@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -124,12 +125,45 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     });
 
                     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                            pxToDp(450),
-                            pxToDp(350));
+							ViewGroup.LayoutParams.WRAP_CONTENT,
+							ViewGroup.LayoutParams.WRAP_CONTENT);
 
                     lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     lp.addRule(RelativeLayout.CENTER_VERTICAL);
-                    lp.rightMargin = pxToDp(300);
+
+					switch (Resources.getSystem().getDisplayMetrics().densityDpi) {
+						case DisplayMetrics.DENSITY_LOW:
+						case DisplayMetrics.DENSITY_140:
+						case DisplayMetrics.DENSITY_180:
+							lp.rightMargin = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
+							break;
+						case DisplayMetrics.DENSITY_200:
+						case DisplayMetrics.DENSITY_220:
+						case DisplayMetrics.DENSITY_HIGH:
+						case DisplayMetrics.DENSITY_260:
+						case DisplayMetrics.DENSITY_280:
+						case DisplayMetrics.DENSITY_300:
+						case DisplayMetrics.DENSITY_XHIGH:
+							lp.rightMargin = pxToDp(220 * (int) Resources.getSystem().getDisplayMetrics().density);
+							break;
+						case DisplayMetrics.DENSITY_340:
+						case DisplayMetrics.DENSITY_360:
+						case DisplayMetrics.DENSITY_400:
+						case DisplayMetrics.DENSITY_420:
+						case DisplayMetrics.DENSITY_440:
+						case DisplayMetrics.DENSITY_450:
+						case DisplayMetrics.DENSITY_XXHIGH:
+							lp.rightMargin = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
+							break;
+						case DisplayMetrics.DENSITY_560:
+						case DisplayMetrics.DENSITY_600:
+						case DisplayMetrics.DENSITY_XXXHIGH:
+							lp.rightMargin = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
+							break;
+						case DisplayMetrics.DENSITY_DEFAULT:
+							lp.rightMargin = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
+							break;
+					}
 
                     if (btn2.getParent() == null)
                         etl_linearLayout.addView(btn2, lp);
