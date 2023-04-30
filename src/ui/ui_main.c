@@ -6483,8 +6483,6 @@ static void UI_InsertServerIntoDisplayList(int num, int position)
 		return;
 	}
 
-    int currentServerBeforeInsert = uiInfo.serverStatus.currentServer;
-
 	uiInfo.serverStatus.numDisplayServers++;
 	for (i = uiInfo.serverStatus.numDisplayServers; i > position; i--)
 	{
@@ -6495,7 +6493,7 @@ static void UI_InsertServerIntoDisplayList(int num, int position)
     // If we're inserting a server before the currently selected one, increment the selected item.
     // This has improved UX over changing the item out from under the user, who might want to select a server
     // and so something with it before the list finishes loading, which can take a while.
-    if (position < currentServerBeforeInsert) {
+    if (position < uiInfo.serverStatus.currentServer) {
         uiInfo.serverStatus.currentServer++;
         menuDef_t *menu = Menus_FindByName("serverList");
         Menu_SetFeederSelection(menu, FEEDER_SERVERS, uiInfo.serverStatus.currentServer, NULL);
