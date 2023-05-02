@@ -34,6 +34,10 @@
 
 #include "server.h"
 
+#ifdef FEATURE_TRACKER
+#include "sv_tracker.h"
+#endif
+
 // Attack log file is started when server is init (!= sv_running 1!)
 // we even log attacks when the server is waiting for rcon and doesn't run a map
 int attHandle = 0; // server attack log file handle
@@ -374,6 +378,10 @@ void SV_Startup(void)
 	svs.initialized = qtrue;
 
 	Cvar_Set("sv_running", "1");
+
+#ifdef FEATURE_TRACKER
+	Tracker_ServerStart();
+#endif
 }
 
 /**
@@ -1125,6 +1133,11 @@ void SV_Init(void)
 
 	sv_hidden = Cvar_GetAndDescribe("sv_hidden", "0", CVAR_ARCHIVE, "Hide the server from queries and from master servers.");
 
+#ifdef FEATURE_TRACKER
+	// tracker server
+	Cvar_Get("sv_tracker", "et-tracker.trackbase.net:4444", CVAR_PROTECTED);
+#endif
+
 	sv_reconnectlimit = Cvar_Get("sv_reconnectlimit", "3", 0);
 	sv_tempbanmessage = Cvar_Get("sv_tempbanmessage", "You have been kicked and are temporarily banned from joining this server.", 0);
 
@@ -1198,6 +1211,10 @@ void SV_Init(void)
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
+#endif
+
+#ifdef FEATURE_TRACKER
+	Tracker_Init();
 #endif
 }
 
@@ -1306,4 +1323,8 @@ void SV_Shutdown(const char *finalmsg)
 
 	// disconnect any local clients
 	CL_Disconnect(qfalse);
+
+#ifdef FEATURE_TRACKER
+	Tracker_ServerStop();
+#endif
 }
