@@ -34,6 +34,10 @@
 
 #include "server.h"
 
+#ifdef FEATURE_TRACKER
+#include "sv_tracker.h"
+#endif
+
 serverStatic_t svs;             // persistant server info
 server_t       sv;              // local server
 vm_t           *gvm = NULL;     // game virtual machine
@@ -536,6 +540,10 @@ void SV_MasterGameCompleteStatus()
 		}
 #endif
 	}
+
+#ifdef FEATURE_TRACKER
+	Tracker_MapEnd();
+#endif
 }
 
 /**
@@ -1752,6 +1760,10 @@ void SV_Frame(int msec)
 
 	// send a heartbeat to the master if needed
 	SV_MasterHeartbeat(HEARTBEAT_GAME);
+
+#ifdef FEATURE_TRACKER
+	Tracker_Frame(msec);
+#endif
 
 	if (com_dedicated->integer)
 	{

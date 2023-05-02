@@ -36,6 +36,10 @@
 #include "server.h"
 #include "../botlib/botlib.h"
 
+#ifdef FEATURE_TRACKER
+#include "sv_tracker.h"
+#endif
+
 botlib_export_t *botlib_export;
 
 #define TRAP_EXTENSIONS_LIST NULL
@@ -476,7 +480,12 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		SV_GameDropClient(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_SERVER_COMMAND:
-		SV_GameSendServerCommand(args[1], VMA(2), qfalse);
+#ifdef FEATURE_TRACKER
+		if (!Tracker_catchServerCommand(args[1], VMA(2)))
+#endif
+		{
+			SV_GameSendServerCommand(args[1], VMA(2));
+		}
 		return 0;
 	case G_LINKENTITY:
 		SV_LinkEntity(VMA(1));
@@ -755,6 +764,10 @@ void SV_RestartGameProgs(void)
 	}
 
 	SV_InitGameVM(qtrue);
+
+#ifdef FEATURE_TRACKER
+	Tracker_MapRestart();
+#endif
 }
 
 /**
@@ -773,6 +786,10 @@ void SV_InitGameProgs(void)
 	}
 
 	SV_InitGameVM(qfalse);
+
+#ifdef FEATURE_TRACKER
+	Tracker_Map(sv_mapname->string);
+#endif
 }
 
 /**

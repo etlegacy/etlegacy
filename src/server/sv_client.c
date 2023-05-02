@@ -35,6 +35,10 @@
 
 #include "server.h"
 
+#ifdef FEATURE_TRACKER
+#include "sv_tracker.h"
+#endif
+
 static void SV_CloseDownload(client_t *cl);
 
 /**
@@ -590,6 +594,10 @@ gotnewcl:
 	// newcl->protocol = PROTOCOL_VERSION;
 	newcl->protocol = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
 
+#ifdef FEATURE_TRACKER
+	Tracker_ClientConnect(newcl);
+#endif
+
 	// check client's engine version
 	Com_ParseUA(&newcl->agent, Info_ValueForKey(userinfo, "etVersion"));
 }
@@ -709,6 +717,10 @@ void SV_DropClient(client_t *drop, const char *reason)
 	{
 		SV_Heartbeat_f();
 	}
+
+#ifdef FEATURE_TRACKER
+	Tracker_ClientDisconnect(drop);
+#endif
 }
 
 /**
@@ -1666,6 +1678,16 @@ void SV_UserinfoChanged(client_t *cl)
 {
 	char *val;
 	int  i;
+
+#ifdef FEATURE_TRACKER
+	if (sv_advert->integer & SVA_TRACKER)
+	{
+		if (strcmp(cl->name, Info_ValueForKey(cl->userinfo, "name")))
+		{
+			Tracker_ClientName(cl);
+		}
+	}
+#endif
 
 	// name for C code
 	Q_strncpyz(cl->name, Info_ValueForKey(cl->userinfo, "name"), sizeof(cl->name));
