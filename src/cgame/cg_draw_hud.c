@@ -50,7 +50,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw"} },
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} },
 	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthtext),       CG_DrawPlayerHealth,       0.25f,  { "Dynamic Color" } },
 	{ HUDF(xptext),           CG_DrawXP,                 0.25f,  { 0 } },
@@ -94,7 +94,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(centerprint),      CG_DrawCenterString,       0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(banner),           CG_DrawBannerPrint,        0.23f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,  { "Full Color" } },// FIXME: outside cg_draw_hud
-	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",         "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",         "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",          "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
 	{ NULL,                   0,                         qfalse, NULL, 0.00f,{ 0 } },
 };
@@ -173,10 +173,10 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->name[0]          = '\0';
 	hud->crosshair        = CG_getComponent(SCREEN_WIDTH * .5f - 24, SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
 	hud->compass          = CG_getComponent(SCREEN_WIDTH - 136, 0, 132, 132, qtrue, COMPASS_ITEM | COMPASS_SECONDARY_OBJECTIVES | COMPASS_PRIMARY_OBJECTIVES | COMPASS_DECOR | COMPASS_CARDINAL_POINTS, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
-	hud->staminabar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
-	hud->breathbar        = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
-	hud->healthbar        = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
-	hud->weaponchargebar  = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_DECOR | BAR_ICON, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
+	hud->staminabar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 1.0f, 0.1f, 0.5f }, (vec4_t) { 1.0f, 0, 0.1f, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
+	hud->breathbar        = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 0.1f, 1.0f, 0.5f }, (vec4_t) { 1.0f, 0.1f, 0, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
+    hud->healthbar        = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | (BAR_ICON << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
+	hud->weaponchargebar  = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 1.0, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0, 1.0f, 0.1f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
 	hud->healthtext       = CG_getComponent(47, 465, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
 	hud->xptext           = CG_getComponent(108, 465, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
 	hud->ranktext         = CG_getComponent(167, 465, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);   // disable
@@ -219,7 +219,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->centerprint      = CG_getComponent(SCREEN_WIDTH * .5f - 211, 378, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.22f, CG_DrawCenterString);
 	hud->banner           = CG_getComponent(SCREEN_WIDTH * .5f - 211, 20, 422, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.23f, CG_DrawBannerPrint);
 	hud->crosshairtext    = CG_getComponent(SCREEN_WIDTH * .5f - 150, 182, 300, 16, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairNames);
-	hud->crosshairbar     = CG_getComponent(SCREEN_WIDTH * .5f - 55, 199, 110, 10, qtrue, CROSSHAIR_BAR_CLASS | CROSSHAIR_BAR_RANK | (BAR_BG << 3), 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
+	hud->crosshairbar     = CG_getComponent(SCREEN_WIDTH * .5f - 55, 199, 110, 10, qtrue, CROSSHAIR_BAR_CLASS | CROSSHAIR_BAR_RANK | ((BAR_BG | BAR_LERP_COLOR) << 3), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
 	hud->stats            = CG_getComponent(SCREEN_WIDTH - 60, 291, 57, 62, qtrue, GAMESTATS_KILL | GAMESTATS_DEATH | GAMESTATS_SELFKILL, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawPlayerStats);
 }
 
@@ -798,7 +798,7 @@ vec4_t bgcolor = { 1.f, 1.f, 1.f, .3f };    // bars backgound
 void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 {
 	vec4_t color;
-	float  frac;
+	int    style = comp->style;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -815,13 +815,32 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 		return;
 	}
 
-	CG_ColorForHealth(color);
-	color[3] = 0.5f;
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
 
-	frac = cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH];
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
-	             comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.hudHealthIcon);
+	if (comp->style & (BAR_ICON << 1))
+	{
+		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
+		color[3] = comp->colorMain[3];
+
+		style &= ~BAR_LERP_COLOR;
+	}
+	else
+	{
+		Vector4Copy(comp->colorMain, color);
+	}
+    
+    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+                 (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH],
+	             style, cgs.media.hudHealthIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -832,9 +851,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
  */
 void CG_DrawStaminaBar(hudComponent_t *comp)
 {
-	vec4_t colour = { 0.1f, 1.0f, 0.1f, 0.5f };
-	vec_t  *color = colour;
-	float  frac   = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
+	vec4_t color;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -856,11 +873,13 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 		return;
 	}
 
+	Vector4Copy(comp->colorMain, color);
+
 	if (cg.snap->ps.powerups[PW_ADRENALINE])
 	{
 		if (cg.snap->ps.pm_flags & PMF_FOLLOW)
 		{
-			Vector4Average(colour, colorWhite, (float)sin(cg.time * .005), colour);
+			Vector4Average(color, colorWhite, (float)sin(cg.time * .005), color);
 		}
 		else
 		{
@@ -868,18 +887,24 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 
 			if (msec >= 0)
 			{
-				Vector4Average(colour, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * M_TAU_F) * .5), colour);
+				Vector4Average(color, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * M_TAU_F) * .5), color);
 			}
 		}
 	}
-	else
+
+	if (comp->showBackGround)
 	{
-		color[0] = 1.0f - frac;
-		color[1] = frac;
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
-	             comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.hudSprintIcon);
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+    
+    CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+                 (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? color : NULL,
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, comp->style, cgs.media.hudSprintIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -890,10 +915,6 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
  */
 void CG_DrawBreathBar(hudComponent_t *comp)
 {
-	static vec4_t colour = { 0.1f, 0.1f, 1.0f, 0.5f };
-	vec_t         *color = colour;
-	float         frac   = cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME;
-
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		return;
@@ -914,11 +935,19 @@ void CG_DrawBreathBar(hudComponent_t *comp)
 		return;
 	}
 
-	color[0] = 1.0f - frac;
-	color[2] = frac;
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
-	             comp->colorBackground, comp->colorBorder, frac, comp->style, cgs.media.waterHintShader);
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+                 (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->style & BAR_LERP_COLOR) ? comp->colorMain : NULL,
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, comp->style, cgs.media.waterHintShader);
 
 	trap_R_SetColor(NULL);
 }
@@ -932,6 +961,7 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 	float    barFrac, chargeTime;
 	qboolean charge = qtrue;
 	vec4_t   color;
+	int      style = comp->style;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -1009,16 +1039,27 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		color[0] = 1.0f;
 		color[1] = color[2] = 0.1f;
 		color[3] = 0.5f;
+
+		style &= ~BAR_LERP_COLOR;
 	}
 	else
 	{
-		color[0] = color[1] = 1.0f;
-		color[2] = barFrac;
-		color[3] = 0.25f + barFrac * 0.5f;
+		Vector4Copy(comp->colorMain, color);
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, color, NULL,
-	             comp->colorBackground, comp->colorBorder, barFrac, comp->style, cgs.media.hudPowerIcon);
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+                 (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
+	             comp->colorBackground, comp->colorBorder, barFrac, style, cgs.media.hudPowerIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -1244,7 +1285,7 @@ void CG_DrawPlayerHealth(hudComponent_t *comp)
 
 	if (comp->style & 1)
 	{
-		CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
+		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
 		color[3] = comp->colorMain[3];
 	}
 	else
@@ -1290,7 +1331,7 @@ void CG_DrawPlayerSprint(hudComponent_t *comp)
 	}
 	else
 	{
-		str = va("%.0f %%", (cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME) * 100);
+		str = va("%.0f %%", (cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME) * 100);
 	}
 
 	CG_DrawCompText(comp, str, comp->colorMain, comp->styleText, &cgs.media.limboFont1);
@@ -1303,7 +1344,7 @@ void CG_DrawPlayerSprint(hudComponent_t *comp)
  */
 void CG_DrawPlayerBreath(hudComponent_t *comp)
 {
-	const char *str = va("%.0f %%", (cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME) * 100);
+	const char *str = va("%.0f %%", (cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME) * 100);
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{

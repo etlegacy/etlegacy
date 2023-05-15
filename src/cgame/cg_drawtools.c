@@ -796,99 +796,49 @@ float *CG_TeamColor(int team)
 }
 
 /**
- * @brief CG_GetColorForHealth
+ * @brief CG_ColorForHealth
  * @param[in] health
  * @param[in] hcolor
- *
- * @note Unused
  */
-void CG_GetColorForHealth(int health, vec4_t hcolor)
+void CG_ColorForHealth(int health, vec4_t hcolor)
 {
 	// calculate the total points of damage that can
 	// be sustained at the current health / armor level
-	if (health <= 0)
-	{
-		VectorClear(hcolor);    // black
-		hcolor[3] = 1;
-		return;
-	}
-
-	// set the color based on health
-	hcolor[0] = 1.0;
-	hcolor[3] = 1.0;
-	if (health >= 100)
-	{
-		hcolor[2] = 1.0;
-	}
-	else if (health < 66)
-	{
-		hcolor[2] = 0;
-	}
-	else
-	{
-		hcolor[2] = (health - 66.f) / 33.0f;
-	}
-
-	if (health > 60)
-	{
-		hcolor[1] = 1.0;
-	}
-	else if (health < 30)
-	{
-		hcolor[1] = 0;
-	}
-	else
-	{
-		hcolor[1] = (health - 30.f) / 30.0f;
-	}
-}
-
-/**
- * @brief CG_ColorForHealth
- * @param[in] hcolor
- */
-void CG_ColorForHealth(vec4_t hcolor)
-{
-	int health;
-
-	// calculate the total points of damage that can
-	// be sustained at the current health / armor level
-	health = cg.snap->ps.stats[STAT_HEALTH];
-	if (health <= 0)
-	{
-		VectorClear(hcolor);    // black
-		hcolor[3] = 1;
-		return;
-	}
-
-	// set the color based on health
-	hcolor[0] = 1.0;
-	hcolor[3] = 1.0;
-	if (health >= 100)
-	{
-		hcolor[2] = 1.0;
-	}
-	else if (health <= 66)
-	{
-		hcolor[2] = 0;
-	}
-	else
-	{
-		hcolor[2] = (health - 66.f) / 33.0f;
-	}
-
-	if (health > 66)
-	{
-		hcolor[1] = 1.0;
-	}
-	else if (health <= 33)
-	{
-		hcolor[1] = 0;
-	}
-	else
-	{
-		hcolor[1] = (health - 33.f) / 33.0f;
-	}
+    if (health <= 0)
+    {
+        VectorClear(hcolor);    // black
+        hcolor[3] = 1;
+        return;
+    }
+    
+    // set the color based on health
+    hcolor[0] = 1.0;
+    hcolor[3] = 1.0;
+    if (health >= 100)
+    {
+        hcolor[2] = 1.0;
+    }
+    else if (health <= 66)
+    {
+        hcolor[2] = 0;
+    }
+    else
+    {
+        hcolor[2] = (health - 66.f) / 33.0f;
+    }
+    
+    if (health > 66)
+    {
+        hcolor[1] = 1.0;
+    }
+    else if (health <= 33)
+    {
+        hcolor[1] = 0;
+    }
+    else
+    {
+        hcolor[1] = (health - 33.f) / 33.0f;
+    }
 }
 
 /**

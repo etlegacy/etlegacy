@@ -154,7 +154,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	// draw health
 	if (player->health > 0)
 	{
-		CG_GetColorForHealth(player->health, hcolor);
+		CG_ColorForHealth(player->health, hcolor);
 
 		text      = va("%i", player->health);
 		textWidth = CG_Text_Width_Ext(text, 0.27f, 0, FONT_TEXT);
@@ -284,7 +284,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	// draw health
 	if (player->health > 0)
 	{
-		CG_GetColorForHealth(player->health, hcolor);
+		CG_ColorForHealth(player->health, hcolor);
 
 		text      = va("%i", player->health);
 		textWidth = CG_Text_Width_Ext(text, 0.27f, 0, FONT_TEXT);
@@ -713,7 +713,7 @@ void CG_DrawShoutcastPlayerStatus(void)
 	// draw hp
 	if (cg.snap->ps.stats[STAT_HEALTH] > 0)
 	{
-		CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], hcolor);
+		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], hcolor);
 		text       = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
 		textWidth  = CG_Text_Width_Ext(text, 0.19f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext(text, 0.19f, 0, FONT_TEXT);

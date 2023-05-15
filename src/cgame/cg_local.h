@@ -3049,8 +3049,7 @@ float *CG_FadeColor_Ext(int startMsec, int totalMsec, float alpha);
 float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMsec, int attackMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
-void CG_ColorForHealth(vec4_t hcolor);
-void CG_GetColorForHealth(int health, vec4_t hcolor);
+void CG_ColorForHealth(int health, vec4_t hcolor);
 
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
@@ -4289,7 +4288,7 @@ typedef struct hudStructure_s
 } hudStucture_t;
 
 #define MAXHUDS 32
-#define MAXSTYLES 16
+#define MAXSTYLES 24
 #define CURRENT_HUD_JSON_VERSION 2
 
 typedef struct

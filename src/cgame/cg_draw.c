@@ -1799,7 +1799,7 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 	{
 		vec4_t hcolor;
 
-		CG_ColorForHealth(hcolor);
+		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], hcolor);
 		hcolor[3] = comp->colorMain[3];
 		trap_R_SetColor(hcolor);
 	}
@@ -1828,7 +1828,7 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		{
 			vec4_t hcolor;
 
-			CG_ColorForHealth(hcolor);
+			CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], hcolor);
 			hcolor[3] = comp->colorSecondary[3];
 			trap_R_SetColor(hcolor);
 		}
@@ -2093,14 +2093,15 @@ void CG_CheckForCursorHints(void)
  */
 void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 {
-	float    *color;
-	vec4_t   bgcolor, bdcolor, c;
+	float    *fadeColor;
+	vec4_t   bgcolor, bdcolor;
+	vec4_t   c, c2;
 	int      health, maxHealth;
-	float    barFrac;
 	float    zChange;
 	qboolean hitClient;
 	int      clientNum, class;
 	float    x = comp->location.x, w = comp->location.w;
+	int      style;
 
 	if (cg_drawCrosshair.integer < 0)
 	{
@@ -2161,9 +2162,9 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	}
 
 	// draw the name of the player being looked at
-	color = CG_FadeColor(cg.crosshairClientTime, cg_drawCrosshairFade.integer);
+	fadeColor = CG_FadeColor(cg.crosshairClientTime, cg_drawCrosshairFade.integer);
 
-	if (!color)
+	if (!fadeColor)
 	{
 		return;
 	}
@@ -2229,7 +2230,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 			w -= CG_Text_Width_Ext_Float(s, comp->scale, 0, &cgs.media.limboFont2);
 			h  = CG_Text_Height_Ext(s, comp->scale, 0, &cgs.media.limboFont2);
 
-			CG_Text_Paint_Ext(comp->location.x + w, comp->location.y + (comp->location.h - h) * 0.5f, comp->scale, comp->scale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x + w, comp->location.y + (comp->location.h - h) * 0.5f, comp->scale, comp->scale, fadeColor, s, 0, 0, 0, &cgs.media.limboFont2);
 
 			w -= comp->location.h;
 
@@ -2265,19 +2266,42 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 
 		maxHealth = CG_GetPlayerMaxHealth(cg.crosshairClientNum, cgs.clientinfo[cg.crosshairClientNum].cls, cgs.clientinfo[cg.crosshairClientNum].team);
 	}
+    
+    // remove unecessary style for bar customization
+    style = (comp->style >> 3);
 
-	barFrac = Com_Clamp(0, 1.f, health / (float)maxHealth);
-
-	c[0] = 1.0f;
-	c[1] = c[2] = barFrac;
-	c[3] = (0.25f + barFrac * 0.5f) * color[3];
-
+	if (style & (BAR_ICON << 1))
+	{
+		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], c);
+		c[3] = comp->colorMain[3] * fadeColor[3];
+        
+        style &= ~BAR_LERP_COLOR;
+	}
+	else
+	{
+		Vector4Copy(comp->colorMain, c);
+		c[3] *= fadeColor[3];
+		Vector4Copy(comp->colorSecondary, c2);
+		c2[3] *= fadeColor[3];
+	}
+    
 	Vector4Copy(comp->colorBackground, bgcolor);
-	bgcolor[3] *= color[3];
+	bgcolor[3] *= fadeColor[3];
 	Vector4Copy(comp->colorBorder, bdcolor);
-	bdcolor[3] *= color[3];
+	bdcolor[3] *= fadeColor[3];
 
-	CG_FilledBar(x, comp->location.y, w, comp->location.h, c, NULL, bgcolor, bdcolor, barFrac, comp->style >> 3, -1);
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, bgcolor);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, bdcolor);
+	}
+    
+    CG_FilledBar(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
+	             Com_Clamp(0, 1.f, health / (float)maxHealth), style, -1);
 
 	trap_R_SetColor(NULL);
 }

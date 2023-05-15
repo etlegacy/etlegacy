@@ -54,7 +54,7 @@
 #define GIB_HEALTH          -175
 #define GIB_DAMAGE(health) health - GIB_HEALTH + 1
 
-#define HOLDBREATHTIME      12000
+#define HOLDBREATHTIME      12000.f
 
 #define RANK_TIED_FLAG      0x4000
 
