@@ -1065,7 +1065,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	if (traceEnt->takedamage)
 	{
 		int hitType = HIT_NONE;
-		G_DamageExt(traceEnt, ent, activator, forward, tr.endpos, damage, 0, mod, &hitType);
+		G_DamageExt(traceEnt, ent, activator, forward, tr.endpos, damage, DAMAGE_DISTANCEFALLOFF, mod, &hitType);
 
 		// send the hit sound info in the flesh hit event
 		if (hitType && fleshEnt)
