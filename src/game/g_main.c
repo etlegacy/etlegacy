@@ -4559,7 +4559,9 @@ void CheckVote(void)
 			total = level.voteInfo.numVotingClients;
 		}
 
-		if (level.voteInfo.voteYes > pcnt * total / 100)
+        int threshold = pcnt * total / 100;
+
+		if (level.voteInfo.voteYes > 1 && level.voteInfo.voteYes > threshold)
 		{
 			// execute the command, then remove the vote
 			if (level.voteInfo.voteYes > total + 1)
@@ -4576,7 +4578,7 @@ void CheckVote(void)
 			else
 			{
 				AP(va("cpm \"^5Vote passed! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
-				G_LogPrintf("Vote Passed: (Y:%d-N:%d) %s\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString);
+				G_LogPrintf("Vote Passed: (Y:%d-N:%d) %s (Required:%d, Voting Clients:%d)\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString, threshold, total);
 			}
 
 			// Perform the passed vote
@@ -4594,17 +4596,18 @@ void CheckVote(void)
 			}
 
 		}
-		else if (level.voteInfo.voteNo && (level.voteInfo.voteNo >= (100 - pcnt) * total / 100))
+        // Only fail vote if more than half vote no.
+		else if (level.voteInfo.voteNo > 1 && level.voteInfo.voteNo >= threshold)
 		{
 			// same behavior as a no response vote
 			AP(va("cpm \"^1Vote FAILED! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
-			G_LogPrintf("Vote Failed: (Y:%d-N:%d) %s\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString);
+			G_LogPrintf("Vote Failed: (Y:%d-N:%d) %s (Required:%d, Voting Clients:%d)\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString, threshold, total);
 		}
 		else if (level.time - level.voteInfo.voteTime >= VOTE_TIME) // timeout, no enough vote
 		{
 			// same behavior as a no response vote
-			AP(va("cpm \"^1Vote TIMEOUT! No enough voters to pass vote ^7(^1%d^7/^2%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, pcnt * total / 100, level.voteInfo.voteString));
-			G_LogPrintf("Vote TIMEOUT! No enough voters to pass vote (%d/%d) %s\n", level.voteInfo.voteYes, pcnt * total / 100, level.voteInfo.voteString);
+			AP(va("cpm \"^1Vote TIMEOUT! No enough voters to pass vote ^7(^1%d^7/^2%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, threshold, level.voteInfo.voteString));
+			G_LogPrintf("Vote TIMEOUT! No enough voters to pass vote (%d/%d) %s\n", level.voteInfo.voteYes, threshold, level.voteInfo.voteString);
 		}
 		else
 		{
