@@ -1541,7 +1541,7 @@ void CG_DrawXP(hudComponent_t *comp)
 		clr = comp->colorMain;
 	}
 
-	str = va("%i XP", cg.snap->ps.stats[STAT_XP]);
+	str = va("%s XP", Com_ScaleNumberPerThousand((float) cg.snap->ps.stats[STAT_XP], 2));
 
 	CG_DrawCompText(comp, str, clr, comp->styleText, &cgs.media.limboFont1);
 }
