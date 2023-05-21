@@ -1139,7 +1139,7 @@ void G_CheckSpottedLandMines(void)
 	int       i, j;
 	gentity_t *ent, *ent2;
 
-	if (level.time - level.lastMapSpottedMinesUpdate < 1000)
+	if (level.time - level.lastMapSpottedMinesUpdate < 500)
 	{
 		return;
 	}
