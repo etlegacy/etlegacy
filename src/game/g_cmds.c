@@ -4287,6 +4287,12 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		return qfalse;
 	}
 
+	// exploit fix - prevent pushing lagged out players
+	if (victim->client->ps.ping == 999 || victim->client->pers.connected == CON_CONNECTING)
+	{
+		return qfalse;
+	}
+
 	// Both players need to be up and running like little bunnies they are.
 	if (ent->health <= 0 || victim->health <= 0)
 	{
