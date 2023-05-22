@@ -1999,6 +1999,14 @@ static void CG_DemoRewindFixEffects(void)
 		}
 	}
 
+	for (i = 0; i < MAX_VIEWDAMAGE; i++)
+	{
+		if (cg.viewDamage[i].damageTime > cg.time)
+		{
+			cg.viewDamage[i].damageTime = 0;
+		}
+	}
+
 	CG_DemoRewindFixLocalEntities();
 
 	// lazy fix, ideally every time based event should be adjusted individually not simply deleted
