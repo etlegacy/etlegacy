@@ -262,9 +262,10 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		// give big weapons the shakey shakey
 		if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
 		{
-			temp                = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
-			temp->s.onFireStart = ent->splashDamage * 4;
-			temp->r.svFlags    |= SVF_BROADCAST;
+			temp                     = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
+			temp->s.onFireStart      = ent->splashDamage * 4;
+			temp->r.svFlags         |= SVF_BROADCAST;
+			temp->r.snapshotCallback = qtrue;
 		}
 
 		G_FreeEntity(ent);
@@ -437,8 +438,9 @@ void G_ExplodeMissile(gentity_t *ent)
 
 			tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
 
-			tent->s.onFireStart = ent->splashDamage * 4;
-			tent->r.svFlags    |= SVF_BROADCAST;
+			tent->s.onFireStart      = ent->splashDamage * 4;
+			tent->r.svFlags         |= SVF_BROADCAST;
+			tent->r.snapshotCallback = qtrue;
 		}
 	}
 }
