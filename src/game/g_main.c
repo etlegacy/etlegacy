@@ -714,6 +714,14 @@ qboolean G_SnapshotCallback(int entityNum, int clientNum)
 		}
 	}
 
+	// don't send if out of range
+	if (ent->s.eType == ET_EVENTS + EV_SHAKE)
+	{
+		float len = VectorDistance(g_entities[clientNum].client->ps.origin, ent->s.pos.trBase);
+
+		return len <= ent->s.onFireStart;
+	}
+
 	return qtrue;
 }
 
@@ -4559,7 +4567,7 @@ void CheckVote(void)
 			total = level.voteInfo.numVotingClients;
 		}
 
-        int threshold = pcnt * total / 100;
+		int threshold = pcnt * total / 100;
 
 		if (level.voteInfo.voteYes > 1 && level.voteInfo.voteYes > threshold)
 		{
@@ -4596,7 +4604,7 @@ void CheckVote(void)
 			}
 
 		}
-        // Only fail vote if more than half vote no.
+		// Only fail vote if more than half vote no.
 		else if (level.voteInfo.voteNo > 1 && level.voteInfo.voteNo >= threshold)
 		{
 			// same behavior as a no response vote
