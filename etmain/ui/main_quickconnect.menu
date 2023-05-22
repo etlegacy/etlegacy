@@ -23,7 +23,7 @@ menuDef {
 	onOpen {
 		setitemcolor background backcolor 0 0 0 0 ;
 		fadein background ;
-		//setEditFocus "efleftServer IP:"
+		setEditFocus "efleftactionServer IP:"
 	}
 
 	onESC {
