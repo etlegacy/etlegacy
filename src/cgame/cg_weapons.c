@@ -6668,14 +6668,25 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 
 	if (cent->currentState.eFlags & EF_MG42_ACTIVE)
 	{
-		if (cent->currentState.eType == ET_MG42_BARREL)
-		{
-			vec3_t forward;
+		centity_t *mg42;
+		int       num;
 
-			VectorCopy(cent->currentState.pos.trBase, muzzle);
-			AngleVectors(cent->lerpAngles, forward, NULL, NULL);
-			VectorMA(muzzle, 40, forward, muzzle);
-			muzzle[2] += DEFAULT_VIEWHEIGHT;
+		// find the mg42 we're attached to
+		for (num = 0 ; num < cg.snap->numEntities ; num++)
+		{
+			mg42 = &cg_entities[cg.snap->entities[num].number];
+
+			if (mg42->currentState.eType == ET_MG42_BARREL &&
+			    mg42->currentState.otherEntityNum == cent->currentState.number)
+			{
+				vec3_t forward;
+
+				VectorCopy(mg42->currentState.pos.trBase, muzzle);
+				AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+				VectorMA(muzzle, 40, forward, muzzle);
+				muzzle[2] += DEFAULT_VIEWHEIGHT;
+				break;
+			}
 		}
 	}
 	else if (cent->currentState.eFlags & EF_MOUNTEDTANK)
@@ -6689,12 +6700,13 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		centity_t *aagun = NULL;
 		int       num;
 
-		// find the mg42 we're attached to
+		// find the aagun we're attached to
 		for (num = 0; num < cg.snap->numEntities; num++)
 		{
 			aagun = &cg_entities[cg.snap->entities[num].number];
 
-			if (aagun->currentState.eType == ET_AAGUN && aagun->currentState.otherEntityNum == cent->currentState.number)
+			if (aagun->currentState.eType == ET_AAGUN
+			    && aagun->currentState.otherEntityNum == cent->currentState.number)
 			{
 				// found it
 				vec3_t forward, right, up;
@@ -6768,7 +6780,7 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
  * @param[in] sourceEntityNum
  * @param[in] otherEntityNum
  */
-void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int otherEntityNum)
+void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum)
 {
 	if (cg_tracers.integer == 2 && sourceEntityNum != cg.clientNum)
 	{
@@ -6796,7 +6808,7 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
  * @param[in] waterfraction
  * @param[in] seed
  */
-void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, int seed)
+void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum)
 {
 	trace_t    trace, trace2;
 	vec3_t     dir;
@@ -6812,60 +6824,6 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 	if (cg_entities[sourceEntityNum].currentState.eFlags & EF_ZOOMING)
 	{
 		return;
-	}
-
-	// hack for fixed/mounted MG
-	if (BG_PlayerMounted(cg_entities[sourceEntityNum].currentState.eFlags))
-	{
-		if (cg_entities[sourceEntityNum].currentState.eFlags & EF_MOUNTEDTANK)
-		{
-			if (IS_MOUNTED_TANK_BROWNING(sourceEntityNum))
-			{
-				weapon = WP_MOBILE_BROWNING;
-			}
-			else
-			{
-				weapon = WP_MOBILE_MG42;
-			}
-		}
-		else if (cg_entities[sourceEntityNum].currentState.eFlags & EF_AAGUN_ACTIVE)
-		{
-			// TODO
-		}
-		else
-		{
-			weapon = WP_MOBILE_MG42;
-		}
-	}
-
-	// snap tracers for MG42 to viewangle of client when antilag is enabled
-	if (cgs.antilag && otherEntNum2 == cg.snap->ps.clientNum && (cg_entities[otherEntNum2].currentState.eFlags & EF_MG42_ACTIVE)) // FIXME: AAGUN
-	{
-		vec3_t  muzzle, forward, right, up;
-		float   r, u;
-		trace_t tr;
-
-		AngleVectors(cg.predictedPlayerState.viewangles, forward, right, up);
-		VectorCopy(cg_entities[cg.snap->ps.viewlocked_entNum].currentState.pos.trBase, muzzle);
-
-		if (cg_entities[cg.snap->ps.viewlocked_entNum].currentState.onFireStart)
-		{
-			VectorMA(muzzle, 16, up, muzzle);
-		}
-
-		r = Q_crandom(&seed) * GetWeaponTableData(WP_DUMMY_MG42)->spread;
-		u = Q_crandom(&seed) * GetWeaponTableData(WP_DUMMY_MG42)->spread;
-
-		VectorMA(muzzle, MAX_TRACE, forward, end);
-		VectorMA(end, r, right, end);
-		VectorMA(end, u, up, end);
-
-		cg.bulletTrace = qtrue;
-		CG_Trace(&tr, muzzle, NULL, NULL, end, otherEntNum2, MASK_SHOT);
-		cg.bulletTrace = qfalse;
-
-		SnapVectorTowards(tr.endpos, muzzle);
-		VectorCopy(tr.endpos, end);
 	}
 
 	// if the shooter is currently valid, calc a source point and possibly
@@ -6922,7 +6880,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 				}
 				else        // (not flesh)
 				{
-					CG_DrawBulletTracer(start, end, sourceEntityNum, otherEntNum2);
+					CG_DrawBulletTracer(start, end, sourceEntityNum);
 				}
 			}
 		}

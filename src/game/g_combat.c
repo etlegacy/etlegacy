@@ -263,7 +263,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	weapon_t  weap;
 	gclient_t *client;
 	int       contents = 0, i, killer = ENTITYNUM_WORLD;
-	char      *killerName  = "<world>";
+	char      *killerName = "<world>";
 	qboolean  killedintank = qfalse;
 	qboolean  attackerClient, dieFromSameTeam = qfalse;
 
@@ -1170,6 +1170,34 @@ qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, meansOfDeath_t
 }
 
 /**
+ * @brief G_DamageFalloff
+ * @details ~~~---______
+ * body / legs / arms shots, coef 0.5
+ *      start at 100% at 1500 units (and before),
+ *		and go to 50% at 2500 units (and after)
+ * head shots, coeff 0.8
+ *      start at 100% at 1500 units (and before),
+ *      and go to 20% at 2500 units (and after)
+ * @param[in,out] damage
+ * @param[in] coeff
+ * @return scale damage value
+ */
+static float G_DamageFalloff(float dist, float coeff)
+{
+	float scale;
+
+	// 1500 to 2500 -> 0.0 to 1.0
+	scale = (dist - 1500.f) / (2500.f - 1500.f);
+	// 0.0 to 1.0 -> 0.0 to coeff
+	scale *= coeff;
+	// 0.0 to coeff -> 1.0 to 1.0 - coeff
+	scale = 1.0f - scale;
+
+	// And, finally, cap it.
+	return Com_Clamp(1.0f - coeff, 1.0f, scale);
+}
+
+/**
  * @var refent
  * @brief This variable needs to be here in order for isHeadShot() to access it..
  */
@@ -1455,43 +1483,13 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 	if (IsHeadShot(targ, dir, point, mod, &refent, qtrue))
 	{
 		// FIXME: also when damage is 0 ?
-		if (take * 2 < 50)     // head shots, all weapons, do minimum 50 points damage
-		{
-			take = 50;
-		}
-		else
-		{
-			take *= 2; // sniper rifles can do full-kill (and knock into limbo)
+		// head shots, all weapons, do minimum 50 points damage
+		// sniper rifles can do full-kill (and knock into limbo)
+		take = MAX(50, take * 2);
 
-		}
 		if (dflags & DAMAGE_DISTANCEFALLOFF)
 		{
-			vec_t dist;
-			float scale;
-
-			dist = VectorDistance(point, muzzleTrace);
-
-			// start at 100% at 1500 units (and before),
-			// and go to 20% at 2500 units (and after)
-
-			// 1500 to 2500 -> 0.0 to 1.0
-			scale = (dist - 1500.f) / (2500.f - 1500.f);
-			// 0.0 to 1.0 -> 0.0 to 0.8
-			scale *= 0.8f;
-			// 0.0 to 0.8 -> 1.0 to 0.2
-			scale = 1.0f - scale;
-
-			// And, finally, cap it.
-			if (scale > 1.0f)
-			{
-				scale = 1.0f;
-			}
-			else if (scale < 0.2f)
-			{
-				scale = 0.2f;
-			}
-
-			take *= scale;
+			take *= G_DamageFalloff(VectorDistance(point, muzzleTrace), 0.8f);
 		}
 
 		if (!(targ->client->ps.eFlags & EF_HEADSHOT))          // only toss hat on first headshot
@@ -1532,47 +1530,55 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_HEAD, qtrue);
 		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
-	else if (IsLegShot(targ, dir, point, mod, &refent, qfalse))
+	else
 	{
-		G_LogRegionHit(attacker, HR_LEGS);
-		hr = HR_LEGS;
-		if (g_debugBullets.integer)
+		if (dflags & DAMAGE_DISTANCEFALLOFF)
 		{
-			trap_SendServerCommand(attacker - g_entities, "print \"Leg Shot\n\"");
+			take *= G_DamageFalloff(VectorDistance(point, muzzleTrace), 0.5f);
 		}
 
-		//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
-	}
-	else if (IsArmShot(targ, attacker, point, mod))
-	{
-		G_LogRegionHit(attacker, HR_ARMS);
-		hr = HR_ARMS;
-		if (g_debugBullets.integer)
+		if (IsLegShot(targ, dir, point, mod, &refent, qfalse))
 		{
-			trap_SendServerCommand(attacker - g_entities, "print \"Arm Shot\n\"");
-		}
-
-		//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_SHOULDER_RIGHT : IMPACTPOINT_SHOULDER_LEFT, qtrue);
-		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
-	}
-	else if (targ->client && targ->health > 0)
-	{
-		if (GetMODTableData(mod)->isHeadshot)
-		{
-			G_LogRegionHit(attacker, HR_BODY);
-			hr = HR_BODY;
+			G_LogRegionHit(attacker, HR_LEGS);
+			hr = HR_LEGS;
 			if (g_debugBullets.integer)
 			{
-				trap_SendServerCommand(attacker - g_entities, "print \"Body Shot\n\"");
+				trap_SendServerCommand(attacker - g_entities, "print \"Leg Shot\n\"");
 			}
-		}
-		else if (GetMODTableData(mod)->isExplosive)
-		{
-			//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_STUNNED, 1, qtrue);
-		}
 
-		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+			//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
+			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		}
+		else if (IsArmShot(targ, attacker, point, mod))
+		{
+			G_LogRegionHit(attacker, HR_ARMS);
+			hr = HR_ARMS;
+			if (g_debugBullets.integer)
+			{
+				trap_SendServerCommand(attacker - g_entities, "print \"Arm Shot\n\"");
+			}
+
+			//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_SHOULDER_RIGHT : IMPACTPOINT_SHOULDER_LEFT, qtrue);
+			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		}
+		else if (targ->client && targ->health > 0)
+		{
+			if (GetMODTableData(mod)->isHeadshot)
+			{
+				G_LogRegionHit(attacker, HR_BODY);
+				hr = HR_BODY;
+				if (g_debugBullets.integer)
+				{
+					trap_SendServerCommand(attacker - g_entities, "print \"Body Shot\n\"");
+				}
+			}
+			else if (GetMODTableData(mod)->isExplosive)
+			{
+				//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_STUNNED, 1, qtrue);
+			}
+
+			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		}
 	}
 
 	if (g_antilag.integer)

@@ -3233,7 +3233,7 @@ void CG_MortarEFX(centity_t *cent);
 
 void CG_MissileHitPlayer(int entityNum, int weapon, vec3_t origin, vec3_t dir, int fleshEntityNum);
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
-void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, int seed);
+void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum);
 
 void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index);
 void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum);

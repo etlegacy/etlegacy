@@ -360,7 +360,7 @@ extern int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
  */
 static void CG_ItemPickup(int itemNum)
 {
-	gitem_t            *item  = BG_GetItem(itemNum);
+	gitem_t            *item = BG_GetItem(itemNum);
 	int                itemid = item->giWeapon;
 	int                wpbank_cur, wpbank_pickup;
 	popupMessageType_t giType;
@@ -2408,19 +2408,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.shoveSound, 255);
 		//}
 		break;
-	case EV_MG42BULLET_HIT_WALL:
-		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->effect1Time);
-		break;
-	case EV_MG42BULLET_HIT_FLESH:
-		CG_PlayHitSound(es->otherEntityNum2, es->modelindex);
-		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, es->effect1Time);
-		break;
-	case EV_BULLET_HIT_WALL:
-		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, 0);
-		break;
-	case EV_BULLET_HIT_FLESH:
+	case EV_BULLET:
 		CG_PlayHitSound(es->otherEntityNum, es->modelindex);
-		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0);
+		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, ISVALIDCLIENTNUM(es->eventParm), es->eventParm);
 		break;
 	case EV_GENERAL_SOUND:
 	{

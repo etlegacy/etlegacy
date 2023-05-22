@@ -1660,6 +1660,7 @@ int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ);
 void G_MagicSink(gentity_t *self);
 
 // g_weapon.c
+void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff, meansOfDeath_t mod);
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 void SnapVectorTowards(vec3_t v, vec3_t to);

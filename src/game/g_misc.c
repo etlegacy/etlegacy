@@ -982,20 +982,11 @@ void flakPuff(vec3_t origin)
  */
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, meansOfDeath_t mod)
 {
-	trace_t   tr;
-	vec3_t    end;
-	float     r;
-	float     u;
-	gentity_t *tent, *fleshEnt = NULL;
-	gentity_t *traceEnt;
-	int       seed = rand() & 255;
+	vec3_t end;
 
-	r = Q_crandom(&seed) * spread;
-	u = Q_crandom(&seed) * spread;
-
-	VectorMA(muzzle, 8192, forward, end);
-	VectorMA(end, r, right, end);
-	VectorMA(end, u, up, end);
+	VectorMA(muzzle, MAX_TRACE, forward, end);
+	VectorMA(end, (crandom() * spread), right, end);
+	VectorMA(end, (crandom() * spread), up, end);
 
 	// use activator for historicaltrace, not ent which may be
 	// the weapon itself (e.g. for mg42s)
@@ -1009,70 +1000,8 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	}
 	// skip corpses for bullet tracing (=non gibbing weapons)
 	G_TempTraceIgnoreBodies();
-	G_Trace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
+	Bullet_Fire_Extended(ent, activator, muzzle, end, damage, qtrue, mod);
 	G_ResetTempTraceIgnoreEnts();
-
-	// bullet debugging using Q3A's railtrail
-	if (g_debugBullets.integer & 1)
-	{
-		tent = G_TempEntity(muzzle, EV_RAILTRAIL);
-		VectorCopy(tr.endpos, tent->s.origin2);
-		tent->s.otherEntityNum2 = activator->s.number;
-	}
-
-	if (tr.surfaceFlags & SURF_NOIMPACT)
-	{
-		tent                    = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_WALL);
-		tent->s.otherEntityNum  = ent->s.number;
-		tent->s.otherEntityNum2 = activator->s.number;
-		ent->s.effect1Time      = seed;
-
-		return;
-	}
-
-	traceEnt = &g_entities[tr.entityNum];
-
-	// snap the endpos to integers, but nudged towards the line
-	SnapVectorTowards(tr.endpos, muzzle);
-
-	// send bullet impact
-	if (traceEnt->takedamage && traceEnt->client)
-	{
-		fleshEnt                = tent = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_FLESH);
-		tent->s.eventParm       = traceEnt->s.number;
-		tent->s.otherEntityNum  = ent->s.number;
-		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
-		tent->s.effect1Time     = seed;
-	}
-	else
-	{
-		// bullet impact should reflect off surface
-		vec3_t reflect;
-		float  dot;
-
-		tent = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_WALL);
-
-		dot = DotProduct(forward, tr.plane.normal);
-		VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
-		VectorNormalize(reflect);
-
-		tent->s.eventParm       = DirToByte(reflect);
-		tent->s.otherEntityNum  = ent->s.number;
-		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
-		tent->s.effect1Time     = seed;
-	}
-
-	if (traceEnt->takedamage)
-	{
-		int hitType = HIT_NONE;
-		G_DamageExt(traceEnt, ent, activator, forward, tr.endpos, damage, DAMAGE_DISTANCEFALLOFF, mod, &hitType);
-
-		// send the hit sound info in the flesh hit event
-		if (hitType && fleshEnt)
-		{
-			fleshEnt->s.modelindex = hitType;
-		}
-	}
 }
 
 /**
@@ -1518,7 +1447,8 @@ void mg42_fire(gentity_t *other)
 	if (!G_LuaHook_FixedMGFire(other->s.number))
 #endif
 	{
-		Fire_Lead_Ext(self, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_MACHINEGUN);
+		Fire_Lead_Ext(self, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage,
+		              muzzle, forward, right, up, MOD_MACHINEGUN);
 	}
 }
 

@@ -1423,9 +1423,9 @@ typedef enum
 	EV_GLOBAL_CLIENT_SOUND,///< no attenuation, only plays for specified client
 	EV_GLOBAL_TEAM_SOUND,  ///< no attenuation, team only
 	EV_FX_SOUND,
-	EV_BULLET_HIT_FLESH,
-	EV_BULLET_HIT_WALL,
-	EV_MISSILE_HIT,
+	//EV_BULLET_HIT_FLESH,
+	//EV_BULLET_HIT_WALL,
+	EV_MISSILE_HIT = 58,
 	EV_MISSILE_MISS,
 	EV_RAILTRAIL,
 	EV_BULLET,             ///< otherEntity is the shooter
@@ -1483,9 +1483,9 @@ typedef enum
 	//EV_POPUP,
 	//EV_POPUPBOOK,
 	//EV_GIVEPAGE,
-	EV_MG42BULLET_HIT_FLESH = 116, ///< these two send the seed as well
-	EV_MG42BULLET_HIT_WALL,
-	EV_SHAKE,
+	//EV_MG42BULLET_HIT_FLESH, ///< these two send the seed as well
+	//EV_MG42BULLET_HIT_WALL,
+	EV_SHAKE = 118,
 	EV_DISGUISE_SOUND,
 	EV_BUILDDECAYED_SOUND,
 	EV_FIRE_WEAPON_AAGUN,

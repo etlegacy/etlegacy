@@ -46,7 +46,7 @@ vec3_t        muzzleTrace;  // used in G_Damage from g_combat.c
 
 // forward dec
 gentity_t *Bullet_Fire(gentity_t *ent);
-qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff);
+void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff, meansOfDeath_t mod);
 
 /**
 ======================================================================
@@ -3400,7 +3400,6 @@ void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 /**
  * @brief Bullet_Fire
  * @param[in] ent
- * @param[in] firedShot - unused
  */
 gentity_t *Bullet_Fire(gentity_t *ent)
 {
@@ -3464,7 +3463,8 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	// skip corpses for bullet tracing (=non gibbing weapons)
 	G_TempTraceIgnoreBodies();
 
-	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_FALL_OFF);
+	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage,
+	                     GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_FALL_OFF, GetWeaponTableData(ent->s.weapon)->mod);
 
 	// ok let the bodies be traced again
 	G_ResetTempTraceIgnoreEnts();
@@ -3489,14 +3489,15 @@ gentity_t *Bullet_Fire(gentity_t *ent)
  * @param[in] distance_falloff
  * @return
  */
-qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff)
+void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff, meansOfDeath_t mod)
 {
 	trace_t   tr;
-	gentity_t *tent, *fleshEnt = NULL;
+	gentity_t *tent;
 	gentity_t *traceEnt;
-	qboolean  hitClient = qfalse;
-	qboolean  waslinked = qfalse;
-	vec3_t    impactPos;
+	//qboolean  hitClient = qfalse;
+	qboolean waslinked = qfalse;
+	vec3_t   impactPos;
+	int      hitType = HIT_NONE;
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (g_entities[attacker->s.number].client && g_entities[attacker->s.number].r.linked == qtrue)
@@ -3535,124 +3536,54 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	VectorCopy(tr.endpos, impactPos);
 	SnapVectorTowards(impactPos, start);
 
-	if (distance_falloff)
-	{
-		vec_t  dist;
-		vec3_t shotvec;
-		float  scale;
-
-		//VectorSubtract( tr.endpos, start, shotvec );
-		VectorSubtract(tr.endpos, muzzleTrace, shotvec);
-
-		dist = VectorLength(shotvec);
-		// ~~~---______
-		// start at 100% at 1500 units (and before),
-		// and go to 50% at 2500 units (and after)
-
-		// 1500 to 2500 -> 0.0 to 1.0
-		scale = (dist - 1500.f) / (2500.f - 1500.f);
-		// 0.0 to 1.0 -> 0.0 to 0.5
-		scale *= 0.5f;
-		// 0.0 to 0.5 -> 1.0 to 0.5
-		scale = 1.0f - scale;
-
-		// And, finally, cap it.
-		if (scale >= 1.0f)
-		{
-			scale = 1.0f;
-		}
-		else if (scale < 0.5f)
-		{
-			scale = 0.5f;
-		}
-
-		damage *= scale;
-	}
-
-	// send bullet impact
-	if (traceEnt->takedamage && traceEnt->client)
-	{
-		fleshEnt          = tent = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
-		tent->s.eventParm = traceEnt->s.number;
-		tent->s.weapon    = source->s.weapon;
-
+	// TODO: Unused
+	/*
 		if (AccuracyHit(traceEnt, attacker))
 		{
 			hitClient = qtrue;
 		}
+	*/
 
-		if (g_debugBullets.integer >= 2)       // show hit player bb
-		{
-			gentity_t *bboxEnt;
-			vec3_t    b1, b2;
-
-			VectorCopy(traceEnt->r.currentOrigin, b1);
-			VectorCopy(traceEnt->r.currentOrigin, b2);
-			VectorAdd(b1, traceEnt->r.mins, b1);
-			VectorAdd(b2, traceEnt->r.maxs, b2);
-			bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
-			VectorCopy(b2, bboxEnt->s.origin2);
-			bboxEnt->s.dmgFlags = 1;    // ("type")
-
-			if (g_debugForSingleClient.integer > -1)
-			{
-				bboxEnt->r.svFlags      = SVF_SINGLECLIENT;
-				bboxEnt->r.singleClient = g_debugForSingleClient.integer;
-			}
-		}
-	}
-	else
-	{
-		// bullet impact should reflect off surface
+	// TODO: we don't reflect bullet, for now
+	/* bullet impact should reflect off surface
 		vec3_t reflect;
 		float  dot;
 
-		if (g_debugBullets.integer <= -2)      // show hit thing bb
+	dot = DotProduct(forward, tr.plane.normal);
+	VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
+	VectorNormalize(reflect);
+
+	tent->s.eventParm = DirToByte(reflect);
+	*/
+
+	if ((g_debugBullets.integer >= 2 && traceEnt->takedamage && traceEnt->client)   // show hit player
+	    || g_debugBullets.integer <= -2)        // show hit thing bb
+	{
+		gentity_t *bboxEnt;
+		vec3_t    b1, b2;
+		vec3_t    maxs;
+
+		VectorCopy(traceEnt->r.currentOrigin, b1);
+		VectorCopy(traceEnt->r.currentOrigin, b2);
+		VectorAdd(b1, traceEnt->r.mins, b1);
+		VectorCopy(traceEnt->r.maxs, maxs);
+		maxs[2] = ClientHitboxMaxZ(traceEnt);
+		VectorAdd(b2, maxs, b2);
+		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
+		VectorCopy(b2, bboxEnt->s.origin2);
+		bboxEnt->s.dmgFlags = 1;    // ("type")
+
+		if (g_debugForSingleClient.integer > -1)
 		{
-			gentity_t *bboxEnt;
-			vec3_t    b1, b2;
-			vec3_t    maxs;
-
-			VectorCopy(traceEnt->r.currentOrigin, b1);
-			VectorCopy(traceEnt->r.currentOrigin, b2);
-			VectorAdd(b1, traceEnt->r.mins, b1);
-			VectorCopy(traceEnt->r.maxs, maxs);
-			maxs[2] = ClientHitboxMaxZ(traceEnt);
-			VectorAdd(b2, maxs, b2);
-			bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
-			VectorCopy(b2, bboxEnt->s.origin2);
-			bboxEnt->s.dmgFlags = 1;    // ("type")
-
-			if (g_debugForSingleClient.integer > -1)
-			{
-				bboxEnt->r.svFlags      = SVF_SINGLECLIENT;
-				bboxEnt->r.singleClient = g_debugForSingleClient.integer;
-			}
+			bboxEnt->r.svFlags      = SVF_SINGLECLIENT;
+			bboxEnt->r.singleClient = g_debugForSingleClient.integer;
 		}
-
-		tent = G_TempEntity(impactPos, EV_BULLET_HIT_WALL);
-
-		dot = DotProduct(forward, tr.plane.normal);
-		VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
-		VectorNormalize(reflect);
-
-		tent->s.eventParm       = DirToByte(reflect);
-		tent->s.otherEntityNum2 = ENTITYNUM_NONE;
-		tent->s.weapon          = source->s.weapon;
 	}
-	tent->s.otherEntityNum = attacker->s.number;
 
 	if (traceEnt->takedamage)
 	{
 		// skip corpses for bullet tracing (=non gibbing weapons)
-		int hitType = 0;
-		G_DamageExt(traceEnt, attacker, attacker, forward, tr.endpos, damage, (distance_falloff ? DAMAGE_DISTANCEFALLOFF : 0), GetWeaponTableData(attacker->s.weapon)->mod, &hitType);
-
-		// send the hit sound info in the flesh hit event
-		if (hitType && fleshEnt)
-		{
-			fleshEnt->s.modelindex = hitType;
-		}
+		G_DamageExt(traceEnt, attacker, attacker, forward, tr.endpos, damage, (distance_falloff ? DAMAGE_DISTANCEFALLOFF : 0), mod, &hitType);
 
 		// allow bullets to "pass through" func_explosives if they break by taking another simultanious shot
 		if (traceEnt->s.eType == ET_EXPLOSIVE)
@@ -3661,11 +3592,19 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 			{
 				// start new bullet at position this hit the bmodel and continue to the end position (ignoring shot-through bmodel in next trace)
 				// spread = 0 as this is an extension of an already spread shot
-				return Bullet_Fire_Extended(traceEnt, attacker, tr.endpos, end, damage, distance_falloff);
+				/*return*/ Bullet_Fire_Extended(traceEnt, attacker, tr.endpos, end, damage, distance_falloff, mod);
 			}
 		}
 	}
-	return hitClient;
+
+	// send bullet impact
+	tent                   = G_TempEntity(impactPos, EV_BULLET);
+	tent->s.eventParm      = traceEnt->s.number;
+	tent->s.weapon         = GetMODTableData(mod)->weaponIcon;
+	tent->s.otherEntityNum = attacker->s.number;
+	tent->s.modelindex     = hitType;   // send the hit sound info in the flesh hit event
+
+	/*return hitClient;*/
 }
 
 /**
