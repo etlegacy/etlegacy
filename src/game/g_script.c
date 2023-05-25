@@ -907,7 +907,7 @@ void mountedmg42_fire(gentity_t *other)
 #endif
 	{
 		Fire_Lead_Ext(other, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage,
-                      muzzle, forward, right, up, (self->s.density & 8) ? MOD_BROWNING : MOD_MG42);
+		              muzzle, forward, right, up, (self->s.density & 8) ? MOD_BROWNING : MOD_MG42);
 	}
 }
 
@@ -987,6 +987,10 @@ void script_mover_think(gentity_t *ent)
 					ent->backupWeaponTime = 0;
 				}
 			}
+		}
+		else
+		{
+			ent->tankLink->client->ps.viewlocked = VIEWLOCK_NONE; // let them look around
 		}
 	}
 

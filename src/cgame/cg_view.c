@@ -1362,15 +1362,15 @@ int CG_CalcViewValues(void)
 #endif
 		{
 			// don't bother evaluating if set to 7 (look at medic)
-			if (ps->viewlocked != VIEWLOCK_MEDIC && ps->viewlocked != VIEWLOCK_MG42 && ps->viewlocked != VIEWLOCK_JITTER)
-			{
-				BG_EvaluateTrajectory(&cg_entities[ps->viewlocked_entNum].currentState.apos, cg.time, cg.refdefViewAngles, qtrue, cg_entities[ps->viewlocked_entNum].currentState.effect2Time);
-			}
+			//if (ps->viewlocked != VIEWLOCK_MEDIC && ps->viewlocked != VIEWLOCK_MG42 && ps->viewlocked != VIEWLOCK_JITTER)
+			//{
+			//	BG_EvaluateTrajectory(&cg_entities[ps->viewlocked_entNum].currentState.apos, cg.time, cg.refdefViewAngles, qtrue, cg_entities[ps->viewlocked_entNum].currentState.effect2Time);
+			//}
 
 			if (ps->viewlocked == VIEWLOCK_JITTER)
 			{
-				cg.refdefViewAngles[0] += crandom();
-				cg.refdefViewAngles[1] += crandom();
+				cg.refdefViewAngles[0] += crandom() * 0.5f;
+				cg.refdefViewAngles[1] += crandom() * 0.5f;
 			}
 		}
 
@@ -1424,7 +1424,7 @@ int CG_CalcViewValues(void)
 			VectorSubtract(vec, cg.refdef_current->vieworg, vec);
 			vectoangles(vec, cg.refdefViewAngles);
 		}
-		else if (ps->viewlocked)
+		else if (ps->viewlocked && (cg.predictedPlayerState.eFlags & (EF_AAGUN_ACTIVE | EF_MG42_ACTIVE)))
 		{
 			vec3_t fwd;
 			float  oldZ = cg.refdef_current->vieworg[2]; // set our position to be behind it

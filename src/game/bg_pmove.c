@@ -3220,7 +3220,7 @@ static qboolean PM_MountedFire(void)
 			else
 			{
 				PM_AddEvent(EV_FIRE_WEAPON_MOUNTEDMG42);
-				//pm->ps->viewlocked = VIEWLOCK_JITTER;             // this enable screen jitter when firing
+				pm->ps->viewlocked = VIEWLOCK_JITTER;             // this enable screen jitter when firing
 			}
 
 			pm->pmext->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
@@ -3233,6 +3233,16 @@ static qboolean PM_MountedFire(void)
 				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->heatRecoveryTime;         // force "heat recovery minimum" right now
 			}
 		}
+
+		// add the recoil amount to the aimSpreadScale
+		pm->ps->aimSpreadScaleFloat += 3.0 * GetWeaponTableData(WP_DUMMY_MG42)->aimSpreadScaleAdd;
+
+		if (pm->ps->aimSpreadScaleFloat > AIMSPREAD_MAXSPREAD)
+		{
+			pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
+		}
+
+		pm->ps->aimSpreadScale = (int)pm->ps->aimSpreadScaleFloat;
 	}
 
 	return qtrue;
@@ -3517,6 +3527,8 @@ static void PM_Weapon(void)
 	// again if lowering or raising
 	if ((pm->ps->weaponTime <= 0 || (!weaponstateFiring && pm->ps->weaponDelay <= 0)) && !delayedFire)
 	{
+		pm->ps->viewlocked = VIEWLOCK_NONE;
+
 		if (pm->ps->weapon != pm->cmd.weapon)
 		{
 			PM_BeginWeaponChange(pm->ps->weapon, pm->cmd.weapon, qfalse);
@@ -3965,6 +3977,11 @@ static void PM_Weapon(void)
 		}
 	}
 
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SET)
+	{
+		pm->ps->viewlocked = VIEWLOCK_JITTER;             // this enable screen jitter when firing
+	}
+
 	// check for overheat
 	if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
@@ -3976,7 +3993,8 @@ static void PM_Weapon(void)
 			pm->pmext->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
 			PM_AddEvent(EV_WEAP_OVERHEAT);
 			//PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon)); // removed.  client handles anim in overheat event
-			addTime = GetWeaponTableData(pm->ps->weapon)->heatRecoveryTime;     // force "heat recovery minimum" right now
+			addTime            = GetWeaponTableData(pm->ps->weapon)->heatRecoveryTime; // force "heat recovery minimum" right now
+			pm->ps->viewlocked = VIEWLOCK_NONE;
 		}
 
 		// sync heat for overheat check
@@ -4693,8 +4711,8 @@ void PM_CheckLadderMove(void)
 	{
 		return;
 	}
-    
-    tracedist = pml.walking ? 1.0 : TRACE_LADDER_DIST;
+
+	tracedist = pml.walking ? 1.0 : TRACE_LADDER_DIST;
 
 	// check for ladder
 	flatforward[0] = pml.forward[0];

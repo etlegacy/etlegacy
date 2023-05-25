@@ -4166,11 +4166,12 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
 	G_RemoveConfigstringIndex(va("%i %i %s", ent->s.number, ent->tagParent->s.number, ent->tagName), CS_TAGCONNECTS, MAX_TAGCONNECTS);
 
 	G_Script_ScriptEvent(tank, "mg42", "unmount");
-	ent->tagParent          = NULL;
-	*ent->tagName           = '\0';
-	ent->s.eFlags          &= ~EF_MOUNTEDTANK;
-	ent->client->ps.eFlags &= ~EF_MOUNTEDTANK;
-	tank->s.powerups        = -1;
+	ent->tagParent             = NULL;
+	*ent->tagName              = '\0';
+	ent->s.eFlags             &= ~EF_MOUNTEDTANK;
+	ent->client->ps.eFlags    &= ~EF_MOUNTEDTANK;
+	tank->s.powerups           = -1;
+	ent->client->ps.viewlocked = VIEWLOCK_NONE; // let them look around
 
 	tank->tankLink = NULL;
 	ent->tankLink  = NULL;

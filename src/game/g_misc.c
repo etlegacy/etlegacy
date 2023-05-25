@@ -983,6 +983,24 @@ void flakPuff(vec3_t origin)
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, meansOfDeath_t mod)
 {
 	vec3_t end;
+	float  aimSpreadScale;
+
+	if (g_userAim.integer)
+	{
+		aimSpreadScale = activator->client->currentAimSpreadScale;
+		// add accuracy factor for AI
+		aimSpreadScale += 0.15f; // just adding a temp /maximum/ accuracy for player (this will be re-visited in greater detail :)
+		if (aimSpreadScale > 1)
+		{
+			aimSpreadScale = 1.0f;  // still cap at 1.0
+		}
+	}
+	else
+	{
+		aimSpreadScale = 1.f;
+	}
+
+	spread *= aimSpreadScale;
 
 	VectorMA(muzzle, MAX_TRACE, forward, end);
 	VectorMA(end, (crandom() * spread), right, end);
@@ -1000,7 +1018,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	}
 	// skip corpses for bullet tracing (=non gibbing weapons)
 	G_TempTraceIgnoreBodies();
-	Bullet_Fire_Extended(ent, activator, muzzle, end, damage, qtrue, mod);
+	Bullet_Fire_Extended(ent, activator, muzzle, end, damage, qfalse, mod);
 	G_ResetTempTraceIgnoreEnts();
 }
 
