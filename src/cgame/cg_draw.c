@@ -2272,7 +2272,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 
 	if (style & (BAR_ICON << 1))
 	{
-		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], c);
+		CG_ColorForHealth(health, c);
 		c[3] = comp->colorMain[3] * fadeColor[3];
         
         style &= ~BAR_LERP_COLOR;
