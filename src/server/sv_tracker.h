@@ -49,7 +49,6 @@ void Tracker_ClientName(client_t *cl);
 void Tracker_Map(char *mapname);
 void Tracker_MapRestart(void);
 void Tracker_MapEnd(void);
-// void Tracker_TeamSwitch(client_t *cl); // unused
 void Tracker_Frame(int msec);
 
 void Tracker_catchBotConnect(int clientNum);
