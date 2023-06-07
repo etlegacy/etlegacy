@@ -414,6 +414,10 @@ char *Tracker_getGUID(client_t *cl)
 	{
 		return Info_ValueForKey(cl->userinfo, "cl_guid");
 	}
+	else if (*Info_ValueForKey(cl->userinfo, "n_guid"))
+	{
+		return Info_ValueForKey(cl->userinfo, "n_guid");
+	}
 	else
 	{
 		return "unknown";
