@@ -88,7 +88,7 @@ qboolean Ccg_Is43Screen(void)
  */
 float Ccg_WideX(float x)
 {
-	return (Ccg_Is43Screen()) ? x : x * cgs.adr43; // * (aspectratio / (4/3))
+	return (Ccg_Is43Screen()) ? x : x *cgs.adr43;  // * (aspectratio / (4/3))
 }
 
 /**
@@ -804,41 +804,41 @@ void CG_ColorForHealth(int health, vec4_t hcolor)
 {
 	// calculate the total points of damage that can
 	// be sustained at the current health / armor level
-    if (health <= 0)
-    {
-        VectorClear(hcolor);    // black
-        hcolor[3] = 1;
-        return;
-    }
-    
-    // set the color based on health
-    hcolor[0] = 1.0;
-    hcolor[3] = 1.0;
-    if (health >= 100)
-    {
-        hcolor[2] = 1.0;
-    }
-    else if (health <= 66)
-    {
-        hcolor[2] = 0;
-    }
-    else
-    {
-        hcolor[2] = (health - 66.f) / 33.0f;
-    }
-    
-    if (health > 66)
-    {
-        hcolor[1] = 1.0;
-    }
-    else if (health <= 33)
-    {
-        hcolor[1] = 0;
-    }
-    else
-    {
-        hcolor[1] = (health - 33.f) / 33.0f;
-    }
+	if (health <= 0)
+	{
+		VectorClear(hcolor);    // black
+		hcolor[3] = 1;
+		return;
+	}
+
+	// set the color based on health
+	hcolor[0] = 1.0;
+	hcolor[3] = 1.0;
+	if (health >= 100)
+	{
+		hcolor[2] = 1.0;
+	}
+	else if (health <= 66)
+	{
+		hcolor[2] = 0;
+	}
+	else
+	{
+		hcolor[2] = (health - 66.f) / 33.0f;
+	}
+
+	if (health > 66)
+	{
+		hcolor[1] = 1.0;
+	}
+	else if (health <= 33)
+	{
+		hcolor[1] = 0;
+	}
+	else
+	{
+		hcolor[1] = (health - 33.f) / 33.0f;
+	}
 }
 
 /**
@@ -1093,12 +1093,14 @@ int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, 
  * @param[in]  maxLineChars
  * @param[out] output
  * @param[in]  maxOutputSize
+ * @param[out] numLineOutput
  */
-char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize)
+char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize, int *numLineOutput)
 {
 	int i = 0, o = 0, l, k;
 	int lineSplit = 0;
 	int lineWidth = 0;
+	int numLine   = 1;
 
 	if (!input || !output || maxOutputSize <= 0)
 	{
@@ -1126,11 +1128,13 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
 			}
 			else if (lineSplit)
 			{
+				++numLine;
 				output[lineSplit] = '\n';
 				lineWidth         = Q_UTF8_PrintStrlenExt(output + lineSplit + 1, o - (lineSplit + 1)); // get line length
 				lineSplit         = 0;
 				continue;
 			}
+			++numLine;
 			output[o++] = '\n';
 			lineWidth   = 0;
 			lineSplit   = 0;
@@ -1140,6 +1144,7 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
 		// linebreak marker
 		if (input[i] == '\\' && input[i + 1] == 'n')
 		{
+			++numLine;
 			i          += 2; // eat linebreak marker
 			output[o++] = '\n';
 			lineSplit   = 0;
@@ -1174,6 +1179,11 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
 
 		output[o++] = input[i++];
 		lineWidth++;
+	}
+
+	if (numLineOutput)
+	{
+		*numLineOutput = numLine;
 	}
 
 	output[o] = 0;

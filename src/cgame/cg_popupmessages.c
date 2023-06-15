@@ -598,10 +598,13 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float y, float lineHeight, float size)
 {
 	float  t;
-	int    w;
+	float  w;
 	vec4_t colorText;
 	float  scale;
 	float  x = (comp->alignText == ITEM_ALIGN_RIGHT) ? comp->location.x + comp->location.w : comp->location.x;
+	char   buffer[256];
+	int    lineNumber            = 1;
+	char   weaponIconSpacing[32] = { 0 };
 
 	Vector4Copy(comp->colorMain, colorText);
 	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
@@ -612,6 +615,35 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 		colorText[3] *= 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
 	}
 
+	Q_strncpyz(buffer, CG_TranslateString(listItem->message), sizeof(buffer));
+
+	if (listItem->weaponShader > 0)
+	{
+		unsigned int i;
+
+		// icon size + 2 extra space
+		i = floor((size * listItem->scaleShader) / CG_Text_Width_Ext(" ", CG_ComputeScale(comp), 0, &cgs.media.limboFont2)) + 2;
+
+		memset(weaponIconSpacing, ' ', sizeof(weaponIconSpacing));
+		weaponIconSpacing[MIN(i, sizeof(weaponIconSpacing) - 1)] = '\0';
+
+		Q_strcat(buffer, sizeof(buffer), weaponIconSpacing);
+	}
+
+	if (listItem->message2[0])
+	{
+		Q_strcat(buffer, sizeof(buffer), CG_TranslateString(listItem->message2));
+	}
+
+	w = comp->location.w - size * 2;
+	CG_WordWrapString(buffer, CG_GetMaxCharsPerLine(buffer, scale, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
+
+	// we reach the comp top, don't print the line
+	if (y - (lineHeight * lineNumber) < comp->location.y)
+	{
+		return y - (lineHeight * lineNumber);
+	}
+
 	if (listItem->shader > 0)
 	{
 		// colorize
@@ -620,13 +652,13 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 
 		if (comp->alignText == ITEM_ALIGN_RIGHT)
 		{
-			x -= lineHeight;
-			CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
+			x -= size;
+			CG_DrawPic(x, y - size - lineHeight * (lineNumber - 1), size, size, listItem->shader);
 		}
 		else
 		{
-			CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
-			x += lineHeight;
+			CG_DrawPic(x, y - size - lineHeight * (lineNumber - 1), size, size, listItem->shader);
+			x += size;
 		}
 
 		// decolorize
@@ -634,44 +666,53 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 		trap_R_SetColor(NULL);
 	}
 
-	w = CG_Text_Width_Ext(listItem->message, scale, 0, &cgs.media.limboFont2);
-
 	if (comp->alignText == ITEM_ALIGN_RIGHT)
 	{
-		x -= w + 4;
-
-		if (listItem->weaponShader > 0)
-		{
-			x -= lineHeight * listItem->scaleShader;
-		}
-
-		if (listItem->message2[0])
-		{
-			x -= CG_Text_Width_Ext(listItem->message2, scale, 0, &cgs.media.limboFont2);
-		}
+		w  = CG_Text_Line_Width_Ext_Float(buffer, scale, &cgs.media.limboFont2);
+		x -= w;
 	}
 
-	CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, scale, scale, colorText, listItem->message, 0, 0, comp->styleText, &cgs.media.limboFont2);
+	CG_DrawMultilineText(x, y - lineHeight * (lineNumber - 1) - lineHeight * 0.25, w, scale, scale, colorText, buffer, lineHeight, 0, 0, comp->styleText, comp->alignText, &cgs.media.limboFont2);
 
 	if (listItem->weaponShader > 0)
 	{
+		int  i;
+		char *spacingStart;
+
+		spacingStart = strstr(buffer, weaponIconSpacing);
+
+		// keep in buffer text until icon insertion
+		if (spacingStart && spacingStart != buffer)
+		{
+			Q_strncpyz(buffer, buffer, spacingStart - buffer);
+
+			// determine on which line the icon should appear
+			for (i = 0; buffer[i]; ++i)
+			{
+				if (buffer[i] == '\n')
+				{
+					--lineNumber;
+				}
+			}
+		}
+		else
+		{
+			Q_strncpyz(buffer, CG_TranslateString(listItem->message), sizeof(buffer));
+			Q_strcat(buffer, sizeof(buffer), " ");
+		}
+
 		// colorize
 		VectorCopy(listItem->color, colorText);
 		trap_R_SetColor(colorText);
 
-		CG_DrawPic(x + w + 4, y - lineHeight, size * listItem->scaleShader, size, listItem->weaponShader);
+		CG_DrawPic(x + CG_Text_Line_Width_Ext_Float(buffer, scale, &cgs.media.limboFont2), y - size - lineHeight * (lineNumber - 1), size * listItem->scaleShader, size, listItem->weaponShader);
 
 		// decolorize
 		VectorCopy(colorWhite, colorText);
 		trap_R_SetColor(NULL);
 	}
 
-	if (listItem->message2[0])
-	{
-		CG_Text_Paint_Ext(x + w + lineHeight * listItem->scaleShader + 4, y - (lineHeight / 2) + 1, scale, scale, colorText, listItem->message2, 0, 0, comp->styleText, &cgs.media.limboFont2);
-	}
-
-	return y - lineHeight;
+	return y - (lineHeight * lineNumber);
 }
 
 /**
@@ -681,12 +722,10 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
  */
 void CG_DrawPM(hudComponent_t *comp)
 {
-	int          i;
-	pmListItem_t *listItem  = cg_pmOldList;
-	int          numPopups  = cg_numPopups.integer == -1 ? 7 : cg_numPopups.integer;
-	float        lineHeight = comp->location.h / numPopups;
-	float        size       = lineHeight - 2;
-	float        y          = comp->location.y + comp->location.h;
+	pmListItem_t *listItem;
+	float        lineHeight;
+	float        size;
+	float        y = comp->location.y + comp->location.h;
 
 	if (cg_numPopups.integer == 0)
 	{
@@ -697,6 +736,9 @@ void CG_DrawPM(hudComponent_t *comp)
 	{
 		return;
 	}
+
+	lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2) * 1.75f;
+	size       = lineHeight;
 
 	if (comp->showBackGround)
 	{
@@ -710,7 +752,7 @@ void CG_DrawPM(hudComponent_t *comp)
 
 	y = CG_DrawPMItems(comp, cg_pmWaitingList, y, lineHeight, size);
 
-	for (i = 0; i < numPopups - 1 && listItem; i++, listItem = listItem->next)
+	for (listItem = cg_pmOldList; listItem && y > (comp->location.y + lineHeight); listItem = listItem->next)
 	{
 		y = CG_DrawPMItems(comp, listItem, y, lineHeight, size);
 	}

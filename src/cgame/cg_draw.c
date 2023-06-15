@@ -1220,7 +1220,7 @@ void CG_PriorityCenterPrint(const char *str, int priority)
 
 	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
 
-	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.centerPrint, sizeof(cg.centerPrint));
+	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.centerPrint, sizeof(cg.centerPrint), NULL);
 	cg.centerPrintPriority = priority;
 	cg.centerPrintTime     = cg.time + 2000;
 }
@@ -3730,7 +3730,7 @@ void CG_ObjectivePrint(const char *str)
 	w     = CG_GetActiveHUD()->objectivetext.location.w;
 
 	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
-	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.oidPrint, sizeof(cg.oidPrint));
+	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.oidPrint, sizeof(cg.oidPrint), NULL);
 	cg.oidPrintTime = cg.time;
 }
 

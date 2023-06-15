@@ -2930,7 +2930,7 @@ void CG_AddToBannerPrint(const char *str)
 	w     = CG_GetActiveHUD()->banner.location.w;
 
 	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
-	CG_WordWrapString(str, maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
+	CG_WordWrapString(str, maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint), NULL);
 	cg.bannerPrintTime = cg.time;
 }
 

@@ -3057,7 +3057,7 @@ void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_
 
 int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, float width);
 // string word wrapper
-char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
+char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize, int *numLineOutput);
 // draws multiline strings
 void CG_DrawMultilineText(float x, float y, float w, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
