@@ -323,7 +323,6 @@ vmCvar_t cg_automapZoom;
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
 vmCvar_t cg_popupTime;
-vmCvar_t cg_numPopups;
 
 vmCvar_t cg_fontScaleSP; // side print
 
@@ -586,7 +585,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupFadeTime,            "cg_popupFadeTime",            "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_popupStayTime,            "cg_popupStayTime",            "2000",        CVAR_ARCHIVE,                 0 },
 	{ &cg_popupTime,                "cg_popupTime",                "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_numPopups,                "cg_numPopups",                "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,           "cg_weapaltReloads",           "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,          "cg_weapaltSwitches",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_sharetimerText,           "cg_sharetimerText",           "",            CVAR_ARCHIVE,                 0 },

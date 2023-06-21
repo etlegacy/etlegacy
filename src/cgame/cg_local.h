@@ -2869,7 +2869,6 @@ extern vmCvar_t cg_automapZoom;
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
 extern vmCvar_t cg_popupTime;
-extern vmCvar_t cg_numPopups;
 
 extern vmCvar_t cg_fontScaleSP;
 

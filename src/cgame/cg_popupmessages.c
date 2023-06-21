@@ -745,11 +745,6 @@ void CG_DrawPM(hudComponent_t *comp)
 	float        y;
 	qboolean     isScapeAvailable;
 
-	if (cg_numPopups.integer == 0)
-	{
-		return;
-	}
-
 	if (!cg_pmWaitingList)
 	{
 		return;
