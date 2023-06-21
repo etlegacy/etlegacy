@@ -59,7 +59,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,  { "Icon Flash" } },
 	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,  { "Dynamic Color" } },
 	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,  { "Latched Class", "No Header" } },// FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages),    CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages),    CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(powerups),         CG_DrawPowerUps,           0.19f,  { 0 } },
 	{ HUDF(objectives),       CG_DrawObjectiveStatus,    0.19f,  { 0 } },
 	{ HUDF(hudhead),          CG_DrawPlayerStatusHead,   0.19f,  { 0 } },

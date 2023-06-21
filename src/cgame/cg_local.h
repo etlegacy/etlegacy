@@ -2138,6 +2138,7 @@ enum
 	POPUP_WEAPON_ICON_ALT    = BIT(6),
 	POPUP_SWAP_VICTIM_KILLER = BIT(7),
 	POPUP_FORCE_COLORS       = BIT(8),
+	POPUP_SCROLL_DOWN        = BIT(9),
 };
 
 // Big popup filters

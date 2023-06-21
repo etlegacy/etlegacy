@@ -595,7 +595,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	}
 }
 
-static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float y, float lineHeight, float size)
+static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float *y, float lineHeight, float size)
 {
 	float  t;
 	float  w;
@@ -638,10 +638,24 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 	w = comp->location.w - size * 2;
 	CG_WordWrapString(buffer, CG_GetMaxCharsPerLine(buffer, scale, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
 
-	// we reach the comp top, don't print the line
-	if (y - (lineHeight * lineNumber) < comp->location.y)
+	// we reach the comp border, don't print the line
+	if (comp->style & POPUP_SCROLL_DOWN)
 	{
-		return y - (lineHeight * lineNumber);
+		*y += lineHeight;
+
+		if (*y + lineHeight * lineNumber > comp->location.y + comp->location.h)
+		{
+			return qfalse;
+		}
+	}
+	else
+	{
+		*y -= lineHeight * (lineNumber - 1);
+
+		if (*y < comp->location.y)
+		{
+			return qfalse;
+		}
 	}
 
 	if (listItem->shader > 0)
@@ -653,11 +667,11 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 		if (comp->alignText == ITEM_ALIGN_RIGHT)
 		{
 			x -= size;
-			CG_DrawPic(x, y - size - lineHeight * (lineNumber - 1), size, size, listItem->shader);
+			CG_DrawPic(x, *y - size, size, size, listItem->shader);
 		}
 		else
 		{
-			CG_DrawPic(x, y - size - lineHeight * (lineNumber - 1), size, size, listItem->shader);
+			CG_DrawPic(x, *y - size, size, size, listItem->shader);
 			x += size;
 		}
 
@@ -672,7 +686,7 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 		x -= w;
 	}
 
-	CG_DrawMultilineText(x, y - lineHeight * (lineNumber - 1) - lineHeight * 0.25, w, scale, scale, colorText, buffer, lineHeight, 0, 0, comp->styleText, comp->alignText, &cgs.media.limboFont2);
+	CG_DrawMultilineText(x, *y - lineHeight * 0.25, w, scale, scale, colorText, buffer, lineHeight, 0, 0, comp->styleText, comp->alignText, &cgs.media.limboFont2);
 
 	if (listItem->weaponShader > 0)
 	{
@@ -705,14 +719,17 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 		VectorCopy(listItem->color, colorText);
 		trap_R_SetColor(colorText);
 
-		CG_DrawPic(x + CG_Text_Line_Width_Ext_Float(buffer, scale, &cgs.media.limboFont2), y - size - lineHeight * (lineNumber - 1), size * listItem->scaleShader, size, listItem->weaponShader);
+		CG_DrawPic(x + CG_Text_Line_Width_Ext_Float(buffer, scale, &cgs.media.limboFont2), *y - size, size * listItem->scaleShader, size, listItem->weaponShader);
 
 		// decolorize
 		VectorCopy(colorWhite, colorText);
 		trap_R_SetColor(NULL);
 	}
 
-	return y - (lineHeight * lineNumber);
+	// next line
+	*y += (comp->style & POPUP_SCROLL_DOWN) ? lineHeight * (lineNumber - 1) + lineHeight * 0.5f : -(lineHeight + lineHeight * 0.5f);
+
+	return qtrue;
 }
 
 /**
@@ -725,7 +742,8 @@ void CG_DrawPM(hudComponent_t *comp)
 	pmListItem_t *listItem;
 	float        lineHeight;
 	float        size;
-	float        y = comp->location.y + comp->location.h;
+	float        y;
+	qboolean     isScapeAvailable;
 
 	if (cg_numPopups.integer == 0)
 	{
@@ -737,8 +755,9 @@ void CG_DrawPM(hudComponent_t *comp)
 		return;
 	}
 
-	lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2) * 1.75f;
-	size       = lineHeight;
+	size = lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2) * 1.75f;
+
+	y = comp->style & POPUP_SCROLL_DOWN ? comp->location.y : comp->location.y + comp->location.h;
 
 	if (comp->showBackGround)
 	{
@@ -750,11 +769,11 @@ void CG_DrawPM(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	y = CG_DrawPMItems(comp, cg_pmWaitingList, y, lineHeight, size);
+	isScapeAvailable = CG_DrawPMItems(comp, cg_pmWaitingList, &y, lineHeight, size);
 
-	for (listItem = cg_pmOldList; listItem && y > (comp->location.y + lineHeight); listItem = listItem->next)
+	for (listItem = cg_pmOldList; listItem && isScapeAvailable; listItem = listItem->next)
 	{
-		y = CG_DrawPMItems(comp, listItem, y, lineHeight, size);
+		isScapeAvailable = CG_DrawPMItems(comp, listItem, &y, lineHeight, size);
 	}
 }
 
