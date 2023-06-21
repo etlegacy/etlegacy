@@ -3376,8 +3376,8 @@ void ClientDisconnect(int clientNum)
 			{
 				if (ent->client->sess.mapVotedFor[i] != -1)
 				{
-					level.mapvoteinfo[ent->client->sess.mapVotedFor[i]].numVotes   -= (i + 1);
-					level.mapvoteinfo[ent->client->sess.mapVotedFor[i]].totalVotes -= (i + 1);
+					level.mapvoteinfo[ent->client->sess.mapVotedFor[i]].numVotes   -= 1;
+					level.mapvoteinfo[ent->client->sess.mapVotedFor[i]].totalVotes -= 1;
 				}
 			}
 		}
