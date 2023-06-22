@@ -3558,6 +3558,11 @@ void BeginIntermission(void)
 			{
 				level.mapvoteinfo[level.sortedMaps[i]].voteEligible++;
 			}
+			else
+			{
+				// not eligible for this draw after sorting
+				level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
+			}
 		}
 	}
 
