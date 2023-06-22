@@ -3664,7 +3664,7 @@ void ExitLevel(void)
 	// MAPVOTE
 	case GT_WOLF_MAPVOTE:
 	{
-		int nextMap = 0, highMapVote = 0, curMapVotes = 0, maxMaps, highMapAge = 0, curMapAge = 0;
+		int nextMap = -1, highMapVote = 0, curMapVotes = 0, maxMaps, highMapAge = 0, curMapAge = 0;
 
 		if (g_resetXPMapCount.integer)
 		{
@@ -3699,7 +3699,13 @@ void ExitLevel(void)
 			}
 		}
 
-		if (highMapVote > 0 && level.mapvoteinfo[nextMap].bspName[0])
+		// no vote casted, pick a random map from draw
+		if (nextMap == -1 && maxMaps > 0)
+		{
+			nextMap = rand() % maxMaps;
+		}
+
+		if (nextMap >= 0 && level.mapvoteinfo[nextMap].bspName[0])
 		{
 			Q_strncpyz(level.lastVotedMap, level.mapvoteinfo[nextMap].bspName, sizeof(level.lastVotedMap));
 
