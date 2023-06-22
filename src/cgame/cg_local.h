@@ -3400,6 +3400,7 @@ qboolean CG_DrawScoreboard(void);
 int SkillNumForClass(int classNum);
 
 qboolean CG_DrawFlag(float x, float y, float fade, int clientNum);
+char *CG_FormatMapBias(float mapProb, team_t team);
 
 // MAPVOTE
 qboolean CG_FindArenaInfo(const char *filename, const char *mapname, arenaInfo_t *info);

@@ -1206,10 +1206,14 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 #ifdef FEATURE_RATING
 			if (cgs.skillRating)
 			{
+				team_t team = cgs.dbMapBias[i + cgs.dbMapVoteListOffset] > 0.5f ? TEAM_ALLIES : TEAM_AXIS;
+
 				y2 += 12;
 				CG_Text_Paint_Ext(x2, y2, button->font->scalex,
 				                  button->font->scaley, *colour,
-				                  va(CG_TranslateString("Map Bias     : %2.2f"), cgs.dbMapBias[i + cgs.dbMapVoteListOffset]),
+				                  va("%s %s%s", CG_TranslateString("Map Bias     :"),
+				                     cgs.dbMapBias[i + cgs.dbMapVoteListOffset] == 0.5f ? "" : (team == TEAM_AXIS) ? "^1Axis " : "^dAllies ",
+				                     CG_FormatMapBias(cgs.dbMapBias[i + cgs.dbMapVoteListOffset], team)),
 				                  0, 0, 0, button->font->font);
 			}
 #endif
