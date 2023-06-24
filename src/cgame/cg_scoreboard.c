@@ -976,11 +976,13 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	// draw header
 	if (team != TEAM_SPECTATOR)
 	{
+		const char *teamText = (team == TEAM_AXIS) ? "AXIS" : "ALLIES";
+
 		if (cg_gameType.integer == GT_WOLF_LMS)
 		{
 			char *s;
 
-			s = va("%s [%d] (%d %s)", CG_TranslateString(team == TEAM_AXIS ? "AXIS" : "ALLIES"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+			s = va("%s [%d] (%d %s)", CG_TranslateString(teamText), cg.teamScores[team - 1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 			s = va("%s ^3%s", s, (team_t)cg.teamFirstBlood == team ? CG_TranslateString("FIRST BLOOD") : "");
 
 			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
@@ -992,7 +994,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_RATING
 			if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 			{
-				s = va("%s [%.1f%%] (%d %s)", CG_TranslateString(team == TEAM_AXIS ? "AXIS" : "ALLIES"), team == TEAM_AXIS ? (double)cg.axisProb : (double)cg.alliesProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				s = va("%s [%.1f%%] (%d %s)", CG_TranslateString(teamText), team == TEAM_AXIS ? (double)cg.axisProb : (double)cg.alliesProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 
 				if (cgs.mapProb != 0.f)
 				{
@@ -1006,7 +1008,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_PRESTIGE
 			if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
 			{
-				s = va("%s (%d %s)", CG_TranslateString(team == TEAM_AXIS ? "AXIS" : "ALLIES"), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				s = va("%s (%d %s)", CG_TranslateString(teamText), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 
 				s2 = va("%s", CG_TranslateString("PRESTIGE"));
 				CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
@@ -1014,7 +1016,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 			else
 #endif
 			{
-				s = va("%s [%d] (%d %s)", CG_TranslateString(team == TEAM_AXIS ? "AXIS" : "ALLIES"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				s = va("%s [%d] (%d %s)", CG_TranslateString(teamText), cg.teamScores[team - 1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 
 				s2 = va("%s: %.0f±%.0fms", CG_TranslateString("AVG PING"), (double)cg.teamPingMean[team], (double)cg.teamPingSd[team]);
 				CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
