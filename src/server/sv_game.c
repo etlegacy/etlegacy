@@ -484,7 +484,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		if (!Tracker_catchServerCommand(args[1], VMA(2)))
 #endif
 		{
-			SV_GameSendServerCommand(args[1], VMA(2));
+			SV_GameSendServerCommand(args[1], VMA(2), qfalse);
 		}
 		return 0;
 	case G_LINKENTITY:
