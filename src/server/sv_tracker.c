@@ -99,7 +99,13 @@ void Tracker_Init(void)
 	t         = time(0);
 	expectnum = 0;
 
-	NET_StringToAdr(tracker, &addr, NA_IP);
+	Com_Printf("Resolving %s\n", tracker);
+	if (!NET_StringToAdr(tracker, &addr, NA_IP)) {
+		Com_Printf("Couldn't resolve address: %s\n", tracker);
+	}
+	else {
+		Com_Printf("%s resolved to %i.%i.%i.%i:%i\n", tracker, addr.ip[0], addr.ip[1], addr.ip[2], addr.ip[3], BigShort(addr.port));
+	}
 #ifdef TRACKER_DEBUG
 	NET_StringToAdr("127.0.0.1:6066", &local, NA_IP);
 #endif
@@ -408,19 +414,24 @@ void Tracker_catchBotConnect(int clientNum)
  *
  * We prefer to use original cl_guid, but some mods has their own guid values
  */
-char *Tracker_getGUID(client_t *cl)
+char* Tracker_getGUID(client_t* cl)
 {
-	if (*Info_ValueForKey(cl->userinfo, "cl_guid"))
-	{
-		return Info_ValueForKey(cl->userinfo, "cl_guid");
+	char* cl_guid = Info_ValueForKey(cl->userinfo, "cl_guid");
+	if (strcmp("", cl_guid) != 0 && strcmp("unknown", cl_guid) != 0) {
+		return cl_guid;
 	}
-	else if (*Info_ValueForKey(cl->userinfo, "n_guid"))
-	{
-		return Info_ValueForKey(cl->userinfo, "n_guid");
-	}
-	else
-	{
-		return "unknown";
+	else {
+		if (*Info_ValueForKey(cl->userinfo, "n_guid"))
+		{
+			return Info_ValueForKey(cl->userinfo, "n_guid");
+		}
+		else if (*Info_ValueForKey(cl->userinfo, "sil_guid")) {
+			return Info_ValueForKey(cl->userinfo, "sil_guid");
+		}
+		else
+		{
+			return "unknown";
+		}
 	}
 }
 
