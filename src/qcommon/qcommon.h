@@ -1299,21 +1299,6 @@ NON-PORTABLE SYSTEM SERVICES
 */
 
 /**
- * @enum joystickAxis_t
- * @brief
- */
-typedef enum
-{
-	AXIS_SIDE,
-	AXIS_FORWARD,
-	AXIS_UP,
-	AXIS_ROLL,
-	AXIS_YAW,
-	AXIS_PITCH,
-	MAX_JOYSTICK_AXIS
-} joystickAxis_t;
-
-/**
  * @enum sysEventType_t
  * @brief
  * @note Make sure SE_NONE is zero
@@ -1342,6 +1327,8 @@ typedef struct
 	void *evPtr;                    ///< this must be manually freed if not NULL
 } sysEvent_t;
 
+
+#define MAX_JOYSTICK_AXIS 16
 void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr);
 int Com_EventLoop(void);
 sysEvent_t Com_GetSystemEvent(void);
