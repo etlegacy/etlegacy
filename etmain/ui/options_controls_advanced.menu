@@ -57,10 +57,10 @@ menuDef {
 	MULTI( 8, JOYSTICK_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Analog Joystick:"), .2, 8, "in_joystickUseAnalog", cvarFloatList { "No" 0 "Yes" 1 }, _("Toggle analog joystick") )
 	EDITFIELD( 8, JOYSTICK_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Joystick Threshold:"), .2, 8, "in_joystickThreshold", 64, 18, _("Set joystick threshold sensitivity") )
 	SLIDER( 8, JOYSTICK_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Forward-Back Sensitivity:"), .2, 8, "j_forward" 5 -15 15, _("Set joystick forward-back sensitivity") )
-	SLIDER( 8, JOYSTICK_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Left-Right Sensitivity::"), .2, 8, "j_side" 5 1 30, _("Set joystick left-right sensitivity") )
-	SLIDER( 8, JOYSTICK_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Up-Down Sensitivity::"), .2, 8, "j_up" 5 1 30, _("Set joystick up-down sensitivity") )
-	SLIDER( 8, JOYSTICK_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Pitch::"), .2, 8, "j_pitch" 5 1 30, _("Set pitch sensitivity") )
-	SLIDER( 8, JOYSTICK_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Yaw:"), .2, 8, "j_yaw" 5 1 30, _("Set yaw sensitivity") )
+	SLIDER( 8, JOYSTICK_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Left-Right Sensitivity::"), .2, 8, "j_side" 5 -15 15, _("Set joystick left-right sensitivity") )
+	SLIDER( 8, JOYSTICK_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Up-Down Sensitivity::"), .2, 8, "j_up" 5 -15 15, _("Set joystick up-down sensitivity") )
+	SLIDER( 8, JOYSTICK_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Pitch::"), .2, 8, "j_pitch" 5 -15 15, _("Set pitch sensitivity") )
+	SLIDER( 8, JOYSTICK_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Yaw:"), .2, 8, "j_yaw" 5 -15 15, _("Set yaw sensitivity") )
 
 #define MISC_Y 32
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 88, _("MISC") )
