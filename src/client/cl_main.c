@@ -3194,17 +3194,17 @@ void CL_Init(void)
 	m_side    = Cvar_Get("m_side", "0.25", CVAR_ARCHIVE_ND);
 	m_filter  = Cvar_Get("m_filter", "0", CVAR_ARCHIVE_ND);
 
-	j_pitch   = Cvar_Get ("j_pitch",        "0.022", CVAR_ARCHIVE_ND);
-	j_yaw     = Cvar_Get ("j_yaw",          "-0.022", CVAR_ARCHIVE_ND);
-	j_forward = Cvar_Get ("j_forward",      "-0.25", CVAR_ARCHIVE_ND);
-	j_side    = Cvar_Get ("j_side",         "0.25", CVAR_ARCHIVE_ND);
-	j_up      = Cvar_Get ("j_up",           "0", CVAR_ARCHIVE_ND);
+	j_pitch   = Cvar_Get("j_pitch",        "0.022", CVAR_ARCHIVE_ND);
+	j_yaw     = Cvar_Get("j_yaw",          "-0.022", CVAR_ARCHIVE_ND);
+	j_forward = Cvar_Get("j_forward",      "-0.25", CVAR_ARCHIVE_ND);
+	j_side    = Cvar_Get("j_side",         "0.25", CVAR_ARCHIVE_ND);
+	j_up      = Cvar_Get("j_up",           "0", CVAR_ARCHIVE_ND);
 
-	j_pitch_axis   = Cvar_Get ("j_pitch_axis",   "3", CVAR_ARCHIVE_ND);
-	j_yaw_axis     = Cvar_Get ("j_yaw_axis",     "2", CVAR_ARCHIVE_ND);
-	j_forward_axis = Cvar_Get ("j_forward_axis", "1", CVAR_ARCHIVE_ND);
-	j_side_axis    = Cvar_Get ("j_side_axis",    "0", CVAR_ARCHIVE_ND);
-	j_up_axis      = Cvar_Get ("j_up_axis",      "4", CVAR_ARCHIVE_ND);
+	j_pitch_axis   = Cvar_Get("j_pitch_axis",   "3", CVAR_ARCHIVE_ND);
+	j_yaw_axis     = Cvar_Get("j_yaw_axis",     "2", CVAR_ARCHIVE_ND);
+	j_forward_axis = Cvar_Get("j_forward_axis", "1", CVAR_ARCHIVE_ND);
+	j_side_axis    = Cvar_Get("j_side_axis",    "0", CVAR_ARCHIVE_ND);
+	j_up_axis      = Cvar_Get("j_up_axis",      "4", CVAR_ARCHIVE_ND);
 
 	Cvar_CheckRange(j_pitch_axis, 0, MAX_JOYSTICK_AXIS-1, qtrue);
 	Cvar_CheckRange(j_yaw_axis, 0, MAX_JOYSTICK_AXIS-1, qtrue);
