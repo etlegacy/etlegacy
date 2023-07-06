@@ -715,13 +715,12 @@ static int joy_keys[16] =
 {
 	K_LEFTARROW, K_RIGHTARROW,
 	K_UPARROW,   K_DOWNARROW,
-	K_JOY16,     K_JOY17,
-	K_JOY18,     K_JOY19,
-	K_JOY20,     K_JOY21,
-	K_JOY22,     K_JOY23,
-
-	K_JOY24,     K_JOY25,
-	K_JOY26,     K_JOY27
+	K_JOY17,     K_JOY18,
+	K_JOY19,     K_JOY20,
+	K_JOY21,     K_JOY22,
+	K_JOY23,     K_JOY24,
+	K_JOY25,     K_JOY26,
+	K_JOY27,     K_JOY28
 };
 
 // translate hat events into keypresses
@@ -740,9 +739,9 @@ static int hat_keys[16] =
 
 struct
 {
-	qboolean buttons[16];  // !!! FIXME: these might be too many.
+	qboolean buttons[SDL_CONTROLLER_BUTTON_MAX + 1];  // +1 because old max was 16, current SDL_CONTROLLER_BUTTON_MAX is 15
 	unsigned int oldaxes;
-	int oldaaxes[16];
+	int oldaaxes[MAX_JOYSTICK_AXIS];
 	unsigned int oldhats;
 } stick_state;
 
@@ -765,6 +764,7 @@ void IN_PrintJoystickInfo_f(void)
 		Com_Printf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
 		Com_Printf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
 		Com_Printf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
+		Com_Printf("Is Gamepad: %s\n", gamepad ? "Yes" : "No");
 	}
 	else
 	{
