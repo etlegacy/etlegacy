@@ -3553,6 +3553,12 @@ void CG_InitConsoleCommands(void)
 	// game console commands
 	CG_AddGameConsoleCommand();
 
+	// remove engine commands to avoid abuse
+	trap_RemoveCommand("+lookup");
+	trap_RemoveCommand("-lookup");
+	trap_RemoveCommand("+lookdown");
+	trap_RemoveCommand("-lookdown");
+
 	// only allow configstrings command when cheats enabled
 	if (!cgs.sv_cheats)
 	{
