@@ -544,6 +544,48 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 				break;
 			case SDL_SCANCODE_NONUSBACKSLASH: key = K_NONUSBACKSLASH;
 				break;
+            case SDL_CONTROLLER_BUTTON_A: key = K_PAD0_A;
+                break;
+            case SDL_CONTROLLER_BUTTON_B: key = K_PAD0_B;
+                break;
+            case SDL_CONTROLLER_BUTTON_X: key = K_PAD0_X;
+                break;
+            case SDL_CONTROLLER_BUTTON_Y: key = K_PAD0_Y;
+                break;
+            case SDL_CONTROLLER_BUTTON_BACK: key = K_PAD0_BACK;
+                break;
+            case SDL_CONTROLLER_BUTTON_GUIDE: key = K_PAD0_GUIDE;
+                break;
+            case SDL_CONTROLLER_BUTTON_START: key = K_PAD0_START;
+                break;
+            case SDL_CONTROLLER_BUTTON_LEFTSTICK: key = K_PAD0_LEFTSTICK_CLICK;
+                break;
+            case SDL_CONTROLLER_BUTTON_RIGHTSTICK: key = K_PAD0_RIGHTSTICK_CLICK;
+                break;
+            case SDL_CONTROLLER_BUTTON_LEFTSHOULDER: key = K_PAD0_LEFTSHOULDER;
+                break;
+            case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: key = K_PAD0_RIGHTSHOULDER;
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_UP: key = K_PAD0_DPAD_UP;
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_DOWN: key = K_PAD0_DPAD_DOWN;
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_LEFT: key = K_PAD0_DPAD_LEFT;
+                break;
+            case SDL_CONTROLLER_BUTTON_DPAD_RIGHT: key = K_PAD0_DPAD_RIGHT;
+                break;
+            case SDL_CONTROLLER_BUTTON_MISC1: key = K_PAD0_MISC1;
+                break;
+            case SDL_CONTROLLER_BUTTON_PADDLE1: key = K_PAD0_PADDLE1;
+                break;
+            case SDL_CONTROLLER_BUTTON_PADDLE2: key = K_PAD0_PADDLE2;
+                break;
+            case SDL_CONTROLLER_BUTTON_PADDLE3: key = K_PAD0_PADDLE3;
+                break;
+            case SDL_CONTROLLER_BUTTON_PADDLE4: key = K_PAD0_PADDLE4;
+                break;
+            case SDL_CONTROLLER_BUTTON_TOUCHPAD: key = K_PAD0_TOUCHPAD;
+                break;
 #ifdef __ANDROID__
 			case SDL_SCANCODE_AC_BACK: key = K_ESCAPE;
 				break;
@@ -1626,7 +1668,17 @@ static void IN_ProcessEvents(void)
 				break;
 			}
 			break;
-		default:
+        case SDL_CONTROLLERAXISMOTION:
+            if (!e.caxis.axis && !e.caxis.value)
+            {
+                break;
+            }
+            if (!e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX || !e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX)
+            {
+                //Com_QueueEvent(lasttime, SE_MOUSE, e.motion.xrel, e.motion.yrel, 0, NULL);
+            }
+            break;
+        default:
 			break;
 		}
 	}
