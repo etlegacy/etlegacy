@@ -964,16 +964,6 @@ static qboolean IN_KeyToAxisAndSign(int keynum, int* outAxis, int* outSign)
 		*outAxis = j_side_axis->integer;
 		*outSign = j_side->value > 0.0f ? 1 : -1;
 	}
-	else if (Q_stricmp(bind, "+lookup") == 0)
-	{
-		*outAxis = j_pitch_axis->integer;
-		*outSign = j_pitch->value > 0.0f ? -1 : 1;
-	}
-	else if (Q_stricmp(bind, "+lookdown") == 0)
-	{
-		*outAxis = j_pitch_axis->integer;
-		*outSign = j_pitch->value > 0.0f ? 1 : -1;
-	}
 	else if (Q_stricmp(bind, "+left") == 0)
 	{
 		*outAxis = j_yaw_axis->integer;
@@ -1673,10 +1663,25 @@ static void IN_ProcessEvents(void)
             {
                 break;
             }
-            if (!e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX || !e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX)
-            {
-                //Com_QueueEvent(lasttime, SE_MOUSE, e.motion.xrel, e.motion.yrel, 0, NULL);
-            }
+
+			if (in_joystickUseAnalog->integer)
+			{
+				if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
+				{
+					if (e.caxis.value <= (-SDL_JOYSTICK_AXIS_MIN / 2))
+					{
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, abs(e.caxis.value / 32767.0f) * j_yaw->value, 0, NULL);
+					}
+					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 2))
+					{
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, -abs(e.caxis.value / 32767.0f) * j_yaw->value, 0, NULL);
+					}
+					else
+					{
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, 0, 0, NULL);
+					}
+				}
+			}
             break;
         default:
 			break;
