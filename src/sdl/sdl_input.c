@@ -1685,6 +1685,37 @@ static void IN_ProcessEvents(void)
 					{
 						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, 0, 0, NULL);
 					}
+				} 
+				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX && e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY)
+				{
+					// ONLY MAKE IT WORK WHEN SDL_CONTROLLER_AXIS_RIGHTY GETS FIXED
+					/*
+					if (e.caxis.value <= (-SDL_JOYSTICK_AXIS_MIN / 2))
+					{
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, fabs(e.caxis.value / 32767) * j_yaw->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_MOUSE, 0, fabs(e.caxis.value / 32767) * j_pitch->value * 2.0f, 0, NULL);
+					}
+					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 2))
+					{
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, -fabs(e.caxis.value / 32767) * j_yaw->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_MOUSE, 0, -fabs(e.caxis.value / 32767) * j_pitch->value * 2.0f, 0, NULL);
+					}
+					else
+					{
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, 0, 0, NULL);
+					}
+					*/
+				}
+				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
+				{
+					if (e.caxis.value <= (-SDL_JOYSTICK_AXIS_MIN / 2))
+					{
+						Com_QueueEvent(lasttime, SE_MOUSE, 0, fabs(e.caxis.value / 32767) * j_pitch->value * 2.0f, 0, NULL);
+					}
+					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 2))
+					{
+						Com_QueueEvent(lasttime, SE_MOUSE, 0, -fabs(e.caxis.value / 32767) * j_pitch->value * 2.0f, 0, NULL);
+					}	
 				}
 #ifdef _WIN32
 				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
