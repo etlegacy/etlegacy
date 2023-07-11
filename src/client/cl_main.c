@@ -3200,6 +3200,12 @@ void CL_Init(void)
 	j_side    = Cvar_Get("j_side",         "0.25", CVAR_ARCHIVE_ND);
 	j_up      = Cvar_Get("j_up",           "0", CVAR_ARCHIVE_ND);
 
+	Cvar_CheckRange(j_pitch, -15.0f, 15.0f, qfalse);
+	Cvar_CheckRange(j_yaw, -15.0f, 15.0f, qfalse);
+	Cvar_CheckRange(j_forward, -15.0f, 15.0f, qfalse);
+	Cvar_CheckRange(j_side, -15.0f, 15.0f, qfalse);
+	Cvar_CheckRange(j_up, -15.0f, 15.0f, qfalse);
+
 	j_pitch_axis   = Cvar_Get("j_pitch_axis",   "3", CVAR_ARCHIVE_ND);
 	j_yaw_axis     = Cvar_Get("j_yaw_axis",     "2", CVAR_ARCHIVE_ND);
 	j_forward_axis = Cvar_Get("j_forward_axis", "1", CVAR_ARCHIVE_ND);
