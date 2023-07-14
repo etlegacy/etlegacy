@@ -1694,11 +1694,11 @@ static void IN_ProcessEvents(void)
 				{
                     if (e.caxis.value <= (-SDL_JOYSTICK_AXIS_MIN / 2))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -abs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
 					}
 					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 2))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, abs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
 					}
                     else
                     {
@@ -1710,11 +1710,11 @@ static void IN_ProcessEvents(void)
 				{
 					if (e.caxis.value <= (-SDL_JOYSTICK_AXIS_MIN / 2))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, abs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
 					}
 					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 2))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -abs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
 					}
 					else
 					{
