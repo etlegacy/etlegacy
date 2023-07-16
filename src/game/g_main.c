@@ -4580,7 +4580,7 @@ void CheckVote(void)
 
 		int threshold = pcnt * total / 100;
 
-		if (level.voteInfo.voteYes > 1 && level.voteInfo.voteYes > threshold)
+		if (level.voteInfo.voteYes > threshold)
 		{
 			// execute the command, then remove the vote
 			if (level.voteInfo.voteYes > total + 1)
