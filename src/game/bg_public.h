@@ -841,18 +841,18 @@ typedef enum
 	WP_KNIFE,                  ///< 1
 	WP_LUGER,                  ///< 2
 	WP_MP40,                   ///< 3
-	WP_GRENADE_LAUNCHER,       ///< 4
+	WP_GRENADE_LAUNCHER,       ///< 4	Axis grenade
 	WP_PANZERFAUST,            ///< 5
 	WP_FLAMETHROWER,           ///< 6
 	WP_COLT,                   ///< 7	equivalent american weapon to german luger
 	WP_THOMPSON,               ///< 8	equivalent american weapon to german mp40
-	WP_GRENADE_PINEAPPLE,      ///< 9
+	WP_GRENADE_PINEAPPLE,      ///< 9	Allied grenade
 
 	WP_STEN,                   ///< 10	silenced sten sub-machinegun
 	WP_MEDIC_SYRINGE,          ///< 11	broken out from CLASS_SPECIAL per Id request
 	WP_AMMO,                   ///< 12	likewise
 	WP_ARTY,                   ///< 13
-	WP_SILENCER,               ///< 14	used to be sp5
+	WP_SILENCER,               ///< 14	Silenced luger
 	WP_DYNAMITE,               ///< 15
 	WP_SMOKETRAIL,             ///< 16
 	WP_MAPMORTAR,              ///< 17
@@ -862,8 +862,8 @@ typedef enum
 	WP_BINOCULARS,             ///< 20
 	WP_PLIERS,                 ///< 21
 	WP_SMOKE_MARKER,           ///< 22	changed name to cause less confusion
-	WP_KAR98,                  ///< 23	WolfXP weapons
-	WP_CARBINE,                ///< 24
+	WP_KAR98,                  ///< 23	Axis rifle
+	WP_CARBINE,                ///< 24	Allied rifle
 	WP_GARAND,                 ///< 25
 	WP_LANDMINE,               ///< 26
 	WP_SATCHEL,                ///< 27
@@ -878,8 +878,8 @@ typedef enum
 	WP_AKIMBO_COLT,            ///< 35
 	WP_AKIMBO_LUGER,           ///< 36
 
-	WP_GPG40,                  ///< 37
-	WP_M7,                     ///< 38
+	WP_GPG40,                  ///< 37	Axis riflegrenade
+	WP_M7,                     ///< 38	Allied riflegrenade
 	WP_SILENCED_COLT,          ///< 39
 
 	WP_GARAND_SCOPE,           ///< 40
@@ -891,14 +891,14 @@ typedef enum
 	WP_AKIMBO_SILENCEDLUGER,   ///< 46
 	WP_MOBILE_MG42_SET,        ///< 47
 
-	// league weapons
-	WP_KNIFE_KABAR,            ///< 48
-	WP_MOBILE_BROWNING,        ///< 49
+	// ETLegacy weapons
+	WP_KNIFE_KABAR,            ///< 48	Allied knife
+	WP_MOBILE_BROWNING,        ///< 49	Allied machinegun
 	WP_MOBILE_BROWNING_SET,    ///< 50
-	WP_MORTAR2,                ///< 51
+	WP_MORTAR2,                ///< 51	Allied mortar
 	WP_MORTAR2_SET,            ///< 52
-	WP_BAZOOKA,                ///< 53
-	WP_MP34,                   ///< 54
+	WP_BAZOOKA,                ///< 53	Allied panzerfaust
+	WP_MP34,                   ///< 54	Axis Sten alternative
 	WP_AIRSTRIKE,              ///< 55
 
 	WP_NUM_WEAPONS             ///< 56
@@ -1060,13 +1060,13 @@ typedef enum
 	MOD_STEN,
 	MOD_GARAND,
 
-	MOD_SILENCER,
+	MOD_SILENCER, // Silenced luger
 	MOD_FG42,
 	MOD_FG42SCOPE,
 	MOD_PANZERFAUST,
-	MOD_GRENADE_LAUNCHER,
+	MOD_GRENADE_LAUNCHER, // Axis grenade
 	MOD_FLAMETHROWER,
-	MOD_GRENADE_PINEAPPLE,
+	MOD_GRENADE_PINEAPPLE, // Allied grenade
 
 	MOD_MAPMORTAR,
 	MOD_MAPMORTAR_SPLASH,
@@ -1090,10 +1090,10 @@ typedef enum
 	MOD_TRIGGER_HURT,
 	MOD_EXPLOSIVE,
 
-	MOD_CARBINE,
-	MOD_KAR98,
-	MOD_GPG40,
-	MOD_M7,
+	MOD_CARBINE, // Allied rifle
+	MOD_KAR98, // Axis rifle
+	MOD_GPG40, // Axis riflegrenade
+	MOD_M7, // Allied riflegrenade
 	MOD_LANDMINE,
 	MOD_SATCHEL,
 
@@ -1120,17 +1120,16 @@ typedef enum
 
 	MOD_SWAP_PLACES,
 
-	// keep these 2 entries last
 	MOD_SWITCHTEAM,
 
 	MOD_SHOVE,
 
-	MOD_KNIFE_KABAR,
-	MOD_MOBILE_BROWNING,
-	MOD_MORTAR2,
-	MOD_BAZOOKA,
+	MOD_KNIFE_KABAR, // Allied knife
+	MOD_MOBILE_BROWNING, // Allied machinegun
+	MOD_MORTAR2, // Allied mortar
+	MOD_BAZOOKA, // Allied panzerfaust
 	MOD_BACKSTAB,
-	MOD_MP34,
+	MOD_MP34, // Allied Sten alternative
 
 	MOD_NUM_MODS
 
@@ -1824,7 +1823,7 @@ typedef enum
 typedef enum extWeaponStats_e
 {
 	WS_KNIFE = 0,      ///< 0
-	WS_KNIFE_KBAR,     ///< 1
+	WS_KNIFE_KBAR,     ///< 1    -- Allied knife
 	WS_LUGER,          ///< 2
 	WS_COLT,           ///< 3
 	WS_MP40,           ///< 4
@@ -1832,11 +1831,11 @@ typedef enum extWeaponStats_e
 	WS_STEN,           ///< 6
 	WS_FG42,           ///< 7
 	WS_PANZERFAUST,    ///< 8
-	WS_BAZOOKA,        ///< 9
+	WS_BAZOOKA,        ///< 9    -- Allied panzerfaust
 	WS_FLAMETHROWER,   ///< 10
 	WS_GRENADE,        ///< 11   -- includes axis and allies grenade types
 	WS_MORTAR,         ///< 12
-	WS_MORTAR2,        ///< 13
+	WS_MORTAR2,        ///< 13   -- Allied mortar
 	WS_DYNAMITE,       ///< 14
 	WS_AIRSTRIKE,      ///< 15   -- Fieldops smoke grenade attack
 	WS_ARTILLERY,      ///< 16   -- Fieldops binocular attack
@@ -1844,9 +1843,9 @@ typedef enum extWeaponStats_e
 	WS_GRENADELAUNCHER,///< 18
 	WS_LANDMINE,       ///< 19
 	WS_MG42,           ///< 20
-	WS_BROWNING,       ///< 21
-	WS_CARBINE,        ///< 22
-	WS_KAR98,          ///< 23
+	WS_BROWNING,       ///< 21   -- Allied machinegun
+	WS_CARBINE,        ///< 22   -- Allied rifle
+	WS_KAR98,          ///< 23   -- Axis rifle
 	WS_GARAND,         ///< 24
 	WS_K43,            ///< 25
 	WS_MP34,           ///< 26

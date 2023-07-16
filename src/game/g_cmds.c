@@ -3289,6 +3289,9 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 		return qfalse;
 	}
 
+	level.voteInfo.votePassed   = 0;
+	level.voteInfo.voteCanceled = 0;
+
 	voteStringFormat = arg2[0] ? "%s %s" : "%s";
 	Com_sprintf(level.voteInfo.voteString, sizeof(level.voteInfo.voteString), voteStringFormat, arg1, arg2);
 
