@@ -1212,10 +1212,6 @@ void SV_Init(void)
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
 #endif
-
-#ifdef FEATURE_TRACKER
-	Tracker_Init();
-#endif
 }
 
 /**

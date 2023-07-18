@@ -3081,6 +3081,14 @@ void Com_Init(char *commandLine)
 		}
 	}
 
+#ifdef FEATURE_TRACKER
+	// This can only be initialized after network initialization is complete, hence it's not in SV_Init();
+	if (com_dedicated->integer)
+	{
+		Tracker_Init();
+	}
+#endif
+
 	com_fullyInitialized = qtrue;
 	Com_Printf("----- Common Initialized -------\n");
 }
