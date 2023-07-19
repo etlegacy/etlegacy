@@ -43,6 +43,10 @@
 #endif
 #include "../server/server.h"
 
+#ifdef FEATURE_TRACKER
+#include "../server/sv_tracker.h"
+#endif
+
 #if defined (_WIN32)
 #   include <winsock2.h>
 #   include "../sys/sys_win32.h"
