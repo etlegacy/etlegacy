@@ -254,7 +254,9 @@ char *Tracker_createClientInfo(int clientNum)
 	playerState_t *ps;
 	ps = SV_GameClientNum(clientNum);
 
-	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], ps->stats[STAT_PLAYER_CLASS], svs.clients[clientNum].name);
+	// PauluzzNL: Weird index offset that I don't understand yet...?
+	int playerClass = ps->stats[STAT_PLAYER_CLASS+1];
+	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], playerClass, svs.clients[clientNum].name);
 }
 
 /**
