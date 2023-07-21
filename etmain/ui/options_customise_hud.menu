@@ -103,7 +103,7 @@ menuDef {
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 112, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggle showing blood spurt effect when players are shot"))
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 124, (SUBWINDOW_WIDTH_R)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draw atmospheric effects (snow/rain) on-screen"))
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 136, (SUBWINDOW_WIDTH_R)-4, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draw additional visual effects (airstrike planes, debris)"))
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 148, (SUBWINDOW_WIDTH_R)-4, 10, _("Impact Effects:"), .2, 8, "cg_impactEffects", cvarFloatList { "None" 0 "Common" 1 "Water" 2 "Common + Water" 3 "Flesh" 4 "Flesh + Common" 5 "Water + Flesh" 6 "All" 7}, _("Set which weapon impact should be draw on hit"))
+    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 148, (SUBWINDOW_WIDTH_R)-4, 10, _("Impact Effects:"), .2, 8, "cg_impactEffects", cvarFloatList { "None" 0 "Common" 1 "Water" 2 "Common + Water" 3 "Flesh" 4 "Flesh + Common" 5 "Water + Flesh" 6 "All" 7}, _("Set which weapon impact should be drawn on hit"))
 
 // Crosshair //
 #define CROSSHAIR_Y 194
