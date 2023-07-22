@@ -252,10 +252,19 @@ void Tracker_TeamSwitch(client_t *cl)
 char *Tracker_createClientInfo(int clientNum)
 {
 	playerState_t *ps;
+	int playerClass;
 	ps = SV_GameClientNum(clientNum);
 
-	// PauluzzNL: Weird index offset that I don't understand yet...?
-	int playerClass = ps->stats[STAT_PLAYER_CLASS+1];
+	// PauluzzNL
+	// The indexes are different between mods, most mods use the default etmain value of 5 for STAT_PLAYER_CLASS, legacy mod uses index 4.
+	// may need to modify for more mods later
+	char* modName = Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "gamename");
+	if (Q_strncmp(modName, "legacy", 6) == 0) {
+		playerClass = ps->stats[STAT_PLAYER_CLASS];
+	}
+	else {
+		playerClass = ps->stats[5];
+	}
 	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], playerClass, svs.clients[clientNum].name);
 }
 
