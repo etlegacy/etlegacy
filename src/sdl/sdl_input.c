@@ -1673,7 +1673,7 @@ static void IN_ProcessEvents(void)
 			{
 				if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
 				{
-					if (e.caxis.value <= (-SDL_JOYSTICK_AXIS_MIN / 2))
+					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 2))
 					{
 						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, fabs(e.caxis.value / 32767) * j_yaw->value, 0, NULL);
 					}
@@ -1692,7 +1692,7 @@ static void IN_ProcessEvents(void)
 				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
 #endif //  _WIN32
 				{
-                    if (e.caxis.value <= (-SDL_JOYSTICK_AXIS_MIN / 2))
+                    if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 2))
 					{
 						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
 					}
@@ -1708,7 +1708,7 @@ static void IN_ProcessEvents(void)
 #ifdef  _WIN32
 				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
 				{
-					if (e.caxis.value <= (-SDL_JOYSTICK_AXIS_MIN / 2))
+					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 2))
 					{
 						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
 					}
