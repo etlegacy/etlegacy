@@ -3433,6 +3433,8 @@ static const char *gameConsoleCommand[] =
 	"ae",                                  //ae <playername> <animEvent>
 #endif
 	"ref",                                 // console also gets ref commands
+	"passvote",
+	"cancelvote",
 	NULL
 };
 
