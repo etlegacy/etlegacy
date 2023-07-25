@@ -114,7 +114,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	localEntity_t *le;
 	refEntity_t   *re;
 	vec3_t        velocity, xvelocity;
-	vec3_t        offset = { 0, 0, 0 };
+	vec3_t        offset     = { 0, 0, 0 };
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
 	qboolean      isFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
@@ -4471,7 +4471,7 @@ void CG_AltWeapon_f(void)
 
 	// don't allow switch when zooming with binocular not equipped,
 	// due to the binocular mask which doesn't disappear when switching
-	if (cg.zoomedBinoc && cg.weaponSelect != WP_BINOCULARS)
+	if (cg.predictedPlayerState.eFlags & EF_ZOOMING && cg.weaponSelect != WP_BINOCULARS)
 	{
 		return;
 	}
@@ -4490,7 +4490,7 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 
-		if (cg.snap->ps.eFlags & EF_ZOOMING)
+		if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
 		{
 			trap_SendConsoleCommand("-zoom\n");
 			cg.binocZoomTime = -cg.time;
@@ -6392,7 +6392,7 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
  */
 static void CG_AddImpactParticles(impactParticle_t *particleEffect, int missileEffect, vec3_t origin, vec3_t dir, soundSurface_t surfFlags, int fleshEntityNum)
 {
-    if (cg_impactEffects.integer & missileEffect)
+	if (cg_impactEffects.integer & missileEffect)
 	{
 		switch (missileEffect)
 		{
