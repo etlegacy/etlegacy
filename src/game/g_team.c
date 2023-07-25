@@ -346,6 +346,10 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 			G_globalFlagIndicator();
 		}
 
+		// reward player for returning objective item
+		G_AddSkillPoints(other, SK_BATTLE_SENSE, 5.f);
+		G_DebugAddSkillPoints(other, SK_BATTLE_SENSE, 5.f, "objective return");
+
 		//ResetFlag will remove this entity!  We must return zero
 		Team_ReturnFlagSound(ent, team);
 		Team_ResetFlag(ent);
@@ -410,6 +414,10 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 	}
 
 	ent->parent = tmp;
+
+	// reward player for stolen objective item
+	G_AddSkillPoints(other, SK_BATTLE_SENSE, 3.f);
+	G_DebugAddSkillPoints(other, SK_BATTLE_SENSE, 3.f, "objective stolen");
 
 	// reset player disguise on stealing docs
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
@@ -1410,6 +1418,10 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	{
 		G_AddEvent(self, EV_GENERAL_SOUND, self->soundPos1);
 	}
+
+	// reward player for capturing spawn point
+	G_AddSkillPoints(other, SK_BATTLE_SENSE, 2.f);
+	G_DebugAddSkillPoints(other, SK_BATTLE_SENSE, 2.f, "checkpoint (flag pole) captured");
 
 	self->parent = other;
 

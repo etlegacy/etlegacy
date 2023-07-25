@@ -263,7 +263,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	weapon_t  weap;
 	gclient_t *client;
 	int       contents = 0, i, killer = ENTITYNUM_WORLD;
-	char      *killerName = "<world>";
+	char      *killerName  = "<world>";
 	qboolean  killedintank = qfalse;
 	qboolean  attackerClient, dieFromSameTeam = qfalse;
 
@@ -609,10 +609,28 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 	}
 
+	if (G_DropItems(self))
+	{
+		// reward attacker for killing objective carrier
+		if (attackerClient && !dieFromSameTeam)
+		{
+			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 3.f);
+			G_DebugAddSkillPoints(attacker, SK_BATTLE_SENSE, 3.f, "objective carrier killed");
+		}
+	}
+
+	// reward attacker for killing player on TOI area
+	if (self->client->touchingTOI)
+	{
+		if (attackerClient && !dieFromSameTeam)
+		{
+			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 2.f);
+			G_DebugAddSkillPoints(attacker, SK_BATTLE_SENSE, 2.f, "killed player on TOI");
+		}
+	}
+
 	// prepare scoreboard
 	CalculateRanks();
-
-	G_DropItems(self);
 
 	// send a fancy "MEDIC!" scream.  Sissies, ain' they?
 	if (self->health > GIB_HEALTH &&

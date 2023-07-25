@@ -1302,7 +1302,7 @@ void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spect
  * @brief Drops items. Currently only red-/blueflag.
  * @param[in,out] self
  */
-void G_DropItems(gentity_t *self)
+qboolean G_DropItems(gentity_t *self)
 {
 	gitem_t *item = NULL;
 
@@ -1389,7 +1389,11 @@ void G_DropItems(gentity_t *self)
 		// Clear out player's temp copies
 		self->s.otherEntityNum2 = 0;
 		self->message           = NULL;
+
+		return qtrue;
 	}
+
+	return qfalse;
 }
 
 /**
