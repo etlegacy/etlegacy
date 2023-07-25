@@ -90,7 +90,7 @@ menuDef {
 
 // In-Game Display //
 #define DISPLAY_Y 32
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, DISPLAY_Y, (SUBWINDOW_WIDTH_R), 148, _("IN-GAME DISPLAY"))
+	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, DISPLAY_Y, (SUBWINDOW_WIDTH_R), 160, _("IN-GAME DISPLAY"))
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Toggle display of weapon flash when firing"))
 	MULTIACTION(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brasstime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, uiScript glPreset, _("Set the duration ejected bullet shells last for"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 40, (SUBWINDOW_WIDTH_R)-4, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Toggle display of bullet tracers"))
@@ -103,10 +103,11 @@ menuDef {
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 112, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggle showing blood spurt effect when players are shot"))
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 124, (SUBWINDOW_WIDTH_R)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draw atmospheric effects (snow/rain) on-screen"))
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 136, (SUBWINDOW_WIDTH_R)-4, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draw additional visual effects (airstrike planes, debris)"))
+    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 148, (SUBWINDOW_WIDTH_R)-4, 10, _("Impact Effects:"), .2, 8, "cg_impactEffects", cvarFloatList { "None" 0 "Common" 1 "Water" 2 "Common + Water" 3 "Flesh" 4 "Flesh + Common" 5 "Water + Flesh" 6 "All" 7}, _("Set which weapon impact should be drawn on hit"))
 
 // Crosshair //
-#define CROSSHAIR_Y 184
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 128, _("CROSSHAIR"))
+#define CROSSHAIR_Y 194
+	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 125, _("CROSSHAIR"))
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Use Cvar Crosshair:"), .2, 8, "cg_useCvarCrosshair", _("Force usage of cvar value for crosshair on map load/reload"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, _("Set the size of the displayed crosshair"))
 	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 40, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggle crosshair spread sizing while moving/firing"))
@@ -143,7 +144,7 @@ menuDef {
 	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 112, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair"))
 
 // Shoutcast //
-#define SHOUTCAST_Y 316
+#define SHOUTCAST_Y 322
     SUBWINDOW( 6 + (SUBWINDOW_WIDTH_L)+6, SHOUTCAST_Y, (SUBWINDOW_WIDTH_L), 100, _("SHOUTCAST") )
     MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Display player lists") )
     MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades") )

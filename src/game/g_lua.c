@@ -850,12 +850,17 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 {
 	int       clientnum = (int)luaL_checkinteger(L, 1);
 	gentity_t *ent      = g_entities + clientnum;
-	gclient_t *client   = ent->client;
 	weapon_t  weapon    = (int)luaL_checkinteger(L, 2);
 
 	if (!ent->client)
 	{
 		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
+		return 0;
+	}
+
+	if (!IS_VALID_WEAPON(weapon))
+	{
+		luaL_error(L, "weapon \"%d\" is not a valid weapon", weapon);
 		return 0;
 	}
 
@@ -867,20 +872,19 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 
 		if (GetWeaponTableData(weapAlts)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
 		{
-			COM_BitClear(client->ps.weapons, weapAlts);
+			COM_BitClear(ent->client->ps.weapons, weapAlts);
 		}
 	}
 
-	// Clear out empty weapon, change to next best weapon
-	G_AddEvent(ent, EV_WEAPONSWITCHED, 0);
-
-	if (weapon == client->ps.weapon)
+	if (weapon == ent->client->ps.weapon)
 	{
-		client->ps.weapon = 0;
+		// Clear out empty weapon, change to next best weapon
+		ent->client->ps.weapon = 0;
+		G_AddEvent(ent, EV_WEAPONSWITCHED, 0);
 	}
 
 #ifdef FEATURE_OMNIBOT
-	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+	Bot_Event_RemoveWeapon(ent->client->ps.clientNum, Bot_WeaponGameToBot(weapon));
 #endif
 
 	return 1;

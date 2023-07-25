@@ -2705,6 +2705,7 @@ extern vmCvar_t cg_nopredict;
 extern vmCvar_t cg_noPlayerAnims;
 extern vmCvar_t cg_showmiss;
 extern vmCvar_t cg_markTime;
+extern vmCvar_t cg_impactEffects;
 extern vmCvar_t cg_brassTime;
 extern vmCvar_t cg_gun_frame;
 extern vmCvar_t cg_gun_x;
@@ -2941,10 +2942,13 @@ enum
 };
 
 // projectile spawn effects at destination
-#define PS_FX_NONE   0
-#define PS_FX_COMMON 1
-#define PS_FX_WATER  2
-#define PS_FX_FLESH  3
+enum
+{
+	PS_FX_NONE   = 0,
+	PS_FX_COMMON = BIT(0),
+	PS_FX_WATER  = BIT(1),
+	PS_FX_FLESH  = BIT(2),
+};
 
 // cg_atmospheric.c
 void CG_EffectParse(const char *effectstr);
@@ -3233,7 +3237,7 @@ void CG_MortarEFX(centity_t *cent);
 
 void CG_MissileHitPlayer(int entityNum, int weapon, vec3_t origin, vec3_t dir, int fleshEntityNum);
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
-void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum);
+void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean isHeadShot, int fleshEntityNum);
 
 void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index);
 void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum);

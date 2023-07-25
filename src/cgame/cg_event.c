@@ -2410,7 +2410,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_BULLET:
 		CG_PlayHitSound(es->otherEntityNum, es->modelindex);
-		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, ISVALIDCLIENTNUM(es->eventParm), es->eventParm);
+		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, es->modelindex, es->eventParm);
 		break;
 	case EV_GENERAL_SOUND:
 	{
