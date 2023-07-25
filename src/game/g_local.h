@@ -1093,6 +1093,7 @@ typedef struct voteInfo_s
 	int voteCaller;                     ///< id of the vote caller
 	int voteTeam;                       ///< id of the vote caller's team
 	int voteCanceled;
+	int votePassed;
 } voteInfo_t;
 
 /**

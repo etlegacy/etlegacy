@@ -2582,6 +2582,23 @@ qboolean Svcmd_Chat_f(void)
 	}
 	return qfalse;
 }
+
+/**
+ * @brief Svcmd_PassVote_f
+ */
+static void Svcmd_PassVote_f(void)
+{
+	level.voteInfo.votePassed = 1;
+}
+
+/**
+ * @brief Svcmd_CancelVote_f
+ */
+static void Svcmd_CancelVote_f(void)
+{
+	level.voteInfo.voteCanceled = 1;
+}
+
 /**
  * @var consoleCommandTable
  * @brief Store common console command
@@ -2638,6 +2655,8 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "ae",                         Svcmd_PlayerAnimEvent         },    //ae <playername> <animEvent>
 #endif
 	{ "ref",                        Svcmd_Ref_f                   },    // console also gets ref commands
+	{ "passvote",                   Svcmd_PassVote_f              },
+	{ "cancelvote",                 Svcmd_CancelVote_f            },
 };
 
 /**
