@@ -1666,6 +1666,16 @@ static void IN_ProcessEvents(void)
 
 			if (in_joystickUseAnalog->integer)
 			{
+                /* Whenever we decide to change to SE_MOUSE
+                 * float angle, lenght;
+                 * float x = 0, _x = 0.0f, _y = 0.0f;
+                 * lenght = e.caxis.value / 32767 >= 0.0f ? 1 : -1;
+                 * angle = atan2f(x / 32767 >= 0.0f ? 1 : -1, e.caxis.value / 32767 >= 0.0f ? 1 : -1);
+                 * _x = lenght * cosf(angle);
+                 * _y = lenght * sinf(angle);
+                 * Com_QueueEvent(lasttime, SE_MOUSE, _x, _y, 0, NULL);
+                 * */
+
 				if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
 				{
 					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 2))
