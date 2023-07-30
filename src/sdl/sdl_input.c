@@ -49,12 +49,12 @@ static cvar_t *in_nograb;
 static qboolean mouseAvailable = qfalse;
 static qboolean mouseActive    = qfalse;
 
-static SDL_GameController *gamepad        = NULL;
-static SDL_Joystick *stick                = NULL;
-static cvar_t       *in_joystick          = NULL;
-static cvar_t       *in_joystickThreshold = NULL;
-static cvar_t       *in_joystickNo        = NULL;
-static cvar_t       *in_joystickUseAnalog = NULL;
+static SDL_GameController *gamepad              = NULL;
+static SDL_Joystick       *stick                = NULL;
+static cvar_t             *in_joystick          = NULL;
+static cvar_t             *in_joystickThreshold = NULL;
+static cvar_t             *in_joystickNo        = NULL;
+static cvar_t             *in_joystickUseAnalog = NULL;
 
 static int vidRestartTime = 0;
 SDL_Window *mainScreen    = NULL;
@@ -544,48 +544,48 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 				break;
 			case SDL_SCANCODE_NONUSBACKSLASH: key = K_NONUSBACKSLASH;
 				break;
-            case SDL_CONTROLLER_BUTTON_A: key = K_PAD0_A;
-                break;
-            case SDL_CONTROLLER_BUTTON_B: key = K_PAD0_B;
-                break;
-            case SDL_CONTROLLER_BUTTON_X: key = K_PAD0_X;
-                break;
-            case SDL_CONTROLLER_BUTTON_Y: key = K_PAD0_Y;
-                break;
-            case SDL_CONTROLLER_BUTTON_BACK: key = K_PAD0_BACK;
-                break;
-            case SDL_CONTROLLER_BUTTON_GUIDE: key = K_PAD0_GUIDE;
-                break;
-            case SDL_CONTROLLER_BUTTON_START: key = K_PAD0_START;
-                break;
-            case SDL_CONTROLLER_BUTTON_LEFTSTICK: key = K_PAD0_LEFTSTICK_CLICK;
-                break;
-            case SDL_CONTROLLER_BUTTON_RIGHTSTICK: key = K_PAD0_RIGHTSTICK_CLICK;
-                break;
-            case SDL_CONTROLLER_BUTTON_LEFTSHOULDER: key = K_PAD0_LEFTSHOULDER;
-                break;
-            case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: key = K_PAD0_RIGHTSHOULDER;
-                break;
-            case SDL_CONTROLLER_BUTTON_DPAD_UP: key = K_PAD0_DPAD_UP;
-                break;
-            case SDL_CONTROLLER_BUTTON_DPAD_DOWN: key = K_PAD0_DPAD_DOWN;
-                break;
-            case SDL_CONTROLLER_BUTTON_DPAD_LEFT: key = K_PAD0_DPAD_LEFT;
-                break;
-            case SDL_CONTROLLER_BUTTON_DPAD_RIGHT: key = K_PAD0_DPAD_RIGHT;
-                break;
-            case SDL_CONTROLLER_BUTTON_MISC1: key = K_PAD0_MISC1;
-                break;
-            case SDL_CONTROLLER_BUTTON_PADDLE1: key = K_PAD0_PADDLE1;
-                break;
-            case SDL_CONTROLLER_BUTTON_PADDLE2: key = K_PAD0_PADDLE2;
-                break;
-            case SDL_CONTROLLER_BUTTON_PADDLE3: key = K_PAD0_PADDLE3;
-                break;
-            case SDL_CONTROLLER_BUTTON_PADDLE4: key = K_PAD0_PADDLE4;
-                break;
-            case SDL_CONTROLLER_BUTTON_TOUCHPAD: key = K_PAD0_TOUCHPAD;
-                break;
+			case SDL_CONTROLLER_BUTTON_A: key = K_PAD0_A;
+				break;
+			case SDL_CONTROLLER_BUTTON_B: key = K_PAD0_B;
+				break;
+			case SDL_CONTROLLER_BUTTON_X: key = K_PAD0_X;
+				break;
+			case SDL_CONTROLLER_BUTTON_Y: key = K_PAD0_Y;
+				break;
+			case SDL_CONTROLLER_BUTTON_BACK: key = K_PAD0_BACK;
+				break;
+			case SDL_CONTROLLER_BUTTON_GUIDE: key = K_PAD0_GUIDE;
+				break;
+			case SDL_CONTROLLER_BUTTON_START: key = K_PAD0_START;
+				break;
+			case SDL_CONTROLLER_BUTTON_LEFTSTICK: key = K_PAD0_LEFTSTICK_CLICK;
+				break;
+			case SDL_CONTROLLER_BUTTON_RIGHTSTICK: key = K_PAD0_RIGHTSTICK_CLICK;
+				break;
+			case SDL_CONTROLLER_BUTTON_LEFTSHOULDER: key = K_PAD0_LEFTSHOULDER;
+				break;
+			case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: key = K_PAD0_RIGHTSHOULDER;
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_UP: key = K_PAD0_DPAD_UP;
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_DOWN: key = K_PAD0_DPAD_DOWN;
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_LEFT: key = K_PAD0_DPAD_LEFT;
+				break;
+			case SDL_CONTROLLER_BUTTON_DPAD_RIGHT: key = K_PAD0_DPAD_RIGHT;
+				break;
+			case SDL_CONTROLLER_BUTTON_MISC1: key = K_PAD0_MISC1;
+				break;
+			case SDL_CONTROLLER_BUTTON_PADDLE1: key = K_PAD0_PADDLE1;
+				break;
+			case SDL_CONTROLLER_BUTTON_PADDLE2: key = K_PAD0_PADDLE2;
+				break;
+			case SDL_CONTROLLER_BUTTON_PADDLE3: key = K_PAD0_PADDLE3;
+				break;
+			case SDL_CONTROLLER_BUTTON_PADDLE4: key = K_PAD0_PADDLE4;
+				break;
+			case SDL_CONTROLLER_BUTTON_TOUCHPAD: key = K_PAD0_TOUCHPAD;
+				break;
 #ifdef __ANDROID__
 			case SDL_SCANCODE_AC_BACK: key = K_ESCAPE;
 				break;
@@ -840,7 +840,7 @@ static void IN_InitJoystick(void)
 		SDL_JoystickClose(stick);
 	}
 
-	stick = NULL;
+	stick   = NULL;
 	gamepad = NULL;
 	Com_Memset(&stick_state, '\0', sizeof(stick_state));
 
@@ -930,17 +930,21 @@ static void IN_ShutdownJoystick(void)
 /**
 * @bried IN_KeyToAxisAndSign
 */
-static qboolean IN_KeyToAxisAndSign(int keynum, int* outAxis, int* outSign)
+static qboolean IN_KeyToAxisAndSign(int keynum, int *outAxis, int *outSign)
 {
-	char* bind;
+	char *bind;
 
 	if (!keynum)
+	{
 		return qfalse;
+	}
 
 	bind = Key_GetBinding(keynum);
 
 	if (!bind || *bind != '+')
+	{
 		return qfalse;
+	}
 
 	*outSign = 0;
 
@@ -993,8 +997,8 @@ static qboolean IN_KeyToAxisAndSign(int keynum, int* outAxis, int* outSign)
  */
 static void IN_GamepadMove(void)
 {
-	int i;
-	int translatedAxes[MAX_JOYSTICK_AXIS];
+	int      i;
+	int      translatedAxes[MAX_JOYSTICK_AXIS];
 	qboolean translatedAxesSet[MAX_JOYSTICK_AXIS];
 
 	SDL_GameControllerUpdate();
@@ -1005,8 +1009,9 @@ static void IN_GamepadMove(void)
 		qboolean pressed = SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_A + i);
 		if (pressed != stick_state.buttons[i])
 		{
-#if SDL_VERSION_ATLEAST( 2, 0, 16 )
-			if (i >= SDL_CONTROLLER_BUTTON_MISC1) {
+#if SDL_VERSION_ATLEAST(2, 0, 16)
+			if (i >= SDL_CONTROLLER_BUTTON_MISC1)
+			{
 				Com_QueueEvent(lasttime, SE_KEY, K_PAD0_MISC1 + i - SDL_CONTROLLER_BUTTON_MISC1, pressed, 0, NULL);
 			}
 			else
@@ -1024,7 +1029,7 @@ static void IN_GamepadMove(void)
 	{
 		for (i = 0; i < MAX_JOYSTICK_AXIS; i++)
 		{
-			translatedAxes[i] = 0;
+			translatedAxes[i]    = 0;
 			translatedAxesSet[i] = qfalse;
 		}
 	}
@@ -1032,25 +1037,27 @@ static void IN_GamepadMove(void)
 	// check axes
 	for (i = 0; i < SDL_CONTROLLER_AXIS_MAX; i++)
 	{
-		int axis = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTX + i);
+		int axis    = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTX + i);
 		int oldAxis = stick_state.oldaaxes[i];
 
 		// Smoothly ramp from dead zone to maximum value
 		float f = ((float)abs(axis) / 32767.0f - in_joystickThreshold->value) / (1.0f - in_joystickThreshold->value);
 
 		if (f < 0.0f)
+		{
 			f = 0.0f;
+		}
 
 		axis = (int)(32767 * ((axis < 0) ? -f : f));
 
 		if (axis != oldAxis)
 		{
-			const int negMap[SDL_CONTROLLER_AXIS_MAX] = { K_PAD0_LEFTSTICK_LEFT,  K_PAD0_LEFTSTICK_UP,   K_PAD0_RIGHTSTICK_LEFT,  K_PAD0_RIGHTSTICK_UP, 0, 0 };
+			const int negMap[SDL_CONTROLLER_AXIS_MAX] = { K_PAD0_LEFTSTICK_LEFT, K_PAD0_LEFTSTICK_UP, K_PAD0_RIGHTSTICK_LEFT, K_PAD0_RIGHTSTICK_UP, 0, 0 };
 			const int posMap[SDL_CONTROLLER_AXIS_MAX] = { K_PAD0_LEFTSTICK_RIGHT, K_PAD0_LEFTSTICK_DOWN, K_PAD0_RIGHTSTICK_RIGHT, K_PAD0_RIGHTSTICK_DOWN, K_PAD0_LEFTTRIGGER, K_PAD0_RIGHTTRIGGER };
 
 			qboolean posAnalog = qfalse, negAnalog = qfalse;
-			int negKey = negMap[i];
-			int posKey = posMap[i];
+			int      negKey = negMap[i];
+			int      posKey = posMap[i];
 
 			if (in_joystickUseAnalog->integer)
 			{
@@ -1063,28 +1070,28 @@ static void IN_GamepadMove(void)
 				// positive to negative/neutral -> keyup if axis hasn't yet been set
 				if (posAnalog && !translatedAxesSet[posAxis] && oldAxis > 0 && axis <= 0)
 				{
-					translatedAxes[posAxis] = 0;
+					translatedAxes[posAxis]    = 0;
 					translatedAxesSet[posAxis] = qtrue;
 				}
 
 				// negative to positive/neutral -> keyup if axis hasn't yet been set
 				if (negAnalog && !translatedAxesSet[negAxis] && oldAxis < 0 && axis >= 0)
 				{
-					translatedAxes[negAxis] = 0;
+					translatedAxes[negAxis]    = 0;
 					translatedAxesSet[negAxis] = qtrue;
 				}
 
 				// negative/neutral to positive -> keydown
 				if (posAnalog && axis > 0)
 				{
-					translatedAxes[posAxis] = axis * posSign;
+					translatedAxes[posAxis]    = axis * posSign;
 					translatedAxesSet[posAxis] = qtrue;
 				}
 
 				// positive/neutral to negative -> keydown
 				if (negAnalog && axis < 0)
 				{
-					translatedAxes[negAxis] = -axis * negSign;
+					translatedAxes[negAxis]    = -axis * negSign;
 					translatedAxesSet[negAxis] = qtrue;
 				}
 			}
@@ -1093,19 +1100,27 @@ static void IN_GamepadMove(void)
 
 			// positive to negative/neutral -> keyup
 			if (!posAnalog && posKey && oldAxis > 0 && axis <= 0)
+			{
 				Com_QueueEvent(lasttime, SE_KEY, posKey, qfalse, 0, NULL);
+			}
 
 			// negative to positive/neutral -> keyup
 			if (!negAnalog && negKey && oldAxis < 0 && axis >= 0)
+			{
 				Com_QueueEvent(lasttime, SE_KEY, negKey, qfalse, 0, NULL);
+			}
 
 			// negative/neutral to positive -> keydown
 			if (!posAnalog && posKey && oldAxis <= 0 && axis > 0)
+			{
 				Com_QueueEvent(lasttime, SE_KEY, posKey, qtrue, 0, NULL);
+			}
 
 			// positive/neutral to negative -> keydown
 			if (!negAnalog && negKey && oldAxis >= 0 && axis < 0)
+			{
 				Com_QueueEvent(lasttime, SE_KEY, negKey, qtrue, 0, NULL);
+			}
 
 			stick_state.oldaaxes[i] = axis;
 		}
@@ -1117,7 +1132,9 @@ static void IN_GamepadMove(void)
 		for (i = 0; i < MAX_JOYSTICK_AXIS; i++)
 		{
 			if (translatedAxesSet[i])
+			{
 				Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, i, translatedAxes[i], 0, NULL);
+			}
 		}
 	}
 }
@@ -1658,23 +1675,23 @@ static void IN_ProcessEvents(void)
 				break;
 			}
 			break;
-        case SDL_CONTROLLERAXISMOTION:
-            if (!e.caxis.axis && !e.caxis.value)
-            {
-                break;
-            }
+		case SDL_CONTROLLERAXISMOTION:
+			if (!e.caxis.axis && !e.caxis.value)
+			{
+				break;
+			}
 
 			if (in_joystickUseAnalog->integer)
 			{
-                /* Whenever we decide to change to SE_MOUSE
-                 * float angle, lenght;
-                 * float x = 0, _x = 0.0f, _y = 0.0f;
-                 * lenght = e.caxis.value / 32767 >= 0.0f ? 1 : -1;
-                 * angle = atan2f(x / 32767 >= 0.0f ? 1 : -1, e.caxis.value / 32767 >= 0.0f ? 1 : -1);
-                 * _x = lenght * cosf(angle);
-                 * _y = lenght * sinf(angle);
-                 * Com_QueueEvent(lasttime, SE_MOUSE, _x, _y, 0, NULL);
-                 * */
+				/* Whenever we decide to change to SE_MOUSE
+				 * float angle, lenght;
+				 * float x = 0, _x = 0.0f, _y = 0.0f;
+				 * lenght = e.caxis.value / 32767 >= 0.0f ? 1 : -1;
+				 * angle = atan2f(x / 32767 >= 0.0f ? 1 : -1, e.caxis.value / 32767 >= 0.0f ? 1 : -1);
+				 * _x = lenght * cosf(angle);
+				 * _y = lenght * sinf(angle);
+				 * Com_QueueEvent(lasttime, SE_MOUSE, _x, _y, 0, NULL);
+				 * */
 
 				if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
 				{
@@ -1693,7 +1710,7 @@ static void IN_ProcessEvents(void)
 				}
 				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
 				{
-                    if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 2))
+					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 2))
 					{
 						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
 					}
@@ -1701,14 +1718,14 @@ static void IN_ProcessEvents(void)
 					{
 						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
 					}
-                    else
-                    {
-                        Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, 0, 0, NULL);
-                    }
+					else
+					{
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, 0, 0, NULL);
+					}
 				}
 			}
-            break;
-        default:
+			break;
+		default:
 			break;
 		}
 	}
