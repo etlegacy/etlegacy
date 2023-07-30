@@ -1,7 +1,5 @@
 package org.etlegacy.app;
 
-import static java.sql.Types.NULL;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -29,7 +27,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
     static volatile boolean UiMenu = false;
     ImageButton btn;
-	boolean is_relative = false;
 
     /**
      * Get an uiMenu boolean variable
@@ -339,11 +336,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         clipboardGetText();
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-			is_relative = true;
 			setRelativeMouseEnabled(true);
 		}
         else {
-			is_relative = false;
 			setRelativeMouseEnabled(false);
 		}
 
