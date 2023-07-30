@@ -434,62 +434,17 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		return 0;
 	}
 
-	private void processJoystickInput(MotionEvent event, int historyPos) {
-
-		InputDevice inputDevice = event.getDevice();
-
-		// Calculate the horizontal distance to move by
-		// using the input value from one of these physical controls:
-		// the left control stick, hat axis, or the right control stick.
-		float x = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_X, historyPos);
-		if (x == 0) {
-			x = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_X, historyPos);
-		}
-		if (x == 0) {
-			x = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_Z, historyPos);
-		}
-
-		// Calculate the vertical distance to move by
-		// using the input value from one of these physical controls:
-		// the left control stick, hat switch, or the right control stick.
-		float y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_Y, historyPos);
-		if (y == 0) {
-			y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_Y, historyPos);
-		}
-		if (y == 0) {
-			y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_RZ, historyPos);
-		}
-
-		if (event.getAxisValue(MotionEvent.AXIS_RZ) > 0.0f)
-			SDLActivity.onNativeMouse(NULL, NULL, 0, y, is_relative);
-		else if ((event.getAxisValue(MotionEvent.AXIS_Z) > 0.0f))
-			SDLActivity.onNativeMouse(NULL, NULL, x, 0, is_relative);
-
-	}
-
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
-
-		//SDLControllerManager.initialize();
-
 		// Check that the event came from a game controller
-		if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK && event.getAction() == MotionEvent.ACTION_MOVE) {
-			// Process all historical movement samples in the batch
-			final int historySize = event.getHistorySize();
-			// Process the movements starting from the
-			// earliest historical position in the batch
-			for (int i = 0; i < historySize; i++) {
-				// Process the event at historical position i
-				//SDLControllerManager.handleJoystickMotionEvent(event);
-				processJoystickInput(event, i);
-			}
-			// Process the current movement sample in the batch (position -1)
-			processJoystickInput(event, -1);
+		if (((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK ||
+				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) && event.getAction() == MotionEvent.ACTION_MOVE) {
+			SDLActivity.getMotionListener();
+			SDLControllerManager.handleJoystickMotionEvent(event);
 			return true;
 		}
 		return super.onGenericMotionEvent(event);
 	}
-
 
 	@Override
     public void onMove(JoyStick joyStick, double angle, double power, int direction) {
