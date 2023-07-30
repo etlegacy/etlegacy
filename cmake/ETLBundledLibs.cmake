@@ -6,11 +6,7 @@
 # or error out the build
 if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
 	message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
-	if(NOT ANDROID)
-		include(libs/CMakeLists.txt)
-	else()
-		add_subdirectory(libs)
-	endif()
+    include(libs/CMakeLists.txt)
 else()
 	message(STATUS "======================================================")
 	message(STATUS "Bundled libraries were not found on your system!")
