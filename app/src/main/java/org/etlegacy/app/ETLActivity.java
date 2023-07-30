@@ -415,25 +415,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
     }
 
-	private static float getCenteredAxis(MotionEvent event, InputDevice device, int axis, int historyPos) {
-		final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
-
-		// A joystick at rest does not always report an absolute position of
-		// (0,0). Use the getFlat() method to determine the range of values
-		// bounding the joystick axis center.
-		if (range != null) {
-			final float flat = range.getFlat();
-			final float value = historyPos < 0 ? event.getAxisValue(axis): event.getHistoricalAxisValue(axis, historyPos);
-
-			// Ignore axis values that are within the 'flat' region of the
-			// joystick axis center.
-			if (Math.abs(value) > flat) {
-				return value;
-			}
-		}
-		return 0;
-	}
-
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
 		// Check that the event came from a game controller
