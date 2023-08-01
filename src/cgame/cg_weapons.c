@@ -114,7 +114,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	localEntity_t *le;
 	refEntity_t   *re;
 	vec3_t        velocity, xvelocity;
-	vec3_t        offset     = { 0, 0, 0 };
+	vec3_t        offset = { 0, 0, 0 };
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
 	qboolean      isFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
@@ -6358,7 +6358,9 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
 			VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
 			tmpv2[2] = 0;
 			VectorAdd(tmpv, tmpv2, tmpv);
-			CG_SmokePuff(origin, tmpv, 5 + rnd * 10, 1, rnd * 0.8f, rnd * 0.8f, 0.5, 500 + (rand() % 800), cg.time, 0, 0, shader);
+			CG_SmokePuff(origin, tmpv, 5 + rnd * 10,
+			             rnd * 0.8f, rnd * 0.8f, rnd * 0.8f, 0.5,
+			             500 + (rand() % 800), cg.time, 0, 0, shader);
 		}
 	}
 	else
@@ -6375,7 +6377,9 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
 			VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
 			tmpv2[2] = 0;
 			VectorAdd(tmpv, tmpv2, tmpv);
-			CG_SmokePuff(origin, tmpv, 5 + rnd * 10, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, 0.125f, 500 + (rand() % 300), cg.time, 0, 0, shader);
+			CG_SmokePuff(origin, tmpv, 5 + rnd * 10,
+			             rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, 0.125f,
+			             500 + (rand() % 300), cg.time, 0, 0, shader);
 		}
 	}
 
@@ -6747,7 +6751,7 @@ void CG_Tracer(const vec3_t source, const vec3_t dest, int sparks)
 /**
  * @brief CG_CalcMuzzlePoint
  * @param[in] entityNum
- * @param[in] muzzle
+ * @param[out] muzzle
  * @return
  */
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
