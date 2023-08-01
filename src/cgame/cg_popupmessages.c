@@ -643,7 +643,7 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 	{
 		*y += lineHeight;
 
-		if (*y + lineHeight * lineNumber > comp->location.y + comp->location.h)
+		if (*y + lineHeight * (lineNumber - 1) + lineHeight * 0.25f > comp->location.y + comp->location.h)
 		{
 			return qfalse;
 		}
@@ -652,7 +652,7 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 	{
 		*y -= lineHeight * (lineNumber - 1);
 
-		if (*y < comp->location.y)
+		if (*y - (lineHeight + lineHeight * 0.25f) < comp->location.y)
 		{
 			return qfalse;
 		}
@@ -727,7 +727,7 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 	}
 
 	// next line
-	*y += (comp->style & POPUP_SCROLL_DOWN) ? lineHeight * (lineNumber - 1) + lineHeight * 0.5f : -(lineHeight + lineHeight * 0.5f);
+	*y += (comp->style & POPUP_SCROLL_DOWN) ? lineHeight * (lineNumber - 1) + lineHeight * 0.25f : -(lineHeight + lineHeight * 0.25f);
 
 	return qtrue;
 }
@@ -750,7 +750,8 @@ void CG_DrawPM(hudComponent_t *comp)
 		return;
 	}
 
-	size = lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2) * 1.75f;
+	size = lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2)
+	                    * 1.5f;
 
 	y = comp->style & POPUP_SCROLL_DOWN ? comp->location.y : comp->location.y + comp->location.h;
 
