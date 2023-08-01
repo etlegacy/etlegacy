@@ -1018,7 +1018,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	}
 	// skip corpses for bullet tracing (=non gibbing weapons)
 	G_TempTraceIgnoreBodies();
-	Bullet_Fire_Extended(ent, activator, muzzle, end, damage, qfalse, mod);
+	Bullet_Fire_Extended(ent, activator, muzzle, end, forward, damage, qfalse, mod);
 	G_ResetTempTraceIgnoreEnts();
 }
 

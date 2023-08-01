@@ -46,7 +46,7 @@ vec3_t        muzzleTrace;  // used in G_Damage from g_combat.c
 
 // forward dec
 gentity_t *Bullet_Fire(gentity_t *ent);
-void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff, meansOfDeath_t mod);
+void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, vec3_t dir, int damage, qboolean distance_falloff, meansOfDeath_t mod);
 
 /**
 ======================================================================
@@ -3463,7 +3463,7 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	// skip corpses for bullet tracing (=non gibbing weapons)
 	G_TempTraceIgnoreBodies();
 
-	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage,
+    Bullet_Fire_Extended(ent, ent, muzzleTrace, end, forward, GetWeaponTableData(ent->s.weapon)->damage,
 	                     GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_FALL_OFF, GetWeaponTableData(ent->s.weapon)->mod);
 
 	// ok let the bodies be traced again
@@ -3489,7 +3489,7 @@ gentity_t *Bullet_Fire(gentity_t *ent)
  * @param[in] distance_falloff
  * @return
  */
-void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff, meansOfDeath_t mod)
+void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, vec3_t dir, int damage, qboolean distance_falloff, meansOfDeath_t mod)
 {
 	trace_t   tr;
 	gentity_t *tent;
@@ -3583,7 +3583,7 @@ void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, 
 	if (traceEnt->takedamage)
 	{
 		// skip corpses for bullet tracing (=non gibbing weapons)
-		G_DamageExt(traceEnt, attacker, attacker, forward, tr.endpos, damage, (distance_falloff ? DAMAGE_DISTANCEFALLOFF : 0), mod, &hitType);
+		G_DamageExt(traceEnt, attacker, attacker, dir, tr.endpos, damage, (distance_falloff ? DAMAGE_DISTANCEFALLOFF : 0), mod, &hitType);
 
 		// allow bullets to "pass through" func_explosives if they break by taking another simultanious shot
 		if (traceEnt->s.eType == ET_EXPLOSIVE)
@@ -3592,7 +3592,7 @@ void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, 
 			{
 				// start new bullet at position this hit the bmodel and continue to the end position (ignoring shot-through bmodel in next trace)
 				// spread = 0 as this is an extension of an already spread shot
-				/*return*/ Bullet_Fire_Extended(traceEnt, attacker, tr.endpos, end, damage, distance_falloff, mod);
+				/*return*/ Bullet_Fire_Extended(traceEnt, attacker, tr.endpos, end, dir, damage, distance_falloff, mod);
 			}
 		}
 	}
