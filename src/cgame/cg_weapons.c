@@ -6092,7 +6092,7 @@ sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_
  * @param[in] dir
  * @param[in] surfFlags
  */
-static void CG_AddWaterImpact(impactParticle_t *particleEffect, int missileEffect, vec3_t origin, vec3_t dir, soundSurface_t surfFlags)
+static void CG_AddWaterImpact(impactParticle_t *particleEffect, vec3_t origin, vec3_t dir, soundSurface_t surfFlags)
 {
 	trace_t trace;
 	vec3_t  tmpv;
@@ -6107,25 +6107,25 @@ static void CG_AddWaterImpact(impactParticle_t *particleEffect, int missileEffec
 	CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, particleEffect->waterRippleRadius, particleEffect->waterRippleLifeTime);
 
 	// particle
-	for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
-	{
-		impactParticleEffect_t *effect = &particleEffect->particleEffect[W_SND_SURF_WATER][i];
+    for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
+    {
+        impactParticleEffect_t *effect = &particleEffect->particleEffect[W_SND_SURF_WATER][i];
 
-		if (!effect->particleEffectUsed)
-		{
-			break;
-		}
+        if (!effect->particleEffectUsed)
+        {
+            break;
+        }
 
-		CG_AddDirtBulletParticles(trace.endpos, dir,
-		                          (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
-		                          effect->particleEffectDuration,
-		                          effect->particleEffectCount,
-		                          effect->particleEffectRandScale,
-		                          effect->particleEffectWidth,
-		                          effect->particleEffectHeight,
-		                          effect->particleEffectAlpha,
-		                          effect->particleEffectShader);
-	}
+        CG_AddDirtBulletParticles(trace.endpos, dir,
+                                  (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
+                                  effect->particleEffectDuration,
+                                  effect->particleEffectCount,
+                                  effect->particleEffectRandScale,
+                                  effect->particleEffectWidth,
+                                  effect->particleEffectHeight,
+                                  effect->particleEffectAlpha,
+                                  effect->particleEffectShader);
+    }
 
 	// play a water splash
 	if (cg_visualEffects.integer)
@@ -6149,7 +6149,7 @@ static void CG_AddWaterImpact(impactParticle_t *particleEffect, int missileEffec
  * @param[in] dir
  * @param[in] surfFlags
  */
-static void CG_AddCommonImpact(impactParticle_t *particleEffect, int missileEffect, vec3_t origin, vec3_t dir, soundSurface_t surfFlags)
+static void CG_AddCommonImpact(impactParticle_t *particleEffect, vec3_t origin, vec3_t dir, soundSurface_t surfFlags)
 {
 	trace_t trace;
 	int     i;
@@ -6166,47 +6166,47 @@ static void CG_AddCommonImpact(impactParticle_t *particleEffect, int missileEffe
 	trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
 
 	// particle
-	for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
-	{
-		if (particleEffect->particleEffect[surfFlags][i].particleEffectUsed)
-		{
-			impactParticleEffect_t *effect = &particleEffect->particleEffect[surfFlags][i];
+    for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
+    {
+        if (particleEffect->particleEffect[surfFlags][i].particleEffectUsed)
+        {
+            impactParticleEffect_t *effect = &particleEffect->particleEffect[surfFlags][i];
 
-			CG_AddDirtBulletParticles(trace.endpos, dir,
-			                          (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
-			                          effect->particleEffectDuration,
-			                          effect->particleEffectCount,
-			                          effect->particleEffectRandScale,
-			                          effect->particleEffectWidth,
-			                          effect->particleEffectHeight,
-			                          effect->particleEffectAlpha,
-			                          effect->particleEffectShader);
-		}
-		else if (particleEffect->extraEffect[i].extraEffectUsed)
-		{
-			impactExtraEffect_t *effect = &particleEffect->extraEffect[i];
-			int                 j, count;
+            CG_AddDirtBulletParticles(trace.endpos, dir,
+                                      (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
+                                      effect->particleEffectDuration,
+                                      effect->particleEffectCount,
+                                      effect->particleEffectRandScale,
+                                      effect->particleEffectWidth,
+                                      effect->particleEffectHeight,
+                                      effect->particleEffectAlpha,
+                                      effect->particleEffectShader);
+        }
+        else if (particleEffect->extraEffect[i].extraEffectUsed)
+        {
+            impactExtraEffect_t *effect = &particleEffect->extraEffect[i];
+            int                 j, count;
 
-			for (count = 0; count < effect->extraEffectCount; count++)
-			{
-				for (j = 0; j < 3; j++)
-				{
-					sprOrg[j] = origin[j] + effect->extraEffectOriginRand * crandom();
-					sprVel[j] = effect->extraEffectVelocityRand * crandom();
-				}
+            for (count = 0; count < effect->extraEffectCount; count++)
+            {
+                for (j = 0; j < 3; j++)
+                {
+                    sprOrg[j] = origin[j] + effect->extraEffectOriginRand * crandom();
+                    sprVel[j] = effect->extraEffectVelocityRand * crandom();
+                }
 
-				VectorAdd(sprVel, trace.plane.normal, sprVel);
-				VectorScale(sprVel, effect->extraEffectVelocityScaling, sprVel);
-				CG_ParticleExplosion(effect->extraEffectShaderName,
-				                     sprOrg,
-				                     sprVel,
-				                     (int)(effect->extraEffectDuration + random() * effect->extraEffectDurationRand),
-				                     (int)(effect->extraEffectSizeStart + random() * effect->extraEffectSizeStartRand),
-				                     (int)(effect->extraEffectSizeEnd + random() * effect->extraEffectSizeEndRand),
-				                     effect->extraEffectLightAnim);
-			}
-		}
-	}
+                VectorAdd(sprVel, trace.plane.normal, sprVel);
+                VectorScale(sprVel, effect->extraEffectVelocityScaling, sprVel);
+                CG_ParticleExplosion(effect->extraEffectShaderName,
+                                     sprOrg,
+                                     sprVel,
+                                     (int)(effect->extraEffectDuration + random() * effect->extraEffectDurationRand),
+                                     (int)(effect->extraEffectSizeStart + random() * effect->extraEffectSizeStartRand),
+                                     (int)(effect->extraEffectSizeEnd + random() * effect->extraEffectSizeEndRand),
+                                     effect->extraEffectLightAnim);
+            }
+        }
+    }
 
 	// explosion
 	if (particleEffect->explosionShaderName[0] != 0)
@@ -6338,48 +6338,52 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
 	tmpf    = VectorLength(tmpv);
 	VectorScale(dir, tmpf, tmpv);
 	VectorAdd(end, tmpv, origin);
-	// whee, got a bullet impact point projected to center body
-	CG_GetOriginForTag(cent, &cent->pe.headRefEnt, "tag_mouth", 0, tmpv, NULL);
-	tmpv[2] += 5;
-	VectorSubtract(tmpv, origin, tmpv2);
-	headshot = (VectorLength(tmpv2) < 10);
 
-	// smoke puffs (sometimes with some blood)
-	if (headshot)
+	if (cg_bloodPuff.integer)
 	{
-		for (i = 0; i < 5; i++)
+		// whee, got a bullet impact point projected to center body
+		CG_GetOriginForTag(cent, &cent->pe.headRefEnt, "tag_mouth", 0, tmpv, NULL);
+		tmpv[2] += 5;
+		VectorSubtract(tmpv, origin, tmpv2);
+		headshot = (VectorLength(tmpv2) < 10);
+
+		// smoke puffs (sometimes with some blood)
+		if (headshot)
 		{
-			rnd = random();
-			VectorScale(dir, 25.0f + random() * 25, tmpv);
-			tmpv[0] += crandom() * 25.0f;
-			tmpv[1] += crandom() * 25.0f;
-			tmpv[2] += crandom() * 25.0f;
-			CG_GetWindVector(tmpv2);
-			VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
-			tmpv2[2] = 0;
-			VectorAdd(tmpv, tmpv2, tmpv);
-			CG_SmokePuff(origin, tmpv, 5 + rnd * 10,
-			             rnd * 0.8f, rnd * 0.8f, rnd * 0.8f, 0.5,
-			             500 + (rand() % 800), cg.time, 0, 0, shader);
+			for (i = 0; i < 5; i++)
+			{
+				rnd = random();
+				VectorScale(dir, 25.0f + random() * 25, tmpv);
+				tmpv[0] += crandom() * 25.0f;
+				tmpv[1] += crandom() * 25.0f;
+				tmpv[2] += crandom() * 25.0f;
+				CG_GetWindVector(tmpv2);
+				VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
+				tmpv2[2] = 0;
+				VectorAdd(tmpv, tmpv2, tmpv);
+				CG_SmokePuff(origin, tmpv, 5 + rnd * 10,
+				             rnd * 0.8f, rnd * 0.8f, rnd * 0.8f, 0.5,
+				             500 + (rand() % 800), cg.time, 0, 0, shader);
+			}
 		}
-	}
-	else
-	{
-		// puff out the front (more dust no blood)
-		for (i = 0; i < 10; i++)
+		else
 		{
-			rnd = random();
-			VectorScale(dir, -35.0f + random() * 25, tmpv);
-			tmpv[0] += crandom() * 25.0f;
-			tmpv[1] += crandom() * 25.0f;
-			tmpv[2] += crandom() * 25.0f;
-			CG_GetWindVector(tmpv2);
-			VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
-			tmpv2[2] = 0;
-			VectorAdd(tmpv, tmpv2, tmpv);
-			CG_SmokePuff(origin, tmpv, 5 + rnd * 10,
-			             rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, 0.125f,
-			             500 + (rand() % 300), cg.time, 0, 0, shader);
+			// puff out the front (more dust no blood)
+			for (i = 0; i < 10; i++)
+			{
+				rnd = random();
+				VectorScale(dir, -35.0f + random() * 25, tmpv);
+				tmpv[0] += crandom() * 25.0f;
+				tmpv[1] += crandom() * 25.0f;
+				tmpv[2] += crandom() * 25.0f;
+				CG_GetWindVector(tmpv2);
+				VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
+				tmpv2[2] = 0;
+				VectorAdd(tmpv, tmpv2, tmpv);
+				CG_SmokePuff(origin, tmpv, 5 + rnd * 10,
+				             rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, 0.125f,
+				             500 + (rand() % 300), cg.time, 0, 0, shader);
+			}
 		}
 	}
 
@@ -6396,15 +6400,12 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
  */
 static void CG_AddImpactParticles(impactParticle_t *particleEffect, int missileEffect, vec3_t origin, vec3_t dir, soundSurface_t surfFlags, int fleshEntityNum)
 {
-	if (cg_impactEffects.integer & missileEffect)
+	switch (missileEffect)
 	{
-		switch (missileEffect)
-		{
-		case PS_FX_COMMON: CG_AddCommonImpact(particleEffect, missileEffect, origin, dir, surfFlags); break;
-		case PS_FX_WATER: CG_AddWaterImpact(particleEffect, missileEffect, origin, dir, surfFlags); break;
-		case PS_FX_FLESH: CG_AddFleshImpact(origin, dir, fleshEntityNum); break;
-		default: break;
-		}
+	case PS_FX_COMMON: CG_AddCommonImpact(particleEffect, origin, dir, surfFlags); break;
+	case PS_FX_WATER: CG_AddWaterImpact(particleEffect, origin, dir, surfFlags); break;
+	case PS_FX_FLESH: CG_AddFleshImpact(origin, dir, fleshEntityNum); break;
+	default: break;
 	}
 }
 

@@ -100,10 +100,10 @@ menuDef {
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 76, (SUBWINDOW_WIDTH_R)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Set duration of bullet marks on walls"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 88, (SUBWINDOW_WIDTH_R)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Set blood flash scale when receiving damage"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 100, (SUBWINDOW_WIDTH_R)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Set blood splatter transparency when taking damage from other players"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 112, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggle showing blood spurt effect when players are shot"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 124, (SUBWINDOW_WIDTH_R)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draw atmospheric effects (snow/rain) on-screen"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 136, (SUBWINDOW_WIDTH_R)-4, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draw additional visual effects (airstrike planes, debris)"))
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 148, (SUBWINDOW_WIDTH_R)-4, 10, _("Impact Effects:"), .2, 8, "cg_impactEffects", cvarFloatList { "None" 0 "Common" 1 "Water" 2 "Common + Water" 3 "Flesh" 4 "Flesh + Common" 5 "Water + Flesh" 6 "All" 7}, _("Set which weapon impact should be drawn on hit"))
+    YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 112, (SUBWINDOW_WIDTH_R)-4, 10, _("Blood Puff:"), .2, 8, "cg_bloodPuff", _("Toggle showing blood puff effect when players are shot"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 124, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggle showing blood spurt effect when players are shot"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 136, (SUBWINDOW_WIDTH_R)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draw atmospheric effects (snow/rain) on-screen"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DISPLAY_Y + 148, (SUBWINDOW_WIDTH_R)-4, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draw additional visual effects (airstrike planes, debris)"))
 
 // Crosshair //
 #define CROSSHAIR_Y 194

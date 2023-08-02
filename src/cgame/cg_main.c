@@ -155,7 +155,7 @@ vmCvar_t cg_nopredict;
 vmCvar_t cg_noPlayerAnims;
 vmCvar_t cg_showmiss;
 vmCvar_t cg_markTime;
-vmCvar_t cg_impactEffects;
+vmCvar_t cg_bloodPuff;
 vmCvar_t cg_brassTime;
 vmCvar_t cg_letterbox;
 vmCvar_t cg_drawGun;
@@ -406,7 +406,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_cycleAllWeaps,            "cg_cycleAllWeaps",            "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_brassTime,                "cg_brassTime",                "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_markTime,                 "cg_markTime",                 "20000",       CVAR_ARCHIVE,                 0 },
-	{ &cg_impactEffects,            "cg_impactEffects",            "7",           CVAR_ARCHIVE,                 0 },
+	{ &cg_bloodPuff,                "cg_bloodPuff",                "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_x,                    "cg_gunX",                     "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_y,                    "cg_gunY",                     "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_z,                    "cg_gunZ",                     "0",           CVAR_TEMP,                    0 },
