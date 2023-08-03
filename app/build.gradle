@@ -29,20 +29,19 @@ new File( 'VERSION.txt' ).eachLine { line ->
 println VERSION
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
     defaultConfig {
         if (buildAsApplication) {
             applicationId "org.etlegacy.app"
         }
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 1
         versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
         setProperty("archivesBaseName", "etlegacy-${getVersion()}")
         externalNativeBuild {
             cmake {
                 arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF", "-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_SSL=OFF"
-                //"-DANDROID_ARM_NEON=OFF"
             }
         }
         ndk {
@@ -52,7 +51,6 @@ android {
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
     signingConfigs {
         debug {
             storeFile file('../etlkey.jks')
@@ -67,7 +65,6 @@ android {
             keyPassword System.getenv("SIGNING_KEY_PASSWORD")
         }
     }
-
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -78,6 +75,10 @@ android {
            signingConfig signingConfigs.release
         }
     }
+	applicationVariants.all { variant ->
+		tasks["merge${variant.name.capitalize()}Assets"]
+				.dependsOn("externalNativeBuild${variant.name.capitalize()}")
+	}
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
         sourceSets.main {
             jniLibs.srcDir 'libs'
