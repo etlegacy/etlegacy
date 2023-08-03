@@ -29,6 +29,7 @@ new File( 'VERSION.txt' ).eachLine { line ->
 println VERSION
 
 android {
+	namespace "org.etlegacy.app"
     compileSdkVersion 31
     defaultConfig {
         if (buildAsApplication) {
