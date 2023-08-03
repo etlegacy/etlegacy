@@ -34,11 +34,11 @@
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+		android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <activity
             android:name=".ETLMain"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="landscape" >
+			android:exported="true"
+			android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -55,12 +55,10 @@
         <activity
             android:name=".ETLActivity"
 			android:configChanges="layoutDirection|locale|orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
-            android:hardwareAccelerated="true"
             android:label="@string/app_name"
             android:largeHeap="true"
 			android:alwaysRetainTaskState="true"
 			android:launchMode="singleInstance"
-			android:exported="false"
 			android:preferMinimalPostProcessing="true"
             android:screenOrientation="sensorLandscape" >
         </activity>
