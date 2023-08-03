@@ -333,6 +333,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+		getMotionListener();
         clipboardGetText();
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
@@ -415,7 +416,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		// Check that the event came from a game controller
 		if (((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK ||
 				(event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) && event.getAction() == MotionEvent.ACTION_MOVE) {
-			SDLActivity.getMotionListener();
 			SDLControllerManager.handleJoystickMotionEvent(event);
 			return true;
 		}
@@ -499,7 +499,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     @Override
     protected String[] getLibraries() {
         return new String[] {
-                "hidapi",
                 "SDL2",
                 "etl"
         };
