@@ -219,7 +219,6 @@ jobs:
       - name: Build
         run: |
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
-          echo "cmake.dir=/opt/cmake/" | tee -a local.properties
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git fetch --tags --force
@@ -571,7 +570,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '11'
 
       - name: Android Repo
         uses: actions/checkout@v3
@@ -597,7 +596,6 @@ jobs:
       - name: Build and Generate Package
         run: |
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
-          echo "cmake.dir=/opt/cmake/" | tee -a local.properties
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git fetch --tags --force
