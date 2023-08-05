@@ -1058,7 +1058,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 				Item_HandleTextFieldDeSelect(g_editItem);
 				Display_MouseMove(NULL, DC->cursorx, DC->cursory);
 			}
-			else if (key == K_TAB || key == K_UPARROW || key == K_DOWNARROW)
+			else if (key == K_TAB || key == K_UPARROW || key == K_PAD0_DPAD_UP || key == K_DOWNARROW || key == K_PAD0_DPAD_DOWN)
 			{
 				return;
 			}
@@ -1183,9 +1183,12 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		break;
 	case K_KP_UPARROW:
 	case K_UPARROW:
+	case K_PAD0_DPAD_UP:
+	case K_PAD0_DPAD_LEFT:
 		Menu_SetPrevCursorItem(menu);
 		break;
 	case K_ESCAPE:
+	case K_PAD0_BACK:
 		if (!g_waitingForKey && menu->onESC)
 		{
 			itemDef_t it;
@@ -1196,6 +1199,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	case K_ENTER:
 	case K_KP_ENTER:
 	case K_MOUSE3:
+	case K_PAD0_START:
 		Item_KeyboardActivate(item);
 		break;
 	case K_TAB:
@@ -1210,6 +1214,8 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		break;
 	case K_KP_DOWNARROW:
 	case K_DOWNARROW:
+	case K_PAD0_DPAD_DOWN:
+	case K_PAD0_DPAD_RIGHT:
 		Menu_SetNextCursorItem(menu);
 		break;
 	case K_MOUSE1:

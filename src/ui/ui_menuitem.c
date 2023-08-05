@@ -840,7 +840,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 		{
 			viewmax = (int)(item->window.rect.w / listPtr->elementWidth);
 
-			if (key == K_LEFTARROW || key == K_KP_LEFTARROW)
+			if (key == K_LEFTARROW || key == K_PAD0_DPAD_LEFT || key == K_KP_LEFTARROW)
 			{
 				if (!listPtr->notselectable)
 				{
@@ -874,7 +874,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 
 				return qtrue;
 			}
-			if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW)
+			if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW || key == K_PAD0_DPAD_RIGHT)
 			{
 				if (!listPtr->notselectable)
 				{
@@ -912,7 +912,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 		else
 		{
 			viewmax = (int)(item->window.rect.h / listPtr->elementHeight);
-			if (key == K_UPARROW || key == K_KP_UPARROW || key == K_MWHEELUP)
+			if (key == K_UPARROW || key == K_PAD0_DPAD_UP || key == K_KP_UPARROW || key == K_MWHEELUP)
 			{
 				if (!listPtr->notselectable)
 				{
@@ -946,7 +946,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 
 				return qtrue;
 			}
-			if (key == K_DOWNARROW || key == K_KP_DOWNARROW || key == K_MWHEELDOWN)
+			if (key == K_DOWNARROW || key == K_PAD0_DPAD_DOWN || key == K_KP_DOWNARROW || key == K_MWHEELDOWN)
 			{
 				if (!listPtr->notselectable)
 				{
@@ -1770,7 +1770,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		}
 	}
 
-	if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_KP_DOWNARROW)
+	if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_PAD0_DPAD_DOWN || key == K_KP_DOWNARROW)
 	{
 		newItem = Menu_SetNextCursorItem(item->parent);
 		if (newItem && TEXTFIELD(newItem->type))
@@ -1790,7 +1790,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		return qtrue;
 	}
 
-	if (key == K_UPARROW || key == K_KP_UPARROW)
+	if (key == K_UPARROW || key == K_PAD0_DPAD_UP || key == K_KP_UPARROW)
 	{
 		newItem = Menu_SetPrevCursorItem(item->parent);
 		if (newItem && TEXTFIELD(newItem->type))
@@ -1801,13 +1801,13 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		}
 	}
 
-	if (key == K_ENTER || key == K_KP_ENTER || key == K_ESCAPE)
+	if (key == K_ENTER || key == K_KP_ENTER || key == K_PAD0_START || key == K_PAD0_BACK || key == K_ESCAPE)
 	{
-		if ((key == K_ENTER || key == K_KP_ENTER) && item->onAccept)
+		if ((key == K_ENTER || key == K_KP_ENTER || key == K_PAD0_START) && item->onAccept)
 		{
 			Item_RunScript(item, NULL, item->onAccept);
 		}
-		else if (key == K_ESCAPE && item->onEsc)
+		else if ((key == K_ESCAPE || key == K_PAD0_BACK) && item->onEsc)
 		{
 			Item_RunScript(item, NULL, item->onEsc);
 		}
@@ -2442,13 +2442,13 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 		return qtrue;
 	}
 
-	if (realKey == K_ESCAPE && item->onEsc)
+	if ((realKey == K_ESCAPE || realKey == K_PAD0_BACK) && item->onEsc)
 	{
 		Item_RunScript(item, NULL, item->onEsc);
 		return qtrue;
 	}
 
-	if (realKey == K_ENTER && item->onEnter)
+	if ((realKey == K_ENTER || realKey == K_PAD0_START) && item->onEnter)
 	{
 		Item_RunScript(item, NULL, item->onEnter);
 		return qtrue;
