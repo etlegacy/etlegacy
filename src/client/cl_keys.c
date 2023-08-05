@@ -662,7 +662,7 @@ void Console_Key(int key)
 	}
 
 	// enter finishes the line
-	if (key == K_ENTER || key == K_KP_ENTER)
+	if (key == K_ENTER || key == K_KP_ENTER || key == K_PAD0_START)
 	{
 		con.highlightOffset = 0;
 
