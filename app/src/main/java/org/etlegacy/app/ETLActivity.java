@@ -333,6 +333,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+		HIDDeviceManager.acquire(getContext());
 		getMotionListener();
         clipboardGetText();
 
