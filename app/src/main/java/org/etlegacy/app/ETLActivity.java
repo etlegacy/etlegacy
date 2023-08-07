@@ -310,6 +310,23 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         });
     }
 
+	/**
+	 * Hide System UI
+	 */
+	private void hideSystemUI() {
+		View decorView = getWindow().getDecorView();
+		decorView.setSystemUiVisibility(
+				View.SYSTEM_UI_FLAG_IMMERSIVE
+						// Set the content to appear under the system bars so that the
+						// content doesn't resize when the system bars hide and show.
+						| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+						| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+						// Hide the nav bar and status bar
+						| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_FULLSCREEN);
+	}
+
     /**
      * Convert pixel metrics to dp
      * @param px value of px to be converted
@@ -413,6 +430,14 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     }
 
 	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		if (hasFocus) {
+			hideSystemUI();
+		}
+		super.onWindowFocusChanged(hasFocus);
+	}
+
+	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
 		// Check that the event came from a game controller
 		if (((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK ||
@@ -497,7 +522,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
     }
 
-    @Override
+	@Override
     protected String[] getLibraries() {
         return new String[] {
                 "SDL2",
