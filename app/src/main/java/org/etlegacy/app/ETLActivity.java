@@ -432,6 +432,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if (hasFocus) {
+			mHasFocus = hasFocus;
 			hideSystemUI();
 		}
 		super.onWindowFocusChanged(hasFocus);
