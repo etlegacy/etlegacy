@@ -60,6 +60,22 @@ static panel_button_text_t debriefPlayerHeadingSmallerFont =
 #define DB_XP_X        DB_TEAMGIBS_X + 24
 #define DH_HEADING_Y   60
 
+#define DB_CHAT_PANEL_X 10.f
+#define DB_CHAT_PANEL_Y (SCREEN_HEIGHT - 122.f)
+#define DB_CHAT_PANEL_WIDTH 492.f
+#define DB_CHAT_PANEL_HEIGHT 112.f
+
+#define DB_BUTTONS_PANEL_X (DB_CHAT_PANEL_X + DB_CHAT_PANEL_WIDTH + 4.f)
+#define DB_BUTTONS_PANEL_Y DB_CHAT_PANEL_Y
+#define DB_BUTTONS_PANEL_Y2 DB_BUTTONS_PANEL_Y + 16.f
+#define DB_BUTTONS_PANEL_WIDTH (SCREEN_WIDTH - DB_BUTTONS_PANEL_X - 10)
+#define DB_BUTTONS_PANEL_HEIGHT DB_CHAT_PANEL_HEIGHT
+#define DB_BUTTON_NUMBER 5
+#define DB_BUTTON_WIDTH_MARGIN_X 4.f
+#define DB_BUTTON_HEIGHT_MARGIN_Y 2.f
+#define DB_BUTTON_WIDTH (DB_BUTTONS_PANEL_WIDTH - DB_BUTTON_WIDTH_MARGIN_X * 2.f)
+#define DB_BUTTON_HEIGHT ((DB_BUTTONS_PANEL_HEIGHT - 18.f - DB_BUTTON_HEIGHT_MARGIN_Y * (DB_BUTTON_NUMBER + 1)) / DB_BUTTON_NUMBER)
+
 static panel_button_t debriefPlayerWeaponStatsHeader =
 {
 	NULL,
@@ -852,8 +868,8 @@ static panel_button_t chatPanelWindow =
 {
 	NULL,
 	"CHAT",
-	{ 10,                        SCREEN_HEIGHT - 122,620, 112 },
-	{ 0,                         0,                  0,   0, 0, 0, 0, 0},
+	{ DB_CHAT_PANEL_X,           DB_CHAT_PANEL_Y,             DB_CHAT_PANEL_WIDTH, DB_CHAT_PANEL_HEIGHT },
+	{ 0,                         0,                           0,                   0, 0, 0, 0, 0        },
 	NULL,                        // font
 	NULL,                        // keyDown
 	NULL,                        // keyUp
@@ -866,54 +882,12 @@ static panel_button_t chatPanelText =
 {
 	NULL,
 	NULL,
-	{ 14,                      SCREEN_HEIGHT - 33,  SCREEN_WIDTH - 28, TEAMCHAT_HEIGHT },
-	{ 0,                       0,                   0,                 0, 0, 0, 0, 0   },
+	{ DB_CHAT_PANEL_X + 4,     SCREEN_HEIGHT - 33,                   DB_CHAT_PANEL_WIDTH - 28, TEAMCHAT_HEIGHT },
+	{ 0,                       0,                                    0,                        0, 0, 0, 0, 0   },
 	NULL,                      // font
 	NULL,                      // keyDown
 	NULL,                      // keyUp
 	CG_Debriefing_ChatBox_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t chatPanelNextButton =
-{
-	NULL,
-	"MORE",
-	{ SCREEN_WIDTH - 10 - 60 - 4, SCREEN_HEIGHT - 30,                        60, 16 },
-	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
-	NULL,                         // font
-	CG_Debriefing_NextButton_KeyDown,// keyDown
-	NULL,                         // keyUp
-	CG_Debriefing_NextButton_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t chatPanelVoteButton =
-{
-	NULL,
-	"MAP VOTE",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                             60, 16 },
-	{ 0,                          0,                                              0,  0, 0, 0, 0, 0},
-	NULL,                         // font
-	CG_Debriefing_VoteButton_KeyDown,// keyDown
-	NULL,                         // keyUp
-	CG_Debriefing_VoteButton_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t chatPanelVoteNowButton =
-{
-	NULL,
-	"^3VOTE NOW",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                           60, 16 },
-	{ 0,                             0,                                            0,  0, 0, 0, 0, 0},
-	NULL,                            // font
-	CG_Debriefing_VoteButton_KeyDown,// keyDown
-	NULL,                            // keyUp
-	CG_Debriefing_VoteNowButton_Draw,
 	NULL,
 	0
 };
@@ -986,6 +960,90 @@ static panel_button_t charPanelEdit =
 	CG_Debriefing_ChatEdit_Draw,
 	CG_Debriefing_ChatEditFinish,
 	0
+};
+
+static panel_button_t buttonPanelWindow =
+    {
+        NULL,
+        "PANELS",
+        { DB_BUTTONS_PANEL_X,        DB_BUTTONS_PANEL_Y,              DB_BUTTONS_PANEL_WIDTH, DB_BUTTONS_PANEL_HEIGHT },
+        { 0,                         0,                               0,                      0, 0, 0, 0, 0           },
+        NULL,                        // font
+        NULL,                        // keyDown
+        NULL,                        // keyUp
+        CG_PanelButtonsRender_Window,
+        NULL,
+        0
+};
+
+static panel_button_t buttonsPanelScoreboard =
+    {
+        NULL,
+        "SCOREBOARD",
+        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT_MARGIN_Y,                                     DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+        { 0,                          0,                                                                                   0,               0, 0, 0, 0, 0    },
+        NULL,                         // font
+        CG_Debriefing_PanelButton_KeyDown,// keyDown
+        NULL,                         // keyUp
+        CG_Debriefing_NextButton_Draw,
+        NULL,
+        0
+};
+
+static panel_button_t buttonsPanelAwards =
+    {
+        NULL,
+        "AWARDS",
+        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT + DB_BUTTON_HEIGHT_MARGIN_Y * 2,                                         DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+        { 0,                          0,                                                                                                              0,               1, 0, 0, 0, 0    },
+        NULL,                         // font
+        CG_Debriefing_PanelButton_KeyDown,// keyDown
+        NULL,                         // keyUp
+        CG_Debriefing_NextButton_Draw,
+        NULL,
+        0
+};
+
+static panel_button_t buttonsPanelStats =
+    {
+        NULL,
+        "STATS",
+        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 2 + DB_BUTTON_HEIGHT_MARGIN_Y * 3,                                          DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+        { 0,                          0,                                                                                                                   0,               2, 0, 0, 0, 0    },
+        NULL,                         // font
+        CG_Debriefing_PanelButton_KeyDown,// keyDown
+        NULL,                         // keyUp
+        CG_Debriefing_NextButton_Draw,
+        NULL,
+        0
+};
+
+static panel_button_t buttonsPanelMapVote =
+    {
+        NULL,
+        "VOTE NOW",
+        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 3 + DB_BUTTON_HEIGHT_MARGIN_Y * 4,                                       DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+        { 0,                          0,                                                                                                                0,               3, 0, 0, 0, 0    },
+        NULL,                         // font
+        CG_Debriefing_PanelButton_KeyDown,// keyDown
+        NULL,                         // keyUp
+        CG_Debriefing_VoteButton_Draw,
+        NULL,
+        0
+};
+
+static panel_button_t buttonsNextButton =
+    {
+        NULL,
+        "NEXT",
+        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 4 + DB_BUTTON_HEIGHT_MARGIN_Y * 5,                                           DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+        { 0,                          0,                                                                                                                    0,               0, 0, 0, 0, 0    },
+        NULL,                         // font
+        CG_Debriefing_NextButton_KeyDown,// keyDown
+        NULL,                         // keyUp
+        CG_Debriefing_NextButton_Draw,
+        NULL,
+        0
 };
 
 // MAPVOTE
@@ -1697,8 +1755,16 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 static panel_button_t *chatPanelButtons[] =
 {
 	&chatPanelWindow,       &chatPanelText,
-	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelVoteNowButton,  &chatPanelQCButton, &chatTypeButton, &chatPanelReadyButton,
+	/*&chatPanelNextButton,   &chatPanelVoteButton, &chatPanelVoteNowButton,*/
+	&chatPanelQCButton,     &chatTypeButton,&chatPanelReadyButton,
 	&charPanelEditSurround, &charPanelEdit,
+	NULL
+};
+
+static panel_button_t *buttonsPanel[] =
+{
+	&buttonPanelWindow,
+	&buttonsPanelScoreboard,&buttonsPanelAwards,  &buttonsPanelStats, &buttonsPanelMapVote, &buttonsNextButton,
 	NULL
 };
 
@@ -1715,6 +1781,7 @@ static panel_button_t *mapVoteButtons[] =
  */
 void CG_ChatPanel_Setup(void)
 {
+	BG_PanelButtonsSetup(buttonsPanel);
 	BG_PanelButtonsSetup(chatPanelButtons);
 	BG_PanelButtonsSetup(teamDebriefPanelButtons);
 	BG_PanelButtonsSetup(debriefPanelButtons);
@@ -1722,6 +1789,7 @@ void CG_ChatPanel_Setup(void)
 	BG_PanelButtonsSetup(mapVoteButtons);
 
 	// convert to possible ws coordinates..
+	C_PanelButtonsSetup(buttonsPanel, cgs.wideXoffset);
 	C_PanelButtonsSetup(chatPanelButtons, cgs.wideXoffset);
 	C_PanelButtonsSetup(teamDebriefPanelButtons, cgs.wideXoffset);
 	C_PanelButtonsSetup(debriefPanelButtons, cgs.wideXoffset);
@@ -1928,13 +1996,9 @@ qboolean CG_Debriefing_Draw(void)
 	{
 	case 0: // player list
 		CG_DrawScoreboard();
-		BG_PanelButtonsRender(chatPanelButtons);
-		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 		break;
 	case 1: // awards
 		BG_PanelButtonsRender(teamDebriefPanelButtons);
-		BG_PanelButtonsRender(chatPanelButtons);
-		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 		break;
 	case 2: // campaign
 		for (i = 0 ; i < cgs.maxclients; i++)
@@ -1945,15 +2009,15 @@ qboolean CG_Debriefing_Draw(void)
 		qsort(cgs.dbSortedClients, cgs.maxclients, sizeof(int), CG_SortPlayersByXP);
 
 		BG_PanelButtonsRender(debriefPanelButtons);
-		BG_PanelButtonsRender(chatPanelButtons);
-		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 		break;
 	case 3: // mapvote
 		BG_PanelButtonsRender(mapVoteButtons);
-		BG_PanelButtonsRender(chatPanelButtons);
-		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 		break;
 	}
+
+	BG_PanelButtonsRender(chatPanelButtons);
+	BG_PanelButtonsRender(buttonsPanel);
+	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 
 	return qtrue;
 }
@@ -2827,6 +2891,11 @@ void CG_Debriefing_KeyEvent(int key, qboolean down)
 		return;
 	}
 
+	if (BG_PanelButtonsKeyEvent(key, down, buttonsPanel))
+	{
+		return;
+	}
+
 	if (!BG_PanelButtons_GetFocusButton() && down && key != K_MOUSE1)
 	{
 		BG_PanelButtons_SetFocusButton(&charPanelEdit);
@@ -3450,22 +3519,16 @@ qboolean CG_Debriefing_QCButton_KeyDown(panel_button_t *button, int key)
 }
 
 /**
- * @brief CG_Debriefing_VoteButton_KeyDown
- * @param button - unused
+ * @brief CG_Debriefing_NextButton_KeyDown
+ * @param[in] button
  * @param[in] key
  * @return
  */
-qboolean CG_Debriefing_VoteButton_KeyDown(panel_button_t *button, int key)
+qboolean CG_Debriefing_PanelButton_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		cgs.dbMode = 3;
-
-		// failsafe
-		if (cgs.gametype != GT_WOLF_MAPVOTE && cgs.dbMode == 3)
-		{
-			cgs.dbMode = 0;
-		}
+		cgs.dbMode = button->data[3];
 
 		return qtrue;
 	}
@@ -3575,29 +3638,28 @@ void CG_Debriefing_VoteButton_Draw(panel_button_t *button)
 
 	if (!(cg.snap->ps.eFlags & EF_VOTED))
 	{
-		return;
+		vec4_t clrBdr = { 0.1f, 0.1f, 0.1f, 0.5f };
+		vec4_t clrBck = { 0.3f, 0.3f, 0.3f, 0.4f };
+
+		vec4_t clrBck_hi = { 0.5f, 0.5f, 0.5f, 0.4f };
+		vec4_t clrTxt_hi = { 0.9f, 0.9f, 0.f, 1.f };
+
+		clrBck[0] = Q_fabs(sin(cg.time / BLINK_DIVISOR));
+		clrBck[3] = Q_fabs(cos(cg.time / BLINK_DIVISOR));
+
+		qboolean hilight = BG_CursorInRect(&button->rect);
+
+		float w = CG_Text_Width_Ext(button->text, 0.2f, 0, &cgs.media.limboFont2);
+
+		CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, hilight ? clrBck_hi : clrBck);
+		CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, clrBdr);
+
+		CG_Text_Paint_Ext(button->rect.x + ((button->rect.w + 2) - w) * 0.5f, button->rect.y + 11, 0.19f, 0.19f, hilight ? clrTxt_hi : colorYellow, button->text, 0, 0, 0, &cgs.media.limboFont2);
 	}
-
-	CG_PanelButtonsRender_Button(button);
-}
-
-/**
- * @brief CG_Debriefing_VoteNowButton_Draw
- * @param[in] button
- */
-void CG_Debriefing_VoteNowButton_Draw(panel_button_t *button)
-{
-	if (cgs.gametype != GT_WOLF_MAPVOTE)
+	else
 	{
-		return;
+		CG_PanelButtonsRender_Button_Ext(&button->rect, "MAP VOTE");
 	}
-
-	if (cg.snap->ps.eFlags & EF_VOTED)
-	{
-		return;
-	}
-
-	CG_PanelButtonsRender_Button(button);
 }
 
 /**

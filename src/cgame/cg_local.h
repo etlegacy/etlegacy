@@ -4026,7 +4026,7 @@ void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button);
 qboolean CG_Debriefing_ChatButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_ReadyButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_QCButton_KeyDown(panel_button_t *button, int key);
-qboolean CG_Debriefing_VoteButton_KeyDown(panel_button_t *button, int key);
+qboolean CG_Debriefing_PanelButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key);
 #ifdef FEATURE_PRESTIGE
 qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key);
