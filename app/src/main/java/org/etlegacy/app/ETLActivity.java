@@ -137,6 +137,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 						case DisplayMetrics.DENSITY_140:
 						case DisplayMetrics.DENSITY_180:
 							lp.rightMargin = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.width = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.height = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
 							break;
 						case DisplayMetrics.DENSITY_200:
 						case DisplayMetrics.DENSITY_220:
@@ -146,6 +148,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 						case DisplayMetrics.DENSITY_300:
 						case DisplayMetrics.DENSITY_XHIGH:
 							lp.rightMargin = pxToDp(220 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.width = pxToDp(620 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.height = pxToDp(220 * (int) Resources.getSystem().getDisplayMetrics().density);
 							break;
 						case DisplayMetrics.DENSITY_340:
 						case DisplayMetrics.DENSITY_360:
@@ -154,15 +158,21 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 						case DisplayMetrics.DENSITY_440:
 						case DisplayMetrics.DENSITY_450:
 						case DisplayMetrics.DENSITY_XXHIGH:
-							lp.rightMargin = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.rightMargin = pxToDp(500 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.width = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.height = pxToDp(500 * (int) Resources.getSystem().getDisplayMetrics().density);
 							break;
 						case DisplayMetrics.DENSITY_560:
 						case DisplayMetrics.DENSITY_600:
 						case DisplayMetrics.DENSITY_XXXHIGH:
 							lp.rightMargin = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.width = pxToDp(1300 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.height = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
 							break;
 						case DisplayMetrics.DENSITY_DEFAULT:
 							lp.rightMargin = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.width = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.height = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
 							break;
 					}
 
