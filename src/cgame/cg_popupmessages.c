@@ -34,6 +34,7 @@
 
 #include "cg_local.h"
 
+#define NUM_PM_STACK           3
 #define NUM_PM_STACK_ITEMS     32
 #define NUM_PM_STACK_ITEMS_BIG 8 // we shouldn't need many of these
 
@@ -67,11 +68,11 @@ struct pmStackItemBig_s
 	pmListItemBig_t *next;
 };
 
-pmListItem_t    cg_pmStack[NUM_PM_STACK_ITEMS];
-pmListItem_t    *cg_pmOldList;
-pmListItem_t    *cg_pmWaitingList;
-pmListItemBig_t *cg_pmWaitingListBig;
+pmListItem_t cg_pmStack[NUM_PM_STACK][NUM_PM_STACK_ITEMS];
+pmListItem_t *cg_pmOldList[NUM_PM_STACK];
+pmListItem_t *cg_pmWaitingList[NUM_PM_STACK];
 
+pmListItemBig_t *cg_pmWaitingListBig;
 pmListItemBig_t cg_pmStackBig[NUM_PM_STACK_ITEMS_BIG];
 
 const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
@@ -127,11 +128,16 @@ void CG_InitPMGraphics(void)
  */
 void CG_InitPM(void)
 {
-	Com_Memset(&cg_pmStack, 0, sizeof(cg_pmStack));
-	Com_Memset(&cg_pmStackBig, 0, sizeof(cg_pmStackBig));
+	int i;
 
-	cg_pmOldList        = NULL;
-	cg_pmWaitingList    = NULL;
+	for (i = 0; i < NUM_PM_STACK; ++i)
+	{
+		Com_Memset(&cg_pmStack[i], 0, sizeof(cg_pmStack[i]));
+		cg_pmOldList[i]     = NULL;
+		cg_pmWaitingList[i] = NULL;
+	}
+
+	Com_Memset(&cg_pmStackBig, 0, sizeof(cg_pmStackBig));
 	cg_pmWaitingListBig = NULL;
 }
 
@@ -161,76 +167,79 @@ void CG_AddToListFront(pmListItem_t **list, pmListItem_t *item)
  */
 void CG_UpdatePMLists(void)
 {
+	int             i;
 	pmListItem_t    *listItem;
 	pmListItem_t    *lastItem;
 	pmListItemBig_t *listItemBig;
 
-	if ((listItem = cg_pmWaitingList))
+	for (i = 0; i < NUM_PM_STACK; ++i)
 	{
-		int t = listItem->time + cg_popupTime.integer;
-
-		if (cg.time > t)
+		if ((listItem = cg_pmWaitingList[i]))
 		{
-			if (listItem->next)
-			{
-				// there's another item waiting to come on, so move to old list
-				cg_pmWaitingList       = listItem->next;
-				cg_pmWaitingList->time = cg.time; // set time we popped up at
+			int t = listItem->time + cg_popupTime.integer;
 
-				CG_AddToListFront(&cg_pmOldList, listItem);
-			}
-			else
+			if (cg.time > t)
 			{
-				if (cg.time > t + cg_popupStayTime.integer + cg_popupFadeTime.integer)
+				if (listItem->next)
 				{
-					// we're gone completely
-					cg_pmWaitingList = NULL;
-					listItem->inuse  = qfalse;
-					listItem->next   = NULL;
+					// there's another item waiting to come on, so move to old list
+					cg_pmWaitingList[i]       = listItem->next;
+					cg_pmWaitingList[i]->time = cg.time; // set time we popped up at
+
+					CG_AddToListFront(&cg_pmOldList[i], listItem);
 				}
-				//else
-				//{ // just sit where we are, no pressure to do anything...
-				//}
+				else
+				{
+					if (cg.time > t + cg_popupStayTime.integer + cg_popupFadeTime.integer)
+					{
+						// we're gone completely
+						cg_pmWaitingList[i] = NULL;
+						listItem->inuse     = qfalse;
+						listItem->next      = NULL;
+					}
+					//else
+					//{ // just sit where we are, no pressure to do anything...
+					//}
+				}
 			}
 		}
-	}
 
-	listItem = cg_pmOldList;
-	lastItem = NULL;
-	while (listItem)
-	{
-		int t = listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer + cg_popupTime.integer;
-
-		if (cg.time > t)
+		listItem = cg_pmOldList[i];
+		lastItem = NULL;
+		while (listItem)
 		{
-			// nuke this, and everything below it (though there shouldn't BE anything below us anyway)
-			pmListItem_t *next;
+			int t = listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer + cg_popupTime.integer;
 
-			if (!lastItem)
+			if (cg.time > t)
 			{
-				// we're the top of the old list, so set to NULL
-				cg_pmOldList = NULL;
+				// nuke this, and everything below it (though there shouldn't BE anything below us anyway)
+				pmListItem_t *next;
+
+				if (!lastItem)
+				{
+					// we're the top of the old list, so set to NULL
+					cg_pmOldList[i] = NULL;
+				}
+				else
+				{
+					lastItem->next = NULL;
+				}
+
+				do
+				{
+					next = listItem->next;
+
+					listItem->next  = NULL;
+					listItem->inuse = qfalse;
+				}
+				while ((listItem = next));
+
+				break;
 			}
-			else
-			{
-				lastItem->next = NULL;
-			}
 
-			do
-			{
-				next = listItem->next;
-
-				listItem->next  = NULL;
-				listItem->inuse = qfalse;
-			}
-			while ((listItem = next));
-
-
-			break;
+			lastItem = listItem;
+			listItem = listItem->next;
 		}
-
-		lastItem = listItem;
-		listItem = listItem->next;
 	}
 
 	if ((listItemBig = cg_pmWaitingListBig))
@@ -291,7 +300,7 @@ pmListItemBig_t *CG_FindFreePMItemBig(void)
  * @brief CG_FindFreePMItem
  * @return
  */
-pmListItem_t *CG_FindFreePMItem(void)
+pmListItem_t *CG_FindFreePMItem(int stackNum)
 {
 	pmListItem_t *listItem;
 	pmListItem_t *lastItem;
@@ -299,14 +308,14 @@ pmListItem_t *CG_FindFreePMItem(void)
 
 	for ( ; i < NUM_PM_STACK_ITEMS; i++)
 	{
-		if (!cg_pmStack[i].inuse)
+		if (!cg_pmStack[stackNum][i].inuse)
 		{
-			return &cg_pmStack[i];
+			return &cg_pmStack[stackNum][i];
 		}
 	}
 
 	// no totally free items, so just grab the last item in the oldlist
-	if ((lastItem = listItem = cg_pmOldList))
+	if ((lastItem = listItem = cg_pmOldList[stackNum]))
 	{
 		while (listItem->next)
 		{
@@ -314,9 +323,9 @@ pmListItem_t *CG_FindFreePMItem(void)
 			listItem = listItem->next;
 		}
 
-		if (lastItem == cg_pmOldList)
+		if (lastItem == cg_pmOldList[stackNum])
 		{
-			cg_pmOldList = NULL;
+			cg_pmOldList[stackNum] = NULL;
 		}
 		else
 		{
@@ -339,47 +348,27 @@ pmListItem_t *CG_FindFreePMItem(void)
  * @param[in] type
  * @return
  */
-static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
+qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter)
 {
 	switch (type)
 	{
 	case PM_CONNECT:
-		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_CONNECT)
-		{
-			return qtrue;
-		}
-		break;
+		return filter & POPUP_FILTER_CONNECT;
 	case PM_TEAM:
-		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_TEAMJOIN)
-		{
-			return qtrue;
-		}
-		break;
+		return filter & POPUP_FILTER_TEAMJOIN;
 	case PM_MESSAGE:
 	case PM_DYNAMITE:
 	case PM_CONSTRUCTION:
 	case PM_MINES:
 	case PM_OBJECTIVE:
 	case PM_DESTRUCTION:
-		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_MISSION)
-		{
-			return qtrue;
-		}
-		break;
+		return filter & POPUP_FILTER_MISSION;
 	case PM_AMMOPICKUP:
 	case PM_HEALTHPICKUP:
 	case PM_WEAPONPICKUP:
-		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_PICKUP)
-		{
-			return qtrue;
-		}
-		break;
+		return filter & POPUP_FILTER_PICKUP;
 	case PM_DEATH:
-		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FILTER_DEATH)
-		{
-			return qtrue;
-		}
-		break;
+		return filter & POPUP_FILTER_DEATH;
 	default:
 		break;
 	}
@@ -387,19 +376,21 @@ static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
 }
 
 /**
- * @brief CG_AddPMItem
- * @param[in] type
- * @param[in] message
- * @param[in] message2
- * @param[in] shader
- * @param[in] weaponShader
- * @param[in] scaleShader
- * @param[in] color
+ * @brief CG_AddPMItemEx
+ * @param type
+ * @param message
+ * @param message2
+ * @param shader
+ * @param weaponShader
+ * @param scaleShader
+ * @param color
+ * @param stackNum
  */
-void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color)
+void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color, int stackNum)
 {
-	pmListItem_t *listItem;
-	char         *end;
+	pmListItem_t   *listItem;
+	char           *end;
+	hudComponent_t *pmComp = (hudComponent_t*)((byte *)&CG_GetActiveHUD()->popupmessages + stackNum * sizeof(hudComponent_t));
 
 	if (!message || !*message)
 	{
@@ -412,17 +403,12 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 		return;
 	}
 
-	if (CG_CheckPMItemFilter(type))
+	if (!pmComp->visible || CG_CheckPMItemFilter(type, pmComp->style))
 	{
-		// log filtered pm to console. Death obituaries are logged in CG_Obituary().
-		if (type != PM_DEATH)
-		{
-			trap_Print(va("%s\n", message));
-		}
 		return;
 	}
 
-	listItem = CG_FindFreePMItem();
+	listItem = CG_FindFreePMItem(stackNum);
 
 	if (!listItem)
 	{
@@ -453,7 +439,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 
 	listItem->inuse = qtrue;
 	listItem->type  = type;
-	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[0].message));
+	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[stackNum][0].message));
 
 	// print and THEN chop off the newline, as the console deals with newlines perfectly
 	if (listItem->message[strlen(listItem->message) - 1] == '\n')
@@ -480,7 +466,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 
 	if (message2)
 	{
-		Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStack[0].message2));
+		Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStack[stackNum][0].message2));
 
 		if (listItem->message[strlen(listItem->message2) - 1] == '\n')
 		{
@@ -498,14 +484,14 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 		}
 	}
 
-	if (!cg_pmWaitingList)
+	if (!cg_pmWaitingList[stackNum])
 	{
-		cg_pmWaitingList = listItem;
-		listItem->time   = cg.time;
+		cg_pmWaitingList[stackNum] = listItem;
+		listItem->time             = cg.time;
 	}
 	else
 	{
-		pmListItem_t *loop = cg_pmWaitingList;
+		pmListItem_t *loop = cg_pmWaitingList[stackNum];
 
 		while (loop->next)
 		{
@@ -513,6 +499,26 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 		}
 
 		loop->next = listItem;
+	}
+}
+
+/**
+ * @brief CG_AddPMItem
+ * @param[in] type
+ * @param[in] message
+ * @param[in] message2
+ * @param[in] shader
+ * @param[in] weaponShader
+ * @param[in] scaleShader
+ * @param[in] color
+ */
+void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color)
+{
+	int i;
+
+	for (i = 0; i < NUM_PM_STACK; ++i)
+	{
+		CG_AddPMItemEx(type, message, message2, shader, weaponShader, scaleShader, color, i);
 	}
 }
 
@@ -595,7 +601,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	}
 }
 
-static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float *y, float lineHeight, float size)
+static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float *y, float lineHeight, float size)
 {
 	float  t;
 	float  w;
@@ -605,6 +611,11 @@ static float CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float 
 	char   buffer[256];
 	int    lineNumber            = 1;
 	char   weaponIconSpacing[32] = { 0 };
+
+	if (!listItem)
+	{
+		return qfalse;
+	}
 
 	Vector4Copy(comp->colorMain, colorText);
 	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
@@ -744,8 +755,9 @@ void CG_DrawPM(hudComponent_t *comp)
 	float        size;
 	float        y;
 	qboolean     isScapeAvailable;
+	int          pmNum = comp - &CG_GetActiveHUD()->popupmessages;
 
-	if (!cg_pmWaitingList)
+	if (!cg_pmWaitingList[pmNum])
 	{
 		return;
 	}
@@ -765,9 +777,9 @@ void CG_DrawPM(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	isScapeAvailable = CG_DrawPMItems(comp, cg_pmWaitingList, &y, lineHeight, size);
+	isScapeAvailable = CG_DrawPMItems(comp, cg_pmWaitingList[pmNum], &y, lineHeight, size);
 
-	for (listItem = cg_pmOldList; listItem && isScapeAvailable; listItem = listItem->next)
+	for (listItem = cg_pmOldList[pmNum]; listItem && isScapeAvailable; listItem = listItem->next)
 	{
 		isScapeAvailable = CG_DrawPMItems(comp, listItem, &y, lineHeight, size);
 	}

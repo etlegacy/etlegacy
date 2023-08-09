@@ -4001,7 +4001,9 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 void CG_InitPM(void);
 void CG_InitPMGraphics(void);
 void CG_UpdatePMLists(void);
+qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter);
 void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color);
+void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color, int stackNum);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);
@@ -4198,7 +4200,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 50
+#define HUD_COMPONENTS_NUM 52
 
 typedef struct hudComponent_s
 {
@@ -4246,15 +4248,17 @@ typedef struct hudStructure_s
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
+	hudComponent_t popupmessages2;
+	hudComponent_t popupmessages3;
 	hudComponent_t powerups;
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
 
 	hudComponent_t cursorhints;
-	hudComponent_t weaponstability;
+	hudComponent_t weaponstability;  // 20
 	hudComponent_t livesleft;
 
-	hudComponent_t roundtimer;      // 20
+	hudComponent_t roundtimer;
 	hudComponent_t reinforcement;
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
@@ -4263,11 +4267,11 @@ typedef struct hudStructure_s
 	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
-	hudComponent_t demotext;
+	hudComponent_t demotext;        // 30
 
 	hudComponent_t missilecamera;
 
-	hudComponent_t sprinttext;      // 30
+	hudComponent_t sprinttext;
 	hudComponent_t breathtext;
 	hudComponent_t weaponchargetext;
 	hudComponent_t fps;
@@ -4275,9 +4279,9 @@ typedef struct hudStructure_s
 	hudComponent_t ping;
 	hudComponent_t speed;
 	hudComponent_t lagometer;
-	hudComponent_t disconnect;
+	hudComponent_t disconnect;      // 40
 	hudComponent_t chat;
-	hudComponent_t spectatorstatus;       // 40
+	hudComponent_t spectatorstatus;
 	hudComponent_t pmitemsbig;
 	hudComponent_t warmuptitle;
 	hudComponent_t warmuptext;
@@ -4285,7 +4289,7 @@ typedef struct hudStructure_s
 	hudComponent_t centerprint;
 	hudComponent_t banner;
 	hudComponent_t crosshair;
-	hudComponent_t crosshairtext;
+	hudComponent_t crosshairtext;   // 50
 	hudComponent_t crosshairbar;
 	hudComponent_t stats;
 

@@ -47,7 +47,7 @@ extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
  * @param[out] weaponShader
  * @param[out] scaleShader
  */
-void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponShader, int *scaleShader)
+void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponShader, int *scaleShader, int style)
 {
 	// Get the related weapon from kill
 	weapon_t weap = IS_VALID_WEAPON(GetMODTableData(mod)->weaponIcon) ? GetMODTableData(mod)->weaponIcon : weapon;
@@ -55,7 +55,7 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 	// if weapon is still valid
 	if (IS_VALID_WEAPON(weap))
 	{
-		if ((CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON_ALT) && cg_weapons[weap].weaponIcon[0])
+		if ((style & POPUP_WEAPON_ICON_ALT) && cg_weapons[weap].weaponIcon[0])
 		{
 			*weaponShader = cg_weapons[weap].weaponIcon[0];
 			*scaleShader  = cg_weapons[weap].weaponIconScale;
@@ -159,6 +159,7 @@ static void CG_Obituary(entityState_t *ent)
 	char           targetName[MAX_NAME_LENGTH];
 	char           attackerName[MAX_NAME_LENGTH];
 	clientInfo_t   *ci, *ca;  // ca = attacker
+	int            i;
 
 	if (target < 0 || target >= MAX_CLIENTS)
 	{
@@ -176,177 +177,190 @@ static void CG_Obituary(entityState_t *ent)
 		ca = &cgs.clientinfo[attacker];
 	}
 
-	Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
-	if (CG_GetActiveHUD()->popupmessages.style & POPUP_FORCE_COLORS)
-	{
-		CG_ColorObituaryEntName(ci, targetName, ca && ca->team == ci->team ? '4': 0);
-	}
-	strcat(targetName, S_COLOR_WHITE);
-
-	// check for single client messages
-	if (!ca)
-	{
-		message = GetMODTableData(mod)->obituaryNoAttackerMessage;
-	}
-	// check for self kill messages
-	else if (attacker == target)
-	{
-		// no obituary message if changing teams
-		if (mod == MOD_SWITCHTEAM)
-		{
-			return;
-		}
-
-		message = GetMODTableData(mod)->obituarySelfKillMessage;
-	}
-
-	if (message)
-	{
-		if (CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON)
-		{
-			qhandle_t weaponShader;
-			int       scaleShader;
-
-			CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader);
-
-			CG_AddPMItem(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, colorYellow);
-		}
-		else
-		{
-			CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString(message)), " ", shader, 0, 0, colorYellow);
-		}
-		trap_Print(va("^7%s^7 %s\n", targetName, CG_TranslateString(message)));
-
-		return;
-	}
-
-	// check for double client messages
-	if (!ca)
-	{
-		strcpy(attackerName, "noname");
-	}
-	else
-	{
-		Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
-		if (CG_GetActiveHUD()->popupmessages.style & POPUP_FORCE_COLORS)
-		{
-			CG_ColorObituaryEntName(ca, attackerName, ca && ca->team == ci->team ? '4': 0);
-		}
-		strcat(attackerName, S_COLOR_WHITE);
-	}
-
 	// check for kill messages from the current clientNum
+	if (attacker != target)
+	{
+		if (attacker == cg.clientNum
 #ifdef FEATURE_EDV
-	if (attacker == cg.clientNum && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
-#else
-	if (attacker == cg.clientNum)
+		    && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam
 #endif
-	{
-		char *s;
-
-		if (ca && ci->team == ca->team)
+		    )
 		{
-			if (mod == MOD_SWAP_PLACES)
-			{
-				s = va("%s %s", CG_TranslateString("You swapped places with"), targetName);
-			}
-			else
-			{
-				s = va("%s %s", CG_TranslateString("^1You killed teammate^7"), targetName);
-			}
-		}
-		else
-		{
-			s = va("%s %s", CG_TranslateString("You killed"), targetName);
-		}
+			char *s;
 
-		CG_PriorityCenterPrint(s, 1);
-	}
-	else if (attacker == cg.snap->ps.clientNum)
-	{
-		char *s;
-
-		if (ca && ci->team == ca->team)
-		{
-			if (mod == MOD_SWAP_PLACES)
+			if (ca && ci->team == ca->team)
 			{
-				s = va("%s %s %s", attackerName, CG_TranslateString("^7swapped places with"), targetName);
-			}
-			else
-			{
-				s = va("%s %s %s", attackerName, CG_TranslateString("^1killed teammate^7"), targetName);
-			}
-		}
-		else
-		{
-			s = va("%s %s %s", attackerName, CG_TranslateString("^7killed"), targetName);
-		}
-
-		CG_PriorityCenterPrint(s, 1);
-	}
-
-	// check for double client messages
-	if (ca)
-	{
-		message  = GetMODTableData(mod)->obituaryKillMessage1;
-		message2 = GetMODTableData(mod)->obituaryKillMessage2;
-
-		if (mod == MOD_BACKSTAB)    // NOTE: we might add a sound for MOD_KNIFE and MOD_KABAR
-		{
-			// goat luvin
-			if (attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
-			{
-				if (ci->team != ca->team)
+				if (mod == MOD_SWAP_PLACES)
 				{
-					trap_S_StartSound(cg.snap->ps.origin, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.goatAxis);
+					s = va("%s %s", CG_TranslateString("You swapped places with"), ci->name);
+				}
+				else
+				{
+					s = va("%s %s", CG_TranslateString("^1You killed teammate^7"), ci->name);
 				}
 			}
+			else
+			{
+				s = va("%s %s", CG_TranslateString("You killed"), ci->name);
+			}
+
+			CG_PriorityCenterPrint(s, 1);
+		}
+		else if (attacker == cg.snap->ps.clientNum)
+		{
+			char *s;
+
+			if (ca && ci->team == ca->team)
+			{
+				if (mod == MOD_SWAP_PLACES)
+				{
+					s = va("%s %s %s", ca->name, CG_TranslateString("^7swapped places with"), ci->name);
+				}
+				else
+				{
+					s = va("%s %s %s", ca->name, CG_TranslateString("^1killed teammate^7"), ci->name);
+				}
+			}
+			else
+			{
+				s = va("%s %s %s", ca ? ca->name : "noname", CG_TranslateString("^7killed"), ci->name);
+			}
+
+			CG_PriorityCenterPrint(s, 1);
+		}
+	}
+
+	for (i = 0; i < 3; ++i)
+	{
+		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&CG_GetActiveHUD()->popupmessages + i * sizeof(hudComponent_t));
+		message  = NULL;
+		message2 = NULL;
+
+		if (!pmComp->visible)
+		{
+			continue;
 		}
 
-		// vanilla style
-		//if (ci->team == ca->team)
-		//{
-		//  message  = "^1WAS KILLED BY TEAMMATE^7";
-		//  message2 = "";
-		//}
+		Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
+		if (pmComp->style & POPUP_FORCE_COLORS)
+		{
+			CG_ColorObituaryEntName(ci, targetName, ca && ca->team == ci->team ? '4': 0);
+		}
+		Q_strcat(targetName, MAX_NAME_LENGTH, S_COLOR_WHITE);
+
+		// check for single client messages
+		if (!ca)
+		{
+			message = GetMODTableData(mod)->obituaryNoAttackerMessage;
+		}
+		// check for self kill messages
+		else if (attacker == target)
+		{
+			// no obituary message if changing teams
+			if (mod == MOD_SWITCHTEAM)
+			{
+				continue;
+			}
+
+			message = GetMODTableData(mod)->obituarySelfKillMessage;
+		}
 
 		if (message)
 		{
-			if (CG_GetActiveHUD()->popupmessages.style & POPUP_WEAPON_ICON)
+			if (pmComp->style & POPUP_WEAPON_ICON)
 			{
 				qhandle_t weaponShader;
 				int       scaleShader;
 
-				CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader);
+				CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader, pmComp->style);
 
-				if (CG_GetActiveHUD()->popupmessages.style & POPUP_SWAP_VICTIM_KILLER)
-				{
-					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite));
-				}
-				else
-				{
-					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite));
-				}
+				CG_AddPMItemEx(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, colorYellow, i);
 			}
 			else
 			{
-				if (ci->team == ca->team)
+				CG_AddPMItemEx(PM_DEATH, va("%s %s.", targetName, CG_TranslateString(message)), " ", shader, 0, 0, colorYellow, i);
+			}
+
+			continue;
+		}
+
+		// check for double client messages
+		if (ca)
+		{
+			message  = GetMODTableData(mod)->obituaryKillMessage1;
+			message2 = GetMODTableData(mod)->obituaryKillMessage2;
+
+			if (mod == MOD_BACKSTAB)    // NOTE: we might add a sound for MOD_KNIFE and MOD_KABAR
+			{
+				// goat luvin
+				if (attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
 				{
-					CG_AddPMItem(PM_DEATH, va("%s^1 %s^7 ", targetName, CG_TranslateString(message)), va("%s^1%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorRed);
+					if (ci->team != ca->team)
+					{
+						trap_S_StartSound(cg.snap->ps.origin, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.goatAxis);
+					}
+				}
+			}
+
+			if (message)
+			{
+				Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
+				if (pmComp->style & POPUP_FORCE_COLORS)
+				{
+					CG_ColorObituaryEntName(ca, attackerName, ca && ca->team == ci->team ? '4': 0);
+				}
+				Q_strcat(attackerName, MAX_NAME_LENGTH, S_COLOR_WHITE);
+
+				if (pmComp->style & POPUP_WEAPON_ICON)
+				{
+					qhandle_t weaponShader;
+					int       scaleShader;
+
+					CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader, pmComp->style);
+
+					if (pmComp->style & POPUP_SWAP_VICTIM_KILLER)
+					{
+						CG_AddPMItemEx(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite), i);
+					}
+					else
+					{
+						CG_AddPMItemEx(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite), i);
+					}
 				}
 				else
 				{
-					CG_AddPMItem(PM_DEATH, va("%s %s ", targetName, CG_TranslateString(message)), va("%s%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorWhite);
+					if (ci->team == ca->team)
+					{
+						CG_AddPMItemEx(PM_DEATH, va("%s^1 %s^7 ", targetName, CG_TranslateString(message)), va("%s^1%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorRed, i);
+					}
+					else
+					{
+						CG_AddPMItemEx(PM_DEATH, va("%s %s ", targetName, CG_TranslateString(message)), va("%s%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorWhite, i);
+					}
 				}
+
+				continue;
 			}
-			trap_Print(va((ci->team == ca->team ? "^7%s^1 %s ^7%s^1%s\n" : "^7%s^7 %s ^7%s^7%s\n"), targetName, CG_TranslateString(message), attackerName, CG_TranslateString(message2)));
-			return;
 		}
 	}
 
-	// we don't know what it was
-	CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
-	trap_Print(va("^7%s^7 died\n", targetName));
+	if (message)
+	{
+		if (ca)
+		{
+			trap_Print(va((ci->team == ca->team ? "^7%s^1 %s ^7%s^1%s\n" : "^7%s^7 %s ^7%s^7%s\n"), targetName, CG_TranslateString(message), attackerName, CG_TranslateString(message2)));
+		}
+		else
+		{
+			trap_Print(va("^7%s^7 %s\n", targetName, CG_TranslateString(message)));
+		}
+	}
+	else
+	{
+		// we don't know what it was
+		CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
+		trap_Print(va("^7%s^7 died\n", targetName));
+	}
 }
 
 //==========================================================================
@@ -360,7 +374,7 @@ extern int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
  */
 static void CG_ItemPickup(int itemNum)
 {
-	gitem_t            *item = BG_GetItem(itemNum);
+	gitem_t            *item  = BG_GetItem(itemNum);
 	int                itemid = item->giWeapon;
 	int                wpbank_cur, wpbank_pickup;
 	popupMessageType_t giType;
