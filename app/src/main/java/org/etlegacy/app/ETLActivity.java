@@ -136,7 +136,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 						case DisplayMetrics.DENSITY_LOW:
 						case DisplayMetrics.DENSITY_140:
 						case DisplayMetrics.DENSITY_180:
-							lp.rightMargin = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.rightMargin = pxToDp(50 * (int) Resources.getSystem().getDisplayMetrics().density);
 							lp.width = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
 							lp.height = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
 							break;
@@ -147,8 +147,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 						case DisplayMetrics.DENSITY_280:
 						case DisplayMetrics.DENSITY_300:
 						case DisplayMetrics.DENSITY_XHIGH:
-							lp.rightMargin = pxToDp(220 * (int) Resources.getSystem().getDisplayMetrics().density);
-							lp.width = pxToDp(620 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.rightMargin = pxToDp(100 * (int) Resources.getSystem().getDisplayMetrics().density);
+							lp.width = pxToDp(550 * (int) Resources.getSystem().getDisplayMetrics().density);
 							lp.height = pxToDp(220 * (int) Resources.getSystem().getDisplayMetrics().density);
 							break;
 						case DisplayMetrics.DENSITY_340:
