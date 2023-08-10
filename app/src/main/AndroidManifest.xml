@@ -47,10 +47,8 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
         </activity>
-        <!--
-         Example of setting SDL hints from AndroidManifest.xml:
+        <!--Do not pass accelerometer data to the app internals-->
         <meta-data android:name="SDL_ENV.SDL_ACCELEROMETER_AS_JOYSTICK" android:value="0"/>
-        -->
         <activity
             android:name=".ETLActivity"
 			android:configChanges="layoutDirection|locale|orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
