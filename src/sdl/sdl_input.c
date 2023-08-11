@@ -1653,13 +1653,13 @@ static void IN_ProcessEvents(void)
 
 				if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
 				{
-					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 2))
+					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, fabs(e.caxis.value / 32767) * j_yaw->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, fabs(e.caxis.value / 8000) * j_yaw->value, 0, NULL);
 					}
-					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 2))
+					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, -fabs(e.caxis.value / 32767) * j_yaw->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, -fabs(e.caxis.value / 8000) * j_yaw->value, 0, NULL);
 					}
 					else
 					{
@@ -1668,13 +1668,13 @@ static void IN_ProcessEvents(void)
 				}
 				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
 				{
-					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 2))
+					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -fabs(e.caxis.value / 8000) * j_pitch->value, 0, NULL);
 					}
-					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 2))
+					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, fabs(e.caxis.value / 32767) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, fabs(e.caxis.value / 8000) * j_pitch->value, 0, NULL);
 					}
 					else
 					{
