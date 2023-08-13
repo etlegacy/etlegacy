@@ -5,7 +5,11 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	160
+#ifdef OLD_CLIENT
+#define WINDOW_HEIGHT	248
+#else
 #define WINDOW_HEIGHT	224
+#endif
 #define GROUP_NAME		"grpIngameMain"
 
 // Main Menu //
@@ -48,6 +52,9 @@ menuDef {
 	BUTTONEXT( 6, 152, WINDOW_WIDTH-12, 18, _("CREDITS"), .3, 14, close ingame_main ; open credits_etlegacy, tooltip _("Look at the legacy hall of fame") )
 	BUTTONEXT( 6, 176, WINDOW_WIDTH-12, 18, _("DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect, tooltip _("Disconnect your connection from current server") )
 	BUTTONEXT( 6, 200, WINDOW_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit, tooltip _("Don't press this. Be warned!") )
+#ifdef OLD_CLIENT
+	BUTTONEXT( 6, 224, WINDOW_WIDTH-12, 18, _("^1UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL, tooltip _("Upgrade!") )
+#endif
 
 // Vanilla client warning //
 #ifdef OLD_CLIENT
@@ -56,13 +63,26 @@ menuDef {
 	LABELWHITE( __WINDOW_WIDTH/2-100-16, 256, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	// Yeah we have a Legacy client, but its old.
 	#ifdef ETLEGACY
-		LABELWHITE( __WINDOW_WIDTH/2-100-16, 270, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your Legacy client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+		LABELWHITE( __WINDOW_WIDTH/2-100-16, 270, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your Legacy client\nClick on ^1UPGRADE NOW\n^7in menu entry"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	#else
-		LABELWHITE( __WINDOW_WIDTH/2-100-16, 270, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+		LABELWHITE( __WINDOW_WIDTH/2-100-16, 270, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client\nClick on ^1UPGRADE NOW\n^7in menu entry"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	#endif
-	BUTTON( __WINDOW_WIDTH/2-100-16+6, 300, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
 #endif
 
+
+#ifdef OLD_CLIENT
+	itemDef {
+		name        "legacy_logo"
+		rect        15 244 128 64
+		style       WINDOW_STYLE_SHADER
+		background  "ui/assets/etl_logo"
+		forecolor   1 1 1 1
+		visible     1
+		decoration
+	}
+
+	LABEL( 60, 294, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
+#else
 	itemDef {
 		name        "legacy_logo"
 		rect        15 220 128 64
@@ -74,4 +94,5 @@ menuDef {
 	}
 
 	LABEL( 60, 270, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
+#endif
 }
