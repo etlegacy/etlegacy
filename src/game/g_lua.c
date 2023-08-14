@@ -565,7 +565,7 @@ static int _et_trap_FS_Rename(lua_State *L)
 extern char bigTextBuffer[100000];
 static int _et_trap_FS_GetFileList(lua_State *L)
 {
-	const char *dirname = luaL_checkstring(L, 1);
+	const char *dirname            = luaL_checkstring(L, 1);
 	const char *filename_extension = luaL_checkstring(L, 2);
 	int        newTable, index = 1, i, filelen, numfiles;
 	char       filename[MAX_QPATH];
@@ -689,22 +689,26 @@ static int _et_G_Damage(lua_State *L)
 // et.G_AddSkillPoints( ent, skill, points )
 static int _et_G_AddSkillPoints(lua_State *L)
 {
-	gentity_t *ent   = g_entities + (int)luaL_checkinteger(L, 1);
-	int       skill  = (int)luaL_checkinteger(L, 2);
-	float     points = luaL_checknumber(L, 3);
+	size_t     l;
+	gentity_t  *ent    = g_entities + (int)luaL_checkinteger(L, 1);
+	int        skill   = (int)luaL_checkinteger(L, 2);
+	float      points  = luaL_checknumber(L, 3);
+	const char *reason = luaL_checklstring(L, 4, &l);
 
-	G_AddSkillPoints(ent, skill, points);
+	G_AddSkillPoints(ent, skill, points, reason);
 	return 0;
 }
 
 // et.G_LoseSkillPoints( ent, skill, points )
 static int _et_G_LoseSkillPoints(lua_State *L)
 {
-	gentity_t *ent   = g_entities + (int)luaL_checkinteger(L, 1);
-	int       skill  = (int)luaL_checkinteger(L, 2);
-	float     points = luaL_checknumber(L, 3);
+	size_t     l;
+	gentity_t  *ent    = g_entities + (int)luaL_checkinteger(L, 1);
+	int        skill   = (int)luaL_checkinteger(L, 2);
+	float      points  = luaL_checknumber(L, 3);
+	const char *reason = luaL_checklstring(L, 4, &l);
 
-	G_LoseSkillPoints(ent, skill, points);
+	G_LoseSkillPoints(ent, skill, points, reason);
 	return 0;
 }
 

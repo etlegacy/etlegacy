@@ -1387,18 +1387,15 @@ void ClientThink_real(gentity_t *ent)
 		{
 			if ((client->combatState & (1 << COMBATSTATE_KILLEDPLAYER)) && (client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED)))
 			{
-				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f);
-				G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
+				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
 			}
 			else if ((client->combatState & (1 << COMBATSTATE_DAMAGEDEALT)) && (client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED)))
 			{
-				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f);
-				G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
+				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
 			}
 			else
 			{
-				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 2.f);
-				G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 2.f, "combatstate warm");
+				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 2.f, "combatstate warm");
 			}
 		}
 

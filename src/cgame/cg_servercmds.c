@@ -2994,6 +2994,7 @@ void CG_AddToBannerPrint(const char *str)
 #define SND_FADE_HASH       100375
 #define ROCKANDROLL_HASH    146207
 #define BP_HASH             25102
+#define XPGAIN_HASH         78572
 // -----------
 
 /**
@@ -3564,6 +3565,13 @@ static void CG_ServerCommand(void)
 	case BP_HASH: // "bp"
 	{
 		CG_AddToBannerPrint(CG_Argv(1));
+		break;
+	}
+	case XPGAIN_HASH:   // "xpgain"
+	{
+		qboolean isLose = Q_atoi(CG_Argv(2)) < 0;
+
+		CG_AddPMItemXP(isLose, va("%s%g ", isLose ? "" : "+", Q_atof(CG_Argv(2))), va("%s", CG_Argv(3)), cgs.media.skillPics[Q_atoi(CG_Argv(1))]);
 		break;
 	}
 	default:

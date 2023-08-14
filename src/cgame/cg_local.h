@@ -2149,6 +2149,13 @@ enum
 	POPUP_BIG_FILTER_PRESTIGE = BIT(2),
 };
 
+// Popup XP Gain
+enum
+{
+	POPUP_XPGAIN_SCROLL_DOWN = BIT(0),
+	POPUP_XPGAIN_NO_REASON   = BIT(1),
+};
+
 // Compass
 enum
 {
@@ -2870,6 +2877,10 @@ extern vmCvar_t cg_automapZoom;
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
 extern vmCvar_t cg_popupTime;
+
+extern vmCvar_t cg_popupXPGainFadeTime;
+extern vmCvar_t cg_popupXPGainStayTime;
+extern vmCvar_t cg_popupXPGainTime;
 
 extern vmCvar_t cg_fontScaleSP;
 
@@ -4005,6 +4016,7 @@ qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter);
 void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color);
 void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color, int stackNum);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
+void CG_AddPMItemXP(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);
 qhandle_t CG_GetPMItemIcon(centity_t *cent);
@@ -4200,7 +4212,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 52
+#define HUD_COMPONENTS_NUM 53
 
 typedef struct hudComponent_s
 {
@@ -4292,6 +4304,7 @@ typedef struct hudStructure_s
 	hudComponent_t crosshairtext;   // 50
 	hudComponent_t crosshairbar;
 	hudComponent_t stats;
+	hudComponent_t xpgain;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4367,6 +4380,7 @@ void CG_DrawMissileCamera(hudComponent_t *comp);
 void CG_DrawTeamInfo(hudComponent_t *comp);
 void CG_DrawSpectator(hudComponent_t *comp);
 void CG_DrawPMItemsBig(hudComponent_t *comp);
+void CG_DrawPMItemsXPGain(hudComponent_t *comp);
 void CG_DrawWarmupTitle(hudComponent_t *comp);
 void CG_DrawWarmupText(hudComponent_t *comp);
 void CG_DrawObjectiveInfo(hudComponent_t *comp);

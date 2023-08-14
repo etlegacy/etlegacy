@@ -37,9 +37,9 @@
 #define NUM_PM_STACK           3
 #define NUM_PM_STACK_ITEMS     32
 #define NUM_PM_STACK_ITEMS_BIG 8 // we shouldn't need many of these
+#define NUM_PM_STACK_ITEMS_XP  32
 
 typedef struct pmStackItem_s pmListItem_t;
-typedef struct pmStackItemBig_s pmListItemBig_t;
 
 struct pmStackItem_s
 {
@@ -57,23 +57,16 @@ struct pmStackItem_s
 	pmListItem_t *next;
 };
 
-struct pmStackItemBig_s
-{
-	popupMessageBigType_t type;
-	qboolean inuse;
-	int time;
-	char message[128];
-	qhandle_t shader;
-
-	pmListItemBig_t *next;
-};
-
 pmListItem_t cg_pmStack[NUM_PM_STACK][NUM_PM_STACK_ITEMS];
 pmListItem_t *cg_pmOldList[NUM_PM_STACK];
 pmListItem_t *cg_pmWaitingList[NUM_PM_STACK];
 
-pmListItemBig_t *cg_pmWaitingListBig;
-pmListItemBig_t cg_pmStackBig[NUM_PM_STACK_ITEMS_BIG];
+pmListItem_t *cg_pmWaitingListBig;
+pmListItem_t cg_pmStackBig[NUM_PM_STACK_ITEMS_BIG];
+
+pmListItem_t *cg_pmOldListXP;
+pmListItem_t *cg_pmWaitingListXP;
+pmListItem_t cg_pmStackXP[NUM_PM_STACK_ITEMS_XP];
 
 const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 {
@@ -86,7 +79,7 @@ const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 	{ "Improved use of Scoped Weapon Ammunition", "Improved use of Sabotage and Misdirection", "Breath Control",                        "Assassin"                 } // scoped weapons & military intelligence
 };
 
-void CG_PMItemBigSound(pmListItemBig_t *item);
+void CG_PMItemBigSound(pmListItem_t *item);
 
 /**
  * @brief CG_InitPMGraphics
@@ -139,6 +132,10 @@ void CG_InitPM(void)
 
 	Com_Memset(&cg_pmStackBig, 0, sizeof(cg_pmStackBig));
 	cg_pmWaitingListBig = NULL;
+
+	Com_Memset(&cg_pmStackXP, 0, sizeof(cg_pmStackXP));
+	cg_pmOldListXP     = NULL;
+	cg_pmWaitingListXP = NULL;
 }
 
 
@@ -163,169 +160,148 @@ void CG_AddToListFront(pmListItem_t **list, pmListItem_t *item)
 }
 
 /**
+ * @brief CG_UpdatePMList
+ * @param[in] waitingList
+ * @param[in] oldList
+ * @param[in] time
+ * @param[in] stayTime
+ * @param[in] fadeTime
+ */
+void CG_UpdatePMList(pmListItem_t **waitingList, pmListItem_t **oldList, int time, int stayTime, int fadeTime)
+{
+	pmListItem_t *listItem = waitingList ? *waitingList : NULL;
+	pmListItem_t *lastItem = NULL;
+
+	if (listItem)
+	{
+		int t = listItem->time + time;
+
+		if (cg.time > t)
+		{
+			if (listItem->next)
+			{
+				// there's another item waiting to come on, so move to old list
+				*waitingList         = listItem->next;
+				(*waitingList)->time = cg.time; // set time we popped up at
+
+				//if (oldList)
+				//{
+				CG_AddToListFront(oldList, listItem);
+				//}
+				//else
+				//{
+				//	// TODO: for now only rank/skill up use shorter PM List
+				//	// so let abuse of it while it is alone
+				//	CG_PMItemBigSound(waitingList);
+
+				//	listItem->inuse = qfalse;
+				//	listItem->next  = NULL;
+				//}
+			}
+			else
+			{
+				if (cg.time > t + stayTime + fadeTime)
+				{
+					// we're gone completely
+					*waitingList    = NULL;
+					listItem->inuse = qfalse;
+					listItem->next  = NULL;
+				}
+				//else
+				//{ // just sit where we are, no pressure to do anything...
+				//}
+			}
+		}
+	}
+
+	listItem = oldList ? *oldList : NULL;
+
+	while (listItem)
+	{
+		int t = listItem->time + stayTime + fadeTime + time;
+
+		if (cg.time > t)
+		{
+			// nuke this, and everything below it (though there shouldn't BE anything below us anyway)
+			pmListItem_t *next;
+
+			if (!lastItem)
+			{
+				// we're the top of the old list, so set to NULL
+				*oldList = NULL;
+			}
+			else
+			{
+				lastItem->next = NULL;
+			}
+
+			do
+			{
+				next = listItem->next;
+
+				listItem->next  = NULL;
+				listItem->inuse = qfalse;
+			}
+			while ((listItem = next));
+
+			break;
+		}
+
+		lastItem = listItem;
+		listItem = listItem->next;
+	}
+}
+
+/**
  * @brief CG_UpdatePMLists
  */
 void CG_UpdatePMLists(void)
 {
-	int             i;
-	pmListItem_t    *listItem;
-	pmListItem_t    *lastItem;
-	pmListItemBig_t *listItemBig;
+	int i;
 
 	for (i = 0; i < NUM_PM_STACK; ++i)
 	{
-		if ((listItem = cg_pmWaitingList[i]))
-		{
-			int t = listItem->time + cg_popupTime.integer;
-
-			if (cg.time > t)
-			{
-				if (listItem->next)
-				{
-					// there's another item waiting to come on, so move to old list
-					cg_pmWaitingList[i]       = listItem->next;
-					cg_pmWaitingList[i]->time = cg.time; // set time we popped up at
-
-					CG_AddToListFront(&cg_pmOldList[i], listItem);
-				}
-				else
-				{
-					if (cg.time > t + cg_popupStayTime.integer + cg_popupFadeTime.integer)
-					{
-						// we're gone completely
-						cg_pmWaitingList[i] = NULL;
-						listItem->inuse     = qfalse;
-						listItem->next      = NULL;
-					}
-					//else
-					//{ // just sit where we are, no pressure to do anything...
-					//}
-				}
-			}
-		}
-
-		listItem = cg_pmOldList[i];
-		lastItem = NULL;
-		while (listItem)
-		{
-			int t = listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer + cg_popupTime.integer;
-
-			if (cg.time > t)
-			{
-				// nuke this, and everything below it (though there shouldn't BE anything below us anyway)
-				pmListItem_t *next;
-
-				if (!lastItem)
-				{
-					// we're the top of the old list, so set to NULL
-					cg_pmOldList[i] = NULL;
-				}
-				else
-				{
-					lastItem->next = NULL;
-				}
-
-				do
-				{
-					next = listItem->next;
-
-					listItem->next  = NULL;
-					listItem->inuse = qfalse;
-				}
-				while ((listItem = next));
-
-				break;
-			}
-
-			lastItem = listItem;
-			listItem = listItem->next;
-		}
+		CG_UpdatePMList(&cg_pmWaitingList[i], &cg_pmOldList[i], cg_popupTime.integer, cg_popupStayTime.integer, cg_popupFadeTime.integer);
 	}
 
-	if ((listItemBig = cg_pmWaitingListBig))
-	{
-		int t = PM_BIGPOPUP_TIME + listItemBig->time;
-
-		if (cg.time > t)
-		{
-			if (listItemBig->next)
-			{
-				// there's another item waiting to come on, so kill us and shove the next one to the front
-				cg_pmWaitingListBig       = listItemBig->next;
-				cg_pmWaitingListBig->time = cg.time; // set time we popped up at
-
-				CG_PMItemBigSound(cg_pmWaitingListBig);
-
-				listItemBig->inuse = qfalse;
-				listItemBig->next  = NULL;
-			}
-			else
-			{
-				if (cg.time > t + cg_popupStayTime.integer + cg_popupFadeTime.integer)
-				{
-					// we're gone completely
-					cg_pmWaitingListBig = NULL;
-					listItemBig->inuse  = qfalse;
-					listItemBig->next   = NULL;
-				}
-				else
-				{
-					// just sit where we are, no pressure to do anything...
-				}
-			}
-		}
-	}
-}
-
-/**
- * @brief CG_FindFreePMItemBig
- * @return
- */
-pmListItemBig_t *CG_FindFreePMItemBig(void)
-{
-	int i = 0;
-
-	for ( ; i < NUM_PM_STACK_ITEMS_BIG; i++)
-	{
-		if (!cg_pmStackBig[i].inuse)
-		{
-			return &cg_pmStackBig[i];
-		}
-	}
-
-	return NULL;
+	CG_UpdatePMList(&cg_pmWaitingListXP, &cg_pmOldListXP, cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
+	CG_UpdatePMList(&cg_pmWaitingListBig, NULL, PM_BIGPOPUP_TIME, cg_popupStayTime.integer, cg_popupFadeTime.integer);   // TODO: cvar popup BIG ?
 }
 
 /**
  * @brief CG_FindFreePMItem
+ * @param[in] waitingList
+ * @param[in] oldList
+ * @param[in] PMListSize
  * @return
  */
-pmListItem_t *CG_FindFreePMItem(int stackNum)
+pmListItem_t *CG_FindFreePMItem(pmListItem_t stack[], pmListItem_t **oldList, int PMListSize)
 {
-	pmListItem_t *listItem;
-	pmListItem_t *lastItem;
-	int          i = 0;
+	int i = 0;
 
-	for ( ; i < NUM_PM_STACK_ITEMS; i++)
+	for ( ; i < PMListSize; i++)
 	{
-		if (!cg_pmStack[stackNum][i].inuse)
+		if (!stack[i].inuse)
 		{
-			return &cg_pmStack[stackNum][i];
+			return &stack[i];
 		}
 	}
 
 	// no totally free items, so just grab the last item in the oldlist
-	if ((lastItem = listItem = cg_pmOldList[stackNum]))
+	if (*oldList)
 	{
+		pmListItem_t *listItem = *oldList;
+		pmListItem_t *lastItem = *oldList;
+
 		while (listItem->next)
 		{
 			lastItem = listItem;
 			listItem = listItem->next;
 		}
 
-		if (lastItem == cg_pmOldList[stackNum])
+		if (lastItem == *oldList)
 		{
-			cg_pmOldList[stackNum] = NULL;
+			*oldList = NULL;
 		}
 		else
 		{
@@ -336,11 +312,9 @@ pmListItem_t *CG_FindFreePMItem(int stackNum)
 
 		return listItem;
 	}
-	else
-	{
-		// there is no old list... PANIC!
-		return NULL;
-	}
+
+	// there is no old list... PANIC!
+	return NULL;
 }
 
 /**
@@ -390,7 +364,7 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 {
 	pmListItem_t   *listItem;
 	char           *end;
-	hudComponent_t *pmComp = (hudComponent_t*)((byte *)&CG_GetActiveHUD()->popupmessages + stackNum * sizeof(hudComponent_t));
+	hudComponent_t *pmComp = (hudComponent_t *)((byte *)&CG_GetActiveHUD()->popupmessages + stackNum * sizeof(hudComponent_t));
 
 	if (!message || !*message)
 	{
@@ -408,7 +382,7 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 		return;
 	}
 
-	listItem = CG_FindFreePMItem(stackNum);
+	listItem = CG_FindFreePMItem(cg_pmStack[stackNum], &cg_pmOldList[stackNum], NUM_PM_STACK_ITEMS);
 
 	if (!listItem)
 	{
@@ -526,7 +500,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
  * @brief CG_PMItemBigSound
  * @param item
  */
-void CG_PMItemBigSound(pmListItemBig_t *item)
+void CG_PMItemBigSound(pmListItem_t *item)
 {
 	if (!cg.snap)
 	{
@@ -558,9 +532,9 @@ void CG_PMItemBigSound(pmListItemBig_t *item)
  */
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader)
 {
-	pmListItemBig_t *listItem;
+	pmListItem_t *listItem;
 
-	listItem = CG_FindFreePMItemBig();
+	listItem = CG_FindFreePMItem(cg_pmStackBig, NULL, NUM_PM_STACK_ITEMS_BIG);
 
 	if (!listItem)
 	{
@@ -590,7 +564,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	}
 	else
 	{
-		pmListItemBig_t *loop = cg_pmWaitingListBig;
+		pmListItem_t *loop = cg_pmWaitingListBig;
 
 		while (loop->next)
 		{
@@ -601,7 +575,119 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	}
 }
 
-static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float *y, float lineHeight, float size)
+/**
+ * @brief CG_AddPMItemXP
+ * @param[in] type
+ * @param[in] message
+ * @param[in] message2
+ * @param[in] shader
+ */
+void CG_AddPMItemXP(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader)
+{
+	pmListItem_t *listItem;
+	char         *end;
+
+	if (!message || !*message)
+	{
+		return;
+	}
+
+	if (type >= PM_XPGAIN_NUM_TYPES)
+	{
+		CG_Printf("Invalid XP gain popup type: %d\n", type);
+		return;
+	}
+
+	listItem = CG_FindFreePMItem(cg_pmStackXP, &cg_pmOldListXP, NUM_PM_STACK_ITEMS_XP);
+
+	if (!listItem)
+	{
+		return;
+	}
+
+	if (shader)
+	{
+		listItem->shader = shader;
+	}
+	else
+	{
+		listItem->shader = -1;
+	}
+
+	listItem->inuse = qtrue;
+	listItem->type  = type;
+	VectorCopy(colorWhite, listItem->color);
+	Q_strncpyz(listItem->message, message, sizeof(cg_pmStackXP[0].message));
+
+	// print and THEN chop off the newline, as the console deals with newlines perfectly
+	if (listItem->message[strlen(listItem->message) - 1] == '\n')
+	{
+		listItem->message[strlen(listItem->message) - 1] = 0;
+	}
+
+	// chop off the newline at the end if any
+	while ((end = strchr(listItem->message, '\n')))
+	{
+		*end = '\0';
+	}
+
+	// don't eat popups for empty lines
+	if (*listItem->message == '\0')
+	{
+		return;
+	}
+
+	if (message2 && !(CG_GetActiveHUD()->xpgain.style & POPUP_XPGAIN_NO_REASON))
+	{
+		Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStackXP[0].message2));
+
+		/*
+		if (listItem->message[strlen(listItem->message2) - 1] == '\n')
+		{
+			listItem->message[strlen(listItem->message2) - 1] = 0;
+		}
+
+		while ((end = strchr(listItem->message2, '\n')))
+		{
+			*end = '\0';
+		}
+
+		if (*listItem->message2 == '\0')
+		{
+			return;
+		}
+		*/
+	}
+
+	if (!cg_pmWaitingListXP)
+	{
+		cg_pmWaitingListXP = listItem;
+		listItem->time     = cg.time;
+	}
+	else
+	{
+		pmListItem_t *loop = cg_pmWaitingListXP;
+
+		while (loop->next)
+		{
+			loop = loop->next;
+		}
+
+		loop->next = listItem;
+	}
+}
+
+/**
+ * @brief CG_DrawPMItems
+ * @param[in] comp
+ * @param[in] listItem
+ * @param[in,out] y
+ * @param[in] lineHeight
+ * @param[in] size
+ * @return
+ */
+static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, float *y, float lineHeight, float size, qboolean scrollDown,
+                               int time, int stayTime, int fadeTime)
 {
 	float  t;
 	float  w;
@@ -620,10 +706,10 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 	Vector4Copy(comp->colorMain, colorText);
 	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
 
-	t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
+	t = listItem->time + time + stayTime;
 	if (cg.time > t)
 	{
-		colorText[3] *= 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
+		colorText[3] *= 1 - ((cg.time - t) / (float)fadeTime);
 	}
 
 	Q_strncpyz(buffer, CG_TranslateString(listItem->message), sizeof(buffer));
@@ -650,7 +736,7 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 	CG_WordWrapString(buffer, CG_GetMaxCharsPerLine(buffer, scale, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
 
 	// we reach the comp border, don't print the line
-	if (comp->style & POPUP_SCROLL_DOWN)
+	if (scrollDown)
 	{
 		*y += lineHeight;
 
@@ -738,15 +824,14 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 	}
 
 	// next line
-	*y += (comp->style & POPUP_SCROLL_DOWN) ? lineHeight * (lineNumber - 1) + lineHeight * 0.25f : -(lineHeight + lineHeight * 0.25f);
+	*y += scrollDown ? lineHeight * (lineNumber - 1) + lineHeight * 0.25f : -(lineHeight + lineHeight * 0.25f);
 
 	return qtrue;
 }
 
 /**
- * @brief CG_DrawPMItems
- * @param[in] rect
- * @param[in] style
+ * @brief CG_DrawPM
+ * @param[in] comp
  */
 void CG_DrawPM(hudComponent_t *comp)
 {
@@ -777,18 +862,19 @@ void CG_DrawPM(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	isScapeAvailable = CG_DrawPMItems(comp, cg_pmWaitingList[pmNum], &y, lineHeight, size);
+	isScapeAvailable = CG_DrawPMItems(comp, cg_pmWaitingList[pmNum], &y, lineHeight, size, comp->style & POPUP_SCROLL_DOWN,
+	                                  cg_popupTime.integer, cg_popupStayTime.integer, cg_popupFadeTime.integer);
 
 	for (listItem = cg_pmOldList[pmNum]; listItem && isScapeAvailable; listItem = listItem->next)
 	{
-		isScapeAvailable = CG_DrawPMItems(comp, listItem, &y, lineHeight, size);
+		isScapeAvailable = CG_DrawPMItems(comp, listItem, &y, lineHeight, size, comp->style & POPUP_SCROLL_DOWN,
+		                                  cg_popupTime.integer, cg_popupStayTime.integer, cg_popupFadeTime.integer);
 	}
 }
 
 /**
  * @brief CG_DrawPMItemsBig
- * @param[in] style
- * @return
+ * @param[in] comp
  */
 void CG_DrawPMItemsBig(hudComponent_t *comp)
 {
@@ -837,6 +923,48 @@ void CG_DrawPMItemsBig(hudComponent_t *comp)
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, scale, 0, &cgs.media.limboFont2);
 
 	CG_Text_Paint_Ext(comp->location.x + (comp->location.w - w) - iconsSize, comp->location.y + iconsSize + h * 0.5, scale, scale, colorText, cg_pmWaitingListBig->message, 0, 0, comp->styleText, &cgs.media.limboFont2);
+}
+
+/**
+ * @brief CG_DrawPMItemsXPGain
+ * @param[in] comp
+ */
+void CG_DrawPMItemsXPGain(hudComponent_t *comp)
+{
+	pmListItem_t *listItem;
+	float        lineHeight;
+	float        size;
+	float        y;
+	qboolean     isScapeAvailable;
+
+	if (!cg_pmWaitingListXP)
+	{
+		return;
+	}
+
+	size = lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2)
+	                    * 1.5f;
+
+	y = comp->style & POPUP_XPGAIN_SCROLL_DOWN ? comp->location.y : comp->location.y + comp->location.h;
+
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
+	isScapeAvailable = CG_DrawPMItems(comp, cg_pmWaitingListXP, &y, lineHeight, size, comp->style & POPUP_XPGAIN_SCROLL_DOWN,
+	                                  cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
+
+	for (listItem = cg_pmOldListXP; listItem && isScapeAvailable; listItem = listItem->next)
+	{
+		isScapeAvailable = CG_DrawPMItems(comp, listItem, &y, lineHeight, size, comp->style & POPUP_XPGAIN_SCROLL_DOWN,
+		                                  cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
+	}
 }
 
 /**

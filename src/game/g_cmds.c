@@ -749,8 +749,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 					points = 20;
 				}
 
-				G_AddSkillPoints(ent, skill, points);
-				G_DebugAddSkillPoints(ent, skill, points, "give skill");
+				G_AddSkillPoints(ent, skill, points, "give skill");
 
 				// ceil the given points to keep consistency with the displayed XP value in HUD
 				trap_SendServerCommand(ent - g_entities, va("print \"give skill: Skill %i '%s' increased (+%.0fXP).\n\"", skill, GetSkillTableData(skill)->skillNames, ceil(points)));
@@ -773,8 +772,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 					points = 20;
 				}
 
-				G_AddSkillPoints(ent, skill, points);
-				G_DebugAddSkillPoints(ent, skill, points, "give skill");
+				G_AddSkillPoints(ent, skill, points, "give skill");
 			}
 			trap_SendServerCommand(ent - g_entities, va("print \"give skill: All skills increased by 1 level.\n\""));
 		}
@@ -3915,8 +3913,7 @@ qboolean Do_UniformStealing(gentity_t *ent, gentity_t *traceEnt)
 						// sound effect
 						G_AddEvent(ent, EV_DISGUISE_SOUND, 0);
 
-						G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f);
-						G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f, "stealing uniform");
+						G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f, "uniform stealed");
 
 						ent->client->disguiseClientNum = traceEnt->s.clientNum;
 
