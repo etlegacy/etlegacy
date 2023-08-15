@@ -233,13 +233,14 @@ static void CG_Obituary(entityState_t *ent)
 	for (i = 0; i < 3; ++i)
 	{
 		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&CG_GetActiveHUD()->popupmessages + i * sizeof(hudComponent_t));
-		message  = NULL;
-		message2 = NULL;
 
 		if (!pmComp->visible)
 		{
 			continue;
 		}
+
+		message = NULL;
+		message2 = NULL;
 
 		Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
 		if (pmComp->style & POPUP_FORCE_COLORS)
