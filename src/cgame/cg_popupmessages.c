@@ -288,7 +288,7 @@ pmListItem_t *CG_FindFreePMItem(pmListItem_t stack[], pmListItem_t **oldList, in
 	}
 
 	// no totally free items, so just grab the last item in the oldlist
-	if (*oldList)
+	if (oldList && *oldList)
 	{
 		pmListItem_t *listItem = *oldList;
 		pmListItem_t *lastItem = *oldList;
