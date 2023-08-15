@@ -358,8 +358,8 @@ static void CG_Obituary(entityState_t *ent)
 	else
 	{
 		// we don't know what it was
-		CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
-		trap_Print(va("^7%s^7 died\n", targetName));
+		CG_AddPMItem(PM_DEATH, va("%s %s.", ci->name, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
+		trap_Print(va("^7%s^7 died\n", ci->name));
 	}
 }
 
