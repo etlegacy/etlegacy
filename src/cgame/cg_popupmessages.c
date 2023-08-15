@@ -184,19 +184,19 @@ void CG_UpdatePMList(pmListItem_t **waitingList, pmListItem_t **oldList, int tim
 				*waitingList         = listItem->next;
 				(*waitingList)->time = cg.time; // set time we popped up at
 
-				//if (oldList)
-				//{
-				CG_AddToListFront(oldList, listItem);
-				//}
-				//else
-				//{
-				//	// TODO: for now only rank/skill up use shorter PM List
-				//	// so let abuse of it while it is alone
-				//	CG_PMItemBigSound(waitingList);
+				if (oldList)
+				{
+					CG_AddToListFront(oldList, listItem);
+				}
+				else
+				{
+					// TODO: for now only rank/skill up use shorter PM List
+					// so let abuse of it while it is alone
+					CG_PMItemBigSound(*waitingList);
 
-				//	listItem->inuse = qfalse;
-				//	listItem->next  = NULL;
-				//}
+					listItem->inuse = qfalse;
+					listItem->next  = NULL;
+				}
 			}
 			else
 			{
