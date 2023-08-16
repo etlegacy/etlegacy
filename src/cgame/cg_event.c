@@ -347,7 +347,7 @@ static void CG_Obituary(entityState_t *ent)
 
 	if (message)
 	{
-		if (ca)
+		if (ca && attacker != target)
 		{
 			trap_Print(va((ci->team == ca->team ? "^7%s^1 %s ^7%s^1%s\n" : "^7%s^7 %s ^7%s^7%s\n"), targetName, CG_TranslateString(message), attackerName, CG_TranslateString(message2)));
 		}
