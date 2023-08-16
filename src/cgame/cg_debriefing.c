@@ -3644,8 +3644,8 @@ void CG_Debriefing_VoteButton_Draw(panel_button_t *button)
 		vec4_t clrBck_hi = { 0.5f, 0.5f, 0.5f, 0.4f };
 		vec4_t clrTxt_hi = { 0.9f, 0.9f, 0.f, 1.f };
 
-		clrBck[0] = Q_fabs(sin(cg.time / BLINK_DIVISOR));
-		clrBck[3] = Q_fabs(cos(cg.time / BLINK_DIVISOR));
+		clrBck[0] = Q_fabs(sin(cg.time / (float)BLINK_DIVISOR));
+		clrBck[3] = Q_fabs(cos(cg.time / (float)BLINK_DIVISOR));
 
 		qboolean hilight = BG_CursorInRect(&button->rect);
 

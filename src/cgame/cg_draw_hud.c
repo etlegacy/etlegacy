@@ -98,6 +98,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,  { "Full Color" } },// FIXME: outside cg_draw_hud
 	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",         "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",          "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
+	{ HUDF(xpgain),           CG_DrawPMItemsXPGain,      0.22f,  { "Scroll Down", "No Reason" } },// FIXME: outside cg_draw_hud
 	{ NULL,                   0,                         qfalse, NULL, 0.00f,{ 0 } },
 };
 
@@ -225,6 +226,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->crosshairtext    = CG_getComponent(SCREEN_WIDTH * .5f - 150, 182, 300, 16, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairNames);
 	hud->crosshairbar     = CG_getComponent(SCREEN_WIDTH * .5f - 55, 199, 110, 10, qtrue, CROSSHAIR_BAR_CLASS | CROSSHAIR_BAR_RANK | ((BAR_BG | BAR_LERP_COLOR) << 3), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawCrosshairHealthBar);
 	hud->stats            = CG_getComponent(SCREEN_WIDTH - 60, 291, 57, 62, qtrue, GAMESTATS_KILL | GAMESTATS_DEATH | GAMESTATS_SELFKILL, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawPlayerStats);
+	hud->xpgain           = CG_getComponent(SCREEN_WIDTH * .5f + 24, SCREEN_HEIGHT * .5 - 24, 250, 57, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPMItemsXPGain);
 }
 
 /**

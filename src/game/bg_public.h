@@ -3030,6 +3030,18 @@ typedef enum popupMessageBigType_e
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
 
+/**
+ * @enum popupMessageXPGainType_e
+ * @typedef popupMessageXPGainType_t
+ * @brief
+ */
+typedef enum popupMessageXPGainType_e
+{
+    PM_GAIN = 0,
+    PM_LOSE,
+    PM_XPGAIN_NUM_TYPES
+} popupMessageXPGainType_t;
+
 #define HITBOXBIT_HEAD   1024
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096

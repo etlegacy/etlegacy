@@ -174,7 +174,7 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 	for (i = NUM_SKILL_LEVELS - 1, lvlSkipped = 0; i >= 0; i--)
 	{
-        if (GetSkillTableData(skill)->skillLevels[i] <= -1)
+		if (GetSkillTableData(skill)->skillLevels[i] <= -1)
 		{
 			lvlSkipped++;
 			continue;
@@ -280,7 +280,7 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 		bg_weaponclass_t *weaponClassInfo = &classInfo->classMiscWeapons[i];
 
 		if (BG_IsSkillAvailable(ent->client->sess.skill, classInfo->classMiscWeapons[i].skill, classInfo->classMiscWeapons[i].minSkillLevel)
-                    && skill == classInfo->classMiscWeapons[i].skill && ent->client->sess.skill[skill] == classInfo->classMiscWeapons[i].minSkillLevel)
+		    && skill == classInfo->classMiscWeapons[i].skill && ent->client->sess.skill[skill] == classInfo->classMiscWeapons[i].minSkillLevel)
 		{
 			AddWeaponToPlayer(ent->client, weaponClassInfo->weapon, classInfo->classMiscWeapons[i].startingAmmo, classInfo->classMiscWeapons[i].startingClip, qfalse);
 		}
@@ -293,7 +293,7 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
  * @param[in] skill
  * @param[in] points
  */
-void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
+void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points, const char *reason)
 {
 	int   oldskill;
 	float oldskillpoints;
@@ -331,7 +331,8 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 		ent->client->sess.skillpoints[skill] = GetSkillTableData(skill)->skillLevels[oldskill];
 	}
 
-	G_Printf("%s ^7just lost %.0f skill points for skill %s\n", ent->client->pers.netname, (double)(oldskillpoints - ent->client->sess.skillpoints[skill]), GetSkillTableData(skill)->skillNames);
+	G_Printf("%s ^7just lost %.0f skill points for skill %s, reason: %s.\n",
+	         ent->client->pers.netname, (double)(oldskillpoints - ent->client->sess.skillpoints[skill]), GetSkillTableData(skill)->skillNames, reason);
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]]        -= oldskillpoints - ent->client->sess.skillpoints[skill];
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] -= oldskillpoints - ent->client->sess.skillpoints[skill];
@@ -421,7 +422,7 @@ void G_ResetXP(gentity_t *ent)
  * @param[in] skill
  * @param[in] points
  */
-void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
+void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points, const char *reason)
 {
 	int oldskill;
 
@@ -452,7 +453,8 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += points;
 
-	//G_Printf( "%s just got %.0f skill points for skill %s\n", ent->client->pers.netname, points, skillNames[skill] );
+	// send XP gaining reason to client
+	trap_SendServerCommand(ent - g_entities, va("xpgain %i %f \"%s\"\n", skill, points, reason));
 
 	// see if player increased in skill
 	oldskill = ent->client->sess.skill[skill];
@@ -465,6 +467,9 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	// prepare scoreboard
 	CalculateRanks();
+
+	// debug on demand
+	G_DebugAddSkillPoints(ent, skill, points, reason);
 }
 
 /**
@@ -483,7 +488,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 
 	if (GetMODTableData(mod)->skillType < SK_NUM_SKILLS)
 	{
-		G_LoseSkillPoints(tker, GetMODTableData(mod)->skillType, GetMODTableData(mod)->defaultKillPoints);
+		G_LoseSkillPoints(tker, GetMODTableData(mod)->skillType, GetMODTableData(mod)->defaultKillPoints, "Team Killing");
 	}
 
 	// prepare scoreboard
@@ -543,8 +548,7 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 
 	skillType = GetMODTableData(mod)->skillType;
 
-	G_AddSkillPoints(attacker, skillType, points);
-	G_DebugAddSkillPoints(attacker, skillType, points, reason);
+	G_AddSkillPoints(attacker, skillType, points, reason);
 
 	// prepare scoreboard
 	CalculateRanks();
@@ -560,8 +564,7 @@ void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod,
 {
 	if (GetMODTableData(mod)->skillType < SK_NUM_SKILLS)
 	{
-		G_AddSkillPoints(attacker, GetMODTableData(mod)->skillType, constructibleStats->destructxpbonus);
-		G_DebugAddSkillPoints(attacker, GetMODTableData(mod)->skillType, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
+		G_AddSkillPoints(attacker, GetMODTableData(mod)->skillType, constructibleStats->destructxpbonus, "destroying objective");
 	}
 
 	// prepare scoreboard
@@ -693,7 +696,7 @@ void G_BuildEndgameStats(void)
 {
 	char      buffer[1024];
 	int       i, j;
-	gclient_t *best = NULL;
+	gclient_t *best         = NULL;
 	int       bestClientNum = -1;
 	float     mapXP, bestMapXP = 0.f;
 

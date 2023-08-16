@@ -480,8 +480,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 
 		if (!traceEnt->isProp) // flag for if they were teamkilled or not
 		{
-			G_AddSkillPoints(ent, SK_FIRST_AID, 4.f);
-			G_DebugAddSkillPoints(ent, SK_FIRST_AID, 4.f, "reviving a player");
+			G_AddSkillPoints(ent, SK_FIRST_AID, 4.f, "revive");
 		}
 
 		// calculate ranks to update numFinalDead arrays. Have to do it manually as addscore has an early out
@@ -1028,8 +1027,7 @@ static qboolean TryConstructing(gentity_t *ent, gentity_t *trigger)
 		// constructible xp sharing
 		addhealth  = (255.f / (constructible->constructibleStats.duration / (float)FRAMETIME));
 		xpperround = constructible->constructibleStats.constructxpbonus / (255.f / addhealth) + 0.01f;
-		G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround);
-		G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "construction sharing.");
+		G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "constructing");
 
 		// Give health until it is full, don't continue
 		constructible->s.angles2[0] += addhealth;
@@ -1660,8 +1658,7 @@ weapengineergoto1:
 			if (traceEnt->sound3to2 != ent->client->sess.sessionTeam)
 			{
 				// constructible xp sharing - some lucky dood is going to get the last 0.00035 points and the repair bonus
-				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f);
-				G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f, "repairing a MG 42");
+				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f, "repairing");
 			}
 
 			traceEnt->takedamage = qtrue;
@@ -1680,8 +1677,7 @@ weapengineergoto1:
 			G_PrintClientSpammyCenterPrint(ent - g_entities, "Repairing MG 42...");
 
 			// constructible xp sharing - repairing an emplaced mg42
-			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround);
-			G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "repairing a MG 42");
+			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "repairing");
 		}
 	}
 	else if (traceEnt == ent->client->touchingTOI && TryConstructing(ent, traceEnt))
@@ -1876,8 +1872,7 @@ weapengineergoto3:
 
 						if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
 						{
-							G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f);
-							G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "defusing an enemy landmine");
+							G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "defusing landmine");
 						}
 
 						// update our map
@@ -1921,8 +1916,7 @@ weapengineergoto3:
 				// consistency with dynamite defusing
 				G_PrintClientSpammyCenterPrint(ent - g_entities, "Satchel charge disarmed");
 
-				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
-				G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "disarming satchel charge");
+				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "disarming satchel");
 			}
 			else
 			{
@@ -2364,8 +2358,7 @@ weapengineergoto3:
 
 							if ((hit->spawnflags & (ent->client->sess.sessionTeam == TEAM_AXIS ? AXIS_OBJECTIVE : ALLIED_OBJECTIVE)) && (!scored))
 							{
-								G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
-								G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
+								G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
 								scored++;
 							}
 
@@ -2434,8 +2427,7 @@ weapengineergoto3:
 							if (hit->s.teamNum == ent->client->sess.sessionTeam && (!scored))
 							{
 								G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
-								G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
-								G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
+								G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
 								scored++;
 							}
 

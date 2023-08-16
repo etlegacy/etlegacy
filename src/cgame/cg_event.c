@@ -233,13 +233,14 @@ static void CG_Obituary(entityState_t *ent)
 	for (i = 0; i < 3; ++i)
 	{
 		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&CG_GetActiveHUD()->popupmessages + i * sizeof(hudComponent_t));
-		message  = NULL;
-		message2 = NULL;
 
 		if (!pmComp->visible)
 		{
 			continue;
 		}
+
+		message = NULL;
+		message2 = NULL;
 
 		Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
 		if (pmComp->style & POPUP_FORCE_COLORS)
@@ -358,8 +359,8 @@ static void CG_Obituary(entityState_t *ent)
 	else
 	{
 		// we don't know what it was
-		CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
-		trap_Print(va("^7%s^7 died\n", targetName));
+		CG_AddPMItem(PM_DEATH, va("%s %s.", ci->name, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
+		trap_Print(va("^7%s^7 died\n", ci->name));
 	}
 }
 

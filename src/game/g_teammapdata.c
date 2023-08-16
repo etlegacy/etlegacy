@@ -1231,8 +1231,8 @@ void G_CheckSpottedLandMines(void)
 
 										trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\"");
 
-										G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
-										G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine");
+										
+										G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "landmine spotted");
 									}
 								}
 								break;
