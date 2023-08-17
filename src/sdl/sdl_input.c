@@ -1849,7 +1849,7 @@ void IN_Init(void)
 	in_nograb = Cvar_Get("in_nograb", "0", CVAR_ARCHIVE);
 
 	in_joystick          = Cvar_Get("in_joystick", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
-    Cvar_Set(in_joystickThreshold , "0.25");
+	in_joystickThreshold = Cvar_Get("in_joystickThreshold", "0.25", CVAR_ARCHIVE_ND);
 
 	SDL_StartTextInput();
 
