@@ -1168,7 +1168,7 @@ void R_Init(void)
 	Com_Memset(&backEnd, 0, sizeof(backEnd));
 	Com_Memset(&tess, 0, sizeof(tess));
 
-    // allign tess.xyz to 16 bytes
+    // align tess.xyz to 16 bytes
     Com_Memset(&tmptess.xyz, 15, sizeof(vec4_t));
     Com_Memcpy(&tmptess.xyz, &tess.xyz, sizeof(vec4_t));
     Com_Memcpy(&tess.xyz, &tmptess.xyz, sizeof(vec4_t));
