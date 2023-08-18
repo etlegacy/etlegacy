@@ -35,6 +35,7 @@
 
 #include "tr_local.h"
 
+shaderCommands_t tmptess;
 glconfig_t glConfig;
 qboolean   textureFilterAnisotropic = qfalse;
 float        maxAnisotropy            = 0.0f;
@@ -1166,6 +1167,12 @@ void R_Init(void)
 	Com_Memset(&tr, 0, sizeof(tr));
 	Com_Memset(&backEnd, 0, sizeof(backEnd));
 	Com_Memset(&tess, 0, sizeof(tess));
+
+    // allign tess.xyz to 16 bytes
+    Com_Memset(&tmptess.xyz, 15, sizeof(vec4_t));
+    Com_Memcpy(&tmptess.xyz, &tess.xyz, sizeof(vec4_t));
+    Com_Memcpy(&tess.xyz, &tmptess.xyz, sizeof(vec4_t));
+    Com_Memset(&tmptess.xyz, 0, sizeof(vec4_t));
 
 	if ((intptr_t) tess.xyz & 15)
 	{
