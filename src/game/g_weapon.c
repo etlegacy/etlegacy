@@ -2164,7 +2164,7 @@ weapengineergoto3:
 							{
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
-									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));
+									G_LogPrintf("Dynamite_Plant: %d %s\n", (int)(traceEnt->parent - g_entities), hit->track);
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
 
@@ -2257,7 +2257,7 @@ weapengineergoto3:
 							{
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
-									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));
+									G_LogPrintf("Dynamite_Plant: %d %s\n", (int)(traceEnt->parent - g_entities), hit->parent->track);
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
 
@@ -2358,6 +2358,7 @@ weapengineergoto3:
 
 							if ((hit->spawnflags & (ent->client->sess.sessionTeam == TEAM_AXIS ? AXIS_OBJECTIVE : ALLIED_OBJECTIVE)) && (!scored))
 							{
+								G_LogPrintf("Dynamite_Diffuse: %d %s\n", (int)(ent - g_entities), hit->parent ? hit->parent->track : hit->track);
 								G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
 								scored++;
 							}
@@ -2426,7 +2427,7 @@ weapengineergoto3:
 							// we got something to destroy
 							if (hit->s.teamNum == ent->client->sess.sessionTeam && (!scored))
 							{
-								G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
+								G_LogPrintf("Dynamite_Diffuse: %d %s\n", (int)(ent - g_entities), hit->parent ? hit->parent->track : hit->track);
 								G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
 								scored++;
 							}
