@@ -1158,6 +1158,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	int              i;
 	bg_weaponclass_t *weaponClassInfo;
 	bg_playerclass_t *classInfo;
+	weapon_t         weaponPrimary;
 
 	if (client->sess.sessionTeam == TEAM_SPECTATOR)
 	{
@@ -1222,6 +1223,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	}
 
 	// add primary weapon (set to current weapon)
+	weaponPrimary = weaponClassInfo->weapon;
 	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qtrue);
 
 	//
@@ -1249,8 +1251,11 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		}
 	}
 
-	// add secondary weapon
-	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
+	// add secondary weapon, but only if it's different from the primary one
+	if (weaponClassInfo->weapon != weaponPrimary)
+	{
+		AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
+	}
 
 	//
 	// special weapons and items
