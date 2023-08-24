@@ -634,7 +634,7 @@ static void CG_MessageMode_f(void)
 {
 	char cmd[64];
 
-	if (cgs.eventHandling != CGAME_EVENT_NONE)
+	if (cgs.eventHandling != CGAME_EVENT_NONE && cgs.eventHandling != CGAME_EVENT_SHOUTCAST)
 	{
 		return;
 	}
