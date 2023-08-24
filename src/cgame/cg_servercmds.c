@@ -1816,7 +1816,7 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 
 	if (CG_GetVoiceChat(voiceChatList, cmd, &snd, &sprite, &chat))
 	{
-		if (mode == SAY_TEAM || mode == SAY_BUDDY || !cg_teamChatsOnly.integer || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+		if (mode == SAY_TEAM || mode == SAY_BUDDY || !cg_teamVoiceChatsOnly.integer || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 		{
 			bufferedVoiceChat_t vchat;
 			const char          *loc = " ";
@@ -3182,6 +3182,11 @@ static void CG_ServerCommand(void)
 		return;
 	}
 	case VCHAT_HASH:                              // "vchat"
+		if (cg_teamVoiceChatsOnly.integer && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
+		{
+			return;
+		}
+
 		CG_VoiceChat(SAY_ALL);              // enabled support
 		return;
 	case TCHAT_HASH:                              // "tchat"

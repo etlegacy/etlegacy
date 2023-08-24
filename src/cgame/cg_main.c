@@ -142,6 +142,7 @@ vmCvar_t cg_weaponCycleDelay;
 vmCvar_t cg_cycleAllWeaps;
 vmCvar_t cg_useWeapsForZoom;
 vmCvar_t cg_teamChatsOnly;
+vmCvar_t cg_teamVoiceChatsOnly;
 vmCvar_t cg_voiceChats;
 vmCvar_t cg_voiceText;
 vmCvar_t cg_drawStatus;
@@ -473,6 +474,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_voiceSpriteTime,          "cg_voiceSpriteTime",          "6000",        CVAR_ARCHIVE,                 0 },
 
 	{ &cg_teamChatsOnly,            "cg_teamChatsOnly",            "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_teamVoiceChatsOnly,       "cg_teamVoiceChatsOnly",       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_voiceChats,               "cg_voiceChats",               "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_voiceText,                "cg_voiceText",                "1",           CVAR_ARCHIVE,                 0 },
 
