@@ -107,6 +107,7 @@ static void SV_Map_f(void)
 	char     mapname[MAX_QPATH];
 	qboolean cheat;
 	char     expanded[MAX_QPATH];
+	char     *c;
 
 	cmd = Cmd_Argv(0);
 	map = Cmd_Argv(1);
@@ -141,6 +142,12 @@ static void SV_Map_f(void)
 	// save the map name here cause on a map restart we reload the etconfig.cfg
 	// and thus nuke the arguments of the map command
 	Q_strncpyz(mapname, map, sizeof(mapname));
+
+	// enforce lowercase names for consistency
+	for (c = mapname; *c; ++c)
+	{
+		*c = tolower(*c);
+	}
 
 	// start up the map
 	SV_SpawnServer(mapname);
