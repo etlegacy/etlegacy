@@ -2585,6 +2585,14 @@ qboolean Svcmd_Chat_f(void)
 }
 
 /**
+ * @brief Svcmd_Qsay_f
+ */
+void Svcmd_Qsay_f(void)
+{
+	trap_SendServerCommand(-1, va("chat \"%s\"", Q_AddCR(ConcatArgs(1))));
+}
+
+/**
  * @brief Svcmd_PassVote_f
  */
 static void Svcmd_PassVote_f(void)
@@ -2658,6 +2666,7 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "ref",                        Svcmd_Ref_f                   },    // console also gets ref commands
 	{ "passvote",                   Svcmd_PassVote_f              },
 	{ "cancelvote",                 Svcmd_CancelVote_f            },
+	{ "qsay",                       Svcmd_Qsay_f                  },
 };
 
 /**
