@@ -1142,6 +1142,7 @@ void Svcmd_RevivePlayer(void)
 	}
 	player = &g_entities[clientNum];
 
+	G_DropItems(player); // otherwise flag will be lost for good
 	ReviveEntity(player, player);
 }
 
