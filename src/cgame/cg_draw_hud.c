@@ -2333,6 +2333,8 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
  */
 static void CG_CompasMoveLocationCalc(float *locationvalue, qboolean directionplus, qboolean animationout)
 {
+	float frac = cg_commandMapTime.value / 250.f;
+
 	if (animationout)
 	{
 		if (directionplus)
@@ -2348,11 +2350,11 @@ static void CG_CompasMoveLocationCalc(float *locationvalue, qboolean directionpl
 	{
 		if (!directionplus)
 		{
-			*locationvalue += (((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f) - 128.f;
+			*locationvalue += (((cg.time - cgs.autoMapExpandTime - 150.f * frac) / 100.f) * 128.f) - 128.f * frac;
 		}
 		else
 		{
-			*locationvalue -= (((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f) - 128.f;
+			*locationvalue -= (((cg.time - cgs.autoMapExpandTime - 150.f * frac) / 100.f) * 128.f) - 128.f * frac;
 		}
 	}
 }
@@ -2440,6 +2442,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 {
 	float      basex = comp->location.x, basey = comp->location.y, basew = comp->location.w, baseh = comp->location.h;
 	snapshot_t *snap;
+	float      expandedMapFrac;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -2460,9 +2463,12 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		return;
 	}
 
+	expandedMapFrac = cg_commandMapTime.value / 250.f;
+
 	if (cgs.autoMapExpanded)
 	{
-		if (cg.time - cgs.autoMapExpandTime < 100.f)
+		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR
+			&& cg.time - cgs.autoMapExpandTime < 100.f * expandedMapFrac)
 		{
 			if (!(comp->style & COMPASS_ALWAYS_DRAW))
 			{
@@ -2481,7 +2487,9 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	}
 	else
 	{
-		if (cg.time - cgs.autoMapExpandTime <= 150.f)
+		if (cg.time - cgs.autoMapExpandTime <= 150.f * expandedMapFrac
+			|| cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
+			&& cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 		{
 			CG_DrawExpandedAutoMap();
 
@@ -2490,7 +2498,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 				return;
 			}
 		}
-		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
+		else if ((cg.time - cgs.autoMapExpandTime > 150.f * expandedMapFrac) && (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.value))
 		{
 			if (!(comp->style & COMPASS_ALWAYS_DRAW))
 			{
