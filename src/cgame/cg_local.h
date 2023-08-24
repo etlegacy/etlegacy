@@ -2758,6 +2758,7 @@ extern vmCvar_t cg_paused;
 extern vmCvar_t cg_blood;
 extern vmCvar_t cg_predictItems;
 extern vmCvar_t cg_teamChatsOnly;
+extern vmCvar_t cg_teamVoiceChatsOnly;
 extern vmCvar_t cg_voiceChats;
 extern vmCvar_t cg_voiceText;
 extern vmCvar_t cg_autoactivate;
