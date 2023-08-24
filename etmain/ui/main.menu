@@ -124,7 +124,7 @@ menuDef {
 	#else
 		LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	#endif
-	BUTTON( __WINDOW_WIDTH/2-100-16+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
+	BUTTON( __WINDOW_WIDTH/2-100-16+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL https://www.etlegacy.com )
 #endif
 
 // Version //

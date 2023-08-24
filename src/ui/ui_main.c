@@ -5906,7 +5906,7 @@ void UI_RunMenuScript(char **args)
 			}
 			else
 			{
-				trap_openURL(PRODUCT_URL);
+				trap_openURL(UI_Cvar_VariableString("ui_finalURL"));
 			}
 		}
 		else if (Q_stricmp(name, "open_homepath") == 0)
