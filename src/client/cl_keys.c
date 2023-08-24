@@ -569,7 +569,7 @@ void Field_CharEvent(field_t *edit, int ch)
 	//charWidth = Q_UTF8_WidthCP(ch);
 	//value     = Q_UTF8_Encode(ch);
 
-	if (ch == CTRL('v'))      // ctrl-v is paste
+	if (ch == CTRL('v') && !keys[K_RALT].down)      // ctrl-v is paste
 	{
 		Field_Paste(edit);
 		return;
