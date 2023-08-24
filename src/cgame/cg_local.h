@@ -2926,6 +2926,8 @@ extern vmCvar_t cg_crosshairColorAlt;
 extern vmCvar_t cg_crosshairPulse;
 extern vmCvar_t cg_crosshairHealth;
 
+extern vmCvar_t cg_commandMapTime;
+
 // local clock flags
 enum
 {

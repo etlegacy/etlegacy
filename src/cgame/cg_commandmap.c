@@ -1716,9 +1716,9 @@ void CG_DrawExpandedAutoMap(void)
 
 	if (cgs.autoMapExpanded)
 	{
-		if (cg.time - cgs.autoMapExpandTime < 250.f)
+		if (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.value)
 		{
-			x -= ((cg.time - cgs.autoMapExpandTime) / 250.f) * (w + 30.f);
+			x -= ((cg.time - cgs.autoMapExpandTime) / cg_commandMapTime.value) * (w + 30.f);
 		}
 		else
 		{
@@ -1727,9 +1727,9 @@ void CG_DrawExpandedAutoMap(void)
 	}
 	else
 	{
-		if (cg.time - cgs.autoMapExpandTime < 250.f)
+		if (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.value)
 		{
-			x = (Ccg_WideX(SCREEN_WIDTH) - w - 20.f) + ((cg.time - cgs.autoMapExpandTime) / 250.f) * (w + 30.f);
+			x = (Ccg_WideX(SCREEN_WIDTH) - w - 20.f) + ((cg.time - cgs.autoMapExpandTime) / cg_commandMapTime.value) * (w + 30.f);
 		}
 		else
 		{
@@ -1847,6 +1847,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	mapScissor_t mapScissor;
 	vec2_t       automapTransformed;
 	snapshot_t   *snap;
+	float        expandedMapFrac;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -1864,9 +1865,11 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 		cgs.ccSelectedLayer = CG_CurLayerForZ((int)cg.predictedPlayerEntity.lerpOrigin[2]);
 	}
 
+	expandedMapFrac = cg_commandMapTime.value / 250.f;
+
 	if (cgs.autoMapExpanded)
 	{
-		if (cg.time - cgs.autoMapExpandTime < 100.f)
+		if (cg.time - cgs.autoMapExpandTime < 100.f * expandedMapFrac)
 		{
 			CG_DrawExpandedAutoMap();
 		}
@@ -1878,12 +1881,12 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	}
 	else
 	{
-		if (cg.time - cgs.autoMapExpandTime <= 150.f)
+		if (cg.time - cgs.autoMapExpandTime <= 150.f * expandedMapFrac)
 		{
 			CG_DrawExpandedAutoMap();
 			return;
 		}
-		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
+		else if ((cg.time - cgs.autoMapExpandTime > 150.f * expandedMapFrac) && (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.value))
 		{
 			CG_DrawExpandedAutoMap();
 		}

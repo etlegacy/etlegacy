@@ -852,9 +852,9 @@ static void CG_AutomapExpandDown_f(void)
 	if (!cgs.autoMapExpanded)
 	{
 		cgs.autoMapExpanded = qtrue;
-		if (cg.time - cgs.autoMapExpandTime < 250)
+		if (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.integer)
 		{
-			cgs.autoMapExpandTime = cg.time - (250 - (cg.time - cgs.autoMapExpandTime));
+			cgs.autoMapExpandTime = cg.time - (cg_commandMapTime.integer - (cg.time - cgs.autoMapExpandTime));
 		}
 		else
 		{
@@ -871,9 +871,9 @@ static void CG_AutomapExpandUp_f(void)
 	if (cgs.autoMapExpanded)
 	{
 		cgs.autoMapExpanded = qfalse;
-		if (cg.time - cgs.autoMapExpandTime < 250)
+		if (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.integer)
 		{
-			cgs.autoMapExpandTime = cg.time - (250 - (cg.time - cgs.autoMapExpandTime));
+			cgs.autoMapExpandTime = cg.time - (cg_commandMapTime.integer - (cg.time - cgs.autoMapExpandTime));
 		}
 		else
 		{
