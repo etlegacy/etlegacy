@@ -53,7 +53,7 @@ menuDef {
 	BUTTONEXT( 6, 176, WINDOW_WIDTH-12, 18, _("DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect, tooltip _("Disconnect your connection from current server") )
 	BUTTONEXT( 6, 200, WINDOW_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit, tooltip _("Don't press this. Be warned!") )
 #ifdef OLD_CLIENT
-	BUTTONEXT( 6, 224, WINDOW_WIDTH-12, 18, _("^1UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL, tooltip _("Upgrade!") )
+	BUTTONEXT( 6, 224, WINDOW_WIDTH-12, 18, _("^1UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL https://www.etlegacy.com, tooltip _("Upgrade!") )
 #endif
 
 // Vanilla client warning //
