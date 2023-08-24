@@ -367,7 +367,7 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #ifdef __APPLE__
 #define K_CLIPBOARD(x) (tolower(x) == 'v' && (DC->keyIsDown(K_LCTRL) || DC->keyIsDown(K_RCTRL) || DC->keyIsDown(K_COMMAND)))
 #else
-#define K_CLIPBOARD(x) (tolower(x) == 'v' && (DC->keyIsDown(K_LCTRL) || DC->keyIsDown(K_RCTRL)))
+#define K_CLIPBOARD(x) (tolower(x) == 'v' && (DC->keyIsDown(K_LCTRL) || DC->keyIsDown(K_RCTRL)) && !DC->keyIsDown(K_RALT))
 #endif
 
 // new ui stuff
