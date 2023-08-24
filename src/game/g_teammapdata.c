@@ -1286,18 +1286,22 @@ void G_UpdateTeamMapData(void)
 		switch (ent->s.eType)
 		{
 		case ET_PLAYER:
-			G_UpdateTeamMapData_Player(ent, qfalse, qfalse);
-			for (j = 0; j < 2; j++)
+		case ET_INVISIBLE: // noclip
+			if (ent->client)
 			{
-				mapEntityData_Team_t *teamList = &mapEntityData[j];
-
-				mEnt = G_FindMapEntityDataSingleClient(teamList, NULL, ent->s.number, -1);
-
-				while (mEnt)
+				G_UpdateTeamMapData_Player(ent, qfalse, qfalse);
+				for (j = 0; j < 2; j++)
 				{
-					VectorCopy(ent->client->ps.origin, mEnt->org);
-					mEnt->yaw = ent->client->ps.viewangles[YAW];
-					mEnt      = G_FindMapEntityDataSingleClient(teamList, mEnt, ent->s.number, -1);
+					mapEntityData_Team_t *teamList = &mapEntityData[j];
+
+					mEnt = G_FindMapEntityDataSingleClient(teamList, NULL, ent->s.number, -1);
+
+					while (mEnt)
+					{
+						VectorCopy(ent->client->ps.origin, mEnt->org);
+						mEnt->yaw = ent->client->ps.viewangles[YAW];
+						mEnt      = G_FindMapEntityDataSingleClient(teamList, mEnt, ent->s.number, -1);
+					}
 				}
 			}
 			break;
