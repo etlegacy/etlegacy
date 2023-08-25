@@ -917,7 +917,6 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 		}
 		else if (isClientFlame && f->blueLife > (lived / 2.0f) && !cgs.matchPaused)
 		{
-
 			skip = qfalse;
 
 			// if this is backwards from the last chunk, then skip it
@@ -957,8 +956,15 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 
 				if (f->blueLife > lived * 3.0f)
 				{
+                    float nozzleSize = f->size;
 
 					shader = nozzleShaders[(cg.time / 50 + (cg.time / 50 >> 1)) % NUM_NOZZLE_SPRITES];
+
+                    // if we have cg_drawGun 0, make the idle flame nozzle size 0
+                    if (f->ignitionOnly)
+                    {
+                        nozzleSize = cg_drawGun.integer ? nozzleSize * 2.0f : 0.0f;
+                    }
 
 					blueTrailHead = CG_AddTrailJunc(blueTrailHead,
 					                                NULL,     // rain - zinx's trail fix
@@ -968,7 +974,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 					                                f->org,
 					                                1,
 					                                alpha, alpha,
-					                                f->size * (f->ignitionOnly /*&& (cg.snap->ps.clientNum != f->ownerCent || cg_thirdPerson.integer)*/ ? 2.0f : 1.0f),
+					                                nozzleSize,
 					                                FLAME_MAX_SIZE,
 					                                TJFL_NOCULL | TJFL_FIXDISTORT,
 					                                c, c, 1.0, 5.0);

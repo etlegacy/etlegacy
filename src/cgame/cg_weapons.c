@@ -3026,14 +3026,14 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
  * @param[in] cent
  * @param[in] origin
  */
-static void CG_FlamethrowerFlame(centity_t *cent, vec3_t origin)
+static void CG_FlamethrowerFlame(centity_t *cent, vec3_t origin, qboolean firing)
 {
 	if (cent->currentState.weapon != WP_FLAMETHROWER)
 	{
 		return;
 	}
 
-	CG_FireFlameChunks(cent, origin, cent->lerpAngles, 1.0, qtrue);
+	CG_FireFlameChunks(cent, origin, cent->lerpAngles, 1.0, firing);
 	return;
 }
 
@@ -3721,7 +3721,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 
 			// Flamethrower effect
-			CG_FlamethrowerFlame(cent, muzzlePoint);
+			CG_FlamethrowerFlame(cent, muzzlePoint, qtrue);
 
 			if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
 			{
@@ -3794,7 +3794,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	                            && !(GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_MELEE)
 	                            && !(GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_SYRINGUE)))
 	{
-		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !BG_PlayerMounted(cg.predictedPlayerState.eFlags))
+		if (!BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 		{
 			vec3_t origin;
 
@@ -3806,7 +3806,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 			VectorMA(origin, -4, cg.refdef_current->viewaxis[2], origin);
 
 			// Flamethrower effect
-			CG_FlamethrowerFlame(&cg.predictedPlayerEntity, origin);
+			CG_FlamethrowerFlame(&cg.predictedPlayerEntity, origin, cg.predictedPlayerState.eFlags & EF_FIRING);
 		}
 
 		if (cg.binocZoomTime)
@@ -6107,25 +6107,25 @@ static void CG_AddWaterImpact(impactParticle_t *particleEffect, vec3_t origin, v
 	CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, particleEffect->waterRippleRadius, particleEffect->waterRippleLifeTime);
 
 	// particle
-    for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
-    {
-        impactParticleEffect_t *effect = &particleEffect->particleEffect[W_SND_SURF_WATER][i];
+	for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
+	{
+		impactParticleEffect_t *effect = &particleEffect->particleEffect[W_SND_SURF_WATER][i];
 
-        if (!effect->particleEffectUsed)
-        {
-            break;
-        }
+		if (!effect->particleEffectUsed)
+		{
+			break;
+		}
 
-        CG_AddDirtBulletParticles(trace.endpos, dir,
-                                  (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
-                                  effect->particleEffectDuration,
-                                  effect->particleEffectCount,
-                                  effect->particleEffectRandScale,
-                                  effect->particleEffectWidth,
-                                  effect->particleEffectHeight,
-                                  effect->particleEffectAlpha,
-                                  effect->particleEffectShader);
-    }
+		CG_AddDirtBulletParticles(trace.endpos, dir,
+		                          (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
+		                          effect->particleEffectDuration,
+		                          effect->particleEffectCount,
+		                          effect->particleEffectRandScale,
+		                          effect->particleEffectWidth,
+		                          effect->particleEffectHeight,
+		                          effect->particleEffectAlpha,
+		                          effect->particleEffectShader);
+	}
 
 	// play a water splash
 	if (cg_visualEffects.integer)
@@ -6166,47 +6166,47 @@ static void CG_AddCommonImpact(impactParticle_t *particleEffect, vec3_t origin, 
 	trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
 
 	// particle
-    for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
-    {
-        if (particleEffect->particleEffect[surfFlags][i].particleEffectUsed)
-        {
-            impactParticleEffect_t *effect = &particleEffect->particleEffect[surfFlags][i];
+	for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
+	{
+		if (particleEffect->particleEffect[surfFlags][i].particleEffectUsed)
+		{
+			impactParticleEffect_t *effect = &particleEffect->particleEffect[surfFlags][i];
 
-            CG_AddDirtBulletParticles(trace.endpos, dir,
-                                      (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
-                                      effect->particleEffectDuration,
-                                      effect->particleEffectCount,
-                                      effect->particleEffectRandScale,
-                                      effect->particleEffectWidth,
-                                      effect->particleEffectHeight,
-                                      effect->particleEffectAlpha,
-                                      effect->particleEffectShader);
-        }
-        else if (particleEffect->extraEffect[i].extraEffectUsed)
-        {
-            impactExtraEffect_t *effect = &particleEffect->extraEffect[i];
-            int                 j, count;
+			CG_AddDirtBulletParticles(trace.endpos, dir,
+			                          (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
+			                          effect->particleEffectDuration,
+			                          effect->particleEffectCount,
+			                          effect->particleEffectRandScale,
+			                          effect->particleEffectWidth,
+			                          effect->particleEffectHeight,
+			                          effect->particleEffectAlpha,
+			                          effect->particleEffectShader);
+		}
+		else if (particleEffect->extraEffect[i].extraEffectUsed)
+		{
+			impactExtraEffect_t *effect = &particleEffect->extraEffect[i];
+			int                 j, count;
 
-            for (count = 0; count < effect->extraEffectCount; count++)
-            {
-                for (j = 0; j < 3; j++)
-                {
-                    sprOrg[j] = origin[j] + effect->extraEffectOriginRand * crandom();
-                    sprVel[j] = effect->extraEffectVelocityRand * crandom();
-                }
+			for (count = 0; count < effect->extraEffectCount; count++)
+			{
+				for (j = 0; j < 3; j++)
+				{
+					sprOrg[j] = origin[j] + effect->extraEffectOriginRand * crandom();
+					sprVel[j] = effect->extraEffectVelocityRand * crandom();
+				}
 
-                VectorAdd(sprVel, trace.plane.normal, sprVel);
-                VectorScale(sprVel, effect->extraEffectVelocityScaling, sprVel);
-                CG_ParticleExplosion(effect->extraEffectShaderName,
-                                     sprOrg,
-                                     sprVel,
-                                     (int)(effect->extraEffectDuration + random() * effect->extraEffectDurationRand),
-                                     (int)(effect->extraEffectSizeStart + random() * effect->extraEffectSizeStartRand),
-                                     (int)(effect->extraEffectSizeEnd + random() * effect->extraEffectSizeEndRand),
-                                     effect->extraEffectLightAnim);
-            }
-        }
-    }
+				VectorAdd(sprVel, trace.plane.normal, sprVel);
+				VectorScale(sprVel, effect->extraEffectVelocityScaling, sprVel);
+				CG_ParticleExplosion(effect->extraEffectShaderName,
+				                     sprOrg,
+				                     sprVel,
+				                     (int)(effect->extraEffectDuration + random() * effect->extraEffectDurationRand),
+				                     (int)(effect->extraEffectSizeStart + random() * effect->extraEffectSizeStartRand),
+				                     (int)(effect->extraEffectSizeEnd + random() * effect->extraEffectSizeEndRand),
+				                     effect->extraEffectLightAnim);
+			}
+		}
+	}
 
 	// explosion
 	if (particleEffect->explosionShaderName[0] != 0)
