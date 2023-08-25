@@ -956,15 +956,16 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 
 				if (f->blueLife > lived * 3.0f)
 				{
-                    float nozzleSize = f->size;
+					float nozzleSize = f->size;
 
 					shader = nozzleShaders[(cg.time / 50 + (cg.time / 50 >> 1)) % NUM_NOZZLE_SPRITES];
 
-                    // if we have cg_drawGun 0, make the idle flame nozzle size 0
-                    if (f->ignitionOnly)
-                    {
-                        nozzleSize = cg_drawGun.integer ? nozzleSize * 2.0f : 0.0f;
-                    }
+					// if we have cg_drawGun 0, make the idle flame nozzle size 0
+					if (f->ignitionOnly)
+					{
+						// cg_drawGun 1 is the only option which flamethrower
+						nozzleSize = (cg_drawGun.integer == 1) ? nozzleSize * 2.0f : 0.0f;
+					}
 
 					blueTrailHead = CG_AddTrailJunc(blueTrailHead,
 					                                NULL,     // rain - zinx's trail fix
