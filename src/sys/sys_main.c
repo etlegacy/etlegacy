@@ -59,6 +59,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #include "sys_win32.h"
+#include "sys_win32_dpi.h"
 #endif
 
 #ifdef __APPLE__
@@ -1163,6 +1164,7 @@ int main(int argc, char **argv)
 	{
 		Sys_ShowConsoleWindow(1, qfalse);
 	}
+	Sys_SetupDPIAwareness();
 #endif
 
 	Com_Printf("Working directory: %s\n", Sys_Cwd());

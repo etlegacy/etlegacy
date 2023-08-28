@@ -148,3 +148,12 @@ END
 /////////////////////////////////////////////////////////////////////////////
 
 
+//
+// Applicatioin manifest
+//
+#ifndef __MINGW32__
+2 RT_MANIFEST "etlegacy.manifest"
+#else
+2 RT_MANIFEST "src/sys/etlegacy.manifest"
+#endif
+
