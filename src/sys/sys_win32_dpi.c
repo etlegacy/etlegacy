@@ -34,7 +34,10 @@
 
 #include "sys_win32_dpi.h"
 
-// MSDN SetProcessDpiAwarenessContext
+/**
+* @brief Sys_EnablePerMonitorV2
+* @return
+*/
 static qboolean Sys_EnablePerMonitorV2(void)
 {
 	SetProcessDpiAwarenessContextPtr set_process_dpi_awareness_context_f = NULL;
@@ -54,8 +57,10 @@ static qboolean Sys_EnablePerMonitorV2(void)
 	return qfalse;
 }
 
-// Ugly hack to detect Win10 without manifest
-// http://www.codeproject.com/Articles/678606/Part-Overcoming-Windows-s-deprecation-of-GetVe?msg=5080848#xx5080848xx
+/**
+* @brief Sys_IsWin10
+* @return
+*/
 static qboolean Sys_IsWin10(void)
 {
 	RtlGetVersionPtr     rtl_get_version_f = NULL;
@@ -88,9 +93,10 @@ static qboolean Sys_IsWin10(void)
 }
 
 
-// secret sauce SetProcessDpiAwarenessInternal
-// MSDN says SetProcessDpiAwareness but the actual symbol is with `Internal`
-// We must check for Win10 to use Per Monitor support, otherwise use system
+/**
+* @brief Sys_EnablePerMonitor
+* @return
+*/
 static qboolean Sys_EnablePerMonitor(void)
 {
 	SetProcessDpiAwarenessPtr set_process_dpi_awareness_f = NULL;
@@ -123,7 +129,10 @@ static qboolean Sys_EnablePerMonitor(void)
 	return qfalse;
 }
 
-// Legacy DPI awareness (Vista+) or all else fails
+/**
+* @brief Sys_EnableDPIAware
+* @return
+*/
 static qboolean Sys_EnableDPIAware(void)
 {
 	SetProcessDPIAwarePtr set_process_dpi_aware_f = NULL;
@@ -143,6 +152,10 @@ static qboolean Sys_EnableDPIAware(void)
 	return qfalse;
 }
 
+/**
+* @brief Sys_SetupDPIAwareness
+* @return
+*/
 void Sys_SetupDPIAwareness(void)
 {
 	Com_DPrintf(S_COLOR_GREEN "DPI Awareness...\n");
