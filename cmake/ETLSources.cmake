@@ -65,6 +65,10 @@ FILE(GLOB CLIENT_SRC
 	"src/qcommon/download.c"
 )
 
+if(WIN32)
+	LIST(APPEND CLIENT_SRC "src/sys/sys_win32_dpi.c")
+endif()
+
 # These files are shared with the CGAME from the UI library
 FILE(GLOB UI_SHARED
 	"src/ui/ui_shared.c"
