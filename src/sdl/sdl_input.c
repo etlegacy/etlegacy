@@ -1651,7 +1651,7 @@ static void IN_ProcessEvents(void)
 				 * Com_QueueEvent(lasttime, SE_MOUSE, _x, _y, 0, NULL);
 				 * */
 
-				if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
+				if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX)
 				{
 					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
 					{
@@ -1666,7 +1666,7 @@ static void IN_ProcessEvents(void)
 						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, 0, 0, NULL);
 					}
 				}
-				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY || (!e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX && !e.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY))
+				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY)
 				{
 					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
 					{
