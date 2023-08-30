@@ -519,18 +519,18 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 
 		switch (hr)
 		{
-		case HR_HEAD: reason = va("%s headshot kill", GetMODTableData(mod)->debugReasonMsg); break;
-		case HR_ARMS: reason = va("%s armshot kill", GetMODTableData(mod)->debugReasonMsg); break;
-		case HR_BODY: reason = va("%s bodyshot kill", GetMODTableData(mod)->debugReasonMsg); break;
-		case HR_LEGS: reason = va("%s legshot kill", GetMODTableData(mod)->debugReasonMsg); break;
-		default:      reason = va("%s kill", GetMODTableData(mod)->debugReasonMsg); break; // for weapons that don't have localized damage, should not happen
+		case HR_HEAD: reason = "headshot kill"; break;
+		case HR_ARMS: reason = "armshot kill"; break;
+		case HR_BODY: reason = "bodyshot kill"; break;
+		case HR_LEGS: reason = "legshot kill"; break;
+		default:      reason = "kill"; break; // for weapons that don't have localized damage, should not happen
 		}
 	}
 	else if (splash)
 	{
 		points = GetMODTableData(mod)->splashKillPoints;
 
-		reason = va("%s splash damage kill", GetMODTableData(mod)->debugReasonMsg);
+		reason = "splash kill";
 	}
 	else
 	{
@@ -538,11 +538,11 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 
 		if (GetMODTableData(mod)->isExplosive)
 		{
-			reason = va("%s direct damage kill", GetMODTableData(mod)->debugReasonMsg);
+			reason = "hit kill";
 		}
 		else
 		{
-			reason = va("%s kill", GetMODTableData(mod)->debugReasonMsg);
+			reason = "kill";
 		}
 	}
 
