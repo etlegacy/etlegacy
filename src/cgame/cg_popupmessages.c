@@ -847,8 +847,10 @@ void CG_DrawPM(hudComponent_t *comp)
 		return;
 	}
 
-	size = lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2)
-	                    * 1.5f;
+	size = lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2);
+
+	size       *= 2.f;
+	lineHeight *= 1.75f;
 
 	y = comp->style & POPUP_SCROLL_DOWN ? comp->location.y : comp->location.y + comp->location.h;
 
@@ -942,8 +944,10 @@ void CG_DrawPMItemsXPGain(hudComponent_t *comp)
 		return;
 	}
 
-	size = lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2)
-	                    * 1.5f;
+	size = lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2);
+
+	size       *= 2.f;
+	lineHeight *= 1.75f;
 
 	y = comp->style & POPUP_XPGAIN_SCROLL_DOWN ? comp->location.y : comp->location.y + comp->location.h;
 
