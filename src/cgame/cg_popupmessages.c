@@ -55,6 +55,7 @@ struct pmStackItem_s
 	vec3_t color;
 
 	pmListItem_t *next;
+	pmListItem_t *prev;
 };
 
 pmListItem_t cg_pmStack[NUM_PM_STACK][NUM_PM_STACK_ITEMS];
@@ -582,9 +583,9 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
  * @param[in] message2
  * @param[in] shader
  */
-void CG_AddPMItemXP(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader)
+void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const char *message2, qhandle_t shader)
 {
-	pmListItem_t *listItem;
+	pmListItem_t *listItem = NULL;
 	char         *end;
 
 	if (!message || !*message)
@@ -596,6 +597,29 @@ void CG_AddPMItemXP(popupMessageType_t type, const char *message, const char *me
 	{
 		CG_Printf("Invalid XP gain popup type: %d\n", type);
 		return;
+	}
+
+	if (cg_pmOldListXP)
+	{
+		listItem = cg_pmOldListXP;
+	}
+	else if (cg_pmWaitingListXP)
+	{
+		listItem = cg_pmWaitingListXP;
+	}
+
+	// reason are similar, use previous message
+	if (listItem)
+	{
+		if (!Q_stricmp(listItem->message2, message2))
+		{
+			Q_strncpyz(listItem->message, va("%f", Q_atof(listItem->message) + Q_atof(message)), sizeof(cg_pmStackXP[0].message));
+			Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStackXP[0].message2));
+
+			listItem->time = cg.time;
+
+			return;
+		}
 	}
 
 	listItem = CG_FindFreePMItem(cg_pmStackXP, &cg_pmOldListXP, NUM_PM_STACK_ITEMS_XP);
@@ -928,6 +952,124 @@ void CG_DrawPMItemsBig(hudComponent_t *comp)
 }
 
 /**
+ * @brief CG_DrawPMItems
+ * @param[in] comp
+ * @param[in] listItem
+ * @param[in,out] y
+ * @param[in] lineHeight
+ * @param[in] size
+ * @return
+ */
+static qboolean CG_DrawPMXPItems(hudComponent_t *comp, pmListItem_t *listItem, float *y, float lineHeight, float size, qboolean scrollDown,
+                                 int time, int stayTime, int fadeTime)
+{
+	float  t;
+	float  w;
+	vec4_t colorText;
+	vec4_t colorText2;
+	float  scale;
+	float  x = (comp->alignText == ITEM_ALIGN_RIGHT) ? comp->location.x + comp->location.w : comp->location.x;
+	char   buffer[256];
+	int    lineNumber = 1;
+	char   *XPGainNumber;
+
+	if (!listItem)
+	{
+		return qfalse;
+	}
+
+	XPGainNumber = va(" %2.0fXP ", Q_atof(listItem->message));
+
+	Vector4Copy(comp->colorMain, colorText);
+	Vector4Copy(comp->colorSecondary, colorText2);
+	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
+
+	// fadein
+//	t = listItem->time + time + fadeTime;
+//	if (cg.time < t)
+//	{
+//		colorText[3]  *= 1.0f - (t - cg.time) / (float)fadeTime;
+//		colorText2[3] *= 1.0f - (t - cg.time) / (float)fadeTime;
+//	}
+
+	// fadeout
+	t = listItem->time + time + stayTime;
+	if (cg.time > t)
+	{
+		colorText[3]  *= 1 - ((cg.time - t) / (float)fadeTime);
+		colorText2[3] *= 1 - ((cg.time - t) / (float)fadeTime);
+	}
+
+	Q_strncpyz(buffer, XPGainNumber, sizeof(buffer));
+
+	if (listItem->message2[0])
+	{
+		Q_strcat(buffer, sizeof(buffer), CG_TranslateString(listItem->message2));
+	}
+
+	w = comp->location.w - size * 2;
+	CG_WordWrapString(buffer, CG_GetMaxCharsPerLine(buffer, scale * 0.75, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
+
+	// we reach the comp border, don't print the line
+	if (scrollDown)
+	{
+		*y += lineHeight;
+
+		if (*y + lineHeight * (lineNumber - 1) + lineHeight * 0.25f > comp->location.y + comp->location.h)
+		{
+			return qfalse;
+		}
+	}
+	else
+	{
+		*y -= lineHeight * (lineNumber - 1);
+
+		if (*y - (lineHeight + lineHeight * 0.25f) < comp->location.y)
+		{
+			return qfalse;
+		}
+	}
+
+	if (listItem->shader > 0)
+	{
+		// colorize
+		VectorCopy(listItem->color, colorText);
+		trap_R_SetColor(colorText);
+
+		if (comp->alignText == ITEM_ALIGN_RIGHT)
+		{
+			x -= size;
+			CG_DrawPic(x, *y - size, size, size, listItem->shader);
+		}
+		else
+		{
+			CG_DrawPic(x, *y - size, size, size, listItem->shader);
+			x += size;
+		}
+
+		// decolorize
+		VectorCopy(colorWhite, colorText);
+		trap_R_SetColor(NULL);
+	}
+
+	if (comp->alignText == ITEM_ALIGN_RIGHT)
+	{
+		w  = CG_Text_Line_Width_Ext_Float(buffer, scale, &cgs.media.limboFont2);
+		x -= w;
+	}
+
+	CG_Text_Paint_Ext(x, *y - lineHeight * 0.25, scale, scale, colorText, XPGainNumber, 0, 0, comp->styleText, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x + (lineNumber > 1 ? 0 : CG_Text_Width_Ext(XPGainNumber, scale, 0, &cgs.media.limboFont1)),
+	                  *y - lineHeight * 0.375 + (lineNumber == 1 ? 0 : lineHeight),
+	                  scale * 0.75, scale * 0.75, colorText2, listItem->message2, 0, 0, comp->styleText, &cgs.media.limboFont2);
+
+	// next line
+	*y += scrollDown ? lineHeight * (lineNumber - 1) + lineHeight * 0.25f : -(lineHeight + lineHeight * 0.25f);
+
+	return qtrue;
+}
+
+/**
  * @brief CG_DrawPMItemsXPGain
  * @param[in] comp
  */
@@ -961,13 +1103,13 @@ void CG_DrawPMItemsXPGain(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	isScapeAvailable = CG_DrawPMItems(comp, cg_pmWaitingListXP, &y, lineHeight, size, comp->style & POPUP_XPGAIN_SCROLL_DOWN,
-	                                  cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
+	isScapeAvailable = CG_DrawPMXPItems(comp, cg_pmWaitingListXP, &y, lineHeight, size, comp->style & POPUP_XPGAIN_SCROLL_DOWN,
+	                                    cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
 
 	for (listItem = cg_pmOldListXP; listItem && isScapeAvailable; listItem = listItem->next)
 	{
-		isScapeAvailable = CG_DrawPMItems(comp, listItem, &y, lineHeight, size, comp->style & POPUP_XPGAIN_SCROLL_DOWN,
-		                                  cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
+		isScapeAvailable = CG_DrawPMXPItems(comp, listItem, &y, lineHeight, size, comp->style & POPUP_XPGAIN_SCROLL_DOWN,
+		                                    cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
 	}
 }
 

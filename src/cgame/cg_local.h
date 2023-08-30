@@ -4019,7 +4019,7 @@ qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter);
 void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color);
 void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color, int stackNum);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
-void CG_AddPMItemXP(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader);
+void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const char *message2, qhandle_t shader);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);
 qhandle_t CG_GetPMItemIcon(centity_t *cent);

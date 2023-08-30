@@ -3574,9 +3574,7 @@ static void CG_ServerCommand(void)
 	}
 	case XPGAIN_HASH:   // "xpgain"
 	{
-		qboolean isLose = Q_atoi(CG_Argv(2)) < 0;
-
-		CG_AddPMItemXP(isLose, va("%s%g ", isLose ? "" : "+", Q_atof(CG_Argv(2))), va("%s", CG_Argv(3)), cgs.media.skillPics[Q_atoi(CG_Argv(1))]);
+        CG_AddPMItemXP(Q_atoi(CG_Argv(2)) < 0, va("%s", CG_Argv(2)), va("%s",CG_Argv(3)), cgs.media.skillPics[Q_atoi(CG_Argv(1))]);
 		break;
 	}
 	default:
