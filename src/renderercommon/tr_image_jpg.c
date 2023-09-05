@@ -117,7 +117,6 @@ void R_LoadJPG(imageData_t *data, unsigned char **pic, int *width, int *height, 
 	unsigned int pixelcount, memcount;
 	unsigned int sindex, dindex;
 	byte         *out;
-	int          len;
 	byte         *buf;
 
 	/* Step 1: allocate and initialize JPEG decompression object */
@@ -143,7 +142,7 @@ void R_LoadJPG(imageData_t *data, unsigned char **pic, int *width, int *height, 
 
 	/* Step 2: specify data source (eg, a file) */
 
-	jpeg_mem_src(&cinfo, data->buffer.b, len);
+	jpeg_mem_src(&cinfo, data->buffer.b, data->size);
 
 	/* Step 3: read file parameters with jpeg_read_header() */
 

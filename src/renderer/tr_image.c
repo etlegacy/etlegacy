@@ -1036,9 +1036,9 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 		// Check if file exists
 		if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
 		{
-			imageData_t data = { 0, name, { NULL } };
+			imageData_t data = { 0, altName, { NULL } };
 			// load the file
-			data.size = ri.FS_ReadFile(name, &data.buffer.v);
+			data.size = ri.FS_ReadFile(altName, &data.buffer.v);
 			if (!data.buffer.b || data.size < 0)
 			{
 				continue;
