@@ -54,7 +54,7 @@ void GLimp_Init(glconfig_t *glConfig, windowContext_t *context);
 void GLimp_Shutdown(void);
 void GLimp_EndFrame(void);
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
-qboolean GLimp_SplashImage(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes));
+qboolean GLimp_SplashImage(qboolean (*LoadSplashImage)(const char *name, byte *data, unsigned int size, unsigned int width, unsigned int height, uint8_t bytes));
 
 // Console
 void CON_Shutdown(void);
@@ -71,12 +71,12 @@ void Sys_GLimpInit(void);
 void Sys_PlatformInit(void);
 
 #ifdef _WIN32
-void Sys_PlatformExit(int code) _attribute ((noreturn));
+void Sys_PlatformExit(int code) _attribute((noreturn));
 #else
 #define Sys_PlatformExit(x) exit(x);
 #endif
 
-void Sys_SigHandler(int signal) _attribute ((noreturn));
+void Sys_SigHandler(int signal) _attribute((noreturn));
 void Sys_ErrorDialog(const char *error);
 void Sys_AnsiColorPrint(const char *msg);
 

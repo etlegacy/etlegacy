@@ -220,7 +220,7 @@ void R_ImageList_f(void)
 
 		texels += image->uploadWidth * image->uploadHeight;
 		Ren_Print("%4i: %4i %4i  %s   %d   ",
-				  i, image->uploadWidth, image->uploadHeight, yesno[image->mipmap], image->TMU);
+		          i, image->uploadWidth, image->uploadHeight, yesno[image->mipmap], image->TMU);
 		switch (image->internalFormat)
 		{
 		case 1:
@@ -301,7 +301,7 @@ void R_ImageList_f(void)
  * @param[in] outheight
  */
 static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *out,
-							int outwidth, int outheight)
+                            int outwidth, int outheight)
 {
 	int      i, j;
 	unsigned *inrow, *inrow2;
@@ -571,13 +571,13 @@ byte mipBlendColors[16][4] =
  * @param[in] noCompress
  */
 static void Upload32(unsigned *data,
-					 int width, int height,
-					 qboolean mipmap,
-					 qboolean picmip,
-					 qboolean lightMap,
-					 int *format,
-					 int *pUploadWidth, int *pUploadHeight,
-					 qboolean noCompress)
+                     int width, int height,
+                     qboolean mipmap,
+                     qboolean picmip,
+                     qboolean lightMap,
+                     int *format,
+                     int *pUploadWidth, int *pUploadHeight,
+                     qboolean noCompress)
 {
 	int      samples;
 	unsigned *scaledBuffer    = NULL;
@@ -631,7 +631,7 @@ static void Upload32(unsigned *data,
 	// scale both axis down equally so we don't have to
 	// deal with a half mip resampling
 	while (scaled_width > glConfig.maxTextureSize
-		   || scaled_height > glConfig.maxTextureSize)
+	       || scaled_height > glConfig.maxTextureSize)
 	{
 		scaled_width  >>= 1;
 		scaled_height >>= 1;
@@ -764,7 +764,7 @@ static void Upload32(unsigned *data,
 
 	// copy or resample data as appropriate for first MIP level
 	if ((scaled_width == width) &&
-		(scaled_height == height))
+	    (scaled_height == height))
 	{
 		if (!mipmap)
 		{
@@ -879,7 +879,7 @@ done:
  * @return
  */
 image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
-					   qboolean mipmap, qboolean allowPicmip, int wrapClampMode)
+                       qboolean mipmap, qboolean allowPicmip, int wrapClampMode)
 {
 	image_t  *image;
 	qboolean isLightmap = qfalse;
@@ -959,13 +959,13 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	if (pic)
 	{
 		Upload32((unsigned *)pic, image->width, image->height,
-				 image->mipmap,
-				 allowPicmip,
-				 isLightmap,
-				 &image->internalFormat,
-				 &image->uploadWidth,
-				 &image->uploadHeight,
-				 noCompress);
+		         image->mipmap,
+		         allowPicmip,
+		         isLightmap,
+		         &image->internalFormat,
+		         &image->uploadWidth,
+		         &image->uploadHeight,
+		         noCompress);
 	}
 	else
 	{
@@ -1036,8 +1036,19 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 		// Check if file exists
 		if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
 		{
+			imageData_t data = { 0, name, { NULL } };
+			// load the file
+			data.size = ri.FS_ReadFile(name, &data.buffer.v);
+			if (!data.buffer.b || data.size < 0)
+			{
+				continue;
+			}
+
 			// Load
-			imageLoaders[i].ImageLoader(altName, pic, width, height, 0xFF);
+			imageLoaders[i].ImageLoader(&data, pic, width, height, 0xFF);
+
+			// free the file data
+			ri.FS_FreeFile(data.buffer.v);
 		}
 
 		if (*pic)
@@ -1177,7 +1188,7 @@ static void R_CreateDlightImage(void)
 		for (y = 0 ; y < DLIGHT_SIZE ; y++)
 		{
 			d = (DLIGHT_SIZE / 2 - 0.5f - x) * (DLIGHT_SIZE / 2 - 0.5f - x) +
-				(DLIGHT_SIZE / 2 - 0.5f - y) * (DLIGHT_SIZE / 2 - 0.5f - y);
+			    (DLIGHT_SIZE / 2 - 0.5f - y) * (DLIGHT_SIZE / 2 - 0.5f - y);
 			b = 4000 / d;
 			if (b > 255)
 			{
@@ -1503,7 +1514,7 @@ SKINS
  */
 static char *CommaParse(char **data_p)
 {
-	int         c     = 0, len = 0;
+	int         c = 0, len = 0;
 	char        *data = *data_p;
 	static char com_token[MAX_TOKEN_CHARS];
 
@@ -1870,7 +1881,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	if (totalSurfaces > MAX_SKIN_SURFACES)
 	{
 		ri.Printf(PRINT_WARNING, "WARNING: Ignoring excess surfaces (found %d, max is %d) in skin '%s'!\n",
-				  totalSurfaces, MAX_SKIN_SURFACES, name);
+		          totalSurfaces, MAX_SKIN_SURFACES, name);
 	}
 
 	// never let a skin have 0 shaders
@@ -2022,9 +2033,9 @@ qboolean R_TouchImage(image_t *inImage)
 	int     hash;
 
 	if (inImage == tr.dlightImage ||
-		inImage == tr.whiteImage ||
-		inImage == tr.defaultImage ||
-		inImage->imgName[0] == '*')     // can't use lightmaps since they might have the same name, but different maps will have different actual lightmap pixels
+	    inImage == tr.whiteImage ||
+	    inImage == tr.defaultImage ||
+	    inImage->imgName[0] == '*')     // can't use lightmaps since they might have the same name, but different maps will have different actual lightmap pixels
 	{
 		return qfalse;
 	}

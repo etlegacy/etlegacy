@@ -36,29 +36,60 @@
 #include "tr_local_proxy.h"
 #include "tr_common.h"
 
-image_t *splashImage = NULL;
+image_t   *splashImage = NULL;
 qhandle_t splashHandle;
 
-static void LoadSplashImage(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes)
+static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size, unsigned int width, unsigned int height, uint8_t bytes)
 {
-	if (data)
+	if (!name && data)
 	{
 		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, data, width, height, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 	}
-	else
+	else if (name && data)
 	{
-		splashImage = R_FindImageFile( name, qfalse, qfalse, GL_CLAMP_TO_EDGE, qfalse);
+		byte *pic;
+		int  i, w, h;
+		char tmpExt[10] = { 0 };
+
+		// Try and find a suitable match using all the image formats supported
+		for (i = 0; i < numImageLoaders; i++)
+		{
+			Com_sprintf(tmpExt, sizeof(tmpExt), ".%s", imageLoaders[i].ext);
+			if (!COM_CompareExtension(name, tmpExt))
+			{
+				continue;
+			}
+
+			// Load
+			{
+				imageData_t img = { (int)size, name, { data } };
+				imageLoaders[i].ImageLoader(&img, &pic, &w, &h, 0xFF);
+			}
+
+			if (*pic)
+			{
+				break;
+			}
+		}
+
+		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, pic, w, h, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+	}
+	else if (name)
+	{
+		splashImage = R_FindImageFile(name, qfalse, qfalse, GL_CLAMP_TO_EDGE, qfalse);
 	}
 
 	if (!splashImage)
 	{
 		Ren_Print(S_COLOR_RED "Could not load splash image\n");
-		return;
+		return qfalse;
 	}
 
 	splashHandle = RE_RegisterShaderFromImage(LEGACY_SPLASH_NAME, LIGHTMAP_2D, splashImage, qfalse);
 
 	GL_CheckErrors();
+
+	return qtrue;
 }
 
 static void R_Splash_AdjustFrom640(float *x, float *y, float *w, float *h)
@@ -98,15 +129,15 @@ void R_InitSplash(void)
 
 void R_DrawSplash(void)
 {
-	float tmp, x, y , w, h;
+	float tmp, x, y, w, h;
 	if (!splashImage)
 	{
 		return;
 	}
 
 	tmp = (float)splashImage->height / (float)splashImage->width;
-	w = SCREEN_WIDTH_F * (glConfig.windowWidth > 1600 ? 0.2f : 0.4f);
-	h = tmp * w;
+	w   = SCREEN_WIDTH_F * (glConfig.windowWidth > 1600 ? 0.2f : 0.4f);
+	h   = tmp * w;
 
 	x = SCREEN_WIDTH_F / 2 - w / 2;
 	y = SCREEN_HEIGHT_F / 2 - h / 2;
@@ -114,6 +145,8 @@ void R_DrawSplash(void)
 	R_Splash_AdjustFrom640(&x, &y, &w, &h);
 
 	RE_BeginFrame();
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
 	RE_SetColor(NULL);
 	RE_StretchPic(x, y, w, h, 0, 0, 1, 1, splashHandle);
 	RE_EndFrame(NULL, NULL);

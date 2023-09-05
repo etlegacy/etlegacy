@@ -215,17 +215,12 @@ struct BufferedFile
  * @param[in] name
  * @return
  */
-static struct BufferedFile *ReadBufferedFile(const char *name)
+static struct BufferedFile *ReadBufferedFile(imageData_t *data)
 {
 	struct BufferedFile *BF;
-	union
-	{
-		byte *b;
-		void *v;
-	} buffer;
 
 	//  input verification
-	if (!name)
+	if (!data)
 	{
 		return NULL;
 	}
@@ -243,10 +238,8 @@ static struct BufferedFile *ReadBufferedFile(const char *name)
 	BF->Ptr       = NULL;
 	BF->BytesLeft = 0;
 
-	// Read the file.
-	BF->Length = ri.FS_ReadFile(name, &buffer.v);
-	BF->Buffer = buffer.b;
-
+	BF->Length = (int)data->size;
+	BF->Buffer = data->buffer.b;
 
 	//  Did we get it? Is it big enough?
 	if (!(BF->Buffer && (BF->Length > 0)))
@@ -271,11 +264,6 @@ static void CloseBufferedFile(struct BufferedFile *BF)
 {
 	if (BF)
 	{
-		if (BF->Buffer)
-		{
-			ri.FS_FreeFile(BF->Buffer);
-		}
-
 		ri.Free(BF);
 	}
 }
@@ -1647,7 +1635,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
  * @param[out] height
  * @param alphaByte is not yet implemented
  */
-void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alphaByte)
+void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte)
 {
 	struct BufferedFile    *ThePNG;
 	byte                   *OutBuffer;
@@ -1672,7 +1660,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alpha
 	uint8_t  TransparentColour[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
 	// input verification
-	if (!(name && pic))
+	if (!(data && pic))
 	{
 		return;
 	}
@@ -1691,7 +1679,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alpha
 	}
 
 	// Read the file.
-	ThePNG = ReadBufferedFile(name);
+	ThePNG = ReadBufferedFile(data);
 	if (!ThePNG)
 	{
 		return;
@@ -1765,7 +1753,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alpha
 	{
 		CloseBufferedFile(ThePNG);
 
-		Ren_Print(S_COLOR_YELLOW "%s: invalid image size\n", name);
+		Ren_Print(S_COLOR_YELLOW "%s: invalid image size\n", data->name);
 
 		return;
 	}
@@ -2015,7 +2003,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alpha
 	}
 
 	//  Allocate output buffer.
-	OutBuffer = R_GetImageBuffer(IHDR_Width * IHDR_Height * Q3IMAGE_BYTESPERPIXEL, BUFFER_IMAGE, name);
+	OutBuffer = R_GetImageBuffer(IHDR_Width * IHDR_Height * Q3IMAGE_BYTESPERPIXEL, BUFFER_IMAGE, data->name);
 	if (!OutBuffer)
 	{
 		ri.Free(DecompressedData);

@@ -53,9 +53,9 @@ static int gammaResetTime = 0;
 
 static int GLimp_CompareModes(const void *a, const void *b);
 
-SDL_Window           *main_window   = NULL;
-static SDL_GLContext SDL_glContext  = NULL;
-static float         displayAspect  = 0.f;
+SDL_Window           *main_window  = NULL;
+static SDL_GLContext SDL_glContext = NULL;
+static float         displayAspect = 0.f;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
@@ -1275,24 +1275,33 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 	SDL_SetWindowGammaRamp(main_window, table[0], table[1], table[2]);
 }
 
-qboolean GLimp_SplashImage(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes))
+qboolean GLimp_SplashImage(qboolean (*LoadSplashImage)(const char *name, byte *data, unsigned int size, unsigned int width, unsigned int height, uint8_t bytes))
 {
-	byte *data = Com_Allocate(SPLASH_DATA_SIZE);
+	qboolean result = qfalse;
+	byte     *data  = Com_Allocate(SPLASH_DATA_SIZE);
 
 	if (!data)
 	{
 		return qfalse;
 	}
 
-	// decode splash image
-	SPLASH_IMAGE_RUN_LENGTH_DECODE(data,
-								   CLIENT_WINDOW_SPLASH.rle_pixel_data,
-								   CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
-								   CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+	if (!LoadSplashImage("splash.svg", (byte *)CLIENT_WINDOW_SPLASH_SVG, strlen(CLIENT_WINDOW_SPLASH_SVG) + 1, 0, 0, 0))
+	{
 
-	LoadSplashImage(NULL, data, CLIENT_WINDOW_SPLASH.width, CLIENT_WINDOW_SPLASH.height, CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+		// decode splash image
+		SPLASH_IMAGE_RUN_LENGTH_DECODE(data,
+		                               CLIENT_WINDOW_SPLASH.rle_pixel_data,
+		                               CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
+		                               CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+
+		result = LoadSplashImage(NULL, data, SPLASH_DATA_SIZE, CLIENT_WINDOW_SPLASH.width, CLIENT_WINDOW_SPLASH.height, CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+	}
+	else
+	{
+		result = qtrue;
+	}
 
 	Com_Dealloc(data);
 
-	return qtrue;
+	return result;
 }

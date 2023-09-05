@@ -807,7 +807,7 @@ void CG_UpdateCvars(void)
 		}
 	}
 
-	// Send any relevent updates
+	// Send any relevant updates
 	if (fSetFlags)
 	{
 		CG_setClientFlags();

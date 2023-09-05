@@ -52,19 +52,13 @@
  * @param [in,out] height height of the image
  * @param [in] alphaByte - unused
  */
-void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alphaByte)
+void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte)
 {
 	NSVGimage      *image = NULL;
 	NSVGrasterizer *rast  = NULL;
 	int            columns, rows, numPixels;
-	int            length;
 	float          dpi, scale;
-	byte           *img_data;
-	union
-	{
-		byte *b;
-		void *v;
-	} buffer;
+	byte           *img_data, *tmp_data;
 
 	*pic = NULL;
 
@@ -77,15 +71,6 @@ void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alpha
 		*height = 0;
 	}
 
-	//
-	// load the file
-	//
-	length = ri.FS_ReadFile(name, &buffer.v);
-	if (!buffer.b || length <= 0)
-	{
-		return;
-	}
-
 	// dpi = 96.f * ((float)glConfig.vidHeight / SCREEN_HEIGHT_F);
 	dpi = 96.f;
 	if (dpi < 96.f)
@@ -93,10 +78,22 @@ void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alpha
 		dpi = 96.f;
 	}
 
-	image = nsvgParse((char *)buffer.b, "px", dpi);
+	// the svg parser modifies the data, so we need to copy it.
+	// FIXME: look into if there is an update at some point on this..
+	tmp_data = Com_Allocate(data->size);
+	Com_Memcpy(tmp_data, data->buffer.v, data->size);
+	if (!tmp_data)
+	{
+		Ren_Drop("Could not allocate memory for the svg image.\n");
+		return;
+	}
+
+	image = nsvgParse((char *)tmp_data, "px", dpi);
+	Com_Dealloc(tmp_data);
+
 	if (image == NULL)
 	{
-		ri.FS_FreeFile(buffer.v);
+		ri.FS_FreeFile(data->buffer.v);
 		Ren_Drop("Could not parse svg.\n");
 		return;
 	}
@@ -105,7 +102,6 @@ void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alpha
 	if (rast == NULL)
 	{
 		nsvgDelete(image);
-		ri.FS_FreeFile(buffer.v);
 		Ren_Drop("Could not init svg rasterizer.\n");
 		return;
 	}
@@ -121,13 +117,12 @@ void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alpha
 
 	numPixels = columns * rows * 4;
 
-	img_data = R_GetImageBuffer(numPixels, BUFFER_IMAGE, name);
+	img_data = R_GetImageBuffer(numPixels, BUFFER_IMAGE, data->name);
 
 	if (!img_data)
 	{
 		nsvgDeleteRasterizer(rast);
 		nsvgDelete(image);
-		ri.FS_FreeFile(buffer.v);
 		Ren_Drop("Could not allocate memory for the svg image.\n");
 		return;
 	}
@@ -149,5 +144,4 @@ void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alpha
 	nsvgDeleteRasterizer(rast);
 	nsvgDelete(image);
 	// ri.Free(img_data);
-	ri.FS_FreeFile(buffer.v);
 }
