@@ -145,8 +145,7 @@ void R_DrawSplash(void)
 	R_Splash_AdjustFrom640(&x, &y, &w, &h);
 
 	RE_BeginFrame();
-	// glClearColor(37.f / 255.f, 44.f / 255.f, 37.f / 255.f, 1);
-	glClearColor(32.f / 255.f, 32.f / 255.f, 32.f / 255.f, 1);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	RE_SetColor(NULL);
 	RE_StretchPic(x, y, w, h, 0, 0, 1, 1, splashHandle);

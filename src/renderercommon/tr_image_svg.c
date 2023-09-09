@@ -139,9 +139,6 @@ void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	}
 	*pic = img_data;
 
-	// RE_SaveTGA(va("%s.tga", name), img_data, columns, rows, qtrue);
-
 	nsvgDeleteRasterizer(rast);
 	nsvgDelete(image);
-	// ri.Free(img_data);
 }
