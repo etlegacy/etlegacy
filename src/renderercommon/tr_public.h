@@ -265,7 +265,7 @@ typedef struct
 	void (*GLimp_SwapFrame)(void);
 	void (*GLimp_SetGamma)(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
 
-	qboolean (*GLimp_SplashImage)(void (*LoadSplashImage)(const char *name, byte *data, unsigned int width, unsigned int height, uint8_t bytes));
+	qboolean (*GLimp_SplashImage)(qboolean (*LoadSplashImage)(const char *name, byte *data, unsigned int size, unsigned int width, unsigned int height, uint8_t bytes));
 
 } refimport_t;
 

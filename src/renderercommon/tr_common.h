@@ -245,14 +245,41 @@ typedef enum
 } renderSpeeds_t;
 
 /**
+ * @struct imageData_t
+ * @brief image data
+ */
+typedef struct
+{
+	int size;
+	const char *name;
+	union
+	{
+		byte *b;
+		void *v;
+	} buffer;
+} imageData_t;
+
+/**
  * @struct imageExtToLoaderMap_s
  * @brief
  */
 typedef struct
 {
 	char *ext;
-	void (*ImageLoader)(const char *, unsigned char **, int *, int *, byte);
+	void (*ImageLoader)(imageData_t *data, byte **, int *, int *, byte);
 } imageExtToLoaderMap_t;
+
+/**
+ * @struct rawImage_t
+ * @brief raw image data
+ */
+typedef struct
+{
+	byte *pic;
+	int width;
+	int height;
+	byte alphaByte;
+} rawImage_t;
 
 extern imageExtToLoaderMap_t imageLoaders[];
 extern int                   numImageLoaders;
@@ -262,12 +289,12 @@ IMAGE LOADERS
 =============================================================
 */
 
-void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadJPG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadPCX(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadJPG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadPCX(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
 
 /*
 =============================================================
