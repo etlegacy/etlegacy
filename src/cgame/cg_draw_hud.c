@@ -46,27 +46,27 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color", "Dynamic Color Alt" } },          // FIXME: outside cg_draw_hud
-	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",  "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw"} },
-	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} },
-	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,  { "Left",          "Center",       "Vertical",      "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color",  "Dynamic Color Alt" } },         // FIXME: outside cg_draw_hud
+	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw"} },
+	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(breathbar),        CG_DrawBreathBar,          0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(healthbar),        CG_DrawPlayerHealthBar,    0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} },
+	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge,       0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthtext),       CG_DrawPlayerHealth,       0.25f,  { "Dynamic Color" } },
 	{ HUDF(xptext),           CG_DrawXP,                 0.25f,  { 0 } },
 	{ HUDF(ranktext),         CG_DrawRank,               0.20f,  { 0 } },
 	{ HUDF(statsdisplay),     CG_DrawSkills,             0.25f,  { "Column" } },
 	{ HUDF(weaponicon),       CG_DrawGunIcon,            0.19f,  { "Icon Flash" } },
 	{ HUDF(weaponammo),       CG_DrawAmmoCount,          0.25f,  { "Dynamic Color" } },
-	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,  { "Latched Class", "No Header",    "Colorless Name","Status Color Name", "Status Color Row" } },// FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages),    CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages2),   CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages3),   CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",    "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(fireteam),         CG_DrawFireTeamOverlay,    0.20f,  { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row"} },// FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages),    CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages2),   CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages3),   CG_DrawPM,                 0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(powerups),         CG_DrawPowerUps,           0.19f,  { 0 } },
 	{ HUDF(objectives),       CG_DrawObjectiveStatus,    0.19f,  { 0 } },
 	{ HUDF(hudhead),          CG_DrawPlayerStatusHead,   0.19f,  { 0 } },
 	{ HUDF(cursorhints),      CG_DrawCursorhint,         0.19f,  { "Size Pulse",    "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
-	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,  { "Always",        "Left",         "Center",        "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(weaponstability),  CG_DrawWeapStability,      0.19f,  { "Always",        "Left",         "Center",         "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),        CG_DrawLivesLeft,          0.19f,  { 0 } },
 	{ HUDF(roundtimer),       CG_DrawRoundTimer,         0.19f,  { "Simple" } },
 	{ HUDF(reinforcement),    CG_DrawRespawnTimer,       0.19f,  { 0 } },
@@ -96,9 +96,9 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(centerprint),      CG_DrawCenterString,       0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(banner),           CG_DrawBannerPrint,        0.23f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,  { "Full Color" } },// FIXME: outside cg_draw_hud
-	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",         "Rank",         "Prestige",      "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",          "Death",        "Self Kill",     "DmgGiven", "DmgRcvd"} },
-	{ HUDF(xpgain),           CG_DrawPMItemsXPGain,      0.22f,  { "Scroll Down", "No Reason" } },// FIXME: outside cg_draw_hud
+	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,  { "Class",         "Rank",         "Prestige",       "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,  { "Kill",          "Death",        "Self Kill",      "DmgGiven", "DmgRcvd"} },
+	{ HUDF(xpgain),           CG_DrawPMItemsXPGain,      0.22f,  { "Scroll Down",   "No Reason" } },// FIXME: outside cg_draw_hud
 	{ NULL,                   0,                         qfalse, NULL, 0.00f,{ 0 } },
 };
 
@@ -2468,7 +2468,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	if (cgs.autoMapExpanded)
 	{
 		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR
-			&& cg.time - cgs.autoMapExpandTime < 100.f * expandedMapFrac)
+		    && cg.time - cgs.autoMapExpandTime < 100.f * expandedMapFrac)
 		{
 			if (!(comp->style & COMPASS_ALWAYS_DRAW))
 			{
@@ -2488,8 +2488,8 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	else
 	{
 		if (cg.time - cgs.autoMapExpandTime <= 150.f * expandedMapFrac
-			|| cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
-			&& cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+		    || cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
+		    && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 		{
 			CG_DrawExpandedAutoMap();
 

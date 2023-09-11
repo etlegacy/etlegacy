@@ -373,10 +373,10 @@ static vec4_t textOrange = { 1.0f, 0.6f, 0.0f, 1.0f };               // orange t
 
 typedef enum
 {
-    TIMEOUT,
-    WOUNDED,
-    DEAD,
-    NONE
+	TIMEOUT,
+	WOUNDED,
+	DEAD,
+	NONE
 } fireteamMemberStatusEnum_t;
 
 static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci);
@@ -616,7 +616,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		x = lineX;
-        vec4_t nameColor;
+		vec4_t nameColor;
 
 		if (i != 0 || !(comp->style & BIT(1)))
 		{
