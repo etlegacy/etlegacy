@@ -2864,8 +2864,6 @@ extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
-extern vmCvar_t cg_fireteamNameColorless;
-extern vmCvar_t cg_fireteamStatusColors;
 extern vmCvar_t cg_fireteamSprites;
 
 extern vmCvar_t cg_simpleItems;

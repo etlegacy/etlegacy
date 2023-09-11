@@ -476,7 +476,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			locwidth = 0;
 		}
 
-		if (cg_fireteamNameColorless.integer || (cg_fireteamStatusColors.integer == 1 && (ci->health <= 0 || ci->ping >= 999)))
+		if (comp->style & BIT(2) || (comp->style & BIT(3) && (ci->health <= 0 || ci->ping >= 999)))
 		{
 			Q_strncpyz(name[i], ci->cleanname, sizeof(name[i]));
 		}
@@ -631,12 +631,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			break;
 		}
 
-		if (cg_fireteamStatusColors.integer)
+		if (comp->style & BIT(3) || comp->style & BIT(4))
 		{
 			fireteamMemberStatusEnum_t status = CG_FireTeamMemberStatus(ci);
 
 			Com_Memcpy(&nameColor, CG_FireTeamNameColor(status), sizeof(vec4_t));
-			if (cg_fireteamStatusColors.integer == 2 && status != NONE)
+			if (comp->style & BIT(4) && status != NONE)
 			{
 				vec4_t rowColor;
 				Com_Memcpy(&rowColor, nameColor, sizeof(vec4_t));

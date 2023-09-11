@@ -310,8 +310,6 @@ vmCvar_t cg_altHud;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
-vmCvar_t cg_fireteamNameColorless;
-vmCvar_t cg_fireteamStatusColors;
 vmCvar_t cg_fireteamSprites;
 
 vmCvar_t cg_weapaltReloads;
@@ -589,8 +587,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_tracers,                  "cg_tracers",                  "1",           CVAR_ARCHIVE,                 0 }, // Draw tracers
 	{ &cg_fireteamNameMaxChars,     "cg_fireteamNameMaxChars",     "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,        "cg_fireteamNameAlign",        "0",           CVAR_ARCHIVE,                 0 },
-    { &cg_fireteamNameColorless,    "cg_fireteamNameColorless",    "0",           CVAR_ARCHIVE,                 0 },
-    { &cg_fireteamStatusColors,     "cg_fireteamStatusColors",     "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamSprites,          "cg_fireteamSprites",          "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_simpleItems,              "cg_simpleItems",              "0",           CVAR_ARCHIVE,                 0 }, // Bugged atm
