@@ -366,11 +366,6 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 
 // Main Functions
 
-static vec4_t textWhite  = { 1.0f, 1.0f, 1.0f, 1.0f };               // regular text
-static vec4_t textYellow = { 1.0f, 1.0f, 0.0f, 1.0f };               // yellow text for health drawing
-static vec4_t textRed    = { 1.0f, 0.0f, 0.0f, 1.0f };               // red text for health drawing
-static vec4_t textOrange = { 1.0f, 0.6f, 0.0f, 1.0f };               // orange text for health drawing
-
 typedef enum
 {
 	TIMEOUT,
@@ -412,6 +407,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	vec4_t FT_select                = { 0.5f, 0.5f, 0.2f, 0.3f }; // selected member
 	vec4_t iconColor                = { 1.0f, 1.0f, 1.0f, 1.0f }; // icon "color", used for alpha adjustments
 	vec4_t iconColorSemitransparent = { 1.0f, 1.0f, 1.0f, 0.5f };
+	vec4_t textWhite                = { 1.0f, 1.0f, 1.0f, 1.0f }; // regular text
+	vec4_t textYellow               = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow text for health drawing
+	vec4_t textRed                  = { 1.0f, 0.0f, 0.0f, 1.0f }; // red text for health drawing
+	vec4_t textOrange               = { 1.0f, 0.6f, 0.0f, 1.0f }; // orange text for ping issues
+	vec4_t nameColor                = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -575,12 +576,13 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	// fireteam alpha adjustments
 
 	// set background alpha first
-	FT_select[3]   *= comp->colorMain[3];
-	iconColor[3]   *= comp->colorMain[3];
-	colorWhite[3]  *= comp->colorMain[3];
-	colorYellow[3] *= comp->colorMain[3];
-	colorRed[3]    *= comp->colorMain[3];
-	colorOrange[3] *= comp->colorMain[3];
+	FT_select[3]  *= comp->colorMain[3];
+	iconColor[3]  *= comp->colorMain[3];
+	textWhite[3]  *= comp->colorMain[3];
+	textYellow[3] *= comp->colorMain[3];
+	textRed[3]    *= comp->colorMain[3];
+	textOrange[3] *= comp->colorMain[3];
+	nameColor[3]  *= comp->colorMain[3];
 
 	if (comp->showBackGround)
 	{
@@ -616,7 +618,6 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		x = lineX;
-		vec4_t nameColor;
 
 		if (i != 0 || !(comp->style & BIT(1)))
 		{
@@ -634,19 +635,18 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		if (comp->style & BIT(3) || comp->style & BIT(4))
 		{
 			fireteamMemberStatusEnum_t status = CG_FireTeamMemberStatus(ci);
-
-			Com_Memcpy(&nameColor, CG_FireTeamNameColor(status), sizeof(vec4_t));
+			vec3_copy(*CG_FireTeamNameColor(status), nameColor);
 			if (comp->style & BIT(4) && status != NONE)
 			{
 				vec4_t rowColor;
-				Com_Memcpy(&rowColor, nameColor, sizeof(vec4_t));
+				vec4_copy(nameColor, rowColor);
 				rowColor[3] = comp->colorBackground[3];
 				CG_FillRect(x, y, w, h, rowColor);
 			}
 		}
 		else
 		{
-			Com_Memcpy(&nameColor, &colorWhite, sizeof(vec4_t));
+			vec4_copy(textWhite, nameColor);
 		}
 
 		if (ci->selected)
@@ -765,27 +765,27 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		else if (ci->health >= 10)
 		{
 			x += spacing;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ci->health > 80 ? comp->colorMain : colorYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ci->health > 80 ? comp->colorMain : textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing * 2;
 		}
 		else if (ci->health > 0)
 		{
 			x += spacing * 2;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, colorYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing;
 		}
 		else if (ci->health == 0)
 		{
 			x += spacing;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? colorWhite : colorRed, "*", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? textWhite : textRed, "*", 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? colorRed : colorWhite, "0", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? textRed : textWhite, "0", 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing;
 		}
 		else
 		{
 			x += spacing * 2;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, colorRed, "0", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textRed, "0", 0, 0, comp->styleText, FONT_TEXT);
 			x += spacing;
 		}
 
