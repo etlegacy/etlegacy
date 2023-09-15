@@ -78,7 +78,8 @@ void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	BMPHeader_t bmpHeader;
 	byte        *bmpRGBA;
 
-	*pic = NULL;
+	*pic     = NULL;
+	buffer.v = NULL;
 
 	if (width)
 	{
