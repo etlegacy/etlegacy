@@ -47,8 +47,8 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 	}
 	else if (name && data)
 	{
-		byte *pic;
-		int  i, w, h;
+		byte *pic = NULL;
+		int  i, w = 0, h = 0;
 		char tmpExt[10] = { 0 };
 
 		// Try and find a suitable match using all the image formats supported
