@@ -366,6 +366,18 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 
 // Main Functions
 
+typedef enum
+{
+	TIMEOUT,
+	WOUNDED,
+	DEAD,
+	NONE
+} fireteamMemberStatusEnum_t;
+
+static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci);
+static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status);
+
+
 /**
  * @brief Draw FireTeam overlay
  * @param[in] rect
@@ -398,6 +410,9 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	vec4_t textWhite                = { 1.0f, 1.0f, 1.0f, 1.0f }; // regular text
 	vec4_t textYellow               = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow text for health drawing
 	vec4_t textRed                  = { 1.0f, 0.0f, 0.0f, 1.0f }; // red text for health drawing
+	vec4_t textOrange               = { 1.0f, 0.6f, 0.0f, 1.0f }; // orange text for ping issues
+	vec4_t nameColor                = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -462,7 +477,16 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			locwidth = 0;
 		}
 
-		Q_strncpyz(name[i], ci->name, sizeof(name[i]));
+		if (comp->style & BIT(2) || (comp->style & BIT(3) && (ci->health <= 0 || ci->ping >= 999)))
+		{
+			Q_strncpyz(name[i], ci->cleanname, sizeof(name[i]));
+		}
+		else
+		{
+			Q_strncpyz(name[i], ci->name, sizeof(name[i]));
+		}
+
+
 		// truncate name if max chars is set
 		if (cg_fireteamNameMaxChars.integer)
 		{
@@ -557,6 +581,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	textWhite[3]  *= comp->colorMain[3];
 	textYellow[3] *= comp->colorMain[3];
 	textRed[3]    *= comp->colorMain[3];
+	textOrange[3] *= comp->colorMain[3];
+	nameColor[3]  *= comp->colorMain[3];
 
 	if (comp->showBackGround)
 	{
@@ -606,19 +632,27 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			break;
 		}
 
-		// highlight selected players
+		if (comp->style & BIT(3) || comp->style & BIT(4))
+		{
+			fireteamMemberStatusEnum_t status = CG_FireTeamMemberStatus(ci);
+			vec3_copy(*CG_FireTeamNameColor(status), nameColor);
+			if (comp->style & BIT(4) && status != NONE)
+			{
+				vec4_t rowColor;
+				vec4_copy(nameColor, rowColor);
+				rowColor[3] = comp->colorBackground[3];
+				CG_FillRect(x, y, w, h, rowColor);
+			}
+		}
+		else
+		{
+			vec4_copy(textWhite, nameColor);
+		}
+
 		if (ci->selected)
 		{
-			// first member requires thicker highlight bar
-			//if (i == 0)
-			//{
-			//	CG_FillRect(x, y, w, h, FT_select);
-			//}
-			//// adjust y to account for the thicker highlight bar of first member
-			//else
-			{
-				CG_FillRect(x, y, w, h, FT_select);
-			}
+			// highlight selected players
+			CG_FillRect(x, y, w, h, FT_select);
 		}
 
 		x += spacing;
@@ -684,11 +718,11 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		// right align?
 		if (cg_fireteamNameAlign.integer > 0)
 		{
-			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + heightTextOffset, scale, scale, textWhite, name[i], 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + heightTextOffset, scale, scale, nameColor, name[i], 0, 0, comp->styleText, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, nameColor, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 
 		// add space
@@ -781,6 +815,42 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	}
 
 	trap_R_SetColor(NULL);
+}
+
+static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci)
+{
+	if (ci->ping >= 999)
+	{
+		return TIMEOUT;
+	}
+	else if (ci->health == 0)
+	{
+		return WOUNDED;
+	}
+	else if (ci->health < 0)
+	{
+		return DEAD;
+	}
+	else
+	{
+		return NONE;
+	}
+}
+
+static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
+{
+	switch (status)
+	{
+	case TIMEOUT:
+		return &colorOrange;
+	case WOUNDED:
+		return &colorYellow;
+	case DEAD:
+		return &colorRed;
+	case NONE:
+	default:
+		return &colorWhite;
+	}
 }
 
 /*

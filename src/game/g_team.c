@@ -792,7 +792,7 @@ void TeamplayInfoMessage(team_t team)
 				}
 			}
 
-			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i", level.sortedClients[i], player->client->pers.teamState.location[0], player->client->pers.teamState.location[1], player->client->pers.teamState.location[2], h, player->s.powerups);
+			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i %i", level.sortedClients[i], player->client->pers.teamState.location[0], player->client->pers.teamState.location[1], player->client->pers.teamState.location[2], h, player->s.powerups, player->client->ps.ping);
 
 			j = strlen(entry);
 			if (stringlength + j > sizeof(string) - 10) // reserve some chars for tinfo prefix
