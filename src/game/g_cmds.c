@@ -1190,17 +1190,21 @@ void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
+#ifdef FEATURE_OMNIBOT
 	if (ent->health <= 0)
 	{
-#ifdef FEATURE_OMNIBOT
 		// cs: bots have to go to limbo when issuing /kill otherwise it's trouble
 		if (ent->r.svFlags & SVF_BOT)
 		{
 			limbo(ent, qtrue);
 			return;
 		}
+	}
 #endif
-		limbo(ent, qtrue);
+
+	if (level.match_pause != PAUSE_NONE)
+	{
+		CP("cp \"Can't ^3/kill^7 while game in pause.\n\"");
 		return;
 	}
 
@@ -1212,7 +1216,7 @@ void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR ||
 	    (ent->client->ps.pm_flags & PMF_LIMBO) ||
-	    ent->health <= 0 || level.match_pause != PAUSE_NONE)
+	    ent->health <= 0)
 	{
 		return;
 	}
@@ -4601,6 +4605,18 @@ void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_ForceTapout_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
+	if (level.match_pause != PAUSE_NONE)
+	{
+		CP("cp \"Can't ^3/forcetapout^7 while game in pause.\n\"");
+		return;
+	}
+
+	if (ent->client->freezed)
+	{
+		trap_SendServerCommand(ent - g_entities, "cp \"You are frozen - ^3/forcetapout^7 is disabled.\"");
+		return;
+	}
+
 	if (ent->client->ps.stats[STAT_HEALTH] <= 0 && (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES))
 	{
 		limbo(ent, qtrue);
