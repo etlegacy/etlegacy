@@ -1190,17 +1190,6 @@ void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-#ifdef FEATURE_OMNIBOT
-	if (ent->health <= 0)
-	{
-		// cs: bots have to go to limbo when issuing /kill otherwise it's trouble
-		if (ent->r.svFlags & SVF_BOT)
-		{
-			limbo(ent, qtrue);
-			return;
-		}
-	}
-#endif
 
 	if (level.match_pause != PAUSE_NONE)
 	{
@@ -1214,9 +1203,14 @@ void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
+	if (ent->health <= 0)
+	{
+		limbo(ent, qtrue);
+		return;
+	}
+
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR ||
-	    (ent->client->ps.pm_flags & PMF_LIMBO) ||
-	    ent->health <= 0)
+	    (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		return;
 	}
