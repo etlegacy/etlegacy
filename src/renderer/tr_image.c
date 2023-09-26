@@ -1015,9 +1015,10 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
  */
 void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 {
-	int  i;
-	char localName[MAX_QPATH];
-	char *altName;
+	int      i;
+	char     localName[MAX_QPATH];
+	char     *altName;
+	qboolean loaderRet = qfalse;
 
 	*pic    = NULL;
 	*width  = 0;
@@ -1045,10 +1046,15 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 			}
 
 			// Load
-			imageLoaders[i].ImageLoader(&data, pic, width, height, 0xFF);
+			loaderRet = imageLoaders[i].ImageLoader(&data, pic, width, height, 0xFF);
 
 			// free the file data
 			ri.FS_FreeFile(data.buffer.v);
+
+			if (!loaderRet)
+			{
+				Ren_Drop("Image loader failed\n");
+			}
 		}
 
 		if (*pic)

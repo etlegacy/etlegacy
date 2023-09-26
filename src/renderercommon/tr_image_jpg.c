@@ -98,7 +98,7 @@ static void R_JPGOutputMessage(j_common_ptr cinfo)
  * @param[out] height
  * @param alphaByte - unused
  */
-void R_LoadJPG(imageData_t *data, unsigned char **pic, int *width, int *height, byte alphaByte)
+qboolean R_LoadJPG(imageData_t *data, unsigned char **pic, int *width, int *height, byte alphaByte)
 {
 	/* This struct contains the JPEG decompression parameters and pointers to
 	 * working space (which is allocated as needed by the JPEG library).
@@ -134,7 +134,7 @@ void R_LoadJPG(imageData_t *data, unsigned char **pic, int *width, int *height, 
 	if (setjmp(jerr.jmpbuf))
 	{
 		// There was an error in jpeg decompression. Abort.
-		return;
+		return qfalse;
 	}
 
 	/* Now we can initialize the JPEG decompression object. */
@@ -253,6 +253,7 @@ void R_LoadJPG(imageData_t *data, unsigned char **pic, int *width, int *height, 
 	 */
 
 	/* And we're done! */
+	return qtrue;
 }
 
 /**

@@ -266,7 +266,7 @@ typedef struct
 typedef struct
 {
 	char *ext;
-	void (*ImageLoader)(imageData_t *data, byte **, int *, int *, byte);
+	qboolean (*ImageLoader)(imageData_t *data, byte **, int *, int *, byte);
 } imageExtToLoaderMap_t;
 
 /**
@@ -289,12 +289,12 @@ IMAGE LOADERS
 =============================================================
 */
 
-void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadJPG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadPCX(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+qboolean R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+qboolean R_LoadJPG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+qboolean R_LoadPCX(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+qboolean R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+qboolean R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
+qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
 
 /*
 =============================================================

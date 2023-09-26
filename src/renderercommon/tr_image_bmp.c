@@ -62,24 +62,18 @@ typedef struct
  * @param[out] height
  * @param alphaByte - unused
  */
-void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte)
+qboolean R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte)
 {
-	int      columns, rows;
-	unsigned numPixels;
-	byte     *pixbuf;
-	int      row, column;
-	byte     *buf_p;
-	byte     *end;
-	union
-	{
-		byte *b;
-		void *v;
-	} buffer;
+	int         columns, rows;
+	unsigned    numPixels;
+	byte        *pixbuf;
+	int         row, column;
+	byte        *buf_p;
+	byte        *end;
 	BMPHeader_t bmpHeader;
 	byte        *bmpRGBA;
 
-	*pic     = NULL;
-	buffer.v = NULL;
+	*pic = NULL;
 
 	if (width)
 	{
@@ -93,11 +87,11 @@ void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alph
 
 	if (data->size < 54)
 	{
-		Ren_Drop("LoadBMP: header too short (%s)\n", data->name);
+		Ren_Warning("LoadBMP: header too short (%s)\n", data->name);
 	}
 
-	buf_p = buffer.b;
-	end   = buffer.b + data->size;
+	buf_p = data->buffer.b;
+	end   = data->buffer.b + data->size;
 
 	bmpHeader.id[0]            = *buf_p++;
 	bmpHeader.id[1]            = *buf_p++;
@@ -134,40 +128,40 @@ void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		if (buf_p + sizeof(bmpHeader.palette) > end)
 		{
-			ri.FS_FreeFile(buffer.v);
-			Ren_Drop("LoadBMP: header too short (%s)\n", data->name);
+			Ren_Warning("LoadBMP: header too short (%s)\n", data->name);
+			return qfalse;
 		}
 
 		Com_Memcpy(bmpHeader.palette, buf_p, sizeof(bmpHeader.palette));
 	}
 
-	if (buffer.b + bmpHeader.bitmapDataOffset > end)
+	if (data->buffer.b + bmpHeader.bitmapDataOffset > end)
 	{
-		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadBMP: invalid offset value in header (%s)\n", data->name);
+		Ren_Warning("LoadBMP: invalid offset value in header (%s)\n", data->name);
+		return qfalse;
 	}
 
-	buf_p = buffer.b + bmpHeader.bitmapDataOffset;
+	buf_p = data->buffer.b + bmpHeader.bitmapDataOffset;
 
 	if (bmpHeader.id[0] != 'B' && bmpHeader.id[1] != 'M')
 	{
-		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadBMP: only Windows-style BMP files supported (%s)\n", data->name);
+		Ren_Warning("LoadBMP: only Windows-style BMP files supported (%s)\n", data->name);
+		return qfalse;
 	}
 	if (bmpHeader.fileSize != data->size)
 	{
-		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadBMP: header size does not match file size (%u vs. %u) (%s)\n", bmpHeader.fileSize, data->size, data->name);
+		Ren_Warning("LoadBMP: header size does not match file size (%u vs. %u) (%s)\n", bmpHeader.fileSize, data->size, data->name);
+		return qfalse;
 	}
 	if (bmpHeader.compression != 0)
 	{
-		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadBMP: only uncompressed BMP files supported (%s)\n", data->name);
+		Ren_Warning("LoadBMP: only uncompressed BMP files supported (%s)\n", data->name);
+		return qfalse;
 	}
 	if (bmpHeader.bitsPerPixel < 8)
 	{
-		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadBMP: monochrome and 4-bit BMP files not supported (%s)\n", data->name);
+		Ren_Warning("LoadBMP: monochrome and 4-bit BMP files not supported (%s)\n", data->name);
+		return qfalse;
 	}
 
 	switch (bmpHeader.bitsPerPixel)
@@ -178,9 +172,8 @@ void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	case 32:
 		break;
 	default:
-		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadBMP: illegal pixel_size '%hu' in file '%s'\n", bmpHeader.bitsPerPixel, data->name);
-		break;
+		Ren_Warning("LoadBMP: illegal pixel_size '%hu' in file '%s'\n", bmpHeader.bitsPerPixel, data->name);
+		return qfalse;
 	}
 
 	columns = bmpHeader.width;
@@ -194,13 +187,13 @@ void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	if (columns <= 0 || !rows || numPixels > 0x1FFFFFFF // 4*1FFFFFFF == 0x7FFFFFFC < 0x7FFFFFFF
 	    || ((numPixels * 4) / columns) / 4 != rows)
 	{
-		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadBMP: %s has an invalid image size\n", data->name);
+		Ren_Warning("LoadBMP: %s has an invalid image size\n", data->name);
+		return qfalse;
 	}
 	if (buf_p + numPixels * bmpHeader.bitsPerPixel / 8 > end)
 	{
-		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadBMP: file truncated (%s)\n", data->name);
+		Ren_Warning("LoadBMP: file truncated (%s)\n", data->name);
+		return qfalse;
 	}
 
 	if (width)
@@ -267,5 +260,5 @@ void R_LoadBMP(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		}
 	}
 
-	ri.FS_FreeFile(buffer.v);
+	return qtrue;
 }

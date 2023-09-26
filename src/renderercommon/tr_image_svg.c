@@ -52,7 +52,7 @@
  * @param [in,out] height height of the image
  * @param [in] alphaByte - unused
  */
-void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte)
+qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte)
 {
 	NSVGimage      *image = NULL;
 	NSVGrasterizer *rast  = NULL;
@@ -84,8 +84,8 @@ void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	Com_Memcpy(tmp_data, data->buffer.v, data->size);
 	if (!tmp_data)
 	{
-		Ren_Drop("Could not allocate memory for the svg image.\n");
-		return;
+		Ren_Warning("R_LoadSVG: Could not allocate memory for the svg image.\n");
+		return qfalse;
 	}
 
 	image = nsvgParse((char *)tmp_data, "px", dpi);
@@ -93,17 +93,16 @@ void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 
 	if (image == NULL)
 	{
-		ri.FS_FreeFile(data->buffer.v);
-		Ren_Drop("Could not parse svg.\n");
-		return;
+		Ren_Warning("R_LoadSVG: Could not parse svg.\n");
+		return qfalse;
 	}
 
 	rast = nsvgCreateRasterizer();
 	if (rast == NULL)
 	{
 		nsvgDelete(image);
-		Ren_Drop("Could not init svg rasterizer.\n");
-		return;
+		Ren_Warning("R_LoadSVG: Could not init svg rasterizer.\n");
+		return qfalse;
 	}
 
 	scale = (float)glConfig.vidHeight / SCREEN_HEIGHT_F;
@@ -123,8 +122,8 @@ void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		nsvgDeleteRasterizer(rast);
 		nsvgDelete(image);
-		Ren_Drop("Could not allocate memory for the svg image.\n");
-		return;
+		Ren_Warning("R_LoadSVG: Could not allocate memory for the svg image.\n");
+		return qfalse;
 	}
 
 	nsvgRasterize(rast, image, 0, 0, scale, img_data, columns, rows, columns * 4);
@@ -141,4 +140,6 @@ void R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 
 	nsvgDeleteRasterizer(rast);
 	nsvgDelete(image);
+
+	return qtrue;
 }

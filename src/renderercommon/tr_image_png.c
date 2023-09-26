@@ -1635,7 +1635,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
  * @param[out] height
  * @param alphaByte is not yet implemented
  */
-void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte)
+qboolean R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte)
 {
 	struct BufferedFile    *ThePNG;
 	byte                   *OutBuffer;
@@ -1662,7 +1662,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	// input verification
 	if (!(data && pic))
 	{
-		return;
+		return qfalse;
 	}
 
 	// Zero out return values.
@@ -1682,7 +1682,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	ThePNG = ReadBufferedFile(data);
 	if (!ThePNG)
 	{
-		return;
+		return qfalse;
 	}
 
 	// Read the siganture of the file.
@@ -1691,7 +1691,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// Is it a PNG?
@@ -1699,7 +1699,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// Read the first chunk-header.
@@ -1708,7 +1708,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// PNG multi-byte types are in Big Endian
@@ -1720,7 +1720,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// Read the IHDR.
@@ -1729,7 +1729,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// Read the CRC for IHDR
@@ -1738,7 +1738,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// Here we could check the CRC if we wanted to.
@@ -1755,7 +1755,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 
 		Ren_Print(S_COLOR_YELLOW "%s: invalid image size\n", data->name);
 
-		return;
+		return qfalse;
 	}
 
 	// Do we need to check if the dimensions of the image are valid for Quake3?
@@ -1765,7 +1765,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// Check if InterlaceMethod is valid.
@@ -1773,7 +1773,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// Read palette for an indexed image.
@@ -1784,7 +1784,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		// Read the chunk-header.
@@ -1793,7 +1793,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		// PNG multi-byte types are in Big Endian
@@ -1805,7 +1805,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		// Check if Length is divisible by 3
@@ -1813,7 +1813,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		// Read the raw palette data
@@ -1822,7 +1822,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		// Read the CRC for the palette
@@ -1831,7 +1831,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		// Set some default values.
@@ -1866,7 +1866,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		//  PNG multi-byte types are in Big Endian
@@ -1878,7 +1878,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		//  Read the transparency information.
@@ -1887,7 +1887,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		//  Read the CRC.
@@ -1896,7 +1896,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		// Only for Grey, True and Indexed ColourType should tRNS exist.
@@ -1908,7 +1908,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 			{
 				CloseBufferedFile(ThePNG);
 
-				return;
+				return qfalse;
 			}
 
 			HasTransparentColour = qtrue;
@@ -1927,7 +1927,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 			{
 				CloseBufferedFile(ThePNG);
 
-				return;
+				return qfalse;
 			}
 
 			HasTransparentColour = qtrue;
@@ -1953,7 +1953,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 			{
 				CloseBufferedFile(ThePNG);
 
-				return;
+				return qfalse;
 			}
 
 			HasTransparentColour = qtrue;
@@ -1972,7 +1972,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		{
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 		}
 	}
@@ -1982,7 +1982,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	//  Skip the signature
@@ -1990,7 +1990,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	//  Decompress all IDAT chunks
@@ -1999,7 +1999,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 	{
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	//  Allocate output buffer.
@@ -2009,7 +2009,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		ri.Free(DecompressedData);
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 
 	// Interlaced and Non-interlaced images need to be handled differently.
@@ -2023,7 +2023,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 			ri.Free(DecompressedData);
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		break;
@@ -2037,7 +2037,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 			ri.Free(DecompressedData);
 			CloseBufferedFile(ThePNG);
 
-			return;
+			return qfalse;
 		}
 
 		break;
@@ -2049,7 +2049,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 		ri.Free(DecompressedData);
 		CloseBufferedFile(ThePNG);
 
-		return;
+		return qfalse;
 	}
 	}
 
@@ -2072,6 +2072,7 @@ void R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alph
 
 	//  We have all data, so close the file.
 	CloseBufferedFile(ThePNG);
+	return qtrue;
 }
 
 #ifdef FEATURE_PNG
@@ -2224,7 +2225,7 @@ void RE_SavePNG(const char *filename, int width, int height, byte *data, int pad
 	{
 		ri.Free(compressedData);
 		ri.Free(imageData);
-		ri.Printf(PRINT_WARNING, "RE_SavePNG: Failed to compress image data.\n");
+		Ren_Warning("RE_SavePNG: Failed to compress image data.\n");
 		return;
 	}
 
