@@ -1887,9 +1887,9 @@ void ClientUserinfoChanged(int clientNum)
 		if (cs_cg_uinfo[0])
 		{
 			Q_sscanf(cs_cg_uinfo, "%u %u %u",
-			       &client->pers.clientFlags,
-			       &client->pers.clientTimeNudge,
-			       &client->pers.clientMaxPackets);
+			         &client->pers.clientFlags,
+			         &client->pers.clientTimeNudge,
+			         &client->pers.clientMaxPackets);
 		}
 		else
 		{
@@ -2040,7 +2040,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char reason[MAX_STRING_CHARS] = "";
 #endif
 	qboolean allowGeoIP = qtrue;
-	int      i, tv;
+	int      i, tv      = 0;
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
