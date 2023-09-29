@@ -1657,7 +1657,7 @@ void SV_Frame(int msec)
 	// and clear sv.time, rather
 	// than checking for negative time wraparound everywhere.
 	// 2giga-milliseconds = 23 days, so it won't be too often
-	if (svs.time > 0x70000000)
+	if (sv.time > 0x70000000)
 	{
 		Q_strncpyz(mapname, sv_mapname->string, MAX_QPATH);
 		SV_Shutdown("Restarting server due to time wrapping");
@@ -1678,7 +1678,7 @@ void SV_Frame(int msec)
 		return;
 	}
 
-	if (sv.restartTime && svs.time >= sv.restartTime)
+	if (sv.restartTime && sv.time >= sv.restartTime)
 	{
 		sv.restartTime = 0;
 		Cbuf_AddText("map_restart 0\n");
@@ -1729,10 +1729,11 @@ void SV_Frame(int msec)
 	while (sv.timeResidual >= frameMsec)
 	{
 		sv.timeResidual -= frameMsec;
+		sv.time         += frameMsec;
 		svs.time        += frameMsec;
 
 		// let everything in the world think and move
-		VM_Call(gvm, GAME_RUN_FRAME, svs.time);
+		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
 
 		// play/record demo frame (if enabled)
 		if (sv.demoState == DS_RECORDING) // Record the frame

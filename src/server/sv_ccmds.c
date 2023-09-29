@@ -274,7 +274,13 @@ static void SV_MapRestart_f(void)
 
 	if (delay)
 	{
-		sv.restartTime = svs.time + delay * 1000;
+		sv.restartTime = sv.time + delay * 1000;
+
+		if (sv.restartTime == 0)
+		{
+			sv.restartTime = 1;
+		}
+
 		SV_SetConfigstring(CS_WARMUP, va("%i", sv.restartTime));
 		return;
 	}
@@ -330,8 +336,8 @@ static void SV_MapRestart_f(void)
 	// run a few frames to allow everything to settle
 	for (i = 0; i < GAME_INIT_FRAMES; i++)
 	{
-		VM_Call(gvm, GAME_RUN_FRAME, svs.time);
-		svs.time += FRAMETIME;
+		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+		sv.time += FRAMETIME;
 	}
 
 	sv.state      = SS_GAME;
@@ -393,7 +399,8 @@ static void SV_MapRestart_f(void)
 	}
 
 	// run another frame to allow things to look at all the players
-	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
+	VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+	sv.time  += FRAMETIME;
 	svs.time += FRAMETIME;
 }
 
@@ -443,11 +450,12 @@ qboolean SV_TempBanIsBanned(netadr_t address)
 {
 	int i;
 
-	for ( i = 0; i < MAX_TEMPBAN_ADDRESSES; i++ ) {
-		if ( svs.tempBanAddresses[ i ].endtime && svs.tempBanAddresses[ i ].endtime > svs.time )
-        {
-			if ( NET_CompareBaseAdr( address, svs.tempBanAddresses[ i ].adr ) )
-            {
+	for ( i = 0; i < MAX_TEMPBAN_ADDRESSES; i++ )
+	{
+		if (svs.tempBanAddresses[i].endtime && svs.tempBanAddresses[i].endtime > svs.time)
+		{
+			if (NET_CompareBaseAdr(address, svs.tempBanAddresses[i].adr))
+			{
 				return qtrue;
 			}
 		}

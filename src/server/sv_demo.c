@@ -856,7 +856,7 @@ void SV_DemoWriteFrame(void)
 	MSG_WriteByte(&msg, demo_endFrame);
 
 	// write server time (will overwrite the server time every end of frame)
-	MSG_WriteLong(&msg, svs.time);
+	MSG_WriteLong(&msg, sv.time);
 
 	// commit data to the demo file
 	SV_DemoWriteMessage(&msg);
@@ -1256,7 +1256,7 @@ static void SV_DemoStartPlayback(void)
 		return;
 	}
 
-	svs.time = time;
+	sv.time = time;
 
 	// initialize our stuff
 	Com_Memset(sv.demoEntities, 0, sizeof(sv.demoEntities));
@@ -1318,7 +1318,7 @@ static void SV_DemoStartRecord(void)
 
 	info = Cvar_InfoString_Big(CVAR_SERVERINFO | CVAR_WOLFINFO);
 
-	Info_SetValueForKey(info, "time", va("%i", svs.time));
+	Info_SetValueForKey(info, "time", va("%i", sv.time));
 	Info_SetValueForKey(info, "sv_fps", va("%i", sv_fps->integer));
 	MSG_WriteString(&msg, info);
 
@@ -1484,7 +1484,7 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 		// try limiting to one exact same command per frame (buggy)
 		// if not done it spams players with a lot of commands,
 		// or even kicks them off the server because of exceeding reliable commands buffer (it can fill the buffer in 1 frame before even 1 cmd is sent)
-		if (time == svs.time)
+		if (time == sv.time)
 		{
 			if (cmdsPerFrameCount > MAX_RELIABLE_COMMANDS)
 			{
@@ -1508,7 +1508,7 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 			Com_Memset(cmds, 0, sizeof(cmds));
 			Q_strncpyz(cmds[0], cmd, MAX_STRING_CHARS);
 			cmdsPerFrameCount = 1;
-			time              = svs.time;
+			time              = sv.time;
 			canSend           = qtrue;
 		}
 	}
@@ -1907,7 +1907,7 @@ read_next_demo_frame: // used to read another whole demo frame
 	if (Cvar_VariableIntegerValue("sv_freezeDemo"))
 	{
 		// reset server time to the same time as the previous frame, to avoid the time going backward when resuming the demo (which will disconnect every players)
-		svs.time = memsvtime;
+		sv.time = memsvtime;
 		return qfalse;
 	}
 
@@ -2052,22 +2052,22 @@ read_next_demo_event: // used to read next demo event
 
 				// iterate a few demo frames to catch to until we are above the server time,
 				// note: this is needed after map_restart (SV_MapRestart_f) and to correctly replay gamestates (when the recording started at GS_WARMUP_COUNTDOWN and GS_PLAYING)
-				if (time < svs.time)
+				if (time < sv.time)
 				{
 					// note: having a server time below the demo time is CRITICAL, else we may send to the clients a server time that is below the previous,
 					// or in the case of legacy mod the time would be set to levelTime = levelTime + level.previousTime (G_RunFrame).
-					int timetoreach = svs.time;
+					int timetoreach = sv.time;
 
-					svs.time = time;
-					while (svs.time <= timetoreach)
+					sv.time = time;
+					while (sv.time <= timetoreach)
 					{
 						SV_DemoReadFrame(); // run a few frames to settle things out
 					}
 				}
 				else
 				{
-					svs.time  = time;   // refresh server in-game time (overwriting any change the game may have done)
-					memsvtime = svs.time;     // keep memory of the last server time, in case we want to freeze the demo
+					sv.time   = time;  // refresh server in-game time (overwriting any change the game may have done)
+					memsvtime = sv.time;     // keep memory of the last server time, in case we want to freeze the demo
 				}
 
 				// check for timescale: if timescale is faster (above 1.0), we read more frames at once (eg: timescale=2, we read 2 frames for one call of this function)
@@ -2359,10 +2359,10 @@ static void SV_Demo_Fastforward_f(void)
 		return;
 	}
 
-	timetoreach = svs.time + (timetoreach * 1000);
+	timetoreach = sv.time + (timetoreach * 1000);
 	gamestate   = Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"));
 
-	while (svs.time < timetoreach)
+	while (sv.time < timetoreach)
 	{
 		if (SV_DemoReadFrame() || gamestate != Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate")))
 		{

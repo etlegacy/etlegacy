@@ -628,7 +628,16 @@ static void SV_ClearServer(void)
 		}
 	}
 
-	Com_Memset(&sv, 0, sizeof(sv));
+	if (!sv_serverTimeReset->integer)
+	{
+		i = sv.time;
+		Com_Memset(&sv, 0, sizeof(sv));
+		sv.time = i;
+	}
+	else
+	{
+		Com_Memset(&sv, 0, sizeof(sv));
+	}
 }
 
 /**
@@ -776,8 +785,7 @@ void SV_SpawnServer(const char *server)
 
 	if (sv_serverTimeReset->integer)
 	{
-		svs.time         = 0;
-		svs.autoDemoTime = 0;
+		sv.time = 0;
 	}
 
 	// load and spawn all other entities
@@ -786,8 +794,8 @@ void SV_SpawnServer(const char *server)
 	// run a few frames to allow everything to settle
 	for (i = 0 ; i < GAME_INIT_FRAMES ; i++)
 	{
-		VM_Call(gvm, GAME_RUN_FRAME, svs.time);
-		svs.time += FRAMETIME;
+		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+		sv.time += FRAMETIME;
 	}
 
 	// create a baseline for more efficient communications
@@ -846,8 +854,9 @@ void SV_SpawnServer(const char *server)
 	}
 
 	// run another frame to allow things to look at all the players
-	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
+	VM_Call(gvm, GAME_RUN_FRAME, sv.time);
 
+	sv.time  += FRAMETIME;
 	svs.time += FRAMETIME;
 
 	// the server sends these to the clients so they can figure
