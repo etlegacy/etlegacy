@@ -550,6 +550,12 @@ void SV_DemoWriteServerConsoleCommand(int exec_when, const char *cmd)
 		return;
 	}
 
+	// make sure we aren't restarting twice in the same frame
+	if (com_frameTime == sv.serverId)
+	{
+		return;
+	}
+
 	MSG_Init(&msg, buf, sizeof(buf));
 	MSG_WriteByte(&msg, demo_serverConsoleCommand);
 	MSG_WriteLong(&msg, exec_when);
