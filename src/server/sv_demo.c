@@ -1575,7 +1575,7 @@ static void SV_DemoReadConfigString(msg_t *msg)
 				break;
 			}
 
-			if (Cvar_Flags(key) == CVAR_NONEXISTENT)
+			if (Cvar_Flags(key) & CVAR_NONEXISTENT)
 			{
 				continue;
 			}
