@@ -92,7 +92,6 @@ static byte buf[0x400000];
 // save cvars and restore them after the demo
 static int      savedMaxClients = -1;
 char            savedCvarsInfo[BIG_INFO_STRING];
-char            *savedCvars       = savedCvarsInfo;
 static qboolean restoreSavedCvars = qtrue;
 
 // for restarting playback
@@ -114,6 +113,8 @@ static void SV_DemoCvarsRestore()
 {
 	char key[BIG_INFO_KEY];
 	char value[BIG_INFO_VALUE];
+	char *savedCvars = savedCvarsInfo;
+
 	// restore initial cvars of the server that were modified by the demo playback
 	// note: must do it before the map_restart! so that latched values such as sv_maxclients takes effect
 	if (restoreSavedCvars)
