@@ -62,22 +62,22 @@ void G_DemoStateChanged(demoState_t demoState, int demoClientsNum)
 
 		if (num < 0)
 		{
-			Com_Printf("Could not add ETLTV-BOT\n");
+			Com_Printf("Could not add ETL DEMO STATS BOT\n");
 			return;
 		}
 
-		Info_SetValueForKey(userinfo, "name", "ETLTV-BOT");
+		Info_SetValueForKey(userinfo, "name", "ETL DEMO STATS BOT");
 		Info_SetValueForKey(userinfo, "rate", "25000");
 		Info_SetValueForKey(userinfo, "snaps", "20");
 		Info_SetValueForKey(userinfo, "ip", "localhost");
-		Info_SetValueForKey(userinfo, "cl_guid", "ETLTV-BOT");
+		Info_SetValueForKey(userinfo, "cl_guid", "ETL-DEMO-STATS-BOT");
 		Info_SetValueForKey(userinfo, "tv", "1"); // value 1 - atm only used so omnibot module will not handle this bot
 
 		trap_SetUserinfo(num, userinfo);
 
 		if ((reason = ClientConnect(num, qtrue, qtrue)) != 0)
 		{
-			Com_Printf(va("Could not connect ETLTV-BOT: %s\n", reason));
+			Com_Printf(va("Could not connect ETL DEMO STATS BOT: %s\n", reason));
 			return;
 		}
 
