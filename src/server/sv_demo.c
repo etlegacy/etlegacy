@@ -1143,7 +1143,10 @@ static void SV_DemoStartPlayback(void)
 		Com_Memset(savedCvarsInfo, 0, BIG_INFO_STRING);
 		Q_strncpyz(savedCvarsInfo, Cvar_InfoString_Big(CVAR_SERVERINFO | CVAR_WOLFINFO), BIG_INFO_STRING);
 		Info_SetValueForKey(savedCvarsInfo, "sv_fps", va("%i", sv_fps->integer));
+		Info_SetValueForKey(savedCvarsInfo, "sv_serverTimeReset", va("%i", sv_serverTimeReset->integer));
 	}
+
+	Cvar_SetValue("sv_serverTimeReset", 1);
 
 	metadata = MSG_ReadString(&msg);
 
