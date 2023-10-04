@@ -2937,14 +2937,26 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_CalculateReinfTime_Float
- * @param[in] menu
+ * @brief CG_ReinfTimeEx
+ * @param[in] team
  * @return
  */
-float CG_CalculateReinfTime_Float(qboolean menu)
+int CG_CalculateReinfTime(team_t team)
+{
+	int dwDeployTime;
+
+	dwDeployTime = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
+	return (int)(1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) * 0.001f);
+}
+
+/**
+ * @brief CG_CalculateReinfTime
+ * @param menu
+ * @return
+ */
+int CG_GetReinfTime(qboolean menu)
 {
 	team_t team;
-	int    dwDeployTime;
 
 	if (menu)
 	{
@@ -2962,31 +2974,7 @@ float CG_CalculateReinfTime_Float(qboolean menu)
 		team = cgs.clientinfo[cg.snap->ps.clientNum].team;
 	}
 
-	dwDeployTime = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
-	return (1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) * 0.001f);
-}
-
-/**
- * @brief CG_CalculateReinfTime
- * @param menu
- * @return
- */
-int CG_CalculateReinfTime(qboolean menu)
-{
-	return (int)(CG_CalculateReinfTime_Float(menu));
-}
-
-/**
- * @brief CG_CalculateShoutcasterReinfTime
- * @param[in] team
- * @return
- */
-int CG_CalculateShoutcasterReinfTime(team_t team)
-{
-	int dwDeployTime;
-
-	dwDeployTime = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
-	return (int)(1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) * 0.001f);
+	return CG_CalculateReinfTime(team);
 }
 
 /**
@@ -4262,10 +4250,8 @@ static void CG_Draw2D(void)
 		{
 			if (cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
-				if (cg_shoutcastDrawPlayers.integer)
-				{
-					CG_DrawShoutcastPlayerList();
-				}
+				CG_DrawShoutcastTeamNames();
+				CG_DrawShoutcastPlayerList();
 
 				if (cg.snap->ps.pm_flags & PMF_FOLLOW)
 				{

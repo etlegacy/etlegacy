@@ -337,7 +337,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		{
 			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 			{
-				msec = CG_CalculateReinfTime(qfalse) * 1000;
+				msec = CG_GetReinfTime(qfalse) * 1000;
 			}
 			else  // no team (spectator mode)
 			{

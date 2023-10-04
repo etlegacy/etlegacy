@@ -2796,15 +2796,23 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 		}
 
 		*rt = va("%2.0i", limbotimeEnemy / 1000);
-		*s  = cgs.gametype == GT_WOLF_LMS ? va("%s", CG_TranslateString("WARMUP")) : va("%2.0i", limbotimeOwn / 1000);
+		*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? va("%s", CG_TranslateString("WARMUP")) : va("%2.0i", limbotimeOwn / 1000);
 
 		// if hud editor is up, return qfalse since we want to see text style changes
 		return !cg.generatingNoiseHud;
 	}
-	else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
+	else if (cgs.gametype != GT_WOLF_LMS)
 	{
-		*s  = va("%2.0i", CG_CalculateReinfTime(qfalse));
-		*rt = CG_SpawnTimerText();
+		if (cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			*s  = va("%2.0i", CG_CalculateReinfTime(TEAM_AXIS));
+			*rt = va("%2.0i", CG_CalculateReinfTime(TEAM_ALLIES));
+		}
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+		{
+			*s  = va("%2.0i", CG_GetReinfTime(qfalse));
+			*rt = CG_SpawnTimerText();
+		}
 	}
 	return qfalse;
 }
@@ -2816,8 +2824,13 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 static char *CG_RoundTimerText()
 {
 	qtime_t qt;
-	int     msec = CG_RoundTime(&qt);
-	if (msec < 0 && cgs.timelimit > 0.0f)
+
+	if (cgs.gamestate != GS_PLAYING)
+	{
+		return "WARMUP";
+	}
+
+	if (CG_RoundTime(&qt) < 0 && cgs.timelimit > 0.0f)
 	{
 		return "0:00"; // round ended
 	}
@@ -2984,11 +2997,7 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
  */
 void CG_DrawRoundTimer(hudComponent_t *comp)
 {
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		CG_DrawShoutcastTimer();
-	}
-	else if (comp->style & 1)
+	if (comp->style & 1)
 	{
 		CG_DrawRoundTimerSimple(comp);
 	}

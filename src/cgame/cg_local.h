@@ -3159,9 +3159,8 @@ void CG_Text_PaintChar(float x, float y, float width, float height, float scale,
 
 void CG_DrawWeapHeat(rectDef_t *rect, int align);
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, int align, vec4_t *refcolor);
-int CG_CalculateReinfTime(qboolean menu);
-float CG_CalculateReinfTime_Float(qboolean menu);
-int CG_CalculateShoutcasterReinfTime(team_t team);
+int CG_CalculateReinfTime(team_t team);
+int CG_GetReinfTime(qboolean menu);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
 void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/);
@@ -3170,7 +3169,7 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAm
 
 void CG_DrawShoutcastPlayerList(void);
 void CG_DrawShoutcastPlayerStatus(void);
-void CG_DrawShoutcastTimer(void);
+void CG_DrawShoutcastTeamNames(void);
 void CG_RequestPlayerStats(int clientNum);
 char *CG_ParseStats(char *data, int i);
 

@@ -2920,7 +2920,7 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 		{
 			return 0;
 		}
-		return (int)CG_CalculateReinfTime_Float(qtrue);
+		return CG_GetReinfTime(qtrue);
 	case 4:     // skills
 		return (1 << cgs.clientinfo[cg.clientNum].skill[CG_LimboPanel_ClassSkillForPosition(button->data[1])]) - 1;
 	case 5:     // clock

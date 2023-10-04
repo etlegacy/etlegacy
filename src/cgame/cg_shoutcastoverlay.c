@@ -143,7 +143,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
 	CG_FilledBar(topRowX + PLAYER_LIST_STATUS_WIDTH, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.75f, colorAxis, colorAxis,
-                 bg, bg, fraction, BAR_BGSPACING_X0Y0, -1);
+	             bg, bg, fraction, BAR_BGSPACING_X0Y0, -1);
 
 	// draw health
 	if (player->health > 0)
@@ -271,7 +271,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
 	CG_FilledBar(topRowX + 1, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.5f, colorAllies, colorAllies,
-                 bg, bg, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
+	             bg, bg, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
 
 	topRowX += PLAYER_LIST_WIDTH;
 
@@ -374,6 +374,11 @@ void CG_DrawShoutcastPlayerList(void)
 	int          i;
 
 	if (cgs.topshots.show == SHOW_ON)
+	{
+		return;
+	}
+
+	if (!cg_shoutcastDrawPlayers.integer)
 	{
 		return;
 	}
@@ -597,14 +602,14 @@ void CG_DrawShoutcastPlayerStatus(void)
 	clientInfo_t  *player = &cgs.clientinfo[cg.snap->ps.clientNum];
 	playerState_t *ps     = &cg.snap->ps;
 	vec4_t        hcolor;
-	float         nameBoxWidth = PLAYER_STATUS_NAMEBOX_WIDTH;
-	float         nameBoxHeight = PLAYER_STATUS_NAMEBOX_HEIGHT;
-	float         nameBoxX = PLAYER_STATUS_NAMEBOX_X;
-	float         nameBoxY = PLAYER_STATUS_NAMEBOX_Y;
-	float         statsBoxWidth = PLAYER_STATUS_STATSBOX_WIDTH;
+	float         nameBoxWidth   = PLAYER_STATUS_NAMEBOX_WIDTH;
+	float         nameBoxHeight  = PLAYER_STATUS_NAMEBOX_HEIGHT;
+	float         nameBoxX       = PLAYER_STATUS_NAMEBOX_X;
+	float         nameBoxY       = PLAYER_STATUS_NAMEBOX_Y;
+	float         statsBoxWidth  = PLAYER_STATUS_STATSBOX_WIDTH;
 	float         statsBoxHeight = PLAYER_STATUS_STATSBOX_HEIGHT;
-	float         statsBoxX = PLAYER_STATUS_STATSBOX_X;
-	float         statsBoxY = PLAYER_STATUS_STATSBOX_Y;
+	float         statsBoxX      = PLAYER_STATUS_STATSBOX_X;
+	float         statsBoxY      = PLAYER_STATUS_STATSBOX_Y;
 	float         textWidth, textWidth2, textHeight;
 	char          *kills, *deaths, *selfkills, *dmgGiven, *dmgRcvd, *text;
 	int           ammo, clip, akimbo, curWeap, weapScale, tmpX;
@@ -806,12 +811,17 @@ void CG_DrawShoutcastPlayerStatus(void)
 /**
 * @brief CG_DrawShoutcastTeamNames
 */
-static void CG_DrawShoutcastTeamNames()
+void CG_DrawShoutcastTeamNames()
 {
 	rectDef_t rect;
 	int       textWidth;
 	int       textHeight;
 	char      *text;
+
+	if (cgs.gamestats.show == SHOW_ON)
+	{
+		return;
+	}
 
 	if (cg_shoutcastDrawTeamNames.integer)
 	{
@@ -871,97 +881,6 @@ static void CG_DrawShoutcastTeamNames()
 		CG_Text_Paint_Ext(rect.x + (rect.w / 2) - (textWidth / 2) + 1.35f, rect.y + (rect.h / 2) + (textHeight / 2) + 1.35f, 0.3f, 0.3f, colorBlack, text, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 		CG_Text_Paint_Ext(rect.x + (rect.w / 2) - (textWidth / 2), rect.y + (rect.h / 2) + (textHeight / 2), 0.3f, 0.3f, colorWhite, text, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 	}
-}
-
-/**
-* @brief CG_DrawTimerShoutcast
-*/
-void CG_DrawShoutcastTimer(void)
-{
-	if (cgs.gamestats.show == SHOW_ON)
-	{
-		return;
-	}
-
-	vec4_t color = { .6f, .6f, .6f, 1.f };
-	char   *text, *rtAllies = "", *rtAxis = "", *round;
-	int    tens;
-	int    msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
-	int    seconds = msec / 1000;
-	int    mins    = seconds / 60;
-	int    w       = GAMETIME_WIDTH;
-	int    h       = GAMETIME_HEIGHT;
-	int    x       = GAMETIME_X;
-	int    y       = GAMETIME_Y;
-	int    textWidth;
-
-	seconds -= mins * 60;
-	tens     = seconds / 10;
-	seconds -= tens * 10;
-
-	if (cgs.gamestate != GS_PLAYING)
-	{
-		text     = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
-		color[3] = fabs(sin(cg.time * 0.002));
-	}
-	else if (msec < 0 && cgs.timelimit > 0.0f)
-	{
-		text     = "^70:00";
-		color[3] = fabs(sin(cg.time * 0.002));
-	}
-	else
-	{
-		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster)
-		{
-			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
-			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
-
-			rtAllies = va("^$%i", reinfTimeAl);
-			rtAxis   = va("^1%i", reinfTimeAx);
-		}
-		else
-		{
-			rtAllies = "";
-			rtAxis   = "";
-		}
-
-		if (cgs.timelimit <= 0.0f)
-		{
-			text = "";
-		}
-		else
-		{
-			text = va("^7%2i:%i%i", mins, tens, seconds);
-		}
-
-		color[3] = 1.f;
-	}
-
-	textWidth = CG_Text_Width_Ext(text, 0.23f, 0, FONT_HEADER);
-
-	// draw box
-	CG_FillRect(x, y, w, h, bg);
-	CG_DrawRect_FixedBorder(x, y, w, h, 2, colorLtGrey);
-
-	// game time
-	CG_Text_Paint_Ext(x + w / 2 - textWidth / 2, y + 13, 0.23f, 0.23f, color, text, 0, 0, 0, FONT_HEADER);
-
-	// axis reinf time
-	CG_Text_Paint_Ext(x + 3, y + h - 5, 0.20f, 0.20f, color, rtAxis, 0, 0, 0, FONT_HEADER);
-
-	// allies reinf time
-	textWidth = CG_Text_Width_Ext(rtAllies, 0.20f, 0, FONT_HEADER);
-	CG_Text_Paint_Ext(x + w - textWidth - 3, y + h - 5, 0.20f, 0.20f, color, rtAllies, 0, 0, 0, FONT_HEADER);
-
-	// round number
-	if (cgs.gametype == GT_WOLF_STOPWATCH)
-	{
-		round     = va("%i/2", cgs.currentRound + 1);
-		textWidth = CG_Text_Width_Ext(round, 0.15f, 0, FONT_HEADER);
-		CG_Text_Paint_Ext(x + w / 2 - textWidth / 2, y + h - 5.5f, 0.15f, 0.15f, colorWhite, round, 0, 0, 0, FONT_HEADER);
-	}
-
-	CG_DrawShoutcastTeamNames();
 }
 
 /**
