@@ -2795,7 +2795,6 @@ extern vmCvar_t cg_autoReload;
 extern vmCvar_t cg_bloodDamageBlend;
 extern vmCvar_t cg_bloodFlash;
 extern vmCvar_t cg_bloodFlashTime;
-extern vmCvar_t cg_drawReinforcementTime;
 extern vmCvar_t cg_noAmmoAutoSwitch;
 extern vmCvar_t cg_printObjectiveInfo;
 #ifdef FEATURE_MULTIVIEW

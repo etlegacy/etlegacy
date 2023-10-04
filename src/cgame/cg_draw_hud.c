@@ -2801,7 +2801,7 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 		// if hud editor is up, return qfalse since we want to see text style changes
 		return !cg.generatingNoiseHud;
 	}
-	else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
+	else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
 	{
 		*s  = va("%2.0i", CG_CalculateReinfTime(qfalse));
 		*rt = CG_SpawnTimerText();
