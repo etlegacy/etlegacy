@@ -3172,7 +3172,6 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAm
 void CG_DrawShoutcastPlayerList(void);
 void CG_DrawShoutcastPlayerStatus(void);
 void CG_DrawShoutcastTimer(void);
-void CG_DrawShoutcastPowerups(void);
 void CG_RequestPlayerStats(int clientNum);
 char *CG_ParseStats(char *data, int i);
 

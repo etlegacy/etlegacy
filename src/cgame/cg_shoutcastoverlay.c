@@ -70,12 +70,6 @@
 #define TEAMNAMES_WIDTH 190
 #define TEAMNAMES_HEIGHT (GAMETIME_HEIGHT)
 
-#define POWERUPS_WIDTH 36
-#define POWERUPS_HEIGHT 36
-#define POWERUPS_X (Ccg_WideX(SCREEN_WIDTH) - POWERUPS_WIDTH - PLAYER_LIST_X)
-#define POWERUPS_Y (MINIMAP_Y + MINIMAP_HEIGHT + 5)
-
-
 static vec4_t bg = { 0.0f, 0.0f, 0.0f, 0.7f };
 
 static vec4_t colorAllies = { 0.121f, 0.447f, 0.811f, 0.45f };
@@ -968,35 +962,6 @@ void CG_DrawShoutcastTimer(void)
 	}
 
 	CG_DrawShoutcastTeamNames();
-}
-
-/**
-* @brief CG_DrawShoutcastPowerups
-*/
-void CG_DrawShoutcastPowerups(void)
-{
-	if (cg.flagIndicator & (1 << PW_REDFLAG))
-	{
-		if (cg.redFlagCounter > 0)
-		{
-			CG_DrawPic(POWERUPS_X, POWERUPS_Y, POWERUPS_WIDTH, POWERUPS_HEIGHT, cgs.media.objectiveTeamShader);
-		}
-		else
-		{
-			CG_DrawPic(POWERUPS_X, POWERUPS_Y, POWERUPS_WIDTH, POWERUPS_HEIGHT, cgs.media.objectiveDroppedShader);
-		}
-	}
-	else if (cg.flagIndicator & (1 << PW_BLUEFLAG))
-	{
-		if (cg.blueFlagCounter > 0)
-		{
-			CG_DrawPic(POWERUPS_X, POWERUPS_Y, POWERUPS_WIDTH, POWERUPS_HEIGHT, cgs.media.objectiveTeamShader);
-		}
-		else
-		{
-			CG_DrawPic(POWERUPS_X, POWERUPS_Y, POWERUPS_WIDTH, POWERUPS_HEIGHT, cgs.media.objectiveDroppedShader);
-		}
-	}
 }
 
 /**

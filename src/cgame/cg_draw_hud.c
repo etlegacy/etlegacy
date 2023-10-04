@@ -1595,12 +1595,6 @@ void CG_DrawPowerUps(hudComponent_t *comp)
 {
 	playerState_t *ps = &cg.snap->ps;
 
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		CG_DrawShoutcastPowerups();
-		return;
-	}
-
 	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
