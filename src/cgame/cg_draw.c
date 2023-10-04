@@ -1326,10 +1326,10 @@ static void CG_DrawScopedReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
+	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -2266,16 +2266,16 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 
 		maxHealth = CG_GetPlayerMaxHealth(cg.crosshairClientNum, cgs.clientinfo[cg.crosshairClientNum].cls, cgs.clientinfo[cg.crosshairClientNum].team);
 	}
-    
-    // remove unecessary style for bar customization
-    style = (comp->style >> 3);
+
+	// remove unecessary style for bar customization
+	style = (comp->style >> 3);
 
 	if (style & (BAR_ICON << 1))
 	{
 		CG_ColorForHealth(health, c);
 		c[3] = comp->colorMain[3] * fadeColor[3];
-        
-        style &= ~BAR_LERP_COLOR;
+
+		style &= ~BAR_LERP_COLOR;
 	}
 	else
 	{
@@ -2284,7 +2284,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		Vector4Copy(comp->colorSecondary, c2);
 		c2[3] *= fadeColor[3];
 	}
-    
+
 	Vector4Copy(comp->colorBackground, bgcolor);
 	bgcolor[3] *= fadeColor[3];
 	Vector4Copy(comp->colorBorder, bdcolor);
@@ -2299,8 +2299,8 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	{
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, bdcolor);
 	}
-    
-    CG_FilledBar(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
+
+	CG_FilledBar(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
 	             Com_Clamp(0, 1.f, health / (float)maxHealth), style, -1);
 
 	trap_R_SetColor(NULL);
@@ -4090,12 +4090,17 @@ static void CG_DrawEnvironmentalAwareness()
 		return;
 	}
 
+	if (snap->ps.pm_flags & PMF_FOLLOW)
+	{
+		return;
+	}
+
 	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		return;
 	}
 
-	if (cg.snap->ps.stats[STAT_HEALTH] <= 0)
+	if (snap->ps.stats[STAT_HEALTH] <= 0)
 	{
 		return;
 	}
@@ -4232,19 +4237,12 @@ static void CG_Draw2D(void)
 		return;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR
 #ifdef FEATURE_EDV
-	    && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam
+	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
-	    )
 	{
 		CG_DrawFlashBlendBehindHUD();
-
-		// don't draw any status if dead
-		if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
-		{
-			CG_DrawEnvironmentalAwareness();
-		}
+		CG_DrawEnvironmentalAwareness();
 
 		if (cg_drawStatus.integer)
 		{
