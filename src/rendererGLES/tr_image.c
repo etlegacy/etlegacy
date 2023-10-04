@@ -1042,6 +1042,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 	int  i;
 	char localName[MAX_QPATH];
 	char *altName;
+    qboolean loaderRet = qfalse;
 
 	*pic    = NULL;
 	*width  = 0;
@@ -1057,12 +1058,28 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 	{
 		altName = va("%s.%s", localName, imageLoaders[i].ext);
 
-		// Check if file exists
-		if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
-		{
-			// Load
-			imageLoaders[i].ImageLoader(altName, pic, width, height, 0xFF);
-		}
+        // Check if file exists
+        if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
+        {
+            imageData_t data = { 0, altName, { NULL } };
+            // load the file
+            data.size = ri.FS_ReadFile(altName, &data.buffer.v);
+            if (!data.buffer.b || data.size < 0)
+            {
+                continue;
+            }
+
+            // Load
+            loaderRet = imageLoaders[i].ImageLoader(&data, pic, width, height, 0xFF);
+
+            // free the file data
+            ri.FS_FreeFile(data.buffer.v);
+
+            if (!loaderRet)
+            {
+                Ren_Drop("Image loader failed\n");
+            }
+        }
 
 		if (*pic)
 		{
