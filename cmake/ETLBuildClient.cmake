@@ -58,7 +58,7 @@ set_target_properties(etl PROPERTIES
 	MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist
 )
 
-if(UNIX AND NOT ARM AND NOT APPLE AND NOT ANDROID)
+if(UNIX AND ARM AND NOT APPLE AND NOT ANDROID)
 	set_target_properties(etl PROPERTIES SUFFIX "${BIN_SUFFIX}")
 endif()
 
