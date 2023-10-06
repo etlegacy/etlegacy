@@ -16,7 +16,7 @@ set_target_properties(etlded
 	RUNTIME_OUTPUT_DIRECTORY_RELEASE ""
 )
 
-if(UNIX AND NOT ARM AND NOT APPLE AND NOT ANDROID)
+if((UNIX OR ARM) AND NOT APPLE AND NOT ANDROID)
 	set_target_properties(etlded PROPERTIES SUFFIX "${BIN_SUFFIX}")
 endif()
 
