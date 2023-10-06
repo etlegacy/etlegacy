@@ -7623,12 +7623,6 @@ msgstr ""
 msgid "Coordinates Only"
 msgstr ""
 
-msgid "Screenshot"
-msgstr "Schermafbeelding"
-
-msgid "Coordinates Only"
-msgstr ""
-
 msgid "Fireteam Overlay"
 msgstr ""
 

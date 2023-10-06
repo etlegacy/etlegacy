@@ -7620,12 +7620,6 @@ msgstr ""
 msgid "Coordinates Only"
 msgstr ""
 
-msgid "Screenshot"
-msgstr "Snímek obrazovky"
-
-msgid "Coordinates Only"
-msgstr ""
-
 msgid "Fireteam Overlay"
 msgstr ""
 

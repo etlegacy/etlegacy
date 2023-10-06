@@ -7626,12 +7626,6 @@ msgstr "Nascondi Solo Armi"
 msgid "Coordinates Only"
 msgstr "Solo Coordinate"
 
-msgid "Screenshot"
-msgstr "Schermata"
-
-msgid "Coordinates Only"
-msgstr "Solo Coordinate"
-
 msgid "Fireteam Overlay"
 msgstr "Interfaccia Fireteam"
 

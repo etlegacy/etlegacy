@@ -5,6 +5,7 @@
 # Christian Sarre <kallekala20@gmail.com>, 2018,2020
 # IR4T4 <gutzu@gmx.ch>, 2018
 # H H <henrik.heino@gmail.com>, 2016
+# Jacker <shogaiam@gmail.com>, 2023
 # Jacker <shogaiam@gmail.com>, 2015
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2021
 # Ray Wolf <ray.wolf@email.com>, 2018
@@ -15,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>, 2021\n"
+"Last-Translator: Jacker <shogaiam@gmail.com>, 2023\n"
 "Language-Team: Finnish (http://app.transifex.com/etlegacy/etlegacy/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1033,11 +1034,11 @@ msgstr "sulkee peli-ikkunan ja aukaisee"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
 msgid "server console. You can then re-open"
-msgstr ""
+msgstr "palvelin konsolin. Voit sitten uudelleen avata."
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
 msgid "the game and connect to the server."
-msgstr ""
+msgstr "pelin ja yhdistää palvelimelle."
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
@@ -1735,7 +1736,7 @@ msgstr "Yksinkertainen puhdistus poistaa tmp ja mukautetut pk3 tiedostot."
 msgid ""
 "A full clean will remove all downloaded files like maps,\n"
 " campaigns and custom pk3 files."
-msgstr ""
+msgstr "Täysi siivous poistaa kaikki ladatus tiedostot kuten kartat,\nkampanjat ja kolmannen osapuolen pk3 tiedostot."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -2705,7 +2706,7 @@ msgstr "Kohtalainen"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells last for"
-msgstr ""
+msgstr "Asettaa uloslentävien hylsyjen keston"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Field Of View:"
@@ -2733,7 +2734,7 @@ msgstr "Partikkeli Efektit:"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Toggles display of particle effects (explosions, some smoke effects)"
-msgstr ""
+msgstr "Kytkee hiukkasten piirtämiset päälle tai pois (räjähdykset ja savuefektit)"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Visual Effects:"
@@ -2741,7 +2742,7 @@ msgstr "Visuaaliset Efektit:"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Draws additional visual effects (airstrike planes, debris)"
-msgstr ""
+msgstr "Enemmän visuaalisia efektejä (ilmaiskujen lentokoneet, pirstaleet)"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
@@ -2749,7 +2750,7 @@ msgstr "Luodinreikien elinaika:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls"
-msgstr ""
+msgstr "Luodinjälkien kesto seinillä"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Blood Flash:"
@@ -2796,7 +2797,7 @@ msgstr "Näytä veri:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when players are shot"
-msgstr ""
+msgstr "Kytkee pelaajien veriroiskeet päälle tai pois kun pelaajaa ammutaan"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
@@ -3120,7 +3121,7 @@ msgstr "Aseta tähtäimen nimien fontin koko"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Popup Stay Time:"
-msgstr ""
+msgstr "Ponnahdusikkunan säilymisaika:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
@@ -3128,7 +3129,7 @@ msgstr "Aseta aika kuinka kauan viestit säilyvät ruudulla"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Popup Fade Time:"
-msgstr ""
+msgstr "Ponnahdusikkunan häviäimisaika:"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
@@ -3252,15 +3253,15 @@ msgstr "Intensiteetti:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The intensity of textures (requires vid_restart)"
-msgstr ""
+msgstr "Tekstuurien intensiteetti (vaati vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map Overbright Bits:"
-msgstr ""
+msgstr "Kartan ylikirkkaus:"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The world gets brighter, but paler (requires vid_restart)"
-msgstr ""
+msgstr "Maailma kirkastuu mutta menettää väriä (vaatii vid_restart)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
@@ -3777,7 +3778,7 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play ET: Legacy, you can create additional profiles "
 "by visiting the Profiles Menu."
-msgstr ""
+msgstr "Ole hyvä ja valitse alustavat asetuksesi alta. Voit vaihtaa näitä milloin tahansa ja päästä käsiksi vielä kehittyneempiin asetuksiin käymällä asetusvalikossa. Jos useampi kuin yksi henkilö haluaa pelata ET: Legacya, voit luoda lisäprofiileja käymällä profiili valikossa."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
@@ -4870,7 +4871,7 @@ msgstr "Paina ^3%s^7 aloittaaksesi"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in"
-msgstr ""
+msgstr "^3LÄMMITTELY:^7 Peli alkaa: "
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
@@ -5116,12 +5117,12 @@ msgstr "%s on tuhottu."
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "Spotted by %s^7 at %s"
-msgstr ""
+msgstr "Spotattiin %s toimesta ^7%s"
 
 #: src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "Spotted by %s"
-msgstr ""
+msgstr "Spotattiin %s toimesta"
 
 #: src/cgame/cg_popupmessages.c:733
 #, c-format
