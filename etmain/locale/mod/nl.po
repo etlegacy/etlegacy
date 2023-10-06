@@ -18,7 +18,7 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
 "Last-Translator: j0bb13, 2020\n"
-"Language-Team: Dutch (http://www.transifex.com/etlegacy/etlegacy/language/nl/)\n"
+"Language-Team: Dutch (http://app.transifex.com/etlegacy/etlegacy/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -3254,7 +3254,7 @@ msgstr "Intensiteit:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The intensity of textures (requires vid_restart)"
-msgstr ""
+msgstr "De intensiteit van de textures (vid_restart vereist)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map Overbright Bits:"
@@ -3262,7 +3262,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The world gets brighter, but paler (requires vid_restart)"
-msgstr ""
+msgstr "De wereld wordt helderder, maar bleker (vid_restart vereist)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
@@ -7143,7 +7143,7 @@ msgstr "Aangepaste breedte:"
 msgid ""
 "Specifies custom resolution width (requires custom resolution set - *Use at "
 "your own risk*)"
-msgstr ""
+msgstr "Specificeert de aangepaste resolutie breedte (aangepaste resolutie vereist-)\n*Gebruik voor eigen risico*)"
 
 msgid "Custom Height:"
 msgstr "Aangepaste hoogte:"
@@ -7151,7 +7151,7 @@ msgstr "Aangepaste hoogte:"
 msgid ""
 "Specifies custom resolution height (requires custom resolution set - *Use at"
 " your own risk*)"
-msgstr ""
+msgstr "Specificeer de aangepaste resolutie hoogte ( aangepaste resolutie vereist - *Gebruik op eigen risico*)"
 
 msgid "Max. Frames Per Second:"
 msgstr "Max. frames per seconde:"
@@ -7300,7 +7300,7 @@ msgid "High Quality Video:"
 msgstr "Hoge kwaliteit video:"
 
 msgid "Sets high quality video"
-msgstr ""
+msgstr "Zet hoge kwaliteit video"
 
 msgid "Port:"
 msgstr "Poort:"
@@ -7512,25 +7512,25 @@ msgid "XP view"
 msgstr "XP-scherm"
 
 msgid "^1CHOOSE YOUR INITIAL SETTINGS"
-msgstr ""
+msgstr "^1Kies je initiële instellingen"
 
 msgid "FAVORITES"
-msgstr ""
+msgstr "Favorieten"
 
 msgid "Shows all favorite servers"
-msgstr ""
+msgstr "Laat alle favorieten servers zien"
 
 msgid "GEOLOCATION"
-msgstr ""
+msgstr "GEOLOCATIE"
 
 msgid "Share Location:"
-msgstr ""
+msgstr "Deel Locatie:"
 
 msgid "Displays your own location in score board"
-msgstr ""
+msgstr "Laat je eigen locatie zien in het scorebord"
 
 msgid "Class selection:"
-msgstr ""
+msgstr "Klas selectie:"
 
 msgid "Team selection:"
 msgstr ""
@@ -7539,46 +7539,46 @@ msgid "Spawn selection:"
 msgstr ""
 
 msgid "Sets the frames per second limit for a stable render rate"
-msgstr ""
+msgstr "Zet het aantal frames per seconde voor een stabiele weergavesnelheid"
 
 msgid "LANGUAGE"
-msgstr ""
+msgstr "TAAL"
 
 msgid "Very Low (15)"
-msgstr ""
+msgstr "Heel laag (15)"
 
 msgid "Low (30)"
-msgstr ""
+msgstr "Laag (30)"
 
 msgid "Medium (60)"
-msgstr ""
+msgstr "Gemiddeld (60)"
 
 msgid "High (100)"
-msgstr ""
+msgstr "Hoog (100)"
 
 msgid "Very High (125)"
-msgstr ""
+msgstr "Heel hoog (125)"
 
 msgid "Enabled & no sound"
-msgstr ""
+msgstr "Ingeschakeld & geen geluid"
 
 msgid "RANDOM"
-msgstr ""
+msgstr "Willekeurig"
 
 msgid "WELCOME"
-msgstr ""
+msgstr "WELKOM"
 
 msgid "English (default)  "
-msgstr ""
+msgstr "Engels (standaard)"
 
 msgid "Shows all Internet servers"
-msgstr ""
+msgstr "Laat alle Internet servers zien"
 
 msgid "Shows all local servers"
-msgstr ""
+msgstr "Laat alle lokale servers zien"
 
 msgid "LOCAL"
-msgstr ""
+msgstr "LOKAAL"
 
 msgid "^5Local"
 msgstr ""
@@ -7702,10 +7702,10 @@ msgid "SELECTION MENUS"
 msgstr ""
 
 msgid "Center Window:"
-msgstr ""
+msgstr "Centreer Venster:"
 
 msgid "Center window in windowed mode"
-msgstr ""
+msgstr "Centreer venster in venstermodus"
 
 msgid "Very Low (43 FPS)"
 msgstr ""
@@ -7717,7 +7717,7 @@ msgid "Medium (85 FPS)"
 msgstr ""
 
 msgid "SCREENSHOTS"
-msgstr ""
+msgstr "SCHERMAFBEELDINGEN"
 
 msgid "TGA (lossless)"
 msgstr ""
@@ -7738,10 +7738,10 @@ msgid "Set the JPEG quality"
 msgstr ""
 
 msgid "REMOVE FAVORITE"
-msgstr ""
+msgstr "FAVORIET VERWIJDEREN"
 
 msgid "Remove this server from your favorites?"
-msgstr ""
+msgstr "Deze server van je favorieten verwijderen?"
 
 msgid "P. Pistol"
 msgstr ""
@@ -7765,31 +7765,31 @@ msgid "3. SMG"
 msgstr ""
 
 msgid "CHOOSE TEAM"
-msgstr ""
+msgstr "KIES TEAM"
 
 msgid "R. Axis"
-msgstr ""
+msgstr "R. Asmogendheden"
 
 msgid "B. Allies"
-msgstr ""
+msgstr "B. Geallieerden"
 
 msgid "S. Spectators"
-msgstr ""
+msgstr "S. Toeschouwers"
 
 msgid "1. Axis"
-msgstr ""
+msgstr "1. Asmogendheden"
 
 msgid "2. Allies"
-msgstr ""
+msgstr "2. Geallieerden"
 
 msgid "3. Spectators"
-msgstr ""
+msgstr "3. Toeschouwers"
 
 msgid "Set or unset this server as favorite"
-msgstr ""
+msgstr "Zet de markering van deze server als favoriet aan of uit"
 
 msgid "MAKE SHOUTCASTER"
-msgstr ""
+msgstr "MAAK COMMENTATOR"
 
 msgid " demo %s: %ik "
 msgstr ""

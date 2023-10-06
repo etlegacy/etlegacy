@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Nerwitz Panzerfizt, 2018
-# Nerwitz Panzerfizt, 2018-2022
+# Nerwitz Panzerfizt, 2018-2023
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: Nerwitz Panzerfizt, 2018-2022\n"
-"Language-Team: Bulgarian (http://www.transifex.com/etlegacy/etlegacy/language/bg/)\n"
+"Last-Translator: Nerwitz Panzerfizt, 2018-2023\n"
+"Language-Team: Bulgarian (http://app.transifex.com/etlegacy/etlegacy/language/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -242,7 +242,7 @@ msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
 " their inspirations."
-msgstr "Най-вече благодарим на Splash Damage за издаването изходния код на играта, екипа зад ioWolfET и raedwulf-et (конкретно, Ралф Истууд) за програмната основа и ioQuake3 за идеите и мотивацията."
+msgstr "Най-вече благодарим на Splash Damage за публикуването изходния код на играта, на екипа зад ioWolfET и raedwulf-et (конкретно, Ралф Истууд) за програмната основа и ioQuake3, за идеите и мотивацията."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
@@ -320,7 +320,7 @@ msgstr "Wolfenstein: Enemy Territory използва технологията �
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
 "Production, development and technical assistance provided by id Software."
-msgstr "Изработка, презентация и техническа поддръжка, осигурени от id Software."
+msgstr "Изработка, презентация и техническа поддръжка, предоставени от id Software."
 
 #: etmain/ui/credits_quit.menu:84
 msgid "^1ORIGINAL DEVELOPERS"
@@ -517,7 +517,7 @@ msgstr "Период прекъсване:"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr "Позволеният период от време за прекъсване или почивка на играчите\nслед завършване на игра"
+msgstr "Позволеният период от време за прекъсване или почивка на играчите\nслед завършване на играта"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
@@ -570,11 +570,11 @@ msgstr "Определя дали играчите могат да се прис
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr "Игнориране наблюдатели:"
+msgstr "Заглушаване наблюдатели:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
-msgstr "Определя дали наблюдателите могат да общуват с играчите в\nпериода на продължителност на играта"
+msgstr "Определя дали наблюдателите могат да общуват с играчите по време на играта"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
 #: etmain/ui/ingame_vote_misc.menu:61
@@ -597,7 +597,7 @@ msgstr "Всички играчи"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
-msgstr "Определя дали можете да ранявате другите играчи в периода\nна подготовка"
+msgstr "Определя дали можете да ранявате другите играчи по време на подготовката"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
@@ -633,7 +633,7 @@ msgstr "Максимум оплаквания:"
 msgid ""
 "The maximum number of complaints a player may receive before being kicked "
 "from a server"
-msgstr "Определя допустимия брой подадени оплаквания към играч, преди да\nбъде изгонен от сървъра"
+msgstr "Определя допустимия брой подадени оплаквания към играч, преди той да\nбъде изгонен от сървъра"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
@@ -664,11 +664,11 @@ msgstr "Изключено"
 msgid ""
 "The number of unique complaints a player may receive before being kicked "
 "from a server"
-msgstr "Общият брой подадени уникални оплаквания към играч, преди да\nбъде изгонен от сървъра"
+msgstr "Общият брой подадени уникални оплаквания към играч, преди той да\nбъде изгонен от сървъра"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
-msgstr "Период за игра:"
+msgstr "Време за игра:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
@@ -680,7 +680,7 @@ msgstr "Пер. разг. Съюзници:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr "Определя периода от време, през което играчите от отбор Съюзници\nмогат да се преразгръщат в играта"
+msgstr "Определя периода от време, през което играчите от отбор Съюзници\nмогат да се преразгръщат"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
@@ -688,7 +688,7 @@ msgstr "Пер. разг. Потисници:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr "Определя периода от време, през което играчите от отбор Потисници\nмогат да се преразгръщат в играта"
+msgstr "Определя периода от време, през което играчите от отбор Потисници\nмогат да се преразгръщат"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
@@ -714,7 +714,7 @@ msgstr "Формат кръг Отброяване:"
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr "Определя формата на кръга при режим на игра Отброяване (при ABBA\nотборите сменят страните си, при ABAB = отборите запазват страните си)"
+msgstr "Определя формата на кръга при режим на игра Отброяване (при ABBA\nотборите сменят страните си, а при ABAB - запазват страните си)"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
@@ -742,7 +742,7 @@ msgstr "Наблюдатели фикс. отбор:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr "Ограничава възможността на играчите да наблюдават противниковия\nотбор"
+msgstr "Забранява на играчите да наблюдават противниковия\nотбор"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
@@ -750,7 +750,7 @@ msgstr "Заключени отбори:"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr "Ограничава възможността на играчите да сменят отборите"
+msgstr "Забранява на играчите да сменят отборите"
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
@@ -777,7 +777,7 @@ msgstr "Задава парола за достъп до сървъра"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
-msgstr "Парола достъп Съдия:"
+msgstr "Парола Съдия:"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid ""
@@ -787,7 +787,7 @@ msgstr "Паролата, нужна за използване на команд
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
-msgstr "Парола достъп RCON:"
+msgstr "Парола RCON:"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid ""
@@ -809,7 +809,7 @@ msgstr "Определя допустимия брой гласове за иг�
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
-msgstr "Таван успешно гласуване:"
+msgstr "Таван на гласуване:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
@@ -835,7 +835,7 @@ msgstr "Режим:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr "Позволява на играчите да гласуват за промяна режима на игра"
+msgstr "Позволява на играчите да гласуват за смяна на режима на игра"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
@@ -843,7 +843,7 @@ msgstr "Изгонване играч:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr "Позволява на играчите да гласуват за изгонването на нарушители\nот играта"
+msgstr "Позволява на играчите да гласуват за изгонването на нарушители"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
@@ -863,11 +863,11 @@ msgstr "Позволява на играчите да гласуват за за
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr "Блок. наблюдатели:"
+msgstr "Загл. наблюдатели:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr "Позволява на играчите да гласуват за блокиране възможността за\nкомуникация на наблюдателите"
+msgstr "Позволява на играчите да гласуват за заглушаване на\nнаблюдателите"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
@@ -907,7 +907,7 @@ msgstr "Смяна отбори:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr "Позволява на играчите да гласуват за размяна местата на отборите"
+msgstr "Позволява на играчите да гласуват за смяна на отборите"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
@@ -915,7 +915,7 @@ msgstr "Приятелски огън:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr "Позволява на играчите да гласуват за включването или\nизключането на приятелски огън"
+msgstr "Позволява на играчите да гласуват за включването или\nизключането на възможността за приятелски огън"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
@@ -1028,11 +1028,11 @@ msgstr "и отвори работната конзола на сървъра"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
 msgid "server console. You can then re-open"
-msgstr ""
+msgstr "конзолата на сървъра. След това може да стартирате наново"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
 msgid "the game and connect to the server."
-msgstr ""
+msgstr "играта и да се свържете със сървъра."
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
@@ -1167,7 +1167,7 @@ msgstr "Да - публичен"
 msgid ""
 "Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
 " client)"
-msgstr "Определя режимът на достъп на отдалечения сървър\n(Локална мрежа, Интернет (без клиент))"
+msgstr "Определя режима на достъп на отдалечения сървър\n(Локална мрежа, Интернет (без клиент))"
 
 #: etmain/ui/hostgame.menu:44
 msgid "Password clients must set to join the server"
@@ -1277,7 +1277,7 @@ msgstr "БОЕН ЛАГЕР"
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
 msgid "SERVER INFO"
-msgstr "НАСТРОЙКИ СЪРВЪР"
+msgstr "ИНФОРМАЦИЯ"
 
 #: etmain/ui/ingame_main.menu:42 etmain/ui/main.menu:108
 #: etmain/ui/options.menu:29
@@ -1317,15 +1317,15 @@ msgstr "Всички"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
-msgstr "Отбор"
+msgstr "Отбора"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Fireteam"
-msgstr "Звено"
+msgstr "Звеното"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
-msgstr "Задава получател на съобщението"
+msgstr "Определяне на получател на съобщението"
 
 #: etmain/ui/ingame_messagemode.menu:60
 msgid "CANCEL"
@@ -1351,7 +1351,7 @@ msgstr "ПРЕРАЗГРЪЩАНЕ"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr "При режим 'Последен оцеля', няма да можете да участвате повторно в играта, ако веднъж вече отстъпите. Сигурни ли сте?"
+msgstr "При режим 'Последен оцеля', няма да можете да участвате повторно в играта, ако веднъж вече сте се оттеглили. Сигурни ли сте?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
@@ -1470,27 +1470,27 @@ msgstr "ИЗКЛ. ОПТ. ВРЪЗКА"
 #: etmain/ui/ingame_vote_misc.menu:50
 #: etmain/ui/ingame_vote_misc_refrcon.menu:49
 msgid "SWAP TEAMS"
-msgstr "РАЗМЯНА ОТБОРИ"
+msgstr "СМЯНА ОТБОРИ"
 
 #: etmain/ui/ingame_vote_misc.menu:51
 #: etmain/ui/ingame_vote_misc_refrcon.menu:50
 msgid "MUTE SPECS"
-msgstr "БЛОК. НАБЛЮДАТЕЛИ"
+msgstr "ЗАГЛ. НАБЛЮДАТЕЛИ"
 
 #: etmain/ui/ingame_vote_misc.menu:52
 #: etmain/ui/ingame_vote_misc_refrcon.menu:51
 msgid "UNMUTE SPECS"
-msgstr "ДЕБЛОК. НАБЛЮДАТЕЛИ"
+msgstr "ОТГЛ. НАБЛЮДАТЕЛИ"
 
 #: etmain/ui/ingame_vote_misc.menu:53
 #: etmain/ui/ingame_vote_misc_refrcon.menu:52
 msgid "FRIENDLY FIRE ON"
-msgstr "ВКЛ. ПРИЯТ. ОГЪН"
+msgstr "ВКЛ. ПР. ОГЪН"
 
 #: etmain/ui/ingame_vote_misc.menu:54
 #: etmain/ui/ingame_vote_misc_refrcon.menu:53
 msgid "FRIENDLY FIRE OFF"
-msgstr "ИЗКЛ. ПРИЯТ. ОГЪН"
+msgstr "ИЗКЛ. ПР. ОГЪН"
 
 #: etmain/ui/ingame_vote_misc.menu:55
 #: etmain/ui/ingame_vote_misc_refrcon.menu:54
@@ -1573,11 +1573,11 @@ msgstr "ОТКЛЮЧИ ОТБОРИТЕ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:86
 msgid "LOCK SPECS"
-msgstr "ЗАКЛЮЧИ НАБЛЮДАТЕЛИ"
+msgstr "ЗАКЛЮЧИ НАБЛЮДАТЕЛИТЕ"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:87
 msgid "UNLOCK SPECS"
-msgstr "ОТКЛЮЧИ НАБЛЮДАТЕЛИ"
+msgstr "ОТКЛЮЧИ НАБЛЮДАТЕЛИТЕ"
 
 #: etmain/ui/ingame_vote_players.menu:49 etmain/ui/ingame_vote_players.menu:50
 #: etmain/ui/ingame_vote_players.menu:51 src/cgame/cg_fireteams.c:359
@@ -1587,12 +1587,12 @@ msgstr "ИЗГОНИ"
 #: etmain/ui/ingame_vote_players.menu:52 etmain/ui/ingame_vote_players.menu:53
 #: etmain/ui/ingame_vote_players.menu:54
 msgid "MUTE"
-msgstr "БЛОКИРАЙ"
+msgstr "ЗАГЛУШИ"
 
 #: etmain/ui/ingame_vote_players.menu:55 etmain/ui/ingame_vote_players.menu:56
 #: etmain/ui/ingame_vote_players.menu:57
 msgid "UN-MUTE"
-msgstr "ДЕБЛОКИРАЙ"
+msgstr "ОТГЛУШИ"
 
 #: etmain/ui/ingame_vote_players.menu:59 etmain/ui/ingame_vote_players.menu:60
 #: etmain/ui/ingame_vote_players.menu:61
@@ -1663,13 +1663,13 @@ msgstr "^1НЕПОДДЪРЖАНА ВЕРСИЯ"
 
 #: etmain/ui/main.menu:119
 msgid "You are running old software"
-msgstr "Използвате остаряла версия на програмата"
+msgstr "Използвате остаряла версия на играта"
 
 #: etmain/ui/main.menu:120
 msgid ""
 "We do recommend to\n"
 "upgrade your ET client"
-msgstr "Препоръчително е да\nобновите вашата игра"
+msgstr "Препоръчително е да\nя обновите до последната такава"
 
 #: etmain/ui/main.menu:121
 msgid "UPGRADE NOW"
@@ -1704,7 +1704,7 @@ msgstr "СВЪРЗВАНЕ"
 
 #: etmain/ui/mods.menu:50
 msgid "Select the modification to play"
-msgstr "Избор на модификация за зареждане"
+msgstr "Избор на модификация, която да бъде заредена"
 
 #: etmain/ui/mods.menu:59
 msgid "LOAD MOD"
@@ -1720,21 +1720,21 @@ msgstr "ПОЧИСТВАНЕ ВРЕМЕННИ ФАЙЛОВЕ"
 
 #: etmain/ui/options_clean.menu:35
 msgid "This will delete all unnecessary files from you fs_homepath."
-msgstr "Изтрива всички ненужни файлове от fs_homepath директорията, забавящи работата на играта."
+msgstr "Изтрива всички ненужни файлове от директория fs_homepath, забавящи работата на играта."
 
 #: etmain/ui/options_clean.menu:36
 msgid "A simple clean will remove tmp and custom pk3 files."
-msgstr "Частично почистване служи за премахване временни и ползвателски pk3 файлове от играта"
+msgstr "Частичното почистване премахва временните и ползвателските pk3 файлове от играта"
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
 "A full clean will remove all downloaded files like maps,\n"
 " campaigns and custom pk3 files."
-msgstr "Цялостно почистване служи за премахване допълнителни карти, кампании и pk3 файлове от играта"
+msgstr "Цялостното почистване премахва допълнителните карти, кампании и pk3 файлове от играта"
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
-msgstr "^1ЗАБЕЛЕЖКА: Използвайте функцията изцяло на своя отговорност!"
+msgstr "^1ЗАБЕЛЕЖКА: Промените са необратими!"
 
 #: etmain/ui/options_clean.menu:39
 msgid "Consult our wiki for documentation."
@@ -1742,11 +1742,11 @@ msgstr "Прочетете повече за процеса в документ�
 
 #: etmain/ui/options_clean.menu:40
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
-msgstr "Натиснете '^7ПРЕКРАТИ ПОЧИСТВАНЕ^9', за да затворите прозореца и се върнете в предишното меню."
+msgstr "Натиснете '^7ПРЕКРАТИ^9', за да затворите прозореца."
 
 #: etmain/ui/options_clean.menu:42
 msgid "ABORT"
-msgstr "ПРЕКРАТИ ПОЧИСТВАНЕ"
+msgstr "ПРЕКРАТИ"
 
 #: etmain/ui/options_clean.menu:42
 msgid "Abort operation"
@@ -1758,7 +1758,7 @@ msgstr "ЧАСТИЧНО ПОЧИСТВАНЕ"
 
 #: etmain/ui/options_clean.menu:43
 msgid "Remove tmp and custom pk3 files"
-msgstr "Премахва временните файлове в играта, различни от основните такива"
+msgstr "Премахва временните и потребителски файлове от играта"
 
 #: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
@@ -1766,7 +1766,7 @@ msgstr "ЦЯЛОСТНО ПОЧИСТВАНЕ"
 
 #: etmain/ui/options_clean.menu:44
 msgid "Remove all maps and campaigns files"
-msgstr "Премахва файловете на допълнителните карти и кампании на играта"
+msgstr "Премахва кампаниите и картите в играта"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
@@ -1874,7 +1874,7 @@ msgstr "Изглажда движенията с мишката чрез мет�
 #: etmain/ui/options_controls.menu:51
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Mouse Sensitivity:"
-msgstr "Чувствителност мишка:"
+msgstr "Чувствителност:"
 
 #: etmain/ui/options_controls.menu:51
 msgid "Use the slider to increase or decrease mouse sensitivity"
@@ -1910,7 +1910,7 @@ msgstr "Отборно съобщение:"
 
 #: etmain/ui/options_controls.menu:59
 msgid "Fire-Team Chat:"
-msgstr "Звеново съобщение:"
+msgstr "Звенно съобщение:"
 
 #: etmain/ui/options_controls.menu:60
 msgid "Quick Chat:"
@@ -1918,7 +1918,7 @@ msgstr "Бързи съобщения:"
 
 #: etmain/ui/options_controls.menu:61
 msgid "Fire-Team Quick Chat:"
-msgstr "Гласови команди звено:"
+msgstr "Гласови команди Звено:"
 
 #: etmain/ui/options_controls.menu:65
 msgid "POP-UPS"
@@ -1946,11 +1946,11 @@ msgstr "Намаляване мащаб компас:"
 
 #: etmain/ui/options_controls.menu:71
 msgid "Player Stats:"
-msgstr "Информация играч:"
+msgstr "Информация за играч:"
 
 #: etmain/ui/options_controls.menu:72
 msgid "Top Shots:"
-msgstr "Най-точни стрелци:"
+msgstr "Най-добри стрелци:"
 
 #: etmain/ui/options_controls.menu:73
 msgid "Objectives:"
@@ -1958,7 +1958,7 @@ msgstr "Цели:"
 
 #: etmain/ui/options_controls.menu:78
 msgid "USE WEAPONS"
-msgstr "ИЗПОЛЗВАНЕ ОРЪЖИЯ"
+msgstr "ОРЪЖИЯ"
 
 #: etmain/ui/options_controls.menu:79
 msgid "Attack:"
@@ -2126,7 +2126,7 @@ msgstr "Превключване между състояния на ходене
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
-msgstr "Дв. натискане залягане:"
+msgstr "Двук. натискане залягане:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
@@ -2142,7 +2142,7 @@ msgstr "Авт. презареждане:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr "Автоматично презарежда оръжието при изпразване пълнителя"
+msgstr "Автоматично презарежда оръжието при изпразване на пълнителя"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
@@ -2449,15 +2449,15 @@ msgstr "ИГРОВИ ИНТЕРФЕЙС"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Draw Gun:"
-msgstr "Показвай оръжие:"
+msgstr "Показвай оръжието:"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Shows gun model on-screen"
-msgstr "Показва 3D модела на оръжието на екрана"
+msgstr "Показва оръжието на екрана"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Show Compass:"
-msgstr "Показвай компас:"
+msgstr "Показвай компаса:"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Displays compass (with icons when near select events)"
@@ -2513,7 +2513,7 @@ msgstr "Тип на показваната икона за идентифика�
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
-msgstr "Показвай местоположения:"
+msgstr "Показване местоположения:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
@@ -2685,7 +2685,7 @@ msgstr "ВЪТРЕШНИ ИГРОВИ НАСТРОЙКИ"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Ejecting Brass:"
-msgstr "Период изхвърляне гилзи:"
+msgstr "Пер. изхвърляне на гилзи:"
 
 #: etmain/ui/options_customise_hud.menu:56 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
@@ -3123,7 +3123,7 @@ msgstr "Задава периода на оставане изскачащите
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Popup Fade Time:"
-msgstr "Период изчезване на изскачащи съобщения:"
+msgstr "Пер. изч. изск. съобщения:"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
@@ -3680,7 +3680,7 @@ msgstr "Премахва направените настройки на филт
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
-msgstr "СПИСЪК СЪРВЪРИ"
+msgstr "СПИСЪК СЪС СЪРВЪРИ"
 
 #: etmain/ui/playonline.menu:332
 msgid "SERVER NAME"
@@ -6208,10 +6208,10 @@ msgid "^5You've been muted\n"
 msgstr "Бяхте блокиран от администратор\n"
 
 msgid "Can't chat - you are muted\n"
-msgstr "Не можете да пишете - блокирани сте\n"
+msgstr "Не можете да пишете, защото сте заглушени\n"
 
 msgid "^5You've been unmuted\n"
-msgstr "^5Бяхте отблокирани от администратор\n"
+msgstr "^5Бяхте отглушени\n"
 
 msgid ""
 "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
@@ -6800,7 +6800,7 @@ msgid "Join a Fireteam?"
 msgstr "Присъединяване към звено?"
 
 msgid "Apply"
-msgstr "Потвърди"
+msgstr "Участвай"
 
 msgid "Create"
 msgstr "Създай"
@@ -7048,7 +7048,7 @@ msgid "MATCH BEGINS NOW!"
 msgstr "ИГРАТА ЗАПОЧВА!"
 
 msgid "Mute Players:"
-msgstr "Блок. играчи:"
+msgstr "Загл. играчи:"
 
 msgid "Allow players to vote for muting players"
 msgstr "Позволява на играчите да гласуват за блокиране комуникацията на посочени играчи"
@@ -7439,7 +7439,7 @@ msgid "Override nickname"
 msgstr "Замяна псевдоним"
 
 msgid "Mute channel"
-msgstr "Заглушаване канал"
+msgstr "Загл. канал"
 
 msgid "Direct + Override"
 msgstr "Директно + замяна"
@@ -7517,7 +7517,7 @@ msgid "GEOLOCATION"
 msgstr "ГЕОЛОКАЦИЯ"
 
 msgid "Share Location:"
-msgstr "Споделяне на местоположение:"
+msgstr "Споделяне местоположение:"
 
 msgid "Displays your own location in score board"
 msgstr "Показва вашето местоположение в таблото с резултати"
@@ -7785,13 +7785,13 @@ msgid "MAKE SHOUTCASTER"
 msgstr "НАПРАВИ КОМЕНТАТОР"
 
 msgid " demo %s: %ik "
-msgstr ""
+msgstr "демо %s: %ik "
 
 msgid " audio %s: %ik "
-msgstr ""
+msgstr " аудио %s: %ik "
 
 msgid "REPLAY"
-msgstr ""
+msgstr "ПРЕГЛЕД"
 
 msgid "RECORD"
-msgstr ""
+msgstr "ЗАПИСВАНЕ"

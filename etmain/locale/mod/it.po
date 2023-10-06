@@ -4,14 +4,15 @@
 # Translators:
 # Hereward <emanuele.scherillo@outlook.com>, 2021
 # Hereward <emanuele.scherillo@outlook.com>, 2021
-# Fade <rkseby@gmail.com>, 2019-2020,2022
+# Mik <rkseby@gmail.com>, 2019-2020,2022
 # IR4T4 <gutzu@gmx.ch>, 2018
 # IR4T4 <gutzu@gmx.ch>, 2018
 # redtide <redtid3@gmail.com>, 2015
 # redtide <transifex.redtide@gmail.com>, 2015
 # Seb47 <seb47tv@gmail.com>, 2016
 # Seb47 <seb47tv@gmail.com>, 2016
-# Fade <rkseby@gmail.com>, 2019
+# Mik <rkseby@gmail.com>, 2019
+# Mik <rkseby@gmail.com>, 2023
 # redtide <redtid3@gmail.com>, 2015
 msgid ""
 msgstr ""
@@ -19,8 +20,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: Fade <rkseby@gmail.com>, 2019-2020,2022\n"
-"Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
+"Last-Translator: Mik <rkseby@gmail.com>, 2023\n"
+"Language-Team: Italian (http://app.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -61,15 +62,15 @@ msgstr "VP North American Studios"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
-msgstr ""
+msgstr "Capo Progetto CQ"
 
 #: etmain/ui/credits_activision.menu:101
 msgid "QA Senior Project Lead"
-msgstr ""
+msgstr "Capo Progetto Senior CQ"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "Capo Gruppo CQ"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
@@ -85,23 +86,23 @@ msgstr "Compatibilità"
 
 #: etmain/ui/credits_activision.menu:114
 msgid "QA Manager"
-msgstr ""
+msgstr "Amministratore CQ"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "Amministratore, Gruppo Rilascio Codice"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "Guida Senior, Gruppo Rilascio Codice"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
-msgstr ""
+msgstr "Guida, Gruppo Rilascio Codice"
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
-msgstr ""
+msgstr "Amministratore, Servizio Clienti"
 
 #: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
 #: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
@@ -142,15 +143,15 @@ msgstr "INDIETRO"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
-msgstr ""
+msgstr "EXTRA"
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr ""
+msgstr "SVILUPPO AGGIUNTIVO"
 
 #: etmain/ui/credits_additional.menu:148
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
-msgstr ""
+msgstr "ORANGE SMOOTHIE PRODUCTIONS (OSP)"
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
@@ -268,7 +269,7 @@ msgstr "^1SITO WEB"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid "© 2012-2020 ET: Legacy Team - under the terms of GPL version 3."
-msgstr ""
+msgstr "© 2012-2020 ET: Legacy Team - secondo i termini del GPL versione 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -318,7 +319,7 @@ msgstr "Produttore Esecutivo"
 
 #: etmain/ui/credits_idsoftware.menu:84
 msgid "Additional Programming"
-msgstr ""
+msgstr "Programmazione Aggiuntiva"
 
 #: etmain/ui/credits_idsoftware.menu:87
 msgid ""
@@ -351,7 +352,7 @@ msgstr "SVILUPPATO DA SPLASH DAMAGE"
 
 #: etmain/ui/credits_splashdamage.menu:82
 msgid "Game Designer / Managing Director"
-msgstr ""
+msgstr "Disegnatore Gioco / Direttore Amministrativo"
 
 #: etmain/ui/credits_splashdamage.menu:84
 msgid "Business Director"
@@ -359,7 +360,7 @@ msgstr "Direttore Commerciale"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
-msgstr ""
+msgstr "ARTE"
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
@@ -371,7 +372,7 @@ msgstr "Artista / Animatore"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
-msgstr ""
+msgstr "Arte Aggiuntiva"
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
@@ -387,45 +388,45 @@ msgstr "Programmatore / Artista"
 
 #: etmain/ui/credits_splashdamage.menu:139
 msgid "DESIGN"
-msgstr ""
+msgstr "DISEGNO"
 
 #: etmain/ui/credits_splashdamage.menu:152
 msgid "Designer / Audio Engineer"
-msgstr ""
+msgstr "Disegnatore / Ingegnere Audio"
 
 #: etmain/ui/credits_splashdamage.menu:154
 msgid "Designer / Writer"
-msgstr ""
+msgstr "Disegnatore / Scrittore"
 
 #: etmain/ui/credits_splashdamage.menu:161
 msgid "LEVEL DESIGN"
-msgstr ""
+msgstr "DESIGN LIVELLO"
 
 #: etmain/ui/credits_splashdamage.menu:174
 msgid "Lead Level Designer"
-msgstr ""
+msgstr "Capo Disegnatore Livello"
 
 #: etmain/ui/credits_splashdamage.menu:176
 msgid "Senior Level Designer"
-msgstr ""
+msgstr "Disegnatore Livello Senior"
 
 #: etmain/ui/credits_splashdamage.menu:178
 #: etmain/ui/credits_splashdamage.menu:180
 #: etmain/ui/credits_splashdamage.menu:184
 msgid "Level Designer"
-msgstr ""
+msgstr "Disegnatore Livello"
 
 #: etmain/ui/credits_splashdamage.menu:182
 msgid "Level Designer / Artist"
-msgstr ""
+msgstr "Disegnatore Livello / Artista"
 
 #: etmain/ui/credits_splashdamage.menu:186
 msgid "Additional Level Design"
-msgstr ""
+msgstr "Disegno Livello Aggiuntivo"
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET: Legacy Website"
-msgstr ""
+msgstr "Sito Web ET: Legacy"
 
 #: etmain/ui/etlegacywebsite.menu:50
 msgid ""
@@ -481,7 +482,7 @@ msgstr "Ping Minimo:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr ""
+msgstr "Imposta il ping minimo che può essere usato per escludere LPBs (0 = Nessun Minimo)"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
@@ -489,7 +490,7 @@ msgstr "Ping Massimo:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr ""
+msgstr "Imposta il ping massimo che può essere usato per escludere HPB (0 = nessun massimo)"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
@@ -498,7 +499,7 @@ msgstr "Vel. Max Gioco:"
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr ""
+msgstr "Massima velocità di invio dei dati del gioco ai clienti (0 = impostazione velocità della partita per il client)"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
@@ -717,13 +718,13 @@ msgstr "Specifica il numero di vite per giocatore in un gioco con limite assegna
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
-msgstr ""
+msgstr "Tipo di round Stopwatch:"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr ""
+msgstr "Determina il tipo di round Stopwatch (ABBA = scambio di lati, ABAB = mantenere i lati)"
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
@@ -1037,11 +1038,11 @@ msgstr "chiuderà la finestra di gioco e aprirà la"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
 msgid "server console. You can then re-open"
-msgstr ""
+msgstr "la console del server. Poi riapri"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
 msgid "the game and connect to the server."
-msgstr ""
+msgstr "il gioco e connettiti al server."
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
@@ -1079,7 +1080,7 @@ msgstr "Si"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable country flags on the server"
-msgstr ""
+msgstr "Abilita bandiere nazionali sul server"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
@@ -1281,7 +1282,7 @@ msgstr "RCON"
 
 #: etmain/ui/ingame_main.menu:40
 msgid "LIMBO MENU"
-msgstr ""
+msgstr "MENU LIMBO"
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
@@ -1350,7 +1351,7 @@ msgstr "AGGIORNA"
 
 #: etmain/ui/ingame_serverinfo.menu:78
 msgid "ADD FAVORITE"
-msgstr ""
+msgstr "AGGIUNGI PRF"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
@@ -1360,13 +1361,13 @@ msgstr "RESPAWNING"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
+msgstr "Nella modalità Last Man Standing mode non ci sarà il respawn se ti togli adesso. Sei sicuro?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
 "This server has Max Lives enabled. Tapping out now will lose a life. Are you"
 " sure?"
-msgstr ""
+msgstr "Questo server ha le Vite abilitate. Se ti arrendi adesso perderai una vita. Sei sicuro?"
 
 #: etmain/ui/ingame_vote_bot.menu:31
 msgid "Bot count:"
@@ -1878,7 +1879,7 @@ msgstr "Regola Mouse:"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooths out the mouse using interpolation"
-msgstr ""
+msgstr "Uniforma il mouse utilizzando l'interpolazione"
 
 #: etmain/ui/options_controls.menu:51
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
@@ -1891,7 +1892,7 @@ msgstr "Sposta il cursore per incrementare o diminuire la sensibilità del mouse
 
 #: etmain/ui/options_controls.menu:52
 msgid "Mouse Pitch:"
-msgstr ""
+msgstr "Velocità Cursore"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.015 (lowest allowed)"
@@ -1903,7 +1904,7 @@ msgstr "0.022 (predefinito)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
-msgstr ""
+msgstr "Movimento su-giù del mirino durante lo spostamento."
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
@@ -1959,7 +1960,7 @@ msgstr "Statistiche:"
 
 #: etmain/ui/options_controls.menu:72
 msgid "Top Shots:"
-msgstr ""
+msgstr "Maggiori Colpi:"
 
 #: etmain/ui/options_controls.menu:73
 msgid "Objectives:"
@@ -1991,7 +1992,7 @@ msgstr "Usa (Aziona):"
 
 #: etmain/ui/options_controls.menu:87
 msgid "SELECT CLASS AND WEAPONS"
-msgstr ""
+msgstr "SELEZIONA CLASSE E ARMI"
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
@@ -2003,7 +2004,7 @@ msgstr "Arma Precedente:"
 
 #: etmain/ui/options_controls.menu:90
 msgid "Slot 1 - Melee:"
-msgstr ""
+msgstr "Slot 1 - Mischia:"
 
 #: etmain/ui/options_controls.menu:91
 msgid "Slot 2 - One Handed:"
@@ -2131,15 +2132,15 @@ msgstr "Corri Sempre:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
-msgstr ""
+msgstr "Scambia cammino/corsa"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
-msgstr ""
+msgstr "Prono Doppio Tocco:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
-msgstr ""
+msgstr "Imposta il ritardo nella pressione tasti per rilevarlo come doppio tocco"
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
@@ -2407,7 +2408,7 @@ msgstr "Schermata"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
-msgstr ""
+msgstr "Mostra Statistiche"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
@@ -2554,11 +2555,11 @@ msgstr "Visualizza le bandiere dei paesi dei giocatori nella tabella punteggi"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
-msgstr ""
+msgstr "Classe Bloccata Fireteam:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr ""
+msgstr "Visualizza classe bloccata Fireteam"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
@@ -2566,11 +2567,11 @@ msgstr "Icone Obitori:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
-msgstr ""
+msgstr "Vittima Arma Assasino"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Killer Weapon Victim"
-msgstr ""
+msgstr "Assasino Arma Vittima"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
@@ -2658,7 +2659,7 @@ msgstr "Personalizza HUD:"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Round Timer"
-msgstr ""
+msgstr "Movimento Round Timer"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Remove Ranks"
@@ -2709,7 +2710,7 @@ msgstr "Medio"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells last for"
-msgstr ""
+msgstr "Imposta la durata dei bossoli espulsi"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Field Of View:"
@@ -2717,7 +2718,7 @@ msgstr "Campo Visivo:"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Best FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
-msgstr ""
+msgstr "Migliore FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
@@ -2733,19 +2734,19 @@ msgstr "Imposta la distanza massima per visualizzare il bagliore delle luci"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Particles Effects:"
-msgstr ""
+msgstr "Effetti Particellari:"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Toggles display of particle effects (explosions, some smoke effects)"
-msgstr ""
+msgstr "Abilita/disabilita visualizzazione effetti particelle (esplosioni, alcuni effetti fumogeni)"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Visual Effects:"
-msgstr ""
+msgstr "Effetti Visivi:"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Draws additional visual effects (airstrike planes, debris)"
-msgstr ""
+msgstr "Abilita effetti visivi aggiuntivi (aerei d'assalto, macerie)"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
@@ -2753,11 +2754,11 @@ msgstr "Durata Segni Muro:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls"
-msgstr ""
+msgstr "Durata dei fori di proiettili nei muri"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Blood Flash:"
-msgstr ""
+msgstr "Schizzi di sangue:"
 
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63
@@ -2784,15 +2785,15 @@ msgstr "Completo"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Red blood \"flash\" scale when receiving damage"
-msgstr ""
+msgstr "Quantità di sangue rosso \"flash\" quando si riceve danno"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood Splatter:"
-msgstr ""
+msgstr "Schizzi di sangue:"
 
 #: etmain/ui/options_customise_hud.menu:63
 msgid "Blood \"splatter\" transparency when taking damage from other players"
-msgstr ""
+msgstr "Trasparenza dello \"schizzo\" di sangue quando si riceve danno da altri giocatori"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Show Blood:"
@@ -2800,7 +2801,7 @@ msgstr "Mostra Sangue:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when players are shot"
-msgstr ""
+msgstr "Scambia la vista del sangue a scatti quando i giocatori sono sparati"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
@@ -2893,15 +2894,15 @@ msgstr "Classe + Grado"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Prestige"
-msgstr ""
+msgstr "Prestigio"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Rank + Prestige"
-msgstr ""
+msgstr "Grado + Prestigio"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank + Prestige"
-msgstr ""
+msgstr "Classe + Grado + Prestigio"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
@@ -3059,27 +3060,27 @@ msgstr "MOVIMENTO"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Bob up:"
-msgstr ""
+msgstr "Ballonzolio verticale:"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Enable/Disable the vertical bob effect when moving"
-msgstr ""
+msgstr "Attiva/Disattiva il ballonzolio verticale in movimento"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Bob pitch:"
-msgstr ""
+msgstr "Ballonzolio:"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Enable/Disable the bob pitch (forwards/backwards) effect when moving"
-msgstr ""
+msgstr "Attiva/Disattiva l'effetto balonzolo (avanti/indietro) in movimento"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Bob roll:"
-msgstr ""
+msgstr "Ballonzolio orizzontale:"
 
 #: etmain/ui/options_customise_hud.menu:109
 msgid "Enable/Disable the bob roll (left/right) effect when moving"
-msgstr ""
+msgstr "Attiva/Disattiva il ballonzolio (sinistra/destra) in movimento"
 
 #: etmain/ui/options_customise_hud.menu:113
 msgid "FONTS"
@@ -3124,7 +3125,7 @@ msgstr "Grandezza caratteri dei nomi sopra il mirino"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Popup Stay Time:"
-msgstr ""
+msgstr "Tempo di Presenza dei Popup:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
@@ -3132,7 +3133,7 @@ msgstr "Imposta la durata di visibilità del popup"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Popup Fade Time:"
-msgstr ""
+msgstr "Tempo di Dissolvenza dei Popup:"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
@@ -3243,7 +3244,7 @@ msgstr "Imposta la risoluzione del gioco"
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Window Mode"
-msgstr ""
+msgstr "Modalità Finestra"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
@@ -3256,15 +3257,15 @@ msgstr "Intensità:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The intensity of textures (requires vid_restart)"
-msgstr ""
+msgstr "Intensità delle texture (richiede vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map Overbright Bits:"
-msgstr ""
+msgstr "Bit Luminosità Mappa:"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The world gets brighter, but paler (requires vid_restart)"
-msgstr ""
+msgstr "Il mondo diventa luminoso, ma più chiaro (richiede vid_restart)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
@@ -3321,7 +3322,7 @@ msgstr "Dettaglio Geometrico:"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Set level of details bias"
-msgstr ""
+msgstr "Modifica livello di dettaglio"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Texture Quality:"
@@ -3427,7 +3428,7 @@ msgstr "Sinc. Ogni Frame:"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Prevent screen tearing"
-msgstr ""
+msgstr "Previeni \"screen tearing\""
 
 #: etmain/ui/options_graphics.menu:71
 msgid "GL Extensions:"
@@ -3781,7 +3782,7 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play ET: Legacy, you can create additional profiles "
 "by visiting the Profiles Menu."
-msgstr ""
+msgstr "Imposta le tue impostazioni iniziali qui di seguito. Potrai cambiarle in qualsiasi momento e selezionando il menu' Opzioni potrai accedere ad altre opzioni avanzate. Se un altra persona vorrà giocare ad ET: Legacy, puoi creare nuovi profili selezionando il menu' Profili."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
@@ -4586,19 +4587,19 @@ msgstr "PAREGGIO!"
 
 #: src/cgame/cg_debriefing.c:3211
 msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "GLI ALLEATI HANNO BATTUTO IL TEMPO!"
 
 #: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "GLI ALLEATI NON SONO RIUSCITI A BATTERE IL TEMPO!"
 
 #: src/cgame/cg_debriefing.c:3222
 msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "LE ASSE HANNO BATTUTO IL TEMPO!"
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "LE ASSE NON SONO RIUSCITE A BATTERE IL TEMPO!"
 
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
@@ -4611,7 +4612,7 @@ msgstr "SEC ALLA PROSSIMA"
 
 #: src/cgame/cg_debriefing.c:2905
 msgid "SEC TO NEXT MAP"
-msgstr ""
+msgstr "SECONDI ALLA PROSSIMA MAPPA"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
@@ -4794,7 +4795,7 @@ msgstr "Premi %s per seguire il giocatore precedente"
 #: src/cgame/cg_draw.c:2168
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr ""
+msgstr "Premi%s a %s per modalità multiview"
 
 #: src/cgame/cg_draw.c:2168
 msgid "disable"
@@ -4882,12 +4883,12 @@ msgstr "^3 PREPARARSI A COMBATTERE!\n"
 
 #: src/cgame/cg_draw.c:2504 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
-msgstr ""
+msgstr "ROUND STOPWATCH"
 
 #: src/cgame/cg_draw.c:2678
 #, c-format
 msgid "The %s team is speclocked!"
-msgstr ""
+msgstr "La squadra%s è bloccata dagli spettatori!"
 
 #: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
 #: src/cgame/cg_scoreboard.c:178
@@ -4959,7 +4960,7 @@ msgstr "INVITA"
 
 #: src/cgame/cg_fireteams.c:365
 msgid "SET ADMIN"
-msgstr ""
+msgstr "IMPOSTA AMMINISTRATORE"
 
 #: src/cgame/cg_fireteams.c:701 src/cgame/cg_fireteams.c:705
 #: src/cgame/cg_fireteams.c:762 src/cgame/cg_fireteams.c:766
@@ -5025,7 +5026,7 @@ msgstr "Nessuna abilità acquisita!"
 
 #: src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
-msgstr ""
+msgstr "PRECISIONI \"TOPSHOT\""
 
 #: src/cgame/cg_info.c:939
 msgid "Player"
@@ -5033,7 +5034,7 @@ msgstr "Giocatore"
 
 #: src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
-msgstr ""
+msgstr "Nessuna informazione di qualifica di arma disponibile."
 
 #: src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
@@ -5238,12 +5239,12 @@ msgstr "Raccolta Automatica"
 #: src/cgame/cg_servercmds.c:1875
 #, c-format
 msgid "Damage Given: %6d      Team Damage Given: %6d"
-msgstr ""
+msgstr "Danni dati: %6d      Danni di squadra dati: %6d"
 
 #: src/cgame/cg_servercmds.c:1876
 #, c-format
 msgid "Damage Recvd: %6d      Team Damage Recvd: %6d"
-msgstr ""
+msgstr "Danni Rcv: %6d      Danni al Team Rcv: %6d"
 
 #: src/cgame/cg_servercmds.c:1878
 #, c-format
@@ -5253,7 +5254,7 @@ msgstr "Uccisi: %3d  Team Kills: %3d  Precisione:  %5.1f%%"
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
 msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
-msgstr ""
+msgstr "Sbudelli:   %3d    Sbudelli di Squadra:  %3d    Tempo di gioco:  %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -5262,11 +5263,11 @@ msgstr "Morti: %3d    Suicidi: %3d    Colpi Testa: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
-msgstr ""
+msgstr "^7Arma     Prec. Colpi/Attacchi Uccisioni Morti Colpi in testa\n"
 
 #: src/cgame/cg_servercmds.c:2040
 msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
-msgstr ""
+msgstr "^7Arma     Prec. Colp./Att. Ucc. Mort. HS \n"
 
 #: src/cgame/cg_servercmds.c:2047
 msgid "^3No weapon info available.\n"
@@ -5343,7 +5344,7 @@ msgstr "In attesa di risposta dal Server Master"
 #: src/ui/ui_main.c:2555
 #, c-format
 msgid "Refresh Time: %s"
-msgstr ""
+msgstr "Tempo di aggiornamento: %s"
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
@@ -5615,19 +5616,19 @@ msgid "You must be a player or following a player to use +stats\n"
 msgstr "Devi essere un giocatore o uno spettatore per usare +stats\n"
 
 msgid "You must be alive to use ^3/kill^7."
-msgstr ""
+msgstr "Devi essere in vita per usare ^3/kill^7."
 
 msgid "No vote in progress.\n"
 msgstr "Nessun voto in corso.\n"
 
 msgid "No or bad challenge for address.\n"
-msgstr ""
+msgstr "Nessuna o errore sfida per indirizzo.\n"
 
 msgid "Match is already in progress!\n"
 msgstr "Partita già in corso!\n"
 
 msgid "^1** Referee Server Setting Change **\n"
-msgstr ""
+msgstr "^1** Cambio dell'Arbitro delle Impostazioni del Server **\n"
 
 msgid "Your fireteam is now public"
 msgstr "ora Il tuo fireteam è pubblico"
@@ -5908,7 +5909,7 @@ msgid "Arming landmine..."
 msgstr "Armamento mina..."
 
 msgid "Landmine armed"
-msgstr ""
+msgstr "Mina armata"
 
 msgid "Dynamite is set, but NOT armed!"
 msgstr "Dinamite piazzata, ma NON armata!"
@@ -5920,10 +5921,10 @@ msgid "Dynamite is now armed with a 30 second timer!"
 msgstr "Dinamite armata con timer di 30 secondi!"
 
 msgid "Defusing landmine..."
-msgstr ""
+msgstr "Disinnesco mina..."
 
 msgid "Landmine defused"
-msgstr ""
+msgstr "Mina disinnescata"
 
 msgid "Defusing dynamite..."
 msgstr "Disinnesco dinamite..."
@@ -6034,7 +6035,7 @@ msgid "Public Settings Loaded!\n"
 msgstr "Impostazioni Pubbliche Caricate!\n"
 
 msgid "Landmine cannot be armed here"
-msgstr ""
+msgstr "Non si può armare una mina qui"
 
 msgid "Your team has too many landmines placed..."
 msgstr "Il tuo team ha troppe mine piazzate..."
@@ -6061,7 +6062,7 @@ msgid "You are now the leader of your fireteam"
 msgstr "Ora sei il leader del tuo fireteam"
 
 msgid "The fireteam you are on has been disbanded"
-msgstr ""
+msgstr "Il fireteami cui eri è stato sciolto"
 
 msgid "You have been given fireteam admin rights"
 msgstr "Hai ceduto i permessi di amministratore del fireteam"
@@ -6070,7 +6071,7 @@ msgid "Too many players already on this Fireteam"
 msgstr "Ci sono già troppi giocatori in questo Fireteam"
 
 msgid "The leader has now left the Fireteam you applied to"
-msgstr ""
+msgstr "Il leader ha abbandonato il tuo Fireteam"
 
 msgid "The other player is already on a fireteam"
 msgstr "L'altro giocatore è fa già parte di un fireteam"
@@ -6133,10 +6134,10 @@ msgid ""
 msgstr "Uso: ^3\\ref <cmd> [parametri]\n\n"
 
 msgid "^5pause speclock warmup ^7[value]\n"
-msgstr ""
+msgstr "^5pausa tempo riscaldamento ^7[valore]\n"
 
 msgid "Sorry, referee status disabled on this server.\n"
-msgstr ""
+msgstr "Spiacente, l'arbitro è disattivato in questo server.\n"
 
 msgid "Referee has ^3LOCKED^7 teams\n"
 msgstr "L'arbitro ha ^3BLOCCATO^7 i team\n"
@@ -6172,7 +6173,7 @@ msgid "The match is already ^5UNPAUSED!\n"
 msgstr "La partita è già stata ^5RIPRESA!\n"
 
 msgid "Bad client slot: "
-msgstr ""
+msgstr "Slot client incoretto:"
 
 msgid "Client"
 msgstr "Client"
@@ -6196,10 +6197,10 @@ msgid "^5You've been removed from the ^1Axis^7 team\n"
 msgstr "^5Sei stato rimosso dall'^1Asse^7\n"
 
 msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
-msgstr ""
+msgstr "L'arbitro ha ^3BLOCCATO^7 le squadre per gli ^3SPETTATORI^7.\n"
 
 msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
-msgstr ""
+msgstr "L'arbitro ha ^3SBLOCCATO^7 le squadre per gli ^3SPETTATORI^7.\n"
 
 msgid "usage: ref warn <clientname> [reason].\n"
 msgstr "uso: ref warn <nomeclient> [motivo].\n"
@@ -6211,16 +6212,16 @@ msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
 msgstr "%s^7 ha emesso un ^1Avviso^7 (Nessun Motivo Fornito)\n"
 
 msgid "Cannot mute a referee.\n"
-msgstr ""
+msgstr "Impossibile mutare un arbitro.\n"
 
 msgid "^5You've been muted\n"
-msgstr ""
+msgstr "^5 Sei stato mutato\n"
 
 msgid "Can't chat - you are muted\n"
-msgstr ""
+msgstr "Impossibile chattare - sei mutato\n"
 
 msgid "^5You've been unmuted\n"
-msgstr ""
+msgstr "^5Sei stato smutato\n"
 
 msgid ""
 "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
@@ -6298,7 +6299,7 @@ msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
 msgstr "Scrivi ^3\\stats <id_giocatore>^7 per vedere le sue statistiche.\n"
 
 msgid "Spectators can't ready a team!\n"
-msgstr ""
+msgstr "Gli spettatori non possono far partire una squadra!\n"
 
 msgid "The ^4Allies^7 team is ready!\n"
 msgstr "Il team ^4Alleati^7 è pronto!\n"
@@ -6343,7 +6344,7 @@ msgid "'s KA-BAR"
 msgstr " con un KA-BAR"
 
 msgid "'s knife arts"
-msgstr ""
+msgstr "e le sue arti del coltello"
 
 msgid "'s .45ACP 1911"
 msgstr " con una .45ACP 1911"
@@ -6427,28 +6428,28 @@ msgid "Can't follow a player on an enemy team!\n"
 msgstr "Non puoi seguire un giocatore del team avversario!\n"
 
 msgid "Can't follow while not in limbo if on a team!\n"
-msgstr ""
+msgstr "Impossibile seguire se  si è in una squadra e non nel limbo!\n"
 
 msgid "Partial Name Matches more than 1 Player.\n"
 msgstr "Ci sono più corrispondenze di nome parziale.\n"
 
 msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
-msgstr ""
+msgstr "Lo spettatore è ora bloccato nella squadra ^1Asse^7.\n"
 
 msgid "^1Axis^7 team spectating is now disabled.\n"
-msgstr ""
+msgstr "Spettatore per squadra ^1Asse^7 è ora disattivato.\n"
 
 msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
-msgstr ""
+msgstr "Lo spettatore è ora bloccato nella squadra ^4Alleati^7.\n"
 
 msgid "^4Allies^7 team spectating is now disabled.\n"
-msgstr ""
+msgstr "Spettatore per squadra ^4Alleati^7 è ora disattivato.\n"
 
 msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
-msgstr ""
+msgstr "Spiacente, la squadra ^4Alleati^7 è bloccata dagli spettatori.\n"
 
 msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
-msgstr ""
+msgstr "Spiacente, la squadra ^1Asse^7 è bloccata dagli spettatori.\n"
 
 msgid "Server quit\n"
 msgstr "Server chiuso\n"
@@ -6475,16 +6476,16 @@ msgid "You have been switched to the Axis team"
 msgstr "Sei stato spostato nel team dell'Asse"
 
 msgid "Keep the Allies from beating the clock!"
-msgstr ""
+msgstr "Impedisci agli Alleati di battere il tempo!"
 
 msgid "Keep the Axis from beating the clock!"
-msgstr ""
+msgstr "Impedisci alle Asse di battere il tempo!"
 
 msgid "You have been switched to the Allied team"
 msgstr "Sei stato spostato nel team degli Alleati"
 
 msgid "Try to beat the clock!"
-msgstr ""
+msgstr "Cerca di battere il cronometro!"
 
 msgid "You have been been stripped of fireteam admin rights"
 msgstr "Ti sono stati rimossi i diritti di amministratore del fireteam"
@@ -6505,7 +6506,7 @@ msgid "was stabbed by"
 msgstr "è stato accoltellato da"
 
 msgid "was backstabbed by"
-msgstr ""
+msgstr "è stato pugnalato da"
 
 msgid "was blasted by"
 msgstr "è stato fatto saltare da"
@@ -6884,22 +6885,22 @@ msgid "Welcome Newbie! Award"
 msgstr "Premio Benvenuto Novello!"
 
 msgid "Highest Headshots Percentage"
-msgstr ""
+msgstr "Maggior Percentuale Headshot"
 
 msgid "Best Survivor"
-msgstr ""
+msgstr "Miglior Sopravvissuto"
 
 msgid "Most Gibs"
-msgstr ""
+msgstr "Maggiori Sbudellamenti"
 
 msgid "Most Selfkills"
-msgstr ""
+msgstr "Maggiori Suicidi"
 
 msgid "Most Deaths"
-msgstr ""
+msgstr "Maggiori Morti"
 
 msgid "Highest Skill Rating"
-msgstr ""
+msgstr "Massima Valutazione"
 
 msgid ""
 "\n"
@@ -6907,115 +6908,115 @@ msgid ""
 msgstr "\nET: Legacy con renderer OpenGL 3.x non può funzionare su questa macchina per la mancanza delle estensioni OpenGL richieste. Si prega di aggiornare i driver della scheda video e riprovare.\n"
 
 msgid "Gib command not allowed during intermission.\n"
-msgstr ""
+msgstr "Il commando sbudello non è ammesso durante l'intervallo.\n"
 
 msgid "^3%d^7 players gibbed."
-msgstr ""
+msgstr "^3%d^7 giocatori sbudellati."
 
 msgid "There is no player to gib."
-msgstr ""
+msgstr "Non c'è nessun giocatore da sbudellare."
 
 msgid "Error - can't gib - %s."
-msgstr ""
+msgstr "Errore - impossibile sbudellare - %s."
 
 msgid "Player must be on a team to be gibbed.\n"
-msgstr ""
+msgstr "Il giocatore deve essere in una squadra per essere sbudellato.\n"
 
 msgid "^7%s^7 was gibbed."
-msgstr ""
+msgstr "^7%s^7 è stato sbudellato."
 
 msgid "Die command not allowed during intermission.\n"
-msgstr ""
+msgstr "Il commando morte non è ammesso durante l'intervallo.\n"
 
 msgid "^3%d^7 players died."
-msgstr ""
+msgstr "^3%d^7 giocatori morti."
 
 msgid "There is no player to die.\n"
-msgstr ""
+msgstr "Non c'è nessun giocatore da far morire.\n"
 
 msgid "Error - can't execute die command - %s.\n"
-msgstr ""
+msgstr "Errore - impossibile eseguire il commando morte - %s.\n"
 
 msgid "Player must be on a team to die.\n"
-msgstr ""
+msgstr "Il giocatore deve essere in una squadra per morire.\n"
 
 msgid "^7%s^7 died."
 msgstr "^7%s^7 è morto."
 
 msgid "Freeze command not allowed during intermission.\n"
-msgstr ""
+msgstr "Il commando congelare non è ammesso durante l'intervallo.\n"
 
 msgid "^3%d^7 players are frozen."
-msgstr ""
+msgstr "^3%d^7 giocatori sono congelati."
 
 msgid "No players in team or they are already frozen.\n"
-msgstr ""
+msgstr "Non ci sono giocatori nelle squadre oppure sono stati già congelati.\n"
 
 msgid "Error - can't freeze - %s.\n"
-msgstr ""
+msgstr "Errore - impossibile congelare - %s.\n"
 
 msgid "Player must be on a team to be frozen.\n"
-msgstr ""
+msgstr "Il giocatore deve essere in una squadra per essere congelato.\n"
 
 msgid "^7%s^7 is frozen."
-msgstr ""
+msgstr "^7%s^7 è stato congelato."
 
 msgid "^3%d^7 players are unfrozen."
-msgstr ""
+msgstr "^3%d^7 giocatori sono stati scongelati."
 
 msgid "No players in team or they are already unfrozen.\n"
-msgstr ""
+msgstr "Non ci sono giocatori nelle squadre oppure sono stati già scongelati.\n"
 
 msgid "Error - can't unfreeze - %s.\n"
-msgstr ""
+msgstr "Errore - impossibile scongelare - %s.\n"
 
 msgid "Player must be on a team to be unfrozen.\n"
-msgstr ""
+msgstr "Il giocatore deve essere in una squadra per essere scongelato.\n"
 
 msgid "^7%s^7 is unfrozen."
-msgstr ""
+msgstr "^7%s^7 è stato scongelato."
 
 msgid "Burn command not allowed during intermission.\n"
-msgstr ""
+msgstr "Il commando Brucia non è ammesso durante l'intervallo.\n"
 
 msgid "^3%d^7 players burned."
-msgstr ""
+msgstr "^3%d^7 giocatori a fuoco."
 
 msgid "No players in team or they are already burned.\n"
-msgstr ""
+msgstr "Non ci sono giocatori nelle squadre oppure sono stati già bruciati.\n"
 
 msgid "Error - can't burn - %s.\n"
-msgstr ""
+msgstr "Errore - impossibile bruciare - %s.\n"
 
 msgid "Player must be on a team to be burned.\n"
-msgstr ""
+msgstr "Il giocatore deve essere in una squadra per essere bruciato.\n"
 
 msgid "^7%s^7 is burned."
-msgstr ""
+msgstr "^7%s^7 è bruciato."
 
 msgid "Pip command not allowed during intermission.\n"
-msgstr ""
+msgstr "Il commando Pip non è ammesso durante l'intervallo.\n"
 
 msgid "^3%d^7 players pipped."
-msgstr ""
+msgstr "^3%d^7 giocatori sono stati \"pipped\"."
 
 msgid "No players in team or they are already pipped.\n"
-msgstr ""
+msgstr "Non ci sono giocatori nelle squadre oppure sono stati già \"pipped\".\n"
 
 msgid "Error - can't pip - %s.\n"
-msgstr ""
+msgstr "Erorre - impossibile \"fare pip\" - %s.\n"
 
 msgid "Player must be on a team to be pipped.\n"
-msgstr ""
+msgstr "Il giocatore deve essere in una squadra per essere \"pipped\".\n"
 
 msgid "^7%s^7 is pipped."
-msgstr ""
+msgstr "^7%s^7 è \"pipped\"."
 
 msgid "%s command not allowed during intermission.\n"
 msgstr "Comando %s non ammesso durante l'intervallo.\n"
 
 msgid "^3%d^7 players %s."
-msgstr ""
+msgstr "^3%d^7 giocatori%s."
 
 msgid "No players in team or they are already %s.\n"
 msgstr "Nessun giocatore in un team o sono già %s.\n"
@@ -7043,10 +7044,10 @@ msgid "Set the system sound control"
 msgstr "Imposta il tipo di controllo audio del sistema"
 
 msgid "No can do!"
-msgstr ""
+msgstr "Non si può fare!"
 
 msgid "Right away!"
-msgstr ""
+msgstr "Subito!"
 
 #: src/cgame/cg_draw.c:2505
 msgid "^3WARMUP:^7 Match begins now!"
@@ -7096,711 +7097,711 @@ msgid "SURRENDER"
 msgstr "ARRENDERSI"
 
 msgid "NO RESTART SHUFFLE"
-msgstr ""
+msgstr "SMISTAMENTO SENZA RIAVVIO"
 
 msgid "Multiview:"
-msgstr ""
+msgstr "Vista multipla:"
 
 msgid "Poll:"
-msgstr ""
+msgstr "Sondaggio:"
 
 msgid "Allow players to vote for custom votes"
-msgstr ""
+msgstr "Permette voti personalizzati ai giocatori"
 
 msgid "Log File:"
-msgstr ""
+msgstr "File Log:"
 
 msgid "Sets the name of the log file or if empty logging is disabled"
-msgstr ""
+msgstr "Specifica il nome del file log o, se è vuoto, di disattivarlo"
 
 msgid "^7BACKSPACE ^3help on/off"
-msgstr ""
+msgstr "^7SPAZIO ^3aiuto sì/no"
 
 msgid "^7BACKSPACE ^mgo  back"
-msgstr ""
+msgstr "^7SPAZIO^mgo  indietro"
 
 msgid "CURRENT PROFILE"
-msgstr ""
+msgstr "PROFILO CORRENTE"
 
 #: src/cgame/cg_draw.c:1504
 msgid "%s^7's dynamite"
-msgstr ""
+msgstr "^7dinamite di%s"
 
 #: src/cgame/cg_draw.c:1516
 msgid "%s^7's mine"
-msgstr ""
+msgstr "^7mina di%s"
 
 msgid "You are frozen - ^3/kill^7 is disabled."
-msgstr ""
+msgstr "Sei stato congelato - ^3/kill^7 è disabilitato."
 
 msgid "Renderer:"
-msgstr ""
+msgstr "Renderer:"
 
 msgid "Set your desired renderer (does a video restart)"
-msgstr ""
+msgstr "Seleziona il tuo render desiderato (il video verrà riavviato)"
 
 msgid "Custom Width:"
-msgstr ""
+msgstr "Larghezza Personalizzata:"
 
 msgid ""
 "Specifies custom resolution width (requires custom resolution set - *Use at "
 "your own risk*)"
-msgstr ""
+msgstr "Specifica la larghezza di risoluzione personalizzata (verrà utilizzata una risoluzione personalizzata - *Usala a tuo rischio*)"
 
 msgid "Custom Height:"
-msgstr ""
+msgstr "Lunghezza Personalizzata:"
 
 msgid ""
 "Specifies custom resolution height (requires custom resolution set - *Use at"
 " your own risk*)"
-msgstr ""
+msgstr "Specifica la lunghezza di risoluzione personalizzata (verrà utilizzata una risoluzione personalizzata - *Usala a tuo rischio*)"
 
 msgid "Max. Frames Per Second:"
-msgstr ""
+msgstr "Frame Massimi Per Secondo:"
 
 msgid "Sets the limit of frames per second"
-msgstr ""
+msgstr "Imposta il limite di frame per secondo"
 
 msgid "JOYSTICK"
-msgstr ""
+msgstr "JOYSTICK"
 
 msgid "Enable Joysticks:"
-msgstr ""
+msgstr "Abilita Joystick:"
 
 msgid "General joystick initialization. Requires vid_restart."
-msgstr ""
+msgstr "Inizializzazione joystick generica. Richiede vid_restart."
 
 msgid "Use Joystick#:"
-msgstr ""
+msgstr "Usa Joystick#:"
 
 msgid "Specifies active joystick"
-msgstr ""
+msgstr "Specifica joystick attivo"
 
 msgid "Analog Joystick:"
-msgstr ""
+msgstr "Joystick Analogico:"
 
 msgid "Use analog joystick?"
-msgstr ""
+msgstr "Usare un joystick analogico?"
 
 msgid "Joystick Threshold:"
-msgstr ""
+msgstr "Soglia Joystick:"
 
 msgid "Sets joystick threshold sensitivity"
-msgstr ""
+msgstr "Imposta limite sensibilità joystick"
 
 msgid ""
 "Includes or excludes servers with anti-lag support from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server con supporto anti-lag"
 
 msgid "Allow players to vote for teams to be shuffled by XP"
-msgstr ""
+msgstr "Permetti ai giocatori di votare per le squadre da smistare per XP"
 
 msgid "Allow players to vote for teams to be shuffled by XP without a restart"
-msgstr ""
+msgstr "Permetti ai giocatori di votare per le squadre da smistare per XP senza riavvio"
 
 msgid "SR Shuffle:"
-msgstr ""
+msgstr "Smistamento SR:"
 
 msgid "Allow players to vote for teams to be shuffled by SR"
-msgstr ""
+msgstr "Permetti ai giocatori di votare per le squadre per essere smistate per SR"
 
 msgid "SR Shuffle No Rstrt:"
-msgstr ""
+msgstr "Smist. SR Senza Riavvio:"
 
 msgid "Allow players to vote for teams to be shuffled by SR without a restart"
-msgstr ""
+msgstr "Permetti ai giocatori di votare per le squadre di essere smistate senza un riavvio"
 
 msgid "Voice text:"
-msgstr ""
+msgstr "Testo vocale:"
 
 msgid "Show voice text in-game"
-msgstr ""
+msgstr "Mostra il testo vocale in gioco"
 
 msgid "Voice chat:"
-msgstr ""
+msgstr "Chat vocale:"
 
 msgid "Play voice chat in-game"
-msgstr ""
+msgstr "Riproduce la chat vocale in gioco"
 
 #: cgame/cg_limbopanel:1907
 msgid "1of%i"
-msgstr ""
+msgstr "1di%i"
 
 #: cgame/cg_limbopanel:1911 cgame/cg_limbopanel:2553 cgame/cg_limbopanel:2570
 #: cgame/cg_limbopanel:2590
 msgid "%iof%i"
-msgstr ""
+msgstr "%idi%i"
 
 msgid "IRC CLIENT"
-msgstr ""
+msgstr "CLIENT IRC"
 
 msgid "Mode:"
-msgstr ""
+msgstr "Modalità:"
 
 msgid "Specifies IRC client behavior"
-msgstr ""
+msgstr "Specifica il comportamento del client IRC"
 
 msgid "Name of IRC server"
-msgstr ""
+msgstr "Nome del server IRC"
 
 msgid "Channel #:"
-msgstr ""
+msgstr "Canale #:"
 
 msgid "Name of IRC channel - no '#' required"
-msgstr ""
+msgstr "Nome canale IRC - '#' non necessario"
 
 msgid "Port of IRC server"
-msgstr ""
+msgstr "Porta del server IRC"
 
 msgid "Nickname:"
-msgstr ""
+msgstr "Nickname:"
 
 msgid "IRC nickame in channel"
-msgstr ""
+msgstr "Soprannome nel canale IRC"
 
 msgid "Kick rejoin time ms:"
-msgstr ""
+msgstr "Tempo di rientro dopo espulsione in ms:"
 
 msgid "Auto rejoin time after kick"
-msgstr ""
+msgstr "Rientro automatico dopo espulsione"
 
 msgid "Reconnect time ms:"
-msgstr ""
+msgstr "Tempo di riconnessione in ms:"
 
 msgid "Reconnect time in ms"
-msgstr ""
+msgstr "Tempo di riconnessione in ms"
 
 msgid "SHUFFLE"
-msgstr ""
+msgstr "RIMESCOLA"
 
 msgid "JOIN A TEAM"
-msgstr ""
+msgstr "UNISCITI A UN TEAM"
 
 msgid "SOLDIER"
-msgstr ""
+msgstr "SOLDATO"
 
 msgid "MEDIC"
-msgstr ""
+msgstr "MEDICO"
 
 msgid "ENGINEER"
-msgstr ""
+msgstr "INGEGNERE"
 
 msgid "FIELD OPS"
-msgstr ""
+msgstr "FIELD OP"
 
 msgid "COVERT OPS"
-msgstr ""
+msgstr "COVERT OP"
 
 msgid ""
 "Includes or excludes ET:Legacy servers with humans from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server ET:Legacy con utenti connessi"
 
 msgid "Specify receiver of quick radio messages"
-msgstr ""
+msgstr "Specifica ricevitore dei messaggi radio"
 
 msgid "High Quality Video:"
-msgstr ""
+msgstr "Alta Qualità Video:"
 
 msgid "Sets high quality video"
-msgstr ""
+msgstr "Imposta qualità video alta"
 
 msgid "Port:"
-msgstr ""
+msgstr "Porta:"
 
 msgid "^1JOIN US"
-msgstr ""
+msgstr "^1UNISCITI A NOI"
 
 msgid ""
 "ET: Legacy is a collaborative effort done in an open, transparent and "
 "friendly manner. Anyone is welcome to join our efforts!"
-msgstr ""
+msgstr "ET: Legacy è un impegno collaborativo eseguito in maniera aperta, trasparente e amichevole. Tutti sono i benvenuti a unirsi al nostro impegno!"
 
 msgid "CHOOSE CLASS AND WEAPONS"
-msgstr ""
+msgstr "SCEGLI LA CLASSE E ARMI"
 
 msgid "S. Soldier"
-msgstr ""
+msgstr "S. Soldiato"
 
 msgid "M. Medic"
-msgstr ""
+msgstr "M. Medico"
 
 msgid "E. Engineer"
-msgstr ""
+msgstr "E. Ingegnere"
 
 msgid "F. Field Ops"
-msgstr ""
+msgstr "F. Field Op"
 
 msgid "C. Covert Ops"
-msgstr ""
+msgstr "C. Covert Op"
 
 msgid "A. Automatic Rifle"
-msgstr ""
+msgstr "A. Fucile Automatico"
 
 msgid "G. Machinegun"
-msgstr ""
+msgstr "G. Mitragliatrice"
 
 msgid "F. Flamethrower"
-msgstr ""
+msgstr "F. Lanciafiamme"
 
 msgid "R. Rocket Launcher"
-msgstr ""
+msgstr "R. Lanciarazzi"
 
 msgid "M. Mortar"
-msgstr ""
+msgstr "M. Mortaio"
 
 msgid "S. SMG"
-msgstr ""
+msgstr "S. SMG"
 
 msgid "G. Rifle"
-msgstr ""
+msgstr "G. Fucile"
 
 msgid "P. Sniper Rifle"
-msgstr ""
+msgstr "P. Fucile di Precisione"
 
 msgid "1. Soldier"
-msgstr ""
+msgstr "1. Soldato"
 
 msgid "2. Medic"
-msgstr ""
+msgstr "2. Medico"
 
 msgid "3. Engineer"
-msgstr ""
+msgstr "3. Ingegnere"
 
 msgid "4. Field Ops"
-msgstr ""
+msgstr "4. Field Op"
 
 msgid "5. Covert Ops"
-msgstr ""
+msgstr "5. Covert Op"
 
 msgid "1. Automatic Rifle"
-msgstr ""
+msgstr "1. Lancia Razzi"
 
 msgid "2. Machinegun"
-msgstr ""
+msgstr "2. Mitragliatrice"
 
 msgid "3. Flamethrower"
-msgstr ""
+msgstr "3. Lanciafiamme"
 
 msgid "4. Rocket Launcher"
-msgstr ""
+msgstr "4. Lanciarazzi"
 
 msgid "5. Mortar"
-msgstr ""
+msgstr "5. Mortaio"
 
 msgid "1. SMG"
-msgstr ""
+msgstr "1. SMG"
 
 msgid "2. Rifle"
-msgstr ""
+msgstr "2. Fucile"
 
 msgid "2. Automatic Rifle"
-msgstr ""
+msgstr "2. Fucile Automatico"
 
 msgid "3. Sniper Rifle"
-msgstr ""
+msgstr "3. Fucile di Precisione"
 
 msgid "desktop resolution"
-msgstr ""
+msgstr "risoluzione scrivania"
 
 msgid "custom resolution"
-msgstr ""
+msgstr "risoluzione personalizzata"
 
 msgid "856*480 Wide Screen"
-msgstr ""
+msgstr "856*480 Wide Screen"
 
 msgid "Windowed"
-msgstr ""
+msgstr "Finestra"
 
 msgid "Fullscreen"
-msgstr ""
+msgstr "Schermo Intero"
 
 msgid "Windowed Fullscreen"
-msgstr ""
+msgstr "Schermo Intero a Finestra"
 
 msgid "Original"
-msgstr ""
+msgstr "Originale"
 
 msgid "Other"
-msgstr ""
+msgstr "Altro"
 
 msgid "Show Speed:"
-msgstr ""
+msgstr "Mostra Velocità:"
 
 msgid "UPS + highest speed"
-msgstr ""
+msgstr "UPS + velocità massima"
 
 msgid "KPH + highest speed"
-msgstr ""
+msgstr "KPH + velocità massima"
 
 msgid "MPH + highest speed"
-msgstr ""
+msgstr "MPH + velocità massima"
 
 msgid "Displays speed of player"
-msgstr ""
+msgstr "Visualizza velocità giocatore"
 
 msgid "Vanilla (default)  "
-msgstr ""
+msgstr "Basilare (predefinito) "
 
 msgid "Direct connect"
-msgstr ""
+msgstr "Connessione diretta"
 
 msgid "Override nickname"
-msgstr ""
+msgstr "Annulla nickname"
 
 msgid "Mute channel"
-msgstr ""
+msgstr "Muta canale"
 
 msgid "Direct + Override"
-msgstr ""
+msgstr "Diretto + Annullo"
 
 msgid "Direct + Mute"
-msgstr ""
+msgstr "Diretto + Muto"
 
 msgid "Override + Mute"
-msgstr ""
+msgstr "Annullo + Muto"
 
 msgid "Direct + Over. + Mute"
-msgstr ""
+msgstr "Diretto + Ann. + Muto"
 
 msgid "Custom"
-msgstr ""
+msgstr "Personalizzato"
 
 msgid "Displays help text"
-msgstr ""
+msgstr "Visualizza testo di aiuto"
 
 msgid "Low (43 FPS)"
-msgstr ""
+msgstr "Bassa (43 FPS)"
 
 msgid "Medium (76 FPS)"
-msgstr ""
+msgstr "Media (76 FPS)"
 
 msgid "Default (85 FPS)"
-msgstr ""
+msgstr "Predefinita (85 FPS)"
 
 msgid "High (125 FPS)"
-msgstr ""
+msgstr "Alta (125 FPS)"
 
 msgid "Add this server to your favorites?"
-msgstr ""
+msgstr "Aggiungere questo server ai preferiti?"
 
 msgid "Select your team, class, weapon and spawnpoint"
-msgstr ""
+msgstr "Seleziona la tua squadra, classe, arma e spawnpoint"
 
 msgid "Print all server info"
-msgstr ""
+msgstr "Stampa tutte le informazioni del server"
 
 msgid "Set available game options"
-msgstr ""
+msgstr "Seleziona impostazioni di gioco disponibili"
 
 msgid "Add this server to your favorites"
-msgstr ""
+msgstr "Aggiungi questo server ai tuoi preferiti"
 
 msgid "Look at the legacy hall of fame"
-msgstr ""
+msgstr "Guarda l'hall of fame di legacy"
 
 msgid "Disconnect your connection from current server"
-msgstr ""
+msgstr "Disconnetti da questo server"
 
 msgid "Don't press this. Be warned!"
-msgstr ""
+msgstr "Non premere qui. Sei avvisato!"
 
 msgid "Skill Rating view"
-msgstr ""
+msgstr "Vista Valutazione Abilità"
 
 msgid "%s - Press double-%s quickly to switch scoreboard"
-msgstr ""
+msgstr "%s - Premere due volte-%svelocemente per cambiare punteggio"
 
 msgid "XP view"
-msgstr ""
+msgstr "Vista XP"
 
 msgid "^1CHOOSE YOUR INITIAL SETTINGS"
-msgstr ""
+msgstr "^1SELEZIONA LE TUE IMPOSTAZIONI INIZIALI"
 
 msgid "FAVORITES"
-msgstr ""
+msgstr "PREFERITI"
 
 msgid "Shows all favorite servers"
-msgstr ""
+msgstr "Mostra tutti i server preferiti"
 
 msgid "GEOLOCATION"
-msgstr ""
+msgstr "GEOLOCALIZZAZIONE"
 
 msgid "Share Location:"
-msgstr ""
+msgstr "Condividi Posizione:"
 
 msgid "Displays your own location in score board"
-msgstr ""
+msgstr "Mostra la tua posizione nella tabella punti"
 
 msgid "Class selection:"
-msgstr ""
+msgstr "Selezione Classe:"
 
 msgid "Team selection:"
-msgstr ""
+msgstr "Selezione Squadra:"
 
 msgid "Spawn selection:"
-msgstr ""
+msgstr "Selezione Spawn:"
 
 msgid "Sets the frames per second limit for a stable render rate"
-msgstr ""
+msgstr "Imposta limite fotogrammi al secondo per velocità rendering stabile"
 
 msgid "LANGUAGE"
-msgstr ""
+msgstr "LINGUA"
 
 msgid "Very Low (15)"
-msgstr ""
+msgstr "Molto basso (15)"
 
 msgid "Low (30)"
-msgstr ""
+msgstr "Basso (30)"
 
 msgid "Medium (60)"
-msgstr ""
+msgstr "Medio (60)"
 
 msgid "High (100)"
-msgstr ""
+msgstr "Alto (100)"
 
 msgid "Very High (125)"
-msgstr ""
+msgstr "Molto alto (125)"
 
 msgid "Enabled & no sound"
-msgstr ""
+msgstr "Abilitato e nessun suono"
 
 msgid "RANDOM"
-msgstr ""
+msgstr "CASUALE"
 
 msgid "WELCOME"
-msgstr ""
+msgstr "BENVENUTO"
 
 msgid "English (default)  "
-msgstr ""
+msgstr "Inglese (predefinito) "
 
 msgid "Shows all Internet servers"
-msgstr ""
+msgstr "Mostra tutti i server Internet"
 
 msgid "Shows all local servers"
-msgstr ""
+msgstr "Mostra tutti i server locali"
 
 msgid "LOCAL"
-msgstr ""
+msgstr "LOCALE"
 
 msgid "^5Local"
-msgstr ""
+msgstr "^5Locale"
 
 msgid "^3Favorites"
-msgstr ""
+msgstr "^3Preferiti"
 
 msgid ""
 "Includes or excludes ET: Legacy servers with humans from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server ET:Legacy con utenti connessi"
 
 msgid "Shoutcast Password:"
-msgstr ""
+msgstr "Password Shoutcast:"
 
 msgid "Password to access the shoutcaster status for live match commentaries"
-msgstr ""
+msgstr "Password per accedere allo stato del shoutcaster per commenti in diretta"
 
 msgid "Bobbing effect:"
-msgstr ""
+msgstr "Effetto ballonzolante:"
 
 msgid "Toggle bobbing"
-msgstr ""
+msgstr "Alterna ballonzolio"
 
 msgid "ITEMS"
-msgstr ""
+msgstr "ELEMENTI"
 
 msgid "Simple Items:"
-msgstr ""
+msgstr "Elementi semplici:"
 
 msgid "Yes except objectives"
-msgstr ""
+msgstr "Sì eccetto obiettivi"
 
 msgid "Draw simple items"
-msgstr ""
+msgstr "Disegna elementi semplici"
 
 msgid "Play startup announcer voice"
-msgstr ""
+msgstr "Riproduci voce presentatore iniziale"
 
 msgid "Hide Weapons Only"
-msgstr ""
+msgstr "Nascondi Solo Armi"
 
 msgid "Coordinates Only"
-msgstr ""
+msgstr "Solo Coordinate"
 
 msgid "Screenshot"
 msgstr "Schermata"
 
 msgid "Coordinates Only"
-msgstr ""
+msgstr "Solo Coordinate"
 
 msgid "Fireteam Overlay"
-msgstr ""
+msgstr "Interfaccia Fireteam"
 
 msgid "Team and Fireteam Chat"
-msgstr ""
+msgstr "Chat Squadra e Fireteam"
 
 msgid "Chat + FT Overlay"
-msgstr ""
+msgstr "Chat + FT Overlay"
 
 msgid "UPS + MAX speed"
-msgstr ""
+msgstr "UPS + velocità MAX"
 
 msgid "KPH + MAX speed"
-msgstr ""
+msgstr "KPH + velocità MAX"
 
 msgid "MPH + MAX speed"
-msgstr ""
+msgstr "MPH + velocità MAX"
 
 msgid "Toggles display of weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Attiva / disattiva la visualizzazione del fuoco dell'arma (sparo)"
 
 msgid "POPUPS AND BANNER"
-msgstr ""
+msgstr "POPUP E BANNER"
 
 msgid "Filter Messages:"
-msgstr ""
+msgstr "Filtra Messaggi:"
 
 msgid "Connection"
-msgstr ""
+msgstr "Connessione"
 
 msgid "Pickup"
-msgstr ""
+msgstr "Raccogliere"
 
 msgid "Death"
-msgstr ""
+msgstr "Morte"
 
 msgid "Connection, Pickup"
-msgstr ""
+msgstr "Connessione, Raccolta"
 
 msgid "Connection, Death"
-msgstr ""
+msgstr "Connessione, Morte"
 
 msgid "Connect, Pickup, Death"
-msgstr ""
+msgstr "Connetti, Raccolta, Morte"
 
 msgid "Set filter on popup messages"
-msgstr ""
+msgstr "Imposta il filtro sui messaggi popup"
 
 msgid "Filter Promotions:"
-msgstr ""
+msgstr "Filtro Promozioni:"
 
 msgid "Skill upgrades"
-msgstr ""
+msgstr "Potenziamenti Abilità"
 
 msgid "Skill + Rank upgrades"
-msgstr ""
+msgstr "Potenziamenti Abilità e Rango"
 
 msgid "Set filter on popup promotion messages"
-msgstr ""
+msgstr "Imposta il filtro sui messaggi popup promozionali"
 
 msgid "Banner Time:"
-msgstr ""
+msgstr "Tempo Ban:"
 
 msgid "Set the time a banner stays visible"
-msgstr ""
+msgstr "Imposta il tempo in cui un banner rimane visibile"
 
 msgid "Drop Objective"
-msgstr ""
+msgstr "Rilascio Obiettivo"
 
 msgid "SELECTION MENUS"
-msgstr ""
+msgstr "MENU DI SELEZIONE"
 
 msgid "Center Window:"
-msgstr ""
+msgstr "Centra Finestra:"
 
 msgid "Center window in windowed mode"
-msgstr ""
+msgstr "Centra in modalità finestra"
 
 msgid "Very Low (43 FPS)"
-msgstr ""
+msgstr "Molto Basso (43 FPS)"
 
 msgid "Low (76 FPS)"
-msgstr ""
+msgstr "Basso (76 FPS)"
 
 msgid "Medium (85 FPS)"
-msgstr ""
+msgstr "Medio (85 FPS)"
 
 msgid "SCREENSHOTS"
-msgstr ""
+msgstr "SCREENSHOTS"
 
 msgid "TGA (lossless)"
-msgstr ""
+msgstr "TGA (lossless)"
 
 msgid "JPEG (lossy)"
-msgstr ""
+msgstr "JPEG (lossy)"
 
 msgid "PNG (lossless)"
-msgstr ""
+msgstr "PNG (lossless)"
 
 msgid "Set your preferred screenshot format"
-msgstr ""
+msgstr "Imposta il tuo formato preferito di screenshot"
 
 msgid "JPEG Quality:"
-msgstr ""
+msgstr "Qualità JPEG:"
 
 msgid "Set the JPEG quality"
-msgstr ""
+msgstr "Imposta la qualità JPEG"
 
 msgid "REMOVE FAVORITE"
-msgstr ""
+msgstr "RIMUOVI PREFERITO"
 
 msgid "Remove this server from your favorites?"
-msgstr ""
+msgstr "Rimuovere questo server dai preferiti?"
 
 msgid "P. Pistol"
-msgstr ""
+msgstr "P. Pistola"
 
 msgid "A. Akimbo"
-msgstr ""
+msgstr "A. Akimbo"
 
 msgid "P. Silenced Pistol"
-msgstr ""
+msgstr "P. Pistola Silenziata"
 
 msgid "A. Silenced Akimbo"
-msgstr ""
+msgstr "A. Akimbo Silenziata"
 
 msgid "1. Pistol"
-msgstr ""
+msgstr "1. Pistola"
 
 msgid "2. Akimbo"
-msgstr ""
+msgstr "2. Akimbo"
 
 msgid "3. SMG"
-msgstr ""
+msgstr "3. SMG"
 
 msgid "CHOOSE TEAM"
-msgstr ""
+msgstr "SCEGLI TEAM"
 
 msgid "R. Axis"
-msgstr ""
+msgstr "R. Axis"
 
 msgid "B. Allies"
-msgstr ""
+msgstr "B. Allies"
 
 msgid "S. Spectators"
-msgstr ""
+msgstr "S. Spettatori"
 
 msgid "1. Axis"
-msgstr ""
+msgstr "1. Asse"
 
 msgid "2. Allies"
-msgstr ""
+msgstr "2. Alleati"
 
 msgid "3. Spectators"
-msgstr ""
+msgstr "3. 3. Spectators"
 
 msgid "Set or unset this server as favorite"
-msgstr ""
+msgstr "Imposta o rimuovi questo server nei preferiti"
 
 msgid "MAKE SHOUTCASTER"
-msgstr ""
+msgstr "CREA SHOUTCASTER"
 
 msgid " demo %s: %ik "
-msgstr ""
+msgstr " demo %s: %ik "
 
 msgid " audio %s: %ik "
-msgstr ""
+msgstr " audio %s: %ik "
 
 msgid "REPLAY"
-msgstr ""
+msgstr "REPLAY"
 
 msgid "RECORD"
-msgstr ""
+msgstr "REGISTRAZIONE"

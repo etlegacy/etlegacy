@@ -17,7 +17,7 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
 "Last-Translator: Benjamin Jung (headcr4sh) <headcr4sh@gmail.com>, 2019\n"
-"Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
+"Language-Team: German (http://app.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1076,7 +1076,7 @@ msgstr "JA"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable country flags on the server"
-msgstr ""
+msgstr "Landesflaggen auf dem Server erlauben"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
@@ -1900,7 +1900,7 @@ msgstr "0.022 (Standard)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
-msgstr ""
+msgstr "Auf- und und Abwärts-Bewegungung des Fadenkreuzes während der Bewegung"
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
@@ -1988,7 +1988,7 @@ msgstr "Benutze (Aktiviere):"
 
 #: etmain/ui/options_controls.menu:87
 msgid "SELECT CLASS AND WEAPONS"
-msgstr ""
+msgstr "WAFFE UND KLASSE WÄHLEN"
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
@@ -2128,15 +2128,15 @@ msgstr "Immer rennen:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
-msgstr ""
+msgstr "Umschalten gehen/laufen"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
-msgstr ""
+msgstr "Doppelklick zum Hinlegen:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
-msgstr ""
+msgstr "Setze die Zeit zwischen Tastendrücken um als Doppelklick zu gelten"
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
@@ -2148,15 +2148,15 @@ msgstr "Automatisches Nachladen:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr ""
+msgstr "Automatisch nachladen wenn das Magazin leer ist"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
-msgstr ""
+msgstr "Automatischer Wechsel:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
-msgstr ""
+msgstr "Automatisch zu neuer Waffe wechseln, wenn die Munition leer ist"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Weapon Icon Flash:"
@@ -2176,11 +2176,11 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
-msgstr ""
+msgstr "Mündungsfeuer:"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Enables or disables weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Aktiviere oder deaktiviere Waffen feuer (Mündungsfeuer)"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
@@ -2231,7 +2231,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
-msgstr ""
+msgstr "Standard Zoom Stufe:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
@@ -2475,7 +2475,7 @@ msgstr "Karten Auto-Zoom."
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
-msgstr ""
+msgstr "Setzt die Zoom Stufe automatisch wenn die Karte lädt"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
@@ -6058,7 +6058,7 @@ msgid "You are now the leader of your fireteam"
 msgstr "Du hast jetzt das Kommando über das Feuerteam"
 
 msgid "The fireteam you are on has been disbanded"
-msgstr ""
+msgstr "Dein Feuerteam wurde aufgelöst"
 
 msgid "You have been given fireteam admin rights"
 msgstr "Dir wurden Feuerteam Admin Rechte gegeben"

@@ -10,7 +10,7 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:49+0000\n"
 "Last-Translator: Col Serra, 2018\n"
-"Language-Team: Serbian (http://www.transifex.com/etlegacy/etlegacy/language/sr/)\n"
+"Language-Team: Serbian (http://app.transifex.com/etlegacy/etlegacy/language/sr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,13 +20,13 @@ msgstr ""
 #: src/client/cl_console.c:803
 #, c-format
 msgid "%s (UPDATE AVAILABLE)"
-msgstr ""
+msgstr "%s(АПДЕЈТ ДОСТУПАН)"
 
 msgid "MOUSE1"
-msgstr ""
+msgstr "MOUSE1"
 
 msgid "MOUSE2"
-msgstr ""
+msgstr "MOUSE2"
 
 msgid "Yes"
 msgstr ""
@@ -41,4 +41,4 @@ msgid "Cancel"
 msgstr ""
 
 msgid "SPACE"
-msgstr ""
+msgstr "SPACE"

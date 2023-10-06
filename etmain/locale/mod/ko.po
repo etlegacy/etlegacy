@@ -10,7 +10,7 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
 "Last-Translator: Kyu-Seok Yang <lklk9110@gmail.com>, 2016-2017,2020-2021\n"
-"Language-Team: Korean (http://www.transifex.com/etlegacy/etlegacy/language/ko/)\n"
+"Language-Team: Korean (http://app.transifex.com/etlegacy/etlegacy/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -6903,67 +6903,67 @@ msgid "^3%d^7 players gibbed."
 msgstr "^3%d^7 플레이어들이 토막내어졌습니다."
 
 msgid "There is no player to gib."
-msgstr ""
+msgstr "확인사살할 플레이어가 없습니다."
 
 msgid "Error - can't gib - %s."
-msgstr ""
+msgstr "오류 - 토막낼 수 없습니다 - %s."
 
 msgid "Player must be on a team to be gibbed.\n"
-msgstr ""
+msgstr "토막날 플레이어가 팀에 속해있어야 합니다.\n"
 
 msgid "^7%s^7 was gibbed."
-msgstr ""
+msgstr "^7%s^7이(가) 토막내어졌습니다."
 
 msgid "Die command not allowed during intermission.\n"
-msgstr ""
+msgstr "사망 명령어는 휴식 시간 중에 사용할 수 없습니다.\n"
 
 msgid "^3%d^7 players died."
-msgstr ""
+msgstr "^3%d^7 플레이어가 사망했습니다."
 
 msgid "There is no player to die.\n"
-msgstr ""
+msgstr "죽일 플레이어가 없습니다.\n"
 
 msgid "Error - can't execute die command - %s.\n"
-msgstr ""
+msgstr "오류 - 사망 명령어를 실행할 수 없습니다 - %s.\n"
 
 msgid "Player must be on a team to die.\n"
-msgstr ""
+msgstr "사망할 플레이어가 팀에 속해있어야 합니다.\n"
 
 msgid "^7%s^7 died."
-msgstr ""
+msgstr "^7%s^7이(가) 죽었습니다."
 
 msgid "Freeze command not allowed during intermission.\n"
-msgstr ""
+msgstr "얼리기 명령어는 휴식 시간 중에 사용할 수 없습니다.\n"
 
 msgid "^3%d^7 players are frozen."
-msgstr ""
+msgstr "^3%d^7 플레이어들이 얼려졌습니다."
 
 msgid "No players in team or they are already frozen.\n"
-msgstr ""
+msgstr "팀에 플레이어가 없거나 모두 얼었습니다.\n"
 
 msgid "Error - can't freeze - %s.\n"
-msgstr ""
+msgstr "오류 - 얼릴 수 없습니다 - %s.\n"
 
 msgid "Player must be on a team to be frozen.\n"
-msgstr ""
+msgstr "얼어붙을 플레이어가 팀에 속해있어야 합니다.\n"
 
 msgid "^7%s^7 is frozen."
-msgstr ""
+msgstr "^7%s^7이(가) 얼었습니다."
 
 msgid "^3%d^7 players are unfrozen."
-msgstr ""
+msgstr "^3%d^7 플레이어가 해동됐습니다."
 
 msgid "No players in team or they are already unfrozen.\n"
-msgstr ""
+msgstr "팀에 플레이어가 없거나 모두 해동됐습니다.\n"
 
 msgid "Error - can't unfreeze - %s.\n"
-msgstr ""
+msgstr "오류 - 해동할 수 없습니다 - %s.\n"
 
 msgid "Player must be on a team to be unfrozen.\n"
-msgstr ""
+msgstr "해동될 플레이어가 팀에 속해있어야 합니다.\n"
 
 msgid "^7%s^7 is unfrozen."
-msgstr ""
+msgstr "^7%s^7이(가) 해동됐습니다."
 
 msgid "Burn command not allowed during intermission.\n"
 msgstr "불태우기 명령어는 휴식 시간 중에 사용할 수 없습니다.\n"

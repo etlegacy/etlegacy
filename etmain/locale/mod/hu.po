@@ -11,7 +11,7 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
 "Last-Translator: Tamás Bene <tbene92@gmail.com>, 2021\n"
-"Language-Team: Hungarian (http://www.transifex.com/etlegacy/etlegacy/language/hu/)\n"
+"Language-Team: Hungarian (http://app.transifex.com/etlegacy/etlegacy/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -259,7 +259,7 @@ msgstr "^1HONLAP"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid "© 2012-2020 ET: Legacy Team - under the terms of GPL version 3."
-msgstr ""
+msgstr "© 2012-2020 ET: Legacy csapat - GPL verzió 3 feltételeiben."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -416,7 +416,7 @@ msgstr "További pálya design"
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET: Legacy Website"
-msgstr ""
+msgstr "ET: Legacy weboldal"
 
 #: etmain/ui/etlegacywebsite.menu:50
 msgid ""
@@ -1070,7 +1070,7 @@ msgstr "Igen"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable country flags on the server"
-msgstr ""
+msgstr "Országzászlók engedélyezése a szerveren"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
@@ -1341,7 +1341,7 @@ msgstr "FRISSÍTÉS"
 
 #: etmain/ui/ingame_serverinfo.menu:78
 msgid "ADD FAVORITE"
-msgstr ""
+msgstr "KEDVENC HOZZÁADÁSA"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
@@ -1982,7 +1982,7 @@ msgstr "Használ (aktivál)"
 
 #: etmain/ui/options_controls.menu:87
 msgid "SELECT CLASS AND WEAPONS"
-msgstr ""
+msgstr "FEGYVER ÉS KASZT VÁLASZTÁS"
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
@@ -2122,7 +2122,7 @@ msgstr "Játékos mindig fut:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
-msgstr ""
+msgstr "Annak beállítása, hogy a játékos alapból fusson vagy sétáljon"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
@@ -2724,19 +2724,19 @@ msgstr "Beállítja, hogy maximum milyen távolról legyen látható a fényudva
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Particles Effects:"
-msgstr ""
+msgstr "Részecske effektek: "
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Toggles display of particle effects (explosions, some smoke effects)"
-msgstr ""
+msgstr "Részecske effektek megjelenítése (robbanások, néhány füst effekt)"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Visual Effects:"
-msgstr ""
+msgstr "Vizuális effektek:"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Draws additional visual effects (airstrike planes, debris)"
-msgstr ""
+msgstr "További vizuális effektek rajzolása (légicsapás repülők, törmelék)"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
@@ -2744,7 +2744,7 @@ msgstr "Fal nyomok élettartalma:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls"
-msgstr ""
+msgstr "Lövedéknyomok időtartama a falakon"
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Blood Flash:"
@@ -2791,7 +2791,7 @@ msgstr "Vér mutatása:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when players are shot"
-msgstr ""
+msgstr "Vér spriccelési effekt megjelenítése, mikor meglövik a játékost"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
@@ -2884,15 +2884,15 @@ msgstr "Kaszt + rang"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Prestige"
-msgstr ""
+msgstr "Presztízs"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Rank + Prestige"
-msgstr ""
+msgstr "Rang + Presztízs"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank + Prestige"
-msgstr ""
+msgstr "Osztály + Rang + Presztízs"
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
@@ -3234,7 +3234,7 @@ msgstr "A játék képernyőfelbontásának beállítása"
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Window Mode"
-msgstr ""
+msgstr "Ablak mód"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
@@ -5244,7 +5244,7 @@ msgstr "Ölés:  %3d    Csapattárs ölés: %3d    Pontosság:  %5.1f%%"
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
 msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
-msgstr ""
+msgstr "Gib:   %3d    Csapatgib:  %3d    Játékidő:  %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -6890,7 +6890,7 @@ msgid "Most Deaths"
 msgstr "Legtöbb halál"
 
 msgid "Highest Skill Rating"
-msgstr ""
+msgstr "Legmagasabb Skill Rating"
 
 msgid ""
 "\n"
@@ -7150,7 +7150,7 @@ msgid "Max. Frames Per Second:"
 msgstr "Maximum képkockaszám másodpercenként:"
 
 msgid "Sets the limit of frames per second"
-msgstr ""
+msgstr "Beállítja a másodpercenkénti képkockaszám maximális értékét"
 
 msgid "JOYSTICK"
 msgstr "JOYSTICK"
@@ -7293,7 +7293,7 @@ msgid "High Quality Video:"
 msgstr "Magas minőségű videó:"
 
 msgid "Sets high quality video"
-msgstr ""
+msgstr "Magas minőségű videó beállítása"
 
 msgid "Port:"
 msgstr "Port:"
@@ -7304,10 +7304,10 @@ msgstr "^1CSATLAKOZZ"
 msgid ""
 "ET: Legacy is a collaborative effort done in an open, transparent and "
 "friendly manner. Anyone is welcome to join our efforts!"
-msgstr ""
+msgstr "ET: Legacy egy együttműködő törekvés egy nyitott, átlátható és barátságos módszer. Bárkit szívesen látunk hogy csatlakozzon a törekvéseinkhez!"
 
 msgid "CHOOSE CLASS AND WEAPONS"
-msgstr ""
+msgstr "VÁLASSZ OSZTÁLYT ÉS FEGYVEREKET"
 
 msgid "S. Soldier"
 msgstr "S. Katona"
@@ -7391,197 +7391,197 @@ msgid "3. Sniper Rifle"
 msgstr "3. Mesterlövész puska"
 
 msgid "desktop resolution"
-msgstr ""
+msgstr "asztal felbontása"
 
 msgid "custom resolution"
-msgstr ""
+msgstr "egyedi felbontás"
 
 msgid "856*480 Wide Screen"
-msgstr ""
+msgstr "856*480 szélesvásznú"
 
 msgid "Windowed"
-msgstr ""
+msgstr "Ablakos"
 
 msgid "Fullscreen"
-msgstr ""
+msgstr "Teljes képernyős"
 
 msgid "Windowed Fullscreen"
-msgstr ""
+msgstr "Teljes képernyő ablakban"
 
 msgid "Original"
-msgstr ""
+msgstr "Eredeti"
 
 msgid "Other"
-msgstr ""
+msgstr "Más"
 
 msgid "Show Speed:"
-msgstr ""
+msgstr "Sebesség mutatása:"
 
 msgid "UPS + highest speed"
-msgstr ""
+msgstr "UPS + legnagyobb sebesség"
 
 msgid "KPH + highest speed"
-msgstr ""
+msgstr "KPH + legnagyobb sebesség"
 
 msgid "MPH + highest speed"
-msgstr ""
+msgstr "MPH + legnagyobb sebesség"
 
 msgid "Displays speed of player"
-msgstr ""
+msgstr "Kijelzi a játékos sebességét"
 
 msgid "Vanilla (default)  "
-msgstr ""
+msgstr "Vanilla (alap)  "
 
 msgid "Direct connect"
-msgstr ""
+msgstr "Közvetlen kapcsolat"
 
 msgid "Override nickname"
-msgstr ""
+msgstr "Becenév felülírása"
 
 msgid "Mute channel"
-msgstr ""
+msgstr "Csatorna némítása"
 
 msgid "Direct + Override"
-msgstr ""
+msgstr "Közvetlen + felülírás"
 
 msgid "Direct + Mute"
-msgstr ""
+msgstr "Közvetlen + némítás"
 
 msgid "Override + Mute"
-msgstr ""
+msgstr "Felülírás + némítás"
 
 msgid "Direct + Over. + Mute"
-msgstr ""
+msgstr "Közvetlen + felülírás + némítás"
 
 msgid "Custom"
-msgstr ""
+msgstr "Egyéni"
 
 msgid "Displays help text"
-msgstr ""
+msgstr "Segítség mutatása"
 
 msgid "Low (43 FPS)"
-msgstr ""
+msgstr "Alacsony (43 FPS)"
 
 msgid "Medium (76 FPS)"
-msgstr ""
+msgstr "Közepes (76 FPS)"
 
 msgid "Default (85 FPS)"
-msgstr ""
+msgstr "Alap (85 FPS)"
 
 msgid "High (125 FPS)"
-msgstr ""
+msgstr "Magas (125 FPS)"
 
 msgid "Add this server to your favorites?"
-msgstr ""
+msgstr "Hozzáadod ezt a szervert a kedvencekhez?"
 
 msgid "Select your team, class, weapon and spawnpoint"
-msgstr ""
+msgstr "Csapat, kaszt, fegyver és spawpont kiválasztása"
 
 msgid "Print all server info"
-msgstr ""
+msgstr "Minden szerver infó kiírása"
 
 msgid "Set available game options"
-msgstr ""
+msgstr "Elérhető játékbeállítása beállítása"
 
 msgid "Add this server to your favorites"
-msgstr ""
+msgstr "Szerver kedvencekhez adása"
 
 msgid "Look at the legacy hall of fame"
-msgstr ""
+msgstr "Legacy hírességek csarnokának megtekintése"
 
 msgid "Disconnect your connection from current server"
-msgstr ""
+msgstr "Lekapcsolódás a jelenlegi szerverről"
 
 msgid "Don't press this. Be warned!"
-msgstr ""
+msgstr "Ezt ne nyomd meg! Figyelmeztetlek!"
 
 msgid "Skill Rating view"
-msgstr ""
+msgstr "Skill Rating nézet"
 
 msgid "%s - Press double-%s quickly to switch scoreboard"
-msgstr ""
+msgstr "%s - Nyomd meg kétszer a-%s gombot gyorsan, hogy eredményjelzőt válts "
 
 msgid "XP view"
-msgstr ""
+msgstr "XP nézet"
 
 msgid "^1CHOOSE YOUR INITIAL SETTINGS"
 msgstr ""
 
 msgid "FAVORITES"
-msgstr ""
+msgstr "KEDVENCEK"
 
 msgid "Shows all favorite servers"
-msgstr ""
+msgstr "Összes kedvenc szerver mutatása"
 
 msgid "GEOLOCATION"
 msgstr ""
 
 msgid "Share Location:"
-msgstr ""
+msgstr "Helyzet megosztása: "
 
 msgid "Displays your own location in score board"
-msgstr ""
+msgstr "Saját hely megjelenítése a pontlistán"
 
 msgid "Class selection:"
-msgstr ""
+msgstr "Osztály választása:"
 
 msgid "Team selection:"
-msgstr ""
+msgstr "Csapat választása:"
 
 msgid "Spawn selection:"
-msgstr ""
+msgstr "Éledési hely választása:"
 
 msgid "Sets the frames per second limit for a stable render rate"
-msgstr ""
+msgstr "Másodpercenkénti képkocka állítása a stabil render sebességhez"
 
 msgid "LANGUAGE"
-msgstr ""
+msgstr "NYELV"
 
 msgid "Very Low (15)"
-msgstr ""
+msgstr "Nagyon alacsony (15)"
 
 msgid "Low (30)"
-msgstr ""
+msgstr "Alacsony (30)"
 
 msgid "Medium (60)"
-msgstr ""
+msgstr "Közepes (60)"
 
 msgid "High (100)"
-msgstr ""
+msgstr "Magas (100)"
 
 msgid "Very High (125)"
-msgstr ""
+msgstr "Nagyon magas (125)"
 
 msgid "Enabled & no sound"
-msgstr ""
+msgstr "Engedélyezve & nincs hang"
 
 msgid "RANDOM"
-msgstr ""
+msgstr "VÉLETLEN"
 
 msgid "WELCOME"
-msgstr ""
+msgstr "ÜDVÖZLÖM"
 
 msgid "English (default)  "
-msgstr ""
+msgstr "Angol (alapértelmezett)"
 
 msgid "Shows all Internet servers"
-msgstr ""
+msgstr "Mutass minden Internet szervert"
 
 msgid "Shows all local servers"
-msgstr ""
+msgstr "Mutass minden helyi szervert"
 
 msgid "LOCAL"
-msgstr ""
+msgstr "HELYI"
 
 msgid "^5Local"
-msgstr ""
+msgstr "^5Helyi"
 
 msgid "^3Favorites"
-msgstr ""
+msgstr "^3Kedvencek"
 
 msgid ""
 "Includes or excludes ET: Legacy servers with humans from the server list"
-msgstr ""
+msgstr "Tartalmaz vagy kizárt ET: Legacy szervereket emberekkel az szerverlistáról"
 
 msgid "Shoutcast Password:"
 msgstr ""
@@ -7590,100 +7590,100 @@ msgid "Password to access the shoutcaster status for live match commentaries"
 msgstr ""
 
 msgid "Bobbing effect:"
-msgstr ""
+msgstr "Dőlés effekt:"
 
 msgid "Toggle bobbing"
-msgstr ""
+msgstr "Dőlés beállítása"
 
 msgid "ITEMS"
-msgstr ""
+msgstr "TÁRGYAK"
 
 msgid "Simple Items:"
-msgstr ""
+msgstr "Egyszerű tárgyak:"
 
 msgid "Yes except objectives"
-msgstr ""
+msgstr "Igen, kivéve feladatok"
 
 msgid "Draw simple items"
-msgstr ""
+msgstr "Egyszerű tárgyak rajzolása"
 
 msgid "Play startup announcer voice"
 msgstr ""
 
 msgid "Hide Weapons Only"
-msgstr ""
+msgstr "Csak fegyverek elrejtése"
 
 msgid "Coordinates Only"
-msgstr ""
+msgstr "Csak koordináták"
 
 msgid "Screenshot"
 msgstr "Képernyőfotó"
 
 msgid "Coordinates Only"
-msgstr ""
+msgstr "Csak koordináták"
 
 msgid "Fireteam Overlay"
-msgstr ""
+msgstr "Tűzcsapat felület"
 
 msgid "Team and Fireteam Chat"
-msgstr ""
+msgstr "Csapat és Tűzcsapat chat "
 
 msgid "Chat + FT Overlay"
-msgstr ""
+msgstr "Chat + TCS Felület"
 
 msgid "UPS + MAX speed"
-msgstr ""
+msgstr "UPS + MAX sebesség"
 
 msgid "KPH + MAX speed"
-msgstr ""
+msgstr "KPH + MAX sebesség "
 
 msgid "MPH + MAX speed"
-msgstr ""
+msgstr "MPH + MAX sebesség"
 
 msgid "Toggles display of weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Fegyver tűzének állítása (torkolattűz)"
 
 msgid "POPUPS AND BANNER"
-msgstr ""
+msgstr "POPUPOK ÉS BANNEREK"
 
 msgid "Filter Messages:"
-msgstr ""
+msgstr "Üzenetek szűrése: "
 
 msgid "Connection"
-msgstr ""
+msgstr "Kapcsolat"
 
 msgid "Pickup"
-msgstr ""
+msgstr "Felvétel"
 
 msgid "Death"
-msgstr ""
+msgstr "Halál"
 
 msgid "Connection, Pickup"
-msgstr ""
+msgstr "Kapcsolat, felvétel"
 
 msgid "Connection, Death"
-msgstr ""
+msgstr "Kapcsolat, halál"
 
 msgid "Connect, Pickup, Death"
-msgstr ""
+msgstr "Csatlakoz, felvétel, halál"
 
 msgid "Set filter on popup messages"
 msgstr ""
 
 msgid "Filter Promotions:"
-msgstr ""
+msgstr "Promóciók szűrése:"
 
 msgid "Skill upgrades"
-msgstr ""
+msgstr "Képesség fejlesztések"
 
 msgid "Skill + Rank upgrades"
-msgstr ""
+msgstr "Képesség + Rang fejlesztések"
 
 msgid "Set filter on popup promotion messages"
 msgstr ""
 
 msgid "Banner Time:"
-msgstr ""
+msgstr "Banner idő:"
 
 msgid "Set the time a banner stays visible"
 msgstr ""
@@ -7692,7 +7692,7 @@ msgid "Drop Objective"
 msgstr ""
 
 msgid "SELECTION MENUS"
-msgstr ""
+msgstr "VÁLASZTÓ MENÜK:"
 
 msgid "Center Window:"
 msgstr ""
@@ -7701,55 +7701,55 @@ msgid "Center window in windowed mode"
 msgstr ""
 
 msgid "Very Low (43 FPS)"
-msgstr ""
+msgstr "Nagyon alacsony (43 FPS)"
 
 msgid "Low (76 FPS)"
-msgstr ""
+msgstr "Alacsony (76 FPS)"
 
 msgid "Medium (85 FPS)"
-msgstr ""
+msgstr "Közepes (85 FPS)"
 
 msgid "SCREENSHOTS"
-msgstr ""
+msgstr "KÉPLOPÁSOK"
 
 msgid "TGA (lossless)"
-msgstr ""
+msgstr "TGA (veszteségmentes)"
 
 msgid "JPEG (lossy)"
-msgstr ""
+msgstr "JPEG (veszteséges)"
 
 msgid "PNG (lossless)"
-msgstr ""
+msgstr "PNG (veszteségmentes)"
 
 msgid "Set your preferred screenshot format"
-msgstr ""
+msgstr "Preferált képernyőmentési formátum"
 
 msgid "JPEG Quality:"
-msgstr ""
+msgstr "JPEG Minőség:"
 
 msgid "Set the JPEG quality"
-msgstr ""
+msgstr "JPEG minőség állítása"
 
 msgid "REMOVE FAVORITE"
-msgstr ""
+msgstr "KEDVENC ELTÁVOLITÁSA"
 
 msgid "Remove this server from your favorites?"
-msgstr ""
+msgstr "Eltávolítod ezt a szervert a kedvenceidből?"
 
 msgid "P. Pistol"
-msgstr ""
+msgstr "P. Pisztoly"
 
 msgid "A. Akimbo"
 msgstr ""
 
 msgid "P. Silenced Pistol"
-msgstr ""
+msgstr "P. Hang-tompított pisztoly"
 
 msgid "A. Silenced Akimbo"
 msgstr ""
 
 msgid "1. Pistol"
-msgstr ""
+msgstr "1. Pisztoly"
 
 msgid "2. Akimbo"
 msgstr ""
@@ -7758,25 +7758,25 @@ msgid "3. SMG"
 msgstr ""
 
 msgid "CHOOSE TEAM"
-msgstr ""
+msgstr "CSAPAT VÁLASZTÁS"
 
 msgid "R. Axis"
-msgstr ""
+msgstr "R. Tengelyhatalmak"
 
 msgid "B. Allies"
-msgstr ""
+msgstr "B. Szövetségesek"
 
 msgid "S. Spectators"
-msgstr ""
+msgstr "S. Nézők"
 
 msgid "1. Axis"
-msgstr ""
+msgstr "1. Tengelyhatalmak"
 
 msgid "2. Allies"
-msgstr ""
+msgstr "2. Szövetségesek"
 
 msgid "3. Spectators"
-msgstr ""
+msgstr "3. Nézők"
 
 msgid "Set or unset this server as favorite"
 msgstr ""

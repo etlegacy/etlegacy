@@ -13,7 +13,7 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
 "Last-Translator: Valentin <vwdvali29@gmail.com>, 2021\n"
-"Language-Team: Romanian (http://www.transifex.com/etlegacy/etlegacy/language/ro/)\n"
+"Language-Team: Romanian (http://app.transifex.com/etlegacy/etlegacy/language/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -22,79 +22,79 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr ""
+msgstr "PRODUS DE ACTIVISION"
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
-msgstr ""
+msgstr "Producător"
 
 #: etmain/ui/credits_activision.menu:84
 msgid "Associate Producer"
-msgstr ""
+msgstr "Producător asociat"
 
 #: etmain/ui/credits_activision.menu:86
 msgid "Installer"
-msgstr ""
+msgstr "instalare"
 
 #: etmain/ui/credits_activision.menu:88
 msgid "Production Coordinator"
-msgstr ""
+msgstr "Coordonator de producție"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
-msgstr ""
+msgstr "Tester de producție"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
-msgstr ""
+msgstr "Producator executiv"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
-msgstr ""
+msgstr "Studiouri din America de Nord"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
-msgstr ""
+msgstr "Liderul proiectului"
 
 #: etmain/ui/credits_activision.menu:101
 msgid "QA Senior Project Lead"
-msgstr ""
+msgstr "Conducător principal de proiect"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "QA Floor Lead"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
-msgstr ""
+msgstr "Testeri:"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
-msgstr ""
+msgstr "Reţea"
 
 #: etmain/ui/credits_activision.menu:112
 msgid "Compatibility"
-msgstr ""
+msgstr "Compatibilitate"
 
 #: etmain/ui/credits_activision.menu:114
 msgid "QA Manager"
-msgstr ""
+msgstr "Manager"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "Manager, Grup de lansare a codului"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "Lider  grup de lansare a codului"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
-msgstr ""
+msgstr "Grup de lansare a codului"
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
-msgstr ""
+msgstr "Manager, asistență pentru clienți"
 
 #: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
 #: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
@@ -131,85 +131,85 @@ msgstr ""
 #: etmain/ui/profile.menu:71 etmain/ui/profile_rename.menu:67
 #: etmain/ui/viewreplay.menu:58
 msgid "BACK"
-msgstr ""
+msgstr "INAPOI"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
-msgstr ""
+msgstr "ADIŢIONAL"
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr ""
+msgstr "DEZVOLTARE SUPLIMENTARĂ"
 
 #: etmain/ui/credits_additional.menu:148
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
-msgstr ""
+msgstr "PRIN PRODUCȚII ORANGE SMOOTHIE"
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
-msgstr ""
+msgstr "Programare"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr ""
+msgstr " PUNKBUSTER BY EVEN BALANCE, INC"
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
-msgstr ""
+msgstr "Președinte"
 
 #: etmain/ui/credits_additional.menu:183
 msgid "Senior Project Leader"
-msgstr ""
+msgstr "Lider principal de proiect"
 
 #: etmain/ui/credits_additional.menu:190
 msgid "VOICE ARTISTS"
-msgstr ""
+msgstr "ARTISTI VOCALI"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr ""
+msgstr "Vocea soldaților aliați / axei"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr ""
+msgstr "Vocea comandantului Axis"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
-msgstr ""
+msgstr "Vocea Comandantului Aliat"
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
-msgstr ""
+msgstr "MULȚUMIRI SPECIALE LUI"
 
 #: etmain/ui/credits_additional.menu:226
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr ""
+msgstr "Return to Castle Wolfenstein a fost dezvoltat de Gray Matter Studios & Nerve Software."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
-msgstr ""
+msgstr "Dorim să mulțumim ambilor dezvoltatori pentru ajutor și asistență"
 
 #: etmain/ui/credits_additional.menu:228
 msgid "during the development of Wolfenstein: Enemy Territory."
-msgstr ""
+msgstr "în timpul dezvoltării lui Wolfenstein: Enemy Territory."
 
 #: etmain/ui/credits_additional.menu:229
 msgid "Original Soundtrack by Bill Brown."
-msgstr ""
+msgstr "Coloana sonoră originală de Bill Brown."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET: LEGACY TEAM"
-msgstr ""
+msgstr "DEZVOLTAT DE  ECHIPA ET: LEGACY"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
-msgstr ""
+msgstr "^ 1PROGRAMARE"
 
 #: etmain/ui/credits_etlegacy.menu:98
 msgid "Project founder, coding & management"
-msgstr ""
+msgstr "Fondator de proiect, codificare și management"
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
@@ -229,7 +229,7 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
-msgstr ""
+msgstr "^1PORTURI"
 
 #: etmain/ui/credits_etlegacy.menu:126
 msgid "AROS and MorphOS"
@@ -237,18 +237,18 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:135
 msgid "^1GREETINGS"
-msgstr ""
+msgstr "^1SALUTARI"
 
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
 " their inspirations."
-msgstr ""
+msgstr "Multe mulțumiri lui Splash Damage pentru lansarea codului sursă, ioWolfET și raedwulf-et (în special Ralph Eastwood) pentru baza noastră de coduri și ioQuake3 pentru inspirațiile lor."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
-msgstr ""
+msgstr "^1CONTRIBUTORI"
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
@@ -261,7 +261,7 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid "© 2012-2020 ET: Legacy Team - under the terms of GPL version 3."
-msgstr ""
+msgstr "© 2012-2020 ET: Legacy Team - sub condițiile GPL versiunea 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -2290,7 +2290,7 @@ msgstr ""
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Short"
-msgstr ""
+msgstr "Scurt"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:50
@@ -2299,16 +2299,16 @@ msgstr ""
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Long"
-msgstr ""
+msgstr "Lung"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr ""
+msgstr "Foarte lung"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
@@ -2332,7 +2332,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:70
 msgid "SOUND"
-msgstr ""
+msgstr "SUNET"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Announcer:"
@@ -5391,42 +5391,42 @@ msgstr ""
 #: src/ui/ui_main.c:8429
 #, c-format
 msgid "Can't find campaign '%s'\n"
-msgstr ""
+msgstr "Nu se poate găsi campania \"%s\"\n"
 
 #: src/ui/ui_main.c:8435
 #, c-format
 msgid "Corrupted campaign '%s'\n"
-msgstr ""
+msgstr "Campanie coruptă '%s\n"
 
 #: src/ui/ui_main.c:8466
 #, c-format
 msgid "%i campaigns found:\n"
-msgstr ""
+msgstr "%i campanii găsite:\n"
 
 #: src/ui/ui_main.c:8470
 msgid "No campaigns found.\n"
-msgstr ""
+msgstr "Nu s-au găsit campanii.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
-msgstr ""
+msgstr "Toate serverele favorite au fost eliminate"
 
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
-msgstr ""
+msgstr "Toate serverele favorite au fost eliminate."
 
 #: src/cgame/cg_predict.c:641
 msgid "You are near"
-msgstr ""
+msgstr "Ești aproape"
 
 msgid "joined the Axis team\n"
-msgstr ""
+msgstr "s-a alăturat echipei Axis\n"
 
 msgid "joined the Allies team\n"
-msgstr ""
+msgstr "s-a alăturat echipei Aliaților\n"
 
 msgid "entered the game\n"
-msgstr ""
+msgstr "a intrat în joc\n"
 
 msgid "rediscovered gravity"
 msgstr ""

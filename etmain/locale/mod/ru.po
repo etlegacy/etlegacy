@@ -14,7 +14,7 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>, 2014-2017,2021\n"
-"Language-Team: Russian (http://www.transifex.com/etlegacy/etlegacy/language/ru/)\n"
+"Language-Team: Russian (http://app.transifex.com/etlegacy/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1073,7 +1073,7 @@ msgstr "да"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable country flags on the server"
-msgstr ""
+msgstr "Включить флаги стран игроков"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
@@ -2125,7 +2125,7 @@ msgstr "Всегда бежать:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
-msgstr ""
+msgstr "Вкл/выкл бег"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
@@ -2727,7 +2727,7 @@ msgstr "Макс. расстояние отображения короны св�
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Particles Effects:"
-msgstr ""
+msgstr "Эффекты частиц:"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Toggles display of particle effects (explosions, some smoke effects)"
@@ -2735,7 +2735,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Visual Effects:"
-msgstr ""
+msgstr "Визуальные эффекты:"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Draws additional visual effects (airstrike planes, debris)"
@@ -5247,7 +5247,7 @@ msgstr "Убийств: %3d Убийств своих: %3d Точность: %5.
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
 msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
-msgstr ""
+msgstr "Убийства: %3d Убийства союзников: %3d Игровое время: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -6160,10 +6160,10 @@ msgid "The match is already ^1PAUSED!\n"
 msgstr "Матч уже на ^1ПАУЗЕ!\n"
 
 msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
-msgstr ""
+msgstr "^3Судья ^5ВОЗОБНОВИЛ^3 матч^3! ... игра продолжится через 10 секунд!\n"
 
 msgid "The match is already ^5UNPAUSED!\n"
-msgstr ""
+msgstr "Матч уже ^5ВОЗОБНОВЛЕН!\n"
 
 msgid "Bad client slot: "
 msgstr "Плохой слот клиента:"
@@ -6175,7 +6175,7 @@ msgid "is not active\n"
 msgstr "не активен\n"
 
 msgid "You can only remove people in the game!\n"
-msgstr ""
+msgstr "Вы можете удалять только участников матча!\n"
 
 msgid "User "
 msgstr "Пользователь"
@@ -6184,19 +6184,19 @@ msgid "is not on the server\n"
 msgstr "не на сервере\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
-msgstr ""
+msgstr "^5Вы переведены из команды ^4Союзников^7\n"
 
 msgid "^5You've been removed from the ^1Axis^7 team\n"
-msgstr ""
+msgstr "^5Вы переведены из команды ^1Фашистов^7\n"
 
 msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
-msgstr ""
+msgstr "Судья ^3ЗАКРЫЛ^7 команды от наблюдения\n"
 
 msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
-msgstr ""
+msgstr "Судья ^3ОТКРЫЛ^7 команды для наблюдения\n"
 
 msgid "usage: ref warn <clientname> [reason].\n"
-msgstr ""
+msgstr "использование команды: ref warn <НикИгрока> [причина].\n"
 
 msgid "Client not on server.\n"
 msgstr "Клиент не на сервере.\n"
@@ -6205,13 +6205,13 @@ msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
 msgstr "%s^7 было выдано ^1Предупреждение^7 (Причина не указана)\n"
 
 msgid "Cannot mute a referee.\n"
-msgstr ""
+msgstr "Невозможно дать мьют судье.\n"
 
 msgid "^5You've been muted\n"
 msgstr "^5Вас заглушили\n"
 
 msgid "Can't chat - you are muted\n"
-msgstr ""
+msgstr "Вы не можете писать - на вас наложен мьют\n"
 
 msgid "^5You've been unmuted\n"
 msgstr "^5Вас разглушили\n"
@@ -6237,15 +6237,15 @@ msgid ""
 "^5\n"
 "Available Game Commands:\n"
 "------------------------\n"
-msgstr ""
+msgstr "^5\nДоступные команды:\n------------------------\n"
 
 msgid ""
 "\n"
 "Type: ^3\\command_name ?^7 for more information\n"
-msgstr ""
+msgstr "\nНаберите: ^3\\название_команды ?^7 для доп. информации по нужной команде\n"
 
 msgid "Spectators can't lock a team!\n"
-msgstr ""
+msgstr "Нельзя фиксировать стороны в режиме Наблюдателя!\n"
 
 msgid "The ^4Allies^7 team is now locked!\n"
 msgstr "^4Союзники^7 зафиксированы!\n"
@@ -6254,51 +6254,51 @@ msgid "^3Your team is already locked!\n"
 msgstr "^3Ваша команда уже зафиксирована!\n"
 
 msgid "The ^4Allies^7 team is now unlocked!\n"
-msgstr ""
+msgstr "Команда ^4Союзников^7 открыта!\n"
 
 msgid "^3Your team is already unlocked!\n"
-msgstr ""
+msgstr "^3Ваша команда уже открыта!\n"
 
 msgid "Spectators can't unlock a team!\n"
-msgstr ""
+msgstr "Нельзя открывать стороны в режиме Наблюдателя!\n"
 
 msgid "The ^1Axis^7 team is now locked!\n"
-msgstr ""
+msgstr "Команда ^1Фашистов^7 зафиксирована!\n"
 
 msgid "The ^1Axis^7 team is now unlocked!\n"
-msgstr ""
+msgstr "Команда ^1Фашистов^7 открыта!\n"
 
 msgid "Team commands not enabled on this server.\n"
-msgstr ""
+msgstr "Общие команды, применяемые к играющим сторонам, отключены на этом сервере.\n"
 
 msgid ""
 "\n"
 "^3>>> Unknown vote command: ^7 \n"
-msgstr ""
+msgstr "\n^3>>> Неизвестная команда голосования: ^7 \n"
 
 msgid ""
 "\n"
 "Valid ^3callvote^7 commands are:\n"
 "^3----------------------------\n"
-msgstr ""
+msgstr "\nИспользование команды ^3callvote^7:\n^3------------------------\n"
 
 msgid ""
 "\n"
 "Usage: ^3\\callvote <command> <params>\n"
 "^7For current settings/help, use: ^3\\callvote <command> ?\n"
-msgstr ""
+msgstr "\nИспользование команды: ^3\\callvote <команда_голосования> <параметры> \n^7Для вывода текущих настроек и помощи по доступным командам голосования наберите: ^3\\callvote <команда_голосования> ?\n"
 
 msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
-msgstr ""
+msgstr "Наберите ^3\\stats <player_id >^7 , чтобы увидеть детальную статистику по присутствующему игроку.\n"
 
 msgid "Spectators can't ready a team!\n"
-msgstr ""
+msgstr "Нельзя давать статус 'ГОТОВ!' сторонам в режиме Наблюдателя!\n"
 
 msgid "The ^4Allies^7 team is ready!\n"
-msgstr ""
+msgstr "^4Союзники^7 готовы!\n"
 
 msgid "The ^1Axis^7 team is ready!\n"
-msgstr ""
+msgstr "^1Фашисты^7 готовы!\n"
 
 msgid "A vote is already in progress.\n"
 msgstr "Голосование в процессе.\n"
@@ -6307,10 +6307,10 @@ msgid "called a vote.\n"
 msgstr "начал голосование.\n"
 
 msgid "^5Vote passed!\n"
-msgstr ""
+msgstr "^5Голосование окончено!\n"
 
 msgid "Spectator team\n"
-msgstr ""
+msgstr "Наблюдатели\n"
 
 msgid "Allies team\n"
 msgstr "Команда союзников\n"
@@ -6358,22 +6358,22 @@ msgid "'s Panzerfaust"
 msgstr " (Панцерфауст)"
 
 msgid "'s Garand"
-msgstr ""
+msgstr " (Garand)"
 
 msgid "'s Sten"
-msgstr ""
+msgstr " (Sten)"
 
 msgid "'s FG 42"
-msgstr ""
+msgstr " (FG 42)"
 
 msgid "'s K43"
-msgstr ""
+msgstr " (K43)"
 
 msgid "'s Bazooka"
-msgstr ""
+msgstr " (Базука)"
 
 msgid "'s Akimbo .45ACP 1911s"
-msgstr ""
+msgstr " с двух рук! (.45ACP 1911 г.)"
 
 msgid "Server disconnected"
 msgstr "Отключён от сервера"
@@ -6385,7 +6385,7 @@ msgid "Server disconnected for unknown reason"
 msgstr "Отключён от сервера по неизвестной причине"
 
 msgid "'s Akimbo Luger 9mms"
-msgstr ""
+msgstr " с двух рук! (Luger, 9мм)"
 
 msgid "Cheats are not enabled on this server.\n"
 msgstr "Читы отключены на этом сервере.\n"
@@ -6394,103 +6394,103 @@ msgid "team: class is not available\n"
 msgstr "команда: класс недоступен\n"
 
 msgid "^1Soldier^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "Класс ^1'Солдат'^7 недоступен, выберите другой!\n"
 
 msgid "^1Medic^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "Класс ^1'Медик'^7 недоступен, выберите другой!\n"
 
 msgid "^1Engineer^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "Класс ^1'Инженер'^7 недоступен, выберите другой!\n"
 
 msgid "^1Field Ops^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "Класс ^1'Полевой'^7 недоступен, выберите другой!\n"
 
 msgid "^1Covert Ops^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "Класс ^1'Разведчик'^7 недоступен, выберите другой!\n"
 
 msgid "You must be alive to use this command.\n"
-msgstr ""
+msgstr "Вы должны быть живы чтобы использовать эту команду\n"
 
 msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
-msgstr ""
+msgstr "Команда ^1фашистов^7 пуста! Следовать не за кем.\n"
 
 msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
-msgstr ""
+msgstr "Команда ^4союзников^7 пуста! Следовать не за кем.\n"
 
 msgid "Can't follow a player on an enemy team!\n"
-msgstr ""
+msgstr "Нельзя следить за игроком чужой команды!\n"
 
 msgid "Can't follow while not in limbo if on a team!\n"
 msgstr ""
 
 msgid "Partial Name Matches more than 1 Player.\n"
-msgstr ""
+msgstr "Буквы никнейма соответствуют более, чем 1 игроку.\n"
 
 msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
-msgstr ""
+msgstr "Теперь можно наблюдать только за командой ^1фашистов^7.\n"
 
 msgid "^1Axis^7 team spectating is now disabled.\n"
-msgstr ""
+msgstr "Наблюдение за командой ^1фашистов^7 отключено.\n"
 
 msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
-msgstr ""
+msgstr "Теперь можно наблюдать только за командой ^4союзников^7.\n"
 
 msgid "^4Allies^7 team spectating is now disabled.\n"
-msgstr ""
+msgstr "Наблюдение за командой ^4союзников^7 отключено.\n"
 
 msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
-msgstr ""
+msgstr "Упс! Наблюдать за командой ^4союзников^7 нельзя.\n"
 
 msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
-msgstr ""
+msgstr "Упс! Наблюдать за командой ^1фашистов^7 нельзя.\n"
 
 msgid "Server quit\n"
 msgstr ""
 
 msgid "You cannot switch during a match, please wait until the round ends."
-msgstr ""
+msgstr "Вы не можете менять сторону во время игры, дождитесь окончания раунда."
 
 msgid "Use the ^3players^7 command to find a valid player ID.\n"
-msgstr ""
+msgstr "Используйте комнаду ^3\\players^7 , чтобы узнать 'player ID' игрока.\n"
 
 msgid "^3Match is already in progress!\n"
 msgstr "^3Матч уже идёт!\n"
 
 msgid "^1Teams have been shuffled!\n"
-msgstr ""
+msgstr "^1Составы команд перераспределены!\n"
 
 msgid "^3*** Loading nextmap! ***\n"
-msgstr ""
+msgstr "^3*** Готовится следующая карта! ***\n"
 
 msgid "^1*** Level Restarted! ***\n"
-msgstr ""
+msgstr "^1*** Матч перезагружен! ***\n"
 
 msgid "You have been switched to the Axis team"
 msgstr "Вы теперь в команде фашистов"
 
 msgid "Keep the Allies from beating the clock!"
-msgstr ""
+msgstr "Не дайте союзникам побить рекорд!"
 
 msgid "Keep the Axis from beating the clock!"
-msgstr ""
+msgstr "Не дайте фашистам побить рекорд!"
 
 msgid "You have been switched to the Allied team"
-msgstr ""
+msgstr "Вы переведены в команду Союзников"
 
 msgid "Try to beat the clock!"
-msgstr ""
+msgstr "Постарайтесь побить рекорд!"
 
 msgid "You have been been stripped of fireteam admin rights"
-msgstr ""
+msgstr "С Вас сняты права руководителя звена"
 
 msgid "%s ^7has left the fireteam\n"
 msgstr "%s ^7покинул звено\n"
 
 msgid "You have been warned by your fireteam leader\n"
-msgstr ""
+msgstr "Вы получили предупреждение от командира звена\n"
 
 msgid "^3moved to spectator for inactivity!\n"
-msgstr ""
+msgstr "^3перемещен в Наблюдатели за бездействие!\n"
 
 msgid "was killed by"
 msgstr "убит игроком"
@@ -6547,7 +6547,7 @@ msgid "stood on"
 msgstr ""
 
 msgid "'s airstrike marker"
-msgstr ""
+msgstr " (Сигнальная граната)"
 
 msgid "- Small Health"
 msgstr ""
@@ -6559,10 +6559,10 @@ msgid "- Health Pack"
 msgstr ""
 
 msgid "- Hot Meal"
-msgstr ""
+msgstr "- Горячая пища"
 
 msgid "- Cold Meal"
-msgstr ""
+msgstr "- Холодная пища"
 
 msgid "- Health"
 msgstr "- Здоровье"
@@ -6571,55 +6571,55 @@ msgid "- Knife"
 msgstr "- Нож"
 
 msgid "- Ka-Bar"
-msgstr ""
+msgstr "- Ka-Bar"
 
 msgid "- Luger"
 msgstr "- Люгер"
 
 msgid "- Akimbo Luger"
-msgstr ""
+msgstr "- Двойные Luger"
 
 msgid "- Silenced Akimbo Luger"
-msgstr ""
+msgstr "- Двойные Luger с глушителем"
 
 msgid "- Thompson"
-msgstr ""
+msgstr "- Thompson"
 
 msgid "- Sten gun"
-msgstr ""
+msgstr "- STEN"
 
 msgid "- Colt"
-msgstr ""
+msgstr "- Colt"
 
 msgid "- Akimbo Colt"
-msgstr ""
+msgstr "- Двойные Colt"
 
 msgid "- Silenced Akimbo Colt"
-msgstr ""
+msgstr "- Двойные Colt  с глушителем"
 
 msgid "- MP 40"
-msgstr ""
+msgstr "- MP 40"
 
 msgid "- Panzerfaust"
-msgstr ""
+msgstr "- Фаустпатрон"
 
 msgid "- Bazooka"
-msgstr ""
+msgstr "- Базука"
 
 msgid "- Grenade"
-msgstr ""
+msgstr "- Граната"
 
 msgid "- Pineapple"
-msgstr ""
+msgstr "- Лимонка"
 
 msgid "- Flamethrower"
-msgstr ""
+msgstr "- Огнемет"
 
 msgid "- Syringe"
-msgstr ""
+msgstr "- Шприц медика"
 
 msgid "- Adrenaline Syringe"
-msgstr ""
+msgstr "- Шприц с адреналином"
 
 msgid "- Ammo Pack"
 msgstr "- Коробка боеприпасов"
@@ -6628,55 +6628,55 @@ msgid "- Mega Ammo Pack"
 msgstr "- Бол. коробка боеприпасов"
 
 msgid "- Binoculars"
-msgstr ""
+msgstr "- Бинокль"
 
 msgid "- Scoped K43 Rifle"
-msgstr ""
+msgstr "- Снайперская K43"
 
 msgid "- K43 Rifle Scope"
-msgstr ""
+msgstr "- Снайперский прицел для K43"
 
 msgid "- K43 Rifle"
-msgstr ""
+msgstr "- K43"
 
 msgid "- M1 Garand"
-msgstr ""
+msgstr "- M1 Garand"
 
 msgid "- M7"
-msgstr ""
+msgstr "- M7"
 
 msgid "- Scoped M1 Garand"
-msgstr ""
+msgstr "- Снайперская M1 Garand"
 
 msgid "- M1 Garand Scope"
-msgstr ""
+msgstr "- Снайперский прицел для M1 Garand"
 
 msgid "- FG 42 Paratroop Rifle"
-msgstr ""
+msgstr "- FG 42"
 
 msgid "- FG 42 Paratroop Rifle Scope"
-msgstr ""
+msgstr "- Снайперский прицел для FG 42"
 
 msgid "- Mortar"
-msgstr ""
+msgstr "- Миномет"
 
 msgid "- Granatwerfer"
-msgstr ""
+msgstr "- Немецкий миномет"
 
 msgid "- Mobile MG 42"
 msgstr "- Переносной MG 42"
 
 msgid "- Mobile Browning"
-msgstr ""
+msgstr "- Переносной Browning"
 
 msgid "- Silenced Luger"
-msgstr ""
+msgstr "- Luger с глушителем"
 
 msgid "- Silenced Colt"
-msgstr ""
+msgstr "- Colt с глушителем"
 
 msgid "Includes or excludes empty and full servers from the server list"
-msgstr ""
+msgstr "Показать/скрыть пустые и переполненные сервера в списке"
 
 msgid "Includes or excludes password protected servers from the server list"
 msgstr ""
@@ -7280,7 +7280,7 @@ msgid "ENGINEER"
 msgstr "ИНЖЕНЕР"
 
 msgid "FIELD OPS"
-msgstr ""
+msgstr "ПОЛЕВИК"
 
 msgid "COVERT OPS"
 msgstr "РАЗВЕДЧИК"
@@ -7517,7 +7517,7 @@ msgid "Shows all favorite servers"
 msgstr ""
 
 msgid "GEOLOCATION"
-msgstr ""
+msgstr "ГЕОЛОКАЦИЯ"
 
 msgid "Share Location:"
 msgstr ""
@@ -7538,7 +7538,7 @@ msgid "Sets the frames per second limit for a stable render rate"
 msgstr ""
 
 msgid "LANGUAGE"
-msgstr ""
+msgstr "ЯЗЫК"
 
 msgid "Very Low (15)"
 msgstr ""
@@ -7574,7 +7574,7 @@ msgid "Shows all local servers"
 msgstr ""
 
 msgid "LOCAL"
-msgstr ""
+msgstr "ЛВС"
 
 msgid "^5Local"
 msgstr ""
@@ -7728,16 +7728,16 @@ msgid "Set your preferred screenshot format"
 msgstr ""
 
 msgid "JPEG Quality:"
-msgstr ""
+msgstr "Качество JPEG:"
 
 msgid "Set the JPEG quality"
 msgstr ""
 
 msgid "REMOVE FAVORITE"
-msgstr ""
+msgstr "УДАЛИТЬ ИЗ ИЗБРАННЫХ"
 
 msgid "Remove this server from your favorites?"
-msgstr ""
+msgstr "Удалить сервер из избранных?"
 
 msgid "P. Pistol"
 msgstr ""

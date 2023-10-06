@@ -15,7 +15,7 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
 "Last-Translator: Michal 'Kimi' Mitter <mittermichal@gmail.com>, 2021\n"
-"Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
+"Language-Team: Czech (http://app.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -219,7 +219,7 @@ msgstr "Kódování, vývoj módu a „Bad Boy“"
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
-msgstr ""
+msgstr "Hlavní kodér pro Windows & renderer"
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
@@ -584,7 +584,7 @@ msgstr "Udává, je-li divákům znemožněno přispívat do herního chatu"
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Warmup Damage:"
-msgstr ""
+msgstr "Poškození za rozcvičky:"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
@@ -1074,7 +1074,7 @@ msgstr "Ano"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable country flags on the server"
-msgstr ""
+msgstr "Povolit vlajky zemí na serveru"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
@@ -1276,7 +1276,7 @@ msgstr "RCON"
 
 #: etmain/ui/ingame_main.menu:40
 msgid "LIMBO MENU"
-msgstr ""
+msgstr "PŘEDPEKLÍ"
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
@@ -1986,7 +1986,7 @@ msgstr "Použít (aktivovat):"
 
 #: etmain/ui/options_controls.menu:87
 msgid "SELECT CLASS AND WEAPONS"
-msgstr ""
+msgstr "ZVOL SI TŘÍDU A ZBRANĚ"
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
@@ -2126,11 +2126,11 @@ msgstr "Vždy běžet:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
-msgstr ""
+msgstr "Přepnout chůzi/běh"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
-msgstr ""
+msgstr "Lehnout dvoj-klepnutím:"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Set the delay time between keypresses required to be a double-tap"
@@ -2736,7 +2736,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Visual Effects:"
-msgstr ""
+msgstr "Vizuální efekty:"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Draws additional visual effects (airstrike planes, debris)"
@@ -5903,7 +5903,7 @@ msgid "Arming landmine..."
 msgstr "Nastražování miny..."
 
 msgid "Landmine armed"
-msgstr ""
+msgstr "Mina nastražena..."
 
 msgid "Dynamite is set, but NOT armed!"
 msgstr "Dynamit je nastaven, ale NEAKTIVOVÁN!"
@@ -6956,7 +6956,7 @@ msgid "^7%s^7 is frozen."
 msgstr "^7%s^7 zmražen."
 
 msgid "^3%d^7 players are unfrozen."
-msgstr ""
+msgstr "^3%d ^7hráčů rozmrazeno."
 
 msgid "No players in team or they are already unfrozen.\n"
 msgstr "Není zde vhodný hráč ke rozmrazení.\n"
@@ -7539,7 +7539,7 @@ msgid "Sets the frames per second limit for a stable render rate"
 msgstr ""
 
 msgid "LANGUAGE"
-msgstr ""
+msgstr "JAZYK"
 
 msgid "Very Low (15)"
 msgstr ""
