@@ -1,0 +1,14 @@
+[main]
+host = https://app.transifex.com
+
+[o:etlegacy:p:etlegacy:r:etlegacy_client]
+source_file = etmain/locale/etlegacy_client.pot
+file_filter = etmain/locale/client/<lang>.po
+type = PO
+resource_name = etlegacy_client.pot
+
+[o:etlegacy:p:etlegacy:r:etlegacy_mod]
+source_file = etmain/locale/etlegacy_mod.pot
+file_filter = etmain/locale/mod/<lang>.po
+type = PO
+resource_name = etlegacy_mod.pot
