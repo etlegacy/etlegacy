@@ -40,7 +40,7 @@
 #define LEGACY_RESOLUTIONS cvarFloatList { "Desktop resolution" - 2 "Custom resolution" - 1 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 (16:9)" 11 "1366*768 (16:9)" 12 "1440*900 (16:10)" 13 "1680*1050 (16:10)" 14 "1600*1200" 15 "1920*1080 (16:9)" 16 "1920*1200 (16:10)" 17 "2560*1440 (16:9)" 18 "2560*1600 (16:10)" 19 "3840*2160 (16:9)" 20 } // see glimp_vidModes in sdl_glimp.c
 #define LEGACY_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 "Borderless Fullscreen" 2 }
 #define VANILLA_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 }
-#define LEGACY_LANGUAGES   cvarStrList { "English (default)  "; "en"; "Български"; "bg"; "Čeština"; "cs"; "Deutsch"; "de"; "Español"; "es"; "Suomi"; "fi"; "Français"; "fr"; "Magyar"; "hu"; "Italiano"; "it"; "Nederlands"; "nl"; "Norsk"; "no"; "Polski"; "pl"; "Português"; "pt"; "Русский"; "ru"; "Српски"; "sr"; "Svenska"; "sv"; "Türkçe"; "tr"; }
+#define LEGACY_LANGUAGES   cvarStrList { "English (default)  "; "en"; "Afrikaans"; "af"; "Shqiptare"; "sq"; "Български"; "bg"; "Català"; "ca"; "Zhōngguó rén"; "zh"; "Čeština"; "cs"; "Dansk"; "da"; "Nederlands"; "nl"; "Suomi"; "fi"; "Français"; "fr"; "Deutsch"; "de"; "Έλληνας"; "el"; "עִברִי"; "he"; "Magyar"; "hu"; "Gaeilge"; "ga"; "Italiano"; "it"; "日本語"; "ja"; "韓国人"; "ko"; "Norsk"; "no"; "ਪੰਜਾਬੀ"; "pa"; "Polski"; "pl"; "Português"; "pt"; "Românesc"; "ro"; "Русский"; "ru"; "Српски"; "sr"; "Slovák"; "sk"; "Slovensko"; "sl"; "Español"; "es"; "Svenska"; "sv"; "Türkçe"; "tr"; "Українець"; "uk"; }
 
 // Marks text as translatable
 #define _(x) x
