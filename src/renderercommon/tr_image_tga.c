@@ -35,14 +35,14 @@
 
 #include "tr_common.h"
 
-typedef struct _TargaHeader
+typedef struct targa_header
 {
 	unsigned char id_length, colormap_type, image_type;
 	unsigned short colormap_index, colormap_length;
 	unsigned char colormap_size;
 	unsigned short x_origin, y_origin, width, height;
 	unsigned char pixel_size, attributes;
-} TargaHeader;
+} targa_header;
 
 /**
  * @brief R_LoadTGA
@@ -59,7 +59,7 @@ qboolean R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte 
 	unsigned int row, column;
 	byte         *buf_p;
 	byte         *end;
-	TargaHeader  targa_header;
+	targa_header targa_header;
 	byte         *targa_rgba;
 
 	*pic = NULL;
@@ -75,7 +75,8 @@ qboolean R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte 
 
 	if (data->size < 18)
 	{
-		Ren_Drop("LoadTGA: header too short (%s)\n", data->name);
+		Ren_Warning("LoadTGA: header too short (%s)\n", data->name);
+		return qfalse;
 	}
 
 	buf_p = data->buffer.b;

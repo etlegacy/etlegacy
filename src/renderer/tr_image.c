@@ -1042,6 +1042,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 			data.size = ri.FS_ReadFile(altName, &data.buffer.v);
 			if (!data.buffer.b || data.size < 0)
 			{
+				Ren_Warning("Failed to load an image (%s) with size: %i\n", data.name, data.size);
 				continue;
 			}
 
@@ -1053,7 +1054,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 
 			if (!loaderRet)
 			{
-				Ren_Drop("Image loader failed\n");
+				Ren_Drop("Image loader failed to parse an image %s\n", data.name);
 			}
 		}
 
