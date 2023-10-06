@@ -7581,9 +7581,6 @@ msgstr ""
 msgid "Coordinates Only"
 msgstr ""
 
-msgid "Coordinates Only"
-msgstr ""
-
 msgid "Fireteam Overlay"
 msgstr ""
 
