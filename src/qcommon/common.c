@@ -1286,26 +1286,6 @@ void *Z_Malloc(size_t size)
 	return buf;
 }
 
-#ifdef ZONE_DEBUG
-/**
- * @brief S_MallocDebug
- * @param[in] size
- * @param[in] label
- * @param[in] file
- * @param[in] line
- * @return
- */
-void *S_MallocDebug(size_t size, char *label, char *file, int line)
-{
-	return Z_TagMallocDebug(size, TAG_SMALL, label, file, line);
-}
-#else
-void *S_Malloc(size_t size)
-{
-	return Z_TagMalloc(size, TAG_SMALL);
-}
-#endif
-
 /**
  * @brief Z_CheckHeap
  */
@@ -1439,7 +1419,8 @@ memstatic_t numberstring[] =
  */
 char *CopyString(const char *in)
 {
-	char *out;
+	size_t len;
+	char   *out;
 
 	if (!in[0])
 	{
@@ -1452,8 +1433,9 @@ char *CopyString(const char *in)
 			return ((char *)&numberstring[in[0] - '0']) + sizeof(memblock_t);
 		}
 	}
-	out = S_Malloc(strlen(in) + 1);
-	strcpy(out, in);
+	len = strlen(in) + 1;
+	out = S_Malloc(len);
+	strncpy(out, in, len);
 	return out;
 }
 
@@ -1638,7 +1620,7 @@ void Com_Meminfo_f(void)
 	Com_Printf("        %9i bytes (%6.2f MB) in dynamic botlib\n", botlibBytes, botlibBytes / Square(1024.f));
 	Com_Printf("        %9i bytes (%6.2f MB) in dynamic renderer\n", rendererBytes, rendererBytes / Square(1024.f));
 	Com_Printf("        %9i bytes (%6.2f MB) in dynamic other\n", zoneBytes - (botlibBytes + rendererBytes), (zoneBytes - (botlibBytes + rendererBytes)) / Square(1024.f));
-	Com_Printf("        %9i bytes (%6.2f MB) in small Zone memory\n", smallZoneBytes, smallZoneBytes / Square(1024.f));
+	Com_Printf("        %9i bytes (%6.2f MB) in small Zone memory (%i) blocks\n", smallZoneBytes, smallZoneBytes / Square(1024.f), smallZoneBlocks);
 }
 
 /**
@@ -2177,7 +2159,7 @@ void Hunk_FreeTempMemory(void *buf)
 		}
 		else
 		{
-			Com_Printf("Hunk_FreeTempMemory: not the final block\n");
+			Com_Printf(S_COLOR_YELLOW "Hunk_FreeTempMemory: not the final block\n");
 		}
 	}
 	else
@@ -2188,7 +2170,7 @@ void Hunk_FreeTempMemory(void *buf)
 		}
 		else
 		{
-			Com_Printf("Hunk_FreeTempMemory: not the final block\n");
+			Com_Printf(S_COLOR_YELLOW "Hunk_FreeTempMemory: not the final block\n");
 		}
 	}
 }
