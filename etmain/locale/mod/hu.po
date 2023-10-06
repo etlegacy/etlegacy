@@ -7616,12 +7616,6 @@ msgstr "Csak fegyverek elrejtése"
 msgid "Coordinates Only"
 msgstr "Csak koordináták"
 
-msgid "Screenshot"
-msgstr "Képernyőfotó"
-
-msgid "Coordinates Only"
-msgstr "Csak koordináták"
-
 msgid "Fireteam Overlay"
 msgstr "Tűzcsapat felület"
 

@@ -7619,12 +7619,6 @@ msgstr ""
 msgid "Coordinates Only"
 msgstr ""
 
-msgid "Screenshot"
-msgstr "Снимок экрана"
-
-msgid "Coordinates Only"
-msgstr ""
-
 msgid "Fireteam Overlay"
 msgstr ""
 

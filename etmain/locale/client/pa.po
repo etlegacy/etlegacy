@@ -2,44 +2,42 @@
 # Copyright (C) 2012-2018 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# Jacker <shogaiam@gmail.com>, 2023
-# Kyu-Seok Yang <lklk9110@gmail.com>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:49+0000\n"
-"Last-Translator: Jacker <shogaiam@gmail.com>, 2023\n"
-"Language-Team: Korean (http://app.transifex.com/etlegacy/etlegacy/language/ko/)\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Panjabi (Punjabi) (http://app.transifex.com/etlegacy/etlegacy/language/pa/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ko\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: pa\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/client/cl_console.c:803
 #, c-format
 msgid "%s (UPDATE AVAILABLE)"
-msgstr "%s (업데이트 사용가능)"
+msgstr ""
 
 msgid "MOUSE1"
-msgstr "MOUSE1"
+msgstr ""
 
 msgid "MOUSE2"
-msgstr "MOUSE2"
+msgstr ""
 
 msgid "Yes"
-msgstr "예"
+msgstr ""
 
 msgid "No"
-msgstr "아니요"
+msgstr ""
 
 msgid "Ok"
-msgstr "좋아요"
+msgstr ""
 
 msgid "Cancel"
-msgstr "취소"
+msgstr ""
 
 msgid "SPACE"
-msgstr "SPACE"
+msgstr ""
