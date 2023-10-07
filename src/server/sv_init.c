@@ -1184,7 +1184,7 @@ void SV_Init(void)
 	// ET://someserver.com
 	sv_fullmsg = Cvar_Get("sv_fullmsg", "Server is full.", CVAR_ARCHIVE);
 
-	sv_advert = Cvar_Get("sv_advert", "3", CVAR_ARCHIVE);
+	sv_advert = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
 
 	sv_protect            = Cvar_Get("sv_protect", "0", CVAR_ARCHIVE);
 	sv_protectLog         = Cvar_Get("sv_protectLog", "", CVAR_ARCHIVE);

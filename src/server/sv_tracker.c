@@ -55,9 +55,6 @@ enum
 qboolean catchBotNum = 0;
 
 netadr_t addr;
-#ifdef TRACKER_DEBUG
-netadr_t local;
-#endif
 
 char infostring[MAX_INFO_STRING];
 
@@ -77,9 +74,6 @@ void Tracker_Send(char *format, ...)
 	va_end(argptr);
 
 	NET_OutOfBandPrint(NS_SERVER, addr, "%s", msg);
-#ifdef TRACKER_DEBUG
-	NET_OutOfBandPrint(NS_SERVER, local, "%s", msg);
-#endif
 }
 
 /**
@@ -106,9 +100,6 @@ void Tracker_Init(void)
 	else {
 		Com_Printf("%s resolved to %i.%i.%i.%i:%i\n", tracker, addr.ip[0], addr.ip[1], addr.ip[2], addr.ip[3], BigShort(addr.port));
 	}
-#ifdef TRACKER_DEBUG
-	NET_StringToAdr("127.0.0.1:6066", &local, NA_IP);
-#endif
 	Com_Printf("Tracker: Server communication enabled.\n");
 }
 
@@ -232,17 +223,6 @@ void Tracker_MapEnd(void)
 	Tracker_requestWeaponStats();
 	maprunning = qfalse;
 }
-
-#if 0
-/**
- * @brief Send info when player changes his team
- * @param[in] cl Client
- */
-void Tracker_TeamSwitch(client_t *cl)
-{
-	Tracker_Send("team %i", (int)(cl - svs.clients));
-}
-#endif // 0
 
 /**
  * @brief Creates client information for other functions
