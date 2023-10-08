@@ -832,7 +832,7 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key)
 *            |        |      |     |     |     |
 *          save      send   save send   save  send
 */
-void trap_DemoSupport(char *commands)
+void trap_DemoSupport(const char *commands)
 {
 	if (dll_trap_DemoSupport)
 	{

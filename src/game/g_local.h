@@ -1761,7 +1761,7 @@ void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1,
 
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
-void trap_DemoSupport(char *commands);
+void trap_DemoSupport(const char *commands);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
 
@@ -2382,7 +2382,7 @@ void G_ResetXP(gentity_t *ent);
 void G_SetPlayerScore(gclient_t *client);
 void G_SetPlayerSkill(gclient_t *client, skillType_t skill);
 void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points, const char *reason);
-void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points, const char* reason);
+void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points, const char *reason);
 void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash);
 void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod, g_constructible_stats_t *constructibleStats);
 void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash);
