@@ -58,6 +58,7 @@ void G_DemoStateChanged(demoState_t demoState, int demoClientsNum)
 		break;
 
 	case DS_RECORDING:
+#ifdef FEATURE_OMNIBOT
 		num = trap_BotAllocateClient(g_maxclients.integer - 1);
 
 		if (num < 0)
@@ -77,11 +78,12 @@ void G_DemoStateChanged(demoState_t demoState, int demoClientsNum)
 
 		if ((reason = ClientConnect(num, qtrue, qtrue)) != 0)
 		{
-			Com_Printf(va("Could not connect ETL DEMO STATS BOT: %s\n", reason));
+			Com_Printf("Could not connect ETL DEMO STATS BOT: %s\n", reason);
 			return;
 		}
 
 		SetTeam(&g_entities[num], "spectator", qtrue, WP_NONE, WP_NONE, qfalse);
+#endif
 		break;
 
 	// called when demo record stops
@@ -97,8 +99,9 @@ void G_DemoStateChanged(demoState_t demoState, int demoClientsNum)
 	}
 }
 
+#ifdef FEATURE_OMNIBOT
 /**
-* @brief G_DemoBotHandling
+* @brief G_DemoRequestStats
 *
 * Managing bot that collects stats during recording
 */
@@ -147,6 +150,7 @@ static void G_DemoRequestStats(void)
 	{
 	}
 }
+#endif
 
 /**
 * @brief G_DemoIntermission
@@ -195,7 +199,9 @@ qboolean G_DemoRunFrame(void)
 
 	if (level.demoState == DS_RECORDING)
 	{
+#ifdef FEATURE_OMNIBOT
 		G_DemoRequestStats();
+#endif
 		return qfalse;
 	}
 
