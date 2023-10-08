@@ -111,9 +111,9 @@ char demoAutoPlay[MAX_DEMO_AUTOPLAY][MAX_OSPATH];
  */
 static void SV_DemoCvarsRestore()
 {
-	char key[BIG_INFO_KEY];
-	char value[BIG_INFO_VALUE];
-	char *savedCvars = savedCvarsInfo;
+	char       key[BIG_INFO_KEY];
+	char       value[BIG_INFO_VALUE];
+	const char *savedCvars = savedCvarsInfo;
 
 	// restore initial cvars of the server that were modified by the demo playback
 	// note: must do it before the map_restart! so that latched values such as sv_maxclients takes effect
@@ -1010,7 +1010,7 @@ static qboolean SV_DemoPlayNext(void)
 		if (strlen(demoAutoPlay[i]))
 		{
 			restoreSavedCvars = qfalse;
-			Com_sprintf(sv.demoName, sizeof(sv.demoName), demoAutoPlay[i]);
+			Com_sprintf(sv.demoName, sizeof(sv.demoName), "%s", demoAutoPlay[i]);
 			Com_Memset(demoAutoPlay[i], 0, sizeof(demoAutoPlay[i]));
 
 			if (com_sv_running->integer)
@@ -1047,7 +1047,7 @@ static void SV_DemoStopPlayback(const char *message)
 		SV_DemoCvarsRestore();
 		if (strlen(message))
 		{
-			Com_Error(ERR_DROP, message);
+			Com_Error(ERR_DROP, "%s", message);
 		}
 		else
 		{
@@ -1084,7 +1084,7 @@ static void SV_DemoStopPlayback(const char *message)
 * @brief SV_DemoPlaybackError Call this to abort the demo play by error.
 * @param [in]
 */
-static void _attribute((noreturn)) SV_DemoPlaybackError(const char *message)
+static void SV_DemoPlaybackError(const char *message)
 {
 	sv.demoState = DS_ERROR;
 	SV_DemoStopPlayback(va("SV_DemoPlaybackError: %s", message));
@@ -1103,12 +1103,12 @@ static void _attribute((noreturn)) SV_DemoPlaybackError(const char *message)
  */
 static void SV_DemoStartPlayback(void)
 {
-	msg_t msg;
-	char  map[MAX_QPATH], fs[MAX_QPATH];
-	char  key[BIG_INFO_STRING], value[BIG_INFO_STRING];
-	char  hostname[MAX_NAME_LENGTH]; // unused
-	char  *metadata;
-	int   i, r, time = 400, fps = 20, clients = 0, gametype = 0;
+	msg_t      msg;
+	char       map[MAX_QPATH], fs[MAX_QPATH];
+	char       key[BIG_INFO_STRING], value[BIG_INFO_STRING];
+	char       hostname[MAX_NAME_LENGTH]; // unused
+	const char *metadata;
+	int        i, r, time = 400, fps = 20, clients = 0, gametype = 0;
 
 	Com_Memset(map, 0, MAX_QPATH);
 	Com_Memset(fs, 0, MAX_QPATH);
@@ -1550,10 +1550,10 @@ static void SV_DemoReadGameCommand(msg_t *msg)
  */
 static void SV_DemoReadConfigString(msg_t *msg)
 {
-	char key[BIG_INFO_KEY];
-	char value[BIG_INFO_VALUE];
-	char *configstring;
-	int  num;
+	char       key[BIG_INFO_KEY];
+	char       value[BIG_INFO_VALUE];
+	const char *configstring;
+	int        num;
 
 	//num = MSG_ReadLong(msg, MAX_CONFIGSTRINGS); FIXME: doesn't work, dunno why, but it would be better than a string to store a long int!
 	num          = Q_atoi(MSG_ReadString(msg));
@@ -2396,7 +2396,7 @@ void SV_DemoInit(void)
 /**
 * @brief SV_DemoSupport
 */
-void SV_DemoSupport(char *commands)
+void SV_DemoSupport(const char *commands)
 {
 	char key[BIG_INFO_KEY];
 	char value[BIG_INFO_VALUE];
