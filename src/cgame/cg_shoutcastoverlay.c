@@ -973,79 +973,13 @@ qboolean CG_ShoutcastCheckExecKey(int key, qboolean doaction)
 
 	key &= ~K_CHAR_FLAG;
 
-	switch (key)
+	if (key >= K_F1 && key <= K_F12)
 	{
-	case K_F1:
 		if (doaction)
 		{
-			trap_SendClientCommand(va("follow %d", players[0]));
+			trap_SendClientCommand(va("follow %d", players[key - K_F1]));
 		}
-		return qtrue;
-	case K_F2:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[1]));
-		}
-		return qtrue;
-	case K_F3:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[2]));
-		}
-		return qtrue;
-	case K_F4:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[3]));
-		}
-		return qtrue;
-	case K_F5:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[4]));
-		}
-		return qtrue;
-	case K_F6:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[5]));
-		}
-		return qtrue;
-	case K_F7:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[6]));
-		}
-		return qtrue;
-	case K_F8:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[7]));
-		}
-		return qtrue;
-	case K_F9:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[8]));
-		}
-		return qtrue;
-	case K_F10:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[9]));
-		}
-		return qtrue;
-	case K_F11:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[10]));
-		}
-		return qtrue;
-	case K_F12:
-		if (doaction)
-		{
-			trap_SendClientCommand(va("follow %d", players[11]));
-		}
+
 		return qtrue;
 	}
 
