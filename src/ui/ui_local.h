@@ -103,8 +103,6 @@ extern vmCvar_t cl_bypassMouseInput;
 
 extern vmCvar_t ui_serverBrowserSettings;
 
-extern vmCvar_t ui_cg_shoutcastDrawPlayers;
-extern vmCvar_t ui_cg_shoutcastDrawTeamNames;
 extern vmCvar_t ui_cg_shoutcastTeamNameRed;
 extern vmCvar_t ui_cg_shoutcastTeamNameBlue;
 extern vmCvar_t ui_cg_shoutcastDrawHealth;

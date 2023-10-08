@@ -145,14 +145,12 @@ menuDef {
 
 // Shoutcast //
 #define SHOUTCAST_Y 322
-    SUBWINDOW( 6 + (SUBWINDOW_WIDTH_L)+6, SHOUTCAST_Y, (SUBWINDOW_WIDTH_L), 100, _("SHOUTCAST") )
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Display player lists") )
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades") )
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them") )
-    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Show team names:"), .2, 8, "cg_shoutcastDrawTeamNames", cvarFloatList { "Off" 0 "On" 1 }, _("Display team names") )
-    EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)") )
-    EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)") )
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y + 88, (SUBWINDOW_WIDTH_R)-4, 10, _("Spectator Names:"), .2, 8, "cg_drawSpectatorNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Display player names when spectating"))
+    SUBWINDOW( 6 + (SUBWINDOW_WIDTH_L)+6, SHOUTCAST_Y, (SUBWINDOW_WIDTH_L), 76, _("SHOUTCAST") )
+    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades") )
+    MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them") )
+    EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)") )
+    EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)") )
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SHOUTCAST_Y + 64, (SUBWINDOW_WIDTH_R)-4, 10, _("Spectator Names:"), .2, 8, "cg_drawSpectatorNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Display player names when spectating"))
 
 // Buttons //
 	BUTTON(6, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_hud ; open options)

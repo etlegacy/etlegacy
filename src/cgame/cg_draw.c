@@ -4248,17 +4248,6 @@ static void CG_Draw2D(void)
 		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
 		{
-			if (cgs.clientinfo[cg.clientNum].shoutcaster)
-			{
-				CG_DrawShoutcastTeamNames();
-				CG_DrawShoutcastPlayerList();
-
-				if (cg.snap->ps.pm_flags & PMF_FOLLOW)
-				{
-					CG_DrawShoutcastPlayerStatus();
-				}
-			}
-
 			CG_DrawActiveHud();
 		}
 	}

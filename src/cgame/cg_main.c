@@ -348,8 +348,6 @@ vmCvar_t cg_drawUnit;
 vmCvar_t cg_visualEffects;
 vmCvar_t cg_bannerTime;
 
-vmCvar_t cg_shoutcastDrawPlayers;
-vmCvar_t cg_shoutcastDrawTeamNames;
 vmCvar_t cg_shoutcastTeamNameRed;
 vmCvar_t cg_shoutcastTeamNameBlue;
 vmCvar_t cg_shoutcastDrawHealth;
@@ -616,8 +614,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_visualEffects,            "cg_visualEffects",            "1",           CVAR_ARCHIVE,                 0 }, // Draw visual effects (i.e : airstrike plane, debris ...)
 	{ &cg_bannerTime,               "cg_bannerTime",               "10000",       CVAR_ARCHIVE,                 0 },
 
-	{ &cg_shoutcastDrawPlayers,     "cg_shoutcastDrawPlayers",     "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_shoutcastDrawTeamNames,   "cg_shoutcastDrawTeamNames",   "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastTeamNameRed,     "cg_shoutcastTeamNameRed",     "Axis",        CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastTeamNameBlue,    "cg_shoutcastTeamNameBlue",    "Allies",      CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawHealth,      "cg_shoutcastDrawHealth",      "0",           CVAR_ARCHIVE,                 0 },

@@ -9220,8 +9220,6 @@ vmCvar_t cl_bypassMouseInput;
 
 vmCvar_t ui_serverBrowserSettings;
 
-vmCvar_t ui_cg_shoutcastDrawPlayers;
-vmCvar_t ui_cg_shoutcastDrawTeamNames;
 vmCvar_t ui_cg_shoutcastTeamNameRed;
 vmCvar_t ui_cg_shoutcastTeamNameBlue;
 vmCvar_t ui_cg_shoutcastDrawHealth;
@@ -9321,8 +9319,6 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairHealth",                  "0",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastTeamNameRed,         "cg_shoutcastTeamNameRed",             "",                           CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "",                           CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },

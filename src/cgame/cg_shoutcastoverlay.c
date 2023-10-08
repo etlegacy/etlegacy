@@ -39,42 +39,6 @@
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_TEXT           &cgs.media.limboFont2
 
-#define PLAYER_LIST_STATUS_WIDTH 28
-#define PLAYER_LIST_STATUS_HEIGHT 28
-
-#define PLAYER_LIST_WIDTH 142
-#define PLAYER_LIST_HEIGHT 28
-#define PLAYER_LIST_X 15
-#define PLAYER_LIST_Y (SCREEN_HEIGHT - 180)
-
-#define PLAYER_STATUS_NAMEBOX_WIDTH 150
-#define PLAYER_STATUS_NAMEBOX_HEIGHT 16
-#define PLAYER_STATUS_NAMEBOX_X (Ccg_WideX(SCREEN_WIDTH) - (Ccg_WideX(SCREEN_WIDTH) / 2) - (PLAYER_STATUS_NAMEBOX_WIDTH / 2))
-#define PLAYER_STATUS_NAMEBOX_Y (SCREEN_HEIGHT - 75)
-
-#define PLAYER_STATUS_STATSBOX_WIDTH 224
-#define PLAYER_STATUS_STATSBOX_HEIGHT 20
-#define PLAYER_STATUS_STATSBOX_X (Ccg_WideX(SCREEN_WIDTH) - (Ccg_WideX(SCREEN_WIDTH) / 2) - (PLAYER_STATUS_STATSBOX_WIDTH / 2))
-#define PLAYER_STATUS_STATSBOX_Y (PLAYER_STATUS_NAMEBOX_Y + PLAYER_STATUS_NAMEBOX_HEIGHT)
-
-#define MINIMAP_WIDTH 150
-#define MINIMAP_HEIGHT 150
-#define MINIMAP_X (Ccg_WideX(SCREEN_WIDTH) - MINIMAP_WIDTH - PLAYER_LIST_X)
-#define MINIMAP_Y 31
-
-#define GAMETIME_WIDTH 60
-#define GAMETIME_HEIGHT 30
-#define GAMETIME_X (Ccg_WideX(SCREEN_WIDTH) / 2) - (GAMETIME_WIDTH / 2)
-#define GAMETIME_Y 12
-
-#define TEAMNAMES_WIDTH 190
-#define TEAMNAMES_HEIGHT (GAMETIME_HEIGHT)
-
-static vec4_t bg = { 0.0f, 0.0f, 0.0f, 0.7f };
-
-static vec4_t colorAllies = { 0.121f, 0.447f, 0.811f, 0.45f };
-static vec4_t colorAxis   = { 0.749f, 0.129f, 0.129f, 0.45f };
-
 int players[12];
 
 /**
@@ -114,12 +78,14 @@ static int CG_GetPlayerCurrentWeapon(clientInfo_t *player)
 * @param[in] y
 * @param[in] index
 */
-static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, float y, int index)
+static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t *player, float y, int index)
 {
 	int    curWeap, weapScale, textWidth, textHeight;
 	float  fraction;
-	float  topRowX    = x;
-	float  bottomRowX = x;
+	float  statusWidth = comp->location.w / 5.f;
+	float  topRowX     = comp->location.x;
+	float  bottomRowX  = comp->location.x;
+	float  height      = comp->location.h / MAX_PLAYERS;
 	char   *text;
 	char   name[MAX_NAME_LENGTH + 2] = { 0 };
 	vec4_t hcolor, borderColor;
@@ -130,20 +96,20 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	}
 	else
 	{
-		Vector4Copy(bg, borderColor);
+		Vector4Copy(comp->colorBorder, borderColor);
 	}
 
 	// draw box
-	CG_FillRect(x, y, PLAYER_LIST_WIDTH, PLAYER_LIST_HEIGHT, bg);
-	CG_FillRect(x, y, PLAYER_LIST_STATUS_WIDTH, PLAYER_LIST_STATUS_HEIGHT, colorAxis);
-	CG_DrawRect_FixedBorder(x, y, PLAYER_LIST_STATUS_WIDTH, PLAYER_LIST_STATUS_HEIGHT, 2, borderColor);
-	CG_DrawRect_FixedBorder(x + PLAYER_LIST_STATUS_WIDTH - 0.75f, y, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH + 0.5f, PLAYER_LIST_HEIGHT / 2, 2, borderColor);
-	CG_DrawRect_FixedBorder(x, y, PLAYER_LIST_WIDTH, PLAYER_LIST_HEIGHT, 2, cg.snap->ps.clientNum == player->clientNum ? colorYellow : borderColor);
+	CG_FillRect(comp->location.x, y, comp->location.w, height, comp->colorBackground);
+	CG_FillRect(comp->location.x, y, statusWidth, height, comp->colorSecondary);
+	CG_DrawRect_FixedBorder(comp->location.x, y, statusWidth, height, 2, borderColor);
+	CG_DrawRect_FixedBorder(comp->location.x + statusWidth - 0.75f, y, comp->location.w - statusWidth + 0.5f, height / 2, 2, borderColor);
+	CG_DrawRect_FixedBorder(comp->location.x, y, comp->location.w, height, 2, cg.snap->ps.clientNum == player->clientNum ? colorYellow : borderColor);
 
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
-	CG_FilledBar(topRowX + PLAYER_LIST_STATUS_WIDTH, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.75f, colorAxis, colorAxis,
-	             bg, bg, fraction, BAR_BGSPACING_X0Y0, -1);
+	CG_FilledBar(topRowX + statusWidth, y + 1, comp->location.w - statusWidth - 1, height / 2 - 1.75f, comp->colorSecondary, comp->colorSecondary,
+	             comp->colorBackground, comp->colorBackground, fraction, BAR_BGSPACING_X0Y0, -1);
 
 	// draw health
 	if (player->health > 0)
@@ -152,21 +118,21 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 
 		text      = va("%i", player->health);
 		textWidth = CG_Text_Width_Ext(text, 0.27f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(topRowX + (PLAYER_LIST_STATUS_WIDTH / 2) - (textWidth / 2) - 0.5f, y + (PLAYER_LIST_HEIGHT / 2) + 4, 0.27f, 0.27f, hcolor, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(topRowX + (statusWidth / 2) - (textWidth / 2) - 0.5f, y + (height / 2) + 4, 0.27f, 0.27f, hcolor, text, 0, 0, comp->styleText, FONT_TEXT);
 	}
 	else if (player->health == 0)
 	{
-		CG_DrawPic(topRowX + (PLAYER_LIST_STATUS_WIDTH / 2) - 10, y + (PLAYER_LIST_HEIGHT / 2) - 10, 20, 20, cgs.media.medicIcon);
+		CG_DrawPic(topRowX + (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.medicIcon);
 	}
 	else if (player->health < 0)
 	{
-		CG_DrawPic(topRowX + (PLAYER_LIST_STATUS_WIDTH / 2) - 10, y + (PLAYER_LIST_HEIGHT / 2) - 10, 20, 20, cgs.media.scoreEliminatedShader);
+		CG_DrawPic(topRowX + (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.scoreEliminatedShader);
 	}
 
 	// draw name limit 20 chars
 	Q_ColorizeString(player->health < 0 ? '9' : '7', player->cleanname, name, MAX_NAME_LENGTH + 2);
 	textHeight = CG_Text_Height_Ext(name, 0.16f, 0, FONT_TEXT);
-	CG_Text_Paint_Ext(x + PLAYER_LIST_STATUS_WIDTH + 1, y + (PLAYER_LIST_HEIGHT / 4) + (textHeight / 2), 0.16f, 0.16f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(comp->location.x + statusWidth + 1, y + (height / 4) + (textHeight / 2), 0.16f, 0.16f, comp->colorMain, name, 0, 20, comp->styleText, FONT_TEXT);
 
 	// draw follow bind
 	if (player->health < 0)
@@ -180,44 +146,44 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 
 	text      = va("(F%i)", index + 1);
 	textWidth = CG_Text_Width_Ext(text, 0.12f, 0, FONT_TEXT);
-	CG_Text_Paint_Ext(x + PLAYER_LIST_WIDTH - textWidth - 2, y + (PLAYER_LIST_HEIGHT / 4) + 2.0f, 0.12f, 0.12f, hcolor, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(comp->location.x + comp->location.w - textWidth - 2, y + (height / 4) + 2.0f, 0.12f, 0.12f, hcolor, text, 0, 0, comp->styleText, FONT_TEXT);
 
 	// draw class
-	CG_DrawPic(bottomRowX + PLAYER_LIST_STATUS_WIDTH + 4, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->cls)]);
-	bottomRowX += PLAYER_LIST_STATUS_WIDTH + 16;
+	CG_DrawPic(bottomRowX + statusWidth + 4, y + (height * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->cls)]);
+	bottomRowX += statusWidth + 16;
 
 	if (player->cls != player->latchedcls)
 	{
 		// arrow latched class
 		textWidth  = CG_Text_Width_Ext("->", 0.2f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("->", 0.2f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(bottomRowX, y + (PLAYER_LIST_HEIGHT * 0.75f) + (textHeight / 2) + 0.5f, 0.2f, 0.2f, colorYellow, "->", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(bottomRowX, y + (height * 0.75f) + (textHeight / 2) + 0.5f, 0.2f, 0.2f, colorYellow, "->", 0, 0, comp->styleText, FONT_TEXT);
 		bottomRowX += textWidth;
 		// latched class
-		CG_DrawPic(bottomRowX + 1, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->latchedcls)]);
+		CG_DrawPic(bottomRowX + 1, y + (height * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->latchedcls)]);
 	}
 
 	// draw powerups
-	bottomRowX = x + PLAYER_LIST_WIDTH;
+	bottomRowX = comp->location.x + comp->location.w;
 	if (player->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 	{
-		CG_DrawPic(bottomRowX - 14, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6.5f, 12, 12, cgs.media.objectiveShader);
+		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.objectiveShader);
 		bottomRowX -= 14;
 	}
 	if (player->powerups & (1 << PW_OPS_DISGUISED))
 	{
-		CG_DrawPic(bottomRowX - 14, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6.5f, 12, 12, player->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, player->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 		bottomRowX -= 14;
 	}
 	if (player->powerups & (1 << PW_INVULNERABLE))
 	{
-		CG_DrawPic(bottomRowX - 14, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6.5f, 12, 12, cgs.media.spawnInvincibleShader);
+		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.spawnInvincibleShader);
 	}
 
 	// draw weapon icon
 	curWeap    = CG_GetPlayerCurrentWeapon(player);
 	weapScale  = cg_weapons[curWeap].weaponIconScale * 10;
-	bottomRowX = x + PLAYER_LIST_WIDTH - 63;
+	bottomRowX = comp->location.x + comp->location.w - 63;
 
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIconScale == 1)
 	{
@@ -227,11 +193,11 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	// note: WP_NONE is excluded
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 	{
-		CG_DrawPic(bottomRowX, y + (PLAYER_LIST_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
+		CG_DrawPic(bottomRowX, y + (height * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
 	}
 	else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 	{
-		CG_DrawPic(bottomRowX, y + (PLAYER_LIST_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
+		CG_DrawPic(bottomRowX, y + (height * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
 	}
 }
 
@@ -242,12 +208,14 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 * @param[in] y
 * @param[in] index
 */
-static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, float y, int index)
+static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo_t *player, float y, int index)
 {
 	int    curWeap, weapScale, textWidth, textHeight;
 	float  fraction;
-	float  topRowX    = x;
-	float  bottomRowX = x + PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH;
+	float  statusWidth = comp->location.w / 5.f;
+	float  topRowX     = comp->location.x;
+	float  bottomRowX  = comp->location.x + comp->location.w - statusWidth;
+	float  height      = comp->location.h / MAX_PLAYERS;
 	char   *text;
 	char   name[MAX_NAME_LENGTH + 2] = { 0 };
 	vec4_t hcolor, borderColor;
@@ -258,22 +226,22 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	}
 	else
 	{
-		Vector4Copy(bg, borderColor);
+		Vector4Copy(comp->colorBorder, borderColor);
 	}
 
 	// draw box
-	CG_FillRect(x + 0.75f, y, PLAYER_LIST_WIDTH - 1, PLAYER_LIST_HEIGHT, bg);
-	CG_FillRect(x + PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH, y, PLAYER_LIST_STATUS_WIDTH, PLAYER_LIST_STATUS_HEIGHT, colorAllies);
-	CG_DrawRect_FixedBorder(x + PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH, y, PLAYER_LIST_STATUS_WIDTH, PLAYER_LIST_STATUS_HEIGHT, 2, borderColor);
-	CG_DrawRect_FixedBorder(x, y, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH + 0.75f, PLAYER_LIST_HEIGHT / 2, 2, borderColor);
-	CG_DrawRect_FixedBorder(x, y, PLAYER_LIST_WIDTH, PLAYER_LIST_HEIGHT, 2, cg.snap->ps.clientNum == player->clientNum ? colorYellow : borderColor);
+	CG_FillRect(comp->location.x + 0.75f, y, comp->location.w - 1, height, comp->colorBackground);
+	CG_FillRect(comp->location.x + comp->location.w - statusWidth, y, statusWidth, height, comp->colorSecondary);
+	CG_DrawRect_FixedBorder(comp->location.x + comp->location.w - statusWidth, y, statusWidth, height, 2, borderColor);
+	CG_DrawRect_FixedBorder(comp->location.x, y, comp->location.w - statusWidth + 0.75f, height / 2, 2, borderColor);
+	CG_DrawRect_FixedBorder(comp->location.x, y, comp->location.w, height, 2, cg.snap->ps.clientNum == player->clientNum ? colorYellow : borderColor);
 
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
-	CG_FilledBar(topRowX + 1, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.5f, colorAllies, colorAllies,
-	             bg, bg, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
+	CG_FilledBar(topRowX + 1, y + 1, comp->location.w - statusWidth - 1, height / 2 - 1.5f, comp->colorSecondary, comp->colorSecondary,
+	             comp->colorBackground, comp->colorBackground, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
 
-	topRowX += PLAYER_LIST_WIDTH;
+	topRowX += comp->location.w;
 
 	// draw health
 	if (player->health > 0)
@@ -282,15 +250,15 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 
 		text      = va("%i", player->health);
 		textWidth = CG_Text_Width_Ext(text, 0.27f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(topRowX - (PLAYER_LIST_STATUS_WIDTH / 2) - (textWidth / 2) - 0.5f, y + (PLAYER_LIST_HEIGHT / 2) + 4, 0.27f, 0.27f, hcolor, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(topRowX - (statusWidth / 2) - (textWidth / 2) - 0.5f, y + (height / 2) + 4, 0.27f, 0.27f, hcolor, text, 0, 0, comp->styleText, FONT_TEXT);
 	}
 	else if (player->health == 0)
 	{
-		CG_DrawPic(topRowX - (PLAYER_LIST_STATUS_WIDTH / 2) - 10, y + (PLAYER_LIST_HEIGHT / 2) - 10, 20, 20, cgs.media.medicIcon);
+		CG_DrawPic(topRowX - (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.medicIcon);
 	}
 	else if (player->health < 0)
 	{
-		CG_DrawPic(topRowX - (PLAYER_LIST_STATUS_WIDTH / 2) - 10, y + (PLAYER_LIST_HEIGHT / 2) - 10, 20, 20, cgs.media.scoreEliminatedShader);
+		CG_DrawPic(topRowX - (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.scoreEliminatedShader);
 	}
 
 	// draw name limit 20 chars
@@ -301,7 +269,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	{
 		textWidth = 116;
 	}
-	CG_Text_Paint_Ext(x + PLAYER_LIST_WIDTH - textWidth - 30, y + (PLAYER_LIST_HEIGHT / 4) + (textHeight / 2), 0.16f, 0.16f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(comp->location.x + comp->location.w - textWidth - 30, y + (height / 4) + (textHeight / 2), 0.16f, 0.16f, comp->colorMain, name, 0, 20, comp->styleText, FONT_TEXT);
 
 	// draw follow bind
 	if (player->health < 0)
@@ -314,10 +282,10 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	}
 
 	text = va("(F%i)", index + 7);
-	CG_Text_Paint_Ext(x + 1, y + (PLAYER_LIST_HEIGHT / 4) + 2.0f, 0.12f, 0.12f, hcolor, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(comp->location.x + 1, y + (height / 4) + 2.0f, 0.12f, 0.12f, hcolor, text, 0, 0, comp->styleText, FONT_TEXT);
 
 	// draw class
-	CG_DrawPic(bottomRowX - 16, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->cls)]);
+	CG_DrawPic(bottomRowX - 16, y + (height * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->cls)]);
 	bottomRowX -= 16;
 
 	if (player->cls != player->latchedcls)
@@ -325,27 +293,27 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 		// arrow latched class
 		textWidth  = CG_Text_Width_Ext("<-", 0.2f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("<-", 0.2f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(bottomRowX - textWidth - 1, y + (PLAYER_LIST_HEIGHT * 0.75f) + (textHeight / 2) + 0.5f, 0.2f, 0.2f, colorYellow, "<-", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(bottomRowX - textWidth - 1, y + (height * 0.75f) + (textHeight / 2) + 0.5f, 0.2f, 0.2f, colorYellow, "<-", 0, 0, comp->styleText, FONT_TEXT);
 		bottomRowX = bottomRowX - textWidth - 1;
 		// latched class
-		CG_DrawPic(bottomRowX - 12, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->latchedcls)]);
+		CG_DrawPic(bottomRowX - 12, y + (height * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->latchedcls)]);
 	}
 
 	// draw powerups
-	bottomRowX = x;
+	bottomRowX = comp->location.x;
 	if (player->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 	{
-		CG_DrawPic(bottomRowX + 2, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6.5f, 12, 12, cgs.media.objectiveShader);
+		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.objectiveShader);
 		bottomRowX += 14;
 	}
 	if (player->powerups & (1 << PW_OPS_DISGUISED))
 	{
-		CG_DrawPic(bottomRowX + 2, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6.5f, 12, 12, player->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, player->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 		bottomRowX += 14;
 	}
 	if (player->powerups & (1 << PW_INVULNERABLE))
 	{
-		CG_DrawPic(bottomRowX + 2, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6.5f, 12, 12, cgs.media.spawnInvincibleShader);
+		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.spawnInvincibleShader);
 	}
 
 	// draw weapon icon
@@ -355,78 +323,99 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	// note: WP_NONE is excluded
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 	{
-		CG_DrawPic(x + 43, y + (PLAYER_LIST_HEIGHT * 0.75f) - 5, weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
+		CG_DrawPic(comp->location.x + 43, y + (height * 0.75f) - 5, weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
 	}
 	else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 	{
-		CG_DrawPic(x + 43, y + (PLAYER_LIST_HEIGHT * 0.75f) - 5, weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
+		CG_DrawPic(comp->location.x + 43, y + (height * 0.75f) - 5, weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
 	}
 }
 
+
 /**
-* @brief CG_DrawShoutcastOverlay
-*/
-void CG_DrawShoutcastPlayerList(void)
+ * @brief CG_DrawShoutcastPlayerList
+ * @param[in] comp
+ */
+static void CG_DrawShoutcastPlayerList(hudComponent_t *comp, team_t team)
 {
-	clientInfo_t *ci;
-	int          axis   = 0;
-	int          allies = 0;
-	int          i;
+	int count;
+	int i;
 
-	if (cgs.topshots.show == SHOW_ON)
+	for (i = 0, count = 0; i < MAX_CLIENTS && count < MAX_PLAYERS; ++i)
 	{
-		return;
-	}
-
-	if (!cg_shoutcastDrawPlayers.integer)
-	{
-		return;
-	}
-
-	for (i = 0; i < MAX_CLIENTS; i++)
-	{
-		ci = &cgs.clientinfo[i];
+		clientInfo_t *ci = &cgs.clientinfo[i];
 
 		if (!ci->infoValid)
 		{
 			continue;
 		}
 
-		if (ci->team == TEAM_SPECTATOR)
+		if (ci->team == team)
 		{
-			continue;
-		}
+			if (ci->team == TEAM_AXIS)
+			{
+				CG_DrawShoutcastPlayerOverlayAxis(comp, ci, comp->location.y + (comp->location.h / MAX_PLAYERS * count) + (1 * count), count);
+				players[count] = ci->clientNum;
+			}
+			else
+			{
+				CG_DrawShoutcastPlayerOverlayAllies(comp, ci, comp->location.y + (comp->location.h / MAX_PLAYERS * count) + (1 * count), count);
+				players[count + 6] = ci->clientNum;
+			}
 
-		if (ci->team == TEAM_AXIS && axis < MAX_PLAYERS)
-		{
-			CG_DrawShoutcastPlayerOverlayAxis(ci, PLAYER_LIST_X, PLAYER_LIST_Y + (PLAYER_LIST_HEIGHT * axis) + (1 * axis), axis);
-			players[axis] = ci->clientNum;
-			axis++;
-		}
-
-		if (ci->team == TEAM_ALLIES && allies < MAX_PLAYERS)
-		{
-			CG_DrawShoutcastPlayerOverlayAllies(ci, Ccg_WideX(SCREEN_WIDTH) - PLAYER_LIST_WIDTH - PLAYER_LIST_X, PLAYER_LIST_Y + (PLAYER_LIST_HEIGHT * allies) + (1 * allies), allies);
-			players[allies + 6] = ci->clientNum;
-			allies++;
-		}
-
-		if (axis >= MAX_PLAYERS && allies >= MAX_PLAYERS)
-		{
-			break;
+			++count;
 		}
 	}
 }
 
 /**
-* @brief CG_DrawShoutcastPlayerChargebar
-* @param[in] x
-* @param[in] y
-* @param[in] width
-* @param[in] height
-* @param[in] flags
-*/
-static void CG_DrawShoutcastPlayerChargebar(float x, float y, int width, int height, int flags)
+ * @brief CG_DrawShoutcastPlayerListAxis
+ * @param[in] comp
+ */
+void CG_DrawShoutcastPlayerListAxis(hudComponent_t *comp)
+{
+	if (cgs.topshots.show == SHOW_ON)
+	{
+		return;
+	}
+
+	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	CG_DrawShoutcastPlayerList(comp, TEAM_AXIS);
+}
+
+/**
+ * @brief CG_DrawShoutcastPlayerListAllies
+ * @param[in] comp
+ */
+void CG_DrawShoutcastPlayerListAllies(hudComponent_t *comp)
+{
+	if (cgs.topshots.show == SHOW_ON)
+	{
+		return;
+	}
+
+	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	CG_DrawShoutcastPlayerList(comp, TEAM_ALLIES);
+}
+
+/**
+ * @brief CG_DrawShoutcastPlayerChargebar
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] flags
+ * @param[in] bgColor
+ */
+static void CG_DrawShoutcastPlayerChargebar(float x, float y, int width, int height, int flags, vec4_t bgColor)
 {
 	float    barFrac, chargeTime;
 	qboolean charge = qtrue;
@@ -505,18 +494,19 @@ static void CG_DrawShoutcastPlayerChargebar(float x, float y, int width, int hei
 		color[3] = 0.25f + barFrac * 0.5f;
 	}
 
-	CG_FilledBar(x, y, width, height, color, NULL, bg, bg, barFrac, flags, -1);
+	CG_FilledBar(x, y, width, height, color, NULL, bgColor, bgColor, barFrac, flags, -1);
 }
 
 /**
-* @brief CG_DrawShoutcasterStaminaBar
-* @param[in] x
-* @param[in] y
-* @param[in] width
-* @param[in] height
-* @param[in] flags
-*/
-static void CG_DrawShoutcastPlayerStaminaBar(float x, float y, int width, int height, int flags)
+ * @brief CG_DrawShoutcastPlayerStaminaBar
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] flags
+ * @param[in] bgColor
+ */
+static void CG_DrawShoutcastPlayerStaminaBar(float x, float y, int width, int height, int flags, vec4_t bgColor)
 {
 	vec4_t colour = { 0.1f, 1.0f, 0.1f, 0.5f };
 	vec_t  *color = colour;
@@ -544,14 +534,14 @@ static void CG_DrawShoutcastPlayerStaminaBar(float x, float y, int width, int he
 		color[1] = frac;
 	}
 
-	CG_FilledBar(x, y, width, height, color, NULL, bg, bg, frac, flags, -1);
+	CG_FilledBar(x, y, width, height, color, NULL, bgColor, bgColor, frac, flags, -1);
 }
 
 /**
 * @brief CG_RequestPlayerStats (CG_StatsDown_f)
 * @param[in] clientNum
 */
-void CG_RequestPlayerStats(int clientNum)
+static void CG_RequestPlayerStats(int clientNum)
 {
 	if (cgs.gamestats.requestTime < cg.time)
 	{
@@ -565,7 +555,7 @@ void CG_RequestPlayerStats(int clientNum)
 * @param[in] data
 * @param[in] i
 */
-char *CG_ParseStats(char *data, int i)
+static char *CG_ParseStats(char *data, int i)
 {
 	int  c;
 	int  stop = 0;
@@ -594,35 +584,58 @@ char *CG_ParseStats(char *data, int i)
 }
 
 /**
-* @brief CG_DrawShoutcastPlayerStatus
-*/
-void CG_DrawShoutcastPlayerStatus(void)
+ * @brief CG_DrawShoutcastPlayerStatus
+ * @param[in] comp
+ */
+void CG_DrawShoutcastPlayerStatus(hudComponent_t *comp)
 {
 	gameStats_t   *gs     = &cgs.gamestats;
 	clientInfo_t  *player = &cgs.clientinfo[cg.snap->ps.clientNum];
 	playerState_t *ps     = &cg.snap->ps;
 	vec4_t        hcolor;
-	float         nameBoxWidth   = PLAYER_STATUS_NAMEBOX_WIDTH;
-	float         nameBoxHeight  = PLAYER_STATUS_NAMEBOX_HEIGHT;
-	float         nameBoxX       = PLAYER_STATUS_NAMEBOX_X;
-	float         nameBoxY       = PLAYER_STATUS_NAMEBOX_Y;
-	float         statsBoxWidth  = PLAYER_STATUS_STATSBOX_WIDTH;
-	float         statsBoxHeight = PLAYER_STATUS_STATSBOX_HEIGHT;
-	float         statsBoxX      = PLAYER_STATUS_STATSBOX_X;
-	float         statsBoxY      = PLAYER_STATUS_STATSBOX_Y;
+	float         nameBoxWidth   = comp->location.w / 1.5f;
+	float         nameBoxHeight  = comp->location.h / 2.25f;
+	float         nameBoxX       = comp->location.x + (comp->location.w - nameBoxWidth) * 0.5f;
+	float         nameBoxY       = comp->location.y;
+	float         statsBoxWidth  = comp->location.w;
+	float         statsBoxHeight = comp->location.h - nameBoxHeight;
+	float         statsBoxX      = comp->location.x;
+	float         statsBoxY      = comp->location.y + nameBoxHeight;
 	float         textWidth, textWidth2, textHeight;
 	char          *kills, *deaths, *selfkills, *dmgGiven, *dmgRcvd, *text;
 	int           ammo, clip, akimbo, curWeap, weapScale, tmpX;
 	char          name[MAX_NAME_LENGTH + 2] = { 0 };
+	float         scale;
+	float         scale2;
 
 	if (cgs.topshots.show == SHOW_ON)
 	{
 		return;
 	}
 
+	if (!cgs.clientinfo[cg.clientNum].shoutcaster && !cg.demoPlayback)
+	{
+		return;
+	}
+
+	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW))
+	{
+		return;
+	}
+
+	scale  = CG_ComputeScale(comp);
+	scale2 = scale * 0.842;
+
 	// draw name box
-	CG_FillRect(nameBoxX, nameBoxY, nameBoxWidth, nameBoxHeight, bg);
-	CG_DrawRect_FixedBorder(nameBoxX, nameBoxY, nameBoxWidth, nameBoxHeight, 2, colorLtGrey);
+	if (comp->showBackGround)
+	{
+		CG_FillRect(nameBoxX, nameBoxY, nameBoxWidth, nameBoxHeight, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(nameBoxX, nameBoxY, nameBoxWidth, nameBoxHeight, 2, comp->colorBorder);
+	}
 
 	// draw team flag
 	if (player->team == TEAM_ALLIES)
@@ -636,20 +649,27 @@ void CG_DrawShoutcastPlayerStatus(void)
 
 	// draw name limit 20 chars, width 110
 	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH + 2);
-	textWidth  = CG_Text_Width_Ext(name, 0.19f, 0, FONT_TEXT);
-	textHeight = CG_Text_Height_Ext(name, 0.19f, 0, FONT_TEXT);
+	textWidth  = CG_Text_Width_Ext(name, scale, 0, FONT_TEXT);
+	textHeight = CG_Text_Height_Ext(name, scale, 0, FONT_TEXT);
 	if (textWidth > 110)
 	{
 		textWidth = 110;
 	}
-	CG_Text_Paint_Ext(nameBoxX + (nameBoxWidth / 2) - (textWidth / 2), nameBoxY + (nameBoxHeight / 2) + (textHeight / 2), 0.19f, 0.19f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(nameBoxX + (nameBoxWidth / 2) - (textWidth / 2), nameBoxY + (nameBoxHeight / 2) + (textHeight / 2), scale, scale, comp->colorMain, name, 0, 20, comp->styleText, FONT_TEXT);
 
 	// draw country flag
 	CG_DrawFlag(nameBoxX + nameBoxWidth - 17, nameBoxY + (nameBoxHeight / 2) - 7, 1, player->clientNum);
 
 	// draw stats box
-	CG_FillRect(statsBoxX, statsBoxY, statsBoxWidth, statsBoxHeight, bg);
-	CG_DrawRect_FixedBorder(statsBoxX, statsBoxY, statsBoxWidth, statsBoxHeight, 2, colorLtGrey);
+	if (comp->showBackGround)
+	{
+		CG_FillRect(statsBoxX, statsBoxY, statsBoxWidth, statsBoxHeight, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(statsBoxX, statsBoxY, statsBoxWidth, statsBoxHeight, 2, comp->colorBorder);
+	}
 
 	// draw powerups
 	tmpX = statsBoxX + statsBoxWidth;
@@ -668,8 +688,8 @@ void CG_DrawShoutcastPlayerStatus(void)
 		CG_DrawPic(tmpX + 3, statsBoxY, 20, 20, cgs.media.spawnInvincibleShader);
 	}
 
-	CG_DrawShoutcastPlayerChargebar(statsBoxX, statsBoxY + statsBoxHeight, statsBoxWidth / 2, 2, BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LEFT);
-	CG_DrawShoutcastPlayerStaminaBar(statsBoxX + (statsBoxWidth / 2), statsBoxY + statsBoxHeight, statsBoxWidth / 2, 2, BAR_BG | BAR_BGSPACING_X0Y0);
+	CG_DrawShoutcastPlayerChargebar(statsBoxX, statsBoxY + statsBoxHeight, statsBoxWidth / 2, 2, BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LEFT, comp->colorBackground);
+	CG_DrawShoutcastPlayerStaminaBar(statsBoxX + (statsBoxWidth / 2), statsBoxY + statsBoxHeight, statsBoxWidth / 2, 2, BAR_BG | BAR_BGSPACING_X0Y0, comp->colorBackground);
 
 	// draw ammo count
 	CG_PlayerAmmoValue(&ammo, &clip, &akimbo, NULL);
@@ -685,8 +705,8 @@ void CG_DrawShoutcastPlayerStatus(void)
 			text = va("%i/%i", ammo, clip);
 		}
 
-		textWidth = CG_Text_Width_Ext(text, 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + statsBoxWidth - (textWidth / 2) - 16, statsBoxY + (statsBoxHeight / 2) + 2, 0.19f, 0.19f, colorWhite, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		textWidth = CG_Text_Width_Ext(text, scale, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + statsBoxWidth - (textWidth / 2) - 16, statsBoxY + (statsBoxHeight / 2) + 2, scale, scale, comp->colorMain, text, 0, 0, comp->styleText, FONT_TEXT);
 	}
 
 	// draw weapon icon
@@ -714,9 +734,9 @@ void CG_DrawShoutcastPlayerStatus(void)
 	{
 		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], hcolor);
 		text       = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
-		textWidth  = CG_Text_Width_Ext(text, 0.19f, 0, FONT_TEXT);
-		textHeight = CG_Text_Height_Ext(text, 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX - (textWidth / 2) + 10, statsBoxY + (statsBoxHeight / 2) + (textHeight / 2), 0.19f, 0.19f, hcolor, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		textWidth  = CG_Text_Width_Ext(text, scale, 0, FONT_TEXT);
+		textHeight = CG_Text_Height_Ext(text, scale, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX - (textWidth / 2) + 10, statsBoxY + (statsBoxHeight / 2) + (textHeight / 2), scale, scale, hcolor, text, 0, 0, comp->styleText, FONT_TEXT);
 	}
 	else if (cg.snap->ps.stats[STAT_HEALTH] <= 0 && (cg.snap->ps.pm_flags & PMF_LIMBO))
 	{
@@ -738,7 +758,7 @@ void CG_DrawShoutcastPlayerStatus(void)
 		// arrow latched class
 		textWidth  = CG_Text_Width_Ext("->", 0.19f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("->", 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 1, statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 1, 0.19f, 0.19f, colorYellow, "->", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 1, statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 1, scale, scale, colorYellow, "->", 0, 0, comp->styleText, FONT_TEXT);
 		statsBoxX += 1 + textWidth;
 		// latched class
 		CG_DrawPic(statsBoxX + 1, statsBoxY + (statsBoxHeight / 2) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->latchedcls)]);
@@ -748,7 +768,7 @@ void CG_DrawShoutcastPlayerStatus(void)
 
 	if (gs->nClientID == player->clientNum && gs->fHasStats)
 	{
-		statsBoxX = PLAYER_STATUS_STATSBOX_X + 55;
+		statsBoxX = statsBoxX + 55;
 
 		dmgGiven  = va("%s", CG_ParseStats(gs->strExtra[0], 1));
 		dmgRcvd   = va("%s", CG_ParseStats(gs->strExtra[1], 1));
@@ -759,128 +779,130 @@ void CG_DrawShoutcastPlayerStatus(void)
 		// kills
 		textWidth  = CG_Text_Width_Ext("K", 0.16f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("K", 0.16f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 6, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), 0.16f, 0.16f, colorMdGrey, "K", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 6, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), scale2, scale2, comp->colorSecondary, "K", 0, 0, comp->styleText, FONT_TEXT);
 
 		textHeight = CG_Text_Height_Ext(kills, 0.19f, 0, FONT_TEXT);
 		textWidth2 = CG_Text_Width_Ext(kills, 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 6 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorWhite, kills, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 6 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, scale, scale, colorWhite, kills, 0, 0, comp->styleText, FONT_TEXT);
 		statsBoxX += 6 + textWidth2;
 
 		// deaths
 		textWidth  = CG_Text_Width_Ext("D", 0.16f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("D", 0.16f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 6, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), 0.16f, 0.16f, colorMdGrey, "D", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 6, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), scale2, scale2, comp->colorSecondary, "D", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 		textHeight = CG_Text_Height_Ext(deaths, 0.19f, 0, FONT_TEXT);
 		textWidth2 = CG_Text_Width_Ext(deaths, 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 6 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorWhite, deaths, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 6 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, scale, scale, colorWhite, deaths, 0, 0, comp->styleText, FONT_TEXT);
 		statsBoxX += 6 + textWidth2;
 
 		// selfkills
 		textWidth  = CG_Text_Width_Ext("SK", 0.16f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("SK", 0.16f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 4, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), 0.16f, 0.16f, colorMdGrey, "SK", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 4, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), scale2, scale2, comp->colorSecondary, "SK", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 		textHeight = CG_Text_Height_Ext(selfkills, 0.19f, 0, FONT_TEXT);
 		textWidth2 = CG_Text_Width_Ext(selfkills, 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 4 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorWhite, selfkills, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 4 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, scale, scale, colorWhite, selfkills, 0, 0, comp->styleText, FONT_TEXT);
 		statsBoxX += 4 + textWidth2;
 
 		// dmgGiven
 		textWidth  = CG_Text_Width_Ext("DG", 0.16f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("DG", 0.16f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 15, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), 0.16f, 0.16f, colorMdGrey, "DG", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 15, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), scale2, scale2, comp->colorSecondary, "DG", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 		textHeight = CG_Text_Height_Ext(dmgGiven, 0.19f, 0, FONT_TEXT);
 		textWidth2 = CG_Text_Width_Ext(dmgGiven, 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 15 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorMdGreen, dmgGiven, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 15 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, scale, scale, colorMdGreen, dmgGiven, 0, 0, comp->styleText, FONT_TEXT);
 		statsBoxX += 15 + textWidth2;
 
 		// dmgRcvd
 		textWidth  = CG_Text_Width_Ext("DR", 0.16f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("DR", 0.16f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 7, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), 0.16f, 0.16f, colorMdGrey, "DR", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 7, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), scale2, scale2, comp->colorSecondary, "DR", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 		textHeight = CG_Text_Height_Ext(dmgRcvd, 0.19f, 0, FONT_TEXT);
 		textWidth2 = CG_Text_Width_Ext(dmgRcvd, 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 7 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorRed, dmgRcvd, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 7 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, scale, scale, colorRed, dmgRcvd, 0, 0, comp->styleText, FONT_TEXT);
 		statsBoxX += 5 + textWidth2;
 	}
 }
 
 /**
-* @brief CG_DrawShoutcastTeamNames
-*/
-void CG_DrawShoutcastTeamNames()
+ * @brief CG_DrawShoutcastTeamNames
+ * @param[in] comp
+ */
+static void CG_DrawShoutcastTeamNames(hudComponent_t *comp, char *text)
 {
-	rectDef_t rect;
-	int       textWidth;
-	int       textHeight;
-	char      *text;
+	int   textWidth;
+	int   textHeight;
+	float scale;
 
 	if (cgs.gamestats.show == SHOW_ON)
 	{
 		return;
 	}
 
-	if (cg_shoutcastDrawTeamNames.integer)
+	if (comp->showBackGround)
 	{
-		// draw axis label
-		if (Q_PrintStrlen(cg_shoutcastTeamNameRed.string) > 0)
-		{
-			text = va("%s", cg_shoutcastTeamNameRed.string);
-		}
-		else
-		{
-			text = va("%s", "Axis");
-		}
-
-		rect.x = GAMETIME_X - TEAMNAMES_WIDTH;
-		rect.y = GAMETIME_Y;
-		rect.w = TEAMNAMES_WIDTH;
-		rect.h = TEAMNAMES_HEIGHT;
-		GradientBar_Paint(&rect, colorAxis);
-
-		// max width 174, limit 20 chars
-		textWidth  = CG_Text_Width_Ext(text, 0.3f, 0, FONT_TEXT);
-		textHeight = CG_Text_Height_Ext(text, 0.3f, 0, FONT_TEXT);
-
-		if (textWidth > 174)
-		{
-			textWidth = 174;
-		}
-
-		CG_Text_Paint_Ext(rect.x + (rect.w / 2) - (textWidth / 2) + 1.35f, rect.y + (rect.h / 2) + (textHeight / 2) + 1.35f, 0.3f, 0.3f, colorBlack, text, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
-		CG_Text_Paint_Ext(rect.x + (rect.w / 2) - (textWidth / 2), rect.y + (rect.h / 2) + (textHeight / 2), 0.3f, 0.3f, colorWhite, text, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
-
-		// draw allies label
-		if (Q_PrintStrlen(cg_shoutcastTeamNameBlue.string) > 0)
-		{
-			text = va("%s", cg_shoutcastTeamNameBlue.string);
-		}
-		else
-		{
-			text = va("%s", "Allies");
-		}
-
-		rect.x = GAMETIME_X + GAMETIME_WIDTH;
-		rect.y = GAMETIME_Y;
-		rect.w = TEAMNAMES_WIDTH;
-		rect.h = TEAMNAMES_HEIGHT;
-		GradientBar_Paint(&rect, colorAllies);
-
-		// max width 174, limit 20 chars
-		textWidth  = CG_Text_Width_Ext(text, 0.3f, 0, FONT_TEXT);
-		textHeight = CG_Text_Height_Ext(text, 0.3f, 0, FONT_TEXT);
-
-		if (textWidth > 174)
-		{
-			textWidth = 174;
-		}
-
-		CG_Text_Paint_Ext(rect.x + (rect.w / 2) - (textWidth / 2) + 1.35f, rect.y + (rect.h / 2) + (textHeight / 2) + 1.35f, 0.3f, 0.3f, colorBlack, text, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
-		CG_Text_Paint_Ext(rect.x + (rect.w / 2) - (textWidth / 2), rect.y + (rect.h / 2) + (textHeight / 2), 0.3f, 0.3f, colorWhite, text, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		GradientBar_Paint(&comp->location, comp->colorBackground);
 	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 2, comp->colorBorder);
+	}
+
+	scale = CG_ComputeScale(comp);
+
+	// max width 174, limit 20 chars
+	textWidth  = MIN(CG_Text_Width_Ext(text, scale, 0, FONT_TEXT), 174);
+	textHeight = CG_Text_Height_Ext(text, scale, 0, FONT_TEXT);
+
+	CG_Text_Paint_Ext(comp->location.x + (comp->location.w / 2) - (textWidth / 2) + 1.35f, comp->location.y + (comp->location.h / 2) + (textHeight / 2) + 1.35f, scale, scale, comp->colorSecondary, text, 0, 20, comp->styleText, FONT_TEXT);
+	CG_Text_Paint_Ext(comp->location.x + (comp->location.w / 2) - (textWidth / 2), comp->location.y + (comp->location.h / 2) + (textHeight / 2), scale, scale, comp->colorMain, text, 0, 20, comp->styleText, FONT_TEXT);
+}
+
+/**
+ * @brief CG_DrawShoutcastTeamNameAxis
+ * @param[in] comp
+ */
+void CG_DrawShoutcastTeamNameAxis(hudComponent_t *comp)
+{
+	if (cgs.gamestats.show == SHOW_ON)
+	{
+		return;
+	}
+
+	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	// draw axis label
+	CG_DrawShoutcastTeamNames(comp, Q_PrintStrlen(cg_shoutcastTeamNameRed.string) > 0
+	                                    ? cg_shoutcastTeamNameRed.string : "Axis");
+}
+
+/**
+ * @brief CG_DrawShoutcastTeamNameAllies
+ * @param[in] comp
+ */
+void CG_DrawShoutcastTeamNameAllies(hudComponent_t *comp)
+{
+	if (cgs.gamestats.show == SHOW_ON)
+	{
+		return;
+	}
+
+	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	// draw allies label
+	CG_DrawShoutcastTeamNames(comp, Q_PrintStrlen(cg_shoutcastTeamNameBlue.string) > 0
+	                                    ? cg_shoutcastTeamNameRed.string : "Allies");
 }
 
 /**

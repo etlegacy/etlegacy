@@ -2904,8 +2904,6 @@ extern vmCvar_t cg_drawUnit;
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 extern vmCvar_t cg_bannerTime;
 
-extern vmCvar_t cg_shoutcastDrawPlayers;
-extern vmCvar_t cg_shoutcastDrawTeamNames;
 extern vmCvar_t cg_shoutcastTeamNameRed;
 extern vmCvar_t cg_shoutcastTeamNameBlue;
 extern vmCvar_t cg_shoutcastDrawHealth;
@@ -3164,14 +3162,6 @@ int CG_GetReinfTime(qboolean menu);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
 void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/);
-
-//cg_shoutcastoverlay.c
-
-void CG_DrawShoutcastPlayerList(void);
-void CG_DrawShoutcastPlayerStatus(void);
-void CG_DrawShoutcastTeamNames(void);
-void CG_RequestPlayerStats(int clientNum);
-char *CG_ParseStats(char *data, int i);
 
 void CG_ToggleShoutcasterMode(int shoutcaster);
 void CG_ShoutcastCheckKeyCatcher(int keycatcher);
@@ -4213,7 +4203,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 53
+#define HUD_COMPONENTS_NUM 57
 
 typedef struct hudComponent_s
 {
@@ -4306,6 +4296,10 @@ typedef struct hudStructure_s
 	hudComponent_t crosshairbar;
 	hudComponent_t stats;
 	hudComponent_t xpgain;
+	hudComponent_t scPlayerListAxis;
+	hudComponent_t scPlayerListAllies;
+	hudComponent_t scTeamNamesAxis;
+	hudComponent_t scTeamNamesAllies;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4419,9 +4413,13 @@ void CG_DrawPing(hudComponent_t *comp);
 void CG_DrawSpeed(hudComponent_t *comp);
 void CG_DrawLagometer(hudComponent_t *comp);
 void CG_DrawDisconnect(hudComponent_t *comp);
-void CG_DrawPlayerStats(hudComponent_t *comp);
 void CG_DrawCrosshairNames(hudComponent_t *comp);
 void CG_DrawCrosshairHealthBar(hudComponent_t *comp);
+void CG_DrawShoutcastPlayerStatus(hudComponent_t *comp);
+void CG_DrawShoutcastPlayerListAxis(hudComponent_t *comp);
+void CG_DrawShoutcastPlayerListAllies(hudComponent_t *comp);
+void CG_DrawShoutcastTeamNameAxis(hudComponent_t *comp);
+void CG_DrawShoutcastTeamNameAllies(hudComponent_t *comp);
 
 /**
  * @brief Using the stringizing operator to save typing...

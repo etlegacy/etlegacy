@@ -1116,9 +1116,8 @@
 				}
 			}
 		}, {
-			"name":	"Shoutcaster",
+						"name":	"Shoutcaster",
 			"number":	5,
-			"parent":	0,
 			"components":	{
 				"compass":	{
 					"rect":	{
@@ -1196,6 +1195,19 @@
 				},
 				"fireteam":	{
 					"visible":	false
+				},
+				"popupmessages":	{
+					"rect":	{
+						"x":	0.49999237060546875,
+						"y":	5,
+						"w":	422,
+						"h":	96
+					},
+					"anchor":	2,
+					"parent":	{
+						"anchor":	8,
+						"component":	null
+					}
 				},
 				"powerups":	{
 					"rect":	{
@@ -1336,10 +1348,22 @@
 					"visible":	false
 				},
 				"stats":	{
-					"visible":	false
+					"visible":	true
 				},
 				"xpgain":	{
 					"backgroundColor":	"bf332b7f"
+				},
+				"scPlayerListAxis":	{
+					"visible":	true
+				},
+				"scPlayerListAllies":	{
+					"visible":	true
+				},
+				"scTeamNamesAxis":	{
+					"visible":	true
+				},
+				"scTeamNamesAllies":	{
+					"visible":	true
 				}
 			}
 		}]
