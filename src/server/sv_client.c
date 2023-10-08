@@ -537,8 +537,8 @@ gotnewcl:
 	// save the userinfo
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
 
-	// Save userinfo changes to demo
-	// Note: client configstring is derived from userinfo so we need to save it before it gets generated and saved in GAME_CLIENT_CONNECT
+	// save userinfo changes to demo
+	// note: client configstring is derived from userinfo so we need to save it before it gets generated and saved in GAME_CLIENT_CONNECT
 	if (sv.demoState == DS_RECORDING)
 	{
 		SV_DemoWriteClientUserinfo(newcl, (const char *)newcl->userinfo);

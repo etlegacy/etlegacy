@@ -725,6 +725,9 @@ qboolean G_SnapshotCallback(int entityNum, int clientNum)
 	return qtrue;
 }
 
+int dll_com_trapGetValue;
+int dll_trap_DemoSupport;
+
 /**
  * @brief This is the only way control passes into the module.
  * This must be the very first function compiled into the .q3vm file
@@ -805,6 +808,9 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return G_SnapshotCallback(arg0, arg1);
 	case GAME_MESSAGERECEIVED:
 		return -1;
+	case GAME_DEMOSTATECHANGED:
+		G_DemoStateChanged((demoState_t)arg0, arg1);
+		return 0;
 	default:
 		G_Printf("Bad game export type: %ld\n", (long int) command);
 		break;
@@ -2298,6 +2304,31 @@ void G_GetMapXP(void)
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
 }
 
+static ID_INLINE void G_SetupExtensionTrap(char *value, int *trap, const char *name)
+{
+	if (trap_GetValue(value, sizeof(value), name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void G_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+
+		G_SetupExtensionTrap(value, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
+	}
+}
+
 /**
  * @brief G_InitGame
  * @param[in] levelTime
@@ -2369,6 +2400,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 
 		level.spawning = oldspawning;
 	}
+
+	G_SetupExtensions();
+	trap_DemoSupport("gstats\\sgstats\\sc0\\score\\sc1\\score");
+
 	level.time            = levelTime;
 	level.startTime       = levelTime;
 	level.server_settings = i;
@@ -4735,8 +4770,6 @@ void G_RunThink(gentity_t *ent)
 	ent->think(ent);
 }
 
-void G_RunEntity(gentity_t *ent, int msec);
-
 /**
  * @brief G_PositionEntityOnTag
  * @param[in,out] entity
@@ -5421,6 +5454,11 @@ void G_RunFrame(int levelTime)
 
 	// get any cvar changes
 	G_UpdateCvars();
+
+	if (G_DemoRunFrame())
+	{
+		return;
+	}
 
 	G_ConfigCheckLocked();
 

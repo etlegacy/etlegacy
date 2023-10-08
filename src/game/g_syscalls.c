@@ -39,7 +39,7 @@ static intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_
 /**
  * @brief dllEntry
  */
-Q_EXPORT void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...))
+Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
@@ -808,4 +808,34 @@ qboolean trap_SendMessage(int clientNum, char *buf, int buflen)
 messageStatus_t trap_MessageStatus(int clientNum)
 {
 	return (messageStatus_t)(SystemCall(G_MESSAGESTATUS, clientNum));
+}
+
+// extension interface
+
+/**
+* @brief Entry point for additional system calls without breaking compatibility with other engines
+* @param[out] value
+* @param[in] valueSize
+* @param[in] key
+* @return
+*/
+qboolean trap_GetValue(char *value, int valueSize, const char *key)
+{
+	return (qboolean)(SystemCall(dll_com_trapGetValue, value, valueSize, key));
+}
+
+/**
+* @brief Extension for informing engine about demo support
+*       and (optional) which commands should be saved and send only per request during plaback (imitating server generating those)
+*
+* Example: gstats\\sgstats\\sc0\\score\\sc1\\score  (send -> what player requests, save -> what is send after that request)
+*            |        |      |     |     |     |
+*          save      send   save send   save  send
+*/
+void trap_DemoSupport(char *commands)
+{
+	if (dll_trap_DemoSupport)
+	{
+		SystemCall(dll_trap_DemoSupport, commands);
+	}
 }

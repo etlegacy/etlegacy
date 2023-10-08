@@ -35,8 +35,25 @@
 
 #include "server.h"
 
+typedef struct gameCommands_s
+{
+	char commandToSave[MAX_QPATH];
+	char commandToSend[MAX_QPATH];
+	int commandToSaveLength;
+	int commandToSendLength;
+
+	char commands[MAX_CLIENTS][MAX_STRING_CHARS];
+} gameCommands_t;
+
+#define MAX_DEMO_GAMECOMMANDS 24
+static gameCommands_t gameCommands[MAX_DEMO_GAMECOMMANDS];
+int                   gameCommandsCount;
+
 // static function decl
 static void SV_DemoWriteClientConfigString(int clientNum, const char *cs_string);
+static void SV_DemoStartPlayback(void);
+static qboolean SV_DemoPlayNext(void);
+static void SV_DemoStateChanged(void);
 
 #define Q_IsColorStringGameCommand(p)      ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1)) // ^[anychar]
 //#define CEIL(VARIABLE) ((VARIABLE - (int)VARIABLE) == 0 ? (int)VARIABLE : (int)VARIABLE + 1) // UNUSED but can be useful
@@ -45,24 +62,25 @@ static void SV_DemoWriteClientConfigString(int clientNum, const char *cs_string)
  * VARIABLES
  ***********************************************/
 
-// Headers/markers for demo messages (events)
+// headers/markers for demo messages (events)
 typedef enum
 {
-	demo_endDemo, // end of demo (close the demo)
-	demo_EOF, // end of file/flux (end of event, separator, notify the demo parser to iterate to the next event of the _same_ frame)
-	demo_endFrame, // player and gentity state marker (recorded each end of frame, hence the name) - at the same time marks the end of the demo frame
+	demo_endDemo,              ///< end of demo (close the demo)
+	demo_EOF,                  ///< end of file/flux (end of event, separator, notify the demo parser to iterate to the next event of the _same_ frame)
+	demo_endFrame,             ///< player and gentity state marker (recorded each end of frame, hence the name) - at the same time marks the end of the demo frame
 
-	demo_configString, // config string setting event
-	demo_clientConfigString, // client config string setting event
-	demo_clientCommand, // client command event
-	demo_serverCommand, // server command event
-	demo_gameCommand, // game command event
-	demo_clientUserinfo, // client userinfo event (client_t management)
-	demo_entityState, // gentity_t->entityState_t management
-	demo_entityShared, // gentity_t->entityShared_t management
-	demo_playerState, // players game state event (playerState_t management)
+	demo_configString,         ///< config string setting event
+	demo_clientConfigString,   ///< client config string setting event
+	demo_clientCommand,        ///< client command event
+	demo_serverCommand,        ///< server command event
+	demo_serverConsoleCommand, ///< server console command
+	demo_gameCommand,          ///< game command event
+	demo_clientUserinfo,       ///< client userinfo event (client_t management)
+	demo_entityState,          ///< entityState_t management
+	demo_entityShared,         ///< entityShared_t management
+	demo_playerState,          ///< players game state event (playerState_t management)
 
-	//demo_clientUsercmd, // players commands/movements packets (usercmd_t management)
+	//demo_clientUsercmd,    ///< players commands/movements packets (usercmd_t management)
 } demo_ops_e;
 
 /*** STATIC VARIABLES ***/
@@ -71,105 +89,70 @@ typedef enum
 // Big fat buffer to store all our stuff
 static byte buf[0x400000];
 
-// Save maxclients and democlients and restore them after the demo
-static int savedMaxClients = -1;
-static int savedFPS        = -1;
-static int savedGametype   = -1;
+// save cvars and restore them after the demo
+static int      savedMaxClients = -1;
+char            savedCvarsInfo[BIG_INFO_STRING];
+static qboolean restoreSavedCvars = qtrue;
 
-static int savedDoWarmup  = -1;
-static int savedAllowVote = -1;
+// for restarting playback
+static char savedPlaybackDemonameVal[MAX_OSPATH] = "";
+static char *savedPlaybackDemoname               = savedPlaybackDemonameVal;
 
-static int savedTimelimit    = -1;
-static int savedFraglimit    = -1;
-static int savedCapturelimit = -1;
+// "fixing" game commands spam
+char cmds[MAX_RELIABLE_COMMANDS][MAX_STRING_CHARS];
+int  cmdsPerFrameCount = 1;
 
-static char savedFsGameVal[MAX_QPATH] = "";
-static char *savedFsGame              = savedFsGameVal;
-
-static char savedPlaybackDemonameVal[MAX_QPATH] = "";
-static char *savedPlaybackDemoname              = savedPlaybackDemonameVal;
-
-static qboolean keepSaved = qfalse; // var that memorizes if we keep the new maxclients and democlients values (in the case that we restart the map/server for these cvars to be affected since they are latched, we need to stop the playback meanwhile we restart, and using this var we can know if the stop is a restart procedure or a real demo end) or if we can restore them (at the end of the demo)
-
-// Game stats
-static char sc0[MAX_STRING_CHARS];
-static char sc1[MAX_STRING_CHARS];
-static char gstats[MAX_CLIENTS][MAX_STRING_CHARS];
-
-static int playerStatsNum;
+// arbitrary limit
+#define MAX_DEMO_AUTOPLAY 10
+char demoAutoPlay[MAX_DEMO_AUTOPLAY][MAX_OSPATH];
 
 /**
  * @brief Restores all CVARs
  */
 static void SV_DemoCvarsRestore()
 {
-	// Restore initial cvars of the server that were modified by the demo playback
-	// Note: must do it before the map_restart! so that latched values such as sv_maxclients takes effect
-	if (!keepSaved)
+	char key[BIG_INFO_KEY];
+	char value[BIG_INFO_VALUE];
+	char *savedCvars = savedCvarsInfo;
+
+	// restore initial cvars of the server that were modified by the demo playback
+	// note: must do it before the map_restart! so that latched values such as sv_maxclients takes effect
+	if (restoreSavedCvars)
 	{
 		Cvar_SetValue("sv_democlients", 0);
 
-		if (savedMaxClients >= 0)
+		while (savedCvars)
 		{
-			Cvar_SetLatched("sv_maxclients", va("%i", savedMaxClients));
-			savedMaxClients = -1;
+			Info_NextPair(&savedCvars, key, value);
+
+			if (!key[0])
+			{
+				break;
+			}
+
+			if (!Q_stricmp(key, "mapname"))
+			{
+				continue;
+			}
+
+			Cvar_SetSafe(key, value);
 		}
 
-		if (savedFPS > 0)
-		{
-			Cvar_SetValue("sv_fps", savedFPS);
-			savedFPS = -1;
-		}
+		savedMaxClients = -1;
+		Com_Memset(savedCvarsInfo, 0, BIG_INFO_STRING);
 
-		if (savedDoWarmup >= 0)
-		{
-			Cvar_SetValue("g_doWarmup", savedDoWarmup);
-			savedDoWarmup = -1;
-		}
+		// FIXME: game_restart is not implemented
 
-		if (savedAllowVote >= 0)
-		{
-			Cvar_SetValue("g_allowVote", savedAllowVote);
-			savedAllowVote = -1;
-		}
-
-		if (savedTimelimit >= 0)
-		{
-			Cvar_SetValue("timelimit", savedTimelimit);
-			savedTimelimit = -1;
-		}
-
-		if (savedFraglimit >= 0)
-		{
-			Cvar_SetValue("fraglimit", savedFraglimit);
-			savedFraglimit = -1;
-		}
-
-		if (savedCapturelimit >= 0)
-		{
-			Cvar_SetValue("capturelimit", savedCapturelimit);
-			savedCapturelimit = -1;
-		}
-
-		if (strlen(savedFsGame))
-		{
-			// After setting all the other vars, we switch back the mod if necessary (it must be done only AFTER all the other cvars are set, else cvars set after won't take effect!)
-			Cbuf_AddText(va("game_restart %s\n", savedFsGame));
-			Q_strncpyz(savedFsGame, "", MAX_QPATH);
-		}
-
-		if (savedGametype >= 0)
-		{
-			Cvar_SetLatched("g_gametype", va("%i", savedGametype));
-			Cbuf_AddText(va("g_gametype %i\n", savedGametype)); // force gametype switching (NOTE: must be AFTER game_restart to work!)
-			savedGametype = -1;
-		}
+		//if (strlen(savedFsGame))
+		//{
+		//	// After setting all the other vars, we switch back the mod if necessary (it must be done only AFTER all the other cvars are set, else cvars set after won't take effect!)
+		//	Cbuf_AddText(va("game_restart %s\n", savedFsGame));
+		//	Q_strncpyz(savedFsGame, "", MAX_QPATH);
+		//}
 
 		Com_Printf("Demo changed CVARs restored.\n");
 	}
 }
-
-
 
 /***********************************************
 * AUXILIARY FUNCTIONS: CHECKING, FILTERING AND CLEANING
@@ -207,6 +190,58 @@ static char *SV_CleanStrCmd(char *string)
 }
 
 /**
+* @brief Store newest game commands during playback for reuse
+*
+* @param[in] cmd
+* @return
+*/
+static qboolean SV_DemoStoreGameCommand(const char *cmd)
+{
+	int i;
+	int index = Q_atoi(Cmd_ArgsFrom(1));
+
+	for (i = 0; i < gameCommandsCount; i++)
+	{
+		if (!Q_strncmp(gameCommands[i].commandToSave, cmd, gameCommands[i].commandToSaveLength))
+		{
+			Q_strncpyz(gameCommands[i].commands[index], cmd, MAX_STRING_CHARS);
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
+* @brief Send newest game commands during playback
+*
+* @param[in] client
+* @param[in] arg0
+* @param[in] arg1
+*/
+static qboolean SV_DemoSendStoredCommands(client_t *client, const char *arg0, const char *arg1)
+{
+	int      i;
+	int      index = Q_atoi(Cmd_ArgsFrom(1));
+	qboolean found = qfalse;
+
+	for (i = 0; i < gameCommandsCount; i++)
+	{
+		if (!Q_strncmp(gameCommands[i].commandToSend, arg0, gameCommands[i].commandToSendLength))
+		{
+			if (index >= 0 && index < MAX_CLIENTS && strlen(gameCommands[i].commands[index]))
+			{
+				SV_GameSendServerCommand(client - svs.clients, gameCommands[i].commands[index]);
+			}
+
+			found = qtrue;
+		}
+	}
+
+	return found;
+}
+
+/**
  * @brief Check that the clientCommand is OK (if not we either continue with a more specialized function, or drop it altogether if there's a privacy concern)
  * @param[in] client
  * @param[in] cmd
@@ -214,7 +249,8 @@ static char *SV_CleanStrCmd(char *string)
  */
 static qboolean SV_CheckClientCommand(client_t *client, const char *cmd)
 {
-	// If that's a userinfo command, we directly handle that with a specialized function (and we check that it contains at least 10 characters so that when we copy the string we don't end up copying a random address in memory)
+	// if that's a userinfo command, we directly handle that with a specialized function
+	// (and we check that it contains at least 10 characters so that when we copy the string we don't end up copying a random address in memory)
 	if (strlen(cmd) > 9 && !Q_strncmp(cmd, "userinfo", 8))
 	{
 		char userinfo[MAX_INFO_STRING];
@@ -232,7 +268,7 @@ static qboolean SV_CheckClientCommand(client_t *client, const char *cmd)
 		return qfalse;
 	}
 
-	return qtrue; // else, the check is OK and we continue to process with the original function
+	return qtrue;
 }
 
 /**
@@ -253,31 +289,6 @@ static qboolean SV_CheckServerCommand(const char *cmd)
 	}
 
 	return qtrue; // else, the check is OK and we continue to process with the original function
-}
-
-/**
-* @brief Filter game commands
-*
-* @details Filter demo game commands that should go to every connected client (not bots and democlients)
-*		 also filter qagame game commands that are blocked during playback (because of missing clientSession_t it is sending garbage data)
-*
-* @param[in] cmd
-* @return
-*/
-static qboolean SV_DemoGameCommandFilter(const char *cmd)
-{
-	int  i;
-	char *filter[] = { "sc ", "score", "sc0", "sc1", "gstats", "impkd", "impt", "imsr", "impr", "imwa", "imws" };
-
-	for (i = 0; i < 11; i++)
-	{
-		if (!strncmp(filter[i], cmd, strlen(filter[i])))
-		{
-			return qtrue;
-		}
-	}
-
-	return qfalse;
 }
 
 /**
@@ -307,103 +318,12 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 		// check that the previous cmd was different from the current cmd.
 		return qfalse; // drop this command, it's a repetition of the previous one
 	}
-	else if (onlyStore && SV_DemoGameCommandFilter(cmd)) // block qagame game commands during playback
-	{
-		return qfalse;
-	}
 	else
 	{
 		// memorize the current cmd for the next check (clean the cmd before, because sometimes the same string is issued by the engine with some empty colors?)
 		Q_strncpyz(prevcmd, cmd, MAX_STRING_CHARS);
 		return qtrue;
 	}
-}
-
-/**
-* @brief Store newest game commands during playback for reuse
-*        also store gstats during recording (based on guid)
-*
-* @param[in] cmd
-* @return
-*/
-static qboolean SV_DemoStoreGameCommand(const char *cmd)
-{
-	if (!Q_strncmp(cmd, "gstats", 6))
-	{
-		int i, index = Q_atoi(Cmd_ArgsFrom(1));
-
-		if (sv.demoState == DS_PLAYBACK)
-		{
-			Com_Memset(gstats[index], 0, MAX_STRING_CHARS);
-			Q_strncpyz(gstats[index], va("%s", cmd), MAX_STRING_CHARS);
-		}
-		else
-		{
-			client_t            *client = &svs.clients[index];
-			svdemoPlayerStats_t *svdps  = &sv.demoPlayerStats[index];
-
-			if (client->gentity && client->gentity->r.svFlags & SVF_BOT)
-			{
-				return qtrue;
-			}
-
-			if (!strlen(svdps->guid))
-			{
-				Q_strcat(svdps->guid, 9, client->guid);
-				playerStatsNum++;
-			}
-
-			if (strlen(svdps->guid) && !strncmp(svdps->guid, client->guid, 8))
-			{
-				Q_strncpyz(svdps->name, va("%s", client->name), MAX_NAME_LENGTH);
-				Q_strncpyz(svdps->stats, va("%s", cmd), MAX_STRING_CHARS);
-			}
-			else
-			{
-				// if after reconnecting we have different clientNum
-				for (i = 0; i < 100; i++)
-				{
-					*svdps = sv.demoPlayerStats[i];
-
-					if (!strlen(svdps->guid))
-					{
-						Q_strcat(svdps->guid, 9, client->guid);
-						playerStatsNum++;
-					}
-
-					if (strlen(svdps->guid) && !strncmp(svdps->guid, client->guid, 8))
-					{
-						Q_strncpyz(svdps->name, va("%s", client->name), MAX_NAME_LENGTH);
-						Q_strncpyz(svdps->stats, va("%s", cmd), MAX_STRING_CHARS);
-						break;
-					}
-				}
-			}
-		}
-
-		return qtrue;
-	}
-	else if (!Q_strncmp(cmd, "sc0", 3))
-	{
-		if (sv.demoState == DS_PLAYBACK)
-		{
-			Com_Memset(sc0, 0, MAX_STRING_CHARS);
-			Q_strncpyz(sc0, va("%s", cmd), MAX_STRING_CHARS);
-		}
-
-		return qtrue;
-	}
-	else if (!Q_strncmp(cmd, "sc1", 3))
-	{
-		if (sv.demoState == DS_PLAYBACK)
-		{
-			Com_Memset(sc1, 0, MAX_STRING_CHARS);
-			Q_strncpyz(sc1, va("%s", cmd), MAX_STRING_CHARS);
-		}
-		return qtrue;
-	}
-
-	return qfalse;
 }
 
 /**
@@ -417,19 +337,15 @@ static qboolean SV_CheckGameCommand(const char *cmd)
 
 	if (!SV_CheckLastCmd(cmd, qfalse))
 	{
-		// check that the previous cmd was different from the current cmd. The engine may send the same command to every client by their cid (one command per client) instead of just sending one command to all using NULL or -1.
-		return qfalse; // drop this command, it's a repetition of the previous one
+		// check that the previous cmd was different from the current cmd.
+		// The engine may send the same command to every client by their cid
+		// (one command per client) instead of just sending one command to all using NULL or -1.
+		// drop this command, it's a repetition of the previous one
+		return qfalse;
 	}
 	else
 	{
-		// store game commands during recording to save it to file
-		if (SV_DemoStoreGameCommand(cmd))
-		{
-			return qtrue;
-		}
-		// we filter out the chat and tchat commands which are recorded and handled directly by clientCommand (which is easier to manage because it makes a difference between say, say_team and tell, which we don't have here in gamecommands: we either have chat(for say and tell) or tchat (for say_team) and the other difference is that chat/tchat messages directly contain the name of the player, while clientCommand only contains the clientid, so that it itself fetch the name from client->name
-		// do not save tinfo and entnfo, qagame during playback will handle it
-		else if (!Q_strncmp(cmd, "chat", 4) || !Q_strncmp(cmd, "tchat", 5) || !Q_strncmp(cmd, "tinfo", 5) || !Q_strncmp(cmd, "entnfo", 6))
+		if (!Q_strncmp(cmd, "chat", 4) || !Q_strncmp(cmd, "tchat", 5))
 		{
 			return qfalse; // we return false if the check wasn't right
 		}
@@ -439,27 +355,6 @@ static qboolean SV_CheckGameCommand(const char *cmd)
 			Cmd_TokenizeString(cmd);
 			SV_DemoWriteConfigString(atoi(Cmd_Argv(1)), Cmd_Argv(2)); // relay to the specialized write configstring function
 			return qfalse; // drop it with the processing of the game command
-		}
-		// do not save more than 1 /scores game command at the end of a round (VERY important) - FIXME: VERY ugly
-		// scores = 1 - receiving first scores game command (Axis)
-		// scores = 2 - receiving first scores game command (Allies)
-		// scores = 3 - start ignoring
-		else if (!Q_stricmp(cmd, "sc \"\n\"") && Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) == GS_INTERMISSION)
-		{
-			scores++;
-
-			if (scores > 2)
-			{
-				return qfalse;
-			}
-		}
-		else if (scores && Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) != GS_INTERMISSION)
-		{
-			scores = 0;
-		}
-		else if (scores > 2 && !Q_strncmp(cmd, "sc ", 3))
-		{
-			return qfalse;
 		}
 
 		return qtrue; // else, the check is OK and we continue to process with the original function
@@ -481,14 +376,11 @@ static qboolean SV_CheckConfigString(int cs_index, const char *cs_string)
 		// we return false if the check wasn't right (meaning that we stop the normal configstring processing since the clientconfigstring function will handle that)
 		return qfalse;
 	}
-	else if (cs_index < CS_MOTD)
+	else if (cs_index == CS_SYSTEMINFO)
 	{
-		// if the configstring index is below 4 (the motd), we don't save it (these are systems configstrings and will make an infinite loop for real clients at connection when the demo is played back, their management must be left to the system even at replaying)
-		// just drop this configstring
 		return qfalse;
 	}
 
-	// else, the check is OK and we continue to process to save it as a normal configstring (for capture scores CS_SCORES1/2, for CS_FLAGSTATUS, etc..)
 	return qtrue;
 }
 
@@ -501,7 +393,6 @@ void SV_DemoFilterClientUserinfo(char *userinfo)
 	Info_RemoveKey(userinfo, "cl_guid");
 	Info_RemoveKey(userinfo, "n_guid"); // nitmod guid
 	Info_RemoveKey(userinfo, "ip");
-	//Info_SetValueForKey(userinfo, "cl_voip", "0");
 }
 
 /**
@@ -538,33 +429,6 @@ static char *SV_CleanFilename(char *string)
 	return string;
 }
 
-/**
- * @brief Generate a full datetime (local and utc) from now
- * @return
- */
-static char *SV_GenerateDateTime(void)
-{
-	// Current local time
-	qtime_t   now;
-	time_t    utcnow = time(NULL);
-	struct tm tnow   = *gmtime(&utcnow);
-	char      buff[1024];
-
-	Com_RealTime(&now);
-
-	strftime(buff, sizeof buff, "timezone %Z (UTC timezone: %Y-%m-%d %H:%M:%S W%W)", &tnow);
-
-	// Return local time and utc time
-	return va("%04d-%02d-%02d %02d:%02d:%02d %s",
-	          1900 + now.tm_year,
-	          1 + now.tm_mon,
-	          now.tm_mday,
-	          now.tm_hour,
-	          now.tm_min,
-	          now.tm_sec,
-	          buff);
-}
-
 /***********************************************
 * DEMO WRITING FUNCTIONS
 * Functions used to construct and write demo events
@@ -578,8 +442,11 @@ static void SV_DemoWriteMessage(msg_t *msg)
 {
 	int len;
 
-	// Write the entire message to the file, prefixed by the length
-	MSG_WriteByte(msg, demo_EOF); // append EOF (end-of-file or rather end-of-flux) to the message so that it will tell the demo parser when the demo will be read that the message ends here, and that it can proceed to the next message
+	// write the entire message to the file, prefixed by the length
+	// append EOF (end-of-file or rather end-of-flux) to the message
+	// so that it will tell the demo parser when the demo will be read that the message ends here
+	// and that it can proceed to the next message
+	MSG_WriteByte(msg, demo_EOF);
 	len = LittleLong(msg->cursize);
 	(void) FS_Write(&len, 4, sv.demoFile);
 	(void) FS_Write(msg->data, msg->cursize, sv.demoFile);
@@ -606,44 +473,6 @@ static void SV_DemoWriteClientCommand(client_t *client, const char *cmd)
 	MSG_WriteByte(&msg, client - svs.clients);
 	MSG_WriteString(&msg, cmd);
 	SV_DemoWriteMessage(&msg);
-}
-
-/**
-* @brief Send newest game commands during playback
-*
-* @param[in] client
-* @param[in] arg0
-* @param[in] arg1
-*/
-static qboolean SV_DemoSendStoredCommands(client_t *client, const char *arg0, const char *arg1)
-{
-	if (!Q_strncmp(arg0, "score", 5))
-	{
-		if (sc0[0] && strlen(sc0))
-		{
-			SV_GameSendServerCommand(client - svs.clients, sc0, qtrue);
-		}
-
-		if (sc1[0] && strlen(sc1))
-		{
-			SV_GameSendServerCommand(client - svs.clients, sc1, qtrue);
-		}
-
-		return qtrue;
-	}
-
-	if (!Q_strncmp(arg0, "sgstats", 7))
-	{
-		int index = Q_atoi(arg1);
-		if (index >= 0 && index < MAX_CLIENTS && strlen(gstats[index]))
-		{
-			SV_GameSendServerCommand(client - svs.clients, gstats[index], qtrue);
-		}
-
-		return qtrue;
-	}
-
-	return qfalse;
 }
 
 /**
@@ -706,6 +535,36 @@ void SV_DemoWriteServerCommand(const char *cmd)
 }
 
 /**
+* @brief Write a server console command to the demo file
+* @param[in] exec_when
+* @param[in] cmd
+*
+* Records map_restart commands so we can perform it at correct time
+*
+*/
+void SV_DemoWriteServerConsoleCommand(int exec_when, const char *cmd)
+{
+	msg_t msg;
+
+	if (Q_strncmp(cmd, "map_restart", 11))
+	{
+		return;
+	}
+
+	// make sure we aren't restarting twice in the same frame
+	if (com_frameTime == sv.serverId)
+	{
+		return;
+	}
+
+	MSG_Init(&msg, buf, sizeof(buf));
+	MSG_WriteByte(&msg, demo_serverConsoleCommand);
+	MSG_WriteLong(&msg, exec_when);
+	MSG_WriteString(&msg, cmd);
+	SV_DemoWriteMessage(&msg);
+}
+
+/**
  * @brief Write a game command to the demo file
  * @param[in] clientNum
  * @param[in] cmd
@@ -727,7 +586,7 @@ void SV_DemoWriteGameCommand(int clientNum, const char *cmd)
 
 	MSG_Init(&msg, buf, sizeof(buf));
 	MSG_WriteByte(&msg, demo_gameCommand);
-	MSG_WriteByte(&msg, clientNum);
+	MSG_WriteLong(&msg, clientNum);
 	MSG_WriteString(&msg, cmd);
 	SV_DemoWriteMessage(&msg);
 }
@@ -755,8 +614,11 @@ void SV_DemoWriteConfigString(int cs_index, const char *cs_string)
 
 	MSG_Init(&msg, buf, sizeof(buf));
 	MSG_WriteByte(&msg, demo_configString);
-	Com_sprintf(cindex, sizeof(cindex), "%i", cs_index); // convert index to a string since we don't have any other way to store values that are greater than a byte (and max_configstrings is 1024 currently)
-	                                                     // FIXME: try to replace by a WriteLong instead of WriteString? Or WriteData (with length! and it uses WriteByte)
+
+	// convert index to a string since we don't have any other way to store values that are greater than a byte (and max_configstrings is 1024 currently)
+	// FIXME: try to replace by a WriteLong instead of WriteString? Or WriteData (with length! and it uses WriteByte)
+	Com_sprintf(cindex, sizeof(cindex), "%i", cs_index);
+
 	MSG_WriteString(&msg, (const char *)cindex);
 	MSG_WriteString(&msg, cs_string);
 	SV_DemoWriteMessage(&msg);
@@ -796,12 +658,13 @@ void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo)
 	static char fuserinfodata[MAX_STRING_CHARS];
 	static char *fuserinfo = fuserinfodata;
 
-	Q_strncpyz(fuserinfo, userinfo, sizeof(fuserinfodata)); // copy the client's userinfo to another storage var, so that we don't modify the client's userinfo (else the filtering will clean its infos such as cl_guid and ip, and next map change the client will be disconnected because of a wrong guid/ip!)
+	// copy the client's userinfo to another storage var, so that we don't modify the client's userinfo
+	// (else the filtering will clean its infos such as cl_guid and ip, and next map change the client will be disconnected because of a wrong guid/ip!)
+	Q_strncpyz(fuserinfo, userinfo, sizeof(fuserinfodata));
 
-	if (strlen(userinfo) > 0)
+	if (strlen(userinfo))
 	{
-		// do the filtering only if the string is not empty
-		SV_DemoFilterClientUserinfo(fuserinfo);   // filters out privacy keys such as ip, cl_guid, (cl_voip)
+		SV_DemoFilterClientUserinfo(fuserinfo);   // filters out privacy keys such as ip, cl_guid
 	}
 
 	MSG_Init(&msg, buf, sizeof(buf));
@@ -869,10 +732,9 @@ static void SV_DemoWriteAllPlayerState(void)
 	playerState_t *player;
 	int           i;
 
-	// Initiliaze msg
 	MSG_Init(&msg, buf, sizeof(buf));
 
-	// Write clients playerState (playerState_t)
+	// write clients playerState (playerState_t)
 	for (i = 0; i < sv_maxclients->integer; i++)
 	{
 		if (svs.clients[i].state < CS_ACTIVE)
@@ -887,7 +749,7 @@ static void SV_DemoWriteAllPlayerState(void)
 		sv.demoPlayerStates[i] = *player;
 	}
 
-	// Commit all these datas to the demo file
+	// commit all these datas to the demo file
 	SV_DemoWriteMessage(&msg);
 }
 
@@ -905,10 +767,9 @@ static void SV_DemoWriteAllEntityState(void)
 	sharedEntity_t *entity;
 	int            i;
 
-	// Initiliaze msg
 	MSG_Init(&msg, buf, sizeof(buf));
 
-	// Write entities (gentity_t->entityState_t or concretely sv.gentities[num].s, in gamecode level. instead of sv.)
+	// write entities (gentity_t->entityState_t or concretely sv.gentities[num].s, in gamecode level. instead of sv.)
 	MSG_WriteByte(&msg, demo_entityState);
 	for (i = 0; i < sv.num_entities; i++)
 	{
@@ -923,9 +784,11 @@ static void SV_DemoWriteAllEntityState(void)
 		sv.demoEntities[i].s = entity->s;
 	}
 
-	MSG_WriteBits(&msg, ENTITYNUM_NONE, GENTITYNUM_BITS); // End marker/Condition to break: since we don't know prior how many entities we store, when reading  the demo we will use an empty entity to break from our while loop
+	// end marker/Condition to break: since we don't know prior how many entities we store,
+	// when reading the demo we will use an empty entity to break from our while loop
+	MSG_WriteBits(&msg, ENTITYNUM_NONE, GENTITYNUM_BITS);
 
-	// Commit all these datas to the demo file
+	// commit all these datas to the demo file
 	SV_DemoWriteMessage(&msg);
 }
 
@@ -942,10 +805,9 @@ static void SV_DemoWriteAllEntityShared(void)
 	sharedEntity_t *entity;
 	int            i;
 
-	// Initiliaze msg
 	MSG_Init(&msg, buf, sizeof(buf));
 
-	// Write entities (gentity_t->entityShared_t or concretely sv.gentities[num].r, in gamecode level. instead of sv.)
+	// write entities (gentity_t->entityShared_t or concretely sv.gentities[num].r, in gamecode level. instead of sv.)
 	MSG_WriteByte(&msg, demo_entityShared);
 
 	for (i = 0; i < sv.num_entities; i++)
@@ -960,95 +822,12 @@ static void SV_DemoWriteAllEntityShared(void)
 		sv.demoEntities[i].r = entity->r;
 	}
 
-	MSG_WriteBits(&msg, ENTITYNUM_NONE, GENTITYNUM_BITS); // End marker/Condition to break: since we don't know prior how many entities we store, when reading  the demo we will use an empty entity to break from our while loop
+	// end marker/Condition to break: since we don't know prior how many entities we store,
+	// when reading the demo we will use an empty entity to break from our while loop
+	MSG_WriteBits(&msg, ENTITYNUM_NONE, GENTITYNUM_BITS);
 
-	// Commit all these datas to the demo file
+	// commit all these datas to the demo file
 	SV_DemoWriteMessage(&msg);
-}
-
-/**
-* @brief SV_DemoRequestStats
-*
-* FIXME: look into storing and replaying ws, wstats, stshots.
-*/
-static void SV_DemoRequestStats(void)
-{
-	client_t   *client;
-	static int lastRequestTime = 0;
-	int        num             = sv_maxclients->integer - 1;
-
-	if (lastRequestTime + 5000 > svs.time)
-	{
-		return;
-	}
-
-	lastRequestTime = svs.time;
-
-	client = &svs.clients[num];
-
-	if (client->state != CS_FREE && client->demoClient)
-	{
-		client_t  *cl;
-		usercmd_t cmd;
-		int       i;
-
-		Com_Memset(&cmd, 0, sizeof(usercmd_t));
-		cmd.serverTime = svs.time;
-
-		for (i = 0, cl = svs.clients; i < num; i++, cl++)
-		{
-			if (cl->state == CS_ACTIVE)
-			{
-				SV_ExecuteClientCommand(client, va("sgstats %d", i), qtrue, qfalse);
-			}
-		}
-
-		SV_ExecuteClientCommand(client, "score", qtrue, qfalse);
-
-		// needed to actually request scoreboard stats (score)
-		SV_ClientThink(client, &cmd);
-	}
-}
-
-/**
-* @brief SV_DemoConnectDummy
-*
-* @details Connect dummy client on last available server slot that will be used as requester of stats.
-*
-*/
-static void SV_DemoConnectDummy()
-{
-	client_t       *client;
-	sharedEntity_t *entity;
-	const char     userinfo[]     = "\\cg_etVersion\\ETLTV\\etVersion\\ETLTV\\name\\^7ETLTV\\rate\\45000\\snaps\\40";
-	const char     configstring[] = "n\\^7ETLTV\\3\\1\\c\\1\\lc\\1\\r\\0\\p\\6\\m\\0000000\\s\\0000000\\dn\\ - 1\\w\\3\\lw\\3\\sw\\2\\lsw\\2\\mu\\0\\ref\\0\\sc\\1\\u\\246";
-	int            num            = sv_maxclients->integer - 1;
-
-	client = &svs.clients[num];
-
-	if (client->state != CS_FREE)
-	{
-		return;
-	}
-
-	client->demoClient = qtrue;
-	entity             = SV_GentityNum(num);
-
-	NET_StringToAdr("localhost", &client->netchan.remoteAddress, NA_LOOPBACK);
-	entity->r.svFlags |= SVF_BOT; // set player as a "bot" so the empty IP and GUID will not cause a kick
-
-	Cmd_TokenizeString(va("userinfo \"%s\"", userinfo));
-	SV_UpdateUserinfo_f(client);
-
-	// set the flag back or the dummy will actually play
-	entity->r.svFlags &= ~SVF_BOT;
-
-	SV_SetConfigstring(CS_PLAYERS + num, configstring);
-	Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);
-
-	SV_ClientEnterWorld(client, NULL);
-
-	SV_ExecuteClientCommand(client, "team spectator", qtrue, qfalse);
 }
 
 /**
@@ -1065,17 +844,14 @@ void SV_DemoWriteFrame(void)
 
 	// STEP1: write all entities states at the end of the frame
 
-	// Write entities (gentity_t->entityState_t or concretely sv.gentities[num].s, in gamecode level. instead of sv.)
+	// write entities (gentity_t->entityState_t or concretely sv.gentities[num].s, in gamecode level. instead of sv.)
 	SV_DemoWriteAllEntityState();
 
-	// Write entities (gentity_t->entityShared_t or concretely sv.gentities[num].r, in gamecode level. instead of sv.)
+	// write entities (gentity_t->entityShared_t or concretely sv.gentities[num].r, in gamecode level. instead of sv.)
 	SV_DemoWriteAllEntityShared();
 
-	// Write clients playerState (playerState_t)
+	// write clients playerState (playerState_t)
 	SV_DemoWriteAllPlayerState();
-
-	// Request stats
-	SV_DemoRequestStats();
 
 	//-----------------------------------------------------
 
@@ -1083,13 +859,13 @@ void SV_DemoWriteFrame(void)
 
 	MSG_Init(&msg, buf, sizeof(buf));
 
-	// Write end of frame marker: this will commit every demo entity change (and it's done at the very end of every server frame to overwrite any change the gamecode/engine may have done)
+	// write end of frame marker: this will commit every demo entity change (and it's done at the very end of every server frame to overwrite any change the gamecode/engine may have done)
 	MSG_WriteByte(&msg, demo_endFrame);
 
-	// Write server time (will overwrite the server time every end of frame)
-	MSG_WriteLong(&msg, svs.time);
+	// write server time (will overwrite the server time every end of frame)
+	MSG_WriteLong(&msg, sv.time);
 
-	// Commit data to the demo file
+	// commit data to the demo file
 	SV_DemoWriteMessage(&msg);
 }
 
@@ -1107,17 +883,22 @@ void SV_DemoWriteFrame(void)
 */
 static qboolean SV_DemoAutoDemoRecordCheck(void)
 {
-	client_t   *cl;
-	int        i;
-	static int lastCheckTime = 0;
-	qboolean   activePlayers = qfalse;
+	client_t *cl;
+	int      i;
+	qboolean activePlayers = qfalse;
 
-	if (lastCheckTime + 10000 > svs.time)
+	if (!sv.demoSupported)
+	{
+		Com_Printf("Demo recording is not supported for %s mod.\n", Cvar_VariableString("fs_game"));
+		return qfalse;
+	}
+
+	if (svs.autoDemoTime + 10000 > svs.time)
 	{
 		return qfalse;
 	}
 
-	lastCheckTime = svs.time;
+	svs.autoDemoTime = svs.time;
 
 	switch (sv_autoDemo->integer)
 	{
@@ -1171,9 +952,9 @@ static qboolean SV_DemoAutoDemoRecordCheck(void)
 void SV_DemoAutoDemoRecord(void)
 {
 	qtime_t now;
-	char    demoname[MAX_QPATH];
+	char    demoname[MAX_OSPATH];
 
-	Com_Memset(demoname, 0, MAX_QPATH);
+	Com_Memset(demoname, 0, MAX_OSPATH);
 
 	if (!SV_DemoAutoDemoRecordCheck())
 	{
@@ -1190,7 +971,7 @@ void SV_DemoAutoDemoRecord(void)
 	                        now.tm_min,
 	                        now.tm_sec,
 	                        SV_CleanFilename(Cvar_VariableString("mapname"))),
-	           MAX_QPATH);
+	           MAX_OSPATH);
 
 	// print a message
 	Com_Printf("DEMO: automatic recording server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
@@ -1200,99 +981,117 @@ void SV_DemoAutoDemoRecord(void)
 }
 
 /**
- * @brief Close the demo file and restart the map (can be used both when recording or when playing or at shutdown of the game)
- */
-static void SV_DemoStopPlayback(void)
-{
-	client_t *client;
-	int      olddemostate = sv.demoState;
-
-	// Clear client configstrings
-	if (olddemostate == DS_PLAYBACK)
-	{
-		int i;
-
-		// unload democlients only if we were replaying a demo (if not it will produce an error!)
-		for (i = 0; i < sv_democlients->integer; i++)
-		{
-			client = &svs.clients[i];
-			if (client->demoClient)
-			{
-				SV_DropClient(client, "disconnected");   // same as SV_Disconnect_f(client);
-				client->demoClient = qfalse;
-			}
-		}
-	}
-
-	// Close demo file after playback
-	FS_FCloseFile(sv.demoFile);
-	sv.demoState = DS_NONE;
-	Cvar_SetValue("sv_demoState", DS_NONE);
-	Com_Printf("DEMO: End of demo. Stopped playing demo %s.\n", sv.demoName);
-
-	SV_DemoCvarsRestore();
-
-	// LAST RELOAD (to reinit all vars)
-	// demo hasn't actually started yet
-	if (olddemostate == DS_NONE && !keepSaved)
-	{
-		// If keepSaved is true, then this restart procedure is totally normal (and that's why we keep values saved), else it is not normal and probably an error happened
-#ifdef DEDICATED
-		Com_Printf("DEMOERROR: An error happened while playing/recording the demo, please check the log for more info\n"); // if server, don't crash it if an error happens, just print a message
-#else
-		Cvar_SetValue("sv_killserver", 1); // do we have to do this for our listen sever? - we do Com_Error after ...
-		Com_Error(ERR_DROP, "An error happened while replaying the demo, please check the log for more info.");
-#endif
-	}
-	else if (olddemostate == DS_PLAYBACK)
-	{
-		// set a special state to say that we are waiting to stop (SV_DemoChangeMaxClients() will set to DS_NONE after moving the real clients to their correct slots)
-		sv.demoState = DS_WAITINGSTOP;
-		Cvar_SetValue("sv_demoState", DS_WAITINGSTOP);
-#ifdef DEDICATED
-		Cbuf_AddText(va("map %s\n", Cvar_VariableString("mapname")));   // better to do a map command rather than map_restart if we do a mod switching with game_restart, map_restart will point to no map (because the config is completely unloaded)
-#else
-		// Update sv_maxclients latched value (since we will kill the server because it's not a dedicated server, we won't restart the map, so latched values won't be affected unless we force the refresh)
-		Cvar_Get("sv_maxclients", "20", 0);   // FIXME: Restore sv_maxclients value (force latched values to commit)
-		                                      // set to 20 clients (ETL default value)
-		sv_maxclients->modified = qfalse; // Set modified to false // FIXME: this is more than ugly
-		// Kill the local server
-		Cvar_SetValue("sv_killserver", 1); // instead of sending a Cbuf_AddText("killserver") command, we here just set a special cvar which will kill the server at the next SV_Frame() iteration (smoother than force killing)
-#endif
-	}
-}
-
-/**
- * @brief Call this to abort the demo play by error.
- * @param [in]
- */
-static void _attribute((noreturn)) SV_DemoPlaybackError(const char *message)
-{
-	// FIXME: reset static vars?!
-
-	SV_DemoStopPlayback();
-
-	Com_Error(ERR_DROP, "SV_DemoPlaybackError: %s\n", message);
-}
-
-/**
- * @brief Just issue again the demo_play command along with the demo filename (used when the system will automatically restart the server for special cvars values to be set up, eg: sv_maxclients, fs_game, g_gametype, etc..)
- */
+* @brief SV_DemoRestartPlayback Just issue again the demo_play command along with the demo filename
+* (used when the system will automatically restart the server for special cvars values to be set up, eg: sv_maxclients, fs_game, g_gametype, etc..)
+*/
 void SV_DemoRestartPlayback(void)
 {
 	if (strlen(savedPlaybackDemoname))
 	{
-		// Set the demoState from DS_WAITINGPLAYBACK to DS_NONE (this avoids the engine to repeatedly restart the playback until it gets done, here we just launch it once) - this fix messages bug and accelerate the loading of the demo when switching mods
-		sv.demoState = DS_NONE;
-		Cvar_SetValue("sv_demoState", DS_NONE);
-		// Restart the playback (reissue the demo_play command and the demo filename)
+		// set the demoState from DS_WAITINGPLAYBACK to DS_NONE (this avoids the engine to repeatedly restart the playback until it gets done, here we just launch it once)
+		// this fix messages bug and accelerate the loading of the demo when switching mods
+		sv.demoState = DS_RESTART;
+		Cvar_SetValue("sv_demoState", DS_RESTART);
+		// restart the playback (reissue the demo_play command and the demo filename)
 		Cbuf_AddText(va("%s\n", savedPlaybackDemoname));
 	}
 	return;
 }
 
 /**
- * @brief Start the playback of a demo
+* @brief SV_DemoPlayNext Plays next demo from the list
+*/
+static qboolean SV_DemoPlayNext(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_DEMO_AUTOPLAY; i++)
+	{
+		if (strlen(demoAutoPlay[i]))
+		{
+			restoreSavedCvars = qfalse;
+			Com_sprintf(sv.demoName, sizeof(sv.demoName), demoAutoPlay[i]);
+			Com_Memset(demoAutoPlay[i], 0, sizeof(demoAutoPlay[i]));
+
+			if (com_sv_running->integer)
+			{
+				Cbuf_AddText("map_restart 0\n");
+			}
+
+			Cbuf_AddText(va("demo_play \"%s\"\n", sv.demoName));
+
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief SV_DemoStopPlayback Close the demo file and restart the map (can be used both when recording or when playing or at shutdown of the game)
+ */
+static void SV_DemoStopPlayback(const char *message)
+{
+	client_t *client;
+	int      i;
+
+	FS_FCloseFile(sv.demoFile);
+
+	Com_Printf("%s (%s)\n", message, sv.demoName);
+
+	if (sv.demoState == DS_ERROR)
+	{
+		sv.demoState = DS_NONE;
+		Cvar_SetValue("sv_demoState", DS_NONE);
+		Cvar_SetValue("sv_killserver", 1); // do we have to do this for our listen sever? - we do Com_Error after ...
+		SV_DemoCvarsRestore();
+		if (strlen(message))
+		{
+			Com_Error(ERR_DROP, message);
+		}
+		else
+		{
+			Com_Error(ERR_DROP, "An error happened while replaying the demo, please check the log for more info.");
+		}
+	}
+	else if (sv.demoState == DS_PLAYBACK)
+	{
+		if (!SV_DemoPlayNext())
+		{
+			Cvar_SetValue("sv_killserver", 1);
+			SV_DemoCvarsRestore();
+		}
+		else
+		{
+			// unload democlients
+			for (i = 0; i < sv_democlients->integer; i++)
+			{
+				client = &svs.clients[i];
+				if (client->demoClient)
+				{
+					SV_DropClient(client, "disconnected");   // same as SV_Disconnect_f(client);
+					client->demoClient = qfalse;
+				}
+			}
+		}
+
+		sv.demoState = DS_NONE;
+		Cvar_SetValue("sv_demoState", DS_NONE);
+	}
+}
+
+/**
+* @brief SV_DemoPlaybackError Call this to abort the demo play by error.
+* @param [in]
+*/
+static void _attribute((noreturn)) SV_DemoPlaybackError(const char *message)
+{
+	sv.demoState = DS_ERROR;
+	SV_DemoStopPlayback(va("SV_DemoPlaybackError: %s", message));
+}
+
+/**
+ * @brief SV_DemoStartPlayback Start the playback of a demo
  *
  * @details sv.demo* have already been set and the demo file opened, start reading gamestate info.
  *
@@ -1305,26 +1104,19 @@ void SV_DemoRestartPlayback(void)
 static void SV_DemoStartPlayback(void)
 {
 	msg_t msg;
-	int   r, time = 400, i, clients = 0, fps = 0, gametype = 0, timelimit = 0, fraglimit = 0, capturelimit = 0, warmuptime = 0, gamestate = GS_INITIALIZE;
-	int   g_currentRound = 0, g_doWarmup = 0, g_warmup = 60, match_minplayers = Q_atoi(MATCH_MINPLAYERS), match_readypercent = 100, g_intermissiontime = 60;
-	int   g_userTimeLimit = 0, g_useralliedrespawntime = 0, g_useraxisrespawntime = 0;
-	float g_moverScale = 1.0f;
-	char  map[MAX_QPATH];
-	char  fs[MAX_QPATH]; // FIXME:  MAX_QPATH - only 64 chars ?!!!
-	char  hostname[MAX_NAME_LENGTH];
-	char  datetime[1024]; // there's no limit in the whole engine specifically designed for dates and time...
-	char  *metadata; // used to store the current metadata index
-	char  g_customConfig[MAX_CVAR_VALUE_STRING];
+	char  map[MAX_QPATH], fs[MAX_QPATH];
+	char  key[BIG_INFO_STRING], value[BIG_INFO_STRING];
+	char  hostname[MAX_NAME_LENGTH]; // unused
+	char  *metadata;
+	int   i, r, time = 400, fps = 20, clients = 0, gametype = 0;
 
 	Com_Memset(map, 0, MAX_QPATH);
 	Com_Memset(fs, 0, MAX_QPATH);
 	Com_Memset(hostname, 0, MAX_NAME_LENGTH);
-	Com_Memset(datetime, 0, 1024);
 
-	// Initialize the demo message buffer
 	MSG_Init(&msg, buf, sizeof(buf));
 
-	// Get the demo header
+	// get the demo header
 	r = FS_Read(&msg.cursize, 4, sv.demoFile);
 	if (r != 4)
 	{
@@ -1347,354 +1139,139 @@ static void SV_DemoStartPlayback(void)
 		SV_DemoPlaybackError("DEMOERROR: Demo file was truncated.\n");
 	}
 
-	// Reading meta-data (infos about the demo)
-	// Note: we read with an if statement, so that if in the future we add more meta datas, older demos which haven't these meta datas will still be replayable
-	metadata = "";
-	while (Q_stricmp(metadata, "endMeta"))
+	if (restoreSavedCvars)
 	{
-		metadata = MSG_ReadString(&msg);   // We read the meta data marker
+		Com_Memset(savedCvarsInfo, 0, BIG_INFO_STRING);
+		Q_strncpyz(savedCvarsInfo, Cvar_InfoString_Big(CVAR_SERVERINFO | CVAR_WOLFINFO), BIG_INFO_STRING);
+		Info_SetValueForKey(savedCvarsInfo, "sv_fps", va("%i", sv_fps->integer));
+		Info_SetValueForKey(savedCvarsInfo, "sv_serverTimeReset", va("%i", sv_serverTimeReset->integer));
+	}
 
-		if (!Q_stricmp(metadata, "endMeta"))     // if the string is the special endMeta string, we already break
+	Cvar_SetValue("sv_serverTimeReset", 1);
+
+	metadata = MSG_ReadString(&msg);
+
+	// reading meta-data (mostly cvars)
+	while (metadata)
+	{
+		Info_NextPair(&metadata, key, value);
+
+		if (!key[0])
 		{
 			break;
 		}
-		else if (!Q_stricmp(metadata, "clients"))
-		{ // democlients
-			// Check slots, time and map
-			clients = MSG_ReadByte(&msg); // number of democlients (sv_maxclients at the time of the recording)
-			if (sv_maxclients->integer < clients || // if we have less real slots than democlients slots or
-			    savedMaxClients < 0 || // if there's no savedMaxClients (so this means we didin't change sv_maxclients yet, and we always need to do so since we need to add sv_democlients)
-			    sv_maxclients->integer <= savedMaxClients)
-			{ // or if maxclients is below or equal to the previous value of maxclients (normally it can only be equal, but if we switch the mod with game_restart, it can get the default value of 8, which can be below, so we need to check that as well)
-				Com_Printf("DEMO: Not enough demo slots, automatically increasing sv_democlients to %d and sv_maxclients to %d.\n", clients, (sv_maxclients->integer + clients > MAX_CLIENTS) ? MAX_CLIENTS : sv_maxclients->integer + clients);
 
-				// save the old values of sv_maxclients, sv_democlients and bot_minplayers to later restore them
-				if (savedMaxClients < 0) // save only if it's the first value, the subsequent ones may be default values of the engine
-				{
-					savedMaxClients = sv_maxclients->integer;
-				}
-
-				// automatically adjusting sv_democlients, sv_maxclients and bot_minplayers
-				Cvar_SetValue("sv_democlients", clients);
-				Cvar_SetLatched("sv_maxclients", va("%i", (sv_maxclients->integer + clients > MAX_CLIENTS) ? MAX_CLIENTS : sv_maxclients->integer + clients));
-				// BUGGY makes a dedicated server crash
-				//Cvar_Get( "sv_maxclients", "8", 0 );
-				//sv_maxclients->modified = qfalse;
-			}
-		}
-		else if (!Q_stricmp(metadata, "time"))
-		{ // server time
-			// reading server time (from the demo)
-			time = MSG_ReadLong(&msg);
+		if (!Q_stricmp(key, "time"))
+		{
+			// svs.time
+			time = Q_atoi(value);
 			if (time < 400)
 			{
 				SV_DemoPlaybackError(va("DEMOERROR: Demo time too small: %d.\n", time));
 			}
 		}
-		else if (!Q_stricmp(metadata, "sv_fps"))
+		else if (!Q_stricmp(key, "sv_fps"))
 		{
-			// reading sv_fps (from the demo)
-			fps = MSG_ReadLong(&msg);
-			if (sv_fps->integer != fps && fps > 0)
+			fps = Q_atoi(value);
+			if (sv_fps->integer != fps && sv_fps > 0)
 			{
-				savedFPS = sv_fps->integer;
 				Cvar_SetValue("sv_fps", fps);
 			}
 		}
-		else if (!Q_stricmp(metadata, "g_gametype"))
+		else if (!Q_stricmp(key, "sv_maxclients"))
 		{
-			// reading g_gametype (from the demo)
-			gametype = MSG_ReadLong(&msg);
-			// memorize the current gametype
-			if (!keepSaved)
-			{
-				savedGametype = sv_gametype->integer; // save the gametype before switching
+			// number of democlients (sv_maxclients at the time of the recording)
+			clients = Q_atoi(value);
+
+			if (sv_maxclients->integer < clients ||
+			    savedMaxClients < 0 || // if there's no savedMaxClients (so this means we didin't change sv_maxclients yet, and we always need to do so since we need to add sv_democlients)
+			    sv_maxclients->integer <= savedMaxClients)
+			{ // or if maxclients is below or equal to the previous value of maxclients (normally it can only be equal, but if we switch the mod with game_restart,
+				// it can get the default value of 8, which can be below, so we need to check that as well)
+
+				// save the old values of sv_maxclients and sv_democlients to later restore them
+				if (savedMaxClients < 0) // save only if it's the first value, the subsequent ones may be default values of the engine
+				{
+					savedMaxClients = sv_maxclients->integer;
+				}
+
+				// automatically adjusting sv_democlients and sv_maxclients
+				Cvar_SetValue("sv_democlients", clients);
+				Cvar_SetLatched("sv_maxclients", va("%i", (sv_maxclients->integer + clients > MAX_CLIENTS) ? MAX_CLIENTS : sv_maxclients->integer + clients));
+
+				Com_Printf("DEMO: Not enough demo slots, automatically increasing sv_democlients to %d and sv_maxclients to %d.\n",
+				           clients, (sv_maxclients->integer + clients > MAX_CLIENTS) ? MAX_CLIENTS : sv_maxclients->integer + clients);
 			}
 		}
-		else if (!Q_stricmp(metadata, "fs_game"))
+		else if (!Q_stricmp(key, "g_gametype"))
 		{
-			// reading fs_game (mod name)
-			Q_strncpyz(fs, MSG_ReadString(&msg), MAX_QPATH);
+			gametype = Q_atoi(value);
+		}
+		else if (!Q_stricmp(key, "gamename"))
+		{
+			// fs_game
+			Q_strncpyz(fs, value, MAX_QPATH);
 			if (strlen(fs))
 			{
 				Com_Printf("DEMO: Warning: this demo was recorded for the following mod: %s\n", fs);
 			}
 		}
-		else if (!Q_stricmp(metadata, "map"))
+		else if (!Q_stricmp(key, "mapname"))
 		{
-			// reading map (from the demo)
-			Q_strncpyz(map, MSG_ReadString(&msg), MAX_QPATH);
+			Q_strncpyz(map, value, MAX_QPATH);
 			if (!FS_FOpenFileRead(va("maps/%s.bsp", map), NULL, qfalse))
 			{
 				SV_DemoPlaybackError(va("Map does not exist: %s.\n", map));
 			}
 		}
-		else if (!Q_stricmp(metadata, "timelimit"))
+		else if (!Q_stricmp(key, "hostname"))
 		{
-			// reading initial timelimit
-			timelimit = MSG_ReadLong(&msg);
-			// memorize the current timelimit
-			if (!keepSaved)
-			{
-				savedTimelimit = Cvar_VariableIntegerValue("timelimit");
-			}
-
-			// set the demo setting
-			// Note: setting correct timelimit is essential for the demo gamestate to be replayed correctly
-			Cvar_SetValue("timelimit", timelimit);
-		}
-		else if (!Q_stricmp(metadata, "fraglimit"))
-		{
-			// reading initial fraglimit
-			fraglimit = MSG_ReadLong(&msg);
-			// memorize the current fraglimit
-			if (!keepSaved)
-			{
-				savedFraglimit = Cvar_VariableIntegerValue("fraglimit");
-			}
-
-			// set the demo setting
-			Cvar_SetValue("fraglimit", fraglimit); // Note: unnecessary for the demo to be replayed, but allows to show the limit in the HUD. FIXME: if the limit is changed during the game, the new value won't be reflected in the demo (but the demo will continue to play to its integrality)
-		}
-		else if (!Q_stricmp(metadata, "capturelimit"))
-		{
-			// reading initial capturelimit
-			capturelimit = MSG_ReadLong(&msg);
-			// memorize the current capturelimit
-			if (!keepSaved)
-			{
-				savedCapturelimit = Cvar_VariableIntegerValue("capturelimit");
-			}
-
-			// set the demo setting
-			Cvar_SetValue("capturelimit", capturelimit); // Note: unnecessary for the demo to be replayed, but allows to show the limit in the HUD. FIXME: if the limit is changed during the game, the new value won't be reflected in the demo (but the demo will continue to play to its integrality)
-
-			// Additional infos (not necessary to replay a demo)
-		}
-		else if (!Q_stricmp(metadata, "hostname"))
-		{
-			// reading sv_hostname (additional info)
-			Q_strncpyz(hostname, MSG_ReadString(&msg), MAX_NAME_LENGTH);
+			Q_strncpyz(hostname, value, MAX_NAME_LENGTH);
 
 		}
-		else if (!Q_stricmp(metadata, "datetime"))
+		else
 		{
-			// reading datetime
-			Q_strncpyz(datetime, MSG_ReadString(&msg), 1024);
-		}
-		else if (!Q_stricmp(metadata, "warmuptime"))
-		{
-			// reading warmuptime (CS_WARMUP)
-			warmuptime = MSG_ReadLong(&msg);
-		}
-		else if (!Q_stricmp(metadata, "gamestate"))
-		{
-			// reading initial gamestate
-			gamestate = MSG_ReadLong(&msg);
-
-			// FIXME: this is a workaround, when recording starts during GS_WARMUP_COUNTDOWN we can't properly set level.warmupTime and the game instantly changes gamestate to GS_PLAYING
-			// thus causing the timelimits of the map to be incorrect, as a workaround, if we start recording during GS_WARMUP_COUNTDOWN we will skip it and start replaying demo from when the game started
-			// so level.time = warmuptime instead
-			if (warmuptime && gamestate == GS_WARMUP_COUNTDOWN)
-			{
-				// set the demo setting
-				Cvar_SetValue("gamestate", GS_PLAYING);
-				time = warmuptime;
-			}
-			else
-			{
-				// set the demo setting
-				Cvar_SetValue("gamestate", gamestate);
-			}
-		}
-		else if (!Q_stricmp(metadata, "g_doWarmup"))
-		{
-			// reading g_doWarmup
-			g_doWarmup = MSG_ReadLong(&msg);
-
-			if (!keepSaved)
-			{
-				savedDoWarmup = Cvar_VariableIntegerValue("g_doWarmup");
-			}
-
-			// set the demo setting
-			Cvar_SetValue("g_doWarmup", g_doWarmup);
-		}
-		else if (!Q_stricmp(metadata, "g_warmup"))
-		{
-			// reading g_warmup
-			g_warmup = MSG_ReadLong(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("g_warmup", g_warmup);
-		}
-		else if (!Q_stricmp(metadata, "g_currentRound"))
-		{
-			// reading g_currentRound
-			g_currentRound = MSG_ReadLong(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("g_currentRound", g_currentRound);
-		}
-		else if (!Q_stricmp(metadata, "match_minplayers"))
-		{
-			// reading match_minplayers
-			match_minplayers = MSG_ReadLong(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("match_minplayers", match_minplayers);
-		}
-		else if (!Q_stricmp(metadata, "match_readypercent"))
-		{
-			// reading match_readypercent
-			match_readypercent = MSG_ReadLong(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("match_readypercent", match_readypercent);
-		}
-		else if (!Q_stricmp(metadata, "g_intermissiontime"))
-		{
-			// reading g_intermissiontime
-			g_intermissiontime = MSG_ReadLong(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("g_intermissiontime", g_intermissiontime);
-		}
-		else if (!Q_stricmp(metadata, "g_userTimeLimit"))
-		{
-			// reading g_userTimeLimit
-			g_userTimeLimit = MSG_ReadLong(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("g_userTimeLimit", g_userTimeLimit);
-
-			if (g_userTimeLimit)
-			{
-				Cvar_SetValue("timelimit", g_userTimeLimit);
-			}
-		}
-		else if (!Q_stricmp(metadata, "g_useralliedrespawntime"))
-		{
-			// reading g_useralliedrespawntime
-			g_useralliedrespawntime = MSG_ReadLong(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("g_useralliedrespawntime", g_useralliedrespawntime);
-		}
-		else if (!Q_stricmp(metadata, "g_useraxisrespawntime"))
-		{
-			// reading g_useraxisrespawntime
-			g_useraxisrespawntime = MSG_ReadLong(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("g_useraxisrespawntime", g_useraxisrespawntime);
-		}
-		else if (!Q_stricmp(metadata, "g_moverScale"))
-		{
-			// reading g_moverScale
-			g_moverScale = MSG_ReadFloat(&msg);
-
-			// set the demo setting
-			Cvar_SetValue("g_moverScale", g_moverScale);
-		}
-		else if (!Q_stricmp(metadata, "g_customConfig"))
-		{
-			// reading g_customConfig (config name)
-			// Note: configs are a big issue, they are loaded on devmap and can overwrite settings that are needed for the demo to replay correctly, like g_doWarmup or timelimit
-			// where incase of g_doWarmup it's not possible to correct it after map loads because the gamestate could be already changed
-			// the config is reloaded at times like end of GS_WARMUP_COUNTDOWN thus overwriting demo settings (fe. timelimit), we will need to save all crucial cvars instead of loading the configs
-			// leaving this for debugging in case of future issues that could be caused by custom configs
-			Q_strncpyz(g_customConfig, MSG_ReadString(&msg), MAX_CVAR_VALUE_STRING);
-			if (strlen(g_customConfig))
-			{
-				Com_Printf("DEMO: Warning: this demo was recorded for the following config: %s\n", g_customConfig);
-			}
-
-			// set the demo setting
-			Cvar_Set("g_customConfig", "");
+			Cvar_SetSafe(key, value);
 		}
 	}
 
-	// force g_antiwarp to 0 as it can break player viewangles sometimes with empty ClientThinks
-	Cvar_SetValue("g_antiwarp", 0);
-	Cvar_SetValue("g_skipCorrection", 0);
-
-	// Memorize g_allowVote
-	if (!keepSaved)
+	if (sv_demoState->integer != DS_RESTART)
 	{
-		savedAllowVote = Cvar_VariableIntegerValue("g_allowVote");
-	}
-	// Remove g_allowVote (prevent players to call a vote while a map is replaying)
-	Cvar_SetValue("g_allowVote", 0);
-	Cvar_SetValue("vote_allow_map", 0);
+		restoreSavedCvars = qfalse;
+		SV_DemoStopPlayback("Demo waiting for playback.");
 
-	// Printing infos about the demo
-	if (!sv_demoTolerant->integer)   // print the meta datas only if we're not in faults tolerance mode (because if there are missing meta datas, the printing will throw an exception! So we'd better avoid it)
-	{
-		Com_Printf("DEMO: Details of %s recorded %s on server \"%s\": sv_fps: %i initial_servertime: %i clients: %i fs_game: %s g_gametype: %i map: %s timelimit: %i fraglimit: %i capturelimit: %i \n", sv.demoName, datetime, hostname, fps, time, clients, fs, gametype, map, timelimit, fraglimit, capturelimit);
-	}
+		// set the status WAITINGPLAYBACK meaning that as soon as the server will be restarted, the next SV_Frame() iteration must reactivate the demo playback
+		// set the cvar too because when restarting the server, all sv.* vars will be destroyed (FIXME: SO WHATS THE POINT OF sv.demoState?????)
+		sv.demoState = DS_WAITINGPLAYBACK;
+		Cvar_SetValue("sv_demoState", DS_WAITINGPLAYBACK);
 
-	// Checking if all initial conditions from the demo are met (map, sv_fps, gametype, servertime, etc...)
-	// FIXME? why sv_cheats is needed? Just to be able to use cheats commands to pass through walls?
-	if (!com_sv_running->integer || Q_stricmp(sv_mapname->string, map) ||
-	    Q_stricmp(Cvar_VariableString("fs_game"), fs) ||
-	    !Cvar_VariableIntegerValue("sv_cheats") ||
-	    //(time < svs.time && !keepSaved) || // We do restart to reinit the server time
-	    sv_maxclients->modified ||
-	    (sv_gametype->integer != gametype && !(gametype == GT_SINGLE_PLAYER && sv_gametype->integer == GT_COOP))  // check for gametype change (need a restart to take effect since it's a latched var) AND check that the gametype difference is not between SinglePlayer and DM/FFA, which are in fact the same gametype (and the server will automatically change SinglePlayer to FFA, so we need to detect that and ignore this automatic change)
-	    )
-	{
-		/// Change to the right map/maxclients/mod and restart the demo playback at the next SV_Frame() iteration
+		// we need to copy the value because since we may spawn a new server (if the demo is played client-side OR if we change fs_game), we will lose all sv. vars
+		// savedPlaybackDemoname is used to restart the playback
+		Q_strncpyz(savedPlaybackDemoname, Cmd_Cmd(), MAX_OSPATH);
 
-		//Cvar_SetValue("sv_democlients", 0); // necessary to stop the playback, else it will produce an error since the demo has not yet started!
-		keepSaved = qtrue; // Declare that we want to keep the value saved (and we don't want to restore them now, because the demo hasn't started yet!)
-		SV_DemoStopPlayback(); // Stop the demo playback (reset back any change)
-		sv.demoState = DS_WAITINGPLAYBACK; // Set the status WAITINGPLAYBACK meaning that as soon as the server will be restarted, the next SV_Frame() iteration must reactivate the demo playback
-		Cvar_SetValue("sv_demoState", DS_WAITINGPLAYBACK); // set the cvar too because when restarting the server, all sv.* vars will be destroyed
-		Q_strncpyz(savedPlaybackDemoname, Cmd_Cmd(), MAX_QPATH); // we need to copy the value because since we may spawn a new server (if the demo is played client-side OR if we change fs_game), we will lose all sv. vars
+		// FIXME: game_restart is not implemented
 
-		Cvar_SetValue("sv_autoDemo", 0); // disable sv_autoDemo else it will start a recording before we can replay a demo (since we restart the map)
-		// **** Automatic mod (fs_game) switching management ****
-		if ((Q_stricmp(Cvar_VariableString("fs_game"), fs) && strlen(fs)) ||
-		    (!strlen(fs) && Q_stricmp(Cvar_VariableString("fs_game"), fs) && Q_stricmp(fs, BASEGAME)))
-		{ // change the game mod only if necessary - if it's different from the current gamemod and the new is not empty, OR the new is empty but it's not BASEGAME and it's different (we're careful because it will restart the game engine and so probably every client will get disconnected)
+		//if ((Q_stricmp(Cvar_VariableString("fs_game"), fs) && strlen(fs)) ||
+		//    (!strlen(fs) && Q_stricmp(Cvar_VariableString("fs_game"), fs) && Q_stricmp(fs, BASEGAME)))
+		//{
+		//	// switch the mod
+		//	Com_Printf("DEMO: Trying to switch automatically to the mod %s to replay the demo\n", strlen(fs) ? fs : BASEGAME);
+		//	Cvar_SetValue("sv_democlients", 0);
+		//	Cbuf_AddText(va("game_restart %s\n", fs));
+		//}
 
-			// Memorize the current mod (only if we are indeed switching mod, otherwise we will save basegame instead of empty strings and force a mod switching when stopping the demo when we haven't changed mod in the first place!)
-			if (strlen(Cvar_VariableString("fs_game")))
-			{
-				// if fs_game is not "", we save it
-				Q_strncpyz(savedFsGame, (const char *)Cvar_VariableString("fs_game"), MAX_QPATH);
-			}
-			else
-			{
-				// else, it's equal to "", and this means that we were playing in the basegame mod, but we need to have a non-empty string, else we can't use game_restart!
-				Q_strncpyz(savedFsGame, BASEGAME, MAX_QPATH);
-			}
-
-			// Switch the mod
-			Com_Printf("DEMO: Trying to switch automatically to the mod %s to replay the demo\n", strlen(fs) ? fs : BASEGAME);
-			Cvar_SetValue("sv_democlients", 0); // set sv_democlients to 0 (because game_restart will reset sv_maxclients, so we have a risk to have a greater sv_democlients than sv_maxclients, and we don't want that)
-			Cbuf_AddText(va("game_restart %s\n", fs)); // switch mod! FIXME: command doesn't exist!
-		}
-
-		// Set the game time (level.time, level.startTime) to our demo time to correctly replay the timelimits of the map/rounds
-		// This is estimate - 7 GAME_INIT_FRAMES from starting the server and loading the map and one additional frame in which we hope to get back here and start reading the demo frames
-		// But it's almost never the case, svs.time can be higher by 50-300ms, which can have a negative effect on the playback,
-		// The time will be adjusted in SV_DemoReadFrame to fix issues caused by mismatched time
-		if (time > svs.time)
-		{
-			svs.time = time - ((GAME_INIT_FRAMES + 1) * FRAMETIME) + (1000 / sv_fps->integer);
-		}
-
-		Cbuf_AddText(va("g_gametype %i\ndevmap %s\n", gametype, map)); // Change gametype and map (using devmap to enable cheats)
+		// change gametype and map (using devmap to enable cheats)
+		Cbuf_AddText(va("g_gametype %i\ndevmap %s\n", gametype, map));
 
 		return;
 	}
 
-	// Initialize our stuff
+	sv.time = time;
+
+	// initialize our stuff
 	Com_Memset(sv.demoEntities, 0, sizeof(sv.demoEntities));
 	Com_Memset(sv.demoPlayerStates, 0, sizeof(sv.demoPlayerStates));
-	Cvar_SetValue("sv_democlients", clients); // Note: we need SV_Startup() to NOT use SV_ChangeMaxClients for this to work without crashing when changing fs_game
+	Cvar_SetValue("sv_democlients", clients); // note: we need SV_Startup() to NOT use SV_ChangeMaxClients for this to work without crashing when changing fs_game
 
 	// FIXME: omnibot - this bot stuff isn't tested well (but better than before)
 	// disable bots and ensure they don't connect again
@@ -1707,27 +1284,31 @@ static void SV_DemoStartPlayback(void)
 		Com_Printf("Bye bye omnibots - you are not allowed to view this demo.\n");
 	}
 
-	// Force all real clients already connected before the demo begins to be set to spectator team
+	// force all real clients already connected before the demo begins to be set to spectator team
 	for (i = sv_democlients->integer; i < sv_maxclients->integer; i++)
 	{
 		if (svs.clients[i].state >= CS_CONNECTED)
 		{
-			// Only set as spectator a player that is at least connected (or primed or active)
-			SV_ExecuteClientCommand(&svs.clients[i], "team spectator", qtrue, qfalse); // should be more interoperable than a forceteam
-			Cbuf_ExecuteText(EXEC_NOW, va("forceteam %i spectator", i)); // sometimes team spectator does not work when a demo is replayed client-side with some mods (eg: ExcessivePlus), in this case we also issue a forceteam (even if it's less interoperable)
+			// only set as spectator a player that is at least connected (or primed or active)
+			SV_ExecuteClientCommand(&svs.clients[i], "team spectator", qtrue, qfalse);
+			Cbuf_ExecuteText(EXEC_NOW, va("forceteam %i spectator", i));
 		}
 	}
 
-	// Start reading the first frame
-	Com_Printf("Playing server-side demo %s.\n", sv.demoName); // log that the demo is started here
+	Com_Printf("Playing server-side demo %s.\n", sv.demoName);
 	SV_SendServerCommand(NULL, "chat \"^3DEMO: Server-side demo replay started!\"");   // send a message to player
 	SV_SendServerCommand(NULL, "cp \"^3DEMO: Server-side demo replay started!\"");   // send a centerprint message to player
-	sv.demoState = DS_PLAYBACK; // set state to playback
-	Cvar_SetValue("sv_demoState", DS_PLAYBACK);
-	keepSaved = qfalse; // Don't save values anymore: the next time we stop playback, we will restore previous values (because now we are really launching the playback, so anything that might happen now is either a big bug or the end of demo, in any case we want to restore the values)
-	SV_DemoReadFrame(); // reading the first frame, which should contain some initialization events (eg: initial confistrings/userinfo when demo recording started, initial entities states and placement, etc..)
 
-	return;
+	sv.demoState = DS_PLAYBACK;
+	Cvar_SetValue("sv_demoState", DS_PLAYBACK);
+
+	// don't save values anymore: the next time we stop playback, we will restore previous values (unless we are in autoplay)
+	restoreSavedCvars = qtrue;
+
+	SV_DemoStateChanged();
+
+	// reading the first frame, which should contain some initialization events (eg: initial confistrings/userinfo when demo recording started, initial entities states and placement, etc..)
+	SV_DemoReadFrame();
 }
 
 /**
@@ -1737,88 +1318,25 @@ static void SV_DemoStartPlayback(void)
 static void SV_DemoStartRecord(void)
 {
 	msg_t msg;
+	char  *info;
 	int   i;
 
-	// Set democlients to 0 since it's only used for replaying demo
+	// set democlients to 0 since it's only used for replaying demo
 	Cvar_SetValue("sv_democlients", 0);
 
 	MSG_Init(&msg, buf, sizeof(buf));
 
-	// Write number of clients (sv_maxclients < MAX_CLIENTS or else we can't playback)
-	MSG_WriteString(&msg, "clients"); // for each demo meta data (infos about the demo), we prepend the name of the var (this allows for fault tolerance and retrocompatibility) - FIXME? We could also use MSG_LookaheadByte() to read a byte, instead of a string, this would save a tiny bit of storage space
-	MSG_WriteByte(&msg, sv_maxclients->integer);
-	// Write current server in-game time
-	MSG_WriteString(&msg, "time");
-	MSG_WriteLong(&msg, svs.time);
-	// Write sv_fps
-	MSG_WriteString(&msg, "sv_fps");
-	MSG_WriteLong(&msg, sv_fps->integer);
-	// Write g_gametype
-	MSG_WriteString(&msg, "g_gametype");
-	MSG_WriteLong(&msg, sv_gametype->integer);
-	// Write fs_game (mod name)
-	MSG_WriteString(&msg, "fs_game");
-	MSG_WriteString(&msg, Cvar_VariableString("fs_game"));
-	// Write map name
-	MSG_WriteString(&msg, "map");
-	MSG_WriteString(&msg, sv_mapname->string);
-	// Write timelimit
-	MSG_WriteString(&msg, "timelimit");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("timelimit"));
-	// Write sv_hostname (only for info)
-	MSG_WriteString(&msg, "hostname");
-	MSG_WriteString(&msg, sv_hostname->string);
-	// Write current datetime (only for info)
-	MSG_WriteString(&msg, "datetime");
-	MSG_WriteString(&msg, SV_GenerateDateTime());
-	// Write warmuptime (CS_WARMUP)
-	MSG_WriteString(&msg, "warmuptime");
-	MSG_WriteLong(&msg, Q_atoi(sv.configstrings[CS_WARMUP]));
-	// Write current gamestate
-	MSG_WriteString(&msg, "gamestate");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("gamestate"));
-	// Write g_doWarmup
-	MSG_WriteString(&msg, "g_doWarmup");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_doWarmup"));
-	// Write g_warmup
-	MSG_WriteString(&msg, "g_warmup");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_warmup"));
-	// Write g_currentRound
-	MSG_WriteString(&msg, "g_currentRound");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_currentRound"));
-	// Write match_minplayers
-	MSG_WriteString(&msg, "match_minplayers");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("match_minplayers"));
-	// Write match_readypercent
-	MSG_WriteString(&msg, "match_readypercent");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("match_readypercent"));
-	// Write g_intermissiontime
-	MSG_WriteString(&msg, "g_intermissiontime");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_intermissiontime"));
-	// Write g_userTimeLimit
-	MSG_WriteString(&msg, "g_userTimeLimit");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_userTimeLimit"));
-	// Write g_useralliedrespawntime
-	MSG_WriteString(&msg, "g_useralliedrespawntime");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_useralliedrespawntime"));
-	// Write g_useraxisrespawntime
-	MSG_WriteString(&msg, "g_useraxisrespawntime");
-	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_useraxisrespawntime"));
-	// Write g_moverScale
-	MSG_WriteString(&msg, "g_moverScale");
-	MSG_WriteLong(&msg, Cvar_VariableValue("g_moverScale"));
-	// Write current config
-	MSG_WriteString(&msg, "g_customConfig");
-	MSG_WriteString(&msg, Cvar_VariableString("g_customConfig"));
+	info = Cvar_InfoString_Big(CVAR_SERVERINFO | CVAR_WOLFINFO);
 
-	// Write end of meta datas (since we will read a string each loop, we need to set a special string to specify the reader that we end the loop, we cannot use a marker because it's a byte)
-	MSG_WriteString(&msg, "endMeta");
+	Info_SetValueForKey(info, "time", va("%i", sv.time));
+	Info_SetValueForKey(info, "sv_fps", va("%i", sv_fps->integer));
+	MSG_WriteString(&msg, info);
 
-	// Write all the above into the demo file
+	// write all the above into the demo file
 	SV_DemoWriteMessage(&msg);
 
-	// Write initial clients userinfo
-	// Note: should be before clients configstrings since clients configstrings are derived from userinfo
+	// write initial clients userinfo
+	// note: should be before clients configstrings since clients configstrings are derived from userinfo
 	for (i = 0; i < sv_maxclients->integer; i++)
 	{
 		client_t *client = &svs.clients[i];
@@ -1833,32 +1351,34 @@ static void SV_DemoStartRecord(void)
 		}
 	}
 
-	// Write all configstrings (such as current capture score CS_SCORE1/2, etc...), including clients configstrings
-	// Note: system configstrings will be filtered and excluded (there's a check function for that), and clients configstrings  will be automatically redirected to the specialized function (see the check function)
+	// write all configstrings (such as current capture score CS_SCORE1/2, etc...), including clients configstrings
+	// note: system configstrings will be filtered and excluded (there's a check function for that)
+	// and clients configstrings  will be automatically redirected to the specialized function (see the check function)
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++)
 	{
-		if (sv.configstrings[i])     // if the configstring pointer exists in memory (because we will check all the possible indexes, but we don't know if they really exist in memory and are used or not, so here we check for that)
+		// if the configstring pointer exists in memory (because we will check all the possible indexes,
+		// but we don't know if they really exist in memory and are used or not, so here we check for that)
+		if (sv.configstrings[i])
 		{
 			SV_DemoWriteConfigString(i, sv.configstrings[i]);
 		}
 	}
 
-	// Write entities and players
+	// write entities and players
 	Com_Memset(sv.demoEntities, 0, sizeof(sv.demoEntities));
 	Com_Memset(sv.demoPlayerStates, 0, sizeof(sv.demoPlayerStates));
-	Com_Memset(sv.demoPlayerStats, 0, sizeof(sv.demoPlayerStats));
-	playerStatsNum = 0;
-	// End of frame
+
+	// end of frame
 	SV_DemoWriteFrame();
-	// Announce we are writing the demo
+
+	// anounce we are writing the demo
 	Com_Printf("DEMO: Recording server-side demo %s.\n", sv.demoName);
 	SV_SendServerCommand(NULL, "chat \"^3DEMO: Recording server-side demo %s.\"", sv.demoName);
-	// Change recording state
+
 	sv.demoState = DS_RECORDING;
 	Cvar_SetValue("sv_demoState", DS_RECORDING);
 
-	// connect dummy client that will be used to collect stats
-	SV_DemoConnectDummy();
+	SV_DemoStateChanged();
 }
 
 /**
@@ -1867,50 +1387,22 @@ static void SV_DemoStartRecord(void)
  */
 static void SV_DemoStopRecord(void)
 {
-	client_t     *client = &svs.clients[sv_maxclients->integer - 1];
-	msg_t        msg;
-	fileHandle_t demoStatsFile;
-	char         statsFileName[MAX_QPATH], buffer[2048];
-	int          i;
+	msg_t msg;
 
-	// End the demo
+	// end the demo
 	MSG_Init(&msg, buf, sizeof(buf));
 	MSG_WriteByte(&msg, demo_endDemo);
 	SV_DemoWriteMessage(&msg); // this also writes demo_EOF
 
-	// Close the file (else it won't be openable until the server is closed)
+	// close the file (else it won't be openable until the server is closed)
 	FS_FCloseFile(sv.demoFile);
-	// Change recording state
+	// change recording state
 	sv.demoState = DS_NONE;
 	Cvar_SetValue("sv_demoState", DS_NONE);
-	// Announce
+	SV_DemoStateChanged();
+	// announce
 	Com_Printf("DEMO: Stopped recording server-side demo %s.\n", sv.demoName);
 	SV_SendServerCommand(NULL, "chat \"^3DEMO: Stopped recording server-side demo %s.\"", sv.demoName);
-
-	// disconnect dummy client if there is one
-	if (client->state != CS_FREE && client->demoClient)
-	{
-		SV_DropClient(client, "disconnected");
-		client->demoClient = qfalse;
-	}
-
-	// save player stats to file
-	COM_StripExtension(sv.demoName, statsFileName, MAX_QPATH);
-	demoStatsFile = FS_FOpenFileWrite(va("%s.txt", statsFileName));
-
-	if (!demoStatsFile)
-	{
-		Com_Printf("DEMO: ERROR: Couldn't open %s.txt for writing.\n", statsFileName);
-		return;
-	}
-
-	for (i = 0; i < playerStatsNum; i++)
-	{
-		Q_strncpyz(buffer, va("%s", va("%s\\%s\\%s", sv.demoPlayerStats[i].guid, sv.demoPlayerStats[i].name, sv.demoPlayerStats[i].stats)), 2048);
-		FS_Write(buffer, strlen(buffer), demoStatsFile);
-	}
-
-	FS_FCloseFile(demoStatsFile);
 }
 
 /***********************************************
@@ -1954,12 +1446,29 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 }
 
 /**
+* @brief SV_DemoReadServerConsoleCommand
+*
+* Replay a server console command (map_restart)
+*
+* @param[in] msg
+*/
+static void SV_DemoReadServerConsoleCommand(msg_t *msg)
+{
+	char *cmd;
+	int  exec_when;
+
+	exec_when = MSG_ReadLong(msg);
+	cmd       = MSG_ReadString(msg);
+	Cbuf_ExecuteText(exec_when, cmd);
+}
+
+/**
  * @brief Replay a game command
  *
  * @details Game command management, such as prints/centerprint (cp) scores command, except chat/tchat (handled by clientCommand)
  *
  * Basically the same as demo_serverCommand (because sv_GameSendServerCommand uses SV_SendServerCommand,
- * but game commands are safe to be replayed to everyone (but shouldn't), while server commands may be unsafe such as disconnect)
+ * game commands are NOT safe to be replayed to everyone, server commands may be unsafe such as disconnect)
  *
  * @param[in] msg
  */
@@ -1969,9 +1478,50 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 	client_t      *client;
 	char          *cmd;
 	int           clientNum, i;
+	static int    time    = 0;
+	qboolean      canSend = qfalse;
 
-	clientNum = MSG_ReadByte(msg);
+	clientNum = MSG_ReadLong(msg);
 	cmd       = MSG_ReadString(msg);
+
+	// FIXME:
+	// ugly fix for something that should be fixed in mod
+	// at least when intermission starts, mod starts sending various commands to clients with stats
+	// but those stats are sent in a loop in mod to every client and every command is saved and replayed,
+	// by sending 1 command with clientNum -1 from mod instead, server would replicate them to all clients while saving only 1 command to demo
+	if (Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate")) == GS_INTERMISSION)
+	{
+		// try limiting to one exact same command per frame (buggy)
+		// if not done it spams players with a lot of commands,
+		// or even kicks them off the server because of exceeding reliable commands buffer (it can fill the buffer in 1 frame before even 1 cmd is sent)
+		if (time == sv.time)
+		{
+			if (cmdsPerFrameCount > MAX_RELIABLE_COMMANDS)
+			{
+				Com_Printf("Demo playback: game commands over limit.\n");
+				return;
+			}
+			for (i = 0; i < cmdsPerFrameCount; i++)
+			{
+				if (strlen(cmds[i]) && !Q_stricmp(cmds[i], cmd))
+				{
+					return;
+				}
+			}
+
+			Q_strncpyz(cmds[cmdsPerFrameCount], cmd, MAX_STRING_CHARS);
+			cmdsPerFrameCount++;
+			canSend = qtrue;
+		}
+		else
+		{
+			Com_Memset(cmds, 0, sizeof(cmds));
+			Q_strncpyz(cmds[0], cmd, MAX_STRING_CHARS);
+			cmdsPerFrameCount = 1;
+			time              = sv.time;
+			canSend           = qtrue;
+		}
+	}
 
 	if (SV_CheckLastCmd(cmd, qfalse) && clientNum < sv_maxclients->integer)
 	{
@@ -1982,23 +1532,14 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 		}
 
 		// do not send game commands to democlients
-		for (i = 0, client = svs.clients; i < sv_maxclients->integer; i++, client++)
+		for (i = sv_democlients->integer, client = svs.clients + sv_democlients->integer; i < sv_maxclients->integer; i++, client++)
 		{
 			player = SV_GameClientNum(i);
 
-			// FIXME: this is just stupid
-			// commands that get sent to every connected client
-			if (!client->demoClient && client->state == CS_ACTIVE && SV_DemoGameCommandFilter(cmd))
+			if (client->state == CS_ACTIVE && (clientNum == -1 || player->clientNum == clientNum || canSend))
 			{
-
+				SV_GameSendServerCommand(i, cmd);
 			}
-			// send game commands to real clients only if they are following a democlient that receives the command
-			else if (client->demoClient || client->state <= CS_PRIMED || player->clientNum != clientNum)
-			{
-				continue;
-			}
-
-			SV_GameSendServerCommand(i, cmd, qtrue);
 		}
 	}
 }
@@ -2009,6 +1550,8 @@ static void SV_DemoReadGameCommand(msg_t *msg)
  */
 static void SV_DemoReadConfigString(msg_t *msg)
 {
+	char key[BIG_INFO_KEY];
+	char value[BIG_INFO_VALUE];
 	char *configstring;
 	int  num;
 
@@ -2016,20 +1559,37 @@ static void SV_DemoReadConfigString(msg_t *msg)
 	num          = Q_atoi(MSG_ReadString(msg));
 	configstring = MSG_ReadString(msg);
 
+	// we make sure to not overwrite real client configstrings (else when the demo starts, normal players will have no name, no model and no status!)
+	// this cannot be done at recording time because we can't know how many sv_maxclients will be set at replaying time
 	if (num < CS_PLAYERS + sv_democlients->integer || num >= CS_PLAYERS + sv_maxclients->integer)
 	{
-		// we make sure to not overwrite real client configstrings (else when the demo starts, normal players will have no name, no model and no status!) - this cannot be done at recording time because we can't know how many sv_maxclients will be set at replaying time
 		SV_SetConfigstring(num, configstring);
 
-		// Set cvars based on configstrings
-		if (num == CS_WOLFINFO && strlen(configstring))
+		// set cvars based on configstrings
+		while (configstring)
 		{
-			float timelimit = Q_atof(Info_ValueForKey(configstring, "g_nextTimeLimit"));
+			Info_NextPair(&configstring, key, value);
 
-			if (timelimit)
+			if (!key[0])
 			{
-				Cvar_SetValue("g_nextTimeLimit", timelimit);
+				break;
 			}
+
+			if (Cvar_Flags(key) & CVAR_NONEXISTENT)
+			{
+				continue;
+			}
+
+			if (!Q_stricmp(key, "g_nextTimeLimit") && Q_atof(value))
+			{
+				Cvar_SetSafe("timelimit", value);
+			}
+			else if (!Q_stricmp(key, "sv_maxclients"))
+			{
+				continue;
+			}
+
+			Cvar_SetSafe(key, value);
 		}
 	}
 }
@@ -2054,9 +1614,9 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 	configstring = MSG_ReadString(msg);
 
 	/**** DEMOCLIENTS CONNECTION MANAGEMENT  ****/
-	// This part manages when a client should begin or be dropped based on the configstrings. This is a workaround because begin and disconnect events are managed in the gamecode,
+	// this part manages when a client should begin or be dropped based on the configstrings. This is a workaround because begin and disconnect events are managed in the gamecode,
 	// so we here use a clever way to know when these events happen (this is based on a careful reading of how work the mechanisms that manage players in a real game, so this should be OK in any case).
-	// Note: this part could also be used in userinfo instead of client configstrings (but since DropClient automatically sets userinfo to null, which is not the case the other way around, this way was preferred)
+	// note: this part could also be used in userinfo instead of client configstrings (but since DropClient automatically sets userinfo to null, which is not the case the other way around, this way was preferred)
 	if (Q_stricmp(sv.configstrings[CS_PLAYERS + num], configstring) && configstring && strlen(configstring))
 	{
 		// client begin or just changed team: previous configstring and new one are different, and the new one is not null
@@ -2068,13 +1628,14 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		svdoldteam = strlen(Info_ValueForKey(sv.configstrings[CS_PLAYERS + num], "t")) ? Q_atoi(Info_ValueForKey(sv.configstrings[CS_PLAYERS + num], "t")) : -1; // affect the new team if detected, else if an empty string is returned, just set -1 (will allow us to detect that there's really no team change instead of having 0 which is TEAM_FREE)
 		svdnewteam = strlen(Info_ValueForKey(configstring, "t")) ? Q_atoi(Info_ValueForKey(configstring, "t")) : -1;
 
-		// Set the client configstring (using a standard Q3 function)
+		// set the client configstring (using a standard Q3 function)
 		SV_SetConfigstring(CS_PLAYERS + num, configstring);
 
 		// set the name (useful for internal functions such as status_f). Anyway userinfo will automatically set both name (server-side) and netname (gamecode-side).
 		Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);
 
-		// Set the remoteAddress of this client to localhost (this will set "ip\localhost" in the userinfo, which will in turn force the gamecode to set this client as a localClient, which avoids inactivity timers and some other stuffs to be triggered)
+		// set the remoteAddress of this client to localhost (this will set "ip\localhost" in the userinfo,
+		// which will in turn force the gamecode to set this client as a localClient, which avoids inactivity timers and some other stuffs to be triggered)
 		if (strlen(configstring)) // we check that the client isn't being dropped
 		{
 			NET_StringToAdr("localhost", &client->netchan.remoteAddress, NA_LOOPBACK);
@@ -2083,18 +1644,19 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		SV_ClientEnterWorld(client, NULL);
 
 		// DEMOCLIENT INITIAL TEAM MANAGEMENT
-		// Note: needed only to set the initial team of the democlients, subsequent team changes are directly handled by their clientCommands
+		// note: needed only to set the initial team of the democlients, subsequent team changes are directly handled by their clientCommands
+		// if there was no team for this player before or if the new team is different
 		if (configstring && strlen(configstring) &&
-		    (svdoldteam == -1 || (svdoldteam != svdnewteam && svdnewteam != -1 && client->gentity->s.teamNum == TEAM_FREE))   // if there was no team for this player before or if the new team is different
+		    (svdoldteam == -1 || (svdoldteam != svdnewteam && svdnewteam != -1 && client->gentity->s.teamNum == TEAM_FREE))
 		    )
 		{
-			// If the client changed team, we manually issue a team change (workaround by using a clientCommand team)
+			// if the client changed team, we manually issue a team change (workaround by using a clientCommand team)
 
 			char svdnewteamstr[TEAM_COMMAND_LENGTH] = { 0 };
 
 			// FIXME: selecting medic because of possible class and weapon restrictions.
-			// Use client->sess.playerType from configstring (key = c) for class, client->sess.playerWeapon (key = w) for weapon, and client->sess.playerWeapon2 (key = sw) for secondary weapon
-			// But it's not really needed as players are correct class and weapons anyway and medic is the safest bet if there will be weapon/class restrictions because of config issues
+			// use client->sess.playerType from configstring (key = c) for class, client->sess.playerWeapon (key = w) for weapon, and client->sess.playerWeapon2 (key = sw) for secondary weapon
+			// but it's not really needed as players are correct class and weapons anyway and medic is the safest bet if there will be weapon/class restrictions because of config issues
 			switch (svdnewteam)
 			{
 			case TEAM_ALLIES:
@@ -2117,13 +1679,14 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 	}
 	else if (Q_stricmp(sv.configstrings[CS_PLAYERS + num], configstring) && strlen(sv.configstrings[CS_PLAYERS + num]) && (!configstring || !strlen(configstring)))
 	{
-		// client disconnect: different configstrings and the new one is empty, so the client is not there anymore, we drop him (also we check that the old config was not empty, else we would be disconnecting a player who is already dropped)
+		// client disconnect: different configstrings and the new one is empty, so the client is not there anymore,
+		// we drop him (also we check that the old config was not empty, else we would be disconnecting a player who is already dropped)
 		client = &svs.clients[num];
 		SV_DropClient(client, "disconnected");   // same as SV_Disconnect_f(client);
 		SV_SetConfigstring(CS_PLAYERS + num, configstring); // empty the configstring
 	}
 	else
-	{ // In any other case (should there be?), we simply set the client configstring (which should not produce any error)
+	{ // in any other case (should there be?), we simply set the client configstring (which should not produce any error)
 		SV_SetConfigstring(CS_PLAYERS + num, configstring);
 	}
 }
@@ -2142,28 +1705,32 @@ static void SV_DemoReadClientUserinfo(msg_t *msg)
 	char           *userinfo;
 	int            num;
 
-	// Get client
+	// get client
 	num    = MSG_ReadByte(msg);
 	client = &svs.clients[num];
-	// Get userinfo
+	// get userinfo
 	userinfo = MSG_ReadString(msg);
 
 	client->demoClient = qtrue;
 
 	entity = SV_GentityNum(num);
 
-	// Set the remoteAddress of this client to localhost (this will set "ip\localhost" in the userinfo, which will in turn force the gamecode to set this client as a localClient, which avoids inactivity timers and some other stuffs to be triggered)
+	// set the remoteAddress of this client to localhost (this will set "ip\localhost" in the userinfo,
+	// which will in turn force the gamecode to set this client as a localClient, which avoids inactivity timers and some other stuffs to be triggered)
 	if (strlen(userinfo)) // we check that the client isn't being dropped (in which case we shouldn't set an address)
 	{
 		NET_StringToAdr("localhost", &client->netchan.remoteAddress, NA_LOOPBACK);
 		entity->r.svFlags |= SVF_BOT; //Set player as a "bot" so the empty IP and GUID will not cause a kick
 	}
 
-	// Update the userinfo for both the server and gamecode
-	Cmd_TokenizeString(va("userinfo \"%s\"", userinfo));   // we need to prepend the userinfo command (or in fact any word) to tokenize the userinfo string to the second index because SV_UpdateUserinfo_f expects to fetch it with Argv(1)
-	SV_UpdateUserinfo_f(client); // will update the server userinfo, automatically fill client_t fields and then transmit to the gamecode and call ClientUserinfoChanged() which will also update the gamecode's client_t from the new userinfo (eg: name [server-side] and netname [gamecode-side] will be both updated)
+	// update the userinfo for both the server and gamecode
+	// we need to prepend the userinfo command (or in fact any word) to tokenize the userinfo string to the second index because SV_UpdateUserinfo_f expects to fetch it with Argv(1)
+	// will update the server userinfo, automatically fill client_t fields and then transmit to the gamecode and call ClientUserinfoChanged()
+	// which will also update the gamecode's client_t from the new userinfo (eg: name [server-side] and netname [gamecode-side] will be both updated)
+	Cmd_TokenizeString(va("userinfo \"%s\"", userinfo));
+	SV_UpdateUserinfo_f(client);
 
-	// Differentiate between players and bots to properly replay gamestates
+	// differentiate between players and bots to properly replay gamestates
 	if (strlen(userinfo) && strlen(Info_ValueForKey(userinfo, "cg_etVersion")))
 	{
 		entity->r.svFlags &= ~SVF_BOT;
@@ -2221,7 +1788,8 @@ static void SV_DemoReadAllPlayerState(msg_t *msg)
 }
 
 /**
- * @brief Read all entities state (gentity_t or sharedEntity_t->entityState_t) from a message and store them in a demoEntities[num].s array (it will be loaded in memory later when SV_DemoReadRefresh() is called)
+ * @brief Read all entities state (gentity_t or sharedEntity_t->entityState_t) from a message and store them in a demoEntities[num].s array
+ *        (it will be loaded in memory later when SV_DemoReadRefresh() is called)
  * @param[in] msg
  */
 static void SV_DemoReadAllEntityState(msg_t *msg)
@@ -2229,51 +1797,24 @@ static void SV_DemoReadAllEntityState(msg_t *msg)
 	sharedEntity_t *entity;
 	int            num;
 
-	// For each state in this message (because we store a concatenation of all entities states in a single message, we could do otherwise, but that's the design)
+	// for each state in this message (because we store a concatenation of all entities states in a single message, we could do otherwise, but that's the design)
 	while (1)
 	{
-		// Get entity num
+		// get entity num
 		num = MSG_ReadBits(msg, GENTITYNUM_BITS);
 
-		// Reached the end of the message, stop here
+		// reached the end of the message, stop here
 		if (num == ENTITYNUM_NONE)
 		{
 			break;
 		}
 
-		// Create a blank entity
+		// create a blank entity
 		entity = SV_GentityNum(num);
-		// Interpolate the new entity state from previous state in sv.demoEntities
+		// interpolate the new entity state from previous state in sv.demoEntities
 		MSG_ReadDeltaEntity(msg, &sv.demoEntities[num].s, &entity->s, num);
 
-		// Fix mover movements, (avoid the "bad moverstate" error)
-		if (entity->s.eType == ET_MOVER)
-		{
-			// 1st way to fix: completely disable movers (but not their displacement effects, so they will be invisible, but players are still moved by movers)
-			//entity->s.eType = ET_GENERAL;
-
-			// 2nd way to fix (better): only binarymovers are producing the bug, because the game will be confused about the moverState since we cannot have access nor set it...
-			// the solution: avoid changing the moverState, only change the position. To do this, avoid calls to ent->reached, so in other words never allow s.pot.trType to be TR_LINEAR_STOP (other types of movers are not affected since they don't have a stop/reached state, they are just looping over and over)
-			if (entity->s.pos.trType == TR_LINEAR_STOP)  // mover reached end of movement? change it...
-			{
-				entity->s.pos.trType = TR_LINEAR;  // ... to always set movers in a moving linear state.
-			}
-
-			// 'Do_Activate_f' from 'g_cmds.c' is not executed when replaying demo thus causing crashes with doors because 'Use_BinaryMover' is not used, but 'Reached_BinaryMover' is.
-			// 'MOVER_POS1ROTATE' -> 'Use_BinaryMover' -> 'MOVER_1TO2ROTATE' -> 'Reached_BinaryMover' -> 'MOVER_POS2ROTATE' -> 'ReturnToPos1Rotate' -> 'MOVER_2TO1ROTATE' -> 'Reached_BinaryMover' -> 'MOVER_POS1ROTATE'
-			// moverState is not changed properly in game code, at least for movers `func_door_rotating`
-			if (entity->s.apos.trType == TR_LINEAR_STOP)
-			{
-				entity->s.apos.trType = TR_LINEAR;
-			}
-		}
-
-		if (entity->s.eType == ET_ITEM)
-		{
-			SV_GentityUpdateItemField(entity);
-		}
-
-		// Save new entity state (in sv.demoEntities, which in other words display the new state)
+		// save new entity state (in sv.demoEntities, which in other words display the new state)
 		sv.demoEntities[num].s = entity->s;
 	}
 }
@@ -2282,7 +1823,8 @@ static void SV_DemoReadAllEntityState(msg_t *msg)
  * @brief Read all shared entities (gentity_t or sharedEntity_t->entityShared_t
  * @param[in] msg
  *
- * @note sharedEntity_t = gentity_t != entityShared_t which is a subfield of gentity_t) from a message and store them in a demoEntities[num].r array (it will be loaded in memory later when SV_DemoReadRefresh() is called)
+ * @note sharedEntity_t = gentity_t != entityShared_t which is a subfield of gentity_t) from a message and store them in a demoEntities[num].r array
+ *       (it will be loaded in memory later when SV_DemoReadRefresh() is called)
  */
 static void SV_DemoReadAllEntityShared(msg_t *msg)
 {
@@ -2291,21 +1833,21 @@ static void SV_DemoReadAllEntityShared(msg_t *msg)
 
 	while (1) // loop until we read the whole message (which is storing several states)
 	{
-		// Get entity num
+		// get entity num
 		num = MSG_ReadBits(msg, GENTITYNUM_BITS);
 
-		// Reached end of message, stop here
+		// reached end of message, stop here
 		if (num == ENTITYNUM_NONE)
 		{
 			break;
 		}
 
-		// Load an empty entity
+		// load an empty entity
 		entity = SV_GentityNum(num);
-		// Interpolate the new entity state from previous state in sv.demoEntities
+		// interpolate the new entity state from previous state in sv.demoEntities
 		MSG_ReadDeltaSharedEntity(msg, &sv.demoEntities[num].r, &entity->r, num);
 
-		// Link/unlink the entity
+		// link/unlink the entity
 		if (entity->r.linked && (!sv.demoEntities[num].r.linked ||
 		                         entity->r.linkcount != sv.demoEntities[num].r.linkcount))
 		{
@@ -2316,7 +1858,7 @@ static void SV_DemoReadAllEntityShared(msg_t *msg)
 			SV_UnlinkEntity(entity);
 		}
 
-		// Save the new state in sv.demoEntities (ie, display current entity state)
+		// save the new state in sv.demoEntities (ie, display current entity state)
 		sv.demoEntities[num].r = entity->r;
 		if (num > sv.num_entities)
 		{
@@ -2326,63 +1868,29 @@ static void SV_DemoReadAllEntityShared(msg_t *msg)
 }
 
 /**
- * @brief Load into memory all stored demo players states and entities (which effectively overwrites the one that were previously written by the game since SV_ReadFrame is called at the very end of every game's frame iteration).
+ * @brief Load into memory all stored demo players states and entities
+ *        (which effectively overwrites the one that were previously written by the game since SV_ReadFrame is called at the very end of every game's frame iteration).
  */
 static void SV_DemoReadRefreshEntities(void)
 {
-	int            i;
-	sharedEntity_t *entity;
+	int i;
 
 	for (i = 0; i < sv_democlients->integer; i++)
 	{
-		// This is a workaround to not use user commands to save storage space, ClientThink is needed for map script triggers to be run
-		// fe. EndRound script which starts G_LogExit
-		if (Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) != GS_INTERMISSION && !(SV_GameClientNum(i)->eFlags & EF_DEAD))
-		{
-			usercmd_t cmd;
-
-			Com_Memset(&cmd, 0, sizeof(cmd));
-			cmd.serverTime = svs.time;
-
-			SV_ClientThink(&svs.clients[i], &cmd);
-		}
-
 		*SV_GameClientNum(i) = sv.demoPlayerStates[i]; // Overwrite player states
 	}
 
-	// Overwrite anything the game may have changed
+	// overwrite anything the game may have changed
 	for (i = 0; i < sv.num_entities; i++)
 	{
-		if (i >= sv_democlients->integer && i < MAX_CLIENTS) // FIXME? shouldn't MAX_CLIENTS be sv_maxclients->integer?
+		// FIXME? shouldn't MAX_CLIENTS be sv_maxclients->integer?
+		if (i >= sv_democlients->integer && i < MAX_CLIENTS)
 		{
 			continue;
 		}
 
-		*SV_GentityNum(i) = sv.demoEntities[i]; // Overwrite entities
-
-		entity = SV_GentityNum(i);
-
-		if (entity->s.eType == ET_FLAMETHROWER_CHUNK)
-		{
-			SV_GentityUpdateParentField(entity, SV_GentityNum(entity->r.ownerNum));
-		}
-	}
-}
-
-/**
- * @brief Update all demoplayers health (will be reflected on the HUD when spectated - for team overlay see tinfo clientcommand)
- *
- * @note This function should always be called after SV_DemoReadRefreshEntities() (or you can also change SV_GameClientNum(i) to sv.demoPlayerStates[i],
- * but make sure the entity already has updated its health state...)
- */
-void SV_DemoReadRefreshPlayersHealth(void)
-{
-	int i;
-
-	// Update all players' health in HUD
-	for (i = 0; i < sv_democlients->integer; i++)
-	{
-		SV_GentityUpdateHealthField(SV_GentityNum(i), SV_GameClientNum(i));   // Update the health with the value of playerState_t->stats[STAT_HEALTH]
+		// overwrite entities
+		*SV_GentityNum(i) = sv.demoEntities[i];
 	}
 }
 
@@ -2405,26 +1913,25 @@ qboolean SV_DemoReadFrame(void)
 
 read_next_demo_frame: // used to read another whole demo frame
 
-	// Demo freezed? Just stop reading the demo frames
+	// demo freezed? Just stop reading the demo frames
 	if (Cvar_VariableIntegerValue("sv_freezeDemo"))
 	{
-		svs.time = memsvtime; // reset server time to the same time as the previous frame, to avoid the time going backward when resuming the demo (which will disconnect every players)
+		// reset server time to the same time as the previous frame, to avoid the time going backward when resuming the demo (which will disconnect every players)
+		sv.time = memsvtime;
 		return qfalse;
 	}
 
-	// Update timescale
-	currentframe++; // update the current frame number
+	currentframe++;
 
 	if (com_timescale->value < 1.0f && com_timescale->value > 0.0f)
 	{
-		// Check timescale: if slowed timescale (below 1.0), then we check that we pass one frame on 1.0/com_timescale (eg: timescale = 0.5, 1.0/0.5=2, so we pass one frame on two)
+		// check timescale: if slowed timescale (below 1.0), then we check that we pass one frame on 1.0/com_timescale (eg: timescale = 0.5, 1.0/0.5=2, so we pass one frame on two)
 		if (currentframe % (int)(1.0f / com_timescale->value) != 0)
 		{ // if it's not yet the right time to read the frame, we just pass and wait for the next server frame to read this demo frame
 			return qfalse;
 		}
 	}
 
-	// Initialize / reinitialize the msg buffer
 	MSG_Init(&msg, buf, sizeof(buf));
 
 	while (1)
@@ -2433,7 +1940,7 @@ read_next_demo_event: // used to read next demo event
 
 		MSG_BeginReading(&msg);
 
-		// Get a message
+		// get a message
 		r = FS_Read(&msg.cursize, 4, sv.demoFile);
 
 		if (r != 4)
@@ -2447,58 +1954,92 @@ read_next_demo_event: // used to read next demo event
 			SV_DemoPlaybackError("DEMOERROR: SV_DemoReadFrame: demo message too long\n");
 		}
 
-		r = FS_Read(msg.data, msg.cursize, sv.demoFile); // fetch the demo message (using the length we got) from the demo file sv.demoFile, and store it into msg.data (will be accessed automatically by MSG_thing() functions), and store in r the length of the data returned (used to check that it's correct)
-		if (r != msg.cursize) // if the returned length of the read demo message is not the same as the length we expected (the one that was stored just prior to the demo message), we return an error because we miss the demo message, and the only reason is that the file is truncated, so there's nothing to read after
+		// fetch the demo message (using the length we got) from the demo file sv.demoFile, and store it into msg.data
+		// (will be accessed automatically by MSG_thing() functions), and store in r the length of the data returned (used to check that it's correct)
+		r = FS_Read(msg.data, msg.cursize, sv.demoFile);
+
+		// if the returned length of the read demo message is not the same as the length we expected
+		// (the one that was stored just prior to the demo message),
+		// we return an error because we miss the demo message, and the only reason is that the file is truncated, so there's nothing to read after
+		if (r != msg.cursize)
 		{
 			SV_DemoPlaybackError("DEMOERROR: Demo file was truncated.");
 		}
 
-		// Parse the message
+		// parse the message
 		while (1)
 		{
-			cmd = MSG_ReadByte(&msg); // Read the demo message marker
+			cmd = MSG_ReadByte(&msg); // read the demo message marker
 
 			switch (cmd) // switch to the right processing depending on the type of the marker
 			{
 			default:
-				// Error tolerance mode: if we encounter an unknown demo message, we just skip to the next (this may allow for retrocompatibility)
+				// error tolerance mode: if we encounter an unknown demo message, we just skip to the next (this may allow for retrocompatibility)
 				if (sv_demoTolerant->integer)
 				{
 					MSG_Clear(&msg);
 					goto read_next_demo_event;
 				}
 				else
-				{     // else we just drop the demo and throw a big fat error
+				{
+					// drop the demo
 					SV_DemoPlaybackError(va("SV_DemoReadFrame: Illegible demo message [%i %i:%i]", cmd, msg.readcount, msg.cursize));
 				}
-			case demo_EOF:     // end of a demo event (the loop will continue to real the next event)
+
+			// end of a demo event (the loop will continue to real the next event)
+			case demo_EOF:
 				MSG_Clear(&msg);
 				goto read_next_demo_event;
-			case demo_configString:     // general configstrings setting (such as capture scores CS_SCORES1/2, etc.) - except clients configstrings
+
+			// general configstrings setting (such as capture scores CS_SCORES1/2, etc.) - except clients configstrings
+			case demo_configString:
 				SV_DemoReadConfigString(&msg);
 				break;
-			case demo_clientConfigString:     // client configstrings setting and clients status management
+
+			// client configstrings setting and clients status management
+			case demo_clientConfigString:
 				SV_DemoReadClientConfigString(&msg);
 				break;
-			case demo_clientUserinfo:     // client userinfo setting and client_t fields management
+
+			// client userinfo setting and client_t fields management
+			case demo_clientUserinfo:
 				SV_DemoReadClientUserinfo(&msg);
 				break;
-			case demo_clientCommand:     // client command management (generally automatic, such as tinfo for HUD team overlay status, team selection, etc.) - except userinfo command that is managed by another event
+
+			// client command management (generally automatic, such as tinfo for HUD team overlay status, team selection, etc.) - except userinfo command that is managed by another event
+			case demo_clientCommand:
 				SV_DemoReadClientCommand(&msg);
 				break;
-			case demo_serverCommand:     // server command management - except print/cp (already handled by gameCommand),
+
+			// server command management - except print/cp (already handled by gameCommand),
+			case demo_serverCommand:
 				SV_DemoReadServerCommand(&msg);
 				break;
-			case demo_gameCommand:     // game command management - such as prints/centerprint (cp) scores command - except chat/tchat (handled by clientCommand) - basically the same as demo_serverCommand (because sv_GameSendServerCommand uses SV_SendServerCommand, but game commands are safe to be replayed to everyone, while server commands may be unsafe such as disconnect)
+
+			// server console command management (map_restart)
+			case demo_serverConsoleCommand:
+				SV_DemoReadServerConsoleCommand(&msg);
+				break;
+
+			// game command management - such as prints/centerprint (cp) scores command - except chat/tchat (handled by clientCommand)
+			// basically the same as demo_serverCommand (because sv_GameSendServerCommand uses SV_SendServerCommand,
+			// but game commands are safe to be replayed to everyone, while server commands may be unsafe such as disconnect)
+			case demo_gameCommand:
 				SV_DemoReadGameCommand(&msg);
 				break;
-			case demo_playerState:     // manage playerState_t (some more players game status management, see demo_endFrame)
+
+			// manage playerState_t (some more players game status management, see demo_endFrame)
+			case demo_playerState:
 				SV_DemoReadAllPlayerState(&msg);
 				break;
-			case demo_entityState:     // manage gentity->entityState_t (some more gentities game status management, see demo_endFrame)
+
+			// manage gentity->entityState_t (some more gentities game status management, see demo_endFrame)
+			case demo_entityState:
 				SV_DemoReadAllEntityState(&msg);
 				break;
-			case demo_entityShared:     // gentity_t->entityShared_t management (see g_local.h for more infos)
+
+			// gentity_t->entityShared_t management (see g_local.h for more infos)
+			case demo_entityShared:
 				SV_DemoReadAllEntityShared(&msg);
 				break;
 			/*
@@ -2509,40 +2050,40 @@ read_next_demo_event: // used to read next demo event
 			case -1: // no more chars in msg FIXME: inspect!
 				Com_DPrintf("SV_DemoReadFrame: no chars [%i %i:%i]\n", cmd, msg.readcount, msg.cursize);
 				return qfalse;
-			case demo_endFrame:     // end of the frame - players and entities game status update: we commit every demo entity to the server, update the server time, then release the demo frame reading here to the next server (and demo) frame
-				Com_DPrintf(" END OF FRAME \n");
 
-				// Update entities
+			// end of the frame - players and entities game status update: we commit every demo entity to the server, update the server time,
+			// then release the demo frame reading here to the next server (and demo) frame
+			case demo_endFrame:
+
+				// update entities
 				SV_DemoReadRefreshEntities();     // load into memory the demo entities (overwriting any change the game may have done)
-				// Update all players' health in HUD
-				SV_DemoReadRefreshPlayersHealth();
-				// Set the server time
+				// set the server time
 				time = MSG_ReadLong(&msg);
 
-				// Iterate a few demo frames to catch to until we are above the server time,
-				// Note: this is needed after map_restart (SV_MapRestart_f) and to correctly replay gamestates (when the recording started at GS_WARMUP_COUNTDOWN and GS_PLAYING)
-				if (time < svs.time)
+				// iterate a few demo frames to catch to until we are above the server time,
+				// note: this is needed after map_restart (SV_MapRestart_f) and to correctly replay gamestates (when the recording started at GS_WARMUP_COUNTDOWN and GS_PLAYING)
+				if (time < sv.time)
 				{
-					// Note: having a server time below the demo time is CRITICAL, else we may send to the clients a server time that is below the previous,
+					// note: having a server time below the demo time is CRITICAL, else we may send to the clients a server time that is below the previous,
 					// or in the case of legacy mod the time would be set to levelTime = levelTime + level.previousTime (G_RunFrame).
-					int timetoreach = svs.time;
+					int timetoreach = sv.time;
 
-					svs.time = time;
-					while (svs.time <= timetoreach)
+					sv.time = time;
+					while (sv.time <= timetoreach)
 					{
 						SV_DemoReadFrame(); // run a few frames to settle things out
 					}
 				}
 				else
 				{
-					svs.time  = time;   // refresh server in-game time (overwriting any change the game may have done)
-					memsvtime = svs.time;     // keep memory of the last server time, in case we want to freeze the demo
+					sv.time   = time;  // refresh server in-game time (overwriting any change the game may have done)
+					memsvtime = sv.time;     // keep memory of the last server time, in case we want to freeze the demo
 				}
 
-				// Check for timescale: if timescale is faster (above 1.0), we read more frames at once (eg: timescale=2, we read 2 frames for one call of this function)
+				// check for timescale: if timescale is faster (above 1.0), we read more frames at once (eg: timescale=2, we read 2 frames for one call of this function)
 				if (com_timescale->value > 1.0f)
 				{
-					// Check that we've read all the frames we needed
+					// check that we've read all the frames we needed
 					if (currentframe % (int)(com_timescale->value) != 0)
 					{
 						goto read_next_demo_frame;     // if not true, we read another frame
@@ -2550,9 +2091,10 @@ read_next_demo_event: // used to read next demo event
 				}
 
 				return qfalse;     // else we end the current demo frame
-			case demo_endDemo:     // end of the demo file - just stop playback and restore saved cvars
-				Com_Printf("End of demo reached.\n");
-				SV_DemoStopPlayback();
+
+			// end of the demo file - just stop playback and restore saved cvars
+			case demo_endDemo:
+				SV_DemoStopPlayback("End of demo reached.");
 				return qtrue;
 			}
 		}
@@ -2572,7 +2114,7 @@ void SV_DemoStopAll(void)
 	}
 	else if (sv.demoState == DS_PLAYBACK)
 	{
-		SV_DemoStopPlayback();
+		SV_DemoStopPlayback("Demo playback stopped.");
 	}
 }
 
@@ -2594,13 +2136,19 @@ static void SV_Demo_Record_f(void)
 		return;
 	}
 
+	if (!sv.demoSupported)
+	{
+		Com_Printf("Demo recording is not supported for %s mod.\n", Cvar_VariableString("fs_game"));
+		return;
+	}
+
 	if (sv.demoState != DS_NONE)
 	{
 		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
 		return;
 	}
 
-	if (sv_maxclients->integer > MAX_CLIENTS)
+	if (sv_maxclients->integer >= MAX_CLIENTS)
 	{
 		Com_Printf("DEMO: ERROR: Too many client slots, reduce sv_maxclients and retry.\n");
 		return;
@@ -2647,7 +2195,7 @@ static void SV_Demo_Play_f(void)
 		return;
 	}
 
-	if (sv.demoState != DS_NONE && sv.demoState != DS_WAITINGPLAYBACK)
+	if (sv.demoState != DS_NONE && sv.demoState != DS_WAITINGPLAYBACK && sv.demoState != DS_RESTART)
 	{
 		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
 		return;
@@ -2664,7 +2212,6 @@ static void SV_Demo_Play_f(void)
 		Com_sprintf(sv.demoName, sizeof(sv.demoName), "svdemos/%s.%s%d", arg, SVDEMOEXT, PROTOCOL_VERSION);
 	}
 
-	//FS_FileExists(sv.demoName);
 	FS_FOpenFileRead(sv.demoName, &sv.demoFile, qtrue);
 	if (!sv.demoFile)
 	{
@@ -2673,6 +2220,93 @@ static void SV_Demo_Play_f(void)
 	}
 
 	SV_DemoStartPlayback();
+}
+
+/**
+* @brief SV_DemoSort sorts alphabetically
+*/
+static int QDECL SV_DemoSort(const void *a, const void *b)
+{
+	const char *fileA = a;
+	const char *fileB = b;
+
+	if (strlen(fileA) && !strlen(fileB))
+	{
+		return -1;
+	}
+
+	if (!strlen(fileA) && strlen(fileB))
+	{
+		return 1;
+	}
+
+	return Q_stricmp(fileA, fileB);
+}
+
+/**
+* @brief SV_Demo_AutoPlay_f plays demos from a folder
+*/
+static void SV_Demo_AutoPlay_f(void)
+{
+	char fileList[30000];
+	char path[MAX_OSPATH];
+	char *arg, *fileName;
+	int  i, count;
+
+	if (sv.demoState != DS_NONE && sv.demoState != DS_WAITINGPLAYBACK && sv.demoState != DS_RESTART)
+	{
+		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
+		return;
+	}
+
+	if (Cmd_Argc() == 2)
+	{
+		arg = Cmd_Argv(1);
+		Com_sprintf(path, sizeof(path), "svdemos/%s", arg);
+	}
+	else
+	{
+		Com_sprintf(path, sizeof(path), "svdemos");
+	}
+
+	count = FS_GetFileList(path, va("%s%d", SVDEMOEXT, PROTOCOL_VERSION), fileList, sizeof(fileList));
+
+	if (count > MAX_DEMO_AUTOPLAY)
+	{
+		Com_Printf("Too many demos in a folder (%i) try removing some (Limit: %i).\n", count, MAX_DEMO_AUTOPLAY);
+		return;
+	}
+
+	if (count)
+	{
+		Com_Memset(demoAutoPlay, 0, sizeof(demoAutoPlay));
+		fileName = fileList;
+
+		if (Cmd_Argc() == 2)
+		{
+			arg = va("%s/", arg);
+		}
+		else
+		{
+			arg = "";
+		}
+
+		for (i = 0; i < count; i++)
+		{
+			Q_strncpyz(demoAutoPlay[i], va("%s%s", arg, fileName), MAX_OSPATH);
+
+			fileName += strlen(fileName) + 1;
+		}
+
+		qsort(demoAutoPlay, MAX_DEMO_AUTOPLAY, sizeof(demoAutoPlay[0]), SV_DemoSort);
+
+		SV_DemoPlayNext();
+		// on first demo save cvars
+		restoreSavedCvars = qtrue;
+		return;
+	}
+
+	Com_Printf("No demos found in %s.\n", arg);
 }
 
 /**
@@ -2735,10 +2369,10 @@ static void SV_Demo_Fastforward_f(void)
 		return;
 	}
 
-	timetoreach = svs.time + (timetoreach * 1000);
+	timetoreach = sv.time + (timetoreach * 1000);
 	gamestate   = Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"));
 
-	while (svs.time < timetoreach)
+	while (sv.time < timetoreach)
 	{
 		if (SV_DemoReadFrame() || gamestate != Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate")))
 		{
@@ -2754,6 +2388,57 @@ void SV_DemoInit(void)
 {
 	Cmd_AddCommand("demo_record", SV_Demo_Record_f, "Starts demo recording.");
 	Cmd_AddCommand("demo_play", SV_Demo_Play_f, "Plays a demo record.", SV_CompleteDemoName);
+	Cmd_AddCommand("demo_autoplay", SV_Demo_AutoPlay_f, va("Plays demos from a folder. (Max %i)", MAX_DEMO_AUTOPLAY));
 	Cmd_AddCommand("demo_stop", SV_Demo_Stop_f, "Stops a demo record.");
 	Cmd_AddCommand("demo_ff", SV_Demo_Fastforward_f, "Fast-forwards a demo record.");
+}
+
+/**
+* @brief SV_DemoSupport
+*/
+void SV_DemoSupport(char *commands)
+{
+	char key[BIG_INFO_KEY];
+	char value[BIG_INFO_VALUE];
+
+	sv.demoSupported = qtrue;
+
+	SV_DemoStateChanged();
+
+	if (sv_demoState->integer == DS_WAITINGPLAYBACK)
+	{
+		if (!commands || !commands[0])
+		{
+			return;
+		}
+
+		Com_Memset(gameCommands, 0, MAX_DEMO_GAMECOMMANDS * sizeof(gameCommands_t));
+		gameCommandsCount = 0;
+
+		while (commands)
+		{
+			Info_NextPair(&commands, key, value);
+
+			if (!key[0])
+			{
+				break;
+			}
+
+			if (gameCommandsCount >= MAX_DEMO_GAMECOMMANDS)
+			{
+				break;
+			}
+
+			Q_strncpyz(gameCommands[gameCommandsCount].commandToSave, key, MAX_QPATH);
+			Q_strncpyz(gameCommands[gameCommandsCount].commandToSend, value, MAX_QPATH);
+			gameCommands[gameCommandsCount].commandToSaveLength = strlen(key);
+			gameCommands[gameCommandsCount].commandToSendLength = strlen(value);
+			gameCommandsCount++;
+		}
+	}
+}
+
+static void SV_DemoStateChanged(void)
+{
+	VM_Call(gvm, GAME_DEMOSTATECHANGED, sv_demoState->integer, sv_democlients->integer);
 }

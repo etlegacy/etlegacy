@@ -1349,6 +1349,10 @@ typedef struct level_locals_s
 	int frameStartTime;
 
 	qboolean suddenDeath;
+
+	demoState_t demoState;     ///< server demo state
+	int demoClientsNum;        ///< number of reserved slots for demo clients
+	int demoClientBotNum;      ///< clientNum of bot that collects stats during recording, optional
 } level_locals_t;
 
 /**
@@ -1747,12 +1751,23 @@ qboolean G_DropItems(gentity_t *self);
 // g_main.c
 void FindIntermissionPoint(void);
 void G_RunThink(gentity_t *ent);
+void G_RunEntity(gentity_t *ent, int msec);
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void G_LogExit(const char *string);
 void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1, 2)));
+
+// extension interface
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+void trap_DemoSupport(char *commands);
+extern int dll_com_trapGetValue;
+extern int dll_trap_DemoSupport;
+
+// g_demo_legacy.c
+void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);
+qboolean G_DemoRunFrame(void);
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);

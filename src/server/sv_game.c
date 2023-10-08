@@ -42,8 +42,14 @@
 
 botlib_export_t *botlib_export;
 
-#define TRAP_EXTENSIONS_LIST NULL
+#define TRAP_EXTENSIONS_LIST g_extensionTraps
 #include "../qcommon/vm_ext.h"
+
+static ext_trap_keys_t g_extensionTraps[] =
+{
+	{ "trap_DemoSupport_Legacy", G_DEMOSUPPORT, qfalse },
+	{ NULL,                      -1,            qfalse }
+};
 
 /**
 * @todo TODO: These functions must be used instead of pointer arithmetic, because
@@ -119,16 +125,12 @@ sharedEntity_t *SV_GEntityForSvEntity(svEntity_t *svEnt)
  * @param[in] clientNum
  * @param[in] text
  */
-void SV_GameSendServerCommand(int clientNum, const char *text, qboolean demoPlayback)
+void SV_GameSendServerCommand(int clientNum, const char *text)
 {
 	// record the game server commands in demos
 	if (sv.demoState == DS_RECORDING)
 	{
 		SV_DemoWriteGameCommand(clientNum, text);
-	}
-	else if (sv.demoState == DS_PLAYBACK && !demoPlayback && !SV_CheckLastCmd(text, qtrue))
-	{
-		return; // block qagame game commands during playback
 	}
 
 	if (clientNum == -1)
@@ -455,6 +457,11 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		Cmd_ArgvBuffer(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_CONSOLE_COMMAND:
+		if (sv.demoState == DS_RECORDING)
+		{
+			SV_DemoWriteServerConsoleCommand(args[1], VMA(2));
+		}
+
 		Cbuf_ExecuteText(args[1], VMA(2));
 		return 0;
 	case G_FS_FOPEN_FILE:
@@ -484,7 +491,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		if (!Tracker_catchServerCommand(args[1], VMA(2)))
 #endif
 		{
-			SV_GameSendServerCommand(args[1], VMA(2), qfalse);
+			SV_GameSendServerCommand(args[1], VMA(2));
 		}
 		return 0;
 	case G_LINKENTITY:
@@ -681,6 +688,10 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case G_MESSAGESTATUS:
 		return SV_BinaryMessageStatus(args[1]);
 
+	case G_DEMOSUPPORT:
+		SV_DemoSupport(VMA(1));
+		return 0;
+
 	case G_TRAP_GETVALUE:
 		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
 
@@ -734,15 +745,7 @@ static void SV_InitGameVM(qboolean restart)
 
 	// use the current msec count for a random seed
 	// init for this gamestate
-	VM_Call(gvm, GAME_INIT, svs.time, Com_Milliseconds(), restart, qtrue, ETLEGACY_VERSION_INT);
-
-	// start recording a demo
-	if (sv_autoDemo->integer)
-	{
-		// stop any demos
-		SV_DemoStopAll();
-		SV_DemoAutoDemoRecord();
-	}
+	VM_Call(gvm, GAME_INIT, sv.time, Com_Milliseconds(), restart, qtrue, ETLEGACY_VERSION_INT);
 }
 
 /**

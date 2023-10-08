@@ -1860,7 +1860,8 @@ typedef enum
 
 	DS_WAITINGPLAYBACK, ///< demo will play after map_restart)
 	DS_PLAYBACK,        ///< a demo is playing
-	DS_WAITINGSTOP,     ///< demo is stopped but we must move clients over their normal slots
+	DS_RESTART,         ///< demo is restarting (so all cvar changes are applied)
+	DS_ERROR,           ///< error occured
 
 	DS_RECORDING,       ///< a demo is being recorded
 

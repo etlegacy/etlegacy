@@ -265,7 +265,9 @@ typedef enum
 	G_MESSAGESTATUS,
 
 	///< engine extensions padding
-	G_TRAP_GETVALUE = COM_TRAP_GETVALUE
+	G_TRAP_GETVALUE = COM_TRAP_GETVALUE,
+
+	G_DEMOSUPPORT
 
 } gameImport_t;
 
@@ -313,6 +315,8 @@ typedef enum
 	// BOT_CHECKATTACKATPOS,
 
 	GAME_MESSAGERECEIVED = 14,      ///< ( int cno, const char *buf, int buflen, int commandTime );
+
+	GAME_DEMOSTATECHANGED,          ///< (demoState_t demoState, int demoClientsNum) // server demo playback
 
 } gameExport_t;
 
