@@ -164,7 +164,6 @@ void DB_DeleteFavorite(const char *profile, const char *address)
 		result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
 		//  Bind-parameter indexing is 1-based.
 		sqlite3_bind_text(res, 1, profile, -1, SQLITE_STATIC);
-		result = sqlite3_step(res);
 	}
 	else
 	{
