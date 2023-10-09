@@ -77,9 +77,11 @@ void DB_InsertFavorite(const char *profile, int source, const char *name, const 
 		return;
 	}
 
-	sql    = va("SELECT * from client_servers WHERE profile='%s' AND address='%s';", profile, address);
+	sql    = "SELECT * from client_servers WHERE profile = ? AND address = ?;";
 	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
-	// FIXME: name - use prepared statement
+	//  Bind-parameter indexing is 1-based.
+	result = sqlite3_bind_text(res, 1, profile, -1, SQLITE_STATIC);
+	result = sqlite3_bind_text(res, 2, address, -1, SQLITE_STATIC);
 
 	if (result == SQLITE_OK)
 	{
@@ -95,7 +97,7 @@ void DB_InsertFavorite(const char *profile, int source, const char *name, const 
 			sqlite3_finalize(res);
 			return;
 		}
-		else if(result == SQLITE_ERROR)
+		else if (result == SQLITE_ERROR)
 		{
 			Com_Printf("SQL an error occured\n");
 		}
@@ -103,12 +105,17 @@ void DB_InsertFavorite(const char *profile, int source, const char *name, const 
 		{
 			char *err_msg = 0;
 
-			// FIXME: name - use prepared statement
-			//sqlite3_bind_int(res, 1, 3);
-			sql = va("INSERT INTO client_servers values('%s', %i, '%s', '%s', '%s', NULL, (datetime('now','localtime')))", profile, source, address, name, mod);
-			result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+			sql    = "INSERT INTO client_servers values(?, ?, ?, ?, ?, NULL, (datetime('now','localtime')));";
+			result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+			//  Bind-parameter indexing is 1-based.
+			result = sqlite3_bind_text(res, 1, profile, -1, SQLITE_STATIC);
+			result = sqlite3_bind_int(res, 2, source);
+			result = sqlite3_bind_text(res, 3, address, -1, SQLITE_STATIC);
+			result = sqlite3_bind_text(res, 4, name, -1, SQLITE_STATIC);
+			result = sqlite3_bind_text(res, 5, mod, -1, SQLITE_STATIC);
+			result = sqlite3_step(res);
 
-			if (result != SQLITE_OK)
+			if (result != SQLITE_DONE)
 			{
 				Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
 				sqlite3_free(err_msg);
@@ -137,7 +144,7 @@ void DB_DeleteFavorite(const char *profile, const char *address)
 	char         *sql;
 	int          result;
 	char         *err_msg = 0;
-	//sqlite3_stmt *res;
+	sqlite3_stmt *res;
 
 	if (!isDBActive)
 	{
@@ -153,16 +160,24 @@ void DB_DeleteFavorite(const char *profile, const char *address)
 
 	if (address[0] == '*')
 	{
-		sql = va("DELETE FROM client_servers WHERE profile='%s';", profile);
+		sql    = "DELETE FROM client_servers WHERE profile = ?;";
+		result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+		//  Bind-parameter indexing is 1-based.
+		sqlite3_bind_text(res, 1, profile, -1, SQLITE_STATIC);
+		result = sqlite3_step(res);
 	}
 	else
 	{
-		sql = va("DELETE FROM client_servers WHERE profile='%s' AND address='%s';", profile, address);
+		sql    = "DELETE FROM client_servers WHERE profile = ? AND address = ?;";
+		result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+		//  Bind-parameter indexing is 1-based.
+		result = sqlite3_bind_text(res, 1, profile, -1, SQLITE_STATIC);
+		result = sqlite3_bind_text(res, 2, address, -1, SQLITE_STATIC);
 	}
 
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+	result = sqlite3_step(res);
 
-	if (result != SQLITE_OK)
+	if (result != SQLITE_DONE)
 	{
 		Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
 	}
@@ -178,7 +193,7 @@ void DB_DeleteFavorite(const char *profile, const char *address)
 		Com_Printf("Favorite '%s' for profile '%s' has been deleted.\n", address, profile);
 	}
 
-	//sqlite3_finalize(res);
+	sqlite3_finalize(res);
 }
 
 /**
@@ -187,13 +202,13 @@ void DB_DeleteFavorite(const char *profile, const char *address)
  * @param[in] argc
  * @param[in] argv
  * @param[in] azColName
- * @return 
+ * @return
  */
 static int DB_callbackFavorites(UNUSED_VAR void *NotUsed, int argc, char **argv, char **azColName)
 {
 	netadr_t addr;
 
-    // avoid array overflows
+	// avoid array overflows
 	if (cls.numfavoriteservers >= MAX_FAVOURITE_SERVERS - 1)
 	{
 		Com_Printf("Can't load all favorites. MAX_FAVOURITE_SERVERS reached.\n");
@@ -202,13 +217,13 @@ static int DB_callbackFavorites(UNUSED_VAR void *NotUsed, int argc, char **argv,
 
 	NET_StringToAdr(argv[2], &addr, NA_UNSPEC);
 	CL_InitServerInfo(&cls.favoriteServers[cls.numfavoriteservers], &addr);
-    Q_strncpyz(cls.favoriteServers[cls.numfavoriteservers].hostName, argv[3], MAX_SERVER_NAME_LENGTH);
+	Q_strncpyz(cls.favoriteServers[cls.numfavoriteservers].hostName, argv[3], MAX_SERVER_NAME_LENGTH);
 
-    cls.favoriteServers[cls.numfavoriteservers].visible = qtrue;
+	cls.favoriteServers[cls.numfavoriteservers].visible = qtrue;
 
-    cls.numfavoriteservers++;
+	cls.numfavoriteservers++;
 
-    return 0;
+	return 0;
 }
 
 /**
@@ -217,9 +232,9 @@ static int DB_callbackFavorites(UNUSED_VAR void *NotUsed, int argc, char **argv,
  */
 void DB_LoadFavorites(const char *profile)
 {
-	int          result;
-	char         *sql;
-	char         *err_msg = 0;
+	int  result;
+	char *sql;
+	char *err_msg = 0;
 
 	// cls.numfavoriteservers = 0; already done before
 
@@ -272,9 +287,11 @@ void DB_UpdateFavorite(const char *profile, const char *address)
 	}
 
 	// get favorite
-	sql    = va("SELECT * from client_servers WHERE profile='%s' AND address='%s';", profile, address);
+	sql    = "SELECT * from client_servers WHERE profile = ? AND address = ?;";
 	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
-	// FIXME: name - use prepared statement
+	//  Bind-parameter indexing is 1-based.
+	sqlite3_bind_text(res, 1, profile, -1, SQLITE_STATIC);
+	sqlite3_bind_text(res, 2, address, -1, SQLITE_STATIC);
 
 	if (result == SQLITE_OK) // we've found an entry
 	{
@@ -284,13 +301,15 @@ void DB_UpdateFavorite(const char *profile, const char *address)
 		{
 			Com_Printf("Favorite found.\n");
 
-			// FIXME: prepared statement
-			//sqlite3_bind_int(res, 1, 3);
 			// FIXME: update name and mod if not set
-			sql = va("UPDATE client_servers SET updated=(datetime('now','localtime')) WHERE profile='%s' AND address='%s';", profile, address);
-			result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+			sql    = "UPDATE client_servers SET updated=(datetime('now','localtime')) WHERE profile = ? AND address = ?;";
+			result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+			//  Bind-parameter indexing is 1-based.
+			sqlite3_bind_text(res, 1, profile, -1, SQLITE_STATIC);
+			sqlite3_bind_text(res, 2, address, -1, SQLITE_STATIC);
+			result = sqlite3_step(res);
 
-			if (result != SQLITE_OK)
+			if (result != SQLITE_DONE)
 			{
 				Com_Printf("Can't update favorite '%s' failed: %s\n", address, err_msg);
 			}
@@ -301,10 +320,10 @@ void DB_UpdateFavorite(const char *profile, const char *address)
 				sqlite3_free(err_msg);
 				return;
 			}
-			
+
 			sqlite3_free(err_msg);
 		}
-		else if(result == SQLITE_ERROR)
+		else if (result == SQLITE_ERROR)
 		{
 			Com_Printf("SQL an error occured\n");
 		}
