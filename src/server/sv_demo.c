@@ -98,10 +98,6 @@ static qboolean restoreSavedCvars = qtrue;
 static char savedPlaybackDemonameVal[MAX_OSPATH] = "";
 static char *savedPlaybackDemoname               = savedPlaybackDemonameVal;
 
-// "fixing" game commands spam
-char cmds[MAX_RELIABLE_COMMANDS][MAX_STRING_CHARS];
-int  cmdsPerFrameCount = 1;
-
 // arbitrary limit
 #define MAX_DEMO_AUTOPLAY 10
 char demoAutoPlay[MAX_DEMO_AUTOPLAY][MAX_OSPATH];
@@ -1484,42 +1480,15 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 	clientNum = MSG_ReadLong(msg);
 	cmd       = MSG_ReadString(msg);
 
-	// FIXME:
-	// ugly fix for something that should be fixed in mod
-	// at least when intermission starts, mod starts sending various commands to clients with stats
-	// but those stats are sent in a loop in mod to every client and every command is saved and replayed,
-	// by sending 1 command with clientNum -1 from mod instead, server would replicate them to all clients while saving only 1 command to demo
-	if (Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate")) == GS_INTERMISSION)
+	// during intermission allow sending all commands to everyone that were originally send to stat collecting bot
+	// if it wasn't present then stats like '/scores' might not be shown at the end of game
+	if (clientNum != -1 && Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate")) == GS_INTERMISSION)
 	{
-		// try limiting to one exact same command per frame (buggy)
-		// if not done it spams players with a lot of commands,
-		// or even kicks them off the server because of exceeding reliable commands buffer (it can fill the buffer in 1 frame before even 1 cmd is sent)
-		if (time == sv.time)
-		{
-			if (cmdsPerFrameCount > MAX_RELIABLE_COMMANDS)
-			{
-				Com_Printf("Demo playback: game commands over limit.\n");
-				return;
-			}
-			for (i = 0; i < cmdsPerFrameCount; i++)
-			{
-				if (strlen(cmds[i]) && !Q_stricmp(cmds[i], cmd))
-				{
-					return;
-				}
-			}
+		client = &svs.clients[clientNum];
 
-			Q_strncpyz(cmds[cmdsPerFrameCount], cmd, MAX_STRING_CHARS);
-			cmdsPerFrameCount++;
-			canSend = qtrue;
-		}
-		else
+		if (client && client->userinfo[0] && Q_atoi(Info_ValueForKey(client->userinfo, "tv")) & 1)
 		{
-			Com_Memset(cmds, 0, sizeof(cmds));
-			Q_strncpyz(cmds[0], cmd, MAX_STRING_CHARS);
-			cmdsPerFrameCount = 1;
-			time              = sv.time;
-			canSend           = qtrue;
+			canSend = qtrue;
 		}
 	}
 

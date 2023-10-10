@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2022 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -104,6 +104,8 @@ void G_DemoStateChanged(demoState_t demoState, int demoClientsNum)
 * @brief G_DemoRequestStats
 *
 * Managing bot that collects stats during recording
+*
+* FIXME: There is probably no point requesting continuously during intermission/warmup
 */
 static void G_DemoRequestStats(void)
 {
@@ -135,6 +137,11 @@ static void G_DemoRequestStats(void)
 
 			// request weapon stats
 			trap_EA_Command(level.demoClientBotNum, va("sgstats %d", level.sortedClients[i]));
+
+			if (g_gamestate.integer == GS_INTERMISSION)
+			{
+				trap_EA_Command(level.demoClientBotNum, va("imws %d", level.sortedClients[i]));
+			}
 		}
 
 		ent->r.svFlags |= SVF_BOT;
