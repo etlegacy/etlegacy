@@ -933,10 +933,24 @@ void CG_ToggleShoutcasterMode(int shoutcaster)
 */
 void CG_ShoutcastCheckKeyCatcher(int keycatcher)
 {
+	// going out of ui menu
 	if (cgs.clientinfo[cg.clientNum].shoutcaster && cgs.eventHandling == CGAME_EVENT_NONE &&
 	    cg.snap->ps.pm_type != PM_INTERMISSION && !(keycatcher & KEYCATCH_UI) && (cg.lastKeyCatcher & KEYCATCH_UI))
 	{
 		CG_ToggleShoutcasterMode(1);
+	}
+
+	// going out of limbo menu, hud editor
+	if (cgs.clientinfo[cg.clientNum].shoutcaster && cgs.eventHandling == CGAME_EVENT_NONE && !(keycatcher & KEYCATCH_UI))
+	{
+		CG_ToggleShoutcasterMode(1);
+	}
+
+	// resolution changes don't automatically close the ui menus but show confirmation window after vid_restart
+	// so need to turn off shoutcast event handling otherwise mouse cursor will not work
+	if (cgs.clientinfo[cg.clientNum].shoutcaster && cgs.eventHandling == CGAME_EVENT_SHOUTCAST && (keycatcher & KEYCATCH_UI))
+	{
+		CG_ToggleShoutcasterMode(0);
 	}
 }
 
