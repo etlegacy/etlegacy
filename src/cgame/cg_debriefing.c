@@ -713,18 +713,18 @@ static panel_button_t debriefPlayerInfoHitRegions =
 };
 
 #define PLAYERHEADER_SKILLS(number)           \
-	static panel_button_t debriefPlayerInfoSkills ## number = {      \
-		NULL,                                       \
-		NULL,                                       \
-		{ 24,                            136 + (number * 14), 12, 12 }, \
-		{ number,                        0,                   0,  0, 0, 0, 0, 0},  \
-		&debriefPlayerInfoFont,          /* font     */  \
-		NULL,                            /* keyDown  */  \
-		NULL,                            /* keyUp    */  \
-		CG_Debriefing_PlayerSkills_Draw,            \
-		NULL,                                       \
-		0,                                       \
-	}
+		static panel_button_t debriefPlayerInfoSkills ## number = {      \
+			NULL,                                       \
+			NULL,                                       \
+			{ 24,                            136 + (number * 14), 12, 12 }, \
+			{ number,                        0,                   0,  0, 0, 0, 0, 0},  \
+			&debriefPlayerInfoFont,          /* font     */  \
+			NULL,                            /* keyDown  */  \
+			NULL,                            /* keyUp    */  \
+			CG_Debriefing_PlayerSkills_Draw,            \
+			NULL,                                       \
+			0,                                       \
+		}
 
 PLAYERHEADER_SKILLS(0);
 PLAYERHEADER_SKILLS(1);
@@ -781,18 +781,18 @@ static panel_button_text_t teamDebriefTitle =
 };
 
 #define TDB_SKILL_TITLES_XP(number, title, x)             \
-	static panel_button_t teamDebriefSkillXPText_ ## number = {          \
-		NULL,                                                   \
-		title,                                                  \
-		{ 100 + (number * 65),      304 - (x * 12),                 20, 200 },      \
-		{ 0,                        0,                              0,  0, 0, 0, 0, 0},                             \
-		&teamDebriefTitleSmall,     /* font     */              \
-		NULL,                       /* keyDown  */                      \
-		NULL,                       /* keyUp    */                  \
-		BG_PanelButtonsRender_Text,                             \
-		NULL,                                                   \
-		0,                                                   \
-	}
+		static panel_button_t teamDebriefSkillXPText_ ## number = {          \
+			NULL,                                                   \
+			title,                                                  \
+			{ 100 + (number * 65),      304 - (x * 12),                 20, 200 },      \
+			{ 0,                        0,                              0,  0, 0, 0, 0, 0},                             \
+			&teamDebriefTitleSmall,     /* font     */              \
+			NULL,                       /* keyDown  */                      \
+			NULL,                       /* keyUp    */                  \
+			BG_PanelButtonsRender_Text,                             \
+			NULL,                                                   \
+			0,                                                   \
+		}
 
 TDB_SKILL_TITLES_XP(0, "Battle Sense", 0);
 TDB_SKILL_TITLES_XP(1, "Engineer", 1);
@@ -804,32 +804,32 @@ TDB_SKILL_TITLES_XP(6, "Covert Ops", 0);
 TDB_SKILL_TITLES_XP(7, "Total", 1);
 
 #define TDB_SKILL_AXIS_XP(number)                         \
-	static panel_button_t teamDebriefSkillXPText0_ ## number = {         \
-		NULL,                                                   \
-		NULL,                                                   \
-		{ 110 + (number * 65),             320,                  470, 200 },                \
-		{ 0,                               number,               0,   0, 0, 0, 0, 0},                        \
-		&teamDebriefTitle,                 /* font     */                  \
-		NULL,                              /* keyDown  */                      \
-		NULL,                              /* keyUp    */                  \
-		CG_TeamDebriefingTeamSkillXP_Draw,                      \
-		NULL,                                                   \
-		0,                                                   \
-	}
+		static panel_button_t teamDebriefSkillXPText0_ ## number = {         \
+			NULL,                                                   \
+			NULL,                                                   \
+			{ 110 + (number * 65),             320,                  470, 200 },                \
+			{ 0,                               number,               0,   0, 0, 0, 0, 0},                        \
+			&teamDebriefTitle,                 /* font     */                  \
+			NULL,                              /* keyDown  */                      \
+			NULL,                              /* keyUp    */                  \
+			CG_TeamDebriefingTeamSkillXP_Draw,                      \
+			NULL,                                                   \
+			0,                                                   \
+		}
 
 #define TDB_SKILL_ALLIES_XP(number)                       \
-	static panel_button_t teamDebriefSkillXPText1_ ## number = {         \
-		NULL,                                                   \
-		NULL,                                                   \
-		{ 110 + (number * 65),             340,                  470, 200 },                \
-		{ 1,                               number,               0,   0, 0, 0, 0, 0},                        \
-		&teamDebriefTitle,                 /* font     */                  \
-		NULL,                              /* keyDown  */                      \
-		NULL,                              /* keyUp    */                  \
-		CG_TeamDebriefingTeamSkillXP_Draw,                      \
-		NULL,                                                   \
-		0,                                                   \
-	}
+		static panel_button_t teamDebriefSkillXPText1_ ## number = {         \
+			NULL,                                                   \
+			NULL,                                                   \
+			{ 110 + (number * 65),             340,                  470, 200 },                \
+			{ 1,                               number,               0,   0, 0, 0, 0, 0},                        \
+			&teamDebriefTitle,                 /* font     */                  \
+			NULL,                              /* keyDown  */                      \
+			NULL,                              /* keyUp    */                  \
+			CG_TeamDebriefingTeamSkillXP_Draw,                      \
+			NULL,                                                   \
+			0,                                                   \
+		}
 
 TDB_SKILL_AXIS_XP(0);
 TDB_SKILL_AXIS_XP(1);
@@ -963,87 +963,87 @@ static panel_button_t charPanelEdit =
 };
 
 static panel_button_t buttonPanelWindow =
-    {
-        NULL,
-        "PANELS",
-        { DB_BUTTONS_PANEL_X,        DB_BUTTONS_PANEL_Y,              DB_BUTTONS_PANEL_WIDTH, DB_BUTTONS_PANEL_HEIGHT },
-        { 0,                         0,                               0,                      0, 0, 0, 0, 0           },
-        NULL,                        // font
-        NULL,                        // keyDown
-        NULL,                        // keyUp
-        CG_PanelButtonsRender_Window,
-        NULL,
-        0
+{
+	NULL,
+	"PANELS",
+	{ DB_BUTTONS_PANEL_X,        DB_BUTTONS_PANEL_Y,              DB_BUTTONS_PANEL_WIDTH, DB_BUTTONS_PANEL_HEIGHT },
+	{ 0,                         0,                               0,                      0, 0, 0, 0, 0           },
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
+	CG_PanelButtonsRender_Window,
+	NULL,
+	0
 };
 
 static panel_button_t buttonsPanelScoreboard =
-    {
-        NULL,
-        "SCOREBOARD",
-        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT_MARGIN_Y,                                     DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
-        { 0,                          0,                                                                                   0,               0, 0, 0, 0, 0    },
-        NULL,                         // font
-        CG_Debriefing_PanelButton_KeyDown,// keyDown
-        NULL,                         // keyUp
-        CG_Debriefing_NextButton_Draw,
-        NULL,
-        0
+{
+	NULL,
+	"SCOREBOARD",
+	{ DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT_MARGIN_Y,                                     DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+	{ 0,                          0,                                                                                   0,               0, 0, 0, 0, 0    },
+	NULL,                         // font
+	CG_Debriefing_PanelButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_NextButton_Draw,
+	NULL,
+	0
 };
 
 static panel_button_t buttonsPanelAwards =
-    {
-        NULL,
-        "AWARDS",
-        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT + DB_BUTTON_HEIGHT_MARGIN_Y * 2,                                         DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
-        { 0,                          0,                                                                                                              0,               1, 0, 0, 0, 0    },
-        NULL,                         // font
-        CG_Debriefing_PanelButton_KeyDown,// keyDown
-        NULL,                         // keyUp
-        CG_Debriefing_NextButton_Draw,
-        NULL,
-        0
+{
+	NULL,
+	"AWARDS",
+	{ DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT + DB_BUTTON_HEIGHT_MARGIN_Y * 2,                                         DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+	{ 0,                          0,                                                                                                              0,               1, 0, 0, 0, 0    },
+	NULL,                         // font
+	CG_Debriefing_PanelButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_NextButton_Draw,
+	NULL,
+	0
 };
 
 static panel_button_t buttonsPanelStats =
-    {
-        NULL,
-        "STATS",
-        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 2 + DB_BUTTON_HEIGHT_MARGIN_Y * 3,                                          DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
-        { 0,                          0,                                                                                                                   0,               2, 0, 0, 0, 0    },
-        NULL,                         // font
-        CG_Debriefing_PanelButton_KeyDown,// keyDown
-        NULL,                         // keyUp
-        CG_Debriefing_NextButton_Draw,
-        NULL,
-        0
+{
+	NULL,
+	"STATS",
+	{ DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 2 + DB_BUTTON_HEIGHT_MARGIN_Y * 3,                                          DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+	{ 0,                          0,                                                                                                                   0,               2, 0, 0, 0, 0    },
+	NULL,                         // font
+	CG_Debriefing_PanelButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_NextButton_Draw,
+	NULL,
+	0
 };
 
 static panel_button_t buttonsPanelMapVote =
-    {
-        NULL,
-        "VOTE NOW",
-        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 3 + DB_BUTTON_HEIGHT_MARGIN_Y * 4,                                       DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
-        { 0,                          0,                                                                                                                0,               3, 0, 0, 0, 0    },
-        NULL,                         // font
-        CG_Debriefing_PanelButton_KeyDown,// keyDown
-        NULL,                         // keyUp
-        CG_Debriefing_VoteButton_Draw,
-        NULL,
-        0
+{
+	NULL,
+	"VOTE NOW",
+	{ DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 3 + DB_BUTTON_HEIGHT_MARGIN_Y * 4,                                       DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+	{ 0,                          0,                                                                                                                0,               3, 0, 0, 0, 0    },
+	NULL,                         // font
+	CG_Debriefing_PanelButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_VoteButton_Draw,
+	NULL,
+	0
 };
 
 static panel_button_t buttonsNextButton =
-    {
-        NULL,
-        "NEXT",
-        { DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 4 + DB_BUTTON_HEIGHT_MARGIN_Y * 5,                                           DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
-        { 0,                          0,                                                                                                                    0,               0, 0, 0, 0, 0    },
-        NULL,                         // font
-        CG_Debriefing_NextButton_KeyDown,// keyDown
-        NULL,                         // keyUp
-        CG_Debriefing_NextButton_Draw,
-        NULL,
-        0
+{
+	NULL,
+	"NEXT",
+	{ DB_BUTTONS_PANEL_X + DB_BUTTON_WIDTH_MARGIN_X,DB_BUTTONS_PANEL_Y2 + DB_BUTTON_HEIGHT * 4 + DB_BUTTON_HEIGHT_MARGIN_Y * 5,                                           DB_BUTTON_WIDTH, DB_BUTTON_HEIGHT },
+	{ 0,                          0,                                                                                                                    0,               0, 0, 0, 0, 0    },
+	NULL,                         // font
+	CG_Debriefing_NextButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_NextButton_Draw,
+	NULL,
+	0
 };
 
 // MAPVOTE
@@ -2431,11 +2431,22 @@ void CG_Debriefing_ParsePrestige(void)
 /**
  * @brief CG_Debriefing_ParsePlayerKillsDeaths
  */
-void CG_Debriefing_ParsePlayerKillsDeaths(void)
+void CG_Debriefing_ParsePlayerKillsDeaths(qboolean secondPart)
 {
-	int i;
+	int i, max;
 
-	for (i = 0; i < cgs.maxclients; i++)
+	if (secondPart)
+	{
+		i   = cgs.maxclients / 2;
+		max = cgs.maxclients;
+	}
+	else
+	{
+		i   = 0;
+		max = cgs.maxclients / 2;
+	}
+
+	for (i; i < max; i++)
 	{
 		cgs.clientinfo[i].kills     = Q_atoi(CG_Argv((i * 6) + 1));
 		cgs.clientinfo[i].deaths    = Q_atoi(CG_Argv((i * 6) + 2));

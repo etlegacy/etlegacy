@@ -4710,7 +4710,7 @@ void Cmd_IntermissionReady_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char buffer[1024];
+	char buffer[MAX_STRING_CHARS];
 	int i;
 
 	if (!ent || !ent->client)
@@ -4718,9 +4718,15 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand,
 		return;
 	}
 
-	Q_strncpyz(buffer, "impkd ", sizeof(buffer));
+	Q_strncpyz(buffer, "impkd0 ", sizeof(buffer));
 	for (i = 0; i < g_maxclients.integer; i++)
 	{
+		if (i == g_maxclients.integer / 2)
+		{
+			trap_SendServerCommand(ent - g_entities, buffer);
+			Q_strncpyz(buffer, "impkd1 ", sizeof(buffer));
+		}
+
 		if (g_entities[i].inuse)
 		{
 			Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i %i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths, level.clients[i].sess.gibs, level.clients[i].sess.self_kills, level.clients[i].sess.team_kills, level.clients[i].sess.team_gibs));

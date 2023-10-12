@@ -2981,7 +2981,8 @@ void CG_AddToBannerPrint(const char *str)
 #define SETSPAWNPT_HASH     137482
 #define IMWA_HASH           51808
 #define IMWS_HASH           54004
-#define IMPKD_HASH          64481
+#define IMPKD0_HASH         70433
+#define IMPKD1_HASH         70557
 #define IMPT_HASH           53279
 #define IMSR_HASH           53398
 #define SR_HASH             27365
@@ -3473,8 +3474,10 @@ static void CG_ServerCommand(void)
 	case IMWS_HASH:                                        // "imws"
 		CG_Debriefing_ParseWeaponStats();
 		return;
-	case IMPKD_HASH:                                       // "impkd"
-		CG_Debriefing_ParsePlayerKillsDeaths();
+	case IMPKD0_HASH:                                      // "impkd0"
+		CG_Debriefing_ParsePlayerKillsDeaths(qfalse);
+	case IMPKD1_HASH:                                      // "impkd1"
+		CG_Debriefing_ParsePlayerKillsDeaths(qtrue);
 		return;
 	case IMPT_HASH:                                        // "impt"
 		CG_Debriefing_ParsePlayerTime();
@@ -3575,7 +3578,7 @@ static void CG_ServerCommand(void)
 	}
 	case XPGAIN_HASH:   // "xpgain"
 	{
-        CG_AddPMItemXP(Q_atoi(CG_Argv(2)) < 0, va("%s", CG_Argv(2)), va("%s",CG_Argv(3)), cgs.media.skillPics[Q_atoi(CG_Argv(1))]);
+		CG_AddPMItemXP(Q_atoi(CG_Argv(2)) < 0, va("%s", CG_Argv(2)), va("%s", CG_Argv(3)), cgs.media.skillPics[Q_atoi(CG_Argv(1))]);
 		break;
 	}
 	default:
