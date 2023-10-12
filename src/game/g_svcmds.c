@@ -2542,19 +2542,12 @@ void Svcmd_CSInfo_f(void)
  */
 void Svcmd_Ref_f(void)
 {
-	char cmd[MAX_TOKEN_CHARS];
-
 	if (level.fLocalHost)
 	{
 		return;
 	}
 
-	//G_refCommandCheck expects the next argument (warn, pause, lock,..)
-	trap_Argv(1, cmd, sizeof(cmd));
-	if (!G_refCommandCheck(NULL, cmd))
-	{
-		G_refHelp_cmd(NULL);
-	}
+	G_ref_cmd(NULL, 0, 0);
 }
 
 /**
