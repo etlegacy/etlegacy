@@ -2304,9 +2304,9 @@ void G_GetMapXP(void)
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
 }
 
-static ID_INLINE void G_SetupExtensionTrap(char *value, int *trap, const char *name)
+static ID_INLINE void G_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
 {
-	if (trap_GetValue(value, sizeof(value), name))
+	if (trap_GetValue(value, valueSize, name))
 	{
 		*trap = Q_atoi(value);
 	}
@@ -2325,7 +2325,7 @@ static ID_INLINE void G_SetupExtensions(void)
 	{
 		dll_com_trapGetValue = Q_atoi(value);
 
-		G_SetupExtensionTrap(value, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
+		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
 	}
 }
 
