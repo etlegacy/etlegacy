@@ -4079,7 +4079,7 @@ void CG_Debriefing_MouseEvent(int x, int y);
 
 void CG_Debriefing_ParseWeaponAccuracies(void);
 void CG_Debriefing_ParseWeaponStats(void);
-void CG_Debriefing_ParsePlayerKillsDeaths(void);
+void CG_Debriefing_ParsePlayerKillsDeaths(qboolean secondPart);
 void CG_Debriefing_ParsePlayerTime(void);
 void CG_Debriefing_ParseAwards(void);
 void CG_Debriefing_ParseSkillRating(void);
