@@ -454,7 +454,10 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points, const cha
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += points;
 
 	// send XP gaining reason to client
-	trap_SendServerCommand(ent - g_entities, va("xpgain %i %f \"%s\"\n", skill, points, reason));
+	if (points)
+	{
+		trap_SendServerCommand(ent - g_entities, va("xpgain %i %f \"%s\"\n", skill, points, reason));
+	}
 
 	// see if player increased in skill
 	oldskill = ent->client->sess.skill[skill];
