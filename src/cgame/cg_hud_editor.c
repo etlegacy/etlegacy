@@ -46,9 +46,9 @@
 #define INPUT_COLOR_WIDTH 35
 #define INPUT_HEIGHT 16
 #define CHECKBOX_SIZE 16
-#define SLIDERS_WIDTH 90
+#define SLIDERS_WIDTH 110
 #define SLIDERS_HEIGHT 16
-#define BUTTON_WIDTH 45
+#define BUTTON_WIDTH 55
 #define BUTTON_HEIGHT 16
 
 #define HUDEDITOR_CONTROLS_SPACER_XY 4
@@ -653,7 +653,7 @@ static panel_button_t hudEditorResetComp =
 {
 	NULL,
 	"Reset Component",
-	{ 0,                      HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT + HUDEDITOR_CONTROLS_SPACER_XY,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2), BUTTON_HEIGHT },
+	{ 0,                      HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT + HUDEDITOR_CONTROLS_SPACER_XY,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2) - 1, BUTTON_HEIGHT },
 	{ 0,                      0,                                                                                  0,                                                       3, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
 	CG_HudEditorButton_KeyDown,// keyDown
@@ -681,7 +681,7 @@ static panel_button_t hudEditorComponentsList =
 {
 	NULL,
 	"hudeditor_componentsList",
-	{ 3,                            SCREEN_HEIGHT + 3,SCREEN_WIDTH, SCREEN_HEIGHT_SAFE * 0.25 },
+	{ 3,                            SCREEN_HEIGHT + 6, SCREEN_WIDTH, SCREEN_HEIGHT_SAFE * 0.28 },
 	{ 0,                            0,  0,            0, 0, 0, 0, 1             },
 	&hudEditorFont_Dropdown,        // font
 	CG_HudEditor_ComponentLists_KeyDown,// keyDown
@@ -2160,7 +2160,7 @@ void CG_HudEditorSetup(void)
 
 	// setup some useful coordinates for the side panel
 	HUDEditorX       = SCREEN_WIDTH_SAFE;
-	HUDEditorWidth   = (HUDEditorX * 1.25f) - HUDEditorX;
+	HUDEditorWidth   = (HUDEditorX * 1.28f) - HUDEditorX;
 	HUDEditorCenterX = HUDEditorX + (HUDEditorWidth * 0.5f);
 
 	for (i = 0, j = 0; hudComponentFields[i].name; i++, j++)
@@ -2268,7 +2268,7 @@ static void CG_DrawHudEditor_ComponentLists(panel_button_t *button)
 
 		y += COMPONENT_BUTTON_HEIGHT + COMPONENT_BUTTON_SPACE_Y;
 
-		if (y + COMPONENT_BUTTON_HEIGHT >= SCREEN_HEIGHT_SAFE + (SCREEN_HEIGHT_SAFE * 0.25f))
+		if (y + COMPONENT_BUTTON_HEIGHT >= button->rect.y + button->rect.h)
 		{
 			y  = button->rect.y;
 			x += w + COMPONENT_BUTTON_SPACE_X;

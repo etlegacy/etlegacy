@@ -271,7 +271,7 @@ static void CG_CalcVrect(void)
 
 	if (cg.editingHud && !cg.fullScreenHudEditor)
 	{
-		CG_Letterbox(80, 80, qfalse);
+		CG_Letterbox(78, 78, qfalse);
 	}
 	else
 	{

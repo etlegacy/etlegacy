@@ -61,10 +61,10 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 	// mouse movement is handled separately in CG_MouseEvent
 	if (cg.editingHud && !cg.fullScreenHudEditor)
 	{
-		*x *= 0.8f;
-		*y *= 0.8f;
-		*w *= 0.8f;
-		*h *= 0.8f;
+		*x *= 0.78f;
+		*y *= 0.78f;
+		*w *= 0.78f;
+		*h *= 0.78f;
 	}
 }
 
