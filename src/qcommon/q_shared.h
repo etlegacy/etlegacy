@@ -667,6 +667,7 @@ MATHLIB
 //=============================================
 
 qboolean Com_PowerOf2(int x);
+long Com_NextPowerOf2(long x);
 
 #define Com_ByteClamp(x) (((x) < 0) ? 0 : ((x) > 255) ? 255 : (x))
 #define Com_Clamp(min, max, value) (((value) < (min)) ? (min) : ((value) > (max)) ? (max) : (value))

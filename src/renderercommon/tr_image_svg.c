@@ -115,6 +115,20 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 	columns = (int)(image->width * scale);
 	rows    = (int)(image->height * scale);
 
+	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(columns) || !Com_PowerOf2(rows)))
+	{
+		columns = (int)Com_NextPowerOf2(columns);
+		scale   = (float)columns / image->width;
+		rows    = (int)(image->height * scale);
+
+		if (!Com_PowerOf2(rows))
+		{
+			scale   = 1.f;
+			columns = (int)image->width;
+			rows    = (int)image->height;
+		}
+	}
+
 	numPixels = columns * rows * 4;
 
 	img_data = R_GetImageBuffer(numPixels, BUFFER_IMAGE, data->name);
