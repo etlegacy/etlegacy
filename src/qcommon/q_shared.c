@@ -68,6 +68,36 @@ long Com_NextPowerOf2(long x)
 }
 
 /**
+ * @brief Com_PreviousPowerOf2
+ * @param x value to get previous power of 2
+ * @return previous power of 2 value
+ */
+long Com_PreviousPowerOf2(long x)
+{
+	return Com_NextPowerOf2(x) >> 1;
+}
+
+/**
+ * @brief Com_ClosestPowerOf2
+ * @param x value to get closest power of 2
+ * @return closest power of 2 value
+ */
+long Com_ClosestPowerOf2(long x)
+{
+	long next = Com_NextPowerOf2(x);
+	long prev = Com_PreviousPowerOf2(x);
+
+	if (next - x < x - prev)
+	{
+		return next;
+	}
+	else
+	{
+		return prev;
+	}
+}
+
+/**
  * @brief COM_FixPath
  * @param[in,out] pathname
  */
