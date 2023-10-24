@@ -618,7 +618,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 				imageBuff[left++] = ((float)out[k] * max);
 			}
 
-			Com_sprintf(name, sizeof(name), "fonts/%s_%i_%i.tga", fontName, imageNumber++, pointSize);
+			Com_sprintf(name, sizeof(name), "fonts/%s_%i_%i_scalable.tga", fontName, imageNumber++, pointSize);
 			//if (r_saveFontData->integer)
 			//{
 			//	RE_SaveTGA(name, imageBuff, imageSize, imageSize, qtrue);
