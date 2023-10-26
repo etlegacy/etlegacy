@@ -45,6 +45,9 @@ win_resource.aps
 # CTags
 .tags*
 
+# Clangd file for LSP
+.clangd
+
 # SublimeText
 *.sublime-workspace
 *.sublime-project

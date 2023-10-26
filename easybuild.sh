@@ -28,12 +28,17 @@ color=true
 # Do 32bit build
 x86_build=true
 
+# Generate a compilation database for LSP usage
+generate_compilation_database=false
+
+# silent mode
+silent_mode=false
 
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
-easy_keys=(clean build generate package install download crust release project updatelicense help)
-easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate print_help)
+easy_keys=(clean build generate package install download crust release project updatelicense watch _watch help)
+easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress print_help)
 easy_count=`expr ${#easy_keys[*]} - 1`
 
 check_exit() {
@@ -68,11 +73,24 @@ else
 fi
 
 einfo() {
-	echo -e "\n$boldgreen~~>$reset $boldwhite${1}$reset"
+	if $silent_mode; then
+		return 1
+	fi
+	command echo -e "\n$boldgreen~~>$reset $boldwhite${1}$reset"
 }
 
 ehead() {
-	echo -e "$boldlightblue * $boldwhite${1}$reset"
+	if $silent_mode; then
+		return 1
+	fi
+	command echo -e "$boldlightblue * $boldwhite${1}$reset"
+}
+
+echo() {
+	if $silent_mode; then
+		return 1
+	fi
+	command echo -e ${1}
 }
 
 app_exists() {
@@ -152,7 +170,7 @@ detectos() {
 	else
 		DISTRO="Unknown"
 	fi
-	echo -e "  running on: $boldgreen${PLATFORMSYS}$reset $darkgreen${PLATFORMARCH}$reset - $boldlightblue${DISTRO}$reset"
+	command echo -e "  running on: $boldgreen${PLATFORMSYS}$reset $darkgreen${PLATFORMARCH}$reset - $boldlightblue${DISTRO}$reset"
 }
 
 # This is in reference to https://cmake.org/pipermail/cmake/2016-April/063312.html
@@ -208,6 +226,7 @@ print_startup() {
 	checkapp git
 	checkapp zip
 	checkapp nasm
+	checkapp entr 0
 	echo
 
 	check_compiler
@@ -230,7 +249,9 @@ setup_sensible_defaults() {
 parse_commandline() {
 	for var in "$@"
 	do
-		if [[ $var == --build=* ]]; then
+		if [ "$var" = "--silent" ]; then
+			silent_mode=true
+		elif [[ $var == --build=* ]]; then
 			BUILDDIR=$(echo $var| cut -d'=' -f 2)
 			einfo "Will use build dir of: ${BUILDDIR}"
 		elif [[ $var == --prefix=* ]]; then
@@ -263,6 +284,8 @@ parse_commandline() {
 		elif [ "$var" = "-clang" ]; then
 			einfo "Will use clang"
 			set_compiler clang clang++ $x86_build
+		elif [ "$var" = "-lsp" ]; then
+			setup_lsp
 		elif [ "$var" = "-gcc" ]; then
 			einfo "Will use gcc"
 			set_compiler gcc g++ $x86_build
@@ -575,7 +598,24 @@ generate_configuration() {
 	fi
 	fi
 
-	echo -e "$boldyellowusing: $boldwhite${_CFGSTRING}$reset"
+	if $generate_compilation_database; then
+		_CFGSTRING="${_CFGSTRING}
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=1
+		"
+	fi
+
+	if [ -n $silent_mode ]; then
+		command echo -e "$boldyellowusing: $boldwhite${_CFGSTRING}$reset"
+	fi
+}
+
+setup_lsp() {
+	einfo "Setting up clangd (for lsp)"
+	generate_compilation_database=true
+	cat > ${_SRC}/.clangd << EOT
+CompileFlags:
+  CompilationDatabase: "${BUILDDIR}"
+EOT
 }
 
 # Check if the bundled libs repo has been loaded
@@ -789,6 +829,25 @@ run_install() {
 	check_exit "make install"
 }
 
+run_watch_progress() {
+	set -e
+	printf "\033c"
+	cd ${BUILDDIR}
+	# The following line will cause the mod & engine code to rebuild every time
+	# cmake ..
+	printf "\033c"
+	cmake --build .
+	printf "\033c"
+	# Just a TODO thing to actually implement some tests at some point
+	command echo "Run tests.."
+	set +e
+	exit 0
+}
+
+run_watch() {
+	find ${SOURCEDIR}/ | entr -d ${_SRC}/easybuild.sh _watch --silent
+}
+
 handle_download() {
 	if [ ! -f $1 ]; then
 		if [ -f /usr/bin/curl  ]; then
@@ -867,11 +926,14 @@ print_help() {
 	ehead "project - generate the project files for your platform"
 	ehead "release - run the entire release process"
 	ehead "updatelicense - update the lisence years for the current year"
+	ehead "watch - watch for source code changes and recompile & run tests"
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -32, -debug, -clang, -nodb -nor2, -nodynamic, -nossl, -systemlibs, -noextra, -noupdate, -mod, -server, -ninja, -nopk3"
+	ehead "-64, -32, -debug, -clang, -lsp, -nodb -nor2, -nodynamic, -nossl, -systemlibs"
+	ehead "-noextra, -noupdate, -mod, -server, -ninja, -nopk3, -lsp"
 	ehead "--build=*, --prefix=*, --osx=* --osx-arc=*"
+	ehead "--silent"
 	echo
 }
 
@@ -884,7 +946,9 @@ start_script() {
 	#CMD_ARGS=$@
 	CMD_ARGS=$PARSE_CMD
 
-	print_startup
+	if [ -n $silent_mode ]; then
+		print_startup
+	fi
 
 	handle_bundled_libs
 
