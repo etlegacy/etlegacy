@@ -115,7 +115,11 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 	columns = (int)(image->width * scale);
 	rows    = (int)(image->height * scale);
 
+#ifdef __ANDROID__
+	if (!Com_PowerOf2(columns) || !Com_PowerOf2(rows))
+#else
 	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(columns) || !Com_PowerOf2(rows)))
+#endif
 	{
 		columns = (int)Com_ClosestPowerOf2(columns);
 		scale   = (float)columns / image->width;
