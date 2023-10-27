@@ -196,18 +196,12 @@ void CG_Respawn(qboolean revived)
 
 		// reset switch back weapon
 		cg.switchbackWeapon = WP_NONE;
-	}
 
-	// Saves the state of sidearm (riflenade weapon is considered as one too)
-	// Puts the silencer on if class is COVERTOPS
-	// Puts riflenade on if current weapon is riflenade weapon
-	if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
-	{
-		cg.pmext.silencedSideArm = 1;
-	}
-	else if (GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_RIFLENADE)
-	{
-		cg.pmext.silencedSideArm = 2;
+		// puts the silencer on if class is COVERTOPS
+		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
+		{
+			cg.pmext.silencedSideArm = 1;
+		}
 	}
 
 	CG_ResetTimers();
@@ -428,6 +422,9 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
  */
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 {
+	int      oldsilencedSideArm;
+	qboolean revived;
+
 #ifdef FEATURE_MULTIVIEW
 	// MV client handling
 	if (cg.mvTotalClients > 0)
@@ -495,7 +492,16 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 	// respawning
 	if (ps->persistant[PERS_SPAWN_COUNT] != ops->persistant[PERS_SPAWN_COUNT])
 	{
-		CG_Respawn(ps->persistant[PERS_REVIVE_COUNT] != ops->persistant[PERS_REVIVE_COUNT] ? qtrue : qfalse);
+		oldsilencedSideArm = cg.pmext.silencedSideArm;
+		revived            = ps->persistant[PERS_REVIVE_COUNT] != ops->persistant[PERS_REVIVE_COUNT];
+
+		CG_Respawn(revived);
+
+		// saves the state of sidearm (riflegrenade weapon is considered as one too)
+		if (revived && (ops->weapon != GetWeaponTableData(ps->weapon)->weapAlts || BG_simpleWeaponState(ops->weaponstate) == WSTATE_FIRE))
+		{
+			cg.pmext.silencedSideArm = oldsilencedSideArm;
+		}
 	}
 
 	if ((ps->pm_flags & PMF_RESPAWNED) && cg.weaponSelect != ps->weapon)
