@@ -3476,6 +3476,7 @@ static void CG_ServerCommand(void)
 		return;
 	case IMPKD0_HASH:                                      // "impkd0"
 		CG_Debriefing_ParsePlayerKillsDeaths(qfalse);
+		return;
 	case IMPKD1_HASH:                                      // "impkd1"
 		CG_Debriefing_ParsePlayerKillsDeaths(qtrue);
 		return;

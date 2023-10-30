@@ -2433,7 +2433,7 @@ void CG_Debriefing_ParsePrestige(void)
  */
 void CG_Debriefing_ParsePlayerKillsDeaths(qboolean secondPart)
 {
-	int i, max;
+	int i, j, max;
 
 	if (secondPart)
 	{
@@ -2446,14 +2446,14 @@ void CG_Debriefing_ParsePlayerKillsDeaths(qboolean secondPart)
 		max = cgs.maxclients / 2;
 	}
 
-	for (i; i < max; i++)
+	for (i, j = 0; i < max; i++, j++)
 	{
-		cgs.clientinfo[i].kills     = Q_atoi(CG_Argv((i * 6) + 1));
-		cgs.clientinfo[i].deaths    = Q_atoi(CG_Argv((i * 6) + 2));
-		cgs.clientinfo[i].gibs      = Q_atoi(CG_Argv((i * 6) + 3));
-		cgs.clientinfo[i].selfKills = Q_atoi(CG_Argv((i * 6) + 4));
-		cgs.clientinfo[i].teamKills = Q_atoi(CG_Argv((i * 6) + 5));
-		cgs.clientinfo[i].teamGibs  = Q_atoi(CG_Argv((i * 6) + 6));
+		cgs.clientinfo[i].kills     = Q_atoi(CG_Argv((j * 6) + 1));
+		cgs.clientinfo[i].deaths    = Q_atoi(CG_Argv((j * 6) + 2));
+		cgs.clientinfo[i].gibs      = Q_atoi(CG_Argv((j * 6) + 3));
+		cgs.clientinfo[i].selfKills = Q_atoi(CG_Argv((j * 6) + 4));
+		cgs.clientinfo[i].teamKills = Q_atoi(CG_Argv((j * 6) + 5));
+		cgs.clientinfo[i].teamGibs  = Q_atoi(CG_Argv((j * 6) + 6));
 	}
 	cgs.dbPlayerKillsDeathsReceived = qtrue;
 }
