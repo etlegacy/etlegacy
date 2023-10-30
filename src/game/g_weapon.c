@@ -327,10 +327,7 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 {
 	vec3_t  org;
 	trace_t tr;
-	int     healamt, headshot, oldweapon, oldclasstime = 0;
-	int     ammo[MAX_WEAPONS];          // total amount of ammo
-	int     ammoclip[MAX_WEAPONS];      // ammo in clip
-	int     weapons[MAX_WEAPONS / (sizeof(int) * 8)];   // 64 bits for weapons held
+	int     healamt, headshot, oldclasstime = 0;
 
 	// heal the dude
 	// copy some stuff out that we'll wanna restore
@@ -347,14 +344,8 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 		healamt = (int)(traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.5);
 	}
 
-	oldweapon = traceEnt->client->ps.weapon;
-
 	// keep class special weapon time to keep them from exploiting revives
 	oldclasstime = traceEnt->client->ps.classWeaponTime;
-
-	Com_Memcpy(ammo, traceEnt->client->ps.ammo, sizeof(int) * MAX_WEAPONS);
-	Com_Memcpy(ammoclip, traceEnt->client->ps.ammoclip, sizeof(int) * MAX_WEAPONS);
-	Com_Memcpy(weapons, traceEnt->client->ps.weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
 
 	ClientSpawn(traceEnt, qtrue, qfalse, qtrue);
 
@@ -363,16 +354,12 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 #endif
 
 	traceEnt->client->ps.stats[STAT_PLAYER_CLASS] = traceEnt->client->sess.playerType;
-	Com_Memcpy(traceEnt->client->ps.ammo, ammo, sizeof(int) * MAX_WEAPONS);
-	Com_Memcpy(traceEnt->client->ps.ammoclip, ammoclip, sizeof(int) * MAX_WEAPONS);
-	Com_Memcpy(traceEnt->client->ps.weapons, weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
 
 	if (headshot)
 	{
 		traceEnt->client->ps.eFlags |= EF_HEADSHOT;
 	}
 
-	traceEnt->client->ps.weapon          = oldweapon;
 	traceEnt->client->ps.weaponstate     = WEAPON_READY;
 	traceEnt->client->ps.classWeaponTime = oldclasstime;
 
@@ -3456,7 +3443,7 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	// skip corpses for bullet tracing (=non gibbing weapons)
 	G_TempTraceIgnoreBodies();
 
-    Bullet_Fire_Extended(ent, ent, muzzleTrace, end, forward, GetWeaponTableData(ent->s.weapon)->damage,
+	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, forward, GetWeaponTableData(ent->s.weapon)->damage,
 	                     GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_FALL_OFF, GetWeaponTableData(ent->s.weapon)->mod);
 
 	// ok let the bodies be traced again

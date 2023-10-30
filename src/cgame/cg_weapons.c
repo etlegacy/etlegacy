@@ -114,7 +114,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	localEntity_t *le;
 	refEntity_t   *re;
 	vec3_t        velocity, xvelocity;
-	vec3_t        offset = { 0, 0, 0 };
+	vec3_t        offset     = { 0, 0, 0 };
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
 	qboolean      isFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
@@ -3477,8 +3477,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				if (anim == WEAP_ALTSWITCHFROM || anim == WEAP_ALTSWITCHTO || anim == WEAP_IDLE1 || anim == WEAP_IDLE2)
 				{
-					// prevent the flying nade effect (much visible with M7 when swapping while raising)
-					if (weaponNum == cent->currentState.nextWeapon)
+					// prevent the flying nade effect (best visible with M7 when swapping while raising)
+					if (weaponNum == cg.snap->ps.nextWeapon && !(cg.snap->ps.pm_flags & PMF_RESPAWNED))
 					{
 						barrel.hModel = weapon->modModels[0];
 

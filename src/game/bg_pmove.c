@@ -5051,11 +5051,6 @@ void PmoveSingle(pmove_t *pmove)
 
 	if (pm->ps->pm_flags & PMF_RESPAWNED)
 	{
-		if (pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
-		{
-			pm->pmext->silencedSideArm |= 1;
-		}
-
 		// clear the respawned flag if attack button are cleared
 		// don't clear if a weapon change is needed to prevent early weapon change
 		if (pm->ps->stats[STAT_HEALTH] > 0 &&
