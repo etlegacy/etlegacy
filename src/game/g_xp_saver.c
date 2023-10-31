@@ -26,21 +26,23 @@
 
 #ifdef FEATURE_DBMS
 #include <sqlite3.h>
+#else
+#error Well here we are. Fix this. This whole file and functionality needs to be macroed away.
 #endif
 
 #ifndef _MSC_VER
 #define __FUNCTION__ __func__
 #endif
 
-#define bf_write(bf, T, input) *((T*)bf++) = (T)input;
-#define bf_read(bf, T, output) output = *((T*)bf++);
+#define bf_write(bf, T, input) *((T *)bf++) = (T)input;
+#define bf_read(bf, T, output) output       = *((T *)bf++);
 #define assert_return(cond, status, msg) \
-	if (!(cond)) { \
-		if (msg) { \
-			G_Printf("^1%s (%i): failed: %s\n", __func__, __LINE__, msg); \
-		} \
-		return status; \
-	}
+		if (!(cond)) { \
+			if (msg) { \
+				G_Printf("^1%s (%i): failed: %s\n", __func__, __LINE__, msg); \
+			} \
+			return status; \
+		}
 
 typedef struct xpData_s
 {
@@ -243,7 +245,7 @@ void G_XPSaver_Store(gclient_t *cl)
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		xp_data.skillpoints[i] = (int)cl->sess.skillpoints[i];
-		xp_data.medals[i] = (int)cl->sess.medals[i];
+		xp_data.medals[i]      = (int)cl->sess.medals[i];
 	}
 
 	// save or update xp
@@ -281,12 +283,12 @@ static int G_XPSaver_Read(xpData_t *xp_data)
 	result = sqlite3_step(sqlstmt);
 
 	if (result == SQLITE_ROW)
-	{	
+	{
 		/* retrieve skills */
-		pSkills = (int*)sqlite3_column_blob(sqlstmt, 1);
+		pSkills = (int *)sqlite3_column_blob(sqlstmt, 1);
 		assert_return(pSkills, 1, sqlite3_errmsg(level.database.db));
 
-		pMedals = (int*)sqlite3_column_blob(sqlstmt, 2);
+		pMedals = (int *)sqlite3_column_blob(sqlstmt, 2);
 		assert_return(pMedals, 2, sqlite3_errmsg(level.database.db));
 
 		for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -299,7 +301,7 @@ static int G_XPSaver_Read(xpData_t *xp_data)
 	else if (result != SQLITE_DONE)
 	{
 		err = sqlite3_errmsg(level.database.db);
-		if (err) 
+		if (err)
 		{
 			G_Printf("^3%s (%i): failed: %s\n", __func__, __LINE__, err);
 		}
@@ -308,7 +310,7 @@ static int G_XPSaver_Read(xpData_t *xp_data)
 	}
 
 	result = sqlite3_finalize(sqlstmt);
-	assert_return(result == SQLITE_OK, 1, sqlite3_errmsg(level.database.db));	
+	assert_return(result == SQLITE_OK, 1, sqlite3_errmsg(level.database.db));
 
 	return 0;
 }
@@ -340,7 +342,7 @@ static int G_XPSaver_Write(xpData_t *xp_data)
 
 	pSkills = buffer;
 	pMedals = buffer + SK_NUM_SKILLS;
-	for (i = 0; i < SK_NUM_SKILLS; i++) 
+	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		bf_write(pSkills, int, xp_data->skillpoints[i]);
 		bf_write(pMedals, int, xp_data->medals[i]);
@@ -359,7 +361,7 @@ static int G_XPSaver_Write(xpData_t *xp_data)
 	result = sqlite3_bind_blob(sqlstmt, 1, buffer, sizeof(int) * SK_NUM_SKILLS, SQLITE_STATIC);
 	assert_return(result == SQLITE_OK, 1, sqlite3_errmsg(level.database.db));
 
-	result = sqlite3_bind_blob(sqlstmt, 2, buffer + SK_NUM_SKILLS, sizeof(int) * SK_NUM_SKILLS, SQLITE_STATIC);        
+	result = sqlite3_bind_blob(sqlstmt, 2, buffer + SK_NUM_SKILLS, sizeof(int) * SK_NUM_SKILLS, SQLITE_STATIC);
 	assert_return(result == SQLITE_OK, 1, sqlite3_errmsg(level.database.db));
 
 	result = sqlite3_step(sqlstmt);
@@ -377,8 +379,8 @@ static int G_XPSaver_Write(xpData_t *xp_data)
  */
 int G_XPSaver_Clear()
 {
-	int          result;
-	char         *err_msg = NULL;
+	int  result;
+	char *err_msg = NULL;
 
 	if (!level.database.initialized)
 	{
