@@ -3024,7 +3024,7 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 	}
 	else
 	{
-		int reinfTime = CG_CalculateReinfTime(qfalse);
+		int reinfTime = CG_CalculateReinfTime(cgs.clientinfo[cg.clientNum].team);
 
 		// coloured respawn counter when deployment is close to bring attention to next respawn
 		if (reinfTime > 2)
@@ -3130,7 +3130,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 				if (cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] >= 0)
 				{
 					int deployTime   = ((cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer) / 1000;
-					int reinfDepTime = CG_CalculateReinfTime(qfalse) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime;
+					int reinfDepTime = CG_CalculateReinfTime(cgs.clientinfo[cg.snap->ps.clientNum].team) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime;
 
 					if (reinfDepTime > 1)
 					{
@@ -3148,7 +3148,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 			}
 			else
 			{
-				int reinfTime = CG_CalculateReinfTime(qfalse);
+				int reinfTime = CG_CalculateReinfTime(cgs.clientinfo[cg.snap->ps.clientNum].team);
 
 				// coloured respawn counter when deployment is close to bring attention to next respawn
 				if (reinfTime > 1)
