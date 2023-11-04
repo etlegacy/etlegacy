@@ -754,7 +754,7 @@ static void WM_DrawClientScore_Player(int x, int y, float scaleX, float scaleY, 
  */
 static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolean livesleft)
 {
-	int          maxchars = 16;
+	int          maxchars  = 16;
 	int          rowHeight = 16;
 	float        scaleX = 0.24f, scaleY = 0.28f;
 	int          offsetY = 12;
@@ -808,7 +808,7 @@ const char *WM_TimeToString(float msec)
  */
 static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, qboolean livesleft)
 {
-	int          maxchars = 23;
+	int          maxchars  = 23;
 	int          rowHeight = 12;
 	float        scaleX = 0.20f, scaleY = 0.25f;
 	int          offsetY = 10;
@@ -1315,7 +1315,18 @@ qboolean CG_DrawScoreboard(void)
 	WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, maxrows, use_mini_chars);
 
 #if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
-	if (cgs.gamestate != GS_INTERMISSION)
+	if (cgs.gamestate != GS_INTERMISSION &&
+		(
+#if defined(FEATURE_RATING)
+			cgs.skillRating
+#endif
+#if defined(FEATURE_RATING) && defined(FEATURE_PRESTIGE)
+			||
+#endif
+#if defined(FEATURE_PRESTIGE)
+			cgs.prestige
+#endif
+	    ))
 	{
 		s2 = Binding_FromName("+scores");
 		if (!Q_stricmp(s2, "(+scores)"))
