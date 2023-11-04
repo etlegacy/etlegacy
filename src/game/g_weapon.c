@@ -1570,35 +1570,21 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 
 	traceEnt = &g_entities[tr.entityNum];
 
-	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD
-	    || tr.contents & CONTENTS_TRIGGER || traceEnt->r.contents & CONTENTS_TRIGGER || traceEnt->s.eType == ET_MOVER)
+	if ((tr.surfaceFlags & SURF_NOIMPACT) || (tr.contents & CONTENTS_TRIGGER) || (traceEnt->r.contents & CONTENTS_TRIGGER) || traceEnt->s.eType == ET_MOVER)
 	{
-		// might be constructible
-		if (!ent->client->touchingTOI)
+		if (ent->client->touchingTOI && TryConstructing(ent, ent->client->touchingTOI))
 		{
-			goto weapengineergoto1;
+			return NULL;
 		}
-		else
-		{
-			if (TryConstructing(ent, ent->client->touchingTOI))
-			{
-				return NULL;
-			}
-		}
-		return NULL;
 	}
-
-weapengineergoto1:
 
 	if (VectorDistance(muzzleTrace, tr.endpos) > CH_BREAKABLE_DIST)
 	{
 		if (ent->client->touchingTOI)
 		{
-			if (TryConstructing(ent, ent->client->touchingTOI))
-			{
-				return NULL;
-			}
+			TryConstructing(ent, ent->client->touchingTOI);
 		}
+
 		return NULL;
 	}
 
