@@ -1892,7 +1892,7 @@ char *Q_TrimStr(char *string)
 	char   *start = string;
 	size_t len    = 0;
 
-	while (*s <= 0x20 || *s >= 0x7F || (Q_IsColorString(s) && *(s + 2) == 0x20))
+	while (*s && (*s <= 0x20 || *s >= 0x7F || (Q_IsColorString(s) && *(s + 2) == 0x20)))
 	{
 		if (Q_IsColorString(s) && *(s + 2) == 0x20)
 		{
@@ -1912,11 +1912,14 @@ char *Q_TrimStr(char *string)
 			--p;
 		}
 
-		p[1] = '\0';
-		len  = (size_t) (p - s + 1);
+		if (*p)
+		{
+			p[1] = '\0';
+		}
+		len = (size_t) (p - s + 1);
 	}
 
-	return (s == start) ? s : memmove(start, s, len + 1);
+	return (s == start) ? s : memmove(start, s, len);
 }
 
 /**
