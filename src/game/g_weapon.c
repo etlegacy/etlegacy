@@ -367,6 +367,11 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	traceEnt->client->ps.weapAnim = PM_IdleAnimForWeapon(traceEnt->client->ps.weapon);
 
 	traceEnt->health = healamt;
+
+	// set stats for revive event (revives and heal amount)
+	G_addStatsMedicRevive(traceEnt, ent);
+	G_addStatsMedicHealth(traceEnt, ent, healamt);
+
 	VectorCopy(org, traceEnt->s.origin);
 	VectorCopy(org, traceEnt->r.currentOrigin);
 	VectorCopy(org, traceEnt->client->ps.origin);

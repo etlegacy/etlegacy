@@ -590,10 +590,21 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
  */
 int Pickup_Health(gentity_t *ent, gentity_t *other)
 {
+	int amount = ent->item->quantity;
+
 	if (ent->parent && ent->parent->client)
 	{
 		other->client->pers.lasthealth_client = ent->parent->s.clientNum;
 	}
+
+	// Calculate health amount picked up
+	// current + amount > max ?
+	if (other->health + amount > other->client->ps.stats[STAT_MAX_HEALTH])
+	{
+		// amount = max - current
+		amount = other->client->ps.stats[STAT_MAX_HEALTH] - other->health;
+	}
+	other->health += amount;
 
 	// if medic isn't giving ammo to self or the enemy, give him some props
 	if (ent->parent && ent->parent->client && ent->parent->client != other->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
@@ -601,11 +612,7 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 		G_AddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "healing");
 	}
 
-	other->health += ent->item->quantity;
-	if (other->health > other->client->ps.stats[STAT_MAX_HEALTH])
-	{
-		other->health = other->client->ps.stats[STAT_MAX_HEALTH];
-	}
+	G_addStatsMedicHealth(other, ent->parent, amount);
 	other->client->ps.stats[STAT_HEALTH] = other->health;
 
 #ifdef FEATURE_OMNIBOT

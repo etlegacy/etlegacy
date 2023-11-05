@@ -264,6 +264,60 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner)
 }
 
 /**
+ * @brief Adds revive stats to the session
+ * @param[in,out] target client who got revived
+ * @param[in,out] source client who revived target
+ */
+void G_addStatsMedicRevive(gentity_t *target, gentity_t *source)
+{
+#ifndef DEBUG_STATS
+	if (g_gamestate.integer != GS_PLAYING)
+	{
+		return;
+	}
+#endif
+	if (!source || !source->client)
+	{
+		return;
+	}
+
+	source->client->sess.team_revive_given++;
+	target->client->sess.team_revive_received++;
+}
+
+/**
+ * @brief Adds amount healing done by medics, from medkits and revives
+ * @param[in,out] target client who received the health
+ * @param[in,out] source client who gave the health
+ * @param[in] value amount of health points
+ */
+void G_addStatsMedicHealth(gentity_t *target, gentity_t *source, int value)
+{
+#ifndef DEBUG_STATS
+	if (g_gamestate.integer != GS_PLAYING)
+	{
+		return;
+	}
+#endif
+	if (!source || !source->client)
+	{
+		return;
+	}
+
+	// check if target is from source's team
+	if (source->client->sess.sessionTeam == target->client->sess.sessionTeam)
+	{
+		source->client->sess.team_health_given    += value;
+		target->client->sess.team_health_received += value;
+	}
+	else
+	{
+		source->client->sess.enemy_health_given    += value;
+		target->client->sess.enemy_health_received += value;
+	}
+}
+
+/**
  * @brief G_addStats
  * @param[in,out] targ
  * @param[in,out] attacker
@@ -479,6 +533,13 @@ void G_createStatsJson(gentity_t *ent, void *target)
 		cJSON_AddNumberToObject(tmp2, "self_kills", ent->client->sess.self_kills);
 		cJSON_AddNumberToObject(tmp2, "team_kills", ent->client->sess.team_kills);
 		cJSON_AddNumberToObject(tmp2, "team_gibs", ent->client->sess.team_gibs);
+		cJSON_AddNumberToObject(tmp2, "team_health_given", ent->client->sess.team_health_given);
+		cJSON_AddNumberToObject(tmp2, "team_health_received", ent->client->sess.team_health_received);
+		cJSON_AddNumberToObject(tmp2, "enemy_health_given", ent->client->sess.enemy_health_given);
+		cJSON_AddNumberToObject(tmp2, "enemy_health_received", ent->client->sess.enemy_health_received);
+		cJSON_AddNumberToObject(tmp2, "team_revive_given", ent->client->sess.team_revive_given);
+		cJSON_AddNumberToObject(tmp2, "team_revive_received", ent->client->sess.team_revive_received);
+
 		cJSON_AddNumberToObject(tmp2, "play_time", (ent->client->sess.time_axis + ent->client->sess.time_allies) == 0 ? 0 : 100.0 * ent->client->sess.time_played / (ent->client->sess.time_axis + ent->client->sess.time_allies));
 	}
 
@@ -681,6 +742,13 @@ void G_deleteStats(int nClient)
 	cl->sess.time_allies          = 0;
 	cl->sess.time_played          = 0;
 
+	cl->sess.team_health_given     = 0;
+	cl->sess.team_health_received  = 0;
+	cl->sess.enemy_health_given    = 0;
+	cl->sess.enemy_health_received = 0;
+	cl->sess.team_revive_given     = 0;
+	cl->sess.team_revive_received  = 0;
+
 #ifdef FEATURE_RATING
 	// skill rating
 	cl->sess.mu       = MU;
@@ -753,6 +821,13 @@ void G_parseStatsJson(void *object)
 			cl->sess.damage_received = Q_ReadIntValueJson(tmp, "damage_received");
 			cl->sess.team_damage_given = Q_ReadIntValueJson(tmp, "team_damage_given");
 			cl->sess.team_damage_received = Q_ReadIntValueJson(tmp, "team_damage_received");
+
+			cl->sess.team_health_given = Q_ReadIntValueJson(tmp, "team_health_given");
+			cl->sess.team_health_received = Q_ReadIntValueJson(tmp, "team_health_received");
+			cl->sess.enemy_health_given = Q_ReadIntValueJson(tmp, "enemy_health_given");
+			cl->sess.enemy_health_received = Q_ReadIntValueJson(tmp, "enemy_health_received");
+			cl->sess.team_revive_given = Q_ReadIntValueJson(tmp, "team_revive_given");
+			cl->sess.team_revive_received = Q_ReadIntValueJson(tmp, "team_revive_received");
 		}
 		else
 		{
@@ -770,7 +845,7 @@ void G_parseStatsJson(void *object)
 void G_printMatchInfo(gentity_t *ent)
 {
 	int       i, j, cnt = 0, eff, time_eff;
-	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
+	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp, tot_rg, tot_rr, tot_thd, tot_thr, tot_ehd, tot_ehr;
 	gclient_t *cl;
 	gentity_t *cl_ent;
 	char      *ref;
@@ -798,14 +873,20 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_tdg = 0;
 		tot_tdr = 0;
 		tot_xp = 0;
+		tot_rg = 0; // Revives given
+		tot_rr = 0; // revives done
+		tot_thd = 0; // team healing done
+		tot_thr = 0; // team healing rec
+		tot_ehd = 0; // enem healing done
+		tot_ehr = 0; // enem healing rec
 
 		CP("sc \"\n\"");
 #ifdef FEATURE_RATING
-		CP("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score^8  Rating^5  Delta\n\"");
-		CP("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
+		CP("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG  RG  RR^7 Eff^2    DG^1    DR^6  TDG^$  TDR^2   THG^$   THR^1   EHG^2   EHR^3  Score^8  Rating^5  Delta\n\"");
+		CP("sc \"^7--------------------------------------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		CP("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score\n\"");
-		CP("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
+		CP("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG  RG  RR^7 Eff^2    DG^1    DR^6  TDG^$  TDR^2   THG^$   THR^1   EHG^2   EHR^3  Score\n\"");
+		CP("sc \"^7-----------------------------------------------------------------------------------------------------------------------------------------\n\"");
 #endif
 
 		for (j = 0; j < level.numConnectedClients; j++)
@@ -846,6 +927,14 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_dr += cl->sess.damage_received;
 			tot_tdg += cl->sess.team_damage_given;
 			tot_tdr += cl->sess.team_damage_received;
+
+			tot_rg += cl->sess.team_revive_given;
+			tot_rr += cl->sess.team_revive_received;
+			tot_thd += cl->sess.team_health_given;
+			tot_thr += cl->sess.team_health_received;
+			tot_ehd += cl->sess.enemy_health_given;
+			tot_ehr += cl->sess.enemy_health_received;
+
 			tot_xp += (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
 
 			eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
@@ -866,9 +955,9 @@ void G_printMatchInfo(gentity_t *ent)
 
 			cnt++;
 #ifdef FEATURE_RATING
-			trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
+			trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^2%6d^$%6d^1%6d^2%6d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
-			trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+			trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^2%6d^$%6d^1%6d^2%6d^3%7d\n\"",
 #endif
 			                                            guid,
 			                                            aTeams[i],
@@ -884,12 +973,18 @@ void G_printMatchInfo(gentity_t *ent)
 			                                            cl->sess.self_kills,
 			                                            cl->sess.team_kills,
 			                                            cl->sess.team_gibs,
+			                                            cl->sess.team_revive_given,
+			                                            cl->sess.team_revive_received,
 			                                            ref,
 			                                            eff,
 			                                            cl->sess.damage_given,
 			                                            cl->sess.damage_received,
 			                                            cl->sess.team_damage_given,
 			                                            cl->sess.team_damage_received,
+			                                            cl->sess.team_health_given,
+			                                            cl->sess.team_health_received,
+			                                            cl->sess.enemy_health_given,
+			                                            cl->sess.enemy_health_received,
 			                                            (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
 #ifdef FEATURE_RATING
 			                                            ,
@@ -908,11 +1003,11 @@ void G_printMatchInfo(gentity_t *ent)
 		                                                             time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
 
 #ifdef FEATURE_RATING
-		                                                             CP("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
+		                                                             CP("sc \"^7--------------------------------------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		                                                             CP("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
+		                                                             CP("sc \"^7-----------------------------------------------------------------------------------------------------------------------------------------\n\"");
 #endif
-		                                                             trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+		                                                             trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d%4d%4d^2%6d^1%6d^6%5d^$%5d^2%6d^$%6d^1%6d^2%6d^3%7d\n\"",
 		                                                                                                         "",
 		                                                                                                         aTeams[i],
 		                                                                                                         "Totals",
@@ -925,11 +1020,17 @@ void G_printMatchInfo(gentity_t *ent)
 		                                                                                                         tot_sk,
 		                                                                                                         tot_tk,
 		                                                                                                         tot_tg,
+		                                                                                                         tot_rg,
+		                                                                                                         tot_rr,
 		                                                                                                         eff,
 		                                                                                                         tot_dg,
 		                                                                                                         tot_dr,
 		                                                                                                         tot_tdg,
 		                                                                                                         tot_tdr,
+		                                                                                                         tot_thd,
+		                                                                                                         tot_thr,
+		                                                                                                         tot_ehd,
+		                                                                                                         tot_ehr,
 		                                                                                                         tot_xp
 		                                                                                                         ));
 	}
