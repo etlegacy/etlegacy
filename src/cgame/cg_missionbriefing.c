@@ -428,7 +428,6 @@ void CG_LocateCampaign(void)
 	char         *dirptr;
 	int          i;
 	unsigned int dirlen;
-	qboolean     found = qfalse;
 
 	// get all campaigns from .campaign files
 	numdirs = trap_FS_GetFileList("scripts", ".campaign", dirlist, 1024);
@@ -440,12 +439,12 @@ void CG_LocateCampaign(void)
 		Q_strcat(filename, MAX_QPATH, dirptr);
 		if (CG_FindCampaignInFile(filename, cgs.currentCampaign, &cgs.campaignData))
 		{
-			found = qtrue;
+			cgs.campaignInfoLoaded = qtrue;
 			break;
 		}
 	}
 
-	if (!found)
+	if (!cgs.campaignInfoLoaded)
 	{
 		return;
 	}
@@ -456,11 +455,15 @@ void CG_LocateCampaign(void)
 
 		if (!CG_FindArenaInfo(filename, cgs.campaignData.mapnames[i], &cgs.campaignData.arenas[i]))
 		{
-			return;
+			// in case parsing arena file failed, fill with dummy / default values
+			Q_strncpyz(cgs.campaignData.arenas[i].lmsdescription, "No description available", sizeof(cgs.campaignData.arenas[i].lmsdescription));
+			Q_strncpyz(cgs.campaignData.arenas[i].description, "No description available", sizeof(cgs.campaignData.arenas[i].description));
+			Q_strncpyz(cgs.campaignData.arenas[i].axiswintext, "AXIS WIN!", sizeof(cgs.campaignData.arenas[i].axiswintext));
+			Q_strncpyz(cgs.campaignData.arenas[i].alliedwintext, "ALLIES WIN!", sizeof(cgs.campaignData.arenas[i].alliedwintext));
+			Q_strncpyz(cgs.campaignData.arenas[i].longname, cgs.campaignData.mapnames[i], sizeof(cgs.campaignData.arenas[i].longname));
+			Vector2Set(cgs.campaignData.arenas[i].mappos, -1, -1);
 		}
 	}
-
-	cgs.campaignInfoLoaded = qtrue;
 }
 
 /**
