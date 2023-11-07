@@ -84,7 +84,7 @@ char *Sys_DefaultHomePath(void)
 #ifdef __ANDROID__
 		if(SDL_AndroidGetExternalStorageState())
 		{
-			Q_strncpyz(homePath, SDL_AndroidGetExternalStoragePath(), sizeof(homePath));
+			Q_strncpyz(homePath, "/sdcard", sizeof(homePath));
 			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
 		}
 		else
