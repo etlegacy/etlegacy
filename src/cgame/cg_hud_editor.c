@@ -654,7 +654,7 @@ static panel_button_t hudEditorResetComp =
 	NULL,
 	"Reset Component",
 	{ 0,                      HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT + HUDEDITOR_CONTROLS_SPACER_XY,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2) - 1, BUTTON_HEIGHT },
-	{ 0,                      0,                                                                                  0,                                                       3, 0, 0, 0, 1 },
+	{ 0,                      0,                                                                                  0,                                                           3, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
 	CG_HudEditorButton_KeyDown,// keyDown
 	CG_HudEditorButton_KeyUp, // keyUp
@@ -681,7 +681,7 @@ static panel_button_t hudEditorComponentsList =
 {
 	NULL,
 	"hudeditor_componentsList",
-	{ 3,                            SCREEN_HEIGHT + 6, SCREEN_WIDTH, SCREEN_HEIGHT_SAFE * 0.28 },
+	{ 3,                            SCREEN_HEIGHT + 6,SCREEN_WIDTH, SCREEN_HEIGHT_SAFE * 0.28 },
 	{ 0,                            0,  0,            0, 0, 0, 0, 1             },
 	&hudEditorFont_Dropdown,        // font
 	CG_HudEditor_ComponentLists_KeyDown,// keyDown
@@ -2331,7 +2331,7 @@ static qboolean CG_HudEditor_ComponentLists_KeyUp(panel_button_t *button, int ke
 
 				rect.y += rect.h + COMPONENT_BUTTON_SPACE_Y;
 
-				if (rect.y + COMPONENT_BUTTON_HEIGHT >= SCREEN_HEIGHT_SAFE + (SCREEN_HEIGHT_SAFE * 0.25f))
+				if (rect.y + COMPONENT_BUTTON_HEIGHT >= button->rect.y + button->rect.h)
 				{
 					rect.y  = button->rect.y;
 					rect.x += rect.w + COMPONENT_BUTTON_SPACE_X;
