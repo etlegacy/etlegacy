@@ -276,7 +276,7 @@ void PushBot(gentity_t *ent, gentity_t *other)
  */
 qboolean ReadyToCallArtillery(gentity_t *ent)
 {
-	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_STAMINA_RECHARGE))
+	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_SIGNALS, SK_FIELDOPS_FIRE_SUPPORT_STAMINA))
 	{
 		if (level.time - ent->client->ps.classWeaponTime <= (level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.66f))
 		{
