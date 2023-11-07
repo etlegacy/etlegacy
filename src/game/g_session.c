@@ -50,7 +50,7 @@
  */
 void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 {
-	cJSON *root, *restartObj = NULL;
+	cJSON *root, *campaign, *restartObj = NULL;
 	char  fileName[MAX_QPATH] = { 0 };
 
 	Com_sprintf(fileName, sizeof(fileName), "session/client%02i.json", (int)(client - level.clients));
@@ -150,6 +150,13 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	if (!level.fResetStats)
 	{
 		G_createStatsJson(&g_entities[client - level.clients], cJSON_AddObjectToObject(root, "wstats"));
+	}
+
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
+	{
+		campaign = cJSON_AddObjectToObject(root, "campaign");
+		cJSON_AddNumberToObject(campaign, "campaign", level.currentCampaign);
+		cJSON_AddNumberToObject(campaign, "map", g_currentCampaignMap.integer);
 	}
 
 	if (!Q_FSWriteJSONTo(root, fileName))
@@ -323,14 +330,25 @@ void G_CalcRank(gclient_t *client)
 void G_ReadSessionData(gclient_t *client)
 {
 	char     fileName[MAX_QPATH] = { 0 };
-	cJSON    *root = NULL, *wstats = NULL;
-	qboolean test;
+	cJSON    *root = NULL, *wstats = NULL, *campaign = NULL;
+	qboolean test, restoreStats = qtrue;
 	int      i = 0;
 
 	Com_sprintf(fileName, sizeof(fileName), "session/client%02i.json", (int)(client - level.clients));
 	Com_Printf("Reading session file %s\n", fileName);
 
 	root = Q_FSReadJsonFrom(fileName);
+
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
+	{
+		campaign = cJSON_GetObjectItem(root, "campaign");
+
+		if (campaign)
+		{
+			restoreStats = Q_ReadIntValueJson(campaign, "campaign") == level.currentCampaign
+				        && Q_ReadIntValueJson(campaign, "map") == g_currentCampaignMap.integer;
+		}
+	}
 
 	client->sess.sessionTeam        = Q_ReadIntValueJson(root, "sessionTeam");
 	client->sess.spectatorTime      = Q_ReadIntValueJson(root, "spectatorTime");
@@ -346,15 +364,19 @@ void G_ReadSessionData(gclient_t *client)
 	client->sess.shoutcaster        = Q_ReadIntValueJson(root, "shoutcaster");
 	client->sess.spec_invite        = Q_ReadIntValueJson(root, "spec_invite");
 	client->sess.spec_team          = Q_ReadIntValueJson(root, "spec_team");
-	client->sess.kills              = Q_ReadIntValueJson(root, "kills");
-	client->sess.deaths             = Q_ReadIntValueJson(root, "deaths");
-	client->sess.gibs               = Q_ReadIntValueJson(root, "gibs");
-	client->sess.self_kills         = Q_ReadIntValueJson(root, "self_kills");
-	client->sess.team_kills         = Q_ReadIntValueJson(root, "team_kills");
-	client->sess.team_gibs          = Q_ReadIntValueJson(root, "team_gibs");
-	client->sess.time_axis          = Q_ReadIntValueJson(root, "time_axis");
-	client->sess.time_allies        = Q_ReadIntValueJson(root, "time_allies");
-	client->sess.time_played        = Q_ReadIntValueJson(root, "time_played");
+	
+	if (restoreStats)
+	{
+		client->sess.kills              = Q_ReadIntValueJson(root, "kills");
+		client->sess.deaths             = Q_ReadIntValueJson(root, "deaths");
+		client->sess.gibs               = Q_ReadIntValueJson(root, "gibs");
+		client->sess.self_kills         = Q_ReadIntValueJson(root, "self_kills");
+		client->sess.team_kills         = Q_ReadIntValueJson(root, "team_kills");
+		client->sess.team_gibs          = Q_ReadIntValueJson(root, "team_gibs");
+		client->sess.time_axis          = Q_ReadIntValueJson(root, "time_axis");
+		client->sess.time_allies        = Q_ReadIntValueJson(root, "time_allies");
+		client->sess.time_played        = Q_ReadIntValueJson(root, "time_played");
+	}
 
 #ifdef FEATURE_RATING
 	{
@@ -408,7 +430,7 @@ void G_ReadSessionData(gclient_t *client)
 
 	// pull and parse weapon stats
 	wstats = cJSON_GetObjectItem(root, "wstats");
-	if (wstats)
+	if (wstats && restoreStats)
 	{
 		G_parseStatsJson(wstats);
 		if (g_gamestate.integer == GS_PLAYING)
