@@ -263,6 +263,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			return (long)s_wcd.hbrEditBackground;
 		}
+        break;
 	case WM_COMMAND:
 		if (wParam == COPY_ID)
 		{
