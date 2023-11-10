@@ -914,10 +914,10 @@ static ID_INLINE qboolean Q_IsColorString(const char *p)
 		return qfalse;
 	}
 
-	// The char might an extended char or part of utf-8 so only check it if its in the 0 - 127 range
-	if (p[1] >= 0 && p[1] <= 127)
+	// The char might an extended char or part of utf-8 so only check it if its valid
+	if (p[1] >= 0)
 	{
-		return isgraph(p[1]) != 0 ? qtrue : qfalse;
+		return (qboolean)isgraph(p[1]);
 	}
 
 	return qtrue;
