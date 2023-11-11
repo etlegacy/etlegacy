@@ -377,6 +377,21 @@ typedef enum
 static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci);
 static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status);
 
+static ID_INLINE int CG_FireTeamClientCurrentWeapon(clientInfo_t *ci)
+{
+	if (cg_entities[ci->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
+	{
+		return IS_MOUNTED_TANK_BROWNING(ci->clientNum) ? WP_MOBILE_BROWNING : WP_MOBILE_MG42;
+	}
+	else if ((cg_entities[ci->clientNum].currentState.eFlags & EF_MG42_ACTIVE) || (cg_entities[ci->clientNum].currentState.eFlags & EF_AAGUN_ACTIVE))
+	{
+		return WP_MOBILE_MG42;
+	}
+	else
+	{
+		return cg_entities[ci->clientNum].currentState.weapon;
+	}
+}
 
 /**
  * @brief Draw FireTeam overlay
@@ -515,18 +530,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 
 		// find the widest weapons icons
-		if (cg_entities[ci->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
-		{
-			curWeap = IS_MOUNTED_TANK_BROWNING(ci->clientNum) ? WP_MOBILE_BROWNING : WP_MOBILE_MG42;
-		}
-		else if ((cg_entities[ci->clientNum].currentState.eFlags & EF_MG42_ACTIVE) || (cg_entities[ci->clientNum].currentState.eFlags & EF_AAGUN_ACTIVE))
-		{
-			curWeap = WP_MOBILE_MG42;
-		}
-		else
-		{
-			curWeap = cg_entities[ci->clientNum].currentState.weapon;
-		}
+		curWeap = CG_FireTeamClientCurrentWeapon(ci);
 
 		if (IS_VALID_WEAPON(curWeap) && (cg_weapons[curWeap].weaponIcon[0] || cg_weapons[curWeap].weaponIcon[1]))     // do not try to draw nothing
 		{
@@ -729,18 +733,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		x += spacing * 2 + bestNameWidth - puwidth;
 
 		// draw the player's weapon icon
-		if (cg_entities[ci->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
-		{
-			curWeap = IS_MOUNTED_TANK_BROWNING(ci->clientNum) ? WP_MOBILE_BROWNING : WP_MOBILE_MG42;
-		}
-		else if ((cg_entities[ci->clientNum].currentState.eFlags & EF_MG42_ACTIVE) || (cg_entities[ci->clientNum].currentState.eFlags & EF_AAGUN_ACTIVE))
-		{
-			curWeap = WP_MOBILE_MG42;
-		}
-		else
-		{
-			curWeap = cg_entities[ci->clientNum].currentState.weapon;
-		}
+		curWeap = CG_FireTeamClientCurrentWeapon(ci);
 
 		// note: WP_NONE is excluded
 		if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
