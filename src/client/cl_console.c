@@ -367,13 +367,13 @@ static void Con_LoadConsoleHistory(void)
 {
 	fileHandle_t f;
 	long         size;
-	int          read, i, width;
+	int          read, i, width = 0;
 	char         *buffer;
 
 	size = FS_SV_FOpenFileRead(ETL_CONSOLE_HISTORY_FILE, &f);
 	if (!f)
 	{
-		Com_Printf("Couldn't read %s.\n", ETL_CONSOLE_HISTORY_FILE);
+		Com_Printf(S_COLOR_YELLOW "Couldn't read %s.\n", ETL_CONSOLE_HISTORY_FILE);
 		return;
 	}
 
@@ -386,12 +386,12 @@ static void Con_LoadConsoleHistory(void)
 		size++;
 	}
 
-	buffer = Com_Allocate(size);
+	buffer = Hunk_AllocateTempMemory(size);
 	Com_Memset(buffer, 0, size);
 
 	read = FS_Read(buffer, (int)size - 1, f);
 
-	for (i = 0, historyLine = 0; i < read && historyLine < COMMAND_HISTORY;)
+	for (i = 0, historyLine = 0; i < read && historyLine < (COMMAND_HISTORY - 1);)
 	{
 		if (!buffer[i])
 		{
@@ -406,6 +406,7 @@ static void Con_LoadConsoleHistory(void)
 				historyLine++;
 			}
 			i++;
+			width = 0;
 			continue;
 		}
 
@@ -420,14 +421,14 @@ static void Con_LoadConsoleHistory(void)
 	}
 
 	// if the history file did not end with a newline
-	if (*historyEditLines[historyLine % COMMAND_HISTORY].buffer)
+	if (width && historyEditLines[historyLine].buffer[0])
 	{
 		historyLine++;
 	}
 	nextHistoryLine = historyLine;
 
-	Com_Dealloc(buffer);
 	FS_FCloseFile(f);
+	Hunk_FreeTempMemory(buffer);
 }
 
 /**
@@ -435,7 +436,8 @@ static void Con_LoadConsoleHistory(void)
  */
 void Con_SaveConsoleHistory(void)
 {
-	int          i;
+	int          i, start, current, len, lastLen;
+	const char   *last = NULL;
 	fileHandle_t f;
 
 	f = FS_SV_FOpenFileWrite(ETL_CONSOLE_HISTORY_FILE);
@@ -445,14 +447,29 @@ void Con_SaveConsoleHistory(void)
 		return;
 	}
 
-	for (i = 0; i < COMMAND_HISTORY; i++)
+	start = (nextHistoryLine % COMMAND_HISTORY);
+	for (i = (start + 1); i < (COMMAND_HISTORY + start); i++)
 	{
-		if (!*historyEditLines[i].buffer)
+		current = i % COMMAND_HISTORY;
+		if (!*historyEditLines[current].buffer)
 		{
 			continue;
 		}
 
-		if (!FS_Write(historyEditLines[i].buffer, (int)strlen(historyEditLines[i].buffer), f))
+		// trim trailing spaces
+		len = (int)strlen(historyEditLines[current].buffer);
+		while (len > 0 && historyEditLines[current].buffer[len - 1] == ' ')
+		{
+			len--;
+		}
+
+		// Do not write the same line twice
+		if (last && !Q_stricmpn(last, historyEditLines[current].buffer, (len > lastLen ? len : lastLen)))
+		{
+			continue;
+		}
+
+		if (!FS_Write(historyEditLines[current].buffer, len, f))
 		{
 			Com_Printf("Couldn't write %s.\n", ETL_CONSOLE_HISTORY_FILE);
 		}
@@ -461,6 +478,8 @@ void Con_SaveConsoleHistory(void)
 		{
 			Com_Printf("Couldn't write %s.\n", ETL_CONSOLE_HISTORY_FILE);
 		}
+		last    = historyEditLines[current].buffer;
+		lastLen = len;
 	}
 
 	FS_FCloseFile(f);
