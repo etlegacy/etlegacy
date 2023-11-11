@@ -193,6 +193,10 @@ extern clientActive_t cl;
 
 //==================================================================
 
+/**
+ * @struct demo_t
+ * @brief Client demo information
+ */
 typedef struct
 {
 	char demoName[MAX_QPATH];

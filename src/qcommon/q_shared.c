@@ -3111,3 +3111,19 @@ int ExtractInt(const char *src)
 
 	return result;
 }
+
+int32_t Q_FloatToInt(float f)
+{
+	floatint_t fi;
+
+	fi.f = f;
+	return fi.i;
+}
+
+float Q_IntToFloat(int32_t i)
+{
+	floatint_t fi;
+
+	fi.i = i;
+	return fi.f;
+}

@@ -278,7 +278,7 @@ static ID_INLINE float vec2_length(const vec2_t v)
 #define vec3_scale(v, s, o)    ((o)[0] = (v)[0] * (s), (o)[1] = (v)[1] * (s), (o)[2] = (v)[2] * (s))
 // Vector multiply & add
 #define vec3_ma(v, s, b, o)    ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s))
-#define vec3_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); v[2] = ((int)(v[2])); }
+#define vec3_snap(v) { (v)[0] = ((int)((v)[0])); (v)[1] = ((int)((v)[1])); (v)[2] = ((int)((v)[2])); }
 void vec3_to_angles(const vec3_t value1, vec3_t angles);
 void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross);
 vec_t vec3_length(const vec3_t v);
@@ -305,14 +305,14 @@ void vec3_lerp(const vec3_t start, const vec3_t end, float frac, vec3_t out);
 // Perpendicular vector of source
 void vec3_per(const vec3_t src, vec3_t dst);
 
-static inline void VectorMin(const vec3_t a, const vec3_t b, vec3_t out)
+static ID_INLINE void VectorMin(const vec3_t a, const vec3_t b, vec3_t out)
 {
 	out[0] = a[0] < b[0] ? a[0] : b[0];
 	out[1] = a[1] < b[1] ? a[1] : b[1];
 	out[2] = a[2] < b[2] ? a[2] : b[2];
 }
 
-static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
+static ID_INLINE void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 {
 	out[0] = a[0] > b[0] ? a[0] : b[0];
 	out[1] = a[1] > b[1] ? a[1] : b[1];
@@ -362,7 +362,8 @@ float angle_mod(float a);
 float angle_lerp(float from, float to, float frac);
 float angle_sub(float a1, float a2);
 void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3);
-inline static void angles_lerp(const vec3_t from, const vec3_t to, float frac, vec3_t out)
+
+static ID_INLINE void angles_lerp(const vec3_t from, const vec3_t to, float frac, vec3_t out)
 {
 	out[0] = angle_lerp(from[0], to[0], frac);
 	out[1] = angle_lerp(from[1], to[1], frac);

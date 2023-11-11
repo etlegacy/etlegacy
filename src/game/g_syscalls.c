@@ -45,19 +45,6 @@ Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...))
 }
 
 /**
- * @brief PASSFLOAT
- * @param[in] x
- * @return
- */
-int PASSFLOAT(float x)
-{
-	floatint_t fi;
-
-	fi.f = x;
-	return fi.i;
-}
-
-/**
  * @brief trap_Printf
  * @param[in] fmt
  */

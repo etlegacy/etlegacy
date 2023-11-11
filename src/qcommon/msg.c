@@ -229,7 +229,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 			break;
 		case 16:
 		{
-			unsigned short *sp = (unsigned short *)&msg->data[msg->cursize];
+			uint16_t *sp = (uint16_t *)&msg->data[msg->cursize];
 
 			*sp           = LittleShort(value);
 			msg->cursize += 2;
@@ -238,7 +238,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		break;
 		case 32:
 		{
-			unsigned int *ip = (unsigned int *)&msg->data[msg->cursize];
+			uint32_t *ip = (uint32_t *)&msg->data[msg->cursize];
 
 			*ip           = LittleLong(value);
 			msg->cursize += 4;
@@ -1584,11 +1584,11 @@ entityShared_t communication
 #define LOG2_8BIT(v)  (8 - 90 / (((v) / 4 + 14) | 1) - 2 / ((v) / 2 + 1))
 #define LOG2_16BIT(v) (8 * ((v) > 255) + LOG2_8BIT((v) >> 8 * ((v) > 255)))
 #define LOG2_32BIT(v) \
-	(16 * ((v) > 65535L) + LOG2_16BIT((v) * 1L >> 16 * ((v) > 65535L)))
+		(16 * ((v) > 65535L) + LOG2_16BIT((v) * 1L >> 16 * ((v) > 65535L)))
 #define LOG2_64BIT(v) \
-	(32 * ((v) / 2L >> 31 > 0) \
-	 + LOG2_32BIT((v) * 1L >> 16 * ((v) / 2L >> 31 > 0) \
-	              >> 16 * ((v) / 2L >> 31 > 0)))
+		(32 * ((v) / 2L >> 31 > 0) \
+		 + LOG2_32BIT((v) * 1L >> 16 * ((v) / 2L >> 31 > 0) \
+					  >> 16 * ((v) / 2L >> 31 > 0)))
 
 /// Compute the number of clients bits at compile-time (this is necessary else the compiler will throw an error because this is not a constant)
 #define CLIENTNUM_BITS  LOG2_8BIT(MAX_CLIENTS)

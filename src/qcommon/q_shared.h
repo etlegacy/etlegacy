@@ -2069,4 +2069,9 @@ char *Com_ScaleNumberPerThousand(float value, unsigned int decimalCount);
 
 int ExtractInt(const char *src);
 
+int32_t Q_FloatToInt(float f);
+float Q_IntToFloat(int32_t i);
+
+#define PASSFLOAT(f) Q_FloatToInt((f))
+
 #endif  // #ifndef INCLUDE_Q_SHARED_H
