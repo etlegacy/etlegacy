@@ -411,8 +411,8 @@ typedef enum
 typedef union
 {
 	float f;
-	int i;
-	unsigned int ui;
+	int32_t i;
+	uint32_t ui;
 } floatint_t;
 
 typedef int qhandle_t;

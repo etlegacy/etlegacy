@@ -2395,7 +2395,7 @@ void quat_to_vec3_FLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up)
 	mat4_t tmp;
 
 	mat4_from_quat(tmp, q);
-	MatrixToVectorsFRU(tmp, forward, left, up);
+	MatrixToVectorsFLU(tmp, forward, left, up);
 }
 
 /**
@@ -3236,7 +3236,9 @@ qboolean mat4_inverse(const mat4_t in, mat4_t out)
  */
 qboolean mat4_inverse_self(mat4_t matrix)
 {
-	return mat4_inverse(matrix, matrix);
+	mat4_t tmp;
+	mat4_copy(matrix, tmp);
+	return mat4_inverse(tmp, matrix);
 }
 
 /**
