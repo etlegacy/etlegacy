@@ -406,7 +406,7 @@ static void Con_LoadConsoleHistory(void)
 				historyLine++;
 			}
 			i++;
-			width = 0;
+			width = 5;
 			continue;
 		}
 
@@ -421,7 +421,7 @@ static void Con_LoadConsoleHistory(void)
 	}
 
 	// if the history file did not end with a newline
-	if (width && historyEditLines[historyLine].buffer[0])
+	if (width < 5 && historyEditLines[historyLine].buffer[0])
 	{
 		historyLine++;
 	}
