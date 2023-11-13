@@ -714,6 +714,11 @@ qboolean G_SnapshotCallback(int entityNum, int clientNum)
 		}
 	}
 
+	if (ent->s.eType == ET_FIRETEAM)
+	{
+		return G_FireTeamEntityCallback(ent, clientNum);
+	}
+
 	// don't send if out of range
 	if (ent->s.eType == ET_EVENTS + EV_SHAKE)
 	{
@@ -2645,6 +2650,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 
 	// reserve some spots for dead player bodies
 	InitBodyQue();
+
+	G_InitFireTeamEntities();
 
 	// load level script
 	G_Script_ScriptLoad();
@@ -5310,6 +5317,9 @@ void G_RunEntity(gentity_t *ent, int msec)
 			ent->s.pos.trTime += level.frameTime;
 		}
 
+		G_RunThink(ent);
+		return;
+	case ET_FIRETEAM:
 		G_RunThink(ent);
 		return;
 	default:

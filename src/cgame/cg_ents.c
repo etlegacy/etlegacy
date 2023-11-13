@@ -2632,6 +2632,9 @@ static void CG_ProcessEntity(centity_t *cent)
 	case ET_AIRSTRIKE_PLANE:
 		CG_MovePlane(cent);
 		break;
+	case ET_FIRETEAM:
+		CG_FireTeamEntityUpdate(cent);
+		break;
 	}
 }
 

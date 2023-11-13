@@ -469,7 +469,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 		if (cg_locations.integer & LOC_FTEAM)
 		{
-			locStr[i] = CG_BuildLocationString(ci->clientNum, ci->location, LOC_FTEAM);
+			locStr[i] = CG_BuildLocationString(ci->clientNum, ci->fireteamLocation, LOC_FTEAM);
 
 			if (!locStr[i][1] || !*locStr[i])
 			{

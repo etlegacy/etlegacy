@@ -565,6 +565,8 @@ const char *enttypenames[] =
 
 	"ET_AIRSTRIKE_PLANE",
 
+	"ET_FIRETEAM",
+
 	"ET_EVENTS"
 };
 

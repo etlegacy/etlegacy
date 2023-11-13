@@ -643,6 +643,7 @@ typedef struct clientInfo_s
 	int botSkill;                   ///< OBSOLETE remove!
 	int score;                      ///< updated by score servercmds
 	vec3_t location;                ///< location (currentOrigin casted int values!) for team mode
+	vec3_t fireteamLocation;        ///< location (currentOrigin casted int values!) for fireteam mode
 	int health;                     ///< you only get this info about your teammates
 	int powerups;                   ///< so can display quad/flag status
 	int breathPuffTime;
@@ -4124,6 +4125,8 @@ void CG_Fireteams_Setup(void);
 
 void CG_Fireteams_MenuText_Draw(panel_button_t *button);
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
+
+void CG_FireTeamEntityUpdate(centity_t *cent);
 
 // cg_spawnpoints.c
 void CG_Spawnpoints_KeyHandling(int key, qboolean down);

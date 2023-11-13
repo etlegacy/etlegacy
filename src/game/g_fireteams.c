@@ -33,6 +33,8 @@
  */
 
 #include "g_local.h"
+#include "bg_ebs.h"
+#include "bg_b64.h"
 
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
@@ -405,6 +407,7 @@ void G_RegisterFireteam(int entityNum)
 	Bot_Event_JoinedFireTeam(leader - g_entities, leader);
 #endif
 
+	level.fireTeamEnts[ft - level.fireTeams]->r.linked = qtrue;
 	G_UpdateFireteamConfigString(ft);
 }
 
@@ -1384,4 +1387,142 @@ void Cmd_FireTeam_MP_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 		G_GiveAdminOfFireTeam(ent - g_entities, clientnum - 1);
 	}
+}
+
+#define FIRETEAM_ENTITY_NEXT_THINK_TIME (level.time + 500)
+
+static void G_FireTeamEntityThink(gentity_t *ent)
+{
+	entityBitStream_t s;
+	gentity_t         *player;
+	fireteamData_t    *team;
+	int               x, y, z, i;
+	char              offset;
+
+	ent->nextthink = FIRETEAM_ENTITY_NEXT_THINK_TIME;
+
+	EBS_InitWrite(&s, &ent->s, qtrue);
+	EBS_WriteBits(&s, 0, 4); ///< Version
+
+	team = &level.fireTeams[ent->key];
+	EBS_WriteBits(&s, ent->key, 4);
+	EBS_WriteBits(&s, team->inuse, 1);
+	if (!team->inuse)
+	{
+		ent->r.linked = qfalse;
+		return;
+	}
+	ent->r.linked = qtrue;
+
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; ++i)
+	{
+		offset = team->joinOrder[i];
+		if (offset == -1)
+		{
+			EBS_WriteBits(&s, BITS(3), 3);
+			continue;
+		}
+		EBS_WriteBits(&s, offset, 3);
+
+		player = &g_entities[(int)offset];
+
+		x = (int)player->r.currentOrigin[0] / 100;
+		y = (int)player->r.currentOrigin[1] / 100;
+		z = (int)player->r.currentOrigin[2] / 100;
+
+		// make sure all the values fit in the bitstream
+		etl_assert(abs(x) <= BITS(10));
+		etl_assert(abs(y) <= BITS(10));
+		etl_assert(abs(z) <= BITS(10));
+
+		EBS_WriteBits(&s, x >= 0 ? 0 : 1, 1);
+		EBS_WriteBits(&s, abs(x), 10);
+
+		EBS_WriteBits(&s, y >= 0 ? 0 : 1, 1);
+		EBS_WriteBits(&s, abs(y), 10);
+
+		EBS_WriteBits(&s, z >= 0 ? 0 : 1, 1);
+		EBS_WriteBits(&s, abs(z), 10);
+
+		etl_assert(player->client->sess.latchPlayerType >= 0 && player->client->sess.latchPlayerType < BITS(4));
+		EBS_WriteBits(&s, player->client->sess.latchPlayerType, 4);
+		etl_assert(player->client->sess.playerWeapon >= 0 && player->client->sess.playerWeapon <= BITS(4));
+		EBS_WriteBits(&s, player->client->sess.playerWeapon, 6);
+	}
+	EBS_WriteBits(&s, 0xFFFF, 16); // end of list
+}
+
+qboolean G_FireTeamEntityCallback(gentity_t *ent, int clientNum)
+{
+	gclient_t      *cl;
+	fireteamData_t *team;
+	int            i;
+
+	cl   = g_entities[clientNum].client;
+	team = &level.fireTeams[ent->key];
+
+	if (!team->inuse)
+	{
+		return qfalse;
+	}
+
+	// swap out the spectating clients data for the client they are spectating
+	if (cl->sess.sessionTeam == TEAM_SPECTATOR && g_entities[cl->sess.spectatorClient].client)
+	{
+		cl = g_entities[cl->sess.spectatorClient].client;
+	}
+
+	// only send fireteam info to players on a team
+	if (cl->sess.sessionTeam != TEAM_AXIS && cl->sess.sessionTeam != TEAM_ALLIES)
+	{
+		// shoutcaster is a bit special so just send all fireteam info
+		if (cl->sess.shoutcaster)
+		{
+			return qtrue;
+		}
+		return qfalse;
+	}
+
+	// only send fireteam info to players on the same team as the leader
+	if (g_entities[team->leader].client->sess.sessionTeam != cl->sess.sessionTeam)
+	{
+		return qfalse;
+	}
+
+	// only send fireteam info to the fireteam members
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
+	{
+		if (team->joinOrder[i] == clientNum)
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+void G_InitFireTeamEntities()
+{
+	int       i;
+	gentity_t *ent;
+
+	for (i = 0; i < MAX_FIRETEAMS; i++)
+	{
+		ent = G_Spawn();
+		// ent->s.number         = 0;
+		ent->classname          = "fireteam";
+		ent->neverFree          = qtrue;
+		ent->s.eType            = ET_FIRETEAM; // FIXME: replace with ET_INVISIBLE?
+		ent->key                = i;
+		ent->think              = G_FireTeamEntityThink;
+		ent->nextthink          = FIRETEAM_ENTITY_NEXT_THINK_TIME;
+		ent->r.svFlags          = SVF_BROADCAST;
+		ent->r.linked           = qfalse;
+		ent->r.snapshotCallback = qtrue;
+		level.fireTeamEnts[i]   = ent;
+	}
+
+#ifdef EBS_TESTS
+	EBS_RunTests();
+#endif
 }

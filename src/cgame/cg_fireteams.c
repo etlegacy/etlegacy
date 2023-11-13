@@ -33,6 +33,7 @@
  */
 
 #include "cg_local.h"
+#include "../game/bg_ebs.h"
 
 panel_button_text_t fireteamTitleFont =
 {
@@ -1621,4 +1622,72 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 	}
 
 	return qfalse;
+}
+
+void CG_FireTeamEntityUpdate(centity_t *cent)
+{
+	entityBitStream_t s;
+	fireteamData_t    *ft;
+	clientInfo_t      *ci;
+	int               i, tmp, offset, sign;
+
+	// Don't update too often and waste parsing time.
+	if (cent->lastTrailTime < cg.time)
+	{
+		cent->lastTrailTime = cg.time + 100;
+	}
+	else
+	{
+		return;
+	}
+
+	EBS_InitRead(&s, &cent->currentState);
+
+	// read version
+	tmp = EBS_ReadBits(&s, 4);
+	etl_assert(tmp == 0);
+
+	// read fireteam offset
+	offset = EBS_ReadBits(&s, 4);
+	etl_assert(offset < MAX_FIRETEAMS);
+	ft = &cg.fireTeams[offset];
+
+	// read and check the inuse bit & flag
+	if (!EBS_ReadBits(&s, 1) || !ft->inuse)
+	{
+		return;
+	}
+
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; ++i)
+	{
+		// read the client offset
+		offset = EBS_ReadBits(&s, 3);
+
+		if (offset == BITS(3))
+		{
+			continue;
+		}
+
+		if (cgs.clientinfo[offset].fireteamData != ft)
+		{
+			Com_Printf("Fireteam mismatch\n");
+			EBS_Skip(&s, 43);
+			continue;
+		}
+
+		ci = &cgs.clientinfo[offset];
+
+		sign                    = EBS_ReadBits(&s, 1) ? -1 : 1;
+		ci->fireteamLocation[0] = (float) (EBS_ReadBits(&s, 10) * 100 * sign);
+		sign                    = EBS_ReadBits(&s, 1) ? -1 : 1;
+		ci->fireteamLocation[1] = (float) (EBS_ReadBits(&s, 10) * 100 * sign);
+		sign                    = EBS_ReadBits(&s, 1) ? -1 : 1;
+		ci->fireteamLocation[2] = (float) (EBS_ReadBits(&s, 10) * 100 * sign);
+
+		ci->latchedcls = EBS_ReadBits(&s, 4);
+		ci->weapon     = EBS_ReadBits(&s, 6);
+
+		// cg_entities[ci->clientNum].currentState.weapon = EBS_ReadBits(&s, 4);
+	}
+	etl_assert(EBS_ReadBits(&s, 16) == 0xFFFF);
 }

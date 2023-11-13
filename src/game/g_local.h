@@ -1213,6 +1213,8 @@ typedef struct level_locals_s
 	int bodyQueIndex;                           ///< dead bodies
 	gentity_t *bodyQue[BODY_QUEUE_SIZE];
 
+	gentity_t *fireTeamEnts[MAX_FIRETEAMS];     ///< fireteam entities for player locations, latched class and weapons
+
 	int numSpawnPoints;                        ////< number of spawn points in this map
 	spawnPointState_t spawnPointStates[MAX_MULTI_SPAWNTARGETS];
 
@@ -2738,6 +2740,8 @@ int G_TeamCount(gentity_t *ent, int weap);
 qboolean G_IsFireteamLeader(int entityNum, fireteamData_t **teamNum);
 fireteamData_t *G_FindFreePublicFireteam(team_t team);
 void G_RegisterFireteam(int entityNum);
+void G_InitFireTeamEntities();
+qboolean G_FireTeamEntityCallback(gentity_t *ent, int clientNum);
 
 void weapon_callAirStrike(gentity_t *ent);
 void weapon_checkAirStrikeThink(gentity_t *ent);

@@ -439,6 +439,8 @@ typedef int clipHandle_t;
 #endif
 #endif
 
+#define BITS(x)             (BIT(x) - 1)
+
 #define SIZE_KB(bytes) ((bytes) >> 10)
 #define SIZE_MB(bytes) ((bytes) >> 20)
 #define SIZE_GB(bytes) ((bytes) >> 30)
@@ -1633,6 +1635,8 @@ typedef enum
 
 	ET_AIRSTRIKE_PLANE,
 
+	ET_FIRETEAM,
+
 	ET_EVENTS                   ///< any of the EV_* events can be added freestanding
 	///< by setting eType to ET_EVENTS + eventNum
 	///< this avoids having to set eFlags and eventNum
@@ -2073,5 +2077,9 @@ int32_t Q_FloatToInt(float f);
 float Q_IntToFloat(int32_t i);
 
 #define PASSFLOAT(f) Q_FloatToInt((f))
+
+void CRC32_Begin(unsigned int *crc);
+void CRC32_ProcessBlock(unsigned int *crc, const void *buffer, unsigned int length);
+void CRC32_End(unsigned int *crc);
 
 #endif  // #ifndef INCLUDE_Q_SHARED_H

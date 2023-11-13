@@ -3127,3 +3127,48 @@ float Q_IntToFloat(int32_t i)
 	fi.i = i;
 	return fi.f;
 }
+
+static struct
+{
+	unsigned int table[256];
+	qboolean created;
+} crc32_data = { { 0 }, qfalse };
+
+void CRC32_Begin(unsigned int *crc)
+{
+	int          i, j;
+	unsigned int c;
+
+	if (!crc32_data.created)
+	{
+		for ( i = 0; i < 256; i++ )
+		{
+			c = i;
+			for ( j = 0; j < 8; j++ )
+				c = c & 1 ? (c >> 1) ^ 0xEDB88320UL : c >> 1;
+			crc32_data.table[i] = c;
+		}
+		crc32_data.created = qtrue;
+	}
+
+	*crc = 0xFFFFFFFFUL;
+}
+
+
+void CRC32_ProcessBlock(unsigned int *crc, const void *buffer, unsigned int length)
+{
+	unsigned int        hash = *crc;
+	const unsigned char *buf = (const unsigned char *)buffer;
+
+	while (length--)
+	{
+		hash = crc32_data.table[(hash ^ *buf++) & 0xFF] ^ (hash >> 8);
+	}
+	*crc = hash;
+}
+
+
+void CRC32_End(unsigned int *crc)
+{
+	*crc ^= 0xFFFFFFFFUL;
+}
