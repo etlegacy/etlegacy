@@ -230,7 +230,7 @@ qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum)
 			continue;
 		}
 
-		for (j = 0; j < MAX_CLIENTS; j++)
+		for (j = 0; j < MAX_FIRETEAM_MEMBERS; j++)
 		{
 			if (level.fireTeams[i].joinOrder[j] == -1)
 			{
@@ -558,10 +558,13 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 						if (G_OnlyBotsInFireteam(ft, entityNum, &firstHuman))
 						{
 							// empty the fireteam
-							for (j = 0; j < g_maxclients.integer - 1; j++)
+							for (j = 0; j < MAX_FIRETEAM_MEMBERS - 1; j++)
 							{
 #ifdef FEATURE_OMNIBOT
-								Bot_Event_LeftFireTeam(ft->joinOrder[j]);
+								if (ft->joinOrder[j] != -1)
+								{
+									Bot_Event_LeftFireTeam(ft->joinOrder[j]);
+								}
 #endif
 								ft->joinOrder[j] = -1;
 							}
@@ -596,11 +599,11 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 						}
 					}
 				}
-				for (j = i; j < g_maxclients.integer - 1; j++)
+				for (j = i; j < MAX_FIRETEAM_MEMBERS - 1; j++)
 				{
 					ft->joinOrder[j] = ft->joinOrder[j + 1];
 				}
-				ft->joinOrder[g_maxclients.integer - 1] = -1;
+				ft->joinOrder[MAX_FIRETEAM_MEMBERS - 1] = -1;
 
 				break;
 			}
