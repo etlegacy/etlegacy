@@ -33,6 +33,7 @@
  */
 
 #include "cg_local.h"
+#include "../game/bg_b64.h"
 
 static int sortedFireTeamClients[MAX_CLIENTS];
 
@@ -126,7 +127,7 @@ void CG_ParseFireteams()
 	int        i, j;
 	char       *s;
 	const char *p;
-	int        clnts[2];
+	int        clientNumber, len;
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -135,8 +136,6 @@ void CG_ParseFireteams()
 
 	for (i = 0; i < MAX_FIRETEAMS; i++)
 	{
-		char hexbuffer[11] = "0x00000000";
-
 		p = CG_ConfigString(CS_FIRETEAMS + i);
 
 		j = Q_atoi(Info_ValueForKey(p, "id"));
@@ -157,27 +156,24 @@ void CG_ParseFireteams()
 		s                    = Info_ValueForKey(p, "p");
 		cg.fireTeams[i].priv = (qboolean) !!Q_atoi(s);
 
-		s = Info_ValueForKey(p, "c");
-		Q_strncpyz(hexbuffer + 2, s, 9);
-		Q_sscanf(hexbuffer, "%x", &clnts[1]);
-		Q_strncpyz(hexbuffer + 2, s + 8, 9);
-		Q_sscanf(hexbuffer, "%x", &clnts[0]);
-
-		cg.fireTeams[i].membersNumber = 0;
-
-		for (j = 0; j < cgs.maxclients; j++)
+		s   = Info_ValueForKey(p, "m");
+		len = (int)strlen(s);
+		if (len > MAX_FIRETEAM_MEMBERS)
 		{
-			if (COM_BitCheck(clnts, j))
-			{
-				cg.fireTeams[i].membersNumber++;
-				cg.fireTeams[i].joinOrder[j]   = qtrue;
-				cgs.clientinfo[j].fireteamData = &cg.fireTeams[i];
-				//CG_Printf("%s\n", cgs.clientinfo[j].name);
-			}
-			else
-			{
-				cg.fireTeams[i].joinOrder[j] = qfalse;
-			}
+			Com_Printf(S_COLOR_YELLOW "WARNING: CG_ParseFireteams: fireteam %i has invalid member string: %s\n", i, s);
+			continue;
+		}
+		cg.fireTeams[i].membersNumber = 0;
+		Com_Memset(cg.fireTeams[i].joinOrder, (char)-1, sizeof(cg.fireTeams[i].joinOrder));
+		for (j = 0; j < len; j++)
+		{
+#if MAX_CLIENTS > 64
+#error "MAX_CLIENTS > 64 and this code needs to be updated"
+#endif
+			clientNumber = B64_Offset(s[j]);
+			etl_assert(clientNumber >= 0 && clientNumber < MAX_CLIENTS);
+			cg.fireTeams[i].joinOrder[cg.fireTeams[i].membersNumber++] = (char)clientNumber;
+			cgs.clientinfo[clientNumber].fireteamData                  = &cg.fireTeams[i];
 		}
 	}
 

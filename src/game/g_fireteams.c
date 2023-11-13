@@ -159,7 +159,7 @@ int G_CountFireteamMembers(fireteamData_t *ft)
 		return -1;
 	}
 
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		if (ft->joinOrder[i] == -1)
 		{
@@ -179,7 +179,6 @@ int G_CountFireteamMembers(fireteamData_t *ft)
 void G_UpdateFireteamConfigString(fireteamData_t *ft)
 {
 	char buffer[128];
-	int  clnts[2] = { 0, 0 };
 
 	if (!ft->inuse)
 	{
@@ -187,18 +186,23 @@ void G_UpdateFireteamConfigString(fireteamData_t *ft)
 	}
 	else
 	{
-		int i;
+		int  i, j;
+		char memberBuff[MAX_FIRETEAM_MEMBERS + 1];
 
-		for (i = 0; i < MAX_CLIENTS; i++)
+		for (i = 0, j = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 		{
-			if (ft->joinOrder[i] != -1)
+			if (ft->joinOrder[i] == -1)
 			{
-				COM_BitSet(clnts, ft->joinOrder[i]);
+				continue;
 			}
+#if MAX_CLIENTS > 64
+#error "MAX_CLIENTS > 64 and this code needs to be updated"
+#endif
+			memberBuff[j++] = B64_Char(ft->joinOrder[i]);
 		}
+		memberBuff[j] = '\0';
 
-		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\p\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], ft->priv, clnts[1], clnts[0]);
-		//G_Printf(va("%s\n", buffer));
+		Com_sprintf(buffer, sizeof(buffer), "\\id\\%i\\l\\%i\\p\\%i\\m\\%s", ft->ident - 1, ft->joinOrder[0], ft->priv, memberBuff);
 	}
 
 	trap_SetConfigstring(CS_FIRETEAMS + (ft - level.fireTeams), buffer);
@@ -455,7 +459,7 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 		return;
 	}
 
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		if (ft->joinOrder[i] == -1)
 		{
@@ -613,7 +617,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 
 	if (print)
 	{
-		for (i = 0; i < MAX_CLIENTS; i++)
+		for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 		{
 			if (ft->joinOrder[i] == -1)
 			{

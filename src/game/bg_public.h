@@ -758,7 +758,7 @@ typedef enum
 #define EF_MOVER_STOP       0x10000000                         ///< will push otherwise	///< moved down to make space for one more client flag
 #define EF_MOVER_BLOCKED    0x20000000                         ///< mover was blocked dont lerp on the client///< moved down to make space for client flag
 
-#define BG_PlayerMounted(eFlags) ((eFlags & EF_MG42_ACTIVE) || (eFlags & EF_MOUNTEDTANK) || (eFlags & EF_AAGUN_ACTIVE))
+#define BG_PlayerMounted(eFlags) ((eFlags &EF_MG42_ACTIVE) || (eFlags &EF_MOUNTEDTANK) || (eFlags &EF_AAGUN_ACTIVE))
 #define BG_IsSkillAvailable(skill, skillType, requiredlvl) (GetSkillTableData(skillType)->skillLevels[requiredlvl] > -1 && skill[skillType] >= requiredlvl)
 
 /**
@@ -2755,13 +2755,13 @@ extern const char *bg_fireteamNamesAxis[MAX_FIRETEAMS / 2];
  */
 typedef struct
 {
-	int ident;
-	char joinOrder[MAX_CLIENTS];    ///< order in which clients joined the fire team (server), client uses to store if a client is on this fireteam
-	int leader;                     ///< leader = joinOrder[0] on server, stored here on client
+	int ident;                               ///< fireteam identity offset (name of the fireteam basically)
+	char joinOrder[MAX_FIRETEAM_MEMBERS];    ///< order in which clients joined the fire team (server), client uses to store if a client is on this fireteam
+	int leader;                              ///< leader = joinOrder[0] on server, stored here on client
 	qboolean inuse;
 	qboolean priv;
 #ifdef CGAMEDLL
-	int membersNumber;              ///< store members number client side on parsing CS
+	int membersNumber;                       ///< store members number client side on parsing CS
 #endif
 } fireteamData_t;
 
@@ -3037,9 +3037,9 @@ typedef enum popupMessageBigType_e
  */
 typedef enum popupMessageXPGainType_e
 {
-    PM_GAIN = 0,
-    PM_LOSE,
-    PM_XPGAIN_NUM_TYPES
+	PM_GAIN = 0,
+	PM_LOSE,
+	PM_XPGAIN_NUM_TYPES
 } popupMessageXPGainType_t;
 
 #define HITBOXBIT_HEAD   1024

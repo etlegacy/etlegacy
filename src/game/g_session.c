@@ -346,7 +346,7 @@ void G_ReadSessionData(gclient_t *client)
 		if (campaign)
 		{
 			restoreStats = Q_ReadIntValueJson(campaign, "campaign") == level.currentCampaign
-				        && Q_ReadIntValueJson(campaign, "map") == g_currentCampaignMap.integer;
+			               && Q_ReadIntValueJson(campaign, "map") == g_currentCampaignMap.integer;
 		}
 	}
 
@@ -364,18 +364,18 @@ void G_ReadSessionData(gclient_t *client)
 	client->sess.shoutcaster        = Q_ReadIntValueJson(root, "shoutcaster");
 	client->sess.spec_invite        = Q_ReadIntValueJson(root, "spec_invite");
 	client->sess.spec_team          = Q_ReadIntValueJson(root, "spec_team");
-	
+
 	if (restoreStats)
 	{
-		client->sess.kills              = Q_ReadIntValueJson(root, "kills");
-		client->sess.deaths             = Q_ReadIntValueJson(root, "deaths");
-		client->sess.gibs               = Q_ReadIntValueJson(root, "gibs");
-		client->sess.self_kills         = Q_ReadIntValueJson(root, "self_kills");
-		client->sess.team_kills         = Q_ReadIntValueJson(root, "team_kills");
-		client->sess.team_gibs          = Q_ReadIntValueJson(root, "team_gibs");
-		client->sess.time_axis          = Q_ReadIntValueJson(root, "time_axis");
-		client->sess.time_allies        = Q_ReadIntValueJson(root, "time_allies");
-		client->sess.time_played        = Q_ReadIntValueJson(root, "time_played");
+		client->sess.kills       = Q_ReadIntValueJson(root, "kills");
+		client->sess.deaths      = Q_ReadIntValueJson(root, "deaths");
+		client->sess.gibs        = Q_ReadIntValueJson(root, "gibs");
+		client->sess.self_kills  = Q_ReadIntValueJson(root, "self_kills");
+		client->sess.team_kills  = Q_ReadIntValueJson(root, "team_kills");
+		client->sess.team_gibs   = Q_ReadIntValueJson(root, "team_gibs");
+		client->sess.time_axis   = Q_ReadIntValueJson(root, "time_axis");
+		client->sess.time_allies = Q_ReadIntValueJson(root, "time_allies");
+		client->sess.time_played = Q_ReadIntValueJson(root, "time_played");
 	}
 
 #ifdef FEATURE_RATING
@@ -648,7 +648,7 @@ void G_InitWorldSession(void)
 			}
 		}
 
-		for ( ; j < MAX_CLIENTS; j++)
+		for ( ; j < MAX_FIRETEAM_MEMBERS; j++)
 		{
 			level.fireTeams[i].joinOrder[j] = -1;
 		}
@@ -705,7 +705,7 @@ void G_WriteSessionData(qboolean restart)
 			char p[8];
 
 			*buffer2 = '\0';
-			for (j = 0; j < MAX_CLIENTS; j++)
+			for (j = 0; j < MAX_FIRETEAM_MEMBERS; j++)
 			{
 				Com_sprintf(p, 8, " %i", level.fireTeams[i].joinOrder[j]);
 				Q_strcat(buffer2, MAX_STRING_CHARS, p);
