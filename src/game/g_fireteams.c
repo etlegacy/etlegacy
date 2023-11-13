@@ -1423,10 +1423,10 @@ static void G_FireTeamEntityThink(gentity_t *ent)
 		offset = team->joinOrder[i];
 		if (offset == -1)
 		{
-			EBS_WriteBits(&s, BITS(3), 3);
+			EBS_WriteBits(&s, BITS(7), 7);
 			continue;
 		}
-		EBS_WriteBits(&s, offset, 3);
+		EBS_WriteBits(&s, offset, 7);
 
 		player = &g_entities[(int)offset];
 

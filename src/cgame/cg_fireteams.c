@@ -1661,9 +1661,9 @@ void CG_FireTeamEntityUpdate(centity_t *cent)
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; ++i)
 	{
 		// read the client offset
-		offset = EBS_ReadBits(&s, 3);
+		offset = EBS_ReadBits(&s, 7);
 
-		if (offset == BITS(3))
+		if (offset == BITS(7))
 		{
 			continue;
 		}
