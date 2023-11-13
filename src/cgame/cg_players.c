@@ -2227,11 +2227,11 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 		else // !sameTeam
 		{
+			fireteamData_t *ft;
 			if (cg_fireteamSprites.integer
-			    && cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1
-			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)
-			    && CG_IsOnSameFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum, cg.clientNum)
-			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)->membersNumber > 1) // don't display FT icon with only 1 member in FT
+			    && cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1 // disguised
+			    && (ft = CG_IsOnSameFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum, cg.clientNum)) // on the same fireteam
+			    && ft->membersNumber > 1) // don't display FT icon with only 1 member in FT
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
 				                     cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected ? colorRed : colorGreen);

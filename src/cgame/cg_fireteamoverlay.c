@@ -183,10 +183,15 @@ void CG_ParseFireteams()
 /**
  * @brief Fireteam that the specified client is a part of
  * @param[in] clientNum
- * @return
+ * @return Fireteam data
  */
 fireteamData_t *CG_IsOnFireteam(int clientNum)
 {
+	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
+	{
+		return NULL;
+	}
+
 	if (cgs.clientinfo[clientNum].team == TEAM_SPECTATOR)
 	{
 		return NULL;
@@ -198,13 +203,15 @@ fireteamData_t *CG_IsOnFireteam(int clientNum)
  * @brief Fireteam that both specified clients are on, if they both are on the same team
  * @param[in] clientNum
  * @param[in] clientNum2
- * @return
+ * @return Fireteam data
  */
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2)
 {
-	if (CG_IsOnFireteam(clientNum) == CG_IsOnFireteam(clientNum2))
+	fireteamData_t *ft;
+	ft = CG_IsOnFireteam(clientNum);
+	if (ft && ft == CG_IsOnFireteam(clientNum2))
 	{
-		return CG_IsOnFireteam(clientNum);
+		return ft;
 	}
 
 	return NULL;
@@ -213,7 +220,7 @@ fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2)
 /**
  * @brief Fireteam that specified client is leader of, or NULL if none
  * @param[in] clientNum
- * @return
+ * @return Fireteam data
  */
 fireteamData_t *CG_IsFireTeamLeader(int clientNum)
 {
