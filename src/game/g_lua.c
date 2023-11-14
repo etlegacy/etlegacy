@@ -2228,12 +2228,16 @@ qboolean G_LuaInit(void)
 			{
 				buff[i] = '\0';
 
-				if (!G_LuaRunIsolated(crt))
+				if (num_vm >= LUA_NUM_VM)
 				{
-					continue;
+					G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
+					break;
 				}
 
-				num_vm++;
+				if (G_LuaRunIsolated(crt))
+				{
+					num_vm++;
+				}
 
 				// prepare for next iteration
 				if (i + 1 < len)
@@ -2243,11 +2247,6 @@ qboolean G_LuaInit(void)
 				else
 				{
 					crt = NULL;
-				}
-				if (num_vm >= LUA_NUM_VM)
-				{
-					G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
-					break;
 				}
 			}
 		}
