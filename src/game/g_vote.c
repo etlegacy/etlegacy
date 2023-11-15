@@ -467,7 +467,7 @@ int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 		{
 			return G_INVALID;
 		}
-		else if ((pid = ClientNumberFromString(ent, arg2)) == -1)
+		else if ((pid = G_ClientNumberFromString(ent, arg2)) == -1)
 		{
 			return G_INVALID;
 		}
@@ -545,7 +545,7 @@ int G_Mute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 		{
 			return G_INVALID;
 		}
-		else if ((pid = ClientNumberFromString(ent, arg2)) == -1)
+		else if ((pid = G_ClientNumberFromString(ent, arg2)) == -1)
 		{
 			return G_INVALID;
 		}
@@ -625,7 +625,7 @@ int G_UnMute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 		{
 			return G_INVALID;
 		}
-		else if ((pid = ClientNumberFromString(ent, arg2)) == -1)
+		else if ((pid = G_ClientNumberFromString(ent, arg2)) == -1)
 		{
 			return G_INVALID;
 		}
@@ -1013,7 +1013,7 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 		{
 			return G_INVALID;
 		}
-		else if ((pid = ClientNumberFromString(ent, arg2)) == -1)
+		else if ((pid = G_ClientNumberFromString(ent, arg2)) == -1)
 		{
 			return G_INVALID;
 		}
@@ -1482,7 +1482,7 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 		{
 			return G_INVALID;
 		}
-		else if ((pid = ClientNumberFromString(ent, arg2)) == -1)
+		else if ((pid = G_ClientNumberFromString(ent, arg2)) == -1)
 		{
 			return G_INVALID;
 		}

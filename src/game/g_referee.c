@@ -358,7 +358,7 @@ void G_refPlayerPut_cmd(gentity_t *ent, team_t team_id)
 
 	// Find the player to place.
 	trap_Argv(2, arg, sizeof(arg));
-	if ((pid = ClientNumberFromString(ent, arg)) == -1)
+	if ((pid = G_ClientNumberFromString(ent, arg)) == -1)
 	{
 		return;
 	}
@@ -415,7 +415,7 @@ void G_refRemove_cmd(gentity_t *ent)
 
 	// Find the player to remove.
 	trap_Argv(2, arg, sizeof(arg));
-	if ((pid = ClientNumberFromString(ent, arg)) == -1)
+	if ((pid = G_ClientNumberFromString(ent, arg)) == -1)
 	{
 		return;
 	}
@@ -509,7 +509,7 @@ void G_refWarning_cmd(gentity_t *ent)
 
 	trap_Argv(3, reason, sizeof(reason));
 
-	kicknum = G_refClientnumForName(ent, cmd);
+	kicknum = G_ClientNumberFromString(ent, cmd);
 
 	if (kicknum != MAX_CLIENTS)
 	{
@@ -537,7 +537,7 @@ void G_refMute_cmd(gentity_t *ent, qboolean mute)
 
 	// Find the player to mute.
 	trap_Argv(2, arg, sizeof(arg));
-	if ((pid = ClientNumberFromString(ent, arg)) == -1)
+	if ((pid = G_ClientNumberFromString(ent, arg)) == -1)
 	{
 		return;
 	}
@@ -626,7 +626,7 @@ void G_PlayerBan()
 		return;
 	}
 
-	bannum = G_refClientnumForName(NULL, cmd);
+	bannum = G_ClientNumberFromString(NULL, cmd);
 
 	if (bannum != MAX_CLIENTS)
 	{
@@ -665,7 +665,7 @@ void G_MakeReferee()
 		return;
 	}
 
-	cnum = G_refClientnumForName(NULL, cmd);
+	cnum = G_ClientNumberFromString(NULL, cmd);
 
 	if (cnum != MAX_CLIENTS)
 	{
@@ -704,7 +704,7 @@ void G_RemoveReferee()
 		return;
 	}
 
-	cnum = G_refClientnumForName(NULL, cmd);
+	cnum = G_ClientNumberFromString(NULL, cmd);
 
 	if (cnum != MAX_CLIENTS)
 	{
@@ -822,7 +822,7 @@ void G_MuteClient()
 		return;
 	}
 
-	cnum = G_refClientnumForName(NULL, cmd);
+	cnum = G_ClientNumberFromString(NULL, cmd);
 
 	if (cnum != MAX_CLIENTS)
 	{
@@ -856,7 +856,7 @@ void G_UnMuteClient()
 		return;
 	}
 
-	cnum = G_refClientnumForName(NULL, cmd);
+	cnum = G_ClientNumberFromString(NULL, cmd);
 
 	if (cnum != MAX_CLIENTS)
 	{
@@ -933,7 +933,7 @@ void G_refMakeShoutcaster_cmd(gentity_t *ent)
 
 	trap_Argv(2, name, sizeof(name));
 
-	if ((pid = ClientNumberFromString(ent, name)) == -1)
+	if ((pid = G_ClientNumberFromString(ent, name)) == -1)
 	{
 		return;
 	}
@@ -985,7 +985,7 @@ void G_refRemoveShoutcaster_cmd(gentity_t *ent)
 
 	trap_Argv(2, name, sizeof(name));
 
-	if ((pid = ClientNumberFromString(ent, name)) == -1)
+	if ((pid = G_ClientNumberFromString(ent, name)) == -1)
 	{
 		return;
 	}
@@ -1009,52 +1009,6 @@ void G_refRemoveShoutcaster_cmd(gentity_t *ent)
 /**
  * Utility
  */
-
-/**
- * @brief G_refClientnumForName
- * @param[in] ent
- * @param[in] name
- * @return
- */
-int G_refClientnumForName(gentity_t *ent, const char *name)
-{
-	char cleanName[MAX_TOKEN_CHARS];
-	int  i;
-
-	if (!*name)
-	{
-		return MAX_CLIENTS;
-	}
-
-	// first, check for slot number
-	if (Q_isanumber(name))
-	{
-		int clientNum = Q_atoi(name);
-
-		for (i = 0; i < level.numConnectedClients; i++)
-		{
-			if (clientNum == level.sortedClients[i])
-			{
-				return(level.sortedClients[i]);
-			}
-		}
-	}
-
-	// second, check for exact name match
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		Q_strncpyz(cleanName, level.clients[level.sortedClients[i]].pers.netname, sizeof(cleanName));
-		Q_CleanStr(cleanName);
-		if (!Q_stricmp(cleanName, name))
-		{
-			return(level.sortedClients[i]);
-		}
-	}
-
-	G_refPrintf(ent, "Client not on server.");
-
-	return MAX_CLIENTS;
-}
 
 /**
  * @brief G_refPrintf

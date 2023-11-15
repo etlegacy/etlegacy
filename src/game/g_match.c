@@ -818,7 +818,9 @@ void G_printMatchInfo(gentity_t *ent)
 				continue;
 			}
 
-			SanitizeString(cl->pers.cl_guid, guid, qfalse);
+			Q_strncpyz(guid, cl->pers.cl_guid, sizeof(guid));
+			Q_CleanStr(guid);
+
 			if (cl_ent->r.svFlags & SVF_BOT)
 			{
 				guid[9] = '\0';
@@ -829,7 +831,8 @@ void G_printMatchInfo(gentity_t *ent)
 				strcat(guid, "*");
 			}
 
-			SanitizeString(cl->pers.netname, n2, qfalse);
+			Q_strncpyz(n2, cl->pers.netname, sizeof(n2));
+			Q_CleanStr(n2);
 			n2[15] = 0;
 
 			ref = "^7";
@@ -1180,7 +1183,7 @@ void G_statsPrint(gentity_t *ent, int nType)
 
 		// Find the player to poll stats.
 		trap_Argv(1, arg, sizeof(arg));
-		if ((pid = ClientNumberFromString(ent, arg)) == -1)
+		if ((pid = G_ClientNumberFromString(ent, arg)) == -1)
 		{
 			return;
 		}

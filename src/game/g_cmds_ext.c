@@ -553,8 +553,12 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, int fDump)
 		cl     = &level.clients[idnum];
 		cl_ent = g_entities + idnum;
 
-		SanitizeString(cl->pers.cl_guid, guid, qfalse);
-		SanitizeString(cl->pers.netname, n2, qfalse);
+		Q_strncpyz(guid, cl->pers.cl_guid, sizeof(guid));
+		Q_CleanStr(guid);
+
+		Q_strncpyz(n2, cl->pers.netname, sizeof(n2));
+		Q_CleanStr(n2);
+
 		n2[26]   = 0;
 		ref[0]   = 0;
 		ready[0] = 0;
@@ -990,7 +994,7 @@ void G_sclogout_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 void G_makesc_cmd(void)
 {
 	char      cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
-	int       pcount, pids[MAX_CLIENTS];
+	int       cnum;
 	gentity_t *ent;
 
 	trap_Argv(0, cmd, sizeof(cmd));
@@ -1008,22 +1012,15 @@ void G_makesc_cmd(void)
 	}
 
 	trap_Argv(1, name, sizeof(name));
-	pcount = ClientNumbersFromString(name, pids);
 
-	if (pcount > 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_Printf("%s: More than one player matches. "
-		         "Be more specific or use the slot number.\n", cmd);
-		return;
-	}
-	else if (pcount < 1)
-	{
-		G_Printf("%s: No connected player found with that "
-		         "name or slot number.\n", cmd);
 		return;
 	}
 
-	ent = pids[0] + g_entities;
+	ent = &g_entities[cnum];
 
 	if (!ent || !ent->client)
 	{
@@ -1052,7 +1049,7 @@ void G_makesc_cmd(void)
 void G_removesc_cmd(void)
 {
 	char      cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
-	int       pcount, pids[MAX_CLIENTS];
+	int       cnum;
 	gentity_t *ent;
 
 	trap_Argv(0, cmd, sizeof(cmd));
@@ -1070,20 +1067,15 @@ void G_removesc_cmd(void)
 	}
 
 	trap_Argv(1, name, sizeof(name));
-	pcount = ClientNumbersFromString(name, pids);
 
-	if (pcount > 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_Printf("%s: More than one player matches. Be more specific or use the slot number.\n", cmd);
-		return;
-	}
-	else if (pcount < 1)
-	{
-		G_Printf("%s: No connected player found with that name or slot number.\n", cmd);
 		return;
 	}
 
-	ent = pids[0] + g_entities;
+	ent = &g_entities[cnum];
 
 	if (!ent || !ent->client)
 	{
@@ -1143,7 +1135,7 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, int fLock)
 
 		// Find the player to invite
 		trap_Argv(1, arg, sizeof(arg));
-		if ((pid = ClientNumberFromString(ent, arg)) == -1)
+		if ((pid = G_ClientNumberFromString(ent, arg)) == -1)
 		{
 			return;
 		}
@@ -1210,7 +1202,7 @@ void G_specuninvite_cmd(gentity_t *ent, unsigned int dwCommand, int fLock)
 
 		// Find the player to invite
 		trap_Argv(1, arg, sizeof(arg));
-		if ((pid = ClientNumberFromString(ent, arg)) == -1)
+		if ((pid = G_ClientNumberFromString(ent, arg)) == -1)
 		{
 			return;
 		}

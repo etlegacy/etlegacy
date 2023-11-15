@@ -2832,39 +2832,6 @@ char *ClientName(int client, char *name, size_t size)
 }
 
 /**
- * @brief FindClientByName
- * @param[in] name
- * @return
- */
-int FindClientByName(const char *name)
-{
-	int  i, j;
-	char buf[MAX_INFO_STRING];
-
-	for (j = 0; j < level.numConnectedClients; j++)
-	{
-		i = level.sortedClients[j];
-		ClientName(i, buf, sizeof(buf));
-		if (!Q_stricmp(buf, name))
-		{
-			return i;
-		}
-	}
-
-	for (j = 0; j < level.numConnectedClients; j++)
-	{
-		i = level.sortedClients[j];
-		ClientName(i, buf, sizeof(buf));
-		if (Q_stristr(buf, name))
-		{
-			return i;
-		}
-	}
-
-	return -1;
-}
-
-/**
  * @brief G_FlingClient
  * @param[in,out] vic
  * @param[in] flingType

@@ -322,11 +322,11 @@ static int _et_trap_DropClient(lua_State *L)
 // clientnum = et.ClientNumberFromString( string )
 static int _et_ClientNumberFromString(lua_State *L)
 {
-	const char *search = luaL_checkstring(L, 1);
-	int        pids[MAX_CLIENTS];
+	char *search = luaL_checkstring(L, 1);
+	int  pids[MAX_CLIENTS];
 
 	// only send exact matches, otherwise -1
-	if (ClientNumbersFromString((char *) search, pids) == 1)
+	if (G_ClientNumbersFromString((char *) search, pids) == 1)
 	{
 		lua_pushinteger(L, pids[0]);
 	}

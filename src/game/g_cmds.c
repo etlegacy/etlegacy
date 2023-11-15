@@ -51,7 +51,7 @@ qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
  * @param[in] len
  * @return
  */
-qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
+static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 {
 	err[0] = '\0';
 
@@ -60,6 +60,7 @@ qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 		Q_strcat(err, len, "no connected player by that name or slot #");
 		return qfalse;
 	}
+
 	if (plist[1] != -1)
 	{
 		char      line[MAX_NAME_LENGTH + 10];
@@ -84,6 +85,7 @@ qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 		}
 		return qfalse;
 	}
+
 	return qtrue;
 }
 
@@ -95,24 +97,21 @@ qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
  * @param[out] plist
  * @return Number of matching clientids.
  */
-int ClientNumbersFromString(char *s, int *plist)
+int G_ClientNumbersFromString(char *s, int *plist)
 {
 	gclient_t *p;
 	int       i, found = 0;
 	char      s2[MAX_STRING_CHARS];
 	char      n2[MAX_STRING_CHARS];
 	char      *m;
-	char      *end = NULL;
 
 	*plist = -1;
 
 	// if a number is provided, it might be a slot #
-	// check the whole string is a number and only if so assume it is a slot number
-	//          still fails for players with a name like "23" and there are 24 slots used
-	i = (int) strtol(s, &end, 10); // end will be "" when s contains only digits
-
-	if ((!end || !*end) && i >= 0)
+	if (Q_isanumber(s))
 	{
+		i = Q_atoi(s);
+
 		if (i >= 0 && i < level.maxclients)
 		{
 			p = &level.clients[i];
@@ -126,21 +125,29 @@ int ClientNumbersFromString(char *s, int *plist)
 	}
 
 	// now look for name matches
-	SanitizeString(s, s2, qtrue);
+	Q_strncpyz(s2, s, sizeof(s));
+	Q_CleanStr(s2);
+	Q_strlwr(s2);
+
 	if (strlen(s2) < 1)
 	{
 		return 0;
 	}
+
 	for (i = 0; i < level.maxclients; ++i)
 	{
 		p = &level.clients[i];
 		if (p->pers.connected != CON_CONNECTED && p->pers.connected != CON_CONNECTING)
 		{
-
 			continue;
 		}
-		SanitizeString(p->pers.netname, n2, qtrue);
+
+		Q_strncpyz(n2, p->pers.netname, sizeof(n2));
+		Q_CleanStr(n2);
+		Q_strlwr(n2);
+
 		m = strstr(n2, s2);
+
 		if (m != NULL)
 		{
 			*plist++ = i;
@@ -149,6 +156,38 @@ int ClientNumbersFromString(char *s, int *plist)
 	}
 	*plist = -1;
 	return found;
+}
+
+/**
+ * @brief Find player slot by matching the slot number or complete/partial player name but unique
+ * @param[in] to
+ * @param[in] s
+ * @return A player number for either a number or name string, -1 if invalid / not found
+ */
+int G_ClientNumberFromString(gentity_t *to, char *s)
+{
+	int pids[MAX_CLIENTS];
+
+	// no match or more than 1 player matchs, out error
+	if (G_ClientNumbersFromString(s, pids) != 1)
+	{
+		char err[MAX_STRING_CHARS];
+
+		G_MatchOnePlayer(pids, err, sizeof(err));
+
+		if (to)
+		{
+			CPx(to - g_entities, va("print \"[lon]Bad client slot: [lof]%s\n\"", err));
+		}
+		else
+		{
+			G_Printf("Bad client slot: %s", err);
+		}
+
+		return -1;
+	}
+
+	return pids[0];
 }
 
 /*
@@ -206,17 +245,17 @@ void G_PlaySound_Cmd(void)
 
 	if (name[0])
 	{
-		int       pids[MAX_CLIENTS];
-		char      err[MAX_STRING_CHARS];
+		int       cnum;
 		gentity_t *victim;
 
-		if (ClientNumbersFromString(name, pids) != 1)
+		cnum = G_ClientNumberFromString(NULL, name);
+
+		if (cnum == -1)
 		{
-			G_MatchOnePlayer(pids, err, sizeof(err));
-			G_Printf("playsound: %s\n", err);
 			return;
 		}
-		victim = &level.gentities[pids[0]];
+
+		victim = &level.gentities[cnum];
 
 		if (!Q_stricmp(cmd, "playsound_env"))
 		{
@@ -561,101 +600,6 @@ char *ConcatArgs(int start)
 }
 
 /**
- * @brief Remove case and control characters
- * @param[in] in
- * @param[out] out
- * @param[in] fToLower
- */
-void SanitizeString(char *in, char *out, qboolean fToLower)
-{
-	while (*in)
-	{
-		if (*in == 27 || *in == '^')
-		{
-			in++;       // skip color code
-			if (*in)
-			{
-				in++;
-			}
-			continue;
-		}
-
-		if (*in < 32)
-		{
-			in++;
-			continue;
-		}
-
-		*out++ = (fToLower) ? tolower(*in++) : *in++;
-	}
-
-	*out = 0;
-}
-
-/**
- * @brief ClientNumberFromString
- * @param[in] to
- * @param[in] s
- * @return A player number for either a number or name string, -1 if invalid
- */
-int ClientNumberFromString(gentity_t *to, char *s)
-{
-	gclient_t *cl;
-	int       idnum;
-	char      s2[MAX_STRING_CHARS];
-	char      n2[MAX_STRING_CHARS];
-	qboolean  fIsNumber = qtrue;
-
-	// See if its a number or string
-	for (idnum = 0; idnum < (int)strlen(s) && s[idnum] != 0; idnum++)
-	{
-		if (s[idnum] < '0' || s[idnum] > '9')
-		{
-			fIsNumber = qfalse;
-			break;
-		}
-	}
-
-	// check for a name match
-	SanitizeString(s, s2, qtrue);
-	for (idnum = 0, cl = level.clients; idnum < level.maxclients; idnum++, cl++)
-	{
-		if (cl->pers.connected != CON_CONNECTED)
-		{
-			continue;
-		}
-
-		SanitizeString(cl->pers.netname, n2, qtrue);
-		if (!strcmp(n2, s2))
-		{
-			return(idnum);
-		}
-	}
-
-	// numeric values are just slot numbers
-	if (fIsNumber)
-	{
-		idnum = Q_atoi(s);
-		if (idnum < 0 || idnum >= level.maxclients)
-		{
-			CPx(to - g_entities, va("print \"[lon]Bad client slot: [lof]%i\n\"", idnum));
-			return -1;
-		}
-
-		cl = &level.clients[idnum];
-		if (cl->pers.connected != CON_CONNECTED)
-		{
-			CPx(to - g_entities, va("print \"[lon]Client[lof] %i [lon]is not active\n\"", idnum));
-			return -1;
-		}
-		return(idnum);
-	}
-
-	CPx(to - g_entities, va("print \"[lon]User [lof]%s [lon]is not on the server\n\"", s));
-	return -1;
-}
-
-/**
  * @brief GetSkillPointUntilLevelUp
  * @param[in] ent
  * @param[in] skill
@@ -687,14 +631,27 @@ float GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
  */
 void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char *name, *amt;
-	//gitem_t     *it;
+	char     *name, *amt;
 	weapon_t weapon;
 	qboolean give_all;
-	//gentity_t       *it_ent;
-	//trace_t     trace;
 	int      amount;
 	qboolean hasAmount = qfalse;
+	int      cnum;
+	int      i = 1;
+
+	name = ConcatArgs(i);
+
+	// try to find a targeted player, otherwise use command caller
+	cnum = G_ClientNumberFromString(ent, name);
+
+	if (cnum != -1)
+	{
+		// retrieved player ent
+		ent = cnum + g_entities;
+
+		// get the give argument
+		name = ConcatArgs(++i);
+	}
 
 	if (!ent || !ent->client)
 	{
@@ -707,14 +664,12 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	}
 
 	// check for an amount (like "give health 30")
-	amt = ConcatArgs(2);
+	amt = ConcatArgs(++i);
 	if (*amt)
 	{
 		hasAmount = qtrue;
 	}
 	amount = Q_atoi(amt);
-
-	name = ConcatArgs(1);
 
 	if (Q_stricmp(name, "all") == 0)
 	{
@@ -2386,9 +2341,8 @@ void Cmd_ResetSetup_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	int  i;
+	int  cnum;
 	char arg[MAX_TOKEN_CHARS];
-	int  pids[MAX_CLIENTS];
 
 	if (trap_Argc() != 2)
 	{
@@ -2406,102 +2360,92 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value)
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
-	// Let /follow match partial names
-	// Use > instead of != since could be a team name
-	if (ClientNumbersFromString(arg, pids) > 1)
-	{
-		CP("print \"Partial Name Matches more than 1 Player.\n\"");
-		return;
-	}
-	i = pids[0];
 
-	if (i == -1)
+	if (!Q_stricmp(arg, "allies") || !Q_stricmp(arg, "axis"))
 	{
-		if (!Q_stricmp(arg, "allies"))
-		{
-			i = TEAM_ALLIES;
-		}
-		else if (!Q_stricmp(arg, "axis"))
-		{
-			i = TEAM_AXIS;
-		}
-		else
-		{
-			return;
-		}
+		team_t team;
+		team = (!Q_stricmp(arg, "allies") ? TEAM_ALLIES : TEAM_AXIS);
+
 		if ((ent->client->sess.sessionTeam == TEAM_AXIS ||
 		     ent->client->sess.sessionTeam == TEAM_ALLIES) &&
-		    ent->client->sess.sessionTeam != i)
+		    ent->client->sess.sessionTeam != team)
 		{
 			CP("print \"Can't follow a player on an enemy team!\n\"");
 			return;
 		}
 
-		if (!TeamCount(ent - g_entities, i))
+		if (!TeamCount(ent - g_entities, team))
 		{
-			CP(va("print \"The %s team %s empty!  Follow command ignored.\n\"", aTeams[i],
-			      ((ent->client->sess.sessionTeam != i) ? "is" : "would be")));
+			CP(va("print \"The %s team %s empty!  Follow command ignored.\n\"", aTeams[team],
+			      ((ent->client->sess.sessionTeam != team) ? "is" : "would be")));
 			return;
 		}
 
 		// Allow for simple toggle
-		if (ent->client->sess.spec_team != i)
+		if (ent->client->sess.spec_team != team)
 		{
-			if (teamInfo[i].spec_lock && !(ent->client->sess.spec_invite & i))
+			if (teamInfo[team].spec_lock && !(ent->client->sess.spec_invite & team))
 			{
-				CP(va("print \"Sorry, the %s team is locked from spectators.\n\"", aTeams[i]));
+				CP(va("print \"Sorry, the %s team is locked from spectators.\n\"", aTeams[team]));
 			}
 			else
 			{
-				ent->client->sess.spec_team = i;
-				CP(va("print \"Spectator follow is now locked on the %s team.\n\"", aTeams[i]));
+				ent->client->sess.spec_team = team;
+				CP(va("print \"Spectator follow is now locked on the %s team.\n\"", aTeams[team]));
 				Cmd_FollowCycle_f(ent, 1, qfalse);
 			}
 		}
 		else
 		{
 			ent->client->sess.spec_team = 0;
-			CP(va("print \"%s team spectating is now disabled.\n\"", aTeams[i]));
+			CP(va("print \"%s team spectating is now disabled.\n\"", aTeams[team]));
 		}
 
+		return;
+	}
+
+	cnum = G_ClientNumberFromString(ent, arg);
+
+	if (cnum == -1)
+	{
 		return;
 	}
 
 	// Can't follow enemy players if not a spectator
 	if ((ent->client->sess.sessionTeam == TEAM_AXIS ||
 	     ent->client->sess.sessionTeam == TEAM_ALLIES) &&
-	    ent->client->sess.sessionTeam != level.clients[i].sess.sessionTeam)
+	    ent->client->sess.sessionTeam != level.clients[cnum].sess.sessionTeam)
 	{
 		CP("print \"Can't follow a player on an enemy team!\n\"");
 		return;
 	}
 
 	// can't follow self
-	if (&level.clients[i] == ent->client)
+	if (&level.clients[cnum] == ent->client)
 	{
 		return;
 	}
 
 	// can't follow another spectator, but shoutcasters can follow other shoutcasters
-	if (level.clients[i].sess.sessionTeam == TEAM_SPECTATOR && (!level.clients[i].sess.shoutcaster || !ent->client->sess.shoutcaster))
+	if (level.clients[cnum].sess.sessionTeam == TEAM_SPECTATOR && (!level.clients[cnum].sess.shoutcaster || !ent->client->sess.shoutcaster))
 	{
 		return;
 	}
 
-	if (level.clients[i].ps.pm_flags & PMF_LIMBO)
+	if (level.clients[cnum].ps.pm_flags & PMF_LIMBO)
 	{
 		return;
 	}
 
 	// can't follow a player on a speclocked team, unless allowed
-	if (!G_allowFollow(ent, level.clients[i].sess.sessionTeam))
+	if (!G_allowFollow(ent, level.clients[cnum].sess.sessionTeam))
 	{
-		CP(va("print \"Sorry, the %s team is locked from spectators.\n\"", aTeams[level.clients[i].sess.sessionTeam]));
+		CP(va("print \"Sorry, the %s team is locked from spectators.\n\"", aTeams[level.clients[cnum].sess.sessionTeam]));
 		return;
 	}
 
 	ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
-	ent->client->sess.spectatorClient = i;
+	ent->client->sess.spectatorClient = cnum;
 }
 
 /**
@@ -5028,24 +4972,27 @@ void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char cmd[MAX_TOKEN_CHARS];
+	char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
 	int cnum;
 
-	trap_Argv(1, cmd, sizeof(cmd));
+	trap_Argv(0, cmd, sizeof(cmd));
+	trap_Argv(1, name, sizeof(cmd));
 
-	if (!*cmd)
+	if (!*name)
 	{
 		trap_SendServerCommand(ent - g_entities, "print \"usage: Ignore <clientname>.\n\"");
 		return;
 	}
 
-	cnum = G_refClientnumForName(ent, cmd); // prints not on server message
+	cnum = G_ClientNumberFromString(ent, name);
 
-	if (cnum != MAX_CLIENTS)
+	if (cnum == -1)
 	{
-		COM_BitSet(ent->client->sess.ignoreClients, cnum);
-		trap_SendServerCommand(ent - g_entities, va("print \"[lon]You are ignoring [lof]%s[lon]^7.\n\"", level.clients[cnum].pers.netname));
+		return;
 	}
+
+	COM_BitSet(ent->client->sess.ignoreClients, cnum);
+	trap_SendServerCommand(ent - g_entities, va("print \"[lon]You are ignoring [lof]%s[lon]^7.\n\"", level.clients[cnum].pers.netname));
 }
 
 /**
@@ -5056,24 +5003,27 @@ void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char cmd[MAX_TOKEN_CHARS];
+	char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
 	int cnum;
 
-	trap_Argv(1, cmd, sizeof(cmd));
+	trap_Argv(0, cmd, sizeof(cmd));
+	trap_Argv(1, name, sizeof(cmd));
 
-	if (!*cmd)
+	if (!*name)
 	{
 		trap_SendServerCommand(ent - g_entities, "print \"usage: Unignore <clientname>.\n\"");
 		return;
 	}
 
-	cnum = G_refClientnumForName(ent, cmd); // prints not on server message
+	cnum = G_ClientNumberFromString(ent, name);
 
-	if (cnum != MAX_CLIENTS)
+	if (cnum == -1)
 	{
-		COM_BitClear(ent->client->sess.ignoreClients, cnum);
-		trap_SendServerCommand(ent - g_entities, va("print \"[lof]%s[lon]^7 is no longer ignored.\n\"", level.clients[cnum].pers.netname));
+		return;
 	}
+
+	COM_BitClear(ent->client->sess.ignoreClients, cnum);
+	trap_SendServerCommand(ent - g_entities, va("print \"[lof]%s[lon]^7 is no longer ignored.\n\"", level.clients[cnum].pers.netname));
 }
 
 #ifdef ETLEGACY_DEBUG

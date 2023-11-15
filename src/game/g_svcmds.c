@@ -1108,7 +1108,6 @@ void Svcmd_ListCampaigns_f(void)
 
 // modified from maddoc sp func
 extern void ReviveEntity(gentity_t *ent, gentity_t *traceEnt);
-extern int FindClientByName(const char *name);
 
 /**
  * @brief Svcmd_RevivePlayer
@@ -1116,9 +1115,9 @@ extern int FindClientByName(const char *name);
  */
 void Svcmd_RevivePlayer(void)
 {
-	int       clientNum;
-	gentity_t *player;
 	char      name[MAX_NAME_LENGTH];
+	int       cnum;
+	gentity_t *player;
 
 	trap_Argv(1, name, sizeof(name));
 
@@ -1134,13 +1133,14 @@ void Svcmd_RevivePlayer(void)
 		return;
 	}
 
-	clientNum = FindClientByName(name);
-	if (clientNum < 0)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_Printf("Invalid client name.\n");
 		return;
 	}
-	player = &g_entities[clientNum];
+
+	player = &g_entities[cnum];
 
 	G_DropItems(player); // otherwise flag will be lost for good
 	ReviveEntity(player, player);
@@ -1151,8 +1151,8 @@ void Svcmd_RevivePlayer(void)
  */
 static void Svcmd_Gib(void)
 {
-	int       pids[MAX_CLIENTS];
-	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	int       cnum;
+	char      name[MAX_NAME_LENGTH];
 	gentity_t *vic;
 	qboolean  doAll = qfalse;
 
@@ -1197,13 +1197,14 @@ static void Svcmd_Gib(void)
 		return;
 	}
 
-	if (ClientNumbersFromString(name, pids) != 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't gib - %s.", err);
 		return;
 	}
-	vic = &g_entities[pids[0]];
+
+	vic = &g_entities[cnum];
 
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
@@ -1224,8 +1225,8 @@ static void Svcmd_Gib(void)
  */
 static void Svcmd_Die(void)
 {
-	int       pids[MAX_CLIENTS];
-	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	int       cnum;
+	char      name[MAX_NAME_LENGTH];
 	gentity_t *vic;
 	qboolean  doAll = qfalse;
 
@@ -1274,13 +1275,14 @@ static void Svcmd_Die(void)
 		return;
 	}
 
-	if (ClientNumbersFromString(name, pids) != 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't execute die command - %s.\n", err);
 		return;
 	}
-	vic = &g_entities[pids[0]];
+
+	vic = &g_entities[cnum];
 
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
@@ -1306,8 +1308,8 @@ extern animStringItem_t animEventTypesStr[];
  */
 static void Svcmd_PlayerAnimEvent(void)
 {
-	int       pids[MAX_CLIENTS];
-	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS], anim[3];
+	int       cnum;
+	char      name[MAX_NAME_LENGTH], anim[3];
 	gentity_t *vic;
 	qboolean  doAll = qfalse;
 
@@ -1354,13 +1356,14 @@ static void Svcmd_PlayerAnimEvent(void)
 		return;
 	}
 
-	if (ClientNumbersFromString(name, pids) != 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't execute ae command - %s.\n", err);
 		return;
 	}
-	vic = &g_entities[pids[0]];
+
+	vic = &g_entities[cnum];
 
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
@@ -1382,8 +1385,8 @@ static void Svcmd_PlayerAnimEvent(void)
  */
 static void Svcmd_Freeze(void)
 {
-	int       pids[MAX_CLIENTS];
-	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	int       cnum;
+	char      name[MAX_NAME_LENGTH];
 	gentity_t *vic;
 	qboolean  doAll = qfalse;
 
@@ -1441,13 +1444,14 @@ static void Svcmd_Freeze(void)
 		return;
 	}
 
-	if (ClientNumbersFromString(name, pids) != 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't freeze - %s.\n", err);
 		return;
 	}
-	vic = &g_entities[pids[0]];
+
+	vic = &g_entities[cnum];
 
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
@@ -1468,8 +1472,8 @@ static void Svcmd_Freeze(void)
  */
 static void Svcmd_Unfreeze(void)
 {
-	int       pids[MAX_CLIENTS];
-	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	int       cnum;
+	char      name[MAX_NAME_LENGTH];
 	gentity_t *vic;
 	qboolean  doAll = qfalse;
 
@@ -1520,13 +1524,14 @@ static void Svcmd_Unfreeze(void)
 		return;
 	}
 
-	if (ClientNumbersFromString(name, pids) != 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't unfreeze - %s.\n", err);
 		return;
 	}
-	vic = &g_entities[pids[0]];
+
+	vic = &g_entities[cnum];
 
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
@@ -1548,8 +1553,8 @@ static void Svcmd_Unfreeze(void)
  */
 static void Svcmd_Burn(void)
 {
-	int       pids[MAX_CLIENTS];
-	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	int       cnum;
+	char      name[MAX_NAME_LENGTH];
 	gentity_t *vic;
 	qboolean  doAll = qfalse;
 
@@ -1602,13 +1607,15 @@ static void Svcmd_Burn(void)
 		return;
 	}
 
-	if (ClientNumbersFromString(name, pids) != 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't burn - %s.\n", err);
 		return;
 	}
-	vic = &g_entities[pids[0]];
+
+	vic = &g_entities[cnum];
+
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
 		G_Printf("Player must be on a team to be burned.\n");
@@ -1652,8 +1659,8 @@ static void G_Pip(gentity_t *vic)
  */
 static void Svcmd_Pip(void)
 {
-	int       pids[MAX_CLIENTS];
-	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	int       cnum;
+	char      name[MAX_NAME_LENGTH];
 	gentity_t *vic;
 	qboolean  doAll = qfalse;
 
@@ -1704,13 +1711,15 @@ static void Svcmd_Pip(void)
 		return;
 	}
 
-	if (ClientNumbersFromString(name, pids) != 1)
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	if (cnum == -1)
 	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't pip - %s.\n", err);
 		return;
 	}
-	vic = &g_entities[pids[0]];
+
+	vic = &g_entities[cnum];
+
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
 		G_Printf("Player must be on a team to be pipped.\n");
@@ -1729,7 +1738,7 @@ static void Svcmd_Pip(void)
  */
 static void Svcmd_Fling(void) // 0 = fling, 1 = throw, 2 = launch
 {
-	int       pids[MAX_CLIENTS];
+	int       cnum;
 	char      name[MAX_NAME_LENGTH];
 	char      fling[9], pastTense[9];
 	gentity_t *vic;
@@ -1783,7 +1792,6 @@ static void Svcmd_Fling(void) // 0 = fling, 1 = throw, 2 = launch
 		}
 	}
 
-
 	trap_Argv(1, name, sizeof(name));
 
 	if (!Q_stricmp(name, "-1") || doAll)
@@ -1815,15 +1823,15 @@ static void Svcmd_Fling(void) // 0 = fling, 1 = throw, 2 = launch
 		return;
 	}
 
-	if (ClientNumbersFromString(name, pids) != 1)
-	{
-		char err[MAX_STRING_CHARS];
+	cnum = G_ClientNumberFromString(NULL, name);
 
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't %s - %s.\n", fling, err);
+	if (cnum == -1)
+	{
 		return;
 	}
-	vic = &g_entities[pids[0]];
+
+	vic = &g_entities[cnum];
+
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS || vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
 		G_Printf("Player must be on a team to be %s.\n", pastTense);
@@ -1850,7 +1858,8 @@ static void Svcmd_Kick_f(void)
 	gclient_t *cl;
 	int       timeout;
 	char      sTimeout[MAX_TOKEN_CHARS];
-	char      name[MAX_TOKEN_CHARS];
+	char      name[MAX_NAME_LENGTH];
+	int       cnum;
 
 	// make sure server is running
 	if (!G_Is_SV_Running())
@@ -1865,6 +1874,12 @@ static void Svcmd_Kick_f(void)
 		return;
 	}
 
+	trap_Argv(1, name, sizeof(name));
+
+	cnum = G_ClientNumberFromString(NULL, name);
+
+	cl = (cnum == -1 ? NULL : &g_entities[cnum]);
+
 	if (trap_Argc() == 3)
 	{
 		trap_Argv(2, sTimeout, sizeof(sTimeout));
@@ -1874,9 +1889,6 @@ static void Svcmd_Kick_f(void)
 	{
 		timeout = 300;
 	}
-
-	trap_Argv(1, name, sizeof(name));
-	cl = G_GetPlayerByName(name);   //ClientForString( name );
 
 	if (!cl)
 	{
@@ -1971,80 +1983,6 @@ static void Svcmd_Kick_f(void)
 		else
 		{
 			trap_DropClient(cl - level.clients, "player kicked", 0);
-		}
-	}
-}
-
-/**
- * @brief kick a user off of the server
- */
-static void Svcmd_KickNum_f(void)
-{
-	gclient_t *cl;
-	int       timeout;
-	char      *ip;
-	char      userinfo[MAX_INFO_STRING];
-	char      sTimeout[MAX_TOKEN_CHARS];
-	char      name[MAX_TOKEN_CHARS];
-	int       clientNum;
-
-	// make sure server is running
-	if (!G_Is_SV_Running())
-	{
-		G_Printf("Server is not running.\n");
-		return;
-	}
-
-	if (trap_Argc() < 2 || trap_Argc() > 3)
-	{
-		G_Printf("Usage: kick <client number> [timeout]\n");
-		return;
-	}
-
-	if (trap_Argc() == 3)
-	{
-		trap_Argv(2, sTimeout, sizeof(sTimeout));
-		timeout = Q_atoi(sTimeout);
-	}
-	else
-	{
-		timeout = 300;
-	}
-
-	trap_Argv(1, name, sizeof(name));
-	clientNum = Q_atoi(name);
-
-	cl = G_GetPlayerByNum(clientNum);
-	if (!cl)
-	{
-		return;
-	}
-	if (cl->pers.localClient)
-	{
-		G_Printf("Cannot kick host player\n");
-		return;
-	}
-
-	// use engine banning system, mods may choose to use their own banlist
-	if (USE_ENGINE_BANLIST)
-	{
-		// kick but dont ban bots, they arent that lame
-		if ((g_entities[cl - level.clients].r.svFlags & SVF_BOT))
-		{
-			timeout = 0;
-		}
-		trap_DropClient(cl - level.clients, "player kicked", timeout);
-	}
-	else
-	{
-		trap_DropClient(cl - level.clients, "player kicked", 0);
-
-		// kick but dont ban bots, they arent that lame
-		if (!(g_entities[cl - level.clients].r.svFlags & SVF_BOT))
-		{
-			trap_GetUserinfo(cl - level.clients, userinfo, sizeof(userinfo));
-			ip = Info_ValueForKey(userinfo, "ip");
-			AddIPBan(ip);
 		}
 	}
 }
@@ -2635,7 +2573,7 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "listcampaigns",              Svcmd_ListCampaigns_f         },
 	{ "revive",                     Svcmd_RevivePlayer            },
 	{ "kick",                       Svcmd_Kick_f                  },    // moved from engine
-	{ "clientkick",                 Svcmd_KickNum_f               },
+	{ "clientkick",                 Svcmd_Kick_f                  },    // both similar to keep compatibility
 #ifdef FEATURE_OMNIBOT
 	{ "bot",                        Bot_Interface_ConsoleCommand  },
 #endif
