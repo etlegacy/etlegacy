@@ -511,7 +511,7 @@ void G_refWarning_cmd(gentity_t *ent)
 
 	kicknum = G_ClientNumberFromString(ent, cmd);
 
-	if (kicknum != MAX_CLIENTS)
+	if (kicknum != -1)
 	{
 		if (level.clients[kicknum].sess.referee == RL_NONE || ((!ent || ent->client->sess.referee == RL_RCON) && level.clients[kicknum].sess.referee <= RL_REFEREE))
 		{
@@ -628,7 +628,7 @@ void G_PlayerBan()
 
 	bannum = G_ClientNumberFromString(NULL, cmd);
 
-	if (bannum != MAX_CLIENTS)
+	if (bannum != -1)
 	{
 		//if( level.clients[bannum].sess.referee != RL_RCON ) {
 
@@ -667,7 +667,7 @@ void G_MakeReferee()
 
 	cnum = G_ClientNumberFromString(NULL, cmd);
 
-	if (cnum != MAX_CLIENTS)
+	if (cnum != -1)
 	{
 		if (level.clients[cnum].sess.referee == RL_NONE)
 		{
@@ -706,7 +706,7 @@ void G_RemoveReferee()
 
 	cnum = G_ClientNumberFromString(NULL, cmd);
 
-	if (cnum != MAX_CLIENTS)
+	if (cnum != -1)
 	{
 		if (level.clients[cnum].sess.referee == RL_REFEREE)
 		{
@@ -824,7 +824,7 @@ void G_MuteClient()
 
 	cnum = G_ClientNumberFromString(NULL, cmd);
 
-	if (cnum != MAX_CLIENTS)
+	if (cnum != -1)
 	{
 		if (level.clients[cnum].sess.referee != RL_RCON)
 		{
@@ -858,7 +858,7 @@ void G_UnMuteClient()
 
 	cnum = G_ClientNumberFromString(NULL, cmd);
 
-	if (cnum != MAX_CLIENTS)
+	if (cnum != -1)
 	{
 		if (level.clients[cnum].sess.muted)
 		{
