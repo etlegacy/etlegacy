@@ -2841,7 +2841,7 @@ void G_Say_f(gentity_t *ent, int mode /*, qboolean arg0*/)
  * @param[in] voiceonly
  * @param[in] randomNum
  */
-void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum)
+void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum, int vsayNum, const char *customChat)
 {
 	int  color;
 	char *cmd;
@@ -2895,18 +2895,15 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 	if (mode == SAY_TEAM)
 	{
-		color = COLOR_CYAN;
-		cmd   = "vtchat";
+		cmd = "vtchat";
 	}
 	else if (mode == SAY_BUDDY)
 	{
-		color = COLOR_YELLOW;
-		cmd   = "vbchat";
+		cmd = "vbchat";
 	}
 	else
 	{
-		color = COLOR_GREEN;
-		cmd   = "vchat";
+		cmd = "vchat";
 	}
 
 	// if bots we don't send voices (no matter if omnibot or not)
@@ -2921,11 +2918,11 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 	if (mode == SAY_TEAM || mode == SAY_BUDDY)
 	{
-		CPx(other - g_entities, va("%s %d %d %d %s %i %i %i %f", cmd, voiceonly, (int)(ent - g_entities), color, id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum));
+		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i %s", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, customChat));
 	}
 	else
 	{
-		CPx(other - g_entities, va("%s %d %d %d %s %f", cmd, voiceonly, (int)(ent - g_entities), color, id, (double)randomNum));
+		CPx(other - g_entities, va("%s %d %d %s %f %i %s", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, customChat));
 	}
 }
 
@@ -2937,7 +2934,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
  * @param[in] id
  * @param[in] voiceonly
  */
-void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const char *customChat, qboolean voiceonly)
+void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const char *customChat, qboolean voiceonly, int vsayNum)
 {
 	int       j;
 	gentity_t *victim;
@@ -2970,16 +2967,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 
 	if (target)
 	{
-		//if (g_customChat.integer && strlen(customChat) > 1 )
-		if (strlen(customChat) > 1) // custom chat cvar control?
-		{
-			G_Say(ent, target, mode, customChat);
-			G_VoiceTo(ent, target, mode, id, qtrue, randomNum);
-		}
-		else
-		{
-			G_VoiceTo(ent, target, mode, id, voiceonly, randomNum);
-		}
+		G_VoiceTo(ent, target, mode, id, voiceonly, randomNum, vsayNum, customChat);
 		return;
 	}
 
@@ -3025,13 +3013,6 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 			allowclients[num] = qtrue;
 		}
 
-		//if (g_customChat.integer && strlen(customChat) > 1)
-		if (strlen(customChat) > 1) // custom chat cvar control?
-		{
-			G_Say(ent, NULL, mode, customChat);
-			voiceonly = qtrue;
-		}
-
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
 			victim = &g_entities[level.sortedClients[j]];
@@ -3057,18 +3038,11 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 				continue;
 			}
 
-			G_VoiceTo(ent, victim, mode, id, voiceonly, randomNum);
+			G_VoiceTo(ent, victim, mode, id, voiceonly, randomNum, vsayNum, customChat);
 		}
 	}
 	else
 	{
-		//if (g_customChat.integer && strlen(customChat) > 1)
-		if (strlen(customChat) > 1) // custom chat cvar control?
-		{
-			G_Say(ent, NULL, mode, customChat);
-			voiceonly = qtrue;
-		}
-
 		// send it to all the apropriate clients
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
@@ -3077,7 +3051,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 			{
 				continue;
 			}
-			G_VoiceTo(ent, victim, mode, id, voiceonly, randomNum);
+			G_VoiceTo(ent, victim, mode, id, voiceonly, randomNum, vsayNum, customChat);
 		}
 	}
 }
@@ -3092,6 +3066,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly)
 {
 	char bufferIndexCustom[32];
+	int  vsayNum;
 
 	if (ent->client->sess.muted)
 	{
@@ -3108,7 +3083,14 @@ void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly)
 
 		trap_Argv((arg0) ? 0 : 1, bufferIndexCustom, sizeof(bufferIndexCustom));
 
-		G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 1 : 2)), voiceonly);
+		if (isdigit(bufferIndexCustom[0]))
+		{
+			vsayNum = Q_atoi(bufferIndexCustom);
+			trap_Argv((arg0) ? 1 : 2, bufferIndexCustom, sizeof(bufferIndexCustom));
+			G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 2 : 3)), voiceonly, vsayNum);
+			return;
+		}
+		G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 1 : 2)), voiceonly, -1);
 	}
 	else
 	{
@@ -3129,7 +3111,14 @@ void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly)
 
 		trap_Argv((arg0) ? 2 + index : 3 + index, bufferIndexCustom, sizeof(bufferIndexCustom));
 
-		G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 3 + index : 4 + index)), voiceonly);
+		if (isdigit(bufferIndexCustom[0]))
+		{
+			vsayNum = Q_atoi(bufferIndexCustom);
+			trap_Argv((arg0) ? 3 + index : 4 + index, bufferIndexCustom, sizeof(bufferIndexCustom));
+			G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 4 + index : 5 + index)), voiceonly, vsayNum);
+			return;
+		}
+		G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 3 + index : 4 + index)), voiceonly, -1);
 	}
 }
 

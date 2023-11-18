@@ -1659,7 +1659,7 @@ void CG_LoadVoiceChats(void)
  * @param[out] chat
  * @return
  */
-int CG_GetVoiceChat(voiceChatList_t *voiceChatList, const char *id, sfxHandle_t *snd, qhandle_t *sprite, char **chat)
+int CG_GetVoiceChat(voiceChatList_t *voiceChatList, const char *id, sfxHandle_t *snd, qhandle_t *sprite, char **chat, double randomNum, int vsayNum)
 {
 	int i, rnd;
 
@@ -1667,7 +1667,8 @@ int CG_GetVoiceChat(voiceChatList_t *voiceChatList, const char *id, sfxHandle_t 
 	{
 		if (!Q_stricmp(id, voiceChatList->voiceChats[i].id))
 		{
-			rnd     = (int)(random() * voiceChatList->voiceChats[i].numSounds);
+			rnd = (vsayNum >= 0 && vsayNum < voiceChatList->voiceChats[i].numSounds) ? vsayNum :
+			      (int)(randomNum * voiceChatList->voiceChats[i].numSounds);
 			*snd    = voiceChatList->voiceChats[i].sounds[rnd];
 			*sprite = voiceChatList->voiceChats[i].sprite[rnd];
 			*chat   = voiceChatList->voiceChats[i].chats[rnd];
@@ -1799,7 +1800,7 @@ void CG_AddBufferedVoiceChat(bufferedVoiceChat_t *vchat)
  * @param[in] cmd
  * @param[in] origin
  */
-void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, const char *cmd, vec3_t origin)
+void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, const char *cmd, vec3_t origin, double randomNum, int vsayNum, char *customMessage)
 {
 	char            *chat;
 	voiceChatList_t *voiceChatList;
@@ -1815,8 +1816,14 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 
 	voiceChatList = CG_VoiceChatListForClient(clientNum);
 
-	if (CG_GetVoiceChat(voiceChatList, cmd, &snd, &sprite, &chat))
+	if (CG_GetVoiceChat(voiceChatList, cmd, &snd, &sprite, &chat, randomNum, vsayNum))
 	{
+
+		if (strlen(customMessage))
+		{
+			chat = customMessage;
+		}
+
 		if (mode == SAY_TEAM || mode == SAY_BUDDY || !cg_teamVoiceChatsOnly.integer || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 		{
 			bufferedVoiceChat_t vchat;
@@ -1847,29 +1854,29 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 					if (!strcmp(cmd, "IamMedic") || !strcmp(cmd, "IamEngineer") || !strcmp(cmd, "IamFieldOps") || !strcmp(cmd, "IamCovertOps") || !strcmp(cmd, "IamSoldier"))
 					{
 						Com_sprintf(vchat.message, sizeof(vchat.message), "^7(%s^7)^3(%s^3): ^%c%s Next class: %s",
-						            ci->name, loc, color, CG_TranslateString(chat), BG_ClassnameForNumber(cgs.clientinfo[clientNum].latchedcls)); // FIXME: CG_TranslateString doesn't make sense here
+						            ci->name, loc, COLOR_CYAN, chat, BG_ClassnameForNumber(cgs.clientinfo[clientNum].latchedcls));
 					}
 					else // isn't sayplayerclass cmd
 					{
 						Com_sprintf(vchat.message, sizeof(vchat.message), "^7(%s^7)^3(%s^3): ^%c%s",
-						            ci->name, loc, color, CG_TranslateString(chat));
+						            ci->name, loc, COLOR_CYAN, chat);
 					}
 				}
 				else
 				{
 					Com_sprintf(vchat.message, sizeof(vchat.message), "^7(%s^7)^3(%s^3): ^%c%s",
-					            ci->name, loc, color, CG_TranslateString(chat));
+					            ci->name, loc, COLOR_CYAN, chat);
 				}
 			}
 			else if (mode == SAY_BUDDY)
 			{
 				Com_sprintf(vchat.message, sizeof(vchat.message), "^7(%s^7)^3(%s^3): ^%c%s",
-				            ci->name, loc, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
+				            ci->name, loc, COLOR_YELLOW, chat);
 			}
 			else
 			{
 				Com_sprintf(vchat.message, sizeof(vchat.message), "^7%s^3: ^%c%s",
-				            ci->name, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
+				            ci->name, COLOR_GREEN, chat);
 			}
 			CG_AddBufferedVoiceChat(&vchat);
 		}
@@ -1883,24 +1890,30 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 void CG_VoiceChat(int mode)
 {
 	const char *cmd;
-	int        clientNum, color;
+	int        clientNum, vsayNum, skip;
+	double     randomNum;
 	qboolean   voiceOnly;
 	vec3_t     origin = { 0 };
+	char       customMessage[MAX_CHATSIZE];
 
+	skip      = 0;
 	voiceOnly = (qboolean)(atoi(CG_Argv(1)));
 	clientNum = Q_atoi(CG_Argv(2));
-	color     = Q_atoi(CG_Argv(3));
 
 	if (mode != SAY_ALL)
 	{
-		origin[0] = Q_atoi(CG_Argv(5));
-		origin[1] = Q_atoi(CG_Argv(6));
-		origin[2] = Q_atoi(CG_Argv(7));
+		origin[0] = Q_atoi(CG_Argv(4));
+		origin[1] = Q_atoi(CG_Argv(5));
+		origin[2] = Q_atoi(CG_Argv(6));
+		skip      = 3;
 	}
 
-	cmd = CG_Argv(4);
+	randomNum = Q_atof(CG_Argv(4 + skip));
+	vsayNum   = Q_atoi(CG_Argv(5 + skip));
+	Q_strncpyz(customMessage, CG_Argv(6 + skip), sizeof(customMessage));
+	cmd = CG_Argv(3);
 
-	CG_VoiceChatLocal(mode, voiceOnly, clientNum, color, cmd, origin);
+	CG_VoiceChatLocal(mode, voiceOnly, clientNum, cmd, origin, randomNum, vsayNum, customMessage);
 }
 
 /**
