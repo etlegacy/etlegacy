@@ -2446,7 +2446,7 @@ void CG_Debriefing_ParsePlayerKillsDeaths(qboolean secondPart)
 		max = cgs.maxclients / 2;
 	}
 
-	for (i, j = 0; i < max; i++, j++)
+	for (j = 0; i < max; i++, j++)
 	{
 		cgs.clientinfo[i].kills     = Q_atoi(CG_Argv((j * 6) + 1));
 		cgs.clientinfo[i].deaths    = Q_atoi(CG_Argv((j * 6) + 2));
