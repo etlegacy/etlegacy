@@ -125,7 +125,7 @@ int G_ClientNumbersFromString(char *s, int *plist)
 	}
 
 	// now look for name matches
-	Q_strncpyz(s2, s, sizeof(s));
+	Q_strncpyz(s2, s, sizeof(s2));
 	Q_CleanStr(s2);
 	Q_strlwr(s2);
 
