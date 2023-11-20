@@ -3646,11 +3646,11 @@ msgstr ""
 msgid "Filter Disabled"
 msgstr ""
 
-#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:115 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
-msgid "Only show..."
+msgid "Empty only..."
 msgstr ""
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
