@@ -874,7 +874,7 @@ typedef enum
 	WP_K43,                    ///< 31
 	WP_FG42,                   ///< 32
 	WP_DUMMY_MG42,             ///< 33 for storing heat on mounted mg42s...
-	WP_MORTAR,                 ///< 34
+	WP_MORTAR,                 ///< 34	Allied mortar
 	WP_AKIMBO_COLT,            ///< 35
 	WP_AKIMBO_LUGER,           ///< 36
 
@@ -895,7 +895,7 @@ typedef enum
 	WP_KNIFE_KABAR,            ///< 48	Allied knife
 	WP_MOBILE_BROWNING,        ///< 49	Allied machinegun
 	WP_MOBILE_BROWNING_SET,    ///< 50
-	WP_MORTAR2,                ///< 51	Allied mortar
+	WP_MORTAR2,                ///< 51	Axis mortar
 	WP_MORTAR2_SET,            ///< 52
 	WP_BAZOOKA,                ///< 53	Allied panzerfaust
 	WP_MP34,                   ///< 54	Axis Sten alternative
@@ -1109,7 +1109,7 @@ typedef enum
 	MOD_K43,
 	MOD_K43_SCOPE,
 
-	MOD_MORTAR,
+	MOD_MORTAR, // Allied mortar
 
 	MOD_AKIMBO_COLT,
 	MOD_AKIMBO_LUGER,
@@ -1126,7 +1126,7 @@ typedef enum
 
 	MOD_KNIFE_KABAR, // Allied knife
 	MOD_MOBILE_BROWNING, // Allied machinegun
-	MOD_MORTAR2, // Allied mortar
+	MOD_MORTAR2, // Axis mortar
 	MOD_BAZOOKA, // Allied panzerfaust
 	MOD_BACKSTAB,
 	MOD_MP34, // Allied Sten alternative
@@ -1834,8 +1834,8 @@ typedef enum extWeaponStats_e
 	WS_BAZOOKA,        ///< 9    -- Allied panzerfaust
 	WS_FLAMETHROWER,   ///< 10
 	WS_GRENADE,        ///< 11   -- includes axis and allies grenade types
-	WS_MORTAR,         ///< 12
-	WS_MORTAR2,        ///< 13   -- Allied mortar
+	WS_MORTAR,         ///< 12   -- Allied mortar
+	WS_MORTAR2,        ///< 13   -- Axis mortar
 	WS_DYNAMITE,       ///< 14
 	WS_AIRSTRIKE,      ///< 15   -- Fieldops smoke grenade attack
 	WS_ARTILLERY,      ///< 16   -- Fieldops binocular attack
