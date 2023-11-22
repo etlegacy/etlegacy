@@ -6348,7 +6348,10 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
 		headshot = (VectorLength(tmpv2) < 10);
 
 		// smoke puffs (sometimes with some blood)
-		if (headshot)
+		// in case of head shot, use a stronger puff blood effect
+		// otherwise, use regular puff effect with no blood
+		// as the puff effect without blood is too intense
+		if (headshot && cg_blood.integer)
 		{
 			for (i = 0; i < 5; i++)
 			{
