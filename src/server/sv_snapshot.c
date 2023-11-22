@@ -803,6 +803,8 @@ int SV_RateMsec(client_t *client)
 		}
 	}
 
+	rate = MIN(90000, MAX(1000, rate));
+
 	if (client->netchan.remoteAddress.type == NA_IP6)
 	{
 		messageSize += UDPIP6_HEADER_SIZE;
