@@ -3539,6 +3539,12 @@ qboolean CG_Debriefing_PanelButton_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
+		// ignore map vote button selection if we are not in map vote game type
+		if (button == &buttonsPanelMapVote && cgs.gametype != GT_WOLF_MAPVOTE)
+		{
+			return qfalse;
+		}
+
 		cgs.dbMode = button->data[3];
 
 		return qtrue;
