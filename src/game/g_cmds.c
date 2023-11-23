@@ -631,7 +631,7 @@ float GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
  */
 void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char     *name, *amt;
+	char     name[MAX_TOKEN_CHARS], amt[MAX_TOKEN_CHARS];
 	weapon_t weapon;
 	qboolean give_all;
 	int      amount;
@@ -639,7 +639,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	int      cnum;
 	int      i = 1;
 
-	name = ConcatArgs(i);
+	trap_Argv(i, name, sizeof(name));
 
 	// try to find a targeted player, otherwise use command caller
 	cnum = G_ClientNumberFromString(ent, name);
@@ -650,7 +650,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 		ent = cnum + g_entities;
 
 		// get the give argument
-		name = ConcatArgs(++i);
+		trap_Argv(++i, name, sizeof(name));
 	}
 
 	if (!ent || !ent->client)
@@ -664,21 +664,14 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	}
 
 	// check for an amount (like "give health 30")
-	amt = ConcatArgs(++i);
+	trap_Argv(++i, amt, sizeof(amt));
 	if (*amt)
 	{
 		hasAmount = qtrue;
+		amount    = Q_atoi(amt);
 	}
-	amount = Q_atoi(amt);
 
-	if (Q_stricmp(name, "all") == 0)
-	{
-		give_all = qtrue;
-	}
-	else
-	{
-		give_all = qfalse;
-	}
+	give_all = !Q_stricmp(name, "all");
 
 	if (Q_stricmpn(name, "skill", 5) == 0)
 	{
