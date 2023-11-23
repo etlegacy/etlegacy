@@ -634,7 +634,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	char     name[MAX_TOKEN_CHARS], amt[MAX_TOKEN_CHARS];
 	weapon_t weapon;
 	qboolean give_all;
-	int      amount;
+	int      amount = 0;
 	qboolean hasAmount = qfalse;
 	int      cnum;
 	int      i = 1;
@@ -665,7 +665,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	// check for an amount (like "give health 30")
 	trap_Argv(++i, amt, sizeof(amt));
-	if (*amt)
+	if (*amt != '\0')
 	{
 		hasAmount = qtrue;
 		amount    = Q_atoi(amt);
