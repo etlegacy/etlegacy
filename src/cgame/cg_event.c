@@ -165,6 +165,13 @@ static void CG_Obituary(entityState_t *ent)
 	{
 		CG_Error("CG_Obituary: target out of range\n");
 	}
+
+	// no obituary message if changing teams
+	if (mod == MOD_SWITCHTEAM)
+	{
+		return;
+	}
+
 	ci = &cgs.clientinfo[target];
 
 	if (attacker < 0 || attacker >= MAX_CLIENTS)
@@ -239,7 +246,7 @@ static void CG_Obituary(entityState_t *ent)
 			continue;
 		}
 
-		message = NULL;
+		message  = NULL;
 		message2 = NULL;
 
 		Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
@@ -257,12 +264,6 @@ static void CG_Obituary(entityState_t *ent)
 		// check for self kill messages
 		else if (attacker == target)
 		{
-			// no obituary message if changing teams
-			if (mod == MOD_SWITCHTEAM)
-			{
-				continue;
-			}
-
 			message = GetMODTableData(mod)->obituarySelfKillMessage;
 		}
 
@@ -359,8 +360,8 @@ static void CG_Obituary(entityState_t *ent)
 	else
 	{
 		// we don't know what it was
-		CG_AddPMItem(PM_DEATH, va("%s %s.", ci->name, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
-		trap_Print(va("^7%s^7 died\n", ci->name));
+		CG_AddPMItem(PM_DEATH, va("%s ^7%s.", ci->name, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
+		trap_Print(va("^7%s ^7%s\n", ci->name, CG_TranslateString("died")));
 	}
 }
 
