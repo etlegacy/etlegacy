@@ -241,7 +241,9 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
 	xvelocity[1] = velocity[0] * v[0][1] + velocity[1] * v[1][1] + velocity[2] * v[2][1];
 	xvelocity[2] = velocity[0] * v[0][2] + velocity[1] * v[1][2] + velocity[2] * v[2][2];
-	VectorScale(xvelocity, waterScale, le->pos.trDelta);
+	VectorScale(xvelocity, waterScale, xvelocity);
+	// add player velocity so brass doesn't eject in front of field of view while strafing
+	VectorAdd(xvelocity, cent->currentState.pos.trDelta, le->pos.trDelta);
 
 	AxisCopy(axisDefault, re->axis);
 
@@ -313,7 +315,9 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
 	xvelocity[1] = velocity[0] * v[0][1] + velocity[1] * v[1][1] + velocity[2] * v[2][1];
 	xvelocity[2] = velocity[0] * v[0][2] + velocity[1] * v[1][2] + velocity[2] * v[2][2];
-	VectorScale(xvelocity, waterScale, le->pos.trDelta);
+	VectorScale(xvelocity, waterScale, xvelocity);
+	// add player velocity so brass doesn't eject in front of field of view while strafing
+	VectorAdd(xvelocity, cent->currentState.pos.trDelta, le->pos.trDelta);
 
 	AxisCopy(axisDefault, re->axis);
 
