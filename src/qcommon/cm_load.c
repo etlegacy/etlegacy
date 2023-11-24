@@ -457,14 +457,50 @@ void CMod_LoadBrushSides(lump_t *l)
 }
 
 /**
+ * @brief CMod_LoadCustomEntityString
+ * @param[in] name
+ */
+qboolean CMod_LoadCustomEntityString(const char* name) {
+	fileHandle_t file;
+	int entFileLen = 0;
+	char* filename;
+	char noext[MAX_QPATH];
+
+	COM_StripExtension(name, noext);
+	filename = va("%s.ent", noext);
+
+	entFileLen = FS_FOpenFileRead(filename, &file, qtrue);
+
+	if (file && entFileLen > 0)
+	{
+		cm.entityString = (char*)Hunk_Alloc(entFileLen + 1, h_high);
+		cm.numEntityChars = entFileLen + 1;
+		FS_Read(cm.entityString, entFileLen, file);
+		FS_FCloseFile(file);
+		cm.entityString[entFileLen] = '\0';
+		Com_Printf(va("Loaded entities from %s\n", filename));
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief CMod_LoadEntityString
  * @param[in] l
+ * @param[in] name
  */
-void CMod_LoadEntityString(lump_t *l)
+void CMod_LoadEntityString(lump_t *l, const char* name)
 {
+	if (CMod_LoadCustomEntityString(name))
+	{
+		return;
+	}
+
 	cm.entityString = Hunk_Alloc(l->filelen, h_high);
 	//cm.numEntityChars = l->filelen;
 	Com_Memcpy(cm.entityString, cmod_base + l->fileofs, l->filelen);
+	Com_Printf(va("Loaded entities from %s\n", name));
 }
 
 #define VIS_HEADER  8
@@ -699,7 +735,7 @@ void CM_LoadMap(const char *name, qboolean clientload, unsigned int *checksum)
 	CMod_LoadBrushes(&header.lumps[LUMP_BRUSHES]);
 	CMod_LoadSubmodels(&header.lumps[LUMP_MODELS]);
 	CMod_LoadNodes(&header.lumps[LUMP_NODES]);
-	CMod_LoadEntityString(&header.lumps[LUMP_ENTITIES]);
+	CMod_LoadEntityString(&header.lumps[LUMP_ENTITIES], name);
 	CMod_LoadVisibility(&header.lumps[LUMP_VISIBILITY]);
 	CMod_LoadPatches(&header.lumps[LUMP_SURFACES], &header.lumps[LUMP_DRAWVERTS]);
 
