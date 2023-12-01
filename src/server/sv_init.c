@@ -311,7 +311,8 @@ void SV_CreateBaseline(void)
 		svent->s.number = entnum;
 
 		// take current state as baseline
-		sv.svEntities[entnum].baseline = svent->s;
+		sv.svEntities[entnum].baseline       = svent->s;
+		sv.svEntities[entnum].baselineShared = svent->r;
 	}
 }
 
@@ -737,8 +738,9 @@ void SV_SpawnServer(const char *server)
 	FS_ClearPakReferences(0);
 
 	// allocate the snapshot entities on the hunk
-	svs.snapshotEntities     = Hunk_Alloc(sizeof(entityState_t) * svs.numSnapshotEntities, h_high);
-	svs.nextSnapshotEntities = 0;
+	svs.snapshotEntities       = Hunk_Alloc(sizeof(entityState_t) * svs.numSnapshotEntities, h_high);
+	svs.snapshotSharedEntities = Hunk_Alloc(sizeof(entityShared_t) * svs.numSnapshotEntities, h_high);
+	svs.nextSnapshotEntities   = 0;
 
 	// toggle the server bit so clients can detect that a
 	// server has changed
@@ -1201,6 +1203,10 @@ void SV_Init(void)
 	sv_ipMaxClients = Cvar_Get("sv_ipMaxClients", "0", CVAR_ARCHIVE);
 
 	sv_serverTimeReset = Cvar_GetAndDescribe("sv_serverTimeReset", "0", CVAR_ARCHIVE_ND, "Reset server time on map change.");
+
+	sv_etltv_maxslaves = Cvar_GetAndDescribe("sv_etltv_maxslaves", "0", CVAR_ARCHIVE_ND, "Number of ettv slaves allowed to connect.");
+	sv_etltv_password  = Cvar_GetAndDescribe("sv_etltv_password", "", CVAR_ARCHIVE_ND, "Password for ettv slaves. Must be set, or no slaves will be able to connect.");
+	sv_etltv_flags     = Cvar_GetAndDescribe("sv_etltv_flags", "6", CVAR_ARCHIVE_ND, "Bitflag 2 and 4. 2 = grant shoutcaster status to slaves. 4 = prevent slaves from being kicked.");
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();

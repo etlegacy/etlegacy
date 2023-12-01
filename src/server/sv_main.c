@@ -125,6 +125,10 @@ cvar_t *sv_ipMaxClients;
 
 cvar_t *sv_serverTimeReset;
 
+cvar_t *sv_etltv_maxslaves;
+cvar_t *sv_etltv_password;
+cvar_t *sv_etltv_flags;
+
 static void SVC_Status(netadr_t from, qboolean force);
 
 /*

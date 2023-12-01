@@ -1630,6 +1630,261 @@ netField_t entitySharedFields[] =
 	{ ESF(snapshotCallback), 1,               0 }
 };
 
+netField_t ettventitySharedFields[] =
+{
+	{ ESF(currentOrigin[0]), 0,  0 },
+	{ ESF(currentOrigin[1]), 0,  0 },
+	{ ESF(currentOrigin[2]), 0,  0 },
+	{ ESF(currentAngles[0]), 0,  0 },
+	{ ESF(currentAngles[1]), 0,  0 },
+	{ ESF(currentAngles[2]), 0,  0 },
+	{ ESF(svFlags),          32, 0 },
+	{ ESF(mins[0]),          0,  0 },
+	{ ESF(mins[1]),          0,  0 },
+	{ ESF(mins[2]),          0,  0 },
+	{ ESF(maxs[0]),          0,  0 },
+	{ ESF(maxs[1]),          0,  0 },
+	{ ESF(maxs[2]),          0,  0 },
+	{ ESF(singleClient),     8,  0 }
+};
+
+/**
+* @brief MSG_ETTV_WriteDeltaSharedEntity
+* @details Appends part of a packetentities message with entityShared_t, without the entity number.
+*          Can delta from either a baseline or a previous packet_entity.
+* @param[out] msg
+* @param[in] from
+* @param[in] to
+* @param[in] force
+*/
+void MSG_ETTV_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force)
+{
+	int        i, lc;
+	int        numFields;
+	netField_t *field;
+	int        trunc;
+	float      fullFloat;
+	int        *fromF, *toF;
+
+	numFields = ARRAY_LEN(ettventitySharedFields);
+
+	// write magic byte
+	MSG_WriteBits(msg, 0x77, 8);
+
+	// a NULL to is a delta remove message
+	if (to == NULL)
+	{
+		if (from == NULL)
+		{
+			return;
+		}
+		MSG_WriteBits(msg, 1, 1);
+		return;
+	}
+
+	// all fields should be 32 bits to avoid any compiler packing issues
+	// if this assert fails, someone added a field to the entityShared_t
+	// struct without updating the message fields
+	//etl_assert(numFields == (sizeof(entityShared_t) - sizeof(entityState_t)) / 4);
+
+	lc = 0;
+	// build the change vector as bytes so it is endien independent
+	for (i = 0, field = ettventitySharedFields; i < numFields; i++, field++)
+	{
+		fromF = (int *)((byte *)from + field->offset);
+		toF   = (int *)((byte *)to + field->offset);
+
+		if (*fromF != *toF)
+		{
+			lc = i + 1;
+		}
+	}
+
+	if (lc == 0)
+	{
+		// nothing at all changed
+		if (!force)
+		{
+			return;     // nothing at all
+		}
+		// write a bits for no change
+		//MSG_WriteBits(msg, number, GENTITYNUM_BITS);
+		MSG_WriteBits(msg, 0, 1);
+		MSG_WriteBits(msg, 0, 1);       // no delta
+		return;
+	}
+
+	//MSG_WriteBits(msg, number, GENTITYNUM_BITS);
+	MSG_WriteBits(msg, 0, 1);
+	MSG_WriteBits(msg, 1, 1);           // we have a delta
+
+	MSG_WriteByte(msg, lc);     // # of changes
+
+	oldsize += numFields;
+
+	for (i = 0, field = ettventitySharedFields; i < lc; i++, field++)
+	{
+		fromF = (int *)((byte *)from + field->offset);
+		toF   = (int *)((byte *)to + field->offset);
+
+		if (*fromF == *toF)
+		{
+			MSG_WriteBits(msg, 0, 1);   // no change
+			continue;
+		}
+
+		MSG_WriteBits(msg, 1, 1);   // changed
+
+		if (field->bits == 0)
+		{
+			// float
+			fullFloat = *(float *)toF;
+			trunc     = (int)fullFloat;
+
+			if (fullFloat == 0.0f)
+			{
+				MSG_WriteBits(msg, 0, 1);
+				oldsize += FLOAT_INT_BITS;
+			}
+			else
+			{
+				MSG_WriteBits(msg, 1, 1);
+				if (trunc == fullFloat && trunc + FLOAT_INT_BIAS >= 0 &&
+				    trunc + FLOAT_INT_BIAS < (1 << FLOAT_INT_BITS))
+				{
+					// send as small integer
+					MSG_WriteBits(msg, 0, 1);
+					MSG_WriteBits(msg, trunc + FLOAT_INT_BIAS, FLOAT_INT_BITS);
+				}
+				else
+				{
+					// send as full floating point value
+					MSG_WriteBits(msg, 1, 1);
+					MSG_WriteBits(msg, *toF, 32);
+				}
+			}
+		}
+		else
+		{
+			if (*toF == 0)
+			{
+				MSG_WriteBits(msg, 0, 1);
+			}
+			else
+			{
+				MSG_WriteBits(msg, 1, 1);
+				// integer
+				MSG_WriteBits(msg, *toF, field->bits);
+			}
+		}
+	}
+}
+
+/**
+* @brief MSG_ETTV_ReadDeltaSharedEntity unused
+* @param[in] msg
+* @param[in] from
+* @param[in] to
+*/
+/*
+void MSG_ETTV_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to)
+{
+	int        i, lc;
+	int        numFields;
+	netField_t *field;
+	int        *fromF, *toF;
+	int        trunc;
+	int        magic;
+
+	// read magic byte
+	magic = MSG_ReadBits(msg, 8);
+	if (magic != 0x77)
+	{
+		Com_Error(ERR_DROP, "MSG_ETTV_ReadDeltaSharedEntity: wrong magic byte 0x%x", magic);
+	}
+
+	// check for a remove
+	if (MSG_ReadBits(msg, 1) == 1)
+	{
+		Com_Memset(to, 0, sizeof(*to));
+		return;
+	}
+
+	// check for no delta
+	if (MSG_ReadBits(msg, 1) == 0)
+	{
+		*(entityShared_t *)to = *(entityShared_t *)from;
+		return;
+	}
+
+	numFields = sizeof(ettventitySharedFields) / sizeof(ettventitySharedFields[0]);
+	lc = MSG_ReadByte(msg);
+
+	if (lc > numFields || lc < 0)
+	{
+		Com_Error(ERR_DROP, "MSG_ETTV_ReadDeltaSharedEntity: invalid entityShared field count");
+	}
+
+	for (i = 0, field = ettventitySharedFields; i < lc; i++, field++)
+	{
+		fromF = (int *)((byte *)from + field->offset);
+		toF = (int *)((byte *)to + field->offset);
+
+		if (!MSG_ReadBits(msg, 1))
+		{
+			// no change
+			*toF = *fromF;
+		}
+		else
+		{
+			if (field->bits == 0)
+			{
+				// float
+				if (MSG_ReadBits(msg, 1) == 0)
+				{
+					*(float *)toF = 0.0f;
+				}
+				else
+				{
+					if (MSG_ReadBits(msg, 1) == 0)
+					{
+						// integral float
+						trunc = MSG_ReadBits(msg, FLOAT_INT_BITS);
+						// bias to allow equal parts positive and negative
+						trunc -= FLOAT_INT_BIAS;
+						*(float *)toF = trunc;
+					}
+					else
+					{
+						// full floating point value
+						*toF = MSG_ReadBits(msg, 32);
+					}
+				}
+			}
+			else
+			{
+				if (MSG_ReadBits(msg, 1) == 0)
+				{
+					*toF = 0;
+				}
+				else
+				{
+					// integer
+					*toF = MSG_ReadBits(msg, field->bits);
+				}
+			}
+			//			pcount[i]++;
+		}
+	}
+	for (i = lc, field = &ettventitySharedFields[lc]; i < numFields; i++, field++)
+	{
+		fromF = (int *)((byte *)from + field->offset);
+		toF = (int *)((byte *)to + field->offset);
+		// no change
+		*toF = *fromF;
+	}
+}*/
+
 /**
  * @brief MSG_WriteDeltaSharedEntity
  * @param[out] msg

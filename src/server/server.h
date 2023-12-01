@@ -71,6 +71,7 @@ typedef struct svEntity_s
 	struct svEntity_s *nextEntityInWorldSector;
 
 	entityState_t baseline;             ///< for delta compression of initial sighting
+	entityShared_t baselineShared;
 	int numClusters;                    ///< if -1, use headnode instead
 	int clusternums[MAX_ENT_CLUSTERS];
 	int lastCluster;                    ///< if all the clusters don't fit in clusternums
@@ -199,6 +200,17 @@ typedef struct netchan_buffer_s
 } netchan_buffer_t;
 
 /**
+* @struct ettvClientSnapshot_s
+* @typedef ettvClientSnapshot_s
+* @brief Playerstates storage for ettv clients so they can send delta playerstate updates
+*/
+typedef struct ettvClientSnapshot_s
+{
+	qboolean messageSent;  ///< is the playerstate valid for delta compression
+	playerState_t ps;
+} ettvClientSnapshot_t;
+
+/**
  * @struct client_s
  * @typedef client_t
  * @brief
@@ -279,6 +291,8 @@ typedef struct client_s
 	int protocol; ///< We can access clients protocol any time
 
 	qboolean demoClient; ///< is this a demoClient?
+	qboolean ettvClient;
+	ettvClientSnapshot_t **ettvClientFrame;
 
 	userAgent_t agent;
 } client_t;
@@ -377,6 +391,7 @@ typedef struct
 	int numSnapshotEntities;                    ///< sv_maxclients->integer*PACKET_BACKUP*MAX_PACKET_ENTITIES
 	int nextSnapshotEntities;                   ///< next snapshotEntities to use
 	entityState_t *snapshotEntities;            ///< [numSnapshotEntities]
+	entityShared_t *snapshotSharedEntities;
 	int nextHeartbeatTime;
 	challenge_t challenges[MAX_CHALLENGES];     ///< to prevent invalid IPs from connecting
 	receipt_t infoReceipts[MAX_INFO_RECEIPTS];
@@ -488,6 +503,10 @@ extern cvar_t *sv_demoTolerant;
 extern cvar_t *sv_ipMaxClients; ///< limit client connection
 
 extern cvar_t *sv_serverTimeReset;
+
+extern cvar_t *sv_etltv_maxslaves;
+extern cvar_t *sv_etltv_password;
+extern cvar_t *sv_etltv_flags;
 
 //===========================================================
 
