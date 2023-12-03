@@ -1878,7 +1878,7 @@ static void Svcmd_Kick_f(void)
 
 	cnum = G_ClientNumberFromString(NULL, name);
 
-	cl = (cnum == -1 ? NULL : &g_entities[cnum]);
+	cl = (cnum == -1 ? NULL : &level.clients[cnum]);
 
 	if (trap_Argc() == 3)
 	{
