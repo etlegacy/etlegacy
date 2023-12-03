@@ -2911,11 +2911,11 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 	if (mode == SAY_TEAM || mode == SAY_BUDDY)
 	{
-		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i %s", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, customChat));
+		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, customChat));
 	}
 	else
 	{
-		CPx(other - g_entities, va("%s %d %d %s %f %i %s", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, customChat));
+		CPx(other - g_entities, va("%s %d %d %s %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, customChat));
 	}
 }
 
