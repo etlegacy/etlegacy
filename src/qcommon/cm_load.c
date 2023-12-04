@@ -477,7 +477,7 @@ qboolean CMod_LoadCustomEntityString(const char* name) {
 		FS_Read(cm.entityString, entFileLen, file);
 		FS_FCloseFile(file);
 		cm.entityString[entFileLen] = '\0';
-		Com_Printf("Loaded entities from %s\n", filename));
+		Com_Printf("Loaded entities from %s\n", filename);
 		return qtrue;
 	}
 
@@ -499,7 +499,7 @@ void CMod_LoadEntityString(lump_t *l, const char* name)
 	cm.entityString = Hunk_Alloc(l->filelen, h_high);
 	//cm.numEntityChars = l->filelen;
 	Com_Memcpy(cm.entityString, cmod_base + l->fileofs, l->filelen);
-	Com_Printf("Loaded entities from %s\n", name));
+	Com_Printf("Loaded entities from %s\n", name);
 }
 
 #define VIS_HEADER  8
