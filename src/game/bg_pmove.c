@@ -1653,6 +1653,15 @@ static void PM_CrashLand(void)
 	// want to take damage or play a crunch sound
 	if (!(pml.groundTrace.surfaceFlags & SURF_NODAMAGE) && !pm->predict)
 	{
+		// when falling damage happens, velocity is cleared, but
+		// this needs to happen in pmove, not g_active!  (prediction will be
+		// wrong, otherwise.)
+		// probably never makes sense to reset speed if the player didn't take damage?
+		if (delta > 38.75f)
+		{
+			VectorClear(pm->ps->velocity);
+		}
+
 		if (pm->debugLevel)
 		{
 			Com_Printf("delta: %5.2f\n", (double)delta);
@@ -1718,14 +1727,6 @@ static void PM_CrashLand(void)
 		{
 			PM_AddEventExt(EV_FOOTSTEP, PM_FootstepForSurface());
 		}
-	}
-
-	// when falling damage happens, velocity is cleared, but
-	// this needs to happen in pmove, not g_active!  (prediction will be
-	// wrong, otherwise.)
-	if (delta > 38.75f)
-	{
-		VectorClear(pm->ps->velocity);
 	}
 
 	// start footstep cycle over
