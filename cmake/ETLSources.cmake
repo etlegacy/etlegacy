@@ -97,6 +97,21 @@ FILE(GLOB QAGAME_SRC
 	"src/qcommon/q_shared.c"
 )
 
+FILE(GLOB TVGAME_SRC
+    "src/game/bg_*.c"
+	"src/game/g_mdx*"
+	"src/game/g_strparse*"
+	"src/game/surfaceflags*"
+	"src/game/g_match_tokens.c"
+	"src/game/g_sha1.c"
+	"src/game/g_mem.c"
+	"src/tvgame/*.c"
+	"src/tvgame/*.h"
+	"src/qcommon/crypto/sha-1/sha1.c"
+	"src/qcommon/q_math.c"
+	"src/qcommon/q_shared.c"
+)
+
 FILE(GLOB UI_SRC
 	"src/ui/*.c"
 	"src/ui/*.h"

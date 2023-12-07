@@ -328,10 +328,14 @@ if(BUILD_MOD)
 			find_package(Lua 5.4 REQUIRED)
 			target_link_libraries(qagame_libraries INTERFACE ${LUA_LIBRARIES})
 			target_include_directories(qagame_libraries INTERFACE ${LUA_INCLUDE_DIR})
+			target_link_libraries(tvgame_libraries INTERFACE ${LUA_LIBRARIES})
+			target_include_directories(tvgame_libraries INTERFACE ${LUA_INCLUDE_DIR})
 		else() # BUNDLED_LUA
 			target_link_libraries(qagame_libraries INTERFACE bundled_lua_int)
+			target_link_libraries(tvgame_libraries INTERFACE bundled_lua_int)
 		endif()
 		target_compile_definitions(qagame_libraries INTERFACE FEATURE_LUA)
+		target_compile_definitions(tvgame_libraries INTERFACE FEATURE_LUA)
 	endif(FEATURE_LUA)
 
 	if(FEATURE_OMNIBOT)
@@ -395,6 +399,7 @@ else()
 endif()
 
 target_link_libraries(qagame_libraries INTERFACE etl_json)
+target_link_libraries(tvgame_libraries INTERFACE etl_json)
 target_link_libraries(cgame_libraries INTERFACE etl_json)
 target_link_libraries(engine_libraries INTERFACE etl_json)
 

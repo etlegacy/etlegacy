@@ -182,18 +182,18 @@ static void SV_ETTV_EmitPlayerstates(client_t *client, msg_t *msg)
 
 	for (i = 0; i < sv_maxclients->integer; i++)
 	{
-		cl                   = &svs.clients[i];
-		frame[i].messageSent = qfalse;
+		cl             = &svs.clients[i];
+		frame[i].valid = qfalse;
 
 		if (cl->state == CS_ACTIVE && client != cl)
 		{
 			// clientnum
 			MSG_WriteByte(msg, i);
 
-			frame[i].ps          = *SV_GameClientNum(i);
-			frame[i].messageSent = qtrue;
+			frame[i].ps    = *SV_GameClientNum(i);
+			frame[i].valid = qtrue;
 
-			if (!oldframe || !oldframe[i].messageSent)
+			if (!oldframe || !oldframe[i].valid)
 			{
 				MSG_WriteDeltaPlayerstate(msg, NULL, &frame[i].ps);
 				//Com_DPrintf(">>> [CL %d] Sent PS baseline\n", i);

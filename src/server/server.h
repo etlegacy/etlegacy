@@ -200,17 +200,6 @@ typedef struct netchan_buffer_s
 } netchan_buffer_t;
 
 /**
-* @struct ettvClientSnapshot_s
-* @typedef ettvClientSnapshot_s
-* @brief Playerstates storage for ettv clients so they can send delta playerstate updates
-*/
-typedef struct ettvClientSnapshot_s
-{
-	qboolean messageSent;  ///< is the playerstate valid for delta compression
-	playerState_t ps;
-} ettvClientSnapshot_t;
-
-/**
  * @struct client_s
  * @typedef client_t
  * @brief
