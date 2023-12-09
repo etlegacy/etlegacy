@@ -631,6 +631,8 @@ typedef struct
 	int numReliableCommands;                            ///< how many commands have we sent
 	int nextCommandDecreaseTime;                        ///< next time we decrease numReliableCommands
 
+	qboolean tvchat;
+
 } clientSession_t;
 
 #define PICKUP_ACTIVATE 0   ///< pickup items only when using "+activate"
@@ -1472,10 +1474,10 @@ typedef struct
 #define DAMAGE_NO_TEAM_PROTECTION   0x00000010  ///< unused. Armor, shields, invulnerability, and godmode have no effect
 #define DAMAGE_DISTANCEFALLOFF      0x00000040  ///< distance falloff
 
-// g_misc.c
+// tvg_misc.c
 void TVG_TeleportPlayer(gclient_t *client, const vec3_t origin, const vec3_t angles);
 
-// g_client.c
+// tvg_client.c
 int TeamCount(int ignoreClientNum, team_t team);
 void TVG_SetClientViewAngle(gclient_t *client, const vec3_t angle);
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles);
@@ -1491,18 +1493,18 @@ char *G_SHA1(const char *string);
 #define CF_ENABLE    1 ///< enables common countryflags functionallity
 #define CF_CONNECT   2 ///< draws country name in connect announcer
 
-// g_character.c
+// tvg_character.c
 qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *character);
 void G_RegisterPlayerClasses(void);
 void G_UpdateCharacter(gclient_t *client);
 
-// g_svcmds.c
+// tvg_svcmds.c
 qboolean TVConsoleCommand(void);
 void G_ProcessIPBans(void);
 qboolean G_FilterIPBanPacket(char *from);
 void AddIPBan(const char *str);
 
-// g_cmds.c
+// tvg_cmds.c
 void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatText);
 void TVG_SayTo(gclient_t *ent, gclient_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
 void G_HQSay(gentity_t *other, int color, const char *name, const char *message);
@@ -1517,7 +1519,7 @@ int TVG_MasterClientNumberFromString(gclient_t *to, char *s);
 
 char *ConcatArgs(int start);
 
-// g_main.c
+// tvg_main.c
 void FindIntermissionPoint(void);
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void SendScoreboardMessageToAllClients(void);
@@ -1533,29 +1535,26 @@ extern int dll_trap_DemoSupport;
 
 int trap_ETTV_GetPlayerstate(int clientNum, playerState_t *ps);
 
-// g_client.c
+// tvg_client.c
 char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
 void TVClientUserinfoChanged(int clientNum);
 void TVClientDisconnect(int clientNum);
 void TVClientBegin(int clientNum);
 void TVClientCommand(int clientNum);
 
-// g_active.c
+// tvg_active.c
 void TVClientThink(int clientNum);
 void TVClientEndFrame(gclient_t *client);
 void TVClientThink_cmd(gclient_t *client, usercmd_t *cmd);
 
-// g_session.c
-void G_ReadSessionData(gclient_t *client);
-void G_InitSessionData(gclient_t *client, const char *userinfo);
+// tvg_session.c
+void TVG_ReadSessionData(gclient_t *client);
+void TVG_InitSessionData(gclient_t *client, const char *userinfo);
+void TVG_WriteSessionData(qboolean restart);
 
-void G_InitWorldSession(void);
-void G_WriteSessionData(qboolean restart);
-
-// g_cmd.c
+// tvg_cmd.c
 void Cmd_Activate_f(gentity_t *ent);
 void Cmd_Activate2_f(gentity_t *ent);
-qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt);
 
 char *Q_AddCR(char *s);
 
@@ -1960,12 +1959,7 @@ void TVG_commands_cmd(gclient_t *client, unsigned int dwCommand, int value);
 void TVG_players_cmd(gclient_t *client, unsigned int dwCommand, int value);
 void TVG_viewers_cmd(gclient_t *client, unsigned int dwCommand, int value);
 void TVG_say_cmd(gclient_t *client, unsigned int dwCommand, int value);
-void G_say_team_cmd(gentity_t *ent, unsigned int dwCommand, int value);
-void G_say_buddy_cmd(gentity_t *ent, unsigned int dwCommand, int value);
-void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, int value);
-void G_vsay_cmd(gentity_t *ent, unsigned int dwCommand, int value);
-void G_vsay_team_cmd(gentity_t *ent, unsigned int dwCommand, int value);
-void G_vsay_buddy_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void TVG_tvchat_cmd(gclient_t *client, unsigned int dwCommand, int value);
 void TVG_scores_cmd(gclient_t *client, unsigned int dwCommand, int value);
 void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, int fDump);
 void TVG_weaponRankings_cmd(gclient_t *client, unsigned int dwCommand, int state);

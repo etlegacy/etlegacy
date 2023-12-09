@@ -1026,19 +1026,19 @@ char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	Q_strncpyz(client->pers.client_ip, cs_ip, MAX_IP4_LENGTH);
 	Q_strncpyz(client->pers.cl_guid, cs_guid, MAX_GUID_LENGTH + 1);
 
-	//if (firstTime)
+	if (firstTime)
 	{
 		client->pers.initialSpawn = qtrue;
 
 		// read or initialize the session data
-		G_InitSessionData(client, userinfo);
+		TVG_InitSessionData(client, userinfo);
 		client->pers.enterTime            = level.time;
 		client->ps.persistant[PERS_SCORE] = 0;
 	}
-	//else
-	//{
-	//	G_ReadSessionData(client);
-	//}
+	else
+	{
+		TVG_ReadSessionData(client);
+	}
 
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{

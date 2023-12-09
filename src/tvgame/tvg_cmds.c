@@ -1076,76 +1076,21 @@ void G_HQSay(gentity_t *other, int color, const char *name, const char *message)
  */
 void TVG_SayTo(gclient_t *client, gclient_t *other, int mode, int color, const char *name, const char *message, qboolean localize)
 {
-	//char cmd[6];
+	char cmd[6];
 
-	//if (!other)
-	//{
-	//	return;
-	//}
-	//if ((mode == SAY_TEAM || mode == SAY_TEAMNL) && !OnSameTeam(ent, other))
-	//{
-	//	return;
-	//}
+	if (!other)
+	{
+		return;
+	}
 
-	// if spectator, no chatting to players
-	//if (match_mutespecs.integer > 0 && client->sess.referee == 0 &&
-	//    ((client->sess.sessionTeam == TEAM_FREE && other->sess.sessionTeam != TEAM_FREE) ||
-	//     (client->sess.sessionTeam == TEAM_SPECTATOR && other->sess.sessionTeam != TEAM_SPECTATOR)))
-	//{
-	//	return;
-	//}
-	//else
-	//{
-	//	if (mode == SAY_BUDDY)      // send only to people who have the sender on their buddy list
-	//	{
-	//		if (ent->s.clientNum != other->s.clientNum)
-	//		{
-	//			fireteamData_t *ft1, *ft2;
-	//			if (!G_IsOnFireteam(other - g_entities, &ft1))
-	//			{
-	//				return;
-	//			}
-	//			if (!G_IsOnFireteam(ent - g_entities, &ft2))
-	//			{
-	//				return;
-	//			}
-	//			if (ft1 != ft2)
-	//			{
-	//				return;
-	//			}
-	//		}
-	//	}
+	Q_strncpyz(cmd, "chat", sizeof(cmd));
 
-	//	if (COM_BitCheck(other->client->sess.ignoreClients, (ent - g_entities)))
-	//	{
-	//		//Q_strncpyz(cmd, "print", sizeof(cmd));
-	//	}
-	//	else if (mode == SAY_TEAM || mode == SAY_BUDDY)
-	//	{
-	//		Q_strncpyz(cmd, "tchat", sizeof(cmd));
-
-	//		trap_SendServerCommand((int)(other - g_entities),
-	//		                       va("%s \"%c%c%s%s\" %i %i %i %i %i",
-	//		                          cmd,
-	//		                          Q_COLOR_ESCAPE, color, message,
-	//		                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
-	//		                          (int)(ent - g_entities), localize,
-	//		                          (int)ent->s.pos.trBase[0],
-	//		                          (int)ent->s.pos.trBase[1],
-	//		                          (int)ent->s.pos.trBase[2]));
-	//	}
-	//	else
-	//	{
-	//		Q_strncpyz(cmd, "chat", sizeof(cmd));
-
-	//		trap_SendServerCommand((int)(other - g_entities),
-	//		                       va("%s \"%s%c%c%s%s\" %i %i",
-	//		                          cmd, name, Q_COLOR_ESCAPE, color,
-	//		                          message,
-	//		                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
-	//		                          (int)(ent - g_entities), localize));
-	//	}
-	//}
+	trap_SendServerCommand((int)(other - level.clients),
+		va("%s \"%c%cTV%c%c: %s%c%c%s%s\" %i %i",
+			cmd, Q_COLOR_ESCAPE, COLOR_RED, Q_COLOR_ESCAPE, COLOR_WHITE,
+			name, Q_COLOR_ESCAPE, color, message,
+			(!Q_stricmp(cmd, "print")) ? "\n" : "",
+			(int)(client - level.clients), localize));
 }
 
 /**
@@ -1168,7 +1113,7 @@ void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatTex
 	{
 	default:
 	case SAY_ALL:
-		G_LogPrintf("say: ^7%s^7: ^2%s\n", client->pers.netname, chatText);
+		G_LogPrintf("say: ^1TV^7:%s^7: ^2%s\n", client->pers.netname, chatText);
 		Com_sprintf(name, sizeof(name), "%c%c%s%c%c: %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_GREEN);
 		color = COLOR_GREEN;
 		break;
@@ -1210,7 +1155,7 @@ void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatTex
 	for (j = 0; j < level.numConnectedClients; j++)
 	{
 		other = &level.clients[level.sortedClients[j]];
-		if (!COM_BitCheck(other->sess.ignoreClients, client - level.clients))
+		if (!COM_BitCheck(other->sess.ignoreClients, client - level.clients) && other->sess.tvchat)
 		{
 			TVG_SayTo(client, other, mode, color, name, text, qfalse);
 		}

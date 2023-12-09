@@ -1372,8 +1372,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 		trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
 	}
 
-	G_InitWorldSession();
-
 	// MAPVOTE
 	if (g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
@@ -1570,7 +1568,7 @@ void TVG_ShutdownGame(int restart)
 	}
 
 	// write all the client session data so we can get it back
-	G_WriteSessionData(restart);
+	TVG_WriteSessionData(restart);
 }
 
 //===================================================================

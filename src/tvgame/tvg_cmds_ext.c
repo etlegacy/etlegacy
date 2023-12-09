@@ -83,13 +83,15 @@ typedef struct
 static tvcmd_reference_t tvCommandInfo[] =
 {
 	// keep "say" command on top for optimisation purpose, they are the most used command
-	//{ "say",            CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_say_cmd,                           " <msg>:^7 Sends a chat message"                                                             },
-	//{ "say_team",       CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_say_team_cmd,                      " <msg>:^7 Sends a team chat message"                                                        },
-	//{ "say_buddy",      CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_say_buddy_cmd,                     " <msg>:^7 Sends a buddy chat message"                                                       },
-	//{ "say_teamnl",     CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_say_teamnl_cmd,                    " <msg>:^7 Sends a team chat message without location info"                                  },
-	//{ "vsay",           CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_vsay_cmd,                          " <msg>:^7 Sends a voice chat message"                                                       },
-	//{ "vsay_team",      CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_vsay_team_cmd,                     " <msg>:^7 Sends a voice team chat message"                                                  },
-	//{ "vsay_buddy",     CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_vsay_buddy_cmd,                    " <msg>:^7 Sends a voice buddy chat message"                                                 },
+	{ "say",              CMD_USAGE_ANY_TIME,           0, NOCD, 0,      qtrue,  TVG_say_cmd,                    " <msg>:^7 Sends a chat message"                                                             },
+	{ "say_team",         CMD_USAGE_ANY_TIME,           0, NOCD, 0,      qtrue,  TVG_say_cmd,                    " <msg>:^7 Sends a chat message"                                                        },
+	{ "say_buddy",        CMD_USAGE_ANY_TIME,           0, NOCD, 0,      qtrue,  TVG_say_cmd,                    " <msg>:^7 Sends a buddy chat message"                                                       },
+	{ "say_teamnl",       CMD_USAGE_ANY_TIME,           0, NOCD, 0,      qtrue,  TVG_say_cmd,                    " <msg>:^7 Sends a team chat message without location info"                                  },
+
+	{ "tvchat",           CMD_USAGE_ANY_TIME,           0, NOCD, 0,      qtrue,  TVG_tvchat_cmd,                 ":^7 Turns tvchat on/off" },
+
+	//{ "ignore",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, TVCmd_Ignore_f,                      " <clientname>:^7 Ignore a player from chat"                                                 },
+	//{ "unignore",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, TVCmd_UnIgnore_f,                    " <clientname>:^7 Unignore a player from chat"                                               },
 
 	//{ "?",              CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_commands_cmd,                      ":^7 Gives a list of commands"                                                               },
 	// copy of ?
@@ -107,8 +109,6 @@ static tvcmd_reference_t tvCommandInfo[] =
 	//{ "follow",         CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Follow_f,                        " <player_ID|allies|axis>:^7 Spectates a particular player or team"                          },
 	//{ "follownext",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_FollowNext_f,                    ":^7 Follow next player in list"                                                             },
 	//{ "followprev",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_FollowPrevious_f,                ":^7 Follow previous player in list"                                                         },
-
-	//{ "ignore",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, TVCmd_Ignore_f,                        " <clientname>:^7 Ignore a player from chat"                                                 },
 
 	{ "imvotetally",      CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionVoteTally,         ""                                                                                            },
 	{ "immaplist",        CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionMapList,               ""                                                                                           },
@@ -143,9 +143,8 @@ static tvcmd_reference_t tvCommandInfo[] =
 	//{ "statsdump",      CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 Shows player stats + match info saved locally to a file"                                },
 	{ "stshots",        CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, MEDIUMCD,       VERYLONGCD, 0,       qfalse, TVCmd_WeaponStatsLeaders_f,            ""                                                                                           },
 	{ "topshots",       CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue,          MEDIUMCD, 0,       qfalse, TVG_weaponRankings_cmd,                ":^7 Shows BEST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
-	//{ "unignore",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, TVCmd_UnIgnore_f,                      " <clientname>:^7 Unignore a player from chat"                                               },
+
 	//{ "ws",             CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_WeaponStat_f,                    ":^7 Shows weapon stats"                                                                     },
-	
 	//{ "setviewpos",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SetViewpos_f,                    " x y z pitch yaw roll useViewHeight(0/1):^7 Set the current player position and view angle" },
 	{ NULL,             CMD_USAGE_ANY_TIME,          qtrue, NOCD, 0,      qfalse, NULL,                                ""                                                                                           }
 };
@@ -497,87 +496,43 @@ void TVG_say_cmd(gclient_t *client, unsigned int dwCommand, int value)
 }
 
 /**
- * @brief G_say_team_cmd
- * @param[in] ent
- * @param[in] dwCommand - unused
- * @param[in] value - unused
- */
-void G_say_team_cmd(gentity_t *ent, unsigned int dwCommand, int value)
+* @brief TVG_tvchat_cmd
+* @param[in,out] client
+* @param dwCommand - unused
+* @param value    - unused
+*
+* @note argv(0) tvchat
+*/
+void TVG_tvchat_cmd(gclient_t *client, unsigned int dwCommand, int value)
 {
-	TVG_Say_f(ent, SAY_TEAM);
-}
+	char *msg;
+	char *name;
 
-/**
- * @brief G_say_buddy_cmd
- * @param[in] ent
- * @param[in] dwCommand - unused
- * @param[in] value - unused
- */
-void G_say_buddy_cmd(gentity_t *ent, unsigned int dwCommand, int value)
-{
-	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
+	name = ConcatArgs(1);
+
+	if (!Q_stricmp(name, "on") || Q_atoi(name))
 	{
-		trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat as spectator\n\"");
-		return;
+		client->sess.tvchat = qtrue;
+	}
+	else if (!Q_stricmp(name, "off") || !Q_stricmp(name, "0"))
+	{
+		client->sess.tvchat = qfalse;
+	}
+	else
+	{
+		client->sess.tvchat = !client->sess.tvchat;
 	}
 
-	TVG_Say_f(ent, SAY_BUDDY);
-}
-
-/**
- * @brief Team chat w/no location info
- * @param[in] ent
- * @param dwCommand - unused
- * @param value - unused
- */
-void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, int value)
-{
-	TVG_Say_f(ent, SAY_TEAMNL);
-}
-
-/**
- * @brief G_vsay_f
- * @param[in] ent
- * @param[in] dwCommand - unused
- * @param[in] value - unused
- */
-void G_vsay_cmd(gentity_t *ent, unsigned int dwCommand, int value)
-{
-	G_Voice_f(ent, SAY_ALL, qfalse, qfalse);
-}
-
-/**
- * @brief G_vsay_team_f
- * @param[in] ent
- * @param[in] dwCommand - unused
- * @param[in] value - unused
- */
-void G_vsay_team_cmd(gentity_t *ent, unsigned int dwCommand, int value)
-{
-	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
+	if (client->sess.tvchat)
 	{
-		trap_SendServerCommand(ent - g_entities, "print \"Can't team chat as spectator\n\"");
-		return;
+		msg = "tvchat ON\n";
+	}
+	else
+	{
+		msg = "tvchat OFF\n";
 	}
 
-	G_Voice_f(ent, SAY_TEAM, qfalse, qfalse);
-}
-
-/**
- * @brief G_vsay_buddy_f
- * @param[in] ent
- * @param[in] dwCommand - unused
- * @param[in] value - unused
- */
-void G_vsay_buddy_cmd(gentity_t *ent, unsigned int dwCommand, int value)
-{
-	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
-	{
-		trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat as spectator\n\"");
-		return;
-	}
-
-	G_Voice_f(ent, SAY_BUDDY, qfalse, qfalse);
+	trap_SendServerCommand(client - level.clients, va("print \"%s\"", msg));
 }
 
 /**
