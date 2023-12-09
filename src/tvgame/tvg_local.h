@@ -541,7 +541,6 @@ typedef enum
 	INFO_WS = 0,
 	INFO_WWS,
 	INFO_GSTATS,
-	INFO_PLAYERS,
 
 	INFO_NUM
 } playerInfoStats_t;
@@ -1958,7 +1957,8 @@ void TVG_SendCommands(void);
 qboolean TVG_commandHelp(gclient_t *client, const char *pszCommand, unsigned int dwCommand);
 qboolean TVG_cmdDebounce(gclient_t *client, const char *pszCommand);
 void TVG_commands_cmd(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_players_cmd(gclient_t *client, unsigned int dwCommand, int fDump);
+void TVG_players_cmd(gclient_t *client, unsigned int dwCommand, int value);
+void TVG_viewers_cmd(gclient_t *client, unsigned int dwCommand, int value);
 void TVG_say_cmd(gclient_t *client, unsigned int dwCommand, int value);
 void G_say_team_cmd(gentity_t *ent, unsigned int dwCommand, int value);
 void G_say_buddy_cmd(gentity_t *ent, unsigned int dwCommand, int value);

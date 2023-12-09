@@ -2153,6 +2153,8 @@ void TVG_RunFrame(int levelTime)
 		}
 	}
 
+	level.validMasterClients[level.numValidMasterClients++] = level.ettvMasterPs.clientNum;
+
 	// if we are waiting for the level to restart, do nothing
 	if (level.restarted)
 	{

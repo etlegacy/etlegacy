@@ -125,7 +125,8 @@ static tvcmd_reference_t tvCommandInfo[] =
 	
 	//{ "obj",            CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SelectedObjective_f,             " <val>:^7 Selected Objective"                                                               },
 	
-	//{ "players",        CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_players_cmd,                       ":^7 Lists all active players and their IDs/information"                                     },
+	{ "players",        CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_players_cmd,                       ":^7 Lists all active players and their IDs"                                     },
+	{ "viewers",        CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_viewers_cmd,                       ":^7 Lists all viewers and their IDs" },
 	//{ "rconAuth",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_AuthRcon_f,                      ":^7 Client authentication"                                                                  },
 	
 	//{ "ref",            CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_ref_cmd,                           " <password>:^7 Become a referee (admin access)"                                             },
@@ -380,11 +381,108 @@ void TVG_commands_cmd(gclient_t *client, unsigned int dwCommand, int value)
  * @brief Show client info
  * @param[in] client
  * @param dwCommand - unused
- * @param fDump - unused
+ * @param value - unused
  */
-void TVG_players_cmd(gclient_t *client, unsigned int dwCommand, int fDump)
+void TVG_players_cmd(gclient_t *client, unsigned int dwCommand, int value)
 {
+	char cs[MAX_TOKEN_CHARS];
+	char name[MAX_TOKEN_CHARS];
+	int i, idnum, count = 0;
 	
+	if (client)
+	{
+		CP("print \"^sID : Player                    \n\"");
+		CP("print \"^1-------------------------------\n\"");
+	}
+	else
+	{
+		G_Printf("ID : Player                    \n");
+		G_Printf("-------------------------------\n");
+	}
+
+	for (i = 0; i < level.numValidMasterClients; i++)
+	{
+		idnum = level.validMasterClients[i];
+
+		trap_GetConfigstring(CS_PLAYERS + idnum, cs, sizeof(cs));
+
+		Q_strncpyz(name, Info_ValueForKey(cs, "n"), sizeof(name));
+		Q_CleanStr(name);
+		name[26] = 0;
+		count++;
+
+		if (client)
+		{
+			CP(va("print \"%2d : %-26s\n\"", idnum, name));
+		}
+		else
+		{
+			G_Printf("%2d : %-26s\n", idnum, name);
+		}
+	}
+
+	if (client)
+	{
+		CP(va("print \"\n^3%2d^7 total player%s\n\n\"", count, count > 1 ? "s" : ""));
+	}
+	else
+	{
+		G_Printf("\n%2d total player%s\n\n", count, count > 1 ? "s" : "");
+	}
+}
+
+/**
+* @brief Show viewers info
+* @param[in] client
+* @param dwCommand - unused
+* @param value - unused
+*/
+void TVG_viewers_cmd(gclient_t *client, unsigned int dwCommand, int value)
+{
+	gclient_t *cl;
+	char cs[MAX_TOKEN_CHARS];
+	char name[MAX_TOKEN_CHARS];
+	int i, idnum, count = 0;
+
+	if (client)
+	{
+		CP("print \"^sID : Spectator                    \n\"");
+		CP("print \"^1----------------------------------\n\"");
+	}
+	else
+	{
+		G_Printf("ID : Spectator                    \n");
+		G_Printf("----------------------------------\n");
+	}
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		idnum = level.sortedClients[i];
+		cl    = &level.clients[idnum];
+
+		Q_strncpyz(name, cl->pers.netname, sizeof(name));
+		Q_CleanStr(name);
+		name[26] = 0;
+		count++;
+
+		if (client)
+		{
+			CP(va("print \"%2d : %-26s\n\"", idnum, name));
+		}
+		else
+		{
+			G_Printf("%2d : %-26s\n", idnum, name);
+		}
+	}
+
+	if (client)
+	{
+		CP(va("print \"\n^3%2d^7 total viewer%s\n\n\"", count, count > 1 ? "s" : ""));
+	}
+	else
+	{
+		G_Printf("\n%2d total viewer%s\n\n", count, count > 1 ? "s" : "");
+	}
 }
 
 /**
