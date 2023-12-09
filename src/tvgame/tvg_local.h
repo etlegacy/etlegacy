@@ -1337,15 +1337,14 @@ void TVCmd_sgStats_f(gclient_t *client, unsigned int dwCommand, int value);
 void TVCmd_WeaponStatsLeaders_f(gclient_t *client, unsigned int dwCommand, int value);
 void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value);
-void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value);
-void Cmd_FollowPrevious_f(gentity_t *ent, unsigned int dwCommand, int value);
+void TVG_Cmd_FollowNext_f(gclient_t *client, unsigned int dwCommand, int value);
+void TVG_Cmd_FollowPrevious_f(gclient_t *client, unsigned int dwCommand, int value);
 void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value);
 void TVG_Cmd_SetViewpos_f(gclient_t *ent, unsigned int dwCommand, int value);
 void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value);
-void StopFollowing(gclient_t *client);
-void Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots);
+void TVG_StopFollowing(gclient_t *client);
+void TVG_Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots);
 
-qboolean G_FollowSame(gentity_t *ent);
 qboolean G_ServerIsFloodProtected(void);
 
 // MAPVOTE
@@ -1478,7 +1477,7 @@ typedef struct
 void TVG_TeleportPlayer(gclient_t *client, const vec3_t origin, const vec3_t angles);
 
 // tvg_client.c
-int TeamCount(int ignoreClientNum, team_t team);
+int TVG_TeamCount(int ignoreClientNum, team_t team);
 void TVG_SetClientViewAngle(gclient_t *client, const vec3_t angle);
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles);
 void BeginIntermission(void);
@@ -1508,7 +1507,7 @@ void AddIPBan(const char *str);
 void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatText);
 void TVG_SayTo(gclient_t *ent, gclient_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
 void G_HQSay(gentity_t *other, int color, const char *name, const char *message);
-void Cmd_Follow_f(gclient_t *ent, unsigned int dwCommand, int value);
+void TVG_Cmd_Follow_f(gclient_t *ent, unsigned int dwCommand, int value);
 void TVG_Say_f(gclient_t *client, int mode /*, qboolean arg0*/);
 void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly);
 void G_PlaySound_Cmd(void);
@@ -2157,10 +2156,6 @@ fieldtype_t GetFieldType(const char *fieldname);
 // g_protect flags
 #define G_PROTECT_LOCALHOST_REF        1
 #define G_PROTECT_MAX_LIVES_BAN_GUID   2
-
-// MAPVOTE
-void G_MapVoteInfoWrite(void);
-void G_MapVoteInfoRead(void);
 
 // g_misc flags
 #define G_MISC_SHOVE_Z                 BIT(0)

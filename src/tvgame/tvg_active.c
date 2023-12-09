@@ -169,12 +169,12 @@ void SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 			// to prevent constant traces done by server.
 			if (client->buttons & BUTTON_SPRINT)
 			{
-				Cmd_FollowCycle_f(client, 1, qtrue);
+				TVG_Cmd_FollowCycle_f(client, 1, qtrue);
 			}
 			// no humans playing?.. then follow a bot
 			if (client->sess.spectatorState != SPECTATOR_FOLLOW)
 			{
-				Cmd_FollowCycle_f(client, 1, qfalse);
+				TVG_Cmd_FollowCycle_f(client, 1, qfalse);
 			}
 		}
 		// attack + sprint button cycles through non-bot/human players
@@ -183,12 +183,12 @@ void SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 	else if ((client->buttons & BUTTON_ATTACK) && !(client->oldbuttons & BUTTON_ATTACK) &&
 	         !(client->buttons & BUTTON_ACTIVATE))
 	{
-		Cmd_FollowCycle_f(client, 1, (client->buttons & BUTTON_SPRINT));
+		TVG_Cmd_FollowCycle_f(client, 1, (client->buttons & BUTTON_SPRINT));
 	}
 	else if (client->sess.sessionTeam == TEAM_SPECTATOR && client->sess.spectatorState == SPECTATOR_FOLLOW &&
 	         (((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) || ucmd->upmove > 0))
 	{
-		StopFollowing(client);
+		TVG_StopFollowing(client);
 	}
 }
 

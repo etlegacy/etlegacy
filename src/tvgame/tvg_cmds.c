@@ -552,7 +552,7 @@ void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value)
  *
  * @param[in,out] client
  */
-void StopFollowing(gclient_t *client)
+void TVG_StopFollowing(gclient_t *client)
 {
 	// divert behaviour if TEAM_SPECTATOR, moved the code from SpectatorThink to put back into free fly correctly
 	// (I am not sure this can be called in non-TEAM_SPECTATOR situation, better be safe)
@@ -776,122 +776,95 @@ void TVCmd_sgStats_f(gclient_t *client, unsigned int dwCommand, int value)
  * @param dwCommand - unused
  * @param value - unused
  */
-void Cmd_Follow_f(gclient_t *client, unsigned int dwCommand, int value)
+void TVG_Cmd_Follow_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	//int  cnum;
-	//char arg[MAX_TOKEN_CHARS];
+	int  cnum;
+	char arg[MAX_TOKEN_CHARS];
 
-	//if (trap_Argc() != 2)
-	//{
-	//	if (client->sess.spectatorState == SPECTATOR_FOLLOW)
-	//	{
-	//		StopFollowing(client);
-	//	}
-	//	return;
-	//}
+	if (trap_Argc() != 2)
+	{
+		if (client->sess.spectatorState == SPECTATOR_FOLLOW)
+		{
+			TVG_StopFollowing(client);
+		}
+		return;
+	}
 
-	//trap_Argv(1, arg, sizeof(arg));
+	trap_Argv(1, arg, sizeof(arg));
 
-	//if (!Q_stricmp(arg, "allies") || !Q_stricmp(arg, "axis"))
-	//{
-	//	team_t team;
-	//	team = (!Q_stricmp(arg, "allies") ? TEAM_ALLIES : TEAM_AXIS);
+	if (!Q_stricmp(arg, "allies") || !Q_stricmp(arg, "axis"))
+	{
+		team_t team;
+		team = (!Q_stricmp(arg, "allies") ? TEAM_ALLIES : TEAM_AXIS);
 
-	//	if ((client->sess.sessionTeam == TEAM_AXIS ||
-	//	     client->sess.sessionTeam == TEAM_ALLIES) &&
-	//	    client->sess.sessionTeam != team)
-	//	{
-	//		CP("print \"Can't follow a player on an enemy team!\n\"");
-	//		return;
-	//	}
+		if (!TVG_TeamCount(client - level.clients, team))
+		{
+			CP(va("print \"The %s team %s empty!  Follow command ignored.\n\"", aTeams[team],
+			      ((client->sess.sessionTeam != team) ? "is" : "would be")));
+			return;
+		}
 
-	//	if (!TeamCount(client - level.clients, team))
-	//	{
-	//		CP(va("print \"The %s team %s empty!  Follow command ignored.\n\"", aTeams[team],
-	//		      ((client->sess.sessionTeam != team) ? "is" : "would be")));
-	//		return;
-	//	}
+		// Allow for simple toggle
+		if (client->sess.spec_team != team)
+		{
+			client->sess.spec_team = team;
+			CP(va("print \"Spectator follow is now locked on the %s team.\n\"", aTeams[team]));
+			TVG_Cmd_FollowCycle_f(client, 1, qfalse);
+		}
+		else
+		{
+			client->sess.spec_team = 0;
+			CP(va("print \"%s team spectating is now disabled.\n\"", aTeams[team]));
+		}
 
-	//	// Allow for simple toggle
-	//	if (client->sess.spec_team != team)
-	//	{
-	//		if (teamInfo[team].spec_lock && !(client->sess.spec_invite & team))
-	//		{
-	//			CP(va("print \"Sorry, the %s team is locked from spectators.\n\"", aTeams[team]));
-	//		}
-	//		else
-	//		{
-	//			client->sess.spec_team = team;
-	//			CP(va("print \"Spectator follow is now locked on the %s team.\n\"", aTeams[team]));
-	//			Cmd_FollowCycle_f(client, 1, qfalse);
-	//		}
-	//	}
-	//	else
-	//	{
-	//		client->sess.spec_team = 0;
-	//		CP(va("print \"%s team spectating is now disabled.\n\"", aTeams[team]));
-	//	}
+		return;
+	}
 
-	//	return;
-	//}
+	cnum = TVG_MasterClientNumberFromString(client, arg);
 
-	//cnum = TVG_ClientNumberFromString(client, arg);
+	if (cnum == -1)
+	{
+		return;
+	}
 
-	//if (cnum == -1)
-	//{
-	//	return;
-	//}
+	if (level.ettvMasterClients[cnum].ps.pm_flags & PMF_LIMBO)
+	{
+		return;
+	}
 
-	//// Can't follow enemy players if not a spectator
-	//if ((client->sess.sessionTeam == TEAM_AXIS ||
-	//     client->sess.sessionTeam == TEAM_ALLIES) &&
-	//    client->sess.sessionTeam != level.clients[cnum].sess.sessionTeam)
-	//{
-	//	CP("print \"Can't follow a player on an enemy team!\n\"");
-	//	return;
-	//}
-
-	//// can't follow self
-	//if (&level.clients[cnum] == client)
-	//{
-	//	return;
-	//}
-
-	//// can't follow another spectator, but shoutcasters can follow other shoutcasters
-	//if (level.clients[cnum].sess.sessionTeam == TEAM_SPECTATOR && (!level.clients[cnum].sess.shoutcaster || !client->sess.shoutcaster))
-	//{
-	//	return;
-	//}
-
-	//if (level.clients[cnum].ps.pm_flags & PMF_LIMBO)
-	//{
-	//	return;
-	//}
-
-	//// can't follow a player on a speclocked team, unless allowed
-	//if (!G_allowFollow(client, level.clients[cnum].sess.sessionTeam))
-	//{
-	//	CP(va("print \"Sorry, the %s team is locked from spectators.\n\"", aTeams[level.clients[cnum].sess.sessionTeam]));
-	//	return;
-	//}
-
-	//client->sess.spectatorState  = SPECTATOR_FOLLOW;
-	//client->sess.spectatorClient = cnum;
+	client->sess.spectatorState  = SPECTATOR_FOLLOW;
+	client->sess.spectatorClient = cnum;
 }
 
 /**
- * @brief Cmd_FollowCycle_f
+* @brief figure out if we are allowed/want to follow a given player
+* @param[in] client
+* @param[in] nTeam
+* @return
+*/
+static qboolean TVG_desiredFollow(gclient_t *client, int nTeam)
+{
+	if (client->sess.spec_team == 0 || client->sess.spec_team == nTeam)
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief TVG_Cmd_FollowCycle_f
  * @param[in,out] ent
  * @param[in] dir
  * @param[in] skipBots
  */
-void Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots)
+void TVG_Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots)
 {
 	int clientnum;
 
 	if (dir != 1 && dir != -1)
 	{
-		G_Error("Cmd_FollowCycle_f: bad dir %i\n", dir);
+		G_Error("TVG_Cmd_FollowCycle_f: bad dir %i\n", dir);
 	}
 
 	clientnum = client->sess.spectatorClient;
@@ -913,21 +886,15 @@ void Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots)
 			continue;
 		}
 
-		// can't follow another spectator
-		//if (level.clients[clientnum].sess.sessionTeam == TEAM_SPECTATOR)
-		//{
-		//	continue;
-		//}
-
 		if (level.ettvMasterClients[clientnum].ps.pm_flags & PMF_LIMBO)
 		{
 			continue;
 		}
 
-		/*if (!G_desiredFollow(ent, level.clients[clientnum].sess.sessionTeam))
+		if (!TVG_desiredFollow(client, level.ettvMasterClients[clientnum].ps.teamNum))
 		{
 			continue;
-		}*/
+		}
 
 		// cycle through humans only?..
 		if (skipBots && (g_entities[clientnum].r.svFlags & SVF_BOT))
@@ -946,70 +913,25 @@ void Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots)
 }
 
 /**
- * @brief Cmd_FollowNext_f
- * @param[in] ent
+ * @brief TVG_Cmd_FollowNext_f
+ * @param[in] client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVG_Cmd_FollowNext_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	Cmd_FollowCycle_f(ent, 1, qfalse);
+	TVG_Cmd_FollowCycle_f(client, 1, qfalse);
 }
 
 /**
- * @brief Cmd_FollowPrevious_f
- * @param[in] ent
+ * @brief TVG_Cmd_FollowPrevious_f
+ * @param[in] client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_FollowPrevious_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVG_Cmd_FollowPrevious_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	Cmd_FollowCycle_f(ent, -1, qfalse);
-}
-
-/**
- * @brief Try to follow the same client as last time (before getting killed)
- * @param[in] ent
- */
-qboolean G_FollowSame(gentity_t *ent)
-{
-	//if (ent->client->sess.spectatorClient < 0 || ent->client->sess.spectatorClient >= level.maxclients)
-	//{
-	//	return qfalse;
-	//}
-
-	//// can only follow connected clients
-	//if (level.clients[ent->client->sess.spectatorClient].pers.connected != CON_CONNECTED)
-	//{
-	//	return qfalse;
-	//}
-
-	//// can't follow another spectator
-	//if (level.clients[ent->client->sess.spectatorClient].sess.sessionTeam == TEAM_SPECTATOR)
-	//{
-	//	return qfalse;
-	//}
-
-	//// couple extra checks for limbo mode
-	//if (ent->client->ps.pm_flags & PMF_LIMBO)
-	//{
-	//	if (level.clients[ent->client->sess.spectatorClient].sess.sessionTeam != ent->client->sess.sessionTeam)
-	//	{
-	//		return qfalse;
-	//	}
-	//}
-
-	//if (level.clients[ent->client->sess.spectatorClient].ps.pm_flags & PMF_LIMBO)
-	//{
-	//	return qfalse;
-	//}
-
-	//if (!G_desiredFollow(ent, level.clients[ent->client->sess.spectatorClient].sess.sessionTeam))
-	//{
-	//	return qfalse;
-	//}
-
-	return qtrue;
+	TVG_Cmd_FollowCycle_f(client, -1, qfalse);
 }
 
 /**

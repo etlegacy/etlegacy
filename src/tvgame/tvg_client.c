@@ -288,17 +288,17 @@ void TVG_SetClientViewAngle(gclient_t *client, const vec3_t angle)
  *
  * @return Number of players on a team
  */
-int TeamCount(int ignoreClientNum, team_t team)
+int TVG_TeamCount(int ignoreClientNum, team_t team)
 {
 	int i, ref, count = 0;
 
-	for (i = 0; i < level.numConnectedClients; i++)
+	for (i = 0; i < level.numValidMasterClients; i++)
 	{
-		if ((ref = level.sortedClients[i]) == ignoreClientNum)
+		if ((ref = level.validMasterClients[i]) == ignoreClientNum)
 		{
 			continue;
 		}
-		if (level.clients[ref].sess.sessionTeam == team)
+		if (level.ettvMasterClients[ref].ps.teamNum == team)
 		{
 			count++;
 		}
@@ -1373,11 +1373,11 @@ void TVClientDisconnect(int clientNum)
 	//	    && flag->client->sess.spectatorState == SPECTATOR_FOLLOW
 	//	    && flag->client->sess.spectatorClient == clientNum)
 	//	{
-	//		StopFollowing(flag);
+	//		TVG_StopFollowing(flag);
 	//	}
 	//	if ((flag->client->ps.pm_flags & PMF_LIMBO) && flag->client->sess.spectatorClient == clientNum)
 	//	{
-	//		Cmd_FollowCycle_f(flag, 1, qfalse);
+	//		TVG_Cmd_FollowCycle_f(flag, 1, qfalse);
 	//	}
 	//}
 

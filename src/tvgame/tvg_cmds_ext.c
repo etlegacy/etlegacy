@@ -106,9 +106,9 @@ static tvcmd_reference_t tvCommandInfo[] =
 	//{ "callvote",       CMD_USAGE_NO_INTERMISSION,   qfalse,      qtrue,  (void (*)(gentity_t *,               unsigned int, int)) Cmd_CallVote_f, " <params>:^7 Calls a vote"                              },
 	//{ "currenttime",    CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 Displays current local time"                                                            },
 
-	//{ "follow",         CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Follow_f,                        " <player_ID|allies|axis>:^7 Spectates a particular player or team"                          },
-	//{ "follownext",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_FollowNext_f,                    ":^7 Follow next player in list"                                                             },
-	//{ "followprev",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_FollowPrevious_f,                ":^7 Follow previous player in list"                                                         },
+	{ "follow",         CMD_USAGE_NO_INTERMISSION,   0, NOCD, 0,       qfalse, TVG_Cmd_Follow_f,                        " <player_ID|allies|axis>:^7 Spectates a particular player or team"                          },
+	{ "follownext",     CMD_USAGE_NO_INTERMISSION,   0, NOCD, 0,       qfalse, TVG_Cmd_FollowNext_f,                    ":^7 Follow next player in list"                                                             },
+	{ "followprev",     CMD_USAGE_NO_INTERMISSION,    0, NOCD, 0,       qfalse, TVG_Cmd_FollowPrevious_f,                ":^7 Follow previous player in list"                                                         },
 
 	{ "imvotetally",      CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionVoteTally,         ""                                                                                            },
 	{ "immaplist",        CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionMapList,               ""                                                                                           },

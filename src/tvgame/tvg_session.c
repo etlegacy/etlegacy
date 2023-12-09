@@ -84,6 +84,7 @@ void TVG_WriteClientSessionData(gclient_t *client, qboolean restart)
 	cJSON_AddNumberToObject(root, "userSpawnPointValue", restart ? client->sess.userSpawnPointValue : 0);
 	cJSON_AddNumberToObject(root, "userMinorSpawnPointValue", restart ? client->sess.userMinorSpawnPointValue : -1);
 
+	cJSON_AddNumberToObject(root, "spec_team", client->sess.spec_team);
 	cJSON_AddNumberToObject(root, "tvchat", client->sess.tvchat);
 
 	if (!Q_FSWriteJSONTo(root, fileName))
@@ -126,6 +127,7 @@ void TVG_ReadSessionData(gclient_t *client)
 	client->sess.userSpawnPointValue      = Q_ReadIntValueJson(root, "userSpawnPointValue");
 	client->sess.userMinorSpawnPointValue = Q_ReadIntValueJson(root, "userMinorSpawnPointValue");
 
+	client->sess.spec_team                = Q_ReadIntValueJson(root, "spec_team");
 	client->sess.tvchat                   = Q_ReadIntValueJson(root, "tvchat");
 
 	cJSON_Delete(root);
@@ -162,8 +164,9 @@ void TVG_InitSessionData(gclient_t *client, const char *userinfo)
 	Com_Memset(sess->medals, 0, sizeof(sess->medals));
 
 	// we set ref in TVClientUserinfoChanged
-	sess->referee = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
-	sess->tvchat  = qtrue;
+	sess->referee   = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
+	sess->spec_team = 0;
+	sess->tvchat    = qtrue;
 
 	TVG_WriteClientSessionData(client, qfalse);
 }

@@ -1535,22 +1535,6 @@ void TVG_ShutdownGame(int restart)
 	G_LuaHook_ShutdownGame(restart);
 	G_LuaShutdown();
 #endif
-	// gametype latching
-	if (((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN  || g_gametype.integer == GT_WOLF_MAPVOTE) && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF)) ||
-	    (g_gametype.integer == GT_WOLF_STOPWATCH && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_STOPWATCH)) ||
-	    (g_gametype.integer == GT_WOLF_LMS && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_LMS)))
-	{
-		if (!(g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF))
-		{
-			trap_Cvar_Set("g_gametype", va("%i", GT_WOLF));
-		}
-		else
-		{
-			trap_Cvar_Set("g_gametype", va("%i", GT_WOLF_LMS));
-		}
-
-		trap_Cvar_Update(&g_gametype);
-	}
 
 	G_Printf("==== TVShutdownGame (%i - %s) ====\n", restart, level.rawmapname);
 
@@ -1925,7 +1909,7 @@ void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted)
 	// take out of follow mode if needed
 	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 	{
-		StopFollowing(ent);
+		TVG_StopFollowing(ent);
 	}
 
 	// move to the spot
@@ -2177,155 +2161,6 @@ void TVG_RunFrame(int levelTime)
 	{
 		TVClientEndFrame(&level.clients[level.sortedClients[i]]);
 	}
-}
-
-// MAPVOTE
-
-/**
- * @brief G_MapVoteInfoWrite
- */
-void G_MapVoteInfoWrite()
-{
-	// if the history is full and a vote has been done, skip the oldest map in history
-	int   i = (level.lastVotedMap[0] && (level.mapvotehistorycount == MAX_HISTORY_MAPS));
-	cJSON *root, *history;
-
-	int count = 0;
-
-	Q_JSONInit();
-
-	root = cJSON_CreateObject();
-	if (!root)
-	{
-		Com_Error(ERR_FATAL, "G_MapVoteInfoWrite: Could not allocate memory for session data\n");
-	}
-
-	history = cJSON_AddArrayToObject(root, "history");
-
-	// parse history array
-	for (; i < level.mapvotehistorycount; i++)
-	{
-		cJSON_AddItemToArray(history, cJSON_CreateString(level.mapvotehistory[i]));
-	}
-
-	// add last voted map
-	if (level.lastVotedMap[0])
-	{
-		cJSON_AddItemToArray(history, cJSON_CreateString(level.lastVotedMap));
-	}
-
-	for (i = 0; i < MAX_VOTE_MAPS; ++i)
-	{
-		if (level.mapvoteinfo[i].bspName[0])
-		{
-			cJSON *map = cJSON_AddObjectToObject(root, level.mapvoteinfo[i].bspName);
-
-			cJSON_AddNumberToObject(map, "timesPlayed", level.mapvoteinfo[i].timesPlayed);
-			cJSON_AddNumberToObject(map, "lastPlayed", level.mapvoteinfo[i].lastPlayed);
-			cJSON_AddNumberToObject(map, "totalVotes", level.mapvoteinfo[i].totalVotes);
-			cJSON_AddNumberToObject(map, "voteEligible", level.mapvoteinfo[i].voteEligible);
-			count++;
-		}
-	}
-	G_Printf("G_MapVoteInfoWrite: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
-
-	if (!Q_FSWriteJSONTo(root, MAPVOTEINFO_FILE_NAME))
-	{
-		Com_Error(ERR_FATAL, "G_MapVoteInfoWrite : Could not write map vote information\n");
-	}
-}
-
-/**
- * @brief G_MapVoteInfoRead_ParseHistory
- * @param history
- */
-static void G_MapVoteInfoRead_ParseHistory(cJSON *history)
-{
-	unsigned int i;
-
-	for (i = 0; i < MAX_HISTORY_MAPS; i++)
-	{
-		Com_Memset(level.mapvotehistory[i], 0, 128);
-	}
-
-	Com_Memset(level.mapvotehistoryindex, -1, sizeof(level.mapvotehistoryindex));
-	Com_Memset(level.mapvotehistorysortedindex, -1, sizeof(level.mapvotehistorysortedindex));
-	level.mapvotehistorycount = 0;
-
-	// ensure history field exist
-	if (history && cJSON_IsArray(history))
-	{
-		int   j, len = cJSON_GetArraySize(history);
-		cJSON *map;
-
-		// parse history array
-		for (i = 0, j = 0; i < len && i < MAX_HISTORY_MAPS; i++)
-		{
-			int k;
-			map = cJSON_GetArrayItem(history, i);
-
-			// ensure the value is valid
-			if (!map || !cJSON_IsString(map))
-			{
-				break;
-			}
-
-			// find the related map name in map pool
-			for (k = 0; k < level.mapVoteNumMaps; k++)
-			{
-				Q_strncpyz(level.mapvotehistory[i], map->valuestring, 128);
-
-				if (!Q_strncmp(level.mapvoteinfo[k].bspName, map->valuestring, 128))
-				{
-					// fill history index array
-					level.mapvotehistoryindex[j] = k;
-					j++;
-				}
-			}
-		}
-
-		level.mapvotehistorycount = i;
-	}
-}
-
-/**
- * @brief G_MapVoteInfoRead
- */
-void G_MapVoteInfoRead()
-{
-	cJSON *root;
-	int   i = 0;
-
-	root = Q_FSReadJsonFrom(MAPVOTEINFO_FILE_NAME);
-
-	if (!root)
-	{
-		G_Printf("G_MapVoteInfoRead: could not open %s file\n", MAPVOTEINFO_FILE_NAME);
-		return;
-	}
-
-	G_MapVoteInfoRead_ParseHistory(cJSON_GetObjectItem(root, "history"));
-
-	for (i = 0; i < level.mapVoteNumMaps; i++)
-	{
-		cJSON *map = cJSON_GetObjectItem(root, level.mapvoteinfo[i].bspName);
-
-		if (map)
-		{
-			level.mapvoteinfo[i].timesPlayed  = Q_ReadIntValueJson(map, "timesPlayed");
-			level.mapvoteinfo[i].lastPlayed   = Q_ReadIntValueJson(map, "lastPlayed");
-			level.mapvoteinfo[i].totalVotes   = Q_ReadIntValueJson(map, "totalVotes");
-			level.mapvoteinfo[i].voteEligible = Q_ReadIntValueJson(map, "voteEligible");
-		}
-		else
-		{
-			level.mapvoteinfo[i].timesPlayed  = 0;
-			level.mapvoteinfo[i].lastPlayed   = -1;
-			level.mapvoteinfo[i].totalVotes   = 0;
-			level.mapvoteinfo[i].voteEligible = 0;
-		}
-	}
-	cJSON_Delete(root);
 }
 
 void TVG_ParsePlatformManifest(void)
