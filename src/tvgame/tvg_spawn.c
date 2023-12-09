@@ -42,7 +42,7 @@
 #endif
 
 /**
- * @brief G_SpawnStringExt
+ * @brief TVG_SpawnStringExt
  * @param[in] key
  * @param[in] defaultString
  * @param[out] out
@@ -50,7 +50,7 @@
  * @param[in] line
  * @return
  */
-qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out, const char *file, int line)
+qboolean TVG_SpawnStringExt(const char *key, const char *defaultString, char **out, const char *file, int line)
 {
 	int i;
 
@@ -75,7 +75,7 @@ qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out
 }
 
 /**
- * @brief G_SpawnFloatExt
+ * @brief TVG_SpawnFloatExt
  * @param[in] key
  * @param[in] defaultString
  * @param[out] out
@@ -83,18 +83,18 @@ qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out
  * @param[in] line
  * @return
  */
-qboolean G_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean TVG_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
 
-	present = G_SpawnStringExt(key, defaultString, &s, file, line);
+	present = TVG_SpawnStringExt(key, defaultString, &s, file, line);
 	*out    = Q_atof(s);
 	return present;
 }
 
 /**
- * @brief G_SpawnIntExt
+ * @brief TVG_SpawnIntExt
  * @param[in] key
  * @param[in] defaultString
  * @param[out] out
@@ -102,18 +102,18 @@ qboolean G_SpawnFloatExt(const char *key, const char *defaultString, float *out,
  * @param[in] line
  * @return
  */
-qboolean G_SpawnIntExt(const char *key, const char *defaultString, int *out, const char *file, int line)
+qboolean TVG_SpawnIntExt(const char *key, const char *defaultString, int *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
 
-	present = G_SpawnStringExt(key, defaultString, &s, file, line);
+	present = TVG_SpawnStringExt(key, defaultString, &s, file, line);
 	*out    = Q_atoi(s);
 	return present;
 }
 
 /**
- * @brief G_SpawnVectorExt
+ * @brief TVG_SpawnVectorExt
  * @param[in] key
  * @param[in] defaultString
  * @param[out] out
@@ -121,12 +121,12 @@ qboolean G_SpawnIntExt(const char *key, const char *defaultString, int *out, con
  * @param[in] line
  * @return
  */
-qboolean G_SpawnVectorExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean TVG_SpawnVectorExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
 
-	present = G_SpawnStringExt(key, defaultString, &s, file, line);
+	present = TVG_SpawnStringExt(key, defaultString, &s, file, line);
 	Q_sscanf(s, "%f %f %f", &out[0], &out[1], &out[2]);
 	return present;
 }
@@ -140,12 +140,12 @@ qboolean G_SpawnVectorExt(const char *key, const char *defaultString, float *out
  * @param[in] line
  * @return
  */
-qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean TVG_SpawnVector2DExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
 
-	present = G_SpawnStringExt(key, defaultString, &s, file, line);
+	present = TVG_SpawnStringExt(key, defaultString, &s, file, line);
 	Q_sscanf(s, "%f %f", &out[0], &out[1]);
 	return present;
 }
@@ -631,14 +631,14 @@ spawn_t spawns[] =
  * @param ent
  * @return qfalse if spawn not found
  */
-qboolean G_CallSpawn(gentity_t *ent)
+qboolean TVG_CallSpawn(gentity_t *ent)
 {
 	spawn_t *s;
-	gitem_t *item;
+	//gitem_t *item;
 
 	if (!ent->classname)
 	{
-		G_Printf("G_CallSpawn: NULL classname\n");
+		G_Printf("TVG_CallSpawn: NULL classname\n");
 		return qfalse;
 	}
 
@@ -689,13 +689,15 @@ qboolean G_CallSpawn(gentity_t *ent)
 	return qfalse;
 }
 
+extern void *G_Alloc(unsigned int size);
+
 /**
  * @brief Builds a copy of the string, translating \\n to real linefeeds
  * so message texts can be multi-line
  * @param string
  * @return
  */
-char *G_NewString(const char *string)
+char *TVG_NewString(const char *string)
 {
 	char         *newb, *new_p;
 	unsigned int i, l;
@@ -737,7 +739,7 @@ char *G_NewString(const char *string)
  * @param[in] value
  * @param[in] ent
  */
-void G_ParseField(const char *key, const char *value, gentity_t *ent)
+void TVG_ParseField(const char *key, const char *value, gentity_t *ent)
 {
 	field_t *f;
 	byte    *b;
@@ -754,7 +756,7 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent)
 			switch (f->type)
 			{
 			case F_LSTRING:
-				*( char ** )(b + f->ofs) = G_NewString(value);
+				*( char ** )(b + f->ofs) = TVG_NewString(value);
 				break;
 			case F_VECTOR:
 				Q_sscanf(value, "%f %f %f", &vec[0], &vec[1], &vec[2]);
@@ -788,7 +790,7 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent)
  * level.spawnVars[], then call the class specfic spawn function
  * @return
  */
-gentity_t *G_SpawnGEntityFromSpawnVars(void)
+gentity_t *TVG_SpawnGEntityFromSpawnVars(void)
 {
 	int       i;
 	gentity_t *ent;
@@ -798,7 +800,7 @@ gentity_t *G_SpawnGEntityFromSpawnVars(void)
 
 	for (i = 0 ; i < level.numSpawnVars ; i++)
 	{
-		G_ParseField(level.spawnVars[i][0], level.spawnVars[i][1], ent);
+		TVG_ParseField(level.spawnVars[i][0], level.spawnVars[i][1], ent);
 	}
 
 	// check for "notteam" / "notfree" flags
@@ -844,7 +846,7 @@ gentity_t *G_SpawnGEntityFromSpawnVars(void)
 	VectorCopy(ent->s.origin, ent->r.currentOrigin);
 
 	// if we didn't get a classname, don't bother spawning anything
-	if (!G_CallSpawn(ent))
+	if (!TVG_CallSpawn(ent))
 	{
 		G_FreeEntity(ent);
 	}
@@ -853,11 +855,11 @@ gentity_t *G_SpawnGEntityFromSpawnVars(void)
 }
 
 /**
- * @brief G_AddSpawnVarToken
+ * @brief TVG_AddSpawnVarToken
  * @param[in] string
  * @return
  */
-char *G_AddSpawnVarToken(const char *string)
+char *TVG_AddSpawnVarToken(const char *string)
 {
 	size_t l;
 	char   *dest;
@@ -865,7 +867,7 @@ char *G_AddSpawnVarToken(const char *string)
 	l = strlen(string);
 	if (level.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS)
 	{
-		G_Error("G_AddSpawnVarToken: MAX_SPAWN_VARS\n");
+		G_Error("TVG_AddSpawnVarToken: MAX_SPAWN_VARS\n");
 	}
 
 	dest = level.spawnVarChars + level.numSpawnVarChars;
@@ -929,8 +931,8 @@ qboolean G_ParseSpawnVars(void)
 		{
 			G_Error("G_ParseSpawnVars: MAX_SPAWN_VARS\n");
 		}
-		level.spawnVars[level.numSpawnVars][0] = G_AddSpawnVarToken(keyname);
-		level.spawnVars[level.numSpawnVars][1] = G_AddSpawnVarToken(com_token);
+		level.spawnVars[level.numSpawnVars][0] = TVG_AddSpawnVarToken(keyname);
+		level.spawnVars[level.numSpawnVars][1] = TVG_AddSpawnVarToken(com_token);
 		level.numSpawnVars++;
 	}
 
@@ -1029,7 +1031,7 @@ void SP_func_fakebrush(gentity_t *ent)
 /**
  * @brief Parses textual entity definitions out of an entstring and spawns gentities.
  */
-void G_SpawnEntitiesFromString(void)
+void TVG_SpawnEntitiesFromString(void)
 {
 	// allow calls to G_Spawn*()
 	G_Printf("Enable spawning!\n");
@@ -1048,7 +1050,7 @@ void G_SpawnEntitiesFromString(void)
 	// parse ents
 	while (G_ParseSpawnVars())
 	{
-		G_SpawnGEntityFromSpawnVars();
+		TVG_SpawnGEntityFromSpawnVars();
 	}
 
 #ifdef FEATURE_LUA

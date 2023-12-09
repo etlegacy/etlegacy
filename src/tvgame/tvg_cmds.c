@@ -42,13 +42,13 @@ const char *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^$Allies^7", "^2Spect
 team_info  teamInfo[TEAM_NUM_TEAMS];
 
 /**
- * @brief G_MatchOnePlayer
- * @param[in] plist
- * @param[out] err
- * @param[in] len
- * @return
- */
-static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
+* @brief G_MatchOnePlayer
+* @param[in] plist
+* @param[out] err
+* @param[in] len
+* @return
+*/
+static qboolean TVG_MatchOnePlayer(int *plist, char *err, size_t len)
 {
 	err[0] = '\0';
 
@@ -87,13 +87,13 @@ static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 }
 
 /**
- * @brief Sets plist to an array of integers that represent client numbers that have
- * names that are a partial match for s. List is terminated by a -1.
- *
- * @param[in] s
- * @param[out] plist
- * @return Number of matching clientids.
- */
+* @brief Sets plist to an array of integers that represent client numbers that have
+* names that are a partial match for s. List is terminated by a -1.
+*
+* @param[in] s
+* @param[out] plist
+* @return Number of matching clientids.
+*/
 int TVG_ClientNumbersFromString(char *s, int *plist)
 {
 	gclient_t *p;
@@ -115,7 +115,7 @@ int TVG_ClientNumbersFromString(char *s, int *plist)
 			if (p->pers.connected == CON_CONNECTED || p->pers.connected == CON_CONNECTING)
 			{
 				*plist++ = i;
-				*plist   = -1;
+				*plist = -1;
 				return 1;
 			}
 		}
@@ -156,11 +156,11 @@ int TVG_ClientNumbersFromString(char *s, int *plist)
 }
 
 /**
- * @brief Find player slot by matching the slot number or complete/partial player name but unique
- * @param[in] to
- * @param[in] s
- * @return A player number for either a number or name string, -1 if invalid / not found
- */
+* @brief Find player slot by matching the slot number or complete/partial player name but unique
+* @param[in] to
+* @param[in] s
+* @return A player number for either a number or name string, -1 if invalid / not found
+*/
 int TVG_ClientNumberFromString(gclient_t *to, char *s)
 {
 	int pids[MAX_CLIENTS];
@@ -170,7 +170,146 @@ int TVG_ClientNumberFromString(gclient_t *to, char *s)
 	{
 		char err[MAX_STRING_CHARS];
 
-		G_MatchOnePlayer(pids, err, sizeof(err));
+		TVG_MatchOnePlayer(pids, err, sizeof(err));
+
+		if (to)
+		{
+			CPx(to - g_entities, va("print \"[lon]Bad client slot: [lof]%s\n\"", err));
+		}
+		else
+		{
+			G_Printf("Bad client slot: %s", err);
+		}
+
+		return -1;
+	}
+
+	return pids[0];
+}
+
+/**
+* @brief TVG_MatchOnePlayerFromMaster
+* @param[in] plist
+* @param[out] err
+* @param[in] len
+* @return
+*/
+static qboolean TVG_MatchOnePlayerFromMaster(int *plist, char *err, size_t len)
+{
+	char cs[MAX_STRING_CHARS];
+
+	err[0] = '\0';
+
+	if (plist[0] == -1)
+	{
+		Q_strcat(err, len, "no connected player by that name or slot #");
+		return qfalse;
+	}
+
+	if (plist[1] != -1)
+	{
+		char      line[MAX_NAME_LENGTH + 10];
+		int       *p;
+
+		line[0] = '\0';
+
+		Q_strcat(err, len, "more than one player name matches be more specific or use the slot #:\n");
+		for (p = plist; *p != -1; p++)
+		{
+			trap_GetConfigstring(CS_PLAYERS + level.validMasterClients[*p], cs, sizeof(cs));
+			Com_sprintf(line, MAX_NAME_LENGTH + 10, "%2i - %s^7\n", *p, Info_ValueForKey(cs, "n"));
+			if (strlen(err) + strlen(line) > len)
+			{
+				break;
+			}
+			Q_strcat(err, len, line);
+		}
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
+* @brief Sets plist to an array of integers that represent client numbers that have
+* names that are a partial match for s. List is terminated by a -1.
+*
+* @param[in] s
+* @param[out] plist
+* @return Number of matching clientids.
+*/
+int TVG_MasterClientNumbersFromString(char *s, int *plist)
+{
+	int       i, found = 0;
+	char      s2[MAX_STRING_CHARS];
+	char      n2[MAX_STRING_CHARS];
+	char      *m;
+	char      cs[MAX_STRING_CHARS];
+
+	*plist = -1;
+
+	// if a number is provided, it might be a slot #
+	if (Q_isanumber(s))
+	{
+		i = Q_atoi(s);
+
+		if (i >= 0 && i < MAX_CLIENTS)
+		{
+			if (level.ettvMasterClients[i].valid)
+			{
+				*plist++ = i;
+				*plist = -1;
+				return 1;
+			}
+		}
+	}
+
+	// now look for name matches
+	Q_strncpyz(s2, s, sizeof(s2));
+	Q_CleanStr(s2);
+	Q_strlwr(s2);
+
+	if (strlen(s2) < 1)
+	{
+		return 0;
+	}
+
+	for (i = 0; i < level.numValidMasterClients; ++i)
+	{
+		trap_GetConfigstring(CS_PLAYERS + level.validMasterClients[i], cs, sizeof(cs));
+
+		Q_strncpyz(n2, Info_ValueForKey(cs, "n"), sizeof(n2));
+		Q_CleanStr(n2);
+		Q_strlwr(n2);
+
+		m = strstr(n2, s2);
+
+		if (m != NULL)
+		{
+			*plist++ = i;
+			found++;
+		}
+	}
+	*plist = -1;
+	return found;
+}
+
+/**
+* @brief Find player slot by matching the slot number or complete/partial player name but unique
+* @param[in] to
+* @param[in] s
+* @return A player number for either a number or name string, -1 if invalid / not found
+*/
+int TVG_MasterClientNumberFromString(gclient_t *to, char *s)
+{
+	int pids[MAX_CLIENTS];
+
+	// no match or more than 1 player matchs, out error
+	if (TVG_MasterClientNumbersFromString(s, pids) != 1)
+	{
+		char err[MAX_STRING_CHARS];
+
+		TVG_MatchOnePlayerFromMaster(pids, err, sizeof(err));
 
 		if (to)
 		{
@@ -267,108 +406,6 @@ void G_PlaySound_Cmd(void)
 	{
 		G_globalSound(sound);
 	}
-}
-
-/**
- * @brief Add score with clientNum at index i of level.sortedClients[] to the string buf.
- *
- * @param ent - unused
- * @param[in] i
- * @param[out] buf
- * @param[in] bufsize
- *
- * @return qtrue if the score was appended to buf, qfalse otherwise.
- *
- * @todo FIXME: FEATURE_MULTIVIEW might be buggy -> powerups var is used to store player class/type (differs from GPL Code)
- *       playerClass is no longer sent!
- */
-qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
-{
-	gclient_t *cl = &level.clients[level.sortedClients[i]];
-	int       ping, respawnsLeft = cl->ps.persistant[PERS_RESPAWNS_LEFT]; // number of respawns left
-	char      entry[128];
-	int       totalXP   = 0;
-	int       miscFlags = 0; // 1 - ready 2 - is bot
-
-	entry[0] = '\0';
-
-	if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		if (g_entities[level.sortedClients[i]].health <= 0)
-		{
-			respawnsLeft = -2;
-		}
-	}
-	else if (respawnsLeft == 0 && ((cl->ps.pm_flags & PMF_LIMBO) || (level.intermissiontime && g_entities[level.sortedClients[i]].health <= 0)))
-	{
-		respawnsLeft = -2;
-	}
-
-	if (cl->pers.connected == CON_CONNECTING)
-	{
-		ping = -1;
-	}
-	else
-	{
-		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
-	}
-
-	if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		totalXP = cl->ps.persistant[PERS_SCORE];
-	}
-	else
-	{
-		int j;
-
-		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-		    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
-		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
-		{
-			for (j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
-			{
-				totalXP += cl->sess.skillpoints[j];
-			}
-		}
-		else
-		{
-			for (j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
-			{
-				// current map XPs only
-				totalXP += cl->sess.skillpoints[j] - cl->sess.startskillpoints[j];
-			}
-		}
-	}
-
-	if (cl->ps.eFlags & EF_READY)
-	{
-		miscFlags |= 1;
-	}
-
-	if (g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT)
-	{
-		miscFlags |= 2;
-	}
-
-	Com_sprintf(entry,
-	            sizeof(entry),
-	            " %i %i %i %i %i %i %i",
-	            level.sortedClients[i],
-	            totalXP,
-	            ping,
-	            (level.intermissiontime - cl->pers.enterTime) / 60000,
-	            g_entities[level.sortedClients[i]].s.powerups,
-	            miscFlags,
-	            respawnsLeft
-	            );
-
-	if ((strlen(buf) + strlen(entry) + 1) > bufsize)
-	{
-		return qfalse;
-	}
-	Q_strcat(buf, bufsize, entry);
-
-	return qtrue;
 }
 
 /**
@@ -537,7 +574,7 @@ void StopFollowing(gclient_t *client)
 		//pos[2] += 16; // removing for now
 		VectorCopy(client->ps.viewangles, angle);
 
-		ClientBegin(client - level.clients);
+		TVClientBegin(client - level.clients);
 
 		VectorCopy(pos, client->ps.origin);
 		TVG_SetClientViewAngle(client, angle);
@@ -701,73 +738,36 @@ int G_ClassCount(gentity_t *ent, int playerType, team_t team)
 
 /**
  * @brief "Topshots" accuracy rankings
- * @param ent
+ * @param client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_WeaponStatsLeaders_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_WeaponStatsLeaders_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	G_weaponStatsLeaders_cmd(ent, qtrue, qtrue);
-	return;
+	TVG_weaponStatsLeaders_cmd(client, qtrue, qtrue);
 }
 
 /**
- * @brief Cmd_wStats_f
- * @param ent
+ * @brief TVCmd_wStats_f
+ * @param client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_wStats_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_wStats_f(gclient_t *ent, unsigned int dwCommand, int value)
 {
-	G_statsPrint(ent, 1);
+	TVG_statsPrint(ent, 1, value);
 	return;
 }
 
 /**
  * @brief Player game stats
- * @param ent
+ * @param client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_sgStats_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_sgStats_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	G_statsPrint(ent, 2);
-	return;
-}
-
-/**
- * @brief Cmd_ResetSetup_f
- * @param[in,out] ent
- * @param dwCommand - unused
- * @param value    - unused
- */
-void Cmd_ResetSetup_f(gentity_t *ent, unsigned int dwCommand, int value)
-{
-	qboolean changed = qfalse;
-
-	if (!ent || !ent->client)
-	{
-		return;
-	}
-
-	ent->client->sess.latchPlayerType = ent->client->sess.playerType;
-
-	if (ent->client->sess.latchPlayerWeapon != ent->client->sess.playerWeapon)
-	{
-		ent->client->sess.latchPlayerWeapon = ent->client->sess.playerWeapon;
-		changed                             = qtrue;
-	}
-
-	if (ent->client->sess.latchPlayerWeapon2 != ent->client->sess.playerWeapon2)
-	{
-		ent->client->sess.latchPlayerWeapon2 = ent->client->sess.playerWeapon2;
-		changed                              = qtrue;
-	}
-
-	if (changed)
-	{
-		ClientUserinfoChanged(ent - g_entities);
-	}
+	TVG_statsPrint(client, 2, value);
 }
 
 /**
@@ -778,8 +778,8 @@ void Cmd_ResetSetup_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_Follow_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	int  cnum;
-	char arg[MAX_TOKEN_CHARS];
+	//int  cnum;
+	//char arg[MAX_TOKEN_CHARS];
 
 	//if (trap_Argc() != 2)
 	//{
@@ -1009,7 +1009,7 @@ qboolean G_FollowSame(gentity_t *ent)
 	//	return qfalse;
 	//}
 
-	//return qtrue;
+	return qtrue;
 }
 
 /**
@@ -1076,12 +1076,12 @@ void G_HQSay(gentity_t *other, int color, const char *name, const char *message)
  */
 void TVG_SayTo(gclient_t *client, gclient_t *other, int mode, int color, const char *name, const char *message, qboolean localize)
 {
-	char cmd[6];
+	//char cmd[6];
 
-	if (!other)
-	{
-		return;
-	}
+	//if (!other)
+	//{
+	//	return;
+	//}
 	//if ((mode == SAY_TEAM || mode == SAY_TEAMNL) && !OnSameTeam(ent, other))
 	//{
 	//	return;
@@ -1250,8 +1250,8 @@ void TVG_Say_f(gclient_t *client, int mode /*, qboolean arg0*/)
  */
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum, int vsayNum, const char *customChat)
 {
-	int  color;
-	char *cmd;
+	//int  color;
+	//char *cmd;
 
 	//if (!other)
 	//{
@@ -1655,289 +1655,158 @@ void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value)
 }
 
 /**
- * @brief Cmd_IntermissionWeaponStats_f
+ * @brief TVCmd_IntermissionWeaponStats_f
  * @param[in] ent
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_IntermissionWeaponStats_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_IntermissionWeaponStats_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	char buffer[1024];
-	int i, clientNum;
+	//char buffer[1024];
+	//int i, clientNum;
 
-	if (!ent || !ent->client)
-	{
-		return;
-	}
+	//if (!ent || !ent->client)
+	//{
+	//	return;
+	//}
 
-	trap_Argv(1, buffer, sizeof(buffer));
+	//trap_Argv(1, buffer, sizeof(buffer));
 
-	clientNum = Q_atoi(buffer);
-	if (clientNum < 0 || clientNum > g_maxclients.integer)
-	{
-		return;
-	}
+	//clientNum = Q_atoi(buffer);
+	//if (clientNum < 0 || clientNum > g_maxclients.integer)
+	//{
+	//	return;
+	//}
 
-	Q_strncpyz(buffer, "imws ", sizeof(buffer));
+	//Q_strncpyz(buffer, "imws ", sizeof(buffer));
 
-	// hit regions
-	Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i ",
-	                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_HEAD],
-	                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_ARMS],
-	                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_BODY],
-	                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_LEGS]));
+	//// hit regions
+	//Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i ",
+	//                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_HEAD],
+	//                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_ARMS],
+	//                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_BODY],
+	//                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_LEGS]));
 
-	for (i = 0; i < WS_MAX; i++)
-	{
-		Q_strcat(buffer, sizeof(buffer), va("%i %i %i ", level.clients[clientNum].sess.aWeaponStats[i].atts, level.clients[clientNum].sess.aWeaponStats[i].hits, level.clients[clientNum].sess.aWeaponStats[i].kills));
-	}
+	//for (i = 0; i < WS_MAX; i++)
+	//{
+	//	Q_strcat(buffer, sizeof(buffer), va("%i %i %i ", level.clients[clientNum].sess.aWeaponStats[i].atts, level.clients[clientNum].sess.aWeaponStats[i].hits, level.clients[clientNum].sess.aWeaponStats[i].kills));
+	//}
 
-	trap_SendServerCommand(ent - g_entities, buffer);
+	//trap_SendServerCommand(ent - g_entities, buffer);
 }
 
 /**
- * @brief Cmd_IntermissionPlayerKillsDeaths_f
- * @param[in,out] ent
+ * @brief TVCmd_IntermissionPlayerKillsDeaths_f
+ * @param[in,out] client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	char buffer[MAX_STRING_CHARS];
-	int i;
-
-	if (!ent || !ent->client)
+	if (level.cmds.impkdValid)
 	{
-		return;
+		trap_SendServerCommand(client - level.clients, level.cmds.impkd[0]);
+		trap_SendServerCommand(client - level.clients, level.cmds.impkd[1]);
 	}
-
-	Q_strncpyz(buffer, "impkd0 ", sizeof(buffer));
-	for (i = 0; i < g_maxclients.integer; i++)
-	{
-		if (i == g_maxclients.integer / 2)
-		{
-			trap_SendServerCommand(ent - g_entities, buffer);
-			Q_strncpyz(buffer, "impkd1 ", sizeof(buffer));
-		}
-
-		if (g_entities[i].inuse)
-		{
-			Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i %i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths, level.clients[i].sess.gibs, level.clients[i].sess.self_kills, level.clients[i].sess.team_kills, level.clients[i].sess.team_gibs));
-		}
-		else
-		{
-			Q_strcat(buffer, sizeof(buffer), "0 0 0 0 0 0 ");
-		}
-	}
-
-	trap_SendServerCommand(ent - g_entities, buffer);
 }
 
 /**
- * @brief Cmd_IntermissionPlayerTime_f
- * @param[in] ent
+* @brief TVCmd_IntermissionPrestige_f
+* @param[in,out] client
+* @param dwCommand - unused
+* @param value    - unused
+*/
+void TVCmd_IntermissionPrestige_f(gclient_t *client, unsigned int dwCommand, int value)
+{
+	if (level.cmds.imprValid)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.impr);
+	}
+}
+
+/**
+ * @brief TVCmd_IntermissionPlayerTime_f
+ * @param[in] client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_IntermissionPlayerTime_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_IntermissionPlayerTime_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	char buffer[1024];
-	int i;
-
-	if (!ent || !ent->client)
+	if (level.cmds.imptValid)
 	{
-		return;
-	}
-
-	Q_strncpyz(buffer, "impt ", sizeof(buffer));
-	for (i = 0; i < g_maxclients.integer; i++)
-	{
-		if (g_entities[i].inuse)
-		{
-			Q_strcat(buffer, sizeof(buffer), va("%i %i %i ", level.clients[i].sess.time_axis, level.clients[i].sess.time_allies, level.clients[i].sess.time_played));
-		}
-		else
-		{
-			Q_strcat(buffer, sizeof(buffer), "0 0 0 ");
-		}
-	}
-
-	trap_SendServerCommand(ent - g_entities, buffer);
-}
-/**
- * @brief G_CalcClientAccuracies
- */
-void G_CalcClientAccuracies(void)
-{
-	int i, j;
-	int shots, hits, headshots;
-
-	for (i = 0; i < g_maxclients.integer; i++)
-	{
-		shots     = 0;
-		hits      = 0;
-		headshots = 0;
-
-		if (g_entities[i].inuse)
-		{
-			for (j = 0; j < WS_MAX; j++)
-			{
-				// don't take into account weapon that can't do headshot
-				if (!aWeaponInfo[j].fHasHeadShots)
-				{
-					continue;
-				}
-
-				shots     += level.clients[i].sess.aWeaponStats[j].atts;
-				hits      += level.clients[i].sess.aWeaponStats[j].hits;
-				headshots += level.clients[i].sess.aWeaponStats[j].headshots;
-			}
-
-			level.clients[i].acc   = shots ? 100 * hits / (float)shots : 0.f;
-			level.clients[i].hspct = hits ? 100 * headshots / (float)hits : 0.f;
-		}
-		else
-		{
-			level.clients[i].acc   = 0.f;
-			level.clients[i].hspct = 0.f;
-		}
+		trap_SendServerCommand(client - level.clients, level.cmds.impt);
 	}
 }
 
 /**
- * @brief Cmd_IntermissionWeaponAccuracies_f
+* @brief TVCmd_IntermissionSkillRating_f
+* @param[in] client
+* @param dwCommand - unused
+* @param value    - unused
+*/
+void TVCmd_IntermissionSkillRating_f(gclient_t *client, unsigned int dwCommand, int value)
+{
+	if (level.cmds.imsrValid)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.imsr);
+	}
+}
+
+/**
+ * @brief TVCmd_IntermissionWeaponAccuracies_f
  * @param[in] ent
  */
-void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_IntermissionWeaponAccuracies_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	char buffer[1024];
-	int i;
-
-	if (!ent || !ent->client)
+	if (level.cmds.imwaValid)
 	{
-		return;
-	}
-
-	G_CalcClientAccuracies();
-
-	Q_strncpyz(buffer, "imwa ", sizeof(buffer));
-	for (i = 0; i < g_maxclients.integer; i++)
-	{
-		if (g_entities[i].inuse)
-		{
-			Q_strcat(buffer, sizeof(buffer), va("%.1f %.1f ", level.clients[i].acc, level.clients[i].hspct));
-		}
-		else
-		{
-			Q_strcat(buffer, sizeof(buffer), "0 0 ");
-		}
-	}
-
-	trap_SendServerCommand(ent - g_entities, buffer);
-}
-
-/**
- * @brief Cmd_SelectedObjective_f
- * @param[in,out] ent
- * @param dwCommand - unused
- * @param value    - unused
- */
-void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
-{
-	int i, val;
-	char buffer[16];
-	vec_t dist, neardist = 0;
-	int nearest = -1;
-
-	if (!ent || !ent->client)
-	{
-		return;
-	}
-
-	if (trap_Argc() != 2)
-	{
-		return;
-	}
-	trap_Argv(1, buffer, 16);
-	val = Q_atoi(buffer) + 1;
-
-	for (i = 0; i < level.numLimboCams; i++)
-	{
-		if (!level.limboCams[i].spawn && level.limboCams[i].info == val)
-		{
-			if (!level.limboCams[i].hasEnt)
-			{
-				VectorCopy(level.limboCams[i].origin, ent->s.origin2);
-				ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
-				trap_SendServerCommand(ent - g_entities, va("portalcampos %i %i %i %i %i %i %i %i", val - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
-
-				break;
-			}
-			else
-			{
-				dist = VectorDistanceSquared(level.limboCams[i].origin, g_entities[level.limboCams[i].targetEnt].r.currentOrigin);
-				if (nearest == -1 || dist < neardist)
-				{
-					nearest  = i;
-					neardist = dist;
-				}
-			}
-		}
-	}
-
-	if (nearest != -1)
-	{
-		i = nearest;
-
-		VectorCopy(level.limboCams[i].origin, ent->s.origin2);
-		ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
-		trap_SendServerCommand(ent - g_entities, va("portalcampos %i %i %i %i %i %i %i %i", val - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
+		trap_SendServerCommand(client - level.clients, level.cmds.imwa);
 	}
 }
 
 /**
- * @brief Cmd_Ignore_f
+ * @brief TVCmd_Ignore_f
  * @param[in,out] ent
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
-	int cnum;
+	//char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
+	//int cnum;
 
-	trap_Argv(0, cmd, sizeof(cmd));
-	trap_Argv(1, name, sizeof(cmd));
+	//trap_Argv(0, cmd, sizeof(cmd));
+	//trap_Argv(1, name, sizeof(cmd));
 
-	if (!*name)
-	{
-		trap_SendServerCommand(ent - g_entities, "print \"usage: Ignore <clientname>.\n\"");
-		return;
-	}
+	//if (!*name)
+	//{
+	//	trap_SendServerCommand(ent - g_entities, "print \"usage: Ignore <clientname>.\n\"");
+	//	return;
+	//}
 
-	cnum = TVG_ClientNumberFromString(ent, name);
+	//cnum = TVG_ClientNumberFromString(ent, name);
 
-	if (cnum == -1)
-	{
-		return;
-	}
+	//if (cnum == -1)
+	//{
+	//	return;
+	//}
 
-	COM_BitSet(ent->client->sess.ignoreClients, cnum);
-	trap_SendServerCommand(ent - g_entities, va("print \"[lon]You are ignoring [lof]%s[lon]^7.\n\"", level.clients[cnum].pers.netname));
+	//COM_BitSet(ent->client->sess.ignoreClients, cnum);
+	//trap_SendServerCommand(ent - g_entities, va("print \"[lon]You are ignoring [lof]%s[lon]^7.\n\"", level.clients[cnum].pers.netname));
 }
 
 /**
- * @brief Cmd_UnIgnore_f
+ * @brief TVCmd_UnIgnore_f
  * @param[in,out] ent
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
+void TVCmd_UnIgnore_f(gclient_t *client, unsigned int dwCommand, int value)
 {
-	char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
-	int cnum;
+	//char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
+	//int cnum;
 
-	trap_Argv(0, cmd, sizeof(cmd));
+	/*trap_Argv(0, cmd, sizeof(cmd));
 	trap_Argv(1, name, sizeof(cmd));
 
 	if (!*name)
@@ -1954,7 +1823,7 @@ void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
 	}
 
 	COM_BitClear(ent->client->sess.ignoreClients, cnum);
-	trap_SendServerCommand(ent - g_entities, va("print \"[lof]%s[lon]^7 is no longer ignored.\n\"", level.clients[cnum].pers.netname));
+	trap_SendServerCommand(ent - g_entities, va("print \"[lof]%s[lon]^7 is no longer ignored.\n\"", level.clients[cnum].pers.netname));*/
 }
 
 #define ENTNFO_HASH         78985
@@ -1969,6 +1838,57 @@ void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
 #define PRINT_HASH          67401
 #define CHAT_HASH           50150
 #define VCHAT_HASH          64608
+#define TCHAT_HASH          64370
+#define VTCHAT_HASH         78944
+#define VBCHAT_HASH         76784
+#define GAMECHAT_HASH       101222
+#define VSCHAT_HASH         78824
+#define WS_HASH             27961
+#define WWS_HASH            42356
+#define GSTATS_HASH         80455
+#define ASTATS_HASH         79741
+#define ASTATSB_HASH        91991
+#define BSTATS_HASH         79860
+#define BSTATSB_HASH        92110
+#define WBSTATS_HASH        94678
+#define RWS_HASH            41761
+#define MAP_RESTART_HASH    147165
+#define PORTALCAMPOS_HASH   161962
+#define REMAPSHADER_HASH    144301
+#define ADDTOBUILD_HASH     129971
+#define SPAWNSERVER_HASH    150779
+#define APPLICATION_HASH    145376
+#define INVITATION_HASH     134986
+#define PROPOSITION_HASH    151490
+#define AFT_HASH            37819
+#define AFTC_HASH           49897
+#define AFTJ_HASH           50751
+#define COMPLAINT_HASH      118983
+#define REQFORCESPAWN_HASH  176027
+#define SDBG_HASH           50109
+#define IMMAPLIST_HASH      120113
+#define IMMAPHISTORY_HASH   164261
+#define IMVOTETALLY_HASH    150058
+#define SETSPAWNPT_HASH     137482
+#define IMWA_HASH           51808
+#define IMWS_HASH           54004
+//#define IMPKD_HASH          64481 // possibly other mods?
+#define IMPKD0_HASH         70433
+#define IMPKD1_HASH         70557
+#define IMPT_HASH           53279
+#define IMSR_HASH           53398
+#define SR_HASH             27365
+#define SRA_HASH            39102
+#define IMPR_HASH           53035
+#define PR_HASH             27008
+#define MU_START_HASH       107698
+#define MU_PLAY_HASH        92607
+#define MU_STOP_HASH        94568
+#define MU_FADE_HASH        87906
+#define SND_FADE_HASH       100375
+#define ROCKANDROLL_HASH    146207
+#define BP_HASH             25102
+#define XPGAIN_HASH         78572
 
 /**
 * @brief TVG_ClientCommandPassThrough This handles server commands (server responses to client commands)
@@ -1985,7 +1905,7 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	char *token;
 	//int passcmdLength = 0;
 	//int cmdLength     = 0;
-	int i = 0;
+	int pid = 0;
 
 	/**parsecmd = cmd;
 
@@ -2017,26 +1937,26 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 
 	switch (BG_StringHashValue(token))
 	{
-	case ENTNFO_HASH:                     // "entnfo"
+	case ENTNFO_HASH:                     // "entnfo" = teammapdata
 		trap_SendServerCommand(-1, cmd);
 		return;
-	case CS_HASH:                         // "cs"
+	case CS_HASH:                         // "cs" = configstring
 		//trap_SendServerCommand(-1, cmd);
 		return;
-	case TINFO_HASH:                      // "tinfo"
+	case TINFO_HASH:                      // "tinfo" = teamplayinfo
 		trap_SendServerCommand(-1, cmd);
 		return;
-	case SC0_HASH:                        // "sc0"
+	case SC0_HASH:                        // "sc0" = scoreboard (/score)
 		level.cmds.scoreHasTwoParts = qfalse;
 		Q_strncpyz(level.cmds.score[0], cmd, sizeof(level.cmds.score[0]));
 		return;
-	case SC1_HASH:                        // "sc1"
+	case SC1_HASH:                        // "sc1" = scoreboard (/score)
 		level.cmds.scoreHasTwoParts = qtrue;
 		Q_strncpyz(level.cmds.score[1], cmd, sizeof(level.cmds.score[0]));
 		return;
 	case WEAPONSTATS_HASH:                // "WeaponStats"
 		return;
-	case SC_HASH:                         // "sc"
+	case SC_HASH:                         // "sc" = /scores
 		if (level.cmds.scoresTime != level.time || level.cmds.scoresEndIndex > 99)
 		{
 			level.cmds.scoresEndIndex = 0;
@@ -2059,18 +1979,161 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	case VCHAT_HASH:                      // "chat"
 		trap_SendServerCommand(-1, cmd);
 		return;
+	//case TCHAT_HASH:                              // "tchat"
+	//	return;
+	//case VTCHAT_HASH:                                // "vtchat"
+	//	return;
+	//case VBCHAT_HASH:                                // "vbchat"
+	//	return;
+	//case GAMECHAT_HASH:                              // "gamechat"
+	//	return;
+	//case VSCHAT_HASH:                                // "vschat"
+	//	return;
+		// weapon stats parsing
+	case WS_HASH:                                      // "ws"
+		token = strtok(NULL, " ");
+		pid = Q_atoi(token);
+		level.cmds.infoStats[INFO_WS].valid[pid] = qtrue;
+		Q_strncpyz(level.cmds.infoStats[INFO_WS].data[pid], cmd, sizeof(level.cmds.infoStats[INFO_WS].data[0]));
+		return;
+	case WWS_HASH:                                    // "wws"
+		token = strtok(NULL, " ");
+		pid = Q_atoi(token);
+		level.cmds.infoStats[INFO_WWS].valid[pid] = qtrue;
+		Q_strncpyz(level.cmds.infoStats[INFO_WWS].data[pid], cmd, sizeof(level.cmds.infoStats[INFO_WWS].data[0]));
+		return;
+	case GSTATS_HASH:                                // "gstats"
+		token = strtok(NULL, " ");
+		pid   = Q_atoi(token);
+		level.cmds.infoStats[INFO_GSTATS].valid[pid] = qtrue;
+		Q_strncpyz(level.cmds.infoStats[INFO_GSTATS].data[pid], cmd, sizeof(level.cmds.infoStats[INFO_GSTATS].data[0]));
+		return;
+	//	// "topshots"-related commands
+	case ASTATS_HASH:                                // "astats"
+		Q_strncpyz(level.cmds.astats, cmd, sizeof(level.cmds.astats));
+		return;
+	case ASTATSB_HASH:                               // "astatsb"
+		Q_strncpyz(level.cmds.astatsb, cmd, sizeof(level.cmds.astatsb));
+		return;
+	case BSTATS_HASH:                                // "bstats"
+		Q_strncpyz(level.cmds.bstats, cmd, sizeof(level.cmds.bstats));
+		return;
+	case BSTATSB_HASH:                               // "bstatsb"
+		Q_strncpyz(level.cmds.bstatsb, cmd, sizeof(level.cmds.bstatsb));
+		return;
+	case WBSTATS_HASH:                               // "wbstats"
+		Q_strncpyz(level.cmds.wbstats, cmd, sizeof(level.cmds.wbstats));
+		return;
+	//	// single weapon stat (requested weapon stats)
+	//case RWS_HASH:                                   // "rws"
+	//	return;
+	//case MAP_RESTART_HASH:                           // "map_restart"
+	//	return;
+	//case PORTALCAMPOS_HASH:                          // "portalcampos"
+	//	return;
+	//case REMAPSHADER_HASH:                           // "remapShader"
+	//	return;
+	//// ensure a file gets into a build (mainly for scripted music calls)
+	//case ADDTOBUILD_HASH:                            // "addToBuild"
+	//	return;
+	//// server sends this command when it's about to kill the current server, before the client can reconnect
+	//case SPAWNSERVER_HASH:                     // "spawnserver"
+	//	return;
+	//case APPLICATION_HASH:                                         //  "application"
+	//	return;
+	//case INVITATION_HASH:                                          // "invitation"
+	//	return;
+	//case PROPOSITION_HASH:                                        // "proposition"
+	//	return;
+	//case AFT_HASH:                                                // "aft"
+	//	return;
+	//case AFTC_HASH:                                              // "aftc"
+	//	return;
+	//case AFTJ_HASH:                                              // "aftj"
+	//	return;
+	//	// Allow client to lodge a complaing
+	//case COMPLAINT_HASH:                                       // "complaint"
+	//	return;
+	//case REQFORCESPAWN_HASH:                               // "reqforcespawn"
+	//	return;
+	//case SDBG_HASH:                                         // "sdbg"
+	//	return;
+	case IMMAPLIST_HASH: // MAPVOTE                         "immaplist"
+		level.cmds.immaplistValid = qtrue;
+		Q_strncpyz(level.cmds.immaplist, cmd, sizeof(level.cmds.immaplist));
+		return;
+	case IMMAPHISTORY_HASH: // MAPVOTE                      "immaphistory"
+		level.cmds.immaphistoryValid = qtrue;
+		Q_strncpyz(level.cmds.immaphistory, cmd, sizeof(level.cmds.immaphistory));
+		return;
+	case IMVOTETALLY_HASH: // MAPVOTE                      "imvotetally"
+		level.cmds.imvotetallyValid = qtrue;
+		Q_strncpyz(level.cmds.imvotetally, cmd, sizeof(level.cmds.imvotetally));
+		return;
+	//case SETSPAWNPT_HASH: //  "setspawnpt"
+	//	return;
+	//	// debriefing server cmds
+	case IMWA_HASH:                                         // "imwa"
+		level.cmds.imwaValid = qtrue;
+		Q_strncpyz(level.cmds.imwa, cmd, sizeof(level.cmds.imwa));
+		return;
+	//case IMWS_HASH:                                        // "imws"
+	//	return;
+	case IMPKD0_HASH:                                      // "impkd0"
+		level.cmds.impkdValid = qtrue;
+		Q_strncpyz(level.cmds.impkd[0], cmd, sizeof(level.cmds.impkd[0]));
+		return;
+	case IMPKD1_HASH:                                      // "impkd1"
+		Q_strncpyz(level.cmds.impkd[1], cmd, sizeof(level.cmds.impkd[1]));
+		return;
+	case IMPT_HASH:                                        // "impt"
+		level.cmds.imptValid = qtrue;
+		Q_strncpyz(level.cmds.impt, cmd, sizeof(level.cmds.impt));
+		return;
+	case IMSR_HASH:                                        // "imsr"
+		level.cmds.imsrValid = qtrue;
+		Q_strncpyz(level.cmds.imsr, cmd, sizeof(level.cmds.imsr));
+		return;
+	//case SR_HASH:                                          // "sr" - backward compatibility with 2.76 demos
+	//	return;
+	//case SRA_HASH:                                         // "sra"
+	//	return;
+	case IMPR_HASH:                                        // "impr"
+		level.cmds.imprValid = qtrue;
+		Q_strncpyz(level.cmds.impr, cmd, sizeof(level.cmds.impr));
+		return;
+	//case PR_HASH:                                          // "pr"
+	//	return;
+	//	// music
+	//	// loops \/
+	//case MU_START_HASH:                                      // "mu_start" has optional parameter for fade-up time
+	//	return;
+	//// plays once then back to whatever the loop was \/
+	//case MU_PLAY_HASH:                        // "mu_play" has optional parameter for fade-up time
+	//	return;
+	//case MU_STOP_HASH:                                  // "mu_stop" has optional parameter for fade-down time
+	//	return;
+	//case MU_FADE_HASH:                                 // "mu_fade"
+	//	return;
+	//case SND_FADE_HASH:                                // "snd_fade"
+	//	return;
+	//case ROCKANDROLL_HASH: // "rockandroll"
+	//	return;
+	//case BP_HASH: // "bp"
+	//	return;
+	//case XPGAIN_HASH:   // "xpgain"
+	//	return;
 	default:
-		G_Printf("Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(token));
+		G_Printf("TVGAME: Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(token));
 		break;
 	}
-
 }
 
 /**
- * @brief ClientCommand
+ * @brief TVClientCommand
  * @param[in] clientNum
  */
-void ClientCommand(int clientNum)
+void TVClientCommand(int clientNum)
 {
 	char cmd[MAX_TOKEN_CHARS];
 

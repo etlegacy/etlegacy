@@ -586,6 +586,7 @@ char *G_createStats(gentity_t *ent)
 //	          ent->client->sess.prestige
 //#endif
 //	          ));
+return NULL;
 }
 
 /**
@@ -687,9 +688,9 @@ void G_parseStatsJson(void *object)
  */
 void G_matchInfoDump(unsigned int dwDumpType)
 {
-	int       i, ref;
-	gentity_t *ent;
-	gclient_t *cl;
+	//int       i, ref;
+	//gentity_t *ent;
+	//gclient_t *cl;
 
 //	for (i = 0; i < level.numConnectedClients; i++)
 //	{
@@ -868,53 +869,48 @@ int G_checkServerToggle(vmCvar_t *cv)
 
 /**
  * @brief Sends a player's stats to the requesting client.
- * @param[in] ent
+ * @param[in] client
  * @param[in] nType
  */
-void G_statsPrint(gentity_t *ent, int nType)
+void TVG_statsPrint(gclient_t *client, int nType, int cooldown)
 {
-	const char *cmd;
+	int  pid;
+	char arg[MAX_TOKEN_CHARS];
+	const char *cmd = (nType == 0) ? "weaponstats" : ((nType == 1) ? "wstats" : "sgstats");
 
-	//if (!ent || (ent->r.svFlags & SVF_BOT))
-	//{
-	//	return;
-	//}
+	// If requesting stats for self, it's easy
+	if (trap_Argc() < 2)
+	{
+		if (client->sess.spectatorState == SPECTATOR_FOLLOW)
+		{
+			pid = client->sess.spectatorClient;
+		}
+		else
+		{
+			return;
+		}
+	}
+	else
+	{
+		// find the player to poll stats
+		trap_Argv(1, arg, sizeof(arg));
+		if ((pid = TVG_MasterClientNumberFromString(client, arg)) == -1)
+		{
+			return;
+		}
+	}
 
-	//cmd = (nType == 0) ? "ws" : ((nType == 1) ? "wws" : "gstats");         // Yes, not the cleanest
+	client->wantsInfoStats[nType].requested          = qtrue;
+	client->wantsInfoStats[nType].requestedClientNum = pid;
 
-	//// If requesting stats for self, it's easy
-	//if (trap_Argc() < 2)
-	//{
-	//	// Always send to everybody at end of match
-	//	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR || level.intermissiontime)
-	//	{
-	//		CP(va("%s %s\n", cmd, G_createStats(ent)));
-	//		// Specs default to players they are chasing
-	//	}
-	//	else if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
-	//	{
-	//		CP(va("%s %s\n", cmd, G_createStats(g_entities + ent->client->sess.spectatorClient)));
-	//	}
-	//	else
-	//	{
-	//		CP(va("%s %s\n", cmd, G_createStats(ent)));
-	//		CP("print \"\nType ^3\\weaponstats <player_id>^7 to see stats on an active player.\n\"");
-	//	}
-	//}
-	//else
-	//{
-	//	int  pid;
-	//	char arg[MAX_TOKEN_CHARS];
+	// request new stats
+	if (level.cmds.lastInfoStatsUpdate + cooldown <= level.time)
+	{
+		level.cmds.infoStats[nType].valid[pid] = qfalse;
+		level.cmds.lastInfoStatsUpdate         = level.time;
 
-	//	// Find the player to poll stats.
-	//	trap_Argv(1, arg, sizeof(arg));
-	//	if ((pid = TVG_ClientNumberFromString(ent, arg)) == -1)
-	//	{
-	//		return;
-	//	}
-
-	//	CP(va("%s %s\n", cmd, G_createStats(g_entities + pid)));
-	//}
+		trap_SendServerCommand(-2, va("%s %d\n", cmd, pid));
+	}
 }
 
 /**

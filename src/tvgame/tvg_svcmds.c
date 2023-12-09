@@ -202,20 +202,6 @@ static void UpdateIPBans(ipFilterList_t *ipFilterList)
 }
 
 /**
- * @brief PrintMaxLivesGUID
- */
-void PrintMaxLivesGUID(void)
-{
-	int i;
-
-	for (i = 0 ; i < numMaxLivesFilters ; i++)
-	{
-		G_LogPrintf("%i. %s\n", i, guidMaxLivesFilters[i].compare);
-	}
-	G_LogPrintf("--- End of list\n");
-}
-
-/**
  * @brief G_FilterPacket
  * @param[in] ipFilterList
  * @param[in] from
@@ -268,35 +254,6 @@ qboolean G_FilterIPBanPacket(char *from)
 }
 
 /**
- * @brief G_FilterMaxLivesIPPacket
- * @param[in] from
- * @return
- */
-qboolean G_FilterMaxLivesIPPacket(char *from)
-{
-	return(G_FilterPacket(&ipMaxLivesFilters, from));
-}
-
-/**
- * @brief Check to see if the user is trying to sneak back in with g_enforcemaxlives enabled
- *
- * @param[in] from
- */
-qboolean G_FilterMaxLivesPacket(char *from)
-{
-	int i;
-
-	for (i = 0; i < numMaxLivesFilters; i++)
-	{
-		if (!Q_stricmp(guidMaxLivesFilters[i].compare, from))
-		{
-			return 1;
-		}
-	}
-	return 0;
-}
-
-/**
  * @brief AddIP
  * @param[in] ipFilterList
  * @param[in] str
@@ -338,32 +295,6 @@ void AddIP(ipFilterList_t *ipFilterList, const char *str)
 void AddIPBan(const char *str)
 {
 	AddIP(&ipFilters, str);
-}
-
-/**
- * @brief AddMaxLivesBan
- * @param[in] str
- */
-void AddMaxLivesBan(const char *str)
-{
-	AddIP(&ipMaxLivesFilters, str);
-}
-
-/**
- * @brief >ith g_enforcemaxlives enabled, this adds a client GUID to a list
- * that prevents them from quitting and reconnecting
- *
- * @param[in] str
- */
-void AddMaxLivesGUID(const char *str)
-{
-	if (numMaxLivesFilters == MAX_IPFILTERS)
-	{
-		G_Printf("MaxLives GUID filter list is full\n");
-		return;
-	}
-	Q_strncpyz(guidMaxLivesFilters[numMaxLivesFilters].compare, str, 33);
-	numMaxLivesFilters++;
 }
 
 /**
@@ -458,23 +389,6 @@ void Svcmd_RemoveIP_f(void)
 void Svcmd_ListIp_f(void)
 {
 	trap_SendConsoleCommand(EXEC_INSERT, "g_banIPs\n");
-}
-
-/**
- * @brief Clears out the entire list maxlives enforcement banlist
- */
-void ClearMaxLivesBans()
-{
-	int i;
-
-	for (i = 0; i < numMaxLivesFilters; i++)
-	{
-		guidMaxLivesFilters[i].compare[0] = '\0';
-	}
-	numMaxLivesFilters = 0;
-
-	ipMaxLivesFilters.numIPFilters = 0;
-	Q_strncpyz(ipMaxLivesFilters.cvarIPList, "g_maxlivesbanIPs", sizeof(ipMaxLivesFilters.cvarIPList));
 }
 
 /**
@@ -1521,6 +1435,8 @@ static void Svcmd_CancelVote_f(void)
 	level.voteInfo.voteCanceled = 1;
 }
 
+extern void Svcmd_GameMem_f(void);
+
 /**
  * @var consoleCommandTable
  * @brief Store common console command
@@ -1533,7 +1449,6 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "addip",                      Svcmd_AddIP_f                 },
 	{ "removeip",                   Svcmd_RemoveIP_f              },
 	{ "listip",                     Svcmd_ListIp_f                },
-	{ "listmaxlivesip",             PrintMaxLivesGUID             },
 
 	{ "makeReferee",                G_MakeReferee                 },
 	{ "removeReferee",              G_RemoveReferee               },
@@ -1561,7 +1476,7 @@ static consoleCommandTable_t consoleCommandTable[] =
  * @brief ConsoleCommand
  * @return
  */
-qboolean ConsoleCommand(void)
+qboolean TVConsoleCommand(void)
 {
 	char         cmd[MAX_TOKEN_CHARS];
 	unsigned int i;

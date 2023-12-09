@@ -308,393 +308,6 @@ int TeamCount(int ignoreClientNum, team_t team)
 }
 
 /**
- * @brief PickTeam
- * @param[in] ignoreClientNum
- * @return
- */
-team_t PickTeam(int ignoreClientNum)
-{
-	int counts[TEAM_NUM_TEAMS] = { 0, 0, 0 };
-
-	counts[TEAM_ALLIES] = TeamCount(ignoreClientNum, TEAM_ALLIES);
-	counts[TEAM_AXIS]   = TeamCount(ignoreClientNum, TEAM_AXIS);
-
-	if (counts[TEAM_ALLIES] > counts[TEAM_AXIS])
-	{
-		return(TEAM_AXIS);
-	}
-	if (counts[TEAM_AXIS] > counts[TEAM_ALLIES])
-	{
-		return(TEAM_ALLIES);
-	}
-
-	// equal team count, so join the team with the lowest score
-	return(((level.teamScores[TEAM_ALLIES] > level.teamScores[TEAM_AXIS]) ? TEAM_AXIS : TEAM_ALLIES));
-}
-
-/**
- * @brief AddExtraSpawnAmmo
- * @param[in,out] client
- * @param[in] weaponNum
- */
-static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
-{
-	// no extra ammo if it don't use ammo
-	if (!GetWeaponTableData(weaponNum)->useAmmo)
-	{
-		return;
-	}
-
-	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PISTOL)
-	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
-		}
-	}
-	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SMG)
-	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
-		}
-	}
-	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE)
-	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_EXTRA_GRENADE))
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
-		}
-	}
-	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_GRENADE)
-	{
-		if (client->sess.playerType == PC_ENGINEER)
-		{
-			if (BG_IsSkillAvailable(client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_EXTRA_GRENADE))
-			{
-				client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
-			}
-		}
-		if (client->sess.playerType == PC_MEDIC)
-		{
-			if (BG_IsSkillAvailable(client->sess.skill, SK_FIRST_AID, SK_MEDIC_EXTRA_AMMO))
-			{
-				client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 1;
-			}
-		}
-	}
-	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SYRINGUE)
-	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_FIRST_AID, SK_MEDIC_RESOURCES))
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 2;
-		}
-	}
-	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE)
-	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
-		}
-	}
-}
-
-/**
- * @brief AddWeaponToPlayer
- * @param[in,out] client
- * @param[in] weapon
- * @param[in] ammo
- * @param[in] ammoclip
- * @param[in] setcurrent
- */
-void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent)
-{
-	if (team_riflegrenades.integer == 0)
-	{
-		switch (weapon)
-		{
-		case WP_GPG40:
-		case WP_M7:
-			return;
-		default:
-			break;
-		}
-	}
-
-	COM_BitSet(client->ps.weapons, weapon);
-	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
-	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]    += ammo;
-
-	if (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
-	{
-		client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] = ammoclip;
-	}
-
-	if (weapon == WP_BINOCULARS)
-	{
-		client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
-	}
-
-	if (setcurrent)
-	{
-		client->ps.weapon = weapon;
-	}
-
-	// skill handling
-	AddExtraSpawnAmmo(client, weapon);
-
-	// add alternative weapon if exist for primary weapon
-	if (GetWeaponTableData(weapon)->weapAlts)
-	{
-		// Covertops got silenced secondary weapon
-		if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
-		{
-			if (client->sess.playerType != PC_COVERTOPS)
-			{
-				return;
-			}
-
-			client->pmext.silencedSideArm = 1;
-		}
-
-		COM_BitSet(client->ps.weapons, GetWeaponTableData(weapon)->weapAlts);
-	}
-}
-
-/**
- * @brief SetWolfSpawnWeapons
- * @param[in,out] client
- */
-void SetWolfSpawnWeapons(gclient_t *client)
-{
-	int              pc   = client->sess.playerType;
-	int              team = client->sess.sessionTeam;
-	int              i;
-	bg_weaponclass_t *weaponClassInfo;
-	bg_playerclass_t *classInfo;
-	weapon_t         weaponPrimary;
-
-	if (client->sess.sessionTeam == TEAM_SPECTATOR)
-	{
-		return;
-	}
-
-	classInfo = BG_GetPlayerClassInfo(team, pc);
-
-	// Communicate it to cgame
-	client->ps.stats[STAT_PLAYER_CLASS] = pc;
-	client->ps.teamNum                  = team;
-
-	// zero out all ammo counts
-	Com_Memset(client->ps.ammo, 0, MAX_WEAPONS * sizeof(int));
-	Com_Memset(client->ps.ammoclip, 0, MAX_WEAPONS * sizeof(int));
-
-	// All players start with a knife (not OR-ing so that it clears previous weapons)
-	client->ps.weapons[0] = 0;
-	client->ps.weapons[1] = 0;
-
-	client->ps.weaponstate = WEAPON_READY;
-
-	//
-	// knife
-	//
-	weaponClassInfo = &classInfo->classKnifeWeapon;
-	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qtrue);
-
-	//
-	// grenade
-	//
-	weaponClassInfo = &classInfo->classGrenadeWeapon;
-	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
-
-	//
-	// primary weapon
-	//
-	weaponClassInfo = &classInfo->classPrimaryWeapons[0]; // default primary weapon
-
-	// ensure weapon is valid
-	if (!IS_VALID_WEAPON(client->sess.playerWeapon))
-	{
-		client->sess.playerWeapon = weaponClassInfo->weapon;
-	}
-
-	// parse available primary weapons and check is valid for current class
-	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i].weapon; i++)
-	{
-		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classPrimaryWeapons[i].skill, classInfo->classPrimaryWeapons[i].minSkillLevel)
-		    && client->sess.skill[classInfo->classPrimaryWeapons[i].skill] >= classInfo->classPrimaryWeapons[i].minSkillLevel)
-		{
-			if (classInfo->classPrimaryWeapons[i].weapon == client->sess.playerWeapon)
-			{
-				weaponClassInfo = &classInfo->classPrimaryWeapons[i];
-				break;
-			}
-		}
-	}
-
-	// add primary weapon (set to current weapon)
-	weaponPrimary = weaponClassInfo->weapon;
-	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qtrue);
-
-	//
-	// secondary weapon
-	//
-	weaponClassInfo = &classInfo->classSecondaryWeapons[0];   // default secondary weapon
-
-	// ensure weapon is valid
-	if (!IS_VALID_WEAPON(client->sess.playerWeapon2))
-	{
-		client->sess.playerWeapon2 = weaponClassInfo->weapon;
-	}
-
-	// parse available secondary weapons and check is valid for current class
-	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classSecondaryWeapons[i].weapon; i++)
-	{
-		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel)
-		    && client->sess.skill[classInfo->classSecondaryWeapons[i].skill] >= classInfo->classSecondaryWeapons[i].minSkillLevel)
-		{
-			if (classInfo->classSecondaryWeapons[i].weapon == client->sess.playerWeapon2)
-			{
-				weaponClassInfo = &classInfo->classSecondaryWeapons[i];
-				break;
-			}
-		}
-	}
-
-	// add secondary weapon, but only if it's different from the primary one
-	if (weaponClassInfo->weapon != weaponPrimary)
-	{
-		AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
-	}
-
-	//
-	// special weapons and items
-	//
-	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classMiscWeapons[i].weapon; i++)
-	{
-		weaponClassInfo = &classInfo->classMiscWeapons[i];
-
-		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classMiscWeapons[i].skill, classInfo->classMiscWeapons[i].minSkillLevel)
-		    && client->sess.skill[classInfo->classMiscWeapons[i].skill] >= classInfo->classMiscWeapons[i].minSkillLevel)
-		{
-			// special check for riflenade, we need the launcher to use it
-			if (GetWeaponTableData(weaponClassInfo->weapon)->type & WEAPON_TYPE_RIFLENADE)
-			{
-				if (!COM_BitCheck(client->ps.weapons, GetWeaponTableData(weaponClassInfo->weapon)->weapAlts))
-				{
-					continue;
-				}
-			}
-
-			// add each
-			AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
-		}
-	}
-}
-
-/**
- * @brief G_CountTeamMedics
- * @param[in] team
- * @param[in] alivecheck
- * @return
- */
-int G_CountTeamMedics(team_t team, qboolean alivecheck)
-{
-	int numMedics = 0;
-	int i, j;
-
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		j = level.sortedClients[i];
-
-		if (level.clients[j].sess.sessionTeam != team)
-		{
-			continue;
-		}
-
-		if (level.clients[j].sess.playerType != PC_MEDIC)
-		{
-			continue;
-		}
-
-		if (alivecheck)
-		{
-			if (g_entities[j].health <= 0)
-			{
-				continue;
-			}
-
-			if (level.clients[j].ps.pm_type == PM_DEAD || (level.clients[j].ps.pm_flags & PMF_LIMBO))
-			{
-				continue;
-			}
-		}
-
-		numMedics++;
-	}
-
-	return numMedics;
-}
-
-/**
- * @brief AddMedicTeamBonus
- * @param[in,out] client
- */
-void AddMedicTeamBonus(gclient_t *client)
-{
-	// compute health mod
-	client->pers.maxHealth = 100 + 10 * G_CountTeamMedics(client->sess.sessionTeam, qfalse);
-
-	if (client->pers.maxHealth > 125)
-	{
-		client->pers.maxHealth = 125;
-	}
-
-	if (BG_IsSkillAvailable(client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
-	{
-		client->pers.maxHealth += 15;
-	}
-
-	if (client->sess.playerType == PC_MEDIC)
-	{
-		client->pers.maxHealth *= 1.12;
-	}
-
-	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
-}
-
-/**
- * @brief G_CountTeamFieldops
- * @param[in] team
- * @param[in] alivecheck
- * @return
- */
-int G_CountTeamFieldops(team_t team)
-{
-	int numFieldops = 0;
-	int i, j;
-
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		j = level.sortedClients[i];
-
-		if (level.clients[j].sess.sessionTeam != team)
-		{
-			continue;
-		}
-
-		if (level.clients[j].sess.playerType != PC_FIELDOPS)
-		{
-			continue;
-		}
-
-		numFieldops++;
-	}
-
-	return numFieldops;
-}
-
-/**
  * @brief ClientCleanName
  * @param[in] in
  * @param[out] out
@@ -977,7 +590,7 @@ char *CheckUserinfo(int clientNum, char *userinfo)
 }
 
 /**
- * @brief Called from ClientConnect when the player first connects and
+ * @brief Called from TVClientConnect when the player first connects and
  * directly by the server system when the player updates a userinfo variable.
  *
  * The game can override any of the settings and call trap_SetUserinfo
@@ -985,7 +598,7 @@ char *CheckUserinfo(int clientNum, char *userinfo)
  *
  * @param[in] clientNum
  */
-void ClientUserinfoChanged(int clientNum)
+void TVClientUserinfoChanged(int clientNum)
 {
 	gclient_t  *client = level.clients + clientNum;
 	int        i;
@@ -1009,7 +622,7 @@ void ClientUserinfoChanged(int clientNum)
 	reason = CheckUserinfo(clientNum, userinfo);
 	if (reason)
 	{
-		G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
+		G_Printf("TVClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
 		trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 0);
 		return;
 	}
@@ -1027,7 +640,7 @@ void ClientUserinfoChanged(int clientNum)
 		if (qfalse == Info_NextPair(&userinfo_ptr, cs_key, cs_value))
 		{
 			// This would only happen if the end user is trying to manually modify the user info string
-			G_Printf("ClientUserinfoChanged: client %d hacking clientinfo, empty key found!\n", clientNum);
+			G_Printf("TVClientUserinfoChanged: client %d hacking clientinfo, empty key found!\n", clientNum);
 			trap_DropClient(clientNum, "Bad userinfo.", 0);
 			return;
 		}
@@ -1045,7 +658,7 @@ void ClientUserinfoChanged(int clientNum)
 			if (CompareIPNoPort(client->pers.client_ip, cs_value) == qfalse)
 			{
 				// They're trying to hack their ip address....
-				G_Printf("ClientUserinfoChanged: client %d hacking ip, old=%s, new=%s\n", clientNum, client->pers.client_ip, cs_value);
+				G_Printf("TVClientUserinfoChanged: client %d hacking ip, old=%s, new=%s\n", clientNum, client->pers.client_ip, cs_value);
 				trap_DropClient(clientNum, "Bad userinfo.", 0);
 				return;
 			}
@@ -1079,7 +692,7 @@ void ClientUserinfoChanged(int clientNum)
 			if (strlen(cs_value) >= MAX_NETNAME)
 			{
 				// They're trying long names
-				G_Printf("ClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+				G_Printf("TVClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 				trap_DropClient(clientNum, va("Name too long (>%d). Plase change your name.", MAX_NETNAME - 1), 0);
 				return;
 			}
@@ -1093,7 +706,7 @@ void ClientUserinfoChanged(int clientNum)
 					// extended ASCII chars have values between -128 and 0 (signed char) and the ASCII code flags are 0-31
 					if (cs_value[i] < 32)
 					{
-						G_Printf("ClientUserinfoChanged: client %d kicked for extended ASCII characters name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+						G_Printf("TVClientUserinfoChanged: client %d kicked for extended ASCII characters name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 						trap_DropClient(clientNum, "Server does not allow extended ASCII characters. Please change your name.", 0);
 						return;
 					}
@@ -1105,7 +718,7 @@ void ClientUserinfoChanged(int clientNum)
 			if (strcmp(client->pers.cl_guid, cs_value))
 			{
 				// They're trying to hack their guid...
-				G_Printf("ClientUserinfoChanged: client %d hacking cl_guid, old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+				G_Printf("TVClientUserinfoChanged: client %d hacking cl_guid, old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 				trap_DropClient(clientNum, "Bad userinfo.", 0);
 				return;
 			}
@@ -1127,8 +740,8 @@ void ClientUserinfoChanged(int clientNum)
 		Info_SetValueForKey(userinfo, "name", cs_name);
 		trap_SetUserinfo(clientNum, userinfo);
 		//CP("cp \"You cannot assign an empty playername! Your name has been reset.\"");
-		G_LogPrintf("ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
-		G_DPrintf("ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
+		G_LogPrintf("TVClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
+		G_DPrintf("TVClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
 	}
 
 	client->medals = 0;
@@ -1141,7 +754,7 @@ void ClientUserinfoChanged(int clientNum)
 	if (!Info_Validate(userinfo))
 	{
 		Q_strncpyz(userinfo, "\\name\\badinfo", sizeof(userinfo));
-		G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: Invalid userinfo\n", clientNum);
+		G_Printf("TVClientUserinfoChanged: CheckUserinfo: client %d: Invalid userinfo\n", clientNum);
 		trap_DropClient(clientNum, "Invalid userinfo", 300);
 		return;
 	}
@@ -1260,8 +873,8 @@ void ClientUserinfoChanged(int clientNum)
 	       client->sess.shoutcaster
 	       );
 
-	G_LogPrintf("ClientUserinfoChanged: %i %s\n", clientNum, s);
-	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, s);
+	G_LogPrintf("TVClientUserinfoChanged: %i %s\n", clientNum, s);
+	G_DPrintf("TVClientUserinfoChanged: %i :: %s\n", clientNum, s);
 }
 
 /**
@@ -1274,7 +887,7 @@ void ClientUserinfoChanged(int clientNum)
  * a string with the reason for denial.
  *
  * Otherwise, the client will be sent the current gamestate
- * and will eventually get to ClientBegin.
+ * and will eventually get to TVClientBegin.
  *
  * @param[in] clientNum
  * @param[in] firstTime will be qtrue the very first time a client connects to the server machine, but qfalse on map changes and tournement restarts.
@@ -1283,7 +896,7 @@ void ClientUserinfoChanged(int clientNum)
  * @return NULL if the client should be allowed, otherwise return
  * a string with the reason for denial.
  */
-char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
+char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 {
 	gclient_t  *client = level.clients + clientNum;
 	const char *userinfo_ptr;
@@ -1399,7 +1012,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		G_LogPrintf("Forcing disconnect on active client: %i\n", (int)(client - level.clients));
 		// so lets just fix up anything that should happen on a disconnect
-		ClientDisconnect(client - level.clients);
+		TVClientDisconnect(client - level.clients);
 	}
 
 	Com_Memset(client, 0, sizeof(*client));
@@ -1451,7 +1064,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	// get and distribute relevent paramters
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
 
-	ClientUserinfoChanged(clientNum);
+	TVClientUserinfoChanged(clientNum);
 
 	// don't do the "xxx connected" messages if they were caried over from previous level
 	// disabled for bots - see join message ... make cvar ?
@@ -1470,43 +1083,13 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 }
 
 /**
- * @brief Scaling for late-joiners of maxlives based on current game time
- * @param cl - unused
- * @param[in] maxRespawns
- * @return
- */
-int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
-{
-	float scaled;
-	int   val;
-
-	// don't scale of the timelimit is 0
-	if (g_timelimit.value == 0.0f) // map end
-	{
-		return maxRespawns - 1;
-	}
-
-	if (g_gamestate.integer != GS_PLAYING) // warmup
-	{
-		return maxRespawns - 1;
-	}
-
-	scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
-	val    = (int)scaled;
-
-	val += ((scaled - (float)val) < 0.5f) ? 0 : 1;
-
-	return val;
-}
-
-/**
  * @brief Called when a client has finished connecting, and is ready
  * to be placed into the level.  This will happen every level load,
  * and on transition between teams, but doesn't happen on respawns
  *
  * @param[in] clientNum
  */
-void ClientBegin(int clientNum)
+void TVClientBegin(int clientNum)
 {
 	gclient_t *client = level.clients + clientNum;
 	int       flags;
@@ -1547,7 +1130,7 @@ void ClientBegin(int clientNum)
 		client->ps.stats[STAT_XP] = stat_xp;
 	}
 
-	if (g_gamestate.integer == GS_INTERMISSION)
+	if (level.intermission)
 	{
 		client->ps.pm_type = PM_INTERMISSION;
 	}
@@ -1578,7 +1161,7 @@ void ClientBegin(int clientNum)
 		//G_clientFlagIndicator(ent);
 	}
 
-	ClientSpawn(client, qfalse, qtrue, qtrue);
+	TVClientSpawn(client);
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
@@ -1596,105 +1179,15 @@ void ClientBegin(int clientNum)
 		trap_SendServerCommand(-1, va("print \"[lof]" S_COLOR_WHITE "%s" S_COLOR_WHITE " [lon]entered the game\n\"", client->pers.netname));
 	}
 
-	G_LogPrintf("ClientBegin: %i\n", clientNum);
+	G_LogPrintf("TVClientBegin: %i\n", clientNum);
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
 }
 
-#if 0 // not used
-
-#define MAX_SPAWNPOINTFROMLIST_POINTS   16
-
-/**
- * @brief SelectSpawnPointFromList
- * @param[in] list
- * @param[out] spawn_origin
- * @param[out] spawn_angles
- * @return
- *
- * @note Unused
- */
-gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
-{
-	char      *pStr = list, *token;
-	gentity_t *spawnPoint = NULL, *trav;
-	int       valid[MAX_SPAWNPOINTFROMLIST_POINTS];
-	int       numValid = 0;
-
-	Com_Memset(valid, 0, sizeof(valid));
-
-	while ((token = COM_Parse(&pStr)) != NULL && token[0])
-	{
-		trav = g_entities + level.maxclients;
-		while ((trav = G_FindByTargetname(trav, token)) != NULL)
-		{
-			if (!spawnPoint)
-			{
-				spawnPoint = trav;
-			}
-			if (!SpotWouldTelefrag(trav))
-			{
-				valid[numValid++] = trav->s.number;
-				if (numValid >= MAX_SPAWNPOINTFROMLIST_POINTS)
-				{
-					break;
-				}
-			}
-		}
-	}
-
-	if (numValid)
-	{
-		spawnPoint = &g_entities[valid[rand() % numValid]];
-
-		// Set the origin of where the bot will spawn
-		VectorCopy(spawnPoint->r.currentOrigin, spawn_origin);
-		spawn_origin[2] += 9;
-
-		// Set the angle we'll spawn in to
-		VectorCopy(spawnPoint->s.angles, spawn_angles);
-	}
-
-	return spawnPoint;
-}
-
-/**
- * @brief G_CheckVersion
- * @param ent
- * @return
- *
- * @note Unused
- */
-static char *G_CheckVersion(gentity_t *ent)
-{
-	// Check cgame version against qagame's one
-
-	char userinfo[MAX_INFO_STRING];
-	char *s;
-
-	trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-	s = Info_ValueForKey(userinfo, "cg_legacyVersion");
-	if (!s || strcmp(s, LEGACY_VERSION))
-	{
-		return(s);
-	}
-	return NULL;
-}
-#endif
-
-static qboolean isMortalSelfDamage(gentity_t *ent)
-{
-	return (
-		(ent->enemy && ent->enemy->s.number >= MAX_CLIENTS) // worldkill
-		|| (ent->enemy == ent) // selfkill
-		|| OnSameTeam(ent->enemy, ent) // teamkill
-		);
-}
-
 /**
  * @brief Called every time a client is placed fresh in the world:
- * after the first ClientBegin, and after each respawn
+ * after the first TVClientBegin, and after each respawn
  * Initializes all non-persistant parts of playerState
  *
  * @param[in,out] ent
@@ -1702,7 +1195,7 @@ static qboolean isMortalSelfDamage(gentity_t *ent)
  * @param[in] teamChange
  * @param[in] restoreHealth
  */
-void ClientSpawn(gclient_t *client, qboolean revived, qboolean teamChange, qboolean restoreHealth)
+void TVClientSpawn(gclient_t *client)
 {
 	int                index = client - level.clients;
 	vec3_t             spawn_origin, spawn_angles;
@@ -1715,10 +1208,6 @@ void ClientSpawn(gclient_t *client, qboolean revived, qboolean teamChange, qbool
 	int                savedPing;
 	int                savedTeam;
 	int                savedDeathTime;
-	int                oldWeapon, oldNextWeapon, oldWeaponstate, oldSilencedSideArm;
-	int                oldAmmo[MAX_WEAPONS];                          // total amount of ammo
-	int                oldAmmoclip[MAX_WEAPONS];                      // ammo in clip
-	int                oldWeapons[MAX_WEAPONS / (sizeof(int) * 8)];   // 64 bits for weapons held
 
 	client->pers.lastSpawnTime            = level.time;
 	client->pers.lastBattleSenseBonusTime = level.timeCurrent;
@@ -1734,12 +1223,7 @@ void ClientSpawn(gclient_t *client, qboolean revived, qboolean teamChange, qbool
 
 	flags |= (client->ps.eFlags & EF_VOTED);
 
-	if (!teamChange)
-	{
-		flags |= (client->ps.eFlags & EF_READY);
-	}
 	// clear everything but the persistant data
-
 	savedPers      = client->pers;
 	savedSess      = client->sess;
 	savedPing      = client->ps.ping;
@@ -1765,10 +1249,7 @@ void ClientSpawn(gclient_t *client, qboolean revived, qboolean teamChange, qbool
 	client->ps.teamNum        = savedTeam;
 	client->disguiseClientNum = -1;
 
-	if (g_gamestate.integer == GS_INTERMISSION)
-	{
-		client->ps.pm_type = PM_INTERMISSION;
-	}
+	client->ps.pm_type = level.ettvMasterPs.pm_type;
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -1821,13 +1302,11 @@ void ClientSpawn(gclient_t *client, qboolean revived, qboolean teamChange, qbool
 
 	trap_GetUsercmd(index, &client->pers.cmd);
 
-	// increases stats[STAT_MAX_HEALTH] based on # of medics in game
-	AddMedicTeamBonus(client);
-
 	// client has (almost) no say in weapon selection when spawning
 	client->pers.cmd.weapon = client->ps.weapon;
 
-	client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH];
+	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth = 100;
+	client->ps.stats[STAT_HEALTH]     = client->ps.stats[STAT_MAX_HEALTH];
 
 	VectorCopy(spawn_origin, client->ps.origin);
 
@@ -1844,27 +1323,15 @@ void ClientSpawn(gclient_t *client, qboolean revived, qboolean teamChange, qbool
 	client->latched_wbuttons      = 0;
 	client->deathTime             = 0;
 
-	//if (level.intermissiontime)
-	//{
-	//	MoveClientToIntermission(ent, (EF_VOTED & client->ps.eFlags));
-
-	//	// send current mapvote tally
-	//	if (g_gametype.integer == GT_WOLF_MAPVOTE)
-	//	{
-	//		G_IntermissionVoteTally(ent);
-	//	}
-	//}
-	//else
-
 	// run a client frame to drop exactly to the floor,
 	// initialize animations and other things
 	client->ps.commandTime      = level.time - 100;
 	client->pers.cmd.serverTime = level.time;
 
-	ClientThink(index);
+	TVClientThink(index);
 
 	// run the presend to set anything else
-	ClientEndFrame(client);
+	TVClientEndFrame(client);
 
 	// set idle animation on weapon
 	client->ps.weapAnim = ((client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;
@@ -1880,7 +1347,7 @@ void ClientSpawn(gclient_t *client, qboolean revived, qboolean teamChange, qbool
  *
  * @param[in] clientNum
  */
-void ClientDisconnect(int clientNum)
+void TVClientDisconnect(int clientNum)
 {
 	gentity_t *ent  = g_entities + clientNum;
 	gentity_t *flag = NULL;
@@ -1914,7 +1381,7 @@ void ClientDisconnect(int clientNum)
 	//	}
 	//}
 
-	G_LogPrintf("ClientDisconnect: %i\n", clientNum);
+	G_LogPrintf("TVClientDisconnect: %i\n", clientNum);
 
 	trap_UnlinkEntity(ent);
 	ent->s.modelindex                      = 0;
@@ -1947,6 +1414,5 @@ void ClientDisconnect(int clientNum)
  */
 void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags)
 {
-	// Store the surface flags
-	g_entities[clientNum].surfaceFlags = surfaceFlags;
+
 }

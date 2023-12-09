@@ -90,11 +90,11 @@ void G_PrintAccuracyLog(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void G_BuildEndgameStats(void)
 {
-	char      buffer[1024];
-	int       i, j;
-	gclient_t *best         = NULL;
-	int       bestClientNum = -1;
-	float     mapXP, bestMapXP = 0.f;
+	//char      buffer[1024];
+	//int       i, j;
+	//gclient_t *best         = NULL;
+	//int       bestClientNum = -1;
+	//float     mapXP, bestMapXP = 0.f;
 
 //	G_CalcClientAccuracies();
 //

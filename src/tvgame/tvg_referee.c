@@ -164,7 +164,7 @@ void TVG_ref_cmd(gclient_t *client, unsigned int dwCommand, int value)
 		client->sess.referee     = 1;
 		client->sess.spec_invite = TEAM_AXIS | TEAM_ALLIES;
 		AP(va("cp \"%s\n^3has become a referee\n\"", client->pers.netname));
-		ClientUserinfoChanged(client - level.clients);
+		TVClientUserinfoChanged(client - level.clients);
 	}
 }
 
@@ -249,7 +249,7 @@ void TVG_refMute_cmd(gclient_t *client, qboolean mute)
 		player->sess.muted = qfalse;
 		G_Printf("\"%s^*\" has been unmuted\n", player->pers.netname);
 	}
-	ClientUserinfoChanged(pid);
+	TVClientUserinfoChanged(pid);
 }
 
 /**
@@ -261,7 +261,7 @@ void TVG_refLogout_cmd(gclient_t *client)
 	if (client && client->sess.referee == RL_REFEREE)
 	{
 		client->sess.referee = RL_NONE;
-		ClientUserinfoChanged(client - level.clients);
+		TVClientUserinfoChanged(client - level.clients);
 		CP("print \"You have been logged out\n\"");
 	}
 }
@@ -358,7 +358,7 @@ void G_MakeReferee()
 				trap_SendServerCommand(cnum, va("cpm \"^2You have been un-muted\""));
 				level.clients[cnum].sess.muted = qfalse;
 			}
-			ClientUserinfoChanged(cnum);
+			TVClientUserinfoChanged(cnum);
 		}
 		else
 		{
@@ -391,7 +391,7 @@ void G_RemoveReferee()
 		{
 			level.clients[cnum].sess.referee = RL_NONE;
 			G_Printf("%s is no longer a referee.\n", cmd);
-			ClientUserinfoChanged(cnum);
+			TVClientUserinfoChanged(cnum);
 		}
 		else
 		{
@@ -425,7 +425,7 @@ void G_MuteClient()
 			trap_SendServerCommand(cnum, va("cpm \"^3You have been muted\""));
 			level.clients[cnum].sess.muted = qtrue;
 			G_Printf("%s^* has been muted\n", cmd);
-			ClientUserinfoChanged(cnum);
+			TVClientUserinfoChanged(cnum);
 		}
 		else
 		{
@@ -459,7 +459,7 @@ void G_UnMuteClient()
 			trap_SendServerCommand(cnum, va("cpm \"^2You have been un-muted\""));
 			level.clients[cnum].sess.muted = qfalse;
 			G_Printf("%s has been un-muted\n", cmd);
-			ClientUserinfoChanged(cnum);
+			TVClientUserinfoChanged(cnum);
 		}
 		else
 		{

@@ -213,33 +213,6 @@ void G_TempTraceIgnoreEntities(gentity_t *ent)
 }
 
 /**
- * @brief AngleDifference
- * @param[in] ang1
- * @param[in] ang2
- * @return
- */
-float AngleDifference(float ang1, float ang2)
-{
-	float diff = ang1 - ang2;
-
-	if (ang1 > ang2)
-	{
-		if (diff > 180.0f)
-		{
-			diff -= 360.0f;
-		}
-	}
-	else
-	{
-		if (diff < -180.0f)
-		{
-			diff += 360.0f;
-		}
-	}
-	return diff;
-}
-
-/**
  * @brief ClientName
  * @param[in] client
  * @param[out] name

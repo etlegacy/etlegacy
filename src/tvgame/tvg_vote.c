@@ -479,7 +479,7 @@ int G_Mute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 			trap_SendServerCommand(pid, va("cpm \"^3You have been muted\""));
 			level.clients[pid].sess.muted = qtrue;
 			AP(va("cp \"%s\n^3has been muted!\n\"", level.clients[pid].pers.netname));
-			ClientUserinfoChanged(pid);
+			TVClientUserinfoChanged(pid);
 		}
 		else
 		{
@@ -547,7 +547,7 @@ int G_UnMute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 			trap_SendServerCommand(pid, va("cpm \"^3You have been un-muted\""));
 			level.clients[pid].sess.muted = qfalse;
 			AP(va("cp \"%s\n^3has been un-muted!\n\"", level.clients[pid].pers.netname));
-			ClientUserinfoChanged(pid);
+			TVClientUserinfoChanged(pid);
 		}
 		else
 		{
@@ -658,7 +658,7 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 			cl->sess.referee     = RL_REFEREE; // FIXME: Differentiate voted refs from passworded refs
 			cl->sess.spec_invite = TEAM_AXIS | TEAM_ALLIES;
 			AP(va("cp \"%s^7 is now a referee\n\"", cl->pers.netname));
-			ClientUserinfoChanged(atoi(level.voteInfo.vote_value));
+			TVClientUserinfoChanged(atoi(level.voteInfo.vote_value));
 		}
 	}
 	return G_OK;
@@ -739,7 +739,7 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 			cl->sess.spec_invite = 0;
 		}
 		AP(va("cp \"%s^7\nis no longer a referee\n\"", cl->pers.netname));
-		ClientUserinfoChanged(atoi(level.voteInfo.vote_value));
+		TVClientUserinfoChanged(atoi(level.voteInfo.vote_value));
 	}
 
 	return G_OK;
@@ -837,125 +837,43 @@ void G_IntermissionMapVote(gentity_t *ent, unsigned int dwCommand, int value)
 }
 
 /**
- * @brief G_IntermissionMapList
- * @param[in] ent
+ * @brief TVG_IntermissionMapList
+ * @param[in] client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void G_IntermissionMapList(gentity_t *ent, unsigned int dwCommand, int value)
+void TVG_IntermissionMapList(gclient_t *client, unsigned int dwCommand, int value)
 {
-	int  i;
-	char mapList[MAX_STRING_CHARS] = { 0 };
-	int  maxMaps;
-
-	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
+	if (level.cmds.immaplistValid)
 	{
-		return;
+		trap_SendServerCommand(client - level.clients, level.cmds.immaplist);
 	}
-
-	maxMaps = g_maxMapsVotedFor.integer;
-	if (maxMaps > level.mapVoteNumMaps)
-	{
-		maxMaps = level.mapVoteNumMaps;
-	}
-
-	Q_strncpyz(mapList, va("immaplist %d ", (g_mapVoteFlags.integer & MAPVOTE_MULTI_VOTE)), MAX_STRING_CHARS);
-
-	for (i = 0; i < maxMaps; i++)
-	{
-		{
-			Q_strcat(mapList, MAX_STRING_CHARS,
-			         va("%s %d %d %d ",
-			            level.mapvoteinfo[level.sortedMaps[i]].bspName,
-			            level.sortedMaps[i],
-			            level.mapvoteinfo[level.sortedMaps[i]].lastPlayed,
-			            level.mapvoteinfo[level.sortedMaps[i]].timesPlayed
-			            ));
-		}
-	}
-
-	trap_SendServerCommand(ent - g_entities, mapList);
-	return;
 }
 
 /**
- * @brief G_IntermissionMapList
- * @param[in] ent
+ * @brief TVG_IntermissionMapHistory
+ * @param[in] client
  * @param dwCommand - unused
  * @param value    - unused
  */
-void G_IntermissionMapHistory(gentity_t *ent, unsigned int dwCommand, int value)
+void TVG_IntermissionMapHistory(gclient_t *client, unsigned int dwCommand, int value)
 {
-	int  i;
-	char mapHistory[MAX_STRING_CHARS] = "immaphistory";
-
-	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
+	if (level.cmds.immaphistoryValid)
 	{
-		return;
+		trap_SendServerCommand(client - level.clients, level.cmds.immaphistory);
 	}
-
-	for (i = 0; i < level.mapvotehistorycount; i++)
-	{
-		Q_strcat(mapHistory, MAX_STRING_CHARS, va(" %d", level.mapvotehistorysortedindex[i]));
-	}
-
-	trap_SendServerCommand(ent - g_entities, mapHistory);
-	return;
 }
 
 /**
- * @brief G_IntermissionVoteTally
- * @param[in] ent
+ * @brief TVG_IntermissionVoteTally
+ * @param[in] client
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void G_IntermissionVoteTally(gentity_t *ent)
+void TVG_IntermissionVoteTally(gclient_t *client, unsigned int dwCommand, int value)
 {
-	int  i;
-	char voteTally[MAX_STRING_CHARS];
-	int  maxMaps;
-	int  voterCount;
-
-	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
+	if (level.cmds.imvotetallyValid)
 	{
-		return;
+		trap_SendServerCommand(client - level.clients, level.cmds.imvotetally);
 	}
-
-	maxMaps = g_maxMapsVotedFor.integer;
-	if (maxMaps > level.mapVoteNumMaps)
-	{
-		maxMaps = level.mapVoteNumMaps;
-	}
-
-	Q_strncpyz(voteTally, "imvotetally", MAX_STRING_CHARS);
-
-	// count the numbers of players which casted a vote
-	for (i = 0, voterCount = 0; i < level.numConnectedClients; ++i)
-	{
-		if (level.clients[level.sortedClients[i]].ps.eFlags & EF_VOTED)
-		{
-			++voterCount;
-		}
-	}
-
-	Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", voterCount));
-	Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", level.numHumanConnectedClients));
-	Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", g_minMapAge.integer));
-
-	for (i = 0; i < maxMaps; i++)
-	{
-		Q_strcat(voteTally, MAX_STRING_CHARS, va(" %d", level.mapvoteinfo[level.sortedMaps[i]].numVotes));
-	}
-
-	// when argument "ent" == NULL, the votetally should be send to all players..
-	if (ent)
-	{
-		trap_SendServerCommand(ent - g_entities, voteTally);
-	}
-	else
-	{
-		for (i = 0; i < level.numConnectedClients; ++i)
-		{
-			trap_SendServerCommand(level.sortedClients[i], voteTally);
-		}
-	}
-	return;
 }

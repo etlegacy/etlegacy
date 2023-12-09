@@ -402,12 +402,12 @@ void ClientIntermissionThink(gclient_t *client)
  * If "g_synchronousClients 1" is set, this will be called exactly
  * once for each server frame, which makes for smooth demo recording.
  *
- * @param[in,out] ent Entity
+ * @param[in] client
  */
-void ClientThink_real(gclient_t *client)
+void TVClientThink_real(gclient_t *client)
 {
 	usercmd_t *ucmd;
-	int msec;
+	int msec, i;
 
 	// don't think if the client is not yet connected (and thus not yet spawned in)
 	if (client->pers.connected != CON_CONNECTED)
@@ -421,7 +421,6 @@ void ClientThink_real(gclient_t *client)
 	ucmd = &client->pers.cmd;
 
 	client->ps.identifyClient = ucmd->identClient;
-	client->lastUpdateFrame   = level.framenum;
 
 	// sanity check the command time to prevent speedup cheating
 	if (ucmd->serverTime > level.time + 200)
@@ -432,8 +431,6 @@ void ClientThink_real(gclient_t *client)
 	{
 		ucmd->serverTime = level.time - 1000;
 	}
-
-	client->frameOffset = trap_Milliseconds() - level.frameStartTime;
 
 	msec = ucmd->serverTime - client->ps.commandTime;
 	// following others may result in bad times, but we still want
@@ -466,11 +463,11 @@ void ClientThink_real(gclient_t *client)
 	}
 
 	// check for exiting intermission
-	if (level.intermissiontime)
-	{
-		ClientIntermissionThink(client);
-		return;
-	}
+	//if (level.intermissiontime)
+	//{
+	//	ClientIntermissionThink(client);
+	//	return;
+	//}
 
 	// check for inactivity timer, but never drop the local client of a non-dedicated server
 	// moved here to allow for spec inactivity checks as well
@@ -479,11 +476,14 @@ void ClientThink_real(gclient_t *client)
 		return;
 	}
 
-	/*if (!(ent->r.svFlags & SVF_BOT) && level.time - client->pers.lastCCPulseTime > 1000)
+	for (i = 0; i < INFO_NUM; i++)
 	{
-		G_SendMapEntityInfo(ent);
-		client->pers.lastCCPulseTime = level.time;
-	}*/
+		if (client->wantsInfoStats[i].requested && level.cmds.infoStats[i].valid[client->wantsInfoStats[i].requestedClientNum])
+		{
+			trap_SendServerCommand(client - level.clients, level.cmds.infoStats[i].data[client->wantsInfoStats[i].requestedClientNum]);
+			client->wantsInfoStats[i].requested = qfalse;
+		}
+	}
 
 	// spectators don't do much
 	// In limbo use SpectatorThink
@@ -499,137 +499,43 @@ void ClientThink_real(gclient_t *client)
  * @param[in,out] client
  * @param[in]     cmd User Command
  */
-void ClientThink_cmd(gclient_t *client, usercmd_t *cmd)
+void TVClientThink_cmd(gclient_t *client, usercmd_t *cmd)
 {
 	client->pers.oldcmd = client->pers.cmd;
 	client->pers.cmd    = *cmd;
-	ClientThink_real(client);
+	TVClientThink_real(client);
 }
 
 /**
  * @brief A new command has arrived from the client
  * @param[in] clientNum Client Number from 0 to MAX_CLIENTS
  */
-void ClientThink(int clientNum)
+void TVClientThink(int clientNum)
 {
 	gclient_t *client = level.clients + clientNum;
 	usercmd_t newcmd;
 
 	trap_GetUsercmd(clientNum, &newcmd);
-	ClientThink_cmd(client, &newcmd);
+	TVClientThink_cmd(client, &newcmd);
 }
 
 /**
- * @brief SpectatorClientEndFrame
- * @param[in,out] ent Spectator Entity
+ * @brief TVSpectatorClientEndFrame
+ * @param[in,out] client
  */
-void SpectatorClientEndFrame(gclient_t *client)
+void TVSpectatorClientEndFrame(gclient_t *client)
 {
-//#ifdef FEATURE_MULTIVIEW
-//	// specs periodically get score updates for useful demo playback info
-//	if (/*ent->client->pers.mvCount > 0 &&*/ client->pers.mvScoreUpdate < level.time && level.demoState != DS_PLAYBACK)
-//	{
-//		client->pers.mvScoreUpdate = level.time + MV_SCOREUPDATE_INTERVAL;
-//		client->wantsscore         = qtrue;
-//	}
-//#endif
-
-	//client->ps.pm_type = level.ettvMasterPs.pm_type;
-
-	// do this to keep current xp of spectators up to date especially on first connect to get xpsave state in limbo
-	if (client->sess.spectatorState == SPECTATOR_FREE)
+	if (level.intermission)
 	{
-		int i;
-		client->ps.stats[STAT_XP] = 0;
-
-		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-		    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
-		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
-		{
-			for (i = 0; i < SK_NUM_SKILLS; ++i)
-			{
-				client->ps.stats[STAT_XP] += client->sess.skillpoints[i];
-			}
-		}
-		else
-		{
-			for (i = 0; i < SK_NUM_SKILLS; ++i)
-			{
-				// current map XPs only
-				client->ps.stats[STAT_XP] += client->sess.skillpoints[i] - client->sess.startskillpoints[i];
-			}
-		}
+		client->ps.pm_type = PM_INTERMISSION;
+		VectorCopy(level.ettvMasterPs.origin, client->ps.origin);
+		VectorCopy(level.ettvMasterPs.viewangles, client->ps.viewangles);
 	}
 
 	// if we are doing a chase cam or a remote view, grab the latest info
 	if (client->sess.spectatorState == SPECTATOR_FOLLOW || (client->ps.pm_flags & PMF_LIMBO))
 	{
-		int       testtime;
-		gclient_t *cl;
-		qboolean  do_respawn = qfalse;
-
-		// Players can respawn quickly in warmup
-		if (g_gamestate.integer != GS_PLAYING && client->respawnTime <= level.timeCurrent &&
-		    client->sess.sessionTeam != TEAM_SPECTATOR)
-		{
-			do_respawn = qtrue;
-		}
-		else if (client->sess.sessionTeam == TEAM_AXIS)
-		{
-			testtime                            = (level.dwRedReinfOffset + level.timeCurrent - level.startTime) % g_redlimbotime.integer;
-			do_respawn                          = (testtime < client->pers.lastReinforceTime);
-			client->pers.lastReinforceTime = testtime;
-		}
-		else if (client->sess.sessionTeam == TEAM_ALLIES)
-		{
-			testtime                            = (level.dwBlueReinfOffset + level.timeCurrent - level.startTime) % g_bluelimbotime.integer;
-			do_respawn                          = (testtime < client->pers.lastReinforceTime);
-			client->pers.lastReinforceTime = testtime;
-		}
-
-		if (g_gametype.integer != GT_WOLF_LMS && g_gamestate.integer == GS_PLAYING)
-		{
-			if ((g_maxlives.integer > 0 || g_alliedmaxlives.integer > 0 || g_axismaxlives.integer > 0)
-			    && client->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
-			{
-				if (do_respawn)
-				{
-					if (g_maxlivesRespawnPenalty.integer)
-					{
-						if (client->ps.persistant[PERS_RESPAWNS_PENALTY] > 0)
-						{
-							client->ps.persistant[PERS_RESPAWNS_PENALTY]--;
-							do_respawn = qfalse;
-						}
-					}
-					else
-					{
-						do_respawn = qfalse;
-					}
-				}
-			}
-		}
-
-		if (g_gametype.integer == GT_WOLF_LMS && g_gamestate.integer == GS_PLAYING)
-		{
-			// Force respawn in LMS when nobody is playing and we aren't at the timelimit yet
-			if (!level.teamEliminateTime &&
-			    level.numTeamClients[0] == level.numFinalDead[0] && level.numTeamClients[1] == level.numFinalDead[1] &&
-			    client->respawnTime <= level.timeCurrent && client->sess.sessionTeam != TEAM_SPECTATOR)
-			{
-				do_respawn = qtrue;
-			}
-			else
-			{
-				do_respawn = qfalse;
-			}
-		}
-
-		if (do_respawn)
-		{
-			//reinforce(ent);
-			return;
-		}
+		gclient_t *cl;	
 
 		if (client->sess.spectatorClient >= 0)
 		{
@@ -637,59 +543,33 @@ void SpectatorClientEndFrame(gclient_t *client)
 			if (level.ettvMasterClients[client->sess.spectatorClient].valid)
 			{
 				playerState_t *ps = &level.ettvMasterClients[client->sess.spectatorClient].ps;
-				int flags = (ps->eFlags & ~(EF_VOTED | EF_READY)) | (client->ps.eFlags & (EF_VOTED | EF_READY));
-				int ping  = client->ps.ping;
+				int flags      = (ps->eFlags & ~(EF_VOTED | EF_READY)) | (client->ps.eFlags & (EF_VOTED | EF_READY));
+				int ping       = client->ps.ping;
+			    int savedScore = client->ps.persistant[PERS_SCORE];
 
-				if (client->sess.sessionTeam != TEAM_SPECTATOR && (client->ps.pm_flags & PMF_LIMBO))
-				{
-					int savedScore          = client->ps.persistant[PERS_SCORE];
-					int savedRespawns       = client->ps.persistant[PERS_RESPAWNS_LEFT];
-					int savedRespawnPenalty = client->ps.persistant[PERS_RESPAWNS_PENALTY];
-					int savedClass          = client->ps.stats[STAT_PLAYER_CLASS];
-
-					do_respawn = client->ps.pm_time;
-
-					client->ps           = *ps;
-					client->ps.pm_flags |= PMF_FOLLOW;
-					client->ps.pm_flags |= PMF_LIMBO;
-
-					client->ps.pm_time                           = do_respawn; // put pm_time back
-					client->ps.persistant[PERS_RESPAWNS_LEFT]    = savedRespawns;
-					client->ps.persistant[PERS_RESPAWNS_PENALTY] = savedRespawnPenalty;
-					client->ps.persistant[PERS_SCORE]            = savedScore; // put score back
-
-					client->ps.stats[STAT_PLAYER_CLASS] = savedClass;          //  put player class back
-				}
-				else
-				{
-					int savedScore = client->ps.persistant[PERS_SCORE];
-
-					client->ps                        = *ps;
-					client->ps.pm_flags              |= PMF_FOLLOW;
-					client->ps.persistant[PERS_SCORE] = savedScore;
-				}
-
-				// carry flags over
-				client->ps.eFlags = flags;
-				client->ps.ping   = ping;
+				client->ps                        = *ps;
+				client->ps.pm_flags              |= PMF_FOLLOW;
+				client->ps.persistant[PERS_SCORE] = savedScore;
+				client->ps.eFlags                 = flags;
+				client->ps.ping                   = ping;
 
 				return;
 			}
 		}
 
 		client->sess.spectatorState = SPECTATOR_FREE;
-		ClientBegin(client - level.clients);
+		TVClientBegin(client - level.clients);
 	}
 }
 
 /**
  * @brief Called at the end of each server frame for each connected client
- * A fast client will have multiple ClientThink for each ClientEndFrame,
- * while a slow client may have multiple ClientEndFrame between ClientThink.
+ * A fast client will have multiple TVClientThink for each TVClientEndFrame,
+ * while a slow client may have multiple TVClientEndFrame between TVClientThink.
  *
  * @param[in,out] ent Entity
  */
-void ClientEndFrame(gclient_t *client)
+void TVClientEndFrame(gclient_t *client)
 {
 	if (g_gamestate.integer == GS_PLAYING && level.match_pause == PAUSE_NONE)
 	{
@@ -732,6 +612,6 @@ void ClientEndFrame(gclient_t *client)
 
 	if ((client->sess.sessionTeam == TEAM_SPECTATOR) || (client->ps.pm_flags & PMF_LIMBO))
 	{
-		SpectatorClientEndFrame(client);
+		TVSpectatorClientEndFrame(client);
 	}
 }

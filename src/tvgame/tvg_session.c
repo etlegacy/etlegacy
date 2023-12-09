@@ -379,7 +379,7 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 	sess->rank         = 0;
 	sess->startxptotal = 0;
 
-	// we set ref in ClientUserinfoChanged
+	// we set ref in TVClientUserinfoChanged
 	sess->referee     = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
 	sess->spec_invite = 0;
 	sess->spec_team   = 0;

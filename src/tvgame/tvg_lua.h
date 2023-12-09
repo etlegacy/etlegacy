@@ -150,7 +150,7 @@ qboolean G_LuaHook_ClientConnect(int clientNum, qboolean firstTime, qboolean isB
 void G_LuaHook_ClientDisconnect(int clientNum);
 void G_LuaHook_ClientBegin(int clientNum);
 void G_LuaHook_ClientUserinfoChanged(int clientNum);
-void G_LuaHook_ClientSpawn(int clientNum, qboolean revived, qboolean teamChange, qboolean restoreHealth);
+void G_LuaHook_ClientSpawn(int clientNum);
 qboolean G_LuaHook_ClientCommand(int clientNum, char *command);
 qboolean G_LuaHook_ConsoleCommand(char *command);
 qboolean G_LuaHook_UpgradeSkill(int cno, skillType_t skill);

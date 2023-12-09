@@ -318,29 +318,29 @@ static int _et_trap_DropClient(lua_State *L)
 // clientnum = et.ClientNumberFromString( string )
 static int _et_ClientNumberFromString(lua_State *L)
 {
-	char *search = luaL_checkstring(L, 1);
-	int  pids[MAX_CLIENTS];
+	//char *search = luaL_checkstring(L, 1);
+	//int  pids[MAX_CLIENTS];
 
-	// only send exact matches, otherwise -1
-	if (TVG_ClientNumbersFromString((char *) search, pids) == 1)
-	{
-		lua_pushinteger(L, pids[0]);
-	}
-	else
-	{
-		lua_pushnil(L);
-	}
+	//// only send exact matches, otherwise -1
+	//if (TVG_ClientNumbersFromString((char *) search, pids) == 1)
+	//{
+	//	lua_pushinteger(L, pids[0]);
+	//}
+	//else
+	//{
+	//	lua_pushnil(L);
+	//}
 	return 1;
 }
 
 // et.G_Say( clientNum, mode, text )
 static int _et_G_Say(lua_State *L)
 {
-	int        clientnum = (int)luaL_checkinteger(L, 1);
-	int        mode      = (int)luaL_checkinteger(L, 2);
-	const char *text     = luaL_checkstring(L, 3);
+	//int        clientnum = (int)luaL_checkinteger(L, 1);
+	//int        mode      = (int)luaL_checkinteger(L, 2);
+	//const char *text     = luaL_checkstring(L, 3);
 
-	TVG_Say(g_entities + clientnum, NULL, mode, text);
+	//TVG_Say(g_entities + clientnum, NULL, mode, text);
 	return 0;
 }
 
@@ -440,7 +440,7 @@ static int _et_ClientUserinfoChanged(lua_State *L)
 {
 	int clientnum = (int)luaL_checkinteger(L, 1);
 
-	ClientUserinfoChanged(clientnum);
+	TVClientUserinfoChanged(clientnum);
 	return 0;
 }
 
@@ -1086,9 +1086,7 @@ static const gentity_field_t gentity_fields[] =
 	_et_gentity_addfield(missionLevel,        FIELD_INT,        0),
 	_et_gentity_addfield(model,               FIELD_STRING,     FIELD_FLAG_READONLY),
 	_et_gentity_addfield(model2,              FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(nextTrain,           FIELD_ENTITY,     0),
 	_et_gentity_addfield(noise_index,         FIELD_INT,        0),
-	_et_gentity_addfield(prevTrain,           FIELD_ENTITY,     0),
 	_et_gentity_addfield(props_frame_state,   FIELD_INT,        FIELD_FLAG_READONLY),
 
 	_et_gentity_addfield(r.absmax,            FIELD_VEC3,       FIELD_FLAG_READONLY),
@@ -1300,10 +1298,10 @@ static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
 
 gentity_t *G_Lua_CreateEntity(char *params)
 {
-	gentity_t *create;
-	char      *token;
-	char      *p = params;
-	char      key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
+	//gentity_t *create;
+	//char      *token;
+	//char      *p = params;
+	//char      key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
 
 	//level.numSpawnVars     = 0;
 	//level.numSpawnVarChars = 0;
@@ -1340,8 +1338,8 @@ gentity_t *G_Lua_CreateEntity(char *params)
 	//		return NULL;
 	//	}
 
-	//	level.spawnVars[level.numSpawnVars][0] = G_AddSpawnVarToken(key);
-	//	level.spawnVars[level.numSpawnVars][1] = G_AddSpawnVarToken(value);
+	//	level.spawnVars[level.numSpawnVars][0] = TVG_AddSpawnVarToken(key);
+	//	level.spawnVars[level.numSpawnVars][1] = TVG_AddSpawnVarToken(value);
 
 	//	level.numSpawnVars++;
 	//}
@@ -1355,7 +1353,7 @@ gentity_t *G_Lua_CreateEntity(char *params)
 	//}
 
 	//trap_LinkEntity(create);
-	return create;
+	return NULL;
 }
 
 // entnum = _et_G_Lua_CreateEntity( params )
@@ -1364,8 +1362,8 @@ gentity_t *G_Lua_CreateEntity(char *params)
 // was et.G_Spawn() before 2.75 (... and  did not work)
 static int _et_G_Lua_CreateEntity(lua_State *L)
 {
-	gentity_t *entnum;
-	char      *params = (char *)luaL_checkstring(L, 1); // make 2 params for classname?
+	//gentity_t *entnum;
+	//char      *params = (char *)luaL_checkstring(L, 1); // make 2 params for classname?
 
 	//entnum = G_Lua_CreateEntity(params);
 
@@ -1416,16 +1414,6 @@ static int _et_G_EntitiesFree(lua_State *L)
 {
 	lua_pushinteger(L, G_EntitiesFree());
 	return 1;
-}
-
-// et.G_SetEntState( entnum, newstate )
-static int _et_G_SetEntState(lua_State *L)
-{
-	gentity_t  *ent;
-	int        entnum   = (int)luaL_checkinteger(L, 1);
-	entState_t newstate = (int)luaL_checkinteger(L, 2);
-
-	return 0;
 }
 
 // et.trap_LinkEntity( entnum )
@@ -1930,11 +1918,11 @@ static int _et_trap_Trace(lua_State *L)
 // et.G_HistoricalTrace( ent, start, mins, maxs, end, entNum, mask )
 static int _et_G_HistoricalTrace(lua_State *L)
 {
-	gentity_t *gent;
-	trace_t   tr;
-	vec3_t    start, mins, maxs, end;
-	vec3_t    *minsPtr = NULL, *maxsPtr = NULL;
-	int       entNum, mask, ent;
+	//gentity_t *gent;
+	//trace_t   tr;
+	//vec3_t    start, mins, maxs, end;
+	//vec3_t    *minsPtr = NULL, *maxsPtr = NULL;
+	//int       entNum, mask, ent;
 
 	/*ent = luaL_checkinteger(L, 1);
 
@@ -2054,7 +2042,6 @@ static const luaL_Reg etlib[] =
 	{ "G_TempEntity",            _et_G_TempEntity            },
 	{ "G_FreeEntity",            _et_G_FreeEntity            },
 	{ "G_EntitiesFree",          _et_G_EntitiesFree          },
-	{ "G_SetEntState",           _et_G_SetEntState           },
 	{ "trap_LinkEntity",         _et_trap_LinkEntity         },
 	{ "trap_UnlinkEntity",       _et_trap_UnlinkEntity       },
 	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
@@ -2186,44 +2173,44 @@ qboolean G_LuaInit(void)
 		lVM[i] = NULL;
 	}
 
-	if (lua_modules.string[0])
-	{
-		Q_strncpyz(buff, lua_modules.string, sizeof(buff));
-		len = strlen(buff);
-		crt = buff;
-		for (i = 0; i <= len; i++)
-		{
-			if (buff[i] == ' ' || buff[i] == '\0' || buff[i] == ',' || buff[i] == ';')
-			{
-				buff[i] = '\0';
+	//if (lua_modules.string[0])
+	//{
+	//	Q_strncpyz(buff, lua_modules.string, sizeof(buff));
+	//	len = strlen(buff);
+	//	crt = buff;
+	//	for (i = 0; i <= len; i++)
+	//	{
+	//		if (buff[i] == ' ' || buff[i] == '\0' || buff[i] == ',' || buff[i] == ';')
+	//		{
+	//			buff[i] = '\0';
 
-				if (num_vm >= LUA_NUM_VM)
-				{
-					G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
-					break;
-				}
+	//			if (num_vm >= LUA_NUM_VM)
+	//			{
+	//				G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
+	//				break;
+	//			}
 
-				if (G_LuaRunIsolated(crt))
-				{
-					num_vm++;
-				}
+	//			if (G_LuaRunIsolated(crt))
+	//			{
+	//				num_vm++;
+	//			}
 
-				// prepare for next iteration
-				if (i + 1 < len)
-				{
-					crt = buff + i + 1;
-				}
-				else
-				{
-					crt = NULL;
-				}
-			}
-		}
-	}
-	else
-	{
-		G_Printf("%s API: %sno Lua files set\n", LUA_VERSION, S_COLOR_BLUE);
-	}
+	//			// prepare for next iteration
+	//			if (i + 1 < len)
+	//			{
+	//				crt = buff + i + 1;
+	//			}
+	//			else
+	//			{
+	//				crt = NULL;
+	//			}
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	G_Printf("%s API: %sno Lua files set\n", LUA_VERSION, S_COLOR_BLUE);
+	//}
 
 	return qtrue;
 }
@@ -2955,7 +2942,7 @@ void G_LuaRestart(void)
  */
 void G_LuaStatus(gentity_t *ent)
 {
-	int i, cnt = 0;
+	/*int i, cnt = 0;
 
 	for (i = 0; i < LUA_NUM_VM; i++)
 	{
@@ -2987,7 +2974,7 @@ void G_LuaStatus(gentity_t *ent)
 			TVG_refPrintf(ent, "%2d %-24s %-40s %-24s", lVM[i]->id, lVM[i]->mod_name, lVM[i]->mod_signature, lVM[i]->file_name);
 		}
 	}
-	TVG_refPrintf(ent, "-- ------------------------ ---------------------------------------- ------------------------");
+	TVG_refPrintf(ent, "-- ------------------------ ---------------------------------------- ------------------------");*/
 }
 
 /*
@@ -3268,39 +3255,36 @@ void G_LuaHook_ClientUserinfoChanged(int clientNum)
 
 /*
  * G_LuaHook_ClientSpawn
- * et_ClientSpawn( clientNum, revived, teamChange, restoreHealth ) callback
+ * et_ClientSpawn( clientNum ) callback
  */
-void G_LuaHook_ClientSpawn(int clientNum, qboolean revived, qboolean teamChange, qboolean restoreHealth)
+void G_LuaHook_ClientSpawn(int clientNum)
 {
-	int      i;
-	lua_vm_t *vm;
+	//int      i;
+	//lua_vm_t *vm;
 
-	for (i = 0; i < LUA_NUM_VM; i++)
-	{
-		vm = lVM[i];
-		if (vm)
-		{
-			if (vm->id < 0) //|| vm->err)
-			{
-				continue;
-			}
-			if (!G_LuaGetNamedFunction(vm, "et_ClientSpawn"))
-			{
-				continue;
-			}
-			// Arguments
-			lua_pushinteger(vm->L, clientNum);
-			lua_pushinteger(vm->L, (int)revived);
-			lua_pushinteger(vm->L, (int)teamChange);
-			lua_pushinteger(vm->L, (int)restoreHealth);
-			// Call
-			if (!G_LuaCall(vm, "et_ClientSpawn", 4, 0))
-			{
-				//G_LuaStopVM(vm);
-				continue;
-			}
-		}
-	}
+	//for (i = 0; i < LUA_NUM_VM; i++)
+	//{
+	//	vm = lVM[i];
+	//	if (vm)
+	//	{
+	//		if (vm->id < 0) //|| vm->err)
+	//		{
+	//			continue;
+	//		}
+	//		if (!G_LuaGetNamedFunction(vm, "et_ClientSpawn"))
+	//		{
+	//			continue;
+	//		}
+	//		// Arguments
+	//		lua_pushinteger(vm->L, clientNum);
+	//		// Call
+	//		if (!G_LuaCall(vm, "et_ClientSpawn", 4, 0))
+	//		{
+	//			//G_LuaStopVM(vm);
+	//			continue;
+	//		}
+	//	}
+	//}
 }
 
 /*
@@ -3446,8 +3430,8 @@ qboolean G_LuaHook_UpgradeSkill(int cno, skillType_t skill)
  */
 qboolean G_LuaHook_SetPlayerSkill(int cno, skillType_t skill)
 {
-	int      i;
-	lua_vm_t *vm;
+	//int      i;
+	//lua_vm_t *vm;
 
 	//for (i = 0; i < LUA_NUM_VM; i++)
 	//{

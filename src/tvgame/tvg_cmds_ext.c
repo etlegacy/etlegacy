@@ -65,14 +65,19 @@ typedef struct
 	char *pszCommandName;
 	tvcmdUsageFlag_t flag;
 	int value;
+	int cooldown;
 	int lastTime;
 	qboolean floodProtected;
 	void (*pCommand)(gclient_t *client, unsigned int dwCommand, int value);
 	const char *pszHelpInfo;
 } tvcmd_reference_t;
 
-#define SHORTCD  5000
-#define MEDIUMCD 15000
+#define NOCD        0
+#define VERYSHORTCD 2500
+#define SHORTCD     5000
+#define MEDIUMCD    15000
+#define LONGCD      30000
+#define VERYLONGCD  60000
 
 // VC optimizes for dup strings :)
 static tvcmd_reference_t tvCommandInfo[] =
@@ -95,7 +100,7 @@ static tvcmd_reference_t tvCommandInfo[] =
 	//{ "+topshots",      CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 HUD overlay showing current top accuracies of all players"                              },
 	//{ "+objectives",    CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 HUD overlay showing current objectives info"                                            },
 
-	//{ "bottomshots",    CMD_USAGE_ANY_TIME,          qfalse,      qfalse, G_weaponRankings_cmd,                ":^7 Shows WORST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
+	{ "bottomshots",    CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE,          qfalse, MEDIUMCD, 0,     qfalse, TVG_weaponRankings_cmd,                ":^7 Shows WORST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
 	//{ "callvote",       CMD_USAGE_NO_INTERMISSION,   qfalse,      qtrue,  (void (*)(gentity_t *,               unsigned int, int)) Cmd_CallVote_f, " <params>:^7 Calls a vote"                              },
 	//{ "currenttime",    CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 Displays current local time"                                                            },
 
@@ -103,51 +108,45 @@ static tvcmd_reference_t tvCommandInfo[] =
 	//{ "follownext",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_FollowNext_f,                    ":^7 Follow next player in list"                                                             },
 	//{ "followprev",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_FollowPrevious_f,                ":^7 Follow previous player in list"                                                         },
 
-	//{ "ignore",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_Ignore_f,                        " <clientname>:^7 Ignore a player from chat"                                                 },
+	//{ "ignore",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, TVCmd_Ignore_f,                        " <clientname>:^7 Ignore a player from chat"                                                 },
 
-	//{ "immaplist",      CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionMapList,               ""                                                                                           },
-	//{ "immaphistory",   CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionMapHistory,            ""                                                                                           },
-	//{ "impkd",          CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPlayerKillsDeaths_f, ""                                                                                           },
+	{ "imvotetally",      CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionVoteTally,         ""                                                                                            },
+	{ "immaplist",        CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionMapList,               ""                                                                                           },
+	{ "immaphistory",     CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionMapHistory,            ""                                                                                           },
 
-	//{ "impr",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPrestige_f,          ""                                                                                           },
-
-	//{ "impt",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPlayerTime_f,        ""                                                                                           },
-	//{ "imready",        CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionReady_f,             ""                                                                                           },
-
-	//{ "imsr",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionSkillRating_f,       ""                                                                                           },
-
-	//{ "imvotetally",    CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionVoteTally_cmd,         ""                                                                                           },
-	//{ "imwa",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionWeaponAccuracies_f,  ""                                                                                           },
-	//{ "imws",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionWeaponStats_f,       ""                                                                                           },
+	{ "impkd",            CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionPlayerKillsDeaths_f, ""                                                                                           },
+	{ "impr",             CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionPrestige_f,          ""                                                                                           },
+	{ "impt",             CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionPlayerTime_f,        ""                                                                                           },
+	{ "imsr",             CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionSkillRating_f,       ""                                                                                           },
+	{ "imwa",             CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionWeaponAccuracies_f,  ""                                                                                           },
+	//{ "imws",           CMD_USAGE_INTERMISSION_ONLY, NOCD, 0,       qfalse, TVCmd_IntermissionWeaponStats_f,       ""                                                                                           },
 
 	//{ "noclip",         CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Noclip_f,                        ":^7 No clip"                                                                                },
 	
 	//{ "obj",            CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SelectedObjective_f,             " <val>:^7 Selected Objective"                                                               },
 	
-	//{ "players",        CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_players_cmd,                       ":^7 Lists all active players and their IDs/information"                                     },
+	//{ "players",        CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_players_cmd,                       ":^7 Lists all active players and their IDs/information"                                     },
 	//{ "rconAuth",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_AuthRcon_f,                      ":^7 Client authentication"                                                                  },
 	
 	//{ "ref",            CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_ref_cmd,                           " <password>:^7 Become a referee (admin access)"                                             },
 
-	//{ "sclogin",        CMD_USAGE_ANY_TIME,          qfalse,      qtrue,  G_sclogin_cmd,                       " <password>:^7 Become a shoutcaster"                                                        },
-	//{ "sclogout",       CMD_USAGE_ANY_TIME,          qfalse,      qtrue,  G_sclogout_cmd,                      ":^7 Removes shoutcaster status"                                                             },
-	{ "score",          CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE,          SHORTCD, 0,       qfalse, TVG_Cmd_Score_f,                         ":^7 Request current scoreboard information"                                                 },
-	{ "scores",         CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE,          SHORTCD, 0,      qfalse, TVG_scores_cmd,                        ":^7 Displays current match stat info"                                                       },
-	//{ "setviewpos",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SetViewpos_f,                    " x y z pitch yaw roll useViewHeight(0/1):^7 Set the current player position and view angle" },
-	//{ "sgstats",        CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_sgStats_f,                       ""                                                                                           },
+	{ "score",            CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue, SHORTCD,  0,      qfalse, TVG_Cmd_Score_f,                       ":^7 Request current scoreboard information"                                                 },
+	{ "scores",           CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue, MEDIUMCD, 0,      qfalse, TVG_scores_cmd,                        ":^7 Displays current match stat info"                                                       },
+	
+	{ "sgstats",        CMD_USAGE_ANY_TIME,          VERYSHORTCD, NOCD, 0,      qtrue, TVCmd_sgStats_f,                       ""                                                                                           },
+	{ "wstats",         CMD_USAGE_ANY_TIME,          VERYSHORTCD, NOCD, 0,      qtrue, TVCmd_wStats_f,                        "" },
+	{ "weaponstats",    CMD_USAGE_ANY_TIME,          VERYSHORTCD, NOCD, 0,      qtrue, TVG_weaponStats_cmd,                   " [player_ID]:^7 Shows weapon accuracy stats for a player" },
 
 	//{ "showstats",      CMD_USAGE_ANY_TIME,          qtrue,       qfalse, G_PrintAccuracyLog,                  ":^7 Shows weapon accuracy stats"                                                            },
 	//{ "statsall",       CMD_USAGE_ANY_TIME,          qfalse,      qtrue,  G_statsall_cmd,                      ":^7 Shows weapon accuracy stats for all players"                                            },
 	//{ "statsdump",      CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 Shows player stats + match info saved locally to a file"                                },
-	//{ "stshots",        CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_WeaponStatsLeaders_f,            ""                                                                                           },
-	//{ "topshots",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, G_weaponRankings_cmd,                ":^7 Shows BEST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon"  },
-	//{ "unignore",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_UnIgnore_f,                      " <clientname>:^7 Unignore a player from chat"                                               },
-	//{ "vote",           CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_Vote_f,                          " <n|0|y|1>:^7 Cast the vote (n|0 = no, y|1 = yes)"                                          },
-	//{ "weaponstats",    CMD_USAGE_ANY_TIME,          qfalse,      qfalse, G_weaponStats_cmd,                   " [player_ID]:^7 Shows weapon accuracy stats for a player"                                   },
-	//{ "where",          CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_Where_f,                         ":^7 Show the current XYZ player position"                                                   },
+	{ "stshots",        CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, MEDIUMCD,       VERYLONGCD, 0,       qfalse, TVCmd_WeaponStatsLeaders_f,            ""                                                                                           },
+	{ "topshots",       CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue,          MEDIUMCD, 0,       qfalse, TVG_weaponRankings_cmd,                ":^7 Shows BEST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
+	//{ "unignore",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, TVCmd_UnIgnore_f,                      " <clientname>:^7 Unignore a player from chat"                                               },
 	//{ "ws",             CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_WeaponStat_f,                    ":^7 Shows weapon stats"                                                                     },
-	//{ "wstats",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_wStats_f,                        ""                                                                                           },
-	{ NULL,             CMD_USAGE_ANY_TIME,          qtrue, 0,      qfalse, NULL,                                ""                                                                                           }
+	
+	//{ "setviewpos",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SetViewpos_f,                    " x y z pitch yaw roll useViewHeight(0/1):^7 Set the current player position and view angle" },
+	{ NULL,             CMD_USAGE_ANY_TIME,          qtrue, NOCD, 0,      qfalse, NULL,                                ""                                                                                           }
 };
 
 /**
@@ -208,14 +207,14 @@ qboolean TVG_commandCheck(gclient_t *client, const char *cmd)
 				return qfalse;
 			}
 			// ignore some commands when at intermission
-			if (level.intermissiontime && (tvCommandInfo[i].flag & CMD_USAGE_NO_INTERMISSION))
+			if (level.intermission && (tvCommandInfo[i].flag & CMD_USAGE_NO_INTERMISSION))
 			{
 				CPx(client - level.clients, va("print \"^3%s^7 not allowed during intermission.\n\"", cmd));
 				return qfalse;
 			}
 
 			// ignore some commands when not at intermission
-			if (!level.intermissiontime && (tvCommandInfo[i].flag & CMD_USAGE_INTERMISSION_ONLY))
+			if (!level.intermission && (tvCommandInfo[i].flag & CMD_USAGE_INTERMISSION_ONLY))
 			{
 				CPx(client - level.clients, va("print \"^3%s^7 not allowed outside intermission.\n\"", cmd));
 				return qfalse;
@@ -227,13 +226,14 @@ qboolean TVG_commandCheck(gclient_t *client, const char *cmd)
 		}
 	}
 
-	trap_SendServerCommand(client - level.clients, va("print \"[lon]unknown cmd[lof] %s\n\"", cmd));
+	trap_SendServerCommand(client - level.clients, va("print \"TVGAME: [lon]unknown cmd[lof] %s\n\"", cmd));
 
 	return qfalse;
 }
 
 /**
 * @brief TVG_SendCommands Sends clients commands to master server
+*        one at a time so to not spam too much
 * @return
 */
 void TVG_SendCommands(void)
@@ -242,9 +242,21 @@ void TVG_SendCommands(void)
 
 	for (i = 0; tvCommandInfo[i].pszCommandName; i++)
 	{
+		// request intermission stats
+		if (tvCommandInfo[i].flag & CMD_USAGE_INTERMISSION_ONLY)
+		{
+			if (!tvCommandInfo[i].lastTime && level.intermission)
+			{
+				trap_SendServerCommand(-2, tvCommandInfo[i].pszCommandName);
+				tvCommandInfo[i].lastTime = level.time;
+				return;
+			}
+		}
+
+		// auto update some information
 		if (tvCommandInfo[i].flag & CMD_USAGE_AUTOUPDATE)
 		{
-			if (tvCommandInfo[i].lastTime + tvCommandInfo[i].value <= level.time)
+			if (tvCommandInfo[i].lastTime + tvCommandInfo[i].cooldown <= level.time)
 			{
 				trap_SendServerCommand(-2, tvCommandInfo[i].pszCommandName);
 				tvCommandInfo[i].lastTime = level.time;
@@ -487,13 +499,13 @@ void TVG_scores_cmd(gclient_t *client, unsigned int dwCommand, int value)
 
 /**
  * @brief Shows a player's stats to the requesting client.
- * @param[in] ent
+ * @param[in] client
  * @param dwCommand - unused
  * @param fDump - unused
  */
-void G_weaponStats_cmd(gentity_t *ent, unsigned int dwCommand, int fDump)
+void TVG_weaponStats_cmd(gclient_t *client, unsigned int dwCommand, int value)
 {
-	G_statsPrint(ent, 0);
+	TVG_statsPrint(client, 0, value);
 }
 
 /**
@@ -608,157 +620,49 @@ int QDECL SortStats(const void *a, const void *b)
 
 /**
  * @brief Shows the most accurate players for each weapon to the requesting client
- * @param ent - unused
+ * @param[in] client
  * @param[in] doTop
  * @param[in] doWindow
  */
-void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
+void TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow)
 {
-	int             i, iWeap, wBestAcc, cClients, cPlaces;
-	unsigned        shots;
-	int             aClients[MAX_CLIENTS];
-	float           acc;
-	char            z[MAX_STRING_CHARS];
-	const gclient_t *cl;
-
-	//z[0] = 0;
-	//for (iWeap = WS_KNIFE; iWeap < WS_MAX; iWeap++)
-	//{
-	//	wBestAcc = (doTop) ? 0 : 99999;
-	//	cClients = 0;
-	//	cPlaces  = 0;
-
-	//	// suckfest - needs two passes, in case there are ties
-	//	for (i = 0; i < level.numConnectedClients; i++)
-	//	{
-	//		cl = &level.clients[level.sortedClients[i]];
-
-	//		if (cl->sess.sessionTeam == TEAM_SPECTATOR)
-	//		{
-	//			continue;
-	//		}
-
-	//		shots = cl->sess.aWeaponStats[iWeap].atts;
-	//		if (shots >= cQualifyingShots[iWeap])
-	//		{
-	//			acc                  = (float)((cl->sess.aWeaponStats[iWeap].hits) * 100.0f) / (float)shots;
-	//			aClients[cClients++] = level.sortedClients[i];
-	//			if (((doTop) ? acc : (float)wBestAcc) > ((doTop) ? wBestAcc : acc))
-	//			{
-	//				wBestAcc = (int)acc;
-	//				cPlaces++;
-	//			}
-	//		}
-	//	}
-
-	//	if (!doTop && cPlaces < 2)
-	//	{
-	//		continue;
-	//	}
-
-	//	for (i = 0; i < cClients; i++)
-	//	{
-	//		cl  = &level.clients[aClients[i]];
-	//		acc = (float)(cl->sess.aWeaponStats[iWeap].hits * 100.0f) / (float)(cl->sess.aWeaponStats[iWeap].atts);
-
-	//		if (((doTop) ? acc : (float)wBestAcc + 0.999f) >= ((doTop) ? wBestAcc : acc))
-	//		{
-	//			Q_strcat(z, sizeof(z), va(" %d %d %d %d %d %d %d", iWeap + 1, aClients[i],
-	//			                          cl->sess.aWeaponStats[iWeap].hits,
-	//			                          cl->sess.aWeaponStats[iWeap].atts,
-	//			                          cl->sess.aWeaponStats[iWeap].kills,
-	//			                          cl->sess.aWeaponStats[iWeap].deaths,
-	//			                          cl->sess.aWeaponStats[iWeap].headshots));
-	//		}
-	//	}
-	//}
-	//CP(va("%sbstats%s %s 0", ((doWindow) ? "w" : ""), ((doTop) ? "" : "b"), z));
+	if (doWindow && doTop)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.wbstats);
+	}
+	else
+	{
+		if (doTop)
+		{
+			trap_SendServerCommand(client - level.clients, level.cmds.bstats);
+		}
+		else
+		{
+			trap_SendServerCommand(client - level.clients, level.cmds.bstatsb);
+		}
+	}
 }
 
 /**
  * @brief Shows best/worst accuracy for all weapons, or sorted accuracies for a single weapon
- * @param[in] ent
+ * @param[in] client
  * @param[in] dwCommand
  * @param[in] state
  */
-void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, int state)
+void TVG_weaponRankings_cmd(gclient_t *client, unsigned int dwCommand, int state)
 {
-	gclient_t *cl;
-	int       c = 0, i, wBestAcc;
-	unsigned  shots;
-	char      z[MAX_STRING_CHARS];
+	if (trap_Argc() < 2)
+	{
+		TVG_weaponStatsLeaders_cmd(client, state, qfalse);
+		return;
+	}
 
-	//if (trap_Argc() < 2)
-	//{
-	//	G_weaponStatsLeaders_cmd(ent, state, qfalse);
-	//	return;
-	//}
-
-	//wBestAcc = (state) ? 0 : 99999;
-
-	//// Find the weapon
-	//trap_Argv(1, z, sizeof(z));
-	//if ((iWeap = Q_atoi(z)) == 0 || iWeap < WS_KNIFE || iWeap >= WS_MAX)
-	//{
-	//	for (iWeap = WS_MAX - 1; iWeap >= WS_KNIFE; iWeap--)
-	//	{
-	//		if (!Q_stricmp(z, aWeaponInfo[iWeap].pszCode))
-	//		{
-	//			break;
-	//		}
-	//	}
-	//}
-
-	//if (iWeap < WS_KNIFE)
-	//{
-	//	Q_strncpyz(z, "^3Available weapon codes:^7\n", sizeof(z));
-	//	for (i = WS_KNIFE; i < WS_MAX; i++)
-	//	{
-	//		Q_strcat(z, sizeof(z), va("  %s - %s\n", aWeaponInfo[i].pszCode, aWeaponInfo[i].pszName));
-	//	}
-	//	CP(va("print \"%s\"", z));
-	//	return;
-	//}
-
-	//Com_Memcpy(&level.sortedStats, &level.sortedClients, sizeof(level.sortedStats));
-	//qsort(level.sortedStats, level.numConnectedClients, sizeof(level.sortedStats[0]), SortStats);
-
-	//z[0] = 0;
-	//for (i = 0; i < level.numConnectedClients; i++)
-	//{
-	//	cl = &level.clients[level.sortedStats[i]];
-
-	//	if (cl->sess.sessionTeam == TEAM_SPECTATOR)
-	//	{
-	//		continue;
-	//	}
-
-	//	shots = cl->sess.aWeaponStats[iWeap].atts;
-	//	if (shots >= cQualifyingShots[iWeap])
-	//	{
-	//		float acc = (float)(cl->sess.aWeaponStats[iWeap].hits * 100.0f) / (float)shots;
-
-	//		c++;
-	//		wBestAcc = (((state) ? acc : wBestAcc) > ((state) ? wBestAcc : acc)) ? (int)acc : wBestAcc;
-	//		Q_strcat(z, sizeof(z), va(" %d %d %d %d %d %d", level.sortedStats[i],
-	//		                          cl->sess.aWeaponStats[iWeap].hits,
-	//		                          shots,
-	//		                          cl->sess.aWeaponStats[iWeap].kills,
-	//		                          cl->sess.aWeaponStats[iWeap].deaths,
-	//		                          cl->sess.aWeaponStats[iWeap].headshots));
-	//	}
-	//}
-
-	//CP(va("astats%s %d %d %d%s", ((state) ? "" : "b"), c, iWeap, wBestAcc, z));
-}
-
-/**
- * @brief G_IntermissionVoteTally_cmd
- * @param[in] ent
- * @param dwCommand - unused
- * @param state - unused
- */
-void G_IntermissionVoteTally_cmd(gentity_t *ent, unsigned int dwCommand, int state)
-{
-	G_IntermissionVoteTally(ent);
+	if (state)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.astats);
+	}
+	else
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.astatsb);
+	}
 }
