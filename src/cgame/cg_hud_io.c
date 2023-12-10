@@ -1329,6 +1329,11 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr)
 		CG_FreeHud(oldHud);
 		CG_RegisterHud(tmpHud);
 		Com_Printf("...properties for hud %i have been updated.\n", tmpHud->hudnumber);
+
+		if (hudData.active == oldHud)
+		{
+			hudData.active = tmpHud;
+		}
 	}
 
 	return tmpHud;
