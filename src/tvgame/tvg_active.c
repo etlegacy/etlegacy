@@ -142,7 +142,6 @@ void SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 		//// save results of pmove
 		//VectorCopy(client->ps.origin, ent->s.origin);
 
-		//G_TouchTriggers(ent);
 		//trap_UnlinkEntity(ent);
 	}
 
@@ -398,13 +397,11 @@ void ClientIntermissionThink(gclient_t *client)
 /**
  * @brief This will be called once for each client frame, which will
  * usually be a couple times for each server frame on fast clients.
- *
- * If "g_synchronousClients 1" is set, this will be called exactly
- * once for each server frame, which makes for smooth demo recording.
+
  *
  * @param[in] client
  */
-void TVClientThink_real(gclient_t *client)
+void TVG_ClientThink_real(gclient_t *client)
 {
 	usercmd_t *ucmd;
 	int msec, i;
@@ -494,39 +491,44 @@ void TVClientThink_real(gclient_t *client)
 }
 
 /**
- * @brief etpro antiwarp
- * @author zinx
- * @param[in,out] client
- * @param[in]     cmd User Command
+ * @brief TVG_ClientThink_cmd
+ * @param[in] client
+ * @param[in] cmd
  */
-void TVClientThink_cmd(gclient_t *client, usercmd_t *cmd)
+void TVG_ClientThink_cmd(gclient_t *client, usercmd_t *cmd)
 {
 	client->pers.oldcmd = client->pers.cmd;
 	client->pers.cmd    = *cmd;
-	TVClientThink_real(client);
+	TVG_ClientThink_real(client);
 }
 
 /**
  * @brief A new command has arrived from the client
  * @param[in] clientNum Client Number from 0 to MAX_CLIENTS
  */
-void TVClientThink(int clientNum)
+void TVG_ClientThink(int clientNum)
 {
 	gclient_t *client = level.clients + clientNum;
 	usercmd_t newcmd;
 
 	trap_GetUsercmd(clientNum, &newcmd);
-	TVClientThink_cmd(client, &newcmd);
+	TVG_ClientThink_cmd(client, &newcmd);
 }
 
 /**
  * @brief TVSpectatorClientEndFrame
  * @param[in,out] client
  */
-void TVSpectatorClientEndFrame(gclient_t *client)
+void TVG_SpectatorClientEndFrame(gclient_t *client)
 {
 	if (level.intermission)
 	{
+		// take out of follow mode if needed
+		if (client->sess.spectatorState == SPECTATOR_FOLLOW)
+		{
+			TVG_StopFollowing(client);
+		}
+
 		client->ps.pm_type = PM_INTERMISSION;
 		VectorCopy(level.ettvMasterPs.origin, client->ps.origin);
 		VectorCopy(level.ettvMasterPs.viewangles, client->ps.viewangles);
@@ -558,51 +560,19 @@ void TVSpectatorClientEndFrame(gclient_t *client)
 		}
 
 		client->sess.spectatorState = SPECTATOR_FREE;
-		TVClientBegin(client - level.clients);
+		TVG_ClientBegin(client - level.clients);
 	}
 }
 
 /**
  * @brief Called at the end of each server frame for each connected client
- * A fast client will have multiple TVClientThink for each TVClientEndFrame,
- * while a slow client may have multiple TVClientEndFrame between TVClientThink.
+ * A fast client will have multiple TVG_ClientThink for each TVG_ClientEndFrame,
+ * while a slow client may have multiple TVG_ClientEndFrame between TVG_ClientThink.
  *
  * @param[in,out] ent Entity
  */
-void TVClientEndFrame(gclient_t *client)
+void TVG_ClientEndFrame(gclient_t *client)
 {
-	if (g_gamestate.integer == GS_PLAYING && level.match_pause == PAUSE_NONE)
-	{
-		// count player time
-		if (!(client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && (client->ps.pm_flags & PMF_LIMBO)))
-		{
-			if (client->sess.sessionTeam == TEAM_AXIS)
-			{
-				client->sess.time_axis += level.frameTime;
-			}
-			else if (client->sess.sessionTeam == TEAM_ALLIES)
-			{
-				client->sess.time_allies += level.frameTime;
-			}
-		}
-
-		// don't count skulled player time
-		if (!(client->sess.sessionTeam == TEAM_SPECTATOR || (client->ps.pm_flags & PMF_LIMBO) || client->ps.stats[STAT_HEALTH] <= 0))
-		{
-			// ensure time played is always smaller or equal than time spent in teams
-			// work around for unreset data of slow connecters
-			if (client->sess.time_played > (client->sess.time_axis + client->sess.time_allies))
-			{
-				client->sess.time_played = 0;
-			}
-			client->sess.time_played += level.frameTime;
-		}
-	}
-
-	// used for informing of speclocked teams.
-	// Zero out here and set only for certain specs
-	client->ps.powerups[PW_BLACKOUT] = 0;
-
 	// check for flood protection - if 1 second has passed between commands, reduce the flood limit counter
 	if (level.time >= client->sess.nextCommandDecreaseTime && client->sess.numReliableCommands)
 	{
@@ -612,6 +582,6 @@ void TVClientEndFrame(gclient_t *client)
 
 	if ((client->sess.sessionTeam == TEAM_SPECTATOR) || (client->ps.pm_flags & PMF_LIMBO))
 	{
-		TVSpectatorClientEndFrame(client);
+		TVG_SpectatorClientEndFrame(client);
 	}
 }

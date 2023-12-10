@@ -675,7 +675,7 @@ qboolean TVG_SnapshotCallback(int entityNum, int clientNum)
 int dll_com_trapGetValue;
 int dll_trap_DemoSupport;
 
-static void TVG_ETTV(int index)
+static void TVG_ETTV_ConfigstringPassthrough(int index)
 {
 	char info[BIG_INFO_STRING];
 	char cs[MAX_TOKEN_CHARS];
@@ -739,27 +739,27 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		TVG_ShutdownGame(arg0);
 		return 0;
 	case GAME_CLIENT_CONNECT:
-		return (intptr_t)TVClientConnect(arg0, arg1, arg2);
+		return (intptr_t)TVG_ClientConnect(arg0, arg1, arg2);
 	case GAME_CLIENT_THINK:
-		TVClientThink(arg0);
+		TVG_ClientThink(arg0);
 		return 0;
 	case GAME_CLIENT_USERINFO_CHANGED:
-		TVClientUserinfoChanged(arg0);
+		TVG_ClientUserinfoChanged(arg0);
 		return 0;
 	case GAME_CLIENT_DISCONNECT:
-		TVClientDisconnect(arg0);
+		TVG_ClientDisconnect(arg0);
 		return 0;
 	case GAME_CLIENT_BEGIN:
-		TVClientBegin(arg0);
+		TVG_ClientBegin(arg0);
 		return 0;
 	case GAME_CLIENT_COMMAND:
-		TVClientCommand(arg0);
+		TVG_ClientCommand(arg0);
 		return 0;
 	case GAME_RUN_FRAME:
 		TVG_RunFrame(arg0);
 		return 0;
 	case GAME_CONSOLE_COMMAND:
-		return TVConsoleCommand();
+		return TVG_ConsoleCommand();
 	case GAME_SNAPSHOT_CALLBACK:
 		return TVG_SnapshotCallback(arg0, arg1);
 	case GAME_MESSAGERECEIVED:
@@ -767,7 +767,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_DEMOSTATECHANGED:
 		return 0;
 	case GAME_ETTV:
-		TVG_ETTV(arg0);
+		TVG_ETTV_ConfigstringPassthrough(arg0);
 		return 0;
 	default:
 		G_Printf("Bad game export type: %ld\n", (long int) command);
@@ -864,9 +864,9 @@ qboolean TVG_ServerIsFloodProtected(void)
 }
 
 /**
- * @brief G_RegisterCvars
+ * @brief TVG_RegisterCvars
  */
-void G_RegisterCvars(void)
+void TVG_RegisterCvars(void)
 {
 	int         i;
 	cvarTable_t *cv;
@@ -886,9 +886,9 @@ void G_RegisterCvars(void)
 }
 
 /**
- * @brief G_UpdateCvars
+ * @brief TVG_UpdateCvars
  */
-void G_UpdateCvars(void)
+void TVG_UpdateCvars(void)
 {
 	int         i;
 	cvarTable_t *cv;
@@ -912,234 +912,18 @@ void G_UpdateCvars(void)
 				{
 					trap_SendServerCommand(-1, va("print \"[lon]Server:[lof] %s [lon]changed to[lof] %s\n\"", cv->cvarName, cv->vmCvar->string));
 				}
-
-				if (cv->vmCvar == &g_filtercams)
-				{
-					trap_SetConfigstring(CS_FILTERCAMS, va("%i", g_filtercams.integer));
-				}
-				else if (cv->vmCvar == &g_soldierChargeTime)
-				{
-					level.soldierChargeTime[0] = g_soldierChargeTime.integer * level.soldierChargeTimeModifier[0];
-					level.soldierChargeTime[1] = g_soldierChargeTime.integer * level.soldierChargeTimeModifier[1];
-					chargetimechanged          = qtrue;
-				}
-				else if (cv->vmCvar == &g_medicChargeTime)
-				{
-					level.medicChargeTime[0] = g_medicChargeTime.integer * level.medicChargeTimeModifier[0];
-					level.medicChargeTime[1] = g_medicChargeTime.integer * level.medicChargeTimeModifier[1];
-					chargetimechanged        = qtrue;
-				}
-				else if (cv->vmCvar == &g_engineerChargeTime)
-				{
-					level.engineerChargeTime[0] = g_engineerChargeTime.integer * level.engineerChargeTimeModifier[0];
-					level.engineerChargeTime[1] = g_engineerChargeTime.integer * level.engineerChargeTimeModifier[1];
-					chargetimechanged           = qtrue;
-				}
-				else if (cv->vmCvar == &g_fieldopsChargeTime)
-				{
-					level.fieldopsChargeTime[0] = g_fieldopsChargeTime.integer * level.fieldopsChargeTimeModifier[0];
-					level.fieldopsChargeTime[1] = g_fieldopsChargeTime.integer * level.fieldopsChargeTimeModifier[1];
-					chargetimechanged           = qtrue;
-				}
-				else if (cv->vmCvar == &g_covertopsChargeTime)
-				{
-					level.covertopsChargeTime[0] = g_covertopsChargeTime.integer * level.covertopsChargeTimeModifier[0];
-					level.covertopsChargeTime[1] = g_covertopsChargeTime.integer * level.covertopsChargeTimeModifier[1];
-					chargetimechanged            = qtrue;
-				}
-				else if (cv->vmCvar == &match_readypercent)
-				{
-					if (match_readypercent.integer < 1)
-					{
-						trap_Cvar_Set(cv->cvarName, "1");
-					}
-					else if (match_readypercent.integer > 100)
-					{
-						trap_Cvar_Set(cv->cvarName, "100");
-					}
-				}
-				else if (cv->vmCvar == &g_warmup)
-				{
-					if (g_gamestate.integer != GS_PLAYING)
-					{
-						level.warmupTime = level.time + (((g_warmup.integer < 10) ? 11 : g_warmup.integer + 1) * 1000);
-						trap_SetConfigstring(CS_WARMUP, va("%i", level.warmupTime));
-					}
-				}
-				// Moved this check out of the main world think loop
-				else if (cv->vmCvar == &g_gametype)
-				{
-					int  worldspawnflags = g_entities[ENTITYNUM_WORLD].spawnflags;
-					int  gt, gametype;
-					char buffer[32];
-
-					trap_Cvar_LatchedVariableStringBuffer("g_gametype", buffer, sizeof(buffer));
-					gametype = Q_atoi(buffer);
-
-					if (gametype == GT_WOLF_CAMPAIGN && gametype != g_gametype.integer)
-					{
-						if (!G_MapIsValidCampaignStartMap())
-						{
-							gt = g_gametype.integer;
-							if (gt != GT_WOLF_LMS)
-							{
-								if (!(worldspawnflags & NO_GT_WOLF))
-								{
-									gt = GT_WOLF;   // Default wolf
-								}
-								else
-								{
-									gt = GT_WOLF_LMS;   // Last man standing
-								}
-							}
-
-							G_Printf("Map '%s' isn't a valid campaign start map, resetting game type to '%i'\n", level.rawmapname, gt);
-							trap_Cvar_Set("g_gametype", va("%i", gt));
-						}
-						continue;
-					}
-
-					if (!level.latchGametype && g_gamestate.integer == GS_PLAYING &&
-					    (((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_MAPVOTE) && (worldspawnflags & NO_GT_WOLF)) ||
-					     (g_gametype.integer == GT_WOLF_STOPWATCH && (worldspawnflags & NO_STOPWATCH)) ||
-					     (g_gametype.integer == GT_WOLF_LMS && (worldspawnflags & NO_LMS)))
-					    )
-					{
-
-						if (!(worldspawnflags & NO_GT_WOLF))
-						{
-							gt = GT_WOLF;   // Default wolf
-						}
-						else
-						{
-							gt = GT_WOLF_LMS;   // Last man standing
-						}
-
-						level.latchGametype = qtrue;
-						AP("print \"Invalid gametype was specified, Restarting\n\"");
-						trap_SendConsoleCommand(EXEC_APPEND, va("wait 2 ; g_gametype %i ; map_restart 10 0\n", gt));
-					}
-				}
-				else if (cv->vmCvar == &pmove_msec)
-				{
-					if (pmove_msec.integer < 8)
-					{
-						trap_Cvar_Set(cv->cvarName, "8");
-					}
-					else if (pmove_msec.integer > 33)
-					{
-						trap_Cvar_Set(cv->cvarName, "33");
-					}
-				}
-				else if (cv->vmCvar == &team_maxSoldiers || cv->vmCvar == &team_maxMedics || cv->vmCvar == &team_maxEngineers || cv->vmCvar == &team_maxFieldops || cv->vmCvar == &team_maxCovertops || cv->vmCvar == &team_maxMortars || cv->vmCvar == &team_maxFlamers || cv->vmCvar == &team_maxMachineguns || cv->vmCvar == &team_maxRockets || cv->vmCvar == &team_maxRiflegrenades || cv->vmCvar == &team_maxplayers)
-				{
-					clsweaprestriction = qtrue;
-				}
-				else if (cv->vmCvar == &skill_battlesense || cv->vmCvar == &skill_covertops || cv->vmCvar == &skill_engineer || cv->vmCvar == &skill_fieldops || cv->vmCvar == &skill_lightweapons || cv->vmCvar == &skill_medic || cv->vmCvar == &skill_soldier)
-				{
-					skillLevelPoints = qtrue;
-				}
-				else if (cv->vmCvar == &shoutcastPassword)
-				{
-				}
 #ifdef FEATURE_LUA
 				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)
 				{
 					G_LuaShutdown();
 				}
 #endif
-
-				{
-					// CS_MODINFO
-					char cs[MAX_INFO_STRING];
-
-					cs[0] = '\0';
-
-					// MAPVOTE
-					// FIXME: mapvote & xp
-					if (g_gametype.integer == GT_WOLF_MAPVOTE)
-					{
-						Info_SetValueForKey(cs, "X", va("%i", (level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ? 0 : level.mapsSinceLastXPReset));
-						Info_SetValueForKey(cs, "Y", (va("%i", g_resetXPMapCount.integer)));
-					}
-
-					trap_SetConfigstring(CS_MODINFO, cs);
-				}
 			}
 		}
 	}
-
-	if (fVoteFlags)
-	{
-		G_voteFlags();
-	}
-
-	if (fToggles)
-	{
-		trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
-	}
-
-	if (chargetimechanged)
-	{
-		char cs[MAX_INFO_STRING];
-
-		cs[0] = '\0';
-		Info_SetValueForKey(cs, "x0", va("%i", level.soldierChargeTime[0]));
-		Info_SetValueForKey(cs, "a0", va("%i", level.soldierChargeTime[1]));
-		Info_SetValueForKey(cs, "x1", va("%i", level.medicChargeTime[0]));
-		Info_SetValueForKey(cs, "a1", va("%i", level.medicChargeTime[1]));
-		Info_SetValueForKey(cs, "x2", va("%i", level.engineerChargeTime[0]));
-		Info_SetValueForKey(cs, "a2", va("%i", level.engineerChargeTime[1]));
-		Info_SetValueForKey(cs, "x3", va("%i", level.fieldopsChargeTime[0]));
-		Info_SetValueForKey(cs, "a3", va("%i", level.fieldopsChargeTime[1]));
-		Info_SetValueForKey(cs, "x4", va("%i", level.covertopsChargeTime[0]));
-		Info_SetValueForKey(cs, "a4", va("%i", level.covertopsChargeTime[1]));
-		trap_SetConfigstring(CS_CHARGETIMES, cs);
-	}
-
-	if (clsweaprestriction)
-	{
-		char cs[MAX_INFO_STRING];
-
-		cs[0] = '\0';
-
-		Info_SetValueForKey(cs, "c0", team_maxSoldiers.string);
-		Info_SetValueForKey(cs, "c1", team_maxMedics.string);
-		Info_SetValueForKey(cs, "c2", team_maxEngineers.string);
-		Info_SetValueForKey(cs, "c3", team_maxFieldops.string);
-		Info_SetValueForKey(cs, "c4", team_maxCovertops.string);
-		Info_SetValueForKey(cs, "w0", team_maxMortars.string);
-		Info_SetValueForKey(cs, "w1", team_maxFlamers.string);
-		Info_SetValueForKey(cs, "w2", team_maxMachineguns.string);
-		Info_SetValueForKey(cs, "w3", team_maxRockets.string);
-		Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
-		Info_SetValueForKey(cs, "w5", team_maxLandmines.string);
-		Info_SetValueForKey(cs, "m", team_maxplayers.string);
-		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
-	}
 }
 
-/**
- * @brief Reset particular server variables back to defaults if a config is voted in.
- */
-void G_wipeCvars(void)
-{
-	int         i;
-	cvarTable_t *pCvars;
-
-	for (i = 0, pCvars = gameCvarTable; i < gameCvarTableSize; i++, pCvars++)
-	{
-		if (pCvars->vmCvar && pCvars->fConfigReset)
-		{
-			G_Printf("set %s %s\n", pCvars->cvarName, pCvars->defaultString);
-			trap_Cvar_Set(pCvars->cvarName, pCvars->defaultString);
-		}
-	}
-
-	G_UpdateCvars();
-}
-
-static ID_INLINE void G_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+static ID_INLINE void TVG_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
 {
 	if (trap_GetValue(value, valueSize, name))
 	{
@@ -1151,7 +935,7 @@ static ID_INLINE void G_SetupExtensionTrap(char *value, int valueSize, int *trap
 	}
 }
 
-static ID_INLINE void G_SetupExtensions(void)
+static ID_INLINE void TVG_SetupExtensions(void)
 {
 	char value[MAX_CVAR_VALUE_STRING];
 
@@ -1160,7 +944,7 @@ static ID_INLINE void G_SetupExtensions(void)
 	{
 		dll_com_trapGetValue = Q_atoi(value);
 
-		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
+		TVG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
 	}
 }
 
@@ -1190,9 +974,9 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	srand(randomSeed);
 
-	G_RegisterCvars();
+	TVG_RegisterCvars();
 
-	G_ProcessIPBans();
+	TVG_ProcessIPBans();
 
 	G_InitMemory();
 
@@ -1211,7 +995,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 		level.spawning = oldspawning;
 	}
 
-	G_SetupExtensions();
+	TVG_SetupExtensions();
 
 	level.time            = levelTime;
 	level.startTime       = levelTime;
@@ -1219,7 +1003,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	// init the anim scripting
 	level.animScriptData.soundIndex = G_SoundIndex;
-	level.animScriptData.playSound  = G_AnimScriptSound;
+	level.animScriptData.playSound  = TVG_AnimScriptSound;
 	// time
 	time(&aclock);
 	strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y", localtime(&aclock));
@@ -1251,8 +1035,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	G_LogPrintf("gametime: %s\n", timeFt);
 
-	G_ResetRemappedShaders();
-
 	// initialize all entities for this game
 	Com_Memset(g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]));
 	level.gentities = g_entities;
@@ -1262,24 +1044,10 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	Com_Memset(g_clients, 0, MAX_CLIENTS * sizeof(g_clients[0]));
 	level.clients = g_clients;
 
-	// set client fields on player ents
-	for (i = 0 ; i < level.maxclients ; i++)
-	{
-		/*g_entities[i].client                           = level.clients + i;
-		level.clients[i].sess.userSpawnPointValue      = 0;
-		level.clients[i].sess.userMinorSpawnPointValue = -1;
-		level.clients[i].sess.resolvedSpawnPointIndex  = 0;*/
-	}
-
 	// always leave room for the max number of clients,
 	// even if they aren't all used, so numbers inside that
 	// range are NEVER anything but clients
 	level.num_entities = MAX_CLIENTS;
-
-	//for (i = 0 ; i < MAX_CLIENTS ; i++)
-	//{
-	//	g_entities[i].classname = "clientslot";
-	//}
 
 	// let the server system know where the entities are
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
@@ -1319,9 +1087,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	BG_InitWeaponStrings();
 
 	G_RegisterPlayerClasses();
-
-	// Match init work
-	G_loadMatchGame();
 
 #ifdef FEATURE_LUA
 	G_LuaHook_InitGame(levelTime, randomSeed, restart);
@@ -1412,272 +1177,21 @@ PLAYER COUNTING / SCORE SORTING
 */
 
 /**
-* @brief SortRanks
-* @param[in] a
-* @param[in] b
-* @return
-*/
-int QDECL SortRanks(const void *a, const void *b)
-{
-	gclient_t *ca = &level.clients[*(const int *)a];
-	gclient_t *cb = &level.clients[*(const int *)b];
-
-	// then connecting clients
-	if (ca->pers.connected == CON_CONNECTING)
-	{
-		return 1;
-	}
-	if (cb->pers.connected == CON_CONNECTING)
-	{
-		return -1;
-	}
-
-	// then spectators
-	if (ca->sess.sessionTeam == TEAM_SPECTATOR && cb->sess.sessionTeam == TEAM_SPECTATOR)
-	{
-		if (ca->sess.spectatorTime < cb->sess.spectatorTime)
-		{
-			return -1;
-		}
-		if (ca->sess.spectatorTime > cb->sess.spectatorTime)
-		{
-			return 1;
-		}
-		return 0;
-	}
-	if (ca->sess.sessionTeam == TEAM_SPECTATOR)
-	{
-		return 1;
-	}
-	if (cb->sess.sessionTeam == TEAM_SPECTATOR)
-	{
-		return -1;
-	}
-
-	if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		// then sort by score
-		if (ca->ps.persistant[PERS_SCORE] > cb->ps.persistant[PERS_SCORE])
-		{
-			return -1;
-		}
-		if (ca->ps.persistant[PERS_SCORE] < cb->ps.persistant[PERS_SCORE])
-		{
-			return 1;
-		}
-	}
-	else
-	{
-		int i, totalXP[2];
-
-		for (totalXP[0] = totalXP[1] = 0, i = 0; i < SK_NUM_SKILLS; i++)
-		{
-			totalXP[0] += ca->sess.skillpoints[i];
-			totalXP[1] += cb->sess.skillpoints[i];
-		}
-
-		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-			(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
-			(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
-		{
-			// current map XPs only
-			totalXP[0] -= ca->sess.startxptotal;
-			totalXP[1] -= cb->sess.startxptotal;
-		}
-
-		// then sort by xp
-		if (totalXP[0] > totalXP[1])
-		{
-			return -1;
-		}
-		if (totalXP[0] < totalXP[1])
-		{
-			return 1;
-		}
-	}
-	return 0;
-}
-
-/**
- * @brief etpro_PlayerInfo
+ * @brief TVG_CalculateRanks
  */
-void etpro_PlayerInfo(void)
+void TVG_CalculateRanks(void)
 {
-	//128 bits
-	char      playerinfo[MAX_CLIENTS + 1];
-	gentity_t *e = &g_entities[0];
-	team_t    playerteam;
-	int       i;
-	int       lastclient = -1;
+	int i;
 
-	Com_Memset(playerinfo, 0, sizeof(playerinfo));
-
-	for (i = 0; i < MAX_CLIENTS; i++, e++)
-	{
-		if (e->client == NULL || e->client->pers.connected == CON_DISCONNECTED)
-		{
-			playerinfo[i] = '-';
-			continue;
-		}
-
-		// keep track of highest connected/connecting client
-		lastclient = i;
-
-		if (e->inuse == qfalse)
-		{
-			playerteam = 0;
-		}
-		else
-		{
-			playerteam = e->client->sess.sessionTeam;
-		}
-		playerinfo[i] = (char)'0' + playerteam;
-	}
-	// terminate the string, if we have any non-0 clients
-	if (lastclient != -1)
-	{
-		playerinfo[lastclient + 1] = (char)0;
-	}
-	else
-	{
-		playerinfo[0] = (char)0;
-	}
-
-	trap_Cvar_Set("P", playerinfo);
-}
-
-/**
- * @brief Recalculates the score ranks of all players.
- * This will be called on every client connect, begin, disconnect, death,
- * and team change.
- */
-void CalculateRanks(void)
-{
-	int       i;
-	char      teaminfo[TEAM_NUM_TEAMS][256];
-	gclient_t *cl;
-
-	level.numConnectedClients       = 0;
-	level.numHumanConnectedClients  = 0;
-	level.numNonSpectatorClients    = 0;
-	level.numPlayingClients         = 0;
-	level.voteInfo.numVotingClients = 0;  // don't count bots
-
-	level.numFinalDead[0] = 0;
-	level.numFinalDead[1] = 0;
-
-	level.voteInfo.numVotingTeamClients[0] = 0;
-	level.voteInfo.numVotingTeamClients[1] = 0;
-
-	for (i = 0; i < TEAM_NUM_TEAMS; i++)
-	{
-		if (i < 2)
-		{
-			level.numTeamClients[i] = 0;
-		}
-		teaminfo[i][0] = 0;
-	}
+	level.numConnectedClients = 0;
 
 	for (i = 0 ; i < level.maxclients ; i++)
 	{
 		if (level.clients[i].pers.connected != CON_DISCONNECTED)
 		{
-			int team = level.clients[i].sess.sessionTeam;
-
 			level.sortedClients[level.numConnectedClients] = i;
 			level.numConnectedClients++;
-
-			if (!(g_entities[i].r.svFlags & SVF_BOT))
-			{
-				++level.numHumanConnectedClients;
-			}
-
-			if (team != TEAM_SPECTATOR)
-			{
-				level.numNonSpectatorClients++;
-
-				Q_strcat(teaminfo[team], sizeof(teaminfo[team]) - 1, va("%d ", level.numConnectedClients));
-
-				// decide if this should be auto-followed
-				if (level.clients[i].pers.connected == CON_CONNECTED)
-				{
-					int teamIndex = level.clients[i].sess.sessionTeam == TEAM_AXIS ? 0 : 1;
-
-					level.numPlayingClients++;
-					if (!(g_entities[i].r.svFlags & SVF_BOT))
-					{
-						level.voteInfo.numVotingClients++;
-					}
-
-					if (level.clients[i].sess.sessionTeam == TEAM_AXIS ||
-					    level.clients[i].sess.sessionTeam == TEAM_ALLIES)
-					{
-						if (g_gametype.integer == GT_WOLF_LMS)
-						{
-							if (g_entities[i].health <= 0 || (level.clients[i].ps.pm_flags & PMF_LIMBO))
-							{
-								level.numFinalDead[teamIndex]++;
-							}
-						}
-						else
-						{
-							if (level.clients[i].ps.persistant[PERS_RESPAWNS_LEFT] == 0 && g_entities[i].health <= 0)
-							{
-								level.numFinalDead[teamIndex]++;
-							}
-						}
-
-						level.numTeamClients[teamIndex]++;
-						if (!(g_entities[i].r.svFlags & SVF_BOT))
-						{
-							level.voteInfo.numVotingTeamClients[teamIndex]++;
-						}
-					}
-				}
-			}
 		}
-	}
-
-	for (i = 0; i < TEAM_NUM_TEAMS; i++)
-	{
-		if (0 == teaminfo[i][0])
-		{
-			Q_strncpyz(teaminfo[i], "(None)", sizeof(teaminfo[i]));
-		}
-	}
-
-	qsort(level.sortedClients, level.numConnectedClients,
-	      sizeof(level.sortedClients[0]), SortRanks);
-
-	// set the rank value for all clients that are connected and not spectators
-	// in team games, rank is just the order of the teams, 0=red, 1=blue, 2=tied
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		cl = &level.clients[level.sortedClients[i]];
-		if (level.teamScores[TEAM_AXIS] == level.teamScores[TEAM_ALLIES])
-		{
-			cl->ps.persistant[PERS_RANK] = 2;
-		}
-		else if (level.teamScores[TEAM_AXIS] > level.teamScores[TEAM_ALLIES])
-		{
-			cl->ps.persistant[PERS_RANK] = 0;
-		}
-		else
-		{
-			cl->ps.persistant[PERS_RANK] = 1;
-		}
-	}
-
-	trap_SetConfigstring(CS_FIRSTBLOOD, va("%i", level.firstbloodTeam));
-	trap_SetConfigstring(CS_ROUNDSCORES1, va("%i", g_axiswins.integer));
-	trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
-
-	etpro_PlayerInfo();
-
-	// if we are at the intermission, send the new info to everyone
-	if (g_gamestate.integer == GS_INTERMISSION)
-	{
-		SendScoreboardMessageToAllClients();
 	}
 }
 
@@ -1686,75 +1200,6 @@ void CalculateRanks(void)
 MAP CHANGING
 ========================================================================
 */
-
-/**
- * @brief Do this at BeginIntermission time and whenever ranks are recalculated
- * due to enters/exits/forced team changes
- */
-void SendScoreboardMessageToAllClients(void)
-{
-	int i;
-
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		if (level.clients[level.sortedClients[i]].pers.connected == CON_CONNECTED)
-		{
-			level.clients[level.sortedClients[i]].wantsscore = qtrue;
-		}
-	}
-}
-
-/**
- * @brief When the intermission starts, this will be called for all players.
- * If a new client connects, this will be called after the spawn function.
- * @param[in,out] ent Client
- * @param[in] hasVoted keep tracking clients vote if they change team during intermission
- */
-void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted)
-{
-	// take out of follow mode if needed
-	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
-	{
-		TVG_StopFollowing(ent->client);
-	}
-
-	// move to the spot
-	VectorCopy(level.intermission_origin, ent->s.origin);
-	VectorCopy(level.intermission_origin, ent->client->ps.origin);
-	VectorCopy(level.intermission_angle, ent->client->ps.viewangles);
-	ent->client->ps.pm_type = PM_INTERMISSION;
-
-	// clean up powerup info
-	// Com_Memset( ent->client->ps.powerups, 0, sizeof(ent->client->ps.powerups) );
-
-	// Player view is distorted in intermission if you have ridden a vehicle,
-	// mounted a tank
-
-	// initialize vars
-	if (!hasVoted && g_gametype.integer == GT_WOLF_MAPVOTE)
-	{
-		ent->client->sess.mapVotedFor[0] = -1;
-		ent->client->sess.mapVotedFor[1] = -1;
-		ent->client->sess.mapVotedFor[2] = -1;
-	}
-
-	if (hasVoted)
-	{
-		ent->client->ps.eFlags |= EF_VOTED;
-	}
-	else
-	{
-		ent->client->ps.eFlags &= ~EF_VOTED;
-	}
-
-	ent->s.eFlags     = 0;
-	ent->s.eType      = ET_GENERAL;
-	ent->s.modelindex = 0;
-	ent->s.loopSound  = 0;
-	ent->s.event      = 0;
-	ent->s.events[0]  = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0;
-	ent->r.contents   = 0;
-}
 
 /**
  * @brief This is also used for spectator spawns
@@ -1908,7 +1353,7 @@ void TVG_RunFrame(int levelTime)
 	level.frameTime    = level.time - level.previousTime;
 
 	// get any cvar changes
-	G_UpdateCvars();
+	TVG_UpdateCvars();
 
 	if (level.lastCmdsUpdate + 100 <= level.time)
 	{
@@ -1918,10 +1363,12 @@ void TVG_RunFrame(int levelTime)
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
-		TVClientEndFrame(&level.clients[level.sortedClients[i]]);
+		TVG_ClientEndFrame(&level.clients[level.sortedClients[i]]);
 	}
 }
 
+// FIXME: test if this works, .manifest extension is not supported in ettv
+//        so it probably fails to open file for read
 void TVG_ParsePlatformManifest(void)
 {
 	fileHandle_t fileHandle;

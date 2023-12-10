@@ -440,7 +440,7 @@ static int _et_ClientUserinfoChanged(lua_State *L)
 {
 	int clientnum = (int)luaL_checkinteger(L, 1);
 
-	TVClientUserinfoChanged(clientnum);
+	TVG_ClientUserinfoChanged(clientnum);
 	return 0;
 }
 
@@ -1356,84 +1356,6 @@ gentity_t *G_Lua_CreateEntity(char *params)
 	return NULL;
 }
 
-// entnum = _et_G_Lua_CreateEntity( params )
-// This function expects same as G_ScriptAction_Create -  keys & values
-// see http://wolfwiki.anime.net/index.php/Map_scripting
-// was et.G_Spawn() before 2.75 (... and  did not work)
-static int _et_G_Lua_CreateEntity(lua_State *L)
-{
-	//gentity_t *entnum;
-	//char      *params = (char *)luaL_checkstring(L, 1); // make 2 params for classname?
-
-	//entnum = G_Lua_CreateEntity(params);
-
-	//if (entnum == NULL)
-	//{
-	//	//luaL_error(L, "can't create entity");
-	//	return 0;
-	//}
-
-	//lua_pushinteger(L, entnum - g_entities);
-
-	return 1;
-}
-
-// _et_G_Lua_DeleteEntity( params )
-static int _et_G_Lua_DeleteEntity(lua_State *L)
-{
-	char *params = (char *)luaL_checkstring(L, 1);
-
-	//lua_pushinteger(L, G_ScriptAction_Delete(NULL, params));
-	return 1;
-}
-
-// entnum = et.G_TempEntity( origin, event )
-static int _et_G_TempEntity(lua_State *L)
-{
-	vec3_t origin;
-	int    event = (int)luaL_checkinteger(L, 2);
-
-	lua_pop(L, 1);
-	_et_gentity_setvec3(L, &origin);
-	lua_pushinteger(L, G_TempEntity(origin, event) - g_entities);
-	return 1;
-}
-
-// et.G_FreeEntity( entnum )
-static int _et_G_FreeEntity(lua_State *L)
-{
-	int entnum = (int)luaL_checkinteger(L, 1);
-
-	G_FreeEntity(g_entities + entnum);
-	// a succesful LUA function has to return 1
-	return 1;
-}
-
-// et.G_EntitiesFree()
-static int _et_G_EntitiesFree(lua_State *L)
-{
-	lua_pushinteger(L, G_EntitiesFree());
-	return 1;
-}
-
-// et.trap_LinkEntity( entnum )
-static int _et_trap_LinkEntity(lua_State *L)
-{
-	int entnum = (int)luaL_checkinteger(L, 1);
-
-	trap_LinkEntity(g_entities + entnum);
-	return 0;
-}
-
-// et.trap_UnlinkEntity( entnum )
-static int _et_trap_UnlinkEntity(lua_State *L)
-{
-	int entnum = (int)luaL_checkinteger(L, 1);
-
-	trap_UnlinkEntity(g_entities + entnum);
-	return 0;
-}
-
 // spawnval = et.G_GetSpawnVar( entnum, key )
 // This function works with fields ( g_spawn.c @ 72 )
 //
@@ -1784,32 +1706,6 @@ static int _et_G_AddEvent(lua_State *L)
 	return 0;
 }
 
-// Shaders
-// et.G_ShaderRemap( oldShader, newShader )
-static int _et_G_ShaderRemap(lua_State *L)
-{
-	float      f          = level.time * 0.001;
-	const char *oldShader = luaL_checkstring(L, 1);
-	const char *newShader = luaL_checkstring(L, 2);
-
-	AddRemap(oldShader, newShader, f);
-	return 0;
-}
-
-// et.G_ResetRemappedShaders()
-static int _et_G_ResetRemappedShaders(lua_State *L)
-{
-	G_ResetRemappedShaders();
-	return 0;
-}
-
-// et.G_ShaderRemapFlush()
-static int _et_G_ShaderRemapFlush(lua_State *L)
-{
-	trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
-	return 0;
-}
-
 // setglobalfog 0 <duration> <float:r> <float:g> <float:b> <float:depthForOpaque>
 // Changes the global fog in a map to a specific color and density.
 // setglobalfog 1 <duration>
@@ -2037,22 +1933,12 @@ static const luaL_Reg etlib[] =
 	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },
 	{ "GetCurrentWeapon",        _et_GetCurrentWeapon        },
 	// Entities
-	{ "G_CreateEntity",          _et_G_Lua_CreateEntity      },
-	{ "G_DeleteEntity",          _et_G_Lua_DeleteEntity      },
-	{ "G_TempEntity",            _et_G_TempEntity            },
-	{ "G_FreeEntity",            _et_G_FreeEntity            },
-	{ "G_EntitiesFree",          _et_G_EntitiesFree          },
-	{ "trap_LinkEntity",         _et_trap_LinkEntity         },
-	{ "trap_UnlinkEntity",       _et_trap_UnlinkEntity       },
 	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
 	{ "G_SetSpawnVar",           _et_G_SetSpawnVar           },
 	{ "gentity_get",             _et_gentity_get             },
 	{ "gentity_set",             _et_gentity_set             },
 	{ "G_AddEvent",              _et_G_AddEvent              },
-	// Shaders
-	{ "G_ShaderRemap",           _et_G_ShaderRemap           },
-	{ "G_ResetRemappedShaders",  _et_G_ResetRemappedShaders  },
-	{ "G_ShaderRemapFlush",      _et_G_ShaderRemapFlush      },
+
 	{ "G_SetGlobalFog",          _et_G_SetGlobalFog          },
 	{ "trap_Trace",              _et_trap_Trace              },
 	{ "G_HistoricalTrace",       _et_G_HistoricalTrace       },

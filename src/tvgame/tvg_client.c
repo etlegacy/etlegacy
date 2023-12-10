@@ -590,7 +590,7 @@ char *CheckUserinfo(int clientNum, char *userinfo)
 }
 
 /**
- * @brief Called from TVClientConnect when the player first connects and
+ * @brief Called from TVG_ClientConnect when the player first connects and
  * directly by the server system when the player updates a userinfo variable.
  *
  * The game can override any of the settings and call trap_SetUserinfo
@@ -598,22 +598,18 @@ char *CheckUserinfo(int clientNum, char *userinfo)
  *
  * @param[in] clientNum
  */
-void TVClientUserinfoChanged(int clientNum)
+void TVG_ClientUserinfoChanged(int clientNum)
 {
 	gclient_t  *client = level.clients + clientNum;
-	int        i;
 	const char *userinfo_ptr                 = NULL;
 	char       cs_key[MAX_STRING_CHARS]      = "";
 	char       cs_value[MAX_STRING_CHARS]    = "";
 	char       cs_cg_uinfo[MAX_STRING_CHARS] = "";
 	char       cs_skill[MAX_STRING_CHARS]    = "";
 	char       *reason;
-	char       *s;
 	char       cs_name[MAX_NETNAME] = "";
 	char       oldname[MAX_NAME_LENGTH];
 	char       userinfo[MAX_INFO_STRING];
-	char       skillStr[16] = "";
-	char       medalStr[16] = "";
 
 	client->ps.clientNum = clientNum;
 
@@ -622,7 +618,7 @@ void TVClientUserinfoChanged(int clientNum)
 	reason = CheckUserinfo(clientNum, userinfo);
 	if (reason)
 	{
-		G_Printf("TVClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
+		G_Printf("TVG_ClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
 		trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 0);
 		return;
 	}
@@ -640,7 +636,7 @@ void TVClientUserinfoChanged(int clientNum)
 		if (qfalse == Info_NextPair(&userinfo_ptr, cs_key, cs_value))
 		{
 			// This would only happen if the end user is trying to manually modify the user info string
-			G_Printf("TVClientUserinfoChanged: client %d hacking clientinfo, empty key found!\n", clientNum);
+			G_Printf("TVG_ClientUserinfoChanged: client %d hacking clientinfo, empty key found!\n", clientNum);
 			trap_DropClient(clientNum, "Bad userinfo.", 0);
 			return;
 		}
@@ -658,7 +654,7 @@ void TVClientUserinfoChanged(int clientNum)
 			if (CompareIPNoPort(client->pers.client_ip, cs_value) == qfalse)
 			{
 				// They're trying to hack their ip address....
-				G_Printf("TVClientUserinfoChanged: client %d hacking ip, old=%s, new=%s\n", clientNum, client->pers.client_ip, cs_value);
+				G_Printf("TVG_ClientUserinfoChanged: client %d hacking ip, old=%s, new=%s\n", clientNum, client->pers.client_ip, cs_value);
 				trap_DropClient(clientNum, "Bad userinfo.", 0);
 				return;
 			}
@@ -692,7 +688,7 @@ void TVClientUserinfoChanged(int clientNum)
 			if (strlen(cs_value) >= MAX_NETNAME)
 			{
 				// They're trying long names
-				G_Printf("TVClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+				G_Printf("TVG_ClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 				trap_DropClient(clientNum, va("Name too long (>%d). Plase change your name.", MAX_NETNAME - 1), 0);
 				return;
 			}
@@ -706,7 +702,7 @@ void TVClientUserinfoChanged(int clientNum)
 					// extended ASCII chars have values between -128 and 0 (signed char) and the ASCII code flags are 0-31
 					if (cs_value[i] < 32)
 					{
-						G_Printf("TVClientUserinfoChanged: client %d kicked for extended ASCII characters name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+						G_Printf("TVG_ClientUserinfoChanged: client %d kicked for extended ASCII characters name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 						trap_DropClient(clientNum, "Server does not allow extended ASCII characters. Please change your name.", 0);
 						return;
 					}
@@ -718,7 +714,7 @@ void TVClientUserinfoChanged(int clientNum)
 			if (strcmp(client->pers.cl_guid, cs_value))
 			{
 				// They're trying to hack their guid...
-				G_Printf("TVClientUserinfoChanged: client %d hacking cl_guid, old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+				G_Printf("TVG_ClientUserinfoChanged: client %d hacking cl_guid, old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 				trap_DropClient(clientNum, "Bad userinfo.", 0);
 				return;
 			}
@@ -740,21 +736,15 @@ void TVClientUserinfoChanged(int clientNum)
 		Info_SetValueForKey(userinfo, "name", cs_name);
 		trap_SetUserinfo(clientNum, userinfo);
 		//CP("cp \"You cannot assign an empty playername! Your name has been reset.\"");
-		G_LogPrintf("TVClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
-		G_DPrintf("TVClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
-	}
-
-	client->medals = 0;
-	for (i = 0; i < SK_NUM_SKILLS; i++)
-	{
-		client->medals += client->sess.medals[i];
+		G_LogPrintf("TVG_ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
+		G_DPrintf("TVG_ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
 	}
 
 	// check for malformed or illegal info strings
 	if (!Info_Validate(userinfo))
 	{
 		Q_strncpyz(userinfo, "\\name\\badinfo", sizeof(userinfo));
-		G_Printf("TVClientUserinfoChanged: CheckUserinfo: client %d: Invalid userinfo\n", clientNum);
+		G_Printf("TVG_ClientUserinfoChanged: CheckUserinfo: client %d: Invalid userinfo\n", clientNum);
 		trap_DropClient(clientNum, "Invalid userinfo", 300);
 		return;
 	}
@@ -838,15 +828,6 @@ void TVClientUserinfoChanged(int clientNum)
 		}
 	}
 
-	for (i = 0; i < SK_NUM_SKILLS; i++)
-	{
-		Q_strcat(skillStr, sizeof(skillStr), va("%i", client->sess.skill[i]));
-		Q_strcat(medalStr, sizeof(medalStr), va("%i", client->sess.medals[i]));
-		// FIXME: Gordon: wont this break if medals > 9 arnout?
-		// Medal count is tied to skill count :()
-		// er, it's based on >> skill per map, so for a huuuuuuge campaign it could break...
-	}
-
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 
 	// To communicate it to cgame
@@ -855,26 +836,26 @@ void TVClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
-	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\lsw\\%i\\mu\\%i\\ref\\%i\\sc\\%i\\u\\%u",
-	       client->pers.netname,
-	       client->sess.sessionTeam,
-	       client->sess.playerType,
-	       client->sess.latchPlayerType,
-	       client->sess.rank,
-	       medalStr,
-	       skillStr,
-	       client->disguiseClientNum,
-	       client->sess.playerWeapon,
-	       client->sess.latchPlayerWeapon,
-	       client->sess.playerWeapon2,
-	       client->sess.latchPlayerWeapon2,
-	       client->sess.muted ? 1 : 0,
-	       client->sess.referee,
-	       client->sess.shoutcaster
-	       );
+	//s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\lsw\\%i\\mu\\%i\\ref\\%i\\sc\\%i\\u\\%u",
+	//       client->pers.netname,
+	//       client->sess.sessionTeam,
+	//       client->sess.playerType,
+	//       client->sess.latchPlayerType,
+	//       client->sess.rank,
+	//       medalStr,
+	//       skillStr,
+	//       client->disguiseClientNum,
+	//       client->sess.playerWeapon,
+	//       client->sess.latchPlayerWeapon,
+	//       client->sess.playerWeapon2,
+	//       client->sess.latchPlayerWeapon2,
+	//       client->sess.muted ? 1 : 0,
+	//       client->sess.referee,
+	//       client->sess.shoutcaster
+	//       );
 
-	G_LogPrintf("TVClientUserinfoChanged: %i %s\n", clientNum, s);
-	G_DPrintf("TVClientUserinfoChanged: %i :: %s\n", clientNum, s);
+	//G_LogPrintf("TVG_ClientUserinfoChanged: %i %s\n", clientNum, s);
+	//G_DPrintf("TVG_ClientUserinfoChanged: %i :: %s\n", clientNum, s);
 }
 
 /**
@@ -887,7 +868,7 @@ void TVClientUserinfoChanged(int clientNum)
  * a string with the reason for denial.
  *
  * Otherwise, the client will be sent the current gamestate
- * and will eventually get to TVClientBegin.
+ * and will eventually get to TVG_ClientBegin.
  *
  * @param[in] clientNum
  * @param[in] firstTime will be qtrue the very first time a client connects to the server machine, but qfalse on map changes and tournement restarts.
@@ -896,7 +877,7 @@ void TVClientUserinfoChanged(int clientNum)
  * @return NULL if the client should be allowed, otherwise return
  * a string with the reason for denial.
  */
-char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
+char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 {
 	gclient_t  *client = level.clients + clientNum;
 	const char *userinfo_ptr;
@@ -1012,7 +993,7 @@ char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		G_LogPrintf("Forcing disconnect on active client: %i\n", (int)(client - level.clients));
 		// so lets just fix up anything that should happen on a disconnect
-		TVClientDisconnect(client - level.clients);
+		TVG_ClientDisconnect(client - level.clients);
 	}
 
 	Com_Memset(client, 0, sizeof(*client));
@@ -1064,7 +1045,7 @@ char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	// get and distribute relevent paramters
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
 
-	TVClientUserinfoChanged(clientNum);
+	TVG_ClientUserinfoChanged(clientNum);
 
 	// don't do the "xxx connected" messages if they were caried over from previous level
 	// disabled for bots - see join message ... make cvar ?
@@ -1077,7 +1058,7 @@ char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	}
 
 	// count current clients and rank for scoreboard
-	CalculateRanks();
+	TVG_CalculateRanks();
 
 	return NULL;
 }
@@ -1089,7 +1070,7 @@ char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
  *
  * @param[in] clientNum
  */
-void TVClientBegin(int clientNum)
+void TVG_ClientBegin(int clientNum)
 {
 	gclient_t *client = level.clients + clientNum;
 	int       flags;
@@ -1155,39 +1136,20 @@ void TVClientBegin(int clientNum)
 	client->pers.savedClassWeaponTimeFop  = -999999;
 	client->pers.savedClassWeaponTimeMed  = -999999;
 
-	// init objective indicator if already set
-	if (level.flagIndicator > 0)
-	{
-		//G_clientFlagIndicator(ent);
-	}
+	TVG_ClientSpawn(client);
 
-	TVClientSpawn(client);
+	client->inactivityTime        = level.time + G_SpectatorInactivityValue * 1000;
+	client->inactivitySecondsLeft = G_SpectatorInactivityValue;
 
-	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
-	{
-		client->inactivityTime        = level.time + G_InactivityValue * 1000;
-		client->inactivitySecondsLeft = G_InactivityValue;
-	}
-	else
-	{
-		client->inactivityTime        = level.time + G_SpectatorInactivityValue * 1000;
-		client->inactivitySecondsLeft = G_SpectatorInactivityValue;
-	}
-
-	if (client->sess.sessionTeam != TEAM_SPECTATOR)
-	{
-		trap_SendServerCommand(-1, va("print \"[lof]" S_COLOR_WHITE "%s" S_COLOR_WHITE " [lon]entered the game\n\"", client->pers.netname));
-	}
-
-	G_LogPrintf("TVClientBegin: %i\n", clientNum);
+	G_LogPrintf("TVG_ClientBegin: %i\n", clientNum);
 
 	// count current clients and rank for scoreboard
-	CalculateRanks();
+	TVG_CalculateRanks();
 }
 
 /**
  * @brief Called every time a client is placed fresh in the world:
- * after the first TVClientBegin, and after each respawn
+ * after the first TVG_ClientBegin, and after each respawn
  * Initializes all non-persistant parts of playerState
  *
  * @param[in,out] ent
@@ -1195,7 +1157,7 @@ void TVClientBegin(int clientNum)
  * @param[in] teamChange
  * @param[in] restoreHealth
  */
-void TVClientSpawn(gclient_t *client)
+void TVG_ClientSpawn(gclient_t *client)
 {
 	int                index = client - level.clients;
 	vec3_t             spawn_origin, spawn_angles;
@@ -1236,11 +1198,7 @@ void TVClientSpawn(gclient_t *client)
 	}
 
 	{
-		qboolean set = client->maxlivescalced;
-
 		Com_Memset(client, 0, sizeof(*client));
-
-		client->maxlivescalced = set;
 	}
 
 	client->pers              = savedPers;
@@ -1328,10 +1286,10 @@ void TVClientSpawn(gclient_t *client)
 	client->ps.commandTime      = level.time - 100;
 	client->pers.cmd.serverTime = level.time;
 
-	TVClientThink(index);
+	TVG_ClientThink(index);
 
 	// run the presend to set anything else
-	TVClientEndFrame(client);
+	TVG_ClientEndFrame(client);
 
 	// set idle animation on weapon
 	client->ps.weapAnim = ((client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;
@@ -1347,13 +1305,11 @@ void TVClientSpawn(gclient_t *client)
  *
  * @param[in] clientNum
  */
-void TVClientDisconnect(int clientNum)
+void TVG_ClientDisconnect(int clientNum)
 {
-	gentity_t *ent  = g_entities + clientNum;
-	gentity_t *flag = NULL;
-	int       i;
+	gclient_t *client = level.clients + clientNum;
 
-	if (!ent->client)
+	if (!client)
 	{
 		return;
 	}
@@ -1365,43 +1321,14 @@ void TVClientDisconnect(int clientNum)
 
 	G_RemoveFromAllIgnoreLists(clientNum);
 
-	// stop any following clients
-	//for (i = 0 ; i < level.numConnectedClients ; i++)
-	//{
-	//	flag = g_entities + level.sortedClients[i];
-	//	if (flag->client->sess.sessionTeam == TEAM_SPECTATOR
-	//	    && flag->client->sess.spectatorState == SPECTATOR_FOLLOW
-	//	    && flag->client->sess.spectatorClient == clientNum)
-	//	{
-	//		TVG_StopFollowing(flag);
-	//	}
-	//	if ((flag->client->ps.pm_flags & PMF_LIMBO) && flag->client->sess.spectatorClient == clientNum)
-	//	{
-	//		TVG_Cmd_FollowCycle_f(flag, 1, qfalse);
-	//	}
-	//}
+	G_LogPrintf("TVG_ClientDisconnect: %i\n", clientNum);
 
-	G_LogPrintf("TVClientDisconnect: %i\n", clientNum);
+    client->pers.connected            = CON_DISCONNECTED;
+	client->ps.persistant[PERS_TEAM]  = TEAM_FREE;
+	client->ps.persistant[PERS_SCORE] = 0;
+	client->sess.sessionTeam          = TEAM_FREE;
 
-	trap_UnlinkEntity(ent);
-	ent->s.modelindex                      = 0;
-	ent->inuse                             = qfalse;
-	ent->classname                         = "disconnected";
-	ent->client->hasaward                  = qfalse;
-	ent->client->medals                    = 0;
-	ent->client->pers.connected            = CON_DISCONNECTED;
-	ent->client->ps.persistant[PERS_TEAM]  = TEAM_FREE;
-	ent->client->ps.persistant[PERS_SCORE] = 0;
-	i                                      = ent->client->sess.sessionTeam;
-	ent->client->sess.sessionTeam          = TEAM_FREE;
-	ent->active                            = 0;
-
-	// this needs to be cleared
-	ent->r.svFlags &= ~SVF_BOT;
-
-	trap_SetConfigstring(CS_PLAYERS + clientNum, "");
-
-	CalculateRanks();
+	TVG_CalculateRanks();
 }
 
 

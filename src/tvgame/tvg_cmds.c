@@ -428,11 +428,11 @@ qboolean TVG_Cmd_Score_f(gclient_t *client, tvcmd_reference_t *self)
 }
 
 /**
- * @brief CheatsOk
+ * @brief TVG_CheatsOk
  * @param[in] client
  * @return
  */
-qboolean CheatsOk(gclient_t *client)
+qboolean TVG_CheatsOk(gclient_t *client)
 {
 	if (!g_cheats.integer)
 	{
@@ -478,7 +478,7 @@ char *ConcatArgs(int start)
 }
 
 /**
- * @brief Cmd_Noclip_f
+ * @brief TVG_Cmd_Noclip_f
  * @param[in] client
  * @param[in] self
  *
@@ -491,7 +491,7 @@ qboolean TVG_Cmd_Noclip_f(gclient_t *client, tvcmd_reference_t *self)
 
 	name = ConcatArgs(1);
 
-	if (!CheatsOk(client))
+	if (!TVG_CheatsOk(client))
 	{
 		return qtrue;
 	}
@@ -540,7 +540,7 @@ void TVG_StopFollowing(gclient_t *client)
 	VectorCopy(client->ps.origin, pos);
 	VectorCopy(client->ps.viewangles, angle);
 
-	TVClientBegin(client - level.clients);
+	TVG_ClientBegin(client - level.clients);
 
 	VectorCopy(pos, client->ps.origin);
 	TVG_SetClientViewAngle(client, angle);
@@ -790,23 +790,6 @@ void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume)
 }
 
 /**
- * @brief G_HQSay
- * @param[in] other
- * @param[in] color
- * @param[in] name
- * @param[in] message
- */
-void G_HQSay(gentity_t *other, int color, const char *name, const char *message)
-{
-	if (!other || !other->inuse || !other->client)
-	{
-		return;
-	}
-
-	trap_SendServerCommand(other - g_entities, va("gamechat \"%s%c%c%s\" 1", name, Q_COLOR_ESCAPE, color, message));
-}
-
-/**
  * @brief TVG_SayTo
  * @param[in] ent
  * @param[in] other
@@ -937,9 +920,8 @@ qboolean TVG_Cmd_SetViewpos_f(gclient_t *client, tvcmd_reference_t *self)
 	char   buffer[MAX_TOKEN_CHARS];
 	int    i;
 
-	if (!g_cheats.integer && client->sess.sessionTeam != TEAM_SPECTATOR)
+	if (!TVG_CheatsOk(client))
 	{
-		trap_SendServerCommand(client - level.clients, va("print \"Only spectators can use the setviewpos command.\n\""));
 		return qtrue;
 	}
 
@@ -1008,33 +990,12 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 /**
  * @brief Cmd_WeaponStat_f
- * @param[in] ent
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] client
+ * @param[in] self
  */
-void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_WeaponStat_f(gclient_t *client, tvcmd_reference_t *self)
 {
-	char buffer[16];
-	extWeaponStats_t stat;
-
-	if (!ent || !ent->client)
-	{
-		return;
-	}
-
-	if (trap_Argc() != 2)
-	{
-		return;
-	}
-	trap_Argv(1, buffer, 16);
-	stat = (extWeaponStats_t)(atoi(buffer));
-
-	if (stat < WS_KNIFE || stat >= WS_MAX)
-	{
-		return;
-	}
-
-	trap_SendServerCommand(ent - g_entities, va("rws %i %i", ent->client->sess.aWeaponStats[stat].atts, ent->client->sess.aWeaponStats[stat].hits));
+	return qtrue;
 }
 
 /**
@@ -1568,8 +1529,9 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	//	// single weapon stat (requested weapon stats)
 	//case RWS_HASH:                                   // "rws"
 	//	return;
-	//case MAP_RESTART_HASH:                           // "map_restart"
-	//	return;
+	case MAP_RESTART_HASH:                           // "map_restart"
+		trap_SendServerCommand(-1, cmd);
+		return;
 	//case PORTALCAMPOS_HASH:                          // "portalcampos"
 	//	return;
 	//case REMAPSHADER_HASH:                           // "remapShader"
@@ -1578,8 +1540,9 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	//case ADDTOBUILD_HASH:                            // "addToBuild"
 	//	return;
 	//// server sends this command when it's about to kill the current server, before the client can reconnect
-	//case SPAWNSERVER_HASH:                     // "spawnserver"
-	//	return;
+	case SPAWNSERVER_HASH:                     // "spawnserver"
+		trap_SendServerCommand(-1, cmd);
+		return;
 	//case APPLICATION_HASH:                                         //  "application"
 	//	return;
 	//case INVITATION_HASH:                                          // "invitation"
@@ -1654,21 +1617,27 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		return;
 	//	// music
 	//	// loops \/
-	//case MU_START_HASH:                                      // "mu_start" has optional parameter for fade-up time
-	//	return;
+	case MU_START_HASH:                                      // "mu_start" has optional parameter for fade-up time
+		trap_SendServerCommand(-1, cmd);
+		return;
 	//// plays once then back to whatever the loop was \/
-	//case MU_PLAY_HASH:                        // "mu_play" has optional parameter for fade-up time
-	//	return;
-	//case MU_STOP_HASH:                                  // "mu_stop" has optional parameter for fade-down time
-	//	return;
-	//case MU_FADE_HASH:                                 // "mu_fade"
-	//	return;
-	//case SND_FADE_HASH:                                // "snd_fade"
-	//	return;
+	case MU_PLAY_HASH:                        // "mu_play" has optional parameter for fade-up time
+		trap_SendServerCommand(-1, cmd);
+		return;
+	case MU_STOP_HASH:                                  // "mu_stop" has optional parameter for fade-down time
+		trap_SendServerCommand(-1, cmd);
+		return;
+	case MU_FADE_HASH:                                 // "mu_fade"
+		trap_SendServerCommand(-1, cmd);
+		return;
+	case SND_FADE_HASH:                                // "snd_fade"
+		trap_SendServerCommand(-1, cmd);
+		return;
 	//case ROCKANDROLL_HASH: // "rockandroll"
 	//	return;
-	//case BP_HASH: // "bp"
-	//	return;
+	case BP_HASH: // "bp"
+		trap_SendServerCommand(-1, cmd);
+		return;
 	//case XPGAIN_HASH:   // "xpgain"
 	//	return;
 	default:
@@ -1678,11 +1647,12 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 }
 
 /**
- * @brief TVClientCommand
+ * @brief TVG_ClientCommand
  * @param[in] clientNum
  */
-void TVClientCommand(int clientNum)
+void TVG_ClientCommand(int clientNum)
 {
+	gclient_t *client;
 	char cmd[MAX_TOKEN_CHARS];
 
 	trap_Argv(0, cmd, sizeof(cmd));
@@ -1693,7 +1663,7 @@ void TVClientCommand(int clientNum)
 		return;
 	}
 
-	gclient_t *client = level.clients + clientNum;
+	client = level.clients + clientNum;
 
 	if (!client)
 	{

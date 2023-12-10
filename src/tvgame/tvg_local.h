@@ -689,7 +689,7 @@ typedef struct ipFilter_s
 /**
  * @struct clientPersistant_t
  * @brief Client data that stays across multiple respawns, but is cleared
- * on each level change or team change at TVClientBegin()
+ * on each level change or team change at TVG_ClientBegin()
  */
 typedef struct
 {
@@ -1376,7 +1376,7 @@ qboolean TVG_Cmd_IntermissionWeaponStats_f(gclient_t *client, tvcmd_reference_t 
 qboolean TVG_IntermissionMapList(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_IntermissionMapHistory(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_IntermissionVoteTally(gclient_t *client, tvcmd_reference_t *self);
-void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value);
+qboolean TVG_Cmd_WeaponStat_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_wStats_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_sgStats_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_WeaponStatsLeaders_f(gclient_t *client, tvcmd_reference_t *self);
@@ -1426,39 +1426,15 @@ void G_InitGentity(gentity_t *e);
 gentity_t *G_Spawn(void);
 gentity_t *G_TempEntity(vec3_t origin, entity_event_t event);
 gentity_t *G_TempEntityNotLinked(entity_event_t event);
-gentity_t *G_PopupMessage(popupMessageType_t type);
 void G_Sound(gentity_t *ent, int soundIndex);
-void G_AnimScriptSound(int soundIndex, vec3_t org, int client);
+void TVG_AnimScriptSound(int soundIndex, vec3_t org, int client);
 void G_FreeEntity(gentity_t *ent);
-int G_EntitiesFree(void);
 void G_ClientSound(gentity_t *ent, int soundIndex);
-
-void G_TouchTriggers(gentity_t *ent);
 
 char *vtos(const vec3_t v);
 
-void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm);
 void G_AddEvent(gentity_t *ent, int event, int eventParm);
 void G_SetOrigin(gentity_t *ent, vec3_t origin);
-void AddRemap(const char *oldShader, const char *newShader, float timeOffset);
-void G_ResetRemappedShaders(void);
-const char *BuildShaderStateConfig(void);
-
-void G_SetAngle(gentity_t *ent, vec3_t angle);
-
-qboolean infront(gentity_t *self, gentity_t *other);
-
-void G_ProcessTagConnect(gentity_t *ent, qboolean clearAngles);
-
-void G_ParseCampaigns(void);
-qboolean G_MapIsValidCampaignStartMap(void);
-
-team_t G_GetTeamFromEntity(gentity_t *ent);
-
-const char *G_StringContains(const char *str1, const char *str2, int casesensitive);
-qboolean G_MatchString(const char *filter, const char *name, int casesensitive);
-
-qboolean CG_ParseMapVotePlayersCountConfig(void);
 
 /**
  * @struct mapVotePlayersCount_s
@@ -1523,10 +1499,9 @@ void TVG_TeleportPlayer(gclient_t *client, const vec3_t origin, const vec3_t ang
 int TVG_TeamCount(int ignoreClientNum, team_t team);
 void TVG_SetClientViewAngle(gclient_t *client, const vec3_t angle);
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles);
-void BeginIntermission(void);
 
-void TVClientSpawn(gclient_t *client);
-void CalculateRanks(void);
+void TVG_ClientSpawn(gclient_t *client);
+void TVG_CalculateRanks(void);
 qboolean SpotWouldTelefrag(gentity_t *spot);
 
 // *LUA* & map configs g_sha1.c
@@ -1541,15 +1516,14 @@ void G_RegisterPlayerClasses(void);
 void G_UpdateCharacter(gclient_t *client);
 
 // tvg_svcmds.c
-qboolean TVConsoleCommand(void);
-void G_ProcessIPBans(void);
+qboolean TVG_ConsoleCommand(void);
+void TVG_ProcessIPBans(void);
 qboolean G_FilterIPBanPacket(char *from);
 void AddIPBan(const char *str);
 
 // tvg_cmds.c
 void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatText);
 void TVG_SayTo(gclient_t *ent, gclient_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
-void G_HQSay(gentity_t *other, int color, const char *name, const char *message);
 qboolean TVG_Cmd_Follow_f(gclient_t *client, tvcmd_reference_t *self);
 void TVG_Say_f(gclient_t *client, int mode /*, qboolean arg0*/);
 void G_PlaySound_Cmd(void);
@@ -1563,7 +1537,6 @@ char *ConcatArgs(int start);
 // tvg_main.c
 void TVG_FindIntermissionPoint(void);
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1, 2)));
@@ -1577,16 +1550,16 @@ extern int dll_trap_DemoSupport;
 int trap_ETTV_GetPlayerstate(int clientNum, playerState_t *ps);
 
 // tvg_client.c
-char *TVClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
-void TVClientUserinfoChanged(int clientNum);
-void TVClientDisconnect(int clientNum);
-void TVClientBegin(int clientNum);
-void TVClientCommand(int clientNum);
+char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
+void TVG_ClientUserinfoChanged(int clientNum);
+void TVG_ClientDisconnect(int clientNum);
+void TVG_ClientBegin(int clientNum);
+void TVG_ClientCommand(int clientNum);
 
 // tvg_active.c
-void TVClientThink(int clientNum);
-void TVClientEndFrame(gclient_t *client);
-void TVClientThink_cmd(gclient_t *client, usercmd_t *cmd);
+void TVG_ClientThink(int clientNum);
+void TVG_ClientEndFrame(gclient_t *client);
+void TVG_ClientThink_cmd(gclient_t *client, usercmd_t *cmd);
 
 // tvg_session.c
 void TVG_ReadSessionData(gclient_t *client);
@@ -1935,8 +1908,6 @@ messageStatus_t trap_MessageStatus(int clientNum);
 
 void G_RemoveFromAllIgnoreLists(int clientNum);
 
-void G_PrintClientSpammyCenterPrint(int entityNum, const char *text);
-
 // Match settings
 #define PAUSE_NONE      0x00    ///< Match is NOT paused.
 #define PAUSE_UNPAUSING 0x01    ///< Pause is about to expire
@@ -1961,20 +1932,6 @@ void G_PrintClientSpammyCenterPrint(int entityNum, const char *text);
 #define AA_STATSTEAM    0x02    ///< Client AutoAction: Dump TEAM player stats
 
 /**
- * @enum enum_t_dp
- * @brief "Delayed Print" ent enumerations
- */
-typedef enum
-{
-	DP_PAUSEINFO = 0,   ///< Print current pause info
-	DP_UNPAUSING,       ///< Print unpause countdown + unpause
-	DP_CONNECTINFO,     ///< Display info on connect
-	DP_MVSPAWN          ///< Set up MV views for clients who need them
-} enum_t_dp;
-
-// Remember: Axis = RED, Allies = BLUE ... right?!
-
-/**
  * @struct team_info
  * @brief Team extras
  */
@@ -1988,8 +1945,7 @@ typedef struct
 } team_info;
 
 // g_main.c
-void G_UpdateCvars(void);
-void G_wipeCvars(void);
+void TVG_UpdateCvars(void);
 
 // g_cmds_ext.c
 qboolean TVG_commandCheck(gclient_t *client, const char *cmd);
@@ -2002,32 +1958,16 @@ qboolean TVG_viewers_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_say_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_tvchat_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_scores_cmd(gclient_t *client, tvcmd_reference_t *self);
-void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, int fDump);
+qboolean TVG_statsall_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponRankings_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStats_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow);
 
 // g_match.c
-void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t mod);
-void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod);
-void G_createStatsJson(gentity_t *ent, void *target);
-char *G_createStats(gentity_t *ent);
-void G_deleteStats(int nClient);
 qboolean G_desiredFollow(gentity_t *ent, int nTeam);
 void G_globalSound(const char *sound);
-void G_globalSoundEnum(int sound);
-void G_initMatch(void);
-void G_loadMatchGame(void);
 void G_matchInfoDump(unsigned int dwDumpType);
-void G_parseStatsJson(void *object);
-void G_printFull(const char *str, gentity_t *ent);
-void G_resetModeState(void);
-void G_resetRoundState(void);
-void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void TVG_statsPrint(gclient_t *client, int nType, int cooldown);
-
-// g_stats.c
-void G_PrintAccuracyLog(gentity_t *ent, unsigned int dwCommand, int value);
 
 // g_referee.c
 void Cmd_AuthRcon_f(gentity_t *ent, unsigned int dwCommand, int value);
@@ -2052,7 +1992,6 @@ qboolean TVG_allowFollow(gclient_t *ent, int nTeam);
 
 // g_vote.c
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);
-void G_voteFlags(void);
 void TVG_voteHelp(gclient_t *client, qboolean fShowVote);
 void G_playersMessage(gentity_t *ent);
 // Actual voting commands
@@ -2062,8 +2001,6 @@ int G_UnMute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-
-void G_BuildEndgameStats(void);
 
 void G_InitTempTraceIgnoreEnts(void);
 void G_ResetTempTraceIgnoreEnts(void);

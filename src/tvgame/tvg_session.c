@@ -163,7 +163,7 @@ void TVG_InitSessionData(gclient_t *client, const char *userinfo)
 	Com_Memset(sess->startskillpoints, 0, sizeof(sess->startskillpoints));
 	Com_Memset(sess->medals, 0, sizeof(sess->medals));
 
-	// we set ref in TVClientUserinfoChanged
+	// we set ref in TVG_ClientUserinfoChanged
 	sess->referee   = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
 	sess->spec_team = 0;
 	sess->tvchat    = qtrue;

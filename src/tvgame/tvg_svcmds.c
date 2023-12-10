@@ -300,7 +300,7 @@ void AddIPBan(const char *str)
 /**
  * @brief G_ProcessIPBans
  */
-void G_ProcessIPBans(void)
+void TVG_ProcessIPBans(void)
 {
 	char *s, *t;
 	char str[MAX_CVAR_VALUE_STRING];
@@ -794,7 +794,7 @@ static void Svcmd_Kick_f(void)
 
 	cnum = TVG_ClientNumberFromString(NULL, name);
 
-	cl = (cnum == -1 ? NULL : &g_entities[cnum]);
+	cl = (cnum == -1 ? NULL : &level.clients[cnum]);
 
 	if (trap_Argc() == 3)
 	{
@@ -1473,10 +1473,10 @@ static consoleCommandTable_t consoleCommandTable[] =
 };
 
 /**
- * @brief ConsoleCommand
+ * @brief TVG_ConsoleCommand
  * @return
  */
-qboolean TVConsoleCommand(void)
+qboolean TVG_ConsoleCommand(void)
 {
 	char         cmd[MAX_TOKEN_CHARS];
 	unsigned int i;

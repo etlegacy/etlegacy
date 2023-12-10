@@ -179,27 +179,6 @@ void TVG_voteHelp(gclient_t *client, qboolean fShowVote)
 }
 
 /**
- * @brief Set disabled votes for client UI
- */
-void G_voteFlags(void)
-{
-	int i, flags = 0;
-
-	for (i = 0; i < numVotesAvailable; i++)
-	{
-		if (trap_Cvar_VariableIntegerValue(voteToggles[i].pszCvar) == 0)
-		{
-			flags |= voteToggles[i].flag;
-		}
-	}
-
-	if (flags != voteFlags.integer)
-	{
-		trap_Cvar_Set("voteFlags", va("%d", flags));
-	}
-}
-
-/**
  * @brief Prints specific callvote command help description.
  * @param[in] ent
  * @param[in] fRefereeCmd
@@ -479,7 +458,7 @@ int G_Mute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 			trap_SendServerCommand(pid, va("cpm \"^3You have been muted\""));
 			level.clients[pid].sess.muted = qtrue;
 			AP(va("cp \"%s\n^3has been muted!\n\"", level.clients[pid].pers.netname));
-			TVClientUserinfoChanged(pid);
+			TVG_ClientUserinfoChanged(pid);
 		}
 		else
 		{
@@ -547,7 +526,7 @@ int G_UnMute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 			trap_SendServerCommand(pid, va("cpm \"^3You have been un-muted\""));
 			level.clients[pid].sess.muted = qfalse;
 			AP(va("cp \"%s\n^3has been un-muted!\n\"", level.clients[pid].pers.netname));
-			TVClientUserinfoChanged(pid);
+			TVG_ClientUserinfoChanged(pid);
 		}
 		else
 		{
@@ -658,7 +637,7 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 			cl->sess.referee     = RL_REFEREE; // FIXME: Differentiate voted refs from passworded refs
 			cl->sess.spec_invite = TEAM_AXIS | TEAM_ALLIES;
 			AP(va("cp \"%s^7 is now a referee\n\"", cl->pers.netname));
-			TVClientUserinfoChanged(atoi(level.voteInfo.vote_value));
+			TVG_ClientUserinfoChanged(atoi(level.voteInfo.vote_value));
 		}
 	}
 	return G_OK;
@@ -739,7 +718,7 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 			cl->sess.spec_invite = 0;
 		}
 		AP(va("cp \"%s^7\nis no longer a referee\n\"", cl->pers.netname));
-		TVClientUserinfoChanged(atoi(level.voteInfo.vote_value));
+		TVG_ClientUserinfoChanged(atoi(level.voteInfo.vote_value));
 	}
 
 	return G_OK;
