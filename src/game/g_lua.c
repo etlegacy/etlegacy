@@ -178,33 +178,7 @@ static int _et_G_LogPrint(lua_State *L)
 	char text[1024];
 
 	Q_strncpyz(text, luaL_checkstring(L, 1), sizeof(text));
-
-	G_Printf("%s", text);
-
-	// Additional logging
-	if (level.logFile)
-	{
-		char string[1024];
-
-		//if ( g_logOptions.integer & LOGOPTS_REALTIME )
-		//{
-		//    Com_sprintf(string, sizeof(string), "%s %s", G_GetRealTime(), text);
-		//}
-		//else
-		{
-			int min, tens, sec;
-
-			sec  = level.time / 1000;
-			min  = sec / 60;
-			sec -= min * 60;
-			tens = sec / 10;
-			sec -= tens * 10;
-
-			Com_sprintf(string, sizeof(string), "%i:%i%i %s", min, tens, sec, text);
-		}
-
-		trap_FS_Write(string, strlen(string), level.logFile);
-	}
+	G_LogPrintf("%s", text);
 	return 0;
 }
 
