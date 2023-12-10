@@ -855,10 +855,10 @@ void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 
 /**
- * @brief G_ServerIsFloodProtected
+ * @brief TVG_ServerIsFloodProtected
  * @return
  */
-qboolean G_ServerIsFloodProtected(void)
+qboolean TVG_ServerIsFloodProtected(void)
 {
 	return (!g_floodProtection.integer || !g_floodWait.integer || !g_floodLimit.integer) ? qfalse : qtrue;
 }
@@ -881,40 +881,7 @@ void G_RegisterCvars(void)
 		if (cv->vmCvar)
 		{
 			cv->modificationCount = cv->vmCvar->modificationCount;
-			// update vote info for clients, if necessary
-			G_checkServerToggle(cv->vmCvar);
 		}
-	}
-
-	// check some things
-	// Gametype is currently restricted to supported types only
-	if ((g_gametype.integer < GT_WOLF || g_gametype.integer >= GT_MAX_GAME_TYPE))
-	{
-		trap_Cvar_Set("g_gametype", va("%i", GT_WOLF));
-		trap_Cvar_Update(&g_gametype);
-		// FIXME: auto restart?
-		// g_gametype is latched and won't use the above value for current game. but running league with invalid gametype is resulting in bad behaviour
-		// let's drop the game... (unfortunately we can't immediately restart the server here (exec map_restart isn't working)
-		G_Error("Invalid game type %i detected - defaulting to %s (%i). Start your server again with no gametype set!\n", g_gametype.integer, gameNames[GT_WOLF], GT_WOLF);
-	}
-
-	trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
-
-	if (match_readypercent.integer < 1)
-	{
-		trap_Cvar_Set("match_readypercent", "1");
-		trap_Cvar_Update(&match_readypercent);
-	}
-
-	if (pmove_msec.integer < 8)
-	{
-		trap_Cvar_Set("pmove_msec", "8");
-		trap_Cvar_Update(&pmove_msec);
-	}
-	else if (pmove_msec.integer > 33)
-	{
-		trap_Cvar_Set("pmove_msec", "33");
-		trap_Cvar_Update(&pmove_msec);
 	}
 }
 
@@ -1098,27 +1065,6 @@ void G_UpdateCvars(void)
 
 					trap_SetConfigstring(CS_MODINFO, cs);
 				}
-
-				// Update vote info for clients, if necessary
-				if (cv->vmCvar == &vote_allow_kick            || cv->vmCvar == &vote_allow_map            ||
-				    cv->vmCvar == &vote_allow_matchreset      || cv->vmCvar == &vote_allow_gametype       ||
-				    cv->vmCvar == &vote_allow_mutespecs       || cv->vmCvar == &vote_allow_nextmap        ||
-				    cv->vmCvar == &vote_allow_config          || cv->vmCvar == &vote_allow_referee        ||
-				    cv->vmCvar == &vote_allow_shuffleteams    || cv->vmCvar == &vote_allow_shuffleteams_norestart ||
-				    cv->vmCvar == &vote_allow_swapteams       || cv->vmCvar == &vote_allow_friendlyfire   ||
-				    cv->vmCvar == &vote_allow_timelimit       || cv->vmCvar == &vote_allow_warmupdamage   ||
-				    cv->vmCvar == &vote_allow_antilag         || cv->vmCvar == &vote_allow_balancedteams  ||
-				    cv->vmCvar == &vote_allow_muting          || cv->vmCvar == &vote_allow_surrender      ||
-				    cv->vmCvar == &vote_allow_restartcampaign || cv->vmCvar == &vote_allow_nextcampaign   ||
-				    cv->vmCvar == &vote_allow_poll            || cv->vmCvar == &vote_allow_maprestart     ||
-				    cv->vmCvar == &vote_allow_cointoss)
-				{
-					fVoteFlags = qtrue;
-				}
-				else
-				{
-					fToggles = (G_checkServerToggle(cv->vmCvar) || fToggles);
-				}
 			}
 		}
 	}
@@ -1193,42 +1139,6 @@ void G_wipeCvars(void)
 	G_UpdateCvars();
 }
 
-#define SNIPSIZE 250
-
-/**
- * @brief Copies max num chars from beginning of dest into src and returns pointer to new src
- * @param[out] dest
- * @param[in] src
- * @param[in] num
- * @return
- */
-char *strcut(char *dest, char *src, int num)
-{
-	int i;
-
-	if (!dest || !src || !num)
-	{
-		return NULL;
-	}
-
-	for (i = 0 ; i < num ; i++)
-	{
-		if ((char)*src)
-		{
-			*dest = *src;
-			dest++;
-			src++;
-		}
-		else
-		{
-			break;
-		}
-	}
-	*dest = (char)0;
-
-	return src;
-}
-
 static ID_INLINE void G_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
 {
 	if (trap_GetValue(value, valueSize, name))
@@ -1286,12 +1196,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	G_InitMemory();
 
-	// intialize gamestate
-	if (g_gamestate.integer == GS_INITIALIZE)
-	{
-		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
-	}
-
 	// set some level globals
 	i = level.server_settings;
 	{
@@ -1308,7 +1212,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	}
 
 	G_SetupExtensions();
-	trap_DemoSupport("gstats\\sgstats\\sc0\\score\\sc1\\score\\impt\\impt\\imsr\\imsr\\impr\\impr\\impkd0\\impkd\\impkd1\\impkd\\imwa\\imwa\\imws\\imws");
 
 	level.time            = levelTime;
 	level.startTime       = levelTime;
@@ -1317,7 +1220,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	// init the anim scripting
 	level.animScriptData.soundIndex = G_SoundIndex;
 	level.animScriptData.playSound  = G_AnimScriptSound;
-
 	// time
 	time(&aclock);
 	strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y", localtime(&aclock));
@@ -1349,73 +1251,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	G_LogPrintf("gametime: %s\n", timeFt);
 
-	G_ParseCampaigns();
-
-	trap_SetConfigstring(CS_SCRIPT_MOVER_NAMES, "");     // clear out
-
 	G_ResetRemappedShaders();
-
-	if (g_mapConfigs.string[0])
-	{
-		char mapConfig[MAX_STRING_CHARS];
-
-		Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
-		Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
-		Q_strcat(mapConfig, sizeof(mapConfig), "/default.cfg\n");
-		trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
-
-		Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
-		Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
-		Q_strcat(mapConfig, sizeof(mapConfig), "/");
-		Q_strcat(mapConfig, sizeof(mapConfig), level.rawmapname);
-		Q_strcat(mapConfig, sizeof(mapConfig), ".cfg\n");
-		trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
-	}
-
-	// MAPVOTE
-	if (g_gametype.integer == GT_WOLF_MAPVOTE)
-	{
-		char mapConfig[MAX_STRING_CHARS];
-
-		//trap_Cvar_Set("C", va("%d,%d",
-		//        ((level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ?
-		//               0 : level.mapsSinceLastXPReset)+1,
-		//       g_resetXPMapCount.integer));
-
-		if (g_mapConfigs.string[0] && g_resetXPMapCount.integer)
-		{
-			Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
-			Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
-			i = level.mapsSinceLastXPReset;
-			if (i == 0 || i == g_resetXPMapCount.integer)
-			{
-				i = 2;
-			}
-			else if (i + 2 <= g_resetXPMapCount.integer)
-			{
-				i += 2;
-			}
-			else
-			{
-				i = 1;
-			}
-			Q_strcat(mapConfig, sizeof(mapConfig), va("/vote_%d.cfg", i));
-
-			trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
-		}
-
-		level.mapVotePlayersCount = CG_ParseMapVotePlayersCountConfig();
-	}
-
-	// Clear out spawn target config strings
-	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
-	Info_SetValueForKey(cs, "s", "0"); // numspawntargets
-	trap_SetConfigstring(CS_MULTI_INFO, cs);
-
-	for (i = CS_MULTI_SPAWNTARGETS; i < CS_MULTI_SPAWNTARGETS + MAX_MULTI_SPAWNTARGETS; i++)
-	{
-		trap_SetConfigstring(i, "");
-	}
 
 	// initialize all entities for this game
 	Com_Memset(g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]));
@@ -1449,21 +1285,9 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
 	                    &level.clients[0].ps, sizeof(level.clients[0]));
 
-
-	numSplinePaths = 0;
-	numPathCorners = 0;
-
-	// MAPVOTE
-	level.mapsSinceLastXPReset = 0;
-
-	// init objective indicator
-	level.flagIndicator   = 0;
-	level.redFlagCounter  = 0;
-	level.blueFlagCounter = 0;
-
 	// disable server engine flood protection if we have mod-sided flood protection enabled
 	// since they don't block the same commands
-	if (G_ServerIsFloodProtected())
+	if (TVG_ServerIsFloodProtected())
 	{
 		int sv_floodprotect = trap_Cvar_VariableIntegerValue("sv_floodprotect");
 		if (sv_floodprotect)
@@ -1482,29 +1306,11 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	// parse the key/value pairs and spawn gentities
 	TVG_SpawnEntitiesFromString();
 
-	FindIntermissionPoint();
+	TVG_FindIntermissionPoint();
 
 	BG_ClearScriptSpeakerPool();
 
 	BG_LoadSpeakerScript(va("sound/maps/%s.sps", level.rawmapname));
-
-	// ===================
-
-	if (!level.gameManager)
-	{
-		G_Printf("^1ERROR No 'script_multiplayer' found in map\n");
-	}
-
-	level.tracemapLoaded = BG_LoadTraceMap(level.rawmapname, level.mapcoordsMins, level.mapcoordsMaxs);
-	if (!level.tracemapLoaded)
-	{
-		G_Printf("^1ERROR No tracemap found for map\n");
-	}
-
-	// Link all the splines up
-	BG_BuildSplinePaths();
-
-	G_Printf("-----------------------------------\n");
 
 	BG_ClearAnimationPool();
 
@@ -1909,7 +1715,7 @@ void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted)
 	// take out of follow mode if needed
 	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 	{
-		TVG_StopFollowing(ent);
+		TVG_StopFollowing(ent->client);
 	}
 
 	// move to the spot
@@ -1953,7 +1759,7 @@ void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted)
 /**
  * @brief This is also used for spectator spawns
  */
-void FindIntermissionPoint(void)
+void TVG_FindIntermissionPoint(void)
 {
 	gentity_t *ent = NULL, *target;
 	vec3_t    dir;
@@ -2022,53 +1828,6 @@ void FindIntermissionPoint(void)
 				vectoangles(dir, level.intermission_angle);
 			}
 		}
-	}
-}
-
-// MAPVOTE
-
-/**
- * @brief G_SortMapsByzOrder
- * @param[in] a
- * @param[in] b
- * @return
- */
-int QDECL G_SortMapsByzOrder(const void *a, const void *b)
-{
-	int z1 = *(const int *)a;
-	int z2 = *(const int *)b;
-
-	if (z1 == -1 && z2 == -1)
-	{
-		return 0;
-	}
-	else if (z1 == -1)
-	{
-		return 1;
-	}
-	else if (z2 == -1)
-	{
-		return -1;
-	}
-
-	// no_randomize ??.. it doesn't sort the list, so NO_SORTING would be a better name for this..
-	// !!!!! what about maps that have been excluded, or have been played too many times..
-	// !!!!! This list always needs to be sorted, to get those maps last in the list.
-	//if ( g_mapVoteFlags.integer & MAPVOTE_NO_RANDOMIZE ) {
-	//  return 0;
-	//}
-
-	if (level.mapvoteinfo[z1].zOrder > level.mapvoteinfo[z2].zOrder)
-	{
-		return -1;
-	}
-	else if (level.mapvoteinfo[z2].zOrder > level.mapvoteinfo[z1].zOrder)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
 	}
 }
 

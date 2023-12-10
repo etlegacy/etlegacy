@@ -121,6 +121,38 @@ typedef struct gclient_s gclient_t;
 //====================================================================
 
 /**
+* @struct tvcmdUsageFlag_e
+* @typedef tvcmdUsageFlag_t
+*/
+typedef enum tvcmdUsageFlag_e
+{
+	CMD_USAGE_ANY_TIME          = BIT(0),
+	CMD_USAGE_INTERMISSION_ONLY = BIT(1),
+	CMD_USAGE_NO_INTERMISSION   = BIT(2),
+	CMD_USAGE_AUTOUPDATE        = BIT(3)
+} tvcmdUsageFlag_t;
+
+/**
+* @struct tvcmd_reference_t
+* @brief
+*
+* @note Update info:
+* 1. Add line to aCommandInfo w/appropriate info
+* 2. Add implementation for specific command (see an existing command for an example)
+*/
+typedef struct tvcmd_reference_s
+{
+	char *pszCommandName;
+	tvcmdUsageFlag_t flag;
+	int value;
+	int updateInterval;
+	int lastUpdateTime;
+	qboolean floodProtected;
+	qboolean(*pCommand)(gclient_t *client, struct tvcmd_reference_s *self);
+	const char *pszHelpInfo;
+} tvcmd_reference_t;
+
+/**
  * @struct g_script_stack_action_t
  * @brief Scripting (parsed at each start)
  */
@@ -541,6 +573,8 @@ typedef enum
 	INFO_WS = 0,
 	INFO_WWS,
 	INFO_GSTATS,
+
+	INFO_IMWS,
 
 	INFO_NUM
 } playerInfoStats_t;
@@ -1035,51 +1069,59 @@ typedef struct spawnPointState_s
 typedef struct tvgamecommandsplayerstats_s
 {
 	qboolean valid[MAX_CLIENTS];
-	char data[MAX_CLIENTS][MAX_TOKEN_CHARS];
+	char data[MAX_CLIENTS][MAX_STRING_CHARS];
 } tvgamecommandsplayerstats_t;
 
 typedef struct tvgamecommands_s
 {
 	qboolean scoreHasTwoParts;
-	char score[2][MAX_TOKEN_CHARS];
+	char score[2][MAX_STRING_CHARS];
+
+	qboolean sraValid;
+	char sra[MAX_STRING_CHARS];
+
+	qboolean prValid;
+	char pr[MAX_STRING_CHARS];
 
 	int scoresTime;
 	int scoresEndIndex;
-	char scores[100][MAX_TOKEN_CHARS];
+	char scores[100][MAX_STRING_CHARS];
 
 	// "topshots"-related commands
-	char astats[MAX_TOKEN_CHARS];
-	char astatsb[MAX_TOKEN_CHARS];
-	char bstats[MAX_TOKEN_CHARS];
-	char bstatsb[MAX_TOKEN_CHARS];
-	char wbstats[MAX_TOKEN_CHARS];
+	char astats[MAX_STRING_CHARS];
+	char astatsb[MAX_STRING_CHARS];
+	char bstats[MAX_STRING_CHARS];
+	char bstatsb[MAX_STRING_CHARS];
+	char wbstats[MAX_STRING_CHARS];
 
+	qboolean waitingForIMWS;
+	int IMWSClientNum;
 	int lastInfoStatsUpdate;
 	tvgamecommandsplayerstats_t infoStats[INFO_NUM];
 
 	qboolean impkdValid;
-	char impkd[2][MAX_TOKEN_CHARS];
+	char impkd[2][MAX_STRING_CHARS];
 
 	qboolean imprValid;
-	char impr[MAX_TOKEN_CHARS];
+	char impr[MAX_STRING_CHARS];
 
 	qboolean imptValid;
-	char impt[MAX_TOKEN_CHARS];
+	char impt[MAX_STRING_CHARS];
 
 	qboolean imsrValid;
-	char imsr[MAX_TOKEN_CHARS];
+	char imsr[MAX_STRING_CHARS];
 
 	qboolean imwaValid;
-	char imwa[MAX_TOKEN_CHARS];
+	char imwa[MAX_STRING_CHARS];
 
 	qboolean immaphistoryValid;
-	char immaphistory[MAX_TOKEN_CHARS];
+	char immaphistory[MAX_STRING_CHARS];
 
 	qboolean immaplistValid;
-	char immaplist[MAX_TOKEN_CHARS];
+	char immaplist[MAX_STRING_CHARS];
 
 	qboolean imvotetallyValid;
-	char imvotetally[MAX_TOKEN_CHARS];
+	char imvotetally[MAX_STRING_CHARS];
 } tvgamecommands_t;
 
 /**
@@ -1322,36 +1364,37 @@ char *TVG_AddSpawnVarToken(const char *string);
 void TVG_ParseField(const char *key, const char *value, gentity_t *ent);
 
 // g_cmds.c
-void TVG_Cmd_Score_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_Ignore_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_UnIgnore_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_IntermissionPrestige_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_IntermissionPlayerTime_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_IntermissionSkillRating_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_IntermissionWeaponAccuracies_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_IntermissionWeaponStats_f(gclient_t *client, unsigned int dwCommand, int value);
+qboolean TVG_Cmd_Score_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_Ignore_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_IntermissionPrestige_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_IntermissionPlayerTime_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_IntermissionSkillRating_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_IntermissionWeaponAccuracies_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_IntermissionWeaponStats_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_IntermissionMapList(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_IntermissionMapHistory(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_IntermissionVoteTally(gclient_t *client, tvcmd_reference_t *self);
 void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value);
-void TVCmd_wStats_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_sgStats_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVCmd_WeaponStatsLeaders_f(gclient_t *client, unsigned int dwCommand, int value);
-void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value);
+qboolean TVG_Cmd_wStats_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_sgStats_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_WeaponStatsLeaders_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_Noclip_f(gclient_t *client, tvcmd_reference_t *self);
 void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value);
-void TVG_Cmd_FollowNext_f(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_Cmd_FollowPrevious_f(gclient_t *client, unsigned int dwCommand, int value);
-void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value);
-void TVG_Cmd_SetViewpos_f(gclient_t *ent, unsigned int dwCommand, int value);
+qboolean TVG_Cmd_FollowNext_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_FollowPrevious_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_SetViewpos_f(gclient_t *ent, tvcmd_reference_t *self);
 void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value);
 void TVG_StopFollowing(gclient_t *client);
 void TVG_Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots);
 
-qboolean G_ServerIsFloodProtected(void);
+qboolean TVG_Cmd_CallVote_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_SelectedObjective_f(gclient_t *ent, tvcmd_reference_t *self);
 
-// MAPVOTE
-void G_IntermissionMapVote(gentity_t *ent, unsigned int dwCommand, int value);
-void TVG_IntermissionMapList(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_IntermissionMapHistory(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_IntermissionVoteTally(gclient_t *client, unsigned int dwCommand, int value);
+qboolean TVG_CommandsAutoUpdate(tvcmd_reference_t *tvcmd);
+
+qboolean TVG_ServerIsFloodProtected(void);
 
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.
 void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume); // Unused.
@@ -1507,9 +1550,8 @@ void AddIPBan(const char *str);
 void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatText);
 void TVG_SayTo(gclient_t *ent, gclient_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
 void G_HQSay(gentity_t *other, int color, const char *name, const char *message);
-void TVG_Cmd_Follow_f(gclient_t *ent, unsigned int dwCommand, int value);
+qboolean TVG_Cmd_Follow_f(gclient_t *client, tvcmd_reference_t *self);
 void TVG_Say_f(gclient_t *client, int mode /*, qboolean arg0*/);
-void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly);
 void G_PlaySound_Cmd(void);
 int TVG_ClientNumbersFromString(char *s, int *plist);
 int TVG_ClientNumberFromString(gclient_t *to, char *s);
@@ -1519,7 +1561,7 @@ int TVG_MasterClientNumberFromString(gclient_t *to, char *s);
 char *ConcatArgs(int start);
 
 // tvg_main.c
-void FindIntermissionPoint(void);
+void TVG_FindIntermissionPoint(void);
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
@@ -1955,21 +1997,19 @@ void TVG_SendCommands(void);
 qboolean TVG_commandHelp(gclient_t *client, const char *pszCommand, unsigned int dwCommand);
 qboolean TVG_cmdDebounce(gclient_t *client, const char *pszCommand);
 void TVG_commands_cmd(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_players_cmd(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_viewers_cmd(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_say_cmd(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_tvchat_cmd(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_scores_cmd(gclient_t *client, unsigned int dwCommand, int value);
+qboolean TVG_players_cmd(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_viewers_cmd(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_say_cmd(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_tvchat_cmd(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_scores_cmd(gclient_t *client, tvcmd_reference_t *self);
 void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, int fDump);
-void TVG_weaponRankings_cmd(gclient_t *client, unsigned int dwCommand, int state);
-void TVG_weaponStats_cmd(gclient_t *client, unsigned int dwCommand, int value);
-void TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow);
-void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum, int vsayNum, const char *customChat);
+qboolean TVG_weaponRankings_cmd(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_weaponStats_cmd(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow);
 
 // g_match.c
 void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t mod);
 void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod);
-int G_checkServerToggle(vmCvar_t *cv);
 void G_createStatsJson(gentity_t *ent, void *target);
 char *G_createStats(gentity_t *ent);
 void G_deleteStats(int nClient);
@@ -2024,7 +2064,6 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 
 void G_BuildEndgameStats(void);
-int G_TeamCount(gentity_t *ent, int weap);
 
 void G_InitTempTraceIgnoreEnts(void);
 void G_ResetTempTraceIgnoreEnts(void);

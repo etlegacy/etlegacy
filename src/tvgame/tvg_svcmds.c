@@ -99,7 +99,7 @@ static int      numMaxLivesFilters = 0;
  * @param[out] f
  * @return
  */
-qboolean StringToFilter(const char *s, ipFilter_t *f)
+static qboolean StringToFilter(const char *s, ipFilter_t *f)
 {
 	char num[128];
 	int  i, j;

@@ -40,38 +40,6 @@ int iWeap = WS_MAX;
 
 const char *lock_status[2] = { "unlock", "lock" };
 
-/**
- * @struct cmd_usage_flag_e
- * @typedef cmd_usage_flag_t
- */
-typedef enum tvcmdUsageFlag_e
-{
-	CMD_USAGE_ANY_TIME          = BIT(0),
-	CMD_USAGE_INTERMISSION_ONLY = BIT(1),
-	CMD_USAGE_NO_INTERMISSION   = BIT(2),
-	CMD_USAGE_AUTOUPDATE        = BIT(3)
-} tvcmdUsageFlag_t;
-
-/**
- * @struct cmd_reference_t
- * @brief
- *
- * @note Update info:
- * 1. Add line to aCommandInfo w/appropriate info
- * 2. Add implementation for specific command (see an existing command for an example)
- */
-typedef struct
-{
-	char *pszCommandName;
-	tvcmdUsageFlag_t flag;
-	int value;
-	int cooldown;
-	int lastTime;
-	qboolean floodProtected;
-	void (*pCommand)(gclient_t *client, unsigned int dwCommand, int value);
-	const char *pszHelpInfo;
-} tvcmd_reference_t;
-
 #define NOCD        0
 #define VERYSHORTCD 2500
 #define SHORTCD     5000
@@ -89,7 +57,6 @@ static tvcmd_reference_t tvCommandInfo[] =
 	{ "say_teamnl",       CMD_USAGE_ANY_TIME,           0, NOCD, 0,      qtrue,  TVG_say_cmd,                    " <msg>:^7 Sends a team chat message without location info"                                  },
 
 	{ "tvchat",           CMD_USAGE_ANY_TIME,           0, NOCD, 0,      qtrue,  TVG_tvchat_cmd,                 ":^7 Turns tvchat on/off" },
-
 	//{ "ignore",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, TVCmd_Ignore_f,                      " <clientname>:^7 Ignore a player from chat"                                                 },
 	//{ "unignore",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, TVCmd_UnIgnore_f,                    " <clientname>:^7 Unignore a player from chat"                                               },
 
@@ -102,29 +69,24 @@ static tvcmd_reference_t tvCommandInfo[] =
 	//{ "+topshots",      CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 HUD overlay showing current top accuracies of all players"                              },
 	//{ "+objectives",    CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 HUD overlay showing current objectives info"                                            },
 
-	{ "bottomshots",    CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE,          qfalse, MEDIUMCD, 0,     qfalse, TVG_weaponRankings_cmd,                ":^7 Shows WORST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
-	//{ "callvote",       CMD_USAGE_NO_INTERMISSION,   qfalse,      qtrue,  (void (*)(gentity_t *,               unsigned int, int)) Cmd_CallVote_f, " <params>:^7 Calls a vote"                              },
-	//{ "currenttime",    CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 Displays current local time"                                                            },
+	{ "bottomshots",    CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE,      0, MEDIUMCD, 0,     qfalse, TVG_weaponRankings_cmd,                ":^7 Shows WORST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
+	{ "callvote",       CMD_USAGE_NO_INTERMISSION,                      0, NOCD, 0,      qtrue,  TVG_Cmd_CallVote_f, " <params>:^7 Calls a vote"                              },
 
 	{ "follow",         CMD_USAGE_NO_INTERMISSION,   0, NOCD, 0,       qfalse, TVG_Cmd_Follow_f,                        " <player_ID|allies|axis>:^7 Spectates a particular player or team"                          },
 	{ "follownext",     CMD_USAGE_NO_INTERMISSION,   0, NOCD, 0,       qfalse, TVG_Cmd_FollowNext_f,                    ":^7 Follow next player in list"                                                             },
 	{ "followprev",     CMD_USAGE_NO_INTERMISSION,    0, NOCD, 0,       qfalse, TVG_Cmd_FollowPrevious_f,                ":^7 Follow previous player in list"                                                         },
 
-	{ "imvotetally",      CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionVoteTally,         ""                                                                                            },
-	{ "immaplist",        CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionMapList,               ""                                                                                           },
-	{ "immaphistory",     CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVG_IntermissionMapHistory,            ""                                                                                           },
+	{ "imvotetally",      CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,      qfalse,  TVG_IntermissionVoteTally,         ""                                                                                            },
+	{ "immaplist",        CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,       qfalse, TVG_IntermissionMapList,               ""                                                                                           },
+	{ "immaphistory",     CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,       qfalse, TVG_IntermissionMapHistory,            ""                                                                                           },
 
-	{ "impkd",            CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionPlayerKillsDeaths_f, ""                                                                                           },
-	{ "impr",             CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionPrestige_f,          ""                                                                                           },
-	{ "impt",             CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionPlayerTime_f,        ""                                                                                           },
-	{ "imsr",             CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionSkillRating_f,       ""                                                                                           },
-	{ "imwa",             CMD_USAGE_INTERMISSION_ONLY, qtrue, NOCD, 0,       qfalse, TVCmd_IntermissionWeaponAccuracies_f,  ""                                                                                           },
-	//{ "imws",           CMD_USAGE_INTERMISSION_ONLY, NOCD, 0,       qfalse, TVCmd_IntermissionWeaponStats_f,       ""                                                                                           },
+	{ "impkd",            CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,       qfalse, TVG_Cmd_IntermissionPlayerKillsDeaths_f, ""                                                                                           },
+	{ "impr",             CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,       qfalse, TVG_Cmd_IntermissionPrestige_f,          ""                                                                                           },
+	{ "impt",             CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,       qfalse, TVG_Cmd_IntermissionPlayerTime_f,        ""                                                                                           },
+	{ "imsr",             CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,       qfalse, TVG_Cmd_IntermissionSkillRating_f,       ""                                                                                           },
+	{ "imwa",             CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,       qfalse, TVG_Cmd_IntermissionWeaponAccuracies_f,  ""                                                                                           },
+	{ "imws",             CMD_USAGE_INTERMISSION_ONLY, 0, NOCD, 0,       qfalse, TVG_Cmd_IntermissionWeaponStats_f,       ""                                                                                           },
 
-	//{ "noclip",         CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Noclip_f,                        ":^7 No clip"                                                                                },
-	
-	//{ "obj",            CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SelectedObjective_f,             " <val>:^7 Selected Objective"                                                               },
-	
 	{ "players",        CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_players_cmd,                       ":^7 Lists all active players and their IDs"                                     },
 	{ "viewers",        CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_viewers_cmd,                       ":^7 Lists all viewers and their IDs" },
 	//{ "rconAuth",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_AuthRcon_f,                      ":^7 Client authentication"                                                                  },
@@ -134,18 +96,21 @@ static tvcmd_reference_t tvCommandInfo[] =
 	{ "score",            CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue, SHORTCD,  0,      qfalse, TVG_Cmd_Score_f,                       ":^7 Request current scoreboard information"                                                 },
 	{ "scores",           CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue, MEDIUMCD, 0,      qfalse, TVG_scores_cmd,                        ":^7 Displays current match stat info"                                                       },
 	
-	{ "sgstats",        CMD_USAGE_ANY_TIME,          VERYSHORTCD, NOCD, 0,      qtrue, TVCmd_sgStats_f,                       ""                                                                                           },
-	{ "wstats",         CMD_USAGE_ANY_TIME,          VERYSHORTCD, NOCD, 0,      qtrue, TVCmd_wStats_f,                        "" },
+	{ "sgstats",        CMD_USAGE_ANY_TIME,          VERYSHORTCD, NOCD, 0,      qtrue, TVG_Cmd_sgStats_f,                       ""                                                                                           },
+	{ "wstats",         CMD_USAGE_ANY_TIME,          VERYSHORTCD, NOCD, 0,      qtrue, TVG_Cmd_wStats_f,                        "" },
 	{ "weaponstats",    CMD_USAGE_ANY_TIME,          VERYSHORTCD, NOCD, 0,      qtrue, TVG_weaponStats_cmd,                   " [player_ID]:^7 Shows weapon accuracy stats for a player" },
 
 	//{ "showstats",      CMD_USAGE_ANY_TIME,          qtrue,       qfalse, G_PrintAccuracyLog,                  ":^7 Shows weapon accuracy stats"                                                            },
 	//{ "statsall",       CMD_USAGE_ANY_TIME,          qfalse,      qtrue,  G_statsall_cmd,                      ":^7 Shows weapon accuracy stats for all players"                                            },
 	//{ "statsdump",      CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ":^7 Shows player stats + match info saved locally to a file"                                },
-	{ "stshots",        CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, MEDIUMCD,       VERYLONGCD, 0,       qfalse, TVCmd_WeaponStatsLeaders_f,            ""                                                                                           },
+	{ "stshots",        CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, MEDIUMCD,       VERYLONGCD, 0,       qfalse, TVG_Cmd_WeaponStatsLeaders_f,            ""                                                                                           },
 	{ "topshots",       CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue,          MEDIUMCD, 0,       qfalse, TVG_weaponRankings_cmd,                ":^7 Shows BEST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
-
 	//{ "ws",             CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_WeaponStat_f,                    ":^7 Shows weapon stats"                                                                     },
+
 	//{ "setviewpos",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SetViewpos_f,                    " x y z pitch yaw roll useViewHeight(0/1):^7 Set the current player position and view angle" },
+	{ "noclip",         CMD_USAGE_NO_INTERMISSION,   qtrue, NOCD, 0,       qfalse, TVG_Cmd_Noclip_f,                        ":^7 No clip" },
+
+	{ "obj",            CMD_USAGE_NO_INTERMISSION,   qtrue, NOCD, 0,       qfalse, TVG_Cmd_SelectedObjective_f,             " <val>:^7 Selected Objective" },
 	{ NULL,             CMD_USAGE_ANY_TIME,          qtrue, NOCD, 0,      qfalse, NULL,                                ""                                                                                           }
 };
 
@@ -156,7 +121,7 @@ static tvcmd_reference_t tvCommandInfo[] =
  */
 qboolean TVG_ClientIsFlooding(gclient_t *client)
 {
-	if (!client || !G_ServerIsFloodProtected())
+	if (!client || !TVG_ServerIsFloodProtected())
 	{
 		return qfalse;
 	}
@@ -198,7 +163,7 @@ qboolean TVG_commandCheck(gclient_t *client, const char *cmd)
 
 	for (i = 0; tvCommandInfo[i].pszCommandName; i++)
 	{
-		if (tvCommandInfo[i].pCommand && 0 == Q_stricmp(cmd, tvCommandInfo[i].pszCommandName))
+		if (tvCommandInfo[i].pCommand && !Q_stricmp(cmd, tvCommandInfo[i].pszCommandName))
 		{
 			// check for flood protected commands
 			if (tvCommandInfo[i].floodProtected && TVG_ClientIsFlooding(client))
@@ -220,7 +185,7 @@ qboolean TVG_commandCheck(gclient_t *client, const char *cmd)
 				return qfalse;
 			}
 
-			tvCommandInfo[i].pCommand(client, i, tvCommandInfo[i].value);
+			tvCommandInfo[i].pCommand(client, &tvCommandInfo[i]);
 
 			return qtrue;
 		}
@@ -233,7 +198,7 @@ qboolean TVG_commandCheck(gclient_t *client, const char *cmd)
 
 /**
 * @brief TVG_SendCommands Sends clients commands to master server
-*        one at a time so to not spam too much
+*        preferably one at a time so to not spam too much
 * @return
 */
 void TVG_SendCommands(void)
@@ -243,12 +208,10 @@ void TVG_SendCommands(void)
 	for (i = 0; tvCommandInfo[i].pszCommandName; i++)
 	{
 		// request intermission stats
-		if (tvCommandInfo[i].flag & CMD_USAGE_INTERMISSION_ONLY)
+		if ((tvCommandInfo[i].flag & CMD_USAGE_INTERMISSION_ONLY) && level.intermission)
 		{
-			if (!tvCommandInfo[i].lastTime && level.intermission)
+			if (tvCommandInfo[i].pCommand(NULL, &tvCommandInfo[i]))
 			{
-				trap_SendServerCommand(-2, tvCommandInfo[i].pszCommandName);
-				tvCommandInfo[i].lastTime = level.time;
 				return;
 			}
 		}
@@ -256,10 +219,8 @@ void TVG_SendCommands(void)
 		// auto update some information
 		if (tvCommandInfo[i].flag & CMD_USAGE_AUTOUPDATE)
 		{
-			if (tvCommandInfo[i].lastTime + tvCommandInfo[i].cooldown <= level.time)
+			if (tvCommandInfo[i].pCommand(NULL, &tvCommandInfo[i]))
 			{
-				trap_SendServerCommand(-2, tvCommandInfo[i].pszCommandName);
-				tvCommandInfo[i].lastTime = level.time;
 				return;
 			}
 		}
@@ -379,10 +340,9 @@ void TVG_commands_cmd(gclient_t *client, unsigned int dwCommand, int value)
 /**
  * @brief Show client info
  * @param[in] client
- * @param dwCommand - unused
- * @param value - unused
+ * @param[in] self
  */
-void TVG_players_cmd(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_players_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
 	char cs[MAX_TOKEN_CHARS];
 	char name[MAX_TOKEN_CHARS];
@@ -428,15 +388,16 @@ void TVG_players_cmd(gclient_t *client, unsigned int dwCommand, int value)
 	{
 		G_Printf("\n%2d total player%s\n\n", count, count > 1 ? "s" : "");
 	}
+
+	return qtrue;
 }
 
 /**
 * @brief Show viewers info
 * @param[in] client
-* @param dwCommand - unused
-* @param value - unused
+* @param[in] self
 */
-void TVG_viewers_cmd(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_viewers_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
 	gclient_t *cl;
 	char cs[MAX_TOKEN_CHARS];
@@ -482,28 +443,30 @@ void TVG_viewers_cmd(gclient_t *client, unsigned int dwCommand, int value)
 	{
 		G_Printf("\n%2d total viewer%s\n\n", count, count > 1 ? "s" : "");
 	}
+
+	return qtrue;
 }
 
 /**
  * @brief G_say_f
  * @param[in] client
- * @param[in] dwCommand - unused
- * @param[in] value - unused
+ * @param[in] self
  */
-void TVG_say_cmd(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_say_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
 	TVG_Say_f(client, SAY_ALL);
+
+	return qtrue;
 }
 
 /**
 * @brief TVG_tvchat_cmd
-* @param[in,out] client
-* @param dwCommand - unused
-* @param value    - unused
+* @param[in] client
+* @param[in] self
 *
 * @note argv(0) tvchat
 */
-void TVG_tvchat_cmd(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_tvchat_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
 	char *msg;
 	char *name;
@@ -533,32 +496,42 @@ void TVG_tvchat_cmd(gclient_t *client, unsigned int dwCommand, int value)
 	}
 
 	trap_SendServerCommand(client - level.clients, va("print \"%s\"", msg));
+
+	return qtrue;
 }
 
 /**
  * @brief Sends match stats to the requesting client.
  * @param[in] client
- * @param dwCommand - unused
- * @param value - unused
+ * @param[in] self
  */
-void TVG_scores_cmd(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_scores_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
 	int i;
+
+	if (!client)
+	{
+		return TVG_CommandsAutoUpdate(self);
+	}
+
 	for (i = 0; i < level.cmds.scoresEndIndex; i++)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.scores[i]);
 	}
+
+	return qtrue;
 }
 
 /**
  * @brief Shows a player's stats to the requesting client.
  * @param[in] client
- * @param dwCommand - unused
- * @param fDump - unused
+ * @param[in] self
  */
-void TVG_weaponStats_cmd(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_weaponStats_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
-	TVG_statsPrint(client, 0, value);
+	TVG_statsPrint(client, 0, self->value);
+
+	return qtrue;
 }
 
 /**
@@ -677,7 +650,7 @@ int QDECL SortStats(const void *a, const void *b)
  * @param[in] doTop
  * @param[in] doWindow
  */
-void TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow)
+qboolean TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow)
 {
 	if (doWindow && doTop)
 	{
@@ -694,6 +667,8 @@ void TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWi
 			trap_SendServerCommand(client - level.clients, level.cmds.bstatsb);
 		}
 	}
+
+	return qtrue;
 }
 
 /**
@@ -702,15 +677,20 @@ void TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWi
  * @param[in] dwCommand
  * @param[in] state
  */
-void TVG_weaponRankings_cmd(gclient_t *client, unsigned int dwCommand, int state)
+qboolean TVG_weaponRankings_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
-	if (trap_Argc() < 2)
+	if (!client)
 	{
-		TVG_weaponStatsLeaders_cmd(client, state, qfalse);
-		return;
+		return TVG_CommandsAutoUpdate(self);
 	}
 
-	if (state)
+	if (trap_Argc() < 2)
+	{
+		TVG_weaponStatsLeaders_cmd(client, self->value, qfalse);
+		return qtrue;
+	}
+
+	if (self->value)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.astats);
 	}
@@ -718,4 +698,6 @@ void TVG_weaponRankings_cmd(gclient_t *client, unsigned int dwCommand, int state
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.astatsb);
 	}
+
+	return qtrue;
 }

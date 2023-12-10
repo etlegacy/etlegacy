@@ -174,7 +174,7 @@ int TVG_ClientNumberFromString(gclient_t *to, char *s)
 
 		if (to)
 		{
-			CPx(to - g_entities, va("print \"[lon]Bad client slot: [lof]%s\n\"", err));
+			CPx(to - level.clients, va("print \"[lon]Bad client slot: [lof]%s\n\"", err));
 		}
 		else
 		{
@@ -326,34 +326,6 @@ int TVG_MasterClientNumberFromString(gclient_t *to, char *s)
 	return pids[0];
 }
 
-/*
- * @brief G_TeamDamageStats
- * @param[in] ent
- *
- * @note Unused
-void G_TeamDamageStats(gentity_t *ent)
-{
-    if (!ent->client) return;
-
-    {
-        float teamHitPct =
-            ent->client->sess.hits ?
-            (ent->client->sess.team_hits / ent->client->sess.hits)*(100):
-            0;
-
-        CPx(ent-g_entities,
-            va("print \"Team Hits: %.2f Total Hits: %.2f "
-                "Pct: %.2f Limit: %d\n\"",
-            ent->client->sess.team_hits,
-            ent->client->sess.hits,
-            teamHitPct,
-            g_teamDamageRestriction.integer
-            ));
-    }
-    return;
-}
-*/
-
 /**
  * @brief G_PlaySound_Cmd
  */
@@ -409,37 +381,65 @@ void G_PlaySound_Cmd(void)
 }
 
 /**
- * @brief Sends current scoreboard information
- * @param[out] ent
- * @param dwCommand - unused
- * @param value - unused
- */
-void TVG_Cmd_Score_f(gclient_t *client, unsigned int dwCommand, int value)
+* @brief TVG_CommandsAutoUpdate update stats
+* @param[in] tvcmd
+*/
+qboolean TVG_CommandsAutoUpdate(tvcmd_reference_t *tvcmd)
 {
+	if (tvcmd->lastUpdateTime + tvcmd->updateInterval <= level.time)
+	{
+		trap_SendServerCommand(-2, tvcmd->pszCommandName);
+		tvcmd->lastUpdateTime = level.time;
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief Sends current scoreboard information
+ * @param[in] client
+ * @param[in] self
+ */
+qboolean TVG_Cmd_Score_f(gclient_t *client, tvcmd_reference_t *self)
+{
+	if (!client)
+	{
+		return TVG_CommandsAutoUpdate(self);
+	}
+
+	if (level.cmds.sraValid)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.sra);
+	}
+
+	if (level.cmds.prValid)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.pr);
+	}
+
 	trap_SendServerCommand(client - level.clients, level.cmds.score[0]);
 	if (level.cmds.scoreHasTwoParts)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.score[1]);
 	}
+
+	return qtrue;
 }
 
 /**
  * @brief CheatsOk
- * @param[in] ent
+ * @param[in] client
  * @return
  */
-qboolean CheatsOk(gentity_t *ent)
+qboolean CheatsOk(gclient_t *client)
 {
 	if (!g_cheats.integer)
 	{
-		trap_SendServerCommand(ent - g_entities, va("print \"Cheats are not enabled on this server.\n\""));
+		trap_SendServerCommand(client - level.clients, va("print \"Cheats are not enabled on this server.\n\""));
 		return qfalse;
 	}
-	if (ent->health <= 0)
-	{
-		trap_SendServerCommand(ent - g_entities, va("print \"You must be alive to use this command.\n\""));
-		return qfalse;
-	}
+
 	return qtrue;
 }
 
@@ -478,63 +478,38 @@ char *ConcatArgs(int start)
 }
 
 /**
- * @brief GetSkillPointUntilLevelUp
- * @param[in] ent
- * @param[in] skill
- * @return
- */
-float GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
-{
-	if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
-	{
-		int i = ent->client->sess.skill[skill] + 1;
-		int x = 1;
-
-		for (; i < NUM_SKILL_LEVELS; i++, x++)
-		{
-			if (GetSkillTableData(skill)->skillLevels[ent->client->sess.skill[skill] + x] >= 0)
-			{
-				return GetSkillTableData(skill)->skillLevels[ent->client->sess.skill[skill] + x] - ent->client->sess.skillpoints[skill];
-			}
-		}
-	}
-	return -1;
-}
-
-/**
  * @brief Cmd_Noclip_f
- * @param[in,out] ent
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] client
+ * @param[in] self
  *
  * @note argv(0) noclip
  */
-void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_Noclip_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	char *msg;
 	char *name;
 
 	name = ConcatArgs(1);
 
-	if (!CheatsOk(ent))
+	if (!CheatsOk(client))
 	{
-		return;
+		return qtrue;
 	}
 
 	if (!Q_stricmp(name, "on") || Q_atoi(name))
 	{
-		ent->client->noclip = qtrue;
+		client->noclip = qtrue;
 	}
 	else if (!Q_stricmp(name, "off") || !Q_stricmp(name, "0"))
 	{
-		ent->client->noclip = qfalse;
+		client->noclip = qfalse;
 	}
 	else
 	{
-		ent->client->noclip = !ent->client->noclip;
+		client->noclip = client->noclip;
 	}
 
-	if (ent->client->noclip)
+	if (client->noclip)
 	{
 		msg = "noclip ON\n";
 	}
@@ -543,7 +518,9 @@ void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value)
 		msg = "noclip OFF\n";
 	}
 
-	trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
+	trap_SendServerCommand(client - level.clients, va("print \"%s\"", msg));
+
+	return qtrue;
 }
 
 /**
@@ -554,229 +531,68 @@ void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void TVG_StopFollowing(gclient_t *client)
 {
-	// divert behaviour if TEAM_SPECTATOR, moved the code from SpectatorThink to put back into free fly correctly
-	// (I am not sure this can be called in non-TEAM_SPECTATOR situation, better be safe)
-	//if (client->sess.sessionTeam == TEAM_SPECTATOR)
-	{
-		// drop to free floating, somewhere above the current position (that's the client you were following)
-		vec3_t    pos, angle;
+	// drop to free floating, somewhere above the current position (that's the client you were following)
+	vec3_t pos, angle;
 
-		// FIXME: to avoid having a spectator with a gun..
-		//if (client->wbuttons & WBUTTON_ATTACK2 || client->buttons & BUTTON_ATTACK)
-		//{
-		//	return;
-		//}
+	client->sess.spectatorState  = SPECTATOR_FREE;
+	client->sess.spectatorClient = 0;
 
-		client->sess.spectatorState  = SPECTATOR_FREE;
-		client->sess.spectatorClient = 0;
+	VectorCopy(client->ps.origin, pos);
+	VectorCopy(client->ps.viewangles, angle);
 
-		VectorCopy(client->ps.origin, pos);
-		//pos[2] += 16; // removing for now
-		VectorCopy(client->ps.viewangles, angle);
+	TVClientBegin(client - level.clients);
 
-		TVClientBegin(client - level.clients);
-
-		VectorCopy(pos, client->ps.origin);
-		TVG_SetClientViewAngle(client, angle);
-	}
-	//else
-	//{
-	//	// legacy code, FIXME: useless?
-	//	// no this is for limbo i'd guess
-	//	client->sess.spectatorState = SPECTATOR_FREE;
-	//	client->ps.clientNum        = ent - g_entities;
-	//}
-}
-
-/*
- * @brief G_NumPlayersWithWeapon
- * @param[in] weap
- * @param[in] team
- * @return
- *
- * @note Unused
-int G_NumPlayersWithWeapon(weapon_t weap, team_t team)
-{
-    int i, j, cnt = 0;
-
-    for (i = 0; i < level.numConnectedClients; i++)
-    {
-        j = level.sortedClients[i];
-
-        if (level.clients[j].sess.playerType != PC_SOLDIER)
-        {
-            continue;
-        }
-
-        if (level.clients[j].sess.sessionTeam != team)
-        {
-            continue;
-        }
-
-        if (level.clients[j].sess.latchPlayerWeapon != weap && level.clients[j].sess.playerWeapon != weap)
-        {
-            continue;
-        }
-
-        cnt++;
-    }
-
-    return cnt;
-}
-*/
-
-/**
- * @brief G_NumPlayersOnTeam
- * @param[in] team
- * @return
- */
-int G_NumPlayersOnTeam(team_t team)
-{
-	int i, j, cnt = 0;
-
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		j = level.sortedClients[i];
-
-		if (level.clients[j].sess.sessionTeam != team)
-		{
-			continue;
-		}
-
-		cnt++;
-	}
-
-	return cnt;
-}
-
-/**
- * @brief G_TeamCount
- * @param[in] ent
- * @param[in] weap weapon or -1
- * @return
- */
-int G_TeamCount(gentity_t *ent, int weap)
-{
-	int i, j, cnt;
-
-	if (weap == -1)     // we aint checking for a weapon, so always include ourselves
-	{
-		cnt = 1;
-	}
-	else     // we ARE checking for a weapon, so ignore ourselves
-	{
-		cnt = 0;
-	}
-
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		j = level.sortedClients[i];
-
-		if (j == ent - g_entities)
-		{
-			continue;
-		}
-
-		if (level.clients[j].sess.sessionTeam != ent->client->sess.sessionTeam)
-		{
-			continue;
-		}
-
-		if (weap != -1)
-		{
-			if (level.clients[j].sess.playerWeapon != weap && level.clients[j].sess.latchPlayerWeapon != weap)
-			{
-				continue;
-			}
-		}
-
-		cnt++;
-	}
-
-	return cnt;
-}
-
-/**
- * @brief G_ClassCount
- * @param[in] ent
- * @param[in] playerType
- * @param[in] team
- * @return
- */
-int G_ClassCount(gentity_t *ent, int playerType, team_t team)
-{
-	int i, j, cnt = 0;
-
-	if (playerType < PC_SOLDIER || playerType > PC_COVERTOPS)
-	{
-		return 0;
-	}
-
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		j = level.sortedClients[i];
-
-		if (ent && j == ent - g_entities)
-		{
-			continue;
-		}
-
-		if (level.clients[j].sess.sessionTeam != team)
-		{
-			continue;
-		}
-
-		if (level.clients[j].sess.playerType != playerType &&
-		    level.clients[j].sess.latchPlayerType != playerType)
-		{
-			continue;
-		}
-		cnt++;
-	}
-	return cnt;
+	VectorCopy(pos, client->ps.origin);
+	TVG_SetClientViewAngle(client, angle);
 }
 
 /**
  * @brief "Topshots" accuracy rankings
- * @param client
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] client
+ * @param[in] self
  */
-void TVCmd_WeaponStatsLeaders_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_WeaponStatsLeaders_f(gclient_t *client, tvcmd_reference_t *self)
 {
+	if (!client)
+	{
+		return TVG_CommandsAutoUpdate(self);
+	}
+
 	TVG_weaponStatsLeaders_cmd(client, qtrue, qtrue);
+
+	return qtrue;
 }
 
 /**
- * @brief TVCmd_wStats_f
- * @param client
- * @param dwCommand - unused
- * @param value    - unused
+ * @brief TVG_Cmd_wStats_f
+ * @param[in] client
+ * @param[in] self
  */
-void TVCmd_wStats_f(gclient_t *ent, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_wStats_f(gclient_t *ent, tvcmd_reference_t *self)
 {
-	TVG_statsPrint(ent, 1, value);
-	return;
+	TVG_statsPrint(ent, 1, self->value);
+
+	return qtrue;
 }
 
 /**
  * @brief Player game stats
- * @param client
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] client
+ * @param[in] self
  */
-void TVCmd_sgStats_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_sgStats_f(gclient_t *client, tvcmd_reference_t *self)
 {
-	TVG_statsPrint(client, 2, value);
+	TVG_statsPrint(client, 2, self->value);
+
+	return qtrue;
 }
 
 /**
  * @brief Cmd_Follow_f
- * @param[in] ent
- * @param dwCommand - unused
- * @param value - unused
+ * @param[in] client
+ * @param[in] self
  */
-void TVG_Cmd_Follow_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_Follow_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	int  cnum;
 	char arg[MAX_TOKEN_CHARS];
@@ -787,7 +603,7 @@ void TVG_Cmd_Follow_f(gclient_t *client, unsigned int dwCommand, int value)
 		{
 			TVG_StopFollowing(client);
 		}
-		return;
+		return qtrue;
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
@@ -801,7 +617,7 @@ void TVG_Cmd_Follow_f(gclient_t *client, unsigned int dwCommand, int value)
 		{
 			CP(va("print \"The %s team %s empty!  Follow command ignored.\n\"", aTeams[team],
 			      ((client->sess.sessionTeam != team) ? "is" : "would be")));
-			return;
+			return qtrue;
 		}
 
 		// Allow for simple toggle
@@ -817,23 +633,25 @@ void TVG_Cmd_Follow_f(gclient_t *client, unsigned int dwCommand, int value)
 			CP(va("print \"%s team spectating is now disabled.\n\"", aTeams[team]));
 		}
 
-		return;
+		return qtrue;
 	}
 
 	cnum = TVG_MasterClientNumberFromString(client, arg);
 
 	if (cnum == -1)
 	{
-		return;
+		return qtrue;
 	}
 
 	if (level.ettvMasterClients[cnum].ps.pm_flags & PMF_LIMBO)
 	{
-		return;
+		return qtrue;
 	}
 
 	client->sess.spectatorState  = SPECTATOR_FOLLOW;
 	client->sess.spectatorClient = cnum;
+
+	return qtrue;
 }
 
 /**
@@ -915,23 +733,25 @@ void TVG_Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots)
 /**
  * @brief TVG_Cmd_FollowNext_f
  * @param[in] client
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] self
  */
-void TVG_Cmd_FollowNext_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_FollowNext_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	TVG_Cmd_FollowCycle_f(client, 1, qfalse);
+
+	return qtrue;
 }
 
 /**
  * @brief TVG_Cmd_FollowPrevious_f
  * @param[in] client
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] self
  */
-void TVG_Cmd_FollowPrevious_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_FollowPrevious_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	TVG_Cmd_FollowCycle_f(client, -1, qfalse);
+
+	return qtrue;
 }
 
 /**
@@ -1107,314 +927,11 @@ void TVG_Say_f(gclient_t *client, int mode /*, qboolean arg0*/)
 }
 
 /**
- * @brief G_VoiceTo
- * @param[in] ent
- * @param[in] other
- * @param[in] mode
- * @param[in] id
- * @param[in] voiceonly
- * @param[in] randomNum
- */
-void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum, int vsayNum, const char *customChat)
-{
-	//int  color;
-	//char *cmd;
-
-	//if (!other)
-	//{
-	//	return;
-	//}
-	//if (!other->inuse)
-	//{
-	//	return;
-	//}
-	//if (!other->client)
-	//{
-	//	return;
-	//}
-
-	//if (mode == SAY_TEAM && !OnSameTeam(ent, other))
-	//{
-	//	return;
-	//}
-
-	//// spec vchat rules follow the same as normal chatting rules
-	//if (match_mutespecs.integer > 0 && ent->client->sess.referee == 0 &&
-	//    ent->client->sess.sessionTeam == TEAM_SPECTATOR && other->client->sess.sessionTeam != TEAM_SPECTATOR)
-	//{
-	//	return;
-	//}
-
-	//if (mode == SAY_TEAM)
-	//{
-	//	cmd = "vtchat";
-	//}
-	//else if (mode == SAY_BUDDY)
-	//{
-	//	cmd = "vbchat";
-	//}
-	//else
-	//{
-	//	cmd = "vchat";
-	//}
-
-	//if (mode == SAY_TEAM || mode == SAY_BUDDY)
-	//{
-	//	CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i %s", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, customChat));
-	//}
-	//else
-	//{
-	//	CPx(other - g_entities, va("%s %d %d %s %f %i %s", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, customChat));
-	//}
-}
-
-/**
- * @brief G_Voice
- * @param[in,out] ent
- * @param[in] target
- * @param[in] mode
- * @param[in] id
- * @param[in] voiceonly
- */
-void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const char *customChat, qboolean voiceonly, int vsayNum)
-{
-	int       j;
-	gentity_t *victim;
-	float     randomNum = random();
-
-	// Don't allow excessive spamming of voice chats
-	ent->voiceChatSquelch     -= (level.time - ent->voiceChatPreviousTime);
-	ent->voiceChatPreviousTime = level.time;
-
-	if (ent->voiceChatSquelch < 0)
-	{
-		ent->voiceChatSquelch = 0;
-	}
-
-	// spam check
-	if (ent->voiceChatSquelch >= 30000)
-	{
-		trap_SendServerCommand(ent - g_entities, "cp \"^1Spam Protection^7: VoiceChat ignored\"");
-		return;
-	}
-
-	if (g_voiceChatsAllowed.integer)
-	{
-		ent->voiceChatSquelch += (30000 / g_voiceChatsAllowed.integer);
-	}
-	else
-	{
-		return;
-	}
-
-	if (target)
-	{
-		G_VoiceTo(ent, target, mode, id, voiceonly, randomNum, vsayNum, customChat);
-		return;
-	}
-
-	// echo the text to the console
-	if (g_dedicated.integer)
-	{
-		G_Printf("voice: ^7%s^7 %s\n", ent->client->pers.netname, id);
-	}
-
-	if (mode == SAY_BUDDY)
-	{
-		char     buffer[32];
-		int      cls, i, cnt, num;
-		qboolean allowclients[MAX_CLIENTS];
-
-		Com_Memset(allowclients, 0, sizeof(allowclients));
-
-		trap_Argv(1, buffer, 32);
-
-		cls = Q_atoi(buffer);
-
-		trap_Argv(2, buffer, 32);
-		cnt = Q_atoi(buffer);
-		if (cnt > MAX_CLIENTS)
-		{
-			cnt = MAX_CLIENTS;
-		}
-
-		for (i = 0; i < cnt; i++)
-		{
-			trap_Argv(3 + i, buffer, 32);
-
-			num = Q_atoi(buffer);
-			if (num < 0)
-			{
-				continue;
-			}
-			if (num >= MAX_CLIENTS)
-			{
-				continue;
-			}
-
-			allowclients[num] = qtrue;
-		}
-
-		for (j = 0; j < level.numConnectedClients; j++)
-		{
-			victim = &g_entities[level.sortedClients[j]];
-
-			if (level.sortedClients[j] != ent->s.clientNum)
-			{
-				if (cls != -1 && cls != level.clients[level.sortedClients[j]].sess.playerType)
-				{
-					continue;
-				}
-			}
-
-			if (cnt)
-			{
-				if (!allowclients[level.sortedClients[j]])
-				{
-					continue;
-				}
-			}
-
-			if (COM_BitCheck(victim->client->sess.ignoreClients, (ent - g_entities)))
-			{
-				continue;
-			}
-
-			G_VoiceTo(ent, victim, mode, id, voiceonly, randomNum, vsayNum, customChat);
-		}
-	}
-	else
-	{
-		// send it to all the apropriate clients
-		for (j = 0; j < level.numConnectedClients; j++)
-		{
-			victim = &g_entities[level.sortedClients[j]];
-			if (COM_BitCheck(victim->client->sess.ignoreClients, (ent - g_entities)))
-			{
-				continue;
-			}
-			G_VoiceTo(ent, victim, mode, id, voiceonly, randomNum, vsayNum, customChat);
-		}
-	}
-}
-
-/**
- * @brief G_Voice_f
- * @param[in] ent
- * @param[in] mode
- * @param[in] arg0
- * @param[in] voiceonly
- */
-void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly)
-{
-	char bufferIndexCustom[32];
-	int  vsayNum;
-
-	if (ent->client->sess.muted)
-	{
-		trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
-		return;
-	}
-
-	if (mode != SAY_BUDDY)
-	{
-		if (trap_Argc() < 2 && !arg0)
-		{
-			return;
-		}
-
-		trap_Argv((arg0) ? 0 : 1, bufferIndexCustom, sizeof(bufferIndexCustom));
-
-		if (isdigit(bufferIndexCustom[0]))
-		{
-			vsayNum = Q_atoi(bufferIndexCustom);
-			trap_Argv((arg0) ? 1 : 2, bufferIndexCustom, sizeof(bufferIndexCustom));
-			G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 2 : 3)), voiceonly, vsayNum);
-			return;
-		}
-		G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 1 : 2)), voiceonly, -1);
-	}
-	else
-	{
-		char bufferIndex[32];
-		int  index;
-
-		trap_Argv(2, bufferIndex, sizeof(bufferIndex));
-		index = Q_atoi(bufferIndex);
-		if (index < 0)
-		{
-			index = 0;
-		}
-
-		if (trap_Argc() < 3 + index && !arg0)
-		{
-			return;
-		}
-
-		trap_Argv((arg0) ? 2 + index : 3 + index, bufferIndexCustom, sizeof(bufferIndexCustom));
-
-		if (isdigit(bufferIndexCustom[0]))
-		{
-			vsayNum = Q_atoi(bufferIndexCustom);
-			trap_Argv((arg0) ? 3 + index : 4 + index, bufferIndexCustom, sizeof(bufferIndexCustom));
-			G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 4 + index : 5 + index)), voiceonly, vsayNum);
-			return;
-		}
-		G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 3 + index : 4 + index)), voiceonly, -1);
-	}
-}
-
-/**
- * @brief Cmd_Where_f
- * @param[in] ent
- * @param dwCommand - unused
- * @param value    - unused
- */
-void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value)
-{
-	trap_SendServerCommand(ent - g_entities, va("print \"%s\n\"", vtos(ent->r.currentOrigin)));
-}
-
-qboolean StringToFilter(const char *s, ipFilter_t *f);
-
-/**
- * @brief G_FindFreeComplainIP
- * @param[in,out] cl
- * @param[in] ip
- * @return
- */
-qboolean G_FindFreeComplainIP(gclient_t *cl, ipFilter_t *ip)
-{
-	int i = 0;
-
-	if (!g_ipcomplaintlimit.integer)
-	{
-		return qtrue;
-	}
-
-	for (i = 0; i < MAX_COMPLAINTIPS && i < g_ipcomplaintlimit.integer; i++)
-	{
-		if (!cl->pers.complaintips[i].compare && !cl->pers.complaintips[i].mask)
-		{
-			cl->pers.complaintips[i].compare = ip->compare;
-			cl->pers.complaintips[i].mask    = ip->mask;
-			return qtrue;
-		}
-		if ((cl->pers.complaintips[i].compare & cl->pers.complaintips[i].mask) == (ip->compare & ip->mask))
-		{
-			return qtrue;
-		}
-	}
-	return qfalse;
-}
-
-/**
  * @brief TVG_Cmd_SetViewpos_f
- * @param[in] ent
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] client
+ * @param[in] self
  */
-void TVG_Cmd_SetViewpos_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_SetViewpos_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	vec3_t origin, angles;
 	char   buffer[MAX_TOKEN_CHARS];
@@ -1423,7 +940,7 @@ void TVG_Cmd_SetViewpos_f(gclient_t *client, unsigned int dwCommand, int value)
 	if (!g_cheats.integer && client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
 		trap_SendServerCommand(client - level.clients, va("print \"Only spectators can use the setviewpos command.\n\""));
-		return;
+		return qtrue;
 	}
 
 	if (trap_Argc() == 5)
@@ -1463,14 +980,13 @@ void TVG_Cmd_SetViewpos_f(gclient_t *client, unsigned int dwCommand, int value)
 	else
 	{
 		trap_SendServerCommand(client - level.clients, va("print \"usage: setviewpos x y z yaw\n       setviewpos x y z pitch yaw roll useViewHeight(1/0)\n\""));
-		return;
+		return qtrue;
 	}
 
 	TVG_TeleportPlayer(client, origin, angles);
-}
 
-extern vec3_t playerMins;
-extern vec3_t playerMaxs;
+	return qtrue;
+}
 
 /**
  * @brief Cmd_Activate_f
@@ -1522,122 +1038,274 @@ void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value)
 }
 
 /**
- * @brief TVCmd_IntermissionWeaponStats_f
- * @param[in] ent
- * @param dwCommand - unused
- * @param value    - unused
- */
-void TVCmd_IntermissionWeaponStats_f(gclient_t *client, unsigned int dwCommand, int value)
+* @brief TVG_IntermissionStatsRequest should the update be requested
+* @param[in] tvcmd
+*/
+static qboolean TVG_IntermissionStatsUpdate(tvcmd_reference_t *tvcmd)
 {
-	//char buffer[1024];
-	//int i, clientNum;
+	if (tvcmd->lastUpdateTime)
+	{
+		return qfalse;
+	}
 
-	//if (!ent || !ent->client)
-	//{
-	//	return;
-	//}
+	trap_SendServerCommand(-2, tvcmd->pszCommandName);
+	tvcmd->lastUpdateTime = level.time;
 
-	//trap_Argv(1, buffer, sizeof(buffer));
-
-	//clientNum = Q_atoi(buffer);
-	//if (clientNum < 0 || clientNum > g_maxclients.integer)
-	//{
-	//	return;
-	//}
-
-	//Q_strncpyz(buffer, "imws ", sizeof(buffer));
-
-	//// hit regions
-	//Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i ",
-	//                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_HEAD],
-	//                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_ARMS],
-	//                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_BODY],
-	//                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_LEGS]));
-
-	//for (i = 0; i < WS_MAX; i++)
-	//{
-	//	Q_strcat(buffer, sizeof(buffer), va("%i %i %i ", level.clients[clientNum].sess.aWeaponStats[i].atts, level.clients[clientNum].sess.aWeaponStats[i].hits, level.clients[clientNum].sess.aWeaponStats[i].kills));
-	//}
-
-	//trap_SendServerCommand(ent - g_entities, buffer);
+	return qtrue;
 }
 
 /**
- * @brief TVCmd_IntermissionPlayerKillsDeaths_f
- * @param[in,out] client
- * @param dwCommand - unused
- * @param value    - unused
- */
-void TVCmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, unsigned int dwCommand, int value)
+* @brief TVG_IntermissionMapList
+* @param[in] client
+* @param[in] self
+*/
+qboolean TVG_IntermissionMapList(gclient_t *client, tvcmd_reference_t *self)
 {
+	if (!client)
+	{
+		return TVG_IntermissionStatsUpdate(self);
+	}
+
+	if (level.cmds.immaplistValid)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.immaplist);
+	}
+
+	return qtrue;
+}
+
+/**
+* @brief TVG_IntermissionMapHistory
+* @param[in] client
+* @param[in] self
+*/
+qboolean TVG_IntermissionMapHistory(gclient_t *client, tvcmd_reference_t *self)
+{
+	if (!client)
+	{
+		return TVG_IntermissionStatsUpdate(self);
+	}
+
+	if (level.cmds.immaphistoryValid)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.immaphistory);
+	}
+
+	return qtrue;
+}
+
+/**
+* @brief TVG_IntermissionVoteTally
+* @param[in] client
+* @param[in] self
+*/
+qboolean TVG_IntermissionVoteTally(gclient_t *client, tvcmd_reference_t *self)
+{
+	if (!client)
+	{
+		return TVG_IntermissionStatsUpdate(self);
+	}
+
+	if (level.cmds.imvotetallyValid)
+	{
+		trap_SendServerCommand(client - level.clients, level.cmds.imvotetally);
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief TVG_Cmd_IntermissionWeaponStats_f
+ * @param[in] client
+ * @param[in] self
+ */
+qboolean TVG_Cmd_IntermissionWeaponStats_f(gclient_t *client, tvcmd_reference_t *self)
+{
+	char buffer[MAX_TOKEN_CHARS];
+	int clientNum;
+
+	if (!client)
+	{
+		if (self->lastUpdateTime)
+		{
+			return qtrue;
+		}
+
+		// waiting for response for previous command
+		if (level.cmds.waitingForIMWS)
+		{
+			return qtrue;
+		}
+
+		if (self->value < 0 || self->value >= level.numValidMasterClients)
+		{
+			self->lastUpdateTime = level.time; // stop updating
+			return qtrue;
+		}
+
+		clientNum = level.validMasterClients[self->value++];
+
+		// shouldn't happen
+		if (level.cmds.infoStats[INFO_IMWS].valid[clientNum])
+		{
+			return qfalse;
+		}
+
+		level.cmds.waitingForIMWS = qtrue;
+		level.cmds.IMWSClientNum  = clientNum;
+		trap_SendServerCommand(-2, va("imws %d", clientNum));
+
+		Com_Printf("Sending imws %d\n", clientNum);
+
+		return qtrue;
+	}
+
+	trap_Argv(1, buffer, sizeof(buffer));
+
+	clientNum = Q_atoi(buffer);
+	
+	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
+	{
+		return qtrue;
+	}
+
+	if (level.cmds.infoStats[INFO_IMWS].valid[clientNum])
+	{
+		trap_SendServerCommand(client - level.clients , level.cmds.infoStats[INFO_IMWS].data[clientNum]);
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief TVG_Cmd_IntermissionPlayerKillsDeaths_f
+ * @param[in] client
+ * @param[in] self
+ */
+qboolean TVG_Cmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, tvcmd_reference_t *self)
+{
+	if (!client)
+	{
+		return TVG_IntermissionStatsUpdate(self);
+	}
+
 	if (level.cmds.impkdValid)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.impkd[0]);
 		trap_SendServerCommand(client - level.clients, level.cmds.impkd[1]);
 	}
+
+	return qtrue;
 }
 
 /**
-* @brief TVCmd_IntermissionPrestige_f
-* @param[in,out] client
-* @param dwCommand - unused
-* @param value    - unused
+* @brief TVG_Cmd_IntermissionPrestige_f
+* @param[in] client
+* @param[in] self
 */
-void TVCmd_IntermissionPrestige_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_IntermissionPrestige_f(gclient_t *client, tvcmd_reference_t *self)
 {
+	if (!client)
+	{
+		return TVG_IntermissionStatsUpdate(self);
+	}
+
 	if (level.cmds.imprValid)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.impr);
 	}
+
+	return qtrue;
 }
 
 /**
- * @brief TVCmd_IntermissionPlayerTime_f
+ * @brief TVG_Cmd_IntermissionPlayerTime_f
  * @param[in] client
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] self
  */
-void TVCmd_IntermissionPlayerTime_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_IntermissionPlayerTime_f(gclient_t *client, tvcmd_reference_t *self)
 {
+	if (!client)
+	{
+		return TVG_IntermissionStatsUpdate(self);
+	}
+
 	if (level.cmds.imptValid)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.impt);
 	}
+
+	return qtrue;
 }
 
 /**
-* @brief TVCmd_IntermissionSkillRating_f
+* @brief TVG_Cmd_IntermissionSkillRating_f
 * @param[in] client
-* @param dwCommand - unused
-* @param value    - unused
+* @param[in] self
 */
-void TVCmd_IntermissionSkillRating_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_IntermissionSkillRating_f(gclient_t *client, tvcmd_reference_t *self)
 {
+	if (!client)
+	{
+		return TVG_IntermissionStatsUpdate(self);
+	}
+
 	if (level.cmds.imsrValid)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.imsr);
 	}
+
+	return qtrue;
 }
 
 /**
- * @brief TVCmd_IntermissionWeaponAccuracies_f
- * @param[in] ent
+ * @brief TVG_Cmd_IntermissionWeaponAccuracies_f
+ * @param[in] client
+ * @param[in] self
  */
-void TVCmd_IntermissionWeaponAccuracies_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_IntermissionWeaponAccuracies_f(gclient_t *client, tvcmd_reference_t *self)
 {
+	if (!client)
+	{
+		return TVG_IntermissionStatsUpdate(self);
+	}
+
 	if (level.cmds.imwaValid)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.imwa);
 	}
+
+	return qtrue;
 }
 
 /**
- * @brief TVCmd_Ignore_f
- * @param[in,out] ent
- * @param dwCommand - unused
- * @param value    - unused
+* @brief TVG_Cmd_CallVote_f
+* @param[in] client
+* @param[in] self
+* @return
+*/
+qboolean TVG_Cmd_CallVote_f(gclient_t *client, tvcmd_reference_t *self)
+{
+	trap_SendServerCommand(client - level.clients, "print \"Callvote is disabled on this server.\"");
+	return qfalse;
+}
+
+/**
+* @brief TVG_Cmd_SelectedObjective_f
+* @param[in] client
+* @param[in] self
+*/
+qboolean TVG_Cmd_SelectedObjective_f(gclient_t *ent, tvcmd_reference_t *self)
+{
+	return qtrue;
+}
+
+/**
+ * @brief TVG_Cmd_Ignore_f
+ * @param[in] client
+ * @param[in] self
  */
-void TVCmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_Ignore_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	//char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
 	//int cnum;
@@ -1660,15 +1328,16 @@ void TVCmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	//COM_BitSet(ent->client->sess.ignoreClients, cnum);
 	//trap_SendServerCommand(ent - g_entities, va("print \"[lon]You are ignoring [lof]%s[lon]^7.\n\"", level.clients[cnum].pers.netname));
+
+	return qtrue;
 }
 
 /**
- * @brief TVCmd_UnIgnore_f
- * @param[in,out] ent
- * @param dwCommand - unused
- * @param value    - unused
+ * @brief TVG_Cmd_UnIgnore_f
+ * @param[in] client
+ * @param[in] self
  */
-void TVCmd_UnIgnore_f(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	//char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
 	//int cnum;
@@ -1691,6 +1360,8 @@ void TVCmd_UnIgnore_f(gclient_t *client, unsigned int dwCommand, int value)
 
 	COM_BitClear(ent->client->sess.ignoreClients, cnum);
 	trap_SendServerCommand(ent - g_entities, va("print \"[lof]%s[lon]^7 is no longer ignored.\n\"", level.clients[cnum].pers.netname));*/
+
+	return qtrue;
 }
 
 #define ENTNFO_HASH         78985
@@ -1772,7 +1443,7 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	char *token;
 	//int passcmdLength = 0;
 	//int cmdLength     = 0;
-	int pid = 0;
+	int clientNum = 0;
 
 	/**parsecmd = cmd;
 
@@ -1858,22 +1529,25 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	//	return;
 		// weapon stats parsing
 	case WS_HASH:                                      // "ws"
-		token = strtok(NULL, " ");
-		pid = Q_atoi(token);
-		level.cmds.infoStats[INFO_WS].valid[pid] = qtrue;
-		Q_strncpyz(level.cmds.infoStats[INFO_WS].data[pid], cmd, sizeof(level.cmds.infoStats[INFO_WS].data[0]));
+		token     = strtok(NULL, " ");
+		clientNum = Q_atoi(token);
+
+		level.cmds.infoStats[INFO_WS].valid[clientNum] = qtrue;
+		Q_strncpyz(level.cmds.infoStats[INFO_WS].data[clientNum], cmd, sizeof(level.cmds.infoStats[INFO_WS].data[0]));
 		return;
 	case WWS_HASH:                                    // "wws"
-		token = strtok(NULL, " ");
-		pid = Q_atoi(token);
-		level.cmds.infoStats[INFO_WWS].valid[pid] = qtrue;
-		Q_strncpyz(level.cmds.infoStats[INFO_WWS].data[pid], cmd, sizeof(level.cmds.infoStats[INFO_WWS].data[0]));
+		token     = strtok(NULL, " ");
+		clientNum = Q_atoi(token);
+
+		level.cmds.infoStats[INFO_WWS].valid[clientNum] = qtrue;
+		Q_strncpyz(level.cmds.infoStats[INFO_WWS].data[clientNum], cmd, sizeof(level.cmds.infoStats[INFO_WWS].data[0]));
 		return;
 	case GSTATS_HASH:                                // "gstats"
-		token = strtok(NULL, " ");
-		pid   = Q_atoi(token);
-		level.cmds.infoStats[INFO_GSTATS].valid[pid] = qtrue;
-		Q_strncpyz(level.cmds.infoStats[INFO_GSTATS].data[pid], cmd, sizeof(level.cmds.infoStats[INFO_GSTATS].data[0]));
+		token     = strtok(NULL, " ");
+		clientNum = Q_atoi(token);
+
+		level.cmds.infoStats[INFO_GSTATS].valid[clientNum] = qtrue;
+		Q_strncpyz(level.cmds.infoStats[INFO_GSTATS].data[clientNum], cmd, sizeof(level.cmds.infoStats[INFO_GSTATS].data[0]));
 		return;
 	//	// "topshots"-related commands
 	case ASTATS_HASH:                                // "astats"
@@ -1944,8 +1618,11 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		level.cmds.imwaValid = qtrue;
 		Q_strncpyz(level.cmds.imwa, cmd, sizeof(level.cmds.imwa));
 		return;
-	//case IMWS_HASH:                                        // "imws"
-	//	return;
+	case IMWS_HASH:                                        // "imws"
+		level.cmds.waitingForIMWS = qfalse;
+		level.cmds.infoStats[INFO_IMWS].valid[level.cmds.IMWSClientNum] = qtrue;
+		Q_strncpyz(level.cmds.infoStats[INFO_IMWS].data[level.cmds.IMWSClientNum], cmd, sizeof(level.cmds.infoStats[INFO_IMWS].data[0]));
+		return;
 	case IMPKD0_HASH:                                      // "impkd0"
 		level.cmds.impkdValid = qtrue;
 		Q_strncpyz(level.cmds.impkd[0], cmd, sizeof(level.cmds.impkd[0]));
@@ -1963,14 +1640,18 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		return;
 	//case SR_HASH:                                          // "sr" - backward compatibility with 2.76 demos
 	//	return;
-	//case SRA_HASH:                                         // "sra"
-	//	return;
+	case SRA_HASH:                                         // "sra"
+		level.cmds.sraValid = qtrue;
+		Q_strncpyz(level.cmds.sra, cmd, sizeof(level.cmds.sra));
+		return;
 	case IMPR_HASH:                                        // "impr"
 		level.cmds.imprValid = qtrue;
 		Q_strncpyz(level.cmds.impr, cmd, sizeof(level.cmds.impr));
 		return;
-	//case PR_HASH:                                          // "pr"
-	//	return;
+	case PR_HASH:                                          // "pr"
+		level.cmds.prValid = qtrue;
+		Q_strncpyz(level.cmds.pr, cmd, sizeof(level.cmds.pr));
+		return;
 	//	// music
 	//	// loops \/
 	//case MU_START_HASH:                                      // "mu_start" has optional parameter for fade-up time
