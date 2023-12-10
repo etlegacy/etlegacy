@@ -306,6 +306,7 @@ vmCvar_t cg_logFile;
 vmCvar_t cg_countryflags; // GeoIP
 
 vmCvar_t cg_altHud;
+vmCvar_t cg_shoutcasterHud;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
@@ -580,6 +581,7 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_countryflags,             "cg_countryflags",             "1",           CVAR_ARCHIVE,                 0 }, // GeoIP
 	{ &cg_altHud,                   "cg_altHud",                   "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
+	{ &cg_shoutcasterHud,           "cg_shoutcasterHud",           "Shoutcaster", CVAR_ARCHIVE,                 0 },
 	{ &cg_tracers,                  "cg_tracers",                  "1",           CVAR_ARCHIVE,                 0 }, // Draw tracers
 	{ &cg_fireteamNameMaxChars,     "cg_fireteamNameMaxChars",     "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,        "cg_fireteamNameAlign",        "0",           CVAR_ARCHIVE,                 0 },

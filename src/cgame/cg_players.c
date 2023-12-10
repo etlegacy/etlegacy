@@ -459,12 +459,10 @@ void CG_NewClientInfo(int clientNum)
 	{
 		if (newInfo.shoutcaster <= 0)
 		{
-			trap_Cvar_Set("cg_altHud", "ETmain");  // back to default HUD
 			CG_Printf("[cgnotify]^3*** You have been stripped of your shoutcaster status! ***\n");
 		}
 		else
 		{
-			trap_Cvar_Set("cg_altHud", "Shoutcaster");  // switch to shoutcaster hud
 			CG_Printf("[cgnotify]^2*** You have been authorized \"shoutcaster\" status ***\n");
 		}
 
