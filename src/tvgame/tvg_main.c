@@ -663,35 +663,15 @@ int dll_trap_DemoSupport;
 
 static void TVG_ETTV_ConfigstringPassthrough(int index)
 {
-	char info[BIG_INFO_STRING];
 	char cs[MAX_TOKEN_CHARS];
 
-	Com_Printf("G_ETTV_CONFIGSTRING PASSTHROUGH index: %d\n", index);
+	if (index == CS_SYSTEMINFO)
+	{
+		return;
+	}
 
-	if (index == CS_REINFSEEDS)
-	{
-		trap_GetConfigstring(CS_REINFSEEDS, cs, sizeof(cs));
-		trap_TVG_SetConfigstring(CS_REINFSEEDS, cs);
-		return;
-	}
-	else if (index < CS_REINFSEEDS)
-	{
-		if (index == CS_SERVERINFO)
-		{
-			trap_GetConfigstring(CS_SERVERINFO, info, sizeof(info));
-			//trap_Cvar_Set()
-			//Info_SetValueForKey(info, "g_redlimbotime", "0");
-			//Info_SetValueForKey(info, "g_bluelimbotime", "0");
-			//Info_SetValueForKey(info, "timelimit", "0");
-			trap_TVG_SetConfigstring(CS_SERVERINFO, info);
-			return;
-		}
-	}
-	else if (index - 49 < 4)
-	{
-		//trap_SetConfigstringTVGAME(index, "");
-		return;
-	}
+	trap_GetConfigstring(index, cs, sizeof(cs));
+	trap_TVG_SetConfigstring(index, cs);
 }
 
 /**
@@ -944,7 +924,6 @@ extern void G_InitMemory(void);
  */
 void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, int serverVersion)
 {
-	int    i;
 	char   cs[MAX_INFO_STRING];
 	time_t aclock;
 	char   timeFt[32];
@@ -1281,7 +1260,6 @@ FUNCTIONS CALLED EVERY FRAME
 void TVG_RunFrame(int levelTime)
 {
 	int  i;
-	char cs[MAX_STRING_CHARS];
 
 	trap_ETTV_GetPlayerstate(-1, &level.ettvMasterPs);
 
