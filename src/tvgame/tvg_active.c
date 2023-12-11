@@ -78,26 +78,20 @@ qboolean G_SpectatorAttackFollow(gclient_t *client)
  */
 void TVG_SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 {
-	//gentity_t *crosshairEnt = &g_entities[ent->client->ps.identifyClient];
-
-	//// sanity check - check .active in case the client sends us something completely bogus
-
-	//if (crosshairEnt->inuse && crosshairEnt->client &&
-	//    (ent->client->sess.sessionTeam == crosshairEnt->client->sess.sessionTeam ||
-	//     crosshairEnt->client->ps.powerups[PW_OPS_DISGUISED]))
-	//{
-
-	//	// identifyClientHealth sent as unsigned char, so we
-	//	// can't transmit negative numbers
-	//	if (crosshairEnt->health >= 0)
-	//	{
-	//		ent->client->ps.identifyClientHealth = crosshairEnt->health;
-	//	}
-	//	else
-	//	{
-	//		ent->client->ps.identifyClientHealth = 0;
-	//	}
-	//}
+	if (client->ps.identifyClient >= 0 && client->ps.identifyClient < MAX_CLIENTS)
+	{
+		if (level.ettvMasterClients[client->ps.identifyClient].valid)
+		{
+			if (level.ettvMasterClients[client->ps.identifyClient].ps.stats[STAT_HEALTH] >= 0)
+			{
+				client->ps.identifyClientHealth = level.ettvMasterClients[client->ps.identifyClient].ps.stats[STAT_HEALTH];
+			}
+			else
+			{
+				client->ps.identifyClientHealth = 0;
+			}
+		}
+	}
 
 	if (client->sess.spectatorState != SPECTATOR_FOLLOW)
 	{
@@ -133,11 +127,6 @@ void TVG_SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 		//{
 		//	Cmd_Activate_f(ent);
 		//}
-
-		//// save results of pmove
-		//VectorCopy(client->ps.origin, ent->s.origin);
-
-		//trap_UnlinkEntity(ent);
 	}
 
 	client->ps.classWeaponTime = 0;
