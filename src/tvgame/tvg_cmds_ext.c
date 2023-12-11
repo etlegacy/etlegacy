@@ -92,7 +92,7 @@ static tvcmd_reference_t tvCommandInfo[] =
 	{ "score",        CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue,       SHORTCD,    0, qfalse, TVG_Cmd_Score_f,                         ":^7 Request current scoreboard information"                                                 },
 	{ "scores",       CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue,       MEDIUMCD,   0, qfalse, TVG_scores_cmd,                          ":^7 Displays current match stat info"                                                       },
 
-	{ "sgstats",      CMD_USAGE_ANY_TIME,                        VERYSHORTCD, NOCD,       0, qtrue,  TVG_Cmd_sgStats_f,                       ""                                                                                           },
+	{ "sgstats",      CMD_USAGE_ANY_TIME,                        SHORTCD,     NOCD,       0, qtrue,  TVG_Cmd_sgStats_f,                       ""                                                                                           },
 	{ "wstats",       CMD_USAGE_ANY_TIME,                        VERYSHORTCD, NOCD,       0, qtrue,  TVG_Cmd_wStats_f,                        ""                                                                                           },
 	{ "weaponstats",  CMD_USAGE_ANY_TIME,                        VERYSHORTCD, NOCD,       0, qtrue,  TVG_weaponStats_cmd,                     " [player_ID]:^7 Shows weapon accuracy stats for a player"                                   },
 
