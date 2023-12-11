@@ -82,7 +82,6 @@ void TVG_WriteClientSessionData(gclient_t *client, qboolean restart)
 	cJSON_AddNumberToObject(root, "ignoreClients2", client->sess.ignoreClients[1]);
 	cJSON_AddNumberToObject(root, "enterTime", client->pers.enterTime);
 	cJSON_AddNumberToObject(root, "userSpawnPointValue", restart ? client->sess.userSpawnPointValue : 0);
-	cJSON_AddNumberToObject(root, "userMinorSpawnPointValue", restart ? client->sess.userMinorSpawnPointValue : -1);
 
 	cJSON_AddNumberToObject(root, "spec_team", client->sess.spec_team);
 	cJSON_AddNumberToObject(root, "tvchat", client->sess.tvchat);
@@ -125,7 +124,6 @@ void TVG_ReadSessionData(gclient_t *client)
 	client->sess.ignoreClients[1]         = Q_ReadIntValueJson(root, "ignoreClients2");
 	client->pers.enterTime                = Q_ReadIntValueJson(root, "enterTime");
 	client->sess.userSpawnPointValue      = Q_ReadIntValueJson(root, "userSpawnPointValue");
-	client->sess.userMinorSpawnPointValue = Q_ReadIntValueJson(root, "userMinorSpawnPointValue");
 
 	client->sess.spec_team                = Q_ReadIntValueJson(root, "spec_team");
 	client->sess.tvchat                   = Q_ReadIntValueJson(root, "tvchat");
@@ -153,15 +151,10 @@ void TVG_InitSessionData(gclient_t *client, const char *userinfo)
 	sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
 
 	sess->userSpawnPointValue      = 0;
-	sess->userMinorSpawnPointValue = -1;
 
 	Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
 
 	sess->muted = qfalse;
-	Com_Memset(sess->skill, 0, sizeof(sess->skill));
-	Com_Memset(sess->skillpoints, 0, sizeof(sess->skillpoints));
-	Com_Memset(sess->startskillpoints, 0, sizeof(sess->startskillpoints));
-	Com_Memset(sess->medals, 0, sizeof(sess->medals));
 
 	// we set ref in TVG_ClientUserinfoChanged
 	sess->referee   = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;

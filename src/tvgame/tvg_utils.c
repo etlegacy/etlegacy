@@ -627,9 +627,6 @@ void G_InitGentity(gentity_t *e)
 	e->nextthink  = 0;
 	e->free       = NULL;
 
-	// init scripting
-	e->scriptStatus.scriptEventIndex = -1;
-
 	// mark the time
 	e->spawnTime = level.time;
 }
@@ -786,7 +783,7 @@ gentity_t *G_TempEntity(vec3_t origin, entity_event_t event)
 
 	VectorCopy(origin, snapped);
 	SnapVector(snapped);        // save network bandwidth
-	G_SetOrigin(e, snapped);
+	TVG_SetOrigin(e, snapped);
 
 	// find cluster for PVS
 	trap_LinkEntity(e);
@@ -910,7 +907,7 @@ void TVG_AnimScriptSound(int soundIndex, vec3_t org, int client)
  * @param[out] ent
  * @param[in] origin
  */
-void G_SetOrigin(gentity_t *ent, vec3_t origin)
+void TVG_SetOrigin(gentity_t *ent, vec3_t origin)
 {
 	VectorCopy(origin, ent->s.pos.trBase);
 	ent->s.pos.trType     = TR_STATIONARY;
@@ -925,250 +922,6 @@ void G_SetOrigin(gentity_t *ent, vec3_t origin)
 	{
 		VectorCopy(origin, ent->client->ps.origin);
 	}
-}
-
-/**
- * @brief Debug polygons only work when running a local game with r_debugSurface set to 2
- * @param[in] start
- * @param[in] end
- * @param[in] color
- * @return
- */
-int DebugLine(vec3_t start, vec3_t end, int color)
-{
-	vec3_t points[4], dir, cross, up = { 0, 0, 1 };
-	float  dot;
-
-	VectorCopy(start, points[0]);
-	VectorCopy(start, points[1]);
-	VectorCopy(end, points[2]);
-	VectorCopy(end, points[3]);
-
-
-	VectorSubtract(end, start, dir);
-	VectorNormalize(dir);
-	dot = DotProduct(dir, up);
-	if (dot > 0.99f || dot < -0.99f)
-	{
-		VectorSet(cross, 1, 0, 0);
-	}
-	else
-	{
-		CrossProduct(dir, up, cross);
-	}
-
-	VectorNormalize(cross);
-
-	VectorMA(points[0], 2, cross, points[0]);
-	VectorMA(points[1], -2, cross, points[1]);
-	VectorMA(points[2], -2, cross, points[2]);
-	VectorMA(points[3], 2, cross, points[3]);
-
-	return trap_DebugPolygonCreate(color, 4, points);
-}
-
-/**
- * @brief G_LoadCampaignsFromFile
- * @param[in] filename
- * @return
- */
-static qboolean G_LoadCampaignsFromFile(const char *filename)
-{
-	int        handle;
-	pc_token_t token;
-	const char *s;
-	qboolean   mapFound = qfalse;
-
-	handle = trap_PC_LoadSource(filename);
-
-	if (!handle)
-	{
-		G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: file not found: %s\n", filename);
-		return qfalse;
-	}
-
-	if (!trap_PC_ReadToken(handle, &token))
-	{
-		trap_PC_FreeSource(handle);
-		return qfalse;
-	}
-	if (*token.string != '{')
-	{
-		trap_PC_FreeSource(handle);
-		return qfalse;
-	}
-
-	while (trap_PC_ReadToken(handle, &token))
-	{
-		if (*token.string == '}')
-		{
-			level.campaignCount++;
-
-			// can't handle any more.
-			if (level.campaignCount >= MAX_CAMPAIGNS)
-			{
-				G_Printf(S_COLOR_RED "G_LoadCampaignsFromFile: MAX_CAMPAIGNS reached: '%i'\n", MAX_CAMPAIGNS);
-				break;
-			}
-
-			if (!trap_PC_ReadToken(handle, &token))
-			{
-				// eof
-				break;
-			}
-
-			if (*token.string != '{')
-			{
-				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected token '%s' inside: %s\n", token.string, filename);
-				trap_PC_FreeSource(handle);
-				return qfalse;
-			}
-		}
-		else if (!Q_stricmp(token.string, "name") ||
-		         !Q_stricmp(token.string, "description") ||
-		         !Q_stricmp(token.string, "image"))
-		{
-			if ((s = PC_String_Parse(handle)) == NULL)
-			{
-				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
-				trap_PC_FreeSource(handle);
-				return qfalse;
-			}
-		}
-		else if (!Q_stricmp(token.string, "shortname"))
-		{
-			if ((s = PC_String_Parse(handle)) == NULL)
-			{
-				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
-				trap_PC_FreeSource(handle);
-				return qfalse;
-			}
-			else
-			{
-				Q_strncpyz(g_campaigns[level.campaignCount].shortname, s, sizeof(g_campaigns[level.campaignCount].shortname));
-			}
-		}
-		else if (!Q_stricmp(token.string, "next"))
-		{
-			if ((s = PC_String_Parse(handle)) == NULL)
-			{
-				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
-				trap_PC_FreeSource(handle);
-				return qfalse;
-			}
-			else
-			{
-				Q_strncpyz(g_campaigns[level.campaignCount].shortname, s, sizeof(g_campaigns[level.campaignCount].next));
-			}
-		}
-		else if (!Q_stricmp(token.string, "type"))
-		{
-			if (!trap_PC_ReadToken(handle, &token))
-			{
-				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
-				trap_PC_FreeSource(handle);
-				return qfalse;
-			}
-
-			if (strstr(token.string, "wolfsp"))
-			{
-				g_campaigns[level.campaignCount].typeBits |= (1 << GT_SINGLE_PLAYER);
-			}
-			if (strstr(token.string, "wolfcoop"))
-			{
-				g_campaigns[level.campaignCount].typeBits |= (1 << GT_COOP);
-			}
-			if (strstr(token.string, "wolfmp"))
-			{
-				g_campaigns[level.campaignCount].typeBits |= (1 << GT_WOLF);
-			}
-			if (strstr(token.string, "wolfsw"))
-			{
-				g_campaigns[level.campaignCount].typeBits |= (1 << GT_WOLF_STOPWATCH);
-			}
-			if (strstr(token.string, "wolflms"))
-			{
-				g_campaigns[level.campaignCount].typeBits |= (1 << GT_WOLF_LMS);
-			}
-		}
-		else if (!Q_stricmp(token.string, "maps"))
-		{
-			char *ptr, mapname[128], *mapnamePtr;
-
-			if (!trap_PC_ReadToken(handle, &token))
-			{
-				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
-				trap_PC_FreeSource(handle);
-				return qfalse;
-			}
-
-			ptr = token.string;
-			while (*ptr)
-			{
-				mapnamePtr = mapname;
-				while (*ptr && *ptr != ';')
-				{
-					*mapnamePtr++ = *ptr++;
-				}
-				if (*ptr)
-				{
-					ptr++;
-				}
-				*mapnamePtr = '\0';
-
-				if (g_gametype.integer == GT_WOLF_CAMPAIGN)
-				{
-					if (!mapFound &&
-					    !Q_stricmp(g_campaigns[level.campaignCount].shortname, g_currentCampaign.string) &&
-					    !Q_stricmp(mapname, level.rawmapname))
-					{
-
-						if (g_currentCampaignMap.integer == 0)
-						{
-							level.newCampaign = qtrue;
-						}
-						else
-						{
-							level.newCampaign = qfalse;
-						}
-
-						if (g_campaigns[level.campaignCount].mapCount == g_currentCampaignMap.integer)
-						{
-							g_campaigns[level.campaignCount].current = g_campaigns[level.campaignCount].mapCount;
-							mapFound                                 = qtrue;
-							//trap_Cvar_Set( "g_currentCampaignMap", va( "%i", g_campaigns[level.campaignCount].mapCount ) );
-						}
-
-						level.currentCampaign = level.campaignCount;
-					}
-				}
-				// don't stomp out of bounds
-				if (g_campaigns[level.campaignCount].mapCount < MAX_MAPS_PER_CAMPAIGN)
-				{
-					Q_strncpyz(g_campaigns[level.campaignCount].mapnames[g_campaigns[level.campaignCount].mapCount], mapname, MAX_QPATH);
-					g_campaigns[level.campaignCount].mapCount++;
-				}
-				else
-				{
-					// yell if there are too many maps in this campaign,
-					// and then skip it
-
-					G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: Campaign %s (%s) has too many maps\n", g_campaigns[level.campaignCount].shortname, filename);
-					// hack - end of campaign will increment this
-					// again, so this one will be overwritten
-					// clear out this campaign so that everything's
-					// okay when when we add the next
-					Com_Memset(&g_campaigns[level.campaignCount], 0, sizeof(g_campaigns[0]));
-					level.campaignCount--;
-
-					break;
-				}
-			}
-		}
-	}
-
-	trap_PC_FreeSource(handle);
-	return mapFound;
 }
 
 char bigTextBuffer[100000];

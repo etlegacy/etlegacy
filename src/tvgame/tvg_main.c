@@ -59,8 +59,6 @@ typedef struct
 gentity_t g_entities[MAX_GENTITIES];
 gclient_t g_clients[MAX_CLIENTS];
 
-g_campaignInfo_t g_campaigns[MAX_CAMPAIGNS];
-
 const char *gameNames[] =
 {
 	"Single Player",        // Obsolete
@@ -333,14 +331,7 @@ vmCvar_t g_skipCorrection;
 
 vmCvar_t g_extendedNames;
 
-vmCvar_t g_stickyCharge;
-vmCvar_t g_xpSaver;
-
 vmCvar_t g_debugForSingleClient;
-
-vmCvar_t g_suddenDeath;
-
-vmCvar_t g_dropObjDelay;
 
 // flood protection
 vmCvar_t g_floodProtection;
@@ -614,11 +605,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_skipCorrection,                  "g_skipCorrection",                  "1",                          0,                                               0, qfalse, qfalse },
 	{ &g_extendedNames,                   "g_extendedNames",                   "1",                          0,                                               0, qfalse, qfalse },
 
-	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-
 	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
 	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
@@ -685,7 +671,7 @@ static void TVG_ETTV_ConfigstringPassthrough(int index)
 	if (index == CS_REINFSEEDS)
 	{
 		trap_GetConfigstring(CS_REINFSEEDS, cs, sizeof(cs));
-		trap_SetConfigstringTVGAME(CS_REINFSEEDS, cs);
+		trap_TVG_SetConfigstring(CS_REINFSEEDS, cs);
 		return;
 	}
 	else if (index < CS_REINFSEEDS)
@@ -697,7 +683,7 @@ static void TVG_ETTV_ConfigstringPassthrough(int index)
 			//Info_SetValueForKey(info, "g_redlimbotime", "0");
 			//Info_SetValueForKey(info, "g_bluelimbotime", "0");
 			//Info_SetValueForKey(info, "timelimit", "0");
-			trap_SetConfigstringTVGAME(CS_SERVERINFO, info);
+			trap_TVG_SetConfigstring(CS_SERVERINFO, info);
 			return;
 		}
 	}
@@ -871,8 +857,6 @@ void TVG_RegisterCvars(void)
 	int         i;
 	cvarTable_t *cv;
 
-	level.server_settings = 0;
-
 	G_Printf("%d cvars in use\n", gameCvarTableSize);
 
 	for (i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++)
@@ -981,16 +965,10 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	G_InitMemory();
 
 	// set some level globals
-	i = level.server_settings;
 	{
 		qboolean   oldspawning = level.spawning;
-		voteInfo_t votedata;
-
-		Com_Memcpy(&votedata, &level.voteInfo, sizeof(voteInfo_t));
 
 		Com_Memset(&level, 0, sizeof(level));
-
-		Com_Memcpy(&level.voteInfo, &votedata, sizeof(voteInfo_t));
 
 		level.spawning = oldspawning;
 	}
@@ -999,7 +977,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	level.time            = levelTime;
 	level.startTime       = levelTime;
-	level.server_settings = i;
 
 	// init the anim scripting
 	level.animScriptData.soundIndex = G_SoundIndex;
@@ -1212,21 +1189,6 @@ void TVG_FindIntermissionPoint(void)
 	char      *buf;
 	int       winner;
 
-	// if the match hasn't ended yet, and we're just a spectator
-	if (!level.intermissiontime)
-	{
-		// try to find the intermission spawnpoint with no team flags set
-		ent = G_Find(NULL, FOFS(classname), "info_player_intermission");
-
-		for ( ; ent; ent = G_Find(ent, FOFS(classname), "info_player_intermission"))
-		{
-			if (!ent->spawnflags)
-			{
-				break;
-			}
-		}
-	}
-
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 	buf    = Info_ValueForKey(cs, "w");
 	winner = Q_atoi(buf);
@@ -1241,18 +1203,15 @@ void TVG_FindIntermissionPoint(void)
 		winner = TEAM_ALLIES;
 	}
 
-	if (!ent)
+	ent = G_Find(NULL, FOFS(classname), "info_player_intermission");
+	while (ent)
 	{
-		ent = G_Find(NULL, FOFS(classname), "info_player_intermission");
-		while (ent)
+		if (ent->spawnflags & winner)
 		{
-			if (ent->spawnflags & winner)
-			{
-				break;
-			}
-
-			ent = G_Find(ent, FOFS(classname), "info_player_intermission");
+			break;
 		}
+
+		ent = G_Find(ent, FOFS(classname), "info_player_intermission");
 	}
 
 	if (!ent) // the map creator forgot to put in an intermission point...

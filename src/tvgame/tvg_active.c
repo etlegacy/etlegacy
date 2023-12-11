@@ -72,11 +72,11 @@ qboolean G_SpectatorAttackFollow(gclient_t *client)
 }
 
 /**
- * @brief SpectatorThink
- * @param[in,out] ent
+ * @brief TVG_SpectatorThink
+ * @param[in] client
  * @param[in] ucmd
  */
-void SpectatorThink(gclient_t *client, usercmd_t *ucmd)
+void TVG_SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 {
 	//gentity_t *crosshairEnt = &g_entities[ent->client->ps.identifyClient];
 
@@ -108,11 +108,6 @@ void SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 		if (client->ps.sprintExertTime)
 		{
 			client->ps.speed *= 3;  // allow sprint in free-cam mode
-		}
-		// dead players are frozen too, in a timeout
-		if ((client->ps.pm_flags & PMF_LIMBO) && level.match_pause != PAUSE_NONE)
-		{
-			client->ps.pm_type = PM_FREEZE;
 		}
 		else if (client->noclip)
 		{
@@ -201,13 +196,13 @@ void SpectatorThink(gclient_t *client, usercmd_t *ucmd)
  *
  * @return Returns qfalse if the client is dropped
  */
-qboolean ClientInactivityTimer(gclient_t *client)
+qboolean TVG_ClientInactivityTimer(gclient_t *client)
 {
 	int      inactivity     = G_InactivityValue;
 	int      inactivityspec = G_SpectatorInactivityValue;
 	qboolean inTeam         = (client->sess.sessionTeam == TEAM_ALLIES || client->sess.sessionTeam == TEAM_AXIS) ? qtrue : qfalse;
 
-	qboolean doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients <= 0)) ? qtrue : qfalse;
+	qboolean doDrop = g_spectatorInactivity.integer != 0;
 
 	// no countdown in warmup and intermission
 	if (g_gamestate.integer != GS_PLAYING)
@@ -328,54 +323,6 @@ qboolean ClientInactivityTimer(gclient_t *client)
 }
 
 /**
- * @brief Actions that happen once a second
- * @param[in,out] ent  Entity
- * @param         msec Scheduler time
- */
-void ClientTimerActions(gentity_t *ent, int msec)
-{
-	gclient_t *client = ent->client;
-
-	client->timeResidual += msec;
-
-	while (client->timeResidual >= 1000)
-	{
-		client->timeResidual -= 1000;
-
-		// regenerate
-		if (ent->health < client->ps.stats[STAT_MAX_HEALTH])
-		{
-			// medic only
-			if (client->sess.playerType == PC_MEDIC)
-			{
-				if (ent->health > client->ps.stats[STAT_MAX_HEALTH] / 1.11)
-				{
-					ent->health += 2;
-
-					if (ent->health > client->ps.stats[STAT_MAX_HEALTH])
-					{
-						ent->health = client->ps.stats[STAT_MAX_HEALTH];
-					}
-				}
-				else
-				{
-					ent->health += 3;
-					if (ent->health > client->ps.stats[STAT_MAX_HEALTH] / 1.1)
-					{
-						ent->health = client->ps.stats[STAT_MAX_HEALTH] / 1.1;
-					}
-				}
-			}
-
-		}
-		else if (ent->health > client->ps.stats[STAT_MAX_HEALTH])               // count down health when over max
-		{
-			ent->health--;
-		}
-	}
-}
-
-/**
  * @brief ClientIntermissionThink
  * @param[in,out] client Client
  */
@@ -411,8 +358,6 @@ void TVG_ClientThink_real(gclient_t *client)
 	{
 		return;
 	}
-
-	client->ps.ammo[WP_ARTY] = 0;
 
 	// mark the time, so the connection sprite can be removed
 	ucmd = &client->pers.cmd;
@@ -468,10 +413,10 @@ void TVG_ClientThink_real(gclient_t *client)
 
 	// check for inactivity timer, but never drop the local client of a non-dedicated server
 	// moved here to allow for spec inactivity checks as well
-	if (!ClientInactivityTimer(client))
-	{
-		return;
-	}
+	//if (!TVG_ClientInactivityTimer(client))
+	//{
+	//	return;
+	//}
 
 	for (i = 0; i < INFO_NUM; i++)
 	{
@@ -486,7 +431,7 @@ void TVG_ClientThink_real(gclient_t *client)
 	// In limbo use SpectatorThink
 	if (client->sess.sessionTeam == TEAM_SPECTATOR || (client->ps.pm_flags & PMF_LIMBO))
 	{
-		SpectatorThink(client, ucmd);
+		TVG_SpectatorThink(client, ucmd);
 	}
 }
 

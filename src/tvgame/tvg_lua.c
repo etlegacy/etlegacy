@@ -917,25 +917,11 @@ static int _et_GetCurrentWeapon(lua_State *L)
 static const gentity_field_t gclient_fields[] =
 {
 	_et_gclient_addfield(noclip,                            FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lastKillTime,                      FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(saved_persistant,                  FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lastConstructibleBlockingWarnTime, FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(landmineSpottedTime,               FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_client,                   FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_mod,                      FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_time,                     FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(respawnTime,                       FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(inactivityTime,                    FIELD_INT,                 0),
 	_et_gclient_addfield(inactivityWarning,                 FIELD_INT,                 0),
-	_et_gclient_addfield(combatState,                       FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(deathAnimTime,                     FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(deathTime,                         FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(disguiseClientNum,                 FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(medals,                            FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(acc,                               FIELD_FLOAT,               FIELD_FLAG_READONLY),
-	_et_gclient_addfield(hspct,                             FIELD_FLOAT,               FIELD_FLAG_READONLY),
-	_et_gclient_addfield(freezed,                           FIELD_INT,                 0),
-	_et_gclient_addfield(constructSoundTime,                FIELD_INT,                 FIELD_FLAG_READONLY),
 
 	// to be compatible with ETPro:
 	_et_gclient_addfieldalias(client.inactivityTime,        inactivityTime,            FIELD_INT,           0),
@@ -943,40 +929,12 @@ static const gentity_field_t gclient_fields[] =
 
 	_et_gclient_addfield(pers.connected,                    FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.netname,                      FIELD_STRING,              FIELD_FLAG_NOPTR),
-	_et_gclient_addfield(pers.localClient,                  FIELD_INT,                 0),
-	_et_gclient_addfield(pers.initialSpawn,                 FIELD_INT,                 0),
-	_et_gclient_addfield(pers.enterTime,                    FIELD_INT,                 0),
+	_et_gclient_addfield(pers.localClient,                  FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.initialSpawn,                 FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.enterTime,                    FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.connectTime,                  FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.teamState.state,              FIELD_INT,                 0),
-	_et_gclient_addfield(pers.voteCount,                    FIELD_INT,                 0),
-	_et_gclient_addfield(pers.complaints,                   FIELD_INT,                 0),
-	_et_gclient_addfield(pers.complaintClient,              FIELD_INT,                 0),
-	_et_gclient_addfield(pers.complaintEndTime,             FIELD_INT,                 0),
-	_et_gclient_addfield(pers.lastReinforceTime,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.applicationClient,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.applicationEndTime,           FIELD_INT,                 0),
-	_et_gclient_addfield(pers.invitationClient,             FIELD_INT,                 0),
-	_et_gclient_addfield(pers.invitationEndTime,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.propositionClient,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.propositionClient2,           FIELD_INT,                 0),
-	_et_gclient_addfield(pers.propositionEndTime,           FIELD_INT,                 0),
-	_et_gclient_addfield(pers.autofireteamEndTime,          FIELD_INT,                 0),
-	_et_gclient_addfield(pers.autofireteamCreateEndTime,    FIELD_INT,                 0),
-	_et_gclient_addfield(pers.autofireteamJoinEndTime,      FIELD_INT,                 0),
+	_et_gclient_addfield(pers.teamState.state,              FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastSpawnTime,                FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.ready,                        FIELD_INT,                 0),
-	_et_gclient_addfield(pers.lastkilled_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastrevive_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastkiller_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastammo_client,              FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lasthealth_client,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.lastteambleed_client,         FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastteambleed_dmg,            FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.playerStats.hitRegions,       FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastBattleSenseBonusTime,     FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastHQMineReportTime,         FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.maxHealth,                    FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.playerStats.selfkills,        FIELD_INT,                 FIELD_FLAG_READONLY),
 
 	_et_gclient_addfield(ps.pm_flags,                       FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_time,                        FIELD_INT,                 FIELD_FLAG_READONLY),
@@ -984,16 +942,16 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(ps.eFlags,                         FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.weapon,                         FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.weaponstate,                    FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.stats,                          FIELD_INT_ARRAY,           0),
-	_et_gclient_addfield(ps.persistant,                     FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(ps.stats,                          FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.persistant,                     FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.ping,                           FIELD_INT,                 FIELD_FLAG_READONLY),// no ping change for lua scripts
-	_et_gclient_addfield(ps.powerups,                       FIELD_INT_ARRAY,           0),
-	_et_gclient_addfield(ps.origin,                         FIELD_VEC3,                0),
-	_et_gclient_addfield(ps.viewangles,                     FIELD_VEC3,                0),
-	_et_gclient_addfield(ps.velocity,                       FIELD_VEC3,                0),
-	_et_gclient_addfield(ps.ammo,                           FIELD_INT_ARRAY,           0),
-	_et_gclient_addfield(ps.ammoclip,                       FIELD_INT_ARRAY,           0),
-	_et_gclient_addfield(ps.classWeaponTime,                FIELD_INT,                 0),
+	_et_gclient_addfield(ps.powerups,                       FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.origin,                         FIELD_VEC3,                FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.viewangles,                     FIELD_VEC3,                FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.velocity,                       FIELD_VEC3,                FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.ammo,                           FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.ammoclip,                       FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.classWeaponTime,                FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.viewheight,                     FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.leanf,                          FIELD_FLOAT,               FIELD_FLAG_READONLY),
 
@@ -1012,41 +970,15 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.latchPlayerWeapon2,           FIELD_INT,                 0),
 	_et_gclient_addfield(sess.ignoreClients,                FIELD_INT_ARRAY,           0),
 	_et_gclient_addfield(sess.muted,                        FIELD_INT,                 0),
-	_et_gclient_addfield(sess.skillpoints,                  FIELD_FLOAT_ARRAY,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.startskillpoints,             FIELD_FLOAT_ARRAY,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.startxptotal,                 FIELD_FLOAT,               FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.skill,                        FIELD_INT_ARRAY,           0),
-	_et_gclient_addfield(sess.rank,                         FIELD_INT,                 0),
-	_et_gclient_addfield(sess.medals,                       FIELD_INT_ARRAY,           0),
 	_et_gclient_addfield(sess.referee,                      FIELD_INT,                 0),
 	_et_gclient_addfield(sess.shoutcaster,                  FIELD_INT,                 0),
-	_et_gclient_addfield(sess.rounds,                       FIELD_INT,                 0),
-	_et_gclient_addfield(sess.spec_invite,                  FIELD_INT,                 0),
 	_et_gclient_addfield(sess.spec_team,                    FIELD_INT,                 0),
-	_et_gclient_addfield(sess.kills,                        FIELD_INT,                 0),
-	_et_gclient_addfield(sess.deaths,                       FIELD_INT,                 0),
-	_et_gclient_addfield(sess.gibs,                         FIELD_INT,                 0),
-	_et_gclient_addfield(sess.self_kills,                   FIELD_INT,                 0),
-	_et_gclient_addfield(sess.team_kills,                   FIELD_INT,                 0),
-	_et_gclient_addfield(sess.team_gibs,                    FIELD_INT,                 0),
-	_et_gclient_addfield(sess.damage_given,                 FIELD_INT,                 0),
-	_et_gclient_addfield(sess.damage_received,              FIELD_INT,                 0),
-	_et_gclient_addfield(sess.team_damage_given,            FIELD_INT,                 0),
-	_et_gclient_addfield(sess.team_damage_received,         FIELD_INT,                 0),
-	_et_gclient_addfield(sess.time_axis,                    FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.time_allies,                  FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.time_played,                  FIELD_INT,                 FIELD_FLAG_READONLY),
-
-	_et_gclient_addfield(sess.aWeaponStats,                 FIELD_WEAPONSTAT,          FIELD_FLAG_READONLY),
 
 	//_et_gclient_addfieldalias(aWeaponStats, sess.aWeaponStats, FIELD_WEAPONSTAT_EXT, FIELD_FLAG_READONLY),
 
 	// origin: use ps.origin instead of r.currentOrigin
 	// for client entities
 	_et_gclient_addfieldalias(origin,                       ps.origin,                 FIELD_VEC3,          0),
-
-	_et_gclient_addfieldalias(sess.team_damage,             sess.team_damage_given,    FIELD_INT,           0),
-	_et_gclient_addfieldalias(sess.team_received,           sess.team_damage_received, FIELD_INT,           0),
 
 	{ NULL },
 };
@@ -1055,120 +987,66 @@ static const gentity_field_t gclient_fields[] =
 // R/W access see see http://wolfwiki.anime.net/index.php/Fieldname
 static const gentity_field_t gentity_fields[] =
 {
-	_et_gentity_addfield(activator,           FIELD_ENTITY,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(chain,               FIELD_ENTITY,     0),
-	_et_gentity_addfield(classname,           FIELD_STRING,     0),
-	_et_gentity_addfield(clipmask,            FIELD_INT,        0),
-	_et_gentity_addfield(closespeed,          FIELD_FLOAT,      0),
-	_et_gentity_addfield(count,               FIELD_INT,        0),
-	_et_gentity_addfield(count2,              FIELD_INT,        0),
-	_et_gentity_addfield(damage,              FIELD_INT,        0),
-	_et_gentity_addfield(deathType,           FIELD_INT,        0),
-	_et_gentity_addfield(delay,               FIELD_FLOAT,      0),
-	_et_gentity_addfield(dl_atten,            FIELD_INT,        0),
-	_et_gentity_addfield(dl_color,            FIELD_VEC3,       0),
-	_et_gentity_addfield(dl_shader,           FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(dl_stylestring,      FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(duration,            FIELD_FLOAT,      0),
-	_et_gentity_addfield(end_size,            FIELD_INT,        0),
-	_et_gentity_addfield(enemy,               FIELD_ENTITY,     0),
-	_et_gentity_addfield(entstate,            FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(classname,           FIELD_STRING,     FIELD_FLAG_READONLY),
+	_et_gentity_addfield(clipmask,            FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(flags,               FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(harc,                FIELD_FLOAT,      0),
-	_et_gentity_addfield(health,              FIELD_INT,        0),
-	_et_gentity_addfield(inuse,               FIELD_INT,        0),
-	_et_gentity_addfield(isProp,              FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(item,                FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(key,                 FIELD_INT,        0),
-	_et_gentity_addfield(message,             FIELD_STRING,     0),
-	_et_gentity_addfield(methodOfDeath,       FIELD_INT,        0),
-	_et_gentity_addfield(mg42BaseEnt,         FIELD_INT,        0),
-	_et_gentity_addfield(missionLevel,        FIELD_INT,        0),
-	_et_gentity_addfield(model,               FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(model2,              FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(noise_index,         FIELD_INT,        0),
-	_et_gentity_addfield(props_frame_state,   FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(inuse,               FIELD_INT,        FIELD_FLAG_READONLY),
 
 	_et_gentity_addfield(r.absmax,            FIELD_VEC3,       FIELD_FLAG_READONLY),
 	_et_gentity_addfield(r.absmin,            FIELD_VEC3,       FIELD_FLAG_READONLY),
 	_et_gentity_addfield(r.bmodel,            FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.contents,          FIELD_INT,        0),
-	_et_gentity_addfield(r.currentAngles,     FIELD_VEC3,       0),
-	_et_gentity_addfield(r.currentOrigin,     FIELD_VEC3,       0),
-	_et_gentity_addfield(r.eventTime,         FIELD_INT,        0),
+	_et_gentity_addfield(r.contents,          FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.currentAngles,     FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.currentOrigin,     FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.eventTime,         FIELD_INT,        FIELD_FLAG_READONLY),
 	//_et_gentity_addfield(r.linkcount, FIELD_INT, FIELD_FLAG_READONLY), // no need to provide it
 	_et_gentity_addfield(r.linked,            FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.maxs,              FIELD_VEC3,       0),
-	_et_gentity_addfield(r.mins,              FIELD_VEC3,       0),
-	_et_gentity_addfield(r.ownerNum,          FIELD_INT,        0),
-	_et_gentity_addfield(r.singleClient,      FIELD_INT,        0),
-	_et_gentity_addfield(r.svFlags,           FIELD_INT,        0),
+	_et_gentity_addfield(r.maxs,              FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.mins,              FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.ownerNum,          FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.singleClient,      FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.svFlags,           FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(r.worldflags,        FIELD_INT,        FIELD_FLAG_READONLY),
 
-	_et_gentity_addfield(radius,              FIELD_INT,        0),
-	_et_gentity_addfield(random,              FIELD_FLOAT,      0),
-	_et_gentity_addfield(rotate,              FIELD_VEC3,       0),
-
-	_et_gentity_addfield(s.angles,            FIELD_VEC3,       0),
-	_et_gentity_addfield(s.angles2,           FIELD_VEC3,       0),
-	_et_gentity_addfield(s.apos,              FIELD_TRAJECTORY, 0),
-	_et_gentity_addfield(s.clientNum,         FIELD_INT,        0),
-	_et_gentity_addfield(s.constantLight,     FIELD_INT,        0),
-	_et_gentity_addfield(s.density,           FIELD_INT,        0),
-	_et_gentity_addfield(s.dl_intensity,      FIELD_INT,        0),
-	_et_gentity_addfield(s.dmgFlags,          FIELD_INT,        0),
-	_et_gentity_addfield(s.eFlags,            FIELD_INT,        0),
-	_et_gentity_addfield(s.eType,             FIELD_INT,        0),
-	_et_gentity_addfield(s.effect1Time,       FIELD_INT,        0),
-	_et_gentity_addfield(s.effect2Time,       FIELD_INT,        0),
-	_et_gentity_addfield(s.effect3Time,       FIELD_INT,        0),
-	_et_gentity_addfield(s.frame,             FIELD_INT,        0),
+	_et_gentity_addfield(s.angles,            FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.angles2,           FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.apos,              FIELD_TRAJECTORY, FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.clientNum,         FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.constantLight,     FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.density,           FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.dl_intensity,      FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.dmgFlags,          FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.eFlags,            FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.eType,             FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.effect1Time,       FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.effect2Time,       FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.effect3Time,       FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.frame,             FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(s.groundEntityNum,   FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.loopSound,         FIELD_INT,        0),
-	_et_gentity_addfield(s.modelindex,        FIELD_INT,        0),
-	_et_gentity_addfield(s.modelindex2,       FIELD_INT,        0),
+	_et_gentity_addfield(s.loopSound,         FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.modelindex,        FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.modelindex2,       FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(s.number,            FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.onFireEnd,         FIELD_INT,        0),
-	_et_gentity_addfield(s.onFireStart,       FIELD_INT,        0),
-	_et_gentity_addfield(s.origin,            FIELD_VEC3,       0),
-	_et_gentity_addfield(s.origin2,           FIELD_VEC3,       0),
-	_et_gentity_addfield(s.pos,               FIELD_TRAJECTORY, 0),
+	_et_gentity_addfield(s.onFireEnd,         FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.onFireStart,       FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.origin,            FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.origin2,           FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.pos,               FIELD_TRAJECTORY, FIELD_FLAG_READONLY),
 	_et_gentity_addfield(s.powerups,          FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.solid,             FIELD_INT,        0),
-	_et_gentity_addfield(s.teamNum,           FIELD_INT,        0),
-	_et_gentity_addfield(s.time,              FIELD_INT,        0),
-	_et_gentity_addfield(s.time2,             FIELD_INT,        0),
+	_et_gentity_addfield(s.solid,             FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.teamNum,           FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.time,              FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.time2,             FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(s.weapon,            FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.eventParm,         FIELD_INT,        0),
+	_et_gentity_addfield(s.eventParm,         FIELD_INT,        FIELD_FLAG_READONLY),
 
-	_et_gentity_addfield(scriptName,          FIELD_STRING,     FIELD_FLAG_READONLY),
 	_et_gentity_addfield(spawnflags,          FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(spawnitem,           FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(speed,               FIELD_INT,        0),
-	_et_gentity_addfield(splashDamage,        FIELD_INT,        0),
-	_et_gentity_addfield(splashMethodOfDeath, FIELD_INT,        0),
-	_et_gentity_addfield(splashRadius,        FIELD_INT,        0),
-	_et_gentity_addfield(start_size,          FIELD_INT,        0),
-	_et_gentity_addfield(tagName,             FIELD_STRING,     FIELD_FLAG_NOPTR + FIELD_FLAG_READONLY),
-	_et_gentity_addfield(tagParent,           FIELD_ENTITY,     0),
-	_et_gentity_addfield(takedamage,          FIELD_INT,        0),
-	_et_gentity_addfield(tankLink,            FIELD_ENTITY,     0),
-	_et_gentity_addfield(target,              FIELD_STRING,     0),
-	_et_gentity_addfield(TargetAngles,        FIELD_VEC3,       0),
-	_et_gentity_addfield(TargetFlag,          FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(targetname,          FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(teamchain,           FIELD_ENTITY,     0),
-	_et_gentity_addfield(teammaster,          FIELD_ENTITY,     0),
-	_et_gentity_addfield(track,               FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(varc,                FIELD_FLOAT,      0),
-	_et_gentity_addfield(wait,                FIELD_FLOAT,      0),
-	_et_gentity_addfield(waterlevel,          FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(watertype,           FIELD_INT,        FIELD_FLAG_READONLY),
 
 	// To be compatible with ETPro:
 	// origin: use r.currentOrigin instead of ps.origin
 	//         for non client entities
-	_et_gentity_addfieldalias(origin,         r.currentOrigin,  FIELD_VEC3,                             0),
+	_et_gentity_addfieldalias(origin,         r.currentOrigin,  FIELD_VEC3,                             FIELD_FLAG_READONLY),
 	{ NULL },
 };
 
@@ -1274,26 +1152,6 @@ static void _et_gentity_settrajectory(lua_State *L, trajectory_t *traj)
 	lua_gettable(L, -2);
 	_et_gentity_setvec3(L, (vec3_t *)traj->trDelta);
 	lua_pop(L, 1);
-}
-
-static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
-{
-	lua_newtable(L);
-	lua_pushinteger(L, 1);
-	lua_pushinteger(L, ws->atts);
-	lua_settable(L, -3);
-	lua_pushinteger(L, 2);
-	lua_pushinteger(L, ws->deaths);
-	lua_settable(L, -3);
-	lua_pushinteger(L, 3);
-	lua_pushinteger(L, ws->headshots);
-	lua_settable(L, -3);
-	lua_pushinteger(L, 4);
-	lua_pushinteger(L, ws->hits);
-	lua_settable(L, -3);
-	lua_pushinteger(L, 5);
-	lua_pushinteger(L, ws->kills);
-	lua_settable(L, -3);
 }
 
 gentity_t *G_Lua_CreateEntity(char *params)
@@ -1603,9 +1461,6 @@ static int _et_gentity_get(lua_State *L)
 		return 1;
 	case FIELD_FLOAT_ARRAY:
 		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * (int)luaL_optinteger(L, 3, 0)))));
-		return 1;
-	case FIELD_WEAPONSTAT:
-		_et_gentity_getweaponstat(L, (weapon_stat_t *)(addr + (sizeof(weapon_stat_t) * (int)luaL_optinteger(L, 3, 0))));
 		return 1;
 
 	}

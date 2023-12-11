@@ -689,79 +689,6 @@ gclient_t *G_GetPlayerByName(const char *name)
 	return NULL;
 }
 
-/**
- * @brief Svcmd_Campaign_f
- */
-void Svcmd_Campaign_f(void)
-{
-	char             str[MAX_TOKEN_CHARS];
-	int              i;
-	g_campaignInfo_t *campaign = NULL;
-
-	// find the campaign
-	trap_Argv(1, str, sizeof(str));
-
-	for (i = 0; i < level.campaignCount; i++)
-	{
-		campaign = &g_campaigns[i];
-
-		if (campaign && !Q_stricmp(campaign->shortname, str))
-		{
-			break;
-		}
-	}
-
-	if (i == level.campaignCount || !campaign || !(campaign->typeBits & (1 << GT_WOLF)))
-	{
-		G_Printf("Can't find campaign '%s'\n", str);
-		return;
-	}
-
-	trap_Cvar_Set("g_currentCampaign", campaign->shortname);
-	trap_Cvar_Set("g_currentCampaignMap", "0");
-
-	level.newCampaign = qtrue;
-
-	// we got a campaign, start it
-	trap_Cvar_Set("g_gametype", va("%i", GT_WOLF_CAMPAIGN));
-
-	trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
-}
-
-/**
- * @brief Svcmd_ListCampaigns_f
- */
-void Svcmd_ListCampaigns_f(void)
-{
-	int i, mpCampaigns = 0;
-
-	for (i = 0; i < level.campaignCount; i++)
-	{
-		if (g_campaigns[i].typeBits & (1 << GT_WOLF))
-		{
-			mpCampaigns++;
-		}
-	}
-
-	if (mpCampaigns)
-	{
-		G_Printf("%i campaigns found:\n", mpCampaigns);
-	}
-	else
-	{
-		G_Printf("No campaigns found\n");
-		return;
-	}
-
-	for (i = 0; i < level.campaignCount; i++)
-	{
-		if (g_campaigns[i].typeBits & (1 << GT_WOLF))
-		{
-			G_Printf(" %s\n", g_campaigns[i].shortname);
-		}
-	}
-}
-
 ///> change into qfalse if you want to use the qagame banning system
 ///> which makes it possible to unban IP addresses
 #define USE_ENGINE_BANLIST qtrue
@@ -1381,7 +1308,7 @@ void Svcmd_Ref_f(void)
 		return;
 	}
 
-	//G_ref_cmd(NULL, 0, 0);
+	TVG_ref_cmd(NULL, NULL);
 }
 
 /**
@@ -1419,22 +1346,6 @@ void Svcmd_Qsay_f(void)
 	trap_SendServerCommand(-1, va("chat \"%s\"", Q_AddCR(ConcatArgs(1))));
 }
 
-/**
- * @brief Svcmd_PassVote_f
- */
-static void Svcmd_PassVote_f(void)
-{
-	level.voteInfo.votePassed = 1;
-}
-
-/**
- * @brief Svcmd_CancelVote_f
- */
-static void Svcmd_CancelVote_f(void)
-{
-	level.voteInfo.voteCanceled = 1;
-}
-
 extern void Svcmd_GameMem_f(void);
 
 /**
@@ -1450,13 +1361,11 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "removeip",                   Svcmd_RemoveIP_f              },
 	{ "listip",                     Svcmd_ListIp_f                },
 
-	{ "makeReferee",                G_MakeReferee                 },
-	{ "removeReferee",              G_RemoveReferee               },
-	{ "mute",                       G_MuteClient                  },
-	{ "unmute",                     G_UnMuteClient                },
-	{ "ban",                        G_PlayerBan                   },
-	{ "campaign",                   Svcmd_Campaign_f              },
-	{ "listcampaigns",              Svcmd_ListCampaigns_f         },
+	{ "makeReferee",                TVG_MakeReferee               },
+	{ "removeReferee",              TVG_RemoveReferee             },
+	{ "mute",                       TVG_MuteClient                },
+	{ "unmute",                     TVG_UnMuteClient              },
+	{ "ban",                        TVG_PlayerBan                 },
 	{ "kick",                       Svcmd_Kick_f                  },    // moved from engine
 	{ "clientkick",                 Svcmd_Kick_f                  },    // both similar to keep compatibility
 
@@ -1467,8 +1376,6 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "playsound_env",              G_PlaySound_Cmd               },
 
 	{ "ref",                        Svcmd_Ref_f                   },    // console also gets ref commands
-	{ "passvote",                   Svcmd_PassVote_f              },
-	{ "cancelvote",                 Svcmd_CancelVote_f            },
 	{ "qsay",                       Svcmd_Qsay_f                  },
 };
 

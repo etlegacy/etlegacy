@@ -799,20 +799,7 @@ void TVG_ClientUserinfoChanged(int clientNum)
 		}
 	}
 
-	client->pers.autoActivate      = (client->pers.clientFlags & CGF_AUTOACTIVATE) ? PICKUP_TOUCH : PICKUP_ACTIVATE;
-	client->pers.predictItemPickup = ((client->pers.clientFlags & CGF_PREDICTITEMS) != 0);
-
-	if (client->pers.clientFlags & CGF_AUTORELOAD)
-	{
-		client->pers.bAutoReloadAux = qtrue;
-		client->pmext.bAutoReload   = qtrue;
-	}
-	else
-	{
-		client->pers.bAutoReloadAux = qfalse;
-		client->pmext.bAutoReload   = qfalse;
-	}
-
+	client->pmext.bAutoReload = qfalse;
 	client->pers.activateLean = (client->pers.clientFlags & CGF_ACTIVATELEAN) != 0 ? qtrue : qfalse;
 
 	// set name
@@ -1021,17 +1008,7 @@ char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		TVG_ReadSessionData(client);
 	}
 
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
-	{
-		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
-		{
-			client->pers.enterTime = level.time;
-		}
-	}
-	else
-	{
-		client->pers.enterTime = level.time;
-	}
+	client->pers.enterTime = level.time;
 
 	if (firstTime)
 	{
@@ -1120,22 +1097,6 @@ void TVG_ClientBegin(int clientNum)
 	client->ps.persistant[PERS_SPAWN_COUNT]   = spawn_count;
 	client->ps.persistant[PERS_RESPAWNS_LEFT] = lives_left;
 
-	client->pers.complaintClient      = -1;
-	client->pers.complaintEndTime     = -1;
-	client->pers.lastkilled_client    = -1;
-	client->pers.lastammo_client      = -1;
-	client->pers.lasthealth_client    = -1;
-	client->pers.lastrevive_client    = -1;
-	client->pers.lastkiller_client    = -1;
-	client->pers.lastteambleed_client = -1;
-	client->pers.lastteambleed_dmg    = -1;
-
-	client->pers.savedClassWeaponTime     = -999999;
-	client->pers.savedClassWeaponTimeCvop = -999999;
-	client->pers.savedClassWeaponTimeEng  = -999999;
-	client->pers.savedClassWeaponTimeFop  = -999999;
-	client->pers.savedClassWeaponTimeMed  = -999999;
-
 	TVG_ClientSpawn(client);
 
 	client->inactivityTime        = level.time + G_SpectatorInactivityValue * 1000;
@@ -1169,11 +1130,8 @@ void TVG_ClientSpawn(gclient_t *client)
 	int                flags;
 	int                savedPing;
 	int                savedTeam;
-	int                savedDeathTime;
 
-	client->pers.lastSpawnTime            = level.time;
-	client->pers.lastBattleSenseBonusTime = level.timeCurrent;
-	client->pers.lastHQMineReportTime     = level.timeCurrent;
+	client->pers.lastSpawnTime = level.time;
 
 	spawnPoint = SelectSpectatorSpawnPoint(spawn_origin, spawn_angles);
 
@@ -1190,7 +1148,6 @@ void TVG_ClientSpawn(gclient_t *client)
 	savedSess      = client->sess;
 	savedPing      = client->ps.ping;
 	savedTeam      = client->ps.teamNum;
-	savedDeathTime = client->deathTime;
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -1221,12 +1178,10 @@ void TVG_ClientSpawn(gclient_t *client)
 
 	// breathbar
 	client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
-	client->airOutTime             = level.time + HOLDBREATHTIME;
 
 	// clear entity values
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags                 = flags;
-	client->deathTime                 = savedDeathTime;
 
 	client->ps.classWeaponTime = -999999;
 
@@ -1247,11 +1202,9 @@ void TVG_ClientSpawn(gclient_t *client)
 
 	client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
 	client->ps.sprintExertTime        = 0;
+	client->ps.friction               = 1.0f;
 
-	client->ps.friction = 1.0f;
-
-	// retrieve from the persistant storage (we use this in pmoveExt_t beause we need it in bg_*)
-	client->pmext.bAutoReload = client->pers.bAutoReloadAux;
+	client->pmext.bAutoReload = qfalse;
 
 	client->ps.clientNum = level.ettvMasterPs.clientNum;
 
@@ -1279,7 +1232,6 @@ void TVG_ClientSpawn(gclient_t *client)
 	client->inactivitySecondsLeft = G_InactivityValue;
 	client->latched_buttons       = 0;
 	client->latched_wbuttons      = 0;
-	client->deathTime             = 0;
 
 	// run a client frame to drop exactly to the floor,
 	// initialize animations and other things

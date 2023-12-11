@@ -85,9 +85,9 @@ static tvcmd_reference_t tvCommandInfo[] =
 
 	{ "players",        CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_players_cmd,                       ":^7 Lists all active players and their IDs"                                     },
 	{ "viewers",        CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_viewers_cmd,                       ":^7 Lists all viewers and their IDs" },
-	//{ "rconAuth",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_AuthRcon_f,                      ":^7 Client authentication"                                                                  },
+	{ "rconAuth",       CMD_USAGE_ANY_TIME,         0, SHORTCD, 0,      qfalse, TVG_Cmd_AuthRcon_f,                      ":^7 Client authentication"                                                                  },
 	
-    //{ "ref",            CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_ref_cmd,                           " <password>:^7 Become a referee (admin access)"                                             },
+    { "ref",            CMD_USAGE_ANY_TIME,          0, SHORTCD, 0,      qtrue,  TVG_ref_cmd,                           " <password>:^7 Become a referee (admin access)"                                             },
 
 	{ "score",            CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue, SHORTCD,  0,      qfalse, TVG_Cmd_Score_f,                       ":^7 Request current scoreboard information"                                                 },
 	{ "scores",           CMD_USAGE_ANY_TIME | CMD_USAGE_AUTOUPDATE, qtrue, MEDIUMCD, 0,      qfalse, TVG_scores_cmd,                        ":^7 Displays current match stat info"                                                       },

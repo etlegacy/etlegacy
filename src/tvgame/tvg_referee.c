@@ -61,6 +61,10 @@ qboolean TVG_refCommandCheck(gclient_t *client, const char *cmd)
 	{
 		TVG_refMute_cmd(client, qfalse);
 	}
+	else if (!Q_stricmp(cmd, "kick"))
+	{
+		TVG_kick_cmd(client);
+	}
 	else if (!Q_stricmp(cmd, "logout"))
 	{
 		TVG_refLogout_cmd(client);
@@ -84,13 +88,11 @@ void TVG_refHelp_cmd(gclient_t *client)
 	{
 		CP("print \"^3Referee commands:^7\n------------------------------------------\n\"");
 
-		TVG_voteHelp(client, qfalse);
-
-		CP("print \"^5allready putallies^7 <pid> ^5specunlock warn ^7<pid>\n\"");
-		CP("print \"^5help putaxis^7 <pid> ^5unlock mute ^7<pid>\n\"");
-		CP("print \"^5lock remove^7 <pid> ^5unpause unmute ^7<pid>\n\"");
-		CP("print \"^5pause speclock logout warmup ^7[value]\n\"");
-		CP("print \"^5makeshoutcaster^7 <pid> ^5removeshoutcaster^7 <pid>\n\"");
+		CP("print \"^5warn ^7<pid/name>\n\"");
+		CP("print \"^5mute ^7<pid/name>\n\"");
+		CP("print \"^unmute ^7<pid/name>\n\"");
+		CP("print \"^kick ^7<pid/name>\n\"");
+		CP("print \"^logout\n\"");
 
 		CP("print \"Usage: ^3\\ref <cmd> [params]\n\n\"");
 
@@ -99,44 +101,34 @@ void TVG_refHelp_cmd(gclient_t *client)
 	else
 	{
 		G_Printf("\nAdditional console commands:\n----------------------------------------------\n");
-		G_Printf("allready putallies <pid> unpause\n");
-		G_Printf("help putaxis <pid> warmup [value]\n");
-		G_Printf("lock speclock warn <pid>\n");
-		G_Printf("pause specunlock\n");
-		G_Printf("remove <pid> unlock\n\n");
-
+		G_Printf("mute unmute warn kick <pid/name>\n");
 		G_Printf("Usage: <cmd> [params]\n\n");
 	}
 }
 
 /**
  * @brief Request for ref status or lists ref commands.
- * @param[in,out] client
- * @param dwCommand - unused
- * @param value - unused
+ * @param[in] client
+ * @param[in] self
  */
-void TVG_ref_cmd(gclient_t *client, unsigned int dwCommand, int value)
+qboolean TVG_ref_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
 	char arg[MAX_TOKEN_CHARS];
 
 	// Roll through ref commands if already a ref
 	if (client == NULL || client->sess.referee)
 	{
-		voteInfo_t votedata;
-
 		trap_Argv(1, arg, sizeof(arg));
-
-		Com_Memcpy(&level.voteInfo, &votedata, sizeof(voteInfo_t));
 
 		if (TVG_refCommandCheck(client, arg))
 		{
-			return;
+			return qtrue;
 		}
 		else
 		{
 			TVG_refHelp_cmd(client);
 		}
-		return;
+		return qtrue;
 	}
 
 	if (client)
@@ -144,13 +136,13 @@ void TVG_ref_cmd(gclient_t *client, unsigned int dwCommand, int value)
 		if (!Q_stricmp(refereePassword.string, "none") || !refereePassword.string[0])
 		{
 			CP("print \"Sorry, referee status disabled on this server.\n\"");
-			return;
+			return qtrue;
 		}
 
 		if (trap_Argc() < 2)
 		{
 			CP("print \"Usage: ref [password]\n\"");
-			return;
+			return qtrue;
 		}
 
 		trap_Argv(1, arg, sizeof(arg));
@@ -158,14 +150,15 @@ void TVG_ref_cmd(gclient_t *client, unsigned int dwCommand, int value)
 		if (Q_stricmp(arg, refereePassword.string))
 		{
 			CP("print \"Invalid referee password!\n\"");
-			return;
+			return qtrue;
 		}
 
 		client->sess.referee     = 1;
-		client->sess.spec_invite = TEAM_AXIS | TEAM_ALLIES;
-		AP(va("cp \"%s\n^3has become a referee\n\"", client->pers.netname));
+		CP("cp \"^3You have become a referee\n\"");
 		TVG_ClientUserinfoChanged(client - level.clients);
 	}
+
+	return qtrue;
 }
 
 /**
@@ -201,6 +194,35 @@ void TVG_refWarning_cmd(gclient_t *client)
 			TVG_refPrintf(client, "Insufficient rights to issue client a warning.");
 		}
 	}
+}
+
+/**
+* @brief TVG_kick_cmd
+* @param[in] client
+*/
+void TVG_kick_cmd(gclient_t *client)
+{
+	int       pid;
+	char      arg[MAX_TOKEN_CHARS];
+	gclient_t *player;
+
+	trap_Argv(2, arg, sizeof(arg));
+	if ((pid = TVG_ClientNumberFromString(client, arg)) == -1)
+	{
+		return;
+	}
+
+	player = level.clients + pid;
+
+	if (player->sess.referee != RL_NONE)
+	{
+		TVG_refPrintf(client, "Cannot kick a referee.");
+		return;
+	}
+
+	trap_SendConsoleCommand(EXEC_APPEND, va("clientkick %d\n", pid));
+	CP(va("cp \"%s\n^3has been kicked!\n\"", level.clients[pid].pers.netname));
+
 }
 
 /**
@@ -249,6 +271,7 @@ void TVG_refMute_cmd(gclient_t *client, qboolean mute)
 		player->sess.muted = qfalse;
 		G_Printf("\"%s^*\" has been unmuted\n", player->pers.netname);
 	}
+
 	TVG_ClientUserinfoChanged(pid);
 }
 
@@ -268,11 +291,10 @@ void TVG_refLogout_cmd(gclient_t *client)
 
 /**
  * @brief Client authentication
- * @param[in,out] ent
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] client
+ * @param[in] self
  */
-void Cmd_AuthRcon_f(gentity_t *ent, unsigned int dwCommand, int value)
+qboolean TVG_Cmd_AuthRcon_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	char buf[MAX_TOKEN_CHARS], cmd[MAX_TOKEN_CHARS];
 
@@ -281,8 +303,10 @@ void Cmd_AuthRcon_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	if (*buf && !strcmp(buf, cmd))
 	{
-		ent->client->sess.referee = RL_RCON;
+		client->sess.referee = RL_RCON;
 	}
+
+	return qtrue;
 }
 
 /**
@@ -290,9 +314,9 @@ void Cmd_AuthRcon_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 
 /**
- * @brief G_PlayerBan
+ * @brief TVG_PlayerBan
  */
-void G_PlayerBan()
+void TVG_PlayerBan()
 {
 	char cmd[MAX_TOKEN_CHARS];
 	int  bannum;
@@ -309,29 +333,20 @@ void G_PlayerBan()
 
 	if (bannum != -1)
 	{
-		//if( level.clients[bannum].sess.referee != RL_RCON ) {
+		const char *value;
+		char       userinfo[MAX_INFO_STRING];
 
-		if (!(g_entities[bannum].r.svFlags & SVF_BOT))
-		{
-			const char *value;
-			char       userinfo[MAX_INFO_STRING];
+		trap_GetUserinfo(bannum, userinfo, sizeof(userinfo));
+		value = Info_ValueForKey(userinfo, "ip");
 
-			trap_GetUserinfo(bannum, userinfo, sizeof(userinfo));
-			value = Info_ValueForKey(userinfo, "ip");
-
-			AddIPBan(value);
-		}
-		else
-		{
-			G_Printf("^3*** Can't ban a bot!\n");
-		}
+		AddIPBan(value);
 	}
 }
 
 /**
- * @brief G_MakeReferee
+ * @brief TVG_MakeReferee
  */
-void G_MakeReferee()
+void TVG_MakeReferee()
 {
 	char cmd[MAX_TOKEN_CHARS];
 	int  cnum;
@@ -368,9 +383,9 @@ void G_MakeReferee()
 }
 
 /**
- * @brief G_RemoveReferee
+ * @brief TVG_RemoveReferee
  */
-void G_RemoveReferee()
+void TVG_RemoveReferee()
 {
 	char cmd[MAX_TOKEN_CHARS];
 	int  cnum;
@@ -401,9 +416,9 @@ void G_RemoveReferee()
 }
 
 /**
- * @brief G_MuteClient
+ * @brief TVG_MuteClient
  */
-void G_MuteClient()
+void TVG_MuteClient()
 {
 	char cmd[MAX_TOKEN_CHARS];
 	int  cnum;
@@ -435,9 +450,9 @@ void G_MuteClient()
 }
 
 /**
- * @brief G_UnMuteClient
+ * @brief TVG_UnMuteClient
  */
-void G_UnMuteClient()
+void TVG_UnMuteClient()
 {
 	char cmd[MAX_TOKEN_CHARS];
 	int  cnum;
