@@ -1206,7 +1206,6 @@ void SV_Init(void)
 
 	sv_etltv_maxslaves = Cvar_GetAndDescribe("sv_etltv_maxslaves", "0", CVAR_ARCHIVE_ND, "Number of ettv slaves allowed to connect.");
 	sv_etltv_password  = Cvar_GetAndDescribe("sv_etltv_password", "", CVAR_ARCHIVE_ND, "Password for ettv slaves. Must be set, or no slaves will be able to connect.");
-	sv_etltv_flags     = Cvar_GetAndDescribe("sv_etltv_flags", "6", CVAR_ARCHIVE_ND, "Bitflag 2 and 4. 2 = grant shoutcaster status to slaves. 4 = prevent slaves from being kicked.");
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();

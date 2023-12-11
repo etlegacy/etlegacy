@@ -495,7 +495,6 @@ extern cvar_t *sv_serverTimeReset;
 
 extern cvar_t *sv_etltv_maxslaves;
 extern cvar_t *sv_etltv_password;
-extern cvar_t *sv_etltv_flags;
 
 //===========================================================
 

@@ -361,7 +361,6 @@ void SV_DirectConnect(netadr_t from)
 	// we don't need these keys after connection, release some space in userinfo
 	Info_RemoveKey(userinfo, "challenge");
 	Info_RemoveKey(userinfo, "qport");
-	Info_RemoveKey(userinfo, "protocol");
 
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -626,7 +625,6 @@ gotnewcl:
 		SV_Heartbeat_f();
 	}
 
-	// newcl->protocol = PROTOCOL_VERSION;
 	newcl->protocol   = protocol;
 	newcl->ettvClient = ettvClient;
 
