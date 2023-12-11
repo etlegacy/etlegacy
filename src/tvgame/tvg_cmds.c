@@ -115,7 +115,7 @@ int TVG_ClientNumbersFromString(char *s, int *plist)
 			if (p->pers.connected == CON_CONNECTED || p->pers.connected == CON_CONNECTING)
 			{
 				*plist++ = i;
-				*plist = -1;
+				*plist   = -1;
 				return 1;
 			}
 		}
@@ -208,8 +208,8 @@ static qboolean TVG_MatchOnePlayerFromMaster(int *plist, char *err, size_t len)
 
 	if (plist[1] != -1)
 	{
-		char      line[MAX_NAME_LENGTH + 10];
-		int       *p;
+		char line[MAX_NAME_LENGTH + 10];
+		int  *p;
 
 		line[0] = '\0';
 
@@ -240,11 +240,11 @@ static qboolean TVG_MatchOnePlayerFromMaster(int *plist, char *err, size_t len)
 */
 int TVG_MasterClientNumbersFromString(char *s, int *plist)
 {
-	int       i, found = 0;
-	char      s2[MAX_STRING_CHARS];
-	char      n2[MAX_STRING_CHARS];
-	char      *m;
-	char      cs[MAX_STRING_CHARS];
+	int  i, found = 0;
+	char s2[MAX_STRING_CHARS];
+	char n2[MAX_STRING_CHARS];
+	char *m;
+	char cs[MAX_STRING_CHARS];
 
 	*plist = -1;
 
@@ -258,7 +258,7 @@ int TVG_MasterClientNumbersFromString(char *s, int *plist)
 			if (level.ettvMasterClients[i].valid)
 			{
 				*plist++ = i;
-				*plist = -1;
+				*plist   = -1;
 				return 1;
 			}
 		}
@@ -376,7 +376,7 @@ void G_PlaySound_Cmd(void)
 	}
 	else
 	{
-		G_globalSound(sound);
+		TVG_globalSound(sound);
 	}
 }
 
@@ -561,6 +561,52 @@ qboolean TVG_Cmd_WeaponStatsLeaders_f(gclient_t *client, tvcmd_reference_t *self
 	TVG_weaponStatsLeaders_cmd(client, qtrue, qtrue);
 
 	return qtrue;
+}
+
+/**
+* @brief Sends a player's stats to the requesting client.
+* @param[in] client
+* @param[in] nType
+*/
+void TVG_statsPrint(gclient_t *client, int nType, int cooldown)
+{
+	int        pid;
+	char       arg[MAX_TOKEN_CHARS];
+	const char *cmd = (nType == 0) ? "weaponstats" : ((nType == 1) ? "wstats" : "sgstats");
+
+	// If requesting stats for self, it's easy
+	if (trap_Argc() < 2)
+	{
+		if (client->sess.spectatorState == SPECTATOR_FOLLOW)
+		{
+			pid = client->sess.spectatorClient;
+		}
+		else
+		{
+			return;
+		}
+	}
+	else
+	{
+		// find the player to poll stats
+		trap_Argv(1, arg, sizeof(arg));
+		if ((pid = TVG_MasterClientNumberFromString(client, arg)) == -1)
+		{
+			return;
+		}
+	}
+
+	client->wantsInfoStats[nType].requested = qtrue;
+	client->wantsInfoStats[nType].requestedClientNum = pid;
+
+	// request new stats
+	if (level.cmds.lastInfoStatsUpdate + cooldown <= level.time)
+	{
+		level.cmds.infoStats[nType].valid[pid] = qfalse;
+		level.cmds.lastInfoStatsUpdate = level.time;
+
+		trap_SendServerCommand(-2, va("%s %d\n", cmd, pid));
+	}
 }
 
 /**
@@ -811,11 +857,11 @@ void TVG_SayTo(gclient_t *client, gclient_t *other, int mode, int color, const c
 	Q_strncpyz(cmd, "chat", sizeof(cmd));
 
 	trap_SendServerCommand((int)(other - level.clients),
-		va("%s \"%c%cTV%c%c: %s%c%c%s%s\" %i %i",
-			cmd, Q_COLOR_ESCAPE, COLOR_RED, Q_COLOR_ESCAPE, COLOR_WHITE,
-			name, Q_COLOR_ESCAPE, color, message,
-			(!Q_stricmp(cmd, "print")) ? "\n" : "",
-			(int)(client - level.clients), localize));
+	                       va("%s \"%c%cTV%c%c: %s%c%c%s%s\" %i %i",
+	                          cmd, Q_COLOR_ESCAPE, COLOR_RED, Q_COLOR_ESCAPE, COLOR_WHITE,
+	                          name, Q_COLOR_ESCAPE, color, message,
+	                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
+	                          (int)(client - level.clients), localize));
 }
 
 /**
@@ -976,7 +1022,7 @@ qboolean TVG_Cmd_SetViewpos_f(gclient_t *client, tvcmd_reference_t *self)
  */
 void Cmd_Activate_f(gentity_t *ent)
 {
-	
+
 }
 
 /**
@@ -1083,7 +1129,7 @@ qboolean TVG_IntermissionVoteTally(gclient_t *client, tvcmd_reference_t *self)
 qboolean TVG_Cmd_IntermissionWeaponStats_f(gclient_t *client, tvcmd_reference_t *self)
 {
 	char buffer[MAX_TOKEN_CHARS];
-	int clientNum;
+	int  clientNum;
 
 	if (!client)
 	{
@@ -1124,7 +1170,7 @@ qboolean TVG_Cmd_IntermissionWeaponStats_f(gclient_t *client, tvcmd_reference_t 
 	trap_Argv(1, buffer, sizeof(buffer));
 
 	clientNum = Q_atoi(buffer);
-	
+
 	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 	{
 		return qtrue;
@@ -1132,7 +1178,7 @@ qboolean TVG_Cmd_IntermissionWeaponStats_f(gclient_t *client, tvcmd_reference_t 
 
 	if (level.cmds.infoStats[INFO_IMWS].valid[clientNum])
 	{
-		trap_SendServerCommand(client - level.clients , level.cmds.infoStats[INFO_IMWS].data[clientNum]);
+		trap_SendServerCommand(client - level.clients, level.cmds.infoStats[INFO_IMWS].data[clientNum]);
 	}
 
 	return qtrue;
@@ -1488,7 +1534,7 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	//	return;
 	//case VSCHAT_HASH:                                // "vschat"
 	//	return;
-		// weapon stats parsing
+	// weapon stats parsing
 	case WS_HASH:                                      // "ws"
 		token     = strtok(NULL, " ");
 		clientNum = Q_atoi(token);
@@ -1582,7 +1628,7 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		Q_strncpyz(level.cmds.imwa, cmd, sizeof(level.cmds.imwa));
 		return;
 	case IMWS_HASH:                                        // "imws"
-		level.cmds.waitingForIMWS = qfalse;
+		level.cmds.waitingForIMWS                                       = qfalse;
 		level.cmds.infoStats[INFO_IMWS].valid[level.cmds.IMWSClientNum] = qtrue;
 		Q_strncpyz(level.cmds.infoStats[INFO_IMWS].data[level.cmds.IMWSClientNum], cmd, sizeof(level.cmds.infoStats[INFO_IMWS].data[0]));
 		return;
@@ -1653,7 +1699,7 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 void TVG_ClientCommand(int clientNum)
 {
 	gclient_t *client;
-	char cmd[MAX_TOKEN_CHARS];
+	char      cmd[MAX_TOKEN_CHARS];
 
 	trap_Argv(0, cmd, sizeof(cmd));
 

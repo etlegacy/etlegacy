@@ -351,7 +351,7 @@ void ClientIntermissionThink(gclient_t *client)
 void TVG_ClientThink_real(gclient_t *client)
 {
 	usercmd_t *ucmd;
-	int msec, i;
+	int       msec, i;
 
 	// don't think if the client is not yet connected (and thus not yet spawned in)
 	if (client->pers.connected != CON_CONNECTED)
@@ -482,17 +482,17 @@ void TVG_SpectatorClientEndFrame(gclient_t *client)
 	// if we are doing a chase cam or a remote view, grab the latest info
 	if (client->sess.spectatorState == SPECTATOR_FOLLOW || (client->ps.pm_flags & PMF_LIMBO))
 	{
-		gclient_t *cl;	
+		gclient_t *cl;
 
 		if (client->sess.spectatorClient >= 0)
 		{
 			cl = &level.clients[client->sess.spectatorClient];
 			if (level.ettvMasterClients[client->sess.spectatorClient].valid)
 			{
-				playerState_t *ps = &level.ettvMasterClients[client->sess.spectatorClient].ps;
-				int flags      = (ps->eFlags & ~(EF_VOTED | EF_READY)) | (client->ps.eFlags & (EF_VOTED | EF_READY));
-				int ping       = client->ps.ping;
-			    int savedScore = client->ps.persistant[PERS_SCORE];
+				playerState_t *ps        = &level.ettvMasterClients[client->sess.spectatorClient].ps;
+				int           flags      = (ps->eFlags & ~(EF_VOTED | EF_READY)) | (client->ps.eFlags & (EF_VOTED | EF_READY));
+				int           ping       = client->ps.ping;
+				int           savedScore = client->ps.persistant[PERS_SCORE];
 
 				client->ps                        = *ps;
 				client->ps.pm_flags              |= PMF_FOLLOW;

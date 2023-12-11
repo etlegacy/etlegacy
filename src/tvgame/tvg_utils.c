@@ -924,4 +924,179 @@ void TVG_SetOrigin(gentity_t *ent, vec3_t origin)
 	}
 }
 
+/**
+* @brief Plays specified sound globally.
+* @param[in] sound
+*/
+void TVG_globalSound(const char *sound)
+{
+	gentity_t *te;
+
+	te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+
+	te->s.eventParm = G_SoundIndex(sound);
+	te->r.svFlags |= SVF_BROADCAST;
+}
+
+/**
+* @brief Teleport player to a given origin and angles
+* @param[in,out] player
+* @param[in] origin
+* @param[in] angles
+*/
+void TVG_TeleportPlayer(gclient_t *client, const vec3_t origin, const vec3_t angles)
+{
+	VectorCopy(origin, client->ps.origin);
+	client->ps.origin[2] += 1;
+
+	// toggle the teleport bit so the client knows to not lerp
+	client->ps.eFlags ^= EF_TELEPORT_BIT;
+
+	// set angles
+	TVG_SetClientViewAngle(client, angles);
+}
+
+/**
+* @brief TVG_ResetTempTraceIgnoreEnts
+*/
+void TVG_ResetTempTraceIgnoreEnts(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_GENTITIES; i++)
+	{
+		if (level.tempTraceIgnoreEnts[i])
+		{
+			g_entities[i].r.linked = qtrue;
+
+			level.tempTraceIgnoreEnts[i] = qfalse;
+		}
+	}
+}
+
+/**
+* @brief TVG_TempTraceIgnoreEntity
+* @param[in,out] ent
+*/
+void TVG_TempTraceIgnoreEntity(gentity_t *ent)
+{
+	if (!ent->r.linked)
+	{
+		return;
+	}
+
+	level.tempTraceIgnoreEnts[ent - g_entities] = qtrue;
+	ent->r.linked = qfalse;
+}
+
+/**
+* @brief TVG_TeamTraceIgnoreBodies
+*/
+void TVG_TempTraceIgnoreBodies(void)
+{
+	int i;
+
+	{
+		// slower way - improve by time
+		for (i = MAX_CLIENTS; i < MAX_GENTITIES; i++)
+		{
+			if (g_entities[i].s.eType == ET_CORPSE)
+			{
+				TVG_TempTraceIgnoreEntity(&g_entities[i]);
+			}
+		}
+	}
+}
+
+/**
+* @brief TVG_TempTraceIgnorePlayersAndBodies
+*/
+void TVG_TempTraceIgnorePlayersAndBodies(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		TVG_TempTraceIgnoreEntity(&g_entities[i]);
+	}
+
+	TVG_TempTraceIgnoreBodies();
+}
+
+/**
+* @brief TVG_TempTraceIgnorePlayers
+*/
+void TVG_TempTraceIgnorePlayers(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		TVG_TempTraceIgnoreEntity(&g_entities[i]);
+	}
+}
+
+/**
+* @brief TVG_TempTraceIgnorePlayersAndBodiesFromTeam
+* @param[in] team
+*/
+void TVG_TempTraceIgnorePlayersFromTeam(team_t team)
+{
+	int i;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (g_entities[i].client && g_entities[i].client->sess.sessionTeam == team)
+		{
+			TVG_TempTraceIgnoreEntity(&g_entities[i]);
+		}
+	}
+}
+
+/**
+* @brief TVG_TempTraceIgnoreEntities
+* @param[in] ent
+*/
+void TVG_TempTraceIgnoreEntities(gentity_t *ent)
+{
+	int           i;
+	int           listLength;
+	int           list[MAX_GENTITIES];
+	gentity_t     *hit;
+	vec3_t        BBmins, BBmaxs;
+	static vec3_t range = { CH_BREAKABLE_DIST, CH_BREAKABLE_DIST, CH_BREAKABLE_DIST };
+
+	if (!ent->client)
+	{
+		return;
+	}
+
+	VectorSubtract(ent->client->ps.origin, range, BBmins);
+	VectorAdd(ent->client->ps.origin, range, BBmaxs);
+
+	listLength = trap_EntitiesInBox(BBmins, BBmaxs, list, MAX_GENTITIES);
+
+	for (i = 0; i < listLength; i++)
+	{
+		hit = &g_entities[list[i]];
+
+		if (hit->s.eType == ET_OID_TRIGGER || hit->s.eType == ET_TRIGGER_MULTIPLE
+			|| hit->s.eType == ET_TRIGGER_FLAGONLY || hit->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
+		{
+			TVG_TempTraceIgnoreEntity(hit);
+		}
+
+		if (hit->s.eType == ET_CORPSE && !(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS))
+		{
+			TVG_TempTraceIgnoreEntity(hit);
+		}
+
+		if (hit->client && (!(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC) || (ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->client->sess.sessionTeam != hit->client->sess.sessionTeam))
+			&& hit->client->ps.pm_type == PM_DEAD && !(hit->client->ps.pm_flags & PMF_LIMBO))
+		{
+			TVG_TempTraceIgnoreEntity(hit);
+		}
+	}
+}
+
 char bigTextBuffer[100000];

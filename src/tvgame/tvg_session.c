@@ -76,7 +76,7 @@ void TVG_WriteClientSessionData(gclient_t *client, qboolean restart)
 	cJSON_AddNumberToObject(root, "latchPlayerWeapon2", client->sess.latchPlayerWeapon2);
 	cJSON_AddNumberToObject(root, "referee", client->sess.referee);
 	cJSON_AddNumberToObject(root, "shoutcaster", client->sess.shoutcaster);
-	
+
 	cJSON_AddNumberToObject(root, "muted", client->sess.muted);
 	cJSON_AddNumberToObject(root, "ignoreClients1", client->sess.ignoreClients[0]);
 	cJSON_AddNumberToObject(root, "ignoreClients2", client->sess.ignoreClients[1]);
@@ -98,8 +98,8 @@ void TVG_WriteClientSessionData(gclient_t *client, qboolean restart)
  */
 void TVG_ReadSessionData(gclient_t *client)
 {
-	char     fileName[MAX_QPATH] = { 0 };
-	cJSON    *root = NULL;
+	char  fileName[MAX_QPATH] = { 0 };
+	cJSON *root               = NULL;
 
 	Com_sprintf(fileName, sizeof(fileName), "session/client%02i.dat", (int)(client - level.clients));
 	Com_Printf("Reading session file %s\n", fileName);
@@ -118,15 +118,15 @@ void TVG_ReadSessionData(gclient_t *client)
 	client->sess.latchPlayerWeapon2 = Q_ReadIntValueJson(root, "latchPlayerWeapon2");
 	client->sess.referee            = Q_ReadIntValueJson(root, "referee");
 	client->sess.shoutcaster        = Q_ReadIntValueJson(root, "shoutcaster");
-	
-	client->sess.muted                    = Q_ReadIntValueJson(root, "muted");
-	client->sess.ignoreClients[0]         = Q_ReadIntValueJson(root, "ignoreClients1");
-	client->sess.ignoreClients[1]         = Q_ReadIntValueJson(root, "ignoreClients2");
-	client->pers.enterTime                = Q_ReadIntValueJson(root, "enterTime");
-	client->sess.userSpawnPointValue      = Q_ReadIntValueJson(root, "userSpawnPointValue");
 
-	client->sess.spec_team                = Q_ReadIntValueJson(root, "spec_team");
-	client->sess.tvchat                   = Q_ReadIntValueJson(root, "tvchat");
+	client->sess.muted               = Q_ReadIntValueJson(root, "muted");
+	client->sess.ignoreClients[0]    = Q_ReadIntValueJson(root, "ignoreClients1");
+	client->sess.ignoreClients[1]    = Q_ReadIntValueJson(root, "ignoreClients2");
+	client->pers.enterTime           = Q_ReadIntValueJson(root, "enterTime");
+	client->sess.userSpawnPointValue = Q_ReadIntValueJson(root, "userSpawnPointValue");
+
+	client->sess.spec_team = Q_ReadIntValueJson(root, "spec_team");
+	client->sess.tvchat    = Q_ReadIntValueJson(root, "tvchat");
 
 	cJSON_Delete(root);
 }
@@ -150,7 +150,7 @@ void TVG_InitSessionData(gclient_t *client, const char *userinfo)
 	sess->latchPlayerWeapon  = sess->playerWeapon = WP_NONE;
 	sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
 
-	sess->userSpawnPointValue      = 0;
+	sess->userSpawnPointValue = 0;
 
 	Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
 

@@ -111,7 +111,7 @@ typedef struct tvcmd_reference_s
 	int updateInterval;
 	int lastUpdateTime;
 	qboolean floodProtected;
-	qboolean(*pCommand)(gclient_t *client, struct tvcmd_reference_s *self);
+	qboolean (*pCommand)(gclient_t *client, struct tvcmd_reference_s *self);
 	const char *pszHelpInfo;
 } tvcmd_reference_t;
 
@@ -572,16 +572,16 @@ qboolean TVG_Cmd_wStats_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_sgStats_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_WeaponStatsLeaders_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_Noclip_f(gclient_t *client, tvcmd_reference_t *self);
-void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value);
 qboolean TVG_Cmd_FollowNext_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_FollowPrevious_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_SetViewpos_f(gclient_t *ent, tvcmd_reference_t *self);
-void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value);
+qboolean TVG_Cmd_CallVote_f(gclient_t *client, tvcmd_reference_t *self);
+qboolean TVG_Cmd_SelectedObjective_f(gclient_t *ent, tvcmd_reference_t *self);
+
 void TVG_StopFollowing(gclient_t *client);
 void TVG_Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots);
 
-qboolean TVG_Cmd_CallVote_f(gclient_t *client, tvcmd_reference_t *self);
-qboolean TVG_Cmd_SelectedObjective_f(gclient_t *ent, tvcmd_reference_t *self);
+void TVG_statsPrint(gclient_t *client, int nType, int cooldown);
 
 qboolean TVG_CommandsAutoUpdate(tvcmd_reference_t *tvcmd);
 
@@ -763,8 +763,8 @@ void Cmd_Activate2_f(gentity_t *ent);
 
 char *Q_AddCR(char *s);
 
-extern level_locals_t   level;
-extern gentity_t        g_entities[];   ///< was explicitly set to MAX_ENTITIES
+extern level_locals_t level;
+extern gentity_t      g_entities[];     ///< was explicitly set to MAX_ENTITIES
 
 #define FOFS(x) ((size_t)&(((gentity_t *)0)->x))
 
@@ -1078,7 +1078,7 @@ void trap_SnapVector(float *v);
 qboolean trap_SendMessage(int clientNum, char *buf, int buflen);
 messageStatus_t trap_MessageStatus(int clientNum);
 
-void G_RemoveFromAllIgnoreLists(int clientNum);
+void TVG_RemoveFromAllIgnoreLists(int clientNum);
 
 // HRESULTS
 #define G_OK         0
@@ -1131,10 +1131,8 @@ qboolean TVG_weaponRankings_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStats_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow);
 
-// g_match.c
-void G_globalSound(const char *sound);
-void G_matchInfoDump(unsigned int dwDumpType);
-void TVG_statsPrint(gclient_t *client, int nType, int cooldown);
+void TVG_globalSound(const char *sound);
+
 
 // g_referee.c
 qboolean TVG_Cmd_AuthRcon_f(gclient_t *client, tvcmd_reference_t *self);
@@ -1152,20 +1150,16 @@ void TVG_RemoveReferee(void);
 void TVG_MuteClient(void);
 void TVG_UnMuteClient(void);
 
-// g_team.c
 extern const char *aTeams[TEAM_NUM_TEAMS];
 extern team_info  teamInfo[TEAM_NUM_TEAMS];
 
-void G_InitTempTraceIgnoreEnts(void);
-void G_ResetTempTraceIgnoreEnts(void);
-void G_TempTraceIgnoreEntity(gentity_t *ent);
-void G_TempTraceIgnoreBodies(void);
-void G_TempTraceIgnorePlayersAndBodies(void);
-void G_TempTraceIgnorePlayers(void);
-void G_TempTraceIgnorePlayersFromTeam(team_t team);
-void G_TempTraceRealHitBox(gentity_t *ent);
-void G_ResetTempTraceRealHitBox(void);
-void G_TempTraceIgnoreEntities(gentity_t *ent);
+void TVG_ResetTempTraceIgnoreEnts(void);
+void TVG_TempTraceIgnoreEntity(gentity_t *ent);
+void TVG_TempTraceIgnoreBodies(void);
+void TVG_TempTraceIgnorePlayersAndBodies(void);
+void TVG_TempTraceIgnorePlayers(void);
+void TVG_TempTraceIgnorePlayersFromTeam(team_t team);
+void TVG_TempTraceIgnoreEntities(gentity_t *ent);
 
 /**
  * @enum fieldtype_t

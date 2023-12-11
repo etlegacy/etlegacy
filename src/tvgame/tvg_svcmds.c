@@ -1354,29 +1354,29 @@ extern void Svcmd_GameMem_f(void);
  */
 static consoleCommandTable_t consoleCommandTable[] =
 {
-	{ "entitylist",                 Svcmd_EntityList_f            },
-	{ "csinfo",                     Svcmd_CSInfo_f                },
-	{ "game_memory",                Svcmd_GameMem_f               },
-	{ "addip",                      Svcmd_AddIP_f                 },
-	{ "removeip",                   Svcmd_RemoveIP_f              },
-	{ "listip",                     Svcmd_ListIp_f                },
+	{ "entitylist",    Svcmd_EntityList_f },
+	{ "csinfo",        Svcmd_CSInfo_f     },
+	{ "game_memory",   Svcmd_GameMem_f    },
+	{ "addip",         Svcmd_AddIP_f      },
+	{ "removeip",      Svcmd_RemoveIP_f   },
+	{ "listip",        Svcmd_ListIp_f     },
 
-	{ "makeReferee",                TVG_MakeReferee               },
-	{ "removeReferee",              TVG_RemoveReferee             },
-	{ "mute",                       TVG_MuteClient                },
-	{ "unmute",                     TVG_UnMuteClient              },
-	{ "ban",                        TVG_PlayerBan                 },
-	{ "kick",                       Svcmd_Kick_f                  },    // moved from engine
-	{ "clientkick",                 Svcmd_Kick_f                  },    // both similar to keep compatibility
+	{ "makeReferee",   TVG_MakeReferee    },
+	{ "removeReferee", TVG_RemoveReferee  },
+	{ "mute",          TVG_MuteClient     },
+	{ "unmute",        TVG_UnMuteClient   },
+	{ "ban",           TVG_PlayerBan      },
+	{ "kick",          Svcmd_Kick_f       },                            // moved from engine
+	{ "clientkick",    Svcmd_Kick_f       },                            // both similar to keep compatibility
 
-	{ "cp",                         Svcmd_CP_f                    },
-	{ "sv_cvarempty",               CC_cvarempty                  },
-	{ "sv_cvar",                    CC_svcvar                     },
-	{ "playsound",                  G_PlaySound_Cmd               },
-	{ "playsound_env",              G_PlaySound_Cmd               },
+	{ "cp",            Svcmd_CP_f         },
+	{ "sv_cvarempty",  CC_cvarempty       },
+	{ "sv_cvar",       CC_svcvar          },
+	{ "playsound",     G_PlaySound_Cmd    },
+	{ "playsound_env", G_PlaySound_Cmd    },
 
-	{ "ref",                        Svcmd_Ref_f                   },    // console also gets ref commands
-	{ "qsay",                       Svcmd_Qsay_f                  },
+	{ "ref",           Svcmd_Ref_f        },                            // console also gets ref commands
+	{ "qsay",          Svcmd_Qsay_f       },
 };
 
 /**

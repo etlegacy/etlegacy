@@ -219,7 +219,7 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 	gentity_t *spot;
 
 	nearestSpot = SelectNearestDeathmatchSpawnPoint(avoidPoint);
-	spot = SelectRandomDeathmatchSpawnPoint();
+	spot        = SelectRandomDeathmatchSpawnPoint();
 
 	if (spot == nearestSpot)
 	{
@@ -274,7 +274,7 @@ void TVG_SetClientViewAngle(gclient_t *client, const vec3_t angle)
 	// set the delta angle
 	for (i = 0 ; i < 3 ; i++)
 	{
-		cmdAngle                        = ANGLE2SHORT(angle[i]);
+		cmdAngle                   = ANGLE2SHORT(angle[i]);
 		client->ps.delta_angles[i] = cmdAngle - client->pers.cmd.angles[i];
 	}
 	VectorCopy(angle, client->ps.viewangles);
@@ -600,7 +600,7 @@ char *CheckUserinfo(int clientNum, char *userinfo)
  */
 void TVG_ClientUserinfoChanged(int clientNum)
 {
-	gclient_t  *client = level.clients + clientNum;
+	gclient_t  *client                       = level.clients + clientNum;
 	const char *userinfo_ptr                 = NULL;
 	char       cs_key[MAX_STRING_CHARS]      = "";
 	char       cs_value[MAX_STRING_CHARS]    = "";
@@ -775,9 +775,9 @@ void TVG_ClientUserinfoChanged(int clientNum)
 	if (cs_cg_uinfo[0])
 	{
 		Q_sscanf(cs_cg_uinfo, "%u %u %u",
-			        &client->pers.clientFlags,
-			        &client->pers.clientTimeNudge,
-			        &client->pers.clientMaxPackets);
+		         &client->pers.clientFlags,
+		         &client->pers.clientTimeNudge,
+		         &client->pers.clientMaxPackets);
 	}
 	else
 	{
@@ -1144,10 +1144,10 @@ void TVG_ClientSpawn(gclient_t *client)
 	flags |= (client->ps.eFlags & EF_VOTED);
 
 	// clear everything but the persistant data
-	savedPers      = client->pers;
-	savedSess      = client->sess;
-	savedPing      = client->ps.ping;
-	savedTeam      = client->ps.teamNum;
+	savedPers = client->pers;
+	savedSess = client->sess;
+	savedPing = client->ps.ping;
+	savedTeam = client->ps.teamNum;
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -1225,7 +1225,7 @@ void TVG_ClientSpawn(gclient_t *client)
 	client->ps.pm_flags |= PMF_RESPAWNED;
 
 	TVG_SetClientViewAngle(client, spawn_angles);
-	
+
 	client->respawnTime           = level.timeCurrent;
 	client->inactivityTime        = level.time + G_InactivityValue * 1000;
 	client->inactivityWarning     = qfalse;
@@ -1271,11 +1271,11 @@ void TVG_ClientDisconnect(int clientNum)
 	G_LuaHook_ClientDisconnect(clientNum);
 #endif
 
-	G_RemoveFromAllIgnoreLists(clientNum);
+	TVG_RemoveFromAllIgnoreLists(clientNum);
 
 	G_LogPrintf("TVG_ClientDisconnect: %i\n", clientNum);
 
-    client->pers.connected            = CON_DISCONNECTED;
+	client->pers.connected            = CON_DISCONNECTED;
 	client->ps.persistant[PERS_TEAM]  = TEAM_FREE;
 	client->ps.persistant[PERS_SCORE] = 0;
 	client->sess.sessionTeam          = TEAM_FREE;
@@ -1294,4 +1294,18 @@ void TVG_ClientDisconnect(int clientNum)
 void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags)
 {
 
+}
+
+/**
+* @brief TVG_RemoveFromAllIgnoreLists
+* @param[in] clientNum
+*/
+void TVG_RemoveFromAllIgnoreLists(int clientNum)
+{
+	int i;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		COM_BitClear(level.clients[i].sess.ignoreClients, clientNum);
+	}
 }

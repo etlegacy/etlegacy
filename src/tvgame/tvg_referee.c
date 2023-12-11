@@ -153,7 +153,7 @@ qboolean TVG_ref_cmd(gclient_t *client, tvcmd_reference_t *self)
 			return qtrue;
 		}
 
-		client->sess.referee     = 1;
+		client->sess.referee = 1;
 		CP("cp \"^3You have become a referee\n\"");
 		TVG_ClientUserinfoChanged(client - level.clients);
 	}

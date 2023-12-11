@@ -966,7 +966,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	// set some level globals
 	{
-		qboolean   oldspawning = level.spawning;
+		qboolean oldspawning = level.spawning;
 
 		Com_Memset(&level, 0, sizeof(level));
 
@@ -975,8 +975,8 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	TVG_SetupExtensions();
 
-	level.time            = levelTime;
-	level.startTime       = levelTime;
+	level.time      = levelTime;
+	level.startTime = levelTime;
 
 	// init the anim scripting
 	level.animScriptData.soundIndex = G_SoundIndex;

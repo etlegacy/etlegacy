@@ -152,13 +152,13 @@ qboolean TVG_SpawnVector2DExt(const char *key, const char *defaultString, float 
 
 field_t fields[] =
 {
-	{ "classname",    FOFS(classname),      F_LSTRING,   0 },
-	{ "origin",       FOFS(s.origin),       F_VECTOR,    0 },
+	{ "classname", FOFS(classname), F_LSTRING,   0 },
+	{ "origin",    FOFS(s.origin),  F_VECTOR,    0 },
 
-	{ "angles",       FOFS(s.angles),       F_VECTOR,    0 },
-	{ "angle",        FOFS(s.angles),       F_ANGLEHACK, 0 },
+	{ "angles",    FOFS(s.angles),  F_VECTOR,    0 },
+	{ "angle",     FOFS(s.angles),  F_ANGLEHACK, 0 },
 
-	{ NULL,           0,                    F_IGNORE,    0 }
+	{ NULL,        0,               F_IGNORE,    0 }
 };
 
 typedef struct
@@ -183,12 +183,12 @@ spawn_t spawns[] =
 {
 	// info entities don't do anything at all, but provide positional
 	// information for things controlled by other processes
-	{ "info_player_start",         SP_info_player_start         },
-	{ "info_player_checkpoint",    SP_info_player_checkpoint    },
-	{ "info_player_deathmatch",    SP_info_player_deathmatch    },
-	{ "info_player_intermission",  SP_info_player_intermission  },
+	{ "info_player_start",        SP_info_player_start        },
+	{ "info_player_checkpoint",   SP_info_player_checkpoint   },
+	{ "info_player_deathmatch",   SP_info_player_deathmatch   },
+	{ "info_player_intermission", SP_info_player_intermission },
 
-	{ 0,                           0                            }
+	{ 0,                          0                           }
 };
 
 /**
