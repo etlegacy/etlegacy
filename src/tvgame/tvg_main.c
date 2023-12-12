@@ -937,6 +937,11 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	srand(randomSeed);
 
+	if (g_maxclients.integer > MAX_CLIENTS)
+	{
+		G_Error("Error: tvgame does not support %d client slots.\n", g_maxclients.integer);
+	}
+
 	TVG_RegisterCvars();
 
 	TVG_ProcessIPBans();
