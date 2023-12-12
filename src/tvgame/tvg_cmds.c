@@ -568,7 +568,7 @@ qboolean TVG_Cmd_WeaponStatsLeaders_f(gclient_t *client, tvcmd_reference_t *self
 * @param[in] client
 * @param[in] nType
 */
-void TVG_statsPrint(gclient_t *client, int nType, int cooldown)
+void TVG_statsPrint(gclient_t *client, int nType, int updateInterval)
 {
 	int        pid;
 	char       arg[MAX_TOKEN_CHARS];
@@ -600,7 +600,7 @@ void TVG_statsPrint(gclient_t *client, int nType, int cooldown)
 	client->wantsInfoStats[nType].requestedClientNum = pid;
 
 	// request new stats
-	if (level.cmds.infoStats[nType].lastUpdateTime[pid] + cooldown <= level.time)
+	if (level.cmds.infoStats[nType].lastUpdateTime[pid] + updateInterval <= level.time)
 	{
 		level.cmds.infoStats[nType].valid[pid]          = qfalse;
 		level.cmds.infoStats[nType].lastUpdateTime[pid] = level.time;

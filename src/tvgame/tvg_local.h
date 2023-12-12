@@ -581,7 +581,7 @@ qboolean TVG_Cmd_SelectedObjective_f(gclient_t *ent, tvcmd_reference_t *self);
 void TVG_StopFollowing(gclient_t *client);
 void TVG_Cmd_FollowCycle_f(gclient_t *client, int dir, qboolean skipBots);
 
-void TVG_statsPrint(gclient_t *client, int nType, int cooldown);
+void TVG_statsPrint(gclient_t *client, int nType, int updateInterval);
 
 qboolean TVG_CommandsAutoUpdate(tvcmd_reference_t *tvcmd);
 
