@@ -1162,8 +1162,6 @@ qboolean TVG_Cmd_IntermissionWeaponStats_f(gclient_t *client, tvcmd_reference_t 
 		level.cmds.IMWSClientNum  = clientNum;
 		trap_SendServerCommand(-2, va("imws %d", clientNum));
 
-		Com_Printf("Sending imws %d\n", clientNum);
-
 		return qtrue;
 	}
 
