@@ -600,10 +600,10 @@ void TVG_statsPrint(gclient_t *client, int nType, int cooldown)
 	client->wantsInfoStats[nType].requestedClientNum = pid;
 
 	// request new stats
-	if (level.cmds.lastInfoStatsUpdate + cooldown <= level.time)
+	if (level.cmds.infoStats[nType].lastUpdateTime[pid] + cooldown <= level.time)
 	{
-		level.cmds.infoStats[nType].valid[pid] = qfalse;
-		level.cmds.lastInfoStatsUpdate         = level.time;
+		level.cmds.infoStats[nType].valid[pid]          = qfalse;
+		level.cmds.infoStats[nType].lastUpdateTime[pid] = level.time;
 
 		trap_SendServerCommand(-2, va("%s %d\n", cmd, pid));
 	}

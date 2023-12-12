@@ -395,6 +395,7 @@ struct gclient_s
 
 typedef struct tvgamecommandsplayerstats_s
 {
+	int lastUpdateTime[MAX_CLIENTS];
 	qboolean valid[MAX_CLIENTS];
 	char data[MAX_CLIENTS][MAX_STRING_CHARS];
 } tvgamecommandsplayerstats_t;
@@ -423,7 +424,6 @@ typedef struct tvgamecommands_s
 
 	qboolean waitingForIMWS;
 	int IMWSClientNum;
-	int lastInfoStatsUpdate;
 	tvgamecommandsplayerstats_t infoStats[INFO_NUM];
 
 	qboolean impkdValid;
