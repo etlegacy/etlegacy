@@ -135,6 +135,7 @@ vmCvar_t g_swapteams;
 vmCvar_t g_restarted;
 vmCvar_t g_log;
 vmCvar_t g_logSync;
+vmCvar_t g_logTimestamp;
 
 vmCvar_t voteFlags;
 vmCvar_t g_complaintlimit;
@@ -441,6 +442,7 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_log,                             "g_log",                             "",                           CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_logSync,                         "g_logSync",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_logTimestamp,                    "g_logTimestamp",                    "1",                          CVAR_TEMP,                                       0, qfalse, qfalse },
 
 	{ &g_password,                        "g_password",                        "none",                       CVAR_USERINFO,                                   0, qfalse, qfalse },
 	{ &sv_privatepassword,                "sv_privatepassword",                "",                           CVAR_TEMP,                                       0, qfalse, qfalse },
@@ -3820,7 +3822,39 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 	char    string[1024];
 	int     l;
 
-	Com_sprintf(string, sizeof(string), "%8i ", level.time);
+	if (g_logTimestamp.integer == 0)
+	{
+		string[0] = 0;
+	}
+	else if (g_logTimestamp.integer == 2) // startup relative time (mmm:ss)
+	{
+		int timestamp = trap_Milliseconds();
+		int m = timestamp / 60000;
+		int s = (timestamp - m * 60000) / 1000;
+
+		if (m < 1000)
+		{
+			Com_sprintf(string, sizeof(string), "%3i:%02i ", m, s);
+		}
+		else
+		{
+			// Intentionally overflowing into the leading space for BC
+			Com_sprintf(string, sizeof(string), "%i:%02i", m, s);
+		}
+	}
+	else if (g_logTimestamp.integer == 3) // vanilla
+	{
+		time_t          aclock;
+		char            timeFt[32];
+
+		time(&aclock);
+		strftime(timeFt, sizeof(timeFt), "%H:%M.%S", localtime(&aclock));
+		Com_sprintf(string, sizeof(string), "%s ", timeFt);
+	}
+	else
+	{
+		Com_sprintf(string, sizeof(string), "%8i ", level.time);
+	}
 
 	l = strlen(string);
 
