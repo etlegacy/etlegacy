@@ -829,13 +829,14 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			}
 		}
 
-
 		ent->client->ps.pm_flags |= PMF_LIMBO;
 		ent->client->ps.pm_flags |= PMF_FOLLOW;
 
 #ifdef FEATURE_OMNIBOT
 		ent->client->sess.botSuicide = qfalse; // cs: avoid needlessly /killing at next spawn
 #endif
+		// fade satchel on player dead
+		G_FadeItems(ent, MOD_SATCHEL);
 
 		if (makeCorpse)
 		{
