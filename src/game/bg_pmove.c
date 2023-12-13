@@ -3236,14 +3236,15 @@ static qboolean PM_MountedFire(void)
 		}
 
 		// add the recoil amount to the aimSpreadScale
-		pm->ps->aimSpreadScaleFloat += 3.0 * GetWeaponTableData(WP_DUMMY_MG42)->aimSpreadScaleAdd;
+		//pm->ps->aimSpreadScaleFloat += 3.0 * GetWeaponTableData(WP_DUMMY_MG42)->aimSpreadScaleAdd;
 
-		if (pm->ps->aimSpreadScaleFloat > AIMSPREAD_MAXSPREAD)
-		{
-			pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
-		}
+		//if (pm->ps->aimSpreadScaleFloat > AIMSPREAD_MAXSPREAD)
+		//{
+		//	pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
+		//}
 
-		pm->ps->aimSpreadScale = (int)pm->ps->aimSpreadScaleFloat;
+		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
+		pm->ps->aimSpreadScale      = (int)pm->ps->aimSpreadScaleFloat;
 	}
 
 	return qtrue;
