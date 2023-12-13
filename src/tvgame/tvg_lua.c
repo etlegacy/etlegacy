@@ -509,9 +509,9 @@ static int _et_trap_FS_FOpenFile(lua_State *L)
 // filedata = et.trap_FS_Read( fd, count )
 static int _et_trap_FS_Read(lua_State *L)
 {
-	char         *filedata = "";
-	fileHandle_t fd        = (int)luaL_checkinteger(L, 1);
-	int          count     = (int)luaL_checkinteger(L, 2);
+	char         *filedata;
+	fileHandle_t fd    = (int)luaL_checkinteger(L, 1);
+	int          count = (int)luaL_checkinteger(L, 2);
 
 	filedata = Com_Allocate(count + 1);
 
@@ -1568,7 +1568,7 @@ static int _et_G_AddEvent(lua_State *L)
 // et.G_SetGlobalFog( params )
 static int _et_G_SetGlobalFog(lua_State *L)
 {
-	char *params = (char *)luaL_checkstring(L, 1);
+	//char *params = (char *)luaL_checkstring(L, 1);
 
 	//lua_pushinteger(L, G_ScriptAction_SetGlobalFog(NULL, params));
 	return 1;

@@ -370,10 +370,6 @@ void TVG_ClientThink_real(gclient_t *client)
 	{
 		return;
 	}
-	if (msec > 200)
-	{
-		msec = 200;
-	}
 
 	// pmove fix
 	if (pmove_msec.integer < 8)
@@ -471,11 +467,8 @@ void TVG_SpectatorClientEndFrame(gclient_t *client)
 	// if we are doing a chase cam or a remote view, grab the latest info
 	if (client->sess.spectatorState == SPECTATOR_FOLLOW || (client->ps.pm_flags & PMF_LIMBO))
 	{
-		gclient_t *cl;
-
 		if (client->sess.spectatorClient >= 0)
 		{
-			cl = &level.clients[client->sess.spectatorClient];
 			if (level.ettvMasterClients[client->sess.spectatorClient].valid)
 			{
 				playerState_t *ps        = &level.ettvMasterClients[client->sess.spectatorClient].ps;

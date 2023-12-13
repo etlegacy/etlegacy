@@ -1126,15 +1126,11 @@ void TVG_ClientSpawn(gclient_t *client)
 	clientPersistant_t savedPers;
 	clientSession_t    savedSess;
 	int                persistant[MAX_PERSISTANT];
-	gentity_t          *spawnPoint;
 	int                flags;
 	int                savedPing;
 	int                savedTeam;
 
-	client->pers.lastSpawnTime = level.time;
-
-	spawnPoint = SelectSpectatorSpawnPoint(spawn_origin, spawn_angles);
-
+	client->pers.lastSpawnTime   = level.time;
 	client->pers.teamState.state = TEAM_ACTIVE;
 
 	// toggle the teleport bit so the client knows to not lerp

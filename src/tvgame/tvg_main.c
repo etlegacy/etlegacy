@@ -635,7 +635,7 @@ void TVG_ParsePlatformManifest(void);
  */
 qboolean TVG_SnapshotCallback(int entityNum, int clientNum)
 {
-	gentity_t *ent = &g_entities[entityNum];
+	//gentity_t *ent = &g_entities[entityNum];
 
 	//Com_Printf("callback entityNum: %d clientNum: %d\n", entityNum, clientNum);
 
@@ -1264,7 +1264,7 @@ FUNCTIONS CALLED EVERY FRAME
  */
 void TVG_RunFrame(int levelTime)
 {
-	int  i;
+	int i;
 
 	trap_ETTV_GetPlayerstate(-1, &level.ettvMasterPs);
 
