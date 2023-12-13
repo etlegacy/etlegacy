@@ -490,6 +490,12 @@ int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 			return G_INVALID;
 		}
 
+		if (level.clients[pid].sess.tvflags & 1)
+		{
+			G_refPrintf(ent, "Can't vote to kick etltv!");
+			return G_INVALID;
+		}
+
 		if (!fRefereeCmd && ent)
 		{
 			if (level.clients[pid].sess.sessionTeam != TEAM_SPECTATOR && level.clients[pid].sess.sessionTeam != ent->client->sess.sessionTeam)

@@ -227,10 +227,6 @@ void CG_ParseServerinfo(void)
 
 	cgs.minclients = Q_atoi(Info_ValueForKey(info, "g_minGameClients")); //  overloaded for ready counts
 
-	cgs.fixedphysics    = Q_atoi(Info_ValueForKey(info, "g_fixedphysics"));
-	cgs.fixedphysicsfps = Q_atoi(Info_ValueForKey(info, "g_fixedphysicsfps"));
-	cgs.pronedelay      = Q_atoi(Info_ValueForKey(info, "g_pronedelay"));
-
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
 }
@@ -353,6 +349,10 @@ void CG_ParseModInfo(void)
 #ifdef FEATURE_MULTIVIEW
 	cgs.mvAllowed = Q_atoi(Info_ValueForKey(info, "MV"));
 #endif
+
+	cgs.fixedphysics    = Q_atoi(Info_ValueForKey(info, "fp"));
+	cgs.fixedphysicsfps = Q_atoi(Info_ValueForKey(info, "fpv"));
+	cgs.pronedelay      = Q_atoi(Info_ValueForKey(info, "pd"));
 }
 
 /**

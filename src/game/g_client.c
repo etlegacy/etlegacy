@@ -2042,6 +2042,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #endif
 	qboolean allowGeoIP = qtrue;
 	int      i, tv      = 0;
+	int      protocol   = 0;
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
@@ -2071,6 +2072,12 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			continue;
 		}
 
+		if (!Q_stricmp(cs_key, "protocol"))
+		{
+			protocol = Q_atoi(cs_value);
+			continue;
+		}
+
 		token = G_GetTokenForString(cs_key);
 		switch (token)
 		{
@@ -2095,7 +2102,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	}
 
 	// check guid
-	if (g_guidCheck.integer && !isBot)
+	if (g_guidCheck.integer && !isBot && protocol != ETTV_PROTOCOL_VERSION)
 	{
 		// don't allow 'unknown' guid (2.60b client with PB not enabled)
 		if (!strcmp(cs_guid, "unknown"))
@@ -2343,6 +2350,11 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 		// unlink the entity - just in case they were already connected
 		trap_UnlinkEntity(ent);
+	}
+
+	if (client->sess.tvflags & 2)
+	{
+		G_MakeShoutcaster(ent);
 	}
 
 #ifdef FEATURE_LUA

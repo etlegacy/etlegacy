@@ -380,6 +380,8 @@ vmCvar_t g_floodProtection;
 vmCvar_t g_floodLimit;
 vmCvar_t g_floodWait;
 
+vmCvar_t g_etltv_flags;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -646,9 +648,9 @@ cvarTable_t gameCvarTable[] =
 	{ &g_mapConfigs,                      "g_mapConfigs",                      "",                           0,                                               0, qfalse, qfalse },
 	{ &g_customConfig,                    "g_customConfig",                    "defaultpublic",              CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_moverScale,                      "g_moverScale",                      "1.0",                        0,                                               0, qfalse, qfalse },
-	{ &g_fixedphysics,                    "g_fixedphysics",                    "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &g_fixedphysicsfps,                 "g_fixedphysicsfps",                 "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &g_pronedelay,                      "g_pronedelay",                      "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
+	{ &g_fixedphysics,                    "g_fixedphysics",                    "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_fixedphysicsfps,                 "g_fixedphysicsfps",                 "125",                        CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_pronedelay,                      "g_pronedelay",                      "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	// Debug
 	{ &g_debugHitboxes,                   "g_debugHitboxes",                   "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_debugPlayerHitboxes,             "g_debugPlayerHitboxes",             "0",                          0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
@@ -673,9 +675,11 @@ cvarTable_t gameCvarTable[] =
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 
-	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
+	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+
+	{ &g_etltv_flags,                     "g_etltv_flags",                     "3",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**
@@ -2050,6 +2054,10 @@ void G_UpdateCvars(void)
 #ifdef FEATURE_MULTIVIEW
 					Info_SetValueForKey(cs, "MV", va("%i", g_multiview.integer));
 #endif
+					Info_SetValueForKey(cs, "fp", va("%i", g_fixedphysics.integer));
+					Info_SetValueForKey(cs, "fpv", va("%i", g_fixedphysicsfps.integer));
+					Info_SetValueForKey(cs, "pd", va("%i", g_pronedelay.integer));
+
 
 					trap_SetConfigstring(CS_MODINFO, cs);
 				}

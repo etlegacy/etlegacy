@@ -1943,6 +1943,17 @@ typedef struct userAgent_s
 	char version[18];    ///< holds engine version
 } userAgent_t;
 
+/**
+* @struct ettvClientSnapshot_s
+* @typedef ettvClientSnapshot_t
+* @brief Playerstates storage for ettv clients
+*/
+typedef struct ettvClientSnapshot_s
+{
+	qboolean valid;    ///< is the playerstate valid for delta compression
+	playerState_t ps;
+} ettvClientSnapshot_t;
+
 void Com_ParseUA(userAgent_t *ua, const char *string);
 
 #define Com_IsCompatible(ua, flag) ((ua)->compatible & (flag))
