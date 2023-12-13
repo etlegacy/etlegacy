@@ -2860,6 +2860,7 @@ extern vmCvar_t cg_spawnTimer_set;
 extern vmCvar_t cg_countryflags; ///< GeoIP
 
 extern vmCvar_t cg_altHud;
+extern vmCvar_t cg_shoutcasterHud;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
