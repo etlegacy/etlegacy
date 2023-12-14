@@ -467,7 +467,7 @@ char *CG_AddSpawnVarToken(const char *string)
 	l = strlen(string);
 	if (cg.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS)
 	{
-		CG_Error("CG_AddSpawnVarToken: MAX_SPAWN_VARS\n");
+		CG_Error("CG_AddSpawnVarToken: MAX_SPAWN_VARS_CHARS\n");
 	}
 
 	dest = cg.spawnVarChars + cg.numSpawnVarChars;
