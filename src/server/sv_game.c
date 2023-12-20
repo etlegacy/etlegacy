@@ -690,12 +690,16 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case G_MESSAGESTATUS:
 		return SV_BinaryMessageStatus(args[1]);
 
+	case G_ETLTV_GETPLAYERSTATE:
+		return SV_CL_GetPlayerstate(args[1], VMA(2));
+
 	case G_DEMOSUPPORT:
 		SV_DemoSupport(VMA(1));
 		return 0;
 
 	case G_TRAP_GETVALUE:
 		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
+
 
 	default:
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);
@@ -722,6 +726,7 @@ void SV_ShutdownGameProgs(void)
 	VM_Call(gvm, GAME_SHUTDOWN, qfalse);
 	VM_Free(gvm);
 	gvm = NULL;
+	svcls.isTVGame = qfalse;
 }
 
 /**
@@ -784,7 +789,16 @@ void SV_InitGameProgs(void)
 	sv.num_tags       = 0;
 
 	// load the dll
-	gvm = VM_Create("qagame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
+	if (svcls.state < CA_AUTHORIZING)
+	{
+		gvm = VM_Create("qagame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
+	}
+	else
+	{
+		gvm = VM_Create("tvgame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
+		svcls.isTVGame = gvm != NULL;
+	}
+	
 	if (!gvm)
 	{
 		VM_Error(ERR_FATAL, "game", Sys_GetDLLName("qagame"));

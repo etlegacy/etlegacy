@@ -1063,6 +1063,21 @@ void SV_SendClientMessages(void)
 	// update any changed configstrings from this frame
 	SV_UpdateConfigStrings();
 
+	if (svcls.isTVGame)
+	{
+		sharedEntity_t *gEnt;
+		sv.num_entities = 0;
+		for (i = 0; i < MAX_GENTITIES; i++)
+		{
+			gEnt = SV_GentityNum(i);
+
+			if (gEnt->r.linked)
+			{
+				sv.num_entities = i + 1;
+			}
+		}
+	}
+
 	// send a message to each connected client
 	for (i = 0; i < sv_maxclients->integer; i++)
 	{

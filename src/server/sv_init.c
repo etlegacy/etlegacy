@@ -300,6 +300,21 @@ void SV_CreateBaseline(void)
 	sharedEntity_t *svent;
 	int            entnum;
 
+	if (svcls.isTVGame)
+	{
+		for (entnum = 0; entnum < MAX_GENTITIES; entnum++)
+		{
+			if (svcl.entitySharedBaselines[entnum].linked)
+			{
+				svent           = SV_GentityNum(entnum);
+				svent->s        = svcl.entityBaselines[entnum];
+				svent->r        = svcl.entitySharedBaselines[entnum];
+				sv.num_entities = entnum + 1;
+				SV_LinkEntity(svent);
+			}
+		}
+	}
+
 	for (entnum = 1; entnum < sv.num_entities ; entnum++)
 	{
 		svent = SV_GentityNum(entnum);
@@ -842,9 +857,13 @@ void SV_SpawnServer(const char *server)
 
 					client          = &svs.clients[i];
 					client->state   = CS_ACTIVE;
-					ent             = SV_GentityNum(i);
-					ent->s.number   = i;
-					client->gentity = ent;
+
+					if (!svcls.isTVGame)
+					{
+						ent = SV_GentityNum(i);
+						ent->s.number = i;
+						client->gentity = ent;
+					}
 
 					client->deltaMessage     = -1;
 					client->lastSnapshotTime = 0;   // generate a snapshot immediately

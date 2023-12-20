@@ -38,9 +38,12 @@
 #include "sv_tracker.h"
 #endif
 
-serverStatic_t svs;             // persistant server info
-server_t       sv;              // local server
-vm_t           *gvm = NULL;     // game virtual machine
+serverStatic_t       svs;             // persistant server info
+server_t             sv;              // local server
+svclientActive_t     svcl;
+svclientConnection_t svclc;
+svclientStatic_t     svcls;
+vm_t                 *gvm = NULL;     // game virtual machine
 
 cvar_t *sv_fps = NULL;          // time rate for running non-clients
 cvar_t *sv_timeout;             // seconds without any message
@@ -1294,6 +1297,12 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 	client_t *cl;
 	int      qport;
 
+	if (NET_CompareAdr(from, svclc.serverAddress))
+	{
+		CL_PacketEvent(from, msg);
+		return;
+	}
+
 	// check for connectionless packet (0xffffffff) first
 	if (msg->cursize >= 4 && *(int *)msg->data == -1)
 	{
@@ -1608,6 +1617,8 @@ void SV_Frame(int msec)
 	start           = Sys_Milliseconds();
 	svs.stats.idle += ( double )(start - end) / 1000;
 
+	svcls.realtime += msec;
+
 	// the menu kills the server with this cvar
 	if (sv_killserver->integer)
 	{
@@ -1630,6 +1641,14 @@ void SV_Frame(int msec)
 		// Block until something interesting happens
 		Sys_Sleep(-1);
 #endif
+
+		SV_CL_CheckForResend();
+
+		if (svcls.state == CA_CONNECTED)
+		{
+			SV_CL_WritePacket();
+		}
+
 		return;
 	}
 
@@ -1748,6 +1767,11 @@ void SV_Frame(int msec)
 		{
 			SV_DemoReadFrame();
 		}
+	}
+
+	if (svcls.isTVGame)
+	{
+		SV_CL_WritePacket();
 	}
 
 	if (com_speeds->integer)

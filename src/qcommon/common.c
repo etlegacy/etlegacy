@@ -3538,7 +3538,7 @@ void Com_Frame(void)
 
 #ifdef DEDICATED
 	// watchdog
-	Com_WatchDog();
+	//Com_WatchDog();
 #endif
 
 	// report timing information

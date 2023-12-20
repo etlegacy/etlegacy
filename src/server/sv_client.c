@@ -564,9 +564,13 @@ gotnewcl:
 	// this is the only place a client_t is EVER initialized
 	*newcl         = temp;
 	clientNum      = newcl - svs.clients;
-	newcl->gentity = SV_GentityNum(clientNum);
 
-	newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
+	if (!svcls.isTVGame)
+	{
+		newcl->gentity = SV_GentityNum(clientNum);
+		newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
+	}
+
 	newcl->challenge          = challenge; // save the challenge
 	Q_strncpyz(newcl->guid, Info_ValueForKey(userinfo, "cl_guid"), sizeof(newcl->guid)); // save guid
 

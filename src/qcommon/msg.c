@@ -1657,7 +1657,7 @@ netField_t ettventitySharedFields[] =
 * @param[in] to
 * @param[in] force
 */
-void MSG_ETTV_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force)
+void MSG_ETTV_WriteDeltaSharedEntity(msg_t *msg, entityShared_t *from, entityShared_t *to, qboolean force)
 {
 	int        i, lc;
 	int        numFields;
@@ -1781,13 +1781,12 @@ void MSG_ETTV_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean 
 }
 
 /**
-* @brief MSG_ETTV_ReadDeltaSharedEntity unused
+* @brief MSG_ETTV_ReadDeltaEntityShared
 * @param[in] msg
 * @param[in] from
 * @param[in] to
 */
-/*
-void MSG_ETTV_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to)
+void MSG_ETTV_ReadDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShared_t *to)
 {
 	int        i, lc;
 	int        numFields;
@@ -1800,7 +1799,7 @@ void MSG_ETTV_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to)
 	magic = MSG_ReadBits(msg, 8);
 	if (magic != 0x77)
 	{
-		Com_Error(ERR_DROP, "MSG_ETTV_ReadDeltaSharedEntity: wrong magic byte 0x%x", magic);
+		Com_Error(ERR_DROP, "MSG_ETTV_ReadDeltaEntityShared: wrong magic byte 0x%x", magic);
 	}
 
 	// check for a remove
@@ -1813,7 +1812,7 @@ void MSG_ETTV_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to)
 	// check for no delta
 	if (MSG_ReadBits(msg, 1) == 0)
 	{
-		*(entityShared_t *)to = *(entityShared_t *)from;
+		*to = *from;
 		return;
 	}
 
@@ -1883,7 +1882,7 @@ void MSG_ETTV_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to)
 		// no change
 		*toF = *fromF;
 	}
-}*/
+}
 
 /**
  * @brief MSG_WriteDeltaSharedEntity
