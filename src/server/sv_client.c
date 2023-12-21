@@ -630,11 +630,11 @@ gotnewcl:
 
 	if (newcl->ettvClient)
 	{
-		newcl->ettvClientFrame = (ettvClientSnapshot_t **)Com_Allocate(sizeof(ettvClientSnapshot_t) * PACKET_BACKUP);
+		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t) * PACKET_BACKUP);
 
 		for (i = 0; i < PACKET_BACKUP; i++)
 		{
-			newcl->ettvClientFrame[i] = (ettvClientSnapshot_t *)calloc(sizeof(ettvClientSnapshot_t), sv_maxclients->integer);
+			newcl->ettvClientFrame[i] = calloc(sizeof(ettvClientSnapshot_t), sv_maxclients->integer);
 		}
 	}
 

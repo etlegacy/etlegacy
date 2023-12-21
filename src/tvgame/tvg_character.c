@@ -192,8 +192,6 @@ void G_UpdateCharacter(gclient_t *client)
 	int            characterIndex;
 	bg_character_t *character;
 
-	return;
-
 	trap_GetUserinfo(client->ps.clientNum, infostring, sizeof(infostring));
 	s = Info_ValueForKey(infostring, "ch");
 	if (*s)

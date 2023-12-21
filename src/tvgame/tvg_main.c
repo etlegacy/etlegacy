@@ -978,7 +978,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 		else
 		{
 			G_LogPrintf("------------------------------------------------------------\n");
-			G_LogPrintf("TVInitGame: %s\n", cs);
+			G_LogPrintf("InitTVGame\n");
 		}
 	}
 	else

@@ -506,7 +506,7 @@ qboolean TVG_Cmd_Noclip_f(gclient_t *client, tvcmd_reference_t *self)
 	}
 	else
 	{
-		client->noclip = client->noclip;
+		client->noclip = !client->noclip;
 	}
 
 	if (client->noclip)
@@ -1686,11 +1686,6 @@ void TVG_ClientCommand(int clientNum)
 	}
 
 	client = level.clients + clientNum;
-
-	if (!client)
-	{
-		return;     // not fully in game yet
-	}
 
 	if (TVG_commandCheck(client, cmd))
 	{

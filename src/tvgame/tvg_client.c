@@ -246,17 +246,14 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 }
 
 /**
- * @brief SelectSpectatorSpawnPoint
+ * @brief TVG_SelectSpectatorSpawnPoint
  * @param[out] origin
  * @param[out] angles
- * @return
  */
-gentity_t *SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles)
+static void TVG_SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles)
 {
 	VectorCopy(level.intermission_origin, origin);
 	VectorCopy(level.intermission_angle, angles);
-
-	return NULL;
 }
 
 //======================================================================
@@ -1130,6 +1127,8 @@ void TVG_ClientSpawn(gclient_t *client)
 	int                savedPing;
 	int                savedTeam;
 
+	TVG_SelectSpectatorSpawnPoint(spawn_origin, spawn_angles);
+
 	client->pers.lastSpawnTime   = level.time;
 	client->pers.teamState.state = TEAM_ACTIVE;
 
@@ -1256,11 +1255,6 @@ void TVG_ClientSpawn(gclient_t *client)
 void TVG_ClientDisconnect(int clientNum)
 {
 	gclient_t *client = level.clients + clientNum;
-
-	if (!client)
-	{
-		return;
-	}
 
 #ifdef FEATURE_LUA
 	// LUA API callbacks
