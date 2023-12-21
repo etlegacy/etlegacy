@@ -392,7 +392,7 @@ static void R_DestroyFBO(frameBuffer_t *fb)
 
 	if (fb->colorBuffer)
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+		glDeleteRenderbuffersEXT(GL_RENDERBUFFER_EXT, &fb->colorBuffer);
 		glDeleteTextures(1, &fb->colorBuffer);
 		fb->colorBuffer = 0;
 	}
