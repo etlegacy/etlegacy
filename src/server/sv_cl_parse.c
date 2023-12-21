@@ -729,8 +729,10 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 
 	svcl.newSnapshots = qtrue;
 
-
-	sv.time = svcl.snap.serverTime;
+	if (svcl.snap.deltaNum == -1)
+	{
+		sv.time = svcl.snap.serverTime;
+	}
 }
 
 /**

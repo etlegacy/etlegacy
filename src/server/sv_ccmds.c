@@ -745,8 +745,7 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("devmap", SV_Map_f, "Loads a specific map in developer mode.", SV_CompleteMapName);
 	Cmd_AddCommand("killserver", SV_KillServer_f, "Kills the server.");
 	Cmd_AddCommand("cleartempbans", SV_TempBanClear_f, "Clears the temporary ban list.");
-	Cmd_AddCommand("tv", SV_CL_Commands_f, "Kills the server.");
-	//Cmd_AddCommand("tv", TV_Commands_f, "tv commands.");
+	Cmd_AddCommand("tv", SV_CL_Commands_f, "tv commands.");
 
 	if (com_dedicated->integer)
 	{

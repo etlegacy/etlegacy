@@ -133,6 +133,12 @@ void SV_GameSendServerCommand(int clientNum, const char *text)
 		SV_DemoWriteGameCommand(clientNum, text);
 	}
 
+	if (clientNum == -2)
+	{
+		SV_CL_AddReliableCommand(text);
+		return;
+	}
+
 	if (clientNum == -1)
 	{
 		SV_SendServerCommand(NULL, "%s", text);

@@ -860,17 +860,6 @@ typedef struct
 
 	int parseEntitiesNum;                   ///< index (not anded off) into cl_parse_entities[]
 
-	int mouseDx[2], mouseDy[2];             ///< added to by mouse events
-	int mouseIndex;
-	int joystickAxis[MAX_JOYSTICK_AXIS];    ///< set by joystick events
-
-	// cgame communicates a few values to the client system
-	int cgameUserCmdValue;                  ///< current weapon to add to usercmd_t
-	int cgameFlags;                         ///< flags that can be set by the gamecode
-	float cgameSensitivity;
-	int cgameMpIdentClient;
-	vec3_t cgameClientLerpOrigin;
-
 	/// cmds[cmdNumber] is the predicted command, [cmdNumber-1] is the last
 	/// properly generated command
 	usercmd_t cmds[CMD_BACKUP];             ///< each mesage will send several old cmds
@@ -922,7 +911,6 @@ int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps);
 void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg);
 void SV_CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg);
 void SV_CL_ServerInfoPacket(netadr_t from, msg_t *msg);
-
 
 // sv_cl_net_chan.c
 void SV_CL_Netchan_Transmit(netchan_t *chan, msg_t *msg);
