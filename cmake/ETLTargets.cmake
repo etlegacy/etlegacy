@@ -26,6 +26,7 @@ add_library(ui_libraries INTERFACE)
 
 # Server mod libraries
 add_library(qagame_libraries INTERFACE)
+add_library(tvgame_libraries INTERFACE)
 
 # JSON library helper target
 add_library(etl_json INTERFACE)

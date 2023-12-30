@@ -382,41 +382,29 @@ static void R_DestroyFBO(frameBuffer_t *fb)
 
 	if (fb->color)
 	{
-		glDeleteRenderbuffersEXT(1, &fb->color);
+		glDeleteTextures(1, &fb->color);
 	}
 
 	if (fb->depth)
 	{
-		glDeleteRenderbuffersEXT(1, &fb->depth);
+		glDeleteTextures(1, &fb->depth);
 	}
 
 	if (fb->colorBuffer)
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
-		glDeleteTextures(1, &fb->colorBuffer);
-		fb->colorBuffer = 0;
+		glDeleteRenderbuffersEXT(GL_RENDERBUFFER_EXT, &fb->colorBuffer);
 	}
 
 	if (fb->depthBuffer)
 	{
-		if (fb->stencil)
-		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
-		}
-		else
-		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
-		}
-
-		glDeleteTextures(1, &fb->depthBuffer);
-		fb->depthBuffer = 0;
+		glDeleteRenderbuffersEXT(GL_RENDERBUFFER_EXT, &fb->depthBuffer);
 	}
 
 	R_BindFBO(NULL);
 	glDeleteFramebuffersEXT(1, &fb->fbo);
-	fb->fbo = 0;
 
 	Com_Memset(fb, 0, sizeof(frameBuffer_t));
+	GL_CheckErrors();
 }
 
 static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width, int height, int samples, int stencil, uint8_t flags)
@@ -438,9 +426,13 @@ static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width
 
 	Com_Memset(fb, 0, sizeof(frameBuffer_t));
 
-	if (name)
+	if (name && name[0])
 	{
 		Q_strncpyz(fb->name, name, MAX_QPATH);
+	}
+	else
+	{
+		fb->name[0] = '\0';
 	}
 
 	fb->width  = width;
@@ -502,7 +494,7 @@ static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width
 	}
 
 
-	if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE)
+	if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT)
 	{
 		Ren_Fatal("Failed to init FBO\n");
 	}

@@ -122,6 +122,9 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pla
 
 void MSG_ReportChangeVectors_f(void);
 
+void MSG_ETTV_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force);
+//void MSG_ETTV_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to);
+
 /**
 ==============================================================
 NET
@@ -379,8 +382,9 @@ The server you attempted to join is running an incompatible version of the game.
 You or the server may be running older versions of the game. Press the auto-update\
  button if it appears on the Main Menu screen."
 
-#define GAMENAME_STRING     "et"
-#define PROTOCOL_VERSION    84
+#define GAMENAME_STRING          "et"
+#define PROTOCOL_VERSION         84
+#define ETTV_PROTOCOL_VERSION    284
 
 /**
  * @var demo_protocols
@@ -430,7 +434,8 @@ enum svc_ops_e
 	svc_serverCommand,          ///< [string] to be executed by client game module
 	svc_download,               ///< [short] size [size bytes]
 	svc_snapshot,
-	svc_EOF
+	svc_EOF,
+	svc_ettv_playerstates
 };
 
 /**

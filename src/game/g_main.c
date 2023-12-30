@@ -135,6 +135,7 @@ vmCvar_t g_swapteams;
 vmCvar_t g_restarted;
 vmCvar_t g_log;
 vmCvar_t g_logSync;
+vmCvar_t g_logTimestamp;
 
 vmCvar_t voteFlags;
 vmCvar_t g_complaintlimit;
@@ -380,6 +381,8 @@ vmCvar_t g_floodProtection;
 vmCvar_t g_floodLimit;
 vmCvar_t g_floodWait;
 
+vmCvar_t g_etltv_flags;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -439,6 +442,7 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_log,                             "g_log",                             "",                           CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_logSync,                         "g_logSync",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_logTimestamp,                    "g_logTimestamp",                    "1",                          CVAR_TEMP,                                       0, qfalse, qfalse },
 
 	{ &g_password,                        "g_password",                        "none",                       CVAR_USERINFO,                                   0, qfalse, qfalse },
 	{ &sv_privatepassword,                "sv_privatepassword",                "",                           CVAR_TEMP,                                       0, qfalse, qfalse },
@@ -646,9 +650,9 @@ cvarTable_t gameCvarTable[] =
 	{ &g_mapConfigs,                      "g_mapConfigs",                      "",                           0,                                               0, qfalse, qfalse },
 	{ &g_customConfig,                    "g_customConfig",                    "defaultpublic",              CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_moverScale,                      "g_moverScale",                      "1.0",                        0,                                               0, qfalse, qfalse },
-	{ &g_fixedphysics,                    "g_fixedphysics",                    "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &g_fixedphysicsfps,                 "g_fixedphysicsfps",                 "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &g_pronedelay,                      "g_pronedelay",                      "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
+	{ &g_fixedphysics,                    "g_fixedphysics",                    "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_fixedphysicsfps,                 "g_fixedphysicsfps",                 "125",                        CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_pronedelay,                      "g_pronedelay",                      "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	// Debug
 	{ &g_debugHitboxes,                   "g_debugHitboxes",                   "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_debugPlayerHitboxes,             "g_debugPlayerHitboxes",             "0",                          0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
@@ -673,9 +677,11 @@ cvarTable_t gameCvarTable[] =
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 
-	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
+	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+
+	{ &g_etltv_flags,                     "g_etltv_flags",                     "3",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**
@@ -2050,6 +2056,10 @@ void G_UpdateCvars(void)
 #ifdef FEATURE_MULTIVIEW
 					Info_SetValueForKey(cs, "MV", va("%i", g_multiview.integer));
 #endif
+					Info_SetValueForKey(cs, "fp", va("%i", g_fixedphysics.integer));
+					Info_SetValueForKey(cs, "fpv", va("%i", g_fixedphysicsfps.integer));
+					Info_SetValueForKey(cs, "pd", va("%i", g_pronedelay.integer));
+
 
 					trap_SetConfigstring(CS_MODINFO, cs);
 				}
@@ -3812,7 +3822,39 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 	char    string[1024];
 	int     l;
 
-	Com_sprintf(string, sizeof(string), "%8i ", level.time);
+	if (g_logTimestamp.integer == 0)
+	{
+		string[0] = 0;
+	}
+	else if (g_logTimestamp.integer == 2) // startup relative time (mmm:ss)
+	{
+		int timestamp = trap_Milliseconds();
+		int m = timestamp / 60000;
+		int s = (timestamp - m * 60000) / 1000;
+
+		if (m < 1000)
+		{
+			Com_sprintf(string, sizeof(string), "%3i:%02i ", m, s);
+		}
+		else
+		{
+			// Intentionally overflowing into the leading space for BC
+			Com_sprintf(string, sizeof(string), "%i:%02i", m, s);
+		}
+	}
+	else if (g_logTimestamp.integer == 3) // vanilla
+	{
+		time_t          aclock;
+		char            timeFt[32];
+
+		time(&aclock);
+		strftime(timeFt, sizeof(timeFt), "%H:%M.%S", localtime(&aclock));
+		Com_sprintf(string, sizeof(string), "%s ", timeFt);
+	}
+	else
+	{
+		Com_sprintf(string, sizeof(string), "%8i ", level.time);
+	}
 
 	l = strlen(string);
 

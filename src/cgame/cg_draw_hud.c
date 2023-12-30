@@ -3504,33 +3504,40 @@ static ID_INLINE void CG_HUD_LoadByName(const char *name)
 void CG_SetHud(void)
 {
 	static int modCount = -1;
+	static int shoutcast = -1;
 
-	if (cg_altHud.modificationCount == modCount && hudData.active && hudData.active->active)
+	vmCvar_t hudCvar = cgs.clientinfo[cg.clientNum].shoutcaster ? cg_shoutcasterHud : cg_altHud;
+
+	if (hudCvar.modificationCount == modCount
+		&& hudData.active
+		&& hudData.active->active
+		&& cgs.clientinfo[cg.clientNum].shoutcaster == shoutcast)
 	{
 		return;
 	}
 
-	if (Q_isanumber(cg_altHud.string))
+	if (Q_isanumber(hudCvar.string))
 	{
-		hudData.active = CG_GetHudByNumber(cg_altHud.integer);
+		hudData.active = CG_GetHudByNumber(hudCvar.integer);
 	}
 	else
 	{
-		hudData.active = CG_GetHudByName(cg_altHud.string);
+		hudData.active = CG_GetHudByName(hudCvar.string);
 
 		if (!hudData.active)
 		{
-			CG_HUD_LoadByName(cg_altHud.string);
+			CG_HUD_LoadByName(hudCvar.string);
 		}
 	}
 
-	modCount = cg_altHud.modificationCount;
+	modCount = hudCvar.modificationCount;
+	shoutcast = cgs.clientinfo[cg.clientNum].shoutcaster;
 
 	if (!hudData.active)
 	{
-		Com_Printf(S_COLOR_YELLOW "WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
+		Com_Printf(S_COLOR_YELLOW "WARNING hud with number %i is not available, defaulting to 0\n", hudCvar.integer);
 		hudData.active = CG_GetHudByNumber(0);
-		trap_Cvar_Set("cg_altHud", "0");
+		trap_Cvar_Set(shoutcast ? "cg_shoutcasterHud" : "cg_altHud", "0");
 		return;
 	}
 

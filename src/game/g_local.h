@@ -700,6 +700,8 @@ typedef struct
 	int numReliableCommands;                            ///< how many commands have we sent
 	int nextCommandDecreaseTime;                        ///< next time we decrease numReliableCommands
 
+	int tvflags;
+
 } clientSession_t;
 
 #define PICKUP_ACTIVATE 0   ///< pickup items only when using "+activate"
@@ -1947,6 +1949,7 @@ extern vmCvar_t g_maxclients;               ///< allow this many total, includin
 extern vmCvar_t g_maxGameClients;           ///< allow this many active
 extern vmCvar_t g_minGameClients;           ///< we need at least this many before match actually starts
 extern vmCvar_t g_restarted;
+extern vmCvar_t g_logTimestamp;
 
 extern vmCvar_t g_timelimit;
 extern vmCvar_t g_friendlyFire;
@@ -2211,6 +2214,9 @@ extern vmCvar_t g_dropObjDelay;
 extern vmCvar_t g_floodProtection;
 extern vmCvar_t g_floodLimit;
 extern vmCvar_t g_floodWait;
+
+#define ETTV_PROTOCOL_VERSION 284
+extern vmCvar_t g_etltv_flags;
 
 /**
  * @struct GeoIPTag

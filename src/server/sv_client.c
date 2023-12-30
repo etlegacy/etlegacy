@@ -201,10 +201,34 @@ static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
 	version = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
 	if (version != PROTOCOL_VERSION)
 	{
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_update]" PROTOCOL_MISMATCH_ERROR_LONG);
-		Com_DPrintf("    rejected connect from version %i\n", version);
+		if (version != ETTV_PROTOCOL_VERSION)
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_update]" PROTOCOL_MISMATCH_ERROR_LONG);
+			Com_DPrintf("    rejected connect from version %i\n", version);
 
-		return qfalse;
+			return qfalse;
+		}
+
+		if (sv_etltv_maxslaves->integer <= 0)
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\nMaster must reserve slots with sv_etltv_maxslaves.\n");
+			Com_DPrintf("    rejected ettv slave connection from %s because sv_etltv_maxslaves is not set.\n", NET_AdrToString(from));
+			return qfalse;
+		}
+
+		if (!sv_etltv_password->string[0])
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\nMaster must set an sv_etltv_password.\n");
+			Com_DPrintf("    rejected ettv slave connection from %s because of empty sv_etltv_password.\n", NET_AdrToString(from));
+			return qfalse;
+		}
+
+		if (strcmp(Info_ValueForKey(userinfo, "masterpassword"), sv_etltv_password->string))
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\nInvalid master password.\n");
+			Com_DPrintf("    rejected ettv slave connection from %s because password didn\'t match sv_etltv_password.\n", NET_AdrToString(from));
+			return qfalse;
+		}
 	}
 
 	// validate userinfo to filter out the people blindly using hack code
@@ -305,6 +329,8 @@ void SV_DirectConnect(netadr_t from)
 	char     *password;
 	int      startIndex;
 	char     *denied;
+	int      protocol;
+	qboolean ettvClient;
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
@@ -327,13 +353,14 @@ void SV_DirectConnect(netadr_t from)
 		return;
 	}
 
-	challenge = Q_atoi(Info_ValueForKey(userinfo, "challenge"));
-	qport     = Q_atoi(Info_ValueForKey(userinfo, "qport"));
+	challenge  = Q_atoi(Info_ValueForKey(userinfo, "challenge"));
+	qport      = Q_atoi(Info_ValueForKey(userinfo, "qport"));
+	protocol   = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
+	ettvClient = protocol == ETTV_PROTOCOL_VERSION;
 
 	// we don't need these keys after connection, release some space in userinfo
 	Info_RemoveKey(userinfo, "challenge");
 	Info_RemoveKey(userinfo, "qport");
-	Info_RemoveKey(userinfo, "protocol");
 
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -455,16 +482,23 @@ void SV_DirectConnect(netadr_t from)
 	// This is to allow us to reserve a couple slots here on our
 	// servers so we can play without having to kick people.
 
-	// check for privateClient password
-	password = Info_ValueForKey(userinfo, "password");
-	if (*password && !strcmp(password, sv_privatePassword->string))
+	if (!ettvClient)
 	{
-		startIndex = sv_democlients->integer;
+		// check for privateClient password
+		password = Info_ValueForKey(userinfo, "password");
+		if (*password && !strcmp(password, sv_privatePassword->string))
+		{
+			startIndex = sv_democlients->integer;
+		}
+		else
+		{
+			// skip past the reserved slots
+			startIndex = sv_privateClients->integer + sv_democlients->integer;
+		}
 	}
 	else
 	{
-		// skip past the reserved slots
-		startIndex = sv_privateClients->integer + sv_democlients->integer;
+		startIndex = sv_maxclients->integer - sv_etltv_maxslaves->integer;
 	}
 
 	newcl = NULL;
@@ -591,8 +625,18 @@ gotnewcl:
 		SV_Heartbeat_f();
 	}
 
-	// newcl->protocol = PROTOCOL_VERSION;
-	newcl->protocol = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
+	newcl->protocol   = protocol;
+	newcl->ettvClient = ettvClient;
+
+	if (newcl->ettvClient)
+	{
+		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t) * PACKET_BACKUP);
+
+		for (i = 0; i < PACKET_BACKUP; i++)
+		{
+			newcl->ettvClientFrame[i] = calloc(sizeof(ettvClientSnapshot_t), sv_maxclients->integer);
+		}
+	}
 
 #ifdef FEATURE_TRACKER
 	Tracker_ClientConnect(newcl);
@@ -718,6 +762,15 @@ void SV_DropClient(client_t *drop, const char *reason)
 		SV_Heartbeat_f();
 	}
 
+	if (drop->ettvClient)
+	{
+		for (i = 0; i < PACKET_BACKUP; i++)
+		{
+			Com_Dealloc(drop->ettvClientFrame[i]);
+		}
+		Com_Dealloc(drop->ettvClientFrame);
+	}
+
 #ifdef FEATURE_TRACKER
 	Tracker_ClientDisconnect(drop);
 #endif
@@ -733,10 +786,11 @@ void SV_DropClient(client_t *drop, const char *reason)
  */
 void SV_SendClientGameState(client_t *client)
 {
-	int           start;
-	entityState_t *base, nullstate;
-	msg_t         msg;
-	byte          msgBuffer[MAX_MSGLEN];
+	int            start;
+	entityState_t  *base, nullstate;
+	entityShared_t *baseShared, nullstateShared;
+	msg_t          msg;
+	byte           msgBuffer[MAX_MSGLEN];
 
 	Com_DPrintf("SV_SendClientGameState() for %s\n", client->name);
 
@@ -783,9 +837,11 @@ void SV_SendClientGameState(client_t *client)
 
 	// write the baselines
 	Com_Memset(&nullstate, 0, sizeof(nullstate));
+	Com_Memset(&nullstateShared, 0, sizeof(nullstateShared));
 	for (start = 0 ; start < MAX_GENTITIES; start++)
 	{
-		base = &sv.svEntities[start].baseline;
+		base       = &sv.svEntities[start].baseline;
+		baseShared = &sv.svEntities[start].baselineShared;
 		if (!base->number)
 		{
 			continue;
@@ -793,6 +849,10 @@ void SV_SendClientGameState(client_t *client)
 
 		MSG_WriteByte(&msg, svc_baseline);
 		MSG_WriteDeltaEntity(&msg, &nullstate, base, qtrue);
+		if (client->ettvClient)
+		{
+			MSG_ETTV_WriteDeltaSharedEntity(&msg, &nullstateShared, baseShared, qtrue);
+		}
 	}
 
 	MSG_WriteByte(&msg, svc_EOF);
@@ -1526,6 +1586,13 @@ static void SV_VerifyPaks_f(client_t *cl)
 		// we basically use this while loop to avoid using 'goto' :)
 		while (bGood)
 		{
+			// FIXME?: it seems that ettv slave only sends "cp (serverId) SLAVE" command
+			// so there is nothing to verify
+			if (cl->ettvClient)
+			{
+				break;
+			}
+
 			// must be at least 6: "cl_paks cgame ui @ firstref ... numChecksums"
 			// numChecksums is encoded
 			if (nClientPaks < 6)

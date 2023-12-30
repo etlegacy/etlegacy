@@ -378,6 +378,12 @@ void G_refPlayerPut_cmd(gentity_t *ent, team_t team_id)
 		return;
 	}
 
+	if (player->client->sess.tvflags & 1)
+	{
+		G_refPrintf(ent, "Sorry, this client cannot join %s team!", aTeams[team_id]);
+		return;
+	}
+
 	player->client->pers.invite = team_id;
 	player->client->pers.ready  = qfalse;
 
@@ -1000,6 +1006,12 @@ void G_refRemoveShoutcaster_cmd(gentity_t *ent)
 	if (!player->client->sess.shoutcaster)
 	{
 		G_refPrintf(ent, "Sorry, %s^7 is not a shoutcaster.", player->client->pers.netname);
+		return;
+	}
+
+	if (player->client->sess.tvflags & 2)
+	{
+		G_refPrintf(ent, "Sorry, cannot remove shoutcaster for %s^7.", player->client->pers.netname);
 		return;
 	}
 
