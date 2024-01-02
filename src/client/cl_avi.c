@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  * Copyright (C) 2013 Jere "Jacker" S
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *

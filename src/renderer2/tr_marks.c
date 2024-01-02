@@ -5,7 +5,7 @@
  * Copyright (C) 2008 Oliver McFadden
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
