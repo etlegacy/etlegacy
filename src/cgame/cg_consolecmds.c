@@ -1710,7 +1710,7 @@ static void CG_ReadHuds_f(void)
 			Q_strcat(tmp, MAX_QPATH, ".dat");
 		}
 
-		if (!CG_TryReadHudFromFile(tmp))
+		if (!CG_TryReadHudFromFile(tmp, qtrue))
 		{
 			CG_Printf(S_COLOR_RED "^1ERROR while reading hud file: %s\n", tmp);
 		}

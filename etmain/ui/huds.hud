@@ -1,9 +1,8 @@
 {
-	"version":	2,
+	"version":	3,
 	"huds":	[{
 			"name":	"Alternate Hud 1",
-			"number":	1,
-			"parent":	0,
+			"parent":	"ETmain",
 			"components":	{
 				"compass":	{
 					"rect":	{
@@ -258,8 +257,7 @@
 			}
 		}, {
 			"name":	"Alternate Hud 2",
-			"number":	2,
-			"parent":	1,
+			"parent":	"Alternate Hud 1",
 			"components":	{
 				"compass":	{
 					"rect":	{
@@ -368,8 +366,7 @@
 			}
 		}, {
 			"name":	"Alternate Hud 3",
-			"number":	3,
-			"parent":	2,
+			"parent":	"Alternate Hud 1",
 			"components":	{
 				"healthbar":	{
 					"rect":	{
@@ -584,8 +581,7 @@
 			}
 		}, {
 			"name":	"Competitor Hud",
-			"number":	4,
-			"parent":	3,
+			"parent":	"Alternate Hud 1",
 			"components":	{
 				"crosshair":	{
 					"style":	0
@@ -1116,8 +1112,8 @@
 				}
 			}
 		}, {
-						"name":	"Shoutcaster",
-			"number":	5,
+			"name":	"Shoutcaster",
+			"parent": "ETmain",
 			"components":	{
 				"compass":	{
 					"rect":	{
@@ -1311,9 +1307,6 @@
 					"visible":	false
 				},
 				"limbotext":	{
-					"visible":	false
-				},
-				"followtext":	{
 					"visible":	false
 				},
 				"missilecamera":	{
