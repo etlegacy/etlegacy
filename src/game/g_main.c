@@ -5538,8 +5538,8 @@ void G_RunFrame(int levelTime)
 
 	if (level.gameManager)
 	{
-		level.gameManager->s.otherEntityNum  = team_maxLandmines.integer - G_CountTeamLandmines(TEAM_AXIS);
-		level.gameManager->s.otherEntityNum2 = team_maxLandmines.integer - G_CountTeamLandmines(TEAM_ALLIES);
+		level.gameManager->s.otherEntityNum  = MAX(0, team_maxLandmines.integer - G_CountTeamLandmines(TEAM_AXIS));
+		level.gameManager->s.otherEntityNum2 = MAX(0, team_maxLandmines.integer - G_CountTeamLandmines(TEAM_ALLIES));
 	}
 #ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);
