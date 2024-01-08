@@ -4954,11 +4954,10 @@ void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
+	char name[MAX_NAME_LENGTH];
 	int cnum;
 
-	trap_Argv(0, cmd, sizeof(cmd));
-	trap_Argv(1, name, sizeof(cmd));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!*name)
 	{
@@ -4985,11 +4984,10 @@ void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
+	char name[MAX_NAME_LENGTH];
 	int cnum;
 
-	trap_Argv(0, cmd, sizeof(cmd));
-	trap_Argv(1, name, sizeof(cmd));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!*name)
 	{
