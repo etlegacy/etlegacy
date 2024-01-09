@@ -2626,15 +2626,16 @@ static void CG_ApplyViewWeaponShift(refEntity_t *hand, vec3_t shifts_90, vec3_t 
 	}
 	else
 	{
+		float fov = (cg_fov.value < 90) ? 90 : cg_fov.value;
 		// interpolate via the distance of 'shifts_90' and 'shifts_120'
 		VectorMA(hand->origin,
-		         shifts_120[0] - ((120.0f - cg_fov.value) * ((shifts_120[0] - shifts_90[0]) / 30)),
+		         shifts_120[0] - ((120.0f - fov) * ((shifts_120[0] - shifts_90[0]) / 30)),
 		         up, hand->origin);
 		VectorMA(hand->origin,
-		         shifts_120[1] - ((120.0f - cg_fov.value) * ((shifts_120[1] - shifts_90[1]) / 30)),
+		         shifts_120[1] - ((120.0f - fov) * ((shifts_120[1] - shifts_90[1]) / 30)),
 		         forward, hand->origin);
 		VectorMA(hand->origin,
-		         shifts_120[2] - ((120.0f - cg_fov.value) * ((shifts_120[2] - shifts_90[2]) / 30)),
+		         shifts_120[2] - ((120.0f - fov) * ((shifts_120[2] - shifts_90[2]) / 30)),
 		         right,
 		         hand->origin);
 	}
