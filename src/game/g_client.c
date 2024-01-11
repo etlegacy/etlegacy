@@ -3497,6 +3497,17 @@ void ClientDisconnect(int clientNum)
 
 	CalculateRanks();
 
+    // disconnecting does not trigger vote cancel due to team switch in checkVote
+    // note: after CalculateRanks so level.numConnectedClients is up-to-date
+    if (level.voteInfo.voteTime && level.voteInfo.voteCaller == clientNum) {
+        AP(va("cpm \"^1Vote CANCELED! Caller disconnected\n\""));
+        G_LogPrintf("Vote canceled: %s (caller %s disconnected)\n",
+                    level.voteInfo.voteString, ent->client->pers.netname);
+        level.voteInfo.voteTime = 0;
+        level.voteInfo.voteCanceled = 1;
+        trap_SetConfigstring(CS_VOTE_TIME, ""); // so the counter goes away
+    }
+
 	G_verifyMatchState((team_t)i);
 #ifdef FEATURE_MULTIVIEW
 	G_smvAllRemoveSingleClient(ent - g_entities);

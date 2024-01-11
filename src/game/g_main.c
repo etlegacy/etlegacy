@@ -4664,21 +4664,6 @@ void CheckVote(void)
 
 		if (level.voteInfo.voteYes > threshold || level.voteInfo.votePassed)
 		{
-            if (!level.voteInfo.votePassed && level.voteInfo.voteYes == 1) {
-                // Scenario: two players - one calls vote and then leaves.
-                // Check if they left, so that the vote does not get passed by calling a vote
-                // and then immediately leaving :)
-                gentity_t *ent = &g_entities[level.voteInfo.voteCaller];
-
-                // client will still be valid for one frame after disconnect, so we have to check inuse too.
-                if (!ent->client || !ent->inuse)
-                {
-                    // Important that we cancel the vote or else it will pass once someone joins, and we re-use
-                    // the g_entity object.
-                    level.voteInfo.voteCanceled = 1;
-                    return;
-                }
-            }
 			// execute the command, then remove the vote
 			if (level.voteInfo.voteYes > total + 1)
 			{
