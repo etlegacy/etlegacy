@@ -3300,6 +3300,17 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	{
 		G_ResetTeamMapData();
 	}
+
+    if (teamChange) {
+        if (level.voteInfo.voteTime && level.voteInfo.voteCaller == index) {
+            AP(va("cpm \"^1Vote CANCELED! Caller switched team\n\""));
+            G_LogPrintf("Vote canceled: %s (caller %s switched team)\n",
+                        level.voteInfo.voteString, ent->client->pers.netname);
+            level.voteInfo.voteTime = 0;
+            level.voteInfo.voteCanceled = 1;
+            trap_SetConfigstring(CS_VOTE_TIME, ""); // so the counter goes away
+        }
+    }
 }
 
 /**
