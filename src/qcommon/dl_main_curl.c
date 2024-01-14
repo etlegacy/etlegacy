@@ -572,6 +572,11 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FAILONERROR, 1);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FOLLOWLOCATION, 1);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_MAXREDIRS, 5);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FORBID_REUSE, 1L);
+
+#ifdef ETLEGACY_DEBUG
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_VERBOSE, 1L);
+#endif
 
 	DL_InitSSL(request->rawHandle);
 
@@ -642,6 +647,11 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_WRITEDATA, (void *)request);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_PROGRESSFUNCTION, DL_cb_Progress);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_PROGRESSDATA, (void *)request);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FORBID_REUSE, 1L);
+
+#ifdef ETLEGACY_DEBUG
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_VERBOSE, 1L);
+#endif
 
 	if (upload)
 	{

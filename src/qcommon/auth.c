@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -58,7 +58,7 @@ static struct
 cvar_t *auth_server;
 cvar_t *sv_auth;
 
-#define AUTH_DEFAULT_SERVER ""
+#define AUTH_DEFAULT_SERVER "https://master.etlegacy.com"
 
 #define AUTH_CLIENT_LOGIN "/api/client/login"
 #define AUTH_CLIENT_CHALLENGE "/api/client/auth/challenge"
@@ -311,9 +311,9 @@ static void Auth_Cmd_f(void)
 	char *tmp  = NULL;
 	int  count = Cmd_Argc();
 
-	if (!Auth_Active())
+	if (!*auth_server->string)
 	{
-		Com_Printf("Requires arguments\n");
+		Com_Printf("Missing auth server\n");
 		return;
 	}
 
@@ -341,8 +341,16 @@ static void Auth_Cmd_f(void)
 		}
 
 		Auth_ClientLogin(Cmd_Argv(2), Cmd_Argv(3));
+		return;
 	}
-	else if (!Q_stricmp(tmp, "logout"))
+
+	if (!Auth_Active())
+	{
+		Com_Printf("Not logged in\n");
+		return;
+	}
+
+	if (!Q_stricmp(tmp, "logout"))
 	{
 		Auth_ClearToken();
 		Auth_SendToServer("logout");
@@ -561,6 +569,16 @@ void Auth_Server_FetchChallenge(void *data, const char *username)
 
 	webUploadData_t *upload = NULL;
 
+	if (data)
+	{
+		((client_t *)data)->loginStatus = LOGIN_SERVER_CHALLENGED;
+	}
+	else
+	{
+		Com_Printf(S_COLOR_RED "ERROR: No client data\n");
+		return;
+	}
+
 	upload = Com_Allocate(sizeof(webUploadData_t));
 	Com_Memset(upload, 0, sizeof(webUploadData_t));
 
@@ -572,8 +590,6 @@ void Auth_Server_FetchChallenge(void *data, const char *username)
 	Q_strcpy(upload->contentType, "application/json");
 	upload->buffer     = (byte *)json;
 	upload->bufferSize = strlen(json);
-
-	((client_t *)data)->loginStatus = LOGIN_SERVER_CHALLENGED;
 
 	Web_CreateRequest(A_URL(AUTH_SERVER_CHALLENGE), authData.authToken, upload, data, &Auth_ServerChallengeCallback, NULL);
 }
@@ -654,6 +670,9 @@ void Auth_Init(void)
 
 #ifndef DEDICATED
 	Cmd_AddCommand("auth", Auth_Cmd_f, "Authentication handler");
+#ifdef ETLEGACY_DEBUG
+	Cmd_AddCommand("authTest", Auth_TestToken, "Test auth token manually");
+#endif
 #endif
 
 	Auth_ReadToken();

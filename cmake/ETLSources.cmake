@@ -13,6 +13,7 @@ FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
 	"src/qcommon/i18n_*"
+	"src/qcommon/auth.c"
 )
 
 LIST(REMOVE_ITEM COMMON_SRC ${COMMON_SRC_REMOVE})
