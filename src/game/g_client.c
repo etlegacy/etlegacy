@@ -3300,6 +3300,17 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	{
 		G_ResetTeamMapData();
 	}
+
+    if (teamChange) {
+        if (level.voteInfo.voteTime && level.voteInfo.voteCaller == index) {
+            AP(va("cpm \"^1Vote CANCELED! Caller switched team\n\""));
+            G_LogPrintf("Vote canceled: %s (caller %s switched team)\n",
+                        level.voteInfo.voteString, ent->client->pers.netname);
+            level.voteInfo.voteTime = 0;
+            level.voteInfo.voteCanceled = 1;
+            trap_SetConfigstring(CS_VOTE_TIME, ""); // so the counter goes away
+        }
+    }
 }
 
 /**
@@ -3496,6 +3507,15 @@ void ClientDisconnect(int clientNum)
 	trap_SetConfigstring(CS_PLAYERS + clientNum, "");
 
 	CalculateRanks();
+
+    if (level.voteInfo.voteTime && level.voteInfo.voteCaller == clientNum) {
+        AP(va("cpm \"^1Vote CANCELED! Caller disconnected\n\""));
+        G_LogPrintf("Vote canceled: %s (caller %s disconnected)\n",
+                    level.voteInfo.voteString, ent->client->pers.netname);
+        level.voteInfo.voteTime = 0;
+        level.voteInfo.voteCanceled = 1;
+        trap_SetConfigstring(CS_VOTE_TIME, ""); // so the counter goes away
+    }
 
 	G_verifyMatchState((team_t)i);
 #ifdef FEATURE_MULTIVIEW
