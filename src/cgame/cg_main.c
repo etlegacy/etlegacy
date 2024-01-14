@@ -1848,7 +1848,9 @@ static void CG_RegisterGraphics(void)
 	cgs.media.objectiveBothDEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_de");
 	cgs.media.objectiveSimpleIcon    = trap_R_RegisterShader("simpleicons/objective");
 	cgs.media.readyShader            = trap_R_RegisterShader("sprites/ready");
-	cgs.media.authenticatedShader    = trap_R_RegisterShader("sprites/authenticated");
+#ifdef LEGACY_AUTH
+	cgs.media.authenticatedShader = trap_R_RegisterShader("sprites/authenticated");
+#endif
 
 	//cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion"); // unused FIXME: remove from shader def
 
