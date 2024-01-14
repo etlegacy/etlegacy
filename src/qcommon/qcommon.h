@@ -310,8 +310,8 @@ typedef struct
 	fileHandle_t download;
 	int downloadNumber;
 	int downloadBlock;                          ///< block we are waiting for
-	int downloadCount;                          ///< how many bytes we got
-	int downloadSize;                           ///< how many bytes we got
+	int downloadCount;                          ///< how many bytes we have downloaded
+	int downloadSize;                           ///< target file size
 	int downloadFlags;                          ///< misc download behaviour flags sent by the server
 	char downloadList[MAX_INFO_STRING];         ///< list of paks we need to download
 
@@ -625,6 +625,8 @@ void Cmd_TokenizeString(const char *text);
 /// Takes a null terminated string.  Does not need to be /n terminated.
 /// breaks the string up into arg tokens.
 void Cmd_TokenizeStringIgnoreQuotes(const char *text_in);
+
+void Cmd_TokenizeStringIncludeComments(const char *text);
 
 /// Parses a single line of text into arguments and tries to execute it
 /// as if it was typed at the console
@@ -954,7 +956,7 @@ qboolean FS_MatchFileInPak(const char *filepath, const char *match);
 #define IsPathSep(X) ((X) == '\\' || (X) == '/' || (X) == PATH_SEP)
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-const char *DL_ContainerizePath(const char *temp, const char *dest);
+const char *Com_ContainerizePath(const char *temp, const char *dest);
 void FS_InitWhitelist(void);
 qboolean FS_IsWhitelisted(const char *pakName, const char *hash);
 #define FS_CONTAINER "dlcache"
@@ -1026,7 +1028,7 @@ int Com_Filter(char *filter, char *name, int casesensitive);
 int Com_FilterPath(const char *filter, const char *name, int casesensitive);
 int Com_RealTime(qtime_t *qtime);
 qboolean Com_SafeMode(void);
-void Com_RandomBytes(byte *string, int len);
+void Com_RandomBytes(void *bytes, int len);
 
 char *Com_MD5File(const char *fileName, int length, const char *prefix, int prefix_len);
 
@@ -1257,9 +1259,10 @@ void Com_Update_f(void);
 void Com_ClearDownload(void);
 void Com_ClearStaticDownload(void);
 
+unsigned int Com_BeginWebDownload(const char *localName, const char *remoteName);
 void Com_NextDownload(void);
 void Com_InitDownloads(void);
-void Com_WWWDownload(void);
+void Com_WebDownloadLoop(void);
 qboolean Com_WWWBadChecksum(const char *pakname);
 void Com_Download_f(void);
 
@@ -1400,7 +1403,7 @@ double Sys_GetWindowsVer(void);
 
 #define sys_stat_t struct _stat
 int Sys_Stat(const char *path, void *stat);
-#define Sys_S_IsDir(m) (m &_S_IFDIR)
+#define Sys_S_IsDir(m) ((m)&_S_IFDIR)
 
 int Sys_Rename(const char *from, const char *to);
 char *Sys_RealPath(const char *path);
@@ -1427,7 +1430,7 @@ const char *Sys_Basename(char *path);
 const char *Sys_Dirname(char *path);
 char *Sys_ConsoleInput(void);
 
-qboolean Sys_RandomBytes(byte *string, int len);
+qboolean Sys_RandomBytes(void *bytes, int len);
 
 char **Sys_ListFiles(const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs);
 void Sys_FreeFileList(char **list);
@@ -1580,6 +1583,31 @@ extern qboolean doTranslateMod;
 #else // FEATURE_GETTEXT
 #define _(x) x
 #define __(x) x
+#endif
+
+// auth.c
+#ifdef LEGACY_AUTH
+typedef enum login_status
+{
+	LOGIN_NONE = 0,
+	LOGIN_SERVER_REQUESTED,
+	LOGIN_SERVER_CHALLENGED,
+	LOGIN_CLIENT_CHALLENGED,
+	LOGIN_SERVER_VERIFY,
+	LOGIN_CLIENT_LOGGED_IN
+} login_status_t;
+
+void Auth_Server_Command_f(void);
+qboolean Auth_SV_RemoveAuthFromUserinfo(char *userinfo);
+void Auth_Server_ClientLogout(void *data, const char *username);
+void Auth_Server_VerifyResponse(void *data, const char *username, const char *challenge, const char *response);
+void Auth_Server_FetchChallenge(void *data, const char *username);
+void Auth_Server_RequestClientAuthentication(void *data);
+qboolean Auth_Server_AuthenticationRequired(void);
+void Auth_Client_FetchResponse(const char *challenge);
+qboolean Auth_Active(void);
+void Auth_Init(void);
+void Auth_Shutdown(void);
 #endif
 
 #endif // #ifndef INCLUDE_QCOMMON_H

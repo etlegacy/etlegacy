@@ -108,7 +108,7 @@ void SV_GetChallenge(netadr_t from)
 		// this is the first time this client has asked for a challenge
 		challenge = &svs.challenges[oldest];
 
-		challenge->challenge = (int)(((unsigned int) rand() << 16) ^ (unsigned int)rand()) ^ svs.time;
+		Com_RandomBytes(&challenge->challenge, sizeof(int32_t));
 		challenge->adr       = from;
 		challenge->firstTime = svs.time;
 		challenge->firstPing = 0;
@@ -362,6 +362,10 @@ void SV_DirectConnect(netadr_t from)
 	Info_RemoveKey(userinfo, "challenge");
 	Info_RemoveKey(userinfo, "qport");
 
+#ifdef LEGACY_AUTH
+	Auth_SV_RemoveAuthFromUserinfo(userinfo);
+#endif
+
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
@@ -513,7 +517,7 @@ void SV_DirectConnect(netadr_t from)
 		}
 	}
 
-	// if there is no free slot avalable we prefer human players over bots
+	// if there is no free slot available then we prefer human players to bots
 	// do a 2nd run and kick bots above startIndex slot
 	if (!newcl)
 	{
@@ -644,6 +648,10 @@ gotnewcl:
 
 	// check client's engine version
 	Com_ParseUA(&newcl->agent, Info_ValueForKey(userinfo, "etVersion"));
+
+#ifdef LEGACY_AUTH
+	Auth_Server_RequestClientAuthentication(&svs.clients[clientNum]);
+#endif
 }
 
 /**
@@ -1127,6 +1135,113 @@ void SV_WWWDownload_f(client_t *cl)
 	Com_Printf("SV_WWWDownload: unknown wwwdl subcommand '%s' for client '%s'\n", subcmd, rc(cl->name));
 	SV_DropClient(cl, va("SV_WWWDownload: unknown wwwdl subcommand '%s'", subcmd));
 }
+
+#if LEGACY_AUTH
+void SV_Login_f(client_t *cl)
+{
+	char *username;
+
+	if (!Auth_Active())
+	{
+		return;
+	}
+
+	if (cl->loginStatus > LOGIN_SERVER_REQUESTED)
+	{
+		if (cl->loginStatus == LOGIN_CLIENT_LOGGED_IN)
+		{
+			Com_Printf("Client '%s' already logged in\n", cl->name);
+			return;
+		}
+
+		Com_Printf("Client '%s' login process already active\n", cl->name);
+		return;
+	}
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf(S_COLOR_RED "Invalid login command from client\n");
+		SV_DropClient(cl, "Stop doing stupid things\n");
+		return;
+	}
+
+	if (!cl->loginRequested)
+	{
+		cl->loginRequested = svs.time;
+	}
+
+	username = Cmd_Argv(1);
+
+	if (!username | !*username)
+	{
+		return;
+	}
+
+	Q_strncpyz(cl->login, username, sizeof(cl->login));
+	Auth_Server_FetchChallenge(cl, username);
+}
+
+void SV_LoginResponse_f(client_t *cl)
+{
+	char *response;
+
+	if (!Auth_Active())
+	{
+		return;
+	}
+
+	if (cl->loginStatus != LOGIN_CLIENT_CHALLENGED)
+	{
+		Com_Printf("Client '%s' invalid login status for login-response\n", cl->name);
+		SV_DropClient(cl, "Stop doing stupid things\n");
+		return;
+	}
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf(S_COLOR_RED "Invalid login-response command from client\n");
+		SV_DropClient(cl, "Stop doing stupid things\n");
+		return;
+	}
+
+	if (!*cl->loginChallenge)
+	{
+		Com_Printf("Client '%s' trying to send challenge response when the login challenge has not been created\n", cl->name);
+		SV_DropClient(cl, "Stop doing stupid things\n");
+		return;
+	}
+
+	response = Cmd_Argv(1);
+
+	if (!response | !*response)
+	{
+		return;
+	}
+	Auth_Server_VerifyResponse(cl, cl->login, cl->loginChallenge, response);
+}
+
+void SV_Logout_f(client_t *cl)
+{
+	if (!Auth_Active())
+	{
+		return;
+	}
+
+	if (Cmd_Argc() != 1)
+	{
+		Com_Printf(S_COLOR_RED "Invalid logout command from client\n");
+		SV_DropClient(cl, "Stop doing stupid things\n");
+		return;
+	}
+
+	if (cl->loginStatus == LOGIN_NONE)
+	{
+		return;
+	}
+
+	Auth_Server_ClientLogout(cl, cl->login);
+}
+#endif
 
 /**
  * @brief Abort an attempted download
@@ -1908,16 +2023,21 @@ typedef struct
 
 static ucmd_t ucmds[] =
 {
-	{ "userinfo",   SV_UpdateUserinfo_f,  qfalse },
-	{ "disconnect", SV_Disconnect_f,      qtrue  },
-	{ "cp",         SV_VerifyPaks_f,      qfalse },
-	{ "vdr",        SV_ResetPureClient_f, qfalse },
-	{ "download",   SV_BeginDownload_f,   qfalse },
-	{ "nextdl",     SV_NextDownload_f,    qfalse },
-	{ "stopdl",     SV_StopDownload_f,    qfalse },
-	{ "donedl",     SV_DoneDownload_f,    qfalse },
-	{ "wwwdl",      SV_WWWDownload_f,     qfalse },
-	{ NULL,         NULL,                 qfalse }
+	{ "userinfo",       SV_UpdateUserinfo_f,  qfalse },
+	{ "disconnect",     SV_Disconnect_f,      qtrue  },
+	{ "cp",             SV_VerifyPaks_f,      qfalse },
+	{ "vdr",            SV_ResetPureClient_f, qfalse },
+	{ "download",       SV_BeginDownload_f,   qfalse },
+	{ "nextdl",         SV_NextDownload_f,    qfalse },
+	{ "stopdl",         SV_StopDownload_f,    qfalse },
+	{ "donedl",         SV_DoneDownload_f,    qfalse },
+	{ "wwwdl",          SV_WWWDownload_f,     qfalse },
+#if LEGACY_AUTH
+	{ "login",          SV_Login_f,           qtrue  },
+	{ "login-response", SV_LoginResponse_f,   qtrue  },
+	{ "logout",         SV_Logout_f,          qtrue  },
+#endif
+	{ NULL,             NULL,                 qfalse }
 };
 
 /**
@@ -2178,6 +2298,29 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 		cl->deltaMessage = -1;
 		return;
 	}
+
+#ifdef LEGACY_AUTH
+	// check if the client is not logged in, but the login has already been requested
+	if (cl->loginStatus != LOGIN_CLIENT_LOGGED_IN && cl->loginRequested)
+	{
+		// If the client is using a non auth aware client, then give the player some extra time to handle authentication via WEB.
+		int allowedTimeout = cl->agent.compatible & BIT(2) ? 10000 : 30000;
+		if (svs.time - cl->loginRequested > allowedTimeout)
+		{
+			if (Auth_Server_AuthenticationRequired())
+			{
+				SV_DropClient(cl, "Only authenticated clients allowed!");
+				return;
+			}
+			else
+			{
+				// reset the login status since it has hung
+				cl->loginStatus    = LOGIN_NONE;
+				cl->loginRequested = 0;
+			}
+		}
+	}
+#endif
 
 	// usually, the first couple commands will be duplicates
 	// of ones we have previously received, but the servertimes

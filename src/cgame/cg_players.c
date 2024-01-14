@@ -293,6 +293,24 @@ void CG_NewClientInfo(int clientNum)
 	v                   = Info_ValueForKey(configstring, "sc");
 	newInfo.shoutcaster = Q_atoi(v);
 
+#ifdef LEGACY_AUTH
+	// auth name
+	v = Info_ValueForKey(configstring, "an");
+	Q_strncpyz(newInfo.authName, v, MAX_NAME_LENGTH);
+
+	// auth id
+	v              = Info_ValueForKey(configstring, "ai");
+	newInfo.authId = Q_atoi(v);
+
+	// clear the center print auth message
+	// FIXME: move the hashes from cg_servercmds.c into a header and maybe change it into an enum?
+	if (*newInfo.authName && newInfo.authId && cg.centerPrintPriority == 92849)
+	{
+		cg.centerPrintPriority = 0;
+		cg.centerPrintTime     = 0;
+	}
+#endif
+
 	// Detect rank/skill changes client side.
 	// Make sure we have some valid clientinfo, otherwise people are thrown
 	// into spectator on map starts.

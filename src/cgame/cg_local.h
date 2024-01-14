@@ -670,6 +670,11 @@ typedef struct clientInfo_s
 	int refStatus;
 	int shoutcaster;
 
+#ifdef LEGACY_AUTH
+	char authName[MAX_NAME_LENGTH];
+	unsigned int authId;
+#endif
+
 	bg_character_t *character;
 
 	/// caching fireteam pointer here, better than trying to work it out all the time
@@ -1627,6 +1632,9 @@ typedef struct
 	qhandle_t objectiveBothDEShader;
 	qhandle_t objectiveSimpleIcon;
 	qhandle_t readyShader;
+#ifdef LEGACY_AUTH
+	qhandle_t authenticatedShader;
+#endif
 
 	qhandle_t constructShader;
 	qhandle_t destroyShader;

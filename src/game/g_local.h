@@ -695,6 +695,11 @@ typedef struct
 	qboolean botPush;                                   ///< allow for disabling of bot pushing via script
 #endif
 
+#ifdef LEGACY_AUTH
+	char authName[MAX_NAME_LENGTH];
+	unsigned int authId;
+#endif
+
 	// flood protection
 	int nextReliableTime;                               ///< next time a command can be executed when flood limited
 	int numReliableCommands;                            ///< how many commands have we sent

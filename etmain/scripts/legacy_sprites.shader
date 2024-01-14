@@ -73,6 +73,21 @@ sprites/ready
 		rgbGen vertex
 	}
 }
+
+//========================================//
+// Authenticated icon
+//========================================//
+sprites/authenticated
+{
+	nocompress
+	nomipmaps
+	nopicmip
+	{
+		map gfx/2d/authenticated.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
 //========================================//
 
 

@@ -1,6 +1,6 @@
 /**
 - * @file g_match_tokens.c
-- * @brief ANSI-C code produced by gperf version 3.0.1
+- * @brief ANSI-C code produced by gperf version 3.0.3
 - *
 - * <pre>
 - * Command-line: gperf -t7C --language=ANSI-C input_tokens.gperf
@@ -9,28 +9,28 @@
 - */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
-    && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
-    && (')' == 41) && ('*' == 42) && ('+' == 43) && (',' == 44) \
-    && ('-' == 45) && ('.' == 46) && ('/' == 47) && ('0' == 48) \
-    && ('1' == 49) && ('2' == 50) && ('3' == 51) && ('4' == 52) \
-    && ('5' == 53) && ('6' == 54) && ('7' == 55) && ('8' == 56) \
-    && ('9' == 57) && (':' == 58) && (';' == 59) && ('<' == 60) \
-    && ('=' == 61) && ('>' == 62) && ('?' == 63) && ('A' == 65) \
-    && ('B' == 66) && ('C' == 67) && ('D' == 68) && ('E' == 69) \
-    && ('F' == 70) && ('G' == 71) && ('H' == 72) && ('I' == 73) \
-    && ('J' == 74) && ('K' == 75) && ('L' == 76) && ('M' == 77) \
-    && ('N' == 78) && ('O' == 79) && ('P' == 80) && ('Q' == 81) \
-    && ('R' == 82) && ('S' == 83) && ('T' == 84) && ('U' == 85) \
-    && ('V' == 86) && ('W' == 87) && ('X' == 88) && ('Y' == 89) \
-    && ('Z' == 90) && ('[' == 91) && ('\\' == 92) && (']' == 93) \
-    && ('^' == 94) && ('_' == 95) && ('a' == 97) && ('b' == 98) \
-    && ('c' == 99) && ('d' == 100) && ('e' == 101) && ('f' == 102) \
-    && ('g' == 103) && ('h' == 104) && ('i' == 105) && ('j' == 106) \
-    && ('k' == 107) && ('l' == 108) && ('m' == 109) && ('n' == 110) \
-    && ('o' == 111) && ('p' == 112) && ('q' == 113) && ('r' == 114) \
-    && ('s' == 115) && ('t' == 116) && ('u' == 117) && ('v' == 118) \
-    && ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \
-    && ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))
+	&& ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
+	&& (')' == 41) && ('*' == 42) && ('+' == 43) && (',' == 44) \
+	&& ('-' == 45) && ('.' == 46) && ('/' == 47) && ('0' == 48) \
+	&& ('1' == 49) && ('2' == 50) && ('3' == 51) && ('4' == 52) \
+	&& ('5' == 53) && ('6' == 54) && ('7' == 55) && ('8' == 56) \
+	&& ('9' == 57) && (':' == 58) && (';' == 59) && ('<' == 60) \
+	&& ('=' == 61) && ('>' == 62) && ('?' == 63) && ('A' == 65) \
+	&& ('B' == 66) && ('C' == 67) && ('D' == 68) && ('E' == 69) \
+	&& ('F' == 70) && ('G' == 71) && ('H' == 72) && ('I' == 73) \
+	&& ('J' == 74) && ('K' == 75) && ('L' == 76) && ('M' == 77) \
+	&& ('N' == 78) && ('O' == 79) && ('P' == 80) && ('Q' == 81) \
+	&& ('R' == 82) && ('S' == 83) && ('T' == 84) && ('U' == 85) \
+	&& ('V' == 86) && ('W' == 87) && ('X' == 88) && ('Y' == 89) \
+	&& ('Z' == 90) && ('[' == 91) && ('\\' == 92) && (']' == 93) \
+	&& ('^' == 94) && ('_' == 95) && ('a' == 97) && ('b' == 98) \
+	&& ('c' == 99) && ('d' == 100) && ('e' == 101) && ('f' == 102) \
+	&& ('g' == 103) && ('h' == 104) && ('i' == 105) && ('j' == 106) \
+	&& ('k' == 107) && ('l' == 108) && ('m' == 109) && ('n' == 110) \
+	&& ('o' == 111) && ('p' == 112) && ('q' == 113) && ('r' == 114) \
+	&& ('s' == 115) && ('t' == 116) && ('u' == 117) && ('v' == 118) \
+	&& ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \
+	&& ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))
 /* The character set is not based on ISO-646.  */
 #error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
@@ -42,7 +42,7 @@
 #line 5 "input_tokens.gperf"
 struct g_strtoken_t { char *name; g_StringToken_t index; };
 
-#define TOTAL_KEYWORDS 49
+#define TOTAL_KEYWORDS 51
 #define MIN_WORD_LENGTH 1
 #define MAX_WORD_LENGTH 20
 #define MIN_HASH_VALUE 1
@@ -71,11 +71,11 @@ hash(register const char *str, register unsigned int len)
 		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
 		88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
 		88, 88, 88, 88, 88, 5,  88, 0,  0,  5,
-		25, 30, 25, 20, 36, 11, 88, 0,  10, 35,
-		30, 88, 10, 88, 45, 15, 0,  50, 88, 50,
+		25, 35, 35, 20, 36, 11, 88, 0,  10, 60,
+		30, 88, 10, 88, 45, 15, 0,  20, 88, 50,
 		40, 88, 88, 88, 88, 88, 88, 88
 	};
-	register int hval = len;
+	register unsigned int hval = len;
 
 	switch (hval)
 	{
@@ -89,19 +89,8 @@ hash(register const char *str, register unsigned int len)
 	return hval;
 }
 
-#ifdef __GNUC__
-__inline
-#ifdef __GNUC_STDC_INLINE__
-__attribute__ ((__gnu_inline__))
-#endif
-#endif
-/**
- * @brief in_word_set
- * @param[in] str
- * @param[in] len
- * @return
- */
-const struct g_strtoken_t *in_word_set(register const char *str, register unsigned int len)
+const struct g_strtoken_t *
+in_word_set(register const char *str, register unsigned int len)
 {
 	static const struct g_strtoken_t wordlist[] =
 	{
@@ -138,9 +127,11 @@ const struct g_strtoken_t *in_word_set(register const char *str, register unsign
 		{ "cl_guid", 7},
 #line 12 "input_tokens.gperf"
 		{ "ip", 5},
-		{ "" }, { "" },
-#line 28 "input_tokens.gperf"
-		{ "f", 21},
+#line 56 "input_tokens.gperf"
+		{ "auth", 49},
+		{ "" },
+#line 57 "input_tokens.gperf"
+		{ "authId", 50},
 #line 41 "input_tokens.gperf"
 		{ "bd", 34},
 #line 55 "input_tokens.gperf"
@@ -158,8 +149,8 @@ const struct g_strtoken_t *in_word_set(register const char *str, register unsign
 #line 13 "input_tokens.gperf"
 		{ "name", 6},
 		{ "" },
-#line 29 "input_tokens.gperf"
-		{ "m", 22},
+#line 28 "input_tokens.gperf"
+		{ "f", 21},
 #line 53 "input_tokens.gperf"
 		{ "gs", 46},
 		{ "" },
@@ -190,14 +181,12 @@ const struct g_strtoken_t *in_word_set(register const char *str, register unsign
 		{ "xp", 24},
 #line 51 "input_tokens.gperf"
 		{ "hs", 44},
-		{ "" },
-#line 20 "input_tokens.gperf"
-		{ "pmove_msec", 13},
-#line 19 "input_tokens.gperf"
-		{ "pmove_fixed", 12},
+		{ "" }, { "" }, { "" },
 #line 32 "input_tokens.gperf"
 		{ "dn", 25},
-		{ "" }, { "" }, { "" }, { "" },
+		{ "" }, { "" }, { "" },
+#line 29 "input_tokens.gperf"
+		{ "m", 22},
 #line 36 "input_tokens.gperf"
 		{ "lw", 29},
 #line 42 "input_tokens.gperf"
@@ -205,29 +194,33 @@ const struct g_strtoken_t *in_word_set(register const char *str, register unsign
 		{ "" }, { "" }, { "" },
 #line 38 "input_tokens.gperf"
 		{ "sw", 31},
+		{ "" }, { "" }, { "" }, { "" },
+#line 34 "input_tokens.gperf"
+		{ "dr", 27},
 #line 50 "input_tokens.gperf"
 		{ "he", 43},
 		{ "" }, { "" }, { "" },
-#line 34 "input_tokens.gperf"
-		{ "dr", 27},
-		{ "" }, { "" }, { "" }, { "" },
 #line 40 "input_tokens.gperf"
 		{ "rn", 33},
+		{ "" }, { "" },
+#line 20 "input_tokens.gperf"
+		{ "pmove_msec", 13},
+#line 19 "input_tokens.gperf"
+		{ "pmove_fixed", 12},
+#line 54 "input_tokens.gperf"
+		{ "mu", 47},
 #line 39 "input_tokens.gperf"
 		{ "ref", 32},
 		{ "" }, { "" }, { "" },
 #line 17 "input_tokens.gperf"
-		{ "respawn", 10},
-		{ "" }, { "" }, { "" }, { "" },
-#line 54 "input_tokens.gperf"
-		{ "mu", 47}
+		{ "respawn", 10}
 	};
 
 	if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
 	{
-		register int key = hash(str, len);
+		unsigned int key = hash(str, len);
 
-		if (key <= MAX_HASH_VALUE && key >= 0)
+		if (key <= MAX_HASH_VALUE)
 		{
 			register const char *s = wordlist[key].name;
 
@@ -239,4 +232,4 @@ const struct g_strtoken_t *in_word_set(register const char *str, register unsign
 	}
 	return 0;
 }
-#line 56 "input_tokens.gperf"
+#line 58 "input_tokens.gperf"

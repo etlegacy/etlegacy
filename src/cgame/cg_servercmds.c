@@ -3010,6 +3010,7 @@ void CG_AddToBannerPrint(const char *str)
 #define ROCKANDROLL_HASH    146207
 #define BP_HASH             25102
 #define XPGAIN_HASH         78572
+#define AUTH_SHOW_MSG_HASH  92849
 // -----------
 
 /**
@@ -3019,6 +3020,7 @@ void CG_AddToBannerPrint(const char *str)
 static void CG_ServerCommand(void)
 {
 	const char *cmd;
+	long       hash = 0;
 
 	cmd = CG_Argv(0);
 
@@ -3028,7 +3030,8 @@ static void CG_ServerCommand(void)
 		return;
 	}
 
-	switch (BG_StringHashValue(cmd))
+	hash = BG_StringHashValue(cmd);
+	switch (hash)
 	{
 	case ENTNFO_HASH:                     // "entnfo"
 	{
@@ -3595,8 +3598,17 @@ static void CG_ServerCommand(void)
 		CG_AddPMItemXP(Q_atoi(CG_Argv(2)) < 0, va("%s", CG_Argv(2)), va("%s", CG_Argv(3)), cgs.media.skillPics[Q_atoi(CG_Argv(1))]);
 		break;
 	}
+#ifdef LEGACY_AUTH
+	case AUTH_SHOW_MSG_HASH: // "authMsg"
+	{
+		CG_DPrintf(S_COLOR_CYAN "Authentication request from the server: %s\n", CG_Argv(1));
+		CG_PriorityCenterPrint(CG_Argv(1), AUTH_SHOW_MSG_HASH);
+		cg.centerPrintTime = cg.time + 20000;
+		break;
+	}
+#endif
 	default:
-		CG_Printf("Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(cmd));
+		CG_Printf("Unknown client game command: %s [%lu]\n", cmd, hash);
 		break;
 	}
 }

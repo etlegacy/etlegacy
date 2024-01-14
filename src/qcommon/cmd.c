@@ -585,8 +585,9 @@ void Cmd_Args_Sanitize(void)
  *
  * @param[in] text_in
  * @param[in] ignoreQuotes
+ * @param[in] checkComments check for comments
  */
-static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
+static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes, qboolean checkComments)
 {
 	const char *text;
 	char       *textOut;
@@ -624,7 +625,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 			}
 
 			// skip // comments
-			if (text[0] == '/' && text[1] == '/')
+			if (checkComments && text[0] == '/' && text[1] == '/')
 			{
 				// lets us put 'http://' in commandlines
 				if (text == text_in || (text > text_in && text[-1] != ':'))
@@ -634,7 +635,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 			}
 
 			// skip /* */ comments
-			if (text[0] == '/' && text[1] == '*')
+			if (checkComments && text[0] == '/' && text[1] == '*')
 			{
 				while (*text && (text[0] != '*' || text[1] != '/'))
 				{
@@ -692,7 +693,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 				break;
 			}
 
-			if (point1 == '/' && text[1] == '/')
+			if (checkComments && point1 == '/' && text[1] == '/')
 			{
 				// lets us put 'http://' in commandlines
 				if (text == text_in || (text > text_in && text[-1] != ':'))
@@ -702,7 +703,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 			}
 
 			// skip /* */ comments
-			if (point1 == '/' && text[1] == '*')
+			if (checkComments && point1 == '/' && text[1] == '*')
 			{
 				break;
 			}
@@ -729,7 +730,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
  */
 void Cmd_TokenizeString(const char *text)
 {
-	Cmd_TokenizeString2(text, qfalse);
+	Cmd_TokenizeString2(text, qfalse, qtrue);
 }
 
 /**
@@ -738,7 +739,12 @@ void Cmd_TokenizeString(const char *text)
  */
 void Cmd_TokenizeStringIgnoreQuotes(const char *text_in)
 {
-	Cmd_TokenizeString2(text_in, qtrue);
+	Cmd_TokenizeString2(text_in, qtrue, qtrue);
+}
+
+void Cmd_TokenizeStringIncludeComments(const char *text)
+{
+	Cmd_TokenizeString2(text, qfalse, qfalse);
 }
 
 /**

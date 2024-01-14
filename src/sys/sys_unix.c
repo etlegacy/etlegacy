@@ -82,7 +82,7 @@ char *Sys_DefaultHomePath(void)
 		}
 
 #ifdef __ANDROID__
-		if(SDL_AndroidGetExternalStorageState())
+		if (SDL_AndroidGetExternalStorageState())
 		{
 			Q_strncpyz(homePath, SDL_AndroidGetExternalStoragePath(), sizeof(homePath));
 			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
@@ -177,19 +177,19 @@ int Sys_Milliseconds(void)
 	{
 		// Most systems with clock_gettime will have CLOCK_MONOTONIC
 		#ifdef CLOCK_MONOTONIC
-        if (clock_gettime(CLOCK_MONOTONIC, &time) == 0)
-        {
-        	clockid = CLOCK_MONOTONIC;
-        }
-        else
-        {
-        	Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC failed. Using CLOCK_REALTIME instead.\n");
-        }
-        #else
-        Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC not found. Using CLOCK_REALTIME instead.\n");
+		if (clock_gettime(CLOCK_MONOTONIC, &time) == 0)
+		{
+			clockid = CLOCK_MONOTONIC;
+		}
+		else
+		{
+			Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC failed. Using CLOCK_REALTIME instead.\n");
+		}
+		#else
+		Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC not found. Using CLOCK_REALTIME instead.\n");
 		#endif
 
-		if(clock_gettime(clockid, &time) == -1)
+		if (clock_gettime(clockid, &time) == -1)
 		{
 			Sys_Error("Sys_Milliseconds: clock_gettime failed: errno %d\n", errno);
 		}
@@ -200,7 +200,7 @@ int Sys_Milliseconds(void)
 
 	clock_gettime(clockid, &time);
 
-	curtime = ( (time.tv_sec * 1000) + (time.tv_nsec / 1000000) ) - sys_timeBase;
+	curtime = ((time.tv_sec * 1000) + (time.tv_nsec / 1000000)) - sys_timeBase;
 
 	return curtime;
 }
@@ -221,7 +221,7 @@ void Sys_SnapVector(float *v)
  * @retval qfalse on failure
  * @retval qtrue  on success
  */
-qboolean Sys_RandomBytes(byte *string, int len)
+qboolean Sys_RandomBytes(void *bytes, int len)
 {
 	FILE *fp;
 
@@ -233,7 +233,7 @@ qboolean Sys_RandomBytes(byte *string, int len)
 
 	setvbuf(fp, NULL, _IONBF, 0); // don't buffer reads from /dev/urandom
 
-	if (fread(string, sizeof(byte), len, fp) != len)
+	if (fread(bytes, sizeof(byte), len, fp) != len)
 	{
 		fclose(fp);
 		return qfalse;

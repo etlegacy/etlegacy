@@ -37,15 +37,63 @@
 
 typedef enum
 {
-	DL_CONTINUE,
-	DL_DONE,
-	DL_FAILED
-} dlStatus_t;
+	REQUEST_NOK   = 0,
+	REQUEST_OK    = BIT(0),
+	REQUEST_ABORT = BIT(1)
+} webRequestResult;
 
-int DL_BeginDownload(const char *localName, const char *remoteName);
-char *DL_GetString(const char *url);
-dlStatus_t DL_DownloadLoop(void);
+struct webRequest_s;
 
+typedef void (*webCallbackFunc_t)(struct webRequest_s *request, webRequestResult requestResult);
+typedef int (*webProgressCallbackFunc_t)(struct webRequest_s *request, double current, double total);
+
+typedef struct webUploadData_s
+{
+	FILE *fileHandle;
+	byte *buffer;
+	size_t bufferSize;
+	size_t bufferPos;
+	char contentType[MAX_QPATH];
+} webUploadData_t;
+
+typedef struct
+{
+	char name[MAX_STRING_CHARS];
+	size_t requestLength;
+
+	FILE *fileHandle;
+
+	size_t bufferSize;
+	size_t bufferPos;
+	byte *buffer;
+} webRequestData_t;
+
+typedef struct webRequest_s
+{
+	unsigned int id;
+	char url[MAX_STRING_CHARS];
+
+	qboolean upload;
+	qboolean abort;
+
+	webCallbackFunc_t complete_clb;
+	webProgressCallbackFunc_t progress_clb;
+
+	webRequestData_t data;
+	void *userData;
+	webUploadData_t *uploadData;
+
+	long httpCode;
+
+	void *rawHandle;
+	void *cList;
+	struct webRequest_s *next;
+} webRequest_t;
+
+unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress);
+unsigned int Web_CreateRequest(const char *url, const char *authToken, webUploadData_t *upload, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress);
+void DL_DownloadLoop(void);
+void DL_AbortAll(qboolean block, qboolean allowContinue);
 void DL_Shutdown(void);
 
 /**
