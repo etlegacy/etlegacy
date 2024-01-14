@@ -616,7 +616,7 @@ qboolean Auth_Server_AuthenticationRequired(void)
 {
 	if (sv_auth->integer == 2)
 	{
-		return qtrue;
+		return Auth_Active();
 	}
 
 	return qfalse;
@@ -649,10 +649,17 @@ void Auth_Client_FetchResponse(const char *challenge)
 
 qboolean Auth_Active(void)
 {
+#ifdef DEDICATED
+	if (*authData.authToken && *auth_server->string)
+	{
+		return qtrue;
+	}
+#else
 	if (*authData.authToken && *authData.username && *auth_server->string)
 	{
 		return qtrue;
 	}
+#endif
 	return qfalse;
 }
 
