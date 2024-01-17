@@ -362,6 +362,7 @@ typedef struct
 typedef struct tempBan_s
 {
 	netadr_t adr;
+	char guid[MAX_GUID_LENGTH + 1];
 	int endtime;
 } tempBan_t;
 
@@ -391,7 +392,7 @@ typedef struct
 	challenge_t challenges[MAX_CHALLENGES];     ///< to prevent invalid IPs from connecting
 	receipt_t infoReceipts[MAX_INFO_RECEIPTS];
 	netadr_t redirectAddress;                   ///< for rcon return messages
-	tempBan_t tempBanAddresses[MAX_TEMPBAN_ADDRESSES];
+	tempBan_t tempBans[MAX_TEMPBAN_ADDRESSES];
 
 	int sampleTimes[SERVER_PERFORMANCECOUNTER_SAMPLES];
 	int currentSampleIndex;
@@ -596,8 +597,8 @@ int SV_SendQueuedMessages(void);
 
 // sv_ccmds.c
 void SV_Heartbeat_f(void);
-qboolean SV_TempBanIsBanned(netadr_t address);
-void SV_TempBanNetAddress(netadr_t address, int length);
+qboolean SV_TempBanIsBanned(netadr_t address, char *guid);
+void SV_TempBan(client_t *client, int length);
 void SV_UptimeReset(void);
 
 // sv_snapshot.c

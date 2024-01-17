@@ -60,7 +60,7 @@ void SV_GetChallenge(netadr_t from)
 	int         oldestTime;
 	challenge_t *challenge;
 
-	if (SV_TempBanIsBanned(from))
+	if (SV_TempBanIsBanned(from, NULL))
 	{
 		NET_OutOfBandPrint(NS_SERVER, from, "print\n%s\n", sv_tempbanmessage->string);
 		return;
@@ -267,6 +267,8 @@ static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
  */
 static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 {
+	char *guid;
+
 	// FIXME: add some logging in for admins? we only do developer prints when a client is filtered
 
 	// inspect what we get as userinfo
@@ -281,7 +283,9 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 		return qtrue;
 	}
 
-	if (SV_TempBanIsBanned(from))
+	guid = Info_ValueForKey(userinfo, "cl_guid");
+
+	if (SV_TempBanIsBanned(from, guid))
 	{
 		NET_OutOfBandPrint(NS_SERVER, from, "print\n%s\n", sv_tempbanmessage->string);
 		Com_DPrintf("    rejected connect with banned client\n");
