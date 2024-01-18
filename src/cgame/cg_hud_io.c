@@ -42,9 +42,10 @@
 
 typedef struct
 {
-	qboolean invalid;               //< file is just plain invalid
-	qboolean calcAnchors;           //< added in version 2
-	qboolean replaceNumberByName;   //< added in version 3
+	qboolean invalid;                                   //< file is just plain invalid
+	qboolean calcAnchors;                               //< added in version 2
+	qboolean replaceNumberByName;                       //< added in version 3
+	char numberToNameTableReminder[MAXHUDS][MAX_QPATH]; //< added in version 3
 } hudFileUpgrades_t;
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
@@ -1267,6 +1268,16 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 	if (name && *name)
 	{
 		Q_strncpyz(tmpHud->name, name, MAX_QPATH);
+
+		if (upgr->replaceNumberByName)
+		{
+			int index = Q_ReadIntValueJson(hud, "number");
+
+			if (index > 0 && index < MAXHUDS)
+			{
+				Q_strncpyz(upgr->numberToNameTableReminder[index], name, MAX_QPATH);
+			}
+		}
 	}
 	else
 	{
@@ -1305,6 +1316,19 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		}
 
 		parentHud = CG_GetHudByName(tmpHud->parentname);
+
+		if (upgr->replaceNumberByName)
+		{
+			if (!parentHud)
+			{
+				int index = Q_atoi(tmpHud->parentname);
+
+				if (index > 0 && index < MAXHUDS)
+				{
+					parentHud = CG_GetHudByName(upgr->numberToNameTableReminder[index]);
+				}
+			}
+		}
 
 		if (parentHud)
 		{

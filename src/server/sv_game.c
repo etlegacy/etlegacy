@@ -160,11 +160,13 @@ void SV_GameDropClient(int clientNum, const char *reason, int length)
 	{
 		return;
 	}
-	SV_DropClient(svs.clients + clientNum, reason);
+
 	if (length)
 	{
-		SV_TempBanNetAddress(svs.clients[clientNum].netchan.remoteAddress, length);
+		SV_TempBan(svs.clients + clientNum, length);
 	}
+
+	SV_DropClient(svs.clients + clientNum, reason);
 }
 
 /**

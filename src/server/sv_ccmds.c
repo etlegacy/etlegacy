@@ -407,54 +407,58 @@ static void SV_MapRestart_f(void)
 //===============================================================
 
 /**
- * @brief SV_TempBanNetAddress
- * @param[in] address
+ * @brief SV_TempBan
+ * @param[in] client
  * @param[in] length
  */
-void SV_TempBanNetAddress(netadr_t address, int length)
+void SV_TempBan(client_t *client, int length)
 {
 	int i;
 	int oldesttime = 0;
-	int oldest     = -1;
+	int slot       = -1;
 
 	for (i = 0; i < MAX_TEMPBAN_ADDRESSES; i++)
 	{
-		if (!svs.tempBanAddresses[i].endtime || svs.tempBanAddresses[i].endtime < svs.time)
+		if (!svs.tempBans[i].endtime || svs.tempBans[i].endtime < svs.time)
 		{
-			// found a free slot
-			svs.tempBanAddresses[i].adr     = address;
-			svs.tempBanAddresses[i].endtime = svs.time + (length * 1000);
-
-			return;
+			slot = i;
+			break;
 		}
 		else
 		{
-			if (oldest == -1 || oldesttime > svs.tempBanAddresses[i].endtime)
+			if (slot == -1 || oldesttime > svs.tempBans[i].endtime)
 			{
-				oldesttime = svs.tempBanAddresses[i].endtime;
-				oldest     = i;
+				oldesttime = svs.tempBans[i].endtime;
+				slot     = i;
 			}
 		}
 	}
 
-	svs.tempBanAddresses[oldest].adr     = address;
-	svs.tempBanAddresses[oldest].endtime = svs.time + length;
+	svs.tempBans[slot].adr     = client->netchan.remoteAddress;
+	svs.tempBans[slot].endtime = svs.time + length * 1000;
+	Q_strcpy(svs.tempBans[slot].guid, client->guid);
 }
 
 /**
  * @brief SV_TempBanIsBanned
  * @param[in] address
+ * @param[in] guid
  * @return
  */
-qboolean SV_TempBanIsBanned(netadr_t address)
+qboolean SV_TempBanIsBanned(netadr_t address, char *guid)
 {
 	int i;
 
 	for ( i = 0; i < MAX_TEMPBAN_ADDRESSES; i++ )
 	{
-		if (svs.tempBanAddresses[i].endtime && svs.tempBanAddresses[i].endtime > svs.time)
+		if (svs.tempBans[i].endtime && svs.tempBans[i].endtime > svs.time)
 		{
-			if (NET_CompareBaseAdr(address, svs.tempBanAddresses[i].adr))
+			if (NET_CompareBaseAdr(address, svs.tempBans[i].adr))
+			{
+				return qtrue;
+			}
+
+			if (guid && *guid && !Q_stricmp(svs.tempBans[i].guid, guid))
 			{
 				return qtrue;
 			}
@@ -462,6 +466,21 @@ qboolean SV_TempBanIsBanned(netadr_t address)
 	}
 
 	return qfalse;
+}
+
+/**
+ * @brief SV_TempBanClear_f
+ */
+static void SV_TempBanClear_f(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_TEMPBAN_ADDRESSES; i++)
+	{
+		svs.tempBans[i].endtime = 0;
+	}
+
+	Com_Printf("Cleared all temporary bans.\n");
 }
 
 /**
@@ -725,6 +744,7 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("map", SV_Map_f, "Loads a specific map.", SV_CompleteMapName);
 	Cmd_AddCommand("devmap", SV_Map_f, "Loads a specific map in developer mode.", SV_CompleteMapName);
 	Cmd_AddCommand("killserver", SV_KillServer_f, "Kills the server.");
+	Cmd_AddCommand("cleartempbans", SV_TempBanClear_f, "Clears the temporary ban list.");
 	if (com_dedicated->integer)
 	{
 		Cmd_AddCommand("say", SV_ConSay_f, "Prints console messages on dedicated servers.");
