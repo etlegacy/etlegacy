@@ -67,8 +67,8 @@ void Omnibot_strncpy(char *dest, const char *source, int count)
 
 //////////////////////////////////////////////////////////////////////////
 
-bool              g_IsOmnibotLoaded = false;
-Bot_EngineFuncs_t g_BotFunctions    = { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+bool              g_IsOmnibotLoaded     = false;
+Bot_EngineFuncs_t g_BotFunctions        = { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 IEngineInterface  *g_InterfaceFunctions = 0;
 std::string       g_OmnibotLibPath;
 
@@ -226,12 +226,12 @@ void OB_ShowLastError(const char *context)
 #ifdef WIN32
 	char *pMessage = 0;
 	FormatMessage(
-	    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-	    0,
-	    GetLastError(),
-	    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-	    (LPTSTR)&pMessage,
-	    0, 0);
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		0,
+		GetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&pMessage,
+		0, 0);
 
 	if (pMessage)
 	{
@@ -311,8 +311,8 @@ eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *pat
 #else
 
 #ifdef __APPLE__
-#define POSTFIX ".dylib"
-#define SUFFIX
+#define POSTFIX ".so"
+#define SUFFIX "_mac"
 #else
 #define POSTFIX ".so"
 #ifdef __x86_64__
