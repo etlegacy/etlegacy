@@ -381,7 +381,7 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	trap_LinkEntity(ent);
 
 	// Let the person being revived know about it
-	trap_SendServerCommand(traceEnt - g_entities, va("cp \"[lon]You have been revived by [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(ent->client->sess.sessionTeam, ent->client->sess.rank)->names, ent->client->pers.netname));
+	trap_SendServerCommand(traceEnt - g_entities, va("cp \"[lon]You have been revived by [lof]%s^7!\"", ent->client->pers.netname));
 
 	traceEnt->props_frame_state = ent->s.number;
 
@@ -461,7 +461,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 		}
 
 		// Let medics know who they just revived
-		trap_SendServerCommand(ent - g_entities, va("cp \"[lon]You have revived [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(traceEnt->client->sess.sessionTeam, traceEnt->client->sess.rank)->names, traceEnt->client->pers.netname));
+		trap_SendServerCommand(ent - g_entities, va("cp \"[lon]You have revived [lof]%s^7!\"", traceEnt->client->pers.netname));
 
 		G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
