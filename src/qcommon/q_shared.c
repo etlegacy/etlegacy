@@ -1919,7 +1919,7 @@ char *Q_TrimStr(char *string)
 		len = (size_t) (p - s + 1);
 	}
 
-	return (s == start) ? s : memmove(start, s, len);
+	return (s == start) ? s : memmove(start, s, len + 1);
 }
 
 /**
