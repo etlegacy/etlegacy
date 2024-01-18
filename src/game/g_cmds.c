@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -421,12 +421,12 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 
 	if (cl->ps.eFlags & EF_READY)
 	{
-		miscFlags |= 1;
+		miscFlags |= BIT(0);
 	}
 
 	if (g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT)
 	{
-		miscFlags |= 2;
+		miscFlags |= BIT(1);
 	}
 
 	Com_sprintf(entry,
@@ -634,7 +634,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	char     name[MAX_TOKEN_CHARS], amt[MAX_TOKEN_CHARS];
 	weapon_t weapon;
 	qboolean give_all;
-	int      amount = 0;
+	int      amount    = 0;
 	qboolean hasAmount = qfalse;
 	int      cnum;
 	int      i = 1;
@@ -2911,11 +2911,11 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 	if (mode == SAY_TEAM || mode == SAY_BUDDY)
 	{
-		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i %s", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, customChat));
+		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, customChat));
 	}
 	else
 	{
-		CPx(other - g_entities, va("%s %d %d %s %f %i %s", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, customChat));
+		CPx(other - g_entities, va("%s %d %d %s %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, customChat));
 	}
 }
 
@@ -4954,11 +4954,10 @@ void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
+	char name[MAX_NAME_LENGTH];
 	int cnum;
 
-	trap_Argv(0, cmd, sizeof(cmd));
-	trap_Argv(1, name, sizeof(cmd));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!*name)
 	{
@@ -4985,11 +4984,10 @@ void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char cmd[MAX_TOKEN_CHARS], name[MAX_NAME_LENGTH];
+	char name[MAX_NAME_LENGTH];
 	int cnum;
 
-	trap_Argv(0, cmd, sizeof(cmd));
-	trap_Argv(1, name, sizeof(cmd));
+	trap_Argv(1, name, sizeof(name));
 
 	if (!*name)
 	{

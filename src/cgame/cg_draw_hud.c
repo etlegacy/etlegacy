@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -238,18 +238,17 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 }
 
 /**
- * @brief CG_GetHudByNumber
- * @param[in] number
+ * @brief CG_GetHudByIndex
+ * @param[in] index
  * @return found hud
  */
 hudStucture_t *CG_GetHudByNumber(int number)
 {
-	int           i;
-	hudStucture_t *hud;
+	int i;
 
 	for (i = 0; i < hudData.count; i++)
 	{
-		hud = hudData.list[i];
+		hudStucture_t *hud = hudData.list[i];
 
 		if (hud->hudnumber == number)
 		{
@@ -267,12 +266,11 @@ hudStucture_t *CG_GetHudByNumber(int number)
  */
 hudStucture_t *CG_GetHudByName(const char *name)
 {
-	int           i;
-	hudStucture_t *hud;
+	int i;
 
 	for (i = 0; i < hudData.count; i++)
 	{
-		hud = hudData.list[i];
+		hudStucture_t *hud = hudData.list[i];
 
 		if (!Q_stricmp(hud->name, name))
 		{
@@ -3403,7 +3401,7 @@ void CG_Hud_Setup(void)
 	// Hud0 aka the Default hud
 	CG_setDefaultHudValues(hud0);
 
-	strcpy(hud0->name, "ETmain");
+	Q_strncpyz(hud0->name, DEFAULTHUD, sizeof(hud0->name));
 
 	// generate the default hud anchors
 	CG_GenerateHudAnchors(hud0);
@@ -3503,34 +3501,45 @@ static ID_INLINE void CG_HUD_LoadByName(const char *name)
  */
 void CG_SetHud(void)
 {
-	static int modCount = -1;
+	static int modCount  = -1;
+	static int shoutcast = -1;
 
-	if (cg_altHud.modificationCount == modCount && hudData.active && hudData.active->active)
+	vmCvar_t hudCvar = cgs.clientinfo[cg.clientNum].shoutcaster ? cg_shoutcasterHud : cg_altHud;
+
+	if (hudCvar.modificationCount == modCount
+	    && hudData.active
+	    && hudData.active->active
+	    && cgs.clientinfo[cg.clientNum].shoutcaster == shoutcast)
 	{
 		return;
 	}
 
-	if (Q_isanumber(cg_altHud.string))
-	{
-		hudData.active = CG_GetHudByNumber(cg_altHud.integer);
-	}
-	else
-	{
-		hudData.active = CG_GetHudByName(cg_altHud.string);
-
-		if (!hudData.active)
-		{
-			CG_HUD_LoadByName(cg_altHud.string);
-		}
-	}
-
-	modCount = cg_altHud.modificationCount;
+	hudData.active = CG_GetHudByName(hudCvar.string);
 
 	if (!hudData.active)
 	{
-		Com_Printf(S_COLOR_YELLOW "WARNING hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
+		if (!hudData.active)
+		{
+			CG_HUD_LoadByName(hudCvar.string);
+		}
+
+		if (!hudData.active)
+		{
+			if (Q_isanumber(hudCvar.string))
+			{
+				hudData.active = CG_GetHudByNumber(hudCvar.integer);
+			}
+		}
+	}
+
+	modCount  = hudCvar.modificationCount;
+	shoutcast = cgs.clientinfo[cg.clientNum].shoutcaster;
+
+	if (!hudData.active)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING hud %s is not available, defaulting to 0\n", hudCvar.string);
 		hudData.active = CG_GetHudByNumber(0);
-		trap_Cvar_Set("cg_altHud", "0");
+		trap_Cvar_Set(shoutcast ? "cg_shoutcasterHud" : "cg_altHud", "0");
 		return;
 	}
 
@@ -3544,7 +3553,7 @@ void CG_SetHud(void)
 	}
 	else
 	{
-		Com_Printf("Setting hud to: %i\n", hudData.active->hudnumber);
+		Com_Printf("Setting hud to index: %i\n", hudData.active->hudnumber);
 	}
 }
 

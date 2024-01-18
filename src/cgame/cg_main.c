@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -306,6 +306,7 @@ vmCvar_t cg_logFile;
 vmCvar_t cg_countryflags; // GeoIP
 
 vmCvar_t cg_altHud;
+vmCvar_t cg_shoutcasterHud;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
@@ -580,6 +581,7 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_countryflags,             "cg_countryflags",             "1",           CVAR_ARCHIVE,                 0 }, // GeoIP
 	{ &cg_altHud,                   "cg_altHud",                   "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
+	{ &cg_shoutcasterHud,           "cg_shoutcasterHud",           "Shoutcaster", CVAR_ARCHIVE,                 0 },
 	{ &cg_tracers,                  "cg_tracers",                  "1",           CVAR_ARCHIVE,                 0 }, // Draw tracers
 	{ &cg_fireteamNameMaxChars,     "cg_fireteamNameMaxChars",     "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,        "cg_fireteamNameAlign",        "0",           CVAR_ARCHIVE,                 0 },
@@ -1846,6 +1848,9 @@ static void CG_RegisterGraphics(void)
 	cgs.media.objectiveBothDEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_de");
 	cgs.media.objectiveSimpleIcon    = trap_R_RegisterShader("simpleicons/objective");
 	cgs.media.readyShader            = trap_R_RegisterShader("sprites/ready");
+#ifdef LEGACY_AUTH
+	cgs.media.authenticatedShader = trap_R_RegisterShader("sprites/authenticated");
+#endif
 
 	//cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion"); // unused FIXME: remove from shader def
 

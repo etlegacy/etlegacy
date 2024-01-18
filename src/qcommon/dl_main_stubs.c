@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -36,20 +36,7 @@
  */
 
 #include "dl_public.h"
-
-/**
- * @brief DL_InitDownload
- */
-void DL_InitDownload(void)
-{
-}
-
-/**
- * @brief DL_Shutdown
- */
-void DL_Shutdown(void)
-{
-}
+#include "q_shared.h"
 
 /**
  * @brief DL_BeginDownload
@@ -57,17 +44,12 @@ void DL_Shutdown(void)
  * @param remoteName - unused
  * @return
  */
-int DL_BeginDownload(const char *localName, const char *remoteName)
+unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
-	return 1;
+	return 0;
 }
 
-/**
- * @brief DL_GetString
- * @param url - unused
- * @return
- */
-char *DL_GetString(const char *url)
+unsigned int Web_CreateRequest(const char *url, const char *authToken, webUploadData_t *upload, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
 	return 0;
 }
@@ -78,7 +60,17 @@ char *DL_GetString(const char *url)
  *
  * @note Maybe this should be CL_DL_DownloadLoop
  */
-dlStatus_t DL_DownloadLoop(void)
+void DL_DownloadLoop(void)
 {
-	return DL_DONE;
+}
+
+void DL_AbortAll(qboolean block, qboolean allowContinue)
+{
+}
+
+/**
+ * @brief DL_Shutdown
+ */
+void DL_Shutdown(void)
+{
 }

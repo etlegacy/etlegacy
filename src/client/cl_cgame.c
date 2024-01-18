@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -332,6 +332,7 @@ qboolean CL_GetServerCommand(int serverCommandNumber)
 	char        *cmd;
 	static char bigConfigString[BIG_INFO_STRING];
 	int         argc;
+	qboolean    commentCommand = qfalse;
 
 	// if we have irretrievably lost a reliable command, drop the connection
 	if (serverCommandNumber <= clc.serverCommandSequence - MAX_RELIABLE_COMMANDS)
@@ -361,7 +362,15 @@ qboolean CL_GetServerCommand(int serverCommandNumber)
 	}
 
 rescan:
-	Cmd_TokenizeString(s);
+	if (s && s[0] == '/' && s[1] == '/')
+	{
+		commentCommand = qtrue;
+		Cmd_TokenizeString(s + 2);
+	}
+	else
+	{
+		Cmd_TokenizeString(s);
+	}
 	cmd  = Cmd_Argv(0);
 	argc = Cmd_Argc();
 
@@ -376,6 +385,22 @@ rescan:
 		{
 			Com_Error(ERR_SERVERDISCONNECT, "Server disconnected");
 		}
+	}
+
+	if (commentCommand)
+	{
+		if (!strcmp(cmd, "auth-srv"))
+		{
+			if (clc.demo.playing)
+			{
+				return qfalse;
+			}
+#ifdef LEGACY_AUTH
+			Auth_Server_Command_f();
+#endif
+		}
+
+		return qfalse;
 	}
 
 	if (!strcmp(cmd, "bcs0"))

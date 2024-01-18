@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -44,9 +44,9 @@
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 /**
- * @brief DL_ContainerizePath target destination path to container if needed
+ * @brief Com_ContainerizePath target destination path to container if needed
  */
-const char *DL_ContainerizePath(const char *temp, const char *dest)
+const char *Com_ContainerizePath(const char *temp, const char *dest)
 {
 	char       hash[41] = { 0 };
 	const char *pakname = FS_Basename(dest);
@@ -195,6 +195,115 @@ void Com_BeginDownload(const char *localName, const char *remoteName)
 #endif
 }
 
+static void Com_WebDownloadComplete(webRequest_t *request, webRequestResult requestResult)
+{
+	const char *to_ospath;
+
+	Cvar_Set("ui_dl_running", "0");
+
+	if (!requestResult)
+	{
+		if (dld.bWWWDlDisconnected)
+		{
+			// in a connected download, we'd tell the server about failure and wait for a reply
+			// but in this case we can't get anything from server
+			// if we just reconnect it's likely we'll get the same disconnected download message, and error out again
+			// this may happen for a regular dl or an auto update
+			const char *error = va("Download failure while getting '%s'\n", dld.downloadName);    // get the msg before clearing structs
+
+			dld.bWWWDlDisconnected = qfalse; // need clearing structs before ERR_DROP, or it goes into endless reload
+			Com_ClearStaticDownload();
+			Com_Error(ERR_DROP, "%s", error);
+		}
+		else
+		{
+			// see CL_ParseDownload, same abort strategy
+			Com_Printf("Download failure while getting '%s'\n", dld.downloadName);
+			Com_AddReliableCommand("wwwdl fail");
+			dld.bWWWDlAborting = qtrue;
+		}
+		return;
+	}
+
+	// taken from CL_ParseDownload
+	// we work with OS paths
+
+	dld.download = 0;
+
+	if (dld.systemDownload)
+	{
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
+	}
+	else
+	{
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"),
+		                           Com_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
+#else
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
+#endif
+	}
+
+	//FIXME: This can get hit more than once for a file..
+	if (FS_FileInPathExists(dld.downloadTempName))
+	{
+		if (Sys_Rename(dld.downloadTempName, to_ospath))
+		{
+			FS_CopyFile(dld.downloadTempName, to_ospath);
+
+			if (Sys_Remove(dld.downloadTempName) != 0)
+			{
+				Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", dld.downloadTempName);
+			}
+		}
+	}
+	else
+	{
+		Com_DPrintf("Downloaded file does not exist (anymore?) '%s'\n", dld.downloadTempName);
+	}
+
+	*dld.downloadTempName = *dld.downloadName = 0;
+	Cvar_Set("cl_downloadName", "");
+	if (dld.bWWWDlDisconnected)
+	{
+		// for an auto-update in disconnected mode, we'll be spawning the setup in CL_DownloadsComplete
+		if (!autoupdate.updateStarted && !dld.noReconnect)
+		{
+			// reconnect to the server, which might send us to a new disconnected download
+			Cbuf_ExecuteText(EXEC_APPEND, "reconnect\n");
+		}
+	}
+	else
+	{
+		Com_AddReliableCommand("wwwdl done");
+		// tracking potential web redirects leading us to wrong checksum - only works in connected mode
+		if (strlen(dld.redirectedList) + strlen(dld.originalDownloadName) + 1 >= sizeof(dld.redirectedList))
+		{
+			// just to be safe
+			Com_Printf("ERROR: redirectedList overflow (%s)\n", dld.redirectedList);
+		}
+		else
+		{
+			strcat(dld.redirectedList, "@");
+			strcat(dld.redirectedList, dld.originalDownloadName);
+		}
+	}
+
+	dld.bWWWDl = qfalse;
+	Com_NextDownload();
+}
+
+static int Com_WebDownloadProgress(webRequest_t *request, double now, double total)
+{
+	Cvar_SetValue("cl_downloadCount", (float)now);
+	return 0;
+}
+
+unsigned int Com_BeginWebDownload(const char *localName, const char *remoteName)
+{
+	return DL_BeginDownload(localName, remoteName, &Com_WebDownloadComplete, &Com_WebDownloadProgress);
+}
+
 static void checkDownloadName(char *filename)
 {
 	int i;
@@ -217,51 +326,50 @@ void Com_NextDownload(void)
 	char *s;
 	char *remoteName, *localName;
 
-	// We are looking to start a download here
-	if (*dld.downloadList)
+	if (!(*dld.downloadList))
 	{
-		s = dld.downloadList;
-
-		// format is:
-		//  @remotename@localname@remotename@localname, etc.
-
-		if (*s == '@')
-		{
-			s++;
-		}
-		remoteName = s;
-
-		if ((s = strchr(s, '@')) == NULL)
-		{
-			Com_DownloadsComplete();
-			return;
-		}
-
-		*s++      = 0;
-		localName = s;
-		if ((s = strchr(s, '@')) != NULL)
-		{
-			*s++ = 0;
-		}
-		else
-		{
-			s = localName + strlen(localName);    // point at the nul byte
-
-		}
-
-		checkDownloadName(remoteName);
-
-		Com_BeginDownload(localName, remoteName);
-
-		dld.downloadRestart = qtrue;
-
-		// move over the rest
-		memmove(dld.downloadList, s, strlen(s) + 1);
-
+		Com_DownloadsComplete();
 		return;
 	}
 
-	Com_DownloadsComplete();
+	// We are looking to start a download here
+	s = dld.downloadList;
+
+	// format is:
+	//  @remotename@localname@remotename@localname, etc.
+
+	if (*s == '@')
+	{
+		s++;
+	}
+	remoteName = s;
+
+	if ((s = strchr(s, '@')) == NULL)
+	{
+		Com_DownloadsComplete();
+		return;
+	}
+
+	*s++      = 0;
+	localName = s;
+	if ((s = strchr(s, '@')) != NULL)
+	{
+		*s++ = 0;
+	}
+	else
+	{
+		s = localName + strlen(localName);    // point at the nul byte
+
+	}
+
+	checkDownloadName(remoteName);
+
+	Com_BeginDownload(localName, remoteName);
+
+	dld.downloadRestart = qtrue;
+
+	// move over the rest
+	memmove(dld.downloadList, s, strlen(s) + 1);
 }
 
 /**
@@ -272,7 +380,7 @@ void Com_InitDownloads(void)
 {
 	char missingFiles[1024] = { '\0' };
 
-	// init some of the www dl data
+	// init the www dl data
 	dld.bWWWDl             = qfalse;
 	dld.bWWWDlAborting     = qfalse;
 	dld.bWWWDlDisconnected = qfalse;
@@ -317,127 +425,30 @@ void Com_InitDownloads(void)
 }
 
 /**
- * @brief Com_WWWDownload
+ * @brief Com_WebDownloadLoop
  */
-void Com_WWWDownload(void)
+void Com_WebDownloadLoop(void)
 {
-	const char      *to_ospath;
-	dlStatus_t      ret;
 	static qboolean bAbort = qfalse;
+
+	DL_DownloadLoop();
 
 	if (dld.bWWWDlAborting)
 	{
 		if (!bAbort)
 		{
-			Com_DPrintf("Com_WWWDownload: WWWDlAborting\n");
+			Com_DPrintf("Com_WebDownloadLoop: WWWDlAborting\n");
 			bAbort = qtrue;
+			DL_AbortAll(qfalse, qfalse);
 		}
 		return;
 	}
 	if (bAbort)
 	{
-		Com_DPrintf("Com_WWWDownload: WWWDlAborting done\n");
+		DL_AbortAll(qtrue, qtrue);
+		Com_DPrintf("Com_WebDownloadLoop: WWWDlAborting done\n");
 		bAbort = qfalse;
 	}
-
-	ret = DL_DownloadLoop();
-
-	if (ret == DL_CONTINUE)
-	{
-		return;
-	}
-	else if (ret == DL_DONE)
-	{
-		// taken from CL_ParseDownload
-		// we work with OS paths
-
-		dld.download = 0;
-
-		if (dld.systemDownload)
-		{
-			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
-		}
-		else
-		{
-#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"),
-			                           DL_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
-#else
-			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
-#endif
-		}
-
-		//FIXME: This can get hit more than once for a file..
-		if (FS_FileInPathExists(dld.downloadTempName))
-		{
-			if (Sys_Rename(dld.downloadTempName, to_ospath))
-			{
-				FS_CopyFile(dld.downloadTempName, to_ospath);
-
-				if (Sys_Remove(dld.downloadTempName) != 0)
-				{
-					Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", dld.downloadTempName);
-				}
-			}
-		}
-		else
-		{
-			Com_DPrintf("Downloaded file does not exist (anymore?) '%s'\n", dld.downloadTempName);
-		}
-
-		*dld.downloadTempName = *dld.downloadName = 0;
-		Cvar_Set("cl_downloadName", "");
-		if (dld.bWWWDlDisconnected)
-		{
-			// for an auto-update in disconnected mode, we'll be spawning the setup in CL_DownloadsComplete
-			if (!autoupdate.updateStarted && !dld.noReconnect)
-			{
-				// reconnect to the server, which might send us to a new disconnected download
-				Cbuf_ExecuteText(EXEC_APPEND, "reconnect\n");
-			}
-		}
-		else
-		{
-			Com_AddReliableCommand("wwwdl done");
-			// tracking potential web redirects leading us to wrong checksum - only works in connected mode
-			if (strlen(dld.redirectedList) + strlen(dld.originalDownloadName) + 1 >= sizeof(dld.redirectedList))
-			{
-				// just to be safe
-				Com_Printf("ERROR: redirectedList overflow (%s)\n", dld.redirectedList);
-			}
-			else
-			{
-				strcat(dld.redirectedList, "@");
-				strcat(dld.redirectedList, dld.originalDownloadName);
-			}
-		}
-	}
-	else
-	{
-		if (dld.bWWWDlDisconnected)
-		{
-			// in a connected download, we'd tell the server about failure and wait for a reply
-			// but in this case we can't get anything from server
-			// if we just reconnect it's likely we'll get the same disconnected download message, and error out again
-			// this may happen for a regular dl or an auto update
-			const char *error = va("Download failure while getting '%s'\n", dld.downloadName);    // get the msg before clearing structs
-
-			dld.bWWWDlDisconnected = qfalse; // need clearing structs before ERR_DROP, or it goes into endless reload
-			Com_ClearStaticDownload();
-			Com_Error(ERR_DROP, "%s", error);
-		}
-		else
-		{
-			// see CL_ParseDownload, same abort strategy
-			Com_Printf("Download failure while getting '%s'\n", dld.downloadName);
-			Com_AddReliableCommand("wwwdl fail");
-			dld.bWWWDlAborting = qtrue;
-		}
-		return;
-	}
-
-	dld.bWWWDl = qfalse;
-	Com_NextDownload();
 }
 
 /**
@@ -486,7 +497,7 @@ static void Com_SetupDownloadRaw(const char *remote, const char *path, const cha
 	Q_strncpyz(dld.downloadName, va("%s/%s", remote, filename), sizeof(dld.downloadName));
 	Q_strncpyz(dld.downloadTempName, tempName, sizeof(dld.downloadTempName));
 
-	if (!DL_BeginDownload(dld.downloadTempName, dld.downloadName))
+	if (!Com_BeginWebDownload(dld.downloadTempName, dld.downloadName))
 	{
 		dld.bWWWDlAborting = qtrue;
 		Com_Error(ERR_DROP, "Could not download file: \"%s\"", dld.downloadName);
@@ -509,7 +520,7 @@ static void Com_SetupDownload(const char *remote, const char *filename)
 	Q_strncpyz(dld.downloadName, va("%s/%s", remote, filename), sizeof(dld.downloadName));
 	Q_strncpyz(dld.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), va("%s" TMP_FILE_EXTENSION, filename)), sizeof(dld.downloadTempName));
 
-	if (!DL_BeginDownload(dld.downloadTempName, dld.downloadName))
+	if (!Com_BeginWebDownload(dld.downloadTempName, dld.downloadName))
 	{
 		dld.bWWWDlAborting = qtrue;
 		Com_Error(ERR_DROP, "Could not download file: \"%s\"", dld.downloadName);

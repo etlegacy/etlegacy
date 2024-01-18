@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -559,12 +559,6 @@ void CL_StopRecord_f(void);
 void CL_DemoRun(void);
 void CL_DemoInit(void);
 void CL_DemoShutdown(void);
-
-// cl_auth
-#ifdef LEGACY_AUTH
-void CL_AuthInit(void);
-void CL_AuthShutdown(void);
-#endif
 
 // cl_input
 

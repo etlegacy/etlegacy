@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -62,12 +62,14 @@ A normal server packet will look like:
  * @param[in] to
  * @param[in] msg
  */
-static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, msg_t *msg)
+static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clientSnapshot_t *to, msg_t *msg)
 {
-	entityState_t *oldent = NULL, *newent = NULL;
-	int           oldindex = 0, newindex = 0;
-	int           oldnum, newnum;
-	int           from_num_entities;
+	entityState_t  *oldent = NULL, *newent = NULL;
+	entityShared_t *oldSharedent = NULL, *newSharedent = NULL;
+	int            oldindex = 0, newindex = 0;
+	int            oldnum, newnum;
+	int            from_num_entities;
+	int            messageSize;
 
 	// generate the delta update
 	if (!from)
@@ -87,8 +89,9 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 		}
 		else
 		{
-			newent = &svs.snapshotEntities[(to->first_entity + newindex) % svs.numSnapshotEntities];
-			newnum = newent->number;
+			newent       = &svs.snapshotEntities[(to->first_entity + newindex) % svs.numSnapshotEntities];
+			newSharedent = &svs.snapshotSharedEntities[(to->first_entity + newindex) % svs.numSnapshotEntities];
+			newnum       = newent->number;
 		}
 
 		if (oldindex >= from_num_entities)
@@ -97,16 +100,24 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 		}
 		else
 		{
-			oldent = &svs.snapshotEntities[(from->first_entity + oldindex) % svs.numSnapshotEntities];
-			oldnum = oldent->number;
+			oldent       = &svs.snapshotEntities[(from->first_entity + oldindex) % svs.numSnapshotEntities];
+			oldSharedent = &svs.snapshotSharedEntities[(from->first_entity + oldindex) % svs.numSnapshotEntities];
+			oldnum       = oldent->number;
 		}
 
 		if (newnum == oldnum)
 		{
+			messageSize = msg->cursize;
+
 			// delta update from old position
 			// because the force parm is qfalse, this will not result
 			// in any bytes being emited if the entity has not changed at all
 			MSG_WriteDeltaEntity(msg, oldent, newent, qfalse);
+			if (client->ettvClient && messageSize != msg->cursize)
+			{
+				MSG_ETTV_WriteDeltaSharedEntity(msg, oldSharedent, newSharedent, qtrue);
+			}
+
 			oldindex++;
 			newindex++;
 			continue;
@@ -121,6 +132,10 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 
 			// this is a new entity, send it from the baseline
 			MSG_WriteDeltaEntity(msg, &sv.svEntities[newnum].baseline, newent, qtrue);
+			if (client->ettvClient)
+			{
+				MSG_ETTV_WriteDeltaSharedEntity(msg, &sv.svEntities[newnum].baselineShared, newSharedent, qtrue);
+			}
 			newindex++;
 			continue;
 		}
@@ -129,12 +144,70 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 		{
 			// the old entity isn't present in the new message
 			MSG_WriteDeltaEntity(msg, oldent, NULL, qtrue);
+			if (client->ettvClient)
+			{
+				MSG_ETTV_WriteDeltaSharedEntity(msg, oldSharedent, NULL, qtrue);
+			}
 			oldindex++;
 			continue;
 		}
 	}
 
 	MSG_WriteBits(msg, (MAX_GENTITIES - 1), GENTITYNUM_BITS);       // end of packetentities
+}
+
+/**
+* @brief Writes delta updates of playerstates to the message.
+* @param[in] client
+* @param[in] msg
+*/
+static void SV_ETTV_EmitPlayerstates(client_t *client, msg_t *msg)
+{
+	ettvClientSnapshot_t *frame, *oldframe = NULL;
+	client_t             *cl;
+	int                  i;
+
+	frame = client->ettvClientFrame[client->netchan.outgoingSequence & PACKET_MASK];
+
+	if (client->deltaMessage <= 0 || client->state != CS_ACTIVE)
+	{
+		Com_DPrintf("%s: Non-Delta request from client. (deltaMessage: %d, state: %d)\n", client->name, client->deltaMessage, client->state);
+	}
+	else if (client->netchan.outgoingSequence - client->deltaMessage < (PACKET_BACKUP - 3))
+	{
+		oldframe = client->ettvClientFrame[client->deltaMessage & PACKET_MASK];;
+	}
+
+	MSG_WriteByte(msg, svc_ettv_playerstates);
+
+	for (i = 0; i < sv_maxclients->integer; i++)
+	{
+		cl             = &svs.clients[i];
+		frame[i].valid = qfalse;
+
+		if (cl->state == CS_ACTIVE && client != cl)
+		{
+			// clientnum
+			MSG_WriteByte(msg, i);
+
+			frame[i].ps    = *SV_GameClientNum(i);
+			frame[i].valid = qtrue;
+
+			if (!oldframe || !oldframe[i].valid)
+			{
+				MSG_WriteDeltaPlayerstate(msg, NULL, &frame[i].ps);
+				//Com_DPrintf(">>> [CL %d] Sent PS baseline\n", i);
+			}
+			else
+			{
+				MSG_WriteDeltaPlayerstate(msg, &oldframe[i].ps, &frame[i].ps);
+				//Com_DPrintf(">>> [CL %d] Sent PS delta\n", i);
+			}
+		}
+	}
+
+	// end of svc_ettv_playerstates
+	MSG_WriteByte(msg, 255);
 }
 
 /**
@@ -227,7 +300,12 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	//}
 
 	// delta encode the entities
-	SV_EmitPacketEntities(oldframe, frame, msg);
+	SV_EmitPacketEntities(client, oldframe, frame, msg);
+
+	if (client->ettvClient && client->state > CS_ZOMBIE)
+	{
+		SV_ETTV_EmitPlayerstates(client, msg);
+	}
 
 	// padding for rate debugging
 	if (sv_padPackets->integer)
@@ -345,7 +423,7 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
  * @param[in] eNums
  * @param[in] portal
  */
-static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums, qboolean portal)
+static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums, qboolean portal)
 #else
 /**
  * @brief SV_AddEntitiesVisibleFromPoint
@@ -353,7 +431,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
  * @param[in,out] frame
  * @param[in] eNums
  */
-static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums)
+static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums)
 #endif
 {
 	int            e, i;
@@ -389,9 +467,9 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 	if (playerEnt->r.svFlags & SVF_SELF_PORTAL)
 	{
 #ifdef FEATURE_ANTICHEAT
-		SV_AddEntitiesVisibleFromPoint(playerEnt->s.origin2, frame, eNums, qtrue); // FIXME: portal qtrue?!
+		SV_AddEntitiesVisibleFromPoint(cl, playerEnt->s.origin2, frame, eNums, qtrue); // FIXME: portal qtrue?!
 #else
-		SV_AddEntitiesVisibleFromPoint(playerEnt->s.origin2, frame, eNums);
+		SV_AddEntitiesVisibleFromPoint(cl, playerEnt->s.origin2, frame, eNums);
 #endif
 	}
 
@@ -444,6 +522,12 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 		// broadcast entities are always sent
 		if (ent->r.svFlags & SVF_BROADCAST)
+		{
+			SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+			continue;
+		}
+
+		if (cl->ettvClient)
 		{
 			SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
 			continue;
@@ -619,9 +703,9 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		if (ent->r.svFlags & SVF_PORTAL)
 		{
 #ifdef FEATURE_ANTICHEAT
-			SV_AddEntitiesVisibleFromPoint(ent->s.origin2, frame, eNums, qtrue /*localClient*/);
+			SV_AddEntitiesVisibleFromPoint(cl, ent->s.origin2, frame, eNums, qtrue /*localClient*/);
 #else
-			SV_AddEntitiesVisibleFromPoint(ent->s.origin2, frame, eNums /*, qtrue, localClient*/);
+			SV_AddEntitiesVisibleFromPoint(cl, ent->s.origin2, frame, eNums /*, qtrue, localClient*/);
 #endif
 		}
 
@@ -648,6 +732,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 	int                     i;
 	sharedEntity_t          *ent;
 	entityState_t           *state;
+	entityShared_t          *stateShared;
 	svEntity_t              *svEnt;
 	sharedEntity_t          *clent;
 	int                     clientNum;
@@ -711,9 +796,9 @@ static void SV_BuildClientSnapshot(client_t *client)
 	// add all the entities directly visible to the eye, which
 	// may include portal entities that merge other viewpoints
 #ifdef FEATURE_ANTICHEAT
-	SV_AddEntitiesVisibleFromPoint(org, frame, &entityNumbers, qfalse /*client->netchan.remoteAddress.type == NA_LOOPBACK*/);
+	SV_AddEntitiesVisibleFromPoint(client, org, frame, &entityNumbers, qfalse /*client->netchan.remoteAddress.type == NA_LOOPBACK*/);
 #else
-	SV_AddEntitiesVisibleFromPoint(org, frame, &entityNumbers /*, qfalse, client->netchan.remoteAddress.type == NA_LOOPBACK*/);
+	SV_AddEntitiesVisibleFromPoint(client, org, frame, &entityNumbers /*, qfalse, client->netchan.remoteAddress.type == NA_LOOPBACK*/);
 #endif
 
 	// if there were portals visible, there may be out of order entities
@@ -738,6 +823,12 @@ static void SV_BuildClientSnapshot(client_t *client)
 		ent    = SV_GentityNum(entityNumbers.snapshotEntities[i]);
 		state  = &svs.snapshotEntities[svs.nextSnapshotEntities % svs.numSnapshotEntities];
 		*state = ent->s;
+
+		if (client->ettvClient)
+		{
+			stateShared  = &svs.snapshotSharedEntities[svs.nextSnapshotEntities % svs.numSnapshotEntities];
+			*stateShared = ent->r;
+		}
 
 #ifdef FEATURE_ANTICHEAT
 		if (sv_wh_active->integer && entityNumbers.snapshotEntities[i] < sv_maxclients->integer)
@@ -802,6 +893,8 @@ int SV_RateMsec(client_t *client)
 			rate = sv_minRate->integer;
 		}
 	}
+
+	rate = MIN(90000, MAX(1000, rate));
 
 	if (client->netchan.remoteAddress.type == NA_IP6)
 	{

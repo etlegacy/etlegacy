@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -678,6 +678,12 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 	else
 	{
 		trap_SendServerCommand(entityNum, va("invitation -1"));
+
+		if (COM_BitCheck(g_entities[otherEntityNum].client->sess.ignoreClients, entityNum))
+		{
+			return;
+		}
+
 		trap_SendServerCommand(otherEntityNum, va("invitation %i", entityNum));
 		g_entities[otherEntityNum].client->pers.invitationClient  = entityNum;
 		g_entities[otherEntityNum].client->pers.invitationEndTime = level.time + 20500;
@@ -860,6 +866,12 @@ void G_ApplyToFireTeam(int entityNum, int fireteamNum)
 	//G_AddClientToFireteam( entityNum, ft->joinOrder[0] );
 
 	trap_SendServerCommand(entityNum, va("application -1"));
+
+	if (COM_BitCheck(leader->client->sess.ignoreClients, entityNum))
+	{
+		return;
+	}
+
 	trap_SendServerCommand(leader - g_entities, va("application %i", entityNum));
 	leader->client->pers.applicationClient  = entityNum;
 	leader->client->pers.applicationEndTime = level.time + 20000;
@@ -922,6 +934,12 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 	}
 
 	trap_SendServerCommand(entityNum, va("proposition -1"));
+
+	if (COM_BitCheck(leader->client->sess.ignoreClients, entityNum))
+	{
+		return;
+	}
+
 	trap_SendServerCommand(leader - g_entities, va("proposition %i %i", otherEntityNum, entityNum));
 	leader->client->pers.propositionClient  = otherEntityNum;
 	leader->client->pers.propositionClient2 = entityNum;

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -49,6 +49,8 @@
 #define PRODUCT_URL             "https://www.etlegacy.com"
 #define CLIENT_WINDOW_TITLE     PRODUCT_LABEL
 #define CLIENT_WINDOW_MIN_TITLE PRODUCT_LABEL
+
+#define ETL_VERSION(major, minor, patch, commit) ((unsigned int)((((major) & 255) << 24) ^ (((minor) & 255) << 16) ^ (((patch) & 255) << 8) ^ ((commit) & 255)))
 
 #define Q3_VERSION              PRODUCT_LABEL " " ETLEGACY_VERSION
 
@@ -437,6 +439,10 @@ typedef int clipHandle_t;
 #else
 #define BIT(x)              (1U << (x))
 #endif
+#endif
+
+#ifndef BITS
+#define BITS(x) (BIT((x)) - 1)
 #endif
 
 #define SIZE_KB(bytes) ((bytes) >> 10)
@@ -959,7 +965,7 @@ void Com_TruncateLongString(char *buffer, const char *s);
 // key / value info strings
 char *Info_ValueForKey(const char *s, const char *key);
 
-void Info_RemoveKey(char *s, const char *key);
+qboolean Info_RemoveKey(char *s, const char *key);
 
 void Info_RemoveKey_big(char *s, const char *key);
 
@@ -1938,10 +1944,21 @@ typedef struct demoPlayInfo_s
  */
 typedef struct userAgent_s
 {
-	int compatible;      ///< is it compatible with the engine? note: this can be flag based in future.
-	char string[64];     ///< holds engine name and version string
-	char version[18];    ///< holds engine version
+	unsigned int compatible;  ///< is it compatible with the engine? note: this can be flag based in future.
+	char string[64];          ///< holds engine name and version string
+	char version[18];         ///< holds engine version
 } userAgent_t;
+
+/**
+* @struct ettvClientSnapshot_s
+* @typedef ettvClientSnapshot_t
+* @brief Playerstates storage for ettv clients
+*/
+typedef struct ettvClientSnapshot_s
+{
+	qboolean valid;    ///< is the playerstate valid for delta compression
+	playerState_t ps;
+} ettvClientSnapshot_t;
 
 void Com_ParseUA(userAgent_t *ua, const char *string);
 

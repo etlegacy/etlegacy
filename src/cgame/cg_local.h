@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -669,6 +669,11 @@ typedef struct clientInfo_s
 
 	int refStatus;
 	int shoutcaster;
+
+#ifdef LEGACY_AUTH
+	char authName[MAX_NAME_LENGTH];
+	unsigned int authId;
+#endif
 
 	bg_character_t *character;
 
@@ -1627,6 +1632,9 @@ typedef struct
 	qhandle_t objectiveBothDEShader;
 	qhandle_t objectiveSimpleIcon;
 	qhandle_t readyShader;
+#ifdef LEGACY_AUTH
+	qhandle_t authenticatedShader;
+#endif
 
 	qhandle_t constructShader;
 	qhandle_t destroyShader;
@@ -2860,6 +2868,7 @@ extern vmCvar_t cg_spawnTimer_set;
 extern vmCvar_t cg_countryflags; ///< GeoIP
 
 extern vmCvar_t cg_altHud;
+extern vmCvar_t cg_shoutcasterHud;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
@@ -4237,6 +4246,8 @@ typedef struct hudStructure_s
 	char name[MAX_QPATH];
 	int hudnumber;
 	int parent;
+	char parentname[MAX_QPATH];
+	qboolean isEditable;
 
 	hudComponent_t compass;
 	hudComponent_t staminabar;
@@ -4306,7 +4317,8 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 24
-#define CURRENT_HUD_JSON_VERSION 2
+#define CURRENT_HUD_JSON_VERSION 3
+#define DEFAULTHUD "ETmain"
 
 typedef struct
 {
@@ -4344,7 +4356,7 @@ hudComponent_t *CG_FindComponentByName(hudStucture_t *hud, const char *name);
 const char *CG_FindComponentName(hudStucture_t *hud, hudComponent_t *comp);
 hudStucture_t *CG_ReadSingleHudJsonFile(const char *filename);
 qboolean CG_WriteHudsToFile();
-qboolean CG_TryReadHudFromFile(const char *filename);
+qboolean CG_TryReadHudFromFile(const char *filename, qboolean isEditable);
 void CG_ReadHudsFromFile(void);
 
 // cg_draw_hud.c
@@ -4353,7 +4365,6 @@ hudStucture_t *CG_GetFreeHud();
 void CG_RegisterHud(hudStucture_t *hud);
 void CG_CloneHud(hudStucture_t *target, hudStucture_t *source);
 void CG_FreeHud(hudStucture_t *hud);
-int CG_FindFreeHudNumber();
 hudStucture_t *CG_GetHudByNumber(int number);
 hudStucture_t *CG_GetHudByName(const char *name);
 void CG_setDefaultHudValues(hudStucture_t *hud);

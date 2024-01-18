@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -3789,6 +3789,8 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
  * [0]  = names      - rank name
  * [1]  = miniNames  - mini rank name
  * [2]  = soundNames - sound to play on rank promotion
+ * 
+ * @todo cgame only. move ?
  */
 ranktable_t rankTable[2][NUM_EXPERIENCE_LEVELS] =
 {

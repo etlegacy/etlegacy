@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -71,6 +71,7 @@ typedef struct svEntity_s
 	struct svEntity_s *nextEntityInWorldSector;
 
 	entityState_t baseline;             ///< for delta compression of initial sighting
+	entityShared_t baselineShared;
 	int numClusters;                    ///< if -1, use headnode instead
 	int clusternums[MAX_ENT_CLUSTERS];
 	int lastCluster;                    ///< if all the clusters don't fit in clusternums
@@ -279,8 +280,18 @@ typedef struct client_s
 	int protocol; ///< We can access clients protocol any time
 
 	qboolean demoClient; ///< is this a demoClient?
+	qboolean ettvClient;
+	ettvClientSnapshot_t **ettvClientFrame;
 
 	userAgent_t agent;
+
+#ifdef LEGACY_AUTH
+	char login[64];
+	uint32_t loginId;
+	char loginChallenge[64];
+	int loginRequested;
+	login_status_t loginStatus;
+#endif
 } client_t;
 
 //=============================================================================
@@ -318,13 +329,11 @@ typedef struct
 typedef struct
 {
 	netadr_t adr;
-	int challenge;
-	int clientChallenge;    ///< challenge number coming from the client
-	int time;               ///< time the last packet was sent to the autherize server
+	int32_t challenge;
+	int time;               ///< time the last packet was sent to the authorize server
 	int pingTime;           ///< time the challenge response was sent to client
 	int firstTime;          ///< time the adr was first used
 	int firstPing;          ///< Used for min and max ping checks
-	qboolean wasrefused;
 	qboolean connected;
 } challenge_t;
 
@@ -353,6 +362,7 @@ typedef struct
 typedef struct tempBan_s
 {
 	netadr_t adr;
+	char guid[MAX_GUID_LENGTH + 1];
 	int endtime;
 } tempBan_t;
 
@@ -377,11 +387,12 @@ typedef struct
 	int numSnapshotEntities;                    ///< sv_maxclients->integer*PACKET_BACKUP*MAX_PACKET_ENTITIES
 	int nextSnapshotEntities;                   ///< next snapshotEntities to use
 	entityState_t *snapshotEntities;            ///< [numSnapshotEntities]
+	entityShared_t *snapshotSharedEntities;
 	int nextHeartbeatTime;
 	challenge_t challenges[MAX_CHALLENGES];     ///< to prevent invalid IPs from connecting
 	receipt_t infoReceipts[MAX_INFO_RECEIPTS];
 	netadr_t redirectAddress;                   ///< for rcon return messages
-	tempBan_t tempBanAddresses[MAX_TEMPBAN_ADDRESSES];
+	tempBan_t tempBans[MAX_TEMPBAN_ADDRESSES];
 
 	int sampleTimes[SERVER_PERFORMANCECOUNTER_SAMPLES];
 	int currentSampleIndex;
@@ -489,6 +500,9 @@ extern cvar_t *sv_ipMaxClients; ///< limit client connection
 
 extern cvar_t *sv_serverTimeReset;
 
+extern cvar_t *sv_etltv_maxslaves;
+extern cvar_t *sv_etltv_password;
+
 //===========================================================
 
 // sv_demo.c
@@ -583,8 +597,8 @@ int SV_SendQueuedMessages(void);
 
 // sv_ccmds.c
 void SV_Heartbeat_f(void);
-qboolean SV_TempBanIsBanned(netadr_t address);
-void SV_TempBanNetAddress(netadr_t address, int length);
+qboolean SV_TempBanIsBanned(netadr_t address, char *guid);
+void SV_TempBan(client_t *client, int length);
 void SV_UptimeReset(void);
 
 // sv_snapshot.c

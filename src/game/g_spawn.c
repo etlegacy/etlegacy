@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -865,7 +865,7 @@ char *G_AddSpawnVarToken(const char *string)
 	l = strlen(string);
 	if (level.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS)
 	{
-		G_Error("G_AddSpawnVarToken: MAX_SPAWN_VARS\n");
+		G_Error("G_AddSpawnVarToken: MAX_SPAWN_VARS_CHARS\n");
 	}
 
 	dest = level.spawnVarChars + level.numSpawnVarChars;

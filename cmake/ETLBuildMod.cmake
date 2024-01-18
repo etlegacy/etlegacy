@@ -73,6 +73,47 @@ if(NOT ANDROID)
 endif()
 
 #
+# tvgame
+#
+if(NOT ANDROID)
+	add_library(tvgame MODULE ${TVGAME_SRC})
+	target_link_libraries(tvgame tvgame_libraries mod_libraries)
+
+	if(FEATURE_LUASQL AND FEATURE_DBMS)
+		target_compile_definitions(tvgame PRIVATE FEATURE_DBMS FEATURE_LUASQL)
+
+		if(BUNDLED_SQLITE3)
+			target_link_libraries(tvgame bundled_sqlite3)
+		else() # BUNDLED_SQLITE3
+			find_package(SQLite3 REQUIRED)
+			target_link_libraries(tvgame ${SQLITE3_LIBRARY})
+			target_include_directories(tvgame PUBLIC ${SQLITE3_INCLUDE_DIR})
+		endif()
+
+		FILE(GLOB LUASQL_SRC
+			"src/luasql/luasql.c"
+			"src/luasql/luasql.h"
+			"src/luasql/ls_sqlite3.c"
+		)
+		set(TVGAME_SRC ${TVGAME_SRC} ${LUASQL_SRC})
+	endif()
+
+	set_target_properties(tvgame
+		PROPERTIES
+		PREFIX ""
+		C_STANDARD 90
+		OUTPUT_NAME "tvgame${LIB_SUFFIX}${ARCH}"
+		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+		RUNTIME_OUTPUT_DIRECTORY "${MODNAME}"
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+	)
+	target_compile_definitions(tvgame PRIVATE GAMEDLL=1 MODLIB=1)
+endif()
+
+#
 # ui
 #
 add_library(ui MODULE ${UI_SRC})
@@ -135,13 +176,13 @@ endif()
 # install bins of cgame, ui and qgame
 if(NOT ANDROID)
 	if(BUILD_MOD_PK3)
-		install(TARGETS qagame
+		install(TARGETS qagame tvgame
 			RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
 			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
 		)
 	else()
-		install(TARGETS cgame qagame ui
+		install(TARGETS cgame qagame tvgame ui
 			RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
 			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"

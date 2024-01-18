@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -160,11 +160,13 @@ void SV_GameDropClient(int clientNum, const char *reason, int length)
 	{
 		return;
 	}
-	SV_DropClient(svs.clients + clientNum, reason);
+
 	if (length)
 	{
-		SV_TempBanNetAddress(svs.clients[clientNum].netchan.remoteAddress, length);
+		SV_TempBan(svs.clients + clientNum, length);
 	}
+
+	SV_DropClient(svs.clients + clientNum, reason);
 }
 
 /**

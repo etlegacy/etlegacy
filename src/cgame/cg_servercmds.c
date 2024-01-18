@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -227,10 +227,6 @@ void CG_ParseServerinfo(void)
 
 	cgs.minclients = Q_atoi(Info_ValueForKey(info, "g_minGameClients")); //  overloaded for ready counts
 
-	cgs.fixedphysics    = Q_atoi(Info_ValueForKey(info, "g_fixedphysics"));
-	cgs.fixedphysicsfps = Q_atoi(Info_ValueForKey(info, "g_fixedphysicsfps"));
-	cgs.pronedelay      = Q_atoi(Info_ValueForKey(info, "g_pronedelay"));
-
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
 }
@@ -353,6 +349,10 @@ void CG_ParseModInfo(void)
 #ifdef FEATURE_MULTIVIEW
 	cgs.mvAllowed = Q_atoi(Info_ValueForKey(info, "MV"));
 #endif
+
+	cgs.fixedphysics    = Q_atoi(Info_ValueForKey(info, "fp"));
+	cgs.fixedphysicsfps = Q_atoi(Info_ValueForKey(info, "fpv"));
+	cgs.pronedelay      = Q_atoi(Info_ValueForKey(info, "pd"));
 }
 
 /**
@@ -3010,6 +3010,7 @@ void CG_AddToBannerPrint(const char *str)
 #define ROCKANDROLL_HASH    146207
 #define BP_HASH             25102
 #define XPGAIN_HASH         78572
+#define AUTH_SHOW_MSG_HASH  92849
 // -----------
 
 /**
@@ -3019,6 +3020,7 @@ void CG_AddToBannerPrint(const char *str)
 static void CG_ServerCommand(void)
 {
 	const char *cmd;
+	long       hash = 0;
 
 	cmd = CG_Argv(0);
 
@@ -3028,7 +3030,8 @@ static void CG_ServerCommand(void)
 		return;
 	}
 
-	switch (BG_StringHashValue(cmd))
+	hash = BG_StringHashValue(cmd);
+	switch (hash)
 	{
 	case ENTNFO_HASH:                     // "entnfo"
 	{
@@ -3595,8 +3598,17 @@ static void CG_ServerCommand(void)
 		CG_AddPMItemXP(Q_atoi(CG_Argv(2)) < 0, va("%s", CG_Argv(2)), va("%s", CG_Argv(3)), cgs.media.skillPics[Q_atoi(CG_Argv(1))]);
 		break;
 	}
+#ifdef LEGACY_AUTH
+	case AUTH_SHOW_MSG_HASH: // "authMsg"
+	{
+		CG_DPrintf(S_COLOR_CYAN "Authentication request from the server: %s\n", CG_Argv(1));
+		CG_PriorityCenterPrint(CG_Argv(1), AUTH_SHOW_MSG_HASH);
+		cg.centerPrintTime = cg.time + 20000;
+		break;
+	}
+#endif
 	default:
-		CG_Printf("Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(cmd));
+		CG_Printf("Unknown client game command: %s [%lu]\n", cmd, hash);
 		break;
 	}
 }

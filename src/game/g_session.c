@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -125,6 +125,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	cJSON_AddNumberToObject(root, "userSpawnPointValue", restart ? client->sess.userSpawnPointValue : 0);
 	cJSON_AddNumberToObject(root, "userMinorSpawnPointValue", restart ? client->sess.userMinorSpawnPointValue : -1);
 	cJSON_AddNumberToObject(root, "uci", client->sess.uci);
+	cJSON_AddNumberToObject(root, "tvflags", client->sess.tvflags);
 
 	// store the clients stats (7) and medals (7)
 	// addition: but only if it isn't a forced map_restart (done by someone on the console)
@@ -346,7 +347,7 @@ void G_ReadSessionData(gclient_t *client)
 		if (campaign)
 		{
 			restoreStats = Q_ReadIntValueJson(campaign, "campaign") == level.currentCampaign
-				        && Q_ReadIntValueJson(campaign, "map") == g_currentCampaignMap.integer;
+			               && Q_ReadIntValueJson(campaign, "map") == g_currentCampaignMap.integer;
 		}
 	}
 
@@ -364,18 +365,18 @@ void G_ReadSessionData(gclient_t *client)
 	client->sess.shoutcaster        = Q_ReadIntValueJson(root, "shoutcaster");
 	client->sess.spec_invite        = Q_ReadIntValueJson(root, "spec_invite");
 	client->sess.spec_team          = Q_ReadIntValueJson(root, "spec_team");
-	
+
 	if (restoreStats)
 	{
-		client->sess.kills              = Q_ReadIntValueJson(root, "kills");
-		client->sess.deaths             = Q_ReadIntValueJson(root, "deaths");
-		client->sess.gibs               = Q_ReadIntValueJson(root, "gibs");
-		client->sess.self_kills         = Q_ReadIntValueJson(root, "self_kills");
-		client->sess.team_kills         = Q_ReadIntValueJson(root, "team_kills");
-		client->sess.team_gibs          = Q_ReadIntValueJson(root, "team_gibs");
-		client->sess.time_axis          = Q_ReadIntValueJson(root, "time_axis");
-		client->sess.time_allies        = Q_ReadIntValueJson(root, "time_allies");
-		client->sess.time_played        = Q_ReadIntValueJson(root, "time_played");
+		client->sess.kills       = Q_ReadIntValueJson(root, "kills");
+		client->sess.deaths      = Q_ReadIntValueJson(root, "deaths");
+		client->sess.gibs        = Q_ReadIntValueJson(root, "gibs");
+		client->sess.self_kills  = Q_ReadIntValueJson(root, "self_kills");
+		client->sess.team_kills  = Q_ReadIntValueJson(root, "team_kills");
+		client->sess.team_gibs   = Q_ReadIntValueJson(root, "team_gibs");
+		client->sess.time_axis   = Q_ReadIntValueJson(root, "time_axis");
+		client->sess.time_allies = Q_ReadIntValueJson(root, "time_allies");
+		client->sess.time_played = Q_ReadIntValueJson(root, "time_played");
 	}
 
 #ifdef FEATURE_RATING
@@ -427,6 +428,7 @@ void G_ReadSessionData(gclient_t *client)
 	client->sess.userSpawnPointValue      = Q_ReadIntValueJson(root, "userSpawnPointValue");
 	client->sess.userMinorSpawnPointValue = Q_ReadIntValueJson(root, "userMinorSpawnPointValue");
 	client->sess.uci                      = Q_ReadIntValueJson(root, "uci");
+	client->sess.tvflags                  = Q_ReadIntValueJson(root, "tvflags");
 
 	// pull and parse weapon stats
 	wstats = cJSON_GetObjectItem(root, "wstats");
@@ -511,6 +513,7 @@ void G_ReadSessionData(gclient_t *client)
 void G_InitSessionData(gclient_t *client, const char *userinfo)
 {
 	clientSession_t *sess = &client->sess;
+	int             protocol;
 
 	// initial team determination
 	sess->sessionTeam = TEAM_SPECTATOR;
@@ -541,6 +544,13 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 	sess->spec_team   = 0;
 
 	sess->uci = 0; // GeoIP
+
+	protocol = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
+
+	if (protocol == ETTV_PROTOCOL_VERSION)
+	{
+		sess->tvflags = g_etltv_flags.integer;
+	}
 
 	G_WriteClientSessionData(client, qfalse);
 }

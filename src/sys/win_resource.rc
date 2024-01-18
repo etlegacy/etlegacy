@@ -115,7 +115,7 @@ BEGIN
 			VALUE "OriginalFilename", "etl.exe"
 			VALUE "ProductName", "ET: Legacy"
 			VALUE "ProductVersion", PRODUCT_VERSION_STR
-			VALUE "LegalCopyright", "2012-2022 ET: Legacy Team"
+			VALUE "LegalCopyright", "2012-2024 ET: Legacy Team"
 		END
 	END
 	BLOCK "VarFileInfo"

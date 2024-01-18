@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -743,7 +743,7 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 		unsigned int i;
 
 		// icon size + 2 extra space
-		i = floor((size * listItem->scaleShader) / CG_Text_Width_Ext(" ", CG_ComputeScale(comp), 0, &cgs.media.limboFont2)) + 2;
+		i = floor((size * abs(listItem->scaleShader)) / CG_Text_Width_Ext(" ", CG_ComputeScale(comp), 0, &cgs.media.limboFont2)) + 2;
 
 		memset(weaponIconSpacing, ' ', sizeof(weaponIconSpacing));
 		weaponIconSpacing[MIN(i, sizeof(weaponIconSpacing) - 1)] = '\0';

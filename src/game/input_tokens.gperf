@@ -53,4 +53,6 @@ g,								45
 gs,								46
 mu,								47
 lsw,							48
+auth,							49
+authId,							50
 %%

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -484,6 +484,29 @@ static qboolean WM_DrawClientScore_Flag(int x, int y, float fade, const clientIn
 	return CG_DrawFlag(x - 3, y - 11, fade, ci->clientNum);
 }
 
+static qboolean WM_DrawClientScore_Authenticated(int x, int y, const clientInfo_t *ci, float fade)
+{
+#ifdef LEGACY_AUTH
+	float alpha[4] = { 1.f, 1.f, 1.f, fade };
+
+	if (!ci->authId)
+	{
+		return qfalse;
+	}
+
+	trap_R_SetColor(alpha);
+
+	// authenticated icon
+	CG_DrawPic(x - 1, y - 9, 10, 10, cgs.media.authenticatedShader);
+
+	trap_R_SetColor(NULL);
+
+	return qtrue;
+#else
+	return qfalse;
+#endif
+}
+
 static int WM_DrawClientScore_PlayerIcons(int x, int y, const clientInfo_t *ci, const score_t *score)
 {
 	int drawnIcons = 0;
@@ -627,6 +650,13 @@ static void WM_DrawClientScore_Spectator(int x, int y, float scaleX, float scale
 		maxchars    -= 2;
 	}
 
+	if (WM_DrawClientScore_Authenticated(x, y, ci, fade))
+	{
+		playerWidth += 12;
+		x           += 12;
+		maxchars    -= 2;
+	}
+
 	// draw name
 	CG_Text_Paint_Ext(x, y, scaleX, scaleY, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	maxchars -= CG_Text_Width_Ext(ci->name, scaleX, 0, FONT_TEXT);
@@ -670,7 +700,7 @@ static void WM_DrawClientScore_Spectator(int x, int y, float scaleX, float scale
 static void WM_DrawClientScore_Player(int x, int y, float scaleX, float scaleY, const clientInfo_t *ci,
                                       const score_t *score, float fade, int rowHeight, int maxchars, qboolean livesleft)
 {
-	int drawnIcons;
+	int drawnIcons  = 0;
 	int playerWidth = 0;
 
 	if (WM_DrawClientScore_Flag(x, y, fade, ci, score, &maxchars))
@@ -680,7 +710,15 @@ static void WM_DrawClientScore_Player(int x, int y, float scaleX, float scaleY, 
 		maxchars    -= 2;
 	}
 
-	drawnIcons   = WM_DrawClientScore_PlayerIcons(x, y, ci, score);
+	if (WM_DrawClientScore_Authenticated(x, y, ci, fade))
+	{
+		playerWidth += 12;
+		x           += 12;
+		maxchars    -= 2;
+		drawnIcons++;
+	}
+
+	drawnIcons  += WM_DrawClientScore_PlayerIcons(x, y, ci, score);
 	playerWidth += drawnIcons * 12;
 	x           += drawnIcons * 12;
 	maxchars    -= drawnIcons * 2;

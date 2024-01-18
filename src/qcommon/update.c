@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -400,7 +400,7 @@ qboolean Com_InitUpdateDownloads(void)
 				// TODO: add file size, so UI can show progress bar
 				//Cvar_SetValue("cl_downloadSize", clc.downloadSize);
 
-				if (!DL_BeginDownload(upd.downloadTempName, upd.downloadName))
+				if (!Com_BeginWebDownload(upd.downloadTempName, upd.downloadName))
 				{
 					Com_Error(ERR_AUTOUPDATE, "Could not download an update file: \"%s\"", upd.downloadName);
 					upd.bWWWDlAborting = qtrue; //TODO: never executed

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -311,7 +311,8 @@ void SV_CreateBaseline(void)
 		svent->s.number = entnum;
 
 		// take current state as baseline
-		sv.svEntities[entnum].baseline = svent->s;
+		sv.svEntities[entnum].baseline       = svent->s;
+		sv.svEntities[entnum].baselineShared = svent->r;
 	}
 }
 
@@ -737,8 +738,9 @@ void SV_SpawnServer(const char *server)
 	FS_ClearPakReferences(0);
 
 	// allocate the snapshot entities on the hunk
-	svs.snapshotEntities     = Hunk_Alloc(sizeof(entityState_t) * svs.numSnapshotEntities, h_high);
-	svs.nextSnapshotEntities = 0;
+	svs.snapshotEntities       = Hunk_Alloc(sizeof(entityState_t) * svs.numSnapshotEntities, h_high);
+	svs.snapshotSharedEntities = Hunk_Alloc(sizeof(entityShared_t) * svs.numSnapshotEntities, h_high);
+	svs.nextSnapshotEntities   = 0;
 
 	// toggle the server bit so clients can detect that a
 	// server has changed
@@ -1054,8 +1056,8 @@ void SV_Init(void)
 	sv_dlRate               = Cvar_Get("sv_dlRate", "100", CVAR_ARCHIVE_ND | CVAR_SERVERINFO);
 	sv_minPing              = Cvar_Get("sv_minPing", "0", CVAR_ARCHIVE_ND | CVAR_SERVERINFO);
 	sv_maxPing              = Cvar_Get("sv_maxPing", "0", CVAR_ARCHIVE_ND | CVAR_SERVERINFO);
-	sv_floodProtect         = Cvar_Get("sv_floodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
-	sv_userInfoFloodProtect = Cvar_Get("sv_userInfoFloodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
+	sv_floodProtect         = Cvar_Get("sv_floodProtect", "1", CVAR_ARCHIVE);
+	sv_userInfoFloodProtect = Cvar_Get("sv_userInfoFloodProtect", "1", CVAR_ARCHIVE);
 	sv_friendlyFire         = Cvar_Get("g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE);
 	sv_maxlives             = Cvar_Get("g_maxlives", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO);
 	sv_needpass             = Cvar_Get("g_needpass", "0", CVAR_SERVERINFO | CVAR_ROM);
@@ -1201,6 +1203,9 @@ void SV_Init(void)
 	sv_ipMaxClients = Cvar_Get("sv_ipMaxClients", "0", CVAR_ARCHIVE);
 
 	sv_serverTimeReset = Cvar_GetAndDescribe("sv_serverTimeReset", "0", CVAR_ARCHIVE_ND, "Reset server time on map change.");
+
+	sv_etltv_maxslaves = Cvar_GetAndDescribe("sv_etltv_maxslaves", "0", CVAR_ARCHIVE_ND, "Number of ettv slaves allowed to connect.");
+	sv_etltv_password  = Cvar_GetAndDescribe("sv_etltv_password", "", CVAR_ARCHIVE_ND, "Password for ettv slaves. Must be set, or no slaves will be able to connect.");
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2983,6 +2983,7 @@ extern skilltable_t skillTable[SK_NUM_SKILLS];
 #define GetSkillTableData(skillIndex) ((skilltable_t *)(&skillTable[skillIndex]))
 
 // Lookup table to find rank table entry
+// TODO: cgame only. move ?
 extern ranktable_t rankTable[2][NUM_EXPERIENCE_LEVELS];
 #define GetRankTableData(team, rankIndex) ((ranktable_t *)(&rankTable[team == TEAM_AXIS ? 0 : 1][rankIndex]))
 

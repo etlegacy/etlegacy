@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -124,6 +124,9 @@ cvar_t *sv_demoTolerant;
 cvar_t *sv_ipMaxClients;
 
 cvar_t *sv_serverTimeReset;
+
+cvar_t *sv_etltv_maxslaves;
+cvar_t *sv_etltv_password;
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -1614,13 +1617,10 @@ void SV_Frame(int msec)
 	}
 
 #ifdef DEDICATED
-	if (svs.download.bWWWDlDisconnected)
+	Com_WebDownloadLoop();
+	if (!com_sv_running->integer)
 	{
-		Com_WWWDownload();
-		if (!com_sv_running->integer)
-		{
-			return;
-		}
+		return;
 	}
 #endif
 	// Running as a server, but no map loaded

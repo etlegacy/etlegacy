@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -375,6 +375,12 @@ void G_refPlayerPut_cmd(gentity_t *ent, team_t team_id)
 	if (team_maxplayers.integer && TeamCount(-1, team_id) >= team_maxplayers.integer)
 	{
 		G_refPrintf(ent, "Sorry, the %s team is already full!", aTeams[team_id]);
+		return;
+	}
+
+	if (player->client->sess.tvflags & 1)
+	{
+		G_refPrintf(ent, "Sorry, this client cannot join %s team!", aTeams[team_id]);
 		return;
 	}
 
@@ -1000,6 +1006,12 @@ void G_refRemoveShoutcaster_cmd(gentity_t *ent)
 	if (!player->client->sess.shoutcaster)
 	{
 		G_refPrintf(ent, "Sorry, %s^7 is not a shoutcaster.", player->client->pers.netname);
+		return;
+	}
+
+	if (player->client->sess.tvflags & 2)
+	{
+		G_refPrintf(ent, "Sorry, cannot remove shoutcaster for %s^7.", player->client->pers.netname);
 		return;
 	}
 

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -293,6 +293,24 @@ void CG_NewClientInfo(int clientNum)
 	v                   = Info_ValueForKey(configstring, "sc");
 	newInfo.shoutcaster = Q_atoi(v);
 
+#ifdef LEGACY_AUTH
+	// auth name
+	v = Info_ValueForKey(configstring, "an");
+	Q_strncpyz(newInfo.authName, v, MAX_NAME_LENGTH);
+
+	// auth id
+	v              = Info_ValueForKey(configstring, "ai");
+	newInfo.authId = Q_atoi(v);
+
+	// clear the center print auth message
+	// FIXME: move the hashes from cg_servercmds.c into a header and maybe change it into an enum?
+	if (*newInfo.authName && newInfo.authId && cg.centerPrintPriority == 92849)
+	{
+		cg.centerPrintPriority = 0;
+		cg.centerPrintTime     = 0;
+	}
+#endif
+
 	// Detect rank/skill changes client side.
 	// Make sure we have some valid clientinfo, otherwise people are thrown
 	// into spectator on map starts.
@@ -459,12 +477,10 @@ void CG_NewClientInfo(int clientNum)
 	{
 		if (newInfo.shoutcaster <= 0)
 		{
-			trap_Cvar_Set("cg_altHud", "ETmain");  // back to default HUD
 			CG_Printf("[cgnotify]^3*** You have been stripped of your shoutcaster status! ***\n");
 		}
 		else
 		{
-			trap_Cvar_Set("cg_altHud", "Shoutcaster");  // switch to shoutcaster hud
 			CG_Printf("[cgnotify]^2*** You have been authorized \"shoutcaster\" status ***\n");
 		}
 

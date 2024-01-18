@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -168,9 +168,9 @@ static panel_button_text_t hudEditorTextTitleFont =
 
 static panel_button_text_t hudEditorTextWarningFont =
 {
-	0.3f,                    0.3f,
-	{ 1.f,                   0.f, 0.f,  1.f },
-	ITEM_TEXTSTYLE_SHADOWED, 0,
+	0.3f,                  0.3f,
+	{ 1.f,                 0.f, 0.f,  1.f },
+	ITEM_TEXTSTYLE_BLINK,  0,
 	&cgs.media.limboFont2,
 };
 
@@ -188,8 +188,8 @@ static panel_button_t hudEditorHudDropdown =
 {
 	NULL,
 	"hudeditor_huds",
-	{ 0,                           HUDEDITOR_SELECTHUD_Y,BUTTON_WIDTH, BUTTON_HEIGHT },
-	{ 0,                           0,         0,            0, 0, 0, 0, 1 },
+	{ 0,                           HUDEDITOR_SELECTHUD_Y,BUTTON_WIDTH * 2.5f, BUTTON_HEIGHT },
+	{ 0,                           0,         0,                   0, 0, 0, 0, 1 },
 	&hudEditorFont_Dropdown,       // font
 	CG_HudEditor_Dropdown_KeyDown, // keyDown
 	CG_HudEditor_HudDropdown_KeyUp,// keyUp
@@ -666,12 +666,12 @@ static panel_button_t hudEditorResetComp =
 static panel_button_t hudEditorWarningLabel =
 {
 	NULL,
-	"CANNOT MODIFY HUD 0",
-	{ 0,                        HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT * 2,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2), BUTTON_HEIGHT },
-	{ 0,                        0,                                                   0,                                                       0, 0, 0, 0, 1 },
-	&hudEditorTextWarningFont,  // font
-	NULL,                       // keyDown
-	NULL,                       // keyUp
+	"CANNOT MODIFY DEFAULT HUDS",
+	{ 0,                         HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT * 2,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2), BUTTON_HEIGHT },
+	{ 0,                         0,                                            0,                                                       0, 0, 0, 0, 1 },
+	&hudEditorTextWarningFont,   // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_HudEditor_SetupTitleText,
 	NULL,
 	0
@@ -705,7 +705,7 @@ static panel_button_t *hudEditor[] =
 	&hudEditorComponentsList,     &hudEditorHudName,
 
 	// Below here all components that should draw on top
-	&hudEditorHudDropdown,        &hudEditorAlignText,               &hudEditorStyleText,
+	&hudEditorAlignText,          &hudEditorStyleText,               &hudEditorHudDropdown,
 	NULL,
 };
 
@@ -718,15 +718,15 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 {
 	hudStucture_t *hud, *hud2;
 
-	if (HUDToDelete == 0)
+	if (HUDToDelete > 0 && !CG_GetHudByNumber(HUDToDelete)->isEditable)
 	{
-		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: can't delete default HUD\n");
+		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: can't delete defaults HUDs\n");
 		return qfalse;
 	}
 
 	if (HUDToDuplicate >= 0)
 	{
-		int num = 1;
+		int hudNumber;
 
 		if (hudData.count == MAXHUDS)
 		{
@@ -734,22 +734,28 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 			return qfalse;
 		}
 
-		num  = CG_FindFreeHudNumber();
-		hud  = CG_GetHudByNumber(HUDToDuplicate);
-		hud2 = CG_GetFreeHud();
+		hud       = CG_GetHudByNumber(HUDToDuplicate);
+		hud2      = CG_GetFreeHud();
+		hudNumber = hud2->hudnumber;
+
 		CG_CloneHud(hud2, hud);
-		hud2->hudnumber = num;
-		hud2->parent    = hud->hudnumber;
+
+		Q_strncpyz(hud2->name, va("%s_copy", hud->name), sizeof(hud2->name));
+		Q_strncpyz(hud2->parentname, hud->name, sizeof(hud2->parentname));
+		hud2->parent     = hud->hudnumber;
+		hud2->hudnumber  = hudNumber;
+		hud2->isEditable = qtrue;
+
 		CG_RegisterHud(hud2);
 
-		hudData.active    = hud2;
-		cg_altHud.integer = hud2->hudnumber;
-		trap_Cvar_Set("cg_altHud", va("%i", hud2->hudnumber));
+		hudData.active = hud2;
+		//cg_altHud.integer = hud2->hudnumber;
+		trap_Cvar_Set("cg_altHud", hud2->name);
 
 		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, hud2->hudnumber);
 	}
 
-	if (HUDToDelete > 0)
+	if (HUDToDelete > 0 && CG_GetHudByNumber(HUDToDelete)->isEditable)
 	{
 		while ((hud = CG_GetHudByNumber(HUDToDelete)))
 		{
@@ -776,7 +782,7 @@ static void CG_HudEditor_SetupTitleText(panel_button_t *button)
 	float textWidth;
 
 	// draw warning label only if HUD 0 is set
-	if (button == &hudEditorWarningLabel && hudData.active->hudnumber)
+	if (button == &hudEditorWarningLabel && hudData.active->isEditable)
 	{
 		return;
 	}
@@ -788,7 +794,7 @@ static void CG_HudEditor_SetupTitleText(panel_button_t *button)
 static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key)
 {
 	// don't modify default HUD
-	if (!hudData.active->hudnumber)
+	if (!hudData.active->isEditable)
 	{
 		return qfalse;
 	}
@@ -854,26 +860,36 @@ static void CG_HudEditor_SetupEditPosition(panel_button_t *button, float totalWi
 static void CG_HudEditor_RenderEditName(panel_button_t *button)
 {
 	float      textWidth, textHeight, totalWidth;
-	const char *label = "Name: ";
+	const char *label = hudData.active->isEditable ? "Name: " : "CLONE IT TO DO MODIFICATION";
 
 	textWidth  = CG_Text_Width_Ext(label, button->font->scalex, 0, button->font->font);
 	textHeight = CG_Text_Height_Ext(label, button->font->scaley, 0, button->font->font);
 	totalWidth = textWidth + button->rect.w;
 
-	CG_HudEditor_SetupEditPosition(button, totalWidth);
+	if (hudData.active->isEditable)
+	{
+		CG_HudEditor_SetupEditPosition(button, totalWidth);
+	}
+	else
+	{
+		button->rect.x = HUDEditorCenterX - (textWidth * 0.5f);
+	}
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + (button->rect.h * 0.5f) + (textHeight / 2),
-	                  button->font->scalex, button->font->scaley, colorWhite, label, 0, 0,
-	                  button->font->style, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + (button->rect.h * 0.5f) + (textHeight * 0.5f),
+	                  button->font->scalex, button->font->scaley, hudData.active->isEditable ? colorWhite : colorRed, label, 0, 0,
+	                  hudData.active->isEditable ? button->font->style : ITEM_TEXTSTYLE_BLINK, button->font->font);
 
-	button->rect.x += textWidth;
-	CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, colorBlack);
+	if (hudData.active->isEditable)
+	{
+		button->rect.x += textWidth;
+		CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, colorBlack);
 
-	button->rect.x += 2; // for spacing
-	button->rect.y -= button->rect.h * 0.5f - (textHeight * 0.5f);
-	BG_PanelButton_RenderEdit(button);
-	button->rect.x -= 2;
-	button->rect.y += button->rect.h * 0.5f - (textHeight * 0.5f);
+		button->rect.x += 2; // for spacing
+		button->rect.y -= button->rect.h * 0.5f - (textHeight * 0.5f);
+		BG_PanelButton_RenderEdit(button);
+		button->rect.x -= 2;
+		button->rect.y += button->rect.h * 0.5f - (textHeight * 0.5f);
+	}
 }
 
 /**
@@ -1022,7 +1038,7 @@ static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int 
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 	// don't modify default HUD
-	if (!hudData.active->hudnumber)
+	if (!hudData.active->isEditable)
 	{
 		return qfalse;
 	}
@@ -1044,7 +1060,7 @@ static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int ke
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
-	if (!hudData.active->hudnumber)
+	if (!hudData.active->isEditable)
 	{
 		return qfalse;
 	}
@@ -1068,7 +1084,7 @@ static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *butto
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 	// don't modify default HUD
-	if (!hudData.active->hudnumber)
+	if (!hudData.active->isEditable)
 	{
 		return qfalse;
 	}
@@ -1091,7 +1107,7 @@ static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, i
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 	// don't modify default HUD
-	if (!hudData.active->hudnumber)
+	if (!hudData.active->isEditable)
 	{
 		return qfalse;
 	}
@@ -1114,7 +1130,7 @@ static qboolean CG_HudEditorAutoAdjust_CheckboxKeyDown(panel_button_t *button, i
 	hudComponent_t *comp = (hudComponent_t *)((char *)hudData.active + hudComponentFields[button->data[1]].offset);
 
 	// don't modify default HUD
-	if (!hudData.active->hudnumber)
+	if (!hudData.active->isEditable)
 	{
 		return qfalse;
 	}
@@ -1254,7 +1270,7 @@ static void CG_HudEditor_UpdateCheckboxStyle(int style)
 */
 static void CG_HudEditor_HudRenderDropdown(panel_button_t *button)
 {
-	const char *labelText  = "Select HUD: ";
+	const char *labelText  = "HUD: ";
 	float      textWidth   = CG_Text_Width_Ext(labelText, 0.3f, 0, button->font->font);
 	float      textHeight  = CG_Text_Height_Ext(labelText, 0.3f, 0, button->font->font);
 	float      totalWidth  = textWidth + button->rect.w;
@@ -1266,7 +1282,7 @@ static void CG_HudEditor_HudRenderDropdown(panel_button_t *button)
 
 	button->rect.x += textWidth;
 	CG_DropdownMainBox(button->rect.x, button->rect.y, button->rect.w, button->rect.h,
-	                   button->font->scalex, button->font->scaley, colorBlack, va("%i", hudData.active->hudnumber),
+	                   button->font->scalex, button->font->scaley, colorBlack, va("%s", hudData.active->name),
 	                   button == BG_PanelButtons_GetFocusButton(), button->font->colour, button->font->style, button->font->font);
 
 	if (button == BG_PanelButtons_GetFocusButton())
@@ -1285,7 +1301,7 @@ static void CG_HudEditor_HudRenderDropdown(panel_button_t *button)
 			}
 
 			y = CG_DropdownBox(button->rect.x, y, button->rect.w, button->rect.h,
-			                   button->font->scalex, button->font->scaley, colorBlack, va("%i", hud->hudnumber), button == BG_PanelButtons_GetFocusButton(),
+			                   button->font->scalex, button->font->scaley, colorBlack, va("%s", hud->name), button == BG_PanelButtons_GetFocusButton(),
 			                   button->font->colour, button->font->style, button->font->font);
 		}
 
@@ -1424,7 +1440,7 @@ static qboolean CG_HudEditor_Dropdown_KeyDown(panel_button_t *button, int key)
 		SOUND_SELECT;
 
 		// don't modify default HUD but allow selecting comp and hud
-		if (hudData.active->hudnumber || button == &hudEditorHudDropdown || button == &hudEditorCompDropdown)
+		if (hudData.active->isEditable || button == &hudEditorHudDropdown || button == &hudEditorCompDropdown)
 		{
 			BG_PanelButtons_SetFocusButton(button);
 			return qtrue;
@@ -1464,8 +1480,8 @@ static qboolean CG_HudEditor_HudDropdown_KeyUp(panel_button_t *button, int key)
 
 				if (BG_CursorInRect(&rect))
 				{
-					trap_Cvar_Set("cg_altHud", va("%i", hud->hudnumber));
-					cg_altHud.integer = hud->hudnumber;
+					trap_Cvar_Set("cg_altHud", hud->name);
+					//cg_altHud.integer = hud->hudnumber;
 					CG_SetHud();
 
 					if (lastFocusComponent)
@@ -1739,7 +1755,7 @@ static void CG_HudEditorRender_Button(panel_button_t *button)
 	qboolean buttonSelected;
 
 	// if default HUD, don't draw some component
-	if (!hudData.active->hudnumber)
+	if (!hudData.active->isEditable)
 	{
 		if (button == &hudEditorSave || button == &hudEditorDelete || button == &hudEditorResetComp)
 		{
@@ -2051,7 +2067,7 @@ static void CG_HudEditorColor_Finish(panel_button_t *button)
 static qboolean CG_HudEditorColor_KeyDown(panel_button_t *button, int key)
 {
 	// don't modify default HUD
-	if (hudData.active->hudnumber && key == K_MOUSE1)
+	if (hudData.active->isEditable && key == K_MOUSE1)
 	{
 		BG_PanelButtons_SetFocusButton(button);
 
@@ -2610,7 +2626,7 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	}
 
 	// don't modify default HUD
-	if (hudData.active->hudnumber && lastFocusComponent && down)
+	if (hudData.active->isEditable && lastFocusComponent && down)
 	{
 		hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
 		qboolean       changeSize;

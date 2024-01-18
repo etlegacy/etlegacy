@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -482,7 +482,7 @@ void Com_Quit_f(void)
 ============================================================================
 COMMAND LINE FUNCTIONS
 
-+ characters seperate the commandLine string into multiple console
++ characters separate the commandLine string into multiple console
 command lines.
 
 All of these are valid:
@@ -515,7 +515,7 @@ void Com_ParseCommandLine(char *commandLine)
 		{
 			inq = !inq;
 		}
-		// look for a + seperating character
+		// look for a + separating character
 		// if commandLine came from a file, we might have real line seperators
 		if (*commandLine == '+' || *commandLine == '\n' || *commandLine == '\r')
 		{
@@ -3030,7 +3030,7 @@ void Com_Init(char *commandLine)
 	Sys_Init();
 
 	// Pick a random port value
-	Com_RandomBytes((byte *)&qport, sizeof(int));
+	Com_RandomBytes(&qport, sizeof(int));
 	Netchan_Init(qport & 0xffff);
 
 	VM_Init();
@@ -3065,6 +3065,10 @@ void Com_Init(char *commandLine)
 #if idppc
 	Com_DetectAltivec();
 	Com_Printf("Altivec support is %s\n", com_altivec->integer ? "enabled" : "disabled");
+#endif
+
+#ifdef LEGACY_AUTH
+	Auth_Init();
 #endif
 
 	// force recommendedSet and don't do vid_restart if in safe mode
@@ -3610,6 +3614,10 @@ void Com_Shutdown(qboolean badProfile)
 
 #ifdef FEATURE_DBMS
 	(void) DB_DeInit();
+#endif
+
+#ifdef LEGACY_AUTH
+	Auth_Shutdown();
 #endif
 
 #ifndef DEDICATED
@@ -4241,19 +4249,22 @@ void Field_AutoComplete(field_t *field)
  * @param[in,out] string
  * @param[in] len
  */
-void Com_RandomBytes(byte *string, int len)
+void Com_RandomBytes(void *bytes, int len)
 {
-	int i;
+	int  i;
+	byte *tmp = bytes;
 
-	if (Sys_RandomBytes(string, len))
+	if (Sys_RandomBytes(bytes, len))
 	{
 		return;
 	}
 
 	Com_Printf("Com_RandomBytes: using weak randomization\n");
+
+	srand(time(NULL));
 	for (i = 0; i < len; i++)
 	{
-		string[i] = (unsigned char)(rand() % 256);
+		tmp[i] = (byte)(rand() % 255);
 	}
 }
 
@@ -4273,8 +4284,23 @@ void Com_ParseUA(userAgent_t *ua, const char *string)
 	// check for compatibility (only accept of own kind)
 	if (!Q_strncmp(string, PRODUCT_LABEL, strlen(PRODUCT_LABEL)))
 	{
-		ua->compatible = 0x1; // basic level compatibility
+		int          major = 0, minor = 0, patch = 0, commit = 0;
+		unsigned int versionInt = 0;
+
+		ua->compatible = BITS(1); // basic level compatibility
 		// match version string, or leave it as zero
 		Q_sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
+
+		if (*ua->version)
+		{
+			Q_sscanf(string, PRODUCT_LABEL " v%2i.%3i.%2i-%4i-*", &major, &minor, &patch, &commit);
+		}
+		versionInt = ETL_VERSION(major, minor, patch, commit);
+
+		// authentication was added around here
+		if (ETL_VERSION(2, 81, 1, 0) <= versionInt)
+		{
+			ua->compatible = BITS(2);
+		}
 	}
 }

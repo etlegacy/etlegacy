@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -735,12 +735,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		// the body can still be gibbed
 		self->die = body_die;
-	}
-
-	// don't fade our own satchel if suicide with it, explosion effect will not be done
-	if (meansOfDeath != MOD_SATCHEL || attacker != self)
-	{
-		G_FadeItems(self, MOD_SATCHEL);
 	}
 
 	CalculateRanks();

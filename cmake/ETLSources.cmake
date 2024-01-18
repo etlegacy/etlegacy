@@ -13,6 +13,7 @@ FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
 	"src/qcommon/i18n_*"
+	"src/qcommon/auth.c"
 )
 
 LIST(REMOVE_ITEM COMMON_SRC ${COMMON_SRC_REMOVE})
@@ -92,6 +93,21 @@ LIST(APPEND CGAME_SRC ${UI_SHARED})
 FILE(GLOB QAGAME_SRC
 	"src/game/*.c"
 	"src/game/*.h"
+	"src/qcommon/crypto/sha-1/sha1.c"
+	"src/qcommon/q_math.c"
+	"src/qcommon/q_shared.c"
+)
+
+FILE(GLOB TVGAME_SRC
+    "src/game/bg_*.c"
+	"src/game/g_mdx*"
+	"src/game/g_strparse*"
+	"src/game/surfaceflags*"
+	"src/game/g_match_tokens.c"
+	"src/game/g_sha1.c"
+	"src/game/g_mem.c"
+	"src/tvgame/*.c"
+	"src/tvgame/*.h"
 	"src/qcommon/crypto/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"

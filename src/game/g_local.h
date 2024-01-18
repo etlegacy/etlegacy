@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -695,10 +695,17 @@ typedef struct
 	qboolean botPush;                                   ///< allow for disabling of bot pushing via script
 #endif
 
+#ifdef LEGACY_AUTH
+	char authName[MAX_NAME_LENGTH];
+	unsigned int authId;
+#endif
+
 	// flood protection
 	int nextReliableTime;                               ///< next time a command can be executed when flood limited
 	int numReliableCommands;                            ///< how many commands have we sent
 	int nextCommandDecreaseTime;                        ///< next time we decrease numReliableCommands
+
+	int tvflags;
 
 } clientSession_t;
 
@@ -1947,6 +1954,7 @@ extern vmCvar_t g_maxclients;               ///< allow this many total, includin
 extern vmCvar_t g_maxGameClients;           ///< allow this many active
 extern vmCvar_t g_minGameClients;           ///< we need at least this many before match actually starts
 extern vmCvar_t g_restarted;
+extern vmCvar_t g_logTimestamp;
 
 extern vmCvar_t g_timelimit;
 extern vmCvar_t g_friendlyFire;
@@ -2211,6 +2219,9 @@ extern vmCvar_t g_dropObjDelay;
 extern vmCvar_t g_floodProtection;
 extern vmCvar_t g_floodLimit;
 extern vmCvar_t g_floodWait;
+
+#define ETTV_PROTOCOL_VERSION 284
+extern vmCvar_t g_etltv_flags;
 
 /**
  * @struct GeoIPTag

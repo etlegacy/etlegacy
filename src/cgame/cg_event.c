@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -69,6 +69,11 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 		{
 			*weaponShader = cgs.media.pmImages[PM_DEATH];
 			*scaleShader  = 1;
+		}
+
+		if (!(style & POPUP_SWAP_VICTIM_KILLER))
+		{
+			*scaleShader *= -1;
 		}
 	}
 	else

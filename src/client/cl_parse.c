@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -909,7 +909,7 @@ void CL_ParseDownload(msg_t *msg)
 			// make downloadTempName an OS path
 			Q_strncpyz(cls.download.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), cls.download.downloadTempName, ""), sizeof(cls.download.downloadTempName));
 			cls.download.downloadTempName[strlen(cls.download.downloadTempName) - 1] = '\0';
-			if (!DL_BeginDownload(cls.download.downloadTempName, cls.download.downloadName))
+			if (!Com_BeginWebDownload(cls.download.downloadTempName, cls.download.downloadName))
 			{
 				// setting bWWWDl to false after sending the wwwdl fail doesn't work
 				// not sure why, but I suspect we have to eat all remaining block -1 that the server has sent us
@@ -939,8 +939,7 @@ void CL_ParseDownload(msg_t *msg)
 			return;
 		}
 	}
-
-	if (!block)
+	else if (!block)
 	{
 		// block zero is special, contains file size
 		cls.download.downloadSize = MSG_ReadLong(msg);
@@ -974,7 +973,7 @@ void CL_ParseDownload(msg_t *msg)
 
 		if (!cls.download.download)
 		{
-			Com_Printf("Could not create %s\n", cls.download.downloadTempName);
+			Com_Printf(S_COLOR_YELLOW "WARNING: Could not create %s\n", cls.download.downloadTempName);
 			CL_AddReliableCommand("stopdl");
 			Com_NextDownload();
 			return;
@@ -985,9 +984,13 @@ void CL_ParseDownload(msg_t *msg)
 	{
 		if (FS_Write(data, size, cls.download.download) == 0)
 		{
-			Com_Printf("CL_ParseDownload: Can't write download to disk\n");
-			// FIXME: close file and clean up
-			//Com_Error(ERR_DROP, "CL_ParseDownload: Can't write download to disk");
+			Com_Printf(S_COLOR_YELLOW "WARNING: CL_ParseDownload: Can't write download to disk\n");
+			FS_FCloseFile(cls.download.download);
+			cls.download.download = 0;
+
+			CL_AddReliableCommand("stopdl");
+			Com_NextDownload();
+			return;
 		}
 	}
 
@@ -1006,7 +1009,7 @@ void CL_ParseDownload(msg_t *msg)
 			FS_FCloseFile(cls.download.download);
 			cls.download.download = 0;
 		#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-			dlDestPath = DL_ContainerizePath(cls.download.downloadTempName, cls.download.downloadName);
+			dlDestPath = Com_ContainerizePath(cls.download.downloadTempName, cls.download.downloadName);
 		#else
 			dlDestPath = cls.download.downloadName;
 		#endif

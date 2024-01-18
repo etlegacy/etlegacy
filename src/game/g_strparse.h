@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -95,9 +95,11 @@ typedef enum
 	TOK_gs,                             ///< 46
 	TOK_mu,                             ///< 47
 	TOK_lsw,                            ///< 48
+	TOK_auth,                           ///< 49
+	TOK_authId,                         ///< 50
 
 	//// Don't add anything below here
-	TOK_UNKNOWN                         ///< 49
+	TOK_UNKNOWN                         ///< 51
 } g_StringToken_t;
 
 extern g_StringToken_t G_GetTokenForString(char const *str);

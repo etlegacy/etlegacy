@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -1710,7 +1710,7 @@ static void CG_ReadHuds_f(void)
 			Q_strcat(tmp, MAX_QPATH, ".dat");
 		}
 
-		if (!CG_TryReadHudFromFile(tmp))
+		if (!CG_TryReadHudFromFile(tmp, qtrue))
 		{
 			CG_Printf(S_COLOR_RED "^1ERROR while reading hud file: %s\n", tmp);
 		}
