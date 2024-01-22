@@ -1599,6 +1599,7 @@ typedef enum login_status
 
 void Auth_Server_Command_f(void);
 qboolean Auth_SV_RemoveAuthFromUserinfo(char *userinfo);
+void Auth_SV_SetUserinfoAuth(void *gameClient);
 void Auth_Server_ClientLogout(void *data, const char *username);
 void Auth_Server_VerifyResponse(void *data, const char *username, const char *challenge, const char *response);
 void Auth_Server_FetchChallenge(void *data, const char *username);

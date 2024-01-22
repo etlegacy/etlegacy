@@ -107,6 +107,26 @@ qboolean Auth_SV_RemoveAuthFromUserinfo(char *userinfo)
 	return ret;
 }
 
+void Auth_SV_SetUserinfoAuth(void *gameClient)
+{
+	client_t *client = gameClient;
+
+	if (!client->loginId)
+	{
+		return;
+	}
+
+	if (!strstr(client->userinfo, "auth\\"))
+	{
+		Info_SetValueForKey(client->userinfo, "auth", client->login);
+	}
+
+	if (!strstr(client->userinfo, "authId\\"))
+	{
+		Info_SetValueForKey(client->userinfo, "authId", va("%i", client->loginId));
+	}
+}
+
 static void Auth_SV_UserInfoChanged(client_t *client)
 {
 	VM_Call(gvm, GAME_CLIENT_USERINFO_CHANGED, client - svs.clients);

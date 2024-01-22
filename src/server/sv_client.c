@@ -1981,6 +1981,10 @@ void SV_UserinfoChanged(client_t *cl)
 	{
 		Com_ParseUA(&cl->agent, val);
 	}
+
+#ifdef LEGACY_AUTH
+	Auth_SV_SetUserinfoAuth(cl);
+#endif
 }
 
 /**
