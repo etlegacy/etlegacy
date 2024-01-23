@@ -855,13 +855,13 @@ void SV_SpawnServer(const char *server)
 					client_t       *client;
 					sharedEntity_t *ent;
 
-					client          = &svs.clients[i];
-					client->state   = CS_ACTIVE;
+					client        = &svs.clients[i];
+					client->state = CS_ACTIVE;
 
 					if (!svcls.isTVGame)
 					{
-						ent = SV_GentityNum(i);
-						ent->s.number = i;
+						ent             = SV_GentityNum(i);
+						ent->s.number   = i;
 						client->gentity = ent;
 					}
 
@@ -1289,6 +1289,13 @@ void SV_Shutdown(const char *finalmsg)
 	{
 		return;
 	}
+
+#ifdef DEDICATED
+	if (!svclc.demo.playing)
+	{
+		SV_CL_Disconnect();
+	}
+#endif
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	Cmd_RemoveCommand("irc_connect");

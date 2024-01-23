@@ -719,11 +719,32 @@ typedef struct
 
 	int realtime;                   ///< ignores pause
 
+	int lastFrameTime;
+
 	qboolean isTVGame;
 
 } svclientStatic_t;
 
 extern svclientStatic_t svcls;
+
+/**
+ * @struct svcldemo_t
+ * @brief Server client demo information
+ */
+typedef struct
+{
+	char demoName[MAX_QPATH];
+	qboolean recording;
+	qboolean playing;
+	qboolean pure;                          ///< are we starting the demo with sv_pure 1 emulation?
+	qboolean waiting;                       ///< don't record until a non-delta message is received
+	qboolean firstFrameSkipped;
+	fileHandle_t file;
+
+	int timeFrames;                         ///< counter of rendered frames
+	int timeStart;                          ///< cls.realtime before first frame
+	int timeBaseTime;                       ///< each frame will be at this time + frameNum * 50
+} svcldemo_t;
 
 /**
  * @struct clientConnection_t
@@ -778,7 +799,7 @@ typedef struct
 	char serverCommands[MAX_RELIABLE_COMMANDS][MAX_TOKEN_CHARS];
 
 	// demo information
-	//demo_t demo;
+	svcldemo_t demo;
 
 	userAgent_t agent;                          ///< holds server engine information
 
@@ -812,7 +833,7 @@ typedef struct
 	int parseEntitiesNum;               ///< at the time of this snapshot
 
 	int serverCommandNum;               ///< execute all commands up to this before
-										///< making the snapshot current
+	                                    ///< making the snapshot current
 
 	ettvClientSnapshot_t playerstates[MAX_CLIENTS];
 
@@ -841,18 +862,18 @@ typedef struct
 typedef struct
 {
 	int timeoutcount;                       ///< it requres several frames in a timeout condition
-											///< to disconnect, preventing debugging breaks from
-											///< causing immediate disconnects on continue
+	                                        ///< to disconnect, preventing debugging breaks from
+	                                        ///< causing immediate disconnects on continue
 	svclSnapshot_t snap;                      ///< latest received from server
 
 	int serverTime;                         ///< may be paused during play
 	int oldServerTime;                      ///< to prevent time from flowing bakcwards
 	int oldFrameServerTime;                 ///< to check tournament restarts
 	int serverTimeDelta;                    ///< cl.serverTime = cls.realtime + cl.serverTimeDelta
-											///  this value changes as net lag varies
+	                                        ///  this value changes as net lag varies
 	int baselineDelta;                      ///< initial or reset value of serverTimeDelta w/o adjustments
 	qboolean extrapolatedSnapshot;          ///< set if any cgame frame has been forced to extrapolate
-											///< cleared when CL_AdjustTimeDelta looks at it
+	                                        ///< cleared when CL_AdjustTimeDelta looks at it
 	qboolean newSnapshots;                  ///< set on parse of any valid packet
 
 	gameState_t gameState;                  ///< configstrings
@@ -864,7 +885,7 @@ typedef struct
 	/// properly generated command
 	usercmd_t cmds[CMD_BACKUP];             ///< each mesage will send several old cmds
 	int cmdNumber;                          ///< incremented each frame, because multiple
-											///< frames may need to be packed into a single packet
+	                                        ///< frames may need to be packed into a single packet
 
 	/// double tapping
 	//doubleTap_t doubleTap;
@@ -879,8 +900,8 @@ typedef struct
 	vec3_t viewangles;
 
 	int serverId;                           ///< included in each client message so the server
-											///< can tell if it is for a prior map_restart
-											///< big stuff at end of structure so most offsets are 15 bits or less
+	                                        ///< can tell if it is for a prior map_restart
+	                                        ///< big stuff at end of structure so most offsets are 15 bits or less
 	svclSnapshot_t snapshots[PACKET_BACKUP];
 
 	entityState_t entityBaselines[MAX_GENTITIES];   ///< for delta compression when not in previous frame
@@ -905,12 +926,15 @@ void SV_CL_SendPureChecksums(void);
 void SV_CL_InitTVGame(void);
 qboolean SV_CL_GetServerCommand(int serverCommandNumber);
 void SV_CL_ConfigstringModified(void);
+char *SV_CL_Cvar_InfoString(char *cs, int index);
 
 int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps);
+void SV_CL_Frame(void);
 
 void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg);
 void SV_CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg);
 void SV_CL_ServerInfoPacket(netadr_t from, msg_t *msg);
+void SV_CL_DisconnectPacket(netadr_t from);
 
 // sv_cl_net_chan.c
 void SV_CL_Netchan_Transmit(netchan_t *chan, msg_t *msg);
@@ -926,5 +950,16 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityState_t *old, entityShared_t *oldShared, qboolean unchanged);
 void SV_CL_ParsePlayerstates(msg_t *msg);
 void SV_CL_SystemInfoChanged(void);
+
+// sv_cl_demo.c
+void SV_CL_DemoInit(void);
+
+void SV_CL_Record(const char *name);
+void SV_CL_StopRecord_f(void);
+void SV_CL_WriteDemoMessage(msg_t *msg, int headerBytes);
+void SV_CL_ReadDemoMessage(void);
+void SV_CL_DemoCompleted(void);
+void SV_CL_DemoCleanUp(void);
+void SV_CL_NextDemo(void);
 
 #endif // #ifndef INCLUDE_SERVER_H

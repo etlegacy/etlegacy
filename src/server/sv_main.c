@@ -1303,6 +1303,11 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 		return;
 	}
 
+	if (svcls.isTVGame && svcls.state == CA_DISCONNECTED)
+	{
+		return;
+	}
+
 	// check for connectionless packet (0xffffffff) first
 	if (msg->cursize >= 4 && *(int *)msg->data == -1)
 	{
@@ -1574,7 +1579,7 @@ static qboolean SV_CheckPaused(void)
  */
 int SV_FrameMsec()
 {
-	if (sv_fps)
+	if (sv_fps && !svcls.isTVGame)
 	{
 		int frameMsec = (int)(1000.0f / sv_fps->value);
 
@@ -1631,6 +1636,13 @@ void SV_Frame(int msec)
 	Com_WebDownloadLoop();
 	if (!com_sv_running->integer)
 	{
+		SV_CL_CheckForResend();
+
+		if (svcls.state == CA_CONNECTED)
+		{
+			SV_CL_WritePacket();
+		}
+
 		return;
 	}
 #endif
@@ -1641,13 +1653,6 @@ void SV_Frame(int msec)
 		// Block until something interesting happens
 		Sys_Sleep(-1);
 #endif
-
-		SV_CL_CheckForResend();
-
-		if (svcls.state == CA_CONNECTED)
-		{
-			SV_CL_WritePacket();
-		}
 
 		return;
 	}
@@ -1705,26 +1710,53 @@ void SV_Frame(int msec)
 	}
 
 	// update infostrings if anything has been changed
-	if (cvar_modifiedFlags & CVAR_SERVERINFO)
+	if (!svcls.isTVGame)
 	{
-		SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
-		cvar_modifiedFlags &= ~CVAR_SERVERINFO;
+		if (cvar_modifiedFlags & CVAR_SERVERINFO)
+		{
+			SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+			cvar_modifiedFlags &= ~CVAR_SERVERINFO;
+		}
+		if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
+		{
+			SV_SetConfigstringNoUpdate(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+			cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
+		}
+		if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
+		{
+			SV_SetConfigstring(CS_SYSTEMINFO, Cvar_InfoString_Big(CVAR_SYSTEMINFO));
+			cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
+		}
+		if (cvar_modifiedFlags & CVAR_WOLFINFO)
+		{
+			SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
+			cvar_modifiedFlags &= ~CVAR_WOLFINFO;
+		}
 	}
-	if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
+	else
 	{
-		SV_SetConfigstringNoUpdate(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
-		cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
+		if (cvar_modifiedFlags & CVAR_SERVERINFO)
+		{
+			SV_SetConfigstring(CS_SERVERINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SERVERINFO], CS_SERVERINFO));
+			cvar_modifiedFlags &= ~CVAR_SERVERINFO;
+		}
+		if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
+		{
+			SV_SetConfigstringNoUpdate(CS_SERVERINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SERVERINFO], CS_SERVERINFO));
+			cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
+		}
+		if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
+		{
+			SV_SetConfigstring(CS_SYSTEMINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SYSTEMINFO], CS_SYSTEMINFO));
+			cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
+		}
+		if (cvar_modifiedFlags & CVAR_WOLFINFO)
+		{
+			SV_SetConfigstring(CS_WOLFINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_WOLFINFO], CS_WOLFINFO));
+			cvar_modifiedFlags &= ~CVAR_WOLFINFO;
+		}
 	}
-	if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
-	{
-		SV_SetConfigstring(CS_SYSTEMINFO, Cvar_InfoString_Big(CVAR_SYSTEMINFO));
-		cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
-	}
-	if (cvar_modifiedFlags & CVAR_WOLFINFO)
-	{
-		SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
-		cvar_modifiedFlags &= ~CVAR_WOLFINFO;
-	}
+
 
 	// start recording a demo
 	if (sv_autoDemo->integer)
@@ -1748,11 +1780,23 @@ void SV_Frame(int msec)
 	while (sv.timeResidual >= frameMsec)
 	{
 		sv.timeResidual -= frameMsec;
-		sv.time         += frameMsec;
 		svs.time        += frameMsec;
 
-		// let everything in the world think and move
-		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+		if (svclc.demo.playing && svcl.serverTime <= sv.time)
+		{
+			SV_CL_ReadDemoMessage();
+		}
+
+		if (!svcls.isTVGame)
+		{
+			sv.time += frameMsec;
+			// let everything in the world think and move
+			VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+		}
+		else
+		{
+			SV_CL_Frame();
+		}
 
 		// play/record demo frame (if enabled)
 		if (sv.demoState == DS_RECORDING) // Record the frame
@@ -1785,8 +1829,11 @@ void SV_Frame(int msec)
 	// check user info buffer thingy
 	SV_CheckClientUserinfoTimer();
 
-	// send messages back to the clients
-	SV_SendClientMessages();
+	if (!svcls.isTVGame)
+	{
+		// send messages back to the clients
+		SV_SendClientMessages();
+	}
 
 	// send a heartbeat to the master if needed
 	SV_MasterHeartbeat(HEARTBEAT_GAME);

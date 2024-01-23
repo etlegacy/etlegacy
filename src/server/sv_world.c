@@ -231,6 +231,11 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 
 	ent = SV_SvEntityForGentity(gEnt);
 
+	if (svcls.isTVGame && gEnt->s.solid == SOLID_BMODEL)
+	{
+		gEnt->r.bmodel = qtrue;
+	}
+
 	// sanity check for possible currentOrigin being reset bug
 	if (!gEnt->r.bmodel && vec3_compare(gEnt->r.currentOrigin, vec3_origin))
 	{

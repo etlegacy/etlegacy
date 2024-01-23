@@ -1432,6 +1432,7 @@ qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self)
 #define ROCKANDROLL_HASH    146207
 #define BP_HASH             25102
 #define XPGAIN_HASH         78572
+#define DISCONNECT_HASH     131683
 
 /**
 * @brief TVG_ClientCommandPassThrough This handles server commands (server responses to client commands)
@@ -1662,6 +1663,9 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		return;
 	//case XPGAIN_HASH:                                    // "xpgain"
 	//	return;
+	case DISCONNECT_HASH:                                  // "disconnect"
+		trap_SendServerCommand(-1, cmd);
+		return;
 	default:
 		G_Printf("TVGAME: Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(token));
 		break;

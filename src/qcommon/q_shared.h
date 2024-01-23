@@ -85,6 +85,7 @@
 
 #define DEMOEXT "dm_"          ///< standard demo extension
 #define SVDEMOEXT "sv_"        ///< standard server demo extension
+#define SVCLDEMOEXT "tv_"      ///< ettv server demo extension
 
 #define MAX_MASTER_SERVERS 5   ///< number of supported master servers
 

@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -56,7 +56,7 @@ static void SV_CL_SetPurePaks(qboolean referencedOnly)
 	FS_PureServerSetReferencedPaks(s, t);
 }
 
- /**
+/**
   * @brief The systeminfo configstring has been changed, so parse new information out of it.
   * This will happen at every gamestate, and possibly during gameplay.
   */
@@ -75,13 +75,13 @@ void SV_CL_SystemInfoChanged(void)
 	//Com_Memset(&entLastVisible, 0, sizeof(entLastVisible));
 
 	// don't set any vars when playing a demo
-	//if (svclc.demo.playing)
-	//{
-	//	// allow running demo in pure mode to simulate server environment,
-	//	// but still setup the referenced packages for the container system to work
-	//	CL_SetPurePaks(!svclc.demo.pure);
-	//	return;
-	//}
+	if (svclc.demo.playing)
+	{
+		// allow running demo in pure mode to simulate server environment,
+		// but still setup the referenced packages for the container system to work
+		SV_CL_SetPurePaks(!svclc.demo.pure);
+		return;
+	}
 
 	//s = Info_ValueForKey(systemInfo, "sv_cheats");
 	//cl_connectedToCheatServer = Q_atoi(s);      //bani
@@ -129,7 +129,7 @@ void SV_CL_SystemInfoChanged(void)
 			if (!(cvar_flags & (CVAR_SYSTEMINFO | CVAR_SERVER_CREATED | CVAR_USER_CREATED)))
 			{
 				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") &&
-					Q_stricmp(key, "pmove_msec") && Q_stricmp(key, "shared"))
+				    Q_stricmp(key, "pmove_msec") && Q_stricmp(key, "shared"))
 				{
 					Com_DPrintf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s=%s\n", key, value);
 					continue;
@@ -209,7 +209,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 			{
 				Com_Error(ERR_DROP, "configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
 			}
-			s = MSG_ReadBigString(msg);
+			s   = MSG_ReadBigString(msg);
 			len = strlen(s);
 
 			if (len + 1 + svcl.gameState.dataCount > MAX_GAMESTATE_CHARS)
@@ -236,6 +236,19 @@ void SV_CL_ParseGamestate(msg_t *msg)
 			MSG_ReadDeltaEntity(msg, &nullstate, es, newnum);
 			MSG_ETTV_ReadDeltaEntityShared(msg, &nullstateShared, entShared);
 		}
+		else if (cmd == svc_ettv_currentstate)
+		{
+			newnum = MSG_ReadBits(msg, GENTITYNUM_BITS);
+
+			if (newnum < 0 || newnum >= MAX_GENTITIES)
+			{
+				Com_Error(ERR_DROP, "Currentstate number out of range : %i", newnum);
+			}
+
+			MSG_ReadDeltaEntity(msg, &svcl.entityBaselines[newnum], &svcl.entityBaselines[newnum], newnum);
+			MSG_ETTV_ReadDeltaEntityShared(msg, &svcl.entitySharedBaselines[newnum], &svcl.entitySharedBaselines[newnum]);
+			svcl.entitySharedBaselines[newnum].linked = qtrue;
+		}
 		else
 		{
 			Com_Error(ERR_DROP, "CL_ParseGamestate: bad command byte");
@@ -251,7 +264,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 
 	// Verify if we have all official pakfiles. As we won't
 	// be downloading them, we should be kicked for not having them.
-	if (/*cl_connectedToPureServer && */!FS_VerifyOfficialPaks())
+	if (/*cl_connectedToPureServer && */ !FS_VerifyOfficialPaks())
 	{
 		Com_Error(ERR_DROP, "Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.");
 	}
@@ -265,11 +278,11 @@ void SV_CL_ParseGamestate(msg_t *msg)
 
 	// This used to call CL_StartHunkUsers, but now we enter the download state before loading the
 	// cgame
-	/*if (!clc.demo.playing)
-	{
-		Com_InitDownloads();
-	}
-	else*/
+	//if (!svclc.demo.playing)
+	//{
+	//	Com_InitDownloads();
+	//}
+	//else
 	{
 		//char missingFiles[MAX_TOKEN_CHARS] = { '\0' };
 		/*if (clc.demo.pure && FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
@@ -299,7 +312,7 @@ void SV_CL_ParseCommandString(msg_t *msg)
 	int  index;
 
 	seq = MSG_ReadLong(msg);
-	s = MSG_ReadString(msg);
+	s   = MSG_ReadString(msg);
 
 	// see if we have already executed stored it off
 	if (svclc.serverCommandSequence >= seq)
@@ -406,7 +419,7 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 	oldindex       = 0;
 
 	newframe->parseEntitiesNum = svcl.parseEntitiesNum;
-	newframe->numEntities = 0;
+	newframe->numEntities      = 0;
 
 	// delta from the entities present in oldframe
 
@@ -564,6 +577,7 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	newSnap.serverCommandNum = svclc.serverCommandSequence;
 
 	newSnap.serverTime = MSG_ReadLong(msg);
+	svcl.serverTime    = newSnap.serverTime;
 
 	newSnap.messageNum = svclc.serverMessageSequence;
 
@@ -585,14 +599,14 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	if (newSnap.deltaNum <= 0)
 	{
 		newSnap.valid = qtrue;      // uncompressed frame
-		old = NULL;
-		//if (svclc.demo.recording)
-		//{
-		//	svclc.demo.waiting = qfalse;   // we can start recording now
-		//	//if(cl_autorecord->integer) {
-		//	//  Cvar_Set( "g_synchronousClients", "0" );
-		//	//}
-		//}
+		old           = NULL;
+		if (svclc.demo.recording)
+		{
+			svclc.demo.waiting = qfalse;   // we can start recording now
+			//if(cl_autorecord->integer) {
+			//  Cvar_Set( "g_synchronousClients", "0" );
+			//}
+		}
 		//else
 		//{
 		//	if (cl_autorecord->integer /*&& Cvar_VariableValue( "g_synchronousClients")*/)
@@ -706,7 +720,7 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	}
 
 	// copy to the current good spot
-	svcl.snap = newSnap;
+	svcl.snap      = newSnap;
 	svcl.snap.ping = 999;
 	// calculate ping time
 	for (i = 0; i < PACKET_BACKUP; i++)
@@ -728,11 +742,6 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	//}
 
 	svcl.newSnapshots = qtrue;
-
-	if (svcl.snap.deltaNum == -1)
-	{
-		sv.time = svcl.snap.serverTime;
-	}
 }
 
 /**
@@ -753,7 +762,7 @@ void SV_CL_ParsePlayerstates(msg_t *msg)
 
 	while (1)
 	{
-		// read the clientNum	
+		// read the clientNum
 		clientNum = MSG_ReadByte(msg);
 
 		if (clientNum == 255)
@@ -881,4 +890,9 @@ void SV_CL_ParseServerMessage(msg_t *msg)
 	}
 
 	//CL_ParseBinaryMessage(msg);
+
+	if (svcls.isTVGame)
+	{
+		SV_CL_Frame();
+	}
 }

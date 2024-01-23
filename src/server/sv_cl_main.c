@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012-2023 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -35,14 +35,14 @@
 #include "server.h"
 
 /**
-* @brief SV_CL_Commands_f
-*/
-void SV_CL_Commands_f(void)
+ * @brief SV_CL_Connect_f
+ */
+void SV_CL_Connect_f(void)
 {
 	char         *server;
 	char         *password;
 	const char   *ip_port;
-	int          argc = Cmd_Argc();
+	int          argc   = Cmd_Argc();
 	netadrtype_t family = NA_UNSPEC;
 
 	if (argc != 4)
@@ -106,7 +106,7 @@ void SV_CL_Commands_f(void)
 	// if we aren't playing on a lan, we need to request a challenge
 	if (NET_IsLocalAddress(svclc.serverAddress))
 	{
-		svcls.state = CA_CHALLENGING;
+		svcls.state          = CA_CHALLENGING;
 		svcls.challengeState = CA_CHALLENGING_INFO;
 	}
 	else
@@ -120,12 +120,42 @@ void SV_CL_Commands_f(void)
 	// we need to setup a correct default for this, otherwise the first val we set might reappear
 	Cvar_Set("com_errorMessage", "");
 
-	svclc.connectTime = -99999; // CL_CheckForResend() will fire immediately
+	svclc.connectTime        = -99999; // CL_CheckForResend() will fire immediately
 	svclc.connectPacketCount = 0;
 
 	// server connection string
 	Cvar_Set("cl_currentServerAddress", server);
 	Cvar_Set("cl_currentServerIP", ip_port);
+}
+
+/**
+* @brief SV_CL_Commands_f
+*/
+void SV_CL_Commands_f(void)
+{
+	char *cmd;
+	int  argc = Cmd_Argc();
+
+	if (argc < 2)
+	{
+		Com_Printf("usage: tv <connect|disconnect> [-4|-6] server masterpassword\n");
+		return;
+	}
+
+	cmd = Cmd_Argv(1);
+
+	if (!Q_stricmp(cmd, "connect"))
+	{
+		SV_CL_Connect_f();
+	}
+	else if (!Q_stricmp(cmd, "disconnect"))
+	{
+		SV_CL_Disconnect();
+	}
+	else
+	{
+		Com_Printf("usage: tv <connect|disconnect> [-4|-6] server masterpassword\n");
+	}
 }
 
 #define RETRANSMIT_TIMEOUT  3000
@@ -137,10 +167,10 @@ void SV_CL_CheckForResend(void)
 {
 	char buffer[64];
 	// don't send anything if playing back a demo
-	//if (svclc.demo.playing)
-	//{
-	//	return;
-	//}
+	if (svclc.demo.playing)
+	{
+		return;
+	}
 
 	// resend if we haven't gotten a reply yet
 	if (svcls.state != CA_CONNECTING && svcls.state != CA_CHALLENGING)
@@ -220,15 +250,32 @@ void SV_CL_CheckForResend(void)
 */
 void SV_CL_Disconnect(void)
 {
+	if (svclc.demo.recording)
+	{
+		SV_CL_StopRecord_f();
+	}
+
+	SV_CL_DemoCleanUp();
+
 	// send a disconnect message to the server
 	// send it a few times in case one is dropped
-	if (svcls.state >= CA_CONNECTED)
+	if (svcls.state >= CA_CONNECTED && !svclc.demo.playing)
 	{
 		SV_CL_AddReliableCommand("disconnect");
+
 		SV_CL_WritePacket();
 		SV_CL_WritePacket();
 		SV_CL_WritePacket();
 	}
+
+	//FS_ClearPureServerPacks();
+
+	SV_CL_ClearState();
+
+	// wipe the client connection
+	Com_Memset(&svclc, 0, sizeof(svclc));
+
+	svcls.state = CA_DISCONNECTED;
 }
 
 /**
@@ -280,10 +327,10 @@ void SV_CL_WritePacket(void)
 	int       count, key;
 
 	// don't send anything if playing back a demo
-	//if (svclc.demo.playing || svcls.state == CA_CINEMATIC)
-	//{
-	//	return;
-	//}
+	if (svclc.demo.playing)
+	{
+		return;
+	}
 
 	Com_Memset(&nullcmd, 0, sizeof(nullcmd));
 	oldcmd = &nullcmd;
@@ -315,7 +362,7 @@ void SV_CL_WritePacket(void)
 
 	svcl.cmdNumber++;
 	oldPacketNum = (svclc.netchan.outgoingSequence - 1) & PACKET_MASK;
-	count = svcl.cmdNumber - svcl.outPackets[oldPacketNum].p_cmdNumber;
+	count        = svcl.cmdNumber - svcl.outPackets[oldPacketNum].p_cmdNumber;
 
 	if (count >= 1)
 	{
@@ -325,8 +372,8 @@ void SV_CL_WritePacket(void)
 		//}
 
 		// begin a client move command
-		if (/*cl_nodelta->integer || */!svcl.snap.valid /*|| clc.demo.waiting*/
-			|| svclc.serverMessageSequence != svcl.snap.messageNum)
+		if (/*cl_nodelta->integer || */ !svcl.snap.valid || svclc.demo.waiting
+		    || svclc.serverMessageSequence != svcl.snap.messageNum)
 		{
 			MSG_WriteByte(&buf, clc_moveNoDelta);
 		}
@@ -348,7 +395,7 @@ void SV_CL_WritePacket(void)
 		// write all the commands, including the predicted command
 		for (i = 0; i < count; i++)
 		{
-			j = (svcl.cmdNumber - count + i + 1) & CMD_MASK;
+			j               = (svcl.cmdNumber - count + i + 1) & CMD_MASK;
 			cmd             = &svcl.cmds[j];
 			cmd->serverTime = sv.time;
 			MSG_WriteDeltaUsercmdKey(&buf, key, oldcmd, cmd);
@@ -357,11 +404,11 @@ void SV_CL_WritePacket(void)
 	}
 
 	// deliver the message
-	packetNum = svclc.netchan.outgoingSequence & PACKET_MASK;
-	svcl.outPackets[packetNum].p_realtime = svcls.realtime;
+	packetNum                               = svclc.netchan.outgoingSequence & PACKET_MASK;
+	svcl.outPackets[packetNum].p_realtime   = svcls.realtime;
 	svcl.outPackets[packetNum].p_serverTime = oldcmd->serverTime;
-	svcl.outPackets[packetNum].p_cmdNumber = svcl.cmdNumber;
-	svclc.lastPacketSentTime = svcls.realtime;
+	svcl.outPackets[packetNum].p_cmdNumber  = svcl.cmdNumber;
+	svclc.lastPacketSentTime                = svcls.realtime;
 
 	//if (cl_showSend->integer)
 	//{
@@ -396,7 +443,7 @@ void SV_CL_InitTVGame(void)
 	t1 = Sys_Milliseconds();
 
 	// find the current mapname
-	info = svcl.gameState.stringData + svcl.gameState.stringOffsets[CS_SERVERINFO];
+	info    = svcl.gameState.stringData + svcl.gameState.stringOffsets[CS_SERVERINFO];
 	mapname = Info_ValueForKey(info, "mapname");
 	Com_sprintf(svcl.mapname, sizeof(svcl.mapname), "maps/%s.bsp", mapname);
 
@@ -499,6 +546,41 @@ void SV_CL_ConfigstringModified(void)
 }
 
 /**
+ * @brief SV_CL_Cvar_InfoString returns updated configstring without overwriting strings from master
+ * @param[in] cs
+ * @param[in] index
+ * @return
+ */
+char *SV_CL_Cvar_InfoString(char *cs, int index)
+{
+	static char info[BIG_INFO_STRING] = { 0 };
+
+	Q_strncpyz(&info, cs, BIG_INFO_STRING);
+
+	if (svcls.state != CA_DISCONNECTED)
+	{
+		if (index == 0)
+		{
+			Info_SetValueForKey_Big(info, "sv_maxPing", sv_maxPing->string);
+			Info_SetValueForKey_Big(info, "sv_minPing", sv_minPing->string);
+			Info_SetValueForKey_Big(info, "sv_maxRate", sv_maxRate->string);
+			Info_SetValueForKey_Big(info, "sv_dlRate", sv_dlRate->string);
+			Info_SetValueForKey_Big(info, "sv_hostname", sv_hostname->string);
+			Info_SetValueForKey_Big(info, "sv_maxclients", sv_maxclients->string);
+			Info_SetValueForKey_Big(info, "sv_privateClients", sv_privateClients->string);
+			Info_SetValueForKey_Big(info, "version", Cvar_VariableString("version"));
+		}
+		else if (index == 1)
+		{
+			Info_SetValueForKey_Big(info, "sv_serverid", va("%d", sv.serverId));
+			Info_SetValueForKey_Big(info, "sv_pure", sv_pure->string);
+		}
+	}
+
+	return info;
+}
+
+/**
  * @brief Set up argc/argv for the given command
  * @param[in] serverCommandNumber
  * @return
@@ -515,10 +597,10 @@ qboolean SV_CL_GetServerCommand(int serverCommandNumber)
 	{
 		// when a demo record was started after the client got a whole bunch of
 		// reliable commands then the client never got those first reliable commands
-		//if (svclc.demo.playing)
-		//{
-		//	return qfalse;
-		//}
+		if (svclc.demo.playing)
+		{
+			return qfalse;
+		}
 		Com_Error(ERR_DROP, "CL_GetServerCommand: a reliable command was cycled out");
 		return qfalse;
 	}
@@ -529,7 +611,7 @@ qboolean SV_CL_GetServerCommand(int serverCommandNumber)
 		return qfalse;
 	}
 
-	s = svclc.serverCommands[serverCommandNumber & (MAX_RELIABLE_COMMANDS - 1)];
+	s                               = svclc.serverCommands[serverCommandNumber & (MAX_RELIABLE_COMMANDS - 1)];
 	svclc.lastExecutedServerCommand = serverCommandNumber;
 
 	//if (cl_showServerCommands->integer)
@@ -539,20 +621,14 @@ qboolean SV_CL_GetServerCommand(int serverCommandNumber)
 
 rescan:
 	Cmd_TokenizeString(s);
-	cmd = Cmd_Argv(0);
+	cmd  = Cmd_Argv(0);
 	argc = Cmd_Argc();
 
 	if (!strcmp(cmd, "disconnect"))
 	{
 		// allow server to indicate why they were disconnected
-		if (argc >= 2)
-		{
-			Com_Error(ERR_SERVERDISCONNECT, "%s", va("Server Disconnected - %s", Cmd_Argv(1)));
-		}
-		else
-		{
-			Com_Error(ERR_SERVERDISCONNECT, "Server disconnected");
-		}
+		Cbuf_AddText("tv disconnect\n");
+		return qtrue;
 	}
 
 	if (!strcmp(cmd, "bcs0"))
@@ -596,9 +672,9 @@ rescan:
 	if (!strcmp(cmd, "map_restart"))
 	{
 		// reparse the string, because Con_ClearNotify() may have done another Cmd_TokenizeString()
-		//Cmd_TokenizeString(s);
-		//// clear outgoing commands before passing
-		//Com_Memset(cl.cmds, 0, sizeof(cl.cmds));
+		Cmd_TokenizeString(s);
+		// clear outgoing commands before passing
+		Com_Memset(svcl.cmds, 0, sizeof(svcl.cmds));
 		return qtrue;
 	}
 
@@ -638,7 +714,7 @@ rescan:
 void SV_CL_SendPureChecksums(void)
 {
 	//const char *pChecksums;
-	char       cMsg[MAX_INFO_VALUE];
+	char cMsg[MAX_INFO_VALUE];
 
 	// if we are pure we need to send back a command with our referenced pk3 checksums
 	//pChecksums = FS_ReferencedPakPureChecksums();
@@ -681,6 +757,9 @@ void SV_CL_DownloadsComplete(void)
 	SV_CL_WritePacket();
 	SV_CL_WritePacket();
 	SV_CL_WritePacket();
+
+	svcls.state = CA_ACTIVE;
+	sv.time     = 0;
 }
 
 /**
@@ -834,6 +913,103 @@ void SV_CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 }
 
 /**
+ * @brief SV_CL_DisconnectPacket
+ *
+ * @details Sometimes the server can drop the client and the netchan based
+ * disconnect can be lost.  If the client continues to send packets
+ * to the server, the server will send out of band disconnect packets
+ * to the client so it doesn't have to wait for the full timeout period.
+ *
+ * @param[in] from
+ */
+void SV_CL_DisconnectPacket(netadr_t from)
+{
+	const char *message;
+
+	if (svcls.state < CA_AUTHORIZING)
+	{
+		return;
+	}
+
+	// if not from our server, ignore it
+	if (!NET_CompareAdr(from, svclc.netchan.remoteAddress))
+	{
+		return;
+	}
+
+	// if we have received packets within three seconds, ignore (it might be a malicious spoof)
+	// NOTE: there used to be a  clc.lastPacketTime = cls.realtime; line in CL_PacketEvent before calling CL_ConnectionLessPacket
+	// therefore .. packets never got through this check, clients never disconnected
+	// switched the clc.lastPacketTime = cls.realtime to happen after the connectionless packets have been processed
+	// you still can't spoof disconnects, cause legal netchan packets will maintain realtime - lastPacketTime below the threshold
+	if (svcls.realtime - svclc.lastPacketTime < 3000)
+	{
+		return;
+	}
+
+	// if we are doing a disconnected download, leave the 'connecting' screen on with the progress information
+	//if (!svcls.download.bWWWDlDisconnected)
+	//{
+	//	// drop the connection
+	//	message = "Server disconnected for unknown reason";
+	//	Com_Printf("%s\n", message);
+	//	Cvar_Set("com_errorMessage", message);
+	//	SV_CL_Disconnect();
+	//}
+	//else
+	{
+		SV_CL_Disconnect();
+	}
+}
+
+/**
+ * @brief an OOB message from server, with potential markups.
+ * Print OOB are the only messages we handle markups in.
+ *
+ * [err_dialog]: Used to indicate that the connection should be aborted. No
+ *               further information, just do an error diagnostic screen afterwards.
+ * [err_prot]:   This is a protocol error. The client uses a custom protocol error
+ *               message (client sided) in the diagnostic window.
+ * ET://         Redirects client to another server.
+ * The space for the error message on the connection screen is limited to 256 chars.
+ */
+void SV_CL_PrintPacket(msg_t *msg)
+{
+	char     *s;
+	qboolean disconnect = qtrue;
+
+	s = MSG_ReadBigString(msg);
+	if (!Q_stricmpn(s, "[err_dialog]", 12))
+	{
+		Q_strncpyz(svclc.serverMessage, s + 12, sizeof(svclc.serverMessage));
+	}
+	else if (!Q_stricmpn(s, "[err_prot]", 10))
+	{
+		Q_strncpyz(svclc.serverMessage, s + 10, sizeof(svclc.serverMessage));
+	}
+	else if (!Q_stricmpn(s, "[err_update]", 12))
+	{
+		Q_strncpyz(svclc.serverMessage, s + 12, sizeof(svclc.serverMessage));
+	}
+	else if (!Q_stricmpn(s, "et://", 5))
+	{
+		Q_strncpyz(svclc.serverMessage, s, sizeof(svclc.serverMessage));
+	}
+	else
+	{
+		Q_strncpyz(svclc.serverMessage, s, sizeof(svclc.serverMessage));
+		disconnect = qfalse;
+	}
+
+	Com_Printf("%s", svclc.serverMessage);
+
+	if (disconnect)
+	{
+		SV_CL_Disconnect();
+	}
+}
+
+/**
  * @brief Responses to broadcasts, etc
  *
  * Compare first n chars so it doesn’t bail if token is parsed incorrectly.
@@ -879,10 +1055,10 @@ void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 			{
 				svclc.onlyVisibleClients = 0;
 			}
-			svcls.state = CA_CHALLENGING;
-			svcls.challengeState = CA_CHALLENGING_INFO;
+			svcls.state              = CA_CHALLENGING;
+			svcls.challengeState     = CA_CHALLENGING_INFO;
 			svclc.connectPacketCount = 0;
-			svclc.connectTime = -99999;
+			svclc.connectTime        = -99999;
 
 			// take this address as the new server address.  This allows
 			// a server proxy to hand off connections to multiple servers
@@ -909,14 +1085,14 @@ void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		{
 			Com_Printf("connectResponse from a different address.  Ignored.\n");
 			Com_Printf("%s should have been %s\n", NET_AdrToString(from),
-				NET_AdrToString(svclc.serverAddress));
+			           NET_AdrToString(svclc.serverAddress));
 			return;
 		}
 
 		Com_CheckUpdateStarted();
 
 		Netchan_Setup(NS_CLIENT, &svclc.netchan, from, Cvar_VariableValue("net_qport"));
-		svcls.state = CA_CONNECTED;
+		svcls.state              = CA_CONNECTED;
 		svclc.lastPacketSentTime = -9999;     // send first packet immediately
 		return;
 	}
@@ -928,7 +1104,7 @@ void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		{
 			SV_CL_ServerInfoPacketCheck(from, msg);
 			svcls.challengeState = CA_CHALLENGING_REQUEST;
-			svclc.connectTime = -99999;    // CL_CheckForResend() will fire immediately
+			svclc.connectTime    = -99999; // CL_CheckForResend() will fire immediately
 			return;
 		}
 		SV_CL_ServerInfoPacket(from, msg);
@@ -946,20 +1122,20 @@ void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	// dropped the connection but it is still getting packets from us
 	if (!Q_stricmp(c, "disconnect"))
 	{
-		//CL_DisconnectPacket(from);
+		SV_CL_DisconnectPacket(from);
 		return;
 	}
 
 	// echo request from server
-	//if (!Q_stricmp(c, "echo"))
-	//{
-	//	// FIXME: || NET_CompareAdr(from, clc.authorizeServer)
-	//	if (NET_CompareAdr(from, svclc.serverAddress) || NET_CompareAdr(from, rcon_address) || NET_CompareAdr(from, autoupdate.autoupdateServer))
-	//	{
-	//		NET_OutOfBandPrint(NS_CLIENT, from, "%s", Cmd_Argv(1));
-	//	}
-	//	return;
-	//}
+	if (!Q_stricmp(c, "echo"))
+	{
+		// FIXME: || NET_CompareAdr(from, clc.authorizeServer)
+		//if (NET_CompareAdr(from, svclc.serverAddress) || NET_CompareAdr(from, rcon_address) || NET_CompareAdr(from, autoupdate.autoupdateServer))
+		//{
+		//	NET_OutOfBandPrint(NS_CLIENT, from, "%s", Cmd_Argv(1));
+		//}
+		return;
+	}
 
 	// cd check
 	if (!Q_stricmp(c, "keyAuthorize"))
@@ -975,16 +1151,16 @@ void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		return;
 	}
 
-	//// echo request from server
-	//if (!Q_stricmp(c, "print"))
-	//{
-	//	// FIXME: || NET_CompareAdr(from, clc.authorizeServer)
-	//	if (NET_CompareAdr(from, clc.serverAddress) || NET_CompareAdr(from, rcon_address) || NET_CompareAdr(from, autoupdate.autoupdateServer))
-	//	{
-	//		CL_PrintPacket(msg);
-	//	}
-	//	return;
-	//}
+	// echo request from server
+	if (!Q_stricmp(c, "print"))
+	{
+		// FIXME: || NET_CompareAdr(from, clc.authorizeServer)
+		if (NET_CompareAdr(from, svclc.serverAddress) /* || NET_CompareAdr(from, rcon_address) || NET_CompareAdr(from, autoupdate.autoupdateServer)*/)
+		{
+			SV_CL_PrintPacket(msg);
+		}
+		return;
+	}
 
 	// Update server response message
 	if (!Q_stricmp(c, "updateResponse"))
@@ -1029,7 +1205,11 @@ static void SV_CL_PacketEvent(netadr_t from, msg_t *msg)
 
 	if (!NET_CompareAdr(from, svclc.serverAddress))
 	{
-		SV_PacketEvent(from, msg);
+		if (svcls.isTVGame)
+		{
+			SV_PacketEvent(from, msg);
+		}
+
 		return;
 	}
 
@@ -1084,12 +1264,10 @@ static void SV_CL_PacketEvent(netadr_t from, msg_t *msg)
 	svclc.lastPacketTime = svcls.realtime;
 	SV_CL_ParseServerMessage(msg);
 
-	// we don't know if it is ok to save a demo message until
-	// after we have parsed the frame
-	//if (svclc.demo.recording && !svclc.demo.waiting)
-	//{
-	//	CL_WriteDemoMessage(msg, headerBytes);
-	//}
+	if (svclc.demo.recording && !svclc.demo.waiting)
+	{
+		SV_CL_WriteDemoMessage(msg, headerBytes);
+	}
 }
 
 #ifdef DEDICATED
@@ -1114,6 +1292,11 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
  */
 void CL_FlushMemory(void)
 {
+	if (svclc.demo.recording)
+	{
+		SV_CL_StopRecord_f();
+	}
+
 	// if not running a server clear the whole hunk
 	if (!com_sv_running->integer)
 	{
@@ -1146,17 +1329,17 @@ int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps)
 {
 	if (!svcls.isTVGame)
 	{
-		Com_Error(ERR_FATAL, "TVGame not loaded");
+		Com_Error(ERR_FATAL, "SV_CL_GetPlayerstate: TVGame not loaded");
 	}
 
 	if (clientNum >= MAX_CLIENTS)
 	{
-		Com_Error(ERR_FATAL, "TVGame invalid clientNum %d", clientNum);
+		Com_Error(ERR_FATAL, "SV_CL_GetPlayerstate: invalid clientNum %d", clientNum);
 	}
 
 	if (ps == NULL)
 	{
-		Com_Error(ERR_FATAL, "TVGame clientNum %d NULL ps", clientNum);
+		Com_Error(ERR_FATAL, "SV_CL_GetPlayerstate: clientNum %d NULL ps", clientNum);
 	}
 
 	if (clientNum == -1)
@@ -1174,4 +1357,50 @@ int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps)
 	}
 
 	return 1;
+}
+
+void SV_CL_Frame(void)
+{
+	int time = 0;
+
+	if (svcls.state < CA_AUTHORIZING)
+	{
+		return;
+	}
+
+	//Com_Printf("SV_CL_Frame: sv.time: %d svcl.serverTime: %d\n", sv.time, svcl.serverTime);
+
+	if (svcl.serverTime < svcls.lastFrameTime)
+	{
+		Com_Printf("Server went backwards in time: %d > %d (late snap?)\n", svcls.lastFrameTime, svcl.serverTime);
+
+		time = svcl.serverTime;
+	}
+	else
+	{
+		//if (!demoplaying)
+		{
+			time = Sys_Milliseconds();
+		}
+
+		if (sv.time != 0)
+		{
+			//Com_Printf("dropped server frame: svs.time [%d] cl.serverTime [%d] frameDelta [%d]\n", sv.time, svcl.serverTime, time);
+		}
+	}
+
+	if (sv.time < svcl.serverTime)
+	{
+		//if (!demoplaying)
+		{
+			sv.time             = svcl.serverTime;
+			svcls.lastFrameTime = sv.time;
+
+			VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+
+			// send messages back to the clients
+			SV_SendClientMessages();
+			return;
+		}
+	}
 }

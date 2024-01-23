@@ -435,7 +435,8 @@ enum svc_ops_e
 	svc_download,               ///< [short] size [size bytes]
 	svc_snapshot,
 	svc_EOF,
-	svc_ettv_playerstates
+	svc_ettv_playerstates,
+	svc_ettv_currentstate
 };
 
 /**

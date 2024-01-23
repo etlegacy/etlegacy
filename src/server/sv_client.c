@@ -211,21 +211,21 @@ static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
 
 		if (sv_etltv_maxslaves->integer <= 0)
 		{
-			NET_OutOfBandPrint(NS_SERVER, from, "print\nMaster must reserve slots with sv_etltv_maxslaves.\n");
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Master must reserve slots with sv_etltv_maxslaves.\n");
 			Com_DPrintf("    rejected ettv slave connection from %s because sv_etltv_maxslaves is not set.\n", NET_AdrToString(from));
 			return qfalse;
 		}
 
 		if (!sv_etltv_password->string[0])
 		{
-			NET_OutOfBandPrint(NS_SERVER, from, "print\nMaster must set an sv_etltv_password.\n");
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Master must set an sv_etltv_password.\n");
 			Com_DPrintf("    rejected ettv slave connection from %s because of empty sv_etltv_password.\n", NET_AdrToString(from));
 			return qfalse;
 		}
 
 		if (strcmp(Info_ValueForKey(userinfo, "masterpassword"), sv_etltv_password->string))
 		{
-			NET_OutOfBandPrint(NS_SERVER, from, "print\nInvalid master password.\n");
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Invalid master password.\n");
 			Com_DPrintf("    rejected ettv slave connection from %s because password didn\'t match sv_etltv_password.\n", NET_AdrToString(from));
 			return qfalse;
 		}
@@ -562,16 +562,16 @@ gotnewcl:
 	// build a new connection
 	// accept the new client
 	// this is the only place a client_t is EVER initialized
-	*newcl         = temp;
-	clientNum      = newcl - svs.clients;
+	*newcl    = temp;
+	clientNum = newcl - svs.clients;
 
 	if (!svcls.isTVGame)
 	{
-		newcl->gentity = SV_GentityNum(clientNum);
+		newcl->gentity            = SV_GentityNum(clientNum);
 		newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
 	}
 
-	newcl->challenge          = challenge; // save the challenge
+	newcl->challenge = challenge;          // save the challenge
 	Q_strncpyz(newcl->guid, Info_ValueForKey(userinfo, "cl_guid"), sizeof(newcl->guid)); // save guid
 
 	// save the address
