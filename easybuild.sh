@@ -79,6 +79,13 @@ einfo() {
 	command echo -e "\n$boldgreen~~>$reset $boldwhite${1}$reset"
 }
 
+ewarning() {
+	if $silent_mode; then
+		return 1
+	fi
+	command echo -e "\n$boldred WARNING$boldyellow~~> $boldwhite${1}$reset"
+}
+
 ehead() {
 	if $silent_mode; then
 		return 1
@@ -155,11 +162,15 @@ _detectlinuxdistro() {
 detectos() {
 	PLATFORMSYS=`uname -s`
 	PLATFORMARCH=`uname -m`
+	# PLATFORMARCHBASE=`uname -p`
+	PLATFORM_IS_DARWIN=0
+
 	if [[ ${PLATFORMSYS} == "Linux" ]]; then
 		DISTRO=`_detectlinuxdistro`
 	elif [[ ${PLATFORMSYS} == "Darwin" ]]; then
 		PLATFORMSYS=`sw_vers -productName`
 		DISTRO=`sw_vers -productVersion`
+		PLATFORM_IS_DARWIN=1
 
 		# Check if x86_build is set and an osx vesion as of Catalina or higher is used
 		IFS='.' read -r -a ver <<< "$DISTRO"
@@ -170,6 +181,7 @@ detectos() {
 	else
 		DISTRO="Unknown"
 	fi
+
 	command echo -e "  running on: $boldgreen${PLATFORMSYS}$reset $darkgreen${PLATFORMARCH}$reset - $boldlightblue${DISTRO}$reset"
 }
 
@@ -279,6 +291,10 @@ parse_commandline() {
 			FEATURE_SSL=0
 			BUNDLED_OPENSSL=0
 			BUNDLED_WOLFSSL=0
+			FEATURE_AUTH=0
+		elif [ "$var" = "-noauth" ] || [  "$var" = "-no-auth" ]; then
+			einfo "Will disable authentication"
+			FEATURE_AUTH=0
 		elif [ "$var" = "-zip" ]; then
 			ZIP_ONLY=1
 		elif [ "$var" = "-clang" ]; then
@@ -464,13 +480,25 @@ generate_configuration() {
 	BUNDLED_PNG=${BUNDLED_PNG:-1}
 	BUNDLED_SQLITE3=${BUNDLED_SQLITE3:-1}
 
-	if [ "${PLATFORMSYS}" != "Mac OS X" ] && [ "${PLATFORMSYS}" != "macOS" ]; then
+	FEATURE_CURL=${FEATURE_CURL:-1}
+	FEATURE_SSL=${FEATURE_SSL:-1}
+	FEATURE_AUTH=${FEATURE_AUTH:-1}
+
+	if [ $PLATFORM_IS_DARWIN -ne 1 ]; then
 		BUNDLED_CURL=${BUNDLED_CURL:-1}
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-1}
 		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-1}
 	else
-		BUNDLED_CURL=${BUNDLED_CURL:-0}
+		# If we are using the authentication system, default to the bundled curl for now (see bellow)
+		# On macos the system curl cause the request to fail when swapping get and post requests sometimes
+		# TODO: recheck the curl failure on macos after a system upgrade later 20204
+		if [ $FEATURE_AUTH -eq 1 ]; then
+			einfo "Authentication is enabled, defaulting to bundled curl"
+			BUNDLED_CURL=${BUNDLED_CURL:-1}
+		else
+			BUNDLED_CURL=${BUNDLED_CURL:-0}
+		fi
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
 		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-0}
@@ -481,8 +509,11 @@ generate_configuration() {
 	FEATURE_RENDERER_GLES=${FEATURE_RENDERER_GLES:-0}
 	RENDERER_DYNAMIC=${RENDERER_DYNAMIC:-1}
 
-	FEATURE_CURL=${FEATURE_CURL:-1}
-	FEATURE_SSL=${FEATURE_SSL:-1}
+	if [ $FEATURE_SSL -eq 0 ] && [ $FEATURE_AUTH -eq 1 ]; then
+		ewarning "SSL is disabled, but authentication is enabled. Disabling authentication."
+		FEATURE_AUTH=0
+	fi
+
 	FEATURE_OGG_VORBIS=${FEATURE_OGG_VORBIS:-1}
 	FEATURE_THEORA=${FEATURE_THEORA:-1}
 	FEATURE_OPENAL=${FEATURE_OPENAL:-1}
@@ -503,7 +534,7 @@ generate_configuration() {
 	INSTALL_GEOIP=${INSTALL_GEOIP:-1}
 	INSTALL_WOLFADMIN=${INSTALL_WOLFADMIN:-1}
 
-	if [ "${PLATFORMSYS}" != "Mac OS X" ] && [ "${PLATFORMSYS}" != "macOS" ]; then
+	if [ $PLATFORM_IS_DARWIN -ne 1 ]; then
 		FEATURE_OMNIBOT=${FEATURE_OMNIBOT:-1}
 		INSTALL_OMNIBOT=${INSTALL_OMNIBOT:-1}
 	else
@@ -542,6 +573,7 @@ generate_configuration() {
 		-DBUNDLED_WOLFSSL=${BUNDLED_WOLFSSL}
 		-DFEATURE_CURL=${FEATURE_CURL}
 		-DFEATURE_SSL=${FEATURE_SSL}
+		-DFEATURE_AUTH=${FEATURE_AUTH}
 		-DFEATURE_OGG_VORBIS=${FEATURE_OGG_VORBIS}
 		-DFEATURE_THEORA=${FEATURE_THEORA}
 		-DFEATURE_OPENAL=${FEATURE_OPENAL}
