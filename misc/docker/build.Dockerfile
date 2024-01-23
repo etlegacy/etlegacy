@@ -1,5 +1,5 @@
 FROM centos:7
-LABEL version="1.4"
+LABEL version="1.5"
 LABEL maintainer="mail@etlegacy.com"
 LABEL description="Linux build machine for the 32 and 64 bit linux releases"
 
@@ -13,7 +13,7 @@ RUN cd /tmp && \
 	yum groupinstall --assumeyes "Development tools" && \
 	yum --assumeyes --exclude=git* install tar freeglut-devel gmake glibc glibc-devel libX11 \
 	libX11-devel mesa-libGL mesa-libGL-devel alsa-lib-devel pulseaudio-libs-devel \
-	curl-devel zlib-devel wget nasm which libXxf86vm-devel \
+	curl-devel zlib-devel wget nasm which libXxf86vm-devel perl-IPC-Cmd \
 	wayland-devel mesa-libEGL-devel mesa-libGLES-devel libxkbcommon-devel libXi-devel libXfixes-devel \
 	libXScrnSaver-devel libXcursor-devel libXinerama-devel libXrandr-devel libXvmc-devel perl-Thread-Queue && \
 	yum --assumeyes remove git && \
