@@ -699,6 +699,10 @@ qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 #define DLNOTIFY_BEGIN      0x00000002  ///< "clientDownload: 4 : beginning ..."
 #define DLNOTIFY_ALL        (DLNOTIFY_REDIRECT | DLNOTIFY_BEGIN)
 
+//============================ TV server client ============================
+
+#define SV_CL_MAXPACKETS 40
+
 /**
  * @struct clientStatic_t
  * @brief the clientStatic_t structure is never wiped, and is used even when
@@ -920,6 +924,7 @@ void SV_CL_CheckForResend(void);
 void SV_CL_Disconnect(void);
 void SV_CL_AddReliableCommand(const char *cmd);
 void SV_CL_WritePacket(void);
+qboolean SV_CL_ReadyToSendPacket(void);
 void SV_CL_ClearState(void);
 void SV_CL_DownloadsComplete(void);
 void SV_CL_SendPureChecksums(void);
@@ -929,7 +934,8 @@ void SV_CL_ConfigstringModified(void);
 char *SV_CL_Cvar_InfoString(char *cs, int index);
 
 int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps);
-void SV_CL_Frame(void);
+void SV_CL_Frame(int frameMsec);
+void SV_CL_RunFrame(void);
 
 void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg);
 void SV_CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg);
@@ -961,5 +967,7 @@ void SV_CL_ReadDemoMessage(void);
 void SV_CL_DemoCompleted(void);
 void SV_CL_DemoCleanUp(void);
 void SV_CL_NextDemo(void);
+
+//============================================================
 
 #endif // #ifndef INCLUDE_SERVER_H

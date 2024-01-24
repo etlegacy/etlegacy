@@ -167,6 +167,49 @@ void SV_CL_SystemInfoChanged(void)
 }
 
 /**
+ * @brief SV_CL_ConfigstringInfoChanged update cvars based on configstring from master
+ */
+static void SV_CL_ConfigstringInfoChanged(int num)
+{
+	char       *cs;
+	const char *s;
+	char       key[BIG_INFO_KEY];
+	char       value[BIG_INFO_VALUE];
+
+	cs = svcl.gameState.stringData + svcl.gameState.stringOffsets[num];
+
+	s = cs;
+	while (s)
+	{
+		cvarFlags_t cvar_flags;
+
+		Info_NextPair(&s, key, value);
+		if (!key[0])
+		{
+			break;
+		}
+
+		if (num == CS_SERVERINFO)
+		{
+			if (!Q_strncmp(key, "sv_", 3) || !Q_stricmp(key, "protocol") || !Q_stricmp(key, "version") ||
+			    !Q_stricmp(key, "gamename") || !Q_stricmp(key, "g_needpass") || !Q_stricmp(key, "g_password"))
+			{
+				continue;
+			}
+		}
+
+		if ((cvar_flags = Cvar_Flags(key)) & CVAR_NONEXISTENT)
+		{
+			Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM);
+		}
+		else
+		{
+			Cvar_SetSafe(key, value);
+		}
+	}
+}
+
+/**
  * @brief SV_CL_ParseGamestate
  * @param[in] msg
  */
@@ -261,6 +304,8 @@ void SV_CL_ParseGamestate(msg_t *msg)
 
 	// parse serverId and other cvars
 	SV_CL_SystemInfoChanged();
+	SV_CL_ConfigstringInfoChanged(CS_SERVERINFO);
+	SV_CL_ConfigstringInfoChanged(CS_WOLFINFO);
 
 	// Verify if we have all official pakfiles. As we won't
 	// be downloading them, we should be kicked for not having them.
@@ -893,6 +938,6 @@ void SV_CL_ParseServerMessage(msg_t *msg)
 
 	if (svcls.isTVGame)
 	{
-		SV_CL_Frame();
+		SV_CL_RunFrame();
 	}
 }

@@ -1448,7 +1448,7 @@ static void SV_CalcPings(void)
  * for a few seconds to make sure any final reliable message gets resent
  * if necessary.
  */
-static void SV_CheckTimeouts(void)
+void SV_CheckTimeouts(void)
 {
 	client_t *cl;
 	int      i;
@@ -1598,6 +1598,77 @@ int SV_FrameMsec()
 	}
 }
 
+/**
+ * @brief SV_Frame_Ext
+ * @param[in] frameMsec
+ */
+static void SV_Frame_Ext(int frameMsec)
+{
+	if (cvar_modifiedFlags & CVAR_SERVERINFO)
+	{
+		SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+		cvar_modifiedFlags &= ~CVAR_SERVERINFO;
+	}
+	if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
+	{
+		SV_SetConfigstringNoUpdate(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+		cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
+	}
+	if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
+	{
+		SV_SetConfigstring(CS_SYSTEMINFO, Cvar_InfoString_Big(CVAR_SYSTEMINFO));
+		cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
+	}
+	if (cvar_modifiedFlags & CVAR_WOLFINFO)
+	{
+		SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
+		cvar_modifiedFlags &= ~CVAR_WOLFINFO;
+	}
+
+	// start recording a demo
+	if (sv_autoDemo->integer)
+	{
+		SV_DemoAutoDemoRecord();
+	}
+
+	// update ping based on the all received frames
+	SV_CalcPings();
+
+	// run the game simulation in chunks
+	while (sv.timeResidual >= frameMsec)
+	{
+		sv.timeResidual -= frameMsec;
+		svs.time        += frameMsec;
+		sv.time         += frameMsec;
+
+		// let everything in the world think and move
+		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+
+		// play/record demo frame (if enabled)
+		if (sv.demoState == DS_RECORDING) // Record the frame
+		{
+			SV_DemoWriteFrame();
+		}
+		else if (sv_demoState->integer == DS_WAITINGPLAYBACK) // Launch again the playback of the demo (because we needed a restart in order to set some cvars such as sv_maxclients or fs_game)
+		{
+			SV_DemoRestartPlayback();
+		}
+		else if (sv.demoState == DS_PLAYBACK) // Play the next demo frame
+		{
+			SV_DemoReadFrame();
+		}
+	}
+
+	// check timeouts
+	SV_CheckTimeouts();
+
+	// check user info buffer thingy
+	SV_CheckClientUserinfoTimer();
+
+	// send messages back to the clients
+	SV_SendClientMessages();
+}
+
 #ifdef DEDICATED
 extern void Sys_Sleep(int msec);
 #endif
@@ -1614,7 +1685,6 @@ extern void Sys_Sleep(int msec);
 void SV_Frame(int msec)
 {
 	int        frameMsec;
-	int        startTime;
 	char       mapname[MAX_QPATH];
 	int        frameStartTime = 0;
 	static int start, end;
@@ -1638,7 +1708,7 @@ void SV_Frame(int msec)
 	{
 		SV_CL_CheckForResend();
 
-		if (svcls.state == CA_CONNECTED)
+		if (svcls.state == CA_CONNECTED && SV_CL_ReadyToSendPacket())
 		{
 			SV_CL_WritePacket();
 		}
@@ -1709,130 +1779,13 @@ void SV_Frame(int msec)
 		return;
 	}
 
-	// update infostrings if anything has been changed
-	if (!svcls.isTVGame)
-	{
-		if (cvar_modifiedFlags & CVAR_SERVERINFO)
-		{
-			SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
-			cvar_modifiedFlags &= ~CVAR_SERVERINFO;
-		}
-		if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
-		{
-			SV_SetConfigstringNoUpdate(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
-			cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
-		}
-		if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
-		{
-			SV_SetConfigstring(CS_SYSTEMINFO, Cvar_InfoString_Big(CVAR_SYSTEMINFO));
-			cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
-		}
-		if (cvar_modifiedFlags & CVAR_WOLFINFO)
-		{
-			SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
-			cvar_modifiedFlags &= ~CVAR_WOLFINFO;
-		}
-	}
-	else
-	{
-		if (cvar_modifiedFlags & CVAR_SERVERINFO)
-		{
-			SV_SetConfigstring(CS_SERVERINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SERVERINFO], CS_SERVERINFO));
-			cvar_modifiedFlags &= ~CVAR_SERVERINFO;
-		}
-		if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
-		{
-			SV_SetConfigstringNoUpdate(CS_SERVERINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SERVERINFO], CS_SERVERINFO));
-			cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
-		}
-		if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
-		{
-			SV_SetConfigstring(CS_SYSTEMINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SYSTEMINFO], CS_SYSTEMINFO));
-			cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
-		}
-		if (cvar_modifiedFlags & CVAR_WOLFINFO)
-		{
-			SV_SetConfigstring(CS_WOLFINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_WOLFINFO], CS_WOLFINFO));
-			cvar_modifiedFlags &= ~CVAR_WOLFINFO;
-		}
-	}
-
-
-	// start recording a demo
-	if (sv_autoDemo->integer)
-	{
-		SV_DemoAutoDemoRecord();
-	}
-
-	if (com_speeds->integer)
-	{
-		startTime = Sys_Milliseconds();
-	}
-	else
-	{
-		startTime = 0;  // quite a compiler warning
-	}
-
-	// update ping based on the all received frames
-	SV_CalcPings();
-
-	// run the game simulation in chunks
-	while (sv.timeResidual >= frameMsec)
-	{
-		sv.timeResidual -= frameMsec;
-		svs.time        += frameMsec;
-
-		if (svclc.demo.playing && svcl.serverTime <= sv.time)
-		{
-			SV_CL_ReadDemoMessage();
-		}
-
-		if (!svcls.isTVGame)
-		{
-			sv.time += frameMsec;
-			// let everything in the world think and move
-			VM_Call(gvm, GAME_RUN_FRAME, sv.time);
-		}
-		else
-		{
-			SV_CL_Frame();
-		}
-
-		// play/record demo frame (if enabled)
-		if (sv.demoState == DS_RECORDING) // Record the frame
-		{
-			SV_DemoWriteFrame();
-		}
-		else if (sv_demoState->integer == DS_WAITINGPLAYBACK) // Launch again the playback of the demo (because we needed a restart in order to set some cvars such as sv_maxclients or fs_game)
-		{
-			SV_DemoRestartPlayback();
-		}
-		else if (sv.demoState == DS_PLAYBACK) // Play the next demo frame
-		{
-			SV_DemoReadFrame();
-		}
-	}
-
 	if (svcls.isTVGame)
 	{
-		SV_CL_WritePacket();
+		SV_CL_Frame(frameMsec);
 	}
-
-	if (com_speeds->integer)
+	else
 	{
-		time_game = Sys_Milliseconds() - startTime;
-	}
-
-	// check timeouts
-	SV_CheckTimeouts();
-
-	// check user info buffer thingy
-	SV_CheckClientUserinfoTimer();
-
-	if (!svcls.isTVGame)
-	{
-		// send messages back to the clients
-		SV_SendClientMessages();
+		SV_Frame_Ext(frameMsec);
 	}
 
 	// send a heartbeat to the master if needed

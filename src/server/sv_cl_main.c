@@ -228,7 +228,7 @@ void SV_CL_CheckForResend(void)
 			Info_SetValueForKey(info, "name", "ETLTV_TEST");
 			Info_SetValueForKey(info, "rate", "90000");
 			Info_SetValueForKey(info, "snaps", "20");
-			Info_SetValueForKey(info, "cl_maxpackets", "40");
+			Info_SetValueForKey(info, "cl_maxpackets", va("%i", SV_CL_MAXPACKETS));
 			Info_SetValueForKey(info, "cg_uinfo", "0 0 40");
 
 			Com_sprintf(data, sizeof(data), "connect \"%s\"", info);
@@ -297,6 +297,68 @@ void SV_CL_AddReliableCommand(const char *cmd)
 	svclc.reliableSequence++;
 	index = svclc.reliableSequence & (MAX_RELIABLE_COMMANDS - 1);
 	Q_strncpyz(svclc.reliableCommands[index], cmd, sizeof(svclc.reliableCommands[index]));
+}
+
+/**
+ * @brief SV_CL_ReadyToSendPacket
+ *
+ * @details Returns qfalse if we are over the maxpackets limit
+ * and should choke back the bandwidth a bit by not sending
+ * a packet this frame.  All the commands will still get
+ * delivered in the next packet, but saving a header and
+ * getting more delta compression will reduce total bandwidth.
+ *
+ * @return
+ */
+qboolean SV_CL_ReadyToSendPacket(void)
+{
+	int oldPacketNum;
+	int delta;
+
+	// don't send anything if playing back a demo
+	if (svclc.demo.playing)
+	{
+		return qfalse;
+	}
+
+	// If we are downloading, we send no less than 50ms between packets
+	//if (*svcls.download.downloadTempName &&
+	//	svcls.realtime - svclc.lastPacketSentTime < 50)
+	//{
+	//	return qfalse;
+	//}
+
+	// if we don't have a valid gamestate yet, only send
+	// one packet a second
+	if (svcls.state != CA_ACTIVE &&
+	    svcls.state != CA_PRIMED &&
+	    /*!*cls.download.downloadTempName &&*/
+	    svcls.realtime - svclc.lastPacketSentTime < 1000)
+	{
+		return qfalse;
+	}
+
+	// send every frame for loopbacks
+	//if (clc.netchan.remoteAddress.type == NA_LOOPBACK)
+	//{
+	//	return qtrue;
+	//}
+
+	// send every frame for LAN
+	//if (Sys_IsLANAddress(clc.netchan.remoteAddress))
+	//{
+	//	return qtrue;
+	//}
+
+	oldPacketNum = (svclc.netchan.outgoingSequence - 1) & PACKET_MASK;
+	delta        = svcls.realtime - svcl.outPackets[oldPacketNum].p_realtime;
+	if (delta < 1000 / SV_CL_MAXPACKETS)
+	{
+		// the accumulated commands will go out in the next packet
+		return qfalse;
+	}
+
+	return qtrue;
 }
 
 /**
@@ -1359,7 +1421,10 @@ int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps)
 	return 1;
 }
 
-void SV_CL_Frame(void)
+/**
+ * @brief SV_CL_RunFrame
+ */
+void SV_CL_RunFrame(void)
 {
 	int time = 0;
 
@@ -1403,4 +1468,56 @@ void SV_CL_Frame(void)
 			return;
 		}
 	}
+}
+
+/**
+ * @brief SV_CL_Frame
+ */
+void SV_CL_Frame(int frameMsec)
+{
+	if (cvar_modifiedFlags & CVAR_SERVERINFO)
+	{
+		SV_SetConfigstring(CS_SERVERINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SERVERINFO], CS_SERVERINFO));
+		cvar_modifiedFlags &= ~CVAR_SERVERINFO;
+	}
+	if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
+	{
+		SV_SetConfigstringNoUpdate(CS_SERVERINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SERVERINFO], CS_SERVERINFO));
+		cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
+	}
+	if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
+	{
+		SV_SetConfigstring(CS_SYSTEMINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SYSTEMINFO], CS_SYSTEMINFO));
+		cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
+	}
+	if (cvar_modifiedFlags & CVAR_WOLFINFO)
+	{
+		SV_SetConfigstring(CS_WOLFINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_WOLFINFO], CS_WOLFINFO));
+		cvar_modifiedFlags &= ~CVAR_WOLFINFO;
+	}
+
+	// run the game simulation in chunks
+	while (sv.timeResidual >= frameMsec)
+	{
+		sv.timeResidual -= frameMsec;
+		svs.time        += frameMsec;
+
+		if (svclc.demo.playing && svcl.serverTime <= sv.time)
+		{
+			SV_CL_ReadDemoMessage();
+		}
+
+		SV_CL_RunFrame();
+	}
+
+	if (SV_CL_ReadyToSendPacket())
+	{
+		SV_CL_WritePacket();
+	}
+
+	// check timeouts
+	SV_CheckTimeouts();
+
+	// check user info buffer thingy
+	SV_CheckClientUserinfoTimer();
 }

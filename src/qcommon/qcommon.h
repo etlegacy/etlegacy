@@ -1296,6 +1296,7 @@ void SV_PacketEvent(netadr_t from, msg_t *msg);
 qboolean SV_GameCommand(void);
 int SV_FrameMsec();
 int SV_SendQueuedPackets();
+void SV_CheckTimeouts(void);
 
 // UI interface
 
