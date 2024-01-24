@@ -13,15 +13,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.google.common.io.Files;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -36,7 +35,7 @@ public class ETLMain extends Activity {
         OutputStream out = null;
 
         try {
-            out = new FileOutputStream(new File(getExternalFilesDir("etlegacy/legacy"), file.getName()));
+            out = Files.newOutputStream(new File(getExternalFilesDir("etlegacy/legacy"), file.getName()).toPath());
             byte[] buf = new byte[1024];
             int len;
             while((len=in.read(buf))>0){
@@ -101,7 +100,7 @@ public class ETLMain extends Activity {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 		}
 
-        String etl_pak = new String();
+        String etl_pak = "";
         AssetManager assManager = getApplicationContext().getAssets();
 
         try {
@@ -171,7 +170,7 @@ public class ETLMain extends Activity {
                     super.onFinish();
                     if (file.getAbsoluteFile().exists()) {
                         try {
-                            Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak2.getName()));
+							Files.move(file.toPath(), etl_pak2.toPath());
                             client.cancelAllRequests(true);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -197,7 +196,7 @@ public class ETLMain extends Activity {
                     super.onFinish();
                     if (file.getAbsoluteFile().exists()) {
                         try {
-                            Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak1.getName()));
+							Files.move(file.toPath(), etl_pak1.toPath());
                             client.cancelAllRequests(true);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -219,12 +218,7 @@ public class ETLMain extends Activity {
                     final int etl_bytesWritten = (int) (bytesWritten / Math.pow(1024, 2));
                     int etl_totalSize = (int) (totalSize / Math.pow(1024, 2));
                     etl_Dialog.setMax(etl_totalSize);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            etl_Dialog.setProgress(etl_bytesWritten);
-                        }
-                    });
+                    runOnUiThread(() -> etl_Dialog.setProgress(etl_bytesWritten));
                 }
 
                 @Override
@@ -232,7 +226,7 @@ public class ETLMain extends Activity {
                     super.onFinish();
                     if (file.getAbsoluteFile().exists()) {
                         try {
-                            Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak0.getName()));
+							Files.move(file.toPath(), etl_pak0.toPath());
                             client.cancelAllRequests(true);
                             etl_Dialog.dismiss();
                             ETLMain.this.startActivity(intent);

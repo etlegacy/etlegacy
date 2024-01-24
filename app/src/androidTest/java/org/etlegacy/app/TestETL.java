@@ -25,34 +25,28 @@ public class TestETL {
 
     private Solo solo;
     Instrumentation instrumentation;
-    InstrumentationRegistry instrumentationRegistry;
     Application app;
 
     @Before
-    public void setUp() throws Exception {
-        app = (Application) instrumentationRegistry.getTargetContext().getApplicationContext();
+    public void setUp() {
+        app = (Application) InstrumentationRegistry.getTargetContext().getApplicationContext();
 
         instrumentation = new Instrumentation();
-        instrumentation = instrumentationRegistry.getInstrumentation();
-        instrumentation.runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                instrumentation.callApplicationOnCreate(app);
-            }
-        });
+        instrumentation = InstrumentationRegistry.getInstrumentation();
+        instrumentation.runOnMainSync(() -> instrumentation.callApplicationOnCreate(app));
     }
 
     @Test
-    public void clickOnNickEntry() throws Exception {
+    public void clickOnNickEntry() {
         // Perform click on Nickname Entry
         // TODO: Implement
 
         assertEquals("org.etlegacy.app", app.getPackageName());
         DisplayMetrics displaymetrics = new DisplayMetrics();
 
-        if (app.getApplicationContext().getClass().getSimpleName() == "ETLActivity") {
+        if (app.getApplicationContext().getClass().getSimpleName().equals("ETLActivity")) {
             sleep(10000);
-            solo.drag(0, displaymetrics.widthPixels, 0, displaymetrics.heightPixels / 2, 100);
+            solo.drag(0, displaymetrics.widthPixels, 0, (float) displaymetrics.heightPixels / 2, 100);
         }
 
     }

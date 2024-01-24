@@ -35,6 +35,8 @@
 #ifndef INCLUDE_DL_PUBLIC_H
 #define INCLUDE_DL_PUBLIC_H
 
+#include "q_shared.h"
+
 typedef enum
 {
 	REQUEST_NOK   = 0,
