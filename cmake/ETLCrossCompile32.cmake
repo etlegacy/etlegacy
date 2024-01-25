@@ -3,7 +3,7 @@
 # The CROSS_COMPILE32 is an old option which was created at a time
 # when ET: Legacy only existed on x86 platforms (windows, linux and mac).
 #
-# MEANING that the option is old and has a caveat of only supporting x86 targets.
+# MEANING that the option is old and has a caveat of only being tested on x86 platforms.
 #
 # If you to cross compile from a system with a different architecture then just use
 # the CMAKE_TOOLCHAIN_FILE option and point it to a toolchain file for your target.
@@ -35,33 +35,48 @@ function(force_rescan_library LIBRARY_NAME)
 	set(${LIBRARY_NAME}_LIBRARY "${LIBRARY_NAME}_LIBRARY-NOTFOUND" CACHE FILEPATH "Cleared." FORCE)
 endfunction()
 
-# FIXME: should this be marked as deprecated or not?
-# message(DEPRECATION "CROSS_COMPILE32 is deprecated, use CMAKE_TOOLCHAIN_FILE or <LANG> flags instead.")
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	message(STATUS "Crosscompiling for 32 bits x86 architecture")
-	set(CMAKE_SIZEOF_VOID_P 4)
-	if (UNIX)
-		set(CMAKE_SYSTEM_PROCESSOR i386)
-		message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
-		set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
-		legacy_replace_or_append_flag("-m64" "-m32" CMAKE_C_FLAGS)
-		legacy_replace_or_append_flag("-m64" "-m32" CMAKE_CXX_FLAGS)
-		legacy_replace_or_append_flag("-m64" "-m32" CMAKE_EXE_LINKER_FLAGS)
-		legacy_replace_or_append_flag("-m64" "-m32" CMAKE_SHARED_LINKER_FLAGS)
-		legacy_replace_or_append_flag("-m64" "-m32" CMAKE_MODULE_LINKER_FLAGS)
-	elseif(WIN32)
-		set(CMAKE_SYSTEM_PROCESSOR x86) #the new cmake on windows will otherwise use arch name of x64 which will fuck up our naming
-		set(ENV{PLATFORM} win32) #this is redundant but just to  be safe
+# The CROSS_COMPILE32 can now contain the actual target processor name (so this is no longer locked to x86)
+macro(legacy_check_cross_compile_flag)
+	string(TOUPPER ${CROSS_COMPILE32} CROSS_COMPILE32_UPPER)
+	# Possible old CROSS_COMPILE32 values that will cause a fallback value (old style)
+	if (NOT CROSS_COMPILE32_UPPER IN_LIST "ON;1;YES;TRUE;Y;T")
+		set(CMAKE_SYSTEM_PROCESSOR ${CROSS_COMPILE32})
 	else()
-		message(WARNING "Cross compile 32bit is 'enabled' but the platform is unknown, this might not (most likely won't) work correctly")
+		if (UNIX)
+			set(CMAKE_SYSTEM_PROCESSOR i386)
+		elseif(WIN32)
+			#the new cmake on windows will otherwise use arch name of x64 which will fuck up our naming
+			set(CMAKE_SYSTEM_PROCESSOR x86)
+			# this is redundant but just to  be safe
+			set(ENV{PLATFORM} win32)
+		endif()
 	endif()
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-	message(WARNING "Cross compilation for 32 bit is enabled on 32 bit toolset. This should not be required. Disabling...")
-	set(CROSS_COMPILE32 OFF)
-	return()
-elseif(CROSS_COMPILE32)
-	message(FATAL_ERROR "System void pointer size is: ${CMAKE_SIZEOF_VOID_P} and cross compilation is requested. This will not work...")
+	message(STATUS "Forcing processor as '${CMAKE_SYSTEM_PROCESSOR}' to cross compile 32bit")
+endmacro()
+
+if(CROSS_COMPILE32)
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		message(STATUS "Crosscompiling for 32 bits architecture")
+
+		legacy_check_cross_compile_flag()
+
+		set(CMAKE_SIZEOF_VOID_P 4)
+		if (UNIX)
+			set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
+			legacy_replace_or_append_flag("-m64" "-m32" CMAKE_C_FLAGS)
+			legacy_replace_or_append_flag("-m64" "-m32" CMAKE_CXX_FLAGS)
+			legacy_replace_or_append_flag("-m64" "-m32" CMAKE_EXE_LINKER_FLAGS)
+			legacy_replace_or_append_flag("-m64" "-m32" CMAKE_SHARED_LINKER_FLAGS)
+			legacy_replace_or_append_flag("-m64" "-m32" CMAKE_MODULE_LINKER_FLAGS)
+		elseif(NOT WIN32)
+			message(WARNING "Cross compile 32bit is 'enabled' but the platform is unknown, this might not (most likely won't) work correctly")
+		endif()
+	elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+		message(WARNING "Cross compilation for 32 bit is enabled on 32 bit toolset. This should not be required.")
+		legacy_check_cross_compile_flag()
+	else()
+		message(FATAL_ERROR "System void pointer size is: ${CMAKE_SIZEOF_VOID_P} and cross compilation is requested. This will not work...")
+	endif()
 endif()
 
 # If we change architecture we need to force rescan of libraries

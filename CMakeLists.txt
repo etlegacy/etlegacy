@@ -141,9 +141,7 @@ set(CMAKE_C_STANDARD 99)
 include(cmake/ETLPrograms.cmake)
 
 # Setup compiler flags for x86 builds
-if (CROSS_COMPILE32)
-	include(cmake/ETLCrossCompile32.cmake)
-endif()
+include(cmake/ETLCrossCompile32.cmake)
 
 # Setup some basic helper variables
 include(cmake/ETLCommon.cmake)
