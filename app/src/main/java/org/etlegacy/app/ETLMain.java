@@ -170,7 +170,7 @@ public class ETLMain extends Activity {
                     super.onFinish();
                     if (file.getAbsoluteFile().exists()) {
                         try {
-							Files.move(file.toPath(), etl_pak2.toPath());
+							Files.move(file.getAbsoluteFile().toPath(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak2.getName()).toPath());
                             client.cancelAllRequests(true);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -196,7 +196,7 @@ public class ETLMain extends Activity {
                     super.onFinish();
                     if (file.getAbsoluteFile().exists()) {
                         try {
-							Files.move(file.toPath(), etl_pak1.toPath());
+							Files.move(file.getAbsoluteFile().toPath(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak1.getName()).toPath());
                             client.cancelAllRequests(true);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -226,7 +226,7 @@ public class ETLMain extends Activity {
                     super.onFinish();
                     if (file.getAbsoluteFile().exists()) {
                         try {
-							Files.move(file.toPath(), etl_pak0.toPath());
+							Files.move(file.getAbsoluteFile().toPath(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak0.getName()).toPath());
                             client.cancelAllRequests(true);
                             etl_Dialog.dismiss();
                             ETLMain.this.startActivity(intent);
