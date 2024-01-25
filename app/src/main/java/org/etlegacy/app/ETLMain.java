@@ -7,241 +7,168 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.FileAsyncHttpResponseHandler;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
-
-import cz.msebera.android.httpclient.Header;
+import java.nio.file.Path;
+import java.util.Objects;
 
 public class ETLMain extends Activity {
 
-    /**
-     * Copy InputStream to a File.
-     * @param in inputstream to be saved
-     * @param file location of file to save inputstream in
-     */
-    private void copyInputStreamToFile(InputStream in, File file) {
-        OutputStream out = null;
+	private static final String PACK_TAG = "PK3";
 
-        try {
-            out = Files.newOutputStream(new File(getExternalFilesDir("etlegacy/legacy"), file.getName()).toPath());
-            byte[] buf = new byte[1024];
-            int len;
-            while((len=in.read(buf))>0){
-                out.write(buf,0,len);
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            // Ensure that the InputStreams are closed even if there's an exception.
-            try {
-                if ( out != null ) {
-                    out.close();
-                }
+	/**
+	 * Shows ProgressBar
+	 *
+	 * @return progressBar obj
+	 */
+	private ProgressDialog DownloadBar() {
+		ProgressDialog asyncDialog = new ProgressDialog(this);
+		asyncDialog.setTitle("Downloading Game Data ..");
+		asyncDialog.setIndeterminate(false);
+		asyncDialog.setProgress(0);
+		asyncDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		asyncDialog.setCancelable(false);
+		asyncDialog.setCanceledOnTouchOutside(false);
+		asyncDialog.show();
 
-                // If you want to close the "in" InputStream yourself then remove this
-                // from here but ensure that you close it yourself eventually.
-                in.close();
-            }
-            catch ( IOException e ) {
-                e.printStackTrace();
-            }
-        }
-    }
+		return asyncDialog;
+	}
 
-    /**
-     * Shows ProgressBar
-     * @return progressBar obj
-     */
-    private ProgressDialog DownloadBar() {
-        ProgressDialog asyncDialog = new ProgressDialog(this);
-        asyncDialog.setTitle("Downloading Game Data ..");
-        asyncDialog.setIndeterminate(false);
-        asyncDialog.setProgress(0);
-        asyncDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        asyncDialog.setCancelable(false);
-        asyncDialog.setCanceledOnTouchOutside(false);
-        asyncDialog.show();
+	/**
+	 * Convert pixel metrics to dp
+	 *
+	 * @param px value of px to be converted
+	 * @return dp
+	 */
+	public static int pxToDp(int px) {
+		return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+	}
 
-        return asyncDialog;
-    }
-
-    /**
-     * Convert pixel metrics to dp
-     * @param px value of px to be converted
-     * @return dp
-     */
-    public static int pxToDp(int px) {
-        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+							 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 		}
 
-        String etl_pak = "";
-        AssetManager assManager = getApplicationContext().getAssets();
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        try {
-            for(String file: assManager.list("")) {
-                if(file.endsWith(".pk3")) {
-                    etl_pak += file;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		ImageView imageView = new ImageView(this);
+		imageView.setBackgroundResource(R.drawable.ic_horizontal_white);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		LinearLayout etlLayout = new LinearLayout(this);
 
-        ImageView imageView = new ImageView(this);
-        imageView.setBackgroundResource(R.drawable.ic_horizontal_white);
+		RelativeLayout.LayoutParams etlParams = new RelativeLayout.LayoutParams(Resources.getSystem().getDisplayMetrics().widthPixels,
+																				Resources.getSystem().getDisplayMetrics().heightPixels);
 
-        LinearLayout etl_Layout = new LinearLayout(this);
+		etlLayout.addView(imageView, etlParams);
+		setContentView(etlLayout);
 
-        RelativeLayout.LayoutParams etl_Params = new RelativeLayout.LayoutParams(Resources.getSystem().getDisplayMetrics().widthPixels,
-                Resources.getSystem().getDisplayMetrics().heightPixels);
+		Path etmain = null;
 
-        etl_Layout.addView(imageView, etl_Params);
-        setContentView(etl_Layout);
+		if (!isExternalStorageWritable()) {
+			Log.d(PACK_TAG, "External storage is not available");
+			throw new RuntimeException("Fuck no ext. storage for writing");
+		}
 
-        final File etl_etlegacy = new File(getExternalFilesDir(null), "etlegacy/legacy/".concat(etl_pak));
+		try {
+			etmain = Objects.requireNonNull(getExternalFilesDir("/etlegacy/etmain")).toPath();
+		} catch (Exception e) {
+			Log.e("ASSETS", "Could not fetch the external files directory", e);
+		}
 
-        if (!etl_etlegacy.exists()) {
-            InputStream is = null;
-            try {
-                is = assManager.open(etl_pak);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            copyInputStreamToFile(is, etl_etlegacy);
-        }
+		assert etmain != null;
+		Log.d("ASSETS", "Acquired the external files dir: " + etmain.toAbsolutePath().toString());
 
-        // FIXME:This is ugly
-        final File etl_pak0 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak0.pk3");
-        final File etl_pak1 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak1.pk3");
-        final File etl_pak2 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak2.pk3");
+		if (!Files.exists(etmain)) {
+			try {
+				Files.createDirectories(etmain);
+			} catch (IOException e) {
+				Log.e(PACK_TAG, "Could not create etmain directories", e);
+				// FIXME: actually close the app gracefully
+				throw new RuntimeException(e);
+			}
+		}
 
-        final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
+		try {
+			extractIncludedPackages(etmain);
+		} catch (IOException e) {
+			Log.e(PACK_TAG, "Could not extract packages", e);
+		}
 
-        if (etl_pak0.exists() && etl_pak1.exists() && etl_pak2.exists()) {
-            ETLMain.this.startActivity(intent);
-            ETLMain.this.finish();
-        } else {
-            final ProgressDialog etl_Dialog = DownloadBar();
-            final AsyncHttpClient client = new AsyncHttpClient();
+		final Path pak0 = etmain.resolve("pak0.pk3");
+		final Path pak1 = etmain.resolve("pak1.pk3");
+		final Path pak2 = etmain.resolve("pak2.pk3");
 
-            // pak2
-            client.get("https://mirror.etlegacy.com/etmain/pak2.pk3", new FileAsyncHttpResponseHandler(this) {
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+		final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
 
-                }
+		if (Files.exists(pak0) && Files.exists(pak1) && Files.exists(pak2)) {
+			ETLMain.this.startActivity(intent);
+			ETLMain.this.finish();
+			return;
+		}
 
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, File file) {
+		final ProgressDialog progressDialog = DownloadBar();
+		final DownloadClient cc = new DownloadClient(this);
 
-                }
+		final String mirrorUrl = "https://mirror.etlegacy.com/etmain/";
+		cc.downloadPackFile(mirrorUrl + pak2.getFileName(), pak2, null, null);
+		cc.downloadPackFile(mirrorUrl + pak1.getFileName(), pak1, null, null);
+		cc.downloadPackFile(mirrorUrl + pak0.getFileName(), pak0, progressDialog::dismiss, (progress) -> {
+			final int bytesWritten = (int) (progress.written / Math.pow(1024, 2));
+			int totalSize = (int) (progress.total / Math.pow(1024, 2));
+			runOnUiThread(() -> {
+				progressDialog.setMax(totalSize);
+				progressDialog.setProgress(bytesWritten);
+			});
+		});
+		cc.whenReady(() -> {
+			runOnUiThread(() -> {
+				progressDialog.dismiss();
+				ETLMain.this.startActivity(intent);
+				ETLMain.this.finish();
+			});
+		});
+	}
 
-                @Override
-                public void onFinish() {
-                    super.onFinish();
-                    if (file.getAbsoluteFile().exists()) {
-                        try {
-							Files.move(file.getAbsoluteFile().toPath(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak2.getName()).toPath());
-                            client.cancelAllRequests(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
+	private void extractIncludedPackages(Path etmain) throws IOException {
+		AssetManager assManager = getApplicationContext().getAssets();
+		String[] assets = Objects.requireNonNull(assManager.list(""));
+		for (String file : assets) {
+			if (file.endsWith(".pk3")) {
 
-            // pak1
-            client.get("https://mirror.etlegacy.com/etmain/pak1.pk3", new FileAsyncHttpResponseHandler(this) {
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+				Path pakFile = etmain.resolve(file);
 
-                }
+				if (Files.exists(pakFile)) {
+					Log.d(PACK_TAG, "pk3 already exists, skipping copy: " + file);
+					continue;
+				}
 
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, File file) {
+				try (InputStream is = assManager.open(file)) {
+					Files.copy(is, pakFile);
+				} catch (Exception e) {
+					Log.e(PACK_TAG, "Something went wrong with the etl package copy", e);
+				}
+			}
+		}
+	}
 
-                }
-
-                @Override
-                public void onFinish() {
-                    super.onFinish();
-                    if (file.getAbsoluteFile().exists()) {
-                        try {
-							Files.move(file.getAbsoluteFile().toPath(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak1.getName()).toPath());
-                            client.cancelAllRequests(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-
-            // pak0
-            client.get("https://mirror.etlegacy.com/etmain/pak0.pk3", new FileAsyncHttpResponseHandler(this) {
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, File file) {
-                }
-
-                @Override
-                public void onProgress(long bytesWritten, long totalSize) {
-                    super.onProgress(bytesWritten, totalSize);
-                    final int etl_bytesWritten = (int) (bytesWritten / Math.pow(1024, 2));
-                    int etl_totalSize = (int) (totalSize / Math.pow(1024, 2));
-                    etl_Dialog.setMax(etl_totalSize);
-                    runOnUiThread(() -> etl_Dialog.setProgress(etl_bytesWritten));
-                }
-
-                @Override
-                public void onFinish() {
-                    super.onFinish();
-                    if (file.getAbsoluteFile().exists()) {
-                        try {
-							Files.move(file.getAbsoluteFile().toPath(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak0.getName()).toPath());
-                            client.cancelAllRequests(true);
-                            etl_Dialog.dismiss();
-                            ETLMain.this.startActivity(intent);
-                            ETLMain.this.finish();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
-                    etl_Dialog.dismiss();
-                }
-            });
-        }
-    }
+	private boolean isExternalStorageWritable() {
+		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+	}
 }

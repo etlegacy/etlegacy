@@ -44,11 +44,12 @@ android {
 		externalNativeBuild {
             cmake {
                 arguments "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF",
-					"-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DBUNDLED_LIBS=ON",
+					"-DINSTALL_EXTRA=OFF", "-DBUNDLED_LIBS=ON", "-DFEATURE_IRC_CLIENT=OFF",
 					"-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF",
 					"-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_OGG_VORBIS=OFF",
-					"-DFEATURE_AUTOUPDATE=OFF", "-DFEATURE_IRC_CLIENT=OFF", "-DFEATURE_SSL=OFF", "-DFEATURE_CURL=OFF",
+					"-DFEATURE_AUTOUPDATE=OFF", "-DFEATURE_SSL=OFF", "-DFEATURE_CURL=OFF",
 					"-DFEATURE_AUTH=OFF"
+				targets "etl", "ui", "cgame"
             }
         }
         ndk {
@@ -88,9 +89,28 @@ android {
 	buildFeatures {
 		buildConfig = true
 	}
+
+	def generatedAssets = layout.buildDirectory.dir("generated/pk3/")
+	sourceSets.named('main') {
+		assets.srcDir(generatedAssets)
+	}
 	applicationVariants.configureEach { variant ->
-		tasks.named("merge${variant.name.capitalize()}Assets") { task ->
-			task.dependsOn("externalNativeBuild${variant.name.capitalize()}")
+		def mergeAssets = tasks.named("merge${variant.name.capitalize()}Assets")
+		if (!variant.name.equalsIgnoreCase('debug')) {
+			mergeAssets.configure {
+				dependsOn("externalNativeBuild${variant.name.capitalize()}")
+			}
+			return
+		}
+
+		def generatePk3 = tasks.register("generate${variant.name.capitalize()}Pk3", Zip) {
+			from(rootProject.file('etmain'))
+			archiveFileName = "zz_legacy_android_debug.pk3"
+			destinationDirectory = generatedAssets
+		}
+		mergeAssets.configure {
+			dependsOn("externalNativeBuild${variant.name.capitalize()}")
+			dependsOn(generatePk3)
 		}
 	}
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
