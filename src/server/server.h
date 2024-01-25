@@ -704,8 +704,8 @@ qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 #define SV_CL_MAXPACKETS 40
 
 /**
- * @struct clientStatic_t
- * @brief the clientStatic_t structure is never wiped, and is used even when
+ * @struct svclientStatic_t
+ * @brief the svclientStatic_t structure is never wiped, and is used even when
  * no client connection is active at all
  *
  * A connection can be to either a server through the network layer or a
@@ -751,8 +751,8 @@ typedef struct
 } svcldemo_t;
 
 /**
- * @struct clientConnection_t
- * @brief The clientConnection_t structure is wiped when disconnecting from a server,
+ * @struct svclientConnection_t
+ * @brief The svclientConnection_t structure is wiped when disconnecting from a server,
  * either to go to a full screen console, play a demo, or connect to a different server
  *
  * A connection can be to either a server through the network layer or a
@@ -815,7 +815,7 @@ typedef struct
 extern svclientConnection_t svclc;
 
 /**
- * @struct clSnapshot_t
+ * @struct svclSnapshot_t
  * @brief Snapshots are a view of the server at a given time
  */
 typedef struct
@@ -844,7 +844,7 @@ typedef struct
 } svclSnapshot_t;
 
 /**
- * @struct outPacket_t
+ * @struct svoutPacket_t
  * @brief
  */
 typedef struct
@@ -859,8 +859,8 @@ typedef struct
 #define CMD_MASK            (CMD_BACKUP - 1)
 
 /**
- * @struct clientActive_t
- * @brief The clientActive_t structure is wiped completely at every
+ * @struct svclientActive_t
+ * @brief The svclientActive_t structure is wiped completely at every
  * new gamestate_t, potentially several times during an established connection
  */
 typedef struct
@@ -959,7 +959,6 @@ void SV_CL_SystemInfoChanged(void);
 
 // sv_cl_demo.c
 void SV_CL_DemoInit(void);
-
 void SV_CL_Record(const char *name);
 void SV_CL_StopRecord_f(void);
 void SV_CL_WriteDemoMessage(msg_t *msg, int headerBytes);

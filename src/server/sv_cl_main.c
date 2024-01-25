@@ -268,7 +268,7 @@ void SV_CL_Disconnect(void)
 		SV_CL_WritePacket();
 	}
 
-	//FS_ClearPureServerPacks();
+	FS_ClearPureServerPacks();
 
 	SV_CL_ClearState();
 
@@ -608,38 +608,34 @@ void SV_CL_ConfigstringModified(void)
 }
 
 /**
- * @brief SV_CL_Cvar_InfoString returns updated configstring without overwriting strings from master
+ * @brief SV_CL_Cvar_InfoString returns updated configstring
  * @param[in] cs
  * @param[in] index
  * @return
  */
 char *SV_CL_Cvar_InfoString(char *cs, int index)
 {
-	static char info[BIG_INFO_STRING] = { 0 };
-
-	Q_strncpyz(&info, cs, BIG_INFO_STRING);
-
 	if (svcls.state != CA_DISCONNECTED)
 	{
 		if (index == 0)
 		{
-			Info_SetValueForKey_Big(info, "sv_maxPing", sv_maxPing->string);
-			Info_SetValueForKey_Big(info, "sv_minPing", sv_minPing->string);
-			Info_SetValueForKey_Big(info, "sv_maxRate", sv_maxRate->string);
-			Info_SetValueForKey_Big(info, "sv_dlRate", sv_dlRate->string);
-			Info_SetValueForKey_Big(info, "sv_hostname", sv_hostname->string);
-			Info_SetValueForKey_Big(info, "sv_maxclients", sv_maxclients->string);
-			Info_SetValueForKey_Big(info, "sv_privateClients", sv_privateClients->string);
-			Info_SetValueForKey_Big(info, "version", Cvar_VariableString("version"));
+			Info_SetValueForKey_Big(cs, "sv_maxPing", sv_maxPing->string);
+			Info_SetValueForKey_Big(cs, "sv_minPing", sv_minPing->string);
+			Info_SetValueForKey_Big(cs, "sv_maxRate", sv_maxRate->string);
+			Info_SetValueForKey_Big(cs, "sv_dlRate", sv_dlRate->string);
+			Info_SetValueForKey_Big(cs, "sv_hostname", sv_hostname->string);
+			Info_SetValueForKey_Big(cs, "sv_maxclients", sv_maxclients->string);
+			Info_SetValueForKey_Big(cs, "sv_privateClients", sv_privateClients->string);
+			Info_SetValueForKey_Big(cs, "version", Cvar_VariableString("version"));
 		}
 		else if (index == 1)
 		{
-			Info_SetValueForKey_Big(info, "sv_serverid", va("%d", sv.serverId));
-			Info_SetValueForKey_Big(info, "sv_pure", sv_pure->string);
+			Info_SetValueForKey_Big(cs, "sv_serverid", va("%d", sv.serverId));
+			Info_SetValueForKey_Big(cs, "sv_pure", sv_pure->string);
 		}
 	}
 
-	return info;
+	return cs;
 }
 
 /**
@@ -870,8 +866,8 @@ void SV_CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg)
  */
 void SV_CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 {
-	int  i, type;
-	char info[MAX_INFO_STRING];
+	//int  i, type;
+	//char info[MAX_INFO_STRING];
 	char *infoString;
 	int  prot;
 	char *gameName;
@@ -986,8 +982,6 @@ void SV_CL_ServerInfoPacket(netadr_t from, msg_t *msg)
  */
 void SV_CL_DisconnectPacket(netadr_t from)
 {
-	const char *message;
-
 	if (svcls.state < CA_AUTHORIZING)
 	{
 		return;
@@ -1475,6 +1469,8 @@ void SV_CL_RunFrame(void)
  */
 void SV_CL_Frame(int frameMsec)
 {
+	int startTime;
+
 	if (cvar_modifiedFlags & CVAR_SERVERINFO)
 	{
 		SV_SetConfigstring(CS_SERVERINFO, SV_CL_Cvar_InfoString(sv.configstrings[CS_SERVERINFO], CS_SERVERINFO));
@@ -1496,6 +1492,15 @@ void SV_CL_Frame(int frameMsec)
 		cvar_modifiedFlags &= ~CVAR_WOLFINFO;
 	}
 
+	if (com_speeds->integer)
+	{
+		startTime = Sys_Milliseconds();
+	}
+	else
+	{
+		startTime = 0;  // quite a compiler warning
+	}
+
 	// run the game simulation in chunks
 	while (sv.timeResidual >= frameMsec)
 	{
@@ -1508,6 +1513,11 @@ void SV_CL_Frame(int frameMsec)
 		}
 
 		SV_CL_RunFrame();
+	}
+
+	if (com_speeds->integer)
+	{
+		time_game = Sys_Milliseconds() - startTime;
 	}
 
 	if (SV_CL_ReadyToSendPacket())

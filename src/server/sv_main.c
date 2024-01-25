@@ -1604,6 +1604,8 @@ int SV_FrameMsec()
  */
 static void SV_Frame_Ext(int frameMsec)
 {
+	int startTime;
+
 	if (cvar_modifiedFlags & CVAR_SERVERINFO)
 	{
 		SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
@@ -1623,6 +1625,15 @@ static void SV_Frame_Ext(int frameMsec)
 	{
 		SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
 		cvar_modifiedFlags &= ~CVAR_WOLFINFO;
+	}
+
+	if (com_speeds->integer)
+	{
+		startTime = Sys_Milliseconds();
+	}
+	else
+	{
+		startTime = 0;  // quite a compiler warning
 	}
 
 	// start recording a demo
@@ -1657,6 +1668,11 @@ static void SV_Frame_Ext(int frameMsec)
 		{
 			SV_DemoReadFrame();
 		}
+	}
+
+	if (com_speeds->integer)
+	{
+		time_game = Sys_Milliseconds() - startTime;
 	}
 
 	// check timeouts

@@ -371,59 +371,14 @@ void SV_CL_ReadDemoMessage(void)
 }
 
 /**
- * @brief SV_CL_WalkDemoExt
- * @param[in] arg
- * @param[in,out] name
- * @param[in,out] demofile
- * @return
+ * @brief SV_CL_PlayDemo_f
  */
-static int SV_CL_WalkDemoExt(const char *arg, char *name, fileHandle_t *demofile)
-{
-	int i = 0;
-	*demofile = 0;
-
-	Com_sprintf(name, MAX_OSPATH, "svdemos/%s.%s%d", arg, SVCLDEMOEXT, PROTOCOL_VERSION);
-	FS_FOpenFileRead(name, demofile, qtrue);
-
-	if (*demofile)
-	{
-		Com_Printf("Demo file: %s\n", name);
-		return PROTOCOL_VERSION;
-	}
-
-	Com_Printf("Not found: %s\n", name);
-
-	while (demo_protocols[i])
-	{
-		if (demo_protocols[i] == PROTOCOL_VERSION)
-		{
-			continue;
-		}
-
-		Com_sprintf(name, MAX_OSPATH, "svdemos/%s.%s%d", arg, SVCLDEMOEXT, demo_protocols[i]);
-		FS_FOpenFileRead(name, demofile, qtrue);
-		if (*demofile)
-		{
-			Com_Printf("Demo file: %s\n", name);
-			return demo_protocols[i];
-		}
-		else
-		{
-			Com_Printf("Not found: %s\n", name);
-		}
-		i++;
-	}
-
-	return -1;
-}
-
 void SV_CL_PlayDemo_f(void)
 {
-	char name[MAX_OSPATH], retry[MAX_OSPATH];
-	char *demoFile, *ext_test;
-	int  protocol, i;
+	char name[MAX_OSPATH];
+	char *demoFile;
 
-	if (Cmd_Argc() < 2)
+	if (Cmd_Argc() != 2)
 	{
 		Com_Printf("demo <demoname>\n");
 		return;
@@ -433,65 +388,15 @@ void SV_CL_PlayDemo_f(void)
 
 	// open the demo file (should be the last arg)
 	demoFile = Cmd_Argv(Cmd_Argc() - 1);
-	// check for an extension .DEMOEXT_?? (?? is protocol)
-	ext_test = strrchr(demoFile, '.');
-
-	if (ext_test && !Q_stricmpn(ext_test + 1, SVCLDEMOEXT, ARRAY_LEN(SVCLDEMOEXT) - 1))
-	{
-		protocol = Q_atoi(ext_test + ARRAY_LEN(SVCLDEMOEXT));
-
-		for (i = 0; demo_protocols[i]; i++)
-		{
-			if (demo_protocols[i] == protocol)
-			{
-				break;
-			}
-		}
-
-		if (demo_protocols[i] || protocol == PROTOCOL_VERSION)
-		{
-			if (Sys_PathAbsolute(demoFile))
-			{
-				char *nameOnly = strrchr(demoFile, '/');
-				FS_FOpenFileReadFullDir(demoFile, &svclc.demo.file);
-
-				if (nameOnly)
-				{
-					demoFile = nameOnly + 1;
-				}
-			}
-			else
-			{
-				Com_sprintf(name, sizeof(name), "svdemos/%s", demoFile);
-				FS_FOpenFileRead(name, &svclc.demo.file, qtrue);
-			}
-		}
-		else
-		{
-			size_t len;
-
-			Com_Printf("Protocol %d not supported for demos\n", protocol);
-			len = ext_test - demoFile;
-
-			if (len >= ARRAY_LEN(retry))
-			{
-				len = ARRAY_LEN(retry) - 1;
-			}
-
-			Q_strncpyz(retry, demoFile, len + 1);
-			retry[len] = '\0';
-			protocol   = SV_CL_WalkDemoExt(retry, name, &svclc.demo.file);
-		}
-	}
-	else
-	{
-		protocol = SV_CL_WalkDemoExt(demoFile, name, &svclc.demo.file);
-	}
+	Com_sprintf(name, MAX_OSPATH, "svdemos/%s.%s%d", demoFile, SVCLDEMOEXT, PROTOCOL_VERSION);
+	FS_FOpenFileRead(name, &svclc.demo.file, qtrue);
 
 	if (!svclc.demo.file)
 	{
-		Com_Error(ERR_DROP, "couldn't open %s", name);
+		Com_Printf("Couldn't open %s", name);
+		return;
 	}
+
 	Q_strncpyz(svclc.demo.demoName, demoFile, sizeof(svclc.demo.demoName));
 
 	if (Cmd_Argc() == 3)

@@ -169,14 +169,14 @@ void SV_CL_SystemInfoChanged(void)
 /**
  * @brief SV_CL_ConfigstringInfoChanged update cvars based on configstring from master
  */
-static void SV_CL_ConfigstringInfoChanged(int num)
+static void SV_CL_ConfigstringInfoChanged(int csnum)
 {
 	char       *cs;
 	const char *s;
 	char       key[BIG_INFO_KEY];
 	char       value[BIG_INFO_VALUE];
 
-	cs = svcl.gameState.stringData + svcl.gameState.stringOffsets[num];
+	cs = svcl.gameState.stringData + svcl.gameState.stringOffsets[csnum];
 
 	s = cs;
 	while (s)
@@ -189,7 +189,7 @@ static void SV_CL_ConfigstringInfoChanged(int num)
 			break;
 		}
 
-		if (num == CS_SERVERINFO)
+		if (csnum == CS_SERVERINFO)
 		{
 			if (!Q_strncmp(key, "sv_", 3) || !Q_stricmp(key, "protocol") || !Q_stricmp(key, "version") ||
 			    !Q_stricmp(key, "gamename") || !Q_stricmp(key, "g_needpass") || !Q_stricmp(key, "g_password"))
