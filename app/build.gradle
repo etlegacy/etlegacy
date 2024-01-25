@@ -43,7 +43,7 @@ android {
 		}
 		externalNativeBuild {
             cmake {
-                arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF",
+                arguments "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF",
 					"-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DBUNDLED_LIBS=ON",
 					"-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF",
 					"-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_OGG_VORBIS=OFF",

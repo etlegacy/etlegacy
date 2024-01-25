@@ -5,7 +5,8 @@
 # the name of the target operating system
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_VERSION 1)
-set(CMAKE_SYSTEM_PROCESSOR "x86")
+set(CMAKE_SYSTEM_PROCESSOR x86)
+set(CMAKE_SIZEOF_VOID_P 4)
 
 # Choose an appropriate compiler prefix
 # see http://mingw-w64.sourceforge.net/

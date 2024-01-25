@@ -14,7 +14,7 @@ set(ETL_ARCH_COUNT 1)
 add_library(os_libraries INTERFACE)
 
 # Color diagnostics for build systems other than make
-if(APPLE OR UNIX)
+if(UNIX)
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdiagnostics-color=always")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=always")
@@ -24,20 +24,8 @@ if(APPLE OR UNIX)
 	endif()
 endif()
 
-if(UNIX AND CROSS_COMPILE32 AND NOT ARM) # 32-bit build
-	set(CMAKE_SYSTEM_PROCESSOR i386)
-	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
-	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
-	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
-	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
-elseif(WIN32 AND CROSS_COMPILE32)
-	set(CMAKE_SYSTEM_PROCESSOR x86) #the new cmake on windows will otherwise use arch name of x64 which will fuck up our naming
-	set(ENV{PLATFORM} win32) #this is redundant but just to  be safe
-elseif(ARM AND CROSS_COMPILE32)
-	message(STATUS "Cross compiling not supported for ARM!")
+if(CROSS_COMPILE32 AND ETL_ARM)
+	message(FATAL_ERROR "Cross compiling not supported for ARM!")
 endif()
 
 if(UNIX)

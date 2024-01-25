@@ -2,10 +2,6 @@
 # Common
 #-----------------------------------------------------------------
 
-function(force_rescan_library LIBRARY_NAME)
-	set(${LIBRARY_NAME}_LIBRARY "${LIBRARY_NAME}_LIBRARY-NOTFOUND" CACHE FILEPATH "Cleared." FORCE)
-endfunction()
-
 IF(NOT CMAKE_BUILD_TYPE)
 	#SET(CMAKE_BUILD_TYPE "Debug")
 	SET(CMAKE_BUILD_TYPE "Release")
@@ -79,19 +75,30 @@ else()
 endif()
 
 # Figure out what build is it (cool eh?)
-if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT CROSS_COMPILE32)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	message(STATUS "64 bits target architecture detected")
 	SET(ETL_64BITS 1)
 	if(WIN32)
 		SET(ETL_WIN64 1)
 	endif()
+elseif(NOT CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
+	# NOTE: this should never happen, but just in case for an invalid toolchain...
+	message(FATAL_ERROR "Unknown target architecture detected. Pointer size: ${CMAKE_SIZEOF_VOID_P}")
 else()
+	message(STATUS "32 bits target architecture detected")
 	SET(ETL_32BITS 1)
 endif()
 
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" system_name_lower)
+
+if(system_name_lower MATCHES "(i386)|(i686)|(x86)|(amd64)")
+	message(STATUS "x86 architecture detected")
 	set(ETL_X86 1)
-elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+elseif(system_name_lower MATCHES "(arm)|(aarch64)")
+	message(STATUS "ARM architecture detected")
 	set(ETL_ARM 1)
+else()
+	message(WARNING "Unknown architecture detected: ${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
 # Installation options

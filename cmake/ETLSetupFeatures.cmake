@@ -2,17 +2,6 @@
 # Setup Features
 #-----------------------------------------------------------------
 
-# If we change architecture we need to force rescan of libraries
-if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
-	force_rescan_library(SDL32)
-	force_rescan_library(CURL)
-	force_rescan_library(JPEG)
-	force_rescan_library(JPEGTURBO)
-	# TODO: recheck optional libs
-	set(OLD_CROSS_COMPILE32 ${CROSS_COMPILE32} CACHE INTERNAL "Previous value for CROSS_COMPILE32")
-	message(STATUS "Libraries rescanned")
-endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
-
 # Helper to src folder
 set(SRC "${PROJECT_SOURCE_DIR}/src")
 
@@ -26,7 +15,7 @@ if(BUILD_CLIENT)
 		target_include_directories(client_libraries INTERFACE ${X11_INCLUDE_DIR})
 	endif()
 
-	if(ARM AND NOT ANDROID)
+	if(ETL_ARM AND NOT ANDROID)
 		#check if we're running on Raspberry Pi
 		MESSAGE("Looking for bcm_host.h")
 		if(EXISTS "/opt/vc/include/bcm_host.h")
@@ -47,7 +36,7 @@ if(BUILD_CLIENT)
 			target_link_directories(client_libraries INTERFACE "/opt/vc/lib")
 			target_link_libraries(client_libraries INTERFACE bcm_host pthread)
 		endif()
-	endif(ARM AND NOT ANDROID)
+	endif()
 
 	if(NOT FEATURE_RENDERER_GLES)
 		if(NOT BUNDLED_GLEW)
