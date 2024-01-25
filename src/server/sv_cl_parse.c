@@ -385,6 +385,25 @@ void SV_CL_ParseCommandString(msg_t *msg)
 }
 
 /**
+ * @brief SV_CL_ParseBinaryMessage
+ * @param[in] msg
+ */
+void SV_CL_ParseBinaryMessage(msg_t *msg)
+{
+	int size;
+
+	MSG_BeginReadingUncompressed(msg);
+
+	size = msg->cursize - msg->readcount;
+	if (size <= 0 || size > MAX_BINARY_MESSAGE)
+	{
+		return;
+	}
+
+	SV_GameBinaryMessageReceived(-1, (char *)&msg->data[msg->readcount], size, svcl.snap.serverTime);
+}
+
+/**
  * @brief Parses deltas from the given base and adds the resulting entity to the current frame
  *
  * @param[in] msg
@@ -934,7 +953,7 @@ void SV_CL_ParseServerMessage(msg_t *msg)
 		}
 	}
 
-	//CL_ParseBinaryMessage(msg);
+	SV_CL_ParseBinaryMessage(msg);
 
 	if (svcls.isTVGame)
 	{
