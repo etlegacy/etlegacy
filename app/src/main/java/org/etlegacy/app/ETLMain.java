@@ -80,6 +80,7 @@ public class ETLMain extends Activity {
 		setContentView(etlLayout);
 
 		Path etmain = null;
+		Path legacy = null;
 
 		if (!isExternalStorageWritable()) {
 			Log.d(PACK_TAG, "External storage is not available");
@@ -88,25 +89,28 @@ public class ETLMain extends Activity {
 
 		try {
 			etmain = Objects.requireNonNull(getExternalFilesDir("/etlegacy/etmain")).toPath();
+			legacy = Objects.requireNonNull(getExternalFilesDir("/etlegacy/legacy")).toPath();
 		} catch (Exception e) {
 			Log.e("ASSETS", "Could not fetch the external files directory", e);
 		}
 
 		assert etmain != null;
+		assert legacy != null;
 		Log.d("ASSETS", "Acquired the external files dir: " + etmain.toAbsolutePath().toString());
 
-		if (!Files.exists(etmain)) {
+		if (!Files.exists(etmain) && !Files.exists(legacy)) {
 			try {
 				Files.createDirectories(etmain);
+				Files.createDirectories(legacy);
 			} catch (IOException e) {
-				Log.e(PACK_TAG, "Could not create etmain directories", e);
+				Log.e(PACK_TAG, "Could not create directories", e);
 				// FIXME: actually close the app gracefully
 				throw new RuntimeException(e);
 			}
 		}
 
 		try {
-			extractIncludedPackages(etmain);
+			extractIncludedPackages(legacy);
 		} catch (IOException e) {
 			Log.e(PACK_TAG, "Could not extract packages", e);
 		}
