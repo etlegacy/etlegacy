@@ -268,6 +268,8 @@
 
 #ifdef __i386__
 #define ARCH_STRING "i386"
+#elif defined __aarch64__
+#define ARCH_STRING "aarch64"
 #elif defined __amd64__
 #undef idx64
 #define idx64 1
