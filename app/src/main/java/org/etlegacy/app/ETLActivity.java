@@ -1,5 +1,6 @@
 package org.etlegacy.app;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -28,6 +29,15 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	static volatile boolean UiMenu = false;
 	ImageButton btn;
 
+	private RelativeLayout etlLinearLayout;
+	private ImageButton shootBtn;
+	private ImageButton reloadBtn;
+	private ImageButton jumpBtn;
+	private ImageButton activateBtn;
+	private ImageButton altBtn;
+	private ImageButton crouchBtn;
+	private JoyStick moveJoystick;
+
 	/**
 	 * Get an uiMenu boolean variable
 	 *
@@ -35,271 +45,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	 */
 	public static boolean getUiMenu() {
 		return UiMenu;
-	}
-
-	/**
-	 * RunUI Function
-	 */
-	public void runUI() {
-
-		final RelativeLayout etl_linearLayout = new RelativeLayout(this);
-		mLayout.addView(etl_linearLayout);
-
-		// This needs some refactoring
-		final ImageButton btn2 = new ImageButton(getApplicationContext());
-		btn2.setId(2);
-		btn2.setImageResource(R.drawable.ic_shoot);
-		btn2.setBackgroundResource(0);
-
-		final ImageButton btn_reload = new ImageButton(getApplicationContext());
-		btn_reload.setImageResource(R.drawable.ic_reload);
-		btn_reload.setBackgroundResource(0);
-
-		final ImageButton btn_jump = new ImageButton(getApplicationContext());
-		btn_jump.setImageResource(R.drawable.ic_jump);
-		btn_jump.setBackgroundResource(0);
-
-		final ImageButton btn_activate = new ImageButton(getApplicationContext());
-		btn_activate.setImageResource(R.drawable.ic_use);
-		btn_activate.setBackgroundResource(0);
-
-		final ImageButton btn_alternative = new ImageButton(getApplicationContext());
-		btn_alternative.setImageResource(R.drawable.ic_alt);
-		btn_alternative.setBackgroundResource(0);
-
-		final ImageButton btn_crouch = new ImageButton(getApplicationContext());
-		btn_crouch.setImageResource(R.drawable.ic_crouch);
-		btn_crouch.setBackgroundResource(0);
-
-		final JoyStick joyStick_left = new JoyStick(getApplicationContext());
-
-		final Handler handler = new Handler(Looper.getMainLooper());
-		handler.post(new Runnable() {
-			public void run() {
-
-				if (!getUiMenu()) {
-					mLayout.removeView(joyStick_left);
-					etl_linearLayout.removeAllViews();
-					handler.postDelayed(this, 500);
-					return;
-				}
-
-				btn2.setOnTouchListener((v, event) -> {
-					final int touchDevId = event.getDeviceId();
-					final int pointerCount = event.getPointerCount();
-					int action = event.getActionMasked();
-					int pointerFingerId;
-					int i = -1;
-					float x, y, p;
-					float mWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-					float mHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-					switch (action) {
-						case MotionEvent.ACTION_DOWN:
-							i = 0;
-							pointerFingerId = event.getPointerId(i);
-							x = event.getX(i) / mWidth;
-							y = event.getY(i) / mHeight;
-							p = event.getPressure(i);
-
-							onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
-							onNativeKeyDown(42);
-							break;
-						case MotionEvent.ACTION_MOVE:
-							for (i = 0; i < pointerCount; i++) {
-								pointerFingerId = event.getPointerId(i);
-								x = event.getX(i) / mWidth;
-								y = event.getY(i) / mHeight;
-								p = event.getPressure(i);
-								onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
-							}
-							break;
-						case MotionEvent.ACTION_UP:
-						case MotionEvent.ACTION_CANCEL:
-							for (i = 0; i < pointerCount; i++) {
-								pointerFingerId = event.getPointerId(i);
-								x = event.getX(i) / mWidth;
-								y = event.getY(i) / mHeight;
-								p = event.getPressure(i);
-								onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
-							}
-							onNativeKeyUp(42);
-							break;
-					}
-					return false;
-				});
-
-				RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-					ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-
-				lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-				lp.addRule(RelativeLayout.CENTER_VERTICAL);
-
-				switch (Resources.getSystem().getDisplayMetrics().densityDpi) {
-					case DisplayMetrics.DENSITY_LOW:
-					case DisplayMetrics.DENSITY_140:
-					case DisplayMetrics.DENSITY_180:
-						lp.rightMargin = pxToDp(50 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.width = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.height = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
-						break;
-					case DisplayMetrics.DENSITY_200:
-					case DisplayMetrics.DENSITY_220:
-					case DisplayMetrics.DENSITY_HIGH:
-					case DisplayMetrics.DENSITY_260:
-					case DisplayMetrics.DENSITY_280:
-					case DisplayMetrics.DENSITY_300:
-					case DisplayMetrics.DENSITY_XHIGH:
-						lp.rightMargin = pxToDp(100 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.width = pxToDp(550 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.height = pxToDp(220 * (int) Resources.getSystem().getDisplayMetrics().density);
-						break;
-					case DisplayMetrics.DENSITY_340:
-					case DisplayMetrics.DENSITY_360:
-					case DisplayMetrics.DENSITY_400:
-					case DisplayMetrics.DENSITY_420:
-					case DisplayMetrics.DENSITY_440:
-					case DisplayMetrics.DENSITY_450:
-					case DisplayMetrics.DENSITY_XXHIGH:
-						lp.rightMargin = pxToDp(500 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.width = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.height = pxToDp(500 * (int) Resources.getSystem().getDisplayMetrics().density);
-						break;
-					case DisplayMetrics.DENSITY_560:
-					case DisplayMetrics.DENSITY_600:
-					case DisplayMetrics.DENSITY_XXXHIGH:
-						lp.rightMargin = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.width = pxToDp(1300 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.height = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
-						break;
-					case DisplayMetrics.DENSITY_DEFAULT:
-						lp.rightMargin = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.width = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
-						lp.height = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
-						break;
-				}
-
-				if (btn2.getParent() == null)
-					etl_linearLayout.addView(btn2, lp);
-
-				btn_reload.setOnClickListener(v -> {
-					onNativeKeyDown(46);
-					onNativeKeyUp(46);
-				});
-
-				RelativeLayout.LayoutParams lp_reload = new RelativeLayout.LayoutParams(
-					ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-
-				lp_reload.addRule(RelativeLayout.BELOW, btn.getId());
-				lp_reload.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-				lp_reload.topMargin = pxToDp(220);
-				lp_reload.rightMargin = pxToDp(90);
-
-				if (btn_reload.getParent() == null)
-					etl_linearLayout.addView(btn_reload, lp_reload);
-
-				btn_jump.setOnTouchListener((v, event) -> {
-					switch (event.getAction()) {
-						case MotionEvent.ACTION_DOWN:
-							onNativeKeyDown(62);
-							break;
-						case MotionEvent.ACTION_UP:
-						case MotionEvent.ACTION_CANCEL:
-							onNativeKeyUp(62);
-							break;
-					}
-					return false;
-				});
-
-				RelativeLayout.LayoutParams lp_jump = new RelativeLayout.LayoutParams(
-					ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-
-				lp_jump.addRule(RelativeLayout.CENTER_HORIZONTAL);
-				lp_jump.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				lp_jump.bottomMargin = pxToDp(-20);
-
-				if (btn_jump.getParent() == null)
-					etl_linearLayout.addView(btn_jump, lp_jump);
-
-				btn_activate.setOnClickListener(v -> {
-					onNativeKeyDown(34);
-					onNativeKeyUp(34);
-				});
-
-				RelativeLayout.LayoutParams lp_activate = new RelativeLayout.LayoutParams(
-					ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-
-				lp_activate.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-				lp_activate.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				lp_activate.bottomMargin = pxToDp(-20);
-				lp_activate.leftMargin = pxToDp(400);
-
-				if (btn_activate.getParent() == null)
-					etl_linearLayout.addView(btn_activate, lp_activate);
-
-				btn_alternative.setOnClickListener(v -> {
-					onNativeKeyDown(30);
-					onNativeKeyUp(30);
-				});
-
-				RelativeLayout.LayoutParams lp_alternative = new RelativeLayout.LayoutParams(
-					ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-
-				lp_alternative.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-				lp_alternative.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				lp_alternative.bottomMargin = pxToDp(-20);
-				lp_alternative.rightMargin = pxToDp(400);
-
-				if (btn_alternative.getParent() == null)
-					etl_linearLayout.addView(btn_alternative, lp_alternative);
-
-				btn_crouch.setOnTouchListener((v, event) -> {
-					switch (event.getAction()) {
-						case MotionEvent.ACTION_DOWN:
-							onNativeKeyDown(31);
-							break;
-						case MotionEvent.ACTION_UP:
-						case MotionEvent.ACTION_CANCEL:
-							onNativeKeyUp(31);
-							break;
-					}
-					return false;
-				});
-
-				RelativeLayout.LayoutParams lp_crouch = new RelativeLayout.LayoutParams(
-					ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-
-				lp_crouch.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-				lp_crouch.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				lp_crouch.bottomMargin = pxToDp(-20);
-
-				if (btn_crouch.getParent() == null)
-					etl_linearLayout.addView(btn_crouch, lp_crouch);
-
-				joyStick_left.setListener(ETLActivity.this);
-				joyStick_left.setPadColor(Color.TRANSPARENT);
-				joyStick_left.setButtonColor(Color.TRANSPARENT);
-				joyStick_left.setButtonRadiusScale(50);
-
-				RelativeLayout.LayoutParams joystick_layout = new RelativeLayout.LayoutParams(
-					400,
-					350);
-
-				joystick_layout.addRule(RelativeLayout.ALIGN_LEFT);
-				joystick_layout.addRule(RelativeLayout.CENTER_VERTICAL);
-				joystick_layout.leftMargin = pxToDp(10);
-
-				if (joyStick_left.getParent() == null)
-					mLayout.addView(joyStick_left, joystick_layout);
-
-				handler.postDelayed(this, 2000);
-			}
-		});
 	}
 
 	/**
@@ -403,13 +148,274 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 		mLayout.addView(esc_btn, lp2);
 
-		runUI();
+		etlLinearLayout = new RelativeLayout(this);
+		mLayout.addView(etlLinearLayout);
+
+		// This needs some refactoring
+		shootBtn = new ImageButton(getApplicationContext());
+		shootBtn.setId(2);
+		shootBtn.setImageResource(R.drawable.ic_shoot);
+		shootBtn.setBackgroundResource(0);
+
+		reloadBtn = new ImageButton(getApplicationContext());
+		reloadBtn.setImageResource(R.drawable.ic_reload);
+		reloadBtn.setBackgroundResource(0);
+
+		jumpBtn = new ImageButton(getApplicationContext());
+		jumpBtn.setImageResource(R.drawable.ic_jump);
+		jumpBtn.setBackgroundResource(0);
+
+		activateBtn = new ImageButton(getApplicationContext());
+		activateBtn.setImageResource(R.drawable.ic_use);
+		activateBtn.setBackgroundResource(0);
+
+		altBtn = new ImageButton(getApplicationContext());
+		altBtn.setImageResource(R.drawable.ic_alt);
+		altBtn.setBackgroundResource(0);
+
+		crouchBtn = new ImageButton(getApplicationContext());
+		crouchBtn.setImageResource(R.drawable.ic_crouch);
+		crouchBtn.setBackgroundResource(0);
+
+		moveJoystick = new JoyStick(getApplicationContext());
+
+		final Handler handler = new Handler(Looper.getMainLooper());
+
+		handler.post(new Runnable() {
+			public void run() {
+				int delay = runUI();
+				if (delay > 0) {
+					handler.postDelayed(this, delay);
+				}
+			}
+		});
+	}
+
+	@SuppressLint("ClickableViewAccessibility")
+	private int runUI() {
+		if (!getUiMenu()) {
+			mLayout.removeView(moveJoystick);
+			etlLinearLayout.removeAllViews();
+			return 500;
+		}
+
+		shootBtn.setOnTouchListener((v, event) -> {
+			final int touchDevId = event.getDeviceId();
+			final int pointerCount = event.getPointerCount();
+			int action = event.getActionMasked();
+			float x, y, p;
+			float mWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+			float mHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+			switch (action) {
+				case MotionEvent.ACTION_DOWN: {
+					int pointerFingerId = event.getPointerId(0);
+					x = event.getX(0) / mWidth;
+					y = event.getY(0) / mHeight;
+					p = event.getPressure(0);
+
+					onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+					onNativeKeyDown(42);
+				}
+				break;
+				case MotionEvent.ACTION_MOVE:
+					for (int i = 0; i < pointerCount; i++) {
+						int pointerFingerId = event.getPointerId(i);
+						x = event.getX(i) / mWidth;
+						y = event.getY(i) / mHeight;
+						p = event.getPressure(i);
+						onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+					}
+					break;
+				case MotionEvent.ACTION_UP:
+				case MotionEvent.ACTION_CANCEL:
+					for (int i = 0; i < pointerCount; i++) {
+						int pointerFingerId = event.getPointerId(i);
+						x = event.getX(i) / mWidth;
+						y = event.getY(i) / mHeight;
+						p = event.getPressure(i);
+						onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
+					}
+					onNativeKeyUp(42);
+					break;
+			}
+			return false;
+		});
+
+		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+			ViewGroup.LayoutParams.WRAP_CONTENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		lp.addRule(RelativeLayout.CENTER_VERTICAL);
+
+		switch (Resources.getSystem().getDisplayMetrics().densityDpi) {
+			case DisplayMetrics.DENSITY_LOW:
+			case DisplayMetrics.DENSITY_140:
+			case DisplayMetrics.DENSITY_180:
+				lp.rightMargin = pxToDp(50 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.width = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.height = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
+				break;
+			case DisplayMetrics.DENSITY_200:
+			case DisplayMetrics.DENSITY_220:
+			case DisplayMetrics.DENSITY_HIGH:
+			case DisplayMetrics.DENSITY_260:
+			case DisplayMetrics.DENSITY_280:
+			case DisplayMetrics.DENSITY_300:
+			case DisplayMetrics.DENSITY_XHIGH:
+				lp.rightMargin = pxToDp(100 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.width = pxToDp(550 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.height = pxToDp(220 * (int) Resources.getSystem().getDisplayMetrics().density);
+				break;
+			case DisplayMetrics.DENSITY_340:
+			case DisplayMetrics.DENSITY_360:
+			case DisplayMetrics.DENSITY_400:
+			case DisplayMetrics.DENSITY_420:
+			case DisplayMetrics.DENSITY_440:
+			case DisplayMetrics.DENSITY_450:
+			case DisplayMetrics.DENSITY_XXHIGH:
+				lp.rightMargin = pxToDp(500 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.width = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.height = pxToDp(500 * (int) Resources.getSystem().getDisplayMetrics().density);
+				break;
+			case DisplayMetrics.DENSITY_560:
+			case DisplayMetrics.DENSITY_600:
+			case DisplayMetrics.DENSITY_XXXHIGH:
+				lp.rightMargin = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.width = pxToDp(1300 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.height = pxToDp(900 * (int) Resources.getSystem().getDisplayMetrics().density);
+				break;
+			case DisplayMetrics.DENSITY_DEFAULT:
+				lp.rightMargin = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.width = pxToDp(600 * (int) Resources.getSystem().getDisplayMetrics().density);
+				lp.height = pxToDp(200 * (int) Resources.getSystem().getDisplayMetrics().density);
+				break;
+		}
+
+		if (shootBtn.getParent() == null)
+			etlLinearLayout.addView(shootBtn, lp);
+
+		reloadBtn.setOnClickListener(v -> {
+			onNativeKeyDown(46);
+			onNativeKeyUp(46);
+		});
+
+		RelativeLayout.LayoutParams lp_reload = new RelativeLayout.LayoutParams(
+			ViewGroup.LayoutParams.WRAP_CONTENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		lp_reload.addRule(RelativeLayout.BELOW, btn.getId());
+		lp_reload.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		lp_reload.topMargin = pxToDp(220);
+		lp_reload.rightMargin = pxToDp(90);
+
+		if (reloadBtn.getParent() == null)
+			etlLinearLayout.addView(reloadBtn, lp_reload);
+
+		jumpBtn.setOnTouchListener((v, event) -> {
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					onNativeKeyDown(62);
+					break;
+				case MotionEvent.ACTION_UP:
+				case MotionEvent.ACTION_CANCEL:
+					onNativeKeyUp(62);
+					break;
+			}
+			return false;
+		});
+
+		RelativeLayout.LayoutParams jumpLayout = new RelativeLayout.LayoutParams(
+			ViewGroup.LayoutParams.WRAP_CONTENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		jumpLayout.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		jumpLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		jumpLayout.bottomMargin = pxToDp(-20);
+
+		if (jumpBtn.getParent() == null)
+			etlLinearLayout.addView(jumpBtn, jumpLayout);
+
+		activateBtn.setOnClickListener(v -> {
+			onNativeKeyDown(34);
+			onNativeKeyUp(34);
+		});
+
+		RelativeLayout.LayoutParams lp_activate = new RelativeLayout.LayoutParams(
+			ViewGroup.LayoutParams.WRAP_CONTENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		lp_activate.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		lp_activate.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		lp_activate.bottomMargin = pxToDp(-20);
+		lp_activate.leftMargin = pxToDp(400);
+
+		if (activateBtn.getParent() == null)
+			etlLinearLayout.addView(activateBtn, lp_activate);
+
+		altBtn.setOnClickListener(v -> {
+			onNativeKeyDown(30);
+			onNativeKeyUp(30);
+		});
+
+		RelativeLayout.LayoutParams lp_alternative = new RelativeLayout.LayoutParams(
+			ViewGroup.LayoutParams.WRAP_CONTENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		lp_alternative.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		lp_alternative.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		lp_alternative.bottomMargin = pxToDp(-20);
+		lp_alternative.rightMargin = pxToDp(400);
+
+		if (altBtn.getParent() == null)
+			etlLinearLayout.addView(altBtn, lp_alternative);
+
+		crouchBtn.setOnTouchListener((v, event) -> {
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					onNativeKeyDown(31);
+					break;
+				case MotionEvent.ACTION_UP:
+				case MotionEvent.ACTION_CANCEL:
+					onNativeKeyUp(31);
+					break;
+			}
+			return false;
+		});
+
+		RelativeLayout.LayoutParams lp_crouch = new RelativeLayout.LayoutParams(
+			ViewGroup.LayoutParams.WRAP_CONTENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		lp_crouch.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		lp_crouch.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		lp_crouch.bottomMargin = pxToDp(-20);
+
+		if (crouchBtn.getParent() == null)
+			etlLinearLayout.addView(crouchBtn, lp_crouch);
+
+		moveJoystick.setListener(ETLActivity.this);
+		moveJoystick.setPadColor(Color.TRANSPARENT);
+		moveJoystick.setButtonColor(Color.TRANSPARENT);
+		moveJoystick.setButtonRadiusScale(50);
+
+		RelativeLayout.LayoutParams joystick_layout = new RelativeLayout.LayoutParams(
+			400,
+			350);
+
+		joystick_layout.addRule(RelativeLayout.ALIGN_LEFT);
+		joystick_layout.addRule(RelativeLayout.CENTER_VERTICAL);
+		joystick_layout.leftMargin = pxToDp(10);
+
+		if (moveJoystick.getParent() == null)
+			mLayout.addView(moveJoystick, joystick_layout);
+
+		return 2000;
 	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if (hasFocus) {
-			mHasFocus = hasFocus;
 			hideSystemUI();
 		}
 		super.onWindowFocusChanged(hasFocus);

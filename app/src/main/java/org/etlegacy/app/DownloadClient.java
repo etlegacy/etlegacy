@@ -38,7 +38,6 @@ public class DownloadClient {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, File file) {
 				Log.d(DOWNLOAD_TAG, "Download complete for: " + httpUrl);
-				downloadList.remove(httpUrl);
 			}
 
 			@Override
