@@ -4443,7 +4443,15 @@ static void FS_Startup(const char *gameName)
 #ifdef DEDICATED
 		homePath = fs_basepath->string;
 #else
-		Com_Error(ERR_FATAL, "FS_Startup: Default home path is empty.");
+		if (Cvar_Flags("fs_homepath") == CVAR_NONEXISTENT)
+		{
+			Com_Error(ERR_FATAL, "FS_Startup: Default home path is empty.");
+		}
+		else
+		{
+			// We couldn't resolve the home path, but user provided one; use the base path as the default.
+			homePath = fs_basepath->string;
+		}
 #endif
 	}
 
