@@ -37,9 +37,6 @@
 #define dld svs.download
 #define Com_AddReliableCommand(x)
 #else
-#ifdef __ANDROID__
-#include "../sys/sys_android.h"
-#endif
 #include "../client/client.h"
 #define dld cls.download
 #define Com_AddReliableCommand(x) CL_AddReliableCommand(x)
@@ -194,14 +191,7 @@ void Com_BeginDownload(const char *localName, const char *remoteName)
 	Cvar_Set("cl_downloadCount", "0");
 	Cvar_SetValue("cl_downloadTime", cls.realtime);
 
-	if (__ANDROID__)
-	{
-		Com_Android_HTTPS(localName, remoteName);
-	}
-	else
-	{
-		Com_AddReliableCommand(va("download %s", remoteName));
-	}
+	Com_AddReliableCommand(va("download %s", remoteName));
 #endif
 }
 
