@@ -14,6 +14,7 @@ public class ETLDownload {
 	}
 
 	private ETLDownload() {
+		handleSystemInit();
 	}
 
 	public void handleSystemInit() {
@@ -32,20 +33,24 @@ public class ETLDownload {
 		}
 	}
 
-	public void beginDownload(String localName, String remoteUrl) {
+	public void beginDownload(String localName, String remoteUrl, long identifier) {
 		// FIXME: implement
+		throw new RuntimeException("Not yet implemented");
 	}
 
-	public void createWebRequest(String url, String authToken) {
+	public void createWebRequest(String url, String authToken, long identifier) {
 		// FIXME: implement
+		throw new RuntimeException("Not yet implemented");
 	}
 
 	public void abortAll() {
 		// FIXME: implement
+		throw new RuntimeException("Not yet implemented");
 	}
 
 	public void shutdown() {
 		// FIXME: implement
+		throw new RuntimeException("Not yet implemented");
 	}
 
 	private native void init();

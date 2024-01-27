@@ -78,8 +78,6 @@
 		if (((status) = curl_easy_setopt((handle), (opt), (param)))) \
 		Com_Printf(S_COLOR_YELLOW "WARNING: %s: curl_easy_setopt " #opt ": %s\n", __func__, curl_easy_strerror(status))
 
-#define FILE_DOWNLOAD_ID 1
-
 static struct
 {
 	qboolean initialized;   ///< the main initialization flag (Initialize once)
