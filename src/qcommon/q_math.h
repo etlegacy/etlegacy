@@ -638,4 +638,7 @@ static ID_INLINE vec_t VectorNormalizeDP(vec3_t v)
 #define AngleVectors angles_vectors
 #define PerpendicularVector(out, src) vec3_per(src, out) // rotated the params to match the way other functions are written
 
+int Q_ClosestMultiple(int n, int x);
+float Q_ClosestMultipleFloat(float n, float x, int decimal);
+
 #endif

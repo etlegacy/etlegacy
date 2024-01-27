@@ -109,10 +109,11 @@ qboolean wsAdjusted = qfalse;
 static panel_button_t  *lastFocusComponent;
 static qboolean        lastFocusComponentMoved;
 static int             elementColorSelection;
-static hudShowLayout_t showLayout    = HUD_SHOW_LAYOUT_OFF;
-static qboolean        showMicroGrid = qfalse;
-static hudShowGrid_t   showGrid      = HUD_SHOW_GRID_OFF;
-static hudGridScale_t  gridScale     = HUD_GRID_SCALE_1;
+static qboolean        forceGridAlignment = qfalse;
+static hudShowLayout_t showLayout         = HUD_SHOW_LAYOUT_OFF;
+static qboolean        showMicroGrid      = qfalse;
+static hudShowGrid_t   showGrid           = HUD_SHOW_GRID_OFF;
+static hudGridScale_t  gridScale          = HUD_GRID_SCALE_1;
 
 static void CG_HudEditorUpdateFields(panel_button_t *button);
 static qboolean CG_HudEditor_Dropdown_KeyDown(panel_button_t *button, int key);
@@ -2489,6 +2490,7 @@ static void CG_HudEditor_HelpDraw(void)
 			{ "h",                   "help on/off"                       },
 			{ "n",                   "noise generator on/off"            },
 			{ "f",                   "full screen on/off"                },
+			{ "a",                   "force grid alignment on/off"       },
 			{ NULL,                  NULL                                },
 			{ "o",                   "show micro grid on/off"            },
 			{ "c",                   "show grid OCD lvl 1/2/3"           },
@@ -2506,6 +2508,13 @@ static void CG_HudEditor_HelpDraw(void)
 	}
 }
 
+/**
+ * @brief CG_HudEditor_ToggleForceGridAlignment
+ */
+static void CG_HudEditor_ToggleForceGridAlignment(void)
+{
+	forceGridAlignment = !forceGridAlignment;
+}
 
 /**
  * @brief CG_HudEditor_ToggleGrid
@@ -2704,46 +2713,20 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		return;
 	}
 
-	if (key == 'l' && down)
+	if (down)
 	{
-		CG_HudEditor_ToggleShowLayout();
-		return;
-	}
-
-	if (key == 'h' && down)
-	{
-		CG_HudEditor_ToggleHelp();
-		return;
-	}
-
-	if (key == 'n' && down)
-	{
-		CG_HudEditor_ToggleNoiseGenerator();
-		return;
-	}
-
-	if (key == 'f' && down)
-	{
-		CG_HudEditor_ToggleFullScreen();
-		return;
-	}
-
-	if (key == 'o' && down)
-	{
-		CG_HudEditor_ToggleMicroGrid();
-		return;
-	}
-
-	if (key == 'c' && down)
-	{
-		CG_HudEditor_ToggleGrid();
-		return;
-	}
-
-	if (key == 'd' && down)
-	{
-		CG_HudEditor_ToggleGridScale();
-		return;
+		switch (key)
+		{
+		case 'l': CG_HudEditor_ToggleShowLayout();         return;
+		case 'h': CG_HudEditor_ToggleHelp();               return;
+		case 'n': CG_HudEditor_ToggleNoiseGenerator();     return;
+		case 'f': CG_HudEditor_ToggleFullScreen();         return;
+		case 'o': CG_HudEditor_ToggleMicroGrid();          return;
+		case 'c': CG_HudEditor_ToggleGrid();               return;
+		case 'd': CG_HudEditor_ToggleGridScale();          return;
+		case 'a': CG_HudEditor_ToggleForceGridAlignment(); return;
+		default: break;
+		}
 	}
 
 	// start parsing hud components from the last focused button
@@ -2782,16 +2765,33 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	{
 		hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
 		qboolean       changeSize;
+		qboolean       gridAlign = forceGridAlignment && (showGrid || showMicroGrid);
 		float          offset;
-		float          *pValue;
+		float          *pValue = NULL;
 
 #ifdef __APPLE__
 		changeSize = trap_Key_IsDown(K_COMMAND);
 #else
 		changeSize = (trap_Key_IsDown(K_RALT) || trap_Key_IsDown(K_LALT));
 #endif
+		if (gridAlign)
+		{
+			float multiple;
+			float side;
 
-		if (trap_Key_IsDown(K_RCTRL) || trap_Key_IsDown(K_LCTRL))
+			switch (gridScale)
+			{
+			case HUD_GRID_SCALE_1: multiple = 0.25f;  break;
+			case HUD_GRID_SCALE_2: multiple = 0.125f; break;
+			case HUD_GRID_SCALE_3: multiple = 0.10f;  break;
+			default:               multiple = 0.10f;  break;
+			}
+
+			side = (key == K_LEFTARROW || key == K_RIGHTARROW) ? SCREEN_WIDTH_SAFE : SCREEN_HEIGHT_SAFE;
+
+			offset = side * (multiple / (1 / multiple));
+		}
+		else if (trap_Key_IsDown(K_RCTRL) || trap_Key_IsDown(K_LCTRL))
 		{
 			offset = 0.1f;
 		}
@@ -2826,6 +2826,11 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		{
 			pValue   = (changeSize ? &comp->location.h : &comp->location.y);
 			*pValue += offset;
+		}
+
+		if (pValue && gridAlign)
+		{
+			*pValue = Q_ClosestMultipleFloat(*pValue, offset, 3);
 		}
 
 		switch (key)
