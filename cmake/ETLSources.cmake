@@ -11,6 +11,7 @@ FILE(GLOB COMMON_SRC
 
 FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
+	"src/qcommon/dl_main_android.c"
 	"src/qcommon/dl_main_stubs.c"
 	"src/qcommon/i18n_*"
 	"src/qcommon/auth.c"
@@ -25,9 +26,9 @@ if(UNIX)
 		SET_SOURCE_FILES_PROPERTIES("src/sys/sys_osx.m" PROPERTIES LANGUAGE C)
 	endif(APPLE)
 
-    if(ANDROID)
-        LIST(APPEND PLATFORM_SRC "src/sys/sys_android.c")
-    endif(ANDROID)
+	if(ANDROID)
+		LIST(APPEND PLATFORM_SRC "src/sys/sys_android.c")
+	endif(ANDROID)
 
 	LIST(APPEND PLATFORM_SRC "src/sys/sys_unix.c")
 	LIST(APPEND PLATFORM_SRC "src/sys/con_tty.c")

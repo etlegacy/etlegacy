@@ -240,12 +240,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 				if (btn_activate.getParent() == null)
 					etl_linearLayout.addView(btn_activate, lp_activate);
 
-				btn_alternative.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						onNativeKeyDown(30);
-						onNativeKeyUp(30);
-					}
+				btn_alternative.setOnClickListener(v -> {
+					onNativeKeyDown(30);
+					onNativeKeyUp(30);
 				});
 
 				RelativeLayout.LayoutParams lp_alternative = new RelativeLayout.LayoutParams(
