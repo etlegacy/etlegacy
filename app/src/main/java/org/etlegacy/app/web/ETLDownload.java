@@ -1,4 +1,4 @@
-package org.etlegacy.app;
+package org.etlegacy.app.web;
 
 import android.util.Log;
 
@@ -38,7 +38,7 @@ public class ETLDownload {
 		throw new RuntimeException("Not yet implemented");
 	}
 
-	public void createWebRequest(String url, String authToken, long identifier) {
+	public void createWebRequest(Request request) {
 		// FIXME: implement
 		throw new RuntimeException("Not yet implemented");
 	}

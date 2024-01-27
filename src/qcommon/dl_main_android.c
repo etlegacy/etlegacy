@@ -33,6 +33,23 @@
  * @brief Download system implementation that uses the Android's system to do the http interactions
  */
 
+/*
+    Java VM Type signatures
+
+    Type Signature                 Java Type
+    Z 	                           boolean
+    B                              byte
+    C                              char
+    S                              short
+    I 	                           int
+    J 	                           long
+    F 	                           float
+    D                              double
+    L fully-qualified-class ;      fully-qualified-class
+    [ type 	                       type[]
+    ( arg-types ) ret-type         method type
+ */
+
 #include "dl_public.h"
 #include "q_shared.h"
 #include "qcommon.h"
@@ -52,7 +69,7 @@ static struct
 	webRequest_t *requests;
 } androidSys = { NULL, NULL, qfalse, 0, NULL };
 
-JNIEXPORT void JNICALL Java_org_etlegacy_app_ETLDownload_init(JNIEnv *env, jobject this)
+JNIEXPORT void JNICALL Java_org_etlegacy_app_web_ETLDownload_init(JNIEnv *env, jobject this)
 {
 	Com_Printf("Download system init from Android");
 	androidSys.download_env       = env;
@@ -68,8 +85,8 @@ static void DL_HandleInit()
 	}
 	// If the java code has not done the init, then just call it ourselves
 	JNIEnv    *env = SDL_AndroidGetJNIEnv();
-	jclass    cls  = (*env)->FindClass(env, "org/etlegacy/app/ETLDownload");
-	jmethodID id   = (*env)->GetStaticMethodID(env, cls, "instance", "()Lorg/etlegacy/app/ETLDownload;");
+	jclass    cls  = (*env)->FindClass(env, "org/etlegacy/app/web/ETLDownload");
+	jmethodID id   = (*env)->GetStaticMethodID(env, cls, "instance", "()Lorg/etlegacy/app/web/ETLDownload;");
 	(*env)->CallStaticObjectMethod(env, cls, id);
 }
 
@@ -225,7 +242,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	request->progress_clb = progress;
 
 	JNIEnv    *env   = androidSys.download_env;
-	jmethodID method = (*env)->GetMethodID(env, androidSys.download_singleton, "beginDownload", "(Ljava/lang/String;Ljava/lang/String;J)v");
+	jmethodID method = (*env)->GetMethodID(env, androidSys.download_singleton, "beginDownload", "(Ljava/lang/String;Ljava/lang/String;J)V");
 
 	jstring localString  = (*env)->NewStringUTF(env, localName);
 	jstring remoteString = (*env)->NewStringUTF(env, remoteName);
@@ -240,12 +257,17 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 
 unsigned int Web_CreateRequest(const char *url, const char *authToken, webUploadData_t *upload, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
-	webRequest_t      *request;
-	struct curl_slist *headers = NULL;
+	webRequest_t *request;
 
 	if (!url || !*url)
 	{
 		Com_Printf(S_COLOR_RED "DL_GetString: Error - empty download URL\n");
+		return qfalse;
+	}
+
+	if (upload && upload->fileHandle)
+	{
+		Com_Error(ERR_DROP, S_COLOR_RED "Android does not yet support file upload!\n");
 		return qfalse;
 	}
 
@@ -260,71 +282,37 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 	request->progress_clb = progress;
 	request->uploadData   = upload;
 
-	// TODO: do we pass the buffer directly from java or do we allocate our own?
-	// request->data.buffer = Com_Allocate(GET_BUFFER_SIZE);
-	// if (!request->data.buffer)
-	// {
-	//     goto error_get;
-	// }
-	// request->data.bufferSize = GET_BUFFER_SIZE;
-	// Com_Memset(request->data.buffer, 0, GET_BUFFER_SIZE);
+	JNIEnv    *env   = androidSys.download_env;
+	jmethodID method = (*env)->GetMethodID(env, androidSys.download_singleton, "createWebRequest", "(Lorg/etlegacy/app/web/Request;)V");
 
-	/*
-	#ifdef ETLEGACY_DEBUG
-	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_VERBOSE, 1L);
-	#endif
+	jclass    uploadDataCls         = (*env)->FindClass(env, "org/etlegacy/app/web/UploadData");
+	jmethodID uploadDataConstructor = (*env)->GetMethodID(env, uploadDataCls, "<init>", "()V");
+	jobject   uploadData            = (*env)->NewObject(env, uploadDataCls, uploadDataConstructor);
+
+	(*env)->SetObjectField(env, uploadData, (*env)->GetFieldID(env, uploadDataCls, "url", "Ljava/lang/String;"), (*env)->NewStringUTF(env, url));
+	(*env)->SetObjectField(env, uploadData, (*env)->GetFieldID(env, uploadDataCls, "authToken", "Ljava/lang/String;"), (*env)->NewStringUTF(env, authToken));
+	(*env)->SetIntField(env, uploadData, (*env)->GetFieldID(env, uploadDataCls, "requestType", "I"), upload ? 1 : 0);
+	(*env)->SetLongField(env, uploadData, (*env)->GetFieldID(env, uploadDataCls, "nativeIdentifier", "J"), (jlong)request->id);
 
 	if (upload)
 	{
-	    ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POST, 1L);
-	    ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READFUNCTION, DL_read_function);
-	    ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READDATA, (void *)upload);
+		if (upload->contentType[0])
+		{
+			jmethodID addHeaderMethod = (*env)->GetMethodID(env, uploadDataCls, "addHeader", "(Ljava/lang/String;Ljava/lang/String;)V");
+			(*env)->CallVoidMethod(env, uploadData, addHeaderMethod, (*env)->NewStringUTF(env, "Content-Type"), (*env)->NewStringUTF(env, upload->contentType));
+		}
 
-	    if (upload->contentType[0])
-	    {
-	        headers = curl_slist_append(headers, "Expect:");
-	        headers = curl_slist_append(headers, va("Content-Type: %s", upload->contentType));
-	    }
+		if (upload->bufferSize)
+		{
+			jbyteArray byteArray = (*env)->NewByteArray(env, upload->bufferSize);
+			(*env)->SetByteArrayRegion(env, byteArray, 0, upload->bufferSize, (jbyte *) upload->buffer);
+			(*env)->SetObjectField(env, uploadData, (*env)->GetFieldID(env, uploadDataCls, "buffer", "[B"), byteArray);
+		}
 	}
 
-	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FAILONERROR, 1);
-	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FOLLOWLOCATION, 1);
-	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_MAXREDIRS, 5);
-
-	if (authToken && *authToken)
-	{
-	    headers = curl_slist_append(headers, va("X-ETL-KEY: %s", authToken));
-	}
-
-	if (headers)
-	{
-	    ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_HTTPHEADER, headers);
-	    request->cList = headers;
-	}
-
-	DL_InitSSL(request->rawHandle);
-
-	if (curl_multi_add_handle(webSys.multiHandle, request->rawHandle) != CURLM_OK)
-	{
-	    Com_Printf(S_COLOR_RED  "Web_CreateRequest: Error - invalid handle.\n");
-	    goto error_get;
-	}
+	(*env)->CallVoidMethod(env, androidSys.download_singleton, method, uploadData);
 
 	return request->id;
-
-	error_get:
-
-	if (request->complete_clb)
-	{
-	    request->complete_clb(request, REQUEST_NOK);
-	}
-	DL_FreeRequest(request);
-
-	return 0;
-	*/
-
-	// FIXME: implement
-	return 0;
 }
 
 void DL_DownloadLoop(void)
