@@ -77,17 +77,17 @@ JNIEXPORT void JNICALL Java_org_etlegacy_app_web_ETLDownload_init(JNIEnv *env, j
 	androidSys.init               = qtrue;
 }
 
-static void DL_HandleInit()
+static jobject DL_HandleInit()
 {
 	if (androidSys.init)
 	{
-		return;
+		return androidSys.download_singleton;
 	}
 	// If the java code has not done the init, then just call it ourselves
 	JNIEnv    *env = SDL_AndroidGetJNIEnv();
 	jclass    cls  = (*env)->FindClass(env, "org/etlegacy/app/web/ETLDownload");
 	jmethodID id   = (*env)->GetStaticMethodID(env, cls, "instance", "()Lorg/etlegacy/app/web/ETLDownload;");
-	(*env)->CallStaticObjectMethod(env, cls, id);
+	return (*env)->CallStaticObjectMethod(env, cls, id);
 }
 
 static unsigned int DL_GetRequestId()
@@ -232,7 +232,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 		return 0;
 	}
 
-	DL_HandleInit();
+	jobject singleton = DL_HandleInit();
 
 	/* ET://ip:port */
 	strcpy(referer, "et://");
@@ -242,13 +242,14 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	request->progress_clb = progress;
 
 	JNIEnv    *env   = androidSys.download_env;
-	jmethodID method = (*env)->GetMethodID(env, androidSys.download_singleton, "beginDownload", "(Ljava/lang/String;Ljava/lang/String;J)V");
+	jclass    cls    = (*env)->GetObjectClass(env, singleton);
+	jmethodID method = (*env)->GetMethodID(env, cls, "beginDownload", "(Ljava/lang/String;Ljava/lang/String;J)V");
 
 	jstring localString  = (*env)->NewStringUTF(env, localName);
 	jstring remoteString = (*env)->NewStringUTF(env, remoteName);
 	jlong   requestId    = (jlong)request->id;
 
-	(*env)->CallVoidMethod(env, androidSys.download_singleton, method, localString, remoteString, requestId);
+	(*env)->CallVoidMethod(env, singleton, method, localString, remoteString, requestId);
 
 	Cvar_Set("cl_downloadName", remoteName);
 
@@ -271,7 +272,7 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 		return qfalse;
 	}
 
-	DL_HandleInit();
+	jobject singleton = DL_HandleInit();
 
 	request = DL_CreateRequest();
 
@@ -283,7 +284,8 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 	request->uploadData   = upload;
 
 	JNIEnv    *env   = androidSys.download_env;
-	jmethodID method = (*env)->GetMethodID(env, androidSys.download_singleton, "createWebRequest", "(Lorg/etlegacy/app/web/Request;)V");
+	jclass    cls    = (*env)->GetObjectClass(env, singleton);
+	jmethodID method = (*env)->GetMethodID(env, cls, "createWebRequest", "(Lorg/etlegacy/app/web/Request;)V");
 
 	jclass    uploadDataCls         = (*env)->FindClass(env, "org/etlegacy/app/web/UploadData");
 	jmethodID uploadDataConstructor = (*env)->GetMethodID(env, uploadDataCls, "<init>", "()V");
@@ -310,7 +312,7 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 		}
 	}
 
-	(*env)->CallVoidMethod(env, androidSys.download_singleton, method, uploadData);
+	(*env)->CallVoidMethod(env, singleton, method, uploadData);
 
 	return request->id;
 }
@@ -322,10 +324,28 @@ void DL_DownloadLoop(void)
 
 void DL_AbortAll(qboolean block, qboolean allowContinue)
 {
-	// FIXME: implement
+	if (!androidSys.download_env)
+	{
+		return;
+	}
+
+	// FIXME: handle the block and allowContinue..
+	JNIEnv    *env    = androidSys.download_env;
+	jobject   request = DL_CreateRequest();
+	jclass    cls     = (*env)->GetObjectClass(env, request);
+	jmethodID method  = (*env)->GetMethodID(env, cls, "abortAll", "()V");
+	(*env)->CallVoidMethod(env, request, method);
 }
 
 void DL_Shutdown(void)
 {
-	// FIXME: implement
+	if (!androidSys.download_env)
+	{
+		return;
+	}
+	JNIEnv    *env    = androidSys.download_env;
+	jobject   request = DL_CreateRequest();
+	jclass    cls     = (*env)->GetObjectClass(env, request);
+	jmethodID method  = (*env)->GetMethodID(env, cls, "shutdown", "()V");
+	(*env)->CallVoidMethod(env, request, method);
 }

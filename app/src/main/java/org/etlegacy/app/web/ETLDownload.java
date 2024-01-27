@@ -33,16 +33,19 @@ public class ETLDownload {
 		}
 	}
 
+	/** @noinspection unused*/
 	public void beginDownload(String localName, String remoteUrl, long identifier) {
 		// FIXME: implement
 		throw new RuntimeException("Not yet implemented");
 	}
 
+	/** @noinspection unused*/
 	public void createWebRequest(Request request) {
 		// FIXME: implement
 		throw new RuntimeException("Not yet implemented");
 	}
 
+	/** @noinspection unused*/
 	public void abortAll() {
 		// FIXME: implement
 		throw new RuntimeException("Not yet implemented");
