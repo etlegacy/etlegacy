@@ -9,6 +9,24 @@ public class Request {
 	public int requestType; // 0 = GET, 1 = POST
 	public Map<String, String> headers = new HashMap<>();
 	public long nativeIdentifier; // this links the C side of things
+	public boolean done = false;
+	public boolean successful = false;
+
+	public synchronized boolean isDone() {
+		return done;
+	}
+
+	public synchronized void setDone(boolean done) {
+		this.done = done;
+	}
+
+	public synchronized boolean isSuccessful() {
+		return successful;
+	}
+
+	public synchronized void setSuccessful(boolean successful) {
+		this.successful = successful;
+	}
 
 	public void addHeader(String name, String value) {
 		if (name == null || name.trim().isEmpty()) {

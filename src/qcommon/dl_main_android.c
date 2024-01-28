@@ -60,6 +60,12 @@
 #error "This file is only supported on client code!"
 #endif
 
+#ifndef __ANDROID__
+#error "This file is only meant for Android jni"
+#endif
+
+#define GET_BUFFER_SIZE (1024 * 256)
+
 static struct
 {
 	JNIEnv *download_env;
@@ -68,14 +74,6 @@ static struct
 	uint32_t requestId;
 	webRequest_t *requests;
 } androidSys = { NULL, NULL, qfalse, 0, NULL };
-
-JNIEXPORT void JNICALL Java_org_etlegacy_app_web_ETLDownload_init(JNIEnv *env, jobject this)
-{
-	Com_Printf("Download system init from Android");
-	androidSys.download_env       = env;
-	androidSys.download_singleton = this;
-	androidSys.init               = qtrue;
-}
 
 static jobject DL_HandleInit()
 {
@@ -243,13 +241,19 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 
 	JNIEnv    *env   = androidSys.download_env;
 	jclass    cls    = (*env)->GetObjectClass(env, singleton);
-	jmethodID method = (*env)->GetMethodID(env, cls, "beginDownload", "(Ljava/lang/String;Ljava/lang/String;J)V");
+	jmethodID method = (*env)->GetMethodID(env, cls, "beginDownload", "(Lorg/etlegacy/app/web/Request;)V");
 
-	jstring localString  = (*env)->NewStringUTF(env, localName);
-	jstring remoteString = (*env)->NewStringUTF(env, remoteName);
-	jlong   requestId    = (jlong)request->id;
+	jclass    dlCls         = (*env)->FindClass(env, "org/etlegacy/app/web/FileDownload");
+	jmethodID dlConstructor = (*env)->GetMethodID(env, dlCls, "<init>", "()V");
+	jobject   dlRequest     = (*env)->NewObject(env, dlCls, dlConstructor);
+	request->rawHandle = dlRequest;
 
-	(*env)->CallVoidMethod(env, singleton, method, localString, remoteString, requestId);
+	(*env)->SetObjectField(env, dlRequest, (*env)->GetFieldID(env, dlCls, "url", "Ljava/lang/String;"), (*env)->NewStringUTF(env, remoteName));
+	(*env)->SetObjectField(env, dlRequest, (*env)->GetFieldID(env, dlCls, "downloadPath", "Ljava/lang/String;"), (*env)->NewStringUTF(env, localName));
+	(*env)->SetIntField(env, dlRequest, (*env)->GetFieldID(env, dlCls, "requestType", "I"), 0);
+	(*env)->SetLongField(env, dlRequest, (*env)->GetFieldID(env, dlCls, "nativeIdentifier", "J"), (jlong)request->id);
+
+	(*env)->CallVoidMethod(env, singleton, method, dlRequest);
 
 	Cvar_Set("cl_downloadName", remoteName);
 
@@ -276,6 +280,14 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 
 	request = DL_CreateRequest();
 
+	request->data.buffer = Com_Allocate(GET_BUFFER_SIZE);
+	if (!request->data.buffer)
+	{
+		Com_Error(ERR_FATAL, "Could not allocate temp buffer\n");
+	}
+	request->data.bufferSize = GET_BUFFER_SIZE;
+	Com_Memset(request->data.buffer, 0, GET_BUFFER_SIZE);
+
 	Q_strncpyz(request->url, url, ARRAY_LEN(request->url));
 
 	request->userData     = userData;
@@ -290,6 +302,7 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 	jclass    uploadDataCls         = (*env)->FindClass(env, "org/etlegacy/app/web/UploadData");
 	jmethodID uploadDataConstructor = (*env)->GetMethodID(env, uploadDataCls, "<init>", "()V");
 	jobject   uploadData            = (*env)->NewObject(env, uploadDataCls, uploadDataConstructor);
+	request->rawHandle = uploadData;
 
 	(*env)->SetObjectField(env, uploadData, (*env)->GetFieldID(env, uploadDataCls, "url", "Ljava/lang/String;"), (*env)->NewStringUTF(env, url));
 	(*env)->SetObjectField(env, uploadData, (*env)->GetFieldID(env, uploadDataCls, "authToken", "Ljava/lang/String;"), (*env)->NewStringUTF(env, authToken));
@@ -319,7 +332,30 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 
 void DL_DownloadLoop(void)
 {
-	// FIXME: implement
+	webRequest_t **lst = &androidSys.requests;
+
+	JNIEnv    *env         = androidSys.download_env;
+	jclass    requestCls   = (*env)->FindClass(env, "org/etlegacy/app/web/Request");
+	jmethodID isDone       = (*env)->GetMethodID(env, requestCls, "isDone", "()Z");
+	jmethodID isSuccessful = (*env)->GetMethodID(env, requestCls, "isSuccessful", "()Z");
+
+	while (*lst)
+	{
+		webRequest_t *req = *lst;
+		// we use the thread synchronization from the java side
+		if ((*env)->CallBooleanMethod(env, req->rawHandle, isDone))
+		{
+			jboolean ok = (*env)->CallBooleanMethod(env, req->rawHandle, isSuccessful);
+			if (req->complete_clb)
+			{
+				req->complete_clb(req, ok ? REQUEST_OK : REQUEST_NOK);
+			}
+
+			DL_FreeRequest(req);
+		}
+
+		lst = &(*lst)->next;
+	}
 }
 
 void DL_AbortAll(qboolean block, qboolean allowContinue)
@@ -330,8 +366,8 @@ void DL_AbortAll(qboolean block, qboolean allowContinue)
 	}
 
 	// FIXME: handle the block and allowContinue..
-	JNIEnv    *env    = androidSys.download_env;
 	jobject   request = DL_CreateRequest();
+	JNIEnv    *env    = androidSys.download_env;
 	jclass    cls     = (*env)->GetObjectClass(env, request);
 	jmethodID method  = (*env)->GetMethodID(env, cls, "abortAll", "()V");
 	(*env)->CallVoidMethod(env, request, method);
@@ -343,9 +379,74 @@ void DL_Shutdown(void)
 	{
 		return;
 	}
-	JNIEnv    *env    = androidSys.download_env;
 	jobject   request = DL_CreateRequest();
+	JNIEnv    *env    = androidSys.download_env;
 	jclass    cls     = (*env)->GetObjectClass(env, request);
 	jmethodID method  = (*env)->GetMethodID(env, cls, "shutdown", "()V");
 	(*env)->CallVoidMethod(env, request, method);
+}
+
+//////////////////////////////////////////
+// JNI native methods
+/////////////////////////////////////////
+
+JNIEXPORT void JNICALL Java_org_etlegacy_app_web_ETLDownload_init(JNIEnv *env, jobject this)
+{
+	Com_Printf("Download system init from Android");
+	androidSys.download_env       = env;
+	androidSys.download_singleton = this;
+	androidSys.init               = qtrue;
+}
+
+JNIEXPORT jint JNICALL Java_org_etlegacy_app_web_ETLDownload_requestProgress(JNIEnv *env, jobject this, jlong current, jlong total, jlong id)
+{
+	webRequest_t *request = DL_GetRequestById(id);
+
+	if (!request)
+	{
+		Com_Printf(S_COLOR_RED "Unknown request id\n");
+		return 0;
+	}
+
+	// if (webSys.abort || request->abort)
+	// {
+	//     return -666;
+	// }
+
+	if (!request->data.requestLength)
+	{
+		request->data.requestLength = (size_t)current;
+	}
+
+	if (request->progress_clb)
+	{
+		return request->progress_clb(request, current, total);
+	}
+	return 0;
+}
+
+JNIEXPORT void JNICALL Java_org_etlegacy_app_web_ETLDownload_requestComplete(JNIEnv *env, jobject this, jint httpCode, jbyteArray data, jlong id)
+{
+	webRequest_t *request = DL_GetRequestById(id);
+
+	if (!request)
+	{
+		Com_Printf(S_COLOR_RED "Unknown request id\n");
+		return;
+	}
+
+	request->httpCode = httpCode;
+
+	if (data)
+	{
+		jsize size = (*env)->GetArrayLength(env, data);
+		if (size < request->data.bufferSize)
+		{
+			(*env)->GetByteArrayRegion(env, data, 0, size, (jbyte *)request->data.buffer);
+		}
+		else
+		{
+			Com_Error(ERR_FATAL, "Too small of a buffer for download\n");
+		}
+	}
 }

@@ -194,7 +194,7 @@ static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ul
 		return -666;
 	}
 
-	if (request->data.requestLength)
+	if (!request->data.requestLength)
 	{
 		if (request->upload)
 		{
