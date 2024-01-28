@@ -2550,6 +2550,17 @@ static void CG_HudEditor_ToggleGridScale(void)
 	}
 }
 
+static ID_INLINE float CG_HudEditor_GetGridScale(void)
+{
+	switch (gridScale)
+	{
+	case HUD_GRID_SCALE_1: return 0.25f;
+	case HUD_GRID_SCALE_2: return 0.125f;
+	case HUD_GRID_SCALE_3: return 0.10f;
+	default: return 0.10f;
+	}
+}
+
 static void CG_HUDEditor_GridDrawSection2(float step, float size)
 {
 	float i, j;
@@ -2579,15 +2590,7 @@ static void CG_HUDEditor_GridDrawSection(float step, float size)
 
 static void CG_HudEditor_GridDraw(void)
 {
-	float step;
-
-	switch (gridScale)
-	{
-	case HUD_GRID_SCALE_1: step = 0.25f; break;
-	case HUD_GRID_SCALE_2: step = 0.125f; break;
-	case HUD_GRID_SCALE_3: step = 0.10f; break;
-	default: return;
-	}
+	float step = CG_HudEditor_GetGridScale();
 
 	if (showMicroGrid)
 	{
@@ -2776,18 +2779,8 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 #endif
 		if (gridAlign)
 		{
-			float multiple;
-			float side;
-
-			switch (gridScale)
-			{
-			case HUD_GRID_SCALE_1: multiple = 0.25f;  break;
-			case HUD_GRID_SCALE_2: multiple = 0.125f; break;
-			case HUD_GRID_SCALE_3: multiple = 0.10f;  break;
-			default:               multiple = 0.10f;  break;
-			}
-
-			side = (key == K_LEFTARROW || key == K_RIGHTARROW) ? SCREEN_WIDTH_SAFE : SCREEN_HEIGHT_SAFE;
+			float multiple = CG_HudEditor_GetGridScale();
+			float side     = (key == K_LEFTARROW || key == K_RIGHTARROW) ? SCREEN_WIDTH_SAFE : SCREEN_HEIGHT_SAFE;
 
 			offset = side * (multiple / (1 / multiple));
 		}
@@ -2893,6 +2886,14 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 
 			comp->location.x = x - offsetX;
 			comp->location.y = y - offsetY;
+
+			if (forceGridAlignment && (showGrid || showMicroGrid))
+			{
+				float multiple = CG_HudEditor_GetGridScale();
+
+				comp->location.x = Q_ClosestMultipleFloat(comp->location.x, SCREEN_WIDTH_SAFE * (multiple / (1 / multiple)), 3);
+				comp->location.y = Q_ClosestMultipleFloat(comp->location.y, SCREEN_HEIGHT_SAFE * (multiple / (1 / multiple)), 3);
+			}
 
 			CG_HudEditorUpdateFields(button);
 			return;
