@@ -202,7 +202,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
       - name: Android Repo
         uses: actions/checkout@v3
@@ -210,16 +210,8 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Downloading NDK
-        uses: actions/checkout@v3
-        with:
-          repository: rafal1137/NDK_ETL
-          path: NDK_ETL
-
       - name: Build
         run: |
-          chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
-          echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git fetch --tags --force
           ./gradlew clean build
@@ -570,19 +562,13 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
       - name: Android Repo
         uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
-
-      - name: Downloading NDK
-        uses: actions/checkout@v3
-        with:
-          repository: rafal1137/NDK_ETL
-          path: NDK_ETL
 
       - uses: actions/download-artifact@v3.0.1
         with:
@@ -595,8 +581,6 @@ jobs:
 
       - name: Build and Generate Package
         run: |
-          chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
-          echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git fetch --tags --force
           ./gradlew clean assembleRelease
