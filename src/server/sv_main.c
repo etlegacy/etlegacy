@@ -1579,7 +1579,7 @@ static qboolean SV_CheckPaused(void)
  */
 int SV_FrameMsec()
 {
-	if (sv_fps && !svcls.isTVGame)
+	if (sv_fps)
 	{
 		int frameMsec = (int)(1000.0f / sv_fps->value);
 
@@ -1759,7 +1759,7 @@ void SV_Frame(int msec)
 	{
 		Cvar_Set("sv_fps", "10");
 	}
-	frameMsec = 1000 / sv_fps->integer ;
+	frameMsec = 1000 / sv_fps->integer;
 
 	sv.timeResidual += msec;
 

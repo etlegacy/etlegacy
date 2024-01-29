@@ -100,7 +100,7 @@ void SV_CL_Record_f(void)
 	{
 		s = Cmd_Argv(1);
 		Q_strncpyz(demoName, s, sizeof(demoName));
-		Com_sprintf(name, sizeof(name), "svdemos/%s.%s%d", demoName, SVCLDEMOEXT, ETTV_PROTOCOL_VERSION);
+		Com_sprintf(name, sizeof(name), "svdemos/%s.%s%d", demoName, SVCLDEMOEXT, PROTOCOL_VERSION);
 	}
 	else
 	{
@@ -110,7 +110,7 @@ void SV_CL_Record_f(void)
 		for (number = 0; number <= 9999; number++)
 		{
 			SV_CL_DemoFilename(number, demoName);
-			Com_sprintf(name, sizeof(name), "svdemos/%s.%s%d", demoName, SVCLDEMOEXT, ETTV_PROTOCOL_VERSION);
+			Com_sprintf(name, sizeof(name), "svdemos/%s.%s%d", demoName, SVCLDEMOEXT, PROTOCOL_VERSION);
 
 			len = FS_ReadFile(name, NULL);
 			if (len <= 0)
@@ -399,34 +399,20 @@ void SV_CL_PlayDemo_f(void)
 
 	Q_strncpyz(svclc.demo.demoName, demoFile, sizeof(svclc.demo.demoName));
 
-	if (Cmd_Argc() == 3)
-	{
-		char *param = Cmd_Argv(1);
-
-		if (!Q_stricmp(param, "pure"))
-		{
-			svclc.demo.pure = qtrue;
-		}
-		else if (!Q_stricmp(param, "dirty"))
-		{
-			svclc.demo.pure = qfalse;
-		}
-	}
-	else
-	{
-		svclc.demo.pure = Cvar_VariableIntegerValue("sv_pure") != 0;
-	}
-
 	svcls.state        = CA_CONNECTED;
 	svclc.demo.playing = qtrue;
+	svclc.demo.pure    = sv_pure->integer != 0;
 
 	Q_strncpyz(svcls.servername, demoFile, sizeof(svcls.servername));
 
 	// read demo messages until connected
-	while (svcls.state >= CA_CONNECTED && svcls.state < CA_PRIMED)
+	while (!svcl.snap.valid || !svcl.serverTime)
 	{
 		SV_CL_ReadDemoMessage();
 	}
+
+	sv.time = svcl.serverTime;
+
 	// don't get the first snapshot this frame, to prevent the long
 	// time from the gamestate load from messing causing a time skip
 	svclc.demo.firstFrameSkipped = qfalse;

@@ -67,12 +67,12 @@ void SV_CL_Connect_f(void)
 	server   = Cmd_Argv(2);
 	password = Cmd_Argv(3);
 
-	//FS_ClearPureServerPacks();
+	FS_ClearPureServerPacks();
 
 	// clear any previous "server full" type messages
 	svclc.serverMessage[0] = 0;
 
-	if (com_sv_running->integer && !strcmp(server, "localhost"))
+	if (com_sv_running->integer)
 	{
 		// if running a local server, kill it
 		SV_Shutdown("Server quit");
@@ -122,10 +122,6 @@ void SV_CL_Connect_f(void)
 
 	svclc.connectTime        = -99999; // CL_CheckForResend() will fire immediately
 	svclc.connectPacketCount = 0;
-
-	// server connection string
-	Cvar_Set("cl_currentServerAddress", server);
-	Cvar_Set("cl_currentServerIP", ip_port);
 }
 
 /**
@@ -275,7 +271,9 @@ void SV_CL_Disconnect(void)
 	// wipe the client connection
 	Com_Memset(&svclc, 0, sizeof(svclc));
 
-	svcls.state = CA_DISCONNECTED;
+	svcls.state               = CA_DISCONNECTED;
+	svcls.lastRunFrameTime    = 0;
+	svcls.lastRunFrameSysTime = Sys_Milliseconds();
 }
 
 /**
@@ -515,10 +513,13 @@ void SV_CL_InitTVGame(void)
 
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++)
 	{
+		if (!svcl.gameState.stringOffsets[i] || i == CS_SYSTEMINFO)
+		{
+			continue;
+		}
+
 		SV_SetConfigstring(i, svcl.gameState.stringData + svcl.gameState.stringOffsets[i]);
 	}
-
-	Info_SetValueForKey_Big(sv.configstrings[CS_SYSTEMINFO], "sv_serverid", va("%d", sv.serverId));
 
 	// we will send a usercmd this frame, which
 	// will cause the server to send us the first snapshot
@@ -1420,47 +1421,70 @@ int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps)
  */
 void SV_CL_RunFrame(void)
 {
-	int time = 0;
+	int frameMsec = 1000 / sv_fps->integer;
+	int systime   = Sys_Milliseconds();
+	int frameDelta;
 
-	if (svcls.state < CA_AUTHORIZING)
+	if (svcls.state <= CA_DISCONNECTED)
 	{
 		return;
 	}
 
-	//Com_Printf("SV_CL_Frame: sv.time: %d svcl.serverTime: %d\n", sv.time, svcl.serverTime);
-
-	if (svcl.serverTime < svcls.lastFrameTime)
+	if (svcl.serverTime < svcls.lastRunFrameTime)
 	{
-		Com_Printf("Server went backwards in time: %d > %d (late snap?)\n", svcls.lastFrameTime, svcl.serverTime);
-
-		time = svcl.serverTime;
+		if (svcl.snap.valid)
+		{
+			Com_Printf("Server went backwards in time: %d > %d\n", svcls.lastRunFrameTime, svcl.serverTime);
+		}
+		else
+		{
+			sv.time                   = svcl.serverTime;
+			svcls.lastRunFrameTime    = svcl.serverTime;
+			svcls.lastRunFrameSysTime = systime;
+		}
 	}
 	else
 	{
-		//if (!demoplaying)
+		if (!svclc.demo.playing)
 		{
-			time = Sys_Milliseconds();
+			frameDelta = (((systime - svcls.lastRunFrameSysTime) + svcls.lastRunFrameTime) / frameMsec) * frameMsec;
+
+			if (systime - svcls.lastRunFrameSysTime > 1500 / sv_fps->integer && frameDelta > svcl.serverTime)
+			{
+				if (sv.time != 0)
+				{
+					Com_Printf("Dropped server frame: systimeDelta [%d] sv.time [%d] svcl.serverTime [%d] frameDelta [%d]\n", systime - svcls.lastRunFrameSysTime, sv.time, svcl.serverTime, frameDelta);
+				}
+
+				svcl.serverTime = frameDelta;
+			}
+		}
+	}
+
+	if (sv.time < svcl.serverTime && svcl.snap.valid)
+	{
+		if (!svclc.demo.playing || svcl.serverTime - sv.time <= frameMsec)
+		{
+			sv.time                   = svcl.serverTime;
+			svcls.lastRunFrameTime    = sv.time;
+			svcls.lastRunFrameSysTime = systime;
+
+			VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+
+			SV_SendClientMessages();
+			return;
 		}
 
 		if (sv.time != 0)
 		{
-			//Com_Printf("dropped server frame: svs.time [%d] cl.serverTime [%d] frameDelta [%d]\n", sv.time, svcl.serverTime, time);
+			Com_Printf("Dropped frame: sv.time [%d] svcl.serverTime [%d]\n", sv.time, svcl.serverTime);
 		}
-	}
 
-	if (sv.time < svcl.serverTime)
-	{
-		//if (!demoplaying)
-		{
-			sv.time             = svcl.serverTime;
-			svcls.lastFrameTime = sv.time;
+		sv.time                   = sv.time + frameMsec;
+		svcls.lastRunFrameTime    = sv.time;
+		svcls.lastRunFrameSysTime = systime;
 
-			VM_Call(gvm, GAME_RUN_FRAME, sv.time);
-
-			// send messages back to the clients
-			SV_SendClientMessages();
-			return;
-		}
+		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
 	}
 }
 

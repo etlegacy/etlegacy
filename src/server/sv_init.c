@@ -304,11 +304,11 @@ void SV_CreateBaseline(void)
 	{
 		for (entnum = 0; entnum < MAX_GENTITIES; entnum++)
 		{
-			if (svcl.entitySharedBaselines[entnum].linked)
+			if (svcl.currentStateEntitiesShared[entnum].linked)
 			{
 				svent           = SV_GentityNum(entnum);
-				svent->s        = svcl.entityBaselines[entnum];
-				svent->r        = svcl.entitySharedBaselines[entnum];
+				svent->s        = svcl.currentStateEntities[entnum];
+				svent->r        = svcl.currentStateEntitiesShared[entnum];
 				sv.num_entities = entnum + 1;
 				SV_LinkEntity(svent);
 			}

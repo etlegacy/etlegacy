@@ -873,7 +873,16 @@ void SV_SendClientGameState(client_t *client)
 
 	MSG_WriteByte(&msg, svc_EOF);
 
-	MSG_WriteLong(&msg, client - svs.clients);
+#ifdef DEDICATED
+	if (svcls.isTVGame)
+	{
+		MSG_WriteLong(&msg, svclc.clientNum);
+	}
+	else
+#endif // DEDICATED
+	{
+		MSG_WriteLong(&msg, client - svs.clients);
+	}
 
 	// write the checksum feed
 	MSG_WriteLong(&msg, sv.checksumFeed);

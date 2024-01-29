@@ -723,7 +723,8 @@ typedef struct
 
 	int realtime;                   ///< ignores pause
 
-	int lastFrameTime;
+	int lastRunFrameTime;
+	int lastRunFrameSysTime;
 
 	qboolean isTVGame;
 
@@ -910,6 +911,9 @@ typedef struct
 
 	entityState_t entityBaselines[MAX_GENTITIES];   ///< for delta compression when not in previous frame
 	entityShared_t entitySharedBaselines[MAX_GENTITIES];
+
+	entityState_t currentStateEntities[MAX_GENTITIES];
+	entityShared_t currentStateEntitiesShared[MAX_GENTITIES];
 
 	entityState_t parseEntities[MAX_PARSE_ENTITIES];
 	entityShared_t parseEntitiesShared[MAX_PARSE_ENTITIES];

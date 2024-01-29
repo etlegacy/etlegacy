@@ -34,6 +34,10 @@
 
 #include "server.h"
 
+/**
+  * @brief SV_CL_SetPurePaks
+ * @param[in] referencedOnly
+ */
 static void SV_CL_SetPurePaks(qboolean referencedOnly)
 {
 	const char *s, *t;
@@ -64,106 +68,28 @@ void SV_CL_SystemInfoChanged(void)
 {
 	char       *systemInfo = svcl.gameState.stringData + svcl.gameState.stringOffsets[CS_SYSTEMINFO];
 	const char *s;
-	char       key[BIG_INFO_KEY];
-	char       value[BIG_INFO_VALUE];
-	qboolean   gameSet;
 
 	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
 	// in some cases, outdated cp commands might get sent with this news serverId
 	svcl.serverId = Q_atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
-
-	//Com_Memset(&entLastVisible, 0, sizeof(entLastVisible));
 
 	// don't set any vars when playing a demo
 	if (svclc.demo.playing)
 	{
 		// allow running demo in pure mode to simulate server environment,
 		// but still setup the referenced packages for the container system to work
-		SV_CL_SetPurePaks(!svclc.demo.pure);
+		//SV_CL_SetPurePaks(!svclc.demo.pure);
 		return;
 	}
 
-	//s = Info_ValueForKey(systemInfo, "sv_cheats");
-	//cl_connectedToCheatServer = Q_atoi(s);      //bani
-	//if (!cl_connectedToCheatServer)
-	//{
-	//	Cvar_SetCheatState();
-	//}
+	s = Info_ValueForKey(systemInfo, "sv_cheats");
+
+	if (!Q_atoi(s))
+	{
+		Cvar_SetCheatState();
+	}
 
 	SV_CL_SetPurePaks(qfalse);
-
-	gameSet = qfalse;
-	// scan through all the variables in the systeminfo and locally set cvars to match
-	s = systemInfo;
-	while (s)
-	{
-		cvarFlags_t cvar_flags;
-
-		Info_NextPair(&s, key, value);
-		if (!key[0])
-		{
-			break;
-		}
-
-		// ehw!
-		if (!Q_stricmp(key, "fs_game"))
-		{
-			if (FS_InvalidGameDir(value))
-			{
-				Com_Printf(S_COLOR_YELLOW "WARNING: Server sent invalid fs_game value %s\n", value);
-				continue;
-			}
-
-			gameSet = qtrue;
-		}
-
-		if ((cvar_flags = Cvar_Flags(key)) & CVAR_NONEXISTENT)
-		{
-			Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM);
-		}
-		else
-		{
-			// If this cvar may not be modified by a server discard the value.
-			// "shared" is for ETJump compatibility, information shared between server & client
-			// TODO: see why CVAR_SERVER_CREATED flag gets dropped here
-			if (!(cvar_flags & (CVAR_SYSTEMINFO | CVAR_SERVER_CREATED | CVAR_USER_CREATED)))
-			{
-				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") &&
-				    Q_stricmp(key, "pmove_msec") && Q_stricmp(key, "shared"))
-				{
-					Com_DPrintf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s=%s\n", key, value);
-					continue;
-				}
-			}
-
-			Cvar_SetSafe(key, value);
-		}
-	}
-
-	// if game folder should not be set and it is set at the client side
-	if (!gameSet && *Cvar_VariableString("fs_game"))
-	{
-		Cvar_Set("fs_game", "");
-	}
-
-	// big hack to clear the image cache on a pure change
-	//cl_connectedToPureServer = Cvar_VariableValue( "sv_pure" );
-	//if (Cvar_VariableValue("sv_pure") != 0.f)
-	//{
-	//	if (!cl_connectedToPureServer && cls.state <= CA_CONNECTED)
-	//	{
-	//		CL_PurgeCache();
-	//	}
-	//	cl_connectedToPureServer = qtrue;
-	//}
-	//else
-	//{
-	//	if (cl_connectedToPureServer && cls.state <= CA_CONNECTED)
-	//	{
-	//		CL_PurgeCache();
-	//	}
-	//	cl_connectedToPureServer = qfalse;
-	//}
 }
 
 /**
@@ -223,6 +149,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 	entityShared_t nullstateShared;
 	int            cmd;
 	char           *s;
+	char           missingFiles[MAX_TOKEN_CHARS] = { '\0' };
 
 	svclc.connectPacketCount = 0;
 
@@ -288,9 +215,9 @@ void SV_CL_ParseGamestate(msg_t *msg)
 				Com_Error(ERR_DROP, "Currentstate number out of range : %i", newnum);
 			}
 
-			MSG_ReadDeltaEntity(msg, &svcl.entityBaselines[newnum], &svcl.entityBaselines[newnum], newnum);
-			MSG_ETTV_ReadDeltaEntityShared(msg, &svcl.entitySharedBaselines[newnum], &svcl.entitySharedBaselines[newnum]);
-			svcl.entitySharedBaselines[newnum].linked = qtrue;
+			MSG_ReadDeltaEntity(msg, &svcl.entityBaselines[newnum], &svcl.currentStateEntities[newnum], newnum);
+			MSG_ETTV_ReadDeltaEntityShared(msg, &svcl.entitySharedBaselines[newnum], &svcl.currentStateEntitiesShared[newnum]);
+			svcl.currentStateEntitiesShared[newnum].linked = qtrue;
 		}
 		else
 		{
@@ -309,36 +236,24 @@ void SV_CL_ParseGamestate(msg_t *msg)
 
 	// Verify if we have all official pakfiles. As we won't
 	// be downloading them, we should be kicked for not having them.
-	if (/*cl_connectedToPureServer && */ !FS_VerifyOfficialPaks())
+	if (sv_pure->integer && !FS_VerifyOfficialPaks())
 	{
 		Com_Error(ERR_DROP, "Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.");
 	}
 
-#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-	Cvar_Set("fs_containerMount", "1");
-#endif
-
 	// reinitialize the filesystem if the game directory has changed
-	//FS_ConditionalRestart(svclc.checksumFeed);
+	FS_ConditionalRestart(svclc.checksumFeed);
 
-	// This used to call CL_StartHunkUsers, but now we enter the download state before loading the
-	// cgame
-	//if (!svclc.demo.playing)
-	//{
-	//	Com_InitDownloads();
-	//}
-	//else
+	if (FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
 	{
-		//char missingFiles[MAX_TOKEN_CHARS] = { '\0' };
-		/*if (clc.demo.pure && FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
-		{
-			Com_Error(ERR_DROP, "Missing required packages: %s", missingFiles);
-		}
-		else*/
-		{
-			SV_CL_DownloadsComplete();
-		}
+		Com_Printf("Missing paks: %s\n", missingFiles);
+		SV_CL_Disconnect();
+		Cvar_Set("cl_paused", "0");
+		sv.time = 0;
+		return;
 	}
+
+	SV_CL_DownloadsComplete();
 
 	// make sure the game starts
 	Cvar_Set("cl_paused", "0");
