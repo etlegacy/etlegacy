@@ -27,11 +27,11 @@ new File( 'VERSION.txt' ).eachLine { line ->
 }
 
 android {
-	namespace "org.etlegacy.app"
+	namespace "com.etlegacy.app"
     compileSdk 33
     defaultConfig {
         if (buildAsApplication) {
-            applicationId "org.etlegacy.app"
+            applicationId "com.etlegacy.app"
         }
         minSdkVersion 26
         //noinspection OldTargetApi
@@ -131,7 +131,7 @@ android {
             variant.outputs.each { output ->
                 def outputFile = output.outputFile
                 if (outputFile != null && outputFile.name.endsWith(".aar")) {
-                    def fileName = "org.etlegacy.app.aar"
+                    def fileName = "com.etlegacy.app.aar"
                     output.outputFile = new File(outputFile.parent, fileName)
                 }
             }

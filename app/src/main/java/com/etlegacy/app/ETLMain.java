@@ -1,4 +1,4 @@
-package org.etlegacy.app;
+package com.etlegacy.app;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;

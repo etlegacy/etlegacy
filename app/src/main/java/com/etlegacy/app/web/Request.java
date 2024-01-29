@@ -1,4 +1,4 @@
-package org.etlegacy.app.web;
+package com.etlegacy.app.web;
 
 import java.util.HashMap;
 import java.util.Map;

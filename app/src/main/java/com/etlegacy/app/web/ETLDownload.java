@@ -1,4 +1,4 @@
-package org.etlegacy.app.web;
+package com.etlegacy.app.web;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;

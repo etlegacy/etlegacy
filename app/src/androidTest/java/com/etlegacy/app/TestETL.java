@@ -1,4 +1,4 @@
-package org.etlegacy.app;
+package com.etlegacy.app;
 
 import android.app.Application;
 import android.app.Instrumentation;
@@ -41,7 +41,7 @@ public class TestETL {
         // Perform click on Nickname Entry
         // TODO: Implement
 
-        assertEquals("org.etlegacy.app", app.getPackageName());
+        assertEquals("com.etlegacy.app", app.getPackageName());
         DisplayMetrics displaymetrics = new DisplayMetrics();
 
         if (app.getApplicationContext().getClass().getSimpleName().equals("ETLActivity")) {

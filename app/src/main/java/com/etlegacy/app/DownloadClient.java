@@ -1,4 +1,4 @@
-package org.etlegacy.app;
+package com.etlegacy.app;
 
 import android.app.Activity;
 import android.util.Log;

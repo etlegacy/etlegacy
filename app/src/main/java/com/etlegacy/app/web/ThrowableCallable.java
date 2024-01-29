@@ -1,4 +1,4 @@
-package org.etlegacy.app.web;
+package com.etlegacy.app.web;
 
 @FunctionalInterface
 public interface ThrowableCallable<T> {

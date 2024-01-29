@@ -84,8 +84,8 @@ static jobject DL_HandleInit()
 	}
 	// If the java code has not done the init, then just call it ourselves
 	JNIEnv    *env = androidSys.env = SDL_AndroidGetJNIEnv();
-	jclass    cls  = androidSys.cls = (*env)->FindClass(env, "org/etlegacy/app/web/ETLDownload");
-	jmethodID id   = (*env)->GetStaticMethodID(env, cls, "instance", "()Lorg/etlegacy/app/web/ETLDownload;");
+	jclass    cls  = androidSys.cls = (*env)->FindClass(env, "com/etlegacy/app/web/ETLDownload");
+	jmethodID id   = (*env)->GetStaticMethodID(env, cls, "instance", "()Lcom/etlegacy/app/web/ETLDownload;");
 	androidSys.singleton = (*env)->CallStaticObjectMethod(env, cls, id);
 	androidSys.init      = qtrue;
 	return androidSys.singleton;
@@ -243,9 +243,9 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	request->progress_clb = progress;
 
 	JNIEnv    *env   = androidSys.env;
-	jmethodID method = (*env)->GetMethodID(env, androidSys.cls, "beginDownload", "(Lorg/etlegacy/app/web/Request;)V");
+	jmethodID method = (*env)->GetMethodID(env, androidSys.cls, "beginDownload", "(Lcom/etlegacy/app/web/Request;)V");
 
-	jclass    dlCls         = (*env)->FindClass(env, "org/etlegacy/app/web/FileDownload");
+	jclass    dlCls         = (*env)->FindClass(env, "com/etlegacy/app/web/FileDownload");
 	jmethodID dlConstructor = (*env)->GetMethodID(env, dlCls, "<init>", "()V");
 	jobject   dlRequest     = (*env)->NewObject(env, dlCls, dlConstructor);
 	request->rawHandle = dlRequest;
@@ -298,9 +298,9 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 	request->uploadData   = upload;
 
 	JNIEnv    *env   = androidSys.env;
-	jmethodID method = (*env)->GetMethodID(env, androidSys.cls, "createWebRequest", "(Lorg/etlegacy/app/web/Request;)V");
+	jmethodID method = (*env)->GetMethodID(env, androidSys.cls, "createWebRequest", "(Lcom/etlegacy/app/web/Request;)V");
 
-	jclass    uploadDataCls         = (*env)->FindClass(env, "org/etlegacy/app/web/UploadData");
+	jclass    uploadDataCls         = (*env)->FindClass(env, "com/etlegacy/app/web/UploadData");
 	jmethodID uploadDataConstructor = (*env)->GetMethodID(env, uploadDataCls, "<init>", "()V");
 	jobject   uploadData            = (*env)->NewObject(env, uploadDataCls, uploadDataConstructor);
 	request->rawHandle = uploadData;
@@ -342,7 +342,7 @@ void DL_DownloadLoop(void)
 	webRequest_t **lst = &androidSys.requests;
 
 	JNIEnv    *env         = androidSys.env;
-	jclass    requestCls   = (*env)->FindClass(env, "org/etlegacy/app/web/Request");
+	jclass    requestCls   = (*env)->FindClass(env, "com/etlegacy/app/web/Request");
 	jmethodID isDone       = (*env)->GetMethodID(env, requestCls, "isDone", "()Z");
 	jmethodID isSuccessful = (*env)->GetMethodID(env, requestCls, "isSuccessful", "()Z");
 
@@ -401,7 +401,7 @@ void DL_Shutdown(void)
 // JNI native methods
 /////////////////////////////////////////
 
-JNIEXPORT void JNICALL Java_org_etlegacy_app_web_ETLDownload_init(JNIEnv *env, jobject this)
+JNIEXPORT void JNICALL Java_com_etlegacy_app_web_ETLDownload_init(JNIEnv *env, jobject this)
 {
 	Com_Printf("Download system init from Android");
 	androidSys.env       = env;
@@ -410,7 +410,7 @@ JNIEXPORT void JNICALL Java_org_etlegacy_app_web_ETLDownload_init(JNIEnv *env, j
 	androidSys.init      = qtrue;
 }
 
-JNIEXPORT jint JNICALL Java_org_etlegacy_app_web_ETLDownload_requestProgress(JNIEnv *env, jobject this, jlong current, jlong total, jlong id)
+JNIEXPORT jint JNICALL Java_com_etlegacy_app_web_ETLDownload_requestProgress(JNIEnv *env, jobject this, jlong current, jlong total, jlong id)
 {
 	webRequest_t *request = DL_GetRequestById(id);
 
@@ -437,7 +437,7 @@ JNIEXPORT jint JNICALL Java_org_etlegacy_app_web_ETLDownload_requestProgress(JNI
 	return 0;
 }
 
-JNIEXPORT void JNICALL Java_org_etlegacy_app_web_ETLDownload_requestComplete(JNIEnv *env, jobject this, jint httpCode, jbyteArray data, jlong id)
+JNIEXPORT void JNICALL Java_com_etlegacy_app_web_ETLDownload_requestComplete(JNIEnv *env, jobject this, jint httpCode, jbyteArray data, jlong id)
 {
 	webRequest_t *request = DL_GetRequestById(id);
 
