@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class ETLMain extends Activity {
 
@@ -129,24 +130,31 @@ public class ETLMain extends Activity {
 		final ProgressDialog progressDialog = DownloadBar();
 		final DownloadClient cc = new DownloadClient(this);
 
-		final String mirrorUrl = "https://mirror.etlegacy.com/etmain/";
-		cc.downloadPackFile(mirrorUrl + pak2.getFileName(), pak2, null, null);
-		cc.downloadPackFile(mirrorUrl + pak1.getFileName(), pak1, null, null);
-		cc.downloadPackFile(mirrorUrl + pak0.getFileName(), pak0, progressDialog::dismiss, (progress) -> {
+		Consumer<DownloadClient.DownloadProgress> progressConsumer = (progress) -> {
 			final int bytesWritten = (int) (progress.written / Math.pow(1024, 2));
 			int totalSize = (int) (progress.total / Math.pow(1024, 2));
 			runOnUiThread(() -> {
 				progressDialog.setMax(totalSize);
 				progressDialog.setProgress(bytesWritten);
 			});
-		});
-		cc.whenReady(() -> {
-			runOnUiThread(() -> {
-				progressDialog.dismiss();
-				ETLMain.this.startActivity(intent);
-				ETLMain.this.finish();
-			});
-		});
+		};
+
+		final String mirrorUrl = "https://mirror.etlegacy.com/etmain/";
+
+		if (!Files.exists(pak2)) {
+			cc.downloadPackFile(mirrorUrl + pak2.getFileName(), pak2, progressDialog::dismiss, progressConsumer);
+		}
+		if (!Files.exists(pak1)) {
+			cc.downloadPackFile(mirrorUrl + pak1.getFileName(), pak1, progressDialog::dismiss, progressConsumer);
+		}
+		if (!Files.exists(pak0)) {
+			cc.downloadPackFile(mirrorUrl + pak0.getFileName(), pak0, progressDialog::dismiss, progressConsumer);
+		}
+		cc.whenReady(() -> runOnUiThread(() -> {
+			progressDialog.dismiss();
+			ETLMain.this.startActivity(intent);
+			ETLMain.this.finish();
+		}));
 	}
 
 	private void extractIncludedPackages(Path etmain) throws IOException {
