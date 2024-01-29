@@ -26,7 +26,6 @@ public class ETLDownload {
 	}
 
 	private ETLDownload() {
-		handleSystemInit();
 	}
 
 	public void handleSystemInit() {
@@ -45,7 +44,9 @@ public class ETLDownload {
 		}
 	}
 
-	/** @noinspection unused*/
+	/**
+	 * @noinspection unused
+	 */
 	public void beginDownload(Request request) {
 		if (!(request instanceof FileDownload)) {
 			throw new RuntimeException("Not yet implemented");
@@ -98,13 +99,17 @@ public class ETLDownload {
 		});
 	}
 
-	/** @noinspection unused*/
+	/**
+	 * @noinspection unused
+	 */
 	public void createWebRequest(Request request) {
 		// FIXME: implement
 		throw new RuntimeException("Not yet implemented");
 	}
 
-	/** @noinspection unused*/
+	/**
+	 * @noinspection unused
+	 */
 	public void abortAll() {
 		// FIXME: implement
 		throw new RuntimeException("Not yet implemented");
