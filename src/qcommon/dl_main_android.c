@@ -334,7 +334,7 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 void DL_DownloadLoop(void)
 {
 	// If we haven't even initialized then there's nothing to do
-	if (!androidSys.init)
+	if (!androidSys.init || !androidSys.requests)
 	{
 		return;
 	}
@@ -346,9 +346,19 @@ void DL_DownloadLoop(void)
 	jmethodID isDone       = (*env)->GetMethodID(env, requestCls, "isDone", "()Z");
 	jmethodID isSuccessful = (*env)->GetMethodID(env, requestCls, "isSuccessful", "()Z");
 
-	while (*lst)
+	while (lst && *lst)
 	{
 		webRequest_t *req = *lst;
+
+		if (!req->next)
+		{
+			lst = NULL;
+		}
+		else
+		{
+			lst = &(*lst)->next;
+		}
+
 		// we use the thread synchronization from the java side
 		if ((*env)->CallBooleanMethod(env, req->rawHandle, isDone))
 		{
@@ -360,8 +370,6 @@ void DL_DownloadLoop(void)
 
 			DL_FreeRequest(req);
 		}
-
-		lst = &(*lst)->next;
 	}
 }
 

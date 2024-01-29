@@ -1,17 +1,29 @@
 package org.etlegacy.app.web;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
+
 import android.util.Log;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.FileAsyncHttpResponseHandler;
-
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import cz.msebera.android.httpclient.Header;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class ETLDownload {
 	private static final String TAG = "ETLDownload";
@@ -19,7 +31,8 @@ public class ETLDownload {
 	private static final ETLDownload me;
 
 	private boolean initDone = false;
-	final AsyncHttpClient client = new AsyncHttpClient();
+	final ExecutorService executor = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
+	final Map<Request, Future<?>> requests = Collections.synchronizedMap(new HashMap<>());
 
 	static {
 		me = new ETLDownload();
@@ -61,63 +74,147 @@ public class ETLDownload {
 			return;
 		}
 
-		client.get(fd.url, new FileAsyncHttpResponseHandler(tempFile.toFile()) {
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, File file) {
-				Log.d(TAG, "Download complete for: " + fd.url);
-				try {
-					Files.move(tempFile, Paths.get(fd.downloadPath));
-					request.setDone(true);
+		final Future<?> future = executor.submit(() -> {
+			ThrowableCallable<HttpURLConnection> handler = (conn -> {
+				InputStream response = conn.getErrorStream();
+				if (response == null) {
+					response = conn.getInputStream();
 					request.setSuccessful(true);
-				} catch (IOException e) {
-					Log.e(TAG, "File move failed", e);
+				} else {
+					request.setSuccessful(false);
 				}
-				requestComplete(statusCode, null, fd.nativeIdentifier);
-			}
 
-			@Override
-			public void onProgress(long bytesWritten, long totalSize) {
-				super.onProgress(bytesWritten, totalSize);
-				requestProgress(bytesWritten, totalSize, fd.nativeIdentifier);
-			}
-
-			@Override
-			public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
-				Log.d(TAG, "Download failure for: " + fd.url);
-				if (Files.exists(tempFile)) {
-					try {
-						Files.delete(tempFile);
-					} catch (IOException e) {
-						Log.e(TAG, "Could not remove temporary file", e);
+				if (request.isSuccessful()) {
+					int len = conn.getContentLength();
+					try (OutputStream out = Files.newOutputStream(tempFile, WRITE)) {
+						InputStream in = new BufferedInputStream(response);
+						copyStream(in, out, len, request);
+						out.flush();
 					}
+					Files.move(tempFile, Paths.get(((FileDownload) request).downloadPath), REPLACE_EXISTING);
 				}
+
+				int code = conn.getResponseCode();
+
+				requestComplete(code, null, request.nativeIdentifier);
 				request.setDone(true);
+			});
+
+			try {
+				createHttpConnection(request, handler);
+			} catch (Exception e) {
+				Log.e(TAG, "Failure", e);
 				request.setSuccessful(false);
-				requestComplete(statusCode, null, fd.nativeIdentifier);
+				request.setDone(true);
+				requestComplete(400, null, request.nativeIdentifier);
 			}
+			requests.remove(request);
 		});
+		this.requests.put(request, future);
 	}
 
 	/**
 	 * @noinspection unused
 	 */
-	public void createWebRequest(Request request) {
-		// FIXME: implement
-		throw new RuntimeException("Not yet implemented");
+	public void createWebRequest(final Request request) {
+		final Future<?> future = executor.submit(() -> {
+			ThrowableCallable<HttpURLConnection> handler = (conn -> {
+
+				if (request instanceof UploadData) {
+					UploadData dd = (UploadData) request;
+					ByteArrayInputStream buf = new ByteArrayInputStream(dd.buffer);
+					try (OutputStream out = new BufferedOutputStream(conn.getOutputStream())) {
+						copyStream(buf, out, dd.buffer.length, request);
+						out.flush();
+					}
+				}
+
+				ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
+
+				InputStream response = conn.getErrorStream();
+				if (response == null) {
+					response = conn.getInputStream();
+					request.setSuccessful(true);
+				} else {
+					request.setSuccessful(false);
+				}
+
+				InputStream in = new BufferedInputStream(response);
+				copyStream(in, outBuffer, conn.getContentLength(), request);
+
+				int code = conn.getResponseCode();
+
+				requestComplete(code, outBuffer.toByteArray(), request.nativeIdentifier);
+				request.setDone(true);
+			});
+
+			try {
+				createHttpConnection(request, handler);
+			} catch (Exception e) {
+				Log.e(TAG, "Failure", e);
+				request.setSuccessful(false);
+				request.setDone(true);
+				requestComplete(400, null, request.nativeIdentifier);
+			}
+			requests.remove(request);
+		});
+		this.requests.put(request, future);
+	}
+
+	private void createHttpConnection(final Request request, ThrowableCallable<HttpURLConnection> handler) throws Exception {
+		URL url = new URL(request.url);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		try {
+			connection.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(10));
+			connection.setReadTimeout((int) TimeUnit.SECONDS.toMillis(10));
+
+			if (request instanceof UploadData) {
+				connection.setRequestMethod("POST");
+				connection.setDoOutput(true);
+				connection.setChunkedStreamingMode(0);
+			} else {
+				connection.setRequestMethod("GET");
+			}
+			connection.setDoInput(true);
+
+			if (request.authToken != null) {
+				connection.setRequestProperty("X-ETL-KEY", request.authToken);
+			}
+
+			if (!request.headers.isEmpty()) {
+				request.headers.forEach(connection::setRequestProperty);
+			}
+
+			// Well we are not libcurl but just to have it print out similarly
+			connection.setRequestProperty("user-agent", "ID_DOWNLOAD/2.0 libcurl");
+
+			handler.apply(connection);
+		} finally {
+			connection.disconnect();
+		}
+	}
+
+	private void copyStream(InputStream in, OutputStream out, int total, Request request) throws IOException {
+		byte[] buffer = new byte[8192];
+		int len, current = 0;
+		while ((len = in.read(buffer)) != -1) {
+			current += len;
+			out.write(buffer, 0, len);
+			requestProgress(current, total, request.nativeIdentifier);
+			out.flush();
+		}
 	}
 
 	/**
 	 * @noinspection unused
 	 */
 	public void abortAll() {
-		// FIXME: implement
-		throw new RuntimeException("Not yet implemented");
+		this.requests.forEach((requests, future) -> future.cancel(true));
+		this.requests.clear();
 	}
 
 	public void shutdown() {
-		// FIXME: implement
-		throw new RuntimeException("Not yet implemented");
+		abortAll();
 	}
 
 	private native void init();
