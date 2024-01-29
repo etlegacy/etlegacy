@@ -333,6 +333,12 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 
 void DL_DownloadLoop(void)
 {
+	// If we haven't even initialized then there's nothing to do
+	if (!androidSys.init)
+	{
+		return;
+	}
+
 	webRequest_t **lst = &androidSys.requests;
 
 	JNIEnv    *env         = androidSys.env;
@@ -346,9 +352,9 @@ void DL_DownloadLoop(void)
 		// we use the thread synchronization from the java side
 		if ((*env)->CallBooleanMethod(env, req->rawHandle, isDone))
 		{
-			jboolean ok = (*env)->CallBooleanMethod(env, req->rawHandle, isSuccessful);
 			if (req->complete_clb)
 			{
+				jboolean ok = (*env)->CallBooleanMethod(env, req->rawHandle, isSuccessful);
 				req->complete_clb(req, ok ? REQUEST_OK : REQUEST_NOK);
 			}
 
