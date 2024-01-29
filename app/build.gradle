@@ -143,7 +143,6 @@ dependencies {
 	// FIXME: replace with our own version
 	api 'com.github.erz05:JoyStick:1.1.0'
     // api 'com.etlegacy.android:joystick:1.1.1-SNAPSHOT'
-    implementation 'com.loopj.android:android-async-http:1.4.11'
     implementation 'com.google.guava:guava:29.0-android'
 
     testImplementation 'junit:junit:4.13.2'

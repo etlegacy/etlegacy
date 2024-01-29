@@ -3,69 +3,71 @@ package com.etlegacy.app;
 import android.app.Activity;
 import android.util.Log;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.FileAsyncHttpResponseHandler;
-
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import cz.msebera.android.httpclient.Header;
 
 public class DownloadClient {
 	private static final String DOWNLOAD_TAG = "Download";
-	final AsyncHttpClient client = new AsyncHttpClient();
-	final List<String> downloadList = Collections.synchronizedList(new ArrayList<>());
-	final ExecutorService pool;
+	final Map<String, Future<?>> downloadList = Collections.synchronizedMap(new HashMap<>());
+	final ExecutorService executor;
 	final Activity context;
 
 	public DownloadClient(Activity context) {
 		this.context = context;
-		this.pool = Executors.newFixedThreadPool(1);
+		this.executor = Executors.newFixedThreadPool(1);
 	}
 
 	public void downloadPackFile(final String httpUrl, Consumer<File> download, Runnable failure, Consumer<DownloadProgress> progress) {
-		downloadList.add(httpUrl);
-		client.get(httpUrl, new FileAsyncHttpResponseHandler(this.context) {
+		Future<?> runnable = executor.submit(() -> {
+			try {
+				URL url = new URL(httpUrl);
+				Log.d(DOWNLOAD_TAG, "Starting download: " + httpUrl);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, File file) {
-				Log.d(DOWNLOAD_TAG, "Download complete for: " + httpUrl);
-			}
+				try {
+					connection.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(10));
+					connection.setReadTimeout((int) TimeUnit.SECONDS.toMillis(10));
+					connection.setRequestMethod("GET");
+					connection.setDoInput(true);
 
-			@Override
-			public void onProgress(long bytesWritten, long totalSize) {
-				super.onProgress(bytesWritten, totalSize);
-				if (progress != null) {
-					progress.accept(new DownloadProgress(totalSize, bytesWritten));
+					Path tempFile = Files.createTempFile("temp_", "_download");
+					try (InputStream stream = connection.getInputStream()) {
+						int len = connection.getContentLength();
+						copyStream(stream, Files.newOutputStream(tempFile), len, progress);
+					}
+
+					if (download != null) {
+						download.accept(tempFile.toFile());
+					}
+					Log.i(DOWNLOAD_TAG, "Download finished for: " + httpUrl);
+				} finally {
+					connection.disconnect();
 				}
-			}
-
-			@Override
-			public void onFinish() {
-				super.onFinish();
-				Log.d(DOWNLOAD_TAG, "Download finished for: " + httpUrl);
-				if (download != null) {
-					download.accept(file);
-				}
-				downloadList.remove(httpUrl);
-			}
-
-			@Override
-			public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
-				Log.d(DOWNLOAD_TAG, "Download failure for: " + httpUrl);
+			} catch (Exception ex) {
+				Log.e(DOWNLOAD_TAG, "Download failure for: " + httpUrl, ex);
 				if (failure != null) {
 					failure.run();
 				}
 			}
+			downloadList.remove(httpUrl);
 		});
+
+		downloadList.put(httpUrl, runnable);
 	}
 
 	public void downloadPackFile(final String httpUrl, Path target, Runnable ready, Runnable failure, Consumer<DownloadProgress> progress) {
@@ -111,7 +113,7 @@ public class DownloadClient {
 	}
 
 	public void whenReady(Runnable ready) {
-		this.pool.submit(() -> {
+		this.executor.submit(() -> {
 			while (!this.downloadList.isEmpty()) {
 				try {
 					//noinspection BusyWait
@@ -126,7 +128,21 @@ public class DownloadClient {
 	}
 
 	public void cancelAll() {
-		client.cancelAllRequests(true);
+		this.downloadList.forEach((requests, future) -> future.cancel(true));
+		this.downloadList.clear();
+	}
+
+	private void copyStream(InputStream in, OutputStream out, int total, Consumer<DownloadProgress> progress) throws IOException {
+		byte[] buffer = new byte[8192];
+		int len, current = 0;
+		while ((len = in.read(buffer)) != -1) {
+			current += len;
+			out.write(buffer, 0, len);
+			if (progress != null) {
+				progress.accept(new DownloadProgress(total, current));
+			}
+			out.flush();
+		}
 	}
 
 	public static class DownloadProgress {
