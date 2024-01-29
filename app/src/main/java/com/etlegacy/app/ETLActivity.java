@@ -1,6 +1,7 @@
 package com.etlegacy.app;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.widget.RelativeLayout;
 
 import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
+import com.etlegacy.app.web.ETLDownload;
 
 import org.libsdl.app.*;
 
@@ -37,6 +39,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private ImageButton altBtn;
 	private ImageButton crouchBtn;
 	private JoyStick moveJoystick;
+	private Handler handler;
+	private Runnable uiRunner;
 
 	/**
 	 * Get an uiMenu boolean variable
@@ -75,13 +79,30 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	}
 
 	@Override
+	public void finish() {
+		// finishAffinity();
+		finishAndRemoveTask();
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 		}
+	}
 
+	@Override
+	protected void onDestroy() {
+		// shutdown the looper and the download thread executor
+		this.handler.removeCallbacks(uiRunner);
+		ETLDownload.instance().shutdownExecutor();
+
+		super.onDestroy();
+
+		// FIXME: figure out what is actually keeping this thing alive.
+		System.exit(0);
 	}
 
 	@Override
@@ -179,16 +200,15 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 		moveJoystick = new JoyStick(getApplicationContext());
 
-		final Handler handler = new Handler(Looper.getMainLooper());
-
-		handler.post(new Runnable() {
-			public void run() {
-				int delay = runUI();
-				if (delay > 0) {
-					handler.postDelayed(this, delay);
-				}
+		handler = new Handler(Looper.getMainLooper());
+		uiRunner = () -> {
+			Log.d("LOOPPER", "Running");
+			int delay = runUI();
+			if (delay > 0) {
+				handler.postDelayed(uiRunner, delay);
 			}
-		});
+		};
+		handler.post(uiRunner);
 	}
 
 	@SuppressLint("ClickableViewAccessibility")

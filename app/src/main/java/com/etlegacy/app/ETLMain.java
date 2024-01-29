@@ -120,10 +120,14 @@ public class ETLMain extends Activity {
 		final Path pak2 = etmain.resolve("pak2.pk3");
 
 		final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
+		intent.addCategory(Intent.CATEGORY_HOME);
+		// intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		if (Files.exists(pak0) && Files.exists(pak1) && Files.exists(pak2)) {
-			ETLMain.this.startActivity(intent);
-			ETLMain.this.finish();
+			startActivity(intent);
+			finish();
 			return;
 		}
 
@@ -152,8 +156,9 @@ public class ETLMain extends Activity {
 		}
 		cc.whenReady(() -> runOnUiThread(() -> {
 			progressDialog.dismiss();
-			ETLMain.this.startActivity(intent);
-			ETLMain.this.finish();
+			startActivity(intent);
+			finish();
+			cc.executor.shutdown();
 		}));
 	}
 

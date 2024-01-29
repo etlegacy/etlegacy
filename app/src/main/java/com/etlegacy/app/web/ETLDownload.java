@@ -217,6 +217,17 @@ public class ETLDownload {
 		abortAll();
 	}
 
+	public void shutdownExecutor() {
+		this.executor.shutdown();
+		try {
+			if (!this.executor.awaitTermination(5, TimeUnit.SECONDS)) {
+				Log.e(TAG, "Failed to terminate executor");
+			}
+		} catch (InterruptedException e) {
+			Log.e(TAG, "Failed to wait for executor shutdown", e);
+		}
+	}
+
 	private native void init();
 
 	private native int requestProgress(long current, long total, long id);
