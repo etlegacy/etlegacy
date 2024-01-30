@@ -110,7 +110,9 @@ android {
 		}
 		mergeAssets.configure {
 			dependsOn("externalNativeBuild${variant.name.capitalize()}")
-			dependsOn(generatePk3)
+			if (BuildConfig.BUILD_TYPE.equals("debug")) {
+				dependsOn(generatePk3)
+			}
 		}
 	}
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
