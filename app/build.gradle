@@ -96,7 +96,7 @@ android {
 	}
 	applicationVariants.configureEach { variant ->
 		def mergeAssets = tasks.named("merge${variant.name.capitalize()}Assets")
-		if (!variant.name.equalsIgnoreCase('debug')) {
+		if (variant.name.equalsIgnoreCase('debug')) {
 			mergeAssets.configure {
 				dependsOn("externalNativeBuild${variant.name.capitalize()}")
 			}
@@ -108,9 +108,9 @@ android {
 			archiveFileName = "zz_legacy_android_debug.pk3"
 			destinationDirectory = generatedAssets
 		}
-		mergeAssets.configure {
-			dependsOn("externalNativeBuild${variant.name.capitalize()}")
-			if (BuildConfig.BUILD_TYPE.equals("debug")) {
+		if (variant.name.equalsIgnoreCase('debug')) {
+			mergeAssets.configure {
+				dependsOn("externalNativeBuild${variant.name.capitalize()}")
 				dependsOn(generatePk3)
 			}
 		}
