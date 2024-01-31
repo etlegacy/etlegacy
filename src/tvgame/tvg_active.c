@@ -389,12 +389,6 @@ void TVG_ClientThink_real(gclient_t *client)
 		                    client->pers.pmoveMsec) * client->pers.pmoveMsec;
 	}
 
-	if (level.intermission)
-	{
-		TVG_ClientIntermissionThink(client);
-		return;
-	}
-
 	// check for inactivity timer, but never drop the local client of a non-dedicated server
 	// moved here to allow for spec inactivity checks as well
 	//if (!TVG_ClientInactivityTimer(client))
@@ -409,6 +403,12 @@ void TVG_ClientThink_real(gclient_t *client)
 			trap_SendServerCommand(client - level.clients, level.cmds.infoStats[i].data[client->wantsInfoStats[i].requestedClientNum]);
 			client->wantsInfoStats[i].requested = qfalse;
 		}
+	}
+
+	if (level.intermission)
+	{
+		TVG_ClientIntermissionThink(client);
+		return;
 	}
 
 	// spectators don't do much
