@@ -3058,7 +3058,7 @@ char *Com_ScaleNumberPerThousand(float value, unsigned int decimalCount)
 	static const char *units[] = { "", "k", "M", "G", "T" };
 	unsigned int      i        = 0;
 
-	while (value > 1000 && i < sizeof(units))
+	while (value > 1000 && i < ARRAY_LEN(units))
 	{
 		value /= 1000;
 		++i;
