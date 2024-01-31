@@ -312,10 +312,10 @@ qboolean TVG_ClientInactivityTimer(gclient_t *client)
 }
 
 /**
- * @brief ClientIntermissionThink
+ * @brief TVG_ClientIntermissionThink
  * @param[in,out] client Client
  */
-void ClientIntermissionThink(gclient_t *client)
+void TVG_ClientIntermissionThink(gclient_t *client)
 {
 	client->ps.eFlags &= ~EF_TALK;
 	client->ps.eFlags &= ~EF_FIRING;
@@ -389,12 +389,11 @@ void TVG_ClientThink_real(gclient_t *client)
 		                    client->pers.pmoveMsec) * client->pers.pmoveMsec;
 	}
 
-	// check for exiting intermission
-	//if (level.intermissiontime)
-	//{
-	//	ClientIntermissionThink(client);
-	//	return;
-	//}
+	if (level.intermission)
+	{
+		TVG_ClientIntermissionThink(client);
+		return;
+	}
 
 	// check for inactivity timer, but never drop the local client of a non-dedicated server
 	// moved here to allow for spec inactivity checks as well
