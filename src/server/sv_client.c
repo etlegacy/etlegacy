@@ -1176,7 +1176,7 @@ void SV_Login_f(client_t *cl)
 
 	username = Cmd_Argv(1);
 
-	if (!username | !*username)
+	if (!username || !*username)
 	{
 		return;
 	}
@@ -1217,7 +1217,7 @@ void SV_LoginResponse_f(client_t *cl)
 
 	response = Cmd_Argv(1);
 
-	if (!response | !*response)
+	if (!response || !*response)
 	{
 		return;
 	}
