@@ -134,6 +134,7 @@ cvar_t *sv_etltv_maxslaves;
 cvar_t *sv_etltv_password;
 cvar_t *sv_etltv_autorecord;
 cvar_t *sv_etltv_autoplay;
+cvar_t *sv_etltv_clientname;
 
 static void SVC_Status(netadr_t from, qboolean force);
 

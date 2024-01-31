@@ -223,7 +223,7 @@ void SV_CL_CheckForResend(void)
 			Info_SetValueForKey(info, "challenge", va("%i", svclc.challenge));
 			Info_SetValueForKey(info, "masterpassword", va("%s", svclc.serverMasterPassword));
 
-			Info_SetValueForKey(info, "name", "ETLTV_TEST");
+			Info_SetValueForKey(info, "name", sv_etltv_clientname->string);
 			Info_SetValueForKey(info, "rate", "90000");
 			Info_SetValueForKey(info, "snaps", "20");
 			Info_SetValueForKey(info, "cl_maxpackets", va("%i", SV_CL_MAXPACKETS));

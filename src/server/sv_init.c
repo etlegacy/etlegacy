@@ -1230,6 +1230,7 @@ void SV_Init(void)
 	sv_etltv_password   = Cvar_GetAndDescribe("sv_etltv_password", "", CVAR_ARCHIVE_ND, "Password for ettv slaves. Must be set, or no slaves will be able to connect.");
 	sv_etltv_autorecord = Cvar_Get("sv_etltv_autorecord", "0", CVAR_ARCHIVE_ND);
 	sv_etltv_autoplay   = Cvar_Get("sv_etltv_autoplay", "0", CVAR_ARCHIVE_ND);
+	sv_etltv_clientname = Cvar_GetAndDescribe("sv_etltv_clientname", "ETLTV", CVAR_ARCHIVE_ND, "Name of the ETLTV client.");
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();

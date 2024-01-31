@@ -227,8 +227,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 		}
 	}
 
-	svclc.clientNum = MSG_ReadLong(msg);
-	// read the checksum feed
+	svclc.clientNum    = MSG_ReadLong(msg);
 	svclc.checksumFeed = MSG_ReadLong(msg);
 
 	// parse serverId and other cvars
@@ -262,9 +261,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 }
 
 /**
- * @brief Command strings are just saved off until cgame asks for them
- * when it transitions a snapshot
- *
+ * @brief Command strings are saved off and executed right away
  * @param[in] msg
  */
 void SV_CL_ParseCommandString(msg_t *msg)

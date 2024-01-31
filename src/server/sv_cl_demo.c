@@ -73,8 +73,11 @@ void SV_CL_DemoFilename(int number, char *fileName)
 	Com_sprintf(fileName, MAX_OSPATH, "demo%04i", number);
 }
 
-static char demoName[MAX_OSPATH];        // compiler bug workaround
+static char demoName[MAX_OSPATH];
 
+/**
+ * @brief SV_CL_Record_f
+ */
 void SV_CL_Record_f(void)
 {
 	char name[MAX_OSPATH];
@@ -232,6 +235,9 @@ void SV_CL_Record(const char *name)
 	// the rest of the demo file will be copied from net messages
 }
 
+/**
+ * @brief SV_CL_StopRecord_f
+ */
 void SV_CL_StopRecord_f(void)
 {
 	int len;
@@ -254,7 +260,7 @@ void SV_CL_StopRecord_f(void)
 }
 
 /**
- * @brief Called when a demo or cinematic finishes
+ * @brief Called when a demo finishes
  * If the "nextdemo" cvar is set, that command will be issued
  */
 void SV_CL_NextDemo(void)
@@ -443,17 +449,12 @@ void SV_CL_PlayDemo_f(void)
 
 	Q_strncpyz(svcls.servername, demoFile, sizeof(svcls.servername));
 
-	// read demo messages until connected
 	while (!svcl.snap.valid || !svcl.serverTime)
 	{
 		SV_CL_ReadDemoMessage();
 	}
 
 	sv.time = svcl.serverTime;
-
-	// don't get the first snapshot this frame, to prevent the long
-	// time from the gamestate load from messing causing a time skip
-	svclc.demo.firstFrameSkipped = qfalse;
 }
 
 /**
