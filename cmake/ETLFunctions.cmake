@@ -1,14 +1,23 @@
 # General macros & functions used by the build process
 
-function(LEG_BUNDLE _NAME _DESC)
+function(LEG_BUNDLED_LIB _NAME _DESC _FEATURE)
+	set(feature_limits ${_FEATURE})
+	separate_arguments(feature_limits)
+	if(NOT (${feature_limits}))
+		message(VERBOSE "Disabling bundled ${_DESC} library due to feature being disabled.")
+		# set(BUNDLED_${_NAME} OFF CACHE BOOL "Build bundled ${_DESC} library." FORCE)
+		set(BUNDLED_${_NAME} OFF PARENT_SCOPE)
+		return()
+	endif()
+
 	# Cannot use ARGN directly with list() command.
 	# Copy to a variable first.
-	set (extra_macro_args ${ARGN})
+	set(extra_macro_args ${ARGN})
 	set(LEG_BUNDLE_${_NAME}_VALID TRUE)
 
 	# Did we get any optional args?
 	list(LENGTH extra_macro_args num_extra_args)
-	if (${num_extra_args} GREATER 0)
+	if(${num_extra_args} GREATER 0)
 		foreach(argument ${extra_macro_args})
 			# message(STATUS "Testing rule ${argument} for ${_DESC}")
 			separate_arguments(argument)
@@ -17,7 +26,7 @@ function(LEG_BUNDLE _NAME _DESC)
 				set(LEG_BUNDLE_${_NAME}_VALID FALSE)
 			endif()
 		endforeach()
-	endif ()
+	endif()
 
 	list(APPEND ALLOPTIONS "BUNDLED_${_NAME}")
 	if (${LEG_BUNDLE_${_NAME}_VALID})
