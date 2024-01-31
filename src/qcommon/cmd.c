@@ -587,7 +587,7 @@ void Cmd_SingleTokenString(const char *text_in)
 	if (text_in)
 	{
 		Q_strncpyz(cmd_cmd, text_in, sizeof(cmd_cmd));
-		cmd_argv[0] = &cmd_cmd;
+		cmd_argv[0] = cmd_cmd;
 	}
 	cmd_argc = text_in != NULL;
 }

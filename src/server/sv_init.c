@@ -300,6 +300,7 @@ void SV_CreateBaseline(void)
 	sharedEntity_t *svent;
 	int            entnum;
 
+#ifdef DEDICATED
 	if (svcls.isTVGame)
 	{
 		for (entnum = 0; entnum < MAX_GENTITIES; entnum++)
@@ -314,6 +315,7 @@ void SV_CreateBaseline(void)
 			}
 		}
 	}
+#endif // DEDICATED
 
 	for (entnum = 1; entnum < sv.num_entities ; entnum++)
 	{
@@ -754,7 +756,7 @@ void SV_SpawnServer(const char *server)
 
 	// allocate the snapshot entities on the hunk
 	svs.snapshotEntities       = Hunk_Alloc(sizeof(entityState_t) * svs.numSnapshotEntities, h_high);
-	svs.snapshotSharedEntities = Hunk_Alloc(sizeof(entityShared_t) * svs.numSnapshotEntities, h_high);
+	svs.snapshotEntitiesShared = Hunk_Alloc(sizeof(entityShared_t) * svs.numSnapshotEntities, h_high);
 	svs.nextSnapshotEntities   = 0;
 
 	// toggle the server bit so clients can detect that a
@@ -857,8 +859,9 @@ void SV_SpawnServer(const char *server)
 
 					client        = &svs.clients[i];
 					client->state = CS_ACTIVE;
-
+#ifdef DEDICATED
 					if (!svcls.isTVGame)
+#endif // DEDICATED
 					{
 						ent             = SV_GentityNum(i);
 						ent->s.number   = i;

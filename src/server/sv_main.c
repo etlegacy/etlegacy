@@ -38,12 +38,14 @@
 #include "sv_tracker.h"
 #endif
 
-serverStatic_t       svs;             // persistant server info
-server_t             sv;              // local server
+serverStatic_t svs;                   // persistant server info
+server_t       sv;                    // local server
+#ifdef DEDICATED
 svclientActive_t     svcl;
 svclientConnection_t svclc;
 svclientStatic_t     svcls;
-vm_t                 *gvm = NULL;     // game virtual machine
+#endif // DEDICATED
+vm_t *gvm = NULL;                     // game virtual machine
 
 cvar_t *sv_fps = NULL;          // time rate for running non-clients
 cvar_t *sv_timeout;             // seconds without any message
@@ -1299,6 +1301,7 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 	client_t *cl;
 	int      qport;
 
+#ifdef DEDICATED
 	if (NET_CompareAdr(from, svclc.serverAddress))
 	{
 		CL_PacketEvent(from, msg);
@@ -1309,6 +1312,7 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 	{
 		return;
 	}
+#endif // DEDICATED
 
 	// check for connectionless packet (0xffffffff) first
 	if (msg->cursize >= 4 && *(int *)msg->data == -1)
@@ -1717,7 +1721,9 @@ void SV_Frame(int msec)
 	start           = Sys_Milliseconds();
 	svs.stats.idle += ( double )(start - end) / 1000;
 
+#ifdef DEDICATED
 	svcls.realtime += msec;
+#endif // DEDICATED
 
 	// the menu kills the server with this cvar
 	if (sv_killserver->integer)
@@ -1804,11 +1810,13 @@ void SV_Frame(int msec)
 		return;
 	}
 
+#ifdef DEDICATED
 	if (svcls.isTVGame)
 	{
 		SV_CL_Frame(frameMsec);
 	}
 	else
+#endif // DEDICATED
 	{
 		SV_Frame_Ext(frameMsec);
 	}

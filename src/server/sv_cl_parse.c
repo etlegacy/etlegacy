@@ -34,6 +34,8 @@
 
 #include "server.h"
 
+#ifdef DEDICATED
+
 /**
   * @brief SV_CL_SetPurePaks
  * @param[in] referencedOnly
@@ -202,7 +204,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 			Com_Memset(&nullstate, 0, sizeof(nullstate));
 			Com_Memset(&nullstateShared, 0, sizeof(nullstateShared));
 			es        = &svcl.entityBaselines[newnum];
-			entShared = &svcl.entitySharedBaselines[newnum];
+			entShared = &svcl.entityBaselinesShared[newnum];
 			MSG_ReadDeltaEntity(msg, &nullstate, es, newnum);
 			MSG_ETTV_ReadDeltaEntityShared(msg, &nullstateShared, entShared);
 		}
@@ -216,7 +218,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 			}
 
 			MSG_ReadDeltaEntity(msg, &svcl.entityBaselines[newnum], &svcl.currentStateEntities[newnum], newnum);
-			MSG_ETTV_ReadDeltaEntityShared(msg, &svcl.entitySharedBaselines[newnum], &svcl.currentStateEntitiesShared[newnum]);
+			MSG_ETTV_ReadDeltaEntityShared(msg, &svcl.entityBaselinesShared[newnum], &svcl.currentStateEntitiesShared[newnum]);
 			svcl.currentStateEntitiesShared[newnum].linked = qtrue;
 		}
 		else
@@ -493,7 +495,7 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 			//{
 			//	Com_Printf("%3i:  baseline: %i\n", msg->readcount, newnum);
 			//}
-			SV_CL_DeltaEntity(msg, newframe, newnum, &svcl.entityBaselines[newnum], &svcl.entitySharedBaselines[newnum], qfalse);
+			SV_CL_DeltaEntity(msg, newframe, newnum, &svcl.entityBaselines[newnum], &svcl.entityBaselinesShared[newnum], qfalse);
 		}
 	}
 
@@ -840,3 +842,5 @@ void SV_CL_ParseServerMessage(msg_t *msg)
 		SV_CL_RunFrame();
 	}
 }
+
+#endif // DEDICATED

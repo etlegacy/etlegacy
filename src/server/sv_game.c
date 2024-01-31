@@ -133,11 +133,13 @@ void SV_GameSendServerCommand(int clientNum, const char *text)
 		SV_DemoWriteGameCommand(clientNum, text);
 	}
 
+#ifdef DEDICATED
 	if (clientNum == -2)
 	{
 		SV_CL_AddReliableCommand(text);
 		return;
 	}
+#endif // DEDICATED
 
 	if (clientNum == -1)
 	{
@@ -697,7 +699,11 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return SV_BinaryMessageStatus(args[1]);
 
 	case G_ETLTV_GETPLAYERSTATE:
+#ifdef DEDICATED
 		return SV_CL_GetPlayerstate(args[1], VMA(2));
+#else
+		return 0;
+#endif // DEDICATED
 
 	case G_DEMOSUPPORT:
 		SV_DemoSupport(VMA(1));
@@ -732,7 +738,10 @@ void SV_ShutdownGameProgs(void)
 	VM_Call(gvm, GAME_SHUTDOWN, qfalse);
 	VM_Free(gvm);
 	gvm = NULL;
+
+#ifdef DEDICATED
 	svcls.isTVGame = qfalse;
+#endif // DEDICATED
 }
 
 /**
@@ -794,17 +803,19 @@ void SV_InitGameProgs(void)
 	sv.num_tagheaders = 0;
 	sv.num_tags       = 0;
 
+#ifdef DEDICATED
 	// load the dll
-	if (svcls.state < CA_AUTHORIZING)
+	if (svcls.state >= CA_AUTHORIZING)
+	{
+		gvm            = VM_Create("tvgame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
+		svcls.isTVGame = gvm != NULL;
+	}
+	else
+#endif // DEDICATED
 	{
 		gvm = VM_Create("qagame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
 	}
-	else
-	{
-		gvm = VM_Create("tvgame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
-		svcls.isTVGame = gvm != NULL;
-	}
-	
+
 	if (!gvm)
 	{
 		VM_Error(ERR_FATAL, "game", Sys_GetDLLName("qagame"));

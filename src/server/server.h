@@ -387,7 +387,7 @@ typedef struct
 	int numSnapshotEntities;                    ///< sv_maxclients->integer*PACKET_BACKUP*MAX_PACKET_ENTITIES
 	int nextSnapshotEntities;                   ///< next snapshotEntities to use
 	entityState_t *snapshotEntities;            ///< [numSnapshotEntities]
-	entityShared_t *snapshotSharedEntities;
+	entityShared_t *snapshotEntitiesShared;
 	int nextHeartbeatTime;
 	challenge_t challenges[MAX_CHALLENGES];     ///< to prevent invalid IPs from connecting
 	receipt_t infoReceipts[MAX_INFO_RECEIPTS];
@@ -703,6 +703,8 @@ qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 
 //============================ TV server client ============================
 
+#ifdef DEDICATED
+
 #define SV_CL_MAXPACKETS 40
 
 /**
@@ -896,9 +898,6 @@ typedef struct
 	int cmdNumber;                          ///< incremented each frame, because multiple
 	                                        ///< frames may need to be packed into a single packet
 
-	/// double tapping
-	//doubleTap_t doubleTap;
-
 	svoutPacket_t outPackets[PACKET_BACKUP];  ///< information about each packet we have sent out
 
 	/// the client maintains its own idea of view angles, which are
@@ -914,7 +913,7 @@ typedef struct
 	svclSnapshot_t snapshots[PACKET_BACKUP];
 
 	entityState_t entityBaselines[MAX_GENTITIES];   ///< for delta compression when not in previous frame
-	entityShared_t entitySharedBaselines[MAX_GENTITIES];
+	entityShared_t entityBaselinesShared[MAX_GENTITIES];
 
 	entityState_t currentStateEntities[MAX_GENTITIES];
 	entityShared_t currentStateEntitiesShared[MAX_GENTITIES];
@@ -974,6 +973,8 @@ void SV_CL_ReadDemoMessage(void);
 void SV_CL_DemoCompleted(void);
 void SV_CL_DemoCleanUp(void);
 void SV_CL_NextDemo(void);
+
+#endif // DEDICATED
 
 //============================================================
 

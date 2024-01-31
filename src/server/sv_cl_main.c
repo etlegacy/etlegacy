@@ -34,6 +34,8 @@
 
 #include "server.h"
 
+#ifdef DEDICATED
+
 /**
  * @brief SV_CL_Connect_f
  */
@@ -1332,7 +1334,6 @@ static void SV_CL_PacketEvent(netadr_t from, msg_t *msg)
 	}
 }
 
-#ifdef DEDICATED
 /**
  * @brief A packet has arrived from the main event loop
  *
@@ -1373,8 +1374,6 @@ void CL_FlushMemory(void)
 		Hunk_ClearToMark();
 	}
 }
-
-#endif // DEDICATED
 
 /**
  * @brief Called before parsing a gamestate
@@ -1572,3 +1571,5 @@ void SV_CL_Frame(int frameMsec)
 	// check user info buffer thingy
 	SV_CheckClientUserinfoTimer();
 }
+
+#endif // DEDICATED

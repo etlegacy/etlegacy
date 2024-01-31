@@ -565,7 +565,9 @@ gotnewcl:
 	*newcl    = temp;
 	clientNum = newcl - svs.clients;
 
+#ifdef DEDICATED
 	if (!svcls.isTVGame)
+#endif // DEDICATED
 	{
 		newcl->gentity            = SV_GentityNum(clientNum);
 		newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
@@ -867,7 +869,7 @@ void SV_SendClientGameState(client_t *client)
 		MSG_WriteDeltaEntity(&msg, &nullstate, base, qtrue);
 		if (client->ettvClient)
 		{
-			MSG_ETTV_WriteDeltaSharedEntity(&msg, &nullstateShared, baseShared, qtrue);
+			MSG_ETTV_WriteDeltaEntityShared(&msg, &nullstateShared, baseShared, qtrue);
 		}
 	}
 

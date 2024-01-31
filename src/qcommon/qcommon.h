@@ -122,7 +122,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pla
 
 void MSG_ReportChangeVectors_f(void);
 
-void MSG_ETTV_WriteDeltaSharedEntity(msg_t *msg, entityShared_t *from, entityShared_t *to, qboolean force);
+void MSG_ETTV_WriteDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShared_t *to, qboolean force);
 void MSG_ETTV_ReadDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShared_t *to);
 
 /**

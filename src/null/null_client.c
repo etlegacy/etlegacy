@@ -78,15 +78,6 @@ void CL_Frame(int msec)
 {
 }
 
-///**
-// * @brief CL_PacketEvent
-// * @param from - unused
-// * @param msg  - unused
-// */
-//void CL_PacketEvent(netadr_t from, msg_t *msg)
-//{
-//}
-
 /**
  * @brief CL_CharEvent
  * @param key - unused
@@ -188,13 +179,6 @@ qboolean CL_ConnectedToServer(void)
 {
 	return qfalse;
 }
-
-///**
-// * @brief CL_FlushMemory
-// */
-//void CL_FlushMemory(void)
-//{
-//}
 
 /**
  * @brief CL_StartHunkUsers

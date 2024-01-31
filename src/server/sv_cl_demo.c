@@ -34,6 +34,8 @@
 
 #include "server.h"
 
+#ifdef DEDICATED
+
 /**
   * @brief Dumps the current net message, prefixed by the length
   * @param[in] msg
@@ -184,14 +186,14 @@ void SV_CL_Record(const char *name)
 	for (i = 0; i < MAX_GENTITIES; i++)
 	{
 		ent       = &svcl.entityBaselines[i];
-		entShared = &svcl.entitySharedBaselines[i];
+		entShared = &svcl.entityBaselinesShared[i];
 		if (!ent->number)
 		{
 			continue;
 		}
 		MSG_WriteByte(&buf, svc_baseline);
 		MSG_WriteDeltaEntity(&buf, &nullstate, ent, qtrue);
-		MSG_ETTV_WriteDeltaSharedEntity(&buf, &nullstateShared, entShared, qtrue);
+		MSG_ETTV_WriteDeltaEntityShared(&buf, &nullstateShared, entShared, qtrue);
 	}
 
 	// current states
@@ -203,7 +205,7 @@ void SV_CL_Record(const char *name)
 		{
 			MSG_WriteByte(&buf, svc_ettv_currentstate);
 			MSG_WriteDeltaEntity(&buf, &svcl.entityBaselines[i], &svent->s, qtrue);
-			MSG_ETTV_WriteDeltaSharedEntity(&buf, &svcl.entitySharedBaselines[i], &svent->r, qtrue);
+			MSG_ETTV_WriteDeltaEntityShared(&buf, &svcl.entityBaselinesShared[i], &svent->r, qtrue);
 		}
 	}
 
@@ -481,3 +483,5 @@ void SV_CL_DemoInit(void)
 	Cmd_AddCommand("ff", SV_CL_FastForward_f);
 	Cmd_SetCommandCompletionFunc("demo", SV_CL_CompleteDemoName);
 }
+
+#endif // DEDICATED

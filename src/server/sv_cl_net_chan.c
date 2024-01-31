@@ -34,6 +34,8 @@
 
 #include "server.h"
 
+#ifdef DEDICATED
+
 /**
  * @brief SV_CL_Netchan_Encode
  * @details First 12 bytes of the data are always:
@@ -211,3 +213,5 @@ qboolean SV_CL_Netchan_Process(netchan_t *chan, msg_t *msg)
 	newsize2 += msg->cursize;
 	return qtrue;
 }
+
+#endif // DEDICATED

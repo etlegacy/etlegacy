@@ -1649,7 +1649,7 @@ netField_t ettventitySharedFields[] =
 };
 
 /**
-* @brief MSG_ETTV_WriteDeltaSharedEntity
+* @brief MSG_ETTV_WriteDeltaEntityShared
 * @details Appends part of a packetentities message with entityShared_t, without the entity number.
 *          Can delta from either a baseline or a previous packet_entity.
 * @param[out] msg
@@ -1657,7 +1657,7 @@ netField_t ettventitySharedFields[] =
 * @param[in] to
 * @param[in] force
 */
-void MSG_ETTV_WriteDeltaSharedEntity(msg_t *msg, entityShared_t *from, entityShared_t *to, qboolean force)
+void MSG_ETTV_WriteDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShared_t *to, qboolean force)
 {
 	int        i, lc;
 	int        numFields;
@@ -1817,7 +1817,7 @@ void MSG_ETTV_ReadDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShar
 	}
 
 	numFields = sizeof(ettventitySharedFields) / sizeof(ettventitySharedFields[0]);
-	lc = MSG_ReadByte(msg);
+	lc        = MSG_ReadByte(msg);
 
 	if (lc > numFields || lc < 0)
 	{
@@ -1827,7 +1827,7 @@ void MSG_ETTV_ReadDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShar
 	for (i = 0, field = ettventitySharedFields; i < lc; i++, field++)
 	{
 		fromF = (int *)((byte *)from + field->offset);
-		toF = (int *)((byte *)to + field->offset);
+		toF   = (int *)((byte *)to + field->offset);
 
 		if (!MSG_ReadBits(msg, 1))
 		{
@@ -1850,7 +1850,7 @@ void MSG_ETTV_ReadDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShar
 						// integral float
 						trunc = MSG_ReadBits(msg, FLOAT_INT_BITS);
 						// bias to allow equal parts positive and negative
-						trunc -= FLOAT_INT_BIAS;
+						trunc        -= FLOAT_INT_BIAS;
 						*(float *)toF = trunc;
 					}
 					else
@@ -1878,7 +1878,7 @@ void MSG_ETTV_ReadDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShar
 	for (i = lc, field = &ettventitySharedFields[lc]; i < numFields; i++, field++)
 	{
 		fromF = (int *)((byte *)from + field->offset);
-		toF = (int *)((byte *)to + field->offset);
+		toF   = (int *)((byte *)to + field->offset);
 		// no change
 		*toF = *fromF;
 	}
