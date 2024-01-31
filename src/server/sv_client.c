@@ -638,7 +638,7 @@ gotnewcl:
 
 	if (newcl->ettvClient)
 	{
-		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t) * PACKET_BACKUP);
+		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t*) * PACKET_BACKUP);
 
 		for (i = 0; i < PACKET_BACKUP; i++)
 		{
