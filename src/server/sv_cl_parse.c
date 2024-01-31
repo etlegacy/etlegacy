@@ -582,49 +582,14 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 		if (svclc.demo.recording)
 		{
 			svclc.demo.waiting = qfalse;   // we can start recording now
-			//if(cl_autorecord->integer) {
-			//  Cvar_Set( "g_synchronousClients", "0" );
-			//}
 		}
-		//else
-		//{
-		//	if (cl_autorecord->integer /*&& Cvar_VariableValue( "g_synchronousClients")*/)
-		//	{
-		//		char    name[256];
-		//		char    mapname[MAX_QPATH];
-		//		char    *period;
-		//		qtime_t time;
-
-		//		Com_RealTime(&time);
-
-		//		Q_strncpyz(mapname, cl.mapname, MAX_QPATH);
-		//		for (period = mapname; *period; period++)
-		//		{
-		//			if (*period == '.')
-		//			{
-		//				*period = '\0';
-		//				break;
-		//			}
-		//		}
-
-		//		for (period = mapname; *period; period++)
-		//		{
-		//			if (*period == '/')
-		//			{
-		//				break;
-		//			}
-		//		}
-		//		if (*period)
-		//		{
-		//			period++;
-		//		}
-
-		//		Com_sprintf(name, sizeof(name), "demos/%d-%02d-%02d-%02d%02d%02d-%s.dm_%d", 1900 + time.tm_year,
-		//			time.tm_mon + 1, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec, period, PROTOCOL_VERSION);
-
-		//		CL_Record(name);
-		//	}
-		//}
+		else
+		{
+			if (sv_etltv_autorecord->integer && !svclc.demo.playing)
+			{
+				Cbuf_ExecuteText(EXEC_APPEND, "record\n");
+			}
+		}
 	}
 	else
 	{

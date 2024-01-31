@@ -616,27 +616,31 @@ void SV_CL_ConfigstringModified(void)
  */
 char *SV_CL_Cvar_InfoString(char *cs, int index)
 {
+	static char newcs[BIG_INFO_STRING];
+
+	Q_strncpyz(newcs, cs, sizeof(newcs));
+
 	if (svcls.state != CA_DISCONNECTED)
 	{
 		if (index == 0)
 		{
-			Info_SetValueForKey_Big(cs, "sv_maxPing", sv_maxPing->string);
-			Info_SetValueForKey_Big(cs, "sv_minPing", sv_minPing->string);
-			Info_SetValueForKey_Big(cs, "sv_maxRate", sv_maxRate->string);
-			Info_SetValueForKey_Big(cs, "sv_dlRate", sv_dlRate->string);
-			Info_SetValueForKey_Big(cs, "sv_hostname", sv_hostname->string);
-			Info_SetValueForKey_Big(cs, "sv_maxclients", sv_maxclients->string);
-			Info_SetValueForKey_Big(cs, "sv_privateClients", sv_privateClients->string);
-			Info_SetValueForKey_Big(cs, "version", Cvar_VariableString("version"));
+			Info_SetValueForKey_Big(newcs, "sv_maxPing", sv_maxPing->string);
+			Info_SetValueForKey_Big(newcs, "sv_minPing", sv_minPing->string);
+			Info_SetValueForKey_Big(newcs, "sv_maxRate", sv_maxRate->string);
+			Info_SetValueForKey_Big(newcs, "sv_dlRate", sv_dlRate->string);
+			Info_SetValueForKey_Big(newcs, "sv_hostname", sv_hostname->string);
+			Info_SetValueForKey_Big(newcs, "sv_maxclients", sv_maxclients->string);
+			Info_SetValueForKey_Big(newcs, "sv_privateClients", sv_privateClients->string);
+			Info_SetValueForKey_Big(newcs, "version", Cvar_VariableString("version"));
 		}
 		else if (index == 1)
 		{
-			Info_SetValueForKey_Big(cs, "sv_serverid", va("%d", sv.serverId));
-			Info_SetValueForKey_Big(cs, "sv_pure", sv_pure->string);
+			Info_SetValueForKey_Big(newcs, "sv_serverid", va("%d", sv.serverId));
+			Info_SetValueForKey_Big(newcs, "sv_pure", sv_pure->string);
 		}
 	}
 
-	return cs;
+	return newcs;
 }
 
 /**
@@ -734,6 +738,7 @@ rescan:
 		Cmd_TokenizeString(s);
 		// clear outgoing commands before passing
 		Com_Memset(svcl.cmds, 0, sizeof(svcl.cmds));
+		Cbuf_AddText("map_restart 0\n");
 		return qtrue;
 	}
 
@@ -1465,6 +1470,11 @@ void SV_CL_RunFrame(void)
 	{
 		if (!svclc.demo.playing || svcl.serverTime - sv.time <= frameMsec)
 		{
+			if (svclc.demo.playing && svclc.demo.fastForwardTime > sv.time)
+			{
+				svs.time += frameMsec;
+			}
+
 			sv.time                   = svcl.serverTime;
 			svcls.lastRunFrameTime    = sv.time;
 			svcls.lastRunFrameSysTime = systime;
@@ -1477,7 +1487,7 @@ void SV_CL_RunFrame(void)
 
 		if (sv.time != 0)
 		{
-			Com_Printf("Dropped frame: sv.time [%d] svcl.serverTime [%d]\n", sv.time, svcl.serverTime);
+			Com_Printf("Dropped frame: sv.time [%d] svcl.serverTime [%d] frameMsec [%d]\n", sv.time, svcl.serverTime, frameMsec);
 		}
 
 		sv.time                   = sv.time + frameMsec;
@@ -1525,18 +1535,25 @@ void SV_CL_Frame(int frameMsec)
 		startTime = 0;  // quite a compiler warning
 	}
 
-	// run the game simulation in chunks
-	while (sv.timeResidual >= frameMsec)
+	if (svclc.demo.fastForwardTime <= sv.time)
 	{
-		sv.timeResidual -= frameMsec;
-		svs.time        += frameMsec;
-
-		if (svclc.demo.playing && svcl.serverTime <= sv.time)
+		// run the game simulation in chunks
+		while (sv.timeResidual >= frameMsec)
 		{
-			SV_CL_ReadDemoMessage();
-		}
+			sv.timeResidual -= frameMsec;
+			svs.time        += frameMsec;
 
-		SV_CL_RunFrame();
+			if (svclc.demo.playing && svcl.serverTime <= sv.time)
+			{
+				SV_CL_ReadDemoMessage();
+			}
+
+			SV_CL_RunFrame();
+		}
+	}
+	else if (svclc.demo.playing && svcl.serverTime <= sv.time)
+	{
+		SV_CL_ReadDemoMessage();
 	}
 
 	if (com_speeds->integer)

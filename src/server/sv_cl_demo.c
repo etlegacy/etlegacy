@@ -100,7 +100,7 @@ void SV_CL_Record_f(void)
 	{
 		s = Cmd_Argv(1);
 		Q_strncpyz(demoName, s, sizeof(demoName));
-		Com_sprintf(name, sizeof(name), "svdemos/%s.%s%d", demoName, SVCLDEMOEXT, PROTOCOL_VERSION);
+		Com_sprintf(name, sizeof(name), "tvdemos/%s.%s%d", demoName, SVCLDEMOEXT, PROTOCOL_VERSION);
 	}
 	else
 	{
@@ -110,9 +110,9 @@ void SV_CL_Record_f(void)
 		for (number = 0; number <= 9999; number++)
 		{
 			SV_CL_DemoFilename(number, demoName);
-			Com_sprintf(name, sizeof(name), "svdemos/%s.%s%d", demoName, SVCLDEMOEXT, PROTOCOL_VERSION);
+			Com_sprintf(name, sizeof(name), "tvdemos/%s.%s%d", demoName, SVCLDEMOEXT, PROTOCOL_VERSION);
 
-			len = FS_ReadFile(name, NULL);
+			len = FS_FileExists(name);
 			if (len <= 0)
 			{
 				break;  // file doesn't exist
@@ -371,12 +371,37 @@ void SV_CL_ReadDemoMessage(void)
 }
 
 /**
+ * @brief SV_CL_FastForward_f
+ */
+void SV_CL_FastForward_f(void)
+{
+	int time;
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf("ff <seconds>\n");
+		return;
+	}
+
+	if (!svclc.demo.playing)
+	{
+		Com_Printf("Must be playing a demo\n");
+		return;
+	}
+
+	time = Q_atoi(Cmd_Argv(1));
+
+	svclc.demo.fastForwardTime = time * 1000 + sv.time;
+}
+
+/**
  * @brief SV_CL_PlayDemo_f
  */
 void SV_CL_PlayDemo_f(void)
 {
-	char name[MAX_OSPATH];
+	char name[MAX_OSPATH], nextDemo[MAX_OSPATH];
 	char *demoFile;
+	int  nextDemoNo;
 
 	if (Cmd_Argc() != 2)
 	{
@@ -388,7 +413,7 @@ void SV_CL_PlayDemo_f(void)
 
 	// open the demo file (should be the last arg)
 	demoFile = Cmd_Argv(Cmd_Argc() - 1);
-	Com_sprintf(name, MAX_OSPATH, "svdemos/%s.%s%d", demoFile, SVCLDEMOEXT, PROTOCOL_VERSION);
+	Com_sprintf(name, MAX_OSPATH, "tvdemos/%s.%s%d", demoFile, SVCLDEMOEXT, PROTOCOL_VERSION);
 	FS_FOpenFileRead(name, &svclc.demo.file, qtrue);
 
 	if (!svclc.demo.file)
@@ -398,6 +423,17 @@ void SV_CL_PlayDemo_f(void)
 	}
 
 	Q_strncpyz(svclc.demo.demoName, demoFile, sizeof(svclc.demo.demoName));
+
+	if (sv_etltv_autoplay->integer)
+	{
+		if (!Q_strncmp(svclc.demo.demoName, "demo", 4) && strlen(svclc.demo.demoName) == 8)
+		{
+			nextDemoNo = Q_atoi(svclc.demo.demoName + 4);
+
+			Com_sprintf(nextDemo, MAX_OSPATH, "demo demo%04i", ++nextDemoNo);
+			Cvar_Set("nextdemo", nextDemo);
+		}
+	}
 
 	svcls.state        = CA_CONNECTED;
 	svclc.demo.playing = qtrue;
@@ -430,7 +466,7 @@ static void SV_CL_CompleteDemoName(char *args, int argNum)
 		char demoExt[16];
 
 		Com_sprintf(demoExt, sizeof(demoExt), ".%s%d", SVCLDEMOEXT, PROTOCOL_VERSION);
-		Field_CompleteFilename("svdemos", demoExt, qtrue, qtrue);
+		Field_CompleteFilename("tvdemos", demoExt, qtrue, qtrue);
 	}
 }
 
@@ -442,5 +478,6 @@ void SV_CL_DemoInit(void)
 	Cmd_AddCommand("record", SV_CL_Record_f);
 	Cmd_AddCommand("stoprecord", SV_CL_StopRecord_f);
 	Cmd_AddCommand("demo", SV_CL_PlayDemo_f);
+	Cmd_AddCommand("ff", SV_CL_FastForward_f);
 	Cmd_SetCommandCompletionFunc("demo", SV_CL_CompleteDemoName);
 }

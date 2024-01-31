@@ -1223,8 +1223,10 @@ void SV_Init(void)
 
 	sv_serverTimeReset = Cvar_GetAndDescribe("sv_serverTimeReset", "0", CVAR_ARCHIVE_ND, "Reset server time on map change.");
 
-	sv_etltv_maxslaves = Cvar_GetAndDescribe("sv_etltv_maxslaves", "0", CVAR_ARCHIVE_ND, "Number of ettv slaves allowed to connect.");
-	sv_etltv_password  = Cvar_GetAndDescribe("sv_etltv_password", "", CVAR_ARCHIVE_ND, "Password for ettv slaves. Must be set, or no slaves will be able to connect.");
+	sv_etltv_maxslaves  = Cvar_GetAndDescribe("sv_etltv_maxslaves", "0", CVAR_ARCHIVE_ND, "Number of ettv slaves allowed to connect.");
+	sv_etltv_password   = Cvar_GetAndDescribe("sv_etltv_password", "", CVAR_ARCHIVE_ND, "Password for ettv slaves. Must be set, or no slaves will be able to connect.");
+	sv_etltv_autorecord = Cvar_Get("sv_etltv_autorecord", "0", CVAR_ARCHIVE_ND);
+	sv_etltv_autoplay   = Cvar_Get("sv_etltv_autoplay", "0", CVAR_ARCHIVE_ND);
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();

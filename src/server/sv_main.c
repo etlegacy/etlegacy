@@ -130,6 +130,8 @@ cvar_t *sv_serverTimeReset;
 
 cvar_t *sv_etltv_maxslaves;
 cvar_t *sv_etltv_password;
+cvar_t *sv_etltv_autorecord;
+cvar_t *sv_etltv_autoplay;
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -1579,6 +1581,13 @@ static qboolean SV_CheckPaused(void)
  */
 int SV_FrameMsec()
 {
+#ifdef DEDICATED
+	if (svcls.isTVGame)
+	{
+		return 8;
+	}
+#endif // DEDICATED
+
 	if (sv_fps)
 	{
 		int frameMsec = (int)(1000.0f / sv_fps->value);

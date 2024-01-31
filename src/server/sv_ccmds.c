@@ -267,6 +267,13 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
+#ifdef DEDICATED
+	if (svclc.demo.playing)
+	{
+		svclc.demo.fastForwardTime = 0;
+	}
+#endif // DEDICATED
+
 	if (Cmd_Argc() > 1)
 	{
 		delay = Q_atoi(Cmd_Argv(1));
@@ -429,7 +436,7 @@ void SV_TempBan(client_t *client, int length)
 			if (slot == -1 || oldesttime > svs.tempBans[i].endtime)
 			{
 				oldesttime = svs.tempBans[i].endtime;
-				slot     = i;
+				slot       = i;
 			}
 		}
 	}
