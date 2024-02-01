@@ -246,15 +246,6 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-# These are for the ubuntu build, our own build image has everything preinstalled.
-#      - name: Install dependencies
-#        run: |
-#          sudo dpkg --add-architecture i386
-#          sudo apt update
-#          sudo apt install nasm gcc-multilib g++-multilib zip
-#          sudo apt install libwayland-dev:i386 wayland-protocols libgl1-mesa-dev:i386 libglu1-mesa-dev:i386
-#          sudo apt install libasound2-dev:i386 pulseaudio:i386 libpulse-dev zlib1g-dev:i386 libsnappy-dev:i386 liblz4-1:i386
-
       - name: Build
         uses: addnab/docker-run-action@v3
         with:
@@ -272,48 +263,34 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: build/legacy
+          path: build/legacy/platforms
+          merge-multiple: true
 
       - name: Create supported platform manifest
         shell: bash
         working-directory: build/legacy
         run: |
-          echo "win_x86 win_x86_64 lnx_x86 lnx_x86_64 macos_x86_64 macos_aarch64 lnx_armv8_64 android_aarch64" > platforms.manifest
+          echo "win_x86 win_x86_64 lnx_x86 lnx_x86_64 macos_x86_64 macos_aarch64 lnx_armv8_64 android_aarch64 android_x86 android_x86_64" > platforms.manifest
 
       - name: Merge mod files
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_*.pk3 platforms.manifest win-mod/*.dll win64-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
+          zip -rvj legacy_*.pk3 platforms.manifest platforms/cgame* platforms/ui*
 
-      - name: Remove the mod packages
+      - name: Remove old artifacts
         uses: geekyeggo/delete-artifact@v4
         with:
           failOnError: false
           name: |
-            lnx64-mod
-            osx-mod
-            win-mod
-            win64-mod
-            raspberry_pi-mod
-            android-mod
-
-      - name: Remove the qagame packages
-        uses: geekyeggo/delete-artifact@v4
-        with:
-          failOnError: false
-          name: |
-            lnx64-qagame
-            osx-qagame
-            win-qagame
-            win64-qagame
-            raspberry_pi-qagame
+            *-mod
+            *-qagame
 
       - name: Create mod zip
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll win64-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
+          zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 platforms/qagame* qagame*.so
 
       - uses: actions/upload-artifact@v4
         with:
@@ -725,28 +702,9 @@ jobs:
         with:
           failOnError: false
           name: |
-            lnx64-packages
-            lnx32-packages
-            osx-packages
-            win-packages
-            win64-packages
-            raspberry_pi-packages
-            android-packages
+            *-packages
             mod-zip
-
-      - uses: geekyeggo/delete-artifact@v4
-        with:
-          failOnError: false
-          name: |
             All-mods
-            lnx64-mod
-            osx-mod
-            win-mod
-            win64-mod
-            raspberry_pi-mod
-            android-mod
-            lnx64-qagame
-            osx-qagame
-            win-qagame
-            win64-qagame
-            raspberry_pi-qagame
+            *-mod
+            *-qagame
+
