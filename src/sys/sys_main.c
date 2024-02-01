@@ -1105,6 +1105,16 @@ int main(int argc, char **argv)
 {
 	char commandLine[MAX_STRING_CHARS] = { 0 };
 
+#ifdef MAIN_MUST_RETURN
+	// if we have not yet hit the main loop then we exit here on error
+	int code = setjmp(exit_game);
+
+	if (code)
+	{
+		return code;
+	}
+#endif
+
 	Sys_PlatformInit();
 
 	// Set the initial time base
