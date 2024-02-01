@@ -51,6 +51,7 @@ jobs:
 
   lnx64-mod:
     runs-on: ubuntu-20.04
+    needs: version
     steps:
       - uses: actions/checkout@v4
         with:
@@ -83,6 +84,7 @@ jobs:
 
   osx-mod:
     runs-on: macos-12
+    needs: version
     steps:
       - uses: actions/checkout@v4
         with:
@@ -123,6 +125,7 @@ jobs:
 
   win-mod:
     runs-on: windows-2019
+    needs: version
     steps:
       - uses: actions/checkout@v4
         with:
@@ -151,6 +154,7 @@ jobs:
 
   win64-mod:
     runs-on: windows-2019
+    needs: version
     steps:
       - uses: actions/checkout@v4
         with:
@@ -179,6 +183,7 @@ jobs:
 
   raspberry_pi-mod:
     runs-on: ubuntu-20.04
+    needs: version
     steps:
       - uses: actions/checkout@v4
         with:
@@ -215,6 +220,7 @@ jobs:
 
   android-mod:
     runs-on: ubuntu-20.04
+    needs: version
     env:
       SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
       SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
