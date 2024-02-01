@@ -38,12 +38,14 @@ jobs:
           fetch-depth: 0
 
       - name: Build
-        uses: docker://etlegacy/lnx-build:latest
-        shell: bash
-        run: |
-          git config --global --add safe.directory $GITHUB_WORKSPACE
-          git fetch --tags --force
-          ./easybuild.sh build -64 -mod
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code
+          run: |
+            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git fetch --tags --force
+            ./easybuild.sh build -64 -mod
 
       - uses: actions/upload-artifact@v4
         with:
@@ -254,12 +256,14 @@ jobs:
 #          sudo apt install libasound2-dev:i386 pulseaudio:i386 libpulse-dev zlib1g-dev:i386 libsnappy-dev:i386 liblz4-1:i386
 
       - name: Build
-        uses: docker://etlegacy/lnx-build:latest
-        shell: bash
-        run: |
-          git config --global --add safe.directory $GITHUB_WORKSPACE
-          git fetch --tags --force
-          ./easybuild.sh build -32
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code
+          run: |
+            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git fetch --tags --force
+            ./easybuild.sh build -32
 
       - name: Get the version
         id: vars
@@ -359,12 +363,14 @@ jobs:
 #          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
 
       - name: Build
-        uses: docker://etlegacy/lnx-build:latest
-        shell: bash
-        run: |
-          git config --global --add safe.directory $GITHUB_WORKSPACE
-          git fetch --tags --force
-          ./easybuild.sh build -64
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code
+          run: |
+            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git fetch --tags --force
+            ./easybuild.sh build -64
 
       - uses: actions/download-artifact@v4
         with:
