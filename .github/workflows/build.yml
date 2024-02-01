@@ -21,7 +21,7 @@ on:
 jobs:
 
 # Try to figure out the build version information only once
-  etl-version:
+  version:
     runs-on: ubuntu-latest
     outputs:
       describe: ${{ steps.git.outputs.describe }}
@@ -34,8 +34,11 @@ jobs:
       - name: Fetch git version information
         id: git
         run: |
-          echo "describe=$(git describe --abbrev=7 2>/dev/null | awk '{$1=$1};1')" >> "$GITHUB_OUTPUT"
-          echo "tag=$(git describe --abbrev=0 2>/dev/null | awk '{$1=$1};1')" >> "$GITHUB_OUTPUT"
+          git_describe=$(git describe --abbrev=7 2>/dev/null | awk '{$1=$1};1')
+          git_tag=$(git describe --abbrev=0 2>/dev/null | awk '{$1=$1};1')
+          echo "Version info: $git_describe ?? $git_tag"
+          echo "describe=$git_describe" >> "$GITHUB_OUTPUT"
+          echo "tag=$git_tag" >> "$GITHUB_OUTPUT"
 
 #   __  __               _                                                  _     _
 #  |  \/  |             | |                                                | |   (_)
@@ -54,10 +57,13 @@ jobs:
           submodules: true
 
       - name: Build
+        env:
+          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+          CI_ETL_TAG: ${{needs.version.outputs.tag}}
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.etl-version.outputs.describe}} -e CI_ETL_TAG=${{needs.etl-version.outputs.tag}}
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}}
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -64 -mod
@@ -96,8 +102,8 @@ jobs:
         env:
           SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
-          CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+          CI_ETL_TAG: ${{needs.version.outputs.tag}}
         shell: bash
         run: |
           ./easybuild.sh build -64 -mod --osx=10.10 --osx-arc="x86_64;arm64"
@@ -125,8 +131,8 @@ jobs:
       - name: Build
         shell: cmd
         env:
-          CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+          CI_ETL_TAG: ${{needs.version.outputs.tag}}
         run: |
           call .\easybuild.bat build -mod
 
@@ -153,8 +159,8 @@ jobs:
       - name: Build
         shell: cmd
         env:
-          CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+          CI_ETL_TAG: ${{needs.version.outputs.tag}}
         run: |
           call .\easybuild.bat build -mod -64
 
@@ -213,8 +219,8 @@ jobs:
       SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
       SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
       SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-      CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
     container:
       image: etlegacy/android-build
     steps:
@@ -269,7 +275,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.etl-version.outputs.describe}} -e CI_ETL_TAG=${{needs.etl-version.outputs.tag}}
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}}
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -32
@@ -306,7 +312,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj etlegacy-mod-${{needs.etl-version.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* qagame*.so
+          zip -rvj etlegacy-mod-${{needs.version.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* qagame*.so
 
       - uses: actions/upload-artifact@v4
         with:
