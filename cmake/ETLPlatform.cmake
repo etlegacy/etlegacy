@@ -298,6 +298,10 @@ if(NOT APPLE)
 	endif()
 endif()
 
+if(UNIX AND ETL_64BITS)
+	set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # summary
 message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
 message(STATUS "Lib arch: ${CMAKE_LIBRARY_ARCHITECTURE}")
@@ -306,6 +310,7 @@ message(STATUS "Install path:    ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Compiler flags:")
 message(STATUS "- C             ${CMAKE_C_FLAGS}")
 message(STATUS "- C++           ${CMAKE_CXX_FLAGS}")
+message(STATUS "- PIC           ${CMAKE_POSITION_INDEPENDENT_CODE}")
 message(STATUS "Linker flags:")
 message(STATUS "- Executable    ${CMAKE_EXE_LINKER_FLAGS}")
 message(STATUS "- Module        ${CMAKE_MODULE_LINKER_FLAGS}")
