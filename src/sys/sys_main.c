@@ -932,6 +932,7 @@ void Sys_ParseArgs(int argc, char **argv)
 			fprintf(stdout, "Masked as: " FAKE_VERSION "\n");
 #endif
 			fprintf(stdout, "Built: " PRODUCT_BUILD_TIME "\n");
+			fprintf(stdout, "Build features: " PRODUCT_BUILD_FEATURES "\n");
 			Sys_Exit(0);
 		}
 	}

@@ -178,6 +178,7 @@ char com_errorMessage[MAX_PRINT_MSG];
 
 void Com_WriteConfig_f(void);
 void CIN_CloseAllVideos(void);
+static void Com_VersionInfo_f(void);
 
 //============================================================================
 
@@ -3019,6 +3020,7 @@ void Com_Init(char *commandLine)
 		Cmd_AddCommand("sql", DB_ExecSQLCommand_f, "Executes an sql command.");
 	}
 #endif
+	Cmd_AddCommand("versionInfo", Com_VersionInfo_f, "Print out the version information of the binary.");
 
 	com_version = Cvar_Get("version", FAKE_VERSION, CVAR_ROM | CVAR_SERVERINFO);
 
@@ -3198,6 +3200,18 @@ void Com_WriteConfig_f(void)
 
 	Com_Printf("Writing %s%s.\n", filename, nodefaults ? " (no default values)" : "");
 	Com_WriteConfigToFile(filename, nodefaults);
+}
+
+static void Com_VersionInfo_f(void)
+{
+#ifdef DEDICATED
+	Com_Printf(Q3_VERSION " " CPUSTRING " dedicated server (%s)\n", __DATE__);
+#else
+	Com_Printf("Client: " ET_VERSION "\n");
+	Com_Printf("Masked as: " FAKE_VERSION "\n");
+#endif
+	Com_Printf("Built: " PRODUCT_BUILD_TIME "\n");
+	Com_Printf("Build features: " PRODUCT_BUILD_FEATURES "\n");
 }
 
 /**
