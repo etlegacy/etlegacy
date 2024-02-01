@@ -20,7 +20,6 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.24")
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-include(GetGitRevisionDescription)
 include(CMakeDependentOption)
 
 include(cmake/ETLBanner.cmake)

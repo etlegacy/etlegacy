@@ -20,6 +20,23 @@ on:
 
 jobs:
 
+# Try to figure out the build version information only once
+  etl-version:
+    runs-on: ubuntu-latest
+    outputs:
+      describe: ${{ steps.git.outputs.describe }}
+      tag: ${{ steps.git.outputs.tag }}
+    steps:
+      - uses: action/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Fetch git version information
+        id: git
+        run: |
+          echo "describe=$(git describe --abbrev=7 2>/dev/null | awk '{$1=$1};1')" >> "$GITHUB_OUTPUT"
+          echo "tag=$(git describe --abbrev=0 2>/dev/null | awk '{$1=$1};1')" >> "$GITHUB_OUTPUT"
+
 #   __  __               _                                                  _     _
 #  |  \/  |             | |                                                | |   (_)
 #  | \  / |   ___     __| |     __ _    ___   _ __     ___   _ __    __ _  | |_   _    ___    _ __
@@ -35,15 +52,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Build
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.etl-version.outputs.describe}} -e CI_ETL_TAG=${{needs.etl-version.outputs.tag}}
           run: |
-            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git config --global --add safe.directory /code
             git fetch --tags --force
             ./easybuild.sh build -64 -mod
 
@@ -66,7 +82,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Install dependencies
         run: brew bundle
@@ -82,6 +97,8 @@ jobs:
         env:
           SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
+          CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
+          CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
         shell: bash
         run: |
           git fetch --tags --force
@@ -106,10 +123,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Build
         shell: cmd
+        env:
+          CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
+          CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
         run: |
           git fetch --tags --force
           call .\easybuild.bat build -mod
@@ -137,6 +156,9 @@ jobs:
 
       - name: Build
         shell: cmd
+        env:
+          CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
+          CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
         run: |
           git fetch --tags --force
           call .\easybuild.bat build -mod -64
@@ -252,14 +274,12 @@ jobs:
           image: etlegacy/lnx-build:latest
           options: -v ${{ github.workspace }}:/code
           run: |
-            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git config --global --add safe.directory /code
             git fetch --tags --force
             ./easybuild.sh build -32
 
-      - name: Get the version
-        id: vars
-        run: |
-          echo "tag=$(git describe --abbrev=7 2>/dev/null)" >> $GITHUB_OUTPUT
+      - name: Change Owner of Container Working Directory
+        run: chown $(whoami) -R .
 
       - uses: actions/download-artifact@v4
         with:
@@ -290,7 +310,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 platforms/qagame* qagame*.so
+          zip -rvj etlegacy-mod-${{needs.etl-version.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* qagame*.so
 
       - uses: actions/upload-artifact@v4
         with:
@@ -333,21 +353,18 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-# These are for the ubuntu build, our own build image has everything preinstalled.
-#      - name: Install dependencies
-#        run: |
-#          sudo apt update
-#          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
-
       - name: Build
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
           options: -v ${{ github.workspace }}:/code
           run: |
-            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git config --global --add safe.directory /code
             git fetch --tags --force
             ./easybuild.sh build -64
+
+      - name: Change Owner of Container Working Directory
+        run: chown $(whoami) -R .
 
       - uses: actions/download-artifact@v4
         with:
