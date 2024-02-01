@@ -3274,7 +3274,7 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
  * @param[in] x the multiple
  * @return closest multiple number
  */
-ID_INLINE int Q_ClosestMultiple(int n, int x) 
+int Q_ClosestMultiple(int n, int x)
 {    
     if (x > n)
     {
@@ -3293,7 +3293,7 @@ ID_INLINE int Q_ClosestMultiple(int n, int x)
  * @param[in] digit
  * @return 
  */
-ID_INLINE float Q_ClosestMultipleFloat(float n, float x, int decimal)
+float Q_ClosestMultipleFloat(float n, float x, int decimal)
 {
     float coeff = pow(10, decimal);
     return Q_ClosestMultiple(n * coeff, x * coeff) / coeff;
