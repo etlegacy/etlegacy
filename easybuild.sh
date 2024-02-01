@@ -34,6 +34,9 @@ generate_compilation_database=false
 # silent mode
 silent_mode=false
 
+# cmake toolchain file
+TOOLCHAIN_FILE=${TOOLCHAIN_FILE:-}
+
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
@@ -278,6 +281,9 @@ parse_commandline() {
 		elif [[ $var == --sysroot=* ]]; then
 			XCODE_SDK_PATH=$(echo $var| cut -d'=' -f 2)
 			einfo "Will use OSX sysroot: ${XCODE_SDK_PATH}"
+		elif [[ $var == --toolchain=* ]]; then
+			TOOLCHAIN_FILE=$(echo $var| cut -d'=' -f 2)
+			einfo "Will use toolchain file: ${TOOLCHAIN_FILE}"
 		elif [ "$var" = "-64" ]; then
 			einfo "Will disable crosscompile"
 			CROSS_COMPILE32=0
@@ -348,9 +354,17 @@ parse_commandline() {
 		elif [ "$var" = "-noupdate" ] || [  "$var" = "-no-update" ]; then
 			einfo "Will disable autoupdate"
 			FEATURE_AUTOUPDATE=0
-		elif [ "$var" = "-RPI" ]; then
+		elif [ "$var" = "-RPI" ] || [  "$var" = "-RPIT" ]; then
 			einfo "Will enable Raspberry PI build ..."
-			ARM=1
+			# If we are using RPIT (T for the toolchain) then we will use the default toolchain file
+			if [  "$var" = "-RPIT" ]; then
+				if [ -n "$TOOLCHAIN_FILE" ]; then
+					einfo "Will use toolchain file: ${TOOLCHAIN_FILE}"
+				else
+					einfo "Will use default RPI toolchain file"
+					TOOLCHAIN_FILE=${_SRC}/cmake/Toolchain-cross-aarch64-linux.cmake
+				fi
+			fi
 			CROSS_COMPILE32=0
 			x86_build=false
 			FEATURE_RENDERER_GLES=0
@@ -460,7 +474,6 @@ generate_configuration() {
 	#cmake variables
 	RELEASE_TYPE=${RELEASE_TYPE:-Release}
 	CROSS_COMPILE32=${CROSS_COMPILE32:-1}
-	ARM=${ARM:-0}
 	BUILD_SERVER=${BUILD_SERVER:-1}
 	BUILD_CLIENT=${BUILD_CLIENT:-1}
 	BUILD_MOD=${BUILD_MOD:-1}
@@ -548,7 +561,6 @@ generate_configuration() {
 		-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}
 		-DCROSS_COMPILE32=${CROSS_COMPILE32}
 		-DZIP_ONLY=${ZIP_ONLY}
-		-DARM=${ARM}
 		-DBUILD_SERVER=${BUILD_SERVER}
 		-DBUILD_CLIENT=${BUILD_CLIENT}
 		-DBUILD_MOD=${BUILD_MOD}
@@ -599,6 +611,12 @@ generate_configuration() {
 		-DINSTALL_GEOIP=${INSTALL_GEOIP}
 		-DINSTALL_WOLFADMIN=${INSTALL_WOLFADMIN}
 	"
+
+	if [ -n "$TOOLCHAIN_FILE" ]; then
+	  _CFGSTRING="${_CFGSTRING}
+	  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}
+	  "
+	fi
 
 	if [ "${DEV}" != 1 ]; then
 	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then

@@ -1,4 +1,4 @@
-def buildAsLibrary = project.hasProperty('BUILD_AS_LIBRARY');
+def buildAsLibrary = project.hasProperty('BUILD_AS_LIBRARY')
 def buildAsApplication = !buildAsLibrary
 if (buildAsApplication) {
     apply plugin: 'com.android.application'
@@ -8,7 +8,7 @@ else {
 }
 
 def getVersion() {
-    def out = new ByteArrayOutputStream();
+    def out = new ByteArrayOutputStream()
     exec {
         executable = 'git'
         args = ['describe', '--tags', '--abbrev=7']
@@ -17,7 +17,7 @@ def getVersion() {
     return out.toString().replace('\n','')
 }
 
-def extractInt( String input ) {
+static def extractInt(String input ) {
   return input.replaceAll("[^0-9]", "")
 }
 
@@ -26,29 +26,36 @@ new File( 'VERSION.txt' ).eachLine { line ->
 	VERSION << extractInt(line)
 }
 
-println VERSION
-
 android {
-	namespace "org.etlegacy.app"
-    compileSdkVersion 31
+	namespace "com.etlegacy.app"
+    compileSdk 33
     defaultConfig {
         if (buildAsApplication) {
-            applicationId "org.etlegacy.app"
+            applicationId "com.etlegacy.app"
         }
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdkVersion 26
+        //noinspection OldTargetApi
+        targetSdk 33
         versionCode 1
-        versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
-        setProperty("archivesBaseName", "etlegacy-${getVersion()}")
-        externalNativeBuild {
+		versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
+		base {
+			archivesName = "etlegacy-${getVersion()}"
+		}
+		externalNativeBuild {
             cmake {
-                arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF", "-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF"
+                arguments "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF",
+					"-DINSTALL_EXTRA=OFF", "-DBUNDLED_LIBS=ON", "-DFEATURE_IRC_CLIENT=OFF",
+					"-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF",
+					"-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_OGG_VORBIS=OFF",
+					"-DFEATURE_AUTOUPDATE=OFF", "-DFEATURE_SSL=ON", "-DFEATURE_CURL=OFF",
+					"-DBUNDLED_OPENSSL=OFF", "-DBUNDLED_WOLFSSL=OFF", "-DFEATURE_AUTH=ON"
+				targets "etl", "ui", "cgame"
             }
         }
         ndk {
             // Specifies the ABI configurations of your native
             // libraries Gradle should build and package with your APK.
-            abiFilters 'arm64-v8a'
+            abiFilters 'arm64-v8a', 'x86_64', 'x86'
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -76,9 +83,37 @@ android {
            signingConfig signingConfigs.release
         }
     }
-	applicationVariants.all { variant ->
-		tasks["merge${variant.name.capitalize()}Assets"]
-				.dependsOn("externalNativeBuild${variant.name.capitalize()}")
+	lint {
+		abortOnError false
+	}
+	buildFeatures {
+		buildConfig = true
+	}
+
+	def generatedAssets = layout.buildDirectory.dir("generated/pk3/")
+	sourceSets.named('main') {
+		assets.srcDir(generatedAssets)
+	}
+	applicationVariants.configureEach { variant ->
+		def mergeAssets = tasks.named("merge${variant.name.capitalize()}Assets")
+		if (variant.name.equalsIgnoreCase('debug')) {
+			mergeAssets.configure {
+				dependsOn("externalNativeBuild${variant.name.capitalize()}")
+			}
+			return
+		}
+
+		def generatePk3 = tasks.register("generate${variant.name.capitalize()}Pk3", Zip) {
+			from(rootProject.file('etmain'))
+			archiveFileName = "zz_legacy_android_debug.pk3"
+			destinationDirectory = generatedAssets
+		}
+		if (variant.name.equalsIgnoreCase('debug')) {
+			mergeAssets.configure {
+				dependsOn("externalNativeBuild${variant.name.capitalize()}")
+				dependsOn(generatePk3)
+			}
+		}
 	}
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
         sourceSets.main {
@@ -92,17 +127,14 @@ android {
         }
 
     }
-    lintOptions {
-        abortOnError false
-    }
 
-    if (buildAsLibrary) {
+	if (buildAsLibrary) {
         libraryVariants.all { variant ->
             variant.outputs.each { output ->
                 def outputFile = output.outputFile
                 if (outputFile != null && outputFile.name.endsWith(".aar")) {
-                    def fileName = "org.etlegacy.app.aar";
-                    output.outputFile = new File(outputFile.parent, fileName);
+                    def fileName = "com.etlegacy.app.aar"
+                    output.outputFile = new File(outputFile.parent, fileName)
                 }
             }
         }
@@ -110,13 +142,14 @@ android {
 }
 
 dependencies {
-    api 'com.github.erz05:JoyStick:1.1.0'
-    implementation 'com.loopj.android:android-async-http:1.4.11'
+	// FIXME: replace with our own version
+	api 'com.github.erz05:JoyStick:1.1.0'
+    // api 'com.etlegacy.android:joystick:1.1.1-SNAPSHOT'
     implementation 'com.google.guava:guava:29.0-android'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.0'
-    androidTestImplementation 'com.android.support.test:runner:0.3'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }

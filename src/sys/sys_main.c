@@ -66,6 +66,16 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#ifdef __ANDROID__
+// Android must exit out of the main call..
+#define MAIN_MUST_RETURN
+#endif
+
+#ifdef MAIN_MUST_RETURN
+#include <setjmp.h>
+jmp_buf exit_game;
+#endif
+
 static char binaryPath[MAX_OSPATH]  = { 0 };
 static char installPath[MAX_OSPATH] = { 0 };
 
@@ -309,7 +319,11 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 
 	NET_Shutdown();
 
+#ifdef MAIN_MUST_RETURN
+	longjmp(exit_game, exitCode);
+#else
 	Sys_PlatformExit(exitCode);
+#endif
 }
 
 
@@ -1024,8 +1038,9 @@ void Sys_SetUpConsoleAndSignals(void)
 /**
  * @brief Main game loop
  */
-void Sys_GameLoop(void)
+static int Sys_GameLoop(void)
 {
+	int return_code = EXIT_SUCCESS;
 #ifdef ETLEGACY_DEBUG
 	int startTime, endTime, totalMsec, countMsec;
 	totalMsec = countMsec = 0;
@@ -1063,10 +1078,21 @@ void Sys_GameLoop(void)
 			Com_Printf("frame:%i total used:%i frame time:%i\n", countMsec, totalMsec, endTime - startTime);
 		}
 #endif
+
+#ifdef MAIN_MUST_RETURN
+		int code = setjmp(exit_game);
+
+		if (code)
+		{
+			return_code = code;
+			break;
+		}
+#endif
 	}
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif /* __clang__ */
+	return return_code;
 }
 
 /**
@@ -1180,7 +1206,5 @@ int main(int argc, char **argv)
 
 #endif
 
-	Sys_GameLoop();
-
-	return EXIT_SUCCESS;
+	return Sys_GameLoop();
 }

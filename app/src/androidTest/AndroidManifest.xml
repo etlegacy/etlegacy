@@ -4,7 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0">
 
-    <instrumentation android:targetPackage="org.etlegacy.app"
+    <instrumentation android:targetPackage="com.etlegacy.app"
         android:name="android.support.test.runner.AndroidJUnitRunner"/>
 
 </manifest>

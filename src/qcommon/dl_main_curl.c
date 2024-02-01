@@ -78,8 +78,6 @@
 		if (((status) = curl_easy_setopt((handle), (opt), (param)))) \
 		Com_Printf(S_COLOR_YELLOW "WARNING: %s: curl_easy_setopt " #opt ": %s\n", __func__, curl_easy_strerror(status))
 
-#define FILE_DOWNLOAD_ID 1
-
 static struct
 {
 	qboolean initialized;   ///< the main initialization flag (Initialize once)
@@ -196,7 +194,7 @@ static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ul
 		return -666;
 	}
 
-	if (request->data.requestLength)
+	if (!request->data.requestLength)
 	{
 		if (request->upload)
 		{
