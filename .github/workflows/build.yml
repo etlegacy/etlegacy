@@ -60,7 +60,6 @@ jobs:
           options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.etl-version.outputs.describe}} -e CI_ETL_TAG=${{needs.etl-version.outputs.tag}}
           run: |
             git config --global --add safe.directory /code
-            git fetch --tags --force
             ./easybuild.sh build -64 -mod
 
       - uses: actions/upload-artifact@v4
@@ -101,7 +100,6 @@ jobs:
           CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
         shell: bash
         run: |
-          git fetch --tags --force
           ./easybuild.sh build -64 -mod --osx=10.10 --osx-arc="x86_64;arm64"
 
       - uses: actions/upload-artifact@v4
@@ -130,7 +128,6 @@ jobs:
           CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
           CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
         run: |
-          git fetch --tags --force
           call .\easybuild.bat build -mod
 
       - uses: actions/upload-artifact@v4
@@ -152,7 +149,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Build
         shell: cmd
@@ -160,7 +156,6 @@ jobs:
           CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
           CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
         run: |
-          git fetch --tags --force
           call .\easybuild.bat build -mod -64
 
       - uses: actions/upload-artifact@v4
@@ -215,9 +210,11 @@ jobs:
   android-mod:
     runs-on: ubuntu-20.04
     env:
-          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+      SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+      SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+      SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+      CI_ETL_DESCRIBE: ${{needs.etl-version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.etl-version.outputs.tag}}
     container:
       image: etlegacy/android-build
     steps:
@@ -272,10 +269,9 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.etl-version.outputs.describe}} -e CI_ETL_TAG=${{needs.etl-version.outputs.tag}}
           run: |
             git config --global --add safe.directory /code
-            git fetch --tags --force
             ./easybuild.sh build -32
 
       - name: Change Owner of Container Working Directory
