@@ -97,7 +97,7 @@ macro(GENERATENUMBER VAR VAL)
 endmacro(GENERATENUMBER)
 
 
-if(DEFINED $ENV{CI_ETL_DESCRIBE})
+if(DEFINED ENV{CI_ETL_DESCRIBE})
 	set(GIT_DESCRIBE $ENV{CI_ETL_DESCRIBE})
 else()
 	execute_process(COMMAND git describe --abbrev=7
@@ -106,7 +106,7 @@ else()
 		OUTPUT_VARIABLE GIT_DESCRIBE)
 endif()
 
-if(DEFINED $ENV{CI_ETL_TAG})
+if(DEFINED ENV{CI_ETL_TAG})
 	set(GIT_DESCRIBE_TAG $ENV{CI_ETL_TAG})
 else()
 	execute_process(COMMAND git describe --abbrev=0
