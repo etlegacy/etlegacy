@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v3
 
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
