@@ -15,8 +15,8 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * FRI'
+#  schedule:
+#    - cron: '0 0 * * FRI'
 
 jobs:
 
