@@ -256,6 +256,10 @@ jobs:
           path: |
             app/build/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libcgame*.so
             app/build/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libui*.so
+            app/build/intermediates/merged_native_libs/release/out/lib/x86/libcgame*.so
+            app/build/intermediates/merged_native_libs/release/out/lib/x86/libui*.so
+            app/build/intermediates/merged_native_libs/release/out/lib/x86_64/libcgame*.so
+            app/build/intermediates/merged_native_libs/release/out/lib/x86_64/libui*.so
 
 
 #   __  __                                                          _
@@ -306,7 +310,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_*.pk3 platforms.manifest platforms/cgame* platforms/ui*
+          zip -rvj legacy_*.pk3 platforms.manifest platforms/cgame* platforms/ui* platforms/libcgame* platforms/libui*
 
       - name: Remove old artifacts
         uses: geekyeggo/delete-artifact@v4
