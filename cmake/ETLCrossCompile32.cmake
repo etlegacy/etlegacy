@@ -10,6 +10,8 @@
 #
 # YOU HAVE BEEN WARNED. (this notice was added 2024)
 #------------------------------------------------------------------------
+set(CROSS_COMPILE32_OLD_VALUES "ON;1;YES;TRUE;Y;T")
+
 function(legacy_replace_or_append_flag CURRENT_FLAG WANTED_FLAG _SOURCE)
 	if("${CURRENT_FLAG}" STREQUAL "")
 		return()
@@ -39,7 +41,7 @@ endfunction()
 macro(legacy_check_cross_compile_flag)
 	string(TOUPPER ${CROSS_COMPILE32} CROSS_COMPILE32_UPPER)
 	# Possible old CROSS_COMPILE32 values that will cause a fallback value (old style)
-	if (NOT CROSS_COMPILE32_UPPER IN_LIST "ON;1;YES;TRUE;Y;T")
+	if (NOT CROSS_COMPILE32_UPPER IN_LIST CROSS_COMPILE32_OLD_VALUES)
 		set(CMAKE_SYSTEM_PROCESSOR ${CROSS_COMPILE32})
 	else()
 		if (UNIX)
