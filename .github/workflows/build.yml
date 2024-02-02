@@ -270,7 +270,7 @@ jobs:
 # This step also generates the final packages for 32 bit lnx.
   lnx32:
     runs-on: ubuntu-20.04
-    needs: [ lnx64-mod, osx-mod, win-mod, win64-mod, raspberry_pi-mod, android-mod ]
+    needs: [ version, lnx64-mod, osx-mod, win-mod, win64-mod, raspberry_pi-mod, android-mod ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -360,7 +360,7 @@ jobs:
 # Generate the final packages for 64lnx, Osx, Windows and RPI (armv7 only)
   lnx64:
     runs-on: ubuntu-20.04
-    needs: [ lnx32 ]
+    needs: [ version, lnx32 ]
     steps:
       - uses: actions/checkout@v4
         with:

@@ -168,6 +168,7 @@ if(GIT_DESCRIBE)
 		set(ETL_CMAKE_PROD_VERSION_STR ${ETLEGACY_VERSION})
 	endif()
 else() # Not using source from git repo
+	message(STATUS "Not using source from git repo, using default version")
 	set(ETL_CMAKE_VERSION ${ETLEGACY_VERSION})
 	set(ETL_CMAKE_VERSION_SHORT ${ETLEGACY_VERSION})
 	set(ETL_CMAKE_PROD_VERSION ${ETLEGACY_VERSIONPLAIN})
