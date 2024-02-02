@@ -902,6 +902,8 @@ char *Q_TrimStr(char *string);
 /// Encodes a plain un-colored string so that it'll be drawn with the given color code.
 void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen);
 
+int Q_StringEndsWith(const char *str, const char *suffix);
+
 const char *Q_GetColorString(unsigned int offset);
 
 int Q_ParseColor(const char *colString, float *outColor);

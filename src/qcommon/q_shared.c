@@ -2019,6 +2019,22 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 	outStr[outOffset] = 0;
 }
 
+int Q_StringEndsWith(const char *str, const char *suffix)
+{
+	size_t len_str, len_suffix;
+	if (!str || !suffix)
+	{
+		return 0;
+	}
+	len_str    = strlen(str);
+	len_suffix = strlen(suffix);
+	if (len_suffix > len_str)
+	{
+		return 0;
+	}
+	return strncmp(str + len_str - len_suffix, suffix, len_suffix) == 0;
+}
+
 // Colors table (Only used locally)
 const struct
 {
