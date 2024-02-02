@@ -334,10 +334,13 @@ jobs:
           path: build/legacy/etlegacy-mod-*.zip
 
       - name: Generate packages
-        shell: bash
-        working-directory: build/
-        run: |
-          cpack
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}}
+          run: |
+            cd build/
+            cpack
 
       - uses: actions/upload-artifact@v4
         with:
@@ -390,9 +393,13 @@ jobs:
         working-directory: build/legacy
 
       - name: Generate packages
-        shell: bash
-        working-directory: build/
-        run: cpack
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}}
+          run: |
+            cd build/
+            cpack
 
       - uses: actions/upload-artifact@v4
         with:
