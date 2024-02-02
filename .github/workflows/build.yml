@@ -275,7 +275,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Build
         uses: addnab/docker-run-action@v3
@@ -361,11 +360,13 @@ jobs:
   lnx64:
     runs-on: ubuntu-20.04
     needs: [ version, lnx32 ]
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Build
         uses: addnab/docker-run-action@v3
@@ -374,7 +375,6 @@ jobs:
           options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
           run: |
             git config --global --add safe.directory /code
-            git fetch --tags --force
             ./easybuild.sh build -64
 
       - name: Change Owner of Container Working Directory
@@ -410,12 +410,14 @@ jobs:
 
   osx:
     runs-on: macos-12
-    needs: [ lnx32 ]
+    needs: [ version, lnx32 ]
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Install dependencies
         run: |
@@ -428,7 +430,6 @@ jobs:
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
         run: |
-          git fetch --tags --force
           ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64"
 
       - uses: actions/download-artifact@v4
@@ -453,17 +454,18 @@ jobs:
 
   win:
     runs-on: windows-2019
-    needs: [ lnx32 ]
+    needs: [ version, lnx32 ]
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - name: Build
         shell: cmd
         run: |
-          git fetch --tags --force
           call .\easybuild.bat build
 
       - uses: actions/download-artifact@v4
@@ -489,7 +491,10 @@ jobs:
 
   win64:
     runs-on: windows-2019
-    needs: [ lnx32 ]
+    needs: [ version, lnx32 ]
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -499,7 +504,6 @@ jobs:
       - name: Build
         shell: cmd
         run: |
-          git fetch --tags --force
           call .\easybuild.bat build -64
 
       - uses: actions/download-artifact@v4
@@ -525,7 +529,7 @@ jobs:
 
   raspberry_pi:
     runs-on: ubuntu-latest
-    needs: [ lnx32 ]
+    needs: [ version, lnx32 ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -572,7 +576,9 @@ jobs:
           SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
           SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-    needs: [ lnx32 ]
+          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+          CI_ETL_TAG: ${{needs.version.outputs.tag}}
+    needs: [ version, lnx32 ]
     container:
       image: etlegacy/android-build
     steps:
@@ -740,9 +746,9 @@ jobs:
         with:
           failOnError: false
           name: |
-            *-packages
-            mod-zip
             All-mods
+            mod-zip
+            *-packages
             *-mod
             *-qagame
 

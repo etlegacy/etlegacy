@@ -19,7 +19,28 @@ else
 fi
 
 ETLEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
-ETLEGACY_VERSION=`git describe --abbrev=7 2>/dev/null`
+
+# if we are in a github-action environment, we don't want to use git to control workspace (use actions instead)
+if [[ "${CI}" == "true" ]]; then
+	allow_git=false
+else
+	allow_git=true
+fi
+
+if [[ -z "${CI_ETL_DESCRIBE}" ]]; then
+	ETLEGACY_VERSION=`git describe --abbrev=7 --tags 2>/dev/null`
+else
+	ETLEGACY_VERSION="${CI_ETL_DESCRIBE}"
+fi
+
+if [[ -z "${CI_ETL_TAG}" ]]; then
+	ETLEGACY_SHORT_VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
+else
+	ETLEGACY_SHORT_VERSION="${CI_ETL_TAG}"
+fi
+
+echo "ET: Legacy version: ${ETLEGACY_VERSION}"
+
 INSTALL_PREFIX=${HOME}/etlegacy
 
 # Set this to false to disable colors
@@ -53,6 +74,14 @@ check_exit() {
 	if [ $EXIT_CODE != 0 ]; then
 		echo Exiting!
 		exit $EXIT_CODE
+	fi
+}
+
+run_git() {
+	if $allow_git; then
+		git "${@:1}"
+	else
+		echo "Git usage is not allowed in this environment"
 	fi
 }
 
@@ -238,7 +267,7 @@ print_startup() {
 	checkapp g++
 	checkapp clang 0
 	checkapp clang++ 0
-	checkapp git
+	checkapp git 0
 	checkapp zip
 	checkapp nasm
 	checkapp entr 0
@@ -672,8 +701,8 @@ EOT
 handle_bundled_libs() {
 	if [[ ! -e "${_SRC}/libs/CMakeLists.txt" ]]; then
 		einfo "Getting bundled libs..."
-		git submodule init
-		git submodule update
+		run_git submodule init
+		run_git submodule update
 	fi
 }
 
@@ -727,7 +756,7 @@ run_clean() {
 		fi
 
 		cd ${_SRC}/libs
-		git clean -d -f
+		run_git clean -d -f
 	fi
 }
 
@@ -795,7 +824,7 @@ create_ready_osx_dmg() {
 	# Create the DMG json
 	cat << END > etlegacy-dmg.json
 {
-	"title": "ET Legacy $SHORT_VERSION",
+	"title": "ET Legacy $ETLEGACY_SHORT_VERSION",
 	"icon": "../misc/etl.icns",
 	"background": "osx-dmg-background.jpg",
 	"window": {
@@ -844,7 +873,6 @@ create_osx_dmg() {
 	fi
 
 	echo "Generating OSX installer"
-	SHORT_VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
 
 	# Generate the icon for the folder
 	# using rsvg-convert
@@ -854,8 +882,8 @@ create_osx_dmg() {
 	# Generate the DMG background
 	# using the Graphics Magick
 	# brew install graphicsmagick
-	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${SHORT_VERSION}'" osx-dmg-background.jpg
-    gm convert ../misc/osx-dmg-background.jpg -resize 1280x720 -font ../misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${SHORT_VERSION}'" osx-dmg-background@2x.jpg
+	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background.jpg
+    gm convert ../misc/osx-dmg-background.jpg -resize 1280x720 -font ../misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background@2x.jpg
 
 	set_osx_folder_icon_tooled
 	create_ready_osx_dmg
