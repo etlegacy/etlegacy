@@ -281,13 +281,16 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}}
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -u $(id -u):$(id -g)
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -32
 
       - name: Change Owner of Container Working Directory
-        run: chown $(whoami) -R .
+        run: |
+          action_name=$(whoami)
+          action_group=$(groups $action_name | awk '{print $3}')
+          sudo chown $action_name:$action_group -R .
 
       - uses: actions/download-artifact@v4
         with:
@@ -365,14 +368,17 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -u $(id -u):$(id -g)
           run: |
             git config --global --add safe.directory /code
             git fetch --tags --force
             ./easybuild.sh build -64
 
       - name: Change Owner of Container Working Directory
-        run: chown $(whoami) -R .
+        run: |
+          action_name=$(whoami)
+          action_group=$(groups $action_name | awk '{print $3}')
+          sudo chown $action_name:$action_group -R .
 
       - uses: actions/download-artifact@v4
         with:
