@@ -85,6 +85,7 @@
 
 #define DEMOEXT "dm_"          ///< standard demo extension
 #define SVDEMOEXT "sv_"        ///< standard server demo extension
+#define SVCLDEMOEXT "tv_"      ///< ettv server demo extension
 
 #define MAX_MASTER_SERVERS 5   ///< number of supported master servers
 
@@ -1718,6 +1719,49 @@ typedef struct entityState_s
 } entityState_t;
 
 /**
+  * @struct entityShared_s
+  * @brief entityShared_t
+  *
+  * @warning Don't add or remove fields to keep 2.60 compatibility
+  */
+typedef struct
+{
+	qboolean linked;                ///< qfalse if not in any good cluster
+	int linkcount;
+
+	int svFlags;                    ///<  SVF_NOCLIENT, SVF_BROADCAST, etc
+	int singleClient;               ///<  only send to this client when SVF_SINGLECLIENT is set
+
+	qboolean bmodel;                ///<  if false, assume an explicit mins / maxs bounding box
+	///<  only set by trap_SetBrushModel
+	vec3_t mins, maxs;
+	int contents;                   ///<  CONTENTS_TRIGGER, CONTENTS_SOLID, CONTENTS_BODY, etc
+	///<  a non-solid entity should set to 0
+
+	vec3_t absmin, absmax;          ///<  derived from mins/maxs and origin + rotation
+
+	/// currentOrigin will be used for all collision detection and world linking.
+	/// it will not necessarily be the same as the trajectory evaluation for the current
+	/// time, because each entity must be moved one at a time after time is advanced
+	/// to avoid simultanious collision issues
+	///
+	vec3_t currentOrigin;
+	vec3_t currentAngles;
+
+	/// when a trace call is made and passEntityNum != ENTITYNUM_NONE,
+	/// an ent will be excluded from testing if:
+	/// ent->s.number == passEntityNum   (don't interact with self)
+	/// ent->s.ownerNum = passEntityNum  (don't interact with your own missiles)
+	/// entity[ent->s.ownerNum].ownerNum = passEntityNum (don't interact with other missiles from owner)
+	int ownerNum;
+	int eventTime;
+
+	int worldflags;
+
+	qboolean snapshotCallback;
+} entityShared_t;
+
+/**
  * @enum connstate_t
  * @brief
  */
@@ -1958,7 +2002,7 @@ typedef struct userAgent_s
 */
 typedef struct ettvClientSnapshot_s
 {
-	qboolean valid;    ///< is the playerstate valid for delta compression
+	qboolean valid;    ///< is the playerstate valid
 	playerState_t ps;
 } ettvClientSnapshot_t;
 

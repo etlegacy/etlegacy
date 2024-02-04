@@ -267,6 +267,13 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
+#ifdef DEDICATED
+	if (svclc.demo.playing)
+	{
+		svclc.demo.fastForwardTime = 0;
+	}
+#endif // DEDICATED
+
 	if (Cmd_Argc() > 1)
 	{
 		delay = Q_atoi(Cmd_Argv(1));
@@ -429,7 +436,7 @@ void SV_TempBan(client_t *client, int length)
 			if (slot == -1 || oldesttime > svs.tempBans[i].endtime)
 			{
 				oldesttime = svs.tempBans[i].endtime;
-				slot     = i;
+				slot       = i;
 			}
 		}
 	}
@@ -745,6 +752,11 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("devmap", SV_Map_f, "Loads a specific map in developer mode.", SV_CompleteMapName);
 	Cmd_AddCommand("killserver", SV_KillServer_f, "Kills the server.");
 	Cmd_AddCommand("cleartempbans", SV_TempBanClear_f, "Clears the temporary ban list.");
+
+#ifdef DEDICATED
+	Cmd_AddCommand("tv", SV_CL_Commands_f, "tv commands.");
+#endif
+
 	if (com_dedicated->integer)
 	{
 		Cmd_AddCommand("say", SV_ConSay_f, "Prints console messages on dedicated servers.");
@@ -759,6 +771,10 @@ void SV_AddOperatorCommands(void)
 #endif
 
 	SV_DemoInit();
+
+#ifdef DEDICATED
+	SV_CL_DemoInit();
+#endif
 }
 
 /**

@@ -38,9 +38,14 @@
 #include "sv_tracker.h"
 #endif
 
-serverStatic_t svs;             // persistant server info
-server_t       sv;              // local server
-vm_t           *gvm = NULL;     // game virtual machine
+serverStatic_t svs;                   // persistant server info
+server_t       sv;                    // local server
+#ifdef DEDICATED
+svclientActive_t     svcl;
+svclientConnection_t svclc;
+svclientStatic_t     svcls;
+#endif // DEDICATED
+vm_t *gvm = NULL;                     // game virtual machine
 
 cvar_t *sv_fps = NULL;          // time rate for running non-clients
 cvar_t *sv_timeout;             // seconds without any message
@@ -127,6 +132,9 @@ cvar_t *sv_serverTimeReset;
 
 cvar_t *sv_etltv_maxslaves;
 cvar_t *sv_etltv_password;
+cvar_t *sv_etltv_autorecord;
+cvar_t *sv_etltv_autoplay;
+cvar_t *sv_etltv_clientname;
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -1294,6 +1302,19 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 	client_t *cl;
 	int      qport;
 
+#ifdef DEDICATED
+	if (NET_CompareAdr(from, svclc.serverAddress))
+	{
+		CL_PacketEvent(from, msg);
+		return;
+	}
+
+	if (svcls.isTVGame && svcls.state == CA_DISCONNECTED)
+	{
+		return;
+	}
+#endif // DEDICATED
+
 	// check for connectionless packet (0xffffffff) first
 	if (msg->cursize >= 4 && *(int *)msg->data == -1)
 	{
@@ -1434,7 +1455,7 @@ static void SV_CalcPings(void)
  * for a few seconds to make sure any final reliable message gets resent
  * if necessary.
  */
-static void SV_CheckTimeouts(void)
+void SV_CheckTimeouts(void)
 {
 	client_t *cl;
 	int      i;
@@ -1565,6 +1586,13 @@ static qboolean SV_CheckPaused(void)
  */
 int SV_FrameMsec()
 {
+#ifdef DEDICATED
+	if (svcls.isTVGame)
+	{
+		return 8;
+	}
+#endif // DEDICATED
+
 	if (sv_fps)
 	{
 		int frameMsec = (int)(1000.0f / sv_fps->value);
@@ -1584,6 +1612,93 @@ int SV_FrameMsec()
 	}
 }
 
+/**
+ * @brief SV_Frame_Ext
+ * @param[in] frameMsec
+ */
+static void SV_Frame_Ext(int frameMsec)
+{
+	int startTime;
+
+	if (cvar_modifiedFlags & CVAR_SERVERINFO)
+	{
+		SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+		cvar_modifiedFlags &= ~CVAR_SERVERINFO;
+	}
+	if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
+	{
+		SV_SetConfigstringNoUpdate(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+		cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
+	}
+	if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
+	{
+		SV_SetConfigstring(CS_SYSTEMINFO, Cvar_InfoString_Big(CVAR_SYSTEMINFO));
+		cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
+	}
+	if (cvar_modifiedFlags & CVAR_WOLFINFO)
+	{
+		SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
+		cvar_modifiedFlags &= ~CVAR_WOLFINFO;
+	}
+
+	if (com_speeds->integer)
+	{
+		startTime = Sys_Milliseconds();
+	}
+	else
+	{
+		startTime = 0;  // quite a compiler warning
+	}
+
+	// start recording a demo
+	if (sv_autoDemo->integer)
+	{
+		SV_DemoAutoDemoRecord();
+	}
+
+	// update ping based on the all received frames
+	SV_CalcPings();
+
+	// run the game simulation in chunks
+	while (sv.timeResidual >= frameMsec)
+	{
+		sv.timeResidual -= frameMsec;
+		svs.time        += frameMsec;
+		sv.time         += frameMsec;
+
+		// let everything in the world think and move
+		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+
+		// play/record demo frame (if enabled)
+		if (sv.demoState == DS_RECORDING) // Record the frame
+		{
+			SV_DemoWriteFrame();
+		}
+		else if (sv_demoState->integer == DS_WAITINGPLAYBACK) // Launch again the playback of the demo (because we needed a restart in order to set some cvars such as sv_maxclients or fs_game)
+		{
+			SV_DemoRestartPlayback();
+		}
+		else if (sv.demoState == DS_PLAYBACK) // Play the next demo frame
+		{
+			SV_DemoReadFrame();
+		}
+	}
+
+	if (com_speeds->integer)
+	{
+		time_game = Sys_Milliseconds() - startTime;
+	}
+
+	// check timeouts
+	SV_CheckTimeouts();
+
+	// check user info buffer thingy
+	SV_CheckClientUserinfoTimer();
+
+	// send messages back to the clients
+	SV_SendClientMessages();
+}
+
 #ifdef DEDICATED
 extern void Sys_Sleep(int msec);
 #endif
@@ -1600,13 +1715,16 @@ extern void Sys_Sleep(int msec);
 void SV_Frame(int msec)
 {
 	int        frameMsec;
-	int        startTime;
 	char       mapname[MAX_QPATH];
 	int        frameStartTime = 0;
 	static int start, end;
 
 	start           = Sys_Milliseconds();
 	svs.stats.idle += ( double )(start - end) / 1000;
+
+#ifdef DEDICATED
+	svcls.realtime += msec;
+#endif // DEDICATED
 
 	// the menu kills the server with this cvar
 	if (sv_killserver->integer)
@@ -1620,6 +1738,13 @@ void SV_Frame(int msec)
 	Com_WebDownloadLoop();
 	if (!com_sv_running->integer)
 	{
+		SV_CL_CheckForResend();
+
+		if (svcls.state == CA_CONNECTED && SV_CL_ReadyToSendPacket())
+		{
+			SV_CL_WritePacket();
+		}
+
 		return;
 	}
 #endif
@@ -1630,6 +1755,7 @@ void SV_Frame(int msec)
 		// Block until something interesting happens
 		Sys_Sleep(-1);
 #endif
+
 		return;
 	}
 
@@ -1649,7 +1775,7 @@ void SV_Frame(int msec)
 	{
 		Cvar_Set("sv_fps", "10");
 	}
-	frameMsec = 1000 / sv_fps->integer ;
+	frameMsec = 1000 / sv_fps->integer;
 
 	sv.timeResidual += msec;
 
@@ -1685,84 +1811,16 @@ void SV_Frame(int msec)
 		return;
 	}
 
-	// update infostrings if anything has been changed
-	if (cvar_modifiedFlags & CVAR_SERVERINFO)
+#ifdef DEDICATED
+	if (svcls.isTVGame)
 	{
-		SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
-		cvar_modifiedFlags &= ~CVAR_SERVERINFO;
-	}
-	if (cvar_modifiedFlags & CVAR_SERVERINFO_NOUPDATE)
-	{
-		SV_SetConfigstringNoUpdate(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
-		cvar_modifiedFlags &= ~CVAR_SERVERINFO_NOUPDATE;
-	}
-	if (cvar_modifiedFlags & CVAR_SYSTEMINFO)
-	{
-		SV_SetConfigstring(CS_SYSTEMINFO, Cvar_InfoString_Big(CVAR_SYSTEMINFO));
-		cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
-	}
-	if (cvar_modifiedFlags & CVAR_WOLFINFO)
-	{
-		SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
-		cvar_modifiedFlags &= ~CVAR_WOLFINFO;
-	}
-
-	// start recording a demo
-	if (sv_autoDemo->integer)
-	{
-		SV_DemoAutoDemoRecord();
-	}
-
-	if (com_speeds->integer)
-	{
-		startTime = Sys_Milliseconds();
+		SV_CL_Frame(frameMsec);
 	}
 	else
+#endif // DEDICATED
 	{
-		startTime = 0;  // quite a compiler warning
+		SV_Frame_Ext(frameMsec);
 	}
-
-	// update ping based on the all received frames
-	SV_CalcPings();
-
-	// run the game simulation in chunks
-	while (sv.timeResidual >= frameMsec)
-	{
-		sv.timeResidual -= frameMsec;
-		sv.time         += frameMsec;
-		svs.time        += frameMsec;
-
-		// let everything in the world think and move
-		VM_Call(gvm, GAME_RUN_FRAME, sv.time);
-
-		// play/record demo frame (if enabled)
-		if (sv.demoState == DS_RECORDING) // Record the frame
-		{
-			SV_DemoWriteFrame();
-		}
-		else if (sv_demoState->integer == DS_WAITINGPLAYBACK) // Launch again the playback of the demo (because we needed a restart in order to set some cvars such as sv_maxclients or fs_game)
-		{
-			SV_DemoRestartPlayback();
-		}
-		else if (sv.demoState == DS_PLAYBACK) // Play the next demo frame
-		{
-			SV_DemoReadFrame();
-		}
-	}
-
-	if (com_speeds->integer)
-	{
-		time_game = Sys_Milliseconds() - startTime;
-	}
-
-	// check timeouts
-	SV_CheckTimeouts();
-
-	// check user info buffer thingy
-	SV_CheckClientUserinfoTimer();
-
-	// send messages back to the clients
-	SV_SendClientMessages();
 
 	// send a heartbeat to the master if needed
 	SV_MasterHeartbeat(HEARTBEAT_GAME);
