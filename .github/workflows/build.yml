@@ -562,6 +562,11 @@ jobs:
         run: ls -R
         working-directory: build/legacy
 
+      - name: Generate packages
+        shell: bash
+        working-directory: build
+        run: cpack
+
       - uses: actions/upload-artifact@v4
         with:
           name: raspberry_pi-packages
