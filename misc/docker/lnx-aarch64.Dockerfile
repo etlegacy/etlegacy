@@ -10,7 +10,7 @@ RUN cd /tmp && \
     libx11-dev:arm64 libgl1-mesa-dev:arm64 libxext-dev:arm64 xserver-xorg-dev:arm64 libwayland-dev:arm64 \
     libasound2-dev:arm64 libpulse-dev:arm64 libxrandr-dev:arm64 libxcursor-dev:arm64 libxi-dev:arm64 \
     libxss-dev:arm64 libxcb-xinput-dev:arm64 libwayland-egl1:arm64 libwayland-egl1-mesa:arm64 libwayland-cursor0:arm64 \
-    xkbcommon-dev:arm64
+    libxkbcommon-dev:arm64
 
 RUN git clone --branch v1.11.1 --depth 1 https://github.com/ninja-build/ninja.git && \
     cmake -B ninja/build -S ninja && \
