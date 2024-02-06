@@ -2,9 +2,9 @@
 name: LinuxArmBuildMachine
 
 on:
-#  push:
-#    paths:
-#      - 'misc/docker/lnx-aarch64.Dockerfile'
+  push:
+    paths:
+      - 'misc/docker/lnx-aarch64.Dockerfile'
   workflow_dispatch:
 
 jobs:
