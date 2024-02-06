@@ -184,26 +184,19 @@ jobs:
   raspberry_pi-mod:
     runs-on: ubuntu-20.04
     needs: version
+    container:
+      image: etlegacy/lnx-aarch64-build
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
 
-      - uses: pguyot/arm-runner-action@v2.5.2
-        with:
-           image_additional_mb: 4096
-           base_image: https://github.com/rafal1137/Raspberrypi_imager/releases/download/latest/rpi.img.xz
-           cpu: cortex-a53
-           cpu_info: cpuinfo/raspberrypi_4b
-           bind_mount_repository: true
-           copy_repository_path: /opt/etlegacy
-           optimize_image: no
-           commands: |
-             cd /opt/etlegacy
-             git fetch --tags --force
-             export CI=true
-             ./easybuild.sh build -RPI -mod -ninja
+      - name: Build
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git fetch --tags --force
+          ./easybuild.sh build -RPIT -mod -ninja
 
       - uses: actions/upload-artifact@v4
         with:
@@ -546,34 +539,24 @@ jobs:
   raspberry_pi:
     runs-on: ubuntu-latest
     needs: [ version, lnx32 ]
+    container:
+      image: etlegacy/lnx-aarch64-build
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
 
+      - name: Build
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git fetch --tags --force
+          ./easybuild.sh build -RPIT -ninja
+
       - uses: actions/download-artifact@v4
         with:
           name: All-mods
-          path: build
-
-      - uses: pguyot/arm-runner-action@v2.5.2
-        with:
-           image_additional_mb: 4096
-           base_image: https://github.com/rafal1137/Raspberrypi_imager/releases/download/latest/rpi.img.xz
-           cpu: cortex-a53
-           cpu_info: cpuinfo/raspberrypi_4b
-           bind_mount_repository: true
-           copy_repository_path: /opt/etlegacy
-           optimize_image: no
-           commands: |
-             cd /opt/etlegacy
-             git fetch --tags --force
-             export CI=true
-             ./easybuild.sh build -RPI -ninja
-             cd build
-             cp *.pk3 /opt/etlegacy/build/legacy
-             cpack
+          path: build/legacy
 
       - name: Display structure of downloaded files
         run: ls -R
