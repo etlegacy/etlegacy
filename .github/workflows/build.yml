@@ -181,7 +181,7 @@ jobs:
           path: |
             build/legacy/qagame*.dll
 
-  raspberry_pi-mod:
+  lnx-aarch64-mod:
     runs-on: ubuntu-20.04
     needs: version
     container:
@@ -200,14 +200,14 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: raspberry_pi-mod
+          name: lnx-aarch64-mod
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
 
       - uses: actions/upload-artifact@v4
         with:
-          name: raspberry_pi-qagame
+          name: lnx-aarch64-qagame
           path: |
             build/legacy/qagame*.so
 
@@ -279,7 +279,7 @@ jobs:
 # This step also generates the final packages for 32 bit lnx.
   lnx32:
     runs-on: ubuntu-20.04
-    needs: [ version, lnx64-mod, osx-mod, win-mod, win64-mod, raspberry_pi-mod, android-mod ]
+    needs: [ version, lnx64-mod, osx-mod, win-mod, win64-mod, lnx-aarch64-mod, android-mod ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -365,7 +365,7 @@ jobs:
 #  |_|      |_| |_| |_|  \__,_| |_|   | .__/   \__,_|  \___| |_|\_\  \__,_|  \__, |  \___| |___/
 #                                     | |                                     __/ |
 #                                     |_|                                    |___/
-# Generate the final packages for 64lnx, Osx, Windows and RPI (armv7 only)
+# Generate the final packages for Lnx, macOS, Windows and Android
   lnx64:
     runs-on: ubuntu-20.04
     needs: [ version, lnx32 ]
@@ -536,7 +536,7 @@ jobs:
             build/etlegacy-*.exe
             build/etlegacy-*.zip
 
-  raspberry_pi:
+  lnx-aarch64:
     runs-on: ubuntu-latest
     needs: [ version, lnx32 ]
     container:
@@ -569,7 +569,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: raspberry_pi-packages
+          name: lnx-aarch64-packages
           path: |
             build/etlegacy-*.tar.gz
             build/etlegacy-*.sh
@@ -636,7 +636,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-20.04
-    needs: [ lnx32, lnx64, osx, win, win64, raspberry_pi, android ]
+    needs: [ lnx32, lnx64, osx, win, win64, lnx-aarch64, android ]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v4
@@ -665,7 +665,7 @@ jobs:
           find win-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=qkKkqKmiKHul" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find win64-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=1EM7l2e6pqpA" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find android-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=pqxx51ioaosg" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
-          find raspberry_pi-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=r3tqepamenlf" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find lnx-aarch64-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=r3tqepamenlf" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=eacan4jn14wt" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
