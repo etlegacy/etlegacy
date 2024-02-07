@@ -34,6 +34,10 @@
 
 #include "sdl_defs.h"
 
+#ifdef FEATURE_RENDERER_VULKAN
+#include <SDL/SDL_vulkan.h>
+#endif
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -663,9 +667,21 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	int             display = 0;
 	int             x = SDL_WINDOWPOS_UNDEFINED, y = SDL_WINDOWPOS_UNDEFINED;
 
-	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED;
+	Uint32 flags = SDL_WINDOW_INPUT_GRABBED;
 
-	Com_Printf("Initializing OpenGL display\n");
+	if (context->vulkan)
+	{
+		flags |= SDL_WINDOW_VULKAN;
+#ifndef FEATURE_RENDERER_VULKAN
+		Com_Error(ERR_FATAL, "Vulkan subsystem not available in build\n");
+#endif
+	}
+	else
+	{
+		flags |= SDL_WINDOW_OPENGL;
+	}
+
+	Com_Printf("Initializing window\n");
 
 	if (r_allowResize->integer && !fullscreen)
 	{
@@ -1043,6 +1059,10 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 			Com_Printf("SDL_Init(SDL_INIT_VIDEO) FAILED (%s)\n", SDL_GetError());
 			return qfalse;
 		}
+
+#ifdef FEATURE_RENDERER_VULKAN
+		SDL_Vulkan_LoadLibrary(NULL);
+#endif
 
 		Com_Printf("SDL initialized driver \"%s\"\n", SDL_GetCurrentVideoDriver());
 	}

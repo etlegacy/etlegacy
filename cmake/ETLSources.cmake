@@ -191,6 +191,18 @@ FILE(GLOB RENDERER2_SHADERDEFS
 	"src/renderer2/gldef/*.gldef"
 )
 
+FILE(GLOB RENDERER_VULKAN_FILES
+	"src/renderer_vk/*.c"
+	"src/renderer_vk/*.h"
+	"src/renderer_vk/vulkan/*.c"
+	"src/renderer_vk/vulkan/*.h"
+)
+
+FILE(GLOB RENDERER_VULKAN_SHADERS
+	"src/renderer_vk/glsl/*.glsl"
+	"src/renderer_vk/glsl/*/*.glsl"
+)
+
 FILE(GLOB IRC_CLIENT_FILES
 	"src/irc/htable.c"
 	"src/irc/htable.h"

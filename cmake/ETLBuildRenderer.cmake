@@ -6,10 +6,12 @@ if(NOT APPLE)
 	set(R1_NAME renderer_opengl1_${ARCH})
 	set(R2_NAME renderer_opengl2_${ARCH})
 	set(R_ES_NAME renderer_opengles_${ARCH})
+	set(R_VULKAN_NAME renderer_vulkan_${ARCH})
 else()
 	set(R1_NAME renderer_opengl1${LIB_SUFFIX})
 	set(R2_NAME renderer_opengl2${LIB_SUFFIX})
 	set(R_ES_NAME renderer_opengles${LIB_SUFFIX})
+	set(R_VULKAN_NAME renderer_vulkan${LIB_SUFFIX})
 endif()
 
 set(RENDERERS_BUILDING)
@@ -23,6 +25,10 @@ endif()
 
 if(FEATURE_RENDERER_GLES)
 	list(APPEND RENDERERS_BUILDING "opengles")
+endif()
+
+if(FEATURE_RENDERER_VULKAN)
+	list(APPEND RENDERERS_BUILDING "vulkan")
 endif()
 
 if(RENDERERS_BUILDING)
@@ -159,4 +165,17 @@ if(FEATURE_RENDERER2)
 	endif()
 
 	configure_renderer(renderer2 ${R2_NAME})
+endif()
+
+if(FEATURE_RENDERER_VULKAN)
+	add_library(renderer_vulkan ${REND_LIBTYPE} ${RENDERER_VULKAN_FILES} ${RENDERER_COMMON} ${RENDERER_VULKAN_SHADERS})
+	target_link_libraries(renderer_vulkan renderer_vulkan_libraries renderer_libraries)
+	target_compile_definitions(renderer_vulkan PRIVATE FEATURE_RENDERER_VULKAN)
+	target_compile_definitions(client_libraries INTERFACE FEATURE_RENDERER_VULKAN)
+
+	if(NOT MSVC)
+		target_link_libraries(renderer_vulkan renderer_libraries m)
+	endif()
+
+	configure_renderer(renderer_vulkan ${R_VULKAN_NAME})
 endif()

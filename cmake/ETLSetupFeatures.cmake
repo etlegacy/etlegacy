@@ -76,6 +76,12 @@ if(BUILD_CLIENT)
 		target_include_directories(renderer_gles_libraries INTERFACE ${GLES_INCLUDE_DIR})
 	endif()
 
+	if(FEATURE_RENDERER_VULKAN)
+		# FIXME: use the vulkan sdk for now, swap to headers only at some point
+		find_package(Vulkan REQUIRED)
+		target_link_libraries(renderer_vulkan_libraries INTERFACE Vulkan::Vulkan)
+	endif()
+
 	if(NOT BUNDLED_SDL)
 		find_package(SDL2 2.0.8 REQUIRED)
 		target_link_libraries(client_libraries INTERFACE ${SDL2_LIBRARY})
@@ -88,7 +94,7 @@ if(BUILD_CLIENT)
 		target_link_libraries(client_libraries INTERFACE bundled_sdl_int)
 		target_compile_definitions(client_libraries INTERFACE BUNDLED_SDL)
 	endif()
-	# for tinygettext (always force SDL icons -> less dependancies)
+	# for tinygettext (always force SDL icons -> less dependencies)
 	target_compile_definitions(client_libraries INTERFACE HAVE_SDL)
 
 	if(NOT BUNDLED_JPEG)
