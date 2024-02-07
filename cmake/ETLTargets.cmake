@@ -15,6 +15,10 @@ add_library(engine_libraries INTERFACE)
 # All renderer common libraries
 add_library(renderer_libraries INTERFACE)
 
+add_library(renderer_gl1_libraries INTERFACE)
+add_library(renderer_gl2_libraries INTERFACE)
+add_library(renderer_gles_libraries INTERFACE)
+
 # Mod shared libraries
 add_library(mod_libraries INTERFACE)
 

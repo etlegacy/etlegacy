@@ -5,13 +5,77 @@
 if(NOT APPLE)
 	set(R1_NAME renderer_opengl1_${ARCH})
 	set(R2_NAME renderer_opengl2_${ARCH})
+	set(R_ES_NAME renderer_opengles_${ARCH})
 else()
 	set(R1_NAME renderer_opengl1${LIB_SUFFIX})
 	set(R2_NAME renderer_opengl2${LIB_SUFFIX})
+	set(R_ES_NAME renderer_opengles${LIB_SUFFIX})
 endif()
 
+set(RENDERERS_BUILDING)
+if(FEATURE_RENDERER1)
+	list(APPEND RENDERERS_BUILDING "opengl1")
+endif()
+
+if(FEATURE_RENDERER2)
+	list(APPEND RENDERERS_BUILDING "opengl2")
+endif()
+
+if(FEATURE_RENDERER_GLES)
+	list(APPEND RENDERERS_BUILDING "opengles")
+endif()
+
+if(RENDERERS_BUILDING)
+	message(STATUS "Building renderers: ${RENDERERS_BUILDING}")
+	list(LENGTH RENDERERS_BUILDING RENDERERS_COUNT)
+	if(RENDERERS_COUNT GREATER 1 AND NOT RENDERER_DYNAMIC)
+		message(FATAL_ERROR "Only one renderer can be built at a time when building static libraries")
+	elseif(RENDERERS_COUNT EQUAL 1 AND RENDERER_DYNAMIC)
+		message(NOTICE "Only one renderer is being built, dynamic libraries is not necessary")
+	endif()
+
+	# Set the default renderer name for the client code
+	list(GET RENDERERS_BUILDING 0 RENDERER_NAME)
+	target_compile_definitions(client_libraries INTERFACE DEFAULT_RENDERER_NAME="${RENDERER_NAME}")
+else()
+	message(FATAL_ERROR "No renderers selected to build")
+endif()
+
+macro(configure_renderer renderer name)
+	# install the dynamic lib only
+	if(RENDERER_DYNAMIC)
+		set_target_properties(${renderer}
+			PROPERTIES
+			OUTPUT_NAME "${name}"
+			LIBRARY_OUTPUT_DIRECTORY ""
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
+		)
+
+		if(WIN32)
+			set_target_properties(${renderer} PROPERTIES PREFIX "")
+		endif(WIN32)
+
+		if(WIN32)
+			install(TARGETS ${renderer}
+				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+			)
+		else()
+			install(TARGETS ${renderer}
+				LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+				ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+			)
+		endif()
+	endif()
+
+	if(NOT RENDERER_DYNAMIC)
+		target_link_libraries(client_libraries INTERFACE ${renderer})
+	endif()
+endmacro()
+
 if(RENDERER_DYNAMIC)
-	MESSAGE("Will build dynamic renderer libraries")
+	message(STATUS "Will build dynamic renderer libraries")
 	target_compile_definitions(client_libraries INTERFACE USE_RENDERER_DLOPEN)
 	target_compile_definitions(renderer_libraries INTERFACE USE_RENDERER_DLOPEN)
 	set(REND_LIBTYPE MODULE)
@@ -20,61 +84,35 @@ else()
 	set(REND_LIBTYPE STATIC)
 endif()
 
-if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
+if(FEATURE_RENDERER1)
+	add_library(renderer1 ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
 
-	if(FEATURE_RENDERER_GLES)
-		add_library(renderer1 ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
-		target_compile_definitions(renderer1 PRIVATE FEATURE_RENDERER_GLES)
-	else()
-		add_library(renderer1 ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
+	target_link_libraries(renderer1 renderer_gl1_libraries renderer_libraries)
+
+	if(NOT MSVC)
+		target_link_libraries(renderer1 m)
 	endif()
 
-	if(MSVC)
-		target_link_libraries(renderer1 renderer_libraries)
-	else()
-		target_link_libraries(renderer1 renderer_libraries m)
-	endif(MSVC)
+	configure_renderer(renderer1 ${R1_NAME})
+endif()
 
-	set_target_properties(renderer1
-		PROPERTIES
-		OUTPUT_NAME "${R1_NAME}"
-	)
+if(FEATURE_RENDERER_GLES)
+	add_library(renderer_es ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
+	target_compile_definitions(renderer_es PRIVATE FEATURE_RENDERER_GLES)
 
-	# install the dynamic lib only
-	if(RENDERER_DYNAMIC)
-		set_target_properties(renderer1
-			PROPERTIES
-			LIBRARY_OUTPUT_DIRECTORY ""
-			LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
-			LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
-		)
+	target_link_libraries(renderer_es renderer_gles_libraries renderer_libraries)
 
-		if(WIN32)
-			set_target_properties(renderer1 PROPERTIES PREFIX "")
-		endif(WIN32)
-
-		if(WIN32)
-			install(TARGETS renderer1
-				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-			)
-		else()
-			install(TARGETS renderer1
-				LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-				ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-			)
-		endif()
+	if(NOT MSVC)
+		target_link_libraries(renderer_es m)
 	endif()
 
-	if(NOT RENDERER_DYNAMIC)
-		target_link_libraries(client_libraries INTERFACE renderer1)
-	endif()
+	configure_renderer(renderer_es ${R_ES_NAME})
 endif()
 
 if(FEATURE_RENDERER2)
 	if(MSVC)
 		list(APPEND RENDERER2_FILES ${RENDERER2_SHADERS})
-	endif(MSVC)
+	endif()
 
 	if(MSVC OR XCODE)
 		GET_FILENAME_COMPONENT(GLSL_FULLPATH ${GLSL_PATH} ABSOLUTE)
@@ -112,41 +150,13 @@ if(FEATURE_RENDERER2)
 
 	add_library(renderer2 ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
 	add_dependencies(renderer2 r2_shader_compile)
-
-	if(MSVC)
-		target_link_libraries(renderer2 renderer_libraries)
-	else()
-		target_link_libraries(renderer2 renderer_libraries m)
-	endif(MSVC)
-
-	set_target_properties(renderer2
-		PROPERTIES
-		OUTPUT_NAME "${R2_NAME}"
-		COMPILE_DEFINITIONS "FEATURE_RENDERER2"
-		LIBRARY_OUTPUT_DIRECTORY ""
-		LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
-		LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
-	)
-
-	if(WIN32)
-		set_target_properties(renderer2 PROPERTIES PREFIX "")
-	endif(WIN32)
-
+	target_link_libraries(renderer2 renderer_gl2_libraries renderer_libraries)
+	target_compile_definitions(renderer2 PRIVATE FEATURE_RENDERER2)
 	target_compile_definitions(renderer2 PUBLIC USE_REFENTITY_ANIMATIONSYSTEM=1)
 
-	if(WIN32)
-		install(TARGETS renderer2
-			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-		)
-	else()
-		install(TARGETS renderer2
-			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-		)
+	if(NOT MSVC)
+		target_link_libraries(renderer2 renderer_libraries m)
 	endif()
 
-	if(NOT RENDERER_DYNAMIC)
-		target_link_libraries(client_libraries INTERFACE renderer2)
-	endif()
-endif(FEATURE_RENDERER2)
+	configure_renderer(renderer2 ${R2_NAME})
+endif()
