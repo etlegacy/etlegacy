@@ -75,11 +75,6 @@ jobs:
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: lnx64-qagame
-          path: |
             build/legacy/qagame*.so
 
       - uses: actions/upload-artifact@v4
@@ -113,11 +108,6 @@ jobs:
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: lnx32-qagame
-          path: |
             build/legacy/qagame*.so
 
   osx-mod:
@@ -154,11 +144,6 @@ jobs:
           path: |
             build/legacy/cgame_mac
             build/legacy/ui_mac
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: osx-qagame
-          path: |
             build/legacy/qagame_mac
 
   win-mod:
@@ -183,11 +168,6 @@ jobs:
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: win-qagame
-          path: |
             build/legacy/qagame*.dll
 
   win64-mod:
@@ -212,11 +192,6 @@ jobs:
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: win64-qagame
-          path: |
             build/legacy/qagame*.dll
 
   lnx-aarch64-mod:
@@ -242,11 +217,6 @@ jobs:
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: lnx-aarch64-qagame
-          path: |
             build/legacy/qagame*.so
 
   android-mod:
@@ -326,9 +296,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          pattern: |
-            *-qagame
-            *-mod
+          pattern: '*-mod'
           path: platforms
           merge-multiple: true
 
@@ -342,14 +310,6 @@ jobs:
         run: |
           zip -rvj legacy_*.pk3 platforms.manifest platforms/cgame* platforms/ui* platforms/libcgame* platforms/libui*
 
-      - name: Remove old artifacts
-        uses: geekyeggo/delete-artifact@v4
-        with:
-          failOnError: false
-          name: |
-            *-mod
-            *-qagame
-
       - name: Create mod zip
         shell: bash
         run: |
@@ -362,7 +322,6 @@ jobs:
           name: |
             incomplete-mod-pk3
             *-mod
-            *-qagame
 
       - uses: actions/upload-artifact@v4
         with:
@@ -820,5 +779,4 @@ jobs:
             incomplete-mod-pk3
             *-packages
             *-mod
-            *-qagame
 
