@@ -38,15 +38,6 @@
 #include "../qcommon/q_shared.h"
 #include "tr_public.h"
 #include "iqm.h"
-#ifdef FEATURE_RENDERER_GLES
-#include <GLES/gl.h>
-#else
-#   ifdef BUNDLED_GLEW
-#      include "GL/glew.h"
-#   else
-#      include <GL/glew.h>
-#   endif
-#endif
 
 extern refimport_t ri;
 

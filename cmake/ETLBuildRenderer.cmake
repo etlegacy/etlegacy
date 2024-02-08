@@ -91,9 +91,10 @@ else()
 endif()
 
 if(FEATURE_RENDERER1)
-	add_library(renderer1 ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
+	add_library(renderer1 ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON} ${RENDERER_COMMON_OPENGL})
 
 	target_link_libraries(renderer1 renderer_gl1_libraries renderer_libraries)
+	target_include_directories(renderer1 PRIVATE src/renderer)
 
 	if(NOT MSVC)
 		target_link_libraries(renderer1 m)
@@ -103,10 +104,11 @@ if(FEATURE_RENDERER1)
 endif()
 
 if(FEATURE_RENDERER_GLES)
-	add_library(renderer_es ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
+	add_library(renderer_es ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON} ${RENDERER_COMMON_OPENGL})
 	target_compile_definitions(renderer_es PRIVATE FEATURE_RENDERER_GLES)
 
 	target_link_libraries(renderer_es renderer_gles_libraries renderer_libraries)
+	target_include_directories(renderer_es PRIVATE src/rendererGLES)
 
 	if(NOT MSVC)
 		target_link_libraries(renderer_es m)
@@ -154,11 +156,12 @@ if(FEATURE_RENDERER2)
 	set_target_properties(shdr2h PROPERTIES FOLDER Tools)
 	set_target_properties(r2_shader_compile PROPERTIES FOLDER Tools)
 
-	add_library(renderer2 ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
+	add_library(renderer2 ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER_COMMON_OPENGL} ${RENDERER2_SHADERS})
 	add_dependencies(renderer2 r2_shader_compile)
 	target_link_libraries(renderer2 renderer_gl2_libraries renderer_libraries)
 	target_compile_definitions(renderer2 PRIVATE FEATURE_RENDERER2)
 	target_compile_definitions(renderer2 PUBLIC USE_REFENTITY_ANIMATIONSYSTEM=1)
+	target_include_directories(renderer2 PRIVATE src/renderer2)
 
 	if(NOT MSVC)
 		target_link_libraries(renderer2 renderer_libraries m)
@@ -172,6 +175,7 @@ if(FEATURE_RENDERER_VULKAN)
 	target_link_libraries(renderer_vulkan renderer_vulkan_libraries renderer_libraries)
 	target_compile_definitions(renderer_vulkan PRIVATE FEATURE_RENDERER_VULKAN)
 	target_compile_definitions(client_libraries INTERFACE FEATURE_RENDERER_VULKAN)
+	target_include_directories(renderer_vulkan PRIVATE src/renderer_vk)
 
 	if(NOT MSVC)
 		target_link_libraries(renderer_vulkan renderer_libraries m)

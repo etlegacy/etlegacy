@@ -157,6 +157,16 @@ FILE(GLOB RENDERER_COMMON
 	"src/qcommon/puff.h"
 )
 
+SET(RENDERER_COMMON_OPENGL
+	"src/renderercommon/tr_common_opengl.c"
+)
+
+SET(RENDERER_COMMON_VULKAN
+	"src/renderercommon/tr_common_vulkan.c"
+)
+
+LIST(REMOVE_ITEM RENDERER_COMMON ${RENDERER_COMMON_OPENGL} ${RENDERER_COMMON_VULKAN})
+
 FILE(GLOB RENDERER_COMMON_DYNAMIC
 	"src/qcommon/q_shared.c"
 	"src/qcommon/q_math.c"

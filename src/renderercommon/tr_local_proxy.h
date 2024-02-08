@@ -35,12 +35,7 @@
 #ifndef TR_LOCAL_PROXY_H
 #define TR_LOCAL_PROXY_H
 
-#ifdef FEATURE_RENDERER2
-#include "../renderer2/tr_local.h"
-#elif defined FEATURE_RENDERER_GLES
-#include "../rendererGLES/tr_local.h"
-#else
-#include "../renderer/tr_local.h"
-#endif
+// FIXME: this is now handled on cmake level so we should remove this
+#include <tr_local.h>
 
 #endif

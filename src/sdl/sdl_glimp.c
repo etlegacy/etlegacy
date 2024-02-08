@@ -35,7 +35,7 @@
 #include "sdl_defs.h"
 
 #ifdef FEATURE_RENDERER_VULKAN
-#include <SDL/SDL_vulkan.h>
+#include <SDL2/SDL_vulkan.h>
 #endif
 
 #include <stdarg.h>
