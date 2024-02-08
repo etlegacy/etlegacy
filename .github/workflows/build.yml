@@ -326,7 +326,9 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          pattern: '*-mod'
+          pattern: |
+            *-qagame
+            *-mod
           path: platforms
           merge-multiple: true
 
@@ -815,6 +817,7 @@ jobs:
           name: |
             All-mods
             mod-zip
+            incomplete-mod-pk3
             *-packages
             *-mod
             *-qagame
