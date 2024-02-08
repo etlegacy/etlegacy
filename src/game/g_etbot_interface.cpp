@@ -1429,6 +1429,15 @@ static int _GetEntityTeam(gentity_t *_ent)
 		break;
 	case ET_CORPSE:
 		return Bot_TeamGameToBot(BODY_TEAM(_ent));
+	case ET_GENERAL:
+		if (!Q_stricmp(_ent->classname, "team_CTF_redspawn"))
+		{
+			return ET_TEAM_AXIS;
+		}
+		if (!Q_stricmp(_ent->classname, "team_CTF_bluespawn"))
+		{
+			return ET_TEAM_ALLIES;
+		}
 	// Let this fall through
 	default:
 		return Bot_TeamGameToBot(_ent->s.teamNum);

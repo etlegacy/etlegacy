@@ -35,6 +35,8 @@
 #ifndef INCLUDE_DL_PUBLIC_H
 #define INCLUDE_DL_PUBLIC_H
 
+#include "q_shared.h"
+
 typedef enum
 {
 	REQUEST_NOK   = 0,
@@ -89,6 +91,8 @@ typedef struct webRequest_s
 	void *cList;
 	struct webRequest_s *next;
 } webRequest_t;
+
+#define FILE_DOWNLOAD_ID 1
 
 unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress);
 unsigned int Web_CreateRequest(const char *url, const char *authToken, webUploadData_t *upload, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress);

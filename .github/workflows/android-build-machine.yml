@@ -1,4 +1,4 @@
-# 2022 Legacy team
+# 2024 Legacy team
 name: AndroidBuildMachine
 
 on:
@@ -10,9 +10,9 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-22.04
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/android-upgrades'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin

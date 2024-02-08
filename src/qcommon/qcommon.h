@@ -122,8 +122,8 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pla
 
 void MSG_ReportChangeVectors_f(void);
 
-void MSG_ETTV_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force);
-//void MSG_ETTV_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to);
+void MSG_ETTV_WriteDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShared_t *to, qboolean force);
+void MSG_ETTV_ReadDeltaEntityShared(msg_t *msg, entityShared_t *from, entityShared_t *to);
 
 /**
 ==============================================================
@@ -435,7 +435,8 @@ enum svc_ops_e
 	svc_download,               ///< [short] size [size bytes]
 	svc_snapshot,
 	svc_EOF,
-	svc_ettv_playerstates
+	svc_ettv_playerstates,
+	svc_ettv_currentstate
 };
 
 /**
@@ -631,6 +632,8 @@ void Cmd_TokenizeStringIncludeComments(const char *text);
 /// Parses a single line of text into arguments and tries to execute it
 /// as if it was typed at the console
 void Cmd_ExecuteString(const char *text);
+
+void Cmd_SingleTokenString(const char *text_in);
 
 /*
 ==============================================================
@@ -1293,6 +1296,7 @@ void SV_PacketEvent(netadr_t from, msg_t *msg);
 qboolean SV_GameCommand(void);
 int SV_FrameMsec();
 int SV_SendQueuedPackets();
+void SV_CheckTimeouts(void);
 
 // UI interface
 

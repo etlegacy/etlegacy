@@ -1621,13 +1621,13 @@ static int _et_G_SetSpawnVar(lua_State *L)
 	return 0;
 }
 
-// variable = et.gentity_get( entnum, fieldname, arrayindex )
-static int _et_gentity_get(lua_State *L)
+// variable = et.gentity_get( entnum, fieldname, array_index )
+static int et_gentity_get(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
 	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
-	unsigned long   addr;
+	lua_Unsigned    addr; // should be uintptr_t but thats c99
 
 	// break on invalid gentity field
 	if (!field)
@@ -1638,11 +1638,11 @@ static int _et_gentity_get(lua_State *L)
 
 	if (field->flags & FIELD_FLAG_GENTITY)
 	{
-		addr = (unsigned long)ent;
+		addr = (lua_Unsigned)ent;
 	}
 	else
 	{
-		addr = (unsigned long)ent->client;
+		addr = (lua_Unsigned)ent->client;
 	}
 
 	// for NULL entities, return nil (prevents server crashes!)
@@ -1987,7 +1987,7 @@ static int _et_G_HistoricalTrace(lua_State *L)
 
 /** @}*/ // doxygen addtogroup lua_etfncs
 
-// et library initialisation array
+// et library initialization array
 static const luaL_Reg etlib[] =
 {
 	// ET Library Calls
@@ -2064,7 +2064,7 @@ static const luaL_Reg etlib[] =
 	{ "trap_UnlinkEntity",       _et_trap_UnlinkEntity       },
 	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
 	{ "G_SetSpawnVar",           _et_G_SetSpawnVar           },
-	{ "gentity_get",             _et_gentity_get             },
+	{ "gentity_get",             et_gentity_get              },
 	{ "gentity_set",             _et_gentity_set             },
 	{ "G_AddEvent",              _et_G_AddEvent              },
 	// Shaders
@@ -2089,6 +2089,7 @@ qboolean G_LuaRunIsolated(const char *modName)
 {
 	int          freeVM, flen = 0;
 	static char  allowedModules[MAX_CVAR_VALUE_STRING];
+	char         filename[MAX_OSPATH];
 	char         *code, *signature;
 	fileHandle_t f;
 	lua_vm_t     *vm;
@@ -2107,72 +2108,80 @@ qboolean G_LuaRunIsolated(const char *modName)
 		return qfalse;
 	}
 
+	Q_strncpyz(filename, modName, sizeof(filename));
+
+	if (Q_stricmp(COM_GetExtension(filename), "lua") != 0)
+	{
+		Q_strcat(filename, sizeof(filename), ".lua");
+	}
+
 	Q_strncpyz(allowedModules, Q_strupr(lua_allowedModules.string), sizeof(allowedModules));
 
 	// try to open lua file
-	flen = trap_FS_FOpenFile(modName, &f, FS_READ);
+	flen = trap_FS_FOpenFile(filename, &f, FS_READ);
 	if (flen < 0)
 	{
-		G_Printf("%s API: %scan not open file '%s'\n", LUA_VERSION, S_COLOR_BLUE, modName);
+		G_Printf("%s API: %scan not open file '%s'\n", LUA_VERSION, S_COLOR_BLUE, filename);
+		return qfalse;
 	}
 	else if (flen > LUA_MAX_FSIZE)
 	{
 		// Let's not load arbitrarily big files to memory.
 		// If your lua file exceeds the limit, let me know.
-		G_Printf("%s API: %signoring file '%s' (too big)\n", LUA_VERSION, S_COLOR_BLUE, modName);
+		G_Printf("%s API: %signoring file '%s' (too big)\n", LUA_VERSION, S_COLOR_BLUE, filename);
 		trap_FS_FCloseFile(f);
+		return qfalse;
+	}
+
+	code = Com_Allocate(flen + 1);
+
+	if (code == NULL)
+	{
+		G_Error("%s API: %smemory allocation error for '%s' data\n", LUA_VERSION, S_COLOR_BLUE, filename);
+	}
+
+	trap_FS_Read(code, flen, f);
+	*(code + flen) = '\0';
+	trap_FS_FCloseFile(f);
+	signature = G_SHA1(code);
+
+	if (Q_stricmp(lua_allowedModules.string, "") && !strstr(allowedModules, signature))
+	{
+		// don't load disallowed lua modules into vm
+		Com_Dealloc(code); // fixed memory leaking in Lua API - thx ETPub/goesa
+		G_Printf("%s API: %sLua module [%s] [%s] disallowed by ACL\n", LUA_VERSION, S_COLOR_BLUE, filename, signature);
 	}
 	else
 	{
-		code = Com_Allocate(flen + 1);
+		// Init lua_vm_t struct
+		vm = (lua_vm_t *)Com_Allocate(sizeof(lua_vm_t));
 
-		if (code == NULL)
+		if (vm == NULL)
 		{
-			G_Error("%s API: %smemory allocation error for '%s' data\n", LUA_VERSION, S_COLOR_BLUE, modName);
+			G_Error("%s API: %svm memory allocation error for %s data\n", LUA_VERSION, S_COLOR_BLUE, filename);
 		}
 
-		trap_FS_Read(code, flen, f);
-		*(code + flen) = '\0';
-		trap_FS_FCloseFile(f);
-		signature = G_SHA1(code);
+		vm->id = -1;
+		Q_strncpyz(vm->file_name, filename, sizeof(vm->file_name));
+		Q_strncpyz(vm->mod_name, "", sizeof(vm->mod_name));
+		Q_strncpyz(vm->mod_signature, signature, sizeof(vm->mod_signature));
+		vm->code      = code;
+		vm->code_size = flen;
+		vm->err       = 0;
 
-		if (Q_stricmp(lua_allowedModules.string, "") && !strstr(allowedModules, signature))
+		// Start lua virtual machine
+		if (G_LuaStartVM(vm))
 		{
-			// don't load disallowed lua modules into vm
-			Com_Dealloc(code); // fixed memory leaking in Lua API - thx ETPub/goesa
-			G_Printf("%s API: %sLua module [%s] [%s] disallowed by ACL\n", LUA_VERSION, S_COLOR_BLUE, modName, signature);
+			vm->id      = freeVM;
+			lVM[freeVM] = vm;
+			return qtrue;
 		}
 		else
 		{
-			// Init lua_vm_t struct
-			vm = (lua_vm_t *)Com_Allocate(sizeof(lua_vm_t));
-
-			if (vm == NULL)
-			{
-				G_Error("%s API: %svm memory allocation error for %s data\n", LUA_VERSION, S_COLOR_BLUE, modName);
-			}
-
-			vm->id = -1;
-			Q_strncpyz(vm->file_name, modName, sizeof(vm->file_name));
-			Q_strncpyz(vm->mod_name, "", sizeof(vm->mod_name));
-			Q_strncpyz(vm->mod_signature, signature, sizeof(vm->mod_signature));
-			vm->code      = code;
-			vm->code_size = flen;
-			vm->err       = 0;
-
-			// Start lua virtual machine
-			if (G_LuaStartVM(vm))
-			{
-				vm->id      = freeVM;
-				lVM[freeVM] = vm;
-				return qtrue;
-			}
-			else
-			{
-				G_LuaStopVM(vm);
-			}
+			G_LuaStopVM(vm);
 		}
 	}
+
 	return qfalse;
 }
 
@@ -3829,5 +3838,22 @@ void G_LuaHook_SpawnEntitiesFromString()
 }
 
 /** @} */ // doxygen addtogroup lua_etevents
+
+void Svcmd_LoadLua_f(void)
+{
+	char buffer[MAX_QPATH];
+	int  i = 1;
+	if (trap_Argc() < 2)
+	{
+		return;
+	}
+
+	for (; i < trap_Argc(); i++)
+	{
+		buffer[0] = '\0';
+		trap_Argv(i, buffer, sizeof(buffer));
+		G_LuaRunIsolated(buffer);
+	}
+}
 
 #endif // FEATURE_LUA

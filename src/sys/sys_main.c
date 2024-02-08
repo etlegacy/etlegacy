@@ -66,6 +66,16 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#ifdef __ANDROID__
+// Android must exit out of the main call..
+#define MAIN_MUST_RETURN
+#endif
+
+#ifdef MAIN_MUST_RETURN
+#include <setjmp.h>
+jmp_buf exit_game;
+#endif
+
 static char binaryPath[MAX_OSPATH]  = { 0 };
 static char installPath[MAX_OSPATH] = { 0 };
 
@@ -309,7 +319,11 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 
 	NET_Shutdown();
 
+#ifdef MAIN_MUST_RETURN
+	longjmp(exit_game, exitCode);
+#else
 	Sys_PlatformExit(exitCode);
+#endif
 }
 
 
@@ -918,6 +932,7 @@ void Sys_ParseArgs(int argc, char **argv)
 			fprintf(stdout, "Masked as: " FAKE_VERSION "\n");
 #endif
 			fprintf(stdout, "Built: " PRODUCT_BUILD_TIME "\n");
+			fprintf(stdout, "Build features: " PRODUCT_BUILD_FEATURES "\n");
 			Sys_Exit(0);
 		}
 	}
@@ -1024,8 +1039,9 @@ void Sys_SetUpConsoleAndSignals(void)
 /**
  * @brief Main game loop
  */
-void Sys_GameLoop(void)
+static int Sys_GameLoop(void)
 {
+	int return_code = EXIT_SUCCESS;
 #ifdef ETLEGACY_DEBUG
 	int startTime, endTime, totalMsec, countMsec;
 	totalMsec = countMsec = 0;
@@ -1063,10 +1079,21 @@ void Sys_GameLoop(void)
 			Com_Printf("frame:%i total used:%i frame time:%i\n", countMsec, totalMsec, endTime - startTime);
 		}
 #endif
+
+#ifdef MAIN_MUST_RETURN
+		int code = setjmp(exit_game);
+
+		if (code)
+		{
+			return_code = code;
+			break;
+		}
+#endif
 	}
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif /* __clang__ */
+	return return_code;
 }
 
 /**
@@ -1078,6 +1105,16 @@ void Sys_GameLoop(void)
 int main(int argc, char **argv)
 {
 	char commandLine[MAX_STRING_CHARS] = { 0 };
+
+#ifdef MAIN_MUST_RETURN
+	// if we have not yet hit the main loop then we exit here on error
+	int code = setjmp(exit_game);
+
+	if (code)
+	{
+		return code;
+	}
+#endif
 
 	Sys_PlatformInit();
 
@@ -1152,7 +1189,7 @@ int main(int argc, char **argv)
 	Com_Init(commandLine);
 
 	//FIXME: Lets not enable this yet for normal use
-#if !defined(DEDICATED) && defined(FEATURE_SSL) && defined(ETLEGACY_DEBUG)
+#if !defined(DEDICATED) && defined(FEATURE_SSL)
 	// Check for certificates
 	Com_CheckCaCertStatus();
 #endif
@@ -1180,7 +1217,5 @@ int main(int argc, char **argv)
 
 #endif
 
-	Sys_GameLoop();
-
-	return EXIT_SUCCESS;
+	return Sys_GameLoop();
 }

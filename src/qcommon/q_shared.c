@@ -2019,6 +2019,22 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 	outStr[outOffset] = 0;
 }
 
+int Q_StringEndsWith(const char *str, const char *suffix)
+{
+	size_t len_str, len_suffix;
+	if (!str || !suffix)
+	{
+		return 0;
+	}
+	len_str    = strlen(str);
+	len_suffix = strlen(suffix);
+	if (len_suffix > len_str)
+	{
+		return 0;
+	}
+	return strncmp(str + len_str - len_suffix, suffix, len_suffix) == 0;
+}
+
 // Colors table (Only used locally)
 const struct
 {
@@ -3058,7 +3074,7 @@ char *Com_ScaleNumberPerThousand(float value, unsigned int decimalCount)
 	static const char *units[] = { "", "k", "M", "G", "T" };
 	unsigned int      i        = 0;
 
-	while (value > 1000 && i < sizeof(units))
+	while (value > 1000 && i < ARRAY_LEN(units))
 	{
 		value /= 1000;
 		++i;

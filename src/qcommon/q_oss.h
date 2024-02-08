@@ -50,6 +50,8 @@ typedef enum
 	OSS_LNX_ARMV8_64    = BIT(6),   ///< 64 - Raspberry Pi aarch 64
 	OSS_MACOS_AARCH64   = BIT(7),   ///< 128 - macOS m1
 	OSS_WIN_X86_64      = BIT(8),   ///< 256 - Windows x86_64
+	OSS_ANDROID_X86     = BIT(9),   ///< 512 - Android x86
+	OSS_ANDROID_X86_64  = BIT(10),  ///< 2014 - Android x86_64
 
 	OSS_END                         ///< Moving "known platforms" index
 } oss_t;
@@ -91,9 +93,9 @@ typedef enum
 #ifdef Q_OSS_STR_INC
 // This must be kept in sync with the oss_t enum above
 const char *oss_str[] = {
-	"win_x86",         "lnx_x86",   "lnx_x86_64",   "macos_x86_64",
-	"android_aarch64", "lnx_armv7", "lnx_armv8_64", "macos_aarch64",
-	"win_x86_64"
+	"win_x86",         "lnx_x86",     "lnx_x86_64",   "macos_x86_64",
+	"android_aarch64", "lnx_armv7",   "lnx_armv8_64", "macos_aarch64",
+	"win_x86_64",      "android_x86", "android_x86_64"
 };
 #endif
 

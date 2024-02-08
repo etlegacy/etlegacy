@@ -46,3 +46,9 @@
 * @brief Build time information in UTC
 */
 #define PRODUCT_BUILD_TIME "@ETL_CMAKE_BUILD_TIME@ UTC"
+
+/**
+* @def PRODUCT_BUILD_FEATURES
+* @brief Build time enabled feature set
+*/
+#define PRODUCT_BUILD_FEATURES "@ETL_COMPILE_FEATURES@"

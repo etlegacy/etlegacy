@@ -97,14 +97,23 @@ macro(GENERATENUMBER VAR VAL)
 endmacro(GENERATENUMBER)
 
 
-execute_process(COMMAND git describe --abbrev=7
+if(DEFINED ENV{CI_ETL_DESCRIBE})
+	set(GIT_DESCRIBE $ENV{CI_ETL_DESCRIBE})
+else()
+	execute_process(COMMAND git describe --abbrev=7
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 		OUTPUT_STRIP_TRAILING_WHITESPACE
 		OUTPUT_VARIABLE GIT_DESCRIBE)
-execute_process(COMMAND git describe --abbrev=0
+endif()
+
+if(DEFINED ENV{CI_ETL_TAG})
+	set(GIT_DESCRIBE_TAG $ENV{CI_ETL_TAG})
+else()
+	execute_process(COMMAND git describe --abbrev=0
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 		OUTPUT_STRIP_TRAILING_WHITESPACE
 		OUTPUT_VARIABLE GIT_DESCRIBE_TAG)
+endif()
 
 if(GIT_DESCRIBE)
 	set(ETL_CMAKE_VERSION ${GIT_DESCRIBE})
@@ -159,6 +168,7 @@ if(GIT_DESCRIBE)
 		set(ETL_CMAKE_PROD_VERSION_STR ${ETLEGACY_VERSION})
 	endif()
 else() # Not using source from git repo
+	message(STATUS "Not using source from git repo, using default version")
 	set(ETL_CMAKE_VERSION ${ETLEGACY_VERSION})
 	set(ETL_CMAKE_VERSION_SHORT ${ETLEGACY_VERSION})
 	set(ETL_CMAKE_PROD_VERSION ${ETLEGACY_VERSIONPLAIN})
@@ -176,6 +186,18 @@ else()
 endif()
 
 message(STATUS "Version: ${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}.${ETLEGACY_VERSION_PATCH}.${ETLEGACY_VERSION_COMMIT} and int version: ${ETL_CMAKE_VERSION_INT}")
+
+get_cmake_property(_variableNames VARIABLES)
+list(SORT _variableNames)
+foreach(_variableName ${_variableNames})
+	if("${_variableName}" MATCHES "^FEATURE_.*" AND ${_variableName} AND NOT "${_variableName}" MATCHES "_AVAILABLE$")
+		string(REGEX REPLACE "^FEATURE_" "" feature_name "${_variableName}")
+		string(TOLOWER "${feature_name}" feature_name)
+		list(APPEND ETL_COMPILE_FEATURES "${feature_name}")
+	endif()
+endforeach()
+list(JOIN ETL_COMPILE_FEATURES ", " ETL_COMPILE_FEATURES)
+message(VERBOSE "Enabled features: ${ETL_COMPILE_FEATURES}")
 
 # Mod version
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/etmain/ui/git_version.h" @ONLY)

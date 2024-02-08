@@ -19,7 +19,28 @@ else
 fi
 
 ETLEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
-ETLEGACY_VERSION=`git describe --abbrev=7 2>/dev/null`
+
+# if we are in a github-action environment, we don't want to use git to control workspace (use actions instead)
+if [[ "${CI}" == "true" ]]; then
+	allow_git=false
+else
+	allow_git=true
+fi
+
+if [[ -z "${CI_ETL_DESCRIBE}" ]]; then
+	ETLEGACY_VERSION=`git describe --abbrev=7 --tags 2>/dev/null`
+else
+	ETLEGACY_VERSION="${CI_ETL_DESCRIBE}"
+fi
+
+if [[ -z "${CI_ETL_TAG}" ]]; then
+	ETLEGACY_SHORT_VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
+else
+	ETLEGACY_SHORT_VERSION="${CI_ETL_TAG}"
+fi
+
+echo "ET: Legacy version: ${ETLEGACY_VERSION}"
+
 INSTALL_PREFIX=${HOME}/etlegacy
 
 # Set this to false to disable colors
@@ -33,6 +54,9 @@ generate_compilation_database=false
 
 # silent mode
 silent_mode=false
+
+# cmake toolchain file
+TOOLCHAIN_FILE=${TOOLCHAIN_FILE:-}
 
 # Command that can be run
 # first array has the cmd names which can be given
@@ -50,6 +74,14 @@ check_exit() {
 	if [ $EXIT_CODE != 0 ]; then
 		echo Exiting!
 		exit $EXIT_CODE
+	fi
+}
+
+run_git() {
+	if $allow_git; then
+		git "${@:1}"
+	else
+		echo "Git usage is not allowed in this environment"
 	fi
 }
 
@@ -235,7 +267,7 @@ print_startup() {
 	checkapp g++
 	checkapp clang 0
 	checkapp clang++ 0
-	checkapp git
+	checkapp git 0
 	checkapp zip
 	checkapp nasm
 	checkapp entr 0
@@ -278,6 +310,9 @@ parse_commandline() {
 		elif [[ $var == --sysroot=* ]]; then
 			XCODE_SDK_PATH=$(echo $var| cut -d'=' -f 2)
 			einfo "Will use OSX sysroot: ${XCODE_SDK_PATH}"
+		elif [[ $var == --toolchain=* ]]; then
+			TOOLCHAIN_FILE=$(echo $var| cut -d'=' -f 2)
+			einfo "Will use toolchain file: ${TOOLCHAIN_FILE}"
 		elif [ "$var" = "-64" ]; then
 			einfo "Will disable crosscompile"
 			CROSS_COMPILE32=0
@@ -348,31 +383,28 @@ parse_commandline() {
 		elif [ "$var" = "-noupdate" ] || [  "$var" = "-no-update" ]; then
 			einfo "Will disable autoupdate"
 			FEATURE_AUTOUPDATE=0
-		elif [ "$var" = "-RPI" ]; then
+		elif [ "$var" = "-RPI" ] || [  "$var" = "-RPIT" ]; then
 			einfo "Will enable Raspberry PI build ..."
-			ARM=1
+			# If we are using RPIT (T for the toolchain) then we will use the default toolchain file
+			if [  "$var" = "-RPIT" ]; then
+				if [ -n "$TOOLCHAIN_FILE" ]; then
+					einfo "Will use toolchain file: ${TOOLCHAIN_FILE}"
+				else
+					einfo "Will use default RPI toolchain file"
+					TOOLCHAIN_FILE=${_SRC}/cmake/Toolchain-cross-aarch64-linux.cmake
+				fi
+			fi
 			CROSS_COMPILE32=0
 			x86_build=false
 			FEATURE_RENDERER_GLES=0
 			RENDERER_DYNAMIC=0
 			FEATURE_RENDERER2=0
-			# FIXME: ogg doesn't compile
-			BUNDLED_OGG_VORBIS=0
-			FEATURE_OGG_VORBIS=0
-			# FIXME
-			FEATURE_THEORA=0
-			BUNDLED_THEORA=0
-			# not required
-			BUNDLED_GLEW=0
-			# FIXME: needs -PIC
-			FEATURE_FREETYPE=0
-			BUNDLED_FREETYPE=0
-			#FEATURE_DBMS=0
-			#BUNDLED_SQLITE3=0
-			#BUNDLED_OPENSSL=0
-			#BUNDLED_WOLFSSL=0
+			FEATURE_OGG_VORBIS=1
+			FEATURE_THEORA=1
+			BUNDLED_GLEW=1
+			FEATURE_FREETYPE=1
 			FEATURE_LUASQL=1
-			FEATURE_PNG=0
+			FEATURE_PNG=1
 			FEATURE_OMNIBOT=1
 			INSTALL_OMNIBOT=0
 		elif [ "$var" = "-ninja" ]; then
@@ -460,7 +492,6 @@ generate_configuration() {
 	#cmake variables
 	RELEASE_TYPE=${RELEASE_TYPE:-Release}
 	CROSS_COMPILE32=${CROSS_COMPILE32:-1}
-	ARM=${ARM:-0}
 	BUILD_SERVER=${BUILD_SERVER:-1}
 	BUILD_CLIENT=${BUILD_CLIENT:-1}
 	BUILD_MOD=${BUILD_MOD:-1}
@@ -505,6 +536,7 @@ generate_configuration() {
 		CMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET:-10.12}
 	fi
 
+	FEATURE_RENDERER1=${FEATURE_RENDERER1:-1}
 	FEATURE_RENDERER2=${FEATURE_RENDERER2:-0}
 	FEATURE_RENDERER_GLES=${FEATURE_RENDERER_GLES:-0}
 	RENDERER_DYNAMIC=${RENDERER_DYNAMIC:-1}
@@ -548,7 +580,6 @@ generate_configuration() {
 		-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}
 		-DCROSS_COMPILE32=${CROSS_COMPILE32}
 		-DZIP_ONLY=${ZIP_ONLY}
-		-DARM=${ARM}
 		-DBUILD_SERVER=${BUILD_SERVER}
 		-DBUILD_CLIENT=${BUILD_CLIENT}
 		-DBUILD_MOD=${BUILD_MOD}
@@ -589,6 +620,7 @@ generate_configuration() {
 		-DFEATURE_RATING=${FEATURE_RATING}
 		-DFEATURE_PRESTIGE=${FEATURE_PRESTIGE}
 		-DFEATURE_AUTOUPDATE=${FEATURE_AUTOUPDATE}
+		-DFEATURE_RENDERER1=${FEATURE_RENDERER1}
 		-DFEATURE_RENDERER2=${FEATURE_RENDERER2}
 		-DFEATURE_RENDERER_GLES=${FEATURE_RENDERER_GLES}
 		-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}
@@ -599,6 +631,12 @@ generate_configuration() {
 		-DINSTALL_GEOIP=${INSTALL_GEOIP}
 		-DINSTALL_WOLFADMIN=${INSTALL_WOLFADMIN}
 	"
+
+	if [ -n "$TOOLCHAIN_FILE" ]; then
+	  _CFGSTRING="${_CFGSTRING}
+	  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}
+	  "
+	fi
 
 	if [ "${DEV}" != 1 ]; then
 	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
@@ -654,8 +692,8 @@ EOT
 handle_bundled_libs() {
 	if [[ ! -e "${_SRC}/libs/CMakeLists.txt" ]]; then
 		einfo "Getting bundled libs..."
-		git submodule init
-		git submodule update
+		run_git submodule init
+		run_git submodule update
 	fi
 }
 
@@ -709,7 +747,7 @@ run_clean() {
 		fi
 
 		cd ${_SRC}/libs
-		git clean -d -f
+		run_git clean -d -f
 	fi
 }
 
@@ -777,7 +815,7 @@ create_ready_osx_dmg() {
 	# Create the DMG json
 	cat << END > etlegacy-dmg.json
 {
-	"title": "ET Legacy $SHORT_VERSION",
+	"title": "ET Legacy $ETLEGACY_SHORT_VERSION",
 	"icon": "../misc/etl.icns",
 	"background": "osx-dmg-background.jpg",
 	"window": {
@@ -826,7 +864,6 @@ create_osx_dmg() {
 	fi
 
 	echo "Generating OSX installer"
-	SHORT_VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
 
 	# Generate the icon for the folder
 	# using rsvg-convert
@@ -836,8 +873,8 @@ create_osx_dmg() {
 	# Generate the DMG background
 	# using the Graphics Magick
 	# brew install graphicsmagick
-	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${SHORT_VERSION}'" osx-dmg-background.jpg
-    gm convert ../misc/osx-dmg-background.jpg -resize 1280x720 -font ../misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${SHORT_VERSION}'" osx-dmg-background@2x.jpg
+	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background.jpg
+    gm convert ../misc/osx-dmg-background.jpg -resize 1280x720 -font ../misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background@2x.jpg
 
 	set_osx_folder_icon_tooled
 	create_ready_osx_dmg
