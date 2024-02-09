@@ -465,6 +465,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 			if (ent->parent && ent->parent->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
 			{
 				G_AddSkillPoints(ent->parent, SK_SIGNALS, 1.f, "resupply");
+				G_LogPrintf("Ammo_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));
 
 #ifdef FEATURE_OMNIBOT
 				//omni-bot event
