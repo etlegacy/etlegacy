@@ -143,6 +143,7 @@
 					}
 				},
 				"popupmessages":	{
+					"mainColor":	"01030209",
 					"textAlign":	1
 				},
 				"popupmessages2":	{
@@ -154,7 +155,7 @@
 					},
 					"style":	0,
 					"scale":	0,
-					"mainColor":	"00000000",
+					"mainColor":	"01030209",
 					"secondaryColor":	"00000000",
 					"backgroundColor":	"00000000",
 					"borderColor":	"00000000",
@@ -174,7 +175,7 @@
 					},
 					"style":	0,
 					"scale":	0,
-					"mainColor":	"00000000",
+					"mainColor":	"01030209",
 					"secondaryColor":	"00000000",
 					"backgroundColor":	"00000000",
 					"borderColor":	"00000000",
