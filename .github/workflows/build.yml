@@ -76,7 +76,7 @@ jobs:
             build/legacy/cgame*.so
             build/legacy/ui*.so
             build/legacy/qagame*.so
-            build/legacy/tvqagame*.so
+            build/legacy/tvgame*.so
 
       - uses: actions/upload-artifact@v4
         with:
@@ -110,7 +110,7 @@ jobs:
             build/legacy/cgame*.so
             build/legacy/ui*.so
             build/legacy/qagame*.so
-            build/legacy/tvqagame*.so
+            build/legacy/tvgame*.so
 
   lnx-aarch64-mod:
     runs-on: ubuntu-20.04
@@ -136,7 +136,7 @@ jobs:
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
-            build/legacy/tvqagame*.so
+            build/legacy/tvgame*.so
 
   osx-mod:
     runs-on: macos-12
@@ -173,7 +173,7 @@ jobs:
             build/legacy/cgame_mac
             build/legacy/ui_mac
             build/legacy/qagame_mac
-            build/legacy/tvqagame_mac
+            build/legacy/tvgame_mac
 
   win-mod:
     runs-on: windows-2019
@@ -198,7 +198,7 @@ jobs:
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
             build/legacy/qagame*.dll
-            build/legacy/tvqagame*.dll
+            build/legacy/tvgame*.dll
 
   win64-mod:
     runs-on: windows-2019
@@ -222,7 +222,7 @@ jobs:
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
-            build/legacy/tvqagame*.dll
+            build/legacy/tvgame*.dll
 
   android-mod:
     runs-on: ubuntu-20.04
@@ -318,7 +318,7 @@ jobs:
       - name: Create mod zip
         shell: bash
         run: |
-          zip -rvj etlegacy-mod-${{needs.version.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* platforms/tvqagame*
+          zip -rvj etlegacy-mod-${{needs.version.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* platforms/tvgame*
 
       - name: Remove old artifacts
         uses: geekyeggo/delete-artifact@v4
@@ -461,7 +461,6 @@ jobs:
 
       - name: Build
         run: |
-          git fetch --tags --force
           ./easybuild.sh build -RPIT -ninja
 
       - uses: actions/download-artifact@v4
