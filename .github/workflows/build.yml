@@ -500,7 +500,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew bundle
-          brew install librsvg graphicsmagick
+          brew install freetype librsvg graphicsmagick imagemagick
 
       - name: Build
         env:

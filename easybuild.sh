@@ -816,7 +816,7 @@ create_ready_osx_dmg() {
 	cat << END > etlegacy-dmg.json
 {
 	"title": "ET Legacy $ETLEGACY_SHORT_VERSION",
-	"icon": "../misc/etl.icns",
+	"icon": "${_SRC}/misc/etl.icns",
 	"background": "osx-dmg-background.jpg",
 	"window": {
 	  "size": {
@@ -833,7 +833,7 @@ END
 
 	# using appdmg nodejs application to generate the actual DMG installer
 	# https://github.com/LinusU/node-appdmg
-	npm i -D appdmg@0.6.2
+	npm i -D appdmg@0.6.6
 	npx appdmg etlegacy-dmg.json "etlegacy-${ETLEGACY_VERSION}.dmg"
 }
 
@@ -868,13 +868,13 @@ create_osx_dmg() {
 	# Generate the icon for the folder
 	# using rsvg-convert
 	# brew install librsvg
-	rsvg-convert -h 256 ../misc/etl.svg > icon.png
+	rsvg-convert -h 256 ${_SRC}/misc/etl.svg > icon.png
 
 	# Generate the DMG background
 	# using the Graphics Magick
 	# brew install graphicsmagick
-	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background.jpg
-    gm convert ../misc/osx-dmg-background.jpg -resize 1280x720 -font ../misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background@2x.jpg
+	magick convert ${_SRC}/misc/osx-dmg-background.jpg -resize 640x360 -font ${_SRC}/misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background.jpg
+    magick convert ${_SRC}/misc/osx-dmg-background.jpg -resize 1280x720 -font ${_SRC}/misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background@2x.jpg
 
 	set_osx_folder_icon_tooled
 	create_ready_osx_dmg
