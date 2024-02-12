@@ -136,6 +136,7 @@ jobs:
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
+            build/legacy/qagame*.so
             build/legacy/tvgame*.so
 
   osx-mod:
@@ -222,6 +223,7 @@ jobs:
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
+            build/legacy/qagame*.dll
             build/legacy/tvgame*.dll
 
   android-mod:
