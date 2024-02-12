@@ -254,7 +254,7 @@ jobs:
         run: |
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git fetch --tags --force
-          ./gradlew clean build
+          ./gradlew clean assembleRelease
           ls -R
 
       - name: Upload arm64-v8a

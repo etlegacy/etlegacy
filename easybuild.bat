@@ -271,7 +271,7 @@ GOTO:EOF
 	CALL:GENERATEPROJECT !build_dir! "!batloc!"
 	ECHO Building...
 	REM msbuild ETLEGACY.sln /target:CMake\ALL_BUILD /p:Configuration=%build_type%
-	cmake --build . --config %build_type%
+	cmake --build . --config %build_type% --parallel
 GOTO:EOF
 
 :DOINSTALL
