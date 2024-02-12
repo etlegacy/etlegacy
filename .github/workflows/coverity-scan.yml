@@ -19,26 +19,17 @@ jobs:
           sudo apt-get install -y nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
 
       - name: Checkout
-        run: |
-          git clone --depth=1 https://github.com/etlegacy/etlegacy .
-          git submodule update --init --recursive
+        run: git clone --recurse-submodules --jobs 8 --branch master --depth 1 https://github.com/etlegacy/etlegacy .
 
       - name: Configure
-        run: |
-          mkdir -p build
-          cd build
-          cmake .. \
-          -DCMAKE_BUILD_TYPE='Debug' \
-          -DCMAKE_INSTALL_PREFIX= \
-          -DCMAKE_LIBRARY_PATH=/usr/lib \
-          -DCMAKE_INCLUDE_PATH=/usr/include \
-          -DCROSS_COMPILE32=0 \
-          -DINSTALL_DEFAULT_BASEDIR=. \
-          -DINSTALL_DEFAULT_BINDIR=. \
-          -DINSTALL_DEFAULT_SHAREDIR=. \
-          -DINSTALL_DEFAULT_MODDIR=. \
-          -DBUNDLED_LIBS=1 \
-          -DINSTALL_EXTRA=0
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE='Debug' -DCMAKE_INSTALL_PREFIX=/
+          -DCMAKE_LIBRARY_PATH=/usr/lib -DCMAKE_INCLUDE_PATH=/usr/include
+          -DINSTALL_DEFAULT_BASEDIR=. -DINSTALL_DEFAULT_BINDIR=.
+          -DINSTALL_DEFAULT_SHAREDIR=. -DINSTALL_DEFAULT_MODDIR=.
+          -DCROSS_COMPILE32=0 -DBUNDLED_LIBS=1 -DINSTALL_EXTRA=0
+          -DFEATURE_SSL=0 -DFEATURE_CURL=0
 
       - name: Download Coverity Build Tool
         run: |
