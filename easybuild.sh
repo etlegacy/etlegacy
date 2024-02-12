@@ -6,8 +6,7 @@
 # and builds ET: Legacy
 
 # Mandatory variables
-_SRC=`pwd`
-#BUILDDIR="${_SRC}/build"
+_SRC=$( dirname -- "$( readlink -f -- "$0"; )"; )
 BUILDDIR="${BUILD_DIR:-${_SRC}/build}"
 SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
