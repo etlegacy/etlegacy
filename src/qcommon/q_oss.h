@@ -51,7 +51,7 @@ typedef enum
 	OSS_MACOS_AARCH64   = BIT(7),   ///< 128 - macOS m1
 	OSS_WIN_X86_64      = BIT(8),   ///< 256 - Windows x86_64
 	OSS_ANDROID_X86     = BIT(9),   ///< 512 - Android x86
-	OSS_ANDROID_X86_64  = BIT(10),  ///< 2014 - Android x86_64
+	OSS_ANDROID_X86_64  = BIT(10),  ///< 1024 - Android x86_64
 
 	OSS_END                         ///< Moving "known platforms" index
 } oss_t;
@@ -82,13 +82,19 @@ typedef enum
 #else
 #define OSS_CURRENT_PLATFORM OSS_DEFAULT
 #endif
-#elif __ANDROID__
+#elif defined(__ANDROID__)
+#if defined __i386__
+#define OSS_CURRENT_PLATFORM OSS_ANDROID_X86
+#elif defined __x86_64__
+#define OSS_CURRENT_PLATFORM OSS_ANDROID_X86_64
+#elif defined __aarch64__
 #define OSS_CURRENT_PLATFORM OSS_ANDROID_AARCH64
 #else
 #define OSS_CURRENT_PLATFORM OSS_DEFAULT
 #endif
-
-#define OSS_KNOWN_COUNT 9
+#else
+#define OSS_CURRENT_PLATFORM OSS_DEFAULT
+#endif
 
 #ifdef Q_OSS_STR_INC
 // This must be kept in sync with the oss_t enum above
@@ -97,6 +103,8 @@ const char *oss_str[] = {
 	"android_aarch64", "lnx_armv7",   "lnx_armv8_64", "macos_aarch64",
 	"win_x86_64",      "android_x86", "android_x86_64"
 };
+
+#define OSS_KNOWN_COUNT ARRAY_LEN(oss_str)
 #endif
 
 #endif
