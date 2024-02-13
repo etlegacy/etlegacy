@@ -565,6 +565,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_REFERER, referer);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_URL, remoteName);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_WRITEFUNCTION, DL_cb_FWriteFile);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_WRITEDATA, (void *)request);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_PROGRESSFUNCTION, DL_cb_Progress);
@@ -644,6 +645,7 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_URL, url);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_WRITEFUNCTION, DL_write_function);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_WRITEDATA, (void *)request);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_PROGRESSFUNCTION, DL_cb_Progress);
