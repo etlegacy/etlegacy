@@ -158,8 +158,8 @@ static qboolean StringToFilter(const char *s, ipFilter_t *f)
  */
 static void UpdateIPBans(ipFilterList_t *ipFilterList)
 {
-	byte b[4];
-	byte m[4];
+	byte b[4] = { 0 };
+	byte m[4] = { 0 };
 	int  i, j;
 	char iplist_final[MAX_CVAR_VALUE_STRING];
 	char ip[64];
