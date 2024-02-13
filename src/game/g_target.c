@@ -1369,21 +1369,18 @@ void target_rumble_think(gentity_t *ent)
 	dayaw   = ent->random;
 	ratio   = 1.0f;
 
-	if (ent->start_size)
+	if (ent->start_size > 0)
 	{
-		int time, time2;
+		int duration;
 
-		if (level.time < (ent->timestamp + ent->start_size))
+		duration = level.time - ent->timestamp;
+		if (duration < ent->start_size)
 		{
-			time  = level.time - ent->timestamp;
-			time2 = (ent->timestamp + ent->start_size) - ent->timestamp;
-			ratio = time / time2;
+			ratio = duration / ent->start_size;
 		}
-		else if (level.time < (ent->timestamp + ent->end_size + ent->start_size))
+		else if (duration > ent->start_size && duration < ent->start_size + ent->end_size)
 		{
-			time  = level.time - ent->timestamp;
-			time2 = (ent->timestamp + ent->start_size + ent->end_size) - ent->timestamp;
-			ratio = time2 / time;   // FIXME: div / 0
+			ratio = (ent->start_size + ent->end_size) / duration;
 		}
 		else
 		{
