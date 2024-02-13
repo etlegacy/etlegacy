@@ -13,24 +13,45 @@ endif()
 #
 # cgame
 #
-add_library(cgame MODULE ${CGAME_SRC})
-target_link_libraries(cgame cgame_libraries mod_libraries)
+if(BUILD_CLIENT_MOD)
+	add_library(cgame MODULE ${CGAME_SRC})
+	target_link_libraries(cgame cgame_libraries mod_libraries)
 
-set_target_properties(cgame
-	PROPERTIES
-	PREFIX ""
-	C_STANDARD 90
-	OUTPUT_NAME "cgame${LIB_SUFFIX}${ARCH}"
-	LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-)
-target_compile_definitions(cgame PRIVATE CGAMEDLL=1 MODLIB=1)
+	set_target_properties(cgame
+		PROPERTIES
+		PREFIX ""
+		C_STANDARD 90
+		OUTPUT_NAME "cgame${LIB_SUFFIX}${ARCH}"
+		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+	)
+	target_compile_definitions(cgame PRIVATE CGAMEDLL=1 MODLIB=1)
+endif()
+
+#
+# ui
+#
+if(BUILD_CLIENT_MOD)
+	add_library(ui MODULE ${UI_SRC})
+	target_link_libraries(ui ui_libraries mod_libraries)
+
+	set_target_properties(ui
+		PROPERTIES
+		PREFIX ""
+		C_STANDARD 90
+		OUTPUT_NAME "ui${LIB_SUFFIX}${ARCH}"
+		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+	)
+	target_compile_definitions(ui PRIVATE UIDLL=1 MODLIB=1)
+endif()
 
 #
 # qagame
 #
-if(NOT ANDROID)
+if(BUILD_SERVER_MOD)
 	add_library(qagame MODULE ${QAGAME_SRC})
 	target_link_libraries(qagame qagame_libraries mod_libraries)
 
@@ -75,7 +96,7 @@ endif()
 #
 # tvgame
 #
-if(NOT ANDROID)
+if(BUILD_SERVER_MOD)
 	add_library(tvgame MODULE ${TVGAME_SRC})
 	target_link_libraries(tvgame tvgame_libraries mod_libraries)
 
@@ -113,23 +134,6 @@ if(NOT ANDROID)
 	target_compile_definitions(tvgame PRIVATE GAMEDLL=1 MODLIB=1)
 endif()
 
-#
-# ui
-#
-add_library(ui MODULE ${UI_SRC})
-target_link_libraries(ui ui_libraries mod_libraries)
-
-set_target_properties(ui
-	PROPERTIES
-	PREFIX ""
-	C_STANDARD 90
-	OUTPUT_NAME "ui${LIB_SUFFIX}${ARCH}"
-	LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-)
-target_compile_definitions(ui PRIVATE UIDLL=1 MODLIB=1)
-
 # Build both architectures on older xcode versions
 if(APPLE)
 
@@ -166,28 +170,32 @@ if(APPLE)
 
 	endif()
 
-	set_target_properties(cgame PROPERTIES OSX_ARCHITECTURES "${OSX_MOD_ARCH}" )
-	set_target_properties(ui PROPERTIES OSX_ARCHITECTURES "${OSX_MOD_ARCH}" )
+	if(BUILD_CLIENT_MOD)
+		set_target_properties(cgame PROPERTIES OSX_ARCHITECTURES "${OSX_MOD_ARCH}" )
+		set_target_properties(ui PROPERTIES OSX_ARCHITECTURES "${OSX_MOD_ARCH}" )
+	endif()
 elseif(ANDROID)
-	set_target_properties(cgame PROPERTIES PREFIX "lib")
-	set_target_properties(ui PROPERTIES PREFIX "lib")
+	if(BUILD_CLIENT_MOD)
+		set_target_properties(cgame PROPERTIES PREFIX "lib")
+		set_target_properties(ui PROPERTIES PREFIX "lib")
+	endif()
 endif()
 
 # install bins of cgame, ui and qgame
-if(NOT ANDROID)
-	if(BUILD_MOD_PK3)
-		install(TARGETS qagame tvgame
-			RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-		)
-	else()
-		install(TARGETS cgame qagame tvgame ui
-			RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-		)
-	endif()
+if(BUILD_SERVER_MOD)
+	install(TARGETS qagame tvgame
+		RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+		LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+		ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+	)
+endif()
+
+if(NOT BUILD_MOD_PK3 AND BUILD_CLIENT_MOD)
+	install(TARGETS cgame ui
+		RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+		LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+		ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+	)
 endif()
 
 #

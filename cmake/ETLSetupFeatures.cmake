@@ -301,11 +301,11 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 			"src/db/db_sql_cmds.c"
 		)
 		target_sources(engine_libraries INTERFACE ${DBMS_SRC})
-	endif(FEATURE_DBMS)
+	endif()
 
 	if(FEATURE_AUTOUPDATE)
 		target_compile_definitions(engine_libraries INTERFACE FEATURE_AUTOUPDATE)
-	endif(FEATURE_AUTOUPDATE)
+	endif()
 endif()
 
 if(BUILD_SERVER)
@@ -314,8 +314,8 @@ if(BUILD_SERVER)
 		target_compile_definitions(server_libraries INTERFACE FEATURE_IRC_SERVER)
 		#list(APPEND SERVER_SRC ${IRC_CLIENT_FILES})
 		target_sources(server_libraries INTERFACE ${IRC_CLIENT_FILES})
-	endif(FEATURE_IRC_SERVER)
-endif(BUILD_SERVER)
+	endif()
+endif()
 
 #-----------------------------------------------------------------
 # Mod features
@@ -323,15 +323,15 @@ endif(BUILD_SERVER)
 if(BUILD_MOD)
 	if(FEATURE_MULTIVIEW)
 		target_compile_definitions(mod_libraries INTERFACE FEATURE_MULTIVIEW)
-	endif(FEATURE_MULTIVIEW)
+	endif()
 
 	if(FEATURE_RATING)
 		target_compile_definitions(mod_libraries INTERFACE FEATURE_RATING)
-	endif(FEATURE_RATING)
+	endif()
 
 	if(FEATURE_PRESTIGE)
 		target_compile_definitions(mod_libraries INTERFACE FEATURE_PRESTIGE)
-	endif(FEATURE_PRESTIGE)
+	endif()
 
 	if(FEATURE_LUA)
 		if(NOT BUNDLED_LUA)
@@ -346,21 +346,19 @@ if(BUILD_MOD)
 		endif()
 		target_compile_definitions(qagame_libraries INTERFACE FEATURE_LUA)
 		target_compile_definitions(tvgame_libraries INTERFACE FEATURE_LUA)
-	endif(FEATURE_LUA)
+	endif()
 
 	if(FEATURE_OMNIBOT)
-		# LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
-		# LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
 		target_compile_definitions(qagame_libraries INTERFACE FEATURE_OMNIBOT)
 		target_sources(qagame_libraries INTERFACE
 			"${SRC}/game/g_etbot_interface.cpp"
 			"${SRC}/Omnibot/Common/BotLoadLibrary.cpp"
 		)
-	endif(FEATURE_OMNIBOT)
+	endif()
 
 	if(FEATURE_EDV)
 		target_compile_definitions(cgame_libraries INTERFACE FEATURE_EDV)
-	endif(FEATURE_EDV)
+	endif()
 
 	if (FEATURE_AUTH)
 		target_compile_definitions(mod_libraries INTERFACE LEGACY_AUTH)
@@ -370,7 +368,7 @@ endif(BUILD_MOD)
 #-----------------------------------------------------------------
 # Server/Common features
 #-----------------------------------------------------------------
-if (BUILD_CLIENT OR BUILD_SERVER)
+if(BUILD_CLIENT OR BUILD_SERVER)
     if(NOT BUNDLED_ZLIB)
         find_package(ZLIB 1.2.8 REQUIRED)
         target_link_libraries(engine_libraries INTERFACE ${ZLIB_LIBRARIES})
@@ -398,7 +396,7 @@ if (BUILD_CLIENT OR BUILD_SERVER)
         target_link_libraries(engine_libraries INTERFACE bundled_minizip)
         target_compile_definitions(engine_libraries INTERFACE BUNDLED_MINIZIP)
     endif()
-endif ()
+endif()
 
 if(NOT BUNDLED_CJSON)
 	if(NOT ANDROID)
@@ -419,8 +417,8 @@ target_link_libraries(engine_libraries INTERFACE etl_json)
 
 if(FEATURE_TRACKER)
     target_compile_definitions(server_libraries INTERFACE FEATURE_TRACKER)
-endif(FEATURE_TRACKER)
+endif()
 
 if(FEATURE_ANTICHEAT)
 	target_compile_definitions(server_libraries INTERFACE FEATURE_ANTICHEAT)
-endif(FEATURE_ANTICHEAT)
+endif()

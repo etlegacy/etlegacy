@@ -43,10 +43,12 @@ option(BUILD_SERVER				"Build the dedicated server executable"							ON)
 option(BUILD_CLIENT				"Build the client executable"									ON)
 option(BUILD_MOD				"Build the mod libraries"										ON)
 
-option(BUILD_MOD_PK3			"Pack the mod libraries and game scripts into mod pk3"			ON)
-
 option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs"	ON)
 option(BUNDLED_LIBS_DEFAULT		"Default value for bundled libs"								ON)
+
+cmake_dependent_option(BUILD_CLIENT_MOD			"Build the client side mod libraries"							ON "BUILD_MOD" OFF)
+cmake_dependent_option(BUILD_SERVER_MOD			"Build the server side mod libraries"							ON "BUILD_MOD" OFF)
+cmake_dependent_option(BUILD_MOD_PK3			"Pack the mod libraries and game scripts into mod pk3"			ON "BUILD_CLIENT_MOD" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64 or Apple OSX anymore
 cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit x86 version of ET:L (64bit is incompatible with 2.60b)" ON "NOT APPLE; NOT ANDROID;NOT CMAKE_SYSTEM MATCHES OpenBSD*;CMAKE_SYSTEM_PROCESSOR MATCHES x86|X86|amd64|AMD64" OFF)
@@ -60,7 +62,6 @@ option(FEATURE_OPENAL			"Enable OpenAL sound backend (client)"					ON)
 option(FEATURE_FREETYPE			"Enable Freetype font library support (client)"			ON)
 option(FEATURE_PNG				"Enable PNG screenshot support (client)"				ON)
 option(FEATURE_TRACKER			"Enable extended server statistics (server)"			ON)
-option(FEATURE_LUA				"Enable Lua support (mod)"								ON)
 option(FEATURE_MULTIVIEW		"Enable multiview support (mod)"						ON)
 option(FEATURE_EDV				"Enable extended demo viewer support (mod)"				ON)
 option(FEATURE_ANTICHEAT		"Enable server side anti-wallhack code (server)"		ON)
@@ -73,7 +74,6 @@ option(FEATURE_IPV6				"Enable IPv6 networking code"							ON)
 option(FEATURE_IRC_CLIENT		"Enable IRC client client side"							ON)
 option(FEATURE_IRC_SERVER		"Enable IRC client server side"							ON)
 option(RENDERER_DYNAMIC			"Build renderer into a dynamic library"					ON)
-option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"			ON)
 option(FEATURE_GETTEXT			"Enable localization using tinygettext"					ON)
 option(FEATURE_SERVERMDX		"Enable MDX support on server side (mod)"				ON)
 option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
@@ -86,6 +86,9 @@ option(FORCE_STATIC_VCRT		"Force static MSVC runtime linking"						ON)
 option(ENABLE_SSE				"Enable Streaming SIMD Extensions"						OFF)
 option(FEATURE_AUTH				"Enable central authentication support"					ON)
 
+cmake_dependent_option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"	ON "WIN32" OFF)
+
+cmake_dependent_option(FEATURE_LUA		"Enable Lua support (mod)"						ON "BUILD_SERVER_MOD" OFF)
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)
 cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON "FEATURE_DBMS" OFF)
 cmake_dependent_option(FEATURE_PRESTIGE	"Enable prestige support (mod)"					ON "FEATURE_DBMS" OFF)
@@ -215,11 +218,9 @@ if(BUILD_MOD AND INSTALL_EXTRA)
 endif(BUILD_MOD AND INSTALL_EXTRA)
 
 # Generate install and uninstall packs
-if(NOT ANDROID)
-	include(cmake/ETLInstall.cmake)
+include(cmake/ETLInstall.cmake)
 
-	# Packaging support
-	include(cmake/ETLCPack.cmake)
+# Packaging support
+include(cmake/ETLCPack.cmake)
 
-	set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
-endif()
+set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
