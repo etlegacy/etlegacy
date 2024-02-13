@@ -302,22 +302,7 @@ qboolean SNDDMA_Init(void)
 	}
 	else
 	{
-		if (desired.freq <= 11025)
-		{
-			desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer);
-		}
-		else if (desired.freq <= 22050)
-		{
-			desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer);
-		}
-		else if (desired.freq <= 44100)
-		{
-			desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer);
-		}
-		else
-		{
-			desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer); // 48KHz
-		}
+		desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer);
 	}
 
 	desired.channels = (int) s_sdlChannels->value;
