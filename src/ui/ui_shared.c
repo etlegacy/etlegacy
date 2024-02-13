@@ -1906,7 +1906,7 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 		}
 	}
 
-	if (c != buffer && (*(c - 1) != '\n'))
+	if (c > instr + 1 && (*(c - 1) != '\n'))
 	{
 		*c++ = '\n';
 	}
