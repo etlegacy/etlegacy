@@ -20,7 +20,6 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.24")
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-include(GetGitRevisionDescription)
 include(CMakeDependentOption)
 
 include(cmake/ETLBanner.cmake)
@@ -44,31 +43,15 @@ option(BUILD_SERVER				"Build the dedicated server executable"							ON)
 option(BUILD_CLIENT				"Build the client executable"									ON)
 option(BUILD_MOD				"Build the mod libraries"										ON)
 
-option(BUILD_MOD_PK3			"Pack the mod libraries and game scripts into mod pk3"			ON)
-
 option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs"	ON)
 option(BUNDLED_LIBS_DEFAULT		"Default value for bundled libs"								ON)
 
-LEG_BUNDLE(SDL SDL)
-LEG_BUNDLE(ZLIB Zlib)
-LEG_BUNDLE(MINIZIP Minizip)
-LEG_BUNDLE(JPEG JPEG)
-LEG_BUNDLE(PNG libpng)
-LEG_BUNDLE(CURL Curl "NOT APPLE")
-LEG_BUNDLE(OPENSSL OpenSSL "NOT WIN32 AND NOT APPLE")
-LEG_BUNDLE(WOLFSSL WolfSSL "NOT BUNDLED_OPENSSL AND NOT WIN32 AND NOT APPLE")
-LEG_BUNDLE(LUA Lua)
-LEG_BUNDLE(OGG_VORBIS OGG)
-LEG_BUNDLE(THEORA Theora)
-LEG_BUNDLE(OPENAL OpenAL "NOT APPLE")
-LEG_BUNDLE(OPENAL_INCLUDE OpenAL-OSX "APPLE")
-LEG_BUNDLE(GLEW Glew)
-LEG_BUNDLE(FREETYPE Freetype2)
-LEG_BUNDLE(SQLITE3 SQlite3)
-LEG_BUNDLE(CJSON cJSON)
+cmake_dependent_option(BUILD_CLIENT_MOD			"Build the client side mod libraries"							ON "BUILD_MOD" OFF)
+cmake_dependent_option(BUILD_SERVER_MOD			"Build the server side mod libraries"							ON "BUILD_MOD" OFF)
+cmake_dependent_option(BUILD_MOD_PK3			"Pack the mod libraries and game scripts into mod pk3"			ON "BUILD_CLIENT_MOD" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64 or Apple OSX anymore
-cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT APPLE AND NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
+cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit x86 version of ET:L (64bit is incompatible with 2.60b)" ON "NOT APPLE; NOT ANDROID;NOT CMAKE_SYSTEM MATCHES OpenBSD*;CMAKE_SYSTEM_PROCESSOR MATCHES x86|X86|amd64|AMD64" OFF)
 
 # Optional features
 option(FEATURE_CURL				"Enable auto-download support using cURL (client)"		ON)
@@ -79,18 +62,18 @@ option(FEATURE_OPENAL			"Enable OpenAL sound backend (client)"					ON)
 option(FEATURE_FREETYPE			"Enable Freetype font library support (client)"			ON)
 option(FEATURE_PNG				"Enable PNG screenshot support (client)"				ON)
 option(FEATURE_TRACKER			"Enable extended server statistics (server)"			ON)
-option(FEATURE_LUA				"Enable Lua support (mod)"								ON)
 option(FEATURE_MULTIVIEW		"Enable multiview support (mod)"						ON)
 option(FEATURE_EDV				"Enable extended demo viewer support (mod)"				ON)
 option(FEATURE_ANTICHEAT		"Enable server side anti-wallhack code (server)"		ON)
 option(FEATURE_AUTOUPDATE		"Enable updater which downloads latest ET:L files"		ON)
-option(FEATURE_RENDERER2		"Build and use the new renderer"						OFF)
+option(FEATURE_RENDERER1		"Build and use the vanilla renderer (OpenGL 1/2)"		ON)
+option(FEATURE_RENDERER2		"Build and use the borked renderer (OpenGL 3)"			OFF)
 option(FEATURE_RENDERER_GLES	"Build and use OpenGL ES renderer"						OFF)
+option(FEATURE_RENDERER_VULKAN	"Build and use Vulkan renderer"							OFF)
 option(FEATURE_IPV6				"Enable IPv6 networking code"							ON)
 option(FEATURE_IRC_CLIENT		"Enable IRC client client side"							ON)
 option(FEATURE_IRC_SERVER		"Enable IRC client server side"							ON)
 option(RENDERER_DYNAMIC			"Build renderer into a dynamic library"					ON)
-option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"			ON)
 option(FEATURE_GETTEXT			"Enable localization using tinygettext"					ON)
 option(FEATURE_SERVERMDX		"Enable MDX support on server side (mod)"				ON)
 option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
@@ -101,8 +84,11 @@ option(ENABLE_MULTI_BUILD		"Enable binary names to include arch"					ON)
 # TODO: implement this field on the libs as well
 option(FORCE_STATIC_VCRT		"Force static MSVC runtime linking"						ON)
 option(ENABLE_SSE				"Enable Streaming SIMD Extensions"						OFF)
-option(FEATURE_AUTH				"Enable central authentication support"					OFF)
+option(FEATURE_AUTH				"Enable central authentication support"					ON)
 
+cmake_dependent_option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"	ON "WIN32" OFF)
+
+cmake_dependent_option(FEATURE_LUA		"Enable Lua support (mod)"						ON "BUILD_SERVER_MOD" OFF)
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)
 cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON "FEATURE_DBMS" OFF)
 cmake_dependent_option(FEATURE_PRESTIGE	"Enable prestige support (mod)"					ON "FEATURE_DBMS" OFF)
@@ -114,12 +100,33 @@ cmake_dependent_option(INSTALL_OMNIBOT		"Install Omni-bot"							ON "FEATURE_OMN
 cmake_dependent_option(INSTALL_GEOIP		"Install GeoLite geolocation database"		ON "INSTALL_EXTRA" OFF)
 cmake_dependent_option(INSTALL_WOLFADMIN	"Install WolfAdmin enhancement suite"		ON "INSTALL_EXTRA" OFF)
 
-option(ARM						"Build ARM version"										OFF)
-
 option(CLIENT_GLVND				"Link against GLVND OpenGL libraries"					OFF)
 
 set(ET_FS_BASEPATH "" CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			ON "ET_FS_BASEPATH" OFF)
+
+if(BUILD_CLIENT OR BUILD_SERVER)
+	set(BUILD_ENGINE ON)
+endif()
+
+# Will just remove the whole option if the feature is disabled
+LEG_BUNDLED_LIB(SDL SDL "BUILD_CLIENT")
+LEG_BUNDLED_LIB(ZLIB Zlib "BUILD_ENGINE")
+LEG_BUNDLED_LIB(MINIZIP Minizip "BUILD_ENGINE")
+LEG_BUNDLED_LIB(JPEG JPEG "BUILD_CLIENT")
+LEG_BUNDLED_LIB(PNG libpng "BUILD_CLIENT AND FEATURE_PNG")
+LEG_BUNDLED_LIB(CURL Curl "BUILD_ENGINE AND FEATURE_CURL" "NOT APPLE")
+LEG_BUNDLED_LIB(OPENSSL OpenSSL "BUILD_ENGINE AND FEATURE_SSL" "NOT WIN32 AND NOT APPLE")
+LEG_BUNDLED_LIB(WOLFSSL WolfSSL "BUILD_ENGINE AND FEATURE_SSL" "NOT BUNDLED_OPENSSL AND NOT WIN32 AND NOT APPLE")
+LEG_BUNDLED_LIB(LUA Lua "FEATURE_LUA AND BUILD_MOD")
+LEG_BUNDLED_LIB(OGG_VORBIS OGG "BUILD_CLIENT AND FEATURE_OGG_VORBIS")
+LEG_BUNDLED_LIB(THEORA Theora "BUILD_CLIENT AND FEATURE_THEORA")
+LEG_BUNDLED_LIB(OPENAL OpenAL "BUILD_CLIENT AND FEATURE_OPENAL" "NOT APPLE")
+LEG_BUNDLED_LIB(OPENAL_INCLUDE OpenAL-OSX "BUILD_CLIENT AND FEATURE_OPENAL" "APPLE")
+LEG_BUNDLED_LIB(GLEW Glew "BUILD_CLIENT AND ( FEATURE_RENDERER1 OR FEATURE_RENDERER2 )")
+LEG_BUNDLED_LIB(FREETYPE Freetype2 "BUILD_CLIENT AND FEATURE_FREETYPE")
+LEG_BUNDLED_LIB(SQLITE3 SQlite3 "BUILD_CLIENT OR BUILD_MOD")
+LEG_BUNDLED_LIB(CJSON cJSON "BUILD_ENGINE OR BUILD_MOD")
 
 #-----------------------------------------------------------------
 # Setup
@@ -141,6 +148,9 @@ set(CMAKE_C_STANDARD 99)
 
 # Find and setup programs the build needs
 include(cmake/ETLPrograms.cmake)
+
+# Setup compiler flags for x86 builds
+include(cmake/ETLCrossCompile32.cmake)
 
 # Setup some basic helper variables
 include(cmake/ETLCommon.cmake)
@@ -208,11 +218,9 @@ if(BUILD_MOD AND INSTALL_EXTRA)
 endif(BUILD_MOD AND INSTALL_EXTRA)
 
 # Generate install and uninstall packs
-if(NOT ANDROID)
-	include(cmake/ETLInstall.cmake)
+include(cmake/ETLInstall.cmake)
 
-	# Packaging support
-	include(cmake/ETLCPack.cmake)
+# Packaging support
+include(cmake/ETLCPack.cmake)
 
-	set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
-endif()
+set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})

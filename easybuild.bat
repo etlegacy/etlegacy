@@ -23,6 +23,7 @@ SET use_autoupdate=1
 SET use_extra=1
 SET build_r2=0
 SET build_ssl=1
+SET build_auth=1
 SET wolf_ssl=0
 SET open_ssl=0
 
@@ -71,6 +72,10 @@ IF NOT "%1"=="" (
 		SET build_ssl=0
 	) ELSE IF /I "%1"=="-no-ssl" (
 		SET build_ssl=0
+	) ELSE IF /I "%1"=="-noauth" (
+		SET build_auth=0
+	) ELSE IF /I "%1"=="-no-auth" (
+		SET build_auth=0
 	) ELSE IF /I "%1"=="-mod" (
 		SET mod_only=1
 	) ELSE IF /I "%1"=="-noupdate" (
@@ -243,15 +248,17 @@ GOTO:EOF
 	MKDIR "%~1"
 	CD "%~1"
 
+	:: Set the CMAKE_GENERATOR_PLATFORM variable to x64 to generate a 64-bit build. (aka -A)
+	IF %build_64%==1 (
+		SET generator_platform=x64
+	) ELSE (
+		SET generator_platform=Win32
+	)
+
 	set build_string=
 	CALL:GENERATECMAKE build_string
-	IF %build_64%==1 (
-		cmake !generator! !platform_toolset! %build_string% "%~2"
-		ECHO cmake !generator! !platform_toolset! %build_string% "%~2"
-	) ELSE (
-		cmake !generator! !platform_toolset! -A Win32 %build_string% "%~2"
-		ECHO cmake !generator! !platform_toolset! -A Win32 %build_string% "%~2"
-	)
+	cmake !generator! !platform_toolset! -A !generator_platform! %build_string% "%~2"
+	ECHO cmake !generator! !platform_toolset! -A !generator_platform! %build_string% "%~2"
 GOTO:EOF
 
 :OPENPROJECT
@@ -264,7 +271,7 @@ GOTO:EOF
 	CALL:GENERATEPROJECT !build_dir! "!batloc!"
 	ECHO Building...
 	REM msbuild ETLEGACY.sln /target:CMake\ALL_BUILD /p:Configuration=%build_type%
-	cmake --build . --config %build_type%
+	cmake --build . --config %build_type% --parallel
 GOTO:EOF
 
 :DOINSTALL
@@ -357,8 +364,17 @@ GOTO :EOF
 		SET feature_ssl=1
 	) ELSE IF !open_ssl!==1 (
 		SET feature_ssl=1
+	)
+
+	IF !build_ssl!==1 (
+		SET feature_ssl=1
 	) ELSE (
 		SET feature_ssl=0
+		SET feature_auth=0
+	)
+
+	if !build_auth!==0 (
+		SET feature_auth=0
 	)
 
 	SET local_build_string=-DBUNDLED_LIBS=YES ^
@@ -370,7 +386,8 @@ GOTO :EOF
 	-DFEATURE_RENDERER2=!build_r2! ^
 	-DBUNDLED_WOLFSSL=!wolf_ssl! ^
 	-DBUNDLED_OPENSSL=!open_ssl! ^
-	-DFEATURE_SSL=!feature_ssl!
+	-DFEATURE_SSL=!feature_ssl! ^
+	-DFEATURE_AUTH=!feature_auth!
 
 	IF !mod_only!==1 (
 		SET local_build_string=!local_build_string! ^

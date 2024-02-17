@@ -941,7 +941,8 @@ void CG_ShoutcastCheckKeyCatcher(int keycatcher)
 	}
 
 	// going out of limbo menu, hud editor
-	if (cgs.clientinfo[cg.clientNum].shoutcaster && cgs.eventHandling == CGAME_EVENT_NONE && !(keycatcher & KEYCATCH_UI))
+	if (cgs.clientinfo[cg.clientNum].shoutcaster && cgs.eventHandling == CGAME_EVENT_NONE &&
+	    cg.snap->ps.pm_type != PM_INTERMISSION && !(keycatcher & KEYCATCH_UI))
 	{
 		CG_ToggleShoutcasterMode(1);
 	}

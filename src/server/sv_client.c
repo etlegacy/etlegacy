@@ -211,21 +211,21 @@ static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
 
 		if (sv_etltv_maxslaves->integer <= 0)
 		{
-			NET_OutOfBandPrint(NS_SERVER, from, "print\nMaster must reserve slots with sv_etltv_maxslaves.\n");
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Master must reserve slots with sv_etltv_maxslaves.\n");
 			Com_DPrintf("    rejected ettv slave connection from %s because sv_etltv_maxslaves is not set.\n", NET_AdrToString(from));
 			return qfalse;
 		}
 
 		if (!sv_etltv_password->string[0])
 		{
-			NET_OutOfBandPrint(NS_SERVER, from, "print\nMaster must set an sv_etltv_password.\n");
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Master must set an sv_etltv_password.\n");
 			Com_DPrintf("    rejected ettv slave connection from %s because of empty sv_etltv_password.\n", NET_AdrToString(from));
 			return qfalse;
 		}
 
 		if (strcmp(Info_ValueForKey(userinfo, "masterpassword"), sv_etltv_password->string))
 		{
-			NET_OutOfBandPrint(NS_SERVER, from, "print\nInvalid master password.\n");
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Invalid master password.\n");
 			Com_DPrintf("    rejected ettv slave connection from %s because password didn\'t match sv_etltv_password.\n", NET_AdrToString(from));
 			return qfalse;
 		}
@@ -562,12 +562,18 @@ gotnewcl:
 	// build a new connection
 	// accept the new client
 	// this is the only place a client_t is EVER initialized
-	*newcl         = temp;
-	clientNum      = newcl - svs.clients;
-	newcl->gentity = SV_GentityNum(clientNum);
+	*newcl    = temp;
+	clientNum = newcl - svs.clients;
 
-	newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
-	newcl->challenge          = challenge; // save the challenge
+#ifdef DEDICATED
+	if (!svcls.isTVGame)
+#endif // DEDICATED
+	{
+		newcl->gentity            = SV_GentityNum(clientNum);
+		newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
+	}
+
+	newcl->challenge = challenge;          // save the challenge
 	Q_strncpyz(newcl->guid, Info_ValueForKey(userinfo, "cl_guid"), sizeof(newcl->guid)); // save guid
 
 	// save the address
@@ -638,7 +644,7 @@ gotnewcl:
 
 	if (newcl->ettvClient)
 	{
-		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t) * PACKET_BACKUP);
+		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t*) * PACKET_BACKUP);
 
 		for (i = 0; i < PACKET_BACKUP; i++)
 		{
@@ -863,13 +869,22 @@ void SV_SendClientGameState(client_t *client)
 		MSG_WriteDeltaEntity(&msg, &nullstate, base, qtrue);
 		if (client->ettvClient)
 		{
-			MSG_ETTV_WriteDeltaSharedEntity(&msg, &nullstateShared, baseShared, qtrue);
+			MSG_ETTV_WriteDeltaEntityShared(&msg, &nullstateShared, baseShared, qtrue);
 		}
 	}
 
 	MSG_WriteByte(&msg, svc_EOF);
 
-	MSG_WriteLong(&msg, client - svs.clients);
+#ifdef DEDICATED
+	if (svcls.isTVGame)
+	{
+		MSG_WriteLong(&msg, svclc.clientNum);
+	}
+	else
+#endif // DEDICATED
+	{
+		MSG_WriteLong(&msg, client - svs.clients);
+	}
 
 	// write the checksum feed
 	MSG_WriteLong(&msg, sv.checksumFeed);
@@ -1176,7 +1191,7 @@ void SV_Login_f(client_t *cl)
 
 	username = Cmd_Argv(1);
 
-	if (!username | !*username)
+	if (!username || !*username)
 	{
 		return;
 	}
@@ -1217,7 +1232,7 @@ void SV_LoginResponse_f(client_t *cl)
 
 	response = Cmd_Argv(1);
 
-	if (!response | !*response)
+	if (!response || !*response)
 	{
 		return;
 	}
@@ -1981,6 +1996,10 @@ void SV_UserinfoChanged(client_t *cl)
 	{
 		Com_ParseUA(&cl->agent, val);
 	}
+
+#ifdef LEGACY_AUTH
+	Auth_SV_SetUserinfoAuth(cl);
+#endif
 }
 
 /**

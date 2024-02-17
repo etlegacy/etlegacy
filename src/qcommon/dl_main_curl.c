@@ -78,8 +78,6 @@
 		if (((status) = curl_easy_setopt((handle), (opt), (param)))) \
 		Com_Printf(S_COLOR_YELLOW "WARNING: %s: curl_easy_setopt " #opt ": %s\n", __func__, curl_easy_strerror(status))
 
-#define FILE_DOWNLOAD_ID 1
-
 static struct
 {
 	qboolean initialized;   ///< the main initialization flag (Initialize once)
@@ -196,7 +194,7 @@ static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ul
 		return -666;
 	}
 
-	if (request->data.requestLength)
+	if (!request->data.requestLength)
 	{
 		if (request->upload)
 		{
@@ -475,6 +473,8 @@ static void DL_FreeRequest(webRequest_t *request)
 			*lst = request->next;
 			break;
 		}
+
+		lst = &(*lst)->next;
 	}
 
 	if (request->data.fileHandle)
@@ -541,6 +541,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	request     = DL_CreateRequest();
 	request->id = FILE_DOWNLOAD_ID; // magical package download id
 	Q_strncpyz(request->url, remoteName, ARRAY_LEN(request->url));
+	Q_strncpyz(request->data.name, localName, ARRAY_LEN(request->data.name));
 
 	request->data.fileHandle = Sys_FOpen(localName, "wb");
 	if (!request->data.fileHandle)

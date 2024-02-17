@@ -1,0 +1,29 @@
+# 2024 Legacy team
+name: LinuxArmBuildMachine
+
+on:
+  push:
+    paths:
+      - 'misc/docker/lnx-aarch64.Dockerfile'
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ubuntu-22.04
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Get the version
+        id: vars
+        run: |
+          echo "tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+
+      - name: Build and push the latest Docker image
+        run: |
+          docker build misc/docker --file misc/docker/lnx-aarch64.Dockerfile --tag etlegacy/lnx-aarch64-build:latest --tag etlegacy/lnx-aarch64-build:${{steps.vars.outputs.tag}}
+          docker push etlegacy/lnx-aarch64-build:${{steps.vars.outputs.tag}}
+          docker push etlegacy/lnx-aarch64-build:latest

@@ -117,32 +117,52 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 	}
 }
 
-static ID_INLINE void CG_ColorObituaryEntName(clientInfo_t *ci, char *name, char force)
+/**
+ * @brief CG_ColorCharFromFloat Just squashes the float value into a char into the range of '0' to '9'
+ * @param val float color channel value between 0.0 and 1.0
+ * @return char color value between '0' and '9'
+ */
+static ID_INLINE char CG_ColorCharFromFloat(float val)
+{
+	return MIN(MAX('0' + (int)(val * 255.0f), '0'), '9');
+}
+
+static ID_INLINE void CG_ColorObituaryEntName(clientInfo_t *ci, vec4_t color, char *name, qboolean same_team)
 {
 	clientInfo_t *self = &cgs.clientinfo[cg.clientNum];
 	Q_CleanStr(name);
 	memmove(name + 2, name, strlen(name) + 1);
 	name[0] = '^';
 
+	if (same_team)
+	{
+		name[1] = CG_ColorCharFromFloat(color[1]);
+		return;
+	}
+
 	if (self->team != TEAM_SPECTATOR)
 	{
 		if (ci->team != self->team)
 		{
-			name[1] = '1';
+			name[1] = CG_ColorCharFromFloat(color[0]);
 		}
 		else
 		{
-			name[1] = '2';
+			name[1] = CG_ColorCharFromFloat(color[2]);
 		}
 	}
 	else
 	{
-		name[1] = '3';
-	}
-
-	if (force)
-	{
-		name[1] = force;
+		// we are spectating so just use the default colors
+		// Axis are red, Allies are green by default
+		if (ci->team == TEAM_AXIS)
+		{
+			name[1] = CG_ColorCharFromFloat(color[0]);
+		}
+		else
+		{
+			name[1] = CG_ColorCharFromFloat(color[2]);
+		}
 	}
 }
 
@@ -257,7 +277,7 @@ static void CG_Obituary(entityState_t *ent)
 		Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
 		if (pmComp->style & POPUP_FORCE_COLORS)
 		{
-			CG_ColorObituaryEntName(ci, targetName, ca && ca->team == ci->team ? '4': 0);
+			CG_ColorObituaryEntName(ci, pmComp->colorMain, targetName, ca && ca->team == ci->team);
 		}
 		Q_strcat(targetName, MAX_NAME_LENGTH, S_COLOR_WHITE);
 
@@ -314,7 +334,7 @@ static void CG_Obituary(entityState_t *ent)
 				Q_strncpyz(attackerName, ca->name, sizeof(attackerName) - 2);
 				if (pmComp->style & POPUP_FORCE_COLORS)
 				{
-					CG_ColorObituaryEntName(ca, attackerName, ca && ca->team == ci->team ? '4': 0);
+					CG_ColorObituaryEntName(ca, pmComp->colorMain, attackerName, ca && ca->team == ci->team);
 				}
 				Q_strcat(attackerName, MAX_NAME_LENGTH, S_COLOR_WHITE);
 

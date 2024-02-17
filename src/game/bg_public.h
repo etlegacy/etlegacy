@@ -870,7 +870,7 @@ typedef enum
 	WP_SATCHEL_DET,            ///< 28
 	WP_SMOKE_BOMB,             ///< 29
 
-	WP_MOBILE_MG42,            ///< 30
+	WP_MOBILE_MG42,            ///< 30 Axis tank-mounted, crew-served & unset soldier machinegun
 	WP_K43,                    ///< 31
 	WP_FG42,                   ///< 32
 	WP_DUMMY_MG42,             ///< 33 for storing heat on mounted mg42s...
@@ -889,12 +889,12 @@ typedef enum
 	WP_MEDIC_ADRENALINE,       ///< 44
 	WP_AKIMBO_SILENCEDCOLT,    ///< 45
 	WP_AKIMBO_SILENCEDLUGER,   ///< 46
-	WP_MOBILE_MG42_SET,        ///< 47
+	WP_MOBILE_MG42_SET,        ///< 47 Axis soldier set machinegun
 
 	// ETLegacy weapons
 	WP_KNIFE_KABAR,            ///< 48	Allied knife
-	WP_MOBILE_BROWNING,        ///< 49	Allied machinegun
-	WP_MOBILE_BROWNING_SET,    ///< 50
+	WP_MOBILE_BROWNING,        ///< 49	Allied tank-mounted & unset soldier machinegun
+	WP_MOBILE_BROWNING_SET,    ///< 50 Allied soldier set machinegun
 	WP_MORTAR2,                ///< 51	Axis mortar
 	WP_MORTAR2_SET,            ///< 52
 	WP_BAZOOKA,                ///< 53	Allied panzerfaust
@@ -1046,9 +1046,9 @@ typedef enum
 typedef enum
 {
 	MOD_UNKNOWN = 0,
-	MOD_MACHINEGUN,
-	MOD_BROWNING,
-	MOD_MG42,
+	MOD_MACHINEGUN, // crew-served MG
+	MOD_BROWNING, // tank-mounted browning
+	MOD_MG42, // tank-mounted MG42
 	MOD_GRENADE,
 
 	// modified wolf weap mods
@@ -1098,7 +1098,7 @@ typedef enum
 	MOD_SATCHEL,
 
 	MOD_SMOKEBOMB,
-	MOD_MOBILE_MG42,
+	MOD_MOBILE_MG42, // Axis machinegun
 	MOD_SILENCED_COLT,
 	MOD_GARAND_SCOPE,
 

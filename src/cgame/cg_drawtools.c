@@ -506,7 +506,7 @@ void CG_DrawRect(float x, float y, float width, float height, float size, const 
  * @param[in] border
  * @param[in,out] color
  */
-void CG_DrawRect_FixedBorder(float x, float y, float width, float height, int border, const float *color)
+void CG_DrawRect_FixedBorder(float x, float y, float width, float height, float border, const float *color)
 {
 	trap_R_SetColor(color);
 

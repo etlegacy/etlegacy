@@ -392,12 +392,12 @@ static void R_DestroyFBO(frameBuffer_t *fb)
 
 	if (fb->colorBuffer)
 	{
-		glDeleteRenderbuffersEXT(GL_RENDERBUFFER_EXT, &fb->colorBuffer);
+		glDeleteRenderbuffersEXT(1, &fb->colorBuffer);
 	}
 
 	if (fb->depthBuffer)
 	{
-		glDeleteRenderbuffersEXT(GL_RENDERBUFFER_EXT, &fb->depthBuffer);
+		glDeleteRenderbuffersEXT(1, &fb->depthBuffer);
 	}
 
 	R_BindFBO(NULL);

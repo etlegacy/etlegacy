@@ -1741,12 +1741,15 @@ qboolean CG_SpeakerEditor_Delete_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
+#define SPEAKEREDITOR_BASE_X 360
+#define SPEAKEREDITOR_BASE_W 272
+
 panel_button_t speakerEditorBack =
 {
 	NULL,
 	NULL,
-	{ 360,                330,   272, 142 },
-	{ 0,                  0,     0,   0, 0, 0, 0, 0},
+	{ SPEAKEREDITOR_BASE_X,330,                    SPEAKEREDITOR_BASE_W, 142 },
+	{ 0,                  0,                      0,                    0, 0, 0, 0, 0},
 	NULL,                 // font
 	NULL,                 // keyDown
 	NULL,                 // keyUp
@@ -2264,10 +2267,17 @@ void CG_SpeakerEditorMouseMove_Handling(int x, int y)
 	{
 		if (editSpeakerHandle.activeAxis >= 0)
 		{
+			int halfWidth = SCREEN_WIDTH * 0.5f;
+
+			if (!Ccg_Is43Screen())
+			{
+				halfWidth *= cgs.adr43;
+			}
+
 			if (editSpeakerHandle.activeAxis == 0)
 			{
 				// this one and the next one are quite nasty, so do it the hacky way
-				if (cgs.cursorX - x < 320)
+				if (cgs.cursorX - x < halfWidth)
 				{
 					editSpeaker->origin[0] -= x;
 				}
@@ -2278,7 +2288,7 @@ void CG_SpeakerEditorMouseMove_Handling(int x, int y)
 			}
 			else if (editSpeakerHandle.activeAxis == 1)
 			{
-				if (cgs.cursorX - x < 320)
+				if (cgs.cursorX - x < halfWidth)
 				{
 					editSpeaker->origin[1] -= x;
 				}
@@ -2303,6 +2313,20 @@ void CG_SpeakerEditorMouseMove_Handling(int x, int y)
 }
 
 /**
+ * @brief CG_AdjustSpeakerEditorX
+ */
+void CG_AdjustSpeakerEditorX(panel_button_t *button)
+{
+	const float wideX = (SCREEN_WIDTH * cgs.adr43) - 8 - SPEAKEREDITOR_BASE_W;
+	const float xAdj  = wideX - SPEAKEREDITOR_BASE_X;
+
+	if (xAdj > 0)
+	{
+		button->rect.x += xAdj;
+	}
+}
+
+/**
  * @brief CG_ActivateEditSoundMode
  */
 void CG_ActivateEditSoundMode(void)
@@ -2319,6 +2343,21 @@ void CG_ActivateEditSoundMode(void)
 	{
 		speakerShader          = trap_R_RegisterShader("gfx/misc/speaker");
 		speakerShaderGrayScale = trap_R_RegisterShader("gfx/misc/speaker_gs");
+
+		if (!Ccg_Is43Screen())
+		{
+			int i;
+
+			for (i = 0; speakerInfoButtons[i] != NULL; i++)
+			{
+				speakerInfoButtons[i]->rect.x *= cgs.adr43;
+			}
+
+			for (i = 0; speakerEditorButtons[i] != NULL; i++)
+			{
+				CG_AdjustSpeakerEditorX(speakerEditorButtons[i]);
+			}
+		}
 
 		BG_PanelButtonsSetup(speakerInfoButtons);
 		BG_PanelButtonsSetup(speakerEditorButtons);

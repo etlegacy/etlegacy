@@ -2598,6 +2598,9 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "passvote",                   Svcmd_PassVote_f              },
 	{ "cancelvote",                 Svcmd_CancelVote_f            },
 	{ "qsay",                       Svcmd_Qsay_f                  },
+#ifdef FEATURE_LUA
+	{ "gLoadLua",                   Svcmd_LoadLua_f               },
+#endif
 };
 
 /**

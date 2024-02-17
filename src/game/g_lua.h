@@ -142,6 +142,9 @@ void G_LuaStatus(gentity_t *ent);
 void G_LuaStackDump();
 lua_vm_t *G_LuaGetVM(lua_State *L);
 
+// Console commands
+void Svcmd_LoadLua_f(void);
+
 // Callbacks
 void G_LuaHook_InitGame(int levelTime, int randomSeed, int restart);
 void G_LuaHook_ShutdownGame(int restart);

@@ -41,6 +41,12 @@
 #include "../renderercommon/tr_public.h"
 #include "../renderercommon/tr_common.h"
 
+#ifdef BUNDLED_GLEW
+#include "GL/glew.h"
+#else
+#include <GL/glew.h>
+#endif
+
 #define GL_INDEX_TYPE       GL_UNSIGNED_INT
 typedef unsigned int glIndex_t;
 
@@ -99,7 +105,7 @@ typedef struct image_s
 	char imgName[MAX_QPATH];        ///< game path, including extension
 	int width, height;              ///< source image
 	int uploadWidth, uploadHeight;  ///< after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
-	GLuint texnum;                  ///< gl texture binding
+	GLuint texnum;            ///< gl texture binding
 
 	int frameUsed;                  ///< for texture usage in frame statistics
 
@@ -2241,8 +2247,8 @@ void R_InitFBO(void);
 #define R_BindHudFBO() { R_BindFBO(hudFbo); }
 #define R_ClearHudFBO() { R_BindHudFBO(); glClearColor(1.f, 1.f, 1.f, 0.f); glClear(GL_COLOR_BUFFER_BIT); }
 #define R_DrawHudOnTop() { \
-		GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA); \
-		R_FboRenderTo(hudFbo, NULL); \
+			GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA); \
+			R_FboRenderTo(hudFbo, NULL); \
 }
 #else
 #define R_BindHudFBO()
@@ -2288,10 +2294,10 @@ extern float r_anormals[NUMMDCVERTEXNORMALS][3];
 
 // optimized version
 #define R_MDC_DecodeXyzCompressed(ofsVec, out, normal) \
-	(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
+		(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
 
 void R_AddMDCSurfaces(trRefEntity_t *ent);
 

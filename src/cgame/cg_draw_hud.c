@@ -52,8 +52,8 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(breathbar),          CG_DrawBreathBar,                 0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} },
 	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthtext),         CG_DrawPlayerHealth,              0.25f,  { "Dynamic Color" } },
-	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { 0 } },
+	{ HUDF(healthtext),         CG_DrawPlayerHealth,              0.25f,  { "Dynamic Color", "Draw Suffix" } },
+	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
 	{ HUDF(ranktext),           CG_DrawRank,                      0.20f,  { 0 } },
 	{ HUDF(statsdisplay),       CG_DrawSkills,                    0.25f,  { "Column" } },
 	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash" } },
@@ -78,9 +78,9 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(followtext),         CG_DrawFollow,                    0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(demotext),           CG_DrawDemoMessage,               0.22f,  { "Details" } },
 	{ HUDF(missilecamera),      CG_DrawMissileCamera,             0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(sprinttext),         CG_DrawPlayerSprint,              0.25f,  { 0 } },
-	{ HUDF(breathtext),         CG_DrawPlayerBreath,              0.25f,  { 0 } },
-	{ HUDF(weaponchargetext),   CG_DrawWeaponCharge,              0.25f,  { 0 } },
+	{ HUDF(sprinttext),         CG_DrawPlayerSprint,              0.25f,  { "Draw Suffix" } },
+	{ HUDF(breathtext),         CG_DrawPlayerBreath,              0.25f,  { "Draw Suffix" } },
+	{ HUDF(weaponchargetext),   CG_DrawWeaponCharge,              0.25f,  { "Draw Suffix" } },
 	{ HUDF(fps),                CG_DrawFPS,                       0.19f,  { 0 } },
 	{ HUDF(snapshot),           CG_DrawSnapshot,                  0.19f,  { 0 } },
 	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { 0 } },
@@ -184,8 +184,8 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->breathbar          = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 0.1f, 1.0f, 0.5f }, (vec4_t) { 1.0f, 0.1f, 0, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
 	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | (BAR_ICON << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
 	hud->weaponchargebar    = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 1.0, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0, 1.0f, 0.1f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
-	hud->healthtext         = CG_getComponent(47, 465, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
-	hud->xptext             = CG_getComponent(108, 465, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
+	hud->healthtext         = CG_getComponent(47, 465, 57, 14, qtrue, 2, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
+	hud->xptext             = CG_getComponent(108, 465, 57, 14, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
 	hud->ranktext           = CG_getComponent(167, 465, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);    // disable
 	hud->statsdisplay       = CG_getComponent(116, 394, 42, 70, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawSkills);
 	hud->weaponicon         = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
@@ -210,9 +210,9 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->followtext         = CG_getComponent(4, 124, 278, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawFollow);
 	hud->demotext           = CG_getComponent(10, 0, 57, 10, qtrue, 0, 100.f, colorRed, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawDemoMessage);
 	hud->missilecamera      = CG_getComponent(4, 120, 160, 120, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawMissileCamera);
-	hud->sprinttext         = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerSprint);
-	hud->breathtext         = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerBreath);
-	hud->weaponchargetext   = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 96, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawWeaponCharge);
+	hud->sprinttext         = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerSprint);
+	hud->breathtext         = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerBreath);
+	hud->weaponchargetext   = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawWeaponCharge);
 	hud->fps                = CG_getComponent(SCREEN_WIDTH - 60, 184, 57, 14, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawFPS);
 	hud->snapshot           = CG_getComponent(SCREEN_WIDTH - 60, 305, 57, 38, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawSnapshot);
 	hud->ping               = CG_getComponent(SCREEN_WIDTH - 60, 200, 57, 14, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPing);
@@ -1172,7 +1172,7 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 	}
 
 	// Draw ammo
-	CG_PlayerAmmoValue(&value, &value2, &value3, comp->style & 1 ? &color : NULL);
+	CG_PlayerAmmoValue(&value, &value2, &value3, (comp->style & 1) ? &color : NULL);
 
 	// .25f
 	if (value3 >= 0)
@@ -1277,7 +1277,7 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
  */
 void CG_DrawPlayerHealth(hudComponent_t *comp)
 {
-	const char *str = va("%i HP", cg.snap->ps.stats[STAT_HEALTH]);
+	const char *str;
 	vec4_t     color;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
@@ -1295,6 +1295,7 @@ void CG_DrawPlayerHealth(hudComponent_t *comp)
 		return;
 	}
 
+	// dynamic color
 	if (comp->style & 1)
 	{
 		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
@@ -1304,6 +1305,8 @@ void CG_DrawPlayerHealth(hudComponent_t *comp)
 	{
 		Vector4Copy(comp->colorMain, color);
 	}
+
+	str = va("%i%s", cg.snap->ps.stats[STAT_HEALTH], comp->style & 2 ? " HP" : "");
 
 	CG_DrawCompText(comp, str, color, comp->styleText, &cgs.media.limboFont1);
 }
@@ -1339,11 +1342,11 @@ void CG_DrawPlayerSprint(hudComponent_t *comp)
 
 	if (cg.snap->ps.powerups[PW_ADRENALINE])
 	{
-		str = va("%d s", (cg.snap->ps.powerups[PW_ADRENALINE] - cg.time) / 1000);
+		str = va("%d%s", (cg.snap->ps.powerups[PW_ADRENALINE] - cg.time) / 1000, (comp->style & 1) ? " s" : "");
 	}
 	else
 	{
-		str = va("%.0f %%", (cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME) * 100);
+		str = va("%.0f%s", (cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME) * 100, (comp->style & 1) ? " %" : "");
 	}
 
 	CG_DrawCompText(comp, str, comp->colorMain, comp->styleText, &cgs.media.limboFont1);
@@ -1356,7 +1359,7 @@ void CG_DrawPlayerSprint(hudComponent_t *comp)
  */
 void CG_DrawPlayerBreath(hudComponent_t *comp)
 {
-	const char *str = va("%.0f %%", (cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME) * 100);
+	const char *str;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -1377,6 +1380,8 @@ void CG_DrawPlayerBreath(hudComponent_t *comp)
 	{
 		return;
 	}
+
+	str = va("%.0f%s", (cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME) * 100, (comp->style & 1) ? " %" : "");
 
 	CG_DrawCompText(comp, str, comp->colorMain, comp->styleText, &cgs.media.limboFont1);
 }
@@ -1425,7 +1430,7 @@ void CG_DrawWeaponCharge(hudComponent_t *comp)
 		break;
 	}
 
-	str = va("%.0f %%", MIN(((cg.time - cg.snap->ps.classWeaponTime) / chargeTime) * 100, 100));
+	str = va("%.0f%s", MIN(((cg.time - cg.snap->ps.classWeaponTime) / chargeTime) * 100, 100), (comp->style & 1) ? " %" : "");
 
 	CG_DrawCompText(comp, str, comp->colorMain, comp->styleText, &cgs.media.limboFont1);
 }
@@ -1553,7 +1558,7 @@ void CG_DrawXP(hudComponent_t *comp)
 		clr = comp->colorMain;
 	}
 
-	str = va("%s XP", Com_ScaleNumberPerThousand((float) cg.snap->ps.stats[STAT_XP], 2));
+	str = va("%s%s", Com_ScaleNumberPerThousand((float) cg.snap->ps.stats[STAT_XP], 2), (comp->style & 1) ? " XP" : "");
 
 	CG_DrawCompText(comp, str, clr, comp->styleText, &cgs.media.limboFont1);
 }

@@ -84,6 +84,23 @@ typedef enum hudShowLayout_e
 	HUD_SHOW_LAYOUT_ALL,
 } hudShowLayout_t;
 
+typedef enum hudShowGrid_e
+{
+	HUD_SHOW_GRID_OFF,
+	HUD_SHOW_GRID_OCD_LEVEL1,
+	HUD_SHOW_GRID_OCD_LEVEL2,
+	HUD_SHOW_GRID_OCD_LEVEL3,
+	HUD_SHOW_GRID_MAX,
+} hudShowGrid_t;
+
+typedef enum hudGridScale_e
+{
+	HUD_GRID_SCALE_1,
+	HUD_GRID_SCALE_2,
+	HUD_GRID_SCALE_3,
+	HUD_GRID_SCALE_MAX,
+} hudGridScale_t;
+
 float    HUDEditorX;
 float    HUDEditorWidth;
 float    HUDEditorCenterX;
@@ -92,7 +109,11 @@ qboolean wsAdjusted = qfalse;
 static panel_button_t  *lastFocusComponent;
 static qboolean        lastFocusComponentMoved;
 static int             elementColorSelection;
-static hudShowLayout_t showLayout = HUD_SHOW_LAYOUT_OFF;
+static qboolean        forceGridAlignment = qfalse;
+static hudShowLayout_t showLayout         = HUD_SHOW_LAYOUT_OFF;
+static qboolean        showMicroGrid      = qfalse;
+static hudShowGrid_t   showGrid           = HUD_SHOW_GRID_OFF;
+static hudGridScale_t  gridScale          = HUD_GRID_SCALE_1;
 
 static void CG_HudEditorUpdateFields(panel_button_t *button);
 static qboolean CG_HudEditor_Dropdown_KeyDown(panel_button_t *button, int key);
@@ -2381,8 +2402,15 @@ static void CG_DrawHudEditor_ToolTip(panel_button_t *button)
 	}
 }
 
+/**
+ * @var helpStatus
+ * @details
+ */
 static int helpStatus = SHOW_ON;
 
+/**
+ * @brief CG_HudEditor_ToggleShowLayout
+ */
 static void CG_HudEditor_ToggleShowLayout(void)
 {
 	switch (showLayout)
@@ -2394,6 +2422,9 @@ static void CG_HudEditor_ToggleShowLayout(void)
 	}
 }
 
+/**
+ * @brief CG_HudEditor_ToggleHelp
+ */
 static void CG_HudEditor_ToggleHelp(void)
 {
 	if (helpStatus != SHOW_ON)
@@ -2406,12 +2437,18 @@ static void CG_HudEditor_ToggleHelp(void)
 	}
 }
 
+/**
+ * @brief CG_HudEditor_ToggleNoiseGenerator
+ */
 static void CG_HudEditor_ToggleNoiseGenerator(void)
 {
 	cg.generatingNoiseHud = !cg.generatingNoiseHud;
 	CG_HudEditor_Cleanup();
 }
 
+/**
+ * @brief CG_HudEditor_ToggleFullScreen
+ */
 static void CG_HudEditor_ToggleFullScreen(void)
 {
 	cg.fullScreenHudEditor = !cg.fullScreenHudEditor;
@@ -2453,6 +2490,11 @@ static void CG_HudEditor_HelpDraw(void)
 			{ "h",                   "help on/off"                       },
 			{ "n",                   "noise generator on/off"            },
 			{ "f",                   "full screen on/off"                },
+			{ "a",                   "force grid alignment on/off"       },
+			{ NULL,                  NULL                                },
+			{ "o",                   "show micro grid on/off"            },
+			{ "c",                   "show grid OCD lvl 1/2/3"           },
+			{ "d",                   "scale grid .25/.125/.1"            },
 		};
 
 		vec4_t bgColor;
@@ -2460,11 +2502,114 @@ static void CG_HudEditor_HelpDraw(void)
 		VectorCopy(colorDkGrey, bgColor);
 		bgColor[3] = .90f;
 
-		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.1, SCREEN_HEIGHT * 0.5, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
+		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.2f, SCREEN_HEIGHT * 0.4f, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
 		                  bgColor, colorBlack, colorDkGrey, colorBlack,
 		                  &hudEditorHeaderFont, &hudEditorTextFont);
 	}
 }
+
+/**
+ * @brief CG_HudEditor_ToggleForceGridAlignment
+ */
+static void CG_HudEditor_ToggleForceGridAlignment(void)
+{
+	forceGridAlignment = !forceGridAlignment;
+}
+
+/**
+ * @brief CG_HudEditor_ToggleGrid
+ */
+static void CG_HudEditor_ToggleGrid(void)
+{
+	++showGrid;
+
+	if (showGrid == HUD_SHOW_GRID_MAX)
+	{
+		showGrid = HUD_SHOW_GRID_OFF;
+	}
+}
+
+/**
+ * @brief CG_HudEditor_ToggleFullScreen
+ */
+static void CG_HudEditor_ToggleMicroGrid(void)
+{
+	showMicroGrid = !showMicroGrid;
+}
+
+/**
+ * @brief CG_HudEditor_ToggleGridScale
+ */
+static void CG_HudEditor_ToggleGridScale(void)
+{
+	++gridScale;
+
+	if (gridScale == HUD_GRID_SCALE_MAX)
+	{
+		gridScale = HUD_GRID_SCALE_1;
+	}
+}
+
+static ID_INLINE float CG_HudEditor_GetGridScale(void)
+{
+	switch (gridScale)
+	{
+	case HUD_GRID_SCALE_1: return 0.25f;
+	case HUD_GRID_SCALE_2: return 0.125f;
+	case HUD_GRID_SCALE_3: return 0.10f;
+	default: return 0.10f;
+	}
+}
+
+static void CG_HUDEditor_GridDrawSection2(float step, float size)
+{
+	float i, j;
+
+	for (i = SCREEN_WIDTH_SAFE * step, j = SCREEN_HEIGHT_SAFE * step;
+	     i < SCREEN_WIDTH_SAFE && j < SCREEN_HEIGHT_SAFE;
+	     i += SCREEN_WIDTH_SAFE * step, j += SCREEN_HEIGHT_SAFE * step)
+	{
+		CG_DrawRect_FixedBorder(i, j, SCREEN_WIDTH_SAFE - i * 2, SCREEN_HEIGHT_SAFE - j * 2, size, (vec4_t) { 1, 1, 1, .5f });
+	}
+}
+
+static void CG_HUDEditor_GridDrawSection(float step, float size)
+{
+	float i;
+
+	for (i = SCREEN_WIDTH_SAFE * step; i < SCREEN_WIDTH_SAFE; i += SCREEN_WIDTH_SAFE * step)
+	{
+		CG_FillRect(i, 0, size, SCREEN_HEIGHT_SAFE, (vec4_t) { 1, 1, 1, .5f });
+	}
+
+	for (i = SCREEN_HEIGHT_SAFE * step; i < SCREEN_HEIGHT_SAFE; i += SCREEN_HEIGHT_SAFE * step)
+	{
+		CG_FillRect(0, i, SCREEN_WIDTH_SAFE, size, (vec4_t) { 1, 1, 1, .5f });
+	}
+}
+
+static void CG_HudEditor_GridDraw(void)
+{
+	float step = CG_HudEditor_GetGridScale();
+
+	if (showMicroGrid)
+	{
+		CG_HUDEditor_GridDrawSection(step / (1 / step), 0.1f);
+	}
+
+	switch (showGrid)
+	{
+	case HUD_SHOW_GRID_OCD_LEVEL3: CG_HUDEditor_GridDrawSection2(step, 1.25f);
+	// fall through
+	case HUD_SHOW_GRID_OCD_LEVEL2: CG_HUDEditor_GridDrawSection(step * 0.5f, 0.25f);
+	// fall through
+	case HUD_SHOW_GRID_OCD_LEVEL1: CG_HUDEditor_GridDrawSection(step, 0.5f);
+	// fall through
+	case HUD_SHOW_GRID_OFF:
+	default: return;
+	}
+}
+
 
 /**
 * @brief CG_DrawHudEditor
@@ -2483,6 +2628,7 @@ void CG_DrawHudEditor(void)
 		altHud = hudData.active->hudnumber;
 	}
 
+	CG_HudEditor_GridDraw();
 	BG_PanelButtonsRender(hudComponentsPanel);
 	BG_PanelButtonsRender(styleCheckBoxPanel);
 	BG_PanelButtonsRender(hudEditor);
@@ -2516,7 +2662,7 @@ void CG_DrawHudEditor(void)
 		}
 	}
 
-	// start for beginning
+	// start from beginning
 	buttons = hudComponentsPanel;
 
 	for ( ; *buttons; buttons++)
@@ -2570,28 +2716,20 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		return;
 	}
 
-	if (key == 'l' && down)
+	if (down)
 	{
-		CG_HudEditor_ToggleShowLayout();
-		return;
-	}
-
-	if (key == 'h' && down)
-	{
-		CG_HudEditor_ToggleHelp();
-		return;
-	}
-
-	if (key == 'n' && down)
-	{
-		CG_HudEditor_ToggleNoiseGenerator();
-		return;
-	}
-
-	if (key == 'f' && down)
-	{
-		CG_HudEditor_ToggleFullScreen();
-		return;
+		switch (key)
+		{
+		case 'l': CG_HudEditor_ToggleShowLayout();         return;
+		case 'h': CG_HudEditor_ToggleHelp();               return;
+		case 'n': CG_HudEditor_ToggleNoiseGenerator();     return;
+		case 'f': CG_HudEditor_ToggleFullScreen();         return;
+		case 'o': CG_HudEditor_ToggleMicroGrid();          return;
+		case 'c': CG_HudEditor_ToggleGrid();               return;
+		case 'd': CG_HudEditor_ToggleGridScale();          return;
+		case 'a': CG_HudEditor_ToggleForceGridAlignment(); return;
+		default: break;
+		}
 	}
 
 	// start parsing hud components from the last focused button
@@ -2630,16 +2768,23 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	{
 		hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
 		qboolean       changeSize;
+		qboolean       gridAlign = forceGridAlignment && (showGrid || showMicroGrid);
 		float          offset;
-		float          *pValue;
+		float          *pValue = NULL;
 
 #ifdef __APPLE__
 		changeSize = trap_Key_IsDown(K_COMMAND);
 #else
 		changeSize = (trap_Key_IsDown(K_RALT) || trap_Key_IsDown(K_LALT));
 #endif
+		if (gridAlign)
+		{
+			float multiple = CG_HudEditor_GetGridScale();
+			float side     = (key == K_LEFTARROW || key == K_RIGHTARROW) ? SCREEN_WIDTH_SAFE : SCREEN_HEIGHT_SAFE;
 
-		if (trap_Key_IsDown(K_RCTRL) || trap_Key_IsDown(K_LCTRL))
+			offset = side * (multiple / (1 / multiple));
+		}
+		else if (trap_Key_IsDown(K_RCTRL) || trap_Key_IsDown(K_LCTRL))
 		{
 			offset = 0.1f;
 		}
@@ -2674,6 +2819,11 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		{
 			pValue   = (changeSize ? &comp->location.h : &comp->location.y);
 			*pValue += offset;
+		}
+
+		if (pValue && gridAlign)
+		{
+			*pValue = Q_ClosestMultipleFloat(*pValue, offset, 3);
 		}
 
 		switch (key)
@@ -2724,7 +2874,7 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 		lastFocusComponentMoved = qtrue;
 
 		// don't modify default HUD
-		if (hudData.active->hudnumber)
+		if (hudData.active->isEditable)
 		{
 			hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
 
@@ -2736,6 +2886,14 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 
 			comp->location.x = x - offsetX;
 			comp->location.y = y - offsetY;
+
+			if (forceGridAlignment && (showGrid || showMicroGrid))
+			{
+				float multiple = CG_HudEditor_GetGridScale();
+
+				comp->location.x = Q_ClosestMultipleFloat(comp->location.x, SCREEN_WIDTH_SAFE * (multiple / (1 / multiple)), 3);
+				comp->location.y = Q_ClosestMultipleFloat(comp->location.y, SCREEN_HEIGHT_SAFE * (multiple / (1 / multiple)), 3);
+			}
 
 			CG_HudEditorUpdateFields(button);
 			return;

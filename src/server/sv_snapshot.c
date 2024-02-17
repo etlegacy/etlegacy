@@ -90,7 +90,7 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 		else
 		{
 			newent       = &svs.snapshotEntities[(to->first_entity + newindex) % svs.numSnapshotEntities];
-			newSharedent = &svs.snapshotSharedEntities[(to->first_entity + newindex) % svs.numSnapshotEntities];
+			newSharedent = &svs.snapshotEntitiesShared[(to->first_entity + newindex) % svs.numSnapshotEntities];
 			newnum       = newent->number;
 		}
 
@@ -101,7 +101,7 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 		else
 		{
 			oldent       = &svs.snapshotEntities[(from->first_entity + oldindex) % svs.numSnapshotEntities];
-			oldSharedent = &svs.snapshotSharedEntities[(from->first_entity + oldindex) % svs.numSnapshotEntities];
+			oldSharedent = &svs.snapshotEntitiesShared[(from->first_entity + oldindex) % svs.numSnapshotEntities];
 			oldnum       = oldent->number;
 		}
 
@@ -115,7 +115,7 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 			MSG_WriteDeltaEntity(msg, oldent, newent, qfalse);
 			if (client->ettvClient && messageSize != msg->cursize)
 			{
-				MSG_ETTV_WriteDeltaSharedEntity(msg, oldSharedent, newSharedent, qtrue);
+				MSG_ETTV_WriteDeltaEntityShared(msg, oldSharedent, newSharedent, qtrue);
 			}
 
 			oldindex++;
@@ -134,7 +134,7 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 			MSG_WriteDeltaEntity(msg, &sv.svEntities[newnum].baseline, newent, qtrue);
 			if (client->ettvClient)
 			{
-				MSG_ETTV_WriteDeltaSharedEntity(msg, &sv.svEntities[newnum].baselineShared, newSharedent, qtrue);
+				MSG_ETTV_WriteDeltaEntityShared(msg, &sv.svEntities[newnum].baselineShared, newSharedent, qtrue);
 			}
 			newindex++;
 			continue;
@@ -146,7 +146,7 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 			MSG_WriteDeltaEntity(msg, oldent, NULL, qtrue);
 			if (client->ettvClient)
 			{
-				MSG_ETTV_WriteDeltaSharedEntity(msg, oldSharedent, NULL, qtrue);
+				MSG_ETTV_WriteDeltaEntityShared(msg, oldSharedent, NULL, qtrue);
 			}
 			oldindex++;
 			continue;
@@ -826,7 +826,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 
 		if (client->ettvClient)
 		{
-			stateShared  = &svs.snapshotSharedEntities[svs.nextSnapshotEntities % svs.numSnapshotEntities];
+			stateShared  = &svs.snapshotEntitiesShared[svs.nextSnapshotEntities % svs.numSnapshotEntities];
 			*stateShared = ent->r;
 		}
 
@@ -1062,6 +1062,23 @@ void SV_SendClientMessages(void)
 
 	// update any changed configstrings from this frame
 	SV_UpdateConfigStrings();
+
+#ifdef DEDICATED
+	if (svcls.isTVGame)
+	{
+		sharedEntity_t *gEnt;
+		sv.num_entities = 0;
+		for (i = 0; i < MAX_GENTITIES; i++)
+		{
+			gEnt = SV_GentityNum(i);
+
+			if (gEnt->r.linked)
+			{
+				sv.num_entities = i + 1;
+			}
+		}
+	}
+#endif // DEDICATED
 
 	// send a message to each connected client
 	for (i = 0; i < sv_maxclients->integer; i++)

@@ -202,7 +202,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 
 		rc = FT_Load_Glyph(face, index, flags);
 
-		if (rc)
+		if (rc != 0)
 		{
 			Ren_Warning("RE_ConstructGlyphInfo: cannot load a glyph into the glyph slot of a face object.\n");
 			return &glyph;         // nothing to render

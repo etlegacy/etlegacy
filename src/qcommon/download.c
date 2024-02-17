@@ -304,6 +304,43 @@ unsigned int Com_BeginWebDownload(const char *localName, const char *remoteName)
 	return DL_BeginDownload(localName, remoteName, &Com_WebDownloadComplete, &Com_WebDownloadProgress);
 }
 
+static void Com_WebDownloadFileSimpleComplete(webRequest_t *request, webRequestResult requestResult)
+{
+	if (!requestResult)
+	{
+		return;
+	}
+	if (FS_FileInPathExists(request->data.name))
+	{
+		char final_filename[MAX_OSPATH] = { 0 };
+		COM_StripExtension(request->data.name, final_filename, sizeof(final_filename));
+		if (Sys_Rename(request->data.name, final_filename))
+		{
+			FS_CopyFile(request->data.name, final_filename);
+
+			if (Sys_Remove(request->data.name) != 0)
+			{
+				Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", request->data.name);
+			}
+		}
+	}
+	else
+	{
+		Com_DPrintf("Downloaded file does not exist (anymore?) '%s'\n", request->data.name);
+	}
+}
+
+unsigned int Com_DownloadFileSimple(const char *localName, const char *remoteName)
+{
+	char tmpPath[MAX_OSPATH] = { 0 };
+	Q_strcpy(tmpPath, localName);
+	if (!Q_StringEndsWith(tmpPath, ".tmp"))
+	{
+		Q_strcat(tmpPath, sizeof(tmpPath), ".tmp");
+	}
+	return DL_BeginDownload(tmpPath, remoteName, &Com_WebDownloadFileSimpleComplete, &Com_WebDownloadProgress);
+}
+
 static void checkDownloadName(char *filename)
 {
 	int i;
@@ -597,7 +634,8 @@ void Com_CheckCaCertStatus(void)
 
 	if (downloadFile)
 	{
-		Com_SetupDownloadRaw(MIRROR_SERVER_URL "/certificates", "", CA_CERT_FILE, CA_CERT_FILE TMP_FILE_EXTENSION, qtrue, qtrue);
+		// Com_SetupDownloadRaw(MIRROR_SERVER_URL "/certificates", "", CA_CERT_FILE, CA_CERT_FILE TMP_FILE_EXTENSION, qtrue, qtrue);
+		Com_DownloadFileSimple(ospath, MIRROR_SERVER_URL "/certificates/" CA_CERT_FILE);
 	}
 #else
 	Com_Printf("Using system ssl certificates\n");

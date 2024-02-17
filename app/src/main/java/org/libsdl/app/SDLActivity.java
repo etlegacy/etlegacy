@@ -1129,7 +1129,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     /**
      * This method is called by SDL using JNI.
      */
-    public static boolean isAndroidTV() {
+	public static boolean isAndroidTV() {
         UiModeManager uiModeManager = (UiModeManager) getContext().getSystemService(UI_MODE_SERVICE);
         if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
             return true;
@@ -1873,7 +1873,7 @@ class SDLMain implements Runnable {
         try {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DISPLAY);
         } catch (Exception e) {
-            Log.v("SDL", "modify thread properties failed " + e.toString());
+            Log.v("SDL", "modify thread properties failed " + e);
         }
 
         Log.v("SDL", "Running main function " + function + " from library " + library);

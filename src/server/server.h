@@ -387,7 +387,7 @@ typedef struct
 	int numSnapshotEntities;                    ///< sv_maxclients->integer*PACKET_BACKUP*MAX_PACKET_ENTITIES
 	int nextSnapshotEntities;                   ///< next snapshotEntities to use
 	entityState_t *snapshotEntities;            ///< [numSnapshotEntities]
-	entityShared_t *snapshotSharedEntities;
+	entityShared_t *snapshotEntitiesShared;
 	int nextHeartbeatTime;
 	challenge_t challenges[MAX_CHALLENGES];     ///< to prevent invalid IPs from connecting
 	receipt_t infoReceipts[MAX_INFO_RECEIPTS];
@@ -502,6 +502,9 @@ extern cvar_t *sv_serverTimeReset;
 
 extern cvar_t *sv_etltv_maxslaves;
 extern cvar_t *sv_etltv_password;
+extern cvar_t *sv_etltv_autorecord;
+extern cvar_t *sv_etltv_autoplay;
+extern cvar_t *sv_etltv_clientname;
 
 //===========================================================
 
@@ -698,5 +701,282 @@ qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 #define DLNOTIFY_REDIRECT   0x00000001  ///< "Redirecting client ..."
 #define DLNOTIFY_BEGIN      0x00000002  ///< "clientDownload: 4 : beginning ..."
 #define DLNOTIFY_ALL        (DLNOTIFY_REDIRECT | DLNOTIFY_BEGIN)
+
+//============================ TV server client ============================
+
+#ifdef DEDICATED
+
+#define SV_CL_MAXPACKETS 40
+
+/**
+ * @struct svclientStatic_t
+ * @brief the svclientStatic_t structure is never wiped, and is used even when
+ * no client connection is active at all
+ *
+ * A connection can be to either a server through the network layer or a
+ * demo through a file.
+ */
+typedef struct
+{
+	connstate_t state;               ///< connection status
+	challengeState_t challengeState; ///< challenge status
+
+	char servername[MAX_OSPATH];     ///< name of server from original connect (used by reconnect)
+
+	int framecount;
+	int frametime;                  ///< msec since last frame
+
+	int realtime;                   ///< ignores pause
+
+	int lastRunFrameTime;
+	int lastRunFrameSysTime;
+
+	qboolean isTVGame;
+
+} svclientStatic_t;
+
+extern svclientStatic_t svcls;
+
+/**
+ * @struct svcldemo_t
+ * @brief Server client demo information
+ */
+typedef struct
+{
+	char demoName[MAX_QPATH];
+	qboolean recording;
+	qboolean playing;
+	qboolean pure;                          ///< are we starting the demo with sv_pure 1 emulation?
+	qboolean waiting;                       ///< don't record until a non-delta message is received
+	qboolean firstFrameSkipped;
+	fileHandle_t file;
+
+	int timeFrames;                         ///< counter of rendered frames
+	int timeStart;                          ///< cls.realtime before first frame
+	int timeBaseTime;                       ///< each frame will be at this time + frameNum * 50
+
+	int fastForwardTime;
+} svcldemo_t;
+
+/**
+ * @struct svclientConnection_t
+ * @brief The svclientConnection_t structure is wiped when disconnecting from a server,
+ * either to go to a full screen console, play a demo, or connect to a different server
+ *
+ * A connection can be to either a server through the network layer or a
+ * demo through a file.
+ */
+typedef struct
+{
+	connstate_t state;                          ///< connection status
+
+	int clientNum;
+	int lastPacketSentTime;                     ///< for retransmits during connection
+	int lastPacketTime;                         ///< for timeouts
+
+	netadr_t serverAddress;
+	int connectTime;                            ///< for connection retransmits
+	int connectPacketCount;                     ///< for display on connection dialog
+	char serverMessage[MAX_STRING_TOKENS];      ///< for display on connection dialog
+
+	char serverMasterPassword[MAX_STRING_TOKENS];
+
+	int challenge;                              ///< from the server to use for connecting
+	int checksumFeed;                           ///< from the server for checksum calculations
+
+	int onlyVisibleClients;
+
+	// these are our reliable messages that go to the server
+	int reliableSequence;
+	int reliableAcknowledge;                    ///< the last one the server has executed
+	/// NOTE: incidentally, reliableCommands[0] is never used (always start at reliableAcknowledge+1)
+	char reliableCommands[MAX_RELIABLE_COMMANDS][MAX_TOKEN_CHARS];
+
+	// unreliable binary data to send to server
+	int binaryMessageLength;
+	char binaryMessage[MAX_BINARY_MESSAGE];
+	qboolean binaryMessageOverflowed;
+
+	/// server message (unreliable) and command (reliable) sequence
+	/// numbers are NOT cleared at level changes, but continue to
+	/// increase as long as the connection is valid
+
+	/// message sequence is used by both the network layer and the
+	/// delta compression layer
+	int serverMessageSequence;
+
+	// reliable messages received from server
+	int serverCommandSequence;
+	int lastExecutedServerCommand;              ///< last server command grabbed or executed with CL_GetServerCommand
+	char serverCommands[MAX_RELIABLE_COMMANDS][MAX_TOKEN_CHARS];
+
+	// demo information
+	svcldemo_t demo;
+
+	userAgent_t agent;                          ///< holds server engine information
+
+	/// big stuff at end of structure so most offsets are 15 bits or less
+	netchan_t netchan;
+
+} svclientConnection_t;
+
+extern svclientConnection_t svclc;
+
+/**
+ * @struct svclSnapshot_t
+ * @brief Snapshots are a view of the server at a given time
+ */
+typedef struct
+{
+	qboolean valid;                     ///< cleared if delta parsing was invalid
+	int snapFlags;                      ///< rate delayed and dropped commands
+
+	int serverTime;                     ///< server time the message is valid for (in msec)
+
+	int messageNum;                     ///< copied from netchan->incoming_sequence
+	int deltaNum;                       ///< messageNum the delta is from
+	int ping;                           ///< time from when cmdNum-1 was sent to time packet was reeceived
+	byte areamask[MAX_MAP_AREA_BYTES];  ///< portalarea visibility bits
+
+	int cmdNum;                         ///< the next cmdNum the server is expecting
+	playerState_t ps;                   ///< complete information about the current player at this time
+
+	int numEntities;                    ///< all of the entities that need to be presented
+	int parseEntitiesNum;               ///< at the time of this snapshot
+
+	int serverCommandNum;               ///< execute all commands up to this before
+	                                    ///< making the snapshot current
+
+	ettvClientSnapshot_t playerstates[MAX_CLIENTS];
+
+} svclSnapshot_t;
+
+/**
+ * @struct svoutPacket_t
+ * @brief
+ */
+typedef struct
+{
+	int p_cmdNumber;            ///< cl.cmdNumber when packet was sent
+	int p_serverTime;           ///< usercmd->serverTime when packet was sent
+	int p_realtime;             ///< cls.realtime when packet was sent
+} svoutPacket_t;
+
+#define MAX_PARSE_ENTITIES  2048
+#define CMD_BACKUP          64
+#define CMD_MASK            (CMD_BACKUP - 1)
+
+/**
+ * @struct svclientActive_t
+ * @brief The svclientActive_t structure is wiped completely at every
+ * new gamestate_t, potentially several times during an established connection
+ */
+typedef struct
+{
+	int timeoutcount;                       ///< it requres several frames in a timeout condition
+	                                        ///< to disconnect, preventing debugging breaks from
+	                                        ///< causing immediate disconnects on continue
+	svclSnapshot_t snap;                      ///< latest received from server
+
+	int serverTime;                         ///< may be paused during play
+	int oldServerTime;                      ///< to prevent time from flowing bakcwards
+	int oldFrameServerTime;                 ///< to check tournament restarts
+	int serverTimeDelta;                    ///< cl.serverTime = cls.realtime + cl.serverTimeDelta
+	                                        ///  this value changes as net lag varies
+	int baselineDelta;                      ///< initial or reset value of serverTimeDelta w/o adjustments
+	qboolean extrapolatedSnapshot;          ///< set if any cgame frame has been forced to extrapolate
+	                                        ///< cleared when CL_AdjustTimeDelta looks at it
+	qboolean newSnapshots;                  ///< set on parse of any valid packet
+
+	gameState_t gameState;                  ///< configstrings
+	char mapname[MAX_QPATH];                ///< extracted from CS_SERVERINFO
+
+	int parseEntitiesNum;                   ///< index (not anded off) into cl_parse_entities[]
+
+	/// cmds[cmdNumber] is the predicted command, [cmdNumber-1] is the last
+	/// properly generated command
+	usercmd_t cmds[CMD_BACKUP];             ///< each mesage will send several old cmds
+	int cmdNumber;                          ///< incremented each frame, because multiple
+	                                        ///< frames may need to be packed into a single packet
+
+	svoutPacket_t outPackets[PACKET_BACKUP];  ///< information about each packet we have sent out
+
+	/// the client maintains its own idea of view angles, which are
+	/// sent to the server each frame.  It is cleared to 0 upon entering each level.
+	/// the server sends a delta each frame which is added to the locally
+	/// tracked view angles to account for standing on rotating objects,
+	/// and teleport direction changes
+	vec3_t viewangles;
+
+	int serverId;                           ///< included in each client message so the server
+	                                        ///< can tell if it is for a prior map_restart
+	                                        ///< big stuff at end of structure so most offsets are 15 bits or less
+	svclSnapshot_t snapshots[PACKET_BACKUP];
+
+	entityState_t entityBaselines[MAX_GENTITIES];   ///< for delta compression when not in previous frame
+	entityShared_t entityBaselinesShared[MAX_GENTITIES];
+
+	entityState_t currentStateEntities[MAX_GENTITIES];
+	entityShared_t currentStateEntitiesShared[MAX_GENTITIES];
+
+	entityState_t parseEntities[MAX_PARSE_ENTITIES];
+	entityShared_t parseEntitiesShared[MAX_PARSE_ENTITIES];
+
+} svclientActive_t;
+
+extern svclientActive_t svcl;
+
+// sv_cl_main.c
+void SV_CL_Commands_f(void);
+void SV_CL_CheckForResend(void);
+void SV_CL_Disconnect(void);
+void SV_CL_AddReliableCommand(const char *cmd);
+void SV_CL_WritePacket(void);
+qboolean SV_CL_ReadyToSendPacket(void);
+void SV_CL_ClearState(void);
+void SV_CL_DownloadsComplete(void);
+void SV_CL_SendPureChecksums(void);
+void SV_CL_InitTVGame(void);
+qboolean SV_CL_GetServerCommand(int serverCommandNumber);
+void SV_CL_ConfigstringModified(void);
+char *SV_CL_Cvar_InfoString(char *cs, int index);
+
+int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps);
+void SV_CL_Frame(int frameMsec);
+void SV_CL_RunFrame(void);
+
+void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg);
+void SV_CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg);
+void SV_CL_ServerInfoPacket(netadr_t from, msg_t *msg);
+void SV_CL_DisconnectPacket(netadr_t from);
+
+// sv_cl_net_chan.c
+void SV_CL_Netchan_Transmit(netchan_t *chan, msg_t *msg);
+void SV_CL_Netchan_TransmitNextFragment(netchan_t *chan);
+qboolean SV_CL_Netchan_Process(netchan_t *chan, msg_t *msg);
+
+// sv_cl_parse.c
+void SV_CL_ParseServerMessage(msg_t *msg);
+void SV_CL_ParseGamestate(msg_t *msg);
+void SV_CL_ParseCommandString(msg_t *msg);
+void SV_CL_ParseSnapshot(msg_t *msg);
+void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapshot_t *newframe);
+void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityState_t *old, entityShared_t *oldShared, qboolean unchanged);
+void SV_CL_ParsePlayerstates(msg_t *msg);
+void SV_CL_SystemInfoChanged(void);
+
+// sv_cl_demo.c
+void SV_CL_DemoInit(void);
+void SV_CL_Record(const char *name);
+void SV_CL_StopRecord_f(void);
+void SV_CL_WriteDemoMessage(msg_t *msg, int headerBytes);
+void SV_CL_ReadDemoMessage(void);
+void SV_CL_DemoCompleted(void);
+void SV_CL_DemoCleanUp(void);
+void SV_CL_NextDemo(void);
+
+#endif // DEDICATED
+
+//============================================================
 
 #endif // #ifndef INCLUDE_SERVER_H
