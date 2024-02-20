@@ -72,7 +72,7 @@ static void SV_CL_Netchan_Encode(msg_t *msg)
 	msg->bit       = sbit;
 	msg->readcount = srdc;
 
-	string = (byte *)svclc.serverCommands[reliableAcknowledge & (MAX_RELIABLE_COMMANDS - 1)];
+	string = (byte *)svclc.serverCommandsLatest[reliableAcknowledge & (MAX_RELIABLE_COMMANDS - 1)];
 	index  = 0;
 
 	key = svclc.challenge ^ serverId ^ messageAcknowledge;

@@ -1231,6 +1231,8 @@ void SV_Init(void)
 	sv_etltv_autorecord = Cvar_Get("sv_etltv_autorecord", "0", CVAR_ARCHIVE_ND);
 	sv_etltv_autoplay   = Cvar_Get("sv_etltv_autoplay", "0", CVAR_ARCHIVE_ND);
 	sv_etltv_clientname = Cvar_GetAndDescribe("sv_etltv_clientname", "ETLTV", CVAR_ARCHIVE_ND, "Name of the ETLTV client.");
+	sv_etltv_delay      = Cvar_GetAndDescribe("sv_etltv_delay", "0", CVAR_INIT, "Delay feed by number of seconds.");
+	sv_etltv_shownet    = Cvar_Get("sv_etltv_shownet", "0", CVAR_ARCHIVE_ND);
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();

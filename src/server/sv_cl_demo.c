@@ -253,8 +253,8 @@ void SV_CL_StopRecord_f(void)
 	(void)FS_Write(&len, 4, svclc.demo.file);
 	(void)FS_Write(&len, 4, svclc.demo.file);
 	FS_FCloseFile(svclc.demo.file);
-	svclc.demo.file = 0;
 
+	svclc.demo.file      = 0;
 	svclc.demo.recording = qfalse;
 	Com_Printf("Stopped demo.\n");
 }
@@ -340,7 +340,7 @@ void SV_CL_ReadDemoMessage(void)
 		return;
 	}
 
-	svclc.serverMessageSequence = LittleLong(s);
+	svclc.serverMessageSequenceLatest = LittleLong(s);
 
 	// init the message
 	MSG_Init(&buf, bufData, sizeof(bufData));
@@ -375,7 +375,7 @@ void SV_CL_ReadDemoMessage(void)
 
 	svclc.lastPacketTime = svcls.realtime;
 	buf.readcount        = 0;
-	SV_CL_ParseServerMessage(&buf);
+	SV_CL_ParseServerMessage_Ext(&buf, 0);
 }
 
 /**
@@ -449,7 +449,7 @@ void SV_CL_PlayDemo_f(void)
 
 	Q_strncpyz(svcls.servername, demoFile, sizeof(svcls.servername));
 
-	while (!svcl.snap.valid || !svcl.serverTime)
+	while (!svcls.firstSnap || !svcl.serverTime)
 	{
 		SV_CL_ReadDemoMessage();
 	}
