@@ -2194,34 +2194,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value)
 		// best secondary weapon for class and team
 		if (!IS_VALID_WEAPON(w2))
 		{
-			int              i;
-			bg_playerclass_t *classInfo;
-
-			classInfo = GetPlayerClassesData(team, playerType);
-
-			w2 = GetPlayerClassesData(team, playerType)->classSecondaryWeapons[0].weapon;
-
-			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
-			{
-				if (!classInfo->classSecondaryWeapons[i].weapon)
-				{
-					break;
-				}
-
-				// is player had the minimum level required to use this weapon
-				if (!BG_IsSkillAvailable(ent->client->sess.skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
-				{
-					continue;
-				}
-
-				// if player handling a similar weapon in primary slot, don't take it
-				if (classInfo->classSecondaryWeapons[i].weapon == w)
-				{
-					continue;
-				}
-
-				w2 = classInfo->classSecondaryWeapons[i].weapon;
-			}
+			w2 = BG_GetBestSecondaryWeapon(playerType, team, w, ent->client->sess.skill);
 		}
 	}
 	else

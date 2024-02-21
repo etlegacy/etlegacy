@@ -3831,31 +3831,7 @@ void CG_LimboPanel_SetDefaultWeapon(int slot)
 	}
 	else
 	{
-		int i, lastValidWeaponPos = 0;
-
-		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
-		{
-			if (!classInfo->classSecondaryWeapons[i].weapon)
-			{
-				break;
-			}
-
-			// is player had the minimum level required to use this weapon
-			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
-			{
-				continue;
-			}
-
-			// if player handling a similar weapon in primary slot, don't show it
-			if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
-			{
-				continue;
-			}
-
-			lastValidWeaponPos = i;
-		}
-
-		cgs.ccSelectedSecondaryWeapon = classInfo->classSecondaryWeapons[lastValidWeaponPos].weapon;
+        cgs.ccSelectedSecondaryWeapon = BG_GetBestSecondaryWeapon(CG_LimboPanel_GetClass(), CG_LimboPanel_GetTeam(), cgs.ccSelectedPrimaryWeapon, cgs.clientinfo[cg.clientNum].skill);
 	}
 }
 

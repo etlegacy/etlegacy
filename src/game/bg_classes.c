@@ -44,20 +44,20 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/axis/soldier.char",
 			"ui/assets/mp_gun_red.tga",
 			"ui/assets/mp_arrow_red.tga",
-			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 60,  30  }, // soldier start with x2 ammo
-				{ WP_MOBILE_MG42,          SK_HEAVY_WEAPONS,                            0, 0,   150 },
-				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0, 200, 0   },
-				{ WP_PANZERFAUST,          SK_HEAVY_WEAPONS,                            0, 4,   0   },
-				{ WP_MORTAR2,              SK_HEAVY_WEAPONS,                            0, 15,  0   },
+				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0,                         60,  30  }, // soldier start with x2 ammo
+				{ WP_MOBILE_MG42,          SK_HEAVY_WEAPONS,                            0,                         0,   150 },
+				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0,                         200, 0   },
+				{ WP_PANZERFAUST,          SK_HEAVY_WEAPONS,                            0,                         4,   0   },
+				{ WP_MORTAR2,              SK_HEAVY_WEAPONS,                            0,                         15,  0   },
 			},
 			{
-				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
-				{ WP_MP40,                 SK_HEAVY_WEAPONS,                            SK_SOLDIER_SMG, 60,  30  }, // soldier start with x2 ammo
+				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
+				{ WP_MP40,                 SK_HEAVY_WEAPONS,                            SK_SOLDIER_SMG,            60,  30  }, // soldier start with x2 ammo
 			},
-			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 4,   0   },
+			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0,                         4,   0   },
 			{
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
@@ -70,19 +70,19 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/axis/medic.char",
 			"ui/assets/mp_health_red.tga",
 			"ui/assets/mp_arrow_red.tga",
-			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 0,   30  }, // medic start with 1 clip less
+				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0,                         0,   30  }, // medic start with 1 clip less
 			},
 			{
-				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
 			},
-			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0, 10,  1   },
-				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                SK_MEDIC_ADRENALINE, 0,   1   }, // share ammo with medic syringe
-				{ WP_MEDKIT,               SK_FIRST_AID,                                0, 0,   1   },
+				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0,                         10,  1   },
+				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                SK_MEDIC_ADRENALINE,       0,   1   }, // share ammo with medic syringe
+				{ WP_MEDKIT,               SK_FIRST_AID,                                0,                         0,   1   },
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
@@ -94,21 +94,21 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/axis/engineer.char",
 			"ui/assets/mp_wrench_red.tga",
 			"ui/assets/mp_arrow_red.tga",
-			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 30,  30  },
-				{ WP_KAR98,                SK_LIGHT_WEAPONS,                            0, 20,  10  },
+				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0,                         30,  30  },
+				{ WP_KAR98,                SK_LIGHT_WEAPONS,                            0,                         20,  10  },
 			},
 			{
-				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
 			},
-			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 4,   0   },
+			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0,                         4,   0   },
 			{
-				{ WP_GPG40,                SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 5,   0   }, // riflenade as special weapon
-				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
-				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
-				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
+				{ WP_GPG40,                SK_EXPLOSIVES_AND_CONSTRUCTION,              0,                         5,   0   }, // riflenade as special weapon
+				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0,                         0,   1   },
+				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0,                         0,   1   },
+				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0,                         0,   1   },
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
@@ -120,19 +120,19 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/axis/fieldops.char",
 			"ui/assets/mp_ammo_red.tga",
 			"ui/assets/mp_arrow_red.tga",
-			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 30,  30  },
+				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0,                         30,  30  },
 			},
 			{
-				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
 			},
-			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_AMMO,                 SK_SIGNALS,                                  0, 0,   1   },
-				{ WP_SMOKE_MARKER,         SK_SIGNALS,                                  0, 0,   1   },
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0, 0,   1   },
+				{ WP_AMMO,                 SK_SIGNALS,                                  0,                         0,   1   },
+				{ WP_SMOKE_MARKER,         SK_SIGNALS,                                  0,                         0,   1   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0,                         0,   1   },
 			},
 			0,
 			0,
@@ -143,22 +143,22 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/axis/cvops.char",
 			"ui/assets/mp_spy_red.tga",
 			"ui/assets/mp_arrow_red.tga",
-			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_MP34,                 SK_LIGHT_WEAPONS,                            0, 64,  32  }, // covert-ops start with x2 ammo
-				{ WP_FG42,                 SK_LIGHT_WEAPONS,                            0, 40,  20  },
-				{ WP_K43,                  SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 20,  10  },
+				{ WP_MP34,                 SK_LIGHT_WEAPONS,                            0,                         64,  32  }, // covert-ops start with x2 ammo
+				{ WP_FG42,                 SK_LIGHT_WEAPONS,                            0,                         40,  20  },
+				{ WP_K43,                  SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0,                         20,  10  },
 			},
 			{
-				{ WP_SILENCER,             SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_SILENCEDLUGER, SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_SILENCER,             SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_SILENCEDLUGER, SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
 			},
-			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 2,   0   },
+			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0,                         2,   0   },
 			{
-				{ WP_SMOKE_BOMB,           SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   1   },
-				{ WP_SATCHEL,              SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   1   },
-				{ WP_SATCHEL_DET,          SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   0   },
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0, 0,   1   },
+				{ WP_SMOKE_BOMB,           SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0,                         0,   1   },
+				{ WP_SATCHEL,              SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0,                         0,   1   },
+				{ WP_SATCHEL_DET,          SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0,                         0,   0   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0,                         0,   1   },
 			},
 			0,
 			0,
@@ -172,20 +172,20 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/allied/soldier.char",
 			"ui/assets/mp_gun_blue.tga",
 			"ui/assets/mp_arrow_blue.tga",
-			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0, 60,  30  }, // soldier start with x2 ammo
-				{ WP_MOBILE_BROWNING,      SK_HEAVY_WEAPONS,                            0, 0,   150 },
-				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0, 200, 0   },
-				{ WP_BAZOOKA,              SK_HEAVY_WEAPONS,                            0, 4,   0   },
-				{ WP_MORTAR,               SK_HEAVY_WEAPONS,                            0, 15,  0   },
+				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0,                         60,  30  }, // soldier start with x2 ammo
+				{ WP_MOBILE_BROWNING,      SK_HEAVY_WEAPONS,                            0,                         0,   150 },
+				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0,                         200, 0   },
+				{ WP_BAZOOKA,              SK_HEAVY_WEAPONS,                            0,                         4,   0   },
+				{ WP_MORTAR,               SK_HEAVY_WEAPONS,                            0,                         15,  0   },
 			},
 			{
-				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
-				{ WP_THOMPSON,             SK_HEAVY_WEAPONS,                            SK_SOLDIER_SMG, 60,  30  }, // soldier start with x2 ammo
+				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
+				{ WP_THOMPSON,             SK_HEAVY_WEAPONS,                            SK_SOLDIER_SMG,            60,  30  }, // soldier start with x2 ammo
 			},
-			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 4,   0   },
+			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0,                         4,   0   },
 			{
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
@@ -198,19 +198,19 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/allied/medic.char",
 			"ui/assets/mp_health_blue.tga",
 			"ui/assets/mp_arrow_blue.tga",
-			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0, 0,   30  }, // medic start with 1 clip less
+				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0,                         0,   30  }, // medic start with 1 clip less
 			},
 			{
-				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
 			},
-			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0, 10,  1   },
-				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                SK_MEDIC_ADRENALINE, 0,   1   }, // share ammo with medic syringe
-				{ WP_MEDKIT,               SK_FIRST_AID,                                0, 0,   1   },
+				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0,                         10,  1   },
+				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                SK_MEDIC_ADRENALINE,       0,   1   }, // share ammo with medic syringe
+				{ WP_MEDKIT,               SK_FIRST_AID,                                0,                         0,   1   },
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
@@ -222,21 +222,21 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/allied/engineer.char",
 			"ui/assets/mp_wrench_blue.tga",
 			"ui/assets/mp_arrow_blue.tga",
-			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0, 30,  30  },
-				{ WP_CARBINE,              SK_LIGHT_WEAPONS,                            0, 20,  10  },
+				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0,                         30,  30  },
+				{ WP_CARBINE,              SK_LIGHT_WEAPONS,                            0,                         20,  10  },
 			},
 			{
-				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
 			},
-			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 4,   0   },
+			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0,                         4,   0   },
 			{
-				{ WP_M7,                   SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 5,   0   }, // riflenade as special weapon
-				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
-				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
-				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
+				{ WP_M7,                   SK_EXPLOSIVES_AND_CONSTRUCTION,              0,                         5,   0   }, // riflenade as special weapon
+				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0,                         0,   1   },
+				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0,                         0,   1   },
+				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0,                         0,   1   },
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
@@ -248,19 +248,19 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/allied/fieldops.char",
 			"ui/assets/mp_ammo_blue.tga",
 			"ui/assets/mp_arrow_blue.tga",
-			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0, 30,  30  },
+				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0,                         30,  30  },
 			},
 			{
-				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
 			},
-			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_AMMO,                 SK_SIGNALS,                                  0, 0,   1   },
-				{ WP_SMOKE_MARKER,         SK_SIGNALS,                                  0, 0,   1   },
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0, 0,   1   },
+				{ WP_AMMO,                 SK_SIGNALS,                                  0,                         0,   1   },
+				{ WP_SMOKE_MARKER,         SK_SIGNALS,                                  0,                         0,   1   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0,                         0,   1   },
 			},
 			0,
 			0,
@@ -271,22 +271,22 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"characters/temperate/allied/cvops.char",
 			"ui/assets/mp_spy_blue.tga",
 			"ui/assets/mp_arrow_blue.tga",
-			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0, 1,   0   },
+			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0,                         1,   0   },
 			{
-				{ WP_STEN,                 SK_LIGHT_WEAPONS,                            0, 64,  32  }, // covert-ops start with x2 ammo
-				{ WP_FG42,                 SK_LIGHT_WEAPONS,                            0, 40,  20  },
-				{ WP_GARAND,               SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 20,  10  },
+				{ WP_STEN,                 SK_LIGHT_WEAPONS,                            0,                         64,  32  }, // covert-ops start with x2 ammo
+				{ WP_FG42,                 SK_LIGHT_WEAPONS,                            0,                         40,  20  },
+				{ WP_GARAND,               SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0,                         20,  10  },
 			},
 			{
-				{ WP_SILENCED_COLT,        SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_SILENCEDCOLT,  SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_SILENCED_COLT,        SK_LIGHT_WEAPONS,                            0,                         24,  8   },
+				{ WP_AKIMBO_SILENCEDCOLT,  SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO,   48,  8   },
 			},
-			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 2,   0   },
+			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0,                         2,   0   },
 			{
-				{ WP_SMOKE_BOMB,           SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   1   },
-				{ WP_SATCHEL,              SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   1   },
-				{ WP_SATCHEL_DET,          SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   0   },
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0, 0,   1   },
+				{ WP_SMOKE_BOMB,           SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0,                         0,   1   },
+				{ WP_SATCHEL,              SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0,                         0,   1   },
+				{ WP_SATCHEL_DET,          SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0,                         0,   0   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0,                         0,   1   },
 			},
 			0,
 			0,
@@ -365,6 +365,47 @@ qboolean BG_WeaponIsPrimaryForClassAndTeam(int classnum, team_t team, weapon_t w
 	}
 
 	return qfalse;
+}
+
+/**
+ * @brief BG_GetBestSecondaryWeapon
+ * @param[in] classNum
+ * @param[in] team
+ * @param[in] primaryWeapon
+ * @param[in] skills
+ * @return
+ */
+weapon_t BG_GetBestSecondaryWeapon(int classNum, team_t team, weapon_t primaryWeapon, int *skills)
+{
+	int              i;
+	weapon_t         weap = WP_NONE;
+	bg_playerclass_t *classInfo;
+
+	classInfo = GetPlayerClassesData(team, classNum);
+
+	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
+	{
+		if (!classInfo->classSecondaryWeapons[i].weapon)
+		{
+			break;
+		}
+
+		// is player had the minimum level required to use this weapon
+		if (!BG_IsSkillAvailable(skills, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
+		{
+			continue;
+		}
+
+		// if player handling a similar weapon in primary slot, don't take it
+		if (classInfo->classSecondaryWeapons[i].weapon == primaryWeapon)
+		{
+			continue;
+		}
+
+		weap = classInfo->classSecondaryWeapons[i].weapon;
+	}
+
+	return weap ? weap : classInfo->classSecondaryWeapons[0].weapon;
 }
 
 /*
