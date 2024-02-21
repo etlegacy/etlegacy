@@ -3351,8 +3351,8 @@ static const char *gameCommand[] =
 	"rs",
 	"sclogin",
 	"sclogout",
-	//"score",      // server side usage for +scores, no really effect when execute manually
-	"scores",
+	//"score",      // used to updated score in debriefing and ingame score board. Not meant to be sent manually.
+	"scores",       // display the scores in console
 	"setviewpos",
 	"setspawnpt",
 	"sgstats",
