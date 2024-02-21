@@ -1373,6 +1373,8 @@ static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
 		}
 
 		// if player handling a similar weapon in primary slot, don't show it
+		// FIXME: we should not check limbo selection in case of selection from cmd
+		// the workaround is to update the selection when entering in class cmd
 		if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
 		{
 			continue;
@@ -1623,6 +1625,10 @@ static void CG_Class_f(void)
 		return;
 	}
 
+	// FIXME: we should not check limbo selection in case of selection from cmd
+	// so we overwrite the value to match the cmd selection
+	cgs.ccSelectedPrimaryWeapon = weapon1;
+
 	if (trap_Argc() > 3)
 	{
 		trap_Argv(3, cls, 64);
@@ -1640,6 +1646,8 @@ static void CG_Class_f(void)
 	{
 		weapon2 = CG_GetSecondaryWeapon(-1, team, playerclass);
 	}
+
+	cgs.ccSelectedSecondaryWeapon = weapon2;
 
 	// Print out the selected class and weapon info
 	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG) && playerclass == PC_SOLDIER &&
