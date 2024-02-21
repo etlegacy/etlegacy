@@ -2197,33 +2197,47 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value)
 			w2 = BG_GetBestSecondaryWeapon(playerType, team, w, ent->client->sess.skill);
 		}
 	}
-	else
+	else    // "swap" team, try to keep the previous selected weapons or equivalent if no one were selected
 	{
 		classChange = qfalse;
 
-		// "swap" team, try to keep the previous selected weapons or equivalent if no one were selected
-		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+		// primary weapon
+		if (!IS_VALID_WEAPON(w))
 		{
-			// primary weapon
+			w = ent->client->sess.playerWeapon;
+
+			// on first connection on server, there is no current weapon selected
+			// and the default class is soldiers so we don't have a valid weapon, use
+			// default primary weapon for class and team
 			if (!IS_VALID_WEAPON(w))
 			{
-				w = ent->client->sess.playerWeapon;
-
-				if (GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv)
-				{
-					w = GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv;
-				}
+				w = GetPlayerClassesData(team, playerType)->classPrimaryWeapons[0].weapon;
 			}
+			// prevent swapping to equivalent weap if the last selected is already of correct team
+			else if (GetWeaponTableData(ent->client->sess.playerWeapon)->team != team &&
+			         GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv)
+			{
+				w = GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv;
+			}
+		}
 
-			// secondary weapon
+		// secondary weapon
+		if (!IS_VALID_WEAPON(w2))
+		{
+			w2 = ent->client->sess.playerWeapon2;
+
+			// on first connection on server, there is no current weapon selected
+			// and the default class is soldiers so we don't have a valid weapon, use
+			// best secondary weapon for class and team
 			if (!IS_VALID_WEAPON(w2))
 			{
-				w2 = ent->client->sess.playerWeapon2;
-
-				if (GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv)
-				{
-					w2 = GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv;
-				}
+				w2 = BG_GetBestSecondaryWeapon(playerType, team, w, ent->client->sess.skill);
+			}
+			// prevent swapping to equivalent weap if the last selected is already of correct team
+			else if (GetWeaponTableData(ent->client->sess.playerWeapon)->team != team
+			         && GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv)
+			{
+				w2 = GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv;
 			}
 		}
 	}
