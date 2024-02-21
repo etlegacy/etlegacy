@@ -338,6 +338,8 @@ vmCvar_t g_floodProtection;
 vmCvar_t g_floodLimit;
 vmCvar_t g_floodWait;
 
+vmCvar_t tvg_queue_ms;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -608,6 +610,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
 	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &tvg_queue_ms,                      "ettv_queue_ms",                     "-1",                         CVAR_ROM,                                        0, qfalse, qfalse },
 };
 
 /**
@@ -1264,7 +1267,8 @@ FUNCTIONS CALLED EVERY FRAME
  */
 void TVG_RunFrame(int levelTime)
 {
-	int i;
+	char *queueMsg, *s = "";
+	int  i, queueSeconds;
 
 	trap_ETTV_GetPlayerstate(-1, &level.ettvMasterPs);
 
@@ -1282,6 +1286,29 @@ void TVG_RunFrame(int levelTime)
 	}
 
 	level.validMasterClients[level.numValidMasterClients++] = level.ettvMasterPs.clientNum;
+
+	queueSeconds = tvg_queue_ms.integer / 1000;
+
+	if (queueSeconds != level.queueSeconds)
+	{
+		level.queueSeconds = queueSeconds;
+
+		if (level.queueSeconds < 1)
+		{
+			queueMsg = va("cp \"\n\"");
+		}
+		else
+		{
+			if (level.queueSeconds != 1)
+			{
+				s = "s";
+			}
+
+			queueMsg = va("cp \"t-%d second%s\n\"", level.queueSeconds, s);
+		}
+
+		trap_SendServerCommand(-1, queueMsg);
+	}
 
 	// if we are waiting for the level to restart, do nothing
 	if (level.restarted)

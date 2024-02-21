@@ -1409,7 +1409,7 @@ void SV_CL_RunFrame(void)
 {
 	int frameMsec = 1000 / sv_fps->integer;
 	int systime   = Sys_Milliseconds();
-	int frameDelta;
+	int frameDelta, queueMs;
 
 	if (svcls.state <= CA_DISCONNECTED)
 	{
@@ -1426,6 +1426,23 @@ void SV_CL_RunFrame(void)
 		}
 
 		svcl.serverTime = (queueTime / frameMsec) * frameMsec;
+
+		if (svMsgQueueHead)
+		{
+			queueMs = svMsgQueueHead->serverTime - svcl.serverTime;
+
+			if (sv_etltv_queue_ms->integer != queueMs)
+			{
+				Cvar_Set("ettv_queue_ms", va("%i", queueMs));
+			}
+		}
+	}
+	else
+	{
+		if (sv_etltv_queue_ms->integer != -1)
+		{
+			Cvar_Set("ettv_queue_ms", "-1");
+		}
 	}
 
 	if (svcl.serverTime < svcls.lastRunFrameTime)

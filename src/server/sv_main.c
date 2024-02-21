@@ -138,6 +138,7 @@ cvar_t *sv_etltv_autoplay;
 cvar_t *sv_etltv_clientname;
 cvar_t *sv_etltv_delay;
 cvar_t *sv_etltv_shownet;
+cvar_t *sv_etltv_queue_ms;
 
 static void SVC_Status(netadr_t from, qboolean force);
 

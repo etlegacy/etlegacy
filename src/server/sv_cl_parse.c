@@ -300,7 +300,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 
 	svcls.isGamestateParsed = svcls.isDelayed;
 	svcls.firstSnap         = qfalse;
-	svcls.queueDemoWaiting  = qfalse;
+	svcls.queueDemoWaiting  = !sv_etltv_autorecord->integer;
 	svcls.fixHitch          = qtrue;
 }
 
