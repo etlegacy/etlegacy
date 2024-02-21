@@ -301,6 +301,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 	svcls.isGamestateParsed = svcls.isDelayed;
 	svcls.firstSnap         = qfalse;
 	svcls.queueDemoWaiting  = qfalse;
+	svcls.fixHitch          = qtrue;
 }
 
 /**
@@ -898,8 +899,30 @@ void SV_CL_ParsePlayerstates(msg_t *msg)
  */
 int SV_CL_GetQueueTime(void)
 {
+	static int prevTime = 0;
+
 	if (svMsgQueueHead)
 	{
+		// map change hitch fix
+		if (prevTime && svMsgQueueHead->serverTime && svcls.fixHitch &&
+		    svMsgQueueHead->systime - prevTime > 100)
+		{
+			serverMessageQueue_t *cur      = svMsgQueueHead;
+			int                  frameMsec = 1000 / sv_fps->integer;
+
+			svcls.fixHitch = qfalse;
+
+			do
+			{
+				cur->systime = prevTime + frameMsec;
+				prevTime     = cur->systime;
+				cur          = cur->next;
+			}
+			while (cur && cur->systime - prevTime > 100);
+		}
+
+		prevTime = svMsgQueueHead->systime;
+
 		return Sys_Milliseconds() - svMsgQueueHead->systime + svMsgQueueHead->serverTime;
 	}
 
@@ -1002,9 +1025,7 @@ void SV_CL_ParseServerMessage_Ext(msg_t *msg, int headerBytes)
 		svclc.serverMessageSequence = svclc.serverMessageSequenceLatest;
 		svclc.serverCommandSequence = svclc.serverCommandSequenceLatest;
 		SV_CL_ParseServerMessage(msg, headerBytes);
-		// FIXME: not needed?
 		svcl.serverTimeLatest = svcl.serverTime;
-		svclc.serverIdLatest  = svcl.serverId;
 	}
 	else
 	{

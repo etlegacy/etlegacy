@@ -742,6 +742,7 @@ typedef struct
 	qboolean isGamestateParsed;     ///< was the first gamestate server message parsed when the master server feed is delayed
 	qboolean firstSnap;             ///< did we parse first snapshot after new gamestate
 	qboolean queueDemoWaiting;      ///< with autorecord on after new gamestate send moveNoDelta usercmds
+	qboolean fixHitch;              ///< fix map change hitch when feed is delayed
 
 } svclientStatic_t;
 
