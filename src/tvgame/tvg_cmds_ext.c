@@ -500,15 +500,14 @@ qboolean TVG_tvchat_cmd(gclient_t *client, tvcmd_reference_t *self)
  */
 qboolean TVG_scores_cmd(gclient_t *client, tvcmd_reference_t *self)
 {
-	//int i;
-
 	return qfalse;
+
+	//int i;
 
 	//if (!client)
 	//{
 	//	if (TVG_CommandsAutoUpdate(self))
 	//	{
-	//		Com_Printf("TVG_scores_cmd update [%d]\n", level.time);
 	//		return qtrue;
 	//	}
 	//

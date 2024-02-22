@@ -456,15 +456,13 @@ void SV_CL_WritePacket(void)
 	key ^= MSG_HashKey(svclc.serverCommandsLatest[svclc.serverCommandSequenceLatest & (MAX_RELIABLE_COMMANDS - 1)], 32, 0);
 
 	// write all the commands, including the predicted command
-	cmd                = &svcl.cmds[svcl.cmdNumber & CMD_MASK];
-	cmd->serverTime    = svcl.serverTimeLatest;
-	nullcmd.serverTime = svcl.cmds[svcl.cmdNumber - 1 & CMD_MASK].serverTime;
+	cmd             = &svcl.cmds[svcl.cmdNumber & CMD_MASK];
+	cmd->serverTime = svcl.serverTimeLatest;
 	MSG_WriteDeltaUsercmdKey(&buf, key, &nullcmd, cmd);
 
 	// deliver the message
-	packetNum                             = svclc.netchan.outgoingSequence & PACKET_MASK;
-	svcl.outPackets[packetNum].p_realtime = svcls.realtime;
-	//svcl.outPackets[packetNum].p_serverTime = cmd->serverTime;
+	packetNum                              = svclc.netchan.outgoingSequence & PACKET_MASK;
+	svcl.outPackets[packetNum].p_realtime  = svcls.realtime;
 	svcl.outPackets[packetNum].p_cmdNumber = svcl.cmdNumber;
 	svclc.lastPacketSentTime               = svcls.realtime;
 
@@ -720,8 +718,6 @@ rescan:
 
 	if (!strcmp(cmd, "map_restart"))
 	{
-		// reparse the string, because Con_ClearNotify() may have done another Cmd_TokenizeString()
-		Cmd_TokenizeString(s);
 		// clear outgoing commands before passing
 		Com_Memset(svcl.cmds, 0, sizeof(svcl.cmds));
 		Cbuf_AddText("map_restart 0\n");
@@ -1470,7 +1466,8 @@ void SV_CL_RunFrame(void)
 			{
 				if (sv.time != 0)
 				{
-					Com_Printf("Dropped server frame: systimeDelta [%d] sv.time [%d] svcl.serverTime [%d] frameDelta [%d]\n", systime - svcls.lastRunFrameSysTime, sv.time, svcl.serverTime, frameDelta);
+					Com_Printf("Dropped server frame: systimeDelta [%d] sv.time [%d] svcl.serverTime [%d] frameDelta [%d]\n",
+					           systime - svcls.lastRunFrameSysTime, sv.time, svcl.serverTime, frameDelta);
 				}
 
 				svcl.serverTime = frameDelta;

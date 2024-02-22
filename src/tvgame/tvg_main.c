@@ -1307,7 +1307,13 @@ void TVG_RunFrame(int levelTime)
 			queueMsg = va("cp \"t-%d second%s\n\"", level.queueSeconds, s);
 		}
 
-		trap_SendServerCommand(-1, queueMsg);
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			if (level.clients[level.sortedClients[i]].pers.connected == CON_CONNECTED)
+			{
+				trap_SendServerCommand(level.sortedClients[i], queueMsg);
+			}
+		}
 	}
 
 	// if we are waiting for the level to restart, do nothing

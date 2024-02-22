@@ -298,10 +298,10 @@ void SV_CL_ParseGamestate(msg_t *msg)
 	// make sure the game starts
 	Cvar_Set("cl_paused", "0");
 
+	svcls.fixHitch          = svcls.isGamestateParsed;
 	svcls.isGamestateParsed = svcls.isDelayed;
 	svcls.firstSnap         = qfalse;
 	svcls.queueDemoWaiting  = !sv_etltv_autorecord->integer;
-	svcls.fixHitch          = qtrue;
 }
 
 /**
@@ -663,7 +663,6 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	svclSnapshot_t newSnap;
 	int            deltaNum;
 	int            oldMessageNum;
-	int            i, packetNum;
 
 	// get the reliable sequence acknowledge number
 	// NOTE: now sent with all server to client messages
@@ -795,25 +794,13 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	}
 
 	// copy to the current good spot
-	svcl.snap      = newSnap;
-	svcl.snap.ping = 999;
-	// calculate ping time
-	for (i = 0; i < PACKET_BACKUP; i++)
-	{
-		packetNum = (svclc.netchan.outgoingSequence - 1 - i) & PACKET_MASK;
-		if (svcl.snap.ps.commandTime >= svcl.outPackets[packetNum].p_serverTime)
-		{
-			svcl.snap.ping = svcls.realtime - svcl.outPackets[packetNum].p_realtime;
-			break;
-		}
-	}
 	// save the frame off in the backup array for later delta comparisons
-	svcl.snapshots[svcl.snap.messageNum & PACKET_MASK] = svcl.snap;
+	svcl.snapshots[svcl.snap.messageNum & PACKET_MASK] = svcl.snap = newSnap;
 
 	if (sv_etltv_shownet->integer == 3)
 	{
-		Com_Printf("   snapshot:%i  delta:%i  ping:%i\n", svcl.snap.messageNum,
-		           svcl.snap.deltaNum, svcl.snap.ping);
+		Com_Printf("   snapshot:%i  delta:%i\n", svcl.snap.messageNum,
+		           svcl.snap.deltaNum);
 	}
 
 	svcl.newSnapshots = qtrue;
@@ -1026,6 +1013,7 @@ void SV_CL_ParseServerMessage_Ext(msg_t *msg, int headerBytes)
 		svclc.serverCommandSequence = svclc.serverCommandSequenceLatest;
 		SV_CL_ParseServerMessage(msg, headerBytes);
 		svcl.serverTimeLatest = svcl.serverTime;
+		svclc.serverIdLatest  = svcl.serverId;
 	}
 	else
 	{
@@ -1140,6 +1128,7 @@ static void *SV_CL_Allocate(int size)
 
 /**
  * @brief SV_CL_NewMessage
+ * @return
  */
 static serverMessageQueue_t *SV_CL_NewMessage(void)
 {

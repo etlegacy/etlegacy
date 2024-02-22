@@ -417,6 +417,12 @@ void SV_CL_PlayDemo_f(void)
 		return;
 	}
 
+	if (sv_etltv_delay->integer)
+	{
+		Com_Printf("sv_etltv_delay must be set to 0 to play demo (current value %d).\n", sv_etltv_delay->integer);
+		return;
+	}
+
 	SV_CL_Disconnect();
 
 	// open the demo file (should be the last arg)
