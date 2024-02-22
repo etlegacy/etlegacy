@@ -644,7 +644,7 @@ gotnewcl:
 
 	if (newcl->ettvClient)
 	{
-		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t*) * PACKET_BACKUP);
+		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t *) * PACKET_BACKUP);
 
 		for (i = 0; i < PACKET_BACKUP; i++)
 		{
@@ -898,7 +898,7 @@ void SV_SendClientGameState(client_t *client)
 	Com_DPrintf("Sending %i bytes in gamestate to client: %i\n", msg.cursize, (int) (client - svs.clients));
 
 	// deliver this to the client
-	SV_SendMessageToClient(&msg, client);
+	SV_SendMessageToClient(&msg, client, qfalse);
 }
 
 /**
@@ -938,6 +938,7 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 	client->gentity = ent;
 
 	client->deltaMessage     = -1;
+	client->parseEntitiesNum = 0;
 	client->lastSnapshotTime = 0;   // generate a snapshot immediately
 
 	if (cmd)
@@ -2244,8 +2245,15 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	usercmd_t cmds[MAX_PACKET_USERCMDS];
 	usercmd_t *cmd, *oldcmd;
 
+	cl->parseEntitiesNum = 0;
+
 	if (delta)
 	{
+		for (i = cl->messageAcknowledge; i < cl->netchan.outgoingSequence; i++)
+		{
+			cl->parseEntitiesNum += cl->frames[i & PACKET_MASK].num_entities;
+		}
+
 		cl->deltaMessage = cl->messageAcknowledge;
 	}
 	else
@@ -2290,9 +2298,22 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	    SV_DemoWriteClientUsercmd(cl, delta, cmdCount, cmds, key);
 	}
 	*/
+	if (cl->frames[cl->messageAcknowledge & PACKET_MASK].messageSent < 1)
+	{
+		Com_DPrintf("client %d: Message from old map\n", cl - svs.clients);
+		cl->parseEntitiesNum = 0;
+	}
+	else
+	{
+		// save time for ping calculation
+		cl->frames[cl->messageAcknowledge & PACKET_MASK].messageAcked = svs.time;
 
-	// save time for ping calculation
-	cl->frames[cl->messageAcknowledge & PACKET_MASK].messageAcked = svs.time;
+		if (!cl->frames[cl->messageAcknowledge & PACKET_MASK].parseEntities)
+		{
+			cl->deltaMessage     = -1;
+			cl->parseEntitiesNum = 0;
+		}
+	}
 
 	// if this is the first usercmd we have received
 	// this gamestate, put the client into the world

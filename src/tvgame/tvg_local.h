@@ -529,6 +529,7 @@ typedef struct level_locals_s
 
 	int numValidMasterClients;
 	int validMasterClients[MAX_CLIENTS];
+	int queueSeconds;
 
 } level_locals_t;
 
@@ -1007,6 +1008,8 @@ extern vmCvar_t g_skipCorrection;
 extern vmCvar_t g_extendedNames;
 
 extern vmCvar_t g_debugForSingleClient;
+
+extern vmCvar_t tvg_queue_ms;
 
 #define G_InactivityValue (g_inactivity.integer ? g_inactivity.integer : 60)
 #define G_SpectatorInactivityValue (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60)
