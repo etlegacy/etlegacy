@@ -1445,7 +1445,7 @@ void SV_CL_RunFrame(void)
 	{
 		if (svcls.firstSnap)
 		{
-			Com_Printf("Server went backwards in time: %d > %d\n", svcls.lastRunFrameTime, svcl.serverTime);
+			Com_DPrintf("Server went backwards in time: %d > %d\n", svcls.lastRunFrameTime, svcl.serverTime);
 		}
 		else
 		{

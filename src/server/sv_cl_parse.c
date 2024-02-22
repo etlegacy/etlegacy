@@ -367,7 +367,7 @@ void SV_CL_ParseGamestateQueue(msg_t *msg)
 	SV_CL_WritePacket();
 	SV_CL_WritePacket();
 
-	svcls.queueDemoWaiting = qfalse;
+	svcls.queueDemoWaiting = !sv_etltv_autorecord->integer;
 }
 
 /**
