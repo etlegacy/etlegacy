@@ -139,7 +139,7 @@ void SV_CL_Commands_f(void)
 
 	if (argc < 2)
 	{
-		Com_Printf("usage: tv <connect|disconnect> [-4|-6] server masterpassword\n");
+		Com_Printf("usage: tv <connect|disconnect> [-4|-6] server masterpassword privatepassword\n");
 		return;
 	}
 
@@ -155,7 +155,7 @@ void SV_CL_Commands_f(void)
 	}
 	else
 	{
-		Com_Printf("usage: tv <connect|disconnect> [-4|-6] server masterpassword\n");
+		Com_Printf("usage: tv <connect|disconnect> [-4|-6] server masterpassword privatepassword\n");
 	}
 }
 
