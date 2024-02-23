@@ -604,7 +604,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 static qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char     *token;
-	int      depthMaskBits     = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0;
+	int      depthMaskBits = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0;
 	qboolean depthMaskExplicit = qfalse;
 
 	stage->active = qtrue;
@@ -3876,8 +3876,8 @@ static void ScanAndLoadShaderFiles(void)
 	// free in reverse order, so the temp files are all dumped
 	for (i = numShaders - 1; i >= 0 ; i--)
 	{
-		strcpy(p++, "\n");
-		strcpy(p, buffers[i]);
+		Q_strncpyz(p++, "\n", sum + numShaders * 2 - (p - s_shaderText));
+		Q_strncpyz(p, buffers[i], sum + numShaders * 2 - (p - s_shaderText));
 		ri.FS_FreeFile(buffers[i]);
 		buffers[i] = p;
 		p         += buffersize[i];

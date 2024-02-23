@@ -200,18 +200,11 @@ static void S_Base_MasterGain(float val)
  */
 void S_Base_SoundList(void)
 {
-	int   i;
-	sfx_t *sfx;
-	int   size, total = 0;
-	char  type[4][16];
-	char  mem[2][16];
-
-	strcpy(type[0], "16bit");
-	strcpy(type[1], "adpcm");
-	strcpy(type[2], "daub4");
-	strcpy(type[3], "mulaw");
-	strcpy(mem[0], "paged out");
-	strcpy(mem[1], "resident");
+	int               i;
+	sfx_t             *sfx;
+	int               size, total = 0;
+	static const char type[4][16] = { "16bit", "adpcm", "daub4", "mulaw" };
+	static const char mem[2][16]  = { "paged out", "resident" };
 
 	for (sfx = knownSfx, i = 0 ; i < numSfx ; i++, sfx++)
 	{
@@ -370,7 +363,7 @@ static sfx_t *S_FindName(const char *name)
 
 	sfx = &knownSfx[i];
 	Com_Memset(sfx, 0, sizeof(*sfx));
-	strcpy(sfx->soundName, name);
+    Q_strncpyz(sfx->soundName, name, sizeof(sfx->soundName));
 
 	sfx->next     = sfxHash[hash];
 	sfxHash[hash] = sfx;

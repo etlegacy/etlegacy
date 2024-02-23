@@ -636,7 +636,7 @@ void PC_AddBuiltinDefines(source_t *source)
         define = (define_t *) GetMemory(sizeof(define_t) + strlen(builtin[i].string) + 1);
         Com_Memset(define, 0, sizeof(define_t));
         define->name = (char *) define + sizeof(define_t);
-        strcpy(define->name, builtin[i].string);
+        Q_strncpyz(define->name, builtin[i].string, sizeof(define->name));
         define->flags  |= DEFINE_FIXED;
         define->builtin = builtin[i].builtin;
         // add the define to the source
@@ -684,7 +684,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 	}
 	case BUILTIN_FILE:
 	{
-		strcpy(token->string, source->scriptstack->filename);
+		Q_strncpyz(token->string, source->scriptstack->filename, sizeof(token->string));
 		token->type    = TT_NAME;
 		token->subtype = strlen(token->string);
 		*firsttoken    = token;
@@ -695,7 +695,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 	{
 		t       = time(NULL);
 		curtime = ctime(&t);
-		strcpy(token->string, "\"");
+		Q_strncpyz(token->string, "\"", sizeof(token->string));
 		strncat(token->string, curtime + 4, 7);
 		strncat(token->string + 7, curtime + 20, 4);
 		strcat(token->string, "\"");
@@ -710,7 +710,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 	{
 		t       = time(NULL);
 		curtime = ctime(&t);
-		strcpy(token->string, "\"");
+		Q_strncpyz(token->string, "\"", sizeof(token->string));
 		strncat(token->string, curtime + 11, 8);
 		strcat(token->string, "\"");
 		//Com_Dealloc(curtime);
@@ -1220,7 +1220,7 @@ int PC_Directive_define(source_t *source)
 	define = (define_t *) GetMemory(sizeof(define_t) + strlen(token.string) + 1);
 	Com_Memset(define, 0, sizeof(define_t));
 	define->name = (char *) define + sizeof(define_t);
-	strcpy(define->name, token.string);
+	Q_strcpy(define->name, token.string);
 	// add the define to the source
 #if DEFINEHASHING
 	PC_AddDefineToHash(define, source->definehash);
@@ -1228,7 +1228,7 @@ int PC_Directive_define(source_t *source)
 	define->next    = source->defines;
 	source->defines = define;
 #endif //DEFINEHASHING
-	   // if nothing is defined, just return
+	// if nothing is defined, just return
 	if (!PC_ReadLine(source, &token))
 	{
 		return qtrue;
@@ -1355,7 +1355,7 @@ define_t *PC_DefineFromString(const char *string)
 #if DEFINEHASHING
 	src.definehash = GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));
 #endif //DEFINEHASHING
-	   // create a define from the source
+	// create a define from the source
 	res = PC_Directive_define(&src);
 	// free any tokens if left
 	for (t = src.tokens; t; t = src.tokens)
@@ -1491,7 +1491,7 @@ define_t *PC_CopyDefine(source_t *source, define_t *define)
 	newdefine = (define_t *) GetMemory(sizeof(define_t) + strlen(define->name) + 1);
 	// copy the define name
 	newdefine->name = (char *) newdefine + sizeof(define_t);
-	strcpy(newdefine->name, define->name);
+	Q_strcpy(newdefine->name, define->name);
 	newdefine->flags    = define->flags;
 	newdefine->builtin  = define->builtin;
 	newdefine->numparms = define->numparms;
@@ -1737,23 +1737,23 @@ int PC_OperatorPriority(int op)
 #define MAX_VALUES      64
 #define MAX_OPERATORS   64
 #define AllocValue(val)                                 \
-	if (numvalues >= MAX_VALUES) {                      \
-		SourceError(source, "out of value space\n");      \
-		error = 1;                                      \
-		break;                                          \
-	}                                                   \
-	else { \
-		val = &value_heap[numvalues++]; }
+		if (numvalues >= MAX_VALUES) {                      \
+			SourceError(source, "out of value space\n");      \
+			error = 1;                                      \
+			break;                                          \
+		}                                                   \
+		else { \
+			val = &value_heap[numvalues++]; }
 #define FreeValue(val)
 
 #define AllocOperator(op)                               \
-	if (numoperators >= MAX_OPERATORS) {                \
-		SourceError(source, "out of operator space\n");   \
-		error = 1;                                      \
-		break;                                          \
-	}                                                   \
-	else { \
-		op = &operator_heap[numoperators++]; }
+		if (numoperators >= MAX_OPERATORS) {                \
+			SourceError(source, "out of operator space\n");   \
+			error = 1;                                      \
+			break;                                          \
+		}                                                   \
+		else { \
+			op = &operator_heap[numoperators++]; }
 #define FreeOperator(op)
 
 /**
@@ -2708,7 +2708,7 @@ int PC_Directive_error(source_t *source)
 {
 	token_t token;
 
-	strcpy(token.string, "");
+	Q_strncpyz(token.string, "", sizeof(token.string));
 	(void) PC_ReadSourceToken(source, &token);
 	SourceError(source, "#error directive: %s", token.string);
 	return qfalse;
@@ -2741,7 +2741,7 @@ void UnreadSignToken(source_t *source)
 	token.whitespace_p    = source->scriptstack->script_p;
 	token.endwhitespace_p = source->scriptstack->script_p;
 	token.linescrossed    = 0;
-	strcpy(token.string, "-");
+	Q_strncpyz(token.string, "-", sizeof(token.string));
 	token.type    = TT_PUNCTUATION;
 	token.subtype = P_SUB;
 	PC_UnreadSourceToken(source, &token);
@@ -3113,29 +3113,33 @@ int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
 
     if (token->type != type)
     {
-        char str[MAX_TOKEN];
+        char *str;
 
-        strcpy(str, "");
         if (type == TT_STRING)
         {
-            strcpy(str, "string");
+            str = "string";
         }
-        if (type == TT_LITERAL)
+        else if (type == TT_LITERAL)
         {
-            strcpy(str, "literal");
+            str = "literal";
         }
-        if (type == TT_NUMBER)
+        else if (type == TT_NUMBER)
         {
-            strcpy(str, "number");
+            str = "number";
         }
-        if (type == TT_NAME)
+        else if (type == TT_NAME)
         {
-            strcpy(str, "name");
+            str = "name";
         }
-        if (type == TT_PUNCTUATION)
+        else if (type == TT_PUNCTUATION)
         {
-            strcpy(str, "punctuation");
+            str = "punctuation"
         }
+        else
+        {
+            str = "";
+        }
+
         SourceError(source, "expected a %s, found %s", str, token->string);
         return qfalse;
     }
@@ -3143,42 +3147,42 @@ int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
     {
         if ((token->subtype & subtype) != subtype)
         {
-            char str[MAX_TOKEN];
+            char *str = NULL;
+            char *str2 = NULL;
 
-            strcpy(str, "");
             if (subtype & TT_DECIMAL)
             {
-                strcpy(str, "decimal");
+                str = "decimal";
             }
             if (subtype & TT_HEX)
             {
-                strcpy(str, "hex");
+                str = "hex";
             }
             if (subtype & TT_OCTAL)
             {
-                strcpy(str, "octal");
+                str = "octal";
             }
             if (subtype & TT_BINARY)
             {
-                strcpy(str, "binary");
+                str = "binary";
             }
             if (subtype & TT_LONG)
             {
-                strcat(str, "long");
+                str2 = "long";
             }
             if (subtype & TT_UNSIGNED)
             {
-                strcat(str, "unsigned");
+                str2 = "unsigned";
             }
             if (subtype & TT_FLOAT)
             {
-                strcat(str, "float");
+                str2 = "float";
             }
             if (subtype & TT_INTEGER)
             {
-                strcat(str, "integer");
+                str2 = "integer";
             }
-            SourceError(source, "expected %s, found %s", str, token->string);
+            SourceError(source, "expected %s%s, found %s", str, str2, token->string);
             return qfalse;
         }
     }
@@ -3463,7 +3467,7 @@ void FreeSource(source_t *source)
 		}
 	}
 #else //DEFINEHASHING
-	  //free all defines
+	//free all defines
 	while (source->defines)
 	{
 		define          = source->defines;
@@ -3471,7 +3475,7 @@ void FreeSource(source_t *source)
 		PC_FreeDefine(define);
 	}
 #endif //DEFINEHASHING
-	   // free all indents
+	// free all indents
 	while (source->indentstack)
 	{
 		indent              = source->indentstack;
@@ -3485,7 +3489,7 @@ void FreeSource(source_t *source)
 		FreeMemory(source->definehash);
 	}
 #endif //DEFINEHASHING
-	   // free the source itself
+	// free the source itself
 	FreeMemory(source);
 }
 
@@ -3566,7 +3570,7 @@ int PC_ReadTokenHandle(int handle, pc_token_t *pc_token)
 	}
 
 	ret = PC_ReadToken(sourceFiles[handle], &token);
-	strcpy(pc_token->string, token.string);
+	Q_strncpyz(pc_token->string, token.string, sizeof(pc_token->string));
 	pc_token->type         = token.type;
 	pc_token->subtype      = token.subtype;
 	pc_token->intvalue     = token.intvalue;
@@ -3616,7 +3620,7 @@ int PC_SourceFileAndLine(int handle, char *filename, int *line)
 		return qfalse;
 	}
 
-	strcpy(filename, sourceFiles[handle]->filename);
+	Q_strcpy(filename, sourceFiles[handle]->filename);
 	if (sourceFiles[handle]->scriptstack)
 	{
 		*line = sourceFiles[handle]->scriptstack->line;

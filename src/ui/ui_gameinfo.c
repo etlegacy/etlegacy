@@ -267,8 +267,8 @@ void UI_LoadArenas(void)
 	for (i = 0; i < numdirs; i++, dirptr += dirlen + 1)
 	{
 		dirlen = strlen(dirptr);
-		Q_strcpy(filename, "scripts/");
-		Q_strcat(filename, 128, dirptr);
+		Q_strncpyz(filename, "scripts/", sizeof(filename));
+		Q_strcat(filename, sizeof(filename), dirptr);
 		UI_LoadArenasFromFile(filename);
 	}
 
@@ -646,8 +646,8 @@ void UI_LoadCampaigns(void)
 	for (i = 0; i < numdirs && uiInfo.campaignCount < MAX_CAMPAIGNS; i++, dirptr += dirlen + 1)
 	{
 		dirlen = strlen(dirptr);
-		Q_strcpy(filename, "scripts/");
-		Q_strcat(filename, 128, dirptr);
+		Q_strncpyz(filename, "scripts/", sizeof(filename));
+		Q_strcat(filename, sizeof(filename), dirptr);
 		UI_LoadCampaignsFromFile(filename);
 	}
 

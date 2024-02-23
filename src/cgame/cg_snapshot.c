@@ -202,7 +202,7 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 
 		if (Q_stricmp(curmap, prevmap))
 		{
-			strcpy(prevmap, curmap);
+			Q_strncpyz(prevmap, curmap, sizeof(prevmap));
 			if (cgs.campaignInfoLoaded)
 			{
 				if (!cg.showGameView)

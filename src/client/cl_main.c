@@ -1434,7 +1434,7 @@ void CL_Clip_f(void)
 		}
 
 		Com_Memset(cmdBuffer[i], 0, MAX_QPATH * sizeof(char));
-		Q_strcpy(cmdBuffer[i], Cmd_Argv(i + 1));
+		Q_strncpyz(cmdBuffer[i], Cmd_Argv(i + 1), sizeof(cmdBuffer[i]));
 	}
 
 	// Execute the command parts
@@ -1632,7 +1632,7 @@ void CL_CheckForResend(void)
 	{
 	case CA_CONNECTING:
 	{
-		strcpy(buffer, "getchallenge");
+		Q_strncpyz(buffer, "getchallenge", sizeof(buffer));
 		NET_OutOfBandPrint(NS_CLIENT, clc.serverAddress, buffer);
 	}
 	break;
@@ -4549,7 +4549,7 @@ void CL_AddToLimboChat(const char *str)
 	// copy old strings
 	for (i = cl.limboChatPos; i > 0; i--)
 	{
-		strcpy(cl.limboChatMsgs[i], cl.limboChatMsgs[i - 1]);
+		Q_strncpyz(cl.limboChatMsgs[i], cl.limboChatMsgs[i - 1], sizeof(cl.limboChatMsgs[i]));
 	}
 
 	// copy new string

@@ -304,7 +304,7 @@ static sfxHandle_t S_AL_BufferFind(const char *filename)
 		ptr = &knownSfx[sfx];
 		Com_Memset(ptr, 0, sizeof(*ptr));
 		ptr->masterLoopSrc = -1;
-		strcpy(ptr->filename, filename);
+		Q_strncpyz(ptr->filename, filename, sizeof(ptr->filename));
 	}
 
 	// Return the handle

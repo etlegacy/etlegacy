@@ -267,7 +267,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	tmpMsg = Q_Extended_To_UTF8(msg);
 	if (tmpMsg != msg)
 	{
-		strcpy(msg, tmpMsg);
+		Q_strncpyz(msg, tmpMsg, MAX_PRINT_MSG);
 	}
 
 	// echo to console if we're not a dedicated server
@@ -1440,7 +1440,7 @@ char *CopyString(const char *in)
 	}
 	len = strlen(in) + 1;
 	out = S_Malloc(len);
-	strncpy(out, in, len);
+	Q_strncpyz(out, in, len);
 	return out;
 }
 
@@ -2327,7 +2327,8 @@ sysEvent_t Com_GetSystemEvent(void)
 
 		len = strlen(s) + 1;
 		b   = Z_Malloc(len);
-		strcpy(b, s);
+
+		Q_strncpyz(b, s, len);
 		Com_QueueEvent(0, SE_CONSOLE, 0, 0, len, b);
 	}
 

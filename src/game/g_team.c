@@ -800,7 +800,7 @@ void TeamplayInfoMessage(team_t team)
 				G_Printf("Warning: tinfo exceeds limit");
 				break;
 			}
-			strcpy(string + stringlength, entry);
+			Q_strcat(string, sizeof(string), entry);
 			stringlength += j;
 			cnt++;
 		}

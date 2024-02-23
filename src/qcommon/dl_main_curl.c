@@ -554,7 +554,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	DL_InitDownload();
 
 	/* ET://ip:port */
-	strcpy(referer, "et://");
+	Q_strncpyz(referer, "et://", sizeof(referer));
 	Q_strncpyz(referer + 5, Cvar_VariableString("cl_currentServerIP"), MAX_STRING_CHARS);
 
 	request->rawHandle = curl_easy_init();

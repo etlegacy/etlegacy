@@ -830,7 +830,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 		return;
 	}
 
-	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+	Q_strncpyz(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), sizeof(infostring));
 
 	// echo back the parameter to status. so master servers can use it as a challenge
 	// to prevent timed spoofed reply packets that add ghost servers
@@ -854,7 +854,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 				break;      // can't hold any more
 			}
 
-			strcpy(status + statusLength, player);
+			Q_strcat(status, sizeof(status), player);
 			statusLength += playerLength;
 		}
 	}

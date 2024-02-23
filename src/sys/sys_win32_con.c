@@ -263,7 +263,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			return (long)s_wcd.hbrEditBackground;
 		}
-        break;
+		break;
 	case WM_COMMAND:
 		if (wParam == COPY_ID)
 		{
@@ -769,11 +769,11 @@ void Sys_CreateConsole(void)
 
 	// create the input line
 	s_wcd.hwndInputLine = CreateWindowExW(WS_EX_CLIENTEDGE,
-	                                     L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
-	                                     0, 0, 0, 0,
-	                                     s_wcd.hWnd,
-	                                     ( HMENU ) INPUT_ID,    // child window ID
-	                                     g_wv.hInstance, NULL);
+	                                      L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
+	                                      0, 0, 0, 0,
+	                                      s_wcd.hWnd,
+	                                      ( HMENU ) INPUT_ID,   // child window ID
+	                                      g_wv.hInstance, NULL);
 
 	// create the buttons
 	s_wcd.hwndButtonCopy = CreateWindow("button", NULL, BS_PUSHBUTTON | WS_VISIBLE | WS_CHILD,
@@ -799,12 +799,12 @@ void Sys_CreateConsole(void)
 
 	// create the scroll buffer
 	s_wcd.hwndBuffer = CreateWindowExW(WS_EX_CLIENTEDGE,
-	                                  L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL /* | WS_BORDER*/ |
-	                                  ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
-	                                  0, 0, 0, 0,
-	                                  s_wcd.hWnd,
-	                                  ( HMENU ) EDIT_ID,    // child window ID
-	                                  g_wv.hInstance, NULL);
+	                                   L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL /* | WS_BORDER*/ |
+	                                   ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
+	                                   0, 0, 0, 0,
+	                                   s_wcd.hWnd,
+	                                   ( HMENU ) EDIT_ID,   // child window ID
+	                                   g_wv.hInstance, NULL);
 
 #if defined (_WIN64)
 	s_wcd.SysInputLineWndProc = ( WNDPROC ) SetWindowLongPtr(s_wcd.hwndInputLine, GWLP_WNDPROC, ( LONG_PTR ) InputLineWndProc);
@@ -918,7 +918,7 @@ char *Sys_ConsoleInput(void)
 		return NULL;
 	}
 
-	strcpy(s_wcd.returnedText, s_wcd.consoleText);
+	Q_strncpyz(s_wcd.returnedText, s_wcd.consoleText, sizeof(s_wcd.returnedText));
 	s_wcd.consoleText[0] = 0;
 
 	return s_wcd.returnedText;
@@ -981,9 +981,9 @@ void Conbuf_AppendText(const char *pMsg)
 
 		i++;
 	}
-	*b     = 0;
+	*b = 0;
 
-	bufLen = Sys_StringToWideCharArray(buffer, w_buffer, CONSOLE_BUFFER_SIZE * 2);
+	bufLen        = Sys_StringToWideCharArray(buffer, w_buffer, CONSOLE_BUFFER_SIZE * 2);
 	s_totalChars += bufLen;
 
 	// replace selection instead of appending if we're overflowing

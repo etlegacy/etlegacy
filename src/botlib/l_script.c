@@ -1067,28 +1067,31 @@ int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
 
     if (token->type != type)
     {
-        char str[MAX_TOKEN];
+        char *str;
 
-        strcpy(str, "");
         if (type == TT_STRING)
         {
-            strcpy(str, "string");
+            str = "string";
         }
-        if (type == TT_LITERAL)
+        else if (type == TT_LITERAL)
         {
-            strcpy(str, "literal");
+            str = "literal";
         }
-        if (type == TT_NUMBER)
+        else if (type == TT_NUMBER)
         {
-            strcpy(str, "number");
+            str = "number";
         }
-        if (type == TT_NAME)
+        else if (type == TT_NAME)
         {
-            strcpy(str, "name");
+            str = "name";
         }
-        if (type == TT_PUNCTUATION)
+        else if (type == TT_PUNCTUATION)
         {
-            strcpy(str, "punctuation");
+            str = "punctuation"
+        }
+        else
+        {
+            str = "";
         }
         ScriptError(script, "expected a %s, found %s", str, token->string);
         return 0;
@@ -1097,42 +1100,42 @@ int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
     {
         if ((token->subtype & subtype) != subtype)
         {
-            char str[MAX_TOKEN];
+            char *str = NULL;
+            char *str2 = NULL;
 
-            strcpy(str, "");
             if (subtype & TT_DECIMAL)
             {
-                strcpy(str, "decimal");
+                str = "decimal";
             }
             if (subtype & TT_HEX)
             {
-                strcpy(str, "hex");
+                str = "hex";
             }
             if (subtype & TT_OCTAL)
             {
-                strcpy(str, "octal");
+                str = "octal";
             }
             if (subtype & TT_BINARY)
             {
-                strcpy(str, "binary");
+                str = "binary";
             }
             if (subtype & TT_LONG)
             {
-                strcat(str, " long");
+                str2 = "long";
             }
             if (subtype & TT_UNSIGNED)
             {
-                strcat(str, " unsigned");
+                str2 = "unsigned";
             }
             if (subtype & TT_FLOAT)
             {
-                strcat(str, " float");
+                str2 = "float";
             }
             if (subtype & TT_INTEGER)
             {
-                strcat(str, " integer");
+                str2 = "integer";
             }
-            ScriptError(script, "expected %s, found %s", str, token->string);
+            ScriptError(script, "expected %s%s, found %s", str, str2, token->string);
             return 0;
         }
     }

@@ -191,7 +191,7 @@ void SV_CL_CheckForResend(void)
 	{
 	case CA_CONNECTING:
 	{
-		strcpy(buffer, "getchallenge");
+		Q_strncpyz(buffer, "getchallenge", sizeof(buffer));
 		NET_OutOfBandPrint(NS_CLIENT, svclc.serverAddress, buffer);
 	}
 	break;

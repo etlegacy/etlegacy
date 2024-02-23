@@ -501,8 +501,7 @@ char *BG_CopyStringIntoBuffer(char *string, char *buffer, unsigned int bufSize, 
 
 	pch = &buffer[*offset];
 
-	// safe to do a strcpy since we've already checked for overrun
-	strcpy(pch, string);
+	Q_strncpyz(pch, string, bufSize - *offset);
 
 	// move the offset along
 	*offset += strlen(string) + 1;

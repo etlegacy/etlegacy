@@ -1570,7 +1570,7 @@ static void IN_ProcessEvents(void)
 			{
 				char buffer[MAX_OSPATH];
 				Com_Memset(buffer, 0, sizeof(buffer));
-				Q_strcpy(buffer, e.drop.file);
+				Q_strncpyz(buffer, e.drop.file, sizeof(buffer));
 				COM_FixPath(buffer);
 				// Set the FS to "dirty" mode for the demo playback
 				Cbuf_AddText(va("demo dirty \"%s\"", buffer));

@@ -56,7 +56,7 @@ struct listhead_t
  * @brief Resets a list head
  */
 #define RESET_LIST(LPTR) \
-	((LPTR)->previous = (LPTR)->next = (LPTR))
+		((LPTR)->previous = (LPTR)->next = (LPTR))
 
 /**
  * @struct tentry_t
@@ -117,7 +117,7 @@ struct hashtable_s
  * @brief Macro that finds the first list head after a table's main structure
  */
 #define TABLE_START(TABLE) \
-	((struct listhead_t *)(((char *)(TABLE)) + sizeof(struct hashtable_s)))
+		((struct listhead_t *)(((char *)(TABLE)) + sizeof(struct hashtable_s)))
 
 /*=============================================*
  * Internal functions prototypes               *
@@ -169,12 +169,12 @@ static void _HT_InsertInGlobalList(hashtable_t table, struct tentry_t *t_entry, 
  *			  will be accessed as a pointer instead of an array
  */
 hashtable_t HT_Create(
-    size_t size,
-    unsigned int flags,
-    size_t item_size,
-    size_t key_offset,
-    size_t key_length
-    )
+	size_t size,
+	unsigned int flags,
+	size_t item_size,
+	size_t key_offset,
+	size_t key_length
+	)
 {
 	hashtable_t       table;
 	size_t            real_size;
@@ -260,10 +260,10 @@ void HT_Destroy(hashtable_t table)
  *             place
  */
 void *HT_GetItem(
-    hashtable_t table,
-    const char *key,
-    qboolean *created
-    )
+	hashtable_t table,
+	const char *key,
+	qboolean *created
+	)
 {
 	unsigned int      hash;
 	struct listhead_t *list_head;
@@ -327,12 +327,12 @@ void *HT_GetItem(
 	{
 		char **key_ptr = (char **)(((char *) data) + table->key_offset);
 		*key_ptr = Z_Malloc(strlen(key) + 1);
-		strcpy(*key_ptr, key);
+		Q_strncpyz(*key_ptr, key, strlen(key) + 1);
 	}
 	else
 	{
 		char *key_ptr = ((char *) data) + table->key_offset;
-		strcpy(key_ptr, key);
+		Q_strncpyz(key_ptr, key, table->item_size);
 	}
 
 	return data;
@@ -355,10 +355,10 @@ void *HT_GetItem(
  * memory will have been freed or reused.
  */
 void *HT_PutItem(
-    hashtable_t table,
-    void *item,
-    qboolean allow_replacement
-    )
+	hashtable_t table,
+	void *item,
+	qboolean allow_replacement
+	)
 {
 	void              *ret_val    = NULL;
 	void              *prev_entry = NULL;
@@ -473,10 +473,10 @@ void *HT_PutItem(
  * the "found" parameter will always be ignored.
  */
 qboolean HT_DeleteItem(
-    hashtable_t table,
-    const char *key,
-    void **found
-    )
+	hashtable_t table,
+	const char *key,
+	void **found
+	)
 {
 	unsigned int      hash;
 	struct listhead_t *list_head;
@@ -569,10 +569,10 @@ qboolean HT_DeleteItem(
  * @note The function should return false if processing is to stop.
  */
 void HT_Apply(
-    hashtable_t table,
-    ht_apply_funct function,
-    void *data
-    )
+	hashtable_t table,
+	ht_apply_funct function,
+	void *data
+	)
 {
 	struct listhead_t *list_head;
 	struct listhead_t *list_entry;
@@ -771,10 +771,10 @@ static char *_HT_KeyFromEntryPP(struct tentry_t *entry, size_t key_offset)
  * @return
  */
 static struct tentry_t *_HT_CreateEntry(
-    hashtable_t table,
-    unsigned int hash,
-    struct listhead_t *list_entry,
-    const char *key)
+	hashtable_t table,
+	unsigned int hash,
+	struct listhead_t *list_entry,
+	const char *key)
 {
 	// Allocate new entry
 	struct tentry_t *t_entry;

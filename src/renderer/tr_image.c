@@ -933,7 +933,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	image->mipmap      = mipmap;
 	image->allowPicmip = allowPicmip;
 
-	strcpy(image->imgName, name);
+	Q_strncpyz(image->imgName, name, sizeof(image->imgName));
 
 	image->width         = width;
 	image->height        = height;

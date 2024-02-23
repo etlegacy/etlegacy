@@ -98,8 +98,8 @@ void G_ResetRemappedShaders(void)
 	// we don't actually have to do this but it's clean ...
 	for (i = 0; i < MAX_SHADER_REMAPS; i++)
 	{
-		strcpy(remappedShaders[i].newShader, "");
-		strcpy(remappedShaders[i].oldShader, "");
+		remappedShaders[i].newShader[0]  = '\0';
+		remappedShaders[i].oldShader[0]  = '\0';
 		remappedShaders[i].timeOffset = 0;
 	}
 }
@@ -1770,8 +1770,8 @@ void G_ParseCampaigns(void)
 			}
 
 			dirlen = strlen(dirptr);
-			Q_strcpy(filename, "scripts/");
-			Q_strcat(filename, MAX_QPATH, dirptr);
+			Q_strncpyz(filename, "scripts/", sizeof(filename));
+			Q_strcat(filename, sizeof(filename), dirptr);
 
 			if (G_LoadCampaignsFromFile(filename))
 			{

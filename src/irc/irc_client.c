@@ -196,8 +196,8 @@ static qboolean IRC_ParserError;
  */
 
 #define irc_string_t(len) struct { \
-		unsigned int length; \
-		char string[len]; \
+			unsigned int length; \
+			char string[len]; \
 }
 
 #define IRC_MAX_NICK_LEN 64
@@ -276,7 +276,7 @@ static struct irc_user_t IRC_User;
 #define IRC_EVTF_SELF       0x00000100  ///< Event applies to current user
 
 #define IRC_EventType(evt) (evt & 0xff)
-#define IRC_EventIsSelf(evt) ((evt & IRC_EVTF_SELF) == IRC_EVTF_SELF)
+#define IRC_EventIsSelf(evt) ((evt &IRC_EVTF_SELF) == IRC_EVTF_SELF)
 #define IRC_MakeEvent(type, isself) (IRC_EVT_ ## type | ((isself) ? IRC_EVTF_SELF : 0))
 
 /*
@@ -526,53 +526,53 @@ static int IRC_ProcessDEQueue()
 /* Parser macros, 'cause I'm lazy */
 #define P_SET_STATE(S) IRC_ParserState = IRC_PARSER_ ## S
 #define P_INIT_MESSAGE(S) { \
-		P_SET_STATE(S); \
-		IRC_ParserInMessage = qtrue; \
-		Com_Memset(&IRC_ReceivedMessage, 0, sizeof(struct irc_message_t)); \
+			P_SET_STATE(S); \
+			IRC_ParserInMessage = qtrue; \
+			Com_Memset(&IRC_ReceivedMessage, 0, sizeof(struct irc_message_t)); \
 }
 #if defined DEBUG_DUMP_IRC
 #define P_ERROR(S) { \
-		if (!IRC_ParserError) { \
-			Com_Printf("IRC PARSER ERROR (state: %d , received: %d)\n", IRC_ParserState, next); \
-		} \
-		P_SET_STATE(S); \
-		IRC_ParserError = qtrue; \
+			if (!IRC_ParserError) { \
+				Com_Printf("IRC PARSER ERROR (state: %d , received: %d)\n", IRC_ParserState, next); \
+			} \
+			P_SET_STATE(S); \
+			IRC_ParserError = qtrue; \
 }
 #else // defined DEBUG_DUMP_IRC
 #define P_ERROR(S) { \
-		P_SET_STATE(S); \
-		IRC_ParserError = qtrue; \
+			P_SET_STATE(S); \
+			IRC_ParserError = qtrue; \
 }
 #endif // defined DEBUG_DUMP_IRC
 #define P_AUTO_ERROR { \
-		if (next == '\r') { \
-			P_ERROR(LF); \
-		} else { \
-			P_ERROR(RECOVERY); \
-		} \
+			if (next == '\r') { \
+				P_ERROR(LF); \
+			} else { \
+				P_ERROR(RECOVERY); \
+			} \
 }
 #define P_INIT_STRING(S) { \
-		IRC_ReceivedMessage.S.string[0] = next; \
-		IRC_ReceivedMessage.S.length    = 1; \
+			IRC_ReceivedMessage.S.string[0] = next; \
+			IRC_ReceivedMessage.S.length    = 1; \
 }
 #define P_ADD_STRING(S) { \
-		if (IRC_ReceivedMessage.S.length == sizeof(IRC_ReceivedMessage.S.string) - 1) { \
-			P_ERROR(RECOVERY); \
-		} else { \
-			IRC_ReceivedMessage.S.string[IRC_ReceivedMessage.S.length++] = next; \
-		} \
+			if (IRC_ReceivedMessage.S.length == sizeof(IRC_ReceivedMessage.S.string) - 1) { \
+				P_ERROR(RECOVERY); \
+			} else { \
+				IRC_ReceivedMessage.S.string[IRC_ReceivedMessage.S.length++] = next; \
+			} \
 }
 #define P_NEXT_PARAM { \
-		if ((++IRC_ReceivedMessage.arg_count) == IRC_MAX_PARAMS) { \
-			P_ERROR(RECOVERY); \
-		} \
+			if ((++IRC_ReceivedMessage.arg_count) == IRC_MAX_PARAMS) { \
+				P_ERROR(RECOVERY); \
+			} \
 }
 #define P_START_PARAM { \
-		if ((++IRC_ReceivedMessage.arg_count) == IRC_MAX_PARAMS) { \
-			P_ERROR(RECOVERY); \
-		} else { \
-			P_INIT_STRING(arg_values[IRC_ReceivedMessage.arg_count - 1]) \
-		} \
+			if ((++IRC_ReceivedMessage.arg_count) == IRC_MAX_PARAMS) { \
+				P_ERROR(RECOVERY); \
+			} else { \
+				P_INIT_STRING(arg_values[IRC_ReceivedMessage.arg_count - 1]) \
+			} \
 }
 #define P_ADD_PARAM P_ADD_STRING(arg_values[IRC_ReceivedMessage.arg_count - 1])
 
@@ -2076,7 +2076,7 @@ static qboolean IRC_InitialiseUser(const char *name)
 	Q_strncpyz(IRC_User.username, source, sizeof(IRC_User.username));
 
 	// Set static address FIXME: add user authentication and cvar for this?
-	strcpy(IRC_User.email, "mymail@mail.com");
+	Q_strncpyz(IRC_User.email, "mymail@mail.com", sizeof(IRC_User.email));
 
 	Com_DPrintf("IRC nick: %s username %s\n", IRC_User.nick, IRC_User.username);
 

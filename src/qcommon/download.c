@@ -333,7 +333,7 @@ static void Com_WebDownloadFileSimpleComplete(webRequest_t *request, webRequestR
 unsigned int Com_DownloadFileSimple(const char *localName, const char *remoteName)
 {
 	char tmpPath[MAX_OSPATH] = { 0 };
-	Q_strcpy(tmpPath, localName);
+	Q_strncpyz(tmpPath, localName, sizeof(tmpPath));
 	if (!Q_StringEndsWith(tmpPath, ".tmp"))
 	{
 		Q_strcat(tmpPath, sizeof(tmpPath), ".tmp");
