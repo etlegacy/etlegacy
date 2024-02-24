@@ -794,8 +794,10 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	}
 
 	// copy to the current good spot
+	svcl.snap = newSnap;
+
 	// save the frame off in the backup array for later delta comparisons
-	svcl.snapshots[svcl.snap.messageNum & PACKET_MASK] = svcl.snap = newSnap;
+	svcl.snapshots[svcl.snap.messageNum & PACKET_MASK] = svcl.snap;
 
 	if (sv_etltv_shownet->integer == 3)
 	{
@@ -830,6 +832,11 @@ void SV_CL_ParsePlayerstates(msg_t *msg)
 		if (clientNum == 255)
 		{
 			break;
+		}
+
+		if (msg->readcount > msg->cursize)
+		{
+			Com_Error(ERR_DROP, "SV_CL_ParsePlayerstates: end of message");
 		}
 
 		if (!oldframe || !oldframe->playerstates[clientNum].valid)

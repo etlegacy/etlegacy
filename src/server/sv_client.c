@@ -2300,7 +2300,7 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	*/
 	if (cl->frames[cl->messageAcknowledge & PACKET_MASK].messageSent < 1)
 	{
-		Com_DPrintf("client %d: Message from old map\n", cl - svs.clients);
+		Com_DPrintf("client %d: Message from old map\n", (int)(cl - svs.clients));
 		cl->parseEntitiesNum = 0;
 	}
 	else
