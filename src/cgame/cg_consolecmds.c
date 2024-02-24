@@ -1583,16 +1583,16 @@ static void CG_Class_f(void)
 	{
 		trap_Argv(3, cls, 64);
 		weapon2 = Q_atoi(cls);
-        
-        // ensure the index is valid and different from primary weapon
+
+		// ensure the index is valid and different from primary weapon
 		if (weapon2 <= 0 || weapon2 > MAX_WEAPS_PER_CLASS || classinfo->classSecondaryWeapons[weapon2].weapon
-		    || classinfo->classSecondaryWeapons[weapon2].weapon == weapon1)
+		    || classinfo->classSecondaryWeapons[weapon2 - 1].weapon == weapon1)
 		{
 			weapon2 = BG_GetBestSecondaryWeapon(playerclass, team, weapon1, cgs.clientinfo[cg.clientNum].skill);
 		}
 		else
 		{
-			weapon2 = classinfo->classSecondaryWeapons[weapon2].weapon;
+			weapon2 = classinfo->classSecondaryWeapons[weapon2 - 1].weapon;
 		}
 	}
 	else
