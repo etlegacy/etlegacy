@@ -2234,7 +2234,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value)
 				w2 = BG_GetBestSecondaryWeapon(playerType, team, w, ent->client->sess.skill);
 			}
 			// prevent swapping to equivalent weap if the last selected is already of correct team
-			else if (GetWeaponTableData(ent->client->sess.playerWeapon)->team != team
+			else if (GetWeaponTableData(ent->client->sess.playerWeapon2)->team != team
 			         && GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv)
 			{
 				w2 = GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv;
