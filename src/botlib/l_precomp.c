@@ -406,7 +406,7 @@ int PC_StringizeTokens(token_t *tokens, token_t *token)
 	token->whitespace_p    = NULL;
 	token->endwhitespace_p = NULL;
 	token->string[0]       = '\0';
-	strcat(token->string, "\"");
+	Q_strcat(token->string, sizeof(token->string), "\"");
 	for (t = tokens; t; t = t->next)
 	{
 		strncat(token->string, t->string, MAX_TOKEN - strlen(token->string));
@@ -426,7 +426,7 @@ int PC_MergeTokens(token_t *t1, token_t *t2)
 	// merging of a name with a name or number
 	if (t1->type == TT_NAME && (t2->type == TT_NAME || t2->type == TT_NUMBER))
 	{
-		strcat(t1->string, t2->string);
+		Q_strcat(t1->string, sizeof(t1->string), t2->string);
 		return qtrue;
 	}
 	// merging of two strings
@@ -698,7 +698,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 		Q_strncpyz(token->string, "\"", sizeof(token->string));
 		strncat(token->string, curtime + 4, 7);
 		strncat(token->string + 7, curtime + 20, 4);
-		strcat(token->string, "\"");
+		Q_strcat(token->string, sizeof(token->string), "\"");
 		//Com_Dealloc(curtime);
 		token->type    = TT_NAME;
 		token->subtype = strlen(token->string);
@@ -712,7 +712,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 		curtime = ctime(&t);
 		Q_strncpyz(token->string, "\"", sizeof(token->string));
 		strncat(token->string, curtime + 11, 8);
-		strcat(token->string, "\"");
+		Q_strcat(token->string, sizeof(token->string), "\"");
 		//Com_Dealloc(curtime);
 		token->type    = TT_NAME;
 		token->subtype = (int)strlen(token->string);
@@ -3033,7 +3033,7 @@ int PC_ReadToken(source_t *source, token_t *token)
 						SourceError(source, "string longer than MAX_TOKEN %d\n", MAX_TOKEN);
 						return qfalse;
 					}
-					strcat(token->string, newtoken.string + 1);
+					Q_strcat(token->string, sizeof(token->string), newtoken.string + 1);
 				}
 				else
 				{
@@ -3335,7 +3335,7 @@ void PC_SetIncludePath(source_t *source, const char *path)
     if (len > 0 && source->includepath[len - 1] != '\\' &&
         source->includepath[len - 1] != '/')
     {
-        strcat(source->includepath, va("%c", PATH_SEP));
+        Q_strcat(source->includepath, sizeof(source->includepath), va("%c", PATH_SEP));
     }
 }
 */

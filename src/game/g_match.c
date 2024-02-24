@@ -828,7 +828,7 @@ void G_printMatchInfo(gentity_t *ent)
 			else
 			{
 				guid[8] = '\0';
-				strcat(guid, "*");
+				Q_strcat(guid, sizeof(guid), "*");
 			}
 
 			Q_strncpyz(n2, cl->pers.netname, sizeof(n2));

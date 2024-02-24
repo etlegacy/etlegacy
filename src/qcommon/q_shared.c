@@ -2744,7 +2744,7 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 		return;
 	}
 
-	strcat(s, newi);
+	Q_strcat(s, MAX_INFO_STRING, newi);
 }
 
 /**
@@ -2795,7 +2795,7 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 		return;
 	}
 
-	strcat(s, newi);
+	Q_strcat(s, BIG_INFO_STRING, newi);
 }
 
 /**

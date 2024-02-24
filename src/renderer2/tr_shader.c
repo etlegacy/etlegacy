@@ -47,8 +47,8 @@ static int numMaterialFiles; // R2 files
 static int numShaderFiles;   // R1 files
 
 shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
-shader_t     *shaderHashTable[FILE_HASH_SIZE];
-texModInfo_t texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
+shader_t      *shaderHashTable[FILE_HASH_SIZE];
+texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
 
 shader_t        shader;
 dynamicShader_t *dshader;
@@ -1618,9 +1618,9 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
  */
 qboolean ParseStage(shaderStage_t *stage, char **text)
 {
-	char *token;
-	int  colorMaskBits             = 0;
-	int  depthMaskBits             = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0, polyModeBits = 0;
+	char         *token;
+	int          colorMaskBits = 0;
+	int          depthMaskBits = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0, polyModeBits = 0;
 	qboolean     depthMaskExplicit = qfalse;
 	int          imageBits         = 0;
 	filterType_t filterType;
@@ -2396,10 +2396,10 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				stage->constantColor[3] = 0;
 				//set shader as portal
 				tess.surfaceShader->isPortal = qtrue;
-				backEnd.viewParms.isPortal = qtrue;
-				shader.sort = SS_PORTAL;
-				stage->type = ST_PORTALMAP;
-				token           = COM_ParseExt(text, qfalse);
+				backEnd.viewParms.isPortal   = qtrue;
+				shader.sort                  = SS_PORTAL;
+				stage->type                  = ST_PORTALMAP;
+				token                        = COM_ParseExt(text, qfalse);
 				if (token[0] == 0)
 				{
 					shader.portalRange = 256;
@@ -2449,7 +2449,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 		// tcGen <function>
 		else if (!Q_stricmp(token, "texGen") || !Q_stricmp(token, "tcGen"))
 		{
-		    stage->type = ST_TCGEN;
+			stage->type = ST_TCGEN;
 
 			token = COM_ParseExt2(text, qfalse);
 			if (token[0] == 0)
@@ -2474,7 +2474,6 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				//stage->type = ST_TCGEN;
 			}
 			else if (!Q_stricmp(token, "texture") || !Q_stricmp(token, "base"))
-
 			{
 
 				//stage->type = ST_TCGEN;
@@ -3793,8 +3792,6 @@ static qboolean ParseShader(char *_text)
 			SkipRestOfLine(text);
 			continue;
 		}
-
-
 		// skip description
 		else if (!Q_stricmp(token, "description"))
 		{
@@ -4076,8 +4073,8 @@ static qboolean ParseShader(char *_text)
 
 			//set read color based on current light
 			shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
-			                                      shader.fogParms.color[1] * tr.identityLight,
-			                                      shader.fogParms.color[2] * tr.identityLight, 1.0);
+			                                       shader.fogParms.color[1] * tr.identityLight,
+			                                       shader.fogParms.color[2] * tr.identityLight, 1.0);
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
@@ -4092,7 +4089,7 @@ static qboolean ParseShader(char *_text)
 			}
 			//this is correct and SHOULD be here, it makes the tcScale correct. this is textures scale wich is "1" and divided
 			//on the opacity
-			shader.fogParms.tcScale        = 1.0f / shader.fogParms.depthForOpaque;
+			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;
@@ -4110,16 +4107,16 @@ static qboolean ParseShader(char *_text)
 		// portal
 		else if (!Q_stricmp(token, "portal"))
 		{
-			shader.sort     = SS_PORTAL;
-			shader.isPortal = qtrue;
+			shader.sort                = SS_PORTAL;
+			shader.isPortal            = qtrue;
 			backEnd.viewParms.isPortal = qtrue;
 			continue;
 		}
 		// portal or mirror
 		else if (!Q_stricmp(token, "mirror"))
 		{
-			shader.sort     = SS_PORTAL;
-			shader.isPortal = qtrue;
+			shader.sort                = SS_PORTAL;
+			shader.isPortal            = qtrue;
 			backEnd.viewParms.isMirror = qtrue;
 			continue;
 		}
@@ -4500,8 +4497,8 @@ static qboolean ParseShader(char *_text)
 		// Doom 3 DECAL_MACRO
 		else if (!Q_stricmp(token, "DECAL_MACRO"))
 		{
-			shader.polygonOffset      = qtrue;
-			shader.sort               = SS_DECAL;
+			shader.polygonOffset = qtrue;
+			shader.sort          = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
 			continue;
@@ -4510,8 +4507,8 @@ static qboolean ParseShader(char *_text)
 		else if (!Q_stricmp(token, "DECAL_ALPHATEST_MACRO"))
 		{
 			// what's different?
-			shader.polygonOffset      = qtrue;
-			shader.sort               = SS_DECAL;
+			shader.polygonOffset = qtrue;
+			shader.sort          = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
 			continue;
@@ -6232,7 +6229,7 @@ void R_ShaderExp_f(void)
 	for (i = 1; i < ri.Cmd_Argc(); i++)
 	{
 		Q_strcat(buffer, sizeof(buffer), ri.Cmd_Argv(i));
-		strcat(buffer, " ");
+		Q_strcat(buffer, sizeof(buffer), " ");
 	}
 	len = strlen(buffer);
 
@@ -6319,9 +6316,9 @@ static void ScanAndLoadGuideFiles(void)
 			Ren_Drop("Couldn't load %s (buffer)", filename); // in theory this shouldn't occure anymore - see build single large buffer
 		}
 
-		strcat(s_guideText, "\n");
+		Q_strcat(s_guideText, s_guideText, "\n");
 		p = &s_guideText[strlen(s_guideText)];
-		strcat(s_guideText, buffers[i]);
+        Q_strcat(s_guideText, sizeof(s_guideText), buffers[i]);
 		ri.FS_FreeFile(buffers[i]);
 		buffers[i] = p;
 		COM_Compress(p);
@@ -6602,8 +6599,8 @@ static int ScanAndLoadShaderFiles(void)
 			continue;
 		}
 
-		strcat(textEnd, buffers[i]);
-		strcat(textEnd, "\n");
+		Q_strcat(textEnd, sizeof(textEnd), buffers[i]);
+		Q_strcat(textEnd, sizeof(textEnd), "\n");
 		textEnd += strlen(textEnd);
 		ri.FS_FreeFile(buffers[i]);
 	}

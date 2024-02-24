@@ -284,8 +284,8 @@ static void Com_WebDownloadComplete(webRequest_t *request, webRequestResult requ
 		}
 		else
 		{
-			strcat(dld.redirectedList, "@");
-			strcat(dld.redirectedList, dld.originalDownloadName);
+			Q_strcat(dld.redirectedList, sizeof(dld.redirectedList), "@");
+			Q_strcat(dld.redirectedList, sizeof(dld.redirectedList), dld.originalDownloadName);
 		}
 	}
 
@@ -508,8 +508,8 @@ qboolean Com_WWWBadChecksum(const char *pakname)
 			Com_Printf("ERROR: badChecksumList overflowed (%s)\n", dld.badChecksumList);
 			return qfalse;
 		}
-		strcat(dld.badChecksumList, "@");
-		strcat(dld.badChecksumList, pakname);
+		Q_strcat(dld.badChecksumList, sizeof(dld.badChecksumList), "@");
+		Q_strcat(dld.badChecksumList, sizeof(dld.badChecksumList), pakname);
 		Com_DPrintf("bad checksums: %s\n", dld.badChecksumList);
 		return qtrue;
 	}

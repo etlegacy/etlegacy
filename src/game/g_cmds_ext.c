@@ -571,7 +571,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, int fDump)
 		{
 			// display only 8 char with * for humans
 			guid[8] = '\0';
-			strcat(guid, "*");
+			Q_strcat(guid, sizeof(guid), "*");
 		}
 
 		// Rate info

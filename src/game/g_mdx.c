@@ -1334,7 +1334,7 @@ void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
 	}
 	else
 	{
-		strcat(sep, ".hit");
+		strncat(sep, ".hit", 4);
 	}
 	mdx_RegisterHits(animModelInfo, hitsfile);
 #endif
