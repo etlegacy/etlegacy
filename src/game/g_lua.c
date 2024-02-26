@@ -553,7 +553,7 @@ static int _et_trap_FS_GetFileList(lua_State *L)
 	for (i = 0; i < numfiles; i++, filenameptr += filelen + 1)
 	{
 		filelen = strlen(filenameptr);
-        Q_strncpyz(filename, filenameptr, sizeof(filename));
+		Q_strncpyz(filename, filenameptr, sizeof(filename));
 
 		lua_pushstring(L, filename);
 		lua_rawseti(L, newTable, index++);
@@ -1311,8 +1311,8 @@ gentity_t *G_Lua_CreateEntity(char *params)
 		{
 			break;
 		}
-        
-        Q_strncpyz(key, token, sizeof(key));
+
+		Q_strncpyz(key, token, sizeof(key));
 
 		token = COM_ParseExt(&p, qfalse);
 		if (!token[0])
@@ -1322,8 +1322,8 @@ gentity_t *G_Lua_CreateEntity(char *params)
 			G_Printf("%s API: spawn key \"%s\" has no valu\n", LUA_VERSION, key);
 			return NULL;
 		}
-        
-        Q_strncpyz(value, token, sizeof(value));
+
+		Q_strncpyz(value, token, sizeof(value));
 
 		if (g_scriptDebug.integer)
 		{
@@ -2111,7 +2111,7 @@ qboolean G_LuaRunIsolated(const char *modName)
 
 	Q_strncpyz(filename, modName, sizeof(filename));
 
-	if (Q_stricmp(COM_GetExtension(filename), "lua") != 0)
+	if (!COM_CompareExtension(filename, ".lua"))
 	{
 		Q_strcat(filename, sizeof(filename), ".lua");
 	}
