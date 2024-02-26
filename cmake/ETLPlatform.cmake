@@ -202,6 +202,10 @@ elseif(WIN32)
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
 		endif()
 
+		# is using cl.exe the __FILE__ macro will not contain the full path to the file by default.
+		# enable the full path with /FC (we use our own ETL_FILENAME to cut the path to project relative path)
+		target_compile_options(shared_libraries INTERFACE /FC)
+
 		if(FORCE_STATIC_VCRT)
 			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")

@@ -1141,8 +1141,8 @@ temp file loading
 #endif
 
 #ifdef ZONE_DEBUG
-#define Z_TagMalloc(size, tag)          Z_TagMallocDebug(size, tag, # size, __FILE__, __LINE__)
-#define Z_Malloc(size)                  Z_MallocDebug(size, # size, __FILE__, __LINE__)
+#define Z_TagMalloc(size, tag)          Z_TagMallocDebug(size, tag, # size, ETL_FILENAME, __LINE__)
+#define Z_Malloc(size)                  Z_MallocDebug(size, # size, ETL_FILENAME, __LINE__)
 void *Z_TagMallocDebug(size_t size, int tag, char *label, char *file, int line);   // NOT 0 filled memory
 void *Z_MallocDebug(size_t size, char *label, char *file, int line);               // returns 0 filled memory
 #else
