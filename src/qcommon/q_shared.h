@@ -624,7 +624,7 @@ typedef enum
 //#define UI_MENUFULL     0x00080000
 //#define UI_SMALLFONT75  0x00100000
 
-#ifdef ETLEGACY_DEBUG
+#if defined(ETLEGACY_DEBUG) && !defined(HUNK_DEBUG)
 #define HUNK_DEBUG
 #endif
 

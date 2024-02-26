@@ -422,3 +422,11 @@ endif()
 if(FEATURE_ANTICHEAT)
 	target_compile_definitions(server_libraries INTERFACE FEATURE_ANTICHEAT)
 endif()
+
+if(ZONE_DEBUG)
+	target_compile_definitions(engine_libraries INTERFACE ZONE_DEBUG)
+endif()
+
+if(HUNK_DEBUG)
+	target_compile_definitions(engine_libraries INTERFACE HUNK_DEBUG)
+endif()
