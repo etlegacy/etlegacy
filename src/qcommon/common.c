@@ -267,7 +267,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	tmpMsg = Q_Extended_To_UTF8(msg);
 	if (tmpMsg != msg)
 	{
-		Q_strncpyz(msg, tmpMsg, MAX_PRINT_MSG);
+		Q_strncpyz(msg, tmpMsg, sizeof(buffer) - (msg - buffer));
 	}
 
 	// echo to console if we're not a dedicated server
