@@ -39,6 +39,7 @@
 
 #ifndef DEDICATED
 #include "../sys/sys_local.h"
+#include "../sdl/sdl_defs.h"
 #include "../client/client.h"
 #endif
 #include "../server/server.h"
