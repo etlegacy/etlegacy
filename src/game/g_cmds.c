@@ -97,7 +97,7 @@ static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
  * @param[out] plist
  * @return Number of matching clientids.
  */
-int G_ClientNumbersFromString(char *s, int *plist)
+int G_ClientNumbersFromString(const char *s, int *plist)
 {
 	gclient_t *p;
 	int       i, found = 0;

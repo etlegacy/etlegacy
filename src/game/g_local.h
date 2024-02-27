@@ -1749,7 +1749,7 @@ void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly);
 void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_Class_f(gentity_t *ent, unsigned int dwCommand, int value);
 void G_PlaySound_Cmd(void);
-int G_ClientNumbersFromString(char *s, int *plist);
+int G_ClientNumbersFromString(const char *s, int *plist);
 char *ConcatArgs(int start);
 qboolean G_DropItems(gentity_t *self);
 

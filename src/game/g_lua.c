@@ -31,18 +31,18 @@ lua_vm_t *lVM[LUA_NUM_VM];
  *          if (input==0) return = -1
  *          if (input address is out of g_entities[] memory range) return -1;
  */
-static int C_gentity_ptr_to_entNum(unsigned long addr)
+static int C_gentity_ptr_to_entNum(uintptr_t addr)
 {
 	// no NULL address,
-	// address must also be in the range of the g_entities array memory space..
+	// address must also be in the range of the g_entities array memory space…
 	// address must also be pointing to the start of an entity (invalid if it points just somewhere halfway into the entity)
 	if (!addr ||
 	    (gentity_t *)addr < &g_entities[0] || (gentity_t *)addr > &g_entities[MAX_GENTITIES - 1] ||
-	    (addr - (unsigned long)&g_entities[0]) % sizeof(gentity_t) != 0)
+	    (addr - (uintptr_t)&g_entities[0]) % sizeof(gentity_t) != 0)
 	{
 		return -1;
 	}
-	return ((gentity_t *)addr - g_entities);
+	return (int)((gentity_t *)addr - g_entities);
 }
 
 /**
@@ -296,11 +296,11 @@ static int _et_trap_DropClient(lua_State *L)
 // clientnum = et.ClientNumberFromString( string )
 static int _et_ClientNumberFromString(lua_State *L)
 {
-	char *search = luaL_checkstring(L, 1);
-	int  pids[MAX_CLIENTS];
+	const char *search = luaL_checkstring(L, 1);
+	int        pids[MAX_CLIENTS];
 
 	// only send exact matches, otherwise -1
-	if (G_ClientNumbersFromString((char *) search, pids) == 1)
+	if (G_ClientNumbersFromString(search, pids) == 1)
 	{
 		lua_pushinteger(L, pids[0]);
 	}
@@ -1628,7 +1628,7 @@ static int et_gentity_get(lua_State *L)
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
 	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
-	lua_Unsigned    addr; // should be uintptr_t but thats c99
+	uintptr_t       addr;
 
 	// break on invalid gentity field
 	if (!field)
@@ -1639,11 +1639,11 @@ static int et_gentity_get(lua_State *L)
 
 	if (field->flags & FIELD_FLAG_GENTITY)
 	{
-		addr = (lua_Unsigned)ent;
+		addr = (uintptr_t)ent;
 	}
 	else
 	{
-		addr = (lua_Unsigned)ent->client;
+		addr = (uintptr_t)ent->client;
 	}
 
 	// for NULL entities, return nil (prevents server crashes!)
@@ -1675,8 +1675,8 @@ static int et_gentity_get(lua_State *L)
 		return 1;
 	case FIELD_ENTITY:
 	{
-		// core: return the entity-number  of the entity that the pointer is pointing at.
-		int entNum = C_gentity_ptr_to_entNum(*(int *)addr);
+		// core: return the entity-number of the entity that the pointer is pointing at.
+		int entNum = C_gentity_ptr_to_entNum(*(uintptr_t *)addr);
 
 		if (entNum < 0)
 		{
