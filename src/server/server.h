@@ -195,8 +195,8 @@ typedef enum
 typedef struct netchan_buffer_s
 {
 	msg_t msg;
-	byte msgBuffer[MAX_MSGLEN];
-	char lastClientCommandString[MAX_STRING_CHARS];
+	byte *msgBuffer;
+	char *lastClientCommandString;
 	struct netchan_buffer_s *next;
 } netchan_buffer_t;
 
