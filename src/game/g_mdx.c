@@ -1330,11 +1330,11 @@ void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
 	Q_strncpyz(hitsfile, animationGroup, sizeof(hitsfile) - 4);
 	if ((sep = strrchr(hitsfile, '.'))) // FIXME: should abort on /'s
 	{
-		Q_strcpy(sep, ".hit");
+		Q_strncpyz(sep, ".hit", sizeof(hitsfile) - (sep - sizeof(hitsfile));
 	}
 	else
 	{
-		strncat(sep, ".hit", 4);
+		Q_strcat(hitsfile, ".hit", sizeof(hitsfile));
 	}
 	mdx_RegisterHits(animModelInfo, hitsfile);
 #endif
