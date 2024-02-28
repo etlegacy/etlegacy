@@ -608,6 +608,9 @@ static void CL_GenerateETKey(void)
 void CL_ClearState(void)
 {
 	Com_Memset(&cl, 0, sizeof(cl));
+
+	cl.cmdBackup = CMD_BACKUP_VET;
+	cl.cmdMask   = CMD_MASK_VET;
 }
 
 /**

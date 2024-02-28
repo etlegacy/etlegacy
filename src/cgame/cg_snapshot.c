@@ -359,6 +359,8 @@ static void CG_TransitionSnapshot(void)
 			CG_TransitionPlayerState(ps, ops);
 		}
 	}
+
+	cg.updateOldestValidCmd = qtrue;
 }
 
 /**

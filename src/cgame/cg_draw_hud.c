@@ -3302,7 +3302,7 @@ void CG_DrawLagometer(hudComponent_t *comp)
 				{
 					w = range;
 				}
-				trap_R_DrawStretchPic(ax + aw - a, ay + ah - w - 2, 1, w, 0, 0, 0, 0, cgs.media.whiteShader);
+				trap_R_DrawStretchPic(ax + aw - a, ay + ah - w, 1, w, 0, 0, 0, 0, cgs.media.whiteShader);
 			}
 
 			if (lagometer.snapshotFlags[i] & SNAPFLAG_RATE_DELAYED)

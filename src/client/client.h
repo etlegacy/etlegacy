@@ -157,6 +157,8 @@ typedef struct
 	usercmd_t cmds[CMD_BACKUP];             ///< each mesage will send several old cmds
 	int cmdNumber;                          ///< incremented each frame, because multiple
 	                                        ///< frames may need to be packed into a single packet
+	int cmdBackup;                          ///< CMD_BACKUP
+	int cmdMask;                            ///< CMD_MASK
 
 	/// double tapping
 	doubleTap_t doubleTap;

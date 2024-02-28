@@ -1563,6 +1563,10 @@ typedef struct
 	char bannerPrint[1024];
 
 	int lastKeyCatcher;
+
+	qboolean updateOldestValidCmd;                    ///< whenever snapshot transition happens save oldest valid command
+	int oldestValidCmd;                               ///< that will be used as a next starting point for prediction
+	                                                  ///< instead of iterating through whole CMD_BACKUP array every frame
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS 5
@@ -3755,9 +3759,11 @@ void trap_R_Finish(void);
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_SysFlashWindow(int state);
 void trap_CommandComplete(const char *value);
+void trap_CmdBackup_Ext(void);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 extern int dll_trap_CommandComplete;
+extern int dll_trap_CmdBackup_Ext;
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 

@@ -1257,10 +1257,19 @@ void CG_PredictPlayerState(void)
 	}
 	// unlagged - optimized prediction
 
+	if (cg.oldestValidCmd && cg.oldestValidCmd >= current - CMD_BACKUP + 1)
+	{
+		cmdNum = cg.oldestValidCmd;
+	}
+	else
+	{
+		cmdNum = current - CMD_BACKUP + 1;
+	}
+
 	// run cmds
 	moved        = qfalse;
 	predictError = qtrue;
-	for (cmdNum = current - CMD_BACKUP + 1 ; cmdNum <= current ; cmdNum++)
+	for (; cmdNum <= current ; cmdNum++)
 	{
 		// get the command
 		trap_GetUserCmd(cmdNum, &cg_pmove.cmd);
@@ -1369,6 +1378,13 @@ void CG_PredictPlayerState(void)
 		if (cg_pmove.cmd.serverTime > latestCmd.serverTime)
 		{
 			continue;
+		}
+
+		// update the oldest valid command
+		if (cg.updateOldestValidCmd)
+		{
+			cg.oldestValidCmd       = cmdNum;
+			cg.updateOldestValidCmd = qfalse;
 		}
 
 		if (cg_pmove.pmove_fixed)
