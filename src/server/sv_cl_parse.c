@@ -1161,15 +1161,13 @@ static serverMessageQueue_t *SV_CL_NewMessage(void)
  */
 static void SV_CL_CheckNewQueuedCommand(char *queuedCmd)
 {
-	char        *s = queuedCmd;
-	char        *cmd;
-	static char bigConfigString[BIG_INFO_STRING];
-	int         argc;
+	char        *s                               = queuedCmd;
+	char        cmd[MAX_STRING_TOKENS]           = { 0 };
+	static char bigConfigString[BIG_INFO_STRING] = { 0 };
 
 rescan:
 	Cmd_TokenizeString(s);
-	cmd  = Cmd_Argv(0);
-	argc = Cmd_Argc();
+	Q_strncpyz(cmd, Cmd_Argv(0), sizeof(cmd));
 
 	if (!strcmp(cmd, "bcs0"))
 	{
@@ -1179,23 +1177,23 @@ rescan:
 
 	if (!strcmp(cmd, "bcs1"))
 	{
-		s = Cmd_Argv(2);
-		if (strlen(bigConfigString) + strlen(s) >= BIG_INFO_STRING)
+		Q_strncpyz(cmd, Cmd_Argv(2), sizeof(cmd));
+		if (strlen(bigConfigString) + strlen(cmd) >= BIG_INFO_STRING)
 		{
 			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING");
 		}
-		Q_strcat(bigConfigString, sizeof(bigConfigString), s);
+		Q_strcat(bigConfigString, sizeof(bigConfigString), cmd);
 		return;
 	}
 
 	if (!strcmp(cmd, "bcs2"))
 	{
-		s = Cmd_Argv(2);
-		if (strlen(bigConfigString) + strlen(s) + 1 >= BIG_INFO_STRING)
+		Q_strncpyz(cmd, Cmd_Argv(2), sizeof(cmd));
+		if (strlen(bigConfigString) + strlen(cmd) + 1 >= BIG_INFO_STRING)
 		{
 			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING");
 		}
-		Q_strcat(bigConfigString, sizeof(bigConfigString), s);
+		Q_strcat(bigConfigString, sizeof(bigConfigString), cmd);
 		Q_strcat(bigConfigString, sizeof(bigConfigString), "\"");
 		s = bigConfigString;
 		goto rescan;
