@@ -1564,6 +1564,9 @@ typedef struct
 
 	int lastKeyCatcher;
 
+	int cmdBackup;                                    ///< CMD_BACKUP
+	int cmdMask;                                      ///< CMD_MASK
+
 	qboolean updateOldestValidCmd;                    ///< whenever snapshot transition happens save oldest valid command
 	int oldestValidCmd;                               ///< that will be used as a next starting point for prediction
 	                                                  ///< instead of iterating through whole CMD_BACKUP array every frame

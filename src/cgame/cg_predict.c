@@ -1113,12 +1113,12 @@ void CG_PredictPlayerState(void)
 
 	// fill in the current cmd with the latest prediction from
 	// cg.pmext (#166)
-	Com_Memcpy(&oldpmext[current & CMD_MASK], &cg.pmext, sizeof(pmoveExt_t));
+	Com_Memcpy(&oldpmext[current & cg.cmdMask], &cg.pmext, sizeof(pmoveExt_t));
 
 	// if we don't have the commands right after the snapshot, we
 	// can't accurately predict a current position, so just freeze at
 	// the last good position we had
-	cmdNum = current - CMD_BACKUP + 1;
+	cmdNum = current - cg.cmdBackup + 1;
 	trap_GetUserCmd(cmdNum, &oldestCmd);
 	if (oldestCmd.serverTime > cg.snap->ps.commandTime
 	    && oldestCmd.serverTime < cg.time)         // special check for map_restart
@@ -1190,7 +1190,7 @@ void CG_PredictPlayerState(void)
 			// do a full predict
 			cg.lastPredictedCommand = 0;
 			cg.backupStateTail      = cg.backupStateTop;
-			predictCmd              = current - CMD_BACKUP + 1;
+			predictCmd              = current - cg.cmdBackup + 1;
 		}
 		// cg.physicsTime is the current snapshot's serverTime
 		// if it's the same as the last one
@@ -1246,7 +1246,7 @@ void CG_PredictPlayerState(void)
 				// do a full predict
 				cg.lastPredictedCommand = 0;
 				cg.backupStateTail      = cg.backupStateTop;
-				predictCmd              = current - CMD_BACKUP + 1;
+				predictCmd              = current - cg.cmdBackup + 1;
 			}
 		}
 
@@ -1257,13 +1257,13 @@ void CG_PredictPlayerState(void)
 	}
 	// unlagged - optimized prediction
 
-	if (cg.oldestValidCmd && cg.oldestValidCmd >= current - CMD_BACKUP + 1)
+	if (cg.oldestValidCmd && cg.oldestValidCmd >= current - cg.cmdBackup + 1)
 	{
 		cmdNum = cg.oldestValidCmd;
 	}
 	else
 	{
-		cmdNum = current - CMD_BACKUP + 1;
+		cmdNum = current - cg.cmdBackup + 1;
 	}
 
 	// run cmds
@@ -1370,7 +1370,7 @@ void CG_PredictPlayerState(void)
 		// don't do anything if the time is before the snapshot player time
 		if (cg_pmove.cmd.serverTime <= cg.predictedPlayerState.commandTime)
 		{
-			Com_Memcpy(&pmext, &oldpmext[cmdNum & CMD_MASK], sizeof(pmoveExt_t));
+			Com_Memcpy(&pmext, &oldpmext[cmdNum & cg.cmdMask], sizeof(pmoveExt_t));
 			continue;
 		}
 
@@ -1417,7 +1417,7 @@ void CG_PredictPlayerState(void)
 		// copy the pmext as it was just before we
 		// previously ran this cmd (or, this will be the
 		// current predicted data if this is the current cmd)  (#166)
-		Com_Memcpy(&pmext, &oldpmext[cmdNum & CMD_MASK], sizeof(pmoveExt_t));
+		Com_Memcpy(&pmext, &oldpmext[cmdNum & cg.cmdMask], sizeof(pmoveExt_t));
 
 		fflush(stdout);
 
