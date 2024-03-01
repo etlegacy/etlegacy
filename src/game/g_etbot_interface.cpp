@@ -234,7 +234,7 @@ void GetMG42s()
 		name = (char *)_GetEntityName(trav);
 		if (name)
 		{
-			Q_strncpyz(mg42s[0].name, name, sizeof(mg42s[0].name));
+			Q_strncpyz(mg42.name, name, sizeof(mg42.name));
 		}
 		else
 		{
