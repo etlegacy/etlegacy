@@ -2,7 +2,7 @@ name: Snapcraft
 
 # Controls when the workflow will run
 on:
-  #workflow_dispatch:
+  workflow_dispatch:
   workflow_run:
     workflows: ["ETLBuild"]
     types:
