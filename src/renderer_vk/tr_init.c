@@ -210,7 +210,7 @@ static void InitOpenGL(void)
 
 		ri.GLimp_Init(&glConfig, &context);
 
-		strcpy(renderer_buffer, glConfig.renderer_string);
+		Q_strncpyz(renderer_buffer, glConfig.renderer_string, renderer_buffer);
 		Q_strlwr(renderer_buffer);
 
 		// OpenGL driver constants
@@ -262,29 +262,29 @@ void GL_CheckErrors(void)
 	switch (err)
 	{
 	case GL_INVALID_ENUM:
-		strcpy(s, "GL_INVALID_ENUM");
+		s = "GL_INVALID_ENUM";
 		break;
 	case GL_INVALID_VALUE:
-		strcpy(s, "GL_INVALID_VALUE");
+		s = "GL_INVALID_VALUE";
 		break;
 	case GL_INVALID_OPERATION:
-		strcpy(s, "GL_INVALID_OPERATION");
+		s = "GL_INVALID_OPERATION";
 		break;
 	case GL_STACK_OVERFLOW:
-		strcpy(s, "GL_STACK_OVERFLOW");
+		s = "GL_STACK_OVERFLOW";
 		break;
 	case GL_STACK_UNDERFLOW:
-		strcpy(s, "GL_STACK_UNDERFLOW");
+		s = "GL_STACK_UNDERFLOW";
 		break;
 	case GL_OUT_OF_MEMORY:
-		strcpy(s, "GL_OUT_OF_MEMORY");
+		s = "GL_OUT_OF_MEMORY";
 		break;
 	default:
-		Com_sprintf(s, sizeof(s), "code (%i)", err);
+		s = "";
 		break;
 	}
 
-	Ren_Fatal("GL_CheckErrors: %s", s);
+	Ren_Fatal("GL_CheckErrors: %s code (%i)", s, err);
 }
 
 /*

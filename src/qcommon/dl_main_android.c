@@ -236,7 +236,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	jobject singleton = DL_HandleInit();
 
 	/* ET://ip:port */
-	strcpy(referer, "et://");
+	Q_strncpyz(referer, "et://", sizeof(referer));
 	Q_strncpyz(referer + 5, Cvar_VariableString("cl_currentServerIP"), MAX_STRING_CHARS);
 
 	request->complete_clb = complete;

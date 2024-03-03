@@ -77,7 +77,7 @@ void R_InitAnimations(void)
 
 	anim       = R_AllocAnimation();
 	anim->type = AT_BAD;
-	strcpy(anim->name, "<default animation>");
+	Q_strncpyz(anim->name, "<default animation>", sizeof(anim->name));
 }
 
 /**
@@ -1383,9 +1383,9 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 		for (i = 0; i < 3; i++)
 		{
 			skel->bounds[0][i] =
-			    oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
+				oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
 			skel->bounds[1][i] =
-			    oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
+				oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
 		}
 
 		for (i = 0, channel = anim->channels; i < anim->numChannels; i++, channel++)

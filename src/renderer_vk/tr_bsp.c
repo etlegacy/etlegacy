@@ -2492,7 +2492,7 @@ void R_LoadEntities(lump_t *l)
 
 	// store for reference by the cgame
 	w->entityString = ri.Hunk_Alloc(l->filelen + 1, h_low);
-	strcpy(w->entityString, p);
+	Q_strncpyz(w->entityString, p, sizeof(l->filelen + 1));
 	w->entityParsePoint = w->entityString;
 
 	token = COM_ParseExt(&p, qtrue);

@@ -271,7 +271,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	{
 		buf = NULL;
 
-		strcpy(filename, name);
+		Q_strncpyz(filename, name, sizeof(filename));
 
 		if (lod != 0)
 		{

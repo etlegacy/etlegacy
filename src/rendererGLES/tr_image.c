@@ -426,25 +426,25 @@ static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 			for (k = 0 ; k < 4 ; k++)
 			{
 				total =
-				    1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
+					1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
 				outpix[k] = total / 36;
 			}
 		}
@@ -854,15 +854,15 @@ static void Upload32(unsigned *data,
 		ri.Free(temp);
 		break;
 	case GL_LUMINANCE:
-        temp = gles_convertLuminance((byte*)scaledBuffer, width, height);
-        glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE, scaled_width, scaled_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, temp);
-        ri.Free(temp);
-        break;
-     case GL_LUMINANCE_ALPHA:
-        temp = gles_convertLuminanceAlpha((byte*)scaledBuffer, width, height);
-        glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, scaled_width, scaled_height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, temp);
-        ri.Free(temp);
-        break;
+		temp = gles_convertLuminance((byte *)scaledBuffer, width, height);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, scaled_width, scaled_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, temp);
+		ri.Free(temp);
+		break;
+	case GL_LUMINANCE_ALPHA:
+		temp = gles_convertLuminanceAlpha((byte *)scaledBuffer, width, height);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, scaled_width, scaled_height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, temp);
+		ri.Free(temp);
+		break;
 	default:
 		internalFormat = GL_RGBA;
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
@@ -881,7 +881,7 @@ static void Upload32(unsigned *data,
 		if (textureFilterAnisotropic)
 		{
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-			                 (GLint)Com_Clamp(1, maxAnisotropy, r_extMaxAnisotropy->integer));
+			                (GLint)Com_Clamp(1, maxAnisotropy, r_extMaxAnisotropy->integer));
 		}
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
@@ -976,7 +976,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	image->mipmap      = mipmap;
 	image->allowPicmip = allowPicmip;
 
-	strcpy(image->imgName, name);
+	Q_strncpyz(image->imgName, name, sizeof(image->imgName));
 
 	image->width         = width;
 	image->height        = height;
@@ -1039,10 +1039,10 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
  */
 void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 {
-	int  i;
-	char localName[MAX_QPATH];
-	char *altName;
-    qboolean loaderRet = qfalse;
+	int      i;
+	char     localName[MAX_QPATH];
+	char     *altName;
+	qboolean loaderRet = qfalse;
 
 	*pic    = NULL;
 	*width  = 0;
@@ -1058,28 +1058,28 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 	{
 		altName = va("%s.%s", localName, imageLoaders[i].ext);
 
-        // Check if file exists
-        if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
-        {
-            imageData_t data = { 0, altName, { NULL } };
-            // load the file
-            data.size = ri.FS_ReadFile(altName, &data.buffer.v);
-            if (!data.buffer.b || data.size < 0)
-            {
-                continue;
-            }
+		// Check if file exists
+		if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
+		{
+			imageData_t data = { 0, altName, { NULL } };
+			// load the file
+			data.size = ri.FS_ReadFile(altName, &data.buffer.v);
+			if (!data.buffer.b || data.size < 0)
+			{
+				continue;
+			}
 
-            // Load
-            loaderRet = imageLoaders[i].ImageLoader(&data, pic, width, height, 0xFF);
+			// Load
+			loaderRet = imageLoaders[i].ImageLoader(&data, pic, width, height, 0xFF);
 
-            // free the file data
-            ri.FS_FreeFile(data.buffer.v);
+			// free the file data
+			ri.FS_FreeFile(data.buffer.v);
 
-            if (!loaderRet)
-            {
-                Ren_Drop("Image loader failed\n");
-            }
-        }
+			if (!loaderRet)
+			{
+				Ren_Drop("Image loader failed\n");
+			}
+		}
 
 		if (*pic)
 		{
@@ -1229,8 +1229,8 @@ static void R_CreateDlightImage(void)
 				b = 0;
 			}
 			data[y][x][0]         =
-			    data[y][x][1]     =
-			        data[y][x][2] = b;
+				data[y][x][1]     =
+					data[y][x][2] = b;
 			data[y][x][3]         = 255;
 		}
 	}
@@ -1280,8 +1280,8 @@ static void R_CreateFogImage(void)
 			}
 
 			data[(y * FOG_S + x) * 4 + 0]         =
-			    data[(y * FOG_S + x) * 4 + 1]     =
-			        data[(y * FOG_S + x) * 4 + 2] = 255;
+				data[(y * FOG_S + x) * 4 + 1]     =
+					data[(y * FOG_S + x) * 4 + 2] = 255;
 			data[(y * FOG_S + x) * 4 + 3]         = alpha; //%	255*d;
 		}
 	}
@@ -1354,8 +1354,8 @@ void R_CreateBuiltinImages(void)
 		for (y = 0 ; y < DEFAULT_SIZE ; y++)
 		{
 			data[y][x][0]         =
-			    data[y][x][1]     =
-			        data[y][x][2] = tr.identityLightByte;
+				data[y][x][1]     =
+					data[y][x][2] = tr.identityLightByte;
 			data[y][x][3]         = 255;
 		}
 	}
@@ -1534,7 +1534,7 @@ SKINS
  */
 static char *CommaParse(char **data_p)
 {
-	int         c     = 0, len = 0;
+	int         c = 0, len = 0;
 	char        *data = *data_p;
 	static char com_token[MAX_TOKEN_CHARS];
 
@@ -1754,7 +1754,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
  */
 qhandle_t RE_RegisterSkin(const char *name)
 {
-    skinSurface_t parseSurfaces[MAX_SKIN_SURFACES];
+	skinSurface_t parseSurfaces[MAX_SKIN_SURFACES];
 	qhandle_t     hSkin;
 	skin_t        *skin;
 	skinModel_t   *model;
@@ -1888,7 +1888,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 		{
 			surf = &parseSurfaces[skin->numSurfaces];
 			Q_strncpyz(surf->name, surfName, sizeof(surf->name));
-            surf->hash   = Com_HashKey(surf->name, sizeof(surf->name));
+			surf->hash   = Com_HashKey(surf->name, sizeof(surf->name));
 			surf->shader = R_FindShader(token, LIGHTMAP_NONE, qtrue);
 			skin->numSurfaces++;
 		}
@@ -1910,9 +1910,9 @@ qhandle_t RE_RegisterSkin(const char *name)
 		return 0;       // use default skin
 	}
 
-    // copy surfaces to skin
-    skin->surfaces = ri.Hunk_Alloc(skin->numSurfaces * sizeof( skinSurface_t ), h_low );
-    Com_Memcpy( skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof( skinSurface_t ) );
+	// copy surfaces to skin
+	skin->surfaces = ri.Hunk_Alloc(skin->numSurfaces * sizeof(skinSurface_t), h_low);
+	Com_Memcpy(skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof(skinSurface_t));
 
 	return hSkin;
 }
@@ -1929,8 +1929,8 @@ void R_InitSkins(void)
 	// make the default skin have all default shaders
 	skin = tr.skins[0] = ri.Hunk_Alloc(sizeof(skin_t), h_low);
 	Q_strncpyz(skin->name, "<default skin>", sizeof(skin->name));
-	skin->numSurfaces         = 1;
-	skin->surfaces         = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
+	skin->numSurfaces        = 1;
+	skin->surfaces           = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
 	skin->surfaces[0].shader = tr.defaultShader;
 }
 

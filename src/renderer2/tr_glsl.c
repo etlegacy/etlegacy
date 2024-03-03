@@ -1354,7 +1354,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 }
 
 #define GLSL_BUFF 64000
-#define GLSL_BUFF_CHAR (sizeof(char) *GLSL_BUFF)
+#define GLSL_BUFF_CHAR (sizeof(char) * GLSL_BUFF)
 
 /**
  * @brief GLSL_BuildGPUShaderText
@@ -1396,7 +1396,7 @@ static char *GLSL_BuildGPUShaderText(programInfo_t *info, GLenum shadertype)
 		return NULL;
 	}
 
-	strcpy(shaderBuffer, shaderExtraDef);
+	Q_strncpyz(shaderBuffer, shaderExtraDef, sizeof(shaderBuffer));
 
 	GLSL_GetShaderText(filename, shadertype, &mainBuffer, &mainBufferSize, qfalse);
 	GLSL_PreprocessShaderText(&shaderBuffer[strlen(shaderBuffer)], mainBuffer, shadertype);
@@ -1404,7 +1404,7 @@ static char *GLSL_BuildGPUShaderText(programInfo_t *info, GLenum shadertype)
 	Com_Dealloc(mainBuffer);
 
 	output = Com_Allocate(strlen(shaderBuffer) * sizeof(char) + 1);
-	strcpy(output, shaderBuffer);
+	Q_strncpyz(output, shaderBuffer, strlen(shaderBuffer) * sizeof(char) + 1);
 	return output;
 }
 

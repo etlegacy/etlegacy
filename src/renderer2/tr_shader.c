@@ -6222,7 +6222,7 @@ void R_ShaderExp_f(void)
 	char         *buffer_p    = &buffer[0];
 	expression_t exp;
 
-	strcpy(shader.name, "dummy");
+    Q_strncpyz(shader.name, "dummy", sizeof(shader.name));
 
 	Ren_Print("-----------------------\n");
 

@@ -3876,8 +3876,9 @@ static void ScanAndLoadShaderFiles(void)
 	// free in reverse order, so the temp files are all dumped
 	for (i = numShaders - 1; i >= 0 ; i--)
 	{
-		strcpy(p++, "\n");
-		strcpy(p, buffers[i]);
+		Q_strncpyz(p, "\n", sum + numShaders * 2 - (p - s_shaderText));
+		++p;
+		Q_strncpyz(p, buffers[i], sum + numShaders * 2 - (p - s_shaderText));
 		ri.FS_FreeFile(buffers[i]);
 		buffers[i] = p;
 		p         += buffersize[i];

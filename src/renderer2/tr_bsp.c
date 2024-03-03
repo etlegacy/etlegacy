@@ -715,7 +715,7 @@ static void LoadRGBEToBytes(const char *name, byte **ldrImage, int *width, int *
 	{
 		for (j = 0; j < 3; j++)
 		{
-			sample[j] = *floatbuf++ *255.0f;
+			sample[j] = *floatbuf++ * 255.0f;
 		}
 
 		// clamp with color normalization
@@ -4226,7 +4226,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 	dleaf_t       *inLeaf;
 	bspNode_t     *out;
 	int           numNodes, numLeafs;
-	srfVert_t     *verts = NULL;
+	srfVert_t     *verts     = NULL;
 	srfTriangle_t *triangles = NULL;
 	IBO_t         *volumeIBO = NULL;
 	vec3_t        mins, maxs;
@@ -4894,8 +4894,9 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 
 			if (!Q_stricmp(keyname, "origin"))
 			{
-				origin = ri.Z_Malloc(strlen(value) + 1);
-				strcpy(origin, value);
+				size_t size = strlen(value) + 1;
+				origin = ri.Z_Malloc(size);
+				Q_strncpyz(origin, value, size);
 			}
 		}
 
@@ -5273,8 +5274,9 @@ void R_LoadLights(char *lightDefs)
 			// lights pointed at a target will be spotlights
 			else if (!Q_stricmp(keyname, "target")) // ETL
 			{
-				target = ri.Z_Malloc(strlen(value) + 1);
-				strcpy(target, value);
+				size_t size = strlen(value) + 1;
+				target = ri.Z_Malloc(size);
+				Q_strncpyz(target, value, size);
 
 				//light->l.rlType = RL_PROJ;
 			}
@@ -5361,7 +5363,7 @@ void R_LoadLights(char *lightDefs)
 				mat4_t rotation;
 
 				Q_sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
-				       &rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
+				         &rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
 
 				quat_from_mat4(light->l.rotation, rotation);
 			}
@@ -5477,7 +5479,6 @@ void R_LoadEntities(lump_t *l)
 
 	// store for reference by the cgame
 	w->entityString = (char *)ri.Hunk_Alloc(l->filelen + 1, h_low);
-	//strcpy(w->entityString, (char *)(fileBase + l->fileofs));
 	Q_strncpyz(w->entityString, (char *)(fileBase + l->fileofs), l->filelen + 1);
 	w->entityParsePoint = w->entityString;
 
@@ -5567,7 +5568,7 @@ void R_LoadEntities(lump_t *l)
 
 
 			Q_sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
-			       &tr.worldEntity.ambientLight[2]);
+			         &tr.worldEntity.ambientLight[2]);
 
 		}
 		// check for ambient scale constant

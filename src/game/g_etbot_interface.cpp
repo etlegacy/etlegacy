@@ -4452,11 +4452,11 @@ public:
 
 			if (mg42s[i].buildable)
 			{
-				strcpy(strName, mg42s[i].newname);
+				Q_strncpyz(strName, mg42s[i].newname, sizeof(strName));
 			}
 			else
 			{
-				strcpy(strName, mg42s[i].name);
+				Q_strncpyz(strName, mg42s[i].name, sizeof(strName));
 			}
 
 			Bot_Util_AddGoal("mountmg42", mg42s[i].ent,

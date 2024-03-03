@@ -36,9 +36,9 @@
 #include "tr_local.h"
 
 shaderCommands_t tmptess;
-glconfig_t glConfig;
-qboolean   textureFilterAnisotropic = qfalse;
-float        maxAnisotropy            = 0.0f;
+glconfig_t       glConfig;
+qboolean         textureFilterAnisotropic = qfalse;
+float            maxAnisotropy            = 0.0f;
 
 glstate_t glState;
 
@@ -197,7 +197,7 @@ static void InitOpenGL(void)
 		Com_Memset(&context, 0, sizeof(windowContext_t));
 
 		// These should be the same as the old ifdeffin on sdl_glimp..
-		context.samples = r_ext_multisample->integer;
+		context.samples      = r_ext_multisample->integer;
 		context.versionMajor = 1;
 		context.versionMinor = 1;
 
@@ -210,7 +210,7 @@ static void InitOpenGL(void)
 
 		ri.GLimp_Init(&glConfig, &context);
 
-		strcpy(renderer_buffer, glConfig.renderer_string);
+		Q_strncpyz(renderer_buffer, glConfig.renderer_string, sizeof(renderer_buffer));
 		Q_strlwr(renderer_buffer);
 
 		// OpenGL driver constants
@@ -251,29 +251,29 @@ void GL_CheckErrors(void)
 	switch (err)
 	{
 	case GL_INVALID_ENUM:
-		strcpy(s, "GL_INVALID_ENUM");
+		s = "GL_INVALID_ENUM";
 		break;
 	case GL_INVALID_VALUE:
-		strcpy(s, "GL_INVALID_VALUE");
+		s = "GL_INVALID_VALUE";
 		break;
 	case GL_INVALID_OPERATION:
-		strcpy(s, "GL_INVALID_OPERATION");
+		s = "GL_INVALID_OPERATION";
 		break;
 	case GL_STACK_OVERFLOW:
-		strcpy(s, "GL_STACK_OVERFLOW");
+		s = "GL_STACK_OVERFLOW";
 		break;
 	case GL_STACK_UNDERFLOW:
-		strcpy(s, "GL_STACK_UNDERFLOW");
+		s = "GL_STACK_UNDERFLOW";
 		break;
 	case GL_OUT_OF_MEMORY:
-		strcpy(s, "GL_OUT_OF_MEMORY");
+		s = "GL_OUT_OF_MEMORY";
 		break;
 	default:
-		Com_sprintf(s, sizeof(s), "%i", err);
+		s = "";
 		break;
 	}
 
-	ri.Error(ERR_VID_FATAL, "GL_CheckErrors: %s", s);
+	Ren_Fatal("GL_CheckErrors: %s code (%i)", s, err);
 }
 
 /*
@@ -560,16 +560,16 @@ const void *RB_TakeScreenshotCmd(const void *data)
 
 	switch (cmd->format)
 	{
-		case SSF_TGA:
-			RB_TakeScreenshotTGA(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
-			break;
-		case SSF_JPEG:
-			RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
-			break;
+	case SSF_TGA:
+		RB_TakeScreenshotTGA(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
+		break;
+	case SSF_JPEG:
+		RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
+		break;
 #ifdef FEATURE_PNG
-		case SSF_PNG:
-			RB_TakeScreenshotPNG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
-			break;
+	case SSF_PNG:
+		RB_TakeScreenshotPNG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
+		break;
 #endif
 	}
 
@@ -668,7 +668,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 	cBuf = PADP(cmd->captureBuffer, packAlign);
 
 	glReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
-	              GL_UNSIGNED_BYTE, cBuf);
+	             GL_UNSIGNED_BYTE, cBuf);
 
 	memcount = padwidth * cmd->height;
 
@@ -814,19 +814,19 @@ void R_ScreenShot_f(void)
 
 	switch (format)
 	{
-		case SSF_TGA:
-			ext = "tga";
-			break;
-		case SSF_JPEG:
-			ext = "jpg";
-			break;
+	case SSF_TGA:
+		ext = "tga";
+		break;
+	case SSF_JPEG:
+		ext = "jpg";
+		break;
 #ifdef FEATURE_PNG
-		case SSF_PNG:
-			ext = "png";
-			break;
+	case SSF_PNG:
+		ext = "png";
+		break;
 #endif
-		default:
-			return;
+	default:
+		return;
 	}
 
 	if (!strcmp(ri.Cmd_Argv(1), "levelshot"))
@@ -1168,11 +1168,11 @@ void R_Init(void)
 	Com_Memset(&backEnd, 0, sizeof(backEnd));
 	Com_Memset(&tess, 0, sizeof(tess));
 
-    // align tess.xyz to 16 bytes
-    Com_Memset(&tmptess.xyz, 15, sizeof(vec4_t));
-    Com_Memcpy(&tmptess.xyz, &tess.xyz, sizeof(vec4_t));
-    Com_Memcpy(&tess.xyz, &tmptess.xyz, sizeof(vec4_t));
-    Com_Memset(&tmptess.xyz, 0, sizeof(vec4_t));
+	// align tess.xyz to 16 bytes
+	Com_Memset(&tmptess.xyz, 15, sizeof(vec4_t));
+	Com_Memcpy(&tmptess.xyz, &tess.xyz, sizeof(vec4_t));
+	Com_Memcpy(&tess.xyz, &tmptess.xyz, sizeof(vec4_t));
+	Com_Memset(&tmptess.xyz, 0, sizeof(vec4_t));
 
 	if ((intptr_t) tess.xyz & 15)
 	{

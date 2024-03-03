@@ -2494,7 +2494,7 @@ void R_LoadEntities(lump_t *l)
 
 	// store for reference by the cgame
 	w->entityString = ri.Hunk_Alloc(l->filelen + 1, h_low);
-	strcpy(w->entityString, p);
+	Q_strncpyz(w->entityString, p, l->filelen + 1);
 	w->entityParsePoint = w->entityString;
 
 	token = COM_ParseExt(&p, qtrue);
@@ -2541,7 +2541,7 @@ void R_LoadEntities(lump_t *l)
 		// check for a different grid size
 		if (!Q_stricmp(keyname, "gridsize"))
 		{
-            Q_sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
+			Q_sscanf(value, "%f %f %f", &w->lightGridSize[0], &w->lightGridSize[1], &w->lightGridSize[2]);
 			continue;
 		}
 	}
