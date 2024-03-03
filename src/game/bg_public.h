@@ -2133,6 +2133,8 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
 
 #define MAX_CAMPAIGNS_TEXT  8192
 
+#define MAX_PRECACHED_FXSOUNDS 3
+
 /**
  * @enum footstep_t
  * @brief

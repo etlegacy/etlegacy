@@ -538,8 +538,8 @@ void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 typedef struct fxSound_s
 {
 	int max;
-	qhandle_t sound[3];
-	const char *soundfile[3];
+	qhandle_t sound[MAX_PRECACHED_FXSOUNDS];
+	const char *soundfile[MAX_PRECACHED_FXSOUNDS];
 } fxSound_t;
 
 static fxSound_t fxSounds[FXTYPE_MAX] =
@@ -569,7 +569,7 @@ void CG_PrecacheFXSounds(void)
 
 	for (i = FXTYPE_WOOD; i < FXTYPE_MAX; i++)
 	{
-		for (j = 0; j < fxSounds[i].max; j++)
+		for (j = 0; j < MAX_PRECACHED_FXSOUNDS && fxSounds[i].soundfile[j]; j++)
 		{
 			fxSounds[i].sound[j] = trap_S_RegisterSound(fxSounds[i].soundfile[j], qfalse);
 		}
