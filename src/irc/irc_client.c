@@ -1376,15 +1376,15 @@ static void IRC_Display(int event, const char *nick, const char *message)
 	// Format message
 	if (has_nick && has_message)
 	{
-		sprintf(buffer, fmt_string, nick_copy, message_copy);
+		Com_sprintf(buffer, sizeof(buffer), fmt_string, nick_copy, message_copy);
 	}
 	else if (has_nick)
 	{
-		sprintf(buffer, fmt_string, nick_copy);
+		Com_sprintf(buffer, sizeof(buffer), fmt_string, nick_copy);
 	}
 	else if (has_message)
 	{
-		sprintf(buffer, fmt_string, message_copy);
+		Com_sprintf(buffer, sizeof(buffer), fmt_string, message_copy);
 	}
 	else
 	{

@@ -3269,7 +3269,7 @@ void R_FindLightmap(int *lightmapIndex)
 	R_IssuePendingRenderCommands();
 
 	// attempt to load an external lightmap
-	sprintf(fileName, "%s/" EXTERNAL_LIGHTMAP, tr.worldDir, *lightmapIndex);
+	Com_sprintf(fileName, sizeof(fileName), "%s/" EXTERNAL_LIGHTMAP, tr.worldDir, *lightmapIndex);
 	image = R_FindImageFile(fileName, qfalse, qfalse, GL_CLAMP_TO_EDGE, qtrue);
 	if (image == NULL)
 	{

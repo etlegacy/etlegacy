@@ -219,7 +219,7 @@ qhandle_t RE_RegisterModel(const char *name)
 			{
 				*strrchr(filename, '.') = 0;
 			}
-			sprintf(namebuf, "_%d.md3", lod);
+			Com_sprintf(namebuf, sizeof(namebuf), "_%d.md3", lod);
 			Q_strcat(filename, sizeof(filename), namebuf);
 		}
 

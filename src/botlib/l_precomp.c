@@ -671,7 +671,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 	{
 	case BUILTIN_LINE:
 	{
-		sprintf(token->string, "%d", deftoken->line);
+		Com_sprintf(token->string, sizeof(token->string), "%d", deftoken->line);
 #ifdef NUMBERVALUE
 		token->intvalue   = deftoken->line;
 		token->floatvalue = deftoken->line;
@@ -2766,7 +2766,7 @@ int PC_Directive_eval(source_t *source)
 	token.whitespace_p    = source->scriptstack->script_p;
 	token.endwhitespace_p = source->scriptstack->script_p;
 	token.linescrossed    = 0;
-	sprintf(token.string, "%ld", labs(value));
+	Com_sprintf(token.string, sizeof(token.string), "%ld", labs(value));
 	token.type    = TT_NUMBER;
 	token.subtype = TT_INTEGER | TT_LONG | TT_DECIMAL;
 	PC_UnreadSourceToken(source, &token);
@@ -2795,7 +2795,7 @@ int PC_Directive_evalfloat(source_t *source)
 	token.whitespace_p    = source->scriptstack->script_p;
 	token.endwhitespace_p = source->scriptstack->script_p;
 	token.linescrossed    = 0;
-	sprintf(token.string, "%1.2f", Q_fabs(value));
+	Com_sprintf(token.string, sizeof(token.string), "%1.2f", Q_fabs(value));
 	token.type    = TT_NUMBER;
 	token.subtype = TT_FLOAT | TT_LONG | TT_DECIMAL;
 	PC_UnreadSourceToken(source, &token);
@@ -2884,7 +2884,7 @@ int PC_DollarDirective_evalint(source_t *source)
 	token.whitespace_p    = source->scriptstack->script_p;
 	token.endwhitespace_p = source->scriptstack->script_p;
 	token.linescrossed    = 0;
-	sprintf(token.string, "%ld", labs(value));
+	Com_sprintf(token.string, sizeof(token.string), "%ld", labs(value));
 	token.type    = TT_NUMBER;
 	token.subtype = TT_INTEGER | TT_LONG | TT_DECIMAL;
 #ifdef NUMBERVALUE
@@ -2917,7 +2917,7 @@ int PC_DollarDirective_evalfloat(source_t *source)
 	token.whitespace_p    = source->scriptstack->script_p;
 	token.endwhitespace_p = source->scriptstack->script_p;
 	token.linescrossed    = 0;
-	sprintf(token.string, "%1.2f", Q_fabs(value));
+	Com_sprintf(token.string, sizeof(token.string), "%1.2f", Q_fabs(value));
 	token.type    = TT_NUMBER;
 	token.subtype = TT_FLOAT | TT_LONG | TT_DECIMAL;
 #ifdef NUMBERVALUE

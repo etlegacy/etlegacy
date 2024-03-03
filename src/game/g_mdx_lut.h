@@ -44,7 +44,7 @@
 		for (i = 0; i < 64; i++)
 		{
 			char name[64];
-			sprintf(name, "%d", i);
+			Com_sprintf(name, sizeof(name), "%d", i);
 			trap_R_LerpTag(&o[0], &refent, name, 0);
 			CG_Printf("/*%4d*/ %a,\n", j * 64 + i, -o[0].origin[2]);
 		}

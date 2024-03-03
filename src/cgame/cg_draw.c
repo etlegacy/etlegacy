@@ -3134,16 +3134,16 @@ void CG_DrawFollow(hudComponent_t *comp)
 
 					if (reinfDepTime > 1)
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^*seconds"), reinfDepTime);
+						Com_sprintf(deploytime, sizeof(deploytime), CG_TranslateString("Bonus Life! Deploying in ^3%d ^*seconds"), reinfDepTime);
 					}
 					else
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^*second"), reinfDepTime);
+						Com_sprintf(deploytime, sizeof(deploytime), CG_TranslateString("Bonus Life! Deploying in ^3%d ^*second"), reinfDepTime);
 					}
 				}
 				else
 				{
-					sprintf(deploytime, "%s", CG_TranslateString("No more deployments this round"));
+					Com_sprintf(deploytime, sizeof(deploytime), "%s", CG_TranslateString("No more deployments this round"));
 				}
 			}
 			else
@@ -3153,11 +3153,11 @@ void CG_DrawFollow(hudComponent_t *comp)
 				// coloured respawn counter when deployment is close to bring attention to next respawn
 				if (reinfTime > 1)
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^*seconds"), reinfTime);
+					Com_sprintf(deploytime, sizeof(deploytime), CG_TranslateString("Deploying in ^3%d ^*seconds"), reinfTime);
 				}
 				else
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^*second"), reinfTime);
+					Com_sprintf(deploytime, sizeof(deploytime), CG_TranslateString("Deploying in ^3%d ^*second"), reinfTime);
 				}
 			}
 

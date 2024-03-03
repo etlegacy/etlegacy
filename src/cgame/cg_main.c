@@ -2878,7 +2878,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	}
 	else
 	{
-		sprintf(versionString, "%i", clientVersion);
+		Com_sprintf(versionString, sizeof(versionString), "%i", clientVersion);
 		trap_Cvar_Set("cg_etVersion", va(PRODUCT_LABEL " v%c.%s %s", versionString[0], versionString + 1, CPUSTRING));
 	}
 

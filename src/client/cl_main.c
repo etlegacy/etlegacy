@@ -3998,7 +3998,7 @@ void CL_GlobalServers_f(void)
 
 		for (i = 1; i <= MAX_MASTER_SERVERS; i++)
 		{
-			sprintf(command, "sv_master%d", i);
+			Com_sprintf(command, sizeof(command), "sv_master%d", i);
 			masteraddress = Cvar_VariableString(command);
 
 			if (!*masteraddress)
@@ -4019,7 +4019,7 @@ void CL_GlobalServers_f(void)
 		return;
 	}
 
-	sprintf(command, "sv_master%d", masterNum);
+	Com_sprintf(command, sizeof(command), "sv_master%d", masterNum);
 	masteraddress = Cvar_VariableString(command);
 
 	if (!*masteraddress)

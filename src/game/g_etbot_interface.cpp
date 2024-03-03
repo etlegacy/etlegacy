@@ -1818,7 +1818,7 @@ void Bot_Util_CheckForGoalEntity(GameEntity _ent)
 					{
 						pGoalName = _GetEntityName(&g_entities[pEnt->s.otherEntityNum]);
 					}
-					sprintf(buffer, "%s_dropped", pGoalName ? pGoalName : "allies_flag");
+					Com_sprintf(buffer, sizeof(buffer), "%s_dropped", pGoalName ? pGoalName : "allies_flag");
 					Bot_Util_AddGoal("flag", pEnt, (1 << ET_TEAM_ALLIES), buffer);
 					Bot_Util_AddGoal("flagreturn", pEnt, (1 << ET_TEAM_AXIS), buffer);
 				}
@@ -1829,7 +1829,7 @@ void Bot_Util_CheckForGoalEntity(GameEntity _ent)
 					{
 						pGoalName = _GetEntityName(&g_entities[pEnt->s.otherEntityNum]);
 					}
-					sprintf(buffer, "%s_dropped", pGoalName ? pGoalName : "axis_flag");
+					Com_sprintf(buffer, sizeof(buffer), "%s_dropped", pGoalName ? pGoalName : "axis_flag");
 					Bot_Util_AddGoal("flag", pEnt, (1 << ET_TEAM_AXIS), buffer);
 					Bot_Util_AddGoal("flagreturn", pEnt, (1 << ET_TEAM_ALLIES), buffer);
 				}

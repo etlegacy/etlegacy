@@ -255,7 +255,7 @@ static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 		}
 	}
 
-	sprintf(buff, "%u/%u", bestNumerator, bestDenominator);
+	Com_sprintf(buff, sizeof(buff), "%u/%u", bestNumerator, bestDenominator);
 	Com_DPrintf("%f -> %s\n", ratio, buff);
 	return buff;
 }

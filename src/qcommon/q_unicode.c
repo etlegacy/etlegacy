@@ -889,7 +889,7 @@ static qboolean Q_EncodeUnicodeChar(const char *str, char *toStr, const size_t m
 		return qfalse;
 	}
 
-	sprintf(buffer, "\\u{%d}", cd);
+	Com_sprintf(buffer, sizeof(buffer), "\\u{%d}", cd);
 	bufferLen = strlen(buffer);
 
 	if (*l + bufferLen >= maxSize)

@@ -611,7 +611,7 @@ void RE_BeginFrame()
 	if (!r_ignoreGLErrors->integer)
 	{
 		int  err;
-		char s[128];
+		char *s;
 
 		R_IssuePendingRenderCommands();
 
@@ -620,32 +620,32 @@ void RE_BeginFrame()
 			switch (err)
 			{
 			case GL_INVALID_ENUM:
-				Q_strcpy(s, "GL_INVALID_ENUM");
+				s = "GL_INVALID_ENUM";
 				break;
 			case GL_INVALID_VALUE:
-				Q_strcpy(s, "GL_INVALID_VALUE");
+				s = "GL_INVALID_VALUE";
 				break;
 			case GL_INVALID_OPERATION:
-				Q_strcpy(s, "GL_INVALID_OPERATION");
+				s = "GL_INVALID_OPERATION";
 				break;
 			case GL_STACK_OVERFLOW:
-				Q_strcpy(s, "GL_STACK_OVERFLOW");
+				s = "GL_STACK_OVERFLOW";
 				break;
 			case GL_STACK_UNDERFLOW:
-				Q_strcpy(s, "GL_STACK_UNDERFLOW");
+				s = "GL_STACK_UNDERFLOW";
 				break;
 			case GL_OUT_OF_MEMORY:
-				Q_strcpy(s, "GL_OUT_OF_MEMORY");
+				s = "GL_OUT_OF_MEMORY";
 				break;
 			case GL_TABLE_TOO_LARGE:
-				Q_strcpy(s, "GL_TABLE_TOO_LARGE");
+				s = "GL_TABLE_TOO_LARGE";
 				break;
 			case GL_INVALID_FRAMEBUFFER_OPERATION_EXT:
-				Q_strcpy(s, "GL_INVALID_FRAMEBUFFER_OPERATION_EXT");
+				s = "GL_INVALID_FRAMEBUFFER_OPERATION_EXT";
 				break;
 			default:
-				Com_sprintf(s, sizeof(s), "0x%X", err);
-				break;
+				s = va("0x%X", err);
+				return;
 			}
 
 			//Ren_Fatal( "caught OpenGL error: %s in file %s line %i", s, filename, line);

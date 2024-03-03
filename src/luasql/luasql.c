@@ -62,7 +62,7 @@ static int luasql_tostring(lua_State *L)
 	}
 	else
 	{
-		sprintf(buff, "%p", (void *)obj);
+		snprintf(buff, sizeof(buff), "%p", (void *)obj);
 	}
 	lua_pushfstring(L, "%s (%s)", lua_tostring(L, lua_upvalueindex(1)), buff);
 	return 1;
