@@ -409,9 +409,9 @@ int PC_StringizeTokens(token_t *tokens, token_t *token)
 	Q_strcat(token->string, sizeof(token->string), "\"");
 	for (t = tokens; t; t = t->next)
 	{
-		strncat(token->string, t->string, MAX_TOKEN - strlen(token->string));
+		Q_strcat(token->string, sizeof(token->string), t->string);
 	}
-	strncat(token->string, "\"", MAX_TOKEN - strlen(token->string));
+	Q_strcat(token->string, sizeof(token->string), "\"");
 	return qtrue;
 }
 

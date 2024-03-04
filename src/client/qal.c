@@ -171,8 +171,8 @@ qboolean QAL_Init(const char *libname)
 #else
 		char fn[1024];
 		Q_strncpyz(fn, Sys_Cwd(), sizeof(fn));
-		strncat(fn, "/", sizeof(fn) - strlen(fn) - 1);
-		strncat(fn, libname, sizeof(fn) - strlen(fn) - 1);
+		Q_strcat(fn, sizeof(fn), "/");
+		Q_strcat(fn, sizeof(fn), libname);
 
 		if ((OpenALLib = Sys_LoadLibrary(fn)) == 0)
 		{
