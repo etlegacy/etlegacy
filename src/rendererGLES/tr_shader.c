@@ -3832,7 +3832,7 @@ static void ScanAndLoadShaderFiles(void)
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaders);
 
-	if (!shaderFiles || !numShaders)
+	if (!shaderFiles || numShaders <= 0)
 	{
 		Ren_Warning("ScanAndLoadShaderFiles WARNING: no shader files found\n");
 		return;
@@ -3859,7 +3859,6 @@ static void ScanAndLoadShaderFiles(void)
 
 	// build single large buffer
 	s_shaderText = ri.Hunk_Alloc(sum + numShaders * 2, h_low);
-
 	// optimised to not use strcat/strlen which can be VERY slow for the large strings we're using here
 	p = s_shaderText;
 	// free in reverse order, so the temp files are all dumped

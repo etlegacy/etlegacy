@@ -6517,7 +6517,7 @@ static int ScanAndLoadShaderFiles(void)
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("materials", ".shader", &numShaderFiles);
 
-	if (!shaderFiles || !numShaderFiles)
+    if (!shaderFiles || numShaderFiles <= 0)
 	{
 		Ren_Print("...no legacy shader files found!\n");
 		return 0;
@@ -6599,8 +6599,8 @@ static int ScanAndLoadShaderFiles(void)
 			continue;
 		}
 
-		Q_strcat(textEnd, sizeof(textEnd), buffers[i]);
-		Q_strcat(textEnd, sizeof(textEnd), "\n");
+		Q_strcat(textEnd, sum + numShaderFiles * 2, buffers[i]);
+		Q_strcat(textEnd, sum + numShaderFiles * 2, "\n");
 		textEnd += strlen(textEnd);
 		ri.FS_FreeFile(buffers[i]);
 	}
