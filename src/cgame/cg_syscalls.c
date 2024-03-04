@@ -1954,3 +1954,21 @@ void trap_CommandComplete(const char *value)
 		SystemCall(dll_trap_CommandComplete, value);
 	}
 }
+
+/**
+ * @brief Extension for letting engine know to use extended user command backup
+ */
+void trap_CmdBackup_Ext(void)
+{
+	if (dll_trap_CmdBackup_Ext)
+	{
+		cg.cmdBackup = CMD_BACKUP;
+		cg.cmdMask   = CMD_MASK;
+		SystemCall(dll_trap_CmdBackup_Ext);
+	}
+	else
+	{
+		cg.cmdBackup = CMD_BACKUP_VET;
+		cg.cmdMask   = CMD_MASK_VET;
+	}
+}

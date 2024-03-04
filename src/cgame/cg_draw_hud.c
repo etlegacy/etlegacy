@@ -3143,7 +3143,7 @@ void CG_DrawDisconnect(hudComponent_t *comp)
 	}
 
 	// draw the phone jack if we are completely past our buffers
-	cmdNum = trap_GetCurrentCmdNumber() - CMD_BACKUP + 1;
+	cmdNum = trap_GetCurrentCmdNumber() - cg.cmdBackup + 1;
 	trap_GetUserCmd(cmdNum, &cmd);
 	if (cmd.serverTime <= cg.snap->ps.commandTime
 	    || cmd.serverTime > cg.time)        // special check for map_restart
@@ -3302,7 +3302,7 @@ void CG_DrawLagometer(hudComponent_t *comp)
 				{
 					w = range;
 				}
-				trap_R_DrawStretchPic(ax + aw - a, ay + ah - w - 2, 1, w, 0, 0, 0, 0, cgs.media.whiteShader);
+				trap_R_DrawStretchPic(ax + aw - a, ay + ah - w, 1, w, 0, 0, 0, 0, cgs.media.whiteShader);
 			}
 
 			if (lagometer.snapshotFlags[i] & SNAPFLAG_RATE_DELAYED)

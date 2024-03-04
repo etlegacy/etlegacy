@@ -2946,6 +2946,7 @@ void Com_Init(char *commandLine)
 	//
 	// no need to latch this in ET, our recoil is framerate independant
 	com_maxfps = Cvar_Get("com_maxfps", "125", CVAR_ARCHIVE /*|CVAR_LATCH*/);
+	Cvar_CheckRange(com_maxfps, 20, 500, qtrue);
 
 	com_developer = Cvar_Get("developer", "0", CVAR_TEMP);
 	com_logfile   = Cvar_Get("logfile", "0", CVAR_TEMP);
@@ -3371,11 +3372,6 @@ void Com_Frame(void)
 	if (com_speeds->integer)
 	{
 		timeBeforeFirstEvents = Sys_Milliseconds();
-	}
-
-	if (!com_dedicated->integer && !com_timedemo->integer && !com_developer->integer)
-	{
-		Cvar_CheckRange(com_maxfps, 20, 333, qtrue);
 	}
 
 	// we may want to spin here if things are going too fast
