@@ -1369,8 +1369,8 @@ int CG_CalcViewValues(void)
 
 			if (ps->viewlocked == VIEWLOCK_JITTER)
 			{
-				cg.refdefViewAngles[0] += crandom() * 0.5f;
-				cg.refdefViewAngles[1] += crandom() * 0.5f;
+				cg.refdefViewAngles[0] += crandom();
+				cg.refdefViewAngles[1] += crandom();
 			}
 		}
 
