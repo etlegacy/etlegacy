@@ -237,7 +237,7 @@ static void InitOpenGL(void)
 void GL_CheckErrors(void)
 {
 	unsigned int err;
-	char         s[64];
+	char         *s;
 
 	err = glGetError();
 	if (err == GL_NO_ERROR)
