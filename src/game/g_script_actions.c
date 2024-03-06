@@ -4946,7 +4946,9 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 	{
 		if (!nospawn)
 		{
+			level.spawning = qtrue;
 			G_CallSpawn(ent);
+			level.spawning = qfalse;
 		}
 
 		trap_LinkEntity(ent);
