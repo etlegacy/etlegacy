@@ -2038,8 +2038,6 @@ extern int snapshotDelayTime;
 #endif // FAKELAG
 #endif // ETLEGACY_DEBUG
 
-extern void CG_SetupDlightstyles(void);
-
 static void CG_DrawSpawnpoints(void)
 {
 	vec3_t start, end;
