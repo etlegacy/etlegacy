@@ -2306,36 +2306,37 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 	cabinet.renderfx          |= RF_MINLIGHT;
 	AnglesToAxis(cent->lerpAngles, cabinet.axis);
 
-	if (cent->currentState.onFireStart == -9999)
+	// figure out the amount of ammo/medpacks to show only if the cabinet is set up correctly
+	// otherwise we might do a div by 0 when cent->currentState.onFireEnd is 0
+	// on a correctly set up cabinet, both of these cannot be 0
+	if (cent->currentState.onFireStart && cent->currentState.onFireEnd)
 	{
-		cnt = MAX_CABINET_TAGS;
-	}
-	else
-	{
-		cnt = MAX_CABINET_TAGS * (cent->currentState.onFireStart / (float)cent->currentState.onFireEnd);
-		if (cnt == 0 && cent->currentState.onFireStart)
+		if (cent->currentState.onFireStart == -9999)
 		{
-			cnt = 1;
+			cnt = MAX_CABINET_TAGS;
+		}
+		else
+		{
+			cnt = MAX_CABINET_TAGS * (cent->currentState.onFireStart / (float)cent->currentState.onFireEnd);
+			if (cnt == 0 && cent->currentState.onFireStart)
+			{
+				cnt = 1;
+			}
+		}
+
+		for (i = 0; i < cnt; i++)
+		{
+			mini_me.hModel = cabinetInfo[type].itemmodels[i];
+
+			CG_PositionEntityOnTag(&mini_me, &cabinet, cabinetInfo[type].tagsnames[i], 0, NULL);
+
+			VectorCopy(mini_me.origin, mini_me.oldorigin);
+			VectorCopy(mini_me.origin, mini_me.lightingOrigin);
+			mini_me.renderfx |= RF_MINLIGHT;
+
+			trap_R_AddRefEntityToScene(&mini_me);
 		}
 	}
-
-	for (i = 0; i < cnt; i++)
-	{
-		mini_me.hModel = cabinetInfo[type].itemmodels[i];
-
-		CG_PositionEntityOnTag(&mini_me, &cabinet, cabinetInfo[type].tagsnames[i], 0, NULL);
-
-		VectorCopy(mini_me.origin, mini_me.oldorigin);
-		VectorCopy(mini_me.origin, mini_me.lightingOrigin);
-		mini_me.renderfx |= RF_MINLIGHT;
-
-		trap_R_AddRefEntityToScene(&mini_me);
-	}
-
-	/*  for( k = 0; k < 3; k++ ) {
-	        VectorScale( cabinet.axis[k], 2.f, cabinet.axis[k] );
-	    }
-	    cabinet.nonNormalizedAxes = qtrue;*/
 
 	trap_R_AddRefEntityToScene(&cabinet);
 }
