@@ -44,6 +44,6 @@ jobs:
         with:
           snap: ${{ steps.snapcraft.outputs.snap }}
 #          release: edge
-#          release: stable
-          release: candidate
+          release: stable
+#          release: candidate
 #          release: beta
