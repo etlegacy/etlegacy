@@ -3051,6 +3051,8 @@ void CG_Letterbox(float xsize, float ysize, qboolean center);
 
 void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t color, qhandle_t shader);
 
+void CG_SetupDlightstyles(void);
+
 // cg_drawtools.c
 
 qboolean Ccg_Is43Screen(void);      // does this game-window have a 4:3 aspectratio. note: this is also true for a 800x600 windowed game on a widescreen monitor

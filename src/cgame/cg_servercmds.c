@@ -1099,7 +1099,7 @@ static void CG_ConfigStringModified(void)
 		}
 		else if (num >= CS_DLIGHTS && num < CS_DLIGHTS + MAX_DLIGHT_CONFIGSTRINGS)
 		{
-			// FIXME - dlight changes ignored!
+			CG_SetupDlightstyles();
 		}
 		else if (num >= CS_FIRETEAMS && num < CS_FIRETEAMS + MAX_FIRETEAMS)
 		{
