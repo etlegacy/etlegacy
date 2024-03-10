@@ -34,6 +34,7 @@ jobs:
       - name: Fetch git version information
         id: git
         run: |
+          git fetch --tags --force
           git_describe=$(git describe --abbrev=7 2>/dev/null | awk '{$1=$1};1')
           git_tag=$(git describe --abbrev=0 2>/dev/null | awk '{$1=$1};1')
           echo "Version info: $git_describe ?? $git_tag"
