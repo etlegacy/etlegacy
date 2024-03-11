@@ -1,49 +1,61 @@
 def buildAsLibrary = project.hasProperty('BUILD_AS_LIBRARY')
 def buildAsApplication = !buildAsLibrary
 if (buildAsApplication) {
-    apply plugin: 'com.android.application'
+	apply plugin: 'com.android.application'
 }
 else {
-    apply plugin: 'com.android.library'
+	apply plugin: 'com.android.library'
 }
 
-def getVersion() {
-    def out = new ByteArrayOutputStream()
-    exec {
-        executable = 'git'
-        args = ['describe', '--tags', '--abbrev=7']
-        standardOutput = out
-    }
-    return out.toString().replace('\n','')
+def getVersionLong() {
+	// use the CI provided version if available
+	if (System.getenv('CI_ETL_DESCRIBE') != null) {
+		return System.getenv('CI_ETL_DESCRIBE')
+	}
+
+	def out = new ByteArrayOutputStream()
+	exec {
+		executable = 'git'
+		args = ['describe', '--tags', '--abbrev=7']
+		standardOutput = out
+	}
+	return out.toString().replace('\n','')
 }
 
-static def extractInt(String input ) {
-  return input.replaceAll("[^0-9]", "")
-}
-
-def VERSION = []
-new File( 'VERSION.txt' ).eachLine { line ->
-	VERSION << extractInt(line)
+def getVersionShort() {
+	// use the CI provided version if available
+	if (System.getenv('CI_ETL_TAG') != null) {
+		def tagString = System.getenv('CI_ETL_TAG')
+		if (tagString.startsWith('v')) {
+			return tagString.substring(1)
+		}
+		return tagString as String
+	}
+	def VERSION = []
+	new File( 'VERSION.txt' ).eachLine { line ->
+		VERSION << line.replaceAll("[^0-9]", "")
+	}
+	return "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}" as String
 }
 
 android {
 	namespace "com.etlegacy.app"
-    compileSdk 33
-    defaultConfig {
-        if (buildAsApplication) {
-            applicationId "com.etlegacy.app"
-        }
-        minSdkVersion 26
-        //noinspection OldTargetApi
-        targetSdk 33
-        versionCode 1
-		versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
+	compileSdk 33
+	defaultConfig {
+		if (buildAsApplication) {
+			applicationId "com.etlegacy.app"
+		}
+		minSdkVersion 26
+		//noinspection OldTargetApi
+		targetSdk 33
+		versionCode 1
+		versionName getVersionShort()
 		base {
-			archivesName = "etlegacy-${getVersion()}"
+			archivesName = "etlegacy-${getVersionLong()}"
 		}
 		externalNativeBuild {
-            cmake {
-                arguments "-DFEATURE_RENDERER1=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF",
+			cmake {
+				arguments "-DFEATURE_RENDERER1=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF",
 					"-DINSTALL_EXTRA=OFF", "-DBUNDLED_LIBS=ON", "-DFEATURE_IRC_CLIENT=OFF",
 					"-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF",
 					"-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_OGG_VORBIS=OFF",
@@ -51,39 +63,39 @@ android {
 					"-DBUNDLED_OPENSSL=OFF", "-DBUNDLED_WOLFSSL=OFF", "-DFEATURE_AUTH=ON",
 					"-DBUILD_SERVER_MOD=OFF", "-DCMAKE_SKIP_INSTALL_RULES=OFF"
 				targets "etl", "ui", "cgame"
-            }
-        }
-        ndk {
-            // Specifies the ABI configurations of your native
-            // libraries Gradle should build and package with your APK.
-            abiFilters 'arm64-v8a', 'x86_64', 'x86'
-        }
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    signingConfigs {
-        debug {
-            storeFile file('../etlkey.jks')
-            keyAlias 'key0'
-            storePassword 'etlegacy'
-            keyPassword 'etlegacy'
-        }
-        release {
-            storeFile = file("../etl.keystore")
-            storePassword System.getenv("SIGNING_STORE_PASSWORD")
-            keyAlias System.getenv("SIGNING_KEY_ALIAS")
-            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
-        }
-    }
-    buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        release {
-           signingConfig signingConfigs.release
-        }
-    }
+			}
+		}
+		ndk {
+			// Specifies the ABI configurations of your native
+			// libraries Gradle should build and package with your APK.
+			abiFilters 'arm64-v8a', 'x86_64', 'x86'
+		}
+		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+	}
+	signingConfigs {
+		debug {
+			storeFile file('../etlkey.jks')
+			keyAlias 'key0'
+			storePassword 'etlegacy'
+			keyPassword 'etlegacy'
+		}
+		release {
+			storeFile = file("../etl.keystore")
+			storePassword System.getenv("SIGNING_STORE_PASSWORD")
+			keyAlias System.getenv("SIGNING_KEY_ALIAS")
+			keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+		}
+	}
+	buildTypes {
+		debug {
+			signingConfig signingConfigs.debug
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+		}
+		release {
+		   signingConfig signingConfigs.release
+		}
+	}
 	lint {
 		abortOnError false
 	}
@@ -116,41 +128,41 @@ android {
 			}
 		}
 	}
-    if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
-        sourceSets.main {
-            jniLibs.srcDir 'libs'
-        }
-        externalNativeBuild {
-            cmake {
-                path '../CMakeLists.txt'
+	if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
+		sourceSets.main {
+			jniLibs.srcDir 'libs'
+		}
+		externalNativeBuild {
+			cmake {
+				path '../CMakeLists.txt'
 				version '3.22.1'
-            }
-        }
+			}
+		}
 
-    }
+	}
 
 	if (buildAsLibrary) {
-        libraryVariants.all { variant ->
-            variant.outputs.each { output ->
-                def outputFile = output.outputFile
-                if (outputFile != null && outputFile.name.endsWith(".aar")) {
-                    def fileName = "com.etlegacy.app.aar"
-                    output.outputFile = new File(outputFile.parent, fileName)
-                }
-            }
-        }
-    }
+		libraryVariants.all { variant ->
+			variant.outputs.each { output ->
+				def outputFile = output.outputFile
+				if (outputFile != null && outputFile.name.endsWith(".aar")) {
+					def fileName = "com.etlegacy.app.aar"
+					output.outputFile = new File(outputFile.parent, fileName)
+				}
+			}
+		}
+	}
 }
 
 dependencies {
 	// FIXME: replace with our own version
 	api 'com.github.erz05:JoyStick:1.1.0'
-    // api 'com.etlegacy.android:joystick:1.1.1-SNAPSHOT'
-    implementation 'com.google.guava:guava:29.0-android'
+	// api 'com.etlegacy.android:joystick:1.1.1-SNAPSHOT'
+	implementation 'com.google.guava:guava:29.0-android'
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.0'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+	testImplementation 'junit:junit:4.13.2'
+	androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.0'
+	androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+	implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
