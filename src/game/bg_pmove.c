@@ -3765,15 +3765,20 @@ static void PM_Weapon(void)
 
 			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
-		else if (pm->ps->eFlags & EF_PRONE)
+
+		// start the animation immediately unless out of ammo
+		if (pm->ps->weaponDelay <= 0 && GetWeaponTableData(pm->ps->weapon)->uses <= PM_WeaponAmmoAvailable(pm->ps->weapon))
 		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2PRONE : ANIM_ET_FIREWEAPONPRONE,
-			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
-		}
-		else
-		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2 : ANIM_ET_FIREWEAPON,
-			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+			if (pm->ps->eFlags & EF_PRONE)
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2PRONE : ANIM_ET_FIREWEAPONPRONE,
+				                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+			}
+			else
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2 : ANIM_ET_FIREWEAPON,
+				                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+			}
 		}
 	}
 
