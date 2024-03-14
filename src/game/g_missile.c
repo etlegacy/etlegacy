@@ -196,6 +196,12 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	{
 		G_BounceMissile(ent, trace);
 
+		// sending bounce event for smoketrail is unnecessary
+		if (ent->s.weapon == WP_SMOKETRAIL)
+		{
+			return;
+		}
+
 		G_AddEvent(ent, EV_GRENADE_BOUNCE, BG_FootstepForSurface(trace->surfaceFlags));
 
 		return;
