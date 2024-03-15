@@ -173,7 +173,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 	qboolean      depthRange = qfalse, oldDepthRange = qfalse;
 	int           i;
 	drawSurf_t    *drawSurf;
-	double	      originalTime = backEnd.refdef.floatTime; // save original time for entity shader offsets
+	double        originalTime = backEnd.refdef.floatTime; // save original time for entity shader offsets
 
 	Ren_LogComment("--- RB_RenderDrawSurfaces ---\n");
 
@@ -2300,7 +2300,7 @@ void RB_RenderGlobalFog()
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
-	if (!tr.world || tr.world->globalFog < 0||!r_wolfFog->integer)
+	if (!tr.world || tr.world->globalFog < 0 || !r_wolfFog->integer)
 	{
 		return;
 	}
@@ -2316,8 +2316,8 @@ void RB_RenderGlobalFog()
 		return;
 	}
 
-	
-	
+
+
 
 	GL_Cull(CT_TWO_SIDED);
 
@@ -2364,12 +2364,12 @@ void RB_RenderGlobalFog()
 
 	SetUniformMatrix16(UNIFORM_VIEWMATRIX, backEnd.viewParms.world.viewMatrix);
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
-	
+
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.fogImage);
-	
-	
+
+
 	// bind u_DepthMap
 	SelectTexture(TEX_DEPTH);
 	if (HDR_ENABLED())
@@ -2569,7 +2569,7 @@ void RB_RenderRotoscope(void)
 	{
 		return;
 	}
-	
+
 	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || backEnd.viewParms.isPortal)
 	{
 		return;
@@ -3750,7 +3750,7 @@ static int EntityOcclusionResultAvailable(trRefEntity_t *entity)
 			glGetQueryObjectiv(entity->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE, &available);
 			if (available)
 			{
-			GL_CheckErrors();
+				GL_CheckErrors();
 			}
 		}
 
@@ -5188,7 +5188,7 @@ static void RB_RenderDebugUtils()
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
-		
+
 		GLSL_SetRequiredVertexPointers(trProg.gl_reflectionShader);
 		//GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
@@ -5198,23 +5198,23 @@ static void RB_RenderDebugUtils()
 
 			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
 #if 1
-            // the glsl shader needs 2 cubemaps and an interpolation factor,
-            // but now we just want to render a single cubemap..
-            // so we pass on two of the same textures
+			// the glsl shader needs 2 cubemaps and an interpolation factor,
+			// but now we just want to render a single cubemap..
+			// so we pass on two of the same textures
 
-            // bind u_EnvironmentMap0
-            SelectTexture(TEX_ENVMAP0);
-            GL_Bind(cubeProbe->cubemap);
+			// bind u_EnvironmentMap0
+			SelectTexture(TEX_ENVMAP0);
+			GL_Bind(cubeProbe->cubemap);
 
-            // bind u_EnvironmentMap1
-            SelectTexture(TEX_ENVMAP1);
-            GL_Bind(cubeProbe->cubemap);
+			// bind u_EnvironmentMap1
+			SelectTexture(TEX_ENVMAP1);
+			GL_Bind(cubeProbe->cubemap);
 
-            // u_EnvironmentInterpolation
-            SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 1.0);
+			// u_EnvironmentInterpolation
+			SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 1.0);
 #else
-            SelectTexture(TEX_COLOR);
-            GL_Bind(cubeProbe->cubemap);
+			SelectTexture(TEX_COLOR);
+			GL_Bind(cubeProbe->cubemap);
 #endif
 
 			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
@@ -5223,7 +5223,7 @@ static void RB_RenderDebugUtils()
 		//Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
 
 
-#if 0	// color the 2 closest cubeProbes (green/red/yellow?/blue?)
+#if 0   // color the 2 closest cubeProbes (green/red/yellow?/blue?)
 		// (disabled because, when you want to inspect a cubeProbe up close, no textures can be seen.. not handy)
 		{
 			cubemapProbe_t *cubeProbe1;
@@ -6173,7 +6173,7 @@ static void RB_RenderView(void)
 	// render chromatric aberration
 	if (tr.refdef.pixelTarget == NULL) // see comment on next code block.. we don't want postFX on cubemaps
 	{
-	RB_CameraPostFX();
+		RB_CameraPostFX();
 	}
 	// copy to given byte buffer that is NOT a FBO.
 	// This will copy the current screen content to a texture.
@@ -7034,6 +7034,7 @@ void RB_ExecuteRenderCommands(const void *data)
 
 	while (1)
 	{
+		data = PADP(data, sizeof(intptr_t));
 		switch (*(const int *)data)
 		{
 		case RC_SET_COLOR:

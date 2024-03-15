@@ -1570,6 +1570,7 @@ void RB_ExecuteRenderCommands(const void *data)
 
 	while (1)
 	{
+		data = PADP(data, sizeof(intptr_t));
 		switch (*( const int * ) data)
 		{
 		case RC_SET_COLOR:

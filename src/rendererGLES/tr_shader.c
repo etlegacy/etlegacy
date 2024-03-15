@@ -2415,10 +2415,10 @@ static void FixRenderCommandList(int newShader)
 	if (cmdList)
 	{
 		const void *curCmd = cmdList->cmds;
-
+		*((int *)(cmdList->cmds + cmdList->used)) = RC_END_OF_LIST;
 		while (1)
 		{
-			curCmd = PADP(curCmd, sizeof(void *));
+			curCmd = PADP(curCmd, sizeof(intptr_t));
 
 			switch (*(const int *)curCmd)
 			{
