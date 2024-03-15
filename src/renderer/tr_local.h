@@ -2169,6 +2169,7 @@ void R_BackupShaders(void);
 void R_PurgeShaders(int count);
 void R_PurgeLightmapShaders(void);
 void R_LoadCacheShaders(void);
+void R_PurgeDynamicShaders(void);
 
 // tr_gamma.c
 void R_ScreenGamma(void);
