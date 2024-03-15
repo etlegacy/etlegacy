@@ -3014,7 +3014,15 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 	// empty the whole list
 	if (!shadername && !shadertext)
 	{
-		R_PurgeDynamicShaders();
+		dptr = dshader;
+		while (dptr)
+		{
+			lastdptr = dptr->next;
+			ri.Free(dptr->shadertext);
+			ri.Free(dptr);
+			dptr = lastdptr;
+		}
+		dshader = NULL;
 		return qtrue;
 	}
 
@@ -3975,24 +3983,6 @@ void R_PurgeShaders(int count)
 	purgeallshaders = qtrue;
 	R_PurgeLightmapShaders();
 	purgeallshaders = qfalse;
-}
-
-/**
- * @brief R_PurgeDynamicShaders
- */
-void R_PurgeDynamicShaders(void)
-{
-	dynamicshader_t *dptr, *lastdptr;
-
-	dptr = dshader;
-	while (dptr)
-	{
-		lastdptr = dptr->next;
-		ri.Free(dptr->shadertext);
-		ri.Free(dptr);
-		dptr = lastdptr;
-	}
-	dshader = NULL;
 }
 
 /**
