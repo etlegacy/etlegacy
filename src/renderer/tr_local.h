@@ -2113,7 +2113,7 @@ typedef struct
 
 extern backEndData_t *backEndData;
 
-void *R_GetCommandBuffer(unsigned int bytes);
+void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
 
 void R_IssuePendingRenderCommands(void);
