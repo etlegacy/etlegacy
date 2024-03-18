@@ -1277,6 +1277,12 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 			{
 				Q_strncpyz(upgr->numberToNameTableReminder[index], name, MAX_QPATH);
 			}
+
+			// try solve the name conflict from previous file version by using number version instead
+			if (CG_GetHudByName(tmpHud->name))
+			{
+				Q_strncpyz(tmpHud->name, va("%i", Q_ReadIntValueJson(hud, "number")), sizeof(tmpHud->name));
+			}
 		}
 	}
 	else
