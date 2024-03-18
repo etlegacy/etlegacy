@@ -154,7 +154,7 @@ static void Com_DownloadsComplete(void)
 		return;
 	}
 
-	// I wonder if that happens - it should not but I suspect it could happen if a download fails in the middle or is aborted
+	// I wonder if that happens - it should not, but I suspect it could happen if a download fails in the middle or is aborted
 	etl_assert(!dld.bWWWDlDisconnected);
 
 #ifndef DEDICATED
@@ -200,6 +200,16 @@ static void Com_WebDownloadComplete(webRequest_t *request, webRequestResult requ
 	const char *to_ospath;
 
 	Cvar_Set("ui_dl_running", "0");
+
+	if (requestResult == REQUEST_ABORT)
+	{
+		Com_Printf("Download aborted for file '%s'\n", request->data.name);
+		if (Sys_Remove(request->data.name) == -1)
+		{
+			Com_Printf(S_COLOR_RED "ERROR: Com_WebDownloadComplete - cannot remove file '%s'\n", request->data.name);
+		}
+		return;
+	}
 
 	if (!requestResult)
 	{
@@ -301,7 +311,7 @@ static int Com_WebDownloadProgress(webRequest_t *request, double now, double tot
 
 unsigned int Com_BeginWebDownload(const char *localName, const char *remoteName)
 {
-	return DL_BeginDownload(localName, remoteName, &Com_WebDownloadComplete, &Com_WebDownloadProgress);
+	return DL_BeginDownload(localName, remoteName, NULL, &Com_WebDownloadComplete, &Com_WebDownloadProgress);
 }
 
 static void Com_WebDownloadFileSimpleComplete(webRequest_t *request, webRequestResult requestResult)
@@ -338,7 +348,7 @@ unsigned int Com_DownloadFileSimple(const char *localName, const char *remoteNam
 	{
 		Q_strcat(tmpPath, sizeof(tmpPath), ".tmp");
 	}
-	return DL_BeginDownload(tmpPath, remoteName, &Com_WebDownloadFileSimpleComplete, &Com_WebDownloadProgress);
+	return DL_BeginDownload(tmpPath, remoteName, NULL, &Com_WebDownloadFileSimpleComplete, &Com_WebDownloadProgress);
 }
 
 static void checkDownloadName(char *filename)

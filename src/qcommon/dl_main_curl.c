@@ -514,7 +514,7 @@ static void DL_FreeRequest(webRequest_t *request)
  * @param remoteName
  * @return
  */
-unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
+unsigned int DL_BeginDownload(const char *localName, const char *remoteName, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
 	char         referer[MAX_STRING_CHARS + 5 /*"et://"*/];
 	CURLcode     status;
@@ -538,8 +538,9 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 		return 0;
 	}
 
-	request     = DL_CreateRequest();
-	request->id = FILE_DOWNLOAD_ID; // magical package download id
+	request           = DL_CreateRequest();
+	request->id       = FILE_DOWNLOAD_ID; // magical package download id
+	request->userData = userData;
 	Q_strncpyz(request->url, remoteName, ARRAY_LEN(request->url));
 	Q_strncpyz(request->data.name, localName, ARRAY_LEN(request->data.name));
 

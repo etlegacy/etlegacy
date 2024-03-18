@@ -200,9 +200,6 @@ jobs:
   android:
     runs-on: ubuntu-20.04
     env:
-      SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
-      SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-      SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
     needs: [ version ]
@@ -223,11 +220,11 @@ jobs:
       - name: Build and Generate Package
         run: |
           git config --global --add safe.directory $GITHUB_WORKSPACE
-          ./gradlew clean assembleRelease
+          ./gradlew clean assembleDebug
           ls -R
 
       - name: Rename APK
         run: |
-          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
-          ls app/build/outputs/apk/release
+          for FILE in ./app/build/outputs/apk/debug/*; do mv $FILE ${FILE%-*}.apk; done
+          ls app/build/outputs/apk/debug
 

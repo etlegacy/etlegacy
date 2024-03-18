@@ -1056,6 +1056,26 @@ void CL_ParseCommandString(msg_t *msg)
 
 	index = seq & (MAX_RELIABLE_COMMANDS - 1);
 	Q_strncpyz(clc.serverCommands[index], s, sizeof(clc.serverCommands[index]));
+
+	// etlded no longer sends connectionless disconnect packet
+	// client only runs reliable server commands in cgame when CA_ACTIVE
+	// but server can send disconnect command before, which leads to client being stuck on connection screen
+	if (cls.state == CA_PRIMED)
+	{
+		Cmd_TokenizeString(s);
+
+		if (!Q_stricmp(Cmd_Argv(0), "disconnect"))
+		{
+			if (Cmd_Argc() >= 2)
+			{
+				Com_Error(ERR_SERVERDISCONNECT, "Server Disconnected - %s", Cmd_Argv(1));
+			}
+			else
+			{
+				Com_Error(ERR_SERVERDISCONNECT, "Server disconnected");
+			}
+		}
+	}
 }
 
 /**

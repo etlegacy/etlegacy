@@ -1298,6 +1298,7 @@ void R_Init(void)
 
 void R_PurgeCache(void)
 {
+	R_PurgeDynamicShaders();
 	R_PurgeShaders(9999999);
 	R_PurgeBackupImages(9999999);
 	R_PurgeModels(9999999);

@@ -3765,15 +3765,20 @@ static void PM_Weapon(void)
 
 			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
-		else if (pm->ps->eFlags & EF_PRONE)
+
+		// start the animation immediately unless out of ammo
+		if (pm->ps->weaponDelay <= 0 && GetWeaponTableData(pm->ps->weapon)->uses <= PM_WeaponAmmoAvailable(pm->ps->weapon))
 		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2PRONE : ANIM_ET_FIREWEAPONPRONE,
-			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
-		}
-		else
-		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2 : ANIM_ET_FIREWEAPON,
-			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+			if (pm->ps->eFlags & EF_PRONE)
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2PRONE : ANIM_ET_FIREWEAPONPRONE,
+				                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+			}
+			else
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2 : ANIM_ET_FIREWEAPON,
+				                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+			}
 		}
 	}
 
@@ -5056,6 +5061,7 @@ void PmoveSingle(pmove_t *pmove)
 		// clear the respawned flag if attack button are cleared
 		// don't clear if a weapon change is needed to prevent early weapon change
 		if (pm->ps->stats[STAT_HEALTH] > 0 &&
+		    !(pm->cmd.wbuttons & WBUTTON_RELOAD) &&
 		    !(pm->cmd.buttons & BUTTON_ATTACK) &&  // & (BUTTON_ATTACK /*| BUTTON_USE_HOLDABLE
 		    (pm->ps->weapon == pm->cmd.weapon))       // bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
 		                                              // and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the

@@ -4256,8 +4256,8 @@ typedef struct hudStructure_s
 	byte computed;
 	char name[MAX_QPATH];
 	int hudnumber;
-	int parent;
-	char parentname[MAX_QPATH];
+	int parentNumber;
+	char parent[MAX_QPATH];
 	qboolean isEditable;
 
 	hudComponent_t compass;
@@ -4378,6 +4378,7 @@ void CG_CloneHud(hudStucture_t *target, hudStucture_t *source);
 void CG_FreeHud(hudStucture_t *hud);
 hudStucture_t *CG_GetHudByNumber(int number);
 hudStucture_t *CG_GetHudByName(const char *name);
+void CG_UpdateParentHUD(const char *oldParent, const char *newParent, int newParentNum);
 void CG_setDefaultHudValues(hudStucture_t *hud);
 void CG_HudComponentsFill(hudStucture_t *hud);
 void CG_CalculateComponentInternals(hudStucture_t *hud, hudComponent_t *comp);

@@ -762,10 +762,10 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		CG_CloneHud(hud2, hud);
 
 		Q_strncpyz(hud2->name, va("%s_copy", hud->name), sizeof(hud2->name));
-		Q_strncpyz(hud2->parentname, hud->name, sizeof(hud2->parentname));
-		hud2->parent     = hud->hudnumber;
-		hud2->hudnumber  = hudNumber;
-		hud2->isEditable = qtrue;
+		Q_strncpyz(hud2->parent, hud->name, sizeof(hud2->parent));
+		hud2->parentNumber = hud->hudnumber;
+		hud2->hudnumber    = hudNumber;
+		hud2->isEditable   = qtrue;
 
 		CG_RegisterHud(hud2);
 
@@ -780,6 +780,11 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 	{
 		while ((hud = CG_GetHudByNumber(HUDToDelete)))
 		{
+			int i;
+
+			// ensure to update parent as well
+			CG_UpdateParentHUD(hud->name, hud->parent, hud->hudnumber);
+
 			if (hud == hudData.active)
 			{
 				trap_Cvar_Set("cg_altHud", "0");
@@ -919,11 +924,23 @@ static void CG_HudEditor_RenderEditName(panel_button_t *button)
 */
 static void CG_HudEditorName_Finish(panel_button_t *button)
 {
-	char buffer[MAX_EDITFIELD];
+	char buffer[MAX_EDITFIELD] = { 0 };
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
 
-	Q_strncpyz(hudData.active->name, buffer, sizeof(hudData.active->name));
+	// check name validity (no doublon, no default hud name, not empty)
+	if (buffer[0] == '\0' || CG_GetHudByName(buffer))
+	{
+		// back to default name
+		trap_Cvar_Set(button->text, hudData.active->name);
+	}
+	else
+	{
+		// ensure to update parent as well
+		CG_UpdateParentHUD(hudData.active->name, buffer, hudData.active->hudnumber);
+
+		Q_strncpyz(hudData.active->name, buffer, sizeof(hudData.active->name));
+	}
 
 	BG_PanelButtons_SetFocusButton(NULL);
 }

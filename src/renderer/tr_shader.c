@@ -2413,10 +2413,10 @@ static void FixRenderCommandList(int newShader)
 	if (cmdList)
 	{
 		const void *curCmd = cmdList->cmds;
-
+		*((int *)(cmdList->cmds + cmdList->used)) = RC_END_OF_LIST;
 		while (1)
 		{
-			curCmd = PADP(curCmd, sizeof(void *));
+			curCmd = PADP(curCmd, sizeof(intptr_t));
 
 			switch (*(const int *)curCmd)
 			{
@@ -3014,15 +3014,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 	// empty the whole list
 	if (!shadername && !shadertext)
 	{
-		dptr = dshader;
-		while (dptr)
-		{
-			lastdptr = dptr->next;
-			ri.Free(dptr->shadertext);
-			ri.Free(dptr);
-			dptr = lastdptr;
-		}
-		dshader = NULL;
+		R_PurgeDynamicShaders();
 		return qtrue;
 	}
 
@@ -3983,6 +3975,24 @@ void R_PurgeShaders(int count)
 	purgeallshaders = qtrue;
 	R_PurgeLightmapShaders();
 	purgeallshaders = qfalse;
+}
+
+/**
+ * @brief R_PurgeDynamicShaders
+ */
+void R_PurgeDynamicShaders(void)
+{
+	dynamicshader_t *dptr, *lastdptr;
+
+	dptr = dshader;
+	while (dptr)
+	{
+		lastdptr = dptr->next;
+		ri.Free(dptr->shadertext);
+		ri.Free(dptr);
+		dptr = lastdptr;
+	}
+	dshader = NULL;
 }
 
 /**
