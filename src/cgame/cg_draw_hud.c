@@ -281,6 +281,29 @@ hudStucture_t *CG_GetHudByName(const char *name)
 	return NULL;
 }
 
+/**
+ * @brief CG_UpdateParentHUD
+ * @param[in] oldParent
+ * @param[in] newParent
+ * @param[in] newParentNum
+ */
+void CG_UpdateParentHUD(const char *oldParent, const char *newParent, int newParentNum)
+{
+	int i;
+	// ensure to update parent child as well
+	for (i = 0; i < hudData.count; i++)
+	{
+		hudStucture_t *hud = hudData.list[i];
+
+		if (!Q_stricmp(hud->parent, oldParent))
+		{
+			// use grand-parent value
+			Q_strncpyz(hud->parent, newParent, sizeof(hud->parent));
+			hud->parentNumber = newParentNum;
+		}
+	}
+}
+
 // HUD DRAWING FUNCTIONS BELLOW
 
 /**
