@@ -614,7 +614,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		// reward attacker for killing objective carrier
 		if (attackerClient && !dieFromSameTeam)
 		{
-			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 3.f, "obj. carrier killed");
+			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f, "obj. carrier killed");
 		}
 	}
 
@@ -623,7 +623,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		if (attackerClient && !dieFromSameTeam)
 		{
-			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 2.f, "kill near obj.");
+			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 3.f, "kill near obj.");
 		}
 	}
 
