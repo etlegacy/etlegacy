@@ -1324,6 +1324,7 @@ qboolean G_DropItems(gentity_t *self)
 
 		flag = LaunchItem(item, origin, launchvel, self->s.number);
 
+		flag->parent        = self;
 		flag->s.modelindex2 = self->s.otherEntityNum2; // FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
 		flag->message       = self->message; // also restore item name
 
