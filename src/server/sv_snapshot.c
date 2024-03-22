@@ -224,7 +224,7 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	// this is the snapshot we are creating
 	frame = &client->frames[client->netchan.outgoingSequence & PACKET_MASK];
 
-	// if we are about to got over MAX_PARSE_ENTITIES send uncompressed snapshot
+	// if we are about to go over MAX_PARSE_ENTITIES send uncompressed snapshot
 	if (client->parseEntitiesNum > MAX_PARSE_ENTITIES - 128)
 	{
 		Com_DPrintf("%s: Too many parse entities.\n", client->name);
@@ -1073,23 +1073,6 @@ void SV_SendClientMessages(void)
 
 	// update any changed configstrings from this frame
 	SV_UpdateConfigStrings();
-
-#ifdef DEDICATED
-	if (svcls.isTVGame)
-	{
-		sharedEntity_t *gEnt;
-		sv.num_entities = 0;
-		for (i = 0; i < MAX_GENTITIES; i++)
-		{
-			gEnt = SV_GentityNum(i);
-
-			if (gEnt->r.linked)
-			{
-				sv.num_entities = i + 1;
-			}
-		}
-	}
-#endif // DEDICATED
 
 	// send a message to each connected client
 	for (i = 0; i < sv_maxclients->integer; i++)

@@ -485,6 +485,8 @@ void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityStat
 		gEnt->s.number = newnum;
 		SV_LinkEntity(gEnt);
 
+		sv.num_entities = newnum + 1;
+
 		if (sv_etltv_shownet->integer == 4)
 		{
 			Com_Printf("%d+ ", newnum);
@@ -515,6 +517,8 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 	entityShared_t *oldstateShared;
 	int            oldindex, newnum, oldnum;
 
+	sv.num_entities = 0;
+
 	oldstate       = NULL;
 	oldstateShared = NULL;
 	oldindex       = 0;
@@ -523,7 +527,6 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 	newframe->numEntities      = 0;
 
 	// delta from the entities present in oldframe
-
 	if (!oldframe)
 	{
 		oldnum = MAX_GENTITIES;
@@ -556,7 +559,7 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 
 		if (msg->readcount > msg->cursize)
 		{
-			Com_Error(ERR_DROP, "CL_ParsePacketEntities: end of message");
+			Com_Error(ERR_DROP, "SV_CL_ParsePacketEntities: end of message");
 		}
 
 		while (oldnum < newnum)
