@@ -41,6 +41,8 @@
 const char *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^$Allies^7", "^2Spectators^7" };
 team_info  teamInfo[TEAM_NUM_TEAMS];
 
+#define MAX_MATCHES 10 + 1
+
 /**
 * @brief G_MatchOnePlayer
 * @param[in] plist
@@ -149,6 +151,11 @@ int TVG_ClientNumbersFromString(char *s, int *plist)
 		{
 			*plist++ = i;
 			found++;
+
+			if (found == MAX_MATCHES - 1)
+			{
+				break;
+			}
 		}
 	}
 	*plist = -1;
@@ -163,7 +170,7 @@ int TVG_ClientNumbersFromString(char *s, int *plist)
 */
 int TVG_ClientNumberFromString(gclient_t *to, char *s)
 {
-	int pids[MAX_CLIENTS];
+	int pids[MAX_MATCHES];
 
 	// no match or more than 1 player matchs, out error
 	if (TVG_ClientNumbersFromString(s, pids) != 1)
@@ -909,7 +916,7 @@ void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatTex
 
 	if (target)
 	{
-		if (!COM_BitCheck(target->sess.ignoreClients, client - level.clients))
+		//if (!COM_BitCheck(target->sess.ignoreClients, client - level.clients))
 		{
 			TVG_SayTo(client, target, mode, color, name, text, qfalse);
 		}
@@ -926,7 +933,7 @@ void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatTex
 	for (j = 0; j < level.numConnectedClients; j++)
 	{
 		other = &level.clients[level.sortedClients[j]];
-		if (!COM_BitCheck(other->sess.ignoreClients, client - level.clients) && other->sess.tvchat)
+		if (/*!COM_BitCheck(other->sess.ignoreClients, client - level.clients) && */ other->sess.tvchat)
 		{
 			TVG_SayTo(client, other, mode, color, name, text, qfalse);
 		}

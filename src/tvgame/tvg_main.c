@@ -1017,12 +1017,15 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 		Q_sscanf(gclients, "%p", &g_clients);
 	}
 
+	level.sortedClients = Com_Allocate(g_maxclients.integer * sizeof(int));
+	Com_Memset(level.sortedClients, 0, g_maxclients.integer * sizeof(int));
+
 	level.clients = g_clients;
 
 	// always leave room for the max number of clients,
 	// even if they aren't all used, so numbers inside that
 	// range are NEVER anything but clients
-	level.num_entities = MAX_CLIENTS;
+	//level.num_entities = MAX_CLIENTS;
 
 	// let the server system know where the entities are
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
@@ -1108,6 +1111,8 @@ void TVG_ShutdownGame(int restart)
 
 	// write all the client session data so we can get it back
 	TVG_WriteSessionData(restart);
+
+	free(level.sortedClients);
 }
 
 //===================================================================

@@ -653,8 +653,8 @@ gentity_t *G_Spawn(void)
 	{
 		// if we go through all entities and can't find one to free,
 		// override the normal minimum times before use
-		e = &g_entities[MAX_CLIENTS];
-		for (i = MAX_CLIENTS ; i < level.num_entities ; i++, e++)
+		e = &g_entities[0];
+		for (i = 0; i < level.num_entities ; i++, e++)
 		{
 			if (e->inuse)
 			{
@@ -935,7 +935,7 @@ void TVG_globalSound(const char *sound)
 	te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 
 	te->s.eventParm = G_SoundIndex(sound);
-	te->r.svFlags |= SVF_BROADCAST;
+	te->r.svFlags  |= SVF_BROADCAST;
 }
 
 /**
@@ -986,7 +986,7 @@ void TVG_TempTraceIgnoreEntity(gentity_t *ent)
 	}
 
 	level.tempTraceIgnoreEnts[ent - g_entities] = qtrue;
-	ent->r.linked = qfalse;
+	ent->r.linked                               = qfalse;
 }
 
 /**
@@ -1081,7 +1081,7 @@ void TVG_TempTraceIgnoreEntities(gentity_t *ent)
 		hit = &g_entities[list[i]];
 
 		if (hit->s.eType == ET_OID_TRIGGER || hit->s.eType == ET_TRIGGER_MULTIPLE
-			|| hit->s.eType == ET_TRIGGER_FLAGONLY || hit->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
+		    || hit->s.eType == ET_TRIGGER_FLAGONLY || hit->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
 		{
 			TVG_TempTraceIgnoreEntity(hit);
 		}
@@ -1092,7 +1092,7 @@ void TVG_TempTraceIgnoreEntities(gentity_t *ent)
 		}
 
 		if (hit->client && (!(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC) || (ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->client->sess.sessionTeam != hit->client->sess.sessionTeam))
-			&& hit->client->ps.pm_type == PM_DEAD && !(hit->client->ps.pm_flags & PMF_LIMBO))
+		    && hit->client->ps.pm_type == PM_DEAD && !(hit->client->ps.pm_flags & PMF_LIMBO))
 		{
 			TVG_TempTraceIgnoreEntity(hit);
 		}

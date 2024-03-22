@@ -257,7 +257,7 @@ typedef struct
 	int latchPlayerType;                                ///< latched class
 	weapon_t latchPlayerWeapon;                         ///< latched primary weapon
 	weapon_t latchPlayerWeapon2;                        ///< latched secondary weapon
-	int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
+	//int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
 	qboolean muted;
 	int skill[SK_NUM_SKILLS];                           ///< skill
 
@@ -483,7 +483,7 @@ typedef struct level_locals_s
 	qboolean restarted;                         ///< waiting for a map_restart to fire
 
 	int numConnectedClients;
-	int sortedClients[MAX_CLIENTS];             ///< sorted by score
+	int *sortedClients;
 
 	// spawn variables
 	qboolean spawning;                          ///< the G_Spawn*() functions are valid

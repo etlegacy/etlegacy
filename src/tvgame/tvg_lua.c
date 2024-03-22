@@ -575,7 +575,7 @@ static int _et_trap_FS_GetFileList(lua_State *L)
 	for (i = 0; i < numfiles; i++, filenameptr += filelen + 1)
 	{
 		filelen = strlen(filenameptr);
-        Q_strncpyz(filename, filenameptr, sizeof(filename));
+		Q_strncpyz(filename, filenameptr, sizeof(filename));
 
 		lua_pushstring(L, filename);
 		lua_rawseti(L, newTable, index++);
@@ -968,7 +968,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.latchPlayerType,          FIELD_INT,         0),
 	_et_gclient_addfield(sess.latchPlayerWeapon,        FIELD_INT,         0),
 	_et_gclient_addfield(sess.latchPlayerWeapon2,       FIELD_INT,         0),
-	_et_gclient_addfield(sess.ignoreClients,            FIELD_INT_ARRAY,   0),
+	//_et_gclient_addfield(sess.ignoreClients,            FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(sess.muted,                    FIELD_INT,         0),
 	_et_gclient_addfield(sess.referee,                  FIELD_INT,         0),
 	_et_gclient_addfield(sess.shoutcaster,              FIELD_INT,         0),
