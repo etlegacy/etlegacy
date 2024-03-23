@@ -57,7 +57,7 @@ typedef struct
 } cvarTable_t;
 
 gentity_t g_entities[MAX_GENTITIES];
-gclient_t g_clients[MAX_CLIENTS];
+gclient_t *g_clients;
 
 const char *gameNames[] =
 {
@@ -927,9 +927,11 @@ extern void G_InitMemory(void);
  */
 void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, int serverVersion)
 {
+	char   gclients[MAX_CVAR_VALUE_STRING];
 	char   cs[MAX_INFO_STRING];
 	time_t aclock;
 	char   timeFt[32];
+	int    i;
 
 	// mod version check
 	MOD_CHECK_ETLEGACY(etLegacyServer, serverVersion, level.etLegacyServer);
@@ -939,11 +941,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	G_Printf("gamedate: %s\n", __DATE__);
 
 	srand(randomSeed);
-
-	if (g_maxclients.integer > MAX_CLIENTS)
-	{
-		G_Error("Error: tvgame does not support %d client slots.\n", g_maxclients.integer);
-	}
 
 	TVG_RegisterCvars();
 
@@ -1005,13 +1002,30 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	// initialize all clients for this game
 	level.maxclients = g_maxclients.integer;
-	Com_Memset(g_clients, 0, MAX_CLIENTS * sizeof(g_clients[0]));
+
+	trap_Cvar_VariableStringBuffer("gclients", gclients, sizeof(gclients));
+
+	if (!Q_stricmp(gclients, ""))
+	{
+		g_clients = Com_Allocate(g_maxclients.integer * sizeof(gclient_t));
+		Com_Memset(g_clients, 0, g_maxclients.integer * sizeof(gclient_t));
+
+		trap_Cvar_Set("gclients", va("%p", g_clients));
+	}
+	else
+	{
+		Q_sscanf(gclients, "%p", &g_clients);
+	}
+
+	level.sortedClients = Com_Allocate(g_maxclients.integer * sizeof(int));
+	Com_Memset(level.sortedClients, 0, g_maxclients.integer * sizeof(int));
+
 	level.clients = g_clients;
 
 	// always leave room for the max number of clients,
 	// even if they aren't all used, so numbers inside that
 	// range are NEVER anything but clients
-	level.num_entities = MAX_CLIENTS;
+	//level.num_entities = MAX_CLIENTS;
 
 	// let the server system know where the entities are
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
@@ -1039,6 +1053,15 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	TVG_SpawnEntitiesFromString();
 
 	TVG_FindIntermissionPoint();
+
+	for (i = 0; i < level.num_entities; i++)
+	{
+		G_FreeEntity(g_entities + i);
+	}
+
+	level.num_entities = 0;
+	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
+	                    &level.clients[0].ps, sizeof(level.clients[0]));
 
 	BG_ClearScriptSpeakerPool();
 
@@ -1088,6 +1111,8 @@ void TVG_ShutdownGame(int restart)
 
 	// write all the client session data so we can get it back
 	TVG_WriteSessionData(restart);
+
+	free(level.sortedClients);
 }
 
 //===================================================================

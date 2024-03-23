@@ -125,7 +125,7 @@ void SV_CL_Connect_f(void)
 	// we need to setup a correct default for this, otherwise the first val we set might reappear
 	Cvar_Set("com_errorMessage", "");
 
-	svclc.connectTime        = -99999; // CL_CheckForResend() will fire immediately
+	svclc.connectTime        = -99999; // SV_CL_CheckForResend() will fire immediately
 	svclc.connectPacketCount = 0;
 }
 
@@ -243,7 +243,7 @@ void SV_CL_CheckForResend(void)
 	}
 	break;
 	default:
-		Com_Error(ERR_FATAL, "CL_CheckForResend: bad cls.state");
+		Com_Error(ERR_FATAL, "SV_CL_CheckForResend: bad svcls.state");
 	}
 }
 
@@ -608,13 +608,23 @@ char *SV_CL_Cvar_InfoString(char *cs, int index)
 	{
 		if (index == CS_SERVERINFO)
 		{
+			// FIXME: sv_maxclients can't go over 64 for legacy cgame
+			// and possibly other mods, which would be good to support too
+			if (sv_maxclients->integer > MAX_CLIENTS)
+			{
+				Info_SetValueForKey_Big(newcs, "sv_maxclients", "64");
+			}
+			else
+			{
+				Info_SetValueForKey_Big(newcs, "sv_maxclients", sv_maxclients->string);
+			}
+
+			Info_SetValueForKey_Big(newcs, "sv_privateClients", sv_privateClients->string);
 			Info_SetValueForKey_Big(newcs, "sv_maxPing", sv_maxPing->string);
 			Info_SetValueForKey_Big(newcs, "sv_minPing", sv_minPing->string);
 			Info_SetValueForKey_Big(newcs, "sv_maxRate", sv_maxRate->string);
 			Info_SetValueForKey_Big(newcs, "sv_dlRate", sv_dlRate->string);
 			Info_SetValueForKey_Big(newcs, "sv_hostname", sv_hostname->string);
-			Info_SetValueForKey_Big(newcs, "sv_maxclients", sv_maxclients->string);
-			Info_SetValueForKey_Big(newcs, "sv_privateClients", sv_privateClients->string);
 			Info_SetValueForKey_Big(newcs, "version", Cvar_VariableString("version"));
 		}
 		else if (index == CS_SYSTEMINFO)
@@ -1362,6 +1372,8 @@ void SV_CL_ClearState(void)
 
 /**
  * @brief SV_CL_GetPlayerstate
+ * @param[in] clientNum
+ * @param[in,out] ps
  * @return
  */
 int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps)

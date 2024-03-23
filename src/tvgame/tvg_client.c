@@ -1025,10 +1025,7 @@ char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	// disabled for bots - see join message ... make cvar ?
 	if (firstTime)
 	{
-
-		{
-			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
-		}
+		trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
 	}
 
 	// count current clients and rank for scoreboard
@@ -1292,10 +1289,10 @@ void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags)
 */
 void TVG_RemoveFromAllIgnoreLists(int clientNum)
 {
-	int i;
+	//int i;
 
-	for (i = 0; i < MAX_CLIENTS; i++)
-	{
-		COM_BitClear(level.clients[i].sess.ignoreClients, clientNum);
-	}
+	//for (i = 0; i < MAX_CLIENTS; i++)
+	//{
+	//	COM_BitClear(level.clients[i].sess.ignoreClients, clientNum);
+	//}
 }

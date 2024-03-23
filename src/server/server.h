@@ -283,7 +283,7 @@ typedef struct client_s
 	qboolean demoClient;                    ///< is this a demoClient?
 	qboolean ettvClient;                    ///< is this a tv client
 	ettvClientSnapshot_t **ettvClientFrame; ///< playerstates for tv client
-	int parseEntitiesNum;                   ///< keep track how many parse entities we sent
+	int parseEntitiesNum;                   ///< keep track how many parse entities we've sent
 
 	userAgent_t agent;
 

@@ -350,7 +350,13 @@ void SV_BoundMaxClients(int minimum)
 	}
 	else if (sv_maxclients->integer > MAX_CLIENTS)
 	{
-		Cvar_Set("sv_maxclients", va("%i", MAX_CLIENTS));
+#ifdef DEDICATED
+		// no limit for etltv slave server
+		if (svcls.state <= CA_DISCONNECTED)
+#endif // DEDICATED
+		{
+			Cvar_Set("sv_maxclients", va("%i", MAX_CLIENTS));
+		}
 	}
 }
 
