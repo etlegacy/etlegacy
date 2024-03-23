@@ -1006,8 +1006,12 @@ static qboolean TryConstructing(gentity_t *ent, gentity_t *trigger)
 
 		if (!ent->client->constructSoundTime || level.time > ent->client->constructSoundTime)
 		{
-			// construction sound sent as event (was temp entity)
-			G_AddEvent(ent, EV_GENERAL_SOUND, GAMESOUND_WORLD_BUILD);
+			if (constructible->s.angles2[0] == 0.f)
+			{
+				// construction sound sent as event (was temp entity)
+				G_AddEvent(ent, EV_GENERAL_SOUND, GAMESOUND_WORLD_BUILD);
+			}
+
 			ent->client->constructSoundTime = level.time + 4000; // duration of sound
 		}
 
