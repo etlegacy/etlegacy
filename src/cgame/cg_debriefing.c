@@ -1264,7 +1264,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 #ifdef FEATURE_RATING
 			if (cgs.skillRating)
 			{
-				team_t team = cgs.dbMapBias[i + cgs.dbMapVoteListOffset] > 0.5f ? TEAM_ALLIES : TEAM_AXIS;
+				team_t team = cgs.dbMapBias[i + cgs.dbMapVoteListOffset] > 0.5f ? TEAM_AXIS : TEAM_ALLIES;
 
 				y2 += 12;
 				CG_Text_Paint_Ext(x2, y2, button->font->scalex,
