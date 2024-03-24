@@ -1549,6 +1549,29 @@ static void Cvar_Trim(qboolean verbose)
 }
 
 /**
+ * @brief Prints a list of all the currently latched cvars and their current and latched values
+ */
+static void Cvar_LatchedList_f(void) {
+	cvar_t* var;
+	int i = 0, j = 0;
+
+	for (var = cvar_vars; var; var = var->next, i++)
+	{
+		if (var->flags & CVAR_LATCH && var->latchedString)
+		{
+			j++;
+			Com_Printf("  %s = ^5%s^7 => ^5%s^7\n", var->name, var->string, var->latchedString);
+		}
+		else
+		{
+			continue;
+		}
+	}
+
+	Com_Printf("\n%i latched cvars\n", j);
+}
+
+/**
  * @brief Resets all cvars to their hardcoded values
  */
 void Cvar_Restart_f(void)
@@ -1919,4 +1942,5 @@ void Cvar_Init(void)
 	Cmd_AddCommand("cvarlist", Cvar_List_f, "Prints a list of all cvars.");
 	Cmd_AddCommand("cvar_restart", Cvar_Restart_f, "Resets all cvars to their hardcoded values.");
 	Cmd_AddCommand("cvar_trim", Cvar_Trim_f, "Removes all user created cvars.");
+	Cmd_AddCommand("latchedlist", Cvar_LatchedList_f, "Prints a list of all the currently latched cvars and their current and latched values.");
 }
