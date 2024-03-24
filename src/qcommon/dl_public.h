@@ -94,7 +94,7 @@ typedef struct webRequest_s
 
 #define FILE_DOWNLOAD_ID 1
 
-unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress);
+unsigned int DL_BeginDownload(const char *localName, const char *remoteName, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress);
 unsigned int Web_CreateRequest(const char *url, const char *authToken, webUploadData_t *upload, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress);
 void DL_DownloadLoop(void);
 void DL_AbortAll(qboolean block, qboolean allowContinue);

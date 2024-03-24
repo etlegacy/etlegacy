@@ -13,7 +13,7 @@
 
 #if !defined(lua_pushliteral)
 #define lua_pushliteral(L, s) \
-	lua_pushstring(L, "" s, (sizeof(s) / sizeof(char)) - 1)
+		lua_pushstring(L, "" s, (sizeof(s) / sizeof(char)) - 1)
 #endif
 
 
@@ -58,11 +58,11 @@ static int luasql_tostring(lua_State *L)
 	pseudo_data *obj = (pseudo_data *)lua_touserdata(L, 1);
 	if (obj->closed)
 	{
-		strcpy(buff, "closed");
+		strncpy(buff, "closed", sizeof(buff));
 	}
 	else
 	{
-		sprintf(buff, "%p", (void *)obj);
+		snprintf(buff, sizeof(buff), "%p", (void *)obj);
 	}
 	lua_pushfstring(L, "%s (%s)", lua_tostring(L, lua_upvalueindex(1)), buff);
 	return 1;

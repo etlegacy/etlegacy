@@ -2982,6 +2982,15 @@ void G_ArtilleryExplode(gentity_t *ent)
 }
 
 /**
+ * @brief G_ArtilleryThink
+ * @param[in,out] ent
+ */
+void G_ArtilleryThink(gentity_t *ent)
+{
+	G_AddEvent(ent, EV_MISSILE_FALLING, 0);
+}
+
+/**
  * @brief Dropping the artillery bomb
  * @param[in,out] ent
  * @note arty nextthink is used to store delay between each shelling bomb, it is overwrite
@@ -3060,13 +3069,11 @@ void artillerySpotterThink(gentity_t *ent)
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 	}
 
-	G_AddEvent(bomb, EV_MISSILE_FALLING, 0);
-
 	// next bomb drop, add randomness
 	ent->nextthink = bomb->nextthink + crandom() * 800;
 
 	// overwrite
-	bomb->nextthink = 0;
+	bomb->nextthink = level.time + FRAMETIME;
 
 	// no more bomb to drop
 	if (ent->count <= 0)
@@ -4143,7 +4150,7 @@ weapFireTable_t weapFireTable[] =
 	{ WP_STEN,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
     { WP_MEDIC_SYRINGE,        Weapon_Syringe,              NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
     { WP_AMMO,                 Weapon_MagicAmmo,            G_MagicSink,                NULL,               ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,     0,       0,     0,        0,           },
-    { WP_ARTY,                 NULL,                        NULL,                       G_ArtilleryExplode, ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      MISSILE_PRESTEP_TIME,  { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 2000,      2,       0,     0,        20,          },
+    { WP_ARTY,                 NULL,                        G_ArtilleryThink,           G_ArtilleryExplode, ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      MISSILE_PRESTEP_TIME,  { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 2000,      2,       0,     0,        20,          },
     { WP_SILENCER,             Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
     { WP_DYNAMITE,             weapon_grenadelauncher_fire, DynaSink,                   DynaFree,           ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     MISSILE_PRESTEP_TIME,  { { -10.f, -10.f, 0.f }, { 10.f, 10.f, 11.f } }, { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 15000,     0,       5,     16500,    20,          },
     { WP_SMOKETRAIL,           NULL,                        artilleryGoAway,            NULL,               ET_MISSILE,            EF_BOUNCE,                  SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     MISSILE_PRESTEP_TIME,  { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 1000,      0,       0,     0,        20,          },

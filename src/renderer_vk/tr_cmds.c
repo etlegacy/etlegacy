@@ -143,14 +143,18 @@ void R_IssuePendingRenderCommands(void)
  * @param[in] bytes
  * @return
  */
-void *R_GetCommandBuffer(unsigned int bytes)
+void *R_GetCommandBuffer(int bytes)
 {
-	renderCommandList_t *cmdList = &backEndData->commands;
+	static size_t       reserved_space = PAD(sizeof(swapBuffersCommand_t), sizeof(intptr_t)) + sizeof(int);
+	renderCommandList_t *cmdList       = &backEndData->commands;
+	etl_assert(cmdList != NULL);
+	etl_assert(bytes > 0);
+	bytes = PAD(bytes, sizeof(intptr_t));
 
 	// always leave room for the swap buffers and end of list commands
-	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS)
+	if (cmdList->used + bytes + reserved_space > MAX_RENDER_COMMANDS)
 	{
-		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int)))
+		if (bytes > MAX_RENDER_COMMANDS - reserved_space)
 		{
 			Ren_Fatal("R_GetCommandBuffer: bad size %u", bytes);
 		}
@@ -543,7 +547,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	etl_assert(cmdList != NULL);
 	// add swap-buffers command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_SWAP_BUFFERS;
-	cmdList->used                            += sizeof(swapBuffersCommand_t);
+	cmdList->used                            += PAD(sizeof(swapBuffersCommand_t), sizeof(intptr_t));
 
 	R_IssueRenderCommands(qtrue);
 

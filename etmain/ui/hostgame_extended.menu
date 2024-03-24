@@ -36,7 +36,7 @@ menuDef {
 #define DOWNLOAD_Y 68
 	SUBWINDOW( 6, DOWNLOAD_Y, (SUBWINDOW_WIDTH), 66, _("DOWNLOAD") )
 	YESNO( 8, DOWNLOAD_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Client Downloads:"), .2, 8, "sv_allowDownload", _("Allows players to download missing files from the server") )
-	NUMERICFIELD( 8, DOWNLOAD_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Maximum Download Rate:"), .2, 8, "sv_dl_maxRate", 6, _("Specifies the maximum download rate from the server for players with missing files") )
+	NUMERICFIELD( 8, DOWNLOAD_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Maximum Download Rate:"), .2, 8, "sv_dlRate", 6, _("Specifies the maximum download rate from the server for players with missing files") )
 	YESNO( 8, DOWNLOAD_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("FTP/HTTP Redirects:"), .2, 8, "sv_wwwDownload", _("Redirects players with missing files to another server") )
 	EDITFIELD( 8, DOWNLOAD_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Base URL:"), .2, 8, "sv_wwwDaveUrl", 64, 18, _("Used to build the URL given to clients for download") )
 	

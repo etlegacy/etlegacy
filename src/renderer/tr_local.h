@@ -2113,7 +2113,7 @@ typedef struct
 
 extern backEndData_t *backEndData;
 
-void *R_GetCommandBuffer(unsigned int bytes);
+void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
 
 void R_IssuePendingRenderCommands(void);
@@ -2169,6 +2169,7 @@ void R_BackupShaders(void);
 void R_PurgeShaders(int count);
 void R_PurgeLightmapShaders(void);
 void R_LoadCacheShaders(void);
+void R_PurgeDynamicShaders(void);
 
 // tr_gamma.c
 void R_ScreenGamma(void);

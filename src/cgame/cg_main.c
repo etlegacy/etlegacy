@@ -46,6 +46,7 @@ extern qboolean  g_waitingForKey;
 int dll_com_trapGetValue;
 int dll_trap_SysFlashWindow;
 int dll_trap_CommandComplete;
+int dll_trap_CmdBackup_Ext;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -2708,6 +2709,7 @@ static ID_INLINE void CG_SetupExtensions(void)
 
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SysFlashWindow, "trap_SysFlashWindow_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CmdBackup_Ext, "trap_CmdBackup_Ext_Legacy");
 	}
 }
 
@@ -2801,6 +2803,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.ccCurrentCamObjective = -2;
 
 	CG_SetupExtensions();
+	trap_CmdBackup_Ext();
 
 	// Background images on the loading screen were not visible on the first call
 	trap_R_SetColor(NULL);
@@ -2878,7 +2881,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	}
 	else
 	{
-		sprintf(versionString, "%i", clientVersion);
+		Com_sprintf(versionString, sizeof(versionString), "%i", clientVersion);
 		trap_Cvar_Set("cg_etVersion", va(PRODUCT_LABEL " v%c.%s %s", versionString[0], versionString + 1, CPUSTRING));
 	}
 

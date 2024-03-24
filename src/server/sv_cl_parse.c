@@ -36,6 +36,35 @@
 
 #ifdef DEDICATED
 
+const char *svc_strings[32] =
+{
+	"svc_bad",
+
+	"svc_nop",
+	"svc_gamestate",
+	"svc_configstring",
+	"svc_baseline",
+	"svc_serverCommand",
+	"svc_download",
+	"svc_snapshot",
+	"svc_EOF",
+	"svc_ettv_playerstates",
+	"svc_ettv_currentstate"
+};
+
+/**
+ * @brief SV_CL_SHOWNET
+ * @param[in] msg
+ * @param[in] s
+ */
+void SV_CL_SHOWNET(msg_t *msg, const char *s)
+{
+	if (sv_etltv_shownet->integer >= 2)
+	{
+		Com_Printf("%3i:%s\n", msg->readcount - 1, s);
+	}
+}
+
 /**
   * @brief SV_CL_SetPurePaks
  * @param[in] referencedOnly
@@ -179,14 +208,14 @@ void SV_CL_ParseGamestate(msg_t *msg)
 			i = MSG_ReadShort(msg);
 			if (i < 0 || i >= MAX_CONFIGSTRINGS)
 			{
-				Com_Error(ERR_DROP, "configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
+				Com_Error(ERR_DROP, "SV_CL_ParseGamestate: configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
 			}
 			s   = MSG_ReadBigString(msg);
 			len = strlen(s);
 
 			if (len + 1 + svcl.gameState.dataCount > MAX_GAMESTATE_CHARS)
 			{
-				Com_Error(ERR_DROP, "MAX_GAMESTATE_CHARS exceeded");
+				Com_Error(ERR_DROP, "SV_CL_ParseGamestate: MAX_GAMESTATE_CHARS exceeded");
 			}
 
 			// append it to the gameState string buffer
@@ -199,7 +228,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 			newnum = MSG_ReadBits(msg, GENTITYNUM_BITS);
 			if (newnum < 0 || newnum >= MAX_GENTITIES)
 			{
-				Com_Error(ERR_DROP, "Baseline number out of range: %i", newnum);
+				Com_Error(ERR_DROP, "SV_CL_ParseGamestate: Baseline number out of range: %i", newnum);
 			}
 			Com_Memset(&nullstate, 0, sizeof(nullstate));
 			Com_Memset(&nullstateShared, 0, sizeof(nullstateShared));
@@ -214,7 +243,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 
 			if (newnum < 0 || newnum >= MAX_GENTITIES)
 			{
-				Com_Error(ERR_DROP, "Currentstate number out of range : %i", newnum);
+				Com_Error(ERR_DROP, "SV_CL_ParseGamestate: Currentstate number out of range : %i", newnum);
 			}
 
 			MSG_ReadDeltaEntity(msg, &svcl.entityBaselines[newnum], &svcl.currentStateEntities[newnum], newnum);
@@ -223,7 +252,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 		}
 		else
 		{
-			Com_Error(ERR_DROP, "CL_ParseGamestate: bad command byte");
+			Com_Error(ERR_DROP, "SV_CL_ParseGamestate: bad command byte");
 		}
 	}
 
@@ -235,6 +264,12 @@ void SV_CL_ParseGamestate(msg_t *msg)
 	SV_CL_ConfigstringInfoChanged(CS_SERVERINFO);
 	SV_CL_ConfigstringInfoChanged(CS_WOLFINFO);
 
+	if (!svcls.isGamestateParsed)
+	{
+		svclc.serverIdLatest     = svcl.serverId;
+		svclc.checksumFeedLatest = svclc.checksumFeed;
+	}
+
 	// Verify if we have all official pakfiles. As we won't
 	// be downloading them, we should be kicked for not having them.
 	if (sv_pure->integer && !FS_VerifyOfficialPaks())
@@ -245,6 +280,8 @@ void SV_CL_ParseGamestate(msg_t *msg)
 	// reinitialize the filesystem if the game directory has changed
 	FS_ConditionalRestart(svclc.checksumFeed);
 
+	// Verify if we have all non-official pakfiles. As we won't
+	// be downloading them, we should be kicked for not having them.
 	if (FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
 	{
 		Com_Printf("Missing paks: %s\n", missingFiles);
@@ -254,10 +291,83 @@ void SV_CL_ParseGamestate(msg_t *msg)
 		return;
 	}
 
+	svclc.moveDelta = svcls.isGamestateParsed;
+
 	SV_CL_DownloadsComplete();
 
 	// make sure the game starts
 	Cvar_Set("cl_paused", "0");
+
+	svcls.fixHitch          = svcls.isGamestateParsed;
+	svcls.isGamestateParsed = svcls.isDelayed;
+	svcls.firstSnap         = qfalse;
+	svcls.queueDemoWaiting  = !sv_etltv_autorecord->integer;
+}
+
+/**
+ * @brief SV_CL_ParseGamestateQueue
+ * @param[in] msg
+ */
+void SV_CL_ParseGamestateQueue(msg_t *msg)
+{
+	int            i;
+	entityState_t  nullstate;
+	entityShared_t nullstateShared;
+	int            cmd;
+	char           *s;
+
+	// a gamestate always marks a server command sequence
+	svclc.serverCommandSequenceLatest = MSG_ReadLong(msg);
+
+	while (1)
+	{
+		cmd = MSG_ReadByte(msg);
+
+		if (cmd == svc_EOF)
+		{
+			break;
+		}
+
+		if (cmd == svc_configstring)
+		{
+			i = MSG_ReadShort(msg);
+
+			if (i < 0 || i >= MAX_CONFIGSTRINGS)
+			{
+				Com_Error(ERR_DROP, "SV_CL_ParseGamestateQueue: configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
+			}
+
+			s = MSG_ReadBigString(msg);
+
+			if (i == CS_SYSTEMINFO)
+			{
+				svclc.serverIdLatest = Q_atoi(Info_ValueForKey(s, "sv_serverid"));
+			}
+		}
+		else if (cmd == svc_baseline || cmd == svc_ettv_currentstate)
+		{
+			MSG_ReadBits(msg, GENTITYNUM_BITS);
+			MSG_ReadDeltaEntity(msg, &nullstate, &nullstate, 0);
+			MSG_ETTV_ReadDeltaEntityShared(msg, &nullstateShared, &nullstateShared);
+		}
+		else
+		{
+			Com_Error(ERR_DROP, "SV_CL_ParseGamestateQueue: bad command byte");
+		}
+	}
+
+	MSG_ReadLong(msg); // clientNum
+	svclc.checksumFeedLatest = MSG_ReadLong(msg);
+
+	SV_CL_SendPureChecksums(svclc.serverIdLatest);
+
+	svclc.moveDelta = qfalse;
+
+	SV_CL_WritePacket();
+	SV_CL_WritePacket();
+	SV_CL_WritePacket();
+
+	svcls.queueDemoWaiting = !sv_etltv_autorecord->integer;
 }
 
 /**
@@ -279,10 +389,12 @@ void SV_CL_ParseCommandString(msg_t *msg)
 		return;
 	}
 
-	svclc.serverCommandSequence = seq;
-	index                       = seq & (MAX_RELIABLE_COMMANDS - 1);
+	svclc.serverCommandSequence       = seq;
+	svclc.serverCommandSequenceLatest = seq;
+	index                             = seq & (MAX_RELIABLE_COMMANDS - 1);
 
 	Q_strncpyz(svclc.serverCommands[index], s, sizeof(svclc.serverCommands[index]));
+	Q_strncpyz(svclc.serverCommandsLatest[index], s, sizeof(svclc.serverCommands[index]));
 
 	if (!gvm)
 	{
@@ -353,6 +465,12 @@ void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityStat
 		if (state->number == (MAX_GENTITIES - 1))
 		{
 			SV_UnlinkEntity(gEnt);
+
+			if (sv_etltv_shownet->integer == 4)
+			{
+				Com_Printf("%d- ", newnum);
+			}
+
 			return;     // entity was delta removed
 		}
 
@@ -366,6 +484,13 @@ void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityStat
 
 		gEnt->s.number = newnum;
 		SV_LinkEntity(gEnt);
+
+		sv.num_entities = newnum + 1;
+
+		if (sv_etltv_shownet->integer == 4)
+		{
+			Com_Printf("%d+ ", newnum);
+		}
 	}
 
 	if (state->number == (MAX_GENTITIES - 1))
@@ -392,6 +517,8 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 	entityShared_t *oldstateShared;
 	int            oldindex, newnum, oldnum;
 
+	sv.num_entities = 0;
+
 	oldstate       = NULL;
 	oldstateShared = NULL;
 	oldindex       = 0;
@@ -400,7 +527,6 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 	newframe->numEntities      = 0;
 
 	// delta from the entities present in oldframe
-
 	if (!oldframe)
 	{
 		oldnum = MAX_GENTITIES;
@@ -433,16 +559,16 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 
 		if (msg->readcount > msg->cursize)
 		{
-			Com_Error(ERR_DROP, "CL_ParsePacketEntities: end of message");
+			Com_Error(ERR_DROP, "SV_CL_ParsePacketEntities: end of message");
 		}
 
 		while (oldnum < newnum)
 		{
 			// one or more entities from the old packet are unchanged
-			//if (cl_shownet->integer == 3)
-			//{
-			//	Com_Printf("%3i:  unchanged: %i\n", msg->readcount, oldnum);
-			//}
+			if (sv_etltv_shownet->integer == 3)
+			{
+				Com_Printf("%3i:  unchanged: %i\n", msg->readcount, oldnum);
+			}
 			SV_CL_DeltaEntity(msg, newframe, oldnum, oldstate, oldstateShared, qtrue);
 
 			oldindex++;
@@ -464,10 +590,10 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 		if (oldnum == newnum)
 		{
 			// delta from previous state
-			//if (cl_shownet->integer == 3)
-			//{
-			//	Com_Printf("%3i:  delta: %i\n", msg->readcount, newnum);
-			//}
+			if (sv_etltv_shownet->integer == 3)
+			{
+				Com_Printf("%3i:  delta: %i\n", msg->readcount, newnum);
+			}
 			SV_CL_DeltaEntity(msg, newframe, newnum, oldstate, oldstateShared, qfalse);
 
 			oldindex++;
@@ -488,10 +614,10 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 		else if (oldnum > newnum)
 		{
 			// delta from baseline
-			//if (cl_shownet->integer == 3)
-			//{
-			//	Com_Printf("%3i:  baseline: %i\n", msg->readcount, newnum);
-			//}
+			if (sv_etltv_shownet->integer == 3)
+			{
+				Com_Printf("%3i:  baseline: %i\n", msg->readcount, newnum);
+			}
 			SV_CL_DeltaEntity(msg, newframe, newnum, &svcl.entityBaselines[newnum], &svcl.entityBaselinesShared[newnum], qfalse);
 		}
 	}
@@ -500,10 +626,10 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 	while (oldnum != MAX_GENTITIES)
 	{
 		// one or more entities from the old packet are unchanged
-		//if (cl_shownet->integer == 3)
-		//{
-		//	Com_Printf("%3i:  unchanged: %i\n", msg->readcount, oldnum);
-		//}
+		if (sv_etltv_shownet->integer == 3)
+		{
+			Com_Printf("%3i:  unchanged: %i\n", msg->readcount, oldnum);
+		}
 		SV_CL_DeltaEntity(msg, newframe, oldnum, oldstate, oldstateShared, qtrue);
 
 		oldindex++;
@@ -540,7 +666,6 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	svclSnapshot_t newSnap;
 	int            deltaNum;
 	int            oldMessageNum;
-	int            i, packetNum;
 
 	// get the reliable sequence acknowledge number
 	// NOTE: now sent with all server to client messages
@@ -570,24 +695,26 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	}
 	newSnap.snapFlags = MSG_ReadByte(msg);
 
+	svclc.moveDelta = qfalse;
+
 	// If the frame is delta compressed from data that we
 	// no longer have available, we must suck up the rest of
 	// the frame, but not use it, then ask for a non-compressed
 	// message
 	if (newSnap.deltaNum <= 0)
 	{
-		newSnap.valid = qtrue;      // uncompressed frame
-		old           = NULL;
+		svclc.moveDelta = qtrue;
+		svcls.firstSnap = qtrue;
+		newSnap.valid   = qtrue;      // uncompressed frame
+		old             = NULL;
+
 		if (svclc.demo.recording)
 		{
 			svclc.demo.waiting = qfalse;   // we can start recording now
 		}
-		else
+		else if (sv_etltv_autorecord->integer && !svclc.demo.playing)
 		{
-			if (sv_etltv_autorecord->integer && !svclc.demo.playing)
-			{
-				Cbuf_ExecuteText(EXEC_APPEND, "record\n");
-			}
+			Cbuf_ExecuteText(EXEC_APPEND, "record\n");
 		}
 	}
 	else
@@ -596,21 +723,28 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 		if (!old->valid)
 		{
 			// should never happen
-			Com_Printf("Delta from invalid frame (not supposed to happen!).\n");
+			Com_Printf("SV_CL_ParseSnapshot: Delta from invalid frame (not supposed to happen!).\n");
 		}
 		else if (old->messageNum != newSnap.deltaNum)
 		{
 			// The frame that the server did the delta from
 			// is too old, so we can't reconstruct it properly.
-			Com_DPrintf("Delta frame too old.\n");
+			Com_DPrintf("SV_CL_ParseSnapshot: Delta frame too old.\n");
 		}
 		else if (svcl.parseEntitiesNum - old->parseEntitiesNum > MAX_PARSE_ENTITIES - 128)
 		{
-			Com_DPrintf("Delta parseEntitiesNum too old.\n");
+			Com_Error(ERR_DROP, "SV_CL_ParseSnapshot: Delta parseEntitiesNum too old.\n");
 		}
 		else
 		{
-			newSnap.valid = qtrue;  // valid delta parse
+			if (!svclc.demo.recording && sv_etltv_autorecord->integer && !svclc.demo.playing)
+			{
+				Cbuf_ExecuteText(EXEC_APPEND, "record\n");
+			}
+
+			svclc.moveDelta = qtrue;
+			newSnap.valid   = qtrue;  // valid delta parse
+			svcls.firstSnap = qtrue;
 		}
 	}
 
@@ -626,7 +760,7 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	MSG_ReadData(msg, &newSnap.areamask, len);
 
 	// read playerinfo
-	//SHOWNET(msg, "playerstate");
+	SV_CL_SHOWNET(msg, "playerstate");
 	if (old)
 	{
 		MSG_ReadDeltaPlayerstate(msg, &old->ps, &newSnap.ps);
@@ -637,7 +771,7 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	}
 
 	// read packet entities
-	//SHOWNET(msg, "packet entities");
+	SV_CL_SHOWNET(msg, "packet entities");
 	SV_CL_ParsePacketEntities(msg, old, &newSnap);
 
 	// if not valid, dump the entire thing now that it has
@@ -663,26 +797,16 @@ void SV_CL_ParseSnapshot(msg_t *msg)
 	}
 
 	// copy to the current good spot
-	svcl.snap      = newSnap;
-	svcl.snap.ping = 999;
-	// calculate ping time
-	for (i = 0; i < PACKET_BACKUP; i++)
-	{
-		packetNum = (svclc.netchan.outgoingSequence - 1 - i) & PACKET_MASK;
-		if (svcl.snap.ps.commandTime >= svcl.outPackets[packetNum].p_serverTime)
-		{
-			svcl.snap.ping = svcls.realtime - svcl.outPackets[packetNum].p_realtime;
-			break;
-		}
-	}
+	svcl.snap = newSnap;
+
 	// save the frame off in the backup array for later delta comparisons
 	svcl.snapshots[svcl.snap.messageNum & PACKET_MASK] = svcl.snap;
 
-	//if (cl_shownet->integer == 3)
-	//{
-	//	Com_Printf("   snapshot:%i  delta:%i  ping:%i\n", cl.snap.messageNum,
-	//		cl.snap.deltaNum, cl.snap.ping);
-	//}
+	if (sv_etltv_shownet->integer == 3)
+	{
+		Com_Printf("   snapshot:%i  delta:%i\n", svcl.snap.messageNum,
+		           svcl.snap.deltaNum);
+	}
 
 	svcl.newSnapshots = qtrue;
 }
@@ -713,13 +837,28 @@ void SV_CL_ParsePlayerstates(msg_t *msg)
 			break;
 		}
 
+		if (msg->readcount > msg->cursize)
+		{
+			Com_Error(ERR_DROP, "SV_CL_ParsePlayerstates: end of message");
+		}
+
 		if (!oldframe || !oldframe->playerstates[clientNum].valid)
 		{
 			MSG_ReadDeltaPlayerstate(msg, NULL, &frame->playerstates[clientNum].ps);
+
+			if (sv_etltv_shownet->integer >= 2)
+			{
+				Com_Printf("%3i:playerstate baseline (client %d)\n", msg->readcount - 1, clientNum);
+			}
 		}
 		else
 		{
 			MSG_ReadDeltaPlayerstate(msg, &oldframe->playerstates[clientNum].ps, &frame->playerstates[clientNum].ps);
+
+			if (sv_etltv_shownet->integer >= 2)
+			{
+				Com_Printf("%3i:playerstate delta (client %d)\n", msg->readcount - 1, clientNum);
+			}
 		}
 
 		frame->playerstates[clientNum].valid = qtrue;
@@ -744,26 +883,131 @@ void SV_CL_ParsePlayerstates(msg_t *msg)
 			svcl.snapshots[oldMessageNum & PACKET_MASK].playerstates[i].valid = qfalse;
 		}
 	}
+
+	if (sv_etltv_shownet->integer >= 2)
+	{
+		Com_Printf("%3i:end of playerstates\n", msg->readcount - 1);
+	}
 }
 
 /**
- * @brief SV_CL_ParseServerMessage
- * @param[in] msg
+ * @brief SV_CL_GetQueueTime
+ * @return
  */
-void SV_CL_ParseServerMessage(msg_t *msg)
+int SV_CL_GetQueueTime(void)
 {
-	int cmd;
+	static int prevTime = 0;
 
-	//if (cl_shownet->integer == 1)
-	//{
-	//	Com_Printf("%i ", msg->cursize);
-	//}
-	//else if (cl_shownet->integer >= 2)
-	//{
-	//	Com_Printf("------------------\n");
-	//}
+	if (svMsgQueueHead)
+	{
+		// map change hitch fix
+		if (prevTime && svMsgQueueHead->serverTime && svcls.fixHitch &&
+		    svMsgQueueHead->systime - prevTime > 100)
+		{
+			serverMessageQueue_t *cur      = svMsgQueueHead;
+			int                  frameMsec = 1000 / sv_fps->integer;
 
+			svcls.fixHitch = qfalse;
+
+			do
+			{
+				cur->systime = prevTime + frameMsec;
+				prevTime     = cur->systime;
+				cur          = cur->next;
+			}
+			while (cur && cur->systime - prevTime > 100);
+		}
+
+		prevTime = svMsgQueueHead->systime;
+
+		return Sys_Milliseconds() - svMsgQueueHead->systime + svMsgQueueHead->serverTime;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief SV_CL_ParseMessageQueue
+ */
+void SV_CL_ParseMessageQueue(void)
+{
+	int i, index;
+
+	if (!svcls.isGamestateParsed)
+	{
+		return;
+	}
+
+	while (1)
+	{
+		if (!svMsgQueueHead || (svMsgQueueHead->serverTime && SV_CL_GetQueueTime() - sv_etltv_delay->integer * 1000 < svMsgQueueHead->serverTime))
+		{
+			break;
+		}
+
+		svclc.serverMessageSequence = svMsgQueueHead->serverMessageSequence;
+
+		if (svMsgQueueHead->serverTime)
+		{
+			svcls.isDelayed = qfalse;
+		}
+		else
+		{
+			svcls.isDelayed = qtrue;
+		}
+
+		for (i = 0; i < svMsgQueueHead->numServerCommand; i++)
+		{
+			index = (i + svMsgQueueHead->serverCommandSequence) & (MAX_RELIABLE_COMMANDS - 1);
+			Q_strncpyz(svclc.serverCommands[index], svMsgQueueHead->serverCommands[i], sizeof(svclc.serverCommands[index]));
+			free(svMsgQueueHead->serverCommands[i]);
+		}
+
+		svclc.serverCommandSequence = svMsgQueueHead->numServerCommand + svMsgQueueHead->serverCommandSequence - 1;
+
+		while (svclc.lastExecutedServerCommand < svclc.serverCommandSequence)
+		{
+			if (SV_CL_GetServerCommand(++svclc.lastExecutedServerCommand))
+			{
+				VM_CallFunc(gvm, GAME_CLIENT_COMMAND, -2);
+			}
+		}
+
+		SV_CL_ParseServerMessage(&svMsgQueueHead->msg, svMsgQueueHead->headerBytes);
+
+		if (svMsgQueueHead->next)
+		{
+			svMsgQueueHead = svMsgQueueHead->next;
+			free(svMsgQueueHead->prev->msg.data);
+			free(svMsgQueueHead->prev);
+			svMsgQueueHead->prev = NULL;
+		}
+		else
+		{
+			free(svMsgQueueHead->msg.data);
+			free(svMsgQueueHead);
+			svMsgQueueHead = NULL;
+		}
+	}
+}
+
+/**
+ * @brief SV_CL_ParseServerMessage_Ext
+ * @param[in] msg
+ * @param[in] headerBytes
+ */
+void SV_CL_ParseServerMessage_Ext(msg_t *msg, int headerBytes)
+{
 	MSG_Bitstream(msg);
+
+	if (sv_etltv_shownet->integer == 1)
+	{
+		Com_Printf("%i ", msg->cursize);
+	}
+	else if (sv_etltv_shownet->integer >= 2)
+	{
+		Com_Printf("------------------\n");
+	}
 
 	// get the reliable sequence acknowledge number
 	svclc.reliableAcknowledge = MSG_ReadLong(msg);
@@ -773,46 +1017,70 @@ void SV_CL_ParseServerMessage(msg_t *msg)
 		svclc.reliableAcknowledge = svclc.reliableSequence;
 	}
 
+	if (!svcls.isGamestateParsed)
+	{
+		svclc.serverMessageSequence = svclc.serverMessageSequenceLatest;
+		svclc.serverCommandSequence = svclc.serverCommandSequenceLatest;
+		SV_CL_ParseServerMessage(msg, headerBytes);
+		svcl.serverTimeLatest = svcl.serverTime;
+		svclc.serverIdLatest  = svcl.serverId;
+	}
+	else
+	{
+		SV_CL_ParseServerMessageIntoQueue(msg, headerBytes);
+		SV_CL_ParseMessageQueue();
+	}
+}
+
+/**
+ * @brief SV_CL_ParseServerMessage
+ * @param[in] msg
+ * @param[in] headerBytes
+ */
+void SV_CL_ParseServerMessage(msg_t *msg, int headerBytes)
+{
+	int cmd;
+
 	// parse the message
 	while (1)
 	{
 		if (msg->readcount > msg->cursize)
 		{
-			Com_Error(ERR_DROP, "CL_ParseServerMessage: read past end of server message");
+			Com_Error(ERR_DROP, "SV_CL_ParseServerMessage: read past end of server message");
 		}
 
 		cmd = MSG_ReadByte(msg);
 
 		if (cmd == svc_EOF)
 		{
-			//SHOWNET(msg, "END OF MESSAGE");
+			SV_CL_SHOWNET(msg, "END OF MESSAGE");
 			break;
 		}
 
-		//if (cl_shownet->integer >= 2)
-		//{
-		//	if (cmd < 0 || cmd > svc_EOF) // MSG_ReadByte might return -1 and we can't access our svc_strings array ...
-		//	{
-		//		Com_Printf("%3i:BAD BYTE %i\n", msg->readcount - 1, cmd); // -> ERR_DROP
-		//	}
-		//	else
-		//	{
-		//		if (!svc_strings[cmd])
-		//		{
-		//			Com_Printf("%3i:BAD CMD %i\n", msg->readcount - 1, cmd);
-		//		}
-		//		else
-		//		{
-		//			SHOWNET(msg, svc_strings[cmd]);
-		//		}
-		//	}
-		//}
+		if (sv_etltv_shownet->integer >= 2)
+		{
+			if (cmd < 0 || cmd > svc_ettv_currentstate) // MSG_ReadByte might return -1 and we can't access our svc_strings array ...
+			{
+				Com_Printf("%3i:BAD BYTE %i\n", msg->readcount - 1, cmd); // -> ERR_DROP
+			}
+			else
+			{
+				if (!svc_strings[cmd])
+				{
+					Com_Printf("%3i:BAD CMD %i\n", msg->readcount - 1, cmd);
+				}
+				else
+				{
+					SV_CL_SHOWNET(msg, svc_strings[cmd]);
+				}
+			}
+		}
 
 		// other commands
 		switch (cmd)
 		{
 		default:
-			Com_Error(ERR_DROP, "CL_ParseServerMessage: Illegible server message %d", cmd);
+			Com_Error(ERR_DROP, "SV_CL_ParseServerMessage: Illegible server message %d", cmd);
 		case svc_nop:
 			break;
 		case svc_serverCommand:
@@ -826,6 +1094,7 @@ void SV_CL_ParseServerMessage(msg_t *msg)
 			break;
 		case svc_ettv_playerstates:
 			SV_CL_ParsePlayerstates(msg);
+			break;
 		case svc_download:
 			//CL_ParseDownload(msg);
 			break;
@@ -838,6 +1107,247 @@ void SV_CL_ParseServerMessage(msg_t *msg)
 	{
 		SV_CL_RunFrame();
 	}
+
+	if (svclc.demo.recording && !svclc.demo.waiting)
+	{
+		SV_CL_WriteDemoMessage(msg, headerBytes);
+	}
+}
+
+/**
+ * @brief SV_CL_Allocate
+ */
+static void *SV_CL_Allocate(int size)
+{
+	void *data;
+
+	if (size > MAX_MSGLEN)
+	{
+		Com_Error(ERR_FATAL, "SV_CL_Allocate: Oversized allocation of [%d].", size);
+	}
+
+	data = Com_Allocate(size);
+
+	if (!data)
+	{
+		Com_Error(ERR_FATAL, "SV_CL_Allocate: Couldn't allocate size [%d].", size);
+	}
+
+	return data;
+}
+
+/**
+ * @brief SV_CL_NewMessage
+ * @return
+ */
+static serverMessageQueue_t *SV_CL_NewMessage(void)
+{
+	serverMessageQueue_t *newMessage = Com_Allocate(sizeof(serverMessageQueue_t));
+
+	if (!newMessage)
+	{
+		Com_Error(ERR_FATAL, "SV_CL_NewMessage: Couldn't allocate new message.");
+	}
+
+	Com_Memset(newMessage, 0, sizeof(serverMessageQueue_t));
+
+	if (svMsgQueueHead == NULL)
+	{
+		svMsgQueueHead = svMsgQueueTail = newMessage;
+	}
+	else
+	{
+		svMsgQueueTail->next       = newMessage;
+		svMsgQueueTail->next->prev = svMsgQueueTail;
+		svMsgQueueTail             = newMessage;
+	}
+
+	return newMessage;
+}
+
+/**
+ * @brief SV_CL_CheckNewQueuedCommand for change in serverId
+ * @param[in] cmd
+ */
+static void SV_CL_CheckNewQueuedCommand(char *queuedCmd)
+{
+	char        *s                               = queuedCmd;
+	char        cmd[MAX_STRING_TOKENS]           = { 0 };
+	static char bigConfigString[BIG_INFO_STRING] = { 0 };
+
+rescan:
+	Cmd_TokenizeString(s);
+	Q_strncpyz(cmd, Cmd_Argv(0), sizeof(cmd));
+
+	if (!strcmp(cmd, "bcs0"))
+	{
+		Com_sprintf(bigConfigString, BIG_INFO_STRING, "cs %s \"%s", Cmd_Argv(1), Cmd_Argv(2));
+		return;
+	}
+
+	if (!strcmp(cmd, "bcs1"))
+	{
+		Q_strncpyz(cmd, Cmd_Argv(2), sizeof(cmd));
+		if (strlen(bigConfigString) + strlen(cmd) >= BIG_INFO_STRING)
+		{
+			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING");
+		}
+		Q_strcat(bigConfigString, sizeof(bigConfigString), cmd);
+		return;
+	}
+
+	if (!strcmp(cmd, "bcs2"))
+	{
+		Q_strncpyz(cmd, Cmd_Argv(2), sizeof(cmd));
+		if (strlen(bigConfigString) + strlen(cmd) + 1 >= BIG_INFO_STRING)
+		{
+			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING");
+		}
+		Q_strcat(bigConfigString, sizeof(bigConfigString), cmd);
+		Q_strcat(bigConfigString, sizeof(bigConfigString), "\"");
+		s = bigConfigString;
+		goto rescan;
+	}
+
+	if (!strcmp(cmd, "cs"))
+	{
+		if (Q_atoi(Cmd_Argv(1)) == CS_SYSTEMINFO)
+		{
+			s                    = Cmd_ArgsFrom(2);
+			svclc.serverIdLatest = Q_atoi(Info_ValueForKey(s, "sv_serverid"));
+		}
+	}
+}
+
+/**
+ * @brief SV_CL_CopyMsg
+ * @param[in,out] dest
+ * @param[in,out] src
+ * @param[in] readCount
+ * @param[in] bit
+ */
+void SV_CL_CopyMsg(msg_t *dest, msg_t *src, int readCount, int bit)
+{
+	byte *data;
+
+	src->readcount = readCount;
+	src->bit       = bit;
+	data           = SV_CL_Allocate(src->cursize);
+	MSG_Copy(dest, data, src->cursize, src);
+}
+
+/**
+ * @brief SV_CL_ParseServerMessageIntoQueue
+ * @param[in] msg
+ */
+void SV_CL_ParseServerMessageIntoQueue(msg_t *msg, int headerBytes)
+{
+	serverMessageQueue_t *currentMessage;
+	char                 *s;
+	int                  cmd, lastReadBit, lastReadCount, index, seq, size;
+
+	currentMessage                        = SV_CL_NewMessage();
+	currentMessage->headerBytes           = headerBytes;
+	currentMessage->serverMessageSequence = svclc.serverMessageSequenceLatest;
+	currentMessage->serverCommandSequence = svclc.serverCommandSequenceLatest;
+	currentMessage->deltaNum              = -1;
+
+	lastReadCount = msg->readcount;
+
+	// parse the message
+	while (1)
+	{
+		if (msg->readcount > msg->cursize)
+		{
+			Com_Error(ERR_DROP, "SV_CL_ParseServerMessageIntoQueue: read past end of server message");
+		}
+
+		lastReadBit = msg->bit;
+		cmd         = MSG_ReadByte(msg);
+
+		if (cmd == svc_EOF)
+		{
+			break;
+		}
+
+		// other commands
+		switch (cmd)
+		{
+		default:
+			Com_Error(ERR_DROP, "SV_CL_ParseServerMessageIntoQueue: Illegible server message %d", cmd);
+		case svc_nop:
+			break;
+		case svc_serverCommand:
+			if (currentMessage->numServerCommand >= MAX_RELIABLE_COMMANDS)
+			{
+				Com_Error(ERR_DROP, "SV_CL_ParseServerMessageIntoQueue: too many commands");
+			}
+
+			seq = MSG_ReadLong(msg);
+			s   = MSG_ReadString(msg);
+
+			lastReadCount = msg->readcount;
+
+			if (!currentMessage->numServerCommand)
+			{
+				currentMessage->serverCommandSequence = seq;
+			}
+			else if (currentMessage->numServerCommand + currentMessage->serverCommandSequence != seq)
+			{
+				Com_Error(ERR_DROP, "SV_CL_ParseServerMessageIntoQueue: command out of order");
+			}
+
+			// see if we have already executed stored it off
+			if (svclc.serverCommandSequenceLatest >= seq)
+			{
+				break;
+			}
+
+			svclc.serverCommandSequenceLatest = seq;
+			index                             = seq & (MAX_RELIABLE_COMMANDS - 1);
+			Q_strncpyz(svclc.serverCommandsLatest[index], s, sizeof(svclc.serverCommandsLatest[index]));
+
+			size                                                             = strlen(s) + 1;
+			currentMessage->serverCommands[currentMessage->numServerCommand] = SV_CL_Allocate(size);
+			Q_strncpyz(currentMessage->serverCommands[currentMessage->numServerCommand], s, size);
+
+			// check for new serverId
+			SV_CL_CheckNewQueuedCommand(currentMessage->serverCommands[currentMessage->numServerCommand]);
+
+			currentMessage->numServerCommand++;
+			break;
+		case svc_gamestate:
+			SV_CL_ParseGamestateQueue(msg);
+			SV_CL_CopyMsg(&currentMessage->msg, msg, lastReadCount, lastReadBit);
+			return;
+		case svc_snapshot:
+			svcl.serverTimeLatest      = MSG_ReadLong(msg);
+			currentMessage->serverTime = svcl.serverTimeLatest;
+			currentMessage->systime    = Sys_Milliseconds();
+			currentMessage->deltaNum   = MSG_ReadByte(msg);
+
+			// try and predict if we should send moveNoDelta command
+			// reduces the amount of unnecessary moveNoDelta commands caused by delay
+			if (!currentMessage->deltaNum || svclc.serverMessageSequenceLatest == currentMessage->deltaNum ||
+			    svclc.serverMessageSequenceLatest - currentMessage->deltaNum <= 0)
+			{
+				if (sv_etltv_autorecord->integer && !svcls.queueDemoWaiting &&
+				    currentMessage->prev && !currentMessage->prev->deltaNum)
+				{
+					svcls.queueDemoWaiting = qtrue;
+				}
+				else
+				{
+					svclc.moveDelta = qtrue;
+				}
+			}
+
+			SV_CL_CopyMsg(&currentMessage->msg, msg, lastReadCount, lastReadBit);
+			return;
+		}
+	}
+
+	SV_CL_CopyMsg(&currentMessage->msg, msg, lastReadCount, lastReadBit);
 }
 
 #endif // DEDICATED

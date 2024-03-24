@@ -933,7 +933,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	image->mipmap      = mipmap;
 	image->allowPicmip = allowPicmip;
 
-	strcpy(image->imgName, name);
+	Q_strncpyz(image->imgName, name, sizeof(image->imgName));
 
 	image->width         = width;
 	image->height        = height;
@@ -1160,8 +1160,11 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 		}
 		tr.allowCompress = -1;
 	}
-
+#ifdef __ANDROID__
+	if (!GL_OES_texture_npot && (((width - 1) & width) || ((height - 1) & height)))
+#else
 	if (!GLEW_ARB_texture_non_power_of_two && (((width - 1) & width) || ((height - 1) & height)))
+#endif
 	{
 		Ren_Developer("WARNING: Image not power of 2 scaled: %s (%i:%i)\n", name, width, height);
 		return NULL;

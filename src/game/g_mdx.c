@@ -1330,11 +1330,11 @@ void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
 	Q_strncpyz(hitsfile, animationGroup, sizeof(hitsfile) - 4);
 	if ((sep = strrchr(hitsfile, '.'))) // FIXME: should abort on /'s
 	{
-		strcpy(sep, ".hit");
+		Q_strncpyz(sep, ".hit", sizeof(hitsfile) - (sep - sizeof(hitsfile));
 	}
 	else
 	{
-		strcat(sep, ".hit");
+		Q_strcat(hitsfile, ".hit", sizeof(hitsfile));
 	}
 	mdx_RegisterHits(animModelInfo, hitsfile);
 #endif
@@ -1568,9 +1568,9 @@ void mdx_calculate_bones_single(/*const*/ grefEntity_t *refent, int i)
  */
 static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t origin, vec3_t axis[3])
 {
-	mdx_t             *frameModel = &mdx_models[QHANDLETOINDEX(refent->frameModel)];
-	mdx_t             *oldFrameModel = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldframeModel, refent->frameModel)];
-	mdx_t             *torsoFrameModel = &mdx_models[QHANDLETOINDEX(refent->torsoFrameModel)];
+	mdx_t             *frameModel         = &mdx_models[QHANDLETOINDEX(refent->frameModel)];
+	mdx_t             *oldFrameModel      = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldframeModel, refent->frameModel)];
+	mdx_t             *torsoFrameModel    = &mdx_models[QHANDLETOINDEX(refent->torsoFrameModel)];
 	mdx_t             *oldTorsoFrameModel = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldTorsoFrameModel, refent->torsoFrameModel)];
 	mdx_t             *oldBoneFrameModel, *boneFrameModel;
 	struct bone       *bone;

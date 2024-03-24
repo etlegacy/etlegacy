@@ -171,6 +171,7 @@ typedef struct
 	int messageSent;                    ///< time the message was transmitted
 	int messageAcked;                   ///< time the message was acked
 	int messageSize;                    ///< used to rate drop packets
+	qboolean parseEntities;             ///< does the frame contains parse entities?
 } clientSnapshot_t;
 
 /**
@@ -194,8 +195,8 @@ typedef enum
 typedef struct netchan_buffer_s
 {
 	msg_t msg;
-	byte msgBuffer[MAX_MSGLEN];
-	char lastClientCommandString[MAX_STRING_CHARS];
+	byte *msgBuffer;
+	char *lastClientCommandString;
 	struct netchan_buffer_s *next;
 } netchan_buffer_t;
 
@@ -277,11 +278,12 @@ typedef struct client_s
 
 	int downloadnotify;
 
-	int protocol; ///< We can access clients protocol any time
+	int protocol;                           ///< We can access clients protocol any time
 
-	qboolean demoClient; ///< is this a demoClient?
-	qboolean ettvClient;
-	ettvClientSnapshot_t **ettvClientFrame;
+	qboolean demoClient;                    ///< is this a demoClient?
+	qboolean ettvClient;                    ///< is this a tv client
+	ettvClientSnapshot_t **ettvClientFrame; ///< playerstates for tv client
+	int parseEntitiesNum;                   ///< keep track how many parse entities we've sent
 
 	userAgent_t agent;
 
@@ -505,6 +507,9 @@ extern cvar_t *sv_etltv_password;
 extern cvar_t *sv_etltv_autorecord;
 extern cvar_t *sv_etltv_autoplay;
 extern cvar_t *sv_etltv_clientname;
+extern cvar_t *sv_etltv_delay;
+extern cvar_t *sv_etltv_shownet;
+extern cvar_t *sv_etltv_queue_ms;
 
 //===========================================================
 
@@ -607,7 +612,7 @@ void SV_UptimeReset(void);
 // sv_snapshot.c
 void SV_AddServerCommand(client_t *client, const char *cmd);
 void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg);
-void SV_SendMessageToClient(msg_t *msg, client_t *client);
+void SV_SendMessageToClient(msg_t *msg, client_t *client, qboolean parseEntities);
 void SV_SendClientMessages(void);
 void SV_SendClientSnapshot(client_t *client);
 void SV_CheckClientUserinfoTimer(void);
@@ -704,6 +709,8 @@ qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 
 //============================ TV server client ============================
 
+#define MAX_PARSE_ENTITIES  2048
+
 #ifdef DEDICATED
 
 #define SV_CL_MAXPACKETS 40
@@ -726,12 +733,17 @@ typedef struct
 	int framecount;
 	int frametime;                  ///< msec since last frame
 
-	int realtime;                   ///< ignores pause
+	int realtime;                   ///<
 
-	int lastRunFrameTime;
-	int lastRunFrameSysTime;
+	int lastRunFrameTime;           ///< last server GAME_RUN_FRAME time
+	int lastRunFrameSysTime;        ///< last server GAME_RUN_FRAME system time
 
-	qboolean isTVGame;
+	qboolean isTVGame;              ///< is it tv server
+	qboolean isDelayed;             ///< is the master server feed delayed
+	qboolean isGamestateParsed;     ///< was the first gamestate server message parsed when the master server feed is delayed
+	qboolean firstSnap;             ///< did we parse first snapshot after new gamestate
+	qboolean queueDemoWaiting;      ///< with autorecord on after new gamestate send moveNoDelta usercmds
+	qboolean fixHitch;              ///< fix map change hitch when feed is delayed
 
 } svclientStatic_t;
 
@@ -780,9 +792,14 @@ typedef struct
 	char serverMessage[MAX_STRING_TOKENS];      ///< for display on connection dialog
 
 	char serverMasterPassword[MAX_STRING_TOKENS];
+	char serverPassword[MAX_STRING_TOKENS];
 
 	int challenge;                              ///< from the server to use for connecting
-	int checksumFeed;                           ///< from the server for checksum calculations
+	int checksumFeed;                           ///< from the server for checksum calculations may be delayed
+	int checksumFeedLatest;                     ///< from the server for checksum calculations always latest
+	int serverIdLatest;
+
+	qboolean moveDelta;                         ///< should we send moveDelta or moveNoDelta usercmd
 
 	int onlyVisibleClients;
 
@@ -803,12 +820,15 @@ typedef struct
 
 	/// message sequence is used by both the network layer and the
 	/// delta compression layer
-	int serverMessageSequence;
+	int serverMessageSequence;         ///< may be delayed or latest sequence number
+	int serverMessageSequenceLatest;   ///< always latest sequence number
 
 	// reliable messages received from server
-	int serverCommandSequence;
-	int lastExecutedServerCommand;              ///< last server command grabbed or executed with CL_GetServerCommand
+	int serverCommandSequence;         ///< may be delayed or latest sequence number
+	int serverCommandSequenceLatest;   ///< always latest sequence number
+	int lastExecutedServerCommand;     ///< last server command grabbed or executed with SV_CL_GetServerCommand
 	char serverCommands[MAX_RELIABLE_COMMANDS][MAX_TOKEN_CHARS];
+	char serverCommandsLatest[MAX_RELIABLE_COMMANDS][MAX_TOKEN_CHARS];
 
 	// demo information
 	svcldemo_t demo;
@@ -862,7 +882,6 @@ typedef struct
 	int p_realtime;             ///< cls.realtime when packet was sent
 } svoutPacket_t;
 
-#define MAX_PARSE_ENTITIES  2048
 #define CMD_BACKUP          64
 #define CMD_MASK            (CMD_BACKUP - 1)
 
@@ -878,8 +897,8 @@ typedef struct
 	                                        ///< causing immediate disconnects on continue
 	svclSnapshot_t snap;                      ///< latest received from server
 
-	int serverTime;                         ///< may be paused during play
-	int oldServerTime;                      ///< to prevent time from flowing bakcwards
+	int serverTime;                         ///< may be delayed or latest serverTime
+	int serverTimeLatest;                   ///< always latest serverTime
 	int oldFrameServerTime;                 ///< to check tournament restarts
 	int serverTimeDelta;                    ///< cl.serverTime = cls.realtime + cl.serverTimeDelta
 	                                        ///  this value changes as net lag varies
@@ -926,6 +945,28 @@ typedef struct
 
 extern svclientActive_t svcl;
 
+/**
+ * @struct messageQueue_t
+ */
+typedef struct serverMessageQueue_s
+{
+	struct serverMessageQueue_s *next, *prev;
+
+	int serverMessageSequence;
+	int serverCommandSequence;
+	int numServerCommand;
+	char *serverCommands[MAX_RELIABLE_COMMANDS];
+
+	int serverTime;
+	int systime;
+	int deltaNum;
+
+	int headerBytes;
+	msg_t msg;
+} serverMessageQueue_t;
+
+extern serverMessageQueue_t *svMsgQueueHead, *svMsgQueueTail;
+
 // sv_cl_main.c
 void SV_CL_Commands_f(void);
 void SV_CL_CheckForResend(void);
@@ -935,7 +976,7 @@ void SV_CL_WritePacket(void);
 qboolean SV_CL_ReadyToSendPacket(void);
 void SV_CL_ClearState(void);
 void SV_CL_DownloadsComplete(void);
-void SV_CL_SendPureChecksums(void);
+void SV_CL_SendPureChecksums(int serverId);
 void SV_CL_InitTVGame(void);
 qboolean SV_CL_GetServerCommand(int serverCommandNumber);
 void SV_CL_ConfigstringModified(void);
@@ -956,7 +997,8 @@ void SV_CL_Netchan_TransmitNextFragment(netchan_t *chan);
 qboolean SV_CL_Netchan_Process(netchan_t *chan, msg_t *msg);
 
 // sv_cl_parse.c
-void SV_CL_ParseServerMessage(msg_t *msg);
+void SV_CL_ParseServerMessage(msg_t *msg, int headerBytes);
+void SV_CL_ParseServerMessage_Ext(msg_t *msg, int headerBytes);
 void SV_CL_ParseGamestate(msg_t *msg);
 void SV_CL_ParseCommandString(msg_t *msg);
 void SV_CL_ParseSnapshot(msg_t *msg);
@@ -964,6 +1006,11 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityState_t *old, entityShared_t *oldShared, qboolean unchanged);
 void SV_CL_ParsePlayerstates(msg_t *msg);
 void SV_CL_SystemInfoChanged(void);
+
+int SV_CL_GetQueueTime(void);
+void SV_CL_ParseMessageQueue(void);
+void SV_CL_ParseServerMessageIntoQueue(msg_t *msg, int headerBytes);
+void SV_CL_ParseGamestateQueue(msg_t *msg);
 
 // sv_cl_demo.c
 void SV_CL_DemoInit(void);

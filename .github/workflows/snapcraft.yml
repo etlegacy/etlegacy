@@ -1,0 +1,49 @@
+name: Snapcraft
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["ETLBuild"]
+    types:
+      - completed
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        platform:
+        - amd64
+        - arm64
+#        - i386
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} 
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with:
+          repository: etlegacy/etlegacy-snap
+          fetch-depth: 1
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Build SNAP
+        uses: diddlesnaps/snapcraft-multiarch-action@v1.8.0
+        id: snapcraft
+        with:
+          architecture: ${{ matrix.platform }}
+      - name: Publish
+        uses: snapcore/action-publish@v1.2.0
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        with:
+          snap: ${{ steps.snapcraft.outputs.snap }}
+          release: edge
+#          release: stable
+#          release: candidate
+#          release: beta

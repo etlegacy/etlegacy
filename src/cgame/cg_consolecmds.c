@@ -1346,50 +1346,6 @@ static void CG_TimerReset_f(void)
 }
 
 /**
- * @brief CG_GetSecondaryWeapon
- * @param[in] weapon
- * @param[in] team
- * @param[in] playerclass
- * @return
- */
-static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
-{
-	bg_playerclass_t *classInfo;
-	classInfo = BG_GetPlayerClassInfo(team, playerclass);
-
-	int i, lastValidWeaponPos = 0;
-
-	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
-	{
-		if (!classInfo->classSecondaryWeapons[i].weapon)
-		{
-			break;
-		}
-
-		// is player had the minimum level required to use this weapon
-		if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
-		{
-			continue;
-		}
-
-		// if player handling a similar weapon in primary slot, don't show it
-		if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
-		{
-			continue;
-		}
-
-		lastValidWeaponPos = i;
-	}
-
-	if (weapon < 0 || weapon > lastValidWeaponPos)
-	{
-		return classInfo->classSecondaryWeapons[lastValidWeaponPos].weapon;
-	}
-
-	return classInfo->classSecondaryWeapons[weapon].weapon;
-}
-
-/**
 * @brief CG_IsClassFull
 * @param[in] ent
 * @param[in] classIndex
@@ -1627,18 +1583,21 @@ static void CG_Class_f(void)
 	{
 		trap_Argv(3, cls, 64);
 		weapon2 = Q_atoi(cls);
-		if (weapon2 <= 0 || weapon2 > MAX_WEAPS_PER_CLASS)
+
+		// ensure the index is valid and different from primary weapon
+		if (weapon2 <= 0 || weapon2 > MAX_WEAPS_PER_CLASS || !classinfo->classSecondaryWeapons[weapon2 - 1].weapon
+		    || classinfo->classSecondaryWeapons[weapon2 - 1].weapon == weapon1)
 		{
-			weapon2 = classinfo->classSecondaryWeapons[0].weapon;
+			weapon2 = BG_GetBestSecondaryWeapon(playerclass, team, weapon1, cgs.clientinfo[cg.clientNum].skill);
 		}
 		else
 		{
-			weapon2 = CG_GetSecondaryWeapon(weapon2 - 1, team, playerclass);
+			weapon2 = classinfo->classSecondaryWeapons[weapon2 - 1].weapon;
 		}
 	}
 	else
 	{
-		weapon2 = CG_GetSecondaryWeapon(-1, team, playerclass);
+		weapon2 = BG_GetBestSecondaryWeapon(playerclass, team, weapon1, cgs.clientinfo[cg.clientNum].skill);
 	}
 
 	// Print out the selected class and weapon info
@@ -3343,8 +3302,8 @@ static const char *gameCommand[] =
 	"rs",
 	"sclogin",
 	"sclogout",
-	"score",
-	"scores",
+	//"score",      // used to updated score in debriefing and ingame score board. Not meant to be sent manually.
+	"scores",       // display the scores in console
 	"setviewpos",
 	"setspawnpt",
 	"sgstats",

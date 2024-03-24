@@ -220,10 +220,10 @@ qboolean TVG_CallSpawn(gentity_t *ent)
 
 	// hack: this avoids spammy prints on start, bsp uses obsolete classnames!
 	// bot_sniper_spot (railgun)
-	if (Q_stricmp(ent->classname, "bot_sniper_spot"))
-	{
-		G_Printf("%s doesn't have a spawn function\n", ent->classname);
-	}
+	//if (Q_stricmp(ent->classname, "bot_sniper_spot"))
+	//{
+	//	G_Printf("%s doesn't have a spawn function\n", ent->classname);
+	//}
 
 	return qfalse;
 }

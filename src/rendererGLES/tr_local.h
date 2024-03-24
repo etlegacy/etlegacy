@@ -2109,7 +2109,7 @@ typedef struct
 
 extern backEndData_t *backEndData;
 
-void *R_GetCommandBuffer(unsigned int bytes);
+void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
 
 void R_IssuePendingRenderCommands(void);
@@ -2203,10 +2203,10 @@ extern float r_anormals[NUMMDCVERTEXNORMALS][3];
 
 // optimized version
 #define R_MDC_DecodeXyzCompressed(ofsVec, out, normal) \
-	(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
+		(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
 
 void R_AddMDCSurfaces(trRefEntity_t *ent);
 

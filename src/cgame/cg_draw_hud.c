@@ -281,6 +281,29 @@ hudStucture_t *CG_GetHudByName(const char *name)
 	return NULL;
 }
 
+/**
+ * @brief CG_UpdateParentHUD
+ * @param[in] oldParent
+ * @param[in] newParent
+ * @param[in] newParentNum
+ */
+void CG_UpdateParentHUD(const char *oldParent, const char *newParent, int newParentNum)
+{
+	int i;
+	// ensure to update parent child as well
+	for (i = 0; i < hudData.count; i++)
+	{
+		hudStucture_t *hud = hudData.list[i];
+
+		if (!Q_stricmp(hud->parent, oldParent))
+		{
+			// use grand-parent value
+			Q_strncpyz(hud->parent, newParent, sizeof(hud->parent));
+			hud->parentNumber = newParentNum;
+		}
+	}
+}
+
 // HUD DRAWING FUNCTIONS BELLOW
 
 /**
@@ -3143,7 +3166,7 @@ void CG_DrawDisconnect(hudComponent_t *comp)
 	}
 
 	// draw the phone jack if we are completely past our buffers
-	cmdNum = trap_GetCurrentCmdNumber() - CMD_BACKUP + 1;
+	cmdNum = trap_GetCurrentCmdNumber() - cg.cmdBackup + 1;
 	trap_GetUserCmd(cmdNum, &cmd);
 	if (cmd.serverTime <= cg.snap->ps.commandTime
 	    || cmd.serverTime > cg.time)        // special check for map_restart
@@ -3302,7 +3325,7 @@ void CG_DrawLagometer(hudComponent_t *comp)
 				{
 					w = range;
 				}
-				trap_R_DrawStretchPic(ax + aw - a, ay + ah - w - 2, 1, w, 0, 0, 0, 0, cgs.media.whiteShader);
+				trap_R_DrawStretchPic(ax + aw - a, ay + ah - w, 1, w, 0, 0, 0, 0, cgs.media.whiteShader);
 			}
 
 			if (lagometer.snapshotFlags[i] & SNAPFLAG_RATE_DELAYED)

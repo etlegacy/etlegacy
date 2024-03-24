@@ -604,7 +604,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 static qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char     *token;
-	int      depthMaskBits     = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0;
+	int      depthMaskBits = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0;
 	qboolean depthMaskExplicit = qfalse;
 
 	stage->active = qtrue;
@@ -2413,10 +2413,10 @@ static void FixRenderCommandList(int newShader)
 	if (cmdList)
 	{
 		const void *curCmd = cmdList->cmds;
-
+		*((int *)(cmdList->cmds + cmdList->used)) = RC_END_OF_LIST;
 		while (1)
 		{
-			curCmd = PADP(curCmd, sizeof(void *));
+			curCmd = PADP(curCmd, sizeof(intptr_t));
 
 			switch (*(const int *)curCmd)
 			{
@@ -3014,15 +3014,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 	// empty the whole list
 	if (!shadername && !shadertext)
 	{
-		dptr = dshader;
-		while (dptr)
-		{
-			lastdptr = dptr->next;
-			ri.Free(dptr->shadertext);
-			ri.Free(dptr);
-			dptr = lastdptr;
-		}
-		dshader = NULL;
+		R_PurgeDynamicShaders();
 		return qtrue;
 	}
 
@@ -3295,7 +3287,7 @@ void R_FindLightmap(int *lightmapIndex)
 	R_IssuePendingRenderCommands();
 
 	// attempt to load an external lightmap
-	sprintf(fileName, "%s/" EXTERNAL_LIGHTMAP, tr.worldDir, *lightmapIndex);
+	Com_sprintf(fileName, sizeof(fileName), "%s/" EXTERNAL_LIGHTMAP, tr.worldDir, *lightmapIndex);
 	image = R_FindImageFile(fileName, qfalse, qfalse, GL_CLAMP_TO_EDGE, qtrue);
 	if (image == NULL)
 	{
@@ -3843,7 +3835,7 @@ static void ScanAndLoadShaderFiles(void)
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaders);
 
-	if (!shaderFiles || !numShaders)
+	if (!shaderFiles || numShaders <= 0)
 	{
 		Ren_Warning("ScanAndLoadShaderFiles WARNING: no shader files found\n");
 		return;
@@ -3870,14 +3862,14 @@ static void ScanAndLoadShaderFiles(void)
 
 	// build single large buffer
 	s_shaderText = ri.Hunk_Alloc(sum + numShaders * 2, h_low);
-
 	// optimised to not use strcat/strlen which can be VERY slow for the large strings we're using here
 	p = s_shaderText;
 	// free in reverse order, so the temp files are all dumped
 	for (i = numShaders - 1; i >= 0 ; i--)
 	{
-		strcpy(p++, "\n");
-		strcpy(p, buffers[i]);
+		Q_strncpyz(p, "\n", sum + numShaders * 2 - (p - s_shaderText));
+		++p;
+		Q_strncpyz(p, buffers[i], sum + numShaders * 2 - (p - s_shaderText));
 		ri.FS_FreeFile(buffers[i]);
 		buffers[i] = p;
 		p         += buffersize[i];
@@ -3983,6 +3975,24 @@ void R_PurgeShaders(int count)
 	purgeallshaders = qtrue;
 	R_PurgeLightmapShaders();
 	purgeallshaders = qfalse;
+}
+
+/**
+ * @brief R_PurgeDynamicShaders
+ */
+void R_PurgeDynamicShaders(void)
+{
+	dynamicshader_t *dptr, *lastdptr;
+
+	dptr = dshader;
+	while (dptr)
+	{
+		lastdptr = dptr->next;
+		ri.Free(dptr->shadertext);
+		ri.Free(dptr);
+		dptr = lastdptr;
+	}
+	dshader = NULL;
 }
 
 /**

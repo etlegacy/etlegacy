@@ -257,7 +257,7 @@ typedef struct
 	int latchPlayerType;                                ///< latched class
 	weapon_t latchPlayerWeapon;                         ///< latched primary weapon
 	weapon_t latchPlayerWeapon2;                        ///< latched secondary weapon
-	int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
+	//int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
 	qboolean muted;
 	int skill[SK_NUM_SKILLS];                           ///< skill
 
@@ -483,7 +483,7 @@ typedef struct level_locals_s
 	qboolean restarted;                         ///< waiting for a map_restart to fire
 
 	int numConnectedClients;
-	int sortedClients[MAX_CLIENTS];             ///< sorted by score
+	int *sortedClients;
 
 	// spawn variables
 	qboolean spawning;                          ///< the G_Spawn*() functions are valid
@@ -529,6 +529,7 @@ typedef struct level_locals_s
 
 	int numValidMasterClients;
 	int validMasterClients[MAX_CLIENTS];
+	int queueSeconds;
 
 } level_locals_t;
 
@@ -1007,6 +1008,8 @@ extern vmCvar_t g_skipCorrection;
 extern vmCvar_t g_extendedNames;
 
 extern vmCvar_t g_debugForSingleClient;
+
+extern vmCvar_t tvg_queue_ms;
 
 #define G_InactivityValue (g_inactivity.integer ? g_inactivity.integer : 60)
 #define G_SpectatorInactivityValue (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60)

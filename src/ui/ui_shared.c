@@ -236,8 +236,8 @@ const char *String_Alloc(const char *p)
 	if (len + strPoolIndex + 1 < STRING_POOL_SIZE)
 	{
 		int ph = strPoolIndex;
-
-		strcpy(&strPool[strPoolIndex], p);
+        
+        Q_strncpyz(&strPool[strPoolIndex], p, sizeof(strPool) - (strPoolIndex));
 		strPoolIndex += len + 1;
 
 		str  = strHandle[hash];
@@ -1906,7 +1906,7 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 		}
 	}
 
-	if (c != buffer && (*(c - 1) != '\n'))
+	if (c > instr + 1 && (*(c - 1) != '\n'))
 	{
 		*c++ = '\n';
 	}

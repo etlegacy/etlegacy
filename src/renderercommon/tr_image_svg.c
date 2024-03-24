@@ -44,6 +44,11 @@
 #define NANOSVGRAST_IMPLEMENTATION
 #include "nanosvg/nanosvgrast.h"
 
+#ifdef __ANDROID__
+// Looks like it needs GLES2 ext header
+#include <GLES2/gl2ext.h>
+#endif
+
 /**
  * @brief R_LoadSVG loads an svg image and converts it to a buffer
  * @param [in] name name of the image to load
@@ -116,7 +121,7 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 	rows    = (int)(image->height * scale);
 
 #ifdef __ANDROID__
-	if (!Com_PowerOf2(columns) || !Com_PowerOf2(rows))
+	if (!GL_OES_texture_npot && (!Com_PowerOf2(columns) || !Com_PowerOf2(rows)))
 #else
 	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(columns) || !Com_PowerOf2(rows)))
 #endif

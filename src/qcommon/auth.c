@@ -247,7 +247,7 @@ static void Auth_ClientLogin(const char *username, const char *password)
 	cJSON_AddStringToObject(root, "guid", Cvar_VariableString("cl_guid"));
 	tmp = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
-	Q_strcpy(upload->contentType, "application/json");
+	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
 	upload->buffer     = (byte *)tmp;
 	upload->bufferSize = strlen(tmp);
 
@@ -573,7 +573,7 @@ void Auth_Server_VerifyResponse(void *data, const char *username, const char *ch
 	json = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
 
-	Q_strcpy(upload->contentType, "application/json");
+	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
 	upload->buffer     = (byte *)json;
 	upload->bufferSize = strlen(json);
 
@@ -607,7 +607,7 @@ void Auth_Server_FetchChallenge(void *data, const char *username)
 	json = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
 
-	Q_strcpy(upload->contentType, "application/json");
+	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
 	upload->buffer     = (byte *)json;
 	upload->bufferSize = strlen(json);
 
@@ -659,7 +659,7 @@ void Auth_Client_FetchResponse(const char *challenge)
 	json = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
 
-	Q_strcpy(upload->contentType, "application/json");
+	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
 	upload->buffer     = (byte *)json;
 	upload->bufferSize = strlen(json);
 

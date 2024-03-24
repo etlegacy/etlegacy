@@ -97,7 +97,7 @@ static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
  * @param[out] plist
  * @return Number of matching clientids.
  */
-int G_ClientNumbersFromString(char *s, int *plist)
+int G_ClientNumbersFromString(const char *s, int *plist)
 {
 	gclient_t *p;
 	int       i, found = 0;
@@ -1324,6 +1324,7 @@ qboolean G_DropItems(gentity_t *self)
 
 		flag = LaunchItem(item, origin, launchvel, self->s.number);
 
+		flag->parent        = self;
 		flag->s.modelindex2 = self->s.otherEntityNum2; // FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
 		flag->message       = self->message; // also restore item name
 
@@ -2191,39 +2192,53 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value)
 			w = GetPlayerClassesData(team, playerType)->classPrimaryWeapons[0].weapon;
 		}
 
-		// default secondary weapon for class and team
+		// best secondary weapon for class and team
 		if (!IS_VALID_WEAPON(w2))
 		{
-			w2 = GetPlayerClassesData(team, playerType)->classSecondaryWeapons[0].weapon;
+			w2 = BG_GetBestSecondaryWeapon(playerType, team, w, ent->client->sess.skill);
 		}
 	}
-	else
+	else    // "swap" team, try to keep the previous selected weapons or equivalent if no one were selected
 	{
 		classChange = qfalse;
 
-		// "swap" team, try to keep the previous selected weapons or equivalent if no one were selected
-		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+		// primary weapon
+		if (!IS_VALID_WEAPON(w))
 		{
-			// primary weapon
+			w = ent->client->sess.playerWeapon;
+
+			// on first connection on server, there is no current weapon selected
+			// and the default class is soldiers so we don't have a valid weapon, use
+			// default primary weapon for class and team
 			if (!IS_VALID_WEAPON(w))
 			{
-				w = ent->client->sess.playerWeapon;
-
-				if (GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv)
-				{
-					w = GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv;
-				}
+				w = GetPlayerClassesData(team, playerType)->classPrimaryWeapons[0].weapon;
 			}
+			// prevent swapping to equivalent weap if the last selected is already of correct team
+			else if (GetWeaponTableData(ent->client->sess.playerWeapon)->team != team &&
+			         GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv)
+			{
+				w = GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv;
+			}
+		}
 
-			// secondary weapon
+		// secondary weapon
+		if (!IS_VALID_WEAPON(w2))
+		{
+			w2 = ent->client->sess.playerWeapon2;
+
+			// on first connection on server, there is no current weapon selected
+			// and the default class is soldiers so we don't have a valid weapon, use
+			// best secondary weapon for class and team
 			if (!IS_VALID_WEAPON(w2))
 			{
-				w2 = ent->client->sess.playerWeapon2;
-
-				if (GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv)
-				{
-					w2 = GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv;
-				}
+				w2 = BG_GetBestSecondaryWeapon(playerType, team, w, ent->client->sess.skill);
+			}
+			// prevent swapping to equivalent weap if the last selected is already of correct team
+			else if (GetWeaponTableData(ent->client->sess.playerWeapon2)->team != team
+			         && GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv)
+			{
+				w2 = GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv;
 			}
 		}
 	}

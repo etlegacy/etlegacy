@@ -34,6 +34,7 @@ jobs:
       - name: Fetch git version information
         id: git
         run: |
+          git fetch --tags --force
           git_describe=$(git describe --abbrev=7 2>/dev/null | awk '{$1=$1};1')
           git_tag=$(git describe --abbrev=0 2>/dev/null | awk '{$1=$1};1')
           echo "Version info: $git_describe ?? $git_tag"
@@ -253,7 +254,6 @@ jobs:
       - name: Build
         run: |
           git config --global --add safe.directory $GITHUB_WORKSPACE
-          git fetch --tags --force
           ./gradlew clean assembleRelease
           ls -R
 
@@ -626,7 +626,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
 
       - uses: actions/download-artifact@v4
         with:
@@ -640,7 +639,6 @@ jobs:
       - name: Build and Generate Package
         run: |
           git config --global --add safe.directory $GITHUB_WORKSPACE
-          git fetch --tags --force
           ./gradlew clean assembleRelease
           ls -R
 
@@ -665,7 +663,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-20.04
-    needs: [ lnx32, lnx64, osx, win, win64, lnx-aarch64, android ]
+    needs: [ version, lnx32, lnx64, osx, win, win64, lnx-aarch64, android ]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v4
@@ -698,12 +696,12 @@ jobs:
           find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=eacan4jn14wt" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
-        if: ${{ steps.vars.outputs.hash_exists == '404' }} && !startsWith(github.ref, 'refs/tags/v')
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && needs.version.outputs.describe != needs.version.outputs.tag
         env:
           DISCORD_WEBHOOK: ${{ secrets.PUBLISH_DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@0.3.0
         with:
-          args: "<@&673533235887865879> Build from ETLegacy: ${{ github.sha }} has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
+          args: "<@&673533235887865879> Build from ETLegacy: ${{ needs.version.outputs.describe }} (${{ github.sha }}) has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
 
   docker:
     runs-on: ubuntu-20.04

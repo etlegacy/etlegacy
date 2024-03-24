@@ -414,8 +414,12 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 
 	ent->parent = tmp;
 
-	// reward player for stolen objective item
-	G_AddSkillPoints(other, SK_BATTLE_SENSE, 3.f, "objective stolen");
+	// prevent gaining XP in case player just drop the objective and took it back
+	if (!ent->parent || ent->parent->client != cl)
+	{
+		// reward player for stolen objective item
+		G_AddSkillPoints(other, SK_BATTLE_SENSE, 3.f, "objective stolen");
+	}
 
 	// reset player disguise on stealing docs
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
@@ -800,7 +804,7 @@ void TeamplayInfoMessage(team_t team)
 				G_Printf("Warning: tinfo exceeds limit");
 				break;
 			}
-			strcpy(string + stringlength, entry);
+			Q_strcat(string, sizeof(string), entry);
 			stringlength += j;
 			cnt++;
 		}
@@ -1418,7 +1422,7 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 
 	// reward player for capturing spawn point
-	G_AddSkillPoints(other, SK_BATTLE_SENSE, 2.f, "checkpoint captured");
+	G_AddSkillPoints(other, SK_BATTLE_SENSE, 3.f, "checkpoint captured");
 
 	self->parent = other;
 

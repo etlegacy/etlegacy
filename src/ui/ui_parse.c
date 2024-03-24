@@ -83,7 +83,7 @@ void Item_ValidateTypeData(itemDef_t *item)
 	{
 		item->typeData = UI_Alloc(sizeof(editFieldDef_t));
 		Com_Memset(item->typeData, 0, sizeof(editFieldDef_t));
-		if (item->type == ITEM_TYPE_EDITFIELD)
+		if (TEXTFIELD(item->type))
 		{
 			if (!((editFieldDef_t *)item->typeData)->maxPaintChars)
 			{

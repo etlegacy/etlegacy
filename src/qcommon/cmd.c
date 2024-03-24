@@ -457,7 +457,7 @@ char *Cmd_Args(void)
 		Q_strcat(cmd_args, MAX_STRING_CHARS, cmd_argv[i]);
 		if (i != cmd_argc - 1)
 		{
-			strcat(cmd_args, " ");
+			Q_strcat(cmd_args, sizeof(cmd_args), " ");
 		}
 	}
 
@@ -484,7 +484,7 @@ char *Cmd_ArgsFrom(int arg)
 		Q_strcat(cmd_args, BIG_INFO_STRING, cmd_argv[i]);
 		if (i != cmd_argc - 1)
 		{
-			strcat(cmd_args, " ");
+			Q_strcat(cmd_args, sizeof(cmd_args), " ");
 		}
 	}
 
@@ -523,7 +523,7 @@ char *Cmd_ArgsFromTo(int arg, int max)
 		Q_strcat(cmd_args, BIG_INFO_STRING, cmd_argv[i]);
 		if (i != max - 1)
 		{
-			strcat(cmd_args, " ");
+			Q_strcat(cmd_args, sizeof(cmd_args), " ");
 		}
 	}
 

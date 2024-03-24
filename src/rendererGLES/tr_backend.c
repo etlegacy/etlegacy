@@ -404,9 +404,9 @@ static void SetViewportAndScissor(void)
 
 	// set the window clipping
 	glViewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
-	            backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
-	glScissor(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
 	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
+	glScissor(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
+	          backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 }
 
 /**
@@ -455,8 +455,8 @@ void RB_BeginDrawingView(void)
 		clearBits |= GL_COLOR_BUFFER_BIT;
 		//
 		glClearColor(tr.world->fogs[tr.world->globalFog].shader->fogParms.color[0] * tr.identityLight,
-		              tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] * tr.identityLight,
-		              tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] * tr.identityLight, 1.0);
+		             tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] * tr.identityLight,
+		             tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] * tr.identityLight, 1.0);
 	}
 	else if (skyboxportal)
 	{
@@ -588,7 +588,7 @@ void RB_BeginDrawingView(void)
 	// clip to the plane of the portal
 	if (backEnd.viewParms.isPortal)
 	{
-		float  plane[4], plane2[4]; // OpenGLES expecting float here on both
+		float plane[4], plane2[4];  // OpenGLES expecting float here on both
 
 		plane[0] = backEnd.viewParms.portalPlane.normal[0];
 		plane[1] = backEnd.viewParms.portalPlane.normal[1];
@@ -1024,9 +1024,9 @@ const void *RB_StretchPic(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts]                 =
-	    *( int * ) tess.vertexColors[numVerts + 1]         =
-	        *( int * ) tess.vertexColors[numVerts + 2]     =
-	            *( int * ) tess.vertexColors[numVerts + 3] = *( int * ) backEnd.color2D;
+		*( int * ) tess.vertexColors[numVerts + 1]         =
+			*( int * ) tess.vertexColors[numVerts + 2]     =
+				*( int * ) tess.vertexColors[numVerts + 3] = *( int * ) backEnd.color2D;
 
 	tess.xyz[numVerts][0] = cmd->x;
 	tess.xyz[numVerts][1] = cmd->y;
@@ -1159,9 +1159,9 @@ const void *RB_RotatedPic(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts]                 =
-	    *( int * ) tess.vertexColors[numVerts + 1]         =
-	        *( int * ) tess.vertexColors[numVerts + 2]     =
-	            *( int * ) tess.vertexColors[numVerts + 3] = *( int * ) backEnd.color2D;
+		*( int * ) tess.vertexColors[numVerts + 1]         =
+			*( int * ) tess.vertexColors[numVerts + 2]     =
+				*( int * ) tess.vertexColors[numVerts + 3] = *( int * ) backEnd.color2D;
 
 	angle                 = cmd->angle * pi2;
 	tess.xyz[numVerts][0] = cmd->x + (cos(angle) * cmd->w);
@@ -1240,10 +1240,10 @@ const void *RB_StretchPicGradient(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts]         =
-	    *( int * ) tess.vertexColors[numVerts + 1] = *( int * ) backEnd.color2D;
+		*( int * ) tess.vertexColors[numVerts + 1] = *( int * ) backEnd.color2D;
 
 	*( int * ) tess.vertexColors[numVerts + 2]     =
-	    *( int * ) tess.vertexColors[numVerts + 3] = *( int * ) cmd->gradientColor;
+		*( int * ) tess.vertexColors[numVerts + 3] = *( int * ) cmd->gradientColor;
 
 	tess.xyz[numVerts][0] = cmd->x;
 	tess.xyz[numVerts][1] = cmd->y;
@@ -1568,6 +1568,7 @@ void RB_ExecuteRenderCommands(const void *data)
 
 	while (1)
 	{
+		data = PADP(data, sizeof(intptr_t));
 		switch (*( const int * ) data)
 		{
 		case RC_SET_COLOR:

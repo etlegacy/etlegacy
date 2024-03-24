@@ -224,6 +224,14 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	// this is the snapshot we are creating
 	frame = &client->frames[client->netchan.outgoingSequence & PACKET_MASK];
 
+	// if we are about to go over MAX_PARSE_ENTITIES send uncompressed snapshot
+	if (client->parseEntitiesNum > MAX_PARSE_ENTITIES - 128)
+	{
+		Com_DPrintf("%s: Too many parse entities.\n", client->name);
+		client->deltaMessage     = -1;
+		client->parseEntitiesNum = 0;
+	}
+
 	// try to use a previous frame as the source for delta compressing the snapshot
 	if (client->deltaMessage <= 0 || client->state != CS_ACTIVE)
 	{
@@ -306,6 +314,8 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	{
 		SV_ETTV_EmitPlayerstates(client, msg);
 	}
+
+	client->parseEntitiesNum += frame->num_entities;
 
 	// padding for rate debugging
 	if (sv_padPackets->integer)
@@ -930,12 +940,13 @@ int SV_RateMsec(client_t *client)
  * @param[in] msg
  * @param[in,out] client
  */
-void SV_SendMessageToClient(msg_t *msg, client_t *client)
+void SV_SendMessageToClient(msg_t *msg, client_t *client, qboolean parseEntities)
 {
 	// record information about the message
-	client->frames[client->netchan.outgoingSequence & PACKET_MASK].messageSize  = msg->cursize;
-	client->frames[client->netchan.outgoingSequence & PACKET_MASK].messageSent  = svs.time;
-	client->frames[client->netchan.outgoingSequence & PACKET_MASK].messageAcked = -1;
+	client->frames[client->netchan.outgoingSequence & PACKET_MASK].messageSize   = msg->cursize;
+	client->frames[client->netchan.outgoingSequence & PACKET_MASK].messageSent   = svs.time;
+	client->frames[client->netchan.outgoingSequence & PACKET_MASK].messageAcked  = -1;
+	client->frames[client->netchan.outgoingSequence & PACKET_MASK].parseEntities = parseEntities;
 
 	// send the datagram
 	SV_Netchan_Transmit(client, msg);
@@ -979,7 +990,7 @@ void SV_SendClientIdle(client_t *client)
 		return;
 	}
 
-	SV_SendMessageToClient(&msg, client);
+	SV_SendMessageToClient(&msg, client, qfalse);
 
 	sv.bpsTotalBytes  += msg.cursize;           // net debugging
 	sv.ubpsTotalBytes += msg.uncompsize / 8;    // net debugging
@@ -1042,7 +1053,7 @@ void SV_SendClientSnapshot(client_t *client)
 		return;
 	}
 
-	SV_SendMessageToClient(&msg, client);
+	SV_SendMessageToClient(&msg, client, qtrue);
 
 	sv.bpsTotalBytes  += msg.cursize;           // net debugging
 	sv.ubpsTotalBytes += msg.uncompsize / 8;    // net debugging
@@ -1062,23 +1073,6 @@ void SV_SendClientMessages(void)
 
 	// update any changed configstrings from this frame
 	SV_UpdateConfigStrings();
-
-#ifdef DEDICATED
-	if (svcls.isTVGame)
-	{
-		sharedEntity_t *gEnt;
-		sv.num_entities = 0;
-		for (i = 0; i < MAX_GENTITIES; i++)
-		{
-			gEnt = SV_GentityNum(i);
-
-			if (gEnt->r.linked)
-			{
-				sv.num_entities = i + 1;
-			}
-		}
-	}
-#endif // DEDICATED
 
 	// send a message to each connected client
 	for (i = 0; i < sv_maxclients->integer; i++)

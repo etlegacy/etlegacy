@@ -433,7 +433,7 @@ void TVG_ClientThink_cmd(gclient_t *client, usercmd_t *cmd)
 
 /**
  * @brief A new command has arrived from the client
- * @param[in] clientNum Client Number from 0 to MAX_CLIENTS
+ * @param[in] clientNum Client Number from 0 to g_maxclients
  */
 void TVG_ClientThink(int clientNum)
 {

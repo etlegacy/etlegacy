@@ -2251,7 +2251,7 @@ void G_StoreMapXP(void)
 		//"to be continued..."
 		if (strlen(u) == SNIPSIZE)
 		{
-			strcat(u, "+");
+			Q_strcat(u, sizeof(u), "+");
 		}
 		trap_Cvar_Set(va("%s_axismapxp%i", MODNAME, j), u);
 		j++;
@@ -2273,7 +2273,7 @@ void G_StoreMapXP(void)
 		// "to be continued..."
 		if (strlen(u) == SNIPSIZE)
 		{
-			strcat(u, "+");
+			Q_strcat(u, sizeof(u), "+");
 		}
 		trap_Cvar_Set(va("%s_alliedmapxp%i", MODNAME, j), u);
 		j++;
@@ -2297,7 +2297,7 @@ void G_GetMapXP(void)
 		j++;
 		*strrchr(s, '+') = (char)0;
 		trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", MODNAME, j), t, sizeof(t));
-		strcat(s, t);
+		Q_strcat(s, sizeof(s), t);
 	}
 	trap_SetConfigstring(CS_AXIS_MAPS_XP, s);
 
@@ -2309,7 +2309,7 @@ void G_GetMapXP(void)
 		j++;
 		*strrchr(s, '+') = (char)0;
 		trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", MODNAME, j), t, sizeof(t));
-		strcat(s, t);
+		Q_strcat(s, sizeof(s), t);
 	}
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
 }
@@ -3829,8 +3829,8 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 	else if (g_logTimestamp.integer == 2) // startup relative time (mmm:ss)
 	{
 		int timestamp = trap_Milliseconds();
-		int m = timestamp / 60000;
-		int s = (timestamp - m * 60000) / 1000;
+		int m         = timestamp / 60000;
+		int s         = (timestamp - m * 60000) / 1000;
 
 		if (m < 1000)
 		{
@@ -3844,8 +3844,8 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 	}
 	else if (g_logTimestamp.integer == 3) // vanilla
 	{
-		time_t          aclock;
-		char            timeFt[32];
+		time_t aclock;
+		char   timeFt[32];
 
 		time(&aclock);
 		strftime(timeFt, sizeof(timeFt), "%H:%M.%S", localtime(&aclock));

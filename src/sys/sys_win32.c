@@ -211,16 +211,16 @@ char *Sys_GetCurrentUser(void)
 
 	if (GetUserNameW(w_userName, &size))
 	{
-		Sys_WideCharArrayToString(w_userName, s_userName, MAX_PATH);
+		Sys_WideCharArrayToString(w_userName, s_userName, sizeof(s_userName));
+
+		if (!s_userName[0])
+		{
+			Q_strncpyz(s_userName, "player", sizeof(s_userName));
+		}
 	}
 	else
 	{
-		strcpy(s_userName, "player");
-	}
-
-	if (!s_userName[0])
-	{
-		strcpy(s_userName, "player");
+		Q_strncpyz(s_userName, "player", sizeof(s_userName));
 	}
 
 	return s_userName;

@@ -2782,7 +2782,7 @@ static pack_t *FS_LoadZipFile(const char *zipfile, const char *basename)
 		Q_strlwr(fileName_inzip);
 		hash                = FS_HashFileName(fileName_inzip, pack->hashSize);
 		buildBuffer[i].name = namePtr;
-		strcpy(buildBuffer[i].name, fileName_inzip);
+		Q_strcpy(buildBuffer[i].name, fileName_inzip);
 		namePtr += strlen(fileName_inzip) + 1;
 		// store the file position in the zip
 		buildBuffer[i].pos    = unzGetOffset(uf);
@@ -2910,9 +2910,8 @@ static int FS_ReturnPath(const char *zname, char *zpath, int *depth)
 		}
 		at++;
 	}
-	strcpy(zpath, zname);
-	zpath[len] = 0;
-	*depth     = newdep;
+	Q_strncpyz(zpath, zname, len + 1);
+	*depth = newdep;
 
 	return len;
 }
@@ -3169,7 +3168,7 @@ int FS_GetFileList(const char *path, const char *extension, char *listbuf, int b
 		nLen = strlen(pFiles[i]) + 1;
 		if (nTotal + nLen + 1 < bufsize)
 		{
-			strcpy(listbuf, pFiles[i]);
+			Q_strncpyz(listbuf, pFiles[i], bufsize - nTotal);
 			listbuf += nLen;
 			nTotal  += nLen;
 		}
@@ -3377,7 +3376,7 @@ int FS_GetModList(char *listbuf, int bufsize)
 				}
 				else
 				{
-					strcpy(descPath, name);
+					Q_strncpyz(descPath, name, sizeof(descPath));
 				}
 
 				if (descHandle)
@@ -3389,9 +3388,9 @@ int FS_GetModList(char *listbuf, int bufsize)
 
 				if (nTotal + nLen + 1 + nDescLen + 1 < bufsize)
 				{
-					strcpy(listbuf, name);
+					Q_strncpyz(listbuf, name, bufsize - nTotal);
 					listbuf += nLen;
-					strcpy(listbuf, descPath);
+					Q_strncpyz(listbuf, descPath, bufsize - nTotal - nLen);
 					listbuf += nDescLen;
 					nTotal  += nLen + nDescLen;
 					nMods++;
@@ -4405,7 +4404,7 @@ static void FS_AddBothGameDirectories(const char *subpath)
 					{
 						char tmpPath[MAX_OSPATH] = { '\0' };
 						char *path               = FS_BuildOSPath(fs_homepath->string, subpath, va("%s%c%s.pk3", FS_CONTAINER, PATH_SEP, packName));
-						Q_strcpy(tmpPath, path);
+						Q_strncpyz(tmpPath, path, sizeof(tmpPath));
 
 						if (FS_FileInPathExists(tmpPath) && FS_CompareZipChecksum(tmpPath, fs_serverReferencedPaks[i]))
 						{

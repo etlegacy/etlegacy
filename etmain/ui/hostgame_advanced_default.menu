@@ -84,7 +84,7 @@
 							clearcvar server_motd3 ;				\
 							clearcvar server_motd4 ;				\
 							setcvar sv_allowDownload 1 ;			\
-							setcvar sv_dl_maxRate 42000 ;			\
+							setcvar sv_dlRate 100 ;					\
 							setcvar sv_wwwDownload 0 ;				\
 							clearcvar sv_wwwBaseUrl ;				\
 

@@ -210,7 +210,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		char filename[1024];
 		buffer = NULL;
 
-		strcpy(filename, name);
+		Q_strncpyz(filename, name, sizeof(filename));
 		if (lod != 0)
 		{
 			char namebuf[80];
@@ -219,8 +219,8 @@ qhandle_t RE_RegisterModel(const char *name)
 			{
 				*strrchr(filename, '.') = 0;
 			}
-			sprintf(namebuf, "_%d.md3", lod);
-			strcat(filename, namebuf);
+			Com_sprintf(namebuf, sizeof(namebuf), "_%d.md3", lod);
+			Q_strcat(filename, sizeof(filename), namebuf);
 		}
 
 		filename[strlen(filename) - 1] = '3';   // try MD3 first (changed order for 2.76)

@@ -141,9 +141,9 @@ void R_LoadModelShadow(model_t *mod)
 					mod->shadowShader = sh->index;
 				}
 			}
-            Q_sscanf(shadowBits, "%f %f %f %f %f %f",
-			       &mod->shadowParms[0], &mod->shadowParms[1], &mod->shadowParms[2],
-			       &mod->shadowParms[3], &mod->shadowParms[4], &mod->shadowParms[5]);
+			Q_sscanf(shadowBits, "%f %f %f %f %f %f",
+			         &mod->shadowParms[0], &mod->shadowParms[1], &mod->shadowParms[2],
+			         &mod->shadowParms[3], &mod->shadowParms[4], &mod->shadowParms[5]);
 		}
 		ri.FS_FreeFile(buf);
 	}
@@ -271,7 +271,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	{
 		buf = NULL;
 
-		strcpy(filename, name);
+		Q_strncpyz(filename, name, sizeof(filename));
 
 		if (lod != 0)
 		{
@@ -281,8 +281,8 @@ qhandle_t RE_RegisterModel(const char *name)
 			{
 				*strrchr(filename, '.') = 0;
 			}
-			sprintf(namebuf, "_%d.md3", lod);
-			strcat(filename, namebuf);
+			Com_sprintf(namebuf, sizeof(namebuf), "_%d.md3", lod);
+			Q_strcat(filename, sizeof(filename), namebuf);
 		}
 
 		filename[strlen(filename) - 1] = '3';    // try MD3 first (changed order for 2.76)
@@ -2253,7 +2253,7 @@ int  hunkmaxsize;
 int  cursize;
 
 #define R_HUNK_MEGS     24
-#define R_HUNK_SIZE     (R_HUNK_MEGS *1024 *1024)
+#define R_HUNK_SIZE     (R_HUNK_MEGS * 1024 * 1024)
 
 /**
  * @brief R_Hunk_Begin

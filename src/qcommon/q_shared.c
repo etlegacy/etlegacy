@@ -1150,12 +1150,14 @@ void SkipRestOfLine(char **data)
 
 /**
  * @brief Parse value and key from the string
- * @param buf_p
- * @param key
- * @param value
- * @param separator
+ * @param[in,out] buf_p
+ * @param[out] key
+ * @param[out] value
+ * @param[in] separator
  * @return true if key&value is valid
- */
+ *
+ * @note Unused
+ *
 qboolean ParseKeyValue(char **buf_p, char *key, char *value, char separator)
 {
 	char   *token;
@@ -1195,7 +1197,7 @@ qboolean ParseKeyValue(char **buf_p, char *key, char *value, char separator)
 
 	return qtrue;
 }
-
+*/
 
 /**
  * @brief Parse1DMatrix
@@ -2599,9 +2601,7 @@ qboolean Info_RemoveKey(char *s, const char *key)
 
 		if (!Q_stricmp(key, pkey))
 		{
-			// rain - arguments to strcpy must not overlap
-			//strcpy (start, s);    // remove this part
-			memmove(start, s, strlen(s) + 1);     // remove this part
+			memmove(start, s, strlen(s) + 1);     // TODO: remove this part ... why ?
 			return qtrue;
 		}
 
@@ -2744,7 +2744,7 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 		return;
 	}
 
-	strcat(s, newi);
+	Q_strcat(s, MAX_INFO_STRING, newi);
 }
 
 /**
@@ -2795,7 +2795,7 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 		return;
 	}
 
-	strcat(s, newi);
+	Q_strcat(s, BIG_INFO_STRING, newi);
 }
 
 /**

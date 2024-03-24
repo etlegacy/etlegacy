@@ -430,11 +430,11 @@ static void CG_StepOffset(void)
  */
 void CG_KickAngles(void)
 {
-	const vec3_t centerSpeed = { 2400, 2400, 2400 };
-	const float  recoilCenterSpeed = 200;
+	const vec3_t centerSpeed        = { 2400, 2400, 2400 };
+	const float  recoilCenterSpeed  = 200;
 	const float  recoilIgnoreCutoff = 15;
-	const float  recoilMaxSpeed = 50;
-	const vec3_t maxKickAngles = { 10, 10, 10 };
+	const float  recoilMaxSpeed     = 50;
+	const vec3_t maxKickAngles      = { 10, 10, 10 };
 	float        idealCenterSpeed, kickChange;
 	int          i, frametime, t;
 	float        ft;
@@ -1369,8 +1369,21 @@ int CG_CalcViewValues(void)
 
 			if (ps->viewlocked == VIEWLOCK_JITTER)
 			{
-				cg.refdefViewAngles[0] += crandom() * 0.5f;
-				cg.refdefViewAngles[1] += crandom() * 0.5f;
+				if (GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_MORTAR)
+				{
+					cg.refdefViewAngles[0] += (crandom() * 0.25f) * (ps->weaponTime / (float)GetWeaponTableData(ps->weapon)->nextShotTime);
+					cg.refdefViewAngles[1] += (crandom() * 0.25f) * (ps->weaponTime / (float)GetWeaponTableData(ps->weapon)->nextShotTime);
+				}
+				else if (GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_MG)
+				{
+					cg.refdefViewAngles[0] += crandom() * 0.5f;
+					cg.refdefViewAngles[1] += crandom() * 0.5f;
+				}
+				else
+				{
+					cg.refdefViewAngles[0] += crandom();
+					cg.refdefViewAngles[1] += crandom();
+				}
 			}
 		}
 
@@ -2037,8 +2050,6 @@ static void CG_DemoRewindFixEffects(void)
 extern int snapshotDelayTime;
 #endif // FAKELAG
 #endif // ETLEGACY_DEBUG
-
-extern void CG_SetupDlightstyles(void);
 
 static void CG_DrawSpawnpoints(void)
 {

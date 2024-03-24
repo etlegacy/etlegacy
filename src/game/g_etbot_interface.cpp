@@ -234,7 +234,7 @@ void GetMG42s()
 		name = (char *)_GetEntityName(trav);
 		if (name)
 		{
-			Q_strncpyz(mg42s[0].name, name, sizeof(mg42s[0].name));
+			Q_strncpyz(mg42.name, name, sizeof(mg42.name));
 		}
 		else
 		{
@@ -1818,7 +1818,7 @@ void Bot_Util_CheckForGoalEntity(GameEntity _ent)
 					{
 						pGoalName = _GetEntityName(&g_entities[pEnt->s.otherEntityNum]);
 					}
-					sprintf(buffer, "%s_dropped", pGoalName ? pGoalName : "allies_flag");
+					Com_sprintf(buffer, sizeof(buffer), "%s_dropped", pGoalName ? pGoalName : "allies_flag");
 					Bot_Util_AddGoal("flag", pEnt, (1 << ET_TEAM_ALLIES), buffer);
 					Bot_Util_AddGoal("flagreturn", pEnt, (1 << ET_TEAM_AXIS), buffer);
 				}
@@ -1829,7 +1829,7 @@ void Bot_Util_CheckForGoalEntity(GameEntity _ent)
 					{
 						pGoalName = _GetEntityName(&g_entities[pEnt->s.otherEntityNum]);
 					}
-					sprintf(buffer, "%s_dropped", pGoalName ? pGoalName : "axis_flag");
+					Com_sprintf(buffer, sizeof(buffer), "%s_dropped", pGoalName ? pGoalName : "axis_flag");
 					Bot_Util_AddGoal("flag", pEnt, (1 << ET_TEAM_AXIS), buffer);
 					Bot_Util_AddGoal("flagreturn", pEnt, (1 << ET_TEAM_ALLIES), buffer);
 				}
@@ -4452,11 +4452,11 @@ public:
 
 			if (mg42s[i].buildable)
 			{
-				strcpy(strName, mg42s[i].newname);
+				Q_strncpyz(strName, mg42s[i].newname, sizeof(strName));
 			}
 			else
 			{
-				strcpy(strName, mg42s[i].name);
+				Q_strncpyz(strName, mg42s[i].name, sizeof(strName));
 			}
 
 			Bot_Util_AddGoal("mountmg42", mg42s[i].ent,

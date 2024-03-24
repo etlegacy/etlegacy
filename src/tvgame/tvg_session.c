@@ -78,8 +78,8 @@ void TVG_WriteClientSessionData(gclient_t *client, qboolean restart)
 	cJSON_AddNumberToObject(root, "shoutcaster", client->sess.shoutcaster);
 
 	cJSON_AddNumberToObject(root, "muted", client->sess.muted);
-	cJSON_AddNumberToObject(root, "ignoreClients1", client->sess.ignoreClients[0]);
-	cJSON_AddNumberToObject(root, "ignoreClients2", client->sess.ignoreClients[1]);
+	//cJSON_AddNumberToObject(root, "ignoreClients1", client->sess.ignoreClients[0]);
+	//cJSON_AddNumberToObject(root, "ignoreClients2", client->sess.ignoreClients[1]);
 	cJSON_AddNumberToObject(root, "enterTime", client->pers.enterTime);
 	cJSON_AddNumberToObject(root, "userSpawnPointValue", restart ? client->sess.userSpawnPointValue : 0);
 
@@ -119,9 +119,9 @@ void TVG_ReadSessionData(gclient_t *client)
 	client->sess.referee            = Q_ReadIntValueJson(root, "referee");
 	client->sess.shoutcaster        = Q_ReadIntValueJson(root, "shoutcaster");
 
-	client->sess.muted               = Q_ReadIntValueJson(root, "muted");
-	client->sess.ignoreClients[0]    = Q_ReadIntValueJson(root, "ignoreClients1");
-	client->sess.ignoreClients[1]    = Q_ReadIntValueJson(root, "ignoreClients2");
+	client->sess.muted = Q_ReadIntValueJson(root, "muted");
+	//client->sess.ignoreClients[0]    = Q_ReadIntValueJson(root, "ignoreClients1");
+	//client->sess.ignoreClients[1]    = Q_ReadIntValueJson(root, "ignoreClients2");
 	client->pers.enterTime           = Q_ReadIntValueJson(root, "enterTime");
 	client->sess.userSpawnPointValue = Q_ReadIntValueJson(root, "userSpawnPointValue");
 
@@ -152,7 +152,7 @@ void TVG_InitSessionData(gclient_t *client, const char *userinfo)
 
 	sess->userSpawnPointValue = 0;
 
-	Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
+	//Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
 
 	sess->muted = qfalse;
 

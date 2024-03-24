@@ -39,6 +39,7 @@
 
 #ifndef DEDICATED
 #include "../sys/sys_local.h"
+#include "../sdl/sdl_defs.h"
 #include "../client/client.h"
 #endif
 #include "../server/server.h"
@@ -267,7 +268,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	tmpMsg = Q_Extended_To_UTF8(msg);
 	if (tmpMsg != msg)
 	{
-		strcpy(msg, tmpMsg);
+		Q_strncpyz(msg, tmpMsg, sizeof(buffer) - (msg - buffer));
 	}
 
 	// echo to console if we're not a dedicated server
@@ -1440,7 +1441,7 @@ char *CopyString(const char *in)
 	}
 	len = strlen(in) + 1;
 	out = S_Malloc(len);
-	strncpy(out, in, len);
+	Q_strncpyz(out, in, len);
 	return out;
 }
 
@@ -2327,7 +2328,8 @@ sysEvent_t Com_GetSystemEvent(void)
 
 		len = strlen(s) + 1;
 		b   = Z_Malloc(len);
-		strcpy(b, s);
+
+		Q_strncpyz(b, s, len);
 		Com_QueueEvent(0, SE_CONSOLE, 0, 0, len, b);
 	}
 
@@ -2945,6 +2947,7 @@ void Com_Init(char *commandLine)
 	//
 	// no need to latch this in ET, our recoil is framerate independant
 	com_maxfps = Cvar_Get("com_maxfps", "125", CVAR_ARCHIVE /*|CVAR_LATCH*/);
+	Cvar_CheckRange(com_maxfps, 20, 500, qtrue);
 
 	com_developer = Cvar_Get("developer", "0", CVAR_TEMP);
 	com_logfile   = Cvar_Get("logfile", "0", CVAR_TEMP);
@@ -3370,11 +3373,6 @@ void Com_Frame(void)
 	if (com_speeds->integer)
 	{
 		timeBeforeFirstEvents = Sys_Milliseconds();
-	}
-
-	if (!com_dedicated->integer && !com_timedemo->integer && !com_developer->integer)
-	{
-		Cvar_CheckRange(com_maxfps, 20, 333, qtrue);
 	}
 
 	// we may want to spin here if things are going too fast

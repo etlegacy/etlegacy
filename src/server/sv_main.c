@@ -44,6 +44,7 @@ server_t       sv;                    // local server
 svclientActive_t     svcl;
 svclientConnection_t svclc;
 svclientStatic_t     svcls;
+serverMessageQueue_t *svMsgQueueHead, *svMsgQueueTail;
 #endif // DEDICATED
 vm_t *gvm = NULL;                     // game virtual machine
 
@@ -135,6 +136,9 @@ cvar_t *sv_etltv_password;
 cvar_t *sv_etltv_autorecord;
 cvar_t *sv_etltv_autoplay;
 cvar_t *sv_etltv_clientname;
+cvar_t *sv_etltv_delay;
+cvar_t *sv_etltv_shownet;
+cvar_t *sv_etltv_queue_ms;
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -826,7 +830,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 		return;
 	}
 
-	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+	Q_strncpyz(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), sizeof(infostring));
 
 	// echo back the parameter to status. so master servers can use it as a challenge
 	// to prevent timed spoofed reply packets that add ghost servers
@@ -850,7 +854,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 				break;      // can't hold any more
 			}
 
-			strcpy(status + statusLength, player);
+			Q_strcat(status, sizeof(status), player);
 			statusLength += playerLength;
 		}
 	}

@@ -464,6 +464,13 @@ typedef int clipHandle_t;
  */
 #define CHECKBITWISE(x, y) (((x) & (y)) == (y))
 
+#ifndef SOURCE_PATH_SIZE
+#define SOURCE_PATH_SIZE 0
+#endif
+// This is a hack to get the filename without the path (this should be optimized out by the compiler)
+#define ETL_FILENAME ((__FILE__) + (SOURCE_PATH_SIZE))
+// If we only want the filename without the path, we can use the possibly supported __FILE_NAME__ macro (gcc & clang)
+
 // We need to use EXPAND because the Microsoft MSVC preprocessor does not expand the va_args the same way as other preprocessors
 // http://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly
 #define EXPAND(x) x
@@ -617,7 +624,7 @@ typedef enum
 //#define UI_MENUFULL     0x00080000
 //#define UI_SMALLFONT75  0x00100000
 
-#ifdef ETLEGACY_DEBUG
+#if defined(ETLEGACY_DEBUG) && !defined(HUNK_DEBUG)
 #define HUNK_DEBUG
 #endif
 
@@ -633,7 +640,7 @@ typedef enum
 } ha_pref;
 
 #ifdef HUNK_DEBUG
-#define Hunk_Alloc(size, preference)              Hunk_AllocDebug(size, preference, # size, __FILE__, __LINE__)
+#define Hunk_Alloc(size, preference)              Hunk_AllocDebug(size, preference, # size, ETL_FILENAME, __LINE__)
 
 void *Hunk_AllocDebug(size_t size, ha_pref preference, char *label, char *file, int line);
 
@@ -762,7 +769,7 @@ void SkipBracedSection(char **program);
 void SkipBracedSection_Depth(char **program, int depth);    ///< start at given depth if already
 void SkipRestOfLine(char **data);
 
-qboolean ParseKeyValue(char **buf_p, char *key, char *value, char separator);
+//qboolean ParseKeyValue(char **buf_p, char *key, char *value, char separator);
 
 void Parse1DMatrix(char **buf_p, int x, float *m);
 
@@ -2078,7 +2085,7 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 // #define Q_sscanf(str, ...) sscanf(str, __VA_ARGS__)
 
 #ifdef ETLEGACY_DEBUG
-#define Q_sscanf(str, fmt, ...) Q_sscanfc(str, PP_NARG_FAST(__VA_ARGS__), __FILE__, __LINE__, fmt, __VA_ARGS__)
+#define Q_sscanf(str, fmt, ...) Q_sscanfc(str, PP_NARG_FAST(__VA_ARGS__), ETL_FILENAME, __LINE__, fmt, __VA_ARGS__)
 static ID_INLINE int Q_sscanfc(const char *str, int count, const char *file, int line, const char *fmt, ...)
 #else
 #define Q_sscanf(str, fmt, ...) Q_sscanfc(str, PP_NARG_FAST(__VA_ARGS__), fmt, __VA_ARGS__)

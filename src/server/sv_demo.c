@@ -1621,7 +1621,7 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		{
 			// if the client changed team, we manually issue a team change (workaround by using a clientCommand team)
 
-			char svdnewteamstr[TEAM_COMMAND_LENGTH] = { 0 };
+			char *svdnewteamstr;
 
 			// FIXME: selecting medic because of possible class and weapon restrictions.
 			// use client->sess.playerType from configstring (key = c) for class, client->sess.playerWeapon (key = w) for weapon, and client->sess.playerWeapon2 (key = sw) for secondary weapon
@@ -1629,17 +1629,17 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 			switch (svdnewteam)
 			{
 			case TEAM_ALLIES:
-				strcpy(svdnewteamstr, "allies 1 8 7");
+				svdnewteamstr = "allies 1 8 7";
 				break;
 			case TEAM_AXIS:
-				strcpy(svdnewteamstr, "axis 1 3 2");
+				svdnewteamstr = "axis 1 3 2";
 				break;
 			case TEAM_SPECTATOR:
-				strcpy(svdnewteamstr, "spectator");
+				svdnewteamstr = "spectator";
 				break;
 			case TEAM_FREE:
 			default:
-				strcpy(svdnewteamstr, "free");
+				svdnewteamstr = "free";
 				break;
 			}
 

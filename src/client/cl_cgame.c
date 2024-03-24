@@ -44,6 +44,7 @@ static ext_trap_keys_t cg_extensionTraps[] =
 {
 	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
 	{ "trap_CommandComplete_Legacy", CG_COMMAND_COMPLETE, qfalse },
+	{ "trap_CmdBackup_Ext_Legacy",   CG_CMDBACKUP_EXT,    qfalse },
 	{ NULL,                          -1,                  qfalse }
 };
 
@@ -89,12 +90,12 @@ qboolean CL_GetUserCmd(int cmdNumber, usercmd_t *ucmd)
 
 	// the usercmd has been overwritten in the wrapping
 	// buffer because it is too far out of date
-	if (cmdNumber <= cl.cmdNumber - CMD_BACKUP)
+	if (cmdNumber <= cl.cmdNumber - cl.cmdBackup)
 	{
 		return qfalse;
 	}
 
-	*ucmd = cl.cmds[cmdNumber & CMD_MASK];
+	*ucmd = cl.cmds[cmdNumber & cl.cmdMask];
 
 	return qtrue;
 }
@@ -379,7 +380,7 @@ rescan:
 		// allow server to indicate why they were disconnected
 		if (argc >= 2)
 		{
-			Com_Error(ERR_SERVERDISCONNECT, "%s", va("Server Disconnected - %s", Cmd_Argv(1)));
+			Com_Error(ERR_SERVERDISCONNECT, "Server Disconnected - %s", Cmd_Argv(1));
 		}
 		else
 		{
@@ -416,7 +417,7 @@ rescan:
 		{
 			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING");
 		}
-		strcat(bigConfigString, s);
+		Q_strcat(bigConfigString, sizeof(bigConfigString), s);
 		return qfalse;
 	}
 
@@ -427,8 +428,8 @@ rescan:
 		{
 			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING");
 		}
-		strcat(bigConfigString, s);
-		strcat(bigConfigString, "\"");
+		Q_strcat(bigConfigString, sizeof(bigConfigString), s);
+		Q_strcat(bigConfigString, sizeof(bigConfigString), "\"");
 		s = bigConfigString;
 		goto rescan;
 	}
@@ -1066,6 +1067,11 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 
 	case CG_COMMAND_COMPLETE:
 		Field_CompleteModSuggestion(VMA(1));
+		return 0;
+
+	case CG_CMDBACKUP_EXT:
+		cl.cmdBackup = CMD_BACKUP;
+		cl.cmdMask   = CMD_MASK;
 		return 0;
 
 	default:

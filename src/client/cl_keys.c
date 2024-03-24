@@ -1126,7 +1126,7 @@ void Key_Unbindall_f(void)
 void Key_Bind_f(void)
 {
 	int  i, c, b;
-	char cmd[1024];
+	char cmd[MAX_CMD];
 
 	c = Cmd_Argc();
 
@@ -1163,7 +1163,7 @@ void Key_Bind_f(void)
 		Q_strcat(cmd, sizeof(cmd), Cmd_Argv(i));
 		if (i != (c - 1))
 		{
-			strcat(cmd, " ");
+			Q_strcat(cmd, sizeof(cmd), " ");
 		}
 	}
 

@@ -1933,7 +1933,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	if (glUnlockArraysEXT)
 	{
 		glUnlockArraysEXT();
-		Ren_LogComment("glUnlockArraysEXT\n")
+		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 }
 

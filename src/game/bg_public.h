@@ -2133,6 +2133,8 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
 
 #define MAX_CAMPAIGNS_TEXT  8192
 
+#define MAX_PRECACHED_FXSOUNDS 3
+
 /**
  * @enum footstep_t
  * @brief
@@ -2629,6 +2631,7 @@ bg_playerclass_t *BG_GetPlayerClassInfo(int team, int cls);
 bg_playerclass_t *BG_PlayerClassForPlayerState(playerState_t *ps);
 qboolean BG_ClassHasWeapon(bg_playerclass_t *classInfo, weapon_t weap);
 qboolean BG_WeaponIsPrimaryForClassAndTeam(int classnum, team_t team, weapon_t weapon);
+weapon_t BG_GetBestSecondaryWeapon(int classNum, team_t team, weapon_t primaryWeapon, int *skills);
 int BG_ClassWeaponCount(bg_playerclass_t *classInfo, team_t team);
 const char *BG_ShortClassnameForNumber(int classNum);
 const char *BG_ClassnameForNumber(int classNum);

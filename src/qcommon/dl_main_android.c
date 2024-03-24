@@ -198,7 +198,7 @@ static void DL_FreeRequest(webRequest_t *request)
 	Com_Dealloc(request);
 }
 
-unsigned int DL_BeginDownload(const char *localName, const char *remoteName, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
+unsigned int DL_BeginDownload(const char *localName, const char *remoteName, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
 	webRequest_t *request;
 	char         referer[MAX_STRING_CHARS + 5 /*"et://"*/];
@@ -221,8 +221,9 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 		return 0;
 	}
 
-	request     = DL_CreateRequest();
-	request->id = FILE_DOWNLOAD_ID; // magical package download id
+	request           = DL_CreateRequest();
+	request->id       = FILE_DOWNLOAD_ID; // magical package download id
+	request->userData = userData;
 	Q_strncpyz(request->url, remoteName, ARRAY_LEN(request->url));
 
 	request->data.fileHandle = Sys_FOpen(localName, "wb");
@@ -236,7 +237,7 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, web
 	jobject singleton = DL_HandleInit();
 
 	/* ET://ip:port */
-	strcpy(referer, "et://");
+	Q_strncpyz(referer, "et://", sizeof(referer));
 	Q_strncpyz(referer + 5, Cvar_VariableString("cl_currentServerIP"), MAX_STRING_CHARS);
 
 	request->complete_clb = complete;

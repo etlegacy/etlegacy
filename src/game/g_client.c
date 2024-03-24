@@ -3526,17 +3526,17 @@ void ClientDisconnect(int clientNum)
 
 	// send effect if they were completely connected
 	if (ent->client->pers.connected == CON_CONNECTED
-	    && ent->client->sess.sessionTeam != TEAM_SPECTATOR
-	    && !(ent->client->ps.pm_flags & PMF_LIMBO))
+		&& ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
+		if (!(ent->client->ps.pm_flags & PMF_LIMBO))
+		{
+			// They don't get to take powerups with them!
+			// Especially important for stuff like CTF flags
+			TossWeapons(ent);
+			G_DropItems(ent);
+		}
 
-		// They don't get to take powerups with them!
-		// Especially important for stuff like CTF flags
-		TossWeapons(ent);
-
-		G_DropItems(ent);
-
-		// Log stats too
+		// Log stats
 		G_LogPrintf("WeaponStats: %s\n", G_createStats(ent));
 	}
 

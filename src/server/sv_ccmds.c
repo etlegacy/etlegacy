@@ -443,7 +443,7 @@ void SV_TempBan(client_t *client, int length)
 
 	svs.tempBans[slot].adr     = client->netchan.remoteAddress;
 	svs.tempBans[slot].endtime = svs.time + length * 1000;
-	Q_strcpy(svs.tempBans[slot].guid, client->guid);
+	Q_strncpyz(svs.tempBans[slot].guid, client->guid, sizeof(svs.tempBans[slot].guid));
 }
 
 /**
@@ -583,7 +583,7 @@ static void SV_ConSay_f(void)
 		return;
 	}
 
-	Q_strcpy(text, "console: ");
+	Q_strncpyz(text, "console: ", sizeof(text));
 
 	if (*p == '"')
 	{
@@ -591,7 +591,7 @@ static void SV_ConSay_f(void)
 		p[strlen(p) - 1] = '\0';
 	}
 
-	Q_strcat(text, 1024, p);
+	Q_strcat(text, sizeof(text), p);
 
 	SV_SendServerCommand(NULL, "chat \"%s\"", text);
 }

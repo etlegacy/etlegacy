@@ -32,11 +32,7 @@
         <category>ActionGame</category>
     </categories>
 
-    <mimetypes>
-        <mimetype>x-scheme-handler/et</mimetype>
-    </mimetypes>
-
-    <screenshots>
+	<screenshots>
         <screenshot type="default">
             <image>https://mirror.etlegacy.com/metainfo/screen-ETL-001.jpg</image>
             <caption>Allies soldiers attacking a bunker complex</caption>

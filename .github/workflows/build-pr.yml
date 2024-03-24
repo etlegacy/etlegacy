@@ -1,0 +1,230 @@
+# ______   _______   _
+#|  ____| |__   __| | |
+#| |__       | |    | |        ___    __ _    __ _    ___   _   _
+#|  __|      | |    | |       / _ \  / _` |  / _` |  / __| | | | |
+#| |____     | |    | |____  |  __/ | (_| | | (_| | | (__  | |_| |
+#|______|    |_|    |______|  \___|  \__, |  \__,_|  \___|  \__, |
+#                                     __/ |                  __/ |
+#                                    |___/                  |___/
+# 2024 Legacy team
+name: ETLBuildPR
+
+on:
+  pull_request:
+    branches: [ master ]
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+
+# Try to figure out the build version information only once
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      describe: ${{ steps.git.outputs.describe }}
+      tag: ${{ steps.git.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Fetch git version information
+        id: git
+        run: |
+          git fetch --tags --force
+          git_describe=$(git describe --abbrev=7 2>/dev/null | awk '{$1=$1};1')
+          git_tag=$(git describe --abbrev=0 2>/dev/null | awk '{$1=$1};1')
+          echo "Version info: $git_describe ?? $git_tag"
+          echo "describe=$git_describe" >> "$GITHUB_OUTPUT"
+          echo "tag=$git_tag" >> "$GITHUB_OUTPUT"
+
+# Run the build on all the current platforms
+  lnx64:
+    runs-on: ubuntu-20.04
+    needs: [ version ]
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          run: |
+            git config --global --add safe.directory /code
+            ./easybuild.sh build -64
+
+      - name: Change Owner of Container Working Directory
+        run: |
+          action_name=$(whoami)
+          action_group=$(groups $action_name | awk '{print $3}')
+          sudo chown $action_name:$action_group -R .
+
+      - name: Generate packages
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          run: |
+            cd build/
+            cpack
+
+  lnx32:
+    runs-on: ubuntu-20.04
+    needs: [ version ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          run: |
+            git config --global --add safe.directory /code
+            ./easybuild.sh build -32
+
+      - name: Change Owner of Container Working Directory
+        run: |
+          action_name=$(whoami)
+          action_group=$(groups $action_name | awk '{print $3}')
+          sudo chown $action_name:$action_group -R .
+
+      - name: Generate packages
+        uses: addnab/docker-run-action@v3
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          run: |
+            cd build/
+            cpack
+
+  lnx-aarch64:
+    runs-on: ubuntu-latest
+    needs: [ version ]
+    container:
+      image: etlegacy/lnx-aarch64-build
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        run: |
+          ./easybuild.sh build -RPIT -ninja
+
+      - name: Generate packages
+        shell: bash
+        working-directory: build
+        run: cpack
+
+  osx:
+    runs-on: macos-12
+    needs: [ version ]
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          brew bundle
+          brew install freetype librsvg graphicsmagick imagemagick
+
+      - name: Build
+        env:
+          SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+          DEVELOPER_DIR: /Library/Developer/CommandLineTools
+        shell: bash
+        run: |
+          ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
+
+      - name: Generate packages
+        shell: bash
+        run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
+
+  win:
+    runs-on: windows-2019
+    needs: [ version ]
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        shell: cmd
+        run: |
+          call .\easybuild.bat build
+
+      - name: Generate packages
+        shell: cmd
+        working-directory: build
+        run: cpack
+
+  win64:
+    runs-on: windows-2019
+    needs: [ version ]
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        shell: cmd
+        run: |
+          call .\easybuild.bat build -64
+
+      - name: Generate packages
+        shell: cmd
+        working-directory: build
+        run: cpack
+
+  android:
+    runs-on: ubuntu-20.04
+    env:
+      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
+      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+    needs: [ version ]
+    container:
+      image: etlegacy/android-build
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Android Repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build and Generate Package
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          ./gradlew clean assembleDebug
+          ls -R
+
+      - name: Rename APK
+        run: |
+          for FILE in ./app/build/outputs/apk/debug/*; do mv $FILE ${FILE%-*}.apk; done
+          ls app/build/outputs/apk/debug
+

@@ -8,6 +8,9 @@ IF(NOT CMAKE_BUILD_TYPE)
 	MESSAGE("No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}")
 ENDIF()
 
+string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
+add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
+
 # set ETLEGACY_DEBUG definition for debug build type
 # and set up properties to check if the build is visual studio or nmake on windows
 string(TOUPPER "${CMAKE_BUILD_TYPE}" buildtype_upper)

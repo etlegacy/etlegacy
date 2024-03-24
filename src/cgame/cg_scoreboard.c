@@ -944,7 +944,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 char *CG_FormatMapBias(float mapProb, team_t team)
 {
 	char  *suffix;
-	float mapBias = 100.f * ((team == TEAM_AXIS) ? (0.5f - mapProb) : (mapProb - 0.5f));
+	float mapBias = 100.f * ((team == TEAM_AXIS) ? (mapProb - 0.5f) : (0.5f - mapProb));
 
 	if (mapBias > 0.f)
 	{

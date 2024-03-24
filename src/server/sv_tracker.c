@@ -94,10 +94,12 @@ void Tracker_Init(void)
 	expectnum = 0;
 
 	Com_Printf("Resolving %s\n", tracker);
-	if (!NET_StringToAdr(tracker, &addr, NA_IP)) {
+	if (!NET_StringToAdr(tracker, &addr, NA_IP))
+	{
 		Com_Printf("Couldn't resolve address: %s\n", tracker);
 	}
-	else {
+	else
+	{
 		Com_Printf("%s resolved to %i.%i.%i.%i:%i\n", tracker, addr.ip[0], addr.ip[1], addr.ip[2], addr.ip[3], BigShort(addr.port));
 	}
 	Com_Printf("Tracker: Server communication enabled.\n");
@@ -232,17 +234,19 @@ void Tracker_MapEnd(void)
 char *Tracker_createClientInfo(int clientNum)
 {
 	playerState_t *ps;
-	int playerClass;
+	int           playerClass;
 	ps = SV_GameClientNum(clientNum);
 
 	// PauluzzNL
 	// The indexes are different between mods, most mods use the default etmain value of 5 for STAT_PLAYER_CLASS, legacy mod uses index 4.
 	// may need to modify for more mods later
-	char* modName = Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "gamename");
-	if (Q_strncmp(modName, "legacy", 6) == 0) {
+	char *modName = Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "gamename");
+	if (Q_strncmp(modName, "legacy", 6) == 0)
+	{
 		playerClass = ps->stats[STAT_PLAYER_CLASS];
 	}
-	else {
+	else
+	{
 		playerClass = ps->stats[5];
 	}
 	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], playerClass, svs.clients[clientNum].name);
@@ -262,10 +266,10 @@ void Tracker_requestWeaponStats(void)
 		return;
 	}
 
-	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+	Q_strncpyz(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), sizeof(infostring));
 	P = Info_ValueForKey(infostring, "P");
 
-	strcpy(expect, "ws");
+	Q_strncpyz(expect, "ws", sizeof(expect));
 	for (i = 0; i < sv_maxclients->value; i++)
 	{
 		if (svs.clients[i].state == CS_ACTIVE)
@@ -371,8 +375,8 @@ qboolean Tracker_catchServerCommand(int clientNum, char *msg)
 		expectnum--;
 		if (expectnum == 0)
 		{
-			strcpy(expect, "");
-			querycl = -1;
+			expect[0] = 0;
+			querycl   = -1;
 		}
 
 		slot = 0;
@@ -405,18 +409,21 @@ void Tracker_catchBotConnect(int clientNum)
  *
  * We prefer to use original cl_guid, but some mods has their own guid values
  */
-char* Tracker_getGUID(client_t* cl)
+char * Tracker_getGUID(client_t *cl)
 {
-	char* cl_guid = Info_ValueForKey(cl->userinfo, "cl_guid");
-	if (strcmp("", cl_guid) != 0 && strcmp("unknown", cl_guid) != 0) {
+	char *cl_guid = Info_ValueForKey(cl->userinfo, "cl_guid");
+	if (strcmp("", cl_guid) != 0 && strcmp("unknown", cl_guid) != 0)
+	{
 		return cl_guid;
 	}
-	else {
+	else
+	{
 		if (*Info_ValueForKey(cl->userinfo, "n_guid"))
 		{
 			return Info_ValueForKey(cl->userinfo, "n_guid");
 		}
-		else if (*Info_ValueForKey(cl->userinfo, "sil_guid")) {
+		else if (*Info_ValueForKey(cl->userinfo, "sil_guid"))
+		{
 			return Info_ValueForKey(cl->userinfo, "sil_guid");
 		}
 		else
