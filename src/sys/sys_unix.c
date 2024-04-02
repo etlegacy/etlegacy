@@ -380,7 +380,11 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
  */
 qboolean Sys_Mkdir(const char *path)
 {
+#ifdef __ANDROID__
+    int result = mkdir(path, 0777);
+#else
 	int result = mkdir(path, 0750);
+#endif
 
 	if (result != 0)
 	{
