@@ -156,6 +156,7 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 	MSG_WriteBits(msg, (MAX_GENTITIES - 1), GENTITYNUM_BITS);       // end of packetentities
 }
 
+#ifdef DEDICATED
 /**
 * @brief Writes delta updates of playerstates to the message.
 * @param[in] client
@@ -180,28 +181,57 @@ static void SV_ETTV_EmitPlayerstates(client_t *client, msg_t *msg)
 
 	MSG_WriteByte(msg, svc_ettv_playerstates);
 
-	for (i = 0; i < sv_maxclients->integer; i++)
+	if (!svcls.isTVGame)
 	{
-		cl             = &svs.clients[i];
-		frame[i].valid = qfalse;
-
-		if (cl->state == CS_ACTIVE && client != cl)
+		for (i = 0; i < sv_maxclients->integer; i++)
 		{
-			// clientnum
-			MSG_WriteByte(msg, i);
+			cl             = &svs.clients[i];
+			frame[i].valid = qfalse;
 
-			frame[i].ps    = *SV_GameClientNum(i);
-			frame[i].valid = qtrue;
-
-			if (!oldframe || !oldframe[i].valid)
+			if (cl->state == CS_ACTIVE && client != cl)
 			{
-				MSG_WriteDeltaPlayerstate(msg, NULL, &frame[i].ps);
-				//Com_DPrintf(">>> [CL %d] Sent PS baseline\n", i);
+				// clientnum
+				MSG_WriteByte(msg, i);
+
+				frame[i].ps    = *SV_GameClientNum(i);
+				frame[i].valid = qtrue;
+
+				if (!oldframe || !oldframe[i].valid)
+				{
+					MSG_WriteDeltaPlayerstate(msg, NULL, &frame[i].ps);
+					//Com_DPrintf(">>> [CL %d] Sent PS baseline\n", i);
+				}
+				else
+				{
+					MSG_WriteDeltaPlayerstate(msg, &oldframe[i].ps, &frame[i].ps);
+					//Com_DPrintf(">>> [CL %d] Sent PS delta\n", i);
+				}
 			}
-			else
+		}
+	}
+	else
+	{
+		for (i = 0; i < MAX_CLIENTS; i++)
+		{
+			frame[i].valid = qfalse;
+
+			if (SV_CL_GetPlayerstate(i, &frame[i].ps))
 			{
-				MSG_WriteDeltaPlayerstate(msg, &oldframe[i].ps, &frame[i].ps);
-				//Com_DPrintf(">>> [CL %d] Sent PS delta\n", i);
+				// clientnum
+				MSG_WriteByte(msg, i);
+
+				frame[i].valid = qtrue;
+
+				if (!oldframe || !oldframe[i].valid)
+				{
+					MSG_WriteDeltaPlayerstate(msg, NULL, &frame[i].ps);
+					//Com_DPrintf(">>> [CL %d] Sent PS baseline\n", i);
+				}
+				else
+				{
+					MSG_WriteDeltaPlayerstate(msg, &oldframe[i].ps, &frame[i].ps);
+					//Com_DPrintf(">>> [CL %d] Sent PS delta\n", i);
+				}
 			}
 		}
 	}
@@ -209,6 +239,7 @@ static void SV_ETTV_EmitPlayerstates(client_t *client, msg_t *msg)
 	// end of svc_ettv_playerstates
 	MSG_WriteByte(msg, 255);
 }
+#endif // DEDICATED
 
 /**
  * @brief SV_WriteSnapshotToClient
@@ -310,10 +341,12 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	// delta encode the entities
 	SV_EmitPacketEntities(client, oldframe, frame, msg);
 
+#ifdef DEDICATED
 	if (client->ettvClient && client->state > CS_ZOMBIE)
 	{
 		SV_ETTV_EmitPlayerstates(client, msg);
 	}
+#endif // DEDICATED
 
 	client->parseEntitiesNum += frame->num_entities;
 
