@@ -1204,7 +1204,11 @@ qboolean TVG_Cmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, tvcmd_refere
 	if (level.cmds.impkdValid)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.impkd[0]);
-		trap_SendServerCommand(client - level.clients, level.cmds.impkd[1]);
+
+		if (level.mod & LEGACY_MOD)
+		{
+			trap_SendServerCommand(client - level.clients, level.cmds.impkd[1]);
+		}
 	}
 
 	return qtrue;
