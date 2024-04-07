@@ -126,7 +126,7 @@ void SV_CL_SystemInfoChanged(void)
 /**
  * @brief SV_CL_ConfigstringInfoChanged update cvars based on configstring from master
  */
-static void SV_CL_ConfigstringInfoChanged(int csnum)
+void SV_CL_ConfigstringInfoChanged(int csnum)
 {
 	char       *cs;
 	const char *s;
@@ -148,8 +148,7 @@ static void SV_CL_ConfigstringInfoChanged(int csnum)
 
 		if (csnum == CS_SERVERINFO)
 		{
-			if (!Q_strncmp(key, "sv_", 3) || !Q_stricmp(key, "protocol") || !Q_stricmp(key, "version") ||
-			    !Q_stricmp(key, "gamename") || !Q_stricmp(key, "g_needpass") || !Q_stricmp(key, "g_password"))
+			if (!Q_strncmp(key, "sv_", 3) || !Q_stricmp(key, "g_needpass") || !Q_stricmp(key, "g_password"))
 			{
 				continue;
 			}
@@ -157,7 +156,14 @@ static void SV_CL_ConfigstringInfoChanged(int csnum)
 
 		if ((cvar_flags = Cvar_Flags(key)) & CVAR_NONEXISTENT)
 		{
-			Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM);
+			if (csnum == CS_SERVERINFO)
+			{
+				Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM | CVAR_SERVERINFO);
+			}
+			else
+			{
+				Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM | CVAR_WOLFINFO);
+			}
 		}
 		else
 		{

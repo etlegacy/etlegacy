@@ -53,8 +53,7 @@ typedef struct
 	int cvarFlags;
 	int modificationCount;          // for tracking changes
 	qboolean trackChange;           // track this variable, and announce if changed
-	qboolean fConfigReset;          // set this var to the default on a config reset
-} cvarTable_t;
+} tvcvarTable_t;
 
 gentity_t g_entities[MAX_GENTITIES];
 gclient_t *g_clients;
@@ -71,546 +70,157 @@ const char *gameNames[] =
 	// GT_MAX_GAME_TYPE
 };
 
-#define MAPVOTEINFO_FILE_NAME "mapvoteinfo.txt"
+vmCvar_t tvg_gametype;
 
-vmCvar_t g_gametype;
-
-vmCvar_t g_timelimit;
-vmCvar_t g_friendlyFire;
 vmCvar_t g_password;
 vmCvar_t sv_privatepassword;
-vmCvar_t g_maxclients;
-vmCvar_t g_maxGameClients;
-vmCvar_t g_minGameClients;
-vmCvar_t g_dedicated;
-vmCvar_t g_speed;
-vmCvar_t g_gravity;
-vmCvar_t g_cheats;
-vmCvar_t g_knockback;
+vmCvar_t tvg_maxclients;
+vmCvar_t tvg_dedicated;
+vmCvar_t tvg_cheats;
 
-vmCvar_t g_forcerespawn;
-vmCvar_t g_inactivity;
-vmCvar_t g_debugMove;
-vmCvar_t g_debugDamage;
+vmCvar_t tvg_inactivity;
 vmCvar_t g_debugAlloc;
 vmCvar_t g_debugBullets;
-vmCvar_t g_motd;
-#ifdef ALLOW_GSYNC
-vmCvar_t g_synchronousClients;
-#endif // ALLOW_GSYNC
-vmCvar_t g_warmup;
+vmCvar_t tvg_motd;
 
-vmCvar_t g_nextTimeLimit;
+vmCvar_t tvg_currentRound;
+vmCvar_t tvg_gamestate;
 
-vmCvar_t g_userTimeLimit;
-vmCvar_t g_userAlliedRespawnTime;
-vmCvar_t g_userAxisRespawnTime;
-vmCvar_t g_currentRound;
-vmCvar_t g_noTeamSwitching;
-vmCvar_t g_altStopwatchMode;
-vmCvar_t g_gamestate;
-vmCvar_t g_swapteams;
+vmCvar_t tvg_log;
+vmCvar_t tvg_logSync;
 
-vmCvar_t g_restarted;
-vmCvar_t g_log;
-vmCvar_t g_logSync;
+vmCvar_t tvg_voiceChatsAllowed;
 
-vmCvar_t voteFlags;
-vmCvar_t g_complaintlimit;
-vmCvar_t g_ipcomplaintlimit;
-vmCvar_t g_filtercams;
-vmCvar_t g_maxlives;
-vmCvar_t g_maxlivesRespawnPenalty;
-vmCvar_t g_voiceChatsAllowed;
-vmCvar_t g_alliedmaxlives;
-vmCvar_t g_axismaxlives;
-vmCvar_t g_fastres;
-vmCvar_t g_enforcemaxlives;
+vmCvar_t tvg_needpass;
 
-vmCvar_t g_needpass;
-vmCvar_t g_balancedteams;
-vmCvar_t g_doWarmup;
-
-vmCvar_t g_teamForceBalance;
-vmCvar_t g_banIPs;
-vmCvar_t g_filterBan;
+vmCvar_t tvg_banIPs;
+vmCvar_t tvg_filterBan;
 
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 
-vmCvar_t g_scriptName; // name of script file to run (instead of default for that map)
-
 vmCvar_t g_developer;
 
-vmCvar_t g_userAim;
-
-// multiplayer reinforcement times
-vmCvar_t g_redlimbotime;
-vmCvar_t g_bluelimbotime;
-// charge times for character class special weapons
-vmCvar_t g_medicChargeTime;
-vmCvar_t g_engineerChargeTime;
-vmCvar_t g_fieldopsChargeTime;
-vmCvar_t g_soldierChargeTime;
-vmCvar_t g_covertopsChargeTime;
-
-vmCvar_t g_antilag;
-
-vmCvar_t g_spectatorInactivity;
-vmCvar_t match_latejoin;
-vmCvar_t match_minplayers;
-vmCvar_t match_mutespecs;
-vmCvar_t match_readypercent;
-vmCvar_t match_timeoutcount;
-vmCvar_t match_timeoutlength;
-vmCvar_t match_warmupDamage;
-vmCvar_t team_maxplayers;
-vmCvar_t team_nocontrols;
+vmCvar_t tvg_spectatorInactivity;
 vmCvar_t server_motd0;
 vmCvar_t server_motd1;
 vmCvar_t server_motd2;
 vmCvar_t server_motd3;
 vmCvar_t server_motd4;
 vmCvar_t server_motd5;
-vmCvar_t vote_allow_config;
-vmCvar_t vote_allow_gametype;
-vmCvar_t vote_allow_kick;
-vmCvar_t vote_allow_map;
-vmCvar_t vote_allow_matchreset;
-vmCvar_t vote_allow_mutespecs;
-vmCvar_t vote_allow_nextmap;
-vmCvar_t vote_allow_referee;
-vmCvar_t vote_allow_shuffleteams;
-vmCvar_t vote_allow_shuffleteams_norestart;
-vmCvar_t vote_allow_swapteams;
-vmCvar_t vote_allow_friendlyfire;
-vmCvar_t vote_allow_timelimit;
-vmCvar_t vote_allow_warmupdamage;
-vmCvar_t vote_allow_antilag;
-vmCvar_t vote_allow_balancedteams;
-vmCvar_t vote_allow_muting;
-vmCvar_t vote_limit;
-vmCvar_t vote_percent;
-vmCvar_t vote_allow_surrender;
-vmCvar_t vote_allow_restartcampaign;
-vmCvar_t vote_allow_nextcampaign;
-vmCvar_t vote_allow_poll;
-vmCvar_t vote_allow_maprestart;
-vmCvar_t vote_allow_cointoss;
 
 vmCvar_t refereePassword;
-vmCvar_t shoutcastPassword;
-vmCvar_t g_debugConstruct;
-vmCvar_t g_landminetimeout;
-
-// Variable for setting the current level of debug printing/logging
-// enabled in bot scripts and regular scripts.
-vmCvar_t g_scriptDebug;
-vmCvar_t g_scriptDebugLevel;
-vmCvar_t g_scriptDebugTarget;
-vmCvar_t g_movespeed;
-
-vmCvar_t g_axismapxp;
-vmCvar_t g_alliedmapxp;
-
-vmCvar_t g_currentCampaign;
-vmCvar_t g_currentCampaignMap;
-
-// for LMS
-vmCvar_t g_axiswins;
-vmCvar_t g_alliedwins;
-vmCvar_t g_lms_teamForceBalance;
-vmCvar_t g_lms_roundlimit;
-vmCvar_t g_lms_matchlimit;
-vmCvar_t g_lms_currentMatch;
-vmCvar_t g_lms_lockTeams;
-vmCvar_t g_lms_followTeamOnly;
 
 vmCvar_t mod_version;
 vmCvar_t mod_url;
 vmCvar_t url;
-
-vmCvar_t g_debugSkills;
-vmCvar_t g_heavyWeaponRestriction;
-vmCvar_t g_autoFireteams;
-
-vmCvar_t g_nextmap;
-vmCvar_t g_nextcampaign;
-
-vmCvar_t g_disableComplaints;
-
-// zinx etpro antiwarp
-vmCvar_t g_antiwarp;
-vmCvar_t g_maxWarp;
 
 #ifdef FEATURE_LUA
 vmCvar_t lua_modules;
 vmCvar_t lua_allowedModules;
 #endif
 
-vmCvar_t g_guidCheck;
-vmCvar_t g_protect; // similar to sv_protect game cvar
-                    // 0 - no protection - default to have ref for localhost clients on listen servers
-                    // 1 - disabled auto ref for localhost clients
+vmCvar_t tvg_protect; // similar to sv_protect game cvar
+                      // 0 - no protection - default to have ref for localhost clients on listen servers
+                      // 1 - disabled auto ref for localhost clients
 
-vmCvar_t g_dropHealth;
-vmCvar_t g_dropAmmo;
-
-vmCvar_t g_shove;
-vmCvar_t g_shoveNoZ;
-
-// MAPVOTE
-vmCvar_t g_mapVoteFlags;
-vmCvar_t g_maxMapsVotedFor;
-vmCvar_t g_minMapAge;
-vmCvar_t g_excludedMaps;
-vmCvar_t g_resetXPMapCount;
-
-vmCvar_t g_campaignFile;
-
-// arty/airstrike rate limiting
-vmCvar_t team_maxAirstrikes;
-vmCvar_t team_maxArtillery;
-
-// team class/weapon limiting
-// classes
-vmCvar_t team_maxSoldiers;
-vmCvar_t team_maxMedics;
-vmCvar_t team_maxEngineers;
-vmCvar_t team_maxFieldops;
-vmCvar_t team_maxCovertops;
-// weapons
-vmCvar_t team_maxMortars;
-vmCvar_t team_maxFlamers;
-vmCvar_t team_maxMachineguns;
-vmCvar_t team_maxRockets;
-vmCvar_t team_maxRiflegrenades;
-vmCvar_t team_maxLandmines;
 // misc
 vmCvar_t team_riflegrenades;
-// skills
-vmCvar_t skill_soldier;
-vmCvar_t skill_medic;
-vmCvar_t skill_engineer;
-vmCvar_t skill_fieldops;
-vmCvar_t skill_covertops;
-vmCvar_t skill_battlesense;
-vmCvar_t skill_lightweapons;
-
-vmCvar_t g_misc;
-
-vmCvar_t g_intermissionTime;
-vmCvar_t g_intermissionReadyPercent;
-
-vmCvar_t g_mapScriptDirectory;
-vmCvar_t g_mapConfigs;
-vmCvar_t g_customConfig;
-
-vmCvar_t g_moverScale;
 
 vmCvar_t g_fixedphysics;
 vmCvar_t g_fixedphysicsfps;
-
 vmCvar_t g_pronedelay;
 
-vmCvar_t g_debugHitboxes;
-vmCvar_t g_debugPlayerHitboxes;
-
-vmCvar_t g_voting;        // see VOTEF_ defines
-
-vmCvar_t g_corpses; // dynamic body que FIXME: limit max bodies by var value
-
-// os support - this SERVERINFO cvar specifies supported client operating systems on server
-// supported platforms are in the 'oss_t' enum
-vmCvar_t g_oss;
-
-vmCvar_t g_realHead; // b_realHead functionality from ETPro
-
 vmCvar_t sv_fps;
-vmCvar_t g_skipCorrection;
 
-vmCvar_t g_extendedNames;
-
-vmCvar_t g_debugForSingleClient;
+vmCvar_t tvg_extendedNames;
 
 // flood protection
-vmCvar_t g_floodProtection;
-vmCvar_t g_floodLimit;
-vmCvar_t g_floodWait;
+vmCvar_t tvg_floodProtection;
+vmCvar_t tvg_floodLimit;
+vmCvar_t tvg_floodWait;
 
 vmCvar_t tvg_queue_ms;
 
-cvarTable_t gameCvarTable[] =
+tvcvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
-	{ &g_cheats,                          "sv_cheats",                         "",                           0,                                               0, qfalse, qfalse },
+	{ &tvg_cheats,              "sv_cheats",               "",                           0,                                           0, qfalse },
+	{ &tvg_dedicated,           "dedicated",               "0",                          0,                                           0, qfalse,},
 
-	// noset vars
-	{ NULL,                               "gamename",                          MODNAME,                      CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
-	{ NULL,                               "gamedate",                          __DATE__,                     CVAR_ROM,                                        0, qfalse, qfalse },
-	{ &g_restarted,                       "g_restarted",                       "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
-	{ NULL,                               "sv_mapname",                        "",                           CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
+	{ &sv_fps,                  "sv_fps",                  "20",                         CVAR_SYSTEMINFO,                             0, qfalse,},
+	{ &pmove_fixed,             "pmove_fixed",             "0",                          CVAR_SYSTEMINFO | CVAR_ROM,                  0, qfalse,},
+	{ &pmove_msec,              "pmove_msec",              "8",                          CVAR_SYSTEMINFO | CVAR_ROM,                  0, qfalse,},
 
-	// latched vars
-	{ &g_gametype,                        "g_gametype",                        "4",                          CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },     // default to GT_WOLF_CAMPAIGN
+	// noset vars, server info
+	{ NULL,                     "gamenametv",              MODNAME_TV,                   CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse },
+	{ NULL,                     "gamedate",                __DATE__,                     CVAR_ROM,                                    0, qfalse },
+	{ NULL,                     "sv_mapname",              "",                           CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse },
+	{ NULL,                     "P",                       "",                           CVAR_SERVERINFO_NOUPDATE,                    0, qfalse,},
 
-	// multiplayer stuffs
-	{ &g_redlimbotime,                    "g_redlimbotime",                    "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
-	{ &g_bluelimbotime,                   "g_bluelimbotime",                   "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
-	{ &g_medicChargeTime,                 "g_medicChargeTime",                 "45000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
-	{ &g_engineerChargeTime,              "g_engineerChargeTime",              "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
-	{ &g_fieldopsChargeTime,              "g_fieldopsChargeTime",              "40000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
-	{ &g_soldierChargeTime,               "g_soldierChargeTime",               "20000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
-	{ &g_covertopsChargeTime,             "g_covertopsChargeTime",             "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
-	{ &g_landminetimeout,                 "g_landminetimeout",                 "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue  },
+	// server info
+	{ &tvg_gametype,            "g_gametype",              "4",                          CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse },                              // default to GT_WOLF_CAMPAIGN
+	{ &tvg_needpass,            "g_needpass",              "0",                          CVAR_SERVERINFO | CVAR_ROM,                  0, qtrue, },
 
-	{ &g_oss,                             "g_oss",                             "0",                          CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
+	{ &tvg_maxclients,          "sv_maxclients",           "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse },
 
-	{ &g_maxclients,                      "sv_maxclients",                     "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
-	{ &g_maxGameClients,                  "g_maxGameClients",                  "0",                          CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
-	{ &g_minGameClients,                  "g_minGameClients",                  "8",                          CVAR_SERVERINFO,                                 0, qfalse, qfalse },
+	{ &mod_version,             "mod_version",             ETLEGACY_VERSION,             CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
+	// points to the URL for mod information, should not be modified by server admin
+	{ &mod_url,                 "mod_url",                 MODURL,                       CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
+	// configured by the server admin, points to the web pages for the server
+	{ &url,                     "URL",                     "",                           CVAR_SERVERINFO | CVAR_ARCHIVE,              0, qfalse,},
+
+	// CVAR_WOLFINFO
+	{ &tvg_currentRound,        "g_currentRound",          "0",                          CVAR_WOLFINFO | CVAR_ROM,                    0, qfalse,},
+	{ &tvg_gamestate,           "gamestate",               "-1",                         CVAR_WOLFINFO | CVAR_ROM,                    0, qfalse,},
 
 	// change anytime vars
-	{ &g_timelimit,                       "timelimit",                         "0",                          CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0, qtrue,  qfalse },
+	{ &tvg_floodProtection,     "tvg_floodProtection",     "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE,              0, qtrue, },
+	{ &tvg_floodLimit,          "tvg_floodLimit",          "5",                          CVAR_ARCHIVE,                                0, qtrue, },
+	{ &tvg_floodWait,           "tvg_floodWait",           "1000",                       CVAR_ARCHIVE,                                0, qtrue, },
+	{ &tvg_log,                 "tvg_log",                 "",                           CVAR_ARCHIVE,                                0, qfalse,},
+	{ &tvg_logSync,             "tvg_logSync",             "0",                          CVAR_ARCHIVE,                                0, qfalse,},
 
-#ifdef ALLOW_GSYNC
-	{ &g_synchronousClients,              "g_synchronousClients",              "0",                          CVAR_SYSTEMINFO | CVAR_CHEAT,                    0, qfalse, qfalse },
-#endif // ALLOW_GSYNC
+	{ &g_password,              "g_password",              "none",                       CVAR_USERINFO,                               0, qfalse,},
+	{ &sv_privatepassword,      "sv_privatepassword",      "",                           CVAR_TEMP,                                   0, qfalse,},
 
-	{ &g_friendlyFire,                    "g_friendlyFire",                    "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qtrue,  qtrue  },
+	{ &tvg_banIPs,              "tvg_banIPs",              "",                           CVAR_ARCHIVE,                                0, qfalse,},
+	{ &tvg_filterBan,           "tvg_filterBan",           "1",                          CVAR_ARCHIVE,                                0, qfalse,},
 
-	{ &g_teamForceBalance,                "g_teamForceBalance",                "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },     // merge from team arena
+	{ &tvg_inactivity,          "tvg_inactivity",          "0",                          0,                                           0, qtrue, },
+	{ &tvg_spectatorInactivity, "tvg_spectatorInactivity", "0",                          0,                                           0, qfalse,},
 
-	{ &g_warmup,                          "g_warmup",                          "60",                         CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-	{ &g_doWarmup,                        "g_doWarmup",                        "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &tvg_voiceChatsAllowed,   "tvg_voiceChatsAllowed",   "5",                          CVAR_ARCHIVE,                                0, qfalse,},
 
-	{ &g_nextTimeLimit,                   "g_nextTimeLimit",                   "0",                          CVAR_WOLFINFO,                                   0, qfalse, qfalse },
-	{ &g_currentRound,                    "g_currentRound",                    "0",                          CVAR_WOLFINFO,                                   0, qfalse, qfalse },
-	{ &g_altStopwatchMode,                "g_altStopwatchMode",                "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qtrue  },
-	{ &g_gamestate,                       "gamestate",                         "-1",                         CVAR_WOLFINFO | CVAR_ROM,                        0, qfalse, qfalse },
+	{ &refereePassword,         "refereePassword",         "none",                       0,                                           0, qfalse,},
 
-	{ &g_noTeamSwitching,                 "g_noTeamSwitching",                 "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &tvg_motd,                "tvg_motd",                "",                           CVAR_ARCHIVE,                                0, qfalse,},
+	{ &server_motd0,            "server_motd0",            " ^NEnemy Territory ^7MOTD ", 0,                                           0, qfalse,},
+	{ &server_motd1,            "server_motd1",            "",                           0,                                           0, qfalse,},
+	{ &server_motd2,            "server_motd2",            "",                           0,                                           0, qfalse,},
+	{ &server_motd3,            "server_motd3",            "",                           0,                                           0, qfalse,},
+	{ &server_motd4,            "server_motd4",            "",                           0,                                           0, qfalse,},
+	{ &server_motd5,            "server_motd5",            "",                           0,                                           0, qfalse,},
 
-	{ &g_userTimeLimit,                   "g_userTimeLimit",                   "0",                          0,                                               0, qfalse, qtrue  },
-	{ &g_userAlliedRespawnTime,           "g_userAlliedRespawnTime",           "0",                          0,                                               0, qfalse, qtrue  },
-	{ &g_userAxisRespawnTime,             "g_userAxisRespawnTime",             "0",                          0,                                               0, qfalse, qtrue  },
-
-	{ &g_swapteams,                       "g_swapteams",                       "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
-
-	{ &g_log,                             "g_log",                             "",                           CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_logSync,                         "g_logSync",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-
-	{ &g_password,                        "g_password",                        "none",                       CVAR_USERINFO,                                   0, qfalse, qfalse },
-	{ &sv_privatepassword,                "sv_privatepassword",                "",                           CVAR_TEMP,                                       0, qfalse, qfalse },
-	{ &g_banIPs,                          "g_banIPs",                          "",                           CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-
-	{ &g_filterBan,                       "g_filterBan",                       "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-
-	{ &g_dedicated,                       "dedicated",                         "0",                          0,                                               0, qfalse, qfalse },
-
-	{ &g_speed,                           "g_speed",                           "320",                        0,                                               0, qtrue,  qtrue  },
-	{ &g_gravity,                         "g_gravity",                         "800",                        0,                                               0, qtrue,  qtrue  },
-	{ &g_knockback,                       "g_knockback",                       "1000",                       0,                                               0, qtrue,  qtrue  },
-
-	{ &g_needpass,                        "g_needpass",                        "0",                          CVAR_SERVERINFO | CVAR_ROM,                      0, qtrue,  qfalse },
-	{ &g_balancedteams,                   "g_balancedteams",                   "0",                          CVAR_SERVERINFO | CVAR_ROM,                      0, qtrue,  qfalse },
-	{ &g_forcerespawn,                    "g_forcerespawn",                    "0",                          0,                                               0, qtrue,  qfalse },
-	{ &g_inactivity,                      "g_inactivity",                      "0",                          0,                                               0, qtrue,  qfalse },
-	{ &g_debugMove,                       "g_debugMove",                       "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_debugDamage,                     "g_debugDamage",                     "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
-	{ &g_debugAlloc,                      "g_debugAlloc",                      "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_debugBullets,                    "g_debugBullets",                    "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_motd,                            "g_motd",                            "",                           CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-
-	{ &voteFlags,                         "voteFlags",                         "0",                          CVAR_TEMP | CVAR_ROM | CVAR_SERVERINFO,          0, qfalse, qfalse },
-
-	{ &g_complaintlimit,                  "g_complaintlimit",                  "6",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-	{ &g_ipcomplaintlimit,                "g_ipcomplaintlimit",                "3",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-	{ &g_filtercams,                      "g_filtercams",                      "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_maxlives,                        "g_maxlives",                        "0",                          CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO,     0, qtrue,  qfalse },
-	{ &g_maxlivesRespawnPenalty,          "g_maxlivesRespawnPenalty",          "0",                          CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO,     0, qtrue,  qfalse },
-	{ &g_voiceChatsAllowed,               "g_voiceChatsAllowed",               "5",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-
-	{ &g_alliedmaxlives,                  "g_alliedmaxlives",                  "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue,  qfalse },
-	{ &g_axismaxlives,                    "g_axismaxlives",                    "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue,  qfalse },
-	{ &g_fastres,                         "g_fastres",                         "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qtrue  },     // Fast Medic Resing
-	{ &g_enforcemaxlives,                 "g_enforcemaxlives",                 "1",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },     // Gestapo enforce maxlives stuff by temp banning
-
-	{ &g_developer,                       "developer",                         "0",                          CVAR_TEMP,                                       0, qfalse, qfalse },
-	{ &g_userAim,                         "g_userAim",                         "1",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
-
-	{ &pmove_fixed,                       "pmove_fixed",                       "0",                          CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
-	{ &pmove_msec,                        "pmove_msec",                        "8",                          CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
-
-	{ &g_scriptName,                      "g_scriptName",                      "",                           CVAR_CHEAT,                                      0, qfalse, qfalse },
-
-	{ &g_antilag,                         "g_antilag",                         "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qfalse, qfalse },
-
-	{ NULL,                               "P",                                 "",                           CVAR_SERVERINFO_NOUPDATE,                        0, qfalse, qfalse },
-
-	{ &refereePassword,                   "refereePassword",                   "none",                       0,                                               0, qfalse, qfalse },
-	{ &shoutcastPassword,                 "shoutcastPassword",                 "none",                       0,                                               0, qfalse, qfalse },
-	{ &g_spectatorInactivity,             "g_spectatorInactivity",             "0",                          0,                                               0, qfalse, qfalse },
-	{ &match_latejoin,                    "match_latejoin",                    "1",                          0,                                               0, qfalse, qfalse },
-	{ &match_minplayers,                  "match_minplayers",                  MATCH_MINPLAYERS,             0,                                               0, qfalse, qfalse },
-	{ &match_mutespecs,                   "match_mutespecs",                   "0",                          0,                                               0, qfalse, qtrue  },
-	{ &match_readypercent,                "match_readypercent",                "100",                        0,                                               0, qfalse, qtrue  },
-	{ &match_timeoutcount,                "match_timeoutcount",                "3",                          0,                                               0, qfalse, qtrue  },
-	{ &match_timeoutlength,               "match_timeoutlength",               "180",                        0,                                               0, qfalse, qtrue  },
-	{ &match_warmupDamage,                "match_warmupDamage",                "1",                          0,                                               0, qfalse, qfalse },
-	{ &server_motd0,                      "server_motd0",                      " ^NEnemy Territory ^7MOTD ", 0,                                               0, qfalse, qfalse },
-	{ &server_motd1,                      "server_motd1",                      "",                           0,                                               0, qfalse, qfalse },
-	{ &server_motd2,                      "server_motd2",                      "",                           0,                                               0, qfalse, qfalse },
-	{ &server_motd3,                      "server_motd3",                      "",                           0,                                               0, qfalse, qfalse },
-	{ &server_motd4,                      "server_motd4",                      "",                           0,                                               0, qfalse, qfalse },
-	{ &server_motd5,                      "server_motd5",                      "",                           0,                                               0, qfalse, qfalse },
-	{ &team_maxplayers,                   "team_maxplayers",                   "0",                          0,                                               0, qfalse, qfalse },
-	{ &team_nocontrols,                   "team_nocontrols",                   "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_config,                 "vote_allow_config",                 "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_gametype,               "vote_allow_gametype",               "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_kick,                   "vote_allow_kick",                   "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_map,                    "vote_allow_map",                    "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_matchreset,             "vote_allow_matchreset",             "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_mutespecs,              "vote_allow_mutespecs",              "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_nextmap,                "vote_allow_nextmap",                "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_referee,                "vote_allow_referee",                "0",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_shuffleteams,           "vote_allow_shuffleteams",           "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_shuffleteams_norestart, "vote_allow_shuffleteams_norestart", "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_swapteams,              "vote_allow_swapteams",              "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_friendlyfire,           "vote_allow_friendlyfire",           "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_timelimit,              "vote_allow_timelimit",              "0",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_warmupdamage,           "vote_allow_warmupdamage",           "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_antilag,                "vote_allow_antilag",                "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_balancedteams,          "vote_allow_balancedteams",          "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_muting,                 "vote_allow_muting",                 "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_limit,                        "vote_limit",                        "5",                          0,                                               0, qfalse, qfalse },
-	{ &vote_percent,                      "vote_percent",                      "50",                         0,                                               0, qfalse, qfalse },
-	{ &vote_allow_surrender,              "vote_allow_surrender",              "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_restartcampaign,        "vote_allow_restartcampaign",        "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_nextcampaign,           "vote_allow_nextcampaign",           "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_poll,                   "vote_allow_poll",                   "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_maprestart,             "vote_allow_maprestart",             "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_cointoss,               "vote_allow_cointoss",               "1",                          0,                                               0, qfalse, qfalse },
-
-	{ &g_voting,                          "g_voting",                          "0",                          0,                                               0, qfalse, qfalse },
-
-	// state vars
-	{ &g_debugConstruct,                  "g_debugConstruct",                  "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
-
-	{ &g_scriptDebug,                     "g_scriptDebug",                     "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
-	// What level of detail do we want script printing to go to.
-	{ &g_scriptDebugLevel,                "g_scriptDebugLevel",                "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
-	{ &g_scriptDebugTarget,               "g_scriptDebugTarget",               "",                           CVAR_CHEAT,                                      0, qfalse, qfalse },
-
-	// How fast do we want Allied single player movement?
-	{ &g_movespeed,                       "g_movespeed",                       "76",                         CVAR_CHEAT,                                      0, qfalse, qfalse },
-
-	// LMS
-	{ &g_lms_teamForceBalance,            "g_lms_teamForceBalance",            "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_lms_roundlimit,                  "g_lms_roundlimit",                  "3",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_lms_matchlimit,                  "g_lms_matchlimit",                  "2",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_lms_currentMatch,                "g_lms_currentMatch",                "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
-	{ &g_lms_lockTeams,                   "g_lms_lockTeams",                   "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_lms_followTeamOnly,              "g_lms_followTeamOnly",              "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_axiswins,                        "g_axiswins",                        "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
-	{ &g_alliedwins,                      "g_alliedwins",                      "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
-	{ &g_axismapxp,                       "g_axismapxp",                       "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
-	{ &g_alliedmapxp,                     "g_alliedmapxp",                     "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
-
-	{ &g_currentCampaign,                 "g_currentCampaign",                 "",                           CVAR_WOLFINFO | CVAR_ROM,                        0, qfalse, qfalse },
-	{ &g_currentCampaignMap,              "g_currentCampaignMap",              "0",                          CVAR_WOLFINFO | CVAR_ROM,                        0, qfalse, qfalse },
-
-	{ &mod_version,                       "mod_version",                       ETLEGACY_VERSION,             CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
-	// points to the URL for mod information, should not be modified by server admin
-	{ &mod_url,                           "mod_url",                           MODURL,                       CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
-	// configured by the server admin, points to the web pages for the server
-	{ &url,                               "URL",                               "",                           CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qfalse, qfalse },
-
-	{ &g_debugSkills,                     "g_debugSkills",                     "0",                          0,                                               0, qfalse, qfalse },
-
-	{ &g_heavyWeaponRestriction,          "g_heavyWeaponRestriction",          "100",                        CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &g_autoFireteams,                   "g_autoFireteams",                   "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-
-	{ &g_nextmap,                         "nextmap",                           "",                           CVAR_TEMP,                                       0, qfalse, qfalse },
-	{ &g_nextcampaign,                    "nextcampaign",                      "",                           CVAR_TEMP,                                       0, qfalse, qfalse },
-
-	{ &g_disableComplaints,               "g_disableComplaints",               "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-
-	// zinx etpro antiwarp
-	{ &g_maxWarp,                         "g_maxWarp",                         "4",                          0,                                               0, qfalse, qfalse },
-	{ &g_antiwarp,                        "g_antiwarp",                        "1",                          0,                                               0, qfalse, qfalse },
 #ifdef FEATURE_LUA
-	{ &lua_modules,                       "lua_modules",                       "",                           0,                                               0, qfalse, qfalse },
-	{ &lua_allowedModules,                "lua_allowedModules",                "",                           0,                                               0, qfalse, qfalse },
+	{ &lua_modules,             "lua_modules",             "",                           0,                                           0, qfalse,},
+	{ &lua_allowedModules,      "lua_allowedModules",      "",                           0,                                           0, qfalse,},
 #endif
 
-	{ &g_guidCheck,                       "g_guidCheck",                       "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_protect,                         "g_protect",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_dropHealth,                      "g_dropHealth",                      "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_dropAmmo,                        "g_dropAmmo",                        "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_shove,                           "g_shove",                           "60",                         0,                                               0, qfalse, qfalse },
-	{ &g_shoveNoZ,                        "g_shoveNoZ",                        "0",                          0,                                               0, qfalse, qfalse },
+	{ &tvg_protect,             "tvg_protect",             "0",                          CVAR_ARCHIVE,                                0, qfalse,},
 
-	// MAPVOTE
-	{ &g_mapVoteFlags,                    "g_mapVoteFlags",                    "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_maxMapsVotedFor,                 "g_maxMapsVotedFor",                 "6",                          0,                                               0, qfalse, qfalse },
-	{ &g_minMapAge,                       "g_minMapAge",                       "3",                          0,                                               0, qfalse, qfalse },
-	{ &g_excludedMaps,                    "g_excludedMaps",                    "",                           0,                                               0, qfalse, qfalse },
-	{ &g_resetXPMapCount,                 "g_resetXPMapCount",                 "0",                          0,                                               0, qfalse, qfalse },
+	{ &tvg_extendedNames,       "tvg_extendedNames",       "1",                          0,                                           0, qfalse,},
 
-	{ &g_campaignFile,                    "g_campaignFile",                    "",                           0,                                               0, qfalse, qfalse },
+	// used in bg_* or g_*
+	{ &g_developer,             "developer",               "0",                          CVAR_TEMP,                                   0, qfalse,},
+	{ &g_debugAlloc,            "g_debugAlloc",            "0",                          0,                                           0, qfalse,},
+	{ &g_debugBullets,          "g_debugBullets",          "0",                          0,                                           0, qfalse,},
+	{ &team_riflegrenades,      "team_riflegrenades",      "1",                          CVAR_ROM,                                    0, qfalse,},
+	{ &g_fixedphysics,          "g_fixedphysics",          "1",                          CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
+	{ &g_fixedphysicsfps,       "g_fixedphysicsfps",       "125",                        CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
+	{ &g_pronedelay,            "g_pronedelay",            "0",                          CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
 
-	{ &team_maxAirstrikes,                "team_maxAirstrikes",                "0.0",                        0,                                               0, qfalse, qfalse },
-	{ &team_maxArtillery,                 "team_maxArtillery",                 "0.0",                        0,                                               0, qfalse, qfalse },
-	// team class/weapon limiting
-	//classes
-	{ &team_maxSoldiers,                  "team_maxSoldiers",                  "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxMedics,                    "team_maxMedics",                    "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxEngineers,                 "team_maxEngineers",                 "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxFieldops,                  "team_maxFieldops",                  "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxCovertops,                 "team_maxCovertops",                 "-1",                         0,                                               0, qfalse, qfalse },
-	//weapons
-	{ &team_maxMortars,                   "team_maxMortars",                   "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxFlamers,                   "team_maxFlamers",                   "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxMachineguns,               "team_maxMachineguns",               "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxRockets,                   "team_maxRockets",                   "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxRiflegrenades,             "team_maxRiflegrenades",             "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxLandmines,                 "team_maxLandmines",                 "10",                         0,                                               0, qfalse, qfalse },
-	//misc
-	{ &team_riflegrenades,                "team_riflegrenades",                "1",                          0,                                               0, qfalse, qfalse },
-	//skills
-	{ &skill_soldier,                     "skill_soldier",                     "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &skill_medic,                       "skill_medic",                       "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &skill_fieldops,                    "skill_fieldops",                    "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &skill_engineer,                    "skill_engineer",                    "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &skill_covertops,                   "skill_covertops",                   "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &skill_battlesense,                 "skill_battlesense",                 "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &skill_lightweapons,                "skill_lightweapons",                "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_misc,                            "g_misc",                            "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_intermissionTime,                "g_intermissionTime",                "60",                         0,                                               0, qfalse, qfalse },
-	{ &g_intermissionReadyPercent,        "g_intermissionReadyPercent",        "100",                        0,                                               0, qfalse, qfalse },
-	{ &g_mapScriptDirectory,              "g_mapScriptDirectory",              "mapscripts",                 0,                                               0, qfalse, qfalse },
-	{ &g_mapConfigs,                      "g_mapConfigs",                      "",                           0,                                               0, qfalse, qfalse },
-	{ &g_customConfig,                    "g_customConfig",                    "defaultpublic",              CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_moverScale,                      "g_moverScale",                      "1.0",                        0,                                               0, qfalse, qfalse },
-	{ &g_fixedphysics,                    "g_fixedphysics",                    "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &g_fixedphysicsfps,                 "g_fixedphysicsfps",                 "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &g_pronedelay,                      "g_pronedelay",                      "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	// Debug
-	{ &g_debugHitboxes,                   "g_debugHitboxes",                   "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
-	{ &g_debugPlayerHitboxes,             "g_debugPlayerHitboxes",             "0",                          0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
-	{ &g_debugForSingleClient,            "g_debugForSingleClient",            "-1",                         0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
-
-	{ &g_corpses,                         "g_corpses",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
-	{ &g_realHead,                        "g_realHead",                        "1",                          0,                                               0, qfalse, qfalse },
-	{ &sv_fps,                            "sv_fps",                            "20",                         CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
-	{ &g_skipCorrection,                  "g_skipCorrection",                  "1",                          0,                                               0, qfalse, qfalse },
-	{ &g_extendedNames,                   "g_extendedNames",                   "1",                          0,                                               0, qfalse, qfalse },
-
-	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
-	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-	{ &tvg_queue_ms,                      "ettv_queue_ms",                     "-1",                         CVAR_ROM,                                        0, qfalse, qfalse },
+	{ &tvg_queue_ms,            "ettv_queue_ms",           "-1",                         CVAR_ROM,                                    0, qfalse,},
 };
 
 /**
@@ -628,7 +238,6 @@ static int fActions = 0;
 void TVG_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, int serverVersion);
 void TVG_RunFrame(int levelTime);
 void TVG_ShutdownGame(int restart);
-void TVG_ParsePlatformManifest(void);
 
 /**
  * @brief G_SnapshotCallback
@@ -698,8 +307,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		int time = trap_Milliseconds();
-		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
-		TVG_ParsePlatformManifest();
+		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME_TV);
 		TVG_InitGame(arg0, arg1, arg2, arg3, arg4);
 		G_Printf("Game Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 	}
@@ -735,6 +343,8 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return -1;
 	case GAME_DEMOSTATECHANGED:
 		return 0;
+	// FIXME: unused by etltv, I don't know why ETTV and etpro tvgame has it
+	// it's not fully implemented in etltv because to my understanding it accomplishes nothing
 	case GAME_ETTV:
 		TVG_ETTV_ConfigstringPassthrough(arg0);
 		return 0;
@@ -829,7 +439,7 @@ void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
  */
 qboolean TVG_ServerIsFloodProtected(void)
 {
-	return (!g_floodProtection.integer || !g_floodWait.integer || !g_floodLimit.integer) ? qfalse : qtrue;
+	return (!tvg_floodProtection.integer || !tvg_floodWait.integer || !tvg_floodLimit.integer) ? qfalse : qtrue;
 }
 
 /**
@@ -837,13 +447,18 @@ qboolean TVG_ServerIsFloodProtected(void)
  */
 void TVG_RegisterCvars(void)
 {
-	int         i;
-	cvarTable_t *cv;
+	int           i;
+	tvcvarTable_t *cv;
 
 	G_Printf("%d cvars in use\n", gameCvarTableSize);
 
 	for (i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++)
 	{
+		if (!(level.mod & LEGACY_MOD) && (cv->vmCvar == &g_fixedphysics || cv->vmCvar == &g_fixedphysicsfps || cv->vmCvar == &g_pronedelay))
+		{
+			cv->cvarFlags &= ~CVAR_SERVERINFO;
+		}
+
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
 		if (cv->vmCvar)
 		{
@@ -857,13 +472,8 @@ void TVG_RegisterCvars(void)
  */
 void TVG_UpdateCvars(void)
 {
-	int         i;
-	cvarTable_t *cv;
-	qboolean    fToggles           = qfalse;
-	qboolean    fVoteFlags         = qfalse;
-	qboolean    chargetimechanged  = qfalse;
-	qboolean    clsweaprestriction = qfalse;
-	qboolean    skillLevelPoints   = qfalse;
+	int           i;
+	tvcvarTable_t *cv;
 
 	for (i = 0, cv = gameCvarTable ; i < gameCvarTableSize ; i++, cv++)
 	{
@@ -918,6 +528,29 @@ static ID_INLINE void TVG_SetupExtensions(void)
 extern void G_InitMemory(void);
 
 /**
+ * @brief TVG_ModCheck
+ */
+static void TVG_ModCheck(void)
+{
+	char fs_game[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("fs_game", fs_game, sizeof(fs_game));
+
+	if (!Q_stricmp(fs_game, "etjump"))
+	{
+		level.mod = ETJUMP_MOD;
+	}
+	else if (!Q_stricmp(fs_game, "etpro"))
+	{
+		level.mod = ETPRO_MOD;
+	}
+	else
+	{
+		level.mod = LEGACY_MOD;
+	}
+}
+
+/**
  * @brief TVG_InitGame
  * @param[in] levelTime
  * @param[in] randomSeed
@@ -937,16 +570,10 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	MOD_CHECK_ETLEGACY(etLegacyServer, serverVersion, level.etLegacyServer);
 
 	G_Printf("------- Game Initialization -------\n");
-	G_Printf("gamename: %s\n", MODNAME);
+	G_Printf("gamename: %s\n", MODNAME_TV);
 	G_Printf("gamedate: %s\n", __DATE__);
 
 	srand(randomSeed);
-
-	TVG_RegisterCvars();
-
-	TVG_ProcessIPBans();
-
-	G_InitMemory();
 
 	// set some level globals
 	{
@@ -957,23 +584,28 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 		level.spawning = oldspawning;
 	}
 
+	TVG_ModCheck();
+
+	TVG_RegisterCvars();
+
+	TVG_ProcessIPBans();
+
+	G_InitMemory();
+
 	TVG_SetupExtensions();
 
 	level.time      = levelTime;
 	level.startTime = levelTime;
 
-	// init the anim scripting
-	level.animScriptData.soundIndex = G_SoundIndex;
-	level.animScriptData.playSound  = TVG_AnimScriptSound;
 	// time
 	time(&aclock);
 	strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y", localtime(&aclock));
 
-	if (g_log.string[0])
+	if (tvg_log.string[0])
 	{
-		if (trap_FS_FOpenFile(g_log.string, &level.logFile, g_logSync.integer ? FS_APPEND_SYNC : FS_APPEND) < 0)
+		if (trap_FS_FOpenFile(tvg_log.string, &level.logFile, tvg_logSync.integer ? FS_APPEND_SYNC : FS_APPEND) < 0)
 		{
-			G_Printf("WARNING: Couldn't open logfile: %s\n", g_log.string);
+			G_Printf("WARNING: Couldn't open logfile: %s\n", tvg_log.string);
 		}
 		else
 		{
@@ -992,7 +624,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	G_LogPrintf("map: %s\n", level.rawmapname);
 
 	// array acces check is done in G_RegisterCvars - we won't execute this with invalid gametype
-	G_LogPrintf("gametype: %s\n", gameNames[g_gametype.integer]);
+	G_LogPrintf("gametype: %s\n", gameNames[tvg_gametype.integer]);
 
 	G_LogPrintf("gametime: %s\n", timeFt);
 
@@ -1001,14 +633,14 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	level.gentities = g_entities;
 
 	// initialize all clients for this game
-	level.maxclients = g_maxclients.integer;
+	level.maxclients = tvg_maxclients.integer;
 
 	trap_Cvar_VariableStringBuffer("gclients", gclients, sizeof(gclients));
 
 	if (!Q_stricmp(gclients, ""))
 	{
-		g_clients = Com_Allocate(g_maxclients.integer * sizeof(gclient_t));
-		Com_Memset(g_clients, 0, g_maxclients.integer * sizeof(gclient_t));
+		g_clients = Com_Allocate(tvg_maxclients.integer * sizeof(gclient_t));
+		Com_Memset(g_clients, 0, tvg_maxclients.integer * sizeof(gclient_t));
 
 		trap_Cvar_Set("gclients", va("%p", g_clients));
 	}
@@ -1017,15 +649,10 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 		Q_sscanf(gclients, "%p", &g_clients);
 	}
 
-	level.sortedClients = Com_Allocate(g_maxclients.integer * sizeof(int));
-	Com_Memset(level.sortedClients, 0, g_maxclients.integer * sizeof(int));
+	level.sortedClients = Com_Allocate(tvg_maxclients.integer * sizeof(int));
+	Com_Memset(level.sortedClients, 0, tvg_maxclients.integer * sizeof(int));
 
 	level.clients = g_clients;
-
-	// always leave room for the max number of clients,
-	// even if they aren't all used, so numbers inside that
-	// range are NEVER anything but clients
-	//level.num_entities = MAX_CLIENTS;
 
 	// let the server system know where the entities are
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
@@ -1062,18 +689,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	level.num_entities = 0;
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
 	                    &level.clients[0].ps, sizeof(level.clients[0]));
-
-	BG_ClearScriptSpeakerPool();
-
-	BG_LoadSpeakerScript(va("sound/maps/%s.sps", level.rawmapname));
-
-	BG_ClearAnimationPool();
-
-	BG_ClearCharacterPool();
-
-	BG_InitWeaponStrings();
-
-	G_RegisterPlayerClasses();
 
 #ifdef FEATURE_LUA
 	G_LuaHook_InitGame(levelTime, randomSeed, restart);
@@ -1265,7 +880,7 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 	Q_vsnprintf(string + l, sizeof(string) - l, fmt, argptr);
 	va_end(argptr);
 
-	if (g_dedicated.integer)
+	if (tvg_dedicated.integer)
 	{
 		G_Printf("%s", string + l);
 	}
@@ -1341,12 +956,6 @@ void TVG_RunFrame(int levelTime)
 		}
 	}
 
-	// if we are waiting for the level to restart, do nothing
-	if (level.restarted)
-	{
-		return;
-	}
-
 	level.framenum++;
 	level.previousTime = level.time;
 	level.time         = levelTime;
@@ -1365,59 +974,4 @@ void TVG_RunFrame(int levelTime)
 	{
 		TVG_ClientEndFrame(&level.clients[level.sortedClients[i]]);
 	}
-}
-
-// FIXME: test if this works, .manifest extension is not supported in ettv
-//        so it probably fails to open file for read
-void TVG_ParsePlatformManifest(void)
-{
-	fileHandle_t fileHandle;
-	char         *buffer, *token, *parse;
-	int          len, i;
-	unsigned int ossFlags = 0;
-
-	len = trap_FS_FOpenFile("platforms.manifest", &fileHandle, FS_READ);
-	if (len <= 0)
-	{
-		G_Printf(S_COLOR_RED "[G_OSS] no file found\n");
-		trap_FS_FCloseFile(fileHandle);
-		return;
-	}
-
-	buffer = Com_Allocate(len + 1);
-	if (!buffer)
-	{
-		G_Printf(S_COLOR_RED "[G_OSS] failed to allocate %i bytes\n", len + 1);
-		trap_FS_FCloseFile(fileHandle);
-		return;
-	}
-
-	trap_FS_Read(buffer, len, fileHandle);
-	buffer[len] = '\0';
-	parse       = buffer;
-
-	trap_FS_FCloseFile(fileHandle);
-
-	COM_BeginParseSession(__FUNCTION__);
-
-	token = COM_Parse(&parse);
-	while (token[0])
-	{
-		for (i = 0; i < OSS_KNOWN_COUNT; i++)
-		{
-			if (!strcmp(oss_str[i], token))
-			{
-				G_DPrintf(S_COLOR_CYAN "[G_OSS] enabling support for platform: %s -> %i\n", token, (int)BIT(i));
-				ossFlags |= (unsigned int) BIT(i);
-			}
-		}
-
-		token = COM_Parse(&parse);
-	}
-
-	G_DPrintf("[G_OSS] parsing done with flag value: %i\n", ossFlags);
-
-	trap_Cvar_Set("g_oss", va("%i", ossFlags));
-
-	Com_Dealloc(buffer);
 }

@@ -270,8 +270,8 @@ void trap_SendServerCommand(int clientNum, const char *text)
 	// so ignore them
 	if (strlen(text) > 1022)
 	{
-		G_LogPrintf("%s: trap_SendServerCommand( %d, ... ) length exceeds 1022.\n", MODNAME, clientNum);
-		G_LogPrintf("%s: text [%s.950s]... truncated\n", MODNAME, text);
+		G_LogPrintf("%s: trap_SendServerCommand( %d, ... ) length exceeds 1022.\n", MODNAME_TV, clientNum);
+		G_LogPrintf("%s: text [%s.950s]... truncated\n", MODNAME_TV, text);
 		return;
 	}
 	SystemCall(G_SEND_SERVER_COMMAND, clientNum, text);
