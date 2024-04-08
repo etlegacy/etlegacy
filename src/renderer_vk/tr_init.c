@@ -171,6 +171,8 @@ cvar_t *r_gfxInfo;
 
 cvar_t *r_scale;
 
+cvar_t *r_scalesvg;
+
 /**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
  *

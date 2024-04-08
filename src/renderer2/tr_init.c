@@ -298,6 +298,8 @@ cvar_t *r_materialScan;
 
 cvar_t *r_smoothNormals; // do another extra smoothing for normals to avoid flat shading
 
+cvar_t *r_scalesvg;
+
 /**
 * @brief This function is responsible for initializing a valid OpenGL subsystem.  This
 * is done by calling GLimp_Init (which gives us a working OGL subsystem) then
