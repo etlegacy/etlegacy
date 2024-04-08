@@ -211,6 +211,8 @@ extern cvar_t *r_maxPolyVerts;
 
 extern cvar_t *r_ext_multisample;
 
+extern cvar_t *r_scalesvg;
+
 /**
  * @enum renderSpeeds_t for r_speeds
  * @brief

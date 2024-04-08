@@ -106,11 +106,17 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 		return qfalse;
 	}
 
-	scale = (float)glConfig.vidHeight / SCREEN_HEIGHT_F;
-	if (scale < 0.f)
-	{
-		scale = 1.f;
-	}
+	//scale = (float)glConfig.vidHeight / SCREEN_HEIGHT_F;
+	//if (scale < 0.f)
+	//{
+	//	scale = 1.f;
+	//}
+
+	// FIXME: improper way to handle svg image quality
+	// we should one day introduce acorrect computation depending of
+	// the resolution and DPI screen ...
+	// the "safe" value (close to vanilla renderer with tga) on 16:9 is 2.25
+	scale = r_scalesvg->value;
 
 	columns = (int)(image->width * scale);
 	rows    = (int)(image->height * scale);
@@ -132,6 +138,11 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 			rows    = (int)image->height;
 		}
 	}
+
+	// FIXME: this prevent ResampleTexture to it the 2048 limit
+	// but the image can be cropped due to reaching the limit
+	columns = MIN(columns, 2048);
+	rows    = MIN(rows, 2048);
 
 	numPixels = columns * rows * 4;
 
