@@ -174,7 +174,7 @@ void TVG_WriteSessionData(qboolean restart)
 	char strServerInfo[MAX_INFO_STRING];
 
 	trap_GetServerinfo(strServerInfo, sizeof(strServerInfo));
-	trap_Cvar_Set("session", va("%i %i %s", g_gametype.integer,
+	trap_Cvar_Set("session", va("%i %i %s", tvg_gametype.integer,
 	                            (teamInfo[TEAM_AXIS].spec_lock * TEAM_AXIS | teamInfo[TEAM_ALLIES].spec_lock * TEAM_ALLIES),
 	                            Info_ValueForKey(strServerInfo, "mapname")));
 

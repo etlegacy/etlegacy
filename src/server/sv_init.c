@@ -98,6 +98,16 @@ void SV_SetConfigstring(int index, const char *val)
 	sv.configstrings[index]         = CopyString(val);
 	sv.configstringsmodified[index] = qtrue;
 
+#ifdef DEDICATED
+	if (svcls.isTVGame && svcls.state != CA_LOADING)
+	{
+		if (index == CS_SERVERINFO || index == CS_WOLFINFO)
+		{
+			SV_CL_ConfigstringInfoChanged(index);
+		}
+	}
+#endif // DEDICATED
+
 	// save config strings to demo
 	if (sv.demoState == DS_RECORDING)
 	{

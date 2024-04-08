@@ -66,9 +66,9 @@ If 0, then only addresses matching the list will be allowed.  This lets you easi
 TTimo NOTE: GUID functions are copied over from the model of IP banning,
 used to enforce max lives independently from server reconnect and team changes (Xian)
 
-TTimo NOTE: for persistence, bans are stored in g_banIPs cvar MAX_CVAR_VALUE_STRING
+TTimo NOTE: for persistence, bans are stored in tvg_banIPs cvar MAX_CVAR_VALUE_STRING
 The size of the cvar string buffer is limiting the banning to around 20 masks
-this could be improved by putting some g_banIPs2 g_banIps3 etc. maybe
+this could be improved by putting some tvg_banIPs2 tvg_banIps3 etc. maybe
 still, you should rely on PB for banning instead
 ==============================================================================
 */
@@ -236,11 +236,11 @@ qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 	{
 		if ((in & ipFilterList->ipFilters[i].mask) == ipFilterList->ipFilters[i].compare)
 		{
-			return g_filterBan.integer != 0;
+			return tvg_filterBan.integer != 0;
 		}
 	}
 
-	return g_filterBan.integer == 0;
+	return tvg_filterBan.integer == 0;
 }
 
 /**
@@ -306,11 +306,11 @@ void TVG_ProcessIPBans(void)
 	char str[MAX_CVAR_VALUE_STRING];
 
 	ipFilters.numIPFilters = 0;
-	Q_strncpyz(ipFilters.cvarIPList, "g_banIPs", sizeof(ipFilters.cvarIPList));
+	Q_strncpyz(ipFilters.cvarIPList, "tvg_banIPs", sizeof(ipFilters.cvarIPList));
 
-	Q_strncpyz(str, g_banIPs.string, sizeof(str));
+	Q_strncpyz(str, tvg_banIPs.string, sizeof(str));
 
-	for (t = s = g_banIPs.string; *t; /* */)
+	for (t = s = tvg_banIPs.string; *t; /* */)
 	{
 		s = strchr(s, ' ');
 		if (!s)
@@ -388,7 +388,7 @@ void Svcmd_RemoveIP_f(void)
  */
 void Svcmd_ListIp_f(void)
 {
-	trap_SendConsoleCommand(EXEC_INSERT, "g_banIPs\n");
+	trap_SendConsoleCommand(EXEC_INSERT, "tvg_banIPs\n");
 }
 
 /**
@@ -1316,7 +1316,7 @@ void Svcmd_Ref_f(void)
  */
 qboolean Svcmd_Say_f(void)
 {
-	if (g_dedicated.integer)
+	if (tvg_dedicated.integer)
 	{
 		trap_SendServerCommand(-1, va("cpm \"server: %s\n\"", Q_AddCR(ConcatArgs(1))));
 		return qtrue;
@@ -1329,7 +1329,7 @@ qboolean Svcmd_Say_f(void)
  */
 qboolean Svcmd_Chat_f(void)
 {
-	if (g_dedicated.integer)
+	if (tvg_dedicated.integer)
 	{
 		// added for rcon/Lua chat
 		trap_SendServerCommand(-1, va("chat \"console: %s\"", Q_AddCR(ConcatArgs(1))));

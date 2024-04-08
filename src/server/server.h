@@ -1006,6 +1006,7 @@ void SV_CL_ParsePacketEntities(msg_t *msg, svclSnapshot_t *oldframe, svclSnapsho
 void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityState_t *old, entityShared_t *oldShared, qboolean unchanged);
 void SV_CL_ParsePlayerstates(msg_t *msg);
 void SV_CL_SystemInfoChanged(void);
+void SV_CL_ConfigstringInfoChanged(int csnum);
 
 int SV_CL_GetQueueTime(void);
 void SV_CL_ParseMessageQueue(void);

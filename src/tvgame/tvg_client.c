@@ -608,8 +608,6 @@ void TVG_ClientUserinfoChanged(int clientNum)
 	char       oldname[MAX_NAME_LENGTH];
 	char       userinfo[MAX_INFO_STRING];
 
-	client->ps.clientNum = clientNum;
-
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
 	reason = CheckUserinfo(clientNum, userinfo);
@@ -689,7 +687,7 @@ void TVG_ClientUserinfoChanged(int clientNum)
 				trap_DropClient(clientNum, va("Name too long (>%d). Plase change your name.", MAX_NETNAME - 1), 0);
 				return;
 			}
-			if (!g_extendedNames.integer)
+			if (!tvg_extendedNames.integer)
 			{
 				unsigned int i;
 
@@ -747,13 +745,13 @@ void TVG_ClientUserinfoChanged(int clientNum)
 	}
 
 #ifndef DEBUG_STATS
-	if (g_developer.integer || *g_log.string || g_dedicated.integer)
+	if (g_developer.integer || *tvg_log.string || tvg_dedicated.integer)
 #endif
 	{
 		G_Printf("Userinfo: %s\n", userinfo);
 	}
 
-	if (g_protect.integer & G_PROTECT_LOCALHOST_REF)
+	if (tvg_protect.integer & G_PROTECT_LOCALHOST_REF)
 	{
 	}
 	else // no protection, check for local client and set ref (for LAN/listen server games)
@@ -766,7 +764,6 @@ void TVG_ClientUserinfoChanged(int clientNum)
 		}
 	}
 
-	// added for zinx etpro antiwarp
 	client->pers.pmoveMsec = pmove_msec.integer;
 
 	if (cs_cg_uinfo[0])
@@ -937,7 +934,7 @@ char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		return va("Bad name: Name too long (>%d). Please change your name.", MAX_NAME_LENGTH - 1);
 	}
 
-	if (!g_extendedNames.integer)
+	if (!tvg_extendedNames.integer)
 	{
 		unsigned int i;
 
@@ -1093,8 +1090,8 @@ void TVG_ClientBegin(int clientNum)
 
 	TVG_ClientSpawn(client);
 
-	client->inactivityTime        = level.time + G_SpectatorInactivityValue * 1000;
-	client->inactivitySecondsLeft = G_SpectatorInactivityValue;
+	client->inactivityTime        = level.time + TVG_InactivityValue * 1000;
+	client->inactivitySecondsLeft = TVG_InactivityValue;
 
 	G_LogPrintf("TVG_ClientBegin: %i\n", clientNum);
 
@@ -1219,9 +1216,9 @@ void TVG_ClientSpawn(gclient_t *client)
 	TVG_SetClientViewAngle(client, spawn_angles);
 
 	client->respawnTime           = level.timeCurrent;
-	client->inactivityTime        = level.time + G_InactivityValue * 1000;
+	client->inactivityTime        = level.time + TVG_InactivityValue * 1000;
 	client->inactivityWarning     = qfalse;
-	client->inactivitySecondsLeft = G_InactivityValue;
+	client->inactivitySecondsLeft = TVG_InactivityValue;
 	client->latched_buttons       = 0;
 	client->latched_wbuttons      = 0;
 

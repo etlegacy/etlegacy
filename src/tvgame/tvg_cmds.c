@@ -441,7 +441,7 @@ qboolean TVG_Cmd_Score_f(gclient_t *client, tvcmd_reference_t *self)
  */
 qboolean TVG_CheatsOk(gclient_t *client)
 {
-	if (!g_cheats.integer)
+	if (!tvg_cheats.integer)
 	{
 		trap_SendServerCommand(client - level.clients, va("print \"Cheats are not enabled on this server.\n\""));
 		return qfalse;
@@ -924,7 +924,7 @@ void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatTex
 	}
 
 	// echo the text to the console
-	if (g_dedicated.integer)
+	if (tvg_dedicated.integer)
 	{
 		G_Printf("%s%s\n", name, text);
 	}
@@ -1204,7 +1204,11 @@ qboolean TVG_Cmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, tvcmd_refere
 	if (level.cmds.impkdValid)
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.impkd[0]);
-		trap_SendServerCommand(client - level.clients, level.cmds.impkd[1]);
+
+		if (level.mod & LEGACY_MOD)
+		{
+			trap_SendServerCommand(client - level.clients, level.cmds.impkd[1]);
+		}
 	}
 
 	return qtrue;
@@ -1422,9 +1426,7 @@ qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self)
 #define SETSPAWNPT_HASH     137482
 #define IMWA_HASH           51808
 #define IMWS_HASH           54004
-//#define IMPKD_HASH          64481 // possibly other mods?
-#define IMPKD0_HASH         70433
-#define IMPKD1_HASH         70557
+#define IMPKD_HASH          64481
 #define IMPT_HASH           53279
 #define IMSR_HASH           53398
 #define SR_HASH             27365
@@ -1440,6 +1442,14 @@ qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self)
 #define BP_HASH             25102
 #define XPGAIN_HASH         78572
 #define DISCONNECT_HASH     131683
+
+// Legacy
+#define IMPKD0_HASH 70433
+#define IMPKD1_HASH 70557
+
+// ETJUMP
+#define GUID_REQUEST_HASH 161588
+#define HAS_TIMERUN_HASH  134442
 
 /**
 * @brief TVG_ClientCommandPassThrough This handles server commands (server responses to client commands)
@@ -1469,8 +1479,8 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	case ENTNFO_HASH:                     // "entnfo" = teammapdata
 		trap_SendServerCommand(-1, cmd);
 		return;
-	case CS_HASH:                         // "cs" = configstring
-		//trap_SendServerCommand(-1, cmd);
+	case CS_HASH:                         // "cs" = configstring - do not send
+		                                  // update will be created just before sending snapshot
 		return;
 	case TINFO_HASH:                      // "tinfo" = teamplayinfo
 		trap_SendServerCommand(-1, cmd);
@@ -1616,6 +1626,7 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		level.cmds.infoStats[INFO_IMWS].valid[level.cmds.IMWSClientNum] = qtrue;
 		Q_strncpyz(level.cmds.infoStats[INFO_IMWS].data[level.cmds.IMWSClientNum], cmd, sizeof(level.cmds.infoStats[INFO_IMWS].data[0]));
 		return;
+	case IMPKD_HASH:                                       // "impkd"
 	case IMPKD0_HASH:                                      // "impkd0"
 		level.cmds.impkdValid = qtrue;
 		Q_strncpyz(level.cmds.impkd[0], cmd, sizeof(level.cmds.impkd[0]));
@@ -1645,12 +1656,11 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		level.cmds.prValid = qtrue;
 		Q_strncpyz(level.cmds.pr, cmd, sizeof(level.cmds.pr));
 		return;
-	//	// music
-	//	// loops \/
+	// music loops \/
 	case MU_START_HASH:                                    // "mu_start" has optional parameter for fade-up time
 		trap_SendServerCommand(-1, cmd);
 		return;
-	//// plays once then back to whatever the loop was \/
+	// plays once then back to whatever the loop was \/
 	case MU_PLAY_HASH:                                     // "mu_play" has optional parameter for fade-up time
 		trap_SendServerCommand(-1, cmd);
 		return;
@@ -1673,6 +1683,12 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	case DISCONNECT_HASH:                                  // "disconnect"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
+	//ETJUMP
+	case GUID_REQUEST_HASH:
+	case HAS_TIMERUN_HASH:
+		return;
+
 	default:
 		G_Printf("TVGAME: Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(token));
 		break;
