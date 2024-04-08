@@ -902,7 +902,7 @@ void CG_DrawShoutcastTeamNameAllies(hudComponent_t *comp)
 
 	// draw allies label
 	CG_DrawShoutcastTeamNames(comp, Q_PrintStrlen(cg_shoutcastTeamNameBlue.string) > 0
-	                                    ? cg_shoutcastTeamNameRed.string : "Allies");
+	                                    ? cg_shoutcastTeamNameBlue.string : "Allies");
 }
 
 /**
