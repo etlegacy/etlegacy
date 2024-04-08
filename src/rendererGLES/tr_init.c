@@ -1140,6 +1140,8 @@ void R_Register(void)
 
 	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
+	r_scalesvg = ri.Cvar_Get("r_scalesvg", "2.25", CVAR_ARCHIVE | CVAR_LATCH);
+
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
 	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Print out the list of images loaded", NULL);

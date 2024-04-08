@@ -1638,6 +1638,8 @@ void R_Register(void)
 
 	r_smoothNormals = ri.Cvar_Get("r_smoothNormals", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
 
+	r_scalesvg = ri.Cvar_Get("r_scalesvg", "2.25", CVAR_ARCHIVE | CVAR_LATCH);
+
 	// make sure all the commands added here are also removed in R_Shutdown
 	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Prints the list of loaded images.", NULL);
 	ri.Cmd_AddSystemCommand("shaderlist", R_ShaderList_f, "Prints the list of loaded shaders.", NULL);
