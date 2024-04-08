@@ -2839,8 +2839,8 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 	{
 		if (cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			*s  = va("%2.0i", CG_CalculateReinfTime(TEAM_AXIS));
-			*rt = va("%2.0i", CG_CalculateReinfTime(TEAM_ALLIES));
+			*s  = va("%2.0i", CG_CalculateReinfTime(TEAM_ALLIES));
+			*rt = va("%2.0i", CG_CalculateReinfTime(TEAM_AXIS));
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
