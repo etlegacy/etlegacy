@@ -305,7 +305,7 @@ parse_commandline() {
 			einfo "Will use OSX target version: ${MACOS_DEPLOYMENT_TARGET}"
 		elif [[ $var == --osx-arc=* ]]; then
 			MACOS_ARCHITECTURES=$(echo $var| cut -d'=' -f 2)
-			einfo "Will use OSX target version: ${MACOS_ARCHITECTURES}"
+			einfo "Will target OSX architecture(s): ${MACOS_ARCHITECTURES}"
 		elif [[ $var == --sysroot=* ]]; then
 			XCODE_SDK_PATH=$(echo $var| cut -d'=' -f 2)
 			einfo "Will use OSX sysroot: ${XCODE_SDK_PATH}"
