@@ -18,16 +18,6 @@
 						"component":	null
 					}
 				},
-				"staminabar":	{
-					"style":	3157,
-					"mainColor":	"ffffffff",
-					"secondaryColor":	"ffffffff"
-				},
-				"breathbar":	{
-					"style":	3157,
-					"mainColor":	"ffffffff",
-					"secondaryColor":	"ffffffff"
-				},
 				"healthbar":	{
 					"rect":	{
 						"x":	-24,
@@ -35,19 +25,11 @@
 						"w":	12,
 						"h":	72
 					},
-					"style":	3157,
-					"mainColor":	"ffffffff",
-					"secondaryColor":	"ffffffff",
 					"anchor":	4,
 					"parent":	{
 						"anchor":	4,
 						"component":	null
 					}
-				},
-				"weaponchargebar":	{
-					"style":	3093,
-					"mainColor":	"ffffffff",
-					"secondaryColor":	"ffffffff"
 				},
 				"healthtext":	{
 					"rect":	{
@@ -142,67 +124,11 @@
 						"component":	null
 					}
 				},
-				"popupmessages":	{
-					"mainColor":	"01030209",
-					"textAlign":	1
-				},
-				"popupmessages2":	{
-					"rect":	{
-						"x":	0,
-						"y":	0,
-						"w":	0,
-						"h":	0
-					},
-					"style":	0,
-					"scale":	0,
-					"mainColor":	"01030209",
-					"secondaryColor":	"00000000",
-					"backgroundColor":	"00000000",
-					"borderColor":	"00000000",
-					"textStyle":	0,
-					"anchor":	0,
-					"parent":	{
-						"anchor":	0,
-						"component":	null
-					}
-				},
-				"popupmessages3":	{
-					"rect":	{
-						"x":	0,
-						"y":	0,
-						"w":	0,
-						"h":	0
-					},
-					"style":	0,
-					"scale":	0,
-					"mainColor":	"01030209",
-					"secondaryColor":	"00000000",
-					"backgroundColor":	"00000000",
-					"borderColor":	"00000000",
-					"textStyle":	0,
-					"anchor":	0,
-					"parent":	{
-						"anchor":	0,
-						"component":	null
-					}
-				},
 				"hudhead":	{
 					"visible":	false
 				},
-				"reinforcement":	{
-					"secondaryColor":	"007fffff"
-				},
-				"spawntimer":	{
-					"secondaryColor":	"ff0000ff"
-				},
 				"localtime":	{
 					"visible":	true
-				},
-				"votetext":	{
-					"secondaryColor":	"ffff00ff"
-				},
-				"demotext":	{
-					"secondaryColor":	"ff0000ff"
 				},
 				"missilecamera":	{
 					"rect":	{
@@ -228,32 +154,6 @@
 				},
 				"lagometer":	{
 					"visible":	true
-				},
-				"crosshairbar":	{
-					"style":	131,
-					"mainColor":	"ffffffff",
-					"secondaryColor":	"ffffffff"
-				},
-				"xpgain":	{
-					"rect":	{
-						"x":	0,
-						"y":	0,
-						"w":	0,
-						"h":	0
-					},
-					"visible":	false,
-					"style":	0,
-					"scale":	0,
-					"mainColor":	"00000000",
-					"secondaryColor":	"00000000",
-					"backgroundColor":	"00000000",
-					"borderColor":	"00000000",
-					"textStyle":	0,
-					"anchor":	0,
-					"parent":	{
-						"anchor":	0,
-						"component":	null
-					}
 				}
 			}
 		}, {
@@ -740,7 +640,7 @@
 				},
 				"fireteam":	{
 					"rect":	{
-						"x":	10.29998779296875,
+						"x":	-2.20001220703125,
 						"y":	-14,
 						"w":	320,
 						"h":	103
@@ -749,7 +649,7 @@
 					"showBorder":	false,
 					"anchor":	2,
 					"parent":	{
-						"anchor":	1,
+						"anchor":	2,
 						"component":	null
 					}
 				},
@@ -841,6 +741,8 @@
 						"w":	57,
 						"h":	14
 					},
+					"showBackGround":	false,
+					"showBorder":	false,
 					"anchor":	1,
 					"parent":	{
 						"anchor":	8,
@@ -1196,13 +1098,27 @@
 				"popupmessages":	{
 					"rect":	{
 						"x":	0.49999237060546875,
-						"y":	5,
+						"y":	9.55799865722656,
 						"w":	422,
 						"h":	96
 					},
-					"anchor":	2,
+					"style":	352,
+					"anchor":	3,
 					"parent":	{
 						"anchor":	8,
+						"component":	null
+					}
+				},
+				"votetext":	{
+					"rect":	{
+						"x":	4,
+						"y":	-44.035003662109375,
+						"w":	278,
+						"h":	28
+					},
+					"anchor":	6,
+					"parent":	{
+						"anchor":	7,
 						"component":	null
 					}
 				},
@@ -1263,7 +1179,6 @@
 						"h":	29
 					},
 					"style":	1,
-					"scale":	99.999847412109375,
 					"backgroundColor":	"000000b2",
 					"borderColor":	"ffffffff",
 					"anchor":	1,
@@ -1341,11 +1256,48 @@
 				"crosshairbar":	{
 					"visible":	false
 				},
-				"stats":	{
-					"visible":	true
+				"followtext":	{
+					"visible":	false
 				},
-				"xpgain":	{
-					"backgroundColor":	"bf332b7f"
+				"disconnect":	{
+					"rect":	{
+						"x":	-2.898284912109375,
+						"y":	-8,
+						"w":	57,
+						"h":	57
+					},
+					"anchor":	2,
+					"parent":	{
+						"anchor":	3,
+						"component":	null
+					}
+				},
+				"chat":	{
+					"rect":	{
+						"x":	0,
+						"y":	0,
+						"w":	364,
+						"h":	33.592998504638672
+					},
+					"anchor":	5,
+					"parent":	{
+						"anchor":	5,
+						"component":	null
+					}
+				},
+				"stats":	{
+					"rect":	{
+						"x":	0,
+						"y":	-39,
+						"w":	341,
+						"h":	36
+					},
+					"visible":	true,
+					"anchor":	5,
+					"parent":	{
+						"anchor":	5,
+						"component":	null
+					}
 				},
 				"scPlayerListAxis":	{
 					"visible":	true
@@ -1358,6 +1310,9 @@
 				},
 				"scTeamNamesAllies":	{
 					"visible":	true
+				},
+				"xpgain":	{
+					"visible":	false
 				}
 			}
 		}]
