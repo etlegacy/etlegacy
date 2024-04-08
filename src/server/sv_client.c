@@ -644,11 +644,20 @@ gotnewcl:
 
 	if (newcl->ettvClient)
 	{
+		int clients = sv_maxclients->integer;
+
+#ifdef DEDICATED
+		if (svcls.isTVGame)
+		{
+			clients = MAX_CLIENTS;
+		}
+#endif // DEDICATED
+
 		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t *) * PACKET_BACKUP);
 
 		for (i = 0; i < PACKET_BACKUP; i++)
 		{
-			newcl->ettvClientFrame[i] = calloc(sizeof(ettvClientSnapshot_t), sv_maxclients->integer);
+			newcl->ettvClientFrame[i] = calloc(sizeof(ettvClientSnapshot_t), clients);
 		}
 	}
 

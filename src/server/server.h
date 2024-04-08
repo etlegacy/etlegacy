@@ -946,7 +946,7 @@ typedef struct
 extern svclientActive_t svcl;
 
 /**
- * @struct messageQueue_t
+ * @struct serverMessageQueue_t
  */
 typedef struct serverMessageQueue_s
 {

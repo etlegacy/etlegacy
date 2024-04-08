@@ -264,6 +264,8 @@ void SV_CL_ParseGamestate(msg_t *msg)
 	SV_CL_ConfigstringInfoChanged(CS_SERVERINFO);
 	SV_CL_ConfigstringInfoChanged(CS_WOLFINFO);
 
+	// happens always if the game is live
+	// otherwise only on first server connection
 	if (!svcls.isGamestateParsed)
 	{
 		svclc.serverIdLatest     = svcl.serverId;
@@ -298,14 +300,15 @@ void SV_CL_ParseGamestate(msg_t *msg)
 	// make sure the game starts
 	Cvar_Set("cl_paused", "0");
 
-	svcls.fixHitch          = svcls.isGamestateParsed;
+	svcls.fixHitch          = svcls.isGamestateParsed; // only true for delayed games on map change
 	svcls.isGamestateParsed = svcls.isDelayed;
 	svcls.firstSnap         = qfalse;
 	svcls.queueDemoWaiting  = !sv_etltv_autorecord->integer;
 }
 
 /**
- * @brief SV_CL_ParseGamestateQueue
+ * @brief SV_CL_ParseGamestateQueue parse gamestate message to read checksum, serverId and
+ * send checksum and moveNoDelta usercmd, everything else is gonna get parsed properly later
  * @param[in] msg
  */
 void SV_CL_ParseGamestateQueue(msg_t *msg)
@@ -430,8 +433,8 @@ void SV_CL_ParseBinaryMessage(msg_t *msg)
 }
 
 /**
- * @brief Parses deltas from the given base and adds the resulting entity to the current frame
- *
+ * @brief Parses deltas from the given base and adds the resulting entity to the current frame and
+ * determines sv.num_entities for current server frame
  * @param[in] msg
  * @param[in,out] frame
  * @param[in] newnum
@@ -901,7 +904,11 @@ int SV_CL_GetQueueTime(void)
 	if (svMsgQueueHead)
 	{
 		// map change hitch fix
-		if (prevTime && svMsgQueueHead->serverTime && svcls.fixHitch &&
+		// when map changes it takes about 500-1000ms to load it, during that time packets are not parsed but still arrive
+		// (master server doesn't know we delayed loading next map) which results in delayed "lag"
+		// this is meant to change the times when the packets in the queue will be read
+		// as if the packets were parsed into queue at the time they arrived (assuming no network issues)
+		if (svcls.fixHitch && prevTime && svMsgQueueHead->serverTime &&
 		    svMsgQueueHead->systime - prevTime > 100)
 		{
 			serverMessageQueue_t *cur      = svMsgQueueHead;
@@ -1017,6 +1024,10 @@ void SV_CL_ParseServerMessage_Ext(msg_t *msg, int headerBytes)
 		svclc.reliableAcknowledge = svclc.reliableSequence;
 	}
 
+	// this statement is always true for live game
+	// and only once on first server connection for delayed game
+	// that way server will be up and running and clients can connect
+	// even if snapshots with entities and players will still be delayed and not sent to clients
 	if (!svcls.isGamestateParsed)
 	{
 		svclc.serverMessageSequence = svclc.serverMessageSequenceLatest;
@@ -1238,6 +1249,9 @@ void SV_CL_CopyMsg(msg_t *dest, msg_t *src, int readCount, int bit)
 
 /**
  * @brief SV_CL_ParseServerMessageIntoQueue
+ * svc_serverCommand(s) are saved off and are not parsed again (saved msg skips it)
+ * svc_gamestate is parsed fully (most read data is ignored) and will be parsed fully again
+ * svc_snapshot is parsed only partly and will be parsed fully later
  * @param[in] msg
  */
 void SV_CL_ParseServerMessageIntoQueue(msg_t *msg, int headerBytes)
