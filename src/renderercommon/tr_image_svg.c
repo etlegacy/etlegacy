@@ -106,26 +106,16 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 		return qfalse;
 	}
 
-	//scale = (float)glConfig.vidHeight / SCREEN_HEIGHT_F;
-	//if (scale < 0.f)
-	//{
-	//	scale = 1.f;
-	//}
-
-	// FIXME: improper way to handle svg image quality
-	// we should one day introduce acorrect computation depending of
-	// the resolution and DPI screen ...
-	// the "safe" value (close to vanilla renderer with tga) on 16:9 is 2.25
-	scale = r_scalesvg->value;
+	scale = (float)glConfig.vidHeight / SCREEN_HEIGHT_F;
+	if (scale < 0.f)
+	{
+		scale = 2.25f;  // safe 16:9 value from 1920 * 1080 res
+	}
 
 	columns = (int)(image->width * scale);
 	rows    = (int)(image->height * scale);
 
-#ifdef __ANDROID__
 	if (!Com_PowerOf2(columns) || !Com_PowerOf2(rows))
-#else
-	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(columns) || !Com_PowerOf2(rows)))
-#endif
 	{
 		columns = (int)Com_ClosestPowerOf2(columns);
 		scale   = (float)columns / image->width;
@@ -133,16 +123,32 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 
 		if (!Com_PowerOf2(rows))
 		{
-			scale   = 1.f;
-			columns = (int)image->width;
-			rows    = (int)image->height;
+			scale   = 2.25f;    // safe 16:9 value from 1920 * 1080 res
+			columns = (int)image->width * scale;
+			rows    = (int)image->height * scale;
 		}
 	}
 
-	// FIXME: this prevent ResampleTexture to it the 2048 limit
+	// force higher svg resolution (0: x1, 1: x2, 2: x4)
+	if (r_scalesvg->integer)
+	{
+		int value = r_scalesvg->integer;
+		columns = columns << value;
+		rows    = rows << value;
+		scale   = (float)columns / image->width;
+	}
+
+	// this prevent ResampleTexture to it the 2048 limit (2K)
 	// but the image can be cropped due to reaching the limit
-	columns = MIN(columns, 2048);
-	rows    = MIN(rows, 2048);
+	// also, it prevent chewing too much memory which could
+	// increase loading time
+	if (columns > 2048)
+	{
+		columns = 2048;
+		scale   = (float)columns / image->width;
+	}
+
+	rows = MIN(rows, 2048);
 
 	numPixels = columns * rows * 4;
 

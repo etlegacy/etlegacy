@@ -1638,7 +1638,8 @@ void R_Register(void)
 
 	r_smoothNormals = ri.Cvar_Get("r_smoothNormals", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
 
-	r_scalesvg = ri.Cvar_Get("r_scalesvg", "2.25", CVAR_ARCHIVE | CVAR_LATCH);
+	r_scalesvg = ri.Cvar_Get("r_scalesvg", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	ri.Cvar_CheckRange(r_scalesvg, 0, 2, qtrue);
 
 	// make sure all the commands added here are also removed in R_Shutdown
 	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Prints the list of loaded images.", NULL);
