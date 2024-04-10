@@ -106,7 +106,7 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 		return qfalse;
 	}
 
-	scale = (float)glConfig.vidHeight / SCREEN_HEIGHT_F;
+	scale = MAX((float)glConfig.vidHeight / SCREEN_HEIGHT_F, (float)glConfig.vidWidth / SCREEN_WIDTH_F);
 	if (scale < 0.f)
 	{
 		scale = 2.25f;  // safe 16:9 value from 1920 * 1080 res
