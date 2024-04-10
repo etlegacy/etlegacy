@@ -1,5 +1,7 @@
 package com.etlegacy.app;
 
+import static android.os.Environment.getExternalStoragePublicDirectory;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -88,8 +90,8 @@ public class ETLMain extends Activity {
 		}
 
 		try {
-			etmain = Objects.requireNonNull(getExternalFilesDir("/etlegacy/etmain")).toPath();
-			legacy = Objects.requireNonNull(getExternalFilesDir("/etlegacy/legacy")).toPath();
+			etmain = Objects.requireNonNull(getExternalStoragePublicDirectory( Environment.DIRECTORY_DOCUMENTS + "/etlegacy/etmain")).toPath();
+			legacy = Objects.requireNonNull(getExternalStoragePublicDirectory( Environment.DIRECTORY_DOCUMENTS + "/etlegacy/legacy")).toPath();
 		} catch (Exception e) {
 			Log.e("ASSETS", "Could not fetch the external files directory", e);
 		}
