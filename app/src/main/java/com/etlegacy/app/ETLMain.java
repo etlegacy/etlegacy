@@ -242,6 +242,8 @@ public class ETLMain extends Activity {
 
 		if (!hasPermissions(ETLMain.this,PERMISSIONS)) {
 			ActivityCompat.requestPermissions(ETLMain.this,PERMISSIONS,1);
+		}else {
+			Start();
 		}
 
 	}
