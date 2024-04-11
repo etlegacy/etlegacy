@@ -4,7 +4,9 @@ import static android.os.Environment.getExternalStoragePublicDirectory;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
@@ -16,6 +18,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.Manifest;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +33,7 @@ import java.util.function.Consumer;
 public class ETLMain extends Activity {
 
 	private static final String PACK_TAG = "PK3";
+	private String[] PERMISSIONS;
 
 	/**
 	 * Shows ProgressBar
@@ -46,6 +53,65 @@ public class ETLMain extends Activity {
 		return asyncDialog;
 	}
 
+	private boolean hasPermissions(Context context, String... PERMISSIONS) {
+
+		if (context != null && PERMISSIONS != null) {
+
+			for (String permission: PERMISSIONS){
+
+				if (ActivityCompat.checkSelfPermission(context,permission) != PackageManager.PERMISSION_GRANTED) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+		if (requestCode == 1) {
+
+			//Manifest.permission.WRITE_EXTERNAL_STORAGE,
+			if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				Log.v("PERMISSION", "WRITE_EXTERNAL_STORAGE Permission is granted");
+			}else {
+				Log.v("PERMISSION", "WRITE_EXTERNAL_STORAGE Permission is denied");
+			}
+
+			//Manifest.permission.READ_EXTERNAL_STORAGE,
+			if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+				Log.v("PERMISSION", "READ_EXTERNAL_STORAGE Permission is granted");
+			}else {
+				Log.v("PERMISSION", "READ_EXTERNAL_STORAGE Permission is denied");
+			}
+
+			//Manifest.permission.BLUETOOTH,
+			if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+				Log.v("PERMISSION", "BLUETOOTH Permission is granted");
+			}else {
+				Log.v("PERMISSION", "BLUETOOTH Permission is denied");
+			}
+
+			//Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+			if (grantResults[3] == PackageManager.PERMISSION_GRANTED) {
+				Log.v("PERMISSION", "MANAGE_EXTERNAL_STORAGE Permission is granted");
+			}else {
+				Log.v("PERMISSION", "MANAGE_EXTERNAL_STORAGE Permission is denied");
+			}
+
+			//Manifest.permission.INTERNET
+			if (grantResults[4] == PackageManager.PERMISSION_GRANTED) {
+				Log.v("PERMISSION", "INTERNET Permission is granted");
+			}else {
+				Log.v("PERMISSION", "INTERNET Permission is denied");
+			}
+			Start();
+		}
+	}
+
 	/**
 	 * Convert pixel metrics to dp
 	 *
@@ -56,31 +122,7 @@ public class ETLMain extends Activity {
 		return (int) (px / Resources.getSystem().getDisplayMetrics().density);
 	}
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-							 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-		}
-
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-		ImageView imageView = new ImageView(this);
-		imageView.setBackgroundResource(R.drawable.ic_horizontal_white);
-
-		LinearLayout etlLayout = new LinearLayout(this);
-
-		RelativeLayout.LayoutParams etlParams = new RelativeLayout.LayoutParams(Resources.getSystem().getDisplayMetrics().widthPixels,
-																				Resources.getSystem().getDisplayMetrics().heightPixels);
-
-		etlLayout.addView(imageView, etlParams);
-		setContentView(etlLayout);
-
+	public void Start() {
 		Path etmain = null;
 		Path legacy = null;
 
@@ -162,6 +204,46 @@ public class ETLMain extends Activity {
 			finish();
 			cc.executor.shutdown();
 		}));
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		PERMISSIONS = new String[] {
+
+			Manifest.permission.WRITE_EXTERNAL_STORAGE,
+			Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.BLUETOOTH,
+			Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+			Manifest.permission.INTERNET
+		};
+
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+							 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+		}
+
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		ImageView imageView = new ImageView(this);
+		imageView.setBackgroundResource(R.drawable.ic_horizontal_white);
+
+		LinearLayout etlLayout = new LinearLayout(this);
+
+		RelativeLayout.LayoutParams etlParams = new RelativeLayout.LayoutParams(Resources.getSystem().getDisplayMetrics().widthPixels,
+																				Resources.getSystem().getDisplayMetrics().heightPixels);
+
+		etlLayout.addView(imageView, etlParams);
+		setContentView(etlLayout);
+
+		if (!hasPermissions(ETLMain.this,PERMISSIONS)) {
+			ActivityCompat.requestPermissions(ETLMain.this,PERMISSIONS,1);
+		}
+
 	}
 
 	private void extractIncludedPackages(Path etmain) throws IOException {
