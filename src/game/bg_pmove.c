@@ -3870,8 +3870,7 @@ static void PM_Weapon(void)
 	}
 
 	// weapon firing animation
-	// FG42 is exclude because the continue animation don't look great with it (no recoil, look stuck)
-	if ((GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC) && pm->ps->weapon != WP_FG42 && pm->ps->weapon != WP_FG42_SCOPE)
+	if (GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC)
 	{
 		PM_ContinueWeaponAnim(weapattackanim);
 	}
