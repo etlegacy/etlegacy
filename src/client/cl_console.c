@@ -89,7 +89,10 @@ void Con_ToggleConsole_f(void)
 	Con_ClearNotify();
 
 	// We clear the keys here to the +/- actions can finnish before modifying the key catcher
-	Key_ClearKeys();
+	// No, this causes things like +sprint, +forward, even vstr scripts like
+	// crouch/sprint toggle to break whenever console is toggled
+	// TODO: maybe there's a workaround for this that could be applied?
+	// Key_ClearKeys();
 
 	// multiple console size support
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
