@@ -1689,7 +1689,7 @@ void CL_SetCGameTime(void)
  * @param[in] orientation
  * @return
  *
- * @note Unused
+ */
 qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation)
 {
     if (!cgvm)
@@ -1699,4 +1699,3 @@ qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation)
 
     return VM_Call(cgvm, CG_GET_TAG, clientNum, tagname, orientation);
 }
-*/
