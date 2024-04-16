@@ -3250,12 +3250,19 @@ void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNu
  */
 qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation)
 {
-	clientInfo_t *ci = &cgs.clientinfo[clientNum];
+	clientInfo_t *ci;
 	centity_t    *cent;
 	refEntity_t  *refent;
 	vec3_t       tempAxis[3];
 	vec3_t       org;
 	int          i;
+
+	if (clientNum <= || clientNum >= MAX_CLIENTS)
+	{
+		return qfalse;
+	}
+
+	ci = &cgs.clientinfo[clientNum];
 
 	if (cg.snap && clientNum == cg.snap->ps.clientNum && cg.renderingThirdPerson)
 	{
