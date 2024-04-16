@@ -842,6 +842,10 @@ qboolean SV_GameCommand(void)
 	return VM_Call(gvm, GAME_CONSOLE_COMMAND);
 }
 
+#ifndef DEDICATED
+extern qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation);
+#endif
+
 /**
  * @brief SV_GetTag
  * @param[in] clientNum - unused
@@ -869,5 +873,17 @@ qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_
 		}
 	}
 
+	// lets try and remove the inconsitancy between ded/non-ded servers...
+	// - bleh, some code in clientthink_real really relies on this working on player models...
+	// only only this code for the release builds so we can test out the hitbox code with the clients
+#if !defined(DEDICATED) && !defined(LEGACY_DEBUG)
+	if (com_dedicated->integer)
+	{
+		return qfalse;
+	}
+
+	return CL_GetTag(clientNum, tagname, orientation);
+#else
 	return qfalse;
+#endif
 }
