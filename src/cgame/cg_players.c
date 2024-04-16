@@ -3257,7 +3257,7 @@ qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientatio
 	vec3_t       org;
 	int          i;
 
-	if (clientNum <= || clientNum >= MAX_CLIENTS)
+	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 	{
 		return qfalse;
 	}
