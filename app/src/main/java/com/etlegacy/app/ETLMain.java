@@ -95,15 +95,9 @@ public class ETLMain extends Activity {
 				Log.v("PERMISSION", "BLUETOOTH Permission is denied");
 			}
 
-			//Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-			if (grantResults[3] == PackageManager.PERMISSION_GRANTED) {
-				Log.v("PERMISSION", "MANAGE_EXTERNAL_STORAGE Permission is granted");
-			}else {
-				Log.v("PERMISSION", "MANAGE_EXTERNAL_STORAGE Permission is denied");
-			}
 
 			//Manifest.permission.INTERNET
-			if (grantResults[4] == PackageManager.PERMISSION_GRANTED) {
+			if (grantResults[3] == PackageManager.PERMISSION_GRANTED) {
 				Log.v("PERMISSION", "INTERNET Permission is granted");
 			}else {
 				Log.v("PERMISSION", "INTERNET Permission is denied");
@@ -210,14 +204,15 @@ public class ETLMain extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		PERMISSIONS = new String[] {
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+			PERMISSIONS = new String[] {
 
-			Manifest.permission.WRITE_EXTERNAL_STORAGE,
-			Manifest.permission.READ_EXTERNAL_STORAGE,
-			Manifest.permission.BLUETOOTH,
-			Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-			Manifest.permission.INTERNET
-		};
+				Manifest.permission.WRITE_EXTERNAL_STORAGE,
+				Manifest.permission.READ_EXTERNAL_STORAGE,
+				Manifest.permission.BLUETOOTH,
+				Manifest.permission.INTERNET
+			};
+		}
 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 							 WindowManager.LayoutParams.FLAG_FULLSCREEN);
