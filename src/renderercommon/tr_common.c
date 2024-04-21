@@ -77,7 +77,7 @@ void R_PrintLongString(const char *string)
 void R_RegisterCommon(void)
 {
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
-	ri.Cvar_CheckRange(r_ext_multisample, 0, 8, qtrue);
+	ri.Cvar_CheckRange(r_ext_multisample, 0, 16, qtrue);
 }
 
 #ifdef USE_RENDERER_DLOPEN
