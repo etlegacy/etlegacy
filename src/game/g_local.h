@@ -1045,6 +1045,8 @@ struct gclient_s
 	int constructSoundTime;                 ///< construction sound time
 
 	qboolean activateHeld;                  ///< client is holding down +activate
+
+	int lastRevivePushTime;
 };
 
 /**
