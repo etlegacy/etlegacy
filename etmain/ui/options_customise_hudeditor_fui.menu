@@ -29,7 +29,7 @@ menuDef
 	{
 		close options_customise_hudeditor_fui;
 		open background_1;
-		open options_customise_hud
+		open options
 	}
 
 // Background //
@@ -52,5 +52,5 @@ menuDef
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("HUD EDITOR") )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("HUD editor is only available in-game."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, SUBWINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_customise_hudeditor_fui ; open options_customise_hud )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, SUBWINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_customise_hudeditor_fui ; open options )
 }
