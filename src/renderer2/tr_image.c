@@ -2078,6 +2078,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 		//const char *ext;
 		char filename[MAX_QPATH];
 		char *altName;
+		qboolean loaderRet = qfalse;
 		byte alphaByte;
 
 		// clear alpha of normalmaps for displacement mapping
@@ -2156,8 +2157,25 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 			// Check if file exists
 			if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
 			{
+				imageData_t data = { 0, altName, { NULL } };
+				// load the file
+				data.size = ri.FS_ReadFile(altName, &data.buffer.v);
+				if (!data.buffer.b || data.size < 0)
+				{
+					Ren_Warning("Failed to load an image (%s) with size: %i\n", data.name, data.size);
+					continue;
+				}
+
 				// Load
-				imageLoaders[i].ImageLoader(altName, pic, width, height, alphaByte);
+				loaderRet = imageLoaders[i].ImageLoader(&data, pic, width, height, 0xFF);
+
+				// free the file data
+				ri.FS_FreeFile(data.buffer.v);
+
+				if (!loaderRet)
+				{
+					Ren_Drop("Image loader failed to parse an image %s\n", data.name);
+				}
 			}
 
 			if (*pic)
