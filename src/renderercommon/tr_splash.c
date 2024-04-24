@@ -85,7 +85,11 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 		return qfalse;
 	}
 
+#ifdef FEATURE_RENDERER2
+	splashHandle = RE_RegisterShaderFromImage(LEGACY_SPLASH_NAME, splashImage, qfalse);
+#else
 	splashHandle = RE_RegisterShaderFromImage(LEGACY_SPLASH_NAME, LIGHTMAP_2D, splashImage, qfalse);
+#endif // FEATURE_RENDERER2
 
 	GL_CheckErrors();
 
