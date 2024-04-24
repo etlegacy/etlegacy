@@ -2025,7 +2025,7 @@ static qboolean CG_HudEditor_KeyDown(panel_button_t *button, int key)
 
 			return qtrue;
 		}
-		else if (comp->visible)
+		else if (comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL)
 		{
 			CG_HudEditorUpdateFields(button);
 			BG_PanelButtons_SetFocusButton(button);
@@ -2057,7 +2057,7 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 
 			return qtrue;
 		}
-		else if (comp->visible)
+		else if (comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL)
 		{
 			lastFocusComponent = button;
 			CG_HudEditorUpdateFields(lastFocusComponent);
@@ -2672,7 +2672,7 @@ void CG_DrawHudEditor(void)
 			skip = qfalse;
 		}
 
-		if (comp->visible && BG_CursorInRect(&button->rect))
+		if ((comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL) && BG_CursorInRect(&button->rect))
 		{
 			CG_DrawHudEditor_ToolTip(button);
 			return;
@@ -2693,8 +2693,8 @@ void CG_DrawHudEditor(void)
 		{
 			break;
 		}
-
-		if (comp->visible && BG_CursorInRect(&button->rect))
+        
+        if ((comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL) && BG_CursorInRect(&button->rect))
 		{
 			CG_DrawHudEditor_ToolTip(button);
 			break;
