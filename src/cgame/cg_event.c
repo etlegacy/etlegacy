@@ -119,7 +119,7 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 
 /**
  * @brief CG_ColorCharFromFloat Just squashes the float value into a char into the range of '0' to '9'
- * @param val float color channel value between 0.0 and 1.0
+ * @param[in] val float color channel value between 0.0 and 1.0
  * @return char color value between '0' and '9'
  */
 static ID_INLINE char CG_ColorCharFromFloat(float val)
@@ -127,6 +127,14 @@ static ID_INLINE char CG_ColorCharFromFloat(float val)
 	return MIN(MAX('0' + (int)(val * 255.0f), '0'), '9');
 }
 
+/**
+ * @brief CG_ColorObituaryEntName
+ * @param[in] ci
+ * @param[in] color As spectator : 1st index is axis color, 2nd index is team kill color, 3rd is allies colors.
+ *                  As player    : 1st index is enemy color, 2nd index is team kill color, 3rd is team mate color.
+ * @param[in,out] name player name to be colored
+ * @param[in] same_team is team kill
+ */
 static ID_INLINE void CG_ColorObituaryEntName(clientInfo_t *ci, vec4_t color, char *name, qboolean same_team)
 {
 	clientInfo_t *self = &cgs.clientinfo[cg.clientNum];
@@ -277,7 +285,7 @@ static void CG_Obituary(entityState_t *ent)
 		Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
 		if (pmComp->style & POPUP_FORCE_COLORS)
 		{
-			CG_ColorObituaryEntName(ci, pmComp->colorMain, targetName, ca && ca->team == ci->team);
+			CG_ColorObituaryEntName(ci, pmComp->colorMain, targetName, ca && ca != ci && ca->team == ci->team);
 		}
 		Q_strcat(targetName, MAX_NAME_LENGTH, S_COLOR_WHITE);
 
@@ -356,7 +364,7 @@ static void CG_Obituary(entityState_t *ent)
 				}
 				else
 				{
-					if (ci->team == ca->team)
+					if (ci->team == ca->team && !(pmComp->style & POPUP_FORCE_COLORS))
 					{
 						CG_AddPMItemEx(PM_DEATH, va("%s^1 %s^7 ", targetName, CG_TranslateString(message)), va("%s^1%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorRed, i);
 					}
