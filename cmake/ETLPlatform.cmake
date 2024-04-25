@@ -115,11 +115,11 @@ elseif(WIN32)
 	endif()
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot")
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /Zp16 /arch:SSE2 /W3 /Od /Ob2 /Oi /Ot")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHa /arch:SSE2 /O2 /Ob2 /Oi /Ot")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /arch:SSE2 /W3 /O2 /Ob2 /Oi /Ot")
 
-		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot")
-		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /EHa /Zp16 /arch:SSE2 /W3 /Od /Ob2 /Oi /Ot")
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /EHa /arch:SSE2 /O2 /Ob2 /Oi /Ot")
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /EHa /arch:SSE2 /W3 /O2 /Ob2 /Oi /Ot")
 
 		set(CompilerFlags
 			CMAKE_CXX_FLAGS
@@ -137,6 +137,9 @@ elseif(WIN32)
 			string(REPLACE "/RTCs" "" ${CompilerFlag} "${${CompilerFlag}}")
 			string(REPLACE "/RTCu" "" ${CompilerFlag} "${${CompilerFlag}}")
 			string(REPLACE "/RTC1" "" ${CompilerFlag} "${${CompilerFlag}}")
+			
+			# remove any "Struct ember Alignment" settings
+			string(REPLACE "/Zp" "" ${CompilerFlag} "${${CompilerFlag}}")
 		endforeach()
 
 		set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} /LARGEADDRESSAWARE")
