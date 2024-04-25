@@ -1374,12 +1374,12 @@ int CG_CalcViewValues(void)
 					cg.refdefViewAngles[0] += (crandom() * 0.25f) * (ps->weaponTime / (float)GetWeaponTableData(ps->weapon)->nextShotTime);
 					cg.refdefViewAngles[1] += (crandom() * 0.25f) * (ps->weaponTime / (float)GetWeaponTableData(ps->weapon)->nextShotTime);
 				}
-				else if (GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_MG)
+				else if (GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_MG || cg.snap->ps.eFlags & EF_MOUNTEDTANK)
 				{
 					cg.refdefViewAngles[0] += crandom() * 0.5f;
 					cg.refdefViewAngles[1] += crandom() * 0.5f;
 				}
-				else
+				else    // nested MG
 				{
 					cg.refdefViewAngles[0] += crandom();
 					cg.refdefViewAngles[1] += crandom();
