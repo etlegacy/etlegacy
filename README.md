@@ -14,8 +14,10 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
 * Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#development](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
 
-![etlegacy-20240425-231129-000](https://github.com/etlegacy/etlegacy/assets/33521759/d12deace-7445-456a-8952-c09363241bb1)
-![etlegacy-20240425-231347-000](https://github.com/etlegacy/etlegacy/assets/33521759/da864ce6-4d95-4d11-9eba-1c323cb0f4ca)
+![etlegacy-20240420-004739-000](https://github.com/etlegacy/etlegacy/assets/33521759/bf1e2641-f04b-4d22-b3e0-fc8cfeb3a0ff)
+![etlegacy-20240420-004556-000](https://github.com/etlegacy/etlegacy/assets/33521759/fe526bba-bd46-4c28-b1d6-d38df6695fd2)
+![etlegacy-20240420-025100-000](https://github.com/etlegacy/etlegacy/assets/33521759/b2837e7d-6cc7-432d-bd16-c09cdba64a91)
+![etlegacy-20240421-191806-000](https://github.com/etlegacy/etlegacy/assets/33521759/63d7017b-4a71-4f58-9ce2-847dd1494fb8)
 
 
 ### Source Code Compiler/Linker Settings for branch corec
