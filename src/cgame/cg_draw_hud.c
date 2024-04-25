@@ -862,6 +862,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 
 	if (comp->style & (BAR_ICON << 1))
 	{
+		Vector4Copy(comp->colorMain, color);
 		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
 		color[3] = comp->colorMain[3];
 
@@ -1321,6 +1322,7 @@ void CG_DrawPlayerHealth(hudComponent_t *comp)
 	// dynamic color
 	if (comp->style & 1)
 	{
+		Vector4Copy(comp->colorMain, color);
 		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
 		color[3] = comp->colorMain[3];
 	}

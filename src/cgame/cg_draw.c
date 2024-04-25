@@ -1799,6 +1799,7 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 	{
 		vec4_t hcolor;
 
+		Vector4Copy(comp->colorMain, hcolor);
 		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], hcolor);
 		hcolor[3] = comp->colorMain[3];
 		trap_R_SetColor(hcolor);
@@ -1828,6 +1829,7 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		{
 			vec4_t hcolor;
 
+			Vector4Copy(comp->colorMain, hcolor);
 			CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], hcolor);
 			hcolor[3] = comp->colorSecondary[3];
 			trap_R_SetColor(hcolor);
@@ -2272,6 +2274,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 
 	if (style & (BAR_ICON << 1))
 	{
+		Vector4Copy(comp->colorMain, c);
 		CG_ColorForHealth(health, c);
 		c[3] = comp->colorMain[3] * fadeColor[3];
 

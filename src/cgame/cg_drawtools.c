@@ -88,7 +88,7 @@ qboolean Ccg_Is43Screen(void)
  */
 float Ccg_WideX(float x)
 {
-	return (Ccg_Is43Screen()) ? x : x *cgs.adr43;  // * (aspectratio / (4/3))
+	return (Ccg_Is43Screen()) ? x : x * cgs.adr43;  // * (aspectratio / (4/3))
 }
 
 /**
@@ -796,9 +796,15 @@ float *CG_TeamColor(int team)
 }
 
 /**
- * @brief CG_ColorForHealth
+ * @brief Set the color depending of the current health.
+ * Color follow the below logic and lerp the color under 100 HP
+ *  - >= 100   : default color (set outside the function)
+ *  - 66 - 100 : Default color to Yellow
+ *  - 33 - 66  : Yellow To Red
+ *  - < 33     : Red
+ *  - 0        : Black
  * @param[in] health
- * @param[in] hcolor
+ * @param[in,out] hcolor
  */
 void CG_ColorForHealth(int health, vec4_t hcolor)
 {
@@ -807,37 +813,42 @@ void CG_ColorForHealth(int health, vec4_t hcolor)
 	if (health <= 0)
 	{
 		VectorClear(hcolor);    // black
-		hcolor[3] = 1;
+		hcolor[3] = 1.f;
+		return;
+	}
+
+	// enough health, keep default value
+	if (health >= 100)
+	{
 		return;
 	}
 
 	// set the color based on health
-	hcolor[0] = 1.0;
-	hcolor[3] = 1.0;
-	if (health >= 100)
+	if (health <= 66)
 	{
-		hcolor[2] = 1.0;
-	}
-	else if (health <= 66)
-	{
+		hcolor[0] = 1.f;
+		hcolor[1] = 1.f;
 		hcolor[2] = 0;
 	}
 	else
 	{
-		hcolor[2] = (health - 66.f) / 33.0f;
+		hcolor[0] += (1 - hcolor[0]) * (1 - (health - 66.f) / 33.f);
+		hcolor[1] += (1 - hcolor[1]) * (1 - (health - 66.f) / 33.f);
+		hcolor[2] *= (health - 66.f) / 33.f;
 	}
 
 	if (health > 66)
 	{
-		hcolor[1] = 1.0;
+		return;
 	}
-	else if (health <= 33)
+
+	if (health <= 33)
 	{
 		hcolor[1] = 0;
 	}
 	else
 	{
-		hcolor[1] = (health - 33.f) / 33.0f;
+		hcolor[1] = (health - 33.f) / 33.f;
 	}
 }
 
