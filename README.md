@@ -14,46 +14,29 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
 * Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#development](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
 
+![etlegacy-20240420-004739-000](https://github.com/etlegacy/etlegacy/assets/33521759/bf1e2641-f04b-4d22-b3e0-fc8cfeb3a0ff)
+![etlegacy-20240420-004556-000](https://github.com/etlegacy/etlegacy/assets/33521759/fe526bba-bd46-4c28-b1d6-d38df6695fd2)
+![etlegacy-20240420-025100-000](https://github.com/etlegacy/etlegacy/assets/33521759/b2837e7d-6cc7-432d-bd16-c09cdba64a91)
+![etlegacy-20240421-191806-000](https://github.com/etlegacy/etlegacy/assets/33521759/63d7017b-4a71-4f58-9ce2-847dd1494fb8)
 
 
 ### Source Code Compiler/Linker Settings for branch corec
 
-## For latest Windows SDK & MSVS 2019 Toolset
+## For Windows SDK & MSVS Toolset
 
-Compile etl with latest Windows SDK, for msvs 2019 with the following settings:
+Compile etl with this Windows SDK, for MSVS with the following settings:
 
 
 > For all files in the solution
 ```
 
   General:
-    Platform Toolset:                     Visual Studio 2019 (v142)
- 	Windows SDK Version:                  10.0 (latest installed version)
+    Platform Toolset:                     Visual Studio 2022 (v143)
+ 	Windows SDK Version:                  10.0.17763.0
 
 ```
 
-> For projects: cgame_mp_x86, etl, etlded, qagame_mp_x86, renderer_opengl1_x86, renderer_opengl2_x86, ui_mp_x86
-```
 
-  C/C++
-    Preprocessor:
-      - add:                              WINDOWS_IGNORE_PACKING_MISMATCH
-    Optimization:
-      - debug build:   Optimization:      Disable (/Od)
-        release build: Optimization:      Maximum Optimization (favor speed) (/O2)
-      - Inline Function Expansion:        Any Suitable (/Ob2)
-      - Enable Intrinstic Functions:      Yes (/Oi)
-      - Favor Size Or Speed:              Favor fast code (/Ot)
-    Code Generation:
-      - Enable C++ Exceptions:            Yes with SEH Exceptions (/Eha)
-      - Basic Runtime Checks:             Default
-      - Struct Member Alignment:          16 Bytes (/Zp16)
-      - Enable Enhanced Instruction Set:  Streaming SIMD Extensions 2 (/arch:SSE2)
-  Linker
-    System:
-      - Enable Large Addresses:           Yes (/LARGEADDRESSAWARE)
-
-```
 
 
 INTRODUCTION
