@@ -20,40 +20,19 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 
 ## For latest Windows SDK & MSVS 2019 Toolset
 
-Compile etl with latest Windows SDK, for msvs 2019 with the following settings:
+Compile etl with this Windows SDK, for MSVS with the following settings:
 
 
 > For all files in the solution
 ```
 
   General:
-    Platform Toolset:                     Visual Studio 2019 (v142)
- 	Windows SDK Version:                  10.0 (latest installed version)
+    Platform Toolset:                     Visual Studio 2022 (v143)
+ 	Windows SDK Version:                  10.0.17763.0
 
 ```
 
-> For projects: cgame_mp_x86, etl, etlded, qagame_mp_x86, renderer_opengl1_x86, renderer_opengl2_x86, ui_mp_x86
-```
 
-  C/C++
-    Preprocessor:
-      - add:                              WINDOWS_IGNORE_PACKING_MISMATCH
-    Optimization:
-      - debug build:   Optimization:      Disable (/Od)
-        release build: Optimization:      Maximum Optimization (favor speed) (/O2)
-      - Inline Function Expansion:        Any Suitable (/Ob2)
-      - Enable Intrinstic Functions:      Yes (/Oi)
-      - Favor Size Or Speed:              Favor fast code (/Ot)
-    Code Generation:
-      - Enable C++ Exceptions:            Yes with SEH Exceptions (/Eha)
-      - Basic Runtime Checks:             Default
-      - Struct Member Alignment:          16 Bytes (/Zp16)
-      - Enable Enhanced Instruction Set:  Streaming SIMD Extensions 2 (/arch:SSE2)
-  Linker
-    System:
-      - Enable Large Addresses:           Yes (/LARGEADDRESSAWARE)
-
-```
 
 
 INTRODUCTION
