@@ -18,7 +18,7 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 
 ### Source Code Compiler/Linker Settings for branch corec
 
-## For latest Windows SDK & MSVS 2019 Toolset
+## For Windows SDK & MSVS Toolset
 
 Compile etl with this Windows SDK, for MSVS with the following settings:
 
