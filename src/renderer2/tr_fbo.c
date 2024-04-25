@@ -646,7 +646,9 @@ void R_InitFBOs(void)
 		R_CheckFBO(tr.occlusionRenderFBO);
 	}
 
-	if (r_staticLight->integer && r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable)
+//	if (r_staticLight->integer && r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable)
+	// The flamethrower needs this FBO too for the fancy shadows in renderer2.
+	if (r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable)
 	{
 		// shadowMap FBOs for shadow mapping offscreen rendering
 		for (i = 0; i < MAX_SHADOWMAPS; i++)

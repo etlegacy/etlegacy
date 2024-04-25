@@ -61,3 +61,4 @@ CMakeSettings.json
 # Do not under any circumstances ignore these
 !/easybuild.sh
 !/easybuild.bat
+/src/renderer2/glsl/forwardLighting_fp.glsl.copy

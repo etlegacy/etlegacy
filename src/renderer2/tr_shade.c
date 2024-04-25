@@ -662,8 +662,6 @@ static void Render_entity(int stage)
 	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
 	SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
 
-	//SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value); // entities use a constant value (half-lambert 0.5)
-
 	if (use_alphaTesting)
 	{
 		GLSL_SetUniform_AlphaTest(pStage->stateBits);
@@ -705,6 +703,8 @@ static void Render_entity(int stage)
 
 	if (use_normalMapping)
 	{
+		SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value);
+
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 
 		if (use_parallaxMapping)
@@ -938,6 +938,7 @@ static void Render_world(int stage, qboolean use_lightMapping)
 								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
 		use_reflectionmap   = use_reflections && (pStage->type == ST_BUNDLE_DBSR);
 
+		// this has to be done before SetMacrosAndSelectProgram()..
 		R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
 	}
 
@@ -972,8 +973,6 @@ static void Render_world(int stage, qboolean use_lightMapping)
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
-	SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value);
 
 	// ..
 	SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, (r_showLightMaps->integer == 1 ? GL_TRUE : GL_FALSE));
@@ -1015,6 +1014,8 @@ static void Render_world(int stage, qboolean use_lightMapping)
 		// render the texture(map)s
 		if (use_normalMapping)
 		{
+			SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value);
+
 			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 
 			//SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
@@ -1197,6 +1198,9 @@ static void Render_shadowFill(int stage)
 	stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS);
 	GL_State(stateBits);
 
+use_alphaTesting = qfalse;//!!!DEBUG!!!
+// this needs to be checked. alpha goes woot.
+
 	SetMacrosAndSelectProgram(trProg.gl_shadowFillShader,
 									USE_ALPHA_TESTING, use_alphaTesting,
 									USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
@@ -1250,7 +1254,7 @@ static void Render_shadowFill(int stage)
 	if (r_debugShadowMaps->integer)
 	{
 		vec4_t shadowMapColor;
-		Vector4Copy(g_color_table[backEnd.pc.c_batches % 8], shadowMapColor);
+	Vector4Copy(g_color_table[backEnd.pc.c_batches % 8], shadowMapColor);
 		SetUniformVec4(UNIFORM_COLOR, shadowMapColor);
 	}
 	else
@@ -2232,10 +2236,10 @@ static void Render_liquid(int stage)
 		SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight);
 
 		// fresnel
-		SetUniformFloat(UNIFORM_FRESNELBIAS, RB_EvalExpression(&pStage->fresnelBiasExp, 0.05f));
-		SetUniformFloat(UNIFORM_FRESNELPOWER, RB_EvalExpression(&pStage->fresnelPowerExp, 2.0f));
-		SetUniformFloat(UNIFORM_FRESNELSCALE, RB_EvalExpression(&pStage->fresnelScaleExp, 0.85f));
-		SetUniformFloat(UNIFORM_NORMALSCALE, RB_EvalExpression(&pStage->normalScaleExp, 0.05f));
+		SetUniformFloat(UNIFORM_FRESNELBIAS, RB_EvalExpression(&pStage->fresnelBiasExp, 0.00f));
+		SetUniformFloat(UNIFORM_FRESNELPOWER, RB_EvalExpression(&pStage->fresnelPowerExp, 1.0f));
+		SetUniformFloat(UNIFORM_FRESNELSCALE, RB_EvalExpression(&pStage->fresnelScaleExp, 1.0f));
+		SetUniformFloat(UNIFORM_NORMALSCALE, RB_EvalExpression(&pStage->normalScaleExp, 0.01f));
 
 		// specular
 		SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value * 5.f); // water always more specular
@@ -2367,7 +2371,7 @@ static void Render_fog_brushes()
 
 		//fogDepthVector[3] = -fog->surface[3] + DotProduct(backEnd.orientation.origin, fog->surface);
 		Dot(backEnd.orientation.origin, fog->surface, fogDepthVector[3]);
-		fogDepthVector[3] -= fog->surface[3];
+		fogDepthVector[3] += -fog->surface[3];
 
 		//eyeT = DotProduct(backEnd.orientation.viewOrigin, fogDepthVector) + fogDepthVector[3];
 		Dot(backEnd.orientation.viewOrigin, fogDepthVector, eyeT);

@@ -808,6 +808,7 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 		attr = ATTR_NORMAL;
 		break;
 	case USE_NORMAL_MAPPING:
+	case USE_PARALLAX_MAPPING:
 	case USE_SPECULAR:
 	case USE_REFLECTIONS:
 	case USE_WATER:
@@ -967,9 +968,16 @@ static void GLSL_BuildShaderExtraDef()
 
 	BUFFEXT("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale);
 
-	// It's always: r_FBufScale * r_NPOTScale.. so we the multiplication once (not for every pixel/fragment)
+	// It's always: r_FBufScale * r_NPOTScale.. so we do the multiplication once (not for every pixel/fragment)
 	BUFFEXT("#ifndef r_FBufNPOTScale\n#define r_FBufNPOTScale vec2(%f, %f)\n#endif\n", fbufWidthScale * npotWidthScale, fbufHeightScale * npotHeightScale);
 
+/*
+	VSM		Variance Shadow Mapping					// not implemented
+	ESM		Exponential Shadow Maps					// not implemented
+	EVSM	Exponential Variance Shadow Mapping
+	PCF		Percentage-Closer Filtering
+	PCSS	Percentage-Closer Soft Shadow			// not implemented
+*/
 	if (r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
 	{
 		BUFFEXT("#ifndef EVSM\n#define EVSM 1\n#endif\n");
@@ -1001,15 +1009,24 @@ static void GLSL_BuildShaderExtraDef()
 			BUFFEXT("#ifndef r_DebugShadowMaps\n#define r_DebugShadowMaps %i\n#endif\n", r_debugShadowMaps->integer);
 		}
 
-		// this filtering doesn't appear to work: TODO
-		if (r_softShadows->integer == 1)
+		// shadow filtering:
+		// a value >0 = EVSM filtering
+		if (r_shadowSamples->value > 0)
 		{
-			BUFFEXT("#ifndef PCSS\n#define PCSS 1\n#endif\n");
-		}
-		else if (r_softShadows->value)
-		{
-			BUFFEXT("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f);
 			// note: if you use this softshadows, you must also set r_shadowBlur to a value != 0
+			// r_shadowBlur is the width of the penumbra,  the transition zone from shadow to light.
+			// If the width is set to 0, the shadows are hard.
+			// Note: If the shadowblur is small, there is no need to take many samples. If the blur is larger, we want more samples..
+			// ratio samples per blur-width is maybe: the square root of blur per sample.  (example: blur is 20, samples=sqrt(20)=4.47
+			// Beware that the max value for r_shadowSamples is 6, and the minimum value for nSamples should be 1.
+//!			int s = (int)(floor(sqrt((r_shadowBlur->value + 1.0))));
+//!			int iSamples = max(1, min(6, s));
+//!			float fSamples = min(r_shadowSamples->value, (float)(iSamples)); // r_shadowSamples always overrules if it has a lower value.
+//!			BUFFEXT("#ifndef SOFTSHADOWSAMPLES\n#define SOFTSHADOWSAMPLES %1.1f\n#endif\n", fSamples);
+			BUFFEXT("#ifndef SOFTSHADOWSAMPLES\n#define SOFTSHADOWSAMPLES %1.1f\n#endif\n", r_shadowSamples->value + 1.0f); // +1 because at least 2 samples are needed..
+		}
+		else {
+			BUFFEXT("#undef SOFTSHADOWSAMPLES\n");
 		}
 
 		//if (r_parallelShadowSplits->integer)
@@ -2812,7 +2829,7 @@ void GLSL_CompileGPUShaders(void)
 	trProg.gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
 	trProg.gl_depthOfField = GLSL_GetShaderProgram("depthOfField");
-	trProg.gl_ssao         = GLSL_GetShaderProgram("SSAO");
+	trProg.gl_ssao         = GLSL_GetShaderProgram("screenSpaceAmbientOcclusion"); // was named SSAO
 
 	trProg.gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 

@@ -1884,61 +1884,66 @@ static void R_SetupSplitFrustums(void)
 //!	float  lambda = r_parallelShadowSplitWeight->value;
 //!	float  ratio  = tr.viewParms.zFar / tr.viewParms.zNear;
 	vec3_t planeOrigin;
-	float  zNear, zFar;
+//@	float  zNear, zFar;
+	float  zFar;
 	// use fixed distances for the splits.
-	// these values produce the least visible blockyness per shadowfrustum. maybe little fine-tuning required only..
+	// these values produce the least visible blockiness per shadowfrustum. maybe little fine-tuning required only..
 	float  si[MAX_SHADOWMAPS+1] = {tr.viewParms.zNear, 384.f, 768.f, 1152.f, 8192.f, tr.viewParms.zFar};
 
-	/*for (j = 0; j < 5; j++)
-	{
-		CopyPlane(&tr.viewParms.frustums[0][j], &tr.viewParms.frustums[1][j]);
-	}*/
-	Com_Memcpy(&tr.viewParms.frustums[1], &tr.viewParms.frustums[0], 5 * sizeof(frustum_t));
+	// copy frustum[0] planes to the rest of the frustums[1..5], because left/right/bottom/top planes stay the same.
+	// We only need to calculate the near/far planes for every split.
+	for (int i = 1; i < 6; i++) Com_Memcpy(&tr.viewParms.frustums[i], &tr.viewParms.frustums[0], sizeof(frustum_t));
 
-	zNear = tr.viewParms.zNear;
-	zFar = zNear; // soon to be increased..
+//@	zNear = tr.viewParms.zNear;
+//@	zFar = zNear; // soon to be increased..
+	zFar = tr.viewParms.zNear; // soon to be increased..
 	for (i = 1, i1 = 2; i <= MAX_SHADOWMAPS; i++, i1++)
 	{
 //!		float si = i / (float)(MAX_SHADOWMAPS);
 //!		zFar = 1.005f * lambda * (tr.viewParms.zNear * powf(ratio, si)) + (1.f - lambda) * (tr.viewParms.zNear + (tr.viewParms.zFar - tr.viewParms.zNear) * si);
 		zFar += si[i];
-		if (i <= MAX_SHADOWMAPS)
-		{
+//@		if (i > 0)
+//@		{
 			tr.viewParms.parallelSplitDistances[i - 1] = zFar;
-		}
+//@		}
 
 		tr.viewParms.frustums[i][FRUSTUM_FAR].type = PLANE_NON_AXIAL;
 		VectorNegate(tr.viewParms.orientation.axis[0], tr.viewParms.frustums[i][FRUSTUM_FAR].normal);
-
 		VectorMA(tr.viewParms.orientation.origin, zFar, tr.viewParms.orientation.axis[0], planeOrigin);
 		//tr.viewParms.frustums[i][FRUSTUM_FAR].dist = DotProduct(planeOrigin, tr.viewParms.frustums[i][FRUSTUM_FAR].normal);
 		Dot(planeOrigin, tr.viewParms.frustums[i][FRUSTUM_FAR].normal, tr.viewParms.frustums[i][FRUSTUM_FAR].dist);
 		SetPlaneSignbits(&tr.viewParms.frustums[i][FRUSTUM_FAR]);
 
-		if (i <= MAX_SHADOWMAPS)
+		if (i1 <= MAX_SHADOWMAPS)
 		{
-//!			zNear = zFar - (zFar * 0.005f);
+//!?		zNear = zFar - (zFar * 0.005f); // relic..
 
+/*
 			tr.viewParms.frustums[i1][FRUSTUM_NEAR].type = PLANE_NON_AXIAL;
 			VectorCopy(tr.viewParms.orientation.axis[0], tr.viewParms.frustums[i1][FRUSTUM_NEAR].normal);
-
 			VectorMA(tr.viewParms.orientation.origin, zNear, tr.viewParms.orientation.axis[0], planeOrigin);
 			//tr.viewParms.frustums[i1][FRUSTUM_NEAR].dist = DotProduct(planeOrigin, tr.viewParms.frustums[i1][FRUSTUM_NEAR].normal);
 			Dot(planeOrigin, tr.viewParms.frustums[i1][FRUSTUM_NEAR].normal, tr.viewParms.frustums[i1][FRUSTUM_NEAR].dist);
 			SetPlaneSignbits(&tr.viewParms.frustums[i1][FRUSTUM_NEAR]);
-		}
-		zNear = zFar;
+*/
+			// The 1st split's far distance, is the 2nd split's near distance..  same plane, but reversed normals.
+			// When the normal of a plane is reversed, the distance gets negated.
+			// So we copy all the data instead of re-calculating.
+			tr.viewParms.frustums[i1][FRUSTUM_NEAR].type = PLANE_NON_AXIAL;
+			VectorCopy(tr.viewParms.orientation.axis[0], tr.viewParms.frustums[i1][FRUSTUM_NEAR].normal);
+			tr.viewParms.frustums[i1][FRUSTUM_NEAR].dist = -tr.viewParms.frustums[i][FRUSTUM_FAR].dist;
+			SetPlaneSignbits(&tr.viewParms.frustums[i1][FRUSTUM_NEAR]);
 
-		/*for (j = 0; j < 4; j++)
-		{
-			CopyPlane(&tr.viewParms.frustums[0][j], &tr.viewParms.frustums[i][j]);
-		}*/
-		// unrolled..
+		}
+//@		zNear = zFar; // no longer needed, the way frustum planes are calculated now..
+/*@
+*		No longer needed, the way frustum planes are calculated now.. the data is already copied.
+		// copy the rest of the planes, because they are all the same for all the split-frustums..
 		CopyPlane(&tr.viewParms.frustums[0][FRUSTUM_LEFT], &tr.viewParms.frustums[i][FRUSTUM_LEFT]);
 		CopyPlane(&tr.viewParms.frustums[0][FRUSTUM_RIGHT], &tr.viewParms.frustums[i][FRUSTUM_RIGHT]);
 		CopyPlane(&tr.viewParms.frustums[0][FRUSTUM_BOTTOM], &tr.viewParms.frustums[i][FRUSTUM_BOTTOM]);
 		CopyPlane(&tr.viewParms.frustums[0][FRUSTUM_TOP], &tr.viewParms.frustums[i][FRUSTUM_TOP]);
-		//Com_Memcpy(&tr.viewParms.frustums[i], &tr.viewParms.frustums[0], 4 * sizeof(frustum_t));
+*/
 	}
 }
 

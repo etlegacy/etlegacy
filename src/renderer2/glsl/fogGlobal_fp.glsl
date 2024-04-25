@@ -26,7 +26,7 @@ void main()
 //	depth *= depth; // hack to see further  (depth*depth will always yield a smaller value, except when depth equals 1)
 //	depth *= depth;
 	vec4  P = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
-	P.xyz /= P.w;
+	P.xyz = P.xyz / P.w;
 
 	// calculate the length in fog (t is always 0 if eye is in fog)      <--- is this line copy/paste woot?..
 	st.s = dot(P.xyz, u_FogDistanceVector.xyz) + u_FogDistanceVector.w;

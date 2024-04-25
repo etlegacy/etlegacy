@@ -2585,7 +2585,7 @@ void R_SetupLightLOD(trRefLight_t *light)
 	// never give ultra quality for point lights
 	if (lod == 0 && light->l.rlType == RL_OMNI)
 	{
-		lod = 1;
+		lod = 0;// 1;
 	}
 
 	light->shadowLOD = lod;

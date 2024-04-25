@@ -12,6 +12,18 @@ vec3 computeReflections(vec3 viewDir, vec3 normal, samplerCube envmap0, samplerC
 	return mix(envColor0, envColor1, interpolate).rgb * intensity;
 }
 
+// the cubeprobes are also aligned to world axis.
+// The reflect vector need to be in worldspace.
+vec3 computeReflectionsW(vec3 viewDir, vec3 normal, mat3 tangentToworld, samplerCube envmap0, samplerCube envmap1, float interpolate, float intensity)
+{
+	vec3 R = tangentToworld * reflect(viewDir, normal); // the reflection vector in worldspace
+	vec4 envColor0 = textureCube(envmap0, R).rgba;
+	vec4 envColor1 = textureCube(envmap1, R).rgba;
+	return mix(envColor0, envColor1, interpolate).rgb * intensity;
+}
+
+
+
 
 // Compute the specular lighting
 vec3 computeSpecular2(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent, float scale)
@@ -22,6 +34,7 @@ vec3 computeSpecular2(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec
 	float intensity = pow(dotNH, exponent);
 	return (intensity * scale * lightColor); // float * float * vec3  (should be better than: f*v*f)
 }
+
 vec3 computeSpecular(vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent, float scale)
 {
 	float dotNL = dot(normal, lightDir);
@@ -33,8 +46,9 @@ vec3 computeSpecular(vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, 
 }
 
 
-// compute the diffuse light term
-// https://en.wikipedia.org/wiki/Lambert%27s_cosine_law
+
+
+// compute the diffuse light term.
 // Diffuse lighting looks a bit like shadowing an object.
 // There is no real shadow being cast, but it renders surfaces darker when they are less facing the light.
 // Changes in diffuse lighting are very visible: If the diffuse light value is 1.0, the surface will be rendered black (if it's not facing the light).
@@ -52,8 +66,10 @@ float computeDiffuseLighting(float dotNL, float amount)
 {
 	float lambert = (1.0 - amount) + (dotNL * amount);
 	//return lambert*lambert; // square the result: this also makes the result always >0. (The old halfLambert was doing this)
-	return abs(lambert); // don't square, but abs instead. (the most useful values are so low already. squaring them, lowers them even more)
+	return abs(lambert); // don't square, but abs instead.
+	//return lambert;
 }
+
 float computeDiffuseLighting2(vec3 normal, vec3 lightDir)
 {
 	return dot(normal, lightDir);

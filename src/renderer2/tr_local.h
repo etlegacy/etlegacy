@@ -3901,9 +3901,8 @@ extern cvar_t *r_parallaxMapping;
 extern cvar_t *r_parallaxDepthScale;
 extern cvar_t *r_parallaxShadow; // value 0.0 to 1.0.  if 0.0 then parallax self shadowing is disabled (and not calculated)
 
-// 3 = stencil shadow volumes
-// 4 = shadow mapping
-extern cvar_t *r_softShadows;
+// fancy EVSM shadowing
+extern cvar_t * r_shadowSamples;
 extern cvar_t *r_shadowBlur;
 
 extern cvar_t *r_shadowMapSizeUltra;

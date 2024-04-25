@@ -582,11 +582,11 @@ SetUniformVec3(UNIFORM_LIGHTCOLOR, light->l.color);
 
 			// bind u_AttenuationMapXY
 			SelectTexture(TEX_ATTEXY);
-			BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
+			BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]); //GL_Bind(attenuationXYStage->bundle[TB_COLORMAP].image[TB_COLORMAP]);
 
 			// bind u_AttenuationMapZ
 			SelectTexture(TEX_ATTEZ);
-			BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
+			BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]); //GL_Bind(attenuationZStage->bundle[TB_COLORMAP].image[TB_COLORMAP]);
 
 			// bind u_ShadowMap
 			if (shadowCompare)
@@ -1468,7 +1468,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 // ..There is almost nothing left of the original code for this OMNI light shadowing.. very woot
 // and still the very same is done as before.. only now more efficiently.
 // Because this function is one of the most heavy ones being called, (if you have the fancy shadows enabled in-game),
-// overall performance could possibly best be improved upon in one of those more cpu-time-consuming functions.
+// overall performance will possibly improve..
 
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
@@ -1527,7 +1527,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							VectorCopy(backEnd.viewParms.orientation.axis[0], viewDirection);
 							VectorNormalizeOnly(viewDirection);
 
-#if 1
+#if 1 // is this needed?..
 							// calculate new up dir
 							CrossProduct(lightDirection, viewDirection, side);
 							VectorNormalizeOnly(side);
@@ -1667,15 +1667,15 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							{
 								VectorCopy(splitFrustumCorners[j], point);
 								point[3] = 1.0f; // initialized once, ..no need to keep setting it.
-#if 1
+
 								Vector4TransformM4(light->viewMatrix, point, transf);
+#if 0
+// is this dividing by 1?
 								/*transf[0] /= transf[3];
 								transf[1] /= transf[3];
 								transf[2] /= transf[3];*/
 								//VectorScale(transf, 1.0f / transf[3], transf);
 								VectorScale(transf, rcp(transf[3]), transf);
-#else
-								VectorTransformM4(light->viewMatrix, point, transf);
 #endif
 
 								AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
@@ -1697,12 +1697,14 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 								point[3] = 1.0f;
 
 								Vector4TransformM4(viewProjectionMatrix, point, transf);
+#if 0
+// is this dividing by 1?
 								/*transf[0] /= transf[3];
 								transf[1] /= transf[3];
 								transf[2] /= transf[3];*/
 								//VectorScale(transf, 1.0f / transf[3], transf);
-								VectorScale(transf, rcp(transf[3]), transf);
-
+//								VectorScale(transf, rcp(transf[3]), transf);
+#endif
 								AddPointToBounds(transf, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							}
 /*
@@ -2574,7 +2576,8 @@ void RB_RenderBloom()
 	Ren_LogComment("--- RB_RenderBloom ---\n");
 
 	// hdr requires bloom renderer
-	if (!r_bloom->integer && !HDR_ENABLED())
+//	if (!r_bloom->integer && !HDR_ENABLED())
+	if (!r_bloom->integer)
 	{
 		return;
 	}
@@ -2715,6 +2718,7 @@ void RB_RenderBloom()
 
 			DRAWVIEWQUAD();
 		}
+
 	}
 
 	// go back to 3D
@@ -7338,6 +7342,7 @@ const void *RB_RenderCubeprobe(const void *data)
 	rf.height  = REF_CUBEMAP_SIZE+2; // "
 	for (i = 0; i < 6; i++)
 	{
+
 		switch (i)
 		{
 		case 0:
@@ -7377,6 +7382,8 @@ const void *RB_RenderCubeprobe(const void *data)
 			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 			break;
 		}
+
+
 
 		// when we are busy rendering a cubemap, the rest of code must know.
 		// Therefor we must always set tr.refdef.renderingCubemap to indicate this.

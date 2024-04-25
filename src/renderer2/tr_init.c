@@ -118,7 +118,7 @@ cvar_t *r_logFile;
 cvar_t *r_drawBuffer;
 cvar_t *r_uiFullScreen;
 cvar_t *r_shadows;
-cvar_t *r_softShadows;
+cvar_t * r_shadowSamples;
 cvar_t *r_shadowBlur;
 
 //cvar_t *r_shadowMapQuality; // unused
@@ -1342,24 +1342,35 @@ void R_Register(void)
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_bumpScale = ri.Cvar_Get("r_bumpScale", "8.0", CVAR_ARCHIVE);
 
+	// Parallax Occlusion Mapping (POM): 0=off, 1=on
 	r_parallaxMapping = ri.Cvar_Get("r_parallaxMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.01", CVAR_CHEAT);
-	r_parallaxShadow = ri.Cvar_Get("r_parallaxShadow", "0.0", CVAR_ARCHIVE); // 0.0 = self-shadow calculation disabled, >0.0 factor is calculated
+	// The POM max. height of the bumps: a value of 0.05 is already quite high..
+	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.02", CVAR_CHEAT);
+	// POM Self-Shadowing: 0.0 = self-shadow calculation disabled, >0.0 factor is calculated.  1.0 is the max.
+	r_parallaxShadow = ri.Cvar_Get("r_parallaxShadow", "0.0", CVAR_ARCHIVE);
 	ri.Cvar_CheckRange(r_parallaxShadow, 0.0f, 1.0f, qfalse);
 
-	r_staticLight = ri.Cvar_Get("r_staticLight", "0", CVAR_ARCHIVE | CVAR_LATCH); // the sun/moon (and lights baked with -keeplights)
+	// the sun/moon (and lights baked with -keeplights) casting shadows and light
+	r_staticLight = ri.Cvar_Get("r_staticLight", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	// omni lights enabling
 	r_dynamicLight = ri.Cvar_Get("r_dynamicLight", "1", CVAR_ARCHIVE);
+	// shadows from omni light
 	r_dynamicLightShadows = ri.Cvar_Get("r_dynamicLightShadows", "1", CVAR_ARCHIVE);
 
-	r_lightScale = ri.Cvar_Get("r_lightScale", "0.005", CVAR_ARCHIVE | CVAR_LATCH); // used with shadowing
+	// used with shadowing. For example to set the intensity of the sun.
+	r_lightScale = ri.Cvar_Get("r_lightScale", "0.005", CVAR_ARCHIVE | CVAR_LATCH);
 
-	// shadowing
-	r_shadows = ri.Cvar_Get("cg_shadows", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	// shadowing: 0 = no shadows.  1=old style blob,  2=fancy shadows (EVSM: Exponential Variance Shadow Mapping)
+	r_shadows = ri.Cvar_Get("cg_shadows", "2", CVAR_ARCHIVE | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_shadows, 0, SHADOWING_EVSM32, qtrue);
 
-	r_shadowBlur = ri.Cvar_Get("r_shadowBlur", "2", CVAR_ARCHIVE | CVAR_LATCH);
-	r_softShadows = ri.Cvar_Get("r_softShadows", "0", CVAR_ARCHIVE | CVAR_LATCH); // 0 = off, 1 = PCSS, <>1 && r_shadowBlur>0 = PCF
-	ri.Cvar_CheckRange(r_softShadows, 0, 6, qtrue);
+	// This is the width of the penumbra (The transition-zone from shadow to light)
+	// So if you make this value 1, there is no penumbra, and you get hard edged shadows.
+	r_shadowBlur = ri.Cvar_Get("r_shadowBlur", "30", CVAR_ARCHIVE | CVAR_LATCH);
+	ri.Cvar_CheckRange(r_shadowBlur, 1, 1000, qtrue);
+	// r_shadowSamples is the number of samples that are taken to calculate the soft shadows.  (The number of samples is actually  r_shadowSamples*r_shadowSamples)
+	r_shadowSamples = ri.Cvar_Get("r_shadowSamples", "3", CVAR_ARCHIVE | CVAR_LATCH); // 0 = off, >1 number of PCF soft shadows samples
+	ri.Cvar_CheckRange(r_shadowSamples, 0, 6, qtrue);
 
 //	r_shadowMapQuality = ri.Cvar_Get("r_shadowMapQuality", "3", CVAR_ARCHIVE | CVAR_LATCH);
 //	ri.Cvar_CheckRange(r_shadowMapQuality, 0, 4, qtrue);
@@ -1406,6 +1417,7 @@ void R_Register(void)
 	sunShadowMapResolutions[3] = r_shadowMapSizeSunMedium->integer;
 	sunShadowMapResolutions[4] = r_shadowMapSizeSunLow->integer;
 
+	// no idea what this all is doing exactly..
 	r_shadowOffsetFactor         = ri.Cvar_Get("r_shadowOffsetFactor", "0", CVAR_CHEAT);
 	r_shadowOffsetUnits          = ri.Cvar_Get("r_shadowOffsetUnits", "0", CVAR_CHEAT);
 	r_shadowLodBias              = ri.Cvar_Get("r_shadowLodBias", "0", CVAR_CHEAT);
@@ -1426,7 +1438,6 @@ void R_Register(void)
 	//r_parallelShadowSplits = ri.Cvar_Get("r_parallelShadowSplits", "4", CVAR_ARCHIVE | CVAR_LATCH);
 	//ri.Cvar_CheckRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
 
-	// atm. you need this set to 1, otherwise the EVSM shadows (cgshadows 6) are not shown..  todo
 	//r_evsmPostProcess = ri.Cvar_Get("r_evsmPostProcess", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 
@@ -1474,15 +1485,16 @@ void R_Register(void)
 	r_showDeluxeMaps           = ri.Cvar_Get("r_showDeluxeMaps", "0", CVAR_CHEAT); // requires normal mapping
 	r_showCubeProbes           = ri.Cvar_Get("r_showCubeProbes", "0", CVAR_CHEAT);
 	r_showBspNodes             = ri.Cvar_Get("r_showBspNodes", "0", CVAR_CHEAT);
-	r_showParallelShadowSplits = ri.Cvar_Get("r_showParallelShadowSplits", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_showDecalProjectors      = ri.Cvar_Get("r_showDecalProjectors", "0", CVAR_CHEAT);
+	// show the zones used by the directional light shader to render shadows of the sun onto the world
+	r_showParallelShadowSplits = ri.Cvar_Get("r_showParallelShadowSplits", "0", CVAR_CHEAT | CVAR_LATCH);
 
 	// FOR sdl_glimp.c
 	r_extMultitexture  = ri.Cvar_Get("r_ext_multitexture", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_extTextureEnvAdd = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_allowExtensions  = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
-	r_materialScan = ri.Cvar_Get("r_materialScan", "2", CVAR_ARCHIVE | CVAR_LATCH);
+	r_materialScan = ri.Cvar_Get("r_materialScan", "3", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_smoothNormals = ri.Cvar_Get("r_smoothNormals", "0", CVAR_ARCHIVE | CVAR_LATCH);
 

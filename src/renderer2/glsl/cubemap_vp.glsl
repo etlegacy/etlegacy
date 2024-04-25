@@ -1,4 +1,6 @@
 /* cubemap_vp.glsl */
+// these cubeprobes are rendered inside out.
+// That way they are more easy to compare with the environment around them.
 
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
