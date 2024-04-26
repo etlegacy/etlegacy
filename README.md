@@ -1,25 +1,169 @@
 Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/468s0285u3w4vfom/branch/master?svg=true)](https://ci.appveyor.com/project/rmarquis/etlegacy/branch/master) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
 ==========
-
-*A second breath of life for Wolfenstein: Enemy Territory*
-
-* Website: [https://www.etlegacy.com](https://www.etlegacy.com)
-* Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
-* Wiki/FAQ: [https://dev.etlegacy.com/projects/etlegacy/wiki](https://dev.etlegacy.com/projects/etlegacy/wiki)
-* Forums: [https://dev.etlegacy.com/projects/etlegacy/boards](https://dev.etlegacy.com/projects/etlegacy/boards)
-* Development (bug reports and feature requests): [https://dev.etlegacy.com](https://dev.etlegacy.com)
-* Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
-* Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
-* Legacy Lua API: [http://legacy-lua-api.readthedocs.io](http://legacy-lua-api.readthedocs.io)
-* Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
-* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#development](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
-
+  
 ![etlegacy-20240420-004739-000](https://github.com/etlegacy/etlegacy/assets/33521759/bf1e2641-f04b-4d22-b3e0-fc8cfeb3a0ff)
 ![etlegacy-20240420-004556-000](https://github.com/etlegacy/etlegacy/assets/33521759/fe526bba-bd46-4c28-b1d6-d38df6695fd2)
 ![etlegacy-20240420-025100-000](https://github.com/etlegacy/etlegacy/assets/33521759/b2837e7d-6cc7-432d-bd16-c09cdba64a91)
 ![etlegacy-20240421-191806-000](https://github.com/etlegacy/etlegacy/assets/33521759/63d7017b-4a71-4f58-9ce2-847dd1494fb8)
+  
+<br><br>  
+**Some cvars used in the renderer2 of branch corec**
+<br><br>  
+___
+## 🟥 Parallax Occlusion Mapping  
+
+### `r_parallaxMapping <0><1>` 
+Disable/enable POM rendering.  
+Note that you must have materials that support POM in the map.  
+To make a POM material, you need a few things: A parallaxmap of the texture and a proper material shader.  
+The parallaxmap is a 4-channel RGBA image. The RGB contains the usual normalmap data, and the alpha channel contains the heightmap data.  
+The suffix for a parallaxmap is **_p**.  So if your material diffuse texture is named _"bigbumps.tga"_, you should name your parallaxmap _"bigbumps_p.tga"_.  
+In ET:Legacy you can also create such a parallaxmap at runtime using shader commands. If you already have a normalmap texture _"bigbumps_n.tga"_, and you have a seperate (RGB) texture _"bigbumps_h.tga"_ with the heightmap, you can use the following definition to create a parallaxmap of the 2 files:  
+
+```
+bumpmap displaceMap(textures/thisfolder/bigbumps_n.tga, textures/thisfolder/bigbumps_h.tga)
+```
+	
+### `r_parallaxDepthScale <float>`  
+Sets the max. parallax depth/scale of the bumps.  
+Use small values, like 0.02. The effect breaks down when too great values are used.  
+It also depends on the difference in heights of the supplied heightmap data how big the bump will be, of course.  
+ 
+### `r_parallaxShadow <0.0 to 1.0>`  
+Self-Shadowing strength. It depends on the location of the sunlight how the surface casts its shadow.  
+A value of 1.0 produces the most self-shadowing on the parallax'ed surface.  
+A value 0 disables self-shadowing. If self-shadowing is disabled, the shader runs faster.  
+<br><br>  
+___
+## 🟥 Lights & Soft Shadows  
+
+### `cg_shadows <int>`  
+To enable soft shadows you must set **cg_shadows 2**.  
+
+### `r_staticLight <0><1>`  
+This disables/enables the rendering of sunlight & shadow.  
+In fact, it is applied any directional light and also includes lights that are baked using _-keeplights_.  
+
+### `r_dynamicLight <0><1>`  
+Disable/enable omni-lights.  
+Most of the lights in ET:Legacy are Omni-lights. The flamethrower's flames are also an omni-light.  
+Omni-lights can create light- & shadow-interactions.  
+
+### `r_dynamicLightShadows <0><1>`  
+Disable/enable casting of shadows by omni-lights.  
+Enabled light-interactions are still shown if the shadows are disabled.  
+
+### `r_shadowBlur <float>`  
+Sets the width of the soft shadow edge (penumbra).  
+A value 0 disables this feature.  You will see shadows, but they are not soft.  
+A value of 1 produces hard edged shadows.  
+A value of 20 or 30 (or greater) produces nice soft shadows. If values get too high, you end up having blurry blobs where you hardly recognize the object casting the shadow anymore.  
+
+### `r_shadowSamples <0 to 6>`  
+The number of samples taken per pixel.  
+This sets the quality of the softness. An increase in quality means a decreases in performance. This option is quite heavy, so use with care.  
+_Note: The actual number of samples taken is really the r_shadowSamples value squared.  For example, if you set it at 3, there will be 9 samples taken for every pixel._  
+
+### `r_rimLighting <0><1>`
+Rim light gives your shading a nice volumentric effect which can greatly enhance the contrast with the background.  
+
+### `r_diffuseLighting <0.0 to 1.0>`  
+Lambertian Diffuse lighting is a simple way to make faces darker if they are turned away from the light.  
+If you use high values, your world will get darker.  
+
+### `r_specularScaleWorld <float>`  
+### `r_specularScaleEntities <float>`  
+### `r_specularScalePlayers <float>`  
+Specular light intensities per category (world, entities, players).  
+Higher values produces more specular lighting.  
+A value of 0 effectively renders the effect invisible.  
+
+### `r_specularExponentWorld <float>`  
+### `r_specularExponentEntities <float>`  
+### `r_specularExponentPlayers <float>`  
+Specular light exponent values.  
+Usually powers of two are used.  
+A higher value produces a wider, more spread out visible effect. For example, a value of 256 could be used for things that are rough and mat.  
+Lower values produce more centered, small focused specular highlights. For example, a value of 4 could be used for glass or metals.  
+<br><br>  
+___
+## 🟥 Reflections  
+  
+These can be reflections of the environment from:
+* cubeProbes
+* "tcGen environment" materials
+* "tcGen reflect" materials
+* reflection-texturemap materials  
+
+CubeProbes are maintained automatically by the game. They are created, stored, loaded and used when needed. You can however explicitely use the console command to rebuild all the cubeProbes for the current map:
+```
+\buildcubemaps
+```
+_Note: During cubeProbe creation the game seems unresponsive. Just wait a while.._  
+
+Materials that use the renderstage **"relectionMap"** use a special RGB texturemap that contains the colors that indicate how much reflection there should be in the material.  
+A reflection map uses the **_x** suffix.
+Here is an example of the material/shader command to add reflections to the surface:  
+```
+reflectionMap models/mapobjects/blitz_sd/blitz_sd_x.tga
+```
+
+### `r_reflectionMapping <0 or 1>`  
+Disable/enable reflections.  
+
+### `r_reflectionScale <0.0 to 1.0>`  
+The intensity of the reflections.  
+A value of 0 makes reflections invisible.  
+The max value of 1.0 produces the most reflections. This value is probably way too high, but it's cool if you like chrome-like objects..  
+<br><br>  
+___
+## 🟥 Liquid / Water  
+  
+The material/shader command **"waterfogvars"** is a feature to create underwater fog. The waterfogvars must be placed in the header of a liquid shader (not in a render stage). Here's an example of how it is defined:
+```
+textures/myliquid/mywater
+{
+	nocompress
+	qer_trans .5
+	q3map_globaltexture
+	surfaceparm trans
+	surfaceparm nonsolid
+	surfaceparm water
+	surfaceparm nomarks
+	cull disable
+	nopicmip
+	nofog
+	waterfogvars ( 0.11 0.13 0.14 ) 0.2 // the underwater fog
+	{ 
+		stage liquidmap
+		refractionIndex 1.3 // water
+		normalScale 0.01
+		fresnelPower 1.0
+		fresnelScale 1.00
+		fresnelBias 0.00
+		tcmod scroll -.02 .001
+		tcmod scale 0.5 0.5
+		color 0.1, 0.1, 0.1, 0.2 // watersurface fog 
+	}
+... etc
+}
+```
+In a material/shader you can make a **"stage liquidmap"** and in that stage you can specify the watersurface-fog color using the **color** command.  
+The watersurface-fog is only seen at the watersurface. As the water gets deeper, you see more of the fog-color, because the fog gets more dense.  
+In the **"stage liquidmap"** you can specify a refraction-index, like so: **"refractionIndex 1.3"**.  
+You can also set the fresnel values to change the reflectiveness of the surface. Commands are:
+* **fresnelPower <float>**
+* **fresnelScale <float>**
+* **fresnelBias <float>**
+
+_Note: if you use **tcMod** commands in the liquidmap stage, you get a fancy water, with waves/ripples etc._  
+
+<br><br>  
+<br><br>  
+<br><br>  
 
 
+  
 ### Source Code Compiler/Linker Settings for branch corec
 
 ## For Windows SDK & MSVS Toolset
@@ -38,6 +182,20 @@ Compile etl with this Windows SDK, for MSVS with the following settings:
 
 
 
+
+*A second breath of life for Wolfenstein: Enemy Territory*
+
+* Website: [https://www.etlegacy.com](https://www.etlegacy.com)
+* Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
+* Wiki/FAQ: [https://dev.etlegacy.com/projects/etlegacy/wiki](https://dev.etlegacy.com/projects/etlegacy/wiki)
+* Forums: [https://dev.etlegacy.com/projects/etlegacy/boards](https://dev.etlegacy.com/projects/etlegacy/boards)
+* Development (bug reports and feature requests): [https://dev.etlegacy.com](https://dev.etlegacy.com)
+* Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
+* Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
+* Legacy Lua API: [http://legacy-lua-api.readthedocs.io](http://legacy-lua-api.readthedocs.io)
+* Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
+* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#development](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
+  
 
 INTRODUCTION
 ============
