@@ -1180,9 +1180,11 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 		VectorCopy(light->l.origin, orientation->viewOrigin);
 
 		Matrix4Identity(orientation->transformMatrix);
-/*		//MatrixAffineInverse(orientation->transformMatrix, orientation->viewMatrix);
+/*
+		//MatrixAffineInverse(orientation->transformMatrix, orientation->viewMatrix);
 		Matrix4Multiply(light->viewMatrix, orientation->transformMatrix, orientation->viewMatrix);
-		Matrix4Copy(orientation->viewMatrix, orientation->modelViewMatrix);*/
+		Matrix4Copy(orientation->viewMatrix, orientation->modelViewMatrix);
+*/
 		// multiplying with the identity matrix, does nothing..
 		Matrix4Copy(light->viewMatrix, orientation->viewMatrix);
 		Matrix4Copy(orientation->viewMatrix, orientation->modelViewMatrix);

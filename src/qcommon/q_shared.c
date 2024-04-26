@@ -2045,7 +2045,7 @@ int Q_stricmp(const char *s1, const char *s2)
 #if 1 //ndef ETL_SSE
 	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
 #else
-	// this SSE2 version is working now..
+	// this SSE2 version is not working now..
 //!!!DEBUG!!! ..but it has a flaw to fix: lowercase only characters that are in the range 'A' to 'Z'    TODO
 	if (!s1 || !s2) return -1;
 	/*

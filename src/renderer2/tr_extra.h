@@ -497,7 +497,7 @@ void MatrixMultiplyZRotation(mat4_t m, vec_t degrees);
 
 ///qboolean PlanesGetIntersectionPoint(const vec4_t plane1, const vec4_t plane2, const vec4_t plane3, vec3_t out);
 //
-// note that this inlined intrinsic doed not return any function-result.
+// note that this inlined intrinsic does not return any function-result.
 // The reason for this, is that nowhere in code any result of the function is ever used. always ignored.
 #define PlanesGetIntersectionPoint(plane1, plane2, plane3, out) \
 { \

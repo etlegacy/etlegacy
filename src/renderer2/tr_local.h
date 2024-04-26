@@ -1284,17 +1284,17 @@ typedef enum
 {
 	COLLAPSE_none = 0,
 	COLLAPSE_genericMulti,
-	COLLAPSE_LD,
-	COLLAPSE_LDB,
-	COLLAPSE_LDBS,
-	COLLAPSE_LDBSR,
-	COLLAPSE_DB,
-	COLLAPSE_DBS,
-	COLLAPSE_DBSR,
-	COLLAPSE_WDB,
-	COLLAPSE_WB,
-	COLLAPSE_WD,
-	COLLAPSE_CB
+	COLLAPSE_LD,				///< lightmap + diffuse
+	COLLAPSE_LDB,				///< lightmap + diffuse + bump
+	COLLAPSE_LDBS,				///< lightmap + diffuse + bump + specular
+	COLLAPSE_LDBSR,				///< lightmap + diffuse + bump + specular + reflectionmap
+	COLLAPSE_DB,				///< diffuse + bump
+	COLLAPSE_DBS,				///< diffuse + bump + specular
+	COLLAPSE_DBSR,				///< diffuse + bump + specular + reflectionmap
+	COLLAPSE_WDB,				///< water + diffuse + bump
+	COLLAPSE_WB,				///< water + bump
+	COLLAPSE_WD,				///< water + diffuse
+	COLLAPSE_CB					///< cubemap + bump
 } collapseType_t;
 
 /**

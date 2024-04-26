@@ -1130,7 +1130,7 @@ mat4_t be_rotMatrix_90_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
  * @brief RB_RenderInteractionsShadowMapped
  *
  * After some initial optimizing, some parts of the code are hardly recognizable.
- * The remaining old commented out code, and commented out intermediate optimization steps ..
+ * The remaining old, commented out code, and commented out intermediate optimization steps ..
  * .. help in understanding how especially the RL_OMNI code has shrunken so much,
  * into just a few basic instructions.
  * If this function would be cleaned up, and removed from all commented out lines,
@@ -2028,6 +2028,8 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 					// we don't need tangent space calculations here
 //					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
 Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE); //skip vbo's too?
+
 				}
 				break;
 			}

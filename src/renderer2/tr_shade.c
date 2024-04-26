@@ -1262,6 +1262,7 @@ use_alphaTesting = qfalse;//!!!DEBUG!!!
 		SetUniformVec4(UNIFORM_COLOR, colorWhite);
 	}
 */
+
 	Tess_DrawElements();
 
 	GL_CheckErrors();

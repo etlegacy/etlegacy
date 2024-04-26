@@ -77,6 +77,7 @@
 #ifdef ETL_SSE
 
 // the SSE version of strlen()
+// Note: Do not feed it NULL
 #undef strlen
 size_t __cdecl SSE_strlen(_In_z_ char const* _Str);
 #define strlen(x) SSE_strlen(x)

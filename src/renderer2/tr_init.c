@@ -1369,8 +1369,8 @@ void R_Register(void)
 	r_shadowBlur = ri.Cvar_Get("r_shadowBlur", "30", CVAR_ARCHIVE | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_shadowBlur, 1, 1000, qtrue);
 	// r_shadowSamples is the number of samples that are taken to calculate the soft shadows.  (The number of samples is actually  r_shadowSamples*r_shadowSamples)
-	r_shadowSamples = ri.Cvar_Get("r_shadowSamples", "3", CVAR_ARCHIVE | CVAR_LATCH); // 0 = off, >1 number of PCF soft shadows samples
-	ri.Cvar_CheckRange(r_shadowSamples, 0, 6, qtrue);
+	r_shadowSamples = ri.Cvar_Get("r_shadowSamples", "3", CVAR_ARCHIVE | CVAR_LATCH); // number of PCF soft shadows samples taken per pixel
+	ri.Cvar_CheckRange(r_shadowSamples, 2, 6, qtrue);
 
 //	r_shadowMapQuality = ri.Cvar_Get("r_shadowMapQuality", "3", CVAR_ARCHIVE | CVAR_LATCH);
 //	ri.Cvar_CheckRange(r_shadowMapQuality, 0, 4, qtrue);
