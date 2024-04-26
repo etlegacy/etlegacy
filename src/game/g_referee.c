@@ -348,6 +348,9 @@ void G_refPlayerPut_cmd(gentity_t *ent, team_t team_id)
 	int       pid;
 	char      arg[MAX_TOKEN_CHARS];
 	gentity_t *player;
+	int       w;
+	int       w2;
+	int       playerType;
 
 	// Works for teamplayish matches
 	if (g_gametype.integer < GT_WOLF)
@@ -387,14 +390,41 @@ void G_refPlayerPut_cmd(gentity_t *ent, team_t team_id)
 	player->client->pers.invite = team_id;
 	player->client->pers.ready  = qfalse;
 
-	if (team_id == TEAM_AXIS)
+	playerType = player->client->sess.playerType;
+
+	if (playerType < PC_SOLDIER || playerType > PC_COVERTOPS)
 	{
-		SetTeam(player, "red", qtrue, WP_NONE, WP_NONE, qfalse);
+		playerType = PC_SOLDIER;
 	}
-	else
+
+	w  = player->client->sess.playerWeapon;
+	w2 = player->client->sess.playerWeapon2;
+
+	// default primary weapon for class and team
+	if (!IS_VALID_WEAPON(w))
 	{
-		SetTeam(player, "blue", qtrue, WP_NONE, WP_NONE, qfalse);
+		w = GetPlayerClassesData(team_id, playerType)->classPrimaryWeapons[0].weapon;
 	}
+	// prevent swapping to equivalent weap if the last selected is already of correct team
+	else if (GetWeaponTableData(w)->team != team_id &&
+	         GetWeaponTableData(w)->weapEquiv)
+	{
+		w = GetWeaponTableData(w)->weapEquiv;
+	}
+
+	// best secondary weapon for class and team
+	if (!IS_VALID_WEAPON(w2))
+	{
+		w2 = BG_GetBestSecondaryWeapon(playerType, team_id, w, player->client->sess.skill);
+	}
+	// prevent swapping to equivalent weap if the last selected is already of correct team
+	else if (GetWeaponTableData(w2)->team != team_id
+	         && GetWeaponTableData(w2)->weapEquiv)
+	{
+		w2 = GetWeaponTableData(w2)->weapEquiv;
+	}
+
+	SetTeam(player, team_id == TEAM_AXIS ? "red" : "blue", qtrue, w, w2, qtrue);
 
 	if (g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN)
 	{
