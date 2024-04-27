@@ -6502,6 +6502,7 @@ static int ScanAndLoadShaderFiles(void)
 {
 	char **shaderFiles;
 	char *buffers[MAX_SHADER_FILES];
+	int  bufferslen[MAX_SHADER_FILES];
 	char *p;
 	int  numShaderFiles, i;
 	char *oldp, *token, *textEnd;
@@ -6513,6 +6514,7 @@ static int ScanAndLoadShaderFiles(void)
 
 	Com_Memset(buffers, 0, sizeof(buffers));
 	Com_Memset(shaderTextHashTableSizes, 0, sizeof(shaderTextHashTableSizes));
+	Com_Memset(bufferslen, 0, MAX_SHADER_FILES);
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("materials", ".shader", &numShaderFiles);
@@ -6538,6 +6540,7 @@ static int ScanAndLoadShaderFiles(void)
 
 		Ren_Developer("...loading '%s'\n", filename);
 		summand = ri.FS_ReadFile(filename, (void **)&buffers[i]);
+		bufferslen[i] = summand;
 
 		if (!buffers[i])
 		{
@@ -6599,9 +6602,11 @@ static int ScanAndLoadShaderFiles(void)
 			continue;
 		}
 
-		strcat(textEnd, buffers[i]);
-		strcat(textEnd, "\n");
-		textEnd += strlen(textEnd);
+		Com_Memcpy(textEnd, buffers[i], bufferslen[i]);
+		textEnd += bufferslen[i];
+		*textEnd = '\n';
+		textEnd++;
+		*textEnd = 0; // this doesn't appear to be necessary
 		ri.FS_FreeFile(buffers[i]);
 	}
 
