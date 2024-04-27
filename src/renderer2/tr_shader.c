@@ -6599,8 +6599,8 @@ static int ScanAndLoadShaderFiles(void)
 			continue;
 		}
 
-		Q_strcat(textEnd, sum + numShaderFiles * 2, buffers[i]);
-		Q_strcat(textEnd, sum + numShaderFiles * 2, "\n");
+		strcat(textEnd, buffers[i]);
+		strcat(textEnd, "\n");
 		textEnd += strlen(textEnd);
 		ri.FS_FreeFile(buffers[i]);
 	}
