@@ -359,16 +359,16 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 			tess.stageIteratorFunc2 = &Tess_StageIteratorGeneric;
 		}
 	}
-	/*
+/*
 	else if (tess.stageIteratorFunc == &Tess_StageIteratorDepthFill)
 	{
-		if (isSky)
+		if (surfaceShader->isSky)
 		{
 			tess.stageIteratorFunc  = &Tess_StageIteratorSky;
 			tess.stageIteratorFunc2 = &Tess_StageIteratorDepthFill;
 		}
 	}
-	*/
+*/
 
 	tess.skipTangentSpaces = skipTangentSpaces;
 	tess.skipVBO           = skipVBO;

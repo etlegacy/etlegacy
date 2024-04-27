@@ -43,12 +43,15 @@ void main()
 
 
 	// reconstruct vertex position in world space
-	vec4 posBack = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depthBack, 1.0);
+	// scale to NDC (Normalized Device Coordinates) space
+	vec4  posBack = vec4(gl_FragCoord.xy, depthBack, 1.0) * 2.0 - 1.0;
+	// unproject to get into viewspace
+	posBack = u_UnprojectMatrix * posBack;
+	// normalize to homogeneous coordinates (where w is always 1)
 	posBack.xyz /= posBack.w;
 
-	vec4 posFront = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depthFront, 1.0);
-//	posFront.xyz /= posFront.w;
-
+	vec4  posFront = vec4(gl_FragCoord.xy, depthFront, 1.0) * 2.0 - 1.0;
+	posFront = u_UnprojectMatrix * posFront;
 	// we might be in the volume.
 	// In that case the volume front plane is behind you, and w becomes negative
 	if (posFront.w <= 0.0) {
@@ -58,11 +61,7 @@ void main()
 	}
 
 	// calculate fog distance
-	//if(depthFront <
-//	float fogDistance = distance(posBack, posFront);
 	float fogDistance = distance(posBack.xyz, posFront.xyz); // ignore the w
-	//float fogDistance = abs(depthBack - depthFront);
-
 
 	// calculate fog exponent
 	float fogExponent = fogDistance * u_FogDensity;

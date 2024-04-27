@@ -3130,7 +3130,7 @@ infoParm_t infoParms[] =
 	{ "origin",            1, 0,                 CONTENTS_ORIGIN           }, // center of rotating brushes
 	{ "trans",             0, 0,                 CONTENTS_TRANSLUCENT      }, // don't eat contained surfaces
 	{ "detail",            0, 0,                 CONTENTS_DETAIL           }, // don't include in structural bsp
-	{ "structural",        0, 0,                 CONTENTS_STRUCTURAL       }, // force into structural bsp even if trnas
+	{ "structural",        0, 0,                 CONTENTS_STRUCTURAL       }, // force into structural bsp even if trans
 	{ "areaportal",        1, 0,                 CONTENTS_AREAPORTAL       }, // divides areas
 	{ "clusterportal",     1, 0,                 CONTENTS_CLUSTERPORTAL    }, // for bots
 	{ "donotenter",        1, 0,                 CONTENTS_DONOTENTER       }, // for bots
@@ -6641,6 +6641,7 @@ textEnd += bufferslen[i] + 1;
 */
 		Com_Memcpy(textEnd, buffers[i], bufferslen[i]);
 		textEnd += bufferslen[i];
+
 		*textEnd = '\n';
 		textEnd++;
 		*textEnd = 0; // this doesn't appear to be necessary

@@ -11,26 +11,21 @@ uniform float     u_FogDensity;
 
 void main()
 {
-#if 0
 	// calculate the screen texcoord in the 0.0 to 1.0 range
-	vec2 st = gl_FragCoord.st * r_FBufScale;
-
-	// scale by the screen non-power-of-two-adjust
-	st *= r_NPOTScale;
-#else
+	// and scale by the screen non-power-of-two-adjust
 	vec2 st = gl_FragCoord.st * r_FBufNPOTScale;
-#endif
 
 	// reconstruct vertex position in world space
 	float depth = texture2D(u_DepthMap, st).r;
-//	depth *= depth; // hack to see further  (depth*depth will always yield a smaller value, except when depth equals 1)
-//	depth *= depth;
-	vec4  P = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
-	P.xyz = P.xyz / P.w;
+	// scale to NDC (Normalized Device Coordinates) space
+	vec4  P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
+	// unproject to get into viewspace
+	P = u_UnprojectMatrix * P;
+	// normalize to homogeneous coordinates (where w is always 1)
+	P.xyz /= P.w;
 
-	// calculate the length in fog (t is always 0 if eye is in fog)      <--- is this line copy/paste woot?..
 	st.s = dot(P.xyz, u_FogDistanceVector.xyz) + u_FogDistanceVector.w;
-	st.t = u_FogDensity; // * 0.125; // divided by 8
+	st.t = u_FogDensity;
 
 	gl_FragColor = u_Color * texture2D(u_ColorMap, st);
 }
