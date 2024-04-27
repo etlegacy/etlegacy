@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -600,6 +600,7 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 	if (ent->parent && ent->parent->client && ent->parent->client != other->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
 	{
 		G_AddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "healing");
+		G_LogPrintf("Health_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));
 	}
 
 	other->health += ent->item->quantity;
