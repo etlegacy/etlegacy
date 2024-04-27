@@ -5205,15 +5205,22 @@ void PmoveSingle(pmove_t *pmove)
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
-		qboolean userinput = abs(pm->cmd.forwardmove) + abs(pm->cmd.rightmove) > 10;
-
-		// in air for too much time
 		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
 		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
+		if (!pm->pmext->airTime && VectorLength(pm->ps->velocity) > 127)
+		{
+			if (!pm->pmext->speedLimitTime)
+			{
+				pm->pmext->speedLimitTime = pm->cmd.serverTime;
+			}
+		}
+
+		// in air for too much time or run for too long
 		if ((pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500)
-		    || (userinput && !pm->pmext->airTime && VectorLength(pm->ps->velocity) > 127))
+		    || (pm->pmext->speedLimitTime && pm->cmd.serverTime > pm->pmext->speedLimitTime + 250))
 		{
 			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
+			pm->pmext->speedLimitTime = 0;
 		}
 	}
 	else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
