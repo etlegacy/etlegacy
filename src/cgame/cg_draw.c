@@ -1743,8 +1743,11 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 			// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
 			if (VectorLength(cg.snap->ps.velocity) > 127)
 			{
-				CG_FinishWeaponChange(weapnum, GetWeaponTableData(weapnum)->weapAlts);
-				return;
+                if (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SCOPED)
+                {
+                    CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
+                    return;
+                }
 			}
 
 			if (
