@@ -268,6 +268,7 @@ vmCvar_t g_maxWarp;
 #ifdef FEATURE_LUA
 vmCvar_t lua_modules;
 vmCvar_t lua_allowedModules;
+vmCvar_t g_luaModuleList;
 #endif
 
 vmCvar_t g_guidCheck;
@@ -597,6 +598,7 @@ cvarTable_t gameCvarTable[] =
 #ifdef FEATURE_LUA
 	{ &lua_modules,                       "lua_modules",                       "",                           0,                                               0, qfalse, qfalse },
 	{ &lua_allowedModules,                "lua_allowedModules",                "",                           0,                                               0, qfalse, qfalse },
+	{ &g_luaModuleList,                   "g_luaModuleList",                   "",                           0,                                               0, qfalse, qfalse },
 #endif
 
 	{ &g_guidCheck,                       "g_guidCheck",                       "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
