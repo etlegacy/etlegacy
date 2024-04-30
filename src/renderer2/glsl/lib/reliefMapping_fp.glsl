@@ -36,11 +36,8 @@
 //
 vec2 parallax(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, float depthscale, float distanceToCam, out float parallaxHeight) {
 	// fade out the effect over distance
-	const float fadeOutDistance = PARALLAX_FADE_START; // start fading at this distance. (distance from the camera)
-	const float maxDistance = PARALLAX_FADE_END;       // at this distance, the effect is faded out
-	if (distanceToCam > maxDistance) return texCoords; // early out if (point on) surface is too far away..
-	float distanceRatio = 1.0;
-	if (distanceToCam > fadeOutDistance) distanceRatio = 1.0 - ((distanceToCam - fadeOutDistance) / (maxDistance - fadeOutDistance));
+	if (distanceToCam > PARALLAX_FADE_END) return texCoords;     // early out if (point on) surface is too far away..
+	float distanceRatio = (distanceToCam > PARALLAX_FADE_START) ? 1.0 - ((distanceToCam - PARALLAX_FADE_START) / (PARALLAX_FADE_END - PARALLAX_FADE_START)) : 1.0;
 
 	// steep parallax mapping
 	const int minLayers = 4;
@@ -99,11 +96,8 @@ float parallaxSelfShadow(sampler2D displaceMap, vec2 texCoords, vec3 lightDir, f
 	}
 
 	// fade out the effect over distance
-	const float fadeOutDistance = PARALLAX_FADE_START; // start fading at this distance. (distance from the camera)
-	const float maxDistance = PARALLAX_FADE_END;       // at this distance, the effect is faded out
-	if (distanceToCam > maxDistance) return 1.0;       // early out if (point on) surface is too far away..
-	float distanceRatio = 1.0;
-	if (distanceToCam > fadeOutDistance) distanceRatio = 1.0 - ((distanceToCam - fadeOutDistance) / (maxDistance - fadeOutDistance));
+	if (distanceToCam > PARALLAX_FADE_END) return 1.0;     // early out if (point on) surface is too far away..
+	float distanceRatio = (distanceToCam > PARALLAX_FADE_START) ? 1.0 - ((distanceToCam - PARALLAX_FADE_START) / (PARALLAX_FADE_END - PARALLAX_FADE_START)) : 1.0;
 
 	const int minLayers = 16;
 	const int maxLayers = 32;
@@ -122,8 +116,7 @@ float parallaxSelfShadow(sampler2D displaceMap, vec2 texCoords, vec3 lightDir, f
 		if (curHeight <= 0) break;
 		if (curHeightValue < curHeight) {
 			numSamples += 1;
-			float newShadow = (curHeight - curHeightValue) * stepHeight;
-			shadow = max(shadow, newShadow);
+			shadow = max(shadow, (curHeight - curHeightValue) * stepHeight);
 		}
 		stepHeight -= numLayers1;
 		curHeight -= layerHeight;
@@ -146,17 +139,16 @@ float parallaxSelfShadow(sampler2D displaceMap, vec2 texCoords, vec3 lightDir, f
 //                                  result.z  = shadow factor
 //
 vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3 lightDir, float depthscale, float distanceToCam, float shadowFactor) {
+	// the function result
+	vec3 result = vec3(texCoords, 1.0); // don't add shadow. Keep it as it is..
 	// fade out the effect over distance
-	const float fadeOutDistance = PARALLAX_FADE_START;            // start fading at this distance. (distance from the camera)
-	const float maxDistance = PARALLAX_FADE_END;                  // at this distance, the effect is faded out
-	if (distanceToCam > maxDistance) return vec3(texCoords, 1.0); // early out if (point on) surface is too far away..
-	float distanceRatio = 1.0;
-	if (distanceToCam > fadeOutDistance) distanceRatio = 1.0 - ((distanceToCam - fadeOutDistance) / (maxDistance - fadeOutDistance));
+	if (distanceToCam > PARALLAX_FADE_END) return result;     // early out if (point on) surface is too far away..
+	float distanceRatio = (distanceToCam > PARALLAX_FADE_START) ? 1.0 - ((distanceToCam - PARALLAX_FADE_START) / (PARALLAX_FADE_END - PARALLAX_FADE_START)) : 1.0;
 
 	// steep parallax mapping
 	const int minLayers = 4;
 	const int maxLayers = 32;
-	float viewAngle = max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0);
+	float viewAngle = max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0); // less layers when viewed from straight above
 	float numLayers = (maxLayers - minLayers) * viewAngle + minLayers;
 	float layerDepth = 1.0 / numLayers;
 	vec2 p = viewDir.xy / viewDir.z * depthscale * distanceRatio;
@@ -184,19 +176,19 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 	float beforeDepth = prevDepthValue - curDepth + layerDepth;
 	float weight = afterDepth / (afterDepth - beforeDepth);
 	float weight_1 = 1.0 - weight;
-	vec2 finalTexCoords = prevTexCoords * weight + curTexCoords * weight_1;
+	result.xy = prevTexCoords * weight + curTexCoords * weight_1; // finalTexCoords
 
 	// self shadowing
 	shadowFactor = clamp(shadowFactor, 0.0, 1.0);
 	if (shadowFactor == 0.0) {
-		return vec3(finalTexCoords, 1.0);
+		return result;
 	} else
 	{
 		float parallaxHeight = curDepth + beforeDepth * weight + afterDepth * weight_1;
 		float lightAngle = dot(vec3(0.0, 0.0, 1.0), lightDir);
 		// if the surface normal points away from the light, do not apply any self-shadow
 		if (lightAngle <= 0) {
-			return vec3(finalTexCoords, 1.0); // don't add shadow. Keep it as it is..
+			return result;
 		}
 
 		const int minLayers = 16;
@@ -204,9 +196,9 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 		float numLayers = (maxLayers - minLayers) * abs(lightAngle) + minLayers;
 		float numLayers1 = 1.0 / numLayers;
 		float layerHeight = parallaxHeight * numLayers1;
-		vec2 deltaTexCoords = lightDir.xy / lightDir.z * numLayers1 * depthscale;
 		float curHeight = parallaxHeight - layerHeight;
-		vec2 curTexCoords = finalTexCoords + deltaTexCoords;
+		vec2 deltaTexCoords = lightDir.xy / lightDir.z * numLayers1 * depthscale;
+		vec2 curTexCoords = result.xy + deltaTexCoords; // result.xy is the parallax vec2 result
 		float curHeightValue = 1.0 - texture2D(displaceMap, curTexCoords).a;
 		float shadow = 0.0;
 		int numSamples = 0;
@@ -216,8 +208,7 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 			if (curHeight <= 0) break;
 			if (curHeightValue < curHeight) {
 				numSamples += 1;
-				float newShadow = (curHeight - curHeightValue) * stepHeight;
-				shadow = max(shadow, newShadow);
+				shadow = max(shadow, (curHeight - curHeightValue) * stepHeight);
 			}
 			stepHeight -= numLayers1;
 			curHeight -= layerHeight;
@@ -227,9 +218,10 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 
 		// if we traced down to the bottom, and didn't hit a bump, we are in full light
 		if (numSamples == 0) {
-			return vec3(finalTexCoords, 1.0);
+			return result;
 		}
-		shadow = 1.0 - shadow * distanceRatio * shadowFactor; // fade out the amount of shadow over distance, and by cvar factor
-		return vec3(finalTexCoords, shadow);
+
+		result.z = 1.0 - shadow * distanceRatio * shadowFactor; // fade out the amount of shadow over distance, and by cvar factor
+		return result;
 	}
 }

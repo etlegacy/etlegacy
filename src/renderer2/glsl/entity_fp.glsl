@@ -28,6 +28,7 @@ uniform sampler2D u_ReflectionMap;
 #endif // USE_REFLECTIONS
 #if defined(USE_PARALLAX_MAPPING)
 uniform float u_DepthScale;
+uniform float u_ParallaxShadow;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_ALPHA_TESTING)
@@ -40,8 +41,9 @@ varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;
-varying vec3 var_LightDirection;
-varying vec3 var_ViewDirW;          // view direction in world space
+varying vec3 var_LightDirW;         // light direction in worldspace
+varying vec3 var_LightDirT;         // light direction in tangentspace
+varying vec3 var_ViewDirW;          // view direction in worldspace
 #if defined(USE_PARALLAX_MAPPING)
 varying vec3 var_ViewDirT;          // view direction in tangentspace
 varying float var_distanceToCam;    //
@@ -65,8 +67,9 @@ void main()
 
 	vec2 texDiffuse = var_TexDiffuse; // diffuse texture coordinates st
 #if defined(USE_PARALLAX_MAPPING)
-	float parallaxHeight; // needed for parallax self shadowing. set by the function parallax()
-	texDiffuse = parallax(u_NormalMap, var_TexDiffuse, var_ViewDirT, u_DepthScale, var_distanceToCam, parallaxHeight);
+	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, var_ViewDirT, -var_LightDirT, u_DepthScale, var_distanceToCam, u_ParallaxShadow);
+	texDiffuse = parallaxResult.xy;
+	float parallaxShadow = parallaxResult.z;
 #endif // end USE_PARALLAX_MAPPING
 
 
@@ -99,7 +102,7 @@ void main()
 	vec3 V = var_ViewDirW;
 
 	// light direction
-	vec3 L = var_LightDirection;
+	vec3 L = var_LightDirW;
 
 	// normal
 	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
@@ -137,6 +140,9 @@ void main()
 
     // compute final color
 	vec4 color = vec4(diffuse.rgb, 1.0);
+#if defined(USE_PARALLAX_MAPPING)
+	color.rgb *= parallaxShadow; //pow(parallaxShadow, 2); //pow(parallaxShadow, 4);
+#endif
 #if defined(USE_SPECULAR)
 	color.rgb += specular;
 #endif // USE_SPECULAR

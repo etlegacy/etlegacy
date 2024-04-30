@@ -106,10 +106,6 @@ void main()
 	vec2 texDiffuse;
 
 #if defined(USE_PARALLAX_MAPPING)
-//!	float parallaxHeight; // needed for parallax self shadowing. set by the function parallax()
-//!	texDiffuse = parallax(u_NormalMap, var_TexDiffuse, var_ViewDirT, u_DepthScale, var_distanceToCam, parallaxHeight);
-//!	float parallaxShadow = parallaxSelfShadow(u_NormalMap, texDiffuse, -var_LightDirT, u_DepthScale, var_distanceToCam, parallaxHeight);
-
 	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, var_ViewDirT, -var_LightDirT, u_DepthScale, var_distanceToCam, u_ParallaxShadow);
 	texDiffuse = parallaxResult.xy;
 	float parallaxShadow = parallaxResult.z;

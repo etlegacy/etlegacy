@@ -1,4 +1,4 @@
-
+/*
 textures/liquids_sd/sea_bright_na
 {
     qer_editorimage textures/liquids_sd/sea_bright_na.tga
@@ -37,6 +37,7 @@ textures/liquids_sd/seawall_foam
 		rgbgen identity
 	}
 }
+*/
 
 // ocean fog water
 textures/battery/fog_water
@@ -48,6 +49,7 @@ textures/battery/fog_water
   	surfaceparm trans
   	surfaceparm water
 	surfaceparm fog
+	sort underwater
 	{
 		map $whiteImage
 		rgbGen const ( 0.4 0.4 0.4 )
@@ -100,12 +102,14 @@ textures/battery/ocean_0
 	deformVertexes wave 1317 sin 0 2.5 0 0.15
  	deformVertexes wave 317 sin 0 1.5 0 0.30
 	cull none
-	sort underwater
-	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
+	sort water
+	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last (distance) value is ignored..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	// Note: this liquid stage does not have a lightmap rendered (nor will it have light/shadows).
 	bumpmap textures/liquids_sd/sea_bright_na_n.tga
+//	bumpmap displaceMap(textures/liquids_sd/sea_bright_na_n.tga, textures/liquids_sd/sea_bright_na_r.tga)
+//	parallax
 	{ 
 		stage liquidmap
 		refractionIndex 1.3
@@ -168,11 +172,13 @@ textures/battery/ocean_0to1
 	deformVertexes wave 1317 sin 0 2.5 0 0.15
  	deformVertexes wave 317 sin 0 1.5 0 0.30 	
 	cull none
-	sort underwater
+	sort water
 	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	bumpmap textures/liquids_sd/sea_bright_na_n.tga
+//	bumpmap displaceMap(textures/liquids_sd/sea_bright_na_n.tga, textures/liquids_sd/sea_bright_na_r.tga)
+//	parallax
 	{ 
 		stage liquidmap
 		refractionIndex 1.3
@@ -187,27 +193,31 @@ textures/battery/ocean_0to1
 	{ 
 		stage diffusemap
 		map textures/liquids_sd/sea_bright_na.tga
-//		blendFunc blend
-//		alphaGen const 0.2
-//		rgbGen identity
 		tcmod scroll -0.01 0.06
 		tcMod turb 0 0.05 0 0.12
 	}
 
 	// collapsed layer 2 : ST_BUNDLE_DB,  diffuse + bump
 	{
-//		stage diffusemap
 		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
-//blendFunc blend
 		alphaGen vertex
 		rgbGen wave sin 0.45 0.1 0.3 0.16
 		tcmod scroll -0.01 0.17
 		tcMod turb 0 0.05 0 0.38
+		fog off
 	}
 	{
 		stage bumpmap
 		map textures/liquids_sd/seawall_foam_n.tga
+//map displacemap(textures/liquids_sd/seawall_foam_n.tga, textures/liquids_sd/sea_wave_h.tga)
+//tcmod scroll -0.01 0.750
+	}
+	{
+		// a "dummy" specularmap on the rest of the stages
+		// otherwise we get too much reflection overall
+		stage specularmap
+		map $blackimage
 	}
 
 	// collapsed layer 3 : ST_BUNDLE_DB,  diffuse + bump
@@ -216,14 +226,17 @@ textures/battery/ocean_0to1
 		map textures/liquids_sd/seawall_foam_n.tga
 	}
 	{ 
-//		stage diffusemap
 		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
-//blendFunc blend
 		alphaGen vertex
 		rgbGen wave sin 0.25 0.1 0 0.1
 		tcmod scroll -0.01 0.09
 		tcMod turb 0 0.16 0.3 0.38
+		fog off
+	}
+	{
+		stage specularmap
+		map $blackimage
 	}
 
 /*
@@ -243,11 +256,13 @@ textures/battery/ocean_1
 	deformVertexes wave 1317 sin 0 2.5 0 0.15
  	deformVertexes wave 317 sin 0 1.5 0 0.30
 	cull none
-	sort underwater
+	sort water
 	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	bumpmap textures/liquids_sd/sea_bright_na_n.tga
+//	bumpmap displaceMap(textures/liquids_sd/sea_bright_na_n.tga, textures/liquids_sd/sea_bright_na_r.tga)
+//	parallax
 	{ 
 		stage liquidmap
 		refractionIndex 1.3
@@ -262,9 +277,6 @@ textures/battery/ocean_1
 	{ 
 		stage diffusemap
 		map textures/liquids_sd/sea_bright_na.tga
-//		blendFunc blend
-//		alphaGen const 0.2
-//		rgbGen identity
 		tcmod scroll -0.01 0.06
 		tcMod turb 0 0.05 0 0.12
 	}
@@ -273,18 +285,23 @@ textures/battery/ocean_1
 	// If you use tcMod, you need to add it for all specific stages that should be transformed by a tcMod.
 	// For example, you could make the bumps move while the diffuse stays still.. or vice versa.
 	{
-		stage diffusemap
 		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
-//blendFunc blend
 		alphaGen vertex
 		rgbGen wave sin 0.45 0.1 0.3 0.16
 		tcmod scroll -0.01 0.17
 		tcMod turb 0 0.05 0 0.38
+		fog off
 	}
 	{
 		stage bumpmap
 		map textures/liquids_sd/seawall_foam_n.tga
+//map displacemap(textures/liquids_sd/seawall_foam_n.tga, textures/liquids_sd/sea_wave_h.tga)
+//tcmod scroll -0.01 0.750
+	}
+	{
+		stage specularmap
+		map $blackimage
 	}
 
 	// collapsed layer 3 : ST_BUNDLE_DB,  diffuse + bump
@@ -293,14 +310,17 @@ textures/battery/ocean_1
 		map textures/liquids_sd/seawall_foam_n.tga
 	}
 	{ 
-		stage diffusemap
 		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
-//blendFunc blend
 		alphaGen vertex
 		rgbGen wave sin 0.25 0.1 0 0.1
 		tcmod scroll -0.01 0.09
 		tcMod turb 0 0.16 0.3 0.38
+		fog off
+	}
+	{
+		stage specularmap
+		map $blackimage
 	}
 /*
 	{
