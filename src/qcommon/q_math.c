@@ -35,12 +35,6 @@
 
 #include "q_shared.h"
 
-#ifdef ETL_SSE
-// sse3 (Pentium 4 Prescott, Athlon 64 San Diego, and up. old stuff.)
-#include "pmmintrin.h"
-#endif
-
-// this isn't working.. warnings still shown
 #pragma warning(disable:4700)
 
 vec3_t vec3_origin = { 0.f, 0.f, 0.f };
