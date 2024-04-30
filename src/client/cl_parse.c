@@ -98,10 +98,10 @@ qboolean isEntVisible(entityState_t *ent)
 
 	// Compute vector perpindicular to view to ent
 	VectorSubtract(end, start, forward);
-	vec3_norm_fast(forward);
+	VectorNormalizeFast(forward);
 	VectorSet(up, 0, 0, 1);
-	vec3_cross(forward, up, right);
-	vec3_norm_fast(right);
+	CrossProduct(forward, up, right);
+	VectorNormalizeFast(right);
 	VectorScale(right, 10, right2);
 	VectorScale(right, 18, right);
 

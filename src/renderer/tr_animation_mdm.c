@@ -598,9 +598,10 @@ static float sp, sy, cp, cy, sr, cr;
  * @param[out] forward
  *
  * @note Unused
+ */
 static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 {
-    LAVangle = angles[YAW] * (M_TAU_F / 360);
+    float LAVangle = angles[YAW] * (M_TAU_F / 360);
     sy       = sin(LAVangle);
     cy       = cos(LAVangle);
     LAVangle = angles[PITCH] * (M_TAU_F / 360);
@@ -611,7 +612,7 @@ static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
     forward[1] = cp * sy;
     forward[2] = -sp;
 }
-*/
+
 
 /*
  * @brief LocalVectorMA
@@ -1072,7 +1073,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 			pf      = angles;
 			*(pf++) = SHORT2ANGLE(*(sh++));
 			*(pf++) = SHORT2ANGLE(*(sh++));
-			*(pf++) = 0;
+			*(pf++) = 0.f;
 			LocalAngleVector(angles, vec);
 #else
 			sh        = (short *)cTBonePtr->ofsAngles;
@@ -1091,7 +1092,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 			pf      = angles;
 			*(pf++) = SHORT2ANGLE(*(sh++));
 			*(pf++) = SHORT2ANGLE(*(sh++));
-			*(pf++) = 0;
+			*(pf++) = 0.f;
 			LocalAngleVector(angles, vec);
 #else
 			sh        = (short *)cBonePtr->ofsAngles;
@@ -1107,7 +1108,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 				pf      = tangles;
 				*(pf++) = SHORT2ANGLE(*(sh++));
 				*(pf++) = SHORT2ANGLE(*(sh++));
-				*(pf++) = 0;
+				*(pf++) = 0.f;
 				LocalAngleVector(tangles, v2);
 #else
 				sh         = (short *)cTBonePtr->ofsAngles;
@@ -1348,13 +1349,13 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 		pf      = angles;
 		*(pf++) = SHORT2ANGLE(*(sh++));
 		*(pf++) = SHORT2ANGLE(*(sh++));
-		*(pf++) = 0;
+		*(pf++) = 0.f;
 		LocalAngleVector(angles, v2);   // new
 
 		pf      = angles;
 		*(pf++) = SHORT2ANGLE(*(sh2++));
 		*(pf++) = SHORT2ANGLE(*(sh2++));
-		*(pf++) = 0;
+		*(pf++) = 0.f;
 		LocalAngleVector(angles, vec);  // old
 #else
 		ingles[0] = sh[0];
@@ -1391,13 +1392,13 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 			pf      = angles;
 			*(pf++) = SHORT2ANGLE(*(sh++));
 			*(pf++) = SHORT2ANGLE(*(sh++));
-			*(pf++) = 0;
+			*(pf++) = 0.f;
 			LocalAngleVector(angles, v2);   // new
 
 			pf      = angles;
 			*(pf++) = SHORT2ANGLE(*(sh2++));
 			*(pf++) = SHORT2ANGLE(*(sh2++));
-			*(pf++) = 0;
+			*(pf++) = 0.f;
 			LocalAngleVector(angles, vec);  // old
 #else
 			ingles[0] = sh[0];

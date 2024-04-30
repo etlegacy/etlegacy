@@ -28,8 +28,7 @@ sprites/construct
 	{
 		map sprites/construct.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		//alphagen wave sin .6 .5 .5 .25
-		rgbgen vertex
+		alphagen wave sin .6 .5 .5 .25
 	}
 }
 
@@ -40,20 +39,7 @@ sprites/destroy
 	{
 		map sprites/destroy.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		//alphagen wave sin .6 .5 0 .25
-		rgbgen vertex
-	}
-}
-
-sprites/escort
-{
-	nocompress
-	nopicmip
-	{
-		map sprites/escort.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		//alphagen wave sin .6 .5 0 .25
-		rgbgen vertex
+		alphagen wave sin .6 .5 0 .25
 	}
 }
 
@@ -74,72 +60,6 @@ sprites/objective
 	nopicmip
 	{
 		map sprites/objective.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbgen vertex
-	}
-}
-
-sprites/objective_team
-{
-	nocompress
-	nopicmip
-	{
-		map sprites/objective_team.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbgen vertex
-	}
-}
-
-sprites/objective_dropped
-{
-	nocompress
-	nopicmip
-	{
-		map sprites/objective_dropped.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbgen vertex
-	}
-}
-
-sprites/objective_enemy
-{
-	nocompress
-	nopicmip
-	{
-		map sprites/objective_enemy.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbgen vertex
-	}
-}
-
-sprites/objective_both_te
-{
-	nocompress
-	nopicmip
-	{
-		map sprites/objective_both_te.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbgen vertex
-	}
-}
-
-sprites/objective_both_td
-{
-	nocompress
-	nopicmip
-	{
-		map sprites/objective_both_td.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbgen vertex
-	}
-}
-
-sprites/objective_both_de
-{
-	nocompress
-	nopicmip
-	{
-		map sprites/objective_both_de.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen vertex
 	}
@@ -205,17 +125,6 @@ sprites/voicechat
 	nopicmip
 	{
 		map sprites/voicechat.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen vertex
-	}
-}
-
-sprites/voicechat_orange
-{
-	nocompress
-	nopicmip
-	{
-		map sprites/voicechat_orange.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}

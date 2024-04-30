@@ -5,8 +5,8 @@ textures/egypt_trim_sd/ctrim_c01
     qer_editorimage textures/egypt_trim_sd/ctrim_c01.tga
 	diffusemap textures/egypt_trim_sd/ctrim_c01.tga
 	bumpmap textures/egypt_trim_sd/ctrim_c01_n.tga
+	specularmap textures/egypt_trim_sd/ctrim_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_trim_sd/ctrim_c03
@@ -14,8 +14,8 @@ textures/egypt_trim_sd/ctrim_c03
     qer_editorimage textures/egypt_trim_sd/ctrim_c03.tga
 	diffusemap textures/egypt_trim_sd/ctrim_c03.tga
 	bumpmap textures/egypt_trim_sd/ctrim_c03_n.tga
+	specularmap textures/egypt_trim_sd/ctrim_c03_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_trim_sd/trim_c14
@@ -23,6 +23,6 @@ textures/egypt_trim_sd/trim_c14
     qer_editorimage textures/egypt_trim_sd/trim_c14.tga
 	diffusemap textures/egypt_trim_sd/trim_c14.tga
 	bumpmap textures/egypt_trim_sd/trim_c14_n.tga
+	specularmap textures/egypt_trim_sd/trim_c14_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

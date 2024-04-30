@@ -865,7 +865,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				msec = 0;
 			}
 
-			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
+			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25.0f * M_TAU_F) + 1.0f) * 0.5f);
 
 			trap_R_SetColor(reviveClr);
 			CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccMedicIcon);
@@ -2504,13 +2504,13 @@ void CG_CommandMap_DrawHighlightText(void)
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor)
 {
 	float  iconx, icony, iconWidth, iconHeight, radius;
-	float  angle, len, diff;
+	float  angle, S, C, len, diff;
 	vec3_t v1, angles;
 
 	VectorCopy(dest, v1);
 	VectorSubtract(origin, v1, v1);
 	len = VectorLength(v1);
-	VectorNormalize(v1);
+	VectorNormalizeOnly(v1);
 	vectoangles(v1, angles);
 
 	if (v1[0] == 0.f && v1[1] == 0.f && v1[2] == 0.f)
@@ -2535,8 +2535,9 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 		radius = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 
-		iconx = iconx + ((float)cos(angle) * radius);
-		icony = icony + ((float)sin(angle) * radius);
+		SinCos(angle, S, C);
+		iconx = iconx + (C * radius);
+		icony = icony + (S * radius);
 
 		iconx = iconx - (iconWidth - 4) / 2;
 		icony = icony - (iconHeight - 4) / 2;

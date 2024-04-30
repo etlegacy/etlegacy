@@ -7,7 +7,6 @@ textures/swf/ametal_m01sm
 	specularmap textures/swf/ametal_m01sm_r.tga
 	bumpmap textures/swf/ametal_m01sm_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/ametal_m08
@@ -17,7 +16,6 @@ textures/swf/ametal_m08
 	specularmap textures/swf/ametal_m08_r.tga
 	bumpmap textures/swf/ametal_m08_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/door_loper
@@ -27,7 +25,6 @@ textures/swf/door_loper
 	specularmap textures/swf/door_loper_r.tga
 	bumpmap textures/swf/door_loper_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/door_m01aaaaswf
@@ -38,7 +35,6 @@ textures/swf/door_m01aaaaswf
 	bumpmap textures/swf/door_m01aaaaswf_n.tga
 	nocompress
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/door_m01aswf
@@ -48,7 +44,6 @@ textures/swf/door_m01aswf
 	specularmap textures/swf/door_m01aswf_r.tga
 	bumpmap textures/swf/door_m01aswf_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/door_m01swf
@@ -58,7 +53,6 @@ textures/swf/door_m01swf
 	specularmap textures/swf/door_m01swf_r.tga
 	bumpmap textures/swf/door_m01swf_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/fuse_box
@@ -68,7 +62,6 @@ textures/swf/fuse_box
 	specularmap textures/swf/fuse_box_r.tga
 	bumpmap textures/swf/fuse_box_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/fuse_box2
@@ -78,7 +71,6 @@ textures/swf/fuse_box2
 	specularmap textures/swf/fuse_box2_r.tga
 	bumpmap textures/swf/fuse_box2_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/fuse_box_ad
@@ -105,7 +97,6 @@ textures/swf/fuse_box1a
 	bumpmap textures/swf/fuse_box1a_n.tga
 	specularmap textures/swf/fuse_box1a_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/metal_m01
@@ -115,7 +106,6 @@ textures/swf/metal_m01
 	specularmap textures/swf/metal_m01_r.tga
 	bumpmap textures/swf/metal_m01_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/metal_m02
@@ -125,7 +115,6 @@ textures/swf/metal_m02
 	bumpmap textures/swf/metal_m02_n.tga
 	specularmap textures/swf/metal_m02_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/metal_m03
@@ -135,7 +124,6 @@ textures/swf/metal_m03
 	specularmap textures/swf/metal_m03_r.tga
 	bumpmap textures/swf/metal_m03_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/spipe_02
@@ -145,7 +133,6 @@ textures/swf/spipe_02
 	specularmap textures/swf/spipe_02_r.tga
 	bumpmap textures/swf/spipe_02_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/spipe_04
@@ -155,7 +142,6 @@ textures/swf/spipe_04
 	specularmap textures/swf/spipe_04_r.tga
 	bumpmap textures/swf/spipe_04_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/spipe_05a
@@ -165,7 +151,6 @@ textures/swf/spipe_05a
 	specularmap textures/swf/spipe_05a_r.tga
 	bumpmap textures/swf/spipe_05a_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/swf/xtrim_cm05
@@ -175,5 +160,4 @@ textures/swf/xtrim_cm05
 	specularmap textures/swf/xtrim_cm05_r.tga
 	bumpmap textures/swf/xtrim_cm05_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }

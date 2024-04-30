@@ -38,6 +38,23 @@
 
 #include "q_shared.h"
 
+// SSE3  (Supported from Pentium 4 Prescott, Athlon 64 San Diego, and up.  That's not even a dual core CPU).
+// The SSE code added to ETLegacy is not (yet) optimized at all.
+// At the moment, there will most likely be a lot of penalties for uOps (micro-ops).
+// The provided code is a first attempt to convert some old code into a bit faster code.
+// By commenting out the ETL_SSE define below, you have the old code back..
+// Note: I still need to fix usage of ETL_SSE so it compiles on all systems (atm. Windows comoile only).
+//
+#ifdef ETL_SSE
+#include "pmmintrin.h"
+#endif
+
+
+// i don't know how to make pragma 4700 warning suppression work for inlined macros.
+// It works with normal functions (see _Vector2AM() on how to successfully disable warnings 4700)
+#pragma warning(disable:4700)
+#pragma warning(disable:4010)
+
 typedef float vec_t;
 typedef vec_t vec2_t[2];
 typedef vec_t vec3_t[3];

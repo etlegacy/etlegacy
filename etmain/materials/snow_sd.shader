@@ -82,7 +82,6 @@ textures/snow_sd/ametal_m03_snow
 	specularmap textures/snow_sd/ametal_m03_snow_r.tga
 	bumpmap textures/snow_sd/ametal_m03_snow_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow_sd/ametal_m04a_snow
@@ -92,7 +91,6 @@ textures/snow_sd/ametal_m04a_snow
 	specularmap textures/snow_sd/ametal_m04a_snow_r.tga
 	bumpmap textures/snow_sd/ametal_m04a_snow_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow_sd/ametal_m04a_snowfade
@@ -102,7 +100,6 @@ textures/snow_sd/ametal_m04a_snowfade
 	specularmap textures/snow_sd/ametal_m04a_snowfade_r.tga
 	bumpmap textures/snow_sd/ametal_m04a_snowfade_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow_sd/bunkertrim_snow
@@ -113,7 +110,6 @@ textures/snow_sd/bunkertrim_snow
 	qer_editorimage textures/snow_sd/bunkertrim_snow.tga
 	q3map_nonplanar
 	q3map_shadeangle 160
-	implicitMap -
 }
 
 //==========================================================================
@@ -145,7 +141,6 @@ textures/snow_sd/bunkerwall_lrg02
 	bumpmap textures/snow_sd/bunkerwall_lrg02_n.tga
 	q3map_nonplanar
 	q3map_shadeangle 80
-	implicitMap -
 }
 
 textures/snow_sd/icey_lake
@@ -186,7 +181,6 @@ textures/snow_sd/icelake2
 	diffusemap textures/snow_sd/icelake2.tga
 	bumpmap textures/snow_sd/icelake2_n.tga
 	specularmap textures/snow_sd/icelake2_r.tga
-
 	{
 		map textures/effects/envmap_ice2.tga
 		tcgen environment
@@ -202,7 +196,6 @@ textures/snow_sd/icelake2
 		rgbGen identity
 		depthWrite
 	}
-	
 }
 
 // Note: Apply this at a scale of 2.0x2.0 so it aligns correctly
@@ -214,7 +207,6 @@ textures/snow_sd/icelake2_opaque
 	specularmap textures/snow_sd/icelake2_r.tga
 	surfaceparm slick
 	tesssize 256
-
 	{
 		map textures/effects/envmap_ice2.tga
 		tcgen environment
@@ -256,7 +248,6 @@ textures/snow_sd/metal_m04g2_snow
 	specularmap textures/snow_sd/metal_m04g2_snow_r.tga
 	bumpmap textures/snow_sd/metal_m04g2_snow_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow_sd/mroof_snow
@@ -266,7 +257,6 @@ textures/snow_sd/mroof_snow
 	bumpmap textures/snow_sd/mroof_snow_n.tga
 	specularmap textures/snow_sd/mroof_snow_r.tga
 	surfaceparm roofsteps
-	implicitMap -
 }
 
 textures/snow_sd/sub1_snow
@@ -276,7 +266,6 @@ textures/snow_sd/sub1_snow
 	specularmap textures/snow_sd/sub1_snow_r.tga
 	bumpmap textures/snow_sd/sub1_snow_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow_sd/sub1_snow2
@@ -286,7 +275,6 @@ textures/snow_sd/sub1_snow2
 	specularmap textures/snow_sd/sub1_snow2_r.tga
 	bumpmap textures/snow_sd/sub1_snow2_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow_sd/wirefence01_snow
@@ -310,7 +298,6 @@ textures/snow_sd/wood_m05a_snow
 	specularmap textures/snow_sd/wood_m05a_snow_r.tga
 	bumpmap textures/snow_sd/wood_m05a_snow_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/snow_sd/wood_m06b_snow
@@ -320,7 +307,6 @@ textures/snow_sd/wood_m06b_snow
 	specularmap textures/snow_sd/wood_m06b_snow_r.tga
 	bumpmap textures/snow_sd/wood_m06b_snow_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/snow_sd/fuse_box_snow
@@ -330,7 +316,6 @@ textures/snow_sd/fuse_box_snow
 	specularmap textures/snow_sd/fuse_box_snow_r.tga
 	bumpmap textures/snow_sd/fuse_box_snow_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow_sd/xmetal_m02_snow
@@ -340,7 +325,6 @@ textures/snow_sd/xmetal_m02_snow
 	specularmap textures/snow_sd/xmetal_m02_snow_r.tga
 	bumpmap textures/snow_sd/xmetal_m02_snow_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow_sd/xmetal_m02t_snow
@@ -350,7 +334,6 @@ textures/snow_sd/xmetal_m02t_snow
 	specularmap textures/snow_sd/xmetal_m02t_snow_r.tga
 	bumpmap textures/snow_sd/xmetal_m02t_snow_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 //==========================================================================
@@ -374,9 +357,7 @@ textures/snow_sd/snow_track03
 	surfaceparm pointlight
 	surfaceparm nomarks
 	polygonOffset
-	
 	sort decal
-	
 	{
 		map textures/snow_sd/snow_track03.tga
        	blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
@@ -397,9 +378,7 @@ textures/snow_sd/snow_track03_faint
 	surfaceparm pointlight
 	surfaceparm nomarks
 	polygonOffset
-	
 	sort decal
-	
 	{
 		map textures/snow_sd/snow_track03.tga
        		blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
@@ -420,9 +399,7 @@ textures/snow_sd/snow_track03_end
 	surfaceparm pointlight
 	surfaceparm nomarks
 	polygonOffset
-	
 	sort decal
-	
 	{
 		map textures/snow_sd/snow_track03_end.tga
         blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
@@ -443,9 +420,7 @@ textures/snow_sd/snow_track03_end_faint
 	surfaceparm pointlight
 	surfaceparm nomarks
 	polygonOffset
-	
 	sort decal
-	
 	{
 		map textures/snow_sd/snow_track03_end.tga
         blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR

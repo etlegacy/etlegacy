@@ -22,12 +22,15 @@ float DecodeDepth(vec4 color)
 
 void main()
 {
+#if 0
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 st = gl_FragCoord.st * r_FBufScale;
 
 	// scale by the screen non-power-of-two-adjust
 	st *= r_NPOTScale;
-
+#else
+	vec2 st = gl_FragCoord.st * r_FBufNPOTScale;
+#endif
 	// calculate fog volume depth
 	float fogDepth;
 

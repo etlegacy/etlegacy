@@ -1,38 +1,57 @@
 /* depthFill_vp.glsl */
+#if defined(USE_VERTEX_SKINNING)
+#include "lib/vertexSkinning"
+#endif // USE_VERTEX_SKINNING
+#if defined(USE_VERTEX_ANIMATION)
+#include "lib/vertexAnimation"
+#endif // USE_VERTEX_ANIMATION
+#if defined(USE_DEFORM_VERTEXES)
+#include "lib/deformVertexes"
+#endif // USE_DEFORM_VERTEXES
 
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
 attribute vec4 attr_TexCoord0;
 attribute vec4 attr_Color;
+#if defined(USE_VERTEX_ANIMATION)
+attribute vec4 attr_Position2;
+attribute vec3 attr_Normal2;
+#endif // USE_VERTEX_ANIMATION
 
-uniform mat4 u_ColorTextureMatrix;
-uniform vec3 u_AmbientColor;
-uniform mat4 u_ModelViewProjectionMatrix;
-
+uniform mat4  u_ModelViewProjectionMatrix;
+uniform mat4  u_ColorTextureMatrix;
+#if defined(USE_VERTEX_ANIMATION)
+uniform float u_VertexInterpolation;
+#endif // USE_VERTEX_ANIMATION
+#if !defined(r_precomputedLighting)
+uniform vec3  u_AmbientColor;
+#endif // r_precomputedLighting
+#if defined(USE_DEFORM_VERTEXES)
 uniform int   u_DeformGen;
 uniform vec4  u_DeformWave;         // [base amplitude phase freq]
 uniform vec3  u_DeformBulge;        // [width height speed]
 uniform float u_DeformSpread;
 uniform float u_Time;
+#endif // USE_DEFORM_VERTEXES
+#if defined(USE_TCGEN_ENVIRONMENT)
+uniform vec3  u_ViewOrigin;
+#endif // USE_TCGEN_ENVIRONMENT
 
-varying vec2 var_Tex;
 varying vec4 var_Color;
+varying vec2 var_Tex;
 
 void main()
 {
+	vec4 position;
 #if defined(USE_VERTEX_SKINNING)
-	vec4 position = vec4(0.0);
+	VertexSkinning_P(attr_Position, position);
+#elif defined(USE_VERTEX_ANIMATION)
+	VertexAnimation_P(attr_Position, attr_Position2, u_VertexInterpolation, position);
+#else
+	position = attr_Position;
+#endif
 
-	for (int i = 0; i < 4; i++)
-	{
-		int   boneIndex  = int(attr_BoneIndexes[i]);
-		float boneWeight = attr_BoneWeights[i];
-		mat4  boneMatrix = u_BoneMatrix[boneIndex];
 
-		position += (boneMatrix * attr_Position) * boneWeight;
-	}
-
-	//position = DeformPosition(position, attr_Normal, attr_TexCoord0.st);
 #if defined(USE_DEFORM_VERTEXES)
 	position = DeformPosition(u_DeformGen,
 	                          u_DeformWave,     // [base amplitude phase freq]
@@ -42,23 +61,37 @@ void main()
 	                          position,
 	                          attr_Normal,
 	                          attr_TexCoord0.st);
-#endif
+//#else // USE_DEFORM_VERTEXES
+//	vec4 position = DeformPosition(attr_Position, attr_Normal, attr_TexCoord0.st);
+#endif // USE_DEFORM_VERTEXES
+
 
 	// transform vertex position into homogenous clip-space
 	gl_Position = u_ModelViewProjectionMatrix * position;
-#else
 
-	vec4 position = DeformPosition(attr_Position, attr_Normal, attr_TexCoord0.st);
-
-	// transform vertex position into homogenous clip-space
-	gl_Position = u_ModelViewProjectionMatrix * position;
-#endif
 
 	// transform texcoords
-	var_Tex = (u_ColorTextureMatrix * attr_TexCoord0).st;
+	vec4 texCoord;
+#if defined(USE_TCGEN_ENVIRONMENT)
+	{
+		vec3 viewer = normalize(u_ViewOrigin - position.xyz);
+		float d = dot(attr_Normal, viewer);
+		vec3 reflected = attr_Normal * 2.0 * d - viewer;
+		texCoord.s = 0.5 + reflected.y * 0.5;
+		texCoord.t = 0.5 - reflected.z * 0.5;
+		texCoord.q = 0;
+		texCoord.w = 1;
+	}
+#elif defined(USE_TCGEN_LIGHTMAP)
+	texCoord = attr_TexCoord1;
+#else
+	texCoord = attr_TexCoord0;
+#endif // USE_TCGEN_ENVIRONMENT,USE_TCGEN_LIGHTMAP
+	var_Tex = (u_ColorTextureMatrix * texCoord).st;
 
-#if defined(r_precomputedLighting)
+
 	// assign color
+#if defined(r_precomputedLighting)
 	var_Color = attr_Color;
 #else
 	var_Color = vec4(u_AmbientColor, 1.0);

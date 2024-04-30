@@ -57,7 +57,11 @@ void main()
 	else
 	{
 		// reset st and don't offset
+#if 0
 		st = gl_FragCoord.st * r_FBufScale * r_NPOTScale;
+#else
+		st = gl_FragCoord.st * r_FBufNPOTScale;
+#endif
 
 		color0 = texture2D(u_CurrentMap, st);
 		color1 = vec4(1.0, 0.0, 0.0, color0.a);

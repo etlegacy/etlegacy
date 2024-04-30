@@ -8,11 +8,15 @@ void main()
 {
 	vec2 st = gl_FragCoord.st;
 
+#if 0
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	st *= r_FBufScale;
 
 	// scale by the screen non-power-of-two-adjust
 	st *= r_NPOTScale;
+#else
+	st *= r_FBufNPOTScale;
+#endif
 
 	// we use the Normal-gauss distribution formula
 	// f(x) being the formula, we used f(0.5)-f(-0.5); f(1.5)-f(0.5)...

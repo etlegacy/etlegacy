@@ -1,6 +1,9 @@
 /* reflection_CB_fp.glsl */
+#if defined(USE_NORMAL_MAPPING)
 #include "lib/normalMapping"
+#endif // USE_NORMAL_MAPPING
 
+uniform float       u_ReflectionScale;
 #if 1
 uniform samplerCube u_EnvironmentMap0;
 uniform samplerCube u_EnvironmentMap1;
@@ -10,11 +13,11 @@ uniform samplerCube u_ColorMap;
 #endif // 1
 uniform mat4        u_ModelMatrix;
 #if defined(USE_NORMAL_MAPPING)
-uniform sampler2D   u_NormalMap;
+uniform sampler2D u_NormalMap;
 #endif // USE_NORMAL_MAPPING
 
 varying vec3 var_Position;
-varying vec3 var_ViewOrigin; // position - vieworigin
+varying vec3 var_ViewOrigin;
 varying vec4 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
@@ -50,22 +53,16 @@ void main()
 #endif // USE_NORMAL_MAPPING
 
 
+
+#if 1
+	// This is the cubeProbes way of rendering reflections.
+	gl_FragColor = vec4(computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale), 1.0);
+#else // 1
 	// compute reflection ray
 	vec3 R = reflect(V, N);
 	R.x = -R.x;
 	R.y = -R.y;
 	//R.z = -R.z; // flip vertically
-
-#if 1
-	// This is the cubeProbes way of rendering reflections.
-	vec4 envColor0 = textureCube(u_EnvironmentMap0, R).rgba;
-	vec4 envColor1 = textureCube(u_EnvironmentMap1, R).rgba;
-	gl_FragColor = vec4(mix(envColor0, envColor1, u_EnvironmentInterpolation).rgb * 0.1, 1.0); //* map.a
-#else // 1
 	gl_FragColor = textureCube(u_ColorMap, R).rgba;
 #endif // 1
-
-//#if 0
-//	gl_FragColor = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation); // this returns only .rgb (no alpha)
-//#endif // 0
 }

@@ -1,5 +1,4 @@
 /* forwardLighting_fp.glsl */
-
 #if defined(USE_NORMAL_MAPPING)
 #include "lib/normalMapping"
 #if defined(USE_PARALLAX_MAPPING)
@@ -8,14 +7,20 @@
 #endif // USE_NORMAL_MAPPING
 
 uniform sampler2D u_DiffuseMap;
-uniform int       u_AlphaTest;
 uniform mat4      u_ViewMatrix;
 uniform sampler2D u_AttenuationMapXY;
 uniform sampler2D u_AttenuationMapZ;
 #if defined(USE_NORMAL_MAPPING)
 uniform sampler2D u_NormalMap;
+#if defined(USE_SPECULAR)
 uniform sampler2D u_SpecularMap;
+uniform float     u_SpecularScale;
+uniform float     u_SpecularExponent;
+#endif // USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
+#if defined(USE_ALPHA_TESTING)
+uniform int u_AlphaTest;
+#endif // USE_ALPHA_TESTING
 
 #if defined(LIGHT_DIRECTIONAL)
 uniform sampler2D u_ShadowMap0;
@@ -36,7 +41,7 @@ uniform vec3 u_LightOrigin;
 #endif
 uniform vec3  u_LightColor;
 uniform float u_LightRadius;
-uniform float u_LightScale;
+uniform float u_LightScale; // note that this is NOT the cvar r_LightScale. This is the light->l.scale
 uniform float u_LightWrapAround;
 
 uniform mat4  u_ShadowMatrix[MAX_SHADOWMAPS];
@@ -51,11 +56,10 @@ varying vec4 var_TexAttenuation;
 varying vec4 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
-varying vec2 var_TexSpecular;
 varying vec3 var_ViewOrigin; // vieworigin - position    !
-varying vec3 var_ViewOrigin2; // vieworigin in worldspace
+varying vec3 var_ViewOrigin2;
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S; // size and start position of search in texture space
+varying vec2 var_S;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -89,7 +93,6 @@ void MakeNormalVectors(const vec3 forward, inout vec3 right, inout vec3 up)
 	right.y = -forward.x;
 	right.z = forward.y;
 	right.x = forward.z;
-
 	float d = dot(right, forward);
 	right += forward * -d;
 	normalize(right);
@@ -109,17 +112,15 @@ float Noise(vec2 co)
 vec3 RandomVec3(vec2 uv)
 {
 	vec3 dir;
-
-#if 1
+//#if 1
 	float r     = Rand(uv);
 	float angle = M_TAU * r; // / 360.0;
 
 	dir = normalize(vec3(cos(angle), sin(angle), r));
-#else
-	// dir = texture2D(u_NoiseMap, gl_FragCoord.st * r_FBufScale).rgb;
-	//dir = normalize(2.0 * (texture2D(u_RandomMap, uv).xyz - 0.5));
-#endif
-
+//#else
+//	// dir = texture2D(u_NoiseMap, gl_FragCoord.st * r_FBufScale).rgb;
+//	//dir = normalize(2.0 * (texture2D(u_RandomMap, uv).xyz - 0.5));
+//#endif
 	return dir;
 }
 
@@ -603,12 +604,36 @@ void    main()
 #endif
 
 
-//#if 0
-//	// create random noise vector
-//	vec3 rand = RandomVec3(gl_FragCoord.st * r_FBufScale);
-//	gl_FragColor = vec4(rand * 0.5 + 0.5, 1.0);
-//	return;
-//#endif
+
+	vec2 texDiffuse = var_TexDiffuse.st;
+#if defined(USE_PARALLAX_MAPPING)
+	texDiffuse += RayIntersectDisplaceMap(texDiffuse, var_S, u_NormalMap); // vec2 texOffset
+#endif // USE_PARALLAX_MAPPING
+
+
+	// compute the diffuse term
+	vec4 diffuse = texture2D(u_DiffuseMap, texDiffuse);
+
+	// If this texture is alphaMasked, do the alpha test first (before calculating shadows).
+#if defined(USE_ALPHA_TESTING)
+	if (u_AlphaTest == ATEST_GT_0 && diffuse.a <= 0.0)
+	{
+		discard;
+		return;
+	}
+	else if (u_AlphaTest == ATEST_LT_128 && diffuse.a >= 0.5)
+	{
+		discard;
+		return;
+	}
+	else if (u_AlphaTest == ATEST_GE_128 && diffuse.a < 0.5)
+	{
+		discard;
+		return;
+	}
+#endif // USE_ALPHA_TESTING
+
+
 
 
 	float shadow = 1.0;
@@ -937,6 +962,8 @@ void    main()
 
 #endif // USE_SHADOWING
 
+
+
 	// compute light direction in world space
 #if defined(LIGHT_DIRECTIONAL)
 	vec3 L = u_LightDir;
@@ -944,30 +971,14 @@ void    main()
 	vec3 L = normalize(u_LightOrigin - var_Position);
 #endif
 
-	vec2 texDiffuse = var_TexDiffuse.st;
-
 	float dotNL;
 
 #if defined(USE_NORMAL_MAPPING)
-
-	vec2 texNormal   = var_TexNormal.st;
-	vec2 texSpecular = var_TexSpecular.st;
-
-	// compute view direction in world space
-	vec3 V = var_ViewOrigin.xyz; // tangentspace //vec3 V = normalize(u_ViewOrigin - var_Position.xyz);
-
-#if defined(USE_PARALLAX_MAPPING)
-	// ray intersect in view direction
-	float depth = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
-	// compute texcoords offset
-	vec2 texOffset = var_S * depth;
-	texDiffuse  += texOffset;
-	texNormal   += texOffset;
-	texSpecular += texOffset;
-#endif // USE_PARALLAX_MAPPING
+	// view direction
+	vec3 V = var_ViewOrigin.xyz;
 
 	// normal
-	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0;
+	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
 	// transform normal from tangentspace to worldspace
 	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
@@ -975,15 +986,18 @@ void    main()
 	dotNL = dot(N, L);
 
 	// specular highlights
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = computeSpecular2(dotNL, V, N, L, vec3(1.0), r_SpecularExponent)
-					* map.rgb * u_LightColor; // * r_SpecularScale;
+#if defined(USE_SPECULAR)
+	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
+	specular *= texture2D(u_SpecularMap, texDiffuse).rgb;
+#endif // USE_SPECULAR
+
+
 
 #else // else USE_NORMAL_MAPPING 
 
 	vec3 N;
 #if defined(TWOSIDED)
-	if (!gl_FrontFacing)
+	if (gl_FrontFacing) //!
 	{
 		N = normalize(-var_Normal.xyz);
 	}
@@ -996,34 +1010,20 @@ void    main()
 
 #endif // end USE_NORMAL_MAPPING
 
-	// compute the diffuse term
-	vec4 diffuse = texture2D(u_DiffuseMap, texDiffuse.st);
 
-#if defined(USE_ALPHA_TESTING)
-	if (u_AlphaTest == ATEST_GT_0 && diffuse.a <= 0.0)
-	{
-		discard;
-		return;
-	}
-	else if (u_AlphaTest == ATEST_LT_128 && diffuse.a >= 0.5)
-	{
-		discard;
-		return;
-	}
-	else if (u_AlphaTest == ATEST_GE_128 && diffuse.a < 0.5)
-	{
-		discard;
-		return;
-	}
-#endif
-
-	// compute the light term
+#if 1
+	// compute the diffuse light term
 #if defined(r_WrapAroundLighting)
 	float NL = clamp(dotNL + u_LightWrapAround, 0.0, 1.0) / clamp(1.0 + u_LightWrapAround, 0.0, 1.0);
 #else
-	float NL = clamp(dotNL, 0.0, 1.0);
+	float NL = max(0.0, dotNL);
+//	const float diffuseLighting = 0.6;
+//	float NL = (1.0 - diffuseLighting) + (dotNL * diffuseLighting);
 #endif
 	diffuse.rgb *= (u_LightColor * NL);
+#else // 1
+	diffuse.rgb *= u_LightColor;
+#endif // 1
 
 
 	// compute light attenuation
@@ -1038,12 +1038,13 @@ void    main()
 	vec3 attenuationZ  = texture2D(u_AttenuationMapZ, vec2(var_TexAttenuation.z, 0)).rgb;
 #endif
 
+
 	// compute final color
 	vec4 color = diffuse;
 
-#if defined(USE_NORMAL_MAPPING)
+#if defined(USE_SPECULAR)
 	color.rgb += specular;
-#endif
+#endif // USE_SPECULAR
 
 #if !defined(LIGHT_DIRECTIONAL)
 	color.rgb *= attenuationXY;

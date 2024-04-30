@@ -883,9 +883,7 @@ const char *CG_TranslateString(const char *string)
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 {
 	vec3_t trans;
-	float  xc, yc;
-	float  px, py;
-	float  z;
+	float xc, yc, px, py, z, dot1, dot2;
 
 	px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
 	py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
@@ -895,7 +893,7 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 	xc = 640.0f / 2.0f;
 	yc = 480.0f / 2.0f;
 
-	z = DotProduct(trans, cg.refdef.viewaxis[0]);
+	Dot(trans, cg.refdef.viewaxis[0], z);
 	if (z < 0.1f)
 	{
 		return qfalse;
@@ -907,8 +905,10 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 		return qfalse;
 	}
 
-	*x = xc - (DotProduct(trans, cg.refdef.viewaxis[1]) * xc) / px;
-	*y = yc - (DotProduct(trans, cg.refdef.viewaxis[2]) * yc) / py;
+	Dot(trans, cg.refdef.viewaxis[1], dot1);
+	Dot(trans, cg.refdef.viewaxis[2], dot2);
+	*x = xc - (dot1 * xc) / px;
+	*y = yc - (dot2 * yc) / py;
 	*x = Ccg_WideX(*x);
 
 	return qtrue;

@@ -30,7 +30,6 @@ textures/snow/s_cashudder_c01
 	bumpmap textures/snow/s_cashudder_c01_n.tga
 	specularmap textures/snow/s_cashudder_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/snow/s_castle_m03a_step
@@ -40,7 +39,6 @@ textures/snow/s_castle_m03a_step
 	bumpmap textures/snow/s_castle_m03a_step_n.tga
 	specularmap textures/snow/s_castle_m03a_step_r.tga
 	surfaceparm snowsteps
-	implicitMap -
 }
 
 textures/snow/s_castle_c02
@@ -48,7 +46,6 @@ textures/snow/s_castle_c02
     diffusemap textures/snow/s_castle_c02.tga
 	bumpmap textures/snow/s_castle_c02_n.tga
 	specularmap textures/snow/s_castle_c02_r.tga
-    implicitMap -
 }
 
 textures/snow/s_castle_c16d
@@ -99,7 +96,6 @@ textures/snow/s_cwood_mo5c
 	specularmap textures/snow/s_cwood_mo5c_r.tga
 	bumpmap textures/snow/s_cwood_mo5c_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/snow/s_diamond_c01a
@@ -109,7 +105,6 @@ textures/snow/s_diamond_c01a
 	specularmap textures/snow/s_diamond_c01a_r.tga
 	bumpmap textures/snow/s_diamond_c01a_n.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/snow/s_dirt_m03i_2
@@ -119,7 +114,6 @@ textures/snow/s_dirt_m03i_2
 	specularmap textures/snow/s_dirt_m03i_2_r.tga
 	bumpmap textures/snow/s_dirt_m03i_2_n.tga
 	surfaceparm snowsteps
-	implicitMap -
 }
 
 textures/snow/s_fence_c07
@@ -142,7 +136,6 @@ textures/snow/s_floor_c10_a2
 	bumpmap textures/snow/s_floor_c10_a2_n.tga
 	specularmap textures/snow/s_floor_c10_a2_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/snow/s_grass_ml03b
@@ -152,7 +145,6 @@ textures/snow/s_grass_ml03b
 	bumpmap textures/snow/s_grass_ml03b_n.tga
 	specularmap textures/snow/s_grass_ml03b_r.tga
 	surfaceparm snowsteps
-	implicitMap -
 }
 
 textures/snow/s_wood_c13a
@@ -162,7 +154,6 @@ textures/snow/s_wood_c13a
 	specularmap textures/snow/s_wood_c13a_r.tga
 	bumpmap textures/snow/s_wood_c13a_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/snow/s_door_c10b_s
@@ -172,7 +163,6 @@ textures/snow/s_door_c10b_s
 	bumpmap textures/snow/s_door_c10b_s_n
 	specularmap textures/snow/s_door_c10b_s_s
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/snow/s_metal_m04dg2
@@ -190,7 +180,6 @@ textures/snow/s_roof_c04dm
    specularmap textures/snow/s_roof_c04dm_r.tga
    bumpmap textures/snow/s_roof_c04dm_n.tga
    surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/snow/s_town_c91
@@ -199,7 +188,6 @@ textures/snow/s_town_c91
 	diffusemap textures/snow/s_town_c91.tga
 	specularmap textures/snow/s_town_c91_r.tga
 	bumpmap textures/snow/s_town_c91_n.tga
-	implicitMap -
 }
 
 textures/snow/s_town_m_c01_trim
@@ -208,7 +196,6 @@ textures/snow/s_town_m_c01_trim
 	diffusemap textures/snow/s_town_m_c01_trim.tga
 	specularmap textures/snow/s_town_m_c01_trim_r.tga
 	bumpmap textures/snow/s_town_m_c01_trim_n.tga
-	implicitMap -
 }
 
 textures/snow/s_window_c05a
@@ -217,7 +204,6 @@ textures/snow/s_window_c05a
 	diffusemap textures/snow/s_window_c05a.tga
 	specularmap textures/snow/s_window_c05a_r.tga
 	bumpmap textures/snow/s_window_c05a_n.tga
-	implicitMap -
 }
 
 
@@ -228,5 +214,4 @@ textures/snow/s_wood_c13a
 	specularmap textures/snow/s_wood_c13a_r.tga
 	bumpmap textures/snow/s_wood_c13a_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

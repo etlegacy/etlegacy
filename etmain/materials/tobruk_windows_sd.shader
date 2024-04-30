@@ -22,7 +22,6 @@ textures/tobruk_windows_sd/tobruk_shutterbrown
 	specularmap textures/tobruk_windows_sd/tobruk_shutterbrown_r.tga
 	bumpmap textures/tobruk_windows_sd/tobruk_shutterbrown_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/tobruk_windows_sd/tobruk_tobruk_lwind
