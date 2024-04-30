@@ -46,7 +46,7 @@ uniform float u_DepthScale;
 #endif // USE_NORMAL_MAPPING
 
 varying vec3 var_Position;
-varying vec4 var_LightColor;
+//varying vec4 var_LightColor;
 varying vec3 var_Normal;
 #if defined(USE_DIFFUSE)
 varying vec2 var_TexDiffuse;
@@ -174,7 +174,6 @@ vec3 specular = computeSpecular(V, N, L, u_LightColor, 256.0, u_SpecularScale); 
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, texDiffuse);
 	color.rgb = mix(color.rgb, diffuse.rgb, var_alphaGen);
-//color += diffuse;
 #endif // USE_DIFFUSE
 
 
@@ -200,7 +199,7 @@ vec3 specular = computeSpecular(V, N, L, u_LightColor, 256.0, u_SpecularScale); 
 	}
 
 	// compute the light term
-	color.rgb *= var_LightColor.rgb;
+//	color.rgb *= var_LightColor.rgb;
 
 
 #if defined(USE_NORMAL_MAPPING)

@@ -54,13 +54,13 @@ varying vec3 var_Normal;
 #if defined(USE_DIFFUSE)
 	varying vec2 var_TexDiffuse;
 	#if defined(USE_NORMAL_MAPPING)
-//		varying mat3 var_tangentMatrix;
+		varying mat3 var_tangentMatrix;
 		varying vec3 var_LightDirection; 
 		varying vec3 var_ViewDirW;               // view direction in world space
-////varying vec3 var_LightDirectionT;
-////varying vec3 var_ViewDirT;           // view direction in tangentspace
+varying vec3 var_LightDirectionT;
+varying vec3 var_ViewDirT;           // view direction in tangentspace
 		#if defined(USE_PARALLAX_MAPPING)
-			varying vec3 var_ViewDirT;           // view direction in tangentspace
+///			varying vec3 var_ViewDirT;           // view direction in tangentspace
 			varying float var_distanceToCam;     // in world units
 		#endif // USE_PARALLAX_MAPPING
 	#endif // USE_NORMAL_MAPPING
@@ -151,20 +151,19 @@ void main()
 #if defined(USE_NORMAL_MAPPING)
 	// view direction
 	vec3 V = var_ViewDirW;
-////vec3 V = var_ViewDirT; // what we really want is all vectors in tangentspace (calculated in the vertexshader), so we don't have to transform every normal in the fp
+//vec3 V = normalize(var_ViewDirT); // what we really want is all vectors in tangentspace (calculated in the vertexshader), so we don't have to transform every normal in the fp
 
 	// light direction in world space
 	vec3 L = var_LightDirection;
-////vec3 L = var_LightDirectionT;
+//vec3 L = var_LightDirectionT;
 
 	// normal
 	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
 	// the bump scale
 	Ntex.y *= u_BumpScale;
 	// the final normal in worldspace
-//!	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
-vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
-//vec3 N = normalize(vec3(-Ntex.z, -Ntex.x, Ntex.y));
+	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+//vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
 	// the angle between the normal- & light-direction (needs normalized vectors to return the cosine of the angle)
 	float dotNL = dot(N, L);
@@ -172,12 +171,14 @@ vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length.. 
 	// compute the diffuse light term
 	diffuse.rgb *= computeDiffuseLighting(dotNL, u_DiffuseLighting);
 
+
 	// compute the specular term (and reflections)
 #if defined(USE_SPECULAR)
 	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
 //vec3 specular = computeSpecular(V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
 	specular *= texture2D(u_SpecularMap, texDiffuse).rgb;
 #endif // USE_SPECULAR
+
 
 // we only render reflections in the lightmap shader , when there's a reflectionmap.
 #if defined(USE_REFLECTIONS)
@@ -203,7 +204,6 @@ vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length.. 
 #endif // USE_REFLECTIONS
 #endif // USE_NORMAL_MAPPING
 	color *= lightmapColor; // lightmap or vertex color
-
 
 
 

@@ -126,7 +126,7 @@ textures/skies/sd_batteryfog
 	surfaceparm trans
 	surfaceparm fog
 	
-	fogparms ( 0.4 0.4 0.4 ) 8192
+	fogparms ( 0.4 0.4 0.4 ) 50000 //8192
 }
 
 textures/skies/sd_batterysky
@@ -157,9 +157,9 @@ textures/skies/sd_batterysky
 	{
 		fog off
 		clampmap textures/skies_sd/battery_mask_ydnar.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		tcMod scale 0.96 0.96
-		tcMod transform 1 0 0 1 -1 -1
+		blendFunc blend
+		tcMod scale 1.0 0.85 // 0.90 0.90
+		tcMod transform 1 0 0 1 -1.1 -1.15
 		rgbGen const ( 0.4 0.4 0.4 ) 
 	}
 }
@@ -204,7 +204,7 @@ textures/skies/sd_siwafog
 	surfaceparm trans
 	surfaceparm fog
 	
-	fogparms ( 0.77 0.64 0.46 ) 20480
+	fogparms ( 0.77 0.64 0.46 ) 204800
 }
 
 textures/skies/sd_wurzburgsky

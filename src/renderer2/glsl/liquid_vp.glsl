@@ -32,7 +32,7 @@ uniform vec4  u_PortalPlane;
 uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
-varying vec4 var_LightColor;
+//varying vec4 var_LightColor;
 varying float var_alphaGen;
 varying vec3 var_Position;
 uniform vec4 u_Color;
@@ -69,7 +69,8 @@ void main()
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
 
-	var_LightColor = attr_Color; // * u_ColorModulate + u_Color;
+//	var_LightColor = attr_Color; // * u_ColorModulate + u_Color;
+//var_LightColor = vec4(1.0);
 
 #if defined(USE_DIFFUSE)
 	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
