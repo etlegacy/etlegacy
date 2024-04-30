@@ -9,7 +9,6 @@
 uniform bool SHOW_LIGHTMAP;
 //uniform bool SHOW_DELUXEMAP;
 
-uniform float     u_DiffuseLighting;
 #if defined(USE_LIGHT_MAPPING)
 	uniform sampler2D u_LightMap;
 #endif // USE_LIGHT_MAPPING
@@ -19,6 +18,7 @@ uniform float     u_DiffuseLighting;
 		uniform int       u_AlphaTest;
 	#endif // USE_ALPHA_TESTING
 	#if defined(USE_NORMAL_MAPPING)
+		uniform float     u_DiffuseLighting;
 		uniform vec3      u_LightColor;
 		uniform sampler2D u_NormalMap;
 		uniform float     u_BumpScale;
@@ -48,20 +48,17 @@ uniform float     u_DiffuseLighting;
 
 varying vec3 var_Position;
 varying vec4 var_Color;
-varying vec3 var_Normal;
 #if defined(USE_LIGHT_MAPPING)
 	varying vec2 var_TexLight;
 #endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
 	varying vec2 var_TexDiffuse;
 	#if defined(USE_NORMAL_MAPPING)
-		varying mat3 var_tangentMatrix;
-		varying vec3 var_LightDirW; 
-		varying vec3 var_ViewDirW;               // view direction in world space
-varying vec3 var_LightDirT;
-varying vec3 var_ViewDirT;           // view direction in tangentspace
+		varying mat3 var_tangentMatrix;          // world to tangent space
+		varying mat3 var_worldMatrix;			 // tangent to world space
+		varying vec3 var_LightDirT;              // light direction in tangent space, normalized
+		varying vec3 var_ViewDirT;               // view direction in tangentspace
 		#if defined(USE_PARALLAX_MAPPING)
-///			varying vec3 var_ViewDirT;           // view direction in tangentspace
 			varying float var_distanceToCam;     // in world units
 		#endif // USE_PARALLAX_MAPPING
 	#endif // USE_NORMAL_MAPPING
@@ -71,11 +68,10 @@ varying vec3 var_ViewDirT;           // view direction in tangentspace
 #endif // USE_PORTAL_CLIPPING
 
 
-void main()
-{
+void main() {
+
 #if defined(USE_PORTAL_CLIPPING)
-	if (var_BackSide < 0.0)
-	{
+	if (var_BackSide < 0.0) {
 		discard;
 		return;
 	}
@@ -105,13 +101,22 @@ void main()
 #if defined(USE_DIFFUSE)
 	vec2 texDiffuse;
 
+
+#if defined(USE_NORMAL_MAPPING)
+	// the view direction in tangentspace
+	vec3 V = normalize(var_ViewDirT);
+
+	// the light direction
+	vec3 L = -var_LightDirT;
+
 #if defined(USE_PARALLAX_MAPPING)
-	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, var_ViewDirT, -var_LightDirT, u_DepthScale, var_distanceToCam, u_ParallaxShadow);
+	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, V, L, u_DepthScale, var_distanceToCam, u_ParallaxShadow, lightmapColor.rgb);
 	texDiffuse = parallaxResult.xy;
 	float parallaxShadow = parallaxResult.z;
 #else
 	texDiffuse = var_TexDiffuse;
 #endif // USE_PARALLAX_MAPPING
+#endif // USE_NORMAL_MAPPING
 
 
 	// compute the diffuse term
@@ -150,21 +155,12 @@ void main()
 
 
 #if defined(USE_NORMAL_MAPPING)
-	// view direction
-	vec3 V = var_ViewDirW;
-//vec3 V = normalize(var_ViewDirT); // what we really want is all vectors in tangentspace (calculated in the vertexshader), so we don't have to transform every normal in the fp
-
-	// light direction in world space
-	vec3 L = var_LightDirW;
-//vec3 L = var_LightDirT;
-
 	// normal
 	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
 	// the bump scale
 	Ntex.y *= u_BumpScale;
-	// the final normal in worldspace
-	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
-//vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+	// the final normal in tangentspace
+	vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
 	// the angle between the normal- & light-direction (needs normalized vectors to return the cosine of the angle)
 	float dotNL = dot(N, L);
@@ -183,7 +179,8 @@ void main()
 
 // we only render reflections in the lightmap shader , when there's a reflectionmap.
 #if defined(USE_REFLECTIONS)
-	vec3 reflections = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
+//	vec3 reflections = computeReflections(var_ViewDirW, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
+	vec3 reflections = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
 #if defined(USE_REFLECTIONMAP)
 	reflections *= texture2D(u_ReflectionMap, texDiffuse).rgb;
 #endif // USE_REFLECTIONMAP
@@ -193,11 +190,10 @@ void main()
 
 
 
-
 	// compute final color
 	vec4 color = diffuse;
 #if defined(USE_PARALLAX_MAPPING)
-	color.rgb *= parallaxShadow; //pow(parallaxShadow, 2); //pow(parallaxShadow, 4);
+	color.rgb *= parallaxShadow;
 #endif
 #if defined(USE_NORMAL_MAPPING)
 #if defined(USE_SPECULAR)
@@ -208,7 +204,6 @@ void main()
 #endif // USE_REFLECTIONS
 #endif // USE_NORMAL_MAPPING
 	color *= lightmapColor; // lightmap or vertex color
-
 
 
 //#if defined(USE_DELUXE_MAPPING)

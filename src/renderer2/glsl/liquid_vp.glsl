@@ -8,51 +8,49 @@ attribute vec4 attr_Color;
 attribute vec4 attr_TexCoord0;
 attribute vec3 attr_Normal;
 #if defined(USE_NORMAL_MAPPING)
-attribute vec3 attr_Tangent;
-attribute vec3 attr_Binormal;
+	attribute vec3 attr_Tangent;
+	attribute vec3 attr_Binormal;
 #endif // USE_NORMAL_MAPPING
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 uniform vec4 u_ColorModulate;
 #if defined(USE_DIFFUSE)
-uniform mat4 u_DiffuseTextureMatrix;
+	uniform mat4 u_DiffuseTextureMatrix;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
-uniform vec3 u_ViewOrigin;
-uniform vec3 u_LightDir;
-#if defined(USE_PARALLAX_MAPPING)
-uniform float u_DepthScale;
-#endif // USE_PARALLAX_MAPPING
+	uniform vec3 u_ViewOrigin;
+	uniform vec3 u_LightDir;
+	#if defined(USE_PARALLAX_MAPPING)
+		uniform float u_DepthScale;
+	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+	uniform vec4  u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 #if defined(USE_DEFORM_VERTEXES)
-uniform float u_Time;
+	uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
 //varying vec4 var_LightColor;
 varying float var_alphaGen;
 varying vec3 var_Position;
 uniform vec4 u_Color;
-varying vec3 var_Normal;
 #if defined(USE_DIFFUSE)
-varying vec2 var_TexDiffuse;        // possibly moving coords
+	varying vec2 var_TexDiffuse;        // possibly moving coords
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
-varying mat3 var_tangentMatrix;
-varying vec2 var_TexNormal;         // these coords are never moving
-varying vec3 var_LightDirW;         // light direction in worldspace
-varying vec3 var_LightDirT;         // light direction in tangentspace
-varying vec3 var_ViewDirW;          // view direction in worldspace
-#if defined(USE_PARALLAX_MAPPING)
-varying vec3 var_ViewDirT;          // view direction in tangentspace
-varying float var_distanceToCam;    //
-#endif // USE_PARALLAX_MAPPING
+	varying mat3 var_tangentMatrix;
+	varying mat3 var_worldMatrix;
+	varying vec2 var_TexNormal;         // these coords are never moving
+	varying vec3 var_LightDirT;         // light direction in tangentspace
+	varying vec3 var_ViewDirT;          // view direction in tangentspace
+	#if defined(USE_PARALLAX_MAPPING)
+		varying float var_distanceToCam;    //
+	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-varying float var_BackSide; // in front, or behind, the portalplane
+	varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
@@ -73,7 +71,11 @@ void main()
 //	var_LightColor = attr_Color; // * u_ColorModulate + u_Color;
 //var_LightColor = vec4(1.0);
 
+	// normalmap texcoords are not transformed
+	var_TexNormal = attr_TexCoord0.st;
+
 #if defined(USE_DIFFUSE)
+	// tcmod transformed texcoords
 	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
 	// the alpha value is the one set by alphaGen const <value>
@@ -82,35 +84,28 @@ void main()
 #endif // USE_DIFFUSE
 	var_alphaGen = u_Color.a;
 
-	// transform normal into world space
-	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
 
 #if defined(USE_NORMAL_MAPPING)
-	vec3 tangent = normalize(u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
-	vec3 binormal = normalize(u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
+	// from tangentspace to worldspace
+	var_worldMatrix = mat3(attr_Tangent, attr_Binormal, attr_Normal); // u_ModelMatrix
+	// from worldspace to tangentspace
+	var_tangentMatrix = transpose(var_worldMatrix); // for an ortho rotation matrix, the inverse is simply the transpose..
 
-	mat3 tangentMatrix;
 
-	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
-//var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz));
+	// from vertex to light
+	vec3 lightDirW = normalize(u_LightDir);
+	var_LightDirT = var_tangentMatrix * lightDirW;
 
-	// normalmap texcoords are not transformed
-	var_TexNormal = attr_TexCoord0.st;
+	// from vertex to camera
+	vec3 viewDirW = var_Position - u_ViewOrigin; // !! do not normalize
+	var_ViewDirT = var_tangentMatrix * viewDirW;
 
-	var_LightDirW = -normalize(u_LightDir);
-
-	vec3 viewVec = var_Position - u_ViewOrigin;
-	var_ViewDirW = normalize(viewVec);
-
-	tangentMatrix = transpose(mat3(tangent, binormal, var_Normal));
-	var_LightDirT = tangentMatrix * var_LightDirW;
 
 #if defined(USE_PARALLAX_MAPPING)
-	var_distanceToCam = length(viewVec);
-//@	mat3 tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // already done before^^
-	var_ViewDirT = tangentMatrix * viewVec; // do not normalize..
+	var_distanceToCam = length(viewDirW);
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
+
 
 #if defined(USE_PORTAL_CLIPPING)
 	// in front, or behind, the portalplane

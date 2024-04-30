@@ -1,5 +1,13 @@
-/* reliefMapping_vp.glsl - Relief mapping helper functions */
-//
+/*
+my test materials are in X:\ETLegacy\etlegacy\build\legacy\materials
+my test textures are in "My Documents"\ETLegacy\etmain\texturesC.pk3
+my test models are in "My Documents"\ETLegacy\etmain\modpack_beta6.pk3
+my test models are in "My Documents"\ETLegacy\legacy\modelsC.pk3
+*/
+
+
+/* reliefMapping_fp.glsl - All-In-One parallax mapping helper function */
+
 // We do Parallax Occlusion Mapping (POM).
 //
 // The needed texturemap is a normalmap/bumpmap in the RGB of an image,
@@ -13,6 +21,7 @@
 //     parallax
 //
 
+
 // The values to adjust the fading zone.
 // The zone that is used to fade out the parallax effect over distance.
 // Parallax mapped surfaces change depth over distance from the viewer.
@@ -23,205 +32,134 @@
 #define PARALLAX_FADE_START 200.0
 #define PARALLAX_FADE_END   500.0
 
+
 // https://learnopengl.com/Advanced-Lighting/Parallax-Mapping
-// arguments:
-//   - displaceMap is a normalmap, with in the alpha channel the heightmap data
-//   - textCoords the incoming texture coordinates to parallax
-//   - viewDir is the viewdir in tangent space
-//   - depthscale is the uniform u_DepthScale
-//   - distanceToCam in world units
-// output:
-//   argument: parallaxHeight
-//   function result: the new texture coordinates
+
 //
-vec2 parallax(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, float depthscale, float distanceToCam, out float parallaxHeight) {
-	// fade out the effect over distance
-	if (distanceToCam > PARALLAX_FADE_END) return texCoords;     // early out if (point on) surface is too far away..
-	float distanceRatio = (distanceToCam > PARALLAX_FADE_START) ? 1.0 - ((distanceToCam - PARALLAX_FADE_START) / (PARALLAX_FADE_END - PARALLAX_FADE_START)) : 1.0;
-
-	// steep parallax mapping
-	const int minLayers = 4;
-	const int maxLayers = 32;
-	float viewAngle = max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0);
-	float numLayers = (maxLayers - minLayers) * viewAngle + minLayers;
-	float layerDepth = 1.0 / numLayers;
-	vec2 p = viewDir.xy / viewDir.z * depthscale * distanceRatio;
-	vec2 deltaTexCoords = p * layerDepth;
-	float curDepth = 0.0;
-	vec2 curTexCoords = texCoords;
-	float curDepthValue = 1.0 - texture2D(displaceMap, curTexCoords).a; // we could also invert the heightmap in the alpha channel of the image
-	vec2 prevTexCoords = curTexCoords;
-	float prevDepthValue = curDepthValue;
-	// a while-loop in glsl is not so easy to compile. My old while loop went woot..
-	// Using variables in the while-condition causes an endless loop.
-	// a for-loop in glsl, using constants, works well..
-	for (int L=minLayers; L<maxLayers; L++) {
-		if (L-minLayers >= numLayers) break;  // and do the loop-condition checks inside the loop
-		if (curDepth >= curDepthValue) break;
-		prevTexCoords = curTexCoords;
-		prevDepthValue = curDepthValue;
-		curTexCoords -= deltaTexCoords;
-		curDepthValue = 1.0 - texture2D(displaceMap, curTexCoords).a; // we use a heightmap, where we should use a "depthmap"
-		curDepth += layerDepth;
-	}
-
-	// parallax occlusion mapping
-	float afterDepth  = curDepthValue - curDepth;
-	float beforeDepth = prevDepthValue - curDepth + layerDepth;
-	float weight = afterDepth / (afterDepth - beforeDepth);
-	float weight_1 = 1.0 - weight;
-	vec2 finalTexCoords = prevTexCoords * weight + curTexCoords * weight_1;
-	parallaxHeight = curDepth + beforeDepth * weight + afterDepth * weight_1;
-	return finalTexCoords;
-}
-
-
-// arguments:
-//   - displaceMap is a normalmap, with in the alpha channel the heightmap data
-//   - textCoords the incoming texture coordinates to parallax
-//   - lightDir in tangent space
-//   - depthscale is the uniform u_DepthScale
-//   - parallaxHeight as calculated by the parallax() function
-// The function result is a value that represents the amount of light there is (not how much shadow):
-// For example: 1.0 = only light, no shadow.  And 0.0 = no light, just shadow
-// So the more shadow you get, the more the function result approaches 0.
-// If the value returned is 0, then the final pixel will be black (that is very! dark).
-//
-float parallaxSelfShadow(sampler2D displaceMap, vec2 texCoords, vec3 lightDir, float depthscale, float distanceToCam, float parallaxHeight)
-{
-	float lightAngle = dot(vec3(0.0, 0.0, 1.0), lightDir);
-	// if the surface normal points away from the light, do not apply any self-shadow
-	if (lightAngle <= 0) {
-		return 1.0; // don't add shadow. Keep it as it is..
-	}
-
-	// fade out the effect over distance
-	if (distanceToCam > PARALLAX_FADE_END) return 1.0;     // early out if (point on) surface is too far away..
-	float distanceRatio = (distanceToCam > PARALLAX_FADE_START) ? 1.0 - ((distanceToCam - PARALLAX_FADE_START) / (PARALLAX_FADE_END - PARALLAX_FADE_START)) : 1.0;
-
-	const int minLayers = 16;
-	const int maxLayers = 32;
-	float numLayers = (maxLayers - minLayers) * abs(lightAngle) + minLayers;
-	float numLayers1 = 1.0 / numLayers;
-	float layerHeight = parallaxHeight * numLayers1;
-	vec2 deltaTexCoords = lightDir.xy / lightDir.z * numLayers1 * depthscale;
-	float curHeight = parallaxHeight - layerHeight;
-	vec2 curTexCoords = texCoords + deltaTexCoords;
-	float curHeightValue = 1.0 - texture2D(displaceMap, curTexCoords).a;
-	float shadow = 0.0;
-	int numSamples = 0;
-	float stepHeight = 1.0 - numLayers1;
-	for (int L=minLayers; L<maxLayers; L++) {
-		if (L-minLayers >= numLayers) break;
-		if (curHeight <= 0) break;
-		if (curHeightValue < curHeight) {
-			numSamples += 1;
-			shadow = max(shadow, (curHeight - curHeightValue) * stepHeight);
-		}
-		stepHeight -= numLayers1;
-		curHeight -= layerHeight;
-		curTexCoords += deltaTexCoords;
-		curHeightValue = 1.0 - texture2D(displaceMap, curTexCoords).a;
-	}
-
-	// if we traced down to the bottom, and didn't hit a bump, we are in full light
-	if (numSamples == 0) {
-		return 1.0;
-	}
-
-	shadow = 1.0 - shadow * distanceRatio; // fade out the amount of shadow over distance..
-	return shadow;
-}
-
-
 // All in one: POM + self shadows
-// The function result is a vec3:   result.xy = parallax final texture coordinates
-//                                  result.z  = shadow factor
 //
-vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3 lightDir, float depthscale, float distanceToCam, float shadowFactor) {
+// The function result is a vec3:
+///  result.xy = parallax final texture coordinates
+//   result.z  = shadow factor  (1.0 means full light, no shadow.  0.0 means no light, maximum shadow)
+//
+// Function arguments:
+//   "displaceMap" is an RGBA image.  RGB stores the normalmap, and the alpha channel holds the heightmap data.
+//   "texCoords" are the current texture coordinates for which to parallax map.
+//   "viewDir" & "lightDir" must be a normalized vectors, in tangent space.
+//   "depthscale" is the value of the cvar r_parallaxDepthScale.
+//   "distanceToCam" is the distance from object to camera, in worldspace.
+//   "shadowFactor" is used to set the amount of parallax-selfshadowing. A value 0 disables this feature. (cvar r_parallaxShadow)
+//   "lightmapColor" is the color computed for the lightmap term.
+//
+vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3 lightDir, float depthscale, float distanceToCam, float shadowFactor, vec3 lightmapColor) {
 	// the function result
-	vec3 result = vec3(texCoords, 1.0); // don't add shadow. Keep it as it is..
+	vec3 result = vec3(texCoords, 1.0); // set shadow value to 1.0 (no shadow)
 	// fade out the effect over distance
 	if (distanceToCam > PARALLAX_FADE_END) return result;     // early out if (point on) surface is too far away..
 	float distanceRatio = (distanceToCam > PARALLAX_FADE_START) ? 1.0 - ((distanceToCam - PARALLAX_FADE_START) / (PARALLAX_FADE_END - PARALLAX_FADE_START)) : 1.0;
 
+	// in tangentspace, the normal of the surface is always the same
+	const vec3 surfaceNormalT = vec3(0.0, 0.0, 1.0);
+
 	// steep parallax mapping
-	const int minLayers = 4;
-	const int maxLayers = 32;
-	float viewAngle = max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0); // less layers when viewed from straight above
+	const int minLayers = 16;
+	const int maxLayers = 64;
+
+	// calculate the derivatives for use in the textureGrad or textureLod function
+	vec2 dx = dFdx(texCoords);
+	vec2 dy = dFdy(texCoords);
+	// calculate the miplevel for use in the textureLod function.
+	vec2 vTexCoordsPerSize = texCoords * textureSize(displaceMap, 0);
+	vec2 dxSize = dFdx(vTexCoordsPerSize);
+	vec2 dySize = dFdy(vTexCoordsPerSize);
+	vec2 dTexCoords = dxSize * dxSize + dySize * dySize;
+	float mipLevel = max(0.5 * log2(max(dTexCoords.x, dTexCoords.y)), 0);
+
+	// less layers when viewed from straight above (in tangent space)
+	float viewAngle = max(abs(dot(surfaceNormalT, viewDir)), 0.0);
 	float numLayers = (maxLayers - minLayers) * viewAngle + minLayers;
 	float layerDepth = 1.0 / numLayers;
-	vec2 p = viewDir.xy / viewDir.z * depthscale * distanceRatio;
-	vec2 deltaTexCoords = p * layerDepth;
+	vec2 deltaTexCoords = viewDir.xy / viewDir.z * layerDepth * depthscale * distanceRatio;
 	float curDepth = 0.0;
 	vec2 curTexCoords = texCoords;
-	float curDepthValue = 1.0 - texture2D(displaceMap, curTexCoords).a; // we could also invert the heightmap in the alpha channel of the image
-	vec2 prevTexCoords = curTexCoords;
-	float prevDepthValue = curDepthValue;
-	// a while-loop in glsl is not so easy to compile. My old while loop went woot..
-	// Using variables in the while-condition causes an endless loop.
-	// a for-loop in glsl, using constants, works well..
-	for (int L=minLayers; L<maxLayers; L++) {
-		if (L-minLayers >= numLayers) break;  // and do the loop-condition checks inside the loop
+	float curDepthValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
+//@	float curDepthValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
+//@	float curDepthValue = texture2D(displaceMap, curTexCoords).a;
+	vec2 prevTexCoords;
+	float prevDepthValue;
+	float afterDepth;
+	float beforeDepth;
+	float parallaxHeight;
+	float weight;
+	float weight_1;
+	// a while-loop in glsl is not so easy to run. My old while loop went woot..
+	// a for-loop in glsl works well.
+	for (int L=0; L<numLayers; L++) {
 		if (curDepth >= curDepthValue) break;
 		prevTexCoords = curTexCoords;
 		prevDepthValue = curDepthValue;
 		curTexCoords -= deltaTexCoords;
-		curDepthValue = 1.0 - texture2D(displaceMap, curTexCoords).a; // we use a heightmap, where we should use a "depthmap"
+		curDepthValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
+//@			curDepthValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
+//@			curDepthValue =  texture2D(displaceMap, curTexCoords).a;
 		curDepth += layerDepth;
 	}
 
 	// parallax occlusion mapping
-	float afterDepth  = curDepthValue - curDepth;
-	float beforeDepth = prevDepthValue - curDepth + layerDepth;
-	float weight = afterDepth / (afterDepth - beforeDepth);
-	float weight_1 = 1.0 - weight;
+	afterDepth  = curDepthValue - curDepth;
+	beforeDepth = prevDepthValue - curDepth + layerDepth;
+	weight = afterDepth / (afterDepth - beforeDepth);
+	weight_1 = 1.0 - weight;
 	result.xy = prevTexCoords * weight + curTexCoords * weight_1; // finalTexCoords
+
 
 	// self shadowing
 	shadowFactor = clamp(shadowFactor, 0.0, 1.0);
+	// early out if self-shadowing is disabled
 	if (shadowFactor == 0.0) {
 		return result;
-	} else
-	{
-		float parallaxHeight = curDepth + beforeDepth * weight + afterDepth * weight_1;
-		float lightAngle = dot(vec3(0.0, 0.0, 1.0), lightDir);
-		// if the surface normal points away from the light, do not apply any self-shadow
-		if (lightAngle <= 0) {
-			return result;
-		}
+	} else {
+		parallaxHeight = curDepth + beforeDepth * weight + afterDepth * weight_1;
 
-		const int minLayers = 16;
-		const int maxLayers = 32;
-		float numLayers = (maxLayers - minLayers) * abs(lightAngle) + minLayers;
-		float numLayers1 = 1.0 / numLayers;
-		float layerHeight = parallaxHeight * numLayers1;
-		float curHeight = parallaxHeight - layerHeight;
-		vec2 deltaTexCoords = lightDir.xy / lightDir.z * numLayers1 * depthscale;
-		vec2 curTexCoords = result.xy + deltaTexCoords; // result.xy is the parallax vec2 result
-		float curHeightValue = 1.0 - texture2D(displaceMap, curTexCoords).a;
+		// there are no shadows when the surface is lit from the backside.
+		float lightAngle = dot(surfaceNormalT, -lightDir);
+		if (lightAngle < 0) return result;
+
+		const int minLayers = 4;
+		const int maxLayers = 8;
 		float shadow = 0.0;
-		int numSamples = 0;
-		float stepHeight = 1.0 - numLayers1;
-		for (int L=minLayers; L<maxLayers; L++) {
-			if (L-minLayers >= numLayers) break;
+		float numLayers = (maxLayers - minLayers) * (1.0 - lightAngle) + minLayers;
+		float divNumLayers = 1.0 / numLayers;
+		float layerHeight = parallaxHeight * divNumLayers;
+		float curHeight = parallaxHeight - layerHeight;
+		vec2 deltaTexCoords = lightDir.xy / lightDir.z * divNumLayers * depthscale;
+		vec2 curTexCoords = result.xy + deltaTexCoords; // result.xy is the parallax vec2 result
+		float curHeightValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
+//@		float curHeightValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
+//@		float curHeightValue = texture2D(displaceMap, curTexCoords).a;
+		float stepHeight = 1.0 - divNumLayers;
+		for (int L=0; L<numLayers; L++) {
 			if (curHeight <= 0) break;
-			if (curHeightValue < curHeight) {
-				numSamples += 1;
-				shadow = max(shadow, (curHeight - curHeightValue) * stepHeight);
-			}
-			stepHeight -= numLayers1;
+			if (curHeightValue < curHeight) shadow = max(shadow, (curHeight - curHeightValue) * stepHeight);
+			stepHeight -= divNumLayers;
 			curHeight -= layerHeight;
 			curTexCoords += deltaTexCoords;
-			curHeightValue = 1.0 - texture2D(displaceMap, curTexCoords).a;
+			curHeightValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
+//@			curHeightValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
+//@			curHeightValue = texture2D(displaceMap, curTexCoords).a;
 		}
 
-		// if we traced down to the bottom, and didn't hit a bump, we are in full light
-		if (numSamples == 0) {
-			return result;
-		}
+		// if there is no shadow, we are in full light
+		if (shadow == 0.0) return result;
 
-		result.z = 1.0 - shadow * distanceRatio * shadowFactor; // fade out the amount of shadow over distance, and by cvar factor
+		// When the lightmap is dark (in shadow) there should be no/less POM self-shadowing..
+		// Because a lightmap can contain color, it's not just a grayscale image, i average over the color channels.
+		float avgLightmap = ((lightmapColor.r + lightmapColor.g + lightmapColor.b) * 0.333333333);
+		shadow *= avgLightmap;
+
+		// fade out the amount of shadow over distance, and by cvar factor
+		result.z = 1.0 - shadow * distanceRatio * shadowFactor;
 		return result;
+
 	}
 }
