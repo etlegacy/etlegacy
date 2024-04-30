@@ -38,9 +38,9 @@ textures/mp_siwa/lmterrain_0
 
 	diffuseMap textures/desert_sd/sand_wave_desert.tga
 	specularMap textures/desert_sd/sand_wave_desert_r.tga
-//	bumpMap textures/desert_sd/sand_wave_desert_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
-	parallax
+	bumpMap textures/desert_sd/sand_wave_desert_n.tga
+//	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
+//	parallax
 	{
 		map $lightmap
 		rgbGen identity
@@ -141,7 +141,8 @@ textures/mp_siwa/lmterrain_6
 	diffuseMap textures/desert_sd/sand_gravels_bright.tga
 	specularMap textures/desert_sd/sand_gravels_bright_r.tga
 //	bumpMap textures/desert_sd/sand_gravels_bright_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+//	bumpmap displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+bumpmap displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
 	parallax
 	{
 		map $lightmap
@@ -175,9 +176,9 @@ textures/mp_siwa/lmterrain_0to1
 
 	diffusemap textures/desert_sd/sand_wave_desert.tga
 	specularmap textures/desert_sd/sand_wave_desert_r.tga
-//	bumpmap textures/desert_sd/sand_wave_desert_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
-	parallax
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+//	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
+//	parallax
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_sand_flat.tga
@@ -208,9 +209,9 @@ textures/mp_siwa/lmterrain_0to2
 
 	diffusemap textures/desert_sd/sand_wave_desert.tga
 	specularmap textures/desert_sd/sand_wave_desert_r.tga
-//	bumpmap textures/desert_sd/sand_wave_desert_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
-	parallax
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+//	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
+//	parallax
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_patchy.tga
@@ -241,9 +242,9 @@ textures/mp_siwa/lmterrain_0to3
 
 	diffusemap textures/desert_sd/sand_wave_desert.tga
 	specularmap textures/desert_sd/sand_wave_desert_r.tga
-//	bumpmap textures/desert_sd/sand_wave_desert_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
-	parallax
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+//	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
+//	parallax
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_disturb_desert.tga
@@ -274,9 +275,9 @@ textures/mp_siwa/lmterrain_0to4
 
 	diffusemap textures/desert_sd/sand_wave_desert.tga
 	specularmap textures/desert_sd/sand_wave_desert_r.tga
-//	bumpmap textures/desert_sd/sand_wave_desert_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
-	parallax
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+//	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
+//	parallax
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_desert_flat.tga
@@ -307,9 +308,9 @@ textures/mp_siwa/lmterrain_0to5
 
 	diffusemap textures/desert_sd/sand_wave_desert.tga
 	specularmap textures/desert_sd/sand_wave_desert_r.tga
-//	bumpmap textures/desert_sd/sand_wave_desert_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
-	parallax
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+//	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
+//	parallax
 	{
 	    stage diffuseMap
 		map textures/desert_sd/rock_edged_smooth.tga
@@ -340,10 +341,9 @@ textures/mp_siwa/lmterrain_0to6
 
 	diffusemap textures/desert_sd/sand_wave_desert.tga
 	specularmap textures/desert_sd/sand_wave_desert_r.tga
-//	bumpmap textures/desert_sd/sand_wave_desert_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+//	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
 	parallax
-
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_gravels_bright.tga
@@ -354,13 +354,13 @@ textures/mp_siwa/lmterrain_0to6
 	{
 	    stage bumpMap
 //		map textures/desert_sd/sand_gravels_bright_n.tga
-		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+//		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_gravels_bright_r.tga
 	}
-
 	{
 		map $lightmap
 		rgbGen identity
@@ -376,9 +376,9 @@ textures/mp_siwa/lmterrain_0to7
 
 	diffusemap textures/desert_sd/sand_wave_desert.tga
 	specularmap textures/desert_sd/sand_wave_desert_r.tga
-//	bumpmap textures/desert_sd/sand_wave_desert_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
-	parallax
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+//	bumpmap displaceMap(textures/desert_sd/sand_wave_desert_n.tga, textures/desert_sd/sand_wave_desert_r.tga)
+//	parallax
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
@@ -545,7 +545,8 @@ textures/mp_siwa/lmterrain_1to6
 	{
 	    stage bumpMap
 //		map textures/desert_sd/sand_gravels_bright_n.tga
-		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+//		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
 	}
 	{
 	    stage specularMap
@@ -701,7 +702,8 @@ textures/mp_siwa/lmterrain_2to6
 	{
 	    stage bumpMap
 //		map textures/desert_sd/sand_gravels_bright_n.tga
-		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+//		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
 	}
 	{
 	    stage specularMap
@@ -827,7 +829,8 @@ textures/mp_siwa/lmterrain_3to6
 	{
 	    stage bumpMap
 //		map textures/desert_sd/sand_gravels_bright_n.tga
-		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+//		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
 	}
 	{
 	    stage specularMap
@@ -922,7 +925,8 @@ textures/mp_siwa/lmterrain_4to6
 	{
 	    stage bumpMap
 //		map textures/desert_sd/sand_gravels_bright_n.tga
-		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+//		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
 	}
 	{
 	    stage specularMap
@@ -986,7 +990,8 @@ textures/mp_siwa/lmterrain_5to6
 	{
 	    stage bumpMap
 //		map textures/desert_sd/sand_gravels_bright_n.tga
-		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+//		map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+map displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
 	}
 	{
 	    stage specularMap
@@ -1039,21 +1044,22 @@ textures/mp_siwa/lmterrain_6to7
 	diffusemap textures/desert_sd/sand_gravels_bright.tga
 	specularmap textures/desert_sd/sand_gravels_bright_r.tga
 //	bumpmap textures/desert_sd/sand_gravels_bright_n.tga
-	bumpmap displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+//	bumpmap displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_h.tga)
+bumpmap displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
 	parallax
 	{
-	    stage diffuseMap
+		stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
-	    rgbGen identity
+		rgbGen identity
 		alphaGen vertex
 		blendFunc blend
 	}
 	{
-	    stage bumpMap
+		stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 	}
 	{
-	    stage specularMap
+		stage specularMap
 		map textures/desert_sd/sand_dirt_medium_r.tga
 	}
 	{

@@ -126,7 +126,8 @@ textures/skies/sd_batteryfog
 	surfaceparm trans
 	surfaceparm fog
 	
-	fogparms ( 0.4 0.4 0.4 ) 50000 //8192
+//	fogparms ( 0.4 0.4 0.4 ) 8192
+	fogparms ( 0.4 0.4 0.4 ) 50000
 }
 
 textures/skies/sd_batterysky
@@ -204,6 +205,7 @@ textures/skies/sd_siwafog
 	surfaceparm trans
 	surfaceparm fog
 	
+//	fogparms ( 0.77 0.64 0.46 ) 20480
 	fogparms ( 0.77 0.64 0.46 ) 204800
 }
 

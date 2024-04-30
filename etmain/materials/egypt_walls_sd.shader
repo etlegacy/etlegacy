@@ -142,8 +142,10 @@ textures/egypt_walls_sd/stucco08a
 	q3map_nonplanar
 	q3map_shadeangle 90
 	diffusemap textures/egypt_walls_sd/stucco08a.tga
-	bumpmap textures/egypt_walls_sd/stucco08a_n.tga
 	specularmap textures/egypt_walls_sd/stucco08a_r.tga
+	bumpmap textures/egypt_walls_sd/stucco08a_n.tga
+//	bumpmap displaceMap(textures/egypt_walls_sd/stucco08a_n.tga, textures/egypt_walls_sd/stucco08a_r.tga)
+//	parallax
 }
 
 textures/egypt_walls_sd/stucco08b
@@ -152,8 +154,10 @@ textures/egypt_walls_sd/stucco08b
 	q3map_nonplanar
 	q3map_shadeangle 90
 	diffusemap textures/egypt_walls_sd/stucco08b.tga
-	bumpmap textures/egypt_walls_sd/stucco08b_n.tga
 	specularmap textures/egypt_walls_sd/stucco08b_r.tga
+	bumpmap textures/egypt_walls_sd/stucco08b_n.tga
+//	bumpmap displaceMap(textures/egypt_walls_sd/stucco08b_n.tga, textures/egypt_walls_sd/stucco08b_r.tga)
+//	parallax
 }
 
 textures/egypt_walls_sd/stucco08c
@@ -162,8 +166,10 @@ textures/egypt_walls_sd/stucco08c
 	q3map_nonplanar
 	q3map_shadeangle 90
 	diffusemap textures/egypt_walls_sd/stucco08c.tga
-	bumpmap textures/egypt_walls_sd/stucco08c_n.tga
 	specularmap textures/egypt_walls_sd/stucco08c_r.tga
+	bumpmap textures/egypt_walls_sd/stucco08c_n.tga
+//	bumpmap displaceMap(textures/egypt_walls_sd/stucco08c_n.tga, textures/egypt_walls_sd/stucco08c_r.tga)
+//	parallax
 }
 
 textures/egypt_walls_sd/stucco08d
@@ -182,8 +188,10 @@ textures/egypt_walls_sd/stucco08e
 	q3map_nonplanar
 	q3map_shadeangle 90
 	diffusemap textures/egypt_walls_sd/stucco08e.tga
-	bumpmap textures/egypt_walls_sd/stucco08e_n.tga
 	specularmap textures/egypt_walls_sd/stucco08e_r.tga
+	bumpmap textures/egypt_walls_sd/stucco08e_n.tga
+//	bumpmap displaceMap(textures/egypt_walls_sd/stucco08e_n.tga, textures/egypt_walls_sd/stucco08e_r.tga)
+//	parallax
 }
 
 textures/egypt_walls_sd/stucco09_bigexp

@@ -24,11 +24,12 @@ textures/mp_railgun/cable
 textures/mp_railgun/fog
 {
 	qer_editorimage textures/sfx/fog_grey1.tga
-	fogparms ( 0.6 0.6 0.6 ) 2560
 	surfaceparm fog
 	surfaceparm nodraw
 	surfaceparm nonsolid
 	surfaceparm trans
+//	fogparms ( 0.6 0.6 0.6 ) 2560
+	fogparms ( 0.6 0.6 0.6 ) 20480
 }
 
 textures/mp_railgun/lmterrain_base

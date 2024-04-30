@@ -14,9 +14,8 @@ textures/liquids_sd/siwa_water
 	surfaceparm fog
 	cull disable
 	nopicmip
-	// the next 2 lines are commented out, because waterfogvars is not functional at this moment.
 	//nofog
-	waterfogvars ( 0.4255 0.4804 0.6882 ) 256.0 // this needs all the spaces inside the ( x x x )
+	waterfogvars ( 0.1098 0.3922 0.3334 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
 	sort underwater
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
@@ -37,7 +36,7 @@ textures/liquids_sd/siwa_water
 		// When you are underwater, and look at the world above the water, you see the world fogged with the same 'color'.
 		// Also here, it's just fog rendered on the watersurface.
 		fog on
-		color 0.1, 0.1, 0.1, 0.2
+		color 0.0549, 0.1961, 0.1667, 0.2   // this needs the comma seperators [r,g,b,a]
 	}
 	{
 		stage diffusemap
