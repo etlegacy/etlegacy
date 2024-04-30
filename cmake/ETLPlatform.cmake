@@ -208,6 +208,7 @@ elseif(WIN32)
 
 		if(FORCE_STATIC_VCRT)
 			if(ETL_SSE)
+				add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH) # this is required for /Zp16 compiler will ignore mismatch
 				set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot")
 				set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /Zp16 /arch:SSE2 /W3 /Od /Ob2 /Oi /Ot")
 			else
