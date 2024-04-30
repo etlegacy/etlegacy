@@ -37,15 +37,73 @@ textures/fueldump/fueldumpsky
 //======================================================================
 textures/fueldump/terrain_base
 {
-	q3map_normalimage textures/sd_bumpmaps/normalmap_terrain
 	q3map_lightmapMergable
 	q3map_lightmapaxis z
 	q3map_lightmapsize 512 512
+	q3map_normalimage textures/sd_bumpmaps/normalmap_terrain
 	//q3map_tcGen ivector ( 512 0 0 ) ( 0 512 0 )
 	q3map_tcMod rotate 37
 	q3map_tcMod scale 1 1
 	surfaceparm landmine
 	surfaceparm snowsteps
+	q3map_nonplanar
+	q3map_shadeangle 10
+}
+
+textures/stone/mxsnow2
+{
+	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow2.tga
+	diffusemap textures/stone/mxsnow2.tga
+	normalmap textures/stone/mxsnow2_n.tga
+	specularmap textures/stone/mxsnow2_r.tga
+	{
+		lightmap $lightmap
+		blendFunc filter
+		rgbgen identity
+	}
+}
+
+textures/stone/mxsnow3
+{
+	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow3.tga
+	diffusemap textures/stone/mxsnow3.tga
+	normalmap textures/stone/mxsnow3_n.tga
+	specularmap textures/stone/mxsnow3_r.tga
+	{
+		lightmap $lightmap
+		blendFunc filter
+		rgbgen identity
+	}
+}
+
+textures/stone/mxrock3h_snow
+{
+	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxrock3h_snow.tga
+	diffusemap textures/stone/mxrock3h_snow.tga
+	normalmap textures/stone/mxrock3h_snow_n.tga
+	specularmap textures/stone/mxrock3h_snow_r.tga
+	{
+		lightmap $lightmap
+		blendFunc filter
+		rgbgen identity
+	}
+}
+
+textures/snow_sd/mxrock4b_snow
+{
+	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/snow_sd/mxrock4b_snow.tga
+	diffusemap textures/snow_sd/mxrock4b_snow.tga
+	normalmap textures/snow_sd/mxrock4b_snow_n.tga
+	specularmap textures/snow_sd/mxrock4b_snow_r.tga
+	{
+		lightmap $lightmap
+		blendFunc filter
+		rgbgen identity
+	}
 }
 
 //======================================================================
