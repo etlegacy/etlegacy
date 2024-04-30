@@ -227,6 +227,10 @@ elseif(WIN32)
 
 			foreach(CompilerFlag ${CompilerFlags})
 				string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+				# remove any "Basic Runtime Checks" settings
+				string(REPLACE "/RTCs" "" ${CompilerFlag} "${${CompilerFlag}}")
+				string(REPLACE "/RTCu" "" ${CompilerFlag} "${${CompilerFlag}}")
+				string(REPLACE "/RTC1" "" ${CompilerFlag} "${${CompilerFlag}}")
 			endforeach()
 
 			if(ETL_SSE)
