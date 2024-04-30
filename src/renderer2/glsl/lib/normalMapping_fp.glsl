@@ -7,9 +7,6 @@
 vec3 computeReflections(vec3 viewDir, vec3 normal, samplerCube envmap0, samplerCube envmap1, float interpolate, float intensity)
 {
 	vec3 R = reflect(viewDir, normal); // the reflection vector
-	R.x = -R.x; // make the cubeprobes in the correct way so this negating R.xy is no longer needed..
-	R.y = -R.y; //
-	//R.z = -R.z; // flip vertically
 	vec4 envColor0 = textureCube(envmap0, R).rgba;
 	vec4 envColor1 = textureCube(envmap1, R).rgba;
 	return mix(envColor0, envColor1, interpolate).rgb * intensity;
