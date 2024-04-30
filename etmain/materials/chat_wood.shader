@@ -12,7 +12,8 @@ textures/chat_wood/chwood_c02
 textures/chat_wood/chwood_c04
 {
     qer_editorimage textures/chat_wood/chwood_c04.tga
-	diffusemap textures/chat_wood/chwood_c04_n.tga
+	diffusemap textures/chat_wood/chwood_c04.tga
+	bumpmap textures/chat_wood/chwood_c04_n.tga
 	specularmap textures/chat_wood/chwood_c04_r.tga
 	surfaceparm woodsteps
 }

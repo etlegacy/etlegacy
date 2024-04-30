@@ -1,4 +1,4 @@
-/* vertexLighting_DBS_entity_fp.glsl */
+/* entity_fp.glsl */
 #if defined(USE_NORMAL_MAPPING)
 #include "lib/normalMapping"
 #if defined(USE_PARALLAX_MAPPING)
@@ -26,6 +26,9 @@ uniform float       u_ReflectionScale;
 uniform sampler2D u_ReflectionMap;
 #endif // USE_REFLECTIONMAP
 #endif // USE_REFLECTIONS
+#if defined(USE_PARALLAX_MAPPING)
+uniform float u_DepthScale;
+#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_ALPHA_TESTING)
 uniform int u_AlphaTest;
@@ -38,9 +41,10 @@ varying vec3 var_Normal;
 varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;
 varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin;
+varying vec3 var_ViewDirW;          // view direction in world space
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S;
+varying vec3 var_ViewDirT;          // view direction in tangentspace
+varying float var_distanceToCam;    //
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -61,7 +65,8 @@ void main()
 
 	vec2 texDiffuse = var_TexDiffuse; // diffuse texture coordinates st
 #if defined(USE_PARALLAX_MAPPING)
-	texDiffuse += RayIntersectDisplaceMap(texDiffuse, var_S, u_NormalMap);
+//	texDiffuse += RayIntersectDisplaceMap(texDiffuse, var_S, u_NormalMap);
+	texDiffuse = parallax(u_NormalMap, var_TexDiffuse, var_ViewDirT, u_DepthScale);
 #endif // end USE_PARALLAX_MAPPING
 
 
@@ -91,14 +96,13 @@ void main()
 
 #if defined(USE_NORMAL_MAPPING)
 	// view direction
-	vec3 V = var_ViewOrigin;
+	vec3 V = var_ViewDirW;
 
 	// light direction
 	vec3 L = var_LightDirection;
 
 	// normal
 	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
-	// transform normal from tangentspace to worldspace
 	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
 	// the cosine of the angle N L

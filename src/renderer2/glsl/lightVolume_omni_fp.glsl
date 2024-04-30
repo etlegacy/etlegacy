@@ -77,51 +77,7 @@ void main()
 
 		float shadow = 1.0;
 
-#if defined(VSM)
-		if (bool(u_ShadowCompare))
-		{
-			// compute incident ray
-			vec3 I2 = T - u_LightOrigin;
-
-			vec4 shadowMoments = textureCube(u_ShadowMap, I2);
-
-			#if defined(VSM_CLAMP)
-			// convert to [-1, 1] vector space
-			shadowMoments = 0.5 * (shadowMoments + 1.0);
-			#endif
-
-			float shadowDistance        = shadowMoments.r;
-			float shadowDistanceSquared = shadowMoments.g;
-
-			const float SHADOW_BIAS    = 0.001;
-			float       vertexDistance = length(I2) / u_LightRadius - SHADOW_BIAS;
-
-			// standard shadow map comparison
-			shadow = vertexDistance <= shadowDistance ? 1.0 : 0.0;
-
-			// variance shadow mapping
-			float E_x2 = shadowDistanceSquared;
-			float Ex_2 = shadowDistance * shadowDistance;
-
-			// AndyTX: VSM_EPSILON is there to avoid some ugly numeric instability with fp16
-			float variance = min(max(E_x2 - Ex_2, 0.0) + VSM_EPSILON, 1.0);
-
-			float mD   = shadowDistance - vertexDistance;
-			float mD_2 = mD * mD;
-			float p    = variance / (variance + mD_2);
-
-			color.rgb += attenuationXY * attenuationZ * max(shadow, p);
-		}
-
-		if (shadow <= 0.0)
-		{
-			continue;
-		}
-		else
-#endif
-		{
-			color.rgb += attenuationXY * attenuationZ;
-		}
+		color.rgb += attenuationXY * attenuationZ;
 	}
 
 	color.rgb /= float(steps);

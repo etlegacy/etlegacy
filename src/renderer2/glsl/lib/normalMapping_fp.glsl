@@ -7,8 +7,8 @@
 vec3 computeReflections(vec3 viewDir, vec3 normal, samplerCube envmap0, samplerCube envmap1, float interpolate, float intensity)
 {
 	vec3 R = reflect(viewDir, normal); // the reflection vector
-	R.x = -R.x;
-	R.y = -R.y;
+	R.x = -R.x; // make the cubeprobes in the correct way so this negating R.xy is no longer needed..
+	R.y = -R.y; //
 	//R.z = -R.z; // flip vertically
 	vec4 envColor0 = textureCube(envmap0, R).rgba;
 	vec4 envColor1 = textureCube(envmap1, R).rgba;
@@ -17,19 +17,6 @@ vec3 computeReflections(vec3 viewDir, vec3 normal, samplerCube envmap0, samplerC
 
 
 // Compute the specular lighting
-// Specular highlights are only visible at certain angles. (light-, view- & surface-normal).
-// It makes objects look shiny, glossy, rough.. when the light catches it right, as seen from your current position.
-// Specular highlight colors are "the same" as the color of the lightsource that emits it. A red light will make specular color red.
-// This effect does nothing if angles are wrong. If you look at it from a wrong direction, you could see no specular at all: that's perfectly possible.
-// If you hover over a bumpy surface, and see specular,.. those bumps will nicely show their shapes as the light glides over it.
-vec3 computeSpecular3(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent)
-{
-	if (dotNL < 0.0) return vec3(0.0);
-	vec3 H = normalize(lightDir + viewDir); // the half-vector
-	float dotNH = max(0.0, dot(normal, H));
-	float intensity = pow(dotNH, exponent);
-	return (intensity * lightColor); // float * vec3
-}
 vec3 computeSpecular2(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent, float scale)
 {
 	if (dotNL < 0.0) return vec3(0.0);
@@ -41,7 +28,11 @@ vec3 computeSpecular2(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec
 vec3 computeSpecular(vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent, float scale)
 {
 	float dotNL = dot(normal, lightDir);
-	return computeSpecular2(dotNL, viewDir, normal, lightDir, lightColor, exponent, scale);
+	if (dotNL < 0.0) return vec3(0.0);
+	vec3 H = normalize(lightDir + viewDir); // the half-vector
+	float dotNH = max(0.0, dot(normal, H));
+	float intensity = pow(dotNH, exponent);
+	return (intensity * scale * lightColor); // float * float * vec3  (should be better than: f*v*f)
 }
 
 
@@ -64,7 +55,7 @@ float computeDiffuseLighting(float dotNL, float amount)
 {
 	float lambert = (1.0 - amount) + (dotNL * amount);
 	//return lambert*lambert; // square the result: this also makes the result always >0. (The old halfLambert was doing this)
-	return abs(lambert); // don't square, but abs instead. (the most useful values are so low already. squaring them lowers them even more)
+	return abs(lambert); // don't square, but abs instead. (the most useful values are so low already. squaring them, lowers them even more)
 }
 float computeDiffuseLighting2(vec3 normal, vec3 lightDir)
 {

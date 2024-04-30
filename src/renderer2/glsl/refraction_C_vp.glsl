@@ -17,7 +17,6 @@ void main()
 	vec4 position;
 
 #if defined(USE_VERTEX_SKINNING)
-
 	VertexSkinning_PN(attr_Position, attr_Normal,
 	                  position,      normal);
 
@@ -29,7 +28,8 @@ void main()
 
 	// transform normal into world space
 	var_Normal = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
-#endif
+
+#else
 
 	// transform vertex position into homogenous clip-space
 	gl_Position = u_ModelViewProjectionMatrix * attr_Position;
@@ -39,4 +39,5 @@ void main()
 
 	// transform normal into world space
 	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
+#endif
 }

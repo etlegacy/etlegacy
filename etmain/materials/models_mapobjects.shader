@@ -3308,7 +3308,9 @@ models/mapobjects/tree_desert_sd/palm_trunk
 	surfaceparm woodsteps
 	diffuseMap models/mapobjects/tree_desert_sd/palm_trunk.tga
 	specularMap models/mapobjects/tree_desert_sd/palm_trunk_r.tga
-	bumpMap models/mapobjects/tree_desert_sd/palm_trunk_n.tga
+//	bumpMap models/mapobjects/tree_desert_sd/palm_trunk_n.tga
+bumpmap displaceMap(models/mapobjects/tree_desert_sd/palm_trunk_n.tga, models/mapobjects/tree_desert_sd/palm_trunk.tga)
+parallax
 }
 
 models/mapobjects/tree_desert_sd/palm_leaf1

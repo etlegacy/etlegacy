@@ -119,11 +119,12 @@ void    main()
 	// transform normalmap texcoords
 	var_TexNormal = (u_NormalTextureMatrix * attr_TexCoord0).st;
 
-	tangent  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
-	binormal = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
+	tangent  = normalize((u_ModelMatrix * vec4(tangent, 0.0)).xyz);
+	binormal = normalize((u_ModelMatrix * vec4(binormal, 0.0)).xyz);
 
 	// in a vertex-shader there exists no gl_FrontFacing
-	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
+//	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
+	var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz));
 #endif // USE_NORMAL_MAPPING
 
 

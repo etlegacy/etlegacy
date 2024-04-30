@@ -22,26 +22,27 @@ generic
 	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 }
 
-lightMapping
+world
 {
-	filename "lightMapping"
-	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_REFLECTIONS USE_REFLECTIONMAP USE_SPECULAR USE_PARALLAX_MAPPING USE_DIFFUSE
+	filename "world"
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_LIGHT_MAPPING USE_DIFFUSE USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SPECULAR USE_REFLECTIONS USE_REFLECTIONMAP
 	//extramacros "TWOSIDED"
-	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_LIGHTCOORD ATTR_NORMAL
+	attribs ATTR_POSITION ATTR_COLOR ATTR_NORMAL ATTR_TANGENT ATTR_BINORMAL ATTR_TEXCOORD ATTR_LIGHTCOORD
 	vertexLibraries "lib/deformVertexes"
 	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }
 
-vertexLighting_DBS_entity
+entity
 {
-	filename "vertexLighting_DBS_entity"
+	filename "entity"
 	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_REFLECTIONS USE_REFLECTIONMAP USE_SPECULAR
 	extramacros "TWOSIDED"
-	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
+	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL ATTR_TANGENT ATTR_BINORMAL
 	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }
 
+/* // no longer used..
 vertexLighting_DBS_world
 {
 	filename "vertexLighting_DBS_world"
@@ -51,6 +52,7 @@ vertexLighting_DBS_world
 	vertexLibraries "lib/deformVertexes"
 	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }
+*/
 
 liquid
 {
@@ -63,11 +65,10 @@ liquid
 forwardLighting_omniXYZ
 {
 	filename "forwardLighting"
-	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SHADOWING USE_SPECULAR
+	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_SHADOWING
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
-	fragmentLibraries "lib/reliefMapping"
 }
 
 forwardLighting_projXYZ
@@ -83,9 +84,9 @@ forwardLighting_projXYZ
 forwardLighting_directionalSun
 {
 	filename "forwardLighting"
-	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SHADOWING USE_SPECULAR
-	extramacros "LIGHT_DIRECTIONAL TWOSIDED"
-	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
+	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_SHADOWING
+	extramacros "LIGHT_DIRECTIONAL"
+	attribs ATTR_POSITION ATTR_NORMAL
 	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 	fragmentLibraries "lib/reliefMapping"
 }
@@ -104,7 +105,7 @@ reflection
 	macros USE_PORTAL_CLIPPING USE_VERTEX_SKINNING USE_VERTEX_ANIMATION USE_DEFORM_VERTEXES USE_NORMAL_MAPPING
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
-	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
+	vertexLibraries "lib/normalMapping lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
 }
 
 skybox

@@ -1,7 +1,7 @@
 /* reflection_CB_fp.glsl */
-#if defined(USE_NORMAL_MAPPING)
+//#if defined(USE_NORMAL_MAPPING)
 #include "lib/normalMapping"
-#endif // USE_NORMAL_MAPPING
+//#endif // USE_NORMAL_MAPPING
 
 uniform float       u_ReflectionScale;
 #if 1

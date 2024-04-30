@@ -23,9 +23,6 @@ uniform mat4  u_ColorTextureMatrix;
 #if defined(USE_VERTEX_ANIMATION)
 uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
-#if !defined(r_precomputedLighting)
-uniform vec3  u_AmbientColor;
-#endif // r_precomputedLighting
 #if defined(USE_DEFORM_VERTEXES)
 uniform int   u_DeformGen;
 uniform vec4  u_DeformWave;         // [base amplitude phase freq]
@@ -89,11 +86,6 @@ void main()
 #endif // USE_TCGEN_ENVIRONMENT,USE_TCGEN_LIGHTMAP
 	var_Tex = (u_ColorTextureMatrix * texCoord).st;
 
-
 	// assign color
-#if defined(r_precomputedLighting)
 	var_Color = attr_Color;
-#else
-	var_Color = vec4(u_AmbientColor, 1.0);
-#endif
 }

@@ -1994,8 +1994,7 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
 		{
 			return c1 < c2 ? -1 : 1;
 		}
-	}
-	while (c1);
+	} while (c1);
 
 	return 0;       // strings are equal
 }
@@ -2008,7 +2007,56 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
  */
 int Q_stricmp(const char *s1, const char *s2)
 {
+#if 1
 	return Q_stricmpn(s1, s2, 99999);
+#else
+	if (!s1 || !s2)
+	{
+		return -1;
+	}
+	
+	uint32_t mask1, mask2, mask, bit1, bit2, bit;
+	char *str1 = s1, *str2 = s2;
+	__m128i xmm0, xmm1, xmm2, xmm3, xmm4;
+	xmm0 = _mm_setzero_si128();
+nextchunk:
+	str1 += 16;
+	str2 += 16;
+	xmm1 = _mm_lddqu_si128((const __m128i*)str1);
+	xmm2 = _mm_lddqu_si128((const __m128i*)str2);
+	xmm3 = _mm_cmpeq_epi8(xmm1, xmm0);
+	xmm4 = _mm_cmpeq_epi8(xmm2, xmm0);
+	mask1 = (uint32_t)_mm_movemask_epi8(xmm3);
+	mask2 = (uint32_t)_mm_movemask_epi8(xmm4);
+	if (mask1 != 0 || mask2 != 0) goto lastchunk;
+	xmm3 = _mm_cmpeq_epi8(xmm1, xmm2);
+	mask = (uint32_t)_mm_movemask_epi8(xmm3);
+	if (mask == 0x0000FFFF) goto nextchunk; // no difference
+	// difference in this chunk
+	_BitScanForward(&bit, ~mask);
+	str1 += bit;
+	str2 += bit;
+	return (*str1 < *str2) ? -1 : 1;
+lastchunk:
+	_BitScanForward(&bit1, ~mask1); // s1[bit1] == 0
+	_BitScanForward(&bit2, ~mask2); // s2[bit2] == 0
+	xmm3 = _mm_cmpeq_epi8(xmm1, xmm2);
+	mask = (uint32_t)_mm_movemask_epi8(xmm3);
+	_BitScanForward(&bit, ~mask); // s1[bit] != s2[bit]
+	if (bit > bit1)
+	{
+		if (bit > bit2) return 0;
+		return -1;
+	}
+	else 
+	{ // bit <= bit1
+		if (bit > bit2) return 1;
+		// bit <= bit2
+	}
+	str1 += bit;
+	str2 += bit;
+	return (*str1 < *str2) ? -1 : 1;
+#endif
 }
 
 /**
