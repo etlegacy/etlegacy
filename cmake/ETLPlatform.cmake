@@ -239,6 +239,10 @@ elseif(WIN32)
 			set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
 		endif()
 
+		if(DEBUG_BUILD OR FORCE_DEBUG)
+			set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} /LARGEADDRESSAWARE")
+		endif()
+
 		# Should we always use this?
 		# add_definitions(-DC_ONLY)
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
