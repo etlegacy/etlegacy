@@ -212,7 +212,7 @@ elseif(WIN32)
 				set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /arch:SSE2 /W3 /Ob2 /Oi /Ot")
 				set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /EHa /arch:SSE2 /O2 /Ob2 /Oi /Ot")
 				set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /EHa /arch:SSE2 /W3 /Ob2 /Oi /Ot")
-			else
+			else()
 				set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
 				set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
 			endif()
