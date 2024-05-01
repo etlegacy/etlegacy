@@ -207,14 +207,12 @@ elseif(WIN32)
 		target_compile_options(shared_libraries INTERFACE /FC)
 
 		if(FORCE_STATIC_VCRT)
+			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
+			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
+			
 			if(ENABLE_SSE)
-				set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHa /arch:SSE2 /O2 /Ob2 /Oi /Ot")
-				set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /arch:SSE2 /W3 /Ob2 /Oi /Ot")
-				set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /EHa /arch:SSE2 /O2 /Ob2 /Oi /Ot")
-				set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /EHa /arch:SSE2 /W3 /Ob2 /Oi /Ot")
-			else()
-				set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
-				set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
+				set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2 /Ob2 /Oi /Ot")
+				set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /arch:SSE2 /Ob2 /Oi /Ot")
 			endif()
 
 			set(CompilerFlags
