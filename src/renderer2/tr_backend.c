@@ -147,7 +147,7 @@ void RB_SetViewMVPM(void)
 	MatrixOrthogonalProjection(ortho,
 	                           backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
 	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
+	                           -99999.f, 99999.f);
 	GL_LoadProjectionMatrix(ortho);
 	GL_LoadModelViewMatrix(matrixIdentity);
 }
@@ -173,7 +173,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 	qboolean      depthRange = qfalse, oldDepthRange = qfalse;
 	int           i;
 	drawSurf_t    *drawSurf;
-	double        originalTime = backEnd.refdef.floatTime; // save original time for entity shader offsets
+	double	      originalTime = backEnd.refdef.floatTime; // save original time for entity shader offsets
 
 	Ren_LogComment("--- RB_RenderDrawSurfaces ---\n");
 
@@ -208,7 +208,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 			break;
 		}
 
-		if (glConfig2.occlusionQueryBits && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_occludeEntities->integer && !entity->occlusionQuerySamples)
 		{
 			continue;
 		}
@@ -483,6 +483,12 @@ static void Render_lightVolume(interaction_t *ia)
 	shaderStage_t *attenuationZStage;
 	vec4_t        quadVerts[4];
 
+	// finally only omni lights interactions are rendered..
+	if (light->l.rlType != RL_OMNI)
+	{
+		return;	
+	}
+
 	// set the window clipping
 	GL_Viewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
 	            backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
@@ -498,20 +504,20 @@ static void Render_lightVolume(interaction_t *ia)
 	{
 	case RL_PROJ:
 	{
-		mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
-		MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0f / Q_min(light->falloffLength, 1.0f));        // scale
+		Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.0f);        // bias
+		MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, rcp(Q_min(light->falloffLength, 1.0f)));        // scale
 		break;
 	}
 	case RL_OMNI:
 	default:
 	{
-		mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
-		MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
+		Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);    // bias
+		MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);       // scale
 		break;
 	}
 	}
-	mat4_mult_self(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
-	mat4_mult_self(light->attenuationMatrix, light->viewMatrix);
+	Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
+	Matrix4MultiplyWith(light->attenuationMatrix, light->viewMatrix);
 
 	lightShader       = light->shader;
 	attenuationZStage = lightShader->stages[0];
@@ -539,7 +545,7 @@ static void Render_lightVolume(interaction_t *ia)
 		Tess_ComputeColor(attenuationXYStage);
 		R_ComputeFinalAttenuation(attenuationXYStage, light);
 
-		if (light->l.rlType == RL_OMNI)
+//		if (light->l.rlType == RL_OMNI)
 		{
 			qboolean shadowCompare;
 
@@ -549,11 +555,11 @@ static void Render_lightVolume(interaction_t *ia)
 			GL_Cull(CT_TWO_SIDED);
 			GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
-			shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0);
+			shadowCompare = (r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0);
 
 			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 			SetUniformVec3(UNIFORM_LIGHTORIGIN, light->origin);
-			SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
+			SetUniformVec3(UNIFORM_LIGHTCOLOR, light->l.color);
 			SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 			SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
 			SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
@@ -578,11 +584,11 @@ static void Render_lightVolume(interaction_t *ia)
 
 			// bind u_AttenuationMapXY
 			SelectTexture(TEX_ATTEXY);
-			BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]);
+			BindAnimatedImage(&attenuationXYStage->bundle[TB_COLORMAP]); //GL_Bind(attenuationXYStage->bundle[TB_COLORMAP].image[TB_COLORMAP]);
 
 			// bind u_AttenuationMapZ
 			SelectTexture(TEX_ATTEZ);
-			BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]);
+			BindAnimatedImage(&attenuationZStage->bundle[TB_COLORMAP]); //GL_Bind(attenuationZStage->bundle[TB_COLORMAP].image[TB_COLORMAP]);
 
 			// bind u_ShadowMap
 			if (shadowCompare)
@@ -592,11 +598,10 @@ static void Render_lightVolume(interaction_t *ia)
 			}
 
 			// draw light scissor rectangle
-			Vector4Set(quadVerts[0], ia->scissorX, ia->scissorY, 0, 1);
-			Vector4Set(quadVerts[1], ia->scissorX + ia->scissorWidth - 1, ia->scissorY, 0, 1);
-			Vector4Set(quadVerts[2], ia->scissorX + ia->scissorWidth - 1, ia->scissorY + ia->scissorHeight - 1, 0,
-			           1);
-			Vector4Set(quadVerts[3], ia->scissorX, ia->scissorY + ia->scissorHeight - 1, 0, 1);
+			Vector4Set(quadVerts[0], ia->scissorX, ia->scissorY, 0.f, 1.f);
+			Vector4Set(quadVerts[1], ia->scissorX + ia->scissorWidth - 1, ia->scissorY, 0.f, 1.f);
+			Vector4Set(quadVerts[2], ia->scissorX + ia->scissorWidth - 1, ia->scissorY + ia->scissorHeight - 1, 0.f, 1.f);
+			Vector4Set(quadVerts[3], ia->scissorX, ia->scissorY + ia->scissorHeight - 1, 0.f, 1.f);
 			Tess_InstantQuad(quadVerts);
 
 			GL_CheckErrors();
@@ -684,7 +689,6 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 		for (i = 0; i < 6; i++)
 		{
 			clipPlane = &frustum[i];
-
 			r = BoxOnPlaneSide(worldBounds[0], worldBounds[1], clipPlane);
 			if (r == 2)
 			{
@@ -699,17 +703,16 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 		}
 
 #if 1
+		point[3] = 1.0f;
 		for (j = 0; j < 8; j++)
 		{
 			point[0] = worldBounds[j & 1][0];
 			point[1] = worldBounds[(j >> 1) & 1][1];
 			point[2] = worldBounds[(j >> 2) & 1][2];
-			point[3] = 1;
+			//point[3] = 1.0f;
 
-			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
-			transf[0] /= transf[3];
-			transf[1] /= transf[3];
-			transf[2] /= transf[3];
+			Vector4TransformM4(lightViewProjectionMatrix, point, transf);
+			VectorScale(transf, rcp(transf[3]), transf);
 
 			AddPointToBounds(transf, bounds[0], bounds[1]);
 		}
@@ -722,7 +725,7 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 			point[2] = worldBounds[(j >> 2) & 1][2];
 			point[3] = 1;
 
-			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
+			Vector4TransformM4(lightViewProjectionMatrix, point, transf);
 			transf[0] /= transf[3];
 			transf[1] /= transf[3];
 			transf[2] /= transf[3];
@@ -758,7 +761,7 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 			point[2] = worldBounds[(j >> 2) & 1][2];
 			point[3] = 1;
 
-			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
+			Vector4TransformM4(lightViewProjectionMatrix, point, transf);
 			//transf[0] /= transf[3];
 			//transf[1] /= transf[3];
 			//transf[2] /= transf[3];
@@ -841,12 +844,12 @@ static void RB_RenderInteractions()
 		if (glConfig2.occlusionQueryBits)
 		{
 			// skip all interactions of this light because it failed the occlusion query
-			if (r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
+			if (r_occludeLights->integer && !ia->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
 
-			if (r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+			if (r_occludeEntities->integer && !entity->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
@@ -932,9 +935,9 @@ static void RB_RenderInteractions()
 			if (entity != &tr.worldEntity)
 			{
 				VectorSubtract(light->origin, backEnd.orientation.origin, tmp);
-				light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
-				light->transformed[1] = DotProduct(tmp, backEnd.orientation.axis[1]);
-				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);
+				Dot(tmp, backEnd.orientation.axis[0], light->transformed[0]);
+				Dot(tmp, backEnd.orientation.axis[1], light->transformed[1]);
+				Dot(tmp, backEnd.orientation.axis[2], light->transformed[2]);
 			}
 			else
 			{
@@ -942,26 +945,26 @@ static void RB_RenderInteractions()
 			}
 
 			// build the attenuation matrix using the entity transform
-			mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
+			Matrix4Multiply(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
 
 			switch (light->l.rlType)
 			{
 			case RL_PROJ:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);            // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0f / Q_min(light->falloffLength, 1.0f));            // scale
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.0f);            // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, rcp(Q_min(light->falloffLength, 1.0f)));            // scale
 				break;
 			}
 			case RL_OMNI:
 			default:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);           // scale
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);        // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);           // scale
 				break;
 			}
 			}
-			mat4_mult_self(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
-			mat4_mult_self(light->attenuationMatrix, modelToLight);
+			Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
+			Matrix4MultiplyWith(light->attenuationMatrix, modelToLight);
 		}
 
 		// add the triangles for this surface
@@ -1030,8 +1033,99 @@ skipInteraction:
 	}
 }
 
+/*
+Some helper matrices for RB_RenderInteractionsShadowMapped()
+*/
+/// sincos 0 0 90		sin: 0 0 1,		cos = 1 1 0
+mat4_t be_rotMatrix_0_0_90 = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/*@ mat4_t be_rotMatrix_0_0_90_r = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, -1.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/ // no longer needed.. obsolete
+mat4_t be_rotMatrix_0_0_90_q = { 0.0f, 0.0f, -1.0f, 0.0f,
+								0.0f, -1.0f, 0.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/// sincos 0 180 90:		sin = 0 0 1,	cos = 1 -1 0
+mat4_t be_rotMatrix_0_180_90 = { -1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/*@ mat4_t be_rotMatrix_0_180_90_r = { -1.0f, 0.0f, 0.0f, 0.0f,
+									0.0f, 0.0f, 1.0f, 0.0f,
+									0.0f, 1.0f, 0.0f, 0.0f,
+									0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_0_180_90_q = { 0.0f, 0.0f, 1.0f, 0.0f,
+									0.0f, 1.0f, 0.0f, 0.0f,
+									-1.0f, 0.0f, 0.0f, 0.0f,
+									0.0f, 0.0f, 0.0f, 1.0f };
+/// sincos 0 90 0;		sin = 0 1 0,	cos = 1 0 1
+mat4_t be_rotMatrix_0_90_0 = { 0.0f, 1.0f, 0.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/*@ mat4_t be_rotMatrix_0_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+								1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_0_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, -1.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/// sincos 0 -90 0:		sin = 0 -1 0,	cos = 1 0 1
+mat4_t be_rotMatrix_0_m90_0 = { 0.0f, -1.0f, 0.0f, 0.0f,
+								1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/*@ mat4_t be_rotMatrix_0_m90_0_r = { 0.0f, 1.0f, 0.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_0_m90_0_q = { -1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/// sincos -90 90 0:		sin = -1 1 0,	cos = 0 0 1
+mat4_t be_rotMatrix_m90_90_0 = { 0.0f, 0.0f, 1.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/*@ mat4_t be_rotMatrix_m90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, -1.0f, 0.0f,
+								1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_m90_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, -1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/// sincos 90 90 0:		sin = 1 1 0,	cos = 0 0 1
+mat4_t be_rotMatrix_90_90_0 = { 0.0f, 0.0f, -1.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+/*@ mat4_t be_rotMatrix_90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_90_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+
 /**
  * @brief RB_RenderInteractionsShadowMapped
+  *
+ * After some initial optimizing, some parts of the code are hardly recognizable.
+ * The remaining old, commented out code, and commented out intermediate optimization steps ..
+ * .. help in understanding how especially the RL_OMNI code has shrunken so much,
+ * into just a few basic instructions.
+ * If this function would be cleaned up, and removed from all commented out lines,
+ * not even i can read easily what is really going on. So for developer's sake, i leave in all comments.
+ * If you look at this code in a code editor, you will most likely "skip" all the green lines already..
+ * ..and see them when you need them.
  */
 static void RB_RenderInteractionsShadowMapped()
 {
@@ -1051,10 +1145,11 @@ static void RB_RenderInteractionsShadowMapped()
 	int           cubeSide;
 	int           splitFrustumIndex;
 	int           startTime = 0;
-	const mat4_t  bias      = { 0.5, 0.0, 0.0, 0.0,
-		                        0.0,       0.5, 0.0, 0.0,
-		                        0.0,       0.0, 0.5, 0.0,
-		                        0.5,       0.5, 0.5, 1.0 };
+	const mat4_t  bias      = { 0.5f, 0.0f, 0.0f, 0.0f,
+		                        0.0f, 0.5f, 0.0f, 0.0f,
+		                        0.0f, 0.0f, 0.5f, 0.0f,
+		                        0.5f, 0.5f, 0.5f, 1.0f };
+	mat4_t        *rotMatrix, *rotMatrix_q;
 
 	if (!glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
 	{
@@ -1092,7 +1187,7 @@ static void RB_RenderInteractionsShadowMapped()
 		shader                = ia->surfaceShader;
 		alphaTest             = shader->alphaTest;
 
-		if (shader->numDeforms)
+		if (shader->numDeforms != 0)
 		{
 			deformType = ShaderRequiresCPUDeforms(shader) ? DEFORM_TYPE_CPU : DEFORM_TYPE_GPU;
 		}
@@ -1101,7 +1196,7 @@ static void RB_RenderInteractionsShadowMapped()
 			deformType = DEFORM_TYPE_NONE;
 		}
 
-		if (glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_occludeLights->integer && !ia->occlusionQuerySamples)
 		{
 			// skip all interactions of this light because it failed the occlusion query
 			goto skipInteraction;
@@ -1134,14 +1229,15 @@ static void RB_RenderInteractionsShadowMapped()
 					{
 						//float           xMin, xMax, yMin, yMax;
 						//float           width, height, depth;
+						float    fovXY;
+#ifndef ETL_SSE
 						float    zNear, zFar;
-						float    fovX, fovY;
-						qboolean flipX, flipY;
-						//float          *proj;
-						vec3_t angles;
-						mat4_t rotationMatrix, transformMatrix, viewMatrix;
-
-						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide);
+						mat4_t /*rotationMatrix,*/ transformMatrix, viewMatrix;
+#else
+						mat4_t viewMatrix;
+						__m128 xmm0, xmm1, xmm2, xmm4, xmm5, xmm6, xmm7, zeroes;
+#endif
+						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide); // insert back if you need it.. i want this function to execute faster..
 
 						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
 						R_AttachFBOTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeSide,
@@ -1162,105 +1258,149 @@ static void RB_RenderInteractionsShadowMapped()
 						case 0:
 						{
 							// view parameters
-							VectorSet(angles, 0, 0, 90);
-
-							// projection parameters
-							flipX = qfalse;
-							flipY = qfalse;
+							rotMatrix = &be_rotMatrix_0_0_90;
+							rotMatrix_q = &be_rotMatrix_0_0_90_q;							// this is the quakeToOpenGLMatrix * viewmatrix
+							fovXY = 90.f;
 							break;
 						}
 						case 1:
 						{
-							VectorSet(angles, 0, 180, 90);
-							flipX = qtrue;
-							flipY = qtrue;
+							rotMatrix = &be_rotMatrix_0_180_90;
+							rotMatrix_q = &be_rotMatrix_0_180_90_q;
+							fovXY = -90.f;
 							break;
 						}
 						case 2:
 						{
-							VectorSet(angles, 0, 90, 0);
-							flipX = qfalse;
-							flipY = qfalse;
+							rotMatrix = &be_rotMatrix_0_90_0;
+							rotMatrix_q = &be_rotMatrix_0_90_0_q;
+							fovXY = 90.f;
 							break;
 						}
 						case 3:
 						{
-							VectorSet(angles, 0, -90, 0);
-							flipX = qtrue;
-							flipY = qtrue;
+							rotMatrix = &be_rotMatrix_0_m90_0;
+							rotMatrix_q = &be_rotMatrix_0_m90_0_q;
+							fovXY = -90.f;
 							break;
 						}
 						case 4:
 						{
-							VectorSet(angles, -90, 90, 0);
-							flipX = qfalse;
-							flipY = qfalse;
+							rotMatrix = &be_rotMatrix_m90_90_0;
+							rotMatrix_q = &be_rotMatrix_m90_90_0_q;
+							fovXY = 90.f;
 							break;
 						}
 						case 5:
 						{
-							VectorSet(angles, 90, 90, 0);
-							flipX = qtrue;
-							flipY = qtrue;
-							break;
-						}
-						default:
-						{
-							// shut up compiler
-							VectorSet(angles, 0, 0, 0);
-							flipX = qfalse;
-							flipY = qfalse;
+							rotMatrix = &be_rotMatrix_90_90_0;
+							rotMatrix_q = &be_rotMatrix_90_90_0_q;
+							fovXY = -90.f;
 							break;
 						}
 						}
-
+#ifndef ETL_SSE
 						// Quake -> OpenGL view matrix from light perspective
-						mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
-						MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
+						MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
+
 						MatrixAffineInverse(transformMatrix, viewMatrix);
+						
+#else
+                        // this is setting viewMatrix.
+						// MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
+						// MatrixAffineInverse(transformMatrix, viewMatrix);
+						// UPDATE: in the end, all that's done, is calculating the bottom row of the viewMatrix..
+						zeroes = _mm_setzero_ps();
+						xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[0]), (const __m64 *)&(*rotMatrix)[1]);		// xmm2 = z y 0 x
+						xmm1 = _mm_mul_ps(xmm0, xmm2);
+						xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
+						xmm6 = _mm_add_ps(xmm1, xmm7);		//
+						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+						xmm1 = _mm_add_ss(xmm6, xmm7);		// xmm1 = dot(in0, in12)
+						xmm1 = _mm_sub_ps(zeroes, xmm1);
+						_mm_store_ss(&viewMatrix[12], xmm1);
+
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[4]), (const __m64 *)&(*rotMatrix)[5]);		// xmm2 = z y 0 x
+						xmm4 = _mm_mul_ps(xmm0, xmm2);
+						xmm7 = _mm_movehdup_ps(xmm4);		// faster way to do: 2 * hadd
+						xmm6 = _mm_add_ps(xmm4, xmm7);		//
+						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+						xmm4 = _mm_add_ss(xmm6, xmm7);		// xmm4 = dot(in4, in12)
+						xmm4 = _mm_sub_ps(zeroes, xmm4);
+						_mm_store_ss(&viewMatrix[13], xmm4);
+
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[8]), (const __m64 *)&(*rotMatrix)[9]);		// xmm2 = z y 0 x
+						xmm5 = _mm_mul_ps(xmm0, xmm2);
+						xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
+						xmm6 = _mm_add_ps(xmm5, xmm7);		//
+						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+						xmm5 = _mm_add_ss(xmm6, xmm7);		// xmm5 = dot(in8, in12)
+						xmm5 = _mm_sub_ps(zeroes, xmm5);
+						_mm_store_ss(&viewMatrix[14], xmm5);
+
+//#						_mm_store_ss(&viewMatrix[15], _mm_set_ss(1.f)); // we just supply a constant 1.f later..
+/*$
+						_mm_storeu_ps(&viewMatrix[0], _mm_loadu_ps((const float *)&(*rotMatrix_r)[0]));
+						_mm_storeu_ps(&viewMatrix[4], _mm_loadu_ps((const float *)&(*rotMatrix_r)[4]));
+						_mm_storeu_ps(&viewMatrix[8], _mm_loadu_ps((const float *)&(*rotMatrix_r)[8]));*/
+						// improvement on ^^the previous^^ code above, ..
+						// .. for the 3x3 part of the matrix that is concerned, we load directly from
+						// the '* quakeToOpenGLMatrix' transformed matrix: rotMatrix_q
+						// We do not use rotMatrix_r values, and later mangle values to create light->viewMatrix ..
+						// .. but we use the "quakeToOpenGLMatrix"-values from rotMatrix_q  (those values are already pre-mangled;)
+						_mm_storeu_ps(&light->viewMatrix[0], _mm_loadu_ps((const float *)&(*rotMatrix_q)[0]));
+						_mm_storeu_ps(&light->viewMatrix[4], _mm_loadu_ps((const float *)&(*rotMatrix_q)[4]));
+						_mm_storeu_ps(&light->viewMatrix[8], _mm_loadu_ps((const float *)&(*rotMatrix_q)[8]));
+#endif
+
+
+
 
 						// convert from our coordinate system (looking down X)
 						// to OpenGL's coordinate system (looking down -Z)
 						mat4_mult(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
 
+
+
+
+
+						//
+						Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], 1.f); // only the bottom row of the matrix is left to be mangled..
+						// TODO: ^^that can be done quicker.   /optimize
+						// This case is a bit different from the code in tr_light R_CalcLightCubeSideBits().
+						// Here the light->viewMatrix & light->projectionMatrix are NOT multiplied..
+						// UPDATE: rotMatrix_q is the viewmatrix * quakeToOpenGLMatrix, and simply copied to 3 rows of light->viewMatrix..
+						// The last row (light->viewMatrix[12]) is set with the previously calculated data (from viewMatrix).
+						// And now that that step in optimization has been done,
+						// it's clear that it would suffice to use a vec4_t (instead of a mat4_t) for the variable 'viewMatrix'.. but yeah.. readability--
+
+
+
 						// OpenGL projection matrix
-						fovX = 90;
-						fovY = 90;
-
-						zNear = 1.0;
+#ifndef ETL_SSE
+						zNear = 1.0f; // const
 						zFar  = light->sphereRadius;
+						MatrixPerspectiveProjectionFovXYRH(light->projectionMatrix, fovXY, fovXY, zNear, zFar);
+#else
+						// fovX & fovY are always both the same, 90 or -90, and zNear is always 1.
+						// we can save the two tanf() calls, and some more calculations..
+						vec_t width_r = rcp(tanf(DEG2RAD(fovXY * 0.5f))), // why don't i succeed making this use constants? :S :)
+							FarrNearFar = light->sphereRadius * rcp(1.f - light->sphereRadius);
+						xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, width_r);
+						_mm_storeu_ps(&light->projectionMatrix[0], xmm0);
+						xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b11100001);		// xmm0 = 0.0f, 0.0f, width_r, 0.0f
+						_mm_storeu_ps(&light->projectionMatrix[4], xmm0); // _mm_set_ps(0.0f, 0.0f, width_r, 0.0f));
+						xmm1 = _mm_set_ps(-1.0f, FarrNearFar, 0.0f, 0.0f);
+						_mm_storeu_ps(&light->projectionMatrix[8], xmm1);
+						xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b00100000);		// xmm1 = 0.0f, FarrNearFar, 0.0f, 0.0f
+						_mm_storeu_ps(&light->projectionMatrix[12], xmm1); // _mm_set_ps(0.0f, FarrNearFar, 0.0f, 0.0f));
+#endif
 
-						if (flipX)
-						{
-							fovX = -fovX;
-						}
-
-						if (flipY)
-						{
-							fovY = -fovY;
-						}
-
-						MatrixPerspectiveProjectionFovXYRH(light->projectionMatrix, fovX, fovY, zNear, zFar);
-
-						GL_LoadProjectionMatrix(light->projectionMatrix);
-						break;
-					}
-					case RL_PROJ:
-					{
-						Ren_LogComment("--- Rendering projective shadowMap ---\n");
-
-						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
-						R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.shadowMapFBOImage[light->shadowLOD]->texnum, 0);
-						if (!r_ignoreGLErrors->integer)
-						{
-							R_CheckFBO(tr.shadowMapFBO[light->shadowLOD]);
-						}
-
-						// set the window clipping
-						GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
-						GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
-
-						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+						// ..There is almost nothing left of the original code for this OMNI light shadowing.. very woot
+						// and still the very same is done as before.. only now more efficiently.
+						// Because this function is one of the most heavy ones being called, (if you have the fancy shadows enabled in-game),
+						// overall performance will possibly improve..
 
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
@@ -1269,10 +1409,10 @@ static void RB_RenderInteractionsShadowMapped()
 					{
 						int    j;
 						vec3_t angles;
-						vec4_t forward, side, up;
+						vec4_t side, up;
 						vec3_t lightDirection;
 						vec3_t viewOrigin, viewDirection;
-						mat4_t rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
+						mat4_t projectionMatrix, viewProjectionMatrix;
 						mat4_t cropMatrix;
 						vec4_t splitFrustum[6];
 						vec3_t splitFrustumCorners[8];
@@ -1283,20 +1423,14 @@ static void RB_RenderInteractionsShadowMapped()
 						vec3_t casterBounds[2];
 						vec3_t receiverBounds[2];
 						vec3_t cropBounds[2];
-						vec4_t point;
+						vec4_t point = {0.f, 0.f, 0.f, 1.f};
 						vec4_t transf;
 
 						Ren_LogComment("--- Rendering directional shadowMap ---\n");
 
 						R_BindFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
-						if (!r_evsmPostProcess->integer)
-						{
-							R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.sunShadowMapFBOImage[splitFrustumIndex]->texnum, 0);
-						}
-						else
-						{
-							R_AttachFBOTextureDepth(tr.sunShadowMapFBOImage[splitFrustumIndex]->texnum);
-						}
+						R_AttachFBOTextureDepth(tr.sunShadowMapFBOImage[splitFrustumIndex]->texnum);
+						
 						if (!r_ignoreGLErrors->integer)
 						{
 							R_CheckFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
@@ -1314,29 +1448,27 @@ static void RB_RenderInteractionsShadowMapped()
 						VectorCopy(light->direction, lightDirection);
 							#endif
 
-						if (r_parallelShadowSplits->integer)
 						{
 							int numCasters;
 
 							// original light direction is from surface to light
 							VectorInverse(lightDirection);
-							VectorNormalize(lightDirection);
+							VectorNormalizeOnly(lightDirection);
 
 							VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);
 							VectorCopy(backEnd.viewParms.orientation.axis[0], viewDirection);
-							VectorNormalize(viewDirection);
+							VectorNormalizeOnly(viewDirection);
 
-#if 1
+#if 1 // is this needed?..
 							// calculate new up dir
 							CrossProduct(lightDirection, viewDirection, side);
-							VectorNormalize(side);
+							VectorNormalizeOnly(side);
 
 							CrossProduct(side, lightDirection, up);
-							VectorNormalize(up);
+							VectorNormalizeOnly(up);
 
 							VectorToAngles(lightDirection, angles);
-							mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
-							AngleVectors(angles, forward, side, up);
+							AngleVectors(angles, NULL, NULL, up);
 
 							MatrixLookAtRH(light->viewMatrix, viewOrigin, lightDirection, up);
 #else
@@ -1426,7 +1558,7 @@ static void RB_RenderInteractionsShadowMapped()
 							                             -splitFrustumViewBounds[1][2],
 							                             -splitFrustumViewBounds[0][2]);
 								#endif
-							mat4_mult(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							Matrix4Multiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 							// find the bounding box of the current split in the light's clip space
 							ClearBounds(splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
@@ -1435,7 +1567,7 @@ static void RB_RenderInteractionsShadowMapped()
 								VectorCopy(splitFrustumCorners[j], point);
 								point[3] = 1;
 
-								mat4_transform_vec4(viewProjectionMatrix, point, transf);
+								Vector4TransformM4(viewProjectionMatrix, point, transf);
 								transf[0] /= transf[3];
 								transf[1] /= transf[3];
 								transf[2] /= transf[3];
@@ -1464,22 +1596,20 @@ static void RB_RenderInteractionsShadowMapped()
 							for (j = 0; j < 8; j++)
 							{
 								VectorCopy(splitFrustumCorners[j], point);
-								//point[3] = 1.0f; // initialized once, ..no need to keep setting it.
-#if 1
-								mat4_transform_vec4(light->viewMatrix, point, transf);
-								transf[0] /= transf[3];
-								transf[1] /= transf[3];
-								transf[2] /= transf[3];
-#else
-								mat4_transform_vec3(light->viewMatrix, point, transf);
+								point[3] = 1.0f; // initialized once, ..no need to keep setting it.
+
+								Vector4TransformM4(light->viewMatrix, point, transf);
+#if 0
+// is this dividing by 1?
+								VectorScale(transf, rcp(transf[3]), transf);
 #endif
 
 								AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 							}
 
-							MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+							MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds);
 
-							mat4_mult(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							Matrix4Multiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 							numCasters = MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, casterBounds, qtrue);
 							MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, receiverBounds, qfalse);
@@ -1489,16 +1619,14 @@ static void RB_RenderInteractionsShadowMapped()
 							for (j = 0; j < 8; j++)
 							{
 								VectorCopy(splitFrustumCorners[j], point);
-								point[3] = 1;
+								point[3] = 1.0f;
 
-								mat4_transform_vec4(viewProjectionMatrix, point, transf);
-								transf[0] /= transf[3];
-								transf[1] /= transf[3];
-								transf[2] /= transf[3];
-
+								Vector4TransformM4(viewProjectionMatrix, point, transf);
+#if 0
+// is this dividing by 1?
 								AddPointToBounds(transf, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							}
-
+/*
 							Ren_LogComment("shadow casters = %i\n", numCasters);
 							Ren_LogComment("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							               splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
@@ -1509,7 +1637,7 @@ static void RB_RenderInteractionsShadowMapped()
 							Ren_LogComment("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							               receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
 							               receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
-
+*/
 							// scene-dependent bounding volume
 							cropBounds[0][0] = Q_max(Q_max(casterBounds[0][0], receiverBounds[0][0]), splitFrustumClipBounds[0][0]);
 							cropBounds[0][1] = Q_max(Q_max(casterBounds[0][1], receiverBounds[0][1]), splitFrustumClipBounds[0][1]);
@@ -1518,11 +1646,8 @@ static void RB_RenderInteractionsShadowMapped()
 							cropBounds[1][1] = Q_min(Q_min(casterBounds[1][1], receiverBounds[1][1]), splitFrustumClipBounds[1][1]);
 
 							cropBounds[0][2] = Q_min(casterBounds[0][2], splitFrustumClipBounds[0][2]);
-							//cropBounds[0][2] = casterBounds[0][2];
-							//cropBounds[0][2] = splitFrustumClipBounds[0][2];
 							cropBounds[1][2] = Q_min(receiverBounds[1][2], splitFrustumClipBounds[1][2]);
-							//cropBounds[1][2] = splitFrustumClipBounds[1][2];
-
+							
 							if (numCasters == 0)
 							{
 								VectorCopy(splitFrustumClipBounds[0], cropBounds[0]);
@@ -1532,58 +1657,32 @@ static void RB_RenderInteractionsShadowMapped()
 							MatrixCrop(cropMatrix, cropBounds[0], cropBounds[1]);
 #endif
 
-							mat4_mult(cropMatrix, projectionMatrix, light->projectionMatrix);
+							Matrix4Multiply(cropMatrix, projectionMatrix, light->projectionMatrix);
 
-							GL_LoadProjectionMatrix(light->projectionMatrix);
-						}
-						else
-						{
-							// original light direction is from surface to light
-							VectorInverse(lightDirection);
-
-							// Quake -> OpenGL view matrix from light perspective
-#if 1
-							VectorToAngles(lightDirection, angles);
-							mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
-							MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, backEnd.viewParms.orientation.origin);
-							MatrixAffineInverse(transformMatrix, viewMatrix);
-							mat4_mult(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
-#else
-							MatrixLookAtRH(light->viewMatrix, backEnd.viewParms.orientation.origin, lightDirection, backEnd.viewParms.orientation.axis[0]);
-#endif
-
-							ClearBounds(splitFrustumBounds[0], splitFrustumBounds[1]);
-							//BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], backEnd.viewParms.visBounds[0], backEnd.viewParms.visBounds[1]);
-							BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], light->worldBounds[0], light->worldBounds[1]);
-
-							ClearBounds(cropBounds[0], cropBounds[1]);
-							for (j = 0; j < 8; j++)
-							{
-								point[0] = splitFrustumBounds[j & 1][0];
-								point[1] = splitFrustumBounds[(j >> 1) & 1][1];
-								point[2] = splitFrustumBounds[(j >> 2) & 1][2];
-								point[3] = 1;
-
-								mat4_transform_vec4(light->viewMatrix, point, transf);
-								transf[0] /= transf[3];
-								transf[1] /= transf[3];
-								transf[2] /= transf[3];
-
-								AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
-							}
-
-							// transform from OpenGL's right handed into D3D's left handed coordinate system
-#if 0
-							MatrixScaleTranslateToUnitCube(projectionMatrix, cropBounds[0], cropBounds[1]);
-							MatrixMultiplyMOD(flipZMatrix, projectionMatrix, light->projectionMatrix);
-#else
-							MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
-#endif
 							GL_LoadProjectionMatrix(light->projectionMatrix);
 						}
 						break;
 					}
+					case RL_PROJ:
+					{
+						Ren_LogComment("--- Rendering projective shadowMap ---\n");
 
+						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
+						R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.shadowMapFBOImage[light->shadowLOD]->texnum, 0);
+						if (!r_ignoreGLErrors->integer)
+						{
+							R_CheckFBO(tr.shadowMapFBO[light->shadowLOD]);
+						}
+
+						// set the window clipping
+						GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
+						GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
+
+						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+						GL_LoadProjectionMatrix(light->projectionMatrix);
+						break;
+					}
 					default:
 						break;
 					}
@@ -1596,13 +1695,16 @@ static void RB_RenderInteractionsShadowMapped()
 				Ren_LogComment("--- Rendering lighting ---\n");
 				Ren_LogComment("----- First Light Interaction: %i -----\n", iaCount);
 
-				if (r_hdrRendering->integer)
+				if (!tr.refdef.renderingCubemap)
 				{
-					R_BindFBO(tr.deferredRenderFBO);
-				}
-				else
-				{
-					R_BindNullFBO();
+					if (r_hdrRendering->integer)
+					{
+						R_BindFBO(tr.deferredRenderFBO);
+					}
+					else
+					{
+						R_BindNullFBO();
+					}
 				}
 
 				// set the window clipping
@@ -1622,8 +1724,8 @@ static void RB_RenderInteractionsShadowMapped()
 				case RL_OMNI:
 				{
 					MatrixAffineInverse(light->transformMatrix, light->viewMatrix);
-					mat4_reset_scale(light->projectionMatrix, 1.0f / light->l.radius[0], 1.0f / light->l.radius[1],
-					                 1.0f / light->l.radius[2]);
+					//Matrix4IdentScale(light->projectionMatrix, 1.0f / light->l.radius[0], 1.0f / light->l.radius[1], 1.0f / light->l.radius[2]);
+					Matrix4IdentScale(light->projectionMatrix, rcp(light->l.radius[0]), rcp(light->l.radius[1]), rcp(light->l.radius[2]));
 					break;
 				}
 				case RL_DIRECTIONAL:
@@ -1639,7 +1741,7 @@ static void RB_RenderInteractionsShadowMapped()
 						GL_PushMatrix();
 						RB_SetViewMVPM();
 
-						for (frustumIndex = 0; frustumIndex <= r_parallelShadowSplits->integer; frustumIndex++)
+						for (frustumIndex = 0; frustumIndex <= MAX_SHADOWMAPS - 1; frustumIndex++)
 						{
 							GL_Cull(CT_TWO_SIDED);
 							GL_State(GLS_DEPTHTEST_DISABLE);
@@ -1650,16 +1752,16 @@ static void RB_RenderInteractionsShadowMapped()
 							SelectTexture(TEX_CURRENT);
 							GL_Bind(tr.sunShadowMapFBOImage[frustumIndex]);
 
-							w = 200;
-							h = 200;
+							w = 200.f;
+							h = 200.f;
 
-							x = 205 * frustumIndex;
-							y = 70;
+							x = 205.f * (float)frustumIndex;
+							y = 70.f;
 
-							Vector4Set(quadVerts[0], x, y, 0, 1);
-							Vector4Set(quadVerts[1], x + w, y, 0, 1);
-							Vector4Set(quadVerts[2], x + w, y + h, 0, 1);
-							Vector4Set(quadVerts[3], x, y + h, 0, 1);
+							Vector4Set(quadVerts[0], x, y, 0.f, 1.f);
+							Vector4Set(quadVerts[1], x + w, y, 0.f, 1.f);
+							Vector4Set(quadVerts[2], x + w, y + h, 0.f, 1.f);
+							Vector4Set(quadVerts[3], x, y + h, 0.f, 1.f);
 
 							Tess_InstantQuad(quadVerts);
 
@@ -1713,25 +1815,25 @@ static void RB_RenderInteractionsShadowMapped()
 								// draw outer surfaces
 								for (j = 0; j < 4; j++)
 								{
-									Vector4Set(quadVerts[0], nearCorners[j][0], nearCorners[j][1], nearCorners[j][2], 1);
-									Vector4Set(quadVerts[1], farCorners[j][0], farCorners[j][1], farCorners[j][2], 1);
-									Vector4Set(quadVerts[2], farCorners[(j + 1) % 4][0], farCorners[(j + 1) % 4][1], farCorners[(j + 1) % 4][2], 1);
-									Vector4Set(quadVerts[3], nearCorners[(j + 1) % 4][0], nearCorners[(j + 1) % 4][1], nearCorners[(j + 1) % 4][2], 1);
+									Vector4Set(quadVerts[0], nearCorners[j][0], nearCorners[j][1], nearCorners[j][2], 1.f);
+									Vector4Set(quadVerts[1], farCorners[j][0], farCorners[j][1], farCorners[j][2], 1.f);
+									Vector4Set(quadVerts[2], farCorners[(j + 1) % 4][0], farCorners[(j + 1) % 4][1], farCorners[(j + 1) % 4][2], 1.f);
+									Vector4Set(quadVerts[3], nearCorners[(j + 1) % 4][0], nearCorners[(j + 1) % 4][1], nearCorners[(j + 1) % 4][2], 1.f);
 									Tess_AddQuadStamp2(quadVerts, colorCyan);
 								}
 
 								// draw far cap
-								Vector4Set(quadVerts[0], farCorners[3][0], farCorners[3][1], farCorners[3][2], 1);
-								Vector4Set(quadVerts[1], farCorners[2][0], farCorners[2][1], farCorners[2][2], 1);
-								Vector4Set(quadVerts[2], farCorners[1][0], farCorners[1][1], farCorners[1][2], 1);
-								Vector4Set(quadVerts[3], farCorners[0][0], farCorners[0][1], farCorners[0][2], 1);
+								Vector4Set(quadVerts[0], farCorners[3][0], farCorners[3][1], farCorners[3][2], 1.f);
+								Vector4Set(quadVerts[1], farCorners[2][0], farCorners[2][1], farCorners[2][2], 1.f);
+								Vector4Set(quadVerts[2], farCorners[1][0], farCorners[1][1], farCorners[1][2], 1.f);
+								Vector4Set(quadVerts[3], farCorners[0][0], farCorners[0][1], farCorners[0][2], 1.f);
 								Tess_AddQuadStamp2(quadVerts, colorBlue);
 
 								// draw near cap
-								Vector4Set(quadVerts[0], nearCorners[0][0], nearCorners[0][1], nearCorners[0][2], 1);
-								Vector4Set(quadVerts[1], nearCorners[1][0], nearCorners[1][1], nearCorners[1][2], 1);
-								Vector4Set(quadVerts[2], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1);
-								Vector4Set(quadVerts[3], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
+								Vector4Set(quadVerts[0], nearCorners[0][0], nearCorners[0][1], nearCorners[0][2], 1.f);
+								Vector4Set(quadVerts[1], nearCorners[1][0], nearCorners[1][1], nearCorners[1][2], 1.f);
+								Vector4Set(quadVerts[2], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1.f);
+								Vector4Set(quadVerts[3], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1.f);
 								Tess_AddQuadStamp2(quadVerts, colorGreen);
 
 								Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddQuadStamp2
@@ -1843,7 +1945,8 @@ static void RB_RenderInteractionsShadowMapped()
 					Ren_LogComment("----- Beginning Shadow Interaction: %i -----\n", iaCount);
 
 					// we don't need tangent space calculations here
-					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, -1, 0);
+					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+
 				}
 				break;
 			}
@@ -1863,7 +1966,7 @@ static void RB_RenderInteractionsShadowMapped()
 				goto skipInteraction;
 			}
 
-			if (glConfig2.occlusionQueryBits && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+			if (glConfig2.occlusionQueryBits && r_occludeEntities->integer && !entity->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
@@ -1887,7 +1990,7 @@ static void RB_RenderInteractionsShadowMapped()
 				Ren_LogComment("----- Beginning Light Interaction: %i -----\n", iaCount);
 
 				// begin a new batch
-				Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, light->l.inverseShadows, qfalse, -1, 0);
+				Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, light->l.inverseShadows, qfalse, LIGHTMAP_NONE, FOG_NONE);
 			}
 		}
 
@@ -1920,16 +2023,14 @@ static void RB_RenderInteractionsShadowMapped()
 				if (drawShadows)
 				{
 					Com_Memset(&backEnd.orientation, 0, sizeof(backEnd.orientation));
-
-					backEnd.orientation.axis[0][0] = 1;
-					backEnd.orientation.axis[1][1] = 1;
-					backEnd.orientation.axis[2][2] = 1;
+					backEnd.orientation.axis[0][0] = 1.0f;	// axis = identity matrix
+					backEnd.orientation.axis[1][1] = 1.0f;	//
+					backEnd.orientation.axis[2][2] = 1.0f;	//
 					VectorCopy(light->l.origin, backEnd.orientation.viewOrigin);
 
-					mat4_ident(backEnd.orientation.transformMatrix);
-					//MatrixAffineInverse(backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-					mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-					mat4_copy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);
+					Matrix4Identity(backEnd.orientation.transformMatrix);
+					Matrix4Copy(light->viewMatrix, backEnd.orientation.viewMatrix);
+					Matrix4Copy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);
 				}
 				else
 				{
@@ -1962,46 +2063,47 @@ static void RB_RenderInteractionsShadowMapped()
 			if (entity != &tr.worldEntity)
 			{
 				VectorSubtract(light->origin, backEnd.orientation.origin, tmp);
-				light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
+				/*light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
 				light->transformed[1] = DotProduct(tmp, backEnd.orientation.axis[1]);
-				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);
+				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);*/
+				Dot(tmp, backEnd.orientation.axis[0], light->transformed[0]);
+				Dot(tmp, backEnd.orientation.axis[1], light->transformed[1]);
+				Dot(tmp, backEnd.orientation.axis[2], light->transformed[2]);
 			}
 			else
 			{
 				VectorCopy(light->origin, light->transformed);
 			}
 
-			mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
+			Matrix4Multiply(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
 
 			// build the attenuation matrix using the entity transform
 			switch (light->l.rlType)
 			{
 			case RL_OMNI:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
-				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
-				mat4_mult_self(light->attenuationMatrix, modelToLight);
-
-				mat4_copy(light->attenuationMatrix, light->shadowMatrices[0]);
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);    // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);       // scale
+				Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix);
+				Matrix4MultiplyWith(light->attenuationMatrix, modelToLight);
+				Matrix4Copy(light->attenuationMatrix, light->shadowMatrices[0]);
 				break;
 			}
 			case RL_PROJ:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));        // scale
-				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
-				mat4_mult_self(light->attenuationMatrix, modelToLight);
-
-				mat4_copy(light->attenuationMatrix, light->shadowMatrices[0]);
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.0f);        // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, rcp(Q_min(light->falloffLength, 1.0f)));        // scale
+				Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix);
+				Matrix4MultiplyWith(light->attenuationMatrix, modelToLight);
+				Matrix4Copy(light->attenuationMatrix, light->shadowMatrices[0]);
 				break;
 			}
 			case RL_DIRECTIONAL:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
-				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
-				mat4_mult_self(light->attenuationMatrix, modelToLight);
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);    // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);       // scale
+				Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix);
+				Matrix4MultiplyWith(light->attenuationMatrix, modelToLight);
 				break;
 			}
 			default:
@@ -2083,15 +2185,14 @@ skipInteraction:
 				case RL_DIRECTIONAL:
 				{
 					// set shadow matrix including scale + offset
-					mat4_copy(bias, light->shadowMatricesBiased[splitFrustumIndex]);
-					mat4_mult_self(light->shadowMatricesBiased[splitFrustumIndex], light->projectionMatrix);
-					mat4_mult_self(light->shadowMatricesBiased[splitFrustumIndex], light->viewMatrix);
+					Matrix4Copy(bias, light->shadowMatricesBiased[splitFrustumIndex]);
+					Matrix4MultiplyWith(light->shadowMatricesBiased[splitFrustumIndex], light->projectionMatrix);
+					Matrix4MultiplyWith(light->shadowMatricesBiased[splitFrustumIndex], light->viewMatrix);
 
-					mat4_mult(light->projectionMatrix, light->viewMatrix, light->shadowMatrices[splitFrustumIndex]);
+					Matrix4Multiply(light->projectionMatrix, light->viewMatrix, light->shadowMatrices[splitFrustumIndex]);
 
-					if (r_parallelShadowSplits->integer)
 					{
-						if (splitFrustumIndex == r_parallelShadowSplits->integer)
+						if (splitFrustumIndex == MAX_SHADOWMAPS - 1)
 						{
 							splitFrustumIndex = 0;
 							drawShadows       = qfalse;
@@ -2104,13 +2205,6 @@ skipInteraction:
 						// jump back to first interaction of this light
 						ia      = &backEnd.viewParms.interactions[iaFirst];
 						iaCount = iaFirst;
-					}
-					else
-					{
-						// jump back to first interaction of this light and start lighting
-						ia          = &backEnd.viewParms.interactions[iaFirst];
-						iaCount     = iaFirst;
-						drawShadows = qfalse;
 					}
 					break;
 				}
@@ -2212,12 +2306,9 @@ void RB_RenderScreenSpaceAmbientOcclusion()
 	// set 2D virtual screen size
 	GL_PushMatrix();
 	RB_SetViewMVPM();
-
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
 	// draw viewport
 	DRAWVIEWQUAD();
-
 	// go back to 3D
 	GL_PopMatrix();
 
@@ -2300,7 +2391,8 @@ void RB_RenderGlobalFog()
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
-	if (!tr.world || tr.world->globalFog < 0 || !r_wolfFog->integer)
+    // this fogGlobal is disabled?
+	if (r_noFog->integer)
 	{
 		return;
 	}
@@ -2316,8 +2408,10 @@ void RB_RenderGlobalFog()
 		return;
 	}
 
-
-
+	if (!tr.world || tr.world->globalFog < 0)
+	{
+		return;
+	}
 
 	GL_Cull(CT_TWO_SIDED);
 
@@ -2339,36 +2433,21 @@ void RB_RenderGlobalFog()
 		fogDistanceVector[0] = -backEnd.orientation.modelViewMatrix[2];
 		fogDistanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
 		fogDistanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
-		fogDistanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
+		Dot(local, backEnd.viewParms.orientation.axis[0], fogDistanceVector[3]);
 
 		// scale the fog vectors based on the fog's thickness
-		fogDistanceVector[0] *= fog->tcScale;
-		fogDistanceVector[1] *= fog->tcScale;
-		fogDistanceVector[2] *= fog->tcScale;
-		fogDistanceVector[3] *= fog->tcScale;
+		Vector4Scale(fogDistanceVector, fog->tcScale, fogDistanceVector);
 
 		SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 		SetUniformVec4(UNIFORM_COLOR, fog->color);
-
-		//if there is a density set
-		if (fog->fogParms.density > 0)
-		{
-			SetUniformFloat(UNIFORM_FOGDENSITY, fog->fogParms.density);
-		}
-		else// use the depthforOpaque wich is set in shader fogparms for end of fog aka where fog is 1.0
-		{
-			SetUniformFloat(UNIFORM_FOGDENSITY, fog->fogParms.depthForOpaque);
-		}
-		// FIXME: fog->fogParms.density?!.. density dont seem to get any value?!
+		SetUniformFloat(UNIFORM_FOGDENSITY, 1.0f); // this must be 1    << why?..it can be 0.0 to 1.0
 	}
-
-	SetUniformMatrix16(UNIFORM_VIEWMATRIX, backEnd.viewParms.world.viewMatrix);
+		
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.fogImage);
-
 
 	// bind u_DepthMap
 	SelectTexture(TEX_DEPTH);
@@ -2385,12 +2464,9 @@ void RB_RenderGlobalFog()
 	// set 2D virtual screen size
 	GL_PushMatrix();
 	RB_SetViewMVPM();
-
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
 	// draw viewport
 	DRAWVIEWQUAD();
-
 	// go back to 3D
 	GL_PopMatrix();
 
@@ -2408,7 +2484,7 @@ void RB_RenderBloom()
 	Ren_LogComment("--- RB_RenderBloom ---\n");
 
 	// hdr requires bloom renderer
-	if (!r_bloom->integer && !HDR_ENABLED())
+	if (!r_bloom->integer)
 	{
 		return;
 	}
@@ -2439,7 +2515,6 @@ void RB_RenderBloom()
 		if (HDR_ENABLED())
 		{
 			SetMacrosAndSelectProgram(trProg.gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
-
 			SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 			SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 			SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
@@ -2550,6 +2625,7 @@ void RB_RenderBloom()
 
 			DRAWVIEWQUAD();
 		}
+
 	}
 
 	// go back to 3D
@@ -2630,14 +2706,14 @@ void RB_CameraPostFX(void)
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	//glUniform1f(tr.cameraEffectsShader.u_BlurMagnitude, r_bloomBlur->value);
 
-	mat4_ident(grain);
+	Matrix4Identity(grain);
 
-	MatrixMultiplyScale(grain, r_cameraFilmGrainScale->value, r_cameraFilmGrainScale->value, 0);
-	MatrixMultiplyTranslation(grain, tess.shaderTime * 10, backEnd.refdef.floatTime * 10, 0);
+	MatrixMultiplyScale(grain, r_cameraFilmGrainScale->value, r_cameraFilmGrainScale->value, 0.f);
+	MatrixMultiplyTranslation(grain, tess.shaderTime * 10.0f, backEnd.refdef.floatTime * 10.f, 0.f);
 
-	MatrixMultiplyTranslation(grain, 0.5, 0.5, 0.0);
+	MatrixMultiplyTranslation(grain, 0.5f, 0.5f, 0.0f);
 	MatrixMultiplyZRotation(grain, tess.shaderTime * (random() * 7));
-	MatrixMultiplyTranslation(grain, -0.5, -0.5, 0.0);
+	MatrixMultiplyTranslation(grain, -0.5f, -0.5f, 0.0f);
 
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, grain);
 
@@ -2690,9 +2766,8 @@ static void RB_CalculateAdaptation()
 	float        maxLuminance     = 0.0f;
 	double       sum              = 0.0;
 	const vec3_t LUMINANCE_VECTOR = { 0.2125f, 0.7154f, 0.0721f };
-	vec4_t       color;
 	float        newAdaptation;
-	float        newMaximum;
+	float        newMaximum, dot;
 
 	// calculate the average scene luminance
 	R_BindFBO(tr.downScaleFBO_64x64);
@@ -2703,12 +2778,8 @@ static void RB_CalculateAdaptation()
 
 	for (i = 0; i < (64 * 64 * 4); i += 4)
 	{
-		color[0] = image[i + 0];
-		color[1] = image[i + 1];
-		color[2] = image[i + 2];
-		color[3] = image[i + 3];
-
-		luminance = DotProduct(color, LUMINANCE_VECTOR) + 0.0001f;
+		Dot((image+i), LUMINANCE_VECTOR, dot);	// don't copy to 'color'. Just point to the vector in the image..
+		luminance = dot + 0.0001f;
 		if (luminance > maxLuminance)
 		{
 			maxLuminance = luminance;
@@ -3124,6 +3195,7 @@ static void GetLightOcclusionQueryResult(trRefLight_t *light)
 		while (!available)
 		{
 			//if(glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
+			if (glIsQuery(light->occlusionQueryObject))
 			{
 				glGetQueryObjectiv(light->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE, &available);
 				//GL_CheckErrors();
@@ -3189,7 +3261,7 @@ void RB_RenderLightOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderLightOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+	if (glConfig2.occlusionQueryBits && r_occludeLights->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
 		int           i;
 		interaction_t *ia;
@@ -3508,14 +3580,13 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 	VectorScale(boundsCenter, 0.5f, boundsCenter);
 
 	MatrixFromVectorsFLU(rot, entity->e.axis[0], entity->e.axis[1], entity->e.axis[2]);
+
 	MatrixTransformNormal2(rot, boundsCenter);
-
 	VectorAdd(entity->e.origin, boundsCenter, boundsCenter);
-
 	MatrixSetupTransformFromVectorsFLU(backEnd.orientation.transformMatrix, axis[0], axis[1], axis[2], boundsCenter);
 
 	MatrixAffineInverse(backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-	mat4_mult(backEnd.viewParms.world.viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.modelViewMatrix);
+	Matrix4Multiply(backEnd.viewParms.world.viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.modelViewMatrix);
 
 	GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
@@ -3780,6 +3851,7 @@ static void GetEntityOcclusionQueryResult(trRefEntity_t *entity)
 		while (!available)
 		{
 			//if(glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
+			if (glIsQuery(entity->occlusionQueryObject))
 			{
 				glGetQueryObjectiv(entity->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE, &available);
 				//GL_CheckErrors();
@@ -3863,6 +3935,14 @@ void RB_RenderEntityOcclusionQueries()
 
 		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
+		// This function is sometimes called when no currentVBO is set,
+		// and that causes a warning to be printed, when GLSL_SetRequiredVertexPointers() is executed.
+		// To avoid this, we set the currentVBO (to the unitcube that is going to be rendered soon anyway).
+		if (!glState.currentVBO)
+		{
+			R_BindVBO(tr.unitCubeVBO);
+			R_BindIBO(tr.unitCubeIBO);
+		}
 		GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
 		GL_Cull(CT_TWO_SIDED);
@@ -3904,6 +3984,15 @@ void RB_RenderEntityOcclusionQueries()
 
 			if (entity->cull == CULL_OUT)
 			{
+				continue;
+			}
+
+			// we must exclude MOD_BSP (the Oasis wall)
+			if (entity == &tr.worldEntity ||
+				(entity->e.reType == RT_MODEL && tr.models[entity->e.hModel]->type == MOD_BSP))
+			{
+				entity->occlusionQuerySamples = 1;
+				entity->noOcclusionQueries = qtrue;
 				continue;
 			}
 
@@ -4039,7 +4128,7 @@ void RB_RenderBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderBspOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
+	if (glConfig2.occlusionQueryBits && r_occludeBsp->integer)
 	{
 		//int             j;
 		bspNode_t *node;
@@ -4070,6 +4159,7 @@ void RB_RenderBspOcclusionQueries()
 		GL_State(GLS_COLORMASK_BITS);
 
 		sentinel = &tr.occlusionQueryList;
+		// this list seems always empty..
 		for (l = sentinel->next; l != sentinel; l = next)
 		{
 			next = l->next;
@@ -4117,7 +4207,7 @@ void RB_CollectBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_CollectBspOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
+	if (glConfig2.occlusionQueryBits && r_occludeBsp->integer)
 	{
 		// int       j = 0;
 		bspNode_t *node;
@@ -4151,6 +4241,8 @@ void RB_CollectBspOcclusionQueries()
 				// but this statement was always true.
 				// if (node->issueOcclusionQuery)
 				// TODO: issueOcclusionQuery is never used
+				// ?  in this very loop it's used, to wait for all queries to finish, but..
+				// ..node->issueOcclusionQuery[x] is never set (outside the loop, before the loop starts).
 				if (node->issueOcclusionQuery[backEnd.viewParms.viewCount])
 				{
 					available = 0;
@@ -4282,7 +4374,7 @@ static void RB_RenderDebugUtils()
 						Vector4Copy(colorMdGrey, lightColor);
 					}
 				}
-				else if (r_dynamicLightOcclusionCulling->integer)
+				else if (r_occludeLights->integer)
 				{
 					if (!ia->occlusionQuerySamples)
 					{
@@ -4329,9 +4421,9 @@ static void RB_RenderDebugUtils()
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorYellow);
 				glVertex3fv(vec3_origin);
 				VectorSubtract(light->origin, backEnd.orientation.origin, tmp);
-				light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
-				light->transformed[1] = DotProduct(tmp, backEnd.orientation.axis[1]);
-				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);
+				Dot(tmp, backEnd.orientation.axis[0], light->transformed[0]);
+				Dot(tmp, backEnd.orientation.axis[1], light->transformed[1]);
+				Dot(tmp, backEnd.orientation.axis[2], light->transformed[2]);
 				glVertex3fv(light->transformed);
 
 				glEnd();
@@ -4392,8 +4484,8 @@ static void RB_RenderDebugUtils()
 #else
 						mat4_t transform, scale, rot;
 
-						mat4_reset_scale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
-						mat4_mult(light->transformMatrix, scale, transform);
+						Matrix4IdentScale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
+						Matrix4Multiply(light->transformMatrix, scale, transform);
 
 						GL_LoadModelViewMatrix(transform);
 						//GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -4597,8 +4689,8 @@ static void RB_RenderDebugUtils()
 		trRefEntity_t *entity;
 		surfaceType_t *surface;
 		vec4_t        lightColor;
-		vec3_t        mins = { -1, -1, -1 };
-		vec3_t        maxs = { 1, 1, 1 };
+		vec3_t        mins = { -1.f, -1.f, -1.f };
+		vec3_t        maxs = { 1.f, 1.f, 1.f };
 
 		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
@@ -4635,7 +4727,7 @@ static void RB_RenderDebugUtils()
 
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-			if (r_shadows->integer >= SHADOWING_ESM16 && light->l.rlType == RL_OMNI)
+			if (r_shadows->integer >= SHADOWING_EVSM32 && light->l.rlType == RL_OMNI)
 			{
 #if 0
 				Vector4Copy(colorMdGrey, lightColor);
@@ -4718,12 +4810,12 @@ static void RB_RenderDebugUtils()
 				}
 				else
 				{
-					Vector4Copy(colorMdGrey, lightColor);
+					Vector4Copy(colorDkGrey, lightColor);
 				}
 
 				Tess_AddCube(vec3_origin, gen->bounds[0], gen->bounds[1], lightColor);
 
-				Tess_AddCube(gen->origin, mins, maxs, colorWhite);
+				Tess_AddCube(gen->origin, mins, maxs, colorWhite); // eer..
 			}
 			else if (*surface == SF_VBO_MESH)
 			{
@@ -4817,7 +4909,7 @@ static void RB_RenderDebugUtils()
 			tess.numIndexes          = 0;
 			tess.numVertexes         = 0;
 
-			if (r_dynamicEntityOcclusionCulling->integer)
+			if (r_occludeEntities->integer)
 			{
 				if (!ent->occlusionQuerySamples)
 				{
@@ -4962,7 +5054,9 @@ static void RB_RenderDebugUtils()
 					quat_to_vec3_FRU(skel->bones[j].rotation, forward, right, up);
 
 					VectorSubtract(offset, origin, diff);
-					if ((length = VectorNormalize(diff)))
+					//if ((length = VectorNormalize(diff)))
+					VectorNorm(diff, &length);
+					if (length != 0.0f)
 					{
 						PerpendicularVector(tmp, diff);
 						//VectorCopy(up, tmp);
@@ -4987,7 +5081,7 @@ static void RB_RenderDebugUtils()
 						Tess_AddTetrahedron(tetraVerts, g_color_table[ColorIndex(j)]);
 					}
 
-					mat4_transform_vec3(backEnd.orientation.transformMatrix, skel->bones[j].origin, worldOrigins[j]);
+					VectorTransformM4(backEnd.orientation.transformMatrix, skel->bones[j].origin, worldOrigins[j]);
 				}
 
 				Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR);
@@ -5155,75 +5249,114 @@ static void RB_RenderDebugUtils()
 		cubemapProbe_t *cubeProbe;
 		int            j;
 		//vec4_t         quadVerts[4];
-		vec3_t mins = { -8, -8, -8 };
-		vec3_t maxs = { 8, 8, 8 };
+		vec3_t mins = { -32, -32, -32 }; // i want to see them bigger
+		vec3_t maxs = { 32, 32, 32 };
 		//vec3_t			viewOrigin;
+		trRefEntity_t* backEndEnt = backEnd.currentEntity;
 
 		if (backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOCUBEMAP))
 		{
 			return;
 		}
 
+/*
+		// use the reflection shader
+		// But we really don't want it to be rendered as a reflection.
+		// We want to render the cubemap without texture transforms.. just the plain textures, fixed on the 6 sides.
+		// For that, we need a shader that renders a 'samplerCube', but that does not use any reflect().  TODO: write such a shader
 		SetMacrosAndSelectProgram(trProg.gl_reflectionShader,
-		                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		                          USE_PORTAL_CLIPPING, qfalse,
 		                          USE_VERTEX_SKINNING, qfalse,
 		                          USE_VERTEX_ANIMATION, qfalse,
 		                          USE_DEFORM_VERTEXES, qfalse,
 		                          USE_NORMAL_MAPPING, qfalse);
-		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-
-		GLSL_SetUniform_ColorModulate(trProg.gl_reflectionShader, CGEN_IDENTITY, AGEN_IDENTITY); //CGEN_CUSTOM_RGB, AGEN_CUSTOM);
-		//GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_IDENTITY, AGEN_IDENTITY);
-		SetUniformVec4(UNIFORM_COLOR, colorBlack);
-
-		//GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-		GL_State(0);
-		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
-		SetUniformInt(UNIFORM_ALPHATEST, ATEST_NONE);
-
-		// set up the transformation matrix
-		backEnd.orientation = backEnd.viewParms.world;
-		//GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
-		//SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
 		GLSL_SetRequiredVertexPointers(trProg.gl_reflectionShader);
-		//GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
+		GLSL_SetUniform_ColorModulate(trProg.gl_reflectionShader, CGEN_IDENTITY, AGEN_IDENTITY); //CGEN_CUSTOM_RGB, AGEN_CUSTOM);
+		SetUniformVec4(UNIFORM_COLOR, colorWhite);
+		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+		SetUniformFloat(UNIFORM_REFLECTIONSCALE, 1.0f);
+
+		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
+		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
+		
 		for (j = 0; j < tr.cubeProbes.currentElements; j++)
 		{
 			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
 
-			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
-#if 1
-			// the glsl shader needs 2 cubemaps and an interpolation factor,
-			// but now we just want to render a single cubemap..
-			// so we pass on two of the same textures
-
-			// bind u_EnvironmentMap0
-			SelectTexture(TEX_ENVMAP0);
-			GL_Bind(cubeProbe->cubemap);
-
-			// bind u_EnvironmentMap1
-			SelectTexture(TEX_ENVMAP1);
-			GL_Bind(cubeProbe->cubemap);
-
-			// u_EnvironmentInterpolation
-			SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 1.0);
-#else
-			SelectTexture(TEX_COLOR);
-			GL_Bind(cubeProbe->cubemap);
-#endif
+			tess.multiDrawPrimitives = 0;
+			tess.numVertexes         = 0;
+			tess.numIndexes          = 0;
 
 			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
-			Tess_End();
+#if 1
+            // the glsl shader needs 2 cubemaps and an interpolation factor,
+            // but now we just want to render a single cubemap..
+            // so we pass on two of the same textures
+
+            // bind u_EnvironmentMap0
+            SelectTexture(TEX_ENVMAP0);
+            GL_Bind(cubeProbe->cubemap);
+
+            // bind u_EnvironmentMap1
+            SelectTexture(TEX_ENVMAP1);
+            GL_Bind(cubeProbe->cubemap);
+
+            // u_EnvironmentInterpolation
+            SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
+#else
+            SelectTexture(TEX_COLOR);
+            GL_Bind(cubeProbe->cubemap);
+#endif
+			Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL);
+			Tess_DrawElements();
 		}
-		//Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
 
+		tess.multiDrawPrimitives = 0;
+		tess.numVertexes         = 0;
+		tess.numIndexes          = 0;
+		//--- end reflection shader
+*/
 
-#if 0   // color the 2 closest cubeProbes (green/red/yellow?/blue?)
+		// use the cubemap shader
+		SetMacrosAndSelectProgram(trProg.gl_cubemapShader);
+		GLSL_SetRequiredVertexPointers(trProg.gl_cubemapShader);
+
+		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+
+		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
+		// the inside of the cube is textured, and the normals all point to the center of the cube.
+		GL_Cull(CT_FRONT_SIDED);
+//		GL_Cull(CT_TWO_SIDED); // we also want to see the cubemap if we are inside the cube..
+		
+		for (j = 0; j < tr.cubeProbes.currentElements; j++)
+		{
+			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
+
+			tess.multiDrawPrimitives = 0;
+			tess.numVertexes         = 0;
+			tess.numIndexes          = 0;
+
+			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
+
+			SelectTexture(TEX_COLOR);
+            GL_Bind(cubeProbe->cubemap);
+
+			Tess_UpdateVBOs(ATTR_POSITION | ATTR_NORMAL);
+			Tess_DrawElements();
+		}
+
+		tess.multiDrawPrimitives = 0;
+		tess.numVertexes         = 0;
+		tess.numIndexes          = 0;
+		//--- end cubemap shader
+
+#if 0	// color the 2 closest cubeProbes (green/red/yellow?/blue?)
 		// (disabled because, when you want to inspect a cubeProbe up close, no textures can be seen.. not handy)
 		{
 			cubemapProbe_t *cubeProbe1;
@@ -5469,16 +5602,15 @@ static void RB_RenderDebugUtils()
 							point[2] = tr.world->models[0].bounds[(j >> 2) & 1][2];
 							point[3] = 1;
 
-							mat4_transform_vec4(viewMatrix, point, transf);
-							transf[0] /= transf[3];
-							transf[1] /= transf[3];
-							transf[2] /= transf[3];
+							Vector4TransformM4(viewMatrix, point, transf);
+							VectorScale(transf, rcp(transf[3]), transf);
 
 							AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 						}
 
 
-						MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+						//MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+						MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds);
 
 						GL_LoadModelViewMatrix(viewMatrix);
 						GL_LoadProjectionMatrix(projectionMatrix);
@@ -5569,7 +5701,7 @@ static void RB_RenderDebugUtils()
 			{
 				node = (bspNode_t *) l->data;
 
-				if (!r_dynamicBspOcclusionCulling->integer)
+				if (!r_occludeBsp->integer)
 				{
 					if (node->contents != -1)
 					{
@@ -5786,6 +5918,11 @@ static void RB_RenderDebugUtils()
 
 /**
  * @brief RB_RenderViewFront
+ * 
+ * Note: If we are rendering offscreen, or when we are rendering the cubeprobe reflection cubemaps,
+ * we don't want this function to mess up the framebuffer we render to offscreen.
+ * In any case, when we are rendering the cubemaps, they do not have fog,coronas,decals,shadows,light, or any posteffects (hdr,bloom...).
+ * We can skip a lot if we are rendering to a cubemap..
  */
 static void RB_RenderViewFront(void)
 {
@@ -5805,15 +5942,20 @@ static void RB_RenderViewFront(void)
 	}
 
 	// disable offscreen rendering
-	if (glConfig2.framebufferObjectAvailable)
+	// But we want to render-to-texture (offscreen) if we are rendering a cubemap (for the reflections),
+	// so we also check if no renderingCubemap is set..
+	if (!tr.refdef.renderingCubemap)
 	{
-		if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+		if (glConfig2.framebufferObjectAvailable)
 		{
-			R_BindFBO(tr.deferredRenderFBO);
-		}
-		else
-		{
-			R_BindNullFBO();
+			if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+			{
+				R_BindFBO(tr.deferredRenderFBO);
+			}
+			else
+			{
+				R_BindNullFBO();
+			}
 		}
 	}
 
@@ -5842,7 +5984,6 @@ static void RB_RenderViewFront(void)
 		if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 		{
 			clearBits |= GL_COLOR_BUFFER_BIT;
-
 			GL_ClearColor(tr.world->fogs[tr.world->globalFog].color[0],
 			              tr.world->fogs[tr.world->globalFog].color[1],
 			              tr.world->fogs[tr.world->globalFog].color[2], 1.0);
@@ -5998,7 +6139,7 @@ static void RB_RenderViewFront(void)
 		startTime = ri.Milliseconds();
 	}
 
-	if (r_dynamicEntityOcclusionCulling->integer)
+	if (r_occludeEntities->integer)
 	{
 		// draw everything from world that is opaque into black so we can benefit from early-z rejections later
 		//RB_RenderOpaqueSurfacesIntoDepth(true);
@@ -6014,43 +6155,47 @@ static void RB_RenderViewFront(void)
 	{
 		// draw everything that is opaque
 		RB_RenderDrawSurfaces(qtrue, DRAWSURFACES_ALL);
-
-		// try to cull entities using hardware occlusion queries
-		//RB_RenderEntityOcclusionQueries();
 	}
+/*
+	// TODO FIX: this mechanism doesn't work. The used sentinel list is never filled.
+	// The real occlusion querying is done by R_CoherentHierachicalCulling(), in function R_AddWorldSurfaces().
 
 	// try to cull bsp nodes for the next frame using hardware occlusion queries
 	RB_RenderBspOcclusionQueries();
-
+*/
 	R2_TIMING(RSPEEDS_SHADING_TIMES)
 	{
 		backEnd.pc.c_forwardAmbientTime = ri.Milliseconds() - startTime;
 	}
 
-	// try to cull lights using hardware occlusion queries
-	RB_RenderLightOcclusionQueries();
-
-	if (r_shadows->integer >= SHADOWING_ESM16)
+	if (!tr.refdef.renderingCubemap)
 	{
-		// render dynamic shadowing and lighting using shadow mapping
-		RB_RenderInteractionsShadowMapped();
+		// try to cull lights using hardware occlusion queries
+		RB_RenderLightOcclusionQueries();
 
-		// render player shadows if any
-		//RB_RenderInteractionsDeferredInverseShadows();
-	}
-	else
-	{
-		// render dynamic lighting
-		RB_RenderInteractions();
-	}
+		if (r_shadows->integer >= SHADOWING_EVSM32)
+		{
+			// render dynamic shadowing and lighting using shadow mapping
+			RB_RenderInteractionsShadowMapped();
 
-	// render ambient occlusion process effect
-	// needs way more work
-	RB_RenderScreenSpaceAmbientOcclusion();
+			// render player shadows if any
+			//RB_RenderInteractionsDeferredInverseShadows();
+		}
+		else
+		{
+			// render dynamic lighting
+			RB_RenderInteractions();
+		}
 
-	if (HDR_ENABLED())
-	{
-		R_BindFBO(tr.deferredRenderFBO);
+		// render ambient occlusion process effect
+		// needs way more work
+		RB_RenderScreenSpaceAmbientOcclusion();
+
+		// TODO: check hdr with fog
+		if (HDR_ENABLED())
+		{
+			R_BindFBO(tr.deferredRenderFBO);
+		}
 	}
 
 	// render global fog effect
@@ -6061,93 +6206,97 @@ static void RB_RenderViewFront(void)
 	// draw everything that is translucent
 	RB_RenderDrawSurfaces(qfalse, DRAWSURFACES_ALL);
 
-	// scale down rendered HDR scene to 1 / 4th
-	if (HDR_ENABLED())
+	if (!tr.refdef.renderingCubemap)
 	{
-		if (glConfig2.framebufferBlitAvailable)
+		// scale down rendered HDR scene to 1 / 4th
+		if (HDR_ENABLED())
 		{
 			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_quarter, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_64x64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		}
-		else
-		{
-			// FIXME add non EXT_framebuffer_blit code
-		}
 
-		RB_CalculateAdaptation();
-	}
-	else
-	{
+			RB_CalculateAdaptation();
+		}
 		/*
-		FIXME this causes: caught OpenGL error:
-		GL_INVALID_OPERATION in file code/renderer/tr_backend.c line 6479
-
-		if(glConfig2.framebufferBlitAvailable)
-		{
-		    // copy deferredRenderFBO to downScaleFBO_quarter
-		    R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
-		}
 		else
 		{
-		    // FIXME add non EXT_framebuffer_blit code
+			FIXME this causes: caught OpenGL error:
+			GL_INVALID_OPERATION in file code/renderer/tr_backend.c line 6479
+
+			if(glConfig2.framebufferBlitAvailable)
+			{
+				// copy deferredRenderFBO to downScaleFBO_quarter
+				R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+			}
+			else
+			{
+				// FIXME add non EXT_framebuffer_blit code
+				}
 		}
 		*/
+
+		GL_CheckErrors();
+
+		// render depth of field post process effect
+		RB_RenderDepthOfField();
+
+		// render bloom post process effect
+		RB_RenderBloom();
+
+		// copy offscreen rendered HDR scene to the current OpenGL context
+		RB_RenderHDRResultToFrameBuffer();
+
+		// render rotoscope post process effect
+		RB_RenderRotoscope();
 	}
-
-	GL_CheckErrors();
-
-	// render depth of field post process effect
-	RB_RenderDepthOfField();
-
-	// render bloom post process effect
-	RB_RenderBloom();
-
-	// copy offscreen rendered HDR scene to the current OpenGL context
-	RB_RenderHDRResultToFrameBuffer();
-
-	// render rotoscope post process effect
-	RB_RenderRotoscope();
 
 	// add the sun flare
 	RB_DrawSun();
 
-	// add light flares on lights that aren't obscured
-	RB_RenderFlares(); // this initiates calls to the very slow glReadPixels()..
+	/*
+	// FIX: this mechanism doesn't work. The used sentinel list is never filled.
+	// This next line goes together with the call to RB_RenderBspOcclusionQueries(), from a few lines up..
 
 	// wait until all bsp node occlusion queries are back
 	RB_CollectBspOcclusionQueries();
+*/
 
-	// render debug information
-	RB_RenderDebugUtils();
-
-	if (backEnd.viewParms.isPortal)
+	if (!tr.refdef.renderingCubemap)
 	{
+		// add light flares on lights that aren't obscured
+		RB_RenderFlares();
+
+		// render debug information
+		RB_RenderDebugUtils();
+
+		if (backEnd.viewParms.isPortal)
+		{
 #if 0
-		if (r_hdrRendering->integer && glConfig.textureFloatAvailable && glConfig.framebufferObjectAvailable && glConfig.framebufferBlitAvailable)
-		{
-			// copy deferredRenderFBO to portalRenderFBO
-			R_CopyToFBO(tr.deferredRenderFBO, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-		}
+			if (r_hdrRendering->integer && glConfig.textureFloatAvailable && glConfig.framebufferObjectAvailable && glConfig.framebufferBlitAvailable)
+			{
+				// copy deferredRenderFBO to portalRenderFBO
+				R_CopyToFBO(tr.deferredRenderFBO, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			}
 #endif
-#if 0
-		// FIXME: this trashes the OpenGL context for an unknown reason
-		if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
-		{
-			// copy main context to portalRenderFBO
-			R_CopyToFBO(NULL, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-		}
+#if 1
+			// FIXME: this trashes the OpenGL context for an unknown reason
+			if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
+			{
+				// copy main context to portalRenderFBO
+				R_CopyToFBO(NULL, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			}
+			//else
 #endif
-		//else
-		{
-			// capture current color buffer
-			GL_SelectTexture(0);
-			ImageCopyBackBuffer(tr.portalRenderImage);
+			{
+				// capture current color buffer
+				GL_SelectTexture(0);
+				ImageCopyBackBuffer(tr.portalRenderImage);
+			}
+			backEnd.pc.c_portals++;
 		}
-		backEnd.pc.c_portals++;
 	}
 
 #if 0
-	if (r_dynamicBspOcclusionCulling->integer)
+	if (r_occludeBsp->integer)
 	{
 		// copy depth of the main context to deferredRenderFBO
 		R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
@@ -6171,20 +6320,9 @@ static void RB_RenderView(void)
 	RB_RenderViewFront();
 
 	// render chromatric aberration
-	if (tr.refdef.pixelTarget == NULL) // see comment on next code block.. we don't want postFX on cubemaps
+	if (!tr.refdef.renderingCubemap) // we don't want postFX on cubemaps
 	{
 		RB_CameraPostFX();
-	}
-	// copy to given byte buffer that is NOT a FBO.
-	// This will copy the current screen content to a texture.
-	// The given texture, pixelTarget, is (a pointer to) a cubeProbe's cubemap.
-	// R_BuildCubeMaps() is the function that triggers this mechanism.
-	else //if (tr.refdef.pixelTarget != NULL)
-	{
-		// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
-		// Soo.. lets do it in the middle.
-		// Note: i don't know how old that^^ comment above is. The issue could long be history.. todo: check it
-		glReadPixels(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
 	}
 
 	GL_CheckErrors();
@@ -6525,7 +6663,7 @@ const void *RB_Draw2dPolys(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(cmd->numverts, (cmd->numverts - 2) * 3);
@@ -6548,10 +6686,10 @@ const void *RB_Draw2dPolys(const void *data)
 		tess.texCoords[tess.numVertexes][0] = cmd->verts[i].st[0];
 		tess.texCoords[tess.numVertexes][1] = cmd->verts[i].st[1];
 
-		tess.colors[tess.numVertexes][0] = cmd->verts[i].modulate[0] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes][1] = cmd->verts[i].modulate[1] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes][2] = cmd->verts[i].modulate[2] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes][3] = cmd->verts[i].modulate[3] * (1.0f / 255.0f);
+		tess.colors[tess.numVertexes][0] = cmd->verts[i].modulate[0] * _1div255;
+		tess.colors[tess.numVertexes][1] = cmd->verts[i].modulate[1] * _1div255;
+		tess.colors[tess.numVertexes][2] = cmd->verts[i].modulate[2] * _1div255;
+		tess.colors[tess.numVertexes][3] = cmd->verts[i].modulate[3] * _1div255;
 		tess.numVertexes++;
 	}
 
@@ -6707,8 +6845,8 @@ const void *RB_StretchPicGradient(const void *data)
 
 	for (i = 0; i < 4; i++)
 	{
-		tess.colors[numVerts + 2][i] = cmd->gradientColor[i] * (1.0f / 255.0f);
-		tess.colors[numVerts + 3][i] = cmd->gradientColor[i] * (1.0f / 255.0f);
+		tess.colors[numVerts + 2][i] = cmd->gradientColor[i] * _1div255;
+		tess.colors[numVerts + 3][i] = cmd->gradientColor[i] * _1div255;
 	}
 
 	tess.xyz[numVerts][0] = cmd->x;
@@ -7004,6 +7142,245 @@ const void *RB_RenderToTexture(const void *data)
 }
 
 /**
+ * @brief RB_RenderCubeprobe
+ * @param[in] (renderCubeprobeCommand_t*)data
+ * 
+ * The RB_ functions are called when an RC_RENDERCUBEPROBE command is executed from the Render-Command-Buffer
+ */
+const void *RB_RenderCubeprobe(const void *data)
+{
+	// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
+	// Soo.. lets do it in the middle of the screen.
+	// UPDATE: This is true still today (2020).
+
+	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
+	// and then we read the pixels from the 32x32 middle of the image.
+	// This ensures that we get the correct colors at the edges of an image. Opengl processes half-pixels when filtering.
+	// (otherwise we'll get a stripe of wrong colors on the images along the edges, and the cubemap images do not align colors).
+	// But, we do readpixels the texture as a 32x32 image from screen.
+	// The fov_x & fov_y must be 90 degrees for a 32x32 image. We must render a 33x33 image with an adjusted fov.
+	//
+	// IF the REF_CUBEMAP_SIZE is set to 32, then fov angles are calculated like this:
+	//   45 degrees is half of 90 degrees. You can see 45 degrees on either side of the line-of-sight.
+	//   Half a cube is 32/2 pixels = 16 pixels.
+	//   sin(45 degrees) = sqrt(2)/2 = M_SQRT2 * 0.5 = 16 (pixels) / length camera to cubeplane.
+	//   => length camera to cubeplane = 16 / (M_SQRT2 * 0.5)
+	//   => the adjusted fov angle's sine value is: 16+1 pixels / length camera to cubeplane
+	//   sin(adjusted fov) = 17 / (16 / M_SQRT2 * 0.5) = 0.7513009550107067446758971347364 radians
+	//   => adjusted (half) fov angle in degrees is 48.703196634271687046758736224782
+	//   The full fov_x & fov_y is: 97.406393268543374093517472449563 degrees
+	// 1/(sqrt(2)/2) = 1.4142135623730950488016887242097 = sqrt(2)  !
+	const double halfCube = 0.5 * REF_CUBEMAP_SIZE;
+	float angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
+	int i;
+	refdef_t rf;
+	byte *cubeTemp[6];  // 6 textures pixeldata
+	FBO_t *previousFBO;
+	uint32_t pboResults = (1<<5) | (1<<4) | (1<<3) | (1<<2) | (1<<1) | (1<<0); // we must wait for pbo results of all 6 sides
+
+	const renderCubeprobeCommand_t *cmd = (const renderCubeprobeCommand_t *)data;
+
+	// for some unknown reason, cmd is not the same at the end of this function call.. so we backup the values we need later.  TODO: check
+	byte **cmd_pixeldata     = cmd->pixeldata;
+	qboolean cmd_commandOnly = cmd->commandOnly;
+
+	// we can not write to data members from cmd, because it's a constant..
+	// So we look up the probe, and then we can edit the probes properties.
+	cubemapProbe_t *probe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, cmd->cubeprobeIndex);
+
+	// The memory used for storing the 6 cubesides pixeldata read from screen or file.
+	// If we supplied a pointer to the pixeldata (pre allocated memory for each of the 6 sides),
+	// then we store the pixeldata to those addresses.
+	// If the cmd->pixeldata == NULL, we manage the needed memory locally in this function.
+	// cmd->commandOnly tells us if we only want to issue the render command, or that we also want to create the cubemap texture.
+	// If cmd->commandOnly is false, it means we must wait for the results to be ready, before we can make the cubemap.
+	// If cmd->commandOnly is true, we do not need memory to store pixeldata. We send the render-command, and are done here..
+	if (!cmd->commandOnly)
+	{
+		if (cmd->pixeldata)
+		{
+			for (i = 0; i < 6; i++)
+			{
+				cubeTemp[i] = cmd->pixeldata[i];
+			}
+		} else {
+			for (i = 0; i < 6; i++)
+			{
+				cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE);
+			}
+		}
+	}
+
+	// use just the pixels in the middle of the screen to draw to
+	GL_Viewport(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
+	GL_Scissor(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
+
+	GL_CheckErrors();
+
+	previousFBO = glState.currentFBO;
+
+	// render the cubemap
+	Com_Memset(&rf, 0, sizeof(refdef_t));
+	VectorCopy(probe->origin, rf.vieworg);
+	rf.fov_x   = angleFOV;
+	rf.fov_y   = angleFOV;
+	rf.x       = 0;
+	rf.y       = 0;
+	rf.time    = 0;
+	rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
+	rf.width   = REF_CUBEMAP_SIZE+2; // 1 extra pixel around the edges
+	rf.height  = REF_CUBEMAP_SIZE+2; // "
+	for (i = 0; i < 6; i++)
+	{
+
+		switch (i)
+		{
+		case 0:
+			// X+
+			VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[1], 0.f, 0.f, 1.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 1:
+			// X-
+			VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[1], 0.f, 0.f, -1.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 2:
+			// Y+
+			VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, 0.f, 1.f);
+			break;
+		case 3:
+			// Y-
+			VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, 0.f, -1.f);
+			break;
+		case 4:
+			// Z+ up
+			VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 5:
+			// Z- down
+			VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);
+			VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		}
+
+
+
+		// when we are busy rendering a cubemap, the rest of code must know.
+		// Therefor we must always set tr.refdef.renderingCubemap to indicate this.
+		tr.refdef.renderingCubemap = qtrue;
+
+		// create and bind a PBO to where the pixels are drawn
+		probe->pbo[i] = R_CreatePBO(PBO_USAGE_READ, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE);
+		R_SyncPBO(probe->pbo[i]);
+
+//		RE_BeginFrame();
+		RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, and more...)
+		R_BindNullVBO();
+		R_BindNullIBO();
+		backEnd.refdef    = tr.refdef;
+		backEnd.viewParms = tr.viewParms;
+		RB_RenderViewFront();
+		R_InitNextFrame();
+
+		// Read pixels from the screen, and store the pixeldata in cpu memory:
+		// Note the extra pixel around the edges.. +1
+//		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, cubeTemp[i]);
+		// ^^this is the old way of reading pixels into cpu memory
+
+		// If we use a PBO to write to, glReadPixels last argument is a byte-offset into the buffer memory.
+		// When a PBO is bound, the call to glReadPixels will return immediately.
+		// The reading of the pixels is actually done when OpenGL sees fit.
+		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, 0); // pbo address 0
+
+		// Read back the pixels from the PBO immediately:
+		// This means we have to wait for the PBO to be ready.
+		// The last argument to R_ReadPBO must be == true, so the function will wait, before doing the copy from gpu->cpu..
+//!*	(void)R_ReadPBO(probe->pbo[i], cubeTemp[i], qtrue); // wait for this result to be available
+		// That^^ line above waits after every (1 of 6) textures until rendering has finished.
+		// We can also collect the results later, after all sides have been rendered (better said: after the commands to render have been issued).
+
+		R_BindNullPBO(); // unbind this pbo, we're done.
+
+		//!!!DEBUG!!! somehow cmd values are now different than at the start of this function call..  wt (it's a const)
+	}
+
+	// execute only the render command?
+	if (cmd_commandOnly)
+	{
+		// the cubemap is not quite ready yet..
+		probe->cubemap = tr.autoCubeImage; // provide a valid temporary texture for rendering,
+		probe->ready = qfalse;             // but indicate that this cube is not ready
+		goto renderCubeProbe_finish;       // we're done.
+	}
+
+	//!* collect the results, and copy the pixeldata from gpu to cpu.
+	//!* (This is just acting on 6 textures/pbos, but it could be just a jiffie faster on slower systems)
+	while (pboResults)
+	{
+		for (i = 0; i < 6; i++)
+		{
+			if (!probe->pbo[i]->sync) continue;
+			if (!R_PBOResultAvailable(probe->pbo[i])) continue;
+			R_ReadPBO(probe->pbo[i], cubeTemp[i], qfalse);
+			pboResults &= ~(1<<i); // clear bit i
+		}
+	}
+
+	// create the cubemap texture
+	probe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", cmd->cubeprobeIndex), (const byte **)cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
+	if (!probe->cubemap)
+	{   // the cubemap texture could not be created
+		probe->cubemap = tr.autoCubeImage; // provide a valid temporary texture
+		probe->ready = qfalse;             // but indicate this cube is not ready
+		goto renderCubeProbe_finish;
+	}
+	// this cubemap is now ready for render use
+	probe->ready = qtrue;
+
+	// save to file.. by another thread
+//	THR_AddProbeToSave(probe); // TODO: this mechanism needs proper file locking
+
+renderCubeProbe_finish:
+	// free allocated memory
+	// If we passed pointers to where the pixeldata needs to be written to, then we do not free that memory here.
+	// That memory is allocated outside this function, so only free memory allocated by this function.
+	// If cmd_commandOnly was true, we didn't even use memory for pixel transfers.
+	if (!cmd_commandOnly)
+	{
+		if (!cmd_pixeldata)
+		{
+			for (i = 0; i < 6; i++)
+			{
+				if (cubeTemp[i]) ri.Free(cubeTemp[i]);
+			}
+		}
+	}
+
+	// select the full screen again
+	GL_Viewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+	GL_Scissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+
+	R_BindNullPBO();
+	R_BindFBO(previousFBO);
+	GL_CheckErrors();
+
+	// turn off the cubemap rendering indicator
+	tr.refdef.renderingCubemap = qfalse;
+
+	return (const void *)(cmd + 1);
+}
+
+/**
  * @brief RB_Finish
  * @param[in] data
  * @return
@@ -7069,6 +7446,9 @@ void RB_ExecuteRenderCommands(const void *data)
 			break;
 		case RC_RENDERTOTEXTURE:
 			data = RB_RenderToTexture(data);
+			break;
+		case RC_RENDERCUBEPROBE:
+			data = RB_RenderCubeprobe(data);
 			break;
 		case RC_FINISH:
 			data = RB_Finish(data);
