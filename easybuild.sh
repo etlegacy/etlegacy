@@ -405,7 +405,7 @@ parse_commandline() {
 			FEATURE_LUASQL=1
 			FEATURE_PNG=1
 			FEATURE_OMNIBOT=1
-			INSTALL_OMNIBOT=0
+			INSTALL_OMNIBOT=1
 		elif [ "$var" = "-ninja" ]; then
 			einfo "Will use Ninja instead of Unix Makefile"
 			MAKEFILE_GENERATOR=${MAKEFILE_GENERATOR:-Ninja}
