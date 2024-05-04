@@ -3358,6 +3358,7 @@ static void PM_Weapon(void)
 	qboolean delayedFire       = qfalse; // true if the delay time has just expired and this is the frame to send the fire event
 	int      weapattackanim;
 	qboolean akimboFire;
+	int      weaponChargeTime = pm->ps->classWeaponTime;
 #ifdef DO_WEAPON_DBG
 	static int weaponstate_last = -1;
 #endif
@@ -3677,22 +3678,18 @@ static void PM_Weapon(void)
 				return;
 			}
 
-			// ready to fire, handle the charge time
-			if (weaponstateFiring)
+			if (coeff != 1.f)
 			{
-				if (coeff != 1.f)
+				if (pm->cmd.serverTime - weaponChargeTime > chargeTime)
 				{
-					if (pm->cmd.serverTime - pm->ps->classWeaponTime > chargeTime)
-					{
-						pm->ps->classWeaponTime = pm->cmd.serverTime - chargeTime;
-					}
+					weaponChargeTime = pm->cmd.serverTime - chargeTime;
+				}
 
-					pm->ps->classWeaponTime += coeff * chargeTime;
-				}
-				else
-				{
-					pm->ps->classWeaponTime = pm->cmd.serverTime;
-				}
+				weaponChargeTime += coeff * chargeTime;
+			}
+			else
+			{
+				weaponChargeTime = pm->cmd.serverTime;
 			}
 		}
 	}
@@ -4009,6 +4006,9 @@ static void PM_Weapon(void)
 			pm->pmext->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->pmext->weapHeat[pm->ps->weapon];
 		}
 	}
+
+	// handle the charge time
+	pm->ps->classWeaponTime = weaponChargeTime;
 
 	pm->ps->weaponTime += addTime;
 
