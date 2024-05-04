@@ -1735,20 +1735,10 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 	}
 
 	// special reticle for scoped weapon
-	if (GetWeaponTableData(weapnum)->type & WEAPON_TYPE_SCOPED)
+	if (cg.zoomed)
 	{
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
-			// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
-			// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
-			if (VectorLength(cg.snap->ps.velocity) > 127)
-			{
-				if (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SCOPED)
-				{
-					CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
-				}
-			}
-
 			if (
 #ifdef FEATURE_MULTIVIEW
 				cg.mvTotalClients < 1 ||
