@@ -919,7 +919,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 
 			// is it in the blue ignition section of the flame?
 		}
-		else if (isClientFlame && f->blueLife > (lived * 0.5f)) && !cgs.matchPaused) // (lived / 2.0f)
+		else if (isClientFlame && f->blueLife > (lived * 0.5f) && !cgs.matchPaused) // (lived / 2.0f)
 		{
 			skip = qfalse;
 
@@ -1120,7 +1120,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 	// if it's only a nozzle, make it blue
 	if (fHead->ignitionOnly)
 	{
-		trap_R_AddLightToScene(lightOrg, 80.0f, alpha, 0.2f, 0.21f, 0.5.0f, 0, 0);
+		trap_R_AddLightToScene(lightOrg, 80.0f, alpha, 0.2f, 0.21f, 0.5f, 0, 0);
 	}
 	else if (isClientFlame || (fHead->ownerCent == cg.snap->ps.clientNum))
 	{
