@@ -60,6 +60,22 @@ struct dynamicShader
 	dynamicShader_t *next;
 };
 
+dynamicShader_t *dshader;
+
+//shaderTable_t table;
+
+
+// the shader is parsed into these global variables, then copied into
+// dynamically allocated memory if it is valid.
+shaderStage_t stages[MAX_SHADER_STAGES];
+
+texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
+
+// these are only referenced while parsing a shader
+char implicitMap[MAX_QPATH];
+unsigned   implicitStateBits;
+cullType_t implicitCullType;
+
 // scan and load shader files behaviour
 #define R_SCAN_SCRIPTS_FOLDER   0x0001      ///< 1  - scan material in scripts folder
 #define R_SCAN_MATERIAL_FOLDER  0x0002      ///< 2  - scan material in material folder
@@ -70,7 +86,7 @@ char *FindShaderInShaderTextR1(const char *shaderName);
 qboolean ParseShaderR1(char *_text);
 
 // tr_shader.c
-void GeneratePermanentShaderTable(float *values, int numValues);
+//void GeneratePermanentShaderTable(float *values, int numValues);
 void ParseStencil(char **text, stencil_t *stencil);
 void ParseWaveForm(char **text, waveForm_t *wave);
 qboolean ParseTexMod(char **text, shaderStage_t *stage);
