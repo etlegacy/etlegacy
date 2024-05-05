@@ -1260,6 +1260,7 @@ void SetPlaneSignbits(struct cplane_s *out)
 	}
 	out->signbits = bits;
 }
+#endif
 
 /*
  * @brief BoxOnPlaneSide2
@@ -2470,9 +2471,9 @@ void vec3_norm2_void(const vec3_t v, vec3_t out)
 void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
 {
 #ifndef ETL_SSE
-	out[0] = veca[0] + scale * vecb[0];
-	out[1] = veca[1] + scale * vecb[1];
-	out[2] = veca[2] + scale * vecb[2];
+	vecc[0] = veca[0] + scale * vecb[0];
+	vecc[1] = veca[1] + scale * vecb[1];
+	vecc[2] = veca[2] + scale * vecb[2];
 #else
 	__m128 xmm1, xmm2, xmm3, xmm4;
 	xmm1 = _mm_load_ss(&scale);
