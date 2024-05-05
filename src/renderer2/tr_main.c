@@ -64,7 +64,7 @@ const mat4_t openGLToQuakeMatrix =
 };
 
 /**
- * @var openGLToQuakeMatrix
+ * @var quakeToD3DMatrix
  * @brief convert from our right handed coordinate system (looking down X)
  * to D3D's left handed coordinate system (looking down Z)
  */
@@ -1602,17 +1602,17 @@ static void SetFarClip(void)
 	
 	// update the zFar distance whenever the global fog's density is covering the world completely.
 	// Otherwise we'd see the world suddenly pop up because the world is clipped before the fog is dense enough.
-/*
-// this is clipping when the fog is not at max => you see a "wall", the background color.
-	if (tr.world != NULL && tr.world->globalFog >= 0
-		&& tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque > 1.f // the fogparms must have a distance supplied (no value <1)
-		&& tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque > tr.viewParms.zNear
-		&& tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque < tr.viewParms.zFar
-		)
-	{
-		tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
+
+	// this is clipping when the fog is not at max => you see a "wall", the background color.
+	if (tr.world != NULL && tr.world->globalFog >= 0) {
+		float dfo = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
+		if (dfo >= 1.f // the fogparms must have a distance supplied (no value <1)
+			&& dfo > tr.viewParms.zNear && dfo < tr.viewParms.zFar) // and the depthForOpaque must be inside the view
+		{
+			tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
+		}
 	}
-*/
+
 }
 
 // *INDENT-OFF*
@@ -3573,9 +3573,6 @@ void R_RenderView(viewParms_t *parms)
 	// matrix for lod calculation
 	R_SetupProjection(qfalse);
 
-	// This will handle any transition from one fog to another fog.
-//! 	R_SetFrameFog();
-
 	R_SetupUnprojection();
 
 	// set camera frustum planes in world space again, but this time including the far plane
@@ -3593,8 +3590,8 @@ void R_RenderView(viewParms_t *parms)
 
 	R_AddEntitySurfaces();
 
-// This will handle any transition from one fog to another fog.
-R_SetFrameFog();
+	// This will handle any transition from one fog to another fog.
+	R_SetFrameFog();
 
 	R_AddLightInteractions();
 
@@ -3675,7 +3672,7 @@ void R_RenderSimpleView(viewParms_t *parms)
 	R_SetupProjection(qfalse);
 
 	// This will handle any transition from one fog to another fog.
- 	R_SetFrameFog(); // we must render with fog, or else the reflections are too colorful for a fogged world..
+	R_SetFrameFog(); // we must render with fog, or else the reflections are too colorful for a fogged world..
 
 	R_SetupUnprojection();
 

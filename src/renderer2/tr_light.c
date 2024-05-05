@@ -1829,38 +1829,27 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	int       i;
 	int       cubeSide;
 	byte      cubeSideBits;
-	float     xMin, xMax, yMin, yMax;
-	float     width, height, depth;
+//!	float     xMin, xMax, yMin, yMax;
+//!	float     width, height, depth;
+//!	float     fovX, fovY;
+//!	float     *proj;
+//!	vec3_t    angles;
+//!	mat4_t    tmpMatrix, projectionMatrix, rotationMatrix, transformMatrix, viewProjectionMatrix, viewMatrix, *rotMatrix, *rotMatrix_r;
+	mat4_t    tmpMatrix, projectionMatrix, viewProjectionMatrix, *rotMatrix, *rotMatrix_r;
+	float     depth;
 	float     zNear, zFar;
-	float     fovX, fovY;
-	float     *proj;
-	vec3_t    angles;
-	mat4_t    tmpMatrix, projectionMatrix, rotationMatrix, transformMatrix, viewProjectionMatrix;
-//	mat4_t    *rotMatrix, *rotMatrix_r, viewMatrix;
 	frustum_t frustum;
 	cplane_t  *clipPlane;
 	int       r;
 	qboolean  anyClip;
 	qboolean  culled;
 
-#if 0
-	static int count = 0;
-	cubeSideBits = 0;
-	for (cubeSide = 0; cubeSide < 6; cubeSide++)
-	{
-		if (count % 2 == 0)
-		{
-			cubeSideBits |= (1 << cubeSide);
-		}
-	}
-	return cubeSideBits;
-#endif
-
 	if (light->l.rlType != RL_OMNI || r_shadows->integer < SHADOWING_EVSM32 || r_noShadowPyramids->integer)
 	{
 		return CUBESIDE_CLIPALL;
 	}
-#if 1
+
+#if 0
 	cubeSideBits = 0;
 	for (cubeSide = 0; cubeSide < 6; cubeSide++)
 	{
@@ -1925,55 +1914,85 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	Vector4Set(&viewMatrix[4], -tmpMatrix[5], tmpMatrix[6], -tmpMatrix[4], tmpMatrix[7]);
 	Vector4Set(&viewMatrix[8], -tmpMatrix[9], tmpMatrix[10], -tmpMatrix[8], tmpMatrix[11]);
 	Vector4Set(&viewMatrix[12], -tmpMatrix[13], tmpMatrix[14], -tmpMatrix[12], tmpMatrix[15]);*/
+
+
+		// OpenGL projection matrix
+		// 
+		// tan(90 degrees) is always the same constant, zNear is always 1  =>  keep it simple..(for the computer)
+		fovX = 90.0f;
+		fovY = 90.0f; // R_CalcFov(fovX, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
+
+		zNear = 1.0f;
+		zFar = light->sphereRadius;
+
+		// tangent of 90 degrees is undefined.. but we need tan(fov/2) anyway.
+		// tan(45 degrees) = 1
+		xMax = zNear; // *tan(DEG2RAD(fovX * 0.5f));
+		xMin = -xMax;
+
+		yMax = zNear; // *tan(DEG2RAD(fovY * 0.5f));
+		yMin = -yMax;
+
+		width = xMax - xMin;
+		height = yMax - yMin;
+		depth = zFar - zNear;
+
+		proj = projectionMatrix;
+		//		proj[0] = (2 * zNear) / width;  proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
+		//		proj[1] = 0;                    proj[5] = (2 * zNear) / height; proj[9] = (yMax + yMin) / height;   proj[13] = 0;
+		//		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -(zFar + zNear) / depth; proj[14] = -(2 * zFar * zNear) / depth;
+		//		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
+		float rW = 1.0f / width, rH = 1.0f / height, rD = 1.0f / depth, zN2 = 2.0f * zNear;
+		proj[0] = zN2 * rW;   proj[4] = 0.0f;       proj[8] = (xMax + xMin) * rW;      proj[12] = 0.0f;
+		proj[1] = 0.0f;       proj[5] = zN2 * rH;   proj[9] = (yMax + yMin) * rH;      proj[13] = 0.0f;
+		proj[2] = 0.0f;       proj[6] = 0.0f;       proj[10] = -(zFar + zNear) * rD;   proj[14] = -(zFar * zN2) * rD;
+		proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  proj[15] = 0.0f;
+
 #else
 	cubeSideBits = 0;
 	for (cubeSide = 0; cubeSide < 6; cubeSide++)
 	{
+		// Quake -> OpenGL view matrix from light perspective
 		switch (cubeSide)
 		{
 		case 0:
 		{
-			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_0_0, light->origin);
 			rotMatrix = &rotMatrix_0_0_0;
 			rotMatrix_r = &rotMatrix_0_0_0_r;
 			break;
 		}
 		case 1:
 		{
-			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_180_0, light->origin);
 			rotMatrix = &rotMatrix_0_180_0;
 			rotMatrix_r = &rotMatrix_0_180_0_r;
 			break;
 		}
 		case 2:
 		{
-			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_90_0, light->origin);
 			rotMatrix = &rotMatrix_0_90_0;
 			rotMatrix_r = &rotMatrix_0_90_0_r;
 			break;
 		}
 		case 3:
 		{
-			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_270_0, light->origin);
 			rotMatrix = &rotMatrix_0_270_0;
 			rotMatrix_r = &rotMatrix_0_270_0_r;
 			break;
 		}
 		case 4:
 		{
-			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_m90_0_0, light->origin);
 			rotMatrix = &rotMatrix_m90_0_0;
 			rotMatrix_r = &rotMatrix_m90_0_0_r;
 			break;
 		}
 		case 5:
 		{
-			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_90_0_0, light->origin);
 			rotMatrix = &rotMatrix_90_0_0;
 			rotMatrix_r = &rotMatrix_90_0_0_r;
 			break;
 		}
 		}
+		// MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_x_x, light->origin);
 		Vector4Copy((float *)&rotMatrix_r[0], &tmpMatrix[0]);
 		Vector4Copy((float *)&rotMatrix_r[4], &tmpMatrix[4]);
 		Vector4Copy((float *)&rotMatrix_r[8], &tmpMatrix[8]);
@@ -1981,42 +2000,21 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		Dot(rotMatrix[4], light->origin, tmpMatrix[13]);  tmpMatrix[13] = -tmpMatrix[13];
 		Dot(rotMatrix[8], light->origin, tmpMatrix[14]);  tmpMatrix[14] = -tmpMatrix[14];
 		tmpMatrix[15] = 1.0f;
-#endif
+
 		// OpenGL projection matrix
-
-// tan(90 degrees) is always the same constant, zNear is always 1  =>  keep it simple..(for the computer)
-
-		fovX = 90.0f;
-		fovY = 90.0f; //R_CalcFov(fovX, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
-
 		zNear = 1.0f;
-		zFar  = light->sphereRadius;
-
-		xMax = zNear * tan(DEG2RAD(fovX));
-		xMin = -xMax;
-
-		yMax = zNear * tan(DEG2RAD(fovY));
-		yMin = -yMax;
-
-		width  = xMax - xMin;
-		height = yMax - yMin;
-		depth  = zFar - zNear;
-
-		proj    = projectionMatrix;
-//		proj[0] = (2 * zNear) / width;  proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
-//		proj[1] = 0;                    proj[5] = (2 * zNear) / height; proj[9] = (yMax + yMin) / height;   proj[13] = 0;
-//		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -(zFar + zNear) / depth; proj[14] = -(2 * zFar * zNear) / depth;
-//		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
-float rW = 1.0f / width, rH = 1.0f / height, rD = 1.0f / depth, zN2 = 2.0f * zNear;
-proj[0] = zN2 * rW;   proj[4] = 0.0f;       proj[8] = (xMax + xMin) * rW;      proj[12] = 0.0f;
-proj[1] = 0.0f;       proj[5] = zN2 * rH;   proj[9] = (yMax + yMin) * rH;      proj[13] = 0.0f;
-proj[2] = 0.0f;       proj[6] = 0.0f;       proj[10] = -(zFar + zNear) * rD;   proj[14] = -(zFar * zN2) * rD;
-proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  proj[15] = 0.0f;
+		zFar = light->sphereRadius;
+		depth = zFar - zNear;
+		float rD = 1.0f / depth;
+		Vector4Set(&projectionMatrix[0], 1.0f, 0.0f, 0.0f, 0.0f);
+		Vector4Set(&projectionMatrix[4], 0.0f, 1.0f, 0.0f, 0.0f);
+		Vector4Set(&projectionMatrix[8], 0.0f, 0.0f, -(zFar + zNear) * rD, -(zFar * 2.0f) * rD);
+		Vector4Set(&projectionMatrix[12], 0.0f, 0.0f, -1.0f, 0.0f);
+#endif
+//		Matrix4Multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
+		Matrix4Multiply(projectionMatrix, tmpMatrix, viewProjectionMatrix);
 
 		// calculate frustum planes using the modelview projection matrix
-//		Matrix4Multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
-Matrix4Multiply(projectionMatrix, tmpMatrix, viewProjectionMatrix);
-
 		R_SetupFrustum2(frustum, viewProjectionMatrix);
 
 		// use the frustum planes to cut off shadowmaps beyond the light volume
@@ -2068,7 +2066,7 @@ Matrix4Multiply(projectionMatrix, tmpMatrix, viewProjectionMatrix);
 
 
 #if 0
-// sse version
+// sse version (old, probably not working)
 byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 {
 	int       i;

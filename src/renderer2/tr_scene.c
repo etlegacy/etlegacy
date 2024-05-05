@@ -679,23 +679,32 @@ void RE_RenderScene(const refdef_t *fd)
 	// Note: The waterfogvars are registered as FOG_WATER, but the globalfog is not registered as the FOG_MAP
 	if (tr.glfogsettings[FOG_WATER].registered && tr.world->globalFog >= 0) //tr.glfogsettings[FOG_MAP].registered)
 	{
-		if (!(tr.refdef.rdflags & RDF_UNDERWATER) && (fd->rdflags & RDF_UNDERWATER)) // entering the water
+		// entering the water?
+		if (!(tr.refdef.rdflags & RDF_UNDERWATER) && (fd->rdflags & RDF_UNDERWATER))
 		{
-			// with old code, this was crashing with an exception.  UPDATE: no longer crashes.. but it doesn't do what it's supposed to do.
-			// if you use a duration of 0, things go wrong.. TODO
-			RE_SetGlobalFog(qfalse, 10, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2], tr.glfogsettings[FOG_WATER].end); // .density);
+//@			RE_SetGlobalFog(qfalse, 0, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2], tr.glfogsettings[FOG_WATER].end); // .density);
+//RE_SetGlobalFog(qfalse, 0, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2], tr.glfogsettings[FOG_WATER].color[3]);
+//RE_SetGlobalFog_(qfalse, FOG_WATER);
+//RE_SetFog(FOG_CMD_SWITCHFOG, FOG_WATER, 0, 0, 0, 0, 0);
 			// adjust the density for underwater
-			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalOriginalFog[3];
+/*
+tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalOriginalFog[3];
 //			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque); // 8 times as dense as the globalfog (the true density)
 			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 0.125f); // 8 times as dense as the globalfog
+*/
 		}
-		else if ((tr.refdef.rdflags & RDF_UNDERWATER) && !(fd->rdflags & RDF_UNDERWATER)) // exiting the water
+		// exiting the water?
+		else if ((tr.refdef.rdflags & RDF_UNDERWATER) && !(fd->rdflags & RDF_UNDERWATER))
 		{
-			RE_SetGlobalFog(qtrue, 10, 0, 0, 0, 0); // restore the fog
+//RE_SetGlobalFog(qtrue, 0, 0, 0, 0, 0); // restore the fog
+//RE_SetGlobalFog_(qtrue, -1);
+//RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 0, 0, 0, 0, 0);
 			// restore the density
+/*
 			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalOriginalFog[3];
 //			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8.f); // this is a hack..
 			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
+*/
 		}
 	}
 

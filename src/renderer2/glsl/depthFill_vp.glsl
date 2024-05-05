@@ -12,26 +12,29 @@
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
 attribute vec4 attr_TexCoord0;
+if defined(USE_TCGEN_LIGHTMAP)
+	attribute vec4 attr_TexCoord1;
+#endif
 attribute vec4 attr_Color;
 #if defined(USE_VERTEX_ANIMATION)
-attribute vec4 attr_Position2;
-attribute vec3 attr_Normal2;
+	attribute vec4 attr_Position2;
+	attribute vec3 attr_Normal2;
 #endif // USE_VERTEX_ANIMATION
 
 uniform mat4  u_ModelViewProjectionMatrix;
 uniform mat4  u_ColorTextureMatrix;
 #if defined(USE_VERTEX_ANIMATION)
-uniform float u_VertexInterpolation;
+	uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
 #if defined(USE_DEFORM_VERTEXES)
-uniform int   u_DeformGen;
-uniform vec4  u_DeformWave;         // [base amplitude phase freq]
-uniform vec3  u_DeformBulge;        // [width height speed]
-uniform float u_DeformSpread;
-uniform float u_Time;
+	uniform int   u_DeformGen;
+	uniform vec4  u_DeformWave;         // [base amplitude phase freq]
+	uniform vec3  u_DeformBulge;        // [width height speed]
+	uniform float u_DeformSpread;
+	uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 #if defined(USE_TCGEN_ENVIRONMENT)
-uniform vec3  u_ViewOrigin;
+	uniform vec3  u_ViewOrigin;
 #endif // USE_TCGEN_ENVIRONMENT
 
 varying vec4 var_Color;
@@ -70,15 +73,13 @@ void main()
 	// transform texcoords
 	vec4 texCoord;
 #if defined(USE_TCGEN_ENVIRONMENT)
-	{
-		vec3 viewer = normalize(u_ViewOrigin - position.xyz);
-		float d = dot(attr_Normal, viewer);
-		vec3 reflected = attr_Normal * 2.0 * d - viewer;
-		texCoord.s = 0.5 + reflected.y * 0.5;
-		texCoord.t = 0.5 - reflected.z * 0.5;
-		texCoord.q = 0;
-		texCoord.w = 1;
-	}
+	vec3 viewer = normalize(u_ViewOrigin - position.xyz);
+	float d = dot(attr_Normal, viewer);
+	vec3 reflected = attr_Normal * 2.0 * d - viewer;
+	texCoord.s = 0.5 + reflected.y * 0.5;
+	texCoord.t = 0.5 - reflected.z * 0.5;
+	texCoord.q = 0;
+	texCoord.w = 1;
 #elif defined(USE_TCGEN_LIGHTMAP)
 	texCoord = attr_TexCoord1;
 #else

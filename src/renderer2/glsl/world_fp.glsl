@@ -9,6 +9,7 @@
 uniform bool SHOW_LIGHTMAP;
 //uniform bool SHOW_DELUXEMAP;
 
+//uniform mat4 u_ModelMatrix;
 #if defined(USE_LIGHT_MAPPING)
 	uniform sampler2D u_LightMap;
 #endif // USE_LIGHT_MAPPING
@@ -48,6 +49,7 @@ uniform bool SHOW_LIGHTMAP;
 
 varying vec3 var_Position;
 varying vec4 var_Color;
+varying vec3 var_Normal;
 #if defined(USE_LIGHT_MAPPING)
 	varying vec2 var_TexLight;
 #endif // USE_LIGHT_MAPPING
@@ -56,6 +58,7 @@ varying vec4 var_Color;
 	#if defined(USE_NORMAL_MAPPING)
 		varying mat3 var_tangentMatrix;          // world to tangent space
 		varying mat3 var_worldMatrix;			 // tangent to world space
+		varying vec3 var_LightDirW;              // in worldspace
 		varying vec3 var_LightDirT;              // light direction in tangent space, normalized
 		varying vec3 var_ViewDirT;               // view direction in tangentspace
 		#if defined(USE_PARALLAX_MAPPING)
@@ -107,7 +110,7 @@ void main() {
 	vec3 V = normalize(var_ViewDirT);
 
 	// the light direction
-	vec3 L = -var_LightDirT;
+	vec3 L = var_LightDirT;
 
 #if defined(USE_PARALLAX_MAPPING)
 	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, V, L, u_DepthScale, var_distanceToCam, u_ParallaxShadow, lightmapColor.rgb);
@@ -162,24 +165,24 @@ void main() {
 	// the final normal in tangentspace
 	vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
-	// the angle between the normal- & light-direction (needs normalized vectors to return the cosine of the angle)
-	float dotNL = dot(N, L);
-
+#if defined(USE_DIFFUSE)
 	// compute the diffuse light term
-	diffuse.rgb *= computeDiffuseLighting(dotNL, u_DiffuseLighting);
+//	vec3 NW = (u_ModelMatrix * vec4(N, 1.0)).xyz;
+//	diffuse.rgb *= computeDiffuseLighting(NW, var_LightDirW, u_DiffuseLighting);
+	diffuse.rgb *= computeDiffuseLighting(N, L, u_DiffuseLighting);
+#endif
 
 
-	// compute the specular term (and reflections)
+	// compute the specular term
 #if defined(USE_SPECULAR)
-	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
-//vec3 specular = computeSpecular(V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
-	specular *= texture2D(u_SpecularMap, texDiffuse).rgb;
+	vec3 specular = computeSpecular(V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
+	specular *= texture2D(u_SpecularMap, texDiffuse).rgb; // scale by specularmap
+	specular *= lightmapColor.rgb; // scale according to the lightmap intensity. There's no specular in the shadow.
 #endif // USE_SPECULAR
 
 
 // we only render reflections in the lightmap shader , when there's a reflectionmap.
 #if defined(USE_REFLECTIONS)
-//	vec3 reflections = computeReflections(var_ViewDirW, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
 	vec3 reflections = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
 #if defined(USE_REFLECTIONMAP)
 	reflections *= texture2D(u_ReflectionMap, texDiffuse).rgb;

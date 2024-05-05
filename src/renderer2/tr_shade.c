@@ -496,7 +496,7 @@ void SetLightUniforms(qboolean setLightColor)
  * @brief Render_generic
  * @param[in] stage
  *
- * This function is only called for stage.type: ST_COLORMAP, ST_LIGHTMAP, ST_DIFFUSEMAP, ST_BUNDLE_DB, ST_BUNDLE_DBS
+ * This function is only called for stage.type: ST_COLORMAP, ST_LIGHTMAP, ST_TCGENENVMAP, ST_DIFFUSEMAP, ST_BUNDLE_DB, ST_BUNDLE_DBS
 */
 static void Render_generic(int stage)
 {
@@ -536,6 +536,8 @@ static void Render_generic(int stage)
 	                          USE_TCGEN_ENVIRONMENT, use_tcgenEnv,
 	                          USE_TCGEN_LIGHTMAP, pStage->tcGen_Lightmap);
 	// end choose right shader program ------------------------------
+
+	GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
 
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
@@ -587,8 +589,6 @@ static void Render_generic(int stage)
 	SelectTexture(TEX_COLOR);
 	BindAnimatedImage(&pStage->bundle[TB_COLORMAP]);
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrix);
-
-	GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
 	Tess_DrawElements();
 
@@ -902,45 +902,44 @@ static void Render_vertexLighting_DBS_world(int stage)
  *
  * This function is only called for stage.type: ST_DIFFUSEMAP, ST_BUNDLE_DB, ST_BUNDLE_DBS, ST_BUNDLE_DBSR
  * It can render the surface with a lightmap.
+ * It can also render only the lightmap, which is needed because there are also vertex-lit lightmapped parts in the world.
 */
-static void Render_world(int stage, qboolean use_lightMapping)
+static void Render_world(int stage, qboolean use_lightMapping, qboolean onlyLightmap)
 {
 	rgbaGen_t rgbaGen;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 	uint32_t stateBits = pStage->stateBits;
-	qboolean use_diffuse         = pStage->bundle[TB_DIFFUSEMAP].image[0] != NULL;
-	qboolean use_alphaTesting    = use_diffuse && (pStage->stateBits & GLS_ATEST_BITS);
-	qboolean use_deforms;
-	qboolean use_normalMapping;
-	qboolean use_parallaxMapping;
+	qboolean use_diffuse = qfalse;;
+	qboolean use_alphaTesting = qfalse;;
+	qboolean use_deforms = qfalse;;
+	qboolean use_normalMapping = qfalse;;
+	qboolean use_parallaxMapping = qfalse;;
 	//qboolean use_deluxeMapping;
-	qboolean use_specular;
-	qboolean use_reflections;
+	qboolean use_specular = qfalse;;
+	qboolean use_reflections = qfalse;;
 	// tr.refdef.renderingCubemap is to prevent using reflections before buildcubemaps() has finished.
-	qboolean use_reflectionmap;
+	qboolean use_reflectionmap = qfalse;;
 	// for now we pass USE_REFLECTIONS & USE_REFLECTIONMAP, but the lightmapping shader will only reflect when there's a reflectionmap assigned.
 
-	if (tr.refdef.renderingCubemap)
-	{
-		use_deforms = qfalse;
-		use_normalMapping = qfalse;
-		use_parallaxMapping = qfalse;
-		use_specular = qfalse;
-		use_reflections = qfalse;
-		use_reflectionmap = qfalse;
-	} else {
-		use_deforms         = tess.surfaceShader->numDeforms > 0; // && !ShaderRequiresCPUDeforms(tess.surfaceShader)
-		use_normalMapping   = use_diffuse && r_normalMapping->integer && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DB || pStage->type == ST_BUNDLE_DBSR);
-		use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
-		use_specular        = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
-		use_reflections     = use_normalMapping && r_reflectionMapping->integer &&
-								pStage->type == ST_BUNDLE_DBSR &&
-								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
-		use_reflectionmap   = use_reflections && (pStage->type == ST_BUNDLE_DBSR);
+	if (!onlyLightmap) {
+		use_diffuse = pStage->bundle[TB_DIFFUSEMAP].image[0] != NULL;
+		use_alphaTesting = use_diffuse && (pStage->stateBits & GLS_ATEST_BITS);
+		if (!tr.refdef.renderingCubemap)
+		{
+			use_deforms = tess.surfaceShader->numDeforms > 0; // && !ShaderRequiresCPUDeforms(tess.surfaceShader)
+			use_normalMapping = use_diffuse && r_normalMapping->integer && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DB || pStage->type == ST_BUNDLE_DBSR);
+			use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
+			use_specular = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
+			use_reflections = use_normalMapping && r_reflectionMapping->integer &&
+				pStage->type == ST_BUNDLE_DBSR &&
+				tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
+			use_reflectionmap = use_reflections && (pStage->type == ST_BUNDLE_DBSR);
 
-		// this has to be done before SetMacrosAndSelectProgram()..
-		R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+			// this has to be done before SetMacrosAndSelectProgram()..
+			R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+		}
 	}
+
 
 	Ren_LogComment("--- Render_world ---\n");
 
@@ -991,96 +990,100 @@ static void Render_world(int stage, qboolean use_lightMapping)
 		clipPortalPlane();
 	}
 
-	// USE_ALPHA_TESTING
-	if (use_alphaTesting)
-	{
-		GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	}
+	if (!onlyLightmap) {
 
-	// USE_DEFORM_VERTEXES
-	if (use_deforms)
-	{
-		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
-	}
-
-	// bind diffuse texture
-	// sometimes the ST_LIGHTMAP stage has no diffusemap.
-	if (use_diffuse) {
-		SelectTexture(TEX_DIFFUSE);
-		GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
-		SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrix);
-
-		// render the texture(map)s
-		if (use_normalMapping)
+		// USE_ALPHA_TESTING
+		if (use_alphaTesting)
 		{
-			SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value);
+			GLSL_SetUniform_AlphaTest(pStage->stateBits);
+		}
 
-			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+		// USE_DEFORM_VERTEXES
+		if (use_deforms)
+		{
+			GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
+			SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
+		}
 
-			//SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
-			SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
-			SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight);
+		// bind diffuse texture
+		// sometimes the ST_LIGHTMAP stage has no diffusemap.
+		if (use_diffuse) {
+			SelectTexture(TEX_DIFFUSE);
+			GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
+			SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrix);
 
-			// USE_PARALLAX_MAPPING
-			if (use_parallaxMapping)
+			// render the texture(map)s
+			if (use_normalMapping)
 			{
-				SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
-				// parallax self shadowing
-				SetUniformFloat(UNIFORM_PARALLAXSHADOW, r_parallaxShadow->value);
-			}
+				SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value);
 
-			// bind u_NormalMap
-			SelectTexture(TEX_NORMAL);
-			GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
+				SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 
-			// the scale of the bumps
-			SetUniformFloat(UNIFORM_BUMPSCALE, r_bumpScale->value);
+				//SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
+				SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
+				SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight);
 
-			// USE_SPECULAR
-			if (use_specular)
-			{
-				// when underwater we use plenty of specular, so it looks wet
-				if (tr.refdef.rdflags & RDF_UNDERWATER)
+				// USE_PARALLAX_MAPPING
+				if (use_parallaxMapping)
 				{
-					SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value * 5.f);
-					SetUniformFloat(UNIFORM_SPECULAREXPONENT, 64.f); //r_specularExponentWorld->value * 0.25f);
-				} else {
-					SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
-					SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
+					SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
+					// parallax self shadowing
+					SetUniformFloat(UNIFORM_PARALLAXSHADOW, r_parallaxShadow->value);
 				}
 
-				// the specularmap
-				SelectTexture(TEX_SPECULAR);
-				GL_Bind(pStage->bundle[TB_SPECULARMAP].image[0]);
-			}
+				// bind u_NormalMap
+				SelectTexture(TEX_NORMAL);
+				GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
 
-			// USE_REFLECTIONS
-			if (use_reflections) //the lightmap shader only renders reflections if there's a reflectionmap
-			{
-				SetUniformFloat(UNIFORM_REFLECTIONSCALE, r_reflectionScale->value);
+				// the scale of the bumps
+				SetUniformFloat(UNIFORM_BUMPSCALE, r_bumpScale->value);
 
-				// bind u_EnvironmentMap0
-				SelectTexture(TEX_ENVMAP0);
-				GL_Bind(tr.reflectionData.env0);
-				// bind u_EnvironmentMap1
-				SelectTexture(TEX_ENVMAP1);
-				GL_Bind(tr.reflectionData.env1);
-				// u_EnvironmentInterpolation
-				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, tr.reflectionData.interpolate);
-
-				if (use_reflectionmap)
+				// USE_SPECULAR
+				if (use_specular)
 				{
-					// bind u_ReflectionMap
-					SelectTexture(TEX_REFLECTION);
-					GL_Bind(pStage->bundle[TB_REFLECTIONMAP].image[0]);
-				}
-			}
+					// when underwater we use plenty of specular, so it looks wet
+					if (tr.refdef.rdflags & RDF_UNDERWATER)
+					{
+						SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value * 5.f);
+						SetUniformFloat(UNIFORM_SPECULAREXPONENT, 16.f); //r_specularExponentWorld->value * 0.25f);
+					}
+					else {
+						SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
+						SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
+					}
 
-			//if (use_deluxeMapping) {
-			//	SelectTexture(TEX_DELUXE);
-			//	BindDeluxeMap(pStage);
-			//}
+					// the specularmap
+					SelectTexture(TEX_SPECULAR);
+					GL_Bind(pStage->bundle[TB_SPECULARMAP].image[0]);
+				}
+
+				// USE_REFLECTIONS
+				if (use_reflections) //the lightmap shader only renders reflections if there's a reflectionmap
+				{
+					SetUniformFloat(UNIFORM_REFLECTIONSCALE, r_reflectionScale->value);
+
+					// bind u_EnvironmentMap0
+					SelectTexture(TEX_ENVMAP0);
+					GL_Bind(tr.reflectionData.env0);
+					// bind u_EnvironmentMap1
+					SelectTexture(TEX_ENVMAP1);
+					GL_Bind(tr.reflectionData.env1);
+					// u_EnvironmentInterpolation
+					SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, tr.reflectionData.interpolate);
+
+					if (use_reflectionmap)
+					{
+						// bind u_ReflectionMap
+						SelectTexture(TEX_REFLECTION);
+						GL_Bind(pStage->bundle[TB_REFLECTIONMAP].image[0]);
+					}
+				}
+
+				//if (use_deluxeMapping) {
+				//	SelectTexture(TEX_DELUXE);
+				//	BindDeluxeMap(pStage);
+				//}
+			}
 		}
 	}
 
@@ -2176,7 +2179,11 @@ static void Render_liquid(int stage)
 
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 	GLSL_SetUniform_ColorModulate(trProg.gl_liquidShader, rgbaGen.color, rgbaGen.alpha);
-	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
+
+	
+	SetUniformVec4(UNIFORM_COLOR, tess.svars.color); // what color is this? :)  the fog stage 'color'
+//	SetUniformVec4(UNIFORM_COLOR, tr.glfogsettings[FOG_WATER].color); // vec4 (r,g,b,density)
+
 
 	// portal plane
 	if (backEnd.viewParms.isPortal)
@@ -2184,11 +2191,43 @@ static void Render_liquid(int stage)
 		clipPortalPlane();
 	}
 
+
+#if 0
 	// this is the fog displayed on the watersurface only (not any underwater fog, nor world fog)
+	glfog_t waterfog = tr.glfogsettings[FOG_WATER];
+	if (waterfog.registered) {
+		if (waterfog.density == 1.0) { // distance fog
+//			waterfog.end // the far distance
+		}
+		else { // density fog
+			// waterfog.density is a value in the range [0.0 to 1.0]
+			// we will use the world boundingbox to get the far distance.
+			if (tr.world && tr.world->globalFog >= 0) {
+				fog_t globalFog = tr.world->fogs[tr.world->globalFog];
+				float maxDist = max(max(globalFog.bounds[1][0] - globalFog.bounds[0][0], globalFog.bounds[1][1] - globalFog.bounds[0][1]), globalFog.bounds[1][2] - globalFog.bounds[0][2]);
+				// this fog will have a density that is a percentage of the globalfog (which should be at 100% density at its 'end').
+				waterfog.end = maxDist * waterfog.density;
+				// now that this fog is converted from density to distance fog, we set the density to 1.
+				waterfog.density = 1.0;
+			}
+			else {
+				// there is no global fog
+			}
+		}
+	}
+	else {
+		// disable the fog in the liquid shader
+		SetUniformFloat(UNIFORM_FOGDENSITY, 0.0);
+		//vec3_t nothing = { 0.0, 0.0, 0.0 };
+		//SetUniformVec3(UNIFORM_FOGCOLOR, nothing);
+	}
+#endif
+
+
 	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
 	if (fogDensity > 0.0)
 	{
-		SetUniformVec3(UNIFORM_FOGCOLOR, tess.svars.color);
+		SetUniformVec3(UNIFORM_FOGCOLOR, tess.svars.color); // UNIFORM_FOGCOLOR is a vec3
 		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 		// bind u_DepthMap
@@ -2384,7 +2423,7 @@ static void Render_fog_brushes()
 		eyeT = 1.f; // non-surface fog always has eye inside (viewpoint is outside when eyeT < 0)
 	}
 
-//	fogDistanceVector[3] += 0.001953125f; // 1.0 / 512.0; // is this optimized with current compiler settings?..  1/(depth*8)?
+//	fogDistanceVector[3] += 0.001953125f; // 1.0 / 512.0; //  1/(depth*8)?
 //!!!DEBUG!!! test: what is ^^that^^ doing?..
 
 	if (tess.surfaceShader->fogPass == FP_EQUAL)
@@ -3160,9 +3199,9 @@ void Tess_StageIteratorGeneric()
 				if (isWorld)
 				{
 					// if there is no ST_LIGHTMAP stage, but a lightmapNum is given: render as lightmapped.
-					// if an ST_LIGHTMAP stage does exist in this shader, then now render this diffuse stage vertex lit.
+					// if an ST_LIGHTMAP stage does exist in this shader, then now render this diffuse stage vertex lit (in the ST_LIGHTMAP stage).
 					qboolean renderLightmap = (!tess.surfaceShader->has_lightmapStage) && has_lightmap;
-					Render_world(stage, renderLightmap);
+					Render_world(stage, renderLightmap, qfalse); // render lightmapped world
 				}
 				else // this is an entity
 				{
@@ -3173,7 +3212,9 @@ void Tess_StageIteratorGeneric()
 		case ST_LIGHTMAP:
 			if (has_lightmap)
 			{ // in Oasis this is the terrain lightmap
-				Render_world(stage, qtrue); // because this stage is only the ST_LIGHTMAP, no normalmapping or more stuff is used for rendering.
+				// Note: this should render ONLY the lightmap! not the textured world
+				// Because this stage is only the ST_LIGHTMAP, no normalmapping or more stuff is used for rendering.
+				Render_world(stage, qtrue, qtrue); // render only the lightmap
 			}
 			else // LIGHTMAP_BY_VERTEX. Render only the vertex-colors.
 			{    // Because we use the generic shader for this, which needs a color map, we pass a whiteImage

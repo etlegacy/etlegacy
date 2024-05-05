@@ -6,6 +6,7 @@
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 
+uniform vec4 u_Color;
 // fog
 uniform sampler2D u_DepthMap;
 uniform mat4      u_UnprojectMatrix;
@@ -29,13 +30,9 @@ uniform sampler2D u_CurrentMap;
 	// reflection
 	#if defined(USE_REFLECTIONS)
 		uniform float       u_ReflectionScale;
-		#if 1
-			uniform samplerCube u_EnvironmentMap0;
-			uniform samplerCube u_EnvironmentMap1;
-			uniform float       u_EnvironmentInterpolation;
-		#else // 1
-			uniform samplerCube u_PortalMap;
-		#endif // 1
+		uniform samplerCube u_EnvironmentMap0;
+		uniform samplerCube u_EnvironmentMap1;
+		uniform float       u_EnvironmentInterpolation;
 	#endif // USE_REFLECTIONS
 	// specular
 	uniform float u_SpecularScale;
@@ -46,6 +43,7 @@ uniform sampler2D u_CurrentMap;
 #endif // USE_NORMAL_MAPPING
 
 varying vec3 var_Position;
+varying vec3 var_Normal;
 //varying vec4 var_LightColor;
 #if defined(USE_DIFFUSE)
 	varying vec2 var_TexDiffuse;
@@ -79,6 +77,7 @@ void main()
 
 	vec4 color; // the final color
 
+
 #if defined(USE_DIFFUSE)
 	vec2 texDiffuse = var_TexDiffuse;
 #endif
@@ -89,7 +88,7 @@ void main()
 	vec3 V = normalize(var_ViewDirT);
 
 	// the light direction
-	vec3 L = -var_LightDirT;
+	vec3 L = var_LightDirT;
 
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 texScreen = gl_FragCoord.st * r_FBufNPOTScale;
@@ -102,9 +101,6 @@ void main()
 	texScreen = parallaxResult.xy;
 	float parallaxShadow = parallaxResult.z;
 	texNormal = texDiffuse; // needs same resolution normalmap as diffusemap..
-//#if defined(USE_DIFFUSE)
-//	texDiffuse = var_TexDiffuse; //texNormal;
-//#endif
 #endif //USE_PARALLAX_MAPPING
 
 
@@ -123,36 +119,43 @@ void main()
 	vec3 refractColor = texture2D(u_CurrentMap, texScreen).rgb;
 
 
+	// set the initial color to the refracted underwater scene
+	color.rgb = refractColor;
+
+
 	// reflection
 #if defined(USE_REFLECTIONS)
+	vec3 reflectColor;
 	// compute fresnel term
 	// ratio reflection/refraction.  Value 1.0 = only refraction, no reflection.   0.0 = only reflection, no refraction.
-	float dotNV = abs(dot(N, -V));
-	float fresnel = clamp(u_FresnelBias + pow(dotNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
+	float dotNV = dot(N, V);
+	float dotAbsNV = abs(dotNV);
 #if 1
+	float fresnel = clamp(u_FresnelBias + pow(dotAbsNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
 	// use the cubeProbes
-	vec3 reflectColor = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
-#else // 1
-	// use a portalmap
-	vec3 R = reflect(V, N); // the reflection vector
-//@	vec3 reflectColor = textureCube(u_PortalMap, R).rgb;
-	vec3 reflectColor = computeReflectionsW(V, N, var_worldMatrix, u_PortalMap, u_PortalMap, 0.0, u_ReflectionScale);
-#endif // 1
-	color.rgb = mix(reflectColor, refractColor, fresnel);
-#else // USE_REFLECTIONS
-	// reflections disabled
-	color.rgb = refractColor;
+	reflectColor = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
+#else
+	float fresnel = clamp(u_FresnelBias + pow(1.0 + dotNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
+	// test surface reflections above/under water are different
+	if (dotNV >= 0) {
+		// Above surface: use the cubeProbes
+		reflectColor = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
+	} else {
+		// Below surface: use the currentmap
+		vec3 R = reflect(V, N); // the reflection vector
+		reflectColor = texture2D(u_CurrentMap, R.st).rgb; // it a test..
+	}
+#endif
 #endif // USE_REFLECTIONS
 
 
-	// diffuse lighting.. why not? :)
-	color.rgb *= computeDiffuseLighting(dot(N,L), 0.2);
+	// diffuse lighting..
+//	color.rgb *= computeDiffuseLighting(N, L, 0.2);
 
 
 	// compute the specular term
-	// We don't use u_SpecularExponent here, but instead a constant value, because water is always +- the same.
-	// That's better than a wild value that a client could enter.
-	vec3 specular = computeSpecular(V, N, L, u_LightColor, 8.0, u_SpecularScale); // u_SpecularExponent
+	// We don't use u_SpecularExponent here, but instead a constant value.
+	vec3 specular = computeSpecular(V, N, L, u_LightColor, 64.0, u_SpecularScale); // u_SpecularExponent
 
 
 #else // USE_NORMAL_MAPPING
@@ -171,12 +174,13 @@ void main()
 #if defined(USE_DIFFUSE)
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, texDiffuse);
-	color.rgb = mix(color.rgb, diffuse.rgb, var_alphaGen);
+	color.rgb = mix(color.rgb, diffuse.rgb, var_alphaGen); // !! var_alphaGen = the alpha value from "color r, g, b, alpha"
 #endif // USE_DIFFUSE
 
 
-
 	// the water-surface fog
+	// Note: if this value is too high, all the translucency of the water gets lost. Use small values..
+	// TODO: Before release, normalize this scale, so people can use more normal values in their materials/shaders.
 	if (u_FogDensity > 0.0)
 	{
 		// reconstruct vertex position in world space
@@ -195,10 +199,17 @@ void main()
 		float fogExponent = fogDistance * u_FogDensity;
 
 		// calculate fog factor
-		float fogFactor = exp2(-abs(fogExponent));
+		float fogFactor = 1.0 - clamp(exp2(-fogExponent * fogExponent), 0, 1);
 
-		color.rgb = mix(u_FogColor, color.rgb, fogFactor);
+//		color.rgb = mix(color.rgb, u_FogColor, fogFactor);
+color.rgb = mix(color.rgb, u_Color.rgb, fogFactor); // test
 	}
+
+
+
+#if defined(USE_REFLECTIONS)
+	color.rgb = mix(reflectColor, color.rgb, fresnel);
+#endif
 
 
 	// compute the light term

@@ -113,11 +113,8 @@ void main()
 	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
 	vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
-	// the cosine of the angle N L
-	float dotNL = dot(N, L);
-
 	// compute the diffuse light term
-	diffuse.rgb *= computeDiffuseLighting(dotNL, u_DiffuseLighting);
+	diffuse.rgb *= computeDiffuseLighting(N, L, u_DiffuseLighting);
 
 
 	// add Rim Lighting to highlight the edges
@@ -130,7 +127,7 @@ void main()
 	// compute the specular term (and reflections)
 	//! https://en.wikipedia.org/wiki/Specular_highlight
 #if defined(USE_SPECULAR)
-	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
+	vec3 specular = computeSpecular(V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
 	specular *= texture2D(u_SpecularMap, texDiffuse).rgb;
 #endif // USE_SPECULAR
 #if defined(USE_REFLECTIONS)

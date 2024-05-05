@@ -17,7 +17,7 @@ void main()
 
 	// reconstruct vertex position in world space
 	float depth = texture2D(u_DepthMap, st).r;
-	// scale to NDC (Normalized Device Coordinates) space
+	// scale to Normalized Device Coordinates
 	vec4  P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
 	// unproject to get into viewspace
 	P = u_UnprojectMatrix * P;

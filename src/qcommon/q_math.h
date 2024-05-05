@@ -1163,6 +1163,7 @@ __pragma(warning(disable:4700)) \
 __pragma(warning(default:4700)) \
 }
 
+// b = a
 ///#define VectorCopy(a, b) _VectorCopy(a, b)
 #define VectorCopy(a, b) \
 { \

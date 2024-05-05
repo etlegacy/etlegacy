@@ -4630,10 +4630,9 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		out->color[3] = 1;
 
 		d = shader->fogParms.depthForOpaque < 1 ? 1 : shader->fogParms.depthForOpaque;
-		// any value <1 will get lost here..
 
 		//out->tcScale = 1.0f / (d * 8);
-//		out->tcScale = rcp(d * 8.f); // this *8 is a hack..
+//		out->tcScale = rcp(d * 8.f);
 		out->tcScale = rcp(d);
 
 		// global fog sets clearcolor/zfar
@@ -4641,7 +4640,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		{
 			s_worldData.globalFog = i + 1;
 			VectorCopy(shader->fogParms.color, s_worldData.globalOriginalFog);
-			s_worldData.globalOriginalFog[3] = shader->fogParms.depthForOpaque;
+			s_worldData.globalOriginalFog[3] = d; // shader->fogParms.depthForOpaque;
 		}
 
 		// set the gradient vector
@@ -5214,6 +5213,12 @@ void R_LoadLights(char *lightDefs)
 				switch (light->l.rlType)
 				{
 				case RL_OMNI:
+/*
+// test!!!DEBUG!!!
+light->l.radius[0] *= 4.0;
+light->l.radius[1] *= 4.0;
+light->l.radius[2] *= 4.0;
+*/
 					numOmniLights++;
 					break;
 				case RL_PROJ:
@@ -7365,82 +7370,84 @@ void R_PrecacheInteractions()
 		surface->lightCount = -1;
 	}
 
-	Com_InitGrowList(&s_interactions, 100); //Com_InitGrowList(&s_interactions, 10000);
-
 	c_vboWorldSurfaces  = 0;
 	c_vboLightSurfaces  = 0;
 	c_vboShadowSurfaces = 0;
 
-	Ren_Developer("...precaching %i lights\n", s_worldData.numLights);
+	Com_InitGrowList(&s_interactions, 100); //Com_InitGrowList(&s_interactions, 10000);
 
-	for (i = 0; i < s_worldData.numLights; i++)
-	{
-		light = &s_worldData.lights[i];
+	if (r_staticLight->integer) {
+		Ren_Developer("...precaching %i lights\n", s_worldData.numLights);
 
-		if (!r_staticLight->integer || !light->isStatic || light->noRadiosity )
+		for (i = 0; i < s_worldData.numLights; i++)
 		{
-			continue;
-		}
+			light = &s_worldData.lights[i];
+
+			if (!light->isStatic || light->noRadiosity)
+			{
+				continue;
+			}
 
 #if 0
-		Ren_Print("light %i: origin(%i %i %i) radius(%i %i %i) color(%f %f %f)\n",
-		          i,
-		          (int)light->l.origin[0], (int)light->l.origin[1], (int)light->l.origin[2],
-		          (int)light->l.radius[0], (int)light->l.radius[1], (int)light->l.radius[2],
-		          light->l.color[0], light->l.color[1], light->l.color[2]);
+			Ren_Print("light %i: origin(%i %i %i) radius(%i %i %i) color(%f %f %f)\n",
+				i,
+				(int)light->l.origin[0], (int)light->l.origin[1], (int)light->l.origin[2],
+				(int)light->l.radius[0], (int)light->l.radius[1], (int)light->l.radius[2],
+				light->l.color[0], light->l.color[1], light->l.color[2]);
 #endif
 
-		// set up light transform matrix
-		MatrixSetupTransformFromQuat(light->transformMatrix, light->l.rotation, light->l.origin);
+			// set up light transform matrix
+			MatrixSetupTransformFromQuat(light->transformMatrix, light->l.rotation, light->l.origin);
 
-		// set up light origin for lighting and shadowing
-		R_SetupLightOrigin(light);
+			// set up light origin for lighting and shadowing
+			R_SetupLightOrigin(light);
 
-		// set up model to light view matrix
-		MatrixAffineInverse(light->transformMatrix, light->viewMatrix); // R_SetupLightView(light);
+			// set up model to light view matrix
+			MatrixAffineInverse(light->transformMatrix, light->viewMatrix); // R_SetupLightView(light);
 
-		// set up projection
-		R_SetupLightProjection(light);
+			// set up projection
+			R_SetupLightProjection(light);
 
-		// calc local bounds for culling
-		R_SetupLightLocalBounds(light);
+			// calc local bounds for culling
+			R_SetupLightLocalBounds(light);
 
-		// setup world bounds for intersection tests
-		MatrixTransformBounds(light->transformMatrix, light->localBounds[0], light->localBounds[1], light->worldBounds[0], light->worldBounds[1]); // R_SetupLightWorldBounds(light);
+			// setup world bounds for intersection tests
+			MatrixTransformBounds(light->transformMatrix, light->localBounds[0], light->localBounds[1], light->worldBounds[0], light->worldBounds[1]); // R_SetupLightWorldBounds(light);
 
-		// setup frustum planes for intersection tests
-		R_SetupLightFrustum(light);
+			// setup frustum planes for intersection tests
+			R_SetupLightFrustum(light);
 
-		// setup interactions
-		light->firstInteractionCache = NULL;
-		light->lastInteractionCache  = NULL;
+			// setup interactions
+			light->firstInteractionCache = NULL;
+			light->lastInteractionCache = NULL;
 
-		light->firstInteractionVBO = NULL;
-		light->lastInteractionVBO  = NULL;
+			light->firstInteractionVBO = NULL;
+			light->lastInteractionVBO = NULL;
 
-		// perform culling and add all the potentially visible surfaces
-		s_lightCount++;
-		R_RecursivePrecacheInteractionNode(s_worldData.nodes, light);
+			// perform culling and add all the potentially visible surfaces
+			s_lightCount++;
+			R_RecursivePrecacheInteractionNode(s_worldData.nodes, light);
 
-		// count number of leafs that touch this light
-		s_lightCount++;
-		QueueInit(&light->leafs);
-		R_RecursiveAddInteractionNode(s_worldData.nodes, light);
-		//Ren_Print("light %i touched %i leaves\n", i, QueueSize(&light->leafs));
+			// count number of leafs that touch this light
+			s_lightCount++;
+			QueueInit(&light->leafs);
+			R_RecursiveAddInteractionNode(s_worldData.nodes, light);
+			//Ren_Print("light %i touched %i leaves\n", i, QueueSize(&light->leafs));
 
-		// create a static VBO surface for each light geometry batch
-		R_CreateVBOLightMeshes(light);
+			// create a static VBO surface for each light geometry batch
+			R_CreateVBOLightMeshes(light);
 
-		// create a static VBO surface for each shadow geometry batch
-		R_CreateVBOShadowMeshes(light);
+			// create a static VBO surface for each shadow geometry batch
+			R_CreateVBOShadowMeshes(light);
 
-		// calculate pyramid bits for each interaction in omni-directional lights
-		R_CalcInteractionCubeSideBits(light);
+			// calculate pyramid bits for each interaction in omni-directional lights
+			R_CalcInteractionCubeSideBits(light);
 
-		// create a static VBO surface for each light geometry batch inside a cubemap pyramid
-		R_CreateVBOShadowCubeMeshes(light);
+			// create a static VBO surface for each light geometry batch inside a cubemap pyramid
+			R_CreateVBOShadowCubeMeshes(light);
+		}
+
 	}
-
 	// move interactions grow list to hunk
 	s_worldData.numInteractions = s_interactions.currentElements;
 	s_worldData.interactions    = (interactionCache_t **)ri.Hunk_Alloc(s_worldData.numInteractions * sizeof(*s_worldData.interactions), h_low);
@@ -8645,6 +8652,8 @@ void RE_LoadWorldMap(const char *name)
 
 	VectorNormalizeOnly(tr.sunDirection);
 
+	tr.glfogNum = FOG_NONE;
+
 	// invalidate fogs (likely to be re-initialized to new values by the current map)
 	RE_SetFog(FOG_SKY, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_PORTALVIEW, 0, 0, 0, 0, 0, 0);
@@ -8654,8 +8663,6 @@ void RE_LoadWorldMap(const char *name)
 	RE_SetFog(FOG_TARGET, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_WATER, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_SERVER, 0, 0, 0, 0, 0, 0);
-
-	tr.glfogNum = FOG_NONE;
 
 	VectorCopy(colorMdGrey, tr.fogColor);
 	tr.fogDensity = 0;
@@ -8763,18 +8770,13 @@ void RE_LoadWorldMap(const char *name)
 
 	tr.world->hasSkyboxPortal = qfalse;
 
-	// reset fog to world fog (if present)
-	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
+	// reset fog to map fog (if present)
+	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 0, 0, 0, 0, 0);
 
 	// make sure the VBO glState entries are save
 	R_BindNullVBO();
 	R_BindNullIBO();
 
-	// build cubemaps after the necessary vbo stuff is done
-///	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
-///	// devmap oasis; set developer 1; set r_showcubeprobes 1
-/// ^^that is an old comment.. i think.  all OK here..
-	//
 	// Here you can select how cubemaps are generated:
 //	R_BuildCubeMaps(qfalse); // qfalse, do not render any missing cubemaps immediately
 	R_BuildCubeMaps(qtrue); // qtrue, render all cubemaps immediately at mapload (old behavior)
@@ -8787,7 +8789,6 @@ void RE_LoadWorldMap(const char *name)
 
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame
 	// but we need the information across 2 frames
-	//^^that must be an old comment: i see no call to BeginFrame here..
 	ClearLink(&tr.traversalStack);
 	ClearLink(&tr.occlusionQueryQueue);
 	ClearLink(&tr.occlusionQueryList);

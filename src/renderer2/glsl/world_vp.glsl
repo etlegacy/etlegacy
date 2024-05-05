@@ -42,6 +42,7 @@ uniform vec4 u_Color;
 // varying variables
 varying vec3 var_Position;
 varying vec4 var_Color;
+varying vec3 var_Normal;
 #if defined(USE_LIGHT_MAPPING)
 	varying vec2 var_TexLight;//map
 #endif // USE_LIGHT_MAPPING
@@ -50,6 +51,7 @@ varying vec4 var_Color;
 	#if defined(USE_NORMAL_MAPPING)
 		varying mat3 var_tangentMatrix;         // world to tangent space
 		varying mat3 var_worldMatrix;			// tangent to world space
+		varying vec3 var_LightDirW;             // in worldspace
 		varying vec3 var_LightDirT;			    // in tangentspace
 		varying vec3 var_ViewDirT;
 		#if defined(USE_PARALLAX_MAPPING)
@@ -77,6 +79,8 @@ void main()
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
 
+	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz;
+
 	// assign color
 	var_Color = attr_Color * u_ColorModulate + u_Color;
 
@@ -101,8 +105,8 @@ void main()
 
 
 	// from vertex to light
-	vec3 lightDirW = normalize(u_LightDir);
-	var_LightDirT = var_tangentMatrix * lightDirW;
+	var_LightDirW = normalize(u_LightDir);
+	var_LightDirT = var_tangentMatrix * var_LightDirW;
 
 	// from vertex to camera
 	vec3 viewDirW = var_Position - u_ViewOrigin; // !! do not normalize

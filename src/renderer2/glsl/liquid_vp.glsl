@@ -14,7 +14,18 @@ attribute vec3 attr_Normal;
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
+
+// There is rgbGen and alphaGen.
+// It returns a vec4 (r,g,b,a) and this is send to the shaders in the u_ColorModulate vec4.
+// The values are all 0.0 for 'rgb', except when "rgbGen vertex" or "rgbGen oneminusvertex" are used.
+// The value is 0.0 for 'a', except when "alphaGen vertex" or "alphaGen oneminusvertex" are used.
+// If "rgbGen vertex" is used, values for 'rgb' are 1,1,1.
+// If "rgbGen oneminusvertex" is used, values for 'rgb' are -1,-1,-1.
+// If "alphaGen vertex" is used, the value for 'a' is 1.
+// If "alphaGen oneminusvertex" is used, the value for 'a' is -1.
 uniform vec4 u_ColorModulate;
+
+uniform vec4 u_Color;
 #if defined(USE_DIFFUSE)
 	uniform mat4 u_DiffuseTextureMatrix;
 #endif // USE_DIFFUSE
@@ -33,11 +44,11 @@ uniform vec4 u_ColorModulate;
 #endif // USE_DEFORM_VERTEXES
 
 //varying vec4 var_LightColor;
-varying float var_alphaGen;
 varying vec3 var_Position;
-uniform vec4 u_Color;
+varying vec3 var_Normal;
 #if defined(USE_DIFFUSE)
 	varying vec2 var_TexDiffuse;        // possibly moving coords
+	varying float var_alphaGen;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
 	varying mat3 var_tangentMatrix;
@@ -68,11 +79,10 @@ void main()
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
 
+	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz;
+
 //	var_LightColor = attr_Color; // * u_ColorModulate + u_Color;
 //var_LightColor = vec4(1.0);
-
-	// normalmap texcoords are not transformed
-	var_TexNormal = attr_TexCoord0.st;
 
 #if defined(USE_DIFFUSE)
 	// tcmod transformed texcoords
@@ -80,12 +90,14 @@ void main()
 
 	// the alpha value is the one set by alphaGen const <value>
 //	var_alphaGen = u_ColorModulate.a; // * 0.5 + 0.5;
-//!	var_alphaGen = u_Color.a;
+	var_alphaGen = u_Color.a; // the u_Color is the waterfogvars (r,g,b,density)
 #endif // USE_DIFFUSE
-	var_alphaGen = u_Color.a;
 
 
 #if defined(USE_NORMAL_MAPPING)
+	// normalmap texcoords are not transformed
+	var_TexNormal = attr_TexCoord0.st;
+
 	// from tangentspace to worldspace
 	var_worldMatrix = mat3(attr_Tangent, attr_Binormal, attr_Normal); // u_ModelMatrix
 	// from worldspace to tangentspace
