@@ -273,8 +273,8 @@ void MatrixLookAtRH(mat4_t m, const vec3_t eye, const vec3_t dir, const vec3_t u
 #ifndef ETL_SSE
 	m[0] = sideN[0];   m[4] = sideN[1];       m[8] = sideN[2];       m[12] = -DotProduct(sideN, eye);
 	m[1] = upN[0];     m[5] = upN[1];         m[9] = upN[2];         m[13] = -DotProduct(upN, eye);
-	m[2] = -dirN[0];   m[6] = -dirN[1];       m[10] = -dirN[2];       m[14] = DotProduct(dirN, eye);
-	m[3] = 0.0f;          m[7] = 0.0f;              m[11] = 0;.0f              m[15] = 1.0f;
+	m[2] = -dirN[0];   m[6] = -dirN[1];       m[10] = -dirN[2];      m[14] = DotProduct(dirN, eye);
+	m[3] = 0.0f;       m[7] = 0.0f;           m[11] = 0.0f;          m[15] = 1.0f;
 #else
 	float dotde, dotue, dotse;
 	Dot(dirN, eye, dotde);

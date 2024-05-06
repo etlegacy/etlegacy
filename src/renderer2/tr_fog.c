@@ -140,7 +140,7 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 			tr.glfogsettings[fogvar].clearscreen = qfalse;
 			tr.glfogsettings[fogvar].density     = density;
 		}
-
+			
 		tr.glfogsettings[fogvar].hint = GL_DONT_CARE;
 		tr.glfogsettings[fogvar].registered = qtrue;
 	}
@@ -155,20 +155,18 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 void R_SetFrameFog(void)
 {
 	// new style global fog transitions
+
 	if (tr.world->globalFogTransEndTime)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
 		{
 			int   fadeTime = tr.world->globalFogTransEndTime - tr.world->globalFogTransStartTime;
 			float lerpPos;
-			if (fadeTime == 0)
-			{
+			if (fadeTime == 0) {
 				lerpPos = 1.f;
 			}
-			else
-			{
-			lerpPos  = (float)(tr.refdef.time - tr.world->globalFogTransStartTime) / (float)fadeTime;
-			}
+			else {
+				/*float*/ lerpPos = (float)(tr.refdef.time - tr.world->globalFogTransStartTime) / (float)fadeTime;
 
 				if (lerpPos > 1)
 				{
@@ -194,25 +192,25 @@ void R_SetFrameFog(void)
 		}
 
 	}
-// do we need to exit this function now?..
-//return; //!!!DEBUG!!!
+	// do we need to exit this function now?..
+	//return; //!!!DEBUG!!!
 
-/*
-	if (r_speeds->integer == RSPEEDS_FOG)
-	{
-		if (!tr.glfogsettings[FOG_TARGET].registered)
+	/*
+		if (r_speeds->integer == RSPEEDS_FOG)
 		{
-			Ren_Print("no fog - calc zFar: %0.1f\n", tr.viewParms.zFar);
-			return;
+			if (!tr.glfogsettings[FOG_TARGET].registered)
+			{
+				Ren_Print("no fog - calc zFar: %0.1f\n", tr.viewParms.zFar);
+				return;
+			}
 		}
-	}
-*/
+	*/
+
 	// If fog is not valid, don't use it
 	if (!tr.glfogsettings[FOG_TARGET].registered)
 	{
 		return;
 	}
-
 	// still fading
 	if (tr.glfogsettings[FOG_TARGET].finishTime) {
 		if (tr.glfogsettings[FOG_TARGET].finishTime > tr.refdef.time)
@@ -302,7 +300,7 @@ void R_SetFrameFog(void)
 		else
 		{
 			Ren_Print("density fog - den: %0.4f  calc zFar: %0.1f  fog zFar: %0.1f\n",
-			          tr.glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, tr.glfogsettings[FOG_CURRENT].end);
+				tr.glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, tr.glfogsettings[FOG_CURRENT].end);
 		}
 	}
 }
