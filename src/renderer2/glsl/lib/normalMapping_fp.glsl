@@ -56,25 +56,25 @@ vec3 computeSpecular(vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, 
 
 // Diffuse lighting looks a bit like shadowing an object.
 // There is no real shadow being cast, but it renders surfaces darker when they are less facing the light.
-// Changes in diffuse lighting are very visible: If the diffuse light amount is 1.0, the surface will be rendered black (if it's not facing the light).
-// If we don't want pitch black surfaces, we must take care that this value is always < 1.0.
-// A value of 0.0 will effectively disable Lambertian.. the dark is gone.
-// Keep the value in a range 0.0 to 1.0.
-// Note: Before entities were always Half-Lambert. That is using a value of 0.5 for diffuse lighting.
-//
-// If you have a bumpmapped world, any bumps will become more visible the higher the diffuse lighting value.
-// But as diffuse values go up, also the surfaces that are facing away from the light are getting darker.
-// It's about finding the right balance for your taste. You don't want it too dark, but you want to see the bumps well.
-//
-// Diffuse lighting can be applied to most objects: all world-brushes, entities, players, fancy water?..
 
 float computeDiffuseLighting(vec3 normal, vec3 lightDir, float amount)
 {
 	if (amount == 0) return 1.0;
-	float dotNL = dot(normal, -lightDir);
+	float dotNL = dot(normal, normalize(lightDir));
 	if (dotNL <= 0) return 1.0; // in full light
 	float lambert = 1.0 - (dotNL * amount);
 	return lambert;
 //	float lambert = (1.0 - amount) + (dotNL * amount);
 //	return lambert*lambert; // square the result: The old halfLambert was doing this
+}
+
+// this version is avoiding darkening surfaces in shadow even more
+float computeDiffuseLighting2(vec3 surfaceNormal, vec3 pixelNormal, vec3 lightDir, float amount)
+{
+	if (amount == 0) return 1.0;
+	vec3 L = normalize(lightDir);
+	float dotPNL = dot(pixelNormal, L);
+	float dotSNL = dot(surfaceNormal, L);
+	amount *= max(0.0, dotSNL);
+	return (1.0 - amount) + (dotPNL * 0.5 + 0.5) * amount;
 }
