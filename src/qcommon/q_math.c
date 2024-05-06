@@ -4598,7 +4598,7 @@ void mat4_transform_vec3(const mat4_t m, const vec3_t in, vec3_t out)
  */
 void mat4_transform_vec3_self(const mat4_t m, vec3_t inout)
 {
-#if 0
+#ifndef ETL_SSE
 	vec3_t tmp;
 	tmp[0] = m[0] * inout[0] + m[4] * inout[1] + m[8] * inout[2] + m[12];
 	tmp[1] = m[1] * inout[0] + m[5] * inout[1] + m[9] * inout[2] + m[13];
