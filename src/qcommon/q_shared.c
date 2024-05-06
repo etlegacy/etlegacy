@@ -1050,6 +1050,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 }
 // *INDENT-ON*
 
+#ifdef ETL_SSE
 /**
  * @brief COM_ParseExt3
  * @param[in,out] data_p
@@ -1069,12 +1070,12 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 	}
 	data = *data_p;
 	len = 0;
-	com_token[0] = 0;
+	com_parser.com_token[0] = 0;
 	// make sure incoming data is valid
 	if (!data)
 	{
 		*data_p = NULL;
-		return com_token;
+		return com_parser.com_token;
 	}
 	// backup the session data so we can unget easily
 	COM_BackupParseSession(data_p);
@@ -1119,7 +1120,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 				// is it a new-line character?
 				if (maskn & 1)
 				{
-					com_lines++;
+					com_parser.com_lines++;
 					hasNewLines = qtrue;
 				}
 				// point to the next char
@@ -1143,7 +1144,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 			{
 				if (*data == '\n')
 				{
-					com_lines++;
+					com_parser.com_lines++;
 					hasNewLines = qtrue;
 				}
 				data++;
@@ -1162,12 +1163,12 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 		if (!data)
 		{
 			*data_p = NULL;
-			return com_token;
+			return com_parser.com_token;
 		}
 		if (hasNewLines && !allowLineBreaks)
 		{
 			*data_p = data;
-			return com_token;
+			return com_parser.com_token;
 		}
 		c = *data;
 		// skip double slash comments
@@ -1202,7 +1203,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 	if (c == '\"')
 	{
 		data++;
-		while (1)
+		while (1)	
 		{
 			c = *data++;
 			if ((c == '\\') && (*data == '\"'))
@@ -1212,17 +1213,17 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 			}
 			else if (c == '\"' || !c)
 			{
-				com_token[len] = 0;
+				com_parser.com_token[len] = 0;
 				*data_p = (char *)data;
-				return com_token;
+				return com_parser.com_token;
 			}
 			else if (*data == '\n')
 			{
-				com_lines++;
+				com_parser.com_lines++;
 			}
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 		}
@@ -1238,7 +1239,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 		{
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 			data++;
@@ -1249,7 +1250,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 		{
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 			data++;
@@ -1258,7 +1259,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 			{
 				if (len < MAX_TOKEN_CHARS - 1)
 				{
-					com_token[len] = c;
+					com_parser.com_token[len] = c;
 					len++;
 				}
 				data++;
@@ -1268,7 +1269,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 			{
 				if (len < MAX_TOKEN_CHARS - 1)
 				{
-					com_token[len] = c;
+					com_parser.com_token[len] = c;
 					len++;
 				}
 				data++;
@@ -1279,9 +1280,9 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 		{
 			len = 0;
 		}
-		com_token[len] = 0;
+		com_parser.com_token[len] = 0;
 		*data_p = (char *)data;
-		return com_token;
+		return com_parser.com_token;
 	}
 	// check for a regular word
 	// we still allow forward and back slashes in name tokens for pathnames
@@ -1297,7 +1298,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 		{
 			if (len < MAX_TOKEN_CHARS - 1)
 			{
-				com_token[len] = c;
+				com_parser.com_token[len] = c;
 				len++;
 			}
 			data++;
@@ -1319,9 +1320,9 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 		{
 			len = 0;
 		}
-		com_token[len] = 0;
+		com_parser.com_token[len] = 0;
 		*data_p = (char *)data;
-		return com_token;
+		return com_parser.com_token;
 	}
 	// check for multi-character punctuation token
 	for (punc = punctuation; *punc; punc++)
@@ -1338,20 +1339,21 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 		if (j == l)
 		{
 			// a valid multi-character punctuation
-			Com_Memcpy(com_token, *punc, l);
-			com_token[l] = 0;
+			Com_Memcpy(com_parser.com_token, *punc, l);
+			com_parser.com_token[l] = 0;
 			data += l;
 			*data_p = (char *)data;
-			return com_token;
+			return com_parser.com_token;
 		}
 	}
 	// single character punctuation
-	com_token[0] = *data;
-	com_token[1] = 0;
+	com_parser.com_token[0] = *data;
+	com_parser.com_token[1] = 0;
 	data++;
 	*data_p = (char *)data;
-	return com_token;
+	return com_parser.com_token;
 }
+#endif
 
 /**
  * @brief COM_MatchToken
