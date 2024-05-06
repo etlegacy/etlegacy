@@ -3790,9 +3790,8 @@ typedef struct
 typedef struct trPrograms_s
 {
 	programInfo_t *gl_genericShader;
-	programInfo_t *gl_worldShader;                      // was gl_lightmappingShader..
-	programInfo_t *gl_entityShader;                     // was gl_vertexLightingShader_DBS_entity..
-	//programInfo_t *gl_vertexLightingShader_DBS_world; // no longer used..
+	programInfo_t *gl_worldShader;
+	programInfo_t *gl_entityShader;
 	programInfo_t *gl_forwardLightingShader_omniXYZ;
 	programInfo_t *gl_forwardLightingShader_projXYZ;
 	programInfo_t *gl_forwardLightingShader_directionalSun;
@@ -4476,6 +4475,7 @@ FOG, tr_fog.c
 //void RB_FogOn();
 void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
+void RE_SetGlobalFog_(qboolean restore, int fog);
 void R_SetFrameFog();
 
 /*

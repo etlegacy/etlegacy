@@ -1946,7 +1946,7 @@ static void RB_RenderInteractionsShadowMapped()
 					Ren_LogComment("----- Beginning Shadow Interaction: %i -----\n", iaCount);
 
 					// we don't need tangent space calculations here
-					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE); //skip vbo's too?
 
 				}
 				break;
@@ -2298,11 +2298,26 @@ void RB_RenderScreenSpaceAmbientOcclusion()
 
 	// capture current color buffer for u_CurrentMap
 	SelectTexture(TEX_CURRENT);
-	ImageCopyBackBuffer(tr.currentRenderImage);
+	if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
+	{
+		GL_Bind(tr.deferredRenderFBOImage);
+	}
+	else
+	{
+		ImageCopyBackBuffer(tr.currentRenderImage);
+	}
 
 	// bind u_DepthMap
 	SelectTexture(TEX_DEPTH);
-	ImageCopyBackBuffer(tr.depthRenderImage);
+	if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
+	{
+		GL_Bind(tr.depthRenderImage);
+	}
+	else
+	{
+		// depth texture is not bound to a FBO
+		ImageCopyBackBuffer(tr.depthRenderImage);
+	}
 
 	// set 2D virtual screen size
 	GL_PushMatrix();
@@ -2441,7 +2456,7 @@ void RB_RenderGlobalFog()
 
 		SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 		SetUniformVec4(UNIFORM_COLOR, fog->color);
-		SetUniformFloat(UNIFORM_FOGDENSITY, 1.0f); // this must be 1    << why?..it can be 0.0 to 1.0
+		SetUniformFloat(UNIFORM_FOGDENSITY, 1.0f); // this must be 1
 	}
 		
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);

@@ -1419,7 +1419,7 @@ void R_Register(void)
 
     r_chcMaxPrevInvisNodesBatchSize = ri.Cvar_Get("r_chcMaxPrevInvisNodesBatchSize", "50", CVAR_CHEAT);
 	r_chcMaxVisibleFrames           = ri.Cvar_Get("r_chcMaxVisibleFrames", "10", CVAR_CHEAT);
-	r_chcVisibilityThreshold        = ri.Cvar_Get("r_chcVisibilityThreshold", "20", CVAR_CHEAT);
+	r_chcVisibilityThreshold        = ri.Cvar_Get("r_chcVisibilityThreshold", "20", CVAR_CHEAT); // how many samples must be visible to pass the occlusionQuery test
 	r_chcIgnoreLeaves               = ri.Cvar_Get("r_chcIgnoreLeaves", "0", CVAR_CHEAT);
 
 	r_hdrRendering           = ri.Cvar_Get("r_hdrRendering", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
@@ -1866,12 +1866,11 @@ void RE_Shutdown(qboolean destroyWindow)
 			{
 				int       j;
 				bspNode_t *node;
-				//trRefLight_t   *light;
+				trRefLight_t   *light;
 
 				for (j = 0; j < tr.world->numnodes; j++)
 				{
 					node = &tr.world->nodes[j];
-
 					glDeleteQueries(MAX_VIEWS, node->occlusionQueryObjects);
 				}
 

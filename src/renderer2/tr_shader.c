@@ -2443,7 +2443,8 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				// we convert it to an ST_TCGENENVMAP.
 				// This makes it easier to distinguish from reflections from cubemaps vs. tcGenEnv.
 				// We don't expect a normalmap (or more maps) for this type of stage, so this stage will not collapse into a bundle.
-				// You must render this stage using the generic or depthFill shaders.
+				// !!!DEBUG!!! liquids do use normalmaps.  re check 
+				// You must render this stage using the generic shader.
 				stage->type = ST_TCGENENVMAP;
 				stage->tcGen_Environment = qtrue;
 				stage->tcGen_Lightmap    = qfalse;
@@ -4216,7 +4217,7 @@ static qboolean ParseShader(char *_text)
 			}
 			// store the fog data, and make this fog active
 			RE_SetFog(FOG_MAP, 0, fogFar, fogColor[0], fogColor[1], fogColor[2], fogDensity);
-			RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
+			RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 0, 0, 0, 0, 0);
 			continue;
 		}
 		// ET sunshader <name>
