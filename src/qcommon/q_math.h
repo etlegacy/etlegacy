@@ -56,10 +56,14 @@
 // BTW: I think it would be benefitial for ETLegacy, to change compiler settings (for x86), to always generate SSE2 code.
 //
 // The intrinsics header files are available since Visual Studio 2008 (9.0)   That's _MSC_VER 1500
-#if defined(_WIN32) || defined(_WIN64) && defined(_MSC_VER) && (_MSC_VER >= 1500) && !defined(_WIN32_WCE) && !defined(_M_ARM)
+#if defined(_WIN32) || defined(_WIN64) || defined(__MINGW32__) || defined(__linux__) || (defined(_MSC_VER) && (_MSC_VER >= 1500) && !defined(_WIN32_WCE) && !defined(_M_ARM))
 // this is the compiler directive that will use the SSE2/SSE3 code..
 #ifdef ETL_SSE
+#if defined(__MINGW32__) || defined(__linux__)
+#include <x86intrin.h>
+#else
 #include <intrin.h>
+#endif
 #include <pmmintrin.h>
 #endif
 #endif
