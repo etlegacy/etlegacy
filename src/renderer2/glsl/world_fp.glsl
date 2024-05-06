@@ -167,9 +167,7 @@ void main() {
 
 #if defined(USE_DIFFUSE)
 	// compute the diffuse light term
-//	vec3 NW = (u_ModelMatrix * vec4(N, 1.0)).xyz;
-//	diffuse.rgb *= computeDiffuseLighting(NW, var_LightDirW, u_DiffuseLighting);
-	diffuse.rgb *= computeDiffuseLighting(N, L, u_DiffuseLighting);
+	diffuse.rgb *= computeDiffuseLighting2(var_Normal, N, L, u_DiffuseLighting);
 #endif
 
 
