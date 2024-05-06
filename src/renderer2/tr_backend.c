@@ -1624,6 +1624,7 @@ static void RB_RenderInteractionsShadowMapped()
 								Vector4TransformM4(viewProjectionMatrix, point, transf);
 #if 0
 // is this dividing by 1?
+#endif
 								AddPointToBounds(transf, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							}
 /*
