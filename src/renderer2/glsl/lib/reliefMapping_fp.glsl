@@ -45,7 +45,7 @@ my test models are in "My Documents"\ETLegacy\legacy\modelsC.pk3
 // Function arguments:
 //   "displaceMap" is an RGBA image.  RGB stores the normalmap, and the alpha channel holds the heightmap data.
 //   "texCoords" are the current texture coordinates for which to parallax map.
-//   "viewDir" & "lightDir" must be a normalized vectors, in tangent space.
+//   "viewDir" & "lightDir" must be a normalized vectors, in tangent space. LightDir is from light to surface.
 //   "depthscale" is the value of the cvar r_parallaxDepthScale.
 //   "distanceToCam" is the distance from object to camera, in worldspace.
 //   "shadowFactor" is used to set the amount of parallax-selfshadowing. A value 0 disables this feature. (cvar r_parallaxShadow)
@@ -62,7 +62,7 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 	const vec3 surfaceNormalT = vec3(0.0, 0.0, 1.0);
 
 	// steep parallax mapping
-	const int minLayers = 16;
+	const int minLayers = 4;
 	const int maxLayers = 64;
 
 	// calculate the derivatives for use in the textureGrad or textureLod function
@@ -76,8 +76,8 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 	float mipLevel = max(0.5 * log2(max(dTexCoords.x, dTexCoords.y)), 0);
 
 	// less layers when viewed from straight above (in tangent space)
-	float viewAngle = max(abs(dot(surfaceNormalT, viewDir)), 0.0);
-	float numLayers = (maxLayers - minLayers) * viewAngle + minLayers;
+	float viewAngle = abs(dot(surfaceNormalT, viewDir));
+	float numLayers = int((maxLayers - minLayers) * viewAngle + minLayers);
 	float layerDepth = 1.0 / numLayers;
 	vec2 deltaTexCoords = viewDir.xy / viewDir.z * layerDepth * depthscale * distanceRatio;
 	float curDepth = 0.0;
@@ -100,8 +100,8 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 		prevDepthValue = curDepthValue;
 		curTexCoords -= deltaTexCoords;
 		curDepthValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
-//@			curDepthValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
-//@			curDepthValue =  texture2D(displaceMap, curTexCoords).a;
+//@		curDepthValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
+//@		curDepthValue =  texture2D(displaceMap, curTexCoords).a;
 		curDepth += layerDepth;
 	}
 
@@ -122,7 +122,7 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 		parallaxHeight = curDepth + beforeDepth * weight + afterDepth * weight_1;
 
 		// there are no shadows when the surface is lit from the backside.
-		float lightAngle = dot(surfaceNormalT, -lightDir);
+		float lightAngle = dot(surfaceNormalT, lightDir);
 		if (lightAngle < 0) return result;
 
 		const int minLayers = 4;
@@ -132,7 +132,7 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 		float divNumLayers = 1.0 / numLayers;
 		float layerHeight = parallaxHeight * divNumLayers;
 		float curHeight = parallaxHeight - layerHeight;
-		vec2 deltaTexCoords = lightDir.xy / lightDir.z * divNumLayers * depthscale;
+		vec2 deltaTexCoords = -lightDir.xy / -lightDir.z * divNumLayers * depthscale;
 		vec2 curTexCoords = result.xy + deltaTexCoords; // result.xy is the parallax vec2 result
 		float curHeightValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
 //@		float curHeightValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
