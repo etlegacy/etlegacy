@@ -4707,6 +4707,7 @@ static void OptimizeStages()
 			else if (stages[i].type == ST_LIQUIDMAP && tmpLiquidStage < 0)
 			{
 				tmpLiquidStage = i;
+				shader.has_liquidStage = qtrue;
 			}
 			else if (stages[i].type == ST_CUBEREFLECTIONS && tmpCubeReflectStage < 0)
 			{

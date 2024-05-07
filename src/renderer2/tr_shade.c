@@ -2111,12 +2111,12 @@ if ((pStage->stateBits & GLS_ATEST_BITS) != 0)
  *
  * This function is only called for stage.type: ST_LIQUIDMAP, ST_BUNDLE_WB, ST_BUNDLE_WDB
 */
-static void Render_liquid(int stage)
+static void Render_liquid(int stage, qboolean use_lightMapping)
 {
 	uint32_t attributebits;
 	rgbaGen_t rgbaGen;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
-	float fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.0005f);  // 0.0005f as default?
+	float fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.0005f);
 	qboolean use_diffuseMapping  = (pStage->type == ST_BUNDLE_WDB || pStage->type == ST_BUNDLE_WD);
 	qboolean use_deforms;
 	qboolean use_normalMapping;
@@ -2162,13 +2162,17 @@ static void Render_liquid(int stage)
 								USE_NORMAL_MAPPING, use_normalMapping,
 								USE_PARALLAX_MAPPING, use_parallaxMapping,
 								USE_REFLECTIONS, use_reflections,
-								USE_WATER, use_water);
+								USE_WATER, use_water,
+								USE_LIGHT_MAPPING, use_lightMapping);
 
 	// vertex attributes
 	attributebits = ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_COLOR;
 	if (use_normalMapping)
 	{
 		attributebits |= (ATTR_TANGENT | ATTR_BINORMAL);
+	}
+	if (use_lightMapping) {
+		attributebits |= ATTR_LIGHTCOORD;
 	}
 	GLSL_VertexAttribsState(attributebits);
 
@@ -2179,50 +2183,23 @@ static void Render_liquid(int stage)
 
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 	GLSL_SetUniform_ColorModulate(trProg.gl_liquidShader, rgbaGen.color, rgbaGen.alpha);
-
-	
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color); // what color is this? :)  the fog stage 'color'
-//	SetUniformVec4(UNIFORM_COLOR, tr.glfogsettings[FOG_WATER].color); // vec4 (r,g,b,density)
 
+	// ..
+	SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, (r_showLightMaps->integer == 1 ? GL_TRUE : GL_FALSE));
+	//SetUniformBoolean(UNIFORM_B_SHOW_DELUXEMAP, (r_showDeluxeMaps->integer == 1 ? GL_TRUE : GL_FALSE));
+
+	if (use_lightMapping) {
+		// bind lightMap
+		SelectTexture(TEX_LIGHTMAP);
+		BindLightMap();
+	}
 
 	// portal plane
 	if (backEnd.viewParms.isPortal)
 	{
 		clipPortalPlane();
 	}
-
-
-#if 0
-	// this is the fog displayed on the watersurface only (not any underwater fog, nor world fog)
-	glfog_t waterfog = tr.glfogsettings[FOG_WATER];
-	if (waterfog.registered) {
-		if (waterfog.density == 1.0) { // distance fog
-//			waterfog.end // the far distance
-		}
-		else { // density fog
-			// waterfog.density is a value in the range [0.0 to 1.0]
-			// we will use the world boundingbox to get the far distance.
-			if (tr.world && tr.world->globalFog >= 0) {
-				fog_t globalFog = tr.world->fogs[tr.world->globalFog];
-				float maxDist = max(max(globalFog.bounds[1][0] - globalFog.bounds[0][0], globalFog.bounds[1][1] - globalFog.bounds[0][1]), globalFog.bounds[1][2] - globalFog.bounds[0][2]);
-				// this fog will have a density that is a percentage of the globalfog (which should be at 100% density at its 'end').
-				waterfog.end = maxDist * waterfog.density;
-				// now that this fog is converted from density to distance fog, we set the density to 1.
-				waterfog.density = 1.0;
-			}
-			else {
-				// there is no global fog
-			}
-		}
-	}
-	else {
-		// disable the fog in the liquid shader
-		SetUniformFloat(UNIFORM_FOGDENSITY, 0.0);
-		//vec3_t nothing = { 0.0, 0.0, 0.0 };
-		//SetUniformVec3(UNIFORM_FOGCOLOR, nothing);
-	}
-#endif
-
 
 	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
 	if (fogDensity > 0.0)
@@ -3228,7 +3205,11 @@ void Tess_StageIteratorGeneric()
 		case ST_LIQUIDMAP:  // liquid
 		case ST_BUNDLE_WB:  // liquid/water + bump
 		case ST_BUNDLE_WDB: // liquid/water + diffuse + bump
-			Render_liquid(stage);
+			{
+				// if there is a lightmap for this surface, but no ST_LIGHTMAP stage, render with the lightmap
+				qboolean renderLightmap = (!tess.surfaceShader->has_lightmapStage) && has_lightmap;
+				Render_liquid(stage, renderLightmap);
+			}
 			break;
 		case ST_SKYBOXMAP:
 			Render_skybox(stage);

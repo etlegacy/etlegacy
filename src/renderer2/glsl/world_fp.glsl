@@ -89,6 +89,13 @@ void main() {
 	vec4 lightmapColor = var_Color;
 #endif // USE_LIGHT_MAPPING
 
+	// override showing only the lightmap?
+	if (SHOW_LIGHTMAP)
+	{
+		gl_FragColor = lightmapColor;
+		return;
+	}
+
 
 //#if defined(USE_DELUXE_MAPPING)
 //	//fixme: must be done when there IS a deluxemap. not when we want-to-see (show) deluxemaps (and just pass -some- normalmap as a substitude :S)
@@ -148,13 +155,6 @@ void main() {
 	vec4 diffuse = vec4(1.0);
 #endif // USE_DIFFUSE
 
-
-	// override showing only the lightmap?
-	if (SHOW_LIGHTMAP)
-	{
-		gl_FragColor = lightmapColor;
-		return;
-	}
 
 
 #if defined(USE_NORMAL_MAPPING)

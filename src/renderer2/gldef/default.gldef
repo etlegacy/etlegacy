@@ -42,23 +42,11 @@ entity
 	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }
 
-/* // no longer used..
-vertexLighting_DBS_world
-{
-	filename "vertexLighting_DBS_world"
-	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_REFLECTIONS USE_REFLECTIONMAP USE_SPECULAR
-	extramacros "TWOSIDED"
-	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL ATTR_COLOR
-	vertexLibraries "lib/deformVertexes"
-	fragmentLibraries "lib/reliefMapping lib/normalMapping"
-}
-*/
-
 liquid
 {
 	filename "liquid"
-	macros USE_PORTAL_CLIPPING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_REFLECTIONS USE_WATER USE_DIFFUSE
-	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL ATTR_COLOR
+	macros USE_PORTAL_CLIPPING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_REFLECTIONS USE_WATER USE_DIFFUSE USE_LIGHT_MAPPING
+	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL  ATTR_TANGENT ATTR_BINORMAL ATTR_COLOR ATTR_LIGHTCOORD
 	vertexLibraries "lib/deformVertexes"
 	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }

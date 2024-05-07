@@ -76,5 +76,6 @@ float computeDiffuseLighting2(vec3 surfaceNormal, vec3 pixelNormal, vec3 lightDi
 	float dotPNL = dot(pixelNormal, L);
 	float dotSNL = dot(surfaceNormal, L);
 	amount *= max(0.0, dotSNL);
+	if (amount == 0) return 1.0;
 	return (1.0 - amount) + (dotPNL * 0.5 + 0.5) * amount;
 }

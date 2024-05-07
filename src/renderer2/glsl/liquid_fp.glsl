@@ -6,6 +6,9 @@
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 
+uniform bool SHOW_LIGHTMAP;
+//uniform bool SHOW_DELUXEMAP;
+
 uniform vec4 u_Color;
 // fog
 uniform sampler2D u_DepthMap;
@@ -15,6 +18,9 @@ uniform float     u_FogDensity;
 uniform float     u_NormalScale;
 //
 uniform sampler2D u_CurrentMap;
+#if defined(USE_LIGHT_MAPPING)
+	uniform sampler2D u_LightMap;
+#endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
 	uniform sampler2D u_DiffuseMap;
 #endif // USE_DIFFUSE
@@ -44,7 +50,10 @@ uniform sampler2D u_CurrentMap;
 
 varying vec3 var_Position;
 varying vec3 var_Normal;
-//varying vec4 var_LightColor;
+#if defined(USE_LIGHT_MAPPING)
+	varying vec2 var_TexLight;
+	varying vec4 var_LightmapColor;
+#endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
 	varying vec2 var_TexDiffuse;
 	varying float var_alphaGen;
@@ -76,6 +85,22 @@ void main()
 
 
 	vec4 color; // the final color
+	vec4 lightmapColor;
+
+#if defined(USE_LIGHT_MAPPING)
+	// get the color from the lightmap
+	lightmapColor = texture2D(u_LightMap, var_TexLight);
+#else
+	lightmapColor = vec4(1.0, 1.0, 1.0, 1.0);
+	//lightmapColor = var_LightmapColor;
+#endif // USE_LIGHT_MAPPING
+
+	// override showing only the lightmap?
+	if (SHOW_LIGHTMAP)
+	{
+		gl_FragColor = lightmapColor;
+		return;
+	}
 
 
 #if defined(USE_DIFFUSE)
@@ -96,8 +121,7 @@ void main()
 
 #if defined(USE_PARALLAX_MAPPING)
 	// compute texcoords offset
-	const vec3 lightmapColor = vec3(1.0, 1.0, 1.0);
-	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, texDiffuse, V, L, u_DepthScale, var_distanceToCam, u_ParallaxShadow, lightmapColor);
+	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, texDiffuse, V, L, u_DepthScale, var_distanceToCam, u_ParallaxShadow, lightmapColor.rgb);
 	texScreen = parallaxResult.xy;
 	float parallaxShadow = parallaxResult.z;
 	texNormal = texDiffuse; // needs same resolution normalmap as diffusemap..
@@ -201,8 +225,8 @@ void main()
 		// calculate fog factor
 		float fogFactor = 1.0 - clamp(exp2(-fogExponent * fogExponent), 0, 1);
 
-//		color.rgb = mix(color.rgb, u_FogColor, fogFactor);
-color.rgb = mix(color.rgb, u_Color.rgb, fogFactor); // test
+		color.rgb = mix(color.rgb, u_FogColor, fogFactor);
+//color.rgb = mix(color.rgb, u_Color.rgb, fogFactor); // test
 	}
 
 
@@ -214,6 +238,9 @@ color.rgb = mix(color.rgb, u_Color.rgb, fogFactor); // test
 
 	// compute the light term
 //	color.rgb *= var_LightColor.rgb;
+
+	// lightmap
+	color *= lightmapColor;
 
 
 #if defined(USE_NORMAL_MAPPING)
