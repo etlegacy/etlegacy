@@ -89,6 +89,13 @@ void main() {
 	vec4 lightmapColor = var_Color;
 #endif // USE_LIGHT_MAPPING
 
+	// override showing only the lightmap?
+	if (SHOW_LIGHTMAP)
+	{
+		gl_FragColor = lightmapColor;
+		return;
+	}
+
 
 //#if defined(USE_DELUXE_MAPPING)
 //	//fixme: must be done when there IS a deluxemap. not when we want-to-see (show) deluxemaps (and just pass -some- normalmap as a substitude :S)
@@ -149,13 +156,6 @@ void main() {
 #endif // USE_DIFFUSE
 
 
-	// override showing only the lightmap?
-	if (SHOW_LIGHTMAP)
-	{
-		gl_FragColor = lightmapColor;
-		return;
-	}
-
 
 #if defined(USE_NORMAL_MAPPING)
 	// normal
@@ -164,6 +164,7 @@ void main() {
 	Ntex.y *= u_BumpScale;
 	// the final normal in tangentspace
 	vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+
 
 #if defined(USE_DIFFUSE)
 	// compute the diffuse light term

@@ -4708,6 +4708,7 @@ static void OptimizeStages()
 			else if (stages[i].type == ST_CUBEREFLECTIONS && tmpCubeReflectStage < 0)
 			{
 				tmpCubeReflectStage = i;
+				shader.has_liquidStage = qtrue;
 			}
 
 		}

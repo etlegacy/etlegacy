@@ -11,6 +11,9 @@ attribute vec3 attr_Normal;
 	attribute vec3 attr_Tangent;
 	attribute vec3 attr_Binormal;
 #endif // USE_NORMAL_MAPPING
+#if defined(USE_LIGHT_MAPPING)
+	attribute vec4 attr_TexCoord1; // the lightmap texture coordinates
+#endif // USE_LIGHT_MAPPING
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
@@ -43,9 +46,13 @@ uniform vec4 u_Color;
 	uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
-//varying vec4 var_LightColor;
+//varying vec4 var_Color;
 varying vec3 var_Position;
 varying vec3 var_Normal;
+#if defined(USE_LIGHT_MAPPING)
+	varying vec2 var_TexLight;			// lightmap texture coordinates
+	varying vec4 var_LightmapColor;
+#endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
 	varying vec2 var_TexDiffuse;        // possibly moving coords
 	varying float var_alphaGen;
@@ -81,8 +88,14 @@ void main()
 
 	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz;
 
-//	var_LightColor = attr_Color; // * u_ColorModulate + u_Color;
-//var_LightColor = vec4(1.0);
+//	var_Color = attr_Color * u_ColorModulate + u_Color;
+
+#if defined(USE_LIGHT_MAPPING)
+	// get lightmap texture coordinates
+	var_TexLight = attr_TexCoord1.st;
+	var_LightmapColor = attr_Color * u_ColorModulate + u_Color;
+#endif // USE_LIGHT_MAPPING
+
 
 #if defined(USE_DIFFUSE)
 	// tcmod transformed texcoords

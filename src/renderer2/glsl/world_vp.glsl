@@ -79,7 +79,7 @@ void main()
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
 
-	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz; // worldspace
+	//var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz; // worldspace
 	var_Normal = attr_Normal.xyz; // used for computeDiffuseLighting2()
 
 	// assign color
