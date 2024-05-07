@@ -38,7 +38,7 @@ weaponDef
 		missileModel		"models/multiplayer/landmine/landmine.md3"
 		//missileSound		""
                 missileBouncingSound {
-                    default "sound/weapons/satchel/satchel_bounce.wav"
+                    default "sound/weapons/landmine/mine_bounce.wav"
                 }
 		missileTrailFunc	"PyroSmokeTrail"					// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
