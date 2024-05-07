@@ -536,7 +536,6 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
 // this function is the very same as: VectorRotate(point, matrix, point)
 // The (possibly) inlined macro is faster. Use VectorRotate() instead..
 //void RotatePoint(vec3_t point, vec3_t matrix[3]);
-void RotatePoint(vec3_t point, vec3_t matrix[3]);
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
 //void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin); // Unused.
 void RotateAroundDirection(vec3_t axis[3], float yaw);
