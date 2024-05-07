@@ -125,7 +125,7 @@ static void predict_clip_velocity(vec3_t in, vec3_t normal, vec3_t out)
 static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t *tr, vec3_t result)
 {
 	int    count, numplanes = 0, i, j, k;
-	float  d, time_left = frametime, into;
+	float  d, time_left = frametime, into, dot;
 	vec3_t planes[MAX_CLIP_PLANES],
 	       velocity, origin, clipVelocity, endVelocity, endClipVelocity, dir, end;
 	trace_t trace;
