@@ -656,8 +656,9 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 		return -1;
 	}
 
+#ifndef ETL_SSE
 	tag     = model->tags + frame * model->numTags;
-	/*tagName = model->tagNames;
+	tagName = model->tagNames;
 	for (i = 0; i < model->numTags; i++, tag++, tagName++)
 	{
 		if ((i >= startTagIndex) && !strcmp(tagName->name, _tagName))
@@ -665,8 +666,8 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 			*outTag = tag;
 			return i;
 		}
-	}*/
-	/*// the oldest code ^^above, loops through elements[0 to startTagIndex] without any need for doing that..
+	}
+	// the oldest code ^^above, loops through elements[0 to startTagIndex] without any need for doing that..
 	tagName = &model->tagNames[startTagIndex];
 	for (i = startTagIndex; i < model->numTags; i++, tag++, tagName++)
 	{
@@ -675,7 +676,8 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 			*outTag = tag;
 			return i;
 		}
-	}*/
+	}
+#else
 	// ..and here's the SSE search string version
 	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm7, zeroes;
 	int mask0, mask16, mask32;
@@ -724,6 +726,7 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 tagName_found:
 	*outTag = tag;
 	return i;
+#endif
 }
 
 /**

@@ -2787,12 +2787,9 @@ void GLSL_CompileGPUShaders(void)
 
 	trProg.gl_genericShader      = GLSL_GetShaderProgram("generic");
 	trProg.gl_worldShader        = GLSL_GetShaderProgram("world");
-	trProg.gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
 
 	trProg.gl_entityShader       = GLSL_GetShaderProgram("entity");
-	trProg.gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
-	trProg.gl_vertexLightingShader_DBS_world  = GLSL_GetShaderProgram("vertexLighting_DBS_world");
-
+	
 	trProg.gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
 	trProg.gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");
 	trProg.gl_forwardLightingShader_directionalSun = GLSL_GetShaderProgram("forwardLighting_directionalSun");
