@@ -41,11 +41,15 @@
 //static char **guideTextHashTable[MAX_GUIDETEXT_HASH];
 static char **shaderTextHashTable[MAX_SHADERTEXT_HASH];
 
+shader_t *shaderHashTable[FILE_HASH_SIZE];
+
 static char *s_guideText;
 static char *s_shaderText;
 
 static int numMaterialFiles; // R2 files
 static int numShaderFiles;   // R1 files
+
+shader_t  shader;
 
 /**
  * @brief R_RemapShader

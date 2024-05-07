@@ -38,6 +38,7 @@
 
 static char **shaderTextHashTableR1[MAX_SHADERTEXT_HASH];
 static char *s_shaderTextR1;
+shader_t    shader;
 
 /**
  * @brief ParseVector
