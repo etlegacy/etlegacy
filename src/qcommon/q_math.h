@@ -611,7 +611,7 @@ void _Vector4Set4(const float value, vec4_t out);
 #define Matrix4Transpose(in, out) mat4_transpose(in, out)
 #define Matrix4FromQuaternion(m, q) mat4_from_quat(m, q)
 
-#ifdef ETL_SSE
+#elif ETL_SSE
 
 // reciprocal: argument x is a float variable. The result is returned into the same variable
 #define RECIPROCAL(x) \
