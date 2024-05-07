@@ -388,7 +388,7 @@ static void calc_viewpoint(playerState_t *ps, vec3_t org, vec3_t vp)
  */
 static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 {
-	float  yaw, pitch, cos_angle;
+	float  yaw, pitch, cos_angle, Spp, Cp, Sy, Cy;
 	vec3_t dir, los;
 
 	VectorSubtract(opos, ppos, los);
