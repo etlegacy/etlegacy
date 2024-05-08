@@ -710,7 +710,7 @@ void CIN_UploadCinematic(int handle)
 
 	if (!CIN_HandleValid(handle))
 	{
-		Com_Printf("CIN_UploadCinematic Warning: invalid handle\n");
+		Com_Printf(S_COLOR_YELLOW "CIN_UploadCinematic Warning: invalid handle\n");
 		return;
 	}
 
@@ -718,8 +718,9 @@ void CIN_UploadCinematic(int handle)
 
 	if (!cin->currentData.image)
 	{
+		Com_Printf(S_COLOR_YELLOW "CIN_UploadCinematic Warning: invalid data\n");
 		return;
 	}
 
-	re.UploadCinematic(256, 256, 256, 256, cin->currentData.image, handle, cin->currentData.dirty);
+	re.UploadCinematic(cin->frameWidth, cin->frameHeight, cin->currentData.width, cin->currentData.height, cin->currentData.image, handle, cin->currentData.dirty);
 }
