@@ -2484,8 +2484,8 @@ void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
 	xmm3 = _mm_load_ss(&veca[2]);
 	xmm2 = _mm_loadh_pi(xmm3, (const __m64 *)(&veca[0]));
 	xmm4 = _mm_add_ps(xmm4, xmm2);
-	_mm_store_ss(&out[2], xmm4);
-	_mm_storeh_pi((__m64 *)(&out[0]), xmm4);
+	_mm_store_ss(&vecc[2], xmm4);
+	_mm_storeh_pi((__m64 *)(&vecc[0]), xmm4);
 #endif
 }
 
