@@ -490,10 +490,6 @@ qboolean mat4_inverse(const mat4_t in, mat4_t out);
 qboolean mat4_inverse_self(mat4_t matrix);
 void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
 
-#define SinCos(rad, s, c)     \
-		(s) = sin((rad));     \
-		(c) = cos((rad));
-
 #ifdef __LCC__
 #ifdef VectorCopy
 #undef VectorCopy
@@ -567,6 +563,9 @@ void _Vector4Set4(const float value, vec4_t out);
 
 #ifndef ETL_SSE
 
+#define SinCos(rad, s, c)     \
+		(s) = sin((rad));     \
+		(c) = cos((rad));
 #define RECIPROCAL(x) (1.0f / (x))
 #define rcp(x) (1.0f / (x))
 #define VectorBound(v, mins, maxs, out) {v[0]=Q_bound(mins[0], v[0], maxs[0]); v[1]=Q_bound(mins[1], v[1], maxs[1]); v[2]=Q_bound(mins[2], v[2], maxs[2]);}
@@ -579,10 +578,32 @@ void _Vector4Set4(const float value, vec4_t out);
 #define VectorAdd(a, b, c) vec3_add(a, b, c)
 #define VectorAddConst(v, value, o) _VectorAddConst(v, value, o)
 #define Vector2AddConst(v, value, o) _Vector2AddConst(v, value, o)	
+#define VectorClear(a) vec3_clear(a)
 #define VectorCopy(a, b) vec3_copy(a, b)
+#define VectorSet(v, x, y, z) vec3_set(v, x, y, z)
 #define VectorScale(v, s, o) vec3_scale(v, s, o)
 #define Vector2Scale(v, s, o) _Vector2Scale(v, s, o)
 #define VectorAbs(v, o) vec3_abs(v, o)
+#define VectorNegate(a, b) vec3_negate(a, b)
+#define Vector2Copy(a, b) vec2_copy(a, b)
+#define Vector2Subtract(a, b, c) vec2_sub(a, b, c)
+#define Vector4Subtract(a, b, c) vec4_sub(a, b, c)
+#define Vector4Set(v, x, y, z, n) vec4_set(v, x, y, z, n)
+#define Vector4Set4(o, value) _Vector4Set4(value, o)
+#define Vector4Copy(a, b) vec4_copy(a, b)
+#define Vector4MA(v, s, b, o) vec4_ma(v, s, b, o)
+#define CrossProduct vec3_cross
+#define VectorNorm vec3_norm_inlined
+#define VectorNormalizeFast vec3_norm_fast
+#define VectorNormalizeOnly vec3_norm_void
+#define VectorNormalize2Only vec3_norm2_void
+#define Vector4NormalizeOnly vec4_norm_void
+#define VectorTransformM4 mat4_transform_vec3
+#define Vector4TransformM4 mat4_transform_vec4
+#define VectorInverse vec3_inv
+#define Vector4Scale vec4_scale
+#define VectorRotate vec3_rotate
+#define MatrixTranspose mat3_transpose
 // Vector multiply & add
 #define VectorMA(v, s, b, o) vec3_ma(v, s, b, o)
 #define Vector4MA(v, s, b, o) vec4_ma(v, s, b, o)
@@ -1733,19 +1754,8 @@ void _VectorMultiply(const vec3_t v1, const vec3_t v2, vec3_t out);
 
 qboolean CalcTangentBinormal(const vec3_t pos0, const vec3_t pos1, const vec3_t pos2, const vec2_t texCoords0, const vec2_t texCoords1, const vec2_t texCoords2, vec3_t tangent0, vec3_t binormal0, vec3_t tangent1, vec3_t binormal1, vec3_t tangent2, vec3_t binormal2);
 
-#define VectorClear(a) vec3_clear(a)
-#define VectorNegate(a, b) vec3_negate(a, b)
-#define VectorSet(v, x, y, z) vec3_set(v, x, y, z)
-
 #define Vector2Set(v, x, y) vec2_set(v, x, y)
-#define Vector2Copy(a, b) vec2_copy(a, b)
-#define Vector2Subtract(a, b, c) vec2_sub(a, b, c)
-#define Vector4Subtract(a, b, c) vec4_sub(a, b, c)
 
-#define Vector4Set(v, x, y, z, n) vec4_set(v, x, y, z, n)
-#define Vector4Set4(o, value) _Vector4Set4(value, o)
-#define Vector4Copy(a, b) vec4_copy(a, b)
-#define Vector4MA(v, s, b, o) vec4_ma(v, s, b, o)
 #define Vector4Average(v, b, s, o) vec4_average(v, b, s, o)
 
 #define SnapVector(v) vec3_snap(v)
@@ -1754,20 +1764,9 @@ qboolean CalcTangentBinormal(const vec3_t pos0, const vec3_t pos1, const vec3_t 
 #define VectorLengthSquared vec3_length_squared
 #define Distance vec3_distance
 #define DistanceSquared vec3_distance_squared
-#define CrossProduct vec3_cross
-#define VectorNorm vec3_norm_inlined
 #define VectorNormalize vec3_norm
-#define VectorNormalizeFast vec3_norm_fast
 #define VectorNormalize2 vec3_norm2
-#define VectorNormalizeOnly vec3_norm_void
-#define VectorNormalize2Only vec3_norm2_void
-#define Vector4NormalizeOnly vec4_norm_void
 #define VectorTransformM3 VectorRotate
-#define VectorTransformM4 mat4_transform_vec3
-#define Vector4TransformM4 mat4_transform_vec4
-#define VectorInverse vec3_inv
-#define Vector4Scale vec4_scale
-#define VectorRotate vec3_rotate
 #define VectorCompare vec3_compare
 
 static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, float epsilon)
@@ -1849,7 +1848,6 @@ static ID_INLINE vec_t VectorNormalizeDP(vec3_t v)
 #define AngleNormalize180 angle_norm_180
 #define AngleDelta angle_delta
 
-#define MatrixTranspose mat3_transpose
 #define AngleVectors angles_vectors
 #define PerpendicularVector(out, src) vec3_per(src, out) // rotated the params to match the way other functions are written
 
