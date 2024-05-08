@@ -144,6 +144,21 @@ void R_FBOSetViewport(frameBuffer_t *from, frameBuffer_t *to)
 	}
 }
 
+static void R_FBO_DrawBuffer(frameBuffer_t *fb, fboBinding binding)
+{
+	if (binding == BOTH || binding == WRITE)
+	{
+		if (fb)
+		{
+			glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+		}
+		else
+		{
+			glDrawBuffer(GL_BACK);
+		}
+	}
+}
+
 static void R_BindFBOAs(frameBuffer_t *fb, fboBinding binding)
 {
 	GLint val = 0;
@@ -182,15 +197,8 @@ void R_BindFBO(frameBuffer_t *fb)
 
 	current = fb;
 
-	if (fb)
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb->fbo);
-	}
-	else
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-		glDrawBuffer(GL_BACK);
-	}
+	R_BindFBOAs(fb, BOTH);
+	R_FBO_DrawBuffer(fb, BOTH);
 }
 
 frameBuffer_t *R_CurrentFBO()
@@ -268,7 +276,7 @@ byte *R_FBOReadPixels(frameBuffer_t *fb, size_t *offset, int *padlen)
 
 static void R_CreateFBODepthAttachment(frameBuffer_t *fb, int samples, int stencilBits, qboolean texture)
 {
-	// if multisampled have this route..
+	// if multi sampled have this route...
 	if (samples)
 	{
 		glGenRenderbuffersEXT(1, &fb->depthBuffer);
@@ -292,7 +300,7 @@ static void R_CreateFBODepthAttachment(frameBuffer_t *fb, int samples, int stenc
 		return;
 	}
 
-	// if we want a texture attachment then this path..
+	// if we want a texture attachment then this path...
 	if (texture)
 	{
 		glGenTextures(1, &fb->depth);

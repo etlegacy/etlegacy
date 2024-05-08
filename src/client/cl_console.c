@@ -790,16 +790,13 @@ void Con_DrawInput(void)
 	y = con.scanLines - 1.25f * smallCharHeight;
 
 	// highlight the current autocompleted part
-	if (con.highlightOffset)
+	if (con.highlightOffset && g_consoleField.buffer[0])
 	{
-		if (strlen(g_consoleField.buffer) > 0)
-		{
-			re.SetColor(console_highlightcolor);
-			re.DrawStretchPic((2 + con.highlightOffset) * smallCharWidth,
-			                  y + 2,
-			                  (strlen(g_consoleField.buffer) - con.highlightOffset) * smallCharWidth,
-			                  smallCharHeight - 2, 0, 0, 0, 0, cls.whiteShader);
-		}
+		re.SetColor(console_highlightcolor);
+		re.DrawStretchPic((2 + con.highlightOffset) * smallCharWidth,
+		                  y + 2,
+		                  (strlen(g_consoleField.buffer) - con.highlightOffset) * smallCharWidth,
+		                  smallCharHeight - 2, 0, 0, 0, 0, cls.whiteShader);
 	}
 
 	re.SetColor(con.color);

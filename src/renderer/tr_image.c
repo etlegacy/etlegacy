@@ -1161,7 +1161,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 		tr.allowCompress = -1;
 	}
 
-	if (!GLEW_ARB_texture_non_power_of_two && (((width - 1) & width) || ((height - 1) & height)))
+	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(width) || !Com_PowerOf2(height)))
 	{
 		Ren_Developer("WARNING: Image not power of 2 scaled: %s (%i:%i)\n", name, width, height);
 		return NULL;
