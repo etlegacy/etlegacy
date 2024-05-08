@@ -62,13 +62,14 @@ menuDef {
 	SLIDER( 8, JOYSTICK_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Yaw:"), .2, 8, "j_yaw" 5 -15 15, _("Set yaw sensitivity") )
 
 #define MISC_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 88, _("MISC") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 100, _("MISC") )
 	MULTI( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Activate lean:"), .2, 8, "cg_activateLean", cvarFloatList { "No" 0 "Yes" 1 }, _("Lean while using the activate button") )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer:"), .2, 8, "sharetimer", "Share the next time the enemy spawns with your team according to your spawntimer" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer fireteam:"), .2, 8, "sharetimer_buddy", "Share the next time the enemy spawns with your fireteam according to your spawntimer" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Shift timer backward:"), .2, 8, "cycle cg_spawntimer_set 0 2147483647 1000", "Shifts enemy spawn timer 1 second backward" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Shift timer forward:"), .2, 8, "cycle cg_spawntimer_set 2147483647 0 1000", "Shifts enemy spawn timer 1 second forward" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Request artillery:"), .2, 8, "+zoom;+attack;-attack;-zoom", "Request artillery with single button press." )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Enemy spawntimer reset:"), .2, 8, "timerReset", "Resets enemy spawntimer" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer:"), .2, 8, "sharetimer", "Share the next time the enemy spawns with your team according to your spawntimer" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer fireteam:"), .2, 8, "sharetimer_buddy", "Share the next time the enemy spawns with your fireteam according to your spawntimer" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Shift timer backward:"), .2, 8, "cycle cg_spawntimer_set 0 2147483647 1000", "Shifts enemy spawn timer 1 second backward" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Shift timer forward:"), .2, 8, "cycle cg_spawntimer_set 2147483647 0 1000", "Shifts enemy spawn timer 1 second forward" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Request artillery:"), .2, 8, "+zoom;+attack;-attack;-zoom", "Request artillery with single button press." )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls )
