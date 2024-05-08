@@ -1768,6 +1768,8 @@ qboolean CalcTangentBinormal(const vec3_t pos0, const vec3_t pos1, const vec3_t 
 #define VectorNormalize2 vec3_norm2
 #define VectorTransformM3 VectorRotate
 #define VectorCompare vec3_compare
+#define VectorCompareLT vec3_compare_lt
+#define VectorCompareGT vec3_compare_gt
 
 static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, float epsilon)
 {
