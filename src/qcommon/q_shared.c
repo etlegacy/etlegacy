@@ -1471,7 +1471,7 @@ nextchunk:
 		} else {
 			// no 0, '\n' found
 			_BitScanForward(&bit2, mask2);
-			com_lines++;
+			com_parser.com_lines++;
 			*data = str + bit2 + 1; // point to one char after the \n
 		}
 	} else {
@@ -1486,7 +1486,7 @@ nextchunk:
 				*data = str + bit1; // point to the 0
 			} else {
 				*data = str + bit2 + 1; // point to one char after the \n
-				com_lines++;
+				com_parser.com_lines++;
 			}
 		}
 	}
