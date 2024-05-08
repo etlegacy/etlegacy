@@ -422,7 +422,7 @@ void CG_EDV_RunInput(void)
 	edv_ps.sprintSpeedScale = 1.1f;
 	edv_ps.crouchSpeedScale = 0.25;
 
-	vector_set(edv_ps.delta_angles, 0, 0, 0);
+	VectorSet(edv_ps.delta_angles, 0, 0, 0);
 	VectorCopy(cg.refdefViewAngles, edv_ps.viewangles);
 	VectorCopy(cgs.demoCamera.camOrigin, edv_ps.origin);
 	VectorCopy(cgs.demoCamera.velocity, edv_ps.velocity);
