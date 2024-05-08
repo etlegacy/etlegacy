@@ -897,7 +897,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
  */
 void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
-	int     i, j, start;
+	int     start;
 	image_t *image;
 
 	if (client < 0 || client > (sizeof(tr.scratchImage) / sizeof(tr.scratchImage[0])))
