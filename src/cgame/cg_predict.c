@@ -594,6 +594,8 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 		out->velocity[i] = prev->ps.velocity[i] +
 		                   f * (next->ps.velocity[i] - prev->ps.velocity[i]);
 	}
+
+	out->leanf = prev->ps.leanf + f * (next->ps.leanf - prev->ps.leanf);
 }
 
 /**
