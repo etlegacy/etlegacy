@@ -391,7 +391,7 @@ GOTO :EOF
 	-DBUNDLED_OPENSSL=!open_ssl! ^
 	-DFEATURE_SSL=!feature_ssl! ^
 	-DFEATURE_AUTH=!feature_auth! ^
-	-ENABLE_SSE=!build_sse!
+	-DENABLE_SSE=!build_sse!
 
 	IF !mod_only!==1 (
 		SET local_build_string=!local_build_string! ^
