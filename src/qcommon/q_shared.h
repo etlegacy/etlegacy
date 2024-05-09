@@ -105,7 +105,7 @@
 #endif
 
 // Other platforms define __SSEn__ macros while windows only defines _M_IX86_FP for 32bit or _M_AMD64/_M_X64 for 64bit macros
-#if defined(__SSE3__) && defined(ETL_ENABLE_SSE)
+#if defined(__SSE2__) && defined(ETL_ENABLE_SSE)
 #define ETL_SSE 1
 #elif (_M_IX86_FP == 2 || (defined(_M_AMD64) || defined(_M_X64))) && defined(ETL_ENABLE_SSE)
 #define ETL_SSE 1
