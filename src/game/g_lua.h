@@ -32,7 +32,7 @@
 #    include <lualib.h>
 #endif
 
-#define LUA_NUM_VM 18
+#define LUA_NUM_VM 64
 #define LUA_MAX_FSIZE 1024 * 1024 ///< 1MB
 
 #define FIELD_INT           0

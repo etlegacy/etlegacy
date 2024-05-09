@@ -2194,14 +2194,58 @@ qboolean G_LuaRunIsolated(const char *modName)
 qboolean G_LuaInit(void)
 {
 	int  i, num_vm = 0, len;
-	char buff[MAX_CVAR_VALUE_STRING], *crt;
+	char buff[MAX_CVAR_VALUE_STRING], *crt, *list, *pList;
+	fileHandle_t f;
 
 	for (i = 0; i < LUA_NUM_VM; i++)
 	{
 		lVM[i] = NULL;
 	}
 
-	if (lua_modules.string[0])
+	if (g_luaModuleList.string[0])
+	{
+		if (lua_modules.string[0])
+		{
+			G_Printf("%s API: %slua_modules cvar will be ignored since g_luaModuleList is set\n", LUA_VERSION, S_COLOR_BLUE);
+		}
+
+		len = trap_FS_FOpenFile(g_luaModuleList.string, &f, FS_READ);
+		if (len < 0)
+		{
+			G_Printf("%s API: %scan not open file '%s'\n", LUA_VERSION, S_COLOR_BLUE, g_luaModuleList.string);
+			return qfalse;
+		}
+
+		list = Com_Allocate(len + 1);
+
+		if (list == NULL)
+		{
+			G_Error("%s API: %smemory allocation error for '%s' data\n", LUA_VERSION, S_COLOR_BLUE, g_luaModuleList.string);
+			return qfalse;
+		}
+
+		trap_FS_Read(list, len, f);
+		*(list + len) = '\0';
+		trap_FS_FCloseFile(f);
+
+		pList = list;
+		while ((crt = COM_Parse(&pList)) && *crt)
+		{
+			if (num_vm >= LUA_NUM_VM)
+			{
+				G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
+				break;
+			}
+
+			if (G_LuaRunIsolated(crt))
+			{
+				num_vm++;
+			}
+		}
+
+		Com_Dealloc(list);
+	}
+	else if (lua_modules.string[0])
 	{
 		Q_strncpyz(buff, lua_modules.string, sizeof(buff));
 		len = strlen(buff);
