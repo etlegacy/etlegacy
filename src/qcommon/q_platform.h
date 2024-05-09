@@ -55,17 +55,17 @@
 #endif
 
 #if (defined(powerc) || defined(powerpc) || defined(ppc) || \
-    defined(__ppc) || defined(__ppc__) || defined(__PPC__) || \
-    defined(__POWERPC__)) && !defined(C_ONLY)
+	defined(__ppc) || defined(__ppc__) || defined(__PPC__) || \
+	defined(__POWERPC__)) && !defined(C_ONLY)
 #define idppc 1
 #if defined(__VEC__) || defined(__ALTIVEC__) || defined(__APPLE_ALTIVEC__)
 #define idppc_altivec 1
 #ifdef __APPLE__  // Apple's GCC does this differently than the FSF.
 #define VECCONST_UINT8(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
-	(vector unsigned char) (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+		(vector unsigned char) (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
 #else
 #define VECCONST_UINT8(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
-	(vector unsigned char) { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p }
+		(vector unsigned char) { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p }
 #endif
 #else
 #define idppc_altivec 0

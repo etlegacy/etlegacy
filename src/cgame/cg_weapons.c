@@ -6026,7 +6026,7 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
 
 	le->startTime = cg.time;
 	le->endTime   = cg.time + lifetime;
-	le->lifeRate = rcp((float)(le->endTime - le->startTime));
+	le->lifeRate  = rcp((float)(le->endTime - le->startTime));
 
 	re = &le->refEntity;
 	VectorCopy(loc, re->origin);

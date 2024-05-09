@@ -34,7 +34,7 @@
 
 #include "tr_local.h"
 
-#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + tess.shaderTime * (freq)) *FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
+#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + tess.shaderTime * (freq)) * FUNCTABLE_SIZE))&FUNCTABLE_MASK] * (amplitude))
 
 /**
  * @brief TableForFunc

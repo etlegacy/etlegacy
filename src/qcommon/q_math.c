@@ -36,14 +36,14 @@
 #include "q_shared.h"
 
 
-vec3_t vec3_origin = { 0.f, 0.f, 0.f };
-vec3_t vec3_1 = { 1.f, 1.f, 1.f };
-vec3_t vec3_minus1 = { -1.f, -1.f, -1.f };
-vec3_t vec3_half = { 0.5f, 0.5f, 0.5f };
-vec4_t vec4_origin = { 0.f, 0.f, 0.f, 0.f };
-vec4_t vec4_1 = { 1.f, 1.f, 1.f, 1.f };
-vec4_t vec4_minus1 = { -1.f, -1.f, -1.f, -1.f };
-vec4_t vec4_half = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec3_t vec3_origin    = { 0.f, 0.f, 0.f };
+vec3_t vec3_1         = { 1.f, 1.f, 1.f };
+vec3_t vec3_minus1    = { -1.f, -1.f, -1.f };
+vec3_t vec3_half      = { 0.5f, 0.5f, 0.5f };
+vec4_t vec4_origin    = { 0.f, 0.f, 0.f, 0.f };
+vec4_t vec4_1         = { 1.f, 1.f, 1.f, 1.f };
+vec4_t vec4_minus1    = { -1.f, -1.f, -1.f, -1.f };
+vec4_t vec4_half      = { 0.5f, 0.5f, 0.5f, 0.5f };
 vec3_t axisDefault[3] = { { 1.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, { 0.f, 0.f, 1.f } };
 
 vec4_t colorBlack    = { 0, 0, 0, 1 };
@@ -204,15 +204,15 @@ vec3_t bytedirs[NUMVERTEXNORMALS] =
 
 #ifdef ETL_SSE
 // The SSE version of strlen() checks 16 bytes at once
-size_t __cdecl SSE_strlen(_In_z_ char const* _Str)
+size_t __cdecl SSE_strlen(_In_z_ char const *_Str)
 {
 	__m128i xmm0, xmm1, xmm2;
-	int ofs = 0, bit, mask;
+	int     ofs = 0, bit, mask;
 	xmm0 = _mm_setzero_si128();
 nextchar:
-	xmm1 = _mm_loadu_si128((__m128i const*)(_Str + ofs));
+	xmm1 = _mm_loadu_si128((__m128i const *)(_Str + ofs));
 	xmm2 = _mm_cmpeq_epi8(xmm1, xmm0);
-		mask = _mm_movemask_epi8(xmm2);
+	mask = _mm_movemask_epi8(xmm2);
 	if (mask == 0)
 	{
 		ofs += 16;
@@ -223,33 +223,45 @@ nextchar:
 }
 
 // The SSE version of strcmp checks 16 bytes at once
-int __cdecl SSE_strcmp(_In_z_ char const* _Str1, _In_z_ char const* _Str2)
+int __cdecl SSE_strcmp(_In_z_ char const *_Str1, _In_z_ char const *_Str2)
 {
-	if (!_Str1 || !_Str2) return -1;
+	if (!_Str1 || !_Str2)
+	{
+		return -1;
+	}
 	const char *str1 = _Str1, *str2 = _Str2;
-	int mask1, mask2, mask, bit1, bit2, bit;
-	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
+	int        mask1, mask2, mask, bit1, bit2, bit;
+	__m128i    xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 	xmm0 = _mm_setzero_si128();
 nextchunk:
-	xmm1 = _mm_lddqu_si128((const __m128i*)str1);
-	xmm2 = _mm_lddqu_si128((const __m128i*)str2);
-	xmm3 = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
-	xmm4 = _mm_cmpeq_epi8(xmm2, xmm0); // "
-	xmm5 = _mm_cmpeq_epi8(xmm1, xmm2); // compare strings
+	xmm1  = _mm_lddqu_si128((const __m128i *)str1);
+	xmm2  = _mm_lddqu_si128((const __m128i *)str2);
+	xmm3  = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
+	xmm4  = _mm_cmpeq_epi8(xmm2, xmm0); // "
+	xmm5  = _mm_cmpeq_epi8(xmm1, xmm2); // compare strings
 	mask1 = _mm_movemask_epi8(xmm3);
 	mask2 = _mm_movemask_epi8(xmm4);
-	mask = _mm_movemask_epi8(xmm5);
-	if (mask1 != 0 || mask2 != 0) {
+	mask  = _mm_movemask_epi8(xmm5);
+	if (mask1 != 0 || mask2 != 0)
+	{
 		// (at least) one of the strings is ending in this chunk, so this is the last chunk to check
 		_BitScanForward(&bit1, mask1); // s1[bit1] == 1
 		_BitScanForward(&bit2, mask2); // s2[bit2] == 1
-		_BitScanForward(&bit, ~mask);  // s1[bit] != s2[bit] 
-		if (bit > bit1) {
-			if (bit > bit2) return 0;
+		_BitScanForward(&bit, ~mask);  // s1[bit] != s2[bit]
+		if (bit > bit1)
+		{
+			if (bit > bit2)
+			{
+				return 0;
+			}
 			return -1;
 		}
-		else { // bit <= bit1
-			if (bit > bit2) return 1;
+		else   // bit <= bit1
+		{
+			if (bit > bit2)
+			{
+				return 1;
+			}
 			// bit <= bit2
 		}
 		str1 += bit;
@@ -257,7 +269,8 @@ nextchunk:
 		return ((char)*str1 < (char)*str2) ? -1 : 1;
 	}
 	// no 0 was found in the strings, so all 16 chars can be compared for any difference
-	if (mask == 0x0000FFFF) { // no difference?
+	if (mask == 0x0000FFFF)   // no difference?
+	{
 		str1 += 16;
 		str2 += 16;
 		goto nextchunk;
@@ -450,9 +463,9 @@ void ByteToDir(int b, vec3_t dir)
 	// now we must go back from an integer to a vector.
 	// First seperate to the coordinate components x, y & z.
 	// then convert back to a range [-1,1]
-	int x = (b >> 20) & 0b1111111111;
-	int y = (b >> 10) & 0b1111111111;
-	int z = b & 0b1111111111;
+	int         x    = (b >> 20) & 0b1111111111;
+	int         y    = (b >> 10) & 0b1111111111;
+	int         z    = b & 0b1111111111;
 	const float r512 = rcp(512.f); // rcp(512) == 1/512;
 	VectorSet(dir, (float)x, (float)y, (float)z);
 	VectorScale(dir, rcp(512.f), dir);
@@ -567,8 +580,8 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 void PlaneFromPoints_void(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c)
 {
 	vec3_t d1, d2;
-	float n;
-	
+	float  n;
+
 	VectorSubtract(b, a, d1);
 	VectorSubtract(c, a, d2);
 	CrossProduct(d2, d1, plane);
@@ -667,7 +680,7 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
 #ifndef ETL_SSE
 	mat4_t M;
 #endif
-		float S, C, C1, D, n;
+	float  S, C, C1, D, n;
 	vec3_t A, as, axa, C1axa, C1a, C1aa;
 	D = DEG2RAD(degrees);
 	SinCos(D, S, C);
@@ -683,21 +696,21 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
 	else
 	{
 		// create the rotation-matrix that makes the point rotate around the vector
-		axa[0] = A[0] * A[1];			// ax*ay
-		axa[1] = A[0] * A[2];			// ax*az
-		axa[2] = A[1] * A[2];			// ay*az
-		VectorScale(A, S, as);			// as = A * S			// vector * scalar
-		VectorScale(axa, C1, C1axa);	// C1axa = axa * C1		// vector * scalar
-		VectorScale(A, C1, C1a);		// C1a = A * C1			// vector * scalar
-		VectorMultiply(C1a, A, C1aa);	// C1aa = C1a * A		// vector * vector
-		VectorAddConst(C1aa, C, C1aa);	// C1aa += C			// vector.xyz += constant
+		axa[0] = A[0] * A[1];           // ax*ay
+		axa[1] = A[0] * A[2];           // ax*az
+		axa[2] = A[1] * A[2];           // ay*az
+		VectorScale(A, S, as);          // as = A * S			// vector * scalar
+		VectorScale(axa, C1, C1axa);    // C1axa = axa * C1		// vector * scalar
+		VectorScale(A, C1, C1a);        // C1a = A * C1			// vector * scalar
+		VectorMultiply(C1a, A, C1aa);   // C1aa = C1a * A		// vector * vector
+		VectorAddConst(C1aa, C, C1aa);  // C1aa += C			// vector.xyz += constant
 #ifndef ETL_SSE
 		// fill the matrix
-		Vector4Set(&M[0],	C1aa[0],			C1axa[0] + as[2],	C1axa[1] - as[1],	0.0f);
-		Vector4Set(&M[4],	C1axa[0] - as[2],	C1aa[1],			C1axa[2] + as[0],	0.0f);
-		Vector4Set(&M[8],	C1axa[1] + as[1],	C1axa[2] - as[0],	C1aa[2],			0.0f);
-		Vector4Set(&M[12],	0.0f,				0.0f,				0.0f,				1.0f);
-		
+		Vector4Set(&M[0], C1aa[0], C1axa[0] + as[2], C1axa[1] - as[1], 0.0f);
+		Vector4Set(&M[4], C1axa[0] - as[2], C1aa[1], C1axa[2] + as[0], 0.0f);
+		Vector4Set(&M[8], C1axa[1] + as[1], C1axa[2] - as[0], C1aa[2], 0.0f);
+		Vector4Set(&M[12], 0.0f, 0.0f, 0.0f, 1.0f);
+
 		// transform the point
 		VectorTransformM4(M, point, dst);
 #else
@@ -769,7 +782,7 @@ void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, 
  * @brief RotateAroundDirection
  * @param[in,out] axis
  * @param[in] yaw
- * 
+ *
  * This function is only called for effects and missiles..
  * .. that's a lot of work to generate a random axis (effects), and make a missile rotate.
  */
@@ -845,7 +858,7 @@ void vec3_to_angles(const vec3_t value1, vec3_t angles)
 		}
 
 		forward = sqrt(value1[0] * value1[0] + value1[1] * value1[1]);
-		pitch = RAD2DEG(atan2(value1[2], forward)); // forward is garanteed to be != 0.0
+		pitch   = RAD2DEG(atan2(value1[2], forward)); // forward is garanteed to be != 0.0
 		if (pitch < 0.0f)
 		{
 			pitch += 360.0f;
@@ -936,7 +949,7 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
 	*/
 
 	vec3_t n;
-	float dotnn, dotnp, d;
+	float  dotnn, dotnp, d;
 	Dot(normal, normal, dotnn);
 	Dot(normal, p, dotnp);
 	d = dotnp / (dotnn * dotnn);
@@ -975,7 +988,7 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
  * @param[in] in
  * @param[in] matrix
  * @param[out] out
- * 
+ *
  * Note: the SSE version can handle equal 'in' & 'out' vectors. (because 'in' is buffered in an xmm register).
  */
 void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
@@ -989,26 +1002,26 @@ void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 	// in
 	xmm2 = _mm_load_ss(&in[2]);
-	xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0);							// xmm2 = in2 in2 in2 in2
-	xmm1 = _mm_loadh_pi(xmm2, (const __m64 *)(&in[0]));				// xmm1 = in1 in0 _   _
-	xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);					// xmm0 = in0 in0 in0 in0
-	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);					// xmm1 = in1 in1 in1 in1
+	xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0);                           // xmm2 = in2 in2 in2 in2
+	xmm1 = _mm_loadh_pi(xmm2, (const __m64 *)(&in[0]));             // xmm1 = in1 in0 _   _
+	xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);                  // xmm0 = in0 in0 in0 in0
+	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);                  // xmm1 = in1 in1 in1 in1
 	// matrix
-	xmm3 = _mm_loadu_ps(&matrix[0][0]);								// xmm3 = m10 m02 m01 m00
-	xmm4 = _mm_loadu_ps(&matrix[1][1]);								// xmm4 = m21 m20 m12 m11
-	xmm5 = _mm_load_ss(&matrix[2][2]);								// xmm5 = 0   0   0   m22
-	xmm5 = _mm_shuffle_ps(xmm5, xmm4, 0b11100100);					// xmm5 = m21 m20 0   m22
-	xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b01001110);					// xmm5 = 0   m22 m21 m20
-	xmm4 = _mm_shuffle_ps(xmm4, xmm3, 0b11110100);					// xmm4 = m10 m10 m12 m11
-	xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0b11010010);					// xmm4 = m10 m12 m11 m10
+	xmm3 = _mm_loadu_ps(&matrix[0][0]);                             // xmm3 = m10 m02 m01 m00
+	xmm4 = _mm_loadu_ps(&matrix[1][1]);                             // xmm4 = m21 m20 m12 m11
+	xmm5 = _mm_load_ss(&matrix[2][2]);                              // xmm5 = 0   0   0   m22
+	xmm5 = _mm_shuffle_ps(xmm5, xmm4, 0b11100100);                  // xmm5 = m21 m20 0   m22
+	xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b01001110);                  // xmm5 = 0   m22 m21 m20
+	xmm4 = _mm_shuffle_ps(xmm4, xmm3, 0b11110100);                  // xmm4 = m10 m10 m12 m11
+	xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0b11010010);                  // xmm4 = m10 m12 m11 m10
 	// multiply and add
-	xmm3 = _mm_mul_ps(xmm3, xmm0);									// xmm3 = _   in0*m02 in0*m01 in0*m00
-	xmm4 = _mm_mul_ps(xmm4, xmm1);									// xmm4 = _   in1*m12 in1*m11 in1*m10
-	xmm5 = _mm_mul_ps(xmm5, xmm2);									// xmm5 = _   in2*m22 in2*m21 in2*m20
+	xmm3 = _mm_mul_ps(xmm3, xmm0);                                  // xmm3 = _   in0*m02 in0*m01 in0*m00
+	xmm4 = _mm_mul_ps(xmm4, xmm1);                                  // xmm4 = _   in1*m12 in1*m11 in1*m10
+	xmm5 = _mm_mul_ps(xmm5, xmm2);                                  // xmm5 = _   in2*m22 in2*m21 in2*m20
 	xmm5 = _mm_add_ps(xmm5, xmm3);
 	xmm5 = _mm_add_ps(xmm5, xmm4);
 	// store out
-	xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b10011100);					// xmm5 = o2 o1 _ o0
+	xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b10011100);                  // xmm5 = o2 o1 _ o0
 	_mm_store_ss(&out[0], xmm5);
 	_mm_storeh_pi((__m64 *)(&out[1]), xmm5);
 #endif
@@ -1180,7 +1193,7 @@ void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3)
  * @brief angle_mod
  * @param[in] a
  * @return
- * 
+ *
  * This is the exact same function as: angle_norm_360()
  */
 float angle_mod(float a)
@@ -1202,7 +1215,7 @@ float angle_norm_pi(float angle)
  * @brief angle_norm_360
  * @param[in] angle
  * @return angle normalized to the range [0 <= angle < 360]
- * 
+ *
  * This is the exact same function as: angle_mod()
  */
 float angle_norm_360(float angle)
@@ -1648,8 +1661,8 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 // the ETL_SSE version
 int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 {
-	float dist1, dist2;
-	int   sides;
+	float  dist1, dist2;
+	int    sides;
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
 
 	// fast axial cases
@@ -1683,18 +1696,18 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 		xmm1 = _mm_mul_ps(xmm1, xmm0);
 		//xmm1 = _mm_hadd_ps(xmm1, xmm1);
 		//xmm1 = _mm_hadd_ps(xmm1, xmm1);
-		xmm4 = _mm_movehdup_ps(xmm1);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm1, xmm4);		//
-		xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-		xmm1 = _mm_add_ss(xmm6, xmm4);		//
+		xmm4 = _mm_movehdup_ps(xmm1);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm1, xmm4);      //
+		xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+		xmm1 = _mm_add_ss(xmm6, xmm4);      //
 		_mm_store_ss(&dist1, xmm1);
 		xmm2 = _mm_mul_ps(xmm2, xmm0);
 		//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 		//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-		xmm4 = _mm_movehdup_ps(xmm2);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm2, xmm4);		//
-		xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-		xmm2 = _mm_add_ss(xmm6, xmm4);		//
+		xmm4 = _mm_movehdup_ps(xmm2);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm2, xmm4);      //
+		xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+		xmm2 = _mm_add_ss(xmm6, xmm4);      //
 		_mm_store_ss(&dist2, xmm2);
 		break;
 	case 2:
@@ -1708,20 +1721,20 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 		xmm4 = _mm_mul_ps(xmm4, xmm0);
 		//xmm4 = _mm_hadd_ps(xmm4, xmm4);
 		//xmm4 = _mm_hadd_ps(xmm4, xmm4);
-		xmm5 = _mm_movehdup_ps(xmm4);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm4, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm4 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm4);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm4, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm4 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist1, xmm4);
 		xmm3 = _mm_shuffle_ps(xmm1, xmm2, 0b10101111); // xmm3 = maxs1 maxs1 mins2 mins2
 		xmm4 = _mm_shuffle_ps(xmm1, xmm3, 0b00110000); // xmm4 = mins2 maxs1 _     mins0
 		xmm4 = _mm_mul_ps(xmm4, xmm0);
 		//xmm4 = _mm_hadd_ps(xmm4, xmm4);
 		//xmm4 = _mm_hadd_ps(xmm4, xmm4);
-		xmm5 = _mm_movehdup_ps(xmm4);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm4, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm4 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm4);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm4, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm4 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist2, xmm4);
 		break;
 	case 3:
@@ -1733,18 +1746,18 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 		xmm1 = _mm_mul_ps(xmm1, xmm0);
 		//xmm1 = _mm_hadd_ps(xmm1, xmm1);
 		//xmm1 = _mm_hadd_ps(xmm1, xmm1);
-		xmm5 = _mm_movehdup_ps(xmm1);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm1, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm1 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm1);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm1, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm1 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist1, xmm1);
 		xmm2 = _mm_mul_ps(xmm2, xmm0);
 		//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 		//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-		xmm5 = _mm_movehdup_ps(xmm2);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm2, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm2 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm2);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm2, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm2 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist2, xmm2);
 		break;
 	case 4:
@@ -1756,18 +1769,18 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 		xmm1 = _mm_mul_ps(xmm1, xmm0);
 		//xmm1 = _mm_hadd_ps(xmm1, xmm1);
 		//xmm1 = _mm_hadd_ps(xmm1, xmm1);
-		xmm5 = _mm_movehdup_ps(xmm1);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm1, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm1 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm1);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm1, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm1 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist1, xmm1);
 		xmm2 = _mm_mul_ps(xmm2, xmm0);
 		//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 		//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-		xmm5 = _mm_movehdup_ps(xmm2);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm2, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm2 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm2);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm2, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm2 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist2, xmm2);
 		break;
 	case 5:
@@ -1781,20 +1794,20 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 		xmm4 = _mm_mul_ps(xmm4, xmm0);
 		//xmm4 = _mm_hadd_ps(xmm4, xmm4);
 		//xmm4 = _mm_hadd_ps(xmm4, xmm4);
-		xmm5 = _mm_movehdup_ps(xmm4);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm4, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm4 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm4);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm4, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm4 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist2, xmm4);
 		xmm3 = _mm_shuffle_ps(xmm1, xmm2, 0b10101111); // xmm3 = maxs1 maxs1 mins2 mins2
 		xmm4 = _mm_shuffle_ps(xmm1, xmm3, 0b00110000); // xmm4 = mins2 maxs1 _     mins0
 		xmm4 = _mm_mul_ps(xmm4, xmm0);
 		//xmm4 = _mm_hadd_ps(xmm4, xmm4);
 		//xmm4 = _mm_hadd_ps(xmm4, xmm4);
-		xmm5 = _mm_movehdup_ps(xmm4);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm4, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm4 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm4);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm4, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm4 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist1, xmm4);
 		break;
 	case 6:
@@ -1806,18 +1819,18 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 		xmm1 = _mm_mul_ps(xmm1, xmm0);
 		//xmm1 = _mm_hadd_ps(xmm1, xmm1);
 		//xmm1 = _mm_hadd_ps(xmm1, xmm1);
-		xmm5 = _mm_movehdup_ps(xmm1);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm1, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm1 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm1);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm1, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm1 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist2, xmm1);
 		xmm2 = _mm_mul_ps(xmm2, xmm0);
 		//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 		//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-		xmm5 = _mm_movehdup_ps(xmm2);		// faster version of: 2 * hadd
-		xmm6 = _mm_add_ps(xmm2, xmm5);		//
-		xmm5 = _mm_movehl_ps(xmm5, xmm6);	//
-		xmm2 = _mm_add_ss(xmm6, xmm5);		//
+		xmm5 = _mm_movehdup_ps(xmm2);       // faster version of: 2 * hadd
+		xmm6 = _mm_add_ps(xmm2, xmm5);      //
+		xmm5 = _mm_movehl_ps(xmm5, xmm6);   //
+		xmm2 = _mm_add_ss(xmm6, xmm5);      //
 		_mm_store_ss(&dist1, xmm2);
 		break;
 	case 7:
@@ -2058,9 +2071,9 @@ qboolean vec3_compare(const vec3_t v1, const vec3_t v2)
 
 	return qtrue;
 #else
-		__m128 xmm1, xmm2, xmm3;
-	xmm1 = _mm_load_ss(&v1[2]);							// xmm1 = 000z
-	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&v1[0]));	// xmm1 = yx0z
+	__m128 xmm1, xmm2, xmm3;
+	xmm1 = _mm_load_ss(&v1[2]);                         // xmm1 = 000z
+	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&v1[0])); // xmm1 = yx0z
 	xmm2 = _mm_load_ss(&v2[2]);
 	xmm2 = _mm_loadh_pi(xmm2, (const __m64 *)(&v2[0]));
 	xmm3 = _mm_cmpneq_ps(xmm1, xmm2);
@@ -2148,7 +2161,7 @@ void vec3_abs(const vec3_t v, vec3_t o)
 	o[2] = Q_fabs(v[2]);
 #else
 	// like Q_fabs, bitwise-and the float like an integer, with 0x7FFFFFFF, to get rid of the sign-bit
-	__m128 xmm0, xmm1, mask;
+	__m128  xmm0, xmm1, mask;
 	__m128i minus1 = _mm_set1_epi32(-1);
 	mask = _mm_castsi128_ps(_mm_srli_epi32(minus1, 1)); // shr one bit, to get the highest bit 0, rest 1
 	xmm1 = _mm_loadh_pi(_mm_load_ss(&v[0]), (const __m64 *)(&v[1]));
@@ -2179,19 +2192,20 @@ vec_t vec3_norm(vec3_t v)
 	return length;
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm6;
-	float s;
+	float  s;
 	xmm2 = _mm_loadh_pi(_mm_load_ss(&v[2]), (const __m64 *)(&v[0]));
 	xmm3 = xmm2;
 	xmm2 = _mm_mul_ps(xmm2, xmm3);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-	xmm4 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm4);      //
 	xmm0 = _mm_sqrt_ss(xmm2);
 	_mm_store_ss(&s, xmm0);
-	if (s != 0.0) {
+	if (s != 0.0)
+	{
 		xmm1 = _mm_rcp_ss(xmm0);
 		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0);
 		xmm3 = _mm_mul_ps(xmm3, xmm1);
@@ -2228,13 +2242,14 @@ void vec3_norm_inlined(vec3_t v, float *l)
 	xmm2 = _mm_mul_ps(xmm2, xmm3);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-	xmm4 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm4);      //
 	xmm0 = _mm_sqrt_ss(xmm2);
 	_mm_store_ss(l, xmm0);
-	if (*l != 0.0) {
+	if (*l != 0.0)
+	{
 		xmm1 = _mm_rcp_ss(xmm0);
 		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0);
 		xmm3 = _mm_mul_ps(xmm3, xmm1);
@@ -2270,12 +2285,13 @@ void vec3_norm_void(vec3_t v)
 	xmm2 = _mm_mul_ps(xmm2, xmm3);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-	xmm4 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm4);      //
 	xmm0 = _mm_sqrt_ss(xmm2);
-	if (_mm_cvtss_f32(xmm0) != 0.0f) {
+	if (_mm_cvtss_f32(xmm0) != 0.0f)
+	{
 		xmm1 = _mm_rcp_ss(xmm0);
 		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0);
 		xmm3 = _mm_mul_ps(xmm3, xmm1);
@@ -2297,7 +2313,7 @@ void vec4_norm_void(vec4_t v)
 		v[1] *= ilength;
 		v[2] *= ilength;
 		v[3] *= ilength;
-}
+	}
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm6;
 	xmm3 = _mm_loadu_ps(&v[0]);
@@ -2308,7 +2324,8 @@ void vec4_norm_void(vec4_t v)
 	xmm4 = _mm_movehl_ps(xmm4, xmm6);
 	xmm2 = _mm_add_ss(xmm6, xmm4);
 	xmm0 = _mm_sqrt_ss(xmm2);
-	if (_mm_cvtss_f32(xmm0) != 0.0f) {
+	if (_mm_cvtss_f32(xmm0) != 0.0f)
+	{
 		xmm1 = _mm_rcp_ss(xmm0);
 		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0);
 		xmm3 = _mm_mul_ps(xmm3, xmm1);
@@ -2326,12 +2343,12 @@ void vec3_norm_fast(vec3_t v)
 {
 #ifndef ETL_SSE
 	float ilength, dot;
-	
+
 	Dot(v, v, dot);
 	ilength = Q_rsqrt(dot);
-	v[0] *= ilength;
-	v[1] *= ilength;
-	v[2] *= ilength;
+	v[0]   *= ilength;
+	v[1]   *= ilength;
+	v[2]   *= ilength;
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm6;
 	xmm1 = _mm_load_ss(&v[2]);
@@ -2340,10 +2357,10 @@ void vec3_norm_fast(vec3_t v)
 	xmm2 = _mm_mul_ps(xmm2, xmm3);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-	xmm4 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm4);      //
 	xmm0 = _mm_rsqrt_ss(xmm2);
 	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0);
 	xmm3 = _mm_mul_ps(xmm3, xmm0);
@@ -2377,26 +2394,29 @@ vec_t vec3_norm2(const vec3_t v, vec3_t out)
 	return length;
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm6;
-	float s;
+	float  s;
 	xmm1 = _mm_load_ss(&v[2]);
 	xmm2 = _mm_loadh_pi(xmm1, (const __m64 *)(&v[0]));
 	xmm3 = xmm2;
 	xmm2 = _mm_mul_ps(xmm2, xmm3);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-	xmm4 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm4);      //
 	xmm0 = _mm_sqrt_ss(xmm2);
 	_mm_store_ss(&s, xmm0);
-	if (s != 0.0) {
+	if (s != 0.0)
+	{
 		xmm1 = _mm_rcp_ss(xmm0);
 		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0);
 		xmm3 = _mm_mul_ps(xmm3, xmm1);
 		_mm_store_ss(&out[2], xmm3);
 		_mm_storeh_pi((__m64 *)(&out[0]), xmm3);
-	} else {
+	}
+	else
+	{
 		xmm3 = _mm_xor_ps(xmm3, xmm3);
 		_mm_store_ss(&out[2], xmm3);
 		_mm_storeh_pi((__m64 *)(&out[0]), xmm3);
@@ -2437,20 +2457,23 @@ void vec3_norm2_void(const vec3_t v, vec3_t out)
 	xmm2 = _mm_mul_ps(xmm2, xmm3);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-	xmm4 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm4);      //
 	xmm0 = _mm_sqrt_ss(xmm2);
 	//_mm_store_ss(&s, xmm0);
 	//if (s != 0.0) {
-	if (_mm_cvtss_f32(xmm0)) {
+	if (_mm_cvtss_f32(xmm0))
+	{
 		xmm1 = _mm_rcp_ss(xmm0);
 		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0);
 		xmm3 = _mm_mul_ps(xmm3, xmm1);
 		_mm_store_ss(&out[2], xmm3);
 		_mm_storeh_pi((__m64 *)(&out[0]), xmm3);
-	} else {
+	}
+	else
+	{
 		xmm3 = _mm_xor_ps(xmm3, xmm3);
 		_mm_store_ss(&out[2], xmm3);
 		_mm_storeh_pi((__m64 *)(&out[0]), xmm3);
@@ -2464,7 +2487,7 @@ void vec3_norm2_void(const vec3_t v, vec3_t out)
  * @param[in] scale
  * @param[in] vecb
  * @param[out] vecc
- * 
+ *
  * Vector Multiply Add
  * a * s + b
  */
@@ -2609,7 +2632,7 @@ void _Vector4Set(const float x, const float y, const float z, const float w, vec
  * @brief _Vector4Set4
  * @param[in] value
  * @param[out] out
- * 
+ *
  * Vector4Set4
  * out = (value,value,value,value)
  */
@@ -2645,10 +2668,10 @@ vec_t _DotProduct(const vec3_t v1, const vec3_t v2)
 	xmm0 = _mm_mul_ps(xmm0, xmm3);
 	//xmm0 = _mm_hadd_ps(xmm0, xmm0);
 	//xmm0 = _mm_hadd_ps(xmm0, xmm0);
-	xmm4 = _mm_movehdup_ps(xmm0);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm0, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm0 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm0);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm0, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm0 = _mm_add_ss(xmm6, xmm4);      //
 	//_mm_store_ss(&s, xmm0);
 	//return s; // cdecl returns a float in ST0 (fpu stack top)  or xmm0?
 	return _mm_cvtss_f32(xmm0);
@@ -2674,10 +2697,10 @@ void __DotProduct(const vec3_t v1, const vec3_t v2, float out)
 	xmm0 = _mm_mul_ps(xmm0, xmm3);
 	//xmm0 = _mm_hadd_ps(xmm0, xmm0);
 	//xmm0 = _mm_hadd_ps(xmm0, xmm0);
-	xmm4 = _mm_movehdup_ps(xmm0);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm0, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm0 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm0);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm0, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm0 = _mm_add_ss(xmm6, xmm4);      //
 	_mm_store_ss(&out, xmm0);
 #endif
 }
@@ -2845,7 +2868,7 @@ void _VectorScale(const vec3_t in, vec_t scale, vec3_t out)
  * @param[in] in
  * @param[in] scale
  * @param[out] out
- * 
+ *
  * _Vector2Scale
  * out = in * scale
  */
@@ -2879,16 +2902,16 @@ void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross)
 #else
 	// unaligned version (for vec3)
 	__m128 xmm1, xmm2, xmm4;
-	xmm1 = _mm_load_ss(&v1[2]);								// xmm1 =  _   _  _ v1z
-	xmm2 = _mm_load_ss(&v2[0]);								// xmm2 =  -   -  - v2x
-	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&v1[0]));		// xmm1 = v1y v1x _ v1z
-	xmm2 = _mm_loadh_pi(xmm2, (const __m64 *)(&v2[1]));		// xmm2 = v2z v2y - v2x
+	xmm1 = _mm_load_ss(&v1[2]);                             // xmm1 =  _   _  _ v1z
+	xmm2 = _mm_load_ss(&v2[0]);                             // xmm2 =  -   -  - v2x
+	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&v1[0]));     // xmm1 = v1y v1x _ v1z
+	xmm2 = _mm_loadh_pi(xmm2, (const __m64 *)(&v2[1]));     // xmm2 = v2z v2y - v2x
 	xmm4 = xmm2;
-	xmm2 = _mm_mul_ps(xmm2, xmm1);							// xmm2 = v1y*v2z v1x*v2y - v1z*v2x
-	xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0b00110110);			// xmm4 = v2x v2z - v2y
-	xmm4 = _mm_mul_ps(xmm4, xmm1);							// xmm4 = v1y*v2x v1x*v2z - v1z*v2y
-	xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0b10000111);			// xmm2 = v1x*v2y v1z*v2x - v1y*v2z
-	xmm2 = _mm_sub_ps(xmm2, xmm4);							// xmm2 = v1x*v2y-v1y*v2x  v1z*v2x-v1x*v2z  -  v1y*v2z-v1z*v2y
+	xmm2 = _mm_mul_ps(xmm2, xmm1);                          // xmm2 = v1y*v2z v1x*v2y - v1z*v2x
+	xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0b00110110);          // xmm4 = v2x v2z - v2y
+	xmm4 = _mm_mul_ps(xmm4, xmm1);                          // xmm4 = v1y*v2x v1x*v2z - v1z*v2y
+	xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0b10000111);          // xmm2 = v1x*v2y v1z*v2x - v1y*v2z
+	xmm2 = _mm_sub_ps(xmm2, xmm4);                          // xmm2 = v1x*v2y-v1y*v2x  v1z*v2x-v1x*v2z  -  v1y*v2z-v1z*v2y
 	_mm_store_ss(&cross[0], xmm2);
 	_mm_storeh_pi((__m64 *)(&cross[1]), xmm2);
 #endif
@@ -2910,10 +2933,10 @@ vec_t vec3_length(const vec3_t v)
 	xmm2 = _mm_mul_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-	xmm4 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm4);      //
 	xmm0 = _mm_sqrt_ss(xmm2);
 	return _mm_cvtss_f32(xmm0);
 #endif
@@ -2935,10 +2958,10 @@ vec_t vec3_length_squared(const vec3_t v)
 	xmm2 = _mm_mul_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
-	xmm4 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm4);		//
-	xmm4 = _mm_movehl_ps(xmm4, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm4);		//
+	xmm4 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm4);      //
+	xmm4 = _mm_movehl_ps(xmm4, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm4);      //
 	return _mm_cvtss_f32(xmm2);
 #endif
 }
@@ -2965,10 +2988,10 @@ vec_t vec3_distance(const vec3_t p1, const vec3_t p2)
 	xmm5 = _mm_mul_ps(xmm5, xmm5);
 	//xmm5 = _mm_hadd_ps(xmm5, xmm5);
 	//xmm5 = _mm_hadd_ps(xmm5, xmm5);
-	xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm5, xmm7);		//
-	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm5 = _mm_add_ss(xmm6, xmm7);		//
+	xmm7 = _mm_movehdup_ps(xmm5);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm5, xmm7);      //
+	xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+	xmm5 = _mm_add_ss(xmm6, xmm7);      //
 	xmm0 = _mm_sqrt_ss(xmm5);
 	return _mm_cvtss_f32(xmm0);
 #endif
@@ -2996,10 +3019,10 @@ vec_t vec3_distance_squared(const vec3_t p1, const vec3_t p2)
 	xmm5 = _mm_mul_ps(xmm5, xmm5);
 	//xmm5 = _mm_hadd_ps(xmm5, xmm5);
 	//xmm5 = _mm_hadd_ps(xmm5, xmm5);
-	xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm5, xmm7);		//
-	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm5 = _mm_add_ss(xmm6, xmm7);		//
+	xmm7 = _mm_movehdup_ps(xmm5);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm5, xmm7);      //
+	xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+	xmm5 = _mm_add_ss(xmm6, xmm7);      //
 	return _mm_cvtss_f32(xmm5);
 #endif
 }
@@ -3042,7 +3065,7 @@ void _Short3Vector(const short in[3], vec3_t out)
 /**
  * @brief _VectorMultiply
  * @param[in]  v1
- * @param[in]  v2 
+ * @param[in]  v2
  * @param[out] out.x=v1.x*v2.x  out.y=v1.y*v2.y  out.z=v1.z*v2.z
  */
 void _VectorMultiply(const vec3_t v1, const vec3_t v2, vec3_t out)
@@ -3126,47 +3149,47 @@ void _MatrixMultiply(const float in1[3][3], const float in2[3][3], float out[3][
 	// in1[2][1] = H	in2[2][1] = Q		out[2][1] = G*K + H*N + I*Q
 	// in1[2][2] = I	in2[2][2] = R		out[2][2] = G*L + H*O + I*R
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
-	xmm1 = _mm_loadu_ps(&in2[0][0]);						// xmm1 = _LKJ
-	xmm3 = _mm_loadu_ps(&in2[1][0]);						// xmm3 = _ONM
-	xmm5 = _mm_loadu_ps(&in2[1][2]);						// xmm5 = RQPO
-	xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b00111001);			// xmm5 = _RQP = in2[2][0]
+	xmm1 = _mm_loadu_ps(&in2[0][0]);                        // xmm1 = _LKJ
+	xmm3 = _mm_loadu_ps(&in2[1][0]);                        // xmm3 = _ONM
+	xmm5 = _mm_loadu_ps(&in2[1][2]);                        // xmm5 = RQPO
+	xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b00111001);          // xmm5 = _RQP = in2[2][0]
 	// out[0]
-	xmm7 = _mm_loadu_ps(&in1[0][0]);						// xmm7 = DCBA
-	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0);					// xmm0 = AAAA
-	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);			// xmm2 = BBBB
-	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);			// xmm4 = CCCC
-	xmm0 = _mm_mul_ps(xmm0, xmm1);							// xmm0 = _ AL AK AJ
-	xmm2 = _mm_mul_ps(xmm2, xmm3);							// xmm2 = _ BO BN BM
-	xmm4 = _mm_mul_ps(xmm4, xmm5);							// xmm4 = _ CR CQ CP
-	xmm0 = _mm_add_ps(xmm0, xmm2);							// xmm0 = _ AL+BO    AK+BN    AJ+BM
-	xmm0 = _mm_add_ps(xmm0, xmm4);							// xmm0 = _ AL+BO+CR AK+BN+CQ AJ+BM+CP
+	xmm7 = _mm_loadu_ps(&in1[0][0]);                        // xmm7 = DCBA
+	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0);                   // xmm0 = AAAA
+	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);          // xmm2 = BBBB
+	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);          // xmm4 = CCCC
+	xmm0 = _mm_mul_ps(xmm0, xmm1);                          // xmm0 = _ AL AK AJ
+	xmm2 = _mm_mul_ps(xmm2, xmm3);                          // xmm2 = _ BO BN BM
+	xmm4 = _mm_mul_ps(xmm4, xmm5);                          // xmm4 = _ CR CQ CP
+	xmm0 = _mm_add_ps(xmm0, xmm2);                          // xmm0 = _ AL+BO    AK+BN    AJ+BM
+	xmm0 = _mm_add_ps(xmm0, xmm4);                          // xmm0 = _ AL+BO+CR AK+BN+CQ AJ+BM+CP
 	_mm_storeu_ps(&out[0][0], xmm0);
 	// out[1]
-	xmm7 = _mm_loadu_ps(&in1[1][0]);						// xmm7 = GFED
-	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0);					// xmm0 = DDDD
-	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);			// xmm2 = EEEE
-	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);			// xmm4 = FFFF
-	xmm0 = _mm_mul_ps(xmm0, xmm1);							// xmm0 = _ DL DK DJ
-	xmm2 = _mm_mul_ps(xmm2, xmm3);							// xmm2 = _ EO EN EM
-	xmm4 = _mm_mul_ps(xmm4, xmm5);							// xmm4 = _ FR FQ FP
-	xmm0 = _mm_add_ps(xmm0, xmm2);							// xmm0 = _ DL+EO    DK+EN    DJ+EM
-	xmm6 = _mm_add_ps(xmm0, xmm4);							// xmm6 = _ DL+EO+FR DK+EN+FQ DJ+EM+FP
+	xmm7 = _mm_loadu_ps(&in1[1][0]);                        // xmm7 = GFED
+	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0);                   // xmm0 = DDDD
+	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);          // xmm2 = EEEE
+	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);          // xmm4 = FFFF
+	xmm0 = _mm_mul_ps(xmm0, xmm1);                          // xmm0 = _ DL DK DJ
+	xmm2 = _mm_mul_ps(xmm2, xmm3);                          // xmm2 = _ EO EN EM
+	xmm4 = _mm_mul_ps(xmm4, xmm5);                          // xmm4 = _ FR FQ FP
+	xmm0 = _mm_add_ps(xmm0, xmm2);                          // xmm0 = _ DL+EO    DK+EN    DJ+EM
+	xmm6 = _mm_add_ps(xmm0, xmm4);                          // xmm6 = _ DL+EO+FR DK+EN+FQ DJ+EM+FP
 	_mm_storeu_ps(&out[1][0], xmm6);
 	// out[2]
 	// the last row is handled specially, because we write 4 floats at a time,
-	// and the row is basically a vec3. 
-	xmm7 = _mm_loadu_ps(&in1[1][2]);						// xmm7 = IHGF
-	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);			// xmm0 = GGGG
-	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);			// xmm2 = HHHH
-	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b11111111);			// xmm4 = IIII
-	xmm0 = _mm_mul_ps(xmm0, xmm1);							// xmm0 = _ GL GK GJ
-	xmm2 = _mm_mul_ps(xmm2, xmm3);							// xmm2 = _ HO HN HM
-	xmm4 = _mm_mul_ps(xmm4, xmm5);							// xmm4 = _ IR IQ IP
-	xmm0 = _mm_add_ps(xmm0, xmm2);							// xmm0 = _ GL+HO GK+HN GJ+HM
-	xmm0 = _mm_add_ps(xmm0, xmm4);							// xmm0 = _ GL+HO+IR GK+HN+IQ GJ+HM+IP
-	xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b00001010);			// xmm6 = GJ+HM+IP GJ+HM+IP DL+EO+FR DL+EO+FR
-	xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b10011100);			// xmm6 = GL+HO+IR GK+HN+IQ GJ+HM+IP DL+EO+FR
-	_mm_storeu_ps(&out[1][2], xmm6);						// store out[2][0] = o20-o21-o22  (and also o12)
+	// and the row is basically a vec3.
+	xmm7 = _mm_loadu_ps(&in1[1][2]);                        // xmm7 = IHGF
+	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);          // xmm0 = GGGG
+	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);          // xmm2 = HHHH
+	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b11111111);          // xmm4 = IIII
+	xmm0 = _mm_mul_ps(xmm0, xmm1);                          // xmm0 = _ GL GK GJ
+	xmm2 = _mm_mul_ps(xmm2, xmm3);                          // xmm2 = _ HO HN HM
+	xmm4 = _mm_mul_ps(xmm4, xmm5);                          // xmm4 = _ IR IQ IP
+	xmm0 = _mm_add_ps(xmm0, xmm2);                          // xmm0 = _ GL+HO GK+HN GJ+HM
+	xmm0 = _mm_add_ps(xmm0, xmm4);                          // xmm0 = _ GL+HO+IR GK+HN+IQ GJ+HM+IP
+	xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b00001010);          // xmm6 = GJ+HM+IP GJ+HM+IP DL+EO+FR DL+EO+FR
+	xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b10011100);          // xmm6 = GL+HO+IR GK+HN+IQ GJ+HM+IP DL+EO+FR
+	_mm_storeu_ps(&out[1][2], xmm6);                        // store out[2][0] = o20-o21-o22  (and also o12)
 #endif
 }
 
@@ -3198,13 +3221,13 @@ void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3])
 	transpose[2][1] = matrix[1][2];
 	transpose[2][2] = matrix[2][2];*/
 	__m128 xmm0, xmm1, xmm3, xmm4, xmm5;
-	xmm0 = _mm_loadu_ps(&matrix[0][0]);							// xmm0 = m10 m02 m01 m00
-	xmm1 = _mm_loadu_ps(&matrix[1][1]);							// xmm1 = m21 m20 m12 m11
-	xmm3 = _mm_shuffle_ps(xmm0, xmm1, 0b10100100);				// xmm3 = m20 m20 m01 m00
-	xmm4 = _mm_shuffle_ps(xmm0, xmm3, 0b01111100);				// xmm4 = m01 m20 m10 m00
+	xmm0 = _mm_loadu_ps(&matrix[0][0]);                         // xmm0 = m10 m02 m01 m00
+	xmm1 = _mm_loadu_ps(&matrix[1][1]);                         // xmm1 = m21 m20 m12 m11
+	xmm3 = _mm_shuffle_ps(xmm0, xmm1, 0b10100100);              // xmm3 = m20 m20 m01 m00
+	xmm4 = _mm_shuffle_ps(xmm0, xmm3, 0b01111100);              // xmm4 = m01 m20 m10 m00
 	_mm_storeu_ps(&transpose[0][0], xmm4);
-	xmm3 = _mm_shuffle_ps(xmm0, xmm1, 0b01011010);				// xmm3 = m12 m12 m02 m02
-	xmm5 = _mm_shuffle_ps(xmm1, xmm3, 0b11011100);				// xmm5 = m12 m02 m21 m11
+	xmm3 = _mm_shuffle_ps(xmm0, xmm1, 0b01011010);              // xmm3 = m12 m12 m02 m02
+	xmm5 = _mm_shuffle_ps(xmm1, xmm3, 0b11011100);              // xmm5 = m12 m02 m21 m11
 	_mm_storeu_ps(&transpose[1][1], xmm5);
 	_mm_store_ss(&transpose[2][2], _mm_load_ss(&matrix[2][2]));
 #endif
@@ -3298,7 +3321,7 @@ void vec3_per(const vec3_t src, vec3_t dst)
 	{
 		if (tempvec[i] < minelem)
 		{
-			pos = i;
+			pos     = i;
 			minelem = tempvec[i];
 		}
 	}
@@ -3346,7 +3369,7 @@ void GetPerpendicularViewVector(const vec3_t point, const vec3_t p1, const vec3_
 void ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj)
 {
 	vec3_t pVec, vec;
-	float dot;
+	float  dot;
 	VectorSubtract(point, vStart, pVec);
 	VectorSubtract(vEnd, vStart, vec);
 	VectorNormalizeOnly(vec);
@@ -3413,7 +3436,7 @@ float DistanceFromLineSquared(vec3_t p, vec3_t lp1, vec3_t lp2)
 	for (j = 0; j < 3; j++)
 	{
 		if ((proj[j] > lp1[j] && proj[j] > lp2[j]) ||
-			(proj[j] < lp1[j] && proj[j] < lp2[j]))
+		    (proj[j] < lp1[j] && proj[j] < lp2[j]))
 		{
 			if (Q_fabs(proj[j] - lp1[j]) < Q_fabs(proj[j] - lp2[j]))
 			{
@@ -3494,7 +3517,7 @@ float vec3_to_yawn(const vec3_t vec)
 void axis_to_angles(axis_t axis, vec3_t angles)
 {
 	vec3_t right, roll_angles, tvec;
-	float dot;
+	float  dot;
 
 	// first get the pitch and yaw from the forward vector
 	vec3_to_angles(axis[0], angles);
@@ -3540,16 +3563,16 @@ float vec3_dist(vec3_t v1, vec3_t v2)
 	__m128 xmm1, xmm2, xmm6, xmm7;
 	// subtract
 	xmm2 = _mm_loadh_pi(_mm_load_ss(&v2[0]), (const __m64 *)(&v2[1]));
-	xmm1 = _mm_loadh_pi(_mm_load_ss(&v1[0]), (const __m64 *)(&v1[1]));		// xmm1 = z y _ x
+	xmm1 = _mm_loadh_pi(_mm_load_ss(&v1[0]), (const __m64 *)(&v1[1]));      // xmm1 = z y _ x
 	xmm2 = _mm_sub_ps(xmm2, xmm1);
 	// length
-	xmm2 = _mm_mul_ps(xmm2, xmm2);											// xmm2 = z*z y*y _ x*x
+	xmm2 = _mm_mul_ps(xmm2, xmm2);                                          // xmm2 = z*z y*y _ x*x
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);
 	//xmm2 = _mm_hadd_ps(xmm2, xmm2);											// xmm2 = zz + yy + xx
-	xmm7 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm2, xmm7);		//
-	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm2 = _mm_add_ss(xmm6, xmm7);		//
+	xmm7 = _mm_movehdup_ps(xmm2);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm2, xmm7);      //
+	xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+	xmm2 = _mm_add_ss(xmm6, xmm7);      //
 	xmm2 = _mm_sqrt_ss(xmm2);
 	return _mm_cvtss_f32(xmm2);
 #endif
@@ -3571,19 +3594,19 @@ float vec3_dist_squared(vec3_t v1, vec3_t v2)
 	//float s;
 	__m128 xmm1, xmm2, xmm6, xmm7;
 	// subtract
-	xmm1 = _mm_load_ss(&v1[2]);								// xmm1 = _ _ _ z
+	xmm1 = _mm_load_ss(&v1[2]);                             // xmm1 = _ _ _ z
 	xmm2 = _mm_load_ss(&v2[2]);
-	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&v1[0]));		// xmm1 = y x _ z
+	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&v1[0]));     // xmm1 = y x _ z
 	xmm2 = _mm_loadh_pi(xmm2, (const __m64 *)(&v2[0]));
 	xmm1 = _mm_sub_ps(xmm1, xmm2);
 	// length
-	xmm1 = _mm_mul_ps(xmm1, xmm1);							// xmm1 = y*y x*x _ z*z
+	xmm1 = _mm_mul_ps(xmm1, xmm1);                          // xmm1 = y*y x*x _ z*z
 	//xmm1 = _mm_hadd_ps(xmm1, xmm1);
 	//xmm1 = _mm_hadd_ps(xmm1, xmm1);
-	xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm1, xmm7);		//
-	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm1 = _mm_add_ss(xmm6, xmm7);		//
+	xmm7 = _mm_movehdup_ps(xmm1);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm1, xmm7);      //
+	xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+	xmm1 = _mm_add_ss(xmm6, xmm7);      //
 	//_mm_store_ss(&s, xmm1);
 	//return s;
 	return _mm_cvtss_f32(xmm1);
@@ -3657,7 +3680,7 @@ void quat_from_mat4(quat_t q, const mat4_t m)
 
 	http://www.intel.com/cd/ids/developer/asmo-na/eng/293748.htm
 	*/
-	float t/*, s*/, m0510;
+	float t /*, s*/, m0510;
 
 	m0510 = m[0] + m[5] + m[10];
 	if (m0510 > 0.0f)
@@ -3745,7 +3768,7 @@ void quat_from_mat4(quat_t q, const mat4_t m)
 		if (m[0] > m[5] && m[0] > m[10])
 		{
 			// column 0
-			float s = sqrt(1.0f + m[0] - m[5] - m[10]) * 2.0f;
+			float s  = sqrt(1.0f + m[0] - m[5] - m[10]) * 2.0f;
 			float _s = 1.0 / s;
 
 			q[0] = 0.25f * s;
@@ -3756,7 +3779,7 @@ void quat_from_mat4(quat_t q, const mat4_t m)
 		else if (m[5] > m[10])
 		{
 			// column 1
-			float s = sqrt(1.0f + m[5] - m[0] - m[10]) * 2.0f;
+			float s  = sqrt(1.0f + m[5] - m[0] - m[10]) * 2.0f;
 			float _s = 1.0 / s;
 
 			q[0] = (m[4] + m[1]) * _s;
@@ -3767,7 +3790,7 @@ void quat_from_mat4(quat_t q, const mat4_t m)
 		else
 		{
 			// column 2
-			float s = sqrt(1.0f + m[10] - m[0] - m[5]) * 2.0f;
+			float s  = sqrt(1.0f + m[10] - m[0] - m[5]) * 2.0f;
 			float _s = 1.0 / s;
 
 			q[0] = (m[8] + m[2]) * _s;
@@ -3792,7 +3815,7 @@ void quat_from_axis(const axis_t m, quat_t q)
 	vec_t w4;
 
 	q[3] = (float)(sqrt((double)(1.0f + m[0][0] + m[1][1] + m[2][2])) * 0.5); // / 2.0);
-	_w4   = 1.0 / (q[3] * 4.0f);
+	_w4  = 1.0 / (q[3] * 4.0f);
 
 	q[0] = (m[1][2] - m[2][1]) * _w4;
 	q[1] = (m[2][0] - m[0][2]) * _w4;
@@ -3820,16 +3843,16 @@ void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll)
 	float radp, rady, radr, srcy, crsy, crcy, srsy, sr, sp, sy, cr, cp, cy;
 
 	radp = DEG2RAD(pitch);
-	sp = sin(radp);
-	cp = cos(radp);
+	sp   = sin(radp);
+	cp   = cos(radp);
 
 	rady = DEG2RAD(yaw);
-	sy = sin(rady);
-	cy = cos(rady);
+	sy   = sin(rady);
+	cy   = cos(rady);
 
 	radr = DEG2RAD(roll);
-	sr = sin(radr);
-	cr = cos(radr);
+	sr   = sin(radr);
+	cr   = cos(radr);
 
 	srcy = sr * cy;
 	crsy = cr * sy;
@@ -3910,19 +3933,20 @@ vec_t quat_norm(quat_t q)
 	return length;
 #else
 	__m128 xmm0, xmm1, xmm6, xmm7;
-	float s;
+	float  s;
 	xmm1 = _mm_loadu_ps(&q[0]);
 	xmm0 = xmm1;
 	xmm0 = _mm_mul_ps(xmm0, xmm0);
 	//xmm0 = _mm_hadd_ps(xmm0, xmm0);
 	//xmm0 = _mm_hadd_ps(xmm0, xmm0); // xmm0 = length
-	xmm7 = _mm_movehdup_ps(xmm0);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm0, xmm7);		//
-	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm0 = _mm_add_ss(xmm6, xmm7);		//
+	xmm7 = _mm_movehdup_ps(xmm0);       // faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm0, xmm7);      //
+	xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+	xmm0 = _mm_add_ss(xmm6, xmm7);      //
 	xmm0 = _mm_sqrt_ss(xmm0);
 	_mm_store_ss(&s, xmm0); // function result
-	if (s != 0.0) {
+	if (s != 0.0)
+	{
 		xmm0 = _mm_rcp_ss(xmm0); // xmm0 = 1/length
 		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0);
 		xmm1 = _mm_mul_ps(xmm1, xmm0);
@@ -4005,7 +4029,7 @@ void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out)
 	}
 
 #ifndef ETL_SSE
-	cosom    = from[0] * to[0] + from[1] * to[1] + from[2] * to[2] + from[3] * to[3];
+	cosom = from[0] * to[0] + from[1] * to[1] + from[2] * to[2] + from[3] * to[3];
 #else
 	{
 		__m128 xmm0, xmm1, xmm6, xmm7;
@@ -4014,10 +4038,10 @@ void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out)
 		xmm0 = _mm_mul_ps(xmm0, xmm1);
 		//xmm0 = _mm_hadd_ps(xmm0, xmm0);
 		//xmm0 = _mm_hadd_ps(xmm0, xmm0);
-		xmm7 = _mm_movehdup_ps(xmm0);		// faster way to do: 2 * hadd
-		xmm6 = _mm_add_ps(xmm0, xmm7);		//
-		xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-		xmm0 = _mm_add_ss(xmm6, xmm7);		//
+		xmm7 = _mm_movehdup_ps(xmm0);       // faster way to do: 2 * hadd
+		xmm6 = _mm_add_ps(xmm0, xmm7);      //
+		xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+		xmm0 = _mm_add_ss(xmm6, xmm7);      //
 		_mm_store_ss(&cosom, xmm0);
 	}
 #endif
@@ -4026,7 +4050,7 @@ void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out)
 	if ((1.0f - absCosom) > 1e-6f)
 	{
 		float sinSqr = 1.0f - (absCosom * absCosom);
-		float sinom = rcp((float)sqrt(sinSqr)); // float sinom  = 1.0f / sqrt(sinSqr)
+		float sinom  = rcp((float)sqrt(sinSqr)); // float sinom  = 1.0f / sqrt(sinSqr)
 		float omega  = atan2(sinSqr * sinom, absCosom);
 
 		scale0 = sin((1.0f - frac) * omega) * sinom;
@@ -4080,16 +4104,28 @@ qboolean mat4_compare(const mat4_t a, const mat4_t b)
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3;
 	xmm0 = _mm_cmpneq_ps(_mm_loadu_ps(&a[0]), _mm_loadu_ps(&b[0]));
-	if (_mm_movemask_ps(xmm0)) return qfalse;
+	if (_mm_movemask_ps(xmm0))
+	{
+		return qfalse;
+	}
 
 	xmm1 = _mm_cmpneq_ps(_mm_loadu_ps(&a[4]), _mm_loadu_ps(&b[4]));
-	if (_mm_movemask_ps(xmm1)) return qfalse;
+	if (_mm_movemask_ps(xmm1))
+	{
+		return qfalse;
+	}
 
 	xmm2 = _mm_cmpneq_ps(_mm_loadu_ps(&a[8]), _mm_loadu_ps(&b[8]));
-	if (_mm_movemask_ps(xmm2)) return qfalse;
+	if (_mm_movemask_ps(xmm2))
+	{
+		return qfalse;
+	}
 
 	xmm3 = _mm_cmpneq_ps(_mm_loadu_ps(&a[12]), _mm_loadu_ps(&b[12]));
-	if (_mm_movemask_ps(xmm3)) return qfalse;
+	if (_mm_movemask_ps(xmm3))
+	{
+		return qfalse;
+	}
 
 	return qtrue;
 #endif
@@ -4105,15 +4141,15 @@ void mat4_copy(const mat4_t in, mat4_t out)
 #if id386_sse && defined __GNUC__ && 0
 	asm volatile
 	(
-	    "movups         (%%edx),        %%xmm0\n"
-	    "movups         0x10(%%edx),    %%xmm1\n"
-	    "movups         0x20(%%edx),    %%xmm2\n"
-	    "movups         0x30(%%edx),    %%xmm3\n"
+		"movups         (%%edx),        %%xmm0\n"
+		"movups         0x10(%%edx),    %%xmm1\n"
+		"movups         0x20(%%edx),    %%xmm2\n"
+		"movups         0x30(%%edx),    %%xmm3\n"
 
-	    "movups         %%xmm0,         (%%eax)\n"
-	    "movups         %%xmm1,         0x10(%%eax)\n"
-	    "movups         %%xmm2,         0x20(%%eax)\n"
-	    "movups         %%xmm3,         0x30(%%eax)\n"
+		"movups         %%xmm0,         (%%eax)\n"
+		"movups         %%xmm1,         0x10(%%eax)\n"
+		"movups         %%xmm2,         0x20(%%eax)\n"
+		"movups         %%xmm3,         0x30(%%eax)\n"
 		:
 		: "a" (out), "d" (in)
 		: "memory"
@@ -4121,25 +4157,25 @@ void mat4_copy(const mat4_t in, mat4_t out)
 #elif id386_3dnow && defined __GNUC__
 	asm volatile
 	(
-	    "femms\n"
-	    "movq           (%%edx),        %%mm0\n"
-	    "movq           8(%%edx),       %%mm1\n"
-	    "movq           16(%%edx),      %%mm2\n"
-	    "movq           24(%%edx),      %%mm3\n"
-	    "movq           32(%%edx),      %%mm4\n"
-	    "movq           40(%%edx),      %%mm5\n"
-	    "movq           48(%%edx),      %%mm6\n"
-	    "movq           56(%%edx),      %%mm7\n"
+		"femms\n"
+		"movq           (%%edx),        %%mm0\n"
+		"movq           8(%%edx),       %%mm1\n"
+		"movq           16(%%edx),      %%mm2\n"
+		"movq           24(%%edx),      %%mm3\n"
+		"movq           32(%%edx),      %%mm4\n"
+		"movq           40(%%edx),      %%mm5\n"
+		"movq           48(%%edx),      %%mm6\n"
+		"movq           56(%%edx),      %%mm7\n"
 
-	    "movq           %%mm0,          (%%eax)\n"
-	    "movq           %%mm1,          8(%%eax)\n"
-	    "movq           %%mm2,          16(%%eax)\n"
-	    "movq           %%mm3,          24(%%eax)\n"
-	    "movq           %%mm4,          32(%%eax)\n"
-	    "movq           %%mm5,          40(%%eax)\n"
-	    "movq           %%mm6,          48(%%eax)\n"
-	    "movq           %%mm7,          56(%%eax)\n"
-	    "femms\n"
+		"movq           %%mm0,          (%%eax)\n"
+		"movq           %%mm1,          8(%%eax)\n"
+		"movq           %%mm2,          16(%%eax)\n"
+		"movq           %%mm3,          24(%%eax)\n"
+		"movq           %%mm4,          32(%%eax)\n"
+		"movq           %%mm5,          40(%%eax)\n"
+		"movq           %%mm6,          48(%%eax)\n"
+		"movq           %%mm7,          56(%%eax)\n"
+		"femms\n"
 		:
 		: "a" (out), "d" (in)
 		: "memory"
@@ -4172,7 +4208,7 @@ void mat4_copy(const mat4_t in, mat4_t out)
  */
 void MatrixOrthogonalProjection(mat4_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearvec, vec_t farvec)
 {
-	float _far_near = rcp(farvec - nearvec);
+	float _far_near   = rcp(farvec - nearvec);
 	float _top_bottom = rcp(top - bottom);
 	float _right_left = rcp(right - left);
 
@@ -4183,9 +4219,9 @@ void MatrixOrthogonalProjection(mat4_t m, vec_t left, vec_t right, vec_t bottom,
 	m[3] = 0.0f;                m[7] = 0.0f;                m[11] = 0.0f;                 m[15] = 1.0f;
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3;
-	xmm0 = _mm_set_ps(0.0f, 0.0f,                            0.0f,                          2.0f * _right_left);
-	xmm1 = _mm_set_ps(0.0f, 0.0f,                            2.0f * _top_bottom,            0.0f);
-	xmm2 = _mm_set_ps(0.0f, -2.0f * _far_near,               0.0f,                          0.0f);
+	xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, 2.0f * _right_left);
+	xmm1 = _mm_set_ps(0.0f, 0.0f, 2.0f * _top_bottom, 0.0f);
+	xmm2 = _mm_set_ps(0.0f, -2.0f * _far_near, 0.0f, 0.0f);
 	xmm3 = _mm_set_ps(1.0f, -(farvec + nearvec) * _far_near, -(top + bottom) * _top_bottom, -(right + left) * _right_left);
 	_mm_storeu_ps(&m[0], xmm0);
 	_mm_storeu_ps(&m[4], xmm1);
@@ -4242,10 +4278,10 @@ void mat4_transform_vec4(const mat4_t m, const vec4_t in, vec4_t out)
 	_m2 = _mm_loadu_ps(&m[8]);
 	_m3 = _mm_loadu_ps(&m[12]);
 	_t0 = _mm_loadu_ps(in);
-	_x = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(0, 0, 0, 0));
-	_y = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(1, 1, 1, 1));
-	_z = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(2, 2, 2, 2));
-	_w = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(3, 3, 3, 3));
+	_x  = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(0, 0, 0, 0));
+	_y  = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(1, 1, 1, 1));
+	_z  = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(2, 2, 2, 2));
+	_w  = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(3, 3, 3, 3));
 	_t0 = _mm_mul_ps(_m3, _w);
 	_t1 = _mm_mul_ps(_m2, _z);
 	_t0 = _mm_add_ps(_t0, _t1);
@@ -4274,10 +4310,10 @@ void mat4_reset_translate(mat4_t m, vec_t x, vec_t y, vec_t z)
 	m[3] = 0;      m[7] = 0;      m[11] = 0;     m[15] = 1;
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3;
-	xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f);		// xmm0 =  m3  m2  m1  m0	(0.0f, 0.0f, 0.0f, 1.0f)
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b11110011);	// xmm1 =  m7  m6  m5  m4	(0.0f, 0.0f, 1.0f, 0.0f)
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b11001111);	// xmm2 = m11 m10  m9  m8	(0.0f, 1.0f, 0.0f, 0.0f)
-	xmm3 = _mm_set_ps(1.0f, z, y, x);				// xmm3 = m15 m14 m13 m12
+	xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f);      // xmm0 =  m3  m2  m1  m0	(0.0f, 0.0f, 0.0f, 1.0f)
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b11110011);  // xmm1 =  m7  m6  m5  m4	(0.0f, 0.0f, 1.0f, 0.0f)
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b11001111);  // xmm2 = m11 m10  m9  m8	(0.0f, 1.0f, 0.0f, 0.0f)
+	xmm3 = _mm_set_ps(1.0f, z, y, x);               // xmm3 = m15 m14 m13 m12
 	_mm_storeu_ps(&m[0], xmm0);
 	_mm_storeu_ps(&m[4], xmm1);
 	_mm_storeu_ps(&m[8], xmm2);
@@ -4296,10 +4332,10 @@ void mat4_reset_translate_vec3(mat4_t m, vec3_t position)
 	mat4_reset_translate(m, position[0], position[1], position[2]);
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3;
-	xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f);						// xmm0 =  m3  m2  m1  m0
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b11110011);					// xmm1 =  m7  m6  m5  m4	(0.0f, 0.0f, 1.0f, 0.0f)
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b11001111);					// xmm2 = m11 m10  m9  m8	(0.0f, 1.0f, 0.0f, 0.0f)
-	xmm3 = _mm_set_ps(1.0f, position[2], position[1], position[0]);	// xmm3 = m15 m14 m13 m12
+	xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f);                      // xmm0 =  m3  m2  m1  m0
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b11110011);                  // xmm1 =  m7  m6  m5  m4	(0.0f, 0.0f, 1.0f, 0.0f)
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b11001111);                  // xmm2 = m11 m10  m9  m8	(0.0f, 1.0f, 0.0f, 0.0f)
+	xmm3 = _mm_set_ps(1.0f, position[2], position[1], position[0]); // xmm3 = m15 m14 m13 m12
 	_mm_storeu_ps(&m[0], xmm0);
 	_mm_storeu_ps(&m[4], xmm1);
 	_mm_storeu_ps(&m[8], xmm2);
@@ -4391,62 +4427,62 @@ void mat4_mult(const mat4_t a, const mat4_t b, mat4_t out)
 	out[15] = b[12] * a[3] + b[13] * a[7] + b[14] * a[11] + b[15] * a[15];
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
-	xmm4 = _mm_loadu_ps(&a[0]);						// xmm4 =  a0  a1  a2  a3
-	xmm5 = _mm_loadu_ps(&a[4]);						// xmm5 =  a4  a5  a6  a7
-	xmm6 = _mm_loadu_ps(&a[8]);						// xmm6 =  a8  a9 a10 a11
-	xmm7 = _mm_loadu_ps(&a[12]);					// xmm7 = a12 a13 a14 a15
+	xmm4 = _mm_loadu_ps(&a[0]);                     // xmm4 =  a0  a1  a2  a3
+	xmm5 = _mm_loadu_ps(&a[4]);                     // xmm5 =  a4  a5  a6  a7
+	xmm6 = _mm_loadu_ps(&a[8]);                     // xmm6 =  a8  a9 a10 a11
+	xmm7 = _mm_loadu_ps(&a[12]);                    // xmm7 = a12 a13 a14 a15
 
-	xmm0 = _mm_loadu_ps(&b[0]);						// xmm0 = b0 b1 b2 b3
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b0 b0 b0 b0
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b1 b1 b1 b1
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b2 b2 b2 b2
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b3 b3 b3 b3
-	xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b3*a12 b3*a13 b3*a14 b3*a15
-	xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b2*a8  b2*a9 b2*a10 b2*a11
-	xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b1*a4  b1*a5  b1*a6  b1*a7
-	xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b0*a0  b0*a1  b0*a2  b0*a3
+	xmm0 = _mm_loadu_ps(&b[0]);                     // xmm0 = b0 b1 b2 b3
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b0 b0 b0 b0
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b1 b1 b1 b1
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b2 b2 b2 b2
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b3 b3 b3 b3
+	xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b3*a12 b3*a13 b3*a14 b3*a15
+	xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b2*a8  b2*a9 b2*a10 b2*a11
+	xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b1*a4  b1*a5  b1*a6  b1*a7
+	xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b0*a0  b0*a1  b0*a2  b0*a3
 	xmm3 = _mm_add_ps(xmm3, xmm2);
 	xmm0 = _mm_add_ps(xmm0, xmm1);
 	xmm0 = _mm_add_ps(xmm0, xmm3);
 	_mm_storeu_ps(&out[0], xmm0);
 
-	xmm0 = _mm_loadu_ps(&b[4]);						// xmm0 = b4 b5 b6 b7
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b4 b4 b4 b4
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b5 b5 b5 b5
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b6 b6 b6 b6
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b7 b7 b7 b7
-	xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b7*a12 b7*a13 b7*a14 b7*a15
-	xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b6*a8  b6*a9 b6*a10 b6*a11
-	xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b5*a4  b5*a5  b5*a6  b5*a7
-	xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b4*a0  b4*a1  b4*a2  b4*a3
+	xmm0 = _mm_loadu_ps(&b[4]);                     // xmm0 = b4 b5 b6 b7
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b4 b4 b4 b4
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b5 b5 b5 b5
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b6 b6 b6 b6
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b7 b7 b7 b7
+	xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b7*a12 b7*a13 b7*a14 b7*a15
+	xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b6*a8  b6*a9 b6*a10 b6*a11
+	xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b5*a4  b5*a5  b5*a6  b5*a7
+	xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b4*a0  b4*a1  b4*a2  b4*a3
 	xmm3 = _mm_add_ps(xmm3, xmm2);
 	xmm0 = _mm_add_ps(xmm0, xmm1);
 	xmm0 = _mm_add_ps(xmm0, xmm3);
 	_mm_storeu_ps(&out[4], xmm0);
 
-	xmm0 = _mm_loadu_ps(&b[8]);						// xmm0 = b8 b9 b10 b11
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b8 b8 b8 b8
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b9 b9 b9 b9
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b10 b10 b10 b10
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b11 b11 b11 b11
-	xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b11*a12 b11*a13 b11*a14 b11*a15
-	xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b10*a8  b10*a9 b10*a10 b10*a11
-	xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =   b9*a4   b9*a5   b9*a6   b9*a7
-	xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =   b8*a0   b8*a1   b8*a2   b8*a3
+	xmm0 = _mm_loadu_ps(&b[8]);                     // xmm0 = b8 b9 b10 b11
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b8 b8 b8 b8
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b9 b9 b9 b9
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b10 b10 b10 b10
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b11 b11 b11 b11
+	xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b11*a12 b11*a13 b11*a14 b11*a15
+	xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b10*a8  b10*a9 b10*a10 b10*a11
+	xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =   b9*a4   b9*a5   b9*a6   b9*a7
+	xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =   b8*a0   b8*a1   b8*a2   b8*a3
 	xmm3 = _mm_add_ps(xmm3, xmm2);
 	xmm0 = _mm_add_ps(xmm0, xmm1);
 	xmm0 = _mm_add_ps(xmm0, xmm3);
 	_mm_storeu_ps(&out[8], xmm0);
 
-	xmm0 = _mm_loadu_ps(&b[12]);					// xmm0 = b12 b13 b14 b15
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b12 b12 b12 b12
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b13 b13 b13 b13
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b14 b14 b14 b14
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b15 b15 b15 b15
-	xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b15*a12 b15*a13 b15*a14 b15*a15
-	xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b14*a8  b14*a9 b14*a10 b14*a11
-	xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b13*a4  b13*a5  b13*a6  b13*a7
-	xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b12*a0  b12*a1  b12*a2  b12*a3
+	xmm0 = _mm_loadu_ps(&b[12]);                    // xmm0 = b12 b13 b14 b15
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b12 b12 b12 b12
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b13 b13 b13 b13
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b14 b14 b14 b14
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b15 b15 b15 b15
+	xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b15*a12 b15*a13 b15*a14 b15*a15
+	xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b14*a8  b14*a9 b14*a10 b14*a11
+	xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b13*a4  b13*a5  b13*a6  b13*a7
+	xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b12*a0  b12*a1  b12*a2  b12*a3
 	xmm3 = _mm_add_ps(xmm3, xmm2);
 	xmm0 = _mm_add_ps(xmm0, xmm1);
 	xmm0 = _mm_add_ps(xmm0, xmm3);
@@ -4468,62 +4504,62 @@ void mat4_mult_self(mat4_t m, const mat4_t m2)
 	mat4_mult(tmp, m2, m);
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
-	xmm4 = _mm_loadu_ps(&m[0]);						// xmm4 =  a0  a1  a2  a3
-	xmm5 = _mm_loadu_ps(&m[4]);						// xmm5 =  a4  a5  a6  a7
-	xmm6 = _mm_loadu_ps(&m[8]);						// xmm6 =  a8  a9 a10 a11
-	xmm7 = _mm_loadu_ps(&m[12]);					// xmm7 = a12 a13 a14 a15
+	xmm4 = _mm_loadu_ps(&m[0]);                     // xmm4 =  a0  a1  a2  a3
+	xmm5 = _mm_loadu_ps(&m[4]);                     // xmm5 =  a4  a5  a6  a7
+	xmm6 = _mm_loadu_ps(&m[8]);                     // xmm6 =  a8  a9 a10 a11
+	xmm7 = _mm_loadu_ps(&m[12]);                    // xmm7 = a12 a13 a14 a15
 
-	xmm0 = _mm_loadu_ps(&m2[0]);						// xmm0 = b0 b1 b2 b3
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b0 b0 b0 b0
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b1 b1 b1 b1
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b2 b2 b2 b2
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b3 b3 b3 b3
-	xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b3*a12 b3*a13 b3*a14 b3*a15
-	xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b2*a8  b2*a9 b2*a10 b2*a11
-	xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b1*a4  b1*a5  b1*a6  b1*a7
-	xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b0*a0  b0*a1  b0*a2  b0*a3
+	xmm0 = _mm_loadu_ps(&m2[0]);                        // xmm0 = b0 b1 b2 b3
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b0 b0 b0 b0
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b1 b1 b1 b1
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b2 b2 b2 b2
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b3 b3 b3 b3
+	xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b3*a12 b3*a13 b3*a14 b3*a15
+	xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b2*a8  b2*a9 b2*a10 b2*a11
+	xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b1*a4  b1*a5  b1*a6  b1*a7
+	xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b0*a0  b0*a1  b0*a2  b0*a3
 	xmm3 = _mm_add_ps(xmm3, xmm2);
 	xmm0 = _mm_add_ps(xmm0, xmm1);
 	xmm0 = _mm_add_ps(xmm0, xmm3);
 	_mm_storeu_ps(&m[0], xmm0);
 
-	xmm0 = _mm_loadu_ps(&m2[4]);						// xmm0 = b4 b5 b6 b7
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b4 b4 b4 b4
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b5 b5 b5 b5
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b6 b6 b6 b6
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b7 b7 b7 b7
-	xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b7*a12 b7*a13 b7*a14 b7*a15
-	xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b6*a8  b6*a9 b6*a10 b6*a11
-	xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b5*a4  b5*a5  b5*a6  b5*a7
-	xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b4*a0  b4*a1  b4*a2  b4*a3
+	xmm0 = _mm_loadu_ps(&m2[4]);                        // xmm0 = b4 b5 b6 b7
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b4 b4 b4 b4
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b5 b5 b5 b5
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b6 b6 b6 b6
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b7 b7 b7 b7
+	xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b7*a12 b7*a13 b7*a14 b7*a15
+	xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b6*a8  b6*a9 b6*a10 b6*a11
+	xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b5*a4  b5*a5  b5*a6  b5*a7
+	xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b4*a0  b4*a1  b4*a2  b4*a3
 	xmm3 = _mm_add_ps(xmm3, xmm2);
 	xmm0 = _mm_add_ps(xmm0, xmm1);
 	xmm0 = _mm_add_ps(xmm0, xmm3);
 	_mm_storeu_ps(&m[4], xmm0);
 
-	xmm0 = _mm_loadu_ps(&m2[8]);						// xmm0 = b8 b9 b10 b11
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b8 b8 b8 b8
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b9 b9 b9 b9
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b10 b10 b10 b10
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b11 b11 b11 b11
-	xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b11*a12 b11*a13 b11*a14 b11*a15
-	xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b10*a8  b10*a9 b10*a10 b10*a11
-	xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =   b9*a4   b9*a5   b9*a6   b9*a7
-	xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =   b8*a0   b8*a1   b8*a2   b8*a3
+	xmm0 = _mm_loadu_ps(&m2[8]);                        // xmm0 = b8 b9 b10 b11
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b8 b8 b8 b8
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b9 b9 b9 b9
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b10 b10 b10 b10
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b11 b11 b11 b11
+	xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b11*a12 b11*a13 b11*a14 b11*a15
+	xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b10*a8  b10*a9 b10*a10 b10*a11
+	xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =   b9*a4   b9*a5   b9*a6   b9*a7
+	xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =   b8*a0   b8*a1   b8*a2   b8*a3
 	xmm3 = _mm_add_ps(xmm3, xmm2);
 	xmm0 = _mm_add_ps(xmm0, xmm1);
 	xmm0 = _mm_add_ps(xmm0, xmm3);
 	_mm_storeu_ps(&m[8], xmm0);
 
-	xmm0 = _mm_loadu_ps(&m2[12]);					// xmm0 = b12 b13 b14 b15
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b12 b12 b12 b12
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b13 b13 b13 b13
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b14 b14 b14 b14
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b15 b15 b15 b15
-	xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b15*a12 b15*a13 b15*a14 b15*a15
-	xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b14*a8  b14*a9 b14*a10 b14*a11
-	xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b13*a4  b13*a5  b13*a6  b13*a7
-	xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b12*a0  b12*a1  b12*a2  b12*a3
+	xmm0 = _mm_loadu_ps(&m2[12]);                   // xmm0 = b12 b13 b14 b15
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b12 b12 b12 b12
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b13 b13 b13 b13
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b14 b14 b14 b14
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b15 b15 b15 b15
+	xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b15*a12 b15*a13 b15*a14 b15*a15
+	xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b14*a8  b14*a9 b14*a10 b14*a11
+	xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b13*a4  b13*a5  b13*a6  b13*a7
+	xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b12*a0  b12*a1  b12*a2  b12*a3
 	xmm3 = _mm_add_ps(xmm3, xmm2);
 	xmm0 = _mm_add_ps(xmm0, xmm1);
 	xmm0 = _mm_add_ps(xmm0, xmm3);
@@ -4544,10 +4580,10 @@ void mat4_ident(mat4_t m)
 	m[3] = 0;      m[7] = 0;      m[11] = 0;     m[15] = 1;
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3;
-	xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f);		// (0.0f, 0.0f, 0.0f, 1.0f)
-	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b11110011);	// (0.0f, 0.0f, 1.0f, 0.0f)
-	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b11001111);	// (0.0f, 1.0f, 0.0f, 0.0f)
-	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b00111111);	// (1.0f, 0.0f, 0.0f, 0.0f)
+	xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f);      // (0.0f, 0.0f, 0.0f, 1.0f)
+	xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b11110011);  // (0.0f, 0.0f, 1.0f, 0.0f)
+	xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b11001111);  // (0.0f, 1.0f, 0.0f, 0.0f)
+	xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b00111111);  // (1.0f, 0.0f, 0.0f, 0.0f)
 	_mm_storeu_ps(&m[0], xmm0);
 	_mm_storeu_ps(&m[4], xmm1);
 	_mm_storeu_ps(&m[8], xmm2);
@@ -4569,14 +4605,14 @@ void mat4_transform_vec3(const mat4_t m, const vec3_t in, vec3_t out)
 	out[2] = m[2] * in[0] + m[6] * in[1] + m[10] * in[2] + m[14];
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
-	xmm1 = _mm_loadh_pi(_mm_load_ss(&in[0]), (const __m64 *)(&in[1]));	// xmm1 = z y _ x
-	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);		// xmm2 = z z z z
-	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);		// xmm1 = y y y y
-	xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);		// xmm0 = x x x x
-	xmm3 = _mm_loadu_ps(&m[0]);							// xmm3 =  m3  m2  m1  m0
-	xmm4 = _mm_loadu_ps(&m[4]);							// xmm4 =  m7  m6  m5  m4
-	xmm5 = _mm_loadu_ps(&m[8]);							// xmm5 = m11 m10  m9  m8
-	xmm6 = _mm_loadu_ps(&m[12]);						// xmm6 = m15 m14 m13 m12
+	xmm1 = _mm_loadh_pi(_mm_load_ss(&in[0]), (const __m64 *)(&in[1]));  // xmm1 = z y _ x
+	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);      // xmm2 = z z z z
+	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);      // xmm1 = y y y y
+	xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);      // xmm0 = x x x x
+	xmm3 = _mm_loadu_ps(&m[0]);                         // xmm3 =  m3  m2  m1  m0
+	xmm4 = _mm_loadu_ps(&m[4]);                         // xmm4 =  m7  m6  m5  m4
+	xmm5 = _mm_loadu_ps(&m[8]);                         // xmm5 = m11 m10  m9  m8
+	xmm6 = _mm_loadu_ps(&m[12]);                        // xmm6 = m15 m14 m13 m12
 	xmm0 = _mm_mul_ps(xmm0, xmm3);
 	xmm1 = _mm_mul_ps(xmm1, xmm4);
 	xmm2 = _mm_mul_ps(xmm2, xmm5);
@@ -4606,16 +4642,16 @@ void mat4_transform_vec3_self(const mat4_t m, vec3_t inout)
 	VectorCopy(tmp, inout);
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
-	xmm0 = _mm_load_ss(&inout[0]);							// xmm0 = _ _ _ x
-	xmm1 = _mm_loadh_pi(xmm0, (const __m64 *)(&inout[1]));	// xmm1 = z y _ _
-	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);			// xmm2 = z z z z
-	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);			// xmm1 = y y y y
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);			// xmm0 = x x x x
+	xmm0 = _mm_load_ss(&inout[0]);                          // xmm0 = _ _ _ x
+	xmm1 = _mm_loadh_pi(xmm0, (const __m64 *)(&inout[1]));  // xmm1 = z y _ _
+	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);          // xmm2 = z z z z
+	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);          // xmm1 = y y y y
+	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);          // xmm0 = x x x x
 
-	xmm3 = _mm_loadu_ps(&m[0]);								// xmm3 =  m0  m1  m2  m3
-	xmm4 = _mm_loadu_ps(&m[4]);								// xmm4 =  m4  m5  m6  m7
-	xmm5 = _mm_loadu_ps(&m[8]);								// xmm5 =  m8  m9 m10 m11
-	xmm6 = _mm_loadu_ps(&m[12]);							// xmm6 = m12 m13 m14 m15
+	xmm3 = _mm_loadu_ps(&m[0]);                             // xmm3 =  m0  m1  m2  m3
+	xmm4 = _mm_loadu_ps(&m[4]);                             // xmm4 =  m4  m5  m6  m7
+	xmm5 = _mm_loadu_ps(&m[8]);                             // xmm5 =  m8  m9 m10 m11
+	xmm6 = _mm_loadu_ps(&m[12]);                            // xmm6 = m12 m13 m14 m15
 
 	xmm0 = _mm_mul_ps(xmm0, xmm3);
 	xmm1 = _mm_mul_ps(xmm1, xmm4);
@@ -4642,10 +4678,10 @@ void mat4_transpose(const mat4_t in, mat4_t out)
 	MatrixTransposeIntoXMM(in);
 	asm volatile
 	(
-	    "movups         %%xmm4,         (%%eax)\n"
-	    "movups         %%xmm5,         0x10(%%eax)\n"
-	    "movups         %%xmm6,         0x20(%%eax)\n"
-	    "movups         %%xmm7,         0x30(%%eax)\n"
+		"movups         %%xmm4,         (%%eax)\n"
+		"movups         %%xmm5,         0x10(%%eax)\n"
+		"movups         %%xmm6,         0x20(%%eax)\n"
+		"movups         %%xmm7,         0x30(%%eax)\n"
 		:
 		: "a" (out)
 		: "memory"
@@ -4658,25 +4694,25 @@ void mat4_transpose(const mat4_t in, mat4_t out)
 	out[12] = in[3];     out[13] = in[7];     out[14] = in[11];     out[15] = in[15];
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
-	xmm0 = _mm_loadu_ps(&in[0]);							// xmm0 = m03 m02 m01 m00
-	xmm1 = _mm_loadu_ps(&in[4]);							// xmm1 = m13 m12 m11 m10
-	xmm2 = _mm_loadu_ps(&in[8]);							// xmm2 = m23 m22 m21 m20
-	xmm3 = _mm_loadu_ps(&in[12]);							// xmm3 = m33 m32 m31 m30
+	xmm0 = _mm_loadu_ps(&in[0]);                            // xmm0 = m03 m02 m01 m00
+	xmm1 = _mm_loadu_ps(&in[4]);                            // xmm1 = m13 m12 m11 m10
+	xmm2 = _mm_loadu_ps(&in[8]);                            // xmm2 = m23 m22 m21 m20
+	xmm3 = _mm_loadu_ps(&in[12]);                           // xmm3 = m33 m32 m31 m30
 	// row 0
-	xmm4 = _mm_shuffle_ps(xmm1, xmm0, 0b11101110);			// xmm4 = m03 m02 m13 m12
-	xmm5 = _mm_shuffle_ps(xmm3, xmm2, 0b11101011);			// xmm5 = m23 m22 m32 m33
-	xmm6 = _mm_shuffle_ps(xmm5, xmm4, 0b11011100);			// xmm6 = m03 m13 m23 m33
+	xmm4 = _mm_shuffle_ps(xmm1, xmm0, 0b11101110);          // xmm4 = m03 m02 m13 m12
+	xmm5 = _mm_shuffle_ps(xmm3, xmm2, 0b11101011);          // xmm5 = m23 m22 m32 m33
+	xmm6 = _mm_shuffle_ps(xmm5, xmm4, 0b11011100);          // xmm6 = m03 m13 m23 m33
 	_mm_storeu_ps((float *)&out[0], xmm6);
 	// row 1
-	xmm7 = _mm_shuffle_ps(xmm5, xmm4, 0b10001001);			// xmm7 = m02 m12 m22 m32
+	xmm7 = _mm_shuffle_ps(xmm5, xmm4, 0b10001001);          // xmm7 = m02 m12 m22 m32
 	_mm_storeu_ps((float *)&out[4], xmm7);
 	// row 2
-	xmm4 = _mm_shuffle_ps(xmm1, xmm0, 0b01000100);			// xmm4 = m01 m00 m11 m10
-	xmm5 = _mm_shuffle_ps(xmm3, xmm2, 0b01000001);			// xmm5 = m21 m20 m30 m31
-	xmm6 = _mm_shuffle_ps(xmm5, xmm4, 0b11011100);			// xmm6 = m01 m11 m21 m31
+	xmm4 = _mm_shuffle_ps(xmm1, xmm0, 0b01000100);          // xmm4 = m01 m00 m11 m10
+	xmm5 = _mm_shuffle_ps(xmm3, xmm2, 0b01000001);          // xmm5 = m21 m20 m30 m31
+	xmm6 = _mm_shuffle_ps(xmm5, xmm4, 0b11011100);          // xmm6 = m01 m11 m21 m31
 	_mm_storeu_ps((float *)&out[8], xmm6);
 	// row 3
-	xmm7 = _mm_shuffle_ps(xmm5, xmm4, 0b10001001);			// xmm7 = m01 m11 m21 m31
+	xmm7 = _mm_shuffle_ps(xmm5, xmm4, 0b10001001);          // xmm7 = m01 m11 m21 m31
 	_mm_storeu_ps((float *)&out[12], xmm7);
 #endif
 #endif
@@ -4738,7 +4774,7 @@ void mat4_from_quat(mat4_t m, const quat_t q)
 */
 	vec3_t q2, qz2, qq2;
 	vec2_t qy2;
-	float xx2;
+	float  xx2;
 
 	VectorAdd(q, q, q2); // vec3, so q[3] remains untouched
 	Vector2Scale(q, q2[1], qy2); // vec2
@@ -4746,7 +4782,7 @@ void mat4_from_quat(mat4_t m, const quat_t q)
 	VectorScale(q2, q[3], qq2); // vec3
 	xx2 = q[0] * q2[0];
 
-	m[3] = m[7] = m[11] = m[12] = m[13] = m[14] = 0.f;
+	m[3]  = m[7] = m[11] = m[12] = m[13] = m[14] = 0.f;
 	m[15] = 1.f;
 
 	m[0] = -qy2[1] - qz2[2] + 1.0f;
@@ -4757,21 +4793,21 @@ void mat4_from_quat(mat4_t m, const quat_t q)
 	m[5] = -xx2 - qz2[2] + 1.0f;
 	m[6] = qz2[1] + qq2[0];
 
-	m[8] = qz2[0] + qq2[1];
-	m[9] = qz2[1] - qq2[0];
+	m[8]  = qz2[0] + qq2[1];
+	m[9]  = qz2[1] - qq2[0];
 	m[10] = -xx2 - qy2[1] + 1.0f;
 #else
 	vec4_t q2, qz2, qq2, qy2;
-	float xx2;
+	float  xx2;
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4;
-	xmm0 = _mm_loadu_ps(&q[0]);						//q		// xmm0 = q3 q2 q1 q0
-	xmm1 = _mm_add_ps(xmm0, xmm0);					//q2	// xmm1 = q * 2
-	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b01010101);			// xmm2 = q2[1] q2[1] q2[1] q2[1]
-	xmm2 = _mm_mul_ps(xmm2, xmm0);					//qy2	// xmm2 = q * q2[1]
-	xmm3 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);			// xmm2 = q2[2] q2[2] q2[2] q2[2]
-	xmm3 = _mm_mul_ps(xmm3, xmm0);					//qz2	// xmm2 = q * q2[2]
-	xmm4 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);			// xmm2 = q2[3] q2[3] q2[3] q2[3]
-	xmm4 = _mm_mul_ps(xmm4, xmm1);					//qq2	// xmm2 = q2 * q2[3]
+	xmm0 = _mm_loadu_ps(&q[0]);                     //q		// xmm0 = q3 q2 q1 q0
+	xmm1 = _mm_add_ps(xmm0, xmm0);                  //q2	// xmm1 = q * 2
+	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b01010101);          // xmm2 = q2[1] q2[1] q2[1] q2[1]
+	xmm2 = _mm_mul_ps(xmm2, xmm0);                  //qy2	// xmm2 = q * q2[1]
+	xmm3 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);          // xmm2 = q2[2] q2[2] q2[2] q2[2]
+	xmm3 = _mm_mul_ps(xmm3, xmm0);                  //qz2	// xmm2 = q * q2[2]
+	xmm4 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);          // xmm2 = q2[3] q2[3] q2[3] q2[3]
+	xmm4 = _mm_mul_ps(xmm4, xmm1);                  //qq2	// xmm2 = q2 * q2[3]
 	_mm_storeu_ps((float *)&q2, xmm1);
 	_mm_storeu_ps((float *)&qy2, xmm2);
 	_mm_storeu_ps((float *)&qz2, xmm3);
@@ -4796,9 +4832,9 @@ void mat4_from_quat(mat4_t m, const quat_t q)
 	m[12] = m[13] = m[14] = 0.0f;
 	m[15] = 1.0f;
 */
-	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, qz2[0] - qq2[1],        qy2[0] + qq2[2],        -qy2[1] - qz2[2] + 1.0f));
-	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, qz2[1] + qq2[0],        -xx2 - qz2[2] + 1.0f,   qy2[0] - qq2[2]));
-	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, -xx2 - qy2[1] + 1.0f,   qz2[1] - qq2[0],        qz2[0] + qq2[1]));
+	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, qz2[0] - qq2[1], qy2[0] + qq2[2], -qy2[1] - qz2[2] + 1.0f));
+	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, qz2[1] + qq2[0], -xx2 - qz2[2] + 1.0f, qy2[0] - qq2[2]));
+	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, -xx2 - qy2[1] + 1.0f, qz2[1] - qq2[0], qz2[0] + qq2[1]));
 	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
 #endif
 #else
@@ -5132,48 +5168,48 @@ qboolean mat4_inverse(const mat4_t in, mat4_t out)
 	return qtrue;
 #else
 	mat4_t inv;
-	float det;
+	float  det;
 
-	float i4_9 = in[4] * in[9],
-			i4_13 = in[4] * in[13],
-			i6_11 = in[6] * in[11],
-			i6_15 = in[6] * in[15],
-			i7_10 = in[7] * in[10],
-			i7_14 = in[7] * in[14],
-			i8_5 = in[8] * in[5],
-			i8_13 = in[8] * in[13],
-			i10_15 = in[10] * in[15],
-			i11_14 = in[11] * in[14],
-			i12_5 = in[12] * in[5],
-			i12_9 = in[12] * in[9];
+	float i4_9   = in[4] * in[9],
+	      i4_13  = in[4] * in[13],
+	      i6_11  = in[6] * in[11],
+	      i6_15  = in[6] * in[15],
+	      i7_10  = in[7] * in[10],
+	      i7_14  = in[7] * in[14],
+	      i8_5   = in[8] * in[5],
+	      i8_13  = in[8] * in[13],
+	      i10_15 = in[10] * in[15],
+	      i11_14 = in[11] * in[14],
+	      i12_5  = in[12] * in[5],
+	      i12_9  = in[12] * in[9];
 
-	inv[0]	 = in[5] * i10_15 -
-				in[5] * i11_14 -
-				in[9] * i6_15 +
-				in[9] * i7_14 +
-				in[13] * i6_11 -
-				in[13] * i7_10;
+	inv[0] = in[5] * i10_15 -
+	         in[5] * i11_14 -
+	         in[9] * i6_15 +
+	         in[9] * i7_14 +
+	         in[13] * i6_11 -
+	         in[13] * i7_10;
 
-	inv[4]	 = -in[4] * i10_15 +
-				in[4] * i11_14 +
-				in[8] * i6_15 -
-				in[8] * i7_14 -
-				in[12] * i6_11 +
-				in[12] * i7_10;
+	inv[4] = -in[4] * i10_15 +
+	         in[4] * i11_14 +
+	         in[8] * i6_15 -
+	         in[8] * i7_14 -
+	         in[12] * i6_11 +
+	         in[12] * i7_10;
 
-	inv[8]	 = i4_9 * in[15] -
-				i4_13 * in[11] -
-				i8_5 * in[15] +
-				i8_13 * in[7] +
-				i12_5 * in[11] -
-				i12_9 * in[7];
+	inv[8] = i4_9 * in[15] -
+	         i4_13 * in[11] -
+	         i8_5 * in[15] +
+	         i8_13 * in[7] +
+	         i12_5 * in[11] -
+	         i12_9 * in[7];
 
-	inv[12]	 = -i4_9 * in[14] +
-				i4_13 * in[10] +
-				i8_5 * in[14] -
-				i8_13 * in[6] -
-				i12_5 * in[10] +
-				i12_9 * in[6];
+	inv[12] = -i4_9 * in[14] +
+	          i4_13 * in[10] +
+	          i8_5 * in[14] -
+	          i8_13 * in[6] -
+	          i12_5 * in[10] +
+	          i12_9 * in[6];
 
 	det = in[0] * inv[0] + in[1] * inv[4] + in[2] * inv[8] + in[3] * inv[12];
 
@@ -5182,104 +5218,104 @@ qboolean mat4_inverse(const mat4_t in, mat4_t out)
 		return qfalse;
 	}
 
-	float i0_5 = in[0] * in[5],
-			i0_9 = in[0] * in[9],
-			i0_13 = in[0] * in[13],
-			i2_7 = in[2] * in[7],
-			i2_11 = in[2] * in[11],
-			i2_15 = in[2] * in[15],
-			i3_6 = in[3] * in[6],
-			i3_10 = in[3] * in[10],
-			i3_14 = in[3] * in[14],
-			i4_1 = in[4] * in[1],
-			i4_2 = in[4] * in[2],
-			i4_3 = in[4] * in[3],
-			i8_1 = in[8] * in[1],
-			i12_1 = in[12] * in[1];
+	float i0_5  = in[0] * in[5],
+	      i0_9  = in[0] * in[9],
+	      i0_13 = in[0] * in[13],
+	      i2_7  = in[2] * in[7],
+	      i2_11 = in[2] * in[11],
+	      i2_15 = in[2] * in[15],
+	      i3_6  = in[3] * in[6],
+	      i3_10 = in[3] * in[10],
+	      i3_14 = in[3] * in[14],
+	      i4_1  = in[4] * in[1],
+	      i4_2  = in[4] * in[2],
+	      i4_3  = in[4] * in[3],
+	      i8_1  = in[8] * in[1],
+	      i12_1 = in[12] * in[1];
 	//
 	inv[1] = -in[1] * i10_15 +
-			in[1] * i11_14 +
-			in[9] * i2_15 -
-			in[9] * i3_14 -
-			in[13] * i2_11 +
-			in[13] * i3_10;
+	         in[1] * i11_14 +
+	         in[9] * i2_15 -
+	         in[9] * i3_14 -
+	         in[13] * i2_11 +
+	         in[13] * i3_10;
 
 	inv[5] = in[0] * i10_15 -
-			in[0] * i11_14 -
-			in[8] * i2_15 +
-			in[8] * i3_14 +
-			in[12] * i2_11 -
-			in[12] * i3_10;
+	         in[0] * i11_14 -
+	         in[8] * i2_15 +
+	         in[8] * i3_14 +
+	         in[12] * i2_11 -
+	         in[12] * i3_10;
 
 	inv[9] = -i0_9 * in[15] +
-			i0_13 * in[11] +
-			i8_1 * in[15] -
-			i8_13 * in[3] -
-			i12_1 * in[11] +
-			i12_9 * in[3];
+	         i0_13 * in[11] +
+	         i8_1 * in[15] -
+	         i8_13 * in[3] -
+	         i12_1 * in[11] +
+	         i12_9 * in[3];
 
 	inv[13] = i0_9 * in[14] -
-			i0_13 * in[10] -
-			i8_1 * in[14] +
-			i8_13 * in[2] +
-			i12_1 * in[10] -
-			i12_9 * in[2];
+	          i0_13 * in[10] -
+	          i8_1 * in[14] +
+	          i8_13 * in[2] +
+	          i12_1 * in[10] -
+	          i12_9 * in[2];
 	//
 	inv[2] = in[1] * i6_15 -
-			in[1] * i7_14 -
-			in[5] * i2_15 +
-			in[5] * i3_14 +
-			in[13] * i2_7 -
-			in[13] * i3_6;
+	         in[1] * i7_14 -
+	         in[5] * i2_15 +
+	         in[5] * i3_14 +
+	         in[13] * i2_7 -
+	         in[13] * i3_6;
 
 	inv[6] = -in[0] * i6_15 +
-			in[0] * i7_14 +
-			in[4] * i2_15 -
-			in[4] * i3_14 -
-			in[12] * i2_7 +
-			in[12] * i3_6;
+	         in[0] * i7_14 +
+	         in[4] * i2_15 -
+	         in[4] * i3_14 -
+	         in[12] * i2_7 +
+	         in[12] * i3_6;
 
 	inv[10] = i0_5 * in[15] -
-			i0_13 * in[7] -
-			i4_1 * in[15] +
-			i4_3 * in[13] +
-			i12_1 * in[7] -
-			i12_5 * in[3];
+	          i0_13 * in[7] -
+	          i4_1 * in[15] +
+	          i4_3 * in[13] +
+	          i12_1 * in[7] -
+	          i12_5 * in[3];
 
 	inv[14] = -i0_5 * in[14] +
-			i0_13 * in[6] +
-			i4_1 * in[14] -
-			i4_2 * in[13] -
-			i12_1 * in[6] +
-			i12_5 * in[2];
+	          i0_13 * in[6] +
+	          i4_1 * in[14] -
+	          i4_2 * in[13] -
+	          i12_1 * in[6] +
+	          i12_5 * in[2];
 	//
 	inv[3] = -in[1] * i6_11 +
-			in[1] * i7_10 +
-			in[5] * i2_11 -
-			in[5] * i3_10 -
-			in[9] * i2_7 +
-			in[9] * i3_6;
+	         in[1] * i7_10 +
+	         in[5] * i2_11 -
+	         in[5] * i3_10 -
+	         in[9] * i2_7 +
+	         in[9] * i3_6;
 
 	inv[7] = in[0] * i6_11 -
-			in[0] * i7_10 -
-			in[4] * i2_11 +
-			in[4] * i3_10 +
-			in[8] * i2_7 -
-			in[8] * i3_6;
+	         in[0] * i7_10 -
+	         in[4] * i2_11 +
+	         in[4] * i3_10 +
+	         in[8] * i2_7 -
+	         in[8] * i3_6;
 
 	inv[11] = -i0_5 * in[11] +
-			i0_9 * in[7] +
-			i4_1 * in[11] -
-			i4_3 * in[9] -
-			i8_1 * in[7] +
-			i8_5 * in[3];
+	          i0_9 * in[7] +
+	          i4_1 * in[11] -
+	          i4_3 * in[9] -
+	          i8_1 * in[7] +
+	          i8_5 * in[3];
 
 	inv[15] = i0_5 * in[10] -
-			i0_9 * in[6] -
-			i4_1 * in[10] +
-			i4_2 * in[9] +
-			i8_1 * in[6] -
-			i8_5 * in[2];
+	          i0_9 * in[6] -
+	          i4_1 * in[10] +
+	          i4_2 * in[9] +
+	          i8_1 * in[6] -
+	          i8_5 * in[2];
 
 	RECIPROCAL(det); // det = 1.0f / det;
 	Vector4Scale(&inv[0], det, &out[0]);
@@ -5315,7 +5351,7 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
 	float radp, rady, radr, srcy, srsy, crcy, crsy, sr, spp, sy, cr, cp, cy;
 
 	radp = DEG2RAD(pitch);
-	
+
 	SinCos(radp, spp, cp); // 'sp' is also the name of a CPU-register. We use 'spp' for asm not to get confused..
 
 	if (yaw == pitch)
@@ -5341,7 +5377,8 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
 			sr = sy;
 			cr = cy;
 		}
-		else {
+		else
+		{
 			radr = DEG2RAD(roll);
 			SinCos(radr, sr, cr);
 		}
@@ -5360,14 +5397,14 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
 
 /**
  * @brief CalcTangentBinormal
- * 
+ *
  * calculate the tangent-vectors and the binormal-vectors
  * given 3 points of a triangle (the positions and the texture-coordinates of those points).
  */
  #pragma warning(disable:4700)
 qboolean CalcTangentBinormal(const vec3_t pos0, const vec3_t pos1, const vec3_t pos2,
-						const vec2_t texCoords0, const vec2_t texCoords1, const vec2_t texCoords2,
-						vec3_t tangent0, vec3_t binormal0, vec3_t tangent1, vec3_t binormal1, vec3_t tangent2, vec3_t binormal2)
+                             const vec2_t texCoords0, const vec2_t texCoords1, const vec2_t texCoords2,
+                             vec3_t tangent0, vec3_t binormal0, vec3_t tangent1, vec3_t binormal1, vec3_t tangent2, vec3_t binormal2)
 {
 	float  bb, bb_1;
 	vec2_t v1sub0, v2sub0, dvist, dv0subdvi, dv1subdvi, dv2subdvi;
@@ -5488,20 +5525,20 @@ qboolean CalcTangentBinormal(const vec3_t pos0, const vec3_t pos1, const vec3_t 
 
 /**
  * @brief Q_ClosestMultiple
- * @param[in] n the number 
+ * @param[in] n the number
  * @param[in] x the multiple
  * @return closest multiple number
  */
 int Q_ClosestMultiple(int n, int x)
-{    
-    if (x > n)
-    {
-        return x;
-    }
-    
-    n = n + x * 0.5f; 
-    n = n - (n % x); 
-    return n; 
+{
+	if (x > n)
+	{
+		return x;
+	}
+
+	n = n + x * 0.5f;
+	n = n - (n % x);
+	return n;
 }
 
 /**
@@ -5509,10 +5546,10 @@ int Q_ClosestMultiple(int n, int x)
  * @param[in] n
  * @param[in] x
  * @param[in] digit
- * @return 
+ * @return
  */
 float Q_ClosestMultipleFloat(float n, float x, int decimal)
 {
-    float coeff = pow(10, decimal);
-    return Q_ClosestMultiple(n * coeff, x * coeff) / coeff;
+	float coeff = pow(10, decimal);
+	return Q_ClosestMultiple(n * coeff, x * coeff) / coeff;
 }

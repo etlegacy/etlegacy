@@ -288,8 +288,8 @@ void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 	float  baseAngle = (ent->r.svFlags & SVF_BOT) ? BOT_BINOCULAR_ANGLE : BINOCULAR_ANGLE;
 
 	ang = (float)(DEG2RAD(baseAngle) * 0.5f);
-	xs = sin(ang);
-	xc = cos(ang);
+	xs  = sin(ang);
+	xc  = cos(ang);
 
 	AnglesToAxis(ent->client->ps.viewangles, axis);
 
@@ -1238,7 +1238,7 @@ void G_CheckSpottedLandMines(void)
 
 										trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\"");
 
-										
+
 										G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "landmine spotted");
 									}
 								}

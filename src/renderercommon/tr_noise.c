@@ -41,7 +41,7 @@
 #define INDEX(x, y, z, t) VAL(x + VAL(y + VAL(z + VAL(t))))
 
 static double s_noise_table[NOISE_SIZE];
-static int   s_noise_perm[NOISE_SIZE];
+static int    s_noise_perm[NOISE_SIZE];
 
 /**
  * @brief GetNoiseValue

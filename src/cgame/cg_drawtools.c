@@ -883,7 +883,7 @@ const char *CG_TranslateString(const char *string)
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 {
 	vec3_t trans;
-	float xc, yc, px, py, z, dot1, dot2;
+	float  xc, yc, px, py, z, dot1, dot2;
 
 	px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
 	py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);

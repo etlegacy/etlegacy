@@ -11,38 +11,38 @@ uniform bool SHOW_LIGHTMAP;
 
 //uniform mat4 u_ModelMatrix;
 #if defined(USE_LIGHT_MAPPING)
-	uniform sampler2D u_LightMap;
+uniform sampler2D u_LightMap;
 #endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
-	uniform sampler2D u_DiffuseMap;
+uniform sampler2D u_DiffuseMap;
 	#if defined(USE_ALPHA_TESTING)
-		uniform int       u_AlphaTest;
+uniform int u_AlphaTest;
 	#endif // USE_ALPHA_TESTING
 	#if defined(USE_NORMAL_MAPPING)
-		uniform float     u_DiffuseLighting;
-		uniform vec3      u_LightColor;
-		uniform sampler2D u_NormalMap;
-		uniform float     u_BumpScale;
-		//#if defined(USE_DELUXE_MAPPING)
-		//uniform sampler2D u_DeluxeMap;
-		//#endif // USE_DELUXE_MAPPING
+uniform float     u_DiffuseLighting;
+uniform vec3      u_LightColor;
+uniform sampler2D u_NormalMap;
+uniform float     u_BumpScale;
+//#if defined(USE_DELUXE_MAPPING)
+//uniform sampler2D u_DeluxeMap;
+//#endif // USE_DELUXE_MAPPING
 		#if defined(USE_SPECULAR)
-			uniform sampler2D u_SpecularMap;
-			uniform float     u_SpecularScale;
-			uniform float     u_SpecularExponent;
+uniform sampler2D u_SpecularMap;
+uniform float     u_SpecularScale;
+uniform float     u_SpecularExponent;
 		#endif // USE_SPECULAR
 		#if defined(USE_REFLECTIONS)
-			uniform samplerCube u_EnvironmentMap0;
-			uniform samplerCube u_EnvironmentMap1;
-			uniform float       u_EnvironmentInterpolation;
-			uniform float       u_ReflectionScale;
+uniform samplerCube u_EnvironmentMap0;
+uniform samplerCube u_EnvironmentMap1;
+uniform float       u_EnvironmentInterpolation;
+uniform float       u_ReflectionScale;
 			#if defined(USE_REFLECTIONMAP)
-				uniform sampler2D   u_ReflectionMap;
+uniform sampler2D u_ReflectionMap;
 			#endif // USE_REFLECTIONMAP
 		#endif  // USE_REFLECTIONS
 		#if defined(USE_PARALLAX_MAPPING)
-			uniform float u_DepthScale;
-			uniform float u_ParallaxShadow;
+uniform float u_DepthScale;
+uniform float u_ParallaxShadow;
 		#endif // USE_PARALLAX_MAPPING
 	#endif // USE_NORMAL_MAPPING
 #endif // USE_DIFFUSE
@@ -51,30 +51,32 @@ varying vec3 var_Position;
 varying vec4 var_Color;
 varying vec3 var_Normal;
 #if defined(USE_LIGHT_MAPPING)
-	varying vec2 var_TexLight;
+varying vec2 var_TexLight;
 #endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
-	varying vec2 var_TexDiffuse;
+varying vec2 var_TexDiffuse;
 	#if defined(USE_NORMAL_MAPPING)
-		varying mat3 var_tangentMatrix;          // world to tangent space
-		varying mat3 var_worldMatrix;			 // tangent to world space
-		varying vec3 var_LightDirW;              // in worldspace
-		varying vec3 var_LightDirT;              // light direction in tangent space, normalized
-		varying vec3 var_ViewDirT;               // view direction in tangentspace
+varying mat3 var_tangentMatrix;                  // world to tangent space
+varying mat3 var_worldMatrix;                    // tangent to world space
+varying vec3 var_LightDirW;                      // in worldspace
+varying vec3 var_LightDirT;                      // light direction in tangent space, normalized
+varying vec3 var_ViewDirT;                       // view direction in tangentspace
 		#if defined(USE_PARALLAX_MAPPING)
-			varying float var_distanceToCam;     // in world units
+varying float var_distanceToCam;                 // in world units
 		#endif // USE_PARALLAX_MAPPING
 	#endif // USE_NORMAL_MAPPING
 #endif // USE_DIFFUSE
 #if defined(USE_PORTAL_CLIPPING)
-	varying float var_BackSide; // in front, or behind, the portalplane
+varying float var_BackSide;     // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
-void main() {
+void main()
+{
 
 #if defined(USE_PORTAL_CLIPPING)
-	if (var_BackSide < 0.0) {
+	if (var_BackSide < 0.0)
+	{
 		discard;
 		return;
 	}

@@ -978,15 +978,15 @@ static void GLSL_BuildShaderExtraDef()
 	PCF		Percentage-Closer Filtering
 	PCSS	Percentage-Closer Soft Shadow			// not implemented
 */
-		if (r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
-		{
-			BUFFEXT("#ifndef EVSM\n#define EVSM 1\n#endif\n");
+	if (r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
+	{
+		BUFFEXT("#ifndef EVSM\n#define EVSM 1\n#endif\n");
 
-			// The exponents for the EVSM techniques should be less than ln(FLT_MAX/FILTER_SIZE)/2 {ln(FLT_MAX/1)/2 ~44.3}
-			//         42.9 is the maximum possible value for FILTER_SIZE=15
-			//         42.0 is the truncated value that we pass into the sample
-			BUFFEXT("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0, 42.0);
-			BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n"); // was 0.0001 but that's not enough to get rid of the sawtooth shadows at the edges of some surfaces
+		// The exponents for the EVSM techniques should be less than ln(FLT_MAX/FILTER_SIZE)/2 {ln(FLT_MAX/1)/2 ~44.3}
+		//         42.9 is the maximum possible value for FILTER_SIZE=15
+		//         42.0 is the truncated value that we pass into the sample
+		BUFFEXT("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0, 42.0);
+		BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n");     // was 0.0001 but that's not enough to get rid of the sawtooth shadows at the edges of some surfaces
 
 		//if (r_lightBleedReduction->value)
 		//{
@@ -1025,7 +1025,8 @@ static void GLSL_BuildShaderExtraDef()
 			// BUFFEXT("#ifndef SOFTSHADOWSAMPLES\n#define SOFTSHADOWSAMPLES %1.1f\n#endif\n", fSamples);
 			BUFFEXT("#ifndef SOFTSHADOWSAMPLES\n#define SOFTSHADOWSAMPLES %1.1f\n#endif\n", r_shadowSamples->value + 1.0f); // +1 because at least 2 samples are needed..
 		}
-		else {
+		else
+		{
 			BUFFEXT("#undef SOFTSHADOWSAMPLES\n");
 		}
 
@@ -2785,11 +2786,11 @@ void GLSL_CompileGPUShaders(void)
 
 	Com_Memset(&trProg, 0, sizeof(trPrograms_t));
 
-	trProg.gl_genericShader      = GLSL_GetShaderProgram("generic");
-	trProg.gl_worldShader        = GLSL_GetShaderProgram("world");
+	trProg.gl_genericShader = GLSL_GetShaderProgram("generic");
+	trProg.gl_worldShader   = GLSL_GetShaderProgram("world");
 
-	trProg.gl_entityShader       = GLSL_GetShaderProgram("entity");
-	
+	trProg.gl_entityShader = GLSL_GetShaderProgram("entity");
+
 	trProg.gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
 	trProg.gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");
 	trProg.gl_forwardLightingShader_directionalSun = GLSL_GetShaderProgram("forwardLighting_directionalSun");

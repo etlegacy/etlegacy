@@ -113,7 +113,7 @@ int G_DB_Init()
 		char         *err_msg = NULL;
 		sqlite3_stmt *sqlstmt;
 
-		result = sqlite3_open_v2(level.database.path, &level.database.db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,NULL);
+		result = sqlite3_open_v2(level.database.path, &level.database.db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
 
 		if (result != SQLITE_OK)
 		{

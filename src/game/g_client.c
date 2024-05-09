@@ -3528,7 +3528,7 @@ void ClientDisconnect(int clientNum)
 
 	// send effect if they were completely connected
 	if (ent->client->pers.connected == CON_CONNECTED
-		&& ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+	    && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
 		if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 		{

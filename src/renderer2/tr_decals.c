@@ -392,8 +392,8 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
 	Dot(center, axis[0], out->center[0]);
 	Dot(center, axis[1], out->center[1]);
 	Dot(center, axis[2], out->center[2]);
-	out->radius    = in->radius;
-	out->radius2   = in->radius2;
+	out->radius  = in->radius;
+	out->radius2 = in->radius2;
 
 	// translate planes
 	for (i = 0; i < in->numPlanes; i++)
@@ -444,8 +444,8 @@ qboolean R_TestDecalBoundingBox(decalProjector_t *dp, vec3_t mins, vec3_t maxs)
 #else
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 	xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)dp->center), (const __m64 *)(dp->center + 1));
-	xmm1 = _mm_add_ps(xmm0, _mm_set_ps1(dp->radius));			// + radius
-	xmm2 = _mm_add_ps(xmm0, _mm_sub_ps(_mm_setzero_ps(),xmm1));	// + -radius
+	xmm1 = _mm_add_ps(xmm0, _mm_set_ps1(dp->radius));           // + radius
+	xmm2 = _mm_add_ps(xmm0, _mm_sub_ps(_mm_setzero_ps(), xmm1)); // + -radius
 	// mins >= center+radius?
 	xmm4 = _mm_loadh_pi(_mm_load_ss((const float *)mins), (const __m64 *)(mins + 1));
 	xmm3 = _mm_cmplt_ps(xmm4, xmm1); // mins < (dp.center - dp.radius)
@@ -453,11 +453,17 @@ qboolean R_TestDecalBoundingBox(decalProjector_t *dp, vec3_t mins, vec3_t maxs)
 	// bits 2,1,0 now indicate which mins[bit] < (center-radius).
 	// Any bit that is unset, indicates that mins[bit] >= (center-radius), in which case we function-return false
 	// So, if not all 3 bits are set, we return false.
-	if (_mm_movemask_ps(xmm3) != 7) return qfalse;
+	if (_mm_movemask_ps(xmm3) != 7)
+	{
+		return qfalse;
+	}
 	// maxs <= center-radius?
 	xmm5 = _mm_loadh_pi(_mm_load_ss((const float *)maxs), (const __m64 *)(maxs + 1));
 	xmm3 = _mm_cmpgt_ps(xmm5, xmm2);
-	if (_mm_movemask_ps(xmm3) != 7) return qfalse;
+	if (_mm_movemask_ps(xmm3) != 7)
+	{
+		return qfalse;
+	}
 	return qtrue;
 #endif
 }
@@ -628,7 +634,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 
 		// fade by distance from plane
 		Dot(dp->center, plane, d);
-		d -= plane[3];
+		d    -= plane[3];
 		alpha = 1.0f - (Q_fabs(d) / dp->radius);
 		if (alpha < 0.0f)
 		{
@@ -733,7 +739,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 		Dot(vert->xyz, dp->texMat[axis][0], d);
 		vert->st[0] = d + dp->texMat[axis][0][3];
 		Dot(vert->xyz, dp->texMat[axis][1], d);
-		vert->st[1] = d + dp->texMat[axis][1][3]; 
+		vert->st[1] = d + dp->texMat[axis][1][3];
 
 		// unidirectional decals fade by half distance from front->back planes
 		if (!dp->omnidirectional)
@@ -742,7 +748,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 			Dot(vert->xyz, dp->planes[0], d);
 			d -= dp->planes[0][3];
 			Dot(vert->xyz, dp->planes[1], d2);
-			d2 -= dp->planes[1][3];
+			d2   -= dp->planes[1][3];
 			alpha = 2.0f * d2 / (d + d2);
 			if (alpha > 1.0f)
 			{

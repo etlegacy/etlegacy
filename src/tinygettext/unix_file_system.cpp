@@ -42,7 +42,7 @@ UnixFileSystem::open_directory(const std::string& pathname)
 {
 #if __cplusplus >= 201703L // C++17
 	std::vector<std::string> files;
-	for(auto const& p : std::filesystem::directory_iterator(pathname))
+	for (auto const& p : std::filesystem::directory_iterator(pathname))
 	{
 		files.push_back(p.path().filename().string());
 	}
@@ -71,23 +71,23 @@ UnixFileSystem::open_directory(const std::string& pathname)
 }
 
 #if __cplusplus >= 201703L // C++17
-	std::unique_ptr<std::istream>
-	UnixFileSystem::open_file(const std::string& filename)
-	{
-		return std::unique_ptr<std::istream>(new std::ifstream(filename));
-	}
+std::unique_ptr<std::istream>
+UnixFileSystem::open_file(const std::string& filename)
+{
+	return std::unique_ptr<std::istream>(new std::ifstream(filename));
+}
 #elif __cplusplus >= 201103L // C++11
-	std::unique_ptr<std::istream>
-	UnixFileSystem::open_file(const std::string& filename)
-	{
-		return std::unique_ptr<std::istream>(new std::ifstream(filename.c_str()));
-	}
+std::unique_ptr<std::istream>
+UnixFileSystem::open_file(const std::string& filename)
+{
+	return std::unique_ptr<std::istream>(new std::ifstream(filename.c_str()));
+}
 #else
-	std::auto_ptr<std::istream>
-	UnixFileSystem::open_file(const std::string& filename)
-	{
-		return std::auto_ptr<std::istream>(new std::ifstream(filename.c_str()));
-	}
+std::auto_ptr<std::istream>
+UnixFileSystem::open_file(const std::string& filename)
+{
+	return std::auto_ptr<std::istream>(new std::ifstream(filename.c_str()));
+}
 #endif
 
 } // namespace tinygettext

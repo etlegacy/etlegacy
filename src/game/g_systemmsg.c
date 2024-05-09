@@ -134,7 +134,7 @@ void G_SendSystemMessage(sysMsg_t message, int team)
 			continue;
 		}
 
-		trap_SendServerCommand((int)(other-g_entities), va("vschat %i %i", (int)(other-g_entities), message));
+		trap_SendServerCommand((int)(other - g_entities), va("vschat %i %i", (int)(other - g_entities), message));
 	}
 }
 

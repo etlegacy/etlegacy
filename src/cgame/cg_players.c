@@ -1867,11 +1867,11 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 		AnglesToAxis(legsAngles, axis);
 		Dot(velocity, axis[1], dot);
-		side = speed * dot;
+		side              = speed * dot;
 		legsAngles[ROLL] -= side;
 
 		Dot(velocity, axis[0], dot);
-		side = speed * dot;
+		side               = speed * dot;
 		legsAngles[PITCH] += side;
 	}
 

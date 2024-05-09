@@ -20,12 +20,12 @@ attribute vec3 attr_Normal2;
 attribute vec4 attr_TexCoord0;
 #endif // USE_DEFORM_VERTEXES
 
-uniform mat4  u_ModelMatrix;
-uniform mat4  u_ModelViewProjectionMatrix;
-uniform vec4  u_ColorModulate;
-uniform vec4  u_Color;
-uniform vec4  u_FogDistanceVector;
-uniform vec4  u_FogDepthVector;
+uniform mat4 u_ModelMatrix;
+uniform mat4 u_ModelViewProjectionMatrix;
+uniform vec4 u_ColorModulate;
+uniform vec4 u_Color;
+uniform vec4 u_FogDistanceVector;
+uniform vec4 u_FogDepthVector;
 #if defined(EYE_OUTSIDE)
 uniform float u_FogEyeT;
 #endif // EYE_OUTSIDE
@@ -37,7 +37,7 @@ uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec3 var_Position;
@@ -84,7 +84,7 @@ void main()
 	else
 	{
 //!		t = 1.0 / 32.0 + 30.0 / 32.0 * t / (t - u_FogEyeT); // cut the distance at the fog plane
-t = 1.0 / 32.0 + 31.0 / 32.0 * t / (t - u_FogEyeT); // cut the distance at the fog plane
+		t = 1.0 / 32.0 + 31.0 / 32.0 * t / (t - u_FogEyeT); // cut the distance at the fog plane
 	}
 #else
 	if (t < 0.0)
@@ -99,7 +99,7 @@ t = 1.0 / 32.0 + 31.0 / 32.0 * t / (t - u_FogEyeT); // cut the distance at the f
 
 	var_Tex = vec2(s, t);
 
-	var_Color =  attr_Color * u_ColorModulate + u_Color;
+	var_Color = attr_Color * u_ColorModulate + u_Color;
 
 #if defined(USE_PORTAL_CLIPPING)
 	// in front, or behind, the portalplane

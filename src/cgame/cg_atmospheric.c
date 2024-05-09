@@ -241,7 +241,7 @@ static qboolean CG_SetParticleActive(cg_atmosphericParticle_t *particle, active_
  */
 static qboolean CG_ParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight, atmFXType_t atmFX)
 {
-	float angle = random() * M_TAU_F;
+	float angle    = random() * M_TAU_F;
 	float distance = 20 + MAX_ATMOSPHERIC_DISTANCE * random();
 	float groundHeight, skyHeight;
 

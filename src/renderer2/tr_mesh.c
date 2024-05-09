@@ -238,20 +238,20 @@ static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdv
 			}
 		}
 #else
-	// This is string searching two char[64].
+		// This is string searching two char[64].
 		// See tr_animation_mdm.c GetMDMSurfaceShader() for more comments on how it works..
 		__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm7, zeroes;
-		int mask0, mask16, mask32;
+		int     mask0, mask16, mask32;
 		zeroes = _mm_setzero_si128();
-		xmm0 = _mm_loadu_si128((const __m128i *)&mdvSurface->name[0]);
-		mask0 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm0, zeroes));
+		xmm0   = _mm_loadu_si128((const __m128i *)&mdvSurface->name[0]);
+		mask0  = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm0, zeroes));
 		if (mask0 == 0)
 		{
-			xmm1 = _mm_loadu_si128((const __m128i *)&mdvSurface->name[16]);
+			xmm1   = _mm_loadu_si128((const __m128i *)&mdvSurface->name[16]);
 			mask16 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm1, zeroes));
 			if (mask16 == 0)
 			{
-				xmm2 = _mm_loadu_si128((const __m128i *)&mdvSurface->name[32]);
+				xmm2   = _mm_loadu_si128((const __m128i *)&mdvSurface->name[32]);
 				mask32 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm2, zeroes));
 				if (mask32 == 0)
 				{
@@ -263,22 +263,43 @@ static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdv
 		{
 			xmm4 = _mm_loadu_si128((const __m128i *)&skin->surfaces[j].name[0]);
 			xmm7 = _mm_cmpeq_epi8(xmm4, xmm0);
-			if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
-			if (mask0 != 0) break;
+			if (_mm_movemask_epi8(xmm7) != 0xFFFF)
+			{
+				continue;
+			}
+			if (mask0 != 0)
+			{
+				break;
+			}
 
 			xmm4 = _mm_loadu_si128((const __m128i *)&skin->surfaces[j].name[16]);
 			xmm7 = _mm_cmpeq_epi8(xmm4, xmm1);
-			if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
-			if (mask16 != 0) break;
+			if (_mm_movemask_epi8(xmm7) != 0xFFFF)
+			{
+				continue;
+			}
+			if (mask16 != 0)
+			{
+				break;
+			}
 
 			xmm4 = _mm_loadu_si128((const __m128i *)&skin->surfaces[j].name[32]);
 			xmm7 = _mm_cmpeq_epi8(xmm4, xmm2);
-			if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
-			if (mask32 != 0) break;
+			if (_mm_movemask_epi8(xmm7) != 0xFFFF)
+			{
+				continue;
+			}
+			if (mask32 != 0)
+			{
+				break;
+			}
 
 			xmm4 = _mm_loadu_si128((const __m128i *)&skin->surfaces[j].name[48]);
 			xmm7 = _mm_cmpeq_epi8(xmm4, xmm3);
-			if (_mm_movemask_epi8(xmm7) == 0xFFFF) break;
+			if (_mm_movemask_epi8(xmm7) == 0xFFFF)
+			{
+				break;
+			}
 		}
 		if (j < skin->numSurfaces)
 		{
@@ -517,8 +538,8 @@ void R_AddMDVInteractions(trRefEntity_t *ent, trRefLight_t *light)
 			// don't add third_person objects if not viewing through a portal
 			//if (!personalModel)
 			//{
-				R_AddLightInteraction(light, (surfaceType_t *)vboSurface, shader, cubeSideBits, iaType);
-				tr.pc.c_dlightSurfaces++;
+			R_AddLightInteraction(light, (surfaceType_t *)vboSurface, shader, cubeSideBits, iaType);
+			tr.pc.c_dlightSurfaces++;
 			//}
 		}
 	}
@@ -539,8 +560,8 @@ void R_AddMDVInteractions(trRefEntity_t *ent, trRefLight_t *light)
 			// don't add third_person objects if not viewing through a portal
 			//if (!personalModel)
 			//{
-				R_AddLightInteraction(light, (surfaceType_t *)mdvSurface, shader, cubeSideBits, iaType);
-				tr.pc.c_dlightSurfaces++;
+			R_AddLightInteraction(light, (surfaceType_t *)mdvSurface, shader, cubeSideBits, iaType);
+			tr.pc.c_dlightSurfaces++;
 			//}
 		}
 	}

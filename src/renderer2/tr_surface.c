@@ -261,20 +261,20 @@ void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, fl
 		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&plane[0]), (const __m64 *)&plane[1]);
 		_mm_store_ss((float *)(&tess.normals[ndx][0]), xmm0);
 		_mm_storeh_pi((__m64 *)(&tess.normals[ndx][1]), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx+1][0]), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+1][1]), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx+2][0]), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+2][1]), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx+3][0]), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+3][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx + 1][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 1][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx + 2][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 2][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx + 3][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 3][1]), xmm0);
 	}
 #endif
 
 	// standard square texture coordinates
-	Vector4Set(tess.texCoords[ndx],   s1, t1, 0.f, 1.f);
-	Vector4Set(tess.texCoords[ndx+1], s2, t1, 0.f, 1.f);
-	Vector4Set(tess.texCoords[ndx+2], s2, t2, 0.f, 1.f);
-	Vector4Set(tess.texCoords[ndx+3], s1, t2, 0.f, 1.f);
+	Vector4Set(tess.texCoords[ndx], s1, t1, 0.f, 1.f);
+	Vector4Set(tess.texCoords[ndx + 1], s2, t1, 0.f, 1.f);
+	Vector4Set(tess.texCoords[ndx + 2], s2, t2, 0.f, 1.f);
+	Vector4Set(tess.texCoords[ndx + 3], s1, t2, 0.f, 1.f);
 
 	// constant color all the way around
 	// should this be identity and let the shader specify from entity?
@@ -326,7 +326,7 @@ ID_INLINE void Tess_AddQuadStampExt3(vec4_t quadVerts[4], const vec4_t color, qb
 	ndx = tess.numVertexes;
 
 	// triangle indexes for a simple quad
-	tess.indexes[tess.numIndexes] = ndx;
+	tess.indexes[tess.numIndexes]     = ndx;
 	tess.indexes[tess.numIndexes + 1] = ndx + 1;
 	tess.indexes[tess.numIndexes + 2] = ndx + 3;
 
@@ -395,7 +395,7 @@ ID_INLINE void Tess_AddQuadStampExt3(vec4_t quadVerts[4], const vec4_t color, qb
 #endif
 
 	tess.numVertexes += 4;
-	tess.numIndexes += 6;
+	tess.numIndexes  += 6;
 
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL;
 }
@@ -1121,10 +1121,10 @@ static void Tess_SurfaceFace(srfSurfaceFace_t *srf)
 		VectorCopy(dv->normal, normal);
 
 		Vector2Copy(dv->st, texCoords);
-		Vector2Set(texCoords+2, 0.f, 1.f);
+		Vector2Set(texCoords + 2, 0.f, 1.f);
 
 		Vector2Copy(dv->lightmap, lightCoords);
-		Vector2Set(lightCoords+2, 0.f, 1.f);
+		Vector2Set(lightCoords + 2, 0.f, 1.f);
 
 		Vector4Copy(dv->lightColor, color);
 	}
@@ -1278,16 +1278,16 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 #pragma warning(disable:4700)
 static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 {
-	int               o, i, i3;
-	int               numVerts = srf->numVerts;   // basic setup
-	vec4_t            distanceCull, distanceVector;
-	float             dot, alpha = 1.0f, z, dist, fovScale = backEnd.viewParms.fovX * (1.0f / 90.0f);
-	vec3_t            local;
-	float *xyz, *normal, *texCoords, *lightCoords, *color;
+	int    o, i, i3;
+	int    numVerts = srf->numVerts;              // basic setup
+	vec4_t distanceCull, distanceVector;
+	float  dot, alpha = 1.0f, z, dist, fovScale = backEnd.viewParms.fovX * (1.0f / 90.0f);
+	vec3_t local;
+	float  *xyz, *normal, *texCoords, *lightCoords, *color;
 	//int               dlightBits;
 	foliageInstance_t *instance;
-	srfTriangle_t *tri;
-	srfVert_t     *dv;
+	srfTriangle_t     *tri;
+	srfVert_t         *dv;
 
 	if (r_vboFoliage->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
@@ -1297,7 +1297,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		R_BindIBO(srf->ibo);
 
 		tess.multiDrawIndexes[tess.multiDrawPrimitives] = (glIndex_t *)BUFFER_OFFSET(srf->firstTriangle * 3 * sizeof(glIndex_t));
-		tess.multiDrawCounts[tess.multiDrawPrimitives] = srf->numTriangles * 3 * srf->numInstances;
+		tess.multiDrawCounts[tess.multiDrawPrimitives]  = srf->numTriangles * 3 * srf->numInstances;
 
 		tess.multiDrawPrimitives++;
 		return;
@@ -1315,7 +1315,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 	if (distanceCull[1] > 0.f)
 	{
 		Dot(srf->origin, distanceVector, dot);
-		z = fovScale * (dot + distanceVector[3] - srf->radius);
+		z     = fovScale * (dot + distanceVector[3] - srf->radius);
 		alpha = (distanceCull[1] - z) * distanceCull[3];
 		if (alpha < distanceCull[2])
 		{
@@ -1392,12 +1392,12 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 			tess.indexes[i3 + 2] = tess.numVertexes + tri->indexes[2];
 		}
 
-		dv = srf->verts;
-		xyz = tess.xyz[tess.numVertexes];
-		normal = tess.normals[tess.numVertexes];
-		texCoords = tess.texCoords[tess.numVertexes];
+		dv          = srf->verts;
+		xyz         = tess.xyz[tess.numVertexes];
+		normal      = tess.normals[tess.numVertexes];
+		texCoords   = tess.texCoords[tess.numVertexes];
 		lightCoords = tess.lightCoords[tess.numVertexes];
-		color = tess.colors[tess.numVertexes];
+		color       = tess.colors[tess.numVertexes];
 
 		for (i = 0; i < srf->numVerts; i++, dv++, xyz += 4, normal += 4, texCoords += 4, lightCoords += 4, color += 4)
 		{
@@ -1425,7 +1425,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		}
 
 		// increment offsets
-		tess.numIndexes += srf->numTriangles * 3;
+		tess.numIndexes  += srf->numTriangles * 3;
 		tess.numVertexes += numVerts;
 	}
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_LIGHTCOORD;
@@ -1529,35 +1529,35 @@ static void Tess_DoRailCore(const vec3_t start, const vec3_t end, const vec3_t u
 
 	// FIXME: use quad stamp?
 	VectorMA(start, spanWidth, up, tess.xyz[tess.numVertexes]);
-	tess.xyz[tess.numVertexes][3]       = 1.f;
+	tess.xyz[tess.numVertexes][3] = 1.f;
 	Vector4Set(tess.texCoords[tess.numVertexes], 0.f, 0.f, 0.f, 1.f);
-	tess.colors[tess.numVertexes][0]    = backEnd.currentEntity->e.shaderRGBA[0] * 0.25f * _1div255;
-	tess.colors[tess.numVertexes][1]    = backEnd.currentEntity->e.shaderRGBA[1] * 0.25f * _1div255;
-	tess.colors[tess.numVertexes][2]    = backEnd.currentEntity->e.shaderRGBA[2] * 0.25f * _1div255;
+	tess.colors[tess.numVertexes][0] = backEnd.currentEntity->e.shaderRGBA[0] * 0.25f * _1div255;
+	tess.colors[tess.numVertexes][1] = backEnd.currentEntity->e.shaderRGBA[1] * 0.25f * _1div255;
+	tess.colors[tess.numVertexes][2] = backEnd.currentEntity->e.shaderRGBA[2] * 0.25f * _1div255;
 	tess.numVertexes++;
 
 	VectorMA(start, spanWidth2, up, tess.xyz[tess.numVertexes]);
-	tess.xyz[tess.numVertexes][3]       = 1.f;
+	tess.xyz[tess.numVertexes][3] = 1.f;
 	Vector4Set(tess.texCoords[tess.numVertexes], 0.f, 1.f, 0.f, 1.f);
-	tess.colors[tess.numVertexes][0]    = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
-	tess.colors[tess.numVertexes][1]    = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
-	tess.colors[tess.numVertexes][2]    = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
+	tess.colors[tess.numVertexes][0] = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
+	tess.colors[tess.numVertexes][1] = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
+	tess.colors[tess.numVertexes][2] = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
 	tess.numVertexes++;
 
 	VectorMA(end, spanWidth, up, tess.xyz[tess.numVertexes]);
-	tess.xyz[tess.numVertexes][3]       = 1.f;
+	tess.xyz[tess.numVertexes][3] = 1.f;
 	Vector4Set(tess.texCoords[tess.numVertexes], t, 0.f, 0.f, 1.f);
-	tess.colors[tess.numVertexes][0]    = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
-	tess.colors[tess.numVertexes][1]    = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
-	tess.colors[tess.numVertexes][2]    = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
+	tess.colors[tess.numVertexes][0] = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
+	tess.colors[tess.numVertexes][1] = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
+	tess.colors[tess.numVertexes][2] = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
 	tess.numVertexes++;
 
 	VectorMA(end, spanWidth2, up, tess.xyz[tess.numVertexes]);
-	tess.xyz[tess.numVertexes][3]       = 1.f;
+	tess.xyz[tess.numVertexes][3] = 1.f;
 	Vector4Set(tess.texCoords[tess.numVertexes], t, 1.f, 0.f, 1.f);
-	tess.colors[tess.numVertexes][0]    = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
-	tess.colors[tess.numVertexes][1]    = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
-	tess.colors[tess.numVertexes][2]    = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
+	tess.colors[tess.numVertexes][0] = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
+	tess.colors[tess.numVertexes][1] = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
+	tess.colors[tess.numVertexes][2] = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
 	tess.numVertexes++;
 
 	tess.indexes[tess.numIndexes++] = vbase;
@@ -1947,8 +1947,8 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 			if (backEnd.currentEntity->e.skeleton.type == SK_ABSOLUTE)
 			{
 				Matrix4IdentScale(m, backEnd.currentEntity->e.skeleton.scale[0],
-				                 backEnd.currentEntity->e.skeleton.scale[1],
-								 backEnd.currentEntity->e.skeleton.scale[2]);
+				                  backEnd.currentEntity->e.skeleton.scale[1],
+				                  backEnd.currentEntity->e.skeleton.scale[2]);
 
 				MatrixSetupTransformFromQuat(m2, backEnd.currentEntity->e.skeleton.bones[i].rotation,
 				                             backEnd.currentEntity->e.skeleton.bones[i].origin);
@@ -2007,8 +2007,8 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 			if (backEnd.currentEntity->e.skeleton.type == SK_ABSOLUTE)
 			{
 				Matrix4IdentScale(m, backEnd.currentEntity->e.skeleton.scale[0],
-				                 backEnd.currentEntity->e.skeleton.scale[1],
-								 backEnd.currentEntity->e.skeleton.scale[2]);
+				                  backEnd.currentEntity->e.skeleton.scale[1],
+				                  backEnd.currentEntity->e.skeleton.scale[2]);
 
 				MatrixSetupTransformFromQuat(m2, backEnd.currentEntity->e.skeleton.bones[i].rotation,
 				                             backEnd.currentEntity->e.skeleton.bones[i].origin);
@@ -2329,8 +2329,8 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 		tess.vboVertexSkinning = qtrue;
 
 		Matrix4IdentScale(m, backEnd.currentEntity->e.skeleton.scale[0],
-							backEnd.currentEntity->e.skeleton.scale[1],
-							backEnd.currentEntity->e.skeleton.scale[2]);
+		                  backEnd.currentEntity->e.skeleton.scale[1],
+		                  backEnd.currentEntity->e.skeleton.scale[2]);
 
 #if 0
 		// convert bones back to matrices

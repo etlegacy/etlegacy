@@ -3,7 +3,7 @@
 #include "lib/normalMapping"
 //#endif // USE_NORMAL_MAPPING
 
-uniform float       u_ReflectionScale;
+uniform float u_ReflectionScale;
 #if 1
 uniform samplerCube u_EnvironmentMap0;
 uniform samplerCube u_EnvironmentMap1;
@@ -11,7 +11,7 @@ uniform float       u_EnvironmentInterpolation;
 #else // 1
 uniform samplerCube u_ColorMap;
 #endif // 1
-uniform mat4        u_ModelMatrix;
+uniform mat4 u_ModelMatrix;
 #if defined(USE_NORMAL_MAPPING)
 uniform sampler2D u_NormalMap;
 #endif // USE_NORMAL_MAPPING
@@ -37,7 +37,7 @@ void main()
 		return;
 	}
 #endif // USE_PORTAL_CLIPPING
-	
+
 
 	// compute incident ray
 	vec3 V = var_ViewOrigin.xyz;

@@ -38,35 +38,35 @@
 #include "tr_local.h"
 
 
-PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height)
+PBO_t * R_CreatePBO(pboUsage_t usage, int width, int height)
 {
-	PBO_t *pbo;
-	int bufTarget = GL_PIXEL_PACK_BUFFER;
-	pboUsage_t bufUsage = GL_STREAM_READ;
+	PBO_t      *pbo;
+	int        bufTarget = GL_PIXEL_PACK_BUFFER;
+	pboUsage_t bufUsage  = GL_STREAM_READ;
 
 	switch (usage)
 	{
 	case PBO_USAGE_WRITE:
 		bufTarget = GL_PIXEL_UNPACK_BUFFER;
-		bufUsage = GL_STREAM_DRAW;
+		bufUsage  = GL_STREAM_DRAW;
 		break;
 	case PBO_USAGE_READ:
 	default:
 		bufTarget = GL_PIXEL_PACK_BUFFER;
-		bufUsage = GL_STREAM_COPY; //GL_STREAM_READ;
+		bufUsage  = GL_STREAM_COPY; //GL_STREAM_READ;
 		break;
 	}
 
 	// make sure the render thread is stopped
-    // R_IssuePendingRenderCommands();
+	// R_IssuePendingRenderCommands();
 
 	pbo = (PBO_t *)ri.Hunk_Alloc(sizeof(*pbo), h_low);
 	Com_AddToGrowList(&tr.pbos, pbo);
 
-	pbo->width = width;
-	pbo->height = height;
-	pbo->target = bufTarget;
-	pbo->usage = bufUsage;
+	pbo->width      = width;
+	pbo->height     = height;
+	pbo->target     = bufTarget;
+	pbo->usage      = bufUsage;
 	pbo->bufferSize = width * height * 4; // RGBA
 
 	glGenBuffers(1, &pbo->handle);
@@ -119,7 +119,7 @@ void R_InitPBOs(void)
 
 void R_ShutdownPBOs(void)
 {
-	int i;
+	int   i;
 	PBO_t *pbo;
 
 	R_BindNullPBO();
@@ -174,12 +174,12 @@ qboolean R_PBOResultAvailable(PBO_t *pbo)
 		Ren_Drop("R_PBOResultAvailable: NULL pbo");
 		return qfalse;
 	}
-	
+
 	if (!pbo->sync)
 	{
 		return qfalse;
 	}
-	
+
 	glGetSynciv(pbo->sync, GL_SYNC_STATUS, sizeof(result), NULL, &result);
 
 	GL_CheckErrors();
@@ -191,7 +191,7 @@ qboolean R_PBOResultAvailable(PBO_t *pbo)
 qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult)
 {
 	GLint result = GL_UNSIGNALED;
-	void *mappedBuffer;
+	void  *mappedBuffer;
 
 	if (!pbo)
 	{
@@ -213,7 +213,7 @@ qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult)
 			glGetSynciv(pbo->sync, GL_SYNC_STATUS, sizeof(result), NULL, &result);
 		}
 	}
-    /*else {
+	/*else {
 		// if you don't waitForResult, you must be sure the result is available: R_PBOResultAvailable(pbo) == true
 		// if (!R_PBOResultAvailable(pbo)) return qfalse;
 		glGetSynciv(pbo->sync, GL_SYNC_STATUS, sizeof(result), NULL, &result);
@@ -239,11 +239,11 @@ qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult)
 // glTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
 qboolean R_pboTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels)
 {
-	void *mappedBuffer;
+	void  *mappedBuffer;
 	PBO_t *pbo = R_CreatePBO(PBO_USAGE_WRITE, width, height);
 
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo->handle);
-glBufferData(GL_PIXEL_UNPACK_BUFFER, pbo->bufferSize, 0, GL_STREAM_DRAW);
+	glBufferData(GL_PIXEL_UNPACK_BUFFER, pbo->bufferSize, 0, GL_STREAM_DRAW);
 	mappedBuffer = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
 	if (mappedBuffer)
 	{

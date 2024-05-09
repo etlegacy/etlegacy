@@ -365,7 +365,7 @@ void S_AdpcmEncodeSound(sfx_t *sfx, short *samples)
 		{
 			sfx->soundData = newchunk;
 		}
-		else if(chunk)
+		else if (chunk)
 		{
 			chunk->next = newchunk;
 		}

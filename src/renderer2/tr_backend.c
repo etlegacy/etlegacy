@@ -173,7 +173,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 	qboolean      depthRange = qfalse, oldDepthRange = qfalse;
 	int           i;
 	drawSurf_t    *drawSurf;
-	double	      originalTime = backEnd.refdef.floatTime; // save original time for entity shader offsets
+	double        originalTime = backEnd.refdef.floatTime; // save original time for entity shader offsets
 
 	Ren_LogComment("--- RB_RenderDrawSurfaces ---\n");
 
@@ -689,7 +689,7 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 		for (i = 0; i < 6; i++)
 		{
 			clipPlane = &frustum[i];
-			r = BoxOnPlaneSide(worldBounds[0], worldBounds[1], clipPlane);
+			r         = BoxOnPlaneSide(worldBounds[0], worldBounds[1], clipPlane);
 			if (r == 2)
 			{
 				goto skipInteraction;
@@ -1037,83 +1037,83 @@ skipInteraction:
 Some helper matrices for RB_RenderInteractionsShadowMapped()
 */
 /// sincos 0 0 90		sin: 0 0 1,		cos = 1 1 0
-mat4_t be_rotMatrix_0_0_90 = { 1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 1.0f, 0.0f,
-								0.0f, -1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_0_0_90 = { 1.0f, 0.0f,  0.0f, 0.0f,
+	                           0.0f, 0.0f,  1.0f, 0.0f,
+	                           0.0f, -1.0f, 0.0f, 0.0f,
+	                           0.0f, 0.0f,  0.0f, 1.0f };
 /*@ mat4_t be_rotMatrix_0_0_90_r = { 1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, -1.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };*/ // no longer needed.. obsolete
-mat4_t be_rotMatrix_0_0_90_q = { 0.0f, 0.0f, -1.0f, 0.0f,
-								0.0f, -1.0f, 0.0f, 0.0f,
-								-1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+								0.0f, 0.0f, 0.0f, 1.0f };*/// no longer needed.. obsolete
+mat4_t be_rotMatrix_0_0_90_q = { 0.0f,  0.0f,  -1.0f, 0.0f,
+	                             0.0f,  -1.0f, 0.0f,  0.0f,
+	                             -1.0f, 0.0f,  0.0f,  0.0f,
+	                             0.0f,  0.0f,  0.0f,  1.0f };
 /// sincos 0 180 90:		sin = 0 0 1,	cos = 1 -1 0
 mat4_t be_rotMatrix_0_180_90 = { -1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 1.0f, 0.0f,
-								0.0f, 1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+	                             0.0f,  0.0f, 1.0f, 0.0f,
+	                             0.0f,  1.0f, 0.0f, 0.0f,
+	                             0.0f,  0.0f, 0.0f, 1.0f };
 /*@ mat4_t be_rotMatrix_0_180_90_r = { -1.0f, 0.0f, 0.0f, 0.0f,
 									0.0f, 0.0f, 1.0f, 0.0f,
 									0.0f, 1.0f, 0.0f, 0.0f,
 									0.0f, 0.0f, 0.0f, 1.0f };*/
-mat4_t be_rotMatrix_0_180_90_q = { 0.0f, 0.0f, 1.0f, 0.0f,
-									0.0f, 1.0f, 0.0f, 0.0f,
-									-1.0f, 0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_0_180_90_q = { 0.0f,  0.0f, 1.0f, 0.0f,
+	                               0.0f,  1.0f, 0.0f, 0.0f,
+	                               -1.0f, 0.0f, 0.0f, 0.0f,
+	                               0.0f,  0.0f, 0.0f, 1.0f };
 /// sincos 0 90 0;		sin = 0 1 0,	cos = 1 0 1
-mat4_t be_rotMatrix_0_90_0 = { 0.0f, 1.0f, 0.0f, 0.0f,
-								-1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 1.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_0_90_0 = { 0.0f,  1.0f, 0.0f, 0.0f,
+	                           -1.0f, 0.0f, 0.0f, 0.0f,
+	                           0.0f,  0.0f, 1.0f, 0.0f,
+	                           0.0f,  0.0f, 0.0f, 1.0f };
 /*@ mat4_t be_rotMatrix_0_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };*/
-mat4_t be_rotMatrix_0_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, -1.0f, 0.0f,
-								0.0f, 1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_0_90_0_q = { 1.0f, 0.0f, 0.0f,  0.0f,
+	                             0.0f, 0.0f, -1.0f, 0.0f,
+	                             0.0f, 1.0f, 0.0f,  0.0f,
+	                             0.0f, 0.0f, 0.0f,  1.0f };
 /// sincos 0 -90 0:		sin = 0 -1 0,	cos = 1 0 1
 mat4_t be_rotMatrix_0_m90_0 = { 0.0f, -1.0f, 0.0f, 0.0f,
-								1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 1.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+	                            1.0f, 0.0f,  0.0f, 0.0f,
+	                            0.0f, 0.0f,  1.0f, 0.0f,
+	                            0.0f, 0.0f,  0.0f, 1.0f };
 /*@ mat4_t be_rotMatrix_0_m90_0_r = { 0.0f, 1.0f, 0.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };*/
 mat4_t be_rotMatrix_0_m90_0_q = { -1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 1.0f, 0.0f,
-								0.0f, 1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+	                              0.0f,  0.0f, 1.0f, 0.0f,
+	                              0.0f,  1.0f, 0.0f, 0.0f,
+	                              0.0f,  0.0f, 0.0f, 1.0f };
 /// sincos -90 90 0:		sin = -1 1 0,	cos = 0 0 1
-mat4_t be_rotMatrix_m90_90_0 = { 0.0f, 0.0f, 1.0f, 0.0f,
-								-1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, -1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_m90_90_0 = { 0.0f,  0.0f,  1.0f, 0.0f,
+	                             -1.0f, 0.0f,  0.0f, 0.0f,
+	                             0.0f,  -1.0f, 0.0f, 0.0f,
+	                             0.0f,  0.0f,  0.0f, 1.0f };
 /*@ mat4_t be_rotMatrix_m90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, -1.0f, 0.0f,
 								1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };*/
-mat4_t be_rotMatrix_m90_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, -1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, -1.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_m90_90_0_q = { 1.0f, 0.0f,  0.0f,  0.0f,
+	                               0.0f, -1.0f, 0.0f,  0.0f,
+	                               0.0f, 0.0f,  -1.0f, 0.0f,
+	                               0.0f, 0.0f,  0.0f,  1.0f };
 /// sincos 90 90 0:		sin = 1 1 0,	cos = 0 0 1
-mat4_t be_rotMatrix_90_90_0 = { 0.0f, 0.0f, -1.0f, 0.0f,
-								-1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_90_90_0 = { 0.0f,  0.0f, -1.0f, 0.0f,
+	                            -1.0f, 0.0f, 0.0f,  0.0f,
+	                            0.0f,  1.0f, 0.0f,  0.0f,
+	                            0.0f,  0.0f, 0.0f,  1.0f };
 /*@ mat4_t be_rotMatrix_90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };*/
 mat4_t be_rotMatrix_90_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
-								0.0f, 1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 1.0f, 0.0f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+	                              0.0f, 1.0f, 0.0f, 0.0f,
+	                              0.0f, 0.0f, 1.0f, 0.0f,
+	                              0.0f, 0.0f, 0.0f, 1.0f };
 
 /**
  * @brief RB_RenderInteractionsShadowMapped
@@ -1146,9 +1146,9 @@ static void RB_RenderInteractionsShadowMapped()
 	int           splitFrustumIndex;
 	int           startTime = 0;
 	const mat4_t  bias      = { 0.5f, 0.0f, 0.0f, 0.0f,
-		                        0.0f, 0.5f, 0.0f, 0.0f,
-		                        0.0f, 0.0f, 0.5f, 0.0f,
-		                        0.5f, 0.5f, 0.5f, 1.0f };
+		                        0.0f,       0.5f, 0.0f, 0.0f,
+		                        0.0f,       0.0f, 0.5f, 0.0f,
+		                        0.5f,       0.5f, 0.5f, 1.0f };
 	mat4_t        *rotMatrix, *rotMatrix_q;
 
 	if (!glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
@@ -1229,9 +1229,9 @@ static void RB_RenderInteractionsShadowMapped()
 					{
 						//float           xMin, xMax, yMin, yMax;
 						//float           width, height, depth;
-						float    fovXY;
+						float fovXY;
 #ifndef ETL_SSE
-						float    zNear, zFar;
+						float                      zNear, zFar;
 						mat4_t /*rotationMatrix,*/ transformMatrix, viewMatrix;
 #else
 						mat4_t viewMatrix;
@@ -1258,44 +1258,44 @@ static void RB_RenderInteractionsShadowMapped()
 						case 0:
 						{
 							// view parameters
-							rotMatrix = &be_rotMatrix_0_0_90;
-							rotMatrix_q = &be_rotMatrix_0_0_90_q;							// this is the quakeToOpenGLMatrix * viewmatrix
-							fovXY = 90.f;
+							rotMatrix   = &be_rotMatrix_0_0_90;
+							rotMatrix_q = &be_rotMatrix_0_0_90_q;                           // this is the quakeToOpenGLMatrix * viewmatrix
+							fovXY       = 90.f;
 							break;
 						}
 						case 1:
 						{
-							rotMatrix = &be_rotMatrix_0_180_90;
+							rotMatrix   = &be_rotMatrix_0_180_90;
 							rotMatrix_q = &be_rotMatrix_0_180_90_q;
-							fovXY = -90.f;
+							fovXY       = -90.f;
 							break;
 						}
 						case 2:
 						{
-							rotMatrix = &be_rotMatrix_0_90_0;
+							rotMatrix   = &be_rotMatrix_0_90_0;
 							rotMatrix_q = &be_rotMatrix_0_90_0_q;
-							fovXY = 90.f;
+							fovXY       = 90.f;
 							break;
 						}
 						case 3:
 						{
-							rotMatrix = &be_rotMatrix_0_m90_0;
+							rotMatrix   = &be_rotMatrix_0_m90_0;
 							rotMatrix_q = &be_rotMatrix_0_m90_0_q;
-							fovXY = -90.f;
+							fovXY       = -90.f;
 							break;
 						}
 						case 4:
 						{
-							rotMatrix = &be_rotMatrix_m90_90_0;
+							rotMatrix   = &be_rotMatrix_m90_90_0;
 							rotMatrix_q = &be_rotMatrix_m90_90_0_q;
-							fovXY = 90.f;
+							fovXY       = 90.f;
 							break;
 						}
 						case 5:
 						{
-							rotMatrix = &be_rotMatrix_90_90_0;
+							rotMatrix   = &be_rotMatrix_90_90_0;
 							rotMatrix_q = &be_rotMatrix_90_90_0_q;
-							fovXY = -90.f;
+							fovXY       = -90.f;
 							break;
 						}
 						}
@@ -1304,38 +1304,38 @@ static void RB_RenderInteractionsShadowMapped()
 						MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 
 						MatrixAffineInverse(transformMatrix, viewMatrix);
-						
+
 #else
-                        // this is setting viewMatrix.
+						// this is setting viewMatrix.
 						// MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
 						// MatrixAffineInverse(transformMatrix, viewMatrix);
 						// UPDATE: in the end, all that's done, is calculating the bottom row of the viewMatrix..
 						zeroes = _mm_setzero_ps();
-						xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
-						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[0]), (const __m64 *)&(*rotMatrix)[1]);		// xmm2 = z y 0 x
-						xmm1 = _mm_mul_ps(xmm0, xmm2);
-						xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
-						xmm6 = _mm_add_ps(xmm1, xmm7);		//
-						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-						xmm1 = _mm_add_ss(xmm6, xmm7);		// xmm1 = dot(in0, in12)
-						xmm1 = _mm_sub_ps(zeroes, xmm1);
+						xmm0   = _mm_loadh_pi(_mm_load_ss((const float *)&light->origin[0]), (const __m64 *)(&light->origin[1])); // xmm0 = z y 0 x
+						xmm2   = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[0]), (const __m64 *)&(*rotMatrix)[1]);   // xmm2 = z y 0 x
+						xmm1   = _mm_mul_ps(xmm0, xmm2);
+						xmm7   = _mm_movehdup_ps(xmm1);     // faster way to do: 2 * hadd
+						xmm6   = _mm_add_ps(xmm1, xmm7);    //
+						xmm7   = _mm_movehl_ps(xmm7, xmm6); //
+						xmm1   = _mm_add_ss(xmm6, xmm7);    // xmm1 = dot(in0, in12)
+						xmm1   = _mm_sub_ps(zeroes, xmm1);
 						_mm_store_ss(&viewMatrix[12], xmm1);
 
-						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[4]), (const __m64 *)&(*rotMatrix)[5]);		// xmm2 = z y 0 x
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[4]), (const __m64 *)&(*rotMatrix)[5]);     // xmm2 = z y 0 x
 						xmm4 = _mm_mul_ps(xmm0, xmm2);
-						xmm7 = _mm_movehdup_ps(xmm4);		// faster way to do: 2 * hadd
-						xmm6 = _mm_add_ps(xmm4, xmm7);		//
-						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-						xmm4 = _mm_add_ss(xmm6, xmm7);		// xmm4 = dot(in4, in12)
+						xmm7 = _mm_movehdup_ps(xmm4);       // faster way to do: 2 * hadd
+						xmm6 = _mm_add_ps(xmm4, xmm7);      //
+						xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+						xmm4 = _mm_add_ss(xmm6, xmm7);      // xmm4 = dot(in4, in12)
 						xmm4 = _mm_sub_ps(zeroes, xmm4);
 						_mm_store_ss(&viewMatrix[13], xmm4);
 
-						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[8]), (const __m64 *)&(*rotMatrix)[9]);		// xmm2 = z y 0 x
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[8]), (const __m64 *)&(*rotMatrix)[9]);     // xmm2 = z y 0 x
 						xmm5 = _mm_mul_ps(xmm0, xmm2);
-						xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
-						xmm6 = _mm_add_ps(xmm5, xmm7);		//
-						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-						xmm5 = _mm_add_ss(xmm6, xmm7);		// xmm5 = dot(in8, in12)
+						xmm7 = _mm_movehdup_ps(xmm5);       // faster way to do: 2 * hadd
+						xmm6 = _mm_add_ps(xmm5, xmm7);      //
+						xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+						xmm5 = _mm_add_ss(xmm6, xmm7);      // xmm5 = dot(in8, in12)
 						xmm5 = _mm_sub_ps(zeroes, xmm5);
 						_mm_store_ss(&viewMatrix[14], xmm5);
 
@@ -1385,15 +1385,15 @@ static void RB_RenderInteractionsShadowMapped()
 #else
 						// fovX & fovY are always both the same, 90 or -90, and zNear is always 1.
 						// we can save the two tanf() calls, and some more calculations..
-						vec_t width_r = rcp(tanf(DEG2RAD(fovXY * 0.5f))), // why don't i succeed making this use constants? :S :)
-							FarrNearFar = light->sphereRadius * rcp(1.f - light->sphereRadius);
+						vec_t width_r     = rcp(tanf(DEG2RAD(fovXY * 0.5f))), // why don't i succeed making this use constants? :S :)
+						      FarrNearFar = light->sphereRadius * rcp(1.f - light->sphereRadius);
 						xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, width_r);
 						_mm_storeu_ps(&light->projectionMatrix[0], xmm0);
-						xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b11100001);		// xmm0 = 0.0f, 0.0f, width_r, 0.0f
+						xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b11100001);      // xmm0 = 0.0f, 0.0f, width_r, 0.0f
 						_mm_storeu_ps(&light->projectionMatrix[4], xmm0); // _mm_set_ps(0.0f, 0.0f, width_r, 0.0f));
 						xmm1 = _mm_set_ps(-1.0f, FarrNearFar, 0.0f, 0.0f);
 						_mm_storeu_ps(&light->projectionMatrix[8], xmm1);
-						xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b00100000);		// xmm1 = 0.0f, FarrNearFar, 0.0f, 0.0f
+						xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b00100000);      // xmm1 = 0.0f, FarrNearFar, 0.0f, 0.0f
 						_mm_storeu_ps(&light->projectionMatrix[12], xmm1); // _mm_set_ps(0.0f, FarrNearFar, 0.0f, 0.0f));
 #endif
 
@@ -1423,14 +1423,14 @@ static void RB_RenderInteractionsShadowMapped()
 						vec3_t casterBounds[2];
 						vec3_t receiverBounds[2];
 						vec3_t cropBounds[2];
-						vec4_t point = {0.f, 0.f, 0.f, 1.f};
+						vec4_t point = { 0.f, 0.f, 0.f, 1.f };
 						vec4_t transf;
 
 						Ren_LogComment("--- Rendering directional shadowMap ---\n");
 
 						R_BindFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
 						R_AttachFBOTextureDepth(tr.sunShadowMapFBOImage[splitFrustumIndex]->texnum);
-						
+
 						if (!r_ignoreGLErrors->integer)
 						{
 							R_CheckFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
@@ -1648,7 +1648,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 							cropBounds[0][2] = Q_min(casterBounds[0][2], splitFrustumClipBounds[0][2]);
 							cropBounds[1][2] = Q_min(receiverBounds[1][2], splitFrustumClipBounds[1][2]);
-							
+
 							if (numCasters == 0)
 							{
 								VectorCopy(splitFrustumClipBounds[0], cropBounds[0]);
@@ -2024,9 +2024,9 @@ static void RB_RenderInteractionsShadowMapped()
 				if (drawShadows)
 				{
 					Com_Memset(&backEnd.orientation, 0, sizeof(backEnd.orientation));
-					backEnd.orientation.axis[0][0] = 1.0f;	// axis = identity matrix
-					backEnd.orientation.axis[1][1] = 1.0f;	//
-					backEnd.orientation.axis[2][2] = 1.0f;	//
+					backEnd.orientation.axis[0][0] = 1.0f;  // axis = identity matrix
+					backEnd.orientation.axis[1][1] = 1.0f;  //
+					backEnd.orientation.axis[2][2] = 1.0f;  //
 					VectorCopy(light->l.origin, backEnd.orientation.viewOrigin);
 
 					Matrix4Identity(backEnd.orientation.transformMatrix);
@@ -2407,7 +2407,7 @@ void RB_RenderGlobalFog()
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
-    // this fogGlobal is disabled?
+	// this fogGlobal is disabled?
 	if (r_noFog->integer)
 	{
 		return;
@@ -2458,7 +2458,7 @@ void RB_RenderGlobalFog()
 		SetUniformVec4(UNIFORM_COLOR, fog->color);
 		SetUniformFloat(UNIFORM_FOGDENSITY, 1.0f); // this must be 1
 	}
-		
+
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 	// bind u_ColorMap
@@ -2794,7 +2794,7 @@ static void RB_CalculateAdaptation()
 
 	for (i = 0; i < (64 * 64 * 4); i += 4)
 	{
-		Dot((image+i), LUMINANCE_VECTOR, dot);	// don't copy to 'color'. Just point to the vector in the image..
+		Dot((image + i), LUMINANCE_VECTOR, dot);  // don't copy to 'color'. Just point to the vector in the image..
 		luminance = dot + 0.0001f;
 		if (luminance > maxLuminance)
 		{
@@ -4005,10 +4005,10 @@ void RB_RenderEntityOcclusionQueries()
 
 			// we must exclude MOD_BSP (the Oasis wall)
 			if (entity == &tr.worldEntity ||
-				(entity->e.reType == RT_MODEL && tr.models[entity->e.hModel]->type == MOD_BSP))
+			    (entity->e.reType == RT_MODEL && tr.models[entity->e.hModel]->type == MOD_BSP))
 			{
 				entity->occlusionQuerySamples = 1;
-				entity->noOcclusionQueries = qtrue;
+				entity->noOcclusionQueries    = qtrue;
 				continue;
 			}
 
@@ -5268,7 +5268,7 @@ static void RB_RenderDebugUtils()
 		vec3_t mins = { -32, -32, -32 }; // i want to see them bigger
 		vec3_t maxs = { 32, 32, 32 };
 		//vec3_t			viewOrigin;
-		trRefEntity_t* backEndEnt = backEnd.currentEntity;
+		trRefEntity_t *backEndEnt = backEnd.currentEntity;
 
 		if (backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOCUBEMAP))
 		{
@@ -5298,7 +5298,7 @@ static void RB_RenderDebugUtils()
 
 		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
 		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
-		
+
 		for (j = 0; j < tr.cubeProbes.currentElements; j++)
 		{
 			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
@@ -5349,7 +5349,7 @@ static void RB_RenderDebugUtils()
 		// the inside of the cube is textured, and the normals all point to the center of the cube.
 		GL_Cull(CT_FRONT_SIDED);
 //		GL_Cull(CT_TWO_SIDED); // we also want to see the cubemap if we are inside the cube..
-		
+
 		for (j = 0; j < tr.cubeProbes.currentElements; j++)
 		{
 			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
@@ -5361,7 +5361,7 @@ static void RB_RenderDebugUtils()
 			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
 
 			SelectTexture(TEX_COLOR);
-            GL_Bind(cubeProbe->cubemap);
+			GL_Bind(cubeProbe->cubemap);
 
 			Tess_UpdateVBOs(ATTR_POSITION | ATTR_NORMAL);
 			Tess_DrawElements();
@@ -5372,7 +5372,7 @@ static void RB_RenderDebugUtils()
 		tess.numIndexes          = 0;
 		//--- end cubemap shader
 
-#if 0	// color the 2 closest cubeProbes (green/red/yellow?/blue?)
+#if 0   // color the 2 closest cubeProbes (green/red/yellow?/blue?)
 		// (disabled because, when you want to inspect a cubeProbe up close, no textures can be seen.. not handy)
 		{
 			cubemapProbe_t *cubeProbe1;
@@ -5934,7 +5934,7 @@ static void RB_RenderDebugUtils()
 
 /**
  * @brief RB_RenderViewFront
- * 
+ *
  * Note: If we are rendering offscreen, or when we are rendering the cubeprobe reflection cubemaps,
  * we don't want this function to mess up the framebuffer we render to offscreen.
  * In any case, when we are rendering the cubemaps, they do not have fog,coronas,decals,shadows,light, or any posteffects (hdr,bloom...).
@@ -6274,7 +6274,7 @@ static void RB_RenderViewFront(void)
 
 	// wait until all bsp node occlusion queries are back
 	RB_CollectBspOcclusionQueries();
-*/
+	*/
 
 	if (!tr.refdef.renderingCubemap)
 	{
@@ -7160,7 +7160,7 @@ const void *RB_RenderToTexture(const void *data)
 /**
  * @brief RB_RenderCubeprobe
  * @param[in] (renderCubeprobeCommand_t*)data
- * 
+ *
  * The RB_ functions are called when an RC_RENDERCUBEPROBE command is executed from the Render-Command-Buffer
  */
 const void *RB_RenderCubeprobe(const void *data)
@@ -7187,17 +7187,17 @@ const void *RB_RenderCubeprobe(const void *data)
 	//   The full fov_x & fov_y is: 97.406393268543374093517472449563 degrees
 	// 1/(sqrt(2)/2) = 1.4142135623730950488016887242097 = sqrt(2)  !
 	const double halfCube = 0.5 * REF_CUBEMAP_SIZE;
-	float angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
-	int i;
-	refdef_t rf;
-	byte *cubeTemp[6];  // 6 textures pixeldata
-	FBO_t *previousFBO;
-	uint32_t pboResults = (1<<5) | (1<<4) | (1<<3) | (1<<2) | (1<<1) | (1<<0); // we must wait for pbo results of all 6 sides
+	float        angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
+	int          i;
+	refdef_t     rf;
+	byte         *cubeTemp[6]; // 6 textures pixeldata
+	FBO_t        *previousFBO;
+	uint32_t     pboResults = (1 << 5) | (1 << 4) | (1 << 3) | (1 << 2) | (1 << 1) | (1 << 0); // we must wait for pbo results of all 6 sides
 
 	const renderCubeprobeCommand_t *cmd = (const renderCubeprobeCommand_t *)data;
 
 	// for some unknown reason, cmd is not the same at the end of this function call.. so we backup the values we need later.  TODO: check
-	byte **cmd_pixeldata     = cmd->pixeldata;
+	byte     **cmd_pixeldata = cmd->pixeldata;
 	qboolean cmd_commandOnly = cmd->commandOnly;
 
 	// we can not write to data members from cmd, because it's a constant..
@@ -7219,7 +7219,9 @@ const void *RB_RenderCubeprobe(const void *data)
 			{
 				cubeTemp[i] = cmd->pixeldata[i];
 			}
-		} else {
+		}
+		else
+		{
 			for (i = 0; i < 6; i++)
 			{
 				cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE);
@@ -7228,8 +7230,8 @@ const void *RB_RenderCubeprobe(const void *data)
 	}
 
 	// use just the pixels in the middle of the screen to draw to
-	GL_Viewport(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
-	GL_Scissor(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
+	GL_Viewport(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE + 2, REF_CUBEMAP_SIZE + 2);
+	GL_Scissor(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE + 2, REF_CUBEMAP_SIZE + 2);
 
 	GL_CheckErrors();
 
@@ -7244,8 +7246,8 @@ const void *RB_RenderCubeprobe(const void *data)
 	rf.y       = 0;
 	rf.time    = 0;
 	rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
-	rf.width   = REF_CUBEMAP_SIZE+2; // 1 extra pixel around the edges
-	rf.height  = REF_CUBEMAP_SIZE+2; // "
+	rf.width   = REF_CUBEMAP_SIZE + 2; // 1 extra pixel around the edges
+	rf.height  = REF_CUBEMAP_SIZE + 2; // "
 	for (i = 0; i < 6; i++)
 	{
 
@@ -7335,7 +7337,7 @@ const void *RB_RenderCubeprobe(const void *data)
 	{
 		// the cubemap is not quite ready yet..
 		probe->cubemap = tr.autoCubeImage; // provide a valid temporary texture for rendering,
-		probe->ready = qfalse;             // but indicate that this cube is not ready
+		probe->ready   = qfalse;           // but indicate that this cube is not ready
 		goto renderCubeProbe_finish;       // we're done.
 	}
 
@@ -7345,10 +7347,16 @@ const void *RB_RenderCubeprobe(const void *data)
 	{
 		for (i = 0; i < 6; i++)
 		{
-			if (!probe->pbo[i]->sync) continue;
-			if (!R_PBOResultAvailable(probe->pbo[i])) continue;
+			if (!probe->pbo[i]->sync)
+			{
+				continue;
+			}
+			if (!R_PBOResultAvailable(probe->pbo[i]))
+			{
+				continue;
+			}
 			R_ReadPBO(probe->pbo[i], cubeTemp[i], qfalse);
-			pboResults &= ~(1<<i); // clear bit i
+			pboResults &= ~(1 << i); // clear bit i
 		}
 	}
 
@@ -7357,7 +7365,7 @@ const void *RB_RenderCubeprobe(const void *data)
 	if (!probe->cubemap)
 	{   // the cubemap texture could not be created
 		probe->cubemap = tr.autoCubeImage; // provide a valid temporary texture
-		probe->ready = qfalse;             // but indicate this cube is not ready
+		probe->ready   = qfalse;           // but indicate this cube is not ready
 		goto renderCubeProbe_finish;
 	}
 	// this cubemap is now ready for render use
@@ -7377,7 +7385,10 @@ renderCubeProbe_finish:
 		{
 			for (i = 0; i < 6; i++)
 			{
-				if (cubeTemp[i]) ri.Free(cubeTemp[i]);
+				if (cubeTemp[i])
+				{
+					ri.Free(cubeTemp[i]);
+				}
 			}
 		}
 	}

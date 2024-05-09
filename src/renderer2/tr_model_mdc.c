@@ -57,16 +57,16 @@
 #define MDC_MAX_DIST      (MDC_MAX_OFS * MDC_DIST_SCALE)
 
 #define R_MDC_DecodeXyzCompressed(ofsVec, out, normal) \
-	(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);             //This doesn't do anything...
+		(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		VectorCopy((r_anormals)[(ofsVec >> 24)], normal);         //This doesn't do anything...
 
 #define R_MDC_DecodeXyzCompressed2(ofsVec, out) \
-	(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	//VectorCopy( ( r_anormals )[( ofsVec >> 24 )], normal ); //This doesn't do anything...
+		(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+		//VectorCopy( ( r_anormals )[( ofsVec >> 24 )], normal ); //This doesn't do anything...
 
 /**
  * @brief R_MDC_CreateVBO_Surfaces

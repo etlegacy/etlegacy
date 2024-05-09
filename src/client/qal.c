@@ -131,7 +131,7 @@ static qboolean alinit_fail = qfalse;
 /**
  * @brief GPA
  * @param[in,out] str
- * @return 
+ * @return
  */
 static void *GPA(char *str)
 {
@@ -154,7 +154,7 @@ static void *GPA(char *str)
 /**
  * @brief QAL_Init
  * @param[in] libname
- * @return 
+ * @return
  */
 qboolean QAL_Init(const char *libname)
 {
@@ -374,8 +374,8 @@ void QAL_Shutdown(void)
 /**
  * @brief QAL_Init
  * @param libname - unused
- * @return 
- * 
+ * @return
+ *
  * @todo TODO: not implemented
  */
 qboolean QAL_Init(const char *libname)
@@ -385,7 +385,7 @@ qboolean QAL_Init(const char *libname)
 
 /**
  * @brief QAL_Shutdown
- * 
+ *
  * @todo TODO: not implemented
  */
 void QAL_Shutdown(void)

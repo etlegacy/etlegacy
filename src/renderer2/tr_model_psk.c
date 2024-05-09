@@ -186,12 +186,12 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	mat4_t unrealToQuake;
 
 #define DeallocAll() Com_Dealloc(materials); \
-	Com_Dealloc(points); \
-	Com_Dealloc(vertexes); \
-	Com_Dealloc(triangles); \
-	Com_Dealloc(refBones); \
-	Com_Dealloc(axWeights); \
-	FreeMemStream(stream);
+		Com_Dealloc(points); \
+		Com_Dealloc(vertexes); \
+		Com_Dealloc(triangles); \
+		Com_Dealloc(refBones); \
+		Com_Dealloc(axWeights); \
+		FreeMemStream(stream);
 
 	//MatrixSetupScale(unrealToQuake, 1, -1, 1);
 	mat4_from_angles(unrealToQuake, 0, 90, 0);

@@ -396,7 +396,7 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 	{
 		for (j = 0, iwj = iwidth; j < width; j++, iwj++)
 		{
-			if (i < height-1 && j < width-1)
+			if (i < height - 1 && j < width - 1)
 			{
 				// vertex order to be reckognized as tristrips
 				v1 = iwj + 1;
@@ -562,9 +562,9 @@ static void InvertCtrl(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_
 	{
 		for (j = 0; j < w2; j++)
 		{
-			w1j                    = width - 1 - j;
-			temp                   = ctrl[i][j];
-			ctrl[i][j]             = ctrl[i][w1j];
+			w1j          = width - 1 - j;
+			temp         = ctrl[i][j];
+			ctrl[i][j]   = ctrl[i][w1j];
 			ctrl[i][w1j] = temp;
 		}
 	}
@@ -735,7 +735,7 @@ void R_FreeSurfaceGridMesh(srfGridMesh_t *grid)
  * @param[in] points
  * @return
  */
-srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE])
+srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE *MAX_PATCH_SIZE])
 {
 	int                  i, j, k, jwidth, j1, j2, j3, j_1;
 	srfVert_t            prev, next, mid;
@@ -1046,7 +1046,7 @@ srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t 
 			continue;
 		}
 		errorTable[1][i] = grid->heightLodError[oldheight];
-		ohgw = oldheight * grid->width;
+		ohgw             = oldheight * grid->width;
 		for (j = 0; j < grid->width; j++)
 		{
 			ctrl[i][j] = grid->verts[ohgw + j];

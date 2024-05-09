@@ -105,7 +105,7 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 	vec3_t      binormal;
 	vec3_t      normal;
 
-	float       *v;
+	float *v;
 
 	Com_InitGrowList(&vboSurfaces, 32);
 

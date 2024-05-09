@@ -261,50 +261,50 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 			factor *= (1.0f - frac[2]);
 			break;
 		case 1:
-			factor *= frac[0];
+			factor     *= frac[0];
 			gridPoint2 += gridStep[0];
-			factor *= (1.0f - frac[1]);
-			factor *= (1.0f - frac[2]);
+			factor     *= (1.0f - frac[1]);
+			factor     *= (1.0f - frac[2]);
 			break;
 		case 2:
-			factor *= (1.0f - frac[0]);
-			factor *= frac[1];
+			factor     *= (1.0f - frac[0]);
+			factor     *= frac[1];
 			gridPoint2 += gridStep[1];
-			factor *= (1.0f - frac[2]);
+			factor     *= (1.0f - frac[2]);
 			break;
 		case 3:
-			factor *= frac[0];
+			factor     *= frac[0];
 			gridPoint2 += gridStep[0];
-			factor *= frac[1];
+			factor     *= frac[1];
 			gridPoint2 += gridStep[1];
-			factor *= (1.0f - frac[2]);
+			factor     *= (1.0f - frac[2]);
 			break;
 		case 4:
-			factor *= (1.0f - frac[0]);
-			factor *= (1.0f - frac[1]);
-			factor *= frac[2];
+			factor     *= (1.0f - frac[0]);
+			factor     *= (1.0f - frac[1]);
+			factor     *= frac[2];
 			gridPoint2 += gridStep[2];
 			break;
 		case 5:
-			factor *= frac[0];
+			factor     *= frac[0];
 			gridPoint2 += gridStep[0];
-			factor *= (1.0f - frac[1]);
-			factor *= frac[2];
+			factor     *= (1.0f - frac[1]);
+			factor     *= frac[2];
 			gridPoint2 += gridStep[2];
 			break;
 		case 6:
-			factor *= (1.0f - frac[0]);
-			factor *= frac[1];
+			factor     *= (1.0f - frac[0]);
+			factor     *= frac[1];
 			gridPoint2 += gridStep[1];
-			factor *= frac[2];
+			factor     *= frac[2];
 			gridPoint2 += gridStep[2];
 			break;
 		case 7:
-			factor *= frac[0];
+			factor     *= frac[0];
 			gridPoint2 += gridStep[0];
-			factor *= frac[1];
+			factor     *= frac[1];
 			gridPoint2 += gridStep[1];
-			factor *= frac[2];
+			factor     *= frac[2];
 			gridPoint2 += gridStep[2];
 			break;
 		}
@@ -452,9 +452,9 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 
 	if (r_debugLight->integer)
 	{
-		 Ren_Print("amb: %f %f %f dir: %f %f %f\n",
-				 ent->ambientLight[0], ent->ambientLight[1], ent->ambientLight[2],
-				 ent->directedLight[0], ent->directedLight[1], ent->directedLight[2]);
+		Ren_Print("amb: %f %f %f dir: %f %f %f\n",
+		          ent->ambientLight[0], ent->ambientLight[1], ent->ambientLight[2],
+		          ent->directedLight[0], ent->directedLight[1], ent->directedLight[2]);
 	}
 }
 
@@ -480,7 +480,7 @@ void R_SetupLightOrigin(trRefLight_t *light)
 		else
 		{
 			const vec3_t down = { 0.0f, 0.0f, 1.0f };
-			
+
 			VectorTransformM4(light->transformMatrix, down, transformed);
 			VectorSubtract(transformed, light->l.origin, light->direction);
 			VectorNormalizeOnly(light->direction);
@@ -643,9 +643,9 @@ void R_SetupLightFrustum(trRefLight_t *light)
 			VectorNormalizeOnly(planeNormal);
 			VectorCopy(planeNormal, light->frustum[i].normal);
 			Dot(planeOrigin, planeNormal, light->frustum[i].dist);
-		//}
-		//for (i = 0; i < 3; i++)
-		//{
+			//}
+			//for (i = 0; i < 3; i++)
+			//{
 			VectorMA(light->l.origin, -light->l.radius[i], axis[i], planeOrigin);
 			VectorCopy(axis[i], planeNormal);
 			VectorNormalizeOnly(planeNormal);
@@ -1348,14 +1348,14 @@ void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, con
 ID_INLINE void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
 {
 	vec4_t eye, clip, normalized, window;
-	vec4_t src2 = {0.f, 0.f, 0.f, 1.f};
-	int windowInt[2];
+	vec4_t src2 = { 0.f, 0.f, 0.f, 1.f };
+	int    windowInt[2];
 
 	///R_TransformWorldToClip(world, tr.viewParms.world.viewMatrix, tr.viewParms.projectionMatrix, eye, clip);
 	VectorCopy(world, src2); //Vector4Set(src2, world[0], world[1], world[2], 1.f);
 	Vector4TransformM4(tr.viewParms.world.viewMatrix, src2, eye);
 	Vector4TransformM4(tr.viewParms.projectionMatrix, eye, clip);
-	 
+
 	///R_TransformClipToWindow(clip, &tr.viewParms, normalized, window);
 	Vector2Scale(&clip[0], rcp(clip[3]), &normalized[0]);
 	//window[0] = ((1.0f + normalized[0]) * 0.5f * (float)tr.viewParms.viewportWidth) + (float)tr.viewParms.viewportX;
@@ -1409,12 +1409,12 @@ ID_INLINE void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_
 
 	for (i = 0; i < FRUSTUM_PLANES; i++)
 	{
-	/*		// note: i moved these next two lines out of the loop..
-		//R_LocalPointToWorld(local1, world1);
-		VectorTransformM4(tr.orientation.transformMatrix, local1, world1);
+		/*		// note: i moved these next two lines out of the loop..
+		    //R_LocalPointToWorld(local1, world1);
+		    VectorTransformM4(tr.orientation.transformMatrix, local1, world1);
 
-		//R_LocalPointToWorld(local2, world2);
-		VectorTransformM4(tr.orientation.transformMatrix, local2, world2);*/
+		    //R_LocalPointToWorld(local2, world2);
+		    VectorTransformM4(tr.orientation.transformMatrix, local2, world2);*/
 
 		frust = &tr.viewParms.frustums[0][i];
 
@@ -1458,8 +1458,8 @@ ID_INLINE void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_
 void R_SetupLightScissor(trRefLight_t *light)
 {
 	vec3_t v1, v3, v4, v5, v6, v7, v8, v9;
-	int w = tr.viewParms.viewportX + tr.viewParms.viewportWidth,
-		h = tr.viewParms.viewportY + tr.viewParms.viewportHeight;
+	int    w = tr.viewParms.viewportX + tr.viewParms.viewportWidth,
+	       h = tr.viewParms.viewportY + tr.viewParms.viewportHeight;
 
 	light->scissor.coords[0] = tr.viewParms.viewportX;
 	light->scissor.coords[1] = tr.viewParms.viewportY;
@@ -1726,58 +1726,58 @@ void R_SetupLightDepthBounds(trRefLight_t *light)
 // Some matrices that are used by R_CalcLightCubeSideBits()
 // There are two versions of a matrix (_r = "3x3 transposed" version)
 mat4_t rotMatrix_0_0_0 = { 1.0f, 0.0f, 0.0f, 0.0f,
-						0.0f, 1.0f, 0.0f, 0.0f,
-						0.0f, 0.0f, 1.0f, 0.0f,
-						0.0f, 0.0f, 0.0f, 1.0f };
+	                       0.0f, 1.0f, 0.0f, 0.0f,
+	                       0.0f, 0.0f, 1.0f, 0.0f,
+	                       0.0f, 0.0f, 0.0f, 1.0f };
 mat4_t rotMatrix_0_0_0_r = { 1.0f, 0.0f, 0.0f, 0.0f,
-							0.0f, 1.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 1.0f, 0.0f,
-							0.0f, 0.0f, 0.0f, 1.0f };
+	                         0.0f, 1.0f, 0.0f, 0.0f,
+	                         0.0f, 0.0f, 1.0f, 0.0f,
+	                         0.0f, 0.0f, 0.0f, 1.0f };
 
-mat4_t rotMatrix_0_180_0 = { -1.f, 0.f, 0.f, 0.f,
-							0.f, -1.f, 0.f, 0.f,
-							0.f, 0.f, 1.f, 0.f,
-							0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t rotMatrix_0_180_0_r = { -1.f, 0.f, 0.f, 0.f,
-								0.f, -1.f, 0.f, 0.f,
-								0.f, 0.f, 1.f, 0.f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_180_0 = { -1.f, 0.f,  0.f,  0.f,
+	                         0.f,  -1.f, 0.f,  0.f,
+	                         0.f,  0.f,  1.f,  0.f,
+	                         0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_180_0_r = { -1.f, 0.f,  0.f,  0.f,
+	                           0.f,  -1.f, 0.f,  0.f,
+	                           0.f,  0.f,  1.f,  0.f,
+	                           0.0f, 0.0f, 0.0f, 1.0f };
 
-mat4_t rotMatrix_0_90_0 = { 0.f, 1.f, 0.f, 0.f,
-							-1.f, 0.f, 0.f, 0.f,
-							0.f, 0.f, 1.f, 0.f,
-							0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t rotMatrix_0_90_0_r = { 0.f, -1.f, 0.f, 0.f,
-							1.f, 0.f, 0.f, 0.f,
-							0.f, 0.f, 1.f, 0.f,
-							0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_90_0 = { 0.f,  1.f,  0.f,  0.f,
+	                        -1.f, 0.f,  0.f,  0.f,
+	                        0.f,  0.f,  1.f,  0.f,
+	                        0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_90_0_r = { 0.f,  -1.f, 0.f,  0.f,
+	                          1.f,  0.f,  0.f,  0.f,
+	                          0.f,  0.f,  1.f,  0.f,
+	                          0.0f, 0.0f, 0.0f, 1.0f };
 
-mat4_t rotMatrix_0_270_0 = { 0.f, -1.f, 0.f, 0.f,
-							1.f, 0.f, 0.f, 0.f,
-							0.f, 0.f, 1.f, 0.f,
-							0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t rotMatrix_0_270_0_r = { 0.f, 1.f, 0.f, 0.f,
-								-1.f, 0.f, 0.f, 0.f,
-								0.f, 0.f, 1.f, 0.f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_270_0 = { 0.f,  -1.f, 0.f,  0.f,
+	                         1.f,  0.f,  0.f,  0.f,
+	                         0.f,  0.f,  1.f,  0.f,
+	                         0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_270_0_r = { 0.f,  1.f,  0.f,  0.f,
+	                           -1.f, 0.f,  0.f,  0.f,
+	                           0.f,  0.f,  1.f,  0.f,
+	                           0.0f, 0.0f, 0.0f, 1.0f };
 
-mat4_t rotMatrix_m90_0_0 = { 0.f, 0.f, 1.f, 0.f,
-							0.f, 1.f, 0.f, 0.f,
-							-1.f, 0.f, 0.f, 0.f,
-							0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t rotMatrix_m90_0_0_r = { 0.f, 0.f, -1.f, 0.f,
-								0.f, 1.f, 0.f, 0.f,
-								1.f, 0.f, 0.f, 0.f,
-								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_m90_0_0 = { 0.f,  0.f,  1.f,  0.f,
+	                         0.f,  1.f,  0.f,  0.f,
+	                         -1.f, 0.f,  0.f,  0.f,
+	                         0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_m90_0_0_r = { 0.f,  0.f,  -1.f, 0.f,
+	                           0.f,  1.f,  0.f,  0.f,
+	                           1.f,  0.f,  0.f,  0.f,
+	                           0.0f, 0.0f, 0.0f, 1.0f };
 
-mat4_t rotMatrix_90_0_0 = { 0.f, 0.f, -1.f, 0.f,
-							0.f, 1.f, 0.f, 0.f,
-							1.f, 0.f, 0.f, 0.f,
-							0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t rotMatrix_90_0_0_r = { 0.f, 0.f, 1.f, 0.f,
-							0.f, 1.f, 0.f, 0.f,
-							-1.f, 0.f, 0.f, 0.f,
-							0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_90_0_0 = { 0.f,  0.f,  -1.f, 0.f,
+	                        0.f,  1.f,  0.f,  0.f,
+	                        1.f,  0.f,  0.f,  0.f,
+	                        0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_90_0_0_r = { 0.f,  0.f,  1.f,  0.f,
+	                          0.f,  1.f,  0.f,  0.f,
+	                          -1.f, 0.f,  0.f,  0.f,
+	                          0.0f, 0.0f, 0.0f, 1.0f };
 
 // *INDENT-OFF*
 /**
@@ -1852,7 +1852,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 				break;
 			}
 		}
-		
+
 		// Quake -> OpenGL view matrix from light perspective
 		mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 		MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
@@ -2033,19 +2033,19 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 // sse version (old, probably not working)
 byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 {
-	int       i;
-	int       cubeSide;
-	byte      cubeSideBits;
+	int  i;
+	int  cubeSide;
+	byte cubeSideBits;
 	//float     xMin, xMax, yMin, yMax;
-	float     /*width, height,*/ depth;
-	float     /*zNear,*/ zFar;
+	float /*width, height,*/ depth;
+	float /*zNear,*/         zFar;
 	//float     fovX, fovY;
 	//float     *proj;
 	//vec3_t    angles;
 #ifndef ETL_SSE
-	mat4_t    tmpMatrix, viewMatrix, projectionMatrix, /*rotationMatrix, transformMatrix,*/ viewProjectionMatrix;
+	mat4_t tmpMatrix, viewMatrix, projectionMatrix, /*rotationMatrix, transformMatrix,*/ viewProjectionMatrix;
 #else
-	mat4_t    tmpMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
+	mat4_t tmpMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
 	__m128 xmm0, xmm1, xmm2, xmm4, xmm5, xmm6, xmm7, zeroes;
 #endif
 	mat4_t    *rotMatrix, *rotMatrix_r;
@@ -2125,42 +2125,42 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		case 0:
 		{
 			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_0_0, light->origin);
-			rotMatrix = &rotMatrix_0_0_0;
+			rotMatrix   = &rotMatrix_0_0_0;
 			rotMatrix_r = &rotMatrix_0_0_0_r;
 			break;
 		}
 		case 1:
 		{
 			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_180_0, light->origin);
-			rotMatrix = &rotMatrix_0_180_0;
+			rotMatrix   = &rotMatrix_0_180_0;
 			rotMatrix_r = &rotMatrix_0_180_0_r;
 			break;
 		}
 		case 2:
 		{
 			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_90_0, light->origin);
-			rotMatrix = &rotMatrix_0_90_0;
+			rotMatrix   = &rotMatrix_0_90_0;
 			rotMatrix_r = &rotMatrix_0_90_0_r;
 			break;
 		}
 		case 3:
 		{
 			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_270_0, light->origin);
-			rotMatrix = &rotMatrix_0_270_0;
+			rotMatrix   = &rotMatrix_0_270_0;
 			rotMatrix_r = &rotMatrix_0_270_0_r;
 			break;
 		}
 		case 4:
 		{
 			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_m90_0_0, light->origin);
-			rotMatrix = &rotMatrix_m90_0_0;
+			rotMatrix   = &rotMatrix_m90_0_0;
 			rotMatrix_r = &rotMatrix_m90_0_0_r;
 			break;
 		}
 		case 5:
 		{
 			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_90_0_0, light->origin);
-			rotMatrix = &rotMatrix_90_0_0;
+			rotMatrix   = &rotMatrix_90_0_0;
 			rotMatrix_r = &rotMatrix_90_0_0_r;
 			break;
 		}
@@ -2204,38 +2204,38 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		Dot(rotMatrix[4], light->origin, tmpMatrix[13]);
 		Dot(rotMatrix[8], light->origin, tmpMatrix[14]);
 		tmpMatrix[15] = 1.0f;
-		Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);	//@
+		Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);    //@
 #else
 		// this is setting tmpMatrix.
 		//	MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
 		//	MatrixAffineInverse(transformMatrix, tmpMatrix);
 		zeroes = _mm_setzero_ps();
-		xmm0 = _mm_loadh_pi(_mm_load_ss(&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
+		xmm0   = _mm_loadh_pi(_mm_load_ss(&light->origin[0]), (const __m64 *)(&light->origin[1]));  // xmm0 = z y 0 x
 
-		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[0]), (const __m64 *)(&rotMatrix[1]));		// xmm2 = z y 0 x
+		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[0]), (const __m64 *)(&rotMatrix[1]));     // xmm2 = z y 0 x
 		xmm1 = _mm_mul_ps(xmm0, xmm2);
-		xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
-		xmm6 = _mm_add_ps(xmm1, xmm7);		//
-		xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-		xmm1 = _mm_add_ss(xmm6, xmm7);		// xmm1 = dot(in0, in12)
+		xmm7 = _mm_movehdup_ps(xmm1);       // faster way to do: 2 * hadd
+		xmm6 = _mm_add_ps(xmm1, xmm7);      //
+		xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+		xmm1 = _mm_add_ss(xmm6, xmm7);      // xmm1 = dot(in0, in12)
 		xmm1 = _mm_sub_ps(zeroes, xmm1);
 		_mm_store_ss(&tmpMatrix[12], xmm1);
 
-		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[4]), (const __m64 *)(&rotMatrix[5]));		// xmm2 = z y 0 x
+		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[4]), (const __m64 *)(&rotMatrix[5]));     // xmm2 = z y 0 x
 		xmm4 = _mm_mul_ps(xmm0, xmm2);
-		xmm7 = _mm_movehdup_ps(xmm4);		// faster way to do: 2 * hadd
-		xmm6 = _mm_add_ps(xmm4, xmm7);		//
-		xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-		xmm4 = _mm_add_ss(xmm6, xmm7);		// xmm4 = dot(in4, in12)
+		xmm7 = _mm_movehdup_ps(xmm4);       // faster way to do: 2 * hadd
+		xmm6 = _mm_add_ps(xmm4, xmm7);      //
+		xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+		xmm4 = _mm_add_ss(xmm6, xmm7);      // xmm4 = dot(in4, in12)
 		xmm4 = _mm_sub_ps(zeroes, xmm4);
 		_mm_store_ss(&tmpMatrix[13], xmm4);
 
-		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[8]), (const __m64 *)(&rotMatrix[9]));		// xmm2 = z y 0 x
+		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[8]), (const __m64 *)(&rotMatrix[9]));     // xmm2 = z y 0 x
 		xmm5 = _mm_mul_ps(xmm0, xmm2);
-		xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
-		xmm6 = _mm_add_ps(xmm5, xmm7);		//
-		xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-		xmm5 = _mm_add_ss(xmm6, xmm7);		// xmm5 = dot(in8, in12)
+		xmm7 = _mm_movehdup_ps(xmm5);       // faster way to do: 2 * hadd
+		xmm6 = _mm_add_ps(xmm5, xmm7);      //
+		xmm7 = _mm_movehl_ps(xmm7, xmm6);   //
+		xmm5 = _mm_add_ss(xmm6, xmm7);      // xmm5 = dot(in8, in12)
 		xmm5 = _mm_sub_ps(zeroes, xmm5);
 		_mm_store_ss(&tmpMatrix[14], xmm5);
 
@@ -2291,8 +2291,8 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 			Vector4Set(&viewMatrix[12], -tmpMatrix[13], tmpMatrix[14], -tmpMatrix[12], tmpMatrix[15]);*/
 #endif
 
-			// convert from our coordinate system (looking down X)
-			// to OpenGL's coordinate system (looking down -Z)
+		// convert from our coordinate system (looking down X)
+		// to OpenGL's coordinate system (looking down -Z)
 		//@	Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
 
 		// NOTE: You can combine the 3 calculations: MatrixSetupTransformFromRotation, MatrixAffineInverse & Matrix4Multiply
@@ -2304,7 +2304,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 
 
 
-				// OpenGL projection matrix
+		// OpenGL projection matrix
 		/*
 		// tan(90 degrees) is always the same constant, zNear is always 1  =>  keep it simple..(for the computer)
 
@@ -2336,7 +2336,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  proj[15] = 0.0f;
 		*/
 		// ..after optimizing, not much of the old code exists.
-		zFar = light->sphereRadius;
+		zFar  = light->sphereRadius;
 		depth = zFar - 1.0f;
 		float rWH = 36.466487130706173033023747483407f, rD = rcp(depth);
 #if 1 //ndef ETL_SSE
@@ -2358,14 +2358,14 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		// Matrix4Multiply(projectionMatrix, viewMatrix, viewProjectionMatrix)
 		//$$	xmm0 = _mm_loadu_ps(&viewMatrix[0]);			// xmm0 = b0 b1 b2 b3
 		xmm0 = _mm_set_ps(tmpMatrix[3], -tmpMatrix[0], tmpMatrix[2], -tmpMatrix[1]); // this handles the quakeToOpenGLMatrix tranform
-		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b0 b0 b0 b0
-		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b1 b1 b1 b1
-		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b2 b2 b2 b2
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b3 b3 b3 b3
-		xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b3*a12 b3*a13 b3*a14 b3*a15
-		xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b2*a8  b2*a9 b2*a10 b2*a11
-		xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b1*a4  b1*a5  b1*a6  b1*a7
-		xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b0*a0  b0*a1  b0*a2  b0*a3
+		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b0 b0 b0 b0
+		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b1 b1 b1 b1
+		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b2 b2 b2 b2
+		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b3 b3 b3 b3
+		xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b3*a12 b3*a13 b3*a14 b3*a15
+		xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b2*a8  b2*a9 b2*a10 b2*a11
+		xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b1*a4  b1*a5  b1*a6  b1*a7
+		xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b0*a0  b0*a1  b0*a2  b0*a3
 		xmm3 = _mm_add_ps(xmm3, xmm2);
 		xmm0 = _mm_add_ps(xmm0, xmm1);
 		xmm0 = _mm_add_ps(xmm0, xmm3);
@@ -2373,14 +2373,14 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 
 		//$$	xmm0 = _mm_loadu_ps(&viewMatrix[4]);			// xmm0 = b4 b5 b6 b7
 		xmm0 = _mm_set_ps(tmpMatrix[7], -tmpMatrix[4], tmpMatrix[6], -tmpMatrix[5]);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b4 b4 b4 b4
-		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b5 b5 b5 b5
-		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b6 b6 b6 b6
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b7 b7 b7 b7
-		xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b7*a12 b7*a13 b7*a14 b7*a15
-		xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b6*a8  b6*a9 b6*a10 b6*a11
-		xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b5*a4  b5*a5  b5*a6  b5*a7
-		xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b4*a0  b4*a1  b4*a2  b4*a3
+		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b4 b4 b4 b4
+		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b5 b5 b5 b5
+		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b6 b6 b6 b6
+		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b7 b7 b7 b7
+		xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b7*a12 b7*a13 b7*a14 b7*a15
+		xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b6*a8  b6*a9 b6*a10 b6*a11
+		xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b5*a4  b5*a5  b5*a6  b5*a7
+		xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b4*a0  b4*a1  b4*a2  b4*a3
 		xmm3 = _mm_add_ps(xmm3, xmm2);
 		xmm0 = _mm_add_ps(xmm0, xmm1);
 		xmm0 = _mm_add_ps(xmm0, xmm3);
@@ -2388,14 +2388,14 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 
 		//$$	xmm0 = _mm_loadu_ps(&viewMatrix[8]);			// xmm0 = b8 b9 b10 b11
 		xmm0 = _mm_set_ps(tmpMatrix[11], -tmpMatrix[8], tmpMatrix[10], -tmpMatrix[9]);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b8 b8 b8 b8
-		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b9 b9 b9 b9
-		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b10 b10 b10 b10
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b11 b11 b11 b11
-		xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b11*a12 b11*a13 b11*a14 b11*a15
-		xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b10*a8  b10*a9 b10*a10 b10*a11
-		xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =   b9*a4   b9*a5   b9*a6   b9*a7
-		xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =   b8*a0   b8*a1   b8*a2   b8*a3
+		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b8 b8 b8 b8
+		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b9 b9 b9 b9
+		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b10 b10 b10 b10
+		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b11 b11 b11 b11
+		xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b11*a12 b11*a13 b11*a14 b11*a15
+		xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b10*a8  b10*a9 b10*a10 b10*a11
+		xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =   b9*a4   b9*a5   b9*a6   b9*a7
+		xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =   b8*a0   b8*a1   b8*a2   b8*a3
 		xmm3 = _mm_add_ps(xmm3, xmm2);
 		xmm0 = _mm_add_ps(xmm0, xmm1);
 		xmm0 = _mm_add_ps(xmm0, xmm3);
@@ -2403,14 +2403,14 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 
 		//xmm0 = _mm_loadu_ps(&viewMatrix[12]);			// xmm0 = b12 b13 b14 b15
 		xmm0 = _mm_set_ps(tmpMatrix[15], -tmpMatrix[12], tmpMatrix[14], -tmpMatrix[13]);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b12 b12 b12 b12
-		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b13 b13 b13 b13
-		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b14 b14 b14 b14
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b15 b15 b15 b15
-		xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b15*a12 b15*a13 b15*a14 b15*a15
-		xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b14*a8  b14*a9 b14*a10 b14*a11
-		xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b13*a4  b13*a5  b13*a6  b13*a7
-		xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b12*a0  b12*a1  b12*a2  b12*a3
+		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);  // xmm0 = b12 b12 b12 b12
+		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);  // xmm1 = b13 b13 b13 b13
+		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);  // xmm2 = b14 b14 b14 b14
+		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);  // xmm3 = b15 b15 b15 b15
+		xmm3 = _mm_mul_ps(xmm3, xmm7);                  // xmm3 = b15*a12 b15*a13 b15*a14 b15*a15
+		xmm2 = _mm_mul_ps(xmm2, xmm6);                  // xmm2 =  b14*a8  b14*a9 b14*a10 b14*a11
+		xmm1 = _mm_mul_ps(xmm1, xmm5);                  // xmm1 =  b13*a4  b13*a5  b13*a6  b13*a7
+		xmm0 = _mm_mul_ps(xmm0, xmm4);                  // xmm0 =  b12*a0  b12*a1  b12*a2  b12*a3
 		xmm3 = _mm_add_ps(xmm3, xmm2);
 		xmm0 = _mm_add_ps(xmm0, xmm1);
 		xmm0 = _mm_add_ps(xmm0, xmm3);
@@ -2421,7 +2421,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 
 		// use the frustum planes to cut off shadowmaps beyond the light volume
 		anyClip = qfalse;
-		culled = qfalse;
+		culled  = qfalse;
 		for (i = 0; i < 5; i++)
 		{
 			clipPlane = &frustum[i];
@@ -2463,7 +2463,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	tr.pc.c_pyramidTests++;
 
 	return cubeSideBits;
-	}
+}
 }
 #endif
 

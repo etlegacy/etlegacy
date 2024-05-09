@@ -601,16 +601,16 @@ static float sp, sy, cp, cy, sr, cr;
  */
 static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 {
-    float LAVangle = angles[YAW] * (M_TAU_F / 360);
-    sy       = sin(LAVangle);
-    cy       = cos(LAVangle);
-    LAVangle = angles[PITCH] * (M_TAU_F / 360);
-    sp       = sin(LAVangle);
-    cp       = cos(LAVangle);
+	float LAVangle = angles[YAW] * (M_TAU_F / 360);
+	sy       = sin(LAVangle);
+	cy       = cos(LAVangle);
+	LAVangle = angles[PITCH] * (M_TAU_F / 360);
+	sp       = sin(LAVangle);
+	cp       = cos(LAVangle);
 
-    forward[0] = cp * cy;
-    forward[1] = cp * sy;
-    forward[2] = -sp;
+	forward[0] = cp * cy;
+	forward[1] = cp * sy;
+	forward[2] = -sp;
 }
 
 
@@ -653,7 +653,7 @@ static ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 
 #define FUNCTABLE_SHIFT     (16 - FUNCTABLE_SIZE2)
 #define SIN_TABLE(i)      tr.sinTable[(i) >> FUNCTABLE_SHIFT];
-#define COS_TABLE(i)      tr.sinTable[(((i) >> FUNCTABLE_SHIFT) + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
+#define COS_TABLE(i)      tr.sinTable[(((i) >> FUNCTABLE_SHIFT) + (FUNCTABLE_SIZE / 4))&FUNCTABLE_MASK];
 
 /**
  * @brief LocalIngleVector

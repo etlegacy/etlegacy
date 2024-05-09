@@ -69,13 +69,13 @@ public:
 
 	mutable int m_MessageId;
 private:
-	void     *m_pVoid;
+	void *m_pVoid;
 	obuint32 m_BlockSize;
 
 	MessageHelper();
 };
 
-#define OB_GETMSG(msgtype) msgtype * pMsg = 0; _data.Get2(pMsg);
+#define OB_GETMSG(msgtype) msgtype *pMsg = 0; _data.Get2(pMsg);
 
 //////////////////////////////////////////////////////////////////////////
 

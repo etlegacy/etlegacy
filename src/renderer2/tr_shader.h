@@ -69,10 +69,10 @@ dynamicShader_t *dshader;
 // dynamically allocated memory if it is valid.
 shaderStage_t stages[MAX_SHADER_STAGES];
 
-texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
+texModInfo_t texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
 
 // these are only referenced while parsing a shader
-char implicitMap[MAX_QPATH];
+char       implicitMap[MAX_QPATH];
 unsigned   implicitStateBits;
 cullType_t implicitCullType;
 

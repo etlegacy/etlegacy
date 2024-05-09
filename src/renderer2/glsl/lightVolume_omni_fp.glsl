@@ -31,7 +31,7 @@ void main()
 	// reconstruct vertex position in world space
 	float depth = texture2D(u_DepthMap, st).r;
 	// scale to NDC (Normalized Device Coordinates) space
-	vec4  P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
+	vec4 P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
 	// unproject to get into viewspace
 	P = u_UnprojectMatrix * P;
 	// normalize to homogeneous coordinates (where w is always 1)
@@ -39,12 +39,12 @@ void main()
 
 #if 0
 	#if defined(USE_PORTAL_CLIPPING)
-		float dist = dot(P.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
-		if (dist < 0.0)
-		{
-			discard;
-			return;
-		}
+	float dist = dot(P.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
+	if (dist < 0.0)
+	{
+		discard;
+		return;
+	}
 	#endif
 #endif
 

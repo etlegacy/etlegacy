@@ -1546,7 +1546,7 @@ static void IN_ProcessEvents(void)
 #ifdef __ANDROID__
 			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qfalse : qtrue), 0, NULL);
 #else
-            Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
+			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
 #endif
 		}
 		break;

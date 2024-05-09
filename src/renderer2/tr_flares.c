@@ -108,7 +108,7 @@ typedef struct flare_s
 flare_t r_flareStructs[MAX_FLARES];
 flare_t *r_activeFlares, *r_inactiveFlares;
 
-int flareCoeff;
+int   flareCoeff;
 float flareSize; // half the size of a flare/corona (in screen coordinates)
 
 // you start to see coronas/flares from this distance.
@@ -146,12 +146,12 @@ void R_ClearFlares(void)
  */
 void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona, uint32_t flareHandle)
 {
-	int     i;
-	flare_t *f;
-	vec4_t  eye, clip, normalized, window;
+	int         i;
+	flare_t     *f;
+	vec4_t      eye, clip, normalized, window;
 	const float distBias = 512.0;
 	const float distLerp = 0.5;
-	float d1 = 0.0f, d2 = 0.0f;
+	float       d1 = 0.0f, d2 = 0.0f;
 
 	backEnd.pc.c_flareAdds++;
 
@@ -216,8 +216,8 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 				f->occlusionQueryObject = tr.occlusionQueryObjectsAsync[flareHandle];
 			}
 			f->occlusionQuerySamples = 0; // so many samples passed the test
-			f->flareSamples = 228803; // tested this by debugging code and check results..
-			f->querying = qfalse; // a query has not been started for this flare
+			f->flareSamples          = 228803; // tested this by debugging code and check results..
+			f->querying              = qfalse; // a query has not been started for this flare
 #if FLARE_QUERY_3D
 			VectorCopy(point, f->origin);
 #endif
@@ -426,7 +426,7 @@ qboolean CreateFlareOcclusionSurface(flare_t *f)
 	VectorAdd(q1, up, q1);
 	VectorAdd(q2, up, q2);
 	VectorSubtract(q3, up, q3);
-		
+
 	Vector4Set(f->quadVerts[0], q0[0], q0[1], q0[2], 1.f);
 	Vector4Set(f->quadVerts[1], q1[0], q1[1], q1[2], 1.f);
 	Vector4Set(f->quadVerts[2], q2[0], q2[1], q2[2], 1.f);
@@ -435,7 +435,8 @@ qboolean CreateFlareOcclusionSurface(flare_t *f)
 	// if the surface is completely off screen, the surface is invalid for querying
 	VectorCopy(f->quadVerts[0], bounds[0]);
 	VectorCopy(f->quadVerts[2], bounds[1]);
-	if (R_CullBox(bounds) == CULL_OUT) {
+	if (R_CullBox(bounds) == CULL_OUT)
+	{
 		return qfalse;
 	}
 #else
@@ -558,13 +559,13 @@ void RB_RenderFlareOcclusionQueries()
 	glVertexAttrib4f(ATTR_INDEX_COLOR, 1.0f, 0.0f, 0.0f, 0.05f);
 
 	SetMacrosAndSelectProgram(trProg.gl_genericShader,
-								USE_ALPHA_TESTING, qfalse,
-								USE_PORTAL_CLIPPING, qfalse, //backEnd.viewParms.isPortal,
-								USE_VERTEX_SKINNING, qfalse,
-								USE_VERTEX_ANIMATION, qfalse,
-								USE_DEFORM_VERTEXES, qfalse,
-								USE_TCGEN_ENVIRONMENT, qfalse,
-								USE_TCGEN_LIGHTMAP, qfalse);
+	                          USE_ALPHA_TESTING, qfalse,
+	                          USE_PORTAL_CLIPPING, qfalse,   //backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, qfalse,
+	                          USE_VERTEX_ANIMATION, qfalse,
+	                          USE_DEFORM_VERTEXES, qfalse,
+	                          USE_TCGEN_ENVIRONMENT, qfalse,
+	                          USE_TCGEN_LIGHTMAP, qfalse);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
@@ -636,7 +637,7 @@ void RB_RenderFlareOcclusionQueries()
 		active = &f->next;
 	}
 
-	// The render commands to draw the query objects are now done. 
+	// The render commands to draw the query objects are now done.
 	// Checking for errors ensures the render pipeline is flushed.
 	GL_CheckErrors();
 
@@ -658,7 +659,7 @@ void RB_RenderFlareOcclusionQueries()
 		{
 			GetFlareOcclusionQueryResult(f);
 
- 			f->querying = qfalse;
+			f->querying = qfalse;
 
 			// if nothing of the query surface is rendered, remove the flare from the list
 			if (!f->occlusionQuerySamples)
@@ -757,12 +758,12 @@ void RB_TestFlare(flare_t *f)
 /**
  * @brief RB_RenderFlare
  * @param[in] f
- * 
+ *
  *   This renders the actual flare image on screen
  */
 void RB_RenderFlare(flare_t *f)
 {
-	float intensity, factor;
+	float  intensity, factor;
 	vec3_t color;
 
 	backEnd.pc.c_flareRenders++;
@@ -869,7 +870,7 @@ void RB_RenderFlares(void)
 
 	if (r_flareCoeff->modified)
 	{
-		flareCoeff = (r_flareCoeff->value == 0.0f)? atof("150") : r_flareCoeff->value;
+		flareCoeff             = (r_flareCoeff->value == 0.0f)? atof("150") : r_flareCoeff->value;
 		r_flareCoeff->modified = qfalse;
 	}
 
@@ -890,8 +891,10 @@ void RB_RenderFlares(void)
 		// use occlusion queries to find out how much of a flare is drawn (and how much is occluded)
 		RB_RenderFlareOcclusionQueries();
 
-	} else {
-		draw = qfalse;
+	}
+	else
+	{
+		draw   = qfalse;
 		active = &r_activeFlares;
 		while ((f = *active) != NULL)
 		{

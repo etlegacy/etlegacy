@@ -174,12 +174,12 @@ bool IsTranslocatedURL(CFURLRef currentURL, CFURLRef *originalURL)
  */
 int OSX_NeedsQuarantineFix()
 {
-	bool  isQuarantined;
-	bool  dialogReturn;
-	int   taskRetVal;
+	bool isQuarantined;
+	bool dialogReturn;
+	int  taskRetVal;
 
 	// appPath contains complete path including "ET Legacy.app"
-	NSURL *appPath = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+	NSURL *appPath  = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
 	NSURL *realPath = nil;
 
 	//does the app run in a translocated path?
@@ -187,7 +187,7 @@ int OSX_NeedsQuarantineFix()
 
 	if (isQuarantined)
 	{
-		if(!realPath)
+		if (!realPath)
 		{
 			Sys_Dialog(DT_ERROR, "Could not detect real application path", "Can't remove app quarantine");
 			return 2;

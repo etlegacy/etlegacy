@@ -363,7 +363,7 @@ static sfx_t *S_FindName(const char *name)
 
 	sfx = &knownSfx[i];
 	Com_Memset(sfx, 0, sizeof(*sfx));
-    Q_strncpyz(sfx->soundName, name, sizeof(sfx->soundName));
+	Q_strncpyz(sfx->soundName, name, sizeof(sfx->soundName));
 
 	sfx->next     = sfxHash[hash];
 	sfxHash[hash] = sfx;
@@ -562,7 +562,7 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 		}
 
 		VectorRotate(source_vec, listener_axis, vec);
-		
+
 		rscale = (float)(sqrt((double)(1.0f - vec[1])));
 		lscale = (float)(sqrt((double)(1.0f + vec[1])));
 		if (rscale < 0)

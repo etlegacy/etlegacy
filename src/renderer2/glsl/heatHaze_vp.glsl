@@ -34,12 +34,12 @@ void main()
 
 #if defined(USE_VERTEX_SKINNING)
 	VertexSkinning_PN(attr_Position, attr_Normal,
-	                  position,      normal);
+	                  position, normal);
 #elif defined(USE_VERTEX_ANIMATION)
 	VertexAnimation_PN(attr_Position, attr_Position2,
-	                   attr_Normal,   attr_Normal2,
-                       u_VertexInterpolation,
-                       position,      normal);
+	                   attr_Normal, attr_Normal2,
+	                   u_VertexInterpolation,
+	                   position, normal);
 #else
 	position = attr_Position;
 	normal   = attr_Normal;

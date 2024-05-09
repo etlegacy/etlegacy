@@ -46,14 +46,14 @@
 
 
 
- // the array to store the entries
+// the array to store the entries
 #define MAX_CUBEMAPSAVE 4096
 static thr_CubemapSave_t arrayCubemapSave[MAX_CUBEMAPSAVE];
 
 // the linked lists:
 // These lists have references to both previous & next entries (for easy entry deletion).
-static thr_CubemapSave_t *entry_CubemapSave = NULL;       // the 1st of the used entries
-static thr_CubemapSave_t *avail_CubemapSave = NULL;       // the 1st of the unused entries
+static thr_CubemapSave_t *entry_CubemapSave  = NULL;      // the 1st of the used entries
+static thr_CubemapSave_t *avail_CubemapSave  = NULL;      // the 1st of the unused entries
 static thr_CubemapSave_t *oldest_CubemapSave = NULL;      // the oldest of the used entries
 
 static HANDLE R2Thread_Mutex; // windows
@@ -97,9 +97,11 @@ static void R2Thread_Wait();
 static void R2Thread_Lock(void)
 {
 	DWORD dwErr;
-	do {
+	do
+	{
 		dwErr = WaitForSingleObject(R2Thread_Mutex, INFINITE);  //! this thread never ends, so adjust the code first << todo
-	} while (dwErr != WAIT_OBJECT_0 && dwErr != WAIT_ABANDONED);
+	}
+	while (dwErr != WAIT_OBJECT_0 && dwErr != WAIT_ABANDONED);
 }
 
 static void R2Thread_Unlock(void)
@@ -161,19 +163,19 @@ void R2Thread_UnlockFile(char *filename)
 void THR_Init_CubemapSave(void)
 {
 	int i;
-	entry_CubemapSave = NULL;
-	avail_CubemapSave = NULL;
-    oldest_CubemapSave = NULL;
+	entry_CubemapSave  = NULL;
+	avail_CubemapSave  = NULL;
+	oldest_CubemapSave = NULL;
 	for (i = 0; i < MAX_CUBEMAPSAVE; i++)
 	{
-		arrayCubemapSave[i].prev = (i==0)? NULL : &arrayCubemapSave[i-1];
+		arrayCubemapSave[i].prev = (i == 0)? NULL : &arrayCubemapSave[i - 1];
 		arrayCubemapSave[i].next = avail_CubemapSave;
-		avail_CubemapSave = &arrayCubemapSave[i];
+		avail_CubemapSave        = &arrayCubemapSave[i];
 	}
 }
 
 
-thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe)
+thr_CubemapSave_t * THR_AddProbeToSave(cubemapProbe_t *probe)
 {
 	thr_CubemapSave_t *entry;
 
@@ -182,13 +184,13 @@ thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe)
 		return NULL; // none available
 	}
 
-    //R2Thread_Lock();
+	//R2Thread_Lock();
 	// exit if it already exists in the list
 	for (entry = entry_CubemapSave; entry; entry = entry->next)
 	{
 		if (entry->probe == probe)
 		{
-    //R2Thread_Unlock();
+			//R2Thread_Unlock();
 			return entry;
 		}
 	}
@@ -198,25 +200,25 @@ thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe)
 	R2Thread_Lock();
 
 	// link an entry
-	entry                             = avail_CubemapSave;
-    /*// the ->next is always NULL
+	entry = avail_CubemapSave;
+	/*// the ->next is always NULL
 	if (avail_CubemapSave->next)
 	{
 		avail_CubemapSave->next->prev = avail_CubemapSave->prev;
 	}*/
-	avail_CubemapSave                 = avail_CubemapSave->next;
-	avail_CubemapSave->next           = NULL;
-	entry->prev                       = (entry_CubemapSave)? entry_CubemapSave->prev : NULL;
-	entry->next                       = entry_CubemapSave;
+	avail_CubemapSave       = avail_CubemapSave->next;
+	avail_CubemapSave->next = NULL;
+	entry->prev             = (entry_CubemapSave)? entry_CubemapSave->prev : NULL;
+	entry->next             = entry_CubemapSave;
 	if (!entry->prev && !entry->next) // this is the only entry, so it's the oldest
 	{
-		oldest_CubemapSave            = avail_CubemapSave;
+		oldest_CubemapSave = avail_CubemapSave;
 	}
 	if (entry_CubemapSave)
 	{
-		entry_CubemapSave->prev       = entry;
+		entry_CubemapSave->prev = entry;
 	}
-	entry_CubemapSave                 = entry;
+	entry_CubemapSave = entry;
 
 	// set the probe
 	entry->probe = probe;
@@ -230,10 +232,10 @@ thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe)
 // remove 'entry' from the list.
 // return the previous entry on exit.
 // return NULL if the entry is NULL.
-thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
+thr_CubemapSave_t * THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 {
 	thr_CubemapSave_t *result;
-	int i;
+	int               i;
 
 	if (!entry)
 	{
@@ -241,46 +243,49 @@ thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 	}
 
 	//lock
-    //R2Thread_Lock();
+	//R2Thread_Lock();
 
 	result = entry->prev;
 
 	// link an entry
 	if (entry->prev)
 	{
-		entry->prev->next             = entry->next;
+		entry->prev->next = entry->next;
 	}
 	if (entry->next)
 	{
-		entry->next->prev             = entry->prev;
+		entry->next->prev = entry->prev;
 	}
 	if (entry == entry_CubemapSave)
 	{
-		entry_CubemapSave             = entry->next;
+		entry_CubemapSave = entry->next;
 	}
-	entry->prev                       = (avail_CubemapSave)? avail_CubemapSave->prev : NULL;
-	entry->next                       = avail_CubemapSave; // could be NULL
+	entry->prev = (avail_CubemapSave)? avail_CubemapSave->prev : NULL;
+	entry->next = avail_CubemapSave;                       // could be NULL
 	if (!entry->next)
 	{
-		oldest_CubemapSave            = entry;
+		oldest_CubemapSave = entry;
 	}
 	if (avail_CubemapSave)
 	{
-		avail_CubemapSave->prev       = entry;
+		avail_CubemapSave->prev = entry;
 	}
-	avail_CubemapSave                 = entry;
+	avail_CubemapSave = entry;
 
 	// release the probe's memory that stored the temporary pixeldata
 	for (i = 0; i < 6; i++)
 	{
-		if (entry->probe->cubeTemp[i]) ri.Free(entry->probe->cubeTemp[i]);
+		if (entry->probe->cubeTemp[i])
+		{
+			ri.Free(entry->probe->cubeTemp[i]);
+		}
 		entry->probe->cubeTemp[i] = NULL;
 	}
 	// unset the probe
 	entry->probe = NULL;
 
 	// unlock
-    // R2Thread_Unlock();
+	// R2Thread_Unlock();
 
 	return result;
 }
@@ -289,10 +294,10 @@ thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 void THR_ProcessProbesToSave(void)
 {
 	cubemapProbe_t *probe;
-    /*
+	/*
 	// process all the entries
 	thr_CubemapSave_t *entry;
-    R2Thread_Lock();
+	R2Thread_Lock();
 	for (entry = entry_CubemapSave; entry; entry = entry->next)
 	{
 		if (R2Thread_Status != THREAD_STATUS_RUNNING) return;
@@ -302,25 +307,31 @@ void THR_ProcessProbesToSave(void)
 		// this entry is processed.
 		entry = THR_RemoveProbeToSave(entry); // the previous entry is returned so the loop will do the right thing..
 	}
-    R2Thread_Unlock();
-    */
-    /*
+	R2Thread_Unlock();
+	*/
+	/*
 	// process only 1 entry at a time
 	if (R2Thread_Status != THREAD_STATUS_RUNNING) return;
-    //R2Thread_Lock();
+	//R2Thread_Lock();
 	if (!entry_CubemapSave) goto THR_ProcessProbesToSave_finish;
 	probe = entry_CubemapSave->probe;
 	if (!probe) goto THR_ProcessProbesToSave_finish;
 	R_SaveCubeProbe(probe, probe->cubeTemp, qfalse); // qfalse means: save only this one
 	(void)THR_RemoveProbeToSave(entry_CubemapSave);
-    THR_ProcessProbesToSave_finish:
-    //R2Thread_Unlock();
+	THR_ProcessProbesToSave_finish:
+	//R2Thread_Unlock();
 	return;
-    */
+	*/
 	// process the oldest entry
-	if (!oldest_CubemapSave) return;
+	if (!oldest_CubemapSave)
+	{
+		return;
+	}
 	probe = oldest_CubemapSave->probe;
-	if (!probe) return;
+	if (!probe)
+	{
+		return;
+	}
 	R_SaveCubeProbe(probe, probe->cubeTemp, qfalse); // qfalse means: save only this one
 	(void)THR_RemoveProbeToSave(oldest_CubemapSave);
 	return;
@@ -367,7 +378,7 @@ static HANDLE R2Thread_Handle = NULL;
 
 static DWORD WINAPI R2Thread_SystemProc(LPVOID dummy)
 {
-    //R2Thread_Mutex = CreateMutex(NULL, qfalse, NULL);
+	//R2Thread_Mutex = CreateMutex(NULL, qfalse, NULL);
 	R2Thread();
 	return 0;
 }

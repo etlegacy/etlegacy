@@ -121,16 +121,16 @@ static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 	int g = in[1] << shift;
 	int b = in[2] << shift;
 
-		// normalize by color instead of saturating to white
-		if ((r | g | b) > 255)
-		{
-			int max = r > g ? r : g;
-			max = max > b ? max : b;
-			r   = r * 255 / max;
-			g   = g * 255 / max;
-			b   = b * 255 / max;
-		}
-	
+	// normalize by color instead of saturating to white
+	if ((r | g | b) > 255)
+	{
+		int max = r > g ? r : g;
+		max = max > b ? max : b;
+		r   = r * 255 / max;
+		g   = g * 255 / max;
+		b   = b * 255 / max;
+	}
+
 	out[0] = (byte)r;
 	out[1] = (byte)g;
 	out[2] = (byte)b;
@@ -164,9 +164,9 @@ static void R_ColorShiftLightingBytes3(byte in[3], byte out[3])
 	{
 		unsigned int max = r > g ? r : g;
 		max = max > b ? max : b;
-		r = r * 255 / max; // r = ((r << 8) - r) / max;
-		g = g * 255 / max; // g = ((g << 8) - g) / max;
-		b = b * 255 / max; // b = ((b << 8) - b) / max;
+		r   = r * 255 / max; // r = ((r << 8) - r) / max;
+		g   = g * 255 / max; // g = ((g << 8) - g) / max;
+		b   = b * 255 / max; // b = ((b << 8) - b) / max;
 	}
 
 	out[0] = (byte)r;
@@ -222,7 +222,7 @@ float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *
 {
 	int   j;
 	float maxIntensity = 0;
-	int   wh = width * height;
+	int   wh           = width * height;
 	int   j4, jpad;
 
 	if (r_showLightMaps->integer > 1)     // color code by intensity as development tool (FIXME: check range)
@@ -579,7 +579,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	if (doGamma)
 	{
 		floatbuf = *pic;
-		gamma = rcp(r_hdrLightmapGamma->value);
+		gamma    = rcp(r_hdrLightmapGamma->value);
 		for (i = 0; i < wh; i++)
 		{
 			for (j = 0; j < 3; j++)
@@ -664,7 +664,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	if (compensate)
 	{
 		rCompensate = rcp(r_hdrLightmapCompensate->value);
-		floatbuf = *pic;
+		floatbuf    = *pic;
 		for (i = 0; i < wh; i++)
 		{
 			for (j = 0; j < 3; j++)
@@ -739,7 +739,7 @@ static void LoadRGBEToBytes(const char *name, byte **ldrImage, int *width, int *
 
 	*width  = w;
 	*height = h;
-	wh = w * h;
+	wh      = w * h;
 
 	*ldrImage = (byte *)ri.Z_Malloc(wh * 4);
 	pixbuf    = *ldrImage;
@@ -782,7 +782,7 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 	image_t      *image;
 	int          i, j, j3, j4;
 	static byte  data[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4], *buf, *buf_p;
-	const        lightmapSquared = LIGHTMAP_SIZE * LIGHTMAP_SIZE;
+	const        lightmapSquared  = LIGHTMAP_SIZE * LIGHTMAP_SIZE;
 	const        lightmapSquared3 = lightmapSquared * 3;
 
 	buf = fileBase + l->fileofs;
@@ -957,7 +957,7 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 			}
 		}
 
-	    if (tr.worldDeluxeMapping)
+		if (tr.worldDeluxeMapping)
 		{
 			// load deluxemaps
 			lightmapFiles = ri.FS_ListFiles(mapName, ".png", &numLightmaps);
@@ -1001,18 +1001,18 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 			}
 		}
 
-	qsort(lightmapFiles, numLightmaps, sizeof(char *), LightmapNameCompare);
+		qsort(lightmapFiles, numLightmaps, sizeof(char *), LightmapNameCompare);
 
-	Ren_Developer("...loading %i lightmaps\n", numLightmaps);
+		Ren_Developer("...loading %i lightmaps\n", numLightmaps);
 
-	// we are about to upload textures
-	R_IssuePendingRenderCommands();
+		// we are about to upload textures
+		R_IssuePendingRenderCommands();
 
-	for (i = 0; i < numLightmaps; i++)
-	{
-		Ren_Developer("...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
+		for (i = 0; i < numLightmaps; i++)
+		{
+			Ren_Developer("...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
 
-		    if (tr.worldDeluxeMapping)
+			if (tr.worldDeluxeMapping)
 			{
 				if (i % 2 == 0)
 				{
@@ -1194,7 +1194,7 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 
 	// get lightmap
 	surf->lightmapNum = LittleLong(ds->lightmapNum);
-	
+
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
 	{
 		surf->lightmapNum /= 2;
@@ -1366,7 +1366,7 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf)
 
 	// get lightmap
 	surf->lightmapNum = LittleLong(ds->lightmapNum);
-	
+
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
 	{
 		surf->lightmapNum /= 2;
@@ -1459,7 +1459,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 
 	// get lightmap
 	surf->lightmapNum = LittleLong(ds->lightmapNum);
-	
+
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
 	{
 		surf->lightmapNum /= 2;
@@ -3459,9 +3459,9 @@ static void R_CreateWorldVBO()
 	// assign the two nearest cubeProbes
 	if (tr.cubeProbes.currentElements > 0)
 	{
-		srfGeneric_t *srf;
+		srfGeneric_t   *srf;
 		cubemapProbe_t *cubeProbe1, *cubeProbe2;
-		float distance1, distance2;
+		float          distance1, distance2;
 		for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
 		{
 			if (*surface->data == SF_FACE)
@@ -4798,27 +4798,27 @@ void R_LoadLightGrid(lump_t *l)
 	gridStep[1] = w->lightGridBounds[0];
 	gridStep[2] = w->lightGridBounds[0] * w->lightGridBounds[1];
 
-	pos[0] = 0;
+	pos[0]      = 0;
 	posFloat[0] = 0.0f;
 	for (i = 0; i < w->lightGridBounds[0]; i++)
 	{
-		pos[1] = 0;
+		pos[1]      = 0;
 		posFloat[1] = 0.0f;
 		for (j = 0; j < w->lightGridBounds[1]; j++)
 		{
-			pos[2] = 0;
+			pos[2]      = 0;
 			posFloat[2] = 0.0f;
 			for (k = 0; k < w->lightGridBounds[2]; k++)
 			{
 				gridPoint = w->lightGridData + pos[0] + pos[1] + pos[2];
 				VectorAdd(posFloat, w->lightGridOrigin, gridPoint->origin);
-				pos[2] += gridStep[2];
+				pos[2]      += gridStep[2];
 				posFloat[2] += w->lightGridSize[2];
 			}
-			pos[1] += gridStep[1];
+			pos[1]      += gridStep[1];
 			posFloat[1] += w->lightGridSize[1];
 		}
-		pos[0] += gridStep[0];
+		pos[0]      += gridStep[0];
 		posFloat[0] += w->lightGridSize[0];
 	}
 
@@ -4826,7 +4826,7 @@ void R_LoadLightGrid(lump_t *l)
 }
 
 /**
- * @brief This is extracting classname light and lightJunior entities from bsp into s_worldData.lights 
+ * @brief This is extracting classname light and lightJunior entities from bsp into s_worldData.lights
  *
  * @param[in] lightDefs
  *
@@ -4834,7 +4834,7 @@ void R_LoadLightGrid(lump_t *l)
  * FIXME: Inspect lightJunior (parse it?, is there a need to assign these to models?)
  * FIXME: spotlights targets
  * FIXME: sun spotlight
- * 
+ *
  * fade
  * - Falloff/radius adjustment value. Multiply the run of the slope by "fade" (1.0f default only valid for "Linear" lights wolf)
  * light
@@ -4941,7 +4941,7 @@ void R_LoadLights(char *lightDefs)
 			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
 			{
 				isLight = qtrue;
-		}
+			}
 		}
 
 		if (*token != '}')
@@ -4996,7 +4996,7 @@ void R_LoadLights(char *lightDefs)
 
 		light->l.inverseShadows = qfalse;
 
-		light->isStatic = qtrue;
+		light->isStatic    = qtrue;
 		light->noRadiosity = qfalse;
 		light->additive    = qtrue;
 
@@ -5358,7 +5358,7 @@ void R_LoadEntities(lump_t *l)
 			if (r_forceAmbient->value <= 0)
 			{
 				Q_sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
-						&tr.worldEntity.ambientLight[2]);
+				         &tr.worldEntity.ambientLight[2]);
 			}
 		}
 		// check for ambient scale constant
@@ -7161,7 +7161,7 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 					{
 //						if (surface->shader != shader)
 //						{
-							break;
+						break;
 //						}
 					}
 //					else
@@ -7394,10 +7394,10 @@ void R_PrecacheInteractions()
 
 	#if 0
 			Ren_Print("light %i: origin(%i %i %i) radius(%i %i %i) color(%f %f %f)\n",
-					i,
-					(int)light->l.origin[0], (int)light->l.origin[1], (int)light->l.origin[2],
-					(int)light->l.radius[0], (int)light->l.radius[1], (int)light->l.radius[2],
-					light->l.color[0], light->l.color[1], light->l.color[2]);
+			          i,
+			          (int)light->l.origin[0], (int)light->l.origin[1], (int)light->l.origin[2],
+			          (int)light->l.radius[0], (int)light->l.radius[1], (int)light->l.radius[2],
+			          light->l.color[0], light->l.color[1], light->l.color[2]);
 	#endif
 
 			// set up light transform matrix
@@ -7846,15 +7846,15 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1
 // This way any transition from cubemap to another cubemap should be smooth,
 // and while interpolating, this function will not search for nearest cubeprobes.
 // It only starts searching a next cube once the interpolation is finished.
-void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t** env1, image_t** env2, float* interpolation)
+void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t **env1, image_t **env2, float *interpolation)
 {
 	// We want to make it go from probe1 to probe2 in x milliseconds
-	const int duration = 2000; // milliseconds
-	float distance, mindistance = 99999999.f;
+	const int      duration = 2000; // milliseconds
+	float          distance, mindistance = 99999999.f;
 	cubemapProbe_t *cubeProbe, *closestProbe;
-	int j, t;
-	int closestProbeIndex;
-	float i;
+	int            j, t;
+	int            closestProbeIndex;
+	float          i;
 /*
 //!!!DEBUG!!!
 // until we can use this on entities, we just do the world only for now..
@@ -7878,19 +7878,20 @@ if (backEnd.currentEntity != &tr.worldEntity)
 		if (tr.refdef.time < tr.reflectionData.endTime)
 		{
 			// yes, we are mixing from probe1 to probe2
-			t = tr.refdef.time - tr.reflectionData.startTime;
-			i = (t <= 0)? 0.f : (float)t / (float)duration;
+			t              = tr.refdef.time - tr.reflectionData.startTime;
+			i              = (t <= 0)? 0.f : (float)t / (float)duration;
 			*interpolation = (i > 1.f) ? 1.f : i;
-			*env1 = tr.reflectionData.probe1->cubemap;
-			*env2 = tr.reflectionData.probe2->cubemap;
+			*env1          = tr.reflectionData.probe1->cubemap;
+			*env2          = tr.reflectionData.probe2->cubemap;
 			return;
 		}
-		else {
+		else
+		{
 			// we're done interpolating
 			tr.reflectionData.endTime = 0;
-			*interpolation = 1.0f;
-			*env1 = tr.reflectionData.probe1->cubemap;
-			*env2 = tr.reflectionData.probe2->cubemap;
+			*interpolation            = 1.0f;
+			*env1                     = tr.reflectionData.probe1->cubemap;
+			*env2                     = tr.reflectionData.probe2->cubemap;
 			// make probe2 the "interpolate-from" probe
 			tr.reflectionData.probe1 = tr.reflectionData.probe2;
 			return;
@@ -7902,19 +7903,19 @@ if (backEnd.currentEntity != &tr.worldEntity)
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = Com_GrowListElement(&tr.cubeProbes, j);
-		distance = Distance(cubeProbe->origin, position);
+		distance  = Distance(cubeProbe->origin, position);
 		if (distance < mindistance)
 		{
-			closestProbe = cubeProbe;
-			mindistance = distance;
+			closestProbe      = cubeProbe;
+			mindistance       = distance;
 			closestProbeIndex = j;
 		}
 	}
 	if (!closestProbe)
 	{
 		// nothing found
-		*env1 = tr.autoCubeImage;
-		*env2 = tr.autoCubeImage;
+		*env1          = tr.autoCubeImage;
+		*env2          = tr.autoCubeImage;
 		*interpolation = 0.0f;
 		return;
 	}
@@ -7956,28 +7957,28 @@ if (backEnd.currentEntity != &tr.worldEntity)
 	{
 		// this is the first time we searched for cubeprobes
 		tr.reflectionData.probe1 = closestProbe;
-		*env1 = tr.reflectionData.probe1->cubemap;
-		*env2 = tr.autoCubeImage;
-		*interpolation = 0.0f;
+		*env1                    = tr.reflectionData.probe1->cubemap;
+		*env2                    = tr.autoCubeImage;
+		*interpolation           = 0.0f;
 		return;
 	}
 
 	// we only need to do something when we find another closest probe
 	if (tr.reflectionData.probe1 == closestProbe)
 	{
-		*env1 = tr.reflectionData.probe1->cubemap;
-		*env2 = tr.autoCubeImage;
+		*env1          = tr.reflectionData.probe1->cubemap;
+		*env2          = tr.autoCubeImage;
 		*interpolation = 0.0f;
 		return;
 	}
 
 	// now we must start an interpolation to the newly found closest probe
-	tr.reflectionData.probe2 = closestProbe;
-	*env1 = tr.reflectionData.probe1->cubemap;
-	*env2 = tr.reflectionData.probe2->cubemap;
-	*interpolation = 0.0f;
+	tr.reflectionData.probe2    = closestProbe;
+	*env1                       = tr.reflectionData.probe1->cubemap;
+	*env2                       = tr.reflectionData.probe2->cubemap;
+	*interpolation              = 0.0f;
 	tr.reflectionData.startTime = tr.refdef.time;
-	tr.reflectionData.endTime = tr.reflectionData.startTime + duration;
+	tr.reflectionData.endTime   = tr.reflectionData.startTime + duration;
 }
 
 
@@ -7999,24 +8000,24 @@ if (backEnd.currentEntity != &tr.worldEntity)
 void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean saveAll)
 {
 	// static, so the content is not lost when exiting this function
-	static int lastFileNum = -1; // initialize with a value that filenumber will never have
-	static qboolean fromfile = qfalse;
-	static byte *buffer = NULL; // pointer to the file buffer (including the 18 byte long header & id-field)
+	static int      lastFileNum = -1; // initialize with a value that filenumber will never have
+	static qboolean fromfile    = qfalse;
+	static byte     *buffer     = NULL; // pointer to the file buffer (including the 18 byte long header & id-field)
 	// the big image containing multiple cubemaps
 	byte *pixeldata = NULL; // the pointer to the actual pixel colors
-	int width = REF_CUBEMAP_STORE_SIZE, height = REF_CUBEMAP_STORE_SIZE;
-	int  pixeldataBytes = width * height * 4;
-	int TGA_IDfield_size = REF_CUBEMAP_TGA_IDFIELD_SIZE;
-	int  fileBytes = 18 + TGA_IDfield_size + pixeldataBytes; // file header + Identification Field + pixeldata
+	int  width = REF_CUBEMAP_STORE_SIZE, height = REF_CUBEMAP_STORE_SIZE;
+	int  pixeldataBytes   = width * height * 4;
+	int  TGA_IDfield_size = REF_CUBEMAP_TGA_IDFIELD_SIZE;
+	int  fileBytes        = 18 + TGA_IDfield_size + pixeldataBytes; // file header + Identification Field + pixeldata
 	// the file for this cubeprobe
-	int filenumber = cubeProbe->index / REF_CUBEMAPS_PER_FILE;
-	int indexInFile = cubeProbe->index % REF_CUBEMAPS_PER_FILE;
-	int offsetInFile = indexInFile * REF_CUBEMAP_PIXELDATA_SIZE;
+	int  filenumber   = cubeProbe->index / REF_CUBEMAPS_PER_FILE;
+	int  indexInFile  = cubeProbe->index % REF_CUBEMAPS_PER_FILE;
+	int  offsetInFile = indexInFile * REF_CUBEMAP_PIXELDATA_SIZE;
 	char *filename;
-	int bytesRead;
+	int  bytesRead;
 	//
 	qboolean swapFiles = (filenumber != lastFileNum);
-	int i;
+	int      i;
 
 	// if it is already stored in this file, we're done..
 	if (cubeProbe->stored)
@@ -8041,11 +8042,16 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 //R2Thread_UnlockFile(filename);
 				if (bytesRead <= 0 || !buffer)
 				{   // something went wrong
-					if (buffer) ri.FS_FreeFile(buffer); // ..but the buffer is not freed when a file is closed.
-					buffer = NULL;
+					if (buffer)
+					{
+						ri.FS_FreeFile(buffer);         // ..but the buffer is not freed when a file is closed.
+					}
+					buffer      = NULL;
 					lastFileNum = -1;
 					return;
-				} else {
+				}
+				else
+				{
 					fromfile = qtrue;
 				}
 			}
@@ -8076,7 +8082,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 		}
 
 		// copy the cubePixeldata into the big image
-		pixeldata = buffer + 18 + TGA_IDfield_size; // point to the start of pixeldata, after the file header & id field
+		pixeldata  = buffer + 18 + TGA_IDfield_size; // point to the start of pixeldata, after the file header & id field
 		pixeldata += offsetInFile; // point to the start of the cubemap in the big image
 		for (i = 0; i < 6; i++, pixeldata += REF_CUBEMAP_TEXTURE_SIZE)
 		{
@@ -8089,7 +8095,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 		// or when this is the very last cubemap (in tr.cubeProbes),
 		// then save the file, and free the memory.
 		if (indexInFile == REF_CUBEMAPS_PER_FILE - 1 ||
-			cubeProbe->index == tr.cubeProbes.currentElements - 1)
+		    cubeProbe->index == tr.cubeProbes.currentElements - 1)
 		{
 			// save the file
 //R2Thread_LockFile(filename);
@@ -8101,10 +8107,12 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 				if (fromfile)
 				{
 					ri.FS_FreeFile(buffer);
-				} else {
+				}
+				else
+				{
 					Com_Dealloc(buffer);
 				}
-				buffer = NULL;
+				buffer      = NULL;
 				lastFileNum = -1;
 			}
 		}
@@ -8116,7 +8124,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 
 	// read the file if it exists
 	lastFileNum = -1;
-	fromfile = qfalse;
+	fromfile    = qfalse;
 	if (ri.FS_FileExists(filename))
 	{
 		// try to read the file (buffer header + pixeldata)
@@ -8125,10 +8133,15 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 //R2Thread_UnlockFile(filename); // don't forget to unlock the file when we exit now
 		if (bytesRead <= 0 || !buffer)
 		{
-			if (buffer) ri.FS_FreeFile(buffer); // ..but the buffer is not freed when a file is closed.
+			if (buffer)
+			{
+				ri.FS_FreeFile(buffer);         // ..but the buffer is not freed when a file is closed.
+			}
 			buffer = NULL;
 			return;
-		} else {
+		}
+		else
+		{
 			fromfile = qtrue;
 		}
 	}
@@ -8157,7 +8170,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 	}
 
 	// copy the cubePixeldata into the big image
-	pixeldata = buffer + 18 + TGA_IDfield_size; // point to the start of pixeldata, after the file header & id field
+	pixeldata  = buffer + 18 + TGA_IDfield_size; // point to the start of pixeldata, after the file header & id field
 	pixeldata += offsetInFile; // point to the start of the cubemap in the big image
 	for (i = 0; i < 6; i++, pixeldata += REF_CUBEMAP_TEXTURE_SIZE)
 	{
@@ -8177,7 +8190,9 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 		if (fromfile)
 		{
 			ri.FS_FreeFile(buffer);
-		} else {
+		}
+		else
+		{
 			Com_Dealloc(buffer);
 		}
 		buffer = NULL;
@@ -8186,7 +8201,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 
 /**
  * @brief This is loading a single cube (6 sides) from a cm/file into cubeTemp.
- * 
+ *
  * @param[in] index of cube probe
  * @param[in, out] cubeTemp
  * return boolean result.
@@ -8200,25 +8215,28 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 {
 	// static, so the content is not lost when exiting this function
-	static int lastFileNum = -1; // initialize with a value that filenumber will never have
-	static byte *buffer = NULL; // pointer to the file buffer (including the 18 byte long header + id-field)
+	static int  lastFileNum = -1; // initialize with a value that filenumber will never have
+	static byte *buffer     = NULL; // pointer to the file buffer (including the 18 byte long header + id-field)
 	//
-	byte *pixeldata     = NULL; // the pointer to the actual pixel colors
-	int filenumber = cubeProbeNum / REF_CUBEMAPS_PER_FILE;
-	int indexInFile = cubeProbeNum % REF_CUBEMAPS_PER_FILE;
-	int offsetInFile = indexInFile * REF_CUBEMAP_PIXELDATA_SIZE;
-	char *filename;
-	int bytesRead = 0;
+	byte     *pixeldata   = NULL; // the pointer to the actual pixel colors
+	int      filenumber   = cubeProbeNum / REF_CUBEMAPS_PER_FILE;
+	int      indexInFile  = cubeProbeNum % REF_CUBEMAPS_PER_FILE;
+	int      offsetInFile = indexInFile * REF_CUBEMAP_PIXELDATA_SIZE;
+	char     *filename;
+	int      bytesRead = 0;
 	qboolean OK;
-	int i;
+	int      i;
 
 	// if the cubemap is in another file (as currently buffered), we must swap to the new file
 	if (filenumber != lastFileNum)
 	{
-		if (buffer) ri.FS_FreeFile(buffer);
-		buffer = NULL;
+		if (buffer)
+		{
+			ri.FS_FreeFile(buffer);
+		}
+		buffer      = NULL;
 		lastFileNum = filenumber;
-		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, filenumber);
+		filename    = va("cm/%s/cm_%04d.tga", s_worldData.baseName, filenumber);
 
 		OK = ri.FS_FileExists(filename);
 		if (OK)
@@ -8229,8 +8247,11 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 		}
 		if (!OK || bytesRead <= 0)
 		{
-			if (buffer) ri.FS_FreeFile(buffer);
-			buffer = NULL;
+			if (buffer)
+			{
+				ri.FS_FreeFile(buffer);
+			}
+			buffer      = NULL;
 			lastFileNum = -1;
 			return qfalse;
 		}
@@ -8248,7 +8269,7 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 	}
 
 	// skip the file header, and id-field
-	pixeldata = buffer + 18 + REF_CUBEMAP_TGA_IDFIELD_SIZE;
+	pixeldata  = buffer + 18 + REF_CUBEMAP_TGA_IDFIELD_SIZE;
 	pixeldata += offsetInFile; // point to the start of the right cubemap
 
 	// copy this cube map into buffer
@@ -8260,8 +8281,11 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 	// if this was the last cubeprobe, we're done: delete the buffer
 	if (cubeProbeNum == tr.cubeProbes.currentElements - 1)
 	{
-		if (buffer) ri.FS_FreeFile(buffer);
-		buffer = NULL;
+		if (buffer)
+		{
+			ri.FS_FreeFile(buffer);
+		}
+		buffer      = NULL;
 		lastFileNum = -1;
 	}
 
@@ -8303,10 +8327,10 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 */
 void R_BuildCubeMaps(qboolean createAll)
 {
-	int i, j;
+	int            i, j;
 	cubemapProbe_t *cubeProbe;
-	byte *pixeldata = NULL;
-	int countRead = 0, countWrite = 0;
+	byte           *pixeldata = NULL;
+	int            countRead = 0, countWrite = 0;
 
 	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
 	// and now we read the pixels in the 32x32 middle of the image.
@@ -8324,11 +8348,11 @@ void R_BuildCubeMaps(qboolean createAll)
 	//   The full fov_x & fov_y is: 97.406393268543374093517472449563 degrees
 	// 1/(sqrt(2)/2) = 1.4142135623730950488016887242097 = sqrt(2)  !
 	const double halfCube = 0.5 * REF_CUBEMAP_SIZE;
-	float angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
+	float        angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
 //	float angleFOV = RAD2DEG((float)asin((halfCube + 1.0) / (halfCube / (1.4142135623730950488016887242097 * 0.5))) * 2.0);
 
 #ifdef LEGACY_DEBUG
-	int endTime, startTime = ri.Milliseconds();
+	int   endTime, startTime = ri.Milliseconds();
 	float duration;
 #endif
 
@@ -8405,10 +8429,10 @@ void R_BuildCubeMaps(qboolean createAll)
 	}
 #else // cubes based on lightgrid
 	{
-		int            numGridPoints, k;
+		int numGridPoints, k;
 		//bspGridPoint_t *gridPoint;
 		//int            gridStep[3];
-		float          posFloat[3];
+		float posFloat[3];
 
 		//gridStep[0] = 1;
 		//gridStep[1] = tr.world->lightGridBounds[0];
@@ -8477,14 +8501,14 @@ void R_BuildCubeMaps(qboolean createAll)
 	//$ Now we have no way of knowing about cubemap-generation progress.. so don't make this function run for a too long time.
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
-		cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
-		cubeProbe->index = j;          // save the index, used later when writing to file
-		cubeProbe->ready = qfalse;     // ready for render use?
+		cubeProbe         = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
+		cubeProbe->index  = j;         // save the index, used later when writing to file
+		cubeProbe->ready  = qfalse;    // ready for render use?
 		cubeProbe->stored = qfalse;    // stored in file?
 		for (i = 0; i < 6; i++)
 		{
 			cubeProbe->cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE); // cpu memory with pixeldata to create the final cubemap texture
-			cubeProbe->pbo[i] = NULL;  // if it needs to be rendered, this pbo is the buffer for pixel transfers from gpu to cpu
+			cubeProbe->pbo[i]      = NULL; // if it needs to be rendered, this pbo is the buffer for pixel transfers from gpu to cpu
 		}
 
 		// Load the cubemap from file if possible, else render a new cubemap (if creatAll is true).
@@ -8501,15 +8525,19 @@ void R_BuildCubeMaps(qboolean createAll)
 				cubeProbe->cubemap = tr.autoCubeImage; // provide something valid to use for rendering
 				continue; // goto buildcubemaps_finish;
 			}
-			cubeProbe->ready = qtrue;  // this cubemap texture is now ready for render use..
+			cubeProbe->ready  = qtrue; // this cubemap texture is now ready for render use..
 			cubeProbe->stored = qtrue; // just read from file, so it's stored
 			// this cubemap is ready. The memory can be freed
 			for (i = 0; i < 6; i++)
 			{
-				if (cubeProbe->cubeTemp[i]) ri.Free(cubeProbe->cubeTemp[i]);
+				if (cubeProbe->cubeTemp[i])
+				{
+					ri.Free(cubeProbe->cubeTemp[i]);
+				}
 				cubeProbe->cubeTemp[i] = NULL;
 			}
-		} else
+		}
+		else
 		{
 			if (!createAll)
 			{
@@ -8553,7 +8581,7 @@ buildcubemaps_finish:
 //	R2Thread_Process = qtrue; // disabled..
 
 #ifdef LEGACY_DEBUG
-	endTime = ri.Milliseconds();
+	endTime  = ri.Milliseconds();
 	duration = (endTime - startTime) / 1000.0f;
 	//Ren_Developer("cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements, (endTime - startTime) / 1000.0);
 	Ren_Print("......total generation time: %5.2f seconds  (avg: %2.5f seconds)\n", duration, duration / (float)tr.cubeProbes.currentElements);
@@ -8577,7 +8605,8 @@ void AddSunLight()
 	}
 
 	// add a directional sun light
-	if (!s_worldData.numLights) { //!!!DEBUG!!! very woot..
+	if (!s_worldData.numLights)   //!!!DEBUG!!! very woot..
+	{
 		s_worldData.lights = (trRefLight_t *)ri.Hunk_Alloc(sizeof(trRefLight_t), h_low);  //!!!DEBUG!!!  just test  beware! of what it does..
 	}
 	trRefLight_t *light = &s_worldData.lights[s_worldData.numLights];
@@ -8607,12 +8636,12 @@ void AddSunLight()
 	VectorClear(light->l.projEnd);
 
 	light->l.inverseShadows = qfalse; // must be false
-	light->isStatic = qtrue; // (must be false to render alpha-masked surfaces).  if true render much faster!
-	light->noRadiosity = qfalse;
-	light->additive = qtrue;
+	light->isStatic         = qtrue; // (must be false to render alpha-masked surfaces).  if true render much faster!
+	light->noRadiosity      = qfalse;
+	light->additive         = qtrue;
 
 	light->shadowLOD = 0;
-	light->l.rlType = RL_DIRECTIONAL;
+	light->l.rlType  = RL_DIRECTIONAL;
 }
 
 /**
@@ -8771,10 +8800,10 @@ void RE_LoadWorldMap(const char *name)
 	R_BuildCubeMaps(qtrue); // qtrue, render all cubemaps immediately at mapload (old behavior)
 
 	// clear the cubeprobe reflections data
-	tr.reflectionData.probe1 = NULL;
-	tr.reflectionData.probe2 = NULL;
+	tr.reflectionData.probe1    = NULL;
+	tr.reflectionData.probe2    = NULL;
 	tr.reflectionData.startTime = 0;
-	tr.reflectionData.endTime = 0;
+	tr.reflectionData.endTime   = 0;
 
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame
 	// but we need the information across 2 frames

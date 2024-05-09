@@ -3405,7 +3405,7 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 {
 	vec3_t ndir, lnormal;
 	float  dot, minDot = 0.3f;
-	int    x      = 0;
+	int    x = 0;
 
 	if (dir[0] < 0.001f && dir[1] < 0.001f)
 	{
@@ -4885,11 +4885,11 @@ void BG_LegsCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t legsOffset)
 	vec3_t flatforward;
 	float  angle;
 
-	angle          = DEG2RAD(viewangles[YAW]);
+	angle = DEG2RAD(viewangles[YAW]);
 #ifndef ETL_SSE
 	SinCos(angle, flatforward[1], flatforward[0]);
 #else
-	SinCos(angle, flatforward+1, flatforward+0); // this is the asm way of specifying an address..
+	SinCos(angle, flatforward + 1, flatforward + 0); // this is the asm way of specifying an address..
 #endif
 	flatforward[2] = 0;
 

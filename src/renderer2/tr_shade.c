@@ -179,8 +179,8 @@ static void BindDeluxeMap(shaderStage_t *pStage)
 
 bspGridPoint_t *LightgridColor(const vec3_t position)
 {
-	vec3_t         lightOrigin;
-	int            pos[3];
+	vec3_t lightOrigin;
+	int    pos[3];
 	//float          frac[3];
 	int            gridStep[3];
 	bspGridPoint_t *gridPoint;
@@ -195,7 +195,7 @@ bspGridPoint_t *LightgridColor(const vec3_t position)
 	// index x,y,z in the lightgrid
 	for (i = 0; i < 3; i++)
 	{
-		v = lightOrigin[i] * tr.world->lightGridInverseSize[i];
+		v      = lightOrigin[i] * tr.world->lightGridInverseSize[i];
 		pos[i] = floor(v);
 		//frac[i] = v - pos[i];
 		if (pos[i] < 0)
@@ -415,24 +415,24 @@ typedef struct rgbaGen_s
  */
 static rgbaGen_t getRgbaGen(shaderStage_t *pStage, int lightmapNum)
 {
-    // always exclude the sky
-    if (tess.surfaceShader->isSky)
-    {
-        rgbaGen_t rgbaGen = { pStage->rgbGen, pStage->alphaGen };
+	// always exclude the sky
+	if (tess.surfaceShader->isSky)
+	{
+		rgbaGen_t rgbaGen = { pStage->rgbGen, pStage->alphaGen };
 
-        return rgbaGen;
-    }
-    else
-    {
-        qboolean isVertexLit           = (qboolean) (lightmapNum == LIGHTMAP_BY_VERTEX || lightmapNum == LIGHTMAP_WHITEIMAGE);
-        qboolean shouldForceCgenVertex = (qboolean) (isVertexLit && pStage->rgbGen == CGEN_IDENTITY);
-        qboolean shouldForceAgenVertex = (qboolean) (isVertexLit && pStage->alphaGen == AGEN_IDENTITY);
-        int colorGen                   = shouldForceCgenVertex ? CGEN_VERTEX : pStage->rgbGen;
-        int alphaGen                   = shouldForceAgenVertex ? AGEN_VERTEX : pStage->alphaGen;
-        rgbaGen_t rgbaGen              = { colorGen, alphaGen };
+		return rgbaGen;
+	}
+	else
+	{
+		qboolean  isVertexLit           = (qboolean) (lightmapNum == LIGHTMAP_BY_VERTEX || lightmapNum == LIGHTMAP_WHITEIMAGE);
+		qboolean  shouldForceCgenVertex = (qboolean) (isVertexLit && pStage->rgbGen == CGEN_IDENTITY);
+		qboolean  shouldForceAgenVertex = (qboolean) (isVertexLit && pStage->alphaGen == AGEN_IDENTITY);
+		int       colorGen              = shouldForceCgenVertex ? CGEN_VERTEX : pStage->rgbGen;
+		int       alphaGen              = shouldForceAgenVertex ? AGEN_VERTEX : pStage->alphaGen;
+		rgbaGen_t rgbaGen               = { colorGen, alphaGen };
 
-        return rgbaGen;
-    }
+		return rgbaGen;
+	}
 }
 
 /**
@@ -443,33 +443,33 @@ static rgbaGen_t getRgbaGen(shaderStage_t *pStage, int lightmapNum)
  */
 static rgbaGen_t getRgbaGenForColorModulation(shaderStage_t *pStage, int lightmapNum)
 {
-    rgbaGen_t rgbaGen;
+	rgbaGen_t rgbaGen;
 
-    rgbaGen = getRgbaGen(pStage, lightmapNum);
+	rgbaGen = getRgbaGen(pStage, lightmapNum);
 
-    // u_ColorGen
-    switch (rgbaGen.color)
-    {
-    case CGEN_VERTEX:
-    case CGEN_ONE_MINUS_VERTEX:
-        break;
-    default:
-        rgbaGen.color = CGEN_CONST;
-        break;
-    }
+	// u_ColorGen
+	switch (rgbaGen.color)
+	{
+	case CGEN_VERTEX:
+	case CGEN_ONE_MINUS_VERTEX:
+		break;
+	default:
+		rgbaGen.color = CGEN_CONST;
+		break;
+	}
 
-    // u_AlphaGen
-    switch (rgbaGen.alpha)
-    {
-    case AGEN_VERTEX:
-    case AGEN_ONE_MINUS_VERTEX:
-        break;
-    default:
-        rgbaGen.alpha = AGEN_CONST;
-        break;
-    }
+	// u_AlphaGen
+	switch (rgbaGen.alpha)
+	{
+	case AGEN_VERTEX:
+	case AGEN_ONE_MINUS_VERTEX:
+		break;
+	default:
+		rgbaGen.alpha = AGEN_CONST;
+		break;
+	}
 
-    return rgbaGen;
+	return rgbaGen;
 }
 
 /**
@@ -495,7 +495,7 @@ void SetLightUniforms(qboolean setLightColor)
 /**
  * @brief Render_generic
  * @param[in] stage
- * 
+ *
  * This function is only called for stage.type: ST_COLORMAP, ST_LIGHTMAP, ST_TCGENENVMAP, ST_DIFFUSEMAP, ST_BUNDLE_DB, ST_BUNDLE_DBS
  */
 static void Render_generic(int stage)
@@ -506,11 +506,11 @@ static void Render_generic(int stage)
 	{
 		return;
 	}
-	qboolean use_deforms          = tess.surfaceShader->numDeforms > 0;
-	qboolean use_alphaTesting     = (pStage->stateBits & GLS_ATEST_BITS) != 0;
-	qboolean use_vertex_skinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
-	qboolean use_vertex_animation = glState.vertexAttribsInterpolation > 0;
-	qboolean use_tcgenEnv         = r_reflectionMapping->integer && pStage->tcGen_Environment && pStage->type == ST_TCGENENVMAP;
+	qboolean  use_deforms          = tess.surfaceShader->numDeforms > 0;
+	qboolean  use_alphaTesting     = (pStage->stateBits & GLS_ATEST_BITS) != 0;
+	qboolean  use_vertex_skinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
+	qboolean  use_vertex_animation = glState.vertexAttribsInterpolation > 0;
+	qboolean  use_tcgenEnv         = r_reflectionMapping->integer && pStage->tcGen_Environment && pStage->type == ST_TCGENENVMAP;
 	rgbaGen_t rgbaGen;
 
 	Ren_LogComment("--- Render_generic ---\n");
@@ -520,10 +520,10 @@ static void Render_generic(int stage)
 	// when rendering to a (reflections) cubemap, a lot is disabled..
 	if (tr.refdef.renderingCubemap)
 	{
-		use_vertex_skinning = qfalse;
+		use_vertex_skinning  = qfalse;
 		use_vertex_animation = qfalse;
-		use_deforms = qfalse;
-		use_tcgenEnv = qfalse;
+		use_deforms          = qfalse;
+		use_tcgenEnv         = qfalse;
 	}
 
 	// choose right shader program ----------------------------------
@@ -597,32 +597,32 @@ static void Render_generic(int stage)
 /**
  * @brief Render_entity
  * @param[in] stage
- * 
+ *
  * This function is only called for stage.type: ST_DIFFUSEMAP, ST_BUNDLE_DB, ST_BUNDLE_DBS, ST_BUNDLE_DBSR
  */
 static void Render_entity(int stage)
 {
-	shaderStage_t *pStage = tess.surfaceStages[stage];
-	qboolean use_alphaTesting     = (pStage->stateBits & GLS_ATEST_BITS) != 0;
-	qboolean use_normalMapping;
-	qboolean use_parallaxMapping;
-	qboolean use_deforms;
-	qboolean use_vertex_skinning;
-	qboolean use_vertex_animation;
-	qboolean use_specular;
-	qboolean use_reflections;
-	qboolean use_reflectionmap;
+	shaderStage_t *pStage          = tess.surfaceStages[stage];
+	qboolean      use_alphaTesting = (pStage->stateBits & GLS_ATEST_BITS) != 0;
+	qboolean      use_normalMapping;
+	qboolean      use_parallaxMapping;
+	qboolean      use_deforms;
+	qboolean      use_vertex_skinning;
+	qboolean      use_vertex_animation;
+	qboolean      use_specular;
+	qboolean      use_reflections;
+	qboolean      use_reflectionmap;
 
 	if (tr.refdef.renderingCubemap)
 	{
-		use_normalMapping = qfalse;
-		use_parallaxMapping = qfalse;
-		use_deforms = qfalse;
-		use_vertex_skinning = qfalse;
+		use_normalMapping    = qfalse;
+		use_parallaxMapping  = qfalse;
+		use_deforms          = qfalse;
+		use_vertex_skinning  = qfalse;
 		use_vertex_animation = qfalse;
-		use_specular = qfalse;
-		use_reflections = qfalse;
-		use_reflectionmap = qfalse;
+		use_specular         = qfalse;
+		use_reflections      = qfalse;
+		use_reflectionmap    = qfalse;
 	}
 	else
 	{
@@ -633,8 +633,8 @@ static void Render_entity(int stage)
 		use_vertex_animation = glState.vertexAttribsInterpolation > 0;
 		use_specular         = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
 		use_reflections      = use_normalMapping && r_reflectionMapping->integer && pStage->type == ST_BUNDLE_DBSR &&
-								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
-		use_reflectionmap    = use_reflections && pStage->type == ST_BUNDLE_DBSR;
+		                       tr.cubeProbes.currentElements > 0;  // && !tr.refdef.renderingCubemap;
+		use_reflectionmap = use_reflections && pStage->type == ST_BUNDLE_DBSR;
 
 //		R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
 		R_FindCubeprobes(backEnd.viewParms.orientation.origin, backEnd.currentEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
@@ -645,16 +645,16 @@ static void Render_entity(int stage)
 	GL_State(pStage->stateBits);
 
 	SetMacrosAndSelectProgram(trProg.gl_entityShader,
-								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_ALPHA_TESTING, use_alphaTesting,
-								USE_VERTEX_SKINNING, use_vertex_skinning,
-								USE_VERTEX_ANIMATION, use_vertex_animation,
-								USE_DEFORM_VERTEXES, use_deforms, // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
-								USE_NORMAL_MAPPING, use_normalMapping,
-								USE_PARALLAX_MAPPING, use_parallaxMapping,
-								USE_REFLECTIONS, use_reflections,
-								USE_REFLECTIONMAP, use_reflectionmap,
-								USE_SPECULAR, use_specular);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, use_alphaTesting,
+	                          USE_VERTEX_SKINNING, use_vertex_skinning,
+	                          USE_VERTEX_ANIMATION, use_vertex_animation,
+	                          USE_DEFORM_VERTEXES, use_deforms,   // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
+	                          USE_NORMAL_MAPPING, use_normalMapping,
+	                          USE_PARALLAX_MAPPING, use_parallaxMapping,
+	                          USE_REFLECTIONS, use_reflections,
+	                          USE_REFLECTIONMAP, use_reflectionmap,
+	                          USE_SPECULAR, use_specular);
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX); // same as backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -770,7 +770,7 @@ else
 /**
  * @brief Render_vertexLighting_DBS_world
  * @param[in] stage
- * 
+ *
  * This function is only called for stage.type: ST_DIFFUSEMAP, ST_BUNDLE_DB, ST_BUNDLE_DBS, ST_BUNDLE_DBSR
  */
 /*
@@ -907,33 +907,34 @@ static void Render_vertexLighting_DBS_world(int stage)
  */
 static void Render_world(int stage, qboolean use_lightMapping, qboolean onlyLightmap)
 {
-	rgbaGen_t rgbaGen;
-	shaderStage_t *pStage = tess.surfaceStages[stage];
-	uint32_t stateBits = pStage->stateBits;
-	qboolean use_diffuse = qfalse;;
-	qboolean use_alphaTesting = qfalse;;
-	qboolean use_deforms = qfalse;;
-	qboolean use_normalMapping = qfalse;;
-	qboolean use_parallaxMapping = qfalse;;
+	rgbaGen_t     rgbaGen;
+	shaderStage_t *pStage             = tess.surfaceStages[stage];
+	uint32_t      stateBits           = pStage->stateBits;
+	qboolean      use_diffuse         = qfalse;;
+	qboolean      use_alphaTesting    = qfalse;;
+	qboolean      use_deforms         = qfalse;;
+	qboolean      use_normalMapping   = qfalse;;
+	qboolean      use_parallaxMapping = qfalse;;
 	//qboolean use_deluxeMapping;
-	qboolean use_specular = qfalse;;
+	qboolean use_specular    = qfalse;;
 	qboolean use_reflections = qfalse;;
 	// tr.refdef.renderingCubemap is to prevent using reflections before buildcubemaps() has finished.
 	qboolean use_reflectionmap = qfalse;;
 	// for now we pass USE_REFLECTIONS & USE_REFLECTIONMAP, but the lightmapping shader will only reflect when there's a reflectionmap assigned.
 
-	if (!onlyLightmap) {
-		use_diffuse = pStage->bundle[TB_DIFFUSEMAP].image[0] != NULL;
+	if (!onlyLightmap)
+	{
+		use_diffuse      = pStage->bundle[TB_DIFFUSEMAP].image[0] != NULL;
 		use_alphaTesting = use_diffuse && (pStage->stateBits & GLS_ATEST_BITS);
 		if (!tr.refdef.renderingCubemap)
 		{
-			use_deforms = tess.surfaceShader->numDeforms > 0; // && !ShaderRequiresCPUDeforms(tess.surfaceShader)
-			use_normalMapping = use_diffuse && r_normalMapping->integer && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DB || pStage->type == ST_BUNDLE_DBSR);
+			use_deforms         = tess.surfaceShader->numDeforms > 0; // && !ShaderRequiresCPUDeforms(tess.surfaceShader)
+			use_normalMapping   = use_diffuse && r_normalMapping->integer && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DB || pStage->type == ST_BUNDLE_DBSR);
 			use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
-			use_specular = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
-			use_reflections = use_normalMapping && r_reflectionMapping->integer &&
-				pStage->type == ST_BUNDLE_DBSR &&
-				tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
+			use_specular        = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
+			use_reflections     = use_normalMapping && r_reflectionMapping->integer &&
+			                      pStage->type == ST_BUNDLE_DBSR &&
+			                      tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
 			use_reflectionmap = use_reflections && (pStage->type == ST_BUNDLE_DBSR);
 
 			// this has to be done before SetMacrosAndSelectProgram()..
@@ -953,17 +954,17 @@ static void Render_world(int stage, qboolean use_lightMapping, qboolean onlyLigh
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_worldShader,
-								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_ALPHA_TESTING, use_alphaTesting,
-								USE_DEFORM_VERTEXES, use_deforms,
-								USE_NORMAL_MAPPING, use_normalMapping,
-								USE_PARALLAX_MAPPING, use_parallaxMapping,
-								//USE_DELUXE_MAPPING, use_deluxeMapping,
-								USE_REFLECTIONS, use_reflections,
-								USE_REFLECTIONMAP, use_reflectionmap,
-								USE_SPECULAR, use_specular,
-								USE_DIFFUSE, use_diffuse,
-								USE_LIGHT_MAPPING, use_lightMapping);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, use_alphaTesting,
+	                          USE_DEFORM_VERTEXES, use_deforms,
+	                          USE_NORMAL_MAPPING, use_normalMapping,
+	                          USE_PARALLAX_MAPPING, use_parallaxMapping,
+	                          //USE_DELUXE_MAPPING, use_deluxeMapping,
+	                          USE_REFLECTIONS, use_reflections,
+	                          USE_REFLECTIONMAP, use_reflectionmap,
+	                          USE_SPECULAR, use_specular,
+	                          USE_DIFFUSE, use_diffuse,
+	                          USE_LIGHT_MAPPING, use_lightMapping);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_worldShader);
 
@@ -991,7 +992,8 @@ static void Render_world(int stage, qboolean use_lightMapping, qboolean onlyLigh
 		clipPortalPlane();
 	}
 
-	if (!onlyLightmap) {
+	if (!onlyLightmap)
+	{
 
 		// USE_ALPHA_TESTING
 		if (use_alphaTesting)
@@ -1008,7 +1010,8 @@ static void Render_world(int stage, qboolean use_lightMapping, qboolean onlyLigh
 
 		// bind diffuse texture
 		// sometimes the ST_LIGHTMAP stage has no diffusemap.
-		if (use_diffuse) {
+		if (use_diffuse)
+		{
 			SelectTexture(TEX_DIFFUSE);
 			GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
 			SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrix);
@@ -1048,7 +1051,8 @@ static void Render_world(int stage, qboolean use_lightMapping, qboolean onlyLigh
 						SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value * 5.f);
 						SetUniformFloat(UNIFORM_SPECULAREXPONENT, 16.f); //r_specularExponentWorld->value * 0.25f);
 					}
-					else {
+					else
+					{
 						SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
 						SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
 					}
@@ -1101,12 +1105,12 @@ static void Render_world(int stage, qboolean use_lightMapping, qboolean onlyLigh
  */
 static void Render_depthFill(int stage)
 {
-    shaderStage_t *pStage = tess.surfaceStages[stage];
+	shaderStage_t *pStage = tess.surfaceStages[stage];
 	//vec4_t        ambientColor;
-	rgbaGen_t     rgbaGen;
-	qboolean use_vertex_skinning  = (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	qboolean use_vertex_animation = (glState.vertexAttribsInterpolation > 0);
-	qboolean use_alphaTesting     = ((pStage->stateBits & GLS_ATEST_BITS) != 0);
+	rgbaGen_t rgbaGen;
+	qboolean  use_vertex_skinning  = (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
+	qboolean  use_vertex_animation = (glState.vertexAttribsInterpolation > 0);
+	qboolean  use_alphaTesting     = ((pStage->stateBits & GLS_ATEST_BITS) != 0);
 
 	Ren_LogComment("--- Render_depthFill ---\n");
 
@@ -1115,13 +1119,13 @@ static void Render_depthFill(int stage)
 	GL_State(pStage->stateBits);
 
 	SetMacrosAndSelectProgram(trProg.gl_genericShader,
-								USE_ALPHA_TESTING, use_alphaTesting,
-								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_VERTEX_SKINNING, use_vertex_skinning,
-								USE_VERTEX_ANIMATION, use_vertex_animation,
-								USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-								USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment,
-								USE_TCGEN_LIGHTMAP, pStage->tcGen_Lightmap);
+	                          USE_ALPHA_TESTING, use_alphaTesting,
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, use_vertex_skinning,
+	                          USE_VERTEX_ANIMATION, use_vertex_animation,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment,
+	                          USE_TCGEN_LIGHTMAP, pStage->tcGen_Lightmap);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
@@ -1202,16 +1206,16 @@ static void Render_shadowFill(int stage)
 	stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS);
 	GL_State(stateBits);
 
-use_alphaTesting = qfalse;//!!!DEBUG!!!
+	use_alphaTesting = qfalse;//!!!DEBUG!!!
 // this needs to be checked. alpha goes woot.
 
 	SetMacrosAndSelectProgram(trProg.gl_shadowFillShader,
-									USE_ALPHA_TESTING, use_alphaTesting,
-									USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-									USE_VERTEX_SKINNING, use_vertexSkinning,
-									USE_VERTEX_ANIMATION, use_vertexAnimation,
-									USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-									LIGHT_DIRECTIONAL, use_lightDirectional);
+	                          USE_ALPHA_TESTING, use_alphaTesting,
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, use_vertexSkinning,
+	                          USE_VERTEX_ANIMATION, use_vertexAnimation,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          LIGHT_DIRECTIONAL, use_lightDirectional);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_shadowFillShader);
 
@@ -1284,22 +1288,23 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	rgbaGen_t rgbaGen;
-	qboolean use_vertexSkinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
-	qboolean use_vertexAnimation = glState.vertexAttribsInterpolation > 0;
-	qboolean use_shadowCompare   = r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0;
+	qboolean  use_vertexSkinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
+	qboolean  use_vertexAnimation = glState.vertexAttribsInterpolation > 0;
+	qboolean  use_shadowCompare   = r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0;
 
-	if (tr.refdef.renderingCubemap) {
+	if (tr.refdef.renderingCubemap)
+	{
 		return;
 	}
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
 
 	SetMacrosAndSelectProgram(trProg.gl_forwardLightingShader_omniXYZ,
-								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_VERTEX_SKINNING, use_vertexSkinning,
-								USE_VERTEX_ANIMATION, use_vertexAnimation,
-								USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-								USE_SHADOWING, use_shadowCompare);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, use_vertexSkinning,
+	                          USE_VERTEX_ANIMATION, use_vertexAnimation,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_SHADOWING, use_shadowCompare);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_forwardLightingShader_omniXYZ);
 
@@ -1384,15 +1389,16 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	rgbaGen_t rgbaGen;
-	qboolean use_alphaTesting    = (diffuseStage->stateBits & GLS_ATEST_BITS) != 0;
-	qboolean use_shadowCompare   = r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0;
-	qboolean use_vertexSkinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
-	qboolean use_vertexAnimation = glState.vertexAttribsInterpolation > 0;
-	qboolean use_normalMapping   = r_normalMapping->integer;
-	qboolean use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
-	qboolean use_specular        = use_normalMapping && (diffuseStage->type == ST_BUNDLE_DBS || diffuseStage->type == ST_BUNDLE_DBSR);
+	qboolean  use_alphaTesting    = (diffuseStage->stateBits & GLS_ATEST_BITS) != 0;
+	qboolean  use_shadowCompare   = r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0;
+	qboolean  use_vertexSkinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
+	qboolean  use_vertexAnimation = glState.vertexAttribsInterpolation > 0;
+	qboolean  use_normalMapping   = r_normalMapping->integer;
+	qboolean  use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
+	qboolean  use_specular        = use_normalMapping && (diffuseStage->type == ST_BUNDLE_DBS || diffuseStage->type == ST_BUNDLE_DBSR);
 
-	if (tr.refdef.renderingCubemap) {
+	if (tr.refdef.renderingCubemap)
+	{
 		return;
 	}
 
@@ -1400,15 +1406,15 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_forwardLightingShader_projXYZ,
-								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_ALPHA_TESTING, use_alphaTesting,
-								USE_VERTEX_SKINNING, use_vertexSkinning,
-								USE_VERTEX_ANIMATION, use_vertexAnimation,
-								USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-								USE_NORMAL_MAPPING, use_normalMapping,
-								USE_PARALLAX_MAPPING, use_parallaxMapping,
-								USE_SHADOWING, use_shadowCompare,
-								USE_SPECULAR, use_specular);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_ALPHA_TESTING, use_alphaTesting,
+	                          USE_VERTEX_SKINNING, use_vertexSkinning,
+	                          USE_VERTEX_ANIMATION, use_vertexAnimation,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_NORMAL_MAPPING, use_normalMapping,
+	                          USE_PARALLAX_MAPPING, use_parallaxMapping,
+	                          USE_SHADOWING, use_shadowCompare,
+	                          USE_SPECULAR, use_specular);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_forwardLightingShader_projXYZ);
 
@@ -1527,13 +1533,14 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
                                                    shaderStage_t *attenuationXYStage,
                                                    shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
-	vec3_t lightDirection;
+	vec3_t    lightDirection;
 	rgbaGen_t rgbaGen;
-	qboolean use_shadowCompare   = r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0;
-	qboolean use_vertexSkinning = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
-	qboolean use_vertexAnimation = glState.vertexAttribsInterpolation > 0;
+	qboolean  use_shadowCompare   = r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0;
+	qboolean  use_vertexSkinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
+	qboolean  use_vertexAnimation = glState.vertexAttribsInterpolation > 0;
 
-	if (tr.refdef.renderingCubemap) {
+	if (tr.refdef.renderingCubemap)
+	{
 		return;
 	}
 
@@ -1541,11 +1548,11 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_forwardLightingShader_directionalSun,
-								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_VERTEX_SKINNING, use_vertexSkinning,
-								USE_VERTEX_ANIMATION, use_vertexAnimation,
-								USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-								USE_SHADOWING, use_shadowCompare);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_VERTEX_SKINNING, use_vertexSkinning,
+	                          USE_VERTEX_ANIMATION, use_vertexAnimation,
+	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_SHADOWING, use_shadowCompare);
 
 	// end choose right shader program ------------------------------
 
@@ -1634,7 +1641,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 /**
  * @brief Render_reflection_CB
  * @param[in] stage
- * 
+ *
  * This is only called for: ST_CUBEREFLECTIONS, ST_BUNDLE_CB
  */
 static void Render_reflection_CB(int stage)
@@ -1644,10 +1651,10 @@ static void Render_reflection_CB(int stage)
 		return;
 	}
 
-	shaderStage_t *pStage = tess.surfaceStages[stage];
-	qboolean use_normalMapping    = (r_normalMapping->integer && pStage->type != ST_CUBEREFLECTIONS);
-	qboolean use_vertex_skinning  = (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
-	qboolean use_vertex_animation = (glState.vertexAttribsInterpolation > 0);
+	shaderStage_t *pStage              = tess.surfaceStages[stage];
+	qboolean      use_normalMapping    = (r_normalMapping->integer && pStage->type != ST_CUBEREFLECTIONS);
+	qboolean      use_vertex_skinning  = (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning);
+	qboolean      use_vertex_animation = (glState.vertexAttribsInterpolation > 0);
 
 	Ren_LogComment("--- Render_reflection_CB ---\n");
 
@@ -2109,19 +2116,19 @@ if ((pStage->stateBits & GLS_ATEST_BITS) != 0)
 /**
  * @brief Render_liquid
  * @param[in] stage
- * 
+ *
  * This function is only called for stage.type: ST_LIQUIDMAP, ST_BUNDLE_WB, ST_BUNDLE_WDB
  */
 static void Render_liquid(int stage, qboolean use_lightMapping)
 {
-	uint32_t attributebits;
-	rgbaGen_t rgbaGen;
-	shaderStage_t *pStage = tess.surfaceStages[stage];
-	float fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.0005f);
-	qboolean use_diffuseMapping  = (pStage->type == ST_BUNDLE_WDB || pStage->type == ST_BUNDLE_WD);
-	qboolean use_deforms;
-	qboolean use_normalMapping;
-	qboolean use_parallaxMapping;
+	uint32_t      attributebits;
+	rgbaGen_t     rgbaGen;
+	shaderStage_t *pStage            = tess.surfaceStages[stage];
+	float         fogDensity         = RB_EvalExpression(&pStage->fogDensityExp, 0.0005f);
+	qboolean      use_diffuseMapping = (pStage->type == ST_BUNDLE_WDB || pStage->type == ST_BUNDLE_WD);
+	qboolean      use_deforms;
+	qboolean      use_normalMapping;
+	qboolean      use_parallaxMapping;
 	// liquid has its own calculated specular, and doesn't need a specularmap.. maybe in the future
 	qboolean use_reflections;
 	// fancy water with moving waves.. only when the diffuse texture has some tcMod assigned, otherwise we would get still standing waves.
@@ -2134,18 +2141,20 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 	// when rendering to a (reflections) cubemap, a lot is disabled..
 	if (tr.refdef.renderingCubemap)
 	{
-		use_deforms = qfalse;
-		use_normalMapping = qfalse;
+		use_deforms         = qfalse;
+		use_normalMapping   = qfalse;
 		use_parallaxMapping = qfalse;
-		use_reflections = qfalse;
-		use_water = qfalse;
-	} else {
+		use_reflections     = qfalse;
+		use_water           = qfalse;
+	}
+	else
+	{
 		use_deforms         = tess.surfaceShader->numDeforms > 0; // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
 		use_normalMapping   = r_normalMapping->integer && (pStage->type == ST_BUNDLE_WB || pStage->type == ST_BUNDLE_WDB);
 		use_parallaxMapping = tess.surfaceShader->parallax && use_normalMapping && r_parallaxMapping->integer;
 		use_reflections     = r_reflectionMapping->integer && use_normalMapping &&
-								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
-		use_water           = use_normalMapping && use_diffuseMapping && pStage->bundle[TB_DIFFUSEMAP].numTexMods;
+		                      tr.cubeProbes.currentElements > 0;   // && !tr.refdef.renderingCubemap;
+		use_water = use_normalMapping && use_diffuseMapping && pStage->bundle[TB_DIFFUSEMAP].numTexMods;
 
 		// if renderingCubemap is true, we are now rendering a cubemap.
 		// But if the needed cubemaps are not yet ready for usage (if they need to get rendered first),
@@ -2157,14 +2166,14 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_liquidShader,
-								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_DEFORM_VERTEXES, use_deforms,
-								USE_DIFFUSE, use_diffuseMapping,
-								USE_NORMAL_MAPPING, use_normalMapping,
-								USE_PARALLAX_MAPPING, use_parallaxMapping,
-								USE_REFLECTIONS, use_reflections,
-								USE_WATER, use_water,
-								USE_LIGHT_MAPPING, use_lightMapping);
+	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+	                          USE_DEFORM_VERTEXES, use_deforms,
+	                          USE_DIFFUSE, use_diffuseMapping,
+	                          USE_NORMAL_MAPPING, use_normalMapping,
+	                          USE_PARALLAX_MAPPING, use_parallaxMapping,
+	                          USE_REFLECTIONS, use_reflections,
+	                          USE_WATER, use_water,
+	                          USE_LIGHT_MAPPING, use_lightMapping);
 
 	// vertex attributes
 	attributebits = ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_COLOR;
@@ -2172,7 +2181,8 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 	{
 		attributebits |= (ATTR_TANGENT | ATTR_BINORMAL);
 	}
-	if (use_lightMapping) {
+	if (use_lightMapping)
+	{
 		attributebits |= ATTR_LIGHTCOORD;
 	}
 	GLSL_VertexAttribsState(attributebits);
@@ -2190,7 +2200,8 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 	SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, (r_showLightMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 	//SetUniformBoolean(UNIFORM_B_SHOW_DELUXEMAP, (r_showDeluxeMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 
-	if (use_lightMapping) {
+	if (use_lightMapping)
+	{
 		// bind lightMap
 		SelectTexture(TEX_LIGHTMAP);
 		BindLightMap();
@@ -2251,7 +2262,7 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 	if (use_normalMapping)
 	{
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-			// light
+		// light
 		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
 		SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight);
 
@@ -2311,14 +2322,15 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
  */
 static void Render_fog_brushes()
 {
-	fog_t  *fog;
-	float  eyeT;
-	vec3_t local;
-	vec4_t fogDistanceVector, fogDepthVector;
+	fog_t    *fog;
+	float    eyeT;
+	vec3_t   local;
+	vec4_t   fogDistanceVector, fogDepthVector;
 	qboolean use_vertex_skinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
 	qboolean use_vertex_animation = glState.vertexAttribsInterpolation > 0;
 
-	if (tr.refdef.renderingCubemap) {
+	if (tr.refdef.renderingCubemap)
+	{
 		return;
 	}
 
@@ -3044,7 +3056,7 @@ static void RB_SetStencil(GLenum side, stencil_t *stencil)
  */
 void Tess_StageIteratorGeneric()
 {
-	int stage;
+	int      stage;
 	qboolean has_lightmap;
 
 	Ren_LogComment("--- Tess_StageIteratorGeneric( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
@@ -3121,28 +3133,28 @@ void Tess_StageIteratorGeneric()
 		case ST_BUNDLE_DB:    // diffuse + bump
 		case ST_BUNDLE_DBS:   // diffuse + bump + specular
 		case ST_BUNDLE_DBSR:  // diffuse + bump + specular + reflectionmap
+		{
+			// check if we render the world or an entity
+			qboolean isWorld = (backEnd.currentEntity == &tr.worldEntity);
+			if (!isWorld)
 			{
-				// check if we render the world or an entity
-				qboolean isWorld = (backEnd.currentEntity == &tr.worldEntity);
-				if (!isWorld)
-				{
-					// treat brushmodels as world
-					model_t *pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
-					isWorld = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp);
-				}
-				if (isWorld)
-				{
-					// if there is no ST_LIGHTMAP stage, but a lightmapNum is given: render as lightmapped.
-					// if an ST_LIGHTMAP stage does exist in this shader, then now render this diffuse stage vertex lit (in the ST_LIGHTMAP stage).
-					qboolean renderLightmap = (!tess.surfaceShader->has_lightmapStage) && has_lightmap;
-					Render_world(stage, renderLightmap, qfalse); // render lightmapped world
-				}
-				else // this is an entity
-				{
-					Render_entity(stage);
-				}
+				// treat brushmodels as world
+				model_t *pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
+				isWorld = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp);
 			}
-			break;
+			if (isWorld)
+			{
+				// if there is no ST_LIGHTMAP stage, but a lightmapNum is given: render as lightmapped.
+				// if an ST_LIGHTMAP stage does exist in this shader, then now render this diffuse stage vertex lit (in the ST_LIGHTMAP stage).
+				qboolean renderLightmap = (!tess.surfaceShader->has_lightmapStage) && has_lightmap;
+				Render_world(stage, renderLightmap, qfalse);     // render lightmapped world
+			}
+			else     // this is an entity
+			{
+				Render_entity(stage);
+			}
+		}
+		break;
 		case ST_LIGHTMAP:
 			if (has_lightmap)
 			{ // in Oasis this is the terrain lightmap
@@ -3162,12 +3174,12 @@ void Tess_StageIteratorGeneric()
 		case ST_LIQUIDMAP:  // liquid
 		case ST_BUNDLE_WB:  // liquid/water + bump
 		case ST_BUNDLE_WDB: // liquid/water + diffuse + bump
-			{
-				// if there is a lightmap for this surface, but no ST_LIGHTMAP stage, render with the lightmap
-				qboolean renderLightmap = (!tess.surfaceShader->has_lightmapStage) && has_lightmap;
-				Render_liquid(stage, renderLightmap);
-			}
-			break;
+		{
+			// if there is a lightmap for this surface, but no ST_LIGHTMAP stage, render with the lightmap
+			qboolean renderLightmap = (!tess.surfaceShader->has_lightmapStage) && has_lightmap;
+			Render_liquid(stage, renderLightmap);
+		}
+		break;
 		case ST_SKYBOXMAP:
 			Render_skybox(stage);
 			break;
@@ -3354,7 +3366,10 @@ void Tess_StageIteratorShadowFill()
 				Render_shadowFill(stage);
 			}
 			break;*/
-			if (tess.surfaceShader->sort > SS_OPAQUE) continue;//for      break;//switch
+			if (tess.surfaceShader->sort > SS_OPAQUE)
+			{
+				continue;                                      //for      break;//switch
+			}
 			// else drop down the next following case statements, and execute that code block..
 			// That's how switch/case/break work.. if the break is absent.
 		}
@@ -3363,16 +3378,16 @@ void Tess_StageIteratorShadowFill()
 		//case ST_BUNDLE_DB:
 		//case ST_BUNDLE_DBS:
 		case ST_BUNDLE_DBSR:
-		//case ST_BUNDLE_CB:
-		//case ST_BUNDLE_WDB: // liquid stages have no texture rendered,
-		//case ST_BUNDLE_WB:  // so if you try to add a shadow to it, (by including this 'case'),
-		//case ST_BUNDLE_WD:  // you don't see it, because this surface is "marked done", and rest stages skipped.
+			//case ST_BUNDLE_CB:
+			//case ST_BUNDLE_WDB: // liquid stages have no texture rendered,
+			//case ST_BUNDLE_WB:  // so if you try to add a shadow to it, (by including this 'case'),
+			//case ST_BUNDLE_WD:  // you don't see it, because this surface is "marked done", and rest stages skipped.
 		{
 			Tess_ComputeTexMatrices(pStage);
 			Render_shadowFill(stage);
-		// if we rendered one shadow plane for this surface, we stop further processing.
-		// We do not want >1 times this effect.
-goto done;
+			// if we rendered one shadow plane for this surface, we stop further processing.
+			// We do not want >1 times this effect.
+			goto done;
 			break;
 		}
 
@@ -3547,7 +3562,7 @@ void Tess_StageIteratorLighting()
 				{
 					Render_forwardLighting_DBS_proj(diffuseStage, attenuationXYStage, attenuationZStage, light);
 				}
-goto done;
+				goto done;
 			}
 		}
 	}
@@ -3596,7 +3611,7 @@ void Tess_End()
 		tess.stageIteratorFunc();
 
 		if ((tess.stageIteratorFunc != Tess_StageIteratorShadowFill) &&
-			(tess.stageIteratorFunc != Tess_StageIteratorDebug))
+		    (tess.stageIteratorFunc != Tess_StageIteratorDebug))
 		{
 			// draw debugging stuff
 			if (r_showTris->integer || r_showBatches->integer || (r_showLightBatches->integer && (tess.stageIteratorFunc == Tess_StageIteratorLighting)))

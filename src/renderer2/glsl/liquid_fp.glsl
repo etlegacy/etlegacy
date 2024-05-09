@@ -19,65 +19,66 @@ uniform float     u_NormalScale;
 //
 uniform sampler2D u_CurrentMap;
 #if defined(USE_LIGHT_MAPPING)
-	uniform sampler2D u_LightMap;
+uniform sampler2D u_LightMap;
 #endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
-	uniform sampler2D u_DiffuseMap;
+uniform sampler2D u_DiffuseMap;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
-	uniform sampler2D u_NormalMap;
-	uniform vec3      u_LightColor;
-	// fresnel
-	uniform float     u_FresnelBias;
-	uniform float     u_FresnelPower;
-	uniform float     u_FresnelScale;
-	// refraction
-	uniform float     u_RefractionIndex;
-	// reflection
+uniform sampler2D u_NormalMap;
+uniform vec3      u_LightColor;
+// fresnel
+uniform float u_FresnelBias;
+uniform float u_FresnelPower;
+uniform float u_FresnelScale;
+// refraction
+uniform float u_RefractionIndex;
+// reflection
 	#if defined(USE_REFLECTIONS)
-		uniform float       u_ReflectionScale;
-		uniform samplerCube u_EnvironmentMap0;
-		uniform samplerCube u_EnvironmentMap1;
-		uniform float       u_EnvironmentInterpolation;
+uniform float       u_ReflectionScale;
+uniform samplerCube u_EnvironmentMap0;
+uniform samplerCube u_EnvironmentMap1;
+uniform float       u_EnvironmentInterpolation;
 	#endif // USE_REFLECTIONS
-	// specular
-	uniform float u_SpecularScale;
-	uniform float u_SpecularExponent;
+// specular
+uniform float u_SpecularScale;
+uniform float u_SpecularExponent;
 	#if defined(USE_PARALLAX_MAPPING)
-		uniform float u_DepthScale;
+uniform float u_DepthScale;
 	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 
 varying vec3 var_Position;
 varying vec3 var_Normal;
 #if defined(USE_LIGHT_MAPPING)
-	varying vec2 var_TexLight;
-	varying vec4 var_LightmapColor;
+varying vec2 var_TexLight;
+varying vec4 var_LightmapColor;
 #endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
-	varying vec2 var_TexDiffuse;
-	varying float var_alphaGen;
+varying vec2  var_TexDiffuse;
+varying float var_alphaGen;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
-	varying mat3 var_tangentMatrix;
-	varying mat3 var_worldMatrix;
-	varying vec2 var_TexNormal;
-	varying vec3 var_LightDirT;         // light direction in tangentspace
-	varying vec3 var_ViewDirT;          // view direction in tangentspace
+varying mat3 var_tangentMatrix;
+varying mat3 var_worldMatrix;
+varying vec2 var_TexNormal;
+varying vec3 var_LightDirT;             // light direction in tangentspace
+varying vec3 var_ViewDirT;              // view direction in tangentspace
 	#if defined(USE_PARALLAX_MAPPING)
-		varying float var_distanceToCam;    //
-		uniform float u_ParallaxShadow;
+varying float var_distanceToCam;            //
+uniform float u_ParallaxShadow;
 	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-	varying float var_BackSide; // in front, or behind, the portalplane
+varying float var_BackSide;     // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
 void main()
 {
 #if defined(USE_PORTAL_CLIPPING)
-	if (var_BackSide < 0.0)	{
+	if (var_BackSide < 0.0)
+	{
 		discard;
 		return;
 	}
@@ -152,7 +153,7 @@ void main()
 	vec3 reflectColor;
 	// compute fresnel term
 	// ratio reflection/refraction.  Value 1.0 = only refraction, no reflection.   0.0 = only reflection, no refraction.
-	float dotNV = dot(N, V);
+	float dotNV    = dot(N, V);
 	float dotAbsNV = abs(dotNV);
 #if 1
 	float fresnel = clamp(u_FresnelBias + pow(dotAbsNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
@@ -161,10 +162,13 @@ void main()
 #else
 	float fresnel = clamp(u_FresnelBias + pow(1.0 + dotNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
 	// test surface reflections above/under water are different
-	if (dotNV >= 0) {
+	if (dotNV >= 0)
+	{
 		// Above surface: use the cubeProbes
 		reflectColor = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
-	} else {
+	}
+	else
+	{
 		// Below surface: use the currentmap
 		vec3 R = reflect(V, N); // the reflection vector
 		reflectColor = texture2D(u_CurrentMap, R.st).rgb; // it a test..
@@ -210,7 +214,7 @@ void main()
 		// reconstruct vertex position in world space
 		float depth = texture2D(u_DepthMap, texScreen).r;
 		// scale to NDC (Normalized Device Coordinates) space
-		vec4  P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
+		vec4 P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
 		// unproject to get into viewspace
 		P = u_UnprojectMatrix * P;
 		// normalize to homogeneous coordinates (where w is always 1)

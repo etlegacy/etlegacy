@@ -1068,8 +1068,8 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 	{
 		Com_Error(ERR_FATAL, "COM_ParseExt3: NULL data_p");
 	}
-	data = *data_p;
-	len = 0;
+	data                    = *data_p;
+	len                     = 0;
 	com_parser.com_token[0] = 0;
 	// make sure incoming data is valid
 	if (!data)
@@ -1086,33 +1086,42 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 	// We use SSE to handle the bulk of the string, up to a 16 byte boundry,
 	// and do the remaining <16 chars in a seperate loop.
 	// We must never access memory beyond the allocated string space..
-	int loops16 = *length >> 4;
-	int rest16 = *length & 0xF; // % 16;
-	int maskspaces, maskn, count;
+	int     loops16 = *length >> 4;
+	int     rest16  = *length & 0xF; // % 16;
+	int     maskspaces, maskn, count;
 	__m128i spaces, nl, data16, xmm3, xmm4, xmm5, xmm6, xmm7;
-	spaces = _mm_set1_epi8(' '+1); // (0x21); // compare less than 0x21   ==   compare <= ' '
-	nl = _mm_set1_epi8('\n');
+	spaces = _mm_set1_epi8(' ' + 1); // (0x21); // compare less than 0x21   ==   compare <= ' '
+	nl     = _mm_set1_epi8('\n');
 	for (; loops16 > 0; loops16--, data += 16, *length -= 16)
 	{
 		// read 16 bytes of data at once
 		data16 = _mm_loadu_si128((const __m128i *)data);
 		// test <= ' '
 		maskspaces = _mm_movemask_epi8(_mm_cmplt_epi8(data16, spaces));
-		if (maskspaces == 0) break; // no whitespace => also no new-lines
+		if (maskspaces == 0)
+		{
+			break;                  // no whitespace => also no new-lines
+		}
 		// test \n
 		maskn = _mm_movemask_epi8(_mm_cmpeq_epi8(data16, nl));
-		if (maskn == 0) {
+		if (maskn == 0)
+		{
 			// no new-lines
-			if (maskspaces == 0xFFFF) continue; // only whitespace
+			if (maskspaces == 0xFFFF)
+			{
+				continue;                       // only whitespace
+			}
 			// some whitespace found..
-			while (maskspaces & 1) {
+			while (maskspaces & 1)
+			{
 				data++;
 				*length--;
 				maskspaces >>= 1;
 			}
 			break; // done.. 'data' points to the first non-whitespace char
 		}
-		else {
+		else
+		{
 			// new-line(s) found
 			count = 0;
 			while (maskspaces & 1)
@@ -1128,10 +1137,13 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 				*length--;
 				// shift the masks a bit
 				maskspaces >>= 1;
-				maskn >>= 1;
+				maskn      >>= 1;
 				count++;
 			}
-			if (count == 16) continue; // check next 16 chars, if all are whitespace
+			if (count == 16)
+			{
+				continue;              // check next 16 chars, if all are whitespace
+			}
 			break; // done.. there was a non-whitespace in these 16 chars
 		}
 	}
@@ -1150,7 +1162,10 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 				data++;
 				*length--;
 			}
-			else break; // done
+			else
+			{
+				break;  // done
+			}
 		}
 	}
 	// data must be set to NULL, if only whitespace was found, and the string ends..
@@ -1203,7 +1218,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 	if (c == '\"')
 	{
 		data++;
-		while (1)	
+		while (1)
 		{
 			c = *data++;
 			if ((c == '\\') && (*data == '\"'))
@@ -1214,7 +1229,7 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 			else if (c == '\"' || !c)
 			{
 				com_parser.com_token[len] = 0;
-				*data_p = (char *)data;
+				*data_p                   = (char *)data;
 				return com_parser.com_token;
 			}
 			else if (*data == '\n')
@@ -1231,9 +1246,9 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 	// check for a number
 	// is this parsing of negative numbers going to cause expression problems
 	if ((c >= '0' && c <= '9') ||
-		(c == '-' && data[1] >= '0' && data[1] <= '9') ||
-		(c == '.' && data[1] >= '0' && data[1] <= '9') ||
-		(c == '-' && data[1] == '.' && data[2] >= '0' && data[2] <= '9'))
+	    (c == '-' && data[1] >= '0' && data[1] <= '9') ||
+	    (c == '.' && data[1] >= '0' && data[1] <= '9') ||
+	    (c == '-' && data[1] == '.' && data[2] >= '0' && data[2] <= '9'))
 	{
 		do
 		{
@@ -1244,7 +1259,8 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 			}
 			data++;
 			c = *data;
-		} while ((c >= '0' && c <= '9') || c == '.');
+		}
+		while ((c >= '0' && c <= '9') || c == '.');
 		// parse the exponent
 		if (c == 'e' || c == 'E')
 		{
@@ -1274,25 +1290,26 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 				}
 				data++;
 				c = *data;
-			} while (c >= '0' && c <= '9');
+			}
+			while (c >= '0' && c <= '9');
 		}
 		if (len == MAX_TOKEN_CHARS)
 		{
 			len = 0;
 		}
 		com_parser.com_token[len] = 0;
-		*data_p = (char *)data;
+		*data_p                   = (char *)data;
 		return com_parser.com_token;
 	}
 	// check for a regular word
 	// we still allow forward and back slashes in name tokens for pathnames
 	// and also colons for drive letters
 	if ((c >= 'a' && c <= 'z') ||
-		(c >= 'A' && c <= 'Z') ||
-		(c == '_') ||
-		(c == '/') ||
-		(c == '\\') ||
-		(c == '$') || (c == '*')) // for bad shader strings
+	    (c >= 'A' && c <= 'Z') ||
+	    (c == '_') ||
+	    (c == '/') ||
+	    (c == '\\') ||
+	    (c == '$') || (c == '*')) // for bad shader strings
 	{
 		do
 		{
@@ -1303,25 +1320,26 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 			}
 			data++;
 			c = *data;
-		} while
-			((c >= 'a' && c <= 'z') ||
-			(c >= 'A' && c <= 'Z') ||
-				(c == '_') ||
-				(c == '-') ||
-				(c >= '0' && c <= '9') ||
-				(c == '/') ||
-				(c == '\\') ||
-				(c == ':') ||
-				(c == '.') ||
-				(c == '$') ||
-				(c == '*') ||
-				(c == '@'));
+		}
+		while
+		((c >= 'a' && c <= 'z') ||
+		 (c >= 'A' && c <= 'Z') ||
+		 (c == '_') ||
+		 (c == '-') ||
+		 (c >= '0' && c <= '9') ||
+		 (c == '/') ||
+		 (c == '\\') ||
+		 (c == ':') ||
+		 (c == '.') ||
+		 (c == '$') ||
+		 (c == '*') ||
+		 (c == '@'));
 		if (len == MAX_TOKEN_CHARS)
 		{
 			len = 0;
 		}
 		com_parser.com_token[len] = 0;
-		*data_p = (char *)data;
+		*data_p                   = (char *)data;
 		return com_parser.com_token;
 	}
 	// check for multi-character punctuation token
@@ -1341,8 +1359,8 @@ char *COM_ParseExt3(char **data_p, int *length, qboolean allowLineBreaks)
 			// a valid multi-character punctuation
 			Com_Memcpy(com_parser.com_token, *punc, l);
 			com_parser.com_token[l] = 0;
-			data += l;
-			*data_p = (char *)data;
+			data                   += l;
+			*data_p                 = (char *)data;
 			return com_parser.com_token;
 		}
 	}
@@ -1452,39 +1470,51 @@ void SkipRestOfLine(char **data)
 
 	*data = p;
 #else
-	int mask1, mask2, bit1, bit2;
-	char *str = *data;
+	int     mask1, mask2, bit1, bit2;
+	char    *str = *data;
 	__m128i xmm0, xmm1, xmm2, xmm3, xmm5;
 	xmm0 = _mm_setzero_si128();
 	xmm5 = _mm_set1_epi8('\n');
 nextchunk:
-	xmm1 = _mm_lddqu_si128((const __m128i*)str);
-	xmm2 = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
-	xmm3 = _mm_cmpeq_epi8(xmm1, xmm5); // find the '\n'
+	xmm1  = _mm_lddqu_si128((const __m128i *)str);
+	xmm2  = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
+	xmm3  = _mm_cmpeq_epi8(xmm1, xmm5); // find the '\n'
 	mask1 = _mm_movemask_epi8(xmm2);
 	mask2 = _mm_movemask_epi8(xmm3);
-	if (!mask1) {
-		if (!mask2) {
+	if (!mask1)
+	{
+		if (!mask2)
+		{
 			// no 0, no '\n'
 			str += 16;
 			goto nextchunk;
-		} else {
+		}
+		else
+		{
 			// no 0, '\n' found
 			_BitScanForward(&bit2, mask2);
 			com_parser.com_lines++;
 			*data = str + bit2 + 1; // point to one char after the \n
 		}
-	} else {
+	}
+	else
+	{
 		_BitScanForward(&bit1, mask1);
-		if (!mask2) {
+		if (!mask2)
+		{
 			// 0 found, no '\n'
 			*data = str + bit1; // point to the 0
-		} else {
+		}
+		else
+		{
 			// 0 found, '\n' found
 			_BitScanForward(&bit2, mask2);
-			if (bit1 < bit2) {
+			if (bit1 < bit2)
+			{
 				*data = str + bit1; // point to the 0
-			} else {
+			}
+			else
+			{
 				*data = str + bit2 + 1; // point to one char after the \n
 				com_parser.com_lines++;
 			}
@@ -2037,7 +2067,8 @@ int Q_strncmp(const char *s1, const char *s2, size_t n)
 		{
 			return c1 < c2 ? -1 : 1;
 		}
-	} while (c1);
+	}
+	while (c1);
 
 	return 0;       // strings are equal
 }
@@ -2059,7 +2090,7 @@ int Q_stricmp(const char *s1, const char *s2)
 	{
 		return -1;
 	}
-	
+
 	// Some info about how to check if a string is passing the boundries of a memory page:
 	// page base address = s1 & 0xFFFFF000
 	// page length = 4096 bytes = 0x1000 bytes
@@ -2070,18 +2101,18 @@ int Q_stricmp(const char *s1, const char *s2)
 	//uint32_t valid = pageEnd - (uint32_t)s1; // total # bytes valid to read in this page
 	//uint32_t valid16 = valid >> 4; // # chunks of 16 bytes valid to read in this page
 
-	int mask1, mask2, mask, bit1, bit2, bit;
-	char *str1 = s1, *str2 = s2;
+	int     mask1, mask2, mask, bit1, bit2, bit;
+	char    *str1 = s1, *str2 = s2;
 	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 	xmm0 = _mm_setzero_si128();
 	xmm5 = _mm_set1_epi8(0x20);
 nextchunk:
-	xmm1 = _mm_lddqu_si128((const __m128i*)str1);
-	xmm2 = _mm_lddqu_si128((const __m128i*)str2);
-	xmm3 = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
-	xmm4 = _mm_cmpeq_epi8(xmm2, xmm0); // "
-	xmm1 = _mm_or_si128(xmm1, xmm5); // to lowercase (if these 2 lines are left out, this func is case-sensitive strcmp)
-	xmm2 = _mm_or_si128(xmm2, xmm5); // "
+	xmm1  = _mm_lddqu_si128((const __m128i *)str1);
+	xmm2  = _mm_lddqu_si128((const __m128i *)str2);
+	xmm3  = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
+	xmm4  = _mm_cmpeq_epi8(xmm2, xmm0); // "
+	xmm1  = _mm_or_si128(xmm1, xmm5); // to lowercase (if these 2 lines are left out, this func is case-sensitive strcmp)
+	xmm2  = _mm_or_si128(xmm2, xmm5); // "
 	mask1 = _mm_movemask_epi8(xmm3);
 	mask2 = _mm_movemask_epi8(xmm4);
 	if (mask1 != 0 || mask2 != 0)
@@ -2090,7 +2121,8 @@ nextchunk:
 	}
 	xmm3 = _mm_cmpeq_epi8(xmm1, xmm2);
 	mask = _mm_movemask_epi8(xmm3);
-	if (mask == 0x0000FFFF) {
+	if (mask == 0x0000FFFF)
+	{
 		str1 += 16;
 		str2 += 16;
 		goto nextchunk; // no difference
@@ -2108,12 +2140,18 @@ lastchunk:
 	_BitScanForward(&bit, ~mask); // s1[bit] != s2[bit]
 	if (bit > bit1)
 	{
-		if (bit > bit2) return 0;
+		if (bit > bit2)
+		{
+			return 0;
+		}
 		return -1;
 	}
-	else 
+	else
 	{ // bit <= bit1
-		if (bit > bit2) return 1;
+		if (bit > bit2)
+		{
+			return 1;
+		}
 		// bit <= bit2
 	}
 	str1 += bit;

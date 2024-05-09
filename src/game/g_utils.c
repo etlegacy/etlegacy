@@ -98,9 +98,9 @@ void G_ResetRemappedShaders(void)
 	// we don't actually have to do this but it's clean ...
 	for (i = 0; i < MAX_SHADER_REMAPS; i++)
 	{
-		remappedShaders[i].newShader[0]  = '\0';
-		remappedShaders[i].oldShader[0]  = '\0';
-		remappedShaders[i].timeOffset = 0;
+		remappedShaders[i].newShader[0] = '\0';
+		remappedShaders[i].oldShader[0] = '\0';
+		remappedShaders[i].timeOffset   = 0;
 	}
 }
 

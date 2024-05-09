@@ -15,7 +15,7 @@
 #define luaL_Reg luaL_reg
 
 #define lua_pushinteger(L, n) \
-	lua_pushnumber(L, (lua_Number)n)
+		lua_pushnumber(L, (lua_Number)n)
 #endif
 
 #define LUASQL_PREFIX "LuaSQL: "

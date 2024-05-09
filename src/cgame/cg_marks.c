@@ -109,7 +109,7 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 	vec4_t color;
 	int    fadeTime;
 	vec3_t points[4];
-	float f1, f2, po_f1, pof1;
+	float  f1, f2, po_f1, pof1;
 
 	Com_Memset(axis, 0, sizeof(vec3_t) * 3);
 
@@ -137,10 +137,10 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 	for (i = 0; i < 3; i++)
 	{
 		// new
-		f1 = radius * axis[1][i];
-		f2 = radius * axis[2][i];
-		pof1 = pushedOrigin[i] + f1;
-		po_f1 = pushedOrigin[i] - f1;
+		f1           = radius * axis[1][i];
+		f2           = radius * axis[2][i];
+		pof1         = pushedOrigin[i] + f1;
+		po_f1        = pushedOrigin[i] - f1;
 		points[0][i] = po_f1 - f2;
 		points[1][i] = po_f1 + f2;
 		points[2][i] = pof1 + f2;

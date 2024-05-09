@@ -367,9 +367,9 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 				vector signed int    merge0, merge1;
 				vector signed int    d0, d1, d2, d3;
 				vector unsigned char samplePermute0 =
-				    VECCONST_UINT8(0, 1, 4, 5, 0, 1, 4, 5, 2, 3, 6, 7, 2, 3, 6, 7);
+					VECCONST_UINT8(0, 1, 4, 5, 0, 1, 4, 5, 2, 3, 6, 7, 2, 3, 6, 7);
 				vector unsigned char samplePermute1 =
-				    VECCONST_UINT8(8, 9, 12, 13, 8, 9, 12, 13, 10, 11, 14, 15, 10, 11, 14, 15);
+					VECCONST_UINT8(8, 9, 12, 13, 8, 9, 12, 13, 10, 11, 14, 15, 10, 11, 14, 15);
 				vector unsigned char loadPermute0, loadPermute1;
 
 				// Rather than permute the vectors after we load them to do the sample

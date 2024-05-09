@@ -105,7 +105,7 @@ void Cui_WideRect(rectDef_t *rect)
  */
 float Cui_WideX(float x)
 {
-	return (DC->glconfig.windowAspect <= RATIO43) ? x : x *(DC->glconfig.windowAspect * RPRATIO43);  // aspectratio / (4/3)
+	return (DC->glconfig.windowAspect <= RATIO43) ? x : x * (DC->glconfig.windowAspect * RPRATIO43);  // aspectratio / (4/3)
 }
 
 /**
@@ -236,8 +236,8 @@ const char *String_Alloc(const char *p)
 	if (len + strPoolIndex + 1 < STRING_POOL_SIZE)
 	{
 		int ph = strPoolIndex;
-        
-        Q_strncpyz(&strPool[strPoolIndex], p, sizeof(strPool) - (strPoolIndex));
+
+		Q_strncpyz(&strPool[strPoolIndex], p, sizeof(strPool) - (strPoolIndex));
 		strPoolIndex += len + 1;
 
 		str  = strHandle[hash];
@@ -1493,31 +1493,31 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 				return qtrue;
 			}
 
-            // numeric value only
+			// numeric value only
 			if (button->data[1])
 			{
-                // ensure the key is in range of numeric value (digit)
+				// ensure the key is in range of numeric value (digit)
 				if (key < '0' || key > '9')
 				{
-                    // try to put a decimal separator
-                    if (key == '.')
-                    {
-                        // decimal separator already exist, don't add twice
-                        if (strchr(s, '.'))
-                        {
-                            return qtrue;
-                        }
-                    }
-                    // don't allow negative value
-                    else if (button->data[1] == 2)
-                    {
-                        return qtrue;
-                    }
-                    // are we trying to put a negative value
-                    else if (!(len == 0 && key == '-'))
-                    {
-                        return qtrue;
-                    }
+					// try to put a decimal separator
+					if (key == '.')
+					{
+						// decimal separator already exist, don't add twice
+						if (strchr(s, '.'))
+						{
+							return qtrue;
+						}
+					}
+					// don't allow negative value
+					else if (button->data[1] == 2)
+					{
+						return qtrue;
+					}
+					// are we trying to put a negative value
+					else if (!(len == 0 && key == '-'))
+					{
+						return qtrue;
+					}
 				}
 			}
 

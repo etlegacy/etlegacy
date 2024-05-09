@@ -243,7 +243,7 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 			VectorNormalizeOnly(up);
 
 			f->timeStart = t;
-			f->timeEnd = (int)(cg.time + FLAME_LIFETIME * rcp(0.5f * speedScale + 0.5f));
+			f->timeEnd   = (int)(cg.time + FLAME_LIFETIME * rcp(0.5f * speedScale + 0.5f));
 			f->size      = FLAME_START_SIZE * speedScale;
 			f->sizeMax   = speedScale * (FLAME_START_MAX_SIZE + f->sizeRand * (firing ? 1.0f : 0.0f));
 			f->sizeRand  = 0;
@@ -714,7 +714,7 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	int           frameNum;
 	vec3_t        vec;
 	unsigned char alphaChar;
-	unsigned int alphaChars;
+	unsigned int  alphaChars;
 	vec2_t        rST;
 	polyBuffer_t  *pPolyBuffer;
 
@@ -735,7 +735,7 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	}
 
 	rST[0]    = radius; // why do? *1.0f;
-		rST[1] = radius * 0.6752194463200540175557056043214f; // *1.0f / 1.481f;
+	rST[1]    = radius * 0.6752194463200540175557056043214f;  // *1.0f / 1.481f;
 	alphaChar = (unsigned char)(255.0f * alpha);
 
 	frameNum = (int)floor((double)(lifeFrac * NUM_FLAME_SPRITES));
@@ -750,11 +750,11 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 
 	pPolyBuffer = CG_PB_FindFreePolyBuffer(flameShaders[frameNum], 4, 6);
 
-	alphaChars = (alphaChar << 24) | (alphaChar << 16) | (alphaChar << 8) | alphaChar;
+	alphaChars                                                  = (alphaChar << 24) | (alphaChar << 16) | (alphaChar << 8) | alphaChar;
 	*(unsigned int *)&pPolyBuffer->color[pPolyBuffer->numVerts] = alphaChars;
-	pPolyBuffer->color[pPolyBuffer->numVerts + 1][0] = alphaChar;
-	pPolyBuffer->color[pPolyBuffer->numVerts + 2][0] = alphaChar;
-	pPolyBuffer->color[pPolyBuffer->numVerts + 3][0] = alphaChar;
+	pPolyBuffer->color[pPolyBuffer->numVerts + 1][0]            = alphaChar;
+	pPolyBuffer->color[pPolyBuffer->numVerts + 2][0]            = alphaChar;
+	pPolyBuffer->color[pPolyBuffer->numVerts + 3][0]            = alphaChar;
 
 	// find the projected distance from the eye to the projection of the flame origin
 	// onto the view direction vector

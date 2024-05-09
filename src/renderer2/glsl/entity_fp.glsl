@@ -11,45 +11,45 @@ uniform vec3      u_LightColor;
 uniform float     u_LightWrapAround;
 uniform vec3      u_AmbientColor;
 #if defined(USE_NORMAL_MAPPING)
-	uniform float     u_DiffuseLighting;
-	uniform sampler2D u_NormalMap;
+uniform float     u_DiffuseLighting;
+uniform sampler2D u_NormalMap;
 	#if defined(USE_SPECULAR)
-		uniform sampler2D u_SpecularMap;
-		uniform float     u_SpecularScale;
-		uniform float     u_SpecularExponent;
+uniform sampler2D u_SpecularMap;
+uniform float     u_SpecularScale;
+uniform float     u_SpecularExponent;
 	#endif // USE_SPECULAR
 	#if defined(USE_REFLECTIONS)
-		uniform samplerCube u_EnvironmentMap0;
-		uniform samplerCube u_EnvironmentMap1;
-		uniform float       u_EnvironmentInterpolation;
-		uniform float       u_ReflectionScale;
+uniform samplerCube u_EnvironmentMap0;
+uniform samplerCube u_EnvironmentMap1;
+uniform float       u_EnvironmentInterpolation;
+uniform float       u_ReflectionScale;
 		#if defined(USE_REFLECTIONMAP)
-			uniform sampler2D u_ReflectionMap;
+uniform sampler2D u_ReflectionMap;
 		#endif // USE_REFLECTIONMAP
 	#endif // USE_REFLECTIONS
 	#if defined(USE_PARALLAX_MAPPING)
-		uniform float u_DepthScale;
-		uniform float u_ParallaxShadow;
+uniform float u_DepthScale;
+uniform float u_ParallaxShadow;
 	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_ALPHA_TESTING)
-	uniform int u_AlphaTest;
+uniform int u_AlphaTest;
 #endif // USE_ALPHA_TESTING
 
 varying vec3 var_Position;
 varying vec2 var_TexDiffuse;
 #if defined(USE_NORMAL_MAPPING)
-	varying mat3 var_tangentMatrix;
-	varying mat3 var_worldMatrix;
-	varying vec2 var_TexNormal;
-	varying vec3 var_LightDirT;             // light direction in tangentspace
-	varying vec3 var_ViewDirT;              // view direction in tangentspace
+varying mat3 var_tangentMatrix;
+varying mat3 var_worldMatrix;
+varying vec2 var_TexNormal;
+varying vec3 var_LightDirT;                 // light direction in tangentspace
+varying vec3 var_ViewDirT;                  // view direction in tangentspace
 	#if defined(USE_PARALLAX_MAPPING)
-		varying float var_distanceToCam;    //
+varying float var_distanceToCam;            //
 	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-	varying float var_BackSide; // in front, or behind, the portalplane
+varying float var_BackSide;     // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
@@ -72,10 +72,10 @@ void main()
 	vec3 L = var_LightDirT;
 
 #if defined(USE_PARALLAX_MAPPING)
-	const vec3 lightmapColor = vec3(1.0, 1.0, 1.0);
-	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, V, L, u_DepthScale, var_distanceToCam, u_ParallaxShadow, lightmapColor);
-	vec2 texDiffuse = parallaxResult.xy;
-	float parallaxShadow = parallaxResult.z;
+	const vec3 lightmapColor  = vec3(1.0, 1.0, 1.0);
+	vec3       parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, V, L, u_DepthScale, var_distanceToCam, u_ParallaxShadow, lightmapColor);
+	vec2       texDiffuse     = parallaxResult.xy;
+	float      parallaxShadow = parallaxResult.z;
 #else
 	vec2 texDiffuse = var_TexDiffuse;
 #endif // USE_PARALLAX_MAPPING
@@ -111,7 +111,7 @@ void main()
 #if defined(USE_NORMAL_MAPPING)
 	// normal
 	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
-	vec3 N = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+	vec3 N    = normalize(Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
 	// compute the diffuse light term
 	diffuse.rgb *= computeDiffuseLighting(N, L, u_DiffuseLighting);
@@ -119,7 +119,7 @@ void main()
 
 	// add Rim Lighting to highlight the edges
 #if defined(r_rimLighting)
-	float rim = 1.0 - clamp(dot(N, V), 0, 1);
+	float rim      = 1.0 - clamp(dot(N, V), 0, 1);
 	vec3  emission = r_rimColor.rgb * pow(rim, r_rimExponent);
 #endif // end r_rimLighting
 
@@ -139,7 +139,7 @@ void main()
 
 
 
-    // compute final color
+	// compute final color
 	vec4 color = vec4(diffuse.rgb, 1.0);
 #if defined(USE_PARALLAX_MAPPING)
 	color.rgb *= parallaxShadow;
@@ -156,11 +156,11 @@ void main()
 
 #else // USE_NORMAL_MAPPING
 
-    vec4 color = vec4(diffuse.rgb, 1.0);
+	vec4 color = vec4(diffuse.rgb, 1.0);
 
 #endif // end USE_NORMAL_MAPPING
 
-    //u_AmbientColor // i really think mapper's ambient values are too high..use this if you want "glowing" entities :P
-    color.rgb *= u_LightColor;
+	//u_AmbientColor // i really think mapper's ambient values are too high..use this if you want "glowing" entities :P
+	color.rgb   *= u_LightColor;
 	gl_FragColor = color;
 }

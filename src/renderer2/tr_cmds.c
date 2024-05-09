@@ -804,10 +804,10 @@ void RE_RenderCubeprobe(int cubeprobeIndex, qboolean commandOnly, byte **pixelda
 		return;
 	}
 
-	cmd->commandId = RC_RENDERCUBEPROBE;
-	cmd->commandOnly = commandOnly;
+	cmd->commandId      = RC_RENDERCUBEPROBE;
+	cmd->commandOnly    = commandOnly;
 	cmd->cubeprobeIndex = cubeprobeIndex;
-	cmd->pixeldata = pixeldataOut;
+	cmd->pixeldata      = pixeldataOut;
 }
 
 /**

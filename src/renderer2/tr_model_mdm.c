@@ -235,18 +235,18 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 		dataOfs += sizeof(vec4_t);
 	}
 
-	vboSurf->vbo                     = R_CreateVBO(va("staticMDMMesh_VBO %i", vboSurfaces->currentElements), data, dataSize, VBO_USAGE_STATIC);
-	vboSurf->vbo->ofsXYZ             = 0;
-	vboSurf->vbo->ofsTexCoords       = ofsTexCoords;
-	vboSurf->vbo->ofsLightCoords     = ofsTexCoords;
-	vboSurf->vbo->ofsTangents        = ofsTangents;
-	vboSurf->vbo->ofsBinormals       = ofsBinormals;
-	vboSurf->vbo->ofsNormals         = ofsNormals;
-	vboSurf->vbo->ofsColors          = ofsNormals;
+	vboSurf->vbo                 = R_CreateVBO(va("staticMDMMesh_VBO %i", vboSurfaces->currentElements), data, dataSize, VBO_USAGE_STATIC);
+	vboSurf->vbo->ofsXYZ         = 0;
+	vboSurf->vbo->ofsTexCoords   = ofsTexCoords;
+	vboSurf->vbo->ofsLightCoords = ofsTexCoords;
+	vboSurf->vbo->ofsTangents    = ofsTangents;
+	vboSurf->vbo->ofsBinormals   = ofsBinormals;
+	vboSurf->vbo->ofsNormals     = ofsNormals;
+	vboSurf->vbo->ofsColors      = ofsNormals;
 	//vboSurf->vbo->ofsLightCoords     = 0; // not required anyway
 	//vboSurf->vbo->ofsLightDirections = 0; // not required anyway
-	vboSurf->vbo->ofsBoneIndexes     = ofsBoneIndexes;
-	vboSurf->vbo->ofsBoneWeights     = ofsBoneWeights;
+	vboSurf->vbo->ofsBoneIndexes = ofsBoneIndexes;
+	vboSurf->vbo->ofsBoneWeights = ofsBoneWeights;
 
 	// calculate LOD IBOs
 	lod = 0;
@@ -776,8 +776,8 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 				R_CalcNormalForTriangle(faceNormal, dv[0]->position, dv[1]->position, dv[2]->position);
 
 				CalcTangentBinormal(dv[0]->position, dv[1]->position, dv[2]->position,
-					dv[0]->texCoords, dv[1]->texCoords, dv[2]->texCoords,
-					dv[0]->tangent, dv[0]->binormal, dv[1]->tangent, dv[1]->binormal, dv[2]->tangent, dv[2]->binormal);
+				                    dv[0]->texCoords, dv[1]->texCoords, dv[2]->texCoords,
+				                    dv[0]->tangent, dv[0]->binormal, dv[1]->tangent, dv[1]->binormal, dv[2]->tangent, dv[2]->binormal);
 /*
 				// calculate barycentric basis for the triangle
 				bb = (dv[1]->texCoords[0] - dv[0]->texCoords[0]) * (dv[2]->texCoords[1] - dv[0]->texCoords[1]) -

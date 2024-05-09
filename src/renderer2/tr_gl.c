@@ -57,9 +57,9 @@ void GL_Bind(image_t *image)
 
 	if (r_noBind->integer && tr.blackImage)
 	{
-	    // performance evaluation option
-	    texnum = tr.blackImage->texnum;
-	    image  = tr.blackImage;
+		// performance evaluation option
+		texnum = tr.blackImage->texnum;
+		image  = tr.blackImage;
 	}
 
 	if (glState.currenttextures[glState.currenttmu] != texnum)
@@ -112,9 +112,9 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	// exactly with waveforms of the same frequency
 	//index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	//index = (int64_t)(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
-	index = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
+	index   = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	index >>= FUNCTABLE_BITS;
-	index %= FUNCTABLE_SIZE;
+	index  %= FUNCTABLE_SIZE;
 
 	if (index < 0)
 	{

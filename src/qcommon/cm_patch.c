@@ -163,7 +163,7 @@ static int CM_SignbitsForNormal(vec3_t normal)
 static qboolean CM_PlaneFromPoints(vec4_t plane, vec3_t a, vec3_t b, vec3_t c)
 {
 	vec3_t d1, d2;
-	float n;
+	float  n;
 
 	VectorSubtract(b, a, d1);
 	VectorSubtract(c, a, d2);
@@ -1723,8 +1723,8 @@ void CM_TracePointThroughPatchCollide(traceWork_t *tw, const struct patchCollide
 			Dot(tw->offsets[planes->signbits], planes->plane, offset);
 			Dot(tw->start, planes->plane, d1);
 			Dot(tw->end, planes->plane, d2);
-			d1 = d1 - planes->plane[3] + offset;
-			d2 = d2 - planes->plane[3] + offset;
+			d1                 = d1 - planes->plane[3] + offset;
+			d2                 = d2 - planes->plane[3] + offset;
 			tw->trace.fraction = (d1 - SURFACE_CLIP_EPSILON) / (d1 - d2);
 
 			if (tw->trace.fraction < 0)

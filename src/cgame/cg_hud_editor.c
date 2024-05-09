@@ -2693,8 +2693,8 @@ void CG_DrawHudEditor(void)
 		{
 			break;
 		}
-        
-        if ((comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL) && BG_CursorInRect(&button->rect))
+
+		if ((comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL) && BG_CursorInRect(&button->rect))
 		{
 			CG_DrawHudEditor_ToolTip(button);
 			break;

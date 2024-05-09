@@ -600,7 +600,7 @@ static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 	float addspeed, accelspeed, currentspeed;
 
 	Dot(pm->ps->velocity, wishdir, currentspeed);
-	addspeed     = wishspeed - currentspeed;
+	addspeed = wishspeed - currentspeed;
 	if (addspeed <= 0)
 	{
 		return;
@@ -5342,7 +5342,7 @@ void PmoveSingle(pmove_t *pmove)
 					pm->ps->velocity[2] += result;
 				}
 			}
-			
+
 			VectorScale(pm->ps->velocity, 64.0f, pm->ps->velocity);
 			// snap some parts of playerstate to save network bandwidth
 			trap_SnapVector(pm->ps->velocity);

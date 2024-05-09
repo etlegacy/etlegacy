@@ -748,8 +748,8 @@ typedef struct IBO_s
  */
 typedef enum
 {
-	PBO_USAGE_WRITE = 0,		    ///< GL_PIXEL_UNPACK_BUFFER. From application to OpenGL. From CPU to GPU
-	PBO_USAGE_READ			        ///< GL_PIXEL_PACK_BUFFER.   From openGL to application. From GPU to CPU
+	PBO_USAGE_WRITE = 0,            ///< GL_PIXEL_UNPACK_BUFFER. From application to OpenGL. From CPU to GPU
+	PBO_USAGE_READ                  ///< GL_PIXEL_PACK_BUFFER.   From openGL to application. From GPU to CPU
 } pboUsage_t;
 
 /**
@@ -1262,7 +1262,7 @@ typedef enum
 
 	ST_REFLECTIONMAP,           ///< cubeMap based reflection + reflectionmap texture.  RGB is filled with shades of gray to set the amount of reflection
 	ST_CUBEREFLECTIONS,         ///< tcGen reflect     cubeMap based reflection
-	ST_TCGENENVMAP,			    ///< tcGen environment reflection
+	ST_TCGENENVMAP,             ///< tcGen environment reflection
 
 	ST_LIQUIDMAP,               ///< liquid/water
 
@@ -1295,17 +1295,17 @@ typedef enum
 {
 	COLLAPSE_none = 0,
 	COLLAPSE_genericMulti,
-	COLLAPSE_LD,				///< lightmap + diffuse
-	COLLAPSE_LDB,				///< lightmap + diffuse + bump
-	COLLAPSE_LDBS,				///< lightmap + diffuse + bump + specular
-	COLLAPSE_LDBSR,				///< lightmap + diffuse + bump + specular + reflectionmap
-	COLLAPSE_DB,				///< diffuse + bump
-	COLLAPSE_DBS,				///< diffuse + bump + specular
-	COLLAPSE_DBSR,				///< diffuse + bump + specular + reflectionmap
-	COLLAPSE_WDB,				///< water + diffuse + bump
-	COLLAPSE_WB,				///< water + bump
-	COLLAPSE_WD,				///< water + diffuse
-	COLLAPSE_CB					///< cubemap + bump
+	COLLAPSE_LD,                ///< lightmap + diffuse
+	COLLAPSE_LDB,               ///< lightmap + diffuse + bump
+	COLLAPSE_LDBS,              ///< lightmap + diffuse + bump + specular
+	COLLAPSE_LDBSR,             ///< lightmap + diffuse + bump + specular + reflectionmap
+	COLLAPSE_DB,                ///< diffuse + bump
+	COLLAPSE_DBS,               ///< diffuse + bump + specular
+	COLLAPSE_DBSR,              ///< diffuse + bump + specular + reflectionmap
+	COLLAPSE_WDB,               ///< water + diffuse + bump
+	COLLAPSE_WB,                ///< water + bump
+	COLLAPSE_WD,                ///< water + diffuse
+	COLLAPSE_CB                 ///< cubemap + bump
 } collapseType_t;
 
 /**
@@ -1406,7 +1406,7 @@ typedef struct
 
 	qboolean overrideFilterType;            ///< for console fonts, 2D elements, etc.
 	filterType_t filterType;
-	
+
 	qboolean overrideWrapType;
 	wrapType_t wrapType;
 
@@ -3746,12 +3746,12 @@ typedef struct
 
 	GLuint vao;
 
-	growList_t vbos;						///< Vertex Buffer Object
-	growList_t ibos;						///< Index Buffer Object
-	growList_t pbos;						///< Pixel Buffer Object
+	growList_t vbos;                        ///< Vertex Buffer Object
+	growList_t ibos;                        ///< Index Buffer Object
+	growList_t pbos;                        ///< Pixel Buffer Object
 
 	growList_t cubeProbes;                  ///< all cubemaps in a linear growing list
-	reflectionData_t reflectionData;		///< the current reflection cubemap data
+	reflectionData_t reflectionData;        ///< the current reflection cubemap data
 	//vertexHash_t **cubeHashTable;           ///< hash table for faster access
 
 	// shader indexes from other modules will be looked up in tr.shaders[]
@@ -3910,7 +3910,7 @@ extern cvar_t *r_parallaxDepthScale;
 extern cvar_t *r_parallaxShadow; // value 0.0 to 1.0.  if 0.0 then parallax self shadowing is disabled (and not calculated)
 
 // fancy EVSM shadowing
-extern cvar_t * r_shadowSamples;
+extern cvar_t *r_shadowSamples;
 extern cvar_t *r_shadowBlur;
 
 extern cvar_t *r_shadowMapSizeUltra;
@@ -4066,9 +4066,9 @@ void R_SetupEntityWorldBounds(trRefEntity_t *ent);
 #else
 ///void R_SetupEntityWorldBounds(trRefEntity_t *ent);
 #define R_SetupEntityWorldBounds(ent) \
-{ \
-	MatrixTransformBounds(tr.orientation.transformMatrix, ent->localBounds[0], ent->localBounds[1], ent->worldBounds[0], ent->worldBounds[1]); \
-}
+		{ \
+			MatrixTransformBounds(tr.orientation.transformMatrix, ent->localBounds[0], ent->localBounds[1], ent->worldBounds[0], ent->worldBounds[1]); \
+		}
 #endif
 
 void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orientation);
@@ -4501,7 +4501,7 @@ CURVE TESSELATION, tr_curve.c
 ============================================================
 */
 
-srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE]);
+srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE *MAX_PATCH_SIZE]);
 srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3_t point, float loderror);
 srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t point, float loderror);
 void R_FreeSurfaceGridMesh(srfGridMesh_t *grid);
@@ -4569,7 +4569,7 @@ void R_VBOList_f(void);
 PIXEL BUFFER OBJECTS, tr_pbo.c
 ============================================================
 */
-PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height);
+PBO_t * R_CreatePBO(pboUsage_t usage, int width, int height);
 
 void R_BindPBO(PBO_t *pbo);
 void R_BindNullPBO(void);
@@ -4588,15 +4588,16 @@ void R_ShutdownPBOs(void);
 THREADS, tr_thread.c
 ============================================================
 */
-typedef struct thr_CubemapSave_s {
+typedef struct thr_CubemapSave_s
+{
 	struct thr_CubemapSave_s *prev;                    ///< linked list previous item
 	struct thr_CubemapSave_s *next;                    ///< linked list next item
 	cubemapProbe_t *probe;                             ///< the probe for which to save the cubemap to file
 } thr_CubemapSave_t;
 
 void THR_Init_CubemapSave(void);
-thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe);
-thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry);
+thr_CubemapSave_t * THR_AddProbeToSave(cubemapProbe_t *probe);
+thr_CubemapSave_t * THR_RemoveProbeToSave(thr_CubemapSave_t *entry);
 
 void R2Thread_Start(void);
 void R2Thread_Stop(void);
@@ -4654,7 +4655,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 
 void RE_RenderScene(const refdef_t *fd);
 void RE_RenderSimpleScene(const refdef_t *fd); // render the scene for use on the environment-cubemaps
-void R_RenderSimpleView(viewParms_t* parms); // no lights, no shadows, no decals ... and more not being rendered
+void R_RenderSimpleView(viewParms_t *parms); // no lights, no shadows, no decals ... and more not being rendered
 
 /*
 =============================================================
@@ -5032,7 +5033,7 @@ void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeB
 void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean saveAll);
 void R_BuildCubeMaps(qboolean createAll);
 //void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2); // unused..
-void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t** env1, image_t** env2, float* interpolation);
+void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t **env1, image_t **env2, float *interpolation);
 
 void FreeVertexHashTable(vertexHash_t **hashTable);
 

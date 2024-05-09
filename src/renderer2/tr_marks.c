@@ -173,7 +173,7 @@ void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **
 {
 	int          s, c;
 	bspSurface_t *surf, **mark;
-	float dot;
+	float        dot;
 
 	// do the tail recursion in a loop
 	while (node->contents == CONTENTS_NODE)
@@ -399,7 +399,7 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	VectorInverse(normals[numPoints + 1]);
 	Dot(normals[numPoints + 1], points[0], dists[numPoints + 1]);
 	dists[numPoints + 1] -= 20.0;
-	numPlanes            = numPoints + 2;
+	numPlanes             = numPoints + 2;
 
 	numsurfaces = 0;
 	R_BoxSurfaces_r(tr.world->nodes, mins, maxs, surfaces, 64, &numsurfaces, projectionDir);

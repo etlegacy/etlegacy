@@ -2066,7 +2066,7 @@ void CG_CheckForCursorHints(void)
 			if (dist <= CH_KNIFE_DIST)
 			{
 				vec3_t pforward, eforward, attacker, target;
-				float dot;
+				float  dot;
 
 				VectorCopy(cg.snap->ps.viewangles, attacker);
 				VectorCopy(tracent->lerpAngles, target);
@@ -4541,7 +4541,7 @@ void CG_Coronas(void)
 				{
 					toofar = qtrue;
 				}
-				
+
 				Dot(dir, cg.refdef_current->viewaxis[0], dot);
 				if (dot >= -0.6f)
 				{

@@ -370,8 +370,8 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 	if (ISVALIDCLIENTNUM(client) && cgs.clientLocation[client].lastLocation)
 	{
 		if (cgs.clientLocation[client].lastX == origin[0]
-		     && cgs.clientLocation[client].lastY == origin[1]
-		     && cgs.clientLocation[client].lastZ == origin[2])
+		    && cgs.clientLocation[client].lastY == origin[1]
+		    && cgs.clientLocation[client].lastZ == origin[2])
 		{
 			return &cgs.location[cgs.clientLocation[client].lastLocation];
 		}

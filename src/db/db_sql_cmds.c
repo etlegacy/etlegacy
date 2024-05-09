@@ -40,7 +40,7 @@
  */
 void DB_ExecSQLCommand_f(void)
 {
-	int  result;
+	int result;
 	//char *cmd;
 	char *sql;
 	char *err_msg = 0;

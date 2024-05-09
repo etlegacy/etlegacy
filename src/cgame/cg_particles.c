@@ -761,7 +761,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		SinCos(angle, S, C);
 		sinR = height * (float)(S * M_SQRT2);
 		cosR = width * (float)(C * M_SQRT2);
-		
+
 		VectorCopy(org, verts[0].xyz);
 		verts[0].xyz[0]     -= sinR;
 		verts[0].xyz[1]     -= cosR;

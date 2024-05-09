@@ -11,7 +11,7 @@ uniform mat4      u_UnprojectMatrix;
 
 float DecodeDepth(vec4 color)
 {
-	float depth;
+	float      depth;
 	const vec4 bitShifts = vec4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0);    // gl_FragCoord.z with 32 bit precision
 //	const vec4 bitShifts = vec4(1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0, 0.0);                              // gl_FragCoord.z with 24 bit precision
 	depth = dot(color, bitShifts);
@@ -31,32 +31,37 @@ void main()
 	float depthFront = DecodeDepth(texture2D(u_DepthMapFront, st));
 
 	// check if the object is in front of the volume => not fogged
-	if (depthSolid < depthFront) {
+	if (depthSolid < depthFront)
+	{
 		discard;
 		return;
 	}
 
 	// check if the object is closer than the back of the volume => fog only to depthsolid
-	if (depthSolid < depthBack) {
+	if (depthSolid < depthBack)
+	{
 		depthBack = depthSolid;
 	}
 
 
 	// reconstruct vertex position in world space
 	// scale to NDC (Normalized Device Coordinates) space
-	vec4  posBack = vec4(gl_FragCoord.xy, depthBack, 1.0) * 2.0 - 1.0;
+	vec4 posBack = vec4(gl_FragCoord.xy, depthBack, 1.0) * 2.0 - 1.0;
 	// unproject to get into viewspace
 	posBack = u_UnprojectMatrix * posBack;
 	// normalize to homogeneous coordinates (where w is always 1)
 	posBack.xyz /= posBack.w;
 
-	vec4  posFront = vec4(gl_FragCoord.xy, depthFront, 1.0) * 2.0 - 1.0;
+	vec4 posFront = vec4(gl_FragCoord.xy, depthFront, 1.0) * 2.0 - 1.0;
 	posFront = u_UnprojectMatrix * posFront;
 	// we might be in the volume.
 	// In that case the volume front plane is behind you, and w becomes negative
-	if (posFront.w <= 0.0) {
+	if (posFront.w <= 0.0)
+	{
 		posFront.xyz = u_ViewOrigin;
-	} else {
+	}
+	else
+	{
 		posFront.xyz /= posFront.w;
 	}
 

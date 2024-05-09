@@ -49,7 +49,7 @@ static char *s_shaderText;
 static int numMaterialFiles; // R2 files
 static int numShaderFiles;   // R1 files
 
-shader_t  shader;
+shader_t shader;
 
 /**
  * @brief R_RemapShader
@@ -320,7 +320,7 @@ static qboolean IsOperator(opcode_t oc)
 	case OP_NEG:
 	case OP_LT:
 	case OP_GT:
-	//case OP_TABLE:
+		//case OP_TABLE:
 		return qtrue;
 	default:
 		return qfalse;
@@ -2384,7 +2384,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->alphaGen         = AGEN_CONST; // AGEN_PORTAL
 				stage->constantColor[3] = 0;
-				token                        = COM_ParseExt(text, qfalse);
+				token                   = COM_ParseExt(text, qfalse);
 				if (token[0] == 0)
 				{
 					shader.portalRange = 256;
@@ -2447,9 +2447,9 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				// we convert it to an ST_TCGENENVMAP.
 				// This makes it easier to distinguish from reflections from cubemaps vs. tcGenEnv.
 				// We don't expect a normalmap (or more maps) for this type of stage, so this stage will not collapse into a bundle.
-				// !!!DEBUG!!! liquids do use normalmaps.  re check 
+				// !!!DEBUG!!! liquids do use normalmaps.  re check
 				// You must render this stage using the generic shader.
-				stage->type = ST_TCGENENVMAP;
+				stage->type              = ST_TCGENENVMAP;
 				stage->tcGen_Environment = qtrue;
 				stage->tcGen_Lightmap    = qfalse;
 			}
@@ -3334,10 +3334,10 @@ void ParseReflectionMap(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
-	stage->active           = qtrue;
-	stage->type             = ST_REFLECTIONMAP;
-	stage->rgbGen           = CGEN_IDENTITY;
-	stage->stateBits        = GLS_DEFAULT;
+	stage->active    = qtrue;
+	stage->type      = ST_REFLECTIONMAP;
+	stage->rgbGen    = CGEN_IDENTITY;
+	stage->stateBits = GLS_DEFAULT;
 	if (!r_compressReflectionMaps->integer)
 	{
 		stage->forceHighQuality = qtrue;
@@ -3358,10 +3358,10 @@ void ParseReflectionMapBlended(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
-	stage->active           = qtrue;
-	stage->type             = ST_REFLECTIONMAP;
-	stage->rgbGen           = CGEN_IDENTITY;
-	stage->stateBits        = GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ONE;
+	stage->active    = qtrue;
+	stage->type      = ST_REFLECTIONMAP;
+	stage->rgbGen    = CGEN_IDENTITY;
+	stage->stateBits = GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ONE;
 
 	if (!r_compressReflectionMaps->integer)
 	{
@@ -4095,16 +4095,16 @@ static qboolean ParseShader(char *_text)
 		// portal
 		else if (!Q_stricmp(token, "portal"))
 		{
-			shader.sort                = SS_PORTAL;
-			shader.isPortal            = qtrue;
+			shader.sort     = SS_PORTAL;
+			shader.isPortal = qtrue;
 
 			continue;
 		}
 		// portal or mirror
 		else if (!Q_stricmp(token, "mirror"))
 		{
-			shader.sort                = SS_PORTAL;
-			shader.isPortal            = qtrue;
+			shader.sort     = SS_PORTAL;
+			shader.isPortal = qtrue;
 			continue;
 		}
 		// skyparms <cloudheight> <outerbox> <innerbox>
@@ -4212,7 +4212,7 @@ static qboolean ParseShader(char *_text)
 			if (fogDensity > 1)
 			{
 				// linear
-				fogFar = fogDensity;
+				fogFar     = fogDensity;
 				fogDensity = 1.0;
 			}
 			else

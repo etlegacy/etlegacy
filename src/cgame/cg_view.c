@@ -375,7 +375,7 @@ void CG_OffsetThirdPersonView(void)
 	A = DEG2RAD(cg_thirdPersonAngle.value);
 	SinCos(A, S, C);
 	forwardScale = C;
-	sideScale = S;
+	sideScale    = S;
 	VectorMA(view, -cg_thirdPersonRange.value * forwardScale, forward, view);
 	VectorMA(view, -cg_thirdPersonRange.value * sideScale, right, view);
 

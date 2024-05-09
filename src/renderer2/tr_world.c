@@ -762,7 +762,8 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 			node = node->children[1];
 			break;
 		}
-	} while (1);
+	}
+	while (1);
 
 
 	{
@@ -1153,8 +1154,8 @@ static void R_UpdateClusterSurfaces()
 			if (tr.world->numClusterVBOSurfaces[tr.visIndex] < tr.world->clusterVBOSurfaces[tr.visIndex].currentElements)
 			{
 				vboSurf =
-				    (srfVBOMesh_t *) Com_GrowListElement(&tr.world->clusterVBOSurfaces[tr.visIndex],
-				                                         tr.world->numClusterVBOSurfaces[tr.visIndex]);
+					(srfVBOMesh_t *) Com_GrowListElement(&tr.world->clusterVBOSurfaces[tr.visIndex],
+					                                     tr.world->numClusterVBOSurfaces[tr.visIndex]);
 				ibo = vboSurf->ibo;
 
 				/*

@@ -478,7 +478,7 @@ static void CM_TraceThroughPatch(traceWork_t *tw, cPatch_t *patch)
  */
 static void CM_CalcTraceBounds(traceWork_t *tw, qboolean expand)
 {
-	int i, mask;
+	int    i, mask;
 	vec3_t s, d, startd;
 	VectorScale(tw->dir, tw->trace.fraction, d);
 	VectorAdd(tw->start, d, startd);
@@ -537,7 +537,7 @@ static void CM_CalcTraceBounds(traceWork_t *tw, qboolean expand)
  */
 static float CM_BoxDistanceFromPlane(vec3_t center, vec3_t extents, cplane_t *plane)
 {
-	float d1, d2, d1d2;
+	float  d1, d2, d1d2;
 	vec3_t v;
 
 	Dot(center, plane->normal, d1);
@@ -1508,7 +1508,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 	}
 	else
 	{
-		tw.isPoint    = qfalse;
+		tw.isPoint = qfalse;
 		VectorCopy(tw.size[1], tw.extents);
 	}
 

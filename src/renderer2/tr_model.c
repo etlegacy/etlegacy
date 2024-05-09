@@ -635,7 +635,7 @@ void R_Modellist_f(void)
  * @param[in] startTagIndex
  * @param[out] outTag
  * @return
- * 
+ *
  * NOTE: R_GetTag() is a local function, and we know for sure that argument _tagName is pointing to a char[64]
  *       because, at this moment, the caller function copies the tagname to a char[64] first.
  *       Pff   lots of copying of data, and string searching for tagnames.. continuously
@@ -680,17 +680,17 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 #else
 	// ..and here's the SSE search string version
 	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm7, zeroes;
-	int mask0, mask16, mask32;
+	int     mask0, mask16, mask32;
 	zeroes = _mm_setzero_si128();
-	xmm0 = _mm_loadu_si128((const __m128i *)&_tagName[0]);
-	mask0 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm0, zeroes));
+	xmm0   = _mm_loadu_si128((const __m128i *)&_tagName[0]);
+	mask0  = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm0, zeroes));
 	if (mask0 == 0)
 	{
-		xmm1 = _mm_loadu_si128((const __m128i *)&_tagName[16]);
+		xmm1   = _mm_loadu_si128((const __m128i *)&_tagName[16]);
 		mask16 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm1, zeroes));
 		if (mask16 == 0)
 		{
-			xmm2 = _mm_loadu_si128((const __m128i *)&_tagName[32]);
+			xmm2   = _mm_loadu_si128((const __m128i *)&_tagName[32]);
 			mask32 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm2, zeroes));
 			if (mask32 == 0)
 			{
@@ -703,22 +703,43 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 	{
 		xmm4 = _mm_loadu_si128((const __m128i *)&tagName->name[0]);
 		xmm7 = _mm_cmpeq_epi8(xmm4, xmm0);
-		if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
-		if (mask0 != 0) goto tagName_found;
+		if (_mm_movemask_epi8(xmm7) != 0xFFFF)
+		{
+			continue;
+		}
+		if (mask0 != 0)
+		{
+			goto tagName_found;
+		}
 
 		xmm4 = _mm_loadu_si128((const __m128i *)&tagName->name[16]);
 		xmm7 = _mm_cmpeq_epi8(xmm4, xmm1);
-		if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
-		if (mask16 != 0) goto tagName_found;
+		if (_mm_movemask_epi8(xmm7) != 0xFFFF)
+		{
+			continue;
+		}
+		if (mask16 != 0)
+		{
+			goto tagName_found;
+		}
 
 		xmm4 = _mm_loadu_si128((const __m128i *)&tagName->name[32]);
 		xmm7 = _mm_cmpeq_epi8(xmm4, xmm2);
-		if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
-		if (mask32 != 0) goto tagName_found;
+		if (_mm_movemask_epi8(xmm7) != 0xFFFF)
+		{
+			continue;
+		}
+		if (mask32 != 0)
+		{
+			goto tagName_found;
+		}
 
 		xmm4 = _mm_loadu_si128((const __m128i *)&tagName->name[48]);
 		xmm7 = _mm_cmpeq_epi8(xmm4, xmm3);
-		if (_mm_movemask_epi8(xmm7) == 0xFFFF) goto tagName_found;
+		if (_mm_movemask_epi8(xmm7) == 0xFFFF)
+		{
+			goto tagName_found;
+		}
 	}
 //tagName_not_found:
 	*outTag = NULL;
@@ -799,7 +820,7 @@ int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endF
 int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex)
 {
 #ifndef ETL_SSE
-	int       i;
+	int i;
 #endif
 	mdvTag_t  *start = NULL, *end = NULL;
 	float     frontLerp, backLerp;
@@ -856,11 +877,11 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 			return -1;
 		}
 		frontLerp = frac;
-		backLerp = 1.0f - frac;
+		backLerp  = 1.0f - frac;
 #ifndef ETL_SSE
 		for (i = 0; i < 3; i++)
 		{
-			tag->origin[i] = start->origin[i] * backLerp + end->origin[i] * frontLerp;
+			tag->origin[i]  = start->origin[i] * backLerp + end->origin[i] * frontLerp;
 			tag->axis[0][i] = start->axis[0][i] * backLerp + end->axis[0][i] * frontLerp;
 			tag->axis[1][i] = start->axis[1][i] * backLerp + end->axis[1][i] * frontLerp;
 			tag->axis[2][i] = start->axis[2][i] * backLerp + end->axis[2][i] * frontLerp;
@@ -928,16 +949,16 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 		VectorClear(tag->origin);
 		return -1;
 
-	/*	case MOD_MDS:
-		// use bone lerping
-		retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
-		if (retval >= 0)
-		{
-			return retval;
-		}
-		// failed
-		return -1;
-		break;*/
+		/*	case MOD_MDS:
+		    // use bone lerping
+		    retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
+		    if (retval >= 0)
+		    {
+		    	return retval;
+		    }
+		    // failed
+		    return -1;
+		    break;*/
 
 /*	case MOD_MDC:
 	    // psuedo-compressed MDC tags

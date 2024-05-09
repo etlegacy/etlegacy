@@ -92,7 +92,7 @@ const GLenum geometricRenderTargets[] =
 	GL_COLOR_ATTACHMENT3_EXT
 };
 
-int shadowMapResolutions[5] = { 2048, 1024, 512, 256, 128 };
+int shadowMapResolutions[5]    = { 2048, 1024, 512, 256, 128 };
 int sunShadowMapResolutions[5] = { 2048, 2048, 1024, 1024, 1024 };
 
 refimport_t ri;
@@ -215,7 +215,7 @@ void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
 {
 	vec3_t cp, u, v;
 	vec3_t faceNormal;
-	float dot;
+	float  dot;
 
 	VectorSet(u, v1[0] - v0[0], t1[0] - t0[0], t1[1] - t0[1]);
 	VectorSet(v, v2[0] - v0[0], t2[0] - t0[0], t2[1] - t0[1]);
@@ -306,7 +306,7 @@ void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
 {
 	vec3_t cp, u, v;
 	vec3_t faceNormal;
-	float dot;
+	float  dot;
 
 	VectorSet(u, v1[0] - v0[0], t1[0] - t0[0], t1[1] - t0[1]);
 	VectorSet(v, v2[0] - v0[0], t2[0] - t0[0], t2[1] - t0[1]);
@@ -518,8 +518,8 @@ void R_CalcTBN2(vec3_t tangent, vec3_t binormal, vec3_t normal,
 		                 (B[0] * N[1] * T[2] - B[2] * N[1] * T[0]) +
 		                 (N[0] * T[1] * B[2] - N[2] * T[1] * B[0]));*/
 		scale2 = rcp((T[0] * B[1] * N[2] - T[2] * B[1] * N[0]) +
-						(B[0] * N[1] * T[2] - B[2] * N[1] * T[0]) +
-						(N[0] * T[1] * B[2] - N[2] * T[1] * B[0]));
+		             (B[0] * N[1] * T[2] - B[2] * N[1] * T[0]) +
+		             (N[0] * T[1] * B[2] - N[2] * T[1] * B[0]));
 
 		// Calculate the inverse if the TBN matrix using the formula described in the article.
 		// We store the basis vectors directly in the provided TBN matrix: pvTBNMatrix
@@ -699,7 +699,7 @@ cullResult_t R_CullBox(vec3_t worldBounds[2])
 	for (i = 0; i < FRUSTUM_PLANES; i++)
 	{
 		frust = &tr.viewParms.frustums[0][i];
-		r = BoxOnPlaneSide(worldBounds[0], worldBounds[1], frust);
+		r     = BoxOnPlaneSide(worldBounds[0], worldBounds[1], frust);
 		if (r == 2)
 		{
 			// completely outside frustum
@@ -989,7 +989,7 @@ void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, con
  */
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix, vec4_t eye, vec4_t dst)
 {
-	vec4_t src2 = {0.f, 0.f, 0.f, 1.f};
+	vec4_t src2 = { 0.f, 0.f, 0.f, 1.f };
 
 	VectorCopy(src, src2);
 	//src2[3] = 1.0f;
@@ -1407,7 +1407,7 @@ static void SetFarClip(void)
 	farthestCornerDistance = 0;
 	vec3_t v, eye;
 	float  distance;
-	int j;
+	int    j;
 	// check visBounds
 	for (i = 0; i < 8; i++)
 	{
@@ -1441,8 +1441,8 @@ static void SetFarClip(void)
 		for (j = 0; j < 3; j++)
 		{
 			eye[j] =
-			    v[0] * tr.viewParms.world.viewMatrix2[j + 0 * 4] +
-			    v[1] * tr.viewParms.world.viewMatrix2[j + 1 * 4] + v[2] * tr.viewParms.world.viewMatrix2[j + 2 * 4] + tr.viewParms.world.viewMatrix2[j + 3 * 4];
+				v[0] * tr.viewParms.world.viewMatrix2[j + 0 * 4] +
+				v[1] * tr.viewParms.world.viewMatrix2[j + 1 * 4] + v[2] * tr.viewParms.world.viewMatrix2[j + 2 * 4] + tr.viewParms.world.viewMatrix2[j + 3 * 4];
 		}
 
 		//farthestCornerDistance = max(farthestCornerDistance, eye[0] * eye[0] + eye[1] * eye[1] + eye[2] * eye[2]);
@@ -1489,8 +1489,8 @@ static void SetFarClip(void)
 			for (j = 0; j < 3; j++)
 			{
 				eye[j] =
-				    v[0] * modelMatrix[j + 0 * 4] +
-				    v[1] * modelMatrix[j + 1 * 4] + v[2] * modelMatrix[j + 2 * 4] + modelMatrix[j + 3 * 4];
+					v[0] * modelMatrix[j + 0 * 4] +
+					v[1] * modelMatrix[j + 1 * 4] + v[2] * modelMatrix[j + 2 * 4] + modelMatrix[j + 3 * 4];
 			}
 
 			farthestCornerDistance = max(farthestCornerDistance, eye[0] * eye[0] + eye[1] * eye[1] + eye[2] * eye[2]);
@@ -1591,7 +1591,7 @@ static void SetFarClip(void)
 #endif
 	//tr.viewParms.zFar = farthestCornerDistance; // the Berzerker distance is not squared
 	tr.viewParms.zFar = sqrt(farthestCornerDistance);
-	
+
 	// update the zFar distance whenever the global fog's density is covering the world completely.
 	// Otherwise we'd see the world suddenly pop up because the world is clipped before the fog is dense enough.
 
@@ -1601,10 +1601,10 @@ static void SetFarClip(void)
 		float dfo = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
 
 		if (dfo >= 1.f // the fogparms must have a distance supplied (no value <1)
-			&& dfo > tr.viewParms.zNear && dfo < tr.viewParms.zFar) // and the depthForOpaque must be inside the view
-			{
-				tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
-			}
+		    && dfo > tr.viewParms.zNear && dfo < tr.viewParms.zFar) // and the depthForOpaque must be inside the view
+		{
+			tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
+		}
 	}
 
 }
@@ -1624,7 +1624,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 
 	// dynamically compute far clip plane distance
 	SetFarClip();
-	   
+
 	zNear = tr.viewParms.zNear = r_zNear->value;
 
 	if (r_zFar->value != 0.f)
@@ -1735,7 +1735,7 @@ static void R_SetupFrustum(void)
 	vec3_t planeOrigin;
 	float  xs, xc;
 	float  ang = DEG2RAD(tr.viewParms.fovX * 0.5f);
-	
+
 	SinCos(ang, xs, xc);
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][FRUSTUM_LEFT].normal);
 	VectorMA(tr.viewParms.frustums[0][FRUSTUM_LEFT].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][FRUSTUM_LEFT].normal);
@@ -1869,19 +1869,20 @@ ID_INLINE void CopyPlane(const cplane_t *in, cplane_t *out)
  */
 static void R_SetupSplitFrustums(void)
 {
-	int    i, i1; // , j;
+	int i, i1;    // , j;
 //!	float  lambda = r_parallelShadowSplitWeight->value;
 //!	float  ratio  = tr.viewParms.zFar / tr.viewParms.zNear;
 	vec3_t planeOrigin;
 //@	float  zNear, zFar;
-	float  zFar;
+	float zFar;
 	// use fixed distances for the splits.
 	// these values produce the least visible blockiness per shadowfrustum. maybe little fine-tuning required only..
-	float  si[MAX_SHADOWMAPS+1] = {tr.viewParms.zNear, 384.f, 768.f, 1152.f, 8192.f, tr.viewParms.zFar};
+	float si[MAX_SHADOWMAPS + 1] = { tr.viewParms.zNear, 384.f, 768.f, 1152.f, 8192.f, tr.viewParms.zFar };
 
 	// copy frustum[0] planes to the rest of the frustums[1..5], because left/right/bottom/top planes stay the same.
 	// We only need to calculate the near/far planes for every split.
-	for (int i = 1; i < 6; i++) Com_Memcpy(&tr.viewParms.frustums[i], &tr.viewParms.frustums[0], sizeof(frustum_t));
+	for (int i = 1; i < 6; i++)
+		Com_Memcpy(&tr.viewParms.frustums[i], &tr.viewParms.frustums[0], sizeof(frustum_t));
 
 //@	zNear = tr.viewParms.zNear;
 //@	zFar = zNear; // soon to be increased..
@@ -1893,7 +1894,7 @@ static void R_SetupSplitFrustums(void)
 		zFar += si[i];
 //@		if (i > 0)
 //@		{
-			tr.viewParms.parallelSplitDistances[i - 1] = zFar;
+		tr.viewParms.parallelSplitDistances[i - 1] = zFar;
 //@		}
 
 		tr.viewParms.frustums[i][FRUSTUM_FAR].type = PLANE_NON_AXIAL;
@@ -2444,8 +2445,8 @@ static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf)
  */
 int R_SpriteFogNum(trRefEntity_t *ent)
 {
-	int   i;
-	fog_t *fog;
+	int    i;
+	fog_t  *fog;
 	vec3_t v;
 
 	if (tr.refdef.rdflags & RDF_NOWORLDMODEL)
@@ -3229,7 +3230,7 @@ void R_AddLightBoundsToVisBounds()
 			}
 
 			// look if we have to draw the light including its interactions
-            /*switch (R_CullLocalBox(light->localBounds))
+			/*switch (R_CullLocalBox(light->localBounds))
 			{
 			case CULL_OUT:
 				continue;
@@ -3655,7 +3656,7 @@ void R_RenderSimpleView(viewParms_t *parms)
 	R_SetupProjection(qfalse);
 
 	// This will handle any transition from one fog to another fog.
- 	R_SetFrameFog(); // we must render with fog, or else the reflections are too colorful for a fogged world..
+	R_SetFrameFog(); // we must render with fog, or else the reflections are too colorful for a fogged world..
 
 	R_SetupUnprojection();
 

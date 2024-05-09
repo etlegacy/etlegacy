@@ -73,7 +73,7 @@ void R_InitNextFrame(void)
 	r_numLights       = 0;
 	r_firstSceneLight = 0;
 
-	r_numcoronas      = 0;
+	r_numcoronas       = 0;
 	r_firstSceneCorona = 0;
 
 	r_numEntities      = 0;
@@ -672,7 +672,7 @@ void RE_RenderScene(const refdef_t *fd)
 	VectorCopy(fd->viewaxis[1], tr.refdef.viewaxis[1]);
 	VectorCopy(fd->viewaxis[2], tr.refdef.viewaxis[2]);
 
-	tr.refdef.time    = fd->time;
+	tr.refdef.time = fd->time;
 
 	// check if we transit into, or out of, the water
 	// Do this only IF both fogs exist at all..
@@ -710,9 +710,9 @@ void RE_RenderScene(const refdef_t *fd)
 
 	tr.refdef.rdflags = fd->rdflags;
 
-	if(fd->rdflags & RDF_SKYBOXPORTAL)
+	if (fd->rdflags & RDF_SKYBOXPORTAL)
 	{
-	    tr.world->hasSkyboxPortal = qtrue; // see int skyboxportal var tr_scene.c/r1
+		tr.world->hasSkyboxPortal = qtrue; // see int skyboxportal var tr_scene.c/r1
 	}
 
 	// copy the areamask data over and note if it has changed, which
@@ -889,13 +889,13 @@ void RE_RenderSimpleScene(const refdef_t *fd)
 	VectorCopy(fd->viewaxis[1], tr.refdef.viewaxis[1]);
 	VectorCopy(fd->viewaxis[2], tr.refdef.viewaxis[2]);
 
-	tr.refdef.time    = fd->time;
+	tr.refdef.time = fd->time;
 
 	tr.refdef.rdflags = fd->rdflags;
 
-	if(fd->rdflags & RDF_SKYBOXPORTAL)
+	if (fd->rdflags & RDF_SKYBOXPORTAL)
 	{
-	    tr.world->hasSkyboxPortal = qtrue; // see int skyboxportal var tr_scene.c/r1
+		tr.world->hasSkyboxPortal = qtrue; // see int skyboxportal var tr_scene.c/r1
 	}
 
 	// copy the areamask data over and note if it has changed, which
@@ -1016,13 +1016,13 @@ void RE_RenderSimpleScene(const refdef_t *fd)
 	R_RenderSimpleView(&parms);
 
 	// the next scene rendered in this frame will tack on after this one
-	r_firstSceneDrawSurf    = tr.refdef.numDrawSurfs;
+	r_firstSceneDrawSurf = tr.refdef.numDrawSurfs;
 //	r_firstSceneInteraction = tr.refdef.numInteractions;
 //	r_firstSceneDecal      += tr.refdef.numDecals;
-	r_firstSceneEntity      = r_numEntities;
+	r_firstSceneEntity = r_numEntities;
 //	r_firstSceneLight       = r_numLights;
-	r_firstScenePoly        = r_numPolys;
-	r_firstScenePolybuffer  = r_numPolybuffers;
+	r_firstScenePoly       = r_numPolys;
+	r_firstScenePolybuffer = r_numPolybuffers;
 
 	tr.frontEndMsec += ri.Milliseconds() - startTime;
 }

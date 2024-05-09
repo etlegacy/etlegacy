@@ -1276,7 +1276,9 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 			// the stupidest idea ever, let's just override the console, every ui element, user choice, etc
 			// nuking this
 			//DC->setOverstrikeMode(qtrue);
-		} else {
+		}
+		else
+		{
 			Com_Printf("Script_SetEditFocus: Can't find %s.\n", name);
 		}
 	}
