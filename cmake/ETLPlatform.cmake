@@ -71,6 +71,11 @@ if(UNIX)
 		endif()
 	endif()
 
+	if(ENABLE_SSE)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2 -mfpmath=sse")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2 -mfpmath=sse")
+	endif()
+
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
 		target_link_libraries(os_libraries INTERFACE m pthread)
 		set(LIB_SUFFIX ".mp.obsd.")
