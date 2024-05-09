@@ -1552,120 +1552,24 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 
 	//R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
-	// calc tangent spaces
-#if 0
-	{
-		float       *v;
-		const float *v0, *v1, *v2;
-		const float *t0, *t1, *t2;
-		vec3_t      tangent;
-		vec3_t      binormal;
-		vec3_t      normal;
-
-		for (i = 0; i < numVerts; i++)
-		{
-			VectorClear(cv->verts[i].tangent);
-			VectorClear(cv->verts[i].binormal);
-			VectorClear(cv->verts[i].normal);
-		}
-
-		for (i = 0, tri = cv->triangles; i < numTriangles; i++, tri++)
-		{
-			v0 = cv->verts[tri->indexes[0]].xyz;
-			v1 = cv->verts[tri->indexes[1]].xyz;
-			v2 = cv->verts[tri->indexes[2]].xyz;
-
-			t0 = cv->verts[tri->indexes[0]].st;
-			t1 = cv->verts[tri->indexes[1]].st;
-			t2 = cv->verts[tri->indexes[2]].st;
-
-#if 1
-			R_CalcTangentSpace(tangent, binormal, normal, v0, v1, v2, t0, t1, t2);
-#else
-			R_CalcNormalForTriangle(normal, v0, v1, v2);
-			R_CalcTangentsForTriangle2(tangent, binormal, v0, v1, v2, t0, t1, t2);
-#endif
-
-			for (j = 0; j < 3; j++)
-			{
-				v = cv->verts[tri->indexes[j]].tangent;
-				VectorAdd(v, tangent, v);
-				v = cv->verts[tri->indexes[j]].binormal;
-				VectorAdd(v, binormal, v);
-				v = cv->verts[tri->indexes[j]].normal;
-				VectorAdd(v, normal, v);
-			}
-		}
-
-		for (i = 0; i < numVerts; i++)
-		{
-			float dot;
-
-			//VectorNormalizeOnly(cv->verts[i].tangent);
-			VectorNormalizeOnly(cv->verts[i].binormal);
-			VectorNormalizeOnly(cv->verts[i].normal);
-
-			// Gram-Schmidt orthogonalize
-			//dot = DotProduct(cv->verts[i].normal, cv->verts[i].tangent);
-			Dot(cv->verts[i].normal, cv->verts[i].tangent, dot);
-			VectorMA(cv->verts[i].tangent, -dot, cv->verts[i].normal, cv->verts[i].tangent);
-			VectorNormalizeOnly(cv->verts[i].tangent);
-
-			////dot = DotProduct(cv->verts[i].normal, cv->verts[i].tangent);
-			//Dot(cv->verts[i].normal, cv->verts[i].tangent, dot);
-			//VectorMA(cv->verts[i].tangent, -dot, cv->verts[i].normal, cv->verts[i].tangent);
-			//VectorNormalizeOnly(cv->verts[i].tangent);
-		}
-	}
-#else
-/*@
-	* The triangle surfaces do not have their tangent/binormals calculated right now.
-	* That calculation is done after all triangles are read.
+	/*
+	* If r_smoothNormals is not set, we need to calculate the tangentvectors now.
+	* If r_smoothNormals is set, we delay calculation of tangetvectors after all tri-surfaces are read.
 	* It's done after vertex-normals are smoothNormal'ed across all other triangle-surfaces.
 	* The terrain is often not created from a single triangle strip, but it's a soup of many triangle-surfaces.
-	* 
+	*/
+	if (!(r_smoothNormals->integer & FLAGS_SMOOTH_TRISURF))
 	{
-		srfVert_t *dv[3];
-
-		for (i = 0, tri = cv->triangles; i < numTriangles; i++, tri++)
-		{
-			dv[0] = &cv->verts[tri->indexes[0]];
-			dv[1] = &cv->verts[tri->indexes[1]];
-			dv[2] = &cv->verts[tri->indexes[2]];
-
-			R_CalcTangentVectors(dv);
-		}
-	}
-*/
-#endif
-/*
-	* This is smoothing just the verts of one triangle-surface.
-	* If you want the whole terrain to be smoothed, you need to do that across all the other triangle-surfaces.
-	* That is why this smoothing of tri-surfaces is relocated, so it is done once all the triangles are read.
-	* R_LoadSurfaces() reads all the surfaces, and smoothens the normals, and calculates tangent-vectors.
-	* 
-	// do another extra smoothing for normals to avoid flat shading
-	if (r_smoothNormals->integer & FLAGS_SMOOTH_TRISURF)
-	{
-		for (i = 0; i < numVerts; i++)
-		{
-			for (j = 0; j < numVerts; j++)
+			srfVert_t* dv[3];
+			for (i = 0, tri = cv->triangles; i < numTriangles; i++, tri++)
 			{
-				if (i == j)
-				{
-					continue;
-				}
+				dv[0] = &cv->verts[tri->indexes[0]];
+				dv[1] = &cv->verts[tri->indexes[1]];
+				dv[2] = &cv->verts[tri->indexes[2]];
 
-				if (R_CompareVert(&cv->verts[i], &cv->verts[j], qfalse))
-				{
-					VectorAdd(cv->verts[i].normal, cv->verts[j].normal, cv->verts[i].normal);
-				}
+				R_CalcTangentVectors(dv);
 			}
-
-			VectorNormalizeOnly(cv->verts[i].normal);
-		}
 	}
-*/
 
 	// finish surface
 	FinishGenericSurface(ds, (srfGeneric_t *) cv, cv->verts[0].xyz);
@@ -4102,6 +4006,9 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	}
 
 	// smooth vertices across all verts of the same type (triangles, planes,...)
+	// TODO: this can be optimized, because when for example 3 verts are smoothed, (with for example indexes 1, 5 & 8)
+	// It will smooth all 3 verts at vert 1, but it will do it again at vert 5, and again at vert 8.
+	// It will also calculate tangentvectors too many times..
 	if (r_smoothNormals->integer & FLAGS_SMOOTH_TRISURF)
 	{
 		// smooth the triangle soup
