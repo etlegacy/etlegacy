@@ -4221,7 +4221,7 @@ static qboolean ParseShader(char *_text)
 			}
 			// store the fog data, and make this fog active
 			RE_SetFog(FOG_MAP, 0, fogFar, fogColor[0], fogColor[1], fogColor[2], fogDensity);
-			RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 0, 0, 0, 0, 0);
+			RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
 			continue;
 		}
 		// ET sunshader <name>
@@ -4630,18 +4630,19 @@ static void OptimizeStages()
 
 	// find out if there is a lightmap stage, and if so, make it the last stage.
 	for (j = 0; j < numStages; j++)
+//@	for (j = numStages - 1; j > 0; j--)
 	{
 		// check for a lightmap or liquid stage
 		if (stages[j].type == ST_LIGHTMAP)
 		{
-//			if (j == 0) break; // lightmap is already the first. we're done
+//@			if (j == 0) break; // lightmap is already the first. we're done
 			if (j == numStages-1) break; // lightmap is already the last. we're done
 			// lightmap to tmpStage
 			shaderStage_t tmpStage = stages[j];
 			for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) { // bundles too?..
 				tmpStage.bundle[k] = stages[j].bundle[k];
 			}
-/*
+/*@
 			// shift array
 			for (i = j; i > 0; i--) {
 				stages[i] = stages[i-1];
@@ -4798,7 +4799,7 @@ static void OptimizeStages()
 		// we have added a stage (collapsed or not)..
 		numStages++;
 	}
-
+/*
 	// if this is a liquid, re-order the stages so the liquid stage is last.
 	// This will render all the additional stages first, and then make it a water-surface.
 	if (shader.has_liquidStage)
@@ -4828,7 +4829,7 @@ static void OptimizeStages()
 			}
 		}
 	}
-
+*/
 	// copy result
 	Com_Memcpy(&stages[0], &tmpStages[0], sizeof(stages));
 	shader.numStages = numStages;
@@ -6535,7 +6536,7 @@ static int ScanAndLoadShaderFiles(void)
 {
 	char **shaderFiles;
 	char *buffers[MAX_SHADER_FILES];
-int bufferslen[MAX_SHADER_FILES]; // the filesizes
+	int bufferslen[MAX_SHADER_FILES]; // the filesizes
 	char *p;
 	int  numShaderFiles, i;
 	char *oldp, *token, *textEnd;
@@ -6547,7 +6548,7 @@ int bufferslen[MAX_SHADER_FILES]; // the filesizes
 
 	Com_Memset(buffers, 0, MAX_SHADER_FILES);
 	Com_Memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
-Com_Memset(bufferslen, 0, MAX_SHADER_FILES);
+	Com_Memset(bufferslen, 0, MAX_SHADER_FILES);
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("materials", ".shader", &numShaderFiles);
@@ -6573,7 +6574,7 @@ Com_Memset(bufferslen, 0, MAX_SHADER_FILES);
 
 		Ren_Developer("...loading '%s'\n", filename);
 		summand = ri.FS_ReadFile(filename, (void **)&buffers[i]);
-bufferslen[i] = summand;
+		bufferslen[i] = summand;
 		if (!buffers[i])
 		{
 			Ren_Drop("Couldn't load %s", filename); // in this case shader file is cought/listed but the file can't be read - drop!

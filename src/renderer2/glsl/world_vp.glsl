@@ -54,6 +54,7 @@ varying vec3 var_Normal;
 		varying vec3 var_LightDirW;             // in worldspace
 		varying vec3 var_LightDirT;			    // in tangentspace
 		varying vec3 var_ViewDirT;
+		varying vec3 var_ViewDirW;
 		#if defined(USE_PARALLAX_MAPPING)
 			varying float var_distanceToCam;    // distance in world space, from camera to object
 		#endif // USE_PARALLAX_MAPPING
@@ -79,8 +80,8 @@ void main()
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
 
-	//var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz; // worldspace
-	var_Normal = attr_Normal.xyz; // used for computeDiffuseLighting2()
+	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz; // worldspace
+	//var_Normal = attr_Normal.xyz; // used for computeDiffuseLighting2()
 
 	// assign color
 	var_Color = attr_Color * u_ColorModulate + u_Color;
@@ -110,12 +111,12 @@ void main()
 	var_LightDirT = var_tangentMatrix * var_LightDirW;
 
 	// from vertex to camera
-	vec3 viewDirW = var_Position - u_ViewOrigin; // !! do not normalize
-	var_ViewDirT = var_tangentMatrix * viewDirW;
+	var_ViewDirW = var_Position - u_ViewOrigin; // !! do not normalize
+	var_ViewDirT = var_tangentMatrix * var_ViewDirW;
 
 
 #if defined(USE_PARALLAX_MAPPING)
-	var_distanceToCam = length(viewDirW);
+	var_distanceToCam = length(var_ViewDirW);
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 

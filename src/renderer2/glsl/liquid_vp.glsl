@@ -102,7 +102,6 @@ void main()
 	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
 	// the alpha value is the one set by alphaGen const <value>
-//	var_alphaGen = u_ColorModulate.a; // * 0.5 + 0.5;
 	var_alphaGen = u_Color.a; // the u_Color is the waterfogvars (r,g,b,density)
 #endif // USE_DIFFUSE
 

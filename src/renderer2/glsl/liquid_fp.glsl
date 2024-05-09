@@ -198,19 +198,17 @@ void main()
 #if defined(USE_DIFFUSE)
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, texDiffuse);
-	color.rgb = mix(color.rgb, diffuse.rgb, var_alphaGen); // !! var_alphaGen = the alpha value from "color r, g, b, alpha"
+	color.rgb = mix(color.rgb, diffuse.rgb, var_alphaGen); // var_alphaGen is the alphaGen const value from the liquid stage
 #endif // USE_DIFFUSE
 
 
 	// the water-surface fog
-	// Note: if this value is too high, all the translucency of the water gets lost. Use small values..
-	// TODO: Before release, normalize this scale, so people can use more normal values in their materials/shaders.
 	if (u_FogDensity > 0.0)
 	{
 		// reconstruct vertex position in world space
 		float depth = texture2D(u_DepthMap, texScreen).r;
-		// scale to NDC (Normalized Device Coordinates) space
-		vec4  P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
+		// scale to Normalized Device Coordinates
+		vec4  P = vec4(vec3(gl_FragCoord.xy, depth) * 2.0 - 1.0, 1.0);
 		// unproject to get into viewspace
 		P = u_UnprojectMatrix * P;
 		// normalize to homogeneous coordinates (where w is always 1)
@@ -224,15 +222,15 @@ void main()
 
 		// calculate fog factor
 		float fogFactor = 1.0 - clamp(exp2(-fogExponent * fogExponent), 0, 1);
+//float fogFactor = 1.0 - clamp(exp(-fogExponent * fogExponent), 0, 1);
 
 		color.rgb = mix(color.rgb, u_FogColor, fogFactor);
-//color.rgb = mix(color.rgb, u_Color.rgb, fogFactor); // test
 	}
 
 
 
 #if defined(USE_REFLECTIONS)
-	color.rgb = mix(reflectColor, color.rgb, fresnel);
+	color.rgb = mix(color.rgb, reflectColor, fresnel);
 #endif
 
 

@@ -1142,6 +1142,7 @@ __pragma(warning(pop)) \
 	_mm_storeu_ps(&c[0], xmm0); \
 }
 
+// c = a + b
 ///#define VectorAdd(a, b, c) _VectorAdd(a, b, c)
 #define VectorAdd(a, b, c) \
 { \

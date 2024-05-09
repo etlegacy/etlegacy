@@ -1599,7 +1599,7 @@ static void SetFarClip(void)
 #endif
 	//tr.viewParms.zFar = farthestCornerDistance; // the Berzerker distance is not squared
 	tr.viewParms.zFar = sqrt(farthestCornerDistance);
-	
+
 	// update the zFar distance whenever the global fog's density is covering the world completely.
 	// Otherwise we'd see the world suddenly pop up because the world is clipped before the fog is dense enough.
 
@@ -1613,6 +1613,7 @@ static void SetFarClip(void)
 		}
 	}
 
+	R_SetFrameFog();
 }
 
 // *INDENT-OFF*

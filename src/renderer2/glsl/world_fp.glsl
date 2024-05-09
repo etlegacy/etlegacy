@@ -61,6 +61,7 @@ varying vec3 var_Normal;
 		varying vec3 var_LightDirW;              // in worldspace
 		varying vec3 var_LightDirT;              // light direction in tangent space, normalized
 		varying vec3 var_ViewDirT;               // view direction in tangentspace
+		varying vec3 var_ViewDirW;
 		#if defined(USE_PARALLAX_MAPPING)
 			varying float var_distanceToCam;     // in world units
 		#endif // USE_PARALLAX_MAPPING
@@ -174,7 +175,7 @@ void main() {
 
 	// compute the specular term
 #if defined(USE_SPECULAR)
-	vec3 specular = computeSpecular(V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
+	vec3 specular = computeSpecular(normalize(var_ViewDirW), var_Normal, var_LightDirW, u_LightColor, u_SpecularExponent, u_SpecularScale);
 	specular *= texture2D(u_SpecularMap, texDiffuse).rgb; // scale by specularmap
 	specular *= lightmapColor.rgb; // scale according to the lightmap intensity. There's no specular in the shadow.
 #endif // USE_SPECULAR

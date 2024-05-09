@@ -1618,6 +1618,12 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		}
 	}
 #else
+/*@
+	* The triangle surfaces do not have their tangent/binormals calculated right now.
+	* That calculation is done after all triangles are read.
+	* It's done after vertex-normals are smoothNormal'ed across all other triangle-surfaces.
+	* The terrain is often not created from a single triangle strip, but it's a soup of many triangle-surfaces.
+	* 
 	{
 		srfVert_t *dv[3];
 
@@ -1630,8 +1636,14 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 			R_CalcTangentVectors(dv);
 		}
 	}
+*/
 #endif
-
+/*
+	* This is smoothing just the verts of one triangle-surface.
+	* If you want the whole terrain to be smoothed, you need to do that across all the other triangle-surfaces.
+	* That is why this smoothing of tri-surfaces is relocated, so it is done once all the triangles are read.
+	* R_LoadSurfaces() reads all the surfaces, and smoothens the normals, and calculates tangent-vectors.
+	* 
 	// do another extra smoothing for normals to avoid flat shading
 	if (r_smoothNormals->integer & FLAGS_SMOOTH_TRISURF)
 	{
@@ -1653,6 +1665,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 			VectorNormalizeOnly(cv->verts[i].normal);
 		}
 	}
+*/
 
 	// finish surface
 	FinishGenericSurface(ds, (srfGeneric_t *) cv, cv->verts[0].xyz);
@@ -4086,6 +4099,90 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	if (r_stitchCurves->integer)
 	{
 		R_MovePatchSurfacesToHunk();
+	}
+
+	// smooth vertices across all verts of the same type (triangles, planes,...)
+	if (r_smoothNormals->integer & FLAGS_SMOOTH_TRISURF)
+	{
+		// smooth the triangle soup
+		int surfverts[100][2]; // room for 100! normals to smooth. Store 2 values per vert (indexes for surface & vertex)
+		int numsurfverts;
+		// first find all the same verts across all surfaces
+		for (int s = 0; s < s_worldData.numSurfaces; s++) {
+			srfTriangles_t* surf = (srfTriangles_t*)s_worldData.surfaces[s].data;
+			if (surf->surfaceType != SF_TRIANGLES) continue;
+			for (int v = 0; v < surf->numVerts; v++) {
+				numsurfverts = 0;
+				surfverts[numsurfverts][0] = s;
+				surfverts[numsurfverts][1] = v;
+				numsurfverts++;
+				// loop through all other verts to find vertices with the same positions
+				for (int s2 = 0; s2 < s_worldData.numSurfaces; s2++) {
+					srfTriangles_t* surf2 = (srfTriangles_t*)s_worldData.surfaces[s2].data;
+					if (surf2->surfaceType != SF_TRIANGLES) continue;
+					for (int v2 = 0; v2 < surf2->numVerts; v2++) {
+						// don't compare against the very same vert
+						if (s == s2 && v == v2) continue;
+						//if (R_CompareVert(&surf->verts[v], &surf2->verts[v2], qfalse))
+						//if (VectorCompare(surf->verts[v].xyz, surf2->verts[v].xyz))
+						if (VectorCompareEpsilon(surf->verts[v].xyz, surf2->verts[v2].xyz, 1.0))
+						{
+							if (numsurfverts < 100) {
+								surfverts[numsurfverts][0] = s2;
+								surfverts[numsurfverts][1] = v2;
+								numsurfverts++;
+							}
+						}
+					}
+				}
+				// now we have an array with surface verts to adjust.
+				// There is always at least 1 vert in the array..
+
+				// Add all the normal vectors of the verts that are the same across all surfaces
+				vec3_t smoothedNormal;
+				int s_index, v_index;
+				VectorClear(smoothedNormal);
+				for (int sv = 0; sv < numsurfverts; sv++) {
+					s_index = surfverts[sv][0];
+					v_index = surfverts[sv][1];
+					srfTriangles_t* s2surf = (srfTriangles_t*)s_worldData.surfaces[s_index].data;
+					srfVert_t* s2vert = (srfVert_t*)&s2surf->verts[v_index];
+					VectorAdd(smoothedNormal, s2vert->normal, smoothedNormal);
+				}
+
+				// now average the resulting normal.  Normalizing will do it just fine..
+				VectorNormalizeOnly(smoothedNormal);
+
+				// and replace the normals in the surfaces with the smoothened vertex-normal
+				for (int sv = 0; sv < numsurfverts; sv++) {
+					s_index = surfverts[sv][0];
+					v_index = surfverts[sv][1];
+					srfTriangles_t* s3surf = (srfTriangles_t*)s_worldData.surfaces[s_index].data;
+					srfVert_t* s3vert = (srfVert_t*)&s3surf->verts[v_index];
+					VectorCopy(smoothedNormal, s3vert->normal);
+				}
+
+				// calculate tangent vectors with this new normal
+				srfTriangles_t* cv;
+				srfTriangle_t* tri;
+				srfVert_t* dv[3];
+				int i;
+				for (int sv = 0; sv < numsurfverts; sv++) {
+					s_index = surfverts[sv][0];
+					v_index = surfverts[sv][1];
+					srfTriangles_t* s3surf = (srfTriangles_t*)s_worldData.surfaces[s_index].data;
+					srfVert_t* s3vert = (srfVert_t*)&s3surf->verts[v_index];
+					for (i = 0, tri = s3surf->triangles; i < s3surf->numTriangles; i++, tri++)
+					{
+						dv[0] = &s3surf->verts[tri->indexes[0]];
+						dv[1] = &s3surf->verts[tri->indexes[1]];
+						dv[2] = &s3surf->verts[tri->indexes[2]];
+						R_CalcTangentVectors(dv);
+					}
+				}
+
+			}
+		}
 	}
 }
 
@@ -8771,14 +8868,14 @@ void RE_LoadWorldMap(const char *name)
 	tr.world->hasSkyboxPortal = qfalse;
 
 	// reset fog to map fog (if present)
-	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 0, 0, 0, 0, 0);
+	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
 
 	// make sure the VBO glState entries are save
 	R_BindNullVBO();
 	R_BindNullIBO();
 
 	// Here you can select how cubemaps are generated:
-//	R_BuildCubeMaps(qfalse); // qfalse, do not render any missing cubemaps immediately
+//	R_BuildCubeMaps(qfalse); // qfalse, do not render any missing cubemaps immediately (needs tr_thread)
 	R_BuildCubeMaps(qtrue); // qtrue, render all cubemaps immediately at mapload (old behavior)
 
 	// clear the cubeprobe reflections data

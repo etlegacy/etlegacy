@@ -766,135 +766,6 @@ else
 	GL_CheckErrors();
 }
 
-/**
- * @brief Render_vertexLighting_DBS_world
- * @param[in] stage
- *
- * This function is only called for stage.type: ST_DIFFUSEMAP, ST_BUNDLE_DB, ST_BUNDLE_DBS, ST_BUNDLE_DBSR
-*/
-/*
-static void Render_vertexLighting_DBS_world(int stage)
-{
-	shaderStage_t *pStage = tess.surfaceStages[stage];
-	rgbaGen_t rgbaGen;
-	qboolean use_normalMapping   = r_normalMapping->integer && pStage->type != ST_DIFFUSEMAP;
-	qboolean use_alphaTesting    = (pStage->stateBits & GLS_ATEST_BITS) != 0;
-	qboolean use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
-	qboolean use_specular        = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
-	qboolean use_reflections     = r_normalMapping->integer && r_reflectionMapping->integer &&
-										pStage->type == ST_BUNDLE_DBSR &&
-										tr.cubeProbes.currentElements > 0 && !tr.refdef.renderingCubemap;
-	qboolean use_reflectionmap    = use_reflections && pStage->type == ST_BUNDLE_DBSR;
-	Ren_LogComment("--- Render_vertexLighting_DBS_world ---\n");
-
-	GL_State(pStage->stateBits);
-
-	SetMacrosAndSelectProgram(trProg.gl_vertexLightingShader_DBS_world,
-								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_ALPHA_TESTING, use_alphaTesting,
-								USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms, // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
-								USE_NORMAL_MAPPING, use_normalMapping,
-								USE_PARALLAX_MAPPING, use_parallaxMapping,
-								USE_REFLECTIONS, use_reflections,
-								USE_REFLECTIONMAP, use_reflectionmap,
-								USE_SPECULAR, use_specular);
-
-	GLSL_SetRequiredVertexPointers(trProg.gl_vertexLightingShader_DBS_world);
-
-	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
-	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, rgbaGen.color, rgbaGen.alpha);
-	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
-
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-	SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX); // same as backEnd.orientation.transformMatrix
-
-	SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value);
-
-	// SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
-	// SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
-
-	///SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentLight->direction);
-	///vec4_t color;
-	///color[0] = backEnd.currentLight->l.color[0];
-	///color[1] = backEnd.currentLight->l.color[1];
-	///color[2] = backEnd.currentLight->l.color[2];
-	///color[3] = 1.0;
-	///SetUniformVec3(UNIFORM_LIGHTCOLOR, color);
-	/////SetLightUniforms(qtrue);
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight);
-
-	// USE_ALPHA_TESTING
-	if (use_alphaTesting)
-	{
-		GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	}
-
-	// USE_DEFORM_VERTEXES
-	if (tess.surfaceShader->numDeforms)
-	{
-		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
-	}
-
-	if (r_wrapAroundLighting->integer)
-	{
-		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
-	}
-
-	// USE_PORTAL_CLIPPING
-	if (backEnd.viewParms.isPortal)
-	{
-		clipPortalPlane();
-	}
-
-	// bind u_DiffuseMap
-	SelectTexture(TEX_DIFFUSE);
-	GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
-	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrix);
-
-	if (use_normalMapping)
-	{
-		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
-
-		// bind u_NormalMap
-		SelectTexture(TEX_NORMAL);
-		GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
-
-		if (use_parallaxMapping)
-		{
-			SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
-		}
-
-		if (use_specular)
-		{
-			SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
-			SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
-			// bind u_SpecularMap
-			SelectTexture(TEX_SPECULAR);
-			GL_Bind(pStage->bundle[TB_SPECULARMAP].image[0]);
-		}
-
-		if (use_reflections)
-		{
-			SetUniformFloat(UNIFORM_REFLECTIONSCALE, r_reflectionScale->value);
-			// bind the 2 nearest cubeProbes
-			BindCubeMaps();
-			// bind the reflectionmap
-			if (use_reflectionmap)
-			{
-				// bind u_ReflectionMap
-				SelectTexture(TEX_REFLECTION);
-				GL_Bind(pStage->bundle[TB_REFLECTIONMAP].image[0]);
-			}
-		}
-	}
-
-	Tess_DrawElements();
-
-	GL_CheckErrors();
-}
-*/
 
 /**
  * @brief Render_world
@@ -990,14 +861,13 @@ static void Render_world(int stage, qboolean use_lightMapping, qboolean onlyLigh
 		clipPortalPlane();
 	}
 
+	// USE_ALPHA_TESTING
+	if (use_alphaTesting)
+	{
+		GLSL_SetUniform_AlphaTest(pStage->stateBits);
+	}
+
 	if (!onlyLightmap) {
-
-		// USE_ALPHA_TESTING
-		if (use_alphaTesting)
-		{
-			GLSL_SetUniform_AlphaTest(pStage->stateBits);
-		}
-
 		// USE_DEFORM_VERTEXES
 		if (use_deforms)
 		{
@@ -2116,7 +1986,7 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 	uint32_t attributebits;
 	rgbaGen_t rgbaGen;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
-	float fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.0005f);
+	float fogDensity;
 	qboolean use_diffuseMapping  = (pStage->type == ST_BUNDLE_WDB || pStage->type == ST_BUNDLE_WD);
 	qboolean use_deforms;
 	qboolean use_normalMapping;
@@ -2183,7 +2053,7 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 	GLSL_SetUniform_ColorModulate(trProg.gl_liquidShader, rgbaGen.color, rgbaGen.alpha);
-	SetUniformVec4(UNIFORM_COLOR, tess.svars.color); // what color is this? :)  the fog stage 'color'
+	SetUniformVec4(UNIFORM_COLOR, tess.svars.color); // this is the alphagen const value from the liquid stage
 
 	// ..
 	SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, (r_showLightMaps->integer == 1 ? GL_TRUE : GL_FALSE));
@@ -2201,10 +2071,13 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 		clipPortalPlane();
 	}
 
+	fogDensity = tr.glfogsettings[FOG_WATER].end; // this is the waterfogvars density value
 	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
 	if (fogDensity > 0.0)
 	{
-		SetUniformVec3(UNIFORM_FOGCOLOR, tess.svars.color); // UNIFORM_FOGCOLOR is a vec3
+		vec3_t fogColor;
+		VectorSet(fogColor, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2]);
+		SetUniformVec3(UNIFORM_FOGCOLOR, fogColor);
 		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 		// bind u_DepthMap
@@ -3200,6 +3073,7 @@ void Tess_StageIteratorGeneric()
 			}
 			break;
 		case ST_COLORMAP:
+			// This renders all the 2D stuff
 			Render_generic(stage);
 			break;
 		case ST_LIQUIDMAP:  // liquid
