@@ -617,7 +617,6 @@ void _Vector4Set4(const float value, vec4_t out);
 
 // forced double-precison functions
 #define DotProductDP(x, y)       ((double)(x)[0] * (y)[0] + (double)(x)[1] * (y)[1] + (double)(x)[2] * (y)[2])
-#define VectorSubtractDP(a, b, c) ((c)[0] = (double)((a)[0] - (b)[0]), (c)[1] = (double)((a)[1] - (b)[1]), (c)[2] = (double)((a)[2] - (b)[2]))
 #define VectorAddDP(a, b, c)      ((c)[0] = (double)((a)[0] + (b)[0]), (c)[1] = (double)((a)[1] + (b)[1]), (c)[2] = (double)((a)[2] + (b)[2]))
 
 #define MatrixMultiply(in1, in2, o) mat3_mult(in1, in2, o)
@@ -1807,6 +1806,9 @@ static ID_INLINE void CrossProductDP(const vec3_t v1, const vec3_t v2, vec3_t cr
 	cross[1] = d1[2] * d2[0] - d1[0] * d2[2];
 	cross[2] = d1[0] * d2[1] - d1[1] * d2[0];
 }
+
+// this needs to be done in SSE
+#define VectorSubtractDP(a, b, c) ((c)[0] = (double)((a)[0] - (b)[0]), (c)[1] = (double)((a)[1] - (b)[1]), (c)[2] = (double)((a)[2] - (b)[2]))
 
 
 static ID_INLINE vec_t VectorNormalizeDP(vec3_t v)
