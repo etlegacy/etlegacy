@@ -2,7 +2,7 @@
 
 uniform sampler2D u_ColorMap;
 #if defined(USE_ALPHA_TESTING)
-uniform int u_AlphaTest;
+uniform int       u_AlphaTest;
 #endif // USE_ALPHA_TESTING
 
 varying vec2 var_Tex;

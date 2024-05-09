@@ -18,7 +18,7 @@ void main()
 
 #if defined(USE_VERTEX_SKINNING)
 	VertexSkinning_PN(attr_Position, attr_Normal,
-	                  position, normal);
+	                  position,      normal);
 
 	// transform vertex position into homogenous clip-space
 	gl_Position = u_ModelViewProjectionMatrix * vertex;

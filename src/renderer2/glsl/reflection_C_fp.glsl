@@ -3,7 +3,7 @@
 #include "lib/normalMapping"
 
 
-uniform float u_ReflectionScale;
+uniform float       u_ReflectionScale;
 #if 1
 uniform samplerCube u_EnvironmentMap0;
 uniform samplerCube u_EnvironmentMap1;

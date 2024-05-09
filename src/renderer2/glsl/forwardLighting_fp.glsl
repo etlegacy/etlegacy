@@ -75,30 +75,30 @@ Pr(X -mu >= k * sigma) <= 1 / ( 1 + k^2)
 
 
 
-uniform mat4 u_ViewMatrix;
-#if LIGHT_DIRECTIONAL == 0
-uniform sampler2D u_AttenuationMapXY;
-uniform sampler2D u_AttenuationMapZ;
+uniform mat4      u_ViewMatrix;
+#if LIGHT_DIRECTIONAL==0
+	uniform sampler2D u_AttenuationMapXY;
+	uniform sampler2D u_AttenuationMapZ;
 #endif // LIGHT_DIRECTIONAL
 
-#if LIGHT_DIRECTIONAL == 1
+#if LIGHT_DIRECTIONAL==1
 	#if !defined(r_ShowParallelShadowSplits)
-uniform sampler2D u_ShadowMap0;
-uniform sampler2D u_ShadowMap1;
-uniform sampler2D u_ShadowMap2;
-uniform sampler2D u_ShadowMap3;
-uniform sampler2D u_ShadowMap4;
+	uniform sampler2D u_ShadowMap0;
+	uniform sampler2D u_ShadowMap1;
+	uniform sampler2D u_ShadowMap2;
+	uniform sampler2D u_ShadowMap3;
+	uniform sampler2D u_ShadowMap4;
 	#endif
 #elif defined(LIGHT_PROJ)
-uniform sampler2D u_ShadowMap0;
+	uniform sampler2D u_ShadowMap0;
 #else
-uniform samplerCube u_ShadowMap;
+	uniform samplerCube u_ShadowMap;
 #endif
 
-#if LIGHT_DIRECTIONAL == 1
-uniform vec3 u_LightDir;
+#if LIGHT_DIRECTIONAL==1
+	uniform vec3 u_LightDir;
 #else
-uniform vec3 u_LightOrigin;
+	uniform vec3 u_LightOrigin;
 #endif
 uniform vec3  u_LightColor;
 uniform float u_LightRadius;
@@ -113,11 +113,11 @@ uniform float u_ShadowBlur;
 varying vec4 var_Position;
 varying vec4 var_Color;
 varying vec3 var_Normal;
-#if LIGHT_DIRECTIONAL == 0
-varying vec4 var_TexAttenuation;
+#if LIGHT_DIRECTIONAL==0
+	varying vec4 var_TexAttenuation;
 #endif // LIGHT_DIRECTIONAL
 #if defined(USE_PORTAL_CLIPPING)
-varying float var_BackSide;     // in front, or behind, the portalplane
+	varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
@@ -172,7 +172,7 @@ float angle = r;// * M_TAU / 360.0;
 
 #if defined(PCSS)
 
-#if LIGHT_DIRECTIONAL == 1
+#if LIGHT_DIRECTIONAL==1
 // TODO SumBlocker for sun shadowing
 
 #elif defined(LIGHT_PROJ)
@@ -282,12 +282,9 @@ float EstimatePenumbra(float vertexDistance, float blocker)
 #if defined(EVSM)
 float ChebyshevUpperBound(vec2 shadowMoments, float vertexDistance, float minVariance)
 {
-	if (vertexDistance <= shadowMoments.x)
-	{
-		return 1.0;
-	}
+	if (vertexDistance <= shadowMoments.x) return 1.0;
 
-	float shadowDistance        = shadowMoments.x;
+	float shadowDistance = shadowMoments.x;
 	float shadowDistanceSquared = shadowMoments.y;
 
 //!!!DEBUG!!! test:  https://fabiensanglard.net/shadowmappingVSM/
@@ -306,7 +303,7 @@ float ChebyshevUpperBound(vec2 shadowMoments, float vertexDistance, float minVar
 	variance = max(variance, minVariance);
 
 	// compute probabilistic upper bound
-	float d    = vertexDistance - shadowDistance;
+	float d = vertexDistance - shadowDistance;
 	float pMax = variance / (variance + (d * d));
 
 //	#if defined(r_LightBleedReduction)
@@ -341,7 +338,7 @@ vec4 ShadowDepthToEVSM(float depth)
 
 
 
-#if LIGHT_DIRECTIONAL == 1 //===========================================================================================
+#if LIGHT_DIRECTIONAL==1 //===========================================================================================
 
 #define ANY_SPLIT -1
 #define READ_SPLIT -2
@@ -358,90 +355,55 @@ bool getShadowMoments(vec4 worldP, float vertDistToCam, inout vec4 shadowVert, i
 	{
 		split = 0;
 		// we're done if we only want to know the split#
-		if (splitRequest == READ_SPLIT)
-		{
-			return false;
-		}
+		if (splitRequest == READ_SPLIT) return false;
 		// take a sample if we are in the correct split
-		if (splitRequest == 0 || splitRequest == ANY_SPLIT)
-		{
-			shadowVert    = u_ShadowMatrix[0] * worldP;
+		if (splitRequest == 0 || splitRequest == ANY_SPLIT) {
+			shadowVert = u_ShadowMatrix[0] * worldP;
 			shadowMoments = texture2DProj(u_ShadowMap0, shadowVert);
 //			shadowMoments = texture2DProj(u_ShadowMap0, shadowVert.xyw); // in our case, this also works..
 //			shadowMoments = texture2D(u_ShadowMap0, shadowVert.xy); // ..and this too.
-		}
-		else
-		{
+		} else
 			return false;
-		}
 	}
 	else if (vertDistToCam < u_ShadowParallelSplitDistances.y)
 	{
 		split = 1;
-		if (splitRequest == READ_SPLIT)
-		{
-			return false;
-		}
-		if (splitRequest == 1 || splitRequest == ANY_SPLIT)
-		{
-			shadowVert    = u_ShadowMatrix[1] * worldP;
+		if (splitRequest == READ_SPLIT) return false;
+		if (splitRequest == 1 || splitRequest == ANY_SPLIT) {
+			shadowVert = u_ShadowMatrix[1] * worldP;
 			shadowMoments = texture2DProj(u_ShadowMap1, shadowVert);
-		}
-		else
-		{
+		} else
 			return false;
-		}
 	}
 	else if (vertDistToCam < u_ShadowParallelSplitDistances.z)
 	{
 		split = 2;
-		if (splitRequest == READ_SPLIT)
-		{
-			return false;
-		}
-		if (splitRequest == 2 || splitRequest == ANY_SPLIT)
-		{
-			shadowVert    = u_ShadowMatrix[2] * worldP;
+		if (splitRequest == READ_SPLIT) return false;
+		if (splitRequest == 2 || splitRequest == ANY_SPLIT) {
+			shadowVert = u_ShadowMatrix[2] * worldP;
 			shadowMoments = texture2DProj(u_ShadowMap2, shadowVert);
-		}
-		else
-		{
+		} else
 			return false;
-		}
 	}
 	else if (vertDistToCam < u_ShadowParallelSplitDistances.w)
 	{
 		split = 3;
-		if (splitRequest == READ_SPLIT)
-		{
-			return false;
-		}
-		if (splitRequest == 3 || splitRequest == ANY_SPLIT)
-		{
-			shadowVert    = u_ShadowMatrix[3] * worldP;
+		if (splitRequest == READ_SPLIT) return false;
+		if (splitRequest == 3 || splitRequest == ANY_SPLIT) {
+			shadowVert = u_ShadowMatrix[3] * worldP;
 			shadowMoments = texture2DProj(u_ShadowMap3, shadowVert);
-		}
-		else
-		{
+		} else
 			return false;
-		}
 	}
 	else
 	{
 		split = 4;
-		if (splitRequest == READ_SPLIT)
-		{
-			return false;
-		}
-		if (splitRequest == 4 || splitRequest == ANY_SPLIT)
-		{
-			shadowVert    = u_ShadowMatrix[4] * worldP;
+		if (splitRequest == READ_SPLIT) return false;
+		if (splitRequest == 4 || splitRequest == ANY_SPLIT) {
+			shadowVert = u_ShadowMatrix[4] * worldP;
 			shadowMoments = texture2DProj(u_ShadowMap4, shadowVert);
-		}
-		else
-		{
+		} else
 			return false;
-		}
 	}
 #endif
 	// a sample was taken
@@ -453,8 +415,8 @@ bool getShadowMoments(vec4 worldP, float vertDistToCam, inout vec4 shadowVert, i
 void FetchShadowMoments(vec3 Pworld, inout vec4 shadowVert, inout vec4 shadowMoments, inout int split)
 {
 	// transform to camera space
-	vec4  worldP                 = vec4(Pworld.xyz, 1.0);
-	vec4  Pcam                   = u_ViewMatrix * worldP;
+	vec4 worldP = vec4(Pworld.xyz, 1.0);
+	vec4 Pcam = u_ViewMatrix * worldP;
 	float vertexDistanceToCamera = -Pcam.z;
 	getShadowMoments(worldP, vertexDistanceToCamera, shadowVert, shadowMoments, split, ANY_SPLIT);
 }
@@ -474,11 +436,11 @@ void PCF(vec3 Pworld, vec3 lightDir, inout vec4 shadowVert, inout vec4 shadowMom
 	MakeNormalVectors(forward, right, up);
 
 	// transform to camera space
-	vec4  worldP                 = vec4(Pworld.xyz, 1.0);
-	vec4  Pcam                   = u_ViewMatrix * worldP;
+	vec4 worldP = vec4(Pworld.xyz, 1.0);
+	vec4 Pcam = u_ViewMatrix * worldP;
 	float vertexDistanceToCamera = -Pcam.z;
 
-	int  splitP, split, nSamples = 0;
+	int splitP, split, nSamples = 0;
 	vec4 moments = vec4(0.0, 0.0, 0.0, 0.0);
 
 	// Get the split# for the given Pworld.
@@ -489,23 +451,11 @@ void PCF(vec3 Pworld, vec3 lightDir, inout vec4 shadowVert, inout vec4 shadowMom
 	// We do some LOD for splits further away from the camera.
 	// Note: if we use 2 samples, you can see a distinct darker splitzone color from split 1 to split 2.
 	// That is the reason why we use a minimum of 3 samples.
-	if (samples > 3 && splitP > 3)
-	{
-		samples--;                            // split 4 takes max. 3 samples
-	}
-	if (samples > 3 && splitP > 2)
-	{
-		samples--;                            // split 3 takes max. 4 samples
-	}
-	if (samples > 3 && splitP > 1)
-	{
-		samples--;                            // split 2 takes max. 5 samples
-	}
-	if (samples > 3 && splitP > 0)
-	{
-		samples--;                            // split 1 takes max. 6 samples
+	if (samples > 3 && splitP > 3) samples--; // split 4 takes max. 3 samples
+	if (samples > 3 && splitP > 2) samples--; // split 3 takes max. 4 samples
+	if (samples > 3 && splitP > 1) samples--; // split 2 takes max. 5 samples
+	if (samples > 3 && splitP > 0) samples--; // split 1 takes max. 6 samples
 
-	}
 #if 1
 	// compute step size for iterating through the kernel
 	float stepSize = 2.0 * filterWidth / samples;
@@ -516,8 +466,7 @@ void PCF(vec3 Pworld, vec3 lightDir, inout vec4 shadowVert, inout vec4 shadowMom
 			vec4 wp = vec4(worldP.xyz + right * i + up * j, 1.0);
 			// only filter in the same initial parallax zone
 			bool sampled = getShadowMoments(wp, vertexDistanceToCamera, shadowVert, shadowMoments, split, splitP);
-			if (sampled)
-			{
+			if (sampled) {
 				nSamples++; // and count only true samples when taking the average
 				moments += shadowMoments;
 			}
@@ -528,11 +477,10 @@ void PCF(vec3 Pworld, vec3 lightDir, inout vec4 shadowVert, inout vec4 shadowMom
 	{
 		for (int j = 0; j < samples; j++)
 		{
-			vec3 rand    = RandomVec3(gl_FragCoord.st * r_FBufScale + vec2(i, j)) * filterWidth;
-			vec4 wp      = vec4(worldP.xyz + right * rand.x + up * rand.y, 1.0);
+			vec3 rand = RandomVec3(gl_FragCoord.st * r_FBufScale + vec2(i, j)) * filterWidth;
+			vec4 wp = vec4(worldP.xyz + right * rand.x + up * rand.y, 1.0);
 			bool sampled = getShadowMoments(wp, vertexDistanceToCamera, shadowVert, shadowMoments, split, splitP);
-			if (sampled)
-			{
+			if (sampled) {
 				nSamples++; // and count only these samples when taking the average
 				moments += shadowMoments;
 			}
@@ -541,7 +489,7 @@ void PCF(vec3 Pworld, vec3 lightDir, inout vec4 shadowVert, inout vec4 shadowMom
 #endif
 
 	// return average of the samples
-	moments      *= (1.0 / nSamples);
+	moments *= (1.0 / nSamples);
 	shadowMoments = moments;
 }
 #endif // #if defined(SOFTSHADOWSAMPLES)
@@ -671,7 +619,7 @@ void    main()
 #endif
 
 
-#if LIGHT_DIRECTIONAL == 1 //===========================================================================================
+#if LIGHT_DIRECTIONAL==1 //===========================================================================================
 
 #if defined(SOFTSHADOWSAMPLES)
 //	PCF(var_Position.xyz, u_LightDir, shadowVert, shadowMoments, u_ShadowTexelSize * u_ShadowBlur * 750.0, SOFTSHADOWSAMPLES); // * big value for the sun
@@ -784,8 +732,7 @@ void    main()
 	// if the surface is back-facing the light, discard
 //	float dotNI = dot(var_Normal.xyz, -normalize(I));
 	float dotNI = dot(var_Normal.xyz, -I); // no need to normalize I, just because of a dot-product test <= 0
-	if (dotNI <= 0.0)
-	{
+	if (dotNI <= 0.0) {
 //!!!DEBUG!!! DO NOT DISCARD. the usual color calculations must still be done..
 		discard;
 		return;
@@ -809,7 +756,7 @@ void    main()
 	{
 		const float SHADOW_BIAS = 0.01;
 
-#if LIGHT_DIRECTIONAL == 1
+#if LIGHT_DIRECTIONAL==1
 //		float vertexDistance = shadowVert.z - 0.0001;
 		float vertexDistance = shadowVert.z;
 #else
@@ -858,7 +805,7 @@ void    main()
 #if defined(LIGHT_PROJ)
 	vec3 attenuationXY = texture2DProj(u_AttenuationMapXY, var_TexAttenuation.xyw).rgb;
 	vec3 attenuationZ  = texture2D(u_AttenuationMapZ, vec2(var_TexAttenuation.z + 0.5, 0.0)).rgb; // FIXME
-#elif LIGHT_DIRECTIONAL == 1
+#elif LIGHT_DIRECTIONAL==1
 //	vec3 attenuationXY = vec3(1.0);
 //	vec3 attenuationZ  = vec3(1.0);
 #else // omni
@@ -870,7 +817,7 @@ void    main()
 	// compute final color
 	vec4 color = vec4(u_LightColor, 1.0);
 
-#if LIGHT_DIRECTIONAL == 0
+#if LIGHT_DIRECTIONAL==0
 	color.rgb *= attenuationXY;
 	color.rgb *= attenuationZ;
 #endif

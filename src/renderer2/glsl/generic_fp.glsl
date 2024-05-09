@@ -2,13 +2,13 @@
 
 uniform sampler2D u_ColorMap;
 #if defined(USE_ALPHA_TESTING)
-uniform int u_AlphaTest;
+	uniform int       u_AlphaTest;
 #endif // USE_ALPHA_TESTING
 
 varying vec2 var_Tex;
 varying vec4 var_Color;
 #if defined(USE_PORTAL_CLIPPING)
-varying float var_BackSide;     // in front, or behind, the portalplane
+	varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 void main()
@@ -46,3 +46,4 @@ void main()
 
 	gl_FragColor = color;
 }
+

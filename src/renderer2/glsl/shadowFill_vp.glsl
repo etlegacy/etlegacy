@@ -13,37 +13,37 @@ attribute vec4 attr_TexCoord0;
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
 #if defined(USE_VERTEX_ANIMATION)
-attribute vec4 attr_Position2;
-attribute vec3 attr_Normal2;
+	attribute vec4 attr_Position2;
+	attribute vec3 attr_Normal2;
 #endif // USE_VERTEX_ANIMATION
 
-uniform mat4 u_ModelMatrix;
-uniform mat4 u_ModelViewProjectionMatrix;
+uniform mat4  u_ModelMatrix;
+uniform mat4  u_ModelViewProjectionMatrix;
 #if defined(USE_ALPHA_TESTING)
-uniform mat4 u_ColorTextureMatrix;
+	uniform mat4  u_ColorTextureMatrix;
 #endif // USE_ALPHA_TESTING
 #if defined(USE_VERTEX_ANIMATION)
-uniform float u_VertexInterpolation;
+	uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
 #if defined(USE_DEFORM_VERTEXES)
-uniform float u_Time;
+	uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
 #if defined(EVSM)
-#if LIGHT_DIRECTIONAL == 0
-uniform vec3  u_LightOrigin;
-uniform float u_LightRadius;
+#if LIGHT_DIRECTIONAL==0
+	uniform vec3  u_LightOrigin;
+	uniform float u_LightRadius;
 
-varying vec3  var_Position;
-varying float var_Distance;
+	varying vec3 var_Position;
+	varying float var_Distance;
 #endif // LIGHT_DIRECTIONAL
 #endif // EVSM
 
 #if defined(USE_ALPHA_TESTING)
-varying vec2 var_Tex;
+	varying vec2 var_Tex;
 #endif // USE_ALPHA_TESTING
 #if defined(USE_PORTAL_CLIPPING)
-varying float var_BackSide;     // in front, or behind, the portalplane
+	varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
@@ -55,13 +55,13 @@ void main()
 
 #if defined(USE_VERTEX_SKINNING)
 	VertexSkinning_PN(attr_Position, attr_Normal,
-	                  position, normal);
+	                  position,      normal);
 
 #elif defined(USE_VERTEX_ANIMATION)
 	VertexAnimation_PN(attr_Position, attr_Position2,
-	                   attr_Normal, attr_Normal2,
-	                   u_VertexInterpolation,
-	                   position, normal);
+	                   attr_Normal,   attr_Normal2,
+                       u_VertexInterpolation,
+                       position,      normal);
 #else // USE_VERTEX_ANIMATION
 	position = attr_Position;
 	normal   = attr_Normal;
@@ -77,7 +77,7 @@ void main()
 	gl_Position = u_ModelViewProjectionMatrix * position;
 
 	// transform position into world space
-#if LIGHT_DIRECTIONAL == 0
+#if LIGHT_DIRECTIONAL==0
 //	var_Position = gl_Position.xyz / gl_Position.w;
 	var_Position = (u_ModelMatrix * position).xyz;
 #if defined(EVSM)

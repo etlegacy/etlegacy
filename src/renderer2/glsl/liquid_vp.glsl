@@ -8,11 +8,11 @@ attribute vec4 attr_Color;
 attribute vec4 attr_TexCoord0;
 attribute vec3 attr_Normal;
 #if defined(USE_NORMAL_MAPPING)
-attribute vec3 attr_Tangent;
-attribute vec3 attr_Binormal;
+	attribute vec3 attr_Tangent;
+	attribute vec3 attr_Binormal;
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_LIGHT_MAPPING)
-attribute vec4 attr_TexCoord1;     // the lightmap texture coordinates
+	attribute vec4 attr_TexCoord1; // the lightmap texture coordinates
 #endif // USE_LIGHT_MAPPING
 
 uniform mat4 u_ModelMatrix;
@@ -30,45 +30,45 @@ uniform vec4 u_ColorModulate;
 
 uniform vec4 u_Color;
 #if defined(USE_DIFFUSE)
-uniform mat4 u_DiffuseTextureMatrix;
+	uniform mat4 u_DiffuseTextureMatrix;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
-uniform vec3 u_ViewOrigin;
-uniform vec3 u_LightDir;
+	uniform vec3 u_ViewOrigin;
+	uniform vec3 u_LightDir;
 	#if defined(USE_PARALLAX_MAPPING)
-uniform float u_DepthScale;
+		uniform float u_DepthScale;
 	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4 u_PortalPlane;
+	uniform vec4  u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 #if defined(USE_DEFORM_VERTEXES)
-uniform float u_Time;
+	uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
 //varying vec4 var_Color;
 varying vec3 var_Position;
 varying vec3 var_Normal;
 #if defined(USE_LIGHT_MAPPING)
-varying vec2 var_TexLight;              // lightmap texture coordinates
-varying vec4 var_LightmapColor;
+	varying vec2 var_TexLight;			// lightmap texture coordinates
+	varying vec4 var_LightmapColor;
 #endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
-varying vec2  var_TexDiffuse;           // possibly moving coords
-varying float var_alphaGen;
+	varying vec2 var_TexDiffuse;        // possibly moving coords
+	varying float var_alphaGen;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
-varying mat3 var_tangentMatrix;
-varying mat3 var_worldMatrix;
-varying vec2 var_TexNormal;             // these coords are never moving
-varying vec3 var_LightDirT;             // light direction in tangentspace
-varying vec3 var_ViewDirT;              // view direction in tangentspace
+	varying mat3 var_tangentMatrix;
+	varying mat3 var_worldMatrix;
+	varying vec2 var_TexNormal;         // these coords are never moving
+	varying vec3 var_LightDirT;         // light direction in tangentspace
+	varying vec3 var_ViewDirT;          // view direction in tangentspace
 	#if defined(USE_PARALLAX_MAPPING)
-varying float var_distanceToCam;            //
+		varying float var_distanceToCam;    //
 	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-varying float var_BackSide;     // in front, or behind, the portalplane
+	varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
@@ -92,7 +92,7 @@ void main()
 
 #if defined(USE_LIGHT_MAPPING)
 	// get lightmap texture coordinates
-	var_TexLight      = attr_TexCoord1.st;
+	var_TexLight = attr_TexCoord1.st;
 	var_LightmapColor = attr_Color * u_ColorModulate + u_Color;
 #endif // USE_LIGHT_MAPPING
 
@@ -102,7 +102,6 @@ void main()
 	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
 	// the alpha value is the one set by alphaGen const <value>
-//	var_alphaGen = u_ColorModulate.a; // * 0.5 + 0.5;
 	var_alphaGen = u_Color.a; // the u_Color is the waterfogvars (r,g,b,density)
 #endif // USE_DIFFUSE
 

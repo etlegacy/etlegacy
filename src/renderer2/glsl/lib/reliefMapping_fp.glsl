@@ -51,15 +51,11 @@ my test models are in "My Documents"\ETLegacy\legacy\modelsC.pk3
 //   "shadowFactor" is used to set the amount of parallax-selfshadowing. A value 0 disables this feature. (cvar r_parallaxShadow)
 //   "lightmapColor" is the color computed for the lightmap term.
 //
-vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3 lightDir, float depthscale, float distanceToCam, float shadowFactor, vec3 lightmapColor)
-{
+vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3 lightDir, float depthscale, float distanceToCam, float shadowFactor, vec3 lightmapColor) {
 	// the function result
 	vec3 result = vec3(texCoords, 1.0); // set shadow value to 1.0 (no shadow)
 	// fade out the effect over distance
-	if (distanceToCam > PARALLAX_FADE_END)
-	{
-		return result;                                        // early out if (point on) surface is too far away..
-	}
+	if (distanceToCam > PARALLAX_FADE_END) return result;     // early out if (point on) surface is too far away..
 	float distanceRatio = (distanceToCam > PARALLAX_FADE_START) ? 1.0 - ((distanceToCam - PARALLAX_FADE_START) / (PARALLAX_FADE_END - PARALLAX_FADE_START)) : 1.0;
 
 	// in tangentspace, the normal of the surface is always the same
@@ -73,23 +69,23 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 	vec2 dx = dFdx(texCoords);
 	vec2 dy = dFdy(texCoords);
 	// calculate the miplevel for use in the textureLod function.
-	vec2  vTexCoordsPerSize = texCoords * textureSize(displaceMap, 0);
-	vec2  dxSize            = dFdx(vTexCoordsPerSize);
-	vec2  dySize            = dFdy(vTexCoordsPerSize);
-	vec2  dTexCoords        = dxSize * dxSize + dySize * dySize;
-	float mipLevel          = max(0.5 * log2(max(dTexCoords.x, dTexCoords.y)), 0);
+	vec2 vTexCoordsPerSize = texCoords * textureSize(displaceMap, 0);
+	vec2 dxSize = dFdx(vTexCoordsPerSize);
+	vec2 dySize = dFdy(vTexCoordsPerSize);
+	vec2 dTexCoords = dxSize * dxSize + dySize * dySize;
+	float mipLevel = max(0.5 * log2(max(dTexCoords.x, dTexCoords.y)), 0);
 
 	// less layers when viewed from straight above (in tangent space)
-	float viewAngle      = abs(dot(surfaceNormalT, viewDir));
-	float numLayers      = int((maxLayers - minLayers) * viewAngle + minLayers);
-	float layerDepth     = 1.0 / numLayers;
-	vec2  deltaTexCoords = viewDir.xy / viewDir.z * layerDepth * depthscale * distanceRatio;
-	float curDepth       = 0.0;
-	vec2  curTexCoords   = texCoords;
-	float curDepthValue  = textureLod(displaceMap, curTexCoords, mipLevel).a;
+	float viewAngle = abs(dot(surfaceNormalT, viewDir));
+	float numLayers = int((maxLayers - minLayers) * viewAngle + minLayers);
+	float layerDepth = 1.0 / numLayers;
+	vec2 deltaTexCoords = viewDir.xy / viewDir.z * layerDepth * depthscale * distanceRatio;
+	float curDepth = 0.0;
+	vec2 curTexCoords = texCoords;
+	float curDepthValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
 //@	float curDepthValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
 //@	float curDepthValue = texture2D(displaceMap, curTexCoords).a;
-	vec2  prevTexCoords;
+	vec2 prevTexCoords;
 	float prevDepthValue;
 	float afterDepth;
 	float beforeDepth;
@@ -98,16 +94,12 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 	float weight_1;
 	// a while-loop in glsl is not so easy to run. My old while loop went woot..
 	// a for-loop in glsl works well.
-	for (int L = 0; L < numLayers; L++)
-	{
-		if (curDepth >= curDepthValue)
-		{
-			break;
-		}
-		prevTexCoords  = curTexCoords;
+	for (int L=0; L<numLayers; L++) {
+		if (curDepth >= curDepthValue) break;
+		prevTexCoords = curTexCoords;
 		prevDepthValue = curDepthValue;
-		curTexCoords  -= deltaTexCoords;
-		curDepthValue  = textureLod(displaceMap, curTexCoords, mipLevel).a;
+		curTexCoords -= deltaTexCoords;
+		curDepthValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
 //@		curDepthValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
 //@		curDepthValue =  texture2D(displaceMap, curTexCoords).a;
 		curDepth += layerDepth;
@@ -116,65 +108,49 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 	// parallax occlusion mapping
 	afterDepth  = curDepthValue - curDepth;
 	beforeDepth = prevDepthValue - curDepth + layerDepth;
-	weight      = afterDepth / (afterDepth - beforeDepth);
-	weight_1    = 1.0 - weight;
-	result.xy   = prevTexCoords * weight + curTexCoords * weight_1; // finalTexCoords
+	weight = afterDepth / (afterDepth - beforeDepth);
+	weight_1 = 1.0 - weight;
+	result.xy = prevTexCoords * weight + curTexCoords * weight_1; // finalTexCoords
 
 
 	// self shadowing
 	shadowFactor = clamp(shadowFactor, 0.0, 1.0);
 	// early out if self-shadowing is disabled
-	if (shadowFactor == 0.0)
-	{
+	if (shadowFactor == 0.0) {
 		return result;
-	}
-	else
-	{
+	} else {
 		parallaxHeight = curDepth + beforeDepth * weight + afterDepth * weight_1;
 
 		// there are no shadows when the surface is lit from the backside.
 		float lightAngle = dot(surfaceNormalT, lightDir);
-		if (lightAngle < 0)
-		{
-			return result;
-		}
+		if (lightAngle < 0) return result;
 
-		const int minLayers      = 4;
-		const int maxLayers      = 8;
-		float     shadow         = 0.0;
-		float     numLayers      = (maxLayers - minLayers) * (1.0 - lightAngle) + minLayers;
-		float     divNumLayers   = 1.0 / numLayers;
-		float     layerHeight    = parallaxHeight * divNumLayers;
-		float     curHeight      = parallaxHeight - layerHeight;
-		vec2      deltaTexCoords = -lightDir.xy / -lightDir.z * divNumLayers * depthscale;
-		vec2      curTexCoords   = result.xy + deltaTexCoords; // result.xy is the parallax vec2 result
-		float     curHeightValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
+		const int minLayers = 4;
+		const int maxLayers = 8;
+		float shadow = 0.0;
+		float numLayers = (maxLayers - minLayers) * (1.0 - lightAngle) + minLayers;
+		float divNumLayers = 1.0 / numLayers;
+		float layerHeight = parallaxHeight * divNumLayers;
+		float curHeight = parallaxHeight - layerHeight;
+		vec2 deltaTexCoords = -lightDir.xy / -lightDir.z * divNumLayers * depthscale;
+		vec2 curTexCoords = result.xy + deltaTexCoords; // result.xy is the parallax vec2 result
+		float curHeightValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
 //@		float curHeightValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
 //@		float curHeightValue = texture2D(displaceMap, curTexCoords).a;
 		float stepHeight = 1.0 - divNumLayers;
-		for (int L = 0; L < numLayers; L++)
-		{
-			if (curHeight <= 0)
-			{
-				break;
-			}
-			if (curHeightValue < curHeight)
-			{
-				shadow = max(shadow, (curHeight - curHeightValue) * stepHeight);
-			}
-			stepHeight    -= divNumLayers;
-			curHeight     -= layerHeight;
-			curTexCoords  += deltaTexCoords;
+		for (int L=0; L<numLayers; L++) {
+			if (curHeight <= 0) break;
+			if (curHeightValue < curHeight) shadow = max(shadow, (curHeight - curHeightValue) * stepHeight);
+			stepHeight -= divNumLayers;
+			curHeight -= layerHeight;
+			curTexCoords += deltaTexCoords;
 			curHeightValue = textureLod(displaceMap, curTexCoords, mipLevel).a;
 //@			curHeightValue = textureGrad(displaceMap, curTexCoords, dx, dy).a;
 //@			curHeightValue = texture2D(displaceMap, curTexCoords).a;
 		}
 
 		// if there is no shadow, we are in full light
-		if (shadow == 0.0)
-		{
-			return result;
-		}
+		if (shadow == 0.0) return result;
 
 		// When the lightmap is dark (in shadow) there should be no/less POM self-shadowing..
 		// Because a lightmap can contain color, it's not just a grayscale image, i average over the color channels.

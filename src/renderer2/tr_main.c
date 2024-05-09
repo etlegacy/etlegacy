@@ -1607,6 +1607,7 @@ static void SetFarClip(void)
 		}
 	}
 
+	R_SetFrameFog();
 }
 
 // *INDENT-OFF*

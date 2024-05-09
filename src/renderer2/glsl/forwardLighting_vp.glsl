@@ -14,35 +14,35 @@ attribute vec4 attr_Color;
 attribute vec4 attr_TexCoord0;
 attribute vec3 attr_Normal;
 #if defined(USE_VERTEX_ANIMATION)
-attribute vec4 attr_Position2;
-attribute vec3 attr_Normal2;
+	attribute vec4 attr_Position2;
+	attribute vec3 attr_Normal2;
 #endif // USE_VERTEX_ANIMATION
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 uniform vec4 u_ColorModulate;
 uniform vec4 u_Color;
-#if LIGHT_DIRECTIONAL == 0
-uniform mat4 u_LightAttenuationMatrix;
+#if LIGHT_DIRECTIONAL==0
+	uniform mat4 u_LightAttenuationMatrix;
 #endif // LIGHT_DIRECTIONAL
 #if defined(USE_DEFORM_VERTEXES)
-uniform float u_Time;
+	uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 #if defined(USE_VERTEX_ANIMATION)
-uniform float u_VertexInterpolation;
+	uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4 u_PortalPlane;
+	uniform vec4  u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec4 var_Position;
 varying vec4 var_Color;
-#if LIGHT_DIRECTIONAL == 0
-varying vec4 var_TexAttenuation;
+#if LIGHT_DIRECTIONAL==0
+	varying vec4 var_TexAttenuation;
 #endif // LIGHT_DIRECTIONAL
 varying vec3 var_Normal;
 #if defined(USE_PORTAL_CLIPPING)
-varying float var_BackSide;     // in front, or behind, the portalplane
+	varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
@@ -57,7 +57,7 @@ void main()
 	VertexAnimation_PN(attr_Position, attr_Position2, attr_Normal, attr_Normal2, u_VertexInterpolation, position, normal);
 #else
 	position = attr_Position;
-	normal   = attr_Normal;
+	normal = attr_Normal;
 #endif
 
 #if defined(USE_DEFORM_VERTEXES)
@@ -69,7 +69,7 @@ void main()
 
 	// transform position into world space
 	var_Position = u_ModelMatrix * position; //vec4
-
+	
 	var_Normal = mat3(u_ModelMatrix) * normal;
 
 #if LIGHT_DIRECTIONAL == 0

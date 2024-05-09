@@ -4221,7 +4221,7 @@ static qboolean ParseShader(char *_text)
 			}
 			// store the fog data, and make this fog active
 			RE_SetFog(FOG_MAP, 0, fogFar, fogColor[0], fogColor[1], fogColor[2], fogDensity);
-			RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 0, 0, 0, 0, 0);
+			RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
 			continue;
 		}
 		// ET sunshader <name>
@@ -4626,12 +4626,13 @@ static void OptimizeStages()
 	}
 
 	// find out if there is a lightmap stage, and if so, make it the last stage.
+	//for (j = 0; j < numStages; j++)
 	for (j = 0; j < numStages; j++)
 	{
 		// check for a lightmap or liquid stage
 		if (stages[j].type == ST_LIGHTMAP)
 		{
-//			if (j == 0) break; // lightmap is already the first. we're done
+			//if (j == 0) break; // lightmap is already the first. we're done
 			if (j == numStages-1) break; // lightmap is already the last. we're done
 			// lightmap to tmpStage
 			shaderStage_t tmpStage = stages[j];
