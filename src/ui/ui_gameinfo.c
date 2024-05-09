@@ -283,6 +283,15 @@ void UI_LoadArenas(void)
 		trap_Print(va(S_COLOR_YELLOW "WARNING: Too many pk3 files in path - %i files found.\nWe strongly do recommend to reduce the number of map/pk3 files to max. 30 in path\nif you want to start a listen server with connected players.\n", uiInfo.mapCount));
 	}
 
+	// UI_LoadArenasFromFile will happily keep increasing this beyond the limits, cap it here instead of the function itself
+	// (or the parsing loop condition like in campaign loading), so we can still display the correct amount above.
+	// this is unlikely to happen with buffer size of 8192, but it could happen in theory with short map names
+	if (uiInfo.mapCount >= MAX_MAPS)
+	{
+		trap_Print(va(S_COLOR_YELLOW "WARNING: Reached MAX_MAPS (%i) for UI display, not all maps are displayed.\n", MAX_MAPS));
+		uiInfo.mapCount = MAX_MAPS - 1;
+	}
+
 	// sorting the maplist
 	qsort(uiInfo.mapList, uiInfo.mapCount, sizeof(uiInfo.mapList[0]), UI_SortArenas);
 }
