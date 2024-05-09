@@ -1321,13 +1321,7 @@ void CG_PredictPlayerState(void)
 				vec3_t adjusted;
 				float  len;
 
-				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, deltaAngles);
-				// add the deltaAngles (fixes jittery view while riding trains)
-				// only do this if player is prone or using set mortar
-				if ((cg.predictedPlayerState.eFlags & EF_PRONE) || CHECKBITWISE(GetWeaponTableData(cg.weaponSelect)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
-				{
-					cg.predictedPlayerState.delta_angles[YAW] += ANGLE2SHORT(deltaAngles[YAW]);
-				}
+				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, NULL);
 
 				if (cg_showmiss.integer)
 				{
@@ -1514,6 +1508,13 @@ void CG_PredictPlayerState(void)
 	{
 		// adjust for the movement of the groundentity
 		CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.time, cg.predictedPlayerState.origin, deltaAngles);
+
+		if (deltaAngles[YAW])
+		{
+			cg.predictedPlayerState.delta_angles[YAW] += ANGLE2SHORT(deltaAngles[YAW]);
+
+			PM_UpdateViewAngles(&cg.predictedPlayerState, &cg.pmext, &cg_pmove.cmd, cg_pmove.trace, cg_pmove.tracemask);
+		}
 	}
 
 	// fire events and other transition triggered things
