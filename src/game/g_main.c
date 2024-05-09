@@ -5707,7 +5707,7 @@ void G_ParsePlatformManifest(void)
 	len = trap_FS_FOpenFile("platforms.manifest", &fileHandle, FS_READ);
 	if (len <= 0)
 	{
-		G_Printf(S_COLOR_RED "[G_OSS] platforms.manifest file found\n");
+		G_Printf(S_COLOR_RED "[G_OSS] platforms.manifest file not found\n");
 		trap_FS_FCloseFile(fileHandle);
 		return;
 	}
