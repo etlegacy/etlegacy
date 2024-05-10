@@ -204,7 +204,7 @@ void R_IssuePendingRenderCommands(void)
  * @param[in] bytes
  * @return
  */
-void *R_GetCommandBuffer(int bytes)
+void *R_GetCommandBuffer(unsigned int bytes)
 {
 	static size_t       reserved_space = PAD(sizeof(swapBuffersCommand_t), sizeof(intptr_t)) + sizeof(int);
 	renderCommandList_t *cmdList       = &backEndData->commands;

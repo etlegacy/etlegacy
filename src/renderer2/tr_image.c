@@ -2117,7 +2117,7 @@ static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height,
 
 	return qtrue;
 }
-static int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
+int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
 
 /**
  * @brief This is a hack to get the common imageloaders working properly
