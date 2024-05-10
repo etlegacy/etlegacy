@@ -527,31 +527,6 @@ qboolean Com_WWWBadChecksum(const char *pakname)
 }
 
 /**
- * @brief Com_SetupDownloadRaw
- * @param[in] remote
- * @param[in] filename
- */
-static void Com_SetupDownloadRaw(const char *remote, const char *path, const char *filename, const char *tempName, qboolean systemDownload, qboolean noReconnect)
-{
-	dld.bWWWDl             = qtrue;
-	dld.bWWWDlDisconnected = qtrue;
-	dld.systemDownload     = systemDownload;
-	dld.noReconnect        = noReconnect;
-
-	// download format: @remotename@localname
-	Q_strncpyz(dld.downloadList, va("@%s@%s", filename, filename), MAX_INFO_STRING);
-	Q_strncpyz(dld.originalDownloadName, path[0] ? va("%s/%s", path, filename) : filename, sizeof(dld.originalDownloadName));
-	Q_strncpyz(dld.downloadName, va("%s/%s", remote, filename), sizeof(dld.downloadName));
-	Q_strncpyz(dld.downloadTempName, tempName, sizeof(dld.downloadTempName));
-
-	if (!Com_BeginWebDownload(dld.downloadTempName, dld.downloadName))
-	{
-		dld.bWWWDlAborting = qtrue;
-		Com_Error(ERR_DROP, "Could not download file: \"%s\"", dld.downloadName);
-	}
-}
-
-/**
  * @brief Com_SetupDownload
  * @param[in] remote
  * @param[in] filename
@@ -644,7 +619,6 @@ void Com_CheckCaCertStatus(void)
 
 	if (downloadFile)
 	{
-		// Com_SetupDownloadRaw(MIRROR_SERVER_URL "/certificates", "", CA_CERT_FILE, CA_CERT_FILE TMP_FILE_EXTENSION, qtrue, qtrue);
 		Com_DownloadFileSimple(ospath, MIRROR_SERVER_URL "/certificates/" CA_CERT_FILE);
 	}
 #else

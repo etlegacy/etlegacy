@@ -647,7 +647,6 @@ qboolean SV_CL_GetServerCommand(int serverCommandNumber)
 	char        *s;
 	char        *cmd;
 	static char bigConfigString[BIG_INFO_STRING];
-	int         argc;
 
 	// if we have irretrievably lost a reliable command, drop the connection
 	if (serverCommandNumber <= svclc.serverCommandSequence - MAX_RELIABLE_COMMANDS)
@@ -678,8 +677,7 @@ qboolean SV_CL_GetServerCommand(int serverCommandNumber)
 
 rescan:
 	Cmd_TokenizeString(s);
-	cmd  = Cmd_Argv(0);
-	argc = Cmd_Argc();
+	cmd = Cmd_Argv(0);
 
 	if (!strcmp(cmd, "disconnect"))
 	{

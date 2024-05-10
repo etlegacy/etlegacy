@@ -1119,7 +1119,7 @@ void CG_ParseMapEntityInfo(int axis_number, int allied_number);
 #define MAX_WEAPS_IN_BANK_MP       18
 #define MAX_WEAP_BANK_SWITCH_ORDER 4
 
-#define MAX_BACKUP_STATES (CMD_BACKUP + 2)
+#define MAX_BACKUP_STATES (CMD_BACKUP_ETL + 2)
 
 /**
  * @struct cg_t

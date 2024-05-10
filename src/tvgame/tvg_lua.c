@@ -1906,52 +1906,12 @@ qboolean G_LuaRunIsolated(const char *modName)
  */
 qboolean G_LuaInit(void)
 {
-	int  i, num_vm = 0, len;
-	char buff[MAX_CVAR_VALUE_STRING], *crt;
+	int i;
 
 	for (i = 0; i < LUA_NUM_VM; i++)
 	{
 		lVM[i] = NULL;
 	}
-
-	//if (lua_modules.string[0])
-	//{
-	//	Q_strncpyz(buff, lua_modules.string, sizeof(buff));
-	//	len = strlen(buff);
-	//	crt = buff;
-	//	for (i = 0; i <= len; i++)
-	//	{
-	//		if (buff[i] == ' ' || buff[i] == '\0' || buff[i] == ',' || buff[i] == ';')
-	//		{
-	//			buff[i] = '\0';
-
-	//			if (num_vm >= LUA_NUM_VM)
-	//			{
-	//				G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
-	//				break;
-	//			}
-
-	//			if (G_LuaRunIsolated(crt))
-	//			{
-	//				num_vm++;
-	//			}
-
-	//			// prepare for next iteration
-	//			if (i + 1 < len)
-	//			{
-	//				crt = buff + i + 1;
-	//			}
-	//			else
-	//			{
-	//				crt = NULL;
-	//			}
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	G_Printf("%s API: %sno Lua files set\n", LUA_VERSION, S_COLOR_BLUE);
-	//}
 
 	return qtrue;
 }

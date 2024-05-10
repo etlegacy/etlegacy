@@ -3740,6 +3740,7 @@ void FS_Which_f(void)
 
 //===========================================================================
 
+#if !defined(DEDICATED)
 /**
  * @brief FS_AddPackToPath add a single package to the search path
  * @param osPath full os path to the pk3 file
@@ -3765,6 +3766,7 @@ static void FS_AddPackToPath(const char *osPath, const char *gameName)
 	search->next   = fs_searchpaths;
 	fs_searchpaths = search;
 }
+#endif
 
 /**
  * @brief paksort
@@ -4390,7 +4392,7 @@ static void FS_AddContainerDirectory(const char *subPath)
 		}
 
 		char *packName = strchr(fs_serverReferencedPakNames[i], '/');
-		if (packName && (packName + 1))
+		if (packName && *(packName + 1))
 		{
 			char       tmpPath[MAX_OSPATH] = { '\0' };
 			char const *path               = FS_BuildOSPath(fs_homepath->string, subPath, va("%s%c%s.pk3", FS_CONTAINER, PATH_SEP, packName + 1));
