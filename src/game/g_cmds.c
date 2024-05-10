@@ -2851,7 +2851,6 @@ void G_Say_f(gentity_t *ent, int mode /*, qboolean arg0*/)
  */
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum, int vsayNum, const char *customChat)
 {
-	int  color;
 	char *cmd;
 
 	if (!other)
