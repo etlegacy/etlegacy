@@ -609,8 +609,8 @@ void CL_ClearState(void)
 {
 	Com_Memset(&cl, 0, sizeof(cl));
 
-	cl.cmdBackup = CMD_BACKUP_VET;
-	cl.cmdMask   = CMD_MASK_VET;
+	cl.cmdBackup = CMD_BACKUP;
+	cl.cmdMask   = CMD_MASK;
 }
 
 /**

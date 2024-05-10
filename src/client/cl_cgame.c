@@ -1070,8 +1070,8 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 
 	case CG_CMDBACKUP_EXT:
-		cl.cmdBackup = CMD_BACKUP;
-		cl.cmdMask   = CMD_MASK;
+		cl.cmdBackup = CMD_BACKUP_ETL;
+		cl.cmdMask   = CMD_MASK_ETL;
 		return 0;
 
 	default:
@@ -1692,10 +1692,10 @@ void CL_SetCGameTime(void)
  */
 qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation)
 {
-    if (!cgvm)
-    {
-        return qfalse;
-    }
+	if (!cgvm)
+	{
+		return qfalse;
+	}
 
-    return VM_Call(cgvm, CG_GET_TAG, clientNum, tagname, orientation);
+	return VM_Call(cgvm, CG_GET_TAG, clientNum, tagname, orientation);
 }
