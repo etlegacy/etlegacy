@@ -3740,6 +3740,7 @@ void FS_Which_f(void)
 
 //===========================================================================
 
+#if !defined(DEDICATED)
 /**
  * @brief FS_AddPackToPath add a single package to the search path
  * @param osPath full os path to the pk3 file
@@ -3765,6 +3766,7 @@ static void FS_AddPackToPath(const char *osPath, const char *gameName)
 	search->next   = fs_searchpaths;
 	fs_searchpaths = search;
 }
+#endif
 
 /**
  * @brief paksort
