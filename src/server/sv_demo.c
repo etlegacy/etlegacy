@@ -329,8 +329,6 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
  */
 static qboolean SV_CheckGameCommand(const char *cmd)
 {
-	static int scores = 0;
-
 	if (!SV_CheckLastCmd(cmd, qfalse))
 	{
 		// check that the previous cmd was different from the current cmd.
@@ -1474,7 +1472,6 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 	client_t      *client;
 	char          *cmd;
 	int           clientNum, i;
-	static int    time    = 0;
 	qboolean      canSend = qfalse;
 
 	clientNum = MSG_ReadLong(msg);
