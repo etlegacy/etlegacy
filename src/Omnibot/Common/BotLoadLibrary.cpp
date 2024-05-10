@@ -418,7 +418,7 @@ void KeyVals::Reset()
 {
 	memset(m_Key, 0, sizeof(m_Key));
 	memset(m_String, 0, sizeof(m_String));
-	memset(m_Value, 0, sizeof(m_Value));
+	(*m_Value) = {};
 }
 
 /**
