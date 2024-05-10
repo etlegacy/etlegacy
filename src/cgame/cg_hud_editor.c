@@ -780,8 +780,6 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 	{
 		while ((hud = CG_GetHudByNumber(HUDToDelete)))
 		{
-			int i;
-
 			// ensure to update parent as well
 			CG_UpdateParentHUD(hud->name, hud->parent, hud->hudnumber);
 
@@ -2693,8 +2691,8 @@ void CG_DrawHudEditor(void)
 		{
 			break;
 		}
-        
-        if ((comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL) && BG_CursorInRect(&button->rect))
+
+		if ((comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL) && BG_CursorInRect(&button->rect))
 		{
 			CG_DrawHudEditor_ToolTip(button);
 			break;
