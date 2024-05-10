@@ -1962,13 +1962,13 @@ void trap_CmdBackup_Ext(void)
 {
 	if (dll_trap_CmdBackup_Ext)
 	{
-		cg.cmdBackup = CMD_BACKUP;
-		cg.cmdMask   = CMD_MASK;
+		cg.cmdBackup = CMD_BACKUP_ETL;
+		cg.cmdMask   = CMD_MASK_ETL;
 		SystemCall(dll_trap_CmdBackup_Ext);
 	}
 	else
 	{
-		cg.cmdBackup = CMD_BACKUP_VET;
-		cg.cmdMask   = CMD_MASK_VET;
+		cg.cmdBackup = CMD_BACKUP;
+		cg.cmdMask   = CMD_MASK;
 	}
 }

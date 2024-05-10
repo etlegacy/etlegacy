@@ -229,12 +229,6 @@ tvcvarTable_t gameCvarTable[] =
  */
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
-/**
- * @var fActions
- * @brief Flag to store executed final auto-actions
- */
-static int fActions = 0;
-
 void TVG_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, int serverVersion);
 void TVG_RunFrame(int levelTime);
 void TVG_ShutdownGame(int restart);

@@ -1070,8 +1070,8 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 
 	case CG_CMDBACKUP_EXT:
-		cl.cmdBackup = CMD_BACKUP;
-		cl.cmdMask   = CMD_MASK;
+		cl.cmdBackup = CMD_BACKUP_ETL;
+		cl.cmdMask   = CMD_MASK_ETL;
 		return 0;
 
 	default:

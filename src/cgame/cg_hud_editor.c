@@ -780,8 +780,6 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 	{
 		while ((hud = CG_GetHudByNumber(HUDToDelete)))
 		{
-			int i;
-
 			// ensure to update parent as well
 			CG_UpdateParentHUD(hud->name, hud->parent, hud->hudnumber);
 

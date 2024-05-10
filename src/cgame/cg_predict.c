@@ -934,7 +934,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
  * appear to be set for prediction runs where they previously weren't
  * is a Bad Thing. This is my bugfix for #166.
  */
-pmoveExt_t oldpmext[CMD_BACKUP];
+pmoveExt_t oldpmext[CMD_BACKUP_ETL];
 
 const char *predictionStrings[] =
 {

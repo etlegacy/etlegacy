@@ -88,10 +88,6 @@ typedef struct ipFilterList_s
 } ipFilterList_t;
 
 static ipFilterList_t ipFilters;
-static ipFilterList_t ipMaxLivesFilters;
-
-static ipGUID_t guidMaxLivesFilters[MAX_IPFILTERS];
-static int      numMaxLivesFilters = 0;
 
 /**
  * @brief StringToFilter

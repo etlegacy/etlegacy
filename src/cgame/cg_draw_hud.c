@@ -2518,8 +2518,8 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	else
 	{
 		if (cg.time - cgs.autoMapExpandTime <= 150.f * expandedMapFrac
-		    || cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
-		    && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+		    || (cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
+		        && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR))
 		{
 			CG_DrawExpandedAutoMap();
 

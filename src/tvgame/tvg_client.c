@@ -870,9 +870,6 @@ char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char       cs_name[MAX_NETNAME + 1]      = "";
 	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
 	//char       cs_rate[MAX_STRING_CHARS]     = "";
-#ifdef FEATURE_LUA
-	char reason[MAX_STRING_CHARS] = "";
-#endif
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
