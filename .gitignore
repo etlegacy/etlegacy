@@ -62,3 +62,4 @@ CMakeSettings.json
 !/easybuild.sh
 !/easybuild.bat
 /src/renderer2/glsl/forwardLighting_fp.glsl.copy
+/etmain/materials_org
