@@ -2117,7 +2117,6 @@ static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height,
 
 	return qtrue;
 }
-int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
 
 /**
  * @brief This is a hack to get the common imageloaders working properly
@@ -3548,8 +3547,8 @@ void R_CreateBuiltinImages(void)
 	byte  *out;
 	float s, value;
 	byte  intensity;
-	const rDEFAULT_SIZE  = 1.0f / DEFAULT_SIZE;
-	const rDEFAULT_SIZE2 = 2.0f / DEFAULT_SIZE;
+	const float rDEFAULT_SIZE  = 1.0f / DEFAULT_SIZE;
+	const float rDEFAULT_SIZE2 = 2.0f / DEFAULT_SIZE;
 
 	R_CreateDefaultImage();
 
