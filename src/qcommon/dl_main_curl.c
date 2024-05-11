@@ -184,7 +184,7 @@ static size_t DL_cb_FWriteFile(void *ptr, size_t size, size_t nmemb, void *userp
  * @note cl_downloadSize and cl_downloadTime are set by the Q3 protocol...
  * and it would probably be expensive to verify them here.
  */
-static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
+static int DL_cb_Progress(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow)
 {
 	int          resp     = 0;
 	webRequest_t *request = (webRequest_t *)clientp;
@@ -210,11 +210,11 @@ static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ul
 	{
 		if (request->upload)
 		{
-			resp = request->progress_clb(request, ulnow, ultotal);
+			resp = request->progress_clb(request, (double)ulnow, (double)ultotal);
 		}
 		else
 		{
-			resp = request->progress_clb(request, dlnow, dltotal);
+			resp = request->progress_clb(request, (double)dlnow, (double)dltotal);
 		}
 	}
 	return resp;
