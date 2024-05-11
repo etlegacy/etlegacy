@@ -56,7 +56,12 @@ static thr_CubemapSave_t *entry_CubemapSave  = NULL;      // the 1st of the used
 static thr_CubemapSave_t *avail_CubemapSave  = NULL;      // the 1st of the unused entries
 static thr_CubemapSave_t *oldest_CubemapSave = NULL;      // the oldest of the used entries
 
+#if defined(WIN32) || defined(WIN64)
 static HANDLE R2Thread_Mutex; // windows
+#elif defined(__linux__)
+//static struct _IO_FILE R2Thread_Mutex;
+static pthread_mutex_t R2Thread_Mutex;
+#endif
 
 // because file locking needs some work, this is a temporary workaround.
 // To not let the main thread, and this R2 thread access the same file,
@@ -114,12 +119,12 @@ static void R2Thread_Unlock(void)
 //mutex
 static void R2Thread_Lock(void)
 {
-	// todo for linux..
+    pthread_mutex_lock(&R2Thread_Mutex);
 }
 
 static void R2Thread_Unlock(void)
 {
-	// todo for linux..
+    pthread_mutex_unlock(&R2Thread_Mutex);
 }
 
 #endif
