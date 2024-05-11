@@ -1106,7 +1106,7 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 	} \
 }
 
-
+// c = a - b
 ///#define VectorSubtract(a, b, c) _VectorSubtract(a, b, c)
 #define VectorSubtract(a, b, c) \
 { \

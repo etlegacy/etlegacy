@@ -79,3 +79,18 @@ float computeDiffuseLighting2(vec3 surfaceNormal, vec3 pixelNormal, vec3 lightDi
 	if (amount == 0) return 1.0;
 	return (1.0 - amount) + (dotPNL * 0.5 + 0.5) * amount;
 }
+
+// this version is avoiding darkening surfaces in shadow even more,
+// and the amount is shifted to produce shadows + light.
+// So surfaces can get a bit lighter than default, and they can get a (same) bit darker.
+float computeDiffuseLighting3(vec3 surfaceNormal, vec3 pixelNormal, vec3 lightDir, float amount, float bias)
+{
+	if (amount == 0) return 1.0;
+	vec3 L = normalize(lightDir);
+	float dotPNL = dot(pixelNormal, L);
+	float dotSNL = dot(surfaceNormal, L);
+	amount *= max(0.0, dotSNL);
+	if (amount == 0) return 1.0;
+	float biased = amount * bias;
+	return (1.0 - biased) + (dotPNL * 0.5 + 0.5) * amount;
+}

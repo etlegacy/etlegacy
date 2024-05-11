@@ -638,7 +638,7 @@ static void Render_entity(int stage)
 //		R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
 		R_FindCubeprobes(backEnd.viewParms.orientation.origin, backEnd.currentEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
 	}
-
+	
 	Ren_LogComment("--- Render_entity ---\n");
 
 	GL_State(pStage->stateBits);
@@ -2272,9 +2272,6 @@ static void Render_fog_brushes()
 		Vector4Set(fogDepthVector, 0.f, 0.f, 0.f, 1.f);
 		eyeT = 1.f; // non-surface fog always has eye inside (viewpoint is outside when eyeT < 0)
 	}
-
-//	fogDistanceVector[3] += 0.001953125f; // 1.0 / 512.0; //  1/(depth*8)?
-//!!!DEBUG!!! test: what is ^^that^^ doing?..
 
 	if (tess.surfaceShader->fogPass == FP_EQUAL)
 	{

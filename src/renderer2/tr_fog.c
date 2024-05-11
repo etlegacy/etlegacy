@@ -283,11 +283,12 @@ void R_SetFrameFog(void)
 		Com_Memcpy(&tr.glfogsettings[FOG_CURRENT], &tr.glfogsettings[FOG_TARGET], sizeof(glfog_t));
 		tr.glfogsettings[FOG_TARGET].registered = qfalse;
 	}
+	tr.glfogsettings[FOG_CURRENT].registered = qtrue;
 
 	// shorten the far clip if the fog opaque distance is closer than the procedural farcip dist
 	if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 	{
-		if (tr.glfogsettings[FOG_CURRENT].end < tr.viewParms.zFar)
+		if (tr.glfogsettings[FOG_CURRENT].end > tr.viewParms.zNear && tr.glfogsettings[FOG_CURRENT].end < tr.viewParms.zFar)
 		{
 			tr.viewParms.zFar = tr.glfogsettings[FOG_CURRENT].end;
 		}
@@ -330,6 +331,7 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 		tr.world->fogs[tr.world->globalFog].color[3] = 1.0; 
 		tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->globalOriginalFog[3]);
 
+
 /* original
 		tr.world->fogs[tr.world->globalFog].fogParms.color[0] = tr.world->globalOriginalFog[0];
 		tr.world->fogs[tr.world->globalFog].fogParms.color[1] = tr.world->globalOriginalFog[1];
@@ -350,6 +352,7 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 		tr.world->fogs[tr.world->globalFog].color[2] = b * tr.identityLight;
 		tr.world->fogs[tr.world->globalFog].color[3] = 1.0;
 		tr.world->fogs[tr.world->globalFog].tcScale *= 2.0; // rcp(depthForOpaque < 1 ? 1 : depthForOpaque);
+
 /*@ original
 		tr.world->fogs[tr.world->globalFog].fogParms.color[0] = r * tr.identityLight;
 		tr.world->fogs[tr.world->globalFog].fogParms.color[1] = g * tr.identityLight;
