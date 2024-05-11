@@ -61,7 +61,7 @@ varying vec3 var_Normal;
 		varying vec3 var_LightDirW;              // in worldspace
 		varying vec3 var_LightDirT;              // light direction in tangent space, normalized
 		varying vec3 var_ViewDirT;               // view direction in tangentspace
-		varying vec3 var_ViewDirW;
+		varying vec3 var_ViewDirWn;              // view direction in worldspace, normalized
 		#if defined(USE_PARALLAX_MAPPING)
 			varying float var_distanceToCam;     // in world units
 		#endif // USE_PARALLAX_MAPPING
@@ -120,6 +120,7 @@ void main() {
 	// the light direction
 	vec3 L = var_LightDirT;
 
+
 #if defined(USE_PARALLAX_MAPPING)
 	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, V, L, u_DepthScale, var_distanceToCam, u_ParallaxShadow, lightmapColor.rgb);
 	texDiffuse = parallaxResult.xy;
@@ -152,6 +153,7 @@ void main() {
 	}
 #endif // USE_ALPHA_TESTING
 
+
 #else // USE_DIFFUSE
 	vec4 diffuse = vec4(1.0);
 #endif // USE_DIFFUSE
@@ -169,13 +171,14 @@ void main() {
 
 #if defined(USE_DIFFUSE)
 	// compute the diffuse light term
-	diffuse.rgb *= computeDiffuseLighting2(var_Normal, N, L, u_DiffuseLighting);
+//	diffuse.rgb *= computeDiffuseLighting2(var_Normal, N, L, u_DiffuseLighting);
+	diffuse.rgb *= computeDiffuseLighting3(var_Normal, N, L, u_DiffuseLighting, 0.75); // 75% extra shadow, 25% extra light
 #endif
 
 
 	// compute the specular term
 #if defined(USE_SPECULAR)
-	vec3 specular = computeSpecular(normalize(var_ViewDirW), var_Normal, var_LightDirW, u_LightColor, u_SpecularExponent, u_SpecularScale);
+	vec3 specular = computeSpecular(var_ViewDirWn, var_Normal, var_LightDirW, u_LightColor, u_SpecularExponent, u_SpecularScale);
 	specular *= texture2D(u_SpecularMap, texDiffuse).rgb; // scale by specularmap
 	specular *= lightmapColor.rgb; // scale according to the lightmap intensity. There's no specular in the shadow.
 #endif // USE_SPECULAR
@@ -195,10 +198,10 @@ void main() {
 
 	// compute final color
 	vec4 color = diffuse;
+#if defined(USE_NORMAL_MAPPING)
 #if defined(USE_PARALLAX_MAPPING)
 	color.rgb *= parallaxShadow;
 #endif
-#if defined(USE_NORMAL_MAPPING)
 #if defined(USE_SPECULAR)
 	color.rgb += specular;
 #endif // USE_SPECULAR
@@ -207,6 +210,7 @@ void main() {
 #endif // USE_REFLECTIONS
 #endif // USE_NORMAL_MAPPING
 	color *= lightmapColor; // lightmap or vertex color
+
 
 
 //#if defined(USE_DELUXE_MAPPING)

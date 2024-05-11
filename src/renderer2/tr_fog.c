@@ -289,11 +289,12 @@ void R_SetFrameFog(void)
 		Com_Memcpy(&tr.glfogsettings[FOG_CURRENT], &tr.glfogsettings[FOG_TARGET], sizeof(glfog_t));
 		tr.glfogsettings[FOG_TARGET].registered = qfalse;
 	}
+	tr.glfogsettings[FOG_CURRENT].registered = qtrue;
 
 	// shorten the far clip if the fog opaque distance is closer than the procedural farcip dist
 	if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 	{
-		if (tr.glfogsettings[FOG_CURRENT].end < tr.viewParms.zFar)
+		if (tr.glfogsettings[FOG_CURRENT].end > tr.viewParms.zNear && tr.glfogsettings[FOG_CURRENT].end < tr.viewParms.zFar)
 		{
 			tr.viewParms.zFar = tr.glfogsettings[FOG_CURRENT].end;
 		}

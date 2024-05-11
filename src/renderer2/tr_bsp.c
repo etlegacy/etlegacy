@@ -1547,6 +1547,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 
 	//R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
+	// calc tangent spaces
 	/*
 	* If r_smoothNormals is not set, we need to calculate the tangentvectors now.
 	* If r_smoothNormals is set, we delay calculation of tangetvectors after all tri-surfaces are read.
@@ -7907,7 +7908,7 @@ if (backEnd.currentEntity != &tr.worldEntity)
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = Com_GrowListElement(&tr.cubeProbes, j);
-		distance  = Distance(cubeProbe->origin, position);
+		distance = DistanceSquared(cubeProbe->origin, position); // we do not need the distance. Squared distance is enough..
 		if (distance < mindistance)
 		{
 			closestProbe      = cubeProbe;
@@ -7983,6 +7984,16 @@ if (backEnd.currentEntity != &tr.worldEntity)
 	*interpolation              = 0.0f;
 	tr.reflectionData.startTime = tr.refdef.time;
 	tr.reflectionData.endTime   = tr.reflectionData.startTime + duration;
+	/*
+	* Find the camera swing so the focus is on the same target for eye & probe-reflection-vector.
+	* Only needed to calculate for closestProbe (the other probe is the old closestProbe).
+	//tr.viewParms.orientation.origin
+	//tr.viewParms.orientation.axis[0]
+	vec3_t d;
+	VectorSubtract(closestProbe->origin, tr.viewParms.orientation.origin, d);
+	VectorScale(d, 0.5, d);
+	...
+	*/
 }
 
 

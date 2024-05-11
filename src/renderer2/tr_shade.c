@@ -2287,9 +2287,6 @@ static void Render_fog_brushes()
 		eyeT = 1.f; // non-surface fog always has eye inside (viewpoint is outside when eyeT < 0)
 	}
 
-//	fogDistanceVector[3] += 0.001953125f; // 1.0 / 512.0; //  1/(depth*8)?
-//!!!DEBUG!!! test: what is ^^that^^ doing?..
-
 	if (tess.surfaceShader->fogPass == FP_EQUAL)
 	{
 		GL_State(GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL);
