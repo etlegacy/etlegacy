@@ -178,6 +178,7 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 		{
 			Dot(trace.plane.normal, planes[i], dot);
 			if (dot > 0.99f)
+			{
 				VectorAdd(trace.plane.normal, velocity, velocity);
 				break;
 			}
@@ -216,7 +217,9 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 				}
 
 				Dot(clipVelocity, planes[j], dot);
-				if (dot >= 0.1f) // move doesn't interact with the plane
+				if (dot >= 0.1f)
+				{
+					// move doesn't interact with the plane
 					continue;
 				}
 
@@ -227,6 +230,7 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 				// see if it goes back into the first clip plane
 				Dot(clipVelocity, planes[i], dot);
 				if (dot >= 0)
+				{
 					continue;
 				}
 
