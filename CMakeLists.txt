@@ -168,6 +168,9 @@ include(cmake/ETLPlatform.cmake)
 # Source globs
 include(cmake/ETLSources.cmake)
 
+# Specific assembly usage
+include(cmake/ETLAssembly.cmake)
+
 # Git version header generation
 include(cmake/ETLVersion.cmake)
 
