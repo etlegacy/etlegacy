@@ -316,6 +316,39 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 	return qtrue;
 }
 
+qboolean SV_CheckChallenge(netadr_t from)
+{
+	int i, challenge;
+
+	if (strlen(Cmd_Argv(1)) > 128)
+	{
+		SV_WriteAttackLog(va("SVC_Info: challenge length from %s exceeded, dropping request\n", NET_AdrToString(from)));
+		return qfalse;
+	}
+
+	challenge = Q_atoi(Cmd_Argv(1));
+
+	if (!NET_IsLocalAddress(from))
+	{
+		for (i = 0; i < MAX_CHALLENGES; i++)
+		{
+			if (NET_CompareAdr(from, svs.challenges[i].adr))
+			{
+				if (challenge == svs.challenges[i].challenge && !svs.challenges[i].connected)
+				{
+					break;      // good
+				}
+			}
+		}
+		if (i == MAX_CHALLENGES)
+		{
+			return qfalse;
+		}
+	}
+
+	return qtrue;
+}
+
 /**
  * @brief A "connect" OOB command has been received
  *
