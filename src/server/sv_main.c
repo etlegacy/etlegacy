@@ -1249,7 +1249,8 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	}
 	else if (!Q_stricmp(c, "getinfo"))
 	{
-		if (sv_hidden->integer)
+		// if the server is hidden, don't respond to getinfo requests by default
+		if (sv_hidden->integer && !SV_CheckChallenge(from))
 		{
 			return;
 		}
