@@ -1993,7 +1993,7 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 	qboolean use_parallaxMapping;
 	// liquid has its own calculated specular, and doesn't need a specularmap.. maybe in the future
 	qboolean use_reflections;
-	// fancy water with moving waves.. only when the diffuse texture has some tcMod assigned, otherwise we would get still standing waves.
+	// fancy water with moving waves.. only when the liquidmap or diffuse texture has some tcMod assigned, otherwise we would get still standing waves.
 	qboolean use_water;
 
 	Ren_LogComment("--- Render_liquid ---\n");
@@ -2014,7 +2014,8 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 		use_parallaxMapping = tess.surfaceShader->parallax && use_normalMapping && r_parallaxMapping->integer;
 		use_reflections     = r_reflectionMapping->integer && use_normalMapping &&
 								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
-		use_water           = use_normalMapping && use_diffuseMapping && pStage->bundle[TB_DIFFUSEMAP].numTexMods;
+//		use_water           = use_normalMapping && use_diffuseMapping && pStage->bundle[TB_DIFFUSEMAP].numTexMods;
+		use_water           = use_normalMapping && pStage->bundle[0].numTexMods; // a liquidmap without diffusemap, but with bumpmap, moving
 
 		// if renderingCubemap is true, we are now rendering a cubemap.
 		// But if the needed cubemaps are not yet ready for usage (if they need to get rendered first),
@@ -2071,26 +2072,28 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 		clipPortalPlane();
 	}
 
-	fogDensity = tr.glfogsettings[FOG_WATER].end; // this is the waterfogvars density value
-	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
-	if (fogDensity > 0.0)
-	{
-		vec3_t fogColor;
-		VectorSet(fogColor, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2]);
-		SetUniformVec3(UNIFORM_FOGCOLOR, fogColor);
-		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
+	//if (tr.glfogsettings[FOG_WATER].registered && tr.glfogsettings[FOG_WATER].end > 1.0f) {
+		fogDensity = tr.glfogsettings[FOG_WATER].end; // this is the waterfogvars depthForOpaque value
+		SetUniformFloat(UNIFORM_FOGDENSITY, 0.005f);// fogDensity);
+		if (fogDensity > 0.0)
+		{
+			vec3_t fogColor;
+			VectorSet(fogColor, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2]);
+			SetUniformVec3(UNIFORM_FOGCOLOR, fogColor);
+			SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
-		// bind u_DepthMap
-		SelectTexture(TEX_DEPTH);
-		if (HDR_ENABLED())
-		{
-			GL_Bind(tr.depthRenderImage);
+			// bind u_DepthMap
+			SelectTexture(TEX_DEPTH);
+			if (HDR_ENABLED())
+			{
+				GL_Bind(tr.depthRenderImage);
+			}
+			else
+			{
+				ImageCopyBackBuffer(tr.depthRenderImage); // depth texture is not bound to a FBO
+			}
 		}
-		else
-		{
-			ImageCopyBackBuffer(tr.depthRenderImage); // depth texture is not bound to a FBO
-		}
-	}
+	//}
 
 	// capture current color buffer for u_CurrentMap
 	SelectTexture(TEX_CURRENT);
@@ -2103,14 +2106,6 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 		ImageCopyBackBuffer(tr.currentRenderImage);
 	}
 
-	if (use_diffuseMapping)
-	{
-		// bind diffuse texture
-		SelectTexture(TEX_DIFFUSE);
-		GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
-		SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrix);
-	}
-
 	// deformVertexes
 	if (use_deforms)
 	{
@@ -2118,10 +2113,24 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
+	if (use_diffuseMapping)
+	{
+		// bind diffuse texture
+		SelectTexture(TEX_DIFFUSE);
+		GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
+	}
+
+	// moving water
+	if (use_water || use_diffuseMapping)
+	{
+		SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrix);
+	}
+
 	if (use_normalMapping)
 	{
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-			// light
+
+		// light
 		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
 		SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight);
 
@@ -2233,37 +2242,20 @@ static void Render_fog_brushes()
 	fogDistanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
 	fogDistanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
-	//fogDistanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
 	Dot(local, backEnd.viewParms.orientation.axis[0], fogDistanceVector[3]);
 
 	// scale the fog vectors based on the fog's thickness
-	/*fogDistanceVector[0] *= fog->tcScale;
-	fogDistanceVector[1] *= fog->tcScale;
-	fogDistanceVector[2] *= fog->tcScale;
-	fogDistanceVector[3] *= fog->tcScale;*/
 	Vector4Scale(fogDistanceVector, fog->tcScale, fogDistanceVector);
 
 	// rotate the gradient vector for this orientation
 	if (fog->hasSurface)
 	{
-		/*fogDepthVector[0] = fog->surface[0] * backEnd.orientation.axis[0][0] +
-							fog->surface[1] * backEnd.orientation.axis[0][1] +
-							fog->surface[2] * backEnd.orientation.axis[0][2];
-		fogDepthVector[1] = fog->surface[0] * backEnd.orientation.axis[1][0] +
-							fog->surface[1] * backEnd.orientation.axis[1][1] +
-							fog->surface[2] * backEnd.orientation.axis[1][2];
-		fogDepthVector[2] = fog->surface[0] * backEnd.orientation.axis[2][0] +
-							fog->surface[1] * backEnd.orientation.axis[2][1] +
-							fog->surface[2] * backEnd.orientation.axis[2][2];*/
 		Dot(fog->surface, backEnd.orientation.axis[0], fogDepthVector[0]);
 		Dot(fog->surface, backEnd.orientation.axis[1], fogDepthVector[1]);
 		Dot(fog->surface, backEnd.orientation.axis[2], fogDepthVector[2]);
-
-		//fogDepthVector[3] = -fog->surface[3] + DotProduct(backEnd.orientation.origin, fog->surface);
 		Dot(backEnd.orientation.origin, fog->surface, fogDepthVector[3]);
 		fogDepthVector[3] += -fog->surface[3];
 
-		//eyeT = DotProduct(backEnd.orientation.viewOrigin, fogDepthVector) + fogDepthVector[3];
 		Dot(backEnd.orientation.viewOrigin, fogDepthVector, eyeT);
 		eyeT += fogDepthVector[3];
 	}
@@ -2406,10 +2398,14 @@ static void Render_volumetricFog()
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+#if 0
 		SetUniformFloat(UNIFORM_FOGDENSITY, tess.surfaceShader->fogParms.tcScale); // rcp(  .depthForOpaque));
 		SetUniformVec3(UNIFORM_FOGCOLOR, tess.surfaceShader->fogParms.color);
-
-		// bind u_DepthMap
+#else
+		SetUniformFloat(UNIFORM_FOGDENSITY, tr.world->fogs[tess.fogNum].tcScale);
+		SetUniformVec3(UNIFORM_FOGCOLOR, tr.world->fogs[tess.fogNum].color);
+#endif
+			// bind u_DepthMap
 		SelectTexture(TEX_DEPTH);
 		if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
 		{
