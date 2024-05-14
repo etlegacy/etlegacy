@@ -12,7 +12,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND ETL_64BITS AND ETL_ENABLE_SSE ) #ENABLE_SSE
     foreach(ASM_FILE ${ASM_FILES})
         list(APPEND COMMON_SRC ${ASM_FILE})
         # not sure if setting this specific properties is necesarry here
-        set_source_files_properties(${ASM} PROPERTIESCOMPILE_FLAGS "/safeseh")
+        set_source_files_properties(${ASM_FILE} PROPERTIESCOMPILE_FLAGS "/safeseh")
     endforeach()
 
 else()
