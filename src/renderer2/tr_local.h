@@ -792,6 +792,14 @@ typedef struct
 
 //===============================================================================
 
+// This is used in tr_bsp.c function R_LoadSurfaces()
+// This structure is a growlistitem to keep track of what verts are already done in the smoothNormals calculation.
+typedef struct
+{
+	int surfaceIndex;
+	int vertexIndex;
+} vertexDone_t;
+
 /**
  * @enum shaderSort_t
  * @brief
@@ -1481,7 +1489,7 @@ typedef struct
 {
 	vec3_t color;
 	float depthForOpaque;
-	unsigned colorInt;      ///< in packed byte format
+//$	unsigned colorInt;      ///< in packed byte format
 	float density;
 	float tcScale;                      ///< texture coordinate vector scales
 } fogParms_t;
@@ -1530,7 +1538,7 @@ typedef struct shader_s
 
 	qboolean fogVolume;                 ///< surface encapsulates a fog volume
 	fogParms_t fogParms;
-	fogPass_t fogPass;                  ///< draw a blended pass, possibly with depth test equals
+	fogPass_t fogPass;                  ///< draw a blended pass, possibly with depth test equals. Used in Render_fog_brushes() with gl_fogQuake3Shader
 	qboolean noFog;
 
 	qboolean parallax;                  ///< material has normalmaps suited for parallax mapping
@@ -2054,13 +2062,17 @@ typedef struct skin_s
  */
 typedef struct
 {
+	// original values read from file
 	int modelNum;                   ///< bsp model the fog belongs to
 	int originalBrushNumber;
 	vec3_t bounds[2];
-   	shader_t *shader;               ///< fog shader to get colorInt and tcScale from
-	vec4_t color;               ///< in packed byte format
-	float tcScale;              ///< texture coordinate vector scales
-	fogParms_t fogParms;
+   	shader_t *shader;               ///< fog shader
+	// values used for rendering
+	vec4_t color;                   ///<
+	float tcScale;                  ///< texture coordinate vector scales
+	float depthForOpaque;           ///<
+	float density;                  ///<
+//	fogParms_t fogParms;
 
 	// for clipping distance in fog when outside
 	qboolean hasSurface;

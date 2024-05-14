@@ -4012,14 +4012,31 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	// It will also calculate tangentvectors too many times..
 	if (r_smoothNormals->integer & FLAGS_SMOOTH_TRISURF)
 	{
-		// smooth the triangle soup
-		int surfverts[100][2]; // room for 100! normals to smooth. Store 2 values per vert (indexes for surface & vertex)
+		// smooth the triangle soup:
+		// room for 100! normals to smooth. Store 2 values per vert (indexes for surface & vertex).
+		// Note: usually a vertex is shared over 2 or 3 triangles.   100 is very optimistic.
+		int surfverts[100][2];
 		int numsurfverts;
+		growList_t VertsDone;
+		vertexDone_t vertDone, *vertCheck;
+		qboolean isSmooth;
+		Com_InitGrowList(&VertsDone, 10000);
 		// first find all the same verts across all surfaces
 		for (int s = 0; s < s_worldData.numSurfaces; s++) {
 			srfTriangles_t* surf = (srfTriangles_t*)s_worldData.surfaces[s].data;
 			if (surf->surfaceType != SF_TRIANGLES) continue;
 			for (int v = 0; v < surf->numVerts; v++) {
+				// skip if this vertex is already done
+				for (int dv = 0; dv < VertsDone.currentElements; dv++) {
+					vertCheck = (vertexDone_t*)Com_GrowListElement(&VertsDone, dv);
+					isSmooth = (vertCheck->surfaceIndex == s && vertCheck->vertexIndex == v);
+					if (isSmooth) goto nextVert;
+				}
+				// mark as done
+				vertDone.surfaceIndex = s;
+				vertDone.vertexIndex = v;
+				Com_AddToGrowList(&VertsDone, &vertDone);
+				//
 				numsurfverts = 0;
 				surfverts[numsurfverts][0] = s;
 				surfverts[numsurfverts][1] = v;
@@ -4036,6 +4053,9 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 						if (VectorCompareEpsilon(surf->verts[v].xyz, surf2->verts[v2].xyz, 1.0))
 						{
 							if (numsurfverts < 100) {
+								vertDone.surfaceIndex = s2;
+								vertDone.vertexIndex = v2;
+								Com_AddToGrowList(&VertsDone, &vertDone);
 								surfverts[numsurfverts][0] = s2;
 								surfverts[numsurfverts][1] = v2;
 								numsurfverts++;
@@ -4043,7 +4063,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 						}
 					}
 				}
-				// now we have an array with surface verts to adjust.
+				// now we have an array (surfverts) with surface verts to adjust.
 				// There is always at least 1 vert in the array..
 
 				// Add all the normal vectors of the verts that are the same across all surfaces
@@ -4071,7 +4091,6 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 				}
 
 				// calculate tangent vectors with this new normal
-				srfTriangles_t* cv;
 				srfTriangle_t* tri;
 				srfVert_t* dv[3];
 				int i;
@@ -4088,9 +4107,11 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 						R_CalcTangentVectors(dv);
 					}
 				}
-
+nextVert:
+				;
 			}
 		}
+		Com_DestroyGrowList(&VertsDone);
 	}
 }
 
@@ -4521,7 +4542,6 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	int          sideNum;
 	int          planeNum;
 	shader_t     *shader;
-	float        d;
 	int          firstSide;
 
 	Ren_Print("...loading fogs\n");
@@ -4627,25 +4647,18 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		// For Siwa Oasis this shader material is read: textures/skies/sd_siwafog
 		shader = R_FindShader(fogs->shader, SHADER_3D_DYNAMIC, qtrue);
 
-		out->fogParms = shader->fogParms;
-
-		out->color[0] = shader->fogParms.color[0] * tr.identityLight;
-		out->color[1] = shader->fogParms.color[1] * tr.identityLight;
-		out->color[2] = shader->fogParms.color[2] * tr.identityLight;
-		out->color[3] = 1;
-
-		d = shader->fogParms.depthForOpaque < 1 ? 1 : shader->fogParms.depthForOpaque;
-
-		//out->tcScale = 1.0f / (d * 8);
-//		out->tcScale = rcp(d * 8.f);
-		out->tcScale = rcp(d);
+		VectorCopy(shader->fogParms.color, out->color);
+		out->color[3] = 1.0;
+		out->density = shader->fogParms.density;
+		out->depthForOpaque = shader->fogParms.depthForOpaque; // < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
+		out->tcScale = rcp(shader->fogParms.depthForOpaque);
 
 		// global fog sets clearcolor/zfar
 		if (out->originalBrushNumber == -1)
 		{
 			s_worldData.globalFog = i + 1;
 			VectorCopy(shader->fogParms.color, s_worldData.globalOriginalFog);
-			s_worldData.globalOriginalFog[3] = d; // shader->fogParms.depthForOpaque;
+			s_worldData.globalOriginalFog[3] = shader->fogParms.depthForOpaque;
 		}
 
 		// set the gradient vector
@@ -8787,7 +8800,9 @@ void RE_LoadWorldMap(const char *name)
 	tr.world->hasSkyboxPortal = qfalse;
 
 	// reset fog to map fog (if present)
-	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
+//	if (tr.world->globalFog < 0) { // if there is no globalfog
+		RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
+//	}
 
 	// make sure the VBO glState entries are save
 	R_BindNullVBO();
