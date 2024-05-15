@@ -2414,7 +2414,7 @@ void RB_RenderGlobalFog()
 	}
 
 	// no fog pass in snooper
-	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog)
+	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW))
 	{
 		return;
 	}

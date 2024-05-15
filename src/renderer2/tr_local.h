@@ -4487,7 +4487,6 @@ FOG, tr_fog.c
 //void RB_FogOn();
 void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
-void RE_SetGlobalFog_(qboolean restore, int fog);
 void R_SetFrameFog();
 
 /*

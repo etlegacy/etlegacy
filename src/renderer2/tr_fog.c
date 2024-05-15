@@ -202,6 +202,7 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 			tr.glfogsettings[FOG_TARGET].end = tr.world->fogs[tr.world->globalFog].depthForOpaque;
 			tr.glfogsettings[FOG_TARGET].density = tr.world->fogs[tr.world->globalFog].density;
 			tr.glfogsettings[FOG_TARGET].finishTime = tr.refdef.time;
+			tr.glfogsettings[FOG_TARGET].mode = GL_LINEAR;
 			tr.glfogsettings[FOG_TARGET].registered = qtrue;
 		}
 	}
