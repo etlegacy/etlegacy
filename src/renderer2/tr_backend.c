@@ -2407,23 +2407,24 @@ void RB_RenderGlobalFog()
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
-	// this fogGlobal is disabled?
+	// all fogging is disabled?
 	if (r_noFog->integer)
 	{
 		return;
 	}
 
-	// no fog pass in snooper
 	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW))
 	{
 		return;
 	}
 
+	// no world means no fog
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
 	}
 
+	// a globalfog must exist
 	if (!tr.world || tr.world->globalFog < 0)
 	{
 		return;

@@ -4666,7 +4666,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		out->color[3] = 1.0;
 		out->density = shader->fogParms.density;
 		d = shader->fogParms.depthForOpaque < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
-		out->depthForOpaque = d; // shader->fogParms.depthForOpaque; // < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
+		out->depthForOpaque = shader->fogParms.depthForOpaque; // < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
 		out->tcScale = rcp(d); // rcp(shader->fogParms.depthForOpaque);
 
 		// global fog sets clearcolor/zfar
@@ -8719,6 +8719,7 @@ void RE_LoadWorldMap(const char *name)
 	RE_SetFog(FOG_WATER, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_SERVER, 0, 0, 0, 0, 0, 0);
 
+	// yet another fog
 	VectorCopy(colorMdGrey, tr.fogColor);
 	tr.fogDensity = 0;
 
@@ -8826,11 +8827,11 @@ void RE_LoadWorldMap(const char *name)
 	tr.world->hasSkyboxPortal = qfalse;
 
 	// reset fog to map fog (if present)
-	//if (tr.world->globalFog < 0)
-	//{ 
+	if (tr.world->globalFog < 0)
+	{ 
 		// if there is no globalfog
 		RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
-	//}
+	}
 
 	// make sure the VBO glState entries are save
 	R_BindNullVBO();
