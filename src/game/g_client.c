@@ -1122,6 +1122,10 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 	// skill handling
 	AddExtraSpawnAmmo(client, weapon);
 
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif
+
 	// add alternative weapon if exist for primary weapon
 	if (GetWeaponTableData(weapon)->weapAlts)
 	{
@@ -1142,10 +1146,6 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 		Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(GetWeaponTableData(weapon)->weapAlts));
 #endif
 	}
-
-#ifdef FEATURE_OMNIBOT
-	Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
-#endif
 }
 
 /**
@@ -3526,7 +3526,7 @@ void ClientDisconnect(int clientNum)
 
 	// send effect if they were completely connected
 	if (ent->client->pers.connected == CON_CONNECTED
-		&& ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+	    && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
 		if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 		{
