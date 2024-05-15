@@ -1090,18 +1090,6 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
  */
 void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent)
 {
-	if (team_riflegrenades.integer == 0)
-	{
-		switch (weapon)
-		{
-		case WP_GPG40:
-		case WP_M7:
-			return;
-		default:
-			break;
-		}
-	}
-
 	COM_BitSet(client->ps.weapons, weapon);
 	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
 	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]    += ammo;
@@ -1273,6 +1261,13 @@ void SetWolfSpawnWeapons(gclient_t *client)
 			// special check for riflenade, we need the launcher to use it
 			if (GetWeaponTableData(weaponClassInfo->weapon)->type & WEAPON_TYPE_RIFLENADE)
 			{
+				// rifle nade is disable
+				if (!team_riflegrenades.integer)
+				{
+					continue;
+				}
+
+				// ensure we have the rifle
 				if (!COM_BitCheck(client->ps.weapons, GetWeaponTableData(weaponClassInfo->weapon)->weapAlts))
 				{
 					continue;
