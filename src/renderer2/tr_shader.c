@@ -4058,6 +4058,8 @@ static qboolean ParseShader(char *_text)
 		// fogParms
 		else if (!Q_stricmp(token, "fogParms"))
 		{
+			float d;
+
 			if (!ParseVector(text, 3, shader.fogParms.color))
 			{
 				return qfalse;
@@ -4074,9 +4076,10 @@ static qboolean ParseShader(char *_text)
 			{
 				shader.fogParms.depthForOpaque = atof(token);
 				shader.fogParms.density = shader.fogParms.depthForOpaque < 1.0f ? shader.fogParms.depthForOpaque : 1.0f;
-				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
+				//shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
+				d = shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
 			}
-			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
+			shader.fogParms.tcScale = 1.0f / d; // shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;
@@ -4177,9 +4180,6 @@ static qboolean ParseShader(char *_text)
 				RE_SetFog(FOG_WATER, 0, 5, watercolor[0], watercolor[1], watercolor[2], fogvar);
 			}
 
-//shader.fogVolume = qtrue;
-//shader.sort      = SS_FOG;
-
 			continue;
 		}
 		// ET fogvars
@@ -4214,9 +4214,10 @@ static qboolean ParseShader(char *_text)
 			{
 				fogFar = 5;
 			}
-			// store the fog data, and make this fog active
+			// store the fog data
 			RE_SetFog(FOG_MAP, 0, fogFar, fogColor[0], fogColor[1], fogColor[2], fogDensity);
-			RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
+			// make this fog active
+			//RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
 			continue;
 		}
 		// ET sunshader <name>

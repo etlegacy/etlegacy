@@ -2495,7 +2495,7 @@ void RB_RenderGlobalFog()
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
-	// this fogGlobal is disabled?
+	// all fogging is disabled?
 	if (r_noFog->integer)
 	{
 		return;
@@ -2507,11 +2507,13 @@ void RB_RenderGlobalFog()
 		return;
 	}
 
+	// no world means no fog
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
 	}
 
+	// a globalfog must exist
 	if (!tr.world || tr.world->globalFog < 0)
 	{
 		return;
@@ -2537,14 +2539,9 @@ void RB_RenderGlobalFog()
 		fogDistanceVector[0] = -backEnd.orientation.modelViewMatrix[2];
 		fogDistanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
 		fogDistanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
-		//fogDistanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
 		Dot(local, backEnd.viewParms.orientation.axis[0], fogDistanceVector[3]);
 
 		// scale the fog vectors based on the fog's thickness
-		/*fogDistanceVector[0] *= fog->tcScale;
-		fogDistanceVector[1] *= fog->tcScale;
-		fogDistanceVector[2] *= fog->tcScale;
-		fogDistanceVector[3] *= fog->tcScale;*/
 		Vector4Scale(fogDistanceVector, fog->tcScale, fogDistanceVector);
 
 		SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);

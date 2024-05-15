@@ -112,7 +112,6 @@ vec3 parallaxAndShadow(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, vec3
 	weight_1 = 1.0 - weight;
 	result.xy = prevTexCoords * weight + curTexCoords * weight_1; // finalTexCoords
 
-
 	// self shadowing
 	shadowFactor = clamp(shadowFactor, 0.0, 1.0);
 	// early out if self-shadowing is disabled
