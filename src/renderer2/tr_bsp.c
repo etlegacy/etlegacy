@@ -4543,6 +4543,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	int          planeNum;
 	shader_t     *shader;
 	int          firstSide;
+	float        d;
 
 	Ren_Print("...loading fogs\n");
 
@@ -4650,15 +4651,16 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		VectorCopy(shader->fogParms.color, out->color);
 		out->color[3] = 1.0;
 		out->density = shader->fogParms.density;
-		out->depthForOpaque = shader->fogParms.depthForOpaque; // < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
-		out->tcScale = rcp(shader->fogParms.depthForOpaque);
+		d = shader->fogParms.depthForOpaque < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
+		out->depthForOpaque = d; // shader->fogParms.depthForOpaque; // < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
+		out->tcScale = rcp(d); // rcp(shader->fogParms.depthForOpaque);
 
 		// global fog sets clearcolor/zfar
 		if (out->originalBrushNumber == -1)
 		{
 			s_worldData.globalFog = i + 1;
 			VectorCopy(shader->fogParms.color, s_worldData.globalOriginalFog);
-			s_worldData.globalOriginalFog[3] = shader->fogParms.depthForOpaque;
+			s_worldData.globalOriginalFog[3] = d; // shader->fogParms.depthForOpaque;
 		}
 
 		// set the gradient vector

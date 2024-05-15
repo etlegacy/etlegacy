@@ -45,12 +45,14 @@ void main()
 	// reconstruct vertex position in world space
 	// scale to NDC (Normalized Device Coordinates) space
 	vec4  posBack = vec4(gl_FragCoord.xy, depthBack, 1.0) * 2.0 - 1.0;
+//	vec4  posBack = vec4(gl_FragCoord.xy, depthBack, 1.0);
 	// unproject to get into viewspace
 	posBack = u_UnprojectMatrix * posBack;
 	// normalize to homogeneous coordinates (where w is always 1)
 	posBack.xyz /= posBack.w;
 
 	vec4  posFront = vec4(gl_FragCoord.xy, depthFront, 1.0) * 2.0 - 1.0;
+//	vec4  posFront = vec4(gl_FragCoord.xy, depthFront, 1.0);
 	posFront = u_UnprojectMatrix * posFront;
 	// we might be in the volume.
 	// In that case the volume front plane is behind you, and w becomes negative

@@ -70,7 +70,6 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 {
 	Ren_Developer("RE_SetFog( fogvar = %i, var1 = %i, var2 = %i, r = %f, g = %f, b = %f, density = %f )\n",
 	              fogvar, var1, var2, r, g, b, density);
-
 	if (fogvar == FOG_CMD_SWITCHFOG)
 	{
 		// don't switch to invalid fogs
@@ -198,7 +197,9 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 			tr.glfogsettings[FOG_TARGET].end = tr.world->fogs[tr.world->globalFog].depthForOpaque;
 			tr.glfogsettings[FOG_TARGET].density = tr.world->fogs[tr.world->globalFog].density;
 			tr.glfogsettings[FOG_TARGET].finishTime = tr.refdef.time;
+			tr.glfogsettings[FOG_TARGET].mode = GL_LINEAR;
 			tr.glfogsettings[FOG_TARGET].registered = qtrue;
+
 		}
 	}
 /*
@@ -222,7 +223,6 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 void R_SetFrameFog(void)
 {
 	// new style global fog transitions
-
 	if (tr.world->globalFogTransEndTime)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
