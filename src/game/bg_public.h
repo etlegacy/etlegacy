@@ -759,7 +759,7 @@ typedef enum
 #define EF_MOVER_STOP       0x10000000                         ///< will push otherwise	///< moved down to make space for one more client flag
 #define EF_MOVER_BLOCKED    0x20000000                         ///< mover was blocked dont lerp on the client///< moved down to make space for client flag
 
-#define BG_PlayerMounted(eFlags) ((eFlags & EF_MG42_ACTIVE) || (eFlags & EF_MOUNTEDTANK) || (eFlags & EF_AAGUN_ACTIVE))
+#define BG_PlayerMounted(eFlags) ((eFlags &EF_MG42_ACTIVE) || (eFlags &EF_MOUNTEDTANK) || (eFlags &EF_AAGUN_ACTIVE))
 #define BG_IsSkillAvailable(skill, skillType, requiredlvl) (GetSkillTableData(skillType)->skillLevels[requiredlvl] > -1 && skill[skillType] >= requiredlvl)
 
 /**
