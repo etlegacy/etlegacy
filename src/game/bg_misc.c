@@ -2570,16 +2570,10 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 			weapon_t clip;
 
 #ifdef GAMEDLL
-			if (team_riflegrenades.integer == 0)
+			// rifle nade is disable
+			if (team_riflegrenades.integer == 0 && GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLENADE)
 			{
-				switch (weapon)
-				{
-				case WP_GPG40:
-				case WP_M7:
-					continue;
-				default:
-					break;
-				}
+				continue;
 			}
 #endif
 
