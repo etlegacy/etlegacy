@@ -29,7 +29,7 @@ uniform mat4 u_ModelViewProjectionMatrix;
 uniform vec4 u_ColorModulate;
 
 uniform vec4 u_Color;
-#if defined(USE_DIFFUSE)
+#if defined(USE_WATER) || defined(USE_DIFFUSE)
 	uniform mat4 u_DiffuseTextureMatrix;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
@@ -46,15 +46,17 @@ uniform vec4 u_Color;
 	uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
-//varying vec4 var_Color;
+varying vec4 var_Color;
 varying vec3 var_Position;
 varying vec3 var_Normal;
 #if defined(USE_LIGHT_MAPPING)
 	varying vec2 var_TexLight;			// lightmap texture coordinates
 	varying vec4 var_LightmapColor;
 #endif // USE_LIGHT_MAPPING
-#if defined(USE_DIFFUSE)
+#if defined(USE_WATER) || defined(USE_DIFFUSE)
 	varying vec2 var_TexDiffuse;        // possibly moving coords
+#endif
+#if defined(USE_DIFFUSE)
 	varying float var_alphaGen;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
@@ -88,7 +90,7 @@ void main()
 
 	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz;
 
-//	var_Color = attr_Color * u_ColorModulate + u_Color;
+	var_Color = attr_Color * u_ColorModulate + u_Color;
 
 #if defined(USE_LIGHT_MAPPING)
 	// get lightmap texture coordinates
@@ -96,13 +98,16 @@ void main()
 	var_LightmapColor = attr_Color * u_ColorModulate + u_Color;
 #endif // USE_LIGHT_MAPPING
 
-
-#if defined(USE_DIFFUSE)
+#if defined(USE_WATER) || defined(USE_DIFFUSE)
 	// tcmod transformed texcoords
 	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
+#endif
 
+#if defined(USE_DIFFUSE)
 	// the alpha value is the one set by alphaGen const <value>
-	var_alphaGen = u_Color.a; // the u_Color is the waterfogvars (r,g,b,density)
+//	var_alphaGen = u_Color.a;
+var_alphaGen = var_Color.a;
+//var_alphaGen = attr_Color.a;
 #endif // USE_DIFFUSE
 
 

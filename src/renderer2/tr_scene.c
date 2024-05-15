@@ -676,8 +676,8 @@ void RE_RenderScene(const refdef_t *fd)
 
 	// check if we transit into, or out of, the water
 	// Do this only IF both fogs exist at all..
-	// Note: The waterfogvars are registered as FOG_WATER, but the globalfog is not registered as the FOG_MAP
-	if (tr.glfogsettings[FOG_WATER].registered && tr.world->globalFog >= 0) //tr.glfogsettings[FOG_MAP].registered)
+	// Note: The waterfogvars are registered as FOG_WATER, but the globalfog is different
+	if (tr.glfogsettings[FOG_WATER].registered && tr.world->globalFog >= 0)
 	{
 		// entering the water?
 		if (!(tr.refdef.rdflags & RDF_UNDERWATER) && (fd->rdflags & RDF_UNDERWATER))

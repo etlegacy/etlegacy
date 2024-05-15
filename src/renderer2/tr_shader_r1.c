@@ -419,20 +419,18 @@ qboolean ParseShaderR1(char *_text)
 				return qfalse;
 			}
 
-			//shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
-			//                                       shader.fogParms.color[1] * tr.identityLight,
-			//                                       shader.fogParms.color[2] * tr.identityLight, 1.0);
-
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
 			{
 				Ren_Warning("WARNING: 'fogParms' incomplete - missing opacity value in shader '%s' set to 1\n", shader.name);
-				shader.fogParms.depthForOpaque = 1;
+				shader.fogParms.density = 1.0f;
+				shader.fogParms.depthForOpaque = 1.0f;
 			}
 			else
 			{
 				shader.fogParms.depthForOpaque = Q_atof(token);
-				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
+				shader.fogParms.density = shader.fogParms.depthForOpaque < 1.0f ? shader.fogParms.depthForOpaque : 1.0f;
+				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
 			}
 			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 

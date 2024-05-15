@@ -4059,23 +4059,18 @@ static qboolean ParseShader(char *_text)
 				return qfalse;
 			}
 
-			// FIXME: inspect - this and tcScale (see below) are set in R_SetFrameFog
-			//
-			//shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
-			//                                       shader.fogParms.color[1] * tr.identityLight,
-			//                                       shader.fogParms.color[2] * tr.identityLight, 1.0);
-
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
 			{
 				Ren_Warning("WARNING: 'fogParms' incomplete - missing opacity value in shader '%s' set to 1\n", shader.name);
-				shader.fogParms.depthForOpaque = 1;
+				shader.fogParms.density = 1.0f;
+				shader.fogParms.depthForOpaque = 1.0f;
 			}
 			else
 			{
-				shader.fogParms.depthForOpaque = Q_atof(token);
-				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
-				// so, if you provide any value <1, that value is lost here.  It will always yield 1..
+				shader.fogParms.depthForOpaque = atof(token);
+				shader.fogParms.density = shader.fogParms.depthForOpaque < 1.0f ? shader.fogParms.depthForOpaque : 1.0f;
+				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
 			}
 			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 
@@ -4614,7 +4609,8 @@ static void OptimizeStages()
 			// remove this inactive stage, and close the gap
 			for (i = j; i < MAX_SHADER_STAGES - 1; i++) {
 				stages[i] = stages[i+1];
-				for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) { // i don't know if this is needed.. /test
+				for (k = 0; k < MAX_TEXTURE_BUNDLES; k++)
+				{
 					stages[i].bundle[k] = stages[i + 1].bundle[k];
 				}
 			}
@@ -4673,6 +4669,10 @@ static void OptimizeStages()
 	numStages = 0; // now count the possibly collapsed stages
 	for (j = 0; j < MAX_SHADER_STAGES; j++)
 	{
+		if (!stages[j].active)
+		{
+			break;
+		}
 		// check for a lightmap or liquid stage
 		// This has nothing to do with collapsing, but we need that info later.
 		if (stages[j].type == ST_LIGHTMAP) {
@@ -4682,10 +4682,23 @@ static void OptimizeStages()
 			shader.has_liquidStage = qtrue;
 		}
 
-		// check up to 4 next maps to find out what type of maps they are
+		// check up to 4 next maps to find out what type of maps they are.
+		// This needs some care with certain cases. For example a liquid-shader can have multiple layers.
+		// The Battery liquid-shader has: bump,liquid,bump,diffuse...    then the diffuse should not go into the first layer.
+		// The bumpmaps indicate a next layer in any case. There's 1 bump max per stage.
 		tmpDiffuseStage = tmpNormalStage = tmpSpecularStage = tmpReflectmapStage = tmpLiquidStage = tmpCubeReflectStage = -1; // invalidate
 		for (i = j; i < j + MAX_TEXTURE_BUNDLES && i < MAX_SHADER_STAGES; i++)
 		{
+			if (!stages[i].active)
+			{
+				break;
+			}
+			// do we have a bumpmap indicating a next layer?
+			qboolean startNextLayer = (stages[i].type == ST_NORMALMAP && tmpNormalStage >= 0);
+			if (startNextLayer)
+			{
+				break; // do not collapse any more
+			}
 			if ((stages[i].type == ST_DIFFUSEMAP || stages[i].type == ST_COLORMAP) && tmpDiffuseStage < 0)
 			{
 				tmpDiffuseStage = i;
@@ -4709,7 +4722,6 @@ static void OptimizeStages()
 			else if (stages[i].type == ST_CUBEREFLECTIONS && tmpCubeReflectStage < 0)
 			{
 				tmpCubeReflectStage = i;
-				shader.has_liquidStage = qtrue;
 			}
 
 		}

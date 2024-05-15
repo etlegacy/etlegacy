@@ -19,9 +19,10 @@ void main()
 	float depth = texture2D(u_DepthMap, st).r;
 	// scale to Normalized Device Coordinates
 	vec4  P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
+//!	vec4  P = vec4(gl_FragCoord.xy, depth, 1.0);
 	// unproject to get into viewspace
 	P = u_UnprojectMatrix * P;
-	// normalize to homogeneous coordinates (where w is always 1)
+	// normalize to homogeneous coordinates
 	P.xyz /= P.w;
 
 	st.s = dot(P.xyz, u_FogDistanceVector.xyz) + u_FogDistanceVector.w;

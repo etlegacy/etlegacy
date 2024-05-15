@@ -10,13 +10,11 @@ uniform bool SHOW_LIGHTMAP;
 //uniform bool SHOW_DELUXEMAP;
 
 uniform vec4 u_Color;
-// fog
 uniform sampler2D u_DepthMap;
 uniform mat4      u_UnprojectMatrix;
 uniform vec3      u_FogColor;
 uniform float     u_FogDensity;
 uniform float     u_NormalScale;
-//
 uniform sampler2D u_CurrentMap;
 #if defined(USE_LIGHT_MAPPING)
 	uniform sampler2D u_LightMap;
@@ -50,12 +48,15 @@ uniform sampler2D u_CurrentMap;
 
 varying vec3 var_Position;
 varying vec3 var_Normal;
+varying vec4 var_Color;
 #if defined(USE_LIGHT_MAPPING)
 	varying vec2 var_TexLight;
 	varying vec4 var_LightmapColor;
 #endif // USE_LIGHT_MAPPING
+#if defined(USE_WATER) || defined(USE_DIFFUSE)
+	varying vec2 var_TexDiffuse;        // possibly moving coords
+#endif
 #if defined(USE_DIFFUSE)
-	varying vec2 var_TexDiffuse;
 	varying float var_alphaGen;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
@@ -103,7 +104,7 @@ void main()
 	}
 
 
-#if defined(USE_DIFFUSE)
+#if defined(USE_WATER) || defined(USE_DIFFUSE)
 	vec2 texDiffuse = var_TexDiffuse;
 #endif
 
@@ -147,6 +148,7 @@ void main()
 	color.rgb = refractColor;
 
 
+
 	// reflection
 #if defined(USE_REFLECTIONS)
 	vec3 reflectColor;
@@ -155,7 +157,7 @@ void main()
 	float dotNV = dot(N, V);
 	float dotAbsNV = abs(dotNV);
 #if 1
-	float fresnel = clamp(u_FresnelBias + pow(dotAbsNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
+	float fresnel = 1.0 - clamp(u_FresnelBias + pow(dotAbsNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
 	// use the cubeProbes
 	reflectColor = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
 #else
@@ -198,35 +200,33 @@ void main()
 #if defined(USE_DIFFUSE)
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, texDiffuse);
-	color.rgb = mix(color.rgb, diffuse.rgb, var_alphaGen); // var_alphaGen is the alphaGen const value from the liquid stage
+	color.rgb = mix(color.rgb, diffuse.rgb, var_alphaGen);
+//color.rgb = mix(color.rgb, diffuse.rgb, var_Color.a);
+	
 #endif // USE_DIFFUSE
 
-
+	
 	// the water-surface fog
-	if (u_FogDensity > 0.0)
-	{
+	if (u_FogDensity > 0.0) {
 		// reconstruct vertex position in world space
 		float depth = texture2D(u_DepthMap, texScreen).r;
-		// scale to Normalized Device Coordinates
-		vec4  P = vec4(vec3(gl_FragCoord.xy, depth) * 2.0 - 1.0, 1.0);
+//?		// scale to Normalized Device Coordinates
+//?		vec4  P = vec4(gl_FragCoord.xy, depth, 1.0) * 2.0 - 1.0;
+		vec4  P = vec4(gl_FragCoord.xy, depth, 1.0);
 		// unproject to get into viewspace
 		P = u_UnprojectMatrix * P;
 		// normalize to homogeneous coordinates (where w is always 1)
 		P.xyz /= P.w;
-
 		// calculate fog distance
 		float fogDistance = distance(P.xyz, var_Position);
-
 		// calculate fog exponent
 		float fogExponent = fogDistance * u_FogDensity;
-
 		// calculate fog factor
 		float fogFactor = 1.0 - clamp(exp2(-fogExponent * fogExponent), 0, 1);
-//float fogFactor = 1.0 - clamp(exp(-fogExponent * fogExponent), 0, 1);
-
+//!		float fogFactor = 1.0 - clamp(exp(-fogExponent * fogExponent), 0, 1);
+		// set the color
 		color.rgb = mix(color.rgb, u_FogColor, fogFactor);
 	}
-
 
 
 #if defined(USE_REFLECTIONS)
@@ -238,8 +238,7 @@ void main()
 //	color.rgb *= var_LightColor.rgb;
 
 	// lightmap
-	color *= lightmapColor;
-
+	color.rgb *= lightmapColor.rgb;
 
 #if defined(USE_NORMAL_MAPPING)
 	color.rgb += specular; // liquids need no specularmap. Liquids have the specular term calculated from any provided normalmap
