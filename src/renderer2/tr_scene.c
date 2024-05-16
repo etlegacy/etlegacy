@@ -682,6 +682,8 @@ void RE_RenderScene(const refdef_t *fd)
 		// entering the water?
 		if (!(tr.refdef.rdflags & RDF_UNDERWATER) && (fd->rdflags & RDF_UNDERWATER))
 		{
+			// if the water has a volumetric fog assigned (like in Battery),
+			// then not change the global fog.  => do not add waterfogvars
 			RE_SetGlobalFog(qfalse, 0, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2], tr.glfogsettings[FOG_WATER].end);
 		}
 		// exiting the water?
