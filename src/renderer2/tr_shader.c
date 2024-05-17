@@ -3061,6 +3061,10 @@ void ParseSort(char **text)
 	{
 		shader.sort = SS_UNDERWATER;
 	}
+	else if (!Q_stricmp(token, "water"))
+	{
+		shader.sort = SS_WATER;
+	}
 	else if (!Q_stricmp(token, "far"))
 	{
 		shader.sort = SS_FAR;
@@ -4073,7 +4077,7 @@ static qboolean ParseShader(char *_text)
 				shader.fogParms.depthForOpaque = atof(token);
 				shader.fogParms.density = shader.fogParms.depthForOpaque < 1.0f ? shader.fogParms.depthForOpaque : 1.0f;
 				//shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
-				d = shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
+				d = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
 			}
 			shader.fogParms.tcScale = 1.0f / d; //shader.fogParms.depthForOpaque;
 
@@ -4217,9 +4221,6 @@ static qboolean ParseShader(char *_text)
 			// store the fog data
 			RE_SetFog(FOG_MAP, 0, fogFar, fogColor[0], fogColor[1], fogColor[2], fogDensity);
 			RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
-			// make this fog active
-			//RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
-
 			continue;
 		}
 		// ET sunshader <name>

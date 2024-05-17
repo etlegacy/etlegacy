@@ -8,6 +8,7 @@
 
 uniform bool SHOW_LIGHTMAP;
 //uniform bool SHOW_DELUXEMAP;
+uniform bool UNDERWATER;
 
 uniform vec4 u_Color;
 uniform sampler2D u_DepthMap;
@@ -24,6 +25,8 @@ uniform sampler2D u_CurrentMap;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
 	uniform sampler2D u_NormalMap;
+	// sunlight
+	//uniform vec3      u_LightDir;
 	uniform vec3      u_LightColor;
 	// fresnel
 	uniform float     u_FresnelBias;
@@ -109,7 +112,12 @@ void main()
 #endif
 
 
-#if defined(USE_NORMAL_MAPPING)
+#if !defined(USE_NORMAL_MAPPING)
+	// normal mapping is disabled.
+	// calculate the screen texcoord in the 0.0 to 1.0 range
+	vec2 texScreen = gl_FragCoord.st * r_FBufScale * r_NPOTScale;
+	color.rgb = texture2D(u_CurrentMap, texScreen).rgb;
+#else // USE_NORMAL_MAPPING
 	// the view direction in tangentspace
 	vec3 V = normalize(var_ViewDirT);
 
@@ -129,7 +137,7 @@ void main()
 #endif //USE_PARALLAX_MAPPING
 
 
-	// normal
+	// pixel normal
 	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0; // static bumpmap
 #if defined(USE_WATER)
 	vec3 Ntex2 = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0; // tcMod moving bumpmap
@@ -144,7 +152,7 @@ void main()
 	vec3 refractColor = texture2D(u_CurrentMap, texScreen).rgb;
 
 
-	// set the initial color to the refracted underwater scene
+	// set the initial color to the refracted scene
 	color.rgb = refractColor;
 
 
@@ -152,24 +160,30 @@ void main()
 	// reflection
 #if defined(USE_REFLECTIONS)
 	vec3 reflectColor;
-	// compute fresnel term
-	// ratio reflection/refraction.  Value 1.0 = only refraction, no reflection.   0.0 = only reflection, no refraction.
 	float dotNV = dot(N, V);
-	float dotAbsNV = abs(dotNV);
-#if 1
-	float fresnel = 1.0 - clamp(u_FresnelBias + pow(dotAbsNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
-	// use the cubeProbes
+#if 0
+	// Always use the cubeProbes, if above or below the watersurface.
+	// compute fresnel term. This is the ratio reflection/refraction.
+	// Value 1.0 = only refraction, no reflection.   0.0 = only reflection, no refraction.
+	float fresnel = 1.0 - clamp(u_FresnelBias + pow(abs(dotNV), u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
 	reflectColor = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
 #else
+	// surface reflections above/under water are different
 	float fresnel = clamp(u_FresnelBias + pow(1.0 + dotNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
-	// test surface reflections above/under water are different
-	if (dotNV >= 0) {
+	if (!UNDERWATER) {
 		// Above surface: use the cubeProbes
 		reflectColor = computeReflectionsW(V, N, var_worldMatrix, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
 	} else {
+#if 1
 		// Below surface: use the currentmap
-		vec3 R = reflect(V, N); // the reflection vector
-		reflectColor = texture2D(u_CurrentMap, R.st).rgb; // it a test..
+				const vec3 surfaceNormalT = vec3(0.0, 0.0, 1.0); // the tangentspace surface normal is just a constant
+		vec3 R = reflect(V, -surfaceNormalT); // the reflection vector
+		vec2 texScreen2 = texScreen + ((N.xy - R.xy) * u_NormalScale);
+		reflectColor = texture2D(u_CurrentMap, texScreen2.st).rgb;
+#else
+		// Below surface: no reflections
+		reflectColor = refractColor;
+#endif
 	}
 #endif
 #endif // USE_REFLECTIONS
@@ -179,18 +193,11 @@ void main()
 //	color.rgb *= computeDiffuseLighting(N, L, 0.2);
 
 
-	// compute the specular term
+	// compute the specular term.
+	// Liquids need no specularmap. Liquids have the specular term calculated from any provided normalmap.
 	// We don't use u_SpecularExponent here, but instead a constant value.
 	vec3 specular = computeSpecular(V, N, L, u_LightColor, 64.0, u_SpecularScale); // u_SpecularExponent
 
-
-#else // USE_NORMAL_MAPPING
-
-
-	// calculate the screen texcoord in the 0.0 to 1.0 range
-	vec2 texScreen = gl_FragCoord.st * r_FBufScale * r_NPOTScale;
-
-	color.rgb = texture2D(u_CurrentMap, texScreen).rgb;
 
 #endif // USE_NORMAL_MAPPING
 
@@ -206,8 +213,8 @@ void main()
 #endif // USE_DIFFUSE
 
 	
-	// the water-surface fog
-	if (u_FogDensity > 0.0) {
+	// the water-surface fog.
+	if (!UNDERWATER && (u_FogDensity > 0.0)) {
 		// reconstruct vertex position in world space
 		float depth = texture2D(u_DepthMap, texScreen).r;
 //?		// scale to Normalized Device Coordinates
@@ -215,7 +222,7 @@ void main()
 		vec4  P = vec4(gl_FragCoord.xy, depth, 1.0);
 		// unproject to get into viewspace
 		P = u_UnprojectMatrix * P;
-		// normalize to homogeneous coordinates (where w is always 1)
+		// normalize to homogeneous coordinates
 		P.xyz /= P.w;
 		// calculate fog distance
 		float fogDistance = distance(P.xyz, var_Position);
@@ -233,16 +240,15 @@ void main()
 	color.rgb = mix(color.rgb, reflectColor, fresnel);
 #endif
 
+#if defined(USE_NORMAL_MAPPING)
+	color.rgb += specular;
+#endif // USE_NORMAL_MAPPING
 
-	// compute the light term
-//	color.rgb *= var_LightColor.rgb;
-
+#if defined(USE_LIGHT_MAPPING)
 	// lightmap
 	color.rgb *= lightmapColor.rgb;
+#endif
 
-#if defined(USE_NORMAL_MAPPING)
-	color.rgb += specular; // liquids need no specularmap. Liquids have the specular term calculated from any provided normalmap
-#endif // USE_NORMAL_MAPPING
 #if defined(USE_PARALLAX_MAPPING)
 	color.rgb *= parallaxShadow;
 #endif

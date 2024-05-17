@@ -4673,8 +4673,8 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		if (out->originalBrushNumber == -1)
 		{
 			s_worldData.globalFog = i + 1;
-			VectorCopy(shader->fogParms.color, s_worldData.globalOriginalFog);
-			s_worldData.globalOriginalFog[3] = d; // shader->fogParms.depthForOpaque;
+			VectorCopy(shader->fogParms.color, s_worldData.globalFog_Original);
+			s_worldData.globalFog_Original[3] = d; // shader->fogParms.depthForOpaque;
 		}
 
 		// set the gradient vector

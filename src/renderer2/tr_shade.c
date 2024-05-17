@@ -1146,13 +1146,13 @@ static void Render_shadowFill(int stage)
 }
 
 /**
- * @brief Render_forwardLighting_DBS_omni
+ * @brief Render_forwardLighting_omni
  * @param[in] diffuseStage
  * @param[in] attenuationXYStage
  * @param[in] attenuationZStage
  * @param[in] light
  */
-static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
+static void Render_forwardLighting_omni(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationXYStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
@@ -1166,7 +1166,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 		return;
 	}
 
-	Ren_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
+	Ren_LogComment("--- Render_forwardLighting_omni ---\n");
 
 	SetMacrosAndSelectProgram(trProg.gl_forwardLightingShader_omniXYZ,
 	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
@@ -1247,13 +1247,13 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 }
 
 /**
- * @brief Render_forwardLighting_DBS_proj
+ * @brief Render_forwardLighting_proj
  * @param[in] diffuseStage
  * @param[in] attenuationXYStage
  * @param[in] attenuationZStage
  * @param[in] light
  */
-static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
+static void Render_forwardLighting_proj(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationXYStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
@@ -1271,7 +1271,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 		return;
 	}
 
-	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
+	Ren_LogComment("--- Render_forwardLighting_proj ---\n");
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_forwardLightingShader_projXYZ,
@@ -1392,13 +1392,13 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 }
 
 /**
- * @brief Render_forwardLighting_DBS_directional
+ * @brief Render_forwardLighting_directional
  * @param[in] diffuseStage
  * @param attenuationXYStage - unused
  * @param attenuationZStage - unused
  * @param[in] light
  */
-static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
+static void Render_forwardLighting_directional(shaderStage_t *diffuseStage,
                                                    shaderStage_t *attenuationXYStage,
                                                    shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
@@ -1413,7 +1413,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 		return;
 	}
 
-	Ren_LogComment("--- Render_forwardLighting_DBS_directional ---\n");
+	Ren_LogComment("--- Render_forwardLighting_directional ---\n");
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_forwardLightingShader_directionalSun,
@@ -2086,6 +2086,7 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 	}
 
 	//if (tr.glfogsettings[FOG_WATER].registered && tr.glfogsettings[FOG_WATER].end > 1.0f) {
+		SetUniformBoolean(UNIFORM_B_UNDERWATER, (tr.refdef.rdflags & RDF_UNDERWATER ? GL_TRUE : GL_FALSE));
 		fogDensity = tr.glfogsettings[FOG_WATER].end; // this is the waterfogvars depthForOpaque value
 		SetUniformFloat(UNIFORM_FOGDENSITY, 0.005f);// fogDensity);
 		if (fogDensity > 0.0)
@@ -2154,7 +2155,7 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 		SetUniformFloat(UNIFORM_NORMALSCALE, RB_EvalExpression(&pStage->normalScaleExp, 0.01f));
 
 		// specular
-		SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value * 5.f); // water always more specular
+		SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
 		SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
 
 		// refraction
@@ -3419,15 +3420,15 @@ void Tess_StageIteratorLighting()
 				// render the appropriate light
 				if (light->l.rlType == RL_OMNI)
 				{
-					Render_forwardLighting_DBS_omni(diffuseStage, attenuationXYStage, attenuationZStage, light);
+					Render_forwardLighting_omni(diffuseStage, attenuationXYStage, attenuationZStage, light);
 				}
 				else if (light->l.rlType == RL_DIRECTIONAL)
 				{
-					Render_forwardLighting_DBS_directional(diffuseStage, attenuationXYStage, attenuationZStage, light);
+					Render_forwardLighting_directional(diffuseStage, attenuationXYStage, attenuationZStage, light);
 				}
 				else
 				{
-					Render_forwardLighting_DBS_proj(diffuseStage, attenuationXYStage, attenuationZStage, light);
+					Render_forwardLighting_proj(diffuseStage, attenuationXYStage, attenuationZStage, light);
 				}
 				goto done;
 			}

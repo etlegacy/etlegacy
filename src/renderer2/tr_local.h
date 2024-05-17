@@ -2883,11 +2883,11 @@ typedef struct
 	fog_t *fogs;
 
 	int globalFog;                          ///< index of global fog
-	vec4_t globalOriginalFog;               ///< to be able to restore original global fog
-	vec4_t globalTransStartFog;             ///< start fog for switch fog transition
-	vec4_t globalTransEndFog;               ///< end fog for switch fog transition
-	int globalFogTransStartTime;
-	int globalFogTransEndTime;
+	vec4_t globalFog_Original;              ///< to be able to restore original global fog
+	vec4_t globalFog_TransitionStartFog;    ///< start fog when transitioning to another fog
+	vec4_t globalFog_TransitionEndFog;      ///< end fog when transitioning from another fog
+	int globalFog_TransitionStartTime;      ///< fog transition start time
+	int globalFog_TransitionEndTime;        ///< fog transition end time
 
 	vec3_t lightGridOrigin;
 	vec3_t lightGridSize;
