@@ -247,7 +247,6 @@ void R_SetFrameFog(void)
 				}
 			}
 			vec3_t vec;
-			VectorSubtract(tr.world->globalFog_TransitionEndTime, tr.world->globalTransStartFog, vec);
 			VectorSubtract(tr.world->globalFog_TransitionEndFog, tr.world->globalFog_TransitionStartFog, vec);
 			VectorMA(vec, lerpPos, tr.world->globalFog_TransitionStartFog, tr.world->fogs[tr.world->globalFog].color);
 			tr.world->fogs[tr.world->globalFog].depthForOpaque = (tr.world->globalFog_TransitionEndFog[3] - tr.world->globalFog_TransitionStartFog[3]) * lerpPos + tr.world->globalFog_TransitionStartFog[3];
