@@ -1,45 +1,7 @@
 // liquids_sd.shader
 
-/*
-// sinTable and cosTable must be defined for the rotate function to work
-table sinTable { {
-0.000000, 0.024541, 0.049068, 0.073565, 0.098017, 0.122411, 0.146730, 0.170962, 
-0.195090, 0.219101, 0.242980, 0.266713, 0.290285, 0.313682, 0.336890, 0.359895, 
-0.382683, 0.405241, 0.427555, 0.449611, 0.471397, 0.492898, 0.514103, 0.534998, 
-0.555570, 0.575808, 0.595699, 0.615232, 0.634393, 0.653173, 0.671559, 0.689541, 
-0.707107, 0.724247, 0.740951, 0.757209, 0.773010, 0.788346, 0.803208, 0.817585, 
-0.831470, 0.844854, 0.857729, 0.870087, 0.881921, 0.893224, 0.903989, 0.914210, 
-0.923880, 0.932993, 0.941544, 0.949528, 0.956940, 0.963776, 0.970031, 0.975702, 
-0.980785, 0.985278, 0.989177, 0.992480, 0.995185, 0.997290, 0.998795, 0.999699, 
-1.000000, 0.999699, 0.998795, 0.997290, 0.995185, 0.992480, 0.989177, 0.985278, 
-0.980785, 0.975702, 0.970031, 0.963776, 0.956940, 0.949528, 0.941544, 0.932993, 
-0.923880, 0.914210, 0.903989, 0.893224, 0.881921, 0.870087, 0.857729, 0.844854, 
-0.831470, 0.817585, 0.803208, 0.788346, 0.773010, 0.757209, 0.740951, 0.724247, 
-0.707107, 0.689541, 0.671559, 0.653173, 0.634393, 0.615232, 0.595699, 0.575808, 
-0.555570, 0.534998, 0.514103, 0.492898, 0.471397, 0.449611, 0.427555, 0.405241, 
-0.382683, 0.359895, 0.336890, 0.313682, 0.290285, 0.266713, 0.242980, 0.219101, 
-0.195090, 0.170962, 0.146730, 0.122411, 0.098017, 0.073565, 0.049068, 0.024541, 
-0.000000, -0.024541, -0.049068, -0.073565, -0.098017, -0.122411, -0.146730, -0.170962, 
--0.195090, -0.219101, -0.242980, -0.266713, -0.290285, -0.313682, -0.336890, -0.359895, 
--0.382683, -0.405241, -0.427555, -0.449611, -0.471397, -0.492898, -0.514103, -0.534998, 
--0.555570, -0.575808, -0.595699, -0.615232, -0.634393, -0.653173, -0.671559, -0.689541, 
--0.707107, -0.724247, -0.740951, -0.757209, -0.773010, -0.788346, -0.803208, -0.817585, 
--0.831470, -0.844854, -0.857729, -0.870087, -0.881921, -0.893224, -0.903989, -0.914210, 
--0.923880, -0.932993, -0.941544, -0.949528, -0.956940, -0.963776, -0.970031, -0.975702, 
--0.980785, -0.985278, -0.989177, -0.992480, -0.995185, -0.997290, -0.998795, -0.999699, 
--1.000000, -0.999699, -0.998795, -0.997290, -0.995185, -0.992480, -0.989177, -0.985278, 
--0.980785, -0.975702, -0.970031, -0.963776, -0.956940, -0.949528, -0.941544, -0.932993, 
--0.923880, -0.914210, -0.903989, -0.893224, -0.881921, -0.870087, -0.857729, -0.844854, 
--0.831470, -0.817585, -0.803208, -0.788346, -0.773010, -0.757209, -0.740951, -0.724247, 
--0.707107, -0.689541, -0.671559, -0.653173, -0.634393, -0.615232, -0.595699, -0.575808, 
--0.555570, -0.534998, -0.514103, -0.492898, -0.471397, -0.449611, -0.427555, -0.405241, 
--0.382683, -0.359895, -0.336890, -0.313682, -0.290285, -0.266713, -0.242980, -0.219101, 
--0.195090, -0.170962, -0.146730, -0.122411, -0.098017, -0.073565, -0.049068, -0.024541 } }
-*/
-
 textures/liquids_sd/siwa_water
 {
-	nocompress
 	qer_editorimage textures/liquids_sd/siwa_water.tga
 	qer_trans .5
 	q3map_globaltexture
@@ -47,57 +9,88 @@ textures/liquids_sd/siwa_water
 	surfaceparm nonsolid
 	surfaceparm water
 	surfaceparm nomarks
+	surfaceparm lightfilter
+	surfaceparm pointlight
+	surfaceparm fog
 	cull disable
 	nopicmip
-	nofog
+	//nofog
+	waterfogvars ( 0.1098 0.3922 0.3334 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
+	sort underwater
 
-	waterfogvars ( 0.11 0.13 0.15 ) 0.2
-
+	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	bumpmap textures/liquids_sd/siwa_water_n.tga
-
 	{ 
 		stage liquidmap
+		refractionIndex 1.3 // water
+		normalScale 0.01 // the scale of the refraction deformations
+		fresnelPower 1.0
+		fresnelScale 2.0
+		fresnelBias 0.5
+		alphaGen const 0.2
+		// 'color' is the fog-color you see on the watersurface only.
+		// It does not render any fog on objects other than the watersurface.
+		// Example: In Oasis, if you are above the watersurface, looking into the underwater tunnel,
+		// it looks like the tunnel is fogged (you see that on the watersurface).
+		// But if you go underwater, and look into that tunnel, you notice the tunnel has no fog at all.
+		// When you are underwater, and look at the world above the water, you see the world fogged with the same 'color'.
+		// Also here, it's just fog rendered on the watersurface.
 		fog on
-		map textures/liquids_sd/siwa_water_n.tga
-		// these are new default values of Renderer_liquid
-		//refractionIndex 1.3 // water
-        //fresnelPower 2.0
-        //fresnelScale 0.85       // + sinTable[time * 0.4] * 0.25
-        //fresnelBias  0.05
-		blendFunc blend
-		alphaFunc GE128
-		depthWrite
-		rgbgen identity
-		tcmod scale 0.5 0.5
+		color 0.0549, 0.1961, 0.1667, 0.2   // this needs the comma seperators [r,g,b,a]
+	}
+	{
+		stage diffusemap
+		map textures/liquids_sd/siwa_water.tga
+		// apply any tcMod to only the diffuse texture of a collapsed liquid stage
+		// this will produce the bumpmapped, moving waves.
 		tcmod scroll -.02 .001
-		color 0.1, 0.1, 0.1, 0.5 // underwater fog color
+		tcmod scale 0.5 0.5
 	}
 
+	// layer 2 : a "dummy" diffusemap that will receive the lightmap (and fancy light/shadows)
+	// but we don't want this to be displayed, so we use a special blendfunc.
+	// Note this is a workaround /todo
+	{
+		stage diffusemap
+		map $blackimage
+		blendfunc GL_ZERO GL_ONE
+	}
+
+	// the other stages are not collapsed
+	// Do NOT make the next stages:	stage diffusemap, or else the light/shadow will be too bright
 	{ 
-		fog on
 		map textures/liquids_sd/seawall_ripple1.tga
-		blendFunc GL_ONE GL_ONE
+		blendFunc blend
+		alphaGen const 0.1
 		rgbGen wave sin 0.3 0.02 0 0.25 
-		tcmod scale 0.01 0.01
 		tcmod scroll -.001 -.0002
+		tcmod scale 0.01 0.01
 	}
-	
+
 	{
-		fog on
 		map textures/liquids_sd/seawall_ripple1.tga
-		blendFunc GL_ONE GL_ONE
+		blendFunc add
+		alphaGen const 0.1
 		rgbGen wave sin 0.1 0.03 0 0.4
-		tcmod scale 1 1
 		tcmod scroll -.005 -.001
+		tcmod scale 1 1
 	}
 	{
-		fog on
 		map textures/liquids_sd/siwa_shimshim1.tga
-		blendFunc GL_ONE GL_ONE
+		blendFunc add
+		alphaGen const 0.1
 		rgbGen wave sin 0.4 0.02 0 0.3
-		tcmod transform 0 1.5 1 1.5 2 1
 		tcmod scroll .005 -.001
+		tcmod transform 0 1.5 1 1.5 2 1
 	}
+
+/*	// don't add a lightmap
+	{
+		map $lightmap
+		rgbGen identity
+		blendFunc filter
+	}
+*/
 }
 
 textures/liquids_sd/siwa_water_2
@@ -105,53 +98,74 @@ textures/liquids_sd/siwa_water_2
 	qer_editorimage textures/liquids_sd/siwa_water.tga
 	qer_trans .5
 	q3map_globaltexture
-	cull disable
-	nocompress
-	nofog
-	surfaceparm nomarks
-	surfaceparm nonsolid
 	surfaceparm trans
+	surfaceparm nonsolid
 	surfaceparm water
-	waterfogvars ( 0.11 0.13 0.15 ) 0.2
-	color 0.1, 0.1, 0.1, 0.5 // underwater fog color
-
-	bumpmap textures/liquids_sd/siwa_water_n.tga
-
+	surfaceparm nomarks
+	surfaceparm lightfilter
+	surfaceparm pointlight
+	surfaceparm fog
+	cull disable
 	nopicmip
+	// the next 2 lines are commented out, because waterfogvars is not functional at this moment.
+	//nofog
+	waterfogvars ( 0.4255 0.4804 0.4882 ) 256.0 // this needs all the spaces inside the ( x x x )
+	sort underwater
+
+	// collapsed layer 1 : ST_BUNDLE_WDB,  water/liquid + diffuse + bump
+	bumpmap textures/liquids_sd/siwa_water_n.tga
 	{
 		stage liquidmap
-		map textures/liquids_sd/siwa_water_n.tga
-		blendFunc blend
-		alphaFunc GE128
-		rgbgen identity
-		tcmod scale 0.5 0.5
-		tcmod scroll -.02 .001
+		fresnelPower 1.0 
+		fresnelScale 2.0
+		fresnelBias 0.5
+		normalScale 0.01
+		alphaGen const 0.2
 		fog on
+		color 0.1, 0.1, 0.1, 0.5
 	}
 	{
+		stage diffusemap
+		map textures/liquids_sd/siwa_water.tga
+		tcmod scroll -.02 .001
+		tcmod scale 0.5 0.5
+	}
+/*
+	// stages 2 to 4 are not collapsed
+	{
 		map textures/liquids_sd/seawall_ripple1.tga
-		blendFunc GL_ONE GL_ONE
+		blendFunc blend
+		alphaGen const 0.1
 		rgbGen wave sin 0.3 0.02 0 0.25
 		tcmod scale 0.01 0.01
 		tcmod scroll -.001 -.0002
-		fog on
 	}
 	{
 		map textures/liquids_sd/seawall_ripple1.tga
-		blendFunc GL_ONE GL_ONE
-		rgbGen wave sin 0.1 0.03 0 0.4
+		blendFunc add
+		alphaGen const 0.001
+//		rgbGen vertex
+//		rgbGen wave sin 0.1 0.03 0 0.4
 		tcmod scale 1 1
 		tcmod scroll -.005 -.001
-		fog on
 	}
 	{
 		map textures/liquids_sd/siwa_shimshim1.tga
-		blendFunc GL_ONE GL_ONE
-		rgbGen wave sin 0.4 0.02 0 0.3
+		blendFunc add
+		alphaGen const 0.001
+//		rgbGen vertex
+//		rgbGen wave sin 0.4 0.02 0 0.3
 		tcmod transform 0 1.5 1 1.5 2 1
 		tcmod scroll .005 -.001
-		fog on
 	}
+*/
+/*
+	{
+		map $lightmap
+		rgbGen identity
+		blendFunc filter
+	}
+*/
 }
 
 textures/liquids_sd/siwa_waternodraw

@@ -192,7 +192,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 
 		// point camera in direction of travel
 		VectorCopy(cent->currentState.pos.trDelta, delta);
-		VectorNormalize(delta);
+		VectorNormalizeOnly(delta);
 		vectoangles(delta, cgs.demoCamera.camAngle);
 
 		if (demo_autotimescaleweapons.integer & ATSW_PANZER)

@@ -347,8 +347,8 @@ typedef enum eCursorHintType
 
 typedef enum eExplosiveTargetType
 {
-	XPLO_TYPE_DYNAMITE    = 1 << 0,
-	    XPLO_TYPE_SATCHEL = 1 << 1
+	XPLO_TYPE_DYNAMITE = 1 << 0,
+	XPLO_TYPE_SATCHEL  = 1 << 1
 } ExplosiveTargetType;
 
 typedef enum eExplosiveState

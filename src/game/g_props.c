@@ -98,12 +98,14 @@ void moveit(gentity_t *ent, float yaw, float dist)
 	vec3_t  origin;
 	trace_t tr;
 	vec3_t  mins, maxs;
+	float   S, C;
 
-	yaw = (float)(yaw * M_TAU_F / 360);
+	yaw = DEG2RAD(yaw);
 
-	move[0] = (float)cos((double)yaw) * dist;
-	move[1] = (float)sin((double)yaw) * dist;
-	move[2] = 0;
+	SinCos(yaw, S, C);
+	move[0] = C * dist;
+	move[1] = S * dist;
+	move[2] = 0.f;
 
 	VectorAdd(ent->r.currentOrigin, move, origin);
 
@@ -402,7 +404,7 @@ void sparks_angles_think(gentity_t *ent)
 		vec3_t vec;
 
 		VectorSubtract(ent->s.origin, target->s.origin, vec);
-		VectorNormalize(vec);
+		VectorNormalizeOnly(vec);
 		VectorCopy(vec, ent->r.currentAngles);
 	}
 
@@ -1660,12 +1662,12 @@ void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, float quantity, int type)
 		start[0] += crandom() * 32;
 		start[1] += crandom() * 32;
 		VectorSubtract(inflictor->r.currentOrigin, ent->r.currentOrigin, dir);
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 	}
 	else if (inflictor)
 	{
 		VectorSubtract(inflictor->r.currentOrigin, ent->r.currentOrigin, dir);
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 		VectorNegate(dir, dir);
 	}
 	else
@@ -3424,7 +3426,7 @@ void SP_props_snowGenerator(gentity_t *ent)
 		}
 
 		VectorSubtract(target->s.origin, ent->s.origin, ent->movedir);
-		VectorNormalize(ent->movedir);
+		VectorNormalizeOnly(ent->movedir);
 	}
 
 	ent->r.contents = CONTENTS_TRIGGER;
@@ -4265,7 +4267,7 @@ void Spawn_Junk(gentity_t *ent)
 	start[2] += 16;
 
 	VectorSubtract(start, ent->r.currentOrigin, dir);
-	VectorNormalize(dir);
+	VectorNormalizeOnly(dir);
 
 	sfx = G_Spawn();
 
@@ -4406,7 +4408,7 @@ void props_locker_mass(gentity_t *ent)
 	start[2] += 16;
 
 	VectorSubtract(start, ent->r.currentOrigin, dir);
-	VectorNormalize(dir);
+	VectorNormalizeOnly(dir);
 
 	tent = G_TempEntity(ent->r.currentOrigin, EV_EFFECT);
 	VectorCopy(ent->r.currentOrigin, tent->s.origin);
@@ -4608,7 +4610,7 @@ void props_flamethrower_think(gentity_t *ent)
 			vec3_t angles, vec;
 
 			VectorSubtract(target->s.origin, ent->s.origin, vec);
-			VectorNormalize(vec);
+			VectorNormalizeOnly(vec);
 			vectoangles(vec, angles);
 			//VectorCopy (angles, ent->r.currentAngles);  // wasn't working
 			VectorCopy(angles, ent->s.apos.trBase);
@@ -4644,7 +4646,7 @@ void props_flamethrower_think(gentity_t *ent)
 
 		//      The flamethrower effect above is purely visual
 		//      we actual need to create an entity that is the fire and will do damage
-		VectorNormalize(flameDir);
+		VectorNormalizeOnly(flameDir);
 		VectorScale(flameDir, FLAME_START_SPEED, flameDir);
 
 		fire_flamechunk(ent, ent->r.currentOrigin, flameDir);
@@ -4732,7 +4734,7 @@ void props_flamethrower_init(gentity_t *ent)
 		vec3_t angles;
 
 		VectorSubtract(target->s.origin, ent->s.origin, vec);
-		VectorNormalize(vec);
+		VectorNormalizeOnly(vec);
 		vectoangles(vec, angles);
 		//VectorCopy (angles, ent->r.currentAngles);
 		VectorCopy(angles, ent->s.apos.trBase);

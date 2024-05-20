@@ -38,16 +38,7 @@
 
 static char **shaderTextHashTableR1[MAX_SHADERTEXT_HASH];
 static char *s_shaderTextR1;
-
-extern shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
-
-extern shader_t        shader;
-extern dynamicShader_t *dshader;
-extern shaderTable_t   table;
-extern shaderStage_t   stages[MAX_SHADER_STAGES];
-extern char            implicitMap[MAX_QPATH];
-extern unsigned        implicitStateBits;
-extern cullType_t      implicitCullType;
+shader_t    shader;
 
 /**
  * @brief ParseVector
@@ -225,7 +216,7 @@ qboolean ParseShaderR1(char *_text)
 			}
 			tr.sunLight[2] = Q_atof(token);
 
-			VectorNormalize(tr.sunLight);
+			VectorNormalizeOnly(tr.sunLight);
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
@@ -428,22 +419,20 @@ qboolean ParseShaderR1(char *_text)
 				return qfalse;
 			}
 
-			//shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
-			//                                       shader.fogParms.color[1] * tr.identityLight,
-			//                                       shader.fogParms.color[2] * tr.identityLight, 1.0);
-
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
 			{
 				Ren_Warning("WARNING: 'fogParms' incomplete - missing opacity value in shader '%s' set to 1\n", shader.name);
-				shader.fogParms.depthForOpaque = 1;
+				shader.fogParms.density        = 1.0f;
+				shader.fogParms.depthForOpaque = 1.0f;
 			}
 			else
 			{
 				shader.fogParms.depthForOpaque = Q_atof(token);
-				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
+				shader.fogParms.density        = shader.fogParms.depthForOpaque < 1.0f ? shader.fogParms.depthForOpaque : 1.0f;
+				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
 			}
-			//shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
+			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;
@@ -682,7 +671,7 @@ qboolean ParseShaderR1(char *_text)
 			if (shader.distanceCull[1] - shader.distanceCull[0] > 0)
 			{
 				// distanceCull[ 3 ] is an optimization
-				shader.distanceCull[3] = 1.0f / (shader.distanceCull[1] - shader.distanceCull[0]);
+				shader.distanceCull[3] = rcp(shader.distanceCull[1] - shader.distanceCull[0]);
 			}
 			else
 			{
@@ -1003,7 +992,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 
-			// Step over the "table"/"guide" and the name
+			/*// Step over the "table"/"guide" and the name
 			if (!Q_stricmp(token, "table") || !Q_stricmp(token, "guide"))
 			{
 				token = COM_ParseExt2(&p, qtrue);
@@ -1012,7 +1001,7 @@ int ScanAndLoadShaderFilesR1()
 				{
 					break;
 				}
-			}
+			}*/
 
 			oldp = p;
 
@@ -1072,7 +1061,7 @@ int ScanAndLoadShaderFilesR1()
 			break;
 		}
 
-		// skip shader tables
+		/*// skip shader tables
 		if (!Q_stricmp(token, "table"))
 		{
 			// skip table name
@@ -1123,7 +1112,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			hash = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableSizes[hash]++;
@@ -1158,7 +1147,7 @@ int ScanAndLoadShaderFilesR1()
 			break;
 		}
 
-		// parse shader tables
+		/*// parse shader tables
 		if (!Q_stricmp(token, "table"))
 		{
 			int           depth;
@@ -1275,7 +1264,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			hash                                                          = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableR1[hash][shaderTextHashTableSizes[hash]++] = oldp;

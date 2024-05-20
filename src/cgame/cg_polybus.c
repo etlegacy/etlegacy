@@ -44,7 +44,7 @@ qboolean     cg_polyBuffersInuse[MAX_PB_BUFFERS];
  * @param[in] shader
  * @param[in] numVerts
  * @param[in] numIndicies
- * @return 
+ * @return
  */
 polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies)
 {

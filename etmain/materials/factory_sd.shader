@@ -7,5 +7,4 @@ textures/factory_sd/metal_wall1
 	bumpmap textures/factory_sd/metal_wall1_n.tga
 	specularmap textures/factory_sd/metal_wall1_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }

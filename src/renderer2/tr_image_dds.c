@@ -220,8 +220,8 @@ typedef struct
 #ifndef MAKEFOURCC
 
 #define MAKEFOURCC(ch0, ch1, ch2, ch3)                                          \
-	((unsigned int)(char)(ch0) | ((unsigned int)(char)(ch1) << 8) |         \
-	 ((unsigned int)(char)(ch2) << 16) | ((unsigned int)(char)(ch3) << 24))
+		((unsigned int)(char)(ch0) | ((unsigned int)(char)(ch1) << 8) |         \
+		 ((unsigned int)(char)(ch2) << 16) | ((unsigned int)(char)(ch3) << 24))
 
 #endif
 
@@ -669,7 +669,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	vec4_t   zeroClampBorder      = { 0, 0, 0, 1 };
 	vec4_t   alphaZeroClampBorder = { 0, 0, 0, 0 };
 
-	Com_Memset(mipOffsets, 0, sizeof(mipOffsets));
+	Com_Memset(mipOffsets, 0, R_LoadDDSImage_MAX_MIPS + 1);
 
 	// comes from R_CreateImage
 	/*
@@ -1073,27 +1073,27 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		//macros so this doesn't get disgustingly huge
 #define loadCubeFace(glTarget)                                                    \
-	w = width;                                                                  \
+		w = width;                                                                  \
                                                                                     \
-	for (i = 0; i < mipLevels; i++)                                            \
-	{                                                                           \
-		if (compressed)                                                        \
-		{                                                                       \
-			GLsizei size = mipOffsets[i + 1] - mipOffsets[i];               \
-			R_UploadCompressedImage2D(ret, glTarget, i, format, w, w,          \
-			                          size, mipOffsets[i]);                                        \
-		}                                                                       \
-		else                                                                    \
-		{                                                                       \
-			R_UploadImage2D(ret, glTarget, i, internal_format, w, w,           \
-			                internal_format, type, mipOffsets[i]);                       \
-		}                                                                       \
+		for (i = 0; i < mipLevels; i++)                                            \
+		{                                                                           \
+			if (compressed)                                                        \
+			{                                                                       \
+				GLsizei size = mipOffsets[i + 1] - mipOffsets[i];               \
+				R_UploadCompressedImage2D(ret, glTarget, i, format, w, w,          \
+										  size, mipOffsets[i]);                                        \
+			}                                                                       \
+			else                                                                    \
+			{                                                                       \
+				R_UploadImage2D(ret, glTarget, i, internal_format, w, w,           \
+								internal_format, type, mipOffsets[i]);                       \
+			}                                                                       \
                                                                                     \
-		w >>= 1; if (w == 0) { w = 1; }                                            \
-	}
+			w >>= 1; if (w == 0) { w = 1; }                                            \
+		}
 
 #define shiftMipOffsets()                                                           \
-	for (i = 0; i <= mipLevels; i++)                                           \
+		for (i = 0; i <= mipLevels; i++)                                           \
 		mipOffsets[i] += shift
 
 		if (filterType == FT_DEFAULT && mipLevels == 1 && glConfig2.generateMipmapAvailable)
@@ -1263,6 +1263,10 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(ret->type, GL_TEXTURE_BORDER_COLOR, alphaZeroClampBorder);
+		break;
+	case WT_MIRROR_REPEAT:
+		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 		break;
 	default:
 		Ren_Warning("WARNING: unknown wrap type for image '%s'\n", ret->name);

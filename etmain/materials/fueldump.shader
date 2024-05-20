@@ -46,6 +46,61 @@ textures/fueldump/terrain_base
 	q3map_tcMod scale 1 1
 	surfaceparm landmine
 	surfaceparm snowsteps
+	q3map_nonplanar
+	q3map_shadeangle 10
+}
+
+textures/stone/mxsnow2
+{
+	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow2.tga
+	diffusemap textures/stone/mxsnow2.tga
+	normalmap textures/stone/mxsnow2_n.tga
+	specularmap textures/stone/mxsnow2_r.tga
+	{
+		lightmap $lightmap
+		blendFunc filter
+		rgbgen identity
+	}
+}
+textures/stone/mxsnow3
+{
+	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow3.tga
+	diffusemap textures/stone/mxsnow3.tga
+	normalmap textures/stone/mxsnow3_n.tga
+	specularmap textures/stone/mxsnow3_r.tga
+	{
+		lightmap $lightmap
+		blendFunc filter
+		rgbgen identity
+	}
+}
+textures/stone/mxrock3h_snow
+{
+	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxrock3h_snow.tga
+	diffusemap textures/stone/mxrock3h_snow.tga
+	normalmap textures/stone/mxrock3h_snow_n.tga
+	specularmap textures/stone/mxrock3h_snow_r.tga
+	{
+		lightmap $lightmap
+		blendFunc filter
+		rgbgen identity
+	}
+}
+textures/snow_sd/mxrock4b_snow
+{
+	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/snow_sd/mxrock4b_snow.tga
+	diffusemap textures/snow_sd/mxrock4b_snow.tga
+	normalmap textures/snow_sd/mxrock4b_snow_n.tga
+	specularmap textures/snow_sd/mxrock4b_snow_r.tga
+	{
+		lightmap $lightmap
+		blendFunc filter
+		rgbgen identity
+	}
 }
 
 //======================================================================
@@ -57,12 +112,16 @@ textures/fueldump/terrain_base
 //======================================================================
 textures/fueldump/terrain1_0
 {
-	qer_editorimage textures/stone/mxsnow2.tga
 	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow2.tga
+//	diffusemap textures/stone/mxsnow2.tga
+//	normalmap textures/stone/mxsnow2_n.tga
+//	specularmap textures/stone/mxsnow2_r.tga
 	{
 		stage diffusemap
 		map textures/stone/mxsnow2.tga
 		rgbGen identity
+//		blendFunc blend
 		alphaGen vertex
 	}
 	{
@@ -108,12 +167,16 @@ textures/fueldump/terrain1_0
 
 textures/fueldump/terrain1_1
 {
-    qer_editorimage textures/snow_sd/mxrock4b_snow.tga
 	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxrock4b_snow.tga
+//	diffusemap textures/stone/mxrock4b_snow.tga
+//	normalmap textures/stone/mxrock4b_snow_n.tga
+//	specularmap textures/stone/mxrock4b_snow_r.tga
 	{
 		stage diffusemap 
 		map textures/snow_sd/mxrock4b_snow.tga
 		rgbGen identity
+//		blendFunc blend
 		alphaGen vertex
 	}
 	{
@@ -134,6 +197,7 @@ textures/fueldump/terrain1_1
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 		alphaGen vertex
+		
 	}
 	{
 	    stage bumpmap
@@ -158,14 +222,18 @@ textures/fueldump/terrain1_1
 
 textures/fueldump/terrain1_2
 {
-    qer_editorimage textures/stone/mxsnow3.tga
 	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow3.tga
+//	diffusemap textures/stone/mxsnow3.tga
+//	normalmap textures/stone/mxsnow3_n.tga
+//	specularmap textures/stone/mxsnow3_r.tga
     {
-	   stage diffusemap
-	   map textures/stone/mxsnow3.tga
-	   rgbGen identity
-	   alphaGen vertex
-    }
+		stage diffusemap
+		map textures/stone/mxsnow3.tga
+		rgbGen identity
+//		blendFunc blend
+		alphaGen vertex
+   }
 	{
 		stage bumpmap
 		map textures/stone/mxsnow3_n.tga
@@ -209,13 +277,16 @@ textures/fueldump/terrain1_2
 
 textures/fueldump/terrain1_3
 {
-    qer_editorimage textures/stone/mxrock3h_snow.tga
 	q3map_baseshader textures/fueldump/terrain_base
-	
+ 	qer_editorimage textures/stone/mxrock3h_snow.tga
+//	diffusemap textures/stone/mxrock3h_snow.tga
+//	normalmap textures/stone/mxrock3h_snow_n.tga
+//	specularmap textures/stone/mxrock3h_snow_r.tga
 	{
 		stage diffusemap
 		map textures/stone/mxrock3h_snow.tga
 		rgbGen identity
+//		blendFunc blend
 		alphaGen vertex
 	}
 	{
@@ -261,8 +332,8 @@ textures/fueldump/terrain1_3
 
 textures/fueldump/terrain1_0to1
 {
-	qer_editorimage textures/stone/mxsnow2.tga
 	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow2.tga
 	{
 	    stage diffusemap
 		map textures/stone/mxsnow2.tga
@@ -273,11 +344,11 @@ textures/fueldump/terrain1_0to1
 	   stage bumpmap
 	   map textures/stone/mxsnow2_n.tga
 	   rgbgen identity
-	   alphaGen vertex
+		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/stone/mxsnow2.tga
+		map textures/stone/mxsnow2_r.tga
 		rgbgen identity
 		alphaGen vertex
 	}
@@ -311,8 +382,8 @@ textures/fueldump/terrain1_0to1
 
 textures/fueldump/terrain1_0to2
 {
-    qer_editorimage textures/stone/mxsnow2.tga
 	q3map_baseshader textures/fueldump/terrain_base
+    qer_editorimage textures/stone/mxsnow2.tga
 	{
 	    stage diffusemap
 		map textures/stone/mxsnow2.tga
@@ -361,8 +432,8 @@ textures/fueldump/terrain1_0to2
 
 textures/fueldump/terrain1_0to3
 {
-	qer_editorimage textures/stone/mxsnow2.tga
 	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow2.tga
 	{
 	    stage diffusemap
 		map textures/stone/mxsnow2.tga
@@ -397,7 +468,7 @@ textures/fueldump/terrain1_0to3
 	}
 	{
 	    stage specularmap
-		map textures/stone/mxrock3h_snow.tga
+		map textures/stone/mxrock3h_snow_r.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 		alphaGen vertex
@@ -411,8 +482,8 @@ textures/fueldump/terrain1_0to3
 
 textures/fueldump/terrain1_1to2
 {
-    qer_editorimage textures/snow_sd/mxrock4b_snow.tga
 	q3map_baseshader textures/fueldump/terrain_base
+    qer_editorimage textures/snow_sd/mxrock4b_snow.tga
 	{
 	    stage diffusemap
 		map textures/snow_sd/mxrock4b_snow.tga
@@ -429,7 +500,7 @@ textures/fueldump/terrain1_1to2
 	   stage specularmap
 	   map textures/snow_sd/mxrock4b_snow_r.tga
 	   rgbgen identity
-	   alphaGen vertex
+		alphaGen vertex
 	}
 	{
 	    stage diffusemap
@@ -461,8 +532,8 @@ textures/fueldump/terrain1_1to2
 
 textures/fueldump/terrain1_1to3
 {
-	qer_editorimage textures/snow_sd/mxrock4b_snow.tga
 	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/snow_sd/mxrock4b_snow.tga
 	{
 	    stage diffusemap
 		map textures/snow_sd/mxrock4b_snow.tga
@@ -511,8 +582,8 @@ textures/fueldump/terrain1_1to3
 
 textures/fueldump/terrain1_2to3
 {
-	qer_editorimage textures/stone/mxsnow3.tga
 	q3map_baseshader textures/fueldump/terrain_base
+	qer_editorimage textures/stone/mxsnow3.tga
 	{
 	    stage diffusemap
 		map textures/stone/mxsnow3.tga
@@ -567,6 +638,11 @@ textures/fueldump/cave_dark
 	q3map_nonplanar
 	q3map_shadeangle 60
 	qer_editorimage textures/stone/mxrock3_a.tga
+	
+	{
+		map $lightmap
+		rgbGen identity
+	}
 	{
 		stage diffusemap
 		map textures/stone/mxrock3_a.tga
@@ -582,11 +658,6 @@ textures/fueldump/cave_dark
 	    map textures/stone/mxrock3_a_r.tga
 		rgbGen identity
 	}
-	{
-		lightmap $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbgen identity
-	}
 }
 
 textures/fueldump/cave_floor
@@ -595,7 +666,10 @@ textures/fueldump/cave_floor
 	q3map_nonplanar
 	q3map_shadeangle 60
 	qer_editorimage textures/stone/mxrock1aa.tga
-	
+	{
+		map $lightmap
+		rgbGen identity
+	}
 	{
 		stage diffusemap
 		map textures/stone/mxrock1aa.tga
@@ -606,11 +680,10 @@ textures/fueldump/cave_floor
 		map textures/stone/mxrock1aa_n.tga
 		rgbGen identity
 	}
-	
 	{
-		lightmap $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbgen identity
+		stage specularmap
+		map textures/stone/mxrock1aa_r.tga
+		rgbGen identity
 	}
 }
 
@@ -672,57 +745,63 @@ textures/terrain/dirt_m03i
 textures/snow_sd/snow_road01
 {
 	q3map_nonplanar
-	q3map_shadeangle 179
+	q3map_shadeangle 10
 	surfaceparm snowsteps
+//	diffusemap textures/snow_sd/snow_road01.tga
+//	normalmap textures/snow_sd/snow_road01_n.tga
+//	specularmap textures/snow_sd/snow_road01_r.tga
 	{
 		stage diffusemap
 		map textures/snow_sd/snow_road01.tga
-		rgbgen identity
+		blendFunc blend
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_road01_n.tga
-		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_road01_r.tga
-		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/snow_sd/snow_path01
 {
 	q3map_nonplanar
-	q3map_shadeangle 179
+	q3map_shadeangle 10
 	surfaceparm snowsteps
+//	diffusemap textures/snow_sd/snow_path01.tga
+//	normalmap textures/snow_sd/snow_path01_n.tga
+//	specularmap textures/snow_sd/snow_path01_r.tga
 	{
 		stage diffusemap
 		map textures/snow_sd/snow_path01.tga
-		rgbgen identity
+		blendFunc blend
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_path01_n.tga
-		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_path01_r.tga
-		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 //==========================================================================
@@ -813,6 +892,7 @@ textures/fueldump/cave_floorblend
 	}
 }
 
+
 textures/fueldump/alphatree
 {
 	qer_editorimage textures/snow/s_dirt_m03i_alphatree.tga
@@ -829,6 +909,7 @@ textures/fueldump/alphatree
 		rgbGen vertex
 	}
 }
+
 
 //==========================================================================
 // Various metal surfaceparm textures
@@ -890,6 +971,9 @@ textures/fueldump/icelake_top
 {
 	qer_trans 0.80
 	qer_editorimage textures/snow_sd/icelake3.tga
+	diffusemap textures/snow_sd/icelake3.tga
+	bumpmap textures/snow_sd/icelake3_n.tga
+	specularmap textures/snow_sd/icelake3_r.tga
 	sort seethrough
 	surfaceparm slick
 	surfaceparm trans
@@ -898,13 +982,12 @@ textures/fueldump/icelake_top
 	tesssize 256
 
 	{
-		map textures/effects/envmap_ice2.tga
+		map textures/effects/envmap_ice2
 		tcgen environment
 		blendfunc blend
 	}
-	{
+	{  
 		map textures/snow_sd/icelake3.tga
-		bumpmap textures/snow_sd/icelake3_n.tga
 		blendfunc blend
 	}
 	{
@@ -913,20 +996,22 @@ textures/fueldump/icelake_top
 		rgbGen identity
 		depthWrite
 	}
-
+	
 }
 
 textures/fueldump/icelake_bottom
 {
 	qer_trans 0.80
 	qer_editorimage textures/snow_sd/icelake3.tga
+	diffusemap textures/snow_sd/icelake3.tga
+	bumpmap textures/snow_sd/icelake3_n.tga
+	specularmap textures/snow_sd/icelake3_r.tga
 	sort seethrough
 	surfaceparm trans
 	cull disable
 	
 	{
 		map textures/snow_sd/icelake3.tga
-		bumpmap textures/snow_sd/icelake3_n.tga
 		blendfunc filter
 	}
 }

@@ -115,8 +115,8 @@ public:
 	};
 
 	PInfo m_Players[MaxPlayers];
-	int   m_MaxPlayers;
-	int   m_AvailableTeams;
+	int m_MaxPlayers;
+	int m_AvailableTeams;
 
 	int GetNumPlayers(int t = OB_TEAM_ALL, Controller c = Both) const
 	{
@@ -430,40 +430,40 @@ public:
 	virtual obResult  GetEntityCategory(const GameEntity _ent, BitFlag32 &_category)                                                                          = 0;
 	virtual obResult GetEntityFlags(const GameEntity _ent, BitFlag64 &_flags)                                                                                 = 0;
 	virtual obResult GetEntityPowerups(const GameEntity _ent, BitFlag64 &_flags)                                                                              = 0;
-	virtual obResult GetEntityEyePosition(const GameEntity _ent, float _pos[3])                                = 0;
-	virtual obResult GetEntityBonePosition(const GameEntity _ent, int _boneid, float _pos[3])                  = 0;
-	virtual obResult GetEntityOrientation(const GameEntity _ent, float _fwd[3], float _right[3], float _up[3]) = 0;
-	virtual obResult GetEntityVelocity(const GameEntity _ent, float _velocity[3])                              = 0;
-	virtual obResult GetEntityPosition(const GameEntity _ent, float _pos[3])                                   = 0;
-	virtual obResult GetEntityWorldAABB(const GameEntity _ent, AABB &_aabb)                                              = 0;
-	virtual obResult GetEntityGroundEntity(const GameEntity _ent, GameEntity &moveent)                                   = 0;
-	virtual GameEntity GetEntityOwner(const GameEntity _ent)                                                             = 0;
-	virtual int GetEntityTeam(const GameEntity _ent)                                                                     = 0;
-	virtual const char *GetEntityName(const GameEntity _ent)                                                             = 0;
-	virtual obResult GetCurrentWeaponClip(const GameEntity _ent, FireMode _mode, int &_curclip, int &_maxclip)           = 0;
-	virtual obResult GetCurrentAmmo(const GameEntity _ent, int _weaponId, int &_cur, int &_max)                          = 0;
-	virtual int GetGameTime()                                                                                            = 0;
-	virtual void GetGoals()                                                                                              = 0;
-	virtual void GetPlayerInfo(obPlayerInfo &info)                                                                       = 0;
-	virtual obResult InterfaceSendMessage(const MessageHelper &_data, const GameEntity _ent)                             = 0;
-	virtual bool DebugLine(const float _start[3], const float _end[3], const obColor &_color, float _time)               = 0;
-	virtual bool DebugRadius(const float _pos[3], const float _radius, const obColor &_color, float _time)               = 0;
-	virtual bool DebugPolygon(const obVec3 *_verts, const int _numverts, const obColor &_color, float _time, int _flags) = 0;
-	virtual void PrintError(const char *_error)                                                                          = 0;
-	virtual void PrintMessage(const char *_msg)                                                                          = 0;
-	virtual bool PrintScreenText(const float _pos[3], float _duration, const obColor &_color, const char *_msg)          = 0;
-	virtual const char *GetMapName()                                                                                     = 0;
-	virtual void GetMapExtents(AABB &_aabb)                                                                              = 0;
-	virtual GameEntity EntityFromID(const int _gameId)                                                                   = 0;
-	virtual GameEntity EntityByName(const char *_name)                                                                   = 0;
-	virtual int IDFromEntity(const GameEntity _ent)                                                                      = 0;
-	virtual bool DoesEntityStillExist(const GameEntity &_hndl)                                                           = 0;
-	virtual int GetAutoNavFeatures(AutoNavFeature *_feature, int _max)                                                   = 0;
-	virtual const char *GetGameName()                                                                                    = 0;
-	virtual const char *GetModName()                                                                                     = 0;
-	virtual const char *GetModVers()                                                                                     = 0;
-	virtual const char *GetBotPath()                                                                                     = 0;
-	virtual const char *GetLogPath()                                                                                     = 0;
+	virtual obResult GetEntityEyePosition(const GameEntity _ent, float _pos[3])                                                                               = 0;
+	virtual obResult GetEntityBonePosition(const GameEntity _ent, int _boneid, float _pos[3])                                                                 = 0;
+	virtual obResult GetEntityOrientation(const GameEntity _ent, float _fwd[3], float _right[3], float _up[3])                                                = 0;
+	virtual obResult GetEntityVelocity(const GameEntity _ent, float _velocity[3])                                                                             = 0;
+	virtual obResult GetEntityPosition(const GameEntity _ent, float _pos[3])                                                                                  = 0;
+	virtual obResult GetEntityWorldAABB(const GameEntity _ent, AABB &_aabb)                                                                                   = 0;
+	virtual obResult GetEntityGroundEntity(const GameEntity _ent, GameEntity &moveent)                                                                        = 0;
+	virtual GameEntity GetEntityOwner(const GameEntity _ent)                                                                                                  = 0;
+	virtual int GetEntityTeam(const GameEntity _ent)                                                                                                          = 0;
+	virtual const char *GetEntityName(const GameEntity _ent)                                                                                                  = 0;
+	virtual obResult GetCurrentWeaponClip(const GameEntity _ent, FireMode _mode, int &_curclip, int &_maxclip)                                                = 0;
+	virtual obResult GetCurrentAmmo(const GameEntity _ent, int _weaponId, int &_cur, int &_max)                                                               = 0;
+	virtual int GetGameTime()                                                                                                                                 = 0;
+	virtual void GetGoals()                                                                                                                                   = 0;
+	virtual void GetPlayerInfo(obPlayerInfo &info)                                                                                                            = 0;
+	virtual obResult InterfaceSendMessage(const MessageHelper &_data, const GameEntity _ent)                                                                  = 0;
+	virtual bool DebugLine(const float _start[3], const float _end[3], const obColor &_color, float _time)                                                    = 0;
+	virtual bool DebugRadius(const float _pos[3], const float _radius, const obColor &_color, float _time)                                                    = 0;
+	virtual bool DebugPolygon(const obVec3 *_verts, const int _numverts, const obColor &_color, float _time, int _flags)                                      = 0;
+	virtual void PrintError(const char *_error)                                                                                                               = 0;
+	virtual void PrintMessage(const char *_msg)                                                                                                               = 0;
+	virtual bool PrintScreenText(const float _pos[3], float _duration, const obColor &_color, const char *_msg)                                               = 0;
+	virtual const char *GetMapName()                                                                                                                          = 0;
+	virtual void GetMapExtents(AABB &_aabb)                                                                                                                   = 0;
+	virtual GameEntity EntityFromID(const int _gameId)                                                                                                        = 0;
+	virtual GameEntity EntityByName(const char *_name)                                                                                                        = 0;
+	virtual int IDFromEntity(const GameEntity _ent)                                                                                                           = 0;
+	virtual bool DoesEntityStillExist(const GameEntity &_hndl)                                                                                                = 0;
+	virtual int GetAutoNavFeatures(AutoNavFeature *_feature, int _max)                                                                                        = 0;
+	virtual const char *GetGameName()                                                                                                                         = 0;
+	virtual const char *GetModName()                                                                                                                          = 0;
+	virtual const char *GetModVers()                                                                                                                          = 0;
+	virtual const char *GetBotPath()                                                                                                                          = 0;
+	virtual const char *GetLogPath()                                                                                                                          = 0;
 };
 
 class IEngineInterface71wrapper : public IEngineInterface

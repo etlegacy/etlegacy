@@ -49,7 +49,7 @@ SKINS
  */
 static char *CommaParse(char **data_p)
 {
-	int         c     = 0, len = 0;
+	int         c = 0, len = 0;
 	char        *data = *data_p;
 	static char com_token[MAX_TOKEN_CHARS];
 
@@ -210,14 +210,15 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		bmodel = model->bsp;
 		if (bmodel && bmodel->firstSurface)
 		{
-			if (bmodel->numSurfaces == 0) {
+			if (bmodel->numSurfaces == 0)
+			{
 				Ren_Print("RE_GetShaderFromModel warning: no surface was found.\n");
 				return 0;
 			}
 
 			// if it's out of range, use the first surface
 			if (surfnum >= bmodel->numSurfaces)
-			{                   
+			{
 				Ren_Print("RE_GetShaderFromModel warning: surface is out of range.\n");
 				surfnum = 0;
 			}

@@ -5,6 +5,7 @@ uniform float     u_BlurMagnitude;
 
 void main()
 {
+#if 0
 	vec2 st00 = gl_FragCoord.st;
 
 	// calculate the screen texcoord in the 0.0 to 1.0 range
@@ -12,6 +13,9 @@ void main()
 
 	// scale by the screen non-power-of-two-adjust
 	st00 *= r_NPOTScale;
+#else
+	vec2 st00 = gl_FragCoord.st * r_FBufNPOTScale;
+#endif
 
 	// set so a magnitude of 1 is approximately 1 pixel with 640x480
 	//vec2 deform = vec2(u_BlurMagnitude * 0.0016, u_BlurMagnitude * 0.00213333);

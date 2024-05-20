@@ -7,7 +7,6 @@ textures/metals_sd/grate_a
 	bumpmap textures/metals_sd/grate_a_n.tga
 	specularmap textures/metals_sd/grate_a_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/metals_sd/grate_b
@@ -48,7 +47,6 @@ metals_sd/detail_b
 	bumpmap metals_sd/detail_b_n.tga
 	specularmap metals_sd/detail_b_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/metals_sd/door_a
@@ -58,7 +56,6 @@ textures/metals_sd/door_a
 	bumpmap textures/metals_sd/door_a_n.tga
 	specularmap textures/metals_sd/door_a_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/metals_sd/duct_a2
@@ -68,7 +65,6 @@ textures/metals_sd/duct_a2
 	bumpmap textures/metals_sd/duct_a2_n.tga
 	specularmap textures/metals_sd/duct_a2_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/metals_sd/wall_b
@@ -78,5 +74,4 @@ textures/metals_sd/wall_b
 	bumpmap textures/metals_sd/wall_b_n.tga
 	specularmap textures/metals_sd/wall_b_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }

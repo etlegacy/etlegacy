@@ -63,10 +63,11 @@ typedef unsigned short glIndex_t;
 #define MAX_SHADERS             (1 << 12)
 #define SHADERS_MASK            (MAX_SHADERS - 1)
 
-#define MAX_SHADER_TABLES       1024
+//#define MAX_SHADER_TABLES       1024
 #define MAX_SHADER_STAGES       16
 
-#define MAX_OCCLUSION_QUERIES   4096
+#define MAX_OCCLUSION_QUERIES         4096
+#define MAX_ASYNC_OCCLUSION_QUERIES   128      // the flare/corona code uses asynchronous querying, and MAX_FLARES is set to 128
 
 #define MAX_FBOS                64
 
@@ -75,8 +76,13 @@ typedef unsigned short glIndex_t;
 
 #define MAX_SHADOWMAPS          5
 
+
+// 1.0f / 255.0f
+#define _1div255 0.0039215686274509803921568627451f
+
 //#define VOLUMETRIC_LIGHTING 1
 
+// NOTE: function BuildRedundantIndices() does not exist, but it's needed by CALC_REDUNDANT_SHADOWVERTS 1
 #define CALC_REDUNDANT_SHADOWVERTS 0
 
 //#define USE_BSP_CLUSTERSURFACE_MERGING 1
@@ -91,15 +97,25 @@ typedef enum
 	DS_STANDARD,                ///< deferred rendering like in Stalker
 } deferredShading_t;
 
-#define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable))
+// we check for a renderingCubemap, because we do not want any hdr code to be executed when we are rendering a simple scene.
+// renderingCubemap is used when creating a cubemap (for the reflections).
+// We do not want the offscreen FBO to become inactive while we are rendering the cubeprobes.
+#define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable && !tr.refdef.renderingCubemap))
 
 // The cubeProbes used for reflections:
 // The width/height (in pixels) of a cubemap texture
-#define REF_CUBEMAP_SIZE        32
-// The width/height (in pixels) of a 'cm' image (1 cm image contains multiple cubemaps)
-#define REF_CUBEMAP_STORE_SIZE  1024
-#define REF_CUBEMAP_STORE_SIDE  (REF_CUBEMAP_STORE_SIZE / REF_CUBEMAP_SIZE)
-#define REF_CUBEMAPS_PER_FILE   (REF_CUBEMAP_STORE_SIDE * REF_CUBEMAP_STORE_SIDE)
+#define REF_CUBEMAP_SIZE                  32
+#define REF_CUBEMAP_TEXTURE_SIZE          (REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4)
+#define REF_CUBEMAP_PIXELDATA_SIZE        (6 * REF_CUBEMAP_TEXTURE_SIZE)
+// The width/height (in pixels) of a 'cm' image (1 cm image contains multiple cubemap(texture)s)
+#define REF_CUBEMAP_STORE_SIZE            1024
+#define REF_CUBEMAP_STORE_SIDE            (REF_CUBEMAP_STORE_SIZE / REF_CUBEMAP_SIZE)
+#define REF_CUBEMAP_TEXTURES_PER_FILE     (REF_CUBEMAP_STORE_SIDE * REF_CUBEMAP_STORE_SIDE)
+#define REF_CUBEMAPS_PER_FILE             ((int)(REF_CUBEMAP_TEXTURES_PER_FILE / 6))
+// the TGA file for storing cm/files has an Identification Field.
+// That id-field acts as a bit-array, holding flags to indicate what cubemaps are generated and stored in the file.
+// There are REF_CUBEMAPS_PER_FILE complete cubemaps in a file.
+#define REF_CUBEMAP_TGA_IDFIELD_SIZE      ((int)ceil((float)REF_CUBEMAPS_PER_FILE / 8.f))
 
 /**
  * @enum cullResult_t
@@ -406,6 +422,111 @@ static ID_INLINE link_t *QueueFront(link_t *l)
 }
 
 /**
+ * @struct orientationr_t
+ * @brief
+ */
+typedef struct
+{
+	vec3_t origin;          ///< in world coordinates
+	vec3_t axis[3];         ///< orientation in world
+	vec3_t viewOrigin;      ///< viewParms->or.origin in local coordinates
+	mat4_t transformMatrix; ///< transforms object to world: either used by camera, model or light
+	mat4_t viewMatrix;      ///< affine inverse of transform matrix to transform other objects into this space
+	mat4_t viewMatrix2;     ///< without quake2opengl conversion
+	mat4_t modelViewMatrix; ///< only used by models, camera viewMatrix * transformMatrix
+} orientationr_t;
+
+/**
+ * @struct vertexHash_s
+ * @typedef vertexHash_t
+ * @brief Useful helper struct
+ */
+typedef struct vertexHash_s
+{
+	vec3_t xyz;
+	void *data;
+
+	struct vertexHash_s *next;
+} vertexHash_t;
+
+enum
+{
+	IF_NONE,
+	IF_NOPICMIP                = BIT(0),
+	IF_NOCOMPRESSION           = BIT(1),
+	IF_ALPHA                   = BIT(2),
+	IF_NORMALMAP               = BIT(3),
+	IF_RGBA16F                 = BIT(4),
+	IF_RGBA32F                 = BIT(5),
+	IF_LA16F                   = BIT(6),
+	IF_LA32F                   = BIT(7),
+	IF_ALPHA16F                = BIT(8),
+	IF_ALPHA32F                = BIT(9),
+	IF_DEPTH16                 = BIT(10),
+	IF_DEPTH24                 = BIT(11),
+	IF_DEPTH32                 = BIT(12),
+	IF_PACKED_DEPTH24_STENCIL8 = BIT(13),
+	IF_LIGHTMAP                = BIT(14),
+	IF_RGBA16                  = BIT(15),
+	IF_RGBE                    = BIT(16),
+	IF_ALPHATEST               = BIT(17),
+	IF_DISPLACEMAP             = BIT(18)
+};
+
+/**
+ * @struct filterType_t
+ * @brief
+ */
+typedef enum
+{
+	FT_DEFAULT = 0,
+	FT_LINEAR,
+	FT_NEAREST
+} filterType_t;
+
+/**
+ * @struct wrapType_t
+ * @brief
+ */
+typedef enum
+{
+	WT_REPEAT = 0,
+	WT_CLAMP,                   ///< don't repeat the texture for texture coords outside [0, 1]
+	WT_EDGE_CLAMP,
+	WT_ZERO_CLAMP,              ///< guarantee 0,0,0,255 edge for projected textures
+	WT_ALPHA_ZERO_CLAMP,        ///< guarante 0 alpha edge for projected textures
+	WT_MIRROR_REPEAT            ///< This was added for a test, but now not used. I leave it in code..
+} wrapType_t;
+
+/**
+ * @struct image_s
+ * @typedef image_t
+ * @brief
+ */
+typedef struct image_s
+{
+	char name[1024];                        ///< formerly MAX_QPATH, game path, including extension
+	                                        ///< can contain stuff like this now:
+	                                        ///< addnormals ( textures/base_floor/stetile4_local.tga ,
+	                                        ///< heightmap ( textures/base_floor/stetile4_bmp.tga , 4 ) )
+	GLenum type;
+	GLuint texnum;                          ///< gl texture binding
+
+	uint16_t width, height;                 ///< source image
+	uint16_t uploadWidth, uploadHeight;     ///< after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
+
+	int frameUsed;                          ///< for texture usage in frame statistics
+
+	uint32_t internalFormat;
+
+	uint32_t bits;
+	filterType_t filterType;
+	wrapType_t wrapType;                    ///< GL_CLAMP or GL_REPEAT
+
+	struct image_s *next;
+} image_t;
+
+/**
  * @struct trRefLight_s
  * @typedef trRefLight_t
  * @brief A trRefLight_t has all the information passed in by
@@ -515,110 +636,6 @@ typedef struct
 } trRefEntity_t;
 
 /**
- * @struct orientationr_t
- * @brief
- */
-typedef struct
-{
-	vec3_t origin;          ///< in world coordinates
-	vec3_t axis[3];         ///< orientation in world
-	vec3_t viewOrigin;      ///< viewParms->or.origin in local coordinates
-	mat4_t transformMatrix; ///< transforms object to world: either used by camera, model or light
-	mat4_t viewMatrix;      ///< affine inverse of transform matrix to transform other objects into this space
-	mat4_t viewMatrix2;     ///< without quake2opengl conversion
-	mat4_t modelViewMatrix; ///< only used by models, camera viewMatrix * transformMatrix
-} orientationr_t;
-
-/**
- * @struct vertexHash_s
- * @typedef vertexHash_t
- * @brief Useful helper struct
- */
-typedef struct vertexHash_s
-{
-	vec3_t xyz;
-	void *data;
-
-	struct vertexHash_s *next;
-} vertexHash_t;
-
-enum
-{
-	IF_NONE,
-	IF_NOPICMIP                = BIT(0),
-	IF_NOCOMPRESSION           = BIT(1),
-	IF_ALPHA                   = BIT(2),
-	IF_NORMALMAP               = BIT(3),
-	IF_RGBA16F                 = BIT(4),
-	IF_RGBA32F                 = BIT(5),
-	IF_LA16F                   = BIT(6),
-	IF_LA32F                   = BIT(7),
-	IF_ALPHA16F                = BIT(8),
-	IF_ALPHA32F                = BIT(9),
-	IF_DEPTH16                 = BIT(10),
-	IF_DEPTH24                 = BIT(11),
-	IF_DEPTH32                 = BIT(12),
-	IF_PACKED_DEPTH24_STENCIL8 = BIT(13),
-	IF_LIGHTMAP                = BIT(14),
-	IF_RGBA16                  = BIT(15),
-	IF_RGBE                    = BIT(16),
-	IF_ALPHATEST               = BIT(17),
-	IF_DISPLACEMAP             = BIT(18)
-};
-
-/**
- * @struct filterType_t
- * @brief
- */
-typedef enum
-{
-	FT_DEFAULT = 0,
-	FT_LINEAR,
-	FT_NEAREST
-} filterType_t;
-
-/**
- * @struct wrapType_t
- * @brief
- */
-typedef enum
-{
-	WT_REPEAT = 0,
-	WT_CLAMP,                   ///< don't repeat the texture for texture coords outside [0, 1]
-	WT_EDGE_CLAMP,
-	WT_ZERO_CLAMP,              ///< guarantee 0,0,0,255 edge for projected textures
-	WT_ALPHA_ZERO_CLAMP         ///< guarante 0 alpha edge for projected textures
-} wrapType_t;
-
-/**
- * @struct image_s
- * @typedef image_t
- * @brief
- */
-typedef struct image_s
-{
-	char name[1024];                        ///< formerly MAX_QPATH, game path, including extension
-	                                        ///< can contain stuff like this now:
-	                                        ///< addnormals ( textures/base_floor/stetile4_local.tga ,
-	                                        ///< heightmap ( textures/base_floor/stetile4_bmp.tga , 4 ) )
-	GLenum type;
-	GLuint texnum;                          ///< gl texture binding
-
-	uint16_t width, height;                 ///< source image
-	uint16_t uploadWidth, uploadHeight;     ///< after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
-
-	int frameUsed;                          ///< for texture usage in frame statistics
-
-	uint32_t internalFormat;
-
-	uint32_t bits;
-	filterType_t filterType;
-	wrapType_t wrapType;                    ///< GL_CLAMP or GL_REPEAT
-
-	struct image_s *next;
-} image_t;
-
-/**
  * @struct BufferImage_s
  * @typedef BufferImage_t
  * @brief
@@ -635,14 +652,14 @@ typedef struct BufferImage_s
 /**
  * @enum BuffetType_t
  * @brief
- */
+ * /
 typedef enum
 {
 	DEFAULT = 0,
 	DIFFUSE,
 	NORMAL,
 	SPECULAR
-} BuffetType_t;
+} BuffetType_t;*/
 
 /**
  * @struct FBO_s
@@ -724,7 +741,75 @@ typedef struct IBO_s
 //  uint32_t        ofsIndexes;
 } IBO_t;
 
+
+/**
+ * @enum pboUsage_t
+ * @brief
+ */
+typedef enum
+{
+	PBO_USAGE_WRITE = 0,            ///< GL_PIXEL_UNPACK_BUFFER. From application to OpenGL. From CPU to GPU
+	PBO_USAGE_READ                  ///< GL_PIXEL_PACK_BUFFER.   From openGL to application. From GPU to CPU
+} pboUsage_t;
+
+/**
+ * @struct PBO_s
+ * @typedef PBO_t
+ * @brief
+ * Pixel Buffer Object
+ */
+typedef struct PBO_s
+{
+//	char name[MAX_QPATH];                   ///< why we need a name?
+	uint32_t handle;                        ///< handle of this PBO
+	int target;                             ///< pack or unpack buffer
+	pboUsage_t usage;                       ///< reading or writing from/to GPU
+	image_t *texture;                       ///< the pbo texture / buffer
+	int width;                              ///< width in pixels
+	int height;                             //< height in pixels
+	int bufferSize;                         ///< size of the pixeldata that will be transfered
+	GLsync sync;                            ///< handle for testing if the result is ready
+} PBO_t;
+
 //===============================================================================
+
+/**
+ * @struct cubemapProbe_t
+ * @brief
+ */
+typedef struct
+{
+	vec3_t origin;
+	int index;                              ///< into array tr.cubeProbes[]
+	image_t *cubemap;                       ///< the cubmap texture (all 6 sides in one texture)
+	qboolean ready;                         ///< false, if this cubemap has not yet been created for rendering
+	qboolean stored;                        ///< true, if this cubemap has been stored to file
+	byte *cubeTemp[6];                      ///< temporary memory for storing pixeldata
+	PBO_t *pbo[6];                          ///< the 6 Pixel Buffer Objects associated with this probe (one for each side of the cube)
+} cubemapProbe_t;
+
+/**
+ * @struct reflectionData_t
+ * @brief
+ * The reflection cubeProbe data needed for the interpolation
+ */
+typedef struct
+{
+	cubemapProbe_t *probe1, *probe2;
+	int startTime, endTime;                 ///< used for interpolation, to make transitions from cube to cube smooth
+	image_t *env0, *env1;                   ///< the textures used for interpolation (from & to textures)
+	float interpolate;                      ///< the interpolation ratio (0.0: 100% env0, 0% env1.   1.0: 0% env0, 100% env1)
+} reflectionData_t;
+
+//===============================================================================
+
+// This is used in tr_bsp.c function R_LoadSurfaces()
+// This structure is a growlistitem to keep track of what verts are already done in the smoothNormals calculation.
+typedef struct
+{
+	int surfaceIndex;
+	int vertexIndex;
+} vertexDone_t;
 
 /**
  * @enum shaderSort_t
@@ -772,7 +857,7 @@ typedef enum
  * @struct shaderTable_s
  * @typedef shaderTable_t
  * @brief
- */
+ *//*
 typedef struct shaderTable_s
 {
 	char name[MAX_QPATH];
@@ -786,7 +871,7 @@ typedef struct shaderTable_s
 	uint16_t numValues;
 
 	struct shaderTable_s *next;
-} shaderTable_t;
+} shaderTable_t;*/
 
 /**
  * @enum genFunc_t
@@ -1003,7 +1088,7 @@ typedef enum
 	OP_SOUND,
 	OP_DISTANCE,
 	// table access
-	OP_TABLE
+	//OP_TABLE
 } opcode_t;
 
 /**
@@ -1158,7 +1243,7 @@ typedef struct
 	double imageAnimationSpeed;
 	image_t *image[MAX_IMAGE_ANIMATIONS];
 
-	qboolean isTcGen;
+	qboolean isTcGenVector;
 	vec3_t tcGenVectors[2];
 
 	uint8_t numTexMods;
@@ -1166,6 +1251,9 @@ typedef struct
 
 	int videoMapHandle;
 	qboolean isVideoMap;
+
+	// core: an alpha value for each bundled texture
+
 } textureBundle_t;
 
 /**
@@ -1176,28 +1264,35 @@ typedef enum
 {
 	// material shader stage types
 	ST_COLORMAP = 0,            ///< vanilla Q3A style shader treatening
-	ST_DIFFUSEMAP,
-	ST_NORMALMAP,
-	ST_SPECULARMAP,
-	ST_REFLECTIONMAP,           ///< cubeMap based reflection
+	ST_DIFFUSEMAP,              ///< diffuse
+	ST_NORMALMAP,               ///< bump
+	ST_SPECULARMAP,             ///< specular
+
+	ST_REFLECTIONMAP,           ///< cubeMap based reflection + reflectionmap texture.  RGB is filled with shades of gray to set the amount of reflection
+	ST_CUBEREFLECTIONS,         ///< tcGen reflect     cubeMap based reflection
+	ST_TCGENENVMAP,             ///< tcGen environment reflection
+
+	ST_LIQUIDMAP,               ///< liquid/water
+
 	ST_REFRACTIONMAP,
 	ST_DISPERSIONMAP,
 	ST_SKYBOXMAP,
 	ST_SCREENMAP,               ///< 2d offscreen or portal rendering
 	ST_PORTALMAP,
 	ST_HEATHAZEMAP,             ///< heatHaze post process effect
-	ST_LIQUIDMAP,
-
 	ST_LIGHTMAP,
 
-	ST_COLLAPSE_lighting_DB,    ///< diffusemap + bumpmap
-	ST_COLLAPSE_lighting_DBS,   ///< diffusemap + bumpmap + specularmap
-	ST_COLLAPSE_reflection_CB,  ///< color cubemap + bumpmap
+	ST_BUNDLE_DB,               ///<            diffuse + bump
+	ST_BUNDLE_DBS,              ///<            diffuse + bump + specular
+	ST_BUNDLE_DBSR,             ///<            diffuse + bump + specular + reflectionmap
+	ST_BUNDLE_CB,               ///< color cubemap + bump              (reflections)
+	ST_BUNDLE_WDB,              ///< liquid/water + diffuse + bump
+	ST_BUNDLE_WB,               ///< liquid/water + bump
+	ST_BUNDLE_WD,               ///< liquid/water + diffuse
 
 	// light shader stage types
 	ST_ATTENUATIONMAP_XY,
-	ST_ATTENUATIONMAP_Z,
-	ST_TCGEN                       ///< tcGen environment reflection
+	ST_ATTENUATIONMAP_Z
 } stageType_t;
 
 /**
@@ -1208,10 +1303,17 @@ typedef enum
 {
 	COLLAPSE_none = 0,
 	COLLAPSE_genericMulti,
-	COLLAPSE_lighting_DB,
-	COLLAPSE_lighting_DBS,
-	COLLAPSE_reflection_CB,
-	COLLAPSE_color_lightmap
+	COLLAPSE_LD,                ///< lightmap + diffuse
+	COLLAPSE_LDB,               ///< lightmap + diffuse + bump
+	COLLAPSE_LDBS,              ///< lightmap + diffuse + bump + specular
+	COLLAPSE_LDBSR,             ///< lightmap + diffuse + bump + specular + reflectionmap
+	COLLAPSE_DB,                ///< diffuse + bump
+	COLLAPSE_DBS,               ///< diffuse + bump + specular
+	COLLAPSE_DBSR,              ///< diffuse + bump + specular + reflectionmap
+	COLLAPSE_WDB,               ///< water + diffuse + bump
+	COLLAPSE_WB,                ///< water + bump
+	COLLAPSE_WD,                ///< water + diffuse
+	COLLAPSE_CB                 ///< cubemap + bump
 } collapseType_t;
 
 /**
@@ -1309,8 +1411,10 @@ typedef struct
 	stencil_t frontStencil, backStencil;
 
 	qboolean overrideNoPicMip;              ///< for images that must always be full resolution
+
 	qboolean overrideFilterType;            ///< for console fonts, 2D elements, etc.
 	filterType_t filterType;
+
 	qboolean overrideWrapType;
 	wrapType_t wrapType;
 
@@ -1396,7 +1500,7 @@ typedef struct
 {
 	vec3_t color;
 	float depthForOpaque;
-	unsigned colorInt;      ///< in packed byte format
+	//unsigned colorInt;                ///< in packed byte format
 	float density;
 	float tcScale;                      ///< texture coordinate vector scales
 } fogParms_t;
@@ -1445,7 +1549,7 @@ typedef struct shader_s
 
 	qboolean fogVolume;                 ///< surface encapsulates a fog volume
 	fogParms_t fogParms;
-	fogPass_t fogPass;                  ///< draw a blended pass, possibly with depth test equals
+	fogPass_t fogPass;                  ///< draw a blended pass, possibly with depth test equals. Used in Render_fog_brushes() with gl_fogQuake3Shader
 	qboolean noFog;
 
 	qboolean parallax;                  ///< material has normalmaps suited for parallax mapping
@@ -1492,6 +1596,7 @@ typedef struct shader_s
 	int timeOffset;                                     ///< current time offset for this shader
 
 	qboolean has_lightmapStage;
+	qboolean has_liquidStage;
 
 	struct shader_s *remappedShader;    ///< current shader this one is remapped too
 
@@ -1907,9 +2012,7 @@ typedef struct
 	int numInteractions;
 	struct interaction_s *interactions;
 
-	byte *pixelTarget;                  ///< set this to Non Null to copy to a buffer after scene rendering
-	int pixelTargetWidth;
-	int pixelTargetHeight;
+	qboolean renderingCubemap;          ///< false is default.  true means we are rendering a simple scene (the reflection cubemaps)
 
 	glfog_t glFog;                      ///< added (needed to pass fog infos into the portal sky scene)
 } trRefdef_t;
@@ -1970,13 +2073,17 @@ typedef struct skin_s
  */
 typedef struct
 {
+	// original values read from file
 	int modelNum;                   ///< bsp model the fog belongs to
 	int originalBrushNumber;
 	vec3_t bounds[2];
-	shader_t *shader;               ///< fog shader to get colorInt and tcScale from
-	vec4_t color;               ///< in packed byte format
-	float tcScale;              ///< texture coordinate vector scales
-	fogParms_t fogParms;
+	shader_t *shader;               ///< fog shader
+	// values used for rendering
+	vec4_t color;                   ///<
+	float tcScale;                  ///< texture coordinate vector scales
+	float depthForOpaque;           ///<
+	float density;                  ///<
+	//fogParms_t fogParms;
 
 	// for clipping distance in fog when outside
 	qboolean hasSurface;
@@ -2776,11 +2883,11 @@ typedef struct
 	fog_t *fogs;
 
 	int globalFog;                          ///< index of global fog
-	vec4_t globalOriginalFog;               ///< to be able to restore original global fog
-	vec4_t globalTransStartFog;             ///< start fog for switch fog transition
-	vec4_t globalTransEndFog;               ///< end fog for switch fog transition
-	int globalFogTransStartTime;
-	int globalFogTransEndTime;
+	vec4_t globalFog_Original;              ///< to be able to restore original global fog
+	vec4_t globalFog_TransitionStartFog;    ///< start fog when transitioning to another fog
+	vec4_t globalFog_TransitionEndFog;      ///< end fog when transitioning from another fog
+	int globalFog_TransitionStartTime;      ///< fog transition start time
+	int globalFog_TransitionEndTime;        ///< fog transition end time
 
 	vec3_t lightGridOrigin;
 	vec3_t lightGridSize;
@@ -3337,9 +3444,19 @@ typedef struct
 
 #define DEFAULT_FOG_EXP_DENSITY         0.5
 
+// size = 4096, that is 2^12.   4096 values fit in table[0 to 4095].  Each value fits in 2^12 bits.
+// If you take any power-of-two value, and you subtract 1 of that value, you have the mask-value.
+// 2^12 - 1 = 4096 - 1 = 4095 = 0b111111111111 = 0x1000 - 1 = 0xFFF
+// Note that the way FUNCTABLE_MASK is defined below, FUNCTABLE_SIZE needs to be a power-of-two.
+// If you do the "-1" on some non-power-of-two value, you get some funny mask value. Example: 11-1 = 10 = 0b1010
+// If you need to know your mask-value for any FUNCTABLE_SIZE, you can use the log-function to find it out.
+// Log2(4096) = 12    on a calculator you typ in:   4096 'log' / 2 'log' =
+// Log2(4096) = 12, because 2^12 = 4096.
+// The example again: Log2(11) = 3.459   Round up, and you need 4 bits for storing 11 unique values.
 #define FUNCTABLE_SIZE      4096    ///< % 1024
-#define FUNCTABLE_SIZE2     12      ///< % 10
-#define FUNCTABLE_MASK      (FUNCTABLE_SIZE - 1)
+#define FUNCTABLE_BITS      12      ///< % 10
+#define FUNCTABLE_DIV_4     1024    ///< (FUNCTABLE_SIZE / 4)
+#define FUNCTABLE_MASK      0xFFF
 
 #define MAX_GLSTACK         5
 
@@ -3469,16 +3586,6 @@ typedef struct
 } backEndState_t;
 
 /**
- * @struct cubemapProbe_t
- * @brief
- */
-typedef struct
-{
-	vec3_t origin;
-	image_t *cubemap;
-} cubemapProbe_t;
-
-/**
  * @struct trGlobals_t
  * @brief Most renderer globals are defined here.
  * backend functions should never modify any of these fields,
@@ -3507,7 +3614,7 @@ typedef struct
 	int frameSceneNum;                      ///< zeroed at RE_BeginFrame
 
 	qboolean worldMapLoaded;
-	//qboolean worldDeluxeMapping;
+	qboolean worldDeluxeMapping;
 	qboolean worldHDR_RGBE;
 	world_t *world;
 
@@ -3552,6 +3659,7 @@ typedef struct
 	image_t *shadowMapFBOImage[MAX_SHADOWMAPS];
 	image_t *shadowCubeFBOImage[MAX_SHADOWMAPS];
 	image_t *sunShadowMapFBOImage[MAX_SHADOWMAPS];
+	//image_t* currentCubemapFBOImage;        ///< the texture of the currentCubemap FBO
 
 	// external images
 	image_t *charsetImage;
@@ -3559,7 +3667,7 @@ typedef struct
 	image_t *vignetteImage;
 
 	// framebuffer objects
-	FBO_t *geometricRenderFBO;              ///< is the G-Buffer for deferred shading
+	//FBO_t *geometricRenderFBO;              ///< is the G-Buffer for deferred shading
 	FBO_t *lightRenderFBO;                  ///< is the light buffer which contains all light properties of the light pre pass
 	FBO_t *deferredRenderFBO;               ///< is used by HDR rendering and deferred shading
 	FBO_t *portalRenderFBO;                 ///< holds a copy of the last currentRender that was rendered into a FBO
@@ -3573,6 +3681,7 @@ typedef struct
 	FBO_t *bloomRenderFBO[2];
 	FBO_t *shadowMapFBO[MAX_SHADOWMAPS];
 	FBO_t *sunShadowMapFBO[MAX_SHADOWMAPS];
+	//FBO_t* currentCubemapFBO;               ///< used for rendering a cubemap from the current position
 
 	// vertex buffer objects
 	VBO_t *unitCubeVBO;
@@ -3591,7 +3700,7 @@ typedef struct
 
 	int numLightmaps;
 	growList_t lightmaps;
-	//growList_t deluxemaps;
+	growList_t deluxemaps;
 
 	image_t *fatLightmap;
 	int fatLightmapSize;
@@ -3649,12 +3758,13 @@ typedef struct
 
 	GLuint vao;
 
-	growList_t vbos;
-	growList_t ibos;
+	growList_t vbos;                        ///< Vertex Buffer Object
+	growList_t ibos;                        ///< Index Buffer Object
+	growList_t pbos;                        ///< Pixel Buffer Object
 
-	byte *cubeTemp[6];                      ///< 6 textures for cubemap storage
 	growList_t cubeProbes;                  ///< all cubemaps in a linear growing list
-	vertexHash_t **cubeHashTable;           ///< hash table for faster access
+	reflectionData_t reflectionData;        ///< the current reflection cubemap data
+	//vertexHash_t **cubeHashTable;           ///< hash table for faster access
 
 	// shader indexes from other modules will be looked up in tr.shaders[]
 	// shader indexes from drawsurfs will be looked up in sortedShaders[]
@@ -3666,8 +3776,8 @@ typedef struct
 	int numSkins;
 	skin_t *skins[MAX_SKINS];
 
-	int numTables;
-	shaderTable_t *shaderTables[MAX_SHADER_TABLES];
+	/*int numTables;
+	shaderTable_t *shaderTables[MAX_SHADER_TABLES];*/
 
 	float sinTable[FUNCTABLE_SIZE];
 	float squareTable[FUNCTABLE_SIZE];
@@ -3677,10 +3787,12 @@ typedef struct
 	float noiseTable[FUNCTABLE_SIZE];
 	float fogTable[FOG_TABLE_SIZE];
 
+	// synchronous queries
 	uint32_t occlusionQueryObjects[MAX_OCCLUSION_QUERIES];
 	int numUsedOcclusionQueryObjects;
+	// asynchronous queries
+	uint32_t occlusionQueryObjectsAsync[MAX_ASYNC_OCCLUSION_QUERIES];
 } trGlobals_t;
-
 
 /**
  * @struct trPrograms_s
@@ -3690,9 +3802,8 @@ typedef struct
 typedef struct trPrograms_s
 {
 	programInfo_t *gl_genericShader;
-	programInfo_t *gl_lightMappingShader;
-	programInfo_t *gl_vertexLightingShader_DBS_entity;
-	programInfo_t *gl_vertexLightingShader_DBS_world;
+	programInfo_t *gl_worldShader;
+	programInfo_t *gl_entityShader;
 	programInfo_t *gl_forwardLightingShader_omniXYZ;
 	programInfo_t *gl_forwardLightingShader_projXYZ;
 	programInfo_t *gl_forwardLightingShader_directionalSun;
@@ -3725,6 +3836,8 @@ typedef struct trPrograms_s
 
 	programInfo_t *gl_colorCorrection;
 
+	programInfo_t *gl_cubemapShader; // a simple cubemap shader for debug purposes..
+
 	/// This is set with the GLSL_SelectPermutation
 	shaderProgram_t *selectedProgram;
 } trPrograms_t;
@@ -3752,21 +3865,19 @@ extern cvar_t *r_railCoreWidth;
 
 extern cvar_t *r_lodTest;
 
-extern cvar_t *r_wolfFog;
+extern cvar_t *r_noFog;
 
-
-
+extern cvar_t *r_forceAmbient;
 extern cvar_t *r_ambientScale;
 extern cvar_t *r_lightScale;
 extern cvar_t *r_debugLight;
 
 extern cvar_t *r_staticLight;               ///< static lights enabled/disabled
 extern cvar_t *r_dynamicLightShadows;
-extern cvar_t *r_precomputedLighting;
-extern cvar_t *r_vertexLighting;
 extern cvar_t *r_compressDiffuseMaps;
-extern cvar_t *r_compressSpecularMaps;
 extern cvar_t *r_compressNormalMaps;
+extern cvar_t *r_compressSpecularMaps;
+extern cvar_t *r_compressReflectionMaps;
 extern cvar_t *r_heatHazeFix;
 extern cvar_t *r_noMarksOnTrisurfs;
 
@@ -3790,25 +3901,30 @@ extern cvar_t *r_extPackedDepthStencil;
 extern cvar_t *r_extFramebufferBlit;
 extern cvar_t *r_extGenerateMipmap;
 
-extern cvar_t *r_collapseStages;
-
-
-extern cvar_t *r_specularExponent;
-extern cvar_t *r_specularExponent2;
-extern cvar_t *r_specularScale;
-extern cvar_t *r_normalScale;
+extern cvar_t *r_specularScaleWorld;  // for the world
+extern cvar_t *r_specularScaleEntities; // for entities only
+extern cvar_t *r_specularScalePlayers; // for players only
+extern cvar_t *r_specularExponentWorld;  // for the world
+extern cvar_t *r_specularExponentEntities; // for entities only
+extern cvar_t *r_specularExponentPlayers; // for players only
+extern cvar_t *r_bumpScale; // the scale of the bumpmaps
 extern cvar_t *r_normalMapping;
 extern cvar_t *r_wrapAroundLighting;
 extern cvar_t *r_diffuseLighting;
 extern cvar_t *r_rimLighting;
 extern cvar_t *r_rimExponent;
 
-// 3 = stencil shadow volumes
-// 4 = shadow mapping
-extern cvar_t *r_softShadows;
+extern cvar_t *r_reflectionMapping; // on/off
+extern cvar_t *r_reflectionScale; // value 0.0 to 1.0     (0.07 = 7%)
+
+extern cvar_t *r_parallaxMapping;
+extern cvar_t *r_parallaxDepthScale;
+extern cvar_t *r_parallaxShadow; // value 0.0 to 1.0.  if 0.0 then parallax self shadowing is disabled (and not calculated)
+
+// fancy EVSM shadowing
+extern cvar_t *r_shadowSamples;
 extern cvar_t *r_shadowBlur;
 
-extern cvar_t *r_shadowMapQuality;
 extern cvar_t *r_shadowMapSizeUltra;
 extern cvar_t *r_shadowMapSizeVeryHigh;
 extern cvar_t *r_shadowMapSizeHigh;
@@ -3821,8 +3937,6 @@ extern cvar_t *r_shadowMapSizeSunHigh;
 extern cvar_t *r_shadowMapSizeSunMedium;
 extern cvar_t *r_shadowMapSizeSunLow;
 
-extern cvar_t *r_shadowOffsetFactor;
-extern cvar_t *r_shadowOffsetUnits;
 extern cvar_t *r_shadowLodBias;
 extern cvar_t *r_shadowLodScale;
 extern cvar_t *r_noShadowPyramids;
@@ -3832,13 +3946,12 @@ extern cvar_t *r_cullShadowPyramidTriangles;
 extern cvar_t *r_debugShadowMaps;
 extern cvar_t *r_noShadowFrustums;
 extern cvar_t *r_noLightFrustums;
-extern cvar_t *r_shadowMapLuminanceAlpha;
 extern cvar_t *r_shadowMapLinearFilter;
 //extern cvar_t *r_lightBleedReduction;
 //extern cvar_t *r_overDarkeningFactor; // exponential shadow mapping
 extern cvar_t *r_shadowMapDepthScale;
-extern cvar_t *r_parallelShadowSplits;
-extern cvar_t *r_parallelShadowSplitWeight;
+//extern cvar_t *r_parallelShadowSplits; // we always have 4 splits
+//extern cvar_t *r_parallelShadowSplitWeight;
 
 extern cvar_t *r_stitchCurves;
 
@@ -3857,7 +3970,7 @@ extern cvar_t *r_showLightGrid;
 extern cvar_t *r_showOcclusionQueries;
 extern cvar_t *r_showBatches;
 extern cvar_t *r_showLightMaps;                 ///< render lightmaps only
-//extern cvar_t *r_showDeluxeMaps;
+extern cvar_t *r_showDeluxeMaps;
 extern cvar_t *r_showCubeProbes;
 extern cvar_t *r_showBspNodes;
 extern cvar_t *r_showParallelShadowSplits;
@@ -3870,9 +3983,7 @@ extern cvar_t *r_vboShadows;
 extern cvar_t *r_vboLighting;
 extern cvar_t *r_vboModels;
 extern cvar_t *r_vboVertexSkinning;
-extern cvar_t *r_vboSmoothNormals;
 extern cvar_t *r_vboFoliage;
-extern cvar_t *r_worldInlineModels;
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 extern cvar_t *r_mergeClusterSurfaces;
 extern cvar_t *r_mergeClusterFaces;
@@ -3880,12 +3991,15 @@ extern cvar_t *r_mergeClusterCurves;
 extern cvar_t *r_mergeClusterTriangles;
 #endif
 
-extern cvar_t *r_parallaxMapping;
-extern cvar_t *r_parallaxDepthScale;
-
-extern cvar_t *r_dynamicBspOcclusionCulling;
-extern cvar_t *r_dynamicEntityOcclusionCulling;
-extern cvar_t *r_dynamicLightOcclusionCulling;
+// TODO:  !!!
+// one bug found: if r_OccludeLights is set to 1, but a map has no cubeProbes yet, an exception is raised.
+// workaround: temporarily set r_OccludeLights to 0, load the map, cubeProbes get made, set r_occludeLights 1 again..
+// UPDATE:
+// i do not have this issue anymore.  Code has changed..
+extern cvar_t *r_occludeLights;
+extern cvar_t *r_occludeBsp;
+extern cvar_t *r_occludeEntities;
+extern cvar_t *r_occludeFlares;
 extern cvar_t *r_chcMaxPrevInvisNodesBatchSize;
 extern cvar_t *r_chcMaxVisibleFrames;
 extern cvar_t *r_chcVisibilityThreshold;
@@ -3908,7 +4022,6 @@ extern cvar_t *r_hdrDebug;
 extern cvar_t *r_screenSpaceAmbientOcclusion;
 extern cvar_t *r_depthOfField;
 
-extern cvar_t *r_reflectionMapping;
 extern cvar_t *r_highQualityNormalMapping;
 
 extern cvar_t *r_bloom;
@@ -3919,7 +4032,7 @@ extern cvar_t *r_cameraPostFX;
 extern cvar_t *r_cameraVignette;
 extern cvar_t *r_cameraFilmGrainScale;
 
-extern cvar_t *r_evsmPostProcess;
+//extern cvar_t *r_evsmPostProcess;
 
 extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
@@ -3960,14 +4073,22 @@ int R_FogLocalPointAndRadius(const vec3_t pt, float radius);
 int R_FogPointAndRadius(const vec3_t pt, float radius);
 int R_FogWorldBox(vec3_t bounds[2]);
 
+#ifndef ETL_SSE
 void R_SetupEntityWorldBounds(trRefEntity_t *ent);
+#else
+///void R_SetupEntityWorldBounds(trRefEntity_t *ent);
+#define R_SetupEntityWorldBounds(ent) \
+		{ \
+			MatrixTransformBounds(tr.orientation.transformMatrix, ent->localBounds[0], ent->localBounds[1], ent->worldBounds[0], ent->worldBounds[1]); \
+		}
+#endif
 
 void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orientation);
 void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *orientation);
 void R_RotateLightForViewParms(const trRefLight_t *ent, const viewParms_t *viewParms, orientationr_t *orientation);
 
 void R_SetupFrustum2(frustum_t frustum, const mat4_t mvp);
-void R_SetupFrustum(void);
+
 qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkST);
 void R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, const vec3_t v2);
 
@@ -3993,7 +4114,7 @@ void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
 
 qboolean R_CalcTangentVectors(srfVert_t *dv[3]);
 
-void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts);
+//void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts); //unused
 
 float R_CalcFov(float fovX, float width, float height);
 
@@ -4017,8 +4138,8 @@ OpenGL WRAPPERS, tr_gl.c
 #define GLCOLOR_NONE 0.0f, 0.0f, 0.0f, 0.0f
 
 void GL_Bind(image_t *image);
-void GL_BindNearestCubeMap(const vec3_t xyz);
-void GL_Unbind(void);
+//void GL_BindNearestCubeMap(const vec3_t xyz); // unused
+void GL_Unbind();
 void BindAnimatedImage(textureBundle_t *bundle);
 //void GL_TextureFilter(image_t *image, filterType_t filterType);
 void GL_SetDefaultState(void);
@@ -4037,8 +4158,8 @@ void GL_DrawBuffer(GLenum mode);
 void GL_FrontFace(GLenum mode);
 void GL_LoadModelViewMatrix(const mat4_t m);
 void GL_LoadProjectionMatrix(const mat4_t m);
-void GL_PushMatrix(void);
-void GL_PopMatrix(void);
+void GL_PushMatrix();
+void GL_PopMatrix();
 void GL_PolygonMode(GLenum face, GLenum mode);
 void GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
 void GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
@@ -4106,7 +4227,7 @@ const void *RB_TakeScreenshotCmd(const void *data);
 void R_InitSkins(void);
 skin_t *R_GetSkinByHandle(qhandle_t hSkin);
 
-void R_DeleteSurfaceVBOs(void);
+void R_DeleteSurfaceVBOs();
 
 /*
 ====================================================================
@@ -4162,7 +4283,7 @@ void R_RemapShader(const char *shaderName, const char *newShaderName, const char
 tr_shade.c
 ====================================================================
 */
-void clipPortalPlane(void);
+void clipPortalPlane();
 
 /*
 ====================================================================
@@ -4180,8 +4301,8 @@ typedef byte color4ub_t[4];
 typedef struct stageVars
 {
 	vec4_t color;
-	qboolean texMatricesChanged[MAX_TEXTURE_BUNDLES];
-	mat4_t texMatrices[MAX_TEXTURE_BUNDLES];
+	//qboolean texMatricesChanged[MAX_TEXTURE_BUNDLES];  //was unused?
+	mat4_t texMatrix; // mat4_t texMatrices[MAX_TEXTURE_BUNDLES];
 } stageVars_t;
 
 #define MAX_MULTIDRAW_PRIMITIVES    1000
@@ -4233,8 +4354,8 @@ typedef struct shaderCommands_s
 	mat4_t boneMatrices[MAX_BONES];
 
 	// info extracted from current shader or backend mode
-	void (*stageIteratorFunc)(void);
-	void (*stageIteratorFunc2)(void);
+	void (*stageIteratorFunc)();
+	void (*stageIteratorFunc2)();
 
 	int numSurfaceStages;
 	shaderStage_t **surfaceStages;
@@ -4244,13 +4365,13 @@ extern shaderCommands_t tess;
 
 void GLSL_InitGPUShaders(void);
 void GLSL_CompileGPUShaders(void);
-void GLSL_ShutdownGPUShaders(void);
+void GLSL_ShutdownGPUShaders();
 void GLSL_BindProgram(shaderProgram_t *program);
 void GLSL_BindNullProgram(void);
 
 // *INDENT-OFF*
-void Tess_Begin(void (*stageIteratorFunc)(void),
-				void (*stageIteratorFunc2)(void),
+void Tess_Begin(void (*stageIteratorFunc)(),
+				void (*stageIteratorFunc2)(),
 				shader_t *surfaceShader, shader_t *lightShader,
 				qboolean skipTangentSpaces,
 				qboolean skipVBO,
@@ -4258,22 +4379,22 @@ void Tess_Begin(void (*stageIteratorFunc)(void),
 				int fogNum);
 // *INDENT-ON*
 void Tess_End(void);
-void Tess_EndBegin(void);
-void Tess_DrawElements(void);
+void Tess_EndBegin();
+void Tess_DrawElements();
 void Tess_CheckOverflow(int verts, int indexes);
 
 void Tess_ComputeColor(shaderStage_t *pStage);
 
-void Tess_StageIteratorDebug(void);
-void Tess_StageIteratorGeneric(void);
+void Tess_StageIteratorDebug();
+void Tess_StageIteratorGeneric();
 //void Tess_StageIteratorDepthFill();
-void Tess_StageIteratorShadowFill(void);
-void Tess_StageIteratorLighting(void);
-void Tess_StageIteratorSky(void);
+void Tess_StageIteratorShadowFill();
+void Tess_StageIteratorLighting();
+void Tess_StageIteratorSky();
 
 void Tess_AddQuadStamp(vec3_t origin, vec3_t left, vec3_t up, const vec4_t color);
 void Tess_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, const vec4_t color, float s1, float t1, float s2, float t2);
-void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, float t1, float s2, float t2, qboolean calcNormals);
+//void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, float t1, float s2, float t2, qboolean calcNormals); // this func is local to tr_surface
 void Tess_AddQuadStamp2(vec4_t quadVerts[4], const vec4_t color);
 void Tess_AddQuadStamp2WithNormals(vec4_t quadVerts[4], const vec4_t color);
 
@@ -4304,7 +4425,7 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
 
 void R_AddWorldInteractions(trRefLight_t *light);
 void R_AddPrecachedWorldInteractions(trRefLight_t *light);
-void R_ShutdownVBOs(void);
+//void R_ShutdownVBOs();  //this is also done later in this file..
 
 /*
 ============================================================
@@ -4314,7 +4435,7 @@ FLARES, tr_flares.c
 
 void R_ClearFlares(void);
 
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona);
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona, uint32_t flareHandle);
 void RB_AddLightFlares(void);
 void RB_RenderFlares(void);
 
@@ -4360,12 +4481,13 @@ FOG, tr_fog.c
 ============================================================
 */
 
-void R_SetFrameFog(void);
-void RB_Fog(glfog_t *curfog);
-void RB_FogOff(void);
-void RB_FogOn(void);
+// the old wolfFog functions are commented out
+//void RB_Fog(glfog_t *curfog);
+//void RB_FogOff();
+//void RB_FogOn();
 void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
+void R_SetFrameFog();
 
 /*
 ============================================================
@@ -4373,7 +4495,7 @@ SHADOWS, tr_shadows.c
 ============================================================
 */
 
-void RB_ProjectionShadowDeform(void);
+void RB_ProjectionShadowDeform();
 
 /*
 ============================================================
@@ -4455,6 +4577,49 @@ void R_VBOList_f(void);
 
 /*
 ============================================================
+PIXEL BUFFER OBJECTS, tr_pbo.c
+============================================================
+*/
+PBO_t * R_CreatePBO(pboUsage_t usage, int width, int height);
+
+void R_BindPBO(PBO_t *pbo);
+void R_BindNullPBO(void);
+
+void R_SyncPBO(PBO_t *pbo); // start a read fencesync
+qboolean R_PBOResultAvailable(PBO_t *pbo);
+
+qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult);
+qboolean R_pboTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
+
+void R_InitPBOs(void);
+void R_ShutdownPBOs(void);
+
+/*
+============================================================
+THREADS, tr_thread.c
+============================================================
+*/
+typedef struct thr_CubemapSave_s
+{
+	struct thr_CubemapSave_s *prev;                    ///< linked list previous item
+	struct thr_CubemapSave_s *next;                    ///< linked list next item
+	cubemapProbe_t *probe;                             ///< the probe for which to save the cubemap to file
+} thr_CubemapSave_t;
+
+void THR_Init_CubemapSave(void);
+thr_CubemapSave_t * THR_AddProbeToSave(cubemapProbe_t *probe);
+thr_CubemapSave_t * THR_RemoveProbeToSave(thr_CubemapSave_t *entry);
+
+void R2Thread_Start(void);
+void R2Thread_Stop(void);
+
+//void R2Thread_LockFile(char *filename);                ///< simple file locking
+//void R2Thread_UnlockFile(char *filename);              ///< It can handle only 1 file locking (which is enough for our purpose)
+
+extern qboolean R2Thread_Process; // this could be done using an event, and waitforsingleobject.. but it's only used for a quick workaround atm.
+
+/*
+============================================================
 DECALS - tr_decals.c
 ============================================================
 */
@@ -4498,7 +4663,10 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
 void RE_AddDynamicLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
 
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
+
 void RE_RenderScene(const refdef_t *fd);
+void RE_RenderSimpleScene(const refdef_t *fd); // render the scene for use on the environment-cubemaps
+void R_RenderSimpleView(viewParms_t *parms); // no lights, no shadows, no decals ... and more not being rendered
 
 /*
 =============================================================
@@ -4562,8 +4730,8 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface);
 =============================================================
 */
 
-void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix,
-                            const float *projectionMatrix, vec4_t eye, vec4_t dst);
+/*void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix,
+                            const float *projectionMatrix, vec4_t eye, vec4_t dst);*/
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix,
                             const float *projectionMatrix, vec4_t eye, vec4_t dst);
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window);
@@ -4571,7 +4739,7 @@ float R_ProjectRadius(float r, vec3_t location);
 
 
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader);
-void Tess_DeformGeometry(void);
+void Tess_DeformGeometry();
 
 float RB_EvalWaveForm(const waveForm_t *wf);
 float RB_EvalWaveFormClamped(const waveForm_t *wf);
@@ -4596,7 +4764,7 @@ RENDERER BACK END FUNCTIONS
 =============================================================
 */
 
-void RB_ExecuteRenderCommands(const void *data);
+//void RB_ExecuteRenderCommands(const void *data); // this one is included later
 
 /*
 =============================================================
@@ -4724,6 +4892,18 @@ typedef struct
 } renderToTextureCommand_t;
 
 /**
+ * @struct renderCubeprobeCommand_t
+ * @brief
+ */
+typedef struct
+{
+	int commandId;
+	int cubeprobeIndex;   // index in tr.cubeProbes[]
+	qboolean commandOnly; // if true, only the render-command is issued, but no cubemap texture is generated. (handle PBO results later)
+	byte **pixeldata;     // can be NULL. In that case, no readpixels is done (and so, no textures can be saved to file)
+} renderCubeprobeCommand_t;
+
+/**
  * @enum ssFormat_t
  * @brief
  */
@@ -4790,6 +4970,7 @@ typedef enum
 	RC_SCREENSHOT,
 	RC_VIDEOFRAME,
 	RC_RENDERTOTEXTURE,
+	RC_RENDERCUBEPROBE,
 	RC_FINISH
 } renderCommand_t;
 
@@ -4839,7 +5020,7 @@ typedef struct
 
 extern backEndData_t *backEndData;  ///< the second one may not be allocated
 
-void *R_GetCommandBuffer(int bytes);
+void *R_GetCommandBuffer(unsigned int bytes);
 void RB_ExecuteRenderCommands(const void *data);
 
 void R_IssuePendingRenderCommands(void);
@@ -4860,12 +5041,15 @@ const void *RB_TakeVideoFrameCmd(const void *data);
 void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
 
 // cubemap reflections stuff
-void R_BuildCubeMaps(void);
-void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2);
+void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean saveAll);
+void R_BuildCubeMaps(qboolean createAll);
+//void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2); // unused..
+void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t **env1, image_t **env2, float *interpolation);
 
 void FreeVertexHashTable(vertexHash_t **hashTable);
 
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h);
+void RE_RenderCubeprobe(int cubeprobeIndex, qboolean commandOnly, byte *pixeldataOut[6]); // Render Command function
 void RE_Finish(void);
 
 void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qboolean doGamma, qboolean toneMap, qboolean compensate);

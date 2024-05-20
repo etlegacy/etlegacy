@@ -7,5 +7,4 @@ textures/miltary_trim/basewd_m02
 	bumpmap textures/miltary_trim/basewd_m02_n.tga
 	specularmap textures/miltary_trim/basewd_m02_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

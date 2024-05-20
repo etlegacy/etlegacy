@@ -343,7 +343,7 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 	intptr_t args[VM_SYSCALL_ARGS] = { 0 };
 	int      i;
 	va_list  ap;
-	size_t len = ARRAY_LEN(args);
+	size_t   len = ARRAY_LEN(args);
 
 	args[0] = arg;
 
@@ -454,9 +454,9 @@ vm_t *VM_Restart(vm_t *vm)
 void VM_Error(errorParm_t errorParm, const char *module, const char *filename)
 {
 #if ARCH_X86
-    Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run.", module, filename));
+	Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run.", module, filename));
 #else
-    Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run and that the mod is compatible with your platform.", module, filename));
+	Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run and that the mod is compatible with your platform.", module, filename));
 #endif
 }
 

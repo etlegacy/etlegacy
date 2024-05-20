@@ -104,8 +104,10 @@
 #pragma warning(disable : 4996) // deprecated POSIX function names
 #endif
 
-// Other platforms define __SSEn__ macros while windows only defines __AVXn__ macros
-#if (defined(__SSE3__) || defined(__AVX2__)) && defined(ETL_ENABLE_SSE)
+// Other platforms define __SSEn__ macros while windows only defines _M_IX86_FP for 32bit or _M_AMD64/_M_X64 for 64bit macros
+#if defined(__SSE3__) && defined(ETL_ENABLE_SSE)
+#define ETL_SSE 1
+#elif (_M_IX86_FP == 2 || (defined(_M_AMD64) || defined(_M_X64))) && defined(ETL_ENABLE_SSE)
 #define ETL_SSE 1
 #endif
 
@@ -1203,8 +1205,12 @@ typedef enum
 */
 #define ANIM_BITS       10
 
-#define ANGLE2SHORT(x)  ((int)((x) * 65536 / 360) & 65535)
-#define SHORT2ANGLE(x)  ((x) * (360.0f / 65536))
+// 65536 / 360
+#define _65536_DIV_360 182.04444444444444444444444444444f
+// 360.0f / 65536
+#define _360_DIV_65536 0.0054931640625f
+#define ANGLE2SHORT(x)  ((int)((x) * _65536_DIV_360) & 65535)
+#define SHORT2ANGLE(x)  ((x) * _360_DIV_65536)
 
 #define SNAPFLAG_RATE_DELAYED   1
 #define SNAPFLAG_NOT_ACTIVE     2   ///< snapshot used during connection and for zombies

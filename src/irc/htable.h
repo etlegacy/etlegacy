@@ -71,46 +71,46 @@ typedef qboolean ( *ht_apply_funct )(void *item, void *extra);
  *=============================================*/
 
 hashtable_t HT_Create(
-    size_t size,
-    unsigned int flags,
-    size_t item_size,
-    size_t key_offset,
-    size_t key_length
-    );
+	size_t size,
+	unsigned int flags,
+	size_t item_size,
+	size_t key_offset,
+	size_t key_length
+	);
 
 /**
  * @def HT_OffsetOfField
  * @brief Macro that determines the offset of a field in a structure
  */
 #define HT_OffsetOfField(TYPE, FIELD) \
-	((char *)(&(((TYPE *) NULL)->FIELD)) - (char *) NULL)
+		((char *)(&(((TYPE *) NULL)->FIELD)) - (char *) NULL)
 
 void HT_Destroy(
-    hashtable_t table
-    );
+	hashtable_t table
+	);
 
 void *HT_GetItem(
-    hashtable_t table,
-    const char *key,
-    qboolean *created
-    );
+	hashtable_t table,
+	const char *key,
+	qboolean *created
+	);
 
 void *HT_PutItem(
-    hashtable_t table,
-    void *item,
-    qboolean allow_replacement
-    );
+	hashtable_t table,
+	void *item,
+	qboolean allow_replacement
+	);
 
 qboolean HT_DeleteItem(
-    hashtable_t table,
-    const char *key,
-    void **found
-    );
+	hashtable_t table,
+	const char *key,
+	void **found
+	);
 
 void HT_Apply(
-    hashtable_t table,
-    ht_apply_funct function,
-    void *data
-    );
+	hashtable_t table,
+	ht_apply_funct function,
+	void *data
+	);
 
 #endif // #ifndef INCLUDE_HTABLE_H

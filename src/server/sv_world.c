@@ -239,7 +239,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 #endif // DEDICATED
 
 	// sanity check for possible currentOrigin being reset bug
-	if (!gEnt->r.bmodel && vec3_compare(gEnt->r.currentOrigin, vec3_origin)
+	if (!gEnt->r.bmodel && VectorCompare(gEnt->r.currentOrigin, vec3_origin)
 #ifdef DEDICATED
 	    && !svcls.isTVGame
 #endif // DEDICATED

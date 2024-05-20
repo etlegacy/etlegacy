@@ -163,6 +163,7 @@ static int CM_SignbitsForNormal(vec3_t normal)
 static qboolean CM_PlaneFromPoints(vec4_t plane, vec3_t a, vec3_t b, vec3_t c)
 {
 	vec3_t d1, d2;
+	float  n;
 
 	VectorSubtract(b, a, d1);
 	VectorSubtract(c, a, d2);
@@ -177,7 +178,7 @@ static qboolean CM_PlaneFromPoints(vec4_t plane, vec3_t a, vec3_t b, vec3_t c)
 }
 
 /**
-================================================================================
+============================0====================================================
 GRID SUBDIVISION
 ================================================================================
 */
@@ -212,7 +213,7 @@ static qboolean CM_NeedsSubdivision(vec3_t a, vec3_t b, vec3_t c)
 
 	// see if the curve is far enough away from the linear mid
 	VectorSubtract(cmid, lmid, delta);
-	dist = vec3_length(delta);
+	dist = VectorLength(delta);
 
 	return dist >= SUBDIVIDE_DISTANCE;
 }
@@ -609,24 +610,28 @@ static int CM_FindPlane(float *p1, float *p2, float *p3)
 	// see if the points are close enough to an existing plane
 	for (i = 0 ; i < numPlanes ; i++)
 	{
-		if (DotProduct(plane, planes[i].plane) < 0)
+		Dot(plane, planes[i].plane, d);
+		if (d < 0)
 		{
 			continue;   // allow backwards planes?
 		}
 
-		d = DotProduct(p1, planes[i].plane) - planes[i].plane[3];
+		Dot(p1, planes[i].plane, d);
+		d -= planes[i].plane[3];
 		if (d < -PLANE_TRI_EPSILON || d > PLANE_TRI_EPSILON)
 		{
 			continue;
 		}
 
-		d = DotProduct(p2, planes[i].plane) - planes[i].plane[3];
+		Dot(p2, planes[i].plane, d);
+		d -= planes[i].plane[3];
 		if (d < -PLANE_TRI_EPSILON || d > PLANE_TRI_EPSILON)
 		{
 			continue;
 		}
 
-		d = DotProduct(p3, planes[i].plane) - planes[i].plane[3];
+		Dot(p3, planes[i].plane, d);
+		d -= planes[i].plane[3];
 		if (d < -PLANE_TRI_EPSILON || d > PLANE_TRI_EPSILON)
 		{
 			continue;
@@ -1539,7 +1544,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
             else v1[n] = tw->size[1][n];
         }
         VectorNegate(normal, v2);
-        offset = DotProduct(v1, v2);
+        Dot(v1, v2, offset);
         //offset = 0;
 
         planedist = planes->plane[3] + offset;
@@ -1589,7 +1594,7 @@ void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *
                 else v1[n] = tw->size[1][n];
             }
             VectorNegate(normal, v2);
-            offset = DotProduct(v1, v2);
+            Dot(v1, v2, offset);
             //offset = 0;
             planedist -= offset;
             // the hit point should be in front of the (inward facing) border plane
@@ -1638,9 +1643,11 @@ void CM_TracePointThroughPatchCollide(traceWork_t *tw, const struct patchCollide
 	planes = pc->planes;
 	for (i = 0 ; i < pc->numPlanes ; i++, planes++)
 	{
-		offset = DotProduct(tw->offsets[planes->signbits], planes->plane);
-		d1     = DotProduct(tw->start, planes->plane) - planes->plane[3] + offset;
-		d2     = DotProduct(tw->end, planes->plane) - planes->plane[3] + offset;
+		Dot(tw->offsets[planes->signbits], planes->plane, offset);
+		Dot(tw->start, planes->plane, d1);
+		Dot(tw->end, planes->plane, d2);
+		d1 = d1 - planes->plane[3] + offset;
+		d2 = d2 - planes->plane[3] + offset;
 		if (d1 <= 0)
 		{
 			frontFacing[i] = qfalse;
@@ -1713,9 +1720,11 @@ void CM_TracePointThroughPatchCollide(traceWork_t *tw, const struct patchCollide
 			planes = &pc->planes[facet->surfacePlane];
 
 			// calculate intersection with a slight pushoff
-			offset             = DotProduct(tw->offsets[planes->signbits], planes->plane);
-			d1                 = DotProduct(tw->start, planes->plane) - planes->plane[3] + offset;
-			d2                 = DotProduct(tw->end, planes->plane) - planes->plane[3] + offset;
+			Dot(tw->offsets[planes->signbits], planes->plane, offset);
+			Dot(tw->start, planes->plane, d1);
+			Dot(tw->end, planes->plane, d2);
+			d1                 = d1 - planes->plane[3] + offset;
+			d2                 = d2 - planes->plane[3] + offset;
 			tw->trace.fraction = (d1 - SURFACE_CLIP_EPSILON) / (d1 - d2);
 
 			if (tw->trace.fraction < 0)
@@ -1745,8 +1754,10 @@ int CM_CheckFacetPlane(float *plane, vec3_t start, vec3_t end, float *enterFrac,
 
 	*hit = qfalse;
 
-	d1 = DotProduct(start, plane) - plane[3];
-	d2 = DotProduct(end, plane) - plane[3];
+	Dot(start, plane, d1);
+	Dot(end, plane, d2);
+	d1 -= plane[3];
+	d2 -= plane[3];
 
 	// if completely in front of face, no intersection with the entire facet
 	if (d1 > 0 && (d2 >= SURFACE_CLIP_EPSILON || d2 >= d1))
@@ -1834,7 +1845,7 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 			plane[3] += tw->sphere.radius;
 
 			// find the closest point on the capsule to the plane
-			t = DotProduct(plane, tw->sphere.offset);
+			Dot(plane, tw->sphere.offset, t);
 			if (t > 0.0f)
 			{
 				VectorSubtract(tw->start, tw->sphere.offset, startp);
@@ -1848,7 +1859,7 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 		}
 		else
 		{
-			offset    = DotProduct(tw->offsets[planes->signbits], plane);
+			Dot(tw->offsets[planes->signbits], plane, offset);
 			plane[3] -= offset;
 			VectorCopy(tw->start, startp);
 			VectorCopy(tw->end, endp);
@@ -1897,7 +1908,7 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 			else
 			{
 				// NOTE: this works even though the plane might be flipped because the bbox is centered
-				offset    = DotProduct(tw->offsets[planes->signbits], plane);
+				Dot(tw->offsets[planes->signbits], plane, offset);
 				plane[3] += Q_fabs(offset);
 				VectorCopy(tw->start, startp);
 				VectorCopy(tw->end, endp);
@@ -1964,7 +1975,7 @@ qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollid
 {
 	unsigned int i;
 	int          j;
-	float        offset, t;
+	float        offset, t, dot;
 	patchPlane_t *planes;
 	facet_t      *facet;
 	float        plane[4];
@@ -1987,7 +1998,7 @@ qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollid
 			plane[3] += tw->sphere.radius;
 
 			// find the closest point on the capsule to the plane
-			t = DotProduct(plane, tw->sphere.offset);
+			Dot(plane, tw->sphere.offset, t);
 			if (t > 0)
 			{
 				VectorSubtract(tw->start, tw->sphere.offset, startp);
@@ -1999,12 +2010,13 @@ qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollid
 		}
 		else
 		{
-			offset    = DotProduct(tw->offsets[planes->signbits], plane);
+			Dot(tw->offsets[planes->signbits], plane, offset);
 			plane[3] -= offset;
 			VectorCopy(tw->start, startp);
 		}
 
-		if (DotProduct(plane, startp) - plane[3] > 0.0f)
+		Dot(plane, startp, dot);
+		if (dot - plane[3] > 0.0f)
 		{
 			continue;
 		}
@@ -2028,7 +2040,7 @@ qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollid
 				plane[3] += tw->sphere.radius;
 
 				// find the closest point on the capsule to the plane
-				t = DotProduct(plane, tw->sphere.offset);
+				Dot(plane, tw->sphere.offset, t);
 				if (t > 0.0f)
 				{
 					VectorSubtract(tw->start, tw->sphere.offset, startp);
@@ -2041,12 +2053,13 @@ qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollid
 			else
 			{
 				// NOTE: this works even though the plane might be flipped because the bbox is centered
-				offset    = DotProduct(tw->offsets[planes->signbits], plane);
+				Dot(tw->offsets[planes->signbits], plane, offset);
 				plane[3] += Q_fabs(offset);
 				VectorCopy(tw->start, startp);
 			}
 
-			if (DotProduct(plane, startp) - plane[3] > 0.0f)
+			Dot(plane, startp, dot);
+			if (dot - plane[3] > 0.0f)
 			{
 				break;
 			}
@@ -2088,6 +2101,7 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 	float                plane[4];
 	vec3_t               mins = { -15, -15, -28 }, maxs = { 15, 15, 28 };
 	vec3_t               v1, v2;
+	float                dot;
 
 	if (!cv2)
 	{
@@ -2151,7 +2165,8 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 				}
 			} //end for
 			VectorNegate(plane, v2);
-			plane[3] += Q_fabs(DotProduct(v1, v2));
+			Dot(v1, v2, dot);
+			plane[3] += Q_fabs(dot);
 			//*/
 
 			w = BaseWindingForPlane(plane, plane[3]);
@@ -2195,7 +2210,8 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 					}
 				} //end for
 				VectorNegate(plane, v2);
-				plane[3] -= Q_fabs(DotProduct(v1, v2));
+				Dot(v1, v2, dot);
+				plane[3] -= Q_fabs(dot);
 
 				ChopWindingInPlace(&w, plane, plane[3], 0.1f);
 			}

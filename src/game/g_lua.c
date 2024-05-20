@@ -2193,8 +2193,8 @@ qboolean G_LuaRunIsolated(const char *modName)
  */
 qboolean G_LuaInit(void)
 {
-	int  i, num_vm = 0, len;
-	char buff[MAX_CVAR_VALUE_STRING], *crt, *list, *pList;
+	int          i, num_vm = 0, len;
+	char         buff[MAX_CVAR_VALUE_STRING], *crt, *list, *pList;
 	fileHandle_t f;
 
 	for (i = 0; i < LUA_NUM_VM; i++)

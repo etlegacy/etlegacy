@@ -7,5 +7,4 @@ textures/town_roof/roof_c05
 	specularmap textures/town_roof/roof_c05_r.tga
 	bumpmap textures/town_roof/roof_c05_n.tga
 	surfaceparm roofsteps
-	implicitMap -
 }

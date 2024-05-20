@@ -252,7 +252,7 @@ void PushBot(gentity_t *ent, gentity_t *other)
 	}
 
 	VectorSubtract(other->r.currentOrigin, ent->r.currentOrigin, dir);
-	VectorNormalize(dir);
+	VectorNormalizeOnly(dir);
 	vectoangles(dir, ang);
 	AngleVectors(ang, f, r, NULL);
 	f[2] = 0;
@@ -264,7 +264,7 @@ void PushBot(gentity_t *ent, gentity_t *other)
 
 	if (VectorLengthSquared(other->client->ps.velocity) > Square(oldspeed))
 	{
-		VectorNormalize(other->client->ps.velocity);
+		VectorNormalizeOnly(other->client->ps.velocity);
 		VectorScale(other->client->ps.velocity, oldspeed, other->client->ps.velocity);
 	}
 }
@@ -1108,7 +1108,7 @@ void WolfFindMedic(gentity_t *self)
 		}
 
 		VectorSubtract(end, start, end);
-		dist = VectorNormalize(end);
+		VectorNorm(end, &dist);
 
 		if (dist < bestdist)
 		{

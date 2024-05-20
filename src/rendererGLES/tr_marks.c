@@ -365,8 +365,8 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	//vec3_t            bestCenter; // center point projected onto the closest surface
 	//float texCoordScale;
 	//float         dot;
-	int      numberPoints  = 4;        // we were only ever passing in 4, so I made this local and used the parameter for the orientation
-	qboolean oldMapping = qfalse;
+	int      numberPoints = 4;         // we were only ever passing in 4, so I made this local and used the parameter for the orientation
+	qboolean oldMapping   = qfalse;
 
 	//increment view count for double check prevention
 	tr.viewCount++;
@@ -424,7 +424,7 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	VectorCopy(projectionDir, normals[numberPoints + 1]);
 	VectorInverse(normals[numberPoints + 1]);
 	dists[numberPoints + 1] = DotProduct(normals[numberPoints + 1], points[0]) - radius * (1 + oldMapping * 10);
-	numPlanes            = numberPoints + 2;
+	numPlanes               = numberPoints + 2;
 
 	numsurfaces = 0;
 	R_BoxSurfaces_r(tr.world->nodes, mins, maxs, surfaces, 4096, &numsurfaces, projectionDir);

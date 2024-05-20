@@ -150,9 +150,9 @@ source_t *LoadSourceFile(const char *filename);
 // free the given source
 void FreeSource(source_t *source);
 // print a source error
-void QDECL SourceError(source_t *source, const char *str, ...) _attribute ((format(printf, 2, 3)));
+void QDECL SourceError(source_t *source, const char *str, ...) _attribute((format(printf, 2, 3)));
 // print a source warning
-void QDECL SourceWarning(source_t *source, const char *str, ...)  _attribute ((format(printf, 2, 3)));
+void QDECL SourceWarning(source_t *source, const char *str, ...)  _attribute((format(printf, 2, 3)));
 
 int PC_LoadSourceHandle(const char *filename);
 int PC_FreeSourceHandle(int handle);

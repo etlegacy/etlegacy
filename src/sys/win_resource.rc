@@ -68,19 +68,19 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 1 TEXTINCLUDE DISCARDABLE
-BEGIN
-	"resource.h\0"
+         BEGIN
+"resource.h\0"
 END
 
 2 TEXTINCLUDE DISCARDABLE
-BEGIN
-	"#include ""winres.h""\r\n"
-	"\0"
+         BEGIN
+"#include " "winres.h" "\r\n"
+                       "\0"
 END
 
 3 TEXTINCLUDE DISCARDABLE
-BEGIN
-	"\0"
+         BEGIN
+"\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -92,36 +92,36 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION PRODUCT_VERSION
- PRODUCTVERSION PRODUCT_VERSION
- FILEFLAGSMASK 0x17L
+FILEVERSION PRODUCT_VERSION
+PRODUCTVERSION PRODUCT_VERSION
+         FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
- FILEFLAGS 0x1L
+         FILEFLAGS 0x1L
 #else
- FILEFLAGS 0x0L
+FILEFLAGS 0x0L
 #endif
- FILEOS 0x40004L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
+FILEOS 0x40004L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
 BEGIN
-	BLOCK "StringFileInfo"
-	BEGIN
-		BLOCK "040904b0"
-		BEGIN
-			VALUE "CompanyName", "ET: Legacy"
-			VALUE "FileDescription", "etl"
-			VALUE "FileVersion", PRODUCT_VERSION_STR
-			VALUE "InternalName", "ET: Legacy"
-			VALUE "OriginalFilename", "etl.exe"
-			VALUE "ProductName", "ET: Legacy"
-			VALUE "ProductVersion", PRODUCT_VERSION_STR
-			VALUE "LegalCopyright", "2012-2024 ET: Legacy Team"
-		END
-	END
-	BLOCK "VarFileInfo"
-	BEGIN
-		VALUE "Translation", 0x409, 1200
-	END
+         BLOCK "StringFileInfo"
+BEGIN
+         BLOCK "040904b0"
+BEGIN
+         VALUE "CompanyName", "ET: Legacy"
+VALUE "FileDescription", "etl"
+VALUE "FileVersion", PRODUCT_VERSION_STR
+         VALUE "InternalName", "ET: Legacy"
+VALUE "OriginalFilename", "etl.exe"
+VALUE "ProductName", "ET: Legacy"
+VALUE "ProductVersion", PRODUCT_VERSION_STR
+         VALUE "LegalCopyright", "2012-2024 ET: Legacy Team"
+END
+END
+         BLOCK "VarFileInfo"
+BEGIN
+         VALUE "Translation", 0x409, 1200
+END
 END
 
 
@@ -132,7 +132,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON    DISCARDABLE     "../../misc/etl.ico"
+IDI_ICON1 ICON DISCARDABLE     "../../misc/etl.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -141,9 +141,8 @@ IDI_ICON1               ICON    DISCARDABLE     "../../misc/etl.ico"
 
 STRINGTABLE DISCARDABLE
 BEGIN
-	IDS_STRING1             "Enemy Territory"
+         IDS_STRING1             "Enemy Territory"
 END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
-

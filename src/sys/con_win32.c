@@ -323,7 +323,7 @@ char *CON_Input(void)
 {
 	INPUT_RECORD buff[MAX_EDIT_LINE];
 	DWORD        count = 0, events = 0;
-	WORD         key   = 0;
+	WORD         key = 0;
 	int          i;
 	int          newlinepos = -1;
 

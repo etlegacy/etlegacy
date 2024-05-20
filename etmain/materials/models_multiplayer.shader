@@ -89,47 +89,23 @@ models/multiplayer/satchel/lightred_on
 
 models/multiplayer/supplies/healthbox
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		diffusemap models/multiplayer/supplies/healthbox.tga
-		bumpmap models/multiplayer/supplies/healthbox_n.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+    diffusemap models/multiplayer/supplies/healthbox.tga
+	bumpmap models/multiplayer/supplies/healthbox_n.tga
+	specularmap models/multiplayer/supplies/healthbox_r.tga
 }
 
 models/multiplayer/supplies/ammobox
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		diffusemap models/multiplayer/supplies/ammobox.tga
-		bumpmap models/multiplayer/supplies/ammobox_n.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	diffusemap models/multiplayer/supplies/ammobox.tga
+	bumpmap models/multiplayer/supplies/ammobox_n.tga
+	specularmap models/multiplayer/supplies/ammobox_r.tga
 }
 
 models/multiplayer/supplies/ammobox_2
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		diffusemap models/multiplayer/supplies/ammobox_2.tga
-		bumpmap models/multiplayer/supplies/ammobox_2_n.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	diffusemap models/multiplayer/supplies/ammobox_2.tga
+	bumpmap models/multiplayer/supplies/ammobox_2_n.tga
+	specularmap models/multiplayer/supplies/ammobox_2_r.tga
 }
 
 models/multiplayer/smokebomb/smoke_bomb

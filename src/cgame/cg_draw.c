@@ -2066,6 +2066,7 @@ void CG_CheckForCursorHints(void)
 			if (dist <= CH_KNIFE_DIST)
 			{
 				vec3_t pforward, eforward, attacker, target;
+				float  dot;
 
 				VectorCopy(cg.snap->ps.viewangles, attacker);
 				VectorCopy(tracent->lerpAngles, target);
@@ -2075,7 +2076,8 @@ void CG_CheckForCursorHints(void)
 				AngleVectors(attacker, pforward, NULL, NULL);
 				AngleVectors(target, eforward, NULL, NULL);
 
-				if (DotProduct(eforward, pforward) > 0.6f)           // from behind(-ish)
+				Dot(eforward, pforward, dot);
+				if (dot > 0.6f)           // from behind(-ish)
 				{
 					cg.cursorHintIcon  = HINT_KNIFE;
 					cg.cursorHintTime  = cg.time;
@@ -4312,9 +4314,9 @@ void CG_ShakeCamera(void)
 
 	{
 		double  x    = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
-		float   valx = sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
-		float   valy = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
-		float   valz = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float   valx = sin(M_PI * 8.0f * 13.0f + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		float   valy = sin(M_PI * 17.0f * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		float   valz = cos(M_PI * 7.0f * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 		vec3_t  vec;
 		trace_t tr;
 
@@ -4333,7 +4335,7 @@ void CG_ShakeCamera(void)
  */
 void CG_DrawMiscGamemodels(void)
 {
-	int         i, j;
+	int         i;
 	refEntity_t ent;
 
 	Com_Memset(&ent, 0, sizeof(ent));
@@ -4363,10 +4365,10 @@ void CG_DrawMiscGamemodels(void)
 		VectorCopy(cgs.miscGameModels[i].org, ent.oldorigin);
 		VectorCopy(cgs.miscGameModels[i].org, ent.lightingOrigin);
 
-		for (j = 0; j < 3; j++)
-		{
-			VectorCopy(cgs.miscGameModels[i].axes[j], ent.axis[j]);
-		}
+		VectorCopy(cgs.miscGameModels[i].axes[0], ent.axis[0]);
+		VectorCopy(cgs.miscGameModels[i].axes[1], ent.axis[1]);
+		VectorCopy(cgs.miscGameModels[i].axes[2], ent.axis[2]);
+
 		ent.hModel = cgs.miscGameModels[i].model;
 
 		trap_R_AddRefEntityToScene(&ent);
@@ -4514,7 +4516,7 @@ void CG_Coronas(void)
 	{
 		int      i;
 		trace_t  tr;
-		float    dist;
+		float    dist, dot;
 		vec3_t   dir;
 		qboolean visible, behind, toofar;
 
@@ -4531,32 +4533,26 @@ void CG_Coronas(void)
 			VectorSubtract(cg.refdef_current->vieworg, cgs.corona[i].org, dir);
 			dist = VectorNormalize2(dir, dir);
 
-			if (dist > cg_coronafardist.integer)
+			if (cg_coronas.integer != 2)
 			{
-				toofar = qtrue;
-			}
-			// dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
-			const float fov = cosf((cg.refdef_current->fov_x / 2) * (float)(M_PI / 180));
-			if (DotProduct(dir, cg.refdef_current->viewaxis[0]) >= -fov)
-			{
-				behind = qtrue;
-			}
+				VectorSubtract(cg.refdef_current->vieworg, cgs.corona[i].org, dir);
+				dist = VectorNormalize2(dir, dir);
+				if (dist > cg_coronafardist.integer)
+				{
+					toofar = qtrue;
+				}
 
-			if (cg_coronas.integer == 2)
-			{   // if set to '2' trace everything
-				behind = qfalse;
-				toofar = qfalse;
+				Dot(dir, cg.refdef_current->viewaxis[0], dot);
+				if (dot >= -0.6f)
+				{
+					behind = qtrue;
+				}
 			}
 
 			if (!behind && !toofar)
 			{
 				CG_Trace(&tr, cg.refdef_current->vieworg, NULL, NULL, cgs.corona[i].org, -1, MASK_SOLID | CONTENTS_BODY);
-
-				visible = qfalse; // 'init'
-				if (tr.fraction == 1.f)
-				{
-					visible = qtrue;
-				}
+				visible = (tr.fraction == 1.f);
 				trap_R_AddCoronaToScene(cgs.corona[i].org, cgs.corona[i].color[0], cgs.corona[i].color[1], cgs.corona[i].color[2], cgs.corona[i].scale, i, visible);
 			}
 		}

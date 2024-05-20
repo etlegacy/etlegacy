@@ -27,19 +27,19 @@ attribute vec3 attr_Binormal2;
 
 uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
-uniform mat4  u_NormalTextureMatrix;
-uniform mat4  u_ModelMatrix;
-uniform mat4  u_ModelViewProjectionMatrix;
-uniform vec3  u_ViewOrigin;
+uniform mat4 u_NormalTextureMatrix;
+uniform mat4 u_ModelMatrix;
+uniform mat4 u_ModelViewProjectionMatrix;
+uniform vec3 u_ViewOrigin;
 #if defined(USE_DEFORM_VERTEXES)
 uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec3 var_Position;
-varying vec3 var_ViewOrigin; // position - vieworigin
+varying vec3 var_ViewOrigin;
 varying vec4 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
@@ -63,28 +63,28 @@ void    main()
 #if defined(USE_VERTEX_SKINNING)
 
 #if defined(USE_NORMAL_MAPPING)
-	VertexSkinning_P_TBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
-	                     position, tangent, binormal, normal);
+	VertexSkinning_PTBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
+	                    position, tangent, binormal, normal);
 #else
-	VertexSkinning_P_N(attr_Position, attr_Normal,
-	                   position, normal);
+	VertexSkinning_PN(attr_Position, attr_Normal,
+	                  position, normal);
 #endif // USE_NORMAL_MAPPING
 
 
 #elif defined(USE_VERTEX_ANIMATION)
 
 #if defined(USE_NORMAL_MAPPING)
-	VertexAnimation_P_TBN(attr_Position, attr_Position2,
-	                      attr_Tangent, attr_Tangent2,
-	                      attr_Binormal, attr_Binormal2,
-	                      attr_Normal, attr_Normal2,
-	                      u_VertexInterpolation,
-	                      position, tangent, binormal, normal);
+	VertexAnimation_PTBN(attr_Position, attr_Position2,
+	                     attr_Tangent, attr_Tangent2,
+	                     attr_Binormal, attr_Binormal2,
+	                     attr_Normal, attr_Normal2,
+	                     u_VertexInterpolation,
+	                     position, tangent, binormal, normal);
 #else
-	VertexAnimation_P_N(attr_Position, attr_Position2,
-	                    attr_Normal, attr_Normal2,
-	                    u_VertexInterpolation,
-	                    position, normal);
+	VertexAnimation_PN(attr_Position, attr_Position2,
+	                   attr_Normal, attr_Normal2,
+	                   u_VertexInterpolation,
+	                   position, normal);
 #endif // USE_NORMAL_MAPPING
 
 #else // USE_VERTEX_SKINNING,USE_VERTEX_ANIMATION
@@ -119,11 +119,12 @@ void    main()
 	// transform normalmap texcoords
 	var_TexNormal = (u_NormalTextureMatrix * attr_TexCoord0).st;
 
-	tangent  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
-	binormal = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
+	tangent  = normalize((u_ModelMatrix * vec4(tangent, 0.0)).xyz);
+	binormal = normalize((u_ModelMatrix * vec4(binormal, 0.0)).xyz);
 
 	// in a vertex-shader there exists no gl_FrontFacing
-	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
+//	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
+	var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz));
 #endif // USE_NORMAL_MAPPING
 
 

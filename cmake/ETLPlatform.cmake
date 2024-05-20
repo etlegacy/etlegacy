@@ -71,6 +71,11 @@ if(UNIX)
 		endif()
 	endif()
 
+	if(ENABLE_SSE)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2 -mfpmath=sse")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2 -mfpmath=sse")
+	endif()
+
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
 		target_link_libraries(os_libraries INTERFACE m pthread)
 		set(LIB_SUFFIX ".mp.obsd.")
@@ -209,6 +214,11 @@ elseif(WIN32)
 		if(FORCE_STATIC_VCRT)
 			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
+			
+			if(ENABLE_SSE)
+				set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2 /Ob2 /Oi /Ot")
+				set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /arch:SSE2 /Ob2 /Oi /Ot")
+			endif()
 
 			set(CompilerFlags
 				CMAKE_CXX_FLAGS
@@ -221,10 +231,18 @@ elseif(WIN32)
 
 			foreach(CompilerFlag ${CompilerFlags})
 				string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+				# remove any "Basic Runtime Checks" settings
+				string(REPLACE "/RTCs" "" ${CompilerFlag} "${${CompilerFlag}}")
+				string(REPLACE "/RTCu" "" ${CompilerFlag} "${${CompilerFlag}}")
+				string(REPLACE "/RTC1" "" ${CompilerFlag} "${${CompilerFlag}}")
 			endforeach()
 
 			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
 			set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
+		endif()
+
+		if(DEBUG_BUILD OR FORCE_DEBUG)
+			set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} /LARGEADDRESSAWARE")
 		endif()
 
 		# Should we always use this?

@@ -1134,8 +1134,8 @@ public:
 
 	KeyVals();
 private:
-	char       m_Key[MaxArgs][MaxArgLength];
-	char       m_String[MaxArgs][MaxStringLength];
+	char m_Key[MaxArgs][MaxArgLength];
+	char m_String[MaxArgs][MaxStringLength];
 	obUserData m_Value[MaxArgs];
 
 	bool SetKeyVal(const char *_key, const obUserData &_ud);
@@ -1328,7 +1328,7 @@ public:
 	}
 
 	char m_Args[MaxArgs][MaxArgLength];
-	int  m_NumArgs;
+	int m_NumArgs;
 };
 
 //////////////////////////////////////////////////////////////////////////

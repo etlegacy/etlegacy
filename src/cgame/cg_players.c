@@ -1010,7 +1010,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		}
 		else
 		{
-			lf->frameTime = lf->oldFrameTime + (int)((float)anim->frameLerp * (1.0f / lf->animSpeedScale));
+			lf->frameTime = lf->oldFrameTime + (int)((float)anim->frameLerp * rcp(lf->animSpeedScale));
 			if (lf->frameTime < cg.time)
 			{
 				lf->frameTime = cg.time;
@@ -1857,19 +1857,21 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 	// lean towards the direction of travel
 	VectorCopy(cent->currentState.pos.trDelta, velocity);
-	speed = VectorNormalize(velocity);
+	VectorNorm(velocity, &speed);
 	if (speed != 0.f)
 	{
 		vec3_t axis[3];
-		float  side;
+		float  side, dot;
 
 		speed *= 0.05;
 
 		AnglesToAxis(legsAngles, axis);
-		side              = speed * DotProduct(velocity, axis[1]);
+		Dot(velocity, axis[1], dot);
+		side              = speed * dot;
 		legsAngles[ROLL] -= side;
 
-		side               = speed * DotProduct(velocity, axis[0]);
+		Dot(velocity, axis[0], dot);
+		side               = speed * dot;
 		legsAngles[PITCH] += side;
 	}
 

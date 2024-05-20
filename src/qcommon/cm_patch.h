@@ -72,9 +72,13 @@ degenerate a few triangles.  Completely degenerate rows and columns are handled
 properly.
 */
 
+#ifdef FEATURE_RENDERER2
+#define MAX_FACETS          1024 // 2048 ?
+#define MAX_PATCH_PLANES    (4096 + 128)
+#else
 #define MAX_FACETS          1024
-#define MAX_PATCH_PLANES    (2048+128)
-
+#define MAX_PATCH_PLANES    (2048 + 128)
+#endif
 
 
 /**

@@ -239,12 +239,13 @@ static plane_t frustum[4];
 void G_SetupFrustum(gentity_t *ent)
 {
 	float  xs, xc;
-	float  ang;
 	vec3_t axis[3];
 	vec3_t vieworg;
 
-	ang = (float)(DEG2RAD(106.27f) * 0.5); // 106.27 = 2 * atan(0.75 * tan(90.0/2) * 16/9)
-	SinCos(ang, xs, xc);
+	xs = 0.0137073546047074765840170910676f; // sin(ang);
+	xc = 0.99990604980155050801971795294044f; // cos(ang);
+	// eer.. this always rsults in the very same values for xs & xc (sin(half pi) & cos(half pi)
+
 
 	AnglesToAxis(ent->client->ps.viewangles, axis);
 
@@ -263,10 +264,10 @@ void G_SetupFrustum(gentity_t *ent)
 	VectorCopy(ent->client->ps.origin, vieworg);
 	vieworg[2] += ent->client->ps.viewheight;
 
-	frustum[0].dist = DotProduct(vieworg, frustum[0].normal);
-	frustum[1].dist = DotProduct(vieworg, frustum[1].normal);
-	frustum[2].dist = DotProduct(vieworg, frustum[2].normal);
-	frustum[3].dist = DotProduct(vieworg, frustum[3].normal);
+	Dot(vieworg, frustum[0].normal, frustum[0].dist);
+	Dot(vieworg, frustum[1].normal, frustum[1].dist);
+	Dot(vieworg, frustum[2].normal, frustum[2].dist);
+	Dot(vieworg, frustum[3].normal, frustum[3].dist);
 }
 
 // Give bots a larger view angle through binoculars than players get - this should help the
@@ -286,8 +287,9 @@ void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 	vec3_t vieworg;
 	float  baseAngle = (ent->r.svFlags & SVF_BOT) ? BOT_BINOCULAR_ANGLE : BINOCULAR_ANGLE;
 
-	ang = (float)(DEG2RAD(baseAngle) * 0.5);
-	SinCos(ang, xs, xc);
+	ang = (float)(DEG2RAD(baseAngle) * 0.5f);
+	xs  = sin(ang);
+	xc  = cos(ang);
 
 	AnglesToAxis(ent->client->ps.viewangles, axis);
 
@@ -306,10 +308,10 @@ void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 	VectorCopy(ent->client->ps.origin, vieworg);
 	vieworg[2] += ent->client->ps.viewheight;
 
-	frustum[0].dist = DotProduct(vieworg, frustum[0].normal);
-	frustum[1].dist = DotProduct(vieworg, frustum[1].normal);
-	frustum[2].dist = DotProduct(vieworg, frustum[2].normal);
-	frustum[3].dist = DotProduct(vieworg, frustum[3].normal);
+	Dot(vieworg, frustum[0].normal, frustum[0].dist);
+	Dot(vieworg, frustum[1].normal, frustum[1].dist);
+	Dot(vieworg, frustum[2].normal, frustum[2].dist);
+	Dot(vieworg, frustum[3].normal, frustum[3].dist);
 }
 
 /**
@@ -320,26 +322,31 @@ void G_SetupFrustum_ForBinoculars(gentity_t *ent)
  */
 static qboolean G_CullPointAndRadius(vec3_t pt, float radius)
 {
-	float dist = DotProduct(pt, frustum[0].normal) - frustum[0].dist;
+	float dist;
+	Dot(pt, frustum[0].normal, dist);
+	dist -= frustum[0].dist;
 
 	if (dist < -radius || dist <= radius)
 	{
 		return qfalse;
 	}
 
-	dist = DotProduct(pt, frustum[1].normal) - frustum[1].dist;
+	Dot(pt, frustum[1].normal, dist);
+	dist -= frustum[1].dist;
 	if (dist < -radius || dist <= radius)
 	{
 		return qfalse;
 	}
 
-	dist = DotProduct(pt, frustum[2].normal) - frustum[2].dist;
+	Dot(pt, frustum[2].normal, dist);
+	dist -= frustum[2].dist;
 	if (dist < -radius || dist <= radius)
 	{
 		return qfalse;
 	}
 
-	dist = DotProduct(pt, frustum[3].normal) - frustum[3].dist;
+	Dot(pt, frustum[3].normal, dist);
+	dist -= frustum[3].dist;
 	if (dist < -radius || dist <= radius)
 	{
 		return qfalse;
@@ -1231,7 +1238,7 @@ void G_CheckSpottedLandMines(void)
 
 										trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\"");
 
-										
+
 										G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "landmine spotted");
 									}
 								}

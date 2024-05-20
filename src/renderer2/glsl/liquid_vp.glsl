@@ -1,84 +1,140 @@
 /* liquid_vp.glsl */
+#if defined(USE_DEFORM_VERTEXES)
+#include "lib/deformVertexes"
+#endif // USE_DEFORM_VERTEXES
 
 attribute vec4 attr_Position;
 attribute vec4 attr_Color;
+attribute vec4 attr_TexCoord0;
 attribute vec3 attr_Normal;
 #if defined(USE_NORMAL_MAPPING)
 attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
-attribute vec4 attr_TexCoord0;
 #endif // USE_NORMAL_MAPPING
+#if defined(USE_LIGHT_MAPPING)
+attribute vec4 attr_TexCoord1;     // the lightmap texture coordinates
+#endif // USE_LIGHT_MAPPING
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
-uniform mat4 u_NormalTextureMatrix;
-uniform vec3 u_ViewOrigin;
+
+// There is rgbGen and alphaGen.
+// It returns a vec4 (r,g,b,a) and this is send to the shaders in the u_ColorModulate vec4.
+// The values are all 0.0 for 'rgb', except when "rgbGen vertex" or "rgbGen oneminusvertex" are used.
+// The value is 0.0 for 'a', except when "alphaGen vertex" or "alphaGen oneminusvertex" are used.
+// If "rgbGen vertex" is used, values for 'rgb' are 1,1,1.
+// If "rgbGen oneminusvertex" is used, values for 'rgb' are -1,-1,-1.
+// If "alphaGen vertex" is used, the value for 'a' is 1.
+// If "alphaGen oneminusvertex" is used, the value for 'a' is -1.
+uniform vec4 u_ColorModulate;
+
+uniform vec4 u_Color;
+#if defined(USE_WATER) || defined(USE_DIFFUSE)
+uniform mat4 u_DiffuseTextureMatrix;
+#endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
+uniform vec3 u_ViewOrigin;
 uniform vec3 u_LightDir;
-#if defined(USE_PARALLAX_MAPPING)
+	#if defined(USE_PARALLAX_MAPPING)
 uniform float u_DepthScale;
-#endif // USE_PARALLAX_MAPPING
+	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
+#if defined(USE_DEFORM_VERTEXES)
+uniform float u_Time;
+#endif // USE_DEFORM_VERTEXES
 
-varying vec4 var_LightColor;
+varying vec4 var_Color;
 varying vec3 var_Position;
-varying vec3 var_ViewOrigin; // position - vieworigin
 varying vec3 var_Normal;
+#if defined(USE_LIGHT_MAPPING)
+varying vec2 var_TexLight;              // lightmap texture coordinates
+varying vec4 var_LightmapColor;
+#endif // USE_LIGHT_MAPPING
+#if defined(USE_WATER) || defined(USE_DIFFUSE)
+varying vec2 var_TexDiffuse;            // possibly moving coords
+#endif
+#if defined(USE_DIFFUSE)
+varying float var_alphaGen;
+#endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
-varying vec2 var_TexNormal; // these coords are never moving
-#if defined(USE_WATER)
-varying vec2 var_TexNormal2; // these coords might be moving (tcMod)
-#endif // USE_WATER
-varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin2; // vieworigin in worldspace
-#if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S; // size and start position of search in texture space
-#endif // USE_PARALLAX_MAPPING
+varying mat3 var_worldMatrix;
+varying vec2 var_TexNormal;             // these coords are never moving
+varying vec3 var_LightDirT;             // light direction in tangentspace
+varying vec3 var_ViewDirT;              // view direction in tangentspace
+	#if defined(USE_PARALLAX_MAPPING)
+varying float var_distanceToCam;            //
+	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-varying float var_BackSide; // in front, or behind, the portalplane
+varying float var_BackSide;     // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
 void main()
 {
+	vec4 position = attr_Position;
+
+#if defined(USE_DEFORM_VERTEXES)
+	position = DeformPosition2(position, attr_Normal, attr_TexCoord0.st, u_Time);
+#endif // USE_DEFORM_VERTEXES
+
 	// transform vertex position into homogenous clip-space
-	gl_Position = u_ModelViewProjectionMatrix * attr_Position;
+	gl_Position = u_ModelViewProjectionMatrix * position;
 
 	// transform position into world space
-	var_Position = (u_ModelMatrix * attr_Position).xyz;
+	var_Position = (u_ModelMatrix * position).xyz;
 
-	// the vieworigin
-	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
+	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 1.0)).xyz;
 
-	// transform normal into world space
-	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
+	var_Color = attr_Color * u_ColorModulate + u_Color;
+
+#if defined(USE_LIGHT_MAPPING)
+	// get lightmap texture coordinates
+	var_TexLight      = attr_TexCoord1.st;
+	var_LightmapColor = attr_Color * u_ColorModulate + u_Color;
+#endif // USE_LIGHT_MAPPING
+
+#if defined(USE_WATER) || defined(USE_DIFFUSE)
+	// tcmod transformed texcoords
+	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
+#endif
+
+#if defined(USE_DIFFUSE)
+	// the alpha value is the one set by alphaGen const <value>
+//	var_alphaGen = u_Color.a;
+	var_alphaGen = var_Color.a;
+//var_alphaGen = attr_Color.a;
+#endif // USE_DIFFUSE
+
 
 #if defined(USE_NORMAL_MAPPING)
-	vec3 tangent = (u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
-	vec3 binormal = (u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
+	// normalmap texcoords are not transformed
+	var_TexNormal = attr_TexCoord0.st;
 
-	// in a vertex-shader there exists no gl_FrontFacing
-	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
+	// from tangentspace to worldspace
+	var_worldMatrix = mat3(attr_Tangent, attr_Binormal, attr_Normal); // u_ModelMatrix
+	// from worldspace to tangentspace
+	var_tangentMatrix = transpose(var_worldMatrix); // for an ortho rotation matrix, the inverse is simply the transpose..
 
-	// transform normalmap texcoords
-	var_TexNormal.xy = attr_TexCoord0.st;
-#if defined(USE_WATER)
-	var_TexNormal2.xy = (u_NormalTextureMatrix * attr_TexCoord0).st;
-#endif // USE_WATER
 
-	var_LightColor = attr_Color;
-	var_LightDirection = -normalize(u_LightDir);
-	// the view origin in worldspace
-	var_ViewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
+	// from vertex to light
+	vec3 lightDirW = normalize(u_LightDir);
+	var_LightDirT = var_tangentMatrix * lightDirW;
+
+	// from vertex to camera
+	vec3 viewDirW = var_Position - u_ViewOrigin; // !! do not normalize
+	var_ViewDirT = var_tangentMatrix * viewDirW;
+
+
 #if defined(USE_PARALLAX_MAPPING)
-	var_S = var_ViewOrigin2.xy * -u_DepthScale / var_ViewOrigin2.z;
+	var_distanceToCam = length(viewDirW);
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
+
 
 #if defined(USE_PORTAL_CLIPPING)
 	// in front, or behind, the portalplane

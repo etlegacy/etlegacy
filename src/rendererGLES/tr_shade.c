@@ -185,7 +185,7 @@ static void DrawTris(shaderCommands_t *input)
 	R_DrawElements(input->numIndexes, input->indexes);
 #else
 	glDrawArrays(GL_TRIANGLES, 0, input->numVertexes);
-	glDrawElements(GL_LINE_STRIP, input->numIndexes, GL_INDEX_TYPE, input->indexes );
+	glDrawElements(GL_LINE_STRIP, input->numIndexes, GL_INDEX_TYPE, input->indexes);
 #endif
 
 	glDepthRangef(0, 1);
@@ -204,18 +204,18 @@ static void DrawNormals(shaderCommands_t *input)
 	glDepthRangef(0, 0);    // never occluded
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 
-    int i;
-    vec3_t vtx[2];
+	int    i;
+	vec3_t vtx[2];
 
-    for (i = 0 ; i < input->numVertexes ; i++)
-    {
-        VectorMA(input->xyz[i], r_normalLength->value, input->normal[i], temp);
+	for (i = 0 ; i < input->numVertexes ; i++)
+	{
+		VectorMA(input->xyz[i], r_normalLength->value, input->normal[i], temp);
 
-        memcpy(vtx, input->xyz[i], sizeof(GLfloat)*3);
-        memcpy(vtx+1, temp, sizeof(GLfloat)*3);
-        glVertexPointer (3, GL_FLOAT, 16, vtx);
-        glDrawArrays(GL_LINES, 0, 2);
-    }
+		memcpy(vtx, input->xyz[i], sizeof(GLfloat) * 3);
+		memcpy(vtx + 1, temp, sizeof(GLfloat) * 3);
+		glVertexPointer(3, GL_FLOAT, 16, vtx);
+		glDrawArrays(GL_LINES, 0, 2);
+	}
 
 	glDepthRangef(0, 1);
 }

@@ -66,7 +66,7 @@ typedef trace_t bsp_trace_t;
 typedef struct botlib_import_s
 {
 	// print messages from the bot library
-	void (QDECL *Print)(int type, char *fmt, ...) _attribute ((format(printf, 2, 3)));
+	void(QDECL * Print)(int type, char *fmt, ...) _attribute((format(printf, 2, 3)));
 	// trace a bbox through the world
 	void (*Trace)(bsp_trace_t *trace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask);
 	// trace a bbox against a specific entity
