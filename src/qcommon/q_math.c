@@ -1046,7 +1046,6 @@ void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out)
 
 // on x86 hardware we can actually use the 1/3 faster method from intrinsics
 #ifdef ETL_SSE
-#include <immintrin.h>
 float Q_rsqrt(float f)
 {
 	__m128 tmp = _mm_set_ss(f);
@@ -1404,7 +1403,7 @@ int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, struct cplane_s *p)
 #ifndef ETL_SSE
 
 #pragma warning( disable: 4035)
-__inline __declspec(naked) int BoxOnPlaneSide_fast(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
+ID_INLINE __declspec(naked) int BoxOnPlaneSide_fast(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 {
 	static int bops_initialized;
 	static int Ljmptab[8];
@@ -1882,19 +1881,8 @@ float RadiusFromBounds(const vec3_t mins, const vec3_t maxs)
  */
 void ClearBounds(vec3_t mins, vec3_t maxs)
 {
-#ifndef ETL_SSE
 	mins[0] = mins[1] = mins[2] = 99999.0f;
-	maxs[0] = maxs[1] = maxs[2] = -99999.0f;
-#else
-	__m128 xmm0, xmm1;
-	xmm0 = _mm_set1_ps(99999.0f);
-	xmm1 = _mm_set1_ps(-99999.0f);
-	_mm_store_ss(&mins[0], xmm0);
-	_mm_storeh_pi((__m64 *)(&mins[1]), xmm0);
-	_mm_store_ss(&maxs[0], xmm1);
-	_mm_storeh_pi((__m64 *)(&maxs[1]), xmm1);
-#endif
-}
+	maxs[0] = maxs[1] = maxs[2] = -99999.0f;}
 #endif
 
 #ifndef ETL_SSE
@@ -1906,7 +1894,6 @@ void ClearBounds(vec3_t mins, vec3_t maxs)
  */
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 {
-#ifndef ETL_SSE
 	if (v[0] < mins[0])
 	{
 		mins[0] = v[0];
@@ -1933,21 +1920,6 @@ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 	{
 		maxs[2] = v[2];
 	}
-#else
-	__m128 xmm0, xmm1, xmm2;
-	xmm0 = _mm_load_ss(&v[0]);
-	xmm0 = _mm_loadh_pi(xmm0, (const __m64 *)(&v[1]));
-	xmm1 = _mm_load_ss(&mins[0]);
-	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&mins[1]));
-	xmm2 = _mm_load_ss(&maxs[0]);
-	xmm2 = _mm_loadh_pi(xmm2, (const __m64 *)(&maxs[1]));
-	xmm1 = _mm_min_ps(xmm1, xmm0);
-	xmm2 = _mm_max_ps(xmm2, xmm0);
-	_mm_store_ss(&mins[0], xmm1);
-	_mm_storeh_pi((__m64 *)(&mins[1]), xmm1);
-	_mm_store_ss(&maxs[0], xmm2);
-	_mm_storeh_pi((__m64 *)(&maxs[1]), xmm2);
-#endif
 }
 #endif
 
@@ -2002,7 +1974,6 @@ qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs)
  */
 void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 {
-#ifndef ETL_SSE
 	if (mins2[0] < mins[0])
 	{
 		mins[0] = mins2[0];
@@ -2032,26 +2003,6 @@ void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 	{
 		maxs[2] = maxs2[2];
 	}
-#else
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4;
-	xmm1 = _mm_load_ss(&mins[0]);
-	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&mins[1]));
-	xmm2 = _mm_load_ss(&mins2[0]);
-	xmm2 = _mm_loadh_pi(xmm2, (const __m64 *)(&mins2[1]));
-
-	xmm3 = _mm_load_ss(&maxs[0]);
-	xmm3 = _mm_loadh_pi(xmm3, (const __m64 *)(&maxs[1]));
-	xmm4 = _mm_load_ss(&maxs2[0]);
-	xmm4 = _mm_loadh_pi(xmm4, (const __m64 *)(&maxs2[1]));
-
-	xmm1 = _mm_min_ps(xmm1, xmm2);
-	xmm3 = _mm_max_ps(xmm3, xmm4);
-
-	_mm_store_ss(&mins[0], xmm1);
-	_mm_storeh_pi((__m64 *)(&mins[1]), xmm1);
-	_mm_store_ss(&maxs[0], xmm3);
-	_mm_storeh_pi((__m64 *)(&maxs[1]), xmm3);
-#endif
 }
 #endif
 
@@ -4900,17 +4851,10 @@ void mat4_from_quat(mat4_t m, const quat_t q)
  */
 void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up)
 {
-#ifndef ETL_SSE
 	m[0] = forward[0];     m[4] = left[0];        m[8] = up[0];   m[12] = 0;
 	m[1] = forward[1];     m[5] = left[1];        m[9] = up[1];   m[13] = 0;
 	m[2] = forward[2];     m[6] = left[2];        m[10] = up[2];  m[14] = 0;
 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
-#else
-	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, forward[2], forward[1], forward[0]));
-	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, left[2], left[1], left[0]));
-	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, up[2], up[1], up[0]));
-	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
-#endif
 }
 #endif
 
@@ -4925,17 +4869,10 @@ void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, con
  */
 void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin)
 {
-#ifndef ETL_SSE
 	m[0] = forward[0];     m[4] = left[0];        m[8] = up[0];   m[12] = origin[0];
 	m[1] = forward[1];     m[5] = left[1];        m[9] = up[1];   m[13] = origin[1];
 	m[2] = forward[2];     m[6] = left[2];        m[10] = up[2];  m[14] = origin[2];
 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
-#else
-	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, forward[2], forward[1], forward[0]));
-	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, left[2], left[1], left[0]));
-	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, up[2], up[1], up[0]));
-	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, origin[2], origin[1], origin[0]));
-#endif
 }
 #endif
 

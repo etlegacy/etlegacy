@@ -64,6 +64,7 @@
 #else
 #include <intrin.h>
 #endif
+#include <immintrin.h>
 #include <pmmintrin.h>
 #endif
 #endif
