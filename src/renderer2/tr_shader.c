@@ -4069,13 +4069,13 @@ static qboolean ParseShader(char *_text)
 			if (!token[0])
 			{
 				Ren_Warning("WARNING: 'fogParms' incomplete - missing opacity value in shader '%s' set to 1\n", shader.name);
-				shader.fogParms.density = 1.0f;
+				shader.fogParms.density        = 1.0f;
 				shader.fogParms.depthForOpaque = 1.0f;
 			}
 			else
 			{
 				shader.fogParms.depthForOpaque = atof(token);
-				shader.fogParms.density = shader.fogParms.depthForOpaque < 1.0f ? shader.fogParms.depthForOpaque : 1.0f;
+				shader.fogParms.density        = shader.fogParms.depthForOpaque < 1.0f ? shader.fogParms.depthForOpaque : 1.0f;
 				//shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
 				d = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
 			}

@@ -9,11 +9,11 @@ attribute vec4 attr_Color;
 attribute vec3 attr_Normal;
 attribute vec4 attr_TexCoord0; // the diffuse/colormap texture coordinates
 #if defined(USE_LIGHT_MAPPING)
-	attribute vec4 attr_TexCoord1; // the lightmap texture coordinates
+attribute vec4 attr_TexCoord1;     // the lightmap texture coordinates
 #endif // USE_LIGHT_MAPPING
 #if defined(USE_NORMAL_MAPPING)
-	attribute vec3 attr_Tangent;
-	attribute vec3 attr_Binormal;
+attribute vec3 attr_Tangent;
+attribute vec3 attr_Binormal;
 #endif // USE_NORMAL_MAPPING
 
 // uniform variables
@@ -22,21 +22,21 @@ uniform mat4 u_ModelViewProjectionMatrix;
 uniform vec4 u_ColorModulate;
 uniform vec4 u_Color;
 #if defined(USE_DIFFUSE)
-	uniform mat4 u_DiffuseTextureMatrix;
+uniform mat4 u_DiffuseTextureMatrix;
 	#if defined(USE_NORMAL_MAPPING)
-		uniform vec3 u_ViewOrigin;
-		uniform vec3 u_LightDir;
-		uniform vec3 u_LightColor;
+uniform vec3 u_ViewOrigin;
+uniform vec3 u_LightDir;
+uniform vec3 u_LightColor;
 		#if defined(USE_PARALLAX_MAPPING)
-			uniform float u_DepthScale;
+uniform float u_DepthScale;
 		#endif // USE_PARALLAX_MAPPING
 	#endif // USE_NORMAL_MAPPING
 #endif // USE_DIFFUSE
 #if defined(USE_PORTAL_CLIPPING)
-	uniform vec4 u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 #if defined(USE_DEFORM_VERTEXES)
-	uniform float u_Time;
+uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
 // varying variables
@@ -44,24 +44,24 @@ varying vec3 var_Position;
 varying vec4 var_Color;
 varying vec3 var_Normal;
 #if defined(USE_LIGHT_MAPPING)
-	varying vec2 var_TexLight;//map
+varying vec2 var_TexLight;    //map
 #endif // USE_LIGHT_MAPPING
 #if defined(USE_DIFFUSE)
-	varying vec2 var_TexDiffuse;
+varying vec2 var_TexDiffuse;
 	#if defined(USE_NORMAL_MAPPING)
-		varying mat3 var_tangentMatrix;         // world to tangent space
-		varying mat3 var_worldMatrix;			// tangent to world space
-		varying vec3 var_LightDirW;             // in worldspace
-		varying vec3 var_LightDirT;			    // in tangentspace
-		varying vec3 var_ViewDirT;              // in tangentspace
-		varying vec3 var_ViewDirWn;             // in worldspace normalized
+varying mat3 var_tangentMatrix;                 // world to tangent space
+varying mat3 var_worldMatrix;                   // tangent to world space
+varying vec3 var_LightDirW;                     // in worldspace
+varying vec3 var_LightDirT;                     // in tangentspace
+varying vec3 var_ViewDirT;                      // in tangentspace
+varying vec3 var_ViewDirWn;                     // in worldspace normalized
 		#if defined(USE_PARALLAX_MAPPING)
-			varying float var_distanceToCam;    // distance in world space, from camera to object
+varying float var_distanceToCam;                // distance in world space, from camera to object
 		#endif // USE_PARALLAX_MAPPING
 	#endif // USE_NORMAL_MAPPING
 #endif // USE_DIFFUSE
 #if defined(USE_PORTAL_CLIPPING)
-	varying float var_BackSide; // in front, or behind, the portalplane
+varying float var_BackSide;     // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
 
 
@@ -112,7 +112,7 @@ void main()
 	// from vertex to camera
 	vec3 viewDirW = var_Position - u_ViewOrigin; // !! do not normalize
 	var_ViewDirWn = normalize(viewDirW);
-	var_ViewDirT = var_tangentMatrix * viewDirW;
+	var_ViewDirT  = var_tangentMatrix * viewDirW;
 
 
 #if defined(USE_PARALLAX_MAPPING)

@@ -4025,42 +4025,56 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 		// smooth the triangle soup:
 		// room for 100! normals to smooth. Store 2 values per vert (indexes for surface & vertex).
 		// Note: usually a vertex is shared over 2 or 3 triangles.   100 is very optimistic.
-		int surfverts[100][2];
-		int numsurfverts;
-		growList_t VertsDone;
+		int          surfverts[100][2];
+		int          numsurfverts;
+		growList_t   VertsDone;
 		vertexDone_t vertDone, *vertCheck;
-		qboolean isSmooth;
+		qboolean     isSmooth;
 		Com_InitGrowList(&VertsDone, 10000);
 		// first find all the same verts across all surfaces
 		for (int s = 0; s < s_worldData.numSurfaces; s++)
 		{
-			srfTriangles_t* surf = (srfTriangles_t*)s_worldData.surfaces[s].data;
-			if (surf->surfaceType != SF_TRIANGLES) continue;
+			srfTriangles_t *surf = (srfTriangles_t *)s_worldData.surfaces[s].data;
+			if (surf->surfaceType != SF_TRIANGLES)
+			{
+				continue;
+			}
 			for (int v = 0; v < surf->numVerts; v++)
 			{
 				// skip if this vertex is already done
 				for (int dv = 0; dv < VertsDone.currentElements; dv++)
 				{
-					vertCheck = (vertexDone_t*)Com_GrowListElement(&VertsDone, dv);
-					isSmooth = (vertCheck->surfaceIndex == s && vertCheck->vertexIndex == v);
-					if (isSmooth) goto nextVert;
+					vertCheck = (vertexDone_t *)Com_GrowListElement(&VertsDone, dv);
+					isSmooth  = (vertCheck->surfaceIndex == s && vertCheck->vertexIndex == v);
+					if (isSmooth)
+					{
+						goto nextVert;
+					}
 				}
 				// mark as done
 				vertDone.surfaceIndex = s;
-				vertDone.vertexIndex = v;
+				vertDone.vertexIndex  = v;
 				Com_AddToGrowList(&VertsDone, &vertDone);
 				//
-				numsurfverts = 0;
+				numsurfverts               = 0;
 				surfverts[numsurfverts][0] = s;
 				surfverts[numsurfverts][1] = v;
 				numsurfverts++;
 				// loop through all other verts to find vertices with the same positions
-				for (int s2 = 0; s2 < s_worldData.numSurfaces; s2++) {
-					srfTriangles_t* surf2 = (srfTriangles_t*)s_worldData.surfaces[s2].data;
-					if (surf2->surfaceType != SF_TRIANGLES) continue;
-					for (int v2 = 0; v2 < surf2->numVerts; v2++) {
+				for (int s2 = 0; s2 < s_worldData.numSurfaces; s2++)
+				{
+					srfTriangles_t *surf2 = (srfTriangles_t *)s_worldData.surfaces[s2].data;
+					if (surf2->surfaceType != SF_TRIANGLES)
+					{
+						continue;
+					}
+					for (int v2 = 0; v2 < surf2->numVerts; v2++)
+					{
 						// don't compare against the very same vert
-						if (s == s2 && v == v2) continue;
+						if (s == s2 && v == v2)
+						{
+							continue;
+						}
 						//if (R_CompareVert(&surf->verts[v], &surf2->verts[v2], qfalse))
 						//if (VectorCompare(surf->verts[v].xyz, surf2->verts[v].xyz))
 						if (VectorCompareEpsilon(surf->verts[v].xyz, surf2->verts[v2].xyz, 1.0))
@@ -4068,7 +4082,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 							if (numsurfverts < 100)
 							{
 								vertDone.surfaceIndex = s2;
-								vertDone.vertexIndex = v2;
+								vertDone.vertexIndex  = v2;
 								Com_AddToGrowList(&VertsDone, &vertDone);
 								surfverts[numsurfverts][0] = s2;
 								surfverts[numsurfverts][1] = v2;
@@ -4082,13 +4096,14 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 
 				// Add all the normal vectors of the verts that are the same across all surfaces
 				vec3_t smoothedNormal;
-				int s_index, v_index;
+				int    s_index, v_index;
 				VectorClear(smoothedNormal);
-				for (int sv = 0; sv < numsurfverts; sv++) {
+				for (int sv = 0; sv < numsurfverts; sv++)
+				{
 					s_index = surfverts[sv][0];
 					v_index = surfverts[sv][1];
-					srfTriangles_t* s2surf = (srfTriangles_t*)s_worldData.surfaces[s_index].data;
-					srfVert_t* s2vert = (srfVert_t*)&s2surf->verts[v_index];
+					srfTriangles_t *s2surf = (srfTriangles_t *)s_worldData.surfaces[s_index].data;
+					srfVert_t      *s2vert = (srfVert_t *)&s2surf->verts[v_index];
 					VectorAdd(smoothedNormal, s2vert->normal, smoothedNormal);
 				}
 
@@ -4096,23 +4111,25 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 				VectorNormalizeOnly(smoothedNormal);
 
 				// and replace the normals in the surfaces with the smoothened vertex-normal
-				for (int sv = 0; sv < numsurfverts; sv++) {
+				for (int sv = 0; sv < numsurfverts; sv++)
+				{
 					s_index = surfverts[sv][0];
 					v_index = surfverts[sv][1];
-					srfTriangles_t* s3surf = (srfTriangles_t*)s_worldData.surfaces[s_index].data;
-					srfVert_t* s3vert = (srfVert_t*)&s3surf->verts[v_index];
+					srfTriangles_t *s3surf = (srfTriangles_t *)s_worldData.surfaces[s_index].data;
+					srfVert_t      *s3vert = (srfVert_t *)&s3surf->verts[v_index];
 					VectorCopy(smoothedNormal, s3vert->normal);
 				}
 
 				// calculate tangent vectors with this new normal
-				srfTriangle_t* tri;
-				srfVert_t* dv[3];
-				int i;
-				for (int sv = 0; sv < numsurfverts; sv++) {
+				srfTriangle_t *tri;
+				srfVert_t     *dv[3];
+				int           i;
+				for (int sv = 0; sv < numsurfverts; sv++)
+				{
 					s_index = surfverts[sv][0];
 					v_index = surfverts[sv][1];
-					srfTriangles_t* s3surf = (srfTriangles_t*)s_worldData.surfaces[s_index].data;
-					srfVert_t* s3vert = (srfVert_t*)&s3surf->verts[v_index];
+					srfTriangles_t *s3surf = (srfTriangles_t *)s_worldData.surfaces[s_index].data;
+					srfVert_t      *s3vert = (srfVert_t *)&s3surf->verts[v_index];
 					for (i = 0, tri = s3surf->triangles; i < s3surf->numTriangles; i++, tri++)
 					{
 						dv[0] = &s3surf->verts[tri->indexes[0]];
@@ -4663,11 +4680,11 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		shader = R_FindShader(fogs->shader, SHADER_3D_DYNAMIC, qtrue);
 
 		VectorCopy(shader->fogParms.color, out->color);
-		out->color[3] = 1.0;
-		out->density = shader->fogParms.density;
-		d = shader->fogParms.depthForOpaque < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
+		out->color[3]       = 1.0;
+		out->density        = shader->fogParms.density;
+		d                   = shader->fogParms.depthForOpaque < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
 		out->depthForOpaque = shader->fogParms.depthForOpaque; // < 1.0f ? 1.0f : shader->fogParms.depthForOpaque;
-		out->tcScale = rcp(d); // rcp(shader->fogParms.depthForOpaque);
+		out->tcScale        = rcp(d); // rcp(shader->fogParms.depthForOpaque);
 
 		// global fog sets clearcolor/zfar
 		if (out->originalBrushNumber == -1)
@@ -7930,7 +7947,7 @@ if (backEnd.currentEntity != &tr.worldEntity)
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = Com_GrowListElement(&tr.cubeProbes, j);
-		distance = DistanceSquared(cubeProbe->origin, position); // we do not need the distance. Squared distance is enough..
+		distance  = DistanceSquared(cubeProbe->origin, position); // we do not need the distance. Squared distance is enough..
 		if (distance < mindistance)
 		{
 			closestProbe      = cubeProbe;
@@ -8828,7 +8845,7 @@ void RE_LoadWorldMap(const char *name)
 
 	// reset fog to map fog (if present)
 	if (tr.world->globalFog < 0)
-	{ 
+	{
 		// if there is no globalfog
 		RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 50, 0, 0, 0, 0);
 	}

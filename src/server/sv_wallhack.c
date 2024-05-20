@@ -407,8 +407,8 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	}
 
 	// calculate unit vector of the direction the player looks at
-	yaw    = DEG2RAD(viewangle[YAW]);
-	pitch  = DEG2RAD(viewangle[PITCH]);
+	yaw   = DEG2RAD(viewangle[YAW]);
+	pitch = DEG2RAD(viewangle[PITCH]);
 	SinCos(yaw, Sy, Cy);
 	SinCos(pitch, Spp, Cp);
 	dir[0] = Cy * Cp;

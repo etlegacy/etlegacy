@@ -3542,11 +3542,11 @@ static void R_CreateColorCubeImages(void)
  */
 void R_CreateBuiltinImages(void)
 {
-	int   x, y;
-	byte  data[DEFAULT_SIZE][DEFAULT_SIZE][4];
-	byte  *out;
-	float s, value;
-	byte  intensity;
+	int         x, y;
+	byte        data[DEFAULT_SIZE][DEFAULT_SIZE][4];
+	byte        *out;
+	float       s, value;
+	byte        intensity;
 	const float rDEFAULT_SIZE  = 1.0f / DEFAULT_SIZE;
 	const float rDEFAULT_SIZE2 = 2.0f / DEFAULT_SIZE;
 

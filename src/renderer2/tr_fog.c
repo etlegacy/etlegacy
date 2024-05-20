@@ -162,16 +162,19 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 	              restore, duration, r, g, b, depthForOpaque);
 
 	// a globalfog must exist
-	if (!tr.world || tr.world->globalFog < 0) {
+	if (!tr.world || tr.world->globalFog < 0)
+	{
 		return;
 	}
 
 	if (restore)
 	{
-		if (duration > 0) {
+		if (duration > 0)
+		{
 
 		}
-		else {
+		else
+		{
 			tr.world->fogs[tr.world->globalFog].color[0] = tr.world->globalFog_Original[0];
 			tr.world->fogs[tr.world->globalFog].color[1] = tr.world->globalFog_Original[1];
 			tr.world->fogs[tr.world->globalFog].color[2] = tr.world->globalFog_Original[2];
@@ -184,9 +187,10 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 	{
 		if (duration > 0)
 		{
-			//TODO			
+			//TODO
 		}
-		else {
+		else
+		{
 			tr.world->fogs[tr.world->globalFog].color[0] = r;
 			tr.world->fogs[tr.world->globalFog].color[1] = g;
 			tr.world->fogs[tr.world->globalFog].color[2] = b;
@@ -195,7 +199,7 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 			//tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].depthForOpaque);
 			tr.world->fogs[tr.world->globalFog].tcScale = rcp(depthForOpaque < 1.0f ? 1.0f : depthForOpaque);
 
-			/*			
+			/*
 			Vector4Set(tr.glfogsettings[FOG_TARGET].color, r, g, b, 1.0);
 			tr.glfogsettings[FOG_TARGET].end = tr.world->fogs[tr.world->globalFog].depthForOpaque;
 			tr.glfogsettings[FOG_TARGET].density = tr.world->fogs[tr.world->globalFog].density;
@@ -250,15 +254,15 @@ void R_SetFrameFog(void)
 			VectorSubtract(tr.world->globalFog_TransitionEndFog, tr.world->globalFog_TransitionStartFog, vec);
 			VectorMA(vec, lerpPos, tr.world->globalFog_TransitionStartFog, tr.world->fogs[tr.world->globalFog].color);
 			tr.world->fogs[tr.world->globalFog].depthForOpaque = (tr.world->globalFog_TransitionEndFog[3] - tr.world->globalFog_TransitionStartFog[3]) * lerpPos + tr.world->globalFog_TransitionStartFog[3];
-			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].depthForOpaque);
+			tr.world->fogs[tr.world->globalFog].tcScale        = rcp(tr.world->fogs[tr.world->globalFog].depthForOpaque);
 		}
 		else
 		{
 			// transition complete
 			VectorCopy(tr.world->globalFog_TransitionEndFog, tr.world->fogs[tr.world->globalFog].color);
 			tr.world->fogs[tr.world->globalFog].depthForOpaque = tr.world->globalFog_TransitionEndFog[3];
-			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->globalFog_TransitionEndFog[3]);
-			tr.world->globalFog_TransitionEndTime = 0; // stop any transition
+			tr.world->fogs[tr.world->globalFog].tcScale        = rcp(tr.world->globalFog_TransitionEndFog[3]);
+			tr.world->globalFog_TransitionEndTime              = 0; // stop any transition
 		}
 
 	}
@@ -352,7 +356,7 @@ void R_SetFrameFog(void)
 			Com_Memcpy(&tr.glfogsettings[FOG_CURRENT], &tr.glfogsettings[FOG_TARGET], sizeof(glfog_t));
 		}
 	}
-	else 
+	else
 	{
 		// the case where no duration is given
 		Com_Memcpy(&tr.glfogsettings[FOG_CURRENT], &tr.glfogsettings[FOG_TARGET], sizeof(glfog_t));

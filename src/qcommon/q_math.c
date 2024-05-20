@@ -1882,7 +1882,8 @@ float RadiusFromBounds(const vec3_t mins, const vec3_t maxs)
 void ClearBounds(vec3_t mins, vec3_t maxs)
 {
 	mins[0] = mins[1] = mins[2] = 99999.0f;
-	maxs[0] = maxs[1] = maxs[2] = -99999.0f;}
+	maxs[0] = maxs[1] = maxs[2] = -99999.0f;
+}
 #endif
 
 #ifndef ETL_SSE

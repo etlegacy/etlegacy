@@ -1864,8 +1864,8 @@ void RE_Shutdown(qboolean destroyWindow)
 
 			if (tr.world)
 			{
-				int          j;
-				bspNode_t    *node;
+				int       j;
+				bspNode_t *node;
 				//trRefLight_t *light;
 
 				for (j = 0; j < tr.world->numnodes; j++)

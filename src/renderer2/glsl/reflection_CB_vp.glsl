@@ -27,15 +27,15 @@ attribute vec3 attr_Binormal2;
 
 uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
-uniform mat4  u_NormalTextureMatrix;
-uniform mat4  u_ModelMatrix;
-uniform mat4  u_ModelViewProjectionMatrix;
-uniform vec3  u_ViewOrigin;
+uniform mat4 u_NormalTextureMatrix;
+uniform mat4 u_ModelMatrix;
+uniform mat4 u_ModelViewProjectionMatrix;
+uniform vec3 u_ViewOrigin;
 #if defined(USE_DEFORM_VERTEXES)
 uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec3 var_Position;
@@ -64,10 +64,10 @@ void    main()
 
 #if defined(USE_NORMAL_MAPPING)
 	VertexSkinning_PTBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
-	                    position,      tangent,      binormal,      normal);
+	                    position, tangent, binormal, normal);
 #else
 	VertexSkinning_PN(attr_Position, attr_Normal,
-	                  position,      normal);
+	                  position, normal);
 #endif // USE_NORMAL_MAPPING
 
 
@@ -75,16 +75,16 @@ void    main()
 
 #if defined(USE_NORMAL_MAPPING)
 	VertexAnimation_PTBN(attr_Position, attr_Position2,
-	                     attr_Tangent,  attr_Tangent2,
+	                     attr_Tangent, attr_Tangent2,
 	                     attr_Binormal, attr_Binormal2,
-	                     attr_Normal,   attr_Normal2,
+	                     attr_Normal, attr_Normal2,
 	                     u_VertexInterpolation,
 	                     position, tangent, binormal, normal);
 #else
 	VertexAnimation_PN(attr_Position, attr_Position2,
-	                   attr_Normal,   attr_Normal2,
+	                   attr_Normal, attr_Normal2,
 	                   u_VertexInterpolation,
-	                   position,      normal);
+	                   position, normal);
 #endif // USE_NORMAL_MAPPING
 
 #else // USE_VERTEX_SKINNING,USE_VERTEX_ANIMATION
@@ -94,7 +94,7 @@ void    main()
 	tangent  = attr_Tangent;
 	binormal = attr_Binormal;
 #endif // USE_NORMAL_MAPPING
-	normal   = attr_Normal;
+	normal = attr_Normal;
 
 #endif // USE_VERTEX_SKINNING,USE_VERTEX_ANIMATION
 

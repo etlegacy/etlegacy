@@ -119,12 +119,12 @@ static void R2Thread_Unlock(void)
 //mutex
 static void R2Thread_Lock(void)
 {
-    pthread_mutex_lock(&R2Thread_Mutex);
+	pthread_mutex_lock(&R2Thread_Mutex);
 }
 
 static void R2Thread_Unlock(void)
 {
-    pthread_mutex_unlock(&R2Thread_Mutex);
+	pthread_mutex_unlock(&R2Thread_Mutex);
 }
 
 #endif

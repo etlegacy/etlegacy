@@ -16,7 +16,7 @@ void main()
 {
 #if 0
 	vec2 scale = r_FBufScale * r_NPOTScale;
-	vec2 st = gl_FragCoord.st;
+	vec2 st    = gl_FragCoord.st;
 
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	st *= r_FBufScale;
@@ -28,7 +28,7 @@ void main()
 	st *= r_NPOTScale;
 #else
 	vec2 scale = r_FBufNPOTScale;
-	vec2 st = gl_FragCoord.st * r_FBufNPOTScale;
+	vec2 st    = gl_FragCoord.st * r_FBufNPOTScale;
 	st *= vec2(4.0, 4.0);
 #endif
 
@@ -38,6 +38,6 @@ void main()
 	color += f(texture2D(u_ColorMap, st + vec2(1.0, -1.0) * scale));
 	color += f(texture2D(u_ColorMap, st + vec2(1.0, 1.0) * scale));
 	color *= 0.25;
-	
+
 	gl_FragColor = color;
 }

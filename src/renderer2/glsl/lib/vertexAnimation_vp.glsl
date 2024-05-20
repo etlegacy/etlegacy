@@ -11,14 +11,14 @@ vec3 InterpolateNormal(vec3 from, vec3 to, float frac)
 }
 
 void VertexAnimation_P(vec4 fromPosition, vec4 toPosition,
-                         float frac,
-                         inout vec4 position)
+                       float frac,
+                       inout vec4 position)
 {
 	position = InterpolatePosition(fromPosition, toPosition, frac);
 }
 
-void VertexAnimation_PN(vec4 fromPosition,   vec4 toPosition,
-                        vec3 fromNormal,     vec3 toNormal,
+void VertexAnimation_PN(vec4 fromPosition, vec4 toPosition,
+                        vec3 fromNormal, vec3 toNormal,
                         float frac,
                         inout vec4 position, inout vec3 normal)
 {
@@ -27,9 +27,9 @@ void VertexAnimation_PN(vec4 fromPosition,   vec4 toPosition,
 }
 
 void VertexAnimation_PTBN(vec4 fromPosition, vec4 toPosition,
-                          vec3 fromTangent,  vec3 toTangent,
+                          vec3 fromTangent, vec3 toTangent,
                           vec3 fromBinormal, vec3 toBinormal,
-                          vec3 fromNormal,   vec3 toNormal,
+                          vec3 fromNormal, vec3 toNormal,
                           float frac,
                           inout vec4 position, inout vec3 tangent, inout vec3 binormal, inout vec3 normal)
 {

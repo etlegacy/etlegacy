@@ -1153,8 +1153,8 @@ static void Render_shadowFill(int stage)
  * @param[in] light
  */
 static void Render_forwardLighting_omni(shaderStage_t *diffuseStage,
-                                            shaderStage_t *attenuationXYStage,
-                                            shaderStage_t *attenuationZStage, trRefLight_t *light)
+                                        shaderStage_t *attenuationXYStage,
+                                        shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	rgbaGen_t rgbaGen;
 	qboolean  use_vertexSkinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
@@ -1254,8 +1254,8 @@ static void Render_forwardLighting_omni(shaderStage_t *diffuseStage,
  * @param[in] light
  */
 static void Render_forwardLighting_proj(shaderStage_t *diffuseStage,
-                                            shaderStage_t *attenuationXYStage,
-                                            shaderStage_t *attenuationZStage, trRefLight_t *light)
+                                        shaderStage_t *attenuationXYStage,
+                                        shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	rgbaGen_t rgbaGen;
 	qboolean  use_alphaTesting    = (diffuseStage->stateBits & GLS_ATEST_BITS) != 0;
@@ -1399,8 +1399,8 @@ static void Render_forwardLighting_proj(shaderStage_t *diffuseStage,
  * @param[in] light
  */
 static void Render_forwardLighting_directional(shaderStage_t *diffuseStage,
-                                                   shaderStage_t *attenuationXYStage,
-                                                   shaderStage_t *attenuationZStage, trRefLight_t *light)
+                                               shaderStage_t *attenuationXYStage,
+                                               shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	vec3_t    lightDirection;
 	rgbaGen_t rgbaGen;
@@ -1992,7 +1992,7 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 {
 	uint32_t      attributebits;
 	rgbaGen_t     rgbaGen;
-	shaderStage_t *pStage            = tess.surfaceStages[stage];
+	shaderStage_t *pStage = tess.surfaceStages[stage];
 	float         fogDensity;
 	qboolean      use_diffuseMapping = (pStage->type == ST_BUNDLE_WDB || pStage->type == ST_BUNDLE_WD);
 	qboolean      use_deforms;
@@ -2024,7 +2024,7 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 		use_reflections     = r_reflectionMapping->integer && use_normalMapping &&
 		                      tr.cubeProbes.currentElements > 0;   // && !tr.refdef.renderingCubemap;
 		//use_water           = use_normalMapping && use_diffuseMapping && pStage->bundle[TB_DIFFUSEMAP].numTexMods;
-		use_water           = use_normalMapping && pStage->bundle[0].numTexMods; // a liquidmap without diffusemap, but with bumpmap, moving
+		use_water = use_normalMapping && pStage->bundle[0].numTexMods;           // a liquidmap without diffusemap, but with bumpmap, moving
 
 		// if renderingCubemap is true, we are now rendering a cubemap.
 		// But if the needed cubemaps are not yet ready for usage (if they need to get rendered first),
@@ -2086,27 +2086,27 @@ static void Render_liquid(int stage, qboolean use_lightMapping)
 	}
 
 	//if (tr.glfogsettings[FOG_WATER].registered && tr.glfogsettings[FOG_WATER].end > 1.0f) {
-		SetUniformBoolean(UNIFORM_B_UNDERWATER, (tr.refdef.rdflags & RDF_UNDERWATER ? GL_TRUE : GL_FALSE));
-		fogDensity = tr.glfogsettings[FOG_WATER].end; // this is the waterfogvars depthForOpaque value
-		SetUniformFloat(UNIFORM_FOGDENSITY, 0.005f);// fogDensity);
-		if (fogDensity > 0.0)
-		{
-			vec3_t fogColor;
-			VectorSet(fogColor, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2]);
-			SetUniformVec3(UNIFORM_FOGCOLOR, fogColor);
-			SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
+	SetUniformBoolean(UNIFORM_B_UNDERWATER, (tr.refdef.rdflags & RDF_UNDERWATER ? GL_TRUE : GL_FALSE));
+	fogDensity = tr.glfogsettings[FOG_WATER].end;     // this is the waterfogvars depthForOpaque value
+	SetUniformFloat(UNIFORM_FOGDENSITY, 0.005f);    // fogDensity);
+	if (fogDensity > 0.0)
+	{
+		vec3_t fogColor;
+		VectorSet(fogColor, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2]);
+		SetUniformVec3(UNIFORM_FOGCOLOR, fogColor);
+		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
-			// bind u_DepthMap
-			SelectTexture(TEX_DEPTH);
-			if (HDR_ENABLED())
-			{
-				GL_Bind(tr.depthRenderImage);
-			}
-			else
-			{
-				ImageCopyBackBuffer(tr.depthRenderImage); // depth texture is not bound to a FBO
-			}
+		// bind u_DepthMap
+		SelectTexture(TEX_DEPTH);
+		if (HDR_ENABLED())
+		{
+			GL_Bind(tr.depthRenderImage);
 		}
+		else
+		{
+			ImageCopyBackBuffer(tr.depthRenderImage);     // depth texture is not bound to a FBO
+		}
+	}
 	//}
 
 	// capture current color buffer for u_CurrentMap
