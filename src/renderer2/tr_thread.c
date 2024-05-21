@@ -58,7 +58,7 @@ static thr_CubemapSave_t *oldest_CubemapSave = NULL;      // the oldest of the u
 
 #if defined(WIN32) || defined(WIN64)
 static HANDLE R2Thread_Mutex; // windows
-#elif defined(__linux__)
+#elif defined(__unix__) || defined(__APPLE__)
 //static struct _IO_FILE R2Thread_Mutex;
 static pthread_mutex_t R2Thread_Mutex;
 #endif
@@ -472,6 +472,10 @@ void R2Thread_Stop(void)
 	Ren_Print("R2_Thread stopping..\n");
 	R2Thread_QuitRequested = qtrue;
 	R2Thread_Wait();
+#ifdef WIN32
 	//CloseHandle(R2Thread_Handle);
 	CloseHandle(R2Thread_Mutex);
+#else
+	pthread_mutex_destroy(&R2Thread_Mutex);
+#endif
 }

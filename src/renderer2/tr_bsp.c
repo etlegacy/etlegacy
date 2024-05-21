@@ -782,8 +782,8 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 	image_t      *image;
 	int          i, j, j3, j4;
 	static byte  data[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4], *buf, *buf_p;
-	const        lightmapSquared  = LIGHTMAP_SIZE * LIGHTMAP_SIZE;
-	const        lightmapSquared3 = lightmapSquared * 3;
+	const int    lightmapSquared  = LIGHTMAP_SIZE * LIGHTMAP_SIZE;
+	const int    lightmapSquared3 = lightmapSquared * 3;
 
 	buf = fileBase + l->fileofs;
 

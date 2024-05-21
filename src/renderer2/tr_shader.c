@@ -6349,7 +6349,8 @@ static void ScanAndLoadGuideFiles(void)
 			Ren_Drop("Couldn't load %s (single buffer)", filename);
 		}
 	}
-	s_guideText = (char *)ri.Hunk_Alloc(sum + numGuides * 2, h_low);
+	u_long s_guideText_len = sum + numGuides * 2 * sizeof(char);
+	s_guideText = (char *)ri.Hunk_Alloc(s_guideText_len, h_low);
 
 	// load in reverse order, so doubled templates are overriden properly
 	for (i = numGuides - 1; i >= 0; i--)
@@ -6363,7 +6364,7 @@ static void ScanAndLoadGuideFiles(void)
 			Ren_Drop("Couldn't load %s (buffer)", filename); // in theory this shouldn't occure anymore - see build single large buffer
 		}
 
-		Q_strcat(s_guideText, s_guideText, "\n");
+		Q_strcat(s_guideText, s_guideText_len, "\n");
 		p = &s_guideText[strlen(s_guideText)];
         Q_strcat(s_guideText, sizeof(s_guideText), buffers[i]);
 		ri.FS_FreeFile(buffers[i]);
@@ -6382,7 +6383,7 @@ static void ScanAndLoadGuideFiles(void)
 		p = buffers[i];
 
 		// look for label
-		while (1)
+		while (qtrue)
 		{
 			token = COM_ParseExt2(&p, qtrue);
 			if (token[0] == 0)
@@ -6413,7 +6414,7 @@ static void ScanAndLoadGuideFiles(void)
 				break;
 			}
 
-			while (1)
+			while (qtrue)
 			{
 				token = COM_ParseExt2(&p, qtrue);
 
@@ -6438,12 +6439,8 @@ static void ScanAndLoadGuideFiles(void)
 			SkipBracedSection(&p);
 
 			// if we passed the pointer to the next shader file
-			if (i < numGuides - 1)
-			{
-				if (p > buffers[i + 1])
-				{
-					break;
-				}
+			if (i < numGuides - 1 && p > buffers[i + 1]) {
+				break;
 			}
 		}
 	}
