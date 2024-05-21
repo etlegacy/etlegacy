@@ -128,6 +128,42 @@ vidmode_t glimp_vidModes[] =        // keep in sync with LEGACY_RESOLUTIONS
 };
 static int s_numVidModes = ARRAY_LEN(glimp_vidModes);
 
+static void GLimp_ParseConfigString(const char *glConfigString, char *type, int *major, int *minor, int *context, int *samples)
+{
+	const char *value;
+
+	// Default values
+	type[0]  = '\0';
+	*major   = 1;
+	*minor   = 0;
+	*context = 0;
+	*samples = 0;
+
+	Com_DPrintf("GLimp_ParseConfigString: %s\n", glConfigString);
+	value = Info_ValueForKey(glConfigString, "type");
+
+	if (value && *value)
+	{
+		Q_strncpyz(type, value, 32);
+	}
+	else
+	{
+		Q_strncpyz(type, "opengl", 32);
+	}
+
+	value  = Info_ValueForKey(glConfigString, "major");
+	*major = value && *value ? Q_atoi(value) : 1;
+
+	value  = Info_ValueForKey(glConfigString, "minor");
+	*minor = value && *value ? Q_atoi(value) : 0;
+
+	value    = Info_ValueForKey(glConfigString, "context");
+	*context = value && *value ? Q_atoi(value) : 0;
+
+	value    = Info_ValueForKey(glConfigString, "samples");
+	*samples = value && *value ? Q_atoi(value) : 0;
+}
+
 /**
  * @brief GLimp_MainWindow
  * @return
@@ -657,11 +693,12 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
  * @param[in] context
  * @return
  */
-static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, windowContext_t *context)
+static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, const char *glConfigString)
 {
+	char            type[32];
+	int             major, minor, contextVersion, samples;
 	int             perChannelColorBits;
 	int             colorBits, depthBits, stencilBits;
-	int             samples;
 	int             i     = 0;
 	SDL_Surface     *icon = NULL;
 	SDL_DisplayMode desktopMode;
@@ -670,7 +707,9 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 	Uint32 flags = SDL_WINDOW_INPUT_GRABBED;
 
-	if (context->vulkan)
+	GLimp_ParseConfigString(glConfigString, type, &major, &minor, &contextVersion, &samples);
+
+	if (Q_stricmp(type, "vulkan") == 0)
 	{
 		flags |= SDL_WINDOW_VULKAN;
 #ifndef FEATURE_RENDERER_VULKAN
@@ -806,7 +845,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		depthBits = r_depthbits->integer;
 	}
 	stencilBits = r_stencilbits->integer;
-	samples     = (context && context->samples ? context->samples : 0);
 
 	for (i = 0; i < 16; i++)
 	{
@@ -961,12 +999,12 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		SDL_SetWindowIcon(main_window, icon);
 
-		if (context && context->versionMajor > 0)
+		if (flags & SDL_WINDOW_OPENGL && contextVersion > 0)
 		{
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, context->versionMajor);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, context->versionMinor);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, major);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minor);
 
-			switch (context->context)
+			switch (contextVersion)
 			{
 			case GL_CONTEXT_COMP:
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
@@ -982,7 +1020,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 				break;
-			case GL_CONTEXT_DEFAULT:
 			default:
 				break;
 			}
@@ -1041,7 +1078,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
  * @param[in] context
  * @return
  */
-static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, windowContext_t *context)
+static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, const char *glConfigString)
 {
 	rserr_t err;
 
@@ -1061,8 +1098,16 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 			return qfalse;
 		}
 
+		// if (Q_stricmp(Info_ValueForKey(glConfigString, "renderer"), "software") == 0)
+		// {
+		// 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 0);
+		// }
+
 #ifdef FEATURE_RENDERER_VULKAN
-		SDL_Vulkan_LoadLibrary(NULL);
+		if (Q_stricmp(Info_ValueForKey(glConfigString, "type"), "vulkan") == 0)
+		{
+			SDL_Vulkan_LoadLibrary(NULL);
+		}
 #endif
 
 		Com_Printf("SDL initialized driver \"%s\"\n", SDL_GetCurrentVideoDriver());
@@ -1076,7 +1121,7 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 		fullscreen             = qfalse;
 	}
 
-	err = GLimp_SetMode(glConfig, mode, fullscreen, noborder, context);
+	err = GLimp_SetMode(glConfig, mode, fullscreen, noborder, glConfigString);
 
 	switch (err)
 	{
@@ -1105,7 +1150,7 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
  * @param[in,out] glConfig
  * @param[in] context
  */
-void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
+void GLimp_Init(glconfig_t *glConfig, const char *glConfigString)
 {
 	SDL_version compiled;
 	SDL_version linked;
@@ -1128,7 +1173,7 @@ void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
 	Sys_GLimpInit();
 
 	// Create the window and set up the context
-	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, (qboolean) !!r_noBorder->integer, context))
+	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, (qboolean) !!r_noBorder->integer, glConfigString))
 	{
 		goto success;
 	}
@@ -1136,7 +1181,7 @@ void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
 	// Try again, this time in a platform specific "safe mode"
 	Sys_GLimpSafeInit();
 
-	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, qfalse, context))
+	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, qfalse, glConfigString))
 	{
 		goto success;
 	}
@@ -1145,7 +1190,7 @@ void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
 	if (r_mode->integer != R_MODE_FALLBACK)
 	{
 		Com_Printf("Setting r_mode %d failed, falling back on r_mode %d\n", r_mode->integer, R_MODE_FALLBACK);
-		if (GLimp_StartDriverAndSetMode(glConfig, R_MODE_FALLBACK, qfalse, qfalse, context))
+		if (GLimp_StartDriverAndSetMode(glConfig, R_MODE_FALLBACK, qfalse, qfalse, glConfigString))
 		{
 			goto success;
 		}

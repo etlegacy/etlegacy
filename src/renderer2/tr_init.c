@@ -323,11 +323,17 @@ static qboolean InitOpenGL(void)
 
 	if (glConfig.vidWidth == 0)
 	{
-		windowContext_t windowContext = { 3, 3, GL_CONTEXT_CORE };
-		GLint           temp;
+		char  renderer_buffer[1024];
+		GLint temp;
+
+		char glConfigString[1024] = { 0 };
+		Info_SetValueForKey(glConfigString, "type", "opengl");
+		Info_SetValueForKey(glConfigString, "major", "3");
+		Info_SetValueForKey(glConfigString, "minor", "3");
+		Info_SetValueForKey(glConfigString, "context", va("%i", GL_CONTEXT_CORE));
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
-		ri.GLimp_Init(&glConfig, &windowContext);
+		ri.GLimp_Init(&glConfig, glConfigString);
 
 		GL_CheckErrors();
 
