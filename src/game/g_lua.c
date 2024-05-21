@@ -1033,6 +1033,11 @@ static const gentity_field_t gclient_fields[] =
 #endif
 	_et_gclient_addfield(sess.uci,                          FIELD_INT,                 0),
 
+#ifdef LEGACY_AUTH
+	_et_gclient_addfield(sess.authName,                     FIELD_STRING,              FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.authId,                       FIELD_INT,                 FIELD_FLAG_READONLY),
+#endif
+
 	_et_gclient_addfield(sess.aWeaponStats,                 FIELD_WEAPONSTAT,          FIELD_FLAG_READONLY),
 
 	//_et_gclient_addfieldalias(aWeaponStats, sess.aWeaponStats, FIELD_WEAPONSTAT_EXT, FIELD_FLAG_READONLY),
