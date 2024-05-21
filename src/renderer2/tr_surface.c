@@ -313,7 +313,7 @@ void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, fl
  * Note: Since Tess_AddQuadStampExt2() is called with always the same texturecoords passed in,
  *       this version of the function was made
  */
-ID_INLINE void Tess_AddQuadStampExt3(vec4_t quadVerts[4], const vec4_t color, qboolean calcNormals)
+static void Tess_AddQuadStampExt3(vec4_t quadVerts[4], const vec4_t color, qboolean calcNormals)
 {
 	//int    i;
 	vec4_t plane;

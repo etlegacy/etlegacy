@@ -1306,7 +1306,7 @@ void R_SortInteractions(trRefLight_t *light)
  * @param[in] plane
  * @param[out] res
  */
-ID_INLINE void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plane, vec3_t res)
+static void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plane, vec3_t res)
 {
 	vec3_t v;
 	float  sect, dotnv1, dotnv;
@@ -1345,7 +1345,7 @@ void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, con
  * @param[in] world
  */
 #pragma warning(disable:4700)
-ID_INLINE void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
+static void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
 {
 	vec4_t eye, clip, normalized, window;
 	vec4_t src2 = { 0.f, 0.f, 0.f, 1.f };
@@ -1396,7 +1396,7 @@ ID_INLINE void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
  * @param[in] local1
  * @param[in] local2
  */
-ID_INLINE void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t local2)
+static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t local2)
 {
 	int      i;
 	qboolean side1, side2;
@@ -1785,7 +1785,7 @@ mat4_t rotMatrix_90_0_0_r = { 0.f,  0.f,  1.f,  0.f,
  * @param[in] light
  * @param[in] worldBounds
  * @return
- * 
+ *
  * INFO: This function could use a cleanup. But then all the old code and comments get lost.
  *       Because the old code makes it easier to understand what is going on, i leave in all that for "understandability"..
  */
@@ -1881,7 +1881,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	Vector4Set(&viewMatrix[12], -tmpMatrix[13], tmpMatrix[14], -tmpMatrix[12], tmpMatrix[15]);*/
 
 		// OpenGL projection matrix
-		// 
+		//
 		// tan(90 degrees) is always the same constant, zNear is always 1  =>  keep it simple..(for the computer)
 		fovX = 90.0f;
 		fovY = 90.0f; // R_CalcFov(fovX, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);

@@ -928,6 +928,7 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 	case MOD_MD5:
 		// Dushan: VS need this first
+	{
 		vec3_t tmp;
 		retval = RE_BoneIndex(handle, tagName);
 		if (retval <= 0)
@@ -941,7 +942,8 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 		VectorCopy(tag->axis[0], tag->axis[1]);
 		VectorCopy(tmp, tag->axis[0]);
 		return retval;
-		break; //..
+	}
+	break;         //..
 #endif
 
 	default:
@@ -950,15 +952,15 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 		return -1;
 
 		/*	case MOD_MDS:
-		    // use bone lerping
-		    retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
-		    if (retval >= 0)
-		    {
-		    	return retval;
-		    }
-		    // failed
-		    return -1;
-		    break;*/
+				// use bone lerping
+				retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
+				if (retval >= 0)
+				{
+					return retval;
+				}
+				// failed
+				return -1;
+				break;*/
 
 /*	case MOD_MDC:
 	    // psuedo-compressed MDC tags
