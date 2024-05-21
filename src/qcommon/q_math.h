@@ -92,8 +92,10 @@ int __cdecl SSE_strcmp(_In_z_ char const *_Str1, _In_z_ char const *_Str2);
 
 // i don't know how to make pragma 4700 warning suppression work for inlined macros.
 // It works with normal functions (see _Vector2AM() on how to successfully disable warnings 4700)
+#ifdef _MSC_VER
 #pragma warning(disable:4700)
 #pragma warning(disable:4010)
+#endif
 
 typedef float vec_t;
 typedef vec_t vec2_t[2];

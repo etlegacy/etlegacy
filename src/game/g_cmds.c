@@ -459,7 +459,7 @@ void G_SendScore(gentity_t *ent)
 	int i         = 0;
 	int numSorted = level.numConnectedClients; // send the latest information on all clients
 	int count     = 0;
-	// commands over 1022 will crash the client so they're
+	// commands over 1022 will crash the client, so they're
 	// pruned in trap_SendServerCommand()
 	// 1022 -32 for the startbuffer -3 for the clientNum
 	char buffer[987];
