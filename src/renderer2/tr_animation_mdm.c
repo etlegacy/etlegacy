@@ -1678,7 +1678,6 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 				{
 					diff[j] = AngleNormalize180(diff[j]);
 				}
-				//angles[j] += thisBoneInfo->torsoWeight * diff[j];
 			}
 			VectorScale(diff, thisBoneInfo->torsoWeight, diff);
 			VectorAdd(angles, diff, angles);
@@ -1715,6 +1714,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 			*(pf++) = 0.f;
 			LocalAngleVector(angles, vec);
 #else
+			sh = (short *)cBonePtr->ofsAngles;
 			LocalIngleVectorPY(sh[PITCH], sh[YAW], vec);
 #endif
 			if (isTorso)
