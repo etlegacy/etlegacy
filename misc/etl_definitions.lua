@@ -146,20 +146,3 @@ function et.G_ShaderRemapFlush() end
 function et.G_SetGlobalFog(params) end
 
 function et.trap_Trace(trace, start, mins, maxs, endpos, entitynum, mask) end
-
-
---- Callbacks
---- LuaLS not super clear on how the callbacks should be defined for the parameters to be documented correctly
---- https://github.com/LuaLS/lua-language-server/issues/477
-
----Called when the game is initialized
----@param leveltime number
----@param randomSeed number
----@param restart boolean
----@type fun(leveltime: number, randomSeed: number, restart: boolean)
-et_InitGame = nil
-
----Called when the game is shut down
-et_RunFrame = nil
----@param leveltime number Current level time
-function et_RunFrame(leveltime) end
