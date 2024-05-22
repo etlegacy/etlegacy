@@ -1575,6 +1575,7 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args)
  */
 void Q_strncpyz(char *dest, const char *src, size_t destsize)
 {
+	etl_assert(dest && src && destsize > 0 && dest != src);
 	if (!dest)
 	{
 		Com_Error(ERR_FATAL, "Q_strncpyz: NULL dest");
@@ -1759,6 +1760,7 @@ char *Q_strupr(char *s1)
 void Q_strcat(char *dest, size_t size, const char *src)
 {
 	size_t l1;
+	etl_assert(dest && src && size > 0 && dest != src);
 
 	l1 = strlen(dest);
 	if (l1 >= size)

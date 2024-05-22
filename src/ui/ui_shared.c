@@ -80,7 +80,7 @@ static int      allocPoint;
 static qboolean outOfMemory;
 
 /**
- * @brief Convert rectangle-coordinates for use with the current aspectratio.
+ * @brief Convert rectangle-coordinates for use with the current aspect ratio.
  * @param[out] rect
  */
 void Cui_WideRect(rectDef_t *rect)
@@ -98,18 +98,18 @@ void Cui_WideRect(rectDef_t *rect)
 }
 
 /**
- * @brief Convert an x-coordinate for use with the current aspectratio.
- * (if the current aspectratio is 4:3, then leave the x-coordinate unchanged)
+ * @brief Convert an x-coordinate for use with the current aspect ratio.
+ * (if the current aspect ratio is 4:3, then leave the x-coordinate unchanged)
  * @param[in] x
  * @return
  */
 float Cui_WideX(float x)
 {
-	return (DC->glconfig.windowAspect <= RATIO43) ? x : x *(DC->glconfig.windowAspect * RPRATIO43);  // aspectratio / (4/3)
+	return (DC->glconfig.windowAspect <= RATIO43) ? x : x * (DC->glconfig.windowAspect * RPRATIO43);  // aspect ratio / (4/3)
 }
 
 /**
- * @brief The horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
+ * @brief The horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspect ratio
  */
 float Cui_WideXoffset(void)
 {

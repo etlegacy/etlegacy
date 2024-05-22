@@ -1362,7 +1362,7 @@ void R_CreateBuiltinImages(void)
  */
 void R_SetColorMappings(void)
 {
-	int   i, j;
+	int   i;
 	float g;
 	int   inf;
 	int   shift;
@@ -1430,28 +1430,15 @@ void R_SetColorMappings(void)
 		}
 		else
 		{
-			inf = 255 * pow(i / 255.0, 1.0 / g) + 0.5;
+			inf = (int)(255 * pow(i / 255.0, 1.0 / g) + 0.5);
 		}
-		inf <<= shift;
-		if (inf < 0)
-		{
-			inf = 0;
-		}
-		if (inf > 255)
-		{
-			inf = 255;
-		}
-		s_gammatable[i] = inf;
+		inf           <<= shift;
+		s_gammatable[i] = ClampByte(inf);
 	}
 
 	for (i = 0 ; i < 256 ; i++)
 	{
-		j = i * r_intensity->value;
-		if (j > 255)
-		{
-			j = 255;
-		}
-		s_intensitytable[i] = j;
+		s_intensitytable[i] = ClampByte((int)(i * r_intensity->value));
 	}
 
 	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
