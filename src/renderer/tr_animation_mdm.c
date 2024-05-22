@@ -598,21 +598,20 @@ static float sp, sy, cp, cy, sr, cr;
  * @param[out] forward
  *
  * @note Unused
- */
 static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 {
-	float LAVangle = angles[YAW] * (M_TAU_F / 360);
-	sy       = sin(LAVangle);
-	cy       = cos(LAVangle);
-	LAVangle = angles[PITCH] * (M_TAU_F / 360);
-	sp       = sin(LAVangle);
-	cp       = cos(LAVangle);
+    LAVangle = angles[YAW] * (M_TAU_F / 360);
+    sy       = sin(LAVangle);
+    cy       = cos(LAVangle);
+    LAVangle = angles[PITCH] * (M_TAU_F / 360);
+    sp       = sin(LAVangle);
+    cp       = cos(LAVangle);
 
-	forward[0] = cp * cy;
-	forward[1] = cp * sy;
-	forward[2] = -sp;
+    forward[0] = cp * cy;
+    forward[1] = cp * sy;
+    forward[2] = -sp;
 }
-
+*/
 
 /*
  * @brief LocalVectorMA
@@ -653,7 +652,7 @@ static ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 
 #define FUNCTABLE_SHIFT     (16 - FUNCTABLE_SIZE2)
 #define SIN_TABLE(i)      tr.sinTable[(i) >> FUNCTABLE_SHIFT];
-#define COS_TABLE(i)      tr.sinTable[(((i) >> FUNCTABLE_SHIFT) + (FUNCTABLE_SIZE / 4))&FUNCTABLE_MASK];
+#define COS_TABLE(i)      tr.sinTable[(((i) >> FUNCTABLE_SHIFT) + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
 
 /**
  * @brief LocalIngleVector
@@ -1073,7 +1072,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 			pf      = angles;
 			*(pf++) = SHORT2ANGLE(*(sh++));
 			*(pf++) = SHORT2ANGLE(*(sh++));
-			*(pf++) = 0.f;
+			*(pf++) = 0;
 			LocalAngleVector(angles, vec);
 #else
 			sh        = (short *)cTBonePtr->ofsAngles;
@@ -1092,7 +1091,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 			pf      = angles;
 			*(pf++) = SHORT2ANGLE(*(sh++));
 			*(pf++) = SHORT2ANGLE(*(sh++));
-			*(pf++) = 0.f;
+			*(pf++) = 0;
 			LocalAngleVector(angles, vec);
 #else
 			sh        = (short *)cBonePtr->ofsAngles;
@@ -1108,7 +1107,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 				pf      = tangles;
 				*(pf++) = SHORT2ANGLE(*(sh++));
 				*(pf++) = SHORT2ANGLE(*(sh++));
-				*(pf++) = 0.f;
+				*(pf++) = 0;
 				LocalAngleVector(tangles, v2);
 #else
 				sh         = (short *)cTBonePtr->ofsAngles;
@@ -1349,13 +1348,13 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 		pf      = angles;
 		*(pf++) = SHORT2ANGLE(*(sh++));
 		*(pf++) = SHORT2ANGLE(*(sh++));
-		*(pf++) = 0.f;
+		*(pf++) = 0;
 		LocalAngleVector(angles, v2);   // new
 
 		pf      = angles;
 		*(pf++) = SHORT2ANGLE(*(sh2++));
 		*(pf++) = SHORT2ANGLE(*(sh2++));
-		*(pf++) = 0.f;
+		*(pf++) = 0;
 		LocalAngleVector(angles, vec);  // old
 #else
 		ingles[0] = sh[0];
@@ -1392,13 +1391,13 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 			pf      = angles;
 			*(pf++) = SHORT2ANGLE(*(sh++));
 			*(pf++) = SHORT2ANGLE(*(sh++));
-			*(pf++) = 0.f;
+			*(pf++) = 0;
 			LocalAngleVector(angles, v2);   // new
 
 			pf      = angles;
 			*(pf++) = SHORT2ANGLE(*(sh2++));
 			*(pf++) = SHORT2ANGLE(*(sh2++));
-			*(pf++) = 0.f;
+			*(pf++) = 0;
 			LocalAngleVector(angles, vec);  // old
 #else
 			ingles[0] = sh[0];

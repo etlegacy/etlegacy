@@ -923,7 +923,7 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 
 			if (msec >= 0)
 			{
-				Vector4Average(color, colorMdRed, (float)(.5f + sin(.2f * sqrt((double)msec) * M_TAU_F) * .5f), color);
+				Vector4Average(color, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * M_TAU_F) * .5), color);
 			}
 		}
 	}

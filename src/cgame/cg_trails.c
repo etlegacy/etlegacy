@@ -664,7 +664,7 @@ static void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 			{
 				ProjectPointOntoVector(cg.refdef_current->vieworg, j->pos, jNext->pos, viewProj);
 				VectorSubtract(cg.refdef_current->vieworg, viewProj, v);
-				VectorNormalizeOnly(v);
+				VectorNormalize(v);
 
 				if (iteration == 1)
 				{
@@ -674,7 +674,7 @@ static void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 				{
 					VectorMA(up, -0.3f, v, up);
 				}
-				VectorNormalizeOnly(up);
+				VectorNormalize(up);
 			}
 		}
 		// do fading when moving towards the projection point onto the trail segment vector

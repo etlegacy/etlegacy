@@ -99,14 +99,6 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 	int vertexesNum;
 	int f;
 
-	const float *v0, *v1, *v2;
-	const float *t0, *t1, *t2;
-	vec3_t      tangent;
-	vec3_t      binormal;
-	vec3_t      normal;
-
-	float *v;
-
 	Com_InitGrowList(&vboSurfaces, 32);
 
 	for (i = 0, surf = mdvModel->surfaces; i < mdvModel->numSurfaces; i++, surf++)
@@ -127,13 +119,17 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 			{
 				for (j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 				{
-					v0 = surf->verts[surf->numVerts * f + tri->indexes[0]].xyz;
-					v1 = surf->verts[surf->numVerts * f + tri->indexes[1]].xyz;
-					v2 = surf->verts[surf->numVerts * f + tri->indexes[2]].xyz;
+					vec3_t tangent  = { 0, 0, 0 };
+					vec3_t binormal = { 0, 0, 0 };
+					vec3_t normal   = { 0, 0, 0 };
 
-					t0 = surf->st[tri->indexes[0]].st;
-					t1 = surf->st[tri->indexes[1]].st;
-					t2 = surf->st[tri->indexes[2]].st;
+					const float *v0 = surf->verts[surf->numVerts * f + tri->indexes[0]].xyz;
+					const float *v1 = surf->verts[surf->numVerts * f + tri->indexes[1]].xyz;
+					const float *v2 = surf->verts[surf->numVerts * f + tri->indexes[2]].xyz;
+
+					const float *t0 = surf->st[tri->indexes[0]].st;
+					const float *t1 = surf->st[tri->indexes[1]].st;
+					const float *t2 = surf->st[tri->indexes[2]].st;
 #if 1
 					R_CalcTangentSpace(tangent, binormal, normal, v0, v1, v2, t0, t1, t2);
 #else
@@ -143,7 +139,7 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 					for (k = 0; k < 3; k++)
 					{
-						v = vertexes[surf->numVerts * f + tri->indexes[k]].tangent;
+						float *v = vertexes[surf->numVerts * f + tri->indexes[k]].tangent;
 						VectorAdd(v, tangent, v);
 
 						v = vertexes[surf->numVerts * f + tri->indexes[k]].binormal;
@@ -157,9 +153,9 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 			for (j = 0, vert = vertexes; j < (surf->numVerts * mdvModel->numFrames); j++, vert++)
 			{
-				VectorNormalizeOnly(vert->tangent);
-				VectorNormalizeOnly(vert->binormal);
-				VectorNormalizeOnly(vert->normal);
+				VectorNormalize(vert->tangent);
+				VectorNormalize(vert->binormal);
+				VectorNormalize(vert->normal);
 			}
 /* FIXME: Hunk_FreeTempMemory: not the final block
             // Note: This does basically work - vanilla truck is fine with smoothed normals
@@ -232,7 +228,7 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
                         // average the vector
                         VectorScale(avgVector, 1.0 / (float)numSame, avgVector);
-                        //VectorNormalizeOnly(avgVector); //?!
+                        //VectorNormalize(avgVector); //?!
 
                         // now write back the newly calculated average normal for all the same vertices
                         for (k = 0; k < numSame; k++)

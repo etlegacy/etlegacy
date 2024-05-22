@@ -5,7 +5,6 @@ textures/egypt_windows_sd/windowtrim01
     qer_editorimage textures/egypt_windows_sd/windowtrim01.tga
 	diffusemap textures/egypt_windows_sd/windowtrim01.tga
 	bumpmap textures/egypt_windows_sd/windowtrim01_n.tga
-	specularmap textures/egypt_windows_sd/windowtrim01_r.tga
 	cull disable
 	nomipmaps
 	surfaceparm metalsteps
@@ -39,6 +38,7 @@ textures/egypt_windows_sd/siwa_windows6
 	diffusemap textures/egypt_windows_sd/siwa_windows6.tga
 	bumpmap textures/egypt_windows_sd/siwa_windows6_n.tga
 	specularmap textures/egypt_windows_sd/siwa_windows6_r.tga
+	implicitMap -
 }
 
 textures/egypt_windows_sd/siwa_windows7
@@ -47,6 +47,7 @@ textures/egypt_windows_sd/siwa_windows7
 	diffusemap textures/egypt_windows_sd/siwa_windows7.tga
 	bumpmap textures/egypt_windows_sd/siwa_windows7_n.tga
 	specularmap textures/egypt_windows_sd/siwa_windows7_r.tga
+	implicitMap -
 }
 
 textures/egypt_windows_sd/siwa_windows8
@@ -55,6 +56,7 @@ textures/egypt_windows_sd/siwa_windows8
 	diffusemap textures/egypt_windows_sd/siwa_windows8.tga
 	bumpmap textures/egypt_windows_sd/siwa_windows8_n.tga
 	specularmap textures/egypt_windows_sd/siwa_windows8_r.tga
+	implicitMap -
 }
 
 textures/egypt_windows_sd/window02a
@@ -63,4 +65,5 @@ textures/egypt_windows_sd/window02a
 	diffusemap textures/egypt_windows_sd/window02a.tga
 	bumpmap textures/egypt_windows_sd/window02a_n.tga
 	specularmap textures/egypt_windows_sd/window02a_r.tga
+	implicitMap -
 }

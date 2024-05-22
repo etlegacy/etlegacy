@@ -221,7 +221,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 	norm  = sky_clip[stage];
 	for (i = 0, v = vecs; i < nump; i++, v += 3)
 	{
-		Dot(v, norm, d);
+		d = DotProduct(v, norm);
 		if (d > ON_EPSILON)
 		{
 			front    = qtrue;
@@ -376,9 +376,9 @@ static void MakeSkyVec(float s, float t, int axis, vec4_t outSt, vec4_t outXYZ)
 	}
 	// vanilla end
 
-	b[0] = s * boxSize;
-	b[1] = t * boxSize;
-	b[2] = boxSize;
+	b[0]    = s * boxSize;
+	b[1]    = t * boxSize;
+	b[2]    = boxSize;
 
 	for (j = 0; j < 3; j++)
 	{
@@ -439,7 +439,7 @@ static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][4];
  */
 static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs[2]) // uses WT_EDGE_CLAMP
 {
-	int s, t;
+    int             s, t;
 	int vertexStart = tess.numVertexes;
 	int tHeight     = maxs[1] - mins[1] + 1;
 	int sWidth      = maxs[0] - mins[0] + 1;
@@ -500,7 +500,7 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
  */
 static void DrawSkySideInner(struct image_s *image, const int mins[2], const int maxs[2])  // uses WT_REPEAT
 {
-	int s, t;
+    int s, t;
 	int vertexStart = tess.numVertexes;
 	int tHeight     = maxs[1] - mins[1] + 1;
 	int sWidth      = maxs[0] - mins[0] + 1;
@@ -689,9 +689,9 @@ static void DrawSkyBox(shader_t *shader, qboolean outerbox)
 			{
 				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
-				           i,
-				           s_skyTexCoords[t][s],
-				           s_skyPoints[t][s]);
+				           i, 
+						   s_skyTexCoords[t][s], 
+						   s_skyPoints[t][s]);
 			}
 		}
 
@@ -834,8 +834,8 @@ static void BuildCloudData()
 	etl_assert(shader->isSky);
 #endif
 
-	sky_min = (1.0f / 256.0f);     // FIXME: not correct?
-	sky_max = (255.0f / 256.0f);
+	sky_min = 1.0 / 256.0;     // FIXME: not correct?
+	sky_max = 255.0 / 256.0;
 
 	// set up for drawing
 	tess.multiDrawPrimitives = 0;
@@ -875,7 +875,7 @@ void R_InitSkyTexCoords(float heightCloud)
 {
 	int    i, s, t;
 	float  radiusWorld = 4096;
-	float  p, dot;
+	float  p;
 	float  sRad, tRad;
 	vec4_t skyVec;
 	vec3_t v;
@@ -898,16 +898,15 @@ void R_InitSkyTexCoords(float heightCloud)
 				           skyVec);
 
 				// compute parametric value 'p' that intersects with cloud layer
-				Dot(skyVec, skyVec, dot);
-				p = (1.0f / (2.0f * dot)) *
-				    (-2.0f * skyVec[2] * radiusWorld +
-				     2.0f * sqrt(Square(skyVec[2]) * Square(radiusWorld) +
-				                 2.0f * Square(skyVec[0]) * radiusWorld * heightCloud +
-				                 Square(skyVec[0]) * Square(heightCloud) +
-				                 2.0f * Square(skyVec[1]) * radiusWorld * heightCloud +
-				                 Square(skyVec[1]) * Square(heightCloud) +
-				                 2.0f * Square(skyVec[2]) * radiusWorld * heightCloud +
-				                 Square(skyVec[2]) * Square(heightCloud)));
+				p = (1.0f / (2 * DotProduct(skyVec, skyVec))) *
+				    (-2 * skyVec[2] * radiusWorld +
+				     2 * sqrt(Square(skyVec[2]) * Square(radiusWorld) +
+				              2 * Square(skyVec[0]) * radiusWorld * heightCloud +
+				              Square(skyVec[0]) * Square(heightCloud) +
+				              2 * Square(skyVec[1]) * radiusWorld * heightCloud +
+				              Square(skyVec[1]) * Square(heightCloud) +
+				              2 * Square(skyVec[2]) * radiusWorld * heightCloud +
+				              Square(skyVec[2]) * Square(heightCloud)));
 
 				s_cloudTexP[i][t][s] = p;
 
@@ -916,7 +915,7 @@ void R_InitSkyTexCoords(float heightCloud)
 				v[2] += radiusWorld;
 
 				// compute vector from world origin to intersection point 'v'
-				VectorNormalizeOnly(v);
+				VectorNormalize(v);
 
 				sRad = Q_acos(v[0]);
 				tRad = Q_acos(v[1]);
@@ -957,14 +956,14 @@ void RB_DrawSun(void)
 
 	GL_PushMatrix();
 
-	Matrix4IdentTranslateV3(transformMatrix, backEnd.viewParms.orientation.origin);
-	Matrix4Multiply(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
+	mat4_reset_translate_vec3(transformMatrix, backEnd.viewParms.orientation.origin);
+	mat4_mult(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
 
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
 
 	dist = backEnd.viewParms.zFar / 1.75f; // div sqrt(3)
-	// shrink the size of the sun
+	// shrunk the size of the sun
 	size = dist * 0.2f;
 
 	VectorScale(tr.sunDirection, dist, origin);
@@ -976,7 +975,7 @@ void RB_DrawSun(void)
 
 	// farthest depth range
 	glDepthRange(1.0, 1.0);
-	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, LIGHTMAP_NONE, tess.fogNum);
+	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, -1, tess.fogNum);
 	Tess_AddQuadStamp(origin, vec1, vec2, colorWhite);
 	Tess_End();
 
@@ -1095,11 +1094,11 @@ void Tess_StageIteratorSky(void)
 
 		DrawSkyBox(tess.surfaceShader, qfalse);
 	}
-
+	
 	// back to normal depth range
 	glDepthRange(0.0, 1.0);
 
 	// note that sky was drawn so we will draw a sun later
 	backEnd.skyRenderedThisView = qtrue;
-	backEnd.refdef.rdflags     &= ~RDF_DRAWINGSKY;
+	backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
 }

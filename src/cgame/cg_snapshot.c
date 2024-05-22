@@ -90,7 +90,7 @@ static void CG_TransitionEntity(centity_t *cent)
 	if (CG_EntOnFire(cent))
 	{
 		vec3_t newDir, newPos, oldPos;
-		float  adjust, n;
+		float  adjust;
 		//
 		BG_EvaluateTrajectory(&cent->nextState.pos, cg.snap->serverTime, newPos, qfalse, cent->currentState.effect2Time);
 		BG_EvaluateTrajectory(&cent->currentState.pos, cg.snap->serverTime, oldPos, qfalse, cent->currentState.effect2Time);
@@ -98,17 +98,15 @@ static void CG_TransitionEntity(centity_t *cent)
 		VectorSubtract(oldPos, newPos, newDir);
 		// fire should go upwards if travelling slow
 		newDir[2] += 2;
-		VectorNorm(newDir, &n);
-		if (n < 1.f)
+		if (VectorNormalize(newDir) < 1)
 		{
 			VectorClear(newDir);
-			newDir[2] = 1.f;
+			newDir[2] = 1;
 		}
 		// now move towards the newDir
 		adjust = 0.3f;
 		VectorMA(cent->fireRiseDir, adjust, newDir, cent->fireRiseDir);
-		VectorNorm(cent->fireRiseDir, &n);
-		if (n <= 0.1f)
+		if (VectorNormalize(cent->fireRiseDir) <= 0.1f)
 		{
 			VectorCopy(newDir, cent->fireRiseDir);
 		}

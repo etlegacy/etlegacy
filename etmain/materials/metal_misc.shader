@@ -7,6 +7,7 @@ textures/metal_misc/ametal_m01
 	bumpmap textures/metal_misc/ametal_m01_n.tga
 	specularmap textures/metal_misc/ametal_m01_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/ametal_m01ns
@@ -17,6 +18,7 @@ textures/metal_misc/ametal_m01ns
 	specularmap textures/metal_misc/ametal_m01_r.tga
 	surfaceparm nonsolid
 	surfaceparm trans
+	implicitMap textures/metal_misc/ametal_m01.tga
 }
 
 textures/metal_misc/ametal_m02
@@ -26,6 +28,7 @@ textures/metal_misc/ametal_m02
 	bumpmap textures/metal_misc/ametal_m02_n.tga
 	specularmap textures/metal_misc/ametal_m02_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/ametal_m03
@@ -35,6 +38,7 @@ textures/metal_misc/ametal_m03
 	bumpmap textures/metal_misc/ametal_m03_n.tga
 	specularmap textures/metal_misc/ametal_m03_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/ametal_m03_slick
@@ -44,6 +48,7 @@ textures/metal_misc/ametal_m03_slick
 	specularmap textures/metal_misc/ametal_m03_r.tga
 	surfaceparm roofsteps
 	surfaceparm slick
+	implicitMap textures/metal_misc/ametal_m03.tga
 }
 
 textures/metal_misc/ametal_m03_nonsolid
@@ -54,6 +59,7 @@ textures/metal_misc/ametal_m03_nonsolid
 	specularmap textures/metal_misc/ametal_m03_r.tga
 	surfaceparm nomarks
 	surfaceparm nonsolid
+	implicitMap textures/metal_misc/ametal_m03.tga
 }
 
 textures/metal_misc/ametal_m03_nonsolid_wils
@@ -64,6 +70,7 @@ textures/metal_misc/ametal_m03_nonsolid_wils
 	specularmap textures/metal_misc/ametal_m03_r.tga
 	surfaceparm nomarks
 	surfaceparm nonsolid
+	implicitMap textures/metal_misc/ametal_m03.tga
 }
 
 textures/metal_misc/ametal_m03a
@@ -73,6 +80,7 @@ textures/metal_misc/ametal_m03a
 	bumpmap textures/metal_misc/ametal_m03a_n.tga
 	specularmap textures/metal_misc/ametal_m03a_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/ametal_m03dm
@@ -81,6 +89,7 @@ textures/metal_misc/ametal_m03dm
 	bumpmap textures/metal_misc/ametal_m03dm_n.tga
 	specularmap textures/metal_misc/ametal_m03dm_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 //this texture doesnt seem to be present in ET but is in RTCW, also seems to be used in maps
 textures/metal_misc/ametal_m03ns
@@ -95,6 +104,7 @@ textures/metal_misc/ametal_m03ns
 	specularmap textures/metal_misc/ametal_m04a_r.tga
 	surfaceparm nonsolid
 	surfaceparm trans
+	implicitMap textures/metal_misc/ametal_m03.tga
 }
 
 textures/metal_misc/ametal_m04a
@@ -103,6 +113,7 @@ textures/metal_misc/ametal_m04a
 	bumpmap textures/metal_misc/ametal_m04a_n.tga
 	specularmap textures/metal_misc/ametal_m04a_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/ametal_m04r2
@@ -111,6 +122,7 @@ textures/metal_misc/ametal_m04r2
 	bumpmap textures/metal_misc/ametal_m04r2_n.tga
 	specularmap textures/metal_misc/ametal_m04r2_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m06
@@ -119,6 +131,7 @@ textures/metal_misc/metal_m06
 	bumpmap textures/metal_misc/metal_m06_n.tga
 	specularmap textures/metal_misc/metal_m06_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/ametal_m06a
@@ -127,6 +140,7 @@ textures/metal_misc/ametal_m06a
 	bumpmap textures/metal_misc/ametal_m06a_n.tga
 	specularmap textures/metal_misc/ametal_m06a_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/ametal_m07a
@@ -135,6 +149,7 @@ textures/metal_misc/ametal_m07a
 	bumpmap textures/metal_misc/ametal_m07a_n.tga
 	specularmap textures/metal_misc/ametal_m07a_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/diamond_c_01
@@ -143,6 +158,7 @@ textures/metal_misc/diamond_c_01
 	bumpmap textures/metal_misc/diamond_c_01_n.tga
 	specularmap textures/metal_misc/diamond_c_01_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/diamond_c_01b
@@ -151,6 +167,7 @@ textures/metal_misc/diamond_c_01b
 	bumpmap textures/metal_misc/diamond_c_01b_n.tga
 	specularmap textures/metal_misc/diamond_c_01b_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/diamond_m_01
@@ -159,6 +176,7 @@ textures/metal_misc/diamond_m_01
 	bumpmap textures/metal_misc/diamond_m_01_n.tga
 	specularmap textures/metal_misc/diamond_m_01_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/diamond_m_02
@@ -167,6 +185,7 @@ textures/metal_misc/diamond_m_02
 	bumpmap textures/metal_misc/diamond_m_02_n.tga
 	specularmap textures/metal_misc/diamond_m_02_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/diamond_m03
@@ -175,6 +194,7 @@ textures/metal_misc/diamond_m03
 	bumpmap textures/metal_misc/diamond_m03_n.tga
 	specularmap textures/metal_misc/diamond_m03_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_c02
@@ -183,6 +203,7 @@ textures/metal_misc/metal_c02
 	bumpmap textures/metal_misc/metal_c02_n.tga
 	specularmap textures/metal_misc/metal_c02_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m01_blood
@@ -192,6 +213,7 @@ textures/metal_misc/metal_m01_blood
 	bumpmap textures/metal_misc/metal_m01_blood_n.tga
 	specularmap textures/metal_misc/metal_m01_blood_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m02ss
@@ -226,6 +248,7 @@ textures/metal_misc/metal_m03
 	bumpmap textures/metal_misc/metal_m03_n.tga
 	specularmap textures/metal_misc/metal_m03_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m04dg
@@ -235,6 +258,7 @@ textures/metal_misc/metal_m04dg
 	bumpmap textures/metal_misc/metal_m04dg_n.tga
 	specularmap textures/metal_misc/metal_m04dg_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m04dr2
@@ -244,6 +268,7 @@ textures/metal_misc/metal_m04dr2
 	bumpmap textures/metal_misc/metal_m04dr2_n.tga
 	specularmap textures/metal_misc/metal_m04dr2_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m04dg2
@@ -253,6 +278,7 @@ textures/metal_misc/metal_m04dg2
 	bumpmap textures/metal_misc/metal_m04dg2_n.tga
 	specularmap textures/metal_misc/metal_m04dg2_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m04g2
@@ -262,6 +288,7 @@ textures/metal_misc/metal_m04g2
 	bumpmap textures/metal_misc/metal_m04g2_n.tga
 	specularmap textures/metal_misc/metal_m04g2_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m04g2-r
@@ -271,6 +298,7 @@ textures/metal_misc/metal_m04g2-r
 	bumpmap textures/metal_misc/metal_m04g2-r_n.tga
 	specularmap textures/metal_misc/metal_m04g2-r_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m04r2
@@ -280,6 +308,7 @@ textures/metal_misc/metal_m04r2
 	bumpmap textures/metal_misc/metal_m04r2_n.tga
 	specularmap textures/metal_misc/metal_m04r2_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/metal_misc/metal_m04ss

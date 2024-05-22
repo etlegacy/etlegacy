@@ -28,7 +28,7 @@ struct Msg_Addbot
 
 	Msg_Addbot()
 		: m_Team(RANDOM_TEAM_IF_NO_TEAM)
-		  , m_Class(RANDOM_CLASS_IF_NO_CLASS)
+		, m_Class(RANDOM_CLASS_IF_NO_CLASS)
 	{
 		m_Name[0] = m_Model[0] = m_Skin[0] = m_SpawnPointName[0] = m_Profile[0] = 0;
 	}
@@ -77,9 +77,9 @@ struct Msg_HealthArmor
 
 	Msg_HealthArmor()
 		: m_CurrentHealth(0)
-		  , m_MaxHealth(0)
-		  , m_CurrentArmor(0)
-		  , m_MaxArmor(0)
+		, m_MaxHealth(0)
+		, m_CurrentArmor(0)
+		, m_MaxArmor(0)
 	{
 	}
 };
@@ -131,9 +131,9 @@ struct Msg_PointContents
 
 	Msg_PointContents()
 		: m_Contents(0)
-		  , x(0.f)
-		  , y(0.f)
-		  , z(0.f)
+		, x(0.f)
+		, y(0.f)
+		, z(0.f)
 	{
 	}
 };
@@ -174,7 +174,7 @@ struct Msg_GameState
 
 	Msg_GameState()
 		: m_GameState(GAME_STATE_INVALID)
-		  , m_TimeLeft(0.f)
+		, m_TimeLeft(0.f)
 	{
 	}
 };
@@ -222,9 +222,9 @@ struct WeaponCharged
 
 	WeaponCharged(int w = 0, FireMode m = Primary)
 		: m_Weapon(w)
-		  , m_FireMode(m)
-		  , m_IsCharged(False)
-		  , m_IsCharging(False)
+		, m_FireMode(m)
+		, m_IsCharged(False)
+		, m_IsCharging(False)
 	{
 	}
 };
@@ -237,8 +237,8 @@ struct WeaponHeatLevel
 
 	WeaponHeatLevel(FireMode m = Primary)
 		: m_FireMode(m)
-		  , m_CurrentHeat(0.f)
-		  , m_MaxHeat(0.f)
+		, m_CurrentHeat(0.f)
+		, m_MaxHeat(0.f)
 	{
 	}
 };
@@ -305,11 +305,11 @@ struct WeaponLimits
 
 	WeaponLimits()
 		: m_MinYaw(-45.f)
-		  , m_MaxYaw(45.f)
-		  , m_MinPitch(-20.f)
-		  , m_MaxPitch(20.f)
-		  , m_WeaponId(0)
-		  , m_Limited(False)
+		, m_MaxYaw(45.f)
+		, m_MinPitch(-20.f)
+		, m_MaxPitch(20.f)
+		, m_WeaponId(0)
+		, m_Limited(False)
 	{
 		m_CenterFacing[0] = 0.f;
 		m_CenterFacing[1] = 0.f;
@@ -386,9 +386,9 @@ struct Event_SystemClientConnected
 
 	Event_SystemClientConnected()
 		: m_GameId(-1)
-		  , m_IsBot(False)
-		  , m_DesiredClass(RANDOM_CLASS_IF_NO_CLASS)
-		  , m_DesiredTeam(RANDOM_TEAM_IF_NO_TEAM)
+		, m_IsBot(False)
+		, m_DesiredClass(RANDOM_CLASS_IF_NO_CLASS)
+		, m_DesiredTeam(RANDOM_TEAM_IF_NO_TEAM)
 	{
 	}
 };
@@ -534,7 +534,7 @@ struct Event_DynamicPathsChanged
 
 	Event_DynamicPathsChanged(int _team, int _navid = 0)
 		: m_TeamMask(_team)
-		  , m_NavId(_navid)
+		, m_NavId(_navid)
 	{
 	}
 };
@@ -563,9 +563,9 @@ struct Event_EntityConnection
 
 	Event_EntityConnection()
 		: m_ConnectionId(0)
-		  , m_ConnectionDir(CON_TWO_WAY)
-		  , m_Radius(0.f)
-		  , m_Teleport(false)
+		, m_ConnectionDir(CON_TWO_WAY)
+		, m_Radius(0.f)
+		, m_Teleport(false)
 	{
 	}
 };

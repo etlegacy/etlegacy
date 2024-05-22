@@ -201,11 +201,6 @@ textures/sfx/wilsflame1
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin .6 .2 0 .6
 	}
-	{
-		stage heathazemap
-		map heightMap(sprites/clnfire/spr000.tga, 2.0)
-		tcMod scroll 0.0 0.5
-	}
 }
 
 textures/sfx/wilsflame2
@@ -231,10 +226,5 @@ textures/sfx/wilsflame2
 		map textures/sfx/flameball.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin .6 .2 0 .6
-	}
-	{
-		stage heathazemap
-		map heightMap(sprites/clnfire/spr000.tga, 2.0)
-		tcMod scroll 0.0 0.5
 	}
 }

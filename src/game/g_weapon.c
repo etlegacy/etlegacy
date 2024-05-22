@@ -2841,17 +2841,17 @@ void weapon_callAirStrike(gentity_t *ent)
 
 	VectorSubtract(ent->s.pos.trBase, ent->parent->client->ps.origin, lookaxis);
 	lookaxis[2] = 0;
-	VectorNormalizeOnly(lookaxis);
+	VectorNormalize(lookaxis);
 
 	dir[0] = 0;
 	dir[1] = 0;
 	dir[2] = crandom();     // generate either up or down vector
-	VectorNormalizeOnly(dir);   // which adds randomness to pass direction below
+	VectorNormalize(dir);   // which adds randomness to pass direction below
 
 	for (i = 0; i < ent->count; i++)
 	{
 		RotatePointAroundVector(bombaxis, dir, lookaxis, 90 + crandom() * 30);   // munge the axis line a bit so it's not totally perpendicular
-		VectorNormalizeOnly(bombaxis);
+		VectorNormalize(bombaxis);
 
 		VectorScale(bombaxis, (-.5f * BOMBSPREAD * NUMBOMBS), pos);
 		VectorAdd(ent->s.pos.trBase, pos, pos);   // first bomb position
@@ -2969,7 +2969,7 @@ void G_ArtilleryExplode(gentity_t *ent)
 			tmpdir[0] = crandom();
 			tmpdir[1] = crandom();
 			tmpdir[2] = 1;
-			VectorNormalizeOnly(tmpdir);
+			VectorNormalize(tmpdir);
 			tmpdir[2] = 1;           // extra up
 			VectorScale(tmpdir, 500 + random() * 500, tmpdir);
 
@@ -3522,9 +3522,9 @@ void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, 
 		vec3_t reflect;
 		float  dot;
 
-	Dot(forward, tr.plane.normal, dot);
+	dot = DotProduct(forward, tr.plane.normal);
 	VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
-	VectorNormalizeOnly(reflect);
+	VectorNormalize(reflect);
 
 	tent->s.eventParm = DirToByte(reflect);
 	*/
@@ -3801,7 +3801,7 @@ gentity_t *weapon_antitank_fire(gentity_t *ent)
 
 	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
 	VectorCopy(forward, dir);
-	VectorNormalizeOnly(dir);
+	VectorNormalize(dir);
 	VectorScale(dir, 2500, dir);
 
 	rocket = fire_missile(ent, muzzleEffect, dir, ent->s.weapon);
@@ -3918,7 +3918,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 	ent->r.svFlags        |= SVF_BROADCAST;
 
 	VectorCopy(forward, dir);
-	VectorNormalizeOnly(dir);
+	VectorNormalize(dir);
 	VectorScale(dir, FLAME_START_SPEED, dir);
 
 	return fire_flamechunk(ent, start, dir);

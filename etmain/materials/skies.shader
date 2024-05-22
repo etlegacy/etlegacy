@@ -126,8 +126,7 @@ textures/skies/sd_batteryfog
 	surfaceparm trans
 	surfaceparm fog
 	
-//	fogparms ( 0.4 0.4 0.4 ) 8192
-	fogparms ( 0.4 0.4 0.4 ) 50000
+	fogparms ( 0.4 0.4 0.4 ) 8192
 }
 
 textures/skies/sd_batterysky
@@ -148,8 +147,7 @@ textures/skies/sd_batterysky
  
 	sunshader textures/skies_sd/batterysunfog
  
-	{
-		fog off
+	{	fog off
 		map textures/skies_sd/battery_clouds.tga
 		tcMod scale 2.5 2.5
 		tcMod scroll 0.0015 -0.003
@@ -158,9 +156,11 @@ textures/skies/sd_batterysky
 	{
 		fog off
 		clampmap textures/skies_sd/battery_mask_ydnar.tga
-		blendFunc blend
-		tcMod scale 1.0 0.85 // 0.90 0.90
-		tcMod transform 1 0 0 1 -1.1 -1.15
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		tcMod scale 0.956 0.956
+		tcMod transform 1 0 0 1 -1 -1
+		// rgbGen identityLighting
+		//rgbGen const ( 0.6 0.6 0.6 ) 
 		rgbGen const ( 0.4 0.4 0.4 ) 
 	}
 }
@@ -205,8 +205,7 @@ textures/skies/sd_siwafog
 	surfaceparm trans
 	surfaceparm fog
 	
-//	fogparms ( 0.77 0.64 0.46 ) 20480
-	fogparms ( 0.77 0.64 0.46 ) 204800
+	fogparms ( 0.77 0.64 0.46 ) 20480
 }
 
 textures/skies/sd_wurzburgsky
@@ -214,7 +213,7 @@ textures/skies/sd_wurzburgsky
 	nocompress
 	qer_editorimage textures/skies/sky_8.tga
 	q3map_lightimage textures/skies/n_blue2.tga
-	q3map_noFog
+	q3map_nofog
 	q3map_globaltexture
 	q3map_lightsubdivide 256 
 	q3map_sun 0.130 0.080 0.020 20 165 5
@@ -238,14 +237,12 @@ textures/skies/sd_wurzburgsky
 	sunshader textures/skies_sd/small_moon
 
 	{
-		fog off
 		map textures/skies_sd/wurzburg_clouds.tga
 		tcMod scale 2.5 2.5
 		tcMod scroll 0.003 -0.0015
 		rgbGen identityLighting
 	}
 	{
-		fog off
 		map textures/skies_sd/ydnar_lightning.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
 		rgbGen wave triangle -8 9 0 0.137
@@ -254,7 +251,6 @@ textures/skies/sd_wurzburgsky
 		tcMod scroll 0.003 -0.0015
 	}
 	{
-		fog off
 		clampmap textures/skies_sd/wurzburg_fogmask.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		tcMod scale 0.956 0.956

@@ -193,7 +193,6 @@ or configs will never get loaded from disk!
 #define MAX_ZPATH           256
 #define MAX_SEARCH_PATHS    4096
 #define MAX_FILEHASH_SIZE   1024
-#define MAX_PACKAGE_PATHS   10
 
 /**
  * @struct fileInPack_s
@@ -261,9 +260,6 @@ static cvar_t       *fs_basepath;
 static cvar_t       *fs_basegame;
 static cvar_t       *fs_gamedirvar;
 static searchpath_t *fs_searchpaths;
-
-static char packagePaths[MAX_PACKAGE_PATHS][MAX_OSPATH];
-
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 /**
 * @var fs_containerMount
@@ -4447,7 +4443,6 @@ static void FS_AddBothGameDirectories(const char *subPath)
 static void FS_Startup(const char *gameName)
 {
 	const char *homePath;
-	int        i;
 
 	Com_Printf("----- Initializing Filesystem --\n");
 
@@ -4502,15 +4497,6 @@ static void FS_Startup(const char *gameName)
 	if (fs_gamedirvar->string[0] && !Q_stricmp(gameName, BASEGAME) && Q_stricmp(fs_gamedirvar->string, gameName))
 	{
 		FS_AddBothGameDirectories(fs_gamedirvar->string);
-	}
-
-	for (i = 0; i < MAX_PACKAGE_PATHS; i++)
-	{
-		if (packagePaths[i][0])
-		{
-			FS_AddGameDirectory(packagePaths[i], "", qtrue);
-			Q_strncpyz(fs_gamedir, fs_gamedirvar->string, sizeof(fs_gamedir));
-		}
 	}
 
 	// add our commands
@@ -5044,27 +5030,6 @@ static void FS_CheckRequiredFiles(int checksumFeed)
 	}
 }
 
-static qboolean FS_InitPackagePaths()
-{
-	int i, x;
-	if (Q_stricmp(Cmd_Argv(0), "addPackagePath"))
-	{
-		return qfalse;
-	}
-
-	for (i = 0, x = 1; x < Cmd_Argc() && i < MAX_PACKAGE_PATHS; i++)
-	{
-		if (!packagePaths[i][0])
-		{
-			continue;
-		}
-
-		Q_strncpyz(packagePaths[i], Cmd_Argv(x), MAX_OSPATH);
-		x++;
-	}
-	return qtrue;
-}
-
 /**
  * @brief Called only at initial startup, not when the filesystem
  * is resetting due to a game change
@@ -5073,8 +5038,6 @@ void FS_InitFilesystem(void)
 {
 	cvar_t *tmp_fs_game;
 
-	Com_Memset(packagePaths, 0, sizeof(packagePaths));
-
 	// allow command line params to override our defaults
 	// we have to specially handle this, because normal command
 	// line variable sets don't happen until after the filesystem
@@ -5082,8 +5045,6 @@ void FS_InitFilesystem(void)
 	Com_StartupVariable("fs_basepath");
 	Com_StartupVariable("fs_homepath");
 	Com_StartupVariable("fs_game");
-
-	Com_CommandLineCheck(&FS_InitPackagePaths);
 
 	// ET: Legacy start
 	// if fs_game is not specified, set 'DEFAULT_MODGAME' mod as default fs_game

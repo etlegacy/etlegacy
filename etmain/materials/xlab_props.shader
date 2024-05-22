@@ -7,6 +7,7 @@ textures/xlab_props/panel_m01
 	specularmap textures/xlab_props/panel_m01_r.tga
 	bumpmap textures/xlab_props/panel_m01_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_props/panel_m01_light
@@ -34,6 +35,7 @@ textures/xlab_props/xdrawers_c03
 	specularmap textures/xlab_props/xdrawers_c03_r.tga
 	bumpmap textures/xlab_props/xdrawers_c03_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_props/xgrid_c01
@@ -43,6 +45,7 @@ textures/xlab_props/xgrid_c01
 	specularmap textures/xlab_props/xgrid_c01_r.tga
 	bumpmap textures/xlab_props/xgrid_c01_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_props/xpanel_c02dm
@@ -52,6 +55,7 @@ textures/xlab_props/xpanel_c02dm
 	specularmap textures/xlab_props/xpanel_c02dm_r.tga
 	bumpmap textures/xlab_props/xpanel_c02dm_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_props/xpanel_c05_light_half
@@ -61,6 +65,7 @@ textures/xlab_props/xpanel_c05_light_half
 	specularmap textures/xlab_props/xpanel_c05_light_half_r.tga
 	bumpmap textures/xlab_props/xpanel_c05_light_half_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_props/xpanel_c08
@@ -70,6 +75,7 @@ textures/xlab_props/xpanel_c08
 	specularmap textures/xlab_props/xpanel_c08_r.tga
 	bumpmap textures/xlab_props/xpanel_c08_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_props/xpanel_c10_light
@@ -79,4 +85,5 @@ textures/xlab_props/xpanel_c10_light
 	specularmap textures/xlab_props/xpanel_c10_light_r.tga
 	bumpmap textures/xlab_props/xpanel_c10_light_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }

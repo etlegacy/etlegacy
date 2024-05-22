@@ -109,7 +109,6 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 	vec4_t color;
 	int    fadeTime;
 	vec3_t points[4];
-	float  f1, f2, po_f1, pof1;
 
 	Com_Memset(axis, 0, sizeof(vec3_t) * 3);
 
@@ -121,7 +120,7 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 
 	// set projection (inverse of dir)
 	//VectorSubtract( vec3_origin, dir, projection );
-	//VectorNormalizeOnly( projection );
+	//VectorNormalize( projection );
 	//projection[ 3 ] = radius * 8;
 
 	// make rotated polygon axis
@@ -137,14 +136,10 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 	for (i = 0; i < 3; i++)
 	{
 		// new
-		f1           = radius * axis[1][i];
-		f2           = radius * axis[2][i];
-		pof1         = pushedOrigin[i] + f1;
-		po_f1        = pushedOrigin[i] - f1;
-		points[0][i] = po_f1 - f2;
-		points[1][i] = po_f1 + f2;
-		points[2][i] = pof1 + f2;
-		points[3][i] = pof1 - f2;
+		points[0][i] = pushedOrigin[i] - radius * axis[1][i] - radius * axis[2][i];
+		points[1][i] = pushedOrigin[i] - radius * axis[1][i] + radius * axis[2][i];
+		points[2][i] = pushedOrigin[i] + radius * axis[1][i] + radius * axis[2][i];
+		points[3][i] = pushedOrigin[i] + radius * axis[1][i] - radius * axis[2][i];
 	}
 
 	// debug code
@@ -157,7 +152,10 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 	#endif
 
 	// set color
-	Vector4Set(color, r, g, b, a);
+	color[0] = r;
+	color[1] = g;
+	color[2] = b;
+	color[3] = a;
 
 	// set decal times (in seconds)
 	fadeTime = lifeTime >> 4;

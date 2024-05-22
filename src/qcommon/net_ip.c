@@ -1306,7 +1306,7 @@ void NET_SetMulticast6(void)
 	if (!*net_mcast6addr->string || !Sys_StringToSockaddr(net_mcast6addr->string, (struct sockaddr *) &addr, sizeof(addr), AF_INET6))
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Incorrect multicast address given, "
-		           "please set cvar %s to a sane value.\n", net_mcast6addr->name);
+		                          "please set cvar %s to a sane value.\n", net_mcast6addr->name);
 
 		Cvar_SetValue(net_enabled->name, net_enabled->integer | NET_DISABLEMCAST);
 
@@ -2049,19 +2049,6 @@ void NET_Init(void)
 	winsockInitialized = qtrue;
 	Com_Printf("Winsock initialized\n");
 #endif
-
-	Com_StartupVariable("net_port");
-	Com_StartupVariable("net_port6");
-	Com_StartupVariable("net_ip");
-	Com_StartupVariable("net_ip6");
-	Com_StartupVariable("net_mcast6addr");
-	Com_StartupVariable("net_mcast6iface");
-	Com_StartupVariable("net_socksEnabled");
-	Com_StartupVariable("net_socksServer");
-	Com_StartupVariable("net_socksPort");
-	Com_StartupVariable("net_socksUsername");
-	Com_StartupVariable("net_socksPassword");
-	Com_StartupVariable("net_dropsim");
 
 	NET_Config(qtrue);
 

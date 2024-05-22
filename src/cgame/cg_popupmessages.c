@@ -819,8 +819,7 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 		// keep in buffer text until icon insertion
 		if (spacingStart && spacingStart != buffer)
 		{
-			etl_assert(spacingStart - buffer < sizeof(buffer) && spacingStart - buffer >= 0);
-			buffer[spacingStart - buffer] = '\0';
+			Q_strncpyz(buffer, buffer, spacingStart - buffer);
 
 			// determine on which line the icon should appear
 			for (i = 0; buffer[i]; ++i)

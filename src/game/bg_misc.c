@@ -2813,14 +2813,12 @@ qboolean BG_TraverseSpline(float *deltaTime, splinePath_t **pSpline)
 qboolean BG_RaySphereIntersection(float radius, vec3_t origin, splineSegment_t *path, float *t0, float *t1)
 {
 	vec3_t v;
-	float  b, c, d, dotvn, dotvv;
+	float  b, c, d;
 
 	VectorSubtract(path->start, origin, v);
 
-	Dot(v, path->v_norm, dotvn);
-	Dot(v, v, dotvv);
-	b = 2 * dotvn;
-	c = dotvv - (radius * radius);
+	b = 2 * DotProduct(v, path->v_norm);
+	c = DotProduct(v, v) - (radius * radius);
 
 	d = (b * b) - (4 * c);
 	if (d < 0)
@@ -3003,7 +3001,7 @@ void BG_ComputeSegments(splinePath_t *pSpline)
 
 		VectorSubtract(vec[0], pSpline->segments[i].start, pSpline->segments[i].v_norm);
 		pSpline->segments[i].length = VectorLength(pSpline->segments[i].v_norm);
-		VectorNormalizeOnly(pSpline->segments[i].v_norm);
+		VectorNormalize(pSpline->segments[i].v_norm);
 	}
 }
 
@@ -3047,9 +3045,9 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			atTime = tr->trTime + tr->trDuration;
 		}
 		deltaTime = (atTime - tr->trTime) * 0.001f;      // milliseconds to seconds
-		if (deltaTime < 0.0f)
+		if (deltaTime < 0)
 		{
-			deltaTime = 0.0f;
+			deltaTime = 0;
 		}
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 		break;
@@ -3078,7 +3076,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		// phase is the acceleration constant
 		phase = VectorLength(tr->trDelta) / (tr->trDuration * 0.001f);
 		// trDelta at least gives us the acceleration direction
-		VectorNormalize2Only(tr->trDelta, result);
+		VectorNormalize2(tr->trDelta, result);
 		// get distance travelled at current time
 		VectorMA(tr->trBase, phase * 0.5f * deltaTime * deltaTime, result, result);
 		break;
@@ -3091,7 +3089,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		// phase is the breaking constant
 		phase = VectorLength(tr->trDelta) / (tr->trDuration * 0.001f);
 		// trDelta at least gives us the acceleration direction
-		VectorNormalize2Only(tr->trDelta, result);
+		VectorNormalize2(tr->trDelta, result);
 		// get distance travelled at current time (without breaking)
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, v);
 		// subtract breaking force
@@ -3103,7 +3101,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			return;
 		}
 
-		deltaTime = tr->trDuration ? (atTime - tr->trTime) / ((float)tr->trDuration) : 0.0f;
+		deltaTime = tr->trDuration ? (atTime - tr->trTime) / ((float)tr->trDuration) : 0;
 
 		if (deltaTime < 0.f)
 		{
@@ -3116,7 +3114,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 
 		if (backwards)
 		{
-			deltaTime = 1.0f - deltaTime;
+			deltaTime = 1 - deltaTime;
 		}
 
 		/*      if(pSpline->isStart) {
@@ -3174,43 +3172,43 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			vectoangles(result, result);
 
 			base1 = tr->trBase[1];
-			if (base1 >= 10000.0f || base1 < -10000.0f)
+			if (base1 >= 10000 || base1 < -10000)
 			{
 				dampin = qtrue;
 				if (base1 < 0)
 				{
-					base1 += 10000.0f;
+					base1 += 10000;
 				}
 				else
 				{
-					base1 -= 10000.0f;
+					base1 -= 10000;
 				}
 			}
 
-			if (base1 >= 1000.0f || base1 < -1000.0f)
+			if (base1 >= 1000 || base1 < -1000)
 			{
 				dampout = qtrue;
-				if (base1 < 0.0f)
+				if (base1 < 0)
 				{
-					base1 += 1000.0f;
+					base1 += 1000;
 				}
 				else
 				{
-					base1 -= 1000.0f;
+					base1 -= 1000;
 				}
 			}
 
 			if (dampin && dampout)
 			{
-				result[ROLL] = base1 + ((sin(((deltaTime * 2.0f) - 1.0f) * M_PI * 0.5f) + 1.0f) * 0.5f * tr->trBase[2]);
+				result[ROLL] = base1 + ((sin(((deltaTime * 2) - 1) * M_PI * 0.5f) + 1) * 0.5 * tr->trBase[2]);
 			}
 			else if (dampin)
 			{
-				result[ROLL] = base1 + (sin(deltaTime * M_PI * 0.5f) * tr->trBase[2]);
+				result[ROLL] = base1 + (sin(deltaTime * M_PI * 0.5) * tr->trBase[2]);
 			}
 			else if (dampout)
 			{
-				result[ROLL] = base1 + ((1.0f - sin((1.0f - deltaTime) *  M_PI * 0.5f)) * tr->trBase[2]);
+				result[ROLL] = base1 + ((1 - sin((1 - deltaTime) * M_PI * 0.5)) * tr->trBase[2]);
 			}
 			else
 			{
@@ -3398,8 +3396,8 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 {
 	vec3_t ndir, lnormal;
-	float  dot, minDot = 0.3f;
-	int    x = 0;
+	float  minDot = 0.3f;
+	int    x      = 0;
 
 	if (dir[0] < 0.001f && dir[1] < 0.001f)
 	{
@@ -3415,7 +3413,7 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 	{
 		//VectorCopy( normal, lnormal );
 		//VectorNormalizeFast( lnormal );
-		VectorNormalize2Only(normal, lnormal);
+		VectorNormalize2(normal, lnormal);
 	}
 
 	VectorNegate(dir, ndir);
@@ -3426,12 +3424,11 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 	}
 
 	// make sure it makrs the impact surface
-	Dot(ndir, lnormal, dot);
-	while (dot < minDot && x < 10)
+	while (DotProduct(ndir, lnormal) < minDot && x < 10)
 	{
 		VectorMA(ndir, .5f, lnormal, ndir);
-		VectorNormalizeOnly(ndir);
-		Dot(ndir, lnormal, dot);
+		VectorNormalize(ndir);
+
 		x++;
 	}
 
@@ -4861,11 +4858,11 @@ void BG_HeadCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t headOffset)
 
 	if (eFlags & EF_DEAD)
 	{
-		VectorScale(flatforward, -24.0f, headOffset);
+		VectorScale(flatforward, -24, headOffset);
 	}
 	else            // EF_PRONE
 	{
-		VectorScale(flatforward, 24.0f, headOffset);
+		VectorScale(flatforward, 24, headOffset);
 	}
 }
 
@@ -4879,20 +4876,17 @@ void BG_LegsCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t legsOffset)
 	vec3_t flatforward;
 	float  angle;
 
-	angle = DEG2RAD(viewangles[YAW]);
-#ifndef ETL_SSE
-	SinCos(angle, flatforward[1], flatforward[0]);
-#else
-	SinCos(angle, flatforward + 1, flatforward + 0); // this is the asm way of specifying an address..
-#endif
+	angle          = DEG2RAD(viewangles[YAW]);
+	flatforward[0] = cos(angle);
+	flatforward[1] = sin(angle);
 	flatforward[2] = 0;
 
 	if (eFlags & EF_DEAD)
 	{
-		VectorScale(flatforward, 32.0f, legsOffset);
+		VectorScale(flatforward, 32, legsOffset);
 	}
 	else            // EF_PRONE
 	{
-		VectorScale(flatforward, -32.0f, legsOffset);
+		VectorScale(flatforward, -32, legsOffset);
 	}
 }

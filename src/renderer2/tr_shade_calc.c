@@ -35,7 +35,7 @@
 
 #include "tr_local.h"
 
-#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + tess.shaderTime * (freq)) * FUNCTABLE_SIZE))&FUNCTABLE_MASK] * (amplitude))
+#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + tess.shaderTime * (freq)) * FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
 
 /**
  * @brief TableForFunc
@@ -135,12 +135,12 @@ static float GetOpValue(const expOperation_t *op)
 		}
 		else if (backEnd.currentEntity)
 		{
-			value = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
+			value = backEnd.currentEntity->e.shaderRGBA[0] * (1.0f / 255.0f);
 
 		}
 		else
 		{
-			value = 1.0f;
+			value = 1.0;
 		}
 		break;
 	case OP_PARM1:
@@ -151,11 +151,11 @@ static float GetOpValue(const expOperation_t *op)
 		}
 		else if (backEnd.currentEntity)
 		{
-			value = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
+			value = backEnd.currentEntity->e.shaderRGBA[1] * (1.0f / 255.0f);
 		}
 		else
 		{
-			value = 1.0f;
+			value = 1.0;
 		}
 		break;
 	case OP_PARM2:
@@ -166,26 +166,26 @@ static float GetOpValue(const expOperation_t *op)
 		}
 		else if (backEnd.currentEntity)
 		{
-			value = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
+			value = backEnd.currentEntity->e.shaderRGBA[2] * (1.0f / 255.0f);
 		}
 		else
 		{
-			value = 1.0f;
+			value = 1.0;
 		}
 		break;
 	case OP_PARM3:
 		if (backEnd.currentLight)
 		{
-			value = 1.0f;
+			value = 1.0;
 			break;
 		}
 		else if (backEnd.currentEntity)
 		{
-			value = backEnd.currentEntity->e.shaderRGBA[3] * _1div255;
+			value = backEnd.currentEntity->e.shaderRGBA[3] * (1.0f / 255.0f);
 		}
 		else
 		{
-			value = 1.0f;
+			value = 1.0;
 		}
 		break;
 	case OP_PARM4:
@@ -195,7 +195,7 @@ static float GetOpValue(const expOperation_t *op)
 		}
 		else
 		{
-			value = 0.0f;
+			value = 0.0;
 		}
 		break;
 	case OP_PARM5:
@@ -213,22 +213,22 @@ static float GetOpValue(const expOperation_t *op)
 	case OP_GLOBAL5:
 	case OP_GLOBAL6:
 	case OP_GLOBAL7:
-		value = 1.0f;
+		value = 1.0;
 		break;
 	case OP_FRAGMENTSHADERS:
-		value = 1.0f;
+		value = 1.0;
 		break;
 	case OP_FRAMEBUFFEROBJECTS:
 		value = glConfig2.framebufferObjectAvailable;
 		break;
 	case OP_SOUND:
-		value = 0.5f;
+		value = 0.5;
 		break;
 	case OP_DISTANCE:
-		value = 0.0f;    // FIXME ?
+		value = 0.0;    // FIXME ?
 		break;
 	default:
-		value = 0.0f;
+		value = 0.0;
 		break;
 	}
 
@@ -248,9 +248,9 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 	expOperation_t          op;
 	expOperation_t          ops[MAX_EXPRESSION_OPS];
 	int                     numOps = 0;
-	float                   value  = 0.f;
-	float                   value1 = 0.f;
-	float                   value2 = 0.f;
+	float                   value  = 0;
+	float                   value1 = 0;
+	float                   value2 = 0;
 	extern const opstring_t opStrings[];
 
 	if (!exp || !exp->active)
@@ -316,7 +316,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 		case OP_DISTANCE:
 			ops[numOps++] = op;
 			break;
-		/*case OP_TABLE:
+		case OP_TABLE:
 		{
 			shaderTable_t *table;
 			int           numValues;
@@ -375,7 +375,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 			op.value      = value;
 			ops[numOps++] = op;
 			break;
-		}*/
+		}
 		default:
 		{
 			if (numOps < 2)
@@ -492,11 +492,13 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 			off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
 
 			scale = WAVEVALUE(table, ds->deformationWave.base,
-			                  ds->deformationWave.amplitude, ds->deformationWave.phase + off, ds->deformationWave.frequency);
+				ds->deformationWave.amplitude, ds->deformationWave.phase + off, ds->deformationWave.frequency);
 
 			VectorScale(normal, scale, offset);
 
-			VectorAdd(xyz, offset, xyz);
+			xyz[0] += offset[0];
+			xyz[1] += offset[1];
+			xyz[2] += offset[2];
 		}
 	}
 	else if (ds->deformationWave.frequency == 0.f)
@@ -507,7 +509,9 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 		{
 			VectorScale(normal, scale, offset);
 
-			VectorAdd(xyz, offset, xyz);
+			xyz[0] += offset[0];
+			xyz[1] += offset[1];
+			xyz[2] += offset[2];
 		}
 	}
 	else //if (ds->deformationWave.frequency < 0)
@@ -519,7 +523,7 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 
 		if (VectorCompare(backEnd.currentEntity->e.fireRiseDir, vec3_origin))
 		{
-			VectorSet(backEnd.currentEntity->e.fireRiseDir, 0.f, 0.f, 1.f);
+			VectorSet(backEnd.currentEntity->e.fireRiseDir, 0, 0, 1);
 		}
 
 		// get the world up vector in local coordinates
@@ -540,7 +544,7 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 		{
 			// hack for negative Z deformation (ack)
 			inverse                        = qtrue;
-			ds->deformationWave.frequency -= 999.0;
+			ds->deformationWave.frequency -= 999;
 		}
 
 		table = TableForFunc(ds->deformationWave.func);
@@ -552,13 +556,13 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 			scale = WAVEVALUE(table, ds->deformationWave.base,
 			                  ds->deformationWave.amplitude, ds->deformationWave.phase + off, ds->deformationWave.frequency);
 
-			Dot(worldUp, normal, dot);
+			dot = DotProduct(worldUp, normal);
 
-			if (dot * scale > 0.f)
+			if (dot * scale > 0)
 			{
 				if (inverse)
 				{
-					scale *= -1.f;
+					scale *= -1;
 				}
 				VectorMA(xyz, dot * scale, worldUp, xyz);
 			}
@@ -566,9 +570,9 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 
 		if (inverse)
 		{
-			ds->deformationWave.frequency += 999.0;
+			ds->deformationWave.frequency += 999;
 		}
-		ds->deformationWave.frequency *= -1.0;
+		ds->deformationWave.frequency *= -1;
 	}
 }
 
@@ -587,12 +591,12 @@ void RB_CalcDeformNormals(deformStage_t *ds)
 	{
 		scale = 0.98;
 		scale = R_NoiseGet4f(xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-		                     tess.shaderTime * ds->deformationWave.frequency);
+				            tess.shaderTime * ds->deformationWave.frequency);
 		normal[0] += ds->deformationWave.amplitude * scale;
 
 		scale = 0.98;
 		scale = R_NoiseGet4f(100 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-		                     tess.shaderTime * ds->deformationWave.frequency);
+				             tess.shaderTime * ds->deformationWave.frequency);
 		normal[1] += ds->deformationWave.amplitude * scale;
 
 		scale = 0.98;
@@ -617,7 +621,6 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 	double       now     = backEnd.refdef.time * 0.001 * ds->bulgeSpeed;
 	int64_t      off;
 	float        scale;
-	vec3_t       v;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4)
 	{
@@ -625,8 +628,9 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 
 		scale = tr.sinTable[off & FUNCTABLE_MASK] * ds->bulgeHeight;
 
-		VectorScale(normal, scale, v);
-		VectorAdd(xyz, v, xyz);
+		xyz[0] += normal[0] * scale;
+		xyz[1] += normal[1] * scale;
+		xyz[2] += normal[2] * scale;
 	}
 }
 
@@ -736,9 +740,9 @@ void DeformText(const char *text)
  */
 static void GlobalVectorToLocal(const vec3_t in, vec3_t out)
 {
-	Dot(in, backEnd.orientation.axis[0], out[0]);
-	Dot(in, backEnd.orientation.axis[1], out[1]);
-	Dot(in, backEnd.orientation.axis[2], out[2]);
+	out[0] = DotProduct(in, backEnd.orientation.axis[0]);
+	out[1] = DotProduct(in, backEnd.orientation.axis[1]);
+	out[2] = DotProduct(in, backEnd.orientation.axis[2]);
 }
 
 /**
@@ -785,10 +789,9 @@ static void AutospriteDeform(void)
 		// find the midpoint
 		xyz = tess.xyz[i];
 
-		VectorAdd(&xyz[0], &xyz[4], mid);
-		VectorAdd(mid, &xyz[8], mid);
-		VectorAdd(mid, &xyz[12], mid);
-		VectorScale(mid, 0.25f, mid);
+		mid[0] = 0.25f * (xyz[0] + xyz[4] + xyz[8] + xyz[12]);
+		mid[1] = 0.25f * (xyz[1] + xyz[5] + xyz[9] + xyz[13]);
+		mid[2] = 0.25f * (xyz[2] + xyz[6] + xyz[10] + xyz[14]);
 
 		VectorSubtract(xyz, mid, delta);
 		radius = VectorLength(delta) * 0.707f;  // / sqrt(2)
@@ -807,9 +810,13 @@ static void AutospriteDeform(void)
 			float axisLength;
 
 			axisLength = VectorLength(backEnd.currentEntity->e.axis[0]);
-			if (axisLength != 0.f)
+			if (axisLength == 0.f)
 			{
-				RECIPROCAL(axisLength);
+				axisLength = 0;
+			}
+			else
+			{
+				axisLength = 1.0f / axisLength;
 			}
 			VectorScale(left, axisLength, left);
 			VectorScale(up, axisLength, up);
@@ -885,7 +892,7 @@ static void Autosprite2Deform(void)
 
 			VectorSubtract(v1, v2, temp);
 
-			Dot(temp, temp, l);
+			l = DotProduct(temp, temp);
 			if (l < lengths[0])
 			{
 				nums[1]    = nums[0];
@@ -915,7 +922,7 @@ static void Autosprite2Deform(void)
 
 		// cross this with the view direction to get minor axis
 		CrossProduct(major, forward, minor);
-		VectorNormalizeOnly(minor);
+		VectorNormalize(minor);
 
 		// re-project the points
 		for (j = 0; j < 2; j++)
@@ -959,12 +966,7 @@ static void Autosprite2Deform(void)
  */
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 {
-	if (!shader)
-	{
-		return qfalse;
-	}
-
-	if (shader->numDeforms)
+	if(shader->numDeforms)
 	{
 		if (shader->numDeforms > 1)
 		{
@@ -976,12 +978,12 @@ qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 
 			switch (ds->deformation)
 			{
-			case DEFORM_WAVE:
-			case DEFORM_BULGE:
-			case DEFORM_MOVE:
-				return qfalse;
-			default:
-				return qtrue;
+				case DEFORM_WAVE:
+				case DEFORM_BULGE:
+				case DEFORM_MOVE:
+					return qfalse;
+				default:
+					return qtrue;
 			}
 		}
 	}
@@ -1074,9 +1076,9 @@ TEX COORDS
 void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 {
 	int   j;
-	float x, y;
+	double x, y;
 
-	Matrix4Identity(matrix);
+	mat4_ident(matrix);
 
 	for (j = 0; j < bundle->numTexMods; j++)
 	{
@@ -1085,16 +1087,16 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 		case TMOD_NONE:
 			//j = TR_MAX_TEXMODS; // break out of for loop
 			//break;
-			return; // exit this function
+			return; //exit this function
 		case TMOD_TURBULENT:
 		{
 			waveForm_t *wf = &bundle->texMods[j].wave;
 
-			x = (1.0f / 4.0f);
+			x = (1.0 / 4.0);
 			y = (wf->phase + tess.shaderTime * wf->frequency);
 
-			MatrixMultiplyScale(matrix, 1.f + (wf->amplitude * sin(y) + wf->base) * x,
-			                    1.f + (wf->amplitude * sin(y + 0.25f) + wf->base) * x, 0.0f);
+			MatrixMultiplyScale(matrix, 1 + (wf->amplitude * sin(y) + wf->base) * x,
+			                    1 + (wf->amplitude * sin(y + 0.25f) + wf->base) * x, 0.0);
 			break;
 		}
 		case TMOD_ENTITY_TRANSLATE:
@@ -1107,20 +1109,30 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 			x = x - floor(bundle->texMods[j].scroll[0]);
 			y = y - floor(bundle->texMods[j].scroll[1]);
 
-			MatrixMultiplyTranslation(matrix, x, y, 0.0f);
+			MatrixMultiplyTranslation(matrix, x, y, 0.0);
 			break;
 		}
 		case TMOD_SCROLL:
 		{
-			x = bundle->texMods[j].scroll[0] * tess.shaderTime;
-			y = bundle->texMods[j].scroll[1] * tess.shaderTime;
+			//check if shader is sky and lower the speed so its closer to vanilla render
+			//see warbell and battery sky..
+			if (tess.surfaceShader->isSky)
+			{
+				x = bundle->texMods[j].scroll[0] * tess.shaderTime *0.5;
+				y = bundle->texMods[j].scroll[1] * tess.shaderTime *0.5;
+			}
+			else
+			{
+				x = bundle->texMods[j].scroll[0] * tess.shaderTime;
+				y = bundle->texMods[j].scroll[1] * tess.shaderTime;
 
+			}
 			// clamp so coordinates don't continuously get larger, causing problems
 			// with hardware limits
 			x = x - floor(bundle->texMods[j].scroll[0]);
 			y = y - floor(bundle->texMods[j].scroll[1]);
 
-			MatrixMultiplyTranslation(matrix, x, y, 0.0f);
+			MatrixMultiplyTranslation(matrix, x, y, 0.0);
 			break;
 		}
 		case TMOD_SCALE:
@@ -1128,34 +1140,34 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 			x = bundle->texMods[j].scale[0];
 			y = bundle->texMods[j].scale[1];
 
-			MatrixMultiplyScale(matrix, x, y, 0.0f);
+			MatrixMultiplyScale(matrix, x, y, 0.0);
 			break;
 		}
 		case TMOD_STRETCH:
 		{
 			float p;
 
-			p = rcp(RB_EvalWaveForm(&bundle->texMods[j].wave));
+			p = 1.0f / RB_EvalWaveForm(&bundle->texMods[j].wave);
 
-			MatrixMultiplyTranslation(matrix, 0.5f, 0.5f, 0.0f);
-			MatrixMultiplyScale(matrix, p, p, 0.0f);
-			MatrixMultiplyTranslation(matrix, -0.5f, -0.5f, 0.0f);
+			MatrixMultiplyTranslation(matrix, 0.5, 0.5, 0.0);
+			MatrixMultiplyScale(matrix, p, p, 0.0);
+			MatrixMultiplyTranslation(matrix, -0.5, -0.5, 0.0);
 			break;
 		}
 		case TMOD_TRANSFORM:
 		{
 			const texModInfo_t *tmi = &bundle->texMods[j];
 
-			Matrix4MultiplyWith(matrix, tmi->matrix);
+			mat4_mult_self(matrix, tmi->matrix);
 			break;
 		}
 		case TMOD_ROTATE:
 		{
 			x = -bundle->texMods[j].rotateSpeed * tess.shaderTime;
 
-			MatrixMultiplyTranslation(matrix, 0.5f, 0.5f, 0.0f);
+			MatrixMultiplyTranslation(matrix, 0.5, 0.5, 0.0);
 			MatrixMultiplyZRotation(matrix, x);
-			MatrixMultiplyTranslation(matrix, -0.5f, -0.5f, 0.0f);
+			MatrixMultiplyTranslation(matrix, -0.5, -0.5, 0.0);
 			break;
 		}
 		case TMOD_SCROLL2:
@@ -1168,7 +1180,7 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 			x = x - floor(bundle->texMods[j].scroll[0]);
 			y = y - floor(bundle->texMods[j].scroll[1]);
 
-			MatrixMultiplyTranslation(matrix, x, y, 0.0f);
+			MatrixMultiplyTranslation(matrix, x, y, 0.0);
 			break;
 		}
 		case TMOD_SCALE2:
@@ -1176,7 +1188,7 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 			x = RB_EvalExpression(&bundle->texMods[j].sExp, 0);
 			y = RB_EvalExpression(&bundle->texMods[j].tExp, 0);
 
-			MatrixMultiplyScale(matrix, x, y, 0.0f);
+			MatrixMultiplyScale(matrix, x, y, 0.0);
 			break;
 		}
 		case TMOD_CENTERSCALE:
@@ -1184,9 +1196,9 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 			x = RB_EvalExpression(&bundle->texMods[j].sExp, 0);
 			y = RB_EvalExpression(&bundle->texMods[j].tExp, 0);
 
-			MatrixMultiplyTranslation(matrix, 0.5f, 0.5f, 0.0f);
-			MatrixMultiplyScale(matrix, x, y, 0.0f);
-			MatrixMultiplyTranslation(matrix, -0.5f, -0.5f, 0.0f);
+			MatrixMultiplyTranslation(matrix, 0.5, 0.5, 0.0);
+			MatrixMultiplyScale(matrix, x, y, 0.0);
+			MatrixMultiplyTranslation(matrix, -0.5, -0.5, 0.0);
 			break;
 		}
 		case TMOD_SHEAR:
@@ -1194,18 +1206,18 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 			x = RB_EvalExpression(&bundle->texMods[j].sExp, 0);
 			y = RB_EvalExpression(&bundle->texMods[j].tExp, 0);
 
-			MatrixMultiplyTranslation(matrix, 0.5f, 0.5f, 0.0f);
+			MatrixMultiplyTranslation(matrix, 0.5, 0.5, 0.0);
 			MatrixMultiplyShear(matrix, x, y);
-			MatrixMultiplyTranslation(matrix, -0.5f, -0.5f, 0.0f);
+			MatrixMultiplyTranslation(matrix, -0.5, -0.5, 0.0);
 			break;
 		}
 		case TMOD_ROTATE2:
 		{
 			x = RB_EvalExpression(&bundle->texMods[j].rExp, 0);
 
-			MatrixMultiplyTranslation(matrix, 0.5f, 0.5f, 0.0f);
+			MatrixMultiplyTranslation(matrix, 0.5, 0.5, 0.0);
 			MatrixMultiplyZRotation(matrix, x);
-			MatrixMultiplyTranslation(matrix, -0.5f, -0.5f, 0.0f);
+			MatrixMultiplyTranslation(matrix, -0.5, -0.5, 0.0);
 			break;
 		}
 

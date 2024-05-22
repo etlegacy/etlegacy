@@ -53,11 +53,6 @@
 /**
  * Initialize the Json library memory functions
  */
-void Q_JSONInitWith(void *(*malloc_fn)(size_t sz), void (*free_fn)(void *ptr));
-
-/**
- * Initialize the Json library memory functions
- */
 void Q_JSONInit(void);
 
 /*

@@ -439,12 +439,12 @@ void R_BindFBO(FBO_t *fbo)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo->frameBuffer);
 
-		if (fbo->colorBuffers[0].buffer)
+		if(fbo->colorBuffers[0].buffer)
 		{
 			glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0].buffer);
 		}
-
-		if (fbo->depthBuffer.buffer)
+		
+		if(fbo->depthBuffer.buffer)
 		{
 			glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer.buffer);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer.buffer);
@@ -488,7 +488,7 @@ void R_SetDefaultFBO(void)
 static void R_CheckDefaultBuffer()
 {
 	unsigned int fbostatus;
-
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glState.currentFBO = NULL;
@@ -646,9 +646,7 @@ void R_InitFBOs(void)
 		R_CheckFBO(tr.occlusionRenderFBO);
 	}
 
-	// if (r_staticLight->integer && r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable)
-	// The flamethrower needs this FBO too for the fancy shadows in renderer2.
-	if (r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable)
+	if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable)
 	{
 		// shadowMap FBOs for shadow mapping offscreen rendering
 		for (i = 0; i < MAX_SHADOWMAPS; i++)
@@ -657,8 +655,34 @@ void R_InitFBOs(void)
 
 			tr.shadowMapFBO[i] = R_CreateFBO(va("_shadowMap%d", i), width, height);
 			R_BindFBO(tr.shadowMapFBO[i]);
-			R_CreateFBOColorBuffer(tr.shadowMapFBO[i], GL_ALPHA32F_ARB, 0);
+
+
+			if (r_shadows->integer == SHADOWING_ESM32)
+			{
+				R_CreateFBOColorBuffer(tr.shadowMapFBO[i], GL_ALPHA32F_ARB, 0);
+			}
+			else if (r_shadows->integer == SHADOWING_VSM32)
+			{
+				R_CreateFBOColorBuffer(tr.shadowMapFBO[i], GL_LUMINANCE_ALPHA32F_ARB, 0);
+			}
+			else if (r_shadows->integer == SHADOWING_EVSM32)
+			{
+				if (r_evsmPostProcess->integer)
+				{
+					R_CreateFBOColorBuffer(tr.shadowMapFBO[i], GL_ALPHA32F_ARB, 0);
+				}
+				else
+				{
+					R_CreateFBOColorBuffer(tr.shadowMapFBO[i], GL_RGBA32F_ARB, 0);
+				}
+			}
+			else
+			{
+				R_CreateFBOColorBuffer(tr.shadowMapFBO[i], GL_RGBA16F_ARB, 0);
+			}
+
 			R_CreateFBODepthBuffer(tr.shadowMapFBO[i], GL_DEPTH_COMPONENT24_ARB);
+
 			R_CheckFBO(tr.shadowMapFBO[i]);
 		}
 
@@ -669,23 +693,47 @@ void R_InitFBOs(void)
 
 			tr.sunShadowMapFBO[i] = R_CreateFBO(va("_sunShadowMap%d", i), width, height);
 			R_BindFBO(tr.sunShadowMapFBO[i]);
+
+			if (r_shadows->integer == SHADOWING_ESM32)
+			{
+				R_CreateFBOColorBuffer(tr.sunShadowMapFBO[i], GL_ALPHA32F_ARB, 0);
+			}
+			else if (r_shadows->integer == SHADOWING_VSM32)
+			{
+				R_CreateFBOColorBuffer(tr.sunShadowMapFBO[i], GL_LUMINANCE_ALPHA32F_ARB, 0);
+			}
+			else if (r_shadows->integer == SHADOWING_EVSM32)
+			{
+				if (!r_evsmPostProcess->integer)
+				{
+					R_CreateFBOColorBuffer(tr.sunShadowMapFBO[i], GL_RGBA32F_ARB, 0);
+				}
+			}
+			else
+			{
+				R_CreateFBOColorBuffer(tr.sunShadowMapFBO[i], GL_RGBA16F_ARB, 0);
+			}
+
 			R_CreateFBODepthBuffer(tr.sunShadowMapFBO[i], GL_DEPTH_COMPONENT24_ARB);
 
-			R_AttachFBOTextureDepth(tr.sunShadowMapFBOImage[i]->texnum);
-			/*
-			Since we don't have a color attachment the framebuffer will be considered incomplete.
-			Consequently, we must inform the driver that we do not wish to render to the color buffer.
-			We do this with a call to set the draw-buffer and read-buffer to GL_NONE:
-			*/
-			glDrawBuffer(GL_NONE);
-			glReadBuffer(GL_NONE);
+			if (r_shadows->integer == SHADOWING_EVSM32 && r_evsmPostProcess->integer)
+			{
+				R_AttachFBOTextureDepth(tr.sunShadowMapFBOImage[i]->texnum);
+
+				/*
+				Since we don't have a color attachment the framebuffer will be considered incomplete.
+				Consequently, we must inform the driver that we do not wish to render to the color buffer.
+				We do this with a call to set the draw-buffer and read-buffer to GL_NONE:
+				*/
+				glDrawBuffer(GL_NONE);
+				glReadBuffer(GL_NONE);
+			}
 
 			R_CheckFBO(tr.sunShadowMapFBO[i]);
 		}
-/*	}
-		This is suspicious
+	}
+
 	{
-		*/
 		if (glConfig2.textureNPOTAvailable)
 		{
 			width  = glConfig.vidWidth;
@@ -714,7 +762,7 @@ void R_InitFBOs(void)
 		R_CheckFBO(tr.portalRenderFBO);
 	}
 
-	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
+
 	{
 		if (glConfig2.textureNPOTAvailable)
 		{
@@ -796,10 +844,7 @@ void R_InitFBOs(void)
 		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.downScaleFBOImage_1x1->texnum, 0);
 		R_CheckFBO(tr.downScaleFBO_1x1);
 #endif
-	}
 
-	if (r_bloom->integer)
-	{
 		if (glConfig2.textureNPOTAvailable)
 		{
 			width  = glConfig.vidWidth * 0.25f;
@@ -845,27 +890,7 @@ void R_InitFBOs(void)
 			R_CheckFBO(tr.bloomRenderFBO[i]);
 		}
 	}
-/*
-	{
-		// current cubemap FBO for the reflections
-		tr.currentCubemapFBO = R_CreateFBO("_currentcubemap", REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE);
-		R_BindFBO(tr.currentCubemapFBO);
 
-		if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
-		{
-			R_CreateFBOColorBuffer(tr.currentCubemapFBO, GL_RGBA16F_ARB, 0);
-		}
-		else
-		{
-			R_CreateFBOColorBuffer(tr.currentCubemapFBO, GL_RGBA, 0); // check for rgb, we don't need a
-		}
-		R_AttachFBOTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, tr.currentCubemapFBOImage->texnum, 0);
-
-		R_CreateFBODepthBuffer(tr.currentCubemapFBO, GL_DEPTH_COMPONENT24);
-
-		R_CheckFBO(tr.currentCubemapFBO);
-	}
-*/
 	GL_CheckErrors();
 
 	R_BindNullFBO();

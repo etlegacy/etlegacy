@@ -198,12 +198,19 @@ static void InitOpenGL(void)
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
 
-		char glConfigString[1024] = { 0 };
-		Info_SetValueForKey(glConfigString, "type", "vulkan");
-		Info_SetValueForKey(glConfigString, "major", "1");
-		Info_SetValueForKey(glConfigString, "minor", "2");
+		windowContext_t context;
+		Com_Memset(&context, 0, sizeof(windowContext_t));
+		// If we are using FBO's then disable multisampling on the main screen buffer
+		if (r_fbo->integer)
+		{
+			context.samples = 0;
+		}
+		else
+		{
+			context.samples = r_ext_multisample->integer;
+		}
 
-		ri.GLimp_Init(&glConfig, glConfigString);
+		ri.GLimp_Init(&glConfig, &context);
 
 		Q_strncpyz(renderer_buffer, glConfig.renderer_string, renderer_buffer);
 		Q_strlwr(renderer_buffer);

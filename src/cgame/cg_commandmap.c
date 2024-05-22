@@ -865,7 +865,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				msec = 0;
 			}
 
-			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25.0f * M_TAU_F) + 1.0f) * 0.5f);
+			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
 			CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccMedicIcon);
@@ -1971,59 +1971,59 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 		}
 	}
 
-	for (i = 0; i < snap->numEntities; ++i)
-	{
-		centity_t *cent = &cg_entities[snap->entities[i].number];
-		qhandle_t icon;
+    for (i = 0; i < snap->numEntities; ++i)
+    {
+        centity_t *cent = &cg_entities[snap->entities[i].number];
+        qhandle_t icon;
 
-		// skip self
-		if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
-		{
-			continue;
-		}
+        // skip self
+        if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
+        {
+            continue;
+        }
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, CG_GetActiveHUD()->compass.style & COMPASS_PRIMARY_OBJECTIVES,
-		                         CG_GetActiveHUD()->compass.style & COMPASS_SECONDARY_OBJECTIVES, CG_GetActiveHUD()->compass.style & COMPASS_ITEM,
-		                         qtrue, NULL);
+        icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, CG_GetActiveHUD()->compass.style & COMPASS_PRIMARY_OBJECTIVES,
+                                 CG_GetActiveHUD()->compass.style & COMPASS_SECONDARY_OBJECTIVES, CG_GetActiveHUD()->compass.style & COMPASS_ITEM,
+                                 qtrue, NULL);
 
-		if (icon)
-		{
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor);
+        if (icon)
+        {
+            CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor);
 
-			// draw overlapping shader for disguised covops
-			if (icon == cgs.media.friendShader)
-			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor);
-			}
-		}
-	}
+            // draw overlapping shader for disguised covops
+            if (icon == cgs.media.friendShader)
+            {
+                CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor);
+            }
+        }
+    }
 
-	// draw compass points for square map
-	if (!mapScissor.circular && (style & COMPASS_CARDINAL_POINTS))
-	{
-		float        centerX   = x + (w * .5f);
-		float        centerY   = y + (h * .5f);
-		float        textScale = (w / 100) * 0.18f;
-		float        textHeight;
-		float        offsetX = (w / 100) * 3.f;
-		float        offsetY = (h / 100) * 3.f;
-		fontHelper_t font    = cgs.media.limboFont2;
+    // draw compass points for square map
+    if (!mapScissor.circular && (style & COMPASS_CARDINAL_POINTS))
+    {
+        float        centerX   = x + (w * .5f);
+        float        centerY   = y + (h * .5f);
+        float        textScale = (w / 100) * 0.18f;
+        float        textHeight;
+        float        offsetX = (w / 100) * 3.f;
+        float        offsetY = (h / 100) * 3.f;
+        fontHelper_t font    = cgs.media.limboFont2;
 
-		// north
-		CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, "N", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+        // north
+        CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, "N", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
 
-		// south
-		textHeight = (float)CG_Text_Height_Ext("S", textScale, 0, &font);
-		CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, "S", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+        // south
+        textHeight = (float)CG_Text_Height_Ext("S", textScale, 0, &font);
+        CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, "S", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
 
-		// east
-		textHeight = (float)CG_Text_Height_Ext("E", textScale, 0, &font);
-		CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "E", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+        // east
+        textHeight = (float)CG_Text_Height_Ext("E", textScale, 0, &font);
+        CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "E", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
 
-		// west
-		textHeight = (float)CG_Text_Height_Ext("W", textScale, 0, &font);
-		CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "W", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
-	}
+        // west
+        textHeight = (float)CG_Text_Height_Ext("W", textScale, 0, &font);
+        CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "W", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+    }
 }
 
 /**
@@ -2504,13 +2504,13 @@ void CG_CommandMap_DrawHighlightText(void)
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor)
 {
 	float  iconx, icony, iconWidth, iconHeight, radius;
-	float  angle, S, C, len, diff;
+	float  angle, len, diff;
 	vec3_t v1, angles;
 
 	VectorCopy(dest, v1);
 	VectorSubtract(origin, v1, v1);
 	len = VectorLength(v1);
-	VectorNormalizeOnly(v1);
+	VectorNormalize(v1);
 	vectoangles(v1, angles);
 
 	if (v1[0] == 0.f && v1[1] == 0.f && v1[2] == 0.f)
@@ -2535,9 +2535,8 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 		radius = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 
-		SinCos(angle, S, C);
-		iconx = iconx + (C * radius);
-		icony = icony + (S * radius);
+		iconx = iconx + ((float)cos(angle) * radius);
+		icony = icony + ((float)sin(angle) * radius);
 
 		iconx = iconx - (iconWidth - 4) / 2;
 		icony = icony - (iconHeight - 4) / 2;

@@ -1036,7 +1036,6 @@ void Com_RandomBytes(void *bytes, int len);
 char *Com_MD5File(const char *fileName, int length, const char *prefix, int prefix_len);
 
 void Com_StartupVariable(const char *match);
-void Com_CommandLineCheck(qboolean (*clb)());
 void Com_SetRecommended(void);
 // checks for and removes command line "+set var arg" constructs
 // if match is NULL, all set commands will be executed, otherwise

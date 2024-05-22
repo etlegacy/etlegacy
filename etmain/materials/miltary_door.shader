@@ -7,6 +7,7 @@ textures/miltary_door/mdoor_c03
 	bumpmap textures/miltary_door/mdoor_c03_n.tga
 	specularmap textures/miltary_door/mdoor_c03_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/miltary_door/mdoor_c04
@@ -15,6 +16,7 @@ textures/miltary_door/mdoor_c04
 	bumpmap textures/miltary_door/mdoor_c04_n.tga
 	specularmap textures/miltary_door/mdoor_c04_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/miltary_door/mdoor_m01
@@ -23,6 +25,7 @@ textures/miltary_door/mdoor_m01
 	bumpmap textures/miltary_door/mdoor_m01_n.tga
 	specularmap textures/miltary_door/mdoor_m01_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/miltary_door/mdoor_m01b
@@ -31,6 +34,7 @@ textures/miltary_door/mdoor_m01b
 	bumpmap textures/miltary_door/mdoor_m01b_n.tga
 	specularmap textures/miltary_door/mdoor_m01b_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/miltary_door/mdoor_m08a
@@ -39,4 +43,5 @@ textures/miltary_door/mdoor_m08a
 	bumpmap textures/miltary_door/mdoor_m08a_n.tga
 	specularmap textures/miltary_door/mdoor_m08a_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }

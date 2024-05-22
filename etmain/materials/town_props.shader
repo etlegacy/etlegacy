@@ -7,4 +7,5 @@ textures/town_props/streetname_c01
 	specularmap textures/town_props/streetname_c01_r.tga
 	bumpmap textures/town_props/streetname_c01_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }

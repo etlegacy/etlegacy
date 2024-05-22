@@ -195,22 +195,22 @@ static void InitOpenGL(void)
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
 
-		char glConfigString[1024] = { 0 };
-		Info_SetValueForKey(glConfigString, "type", "opengl");
-		Info_SetValueForKey(glConfigString, "major", "1");
-		Info_SetValueForKey(glConfigString, "minor", "1");
+		windowContext_t context;
+		Com_Memset(&context, 0, sizeof(windowContext_t));
 
-		// If we are using FBO's then disable multisampling on the main screen buffer
-		Info_SetValueForKey(glConfigString, "samples", va("%d", r_ext_multisample->integer));
+		// These should be the same as the old ifdeffin on sdl_glimp..
+		context.samples      = r_ext_multisample->integer;
+		context.versionMajor = 1;
+		context.versionMinor = 1;
 
 		// FIXME: check if both Rpi and Android can use the "EGL" one.
 #ifdef __ANDROID__
-		Info_SetValueForKey(glConfigString, "context", va("%i", GL_CONTEXT_EGL));
+		context.context = GL_CONTEXT_EGL;
 #else
-		Info_SetValueForKey(glConfigString, "context", va("%i", GL_CONTEXT_ES));
+		context.context = GL_CONTEXT_ES;
 #endif
 
-		ri.GLimp_Init(&glConfig, glConfigString);
+		ri.GLimp_Init(&glConfig, &context);
 
 		Q_strncpyz(renderer_buffer, glConfig.renderer_string, sizeof(renderer_buffer));
 		Q_strlwr(renderer_buffer);

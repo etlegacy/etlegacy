@@ -5,8 +5,9 @@ textures/miltary_wall/brick_l_01
     qer_editorimage textures/miltary_wall/brick_l_01.tga
 	diffusemap textures/miltary_wall/brick_l_01.tga
 	bumpmap textures/miltary_wall/brick_l_01_n.tga
-	specularmap textures/miltary_wall/brick_l_01_r.tga
+	specularmap textures/miltary_wall/brick_l_01.tga
 	surfaceparm woodsteps
+	implicitMap -
 }
 
 textures/miltary_wall/miltary_m01
@@ -16,6 +17,7 @@ textures/miltary_wall/miltary_m01
 	bumpmap textures/miltary_wall/miltary_m01_n.tga
 	specularmap textures/miltary_wall/miltary_m01_r.tga
 	surfaceparm woodsteps
+	implicitMap -
 }
 
 textures/miltary_wall/miltary_m06
@@ -25,6 +27,7 @@ textures/miltary_wall/miltary_m06
 	bumpmap textures/miltary_wall/miltary_m06_n.tga
 	specularmap textures/miltary_wall/miltary_m06_r.tga
 	surfaceparm woodsteps
+	implicitMap -
 }
 
 textures/miltary_wall/miltary_m06_cloth
@@ -33,6 +36,8 @@ textures/miltary_wall/miltary_m06_cloth
 	diffusemap textures/miltary_wall/miltary_m06.tga
 	bumpmap textures/miltary_wall/miltary_m06_n.tga
 	specularmap textures/miltary_wall/miltary_m06_r.tga
+
+	implicitMap textures/miltary_wall/miltary_m06.tga
 }
 
 textures/miltary_wall/mroof_m01a
@@ -42,6 +47,7 @@ textures/miltary_wall/mroof_m01a
 	bumpmap textures/miltary_wall/mroof_m01a_n.tga
 	specularmap textures/miltary_wall/mroof_m01a_r.tga
 	surfaceparm roofsteps
+	implicitMap -
 }
 
 textures/miltary_wall/window_m03

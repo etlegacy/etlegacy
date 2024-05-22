@@ -300,7 +300,6 @@ void Cmd_Exec_f(void)
 	qboolean quiet;
 
 	quiet = !Q_stricmp(Cmd_Argv(0), "execq");
-	f.v   = NULL;
 
 	if (Cmd_Argc() != 2)
 	{

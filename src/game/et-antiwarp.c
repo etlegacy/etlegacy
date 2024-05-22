@@ -220,7 +220,7 @@ void DoClientThinks(gentity_t *ent)
 			goto drop_packet;
 		}
 
-		scale = (1.0f / LAG_DECAY);
+		scale = 1.f / LAG_DECAY;
 
 		speed = G_CmdScale(ent, cmd);
 

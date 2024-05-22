@@ -57,8 +57,7 @@ int CM_PointLeafnum_r(const vec3_t p, int num)
 		}
 		else
 		{
-			Dot(plane->normal, p, d);
-			d -= plane->dist;
+			d = DotProduct(plane->normal, p) - plane->dist;
 		}
 		if (d < 0)
 		{
@@ -318,7 +317,7 @@ int CM_PointContents(const vec3_t p, clipHandle_t model)
 		// see if the point is in the brush
 		for (i = 0 ; i < b->numsides ; i++)
 		{
-			Dot(p, b->sides[i].plane->normal, d);
+			d = DotProduct(p, b->sides[i].plane->normal);
 // FIXME test for Cash
 //          if ( d >= b->sides[i].plane->dist ) {
 			if (d > b->sides[i].plane->dist)
@@ -361,9 +360,9 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 		angles_vectors(angles, forward, right, up);
 
 		VectorCopy(p_l, temp);
-		Dot(temp, forward, p_l[0]);
-		Dot(temp, right, p_l[1]);
-		Dot(temp, up, p_l[2]);
+		p_l[0] = DotProduct(temp, forward);
+		p_l[1] = -DotProduct(temp, right);
+		p_l[2] = DotProduct(temp, up);
 	}
 
 	return CM_PointContents(p_l, model);

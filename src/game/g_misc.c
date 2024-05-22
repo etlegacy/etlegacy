@@ -448,7 +448,7 @@ void locateCamera(gentity_t *ent)
 	if (target)
 	{
 		VectorSubtract(target->s.origin, owner->s.origin, dir);
-		VectorNormalizeOnly(dir);
+		VectorNormalize(dir);
 	}
 	else
 	{
@@ -533,7 +533,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	if (ent->enemy)
 	{
 		VectorSubtract(ent->enemy->r.currentOrigin, ent->s.origin, dir);
-		VectorNormalizeOnly(dir);
+		VectorNormalize(dir);
 	}
 	else
 	{
@@ -556,7 +556,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	deg = crandom() * ent->random;
 	VectorMA(dir, deg, right, dir);
 
-	VectorNormalizeOnly(dir);
+	VectorNormalize(dir);
 
 	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_GRENADE)
 	{
@@ -566,7 +566,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	}
 	else if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER)
 	{
-		VectorNormalizeOnly(dir);
+		VectorNormalize(dir);
 		VectorScale(dir, 5000, dir);
 		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
 	}
@@ -2871,7 +2871,7 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
 		VectorSet(dir, 0, 0, 10);
 	}
 
-	VectorNormalizeOnly(dir);
+	VectorNormalize(dir);
 	VectorScale(dir, 1500, flingvec);
 	VectorAdd(vic->s.pos.trDelta, flingvec, vic->s.pos.trDelta);
 	VectorAdd(vic->client->ps.velocity, flingvec, vic->client->ps.velocity);

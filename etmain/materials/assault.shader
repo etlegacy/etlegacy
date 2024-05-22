@@ -7,6 +7,7 @@ textures/assault/atool_m02
 	bumpMap textures/assault/atool_m02_n.tga
 	specularMap textures/assault/atool_m02_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/atruss_m06a
@@ -32,6 +33,7 @@ textures/assault/machine_cl01
 	bumpMap textures/assault/machine_cl01_n.tga
 	specularMap textures/assault/machine_cl01_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/machine_c01b
@@ -41,6 +43,7 @@ textures/assault/machine_c01b
 	bumpMap textures/assault/machine_c01b_n.tga
 	specularMap textures/assault/machine_c01b_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/machine_c03a
@@ -50,6 +53,7 @@ textures/assault/machine_c03a
 	bumpMap textures/assault/machine_c03a_n.tga
 	specularMap textures/assault/machine_c03a_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/machine_c03e
@@ -59,6 +63,7 @@ textures/assault/machine_c03e
 	bumpMap textures/assault/machine_c03e_n.tga
 	specularMap textures/assault/machine_c03e_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/machine_c04b
@@ -68,6 +73,7 @@ textures/assault/machine_c04b
 	bumpMap textures/assault/machine_c04b_n.tga
 	specularMap textures/assault/machine_c04b_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/machine_c05b
@@ -77,6 +83,7 @@ textures/assault/machine_c05b
 	bumpMap textures/assault/machine_c05b_n.tga
 	specularMap textures/assault/machine_c05b_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/machine_c06b
@@ -86,6 +93,7 @@ textures/assault/machine_c06b
 	bumpMap textures/assault/machine_c06b_n.tga
 	specularMap textures/assault/machine_c06b_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/machine_c07
@@ -95,6 +103,7 @@ textures/assault/machine_c07
 	bumpMap textures/assault/machine_c07_n.tga
 	specularMap textures/assault/machine_c07_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/metal_c06
@@ -104,6 +113,7 @@ textures/assault/metal_c06
 	bumpMap textures/assault/metal_c06_n.tga
 	specularMap textures/assault/metal_c06_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/metal_c07a
@@ -113,6 +123,7 @@ textures/assault/metal_c07a
 	bumpMap textures/assault/metal_c07a_n.tga
 	specularMap textures/assault/metal_c07a_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/assault/metal_c07ans
@@ -123,6 +134,7 @@ textures/assault/metal_c07ans
 	specularMap textures/assault/metal_c07ans_r.tga
 	surfaceparm nonsolid
 	surfaceparm trans
+	implicitMap textures/assault/metal_c07a.tga
 }
 
 textures/assault/trim_c01
@@ -132,4 +144,5 @@ textures/assault/trim_c01
 	bumpMap textures/assault/trim_c01_n.tga
 	specularMap textures/assault/trim_c01_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }

@@ -222,7 +222,7 @@ void Com_EndRedirect(void)
 }
 
 /**
- * @brief Both client and server can use this, and it will output to the appropriate place.
+ * @brief Both client and server can use this, and it will output to the apropriate place.
  *
  * A raw string should NEVER be passed as fmt, because of "%f" type crashers.
  *
@@ -518,7 +518,7 @@ void Com_ParseCommandLine(char *commandLine)
 			inq = !inq;
 		}
 		// look for a + separating character
-		// if commandLine came from a file, we might have real line separators
+		// if commandLine came from a file, we might have real line seperators
 		if (*commandLine == '+' || *commandLine == '\n' || *commandLine == '\r')
 		{
 			if (com_numConsoleLines == MAX_CONSOLE_LINES)
@@ -619,21 +619,6 @@ void Com_StartupVariable(const char *match)
 				Cvar_Set2(s, Cmd_ArgsFrom(2), qfalse);
 			}
 		}
-	}
-}
-
-void Com_CommandLineCheck(qboolean (*clb)())
-{
-	int i;
-
-	for (i = 0 ; i < com_numConsoleLines ; i++)
-	{
-		Cmd_TokenizeString(com_consoleLines[i]);
-		if (!(*clb)())
-		{
-			continue;
-		}
-		com_consoleLines[i][0] = 0;
 	}
 }
 
@@ -2784,16 +2769,6 @@ static void Com_DetectAltivec(void)
 }
 #endif
 
-static qboolean Com_InitExecs()
-{
-	if (Q_stricmp(Cmd_Argv(0), "exec") && Q_stricmp(Cmd_Argv(0), "execq"))
-	{
-		return qfalse;
-	}
-	Cbuf_AddText(va("%s\n", Cmd_ArgsFrom(0)));
-	return qtrue;
-}
-
 /**
  * @brief Com_Init
  * @param[in] commandLine
@@ -2945,8 +2920,6 @@ void Com_Init(char *commandLine)
 #endif
 
 	Cbuf_AddText("exec autoexec.cfg\n");
-
-	Com_CommandLineCheck(&Com_InitExecs);
 
 	// reset crashed state
 	Cbuf_AddText("set com_crashed 0\n");

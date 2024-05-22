@@ -7,6 +7,7 @@ textures/xlab_wall/x_metalwall_m01
 	specularmap textures/xlab_wall/x_metalwall_m01_r.tga
 	bumpmap textures/xlab_wall/x_metalwall_m01_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_wall/xmetal_c03
@@ -16,6 +17,7 @@ textures/xlab_wall/xmetal_c03
 	specularmap textures/xlab_wall/xmetal_c03_r.tga
 	bumpmap textures/xlab_wall/xmetal_c03_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 //===========================================================================
@@ -119,6 +121,7 @@ textures/xlab_wall/xmetal_m02f
 	specularmap textures/xlab_wall/xmetal_m02f_r.tga
 	bumpmap textures/xlab_wall/xmetal_m02f_n.tga
 	surfaceparm metalsteps
+	implicitMap textures/xlab_wall/xmetal_m02.tga
 }
 
 textures/xlab_wall/xmetal_m03l
@@ -128,6 +131,7 @@ textures/xlab_wall/xmetal_m03l
 	specularmap textures/xlab_wall/xmetal_m03l_r.tga
 	bumpmap textures/xlab_wall/xmetal_m03l_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_wall/xtrim_c02
@@ -137,6 +141,7 @@ textures/xlab_wall/xtrim_c02
 	specularmap textures/xlab_wall/xtrim_c02_r.tga
 	bumpmap textures/xlab_wall/xtrim_c02_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_wall/xtrim_c04
@@ -146,6 +151,7 @@ textures/xlab_wall/xtrim_c04
 	specularmap textures/xlab_wall/xtrim_c04_r.tga
 	bumpmap textures/xlab_wall/xtrim_c04_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_wall/xtrim_c05
@@ -155,6 +161,7 @@ textures/xlab_wall/xtrim_c05
 	specularmap textures/xlab_wall/xtrim_c05_r.tga
 	bumpmap textures/xlab_wall/xtrim_c05_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_wall/xtrim_c06
@@ -164,6 +171,7 @@ textures/xlab_wall/xtrim_c06
 	specularmap textures/xlab_wall/xtrim_c06_r.tga
 	bumpmap textures/xlab_wall/xtrim_c06_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_wall/xtrim_c07
@@ -173,6 +181,7 @@ textures/xlab_wall/xtrim_c07
 	specularmap textures/xlab_wall/xtrim_c07_r.tga
 	bumpmap textures/xlab_wall/xtrim_c07_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/xlab_wall/xwall_c07
@@ -182,4 +191,5 @@ textures/xlab_wall/xwall_c07
 	specularmap textures/xlab_wall/xwall_c07_r.tga
 	bumpmap textures/xlab_wall/xwall_c07_n.tga
 	surfaceparm metalsteps
+	implicitMap -
 }

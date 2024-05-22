@@ -8,15 +8,11 @@ void main()
 {
 	vec2 st = gl_FragCoord.st;
 
-#if 0
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	st *= r_FBufScale;
 
 	// scale by the screen non-power-of-two-adjust
 	st *= r_NPOTScale;
-#else
-	st *= r_FBufNPOTScale;
-#endif
 
 	// we use the Normal-gauss distribution formula
 	// f(x) being the formula, we used f(0.5)-f(-0.5); f(1.5)-f(0.5)...
@@ -31,10 +27,10 @@ void main()
 	float gaussSum     = 4096.0; // = 64.0^2 = result of sumWeights;
 	#else
 	float gaussFact[11] = float[11](
-		0.0222244, 0.0378346, 0.0755906, 0.1309775, 0.1756663,
-		0.1974126,
-		0.1756663, 0.1309775, 0.0755906, 0.0378346, 0.0222244
-		);
+	    0.0222244, 0.0378346, 0.0755906, 0.1309775, 0.1756663,
+	    0.1974126,
+	    0.1756663, 0.1309775, 0.0755906, 0.0378346, 0.0222244
+	    );
 	#endif
 
 	// do a full gaussian blur

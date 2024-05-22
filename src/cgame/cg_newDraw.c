@@ -427,7 +427,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	// color
 	if (comp->style & 4)
 	{
-		color[3] *= 0.5f + 0.5f * sin(cg.time / 150.0);
+		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
 	}
 
 	// strobe
@@ -439,7 +439,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	// size
 	else if (comp->style & 1)
 	{
-		scale     = (float)(CURSORHINT_SCALE * (0.5f + 0.5f * sin(cg.time / 150.0))); // sin pulse
+		scale     = (float)(CURSORHINT_SCALE * (0.5 + 0.5 * sin(cg.time / 150.0))); // sin pulse
 		halfscale = scale * 0.5f;
 	}
 

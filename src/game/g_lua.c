@@ -1033,11 +1033,6 @@ static const gentity_field_t gclient_fields[] =
 #endif
 	_et_gclient_addfield(sess.uci,                          FIELD_INT,                 0),
 
-#ifdef LEGACY_AUTH
-	_et_gclient_addfield(sess.authName,                     FIELD_STRING,              FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.authId,                       FIELD_INT,                 FIELD_FLAG_READONLY),
-#endif
-
 	_et_gclient_addfield(sess.aWeaponStats,                 FIELD_WEAPONSTAT,          FIELD_FLAG_READONLY),
 
 	//_et_gclient_addfieldalias(aWeaponStats, sess.aWeaponStats, FIELD_WEAPONSTAT_EXT, FIELD_FLAG_READONLY),
@@ -2198,8 +2193,8 @@ qboolean G_LuaRunIsolated(const char *modName)
  */
 qboolean G_LuaInit(void)
 {
-	int          i, num_vm = 0, len;
-	char         buff[MAX_CVAR_VALUE_STRING], *crt, *list, *pList;
+	int  i, num_vm = 0, len;
+	char buff[MAX_CVAR_VALUE_STRING], *crt, *list, *pList;
 	fileHandle_t f;
 
 	for (i = 0; i < LUA_NUM_VM; i++)

@@ -331,7 +331,6 @@ void CG_OffsetThirdPersonView(void)
 	vec3_t        focusPoint;
 	float         focusDist;
 	float         forwardScale, sideScale;
-	float         S, C, A;
 
 	cg.refdef_current->vieworg[2] += cg.predictedPlayerState.viewheight;
 
@@ -372,10 +371,8 @@ void CG_OffsetThirdPersonView(void)
 
 	AngleVectors(cg.refdefViewAngles, forward, right, up);
 
-	A = DEG2RAD(cg_thirdPersonAngle.value);
-	SinCos(A, S, C);
-	forwardScale = C;
-	sideScale    = S;
+	forwardScale = cos(cg_thirdPersonAngle.value / 180 * M_PI);
+	sideScale    = sin(cg_thirdPersonAngle.value / 180 * M_PI);
 	VectorMA(view, -cg_thirdPersonRange.value * forwardScale, forward, view);
 	VectorMA(view, -cg_thirdPersonRange.value * sideScale, right, view);
 
@@ -1732,8 +1729,10 @@ static plane_t frustum[4];
 //  CG_SetupFrustum
 void CG_SetupFrustum(void)
 {
-	float xs, xc, ang = DEG2RAD(cg.refdef_current->fov_x) * 0.5f;
-	SinCos(ang, xs, xc);
+	float ang = cg.refdef_current->fov_x / 180 * M_PI * 0.5;
+	float xs  = sin(ang);
+	float xc  = cos(ang);
+	int i;
 
 	VectorScale(cg.refdef_current->viewaxis[0], xs, frustum[0].normal);
 	VectorMA(frustum[0].normal, xc, cg.refdef_current->viewaxis[1], frustum[0].normal);
@@ -1741,8 +1740,9 @@ void CG_SetupFrustum(void)
 	VectorScale(cg.refdef_current->viewaxis[0], xs, frustum[1].normal);
 	VectorMA(frustum[1].normal, -xc, cg.refdef_current->viewaxis[1], frustum[1].normal);
 
-	ang = DEG2RAD(cg.refdef.fov_y) * 0.5f;
-	SinCos(ang, xs, xc);
+	ang = cg.refdef.fov_y / 180 * M_PI * 0.5;
+	xs  = sin(ang);
+	xc  = cos(ang);
 
 	VectorScale(cg.refdef_current->viewaxis[0], xs, frustum[2].normal);
 	VectorMA(frustum[2].normal, xc, cg.refdef_current->viewaxis[2], frustum[2].normal);
@@ -1750,10 +1750,10 @@ void CG_SetupFrustum(void)
 	VectorScale(cg.refdef_current->viewaxis[0], xs, frustum[3].normal);
 	VectorMA(frustum[3].normal, -xc, cg.refdef_current->viewaxis[2], frustum[3].normal);
 
-	Dot(cg.refdef_current->vieworg, frustum[0].normal, frustum[0].dist);
-	Dot(cg.refdef_current->vieworg, frustum[1].normal, frustum[1].dist);
-	Dot(cg.refdef_current->vieworg, frustum[2].normal, frustum[2].dist);
-	Dot(cg.refdef_current->vieworg, frustum[3].normal, frustum[3].dist);
+	for (i = 0 ; i < 4 ; i++)
+	{
+		frustum[i].dist = DotProduct(cg.refdef_current->vieworg, frustum[i].normal);
+	}
 }
 
 /**
@@ -1765,15 +1765,13 @@ qboolean CG_CullPoint(vec3_t pt)
 {
 	int i;
 	plane_t *frust;
-	float dot;
 
 	// check against frustum planes
 	for (i = 0 ; i < 4 ; i++)
 	{
 		frust = &frustum[i];
 
-		Dot(pt, frust->normal, dot);
-		if ((dot - frust->dist) < 0)
+		if ((DotProduct(pt, frust->normal) - frust->dist) < 0)
 		{
 			return qtrue;
 		}
@@ -1792,15 +1790,13 @@ qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 {
 	int i;
 	plane_t *frust;
-	float dot;
 
 	// check against frustum planes
 	for (i = 0 ; i < 4 ; i++)
 	{
 		frust = &frustum[i];
 
-		Dot(pt, frust->normal, dot);
-		if ((dot - frust->dist) < -radius)
+		if ((DotProduct(pt, frust->normal) - frust->dist) < -radius)
 		{
 			return qtrue;
 		}

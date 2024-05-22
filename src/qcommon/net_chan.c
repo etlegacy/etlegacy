@@ -500,8 +500,7 @@ extern cvar_t *cl_packetdelay;
 #endif
 
 typedef struct delaybuf delaybuf_t;
-struct delaybuf
-{
+struct delaybuf {
 	netsrc_t sock;
 	int length;
 	char data[MAX_PACKETLEN];
@@ -529,9 +528,9 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 	// network debugging
 	if (sv_packetloss->integer || sv_packetdelay->integer
 #ifndef DEDICATED
-	    || cl_packetloss->integer || cl_packetdelay->integer
+			|| cl_packetloss->integer || cl_packetdelay->integer
 #endif
-	    )
+	)
 	{
 		int        packetloss, packetdelay;
 		delaybuf_t **delaybuf_head, **delaybuf_tail;
@@ -540,22 +539,22 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 		{
 #ifndef DEDICATED
 		case NS_CLIENT:
-			packetloss    = cl_packetloss->integer;
-			packetdelay   = cl_packetdelay->integer;
+			packetloss = cl_packetloss->integer;
+			packetdelay = cl_packetdelay->integer;
 			delaybuf_head = &cl_delaybuf_head;
 			delaybuf_tail = &cl_delaybuf_tail;
 			break;
 #endif
 		case NS_SERVER:
-			packetloss    = sv_packetloss->integer;
-			packetdelay   = sv_packetdelay->integer;
+			packetloss = sv_packetloss->integer;
+			packetdelay = sv_packetdelay->integer;
 			delaybuf_head = &sv_delaybuf_head;
 			delaybuf_tail = &sv_delaybuf_tail;
 			break;
 		default:
 			// shut up compiler for dedicated
-			packetloss    = 0;
-			packetdelay   = 0;
+			packetloss = 0;
+			packetdelay = 0;
 			delaybuf_head = NULL;
 			delaybuf_tail = NULL;
 			break;
@@ -575,7 +574,7 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 
 		if (packetdelay)
 		{
-			int        curtime;
+			int curtime;
 			delaybuf_t *buf, *nextbuf;
 
 			curtime = Sys_Milliseconds();
@@ -590,7 +589,7 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 
 				if (showpackets->integer)
 				{
-					Com_Printf("delayed packet(%dms) %4i\n", buf->time - curtime, buf->length);
+					Com_Printf( "delayed packet(%dms) %4i\n", buf->time - curtime, buf->length);
 				}
 
 				switch (buf->to.type)
@@ -607,7 +606,7 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 				}
 
 				// remove from queue
-				nextbuf        = buf->next;
+				nextbuf = buf->next;
 				*delaybuf_head = nextbuf;
 				if (!*delaybuf_head)
 				{
@@ -620,13 +619,13 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 			buf = (delaybuf_t *) Z_Malloc(sizeof(*buf));
 			if (!buf)
 			{
-				Com_Error(ERR_FATAL, "Couldn't allocate packet delay buffer\n");
+				Com_Error(ERR_FATAL, "Couldn't allocate packet delay buffer\n" );
 			}
 
-			buf->sock   = sock;
+			buf->sock = sock;
 			buf->length = length;
 			Com_Memcpy(buf->data, data, length);
-			buf->to   = to;
+			buf->to = to;
 			buf->time = curtime;
 			buf->next = NULL;
 

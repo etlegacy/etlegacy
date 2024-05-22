@@ -47,7 +47,7 @@
 #include "../qcommon.h"
 #endif
 
-void Q_JSONInitWith(void *(*malloc_fn)(size_t sz), void (*free_fn)(void *ptr))
+void Q_JSONInit(void)
 {
 	static qboolean initDone = qfalse;
 
@@ -59,16 +59,11 @@ void Q_JSONInitWith(void *(*malloc_fn)(size_t sz), void (*free_fn)(void *ptr))
 	// This is mostly pointless now, but we might want to use custom allocators or a buffer at some point.
 	cJSON_Hooks hooks =
 	{
-		malloc_fn,
-		free_fn
+		Com_Allocate,
+		Com_Dealloc
 	};
 	cJSON_InitHooks(&hooks);
 	initDone = qtrue;
-}
-
-void Q_JSONInit(void)
-{
-	Q_JSONInitWith(Com_Allocate, Com_Dealloc);
 }
 
 cJSON *Q_FSReadJsonFrom(const char *path)
@@ -95,7 +90,7 @@ cJSON *Q_FSReadJsonFrom(const char *path)
 		return NULL;
 	}
 
-	buffer = (char *)cJSON_malloc(len + 1);
+	buffer = (char *)Com_Allocate(len + 1);
 	if (!buffer)
 	{
 		return NULL;
@@ -112,7 +107,7 @@ cJSON *Q_FSReadJsonFrom(const char *path)
 
 	// read buffer
 	object = cJSON_Parse(buffer);
-	cJSON_free(buffer);
+	Com_Dealloc(buffer);
 
 	return object;
 }
@@ -157,7 +152,7 @@ qboolean Q_FSWriteJSON(cJSON *object, fileHandle_t handle)
 		return qfalse;
 	}
 
-	cJSON_free(serialised);
+	Com_Dealloc(serialised);
 	cJSON_Delete(object);
 
 	return qtrue;

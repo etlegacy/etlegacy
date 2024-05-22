@@ -204,7 +204,7 @@ void R_IssuePendingRenderCommands(void)
  * @param[in] bytes
  * @return
  */
-void *R_GetCommandBuffer(unsigned int bytes)
+void *R_GetCommandBuffer(int bytes)
 {
 	static size_t       reserved_space = PAD(sizeof(swapBuffersCommand_t), sizeof(intptr_t)) + sizeof(int);
 	renderCommandList_t *cmdList       = &backEndData->commands;
@@ -781,33 +781,6 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->y         = y;
 	cmd->w         = w;
 	cmd->h         = h;
-}
-
-/**
- * @brief RB_RenderCubeprobe
- * @param[in] cubeprobeIndex: the index of the cubeprobe in tr.cubeProbes
- * @param[in] pixelData: if NULL, no pixeldata is read back (so cpu can use it to store to file)
- * @return
- */
-void RE_RenderCubeprobe(int cubeprobeIndex, qboolean commandOnly, byte **pixeldataOut)
-{
-	renderCubeprobeCommand_t *cmd;
-
-	if (cubeprobeIndex < 0 || cubeprobeIndex >= tr.cubeProbes.currentElements)
-	{
-		return;
-	}
-
-	cmd = (renderCubeprobeCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
-	if (!cmd)
-	{
-		return;
-	}
-
-	cmd->commandId      = RC_RENDERCUBEPROBE;
-	cmd->commandOnly    = commandOnly;
-	cmd->cubeprobeIndex = cubeprobeIndex;
-	cmd->pixeldata      = pixeldataOut;
 }
 
 /**

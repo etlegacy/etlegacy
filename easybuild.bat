@@ -21,8 +21,7 @@ SET build_64=0
 SET mod_only=0
 SET use_autoupdate=1
 SET use_extra=1
-SET build_r2=1
-SET build_sse=0
+SET build_r2=0
 SET build_ssl=1
 SET build_auth=1
 SET wolf_ssl=0
@@ -91,8 +90,6 @@ IF NOT "%1"=="" (
 		SET build_type=Debug
 	) ELSE IF /I "%1"=="-nor2" (
 		SET build_r2=0
-	) ELSE IF /I "%1"=="-sse" (
-		SET build_sse=1
 	) ELSE IF /I "%1"=="-no-r2" (
 		SET build_r2=0
 	) ELSE IF /I "%1"=="-generator" (
@@ -390,8 +387,7 @@ GOTO :EOF
 	-DBUNDLED_WOLFSSL=!wolf_ssl! ^
 	-DBUNDLED_OPENSSL=!open_ssl! ^
 	-DFEATURE_SSL=!feature_ssl! ^
-	-DFEATURE_AUTH=!feature_auth! ^
-	-DENABLE_SSE=!build_sse!
+	-DFEATURE_AUTH=!feature_auth!
 
 	IF !mod_only!==1 (
 		SET local_build_string=!local_build_string! ^

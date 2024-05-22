@@ -5,8 +5,8 @@ textures/doors/door_c01b
     qer_editorimage textures/doors/door_c01b.tga
 	diffusemap textures/doors/door_c01b.tga
 	bumpmap textures/doors/door_c01b_n.tga
-	specularmap textures/doors/door_c01b_r.tga
 	surfaceparm woodsteps
+	implicitMap -
 }
 
 textures/doors/door_c05
@@ -14,8 +14,8 @@ textures/doors/door_c05
     qer_editorimage textures/doors/door_c05.tga
 	diffusemap textures/doors/door_c05.tga
 	bumpmap textures/doors/door_c05_n.tga
-	specularmap textures/doors/door_c05_r.tga
 	surfaceparm woodsteps
+	implicitMap -
 }
 
 textures/doors/door_c08
@@ -23,8 +23,8 @@ textures/doors/door_c08
     qer_editorimage textures/doors/door_c08.tga
 	diffusemap textures/doors/door_c08.tga
 	bumpmap textures/doors/door_c08_n.tga
-	specularmap textures/doors/door_c08_r.tga
 	surfaceparm woodsteps
+	implicitMap -
 }
 
 textures/doors/door_c13
@@ -32,8 +32,8 @@ textures/doors/door_c13
     qer_editorimage textures/doors/door_c13.tga
 	diffusemap textures/doors/door_c13.tga
 	bumpmap textures/doors/door_c13_n.tga
-	specularmap textures/doors/door_c13_r.tga
 	surfaceparm woodsteps
+	implicitMap -
 }
 
 textures/doors/door_m01asml
@@ -43,6 +43,7 @@ textures/doors/door_m01asml
 	bumpmap textures/doors/door_m01asml_n.tga
 	specularmap textures/doors/door_m01asml_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/doors/door_m01asml_axis
@@ -52,6 +53,7 @@ textures/doors/door_m01asml_axis
 	bumpmap textures/doors/door_m01asml_axis_n.tga
 	specularmap textures/doors/door_m01asml_axis_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }
 
 textures/doors/door_m04
@@ -63,6 +65,7 @@ textures/doors/door_m04
 	cull none
 	surfaceparm metalsteps
 	surfaceparm pointlight
+	implicitMap -
 }
 
 textures/doors/heavy_door_01
@@ -72,4 +75,5 @@ textures/doors/heavy_door_01
 	bumpmap textures/doors/heavy_door_01_n.tga
 	specularmap textures/doors/heavy_door_01_r.tga
 	surfaceparm metalsteps
+	implicitMap -
 }

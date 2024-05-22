@@ -71,7 +71,7 @@ option(FEATURE_EDV				"Enable extended demo viewer support (mod)"				ON)
 option(FEATURE_ANTICHEAT		"Enable server side anti-wallhack code (server)"		ON)
 option(FEATURE_AUTOUPDATE		"Enable updater which downloads latest ET:L files"		ON)
 option(FEATURE_RENDERER1		"Build and use the vanilla renderer (OpenGL 1/2)"		ON)
-option(FEATURE_RENDERER2		"Build and use the extended renderer (OpenGL 3)"		OFF)
+option(FEATURE_RENDERER2		"Build and use the borked renderer (OpenGL 3)"			OFF)
 option(FEATURE_RENDERER_GLES	"Build and use OpenGL ES renderer"						OFF)
 option(FEATURE_RENDERER_VULKAN	"Build and use Vulkan renderer"							OFF)
 option(FEATURE_IPV6				"Enable IPv6 networking code"							ON)
@@ -167,9 +167,6 @@ include(cmake/ETLPlatform.cmake)
 
 # Source globs
 include(cmake/ETLSources.cmake)
-
-# Specific assembly usage
-include(cmake/ETLAssembly.cmake)
 
 # Git version header generation
 include(cmake/ETLVersion.cmake)
