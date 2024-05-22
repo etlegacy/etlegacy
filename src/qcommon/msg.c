@@ -1153,7 +1153,7 @@ netField_t entityStateFields[] =
 	{ NETF(clientNum),       8,               0 },
 	{ NETF(solid),           24,              0 },
 	{ NETF(event),           10,              0 },
-	{ NETF(eventParm),       8,               0 },
+	{ NETF(eventParm),       16,              0 },
 	{ NETF(eventSequence),   8,               0 }, // warning: need to modify cg_event.c at "// check the sequencial list" if you change this
 	{ NETF(events[0]),       8,               0 },
 	{ NETF(events[1]),       8,               0 },
