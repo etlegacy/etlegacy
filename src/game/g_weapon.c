@@ -3572,7 +3572,11 @@ void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, 
 
 	// send bullet impact
 	tent                   = G_TempEntity(impactPos, EV_BULLET);
-	tent->s.eventParm      = traceEnt->s.number;
+	if (traceEnt->s.number > 255) {  // snap to max uint8_t (wire size)
+		tent->s.eventParm  = 255;
+	} else {
+		tent->s.eventParm  = traceEnt->s.number;
+	}
 	tent->s.weapon         = GetMODTableData(mod)->weaponIcon;
 	tent->s.otherEntityNum = attacker->s.number;
 	tent->s.modelindex     = hitType;   // send the hit sound info in the flesh hit event
