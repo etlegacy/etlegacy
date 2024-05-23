@@ -7,13 +7,14 @@
 # Miguel G. <brutor_land@hotmail.com>, 2019
 # Unode <simpledark+transifex@gmail.com>, 2015
 # Unode <simpledark+transifex@gmail.com>, 2015
+# ViniVanDog, 2024
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: Afonso Collazzo Carvalho <afonsoccarvalho1@gmail.com>, 2019\n"
+"Last-Translator: ViniVanDog, 2024\n"
 "Language-Team: Portuguese (http://app.transifex.com/etlegacy/etlegacy/language/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -419,13 +420,13 @@ msgstr "Desenho de Nível Adicional"
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET: Legacy Website"
-msgstr ""
+msgstr "Site do ET: Legacy"
 
 #: etmain/ui/etlegacywebsite.menu:50
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr ""
+msgstr "Você gostaria de abrir\nwww.etlegacy.com ?"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -459,7 +460,7 @@ msgstr "DEFINIÇÕES PADRÃO DE SERVIDOR"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
-msgstr ""
+msgstr "Redefinir as configurações do servidor para o padrão ?"
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
@@ -475,7 +476,7 @@ msgstr "Ping Mínimo:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr ""
+msgstr "Definindo o ping minímo a ser usado para excluir LPBs ( 0 = Sem minímo )"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
@@ -483,16 +484,16 @@ msgstr "Ping Máximo:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr ""
+msgstr "Definindo o ping maximo a ser usado para excluir HPBs ( 0 = Sem maximo )"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
-msgstr ""
+msgstr "Taxa de Jogo Máxima: "
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr ""
+msgstr "Taxa máxima para mandar dados para o cliente ( 0 = mesmo que foi definido pelo configurações do cliente )"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
@@ -3644,79 +3645,25 @@ msgstr ""
 msgid "Filter affecting servers with map name"
 msgstr ""
 
-#: etmain/ui/playonline.menu:115
-#: etmain/ui/playonline.menu:126
-#: etmain/ui/playonline.menu:137
-#: etmain/ui/playonline.menu:148
-#: etmain/ui/playonline.menu:159
-#: etmain/ui/playonline.menu:170
-#: etmain/ui/playonline.menu:181
-#: etmain/ui/playonline.menu:192
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
 msgstr "Filtro Desativado"
 
-#: etmain/ui/playonline.menu:115
-msgid "Empty only..."
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Only show..."
 msgstr ""
 
-#: etmain/ui/playonline.menu:115
-msgid "Not empty..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "Requires password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "No password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "Friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "No friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "With max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "Without max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "No weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "Weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "With antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "Without antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Balanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Unbalanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "With humans..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "Without humans..."
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Don't show..."
 msgstr ""
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648

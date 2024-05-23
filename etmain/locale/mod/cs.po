@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Filip Kokoška <panprezident789@gmail.com>, 2019
-# Radegast <jsimek.cz@gmail.com>, 2015
+# Jan Šimek <jsimek.cz@gmail.com>, 2015
 # Jan Szotkowski <honza.szotkowski@seznam.cz>, 2019
 # Michal 'Kimi' Mitter <mittermichal@gmail.com>, 2021
 # Michal 'Kimi' Mitter <mittermichal@gmail.com>, 2015
@@ -3645,80 +3645,26 @@ msgstr "Na seznam zařazuje nebo vyřazuje servery se zvolenou herní úrovní"
 msgid "Filter affecting servers with map name"
 msgstr "Filtruje servery dle zvolené herní úrovně"
 
-#: etmain/ui/playonline.menu:115
-#: etmain/ui/playonline.menu:126
-#: etmain/ui/playonline.menu:137
-#: etmain/ui/playonline.menu:148
-#: etmain/ui/playonline.menu:159
-#: etmain/ui/playonline.menu:170
-#: etmain/ui/playonline.menu:181
-#: etmain/ui/playonline.menu:192
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
 msgstr "Filtr vypnut"
 
-#: etmain/ui/playonline.menu:115
-msgid "Empty only..."
-msgstr ""
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Only show..."
+msgstr "Zobraz jen..."
 
-#: etmain/ui/playonline.menu:115
-msgid "Not empty..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "Requires password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "No password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "Friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "No friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "With max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "Without max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "No weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "Weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "With antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "Without antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Balanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Unbalanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "With humans..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "Without humans..."
-msgstr ""
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Don't show..."
+msgstr "Nezobrazuj..."
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"

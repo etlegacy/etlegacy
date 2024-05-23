@@ -3646,80 +3646,26 @@ msgstr "Incluye o excluye servidores con el mapa deseado de la lista de servidor
 msgid "Filter affecting servers with map name"
 msgstr "Filtrando servidores por el nombre del mapa"
 
-#: etmain/ui/playonline.menu:115
-#: etmain/ui/playonline.menu:126
-#: etmain/ui/playonline.menu:137
-#: etmain/ui/playonline.menu:148
-#: etmain/ui/playonline.menu:159
-#: etmain/ui/playonline.menu:170
-#: etmain/ui/playonline.menu:181
-#: etmain/ui/playonline.menu:192
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
 msgstr "Filtro Desactivado"
 
-#: etmain/ui/playonline.menu:115
-msgid "Empty only..."
-msgstr "Solo vacía..."
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Only show..."
+msgstr "Mostrar sólo..."
 
-#: etmain/ui/playonline.menu:115
-msgid "Not empty..."
-msgstr "No vacío..."
-
-#: etmain/ui/playonline.menu:126
-msgid "Requires password..."
-msgstr "Requiere contraseña..."
-
-#: etmain/ui/playonline.menu:126
-msgid "No password..."
-msgstr "Sin contraseña..."
-
-#: etmain/ui/playonline.menu:137
-msgid "Friendly fire..."
-msgstr "Fuego amigo..."
-
-#: etmain/ui/playonline.menu:137
-msgid "No friendly fire..."
-msgstr "Sin fuego amigo..."
-
-#: etmain/ui/playonline.menu:148
-msgid "With max lives..."
-msgstr "Con vidas máximas..."
-
-#: etmain/ui/playonline.menu:148
-msgid "Without max lives..."
-msgstr "Sin vidas máximas..."
-
-#: etmain/ui/playonline.menu:159
-msgid "No weapon limits..."
-msgstr "Sin límites de armas..."
-
-#: etmain/ui/playonline.menu:159
-msgid "Weapon limits..."
-msgstr "Límites de armas..."
-
-#: etmain/ui/playonline.menu:170
-msgid "With antilag..."
-msgstr "Con antilag..."
-
-#: etmain/ui/playonline.menu:170
-msgid "Without antilag..."
-msgstr "Sin antilag..."
-
-#: etmain/ui/playonline.menu:181
-msgid "Balanced only..."
-msgstr "Solo equilibrada ..."
-
-#: etmain/ui/playonline.menu:181
-msgid "Unbalanced only..."
-msgstr "Solo desequilibrada ..."
-
-#: etmain/ui/playonline.menu:192
-msgid "With humans..."
-msgstr "Con humanos..."
-
-#: etmain/ui/playonline.menu:192
-msgid "Without humans..."
-msgstr "Sin humanos..."
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Don't show..."
+msgstr "No mostrar..."
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
@@ -7671,12 +7617,6 @@ msgstr "Reproducir voz de inicio del locutor"
 
 msgid "Hide Weapons Only"
 msgstr "Esconder Solo Armas"
-
-msgid "Coordinates Only"
-msgstr "Solo Coordenadas"
-
-msgid "Screenshot"
-msgstr "Captura de Pantalla"
 
 msgid "Coordinates Only"
 msgstr "Solo Coordenadas"

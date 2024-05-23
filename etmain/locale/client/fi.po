@@ -4,7 +4,7 @@
 # Translators:
 # H H <henrik.heino@gmail.com>, 2016
 # Jacker <shogaiam@gmail.com>, 2023
-# Sauli Vepsä <zAulivee@outlook.com>, 2015
+# saukko28 <zAulivee@outlook.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"

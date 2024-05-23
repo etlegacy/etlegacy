@@ -3640,79 +3640,25 @@ msgstr ""
 msgid "Filter affecting servers with map name"
 msgstr ""
 
-#: etmain/ui/playonline.menu:115
-#: etmain/ui/playonline.menu:126
-#: etmain/ui/playonline.menu:137
-#: etmain/ui/playonline.menu:148
-#: etmain/ui/playonline.menu:159
-#: etmain/ui/playonline.menu:170
-#: etmain/ui/playonline.menu:181
-#: etmain/ui/playonline.menu:192
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
 msgstr ""
 
-#: etmain/ui/playonline.menu:115
-msgid "Empty only..."
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Only show..."
 msgstr ""
 
-#: etmain/ui/playonline.menu:115
-msgid "Not empty..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "Requires password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "No password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "Friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "No friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "With max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "Without max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "No weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "Weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "With antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "Without antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Balanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Unbalanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "With humans..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "Without humans..."
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Don't show..."
 msgstr ""
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648

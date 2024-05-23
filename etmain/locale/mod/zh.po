@@ -2,13 +2,14 @@
 # Copyright (C) 2012-2018 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
+# lnesuper <lnesuper@gmail.com>, 2024
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: lnesuper <lnesuper@gmail.com>, 2024\n"
 "Language-Team: Chinese (http://app.transifex.com/etlegacy/etlegacy/language/zh/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,79 +19,79 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr ""
+msgstr "由Activision制作"
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
-msgstr ""
+msgstr "制片人"
 
 #: etmain/ui/credits_activision.menu:84
 msgid "Associate Producer"
-msgstr ""
+msgstr "联合制片人"
 
 #: etmain/ui/credits_activision.menu:86
 msgid "Installer"
-msgstr ""
+msgstr "安装程序"
 
 #: etmain/ui/credits_activision.menu:88
 msgid "Production Coordinator"
-msgstr ""
+msgstr "制作协调员"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
-msgstr ""
+msgstr "产品测试"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
-msgstr ""
+msgstr "高级执行制片人"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
-msgstr ""
+msgstr "北美工作室副总裁"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
-msgstr ""
+msgstr "QA项目负责人"
 
 #: etmain/ui/credits_activision.menu:101
 msgid "QA Senior Project Lead"
-msgstr ""
+msgstr "QA高级项目负责人"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "QA现场负责人"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
-msgstr ""
+msgstr "测试人员"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
-msgstr ""
+msgstr "网络"
 
 #: etmain/ui/credits_activision.menu:112
 msgid "Compatibility"
-msgstr ""
+msgstr "兼容性"
 
 #: etmain/ui/credits_activision.menu:114
 msgid "QA Manager"
-msgstr ""
+msgstr "QA经理"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "代码发布组经理"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
-msgstr ""
+msgstr "代码发布组高级主管"
 
 #: etmain/ui/credits_activision.menu:120
 msgid "Lead, Code Release Group"
-msgstr ""
+msgstr "代码发布组负责人"
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
-msgstr ""
+msgstr "客户支持经理"
 
 #: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
 #: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
@@ -127,51 +128,51 @@ msgstr ""
 #: etmain/ui/profile.menu:71 etmain/ui/profile_rename.menu:67
 #: etmain/ui/viewreplay.menu:58
 msgid "BACK"
-msgstr ""
+msgstr "返回"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
-msgstr ""
+msgstr "附加的"
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr ""
+msgstr "额外的开发"
 
 #: etmain/ui/credits_additional.menu:148
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
-msgstr ""
+msgstr "OSP橙汁奶昔制作公司"
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
-msgstr ""
+msgstr "编程"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr ""
+msgstr "朋克终结者偶平衡公司"
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
-msgstr ""
+msgstr "董事长"
 
 #: etmain/ui/credits_additional.menu:183
 msgid "Senior Project Leader"
-msgstr ""
+msgstr "高级项目主管"
 
 #: etmain/ui/credits_additional.menu:190
 msgid "VOICE ARTISTS"
-msgstr ""
+msgstr "配音艺术家"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr ""
+msgstr "盟军/轴心国士兵声音"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr ""
+msgstr "轴心国指挥官声音"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
-msgstr ""
+msgstr "盟军司令声音"
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
@@ -3639,79 +3640,25 @@ msgstr ""
 msgid "Filter affecting servers with map name"
 msgstr ""
 
-#: etmain/ui/playonline.menu:115
-#: etmain/ui/playonline.menu:126
-#: etmain/ui/playonline.menu:137
-#: etmain/ui/playonline.menu:148
-#: etmain/ui/playonline.menu:159
-#: etmain/ui/playonline.menu:170
-#: etmain/ui/playonline.menu:181
-#: etmain/ui/playonline.menu:192
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
 msgstr ""
 
-#: etmain/ui/playonline.menu:115
-msgid "Empty only..."
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Only show..."
 msgstr ""
 
-#: etmain/ui/playonline.menu:115
-msgid "Not empty..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "Requires password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "No password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "Friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "No friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "With max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "Without max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "No weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "Weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "With antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "Without antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Balanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Unbalanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "With humans..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "Without humans..."
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Don't show..."
 msgstr ""
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
@@ -7663,12 +7610,6 @@ msgid "Play startup announcer voice"
 msgstr ""
 
 msgid "Hide Weapons Only"
-msgstr ""
-
-msgid "Coordinates Only"
-msgstr ""
-
-msgid "Screenshot"
 msgstr ""
 
 msgid "Coordinates Only"

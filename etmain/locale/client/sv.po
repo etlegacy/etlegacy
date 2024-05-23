@@ -2,6 +2,7 @@
 # Copyright (C) 2012-2018 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
+# Alf Svensson, 2024
 # Oscar Vestlund <macchute@gmail.com>, 2018
 msgid ""
 msgstr ""
@@ -9,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:49+0000\n"
-"Last-Translator: Oscar Vestlund <macchute@gmail.com>, 2018\n"
+"Last-Translator: Alf Svensson, 2024\n"
 "Language-Team: Swedish (http://app.transifex.com/etlegacy/etlegacy/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,16 +30,16 @@ msgid "MOUSE2"
 msgstr "MUS 2"
 
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 msgid "No"
-msgstr ""
+msgstr "Nej"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 msgid "SPACE"
 msgstr "BLANKSTEG"

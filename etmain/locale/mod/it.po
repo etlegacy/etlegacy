@@ -7,6 +7,7 @@
 # Mik <rkseby@gmail.com>, 2019-2020,2022
 # IR4T4 <gutzu@gmx.ch>, 2018
 # IR4T4 <gutzu@gmx.ch>, 2018
+# Jacker <shogaiam@gmail.com>, 2023
 # redtide <redtid3@gmail.com>, 2015
 # redtide <transifex.redtide@gmail.com>, 2015
 # Seb47 <seb47tv@gmail.com>, 2016
@@ -20,7 +21,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: Mik <rkseby@gmail.com>, 2023\n"
+"Last-Translator: Jacker <shogaiam@gmail.com>, 2023\n"
 "Language-Team: Italian (http://app.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -285,7 +286,7 @@ msgstr "TEAM DI SVILUPPO ET PRO"
 
 #: etmain/ui/credits_et260.menu:114
 msgid "MAC OS X PORT"
-msgstr "MAC OS X PORT"
+msgstr "PORT PER macOS"
 
 #: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
 msgid "Lead Programmer"
@@ -647,7 +648,7 @@ msgstr "Il numero massimo di reclami che un giocatore può ricevere prima di ess
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
-msgstr "Massimo Reclami Unici:"
+msgstr "Massimo Segnalati:"
 
 #: etmain/ui/hostgame_advanced.menu:52
 #: etmain/ui/options_customise_game.menu:49
@@ -811,7 +812,7 @@ msgstr "VOTAZIONI"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
-msgstr "Voti per Giocatore:"
+msgstr "Voti Massimi per Giocatore:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
@@ -3651,80 +3652,26 @@ msgstr "Include o esclude dalla lista i server con la mappa specificata"
 msgid "Filter affecting servers with map name"
 msgstr "Filtra i server con la mappa specificata"
 
-#: etmain/ui/playonline.menu:115
-#: etmain/ui/playonline.menu:126
-#: etmain/ui/playonline.menu:137
-#: etmain/ui/playonline.menu:148
-#: etmain/ui/playonline.menu:159
-#: etmain/ui/playonline.menu:170
-#: etmain/ui/playonline.menu:181
-#: etmain/ui/playonline.menu:192
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
 msgstr "Filtro Disabilitato"
 
-#: etmain/ui/playonline.menu:115
-msgid "Empty only..."
-msgstr ""
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Only show..."
+msgstr "Mostra..."
 
-#: etmain/ui/playonline.menu:115
-msgid "Not empty..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "Requires password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:126
-msgid "No password..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "Friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:137
-msgid "No friendly fire..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "With max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:148
-msgid "Without max lives..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "No weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:159
-msgid "Weapon limits..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "With antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:170
-msgid "Without antilag..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Balanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:181
-msgid "Unbalanced only..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "With humans..."
-msgstr ""
-
-#: etmain/ui/playonline.menu:192
-msgid "Without humans..."
-msgstr ""
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Don't show..."
+msgstr "Non mostrare..."
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
