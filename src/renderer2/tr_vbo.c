@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -554,8 +554,8 @@ void R_InitVBOs(void)
 
 	Ren_Print("------- R_InitVBOs -------\n");
 
-	Com_InitGrowList(&tr.vbos, 16384);
-	Com_InitGrowList(&tr.ibos, 2048);
+	Com_InitGrowList(&tr.vbos, 100); //Com_InitGrowList(&tr.vbos, 16384);
+	Com_InitGrowList(&tr.ibos, 100); //Com_InitGrowList(&tr.ibos, 2048);
 
 	dataSize = sizeof(vec4_t) * SHADER_MAX_VERTEXES * 11;
 	data     = (byte *)Com_Allocate(dataSize);

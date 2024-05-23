@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -39,16 +39,6 @@
 static char **shaderTextHashTableR1[MAX_SHADERTEXT_HASH];
 static char *s_shaderTextR1;
 
-extern shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
-
-extern shader_t        shader;
-extern dynamicShader_t *dshader;
-extern shaderTable_t   table;
-extern shaderStage_t   stages[MAX_SHADER_STAGES];
-extern char            implicitMap[MAX_QPATH];
-extern unsigned        implicitStateBits;
-extern cullType_t      implicitCullType;
-
 /**
  * @brief ParseVector
  * @param[in,out] text
@@ -76,7 +66,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 			Ren_Warning("WARNING: missing vector element in shader '%s' - no token\n", shader.name);
 			return qfalse;
 		}
-		v[i] = Q_atof(token);
+		v[i] = atof(token);
 	}
 
 	token = COM_ParseExt(text, qfalse);
@@ -206,7 +196,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			tr.sunLight[0] = Q_atof(token);
+			tr.sunLight[0] = atof(token);
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
@@ -214,7 +204,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			tr.sunLight[1] = Q_atof(token);
+			tr.sunLight[1] = atof(token);
 
 
 			token = COM_ParseExt2(text, qfalse);
@@ -223,9 +213,9 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			tr.sunLight[2] = Q_atof(token);
+			tr.sunLight[2] = atof(token);
 
-			VectorNormalize(tr.sunLight);
+			VectorNormalizeOnly(tr.sunLight);
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
@@ -233,7 +223,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			a = Q_atof(token);
+			a = atof(token);
 			VectorScale(tr.sunLight, a, tr.sunLight);
 
 			token = COM_ParseExt2(text, qfalse);
@@ -242,7 +232,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			a = Q_atof(token);
+			a = atof(token);
 			a = a / 180 * M_PI;
 
 			token = COM_ParseExt2(text, qfalse);
@@ -251,7 +241,7 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing parm for 'xmap_sun' keyword in shader '%s'\n", shader.name);
 				continue;
 			}
-			b = Q_atof(token);
+			b = atof(token);
 			b = b / 180 * M_PI;
 
 			tr.sunDirection[0] = cos(a) * cos(b);
@@ -355,7 +345,7 @@ qboolean ParseShaderR1(char *_text)
 			token = COM_ParseExt(text, qfalse);
 			if (token[0])
 			{
-				shader.clampTime = Q_atof(token);
+				shader.clampTime = atof(token);
 			}
 			else
 			{
@@ -428,22 +418,20 @@ qboolean ParseShaderR1(char *_text)
 				return qfalse;
 			}
 
-			//shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
-			//                                       shader.fogParms.color[1] * tr.identityLight,
-			//                                       shader.fogParms.color[2] * tr.identityLight, 1.0);
-
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
 			{
 				Ren_Warning("WARNING: 'fogParms' incomplete - missing opacity value in shader '%s' set to 1\n", shader.name);
-				shader.fogParms.depthForOpaque = 1;
+				shader.fogParms.density = 1.0f;
+				shader.fogParms.depthForOpaque = 1.0f;
 			}
 			else
 			{
-				shader.fogParms.depthForOpaque = Q_atof(token);
-				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
+				shader.fogParms.depthForOpaque = atof(token);
+				shader.fogParms.density = shader.fogParms.depthForOpaque < 1.0f ? shader.fogParms.depthForOpaque : 1.0f;
+				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1.0f ? 1.0f : shader.fogParms.depthForOpaque;
 			}
-			//shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
+			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;
@@ -498,13 +486,13 @@ qboolean ParseShaderR1(char *_text)
 				continue;
 			}
 
-			if (Q_atof(token) > 1)
+			if (atof(token) > 1)
 			{
 				Ren_Warning("WARNING: last value for skyfogvars is 'density' which needs to be 0.0-1.0\n");
 				continue;
 			}
 
-			RE_SetFog(FOG_SKY, 0, 5, fogColor[0], fogColor[1], fogColor[2], Q_atof(token));
+			RE_SetFog(FOG_SKY, 0, 5, fogColor[0], fogColor[1], fogColor[2], atof(token));
 
 			continue;
 		}
@@ -526,7 +514,7 @@ qboolean ParseShaderR1(char *_text)
 				continue;
 			}
 
-			fogvar = Q_atof(token);
+			fogvar = atof(token);
 
 			// right now allow one water color per map.  I'm sure this will need
 			//          to change at some point, but I'm not sure how to track fog parameters
@@ -567,7 +555,7 @@ qboolean ParseShaderR1(char *_text)
 			// NOTE:   fogFar > 1 means the shader is setting the farclip, < 1 means setting
 			//         density (so old maps or maps that just need softening fog don't have to care about farclip)
 
-			fogDensity = Q_atof(token);
+			fogDensity = atof(token);
 			if (fogDensity > 1)
 			{                   // linear
 				fogFar = fogDensity;
@@ -608,9 +596,9 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing value for 'lightgrid ambient multiplier'\n");
 				continue;
 			}
-			if (Q_atof(token) > 0)
+			if (atof(token) > 0)
 			{
-				tr.lightGridMulAmbient = Q_atof(token);
+				tr.lightGridMulAmbient = atof(token);
 			}
 		}
 		else if (!Q_stricmp(token, "lightgridmuldir"))
@@ -622,9 +610,9 @@ qboolean ParseShaderR1(char *_text)
 				Ren_Warning("WARNING: missing value for 'lightgrid directional multiplier'\n");
 				continue;
 			}
-			if (Q_atof(token) > 0)
+			if (atof(token) > 0)
 			{
-				tr.lightGridMulDirected = Q_atof(token);
+				tr.lightGridMulDirected = atof(token);
 			}
 		}
 		// light <value> determines flaring in xmap, not needed here
@@ -675,14 +663,15 @@ qboolean ParseShaderR1(char *_text)
 				}
 				else
 				{
-					shader.distanceCull[i] = Q_atof(token);
+					shader.distanceCull[i] = atof(token);
 				}
 			}
 
 			if (shader.distanceCull[1] - shader.distanceCull[0] > 0)
 			{
 				// distanceCull[ 3 ] is an optimization
-				shader.distanceCull[3] = 1.0f / (shader.distanceCull[1] - shader.distanceCull[0]);
+				//shader.distanceCull[3] = 1.0f / (shader.distanceCull[1] - shader.distanceCull[0]);
+				shader.distanceCull[3] = rcp(shader.distanceCull[1] - shader.distanceCull[0]);
 			}
 			else
 			{
@@ -785,7 +774,7 @@ qboolean ParseShaderR1(char *_text)
 				continue;
 			}
 			shader.spectrum      = qtrue;
-			shader.spectrumValue = Q_atoi(token);
+			shader.spectrumValue = atoi(token);
 			continue;
 		}
 		// diffuseMap <image>
@@ -847,8 +836,8 @@ qboolean ParseShaderR1(char *_text)
 		// Doom 3 DECAL_MACRO
 		else if (!Q_stricmp(token, "DECAL_MACRO"))
 		{
-			shader.polygonOffset = qtrue;
-			shader.sort          = SS_DECAL;
+			shader.polygonOffset      = qtrue;
+			shader.sort               = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
 			continue;
@@ -857,8 +846,8 @@ qboolean ParseShaderR1(char *_text)
 		else if (!Q_stricmp(token, "DECAL_ALPHATEST_MACRO"))
 		{
 			// what's different?
-			shader.polygonOffset = qtrue;
-			shader.sort          = SS_DECAL;
+			shader.polygonOffset      = qtrue;
+			shader.sort               = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
 			continue;
@@ -960,8 +949,8 @@ int ScanAndLoadShaderFilesR1()
 	char         filename[MAX_QPATH];
 	long         sum = 0, summand;
 
-	Com_Memset(buffers, 0, sizeof(buffers));
-	Com_Memset(shaderTextHashTableSizes, 0, sizeof(shaderTextHashTableSizes));
+	Com_Memset(buffers, 0, MAX_SHADER_FILES);
+	Com_Memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaderFiles);
@@ -1003,7 +992,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 
-			// Step over the "table"/"guide" and the name
+/*			// Step over the "table"/"guide" and the name
 			if (!Q_stricmp(token, "table") || !Q_stricmp(token, "guide"))
 			{
 				token = COM_ParseExt2(&p, qtrue);
@@ -1012,7 +1001,7 @@ int ScanAndLoadShaderFilesR1()
 				{
 					break;
 				}
-			}
+			}*/
 
 			oldp = p;
 
@@ -1048,8 +1037,8 @@ int ScanAndLoadShaderFilesR1()
 			continue;
 		}
 
-		Q_strcat(textEnd, sizeof(textEnd), buffers[i]);
-		Q_strcat(textEnd, sizeof(textEnd), "\n");
+		strcat(textEnd, buffers[i]);
+		strcat(textEnd, "\n");
 		textEnd += strlen(textEnd);
 		ri.FS_FreeFile(buffers[i]);
 	}
@@ -1072,7 +1061,7 @@ int ScanAndLoadShaderFilesR1()
 			break;
 		}
 
-		// skip shader tables
+/*		// skip shader tables
 		if (!Q_stricmp(token, "table"))
 		{
 			// skip table name
@@ -1123,7 +1112,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			hash = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableSizes[hash]++;
@@ -1158,7 +1147,7 @@ int ScanAndLoadShaderFilesR1()
 			break;
 		}
 
-		// parse shader tables
+/*		// parse shader tables
 		if (!Q_stricmp(token, "table"))
 		{
 			int           depth;
@@ -1220,7 +1209,7 @@ int ScanAndLoadShaderFilesR1()
 						Ren_Warning("WARNING: FUNCTABLE_SIZE hit\n");
 						break;
 					}
-					values[numValues++] = Q_atof(token);
+					values[numValues++] = atof(token);
 				}
 			}
 			while (depth && p);
@@ -1275,7 +1264,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			hash                                                          = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableR1[hash][shaderTextHashTableSizes[hash]++] = oldp;

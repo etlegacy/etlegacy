@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -173,7 +173,9 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	{
 		float d;
 
-		d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
+		//d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
+		Dot(tr.orientation.viewOrigin, gen->plane.normal, d);
+		d -= gen->plane.dist;
 		if (d > 0.0f)
 		{
 			*frontFace = 1;
@@ -363,7 +365,7 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 		shader_t *shader = surf->shader;
 
 		if (r_mergeClusterSurfaces->integer &&
-		    !r_dynamicBspOcclusionCulling->integer &&
+		    !r_occludeBsp->integer &&
 		    ((r_mergeClusterFaces->integer && *surf->data == SF_FACE) ||
 		     (r_mergeClusterCurves->integer && *surf->data == SF_GRID) ||
 		     (r_mergeClusterTriangles->integer && *surf->data == SF_TRIANGLES)) &&
@@ -430,6 +432,8 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	bspModel_t   *bspModel;
 	model_t      *pModel;
 	unsigned int i;
+	vec3_t       v;
+	vec3_t       transformed;
 	vec3_t       boundsCenter;
 	int          fogNum;
 	//float	   boundsRadius;
@@ -444,11 +448,13 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	VectorCopy(ent->e.axis[2], bspModel->orientation.axis[2]);
 
 	// copy local bounds
-	for (i = 0; i < 3; i++)
+	/*for (i = 0; i < 3; i++)
 	{
 		ent->localBounds[0][i] = bspModel->bounds[0][i];
 		ent->localBounds[1][i] = bspModel->bounds[1][i];
-	}
+	}*/
+	VectorCopy(bspModel->bounds[0], ent->localBounds[0]);
+	VectorCopy(bspModel->bounds[1], ent->localBounds[1]);
 
 #if 0
 	boundsRadius = RadiusFromBounds(bspModel->bounds[0], bspModel->bounds[1]);
@@ -463,17 +469,22 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 
 	// setup world bounds for intersection tests
 	ClearBounds(ent->worldBounds[0], ent->worldBounds[1]);
+	for (i = 0; i < 8; i++)
+	{
+		v[0] = ent->localBounds[i & 1][0];
+		v[1] = ent->localBounds[(i >> 1) & 1][1];
+		v[2] = ent->localBounds[(i >> 2) & 1][2];
 
-	//use a transformmatrix instead as it is faster
-	mat4_transform_vec3(tr.orientation.transformMatrix, bspModel->bounds[0], ent->worldBounds[0]);
-	mat4_transform_vec3(tr.orientation.transformMatrix, bspModel->bounds[1], ent->worldBounds[1]);
-		
+		// transform local bounds vertices into world space
+		R_LocalPointToWorld(v, transformed);
+
+		AddPointToBounds(transformed, ent->worldBounds[0], ent->worldBounds[1]);
+	}
 
 	VectorAdd(ent->worldBounds[0], ent->worldBounds[1], boundsCenter);
-	//rotate the "forcedorigin to be right?
-	VectorScale(boundsCenter,0.5, boundsCenter);
-	
-	// BSP inline models should always use vertex lighting
+	VectorScale(boundsCenter, 0.5f, boundsCenter);
+
+	// BSP inline models should always use vertex lighting (why?..)
 	R_SetupEntityLighting(&tr.refdef, ent, boundsCenter);
 
 	fogNum = R_FogWorldBox(ent->worldBounds);
@@ -550,7 +561,7 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 	tr.pc.c_leafs++;
 
 	// add to z buffer bounds
-	if (node->mins[0] < tr.viewParms.visBounds[0][0])
+	/*if (node->mins[0] < tr.viewParms.visBounds[0][0])
 	{
 		tr.viewParms.visBounds[0][0] = node->mins[0];
 	}
@@ -561,9 +572,10 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 	if (node->mins[2] < tr.viewParms.visBounds[0][2])
 	{
 		tr.viewParms.visBounds[0][2] = node->mins[2];
-	}
+	}*/
+	VectorMin(node->mins, tr.viewParms.visBounds[0], tr.viewParms.visBounds[0]);
 
-	if (node->maxs[0] > tr.viewParms.visBounds[1][0])
+	/*if (node->maxs[0] > tr.viewParms.visBounds[1][0])
 	{
 		tr.viewParms.visBounds[1][0] = node->maxs[0];
 	}
@@ -574,7 +586,8 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 	if (node->maxs[2] > tr.viewParms.visBounds[1][2])
 	{
 		tr.viewParms.visBounds[1][2] = node->maxs[2];
-	}
+	}*/
+	VectorMax(node->maxs, tr.viewParms.visBounds[1], tr.viewParms.visBounds[1]);
 
 	// add the individual surfaces
 	mark = node->markSurfaces;
@@ -605,7 +618,7 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 			return;
 		}
 
-		if (node->contents != -1 && !node->numMarkSurfaces)
+		if (node->contents != CONTENTS_NODE && !node->numMarkSurfaces)
 		{
 			// don't waste time dealing with this empty leaf
 			return;
@@ -656,7 +669,7 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 			}
 		}
 
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			break;
 		}
@@ -708,8 +721,9 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 
 		// even surfaces that belong to nodes that are outside of the view frustum
 		// can cast shadows into the view frustum
-		if (!r_noCull->integer && r_shadows->integer <= SHADOWING_BLOB)
-		{
+//		if (!r_noCull->integer && r_shadows->integer <= SHADOWING_BLOB)
+if (!r_noCull->integer && r_shadows->integer > SHADOWING_BLOB)
+			{
 			for (i = 0; i < FRUSTUM_PLANES; i++)
 			{
 				if (planeBits & (1 << i))
@@ -729,7 +743,7 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 			}
 		}
 
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			break;
 		}
@@ -797,12 +811,14 @@ static bspNode_t *R_PointInLeaf(const vec3_t p)
 	node = tr.world->nodes;
 	while (1)
 	{
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			break;
 		}
 		plane = node->plane;
-		d     = DotProduct(p, plane->normal) - plane->dist;
+		//d = DotProduct(p, plane->normal) - plane->dist;
+		Dot(p, plane->normal, d);
+		d -= plane->dist;
 		if (d > 0)
 		{
 			node = node->children[0];
@@ -969,7 +985,7 @@ static void R_UpdateClusterSurfaces()
 		shader      = surface->shader;
 		lightmapNum = surface->lightmapNum;
 
-		if (shader != oldShader || (r_precomputedLighting->integer ? lightmapNum != oldLightmapNum : 0))
+		if (shader != oldShader || lightmapNum != oldLightmapNum)
 		{
 			oldShader      = shader;
 			oldLightmapNum = lightmapNum;
@@ -1232,7 +1248,7 @@ static void R_MarkLeaves(void)
 
 	// lockpvs lets designers walk around to determine the
 	// extent of the current pvs
-	if (r_lockPvs->integer) // || r_dynamicBspOcclusionCulling->integer)
+	if (r_lockPvs->integer) // || r_occludeBsp->integer)
 	{
 		return;
 	}
@@ -1249,7 +1265,7 @@ static void R_MarkLeaves(void)
 		if (tr.visClusters[i] == cluster)
 		{
 			// if r_showcluster was just turned on, remark everything
-			if (!tr.refdef.areamaskModified && !r_showCluster->modified) // && !r_dynamicBspOcclusionCulling->modified)
+			if (!tr.refdef.areamaskModified && !r_showCluster->modified) // && !r_occludeBsp->modified)
 			{
 				if (tr.visClusters[i] != tr.visClusters[tr.visIndex] && r_showCluster->integer)
 				{
@@ -1281,14 +1297,14 @@ static void R_MarkLeaves(void)
 	}
 
 	/*
-	if(r_dynamicBspOcclusionCulling->modified)
+	if(r_occludeBsp->modified)
 	{
-	    r_dynamicBspOcclusionCulling->modified = qfalse;
+	    r_occludeBsp->modified = qfalse;
 	}
 	*/
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
-	if (r_mergeClusterSurfaces->integer && !r_dynamicBspOcclusionCulling->integer)
+	if (r_mergeClusterSurfaces->integer && !r_occludeBsp->integer)
 	{
 		R_UpdateClusterSurfaces();
 	}
@@ -1371,7 +1387,7 @@ static void DrawLeaf(bspNode_t *node, int decalBits)
 	tr.pc.c_leafs++;
 
 	// add to z buffer bounds
-	if (node->mins[0] < tr.viewParms.visBounds[0][0])
+	/*if (node->mins[0] < tr.viewParms.visBounds[0][0])
 	{
 		tr.viewParms.visBounds[0][0] = node->mins[0];
 	}
@@ -1382,9 +1398,10 @@ static void DrawLeaf(bspNode_t *node, int decalBits)
 	if (node->mins[2] < tr.viewParms.visBounds[0][2])
 	{
 		tr.viewParms.visBounds[0][2] = node->mins[2];
-	}
+	}*/
+	VectorMin(node->mins, tr.viewParms.visBounds[0], tr.viewParms.visBounds[0]);
 
-	if (node->maxs[0] > tr.viewParms.visBounds[1][0])
+	/*if (node->maxs[0] > tr.viewParms.visBounds[1][0])
 	{
 		tr.viewParms.visBounds[1][0] = node->maxs[0];
 	}
@@ -1395,7 +1412,8 @@ static void DrawLeaf(bspNode_t *node, int decalBits)
 	if (node->maxs[2] > tr.viewParms.visBounds[1][2])
 	{
 		tr.viewParms.visBounds[1][2] = node->maxs[2];
-	}
+	}*/
+	VectorMax(node->maxs, tr.viewParms.visBounds[1], tr.viewParms.visBounds[1]);
 
 	// add the individual surfaces
 	mark = node->markSurfaces;
@@ -1485,7 +1503,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 
        Ren_LogComment("--- DrawNode_r( node = %li, isLeaf = %i ) ---\n", (long)(node - tr.world->nodes), node->contents == -1);
 
-        if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
+        if (node->contents != CONTENTS_NODE) // && !(node->contents & CONTENTS_TRANSLUCENT))
         {
             SetUniformVec4(UNIFORM_COLOR, colorGreen);
         }
@@ -1511,7 +1529,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
             tess.numVertexes         = 0;
         }
 
-        if (node->contents != -1)
+        if (node->contents != CONTENTS_NODE)
         {
             break;
         }
@@ -1656,7 +1674,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	{
 		node = (bspNode_t *) l->data;
 
-		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
+		if (node->contents != CONTENTS_NODE) // && !(node->contents & CONTENTS_TRANSLUCENT))
 		{
 			SetUniformVec4(UNIFORM_COLOR, colorGreen);
 		}
@@ -1812,7 +1830,7 @@ static void PullUpVisibility(bspNode_t *node)
  * @note Unused
 static void PushNode(link_t * traversalStack, bspNode_t * node)
 {
-    if(node->contents != -1)
+    if(node->contents != CONTENTS_NODE)
     {
         //DrawLeaf(node, tr.refdef.decalBits);
     }
@@ -1865,7 +1883,7 @@ static void TraverseNode(link_t *distanceQueue, bspNode_t *node)
 #if defined(DEBUG_CHC)
 	if (RENLOG)
 	{
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			Ren_LogComment("--- TraverseNode( leaf = %i ) ---\n", node - tr.world->nodes);
 
@@ -1897,11 +1915,12 @@ static void TraverseNode(link_t *distanceQueue, bspNode_t *node)
 	}
 #endif
 
-	if (node->contents != -1)
+	/*if (node->contents != CONTENTS_NODE)
 	{
 		//DrawLeaf(node, tr.refdef.decalBits);
 	}
-	else
+	else*/
+	if (node->contents == CONTENTS_NODE)
 	{
 		EnQueue(distanceQueue, node->children[0]);
 		EnQueue(distanceQueue, node->children[1]);
@@ -1927,7 +1946,7 @@ static void BuildNodeTraversalStackPost_r(bspNode_t *node)
 		#if defined(DEBUG_CHC)
 		if (RENLOG)
 		{
-			if (node->contents != -1)
+			if (node->contents != CONTENTS_NODE)
 			{
 				Ren_LogComment("--- BuildNodeTraversalStackPost_r( leaf = %i, visible = %i ) ---\n", node - tr.world->nodes, node->visible[tr.viewCount]);
 			}
@@ -1940,7 +1959,7 @@ static void BuildNodeTraversalStackPost_r(bspNode_t *node)
 
 		InsertLink(&node->visChain, &tr.traversalStack);
 
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			if (node->visible[tr.viewCount])
 			{
@@ -2083,10 +2102,10 @@ static void R_CoherentHierachicalCulling()
 	}
 
 	ClearLink(&tr.traversalStack);
-	QueueInit(&tr.occlusionQueryQueue);
-	ClearLink(&tr.occlusionQueryList);
+	ClearLink(&tr.occlusionQueryList); // this list is never filled..
 
-	//ClearLink(&traversalStack);
+	QueueInit(&tr.occlusionQueryQueue);
+
 	QueueInit(&distanceQueue);
 	QueueInit(&occlusionQueryQueue);
 	QueueInit(&visibleQueue);
@@ -2147,7 +2166,7 @@ static void R_CoherentHierachicalCulling()
 					{
 						Ren_LogComment("single query node %li visible\n", (long)(node - tr.world->nodes));
 
-						if (r_dynamicBspOcclusionCulling->integer == 1)
+						if (r_occludeBsp->integer == 1)
 						{
 							if (!WasVisible(node))
 							{
@@ -2182,12 +2201,11 @@ static void R_CoherentHierachicalCulling()
 				}
 			}
 #if 1
-			else if (r_dynamicBspOcclusionCulling->integer == 1)
+			else if (r_occludeBsp->integer == 1)
 			{
 				if (!QueueEmpty(&visibleQueue))
 				{
 					node = (bspNode_t *) DeQueue(&visibleQueue);
-
 					IssueOcclusionQuery(&occlusionQueryQueue, node, qtrue);
 				}
 			}
@@ -2211,7 +2229,7 @@ static void R_CoherentHierachicalCulling()
 			Ren_LogComment("distance-queue --> node %li\n", (long)(node - tr.world->nodes));
 
 			if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex] && // node was marked as potentially visible
-			    (node->contents == -1 || node->numMarkSurfaces) &&
+			    (node->contents == CONTENTS_NODE || node->numMarkSurfaces) &&
 			    InsideViewFrustum(node, FRUSTUM_CLIPALL)
 			    )
 			{
@@ -2222,7 +2240,7 @@ static void R_CoherentHierachicalCulling()
 				qboolean clipsNearPlane;
 				qboolean leafThatNeedsQuery;
 
-				if (r_dynamicBspOcclusionCulling->integer > 1)
+				if (r_occludeBsp->integer > 1)
 				{
 					// reset node's visibility classification
 					//node->visible[tr.viewCount] = !QueryReasonable(node);
@@ -2248,7 +2266,7 @@ static void R_CoherentHierachicalCulling()
 					needsQuery = qfalse;
 				}
 				#if 1
-				else if (r_chcIgnoreLeaves->integer && node->contents != -1)
+				else if (r_chcIgnoreLeaves->integer && node->contents != CONTENTS_NODE)
 				{
 					// NOTE: this is the fastest dynamic occlusion culling path
 
@@ -2265,13 +2283,13 @@ static void R_CoherentHierachicalCulling()
 				else
 				{
 					// CHC default
-					needsQuery = !wasVisible || (node->contents != -1);
+					needsQuery = !wasVisible || (node->contents != CONTENTS_NODE);
 				}
 
 				// update node's visited flag
 				node->lastVisited[tr.viewCount] = tr.frameCount;
 
-				leafThatNeedsQuery = node->contents != -1;
+				leafThatNeedsQuery = node->contents != CONTENTS_NODE;
 
 				if (leafThatNeedsQuery)
 				{
@@ -2285,7 +2303,7 @@ static void R_CoherentHierachicalCulling()
 					leafThatNeedsQuery = qtrue;
 				}
 
-				if (r_dynamicBspOcclusionCulling->integer == 1)
+				if (r_occludeBsp->integer == 1)
 				{
 					// CHC++
 
@@ -2303,7 +2321,7 @@ static void R_CoherentHierachicalCulling()
 					else
 					{
 						#if 1
-						if ((node->contents != -1) && !clipsNearPlane && QueryReasonable(node) && leafThatNeedsQuery)
+						if ((node->contents != CONTENTS_NODE) && !clipsNearPlane && QueryReasonable(node) && leafThatNeedsQuery)
 						{
 							Ren_LogComment("v-queue <-- node %li\n", (long)(node - tr.world->nodes));
 
@@ -2338,7 +2356,7 @@ static void R_CoherentHierachicalCulling()
 			}
 		}
 
-		if (r_dynamicBspOcclusionCulling->integer == 1)
+		if (r_occludeBsp->integer == 1)
 		{
 			if (QueueEmpty(&distanceQueue))
 			//if(StackEmpty(&traversalStack))
@@ -2356,6 +2374,7 @@ static void R_CoherentHierachicalCulling()
 						node = (bspNode_t *) DeQueue(&visibleQueue);
 
 						IssueOcclusionQuery(&occlusionQueryQueue, node, qtrue);
+
 					}
 				}
 			}
@@ -2414,11 +2433,12 @@ void R_AddWorldSurfaces(void)
 	}
 	else
 	{
+
 		// determine which leaves are in the PVS / areamask
 		R_MarkLeaves();
 
 		// update the bsp nodes with the dynamic occlusion query results
-		if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
+		if (glConfig2.occlusionQueryBits && r_occludeBsp->integer)
 		{
 			R_CoherentHierachicalCulling();
 		}
@@ -2436,7 +2456,7 @@ void R_AddWorldSurfaces(void)
 		R_AddDecalSurfaces(tr.world->models);
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
-		if (r_mergeClusterSurfaces->integer && !r_dynamicBspOcclusionCulling->integer)
+		if (r_mergeClusterSurfaces->integer && !r_occludeBsp->integer)
 		{
 			int          j, i;
 			srfVBOMesh_t *srf;
@@ -2540,8 +2560,6 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 			switch (light->l.rlType)
 			{
 			case RL_OMNI:
-				R_AddLightInteraction(light, (surfaceType_t *)srf, shader, CUBESIDE_CLIPALL, IA_LIGHTONLY);
-				break;
 			case RL_DIRECTIONAL:
 			case RL_PROJ:
 				R_AddLightInteraction(light, (surfaceType_t *)srf, shader, CUBESIDE_CLIPALL, IA_LIGHTONLY);
@@ -2565,16 +2583,11 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 
 			R_AddLightInteraction(light, (surfaceType_t *)srf, shader, iaVBO->cubeSideBits, IA_SHADOWONLY);
 		}
-
+		
 		// add interactions that couldn't be merged into VBOs
 		for (iaCache = light->firstInteractionCache; iaCache; iaCache = iaCache->next)
 		{
-			if (iaCache->redundant)
-			{
-				continue;
-			}
-
-			if (iaCache->mergedIntoVBO)
+			if (iaCache->redundant || iaCache->mergedIntoVBO)
 			{
 				continue;
 			}
@@ -2585,14 +2598,11 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 			// into this view
 			if (surface->viewCount != tr.viewCountNoReset)
 			{
-				if (r_shadows->integer < SHADOWING_ESM16 || light->l.noShadows)
+				if (r_shadows->integer < SHADOWING_EVSM32 || light->l.noShadows)
 				{
 					continue;
 				}
-				else
-				{
-					iaType = IA_SHADOWONLY;
-				}
+				iaType = IA_SHADOWONLY;
 			}
 			else
 			{
@@ -2620,7 +2630,7 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 			// into this view
 			if (surface->viewCount != tr.viewCountNoReset)
 			{
-				if (r_shadows->integer < SHADOWING_ESM16 || light->l.noShadows)
+				if (r_shadows->integer < SHADOWING_EVSM32 || light->l.noShadows)
 				{
 					continue;
 				}

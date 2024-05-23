@@ -110,6 +110,16 @@ extern vec4_t clrBrownTextLt;
 extern vec4_t clrBrownTextLt2;
 extern vec4_t clrBrownLineFull;
 
+extern vec3_t vec3_origin;      // 0,0,0
+extern vec3_t vec3_1;           // 1,1,1
+extern vec3_t vec3_minus1;      // -1,-1,-1
+extern vec3_t vec3_half;        // 0.5,0.5,0.5
+extern vec4_t vec4_origin;      // 0,0,0,0
+extern vec4_t vec4_1;           // 1,1,1,1
+extern vec4_t vec4_minus1;      // -1,-1,-1,-1
+extern vec4_t vec4_half;        // 0.5,0.5,0.5,0.5
+extern vec3_t axisDefault[3];
+
 #define GAME_INIT_FRAMES    6
 #define FRAMETIME           100                 // msec
 
@@ -125,8 +135,10 @@ extern vec4_t g_color_table[32];
 #define Q_IsHexColorString(p) (ishex(*(p)) && ishex(*((p) + 1)) && ishex(*((p) + 2)) && ishex(*((p) + 3)) && ishex(*((p) + 4)) && ishex(*((p) + 5)))
 #define Q_HexColorStringHasAlpha(p) (ishex(*((p) + 6)) && ishex(*((p) + 7)))
 
-#define DEG2RAD(a) (((a) * M_PI) / 180.0)
-#define RAD2DEG(a) (((a) * 180.0) / M_PI)
+#define _PI_DIV_180 0.01745329251994329576923690768489f
+#define _180_DIV_PI 57.295779513082320876798154814105f
+#define DEG2RAD(a) ((a) * _PI_DIV_180)
+#define RAD2DEG(a) ((a) * _180_DIV_PI)
 
 struct cplane_s;
 

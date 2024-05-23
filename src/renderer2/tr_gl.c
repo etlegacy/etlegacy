@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -55,12 +55,12 @@ void GL_Bind(image_t *image)
 
 	texnum = image->texnum;
 
-	/*if (r_noBind->integer && tr.blackImage)
+	if (r_noBind->integer && tr.blackImage)
 	{
-	    // performance evaluation option
-	    texnum = tr.blackImage->texnum;
-	    image  = tr.blackImage;
-	}*/
+		// performance evaluation option
+		texnum = tr.blackImage->texnum;
+		image  = tr.blackImage;
+	}
 
 	if (glState.currenttextures[glState.currenttmu] != texnum)
 	{
@@ -69,7 +69,6 @@ void GL_Bind(image_t *image)
 		glBindTexture(image->type, texnum);
 	}
 }
-
 
 /**
  * @brief GL_Unbind
@@ -113,10 +112,9 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	// exactly with waveforms of the same frequency
 	//index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	//index = (int64_t)(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
-
-	index   = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
-	index >>= FUNCTABLE_SIZE2; // ??! what is this? it does slow down the flames
-	//index %= FUNCTABLE_SIZE;
+	index = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
+	index >>= FUNCTABLE_BITS;
+	index %= FUNCTABLE_SIZE;
 
 	if (index < 0)
 	{
@@ -369,8 +367,8 @@ void GL_LoadModelViewMatrix(const mat4_t m)
 		return;
 	}
 
-	mat4_copy(m, GLSTACK_MVM);
-	mat4_mult(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
+	Matrix4Copy(m, GLSTACK_MVM);
+	Matrix4Multiply(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
 }
 
 /**
@@ -384,8 +382,8 @@ void GL_LoadProjectionMatrix(const mat4_t m)
 		return;
 	}
 
-	mat4_copy(m, GLSTACK_PM);
-	mat4_mult(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
+	Matrix4Copy(m, GLSTACK_PM);
+	Matrix4Multiply(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
 }
 
 /**

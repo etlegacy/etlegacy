@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -73,7 +73,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	// check version
 	token   = COM_ParseExt2(&buf_p, qfalse);
-	version = Q_atoi(token);
+	version = atoi(token);
 
 	if (version != MD5_VERSION)
 	{
@@ -100,7 +100,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	}
 
 	token         = COM_ParseExt2(&buf_p, qfalse);
-	md5->numBones = Q_atoi(token);
+	md5->numBones = atoi(token);
 
 	// parse numMeshes <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -112,7 +112,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	}
 
 	token            = COM_ParseExt2(&buf_p, qfalse);
-	md5->numSurfaces = Q_atoi(token);
+	md5->numSurfaces = atoi(token);
 	//Ren_Print("R_LoadMD5: '%s' has %i surfaces\n", modName, md5->numSurfaces);
 
 	if (md5->numBones < 1)
@@ -157,7 +157,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		//Ren_Print("R_LoadMD5: '%s' has bone '%s'\n", modName, bone->name);
 
 		token             = COM_ParseExt2(&buf_p, qfalse);
-		bone->parentIndex = Q_atoi(token);
+		bone->parentIndex = atoi(token);
 
 		//Ren_Print("R_LoadMD5: '%s' has bone '%s' with parent index %i\n", modName, bone->name, bone->parentIndex);
 
@@ -207,7 +207,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		}
 
 		QuatCalcW(boneQuat);
-		mat4_from_quat(boneMat, boneQuat);
+		Matrix4FromQuaternion(boneMat, boneQuat);
 
 		VectorCopy(boneOrigin, bone->origin);
 		quat_copy(boneQuat, bone->rotation);
@@ -311,7 +311,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		}
 
 		token          = COM_ParseExt2(&buf_p, qfalse);
-		surf->numVerts = Q_atoi(token);
+		surf->numVerts = atoi(token);
 
 		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
@@ -359,10 +359,10 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			}
 
 			token          = COM_ParseExt2(&buf_p, qfalse);
-			v->firstWeight = Q_atoi(token);
+			v->firstWeight = atoi(token);
 
 			token         = COM_ParseExt2(&buf_p, qfalse);
-			v->numWeights = Q_atoi(token);
+			v->numWeights = atoi(token);
 
 			if (v->numWeights > MAX_WEIGHTS)
 			{
@@ -381,7 +381,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		}
 
 		token              = COM_ParseExt2(&buf_p, qfalse);
-		surf->numTriangles = Q_atoi(token);
+		surf->numTriangles = atoi(token);
 
 		if (surf->numTriangles > SHADER_MAX_TRIANGLES)
 		{
@@ -407,7 +407,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			for (k = 0; k < 3; k++)
 			{
 				token           = COM_ParseExt2(&buf_p, qfalse);
-				tri->indexes[k] = Q_atoi(token);
+				tri->indexes[k] = atoi(token);
 			}
 		}
 
@@ -421,7 +421,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		}
 
 		token            = COM_ParseExt2(&buf_p, qfalse);
-		surf->numWeights = Q_atoi(token);
+		surf->numWeights = atoi(token);
 
 		surf->weights = ri.Hunk_Alloc(sizeof(*weight) * surf->numWeights, h_low);
 
@@ -439,7 +439,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			(void) COM_ParseExt2(&buf_p, qfalse);
 
 			token             = COM_ParseExt2(&buf_p, qfalse);
-			weight->boneIndex = Q_atoi(token);
+			weight->boneIndex = atoi(token);
 
 			token              = COM_ParseExt2(&buf_p, qfalse);
 			weight->boneWeight = atof(token);
@@ -568,9 +568,9 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
-				VectorNormalize(v->tangent);
-				VectorNormalize(v->binormal);
-				VectorNormalize(v->normal);
+				VectorNormalizeOnly(v->tangent);
+				VectorNormalizeOnly(v->binormal);
+				VectorNormalizeOnly(v->normal);
 			}
 		}
 #else
@@ -613,7 +613,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 					dv[k]->tangent[2] = bary[0] * dv[0]->position[2] + bary[1] * dv[1]->position[2] + bary[2] * dv[2]->position[2];
 
 					VectorSubtract(dv[k]->tangent, dv[k]->position, dv[k]->tangent);
-					VectorNormalize(dv[k]->tangent);
+					VectorNormalizeOnly(dv[k]->tangent);
 
 					// calculate t tangent vector (binormal)
 					s       = dv[k]->texCoords[0];
@@ -627,12 +627,12 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 					dv[k]->binormal[2] = bary[0] * dv[0]->position[2] + bary[1] * dv[1]->position[2] + bary[2] * dv[2]->position[2];
 
 					VectorSubtract(dv[k]->binormal, dv[k]->position, dv[k]->binormal);
-					VectorNormalize(dv[k]->binormal);
+					VectorNormalizeOnly(dv[k]->binormal);
 
 					// calculate the normal as cross product N=TxB
 #if 0
 					CrossProduct(dv[k]->tangent, dv[k]->binormal, dv[k]->normal);
-					VectorNormalize(dv[k]->normal);
+					VectorNormalizeOnly(dv[k]->normal);
 
 					// Gram-Schmidt orthogonalization process for B
 					// compute the cross product B=NxT to obtain
@@ -655,9 +655,9 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 #if 1
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
-				//VectorNormalize(v->tangent);
-				//VectorNormalize(v->binormal);
-				VectorNormalize(v->normal);
+				//VectorNormalizeOnly(v->tangent);
+				//VectorNormalizeOnly(v->binormal);
+				VectorNormalizeOnly(v->normal);
 			}
 #endif
 		}
@@ -681,7 +681,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 					}
 				}
 
-				VectorNormalize(surf->verts[j].normal);
+				VectorNormalizeOnly(surf->verts[j].normal);
 			}
 		}
 	}
@@ -692,7 +692,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	for (i = 0, surf = md5->surfaces; i < md5->numSurfaces; i++, surf++)
 	{
 		// sort triangles
-		Com_InitGrowList(&sortedTriangles, 1000);
+		Com_InitGrowList(&sortedTriangles, 100); //Com_InitGrowList(&sortedTriangles, 1000);
 
 		for (j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 		{
@@ -740,7 +740,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			numBoneReferences = 0;
 			Com_Memset(boneReferences, 0, sizeof(boneReferences));
 
-			Com_InitGrowList(&vboTriangles, 1000);
+			Com_InitGrowList(&vboTriangles, 100); //Com_InitGrowList(&vboTriangles, 1000);
 
 			for (j = 0; j < sortedTriangles.currentElements; j++)
 			{

@@ -14,6 +14,7 @@ vec4 f(vec4 color)
 
 void main()
 {
+#if 0
 	vec2 scale = r_FBufScale * r_NPOTScale;
 	vec2 st = gl_FragCoord.st;
 
@@ -25,6 +26,11 @@ void main()
 
 	// scale by the screen non-power-of-two-adjust
 	st *= r_NPOTScale;
+#else
+	vec2 scale = r_FBufNPOTScale;
+	vec2 st = gl_FragCoord.st * r_FBufNPOTScale;
+	st *= vec2(4.0, 4.0);
+#endif
 
 	// perform a box filter for the downsample
 	vec4 color = f(texture2D(u_ColorMap, st + vec2(-1.0, -1.0) * scale));

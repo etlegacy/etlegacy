@@ -1,37 +1,3 @@
-/*
- * Wolfenstein: Enemy Territory GPL Source Code
- * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
- * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
- *
- * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
- *
- * This file is part of ET: Legacy - http://www.etlegacy.com
- *
- * ET: Legacy is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * ET: Legacy is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
- *
- * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
- * subject to certain additional terms. You should have received a copy
- * of these additional terms immediately following the terms and conditions
- * of the GNU General Public License which accompanied the source code.
- * If not, please request a copy in writing from id Software at the address below.
- *
- * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- */
-/**
- * @file renderer2/tr_thread.c
- */
 
 #include "tr_local.h"
 
@@ -46,22 +12,17 @@
 
 
 
-// the array to store the entries
+ // the array to store the entries
 #define MAX_CUBEMAPSAVE 4096
 static thr_CubemapSave_t arrayCubemapSave[MAX_CUBEMAPSAVE];
 
 // the linked lists:
 // These lists have references to both previous & next entries (for easy entry deletion).
-static thr_CubemapSave_t *entry_CubemapSave  = NULL;      // the 1st of the used entries
-static thr_CubemapSave_t *avail_CubemapSave  = NULL;      // the 1st of the unused entries
+static thr_CubemapSave_t *entry_CubemapSave = NULL;       // the 1st of the used entries
+static thr_CubemapSave_t *avail_CubemapSave = NULL;       // the 1st of the unused entries
 static thr_CubemapSave_t *oldest_CubemapSave = NULL;      // the oldest of the used entries
 
-#if defined(WIN32) || defined(WIN64)
 static HANDLE R2Thread_Mutex; // windows
-#elif defined(__unix__) || defined(__APPLE__)
-//static struct _IO_FILE R2Thread_Mutex;
-static pthread_mutex_t R2Thread_Mutex;
-#endif
 
 // because file locking needs some work, this is a temporary workaround.
 // To not let the main thread, and this R2 thread access the same file,
@@ -102,11 +63,9 @@ static void R2Thread_Wait();
 static void R2Thread_Lock(void)
 {
 	DWORD dwErr;
-	do
-	{
+	do {
 		dwErr = WaitForSingleObject(R2Thread_Mutex, INFINITE);  //! this thread never ends, so adjust the code first << todo
-	}
-	while (dwErr != WAIT_OBJECT_0 && dwErr != WAIT_ABANDONED);
+	} while (dwErr != WAIT_OBJECT_0 && dwErr != WAIT_ABANDONED);
 }
 
 static void R2Thread_Unlock(void)
@@ -119,12 +78,12 @@ static void R2Thread_Unlock(void)
 //mutex
 static void R2Thread_Lock(void)
 {
-	pthread_mutex_lock(&R2Thread_Mutex);
+	// todo for linux..
 }
 
 static void R2Thread_Unlock(void)
 {
-	pthread_mutex_unlock(&R2Thread_Mutex);
+	// todo for linux..
 }
 
 #endif
@@ -140,9 +99,9 @@ void R2Thread_LockFile(char *filename)
 	// if no file is locked, R2Thread_LockedFilename == ""
 	while(R2Thread_LockedFilename[0] != '\0'); // while(strcmp(&R2Thread_LockedFilename, ""));
 	//Com_Memset(R2Thread_LockedFilename, 0, sizeof(R2Thread_LockedFilename)); // no need, strcpy includes the trailing 0
-    //R2Thread_Lock();
+//R2Thread_Lock();
 	strcpy(&R2Thread_LockedFilename[0], filename);
-    //R2Thread_Unlock();
+//R2Thread_Unlock();
 }
 
 void R2Thread_UnlockFile(char *filename)
@@ -150,9 +109,9 @@ void R2Thread_UnlockFile(char *filename)
 	// only if the filename matches the locked filename, we clear the variable.
 	if (!strcmp(&R2Thread_LockedFilename[0], filename))
 	{
-    //R2Thread_Lock();
+//R2Thread_Lock();
 		R2Thread_LockedFilename[0] = '\0';
-    //R2Thread_Unlock();
+//R2Thread_Unlock();
 	}
 }
 */
@@ -168,19 +127,19 @@ void R2Thread_UnlockFile(char *filename)
 void THR_Init_CubemapSave(void)
 {
 	int i;
-	entry_CubemapSave  = NULL;
-	avail_CubemapSave  = NULL;
-	oldest_CubemapSave = NULL;
+	entry_CubemapSave = NULL;
+	avail_CubemapSave = NULL;
+oldest_CubemapSave = NULL;
 	for (i = 0; i < MAX_CUBEMAPSAVE; i++)
 	{
-		arrayCubemapSave[i].prev = (i == 0)? NULL : &arrayCubemapSave[i - 1];
+		arrayCubemapSave[i].prev = (i==0)? NULL : &arrayCubemapSave[i-1];
 		arrayCubemapSave[i].next = avail_CubemapSave;
-		avail_CubemapSave        = &arrayCubemapSave[i];
+		avail_CubemapSave = &arrayCubemapSave[i];
 	}
 }
 
 
-thr_CubemapSave_t * THR_AddProbeToSave(cubemapProbe_t *probe)
+thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe)
 {
 	thr_CubemapSave_t *entry;
 
@@ -189,13 +148,13 @@ thr_CubemapSave_t * THR_AddProbeToSave(cubemapProbe_t *probe)
 		return NULL; // none available
 	}
 
-	//R2Thread_Lock();
+//R2Thread_Lock();
 	// exit if it already exists in the list
 	for (entry = entry_CubemapSave; entry; entry = entry->next)
 	{
 		if (entry->probe == probe)
 		{
-			//R2Thread_Unlock();
+//R2Thread_Unlock();
 			return entry;
 		}
 	}
@@ -205,25 +164,25 @@ thr_CubemapSave_t * THR_AddProbeToSave(cubemapProbe_t *probe)
 	R2Thread_Lock();
 
 	// link an entry
-	entry = avail_CubemapSave;
-	/*// the ->next is always NULL
+	entry                             = avail_CubemapSave;
+/*	// the ->next is always NULL
 	if (avail_CubemapSave->next)
 	{
 		avail_CubemapSave->next->prev = avail_CubemapSave->prev;
 	}*/
-	avail_CubemapSave       = avail_CubemapSave->next;
-	avail_CubemapSave->next = NULL;
-	entry->prev             = (entry_CubemapSave)? entry_CubemapSave->prev : NULL;
-	entry->next             = entry_CubemapSave;
+	avail_CubemapSave                 = avail_CubemapSave->next;
+	avail_CubemapSave->next           = NULL;
+	entry->prev                       = (entry_CubemapSave)? entry_CubemapSave->prev : NULL;
+	entry->next                       = entry_CubemapSave;
 	if (!entry->prev && !entry->next) // this is the only entry, so it's the oldest
 	{
-		oldest_CubemapSave = avail_CubemapSave;
+		oldest_CubemapSave            = avail_CubemapSave;
 	}
 	if (entry_CubemapSave)
 	{
-		entry_CubemapSave->prev = entry;
+		entry_CubemapSave->prev       = entry;
 	}
-	entry_CubemapSave = entry;
+	entry_CubemapSave                 = entry;
 
 	// set the probe
 	entry->probe = probe;
@@ -237,10 +196,10 @@ thr_CubemapSave_t * THR_AddProbeToSave(cubemapProbe_t *probe)
 // remove 'entry' from the list.
 // return the previous entry on exit.
 // return NULL if the entry is NULL.
-thr_CubemapSave_t * THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
+thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 {
 	thr_CubemapSave_t *result;
-	int               i;
+	int i;
 
 	if (!entry)
 	{
@@ -248,49 +207,46 @@ thr_CubemapSave_t * THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 	}
 
 	//lock
-	//R2Thread_Lock();
+//	R2Thread_Lock();
 
 	result = entry->prev;
 
 	// link an entry
 	if (entry->prev)
 	{
-		entry->prev->next = entry->next;
+		entry->prev->next             = entry->next;
 	}
 	if (entry->next)
 	{
-		entry->next->prev = entry->prev;
+		entry->next->prev             = entry->prev;
 	}
 	if (entry == entry_CubemapSave)
 	{
-		entry_CubemapSave = entry->next;
+		entry_CubemapSave             = entry->next;
 	}
-	entry->prev = (avail_CubemapSave)? avail_CubemapSave->prev : NULL;
-	entry->next = avail_CubemapSave;                       // could be NULL
+	entry->prev                       = (avail_CubemapSave)? avail_CubemapSave->prev : NULL;
+	entry->next                       = avail_CubemapSave; // could be NULL
 	if (!entry->next)
 	{
-		oldest_CubemapSave = entry;
+		oldest_CubemapSave            = entry;
 	}
 	if (avail_CubemapSave)
 	{
-		avail_CubemapSave->prev = entry;
+		avail_CubemapSave->prev       = entry;
 	}
-	avail_CubemapSave = entry;
+	avail_CubemapSave                 = entry;
 
 	// release the probe's memory that stored the temporary pixeldata
 	for (i = 0; i < 6; i++)
 	{
-		if (entry->probe->cubeTemp[i])
-		{
-			ri.Free(entry->probe->cubeTemp[i]);
-		}
+		if (entry->probe->cubeTemp[i]) ri.Free(entry->probe->cubeTemp[i]);
 		entry->probe->cubeTemp[i] = NULL;
 	}
 	// unset the probe
 	entry->probe = NULL;
 
 	// unlock
-	// R2Thread_Unlock();
+//	R2Thread_Unlock();
 
 	return result;
 }
@@ -299,10 +255,10 @@ thr_CubemapSave_t * THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 void THR_ProcessProbesToSave(void)
 {
 	cubemapProbe_t *probe;
-	/*
+/*
 	// process all the entries
 	thr_CubemapSave_t *entry;
-	R2Thread_Lock();
+R2Thread_Lock();
 	for (entry = entry_CubemapSave; entry; entry = entry->next)
 	{
 		if (R2Thread_Status != THREAD_STATUS_RUNNING) return;
@@ -312,31 +268,25 @@ void THR_ProcessProbesToSave(void)
 		// this entry is processed.
 		entry = THR_RemoveProbeToSave(entry); // the previous entry is returned so the loop will do the right thing..
 	}
-	R2Thread_Unlock();
-	*/
-	/*
+R2Thread_Unlock();
+*/
+/*
 	// process only 1 entry at a time
 	if (R2Thread_Status != THREAD_STATUS_RUNNING) return;
-	//R2Thread_Lock();
+//R2Thread_Lock();
 	if (!entry_CubemapSave) goto THR_ProcessProbesToSave_finish;
 	probe = entry_CubemapSave->probe;
 	if (!probe) goto THR_ProcessProbesToSave_finish;
 	R_SaveCubeProbe(probe, probe->cubeTemp, qfalse); // qfalse means: save only this one
 	(void)THR_RemoveProbeToSave(entry_CubemapSave);
-	THR_ProcessProbesToSave_finish:
-	//R2Thread_Unlock();
+THR_ProcessProbesToSave_finish:
+//R2Thread_Unlock();
 	return;
-	*/
+*/
 	// process the oldest entry
-	if (!oldest_CubemapSave)
-	{
-		return;
-	}
+	if (!oldest_CubemapSave) return;
 	probe = oldest_CubemapSave->probe;
-	if (!probe)
-	{
-		return;
-	}
+	if (!probe) return;
 	R_SaveCubeProbe(probe, probe->cubeTemp, qfalse); // qfalse means: save only this one
 	(void)THR_RemoveProbeToSave(oldest_CubemapSave);
 	return;
@@ -383,7 +333,7 @@ static HANDLE R2Thread_Handle = NULL;
 
 static DWORD WINAPI R2Thread_SystemProc(LPVOID dummy)
 {
-	//R2Thread_Mutex = CreateMutex(NULL, qfalse, NULL);
+//	R2Thread_Mutex = CreateMutex(NULL, qfalse, NULL);
 	R2Thread();
 	return 0;
 }
@@ -472,10 +422,6 @@ void R2Thread_Stop(void)
 	Ren_Print("R2_Thread stopping..\n");
 	R2Thread_QuitRequested = qtrue;
 	R2Thread_Wait();
-#ifdef WIN32
 	//CloseHandle(R2Thread_Handle);
 	CloseHandle(R2Thread_Mutex);
-#else
-	pthread_mutex_destroy(&R2Thread_Mutex);
-#endif
 }

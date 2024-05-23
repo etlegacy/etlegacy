@@ -5,7 +5,7 @@
  * Copyright (C) 2007 HermitWorks Entertainment Corporation
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -669,7 +669,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	vec4_t   zeroClampBorder      = { 0, 0, 0, 1 };
 	vec4_t   alphaZeroClampBorder = { 0, 0, 0, 0 };
 
-	Com_Memset(mipOffsets, 0, sizeof(mipOffsets));
+	Com_Memset(mipOffsets, 0, R_LoadDDSImage_MAX_MIPS + 1);
 
 	// comes from R_CreateImage
 	/*
@@ -1263,6 +1263,10 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(ret->type, GL_TEXTURE_BORDER_COLOR, alphaZeroClampBorder);
+		break;
+	case WT_MIRROR_REPEAT:
+		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 		break;
 	default:
 		Ren_Warning("WARNING: unknown wrap type for image '%s'\n", ret->name);

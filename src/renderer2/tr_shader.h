@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -38,12 +38,14 @@
 
 #include "tr_local.h"
 
-#define MAX_SHADERTABLE_HASH    1024
+/*#define MAX_SHADERTABLE_HASH    1024
+static shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
 
-#define MAX_GUIDETEXT_HASH      2048
+#define MAX_GUIDETEXT_HASH      2048*/
 #define MAX_SHADERTEXT_HASH     2048
 
 #define FILE_HASH_SIZE          1024
+shader_t *shaderHashTable[FILE_HASH_SIZE];
 
 #define MAX_SHADER_FILES        4096
 #define MAX_GUIDE_FILES         1024
@@ -52,6 +54,8 @@
 
 #define generateHashValue(fname, size) Q_GenerateHashValue(fname, size, qfalse, qtrue)
 
+shader_t shader;
+
 // dynamic shader list
 typedef struct dynamicShader dynamicShader_t;
 struct dynamicShader
@@ -59,6 +63,22 @@ struct dynamicShader
 	char *shadertext;
 	dynamicShader_t *next;
 };
+
+dynamicShader_t *dshader;
+
+//shaderTable_t table;
+
+
+// the shader is parsed into these global variables, then copied into
+// dynamically allocated memory if it is valid.
+shaderStage_t stages[MAX_SHADER_STAGES];
+
+texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
+
+// these are only referenced while parsing a shader
+char implicitMap[MAX_QPATH];
+unsigned   implicitStateBits;
+cullType_t implicitCullType;
 
 // scan and load shader files behaviour
 #define R_SCAN_SCRIPTS_FOLDER   0x0001      ///< 1  - scan material in scripts folder
@@ -70,7 +90,7 @@ char *FindShaderInShaderTextR1(const char *shaderName);
 qboolean ParseShaderR1(char *_text);
 
 // tr_shader.c
-void GeneratePermanentShaderTable(float *values, int numValues);
+//void GeneratePermanentShaderTable(float *values, int numValues);
 void ParseStencil(char **text, stencil_t *stencil);
 void ParseWaveForm(char **text, waveForm_t *wave);
 qboolean ParseTexMod(char **text, shaderStage_t *stage);

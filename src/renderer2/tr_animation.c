@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -77,7 +77,7 @@ void R_InitAnimations(void)
 
 	anim       = R_AllocAnimation();
 	anim->type = AT_BAD;
-	Q_strncpyz(anim->name, "<default animation>", sizeof(anim->name));
+	strcpy(anim->name, "<default animation>");
 }
 
 /**
@@ -106,7 +106,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 
 	// check version
 	token   = COM_ParseExt2(&buf_p, qfalse);
-	version = Q_atoi(token);
+	version = atoi(token);
 	if (version != MD5_VERSION)
 	{
 		Ren_Warning("RE_RegisterAnimation: '%s' has wrong version (%i should be %i)\n", name, version, MD5_VERSION);
@@ -125,7 +125,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 	token           = COM_ParseExt2(&buf_p, qfalse);
-	anim->numFrames = Q_atoi(token);
+	anim->numFrames = atoi(token);
 
 	// parse numJoints <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -135,7 +135,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 	token             = COM_ParseExt2(&buf_p, qfalse);
-	anim->numChannels = Q_atoi(token);
+	anim->numChannels = atoi(token);
 
 	// parse frameRate <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -145,7 +145,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 	token           = COM_ParseExt2(&buf_p, qfalse);
-	anim->frameRate = Q_atoi(token);
+	anim->frameRate = atoi(token);
 
 	// parse numAnimatedComponents <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -156,7 +156,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 	token                       = COM_ParseExt2(&buf_p, qfalse);
-	anim->numAnimatedComponents = Q_atoi(token);
+	anim->numAnimatedComponents = atoi(token);
 
 	// parse hierarchy {
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -183,7 +183,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		//Ren_Print("RE_RegisterAnimation: '%s' has channel '%s'\n", name, channel->name);
 
 		token                = COM_ParseExt2(&buf_p, qfalse);
-		channel->parentIndex = Q_atoi(token);
+		channel->parentIndex = atoi(token);
 
 		if (channel->parentIndex >= anim->numChannels)
 		{
@@ -192,10 +192,10 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		}
 
 		token                   = COM_ParseExt2(&buf_p, qfalse);
-		channel->componentsBits = Q_atoi(token);
+		channel->componentsBits = atoi(token);
 
 		token                     = COM_ParseExt2(&buf_p, qfalse);
-		channel->componentsOffset = Q_atoi(token);
+		channel->componentsOffset = atoi(token);
 	}
 
 	// parse }
@@ -949,7 +949,7 @@ void R_AddMD5Surfaces(trRefEntity_t *ent)
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum
 	R_CullMD5(ent);
-
+	
 	if (ent->cull == CULL_OUT)
 	{
 		return;
@@ -1383,9 +1383,9 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 		for (i = 0; i < 3; i++)
 		{
 			skel->bounds[0][i] =
-				oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
+			    oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
 			skel->bounds[1][i] =
-				oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
+			    oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
 		}
 
 		for (i = 0, channel = anim->channels; i < anim->numChannels; i++, channel++)

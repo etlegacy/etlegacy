@@ -13,47 +13,47 @@ attribute vec4 attr_TexCoord0;
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
 #if defined(USE_VERTEX_ANIMATION)
-attribute vec4 attr_Position2;
-attribute vec3 attr_Normal2;
+	attribute vec4 attr_Position2;
+	attribute vec3 attr_Normal2;
 #endif // USE_VERTEX_ANIMATION
 #if defined(USE_NORMAL_MAPPING)
-attribute vec3 attr_Tangent;
-attribute vec3 attr_Binormal;
+	attribute vec3 attr_Tangent;
+	attribute vec3 attr_Binormal;
 	#if defined(USE_VERTEX_ANIMATION)
-attribute vec3 attr_Tangent2;
-attribute vec3 attr_Binormal2;
+		attribute vec3 attr_Tangent2;
+		attribute vec3 attr_Binormal2;
 	#endif // USE_VERTEX_ANIMATION
 #endif // USE_NORMAL_MAPPING
 
-uniform mat4 u_ModelMatrix;
-uniform mat4 u_ModelViewProjectionMatrix;
-uniform mat4 u_DiffuseTextureMatrix;
+uniform mat4  u_ModelMatrix;
+uniform mat4  u_ModelViewProjectionMatrix;
+uniform mat4  u_DiffuseTextureMatrix;
 #if defined(USE_NORMAL_MAPPING)
-uniform vec3 u_ViewOrigin;
-uniform vec3 u_LightDir;
+	uniform vec3  u_ViewOrigin;
+	uniform vec3  u_LightDir;
 	#if defined(USE_PARALLAX_MAPPING)
-uniform float u_DepthScale;
+		uniform float u_DepthScale;
 	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4 u_PortalPlane;
+	uniform vec4  u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 #if defined(USE_DEFORM_VERTEXES)
-uniform float u_Time;
+	uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 #if defined(USE_VERTEX_ANIMATION)
-uniform float u_VertexInterpolation;
+	uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
 
 varying vec2 var_TexDiffuse;
 varying vec3 var_Position;
 #if defined(USE_NORMAL_MAPPING)
-varying mat3 var_tangentMatrix;
-varying mat3 var_worldMatrix;
-varying vec3 var_LightDirT;              // light direction in tangentspace
-varying vec3 var_ViewDirT;               // view direction in tangentspace
+	varying mat3 var_tangentMatrix;
+	varying mat3 var_worldMatrix;
+	varying vec3 var_LightDirT;          // light direction in tangentspace
+	varying vec3 var_ViewDirT;           // view direction in tangentspace
 	#if defined(USE_PARALLAX_MAPPING)
-varying float var_distanceToCam;             //
+		varying float var_distanceToCam;     //
 	#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -74,25 +74,25 @@ void main()
 #if defined(USE_VERTEX_SKINNING)
 #if defined(USE_NORMAL_MAPPING)
 	VertexSkinning_PTBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
-	                    position, tangent, binormal, normal);
+	                    position,      tangent,      binormal,      normal);
 #else
 	VertexSkinning_PN(attr_Position, attr_Normal,
-	                  position, normal);
+	                  position,      normal);
 #endif // USE_NORMAL_MAPPING
 
 #elif defined(USE_VERTEX_ANIMATION)
 #if defined(USE_NORMAL_MAPPING)
 	VertexAnimation_PTBN(attr_Position, attr_Position2,
-	                     attr_Tangent, attr_Tangent2,
+	                     attr_Tangent,  attr_Tangent2,
 	                     attr_Binormal, attr_Binormal2,
-	                     attr_Normal, attr_Normal2,
+	                     attr_Normal,   attr_Normal2,
 	                     u_VertexInterpolation,
 	                     position, tangent, binormal, normal);
 #else // USE_NORMAL_MAPPING
 	VertexAnimation_PN(attr_Position, attr_Position2,
-	                   attr_Normal, attr_Normal2,
+	                   attr_Normal,   attr_Normal2,
 	                   u_VertexInterpolation,
-	                   position, normal);
+	                   position,      normal);
 #endif // USE_NORMAL_MAPPING
 
 #else // USE_VERTEX_ANIMATION

@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
- * Copyright (C) 2012-2024 ET:Legacy team <mail@etlegacy.com>
+ * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -152,7 +152,6 @@ void R_PerformanceCounters(void)
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
-// FIXME: Unused ?
 // int c_blockedOnRender;
 // int c_blockedOnMain;
 
@@ -204,18 +203,15 @@ void R_IssuePendingRenderCommands(void)
  * @param[in] bytes
  * @return
  */
-void *R_GetCommandBuffer(int bytes)
+void *R_GetCommandBuffer(unsigned int bytes)
 {
-	static size_t       reserved_space = PAD(sizeof(swapBuffersCommand_t), sizeof(intptr_t)) + sizeof(int);
-	renderCommandList_t *cmdList       = &backEndData->commands;
-	etl_assert(cmdList != NULL);
-	etl_assert(bytes > 0);
-	bytes = PAD(bytes, sizeof(intptr_t));
+	renderCommandList_t *cmdList = &backEndData->commands;
 
 	// always leave room for the swap buffers and end of list commands
-	if (cmdList->used + bytes + reserved_space > MAX_RENDER_COMMANDS)
+	// - added swapBuffers_t from ET
+	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS)
 	{
-		if (bytes > MAX_RENDER_COMMANDS - reserved_space)
+		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int)))
 		{
 			Ren_Fatal("R_GetCommandBuffer: bad size %u", bytes);
 		}
@@ -614,7 +610,7 @@ void RE_BeginFrame()
 	if (!r_ignoreGLErrors->integer)
 	{
 		int  err;
-		char *s;
+		char s[128];
 
 		R_IssuePendingRenderCommands();
 
@@ -623,32 +619,32 @@ void RE_BeginFrame()
 			switch (err)
 			{
 			case GL_INVALID_ENUM:
-				s = "GL_INVALID_ENUM";
+				Q_strcpy(s, "GL_INVALID_ENUM");
 				break;
 			case GL_INVALID_VALUE:
-				s = "GL_INVALID_VALUE";
+				Q_strcpy(s, "GL_INVALID_VALUE");
 				break;
 			case GL_INVALID_OPERATION:
-				s = "GL_INVALID_OPERATION";
+				Q_strcpy(s, "GL_INVALID_OPERATION");
 				break;
 			case GL_STACK_OVERFLOW:
-				s = "GL_STACK_OVERFLOW";
+				Q_strcpy(s, "GL_STACK_OVERFLOW");
 				break;
 			case GL_STACK_UNDERFLOW:
-				s = "GL_STACK_UNDERFLOW";
+				Q_strcpy(s, "GL_STACK_UNDERFLOW");
 				break;
 			case GL_OUT_OF_MEMORY:
-				s = "GL_OUT_OF_MEMORY";
+				Q_strcpy(s, "GL_OUT_OF_MEMORY");
 				break;
 			case GL_TABLE_TOO_LARGE:
-				s = "GL_TABLE_TOO_LARGE";
+				Q_strcpy(s, "GL_TABLE_TOO_LARGE");
 				break;
 			case GL_INVALID_FRAMEBUFFER_OPERATION_EXT:
-				s = "GL_INVALID_FRAMEBUFFER_OPERATION_EXT";
+				Q_strcpy(s, "GL_INVALID_FRAMEBUFFER_OPERATION_EXT");
 				break;
 			default:
-				s = va("0x%X", err);
-				return;
+				Com_sprintf(s, sizeof(s), "0x%X", err);
+				break;
 			}
 
 			//Ren_Fatal( "caught OpenGL error: %s in file %s line %i", s, filename, line);
@@ -781,6 +777,33 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->y         = y;
 	cmd->w         = w;
 	cmd->h         = h;
+}
+
+/**
+ * @brief RB_RenderCubeprobe
+ * @param[in] cubeprobeIndex: the index of the cubeprobe in tr.cubeProbes
+ * @param[in] pixelData: if NULL, no pixeldata is read back (so cpu can use it to store to file)
+ * @return
+ */
+void RE_RenderCubeprobe(int cubeprobeIndex, qboolean commandOnly, byte **pixeldataOut)
+{
+	renderCubeprobeCommand_t *cmd;
+
+	if (cubeprobeIndex < 0 || cubeprobeIndex >= tr.cubeProbes.currentElements)
+	{
+		return;
+	}
+
+	cmd = (renderCubeprobeCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+
+	cmd->commandId = RC_RENDERCUBEPROBE;
+	cmd->commandOnly = commandOnly;
+	cmd->cubeprobeIndex = cubeprobeIndex;
+	cmd->pixeldata = pixeldataOut;
 }
 
 /**
