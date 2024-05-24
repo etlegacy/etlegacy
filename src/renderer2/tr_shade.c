@@ -2219,7 +2219,7 @@ static void Render_fog_brushes()
 	Ren_LogComment("--- Render_fog_brushes ---\n");
 
 	// we can disable any fogging with the cvar.
-	if (r_noFog->integer)
+	if (r_wolfFog->integer)
 	{
 		return;
 	}

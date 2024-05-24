@@ -2408,7 +2408,7 @@ void RB_RenderGlobalFog()
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
 	// all fogging is disabled?
-	if (r_noFog->integer)
+	if (r_wolfFog->integer)
 	{
 		return;
 	}
