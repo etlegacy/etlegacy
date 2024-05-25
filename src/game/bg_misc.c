@@ -3504,8 +3504,8 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_GLOBAL_CLIENT_SOUND",
 	"EV_GLOBAL_TEAM_SOUND",
 	"EV_FX_SOUND",
-	"unused event",              // EV_BULLET_HIT_FLESH
-	"unused event",              // EV_BULLET_HIT_WALL
+	"EV_BULLET_HIT_FLESH",
+	"EV_BULLET_HIT_WALL",
 	"EV_MISSILE_HIT",
 	"EV_MISSILE_MISS",
 	"EV_RAILTRAIL",
@@ -3564,8 +3564,8 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"unused event",              // EV_POPUP,
 	"unused event",              // EV_POPUPBOOK,
 	"unused event",              // EV_GIVEPAGE,
-	"unused event",              // EV_MG42BULLET_HIT_FLESH
-	"unused event",              // EV_MG42BULLET_HIT_WALL
+	"EV_MG42BULLET_HIT_FLESH",
+	"EV_MG42BULLET_HIT_WALL",
 	"EV_SHAKE",
 	"EV_DISGUISE_SOUND",
 	"EV_BUILDDECAYED_SOUND",

@@ -6978,20 +6978,17 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum)
 
 /**
  * @brief Renders bullet effects.
+ * @param[in] weapon
  * @param[in] end
  * @param[in] sourceEntityNum
- * @param[in] flesh
+ * @param[in] isFlesh
  * @param[in] fleshEntityNum
- * @param[in] otherEntNum2
- * @param[in] waterfraction
- * @param[in] seed
  */
-void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean isHeadShot, int fleshEntityNum)
+void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean isFlesh, int fleshEntityNum)
 {
 	trace_t  trace, trace2;
 	vec3_t   dir;
 	vec3_t   start = { 0, 0, 0 };
-	qboolean flesh = ISVALIDCLIENTNUM(fleshEntityNum);
 
 	if (sourceEntityNum < 0 || sourceEntityNum >= MAX_GENTITIES)
 	{
@@ -7048,7 +7045,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean isHeadShot,
 				CG_RailTrail(color, start, end, 0, 0);
 #endif
 				// if not flesh, then do a moving tracer
-				if (flesh)
+				if (isFlesh)
 				{
 					// draw a tracer
 					if (random() < cg_tracerChance.value)
@@ -7068,7 +7065,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean isHeadShot,
 	VectorNormalizeFast(dir);
 
 	// impact splash and mark
-	if (flesh)
+	if (isFlesh)
 	{
 		// play the bullet hit flesh sound
 		CG_MissileHitWall(weapon, PS_FX_FLESH, end, dir, 0, fleshEntityNum);

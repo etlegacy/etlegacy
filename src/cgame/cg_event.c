@@ -2457,10 +2457,15 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.shoveSound, 255);
 		//}
 		break;
-	case EV_BULLET:
-		CG_PlayHitSound(es->otherEntityNum, es->modelindex);
-		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, es->modelindex, es->eventParm);
-		break;
+    case EV_BULLET_HIT_WALL:
+    case EV_MG42BULLET_HIT_WALL:
+		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, 0);
+    	break;
+    case EV_BULLET_HIT_FLESH:
+    case EV_MG42BULLET_HIT_FLESH:
+    	CG_PlayHitSound(es->otherEntityNum, es->modelindex);
+		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm);
+    	break;
 	case EV_GENERAL_SOUND:
 	{
 		sfxHandle_t sound = CG_GetGameSound(es->eventParm);

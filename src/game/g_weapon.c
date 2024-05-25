@@ -3517,18 +3517,6 @@ void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, 
 		}
 	*/
 
-	// TODO: we don't reflect bullet, for now
-	/* bullet impact should reflect off surface
-		vec3_t reflect;
-		float  dot;
-
-	dot = DotProduct(forward, tr.plane.normal);
-	VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
-	VectorNormalize(reflect);
-
-	tent->s.eventParm = DirToByte(reflect);
-	*/
-
 	if ((g_debugBullets.integer >= 2 && traceEnt->takedamage && traceEnt->client)   // show hit player
 	    || g_debugBullets.integer <= -2)        // show hit thing bb
 	{
@@ -3570,12 +3558,34 @@ void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, 
 		}
 	}
 
+
 	// send bullet impact
-	tent                   = G_TempEntity(impactPos, EV_BULLET);
-	tent->s.eventParm      = traceEnt->s.number;
+	if (traceEnt->takedamage && hitType != HIT_NONE)  // hit player
+	{
+		tent			   = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
+		tent->s.eventParm  = traceEnt->s.number;
+		tent->s.modelindex = hitType;  // send the hit sound info in the flesh hit event
+	} else {  // otherwise, i.e. hit wall/surface or nothing/sky
+		tent = G_TempEntity(impactPos, EV_BULLET_HIT_WALL);
+	}
+
+	if (traceEnt->takedamage && hitType == HIT_NONE)  // hit wall/surface
+	{
+		// TODO: we don't reflect bullet, for now
+		/* bullet impact should reflect off surface
+			vec3_t reflect;
+			float  dot;
+
+		dot = DotProduct(forward, tr.plane.normal);
+		VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
+		VectorNormalize(reflect);
+
+		tent->s.eventParm = DirToByte(reflect);
+		*/
+	}
+
 	tent->s.weapon         = GetMODTableData(mod)->weaponIcon;
 	tent->s.otherEntityNum = attacker->s.number;
-	tent->s.modelindex     = hitType;   // send the hit sound info in the flesh hit event
 
 	/*return hitClient;*/
 }
