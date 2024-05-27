@@ -11,7 +11,7 @@ BUILDDIR="${BUILD_DIR:-${_SRC}/build}"
 SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
 
-if [[ `uname -s` == "Darwin" ]]; then
+if [[ "$(uname -s)" == "Darwin" ]]; then
 	MODMAIN="${HOME}/Library/Application Support/etlegacy/etmain"
 else
 	MODMAIN="${HOME}/.etlegacy/etmain"
@@ -27,13 +27,13 @@ else
 fi
 
 if [[ -z "${CI_ETL_DESCRIBE}" ]]; then
-	ETLEGACY_VERSION=`git describe --abbrev=7 --tags 2>/dev/null`
+	ETLEGACY_VERSION=$(git describe --abbrev=7 --tags 2>/dev/null)
 else
 	ETLEGACY_VERSION="${CI_ETL_DESCRIBE}"
 fi
 
 if [[ -z "${CI_ETL_TAG}" ]]; then
-	ETLEGACY_SHORT_VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
+	ETLEGACY_SHORT_VERSION=$(git describe --abbrev=0 --tags 2>/dev/null)
 else
 	ETLEGACY_SHORT_VERSION="${CI_ETL_TAG}"
 fi
@@ -134,8 +134,8 @@ echo() {
 app_exists() {
 	local __resultvar=$1
 	local app_result=0
-	BINPATH=`which $2 2>/dev/null`
 	if [ $? == 0 ]; then
+	BINPATH=$(which "$2" 2>/dev/null)
 		local app_result=1
 	fi
 
@@ -191,16 +191,16 @@ _detectlinuxdistro() {
 }
 
 detectos() {
-	PLATFORMSYS=`uname -s`
-	PLATFORMARCH=`uname -m`
+	PLATFORMSYS=$(uname -s)
+	PLATFORMARCH=$(uname -m)
 	# PLATFORMARCHBASE=`uname -p`
 	PLATFORM_IS_DARWIN=0
 
 	if [[ ${PLATFORMSYS} == "Linux" ]]; then
-		DISTRO=`_detectlinuxdistro`
+		DISTRO=$(_detectlinuxdistro)
 	elif [[ ${PLATFORMSYS} == "Darwin" ]]; then
-		PLATFORMSYS=`sw_vers -productName`
-		DISTRO=`sw_vers -productVersion`
+		PLATFORMSYS=$(sw_vers -productName)
+		DISTRO=$(sw_vers -productVersion)
 		PLATFORM_IS_DARWIN=1
 
 		# Check if x86_build is set and an osx vesion as of Catalina or higher is used
@@ -283,7 +283,7 @@ print_startup() {
 
 setup_sensible_defaults() {
 	# Default to 64 bit builds on OSX
-	if [[ `uname -s` == "Darwin" ]]; then
+	if [[ $(uname -s) == "Darwin" ]]; then
 		CROSS_COMPILE32=0
 		x86_build=false
 	fi
