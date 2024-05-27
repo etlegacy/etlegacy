@@ -632,9 +632,9 @@ generate_configuration() {
 	"
 
 	if [ -n "$TOOLCHAIN_FILE" ]; then
-	  _CFGSTRING="${_CFGSTRING}
-	  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}
-	  "
+		_CFGSTRING="${_CFGSTRING}
+		-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}
+		"
 	fi
 
 	if [ "${DEV}" != 1 ]; then
@@ -650,9 +650,9 @@ generate_configuration() {
 		-DINSTALL_DEFAULT_BASEDIR=./
 		"
 		if [ -n "$MACOS_ARCHITECTURES" ]; then
-		  _CFGSTRING="${_CFGSTRING}
-		  -DCMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}
-		  "
+			_CFGSTRING="${_CFGSTRING}
+			-DCMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}
+			"
 		fi
 
 	else
@@ -814,19 +814,19 @@ create_ready_osx_dmg() {
 	# Create the DMG json
 	cat << END > etlegacy-dmg.json
 {
-	"title": "ET Legacy $ETLEGACY_SHORT_VERSION",
-	"icon": "${_SRC}/misc/etl.icns",
-	"background": "osx-dmg-background.jpg",
-	"window": {
-	  "size": {
-		  "width": 640,
-		  "height": 390
-	  }
-	},
-	"contents": [
-		{ "x": 456, "y": 250, "type": "link", "path": "/Applications" },
-		{ "x": 192, "y": 250, "type": "file", "path": "ETLegacy" }
-	]
+  "title": "ET Legacy $ETLEGACY_SHORT_VERSION",
+  "icon": "${_SRC}/misc/etl.icns",
+  "background": "osx-dmg-background.jpg",
+  "window": {
+    "size": {
+      "width": 640,
+      "height": 390
+    }
+  },
+  "contents": [
+    { "x": 456, "y": 250, "type": "link", "path": "/Applications" },
+    { "x": 192, "y": 250, "type": "file", "path": "ETLegacy" }
+  ]
 }
 END
 
@@ -873,7 +873,7 @@ create_osx_dmg() {
 	# using the Graphics Magick
 	# brew install graphicsmagick
 	magick convert ${_SRC}/misc/osx-dmg-background.jpg -resize 640x360 -font ${_SRC}/misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background.jpg
-    magick convert ${_SRC}/misc/osx-dmg-background.jpg -resize 1280x720 -font ${_SRC}/misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background@2x.jpg
+	magick convert ${_SRC}/misc/osx-dmg-background.jpg -resize 1280x720 -font ${_SRC}/misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background@2x.jpg
 
 	set_osx_folder_icon_tooled
 	create_ready_osx_dmg
