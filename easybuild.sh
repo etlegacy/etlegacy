@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # encoding: utf-8
+# shellcheck disable=SC2153,SC2181,SC2218
 
 # Made by the ET: Legacy team!
 # script checks for needed applications
@@ -62,7 +63,7 @@ TOOLCHAIN_FILE=${TOOLCHAIN_FILE:-}
 # second array holds the functions which match the cmd names
 easy_keys=(clean build generate package install download crust release project updatelicense watch _watch help)
 easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress print_help)
-easy_count=`expr ${#easy_keys[*]} - 1`
+easy_count=$((${#easy_keys[*]} - 1))
 
 check_exit() {
 	EXIT_CODE=$?
@@ -205,7 +206,7 @@ detectos() {
 
 		# Check if x86_build is set and an osx vesion as of Catalina or higher is used
 		IFS='.' read -r -a ver <<< "$DISTRO"
-		if ([ "${ver[0]}" -gt 10 ] || [ "${ver[1]}" -gt 13 ]) && [ "${x86_build}" = true ]; then
+		if { [ "${ver[0]}" -gt 10 ] || [ "${ver[1]}" -gt 13 ]; } && [ "${x86_build}" = true ]; then
 			einfo "You can't compile 32bit binaries with Mac OS ${ver[0]}.${ver[1]}. Use the flag \"-64\". Aborting."
 			exit 1
 		fi
@@ -939,10 +940,9 @@ run_download() {
 run_uncrustify() {
 	einfo "Uncrustify..."
 	cd "${SOURCEDIR}"
-	for FILE in $(find . -type f -not -name "unzip.c" -name "*.c" -or -name "*.cpp" -or -name "*.glsl" -not -name "g_etbot_interface.cpp" -or -name "*.h" -or \( -name "sha*" -prune \) -or \( -name "Omnibot" -prune \));
-	do
+	while read -r FILE; do
 		uncrustify -c "${_SRC}"/uncrustify.cfg  --no-backup "${FILE}"
-	done
+	done < <(find . -type f -not -name "unzip.c" -name "*.c" -or -name "*.cpp" -or -name "*.glsl" -not -name "g_etbot_interface.cpp" -or -name "*.h" -or \( -name "sha*" -prune \) -or \( -name "Omnibot" -prune \))
 }
 
 run_project() {
