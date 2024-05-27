@@ -674,7 +674,7 @@ generate_configuration() {
 	fi
 
 	if [ -n $silent_mode ]; then
-		command echo -e "$boldyellowusing: $boldwhite${_CFGSTRING}$reset"
+		command echo -e "${boldyellow}using: $boldwhite${_CFGSTRING}$reset"
 	fi
 }
 
