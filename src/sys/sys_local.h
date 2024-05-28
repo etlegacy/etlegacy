@@ -39,6 +39,8 @@
 #include "../qcommon/qcommon.h"
 
 // Input subsystem
+void IN_GetMousePosition(int *mouseX, int *mouseY, qboolean ingame);
+void IN_SetMouseFlags(int flags);
 void IN_Init(void);
 void IN_Frame(void);
 void IN_Shutdown(void);

@@ -804,6 +804,13 @@ void trap_GetAutoUpdate(void);
 void trap_openURL(const char *url);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
+extern int dll_com_trapGetValue;
+extern int dll_trap_Sys_CursorPosition;
+extern int dll_trap_Sys_CursorFlags;
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+void trap_Sys_CursorPosition(int *mouseX, int *mouseY);
+void trap_Sys_CursorFlags(int flags);
+
 // localization functions
 const char *UI_TranslateString(const char *string);
 void trap_TranslateString(const char *fmt, char *buffer);

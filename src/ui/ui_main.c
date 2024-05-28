@@ -1017,7 +1017,7 @@ void UI_Refresh(int realtime)
 
 	// draw cursor
 	trap_R_SetColor(NULL);
-	if (Menu_Count() > 0)
+	if (Menu_Count() > 0 && !dll_trap_Sys_CursorFlags)
 	{
 		uiClientState_t cstate;
 
@@ -6490,14 +6490,15 @@ static void UI_InsertServerIntoDisplayList(int num, int position)
 	}
 	uiInfo.serverStatus.displayServers[position] = num;
 
-    // If we're inserting a server before the currently selected one, increment the selected item.
-    // This has improved UX over changing the item out from under the user, who might want to select a server
-    // and so something with it before the list finishes loading, which can take a while.
-    if (position < uiInfo.serverStatus.currentServer) {
-        uiInfo.serverStatus.currentServer++;
-        menuDef_t *menu = Menus_FindByName("serverList");
-        Menu_SetFeederSelection(menu, FEEDER_SERVERS, uiInfo.serverStatus.currentServer, NULL);
-    }
+	// If we're inserting a server before the currently selected one, increment the selected item.
+	// This has improved UX over changing the item out from under the user, who might want to select a server
+	// and so something with it before the list finishes loading, which can take a while.
+	if (position < uiInfo.serverStatus.currentServer)
+	{
+		uiInfo.serverStatus.currentServer++;
+		menuDef_t *menu = Menus_FindByName("serverList");
+		Menu_SetFeederSelection(menu, FEEDER_SERVERS, uiInfo.serverStatus.currentServer, NULL);
+	}
 }
 
 /**
@@ -8553,6 +8554,32 @@ static void UI_RunCinematicFrame(int handle)
 	trap_CIN_RunCinematic(handle);
 }
 
+static ID_INLINE void UI_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+{
+	if (trap_GetValue(value, valueSize, name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void UI_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+
+		UI_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_Sys_CursorPosition, "trap_Sys_CursorPosition_Legacy");
+		UI_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_Sys_CursorFlags, "trap_Sys_CursorFlags_Legacy");
+	}
+}
+
 /**
  * @brief _UI_Init
  * @param[in] etLegacyClient
@@ -8573,6 +8600,13 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	trap_GetGlconfig(&uiInfo.uiDC.glconfig);
 
 	UI_ParseGLConfig();
+
+	UI_SetupExtensions();
+
+	if (dll_trap_Sys_CursorFlags)
+	{
+		trap_Sys_CursorFlags(BIT(0) | BIT(1));
+	}
 
 	// for 640x480 virtualized screen
 	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0f / 480.0f);
@@ -8825,6 +8859,11 @@ void UI_MouseEvent(int dx, int dy)
 	else if (uiInfo.uiDC.cursory > SCREEN_HEIGHT)
 	{
 		uiInfo.uiDC.cursory = SCREEN_HEIGHT;
+	}
+
+	if (dll_trap_Sys_CursorPosition)
+	{
+		trap_Sys_CursorPosition(&uiInfo.uiDC.cursorx, &uiInfo.uiDC.cursory);
 	}
 
 	if (Menu_Count() > 0)

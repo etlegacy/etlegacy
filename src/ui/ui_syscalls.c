@@ -1158,3 +1158,23 @@ void trap_GetHunkData(int *hunkused, int *hunkexpected)
 {
 	SystemCall(UI_GETHUNKDATA, hunkused, hunkexpected);
 }
+
+// Extensions
+int dll_com_trapGetValue        = 0;
+int dll_trap_Sys_CursorPosition = 0;
+int dll_trap_Sys_CursorFlags    = 0;
+
+qboolean trap_GetValue(char *value, int valueSize, const char *key)
+{
+	return (qboolean)(SystemCall(dll_com_trapGetValue, value, valueSize, key));
+}
+
+void trap_Sys_CursorPosition(int *mouseX, int *mouseY)
+{
+	SystemCall(dll_trap_Sys_CursorPosition, mouseX, mouseY);
+}
+
+void trap_Sys_CursorFlags(int flags)
+{
+	SystemCall(dll_trap_Sys_CursorFlags, flags);
+}

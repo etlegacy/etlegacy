@@ -67,6 +67,8 @@ SDL_Window *mainScreen    = NULL;
 // Try it. com_maxfps 1, press "forward", have fun.
 static int lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
 
+static unsigned int mouse_flags = 0;
+
 /**
  * @brief IN_GetClipboardData
  * @return
@@ -594,6 +596,12 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 #if !defined(__ANDROID__) || __ANDROID_API__ > 23
 	int relative_result = 0;
 #endif
+
+	if (mouse_flags != 0)
+	{
+		grab     = (mouse_flags & BIT(0)) == 0;
+		relative = (mouse_flags & BIT(1)) == 0;
+	}
 
 	if (relative == !mouse_relative)
 	{
@@ -1546,7 +1554,7 @@ static void IN_ProcessEvents(void)
 #ifdef __ANDROID__
 			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qfalse : qtrue), 0, NULL);
 #else
-            Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
+			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
 #endif
 		}
 		break;
@@ -1802,6 +1810,37 @@ static void IN_InitKeyLockStates(void)
 	keys[K_SCROLLOCK].down  = keystate[SDL_SCANCODE_SCROLLLOCK];
 	keys[K_KP_NUMLOCK].down = keystate[SDL_SCANCODE_NUMLOCKCLEAR];
 	keys[K_CAPSLOCK].down   = keystate[SDL_SCANCODE_CAPSLOCK];
+}
+
+void IN_GetMousePosition(int *mouseX, int *mouseY, qboolean ingame)
+{
+	SDL_GetMouseState(mouseX, mouseY);
+	// SDL_GetRelativeMouseState(mouseX, mouseY);
+
+	if (ingame)
+	{
+		float ratio = 1.f;
+
+		if (cls.glconfig.windowAspect > RATIO43)
+		{
+			ratio = cls.glconfig.windowAspect * RPRATIO43;
+		}
+
+		*mouseX = (int)((float)*mouseX * (SCREEN_WIDTH_F / (float) cls.glconfig.windowWidth) * ratio);
+		*mouseY = (int)((float)*mouseY * (SCREEN_HEIGHT_F / (float) cls.glconfig.windowHeight) * ratio);
+	}
+}
+
+void IN_SetMouseFlags(int flags)
+{
+	if (flags == 0 || flags < 0)
+	{
+		// full reset
+		mouse_flags = 0;
+	}
+
+	mouse_flags = flags;
+	IN_GrabMouse(!(flags & BIT(0)), !(flags & BIT(1)));
 }
 
 /**

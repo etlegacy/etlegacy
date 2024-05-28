@@ -186,6 +186,8 @@ typedef enum
 	///< engine extensions padding
 	UI_TRAP_GETVALUE = COM_TRAP_GETVALUE,
 
+	UI_GET_CURSOR_POSITION,
+	UI_SET_CURSOR_FLAGS,
 } uiImport_t;
 
 // Number of columns in the server list
