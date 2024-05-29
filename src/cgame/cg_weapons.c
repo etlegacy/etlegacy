@@ -6977,21 +6977,18 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum)
 }
 
 /**
- * @brief Renders bullet effects.
+ * @brief CG_Bullet
+ * @param[in] weapon
  * @param[in] end
  * @param[in] sourceEntityNum
- * @param[in] flesh
- * @param[in] fleshEntityNum
- * @param[in] otherEntNum2
- * @param[in] waterfraction
- * @param[in] seed
+ * @param[in] targetEntityNum
  */
-void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean isHeadShot, int fleshEntityNum)
+void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, int targetEntityNum)
 {
 	trace_t  trace, trace2;
 	vec3_t   dir;
 	vec3_t   start = { 0, 0, 0 };
-	qboolean flesh = ISVALIDCLIENTNUM(fleshEntityNum);
+	qboolean flesh = ISVALIDCLIENTNUM(targetEntityNum);
 
 	if (sourceEntityNum < 0 || sourceEntityNum >= MAX_GENTITIES)
 	{
@@ -7071,7 +7068,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean isHeadShot,
 	if (flesh)
 	{
 		// play the bullet hit flesh sound
-		CG_MissileHitWall(weapon, PS_FX_FLESH, end, dir, 0, fleshEntityNum);
+		CG_MissileHitWall(weapon, PS_FX_FLESH, end, dir, 0, targetEntityNum);
 	}
 	else        // (not flesh)
 	{
