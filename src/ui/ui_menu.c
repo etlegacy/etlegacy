@@ -914,6 +914,51 @@ void  Menus_Activate(menuDef_t *menu)
 		DC->startBackgroundTrack(menu->soundName, menu->soundName, 0);
 	}
 
+	// register accelerator onKey action
+	for (i = 0; i < menu->itemCount; i++)
+	{
+		itemDef_t *item = menu->items[i];
+		const char *s   = item->text;
+
+		int       len                  = 0;
+		int       count                = 0;
+		short int accelerator          = 0;
+		qboolean  accelerator_upcoming = qfalse;
+
+		if (s == NULL) {
+			continue;
+		}
+
+		len = Q_UTF8_Strlen(s);
+
+		while (s && *s && count < len)
+		{
+			if (Q_IsAcceleratorString(s))
+			{
+				accelerator_upcoming = qtrue;
+				s                   += 2;
+				continue;
+			}
+			else
+			{
+				if (accelerator_upcoming)
+				{
+					accelerator          = tolower(s[0]);
+					accelerator_upcoming = qfalse;
+					break;
+				}
+
+				s += Q_UTF8_Width(s);
+				count++;
+			}
+		}
+
+		if (accelerator != 0)
+		{
+			menu->onKey[accelerator] = item->action;
+		}
+	}
+
 	Display_CloseCinematics();
 
 }
