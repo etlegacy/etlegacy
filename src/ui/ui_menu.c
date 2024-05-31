@@ -914,6 +914,52 @@ void  Menus_Activate(menuDef_t *menu)
 		DC->startBackgroundTrack(menu->soundName, menu->soundName, 0);
 	}
 
+	// register accelerator onKey action
+	for (i = 0; i < menu->itemCount; i++)
+	{
+		itemDef_t  *item = menu->items[i];
+		const char *s    = item->text;
+
+		int       len                  = 0;
+		int       count                = 0;
+		short int accelerator          = 0;
+		qboolean  accelerator_upcoming = qfalse;
+
+		if (s == NULL)
+		{
+			continue;
+		}
+
+		len = Q_UTF8_Strlen(s);
+
+		while (s && *s && count < len)
+		{
+			if (Q_IsAcceleratorString(s))
+			{
+				accelerator_upcoming = qtrue;
+				s                   += 2;
+				continue;
+			}
+			else
+			{
+				if (accelerator_upcoming)
+				{
+					accelerator          = tolower(s[0]);
+					accelerator_upcoming = qfalse;
+					break;
+				}
+
+				s += Q_UTF8_Width(s);
+				count++;
+			}
+		}
+
+		if (accelerator != 0)
+		{
+			menu->onKey[accelerator] = item->action;
+		}
+	}
+
 	Display_CloseCinematics();
 
 }
@@ -1142,32 +1188,35 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	}
 
 	// we need to check and see if we're supposed to loop through the items to find the key press func
-	if (!menu->itemHotkeyMode)
+	if (!g_editingField)
 	{
-		if (key >= 0 && key < MAX_KEYS && menu->onKey[key])
+		if (!menu->itemHotkeyMode)
 		{
-			itemDef_t it;
-			it.parent = menu;
-			Item_RunScript(&it, NULL, menu->onKey[key]);
-			return;
-		}
-	}
-	else if (key >= 0 && key < MAX_KEYS)
-	{
-		itemDef_t *it;
-
-		// we're using the item hotkey mode, so we want to loop through all the items in this menu
-		for (i = 0; i < menu->itemCount; i++)
-		{
-			it = menu->items[i];
-
-			// is the hotkey for this the same as what was pressed?
-			if (it->hotkey == key
-			    // and is this item visible?
-			    && Item_EnableShowViaCvar(it, CVAR_SHOW))
+			if (key >= 0 && key < MAX_KEYS && menu->onKey[key])
 			{
-				Item_RunScript(it, NULL, it->onKey);
+				itemDef_t it;
+				it.parent = menu;
+				Item_RunScript(&it, NULL, menu->onKey[key]);
 				return;
+			}
+		}
+		else if (key >= 0 && key < MAX_KEYS)
+		{
+			itemDef_t *it;
+
+			// we're using the item hotkey mode, so we want to loop through all the items in this menu
+			for (i = 0; i < menu->itemCount; i++)
+			{
+				it = menu->items[i];
+
+				// is the hotkey for this the same as what was pressed?
+				if (it->hotkey == key
+				    // and is this item visible?
+				    && Item_EnableShowViaCvar(it, CVAR_SHOW))
+				{
+					Item_RunScript(it, NULL, it->onKey);
+					return;
+				}
 			}
 		}
 	}
