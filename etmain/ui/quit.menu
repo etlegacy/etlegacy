@@ -34,6 +34,16 @@ menuDef {
 #endif // FUI
 	}
 
+	onEnter {
+		close quit ;
+#ifdef FUI
+		close main
+#else
+		close ingame_main
+#endif // FUI
+		open credits_quit
+	}
+
 // Background //
 	itemDef {
 		name		"background"

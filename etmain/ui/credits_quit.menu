@@ -20,6 +20,9 @@ menuDef {
 		uiScript Quit
 	}
 
+	onEnter {
+		uiScript Quit
+	}
 
 // Window //
 	itemDef {
