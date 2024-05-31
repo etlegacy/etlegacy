@@ -1332,7 +1332,7 @@ panel_button_t *bg_focusButton;
  */
 qboolean BG_RectContainsPoint(float x, float y, float w, float h, float px, float py)
 {
-	if (px > x && px < x + w && py > y && py < y + h)
+	if (px >= x && px < x + w && py >= y && py < y + h)
 	{
 		return qtrue;
 	}
