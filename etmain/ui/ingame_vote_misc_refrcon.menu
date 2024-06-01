@@ -112,5 +112,5 @@ menuDef {
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 266, .5*(WINDOW_WIDTH-18), 14, _("LOCK SPECS"), .24, 11, exec "cmd ref speclock" ; uiScript closeingame, settingDisabled CV_SVS_LOCKSPECS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 266, .5*(WINDOW_WIDTH-18), 14, _("UNLOCK SPECS"), .24, 11, exec "cmd ref specunlock" ; uiScript closeingame, settingEnabled CV_SVS_LOCKSPECS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close ingame_vote_misc_refrcon ; open ingame_vote )
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("^_BACK"), .3, 14, close ingame_vote_misc_refrcon ; open ingame_vote )
 }
