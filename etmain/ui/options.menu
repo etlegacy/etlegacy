@@ -32,9 +32,9 @@ menuDef {
         BUTTON ( 6, 32, WINDOW_WIDTH-12, 18, _("GAME"), .3, 14, close options ; open options_customise_game )
         BUTTON ( 6, 56, WINDOW_WIDTH-12, 18, _("VIEW"), .3, 14, close options ; open options_customise_hud )
 #ifdef FUI
-        BUTTON ( 6, 80, WINDOW_WIDTH-12, 18, _("HUD EDITOR"), .3, 14, open options_customise_hudeditor_fui)
+        BUTTON ( 6, 80, WINDOW_WIDTH-12, 18, _("^_HUD EDITOR"), .3, 14, open options_customise_hudeditor_fui)
 #else
-        BUTTON ( 6, 80, WINDOW_WIDTH-12, 18, _("HUD EDITOR"), .3, 14, uiScript edithud ; close options )
+        BUTTON ( 6, 80, WINDOW_WIDTH-12, 18, _("^_HUD EDITOR"), .3, 14, uiScript edithud ; close options )
 #endif
         BUTTON ( 6, 104, WINDOW_WIDTH-12, 18, _("CONTROLS"), .3, 14, close options ; open options_controls )
         BUTTON ( 6, 128, WINDOW_WIDTH-12, 18, _("SYSTEM"), .3, 14, close options ; open options_system )

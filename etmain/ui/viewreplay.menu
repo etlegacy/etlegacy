@@ -61,9 +61,9 @@ menuDef {
 	}
 
 	// Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close viewreplay ; open main )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("DELETE"), .3, 14, conditionalScript ValidReplaySelected 2
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("^_BACK"), .3, 14, close viewreplay ; open main )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("^_DELETE"), .3, 14, conditionalScript ValidReplaySelected 2
 		( "clearFocus ; open viewreplay_delete" )
 		( "clearFocus" ) )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("VIEW"), .3, 14, uiScript RunDemo )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("^_VIEW"), .3, 14, uiScript RunDemo )
 }

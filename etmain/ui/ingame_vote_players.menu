@@ -74,5 +74,5 @@ menuDef {
 	BUTTONEXT( 208, 158, WINDOW_WIDTH-208-6, 14, _("WARN"), .24, 11, open ingame_vote_players_warn, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 208, 170, WINDOW_WIDTH-208-6, 14, _("BAN"), .24, 11, uiScript rconBan ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_RCON } )
 
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close ingame_vote_players ; open ingame_vote )
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("^_BACK"), .3, 14, close ingame_vote_players ; open ingame_vote )
 }

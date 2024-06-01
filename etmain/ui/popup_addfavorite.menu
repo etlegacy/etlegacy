@@ -52,6 +52,6 @@ menuDef {
 	// note: this isn't set for listen servers
 	CVARLABEL( SUBWINDOW_X+2, SUBWINDOW_Y+34, (SUBWINDOW_WIDTH)-4, 10, "cl_currentServerIP", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, uiScript createFavoriteIngame ; close popupAddFavorite ; open ingame_main )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close popupAddFavorite ; open ingame_main )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("^_YES"), .3, 14, uiScript createFavoriteIngame ; close popupAddFavorite ; open ingame_main )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("^_NO"), .3, 14, close popupAddFavorite ; open ingame_main )
 }
