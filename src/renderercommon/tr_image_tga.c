@@ -334,7 +334,7 @@ breakOut:   ;
 		unsigned char *flip;
 		unsigned char *src, *dst;
 
-		//Ren_Warning( "WARNING: '%s' TGA file header declares top-down image, flipping\n", data->name);
+		Ren_Developer("LoadTGA: '%s' TGA file header declares top-down image, flipping\n", data->name);
 
 		flip = (unsigned char *)ri.Hunk_AllocateTempMemory(columns * 4);
 		for (row = 0; row < rows / 2; row++)
