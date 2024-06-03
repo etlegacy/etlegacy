@@ -236,8 +236,8 @@ const char *String_Alloc(const char *p)
 	if (len + strPoolIndex + 1 < STRING_POOL_SIZE)
 	{
 		int ph = strPoolIndex;
-        
-        Q_strncpyz(&strPool[strPoolIndex], p, sizeof(strPool) - (strPoolIndex));
+
+		Q_strncpyz(&strPool[strPoolIndex], p, sizeof(strPool) - (strPoolIndex));
 		strPoolIndex += len + 1;
 
 		str  = strHandle[hash];
@@ -641,7 +641,7 @@ qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y)
 		// correction for widescreen cursor coordinates..
 		x = Cui_WideX(x);
 
-		if (x > Cui_WideX(rect->x) && x < Cui_WideX(rect->x + rect->w) && y > rect->y && y < rect->y + rect->h)
+		if (x >= Cui_WideX(rect->x) && x < Cui_WideX(rect->x + rect->w) && y >= rect->y && y < rect->y + rect->h)
 		{
 			return qtrue;
 		}
@@ -661,7 +661,7 @@ qboolean Rect_ContainsPointN(rectDef_t *rect, float x, float y)
 {
 	if (rect)
 	{
-		if (x > rect->x && x < rect->x + rect->w + 200 && y > rect->y && y < rect->y + rect->h)
+		if (x >= rect->x && x < rect->x + rect->w + 200 && y >= rect->y && y < rect->y + rect->h)
 		{
 			return qtrue;
 		}
@@ -1332,7 +1332,7 @@ panel_button_t *bg_focusButton;
  */
 qboolean BG_RectContainsPoint(float x, float y, float w, float h, float px, float py)
 {
-	if (px > x && px < x + w && py > y && py < y + h)
+	if (px >= x && px < x + w && py >= y && py < y + h)
 	{
 		return qtrue;
 	}
@@ -1493,31 +1493,31 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 				return qtrue;
 			}
 
-            // numeric value only
+			// numeric value only
 			if (button->data[1])
 			{
-                // ensure the key is in range of numeric value (digit)
+				// ensure the key is in range of numeric value (digit)
 				if (key < '0' || key > '9')
 				{
-                    // try to put a decimal separator
-                    if (key == '.')
-                    {
-                        // decimal separator already exist, don't add twice
-                        if (strchr(s, '.'))
-                        {
-                            return qtrue;
-                        }
-                    }
-                    // don't allow negative value
-                    else if (button->data[1] == 2)
-                    {
-                        return qtrue;
-                    }
-                    // are we trying to put a negative value
-                    else if (!(len == 0 && key == '-'))
-                    {
-                        return qtrue;
-                    }
+					// try to put a decimal separator
+					if (key == '.')
+					{
+						// decimal separator already exist, don't add twice
+						if (strchr(s, '.'))
+						{
+							return qtrue;
+						}
+					}
+					// don't allow negative value
+					else if (button->data[1] == 2)
+					{
+						return qtrue;
+					}
+					// are we trying to put a negative value
+					else if (!(len == 0 && key == '-'))
+					{
+						return qtrue;
+					}
 				}
 			}
 
