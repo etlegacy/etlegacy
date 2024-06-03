@@ -96,6 +96,11 @@ qboolean R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte 
 	targa_header.pixel_size = buf_p[16];
 	targa_header.attributes = buf_p[17];
 
+	if (targa_header.attributes & 0x20)
+	{
+		Ren_Developer("LoadTGA: top-left field order on file %s\n", data->name);
+	}
+
 	targa_header.colormap_index  = LittleShort(targa_header.colormap_index);
 	targa_header.colormap_length = LittleShort(targa_header.colormap_length);
 	targa_header.x_origin        = LittleShort(targa_header.x_origin);
