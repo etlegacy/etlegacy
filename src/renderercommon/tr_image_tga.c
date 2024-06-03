@@ -96,11 +96,6 @@ qboolean R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte 
 	targa_header.pixel_size = buf_p[16];
 	targa_header.attributes = buf_p[17];
 
-	if (targa_header.attributes & 0x20)
-	{
-		Ren_Developer("LoadTGA: top-left field order on file %s\n", data->name);
-	}
-
 	targa_header.colormap_index  = LittleShort(targa_header.colormap_index);
 	targa_header.colormap_length = LittleShort(targa_header.colormap_length);
 	targa_header.x_origin        = LittleShort(targa_header.x_origin);
@@ -339,7 +334,7 @@ breakOut:   ;
 		unsigned char *flip;
 		unsigned char *src, *dst;
 
-		//Ren_Warning( "WARNING: '%s' TGA file header declares top-down image, flipping\n", data->name);
+		Ren_Developer("LoadTGA: '%s' TGA file header declares top-down image, flipping\n", data->name);
 
 		flip = (unsigned char *)ri.Hunk_AllocateTempMemory(columns * 4);
 		for (row = 0; row < rows / 2; row++)
