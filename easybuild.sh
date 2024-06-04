@@ -134,16 +134,7 @@ echo() {
 	command echo -e "${1}"
 }
 
-app_exists() {
-	local __resultvar=$1
-	local app_result=0
-	BINPATH=$(which "$2" 2>/dev/null)
-	if [ "$?" == 0 ]; then
-		local app_result=1
-	fi
-
-	eval "$__resultvar"="'$app_result'"
-}
+app_exists() { command -v "$1" &>/dev/null; }
 
 checkapp() {
 	if [ "${2}" ]; then
@@ -152,9 +143,7 @@ checkapp() {
 		ISPROBLEM=1
 	fi
 
-	app_exists APP_FOUND "$1"
-
-	if [ "$APP_FOUND" == 1 ]; then
+	if app_exists "$1"; then
 		printf "  %-10s $boldgreen%s$reset: %s\n" "${1}" "found" "${BINPATH}"
 	else
 		if [ "${ISPROBLEM}" == 0 ]; then
@@ -234,13 +223,13 @@ set_compiler() {
 
 check_compiler() {
 	if [ -z "$CC" ] && [ -z "$CXX" ]; then
-		app_exists GCCFOUND "gcc"
-		app_exists GPLUSFOUND "g++"
-		app_exists CLANGFOUND "clang"
-		app_exists CLANGPLUSFOUND "clang++"
-		if [ "$GCCFOUND" == 1 ] && [ "$GPLUSFOUND" == 1 ]; then
+		app_exists "gcc"     && GCCFOUND=1
+		app_exists "g++"     && GPLUSFOUND=1
+		app_exists "clang"   && CLANGFOUND=1
+		app_exists "clang++" && CLANGPLUSFOUND=1
+		if [ "$GCCFOUND" ] && [ "$GPLUSFOUND" ]; then
 			set_compiler gcc g++ $x86_build
-		elif [ "$CLANGFOUND" == 1 ] && [ "$CLANGPLUSFOUND" == 1 ]; then
+		elif [ "$CLANGFOUND" ] && [ "$CLANGPLUSFOUND" ]; then
 			set_compiler clang clang++ $x86_build
 		else
 			einfo "Missing compiler. Exiting."
@@ -845,26 +834,22 @@ END
 
 create_osx_dmg() {
 	# Generate DMG
-	app_exists APP_FOUND "gm"
-	if [ "$APP_FOUND" == 0 ]; then
+	if ! app_exists "gm"; then
 		echo "Missing GraphicsMagick skipping OSX installer creation"
 		return
 	fi
 
-	app_exists APP_FOUND "node"
-	if [ "$APP_FOUND" == 0 ]; then
+	if ! app_exists "node"; then
 		echo "Missing nodejs skipping OSX installer creation"
 		return
 	fi
 
-	app_exists APP_FOUND "npx"
-	if [ "$APP_FOUND" == 0 ]; then
+	if ! app_exists "npx"; then
 		echo "Missing npx skipping OSX installer creation"
 		return
 	fi
 
-	app_exists APP_FOUND "rsvg-convert"
-	if [ "$APP_FOUND" == 0 ]; then
+	if ! app_exists "rsvg-convert"; then
 		echo "Missing rsvg-convert cannot create installer"
 		exit 1
 	fi
