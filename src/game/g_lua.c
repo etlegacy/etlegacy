@@ -3887,6 +3887,55 @@ void G_LuaHook_SpawnEntitiesFromString()
 	}
 }
 
+/*
+ * G_LuaHook_Chat
+ * et_Chat( sender, receiver, text ) callback
+ */
+const char *G_LuaHook_Chat(int sender, int receiver, const char *message, char *buffer, size_t bufsize)
+{
+	int      i;
+	lua_vm_t *vm;
+	const char *result, *newMessage;
+
+	newMessage = message;
+	for (i = 0; i < LUA_NUM_VM; i++)
+	{
+		vm = lVM[i];
+		if (vm)
+		{
+			if (vm->id < 0) //|| vm->err)
+			{
+				continue;
+			}
+			if (!G_LuaGetNamedFunction(vm, "et_Chat"))
+			{
+				continue;
+			}
+			// Arguments
+			lua_pushinteger(vm->L, sender);
+			lua_pushinteger(vm->L, receiver);
+			lua_pushstring(vm->L, newMessage);
+			// Call
+			if (!G_LuaCall(vm, "et_Chat", 3, 2))
+			{
+				//G_LuaStopVM(vm);
+				continue;
+			}
+			// Return values
+			if (lua_isinteger(vm->L, -2) &&
+					lua_tointeger(vm->L, -2) != qfalse &&
+					lua_isstring(vm->L, -1))
+			{
+				result = luaL_checkstring(vm->L, -1);
+				Q_strncpyz(buffer, result, bufsize);
+				newMessage = buffer;
+			}
+			lua_pop(vm->L, 2);
+		}
+	}
+	return newMessage;
+}
+
 /** @} */ // doxygen addtogroup lua_etevents
 
 void Svcmd_LoadLua_f(void)
