@@ -4562,6 +4562,11 @@ void CheckWolfMP(void)
 			{
 				int delay = (g_warmup.integer < 10) ? 11 : g_warmup.integer + 1;
 
+				// skip warmup when cheats enabled (devmap)
+				if (g_cheats.integer) {
+					delay = 1;
+				}
+
 				level.warmupTime = level.time + (delay * 1000);
 				trap_Cvar_Set("gamestate", va("%i", GS_WARMUP_COUNTDOWN));
 				trap_Cvar_Update(&g_gamestate);
