@@ -461,7 +461,7 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_needpass,                        "g_needpass",                        "0",                          CVAR_SERVERINFO | CVAR_ROM,                      0, qtrue,  qfalse },
 	{ &g_balancedteams,                   "g_balancedteams",                   "0",                          CVAR_SERVERINFO | CVAR_ROM,                      0, qtrue,  qfalse },
-	{ &g_forcerespawn,                    "g_forcerespawn",                    "0",                          0,                                               0, qtrue,  qfalse },
+	{ &g_forcerespawn,                    "g_forcerespawn",                    "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_inactivity,                      "g_inactivity",                      "0",                          0,                                               0, qtrue,  qfalse },
 	{ &g_debugMove,                       "g_debugMove",                       "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_debugDamage,                     "g_debugDamage",                     "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },

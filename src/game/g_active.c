@@ -838,8 +838,8 @@ void ClientTimerActions(gentity_t *ent, int msec)
 {
 	gclient_t *client = ent->client;
 
-   // reset and pause client timer when we've reached maxhealth, such that once
-   // we take damage again, it will take a full second every time to re-heal
+	// reset and pause client timer when we've reached maxhealth, such that once
+	// we take damage again, it will take a full second every time to re-heal
 	if (ent->health == client->ps.stats[STAT_MAX_HEALTH])
 	{
 		if (client->timeResidual != 0)
@@ -1750,11 +1750,25 @@ void SpectatorClientEndFrame(gentity_t *ent)
 		gclient_t *cl;
 		qboolean  do_respawn = qfalse;
 
-		// Players can respawn quickly in warmup
-		if (g_gamestate.integer != GS_PLAYING && ent->client->respawnTime <= level.timeCurrent &&
-		    ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+		if (
+			// Players can instantly respawn when 'g_forcerespawn == -1'
+			(g_forcerespawn.integer == -1 && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+			// Players can instantly respawn in warmup
+			|| (g_gamestate.integer != GS_PLAYING && ent->client->respawnTime <= level.timeCurrent &&
+			    ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+			)
 		{
-			do_respawn = qtrue;
+			// XXX : delay respawn onto the next frame - this circumvents
+			// specific issues that currently occur when player die and respawn
+			// on the same server frame
+			if (ent->client->instantRespawnDelayTime == 0)
+			{
+				ent->client->instantRespawnDelayTime = level.time;
+			}
+			else if (level.time > ent->client->instantRespawnDelayTime)
+			{
+				do_respawn = qtrue;
+			}
 		}
 		else if (ent->client->sess.sessionTeam == TEAM_AXIS)
 		{
