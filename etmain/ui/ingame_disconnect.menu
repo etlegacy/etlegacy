@@ -25,6 +25,12 @@ menuDef {
 		fadein background
 	}
 
+	onEnter {
+		close ingame_disconnect ;
+		close main ;
+		uiScript leave
+	}
+
 	onESC {
 		close ingame_disconnect ;
 		open ingame_main
