@@ -879,12 +879,14 @@ static int _et_GetCurrentWeapon(lua_State *L)
 	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 	{
 		luaL_error(L, "\"clientNum\" is out of bounds: %d", clientNum);
+		return 0;
 	}
 
 	ent = g_entities + clientNum;
 	if (!ent->client)
 	{
 		luaL_error(L, "\"clientNum\" \"%d\" is not a client entity", clientNum);
+		return 0;
 	}
 
 	client   = ent->client;
