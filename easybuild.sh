@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # encoding: utf-8
+# shellcheck disable=SC2153,SC2181,SC2218
 
 # Made by the ET: Legacy team!
 # script checks for needed applications
@@ -11,7 +12,7 @@ BUILDDIR="${BUILD_DIR:-${_SRC}/build}"
 SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
 
-if [[ `uname -s` == "Darwin" ]]; then
+if [[ "$(uname -s)" == "Darwin" ]]; then
 	MODMAIN="${HOME}/Library/Application Support/etlegacy/etmain"
 else
 	MODMAIN="${HOME}/.etlegacy/etmain"
@@ -27,13 +28,13 @@ else
 fi
 
 if [[ -z "${CI_ETL_DESCRIBE}" ]]; then
-	ETLEGACY_VERSION=`git describe --abbrev=7 --tags 2>/dev/null`
+	ETLEGACY_VERSION=$(git describe --abbrev=7 --tags 2>/dev/null)
 else
 	ETLEGACY_VERSION="${CI_ETL_DESCRIBE}"
 fi
 
 if [[ -z "${CI_ETL_TAG}" ]]; then
-	ETLEGACY_SHORT_VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
+	ETLEGACY_SHORT_VERSION=$(git describe --abbrev=0 --tags 2>/dev/null)
 else
 	ETLEGACY_SHORT_VERSION="${CI_ETL_TAG}"
 fi
@@ -57,12 +58,14 @@ silent_mode=false
 # cmake toolchain file
 TOOLCHAIN_FILE=${TOOLCHAIN_FILE:-}
 
+cmake_args=()
+
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
 easy_keys=(clean build generate package install download crust release project updatelicense watch _watch help)
 easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress print_help)
-easy_count=`expr ${#easy_keys[*]} - 1`
+easy_count=$((${#easy_keys[*]} - 1))
 
 check_exit() {
 	EXIT_CODE=$?
@@ -128,33 +131,22 @@ echo() {
 	if $silent_mode; then
 		return 1
 	fi
-	command echo -e ${1}
+	command echo -e "${1}"
 }
 
-app_exists() {
-	local __resultvar=$1
-	local app_result=0
-	BINPATH=`which $2 2>/dev/null`
-	if [ $? == 0 ]; then
-		local app_result=1
-	fi
-
-	eval $__resultvar="'$app_result'"
-}
+app_exists() { command -v "$1" &>/dev/null; }
 
 checkapp() {
-	if [ ${2} ]; then
+	if [ "${2}" ]; then
 		ISPROBLEM=${2}
 	else
 		ISPROBLEM=1
 	fi
 
-	app_exists APP_FOUND $1
-
-	if [ $APP_FOUND == 1 ]; then
+	if app_exists "$1"; then
 		printf "  %-10s $boldgreen%s$reset: %s\n" "${1}" "found" "${BINPATH}"
 	else
-		if [ ${ISPROBLEM} == 0 ]; then
+		if [ "${ISPROBLEM}" == 0 ]; then
 			printf "  %-10s $boldyellow%s$reset\n" "${1}" "not found but no problem"
 		else
 			printf "  %-10s $boldred%s$reset\n" "${1}" "not found"
@@ -171,7 +163,7 @@ _detectlinuxdistro() {
 		/etc/SuSE-release /etc/novell-release /etc/sles-release"
 
 	for distro in ${_DISTROFILES}; do
-		[ -e "${distro}" ] && echo $(<${distro}) && exit
+		[ -e "${distro}" ] && echo "$(<"${distro}")" && exit
 	done
 
 	# archlinux has empty file...
@@ -183,7 +175,7 @@ _detectlinuxdistro() {
 	# oh, maybe we have /etc/lsb-release?
 	if [ -e "/etc/lsb-release" ]; then
 		. "/etc/lsb-release"
-		[ ! ${DISTRIB_DESCRIPTION} ] && DISTRIB_DESCRIPTION="${DISTRIB_ID} ${DISTRIB_RELEASE}"
+		[ ! "${DISTRIB_DESCRIPTION}" ] && DISTRIB_DESCRIPTION="${DISTRIB_ID} ${DISTRIB_RELEASE}"
 		echo "${DISTRIB_DESCRIPTION}"
 		exit
 	fi
@@ -191,21 +183,21 @@ _detectlinuxdistro() {
 }
 
 detectos() {
-	PLATFORMSYS=`uname -s`
-	PLATFORMARCH=`uname -m`
+	PLATFORMSYS=$(uname -s)
+	PLATFORMARCH=$(uname -m)
 	# PLATFORMARCHBASE=`uname -p`
 	PLATFORM_IS_DARWIN=0
 
 	if [[ ${PLATFORMSYS} == "Linux" ]]; then
-		DISTRO=`_detectlinuxdistro`
+		DISTRO=$(_detectlinuxdistro)
 	elif [[ ${PLATFORMSYS} == "Darwin" ]]; then
-		PLATFORMSYS=`sw_vers -productName`
-		DISTRO=`sw_vers -productVersion`
+		PLATFORMSYS=$(sw_vers -productName)
+		DISTRO=$(sw_vers -productVersion)
 		PLATFORM_IS_DARWIN=1
 
 		# Check if x86_build is set and an osx vesion as of Catalina or higher is used
 		IFS='.' read -r -a ver <<< "$DISTRO"
-		if ([ "${ver[0]}" -gt 10 ] || [ "${ver[1]}" -gt 13 ]) && [ "${x86_build}" = true ]; then
+		if { [ "${ver[0]}" -gt 10 ] || [ "${ver[1]}" -gt 13 ]; } && [ "${x86_build}" = true ]; then
 			einfo "You can't compile 32bit binaries with Mac OS ${ver[0]}.${ver[1]}. Use the flag \"-64\". Aborting."
 			exit 1
 		fi
@@ -220,7 +212,7 @@ detectos() {
 # Long story short, setting the cross compile state in cmake does not work on all platforms
 # so lets set the -m32 flag before we run cmake
 set_compiler() {
-	if [ ${3} == true ]; then
+	if [ "${3}" == true ]; then
 		export CC="${1} -m32"
 		export CXX="${2} -m32"
 	else
@@ -231,13 +223,13 @@ set_compiler() {
 
 check_compiler() {
 	if [ -z "$CC" ] && [ -z "$CXX" ]; then
-		app_exists GCCFOUND "gcc"
-		app_exists GPLUSFOUND "g++"
-		app_exists CLANGFOUND "clang"
-		app_exists CLANGPLUSFOUND "clang++"
-		if [ $GCCFOUND == 1 ] && [ $GPLUSFOUND == 1 ]; then
+		app_exists "gcc"     && GCCFOUND=1
+		app_exists "g++"     && GPLUSFOUND=1
+		app_exists "clang"   && CLANGFOUND=1
+		app_exists "clang++" && CLANGPLUSFOUND=1
+		if [ "$GCCFOUND" ] && [ "$GPLUSFOUND" ]; then
 			set_compiler gcc g++ $x86_build
-		elif [ $CLANGFOUND == 1 ] && [ $CLANGPLUSFOUND == 1 ]; then
+		elif [ "$CLANGFOUND" ] && [ "$CLANGPLUSFOUND" ]; then
 			set_compiler clang clang++ $x86_build
 		else
 			einfo "Missing compiler. Exiting."
@@ -283,7 +275,7 @@ print_startup() {
 
 setup_sensible_defaults() {
 	# Default to 64 bit builds on OSX
-	if [[ `uname -s` == "Darwin" ]]; then
+	if [[ $(uname -s) == "Darwin" ]]; then
 		CROSS_COMPILE32=0
 		x86_build=false
 	fi
@@ -295,22 +287,22 @@ parse_commandline() {
 		if [ "$var" = "--silent" ]; then
 			silent_mode=true
 		elif [[ $var == --build=* ]]; then
-			BUILDDIR=$(echo $var| cut -d'=' -f 2)
+			BUILDDIR=$(echo "$var" | cut -d'=' -f 2)
 			einfo "Will use build dir of: ${BUILDDIR}"
 		elif [[ $var == --prefix=* ]]; then
-			INSTALL_PREFIX=$(echo $var| cut -d'=' -f 2)
+			INSTALL_PREFIX=$(echo "$var" | cut -d'=' -f 2)
 			einfo "Will use installation dir of: ${INSTALL_PREFIX}"
 		elif [[ $var == --osx=* ]]; then
-			MACOS_DEPLOYMENT_TARGET=$(echo $var| cut -d'=' -f 2)
+			MACOS_DEPLOYMENT_TARGET=$(echo "$var" | cut -d'=' -f 2)
 			einfo "Will use OSX target version: ${MACOS_DEPLOYMENT_TARGET}"
 		elif [[ $var == --osx-arc=* ]]; then
-			MACOS_ARCHITECTURES=$(echo $var| cut -d'=' -f 2)
+			MACOS_ARCHITECTURES=$(echo "$var" | cut -d'=' -f 2)
 			einfo "Will target OSX architecture(s): ${MACOS_ARCHITECTURES}"
 		elif [[ $var == --sysroot=* ]]; then
-			XCODE_SDK_PATH=$(echo $var| cut -d'=' -f 2)
+			XCODE_SDK_PATH=$(echo "$var" | cut -d'=' -f 2)
 			einfo "Will use OSX sysroot: ${XCODE_SDK_PATH}"
 		elif [[ $var == --toolchain=* ]]; then
-			TOOLCHAIN_FILE=$(echo $var| cut -d'=' -f 2)
+			TOOLCHAIN_FILE=$(echo "$var" | cut -d'=' -f 2)
 			einfo "Will use toolchain file: ${TOOLCHAIN_FILE}"
 		elif [ "$var" = "-64" ]; then
 			einfo "Will disable crosscompile"
@@ -514,7 +506,7 @@ generate_configuration() {
 	FEATURE_SSL=${FEATURE_SSL:-1}
 	FEATURE_AUTH=${FEATURE_AUTH:-1}
 
-	if [ $PLATFORM_IS_DARWIN -ne 1 ]; then
+	if [ "$PLATFORM_IS_DARWIN" -ne 1 ]; then
 		BUNDLED_CURL=${BUNDLED_CURL:-1}
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-1}
 		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
@@ -523,7 +515,7 @@ generate_configuration() {
 		# If we are using the authentication system, default to the bundled curl for now (see bellow)
 		# On macos the system curl cause the request to fail when swapping get and post requests sometimes
 		# TODO: recheck the curl failure on macos after a system upgrade later 20204
-		if [ $FEATURE_AUTH -eq 1 ]; then
+		if [ "$FEATURE_AUTH" -eq 1 ]; then
 			einfo "Authentication is enabled, defaulting to bundled curl"
 			BUNDLED_CURL=${BUNDLED_CURL:-1}
 		else
@@ -540,7 +532,7 @@ generate_configuration() {
 	FEATURE_RENDERER_GLES=${FEATURE_RENDERER_GLES:-0}
 	RENDERER_DYNAMIC=${RENDERER_DYNAMIC:-1}
 
-	if [ $FEATURE_SSL -eq 0 ] && [ $FEATURE_AUTH -eq 1 ]; then
+	if [ "$FEATURE_SSL" -eq 0 ] && [ "$FEATURE_AUTH" -eq 1 ]; then
 		ewarning "SSL is disabled, but authentication is enabled. Disabling authentication."
 		FEATURE_AUTH=0
 	fi
@@ -565,7 +557,7 @@ generate_configuration() {
 	INSTALL_GEOIP=${INSTALL_GEOIP:-1}
 	INSTALL_WOLFADMIN=${INSTALL_WOLFADMIN:-1}
 
-	if [ $PLATFORM_IS_DARWIN -ne 1 ]; then
+	if [ "$PLATFORM_IS_DARWIN" -ne 1 ]; then
 		FEATURE_OMNIBOT=${FEATURE_OMNIBOT:-1}
 		INSTALL_OMNIBOT=${INSTALL_OMNIBOT:-1}
 	else
@@ -575,113 +567,117 @@ generate_configuration() {
 	fi
 
 	einfo "Configuring ET: Legacy..."
-	_CFGSTRING="
-		-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}
-		-DCROSS_COMPILE32=${CROSS_COMPILE32}
-		-DZIP_ONLY=${ZIP_ONLY}
-		-DBUILD_SERVER=${BUILD_SERVER}
-		-DBUILD_CLIENT=${BUILD_CLIENT}
-		-DBUILD_MOD=${BUILD_MOD}
-		-DBUILD_MOD_PK3=${BUILD_MOD_PK3}
-		-DBUNDLED_LIBS=${BUNDLED_LIBS}
-		-DBUNDLED_SDL=${BUNDLED_SDL}
-		-DBUNDLED_ZLIB=${BUNDLED_ZLIB}
-		-DBUNDLED_MINIZIP=${BUNDLED_MINIZIP}
-		-DBUNDLED_JPEG=${BUNDLED_JPEG}
-		-DBUNDLED_CURL=${BUNDLED_CURL}
-		-DBUNDLED_WOLFSSL=${BUNDLED_WOLFSSL}
-		-DBUNDLED_OPENSSL=${BUNDLED_OPENSSL}
-		-DBUNDLED_LUA=${BUNDLED_LUA}
-		-DBUNDLED_OGG_VORBIS=${BUNDLED_OGG_VORBIS}
-		-DBUNDLED_THEORA=${BUNDLED_THEORA}
-		-DBUNDLED_OPENAL=${BUNDLED_OPENAL}
-		-DBUNDLED_GLEW=${BUNDLED_GLEW}
-		-DBUNDLED_FREETYPE=${BUNDLED_FREETYPE}
-		-DBUNDLED_PNG=${BUNDLED_PNG}
-		-DBUNDLED_SQLITE3=${BUNDLED_SQLITE3}
-		-DBUNDLED_OPENSSL=${BUNDLED_OPENSSL}
-		-DBUNDLED_WOLFSSL=${BUNDLED_WOLFSSL}
-		-DFEATURE_CURL=${FEATURE_CURL}
-		-DFEATURE_SSL=${FEATURE_SSL}
-		-DFEATURE_AUTH=${FEATURE_AUTH}
-		-DFEATURE_OGG_VORBIS=${FEATURE_OGG_VORBIS}
-		-DFEATURE_THEORA=${FEATURE_THEORA}
-		-DFEATURE_OPENAL=${FEATURE_OPENAL}
-		-DFEATURE_FREETYPE=${FEATURE_FREETYPE}
-		-DFEATURE_PNG=${FEATURE_PNG}
-		-DFEATURE_TRACKER=${FEATURE_TRACKER}
-		-DFEATURE_LUA=${FEATURE_LUA}
-		-DFEATURE_MULTIVIEW=${FEATURE_MULTIVIEW}
-		-DFEATURE_EDV=${FEATURE_EDV}
-		-DFEATURE_ANTICHEAT=${FEATURE_ANTICHEAT}
-		-DFEATURE_GETTEXT=${FEATURE_GETTEXT}
-		-DFEATURE_DBMS=${FEATURE_DBMS}
-		-DFEATURE_RATING=${FEATURE_RATING}
-		-DFEATURE_PRESTIGE=${FEATURE_PRESTIGE}
-		-DFEATURE_AUTOUPDATE=${FEATURE_AUTOUPDATE}
-		-DFEATURE_RENDERER1=${FEATURE_RENDERER1}
-		-DFEATURE_RENDERER2=${FEATURE_RENDERER2}
-		-DFEATURE_RENDERER_GLES=${FEATURE_RENDERER_GLES}
-		-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}
-		-DFEATURE_LUASQL=${FEATURE_LUASQL}
-		-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}
-		-DINSTALL_EXTRA=${INSTALL_EXTRA}
-		-DINSTALL_OMNIBOT=${INSTALL_OMNIBOT}
-		-DINSTALL_GEOIP=${INSTALL_GEOIP}
-		-DINSTALL_WOLFADMIN=${INSTALL_WOLFADMIN}
-	"
+	cmake_args+=(
+		"-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}"
+		"-DCROSS_COMPILE32=${CROSS_COMPILE32}"
+		"-DZIP_ONLY=${ZIP_ONLY}"
+		"-DBUILD_SERVER=${BUILD_SERVER}"
+		"-DBUILD_CLIENT=${BUILD_CLIENT}"
+		"-DBUILD_MOD=${BUILD_MOD}"
+		"-DBUILD_MOD_PK3=${BUILD_MOD_PK3}"
+		"-DBUNDLED_LIBS=${BUNDLED_LIBS}"
+		"-DBUNDLED_SDL=${BUNDLED_SDL}"
+		"-DBUNDLED_ZLIB=${BUNDLED_ZLIB}"
+		"-DBUNDLED_MINIZIP=${BUNDLED_MINIZIP}"
+		"-DBUNDLED_JPEG=${BUNDLED_JPEG}"
+		"-DBUNDLED_CURL=${BUNDLED_CURL}"
+		"-DBUNDLED_WOLFSSL=${BUNDLED_WOLFSSL}"
+		"-DBUNDLED_OPENSSL=${BUNDLED_OPENSSL}"
+		"-DBUNDLED_LUA=${BUNDLED_LUA}"
+		"-DBUNDLED_OGG_VORBIS=${BUNDLED_OGG_VORBIS}"
+		"-DBUNDLED_THEORA=${BUNDLED_THEORA}"
+		"-DBUNDLED_OPENAL=${BUNDLED_OPENAL}"
+		"-DBUNDLED_GLEW=${BUNDLED_GLEW}"
+		"-DBUNDLED_FREETYPE=${BUNDLED_FREETYPE}"
+		"-DBUNDLED_PNG=${BUNDLED_PNG}"
+		"-DBUNDLED_SQLITE3=${BUNDLED_SQLITE3}"
+		"-DBUNDLED_OPENSSL=${BUNDLED_OPENSSL}"
+		"-DBUNDLED_WOLFSSL=${BUNDLED_WOLFSSL}"
+		"-DFEATURE_CURL=${FEATURE_CURL}"
+		"-DFEATURE_SSL=${FEATURE_SSL}"
+		"-DFEATURE_AUTH=${FEATURE_AUTH}"
+		"-DFEATURE_OGG_VORBIS=${FEATURE_OGG_VORBIS}"
+		"-DFEATURE_THEORA=${FEATURE_THEORA}"
+		"-DFEATURE_OPENAL=${FEATURE_OPENAL}"
+		"-DFEATURE_FREETYPE=${FEATURE_FREETYPE}"
+		"-DFEATURE_PNG=${FEATURE_PNG}"
+		"-DFEATURE_TRACKER=${FEATURE_TRACKER}"
+		"-DFEATURE_LUA=${FEATURE_LUA}"
+		"-DFEATURE_MULTIVIEW=${FEATURE_MULTIVIEW}"
+		"-DFEATURE_EDV=${FEATURE_EDV}"
+		"-DFEATURE_ANTICHEAT=${FEATURE_ANTICHEAT}"
+		"-DFEATURE_GETTEXT=${FEATURE_GETTEXT}"
+		"-DFEATURE_DBMS=${FEATURE_DBMS}"
+		"-DFEATURE_RATING=${FEATURE_RATING}"
+		"-DFEATURE_PRESTIGE=${FEATURE_PRESTIGE}"
+		"-DFEATURE_AUTOUPDATE=${FEATURE_AUTOUPDATE}"
+		"-DFEATURE_RENDERER1=${FEATURE_RENDERER1}"
+		"-DFEATURE_RENDERER2=${FEATURE_RENDERER2}"
+		"-DFEATURE_RENDERER_GLES=${FEATURE_RENDERER_GLES}"
+		"-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}"
+		"-DFEATURE_LUASQL=${FEATURE_LUASQL}"
+		"-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}"
+		"-DINSTALL_EXTRA=${INSTALL_EXTRA}"
+		"-DINSTALL_OMNIBOT=${INSTALL_OMNIBOT}"
+		"-DINSTALL_GEOIP=${INSTALL_GEOIP}"
+		"-DINSTALL_WOLFADMIN=${INSTALL_WOLFADMIN}"
+	)
 
 	if [ -n "$TOOLCHAIN_FILE" ]; then
-	  _CFGSTRING="${_CFGSTRING}
-	  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}
-	  "
+		cmake_args+=(
+			"-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}"
+		)
 	fi
 
 	if [ "${DEV}" != 1 ]; then
 	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
 		PREFIX=${INSTALL_PREFIX}
-		_CFGSTRING="${_CFGSTRING}
-		-DXCODE_SDK_PATH=${XCODE_SDK_PATH}
-		-DCMAKE_INSTALL_PREFIX=${PREFIX}
-		-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
-		-DINSTALL_DEFAULT_MODDIR=./
-		-DINSTALL_DEFAULT_SHAREDIR=./
-		-DINSTALL_DEFAULT_BINDIR=./
-		-DINSTALL_DEFAULT_BASEDIR=./
-		"
+		cmake_args+=(
+			"-DXCODE_SDK_PATH=${XCODE_SDK_PATH}"
+			"-DCMAKE_INSTALL_PREFIX=${PREFIX}"
+			"-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+			"-DINSTALL_DEFAULT_MODDIR=./"
+			"-DINSTALL_DEFAULT_SHAREDIR=./"
+			"-DINSTALL_DEFAULT_BINDIR=./"
+			"-DINSTALL_DEFAULT_BASEDIR=./"
+		)
 		if [ -n "$MACOS_ARCHITECTURES" ]; then
-		  _CFGSTRING="${_CFGSTRING}
-		  -DCMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}
-		  "
+		cmake_args+=(
+			"-DCMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}"
+		)
 		fi
 
 	else
 		PREFIX=${INSTALL_PREFIX}
-		_CFGSTRING="${_CFGSTRING}
-		-DCMAKE_INSTALL_PREFIX=${PREFIX}
-		-DINSTALL_DEFAULT_MODDIR=.
-		-DINSTALL_DEFAULT_SHAREDIR=.
-		-DINSTALL_DEFAULT_BINDIR=.
-		-DINSTALL_DEFAULT_BASEDIR=.
-		"
+		cmake_args+=(
+			"-DCMAKE_INSTALL_PREFIX=${PREFIX}"
+			"-DINSTALL_DEFAULT_MODDIR=."
+			"-DINSTALL_DEFAULT_SHAREDIR=."
+			"-DINSTALL_DEFAULT_BINDIR=."
+			"-DINSTALL_DEFAULT_BASEDIR=."
+		)
 	fi
 	fi
 
 	if $generate_compilation_database; then
-		_CFGSTRING="${_CFGSTRING}
-		-DCMAKE_EXPORT_COMPILE_COMMANDS=1
-		"
+		cmake_args+=(
+			"-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+		)
 	fi
 
-	if [ -n $silent_mode ]; then
-		command echo -e "$boldyellowusing: $boldwhite${_CFGSTRING}$reset"
+	if [ -n "$silent_mode" ]; then
+		printf "%busing: %b\n" "$boldyellow" "$boldwhite"
+		for cmake_arg in "${cmake_args[@]}" ; do
+			printf "   %s\n" "$cmake_arg"
+		done
+		printf "%b" "$reset"
 	fi
 }
 
 setup_lsp() {
 	einfo "Setting up clangd (for lsp)"
 	generate_compilation_database=true
-	cat > ${_SRC}/.clangd << EOT
+	cat > "${_SRC}"/.clangd << EOT
 CompileFlags:
   CompilationDatabase: "${BUILDDIR}"
 EOT
@@ -698,63 +694,63 @@ handle_bundled_libs() {
 
 run_clean() {
 	einfo "Clean..."
-	if [ -d ${BUILDDIR} ]; then
-		rm -rf ${BUILDDIR}
+	if [ -d "${BUILDDIR}" ]; then
+		rm -rf "${BUILDDIR}"
 	fi
 	CLEANLIBS=1
 	if [[ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]]; then
 		# this doesn't work?
 		if [ "${BUNDLED_SDL}" == 1 ]; then
 			einfo "Cleaning SDL..."
-			cd ${_SRC}/libs/sdl2;  make clean
+			cd "${_SRC}"/libs/sdl2;  make clean
 		fi
 		if [ "${BUNDLED_ZLIB}" == 1 ]; then
 			einfo "Cleaning ZLib..."
-			cd ${_SRC}/libs/zlib; make distclean
+			cd "${_SRC}"/libs/zlib; make distclean
 		fi
 		if [ "${BUNDLED_MINIZIP}" == 1 ]; then
 			einfo "Cleaning MiniZip..."
-			cd ${_SRC}/libs/minizip; make clean
+			cd "${_SRC}"/libs/minizip; make clean
 		fi
 		if [ "${BUNDLED_JPEG}" == 1 ]; then
 			einfo "Cleaning libjpeg-turbo..."
-			cd ${_SRC}/libs/jpegturbo; make clean
+			cd "${_SRC}"/libs/jpegturbo; make clean
 		fi
 		if [ "${BUNDLED_CURL}" == 1 ]; then
 			einfo "Cleaning libcurl..."
-			cd ${_SRC}/libs/curl/src; make clean
+			cd "${_SRC}"/libs/curl/src; make clean
 		fi
 		if [ "${BUNDLED_LUA}" == 1 ]; then
 			einfo "Cleaning Lua..."
-			cd ${_SRC}/libs/lua/src; make clean
+			cd "${_SRC}"/libs/lua/src; make clean
 		fi
 		if [ "${BUNDLED_OGG_VORBIS}" == 1 ]; then
 			einfo "Cleaning libogg..."
-			cd ${_SRC}/libs/ogg; make clean
+			cd "${_SRC}"/libs/ogg; make clean
 			einfo "Cleaning libvorbis..."
-			cd ${_SRC}/libs/vorbis; make clean
+			cd "${_SRC}"/libs/vorbis; make clean
 			# einfo "Cleaning libtheora..."
 			# cd ${_SRC}/libs/theora; make clean
 		fi
 		if [ "${BUNDLED_OPENAL}" == 1 ]; then
 			einfo "Cleaning openAL..."
-			cd ${_SRC}/libs/openal; make clean
+			cd "${_SRC}"/libs/openal; make clean
 		fi
 		if [ "${BUNDLED_PNG}" == 1 ]; then
 			einfo "Cleaning libpng..."
-			cd ${_SRC}/libs/libpng; make clean
+			cd "${_SRC}"/libs/libpng; make clean
 		fi
 
-		cd ${_SRC}/libs
+		cd "${_SRC}"/libs
 		run_git clean -d -f
 	fi
 }
 
 run_generate() {
 	einfo "Generating makefiles: ${MAKEFILE_GENERATOR}..."
-	mkdir -p ${BUILDDIR}
-	cd ${BUILDDIR}
-	cmake -G "${MAKEFILE_GENERATOR}" ${_CFGSTRING} ..
+	mkdir -p "${BUILDDIR}"
+	cd "${BUILDDIR}"
+	cmake -G "${MAKEFILE_GENERATOR}" "${cmake_args[@]}" ..
 	check_exit
 }
 
@@ -762,10 +758,10 @@ run_build() {
 	run_generate
 	einfo "Build..."
 	if [ -z "$CMD_ARGS" ]; then
-		cmake --build . --config $RELEASE_TYPE
+		cmake --build . --config "$RELEASE_TYPE"
 	else
 		# Pass the extra args to the build tool, what ever it might be
-		cmake --build . --config $RELEASE_TYPE -- ${CMD_ARGS}
+		cmake --build . --config "$RELEASE_TYPE" -- "${CMD_ARGS}"
 	fi
 	check_exit
 }
@@ -814,19 +810,19 @@ create_ready_osx_dmg() {
 	# Create the DMG json
 	cat << END > etlegacy-dmg.json
 {
-	"title": "ET Legacy $ETLEGACY_SHORT_VERSION",
-	"icon": "${_SRC}/misc/etl.icns",
-	"background": "osx-dmg-background.jpg",
-	"window": {
-	  "size": {
-		  "width": 640,
-		  "height": 390
-	  }
-	},
-	"contents": [
-		{ "x": 456, "y": 250, "type": "link", "path": "/Applications" },
-		{ "x": 192, "y": 250, "type": "file", "path": "ETLegacy" }
-	]
+  "title": "ET Legacy $ETLEGACY_SHORT_VERSION",
+  "icon": "${_SRC}/misc/etl.icns",
+  "background": "osx-dmg-background.jpg",
+  "window": {
+    "size": {
+      "width": 640,
+      "height": 390
+    }
+  },
+  "contents": [
+    { "x": 456, "y": 250, "type": "link", "path": "/Applications" },
+    { "x": 192, "y": 250, "type": "file", "path": "ETLegacy" }
+  ]
 }
 END
 
@@ -838,26 +834,22 @@ END
 
 create_osx_dmg() {
 	# Generate DMG
-	app_exists APP_FOUND "gm"
-	if [ $APP_FOUND == 0 ]; then
+	if ! app_exists "gm"; then
 		echo "Missing GraphicsMagick skipping OSX installer creation"
 		return
 	fi
 
-	app_exists APP_FOUND "node"
-	if [ $APP_FOUND == 0 ]; then
+	if ! app_exists "node"; then
 		echo "Missing nodejs skipping OSX installer creation"
 		return
 	fi
 
-	app_exists APP_FOUND "npx"
-	if [ $APP_FOUND == 0 ]; then
+	if ! app_exists "npx"; then
 		echo "Missing npx skipping OSX installer creation"
 		return
 	fi
 
-	app_exists APP_FOUND "rsvg-convert"
-	if [ $APP_FOUND == 0 ]; then
+	if ! app_exists "rsvg-convert"; then
 		echo "Missing rsvg-convert cannot create installer"
 		exit 1
 	fi
@@ -867,13 +859,13 @@ create_osx_dmg() {
 	# Generate the icon for the folder
 	# using rsvg-convert
 	# brew install librsvg
-	rsvg-convert -h 256 ${_SRC}/misc/etl.svg > icon.png
+	rsvg-convert -h 256 "${_SRC}"/misc/etl.svg > icon.png
 
 	# Generate the DMG background
 	# using the Graphics Magick
 	# brew install graphicsmagick
-	magick convert ${_SRC}/misc/osx-dmg-background.jpg -resize 640x360 -font ${_SRC}/misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background.jpg
-    magick convert ${_SRC}/misc/osx-dmg-background.jpg -resize 1280x720 -font ${_SRC}/misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background@2x.jpg
+	magick convert "${_SRC}"/misc/osx-dmg-background.jpg -resize 640x360 -font "${_SRC}"/misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 80,355 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background.jpg
+	magick convert "${_SRC}"/misc/osx-dmg-background.jpg -resize 1280x720 -font "${_SRC}"/misc/din1451alt.ttf -pointsize 40 -fill 'rgb(85,85,85)'  -draw "text 165,710 '${ETLEGACY_SHORT_VERSION}'" osx-dmg-background@2x.jpg
 
 	set_osx_folder_icon_tooled
 	create_ready_osx_dmg
@@ -881,7 +873,7 @@ create_osx_dmg() {
 
 run_package() {
 	einfo "Package..."
-	cd ${BUILDDIR}
+	cd "${BUILDDIR}"
 	# check_exit "make package"
 	# calling cpack directly we are not checking the build output anymore
 	check_exit "cpack"
@@ -893,14 +885,14 @@ run_package() {
 
 run_install() {
 	einfo "Install..."
-	cd ${BUILDDIR}
+	cd "${BUILDDIR}"
 	check_exit "make install"
 }
 
 run_watch_progress() {
 	set -e
 	printf "\033c"
-	cd ${BUILDDIR}
+	cd "${BUILDDIR}"
 	# The following line will cause the mod & engine code to rebuild every time
 	# cmake ..
 	printf "\033c"
@@ -913,11 +905,11 @@ run_watch_progress() {
 }
 
 run_watch() {
-	find ${SOURCEDIR}/ | entr -d ${_SRC}/easybuild.sh _watch --silent
+	find "${SOURCEDIR}"/ | entr -d "${_SRC}"/easybuild.sh _watch --silent
 }
 
 handle_download() {
-	if [ ! -f $1 ]; then
+	if [ ! -f "$1" ]; then
 		if [ -f /usr/bin/curl  ]; then
 			curl -O "${ETLEGACY_MIRROR}$1"
 		else
@@ -937,24 +929,23 @@ run_download() {
 
 run_uncrustify() {
 	einfo "Uncrustify..."
-	cd ${SOURCEDIR}
-	for FILE in $(find . -type f -not -name "unzip.c" -name "*.c" -or -name "*.cpp" -or -name "*.glsl" -not -name "g_etbot_interface.cpp" -or -name "*.h" -or \( -name "sha*" -prune \) -or \( -name "Omnibot" -prune \));
-	do
-		uncrustify -c ${_SRC}/uncrustify.cfg  --no-backup ${FILE}
-	done
+	cd "${SOURCEDIR}"
+	while read -r FILE; do
+		uncrustify -c "${_SRC}"/uncrustify.cfg  --no-backup "${FILE}"
+	done < <(find . -type f -not -name "unzip.c" -name "*.c" -or -name "*.cpp" -or -name "*.glsl" -not -name "g_etbot_interface.cpp" -or -name "*.h" -or \( -name "sha*" -prune \) -or \( -name "Omnibot" -prune \))
 }
 
 run_project() {
 	einfo "Project..."
-	if [ -d ${PROJECTDIR} ]; then
-		rm -rf ${PROJECTDIR}
+	if [ -d "${PROJECTDIR}" ]; then
+		rm -rf "${PROJECTDIR}"
 	fi
-	mkdir -p ${PROJECTDIR}
-	cd ${PROJECTDIR}
+	mkdir -p "${PROJECTDIR}"
+	cd "${PROJECTDIR}"
 	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
-		cmake -G 'Xcode' ${_CFGSTRING} ..
+		cmake -G 'Xcode' "${cmake_args[@]}" ..
 	else
-		cmake ${_CFGSTRING} ..
+		cmake "${cmake_args[@]}" ..
 	fi
 }
 
@@ -1008,13 +999,13 @@ print_help() {
 start_script() {
 	setup_sensible_defaults
 
-	parse_commandline $@
+	parse_commandline "$@"
 
 	#CMD_ARGS="${@:2}"
 	#CMD_ARGS=$@
 	CMD_ARGS=$PARSE_CMD
 
-	if [ -n $silent_mode ]; then
+	if [ -n "$silent_mode" ]; then
 		print_startup
 	fi
 
@@ -1046,7 +1037,7 @@ start_script() {
 	run_default
 }
 
-start_script $@
+start_script "$@"
 
 # Return to the original path
-cd ${_SRC}
+cd "${_SRC}"

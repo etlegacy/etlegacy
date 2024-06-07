@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# encoding: utf-8
 
 # Imagemagick's world flags generator
 
@@ -85,26 +86,24 @@ cp -f _united-nations.png A1.png
 cp -f _united-nations.png A2.png
 cp -fpv _united-nations.png 01.png # localhost
 
-for i in ${geoip_country_codes[@]};
-do
-		items=$((items+1))
-		current_row+="${i}.png "
+for i in "${geoip_country_codes[@]}"; do
+	items=$((items+1))
+	current_row+="${i}.png "
 
-		if [ $(( ${items} % 16 )) -eq 0 ] || [ ${items} -eq 256 ]; then
-		printf "Stitching items on row ${total_rows}: ${current_row}\n"
+	if [[ $(( "${items}" % 16 )) -eq 0 ]] || [[ ${items} -eq 256 ]]; then
+		printf "Stitching items on row %d: %s\n" "${total_rows}" "${current_row}"
 		total_rows=$((total_rows+1))
-		convert ${current_row} +append row${total_rows}.png
+		convert "${current_row}" +append "row${total_rows}.png"
 		current_row=""
-		fi
+	fi
 done
 
 rows=""
 
-for ((i=1;i<=${total_rows};i++));
-do
-		rows+="row${i}.png "
+for (( i = 1; i <= total_rows; i++ )); do
+	rows+="row${i}.png "
 done
 
-printf "Stitching rows: ${rows}\n"
-convert ${rows} -append flags.png
+printf "Stitching rows: %s\n" "${rows}"
+convert "${rows}" -append flags.png
 convert flags.png world_flags.tga
