@@ -49,7 +49,9 @@ static shaderProgramInfo_t shaderProgramInfo;
 
 static shaderProgram_t *R_FindAvailableShaderProgram(void)
 {
-	for (int i = 0; i < MAX_SHADER_PROGRAMS; i++)
+	int i;
+
+	for (i = 0; i < MAX_SHADER_PROGRAMS; i++)
 	{
 		if (!shaderProgramInfo.programs[i].program)
 		{
@@ -195,8 +197,10 @@ void R_InitShaderPrograms(void)
 
 void R_ShutdownShaderPrograms(void)
 {
+	int i;
+
 	R_UseShaderProgram(NULL);
-	for (int i = 0; i < MAX_SHADER_PROGRAMS; i++)
+	for (i = 0; i < MAX_SHADER_PROGRAMS; i++)
 	{
 		R_DestroyShaderProgram(&shaderProgramInfo.programs[i]);
 	}

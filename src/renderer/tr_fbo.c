@@ -62,7 +62,9 @@ static shaderProgram_t *blitProgram;
 
 static frameBuffer_t *R_FindAvailableFbo(void)
 {
-	for (int i = 0; i < MAX_FBOS; i++)
+	int i;
+
+	for (i = 0; i < MAX_FBOS; i++)
 	{
 		if (!systemFbos[i].fbo)
 		{
@@ -227,6 +229,7 @@ static void R_GetCurrentFBOId(fboBinding binding, GLint *fboId)
 static frameBuffer_t *R_GetCurrentFBO(fboBinding binding)
 {
 	GLint id;
+	int	  i;
 
 	R_GetCurrentFBOId(binding, &id);
 
@@ -235,7 +238,7 @@ static frameBuffer_t *R_GetCurrentFBO(fboBinding binding)
 		return NULL;
 	}
 
-	for (int i = 0; i < MAX_FBOS; i++)
+	for (i = 0; i < MAX_FBOS; i++)
 	{
 		if (systemFbos[i].fbo == id)
 		{
@@ -684,12 +687,14 @@ void R_InitFBO(void)
 
 void R_ShutdownFBO(void)
 {
+	int i;
+
 	if (!tr.useFBO)
 	{
 		return;
 	}
 
-	for (int i = 0; i < MAX_FBOS; i++)
+	for (i = 0; i < MAX_FBOS; i++)
 	{
 		R_DestroyFBO(&systemFbos[i]);
 	}

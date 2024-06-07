@@ -4364,6 +4364,8 @@ static void FS_ReorderPurePaks(void)
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 static void FS_AddContainerDirectory(const char *subPath)
 {
+	int i;
+
 	// only support etmain & legacy for now
 	if (!fs_containerMount->integer || (Q_stricmp(subPath, BASEGAME) && Q_stricmp(subPath, DEFAULT_MODGAME)))
 	{
@@ -4381,7 +4383,7 @@ static void FS_AddContainerDirectory(const char *subPath)
 	}
 
 	// We are in a non-pure server, so just try to mount the minimal required packs
-	for (int i = 0 ; i < fs_numServerReferencedPaks ; i++)
+	for (i = 0 ; i < fs_numServerReferencedPaks ; i++)
 	{
 		// Do we have the pack already
 		if (FS_HasPack(fs_serverReferencedPaks[i]))
