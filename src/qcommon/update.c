@@ -506,7 +506,8 @@ void Com_UpdateInfoPacket(netadr_t from)
 
 #ifdef FEATURE_AUTOUPDATE
 #ifndef DEDICATED
-		if (uivm)
+		// other mods won't have this menu, so only display the update menu if running legacy mod
+		if (uivm && !Q_stricmp(Cvar_VariableString("fs_game"), MODNAME))
 		{
 			uiMenuCommand_t currentMenu = (uiMenuCommand_t)(VM_Call(uivm, UI_GET_ACTIVE_MENU));
 			if (currentMenu != UIMENU_WM_AUTOUPDATE)
