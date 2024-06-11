@@ -13,6 +13,11 @@ set(ETL_ARCH_COUNT 1)
 
 add_library(os_libraries INTERFACE)
 
+# Enable specific C warnings
+if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wdeclaration-after-statement -Wunused-but-set-variable")
+endif()
+
 # Color diagnostics for build systems other than make
 if(UNIX)
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
