@@ -232,6 +232,7 @@ void _UI_DrawTopBottom(float x, float y, float w, float h, float size)
 
 /**
  * @brief UI_DrawRect
+ * Draw an unfilled rectangle.
  * Coordinates are 640*480 virtual values
  * @param[in] x
  * @param[in] y
@@ -575,9 +576,10 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 	if (text)
 	{
-		const char *s    = text;
-		int        len   = Q_UTF8_Strlen(text);
-		int        count = 0;
+		const char *s             = text;
+		int        len            = Q_UTF8_Strlen(text);
+		int        count          = 0;
+		qboolean   is_accelerator = qfalse;
 
 		trap_R_SetColor(color);
 		Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
@@ -599,7 +601,14 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 			glyph = Q_UTF8_GetGlyph(font, s);
 
-			if (Q_IsColorString(s))
+
+			if (Q_IsAcceleratorString(s))
+			{
+				is_accelerator = qtrue;
+				s             += 2;
+				continue;
+			}
+			else if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
 				{
@@ -630,6 +639,17 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 					colorBlack[3] = 1.0;
 				}
+
+				if (is_accelerator)
+				{
+					trap_R_SetColor(colorBlack);
+					UI_FillRect(x + (glyph->pitch * scalex),
+					            y - yadj + (glyph->imageHeight * scaley) + 1.0,
+					            glyph->imageWidth * scalex, 0.6, newColor);
+					trap_R_SetColor(newColor);
+					is_accelerator = qfalse;
+				}
+
 				Text_PaintCharExt(x + (glyph->pitch * scalex), y - yadj, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 
 				x += (glyph->xSkip * scalex) + adjust;

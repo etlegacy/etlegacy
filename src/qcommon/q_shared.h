@@ -939,6 +939,28 @@ static ID_INLINE qboolean Q_IsColorString(const char *p)
 	return qtrue;
 }
 
+static ID_INLINE qboolean Q_IsAcceleratorString(const char *p)
+{
+	if (!p || p[0] != Q_COLOR_ESCAPE)
+	{
+		return qfalse;
+	}
+
+	if (p[1] != '_')
+	{
+		return qfalse;
+	}
+
+	// The char might an extended char or part of utf-8 so only check it if its
+	// valid
+	if (p[1] >= 0)
+	{
+		return (qboolean)isgraph(p[1]);
+	}
+
+	return qfalse;
+}
+
 /// removes color sequences from string
 char *Q_CleanStr(char *string);
 
