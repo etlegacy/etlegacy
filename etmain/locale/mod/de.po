@@ -462,11 +462,11 @@ msgstr "STANDARD SERVER EINSTELLUNGEN"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
-msgstr "Server Einstellungen auf standard zurücksetzen?"
+msgstr "Server Einstellungen auf Standard zurücksetzen?"
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
-msgstr "SPIEL ERSTELLUNG: ERWEITERT"
+msgstr "SPIEL ERSTELLEN: ERWEITERT"
 
 #: etmain/ui/hostgame_advanced.menu:31
 msgid "GENERAL"
@@ -724,27 +724,27 @@ msgstr "Bestimmt die Art der Stoppuhrrunde (ABBA = Seitenwechsel, ABAB = Kein Se
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr "BIS ZUM LETZTEN MANN"
+msgstr "LAST MAN STANDING"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr "BZMS Runden pro Spiel:"
+msgstr "LMS Runden pro Spiel:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr "Überschreibe die standard BZLM Runden pro Spiel"
+msgstr "Überschreibe die standard LMS Runden pro Spiel"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr "BZLM (LMS) Spiele pro Karte:"
+msgstr "LMS Spiele pro Karte:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr "Standard für BZLM Spiele (Bestehend aus Runden) pro Karte nicht beachten"
+msgstr "Standard für LMS Spiele (Bestehend aus Runden) pro Karte nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr "BZLM nur Team Beobachter:"
+msgstr "LMS nur Team Beobachter:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
@@ -752,7 +752,7 @@ msgstr "Verhindert das Spieler das gegnerische Team beobachten"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
-msgstr "BZLM gesperrte Teams:"
+msgstr "LMS gesperrte Teams:"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
@@ -917,7 +917,7 @@ msgstr "Erlaubt Spielern für einen Seitenwechsel der Teams abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
-msgstr "Eigenbeschuß:"
+msgstr "Eigenbeschuss:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
@@ -1072,7 +1072,7 @@ msgstr "Nein"
 #: etmain/ui/hostgame_extended.menu:32
 #: etmain/ui/options_customise_game.menu:42
 msgid "Yes"
-msgstr "JA"
+msgstr "Ja"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable country flags on the server"
@@ -1110,7 +1110,7 @@ msgstr "Kampagne"
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
-msgstr "Bis zum letzten Mann"
+msgstr "Last Man Standing"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1219,7 +1219,7 @@ msgstr "Limitiert die Anzahl der verfügbaren Waffen für Spieler prozentual auf
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
-msgstr "Ausgewogene Teams"
+msgstr "Ausgeglichene Teams"
 
 #: etmain/ui/hostgame.menu:110
 msgid ""
@@ -1357,7 +1357,7 @@ msgstr "WIEDEREINSTEIGEN"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr "Im 'Bis Zum Letzten Mann' Spiel kommst Du nicht mehr ins Spiel, wenn du jetzt aussteigst. Bist du sicher?"
+msgstr "Im 'Last Mand Standing' Spiel kommst Du nicht mehr ins Spiel, wenn du jetzt aussteigst. Bist du sicher?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
@@ -1522,10 +1522,13 @@ msgstr "ÖFFENTLICHE KONFIG."
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 #: etmain/ui/options_customise_game.menu:73
 #: etmain/ui/options_customise_game.menu:80
+msgid "None"
+msgstr "Nichts"
+
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr "Nichts"
+msgstr "Keine"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
@@ -1822,19 +1825,19 @@ msgstr "Zurück:"
 
 #: etmain/ui/options_controls.menu:35
 msgid "Move Left:"
-msgstr "Bewegung Links:"
+msgstr "Links Bewegen:"
 
 #: etmain/ui/options_controls.menu:36
 msgid "Move Right:"
-msgstr "Bewegung Rechts:"
+msgstr "Rechts Bewegen:"
 
 #: etmain/ui/options_controls.menu:37
 msgid "Lean Left:"
-msgstr "Neigung Links:"
+msgstr "Links Lehnen:"
 
 #: etmain/ui/options_controls.menu:38
 msgid "Lean Right:"
-msgstr "Neigung Rechts:"
+msgstr "Rechts Lehnen:"
 
 #: etmain/ui/options_controls.menu:39
 msgid "Jump:"
@@ -1846,7 +1849,7 @@ msgstr "Ducken:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
-msgstr "Kriechen:"
+msgstr "Hinlegen:"
 
 #: etmain/ui/options_controls.menu:42
 msgid "Walk:"
@@ -1854,7 +1857,7 @@ msgstr "Gehen:"
 
 #: etmain/ui/options_controls.menu:43
 msgid "Sprint:"
-msgstr "Laufen:"
+msgstr "Sprinten:"
 
 #: etmain/ui/options_controls.menu:47
 msgid "INPUT"
@@ -1871,11 +1874,11 @@ msgstr "Maus Oben/Unten umkehren"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
-msgstr "Geschmeidige Maus:"
+msgstr "Mausglättung:"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooths out the mouse using interpolation"
-msgstr "Geschmeidige Maus durch Interpolation"
+msgstr "Mausglättung durch Interpolation"
 
 #: etmain/ui/options_controls.menu:51
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
@@ -2037,7 +2040,7 @@ msgstr "SONSTIGE"
 
 #: etmain/ui/options_controls.menu:102
 msgid "Vote Yes:"
-msgstr "Stimme Ja:"
+msgstr "Abstimmung Ja:"
 
 #: etmain/ui/options_controls.menu:103
 msgid "Take Screenshot:"
@@ -2045,7 +2048,7 @@ msgstr "Erzeuge Bildschirmfoto:"
 
 #: etmain/ui/options_controls.menu:104
 msgid "Vote No:"
-msgstr "Stimme Nein:"
+msgstr "Abstimmung Nein:"
 
 #: etmain/ui/options_controls.menu:105
 msgid "Record Replay:"
@@ -2061,27 +2064,27 @@ msgstr "Alle Mitglieder auswählen:"
 
 #: etmain/ui/options_controls.menu:111
 msgid "Select Member #1:"
-msgstr "Wähle Kamerad #1:"
+msgstr "Wähle Mitglied #1:"
 
 #: etmain/ui/options_controls.menu:112
 msgid "Select Member #2:"
-msgstr "Wähle Kamerad #2:"
+msgstr "Wähle Mitglied #2:"
 
 #: etmain/ui/options_controls.menu:113
 msgid "Select Member #3:"
-msgstr "Wähle Kamerad #3:"
+msgstr "Wähle Mitglied #3:"
 
 #: etmain/ui/options_controls.menu:114
 msgid "Select Member #4:"
-msgstr "Wähle Kamerad #4:"
+msgstr "Wähle Mitglied #4:"
 
 #: etmain/ui/options_controls.menu:115
 msgid "Select Member #5:"
-msgstr "Wähle Kamerad #6:"
+msgstr "Wähle Mitglied #6:"
 
 #: etmain/ui/options_controls.menu:116
 msgid "Select Member #6:"
-msgstr "Wähle Kamerad #6:"
+msgstr "Wähle Mitglied #6:"
 
 #: etmain/ui/options_controls.menu:117
 msgid "Deselect All:"
@@ -2090,6 +2093,14 @@ msgstr "Alle deselektieren:"
 #: etmain/ui/options_controls.menu:118
 msgid "Fire-Team Admin:"
 msgstr "Feuerteam Admin:"
+
+#: etmain/ui/options_controls.menu:119
+msgid "Select Member #7:"
+msgstr "Wähle Mitglied #7:"
+
+#: etmain/ui/options_controls.menu:120
+msgid "Select Member #8:"
+msgstr "Wähle Mitglied #8:"
 
 #: etmain/ui/options_customise_game.menu:29 etmain/ui/options.menu:32
 msgid "GAME"
@@ -2124,7 +2135,7 @@ msgstr "PHYSIK"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Always Run:"
-msgstr "Immer rennen:"
+msgstr "Immer laufen:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
@@ -2152,7 +2163,7 @@ msgstr "Automatisch nachladen wenn das Magazin leer ist"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
-msgstr "Automatischer Wechsel:"
+msgstr "Automatisches Wechseln:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
@@ -2364,15 +2375,15 @@ msgstr "Kein Team Treffer Klang"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr "Kein Kopfschuss Treffer Signal"
+msgstr "Kein Kopfschuss Treffer Klang"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr "Kein Körper Treffer Signal"
+msgstr "Kein Körper Treffer Klang"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr "Setze Treffer Signal"
+msgstr "Setze Treffer Klang"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
@@ -3624,7 +3635,7 @@ msgstr "Ziele"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
-msgstr "BZLM"
+msgstr "LMS"
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
@@ -5421,7 +5432,7 @@ msgstr "Alle Server Favouriten gelöscht."
 
 #: src/cgame/cg_predict.c:641
 msgid "You are near"
-msgstr "In der Nähe:"
+msgstr "In der Nähe"
 
 msgid "joined the Axis team\n"
 msgstr "tritt dem Achsen Team bei\n"
@@ -5959,7 +5970,7 @@ msgid "You have been revived by "
 msgstr ""
 
 msgid "Constructing..."
-msgstr "Konstruiere..."
+msgstr "Aufbauen..."
 
 msgid "Allied Command Post constructed. Charge speed increased!"
 msgstr ""
