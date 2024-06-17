@@ -9,6 +9,7 @@
 /*.make
 CMakeLists.txt.user
 etmain/ui/git_version.h
+/.cache
 
 #
 # OS specific
