@@ -574,6 +574,7 @@ void CG_mvDraw(cg_window_t *sw)
 	float     b_x, b_y, b_w, b_h;
 	float     s     = 1.0f;
 	centity_t *cent = &cg_entities[pID];
+	float     zoomBinoc;
 
 	Com_Memset(&refdef, 0, sizeof(refdef_t));
 	Com_Memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
@@ -675,9 +676,9 @@ void CG_mvDraw(cg_window_t *sw)
 	refdef.y      = rd_y;
 	refdef.width  = rd_w;
 	refdef.height = rd_h;
-	float zoomBinoc = Com_Clamp(GetWeaponTableData(WP_BINOCULARS)->zoomIn,
-	                            GetWeaponTableData(WP_BINOCULARS)->zoomOut,
-	                            cg_zoomDefaultSniper.value);
+	zoomBinoc     = Com_Clamp(GetWeaponTableData(WP_BINOCULARS)->zoomIn,
+	                          GetWeaponTableData(WP_BINOCULARS)->zoomOut,
+	                          cg_zoomDefaultSniper.value);
 
 	refdef.fov_x = (cgs.clientinfo[pID].health > 0 &&
 					(/*cent->currentState.weapon == WP_SNIPERRIFLE ||*/   // WARNING: WARNOUT: this needs updating?

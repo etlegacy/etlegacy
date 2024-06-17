@@ -246,9 +246,11 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
  */
 static void CG_TransitionSnapshot(void)
 {
-	centity_t  *cent;
-	snapshot_t *oldFrame;
-	int        i, id;
+	centity_t     *cent;
+	snapshot_t    *oldFrame;
+	int           i, id;
+	playerState_t *ops;
+	playerState_t *ps;
 
 	if (!cg.snap)
 	{
@@ -338,8 +340,8 @@ static void CG_TransitionSnapshot(void)
 			}
 		}
 
-		playerState_t *ops = &oldFrame->ps;
-		playerState_t *ps  = &cg.snap->ps;
+		ops = &oldFrame->ps;
+		ps  = &cg.snap->ps;
 
 		// teleporting checks are irrespective of prediction
 		if ((ps->eFlags ^ ops->eFlags) & EF_TELEPORT_BIT)

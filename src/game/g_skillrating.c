@@ -1166,6 +1166,8 @@ void G_UpdateSkillRating(int winner)
  */
 float G_CalculateWinProbability(int team)
 {
+	int currentTime;
+
 	int       i;
 	float     c, t, winningMu, losingMu;
 	gclient_t *cl;
@@ -1188,7 +1190,7 @@ float G_CalculateWinProbability(int team)
 	}
 
 	// current play time
-	int currentTime = level.timeCurrent - level.startTime - level.timeDelta;
+	currentTime = level.timeCurrent - level.startTime - level.timeDelta;
 
 	// map side parameter
 	if (g_skillRating.integer > 1)
@@ -1270,6 +1272,8 @@ float G_CalculateWinProbability(int team)
 
 		while (sqlite3_step(sqlstmt) == SQLITE_ROW)
 		{
+			qboolean isPlaying;
+
 			// assign match data
 			sr_data.guid        = sqlite3_column_text(sqlstmt, 0);
 			sr_data.mu          = sqlite3_column_double(sqlstmt, 1);
@@ -1284,7 +1288,7 @@ float G_CalculateWinProbability(int team)
 			}
 
 			// player has reconnected
-			qboolean isPlaying = qfalse;
+			isPlaying = qfalse;
 
 			for (i = 0, cl = level.clients; i < level.maxclients; i++, cl++)
 			{

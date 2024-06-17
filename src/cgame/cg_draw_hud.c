@@ -316,9 +316,12 @@ void CG_UpdateParentHUD(const char *oldParent, const char *newParent, int newPar
  */
 static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t icon)
 {
+	float ofsX;
+	float ofsY;
+
 	trap_R_SetColor(colorBlack);
-	float ofsX = (w * 1.07f) - w;
-	float ofsY = (h * 1.07f) - h;
+	ofsX = (w * 1.07f) - w;
+	ofsY = (h * 1.07f) - h;
 	CG_DrawPic(x + ofsX, y + ofsY, w, h, icon);
 	trap_R_SetColor(NULL);
 	CG_DrawPic(x, y, w, h, icon);
@@ -2860,6 +2863,8 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 static char *CG_RoundTimerText()
 {
 	qtime_t qt;
+	char    *seconds;
+	char    *minutes;
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
@@ -2871,8 +2876,8 @@ static char *CG_RoundTimerText()
 		return "0:00"; // round ended
 	}
 
-	char *seconds = qt.tm_sec > 9 ? va("%i", qt.tm_sec) : va("0%i", qt.tm_sec);
-	char *minutes = qt.tm_min > 9 ? va("%i", qt.tm_min) : va("0%i", qt.tm_min);
+	seconds = qt.tm_sec > 9 ? va("%i", qt.tm_sec) : va("0%i", qt.tm_sec);
+	minutes = qt.tm_min > 9 ? va("%i", qt.tm_min) : va("0%i", qt.tm_min);
 
 	return va("%s:%s", minutes, seconds);
 }
@@ -3799,6 +3804,7 @@ static anchorPoints_t CG_FindClosestAnchors(hudStucture_t *hud, hudComponent_t *
 qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 {
 	rectDef_t parentLoc, tmpLoc;
+	float     xAbs;
 
 	// force quit this insanity
 	if (depth > 10 || depth < 0)
@@ -3845,7 +3851,7 @@ qboolean CG_ComputeComponentPosition(hudComponent_t *comp, int depth)
 	}
 
 	// final location
-	float xAbs = Q_fabs(comp->internalLocation.x);
+	xAbs = Q_fabs(comp->internalLocation.x);
 
 	if (xAbs)
 	{

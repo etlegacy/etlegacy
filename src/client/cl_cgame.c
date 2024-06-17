@@ -1309,6 +1309,10 @@ int clFrameTime;
  */
 int CL_FindIncrementThreshold(void)
 {
+	int LCM;
+	int min;
+	int clTime;
+
 	clFrameTime = cls.frametime;
 
 	// handles zero duration between frames (often happens on map change)
@@ -1319,7 +1323,7 @@ int CL_FindIncrementThreshold(void)
 
 	// calculates the least common multiple of clFrameTime and svFrameTime
 	// the LCM represents how long until the time over-run pattern repeats
-	int LCM = svFrameTime > clFrameTime ? svFrameTime : clFrameTime;
+	LCM = svFrameTime > clFrameTime ? svFrameTime : clFrameTime;
 	while (1)
 	{
 		if (LCM % clFrameTime == 0 && LCM % svFrameTime == 0)
@@ -1329,8 +1333,8 @@ int CL_FindIncrementThreshold(void)
 		++LCM;
 	}
 
-	int min    = 0;
-	int clTime = 0;
+	min    = 0;
+	clTime = 0;
 	// finds the worst amount of client over-run assuming no initial spare time
 	while (clTime <= LCM)
 	{
@@ -1430,6 +1434,7 @@ void CL_AdjustTimeDelta(void)
 			else
 			{
 				int svOldFrameTime = svFrameTime;
+				int spareTime;
 
 				if (com_sv_running->integer)
 				{
@@ -1448,7 +1453,7 @@ void CL_AdjustTimeDelta(void)
 					threshold = CL_FindIncrementThreshold();
 				}
 
-				int spareTime =
+				spareTime =
 					cl.snap.serverTime                    // server time
 					- (cls.realtime + cl.serverTimeDelta) // client time
 					- cl_extrapolationMargin->integer;    // margin time
@@ -1608,6 +1613,7 @@ void CL_SetCGameTime(void)
 		// or less latency to be added in the interest of better
 		// smoothness or better responsiveness.
 		int tn = cl_timeNudge->integer;
+		int spareTime;
 
 		if (tn < -30)
 		{
@@ -1631,7 +1637,7 @@ void CL_SetCGameTime(void)
 		// note if we are almost past the latest frame (without timeNudge),
 		// so we will try and adjust back a bit when the next snapshot arrives
 
-		int spareTime =
+		spareTime =
 			cl.snap.serverTime                     //server
 			- (cls.realtime + cl.serverTimeDelta); //client
 

@@ -3115,17 +3115,23 @@ void QDECL CG_WriteToLog(const char *fmt, ...)
 
 int CG_RoundTime(qtime_t *qtime)
 {
-	int msec = cgs.timelimit * 60000.f;
+	int msec;
+	int seconds;
+	int mins;
+	int hours;
+	int tens;
+
+	msec = cgs.timelimit * 60000.f;
 	if (cgs.gamestate == GS_PLAYING)
 	{
 		msec -= cg.time - cgs.levelStartTime;
 	}
 
-	int seconds = msec / 1000;
-	int mins    = seconds / 60;
-	int hours   = mins / 60;
-	seconds -= mins * 60;
-	int tens = seconds / 10;
+	seconds        = msec / 1000;
+	mins           = seconds / 60;
+	hours          = mins / 60;
+	seconds       -= mins * 60;
+	tens           = seconds / 10;
 	seconds       -= tens * 10;
 	seconds        = Q_atoi(va("%i%i", tens, seconds));
 	qtime->tm_sec  = seconds;

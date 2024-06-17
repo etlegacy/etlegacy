@@ -857,12 +857,13 @@ void Q_UTF8_ToUTF32(const char *string, uint32_t *charArray, size_t *outLen)
 
 void Q_UTF32_ToUTF8(const uint32_t *charArray, size_t arraySize, char *string, size_t *outLen)
 {
-	int len, i, x, byteOffset = 0;
+	int  len, i, x, byteOffset = 0;
+	char *str;
 
 	for (i = 0; i < arraySize; i++)
 	{
 		len = Q_UTF8_WidthCP(charArray[i]);
-		char *str = Q_UTF8_Encode(charArray[i]);
+		str = Q_UTF8_Encode(charArray[i]);
 
 		for (x = 0; x < len; x++)
 		{
@@ -964,6 +965,8 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 {
 	char *str = fromStr;
 	int  l    = 0;
+	int  number;
+	char *buffer;
 
 	while (*str)
 	{
@@ -1006,7 +1009,7 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 			}
 
 			tmpNumber[numberOffset] = '\0';
-			int number = Q_atoi(tmpNumber);
+			number                  = Q_atoi(tmpNumber);
 
 			// Ignore non printable keys
 			if (number < 32)
@@ -1015,7 +1018,7 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 				continue;
 			}
 
-			char *buffer = Q_UTF8_Encode(number);
+			buffer = Q_UTF8_Encode(number);
 
 			while (*buffer)
 			{

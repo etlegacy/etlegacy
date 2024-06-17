@@ -1564,6 +1564,7 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
                        const vec4_t backgroundColor, const vec4_t borderColor, const vec4_t backgroundColorTitle, const vec4_t borderColorTitle,
                        panel_button_text_t *fontHeader, panel_button_text_t *fontText)
 {
+	float        diff;
 	unsigned int i;
 	int          len, maxlen = 0;
 	int          w, h;
@@ -1584,7 +1585,7 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 	Vector4Copy(fontHeader->colour, hdrColor);
 	Vector4Copy(fontText->colour, tColor);
 
-	float diff = cg.fadeTime - trap_Milliseconds();
+	diff = cg.fadeTime - trap_Milliseconds();
 
 	// FIXME: Should compute all this stuff beforehand
 	// Compute required width

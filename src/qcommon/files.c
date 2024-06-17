@@ -4383,6 +4383,8 @@ static void FS_AddContainerDirectory(const char *subPath)
 	// We are in a non-pure server, so just try to mount the minimal required packs
 	for (int i = 0 ; i < fs_numServerReferencedPaks ; i++)
 	{
+		char *packName;
+
 		// Do we have the pack already
 		if (FS_HasPack(fs_serverReferencedPaks[i]))
 		{
@@ -4395,7 +4397,7 @@ static void FS_AddContainerDirectory(const char *subPath)
 			continue;
 		}
 
-		char *packName = strchr(fs_serverReferencedPakNames[i], '/');
+		packName = strchr(fs_serverReferencedPakNames[i], '/');
 		if (packName && *(packName + 1))
 		{
 			char       tmpPath[MAX_OSPATH] = { '\0' };

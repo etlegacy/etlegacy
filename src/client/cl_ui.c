@@ -115,13 +115,16 @@ void LAN_LoadCachedServers(void)
 		cJSON *serverObj = NULL;
 		cJSON_ArrayForEach(serverObj, root)
 		{
+			char *address;
+			char *name;
+
 			if (!cJSON_IsObject(serverObj))
 			{
 				continue;
 			}
 
-			char *address = Q_ReadStringValueJsonEx(serverObj, "address", "");
-			char *name    = Q_ReadStringValueJsonEx(serverObj, "name", "");
+			address = Q_ReadStringValueJsonEx(serverObj, "address", "");
+			name    = Q_ReadStringValueJsonEx(serverObj, "name", "");
 
 			if (*address && *name)
 			{

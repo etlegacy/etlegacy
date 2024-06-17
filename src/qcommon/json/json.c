@@ -50,6 +50,7 @@
 void Q_JSONInitWith(void *(*malloc_fn)(size_t sz), void (*free_fn)(void *ptr))
 {
 	static qboolean initDone = qfalse;
+	cJSON_Hooks     hooks;
 
 	if (initDone)
 	{
@@ -57,7 +58,7 @@ void Q_JSONInitWith(void *(*malloc_fn)(size_t sz), void (*free_fn)(void *ptr))
 	}
 
 	// This is mostly pointless now, but we might want to use custom allocators or a buffer at some point.
-	cJSON_Hooks hooks =
+	hooks = (cJSON_Hooks)
 	{
 		malloc_fn,
 		free_fn

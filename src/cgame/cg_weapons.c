@@ -2852,6 +2852,7 @@ static int CG_DefaultAnimFrameForWeapon(int weapon)
  */
 static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *weapOld, int *weap, float *weapBackLerp)
 {
+	int          ws;
 	centity_t    *cent = &cg.predictedPlayerEntity;
 	clientInfo_t *ci   = &cgs.clientinfo[ps->clientNum];
 
@@ -2861,7 +2862,7 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 		return;
 	}
 
-	int ws = BG_simpleWeaponState(ps->weaponstate);
+	ws = BG_simpleWeaponState(ps->weaponstate);
 
 	// okay to early out here since we can never reload, fire and switch at the same time
 	if (ws == WSTATE_FIRE && !(cg_weapAnims.integer & WEAPANIM_FIRING))
@@ -3863,6 +3864,9 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// mounted gun drawing
 	if (ps->eFlags & EF_MOUNTEDTANK)
 	{
+		// FIXME: HACK dummy model to just draw _something_
+		refEntity_t flash;
+
 		Com_Memset(hand, 0, sizeof(refEntity_t));
 		CG_CalculateWeaponPosition(hand->origin, angles);
 		AnglesToAxis(angles, hand->axis);
@@ -3904,9 +3908,6 @@ void CG_AddViewWeapon(playerState_t *ps)
 				CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, cg.tankflashorg, 1000, 8, 20, 30, alpha, 8.f);
 			}
 		}
-
-		// FIXME: HACK dummy model to just draw _something_
-		refEntity_t flash;
 
 		Com_Memset(&flash, 0, sizeof(flash));
 		flash.renderfx = (RF_LIGHTING_ORIGIN | RF_DEPTHHACK);

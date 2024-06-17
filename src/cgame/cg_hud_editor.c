@@ -2632,6 +2632,7 @@ static void CG_HudEditor_GridDraw(void)
 void CG_DrawHudEditor(void)
 {
 	static int altHud = -1;
+	qboolean   skip;
 
 	panel_button_t **buttons = hudComponentsPanel;
 	panel_button_t *button;
@@ -2653,7 +2654,7 @@ void CG_DrawHudEditor(void)
 	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 
 	// start parsing hud components from the last focused button
-	qboolean skip = qtrue;
+	skip = qtrue;
 	for ( ; *buttons; buttons++)
 	{
 		button = (*buttons);
@@ -2874,14 +2875,14 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 */
 void CG_HudEditorMouseMove_Handling(int x, int y)
 {
+	panel_button_t *button = lastFocusComponent;
+	static float   offsetX = 0;
+	static float   offsetY = 0;
+
 	if (!cg.editingHud)
 	{
 		return;
 	}
-
-	panel_button_t *button = lastFocusComponent;
-	static float   offsetX = 0;
-	static float   offsetY = 0;
 
 	if (button && !button->data[7])
 	{

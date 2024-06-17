@@ -94,24 +94,29 @@ static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 {
 	fileHandle_t certHandle;
 	int          i;
+	int          len;
+	char         *buffer;
+	BIO          *cbio;
+	X509_STORE   *cts;
+	STACK_OF(X509_INFO) * inf;
+
 	(void)curl;
 	(void)parm;
 
-	int len = (int) FS_SV_FOpenFileRead(CA_CERT_FILE, &certHandle);
+	len = (int) FS_SV_FOpenFileRead(CA_CERT_FILE, &certHandle);
 	if (len <= 0)
 	{
 		FS_FCloseFile(certHandle);
 		goto callback_failed;
 	}
 
-	char *buffer = Com_Allocate(len + 1);
+	buffer      = Com_Allocate(len + 1);
 	buffer[len] = 0;
 	FS_Read(buffer, len, certHandle);
 	FS_FCloseFile(certHandle);
 
-	BIO        *cbio = BIO_new_mem_buf(buffer, len);
-	X509_STORE *cts  = SSL_CTX_get_cert_store((SSL_CTX *)ssl_ctx);
-	STACK_OF(X509_INFO) * inf;
+	cbio = BIO_new_mem_buf(buffer, len);
+	cts  = SSL_CTX_get_cert_store((SSL_CTX *)ssl_ctx);
 
 	if (!cts || !cbio)
 	{
@@ -394,6 +399,8 @@ static unsigned int DL_GetRequestId()
 {
 	while (qtrue)
 	{
+		webRequest_t **lst;
+
 		unsigned int tmp = 1 + (++webSys.requestId);
 
 		// 0 is an invalid id, and 1 is reserved
@@ -404,7 +411,7 @@ static unsigned int DL_GetRequestId()
 
 		// wrap around protection
 		// very highly unlikely that this ever happens, but you never know
-		webRequest_t **lst = &webSys.requests;
+		lst = &webSys.requests;
 
 		while (*lst)
 		{
@@ -765,16 +772,20 @@ void DL_DownloadLoop(void)
 
 	while ((msg = curl_multi_info_read(webSys.multiHandle, &dls)))
 	{
+		long             code;
+		CURL             *handle;
+		webRequest_t     **lst;
+		webRequestResult result;
+
 		if (msg->msg != CURLMSG_DONE)
 		{
 			DL_SetupContentLength(msg->easy_handle);
 			continue;
 		}
 
-		long             code;
-		CURL             *handle = msg->easy_handle;
-		webRequest_t     **lst   = &webSys.requests;
-		webRequestResult result  = msg->data.result == CURLE_OK ? REQUEST_OK : REQUEST_NOK;
+		handle = msg->easy_handle;
+		lst    = &webSys.requests;
+		result = msg->data.result == CURLE_OK ? REQUEST_OK : REQUEST_NOK;
 
 		// before doing anything else, remove the request from the multi-handle
 		curl_multi_remove_handle(webSys.multiHandle, handle);

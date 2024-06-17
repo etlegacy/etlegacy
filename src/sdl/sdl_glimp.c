@@ -266,6 +266,7 @@ static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 	for (i = 0; i < iterations; i++)
 	{
 		double delta = (double) numerator / (double) denominator - ratio;
+		double newDelta;
 
 		// Close enough for most resolutions
 		if (fabs(delta) < 0.002)
@@ -282,7 +283,7 @@ static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 			denominator++;
 		}
 
-		double newDelta = fabs((double) numerator / (double) denominator - ratio);
+		newDelta = fabs((double) numerator / (double) denominator - ratio);
 		if (newDelta < bestDelta)
 		{
 			bestDelta       = newDelta;
@@ -590,8 +591,9 @@ static void GLimp_DetectAvailableModes(void)
  */
 static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qboolean fullscreen)
 {
-	int displayIndex = 0, tmpX = SDL_WINDOWPOS_UNDEFINED, tmpY = SDL_WINDOWPOS_UNDEFINED;
-	int numDisplays = SDL_GetNumVideoDisplays();
+	int      displayIndex = 0, tmpX = SDL_WINDOWPOS_UNDEFINED, tmpY = SDL_WINDOWPOS_UNDEFINED;
+	int      numDisplays = SDL_GetNumVideoDisplays();
+	SDL_Rect rect;
 
 	if (!r_windowLocation->string || !r_windowLocation->string[0])
 	{
@@ -659,7 +661,6 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 		return;
 	}
 
-	SDL_Rect rect;
 	SDL_GetDisplayBounds(displayIndex, &rect);
 
 	// SDL resets the values to displays origins when switching between windowed and fullscreen, so just move it a bit
