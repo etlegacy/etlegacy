@@ -3726,6 +3726,8 @@ void Cmd_SetViewpos_f(gentity_t *ent, unsigned int dwCommand, int value)
 	}
 	else if (trap_Argc() == 8)
 	{
+		qboolean useViewHeight;
+
 		for (i = 0; i < 3; i++)
 		{
 			trap_Argv(i + 1, buffer, sizeof(buffer));
@@ -3739,7 +3741,7 @@ void Cmd_SetViewpos_f(gentity_t *ent, unsigned int dwCommand, int value)
 		}
 
 		trap_Argv(7, buffer, sizeof(buffer));
-		qboolean useViewHeight = Q_atof(buffer);
+		useViewHeight = Q_atof(buffer);
 
 		if (useViewHeight)
 		{

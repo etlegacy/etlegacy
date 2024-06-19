@@ -4623,6 +4623,7 @@ void CheckVote(void)
 	{
 		int pcnt = vote_percent.integer;
 		int total;
+		int threshold;
 
 		if (pcnt > 99)
 		{
@@ -4662,7 +4663,7 @@ void CheckVote(void)
 			total = level.voteInfo.numVotingClients;
 		}
 
-		int threshold = pcnt * total / 100;
+		threshold = pcnt * total / 100;
 
 		if (level.voteInfo.voteYes > threshold || level.voteInfo.votePassed)
 		{

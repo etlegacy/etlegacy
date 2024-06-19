@@ -992,6 +992,8 @@ qboolean TVG_Cmd_SetViewpos_f(gclient_t *client, tvcmd_reference_t *self)
 	}
 	else if (trap_Argc() == 8)
 	{
+		qboolean useViewHeight;
+
 		for (i = 0; i < 3; i++)
 		{
 			trap_Argv(i + 1, buffer, sizeof(buffer));
@@ -1005,7 +1007,7 @@ qboolean TVG_Cmd_SetViewpos_f(gclient_t *client, tvcmd_reference_t *self)
 		}
 
 		trap_Argv(7, buffer, sizeof(buffer));
-		qboolean useViewHeight = Q_atof(buffer);
+		useViewHeight = Q_atof(buffer);
 
 		if (useViewHeight)
 		{

@@ -6476,7 +6476,8 @@ static int UI_CampaignCount(qboolean singlePlayer)
  */
 static void UI_InsertServerIntoDisplayList(int num, int position)
 {
-	int i;
+	int       i;
+	menuDef_t *menu;
 
 	if (position < 0 || position > uiInfo.serverStatus.numDisplayServers)
 	{
@@ -6495,7 +6496,7 @@ static void UI_InsertServerIntoDisplayList(int num, int position)
     // and so something with it before the list finishes loading, which can take a while.
     if (position < uiInfo.serverStatus.currentServer) {
         uiInfo.serverStatus.currentServer++;
-        menuDef_t *menu = Menus_FindByName("serverList");
+        menu = Menus_FindByName("serverList");
         Menu_SetFeederSelection(menu, FEEDER_SERVERS, uiInfo.serverStatus.currentServer, NULL);
     }
 }

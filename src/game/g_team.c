@@ -2373,11 +2373,13 @@ void G_UpdateSpawnPointStatePlayerCounts()
 void G_UpdateSpawnPointState(gentity_t *ent)
 {
 	static char cs[MAX_STRING_CHARS];
+	spawnPointState_t *spawnPointState;
+
 	if (ent == NULL || !ent->count)
 	{
 		return;
 	}
-	spawnPointState_t *spawnPointState = &level.spawnPointStates[ent->count - CS_MULTI_SPAWNTARGETS];
+	spawnPointState = &level.spawnPointStates[ent->count - CS_MULTI_SPAWNTARGETS];
 	// update state
 	VectorCopy(ent->s.origin, spawnPointState->origin);
 	spawnPointState->team = (team_t)(ent->count2 & 0xF);

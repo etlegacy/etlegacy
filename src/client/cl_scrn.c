@@ -140,6 +140,10 @@ static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 	{
 		float       scaleX, scaleY, scale;
 		glyphInfo_t *info;
+		float       xx;
+		float       yy;
+		float       ww;
+		float       hh;
 
 		if (ch < 32)
 		{
@@ -164,10 +168,10 @@ static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 		scaleX *= scale;
 		scaleY *= scale;
 
-		float xx = (float)x + ((float)info->pitch * scaleX);
-		float yy = (float)y - ((float)info->top * scaleY) + 12;
-		float ww = (float)info->imageWidth * scaleX;
-		float hh = (float)info->imageHeight * scaleY;
+		xx = (float)x + ((float)info->pitch * scaleX);
+		yy = (float)y - ((float)info->top * scaleY) + 12;
+		ww = (float)info->imageWidth * scaleX;
+		hh = (float)info->imageHeight * scaleY;
 
 		// Just squash the icon font to match
 		if (ch < 32)

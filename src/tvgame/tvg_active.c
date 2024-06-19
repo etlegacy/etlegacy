@@ -224,6 +224,8 @@ qboolean TVG_ClientInactivityTimer(gclient_t *client)
 	// start countdown
 	if (!client->inactivityWarning)
 	{
+		int secondsLeft;
+
 		if (level.time > client->inactivityTime - inactivity)
 		{
 			client->inactivityWarning     = qtrue;
@@ -231,7 +233,7 @@ qboolean TVG_ClientInactivityTimer(gclient_t *client)
 			client->inactivitySecondsLeft = inactivity;
 		}
 
-		int secondsLeft = (client->inactivityTime + inactivity - level.time) / 1000;
+		secondsLeft = (client->inactivityTime + inactivity - level.time) / 1000;
 
 		// countdown expired..
 		if (secondsLeft <= 0)

@@ -379,8 +379,9 @@ void Field_Draw(field_t *edit, int x, int y, int width, qboolean showCursor, qbo
  */
 void Field_Paste(field_t *edit)
 {
-	char   *cbd;
-	size_t pasteLen, i;
+	char     *cbd;
+	size_t   pasteLen, i;
+	uint32_t *chars;
 
 	cbd = IN_GetClipboardData();
 
@@ -391,7 +392,7 @@ void Field_Paste(field_t *edit)
 
 	// send as if typed, so insert / overstrike works properly
 	pasteLen = Q_UTF8_Strlen(cbd);
-	uint32_t *chars = Com_Allocate(sizeof(uint32_t) * pasteLen);
+	chars    = Com_Allocate(sizeof(uint32_t) * pasteLen);
 	Com_Memset(chars, 0, sizeof(uint32_t) * pasteLen);
 	Q_UTF8_ToUTF32(cbd, chars, &pasteLen);
 

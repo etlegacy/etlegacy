@@ -128,6 +128,7 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 {
 	centity_t *cent;
 	vec3_t    origin;
+	float     maxs;
 
 	if (!hitEnt)
 	{
@@ -153,7 +154,7 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 		VectorMA(origin, 6.5f, cent->pe.headRefEnt.axis[2], origin); // up
 		VectorMA(origin, 0.5f, cent->pe.headRefEnt.axis[0], origin); // forward
 
-		float maxs = origin[2] - cent->lerpOrigin[2] - 6;
+		maxs = origin[2] - cent->lerpOrigin[2] - 6;
 		return (maxs < PRONE_BODYHEIGHT) ? PRONE_BODYHEIGHT : maxs;
 	}
 	else if (hitEnt->eFlags & EF_CROUCHING)
@@ -162,7 +163,7 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 		VectorMA(origin, 6.5f, cent->pe.headRefEnt.axis[2], origin); // up
 		VectorMA(origin, 0.5f, cent->pe.headRefEnt.axis[0], origin); // forward
 
-		float maxs = origin[2] - cent->lerpOrigin[2] - 6;
+		maxs = origin[2] - cent->lerpOrigin[2] - 6;
 		return (maxs < CROUCH_IDLE_BODYHEIGHT) ? CROUCH_IDLE_BODYHEIGHT : maxs;
 	}
 	else

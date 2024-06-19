@@ -193,12 +193,12 @@ static void InitOpenGL(void)
 
 	if (glConfig.vidWidth == 0)
 	{
+		char  glConfigString[1024] = { 0 };
 		char  renderer_buffer[1024];
 		GLint temp;
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
 
-		char glConfigString[1024] = { 0 };
 		Info_SetValueForKey(glConfigString, "type", "opengl");
 		Info_SetValueForKey(glConfigString, "major", "1");
 		Info_SetValueForKey(glConfigString, "minor", "1");

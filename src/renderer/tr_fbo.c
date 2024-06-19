@@ -95,6 +95,8 @@ static void R_SetFBOViewport(frameBuffer_t *fb)
 
 void R_FBOSetViewport(frameBuffer_t *from, frameBuffer_t *to)
 {
+	frameBuffer_t *com;
+
 	if (!tr.useFBO)
 	{
 		return;
@@ -121,7 +123,7 @@ void R_FBOSetViewport(frameBuffer_t *from, frameBuffer_t *to)
 		return;
 	}
 
-	frameBuffer_t *com = NULL;
+	com = NULL;
 	if (from)
 	{
 		com = from;
@@ -590,12 +592,14 @@ void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to)
 
 void R_FboRenderTo(frameBuffer_t *from, frameBuffer_t *to)
 {
+	frameBuffer_t *tmp;
+
 	if (!tr.useFBO)
 	{
 		return;
 	}
 
-	frameBuffer_t *tmp = current;
+	tmp = current;
 
 	if (!blitProgram)
 	{
@@ -629,6 +633,10 @@ void R_FboRenderTo(frameBuffer_t *from, frameBuffer_t *to)
 
 void R_InitFBO(void)
 {
+	int   samples;
+	int   stencil;
+	GLint blitProgramMap;
+
 	Com_Memset(&systemFbos, 0, sizeof(frameBuffer_t) * MAX_FBOS);
 
 	current     = NULL;
@@ -652,8 +660,8 @@ void R_InitFBO(void)
 	mainFbo   = NULL;
 	msMainFbo = NULL;
 
-	int samples = ri.Cvar_VariableIntegerValue("r_ext_multisample");
-	int stencil = ri.Cvar_VariableIntegerValue("r_stencilbits");
+	samples = ri.Cvar_VariableIntegerValue("r_ext_multisample");
+	stencil = ri.Cvar_VariableIntegerValue("r_stencilbits");
 
 	GL_CheckErrors();
 
@@ -674,7 +682,7 @@ void R_InitFBO(void)
 	// Setup the blitting program
 	blitProgram = R_CreateShaderProgram(fboBlitVert, fboBlitFrag);
 	R_UseShaderProgram(blitProgram);
-	GLint blitProgramMap = R_GetShaderProgramUniform(blitProgram, "u_CurrentMap");
+	blitProgramMap = R_GetShaderProgramUniform(blitProgram, "u_CurrentMap");
 	glUniform1i(blitProgramMap, 0);
 
 	R_UseShaderProgram(NULL);

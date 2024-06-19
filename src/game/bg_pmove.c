@@ -435,15 +435,15 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 	// legs and head
 	if ((pm->ps->eFlags & EF_PRONE) || (pm->ps->eFlags & EF_DEAD))
 	{
+		trace_t  legtrace;
+		trace_t  headtrace;
+		qboolean adjust = qfalse;
+
 		// ignore head and legs completely if we're dead and either is stuck in solid
 		if (pm->pmext->deadInSolid)
 		{
 			return;
 		}
-
-		trace_t  legtrace;
-		trace_t  headtrace;
-		qboolean adjust = qfalse;
 
 		PM_TraceLegs(&legtrace, legsOffset, start, end, trace,
 		             pm->ps->viewangles, pm->trace, pm->ps->clientNum,

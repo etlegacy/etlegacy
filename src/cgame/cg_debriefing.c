@@ -3564,6 +3564,9 @@ qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key)
  */
 void CG_Debriefing_VoteButton_Draw(panel_button_t *button)
 {
+	qboolean hilight;
+	float    w;
+
 	if (cgs.gametype != GT_WOLF_MAPVOTE)
 	{
 		return;
@@ -3580,9 +3583,9 @@ void CG_Debriefing_VoteButton_Draw(panel_button_t *button)
 		clrBck[0] = Q_fabs(sin(cg.time / (float)BLINK_DIVISOR));
 		clrBck[3] = Q_fabs(cos(cg.time / (float)BLINK_DIVISOR));
 
-		qboolean hilight = BG_CursorInRect(&button->rect);
+		hilight = BG_CursorInRect(&button->rect);
 
-		float w = CG_Text_Width_Ext(button->text, 0.2f, 0, &cgs.media.limboFont2);
+		w = CG_Text_Width_Ext(button->text, 0.2f, 0, &cgs.media.limboFont2);
 
 		CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, hilight ? clrBck_hi : clrBck);
 		CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, clrBdr);

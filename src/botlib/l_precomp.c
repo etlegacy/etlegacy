@@ -1485,9 +1485,9 @@ void PC_RemoveAllGlobalDefines(void)
  */
 define_t *PC_CopyDefine(source_t *source, define_t *define)
 {
-	(void)source;
 	define_t *newdefine;
 	token_t  *token, *newtoken, *lasttoken;
+	(void)source;
 	newdefine = (define_t *) GetMemory(sizeof(define_t) + strlen(define->name) + 1);
 	// copy the define name
 	newdefine->name = (char *) newdefine + sizeof(define_t);

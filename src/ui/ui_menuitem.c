@@ -1598,6 +1598,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	int            valueLen;
 	itemDef_t      *newItem = NULL;
 	editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
+	size_t         cutOff;
 
 	if (!item->cvar)
 	{
@@ -1612,7 +1613,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	if (editPtr->maxChars && valueLen > editPtr->maxChars)
 	{
 		valueLen = editPtr->maxChars;
-		size_t cutOff = Q_UTF8_ByteOffset(buff, editPtr->maxChars);
+		cutOff   = Q_UTF8_ByteOffset(buff, editPtr->maxChars);
 		Com_Memset(&buff[cutOff], 0, sizeof(buff) - cutOff);
 	}
 
@@ -3219,6 +3220,7 @@ void Item_Model_Paint(itemDef_t *item)
 	vec3_t      mins, maxs, origin;
 	vec3_t      angles;
 	modelDef_t  *modelPtr = (modelDef_t *)item->typeData;
+	float       len;
 
 	if (modelPtr == NULL)
 	{
@@ -3256,7 +3258,7 @@ void Item_Model_Paint(itemDef_t *item)
 	// calculate distance so the model nearly fills the box
 	//if (qtrue)
 	//{
-	float len = 0.5f * (maxs[2] - mins[2]);
+	len = 0.5f * (maxs[2] - mins[2]);
 
 	origin[0] = len / 0.268f;        // len / tan( fov/2 )
 	//origin[0] = len / tan(w/2);

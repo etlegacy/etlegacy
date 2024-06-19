@@ -4516,6 +4516,7 @@ void CG_Coronas(void)
 		trace_t  tr;
 		float    dist;
 		vec3_t   dir;
+		float    fov;
 		qboolean visible, behind, toofar;
 
 		for (i = 0 ; i < cg.numCoronas ; ++i)
@@ -4536,7 +4537,7 @@ void CG_Coronas(void)
 				toofar = qtrue;
 			}
 			// dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
-			const float fov = cosf((cg.refdef_current->fov_x / 2) * (float)(M_PI / 180));
+			fov = cosf((cg.refdef_current->fov_x / 2) * (float)(M_PI / 180));
 			if (DotProduct(dir, cg.refdef_current->viewaxis[0]) >= -fov)
 			{
 				behind = qtrue;

@@ -121,6 +121,8 @@ void CG_LocationsSave(const char *path)
 
 void CG_LocationsAdd(const char *message)
 {
+	location_t *loc;
+
 	if (!cg.editingLocations)
 	{
 		CG_Printf(S_COLOR_RED "Location editing is not enabled.\n");
@@ -133,7 +135,7 @@ void CG_LocationsAdd(const char *message)
 		return;
 	}
 
-	location_t *loc = &cgs.location[cgs.numLocations];
+	loc = &cgs.location[cgs.numLocations];
 
 	loc->index = cgs.numLocations;
 	Q_strncpyz(loc->message, message, sizeof(loc->message));

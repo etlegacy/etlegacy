@@ -235,12 +235,13 @@ char *Tracker_createClientInfo(int clientNum)
 {
 	playerState_t *ps;
 	int           playerClass;
+	char          *modName;
 	ps = SV_GameClientNum(clientNum);
 
 	// PauluzzNL
 	// The indexes are different between mods, most mods use the default etmain value of 5 for STAT_PLAYER_CLASS, legacy mod uses index 4.
 	// may need to modify for more mods later
-	char *modName = Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "gamename");
+	modName = Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "gamename");
 	if (Q_strncmp(modName, "legacy", 6) == 0)
 	{
 		playerClass = ps->stats[STAT_PLAYER_CLASS];
