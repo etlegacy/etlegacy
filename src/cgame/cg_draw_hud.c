@@ -2483,7 +2483,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		snap = cg.snap;
 	}
 
-	if ((snap->ps.pm_flags & PMF_LIMBO && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || snap->ps.stats[STAT_HEALTH] <= 0) && !cgs.clientinfo[cg.clientNum].shoutcaster)
 #ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
 #endif
@@ -2535,11 +2535,6 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 				CG_CompasMoveLocation(&basex, &basey, basew, qfalse);
 			}
 		}
-	}
-
-	if ((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster))
-	{
-		return;
 	}
 
 	if (comp->showBackGround)
