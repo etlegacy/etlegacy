@@ -2121,7 +2121,7 @@ void Touch_DoorTrigger(gentity_t *ent, gentity_t *other, trace_t *trace)
 /**
  * @brief All of the parts of a door have been spawned, so create
  * a trigger that encloses all of them
- * @param ent
+ * @param[in] ent
  */
 void Think_SpawnNewDoorTrigger(gentity_t *ent)
 {
@@ -2129,11 +2129,8 @@ void Think_SpawnNewDoorTrigger(gentity_t *ent)
 	vec3_t    mins, maxs;
 	int       i, best = 0;
 
-	// set all of the slaves as shootable
-	for (other = ent ; other ; other = other->teamchain)
-	{
-		other->takedamage = qtrue;
-	}
+	// FIXME: isn't already set to true if "health" key is set ?
+	ent->takedamage = qtrue;
 
 	// find the bounds of everything on the team
 	VectorCopy(ent->r.absmin, mins);
@@ -2143,6 +2140,9 @@ void Think_SpawnNewDoorTrigger(gentity_t *ent)
 	{
 		AddPointToBounds(other->r.absmin, mins, maxs);
 		AddPointToBounds(other->r.absmax, mins, maxs);
+
+		// set all of the slaves as shootable
+		other->takedamage = qtrue;
 	}
 
 	// find the thinnest axis, which will be the one we expand
