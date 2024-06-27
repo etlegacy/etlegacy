@@ -873,16 +873,16 @@ qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_
 		}
 	}
 
-	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
-	{
-		return qfalse;
-	}
-
 	// lets try and remove the inconsitancy between ded/non-ded servers...
 	// - bleh, some code in clientthink_real really relies on this working on player models...
 	// only only this code for the release builds so we can test out the hitbox code with the clients
 #if !defined(DEDICATED) && !defined(LEGACY_DEBUG)
 	if (com_dedicated->integer)
+	{
+		return qfalse;
+	}
+
+	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 	{
 		return qfalse;
 	}
