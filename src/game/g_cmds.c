@@ -5082,7 +5082,7 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	client->sess.playerWeapon  = ent->client->sess.latchPlayerWeapon = cl.sess.playerWeapon;
 	client->sess.playerWeapon2 = ent->client->sess.latchPlayerWeapon2 = cl.sess.playerWeapon2;
 	// spawn them in
-	ClientSpawn(ent, qfalse, qtrue, qtrue);
+	ClientSpawn(ent, qfalse, qtrue, qtrue, qtrue);
 	// restore items
 	client->pers = saved;
 	Com_Memcpy(ent->client->ps.persistant, persistant, sizeof(persistant));
