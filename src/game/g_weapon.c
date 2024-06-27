@@ -347,7 +347,7 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	// keep class special weapon time to keep them from exploiting revives
 	oldclasstime = traceEnt->client->ps.classWeaponTime;
 
-	ClientSpawn(traceEnt, qtrue, qfalse, qtrue);
+	ClientSpawn(traceEnt, qtrue, qfalse, qtrue, qtrue);
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_Revived(traceEnt - g_entities, ent);

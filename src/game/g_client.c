@@ -956,7 +956,7 @@ void respawn(gentity_t *ent)
 
 	G_DPrintf("Respawning %s, %i lives left\n", ent->client->pers.netname, ent->client->ps.persistant[PERS_RESPAWNS_LEFT]);
 
-	ClientSpawn(ent, qfalse, qfalse, qtrue);
+	ClientSpawn(ent, qfalse, qfalse, qtrue, qtrue);
 }
 
 /**
@@ -2642,7 +2642,7 @@ void ClientBegin(int clientNum)
 		G_clientFlagIndicator(ent);
 	}
 
-	ClientSpawn(ent, qfalse, qtrue, qtrue);
+	ClientSpawn(ent, qfalse, qtrue, qtrue, qfalse);
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
@@ -2895,7 +2895,7 @@ static qboolean isMortalSelfDamage(gentity_t *ent)
  * @param[in] teamChange
  * @param[in] restoreHealth
  */
-void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth)
+void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth, qboolean toggleTeleport)
 {
 	int                index = ent - g_entities;
 	vec3_t             spawn_origin, spawn_angles;
@@ -2959,9 +2959,13 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	client->pers.teamState.state = TEAM_ACTIVE;
 
-	// toggle the teleport bit so the client knows to not lerp
-	flags  = ent->client->ps.eFlags & EF_TELEPORT_BIT;
-	flags ^= EF_TELEPORT_BIT;
+	flags = ent->client->ps.eFlags & EF_TELEPORT_BIT;
+
+	if (toggleTeleport)
+	{
+		// toggle the teleport bit so the client knows to not lerp
+		flags ^= EF_TELEPORT_BIT;
+	}
 
 	// unlagged reset history markers
 	G_ResetMarkers(ent);
