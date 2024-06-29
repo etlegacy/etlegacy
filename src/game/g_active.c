@@ -1737,8 +1737,13 @@ void SpectatorClientEndFrame(gentity_t *ent)
 		gclient_t *cl;
 		qboolean  do_respawn = qfalse;
 
+		// instant respawn when cheats enabled (devmap)
+		if (g_cheats.integer && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+		{
+			do_respawn = qtrue;
+		}
 		// Players can respawn quickly in warmup
-		if (g_gamestate.integer != GS_PLAYING && ent->client->respawnTime <= level.timeCurrent &&
+		else if (g_gamestate.integer != GS_PLAYING && ent->client->respawnTime <= level.timeCurrent &&
 		    ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 		{
 			do_respawn = qtrue;
