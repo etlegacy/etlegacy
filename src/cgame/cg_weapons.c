@@ -3110,6 +3110,16 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			return;
 		}
 	}
+	// hide weapon drop/swapoff on some weapons
+	else if (weaponNum == WP_PANZERFAUST || weaponNum == WP_SATCHEL)
+	{
+		if (ps) {
+			if (ps && !ps->ammoclip[weaponNum] && ps->weaponstate == 3 /* drop/swapoff */)
+			{
+				return;
+			}
+		}
+	}
 
 	// no weapon when on mg_42
 	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
