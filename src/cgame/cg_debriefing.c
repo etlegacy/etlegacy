@@ -2700,24 +2700,10 @@ void CG_Debriefing_MouseEvent(int x, int y)
 	}
 
 	cgs.cursorX += x;
-	if (cgs.cursorX < 0)
-	{
-		cgs.cursorX = 0;
-	}
-	else if (cgs.cursorX > SCREEN_WIDTH)
-	{
-		cgs.cursorX = SCREEN_WIDTH;
-	}
+	cgs.cursorX  = Com_Clamp(0, SCREEN_WIDTH_SAFE, cgs.cursorX);
 
 	cgs.cursorY += y;
-	if (cgs.cursorY < 0)
-	{
-		cgs.cursorY = 0;
-	}
-	else if (cgs.cursorY > SCREEN_HEIGHT)
-	{
-		cgs.cursorY = SCREEN_HEIGHT;
-	}
+	cgs.cursorY  = Com_Clamp(0, SCREEN_HEIGHT_SAFE, cgs.cursorY);
 }
 
 /**
