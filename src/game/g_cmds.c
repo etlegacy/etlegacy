@@ -3191,6 +3191,11 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 				CP("cp \"You cannot call a vote as a spectator.\"");
 				return qfalse;
 			}
+			else if (g_gamestate.integer == GS_WARMUP_COUNTDOWN && (level.warmupTime - level.time) < VOTE_TIME)
+			{
+				CP("cp \"You cannot call a vote when warmup is about to end.\"");
+				return qfalse;
+			}
 		}
 	}
 
@@ -3273,12 +3278,9 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 		G_globalSoundEnum(GAMESOUND_MISC_VOTE);
 	}
 
-	// shorter the vote timeout when warmup countdown or map time are going to end
-	if (g_gamestate.integer == GS_WARMUP_COUNTDOWN && (level.warmupTime - level.time) < VOTE_TIME)
-	{
-		level.voteInfo.voteTime = level.warmupTime - VOTE_TIME;
-	}
-	else if (g_gamestate.integer == GS_PLAYING && (level.startTime + (g_timelimit.value * 60000) - level.time < VOTE_TIME))
+	// shorter the vote timeout when map time is going to end
+	// (e.g. surrendering a match in stopwatch)
+	if (g_gamestate.integer == GS_PLAYING && (level.startTime + (g_timelimit.value * 60000) - level.time < VOTE_TIME))
 	{
 		level.voteInfo.voteTime = level.startTime + (g_timelimit.value * 60000) - VOTE_TIME;
 	}
