@@ -92,15 +92,6 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case CG_MOUSE_EVENT:
 		cgDC.cursorx = cgs.cursorX;
 		cgDC.cursory = cgs.cursorY;
-		// when the limbopanel is open, we want the cursor to be able to move all the way to the right edge of the screen..
-		// ... same for the debriefing screen
-		if (cg.showGameView || cgs.dbShowing)
-		{
-			if (!Ccg_Is43Screen())
-			{
-				cgDC.cursorx *= cgs.adr43;
-			}
-		}
 		CG_MouseEvent(arg0, arg1);
 		return 0;
 	case CG_EVENT_HANDLING:
