@@ -2,19 +2,19 @@ weaponDef
 {
 	// This basically fills out weaponInfo_t
 	client {
-		//standModel			"models/weapons2/fg42/fg42_stand.mdc"	// weapon pickup 'stand' (do we still use this?)
-		pickupModel		"models/weapons2/fg42/fg42.md3"
+		//standModel		"models/weapons2/fg42/fg42_stand.mdc"	// weapon pickup 'stand' (do we still use this?)
+		pickupModel			"models/weapons2/fg42/fg42.md3"
 		droppedAnglesHack
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/weapons2/fg42/weapon.cfg"
 		handsModel			"models/weapons2/fg42/v_fg42_hand.mdc"
-		
+
 		flashDlightColor	1.0 0.6 0.23
 		flashSound			"sound/weapons/fg42/fg42_fire.wav"		// supports up to 4 flash sounds
 		flashEchoSound		"sound/weapons/fg42/fg42_far.wav"		// supports up to 4 flash echo sounds
 		//lastShotSound		""										// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		//overheatSound		""
@@ -24,55 +24,55 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
 		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
-		
+
 		weaponIcon			"icons/iconw_fg42"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_fg42_1_select"
 		weaponSimpleIcon	"simpleicons/fg42"
 		weaponSimpleIconScale 2 1
-		
+
 		weaponCardIcon      "gfx/limbo/weaponcard01"
 		weaponCardScale     1 1
 		weaponCardPointS    0 1
 		weaponCardPointT    0.375 0.5
-		
+
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
-		
+
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		ejectBrassOffset    16 -4 24
-                
-                fireRecoil 0.3 0.6 0    // kick angle
-                adjustLean 1 1 1
-		
+
+		fireRecoil 0.3 0.6 0    // kick angle
+		adjustLean 1 1 1
+
 		//modModel 1		""
-                
+
 		impactDurationCoeff 1
 		impactMarkMaxRange  384	// -1 infinite
-                impactParticle    "particles/bullet.particle" 
-                impactSoundVolume 64
-                impactMarkRadius  1.5
-                impactSound {                   // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default 5 "sound/weapons/impact/stone"
-                    wood    5 "sound/weapons/impact/wood"
-                    metal   5 "sound/weapons/impact/metal"
-                    roof    5 "sound/weapons/impact/metal"
-                    glass   5 "sound/weapons/impact/glass"
-                    water   5 "sound/weapons/impact/water"
-                    //flesh   5 "sound/weapons/impact/flesh"    // terrible sounds, stonehit is used instead
-                
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/bullet_mrk"
-                    wood    "gfx/damage/wood_mrk"
-                    metal   "gfx/damage/metal_mrk"
-                    glass   "gfx/damage/glass_mrk" 
-                }
-		
+		impactParticle    "particles/bullet.particle"
+		impactSoundVolume 64
+		impactMarkRadius  1.5
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default 5 "sound/weapons/impact/stone"
+			wood    5 "sound/weapons/impact/wood"
+			metal   5 "sound/weapons/impact/metal"
+			roof    5 "sound/weapons/impact/metal"
+			glass   5 "sound/weapons/impact/glass"
+			water   5 "sound/weapons/impact/water"
+			//flesh   5 "sound/weapons/impact/flesh"    // terrible sounds, stonehit is used instead
+		}
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/bullet_mrk"
+			wood    "gfx/damage/wood_mrk"
+			metal   "gfx/damage/metal_mrk"
+			glass   "gfx/damage/glass_mrk"
+		}
+
 		firstPerson {
 			model			"models/weapons2/fg42/v_fg42.mdc"
 			flashModel		"models/weapons2/fg42/v_fg42_flash.mdc"
@@ -100,11 +100,11 @@ weaponDef
 				}
 			}
 		}
-		
+
 		thirdPerson {
 			model			"models/weapons2/fg42/fg42.md3"
 			flashmodel		"models/weapons2/fg42/fg42_flash.mdc"
-			
+
 			weaponLink
 			{
 				part 0

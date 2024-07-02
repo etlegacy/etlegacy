@@ -6,15 +6,15 @@ weaponDef
 		droppedAnglesHack
 		//pickupModel			"models/multiplayer/mauser/mauser_pickup.md3"
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/multiplayer/kar98/weapon.cfg"
 		handsModel			"models/multiplayer/kar98/v_kar98_hand.md3"
-		
+
 		flashDlightColor	1.0 0.7 0.5
 		flashSound			"sound/weapons/k43/k43_fire_grenade.wav"	// supports up to 4 flash sounds
 		flashEchoSound		"sound/weapons/k43/k43_far.wav"			// supports up to 4 flash echo sounds
 		//lastShotSound		""										// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		//overheatSound		""
@@ -24,62 +24,63 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		switchSound			"sound/weapons/k43/k43_grenade_on.wav"	// allow overriding of weaponswitch sound
 		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
-		
+
 		weaponIcon			"icons/iconw_kar98_gren"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_kar98_gren_1_select"
 		weaponSimpleIcon	"simpleicons/kar98"
 		weaponSimpleIconScale 2 1
-		
+
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0
 		//weaponCardPointS  0 0
 		//weaponCardPointT  0 0
-		
+
 		missileModel		"models/multiplayer/kar98/v_kar98_scope.md3"
 		//missileSound		"sound/weapons/k43/k43_grenade_fly.wav"
-		missileBouncingSound { 
-                    default 2 "sound/weapons/grenade/bounce_hard"
-                    wood    2 "sound/weapons/grenade/bounce_wood"
-                    metal   2 "sound/weapons/grenade/bounce_metal"
-                    roof    2 "sound/weapons/grenade/bounce_metal"
-                    gravel  2 "sound/weapons/grenade/bounce_hard"
-                    grass   2 "sound/weapons/grenade/bounce_soft"
-                    snow    2 "sound/weapons/grenade/bounce_soft"
-                    carpet  2 "sound/weapons/grenade/bounce_soft"
-                    }
+		missileBouncingSound {
+			default 2 "sound/weapons/grenade/bounce_hard"
+			wood    2 "sound/weapons/grenade/bounce_wood"
+			metal   2 "sound/weapons/grenade/bounce_metal"
+			roof    2 "sound/weapons/grenade/bounce_metal"
+			gravel  2 "sound/weapons/grenade/bounce_hard"
+			grass   2 "sound/weapons/grenade/bounce_soft"
+			snow    2 "sound/weapons/grenade/bounce_soft"
+			carpet  2 "sound/weapons/grenade/bounce_soft"
+		}
 		missileTrailFunc	"GrenadeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
-		
+
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
-                
-                adjustLean 1 1 2
-		
+
+		adjustLean 1 1 2
+
 		modModel 0			"models/multiplayer/kar98/v_kar98_scope.md3"
 		modModel 1			"models/multiplayer/kar98/kar98_att.md3"
-                
+
 		impactDurationCoeff 3
 		impactMarkMaxRange  -1	// -1 infinite
-                impactSoundRange  400
-                impactParticle    "particles/small_explosion.particle"  
-                impactSoundVolume 127
-                impactMarkRadius  64
-                impactSound {                           // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default "sound/weapons/grenade/gren_expl.wav"
-                    far     "sound/weapons/grenade/gren_expl_far.wav"
-                    water   "sound/weapons/grenade/gren_expl_water.wav"
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/burn_med_mrk"
-                }
-		
+		impactSoundRange  400
+		impactParticle    "particles/small_explosion.particle"
+		impactSoundVolume 127
+		impactMarkRadius  64
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default "sound/weapons/grenade/gren_expl.wav"
+			far     "sound/weapons/grenade/gren_expl_far.wav"
+			water   "sound/weapons/grenade/gren_expl_water.wav"
+		}
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/burn_med_mrk"
+		}
+
 		firstPerson {
 			model			"models/multiplayer/kar98/v_kar98.md3"
-					axisskin	"models/multiplayer/kar98/kar98_axis.skin"
-					alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
+			axisskin		"models/multiplayer/kar98/kar98_axis.skin"
+			alliedskin		"models/multiplayer/kar98/kar98_allied.skin"
 			//flashModel		"models/multiplayer/kar98/v_kar98_flash.mdc"
 
 			// weapon building
@@ -98,8 +99,8 @@ weaponDef
 				}
 				part 2
 				{
-					tag		"tag_barrel3"
-					model	"models/multiplayer/kar98/v_kar98_barrel3.mdc"
+					tag			"tag_barrel3"
+					model		"models/multiplayer/kar98/v_kar98_barrel3.mdc"
 					axisskin	"models/multiplayer/kar98/kar98_axis.skin"
 					alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
 				}
@@ -120,7 +121,7 @@ weaponDef
 				}
 			}
 		}
-		
+
 		thirdPerson {
 			model			"models/multiplayer/kar98/kar98_3rd.md3"
 			//flashmodel		"models/multiplayer/kar98/kar98_3rd_flash.mdc"

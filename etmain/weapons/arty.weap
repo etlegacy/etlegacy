@@ -6,33 +6,34 @@ weaponDef
 		weaponIconScale		1
 
 		missileSound		"sound/weapons/mortar/mortar_fly.wav"
-		missileFallSound        3 "sound/weapons/artillery/artillery_fly_"
+		missileFallSound	3 "sound/weapons/artillery/artillery_fly_"
 		missileModel		"models/multiplayer/mortar/mortar_shell.md3"
 		missileTrailFunc	"PyroSmokeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		200
 		//missileDlightColor	0.75 0.3 0.0
-                
-                adjustLean 1 1 1
-                
+
+		adjustLean 1 1 1
+
 		impactDurationCoeff 3
 		impactMarkMaxRange  -1	// -1 infinite
-                impactSoundRange 800
-                impactSoundVolume 127
-                impactMarkRadius  128
-                impactParticle    "particles/big_explosion.particle" 
-                impactSound {                       // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default 3 "sound/weapons/artillery/artillery_expl_"
-                    far       "sound/weapons/artillery/artillery_expl_far.wav"
-                    water     "sound/weapons/grenade/gren_expl_water.wav"
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/burn_med_mrk"
-                }
-
-		firstPerson {		
+		impactSoundRange 800
+		impactSoundVolume 127
+		impactMarkRadius  128
+		impactParticle    "particles/big_explosion.particle"
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default 3 "sound/weapons/artillery/artillery_expl_"
+			far       "sound/weapons/artillery/artillery_expl_far.wav"
+			water     "sound/weapons/grenade/gren_expl_water.wav"
 		}
-		
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/burn_med_mrk"
+		}
+
+		firstPerson {
+		}
+
 		thirdPerson {
 		}
 	}

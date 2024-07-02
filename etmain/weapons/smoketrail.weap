@@ -5,7 +5,7 @@ weaponDef
 		missileTrailFunc	"PyroSmokeTrail"					// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		missileDlight		200
 
-        //missileSound		"sound/weapons/rocket/rocket_fly.wav" // we may add a new sound for this
-        missileDlightColor	0.75 0.3 0.0
+		//missileSound		"sound/weapons/rocket/rocket_fly.wav" // we may add a new sound for this
+		missileDlightColor	0.75 0.3 0.0
 	}
 }
