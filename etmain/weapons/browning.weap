@@ -6,15 +6,15 @@ weaponDef
 		droppedAnglesHack
 		pickupModel			"models/weapons2/browning/brown30cal_pickup.md3"
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/multiplayer/mg42/weapon.cfg"
 		handsModel			"models/weapons2/browning/v_brown30cal_hand.md3"
-		
+
 		flashDlightColor	1.0 0.6 0.23
 		flashSound			"sound/weapons/browning/browning_fire.wav"		// supports up to 4 flash sounds
 		flashEchoSound		"sound/weapons/browning/browning_far.wav"		// supports up to 4 flash echo sounds
 		//lastShotSound		""										// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		overheatSound		"sound/weapons/browning/browning_heat.wav"
@@ -24,55 +24,55 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
 		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
-		
-		weaponIcon				"icons/iconw_browning"
+
+		weaponIcon			"icons/iconw_browning"
 		weaponIconScale		2
-		weaponSelectedIcon		"icons/iconw_browning_1_select"
+		weaponSelectedIcon	"icons/iconw_browning_1_select"
 		weaponSimpleIcon	"simpleicons/browning"
 		weaponSimpleIconScale 2 1
-		
+
 		weaponCardIcon      "gfx/limbo/weaponcard03"
 		weaponCardScale     1 1
 		weaponCardPointS    0 1
 		weaponCardPointT    0 0.125
-		
+
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
-		
+
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		ejectBrassOffset    12 -4 24
-                
-                fireRecoil 0.3 0.6 0    // kick angle
-                adjustLean 1 1 1
-		
+
+		fireRecoil 0.3 0.6 0    // kick angle
+		adjustLean 1 1 1
+
 		modModel 0				"models/weapons2/browning/brown30cal_3rd_bipod.md3"
-                
+
 		impactDurationCoeff 1
 		impactMarkMaxRange  384	// -1 infinite
-                impactParticle    "particles/bullet.particle" 
-                impactSoundVolume 64
-                impactMarkRadius  1.5
-                impactSound {                   // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default 5 "sound/weapons/impact/stone"
-                    wood    5 "sound/weapons/impact/wood"
-                    metal   5 "sound/weapons/impact/metal"
-                    roof    5 "sound/weapons/impact/metal"
-                    glass   5 "sound/weapons/impact/glass"
-                    water   5 "sound/weapons/impact/water"
-                    //flesh   5 "sound/weapons/impact/flesh"    // terrible sounds, stonehit is used instead
-                
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/bullet_mrk"
-                    wood    "gfx/damage/wood_mrk"
-                    metal   "gfx/damage/metal_mrk"
-                    glass   "gfx/damage/glass_mrk" 
-                }
-		
+		impactParticle    "particles/bullet.particle"
+		impactSoundVolume 64
+		impactMarkRadius  1.5
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default 5 "sound/weapons/impact/stone"
+			wood    5 "sound/weapons/impact/wood"
+			metal   5 "sound/weapons/impact/metal"
+			roof    5 "sound/weapons/impact/metal"
+			glass   5 "sound/weapons/impact/glass"
+			water   5 "sound/weapons/impact/water"
+			//flesh   5 "sound/weapons/impact/flesh"    // terrible sounds, stonehit is used instead
+		}
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/bullet_mrk"
+			wood    "gfx/damage/wood_mrk"
+			metal   "gfx/damage/metal_mrk"
+			glass   "gfx/damage/glass_mrk"
+		}
+
 		firstPerson {
 			model			"models/weapons2/browning/v_brown30cal.md3"
 			flashModel		"models/multiplayer/mg42/v_mg42_flash.mdc"
@@ -112,7 +112,7 @@ weaponDef
 				}
 			}
 		}
-		
+
 		thirdPerson {
 			model			"models/weapons2/browning/brown30cal_3rd.md3"
 			flashmodel		"models/multiplayer/mg42/mg42_3rd_flash.mdc"

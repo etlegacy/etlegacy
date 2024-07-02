@@ -10,21 +10,22 @@ weaponDef
 		missileSound		"sound/weapons/mortar/mortar_fly.wav"
 		missileTrailFunc	"GrenadeTrail"                               // supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		missileDlightColor	1 0.7 0.5
-                
+
 		impactDurationCoeff 3
 		impactMarkMaxRange  -1	// -1 infinite
-                impactSoundRange 1200
-                impactParticle    "particles/map_mortar_explosion.particle" 
-                impactSoundVolume 127
-                impactMarkRadius  96
-                impactSound {                       // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default "sound/weapons/mortar/mortar_expl.wav"        
-                    far     "sound/weapons/mortar/mortar_expl_far.wav"
-                    water   "sound/weapons/grenade/gren_expl_water.wav"
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/burn_med_mrk"
-                }
+		impactSoundRange 1200
+		impactParticle    "particles/map_mortar_explosion.particle"
+		impactSoundVolume 127
+		impactMarkRadius  96
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default "sound/weapons/mortar/mortar_expl.wav"
+			far     "sound/weapons/mortar/mortar_expl_far.wav"
+			water   "sound/weapons/grenade/gren_expl_water.wav"
+		}
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/burn_med_mrk"
+		}
 	}
 }

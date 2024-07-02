@@ -4,17 +4,17 @@ weaponDef
 	client {
 		//standModel		""										// weapon pickup 'stand' (do we still use this?)
 		droppedAnglesHack
-		pickupModel		"models/multiplayer/kar98/kar98_scope_pickup.md3"
+		pickupModel			"models/multiplayer/kar98/kar98_scope_pickup.md3"
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/multiplayer/kar98/weapon2.cfg"
 		handsModel			"models/multiplayer/kar98/v_kar98_hand2.md3"
-		
+
 		flashDlightColor	1.0 0.6 0.23
 		flashSound			"sound/weapons/k43/k43_fire_silence.wav"// supports up to 4 flash sounds
 		//flashEchoSound	""										// supports up to 4 flash echo sounds
 		//lastShotSound		""										// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		//overheatSound		""
@@ -24,62 +24,62 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
 		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
-		
+
 		weaponIcon			"icons/iconw_mauser"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_mauser_1_select"
 		weaponSimpleIcon	"simpleicons/k43"
 		weaponSimpleIconScale 2 1
-		
+
 		weaponCardIcon      "gfx/limbo/weaponcard02"
 		weaponCardScale     1 1
 		weaponCardPointS    0 1
 		weaponCardPointT    0.75 0.875
-		
+
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
-		
+
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		ejectBrassOffset    16 -4 24
-                
-                fireRecoil 2 1 0    // kick angle
-                adjustLean 1 1 2
-		
+
+		fireRecoil 2 1 0    // kick angle
+		adjustLean 1 1 2
+
 		modModel 0			"models/multiplayer/kar98/v_kar98_scope2.md3"
 		modModel 1			"models/multiplayer/kar98/v_kar98_silencer.md3"
 		modModel 2			"models/multiplayer/kar98/kar98_scp.md3"
-                
+
 		impactDurationCoeff 1
 		impactMarkMaxRange  384	// -1 infinite
-                impactParticle    "particles/bullet.particle" 
-                impactSoundVolume 64
-                impactMarkRadius  1.5
-                impactSound {                   // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default 5 "sound/weapons/impact/stone"
-                    wood    5 "sound/weapons/impact/wood"
-                    metal   5 "sound/weapons/impact/metal"
-                    roof    5 "sound/weapons/impact/metal"
-                    glass   5 "sound/weapons/impact/glass"
-                    water   5 "sound/weapons/impact/water"
-                    //flesh   5 "sound/weapons/impact/flesh"    // terrible sounds, stonehit is used instead
-                
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/bullet_mrk"
-                    wood    "gfx/damage/wood_mrk"
-                    metal   "gfx/damage/metal_mrk"
-                    glass   "gfx/damage/glass_mrk" 
-                }
-		
+		impactParticle    "particles/bullet.particle"
+		impactSoundVolume 64
+		impactMarkRadius  1.5
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default 5 "sound/weapons/impact/stone"
+			wood    5 "sound/weapons/impact/wood"
+			metal   5 "sound/weapons/impact/metal"
+			roof    5 "sound/weapons/impact/metal"
+			glass   5 "sound/weapons/impact/glass"
+			water   5 "sound/weapons/impact/water"
+			//flesh   5 "sound/weapons/impact/flesh"    // terrible sounds, stonehit is used instead
+		}
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/bullet_mrk"
+			wood    "gfx/damage/wood_mrk"
+			metal   "gfx/damage/metal_mrk"
+			glass   "gfx/damage/glass_mrk"
+		}
+
 		firstPerson {
-			model			"models/multiplayer/kar98/v_kar98.md3"
+			model		"models/multiplayer/kar98/v_kar98.md3"
 			axisskin	"models/multiplayer/kar98/kar98_axis.skin"
 			alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
-			flashModel		"models/multiplayer/kar98/v_kar98_flash.mdc"
+			flashModel	"models/multiplayer/kar98/v_kar98_flash.mdc"
 
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
@@ -97,8 +97,8 @@ weaponDef
 				}
 				part 2
 				{
-					tag		"tag_barrel3"
-					model	"models/multiplayer/kar98/v_kar98_barrel3.mdc"
+					tag			"tag_barrel3"
+					model		"models/multiplayer/kar98/v_kar98_barrel3.mdc"
 					axisskin	"models/multiplayer/kar98/kar98_axis.skin"
 					alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
 				}
@@ -119,7 +119,7 @@ weaponDef
 				}
 			}
 		}
-		
+
 		thirdPerson {
 			model			"models/multiplayer/kar98/kar98_3rd.md3"
 			flashmodel		"models/multiplayer/kar98/kar98_3rd_flash.mdc"

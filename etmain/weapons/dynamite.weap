@@ -5,15 +5,15 @@ weaponDef
 		//standModel		""									// weapon pickup 'stand'
 		//pickupModel		""
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/weapons2/dynamite/weapon.cfg"
-		handsModel              "models/weapons2/dynamite/v_dynamite_hand.mdc"
-		
+		handsModel			"models/weapons2/dynamite/v_dynamite_hand.mdc"
+
 		//flashDlightColor	0 0 0
 		//flashSound		""									// supports up to 4 flash sounds
 		//flashEchoSound	""									// supports up to 4 flash echo sounds
 		//lastShotSound		""									// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		//overheatSound		""
@@ -23,48 +23,49 @@ weaponDef
 		spindownSound		"sound/weapons/dynamite/dynamite_timer.wav"			// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
 		//noAmmoSound       ""
-		
+
 		weaponIcon			"icons/iconw_dynamite"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_dynamite_1_select"
 		//weaponSimpleIcon	""
 		//weaponSimpleIconScale 1 1
-		
+
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0
 		//weaponCardPointS  0 0
 		//weaponCardPointT  0 0
-		
+
 		missileModel		"models/multiplayer/dynamite/dynamite.md3"
 		//missileSound		""
-                missileBouncingSound {
-                    default "sound/weapons/dynamite/dynamite_bounce.wav"
-                }
+		missileBouncingSound {
+			default "sound/weapons/dynamite/dynamite_bounce.wav"
+		}
 		missileTrailFunc	"DynamiteTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
-		
+
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
-                
-                adjustLean 1 1 1
-		
+
+		adjustLean 1 1 1
+
 		//modModel 1		""
-		
+
 		impactDurationCoeff 3
 		impactMarkMaxRange  -1	// -1 infinite
-                impactSoundRange 400
-                impactParticle   "particles/dynamite_explosion.particle" 
-                impactSoundVolume 127
-                impactMarkRadius  128
-                impactSound {                       // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default "sound/weapons/dynamite/dynamite_expl.wav"
-                    far     "sound/weapons/dynamite/dynamite_expl_far.wav"
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/burn_med_mrk"
-                }
+		impactSoundRange  400
+		impactParticle   "particles/dynamite_explosion.particle"
+		impactSoundVolume 127
+		impactMarkRadius  128
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default "sound/weapons/dynamite/dynamite_expl.wav"
+			far     "sound/weapons/dynamite/dynamite_expl_far.wav"
+		}
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/burn_med_mrk"
+		}
 
 		firstPerson {
 			model		"models/weapons2/dynamite/v_dynamite.md3"
@@ -81,7 +82,7 @@ weaponDef
 				}
 			}
 		}
-		
+
 		thirdPerson {
 			model		"models/multiplayer/dynamite/dynamite_3rd.md3"
 			//flashmodel	""

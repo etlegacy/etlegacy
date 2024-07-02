@@ -5,15 +5,15 @@ weaponDef
 		//standModel		""									// weapon pickup 'stand'
 		//pickupModel		""
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/multiplayer/knife/weapon.cfg"
 		handsModel			"models/multiplayer/knife/v_knife_hand.md3"
-		
+
 		//flashDlightColor	0 0 0
 		flashSound		3	"sound/weapons/knife/knife_slash"	// supports up to 4 flash sounds
 		//flashEchoSound	""										// supports up to 4 flash echo sounds
 		//lastShotSound		""									// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		//overheatSound		""
@@ -23,45 +23,46 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
 		//noAmmoSound       ""
-		
+
 		weaponIcon			"icons/iconw_knife"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_knife_1_select"
 		//weaponSimpleIcon	""
 		//weaponSimpleIconScale 1 1
-		
+
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0
 		//weaponCardPointS  0 0
 		//weaponCardPointT  0 0
-		
+
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
-		
+
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
-                
-                adjustLean 1 1 1
-                
+
+		adjustLean 1 1 1
+
 		impactDurationCoeff 1
-	        impactMarkMaxRange  384	// -1 infinite
-                impactParticle    "particles/melee.particle" 
-                impactSoundVolume 127
-                impactMarkRadius  1
-                impactSound {                   // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default "sound/weapons/knife/knife_hitwall1.wav" 
-                    flesh   4 "sound/weapons/knife/knife_hit" 
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/bullet_mrk"
-                }
-		
+		impactMarkMaxRange  384	// -1 infinite
+		impactParticle    "particles/melee.particle"
+		impactSoundVolume 127
+		impactMarkRadius  1
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default "sound/weapons/knife/knife_hitwall1.wav"
+			flesh   4 "sound/weapons/knife/knife_hit"
+		}
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/bullet_mrk"
+		}
+
 		//modModel 1		""
-		
+
 		firstPerson {
 			model		"models/multiplayer/knife/v_knife.md3"
 			axisskin	"models/multiplayer/knife/knife_axis.skin"
@@ -79,7 +80,7 @@ weaponDef
 				}
 			}
 		}
-		
+
 		thirdPerson {
 			model		"models/multiplayer/knife/knife.md3"
 			//flashmodel	""

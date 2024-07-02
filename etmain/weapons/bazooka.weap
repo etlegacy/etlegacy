@@ -5,15 +5,15 @@ weaponDef
 		standModel			"models/weapons2/bazooka/bazooka_stand.md3"		// weapon pickup 'stand' (do we still use this?)
 		pickupModel			"models/weapons2/bazooka/bazooka_pickup.md3"
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/weapons2/bazooka/weapon.cfg"
 		handsModel			"models/weapons2/bazooka/v_bazooka_hand.md3"
-		
+
 		flashDlightColor	0.75 0.3 0.0
 		flashSound			"sound/weapons/rocket/rocket_fire.wav"	// supports up to 4 flash sounds
 		//flashEchoSound		"sound/weapons/rocket/rocket_expl_far.wav"	// supports up to 4 flash echo sounds
 		//lastShotSound		""										// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		//overheatSound		""
@@ -23,47 +23,48 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
 		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
-		
+
 		weaponIcon			"icons/iconw_bazooka"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_bazooka_1_select"
 		weaponSimpleIcon	"simpleicons/bazooka"
 		weaponSimpleIconScale 2 1
-		
+
 		weaponCardIcon      "gfx/limbo/weaponcard03"
 		weaponCardScale     1 1
 		weaponCardPointS    0 1
 		weaponCardPointT    0.125 0.25
-		
+
 		missileModel		"models/weapons2/bazooka/bazooka_rocket.md3"
 		missileSound		"sound/weapons/rocket/rocket_fly.wav"
 		missileTrailFunc	"RocketTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		missileDlight		200
 		missileDlightColor	0.75 0.3 0.0
-		
+
 		//ejectBrassFunc		"PanzerFaustEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		ejectBrassOffset    -24 -4 24
-                
-                adjustLean 1 1 1
-		
+
+		adjustLean 1 1 1
+
 		//modModel 1		""
-                
+
 		impactDurationCoeff 3
 		impactMarkMaxRange  -1	// -1 infinite
-                impactSoundRange 800    
-                impactSoundVolume 127
-                impactMarkRadius  128
-                impactParticle    "particles/big_explosion.particle"  
-                impactSound {                           // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                
-                    default "sound/weapons/rocket/rocket_expl.wav"
-                    far     "sound/weapons/rocket/rocket_expl_far.wav"
-                    water   "sound/weapons/grenade/gren_expl_water.wav"
-                }
-                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
-                    default "gfx/damage/burn_med_mrk"
-                }
-		
+		impactSoundRange  800
+		impactSoundVolume 127
+		impactMarkRadius  128
+		impactParticle    "particles/big_explosion.particle"
+		// each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactSound {
+			default "sound/weapons/rocket/rocket_expl.wav"
+			far     "sound/weapons/rocket/rocket_expl_far.wav"
+			water   "sound/weapons/grenade/gren_expl_water.wav"
+		}
+		// each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+		impactMark {
+			default "gfx/damage/burn_med_mrk"
+		}
+
 		firstPerson {
 			model			"models/weapons2/bazooka/v_bazooka.md3"
 			flashModel		"models/weapons2/panzerfaust/v_pf_flash.mdc"
@@ -81,7 +82,7 @@ weaponDef
 				}
 			}
 		}
-		
+
 		thirdPerson {
 			model			"models/weapons2/bazooka/bazooka_3rd.md3"
 			flashmodel		"models/weapons2/panzerfaust/pf_flash.mdc"

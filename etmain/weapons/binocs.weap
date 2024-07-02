@@ -5,15 +5,15 @@ weaponDef
 		//standModel		""										// weapon pickup 'stand' (do we still use this?)
 		//pickupModel		""
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/multiplayer/binocs/weapon.cfg"
 		handsModel			"models/multiplayer/binocs/v_binocs_hand.md3"
-		
+
 		//flashDlightColor	0 0 0
 		//flashSound		""										// supports up to 4 flash sounds
 		//flashEchoSound	""										// supports up to 4 flash echo sounds
 		//lastShotSound		""										// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		//overheatSound		""
@@ -23,36 +23,36 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
 		//noAmmoSound       ""
-		
+
 		weaponIcon			"icons/iconw_binoculars"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_binoculars_1_select.tga"
 		//weaponSimpleIcon	""
 		//weaponSimpleIconScale 1 1
-		
+
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0
 		//weaponCardPointS  0 0
 		//weaponCardPointT  0 0
-		
+
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
-		
+
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
-                
-                adjustLean 1 1 1
-		
+
+		adjustLean 1 1 1
+
 		//modModel 1		""
-		
+
 		firstPerson {
 			model			"models/multiplayer/binocs/v_binocs.md3"
 			//flashModel	""
 		}
-		
+
 		thirdPerson {
 			model			"models/multiplayer/binocs/binocs.md3"
 			//flashmodel	""

@@ -6,15 +6,15 @@ weaponDef
 		droppedAnglesHack
 		pickupModel		    "models/multiplayer/mortar/mortar_pickup.md3"
 		//pickupSound		"sound/misc/w_pkup.wav"
-		
+
 		weaponConfig		"models/multiplayer/mortar/weapon.cfg"
 		handsModel			"models/multiplayer/mortar/v_mortar_hand.md3"
-		
+
 		//flashDlightColor	0 0 0
 		//flashSound		""									// supports up to 4 flash sounds
 		//flashEchoSound	""									// supports up to 4 flash echo sounds
 		//lastShotSound		""									// supports up to 4 last shot sounds
-		
+
 		//readySound		""
 		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
 		//overheatSound		""
@@ -24,31 +24,31 @@ weaponDef
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		switchSound			"sound/weapons/mortar/mortar_off.wav"		// allow overriding of weaponswitch sound
 		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
-		
+
 		weaponIcon			"icons/iconw_mortar"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_mortar_1_select"
 		weaponSimpleIcon	"simpleicons/mortar"
 		weaponSimpleIconScale 1 1
-		
+
 		weaponCardIcon      "gfx/limbo/weaponcard01"
 		weaponCardScale     1 1
 		weaponCardPointS    0 1
 		weaponCardPointT    0 0.125
-		
+
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
-		
+
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
-                
-                adjustLean 1 1 1
-		
+
+		adjustLean 1 1 1
+
 		//modModel 1		""
-		
+
 		firstPerson {
 			model		"models/multiplayer/mortar/v_mortar.md3"
 			//flashModel	""
@@ -64,8 +64,8 @@ weaponDef
 				}
 				part 1
 				{
-					tag		"tag_barrel2"
-					model	"models/multiplayer/mortar/v_mortar_barrel2.md3"
+					tag			"tag_barrel2"
+					model		"models/multiplayer/mortar/v_mortar_barrel2.md3"
 					axisskin	"models/multiplayer/mortar/mortar_axis.skin"
 					alliedskin	"models/multiplayer/mortar/mortar_allied.skin"
 				}
@@ -93,10 +93,10 @@ weaponDef
 				{
 					tag		"tag_barrel7"
 					model	"models/multiplayer/mortar/v_mortar_barrel7.md3"
-				}				
+				}
 			}
 		}
-		
+
 		thirdPerson {
 			model		"models/multiplayer/mortar/mortar_3rda.md3"
 			//flashmodel	""
