@@ -633,7 +633,6 @@ static const char *giveCmds[] =
 	"ammo",
 	"allammo",
 	"keys",
-	NULL
 };
 
 /**
