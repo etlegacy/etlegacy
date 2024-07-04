@@ -3489,8 +3489,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 						if (barrel.hModel)
 						{
-							CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
-							CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+							// only render rifle grenade when NOT firing -
+							// otherwise 'tag_scope' lerps from rifle towards
+							// the player in 1st person view #2602
+							if (!(ps && ps->weaponstate == WEAPON_DROPPING))
+							{
+								CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
+								CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+							}
 						}
 					}
 				}
