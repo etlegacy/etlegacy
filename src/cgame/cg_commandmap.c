@@ -1836,12 +1836,15 @@ void CG_DrawExpandedAutoMap(void)
 void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int style)
 {
 	int          i;
-	float        x = basex, y = basey, w = basew, h = baseh;
-	float        angle, diff;
+	float        x;
+	float        y;
+	float        w;
+	float        h;
+	float        angle;
+	float        diff;
 	mapScissor_t mapScissor;
 	vec2_t       automapTransformed;
 	snapshot_t   *snap;
-	float        expandedMapFrac;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -1859,33 +1862,6 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 		cgs.ccSelectedLayer = CG_CurLayerForZ((int)cg.predictedPlayerEntity.lerpOrigin[2]);
 	}
 
-	expandedMapFrac = cg_commandMapTime.value / 250.f;
-
-	if (cgs.autoMapExpanded)
-	{
-		if (cg.time - cgs.autoMapExpandTime < 100.f * expandedMapFrac)
-		{
-			CG_DrawExpandedAutoMap();
-		}
-		else
-		{
-			CG_DrawExpandedAutoMap();
-			return;
-		}
-	}
-	else
-	{
-		if (cg.time - cgs.autoMapExpandTime <= 150.f * expandedMapFrac)
-		{
-			CG_DrawExpandedAutoMap();
-			return;
-		}
-		else if ((cg.time - cgs.autoMapExpandTime > 150.f * expandedMapFrac) && (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.value))
-		{
-			CG_DrawExpandedAutoMap();
-		}
-	}
-
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam == qtrue || cgs.demoCamera.renderingWeaponCam == qtrue)
 	{
@@ -1894,10 +1870,10 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 #endif
 
 	diff = basew * 0.25f;
-	x    = x + (diff / 2);
-	y    = y + (diff / 2);
-	w    = w - diff;
-	h    = h - diff;
+	x    = basex + (diff / 2);
+	y    = basey + (diff / 2);
+	w    = basew - diff;
+	h    = baseh - diff;
 
 	mapScissor.circular   = !(style & COMPASS_SQUARE);
 	mapScissor.zoomFactor = cg_automapZoom.value;
@@ -1971,59 +1947,59 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 		}
 	}
 
-    for (i = 0; i < snap->numEntities; ++i)
-    {
-        centity_t *cent = &cg_entities[snap->entities[i].number];
-        qhandle_t icon;
+	for (i = 0; i < snap->numEntities; ++i)
+	{
+		centity_t *cent = &cg_entities[snap->entities[i].number];
+		qhandle_t icon;
 
-        // skip self
-        if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
-        {
-            continue;
-        }
+		// skip self
+		if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
+		{
+			continue;
+		}
 
-        icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, CG_GetActiveHUD()->compass.style & COMPASS_PRIMARY_OBJECTIVES,
-                                 CG_GetActiveHUD()->compass.style & COMPASS_SECONDARY_OBJECTIVES, CG_GetActiveHUD()->compass.style & COMPASS_ITEM,
-                                 qtrue, NULL);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, CG_GetActiveHUD()->compass.style & COMPASS_PRIMARY_OBJECTIVES,
+		                         CG_GetActiveHUD()->compass.style & COMPASS_SECONDARY_OBJECTIVES, CG_GetActiveHUD()->compass.style & COMPASS_ITEM,
+		                         qtrue, NULL);
 
-        if (icon)
-        {
-            CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor);
+		if (icon)
+		{
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor);
 
-            // draw overlapping shader for disguised covops
-            if (icon == cgs.media.friendShader)
-            {
-                CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor);
-            }
-        }
-    }
+			// draw overlapping shader for disguised covops
+			if (icon == cgs.media.friendShader)
+			{
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor);
+			}
+		}
+	}
 
-    // draw compass points for square map
-    if (!mapScissor.circular && (style & COMPASS_CARDINAL_POINTS))
-    {
-        float        centerX   = x + (w * .5f);
-        float        centerY   = y + (h * .5f);
-        float        textScale = (w / 100) * 0.18f;
-        float        textHeight;
-        float        offsetX = (w / 100) * 3.f;
-        float        offsetY = (h / 100) * 3.f;
-        fontHelper_t font    = cgs.media.limboFont2;
+	// draw compass points for square map
+	if (!mapScissor.circular && (style & COMPASS_CARDINAL_POINTS))
+	{
+		float        centerX   = x + (w * .5f);
+		float        centerY   = y + (h * .5f);
+		float        textScale = (w / 100) * 0.18f;
+		float        textHeight;
+		float        offsetX = (w / 100) * 3.f;
+		float        offsetY = (h / 100) * 3.f;
+		fontHelper_t font    = cgs.media.limboFont2;
 
-        // north
-        CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, "N", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+		// north
+		CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, "N", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
 
-        // south
-        textHeight = (float)CG_Text_Height_Ext("S", textScale, 0, &font);
-        CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, "S", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+		// south
+		textHeight = (float)CG_Text_Height_Ext("S", textScale, 0, &font);
+		CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, "S", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
 
-        // east
-        textHeight = (float)CG_Text_Height_Ext("E", textScale, 0, &font);
-        CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "E", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+		// east
+		textHeight = (float)CG_Text_Height_Ext("E", textScale, 0, &font);
+		CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "E", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
 
-        // west
-        textHeight = (float)CG_Text_Height_Ext("W", textScale, 0, &font);
-        CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "W", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
-    }
+		// west
+		textHeight = (float)CG_Text_Height_Ext("W", textScale, 0, &font);
+		CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "W", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+	}
 }
 
 /**
