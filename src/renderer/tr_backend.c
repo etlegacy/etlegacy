@@ -900,7 +900,7 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 	int     start;
 	image_t *image;
 
-	if (client < 0 || client > (sizeof(tr.scratchImage) / sizeof(tr.scratchImage[0])))
+	if (client < 0 || client >= (sizeof(tr.scratchImage) / sizeof(tr.scratchImage[0])))
 	{
 		Ren_Drop("RE_UploadCinematic: image offset out of range");
 	}
