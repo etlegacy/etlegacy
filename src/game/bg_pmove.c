@@ -1840,8 +1840,10 @@ static void PM_GroundTraceMissed(void)
  */
 static void PM_GroundTrace(void)
 {
-	vec3_t  point;
-	trace_t trace;
+ 	vec3_t       point;
+ 	trace_t      trace;
+ 	const vec3_t upwards = { 0.0f, 0.0f, 1.0f };
+ 	float        upwardsdirection;
 
 	point[0] = pm->ps->origin[0];
 	point[1] = pm->ps->origin[1];
@@ -1891,8 +1893,16 @@ static void PM_GroundTrace(void)
 		{
 			Com_Printf("%i:kickoff\n", c_pmove);
 		}
-		// go into jump animation (but not under water)
-		if (pm->waterlevel < 3)
+
+		// play jump animation only when not underwater and when being kicked
+		// _somewhat_ towards the sky or anywhere downwards
+		VectorNormalize2(pm->ps->velocity, point);  // reuse point var
+		upwardsdirection = DotProduct(point, upwards);
+		// NOTE: the positive cutoff value for 'upwardsdirection' below has been
+		// determined by running across the terrain of official maps and finding
+		// a constant that triggers only for visually distinct (steep) slopes,
+		// such that the jump anim playback becomes reproducible/consistent
+		if (pm->waterlevel < 3 && (upwardsdirection >= 0.335f || upwardsdirection <= 0.0f))
 		{
 			if (pm->cmd.forwardmove >= 0)
 			{
