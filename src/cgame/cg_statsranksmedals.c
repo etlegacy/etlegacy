@@ -48,8 +48,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank2",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank2",   128, 128 }
+			{ 0, "gfx/hud/ranks/arank2",                    128, 128 },
+			{ 0, "models/players/temperate/common/arank2",  128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank2",                    128, 128 },
@@ -58,8 +58,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank3",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank3",   128, 128 }
+			{ 0, "gfx/hud/ranks/arank3",                    128, 128 },
+			{ 0, "models/players/temperate/common/arank3",  128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank3",                    128, 128 },
@@ -68,8 +68,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank4",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank4",   128, 128 }
+			{ 0, "gfx/hud/ranks/arank4",                    128, 128 },
+			{ 0, "models/players/temperate/common/arank4",  128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank4",                    128, 128 },
@@ -78,8 +78,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank5",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank5",   128, 128 }
+			{ 0, "gfx/hud/ranks/arank5",                    128, 128 },
+			{ 0, "models/players/temperate/common/arank5",  128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank5",                    128, 128 },
@@ -88,8 +88,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank6",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank6",   128, 128 }
+			{ 0, "gfx/hud/ranks/arank6",                    128, 128 },
+			{ 0, "models/players/temperate/common/arank6",  128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank6",                    128, 128 },
@@ -98,8 +98,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank7",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank7",   128, 128 }
+			{ 0, "gfx/hud/ranks/arank7",                    128, 128 },
+			{ 0, "models/players/temperate/common/arank7",  128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank7",                    128, 128 },
@@ -108,8 +108,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank8",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank8",   128, 128 }
+			{ 0, "gfx/hud/ranks/arank8",                    128, 128 },
+			{ 0, "models/players/temperate/common/arank8",  128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank8",                    128, 128 },
@@ -118,8 +118,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank9",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank9",   128, 128 }
+			{ 0, "gfx/hud/ranks/arank9",                    128, 128 },
+			{ 0, "models/players/temperate/common/arank9",  128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank9",                    128, 128 },
@@ -128,8 +128,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank10",                    128, 128 },
-			{ 0, "models/players/temperate/common/rank10",  128, 128 }
+			{ 0, "gfx/hud/ranks/arank10",                   128, 128 },
+			{ 0, "models/players/temperate/common/arank10", 128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank10",                   128, 128 },
@@ -138,8 +138,8 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 	{
 		{
-			{ 0, "gfx/hud/ranks/rank11",                    128, 128 },
-			{ 0, "models/players/temperate/common/rank11",  128, 128 }
+			{ 0, "gfx/hud/ranks/arank11",                   128, 128 },
+			{ 0, "models/players/temperate/common/arank11", 128, 128 }
 		},
 		{
 			{ 0, "gfx/hud/ranks/xrank11",                   128, 128 },

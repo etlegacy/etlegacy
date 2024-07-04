@@ -6,7 +6,7 @@
 //========================================//
 // HUD Ranks
 //========================================//
-gfx/hud/ranks/rank2
+gfx/hud/ranks/arank2
 {
 	nomipmaps
 	nopicmip
@@ -17,7 +17,7 @@ gfx/hud/ranks/rank2
 	}
 }
 
-gfx/hud/ranks/rank3
+gfx/hud/ranks/arank3
 {
 	nomipmaps
 	nopicmip
@@ -28,7 +28,7 @@ gfx/hud/ranks/rank3
 	}
 }
 
-gfx/hud/ranks/rank4
+gfx/hud/ranks/arank4
 {
 	nomipmaps
 	nopicmip
@@ -39,7 +39,7 @@ gfx/hud/ranks/rank4
 	}
 }
 
-gfx/hud/ranks/rank5
+gfx/hud/ranks/arank5
 {
 	nomipmaps
 	nopicmip
@@ -50,7 +50,7 @@ gfx/hud/ranks/rank5
 	}
 }
 
-gfx/hud/ranks/rank6
+gfx/hud/ranks/arank6
 {
 	nomipmaps
 	nopicmip
@@ -61,7 +61,7 @@ gfx/hud/ranks/rank6
 	}
 }
 
-gfx/hud/ranks/rank7
+gfx/hud/ranks/arank7
 {
 	nomipmaps
 	nopicmip
@@ -72,7 +72,7 @@ gfx/hud/ranks/rank7
 	}
 }
 
-gfx/hud/ranks/rank8
+gfx/hud/ranks/arank8
 {
 	nomipmaps
 	nopicmip
@@ -83,7 +83,7 @@ gfx/hud/ranks/rank8
 	}
 }
 
-gfx/hud/ranks/rank9
+gfx/hud/ranks/arank9
 {
 	nomipmaps
 	nopicmip
@@ -94,7 +94,7 @@ gfx/hud/ranks/rank9
 	}
 }
 
-gfx/hud/ranks/rank10
+gfx/hud/ranks/arank10
 {
 	nomipmaps
 	nopicmip
@@ -105,7 +105,7 @@ gfx/hud/ranks/rank10
 	}
 }
 
-gfx/hud/ranks/rank11
+gfx/hud/ranks/arank11
 {
 	nomipmaps
 	nopicmip

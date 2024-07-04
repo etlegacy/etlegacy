@@ -6,7 +6,7 @@
 //========================================//
 // Helmet ranks
 //========================================//
-models/players/temperate/common/rank2
+models/players/temperate/common/arank2
 {
 	polygonoffset
 	{
@@ -16,7 +16,7 @@ models/players/temperate/common/rank2
 	}
 }
 
-models/players/temperate/common/rank3
+models/players/temperate/common/arank3
 {
 	polygonoffset
 	{
@@ -26,7 +26,7 @@ models/players/temperate/common/rank3
 	}
 }
 
-models/players/temperate/common/rank4
+models/players/temperate/common/arank4
 {
 	polygonoffset
 	{
@@ -36,7 +36,7 @@ models/players/temperate/common/rank4
 	}
 }
 
-models/players/temperate/common/rank5
+models/players/temperate/common/arank5
 {
 	polygonoffset
 	{
@@ -46,7 +46,7 @@ models/players/temperate/common/rank5
 	}
 }
 
-models/players/temperate/common/rank6
+models/players/temperate/common/arank6
 {
 	polygonoffset
 	{
@@ -56,7 +56,7 @@ models/players/temperate/common/rank6
 	}
 }
 
-models/players/temperate/common/rank7
+models/players/temperate/common/arank7
 {
 	polygonoffset
 	{
@@ -66,7 +66,7 @@ models/players/temperate/common/rank7
 	}
 }
 
-models/players/temperate/common/rank8
+models/players/temperate/common/arank8
 {
 	polygonoffset
 	{
@@ -76,7 +76,7 @@ models/players/temperate/common/rank8
 	}
 }
 
-models/players/temperate/common/rank9
+models/players/temperate/common/arank9
 {
 	polygonoffset
 	{
@@ -86,7 +86,7 @@ models/players/temperate/common/rank9
 	}
 }
 
-models/players/temperate/common/rank10
+models/players/temperate/common/arank10
 {
 	polygonoffset
 	{
@@ -96,7 +96,7 @@ models/players/temperate/common/rank10
 	}
 }
 
-models/players/temperate/common/rank11
+models/players/temperate/common/arank11
 {
 	polygonoffset
 	{
