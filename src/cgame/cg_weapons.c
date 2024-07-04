@@ -663,12 +663,12 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
  * @param[in] index
  * @param[in] sideNum
  */
-void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum)
+void CG_RailTrail2(const vec3_t color, const vec3_t start, const vec3_t end, int index, int sideNum)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
 
-	if (index)
+	if (index >= 0)
 	{
 		le = CG_FindLocalEntity(index, sideNum);
 
