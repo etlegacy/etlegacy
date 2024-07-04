@@ -623,6 +623,19 @@ float GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
 	return -1;
 }
 
+static const char *giveCmds[] =
+{
+	"all",
+	"skill",
+	"medal",
+	"health",
+	"weapons",
+	"ammo",
+	"allammo",
+	"keys",
+	NULL
+};
+
 /**
  * @brief Give items to a client
  * @param[in,out] ent
@@ -638,19 +651,35 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	qboolean hasAmount = qfalse;
 	int      cnum;
 	int      i = 1;
+	int      j;
+	qboolean validGiveCmd = qfalse;
 
 	trap_Argv(i, name, sizeof(name));
 
-	// try to find a targeted player, otherwise use command caller
-	cnum = G_ClientNumberFromString(ent, name);
-
-	if (cnum != -1)
+	// check if we're issuing a valid give command first
+	for (j = 0; j < ARRAY_LEN(giveCmds); j++)
 	{
-		// retrieved player ent
-		ent = cnum + g_entities;
+		// strcmpn so this matches the behavior used to check the argument later
+		if (!Q_stricmpn(giveCmds[j], name, strlen(giveCmds[j])))
+		{
+			validGiveCmd = qtrue;
+			break;
+		}
+	}
 
-		// get the give argument
-		trap_Argv(++i, name, sizeof(name));
+	// first argument wasn't a valid give command, try to find a targeted player, otherwise use command caller
+	if (!validGiveCmd)
+	{
+		cnum = G_ClientNumberFromString(ent, name);
+
+		if (cnum != -1)
+		{
+			// retrieved player ent
+			ent = cnum + g_entities;
+
+			// get the give argument
+			trap_Argv(++i, name, sizeof(name));
+		}
 	}
 
 	if (!ent || !ent->client)
@@ -729,13 +758,13 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	if (Q_stricmpn(name, "medal", 5) == 0)
 	{
-		int i;
+		int skill;
 
-		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		for (skill = SK_BATTLE_SENSE; skill < SK_NUM_SKILLS; skill++)
 		{
-			if (!ent->client->sess.medals[i])
+			if (!ent->client->sess.medals[skill])
 			{
-				ent->client->sess.medals[i] = 1;
+				ent->client->sess.medals[skill] = 1;
 				break; // add 1 medal, not all at once..
 			}
 		}
