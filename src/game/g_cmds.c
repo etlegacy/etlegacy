@@ -647,11 +647,11 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	char     name[MAX_TOKEN_CHARS], amt[MAX_TOKEN_CHARS];
 	weapon_t weapon;
 	qboolean give_all;
-	int      amount    = 0;
-	qboolean hasAmount = qfalse;
 	int      cnum;
-	int      i = 1;
 	int      j;
+	int      amount       = 0;
+	qboolean hasAmount    = qfalse;
+	int      i            = 1;
 	qboolean validGiveCmd = qfalse;
 
 	trap_Argv(i, name, sizeof(name));
