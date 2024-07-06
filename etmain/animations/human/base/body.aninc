@@ -118,10 +118,10 @@
 
 		//drop				2975	5	0	20	0	0	0
 
-		climb_up			2981	21	21	20	-1	0	0
-		climb_dis			3003	31	0	20	0	0	0
-		climb_start			3035	46	0	20	0	0	0
-		climb_down			3082	28	28	20	-1	0	0
+		climb_up			2981	21	21	10	-1	0	0
+		climb_dis			3004	7	0	40	0	0	0
+		climb_start			2981	1	0	100	-1	1	0  // effectively disable
+		climb_down			3082	28	28	12	-1	0	0
 
 		jump_1step_2h		3111	11	0	20	0	0	0
 		jump_1step_1h		3131	11	0	20	0	0	0
