@@ -3713,6 +3713,15 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 			VectorCopy(flash.origin, muzzlePoint);
 
+			// the muzzlePoint differs in a big way when proning between 1st and
+			// 3rd person - this can cause flames to not render in 3rd person
+			// that reach and do render in 1st person - to remedy, apply an
+			// offset
+			if (cg.renderingThirdPerson && (cg.predictedPlayerState.eFlags & EF_PRONE)) {
+				const vec3_t offz = { 0.0f, 0.0f, 7.3f };
+				VectorAdd(muzzlePoint, offz, muzzlePoint);
+			}
+
 			CG_Trace(&trace, muzzlePoint, NULL, NULL, muzzlePoint, cent->currentState.number, MASK_SHOT | MASK_WATER);
 
 			if (trace.startsolid)
