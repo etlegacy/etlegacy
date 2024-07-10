@@ -131,6 +131,11 @@ char *Sys_DefaultHomePath(void)
 {
 	char *p;
 
+	if ((p = getenv("ETL_HOME")) != NULL)
+	{
+		Q_strncpyz(homePath, p, sizeof(homePath));
+	}
+
 	if (!*homePath)
 	{
 		if ((p = getenv("HOME")) != NULL)
