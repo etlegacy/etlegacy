@@ -518,7 +518,7 @@ void CG_ParseWolfinfo(void)
 	{
 		if (cg_announcer.integer)
 		{
-			// @XXX Workaround for #522
+			// FIXME : Workaround
 			// As upon a warmup end, 'trap_S_Respatialize' seems to be called
 			// only _after_ calling this place here (which would make
 			// 'trap_S_StartLocalSound' work correctly) - we add this edge case
