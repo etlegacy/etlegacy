@@ -3131,3 +3131,24 @@ int CG_RoundTime(qtime_t *qtime)
 
 	return msec;
 }
+
+/**
+ * @brief CG_IsVersionCompatible
+ * @param[in] current
+ * @param[in] minimum
+ * @return
+ */
+qboolean CG_IsVersionCompatible(version_t *current, version_t *minimum)
+{
+    if (current->major != minimum->major)
+    {
+        return current->major > minimum->major;
+    }
+    
+    if (current->minor != minimum->minor)
+    {
+        return current->minor > minimum->minor;
+    }
+    
+    return current->patch >= minimum->patch;
+}

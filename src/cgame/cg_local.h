@@ -1113,6 +1113,17 @@ typedef enum
 	SHOW_ON
 } showView_t;
 
+/**
+ * @struct version_t
+ * @brief
+ */
+typedef struct version_s
+{
+	int major;
+	int minor;
+	int patch;
+} version_t;
+
 void CG_ParseMapEntityInfo(int axis_number, int allied_number);
 
 #define MAX_WEAP_BANKS_MP          10
@@ -1135,6 +1146,7 @@ typedef struct
 
 	qboolean demoPlayback;
 	demoPlayInfo_t *demoinfo;
+	version_t demoVersion;
 	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
@@ -3018,6 +3030,7 @@ void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
 int CG_RoundTime(qtime_t *qtime);
+qboolean CG_IsVersionCompatible(version_t *current, version_t *minimum);
 
 void CG_HudEditor_Cleanup();
 
