@@ -1655,8 +1655,11 @@ void G_IntermissionMapList(gentity_t *ent, unsigned int dwCommand, int value)
 #ifdef FEATURE_RATING
 		if (g_skillRating.integer)
 		{
+			// NOTE: need at least 3 digits prcision to ensure map bias is computed correctly
+			// on debriefing page, otherwise the implicit rounding doesn't provide the required
+			// 1 digit precision we are waiting for
 			Q_strcat(mapList, MAX_STRING_CHARS,
-			         va("%s %d %d %d %2.2f ",
+			         va("%s %d %d %d %2.3f ",
 			            level.mapvoteinfo[level.sortedMaps[i]].bspName,
 			            level.sortedMaps[i],
 			            level.mapvoteinfo[level.sortedMaps[i]].lastPlayed,
