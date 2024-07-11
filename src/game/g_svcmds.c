@@ -1576,6 +1576,7 @@ static void Svcmd_Burn(void)
 
 	trap_Argv(1, name, sizeof(name));
 
+	// for all players
 	if (!Q_stricmp(name, "-1") || doAll)
 	{
 		int it, count = 0;
@@ -1589,7 +1590,6 @@ static void Svcmd_Burn(void)
 				continue;
 			}
 
-			vic->client->ps.eFlags |= EF_SMOKING;
 			// FIXME: add mod param? mod_unknown instead of flamer
 			G_BurnMeGood(vic, vic, NULL);
 			count++;
@@ -1607,6 +1607,7 @@ static void Svcmd_Burn(void)
 		return;
 	}
 
+	// for a specific player
 	cnum = G_ClientNumberFromString(NULL, name);
 
 	if (cnum == -1)
@@ -1622,7 +1623,6 @@ static void Svcmd_Burn(void)
 		return;
 	}
 
-	vic->client->ps.eFlags |= EF_SMOKINGBLACK;
 	// FIXME: add mod param? mod_unknown instead of flamer
 	G_BurnMeGood(vic, vic, NULL);
 
