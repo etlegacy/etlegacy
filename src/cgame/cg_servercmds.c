@@ -365,26 +365,15 @@ void CG_ParseSysteminfo(void)
 
 	info = CG_ConfigString(CS_SYSTEMINFO);
 
-/*
-    cgs.pmove_fixed = (atoi(Info_ValueForKey(info, "pmove_fixed"))) ? qtrue : qfalse;
-    cgs.pmove_msec  = Q_atoi(Info_ValueForKey(info, "pmove_msec"));
-    if (cgs.pmove_msec < 8)
-    {
-        cgs.pmove_msec = 8;
-    }
-    else if ( cgs.pmove_msec > 33)
-    {
-        cgs.pmove_msec = 33;
-    }
-*/
 	cgs.sv_fps = Q_atoi(Info_ValueForKey(info, "sv_fps"));
 
+	if (!cgs.sv_fps)
+	{
+		// no way to know for sure, assume default
+		cgs.sv_fps = 20;
+	}
+
 	cgs.sv_cheats = (atoi(Info_ValueForKey(info, "sv_cheats"))) ? qtrue : qfalse;
-
-/*
-
-    bg_evaluategravity = atof(Info_ValueForKey(info, "g_gravity"));
-*/
 }
 
 
