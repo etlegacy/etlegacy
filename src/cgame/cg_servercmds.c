@@ -518,7 +518,16 @@ void CG_ParseWolfinfo(void)
 	{
 		if (cg_announcer.integer)
 		{
-			trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
+			// FIXME : Workaround
+			// As upon a warmup end, 'trap_S_Respatialize' seems to be called
+			// only _after_ calling this place here (which would make
+			// 'trap_S_StartLocalSound' work correctly) - we add this edge case
+			// to play the 'FIGHT' announcer voice line on the spectator itself.
+			if (cg.snap->ps.pm_flags & PMF_FOLLOW) {
+				trap_S_StartSound(NULL, cg.clientNum, CHAN_ANNOUNCER, cgs.media.countFight);
+			} else {
+				trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
+			}
 		}
 
 		Pri("^1FIGHT!\n");
