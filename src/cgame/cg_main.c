@@ -821,25 +821,54 @@ void CG_RestoreProfile(void)
 }
 
 /**
- * @brief Try to exec a cfg file if it is found
+ * @brief Checks whether a cfg file exists or not
  * @param[in] filename
- * @return
+ * @return qtrue if file exists
  */
-qboolean CG_execFile(const char *filename)
+qboolean CG_ConfigFileExists(const char *filename)
 {
 	int handle = trap_PC_LoadSource(va("%s.cfg", filename));
-
 	trap_PC_FreeSource(handle);
+	return handle ? qtrue : qfalse;
+}
 
-	if (!handle)
-	{
-		// file not found
-		return qfalse;
-	}
-
+/**
+ * @brief Execs a .cfg file
+ * @param[in] filename
+ */
+void CG_execFile(const char *filename)
+{
 	trap_SendConsoleCommand(va("exec %s.cfg\n", filename));
+}
 
-	return qtrue;
+/**
+ * @brief Executes map-specific autoexec files
+ * @param[in] cheats
+ */
+void CG_MapAutoexec(qboolean cheats)
+{
+	char       filename[128];
+	const char *basename = cheats ? "autoexec_devmap_" : "autoexec_";
+
+	Q_strncpyz(filename, basename, sizeof(filename));
+	Q_strcat(filename, sizeof(filename), cgs.rawmapname);
+
+	if (CG_ConfigFileExists(filename))
+	{
+		CG_execFile(filename);
+		cgs.mapConfigLoaded = qtrue;
+	}
+	else
+	{
+		Q_strncpyz(filename, basename, sizeof(filename));
+		Q_strcat(filename, sizeof(filename), "default");
+
+		if (CG_ConfigFileExists(filename))
+		{
+			CG_execFile(filename);
+			cgs.mapConfigLoaded = qtrue;
+		}
+	}
 }
 
 /**
@@ -2838,9 +2867,14 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_AssetCache();
 
 	// try execing map autoexec scripts
-	if (!CG_execFile(va("autoexec_%s", cgs.rawmapname)))
+	cgs.mapConfigLoaded = qfalse;
+	CG_MapAutoexec(cgs.sv_cheats);
+
+	// if cheats are enabled but devmap-specific configs aren't found,
+	// fallback to regular configs
+	if (cgs.sv_cheats && !cgs.mapConfigLoaded)
 	{
-		CG_execFile("autoexec_default");
+		CG_MapAutoexec(qfalse);
 	}
 
 	cgs.campaignInfoLoaded = qfalse;
@@ -3140,15 +3174,15 @@ int CG_RoundTime(qtime_t *qtime)
  */
 qboolean CG_IsVersionCompatible(version_t *current, version_t *minimum)
 {
-    if (current->major != minimum->major)
-    {
-        return current->major > minimum->major;
-    }
-    
-    if (current->minor != minimum->minor)
-    {
-        return current->minor > minimum->minor;
-    }
-    
-    return current->patch >= minimum->patch;
+	if (current->major != minimum->major)
+	{
+		return current->major > minimum->major;
+	}
+
+	if (current->minor != minimum->minor)
+	{
+		return current->minor > minimum->minor;
+	}
+
+	return current->patch >= minimum->patch;
 }

@@ -2704,6 +2704,8 @@ typedef struct cgs_s
 	int sv_fps;                 // FPS server wants to send
 	sampledStat_t sampledStat;  // fps client sample data
 
+	qboolean mapConfigLoaded; // map-specific autoexec status
+
 } cgs_t;
 
 //==============================================================================
@@ -3023,7 +3025,8 @@ void CG_QueueMusic(void);
 
 void CG_UpdateCvars(void);
 
-qboolean CG_execFile(const char *filename);
+qboolean CG_ConfigFileExists(const char *filename);
+void CG_execFile(const char *filename);
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
 void CG_KeyEvent(int key, qboolean down);
