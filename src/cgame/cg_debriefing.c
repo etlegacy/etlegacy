@@ -1933,7 +1933,7 @@ qboolean CG_Debriefing_Draw(void)
 
 	BG_PanelButtonsRender(chatPanelButtons);
 	BG_PanelButtonsRender(buttonsPanel);
-	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+	CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
 
 	return qtrue;
 }

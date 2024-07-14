@@ -1022,7 +1022,7 @@ void UI_Refresh(int realtime)
 		uiClientState_t cstate;
 
 		trap_GetClientState(&cstate);
-		if (cstate.connState <= CA_DISCONNECTED || cstate.connState >= CA_ACTIVE)
+		if ((cstate.connState <= CA_DISCONNECTED || cstate.connState >= CA_ACTIVE) && uiInfo.uiDC.cursorVisible)
 		{
 			UI_DrawHandlePic(uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory, 32, 32, uiInfo.uiDC.Assets.cursor);
 		}
@@ -6491,14 +6491,15 @@ static void UI_InsertServerIntoDisplayList(int num, int position)
 	}
 	uiInfo.serverStatus.displayServers[position] = num;
 
-    // If we're inserting a server before the currently selected one, increment the selected item.
-    // This has improved UX over changing the item out from under the user, who might want to select a server
-    // and so something with it before the list finishes loading, which can take a while.
-    if (position < uiInfo.serverStatus.currentServer) {
-        uiInfo.serverStatus.currentServer++;
-        menu = Menus_FindByName("serverList");
-        Menu_SetFeederSelection(menu, FEEDER_SERVERS, uiInfo.serverStatus.currentServer, NULL);
-    }
+	// If we're inserting a server before the currently selected one, increment the selected item.
+	// This has improved UX over changing the item out from under the user, who might want to select a server
+	// and so something with it before the list finishes loading, which can take a while.
+	if (position < uiInfo.serverStatus.currentServer)
+	{
+		uiInfo.serverStatus.currentServer++;
+		menu = Menus_FindByName("serverList");
+		Menu_SetFeederSelection(menu, FEEDER_SERVERS, uiInfo.serverStatus.currentServer, NULL);
+	}
 }
 
 /**
@@ -8860,6 +8861,9 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 	{
 		menutype = menu;
 
+		// assume we want to draw cursor
+		uiInfo.uiDC.cursorVisible = qtrue;
+
 		switch (menu)
 		{
 		case UIMENU_NONE:
@@ -8960,48 +8964,42 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 			return;
 
 		case UIMENU_WM_QUICKMESSAGE:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("wm_quickmessage");
 			return;
 
 		case UIMENU_WM_QUICKMESSAGEALT:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("wm_quickmessageAlt");
 			return;
 
 		case UIMENU_WM_FTQUICKMESSAGE:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("wm_ftquickmessage");
 			return;
 
 		case UIMENU_WM_FTQUICKMESSAGEALT:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("wm_ftquickmessageAlt");
 			return;
 
 		case UIMENU_WM_TAPOUT:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("tapoutmsg");
 			return;
 
 		case UIMENU_WM_TAPOUT_LMS:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("tapoutmsglms");
@@ -9017,32 +9015,28 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 			return;
 
 		case UIMENU_WM_CLASS:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("wm_class");
 			return;
 
 		case UIMENU_WM_CLASSALT:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("wm_classAlt");
 			return;
 
 		case UIMENU_WM_TEAM:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("wm_team");
 			return;
 
 		case UIMENU_WM_TEAMALT:
-			uiInfo.uiDC.cursorx = 639;
-			uiInfo.uiDC.cursory = 479;
+			uiInfo.uiDC.cursorVisible = qfalse;
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_OpenByName("wm_teamAlt");

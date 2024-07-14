@@ -167,18 +167,18 @@ static panel_button_t rightLimboPannel =
 #define MEDAL_PIC_X     450.f
 #define MEDAL_PIC_SIZE  (630.f - MEDAL_PIC_X)
 #define MEDAL_PIC(number)                \
-	static panel_button_t medalPic ## number = {         \
-		NULL,                                   \
-		NULL,                                   \
-		{ MEDAL_PIC_X + MEDAL_PIC_GAP + ((number) * (MEDAL_PIC_GAP + MEDAL_PIC_WIDTH)),119,                                                                           MEDAL_PIC_WIDTH, 26 }, \
-		{ number,                  0,                                                                             0,               0, 0, 0, 0, 0},        \
-		NULL,                      /* font       */              \
-		NULL,                      /* keyDown    */                  \
-		NULL,                      /* keyUp  */                  \
-		CG_LimboPanel_RenderMedal,              \
-		NULL,                                   \
-		0,                                   \
-	}
+		static panel_button_t medalPic ## number = {         \
+			NULL,                                   \
+			NULL,                                   \
+			{ MEDAL_PIC_X + MEDAL_PIC_GAP + ((number) * (MEDAL_PIC_GAP + MEDAL_PIC_WIDTH)),119,                                                                           MEDAL_PIC_WIDTH, 26 }, \
+			{ number,                  0,                                                                             0,               0, 0, 0, 0, 0},        \
+			NULL,                      /* font       */              \
+			NULL,                      /* keyDown    */                  \
+			NULL,                      /* keyUp  */                  \
+			CG_LimboPanel_RenderMedal,              \
+			NULL,                                   \
+			0,                                   \
+		}
 
 MEDAL_PIC(0);
 MEDAL_PIC(1);
@@ -195,18 +195,18 @@ MEDAL_PIC(6);
 #define SKILL_PIC_X     450.f
 #define SKILL_PIC_SIZE  (630.f - SKILL_PIC_X)
 #define SKILL_PIC(number)                \
-	static panel_button_t skillPic ## number = {         \
-		NULL,                                   \
-		NULL,                                   \
-		{ SKILL_PIC_X + SKILL_PIC_GAP + ((number) * (SKILL_PIC_GAP + SKILL_PIC_WIDTH)),119,                                                                           SKILL_PIC_WIDTH, 26 }, \
-		{ number,                     0,                                                                             0,               0, 0, 0, 0, 0}, \
-		NULL,                         /* font       */              \
-		NULL,                         /* keyDown    */              \
-		NULL,                         /* keyUp  */                  \
-		CG_LimboPanel_RenderPrestige,        \
-		NULL,                                \
-		0,                                   \
-	}
+		static panel_button_t skillPic ## number = {         \
+			NULL,                                   \
+			NULL,                                   \
+			{ SKILL_PIC_X + SKILL_PIC_GAP + ((number) * (SKILL_PIC_GAP + SKILL_PIC_WIDTH)),119,                                                                           SKILL_PIC_WIDTH, 26 }, \
+			{ number,                     0,                                                                             0,               0, 0, 0, 0, 0}, \
+			NULL,                         /* font       */              \
+			NULL,                         /* keyDown    */              \
+			NULL,                         /* keyUp  */                  \
+			CG_LimboPanel_RenderPrestige,        \
+			NULL,                                \
+			0,                                   \
+		}
 
 SKILL_PIC(0);
 SKILL_PIC(1);
@@ -226,45 +226,45 @@ SKILL_PIC(6);
 #define TEAM_COUNTER_SPACING    4.f
 
 #define TEAM_COUNTER(number)             \
-	static panel_button_t teamCounter ## number = {      \
-		NULL,                                   \
-		NULL,                                   \
-		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)),236,                                                                                       TEAM_COUNTER_WIDTH, 14 },  \
-		{ 1,                         number,                                                                                    0,                  0, 0, 0, 0, 0},        \
-		NULL,                        /* font       */              \
-		NULL,                        /* keyDown    */                  \
-		NULL,                        /* keyUp  */                  \
-		CG_LimboPanel_RenderCounter,            \
-		NULL,                                   \
-		0,                                   \
-	};                                          \
-	static panel_button_t teamCounterLight ## number = { \
-		NULL,                                   \
-		NULL,                                   \
-		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)) - 20,236,                                                                                            16, 16 }, \
-		{ 1,                       number,                                                                                         0,  0, 0, 0, 0, 0},        \
-		NULL,                      /* font       */              \
-		NULL,                      /* keyDown    */                  \
-		NULL,                      /* keyUp  */                  \
-		CG_LimboPanel_RenderLight,              \
-		NULL,                                   \
-		0,                                   \
-	};                                          \
-	static panel_button_t teamButton ## number = {       \
-		NULL,                                   \
-		NULL,                                   \
-		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH) + (TEAM_COUNTER_BUTTON_DIFF / 2.f)) - 17 + TEAM_COUNTER_SPACING, \
-		  188 + TEAM_COUNTER_SPACING, \
-		  TEAM_COUNTER_WIDTH - TEAM_COUNTER_BUTTON_DIFF + 20 - 2 * TEAM_COUNTER_SPACING, \
-		  44 - 2 * TEAM_COUNTER_SPACING },  \
-		{ number,                                                                        0,0, 0, 0, 0, 0, 0 },        \
-		NULL,                                                                            /* font       */              \
-		CG_LimboPanel_TeamButton_KeyDown,                                                /* keyDown    */ \
-		NULL,                                                                            /* keyUp  */                  \
-		CG_LimboPanel_RenderTeamButton,         \
-		NULL,                                   \
-		0,                                   \
-	}
+		static panel_button_t teamCounter ## number = {      \
+			NULL,                                   \
+			NULL,                                   \
+			{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)),236,                                                                                       TEAM_COUNTER_WIDTH, 14 },  \
+			{ 1,                         number,                                                                                    0,                  0, 0, 0, 0, 0},        \
+			NULL,                        /* font       */              \
+			NULL,                        /* keyDown    */                  \
+			NULL,                        /* keyUp  */                  \
+			CG_LimboPanel_RenderCounter,            \
+			NULL,                                   \
+			0,                                   \
+		};                                          \
+		static panel_button_t teamCounterLight ## number = { \
+			NULL,                                   \
+			NULL,                                   \
+			{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)) - 20,236,                                                                                            16, 16 }, \
+			{ 1,                       number,                                                                                         0,  0, 0, 0, 0, 0},        \
+			NULL,                      /* font       */              \
+			NULL,                      /* keyDown    */                  \
+			NULL,                      /* keyUp  */                  \
+			CG_LimboPanel_RenderLight,              \
+			NULL,                                   \
+			0,                                   \
+		};                                          \
+		static panel_button_t teamButton ##       number = {       \
+			NULL,                                   \
+			NULL,                                   \
+			{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH) + (TEAM_COUNTER_BUTTON_DIFF / 2.f)) - 17 + TEAM_COUNTER_SPACING, \
+			  188 + TEAM_COUNTER_SPACING, \
+			  TEAM_COUNTER_WIDTH - TEAM_COUNTER_BUTTON_DIFF + 20 - 2 * TEAM_COUNTER_SPACING, \
+			  44 - 2 * TEAM_COUNTER_SPACING },  \
+			{ number,                                                                    0,0, 0, 0, 0, 0, 0 },        \
+			NULL,                                                                        /* font       */              \
+			CG_LimboPanel_TeamButton_KeyDown,                                            /* keyDown    */ \
+			NULL,                                                                        /* keyUp  */                  \
+			CG_LimboPanel_RenderTeamButton,         \
+			NULL,                                   \
+			0,                                   \
+		}
 
 TEAM_COUNTER(0);
 TEAM_COUNTER(1);
@@ -278,30 +278,30 @@ TEAM_COUNTER(2);
 //#define CLASS_COUNTER_LIGHT_DIFF 4.f
 #define CLASS_COUNTER_BUTTON_DIFF (-18.f)
 #define CLASS_COUNTER(number)            \
-	static panel_button_t classCounter ## number = {     \
-		NULL,                                   \
-		NULL,                                   \
-		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + ((number) * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)),302,                                                                                           CLASS_COUNTER_WIDTH, 14 }, \
-		{ 0,                         number,                                                                                        0,                   0, 0, 0, 0, 0},        \
-		NULL,                        /* font       */              \
-		NULL,                        /* keyDown    */                  \
-		NULL,                        /* keyUp  */                  \
-		CG_LimboPanel_RenderCounter,            \
-		NULL,                                   \
-		0,                                      \
-	};                                          \
-	static panel_button_t classButton ## number = {      \
-		NULL,                                   \
-		NULL,                                   \
-		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + ((number) * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)) + (CLASS_COUNTER_BUTTON_DIFF / 2.f),266,                                                                                                                               CLASS_COUNTER_WIDTH - CLASS_COUNTER_BUTTON_DIFF, 34 },   \
-		{ 0,                             number,                                                                                                                            0,                                               0, 0, 0, 0, 0},        \
-		NULL,                            /* font       */              \
-		CG_LimboPanel_ClassButton_KeyDown,/* keyDown   */  \
-		NULL,                            /* keyUp  */                  \
-		CG_LimboPanel_RenderClassButton,        \
-		NULL,                                   \
-		0,                                      \
-	}
+		static panel_button_t classCounter ## number = {     \
+			NULL,                                   \
+			NULL,                                   \
+			{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + ((number) * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)),302,                                                                                           CLASS_COUNTER_WIDTH, 14 }, \
+			{ 0,                         number,                                                                                        0,                   0, 0, 0, 0, 0},        \
+			NULL,                        /* font       */              \
+			NULL,                        /* keyDown    */                  \
+			NULL,                        /* keyUp  */                  \
+			CG_LimboPanel_RenderCounter,            \
+			NULL,                                   \
+			0,                                      \
+		};                                          \
+		static panel_button_t classButton ## number = {      \
+			NULL,                                   \
+			NULL,                                   \
+			{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + ((number) * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)) + (CLASS_COUNTER_BUTTON_DIFF / 2.f),266,                                                                                                                               CLASS_COUNTER_WIDTH - CLASS_COUNTER_BUTTON_DIFF, 34 },   \
+			{ 0,                             number,                                                                                                                            0,                                               0, 0, 0, 0, 0},        \
+			NULL,                            /* font       */              \
+			CG_LimboPanel_ClassButton_KeyDown,/* keyDown   */  \
+			NULL,                            /* keyUp  */                  \
+			CG_LimboPanel_RenderClassButton,        \
+			NULL,                                   \
+			0,                                      \
+		}
 
 static panel_button_t classBar =
 {
@@ -338,18 +338,18 @@ CLASS_COUNTER(3);
 CLASS_COUNTER(4);
 
 #define FILTER_BUTTON(number) \
-	static panel_button_t filterButton ## number = { \
-		NULL,                               \
-		NULL,                               \
-		{ 14,                      50 + ((number) * 30), 26, 26 },     \
-		{ number,                  0,                    0,  0, 0, 0, 0, 0},    \
-		NULL,                      /* font       */          \
-		CG_LimboPanel_Filter_KeyDown,/* keyDown    */              \
-		NULL,                      /* keyUp  */              \
-		CG_LimboPanel_Filter_Draw,          \
-		NULL,                               \
-		0,                                  \
-	}
+		static panel_button_t filterButton ## number = { \
+			NULL,                               \
+			NULL,                               \
+			{ 14,                      50 + ((number) * 30), 26, 26 },     \
+			{ number,                  0,                    0,  0, 0, 0, 0, 0},    \
+			NULL,                      /* font       */          \
+			CG_LimboPanel_Filter_KeyDown,/* keyDown    */              \
+			NULL,                      /* keyUp  */              \
+			CG_LimboPanel_Filter_Draw,          \
+			NULL,                               \
+			0,                                  \
+		}
 
 FILTER_BUTTON(0);
 FILTER_BUTTON(1);
@@ -376,18 +376,18 @@ static panel_button_t filterTitleText =
 };
 
 #define LEFT_FRAME(shader, number, x, y, w, h) \
-	static panel_button_t leftFrame0 ## number = {   \
-		shader,                             \
-		NULL,                               \
-		{ x,                       y, w, h },                     \
-		{ 0,                       0, 0, 0, 0, 0, 0, 0},         \
-		NULL,                      /* font       */          \
-		NULL,                      /* keyDown    */              \
-		NULL,                      /* keyUp  */              \
-		BG_PanelButtonsRender_Img,          \
-		NULL,                               \
-		0,                                  \
-	}
+		static panel_button_t leftFrame0 ## number = {   \
+			shader,                             \
+			NULL,                               \
+			{ x,                       y, w, h },                     \
+			{ 0,                       0, 0, 0, 0, 0, 0, 0},         \
+			NULL,                      /* font       */          \
+			NULL,                      /* keyDown    */              \
+			NULL,                      /* keyUp  */              \
+			BG_PanelButtonsRender_Img,          \
+			NULL,                               \
+			0,                                  \
+		}
 
 #define LF_X1 64
 #define LF_X2 416
@@ -3568,7 +3568,7 @@ qboolean CG_LimboPanel_Draw(void)
 	BG_PanelButtonsRender(limboPanelButtons);
 
 	trap_R_SetColor(NULL);
-	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+	CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
 
 	if (cgs.ccRequestedObjective != -1)
 	{
@@ -3831,7 +3831,7 @@ void CG_LimboPanel_SetDefaultWeapon(int slot)
 	}
 	else
 	{
-        cgs.ccSelectedSecondaryWeapon = BG_GetBestSecondaryWeapon(CG_LimboPanel_GetClass(), CG_LimboPanel_GetTeam(), cgs.ccSelectedPrimaryWeapon, cgs.clientinfo[cg.clientNum].skill);
+		cgs.ccSelectedSecondaryWeapon = BG_GetBestSecondaryWeapon(CG_LimboPanel_GetClass(), CG_LimboPanel_GetTeam(), cgs.ccSelectedPrimaryWeapon, cgs.clientinfo[cg.clientNum].skill);
 	}
 }
 
