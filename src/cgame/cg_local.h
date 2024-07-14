@@ -1582,6 +1582,8 @@ typedef struct
 	qboolean updateOldestValidCmd;                    ///< whenever snapshot transition happens save oldest valid command
 	int oldestValidCmd;                               ///< that will be used as a next starting point for prediction
 	                                                  ///< instead of iterating through whole CMD_BACKUP array every frame
+
+	qboolean mapConfigLoaded; // qtrue if map-specific autoexec was loaded
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS 5
@@ -2703,8 +2705,6 @@ typedef struct cgs_s
 	qboolean sv_cheats;         // server allows cheats
 	int sv_fps;                 // FPS server wants to send
 	sampledStat_t sampledStat;  // fps client sample data
-
-	qboolean mapConfigLoaded; // map-specific autoexec status
 
 } cgs_t;
 
