@@ -1022,9 +1022,14 @@ void UI_Refresh(int realtime)
 		uiClientState_t cstate;
 
 		trap_GetClientState(&cstate);
+
+		// Note: this is the only place where cursor drawing is explicitly called in UI,
+		// so it's just checking if the cursor should be visible or not.
+		// If cursor drawing is explicitly called somewhere else in UI, this should probably
+		// be refactored into a separate cursor drawing function (see CG_DrawCursor)
 		if ((cstate.connState <= CA_DISCONNECTED || cstate.connState >= CA_ACTIVE) && uiInfo.uiDC.cursorVisible)
 		{
-			UI_DrawHandlePic(uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory, 32, 32, uiInfo.uiDC.Assets.cursor);
+			UI_DrawHandlePic(uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory, CURSOR_SIZE, CURSOR_SIZE, uiInfo.uiDC.Assets.cursor);
 		}
 	}
 }

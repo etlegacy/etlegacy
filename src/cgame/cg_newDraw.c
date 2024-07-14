@@ -860,6 +860,7 @@ void CG_EventHandling(int type, qboolean fForced)
 			{
 				trap_UI_Popup(UIMENU_INGAME);
 			}
+
 			trap_Cvar_Set("cl_bypassmouseinput", "0");
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_SPAWNPOINTMSG)
