@@ -35,6 +35,8 @@
 #ifndef INCLUDE_CG_PUBLIC_H
 #define INCLUDE_CG_PUBLIC_H
 
+#include "../qcommon/q_shared.h"
+
 /// Allow a lot of command backups for very fast systems
 /// multiple commands may be combined into a single packet, so this
 /// needs to be larger than PACKET_BACKUP

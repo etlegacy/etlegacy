@@ -36,6 +36,8 @@
 #ifndef INCLUDE_G_PUBLIC_H
 #define INCLUDE_G_PUBLIC_H
 
+#include "../qcommon/q_shared.h"
+
 #define GAME_API_VERSION    8
 
 //===============================================================

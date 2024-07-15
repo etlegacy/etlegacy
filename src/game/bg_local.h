@@ -36,6 +36,8 @@
 #ifndef INCLUDE_BG_LOCAL_H
 #define INCLUDE_BG_LOCAL_H
 
+#include "bg_public.h"
+
 #define MIN_WALK_NORMAL 0.7f     ///< Can't walk on very steep slopes
 
 #define STEPSIZE        18

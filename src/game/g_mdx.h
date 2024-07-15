@@ -29,6 +29,8 @@
 #ifndef INCLUDE_G_MDX_H
 #define INCLUDE_G_MDX_H
 
+#include "../tvgame/tvg_local.h"
+
 //TODO: enable this later on when fixed (&& figured out how the fuck it works)
 /*
 #ifdef ETLEGACY_DEBUG

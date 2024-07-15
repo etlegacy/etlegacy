@@ -45,6 +45,8 @@
 #ifndef INCLUDE_Q_UNICODE_H
 #define INCLUDE_Q_UNICODE_H
 
+#include "../qcommon/q_shared.h"
+
 // The version in which unicode was added
 #define UNICODE_SUPPORT_VERSION 273
 

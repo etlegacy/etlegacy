@@ -39,6 +39,8 @@
 #ifndef IRC_CLIENT_H
 #define IRC_CLIENT_H
 
+#include "../qcommon/q_shared.h"
+
 /* IRC control cvars */
 extern cvar_t *irc_mode;
 extern cvar_t *irc_server;

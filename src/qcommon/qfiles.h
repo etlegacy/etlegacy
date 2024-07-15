@@ -37,6 +37,8 @@
 #ifndef INCLUDE_QFILES_H
 #define INCLUDE_QFILES_H
 
+#include "../qcommon/q_shared.h"
+
 // surface geometry should not exceed these limits
 #define SHADER_MAX_VERTEXES 10000 ///< Arnout: 1024+1 (1 buffer for RB_EndSurface overflow check) // was 4000, 1000 in q3ta //Jacker changed from 1025 to 10000
 #define SHADER_MAX_INDEXES  (6 * SHADER_MAX_VERTEXES)

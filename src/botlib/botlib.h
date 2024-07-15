@@ -35,6 +35,8 @@
 #ifndef INCLUDE_BOTLIB_H
 #define INCLUDE_BOTLIB_H
 
+#include "../qcommon/q_shared.h"
+
 #define BOTLIB_API_VERSION      2
 
 #define MAX_DEBUGPOLYS      4096

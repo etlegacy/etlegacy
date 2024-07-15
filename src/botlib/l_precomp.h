@@ -36,6 +36,8 @@
 #ifndef INCLUDE_L_PRECOMP_H
 #define INCLUDE_L_PRECOMP_H
 
+#include "l_script.h"
+
 #ifndef _MAX_PATH
 #define MAX_PATH            MAX_QPATH
 #endif

@@ -35,6 +35,8 @@
 #ifndef INCLUDE_SND_PUBLIC_H
 #define INCLUDE_SND_PUBLIC_H
 
+#include "../qcommon/q_shared.h"
+
 // background track queuing
 #define QUEUED_PLAY_ONCE    -1
 #define QUEUED_PLAY_LOOPED  -2
