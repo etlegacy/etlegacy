@@ -444,7 +444,7 @@ struct gentity_s
 
 	qboolean active;
 
-	// mg42
+	// stationary heavy weapon aiming (e.g. misc_mg42, misc_aagun)
 	float harc;
 	float varc;
 

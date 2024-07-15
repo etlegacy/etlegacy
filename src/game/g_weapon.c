@@ -4213,7 +4213,7 @@ void FireWeapon(gentity_t *ent)
 		return;
 	}
 
-	// mg42
+	// stationary heavy weapon (e.g. misc_mg42, misc_aagun)
 	if (ent->client->ps.persistant[PERS_HWEAPON_USE] && ent->active)
 	{
 		return;

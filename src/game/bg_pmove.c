@@ -2118,7 +2118,7 @@ static void PM_Footsteps(void)
 	// all cyclic walking effects
 	pm->xyspeed = sqrt(pm->ps->velocity[0] * pm->ps->velocity[0] +  pm->ps->velocity[1] * pm->ps->velocity[1]);
 
-	// mg42, always idle
+	// stationary heavy weapon (e.g. misc_mg42, misc_aagun), always idle
 	if (pm->ps->persistant[PERS_HWEAPON_USE])
 	{
 		animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);

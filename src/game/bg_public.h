@@ -553,7 +553,7 @@ typedef struct pmoveExt_s
 	int silencedSideArm;           ///< Keep track of whether the luger/colt is silenced "in holster", prolly want to do this for the kar98 etc too
 	float sprintTime;
 
-	// MG42 aiming
+	// stationary heavy weapon (e.g. misc_mg42, misc_aagun) aiming
 	float varc, harc;
 	vec3_t centerangles;
 
@@ -707,8 +707,7 @@ typedef enum
 	PERS_HEADSHOTS,                ///< Deprecated. Remove?
 	PERS_BLEH_3,
 
-	// mg42                        ///< TODO: I don't understand these here. Can someone explain?
-	PERS_HWEAPON_USE,              ///< enum 12 - don't change
+	PERS_HWEAPON_USE,              ///< non-zero when using a stationary hweapon (mg42=1, aagun=2) - enum 12 - don't change
 	// wolfkick
 	PERS_WOLFKICK
 } persEnum_t;
