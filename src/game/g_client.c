@@ -3230,7 +3230,12 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 		else
 		{
-			if (COM_BitCheck(client->ps.weapons, oldWeapon))
+			// unset some alt weapons
+			if (GetWeaponTableData(oldWeapon)->weapAlts && GetWeaponTableData(oldWeapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED))
+			{
+				client->ps.weapon = oldNextWeapon = GetWeaponTableData(oldWeapon)->weapAlts;
+			}
+			else if (COM_BitCheck(client->ps.weapons, oldWeapon))
 			{
 				client->ps.weapon = oldWeapon;
 			}

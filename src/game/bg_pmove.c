@@ -5198,11 +5198,6 @@ void PmoveSingle(pmove_t *pmove)
 	if (pm->ps->pm_type == PM_DEAD)
 	{
 		PM_DeadMove();
-
-		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SET)
-		{
-			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
-		}
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
