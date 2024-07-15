@@ -2521,9 +2521,10 @@ static void PM_BeginWeaponReload(weapon_t weapon)
  */
 static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolean reload)        // modified to play 1st person alt-mode transition animations.
 {
-	if (pm->ps->pm_flags & PMF_RESPAWNED)
+	// don't allow weapon switch until all buttons are up, except for sniper scopes
+	if (pm->ps->pm_flags & PMF_RESPAWNED && !(GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_SCOPED))
 	{
-		return;     // don't allow weapon switch until all buttons are up
+		return;
 	}
 
 	if (!IS_VALID_WEAPON(newWeapon))
@@ -3367,6 +3368,13 @@ static void PM_Weapon(void)
 	// don't allow attack until all buttons are up
 	if (pm->ps->pm_flags & PMF_RESPAWNED)
 	{
+		// make sure we switch out of sniper scope in case we died while scoped
+		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
+		{
+			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
+			PM_FinishWeaponChange();
+		}
+
 		return;
 	}
 
