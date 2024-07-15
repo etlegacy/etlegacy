@@ -3107,6 +3107,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			return;
 		}
 	}
+	else if (ps && weaponNum == WP_PANZERFAUST)
+	{
+		// 1P - don't pull out another panzerfaust right after firing
+		if (ps->weaponstate == WEAPON_DROPPING && !ps->ammoclip[weaponNum])
+		{
+			return;
+		}
+	}
 
 	// no weapon when on mg_42
 	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
