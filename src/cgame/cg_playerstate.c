@@ -176,15 +176,6 @@ void CG_Respawn(qboolean revived)
 	trap_SendConsoleCommand("-zoom\n");
 	cg.binocZoomTime = 0;
 
-	// ensure scoped weapons are reset after revive
-	if (revived)
-	{
-		if (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SCOPED)
-		{
-			CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
-		}
-	}
-
 	// clear pmext
 	Com_Memset(&cg.pmext, 0, sizeof(cg.pmext));
 
