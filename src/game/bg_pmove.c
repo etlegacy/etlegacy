@@ -1894,15 +1894,18 @@ static void PM_GroundTrace(void)
 			Com_Printf("%i:kickoff\n", c_pmove);
 		}
 
-		// play jump animation only when not underwater and when being kicked
-		// _somewhat_ towards the sky or anywhere downwards
+		// play jump animation only:
+		//   1. when not underwater
+		//   2. when being kicked _somewhat_ towards the sky or anywhere
+		//      downwards
+		//   3. when not on a ladder
 		VectorNormalize2(pm->ps->velocity, point);  // reuse point var
 		upwardsdirection = DotProduct(point, upwards);
 		// NOTE: the positive cutoff value for 'upwardsdirection' below has been
 		// determined by running across the terrain of official maps and finding
 		// a constant that triggers only for visually distinct (steep) slopes,
 		// such that the jump anim playback becomes reproducible/consistent
-		if (pm->waterlevel < 3 && (upwardsdirection >= 0.335f || upwardsdirection <= 0.0f))
+		if (pm->waterlevel < 3 && (upwardsdirection >= 0.335f || upwardsdirection <= 0.0f) && !(pm->ps->pm_flags & PMF_LADDER))
 		{
 			if (pm->cmd.forwardmove >= 0)
 			{
@@ -4784,7 +4787,7 @@ void PM_CheckLadderMove(void)
 	// if we have just mounted the ladder
 	if (pml.ladder && !wasOnLadder && pm->ps->velocity[2] < 0)        // only play anim if going down ladder
 	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_CLIMB_MOUNT, qfalse, qfalse);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_CLIMB_MOUNT, qfalse, qtrue);
 	}
 }
 
