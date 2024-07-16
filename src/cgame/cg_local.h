@@ -1582,6 +1582,8 @@ typedef struct
 	qboolean updateOldestValidCmd;                    ///< whenever snapshot transition happens save oldest valid command
 	int oldestValidCmd;                               ///< that will be used as a next starting point for prediction
 	                                                  ///< instead of iterating through whole CMD_BACKUP array every frame
+
+	qboolean mapConfigLoaded; // qtrue if map-specific autoexec was loaded
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS 5
@@ -3023,7 +3025,8 @@ void CG_QueueMusic(void);
 
 void CG_UpdateCvars(void);
 
-qboolean CG_execFile(const char *filename);
+qboolean CG_ConfigFileExists(const char *filename);
+void CG_execFile(const char *filename);
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
 void CG_KeyEvent(int key, qboolean down);
