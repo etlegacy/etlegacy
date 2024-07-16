@@ -493,7 +493,7 @@ void CG_windowDraw(void)
 	// Mouse cursor lays on top of everything
 	if (cg.mvTotalClients > 0 && cg.time < cgs.cursorUpdate && fAllowMV)
 	{
-		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+		CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
 	}
 #endif
 
@@ -725,7 +725,7 @@ void CG_cursorUpdate(void)
 	int                charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	int                charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg_window_t        *w;
-	cg_windowHandler_t *wh    = &cg.winHandler;
+	cg_windowHandler_t *wh = &cg.winHandler;
 	qboolean           fFound = qfalse, fUpdateOverlay = qfalse;
 	qboolean           fSelect, fResize;
 
@@ -754,9 +754,9 @@ void CG_cursorUpdate(void)
 			// If the current window is selected, and the button is down, then allow the update
 			// to occur, as quick mouse movements can move it past the window borders
 			if (!fFound &&
-			    (
-			        ((w->mvInfo & MV_SELECTED) && fSelect) ||
-			        (!fSelect && nx >= w->x && nx < w->x + w->w && ny >= w->y && ny < w->y + w->h)
+				(
+					((w->mvInfo & MV_SELECTED) && fSelect) ||
+					(!fSelect && nx >= w->x && nx < w->x + w->w && ny >= w->y && ny < w->y + w->h)
 			    ))
 			{
 				if (!(w->mvInfo & MV_SELECTED))

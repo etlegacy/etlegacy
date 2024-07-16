@@ -755,6 +755,9 @@ void CG_EventHandling(int type, qboolean fForced)
 		trap_Cvar_Set("cl_bypassMouseInput", "0");
 	}
 
+	// assume we want to draw cursor
+	cgDC.cursorVisible = qtrue;
+
 	switch (type)
 	{
 	// Demo support
@@ -899,17 +902,20 @@ void CG_EventHandling(int type, qboolean fForced)
 		cgs.ftMenuPos       = -1;
 		cgs.ftMenuMode      = 0;
 		cg.showFireteamMenu = qtrue;
+		cgDC.cursorVisible  = qfalse;
 		trap_Cvar_Set("cl_bypassmouseinput", "1");
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
 	else if (type == CGAME_EVENT_SHOUTCAST)
 	{
+		cgDC.cursorVisible = qfalse;
 		trap_Cvar_Set("cl_bypassmouseinput", "1");
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
 	else if (type == CGAME_EVENT_SPAWNPOINTMSG)
 	{
 		cg.showSpawnpointsMenu = qtrue;
+		cgDC.cursorVisible     = qfalse;
 		trap_Cvar_Set("cl_bypassmouseinput", "1");
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}

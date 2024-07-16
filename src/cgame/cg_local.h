@@ -4491,4 +4491,6 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 
 float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
 
+void CG_DrawCursor(float x, float y);
+
 #endif // #ifndef INCLUDE_CG_LOCAL_H

@@ -4258,7 +4258,7 @@ static void CG_Draw2D(void)
 	{
 		// draw cursor
 		trap_R_SetColor(NULL);
-		CG_DrawPic(cgDC.cursorx - 14, cgDC.cursory - 14, 32, 32, cgs.media.cursorIcon);
+		CG_DrawCursor(cgDC.cursorx - 14, cgDC.cursory - 14);
 	}
 
 	if (cg.showFireteamMenu)

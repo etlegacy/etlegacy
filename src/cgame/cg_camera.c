@@ -293,7 +293,7 @@ void CG_CameraEditorDraw(void)
 
 		// render cursor
 		trap_R_SetColor(NULL);
-		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+		CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
 	}
 }
 

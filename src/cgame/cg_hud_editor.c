@@ -2651,7 +2651,7 @@ void CG_DrawHudEditor(void)
 	CG_HudEditor_HelpDraw();
 
 	trap_R_SetColor(NULL);
-	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+	CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
 
 	// start parsing hud components from the last focused button
 	skip = qtrue;
