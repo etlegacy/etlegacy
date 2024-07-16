@@ -75,7 +75,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(votetext),           CG_DrawVote,                      0.22f,  { "Complaint" } }, // FIXME: outside cg_draw_hud
 	{ HUDF(spectatortext),      CG_DrawSpectatorMessage,          0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(limbotext),          CG_DrawLimboMessage,              0.22f,  { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
-	{ HUDF(followtext),         CG_DrawFollow,                    0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(followtext),         CG_DrawFollow,                    0.22f,  { "No Countdown" } },           // FIXME: outside cg_draw_hud
 	{ HUDF(demotext),           CG_DrawDemoMessage,               0.22f,  { "Details" } },
 	{ HUDF(missilecamera),      CG_DrawMissileCamera,             0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(sprinttext),         CG_DrawPlayerSprint,              0.25f,  { "Draw Suffix" } },

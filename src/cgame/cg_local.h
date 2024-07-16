@@ -2197,6 +2197,12 @@ enum
 	COMPASS_ALWAYS_DRAW          = BIT(7),
 };
 
+// Follow filters
+enum
+{
+	FOLLOW_NO_COUNTDOWN = BIT(0),
+};
+
 /// Locations
 #define MAX_C_LOCATIONS 1024
 

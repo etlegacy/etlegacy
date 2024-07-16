@@ -3060,6 +3060,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 	float heightIconsOffset;
 	float scale;
 	float iconsSize;
+	const qboolean showCountdown = !(comp->style & FOLLOW_NO_COUNTDOWN);
 
 #ifdef FEATURE_MULTIVIEW
 	// MV following info for mainview
@@ -3135,7 +3136,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 					int deployTime   = ((cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer) / 1000;
 					int reinfDepTime = CG_CalculateReinfTime(cgs.clientinfo[cg.snap->ps.clientNum].team) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime;
 
-					if (reinfDepTime > 1)
+					if (showCountdown && reinfDepTime > 1)
 					{
 						Com_sprintf(deploytime, sizeof(deploytime), CG_TranslateString("Bonus Life! Deploying in ^3%d ^*seconds"), reinfDepTime);
 					}
@@ -3149,7 +3150,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 					Com_sprintf(deploytime, sizeof(deploytime), "%s", CG_TranslateString("No more deployments this round"));
 				}
 			}
-			else
+			else if (showCountdown)
 			{
 				int reinfTime = CG_CalculateReinfTime(cgs.clientinfo[cg.snap->ps.clientNum].team);
 
