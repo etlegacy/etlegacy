@@ -2909,7 +2909,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                savedPing;
 	int                savedTeam;
 	int                savedDeathTime;
-	int                oldWeapon, oldNextWeapon, oldWeaponstate, oldSilencedSideArm;
+	int                oldWeapon, oldNextWeapon, oldSilencedSideArm;
 	int                oldAmmo[MAX_WEAPONS];                          // total amount of ammo
 	int                oldAmmoclip[MAX_WEAPONS];                      // ammo in clip
 	int                oldWeapons[MAX_WEAPONS / (sizeof(int) * 8)];   // 64 bits for weapons held
@@ -2992,7 +2992,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	{
 		oldWeapon          = client->ps.weapon;
 		oldNextWeapon      = client->ps.nextWeapon;
-		oldWeaponstate     = client->ps.weaponstate;
 		oldSilencedSideArm = client->pmext.silencedSideArm;
 
 		Com_Memcpy(oldAmmo, client->ps.ammo, sizeof(int) * MAX_WEAPONS);
@@ -3230,7 +3229,12 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 		else
 		{
-			if (COM_BitCheck(client->ps.weapons, oldWeapon))
+			// unset some alt weapons
+			if (GetWeaponTableData(oldWeapon)->weapAlts && GetWeaponTableData(oldWeapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED))
+			{
+				client->ps.weapon = GetWeaponTableData(oldWeapon)->weapAlts;
+			}
+			else if (COM_BitCheck(client->ps.weapons, oldWeapon))
 			{
 				client->ps.weapon = oldWeapon;
 			}
@@ -3243,16 +3247,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 			}
 
 			client->pmext.silencedSideArm = oldSilencedSideArm;
-		}
-
-		// cgame's prevent the flying nade effect (best visible with M7 when swapping while raising)
-		if (BG_simpleWeaponState(oldWeaponstate) == WSTATE_SWITCH)
-		{
-			client->ps.nextWeapon = client->ps.weapon;
-		}
-		else
-		{
-			client->ps.nextWeapon = oldNextWeapon;
 		}
 	}
 

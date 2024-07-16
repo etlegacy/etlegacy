@@ -176,15 +176,6 @@ void CG_Respawn(qboolean revived)
 	trap_SendConsoleCommand("-zoom\n");
 	cg.binocZoomTime = 0;
 
-	// ensure scoped weapons are reset after revive
-	if (revived)
-	{
-		if (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SCOPED)
-		{
-			CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
-		}
-	}
-
 	// clear pmext
 	Com_Memset(&cg.pmext, 0, sizeof(cg.pmext));
 
@@ -214,12 +205,24 @@ void CG_Respawn(qboolean revived)
 	{
 		if ((cgs.clientinfo[cg.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES) && (cgs.clientinfo[cg.clientNum].cls != oldCls))
 		{
-			CG_execFile(va("autoexec_%s", BG_ClassnameForNumberFilename(cgs.clientinfo[cg.clientNum].cls)));
+			const char *classCfg = va("autoexec_%s", BG_ClassnameForNumberFilename(cgs.clientinfo[cg.clientNum].cls));
+
+			if (CG_ConfigFileExists(classCfg))
+			{
+				CG_execFile(classCfg);
+			}
+
 			oldCls = cgs.clientinfo[cg.clientNum].cls;
 		}
 		if (cgs.clientinfo[cg.clientNum].team != oldTeam)
 		{
-			CG_execFile(va("autoexec_%s", BG_TeamnameForNumber(cgs.clientinfo[cg.clientNum].team)));
+			const char *teamCfg = va("autoexec_%s", BG_TeamnameForNumber(cgs.clientinfo[cg.clientNum].team));
+
+			if (CG_ConfigFileExists(teamCfg))
+			{
+				CG_execFile(teamCfg);
+			}
+
 			oldTeam = cgs.clientinfo[cg.clientNum].team;
 		}
 	}

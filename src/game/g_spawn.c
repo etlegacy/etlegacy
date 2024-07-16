@@ -197,7 +197,7 @@ field_t fields[] =
 	// for target_unlock
 	{ "key",          FOFS(key),            F_INT,       0 },
 
-	// mg42
+	// stationary heavy weapon aiming (e.g. misc_mg42, misc_aagun)
 	{ "harc",         FOFS(harc),           F_FLOAT,     0 },
 	{ "varc",         FOFS(varc),           F_FLOAT,     0 },
 

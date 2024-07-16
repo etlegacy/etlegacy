@@ -2473,9 +2473,12 @@ static void CG_CompasMoveLocation(float *basex, float *basey, float basew, qbool
  */
 void CG_DrawNewCompass(hudComponent_t *comp)
 {
-	float      basex = comp->location.x, basey = comp->location.y, basew = comp->location.w, baseh = comp->location.h;
+	float      basex           = comp->location.x;
+	float      basey           = comp->location.y;
+	float      basew           = comp->location.w;
+	float      baseh           = comp->location.h;
+	float      expandedMapFrac = cg_commandMapTime.value / 250.f;
 	snapshot_t *snap;
-	float      expandedMapFrac;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -2495,8 +2498,6 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		CG_DrawExpandedAutoMap();
 		return;
 	}
-
-	expandedMapFrac = cg_commandMapTime.value / 250.f;
 
 	if (cgs.autoMapExpanded)
 	{

@@ -553,7 +553,7 @@ typedef struct pmoveExt_s
 	int silencedSideArm;           ///< Keep track of whether the luger/colt is silenced "in holster", prolly want to do this for the kar98 etc too
 	float sprintTime;
 
-	// MG42 aiming
+	// stationary heavy weapon (e.g. misc_mg42, misc_aagun) aiming
 	float varc, harc;
 	vec3_t centerangles;
 
@@ -692,25 +692,26 @@ typedef enum
  */
 typedef enum
 {
-	PERS_SCORE = 0,                ///< !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
-	PERS_HITS,                     ///< Deprecated. Remove?
+	/// !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
+	PERS_SCORE = 0,
+	PERS_UNUSED_01,                ///< previously PERS_HITS
 	PERS_RANK,
 	PERS_TEAM,
 	PERS_SPAWN_COUNT,              ///< incremented every respawn
 	PERS_ATTACKER,                 ///< clientnum of last damage inflicter
 	PERS_KILLED,                   ///< count of the number of times you died
-	// these were added for single player awards tracking
+	// { these were added for single player awards tracking
 	PERS_RESPAWNS_LEFT,            ///< number of remaining respawns
 	PERS_RESPAWNS_PENALTY,         ///< how many respawns you have to sit through before respawning again
-
+	// }
 	PERS_REVIVE_COUNT,
-	PERS_HEADSHOTS,                ///< Deprecated. Remove?
-	PERS_BLEH_3,
-
-	// mg42                        ///< TODO: I don't understand these here. Can someone explain?
-	PERS_HWEAPON_USE,              ///< enum 12 - don't change
-	// wolfkick
-	PERS_WOLFKICK
+	PERS_UNUSED_10,                ///< previously PERS_HEADSHOTS
+	PERS_UNUSED_11,                ///< previously PERS_BLEH_3
+	PERS_HWEAPON_USE,              ///< non-zero when using a stationary hweapon (mg42=1, aagun=2)
+	PERS_UNUSED_13,                ///< previously PERS_WOLFKICK
+	PERS_UNUSED_14,
+	PERS_UNUSED_15,
+	// MAX_PERSISTANT
 } persEnum_t;
 
 // entityState_t->eFlags

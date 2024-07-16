@@ -1163,7 +1163,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			}
 
 			// display map description
-			CG_DrawVerticalScrollingString(&(rectDef_t) { x2, DB_MAPVOTE_Y2 + 12 + (177.0f / 233.0f * 190), 190, 45 },
+			CG_DrawVerticalScrollingString(&(rectDef_t) { x2 - 5, DB_MAPVOTE_Y2 + 10 + (177.0f / 233.0f * 190), 190, 40 },
 			                               *colour, button->font->scalex, 100, 1, &descriptionScroll, button->font->font);
 
 			CG_Text_Paint_Ext(x2, y2, button->font->scalex,
@@ -1933,7 +1933,7 @@ qboolean CG_Debriefing_Draw(void)
 
 	BG_PanelButtonsRender(chatPanelButtons);
 	BG_PanelButtonsRender(buttonsPanel);
-	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+	CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
 
 	return qtrue;
 }

@@ -663,12 +663,12 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
  * @param[in] index
  * @param[in] sideNum
  */
-void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum)
+void CG_RailTrail2(const vec3_t color, const vec3_t start, const vec3_t end, int index, int sideNum)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
 
-	if (index)
+	if (index >= 0)
 	{
 		le = CG_FindLocalEntity(index, sideNum);
 
@@ -3058,9 +3058,6 @@ static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState
 	trap_R_AddRefEntityToScene(gun);
 }
 
-// TODO: unused ?
-//#define DEBUG_WEAPON
-
 // TODO: move to top ?
 #define BARREL_SMOKE_TIME 1000
 
@@ -3136,9 +3133,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
+	// stationary heavy weapon (e.g. misc_mg42, misc_aagun) muzzle flash
 	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
-		// MG42 Muzzle Flash
 		if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
 		{
 			CG_MG42EFX(cent);
@@ -3183,17 +3180,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	if (!gun.hModel)
 	{
-#ifdef DEBUG_WEAPON
-		CG_Printf("returning due to: !gun.hModel\n");
-#endif
 		return;
 	}
 
 	if (!ps && (cg.snap->ps.pm_flags & PMF_LADDER) && isPlayer)          // player on ladder
 	{
-#ifdef DEBUG_WEAPON
-		CG_Printf("returning due to: !ps && cg.snap->ps.pm_flags & PMF_LADDER\n");
-#endif
 		return;
 	}
 
@@ -3489,8 +3480,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 						if (barrel.hModel)
 						{
-							CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
-							CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+							// only render rifle grenade when NOT firing -
+							// otherwise 'tag_scope' lerps from rifle towards
+							// the player in 1st person view #2602
+							if (!(ps && ps->weaponstate == WEAPON_DROPPING))
+							{
+								CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
+								CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+							}
 						}
 					}
 				}

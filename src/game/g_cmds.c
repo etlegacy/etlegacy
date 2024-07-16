@@ -623,6 +623,18 @@ float GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
 	return -1;
 }
 
+static const char *giveCmds[] =
+{
+	"all",
+	"skill",
+	"medal",
+	"health",
+	"weapons",
+	"ammo",
+	"allammo",
+	"keys",
+};
+
 /**
  * @brief Give items to a client
  * @param[in,out] ent
@@ -634,23 +646,39 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	char     name[MAX_TOKEN_CHARS], amt[MAX_TOKEN_CHARS];
 	weapon_t weapon;
 	qboolean give_all;
-	int      amount    = 0;
-	qboolean hasAmount = qfalse;
 	int      cnum;
-	int      i = 1;
+	int      j;
+	int      amount       = 0;
+	qboolean hasAmount    = qfalse;
+	int      i            = 1;
+	qboolean validGiveCmd = qfalse;
 
 	trap_Argv(i, name, sizeof(name));
 
-	// try to find a targeted player, otherwise use command caller
-	cnum = G_ClientNumberFromString(ent, name);
-
-	if (cnum != -1)
+	// check if we're issuing a valid give command first
+	for (j = 0; j < ARRAY_LEN(giveCmds); j++)
 	{
-		// retrieved player ent
-		ent = cnum + g_entities;
+		// strcmpn so this matches the behavior used to check the argument later
+		if (!Q_stricmpn(giveCmds[j], name, strlen(giveCmds[j])))
+		{
+			validGiveCmd = qtrue;
+			break;
+		}
+	}
 
-		// get the give argument
-		trap_Argv(++i, name, sizeof(name));
+	// first argument wasn't a valid give command, try to find a targeted player, otherwise use command caller
+	if (!validGiveCmd)
+	{
+		cnum = G_ClientNumberFromString(ent, name);
+
+		if (cnum != -1)
+		{
+			// retrieved player ent
+			ent = cnum + g_entities;
+
+			// get the give argument
+			trap_Argv(++i, name, sizeof(name));
+		}
 	}
 
 	if (!ent || !ent->client)
@@ -729,13 +757,13 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	if (Q_stricmpn(name, "medal", 5) == 0)
 	{
-		int i;
+		int skill;
 
-		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		for (skill = SK_BATTLE_SENSE; skill < SK_NUM_SKILLS; skill++)
 		{
-			if (!ent->client->sess.medals[i])
+			if (!ent->client->sess.medals[skill])
 			{
-				ent->client->sess.medals[i] = 1;
+				ent->client->sess.medals[skill] = 1;
 				break; // add 1 medal, not all at once..
 			}
 		}
@@ -3191,6 +3219,11 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 				CP("cp \"You cannot call a vote as a spectator.\"");
 				return qfalse;
 			}
+			else if (g_gamestate.integer == GS_WARMUP_COUNTDOWN && (level.warmupTime - level.time) < VOTE_TIME)
+			{
+				CP("cp \"You cannot call a vote when warmup is about to end.\"");
+				return qfalse;
+			}
 		}
 	}
 
@@ -3273,12 +3306,9 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 		G_globalSoundEnum(GAMESOUND_MISC_VOTE);
 	}
 
-	// shorter the vote timeout when warmup countdown or map time are going to end
-	if (g_gamestate.integer == GS_WARMUP_COUNTDOWN && (level.warmupTime - level.time) < VOTE_TIME)
-	{
-		level.voteInfo.voteTime = level.warmupTime - VOTE_TIME;
-	}
-	else if (g_gamestate.integer == GS_PLAYING && (level.startTime + (g_timelimit.value * 60000) - level.time < VOTE_TIME))
+	// shorter the vote timeout when map time is going to end
+	// (e.g. surrendering a match in stopwatch)
+	if (g_gamestate.integer == GS_PLAYING && (level.startTime + (g_timelimit.value * 60000) - level.time < VOTE_TIME))
 	{
 		level.voteInfo.voteTime = level.startTime + (g_timelimit.value * 60000) - VOTE_TIME;
 	}

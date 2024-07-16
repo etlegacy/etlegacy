@@ -127,6 +127,8 @@
 #define SLIDER_THUMB_HEIGHT 12.0f    ///< 20.0
 #define NUM_CROSSHAIRS      16
 
+#define CURSOR_SIZE 32.0f
+
 /**
  * @struct windowDef_s
  * @typedef Window
@@ -559,6 +561,7 @@ typedef struct
 	int frameTime;
 	int cursorx;
 	int cursory;
+	qboolean cursorVisible;
 	qboolean debug;
 
 	cachedAssets_t Assets;

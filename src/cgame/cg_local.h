@@ -1113,6 +1113,17 @@ typedef enum
 	SHOW_ON
 } showView_t;
 
+/**
+ * @struct version_t
+ * @brief
+ */
+typedef struct version_s
+{
+	int major;
+	int minor;
+	int patch;
+} version_t;
+
 void CG_ParseMapEntityInfo(int axis_number, int allied_number);
 
 #define MAX_WEAP_BANKS_MP          10
@@ -1135,6 +1146,7 @@ typedef struct
 
 	qboolean demoPlayback;
 	demoPlayInfo_t *demoinfo;
+	version_t demoVersion;
 	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
@@ -1570,6 +1582,8 @@ typedef struct
 	qboolean updateOldestValidCmd;                    ///< whenever snapshot transition happens save oldest valid command
 	int oldestValidCmd;                               ///< that will be used as a next starting point for prediction
 	                                                  ///< instead of iterating through whole CMD_BACKUP array every frame
+
+	qboolean mapConfigLoaded; // qtrue if map-specific autoexec was loaded
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS 5
@@ -3011,13 +3025,15 @@ void CG_QueueMusic(void);
 
 void CG_UpdateCvars(void);
 
-qboolean CG_execFile(const char *filename);
+qboolean CG_ConfigFileExists(const char *filename);
+void CG_execFile(const char *filename);
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
 void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
 int CG_RoundTime(qtime_t *qtime);
+qboolean CG_IsVersionCompatible(version_t *current, version_t *minimum);
 
 void CG_HudEditor_Cleanup();
 
@@ -3260,7 +3276,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, int targetEntityNum);
 
 void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index);
-void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum);
+void CG_RailTrail2(const vec3_t color, const vec3_t start, const vec3_t end, int index, int sideNum);
 
 void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent);
@@ -4477,5 +4493,7 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
                        panel_button_text_t *fontHeader, panel_button_text_t *fontText);
 
 float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
+
+void CG_DrawCursor(float x, float y);
 
 #endif // #ifndef INCLUDE_CG_LOCAL_H

@@ -2131,7 +2131,7 @@ static void PM_Footsteps(void)
 	// all cyclic walking effects
 	pm->xyspeed = sqrt(pm->ps->velocity[0] * pm->ps->velocity[0] +  pm->ps->velocity[1] * pm->ps->velocity[1]);
 
-	// mg42, always idle
+	// stationary heavy weapon (e.g. misc_mg42, misc_aagun), always idle
 	if (pm->ps->persistant[PERS_HWEAPON_USE])
 	{
 		animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
@@ -5211,11 +5211,6 @@ void PmoveSingle(pmove_t *pmove)
 	if (pm->ps->pm_type == PM_DEAD)
 	{
 		PM_DeadMove();
-
-		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SET)
-		{
-			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
-		}
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{

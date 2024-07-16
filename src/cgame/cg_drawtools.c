@@ -1687,3 +1687,13 @@ float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHe
 	return comp->hardScale * (comp->scale / 100.f);
 	//return (height / (Q_UTF8_GlyphScale(font) * Q_UTF8_GetGlyph(font, "A")->height)) * (scale / 100.f);
 }
+
+void CG_DrawCursor(float x, float y)
+{
+	if (!cgDC.cursorVisible)
+	{
+		return;
+	}
+
+	CG_DrawPic(x, y, CURSOR_SIZE, CURSOR_SIZE, cgs.media.cursorIcon);
+}

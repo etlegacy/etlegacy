@@ -684,6 +684,14 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
 	                    &level.clients[0].ps, sizeof(level.clients[0]));
 
+	BG_ClearAnimationPool();
+
+	BG_ClearCharacterPool();
+
+	BG_InitWeaponStrings();
+
+	G_RegisterPlayerClasses();
+
 #ifdef FEATURE_LUA
 	G_LuaHook_InitGame(levelTime, randomSeed, restart);
 #endif

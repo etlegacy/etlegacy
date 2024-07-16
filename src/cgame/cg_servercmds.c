@@ -193,6 +193,65 @@ static void CG_ParseTeamInfo(void)
 }
 
 /**
+ * @brief CG_FillVersionInfo
+ * @param[int,out] version
+ * @param[in] versionStr
+ * @param[in] delimiter
+ */
+static void CG_FillVersionInfo(version_t *version, char *versionStr, const char *delimiter)
+{
+	version->major = Q_atoi(strtok(versionStr, delimiter));
+	version->minor = Q_atoi(strtok(NULL, delimiter));
+	version->patch = Q_atoi(strtok(NULL, delimiter));
+}
+
+static void CG_ParseDemoVersion(void)
+{
+	const char *serverInfoCS = CG_ConfigString(CS_SERVERINFO);
+	char       *versionStr   = Info_ValueForKey(serverInfoCS, "mod_version");
+
+	// check if mod_version is present
+	// if not present, look for sv_referencedPakNames as a fallback
+	if (!versionStr || !*versionStr)
+	{
+		const char *sysInfoCS = CG_ConfigString(CS_SYSTEMINFO);
+		char       *pakNames  = Info_ValueForKey(sysInfoCS, "sv_referencedPakNames");
+
+		// sanity check, shouldn't happen
+		if (!pakNames)
+		{
+			return;
+		}
+
+		versionStr = strchr(pakNames, '/');
+
+		// should not happen
+		if (!versionStr)
+		{
+			return;
+		}
+	}
+
+	while (*versionStr)
+	{
+		if (Q_isnumeric(*versionStr))
+		{
+			break;
+		}
+
+		++versionStr;
+	}
+
+	// parsing failed, bail
+	if (!versionStr || !*versionStr)
+	{
+		return;
+	}
+
+	CG_FillVersionInfo(&cg.demoVersion, versionStr, ".");
+}
+
+/**
  * @brief This is called explicitly when the gamestate is first received,
  * and whenever the server updates any serverinfo flagged cvars
  */
@@ -229,6 +288,11 @@ void CG_ParseServerinfo(void)
 
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
+
+	if (cg.demoPlayback)
+	{
+		CG_ParseDemoVersion();
+	}
 }
 
 /**
@@ -301,26 +365,15 @@ void CG_ParseSysteminfo(void)
 
 	info = CG_ConfigString(CS_SYSTEMINFO);
 
-/*
-    cgs.pmove_fixed = (atoi(Info_ValueForKey(info, "pmove_fixed"))) ? qtrue : qfalse;
-    cgs.pmove_msec  = Q_atoi(Info_ValueForKey(info, "pmove_msec"));
-    if (cgs.pmove_msec < 8)
-    {
-        cgs.pmove_msec = 8;
-    }
-    else if ( cgs.pmove_msec > 33)
-    {
-        cgs.pmove_msec = 33;
-    }
-*/
 	cgs.sv_fps = Q_atoi(Info_ValueForKey(info, "sv_fps"));
 
+	if (!cgs.sv_fps)
+	{
+		// no way to know for sure, assume default
+		cgs.sv_fps = 20;
+	}
+
 	cgs.sv_cheats = (atoi(Info_ValueForKey(info, "sv_cheats"))) ? qtrue : qfalse;
-
-/*
-
-    bg_evaluategravity = atof(Info_ValueForKey(info, "g_gravity"));
-*/
 }
 
 
@@ -518,7 +571,16 @@ void CG_ParseWolfinfo(void)
 	{
 		if (cg_announcer.integer)
 		{
-			trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
+			// FIXME : Workaround
+			// As upon a warmup end, 'trap_S_Respatialize' seems to be called
+			// only _after_ calling this place here (which would make
+			// 'trap_S_StartLocalSound' work correctly) - we add this edge case
+			// to play the 'FIGHT' announcer voice line on the spectator itself.
+			if (cg.snap->ps.pm_flags & PMF_FOLLOW) {
+				trap_S_StartSound(NULL, cg.clientNum, CHAN_ANNOUNCER, cgs.media.countFight);
+			} else {
+				trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
+			}
 		}
 
 		Pri("^1FIGHT!\n");

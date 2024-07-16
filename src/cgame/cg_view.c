@@ -1069,7 +1069,7 @@ static int CG_CalcFov(void)
 #endif
 	    )
 	{
-		// mg42 zoom
+		// stationary heavy weapon (e.g. misc_mg42, misc_aagun) zoom
 		if (cg.snap->ps.persistant[PERS_HWEAPON_USE])
 		{
 			fov_x = 55;
@@ -2415,9 +2415,9 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 			CG_AddAtmosphericEffects();
 		}
 
-		// mg42
 		if (!cg.showGameView && !cgs.dbShowing)
 		{
+			// stationary heavy weapon (e.g. misc_mg42, misc_aagun)
 			if (!cg.snap->ps.persistant[PERS_HWEAPON_USE])
 			{
 				CG_AddViewWeapon(&cg.predictedPlayerState);
