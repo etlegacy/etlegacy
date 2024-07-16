@@ -4560,7 +4560,7 @@ void CheckWolfMP(void)
 			    (level.numPlayingClients >= match_minplayers.integer &&
 			     level.lastRestartTime + 1000 < level.time && G_readyMatchState()))
 			{
-				int delay = (g_warmup.integer < 10) ? 11 : g_warmup.integer + 1;
+				int delay = MAX(1, g_warmup.integer + 1);
 
 				level.warmupTime = level.time + (delay * 1000);
 				trap_Cvar_Set("gamestate", va("%i", GS_WARMUP_COUNTDOWN));
