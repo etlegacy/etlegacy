@@ -3058,9 +3058,6 @@ static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState
 	trap_R_AddRefEntityToScene(gun);
 }
 
-// TODO: unused ?
-//#define DEBUG_WEAPON
-
 // TODO: move to top ?
 #define BARREL_SMOKE_TIME 1000
 
@@ -3183,17 +3180,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	if (!gun.hModel)
 	{
-#ifdef DEBUG_WEAPON
-		CG_Printf("returning due to: !gun.hModel\n");
-#endif
 		return;
 	}
 
 	if (!ps && (cg.snap->ps.pm_flags & PMF_LADDER) && isPlayer)          // player on ladder
 	{
-#ifdef DEBUG_WEAPON
-		CG_Printf("returning due to: !ps && cg.snap->ps.pm_flags & PMF_LADDER\n");
-#endif
 		return;
 	}
 
