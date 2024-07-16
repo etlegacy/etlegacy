@@ -3136,9 +3136,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
+	// stationary heavy weapon (e.g. misc_mg42, misc_aagun) muzzle flash
 	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
-		// MG42 Muzzle Flash
 		if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
 		{
 			CG_MG42EFX(cent);
