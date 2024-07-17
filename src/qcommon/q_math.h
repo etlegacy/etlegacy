@@ -36,7 +36,8 @@
 #ifndef INCLUDE_Q_MATH_H
 #define INCLUDE_Q_MATH_H
 
-#include "q_shared.h"
+#include "q_primitives.h"
+#include "q_platform.h"
 
 typedef float vec_t;
 typedef vec_t vec2_t[2];

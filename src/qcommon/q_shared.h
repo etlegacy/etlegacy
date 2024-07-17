@@ -157,62 +157,7 @@
 
  **********************************************************************/
 
-#ifdef Q3_VM
-
-#include "bg_lib.h"
-
-typedef int intptr_t;
-
-#else
-
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdlib.h>
-
-#ifdef __aarch64__ // ARM definition seems to not work here
-
-#include <stddef.h>
-
-#endif
-
-#include <time.h>
-#include <ctype.h>
-#include <limits.h>
-#include <sys/stat.h>
-#include <float.h>
-
-#if defined (_MSC_VER) && (_MSC_VER >= 1600)
-#include <stdint.h>
-
-// vsnprintf is ISO/IEC 9899:1999
-// abstracting this to make it portable
-int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
-#elif defined (_MSC_VER)
-#include <io.h>
-
-typedef signed __int64 int64_t;
-typedef signed __int32 int32_t;
-typedef signed __int16 int16_t;
-typedef signed __int8 int8_t;
-typedef unsigned __int64 uint64_t;
-typedef unsigned __int32 uint32_t;
-typedef unsigned __int16 uint16_t;
-typedef unsigned __int8 uint8_t;
-
-// vsnprintf is ISO/IEC 9899:1999
-// abstracting this to make it portable
-int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
-#else // not using MSVC
-
-#include <stdint.h>
-
-#define Q_vsnprintf vsnprintf
-#endif // defined (_MSC_VER) && (_MSC_VER >= 1600)
-#endif // Q3_VM
-
+#include "q_primitives.h"
 #include "q_platform.h"
 
 //======================= WIN32 DEFINES =================================
@@ -395,28 +340,6 @@ static ID_INLINE float idSqrt(float x)
 #endif // __ANDROID__
 
 //=============================================================
-
-typedef unsigned char byte;
-
-/**
- * @enum qboolean
- * @brief Boolean definition
- */
-typedef enum
-{
-	qfalse, qtrue
-} qboolean;
-
-/**
- * @union floatint_t
- * @brief
- */
-typedef union
-{
-	float f;
-	int32_t i;
-	uint32_t ui;
-} floatint_t;
 
 typedef int qhandle_t;
 typedef int sfxHandle_t;
