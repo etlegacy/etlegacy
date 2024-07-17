@@ -99,7 +99,14 @@ static ID_INLINE void SafeFS_Write(const void *buffer, int len, fileHandle_t f)
 {
 	if (FS_Write(buffer, len, f) < len)
 	{
-		Com_Error(ERR_DROP, "Failed to write avi file");
+		if (videoPipe)
+		{
+			Com_Error(ERR_DROP, "Failed to write avi file.\n\nMake sure the path to ffmpeg binary is part of $PATH environmental variable, or is placed next to the ETL executable.\n");
+		}
+		else
+		{
+			Com_Error(ERR_DROP, "Failed to write avi file\n");
+		}
 	}
 }
 
