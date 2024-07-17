@@ -116,6 +116,8 @@ cvar_t *com_timescale;
 cvar_t *com_fixedtime;
 cvar_t *com_journal;
 cvar_t *com_maxfps;
+cvar_t *com_maxfpsUnfocused;
+cvar_t *com_maxfpsMinimized;
 cvar_t *com_timedemo;
 cvar_t *com_sv_running;
 cvar_t *com_cl_running;
@@ -2976,6 +2978,12 @@ void Com_Init(char *commandLine)
 	com_maxfps = Cvar_Get("com_maxfps", "125", CVAR_ARCHIVE /*|CVAR_LATCH*/);
 	Cvar_CheckRange(com_maxfps, 20, 500, qtrue);
 
+	com_maxfpsUnfocused = Cvar_Get("com_maxfpsUnfocused", "-1", CVAR_ARCHIVE);
+	Cvar_CheckRange(com_maxfpsUnfocused, -1, 500, qtrue);
+
+	com_maxfpsMinimized = Cvar_Get("com_maxfpsMinimized", "-1", CVAR_ARCHIVE);
+	Cvar_CheckRange(com_maxfpsMinimized, -1, 500, qtrue);
+
 	com_developer = Cvar_Get("developer", "0", CVAR_TEMP);
 	com_logfile   = Cvar_Get("logfile", "0", CVAR_TEMP);
 
@@ -3371,7 +3379,7 @@ int Com_TimeVal(int minMsec)
  */
 void Com_Frame(void)
 {
-	int        msec, minMsec;
+	int        msec, minMsec = 0;
 	int        timeVal, timeValSV;
 	static int lastTime = 0, bias = 0;
 	int        timeBeforeFirstEvents;
@@ -3412,23 +3420,45 @@ void Com_Frame(void)
 		}
 		else
 		{
-			if (com_minimized->integer && !Cvar_VariableString("cl_downloadName")[0] // don't set different minMsec while downloading
-			    && Cvar_VariableIntegerValue("cl_demorecording") == 0) // don't set different minMsec while recording
+			if (
+				com_minimized->integer
+				&& !Cvar_VariableString("cl_downloadName")[0]          // don't set different minMsec while downloading
+				&& Cvar_VariableIntegerValue("cl_demorecording") == 0  // don't set different minMsec while recording
+				)
 			{
-				minMsec = 100; // = 1000/10;
+				if (com_maxfpsMinimized->integer < 0)  // default
+				{
+					minMsec = 100; // = 1000/10;
+				}
+				else if (com_maxfpsMinimized->integer > 0)
+				{
+					minMsec = 1000 / com_maxfpsMinimized->integer;
+				}
 			}
-			else if (com_unfocused->integer && com_maxfps->integer > 1 && !Cvar_VariableString("cl_downloadName")[0]  // don't set different minMsec while downloading
-			         && Cvar_VariableIntegerValue("cl_demorecording") == 0) // don't set different minMsec while recording
+			else if (
+				com_unfocused->integer
+				&& !Cvar_VariableString("cl_downloadName")[0]          // don't set different minMsec while downloading
+				&& Cvar_VariableIntegerValue("cl_demorecording") == 0  // don't set different minMsec while recording
+				)
 			{
-				minMsec = 1000 / (com_maxfps->integer / 2);
+				if (com_maxfpsUnfocused->integer < 0)  // default
+				{
+					minMsec = 1000 / (com_maxfps->integer / 2);
+				}
+				else if (com_maxfpsUnfocused->integer > 0)
+				{
+					minMsec = 1000 / com_maxfpsUnfocused->integer;
+				}
 			}
-			else if (com_maxfps->integer > 0)
-			{
-				minMsec = 1000 / com_maxfps->integer;
-			}
-			else
+			else if (com_maxfps->integer < 0)
 			{
 				minMsec = 1;
+			}
+
+			// fallback to com_maxfps
+			if (minMsec == 0)
+			{
+				minMsec = 1000 / com_maxfps->integer;
 			}
 
 			timeVal = com_frameTime - lastTime;
