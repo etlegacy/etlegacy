@@ -363,7 +363,7 @@ static sfx_t *S_FindName(const char *name)
 
 	sfx = &knownSfx[i];
 	Com_Memset(sfx, 0, sizeof(*sfx));
-    Q_strncpyz(sfx->soundName, name, sizeof(sfx->soundName));
+	Q_strncpyz(sfx->soundName, name, sizeof(sfx->soundName));
 
 	sfx->next     = sfxHash[hash];
 	sfxHash[hash] = sfx;
@@ -1548,7 +1548,7 @@ void S_GetSoundtime(void)
 
 	if (CL_VideoRecording())
 	{
-		float fps           = MIN(cl_avidemo->integer, 1000.0f);
+		float fps           = MIN(cl_aviFrameRate->integer, 1000.0f);
 		float frameDuration = MAX(dma.speed / fps, 1.0f); // +clc.aviSoundFrameRemainder;
 
 		int msec = (int)frameDuration;

@@ -1265,6 +1265,55 @@ fileHandle_t FS_FOpenFileAppend(const char *fileName)
 	return f;
 }
 
+fileHandle_t FS_PipeOpenWrite(const char *cmd, const char *filename)
+{
+	fileHandleData_t *fd;
+	fileHandle_t     f;
+	const char       *ospath;
+
+	if (!fs_searchpaths)
+	{
+		Com_Error(ERR_FATAL, "FS_PipeOpenWrite: Filesystem call made without initialization");
+	}
+
+	ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, filename);
+
+	if (fs_debug->integer)
+	{
+		Com_Printf("%s: %s\n", __func__, ospath);
+	}
+
+	FS_CheckFilenameIsMutable(ospath, __func__);
+
+	f  = FS_HandleForFile();
+	fd = &fsh[f];
+
+	if (FS_CreatePath(ospath))
+	{
+		return 0;
+	}
+
+	// FIXME: validate this on other platforms, only tested on x86/64 linux/windows (macOS should be okay too)
+	// linux-aarch64 probably fine?
+	// android most likely doesn't work?
+#ifdef _WIN32
+	fd->handleFiles.file.o = _popen(cmd, "wb");
+#else
+	fd->handleFiles.file.o = popen(cmd, "w");
+#endif
+
+	if (fd->handleFiles.file.o == NULL)
+	{
+		return 0;
+	}
+
+	Q_strncpyz(fd->name, filename, sizeof(fd->name));
+	fd->handleSync = qfalse;
+	fd->zipFile    = qfalse;
+
+	return f;
+}
+
 /**
  * @brief Compare filenames
  * Ignores case and separator char distinctions
