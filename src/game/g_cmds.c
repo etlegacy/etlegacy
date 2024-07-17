@@ -650,6 +650,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	int      j;
 	int      amount       = 0;
 	qboolean hasAmount    = qfalse;
+	qboolean isAllAmount  = qfalse;
 	int      i            = 1;
 	qboolean validGiveCmd = qfalse;
 
@@ -695,8 +696,16 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	trap_Argv(++i, amt, sizeof(amt));
 	if (*amt != '\0')
 	{
-		hasAmount = qtrue;
-		amount    = Q_atoi(amt);
+		if (Q_stricmpn(amt, "all", 3) == 0)
+		{
+			hasAmount   = qtrue;
+			isAllAmount = qtrue;
+		}
+		else
+		{
+			hasAmount = qtrue;
+			amount    = Q_atoi(amt);
+		}
 	}
 
 	give_all = !Q_stricmp(name, "all");
@@ -830,7 +839,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	if (give_all || Q_stricmpn(name, "ammo", 4) == 0)
 	{
-		if (amount)
+		if (amount)  // give a specific amount
 		{
 			if (ent->client->ps.weapon
 			    && ent->client->ps.weapon != WP_SATCHEL && ent->client->ps.weapon != WP_SATCHEL_DET
@@ -839,13 +848,23 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 				Add_Ammo(ent, (weapon_t)ent->client->ps.weapon, amount, qtrue);
 			}
 		}
-		else
+		else if (isAllAmount)  // give forced 9999 ammo when called via 'all'
 		{
 			for (weapon = WP_KNIFE ; weapon < WP_NUM_WEAPONS ; weapon++)
 			{
 				if (COM_BitCheck(ent->client->ps.weapons, weapon) && weapon != WP_SATCHEL && weapon != WP_SATCHEL_DET)
 				{
 					Add_Ammo(ent, weapon, 9999, qtrue);
+				}
+			}
+		}
+		else  // give maxammo by default
+		{
+			for (weapon = WP_KNIFE ; weapon < WP_NUM_WEAPONS ; weapon++)
+			{
+				if (COM_BitCheck(ent->client->ps.weapons, weapon) && weapon != WP_SATCHEL && weapon != WP_SATCHEL_DET)
+				{
+					Add_Ammo(ent, weapon, GetWeaponTableData(weapon)->maxAmmo, qtrue);
 				}
 			}
 		}
