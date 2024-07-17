@@ -36,6 +36,8 @@
 #ifndef INCLUDE_CM_POLYLIB_H
 #define INCLUDE_CM_POLYLIB_H
 
+#include "../qcommon/q_shared.h"
+
 typedef struct
 {
 	int numpoints;

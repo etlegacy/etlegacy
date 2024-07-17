@@ -36,6 +36,8 @@
 #ifndef INCLUDE_BE_INTERFACE_H
 #define INCLUDE_BE_INTERFACE_H
 
+#include "botlib.h"
+
 extern botlib_import_t botimport;
 
 #endif // #ifndef INCLUDE_BE_INTERFACE_H

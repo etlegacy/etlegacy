@@ -39,6 +39,8 @@
 #ifndef INCLUDE_BG_PUBLIC_H
 #define INCLUDE_BG_PUBLIC_H
 
+#include "../qcommon/q_shared.h"
+
 #define GAME_VERSION        "Enemy Territory"
 #define GAME_VERSION_DATED  (GAME_VERSION ", ET 2.60b")
 

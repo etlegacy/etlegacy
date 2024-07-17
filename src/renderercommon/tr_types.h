@@ -38,6 +38,8 @@
 #ifndef INCLUDE_TR_TYPES_H
 #define INCLUDE_TR_TYPES_H
 
+#include "../qcommon/q_shared.h"
+
 // renderer2 BEGIN
 #define MAX_REF_LIGHTS      1024
 #define MAX_BONES           128         ///< RB: same as MDX_MAX_BONES

@@ -35,6 +35,8 @@
 #ifndef INCLUDE_CM_PATCH_H
 #define INCLUDE_CM_PATCH_H
 
+#include "../qcommon/q_shared.h"
+
 /*
 
 This file does not reference any globals, and has these entry points:

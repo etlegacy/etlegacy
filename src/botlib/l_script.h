@@ -36,6 +36,8 @@
 #ifndef INCLUDE_L_SCRIPT_H
 #define INCLUDE_L_SCRIPT_H
 
+#include "../qcommon/q_shared.h"
+
 /// undef if binary numbers of the form 0b... or 0B... are not allowed
 #define BINARYNUMBERS
 /// undef if not using the token.intvalue and token.floatvalue

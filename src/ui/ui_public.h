@@ -34,6 +34,8 @@
 #ifndef INCLUDE_UI_PUBLIC_H
 #define INCLUDE_UI_PUBLIC_H
 
+#include "../qcommon/q_shared.h"
+
 #define UI_API_VERSION  4
 
 /**
