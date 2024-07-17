@@ -1473,7 +1473,6 @@ void CL_PlayDemo_f(void)
 	{
 		Com_FuncDrop("couldn't open %s", name);
 	}
-	Q_strncpyz(clc.demo.demoName, demoFile, sizeof(clc.demo.demoName));
 
 	Con_Close();
 
@@ -1481,6 +1480,8 @@ void CL_PlayDemo_f(void)
 	CL_AllocateDemoPoints();
 	CL_ParseDemo();
 #endif
+
+	Q_strncpyz(clc.demo.demoName, demoFile, sizeof(clc.demo.demoName));
 
 	if (Cmd_Argc() == 3)
 	{
