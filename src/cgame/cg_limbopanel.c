@@ -3613,13 +3613,57 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
 
 	if (down)
 	{
+		// close limbo menu if 'openlimbomenu' key is pressed again
 		cgDC.getKeysForBinding("openlimbomenu", &b1, &b2);
 		if ((b1 != -1 && b1 == key) || (b2 != -1 && b2 == key))
 		{
 			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 			return;
 		}
+
+		// other bindings
+		switch (key) {
+			case '1':
+				CG_LimboPanel_TeamButton_KeyDown(&teamButton0, K_MOUSE1);
+				break;
+			case '2':
+				CG_LimboPanel_TeamButton_KeyDown(&teamButton1, K_MOUSE1);
+				break;
+			case '3':
+				CG_LimboPanel_TeamButton_KeyDown(&teamButton2, K_MOUSE1);
+				break;
+			case 'e':  // engineer
+				CG_LimboPanel_ClassButton_KeyDown(&classButton2, K_MOUSE1);
+				break;
+			case 'c':  // covops
+				CG_LimboPanel_ClassButton_KeyDown(&classButton4, K_MOUSE1);
+				break;
+			case 'f':  // fieldops
+				CG_LimboPanel_ClassButton_KeyDown(&classButton3, K_MOUSE1);
+				break;
+			case 'm':  // medic
+				CG_LimboPanel_ClassButton_KeyDown(&classButton1, K_MOUSE1);
+				break;
+			case 's':  // soldier
+				CG_LimboPanel_ClassButton_KeyDown(&classButton0, K_MOUSE1);
+				break;
+			case K_TAB:
+				// toggle between primary and secondary weaponview
+				if (cgs.ccSelectedWeaponSlot == 0) {
+					CG_LimboPanel_WeaponLights_KeyDown(&weaponLight2, K_MOUSE1);
+				} else {
+					CG_LimboPanel_WeaponLights_KeyDown(&weaponLight1, K_MOUSE1);
+				}
+				break;
+			case K_ENTER:
+			case 'y':  // y for yes / confirm
+				CG_LimboPanel_OkButton_KeyDown(&okButton, K_MOUSE1);
+				break;
+			default:
+				break;
+		}
 	}
+
 
 	if (down && key)
 	{
