@@ -3126,7 +3126,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 			CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 		}
 
-		if (cgs.gametype != GT_WOLF_LMS)
+		if (cgs.gametype != GT_WOLF_LMS && !(comp->style & FOLLOW_NO_COUNTDOWN))
 		{
 			if (cg.snap->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
 			{
