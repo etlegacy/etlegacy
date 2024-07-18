@@ -827,6 +827,8 @@ int FS_GetModList(char *listbuf, int bufsize);
 fileHandle_t FS_FOpenFileWrite(const char *fileName);
 // will properly create any needed paths and deal with seperater character issues
 
+fileHandle_t FS_PipeOpenWrite(const char *cmd, const char *filename);
+
 long FS_filelength(fileHandle_t f);
 fileHandle_t FS_SV_FOpenFileWrite(const char *fileName);
 long FS_SV_FOpenFileRead(const char *fileName, fileHandle_t *fp);
