@@ -1498,7 +1498,7 @@ static void CL_ConsoleFont_f(void)
 
 		if (font && font[0])
 		{
-			re.RegisterFont(font, SMALLCHAR_HEIGHT, &cls.consoleFont, qtrue);
+			re.RegisterFont(font, smallCharHeight, &cls.consoleFont, qtrue);
 		}
 	}
 }
@@ -2848,10 +2848,10 @@ void CL_InitRenderer(void)
 	Com_Memset(&cls.consoleFont, 0, sizeof(cls.consoleFont));
 	if (fontName && fontName[0])
 	{
-		re.RegisterFont(fontName, SMALLCHAR_HEIGHT, &cls.consoleFont, qtrue);
+		re.RegisterFont(fontName, smallCharHeight, &cls.consoleFont, qtrue);
 	}
 	Com_Memset(&cls.etIconFont, 0, sizeof(cls.etIconFont));
-	re.RegisterFont("ETL-icon-font", SMALLCHAR_HEIGHT, &cls.etIconFont, qfalse);
+	re.RegisterFont("ETL-icon-font", smallCharHeight, &cls.etIconFont, qfalse);
 
 	cls.whiteShader = re.RegisterShader("white");
 
