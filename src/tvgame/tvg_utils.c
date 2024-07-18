@@ -42,14 +42,14 @@ model / sound configstring indexes
 */
 
 /**
- * @brief G_FindConfigstringIndex
+ * @brief TVG_FindConfigstringIndex
  * @param[in] name
  * @param[in] start
  * @param[in] max
  * @param[in] create
  * @return
  */
-int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create)
+int TVG_FindConfigstringIndex(const char *name, int start, int max, qboolean create)
 {
 	int  i;
 	char s[MAX_STRING_CHARS];
@@ -79,7 +79,7 @@ int G_FindConfigstringIndex(const char *name, int start, int max, qboolean creat
 
 	if (i == max)
 	{
-		G_Error("G_FindConfigstringIndex: overflow '%s' (%i %i) max: %i\n", name, start, start + i, max);
+		G_Error("TVG_FindConfigstringIndex: overflow '%s' (%i %i) max: %i\n", name, start, start + i, max);
 	}
 
 	trap_SetConfigstring(start + i, name);
@@ -95,7 +95,7 @@ int G_FindConfigstringIndex(const char *name, int start, int max, qboolean creat
  * @param[in] start
  * @param[in] max
  */
-void G_RemoveConfigstringIndex(const char *name, int start, int max)
+void TVG_RemoveConfigstringIndex(const char *name, int start, int max)
 {
 	int  i, j;
 	char s[MAX_STRING_CHARS];
@@ -130,65 +130,65 @@ void G_RemoveConfigstringIndex(const char *name, int start, int max)
 }
 
 /**
- * @brief G_ModelIndex
+ * @brief TVG_ModelIndex
  * @param[in] name
  * @return
  */
-int G_ModelIndex(const char *name)
+int TVG_ModelIndex(const char *name)
 {
-	return G_FindConfigstringIndex(name, CS_MODELS, MAX_MODELS, qtrue);
+	return TVG_FindConfigstringIndex(name, CS_MODELS, MAX_MODELS, qtrue);
 }
 
 /**
- * @brief G_SoundIndex
+ * @brief TVG_SoundIndex
  * @param[in] name
  * @return
  */
-int G_SoundIndex(const char *name)
+int TVG_SoundIndex(const char *name)
 {
-	return G_FindConfigstringIndex(name, CS_SOUNDS, MAX_SOUNDS, qtrue) + GAMESOUND_MAX;
+	return TVG_FindConfigstringIndex(name, CS_SOUNDS, MAX_SOUNDS, qtrue) + GAMESOUND_MAX;
 }
 
 /**
- * @brief G_SkinIndex
+ * @brief TVG_SkinIndex
  * @param[in] name
  * @return
  */
-int G_SkinIndex(const char *name)
+int TVG_SkinIndex(const char *name)
 {
-	return G_FindConfigstringIndex(name, CS_SKINS, MAX_CS_SKINS, qtrue);
+	return TVG_FindConfigstringIndex(name, CS_SKINS, MAX_CS_SKINS, qtrue);
 }
 
 /**
- * @brief G_ShaderIndex
+ * @brief TVG_ShaderIndex
  * @param[in] name
  * @return
  */
-int G_ShaderIndex(const char *name)
+int TVG_ShaderIndex(const char *name)
 {
-	return G_FindConfigstringIndex(name, CS_SHADERS, MAX_CS_SHADERS, qtrue);
+	return TVG_FindConfigstringIndex(name, CS_SHADERS, MAX_CS_SHADERS, qtrue);
 }
 
 /**
- * @brief G_CharacterIndex
+ * @brief TVG_CharacterIndex
  * @param[in] name
  * @return
  *
  * @note Unused
  */
-int G_CharacterIndex(const char *name)
+int TVG_CharacterIndex(const char *name)
 {
-	return G_FindConfigstringIndex(name, CS_CHARACTERS, MAX_CHARACTERS, qtrue);
+	return TVG_FindConfigstringIndex(name, CS_CHARACTERS, MAX_CHARACTERS, qtrue);
 }
 
 /**
- * @brief G_StringIndex
+ * @brief TVG_StringIndex
  * @param[in] string
  * @return
  */
-int G_StringIndex(const char *string)
+int TVG_StringIndex(const char *string)
 {
-	return G_FindConfigstringIndex(string, CS_STRINGS, MAX_CSSTRINGS, qtrue);
+	return TVG_FindConfigstringIndex(string, CS_STRINGS, MAX_CSSTRINGS, qtrue);
 }
 
 //=====================================================================
@@ -198,7 +198,7 @@ int G_StringIndex(const char *string)
  * @param[in] team
  * @param[in] cmd
  */
-void G_TeamCommand(team_t team, const char *cmd)
+void TVG_TeamCommand(team_t team, const char *cmd)
 {
 	int i;
 
@@ -225,7 +225,7 @@ void G_TeamCommand(team_t team, const char *cmd)
  * @param[in] match
  * @return
  */
-gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
+gentity_t *TVG_Find(gentity_t *from, int fieldofs, const char *match)
 {
 	char      *s;
 	gentity_t *max = &g_entities[level.num_entities];
@@ -260,127 +260,12 @@ gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
 }
 
 /**
- * @brief Like G_Find, but searches for integer values.
- * @param[in,out] from
- * @param[in] fieldofs
- * @param[in] match
- * @return
- */
-gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match)
-{
-	int       i;
-	gentity_t *max = &g_entities[level.num_entities];
-
-	if (!from)
-	{
-		from = g_entities;
-	}
-	else
-	{
-		from++;
-	}
-
-	for ( ; from < max ; from++)
-	{
-		if (!from->inuse)
-		{
-			continue;
-		}
-		i = *(int *) ((byte *)from + fieldofs);
-		if (i == match)
-		{
-			return from;
-		}
-	}
-
-	return NULL;
-}
-
-/**
- * @brief Like G_Find, but searches for float values..
- * @param[in,out] from
- * @param[in] fieldofs
- * @param[in] match
- * @return
- */
-gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match)
-{
-	float     f;
-	gentity_t *max = &g_entities[level.num_entities];
-
-	if (!from)
-	{
-		from = g_entities;
-	}
-	else
-	{
-		from++;
-	}
-
-	for ( ; from < max ; from++)
-	{
-		if (!from->inuse)
-		{
-			continue;
-		}
-		f = *(float *) ((byte *)from + fieldofs);
-		if (f == match)
-		{
-			return from;
-		}
-	}
-
-	return NULL;
-}
-
-/**
- * @brief Like G_Find, but searches for vector values..
- * @param[in,out] from
- * @param[in] fieldofs
- * @param[in] match
- * @return
- */
-gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match)
-{
-	vec3_t    vec;
-	gentity_t *max = &g_entities[level.num_entities];
-
-	if (!from)
-	{
-		from = g_entities;
-	}
-	else
-	{
-		from++;
-	}
-
-	for ( ; from < max ; from++)
-	{
-		if (!from->inuse)
-		{
-			continue;
-		}
-		vec[0] = *(vec_t *) ((byte *)from + fieldofs + 0);
-		vec[1] = *(vec_t *) ((byte *)from + fieldofs + 4);
-		vec[2] = *(vec_t *) ((byte *)from + fieldofs + 8);
-
-		if (vec[0] == match[0] && vec[1] == match[1] && vec[2] == match[2])
-		{
-			return from;
-		}
-	}
-
-	return NULL;
-}
-
-
-/**
- * @brief G_FindByTargetname
+ * @brief TVG_FindByTargetname
  * @param[in,out] from
  * @param[in] match
  * @return
  */
-gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
+gentity_t *TVG_FindByTargetname(gentity_t *from, const char *match)
 {
 	gentity_t *max = &g_entities[level.num_entities];
 	int       hash;
@@ -389,50 +274,9 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 
 	if (hash == -1) // if there is no name (not empty string!) BG_StringHashValue returns -1
 	{
-		G_Printf("G_FindByTargetname WARNING: invalid match pointer '%s' - run devmap & g_scriptdebug 1 to get more info about\n", match);
+		G_Printf("TVG_FindByTargetname WARNING: invalid match pointer '%s' - run devmap & g_scriptdebug 1 to get more info about\n", match);
 		return NULL;
 	}
-
-	if (!from)
-	{
-		from = g_entities;
-	}
-	else
-	{
-		from++;
-	}
-
-	for ( ; from < max ; from++)
-	{
-		if (!from->inuse)
-		{
-			continue;
-		}
-
-		if (!from->targetname) // there are ents with no targetname set
-		{
-			continue;
-		}
-
-		if (from->targetnamehash == hash && !Q_stricmp(from->targetname, match))
-		{
-			return from;
-		}
-	}
-
-	return NULL;
-}
-
-/**
- * @brief This version should be used for loops, saves the constant hash building
- * @param[in,out] from
- * @param[in] match
- * @param[in] hash
- * @return
- */
-gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
-{
-	gentity_t *max = &g_entities[level.num_entities];
 
 	if (!from)
 	{
@@ -471,7 +315,7 @@ gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
  * @param[in] targetname
  * @return
  */
-gentity_t *G_PickTarget(const char *targetname)
+gentity_t *TVG_PickTarget(const char *targetname)
 {
 	gentity_t *ent        = NULL;
 	int       num_choices = 0;
@@ -479,13 +323,13 @@ gentity_t *G_PickTarget(const char *targetname)
 
 	if (!targetname)
 	{
-		//G_Printf("G_PickTarget called with NULL targetname\n");
+		//G_Printf("TVG_PickTarget called with NULL targetname\n");
 		return NULL;
 	}
 
 	while (1)
 	{
-		ent = G_FindByTargetname(ent, targetname);
+		ent = TVG_FindByTargetname(ent, targetname);
 		if (!ent)
 		{
 			break;
@@ -499,7 +343,7 @@ gentity_t *G_PickTarget(const char *targetname)
 
 	if (!num_choices)
 	{
-		G_Printf(S_COLOR_YELLOW "WARNING G_PickTarget: target %s not found or isn't in use - this might be a bug (returning NULL)\n", targetname);
+		G_Printf(S_COLOR_YELLOW "WARNING TVG_PickTarget: target %s not found or isn't in use - this might be a bug (returning NULL)\n", targetname);
 		return NULL;
 	}
 
@@ -507,68 +351,11 @@ gentity_t *G_PickTarget(const char *targetname)
 }
 
 /**
- * @brief G_AllowTeamsAllowed
- * @param[in] ent
- * @param[in] activator
- * @return
- */
-qboolean G_AllowTeamsAllowed(gentity_t *ent, gentity_t *activator)
-{
-	if (ent->allowteams && activator && activator->client)
-	{
-		if (activator->client->sess.sessionTeam != TEAM_SPECTATOR)
-		{
-			int checkTeam = activator->client->sess.sessionTeam;
-
-			if (!(ent->allowteams & checkTeam))
-			{
-				if ((ent->allowteams & ALLOW_DISGUISED_CVOPS) && activator->client->ps.powerups[PW_OPS_DISGUISED])
-				{
-					if (checkTeam == TEAM_AXIS)
-					{
-						checkTeam = TEAM_ALLIES;
-					}
-					else if (checkTeam == TEAM_ALLIES)
-					{
-						checkTeam = TEAM_AXIS;
-					}
-				}
-
-				if (!(ent->allowteams & checkTeam))
-				{
-					return qfalse;
-				}
-			}
-		}
-	}
-
-	return qtrue;
-}
-
-/**
- * @brief Added to allow more checking on what uses what
- * @param[in,out] ent
- * @param[in] other
- * @param[in] activator
- */
-void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator)
-{
-	// check for allowteams
-	if (!G_AllowTeamsAllowed(ent, activator))
-	{
-		return;
-	}
-
-	// Woop we got through, let's use the entity
-	ent->use(ent, other, activator);
-}
-
-/**
  * @brief This is just a convenience function for printing vectors
  * @param[in] v
  * @return
  */
-char *vtos(const vec3_t v)
+char *TVG_VecToStr(const vec3_t v)
 {
 	static int  index;
 	static char str[8][32];
@@ -584,47 +371,15 @@ char *vtos(const vec3_t v)
 }
 
 /**
- * @brief The editor only specifies a single value for angles (yaw),
- * but we have special constants to generate an up or down direction.
- * Angles will be cleared, because it is being used to represent a direction
- * instead of an orientation.
- *
- * @param[in,out] angles
- * @param[out] movedir
- */
-void G_SetMovedir(vec3_t angles, vec3_t movedir)
-{
-	static vec3_t VEC_UP       = { 0, -1, 0 };
-	static vec3_t MOVEDIR_UP   = { 0, 0, 1 };
-	static vec3_t VEC_DOWN     = { 0, -2, 0 };
-	static vec3_t MOVEDIR_DOWN = { 0, 0, -1 };
-
-	if (VectorCompare(angles, VEC_UP))
-	{
-		VectorCopy(MOVEDIR_UP, movedir);
-	}
-	else if (VectorCompare(angles, VEC_DOWN))
-	{
-		VectorCopy(MOVEDIR_DOWN, movedir);
-	}
-	else
-	{
-		AngleVectors(angles, movedir, NULL, NULL);
-	}
-	VectorClear(angles);
-}
-
-/**
- * @brief G_InitGentity
+ * @brief TVG_InitGentity
  * @param[in,out] e
  */
-void G_InitGentity(gentity_t *e)
+void TVG_InitGentity(gentity_t *e)
 {
 	e->inuse      = qtrue;
 	e->classname  = "noclass";
 	e->s.number   = e - g_entities;
 	e->r.ownerNum = ENTITYNUM_NONE;
-	e->nextthink  = 0;
 	e->free       = NULL;
 
 	// mark the time
@@ -644,7 +399,7 @@ void G_InitGentity(gentity_t *e)
  *
  * @return
  */
-gentity_t *G_Spawn(void)
+gentity_t *TVG_Spawn(void)
 {
 	int       i = 0, force;
 	gentity_t *e = NULL;
@@ -670,7 +425,7 @@ gentity_t *G_Spawn(void)
 			}
 
 			// reuse this slot
-			G_InitGentity(e);
+			TVG_InitGentity(e);
 			return e;
 		}
 		if (i != ENTITYNUM_MAX_NORMAL)
@@ -695,7 +450,7 @@ gentity_t *G_Spawn(void)
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
 	                    &level.clients[0].ps, sizeof(level.clients[0]));
 
-	G_InitGentity(e);
+	TVG_InitGentity(e);
 	return e;
 }
 
@@ -704,7 +459,7 @@ gentity_t *G_Spawn(void)
  *
  * @param[in,out] ent
  */
-void G_FreeEntity(gentity_t *ent)
+void TVG_FreeEntity(gentity_t *ent)
 {
 	if (ent->free)
 	{
@@ -713,11 +468,6 @@ void G_FreeEntity(gentity_t *ent)
 
 	trap_UnlinkEntity(ent);       // unlink from world
 
-	if (ent->neverFree)
-	{
-		return;
-	}
-
 	// this tiny hack fixes level.num_entities rapidly reaching MAX_GENTITIES-1
 	// some very often spawned entities don't have to relax (=spawned, immediately freed and not transmitted)
 	// before all game entities did relax - now  ET_TEMPHEAD, ET_TEMPLEGS and ET_EVENTS no longer relax
@@ -725,7 +475,7 @@ void G_FreeEntity(gentity_t *ent)
 	// - optimization: if events are freed EVENT_VALID_MSEC has already passed (keep in mind these are broadcasted)
 	// - when enabled g_debugHitboxes, g_debugPlayerHitboxes or g_debugbullets 3 we want visible trace effects - don't free immediately
 	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
-	if (ent->s.eType == ET_TEMPHEAD || ent->s.eType == ET_TEMPLEGS || ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS)
+	if (ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS)
 	{
 		// debug
 		if (g_developer.integer)
@@ -755,133 +505,29 @@ void G_FreeEntity(gentity_t *ent)
 	}
 }
 
-/**
- * @brief Spawns an event entity that will be auto-removed.
- *
- * @details The origin will be snapped to save net bandwidth, so care
- * must be taken if the origin is right on a surface (snap towards start vector first)
- *
- * @param[in] origin
- * @param[in] event
- * @return
- */
-gentity_t *G_TempEntity(vec3_t origin, entity_event_t event)
-{
-	gentity_t *e;
-	vec3_t    snapped;
-
-	e = G_Spawn();
-
-	e->s.eType = ET_EVENTS + event;
-
-	e->classname      = "tempEntity";
-	e->eventTime      = level.time;
-	e->r.eventTime    = level.time;
-	e->freeAfterEvent = qtrue;
-
-	VectorCopy(origin, snapped);
-	SnapVector(snapped);        // save network bandwidth
-	TVG_SetOrigin(e, snapped);
-
-	// find cluster for PVS
-	trap_LinkEntity(e);
-
-	return e;
-}
-
-/**
- * @brief Spawns an event entity that will be auto-removed
- * Use this for non visible and not origin based events like global sounds etc.
- *
- * @param[in] event
- *
- * @return
- *
- * @note Don't forget to call e->r.svFlags = SVF_BROADCAST; after
- */
-gentity_t *G_TempEntityNotLinked(entity_event_t event)
-{
-	gentity_t *e;
-
-	e = G_Spawn();
-
-	e->s.eType        = ET_EVENTS + event;
-	e->classname      = "tempEntity";
-	e->eventTime      = level.time;
-	e->r.eventTime    = level.time;
-	e->freeAfterEvent = qtrue;
-	e->r.linked       = qtrue; // don't link for real
-
-	return e;
-}
-
 //==============================================================================
 
 /**
  * @brief Adds an event+parm and twiddles the event counter
- * @param[in,out] ent
+ * @param[in,out] client
  * @param[in] event
  * @param[in] eventParm
  */
-void G_AddEvent(gentity_t *ent, int event, int eventParm)
+void TVG_AddEvent(gclient_t *client, int event, int eventParm)
 {
 	if (!event)
 	{
-		G_Printf(S_COLOR_YELLOW "WARNING G_AddEvent: zero event added for entity %i\n", ent->s.number);
+		G_Printf(S_COLOR_YELLOW "WARNING G_AddEvent: zero event added for client %i\n", client - level.clients);
 		return;
 	}
 
 	// use the sequential event list
-	if (ent->client)
+	if (client)
 	{
 		// commented in - externalEvents not being handled properly in Wolf right now
-		ent->client->ps.events[ent->client->ps.eventSequence & (MAX_EVENTS - 1)]     = event;
-		ent->client->ps.eventParms[ent->client->ps.eventSequence & (MAX_EVENTS - 1)] = eventParm;
-		ent->client->ps.eventSequence++;
-	}
-	else
-	{
-		// commented in - externalEvents not being handled properly in Wolf right now
-		ent->s.events[ent->s.eventSequence & (MAX_EVENTS - 1)]     = event;
-		ent->s.eventParms[ent->s.eventSequence & (MAX_EVENTS - 1)] = eventParm;
-		ent->s.eventSequence++;
-	}
-	ent->eventTime   = level.time;
-	ent->r.eventTime = level.time;
-}
-
-/**
- * @brief Removed channel parm, since it wasn't used, and could cause confusion
- * @param[in] ent
- * @param[in] soundIndex
- */
-void G_Sound(gentity_t *ent, int soundIndex)
-{
-	gentity_t *te;
-
-	te = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
-
-	te->s.eventParm = soundIndex;
-}
-
-/**
- * @brief G_ClientSound
- * @param[in] ent
- * @param[in] soundIndex
- */
-void G_ClientSound(gentity_t *ent, int soundIndex)
-{
-	if (ent && ent->client)
-	{
-		gentity_t *te;
-
-		te = G_TempEntityNotLinked(EV_GLOBAL_CLIENT_SOUND);
-
-		te->s.teamNum   = (ent->client - level.clients);
-		te->s.eventParm = soundIndex;
-
-		te->r.singleClient = ent->s.number;
-		te->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;
+		client->ps.events[client->ps.eventSequence & (MAX_EVENTS - 1)]     = event;
+		client->ps.eventParms[client->ps.eventSequence & (MAX_EVENTS - 1)] = eventParm;
+		client->ps.eventSequence++;
 	}
 }
 
@@ -893,48 +539,12 @@ void G_ClientSound(gentity_t *ent, int soundIndex)
  */
 void TVG_AnimScriptSound(int soundIndex, vec3_t org, int client)
 {
-	gentity_t *e = &g_entities[client];
+	gclient_t *cl = &level.clients[client];
 
-	G_AddEvent(e, EV_GENERAL_SOUND, soundIndex);
+	TVG_AddEvent(cl, EV_GENERAL_SOUND, soundIndex);
 }
 
 //==============================================================================
-
-/**
- * @brief Sets the pos trajectory for a fixed position
- * @param[out] ent
- * @param[in] origin
- */
-void TVG_SetOrigin(gentity_t *ent, vec3_t origin)
-{
-	VectorCopy(origin, ent->s.pos.trBase);
-	ent->s.pos.trType     = TR_STATIONARY;
-	ent->s.pos.trTime     = 0;
-	ent->s.pos.trDuration = 0;
-	VectorClear(ent->s.pos.trDelta);
-
-	VectorCopy(origin, ent->s.origin);
-	VectorCopy(origin, ent->r.currentOrigin);
-
-	if (ent->client)
-	{
-		VectorCopy(origin, ent->client->ps.origin);
-	}
-}
-
-/**
-* @brief Plays specified sound globally.
-* @param[in] sound
-*/
-void TVG_globalSound(const char *sound)
-{
-	gentity_t *te;
-
-	te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
-
-	te->s.eventParm = G_SoundIndex(sound);
-	te->r.svFlags  |= SVF_BROADCAST;
-}
 
 /**
 * @brief Teleport player to a given origin and angles
@@ -1044,55 +654,9 @@ void TVG_TempTraceIgnorePlayersFromTeam(team_t team)
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
-		if (g_entities[i].client && g_entities[i].client->sess.sessionTeam == team)
+		if (g_entities[i].s.teamNum == team)
 		{
 			TVG_TempTraceIgnoreEntity(&g_entities[i]);
-		}
-	}
-}
-
-/**
-* @brief TVG_TempTraceIgnoreEntities
-* @param[in] ent
-*/
-void TVG_TempTraceIgnoreEntities(gentity_t *ent)
-{
-	int           i;
-	int           listLength;
-	int           list[MAX_GENTITIES];
-	gentity_t     *hit;
-	vec3_t        BBmins, BBmaxs;
-	static vec3_t range = { CH_BREAKABLE_DIST, CH_BREAKABLE_DIST, CH_BREAKABLE_DIST };
-
-	if (!ent->client)
-	{
-		return;
-	}
-
-	VectorSubtract(ent->client->ps.origin, range, BBmins);
-	VectorAdd(ent->client->ps.origin, range, BBmaxs);
-
-	listLength = trap_EntitiesInBox(BBmins, BBmaxs, list, MAX_GENTITIES);
-
-	for (i = 0; i < listLength; i++)
-	{
-		hit = &g_entities[list[i]];
-
-		if (hit->s.eType == ET_OID_TRIGGER || hit->s.eType == ET_TRIGGER_MULTIPLE
-		    || hit->s.eType == ET_TRIGGER_FLAGONLY || hit->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
-		{
-			TVG_TempTraceIgnoreEntity(hit);
-		}
-
-		if (hit->s.eType == ET_CORPSE && !(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS))
-		{
-			TVG_TempTraceIgnoreEntity(hit);
-		}
-
-		if (hit->client && (!(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC) || (ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->client->sess.sessionTeam != hit->client->sess.sessionTeam))
-		    && hit->client->ps.pm_type == PM_DEAD && !(hit->client->ps.pm_flags & PMF_LIMBO))
-		{
-			TVG_TempTraceIgnoreEntity(hit);
 		}
 	}
 }

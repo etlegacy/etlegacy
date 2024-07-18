@@ -120,7 +120,7 @@ void SV_CL_SystemInfoChanged(void)
 		Cvar_SetCheatState();
 	}
 
-	SV_CL_SetPurePaks(qfalse);
+	SV_CL_SetPurePaks(!sv_pure->integer);
 }
 
 /**
@@ -488,7 +488,8 @@ void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityStat
 
 		if (state->number < MAX_CLIENTS)
 		{
-			gEnt->r.contents = CONTENTS_SOLID;
+			gEnt->r.contents = CONTENTS_BODY;
+			gEnt->r.ownerNum = ENTITYNUM_NONE;
 		}
 
 		gEnt->s.number = newnum;

@@ -275,9 +275,7 @@ typedef enum
 
 	GAME_MESSAGERECEIVED = 14,      ///< ( int cno, const char *buf, int buflen, int commandTime );
 
-	GAME_DEMOSTATECHANGED,          ///< (demoState_t demoState, int demoClientsNum) // server demo playback
-
-	GAME_ETTV = 1000,
+	GAME_ETTV = 1000,               ///< ETTV backward compatibility
 
 } gameExport_t;
 

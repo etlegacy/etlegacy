@@ -118,6 +118,7 @@ vmCvar_t url;
 #ifdef FEATURE_LUA
 vmCvar_t lua_modules;
 vmCvar_t lua_allowedModules;
+vmCvar_t tvg_luaModuleList;
 #endif
 
 vmCvar_t tvg_protect; // similar to sv_protect game cvar
@@ -205,6 +206,7 @@ tvcvarTable_t gameCvarTable[] =
 #ifdef FEATURE_LUA
 	{ &lua_modules,             "lua_modules",             "",                           0,                                           0, qfalse,},
 	{ &lua_allowedModules,      "lua_allowedModules",      "",                           0,                                           0, qfalse,},
+	{ &tvg_luaModuleList,       "tvg_luaModuleList",       "",                           0,                                           0, qfalse,},
 #endif
 
 	{ &tvg_protect,             "tvg_protect",             "0",                          CVAR_ARCHIVE,                                0, qfalse,},
@@ -216,9 +218,9 @@ tvcvarTable_t gameCvarTable[] =
 	{ &g_debugAlloc,            "g_debugAlloc",            "0",                          0,                                           0, qfalse,},
 	{ &g_debugBullets,          "g_debugBullets",          "0",                          0,                                           0, qfalse,},
 	{ &team_riflegrenades,      "team_riflegrenades",      "1",                          CVAR_ROM,                                    0, qfalse,},
-	{ &g_fixedphysics,          "g_fixedphysics",          "1",                          CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
-	{ &g_fixedphysicsfps,       "g_fixedphysicsfps",       "125",                        CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
-	{ &g_pronedelay,            "g_pronedelay",            "0",                          CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
+	{ &g_fixedphysics,          "g_fixedphysics",          "1",                          CVAR_ROM,                                    0, qfalse,},
+	{ &g_fixedphysicsfps,       "g_fixedphysicsfps",       "125",                        CVAR_ROM,                                    0, qfalse,},
+	{ &g_pronedelay,            "g_pronedelay",            "0",                          CVAR_ROM,                                    0, qfalse,},
 
 	{ &tvg_queue_ms,            "ettv_queue_ms",           "-1",                         CVAR_ROM,                                    0, qfalse,},
 };
@@ -266,19 +268,6 @@ qboolean TVG_SnapshotCallback(int entityNum, int clientNum)
 
 int dll_com_trapGetValue;
 int dll_trap_DemoSupport;
-
-static void TVG_ETTV_ConfigstringPassthrough(int index)
-{
-	char cs[MAX_TOKEN_CHARS];
-
-	if (index == CS_SYSTEMINFO)
-	{
-		return;
-	}
-
-	trap_GetConfigstring(index, cs, sizeof(cs));
-	trap_TVG_SetConfigstring(index, cs);
-}
 
 /**
  * @brief This is the only way control passes into the module.
@@ -335,12 +324,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return TVG_SnapshotCallback(arg0, arg1);
 	case GAME_MESSAGERECEIVED:
 		return -1;
-	case GAME_DEMOSTATECHANGED:
-		return 0;
-	// FIXME: unused by etltv, I don't know why ETTV and etpro tvgame has it
-	// it's not fully implemented in etltv because to my understanding it accomplishes nothing
 	case GAME_ETTV:
-		TVG_ETTV_ConfigstringPassthrough(arg0);
 		return 0;
 	default:
 		G_Printf("Bad game export type: %ld\n", (long int) command);
@@ -365,7 +349,7 @@ void QDECL G_Printf(const char *fmt, ...)
 
 #ifdef FEATURE_LUA
 	// LUA* API callbacks
-	G_LuaHook_Print(GPRINT_TEXT, text);
+	TVG_LuaHook_Print(GPRINT_TEXT, text);
 #endif
 
 	trap_Printf(text);
@@ -394,7 +378,7 @@ void QDECL G_DPrintf(const char *fmt, ...)
 
 #ifdef FEATURE_LUA
 		// LUA* API callbacks
-		G_LuaHook_Print(GPRINT_DEVELOPER, text);
+		TVG_LuaHook_Print(GPRINT_DEVELOPER, text);
 #endif
 
 		trap_Printf(text);
@@ -418,7 +402,7 @@ void QDECL G_Error(const char *fmt, ...)
 
 #ifdef FEATURE_LUA
 	// LUA* API callbacks
-	G_LuaHook_Print(GPRINT_ERROR, text);
+	TVG_LuaHook_Print(GPRINT_ERROR, text);
 #endif
 
 	trap_Error(text);
@@ -448,11 +432,6 @@ void TVG_RegisterCvars(void)
 
 	for (i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++)
 	{
-		if (!(level.mod & LEGACY_MOD) && (cv->vmCvar == &g_fixedphysics || cv->vmCvar == &g_fixedphysicsfps || cv->vmCvar == &g_pronedelay))
-		{
-			cv->cvarFlags &= ~CVAR_SERVERINFO;
-		}
-
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
 		if (cv->vmCvar)
 		{
@@ -486,7 +465,7 @@ void TVG_UpdateCvars(void)
 #ifdef FEATURE_LUA
 				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)
 				{
-					G_LuaShutdown();
+					TVG_LuaShutdown();
 				}
 #endif
 			}
@@ -665,7 +644,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	}
 
 #ifdef FEATURE_LUA
-	G_LuaInit();
+	TVG_LuaInit();
 #else
 	G_Printf("%sNo Lua API available\n", S_COLOR_BLUE);
 #endif
@@ -677,7 +656,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	for (i = 0; i < level.num_entities; i++)
 	{
-		G_FreeEntity(g_entities + i);
+		TVG_FreeEntity(g_entities + i);
 	}
 
 	level.num_entities = 0;
@@ -693,7 +672,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	G_RegisterPlayerClasses();
 
 #ifdef FEATURE_LUA
-	G_LuaHook_InitGame(levelTime, randomSeed, restart);
+	TVG_LuaHook_InitGame(levelTime, randomSeed, restart);
 #endif
 }
 
@@ -707,8 +686,8 @@ void TVG_ShutdownGame(int restart)
 	char   timeFt[32];
 
 #ifdef FEATURE_LUA
-	G_LuaHook_ShutdownGame(restart);
-	G_LuaShutdown();
+	TVG_LuaHook_ShutdownGame(restart);
+	TVG_LuaShutdown();
 #endif
 
 	G_Printf("==== TVShutdownGame (%i - %s) ====\n", restart, level.rawmapname);
@@ -832,7 +811,7 @@ void TVG_FindIntermissionPoint(void)
 		winner = TEAM_ALLIES;
 	}
 
-	ent = G_Find(NULL, FOFS(classname), "info_player_intermission");
+	ent = TVG_Find(NULL, FOFS(classname), "info_player_intermission");
 	while (ent)
 	{
 		if (ent->spawnflags & winner)
@@ -840,7 +819,7 @@ void TVG_FindIntermissionPoint(void)
 			break;
 		}
 
-		ent = G_Find(ent, FOFS(classname), "info_player_intermission");
+		ent = TVG_Find(ent, FOFS(classname), "info_player_intermission");
 	}
 
 	if (!ent) // the map creator forgot to put in an intermission point...
@@ -854,7 +833,7 @@ void TVG_FindIntermissionPoint(void)
 		// if it has a target, look towards it
 		if (ent->target)
 		{
-			target = G_PickTarget(ent->target);
+			target = TVG_PickTarget(ent->target);
 			if (target)
 			{
 				VectorSubtract(target->s.origin, level.intermission_origin, dir);
@@ -976,4 +955,8 @@ void TVG_RunFrame(int levelTime)
 	{
 		TVG_ClientEndFrame(&level.clients[level.sortedClients[i]]);
 	}
+
+#ifdef FEATURE_LUA
+	TVG_LuaHook_RunFrame(levelTime);
+#endif
 }

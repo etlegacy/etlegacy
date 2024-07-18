@@ -128,7 +128,7 @@ typedef struct tvcmd_reference_s
 	int updateInterval;
 	int lastUpdateTime;
 	qboolean floodProtected;
-	mods_t mods; // excluded mods for CMD_USAGE_AUTOUPDATE
+	int mods; // excluded mods for CMD_USAGE_AUTOUPDATE
 	qboolean (*pCommand)(gclient_t *client, struct tvcmd_reference_s *self);
 	const char *pszHelpInfo;
 } tvcmd_reference_t;
@@ -150,51 +150,27 @@ struct gentity_s
 	// EXPECTS THE FIELDS IN THAT ORDER!
 	//================================
 
-	struct gclient_s *client;       ///< NULL if not a client
-
 	qboolean inuse;
 
 	const char *classname;          ///< set in QuakeEd
 	int spawnflags;                 ///< set in QuakeEd
 
-	qboolean neverFree;             ///< if true, FreeEntity will only unlink
-	///< bodyque uses this
-
 	int flags;                      ///< FL_* variables
 
 	int freetime;                   ///< level.time when the object was freed
 
-	int eventTime;                  ///< events will be cleared EVENT_VALID_MSEC after set
-	qboolean freeAfterEvent;
-	qboolean unlinkAfterEvent;
-
-	int clipmask;                   ///< brushes with this content value will be collided against
-	///< when moving.  items and corpses do not collide against
-	///< players, for instance
-
-	float angle;                    ///< set in editor, -1 = up, -2 = down
 	char *target;
 
 	char *targetname;
 	int targetnamehash;             ///< adding a hash for this for faster lookups
 
-	int nextthink;
 	void (*free)(gentity_t *self);
-	void (*think)(gentity_t *self);
-	void (*reached)(gentity_t *self);           ///< movers call this when hitting endpoint
-	void (*blocked)(gentity_t *self, gentity_t *other);
-	void (*touch)(gentity_t *self, gentity_t *other, trace_t *trace);
-	void (*use)(gentity_t *self, gentity_t *other, gentity_t *activator);
-	void (*pain)(gentity_t *self, gentity_t *attacker, int damage, vec3_t point);
-	void (*die)(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod);
 
 	gentity_t *enemy;
 
 	int allowteams;
 
 	int spawnTime;
-
-	int spawnId;                        ///< team_CTF_redspawn/team_CTF_bluespawn minor spawnpoint id
 };
 
 /**
@@ -260,30 +236,20 @@ typedef struct
  * @brief Client data that stays across multiple levels or tournament restarts
  * this is achieved by writing all the data to vmCvar strings at game shutdown
  * time and reading them back at connection time.  Anything added here
- * MUST be dealt with in G_InitSessionData() / G_ReadSessionData() / G_WriteSessionData()
+ * MUST be dealt with in TVG_InitSessionData() / TVG_ReadSessionData() / TVG_WriteSessionData()
  */
 typedef struct
 {
 	team_t sessionTeam;
-	int spectatorTime;                                  ///< for determining next-in-line to play
 	spectatorState_t spectatorState;
 	int spectatorClient;                                ///< for chasecam and follow mode
 	int playerType;                                     ///< class
-	weapon_t playerWeapon;                              ///< primary weapon
-	weapon_t playerWeapon2;                             ///< secondary weapon
-	int userSpawnPointValue;                            ///< index of objective to spawn nearest to (returned from UI)
-	int latchPlayerType;                                ///< latched class
-	weapon_t latchPlayerWeapon;                         ///< latched primary weapon
-	weapon_t latchPlayerWeapon2;                        ///< latched secondary weapon
 	//int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
 	qboolean muted;
 	int skill[SK_NUM_SKILLS];                           ///< skill
 
 	int referee;
-	int shoutcaster;
 	int spec_team;
-
-	qboolean versionOK;
 
 	// flood protection
 	int nextReliableTime;                               ///< next time a command can be executed when flood limited
@@ -305,8 +271,6 @@ typedef struct ipFilter_s
 	unsigned compare;
 } ipFilter_t;
 
-#define MAX_COMPLAINTIPS 5
-
 /**
  * @struct clientPersistant_t
  * @brief Client data that stays across multiple respawns, but is cleared
@@ -318,32 +282,19 @@ typedef struct
 	usercmd_t cmd;                      ///< we would lose angles if not persistant
 	usercmd_t oldcmd;                   ///< previous command processed by pmove()
 	qboolean localClient;               ///< true if "ip" info key is "localhost"
-	qboolean initialSpawn;              ///< the first spawn should be at a cool location
 	qboolean activateLean;
-	qboolean pmoveFixed;
-	int pmoveMsec;
 
 	char netname[MAX_NETNAME];
 	char client_ip[MAX_IP4_LENGTH];     ///< ip 'caching' - it won't change
 	char cl_guid[MAX_GUID_LENGTH + 1];
 
-	int maxHealth;                      ///<
 	int enterTime;                      ///< level.time the client entered the game
 	int connectTime;                    ///< level.time the client first connected to the server
 	playerTeamState_t teamState;        ///< status in teamplay games
-
-	int lastSpawnTime;
-
-	unsigned int autoaction;            ///< End-of-match auto-requests
-	unsigned int clientFlags;           ///< Client settings that need server involvement
-	unsigned int clientMaxPackets;      ///< Client com_maxpacket settings
-	unsigned int clientTimeNudge;       ///< Client cl_timenudge settings
 	int cmd_debounce;                   ///< Dampening of command spam
 
 	bg_character_t *character;
 	int characterIndex;
-
-	ipFilter_t complaintips[MAX_COMPLAINTIPS];
 } clientPersistant_t;
 
 /**
@@ -376,8 +327,6 @@ struct gclient_s
 
 	qboolean noclip;
 
-	// we can't just use pers.lastCommand.time, because
-	// of the g_sycronousclients case
 	int buttons;
 	int oldbuttons;
 	int latched_buttons;
@@ -385,23 +334,15 @@ struct gclient_s
 	int wbuttons;
 	int oldwbuttons;
 	int latched_wbuttons;
-	vec3_t oldOrigin;
 
 	// timers
-	int respawnTime;                        ///< can respawn when time > this, force after g_forcerespwan
 	int inactivityTime;                     ///< kick players when time > this
 	qboolean inactivityWarning;             ///< qtrue if the five seoond warning has been given
 	int inactivitySecondsLeft;              ///< for displaying a counting-down time on clients (milliseconds before activity kicks in..)
 
-	int saved_persistant[MAX_PERSISTANT];   ///< Save ps->persistant here during Limbo
-
 	pmoveExt_t pmext;
 
-	int disguiseClientNum;
-
 	wantsPlayerInfoStats_t wantsInfoStats[INFO_NUM];
-
-	qboolean activateHeld;                  ///< client is holding down +activate
 };
 
 // this structure is cleared as each map is entered
@@ -492,13 +433,10 @@ typedef struct level_locals_s
 
 	int framenum;
 	int time;                                   ///< in msec
-	int overTime;                               ///< workaround for dual objective timelimit bug
 	int previousTime;                           ///< so movers can back up when blocked
 	int frameTime;                              ///< time delta
 
 	int startTime;                              ///< level.time the map was started
-
-	qboolean restarted;                         ///< waiting for a map_restart to fire
 
 	int numConnectedClients;
 	int *sortedClients;
@@ -516,13 +454,9 @@ typedef struct level_locals_s
 	/// player/AI model scripting (server repository)
 	animScriptData_t animScriptData;
 
-	int lastRestartTime;
-
 	qboolean fLocalHost;
-	int timeCurrent;                            ///< Real game clock
-	int timeDelta;                              ///< Offset from internal clock - used to calculate real match time
 
-	qboolean mapcoordsValid, tracemapLoaded;
+	qboolean mapcoordsValid;
 	vec2_t mapcoordsMins, mapcoordsMaxs;
 
 	qboolean tempTraceIgnoreEnts[MAX_GENTITIES];
@@ -530,12 +464,6 @@ typedef struct level_locals_s
 	// sv_cvars
 	svCvar_t svCvars[MAX_SVCVARS];
 	int svCvarsCount;
-
-	int frameStartTime;
-
-	demoState_t demoState;     ///< server demo state
-	int demoClientsNum;        ///< number of reserved slots for demo clients
-	int demoClientBotNum;      ///< clientNum of bot that collects stats during recording, optional
 
 	qboolean intermission;
 
@@ -553,12 +481,12 @@ typedef struct level_locals_s
 
 } level_locals_t;
 
-// g_spawn.c
-#define G_SpawnString(key, def, out) TVG_SpawnStringExt(key, def, out, __FILE__, __LINE__)
-#define G_SpawnFloat(key, def, out) TVG_SpawnFloatExt(key, def, out, __FILE__, __LINE__)
-#define G_SpawnInt(key, def, out) TVG_SpawnIntExt(key, def, out, __FILE__, __LINE__)
-#define G_SpawnVector(key, def, out) TVG_SpawnVectorExt(key, def, out, __FILE__, __LINE__)
-#define G_SpawnVector2D(key, def, out) TVG_SpawnVector2DExt(key, def, out, __FILE__, __LINE__)
+// tvg_spawn.c
+#define TVG_SpawnString(key, def, out) TVG_SpawnStringExt(key, def, out, __FILE__, __LINE__)
+#define TVG_SpawnFloat(key, def, out) TVG_SpawnFloatExt(key, def, out, __FILE__, __LINE__)
+#define TVG_SpawnInt(key, def, out) TVG_SpawnIntExt(key, def, out, __FILE__, __LINE__)
+#define TVG_SpawnVector(key, def, out) TVG_SpawnVectorExt(key, def, out, __FILE__, __LINE__)
+#define TVG_SpawnVector2D(key, def, out) TVG_SpawnVector2DExt(key, def, out, __FILE__, __LINE__)
 
 qboolean TVG_SpawnStringExt(const char *key, const char *defaultString, char **out, const char *file, int line);      // spawn string returns a temporary reference, you must CopyString() if you want to keep it
 qboolean TVG_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line);
@@ -575,7 +503,7 @@ qboolean TVG_CallSpawn(gentity_t *ent);
 char *TVG_AddSpawnVarToken(const char *string);
 void TVG_ParseField(const char *key, const char *value, gentity_t *ent);
 
-// g_cmds.c
+// tvg_cmds.c
 qboolean TVG_Cmd_Score_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_Ignore_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self);
@@ -608,45 +536,30 @@ qboolean TVG_CommandsAutoUpdate(tvcmd_reference_t *tvcmd);
 
 qboolean TVG_ServerIsFloodProtected(void);
 
-void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.
-void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume); // Unused.
+// tvg_utils.c
+int TVG_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
+void TVG_RemoveConfigstringIndex(const char *name, int start, int max);
 
-// g_utils.c
-int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
-void G_RemoveConfigstringIndex(const char *name, int start, int max);
+int TVG_ModelIndex(const char *name);
+int TVG_SoundIndex(const char *name);
+int TVG_SkinIndex(const char *name);
+int TVG_ShaderIndex(const char *name);
+int TVG_CharacterIndex(const char *name);
+int TVG_StringIndex(const char *string);
+void TVG_TeamCommand(team_t team, const char *cmd);
 
-int G_ModelIndex(const char *name);
-int G_SoundIndex(const char *name);
-int G_SkinIndex(const char *name);
-int G_ShaderIndex(const char *name);
-int G_CharacterIndex(const char *name);
-int G_StringIndex(const char *string);
-qboolean G_AllowTeamsAllowed(gentity_t *ent, gentity_t *activator);
-void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator);
-void G_TeamCommand(team_t team, const char *cmd);
+gentity_t *TVG_Find(gentity_t *from, int fieldofs, const char *match);
+gentity_t *TVG_FindByTargetname(gentity_t *from, const char *match);
+gentity_t *TVG_PickTarget(const char *targetname);
 
-gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match);
-gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match);
-gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match);
-gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match);
-gentity_t *G_FindByTargetname(gentity_t *from, const char *match);
-gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash);
-gentity_t *G_PickTarget(const char *targetname);
-void G_SetMovedir(vec3_t angles, vec3_t movedir);
-
-void G_InitGentity(gentity_t *e);
-gentity_t *G_Spawn(void);
-gentity_t *G_TempEntity(vec3_t origin, entity_event_t event);
-gentity_t *G_TempEntityNotLinked(entity_event_t event);
-void G_Sound(gentity_t *ent, int soundIndex);
+void TVG_InitGentity(gentity_t *e);
+gentity_t *TVG_Spawn(void);
 void TVG_AnimScriptSound(int soundIndex, vec3_t org, int client);
-void G_FreeEntity(gentity_t *ent);
-void G_ClientSound(gentity_t *ent, int soundIndex);
+void TVG_FreeEntity(gentity_t *ent);
 
-char *vtos(const vec3_t v);
+char *TVG_VecToStr(const vec3_t v);
 
-void G_AddEvent(gentity_t *ent, int event, int eventParm);
-void TVG_SetOrigin(gentity_t *ent, vec3_t origin);
+void TVG_AddEvent(gclient_t *client, int event, int eventParm);
 
 /**
  * @struct mapVotePlayersCount_s
@@ -714,7 +627,6 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles);
 
 void TVG_ClientSpawn(gclient_t *client);
 void TVG_CalculateRanks(void);
-qboolean SpotWouldTelefrag(gentity_t *spot);
 
 // *LUA* & map configs g_sha1.c
 char *G_SHA1(const char *string);
@@ -738,7 +650,7 @@ void TVG_Say(gclient_t *client, gclient_t *target, int mode, const char *chatTex
 void TVG_SayTo(gclient_t *ent, gclient_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
 qboolean TVG_Cmd_Follow_f(gclient_t *client, tvcmd_reference_t *self);
 void TVG_Say_f(gclient_t *client, int mode /*, qboolean arg0*/);
-void G_PlaySound_Cmd(void);
+void TVG_PlaySound_Cmd(void);
 int TVG_ClientNumbersFromString(char *s, int *plist);
 int TVG_ClientNumberFromString(gclient_t *to, char *s);
 int TVG_MasterClientNumbersFromString(char *s, int *plist);
@@ -833,6 +745,7 @@ extern vmCvar_t server_motd5;
 #ifdef FEATURE_LUA
 extern vmCvar_t lua_modules;
 extern vmCvar_t lua_allowedModules;
+extern vmCvar_t tvg_luaModuleList;
 #endif
 
 extern vmCvar_t tvg_voiceChatsAllowed;
@@ -879,7 +792,6 @@ void trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t
 void trap_DropClient(int clientNum, const char *reason, int length);
 void trap_SendServerCommand(int clientNum, const char *text);
 void trap_SetConfigstring(int num, const char *string);
-void trap_TVG_SetConfigstring(int num, const char *string);
 void trap_GetConfigstring(int num, char *buffer, int bufferSize);
 void trap_GetUserinfo(int num, char *buffer, int bufferSize);
 void trap_SetUserinfo(int num, const char *buffer);
@@ -932,12 +844,6 @@ void TVG_RemoveFromAllIgnoreLists(int clientNum);
 
 #define CMD_DEBOUNCE    5000    ///< 5s between cmds
 
-#define EOM_WEAPONSTATS 0x01    ///< Dump of player weapon stats at end of match.
-#define EOM_MATCHINFO   0x02    ///< Dump of match stats at end of match.
-
-#define AA_STATSALL     0x01    ///< Client AutoAction: Dump ALL player stats
-#define AA_STATSTEAM    0x02    ///< Client AutoAction: Dump TEAM player stats
-
 /**
  * @struct team_info
  * @brief Team extras
@@ -951,10 +857,10 @@ typedef struct
 	int timeouts;
 } team_info;
 
-// g_main.c
+// tvg_main.c
 void TVG_UpdateCvars(void);
 
-// g_cmds_ext.c
+// tvg_cmds_ext.c
 qboolean TVG_commandCheck(gclient_t *client, const char *cmd);
 void TVG_SendCommands(void);
 qboolean TVG_commandHelp(gclient_t *client, const char *pszCommand, unsigned int dwCommand);
@@ -970,10 +876,7 @@ qboolean TVG_weaponRankings_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStats_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow);
 
-void TVG_globalSound(const char *sound);
-
-
-// g_referee.c
+// tvg_referee.c
 qboolean TVG_Cmd_AuthRcon_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_ref_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_refCommandCheck(gclient_t *client, const char *cmd);
@@ -998,7 +901,6 @@ void TVG_TempTraceIgnoreBodies(void);
 void TVG_TempTraceIgnorePlayersAndBodies(void);
 void TVG_TempTraceIgnorePlayers(void);
 void TVG_TempTraceIgnorePlayersFromTeam(team_t team);
-void TVG_TempTraceIgnoreEntities(gentity_t *ent);
 
 /**
  * @enum fieldtype_t

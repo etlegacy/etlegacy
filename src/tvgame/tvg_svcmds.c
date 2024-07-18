@@ -506,14 +506,7 @@ void Svcmd_EntityList_f(void)
 		// print the ents which are in use
 		//Q_strcat(line, sizeof(line), va("^7%4i: ", e));
 
-		if (check->neverFree)
-		{
-			Com_sprintf(line, 128, "^1%4i: ", e);
-		}
-		else
-		{
-			Com_sprintf(line, 128, "^7%4i: ", e);
-		}
+		Com_sprintf(line, 128, "^7%4i: ", e);
 
 		if (check->s.eType <= ET_EVENTS) // print events
 		{
@@ -1368,8 +1361,8 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "cp",            Svcmd_CP_f         },
 	{ "sv_cvarempty",  CC_cvarempty       },
 	{ "sv_cvar",       CC_svcvar          },
-	{ "playsound",     G_PlaySound_Cmd    },
-	{ "playsound_env", G_PlaySound_Cmd    },
+	{ "playsound",     TVG_PlaySound_Cmd  },
+	{ "playsound_env", TVG_PlaySound_Cmd  },
 
 	{ "ref",           Svcmd_Ref_f        },                            // console also gets ref commands
 	{ "qsay",          Svcmd_Qsay_f       },
@@ -1389,21 +1382,21 @@ qboolean TVG_ConsoleCommand(void)
 #ifdef FEATURE_LUA
 	if (!Q_stricmp(cmd, "lua_status"))
 	{
-		G_LuaStatus(NULL);
+		TVG_LuaStatus(NULL);
 		return qtrue;
 	}
 	else if (!Q_stricmp(cmd, "lua_restart"))
 	{
-		G_LuaRestart();
+		TVG_LuaRestart();
 		return qtrue;
 	}
 	else if (Q_stricmp(cmd, "lua_api") == 0)
 	{
-		G_LuaStackDump();
+		TVG_LuaStackDump();
 		return qtrue;
 	}
 	// *LUA* API callbacks
-	else if (G_LuaHook_ConsoleCommand(cmd))
+	else if (TVG_LuaHook_ConsoleCommand(cmd))
 	{
 		return qtrue;
 	}
