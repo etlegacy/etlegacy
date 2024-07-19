@@ -188,7 +188,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
                   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon)
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
-	float  x2 = x, y2 = y, w2 = w, h2 = h;
+	float  x2 = x, x3 = x, y2 = y, y3 = y, w2 = w, h2 = h;
 	float  iconW, iconH;
 
 	if (frac > 1)
@@ -272,6 +272,18 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		h -= (2 * indent);
 	}
 
+	x3 = x;
+	y3 = y;
+
+	// backgroundcolor is reused for the needle from here, inverted in case we
+	// draw it on the background itself
+	if ((!(flags & BAR_BG) && endColor) || ((flags & BAR_BG) && !endColor))
+	{
+		backgroundcolor[0] = 255 - backgroundcolor[0];
+		backgroundcolor[1] = 255 - backgroundcolor[1];
+		backgroundcolor[2] = 255 - backgroundcolor[2];
+	}
+
 	// adjust for horiz/vertical and draw the fractional box
 	if (flags & BAR_VERT)
 	{
@@ -296,6 +308,11 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			CG_FillRect(x, y, w, h * frac, startColor);
 		}
 
+		if (needleFrac > 0.f && flags & BAR_NEEDLE)
+		{
+			CG_FillRect(x3, y3 + (h * (1 - needleFrac)) + 0.0, w, 1.0, backgroundcolor);
+		}
+
 		if (flags & BAR_DECOR)
 		{
 			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBar);
@@ -307,6 +324,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			if (icon == cgs.media.hudPowerIcon)
 			{
 				iconW *= .5f;
+				x3     = x2;
 				x2    += iconW * .5f;
 
 				if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
@@ -348,6 +366,11 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			CG_FillRect(x, y, w * frac, h, startColor);
 		}
 
+		if (needleFrac > 0.f && flags & BAR_NEEDLE)
+		{
+			CG_FillRect(x3 + (w * (1 - needleFrac)) - 0.0, y3, 1.0, h, backgroundcolor);
+		}
+
 		if (flags & BAR_DECOR)
 		{
 			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBarHorizontal);
@@ -376,24 +399,6 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			}
 		}
 	}
-}
-
-/**
- * @brief Generic routine for pretty much all status indicators that show a fractional
- * value to the player by virtue of how full a drawn box is.
- * @param[in] x
- * @param[in] y
- * @param[in] width
- * @param[in] height
- * @param[in] percent
- *
- * @note Unused
- */
-void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent)
-{
-	vec4_t bgcolor = { 0.5f, 0.5f, 0.5f, 0.3f },
-	       color   = { 1.0f, 1.0f, 1.0f, 0.3f };
-	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA, -1);
 }
 
 /**

@@ -2246,6 +2246,7 @@ enum
 	BAR_BORDER_SMALL   = BIT(9),
 	BAR_DECOR          = BIT(10),
 	BAR_ICON           = BIT(11),
+	BAR_NEEDLE         = BIT(12),
 };
 
 enum
