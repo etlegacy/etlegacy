@@ -257,10 +257,10 @@ SKILL_PIC(6);
 			  188 + TEAM_COUNTER_SPACING, \
 			  TEAM_COUNTER_WIDTH - TEAM_COUNTER_BUTTON_DIFF + 20 - 2 * TEAM_COUNTER_SPACING, \
 			  44 - 2 * TEAM_COUNTER_SPACING },  \
-			{ number,                                                                    0,0, 0, 0, 0, 0, 0 },        \
-			NULL,                                                                        /* font       */              \
-			CG_LimboPanel_TeamButton_KeyDown,                                            /* keyDown    */ \
-			NULL,                                                                        /* keyUp  */                  \
+			{ number,                                                                        0,0, 0, 0, 0, 0, 0 },        \
+			NULL,                                                                            /* font       */              \
+			CG_LimboPanel_TeamButton_KeyDown,                                                /* keyDown    */ \
+			NULL,                                                                            /* keyUp  */                  \
 			CG_LimboPanel_RenderTeamButton,         \
 			NULL,                                   \
 			0,                                   \
@@ -2533,6 +2533,24 @@ qboolean CG_LimboPanel_WeaponPanel_KeyDown(panel_button_t *button, int key)
 }
 
 /**
+ * @brief Select 'weaponIndex'th weapon button when weapon panel is being shown.
+ * @param[in] button
+ * @param[in] weaponIndex
+ */
+static void CG_LimboPanel_WeaponPanel_SelectButton(panel_button_t *button, int weaponIndex)
+{
+
+	CG_LimboPanel_SetSelectedWeaponNum(cgs.ccSelectedWeaponSlot, (weapon_t)button->data[weaponIndex]);
+
+	if (!CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
+	{
+		CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
+	}
+
+	CG_LimboPanel_RequestWeaponStats();
+}
+
+/**
  * @brief CG_LimboPanel_WeaponPanel_KeyUp
  * @param[in] button
  * @param[in] key
@@ -2562,14 +2580,7 @@ qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 					continue;
 				}
 
-				CG_LimboPanel_SetSelectedWeaponNum(cgs.ccSelectedWeaponSlot, (weapon_t)button->data[cnt]);
-
-				if (!CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
-				{
-					CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
-				}
-
-				CG_LimboPanel_RequestWeaponStats();
+				CG_LimboPanel_WeaponPanel_SelectButton(button, cnt);
 
 				break;
 			}
@@ -2709,6 +2720,42 @@ static vec4_t clrWeaponPanel  = { 0.f, 0.f, 0.f, 0.4f };
 static vec4_t clrWeaponPanel2 = { 1.f, 1.f, 1.f, 0.4f };
 
 /**
+ * @brief For a given weapon, return with it's weapon_t if it's a selectable
+ * weapon option in the weapon panel, otherwise WP_NONE.
+ * @param[in] classInfo
+ * @param[in] weapon
+ */
+static weapon_t CG_LimboPanel_WeaponPanel_GetSelectableWeaponOption(bg_playerclass_t *classInfo, int weapon)
+{
+	if (cgs.ccSelectedWeaponSlot == PRIMARY_SLOT)
+	{
+		// is player had the minimum level required to use this weapon
+		if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classPrimaryWeapons[weapon].skill, classInfo->classPrimaryWeapons[weapon].minSkillLevel))
+		{
+			return WP_NONE;
+		}
+
+		return classInfo->classPrimaryWeapons[weapon].weapon;
+	}
+	else
+	{
+		// is player had the minimum level required to use this weapon
+		if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[weapon].skill, classInfo->classSecondaryWeapons[weapon].minSkillLevel))
+		{
+			return WP_NONE;
+		}
+
+		// if player handling a similar weapon in primary slot, don't show it
+		if (classInfo->classSecondaryWeapons[weapon].weapon == cgs.ccSelectedPrimaryWeapon)
+		{
+			return WP_NONE;
+		}
+
+		return classInfo->classSecondaryWeapons[weapon].weapon;
+	}
+}
+
+/**
  * @brief CG_LimboPanel_WeaponPanel
  * @param[in] button
  */
@@ -2748,36 +2795,8 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 
 	for (i = 0, x = 1; i < MAX_WEAPS_PER_CLASS; i++)
 	{
-		weapon_t cycleWeap;
-
-		if (cgs.ccSelectedWeaponSlot == PRIMARY_SLOT)
-		{
-			// is player had the minimum level required to use this weapon
-			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classPrimaryWeapons[i].skill, classInfo->classPrimaryWeapons[i].minSkillLevel))
-			{
-				continue;
-			}
-
-			cycleWeap = classInfo->classPrimaryWeapons[i].weapon;
-		}
-		else
-		{
-			// is player had the minimum level required to use this weapon
-			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
-			{
-				continue;
-			}
-
-			// if player handling a similar weapon in primary slot, don't show it
-			if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
-			{
-				continue;
-			}
-
-			cycleWeap = classInfo->classSecondaryWeapons[i].weapon;
-		}
-
-		if (cycleWeap)
+		weapon_t cycleWeap = CG_LimboPanel_WeaponPanel_GetSelectableWeaponOption(classInfo, i);
+		if (cycleWeap != WP_NONE)
 		{
 			++cnt;
 
@@ -3628,46 +3647,168 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
 			return;
 		}
 
-		// other bindings
-		switch (key) {
+		// accelerator keys when the weapon panel is open
+		if (BG_PanelButtons_GetFocusButton() == &weaponPanel)
+		{
+			int selectedWeapon = 0;
+
+			switch (key)
+			{
+			// 1-9 keys select the weapon indexed counting downwards from
+			// the top
 			case '1':
-				CG_LimboPanel_TeamButton_KeyDown(&teamButton0, K_MOUSE1);
+				selectedWeapon = 1;
 				break;
 			case '2':
-				CG_LimboPanel_TeamButton_KeyDown(&teamButton1, K_MOUSE1);
+				selectedWeapon = 2;
 				break;
 			case '3':
-				CG_LimboPanel_TeamButton_KeyDown(&teamButton2, K_MOUSE1);
+				selectedWeapon = 3;
 				break;
-			case 'e':  // engineer
-				CG_LimboPanel_ClassButton_KeyDown(&classButton2, K_MOUSE1);
+			case '4':
+				selectedWeapon = 4;
 				break;
-			case 'c':  // covops
-				CG_LimboPanel_ClassButton_KeyDown(&classButton4, K_MOUSE1);
+			case '5':
+				selectedWeapon = 5;
 				break;
-			case 'f':  // fieldops
-				CG_LimboPanel_ClassButton_KeyDown(&classButton3, K_MOUSE1);
+			case '6':
+				selectedWeapon = 6;
 				break;
-			case 'm':  // medic
-				CG_LimboPanel_ClassButton_KeyDown(&classButton1, K_MOUSE1);
+			case '7':
+				selectedWeapon = 7;
 				break;
-			case 's':  // soldier
-				CG_LimboPanel_ClassButton_KeyDown(&classButton0, K_MOUSE1);
+			case '8':
+				selectedWeapon = 8;
 				break;
-			case K_TAB:
-				// toggle between primary and secondary weaponview
-				if (cgs.ccSelectedWeaponSlot == 0) {
-					CG_LimboPanel_WeaponLights_KeyDown(&weaponLight2, K_MOUSE1);
-				} else {
-					CG_LimboPanel_WeaponLights_KeyDown(&weaponLight1, K_MOUSE1);
+			case '9':
+				selectedWeapon = 9;
+				break;
+			case '0':
+				selectedWeapon = 10;
+				break;
+			// space cancels the weapon panel without selecting any weapon
+			case K_SPACE:
+				BG_PanelButtons_SetFocusButton(NULL);
+				return;
+				break;
+			}
+
+			if (selectedWeapon != 0)
+			{
+				bg_playerclass_t *classInfo;
+				int              i, cnt = 0;
+
+				classInfo = CG_LimboPanel_GetPlayerClass();
+				if (!classInfo)
+				{
+					return;
 				}
-				break;
-			case K_ENTER:
-			case 'y':  // y for yes / confirm
-				CG_LimboPanel_OkButton_KeyDown(&okButton, K_MOUSE1);
-				break;
-			default:
-				break;
+
+				for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
+				{
+					weapon_t weap = CG_LimboPanel_WeaponPanel_GetSelectableWeaponOption(classInfo, i);
+					if (weap != WP_NONE)
+					{
+						++cnt;
+
+						if (cnt == selectedWeapon)
+						{
+							for (i = 0; i < 8; ++i)
+							{
+								if (weaponPanel.data[i] == weap)
+								{
+									CG_LimboPanel_WeaponPanel_SelectButton(&weaponPanel, i);
+									BG_PanelButtons_SetFocusButton(NULL);
+								}
+							}
+						}
+					}
+
+				}
+			}
+
+			return;
+		}
+
+		// remaining accelerator keys
+		switch (key)
+		{
+		// select teams
+		case '1':
+			CG_LimboPanel_TeamButton_KeyDown(&teamButton0, K_MOUSE1);
+			break;
+		case '2':
+			CG_LimboPanel_TeamButton_KeyDown(&teamButton1, K_MOUSE1);
+			break;
+		case '3':
+			CG_LimboPanel_TeamButton_KeyDown(&teamButton2, K_MOUSE1);
+			break;
+		// select class
+		case 'e':  // engineer
+			CG_LimboPanel_ClassButton_KeyDown(&classButton2, K_MOUSE1);
+			break;
+		case 'c':  // covops
+			CG_LimboPanel_ClassButton_KeyDown(&classButton4, K_MOUSE1);
+			break;
+		case 'f':  // fieldops
+			CG_LimboPanel_ClassButton_KeyDown(&classButton3, K_MOUSE1);
+			break;
+		case 'm':  // medic
+			CG_LimboPanel_ClassButton_KeyDown(&classButton1, K_MOUSE1);
+			break;
+		case 's':  // soldier
+			CG_LimboPanel_ClassButton_KeyDown(&classButton0, K_MOUSE1);
+			break;
+		// toggle between primary and secondary weaponpanel view
+		case K_TAB:
+			if (cgs.ccSelectedWeaponSlot == 0)
+			{
+				CG_LimboPanel_WeaponLights_KeyDown(&weaponLight2, K_MOUSE1);
+			}
+			else
+			{
+				CG_LimboPanel_WeaponLights_KeyDown(&weaponLight1, K_MOUSE1);
+			}
+			break;
+		// open the weapon panel if there is a selection to be made
+		case K_SPACE:
+		{
+			bg_playerclass_t *classInfo;
+			int              i;
+			qboolean         foundWeaponOption = qfalse;
+			weapon_t         weapInfo;
+			weapon_t         selectedWeapon;
+			classInfo = CG_LimboPanel_GetPlayerClass();
+
+			if (classInfo)
+			{
+				// find a selectable weapon option before actually opening up weapon
+				// panel
+				selectedWeapon = CG_LimboPanel_GetSelectedWeapon(cgs.ccSelectedWeaponSlot);
+				for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
+				{
+					weapInfo = CG_LimboPanel_WeaponPanel_GetSelectableWeaponOption(classInfo, i);
+					if (weapInfo != WP_NONE && weapInfo != selectedWeapon)
+					{
+						foundWeaponOption = qtrue;
+						break;
+					}
+				}
+
+				if (foundWeaponOption)
+				{
+					CG_LimboPanel_WeaponPanel_KeyDown(&weaponPanel, K_MOUSE1);
+				}
+			}
+		}
+		break;
+		// confirm the current limbo selection
+		case K_ENTER:
+		case 'y':
+			CG_LimboPanel_OkButton_KeyDown(&okButton, K_MOUSE1);
+			break;
+		default:
+			break;
 		}
 	}
 
