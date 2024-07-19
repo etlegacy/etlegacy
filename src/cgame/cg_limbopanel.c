@@ -3483,6 +3483,13 @@ void CG_LimboPanel_Setup(void)
 		cgs.ccSelectedLayer = CG_CurLayerForZ((int)cg.predictedPlayerEntity.lerpOrigin[2]);
 	}
 
+	// clear focus button in case limbo was abruptly closed via K_ESCAPE,
+	// otherwise breaks key handling
+	if (BG_PanelButtons_GetFocusButton() != NULL)
+	{
+		BG_PanelButtons_SetFocusButton(NULL);
+	}
+
 	for ( ; *buttons; buttons++)
 	{
 		button = (*buttons);
