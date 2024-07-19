@@ -848,6 +848,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	dropped->s.eType           = ET_ITEM;
 	dropped->s.modelindex      = item->id ; // store item number in modelindex
 	dropped->s.otherEntityNum2 = 1; // this is taking modelindex2's place for a dropped item
+	dropped->s.groundEntityNum = ENTITYNUM_NONE;
 
 	dropped->classname = item->classname;
 	dropped->item      = item;
@@ -1274,8 +1275,8 @@ void G_RunItem(gentity_t *ent)
 	int     contents;
 	int     mask = ent->clipmask ? ent->clipmask : MASK_SOLID;
 
-	// if groundentity has been set to -1, it may have been pushed off an edge
-	if (ent->s.groundEntityNum == -1)
+	// if groundentity has been set to ENTITYNUM_NONE, it may have been pushed off an edge
+	if (ent->s.groundEntityNum == ENTITYNUM_NONE)
 	{
 		if (ent->s.pos.trType != TR_GRAVITY)
 		{
@@ -1324,7 +1325,7 @@ void G_RunItem(gentity_t *ent)
 			VectorClear(ent->s.pos.trDelta);
 			ent->s.pos.trType      = TR_GRAVITY;
 			ent->s.pos.trTime      = level.time;
-			ent->s.groundEntityNum = -1;
+			ent->s.groundEntityNum = ENTITYNUM_NONE;
 		}
 
 		G_RunThink(ent);

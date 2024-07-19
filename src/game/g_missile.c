@@ -75,7 +75,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	}
 
 	// set ground entity
-	if (ent->s.groundEntityNum != -1)
+	if (ent->s.groundEntityNum != ENTITYNUM_NONE)
 	{
 		ground = &g_entities[ent->s.groundEntityNum];
 	}
@@ -473,7 +473,7 @@ void MissileGroundCheck(gentity_t *self)
 
 	if (tr.fraction == 1.f)
 	{
-		self->s.groundEntityNum = -1;
+		self->s.groundEntityNum = ENTITYNUM_NONE;
 	}
 }
 
@@ -493,7 +493,7 @@ void G_RunMissile(gentity_t *ent)
 	{
 		MissileGroundCheck(ent);
 
-		if (ent->s.groundEntityNum == -1)
+		if (ent->s.groundEntityNum == ENTITYNUM_NONE)
 		{
 			if (ent->s.pos.trType != TR_GRAVITY)
 			{

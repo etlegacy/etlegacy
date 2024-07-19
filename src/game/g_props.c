@@ -1138,7 +1138,7 @@ void Just_Got_Thrown(gentity_t *self)
 {
 	float len = 0;
 
-	if (self->s.groundEntityNum == -1)
+	if (self->s.groundEntityNum == ENTITYNUM_NONE)
 	{
 		self->nextthink = level.time + FRAMETIME;
 
@@ -1239,7 +1239,7 @@ void Props_Activated(gentity_t *self)
 		self->physicsObject = qtrue;
 		self->physicsBounce = 0.2f;
 
-		self->s.groundEntityNum = -1;
+		self->s.groundEntityNum = ENTITYNUM_NONE;
 
 		self->s.pos.trType = TR_GRAVITY;
 		self->s.pos.trTime = level.time;
@@ -1298,7 +1298,7 @@ void Props_Activated(gentity_t *self)
 
 		prop->classname = self->classname;
 
-		prop->s.groundEntityNum = -1;
+		prop->s.groundEntityNum = ENTITYNUM_NONE;
 
 		VectorCopy(self->r.currentOrigin, prop->s.origin2);
 
@@ -1400,7 +1400,7 @@ void Props_Chair_Think(gentity_t *self)
 		}
 	}
 
-	if (self->s.groundEntityNum == -1)
+	if (self->s.groundEntityNum == ENTITYNUM_NONE)
 	{
 		self->physicsObject = qtrue;
 		self->physicsBounce = 0.2f;
@@ -1507,7 +1507,7 @@ void Prop_Check_Ground(gentity_t *self)
 
 	if (tr.fraction == 1.f)
 	{
-		self->s.groundEntityNum = -1;
+		self->s.groundEntityNum = ENTITYNUM_NONE;
 	}
 }
 
