@@ -718,8 +718,6 @@ typedef struct
 	char version[256];
 	char date[16];
 	char arch[64];
-	float versionWidth;                 ///< longest string out of the version strings (version, date, arch)
-	                                    ///< used to determine console linewidth
 } console_t;
 
 extern console_t con;
