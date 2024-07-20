@@ -3014,12 +3014,6 @@ void CL_SetConsoleScale(float factor)
 		return;
 	}
 
-	// adjustments are already made since the last time scaling was changed, we can exit
-	if (!con_scale->modified)
-	{
-		return;
-	}
-
 	if (con.scale != factor)
 	{
 		con_scale->modified = qtrue;
