@@ -1703,7 +1703,7 @@ static int _et_TeleportPlayer(lua_State *L)
 {
 	int       clientnum = (int)luaL_checkinteger(L, 1);
 	gclient_t *client   = level.clients + clientnum;
-	vec3_t    pos, angles;
+	vec3_t    origin, angles;
 
 	if (!lua_istable(L, 2))
 	{
@@ -1723,10 +1723,10 @@ static int _et_TeleportPlayer(lua_State *L)
 		return 0;
 	}
 
-	VectorCopy(*_etH_toVec3(L, 2), pos);
+	VectorCopy(*_etH_toVec3(L, 2), origin);
 	VectorCopy(*_etH_toVec3(L, 3), angles);
 
-	TVG_TeleportPlayer(client, pos, angles);
+	TVG_TeleportPlayer(client, origin, angles);
 
 	return 0;
 }
