@@ -244,7 +244,6 @@ typedef struct
 	/// avi output stuff
 	qboolean (*CL_VideoRecording)(void);
 	void (*CL_WriteAVIVideoFrame)(const byte *buffer, int size);
-	void (*CL_SetScaling)(float scale);
 
 #ifdef FEATURE_PNG
 	int (*zlib_compress)(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);

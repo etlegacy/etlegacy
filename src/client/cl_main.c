@@ -2892,7 +2892,6 @@ void CL_ShutdownRef(void)
  */
 void CL_InitRenderer(void)
 {
-	const char *fontName = Cvar_VariableString("con_fontName");
 
 	// this sets up the renderer and calls R_Init
 	re.BeginRegistration(&cls.glconfig);
@@ -2901,13 +2900,7 @@ void CL_InitRenderer(void)
 	cls.charSetShader = re.RegisterShader("gfx/2d/consolechars");
 
 	// try to load a Truetype if available
-	Com_Memset(&cls.consoleFont, 0, sizeof(cls.consoleFont));
-	if (fontName && fontName[0])
-	{
-		re.RegisterFont(fontName, smallCharHeight, &cls.consoleFont, qtrue);
-	}
-	Com_Memset(&cls.etIconFont, 0, sizeof(cls.etIconFont));
-	re.RegisterFont("ETL-icon-font", smallCharHeight, &cls.etIconFont, qfalse);
+	CL_RegisterConsoleFont();
 
 	cls.whiteShader = re.RegisterShader("white");
 
@@ -3006,14 +2999,66 @@ extern refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp);
 
 
 /**
- * @brief CL_SetScaling
- * @return
+ * @brief CL_SetConsoleScale
+ * @param factor - console font scaling factor
  */
-static void CL_SetScaling(float scale)
+void CL_SetConsoleScale(float factor)
 {
-	smallCharWidth  = SMALLCHAR_WIDTH * scale;
-	smallCharHeight = SMALLCHAR_HEIGHT * scale;
+	float renderScale;
+
+	// video isn't initialized yet
+	if (!cls.glconfig.vidHeight || !cls.glconfig.windowHeight)
+	{
+		smallCharWidth  = SMALLCHAR_WIDTH;
+		smallCharHeight = SMALLCHAR_HEIGHT;
+		return;
+	}
+
+	// adjustments are already made since the last time scaling was changed, we can exit
+	if (!con_scale->modified)
+	{
+		return;
+	}
+
+	if (con.scale != factor)
+	{
+		con_scale->modified = qtrue;
+	}
+
+	con.scale = factor;
+
+	// renderer scaling is uniform, so we only need to calculate one direction
+	renderScale = (float)cls.glconfig.vidHeight / (float)cls.glconfig.windowHeight;
+
+	smallCharWidth  = SMALLCHAR_WIDTH * renderScale * con.scale;
+	smallCharHeight = SMALLCHAR_HEIGHT * renderScale * con.scale;
+
+	// re-register the console font for the current scaling
+	// FIXME: free the old fonts first, otherwise we keep registering new ones and hit MAX_FONTS
+	//  for now this requires a vid_restart to load the correctly scaled font again,
+	//  since there's no way to unload fonts at the moment
+	// CL_RegisterConsoleFont();
 }
+
+
+/**
+ * @brief CL_RegisterConsoleFont
+ */
+void CL_RegisterConsoleFont(void)
+{
+	const char *fontName = Cvar_VariableString("con_fontName");
+
+	Com_Memset(&cls.consoleFont, 0, sizeof(cls.consoleFont));
+
+	if (fontName && fontName[0])
+	{
+		re.RegisterFont(fontName, smallCharHeight, &cls.consoleFont, qtrue);
+	}
+
+	Com_Memset(&cls.etIconFont, 0, sizeof(cls.etIconFont));
+	re.RegisterFont("ETL-icon-font", smallCharHeight, &cls.etIconFont, qfalse);
+}
+
 
 /**
  * @brief CL_InitRef
@@ -3118,7 +3163,6 @@ void CL_InitRef(void)
 
 	ri.CL_VideoRecording     = CL_VideoRecording;
 	ri.CL_WriteAVIVideoFrame = CL_WriteAVIVideoFrame;
-	ri.CL_SetScaling         = CL_SetScaling;
 
 #ifdef FEATURE_PNG
 	ri.zlib_crc32    = crc32;

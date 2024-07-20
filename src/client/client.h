@@ -502,6 +502,8 @@ extern cvar_t *cl_defaultProfile;
 
 extern cvar_t *cl_consoleKeys;
 
+extern cvar_t *con_scale;
+
 //=================================================
 
 // cl_main
@@ -548,6 +550,9 @@ void CL_TranslateStringMod(const char *string, char *dest_buffer);
 void CL_OpenURL(const char *url);
 
 void CL_Record(const char *name);
+
+void CL_RegisterConsoleFont(void);
+void CL_SetConsoleScale(float factor);
 
 // cl_avi
 
@@ -673,8 +678,8 @@ qboolean CL_UpdateVisiblePings_f(int source);
 
 #define CON_TEXTSIZE    131072
 
-extern int smallCharWidth;      ///< SMALLCHAR_WIDTH with renderer scale accounted for
-extern int smallCharHeight;     ///< SMALLCHAR_HEIGHT with renderer scale accounted for
+extern int smallCharWidth;      ///< SMALLCHAR_WIDTH with renderer + console scale accounted for
+extern int smallCharHeight;     ///< SMALLCHAR_HEIGHT with renderer + console scale accounted for
 
 /**
  * @struct console_t
@@ -707,6 +712,14 @@ typedef struct
 	vec4_t color;                       ///< for transparent lines
 
 	int highlightOffset;                ///< highligting start offset (if == 0) then no hightlight
+
+	float scale;                        ///< current console scale
+
+	char version[256];
+	char date[16];
+	char arch[64];
+	float versionWidth;                 ///< longest string out of the version strings (version, date, arch)
+	                                    ///< used to determine console linewidth
 } console_t;
 
 extern console_t con;
@@ -756,7 +769,6 @@ void SCR_DrawChar(int x, int y, float w, float h, int ch, qboolean nativeResolut
 void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape, qboolean dropShadow, qboolean nativeResolution);
 
 #define SCR_DrawSmallChar(x, y, ch) SCR_DrawChar(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, ch, qtrue)
-// ignores embedded color control characters
 #define SCR_DrawSmallString(x, y, string, setColor, forceColor, noColorEscape) SCR_DrawStringExt(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, string, setColor, forceColor, noColorEscape, qfalse, qtrue)
 
 // cl_cin.c
