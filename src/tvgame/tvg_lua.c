@@ -28,18 +28,18 @@ lua_vm_t *lVM[LUA_NUM_VM];
  *             if (input==0) return = -1
  *             if (input address is out of g_entities[] memory range) return -1;
  */
-static int C_gentity_ptr_to_entNum(unsigned long addr)
+static int C_gentity_ptr_to_entNum(uintptr_t addr)
 {
 	// no NULL address,
 	// address must also be in the range of the g_entities array memory space..
 	// address must also be pointing to the start of an entity (invalid if it points just somewhere halfway into the entity)
 	if (!addr ||
 	    (gentity_t *)addr < &g_entities[0] || (gentity_t *)addr > &g_entities[MAX_GENTITIES - 1] ||
-	    (addr - (unsigned long)&g_entities[0]) % sizeof(gentity_t) != 0)
+	    (addr - (uintptr_t)&g_entities[0]) % sizeof(gentity_t) != 0)
 	{
 		return -1;
 	}
-	return ((gentity_t *)addr - g_entities);
+	return (int)((gentity_t *)addr - g_entities);
 }
 
 /**
@@ -1116,7 +1116,7 @@ static void _et_setusercmd(lua_State *L, usercmd_t *cmd)
  * @param[in] arrayIndex
  * @param[out] success
  */
-static int _et_field_get(lua_State *L, tvgame_field_t *field, unsigned long addr, int arrayIndex)
+static int _et_field_get(lua_State *L, tvgame_field_t *field, uintptr_t addr, int arrayIndex)
 {
 	if (!addr)
 	{
@@ -1147,7 +1147,7 @@ static int _et_field_get(lua_State *L, tvgame_field_t *field, unsigned long addr
 	case FIELD_ENTITY:
 	{
 		// core: return the entity-number  of the entity that the pointer is pointing at.
-		int entNum = C_gentity_ptr_to_entNum(*(int *)addr);
+		int entNum = C_gentity_ptr_to_entNum(*(uintptr_t *)addr);
 
 		if (entNum < 0)
 		{
@@ -1166,7 +1166,7 @@ static int _et_field_get(lua_State *L, tvgame_field_t *field, unsigned long addr
 	case FIELD_INT_ARRAY:
 		if (field->flags & FIELD_FLAG_NOPTR)
 		{
-			lua_pushinteger(L, (*(int *)(*(unsigned long *)addr + (sizeof(int) * arrayIndex))));
+			lua_pushinteger(L, (*(int *)(*(uintptr_t *)addr + (sizeof(int) * arrayIndex))));
 		}
 		else
 		{
@@ -1207,7 +1207,7 @@ static int _et_level_get(lua_State *L)
 		return 0;
 	}
 
-	return _et_field_get(L, field, (unsigned long)&level, (int)luaL_optinteger(L, 2, 0));
+	return _et_field_get(L, field, (uintptr_t)&level, (int)luaL_optinteger(L, 2, 0));
 }
 
 /**
@@ -1231,7 +1231,7 @@ static int _et_gentity_get(lua_State *L)
 		return 0;
 	}
 
-	return _et_field_get(L, field, (unsigned long)ent, (int)luaL_optinteger(L, 3, 0));
+	return _et_field_get(L, field, (uintptr_t)ent, (int)luaL_optinteger(L, 3, 0));
 }
 
 /**
@@ -1255,7 +1255,7 @@ static int _et_gclient_get(lua_State *L)
 		return 0;
 	}
 
-	return _et_field_get(L, field, (unsigned long)client, (int)luaL_optinteger(L, 3, 0));
+	return _et_field_get(L, field, (uintptr_t)client, (int)luaL_optinteger(L, 3, 0));
 }
 
 /**
@@ -1300,7 +1300,7 @@ static int _et_ps_get(lua_State *L)
 		return 0;
 	}
 
-	return _et_field_get(L, field, (unsigned long)&client, (int)luaL_optinteger(L, 3, 0));
+	return _et_field_get(L, field, (uintptr_t)&client, (int)luaL_optinteger(L, 3, 0));
 }
 
 /**
@@ -1316,7 +1316,7 @@ static int _et_gclient_set(lua_State *L)
 	gclient_t      *client    = level.clients + (int)luaL_checkinteger(L, 1);
 	const char     *fieldname = luaL_checkstring(L, 2);
 	tvgame_field_t *field     = _et_getfield((char *)fieldname, FIELD_FLAG_GCLIENT);
-	unsigned long  addr;
+	uintptr_t      addr;
 	const char     *buffer;
 
 	// break on invalid gentity field
@@ -1333,7 +1333,7 @@ static int _et_gclient_set(lua_State *L)
 		return 0;
 	}
 
-	addr = (unsigned long)client;
+	addr = (uintptr_t)client;
 
 	if (!addr)
 	{
