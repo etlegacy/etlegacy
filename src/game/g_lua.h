@@ -100,7 +100,7 @@ typedef struct
 {
 	const char *name;
 	int type;
-	unsigned long mapping;
+	uintptr_t mapping;
 	int flags;
 } gentity_field_t;
 
