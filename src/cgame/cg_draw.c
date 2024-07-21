@@ -3223,8 +3223,18 @@ void CG_DrawFollow(hudComponent_t *comp)
  */
 void CG_DrawWarmupTitle(hudComponent_t *comp)
 {
-	static qboolean announced = qfalse;
-	const char      *s;
+	const char         *s;
+	static gamestate_t oldGamestate          = -1;
+	qboolean           announceAtWarmupStart = qfalse;
+
+	if (cgs.gamestate != oldGamestate)
+	{
+		if (cgs.gamestate == GS_WARMUP_COUNTDOWN && oldGamestate == GS_WARMUP)
+		{
+			announceAtWarmupStart = qtrue;
+		}
+		oldGamestate = cgs.gamestate;
+	}
 
 	if (cg.serverRespawning)
 	{
@@ -3249,7 +3259,9 @@ void CG_DrawWarmupTitle(hudComponent_t *comp)
 	}
 	else
 	{
-		int sec = (cg.warmup - cg.time) / 1000;
+		static int processedWarmupCount = -1;
+		int        sec                  = (cg.warmup - cg.time) / 1000;
+		int        warmupAnnounceSec    = announceAtWarmupStart ? sec : 10;
 
 		if (sec <= 0)
 		{
@@ -3257,29 +3269,26 @@ void CG_DrawWarmupTitle(hudComponent_t *comp)
 		}
 		else
 		{
+
 			s = va("%s %s%i", CG_TranslateString("^3WARMUP:^* Match begins in"), sec  < 4 ? "^1" : "^2", sec);
-		}
 
-		// pre start actions
-		if (sec == 10 && !announced)
-		{
-			if (cg_announcer.integer)
+			// process warmup actions
+			if (sec <= warmupAnnounceSec && processedWarmupCount != cg.warmupCount)
 			{
-				trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
+				if (cg_announcer.integer)
+				{
+					trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
+				}
+
+				CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
+
+				if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
+				{
+					CG_autoRecord_f();
+				}
+
+				processedWarmupCount = cg.warmupCount;
 			}
-
-			CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
-
-			if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
-			{
-				CG_autoRecord_f();
-			}
-
-			announced = qtrue;
-		}
-		else if (sec != 10)
-		{
-			announced = qfalse;
 		}
 	}
 
