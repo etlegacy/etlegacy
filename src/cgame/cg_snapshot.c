@@ -78,6 +78,8 @@ static void CG_ResetEntity(centity_t *cent)
 
 	cent->moving     = qfalse;
 	cent->akimboFire = qfalse;
+
+	cent->miscInt = 0;
 }
 
 /**

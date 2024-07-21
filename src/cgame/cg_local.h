@@ -392,7 +392,7 @@ typedef struct centity_s
 	int overheatTime;
 	int previousEvent;
 	int previousEventSequence;
-	int teleportFlag;
+	int miscInt;
 
 	int trailTime;                  ///< so missile trails can handle dropped initial packets
 	int miscTime;

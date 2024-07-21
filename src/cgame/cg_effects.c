@@ -133,7 +133,7 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel,
 	le->radius  = radius;
 
 	re             = &le->refEntity;
-	re->rotation   = Q_random(&seed) * 360;
+	re->rotation   = Q_RandomFloat(&seed) * 360;
 	re->radius     = radius;
 	re->shaderTime = startTime / 1000.0f;
 
@@ -889,8 +889,8 @@ typedef struct smokesprite_s
 	vec3_t pos;
 	vec4_t colour;
 
-	vec3_t dir;
-	float dist;
+	vec3_t dir;  // direction
+	float dist;  // distance
 	float size;
 
 	centity_t *smokebomb;
@@ -1050,7 +1050,7 @@ qboolean CG_SpawnSmokeSprite(centity_t *cent, float dist)
 		//VectorCopy( cent->lerpOrigin, smokesprite->pos );
 		//smokesprite->pos[2] += 32;
 		VectorCopy(cent->origin2, smokesprite->pos);
-		VectorCopy(bytedirs[rand() % NUMVERTEXNORMALS], smokesprite->dir);
+		VectorCopy(bytedirs[Q_LCG(cent->currentState.time + cent->miscInt /*sprite number*/) % NUMVERTEXNORMALS], smokesprite->dir);
 		smokesprite->dir[2]   *= .5f;
 		smokesprite->size      = 16.f;
 		smokesprite->colour[0] = .35f; // + crandom() * .1f;
@@ -1069,6 +1069,9 @@ qboolean CG_SpawnSmokeSprite(centity_t *cent, float dist)
 			cent->miscTime++;
 		}
 	}
+
+	// advance smoke sprite number
+	cent->miscInt++;
 
 	return qtrue;
 }

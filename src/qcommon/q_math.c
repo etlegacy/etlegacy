@@ -194,36 +194,26 @@ vec3_t bytedirs[NUMVERTEXNORMALS] =
 //==============================================================
 
 /**
- * @brief Q_rand
+ * @brief random function producing ints with a passed seed
  * @param[in,out] seed
  * @return
  */
-int Q_rand(int *seed)
+int Q_RandomInt(int *seed)
 {
-	*seed = (int)(69069U * *seed + 1U);
+	*seed = Q_LCG(*seed);
 	return *seed;
 }
 
 /**
- * @brief Q_random
- * @param[in] seed
+ * @brief random function producing floats with a passed seed
+ * @param[in,out] seed
  * @return
  */
-float Q_random(int *seed)
+float Q_RandomFloat(int *seed)
 {
-	return (float)(Q_rand(seed) & 0xffff) / (float)0x10000;
+	*seed = Q_LCG(*seed);
+	return (float)(*seed & 0xffff) / (float)0x10000;
 }
-
-/**
- * @brief Q_crandom
- * @param[in] seed
- * @return
- */
-float Q_crandom(int *seed)
-{
-	return 2.0f * (Q_random(seed) - 0.5f);
-}
-
 
 //=======================================================
 
