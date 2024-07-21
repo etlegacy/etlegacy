@@ -1464,9 +1464,9 @@ void SV_CheckTimeouts(void)
 {
 	client_t *cl;
 	int      i;
-	int      droppoint    = svs.time - 1000 * sv_timeout->integer;    // default 60 - used in game and while vid_restart
+	int      droppoint    = svs.time - 1000 * sv_timeout->integer;    // default 10 - used in game and while vid_restart
 	int      zombiepoint  = svs.time - 1000 * sv_zombietime->integer; // default 2
-	int      droppoint_dl = svs.time - 1000 * sv_dl_timeout->integer; // default 300
+	int      droppoint_dl = svs.time - 1000 * sv_dl_timeout->integer; // default 60
 
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
