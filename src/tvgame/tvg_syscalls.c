@@ -284,16 +284,6 @@ void trap_SendServerCommand(int clientNum, const char *text)
  */
 void trap_SetConfigstring(int num, const char *string)
 {
-	//SystemCall(G_SET_CONFIGSTRING, num, string);
-}
-
-/**
-* @brief trap_TVG_SetConfigstring
-* @param[in] num
-* @param[in] string
-*/
-void trap_TVG_SetConfigstring(int num, const char *string)
-{
 	SystemCall(G_SET_CONFIGSTRING, num, string);
 }
 

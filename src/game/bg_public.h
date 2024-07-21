@@ -48,6 +48,8 @@
 #define USE_MDXFILE
 #endif
 
+#define DEFAULT_HEALTH 100
+
 #define SPRINTTIME 20000.0f
 
 #define DEFAULT_GRAVITY     800
