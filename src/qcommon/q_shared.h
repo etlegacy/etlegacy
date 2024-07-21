@@ -1973,7 +1973,7 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
  *
  * @brief This should be something like INT_MAX but that would need limits.h everywhere so meh and negative values should be somewhat safe
  */
-#define VM_CALL_END (-1337)
+#define VM_CALL_END (intptr_t)(-1337)
 #define SystemCall(...) syscall(__VA_ARGS__, VM_CALL_END)
 
 #ifdef ETLEGACY_DEBUG
