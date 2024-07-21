@@ -120,7 +120,7 @@ static int _et_FindMod(lua_State *L)
  *        success = et.IPCSend( vmnumber, message )
  * @param[in] vmnumber
  * @param[in] message
- * @param[out] success
+ * @return success
  */
 static int _et_IPCSend(lua_State *L)
 {
@@ -229,7 +229,7 @@ static int _et_G_LogPrint(lua_State *L)
  * @brief _et_ConcatArgs
  *        args = et.ConcatArgs( index )
  * @param[in] index
- * @param[out] args
+ * @return args
  */
 static int _et_ConcatArgs(lua_State *L)
 {
@@ -242,7 +242,7 @@ static int _et_ConcatArgs(lua_State *L)
 /**
  * @brief _et_trap_Argc
  *        argcount = et.trap_Argc()
- * @param[out] argcount
+ * @return argcount
  */
 static int _et_trap_Argc(lua_State *L)
 {
@@ -254,7 +254,7 @@ static int _et_trap_Argc(lua_State *L)
  * @brief _et_trap_Argv
  *        arg = et.trap_Argv( argnum )
  * @param[in] argnum
- * @param[out] arg
+ * @return arg
  */
 static int _et_trap_Argv(lua_State *L)
 {
@@ -272,7 +272,7 @@ static int _et_trap_Argv(lua_State *L)
  * @brief _et_trap_Cvar_Get
  *        cvarvalue = et.trap_Cvar_Get( cvarname )
  * @param[in] cvarname
- * @param[out] cvarvalue
+ * @return cvarvalue
  */
 static int _et_trap_Cvar_Get(lua_State *L)
 {
@@ -289,6 +289,7 @@ static int _et_trap_Cvar_Get(lua_State *L)
  *        et.trap_Cvar_Set( cvarname, cvarvalue )
  * @param[in] cvarname
  * @param[in] cvarvalue
+ * @return
  */
 static int _et_trap_Cvar_Set(lua_State *L)
 {
@@ -305,7 +306,7 @@ static int _et_trap_Cvar_Set(lua_State *L)
  * @brief _et_trap_GetConfigstring
  *        configstringvalue = et.trap_GetConfigstring( index )
  * @param[in] index
- * @param[out] configstringvalue
+ * @return configstringvalue
  */
 static int _et_trap_GetConfigstring(lua_State *L)
 {
@@ -322,6 +323,7 @@ static int _et_trap_GetConfigstring(lua_State *L)
  *        et.trap_SetConfigstring( index, configstringvalue )
  * @param[in] index
  * @param[in] configstringvalue
+ * @return
  */
 static int _et_trap_SetConfigstring(lua_State *L)
 {
@@ -339,6 +341,7 @@ static int _et_trap_SetConfigstring(lua_State *L)
  *        et.trap_SendConsoleCommand( when, command )
  * @param[in] when
  * @param[in] command
+ * @return
  */
 static int _et_trap_SendConsoleCommand(lua_State *L)
 {
@@ -356,7 +359,7 @@ static int _et_trap_SendConsoleCommand(lua_State *L)
  *        infostring = et.Info_RemoveKey( infostring, key )
  * @param[in] infostring
  * @param[in] key
- * @param[out] infostring
+ * @return infostring
  */
 static int _et_Info_RemoveKey(lua_State *L)
 {
@@ -375,7 +378,7 @@ static int _et_Info_RemoveKey(lua_State *L)
  * @param[in] infostring
  * @param[in] key
  * @param[in] value
- * @param[out] infostring
+ * @return infostring
  */
 static int _et_Info_SetValueForKey(lua_State *L)
 {
@@ -394,7 +397,7 @@ static int _et_Info_SetValueForKey(lua_State *L)
  *        keyvalue = et.Info_ValueForKey( infostring, key )
  * @param[in] infostring
  * @param[in] key
- * @param[out] keyvalue
+ * @return keyvalue
  */
 static int _et_Info_ValueForKey(lua_State *L)
 {
@@ -409,7 +412,7 @@ static int _et_Info_ValueForKey(lua_State *L)
  * @brief _et_Q_CleanStr
  *        cleanstring = et.Q_CleanStr( string )
  * @param[in] string
- * @param[out] cleanstring
+ * @return cleanstring
  */
 static int _et_Q_CleanStr(lua_State *L)
 {
@@ -428,8 +431,7 @@ static int _et_Q_CleanStr(lua_State *L)
  *        fd, len = et.trap_FS_FOpenFile( filename, mode )
  * @param[in] filename
  * @param[in] mode
- * @param[out] fd
- * @param[out] len
+ * @return fd, len
  */
 static int _et_trap_FS_FOpenFile(lua_State *L)
 {
@@ -449,7 +451,7 @@ static int _et_trap_FS_FOpenFile(lua_State *L)
  *        filedata = et.trap_FS_Read( fd, count )
  * @param[in] fd
  * @param[in] count
- * @param[out] filedata
+ * @return filedata
  */
 static int _et_trap_FS_Read(lua_State *L)
 {
@@ -478,7 +480,7 @@ static int _et_trap_FS_Read(lua_State *L)
  * @param[in] filedata
  * @param[in] count
  * @param[in] fd
- * @param[out] count
+ * @return count
  */
 static int _et_trap_FS_Write(lua_State *L)
 {
@@ -494,6 +496,7 @@ static int _et_trap_FS_Write(lua_State *L)
  * @brief _et_trap_FS_FCloseFile
  *        et.trap_FS_FCloseFile( fd )
  * @param[in] fd
+ * @return
  */
 static int _et_trap_FS_FCloseFile(lua_State *L)
 {
@@ -507,6 +510,7 @@ static int _et_trap_FS_FCloseFile(lua_State *L)
  *        et.trap_FS_Rename( oldname, newname )
  * @param[in] oldname
  * @param[in] newname
+ * @return
  */
 static int _et_trap_FS_Rename(lua_State *L)
 {
@@ -524,7 +528,7 @@ extern char bigTextBuffer[100000];
  *        filelist = et.trap_FS_GetFileList( dirname, fileextension )
  * @param[in] dirname
  * @param[in] fileextension
- * @param[out] filelist
+ * @return filelist
  */
 static int _et_trap_FS_GetFileList(lua_State *L)
 {
@@ -555,6 +559,7 @@ static int _et_trap_FS_GetFileList(lua_State *L)
  * @brief _et_TVG_SoundIndex
  *        soundindex = et.TVG_SoundIndex( filename )
  * @param[in] filename
+ * @return
  */
 static int _et_TVG_SoundIndex(lua_State *L)
 {
@@ -568,7 +573,7 @@ static int _et_TVG_SoundIndex(lua_State *L)
  * @brief _et_TVG_ModelIndex
  *        modelindex = et.TVG_ModelIndex( filename )
  * @param[in] filename
- * @param[out] modelindex
+ * @return modelindex
  */
 static int _et_TVG_ModelIndex(lua_State *L)
 {
@@ -581,7 +586,7 @@ static int _et_TVG_ModelIndex(lua_State *L)
 /**
  * @brief _et_trap_Milliseconds
  *        milliseconds = et.trap_Milliseconds()
- * @param[out] milliseconds
+ * @return milliseconds
  */
 static int _et_trap_Milliseconds(lua_State *L)
 {
@@ -595,7 +600,7 @@ static int _et_trap_Milliseconds(lua_State *L)
  *        success = et.isBitSet(bit,value)
  * @param[in] bit
  * @param[in] value
- * @param[out] success
+ * @return success
  */
 static int _et_isBitSet(lua_State *L)
 {
@@ -844,7 +849,7 @@ static const tvgame_field_t level_fields[] =
  * @brief _et_getfield fields helper function
  * @param[in] fieldname
  * @param[in] fieldFlag
- * @param[out] game_field_t
+ * @return game_field_t
  */
 static tvgame_field_t *_et_getfield(char *fieldname, int fieldFlag)
 {
@@ -1114,7 +1119,7 @@ static void _et_setusercmd(lua_State *L, usercmd_t *cmd)
  * @param[in] field
  * @param[in] addr
  * @param[in] arrayIndex
- * @param[out] success
+ * @return success
  */
 static int _et_field_get(lua_State *L, tvgame_field_t *field, uintptr_t addr, int arrayIndex)
 {
@@ -1193,7 +1198,7 @@ static int _et_field_get(lua_State *L, tvgame_field_t *field, uintptr_t addr, in
  *        et.level_get( fieldname, arrayindex )
  * @param[in] fieldname
  * @param[in] arrayindex
- * @param[out] requested field value
+ * @return requested field value
  */
 static int _et_level_get(lua_State *L)
 {
@@ -1216,7 +1221,7 @@ static int _et_level_get(lua_State *L)
  * @param[in] entnum
  * @param[in] fieldname
  * @param[in] arrayindex
- * @param[out] requested field value
+ * @return requested field value
  */
 static int _et_gentity_get(lua_State *L)
 {
@@ -1240,7 +1245,7 @@ static int _et_gentity_get(lua_State *L)
  * @param[in] clientnum
  * @param[in] fieldname
  * @param[in] arrayindex
- * @param[out] requested field value
+ * @return requested field value
  */
 static int _et_gclient_get(lua_State *L)
 {
@@ -1264,7 +1269,7 @@ static int _et_gclient_get(lua_State *L)
  * @param[in] clientnum
  * @param[in] fieldname
  * @param[in] arrayindex
- * @param[out] requested field value
+ * @return requested field value
  */
 static int _et_ps_get(lua_State *L)
 {
@@ -1310,6 +1315,7 @@ static int _et_ps_get(lua_State *L)
  * @param[in] fieldname
  * @param[in] arrayindex
  * @param[in] value
+ * @return
  */
 static int _et_gclient_set(lua_State *L)
 {
@@ -1395,6 +1401,7 @@ static int _et_gclient_set(lua_State *L)
  * @param[in] client
  * @param[in] event
  * @param[in] eventparm
+ * @return
  */
 static int _et_TVG_AddEvent(lua_State *L)
 {
@@ -1458,7 +1465,7 @@ static void _et_gettrace(lua_State *L, trace_t *tr)
 /**
  * @brief _etH_toVec3
  * @param[in] inx
- * @param[out] vec3_t
+ * @return vec3_t
  */
 static vec3_t *_etH_toVec3(lua_State *L, int inx)
 {
@@ -1480,6 +1487,7 @@ static vec3_t *_etH_toVec3(lua_State *L, int inx)
  * @param[in] end
  * @param[in] entNum
  * @param[in] mask
+ * @return
  */
 static int _et_trap_Trace(lua_State *L)
 {
@@ -1528,6 +1536,7 @@ static int _et_trap_Trace(lua_State *L)
  *        et.trap_SendServerCommand( clientnum, command )
  * @param[in] clientNum
  * @param[in] command
+ * @return
  */
 static int _et_trap_SendServerCommand(lua_State *L)
 {
@@ -1544,6 +1553,7 @@ static int _et_trap_SendServerCommand(lua_State *L)
  * @param[in] clientNum
  * @param[in] reason
  * @param[in] ban_time
+ * @return
  */
 static int _et_trap_DropClient(lua_State *L)
 {
@@ -1561,6 +1571,7 @@ static int _et_trap_DropClient(lua_State *L)
 *         if there is none or more than one match nil is returned.
  *        clientnum = et.ClientNumberFromString( string )
  * @param[in] string
+ * @return
  */
 static int _et_ClientNumberFromString(lua_State *L)
 {
@@ -1585,6 +1596,7 @@ static int _et_ClientNumberFromString(lua_State *L)
 *         if there is none or more than one match nil is returned.
  *        clientnum = et.MasterClientNumberFromString( string )
  * @param[in] string
+ * @return
  */
 static int _et_MasterClientNumberFromString(lua_State *L)
 {
@@ -1609,6 +1621,7 @@ static int _et_MasterClientNumberFromString(lua_State *L)
  * @param[in] clientNum
  * @param[in] mode
  * @param[in] text
+ * @return
  */
 static int _et_TVG_Say(lua_State *L)
 {
@@ -1626,6 +1639,7 @@ static int _et_TVG_Say(lua_State *L)
  * @param[in] clientNum
  * @param[in] duration
  * @param[in] reason
+ * @return
  */
 static int _et_MutePlayer(lua_State *L)
 {
@@ -1675,6 +1689,7 @@ static int _et_MutePlayer(lua_State *L)
  * @brief _et_UnmutePlayer
  *        et.UnmutePlayer( clientnum )
  * @param[in] clientNum
+ * @return
  */
 static int _et_UnmutePlayer(lua_State *L)
 {
@@ -1698,6 +1713,7 @@ static int _et_UnmutePlayer(lua_State *L)
  * @brief _et_TeleportPlayer teleport shifts origin[2] by +1
  *        et.TeleportPlayer( clientnum, vec3_t origin, vec3_t angles )
  * @param[in] clientNum
+ * @return
  */
 static int _et_TeleportPlayer(lua_State *L)
 {
@@ -1737,6 +1753,7 @@ static int _et_TeleportPlayer(lua_State *L)
  * @brief _et_trap_GetUserinfo
  *        userinfo = et.trap_GetUserinfo( clientnum )
  * @param[in] clientNum
+ * @return userinfo
  */
 static int _et_trap_GetUserinfo(lua_State *L)
 {
@@ -1753,6 +1770,7 @@ static int _et_trap_GetUserinfo(lua_State *L)
  *        et.trap_SetUserinfo( clientnum, userinfo )
  * @param[in] clientNum
  * @param[in] userinfo
+ * @return
  */
 static int _et_trap_SetUserinfo(lua_State *L)
 {
@@ -1767,6 +1785,7 @@ static int _et_trap_SetUserinfo(lua_State *L)
  * @brief _et_ClientUserinfoChanged
  *        et.ClientUserinfoChanged( clientNum )
  * @param[in] clientNum
+ * @return
  */
 static int _et_ClientUserinfoChanged(lua_State *L)
 {
@@ -1866,6 +1885,7 @@ static const luaL_Reg etlib[] =
 /**
  * @brief TVG_LuaRunIsolated creates and runs specified module in isolated state
  * @param[in] modName
+ * @return
  */
 qboolean TVG_LuaRunIsolated(const char *modName)
 {
@@ -1960,6 +1980,7 @@ qboolean TVG_LuaRunIsolated(const char *modName)
 
 /**
  * @brief TVG_LuaInit initialises the Lua API interface
+ * @return
  */
 qboolean TVG_LuaInit(void)
 {
@@ -2063,6 +2084,7 @@ qboolean TVG_LuaInit(void)
  * @param[in] func
  * @param[in] nargs
  * @param[in] nresults
+ * @return
  */
 qboolean TVG_LuaCall(lua_vm_t *vm, const char *func, int nargs, int nresults)
 {
@@ -2093,6 +2115,7 @@ qboolean TVG_LuaCall(lua_vm_t *vm, const char *func, int nargs, int nresults)
                                   if the function does not exist, returns qfalse.
  * @param[in] vm
  * @param[in] name
+ * @return
  */
 qboolean TVG_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
 {
@@ -2116,7 +2139,7 @@ qboolean TVG_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
  * @brief TVG_LuaStackDump dump the lua stack to console
  *                         executed by the ingame "lua_api" command
  */
-void TVG_LuaStackDump()
+void TVG_LuaStackDump(void)
 {
 	lua_vm_t *vm = (lua_vm_t *) Com_Allocate(sizeof(lua_vm_t));
 
@@ -2639,6 +2662,7 @@ static void TVG_RegisterConstants(lua_vm_t *vm)
 /**
  * @brief TVG_LuaStartVM starts one individual virtual machine.
  * @param[in] vm
+ * @return
  */
 qboolean TVG_LuaStartVM(lua_vm_t *vm)
 {
@@ -2753,6 +2777,7 @@ qboolean TVG_LuaStartVM(lua_vm_t *vm)
 /**
  * @brief TVG_LuaStopVM stops one virtual machine, and calls its et_Quit callback.
  * @param[in] vm
+ * @return
  */
 void TVG_LuaStopVM(lua_vm_t *vm)
 {
@@ -2859,6 +2884,7 @@ void TVG_LuaStatus(gclient_t *client)
 /**
  * @brief TVG_LuaGetVM retrieves the VM for a given lua_State
  * @param[in] L
+ * @return
  */
 lua_vm_t *TVG_LuaGetVM(lua_State *L)
 {
@@ -2995,7 +3021,7 @@ void TVG_LuaHook_RunFrame(int levelTime)
  * @param[in] clientNum
  * @param[in] firstTime
  * @param[in] isBot
- * @param[out] reject reason
+ * @return reject reason
  */
 qboolean TVG_LuaHook_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot, char *reason)
 {
@@ -3183,7 +3209,7 @@ void TVG_LuaHook_ClientSpawn(int clientNum)
  *        intercepted = et_ClientCommand( clientNum, command ) callback
  * @param[in] clientNum
  * @param[in] command
- * @param[out] intercepted
+ * @return intercepted
  */
 qboolean TVG_LuaHook_ClientCommand(int clientNum, char *command)
 {
@@ -3231,7 +3257,7 @@ qboolean TVG_LuaHook_ClientCommand(int clientNum, char *command)
  * @brief TVG_LuaHook_ConsoleCommand
  *        intercepted = et_ConsoleCommand( command ) callback
  * @param[in] command
- * @param[out] intercepted
+ * @return intercepted
  */
 qboolean TVG_LuaHook_ConsoleCommand(char *command)
 {
