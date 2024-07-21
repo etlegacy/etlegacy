@@ -1384,13 +1384,13 @@ static int _et_G_SetSpawnVar(lua_State *L)
 	return 0;
 }
 
-// variable = et.gentity_get( entnum, fieldname, arrayindex )
-static int _et_gentity_get(lua_State *L)
+// variable = et.gentity_get( entnum, fieldname, array_index )
+static int et_gentity_get(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
 	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
-	unsigned long   addr;
+	uintptr_t       addr;
 
 	// break on invalid gentity field
 	if (!field)
@@ -1401,11 +1401,11 @@ static int _et_gentity_get(lua_State *L)
 
 	if (field->flags & FIELD_FLAG_GENTITY)
 	{
-		addr = (unsigned long)ent;
+		addr = (uintptr_t)ent;
 	}
 	else
 	{
-		addr = (unsigned long)ent->client;
+		addr = (uintptr_t)ent->client;
 	}
 
 	// for NULL entities, return nil (prevents server crashes!)
@@ -1467,13 +1467,13 @@ static int _et_gentity_get(lua_State *L)
 	return 0;
 }
 
-// et.gentity_set( entnum, fieldname, arrayindex, value )
-static int _et_gentity_set(lua_State *L)
+// et.gentity_set( entnum, fieldname, array_index, value )
+static int et_gentity_set(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
 	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
-	unsigned long   addr;
+	uintptr_t       addr;
 	const char      *buffer;
 
 	// break on invalid gentity field
@@ -1492,11 +1492,11 @@ static int _et_gentity_set(lua_State *L)
 
 	if (field->flags & FIELD_FLAG_GENTITY)
 	{
-		addr = (unsigned long)ent;
+		addr = (uintptr_t)ent;
 	}
 	else
 	{
-		addr = (unsigned long)ent->client;
+		addr = (uintptr_t)ent->client;
 	}
 
 	// for NULL entities, return nil (prevents server crashes!)
@@ -1790,8 +1790,8 @@ static const luaL_Reg etlib[] =
 	// Entities
 	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
 	{ "G_SetSpawnVar",           _et_G_SetSpawnVar           },
-	{ "gentity_get",             _et_gentity_get             },
-	{ "gentity_set",             _et_gentity_set             },
+	{ "gentity_get",             et_gentity_get              },
+	{ "gentity_set",             et_gentity_set              },
 	{ "G_AddEvent",              _et_G_AddEvent              },
 
 	{ "G_SetGlobalFog",          _et_G_SetGlobalFog          },
