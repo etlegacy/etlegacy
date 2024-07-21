@@ -334,9 +334,9 @@ int TVG_MasterClientNumberFromString(gclient_t *to, char *s)
 }
 
 /**
- * @brief G_PlaySound_Cmd
+ * @brief TVG_PlaySound_Cmd
  */
-void G_PlaySound_Cmd(void)
+void TVG_PlaySound_Cmd(void)
 {
 	char sound[MAX_QPATH], name[MAX_NAME_LENGTH], cmd[32] = { "playsound" };
 
@@ -361,7 +361,7 @@ void G_PlaySound_Cmd(void)
 	if (name[0])
 	{
 		int       cnum;
-		gentity_t *victim;
+		gclient_t *victim;
 
 		cnum = TVG_ClientNumberFromString(NULL, name);
 
@@ -370,20 +370,20 @@ void G_PlaySound_Cmd(void)
 			return;
 		}
 
-		victim = &level.gentities[cnum];
+		victim = &level.clients[cnum];
 
 		if (!Q_stricmp(cmd, "playsound_env"))
 		{
-			G_AddEvent(victim, EV_GENERAL_SOUND, G_SoundIndex(sound));
+			TVG_AddEvent(victim, EV_GENERAL_SOUND, TVG_SoundIndex(sound));
 		}
 		else
 		{
-			G_ClientSound(victim, G_SoundIndex(sound));
+			G_Printf("no sound found/played\n");
 		}
 	}
 	else
 	{
-		TVG_globalSound(sound);
+		G_Printf("no sound found/played\n");
 	}
 }
 
@@ -805,41 +805,6 @@ qboolean TVG_Cmd_FollowPrevious_f(gclient_t *client, tvcmd_reference_t *self)
 	TVG_Cmd_FollowCycle_f(client, -1, qfalse);
 
 	return qtrue;
-}
-
-/**
- * @brief Plays a sound (wav file or sound script) on this entity
- * @param[in] ent entity to play the sound on
- * @param[in] soundId sound file name or sound script ID
- * @param[in] volume sound volume, only applies to sound file name call
- *
- * @note Unused. Keep this.
- *
- * @note Calling G_AddEvent(..., EV_GENERAL_SOUND, ...) has the danger of
- * the event never getting through to the client because the entity might not
- * be visible (unless it has the SVF_BROADCAST flag), so if you want to make sure
- * the sound is heard, call this function instead.
- */
-void G_EntitySound(gentity_t *ent, const char *soundId, int volume)
-{
-	//   for sound script, volume is currently always 127.
-	trap_SendServerCommand(-1, va("entitySound %d %s %d %i %i %i normal", ent->s.number, soundId, volume,
-	                              (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2]));
-}
-
-/**
- * @brief Similar to G_EntitySound, but do not cut this sound off
- * @param[in] ent entity to play the sound on
- * @param[in] soundId sound file name or sound script ID
- * @param[in] volume sound volume, only applies to sound file name call
- *
- * @note Unused. See G_EntitySound()
- */
-void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume)
-{
-	//   for sound script, volume is currently always 127.
-	trap_SendServerCommand(-1, va("entitySound %d %s %d %i %i %i noCut", ent->s.number, soundId, volume,
-	                              (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2]));
 }
 
 /**
@@ -1640,24 +1605,6 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		level.cmds.imptValid = qtrue;
 		Q_strncpyz(level.cmds.impt, cmd, sizeof(level.cmds.impt));
 		return;
-	case IMSR_HASH:                                        // "imsr"
-		level.cmds.imsrValid = qtrue;
-		Q_strncpyz(level.cmds.imsr, cmd, sizeof(level.cmds.imsr));
-		return;
-	//case SR_HASH:                                        // "sr" - backward compatibility with 2.76 demos
-	//	return;
-	case SRA_HASH:                                         // "sra"
-		level.cmds.sraValid = qtrue;
-		Q_strncpyz(level.cmds.sra, cmd, sizeof(level.cmds.sra));
-		return;
-	case IMPR_HASH:                                        // "impr"
-		level.cmds.imprValid = qtrue;
-		Q_strncpyz(level.cmds.impr, cmd, sizeof(level.cmds.impr));
-		return;
-	case PR_HASH:                                          // "pr"
-		level.cmds.prValid = qtrue;
-		Q_strncpyz(level.cmds.pr, cmd, sizeof(level.cmds.pr));
-		return;
 	// music loops \/
 	case MU_START_HASH:                                    // "mu_start" has optional parameter for fade-up time
 		trap_SendServerCommand(-1, cmd);
@@ -1686,7 +1633,27 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		trap_SendServerCommand(-1, cmd);
 		return;
 
-	//ETJUMP
+	// Legacy
+	case IMSR_HASH:                                        // "imsr"
+		level.cmds.imsrValid = qtrue;
+		Q_strncpyz(level.cmds.imsr, cmd, sizeof(level.cmds.imsr));
+		return;
+	//case SR_HASH:                                        // "sr" - backward compatibility with 2.76 demos
+	//	return;
+	case SRA_HASH:                                         // "sra"
+		level.cmds.sraValid = qtrue;
+		Q_strncpyz(level.cmds.sra, cmd, sizeof(level.cmds.sra));
+		return;
+	case IMPR_HASH:                                        // "impr"
+		level.cmds.imprValid = qtrue;
+		Q_strncpyz(level.cmds.impr, cmd, sizeof(level.cmds.impr));
+		return;
+	case PR_HASH:                                          // "pr"
+		level.cmds.prValid = qtrue;
+		Q_strncpyz(level.cmds.pr, cmd, sizeof(level.cmds.pr));
+		return;
+
+	// ETJump
 	case GUID_REQUEST_HASH:
 	case HAS_TIMERUN_HASH:
 		return;
@@ -1715,6 +1682,20 @@ void TVG_ClientCommand(int clientNum)
 	}
 
 	client = level.clients + clientNum;
+
+#ifdef FEATURE_LUA
+	// LUA API callbacks
+	if (TVG_LuaHook_ClientCommand(clientNum, cmd))
+	{
+		return;
+	}
+
+	if (Q_stricmp(cmd, "lua_status") == 0)
+	{
+		TVG_LuaStatus(client);
+		return;
+	}
+#endif
 
 	if (TVG_commandCheck(client, cmd))
 	{

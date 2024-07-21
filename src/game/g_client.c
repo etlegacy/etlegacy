@@ -1329,7 +1329,7 @@ int G_CountTeamMedics(team_t team, qboolean alivecheck)
 void AddMedicTeamBonus(gclient_t *client)
 {
 	// compute health mod
-	client->pers.maxHealth = 100 + 10 * G_CountTeamMedics(client->sess.sessionTeam, qfalse);
+	client->pers.maxHealth = DEFAULT_HEALTH + 10 * G_CountTeamMedics(client->sess.sessionTeam, qfalse);
 
 	if (client->pers.maxHealth > 125)
 	{

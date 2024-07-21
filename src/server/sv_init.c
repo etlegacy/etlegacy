@@ -99,12 +99,10 @@ void SV_SetConfigstring(int index, const char *val)
 	sv.configstringsmodified[index] = qtrue;
 
 #ifdef DEDICATED
-	if (svcls.isTVGame && svcls.state != CA_LOADING)
+	if (svcls.isTVGame && svcls.state != CA_LOADING &&
+	    (index == CS_SERVERINFO || index == CS_WOLFINFO))
 	{
-		if (index == CS_SERVERINFO || index == CS_WOLFINFO)
-		{
-			SV_CL_ConfigstringInfoChanged(index);
-		}
+		SV_CL_ConfigstringInfoChanged(index);
 	}
 #endif // DEDICATED
 
@@ -358,15 +356,14 @@ void SV_BoundMaxClients(int minimum)
 	{
 		Cvar_Set("sv_maxclients", va("%i", minimum));
 	}
-	else if (sv_maxclients->integer > MAX_CLIENTS)
-	{
+	else if (sv_maxclients->integer > MAX_CLIENTS
 #ifdef DEDICATED
-		// no limit for etltv slave server
-		if (svcls.state <= CA_DISCONNECTED)
+	         // no limit for etltv slave server
+	         && svcls.state <= CA_DISCONNECTED
 #endif // DEDICATED
-		{
-			Cvar_Set("sv_maxclients", va("%i", MAX_CLIENTS));
-		}
+	         )
+	{
+		Cvar_Set("sv_maxclients", va("%i", MAX_CLIENTS));
 	}
 }
 

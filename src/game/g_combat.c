@@ -1469,11 +1469,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_ENEMY_WEAPON, attacker->client->ps.weapon, qtrue);
 	}
 
-	if (damage < 0)
-	{
-		damage = 0;
-	}
-	take = damage;
+    take = MAX(damage, 0);
 
 	// adrenaline junkie!
 	if (targ->client && targ->client->ps.powerups[PW_ADRENALINE])
@@ -1605,7 +1601,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 	}
 	else
 	{
-		knockback = (damage > 200) ? 200 : damage;
+		knockback = MIN(take, 200);
 
 		if (dflags & DAMAGE_HALF_KNOCKBACK)
 		{
