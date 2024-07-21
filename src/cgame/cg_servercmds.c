@@ -995,7 +995,7 @@ static void CG_ConfigStringModified(void)
 
 	// get the gamestate from the client system, which will have the
 	// new configstring already integrated
-	trap_GetGameState(&cgs.gameState);
+	trap_GetGameState(&cgs.currentGameState);
 
 	// do something with it if necessary
 	switch (num)

@@ -2439,7 +2439,7 @@ typedef struct sortedVotedMapByTotal_s
  */
 typedef struct cgs_s
 {
-	gameState_t gameState;                          ///< gamestate from server
+	gameState_t currentGameState;                   ///< gameState from server
 	glconfig_t glconfig;                            ///< rendering configuration
 	float screenXScale;                             ///< derived from glconfig
 	float screenYScale;

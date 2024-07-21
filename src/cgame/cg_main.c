@@ -2298,7 +2298,7 @@ const char *CG_ConfigString(int index)
 	{
 		CG_Error("CG_ConfigString: bad index: %i\n", index);
 	}
-	return cgs.gameState.stringData + cgs.gameState.stringOffsets[index];
+	return cgs.currentGameState.stringData + cgs.currentGameState.stringOffsets[index];
 }
 
 /**
@@ -2851,7 +2851,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	}
 
 	// get the gamestate from the client system
-	trap_GetGameState(&cgs.gameState);
+	trap_GetGameState(&cgs.currentGameState);
 
 	cg.warmupCount = -1;
 

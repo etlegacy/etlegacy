@@ -1983,7 +1983,7 @@ static void CG_DemoRewindFixEffects(void)
 {
 	int i;
 
-	trap_GetGameState(&cgs.gameState);
+	trap_GetGameState(&cgs.currentGameState);
 
 	CG_ParseSysteminfo();
 	CG_ParseServerinfo();
