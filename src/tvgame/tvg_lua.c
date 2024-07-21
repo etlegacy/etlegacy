@@ -1171,18 +1171,18 @@ static int _et_field_get(lua_State *L, tvgame_field_t *field, uintptr_t addr, in
 	case FIELD_INT_ARRAY:
 		if (field->flags & FIELD_FLAG_NOPTR)
 		{
-			lua_pushinteger(L, (*(int *)(*(uintptr_t *)addr + (sizeof(int) * arrayIndex))));
+			lua_pushinteger(L, (*(int *)(*(uintptr_t *)addr + (sizeof(int) * (int)luaL_optinteger(L, arrayIndex, 0)))));
 		}
 		else
 		{
-			lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * arrayIndex))));
+			lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * (int)luaL_optinteger(L, arrayIndex, 0)))));
 		}
 		return 1;
 	case FIELD_TRAJECTORY:
 		_et_gettrajectory(L, (trajectory_t *)addr);
 		return 1;
 	case FIELD_FLOAT_ARRAY:
-		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * arrayIndex))));
+		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * (int)luaL_optinteger(L, arrayIndex, 0)))));
 		return 1;
 	case FIELD_USERCMD:
 		_et_getusercmd(L, (usercmd_t *)addr);
@@ -1212,7 +1212,7 @@ static int _et_level_get(lua_State *L)
 		return 0;
 	}
 
-	return _et_field_get(L, field, (uintptr_t)&level, (int)luaL_optinteger(L, 2, 0));
+	return _et_field_get(L, field, (uintptr_t)&level, 2);
 }
 
 /**
@@ -1236,7 +1236,7 @@ static int _et_gentity_get(lua_State *L)
 		return 0;
 	}
 
-	return _et_field_get(L, field, (uintptr_t)ent, (int)luaL_optinteger(L, 3, 0));
+	return _et_field_get(L, field, (uintptr_t)ent, 3);
 }
 
 /**
@@ -1260,7 +1260,7 @@ static int _et_gclient_get(lua_State *L)
 		return 0;
 	}
 
-	return _et_field_get(L, field, (uintptr_t)client, (int)luaL_optinteger(L, 3, 0));
+	return _et_field_get(L, field, (uintptr_t)client, 3);
 }
 
 /**
@@ -1305,7 +1305,7 @@ static int _et_ps_get(lua_State *L)
 		return 0;
 	}
 
-	return _et_field_get(L, field, (uintptr_t)&client, (int)luaL_optinteger(L, 3, 0));
+	return _et_field_get(L, field, (uintptr_t)&client, 3);
 }
 
 /**
