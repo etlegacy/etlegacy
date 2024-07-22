@@ -338,12 +338,12 @@ void VM_LoadSymbols(vm_t *vm)
  */
 intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
-#if defined(__x86_64__) || defined (__llvm__) || defined(__ANDROID__) || defined(__aarch64__) || ((defined __linux__) && (defined __powerpc__))
+#if defined(__x86_64__) || defined (_WIN64) || defined (__llvm__) || defined(__ANDROID__) || defined(__aarch64__) || ((defined __linux__) && (defined __powerpc__))
 	// rcg010206 - see commentary above
 	intptr_t args[VM_SYSCALL_ARGS] = { 0 };
 	int      i;
 	va_list  ap;
-	size_t len = ARRAY_LEN(args);
+	size_t   len = ARRAY_LEN(args);
 
 	args[0] = arg;
 
@@ -422,10 +422,10 @@ vm_t *VM_Restart(vm_t *vm)
 	// round up to next power of 2 so all data operations can
 	// be mask protected
 	dataLength = header->dataLength + header->litLength + header->bssLength;
-	for (i = 0; dataLength > (1 << i); i++)
+	for (i = 0; dataLength > ((intptr_t)1 << i); i++)
 	{
 	}
-	dataLength = 1 << i;
+	dataLength = (intptr_t)1 << i;
 
 	// clear the data
 	Com_Memset(vm->dataBase, 0, dataLength);
@@ -454,9 +454,9 @@ vm_t *VM_Restart(vm_t *vm)
 void VM_Error(errorParm_t errorParm, const char *module, const char *filename)
 {
 #if ARCH_X86
-    Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run.", module, filename));
+	Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run.", module, filename));
 #else
-    Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run and that the mod is compatible with your platform.", module, filename));
+	Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run and that the mod is compatible with your platform.", module, filename));
 #endif
 }
 
