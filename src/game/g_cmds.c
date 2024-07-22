@@ -649,7 +649,6 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	int      cnum;
 	int      j;
 	int      amount       = 0;
-	qboolean hasAmount    = qfalse;
 	int      i            = 1;
 	qboolean validGiveCmd = qfalse;
 
@@ -695,7 +694,6 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	trap_Argv(++i, amt, sizeof(amt));
 	if (*amt != '\0')
 	{
-		hasAmount = qtrue;
 		amount    = Q_atoi(amt);
 	}
 
@@ -712,7 +710,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 			return;
 		}
 
-		if (hasAmount) // skill number given
+		if (amount) // skill number given
 		{
 			skill = (skillType_t)amount; // Change amount to skill, so that we can use amount properly
 
