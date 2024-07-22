@@ -138,7 +138,7 @@ static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 	}
 	else
 	{
-		float       scaleX, scaleY, scale;
+		float       scaleX, scaleY, scale, renderScale;
 		glyphInfo_t *info;
 		float       xx;
 		float       yy;
@@ -159,7 +159,8 @@ static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 			return;
 		}
 
-		scale = cls.consoleFont.glyphScale * ((float)smallCharHeight / (float)SMALLCHAR_HEIGHT);
+		renderScale = (float)smallCharHeight / (float)SMALLCHAR_HEIGHT;
+		scale       = cls.consoleFont.glyphScale * renderScale;
 
 		// FIXME: fix the magic numbers at some point
 		scaleX = 0.3f; // (float)w / (float)info->imageWidth;
@@ -169,7 +170,7 @@ static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 		scaleY *= scale;
 
 		xx = (float)x + ((float)info->pitch * scaleX);
-		yy = (float)y - ((float)info->top * scaleY) + 12;
+		yy = (float)y - ((float)info->top * scaleY) + (12 * renderScale);
 		ww = (float)info->imageWidth * scaleX;
 		hh = (float)info->imageHeight * scaleY;
 

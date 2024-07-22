@@ -218,14 +218,11 @@ static void InitOpenGL(void)
 			glConfig.maxTextureSize = 0;
 		}
 
-		ri.CL_SetScaling(1.0f);
-
 		if (r_scale->value)
 		{
-			float scale = Com_Clamp(0.2f, 4.f, r_scale->value);
+			const float scale = Com_Clamp(0.2f, 4.f, r_scale->value);
 			glConfig.vidWidth  *= scale;
 			glConfig.vidHeight *= scale;
-			ri.CL_SetScaling(scale);
 		}
 	}
 
