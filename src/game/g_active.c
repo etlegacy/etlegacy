@@ -1231,6 +1231,8 @@ void ClientThink_real(gentity_t *ent)
 		                    client->pers.pmoveMsec) * client->pers.pmoveMsec;
 	}
 
+	G_SendMatchInfo(ent);
+
 	if (client->wantsscore)
 	{
 		G_SendScore(ent);
