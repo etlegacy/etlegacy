@@ -159,7 +159,7 @@ static void SRC_DrawSingleChar(int x, int y, int w, int h, int ch)
 			return;
 		}
 
-		scale = cls.consoleFont.glyphScale;
+		scale = cls.consoleFont.glyphScale * ((float)smallCharHeight / (float)SMALLCHAR_HEIGHT);
 
 		// FIXME: fix the magic numbers at some point
 		scaleX = 0.3f; // (float)w / (float)info->imageWidth;

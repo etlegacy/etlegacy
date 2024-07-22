@@ -76,6 +76,9 @@ cvar_t *cl_avidemo;
 cvar_t *cl_forceavidemo;
 cvar_t *cl_avidemotype;
 cvar_t *cl_aviMotionJpeg;
+cvar_t *cl_aviFrameRate;
+cvar_t *cl_aviPipeFormat;
+cvar_t *cl_aviPipeExtension;
 
 cvar_t *cl_freelook;
 cvar_t *cl_sensitivity;
@@ -160,6 +163,8 @@ void CL_ServerStatus_f(void);
 void CL_ServerStatusResponse(netadr_t from, msg_t *msg);
 
 void CL_WavStopRecord_f(void);
+
+qboolean videoPipe;
 
 /**
  * @brief CL_PurgeCache
@@ -1498,7 +1503,7 @@ static void CL_ConsoleFont_f(void)
 
 		if (font && font[0])
 		{
-			re.RegisterFont(font, SMALLCHAR_HEIGHT, &cls.consoleFont, qtrue);
+			re.RegisterFont(font, smallCharHeight, &cls.consoleFont, qtrue);
 		}
 	}
 }
@@ -2376,6 +2381,34 @@ void CL_CheckUserinfo(void)
 	}
 }
 
+
+/**
+ * @brief CL_GetVideoExtension
+ * @return extension
+ */
+static const char *CL_GetVideoExtension(void)
+{
+	const char *extension;
+
+	if (videoPipe)
+	{
+		if (cl_aviPipeExtension->string && cl_aviPipeExtension->string[0] != '\0')
+		{
+			extension = cl_aviPipeExtension->string;
+		}
+		else
+		{
+			extension = "mp4";
+		}
+	}
+	else
+	{
+		extension = "avi";
+	}
+
+	return extension;
+}
+
 /**
  * @brief This function will be called when the AVI recording will start either by video or cl_avidemo commands
  * @param[in] aviname
@@ -2386,8 +2419,9 @@ void CL_StartVideoRecording(const char *aviname)
 
 	if (!aviname)
 	{
-		int i, last;
-		int a, b, c, d;
+		int        i, last;
+		int        a, b, c, d;
+		const char *ext = CL_GetVideoExtension();
 
 		for (i = 0; i <= 9999; i++)
 		{
@@ -2400,8 +2434,8 @@ void CL_StartVideoRecording(const char *aviname)
 			c     = last / 10;
 			last -= c * 10;
 			d     = last;
-			Com_Printf("videos/%s%d%d%d%d.avi\n", clc.demo.demoName, a, b, c, d);
-			Com_sprintf(filename, MAX_OSPATH, "videos/%s%d%d%d%d.avi", clc.demo.demoName, a, b, c, d);
+			Com_Printf("videos/%s_%d%d%d%d.%s\n", clc.demo.demoName, a, b, c, d, ext);
+			Com_sprintf(filename, MAX_OSPATH, "videos/%s_%d%d%d%d.%s", clc.demo.demoName, a, b, c, d, ext);
 
 			if (!FS_FileExists(filename))
 			{
@@ -2414,11 +2448,11 @@ void CL_StartVideoRecording(const char *aviname)
 			Com_Printf(S_COLOR_RED "ERROR: no free file names to create video\n");
 			return;
 		}
-		CL_OpenAVIForWriting(filename);
+		CL_OpenAVIForWriting(filename, videoPipe);
 	}
 	else
 	{
-		CL_OpenAVIForWriting(aviname);
+		CL_OpenAVIForWriting(aviname, videoPipe);
 	}
 }
 
@@ -2427,28 +2461,46 @@ void CL_StartVideoRecording(const char *aviname)
  */
 void CL_Video_f(void)
 {
-	char filename[MAX_OSPATH];
+	char       filename[MAX_OSPATH];
+	const char *ext;
 
 	if (!clc.demo.playing)
 	{
-		Com_Printf("The video command can only be used when playing back demos\n");
+		Com_Printf("The %s command can only be used when playing back demos\n", Cmd_Argv(0));
 		return;
 	}
 
-	Cvar_Set("cl_avidemotype", "2");
-	if (cl_avidemo->integer <= 0)
+	if (cl_avidemo->integer != 0)
 	{
-		Cvar_Set("cl_avidemo", "30");
+		Com_Printf("The %s command cannot be used unless cl_avidemo is 0\n", Cmd_Argv(0));
 	}
 
+	videoPipe = !Q_stricmp(Cmd_Argv(0), "video-pipe");
+	ext       = CL_GetVideoExtension();
+
+	Cvar_Set("cl_avidemotype", "2");
+
+	// explicit filename
 	if (Cmd_Argc() > 1)
 	{
-		// explicit filename
-		Com_sprintf(filename, MAX_OSPATH, "videos/%s.avi", Cmd_Argv(1));
+		const char *name = Cmd_Argv(1);
+
+		// magic token $demo = use current demo name as video name
+		if (!Q_stricmp(name, "$demo"))
+		{
+			Com_sprintf(filename, sizeof(filename), "videos/%s.%s", clc.demo.demoName, ext);
+		}
+		else
+		{
+			Com_sprintf(filename, sizeof(filename), "videos/%s.%s", name, ext);
+		}
+
+		// allow setting video framerate via the video command
 		if (Cmd_Argc() == 3)
 		{
-			Cvar_Set("cl_avidemo", Cmd_Argv(2));
+			Cvar_Set("cl_aviFrameRate", Cmd_Argv(2));
 		}
+
 		CL_StartVideoRecording(filename);
 	}
 	else
@@ -2506,19 +2558,24 @@ void CL_CaptureFrameVideo(void)
 
 static void CL_FrameHandleVideo(int *msec)
 {
+	qboolean videoActive = CL_VideoRecording();
+	qboolean inGame      = cls.state == CA_ACTIVE;
+
 	// if recording an avi, lock to a fixed fps
-	if (cl_avidemo->integer && *msec && ((cls.state == CA_ACTIVE && clc.demo.playing) || cl_forceavidemo->integer))
+	if ((cl_avidemo->integer && *msec && ((inGame && clc.demo.playing) || cl_forceavidemo->integer))
+	    || (videoActive && (inGame && clc.demo.playing)))
 	{
-		float fps;
-		float frameDuration;
+		float     fps;
+		float     frameDuration;
+		const int videoFps = videoActive ? cl_aviFrameRate->integer : cl_avidemo->integer;
 
 		if (com_timescale->value > 0.0f)
 		{
-			fps = MIN(cl_avidemo->integer * com_timescale->value, 1000.0f);
+			fps = MIN(videoFps * com_timescale->value, 1000.0f);
 		}
 		else
 		{
-			fps = MIN(cl_avidemo->integer, 1000.0f);
+			fps = MIN(videoFps, 1000.0f);
 		}
 		frameDuration = MAX(1000.0f / fps, 1.0f); // + clc.aviVideoFrameRemainder;
 
@@ -2527,8 +2584,7 @@ static void CL_FrameHandleVideo(int *msec)
 		*msec = (int)frameDuration;
 		//clc.aviVideoFrameRemainder = frameDuration + msec;
 	}
-	else if ((!cl_avidemo->integer && CL_VideoRecording())
-	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+	else if ((cl_avidemo->integer && (!inGame || !cl_forceavidemo->integer)) || (videoActive && !inGame))
 	{
 		CL_StopVideo_f();
 	}
@@ -2848,10 +2904,10 @@ void CL_InitRenderer(void)
 	Com_Memset(&cls.consoleFont, 0, sizeof(cls.consoleFont));
 	if (fontName && fontName[0])
 	{
-		re.RegisterFont(fontName, SMALLCHAR_HEIGHT, &cls.consoleFont, qtrue);
+		re.RegisterFont(fontName, smallCharHeight, &cls.consoleFont, qtrue);
 	}
 	Com_Memset(&cls.etIconFont, 0, sizeof(cls.etIconFont));
-	re.RegisterFont("ETL-icon-font", SMALLCHAR_HEIGHT, &cls.etIconFont, qfalse);
+	re.RegisterFont("ETL-icon-font", smallCharHeight, &cls.etIconFont, qfalse);
 
 	cls.whiteShader = re.RegisterShader("white");
 
@@ -3155,6 +3211,14 @@ void CL_Init(void)
 	cl_avidemotype   = Cvar_Get("cl_avidemotype", "0", CVAR_ARCHIVE);
 	cl_aviMotionJpeg = Cvar_Get("cl_avimotionjpeg", "0", CVAR_TEMP);
 
+	cl_aviFrameRate = Cvar_GetAndDescribe("cl_aviFrameRate", "25", CVAR_ARCHIVE, "Framerate to use for video recording with video and video-pipe");
+	Cvar_CheckRange(cl_aviFrameRate, 1, 1000, qtrue);
+
+	cl_aviPipeFormat = Cvar_GetAndDescribe("cl_aviPipeFormat",
+	                                       "-preset medium -crf 23 -vcodec libx264 -flags +cgop -pix_fmt yuvj420p -bf 2 -codec:a aac -strict -2 -b:a 160k -movflags faststart",
+	                                       CVAR_ARCHIVE, "ffmpeg command line passed to the encoder when using video-pipe");
+	cl_aviPipeExtension = Cvar_GetAndDescribe("cl_aviPipeExtension", "mp4", CVAR_ARCHIVE, "Extension to use for video files when using video-pipe");
+
 	rconAddress = Cvar_Get("rconAddress", "", 0);
 
 	cl_yawspeed      = Cvar_Get("cl_yawspeed", "140", CVAR_ARCHIVE_ND);
@@ -3319,6 +3383,7 @@ void CL_Init(void)
 
 	// Avi recording
 	Cmd_AddCommand("video", CL_Video_f, "Starts AVI recording during demo view.");
+	Cmd_AddCommand("video-pipe", CL_Video_f, "Pipe video and audio to ffmpeg for video recording.");
 	Cmd_AddCommand("stopvideo", CL_StopVideo_f, "Stops AVI recording.");
 
 	Cmd_AddCommand("save_favs", CL_SaveFavServersToFile_f, "Saves the favcache.dat file into mod/profile path of fs_homepath.");
@@ -3418,6 +3483,7 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("fs_referencedList");
 	Cmd_RemoveCommand("model");
 	Cmd_RemoveCommand("video");
+	Cmd_RemoveCommand("video-pipe");
 	Cmd_RemoveCommand("stopvideo");
 
 	Cmd_RemoveCommand("save_favs");

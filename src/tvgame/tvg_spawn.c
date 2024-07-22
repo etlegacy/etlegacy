@@ -335,7 +335,7 @@ gentity_t *TVG_SpawnGEntityFromSpawnVars(void)
 	gentity_t *ent;
 	char      *str;
 
-	ent = G_Spawn(); // get the next free entity
+	ent = TVG_Spawn(); // get the next free entity
 
 	for (i = 0 ; i < level.numSpawnVars ; i++)
 	{
@@ -343,17 +343,17 @@ gentity_t *TVG_SpawnGEntityFromSpawnVars(void)
 	}
 
 	// check for "notteam" / "notfree" flags
-	G_SpawnInt("notteam", "0", &i);
+	TVG_SpawnInt("notteam", "0", &i);
 	if (i)
 	{
 		G_Printf("G_SpawnGEntityFromSpawnVars Warning: Can't spawn entity in team games - returning NULL\n");
 
-		G_FreeEntity(ent);
+		TVG_FreeEntity(ent);
 		return NULL;
 	}
 
 	// allowteams handling
-	G_SpawnString("allowteams", "", &str);
+	TVG_SpawnString("allowteams", "", &str);
 	if (str[0])
 	{
 		str = Q_strlwr(str);
@@ -387,7 +387,7 @@ gentity_t *TVG_SpawnGEntityFromSpawnVars(void)
 	// if we didn't get a classname, don't bother spawning anything
 	if (!TVG_CallSpawn(ent))
 	{
-		G_FreeEntity(ent);
+		TVG_FreeEntity(ent);
 	}
 
 	return ent;
@@ -493,22 +493,22 @@ void SP_worldspawn(void)
 {
 	char *s;
 
-	G_SpawnString("classname", "", &s);
+	TVG_SpawnString("classname", "", &s);
 	if (Q_stricmp(s, "worldspawn"))
 	{
 		G_Error("SP_worldspawn: The first entity isn't 'worldspawn'\n");
 	}
 
 	level.mapcoordsValid = qfalse;
-	if (G_SpawnVector2D("mapcoordsmins", "-128 128", level.mapcoordsMins) &&     // top left
-	    G_SpawnVector2D("mapcoordsmaxs", "128 -128", level.mapcoordsMaxs))       // bottom right
+	if (TVG_SpawnVector2D("mapcoordsmins", "-128 128", level.mapcoordsMins) &&     // top left
+	    TVG_SpawnVector2D("mapcoordsmaxs", "128 -128", level.mapcoordsMaxs))       // bottom right
 	{
 		level.mapcoordsValid = qtrue;
 	}
 
 	BG_InitLocations(level.mapcoordsMins, level.mapcoordsMaxs);
 
-	G_SpawnString("spawnflags", "0", &s);
+	TVG_SpawnString("spawnflags", "0", &s);
 	g_entities[ENTITYNUM_WORLD].spawnflags   = Q_atoi(s);
 	g_entities[ENTITYNUM_WORLD].r.worldflags = g_entities[ENTITYNUM_WORLD].spawnflags;
 
@@ -545,10 +545,6 @@ void TVG_SpawnEntitiesFromString(void)
 	{
 		TVG_SpawnGEntityFromSpawnVars();
 	}
-
-#ifdef FEATURE_LUA
-	G_LuaHook_SpawnEntitiesFromString();
-#endif
 
 	G_Printf("Disable spawning!\n");
 	level.spawning = qfalse;            // any future calls to G_Spawn*() will be errors

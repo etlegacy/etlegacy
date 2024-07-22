@@ -101,7 +101,6 @@ FILE(GLOB QAGAME_SRC
 
 FILE(GLOB TVGAME_SRC
     "src/game/bg_*.c"
-	"src/game/g_mdx*"
 	"src/game/g_strparse*"
 	"src/game/surfaceflags*"
 	"src/game/g_match_tokens.c"

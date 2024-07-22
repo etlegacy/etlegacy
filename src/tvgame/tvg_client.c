@@ -60,18 +60,18 @@ void SP_info_player_deathmatch(gentity_t *ent)
 {
 	int i;
 
-	G_SpawnInt("nobots", "0", &i);
+	TVG_SpawnInt("nobots", "0", &i);
 	if (i)
 	{
 		ent->flags |= FL_NO_BOTS;
 	}
-	G_SpawnInt("nohumans", "0", &i);
+	TVG_SpawnInt("nohumans", "0", &i);
 	if (i)
 	{
 		ent->flags |= FL_NO_HUMANS;
 	}
 
-	ent->enemy = G_PickTarget(ent->target);
+	ent->enemy = TVG_PickTarget(ent->target);
 	if (ent->enemy)
 	{
 		vec3_t dir;
@@ -122,34 +122,6 @@ void SP_info_player_intermission(gentity_t *ent)
 */
 
 /**
-* @brief SpotWouldTelefrag
-* @param[in] spot
-* @return
-*/
-qboolean SpotWouldTelefrag(gentity_t *spot)
-{
-	int       i, num;
-	int       touch[MAX_GENTITIES];
-	gentity_t *hit;
-	vec3_t    mins, maxs;
-
-	VectorAdd(spot->r.currentOrigin, playerMins, mins);
-	VectorAdd(spot->r.currentOrigin, playerMaxs, maxs);
-	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
-
-	for (i = 0; i < num; i++)
-	{
-		hit = &g_entities[touch[i]];
-		if (hit->client && hit->client->ps.stats[STAT_HEALTH] > 0)
-		{
-			return qtrue;
-		}
-	}
-
-	return qfalse;
-}
-
-/**
 * @brief Find the spot that we DON'T want to use
 * @param[in] from
 * @return
@@ -160,7 +132,7 @@ gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 	float     dist, nearestDist = 999999;
 	gentity_t *nearestSpot = NULL;
 
-	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
+	while ((spot = TVG_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
 	{
 		dist = VectorDistance(spot->r.currentOrigin, from);
 		if (dist < nearestDist)
@@ -186,19 +158,15 @@ gentity_t *SelectRandomDeathmatchSpawnPoint(void)
 	int       selection;
 	gentity_t *spots[MAX_SPAWN_POINTS];
 
-	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
+	while ((spot = TVG_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
 	{
-		if (SpotWouldTelefrag(spot))
-		{
-			continue;
-		}
 		spots[count] = spot;
 		count++;
 	}
 
 	if (!count)     // no spots that won't telefrag
 	{
-		return G_Find(NULL, FOFS(classname), "info_player_deathmatch");
+		return TVG_Find(NULL, FOFS(classname), "info_player_deathmatch");
 	}
 
 	selection = rand() % count;
@@ -597,12 +565,11 @@ char *CheckUserinfo(int clientNum, char *userinfo)
  */
 void TVG_ClientUserinfoChanged(int clientNum)
 {
-	gclient_t  *client                       = level.clients + clientNum;
-	const char *userinfo_ptr                 = NULL;
-	char       cs_key[MAX_STRING_CHARS]      = "";
-	char       cs_value[MAX_STRING_CHARS]    = "";
-	char       cs_cg_uinfo[MAX_STRING_CHARS] = "";
-	char       cs_skill[MAX_STRING_CHARS]    = "";
+	gclient_t  *client                    = level.clients + clientNum;
+	const char *userinfo_ptr              = NULL;
+	char       cs_key[MAX_STRING_CHARS]   = "";
+	char       cs_value[MAX_STRING_CHARS] = "";
+	char       cs_skill[MAX_STRING_CHARS] = "";
 	char       *reason;
 	char       cs_name[MAX_NETNAME] = "";
 	char       oldname[MAX_NAME_LENGTH];
@@ -657,27 +624,7 @@ void TVG_ClientUserinfoChanged(int clientNum)
 			break;
 		}
 		case TOK_cg_uinfo:
-			Q_strncpyz(cs_cg_uinfo, cs_value, MAX_STRING_CHARS);
 			break;
-		/*
-		            case TOK_pmove_fixed:
-		                if ( cs_value[0] )
-		                    client->pers.pmoveFixed = Q_atoi(cs_value);
-		                else
-		                    client->pers.pmoveFixed = 0;
-		                break;
-		            case TOK_pmove_msec:
-		                if ( cs_value[0] )
-		                    client->pers.pmoveMsec = Q_atoi(cs_value);
-		                else
-		                    client->pers.pmoveMsec = 8;
-		                // paranoia
-		                if (  client->pers.pmoveMsec > 33 )
-		                    client->pers.pmoveMsec = 33;
-		                if ( client->pers.pmoveMsec < 3 )
-		                    client->pers.pmoveMsec = 3;
-		                break;
-		*/
 		case TOK_name:
 			// see also MAX_NAME_LENGTH
 			if (strlen(cs_value) >= MAX_NETNAME)
@@ -764,37 +711,8 @@ void TVG_ClientUserinfoChanged(int clientNum)
 		}
 	}
 
-	client->pers.pmoveMsec = pmove_msec.integer;
-
-	if (cs_cg_uinfo[0])
-	{
-		Q_sscanf(cs_cg_uinfo, "%u %u %u",
-		         &client->pers.clientFlags,
-		         &client->pers.clientTimeNudge,
-		         &client->pers.clientMaxPackets);
-	}
-	else
-	{
-		// cg_uinfo was empty and useless.
-		// Let us fill these values in with something useful,
-		// if there not present to prevent auto reload
-		// from failing. - forty
-		if (!client->pers.clientFlags)
-		{
-			client->pers.clientFlags = 13;
-		}
-		if (!client->pers.clientTimeNudge)
-		{
-			client->pers.clientTimeNudge = 0;
-		}
-		if (!client->pers.clientMaxPackets)
-		{
-			client->pers.clientMaxPackets = 125;
-		}
-	}
-
 	client->pmext.bAutoReload = qfalse;
-	client->pers.activateLean = (client->pers.clientFlags & CGF_ACTIVATELEAN) != 0 ? qtrue : qfalse;
+	client->pers.activateLean = qfalse;
 
 	// set name
 	Q_strncpyz(oldname, client->pers.netname, sizeof(oldname));
@@ -809,7 +727,7 @@ void TVG_ClientUserinfoChanged(int clientNum)
 		}
 	}
 
-	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
+	client->ps.stats[STAT_MAX_HEALTH] = DEFAULT_HEALTH;
 
 	// To communicate it to cgame
 	client->ps.stats[STAT_PLAYER_CLASS] = client->sess.playerType;
@@ -821,19 +739,17 @@ void TVG_ClientUserinfoChanged(int clientNum)
 	//       client->pers.netname,
 	//       client->sess.sessionTeam,
 	//       client->sess.playerType,
-	//       client->sess.latchPlayerType,
 	//       client->sess.rank,
 	//       medalStr,
 	//       skillStr,
-	//       client->disguiseClientNum,
-	//       client->sess.playerWeapon,
-	//       client->sess.latchPlayerWeapon,
-	//       client->sess.playerWeapon2,
-	//       client->sess.latchPlayerWeapon2,
 	//       client->sess.muted ? 1 : 0,
-	//       client->sess.referee,
-	//       client->sess.shoutcaster
+	//       client->sess.referee
 	//       );
+
+#ifdef FEATURE_LUA
+	// *LUA* API callbacks
+	TVG_LuaHook_ClientUserinfoChanged(clientNum);
+#endif
 
 	//G_LogPrintf("TVG_ClientUserinfoChanged: %i %s\n", clientNum, s);
 	//G_DPrintf("TVG_ClientUserinfoChanged: %i :: %s\n", clientNum, s);
@@ -870,6 +786,10 @@ char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char       cs_name[MAX_NETNAME + 1]      = "";
 	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
 	//char       cs_rate[MAX_STRING_CHARS]     = "";
+
+#ifdef FEATURE_LUA
+	char reason[MAX_STRING_CHARS] = "";
+#endif
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
@@ -946,20 +866,17 @@ char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		}
 	}
 
-	if (!isBot)
+	// we don't check password for bots and local client
+	// NOTE: local client <-> "ip" "localhost"
+	//   this means this client is not running in our current process
+	if ((strcmp(cs_ip, "localhost") != 0))
 	{
-		// we don't check password for bots and local client
-		// NOTE: local client <-> "ip" "localhost"
-		//   this means this client is not running in our current process
-		if ((strcmp(cs_ip, "localhost") != 0))
+		// check for a password
+		if (g_password.string[0] && Q_stricmp(g_password.string, "none") && strcmp(g_password.string, cs_password) != 0)
 		{
-			// check for a password
-			if (g_password.string[0] && Q_stricmp(g_password.string, "none") && strcmp(g_password.string, cs_password) != 0)
+			if (!sv_privatepassword.string[0] || strcmp(sv_privatepassword.string, cs_password))
 			{
-				if (!sv_privatepassword.string[0] || strcmp(sv_privatepassword.string, cs_password))
-				{
-					return "Invalid password";
-				}
+				return "Invalid password";
 			}
 		}
 	}
@@ -979,16 +896,12 @@ char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	client->pers.connected   = CON_CONNECTING;
 	client->pers.connectTime = level.time;
 
-	client->disguiseClientNum = -1;
-
 	// Set the client ip and guid
 	Q_strncpyz(client->pers.client_ip, cs_ip, MAX_IP4_LENGTH);
 	Q_strncpyz(client->pers.cl_guid, cs_guid, MAX_GUID_LENGTH + 1);
 
 	if (firstTime)
 	{
-		client->pers.initialSpawn = qtrue;
-
 		// read or initialize the session data
 		TVG_InitSessionData(client, userinfo);
 		client->pers.enterTime            = level.time;
@@ -1007,8 +920,15 @@ char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		client->sess.sessionTeam     = TEAM_SPECTATOR;
 		client->sess.spectatorState  = SPECTATOR_FREE;
 		client->sess.spectatorClient = 0;
-
 	}
+
+#ifdef FEATURE_LUA
+	// LUA API callbacks (check with Lua scripts)
+	if (TVG_LuaHook_ClientConnect(clientNum, firstTime, isBot, reason))
+	{
+		return va("You are excluded from this server. %s\n", reason);
+	}
+#endif
 
 	// get and distribute relevent paramters
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
@@ -1041,6 +961,15 @@ void TVG_ClientBegin(int clientNum)
 	int       flags;
 	int       spawn_count, lives_left;
 	int       stat_xp, score; // restore xp & score
+
+#ifdef FEATURE_LUA
+	// call LUA clientBegin only once when player connects
+	qboolean firsttime = qfalse;
+	if (client->pers.connected == CON_CONNECTING)
+	{
+		firsttime = qtrue;
+	}
+#endif
 
 	client->pers.connected       = CON_CONNECTED;
 	client->pers.teamState.state = TEAM_BEGIN;
@@ -1094,6 +1023,15 @@ void TVG_ClientBegin(int clientNum)
 
 	// count current clients and rank for scoreboard
 	TVG_CalculateRanks();
+
+#ifdef FEATURE_LUA
+	// call LUA clientBegin only once
+	if (firsttime == qtrue)
+	{
+		// LUA API callbacks
+		TVG_LuaHook_ClientBegin(clientNum);
+	}
+#endif
 }
 
 /**
@@ -1108,7 +1046,7 @@ void TVG_ClientBegin(int clientNum)
  */
 void TVG_ClientSpawn(gclient_t *client)
 {
-	int                index = client - level.clients;
+	int                clientnum = client - level.clients;
 	vec3_t             spawn_origin, spawn_angles;
 	int                i;
 	clientPersistant_t savedPers;
@@ -1120,7 +1058,6 @@ void TVG_ClientSpawn(gclient_t *client)
 
 	TVG_SelectSpectatorSpawnPoint(spawn_origin, spawn_angles);
 
-	client->pers.lastSpawnTime   = level.time;
 	client->pers.teamState.state = TEAM_ACTIVE;
 
 	// toggle the teleport bit so the client knows to not lerp
@@ -1144,11 +1081,10 @@ void TVG_ClientSpawn(gclient_t *client)
 		Com_Memset(client, 0, sizeof(*client));
 	}
 
-	client->pers              = savedPers;
-	client->sess              = savedSess;
-	client->ps.ping           = savedPing;
-	client->ps.teamNum        = savedTeam;
-	client->disguiseClientNum = -1;
+	client->pers       = savedPers;
+	client->sess       = savedSess;
+	client->ps.ping    = savedPing;
+	client->ps.teamNum = savedTeam;
 
 	client->ps.pm_type = level.ettvMasterPs.pm_type;
 
@@ -1166,7 +1102,7 @@ void TVG_ClientSpawn(gclient_t *client)
 	client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
 
 	// clear entity values
-	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
+	client->ps.stats[STAT_MAX_HEALTH] = DEFAULT_HEALTH;
 	client->ps.eFlags                 = flags;
 
 	client->ps.classWeaponTime = -999999;
@@ -1197,12 +1133,12 @@ void TVG_ClientSpawn(gclient_t *client)
 	// start tracing legs and head again if they were in solid
 	client->pmext.deadInSolid = qfalse;
 
-	trap_GetUsercmd(index, &client->pers.cmd);
+	trap_GetUsercmd(clientnum, &client->pers.cmd);
 
 	// client has (almost) no say in weapon selection when spawning
 	client->pers.cmd.weapon = client->ps.weapon;
 
-	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth = 100;
+	client->ps.stats[STAT_MAX_HEALTH] = DEFAULT_HEALTH;
 	client->ps.stats[STAT_HEALTH]     = client->ps.stats[STAT_MAX_HEALTH];
 
 	VectorCopy(spawn_origin, client->ps.origin);
@@ -1212,19 +1148,23 @@ void TVG_ClientSpawn(gclient_t *client)
 
 	TVG_SetClientViewAngle(client, spawn_angles);
 
-	client->respawnTime           = level.timeCurrent;
 	client->inactivityTime        = level.time + TVG_InactivityValue * 1000;
 	client->inactivityWarning     = qfalse;
 	client->inactivitySecondsLeft = TVG_InactivityValue;
 	client->latched_buttons       = 0;
 	client->latched_wbuttons      = 0;
 
+#ifdef FEATURE_LUA
+	// *LUA* API callbacks
+	TVG_LuaHook_ClientSpawn(clientnum);
+#endif
+
 	// run a client frame to drop exactly to the floor,
 	// initialize animations and other things
 	client->ps.commandTime      = level.time - 100;
 	client->pers.cmd.serverTime = level.time;
 
-	TVG_ClientThink(index);
+	TVG_ClientThink(clientnum);
 
 	// run the presend to set anything else
 	TVG_ClientEndFrame(client);
@@ -1249,7 +1189,7 @@ void TVG_ClientDisconnect(int clientNum)
 
 #ifdef FEATURE_LUA
 	// LUA API callbacks
-	G_LuaHook_ClientDisconnect(clientNum);
+	TVG_LuaHook_ClientDisconnect(clientNum);
 #endif
 
 	TVG_RemoveFromAllIgnoreLists(clientNum);

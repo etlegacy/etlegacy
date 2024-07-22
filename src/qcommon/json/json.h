@@ -106,11 +106,6 @@ static ID_INLINE double Q_ReadNumberValueJsonEx(cJSON *object, const char *name,
 		return cJSON_GetNumberValue(tmp);
 	}
 
-	if (!defaultValue)
-	{
-		Q_JsonError("Missing field: %s\n", name);
-	}
-
 	return defaultValue;
 }
 
@@ -132,11 +127,6 @@ static ID_INLINE char *Q_ReadStringValueJsonEx(cJSON *object, const char *name, 
 		return cJSON_GetStringValue(tmp);
 	}
 
-	if (!defaultVal)
-	{
-		Q_JsonError("Missing field: %s\n", name);
-	}
-
 	return defaultVal;
 }
 
@@ -156,11 +146,6 @@ static ID_INLINE qboolean Q_ReadBoolValueJsonEx(cJSON *object, const char *name,
 	if (tmp && cJSON_IsBool(tmp))
 	{
 		return cJSON_IsTrue(tmp) ? qtrue : qfalse;
-	}
-
-	if (!defaultVal)
-	{
-		Q_JsonError("Missing field: %s\n", name);
 	}
 
 	return defaultVal;

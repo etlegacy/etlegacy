@@ -466,6 +466,9 @@ extern cvar_t *cl_showMouseRate;
 
 extern cvar_t *cl_avidemo;
 extern cvar_t *cl_aviMotionJpeg;
+extern cvar_t *cl_aviFrameRate;
+extern cvar_t *cl_aviPipeFormat;
+extern cvar_t *cl_aviPipeExtension;
 
 extern cvar_t *m_pitch;
 extern cvar_t *m_yaw;
@@ -502,6 +505,10 @@ extern cvar_t *cl_consoleKeys;
 //=================================================
 
 // cl_main
+
+// video recording - are we using "video" or "video-pipe"?
+extern qboolean videoPipe;
+
 void CL_WriteWaveOpen(void);
 void CL_WriteWaveClose(void);
 void CL_Init(void);
@@ -544,7 +551,7 @@ void CL_Record(const char *name);
 
 // cl_avi
 
-qboolean CL_OpenAVIForWriting(const char *fileName);
+qboolean CL_OpenAVIForWriting(const char *fileName, qboolean pipe);
 void CL_TakeVideoFrame(void);
 void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size);
 void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size);
