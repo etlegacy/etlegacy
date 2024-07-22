@@ -699,7 +699,7 @@ char *Q_AddCR(char *s);
 extern level_locals_t level;
 extern gentity_t      g_entities[];     ///< was explicitly set to MAX_ENTITIES
 
-#define FOFS(x) ((size_t)&(((gentity_t *)0)->x))
+#define FOFS(x) (offsetof(gentity_t, x)))
 
 extern vmCvar_t tvg_gametype;
 
@@ -927,7 +927,7 @@ typedef enum
 typedef struct
 {
 	char *name;
-	int ofs;
+	size_t ofs;
 	fieldtype_t type;
 	int flags;
 } field_t;

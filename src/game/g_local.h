@@ -1506,7 +1506,7 @@ void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator);
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon);
 void G_TeamCommand(team_t team, const char *cmd);
 
-gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match);
+gentity_t *G_Find(gentity_t *from, size_t fieldofs, const char *match);
 gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match);
 gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match);
 gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match);
@@ -1935,7 +1935,7 @@ extern level_locals_t   level;
 extern gentity_t        g_entities[];   ///< was explicitly set to MAX_ENTITIES
 extern g_campaignInfo_t g_campaigns[];
 
-#define FOFS(x) ((size_t)&(((gentity_t *)0)->x))
+#define FOFS(x) (offsetof(gentity_t, x))
 
 #ifdef FEATURE_OMNIBOT
 extern vmCvar_t g_OmniBotPath;
@@ -2891,7 +2891,7 @@ typedef enum
 typedef struct
 {
 	char *name;
-	int ofs;
+	size_t ofs;
 	fieldtype_t type;
 	int flags;
 } field_t;

@@ -98,9 +98,9 @@ void G_ResetRemappedShaders(void)
 	// we don't actually have to do this but it's clean ...
 	for (i = 0; i < MAX_SHADER_REMAPS; i++)
 	{
-		remappedShaders[i].newShader[0]  = '\0';
-		remappedShaders[i].oldShader[0]  = '\0';
-		remappedShaders[i].timeOffset = 0;
+		remappedShaders[i].newShader[0] = '\0';
+		remappedShaders[i].oldShader[0] = '\0';
+		remappedShaders[i].timeOffset   = 0;
 	}
 }
 
@@ -317,7 +317,7 @@ void G_TeamCommand(team_t team, const char *cmd)
  * @param[in] match
  * @return
  */
-gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
+gentity_t *G_Find(gentity_t *from, size_t fieldofs, const char *match)
 {
 	char      *s;
 	gentity_t *max = &g_entities[level.num_entities];
