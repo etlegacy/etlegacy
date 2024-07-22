@@ -136,7 +136,7 @@ int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 	if ((GetWeaponTableData(ammoweap)->type & WEAPON_TYPE_GRENADE) || ammoweap == WP_DYNAMITE || ammoweap == WP_SATCHEL_DET) // make sure if he picks it up that he get's the "launcher" too
 	{
 		COM_BitSet(ent->client->ps.weapons, ammoweap);
-		fillClip = qtrue;   // always filter into the "clip"
+		fillClip = qtrue;  // always filter into the "clip"
 	}
 
 	if (fillClip)
@@ -144,21 +144,27 @@ int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 		Fill_Clip(&ent->client->ps, weapon);
 	}
 
-	ent->client->ps.ammo[ammoweap] += count;
-
-	if (!GetWeaponTableData(ammoweap)->useClip)
-	{
-		maxammo -= ent->client->ps.ammoclip[ammoweap];
-	}
-
-	if (ent->client->ps.ammo[ammoweap] > maxammo)
-	{
-		ent->client->ps.ammo[ammoweap] = maxammo;   // - ent->client->ps.ammoclip[BG_FindClipForWeapon(weapon)];
-	}
-
-	if (count >= 999)     // 'really, give /all/'
+	if (count >= 999)  // really, give **all** - force the count
 	{
 		ent->client->ps.ammo[ammoweap] = count;
+	}
+	else  // otherwise cap the count to maxammo / >0
+	{
+		ent->client->ps.ammo[ammoweap] += count;
+
+		if (!GetWeaponTableData(ammoweap)->useClip)
+		{
+			maxammo -= ent->client->ps.ammoclip[ammoweap];
+		}
+
+		if (ent->client->ps.ammo[ammoweap] > maxammo)
+		{
+			ent->client->ps.ammo[ammoweap] = maxammo;   // - ent->client->ps.ammoclip[BG_FindClipForWeapon(weapon)];
+		}
+		else if (ent->client->ps.ammo[ammoweap] < 0)
+		{
+			ent->client->ps.ammo[ammoweap] = 0;
+		}
 	}
 
 	return (ent->client->ps.ammo[ammoweap] > originalCount);

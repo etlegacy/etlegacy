@@ -649,6 +649,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	int      cnum;
 	int      j;
 	int      amount       = 0;
+	qboolean isNoneAmount = qfalse;
 	int      i            = 1;
 	qboolean validGiveCmd = qfalse;
 
@@ -694,7 +695,14 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	trap_Argv(++i, amt, sizeof(amt));
 	if (*amt != '\0')
 	{
-		amount    = Q_atoi(amt);
+		if (Q_stricmpn(amt, "none", 4) == 0)
+		{
+			isNoneAmount = qtrue;
+		}
+		else
+		{
+			amount = Q_atoi(amt);
+		}
 	}
 
 	give_all = !Q_stricmp(name, "all");
@@ -734,6 +742,18 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 				trap_SendServerCommand(ent - g_entities, va("print \"give skill <skill_no>: No valid skill '%i' (0-6).\n\"", skill));
 			}
 		}
+		else if (isNoneAmount)
+		{
+			// drop all skill levels
+			for (skill = SK_BATTLE_SENSE; skill < SK_NUM_SKILLS; skill++)
+			{
+				points = ent->client->sess.skillpoints[skill];
+				Com_Printf("%f\n", points);
+
+				G_AddSkillPoints(ent, skill, points * -1, "give skill none");
+			}
+			trap_SendServerCommand(ent - g_entities, va("print \"give skill none: All skills dropped to 0.\n\""));
+		}
 		else
 		{
 			// bumps all skills with 1 level
@@ -752,7 +772,6 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 		}
 		return;
 	}
-
 	if (Q_stricmpn(name, "medal", 5) == 0)
 	{
 		int skill;
@@ -768,10 +787,13 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 		ClientUserinfoChanged(ent - g_entities);
 		return;
 	}
-
-	if (give_all || Q_stricmpn(name, "health", 6) == 0)
+	if (give_all || Q_stricmpn(name, "health", 6) == 0 || Q_stricmpn(name, "hp", 2) == 0)
 	{
-		// modified
+		if (isNoneAmount)
+		{
+			amount = ent->health * -1;
+		}
+
 		if (amount)
 		{
 			if (amount > 0)
@@ -794,7 +816,6 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 			return;
 		}
 	}
-
 	/*if ( Q_stricmpn( name, "damage", 6) == 0)
 	{
 	    if(amount) {
@@ -812,12 +833,28 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	    return;
 	}*/
-
-	if (give_all || Q_stricmp(name, "weapons") == 0)
+	if (give_all || Q_stricmpn(name, "weapon", 6) == 0)
 	{
-		for (weapon = 0; weapon < WP_NUM_WEAPONS; weapon++)
+		if (amount)
 		{
-			COM_BitSet(ent->client->ps.weapons, weapon);
+			COM_BitSet(ent->client->ps.weapons, amount);
+			trap_SendServerCommand(ent - g_entities, va("print \"Giving weapon %d, without ammo.\n\"", amount));
+		}
+		else if (isNoneAmount)
+		{
+			for (weapon = 0; weapon < WP_NUM_WEAPONS; weapon++)
+			{
+				COM_BitClear(ent->client->ps.weapons, weapon);
+			}
+			trap_SendServerCommand(ent - g_entities, va("print \"Removing all weapons.\n\""));
+		}
+		else
+		{
+			for (weapon = 0; weapon < WP_NUM_WEAPONS; weapon++)
+			{
+				COM_BitSet(ent->client->ps.weapons, weapon);
+			}
+			trap_SendServerCommand(ent - g_entities, va("print \"Giving all weapons, without ammo.\n\""));
 		}
 
 		if (!give_all)
@@ -825,10 +862,9 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 			return;
 		}
 	}
-
 	if (give_all || Q_stricmpn(name, "ammo", 4) == 0)
 	{
-		if (amount)
+		if (amount)  // give a specific amount on current weapon
 		{
 			if (ent->client->ps.weapon
 			    && ent->client->ps.weapon != WP_SATCHEL && ent->client->ps.weapon != WP_SATCHEL_DET
@@ -837,7 +873,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 				Add_Ammo(ent, (weapon_t)ent->client->ps.weapon, amount, qtrue);
 			}
 		}
-		else
+		else if (Q_stricmpn(amt, "all", 3) == 0)  // give forced 9999 ammo when called via 'all' on all weapons
 		{
 			for (weapon = WP_KNIFE ; weapon < WP_NUM_WEAPONS ; weapon++)
 			{
@@ -847,13 +883,43 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 				}
 			}
 		}
+		else if (isNoneAmount)  // empty ammo completely on all weapons
+		{
+			for (weapon = WP_KNIFE ; weapon < WP_NUM_WEAPONS ; weapon++)
+			{
+				if (COM_BitCheck(ent->client->ps.weapons, weapon) && weapon != WP_SATCHEL && weapon != WP_SATCHEL_DET)
+				{
+					ent->client->ps.ammo[weapon]     = 0;
+					ent->client->ps.ammoclip[weapon] = 0;
+				}
+			}
+		}
+		else if (Q_stricmpn(amt, "clip", 4) == 0)  // give a single clip to all weapons
+		{
+			for (weapon = WP_KNIFE ; weapon < WP_NUM_WEAPONS ; weapon++)
+			{
+				if (COM_BitCheck(ent->client->ps.weapons, weapon) && weapon != WP_SATCHEL && weapon != WP_SATCHEL_DET)
+				{
+					Add_Ammo(ent, weapon, GetWeaponTableData(weapon)->maxClip, qtrue);
+				}
+			}
+		}
+		else  // give maxammo by default on all weapons
+		{
+			for (weapon = WP_KNIFE ; weapon < WP_NUM_WEAPONS ; weapon++)
+			{
+				if (COM_BitCheck(ent->client->ps.weapons, weapon) && weapon != WP_SATCHEL && weapon != WP_SATCHEL_DET)
+				{
+					Add_Ammo(ent, weapon, GetWeaponTableData(weapon)->maxAmmo, qtrue);
+				}
+			}
+		}
 
 		if (!give_all)
 		{
 			return;
 		}
 	}
-
 	// "give allammo <n>" allows you to give a specific amount of ammo to /all/ weapons while
 	// allowing "give ammo <n>" to only give to the selected weap.
 	if (Q_stricmpn(name, "allammo", 7) == 0 && amount)
@@ -866,7 +932,6 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 			return;
 		}
 	}
-
 	// Wolf keys
 	if (give_all || Q_stricmp(name, "keys") == 0)
 	{
@@ -876,7 +941,6 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 			return;
 		}
 	}
-
 	// spawn a specific item right on the player
 	/*if ( !give_all ) {
 	    it = BG_FindItem (name);
@@ -897,6 +961,16 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	        G_FreeEntity( it_ent );
 	    }
 	}*/
+	// show usage
+	if (Q_stricmp(name, "") == 0)
+	{
+		trap_SendServerCommand(ent - g_entities, va(
+								   "print \"usage: give [all|ammo|health|hp|medal|skill|weapon(s)] [all|none|<amount>]\n"
+								   "or:    give ammo clip\n"
+								   "\n\""
+								   ));
+		return;
+	}
 }
 
 /**
