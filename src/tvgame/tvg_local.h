@@ -548,7 +548,7 @@ int TVG_CharacterIndex(const char *name);
 int TVG_StringIndex(const char *string);
 void TVG_TeamCommand(team_t team, const char *cmd);
 
-gentity_t *TVG_Find(gentity_t *from, int fieldofs, const char *match);
+gentity_t *TVG_Find(gentity_t *from, size_t fieldofs, const char *match);
 gentity_t *TVG_FindByTargetname(gentity_t *from, const char *match);
 gentity_t *TVG_PickTarget(const char *targetname);
 
@@ -699,7 +699,7 @@ char *Q_AddCR(char *s);
 extern level_locals_t level;
 extern gentity_t      g_entities[];     ///< was explicitly set to MAX_ENTITIES
 
-#define FOFS(x) (offsetof(gentity_t, x)))
+#define FOFS(x) (offsetof(gentity_t, x))
 
 extern vmCvar_t tvg_gametype;
 
