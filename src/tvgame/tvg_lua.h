@@ -103,7 +103,7 @@ typedef struct tvgame_field_s
 {
 	const char *name;
 	int type;
-	unsigned long mapping;
+	uintptr_t mapping;
 	int flags;
 } tvgame_field_t;
 

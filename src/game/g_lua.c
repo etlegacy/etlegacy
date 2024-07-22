@@ -1715,13 +1715,13 @@ static int et_gentity_get(lua_State *L)
 	return 0;
 }
 
-// et.gentity_set( entnum, fieldname, arrayindex, value )
-static int _et_gentity_set(lua_State *L)
+// et.gentity_set( entnum, fieldname, array_index, value )
+static int et_gentity_set(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
 	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
-	unsigned long   addr;
+	uintptr_t       addr;
 	const char      *buffer;
 
 	// break on invalid gentity field
@@ -1740,11 +1740,11 @@ static int _et_gentity_set(lua_State *L)
 
 	if (field->flags & FIELD_FLAG_GENTITY)
 	{
-		addr = (unsigned long)ent;
+		addr = (uintptr_t )ent;
 	}
 	else
 	{
-		addr = (unsigned long)ent->client;
+		addr = (uintptr_t)ent->client;
 	}
 
 	// for NULL entities, return nil (prevents server crashes!)
@@ -2073,7 +2073,7 @@ static const luaL_Reg etlib[] =
 	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
 	{ "G_SetSpawnVar",           _et_G_SetSpawnVar           },
 	{ "gentity_get",             et_gentity_get              },
-	{ "gentity_set",             _et_gentity_set             },
+	{ "gentity_set",             et_gentity_set              },
 	{ "G_AddEvent",              _et_G_AddEvent              },
 	// Shaders
 	{ "G_ShaderRemap",           _et_G_ShaderRemap           },
@@ -2200,8 +2200,8 @@ qboolean G_LuaRunIsolated(const char *modName)
  */
 qboolean G_LuaInit(void)
 {
-	int  i, num_vm = 0, len;
-	char buff[MAX_CVAR_VALUE_STRING], *crt, *list, *pList;
+	int          i, num_vm = 0, len;
+	char         buff[MAX_CVAR_VALUE_STRING], *crt, *list, *pList;
 	fileHandle_t f;
 
 	for (i = 0; i < LUA_NUM_VM; i++)
