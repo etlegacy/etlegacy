@@ -3829,7 +3829,7 @@ public:
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt)
 		{
-			if (pEnt->s.groundEntityNum > 0 && pEnt->s.groundEntityNum < ENTITYNUM_MAX_NORMAL)
+			if (pEnt->s.groundEntityNum >= 0 && pEnt->s.groundEntityNum < ENTITYNUM_NONE)
 			{
 				moveent = HandleFromEntity(&g_entities[pEnt->s.groundEntityNum]);
 			}

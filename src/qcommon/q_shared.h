@@ -1603,7 +1603,9 @@ typedef struct entityState_s
 	int otherEntityNum;     ///< shotgun sources, etc
 	int otherEntityNum2;
 
-	int groundEntityNum;    ///< -1 = in air
+	int groundEntityNum;    ///< ENTITYNUM_NONE when in air when - otherwise the
+							///entity number of the entity it is atop, also see
+							///ENTITYNUM_WORLD
 
 	int constantLight;      ///< r + (g<<8) + (b<<16) + (intensity<<24)
 	int dl_intensity;       ///< used for coronas

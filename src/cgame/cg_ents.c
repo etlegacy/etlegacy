@@ -812,7 +812,7 @@ static void CG_Item(centity_t *cent)
 
 			if (es->eFlags & EF_SPINNING)
 			{
-				if (es->groundEntityNum == -1 || !es->groundEntityNum)     // spinning with a stand will spin the stand and the attached weap (only when in the air)
+				if (es->groundEntityNum == ENTITYNUM_NONE)     // spinning with a stand will spin the stand and the attached weap (only when in the air)
 				{
 					VectorCopy(cg.autoAnglesSlow, cent->lerpAngles);
 					VectorCopy(cg.autoAnglesSlow, cent->lastLerpAngles);
@@ -863,7 +863,7 @@ static void CG_Item(centity_t *cent)
 
 			if (es->eFlags & EF_SPINNING)      // spinning will override the angles set by a stand
 			{
-				if (es->groundEntityNum == -1 || !es->groundEntityNum)     // spinning with a stand will spin the stand and the attached weap (only when in the air)
+				if (es->groundEntityNum == ENTITYNUM_NONE)     // spinning with a stand will spin the stand and the attached weap (only when in the air)
 				{
 					VectorCopy(cg.autoAnglesSlow, cent->lerpAngles);
 					VectorCopy(cg.autoAnglesSlow, cent->lastLerpAngles);
