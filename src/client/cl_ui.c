@@ -445,13 +445,6 @@ static int LAN_GetServerCount(int source)
  */
 static void LAN_GetServerAddressString(int source, int n, char *buf, size_t buflen)
 {
-#ifdef _WIN64
-	if (buflen > 1024)
-	{
-		buflen = (size_t)1024;
-	}
-#endif // WIN64
-
 	switch (source)
 	{
 	case AS_LOCAL:
@@ -547,12 +540,6 @@ static void LAN_GetServerInfo(int source, int n, char *buf, size_t buflen)
 		Info_SetValueForKey(info, "balancedteams", va("%i", server->balancedteams));
 		Info_SetValueForKey(info, "g_oss", va("%i", server->oss));
 		Info_SetValueForKey(info, "blocked", va("%i", server->blocked));
-#ifdef _WIN64
-		if (buflen > 1024)
-		{
-			buflen = (size_t)1024;
-		}
-#endif // WIN64
 		Q_strncpyz(buf, info, buflen);
 	}
 	else
