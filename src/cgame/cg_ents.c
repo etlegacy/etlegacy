@@ -642,6 +642,15 @@ static int CG_PlayerCanPickupWeapon(int clientNum, weapon_t weapon)
 }
 
 /**
+ * @brief Heavily reduce chance of z-fighting by offsetting the z-pos by a
+ * minute amount.
+ */
+static inline void CG_ReduceEntityZFight(refEntity_t *ent, int entityNum)
+{
+	ent->origin[2] += ((entityNum % 100) * 0.001f);
+}
+
+/**
  * @brief CG_Item
  * @param[in] cent
  */
@@ -984,6 +993,11 @@ static void CG_Item(centity_t *cent)
 		{
 			ent.hilightIntensity = 1.0;
 		}
+	}
+
+	if (es->groundEntityNum != ENTITYNUM_NONE /*is on the ground*/ && (item->giType == IT_HEALTH || item->giWeapon == WP_AMMO))
+	{
+		CG_ReduceEntityZFight(&ent, es->number);
 	}
 
 	// add to refresh list
@@ -1350,6 +1364,11 @@ static void CG_Missile(centity_t *cent)
 		{
 			ent.origin[2]    -= 8;
 			ent.oldorigin[2] -= 8;
+		}
+
+		if (cent->currentState.groundEntityNum != ENTITYNUM_NONE)  /*is on the ground*/
+		{
+			CG_ReduceEntityZFight(&ent, cent->currentState.number);
 		}
 	}
 
