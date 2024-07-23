@@ -517,7 +517,7 @@ void TVG_AddEvent(gclient_t *client, int event, int eventParm)
 {
 	if (!event)
 	{
-		G_Printf(S_COLOR_YELLOW "WARNING G_AddEvent: zero event added for client %i\n", client - level.clients);
+		G_Printf(S_COLOR_YELLOW "WARNING G_AddEvent: zero event added for client %i\n", (int)(client - level.clients));
 		return;
 	}
 

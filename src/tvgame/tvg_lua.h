@@ -72,12 +72,12 @@
 //#define lua_regconststring(L, n) (lua_pushstring(L, n), lua_setfield(L, -2, #n))
 
 // macros to add gentity, gclient and level fields
-#define _et_gentity_addfield(n, t, f) { #n, t, offsetof(struct gentity_s, n), FIELD_FLAG_GENTITY + f }
-#define _et_gentity_addfieldalias(n, a, t, f) { #n, t, offsetof(struct gentity_s, a), FIELD_FLAG_GENTITY + f }
-#define _et_gclient_addfield(n, t, f) { #n, t, offsetof(struct gclient_s, n), FIELD_FLAG_GCLIENT + f }
-#define _et_gclient_addfieldalias(n, a, t, f) { #n, t, offsetof(struct gclient_s, a), FIELD_FLAG_GCLIENT + f }
-#define _et_level_addfield(n, t, f) { #n, t, offsetof(struct level_locals_s, n), FIELD_FLAG_LEVEL + f }
-#define _et_level_addfieldalias(n, a, t, f) { #n, t, offsetof(struct level_locals_s, a), FIELD_FLAG_LEVEL + f }
+#define _et_gentity_addfield(n, t, f) { #n, t, offsetof(struct gentity_s, n), FIELD_FLAG_GENTITY + (f) }
+#define _et_gentity_addfieldalias(n, a, t, f) { #n, t, offsetof(struct gentity_s, a), FIELD_FLAG_GENTITY + (f) }
+#define _et_gclient_addfield(n, t, f) { #n, t, offsetof(struct gclient_s, n), FIELD_FLAG_GCLIENT + (f) }
+#define _et_gclient_addfieldalias(n, a, t, f) { #n, t, offsetof(struct gclient_s, a), FIELD_FLAG_GCLIENT + (f) }
+#define _et_level_addfield(n, t, f) { #n, t, offsetof(struct level_locals_s, n), FIELD_FLAG_LEVEL + (f) }
+#define _et_level_addfieldalias(n, a, t, f) { #n, t, offsetof(struct level_locals_s, a), FIELD_FLAG_LEVEL + (f) }
 
 /**
  * @struct lua_vm_s
