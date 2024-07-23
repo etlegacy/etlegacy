@@ -225,7 +225,7 @@ void TVG_TeamCommand(team_t team, const char *cmd)
  * @param[in] match
  * @return
  */
-gentity_t *TVG_Find(gentity_t *from, int fieldofs, const char *match)
+gentity_t *TVG_Find(gentity_t *from, size_t fieldofs, const char *match)
 {
 	char      *s;
 	gentity_t *max = &g_entities[level.num_entities];
