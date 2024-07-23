@@ -576,9 +576,12 @@ void CG_ParseWolfinfo(void)
 			// only _after_ calling this place here (which would make
 			// 'trap_S_StartLocalSound' work correctly) - we add this edge case
 			// to play the 'FIGHT' announcer voice line on the spectator itself.
-			if (cg.snap->ps.pm_flags & PMF_FOLLOW) {
+			if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+			{
 				trap_S_StartSound(NULL, cg.clientNum, CHAN_ANNOUNCER, cgs.media.countFight);
-			} else {
+			}
+			else
+			{
 				trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
 			}
 		}
@@ -2903,37 +2906,63 @@ static void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char
 static void CG_scores_cmd(void)
 {
 	const char *str;
+	int        i;
 
 	str = CG_Argv(1);
 
-	CG_Printf("[skipnotify]%s", str);
-	if (cgs.dumpStatsFile > 0)
+	// if this is start of cmd reset the counter
+	// in case a player requested scores again before receiving end marker
+	if (Q_atoi(str))
 	{
-		char s[MAX_STRING_CHARS];
-
-		CG_cleanName(str, s, sizeof(s), qtrue);
-		trap_FS_Write(s, strlen(s), cgs.dumpStatsFile);
+		cgs.scoresCount = 0;
+		return;
 	}
 
-	if (trap_Argc() > 2)
+	if (cgs.scoresCount < MAX_SCORES_CMDS)
 	{
+		Q_strncpyz(cgs.scores[cgs.scoresCount++], str, sizeof(cgs.scores[0]));
+	}
+	else
+	{
+		CG_Printf(S_COLOR_YELLOW "WARNING: Scores index overflow, dropping command\n");
+	}
+
+	if (trap_Argc() <= 2)
+	{
+		return;
+	}
+
+	for (i = 0; i < cgs.scoresCount; i++)
+	{
+		CG_Printf("[skipnotify]%s", cgs.scores[i]);
+
 		if (cgs.dumpStatsFile > 0)
 		{
-			qtime_t ct;
+			char s[MAX_STRING_CHARS];
 
-			trap_RealTime(&ct);
-			str = va("\nStats recorded: %02d:%02d:%02d (%02d %s %d)\n\n\n",
-			         ct.tm_hour, ct.tm_min, ct.tm_sec,
-			         ct.tm_mday, aMonths[ct.tm_mon], 1900 + ct.tm_year);
-
-			trap_FS_Write(str, strlen(str), cgs.dumpStatsFile);
-
-			CG_Printf("[cgnotify]\n^3>>> Stats recorded to: ^7%s\n\n", cgs.dumpStatsFileName);
-			trap_FS_FCloseFile(cgs.dumpStatsFile);
-			cgs.dumpStatsFile = 0;
+			CG_cleanName(cgs.scores[i], s, sizeof(s), qtrue);
+			trap_FS_Write(s, strlen(s), cgs.dumpStatsFile);
 		}
-		cgs.dumpStatsTime = 0;
 	}
+
+	if (cgs.dumpStatsFile > 0)
+	{
+		qtime_t ct;
+
+		trap_RealTime(&ct);
+		str = va("\nStats recorded: %02d:%02d:%02d (%02d %s %d)\n\n\n",
+		         ct.tm_hour, ct.tm_min, ct.tm_sec,
+		         ct.tm_mday, aMonths[ct.tm_mon], 1900 + ct.tm_year);
+
+		trap_FS_Write(str, strlen(str), cgs.dumpStatsFile);
+
+		CG_Printf("[cgnotify]\n^3>>> Stats recorded to: ^7%s\n\n", cgs.dumpStatsFileName);
+		trap_FS_FCloseFile(cgs.dumpStatsFile);
+		cgs.dumpStatsFile = 0;
+	}
+
+	cgs.dumpStatsTime = 0;
+	cgs.scoresCount   = 0;
 }
 
 /**

@@ -1463,13 +1463,26 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	case WEAPONSTATS_HASH:                // "WeaponStats"
 		return;
 	case SC_HASH:                         // "sc" = /scores
-		if (level.cmds.scoresTime != level.time || level.cmds.scoresEndIndex > 99)
+	{
+		int count;
+		token = strtok(NULL, " ");
+
+		if (count = Q_atoi(token))
 		{
-			level.cmds.scoresEndIndex = 0;
+			level.cmds.scoresIndex = 0;
+			level.cmds.scoresCount = count < MAX_SCORES_CMDS ? count : MAX_SCORES_CMDS;
 		}
-		Q_strncpyz(level.cmds.scores[level.cmds.scoresEndIndex++], cmd, sizeof(level.cmds.scores[0]));
-		level.cmds.scoresTime = level.time;
+
+		if (level.cmds.scoresIndex <= level.cmds.scoresCount)
+		{
+			Q_strncpyz(level.cmds.scores[level.cmds.scoresIndex++], cmd, sizeof(level.cmds.scores[0]));
+		}
+		else
+		{
+			G_DPrintf(S_COLOR_YELLOW "WARNING: Scores index overflow, dropping command\n");
+		}
 		return;
+	}
 	case CPM_HASH:                        // "cpm"
 		trap_SendServerCommand(-1, cmd);
 		return;

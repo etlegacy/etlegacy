@@ -762,6 +762,37 @@ void G_parseStatsJson(void *object)
 }
 
 /**
+ * @brief G_SendMatchInfo sends current player match info
+ * @param[in] ent
+ */
+void G_SendMatchInfo(gentity_t *ent)
+{
+	// this marks the start of sc cmd,
+	// the number itself is used in tvgame but not cgame
+	if (!ent->client->scoresIndex && ent->client->scoresCount)
+	{
+		CP(va("sc %d", ent->client->scoresCount));
+	}
+
+	if (ent->client->scoresIndex < ent->client->scoresCount)
+	{
+		CP(ent->client->scores[ent->client->scoresIndex++]);
+	}
+}
+
+/**
+ * @brief G_SaveMatchInfo saves current player match info
+ * @param[in] ent
+ * @param[in] cmd
+ */
+static ID_INLINE void G_SaveMatchInfo(gentity_t *ent, char *cmd)
+{
+	Q_strncpyz(ent->client->scores[ent->client->scoresCount++], cmd, sizeof(ent->client->scores[0]));
+}
+
+#define SMI(cmd) G_SaveMatchInfo(ent, cmd)
+
+/**
  * @brief Prints current player match info.
  * @param[in] ent
  *
@@ -776,6 +807,8 @@ void G_printMatchInfo(gentity_t *ent)
 	char      *ref;
 	char      guid[MAX_GUID_LENGTH + 1];
 	char      n2[MAX_STRING_CHARS];
+
+	ent->client->scoresIndex = ent->client->scoresCount = 0;
 
 	for (i = TEAM_AXIS; i <= TEAM_SPECTATOR; i++)
 	{
@@ -799,13 +832,13 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_tdr = 0;
 		tot_xp = 0;
 
-		CP("sc \"\n\"");
+		SMI("sc \"\n\"");
 #ifdef FEATURE_RATING
-		CP("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score^8  Rating^5  Delta\n\"");
-		CP("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
+		SMI("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score^8  Rating^5  Delta\n\"");
+		SMI("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		CP("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score\n\"");
-		CP("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
+		SMI("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score\n\"");
+		SMI("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
 #endif
 
 		for (j = 0; j < level.numConnectedClients; j++)
@@ -869,72 +902,72 @@ void G_printMatchInfo(gentity_t *ent)
 
 			cnt++;
 #ifdef FEATURE_RATING
-			trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
+			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
-			trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
 #endif
-			                                            guid,
-			                                            aTeams[i],
-			                                            ref,
-			                                            n2,
-			                                            cl->sess.time_axis / 60000,
-			                                            cl->sess.time_allies / 60000,
-			                                            ref,
-			                                            time_eff,
-			                                            cl->sess.kills,
-			                                            cl->sess.deaths,
-			                                            cl->sess.gibs,
-			                                            cl->sess.self_kills,
-			                                            cl->sess.team_kills,
-			                                            cl->sess.team_gibs,
-			                                            ref,
-			                                            eff,
-			                                            cl->sess.damage_given,
-			                                            cl->sess.damage_received,
-			                                            cl->sess.team_damage_given,
-			                                            cl->sess.team_damage_received,
-			                                            (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
+			                        guid,
+			                        aTeams[i],
+			                        ref,
+			                        n2,
+			                        cl->sess.time_axis / 60000,
+			                        cl->sess.time_allies / 60000,
+			                        ref,
+			                        time_eff,
+			                        cl->sess.kills,
+			                        cl->sess.deaths,
+			                        cl->sess.gibs,
+			                        cl->sess.self_kills,
+			                        cl->sess.team_kills,
+			                        cl->sess.team_gibs,
+			                        ref,
+			                        eff,
+			                        cl->sess.damage_given,
+			                        cl->sess.damage_received,
+			                        cl->sess.team_damage_given,
+			                        cl->sess.team_damage_received,
+			                        (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
 #ifdef FEATURE_RATING
-			                                            ,
-			                                            Com_RoundFloatWithNDecimal(cl->sess.mu - 3 * cl->sess.sigma, 2),
-			                                            (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma)
+			                        ,
+			                        Com_RoundFloatWithNDecimal(cl->sess.mu - 3 * cl->sess.sigma, 2),
+			                        (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma)
 #endif
-			                                            ));
+			                        ));
 		}
 
 		eff = (tot_kills + tot_deaths == 0) ? 0 : 100 * tot_kills / (tot_kills + tot_deaths);
-		                                                             if (eff < 0)
+		if (eff < 0)
 		{
 			eff = 0;
 		}
 
-		                                                             time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
+		time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
 
 #ifdef FEATURE_RATING
-		                                                             CP("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
+		SMI("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		                                                             CP("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
+		SMI("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
 #endif
-		                                                             trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
-		                                                                                                         "",
-		                                                                                                         aTeams[i],
-		                                                                                                         "Totals",
-		                                                                                                         tot_timex / 60000,
-		                                                                                                         tot_timel / 60000,
-		                                                                                                         time_eff,
-		                                                                                                         tot_kills,
-		                                                                                                         tot_deaths,
-		                                                                                                         tot_gibs,
-		                                                                                                         tot_sk,
-		                                                                                                         tot_tk,
-		                                                                                                         tot_tg,
-		                                                                                                         eff,
-		                                                                                                         tot_dg,
-		                                                                                                         tot_dr,
-		                                                                                                         tot_tdg,
-		                                                                                                         tot_tdr,
-		                                                                                                         tot_xp
-		                                                                                                         ));
+		G_SaveMatchInfo(ent, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+		                        "",
+		                        aTeams[i],
+		                        "Totals",
+		                        tot_timex / 60000,
+		                        tot_timel / 60000,
+		                        time_eff,
+		                        tot_kills,
+		                        tot_deaths,
+		                        tot_gibs,
+		                        tot_sk,
+		                        tot_tk,
+		                        tot_tg,
+		                        eff,
+		                        tot_dg,
+		                        tot_dr,
+		                        tot_tdg,
+		                        tot_tdr,
+		                        tot_xp
+		                        ));
 	}
 
 #ifdef FEATURE_RATING
@@ -943,17 +976,17 @@ void G_printMatchInfo(gentity_t *ent)
 	{
 		if (g_skillRating.integer > 1)
 		{
-			CP(va("sc \"\n^2Map bias: ^1%+.1f^7/^$%+.1f^7 pct\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0",
-			      100.f * (level.mapProb - 0.5f), 100.f * (0.5f - level.mapProb), 100.f * level.axisProb, 100.f * level.alliesProb));
+			SMI(va("sc \"\n^2Map bias: ^1%+.1f^7/^$%+.1f^7 pct\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\"",
+			       100.f * (level.mapProb - 0.5f), 100.f * (0.5f - level.mapProb), 100.f * level.axisProb, 100.f * level.alliesProb));
 		}
 		else
 		{
-			CP(va("sc \"\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0", 100.f * level.axisProb, 100.f * level.alliesProb));
+			SMI(va("sc \"\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\"", 100.f * level.axisProb, 100.f * level.alliesProb));
 		}
 	}
 #endif
 
-	CP(va("sc \"%s\n\n\" 0", ((!cnt) ? "^3\nNo scores to report." : "")));
+	SMI(va("sc \"%s\n\n\" 0", ((!cnt) ? "^3\nNo scores to report." : "")));
 }
 
 /**

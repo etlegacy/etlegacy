@@ -2712,6 +2712,8 @@ typedef struct cgs_s
 	int sv_fps;                 // FPS server wants to send
 	sampledStat_t sampledStat;  // fps client sample data
 
+	int scoresCount;
+	char scores[MAX_SCORES_CMDS][MAX_STRING_CHARS];
 } cgs_t;
 
 //==============================================================================

@@ -108,6 +108,8 @@ extern vec3_t playerHeadProneMaxs;
 
 #define MAX_COMMANDMAP_LAYERS   16
 
+#define MAX_SCORES_CMDS 96
+
 // on fire effects
 #define FIRE_FLASH_TIME         2000
 #define FIRE_FLASH_FADEIN_TIME  1000

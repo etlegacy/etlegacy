@@ -1047,6 +1047,10 @@ struct gclient_s
 	qboolean activateHeld;                  ///< client is holding down +activate
 
 	int lastRevivePushTime;
+
+	int scoresIndex;
+	int scoresCount;
+	char scores[MAX_SCORES_CMDS][MAX_STRING_CHARS];
 };
 
 /**
@@ -2525,6 +2529,7 @@ void G_initMatch(void);
 void G_loadMatchGame(void);
 void G_matchInfoDump(unsigned int dwDumpType);
 void G_printMatchInfo(gentity_t *ent);
+void G_SendMatchInfo(gentity_t *ent);
 void G_parseStatsJson(void *object);
 void G_printFull(const char *str, gentity_t *ent);
 void G_resetModeState(void);

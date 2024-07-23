@@ -343,6 +343,9 @@ struct gclient_s
 	pmoveExt_t pmext;
 
 	wantsPlayerInfoStats_t wantsInfoStats[INFO_NUM];
+
+	int scoresIndex;
+	qboolean wantsScores;
 };
 
 // this structure is cleared as each map is entered
@@ -370,9 +373,9 @@ typedef struct tvgamecommands_s
 	qboolean prValid;
 	char pr[MAX_STRING_CHARS];
 
-	int scoresTime;
-	int scoresEndIndex;
-	char scores[100][MAX_STRING_CHARS];
+	int scoresIndex;
+	int scoresCount;
+	char scores[MAX_SCORES_CMDS][MAX_STRING_CHARS];
 
 	// "topshots"-related commands
 	char astats[MAX_STRING_CHARS];
@@ -875,6 +878,8 @@ qboolean TVG_statsall_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponRankings_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStats_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow);
+
+void TVG_SendMatchInfo(gclient_t *client);
 
 // tvg_referee.c
 qboolean TVG_Cmd_AuthRcon_f(gclient_t *client, tvcmd_reference_t *self);

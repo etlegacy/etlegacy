@@ -313,6 +313,8 @@ void TVG_ClientThink_real(gclient_t *client)
 		return;
 	}
 
+	TVG_SendMatchInfo(client);
+
 	// check for inactivity timer, but never drop the local client of a non-dedicated server
 	// moved here to allow for spec inactivity checks as well
 	if (!TVG_ClientInactivityTimer(client))
