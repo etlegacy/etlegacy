@@ -45,6 +45,7 @@
 #define FIELD_FLOAT_ARRAY   7
 #define FIELD_WEAPONSTAT    8
 #define FIELD_USERCMD       9
+#define FIELD_TVCMDS        10
 
 #define FIELD_FLAG_GENTITY  1  ///< marks a gentity_s field
 #define FIELD_FLAG_GCLIENT  2  ///< marks a gclient_s field

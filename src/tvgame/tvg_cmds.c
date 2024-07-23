@@ -623,7 +623,7 @@ void TVG_statsPrint(gclient_t *client, int nType, int updateInterval)
  */
 qboolean TVG_Cmd_wStats_f(gclient_t *ent, tvcmd_reference_t *self)
 {
-	TVG_statsPrint(ent, 1, self->value);
+	TVG_statsPrint(ent, self->value, self->updateInterval);
 
 	return qtrue;
 }
@@ -635,7 +635,7 @@ qboolean TVG_Cmd_wStats_f(gclient_t *ent, tvcmd_reference_t *self)
  */
 qboolean TVG_Cmd_sgStats_f(gclient_t *client, tvcmd_reference_t *self)
 {
-	TVG_statsPrint(client, 2, self->value);
+	TVG_statsPrint(client, self->value, self->updateInterval);
 
 	return qtrue;
 }
@@ -1172,7 +1172,7 @@ qboolean TVG_Cmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, tvcmd_refere
 	{
 		trap_SendServerCommand(client - level.clients, level.cmds.impkd[0]);
 
-		if (level.mod & LEGACY_MOD)
+		if (level.mod & LEGACY)
 		{
 			trap_SendServerCommand(client - level.clients, level.cmds.impkd[1]);
 		}
@@ -1688,6 +1688,13 @@ void TVG_ClientCommand(int clientNum)
 
 	trap_Argv(0, cmd, sizeof(cmd));
 
+#ifdef FEATURE_LUA
+	if (TVG_LuaHook_ClientCommand(clientNum, cmd))
+	{
+		return;
+	}
+#endif
+
 	if (clientNum == -2)
 	{
 		TVG_ClientCommandPassThrough(cmd);
@@ -1697,12 +1704,6 @@ void TVG_ClientCommand(int clientNum)
 	client = level.clients + clientNum;
 
 #ifdef FEATURE_LUA
-	// LUA API callbacks
-	if (TVG_LuaHook_ClientCommand(clientNum, cmd))
-	{
-		return;
-	}
-
 	if (Q_stricmp(cmd, "lua_status") == 0)
 	{
 		TVG_LuaStatus(client);

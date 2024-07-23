@@ -619,110 +619,216 @@ static int _et_isBitSet(lua_State *L)
 }
 
 /**
- * @brief gclient_fields client entity fields
+ * @brief playerState_fields playerState_t fields
+ */
+static const tvgame_field_t playerState_fields[] =
+{
+	_et_gclient_addfield(ps.commandTime,          FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.pm_type,              FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.bobCycle,             FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.pm_flags,             FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.pm_time,              FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.eFlags,               FIELD_INT,       FIELD_FLAG_READONLY),
+
+	_et_gclient_addfield(ps.origin,               FIELD_VEC3,      FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.viewangles,           FIELD_VEC3,      FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.velocity,             FIELD_VEC3,      FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.delta_angles,         FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(ps.groundEntityNum,      FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.leanf,                FIELD_FLOAT,     FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.viewheight,           FIELD_INT,       FIELD_FLAG_READONLY),
+
+	_et_gclient_addfield(ps.mins,                 FIELD_VEC3,      FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.maxs,                 FIELD_VEC3,      FIELD_FLAG_READONLY),
+
+	_et_gclient_addfield(ps.weapon,               FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.nextWeapon,           FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.weaponstate,          FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.weaponTime,           FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.weaponDelay,          FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.grenadeTimeLeft,      FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.curWeapHeat,          FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.aimSpreadScale,       FIELD_INT,       FIELD_FLAG_READONLY),
+
+	_et_gclient_addfield(ps.ammo,                 FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(ps.ammoclip,             FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(ps.classWeaponTime,      FIELD_INT,       FIELD_FLAG_READONLY),
+
+	_et_gclient_addfield(ps.eventSequence,        FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.events,               FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(ps.eventParms,           FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(ps.oldEventSequence,     FIELD_INT,       FIELD_FLAG_READONLY),
+
+	_et_gclient_addfield(ps.stats,                FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(ps.persistant,           FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(ps.ping,                 FIELD_INT,       FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(ps.powerups,             FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+
+	_et_gclient_addfield(ps.damageEvent,          FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.damageYaw,            FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.damagePitch,          FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.damageCount,          FIELD_INT,       FIELD_FLAG_READONLY),
+
+	_et_gclient_addfield(ps.clientNum,            FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.viewlocked,           FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.viewlocked_entNum,    FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.teamNum,              FIELD_INT,       FIELD_FLAG_READONLY),
+
+	_et_gclient_addfield(ps.serverCursorHint,     FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.serverCursorHintVal,  FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.identifyClient,       FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.identifyClientHealth, FIELD_INT,       FIELD_FLAG_READONLY),
+
+	{ NULL },
+};
+
+/**
+ * @brief clientPersistant_fields clientPersistant_t fields
+ */
+static const tvgame_field_t clientPersistant_fields[] =
+{
+	_et_gclient_addfield(pers.connected,       FIELD_INT,     FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.cmd,             FIELD_USERCMD, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.oldcmd,          FIELD_USERCMD, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.netname,         FIELD_STRING,  FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(pers.localClient,     FIELD_INT,     FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.enterTime,       FIELD_INT,     FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.connectTime,     FIELD_INT,     FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.teamState.state, FIELD_INT,     FIELD_FLAG_READONLY),
+
+	{ NULL },
+};
+
+/**
+ * @brief clientSession_fields clientSession_t fields
+ */
+static const tvgame_field_t clientSession_fields[] =
+{
+	_et_gclient_addfield(sess.sessionTeam,             FIELD_INT, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.spectatorState,          FIELD_INT, 0),
+	_et_gclient_addfield(sess.spectatorClient,         FIELD_INT, 0),
+	_et_gclient_addfield(sess.playerType,              FIELD_INT, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.muted,                   FIELD_INT, 0),
+	_et_gclient_addfield(sess.referee,                 FIELD_INT, 0),
+	_et_gclient_addfield(sess.spec_team,               FIELD_INT, 0),
+
+	_et_gclient_addfield(sess.nextReliableTime,        FIELD_INT, 0),
+	_et_gclient_addfield(sess.numReliableCommands,     FIELD_INT, 0),
+	_et_gclient_addfield(sess.nextCommandDecreaseTime, FIELD_INT, 0),
+
+	_et_gclient_addfield(sess.tvchat,                  FIELD_INT, 0),
+
+	{ NULL },
+};
+
+/**
+ * @brief gclient_fields gclient_t fields
  */
 static const tvgame_field_t gclient_fields[] =
 {
-	// gclient_t struct
-	_et_gclient_addfield(noclip,                        FIELD_INT,         0),
-	_et_gclient_addfield(inactivityTime,                FIELD_INT,         0),
-	_et_gclient_addfield(inactivityWarning,             FIELD_INT,         0),
-	_et_gclient_addfield(inactivitySecondsLeft,         FIELD_INT,         0),
+	_et_gclient_addfield(noclip,                FIELD_INT, 0),
+	_et_gclient_addfield(inactivityTime,        FIELD_INT, 0),
+	_et_gclient_addfield(inactivityWarning,     FIELD_INT, 0),
+	_et_gclient_addfield(inactivitySecondsLeft, FIELD_INT, 0),
 
-	_et_gclient_addfield(buttons,                       FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(oldbuttons,                    FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(latched_buttons,               FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(wbuttons,                      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(oldwbuttons,                   FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(latched_wbuttons,              FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(buttons,               FIELD_INT, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(oldbuttons,            FIELD_INT, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(latched_buttons,       FIELD_INT, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(wbuttons,              FIELD_INT, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(oldwbuttons,           FIELD_INT, FIELD_FLAG_READONLY),
+	_et_gclient_addfield(latched_wbuttons,      FIELD_INT, FIELD_FLAG_READONLY),
 
-	// to be compatible with ETPro:
-	_et_gclient_addfieldalias(client.inactivityTime,    inactivityTime,    FIELD_INT,           0),
-	_et_gclient_addfieldalias(client.inactivityWarning, inactivityWarning, FIELD_INT,           0),
-	_et_gclient_addfieldalias(origin,                   ps.origin,         FIELD_VEC3,          0),
+	{ NULL },
+};
 
-	// clientPersistant_t struct
-	_et_gclient_addfield(pers.connected,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.cmd,                      FIELD_USERCMD,     FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.oldcmd,                   FIELD_USERCMD,     FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.netname,                  FIELD_STRING,      FIELD_FLAG_NOPTR),
-	_et_gclient_addfield(pers.localClient,              FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.enterTime,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.connectTime,              FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.teamState.state,          FIELD_INT,         FIELD_FLAG_READONLY),
+/**
+ * @brief entityShared_fields entityShared_t fields
+ */
+static const tvgame_field_t entityShared_fields[] =
+{
+	_et_gentity_addfield(r.linked,           FIELD_INT,  FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.svFlags,          FIELD_INT,  FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.singleClient,     FIELD_INT,  FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.bmodel,           FIELD_INT,  FIELD_FLAG_READONLY),
 
-	// clientSession_t struct
-	_et_gclient_addfield(sess.sessionTeam,              FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.spectatorState,           FIELD_INT,         0),
-	_et_gclient_addfield(sess.spectatorClient,          FIELD_INT,         0),
-	_et_gclient_addfield(sess.playerType,               FIELD_INT,         FIELD_FLAG_READONLY),
-	//_et_gclient_addfield(sess.ignoreClients,            FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(sess.muted,                    FIELD_INT,         0),
-	_et_gclient_addfield(sess.referee,                  FIELD_INT,         0),
-	_et_gclient_addfield(sess.spec_team,                FIELD_INT,         0),
+	_et_gentity_addfield(r.maxs,             FIELD_VEC3, FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.mins,             FIELD_VEC3, FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(sess.nextReliableTime,         FIELD_INT,         0),
-	_et_gclient_addfield(sess.numReliableCommands,      FIELD_INT,         0),
-	_et_gclient_addfield(sess.nextCommandDecreaseTime,  FIELD_INT,         0),
+	_et_gentity_addfield(r.contents,         FIELD_INT,  FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(sess.tvchat,                   FIELD_INT,         0),
+	_et_gentity_addfield(r.absmin,           FIELD_VEC3, FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.absmax,           FIELD_VEC3, FIELD_FLAG_READONLY),
 
-	// playerState_t struct
-	_et_gclient_addfield(ps.commandTime,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.pm_type,                    FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.bobCycle,                   FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.pm_flags,                   FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.pm_time,                    FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.eFlags,                     FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.currentOrigin,    FIELD_VEC3, FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.currentAngles,    FIELD_VEC3, FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.origin,                     FIELD_VEC3,        FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.viewangles,                 FIELD_VEC3,        FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.velocity,                   FIELD_VEC3,        FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.delta_angles,               FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.groundEntityNum,            FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.leanf,                      FIELD_FLOAT,       FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.viewheight,                 FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.ownerNum,         FIELD_INT,  FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.eventTime,        FIELD_INT,  FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.mins,                       FIELD_VEC3,        FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.maxs,                       FIELD_VEC3,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.worldflags,       FIELD_INT,  FIELD_FLAG_READONLY),
+	_et_gentity_addfield(r.snapshotCallback, FIELD_INT,  FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.weapon,                     FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.nextWeapon,                 FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.weaponstate,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.weaponTime,                 FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.weaponDelay,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.grenadeTimeLeft,            FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.curWeapHeat,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.aimSpreadScale,             FIELD_INT,         FIELD_FLAG_READONLY),
+	{ NULL },
+};
 
-	_et_gclient_addfield(ps.ammo,                       FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.ammoclip,                   FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.classWeaponTime,            FIELD_INT,         FIELD_FLAG_READONLY),
+/**
+ * @brief entityState_fields entityState_t fields
+ */
+static const tvgame_field_t entityState_fields[] =
+{
+	_et_gentity_addfield(s.number,          FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.eType,           FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.eFlags,          FIELD_INT,        FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.eventSequence,              FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.events,                     FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.eventParms,                 FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.oldEventSequence,           FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.pos,             FIELD_TRAJECTORY, FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.apos,            FIELD_TRAJECTORY, FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.stats,                      FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.persistant,                 FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.ping,                       FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.powerups,                   FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.time,            FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.time2,           FIELD_INT,        FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.damageEvent,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.damageYaw,                  FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.damagePitch,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.damageCount,                FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.origin,          FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.origin2,         FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.angles,          FIELD_VEC3,       FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.angles2,         FIELD_VEC3,       FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.clientNum,                  FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.viewlocked,                 FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.viewlocked_entNum,          FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.teamNum,                    FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.otherEntityNum,  FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.otherEntityNum2, FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.groundEntityNum, FIELD_INT,        FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.serverCursorHint,           FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.serverCursorHintVal,        FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.identifyClient,             FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.identifyClientHealth,       FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.constantLight,   FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.dl_intensity,    FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.loopSound,       FIELD_INT,        FIELD_FLAG_READONLY),
+
+	_et_gentity_addfield(s.modelindex,      FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.modelindex2,     FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.clientNum,       FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.frame,           FIELD_INT,        FIELD_FLAG_READONLY),
+
+	_et_gentity_addfield(s.solid,           FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.event,           FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.eventParm,       FIELD_INT,        FIELD_FLAG_READONLY),
+
+	_et_gentity_addfield(s.eventSequence,   FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.events,          FIELD_INT_ARRAY,  FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_gentity_addfield(s.eventParms,      FIELD_INT_ARRAY,  FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+
+	_et_gentity_addfield(s.powerups,        FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.weapon,          FIELD_INT,        FIELD_FLAG_READONLY),
+
+	_et_gentity_addfield(s.legsAnim,        FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.torsoAnim,       FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.density,         FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.dmgFlags,        FIELD_INT,        FIELD_FLAG_READONLY),
+
+	_et_gentity_addfield(s.onFireEnd,       FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.onFireStart,     FIELD_INT,        FIELD_FLAG_READONLY),
+
+	_et_gentity_addfield(s.nextWeapon,      FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.teamNum,         FIELD_INT,        FIELD_FLAG_READONLY),
+
+	_et_gentity_addfield(s.effect1Time,     FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.effect2Time,     FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(s.effect3Time,     FIELD_INT,        FIELD_FLAG_READONLY),
 
 	{ NULL },
 };
@@ -732,92 +838,12 @@ static const tvgame_field_t gclient_fields[] =
  */
 static const tvgame_field_t gentity_fields[] =
 {
-	_et_gentity_addfield(r.linked,           FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.svFlags,          FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.singleClient,     FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.bmodel,           FIELD_INT,        FIELD_FLAG_READONLY),
+	_et_gentity_addfield(classname,  FIELD_STRING, FIELD_FLAG_READONLY),
+	_et_gentity_addfield(flags,      FIELD_INT,    FIELD_FLAG_READONLY),
+	_et_gentity_addfield(inuse,      FIELD_INT,    FIELD_FLAG_READONLY),
+	_et_gentity_addfield(spawnflags, FIELD_INT,    FIELD_FLAG_READONLY),
+	_et_gentity_addfield(targetname, FIELD_STRING, FIELD_FLAG_READONLY),
 
-	_et_gentity_addfield(r.maxs,             FIELD_VEC3,       FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.mins,             FIELD_VEC3,       FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(r.contents,         FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(r.absmin,           FIELD_VEC3,       FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.absmax,           FIELD_VEC3,       FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(r.currentOrigin,    FIELD_VEC3,       FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.currentAngles,    FIELD_VEC3,       FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(r.ownerNum,         FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.eventTime,        FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(r.worldflags,       FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(r.snapshotCallback, FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.number,           FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.eType,            FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.eFlags,           FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.pos,              FIELD_TRAJECTORY, FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.apos,             FIELD_TRAJECTORY, FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.time,             FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.time2,            FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.origin,           FIELD_VEC3,       FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.origin2,          FIELD_VEC3,       FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.angles,           FIELD_VEC3,       FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.angles2,          FIELD_VEC3,       FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.otherEntityNum,   FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.otherEntityNum2,  FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.groundEntityNum,  FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.constantLight,    FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.dl_intensity,     FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.loopSound,        FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.modelindex,       FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.modelindex2,      FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.clientNum,        FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.frame,            FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.solid,            FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.event,            FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.eventParm,        FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.eventSequence,    FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.events,           FIELD_INT_ARRAY,  FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.eventParms,       FIELD_INT_ARRAY,  FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.powerups,         FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.weapon,           FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.legsAnim,         FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.torsoAnim,        FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.density,          FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.dmgFlags,         FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.onFireEnd,        FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.onFireStart,      FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.nextWeapon,       FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.teamNum,          FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(s.effect1Time,      FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.effect2Time,      FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(s.effect3Time,      FIELD_INT,        FIELD_FLAG_READONLY),
-
-	_et_gentity_addfield(classname,          FIELD_STRING,     FIELD_FLAG_READONLY),
-	_et_gentity_addfield(flags,              FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(inuse,              FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(spawnflags,         FIELD_INT,        FIELD_FLAG_READONLY),
-	_et_gentity_addfield(targetname,         FIELD_STRING,     FIELD_FLAG_READONLY),
-
-	// To be compatible with ETPro:
-	// origin: use r.currentOrigin instead of ps.origin
-	//         for non client entities
-	_et_gentity_addfieldalias(origin,        r.currentOrigin,  FIELD_VEC3,          FIELD_FLAG_READONLY),
 	{ NULL },
 };
 
@@ -831,19 +857,47 @@ static const tvgame_field_t level_fields[] =
 	_et_level_addfield(frameTime,             FIELD_INT,       FIELD_FLAG_READONLY),
 	_et_level_addfield(startTime,             FIELD_INT,       FIELD_FLAG_READONLY),
 
+	_et_level_addfield(rawmapname,            FIELD_STRING,    FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_level_addfield(intermission_origin,   FIELD_VEC3,      0),
+	_et_level_addfield(intermission_angle,    FIELD_VEC3,      0),
+
 	_et_level_addfield(queueSeconds,          FIELD_INT,       FIELD_FLAG_READONLY),
 	_et_level_addfield(intermission,          FIELD_INT,       FIELD_FLAG_READONLY),
 
 	_et_level_addfield(numConnectedClients,   FIELD_INT,       FIELD_FLAG_READONLY),
-	_et_level_addfield(sortedClients,         FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
+	_et_level_addfield(sortedClients,         FIELD_INT_ARRAY, FIELD_FLAG_READONLY),
 
 	_et_level_addfield(numValidMasterClients, FIELD_INT,       FIELD_FLAG_READONLY),
-	_et_level_addfield(validMasterClients,    FIELD_INT_ARRAY, FIELD_FLAG_READONLY),
+	_et_level_addfield(validMasterClients,    FIELD_INT_ARRAY, FIELD_FLAG_READONLY | FIELD_FLAG_NOPTR),
 
 	_et_level_addfield(mod,                   FIELD_INT,       FIELD_FLAG_READONLY),
 
+	_et_level_addfield(tvcmdsCount,           FIELD_INT,       FIELD_FLAG_READONLY),
+	_et_level_addfield(tvcmds,                FIELD_TVCMDS,    0),
+
 	{ NULL },
 };
+
+/**
+ * @brief _et_gettvgame_field fields helper function
+ * @param[in] fieldname
+ * @param[in] array
+ * @return game_field_t
+ */
+static tvgame_field_t *_et_gettvgame_field(const char *fieldname, const tvgame_field_t *array)
+{
+	int i;
+
+	for (i = 0; array[i].name; i++)
+	{
+		if (!Q_stricmp(fieldname, array[i].name))
+		{
+			return (tvgame_field_t *)&array[i];
+		}
+	}
+
+	return NULL;
+}
 
 /**
  * @brief _et_getfield fields helper function
@@ -851,42 +905,44 @@ static const tvgame_field_t level_fields[] =
  * @param[in] fieldFlag
  * @return game_field_t
  */
-static tvgame_field_t *_et_getfield(char *fieldname, int fieldFlag)
+static tvgame_field_t *_et_getfield(const char *fieldname, int fieldFlag)
 {
-	int i;
-
 	switch (fieldFlag)
 	{
 	case FIELD_FLAG_GENTITY:
-		for (i = 0; gentity_fields[i].name; i++)
+		if (!Q_strncmp(fieldname, "s.", 2))
 		{
-			if (Q_stricmp(fieldname, gentity_fields[i].name) == 0)
-			{
-				return (tvgame_field_t *)&gentity_fields[i];
-			}
+			return _et_gettvgame_field(fieldname, entityState_fields);
 		}
-		break;
-	case FIELD_FLAG_GCLIENT:
-		for (i = 0; gclient_fields[i].name; i++)
-		{
-			if (Q_stricmp(fieldname, gclient_fields[i].name) == 0)
-			{
-				return (tvgame_field_t *)&gclient_fields[i];
-			}
-		}
-		break;
-	case FIELD_FLAG_LEVEL:
-		for (i = 0; level_fields[i].name; i++)
-		{
-			if (Q_stricmp(fieldname, level_fields[i].name) == 0)
-			{
-				return (tvgame_field_t *)&level_fields[i];
-			}
-		}
-		break;
-	}
 
-	return NULL;
+		if (!Q_strncmp(fieldname, "r.", 2))
+		{
+			return _et_gettvgame_field(fieldname, entityShared_fields);
+		}
+
+		return _et_gettvgame_field(fieldname, gentity_fields);
+	case FIELD_FLAG_GCLIENT:
+		if (!Q_strncmp(fieldname, "ps.", 3))
+		{
+			return _et_gettvgame_field(fieldname, playerState_fields);
+		}
+
+		if (!Q_strncmp(fieldname, "sess.", 5))
+		{
+			return _et_gettvgame_field(fieldname, clientSession_fields);
+		}
+
+		if (!Q_strncmp(fieldname, "pers.", 5))
+		{
+			return _et_gettvgame_field(fieldname, clientPersistant_fields);
+		}
+
+		return _et_gettvgame_field(fieldname, gclient_fields);
+	case FIELD_FLAG_LEVEL:
+		return _et_gettvgame_field(fieldname, level_fields);
+	default:
+		return NULL;
+	}
 }
 
 /**
@@ -969,11 +1025,11 @@ static void _et_settrajectory(lua_State *L, trajectory_t *traj)
 	lua_pop(L, 1);
 	lua_pushstring(L, "trTime");
 	lua_gettable(L, -2);
-	traj->trTime = lua_tointeger(L, -1);
+	traj->trTime = (int)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 	lua_pushstring(L, "trDuration");
 	lua_gettable(L, -2);
-	traj->trDuration = lua_tointeger(L, -1);
+	traj->trDuration = (int)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 	lua_pushstring(L, "trBase");
 	lua_gettable(L, -2);
@@ -1042,7 +1098,7 @@ static void _et_setusercmd(lua_State *L, usercmd_t *cmd)
 {
 	lua_pushstring(L, "serverTime");
 	lua_gettable(L, -2);
-	cmd->serverTime = lua_tointeger(L, -1);
+	cmd->serverTime = (int)lua_tointeger(L, -1);
 	lua_pop(L, 1);
 
 	lua_pushstring(L, "buttons");
@@ -1071,17 +1127,17 @@ static void _et_setusercmd(lua_State *L, usercmd_t *cmd)
 
 		lua_pushinteger(L, 1);
 		lua_gettable(L, -2);
-		cmd->angles[0] = lua_tointeger(L, -1);
+		cmd->angles[0] = (int)lua_tointeger(L, -1);
 		lua_pop(L, 1);
 
 		lua_pushinteger(L, 2);
 		lua_gettable(L, -2);
-		cmd->angles[1] = lua_tointeger(L, -1);
+		cmd->angles[1] = (int)lua_tointeger(L, -1);
 		lua_pop(L, 1);
 
 		lua_pushinteger(L, 3);
 		lua_gettable(L, -2);
-		cmd->angles[2] = lua_tointeger(L, -1);
+		cmd->angles[2] = (int)lua_tointeger(L, -1);
 		lua_pop(L, 1);
 
 		lua_pop(L, 1);
@@ -1114,14 +1170,126 @@ static void _et_setusercmd(lua_State *L, usercmd_t *cmd)
 }
 
 /**
+ * @brief _et_findtvcmd
+ * @param[in] tvcmd
+ * @param[in] name
+ * @param[in,out] index
+ * @return
+ */
+static qboolean _et_findtvcmd(tvcmd_reference_t *tvcmd, const char *name, int *index)
+{
+	int i;
+
+	for (i = 0; tvcmd[i].pszCommandName; i++)
+	{
+		if (!Q_stricmp(tvcmd[i].pszCommandName, name))
+		{
+			*index = i;
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief _et_gettvcmd
+ * @param[in,out] L
+ * @param[in] tvcmd
+ * @param[in] name
+ */
+static void _et_gettvcmd(lua_State *L, tvcmd_reference_t *tvcmd, const char *name)
+{
+	int index;
+
+	if (!_et_findtvcmd(tvcmd, name, &index))
+	{
+		// command not found, return nil
+		lua_pushnil(L);
+		return;
+	}
+
+	lua_newtable(L);
+
+	lua_pushstring(L, tvcmd[index].pszCommandName);
+	lua_setfield(L, -2, "name");
+
+	lua_pushinteger(L, tvcmd[index].flag);
+	lua_setfield(L, -2, "flag");
+
+	lua_pushinteger(L, tvcmd[index].value);
+	lua_setfield(L, -2, "value");
+
+	lua_pushinteger(L, tvcmd[index].updateInterval);
+	lua_setfield(L, -2, "updateInterval");
+
+	lua_pushinteger(L, tvcmd[index].lastUpdateTime);
+	lua_setfield(L, -2, "lastUpdateTime");
+
+	lua_pushinteger(L, tvcmd[index].floodProtected);
+	lua_setfield(L, -2, "floodProtected");
+
+	lua_pushinteger(L, tvcmd[index].mods);
+	lua_setfield(L, -2, "mods");
+}
+
+/**
+ * @brief _et_settvcmd
+ * @param[in,out] L
+ * @param[in] tvcmd
+ * @param[in] name
+ */
+static void _et_settvcmd(lua_State *L, tvcmd_reference_t *tvcmd, const char *name)
+{
+	int index;
+
+	if (!_et_findtvcmd(tvcmd, name, &index))
+	{
+		// command not found
+		luaL_error(L, "tried to modify not existing tvcmd \"%s\"", name);
+		return;
+	}
+
+	lua_pushstring(L, "flag");
+	lua_gettable(L, -2);
+	tvcmd[index].flag = (int)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "value");
+	lua_gettable(L, -2);
+	tvcmd[index].value = (int)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "updateInterval");
+	lua_gettable(L, -2);
+	tvcmd[index].updateInterval = (int)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "lastUpdateTime");
+	lua_gettable(L, -2);
+	tvcmd[index].lastUpdateTime = (int)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "floodProtected");
+	lua_gettable(L, -2);
+	tvcmd[index].floodProtected = (int)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "mods");
+	lua_gettable(L, -2);
+	tvcmd[index].mods = (int)lua_tointeger(L, -1);
+	lua_pop(L, 1);
+}
+
+/**
  * @brief _et_field_get get field
  * @param[in,out] L
  * @param[in] field
  * @param[in] addr
- * @param[in] arrayIndex
+ * @param[in] arg
  * @return success
  */
-static int _et_field_get(lua_State *L, tvgame_field_t *field, uintptr_t addr, int arrayIndex)
+static int _et_field_get(lua_State *L, tvgame_field_t *field, uintptr_t addr, int arg)
 {
 	if (!addr)
 	{
@@ -1171,25 +1339,101 @@ static int _et_field_get(lua_State *L, tvgame_field_t *field, uintptr_t addr, in
 	case FIELD_INT_ARRAY:
 		if (field->flags & FIELD_FLAG_NOPTR)
 		{
-			lua_pushinteger(L, (*(int *)(*(uintptr_t *)addr + (sizeof(int) * (int)luaL_optinteger(L, arrayIndex, 0)))));
+			lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * (int)luaL_optinteger(L, arg, 0)))));
 		}
 		else
 		{
-			lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * (int)luaL_optinteger(L, arrayIndex, 0)))));
+			lua_pushinteger(L, (*(int *)(*(uintptr_t *)addr + (sizeof(int) * (int)luaL_optinteger(L, arg, 0)))));
 		}
 		return 1;
 	case FIELD_TRAJECTORY:
 		_et_gettrajectory(L, (trajectory_t *)addr);
 		return 1;
 	case FIELD_FLOAT_ARRAY:
-		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * (int)luaL_optinteger(L, arrayIndex, 0)))));
+		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * (int)luaL_optinteger(L, arg, 0)))));
 		return 1;
 	case FIELD_USERCMD:
 		_et_getusercmd(L, (usercmd_t *)addr);
 		return 1;
-
+	case FIELD_TVCMDS:
+		_et_gettvcmd(L, (tvcmd_reference_t *)*(uintptr_t *)addr, luaL_optstring(L, arg, 0));
+		return 1;
+	default:
+		G_Printf("Lua API: field_get with no valid field type\n");
+		break;
 	}
 
+	return 0;
+}
+
+/**
+ * @brief _et_field_set set field
+ * @param[in,out] L
+ * @param[in] field
+ * @param[in] addr
+ * @param[in] arg1
+ * @param[in] arg2
+ * @return success
+ */
+static int _et_field_set(lua_State *L, tvgame_field_t *field, uintptr_t addr, int arg1, int arg2)
+{
+	if (!addr)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+
+	addr += field->mapping;
+
+	switch (field->type)
+	{
+	case FIELD_INT:
+		*(int *)addr = (int)luaL_checkinteger(L, arg1);
+		break;
+	case FIELD_STRING:
+	{
+		const char *buffer = luaL_checkstring(L, arg1);
+
+		if (field->flags & FIELD_FLAG_NOPTR)
+		{
+			Q_strncpyz((char *)addr, buffer, strlen((char *)addr));
+		}
+		else
+		{
+			Com_Dealloc(*(char **)addr);
+			*(char **)addr = Com_Allocate(strlen(buffer) + 1);
+			Q_strncpyz(*(char **)addr, buffer, strlen(buffer));
+		}
+		break;
+	}
+	case FIELD_FLOAT:
+		*(float *)addr = (float)luaL_checknumber(L, arg1);
+		break;
+	case FIELD_ENTITY:
+		// pointer-fields are read-only..
+		break;
+	case FIELD_VEC3:
+		_et_setvec3(L, (vec3_t *)addr);
+		break;
+	case FIELD_INT_ARRAY:
+		*(int *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, arg1))) = (int)luaL_checkinteger(L, arg2);
+		break;
+	case FIELD_TRAJECTORY:
+		_et_settrajectory(L, (trajectory_t *)addr);
+		break;
+	case FIELD_FLOAT_ARRAY:
+		*(float *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, arg1))) = (float)luaL_checknumber(L, arg2);
+		return 1;
+	case FIELD_USERCMD:
+		_et_setusercmd(L, (usercmd_t *)addr);
+		return 1;
+	case FIELD_TVCMDS:
+		_et_settvcmd(L, (tvcmd_reference_t *)*(uintptr_t *)addr, luaL_optstring(L, arg1, 0));
+		return 1;
+	default:
+		G_Printf("Lua API: field_set with no valid field type\n");
+		break;
+	}
 	return 0;
 }
 
@@ -1203,9 +1447,8 @@ static int _et_field_get(lua_State *L, tvgame_field_t *field, uintptr_t addr, in
 static int _et_level_get(lua_State *L)
 {
 	const char     *fieldname = luaL_checkstring(L, 1);
-	tvgame_field_t *field     = _et_getfield((char *)fieldname, FIELD_FLAG_LEVEL);
+	tvgame_field_t *field     = _et_getfield(fieldname, FIELD_FLAG_LEVEL);
 
-	// break on invalid field
 	if (!field)
 	{
 		luaL_error(L, "tried to get invalid level field \"%s\"", fieldname);
@@ -1213,6 +1456,34 @@ static int _et_level_get(lua_State *L)
 	}
 
 	return _et_field_get(L, field, (uintptr_t)&level, 2);
+}
+
+/**
+ * @brief _et_level_set
+		  et.level_set( fieldname, arrayindex, value )
+ * @param[in] fieldname
+ * @param[in] arrayindex
+ * @param[in] value
+ * @return
+ */
+static int _et_level_set(lua_State *L)
+{
+	const char     *fieldname = luaL_checkstring(L, 1);
+	tvgame_field_t *field     = _et_getfield(fieldname, FIELD_FLAG_LEVEL);
+
+	if (!field)
+	{
+		luaL_error(L, "tried to set invalid level field \"%s\"", fieldname);
+		return 0;
+	}
+
+	if (field->flags & FIELD_FLAG_READONLY)
+	{
+		luaL_error(L, "tried to set read-only level field \"%s\"", fieldname);
+		return 0;
+	}
+
+	return _et_field_set(L, field, (uintptr_t)&level, 2, 3);
 }
 
 /**
@@ -1227,9 +1498,8 @@ static int _et_gentity_get(lua_State *L)
 {
 	gentity_t      *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char     *fieldname = luaL_checkstring(L, 2);
-	tvgame_field_t *field     = _et_getfield((char *)fieldname, FIELD_FLAG_GENTITY);
+	tvgame_field_t *field     = _et_getfield(fieldname, FIELD_FLAG_GENTITY);
 
-	// break on invalid field
 	if (!field)
 	{
 		luaL_error(L, "tried to get invalid gentity field \"%s\"", fieldname);
@@ -1251,9 +1521,8 @@ static int _et_gclient_get(lua_State *L)
 {
 	gclient_t      *client    = level.clients + (int)luaL_checkinteger(L, 1);
 	const char     *fieldname = luaL_checkstring(L, 2);
-	tvgame_field_t *field     = _et_getfield((char *)fieldname, FIELD_FLAG_GCLIENT);
+	tvgame_field_t *field     = _et_getfield(fieldname, FIELD_FLAG_GCLIENT);
 
-	// break on invalid field
 	if (!field)
 	{
 		luaL_error(L, "tried to get invalid gclient field \"%s\"", fieldname);
@@ -1261,6 +1530,36 @@ static int _et_gclient_get(lua_State *L)
 	}
 
 	return _et_field_get(L, field, (uintptr_t)client, 3);
+}
+
+/**
+ * @brief _et_gclient_set
+		  et.gclient_set( clientnum, fieldname, arrayindex, value )
+ * @param[in] entnum
+ * @param[in] fieldname
+ * @param[in] arrayindex
+ * @param[in] value
+ * @return
+ */
+static int _et_gclient_set(lua_State *L)
+{
+	gclient_t      *client    = level.clients + (int)luaL_checkinteger(L, 1);
+	const char     *fieldname = luaL_checkstring(L, 2);
+	tvgame_field_t *field     = _et_getfield(fieldname, FIELD_FLAG_GCLIENT);
+
+	if (!field)
+	{
+		luaL_error(L, "tried to set invalid gclient field \"%s\"", fieldname);
+		return 0;
+	}
+
+	if (field->flags & FIELD_FLAG_READONLY)
+	{
+		luaL_error(L, "tried to set read-only gclient field \"%s\"", fieldname);
+		return 0;
+	}
+
+	return _et_field_set(L, field, (uintptr_t)client, 3, 4);
 }
 
 /**
@@ -1275,10 +1574,9 @@ static int _et_ps_get(lua_State *L)
 {
 	int            clientnum  = (int)luaL_checkinteger(L, 1);
 	const char     *fieldname = luaL_checkstring(L, 2);
-	tvgame_field_t *field     = _et_getfield((char *)fieldname, FIELD_FLAG_GCLIENT);
+	tvgame_field_t *field     = _et_getfield(fieldname, FIELD_FLAG_GCLIENT);
 	gclient_t      client;
 
-	// break on invalid field
 	if (!field || Q_strncmp("ps.", fieldname, 3))
 	{
 		luaL_error(L, "tried to get invalid playerstate field \"%s\"", fieldname);
@@ -1306,93 +1604,6 @@ static int _et_ps_get(lua_State *L)
 	}
 
 	return _et_field_get(L, field, (uintptr_t)&client, 3);
-}
-
-/**
- * @brief _et_gclient_set
-          et.gclient_set( clientnum, fieldname, arrayindex, value )
- * @param[in] entnum
- * @param[in] fieldname
- * @param[in] arrayindex
- * @param[in] value
- * @return
- */
-static int _et_gclient_set(lua_State *L)
-{
-	gclient_t      *client    = level.clients + (int)luaL_checkinteger(L, 1);
-	const char     *fieldname = luaL_checkstring(L, 2);
-	tvgame_field_t *field     = _et_getfield((char *)fieldname, FIELD_FLAG_GCLIENT);
-	uintptr_t      addr;
-	const char     *buffer;
-
-	// break on invalid gentity field
-	if (!field)
-	{
-		luaL_error(L, "tried to set invalid gclient field \"%s\"", fieldname);
-		return 0;
-	}
-
-	// break on read-only gentity field
-	if (field->flags & FIELD_FLAG_READONLY)
-	{
-		luaL_error(L, "tried to set read-only gclient field \"%s\"", fieldname);
-		return 0;
-	}
-
-	addr = (uintptr_t)client;
-
-	if (!addr)
-	{
-		lua_pushnil(L);
-		return 1;
-	}
-
-	addr += field->mapping;
-
-	switch (field->type)
-	{
-	case FIELD_INT:
-		*(int *)addr = (int)luaL_checkinteger(L, 3);
-		break;
-	case FIELD_STRING:
-		buffer = luaL_checkstring(L, 3);
-		if (field->flags & FIELD_FLAG_NOPTR)
-		{
-			Q_strncpyz((char *)addr, buffer, strlen((char *)addr));
-		}
-		else
-		{
-			Com_Dealloc(*(char **)addr);
-			*(char **)addr = Com_Allocate(strlen(buffer) + 1);
-			Q_strncpyz(*(char **)addr, buffer, strlen(buffer));
-		}
-		break;
-	case FIELD_FLOAT:
-		*(float *)addr = (float)luaL_checknumber(L, 3);
-		break;
-	case FIELD_ENTITY:
-		// pointer-fields are read-only..
-		break;
-	case FIELD_VEC3:
-		_et_setvec3(L, (vec3_t *)addr);
-		break;
-	case FIELD_INT_ARRAY:
-		*(int *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, 3))) = (int)luaL_checkinteger(L, 4);
-		break;
-	case FIELD_TRAJECTORY:
-		_et_settrajectory(L, (trajectory_t *)addr);
-		break;
-	case FIELD_FLOAT_ARRAY:
-		*(float *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, 3))) = luaL_checknumber(L, 4);
-		return 1;
-	case FIELD_USERCMD:
-		_et_setusercmd(L, (usercmd_t *)addr);
-		return 1;
-	default:
-		G_Printf("Lua API: et.gclient_set with no valid field type\n");
-		break;
-	}
-	return 0;
 }
 
 /**
@@ -1869,6 +2080,7 @@ static const luaL_Reg etlib[] =
 	// Entities
 	{ "gentity_get",                  _et_gentity_get                  },
 	{ "level_get",                    _et_level_get                    },
+	{ "level_set",                    _et_level_set                    },
 	{ "ps_get",                       _et_ps_get                       },
 	{ "gclient_get",                  _et_gclient_get                  },
 	{ "gclient_set",                  _et_gclient_set                  },
@@ -2641,9 +2853,17 @@ static void TVG_RegisterConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, STAT_ANTIWARP_DELAY);
 
 	// mods_t
-	lua_regconstinteger(vm->L, LEGACY_MOD);
-	lua_regconstinteger(vm->L, ETJUMP_MOD);
-	lua_regconstinteger(vm->L, ETPRO_MOD);
+	lua_regconstinteger(vm->L, LEGACY);
+	lua_regconstinteger(vm->L, ETJUMP);
+	lua_regconstinteger(vm->L, ETPRO);
+	lua_regconstinteger(vm->L, UNKNOWN);
+	lua_regconstinteger(vm->L, ALL);
+
+	// tvcmdUsageFlag_t
+	lua_regconstinteger(vm->L, CMD_USAGE_ANY_TIME);
+	lua_regconstinteger(vm->L, CMD_USAGE_INTERMISSION_ONLY);
+	lua_regconstinteger(vm->L, CMD_USAGE_NO_INTERMISSION);
+	lua_regconstinteger(vm->L, CMD_USAGE_AUTOUPDATE);
 
 	// cs, weapon and MOD constants
 	TVG_RegisterConfigstringConstants(vm);
@@ -2653,7 +2873,7 @@ static void TVG_RegisterConstants(lua_vm_t *vm)
 	TVG_RegisterSurfaceConstants(vm);
 
 	// FIXME: add support of other mod's constants
-	if (!(level.mod & LEGACY_MOD))
+	if (!(level.mod & LEGACY))
 	{
 		G_Printf("%s API: %sWARNING: Lua registered constants are legacy mod constants, not all may correctly apply to current mod.\n", LUA_VERSION, S_COLOR_BLUE);
 	}
