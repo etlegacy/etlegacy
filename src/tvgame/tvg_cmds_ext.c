@@ -108,8 +108,6 @@ static tvcmd_reference_t tvCommandInfo[] =
 
 /**
  * @brief TVG_InitTVCmds
- * @param[in] client
- * @return
  */
 void TVG_InitTVCmds(void)
 {
