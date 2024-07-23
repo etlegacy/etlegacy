@@ -519,8 +519,24 @@ void VM_Clear(void);
 vm_t *VM_Restart(vm_t *vm);
 void VM_Error(errorParm_t errorParm, const char *module, const char *filename);
 
+#define GET_VM_MACRO(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, NAME, ...) NAME
+
+#define VM_Call_0(vm, callNum) VM_CallFunc(vm, callNum, VM_CALL_END)
+#define VM_Call_1(vm, callNum, a1) VM_CallFunc(vm, callNum, (intptr_t)(a1), VM_CALL_END)
+#define VM_Call_2(vm, callNum, a1, a2) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), VM_CALL_END)
+#define VM_Call_3(vm, callNum, a1, a2, a3) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), VM_CALL_END)
+#define VM_Call_4(vm, callNum, a1, a2, a3, a4) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), VM_CALL_END)
+#define VM_Call_5(vm, callNum, a1, a2, a3, a4, a5) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), VM_CALL_END)
+#define VM_Call_6(vm, callNum, a1, a2, a3, a4, a5, a6) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), VM_CALL_END)
+#define VM_Call_7(vm, callNum, a1, a2, a3, a4, a5, a6, a7) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), VM_CALL_END)
+#define VM_Call_8(vm, callNum, a1, a2, a3, a4, a5, a6, a7, a8) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), VM_CALL_END)
+#define VM_Call_9(vm, callNum, a1, a2, a3, a4, a5, a6, a7, a8, a9) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), VM_CALL_END)
+#define VM_Call_10(vm, callNum, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), VM_CALL_END)
+#define VM_Call_11(vm, callNum, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), VM_CALL_END)
+#define VM_Call_12(vm, callNum, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12) VM_CallFunc(vm, callNum, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12), VM_CALL_END)
+
+#define VM_Call(...) EXPAND(GET_VM_MACRO(__VA_ARGS__, VM_Call_12, VM_Call_11, VM_Call_10, VM_Call_9, VM_Call_8, VM_Call_7, VM_Call_6, VM_Call_5, VM_Call_4, VM_Call_3, VM_Call_2, VM_Call_1, VM_Call_0)(__VA_ARGS__))
 intptr_t QDECL VM_CallFunc(vm_t *vm, int callNum, ...);
-#define VM_Call(...) VM_CallFunc(__VA_ARGS__, VM_CALL_END)
 
 void VM_Debug(int level);
 
