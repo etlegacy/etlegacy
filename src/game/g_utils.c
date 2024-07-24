@@ -784,6 +784,7 @@ void G_InitGentity(gentity_t *e)
 	e->r.ownerNum = ENTITYNUM_NONE;
 	e->nextthink  = 0;
 	e->free       = NULL;
+	e->s.solid    = 0;
 
 	// init scripting
 	e->scriptStatus.scriptEventIndex = -1;
