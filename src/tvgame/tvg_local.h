@@ -95,9 +95,11 @@ typedef struct gclient_s gclient_t;
  */
 typedef enum
 {
-	LEGACY_MOD = BIT(0),
-	ETJUMP_MOD = BIT(1),
-	ETPRO_MOD  = BIT(2)
+	LEGACY  = BIT(0),
+	ETJUMP  = BIT(1),
+	ETPRO   = BIT(2),
+	UNKNOWN = BIT(3),
+	ALL     = LEGACY | ETJUMP | ETPRO | UNKNOWN
 } mods_t;
 
 /**
@@ -115,10 +117,6 @@ typedef enum tvcmdUsageFlag_e
 /**
 * @struct tvcmd_reference_t
 * @brief
-*
-* @note Update info:
-* 1. Add line to aCommandInfo w/appropriate info
-* 2. Add implementation for specific command (see an existing command for an example)
 */
 typedef struct tvcmd_reference_s
 {
@@ -128,8 +126,8 @@ typedef struct tvcmd_reference_s
 	int updateInterval;
 	int lastUpdateTime;
 	qboolean floodProtected;
-	int mods; // excluded mods for CMD_USAGE_AUTOUPDATE
 	qboolean (*pCommand)(gclient_t *client, struct tvcmd_reference_s *self);
+	int mods;
 	const char *pszHelpInfo;
 } tvcmd_reference_t;
 
@@ -482,6 +480,8 @@ typedef struct level_locals_s
 
 	mods_t mod;
 
+	int tvcmdsCount;
+	tvcmd_reference_t *tvcmds;
 } level_locals_t;
 
 // tvg_spawn.c
@@ -866,9 +866,9 @@ void TVG_UpdateCvars(void);
 // tvg_cmds_ext.c
 qboolean TVG_commandCheck(gclient_t *client, const char *cmd);
 void TVG_SendCommands(void);
-qboolean TVG_commandHelp(gclient_t *client, const char *pszCommand, unsigned int dwCommand);
+qboolean TVG_commandHelp(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_cmdDebounce(gclient_t *client, const char *pszCommand);
-void TVG_commands_cmd(gclient_t *client, unsigned int dwCommand, int value);
+qboolean TVG_commands_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_players_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_viewers_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_say_cmd(gclient_t *client, tvcmd_reference_t *self);
@@ -880,6 +880,7 @@ qboolean TVG_weaponStats_cmd(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_weaponStatsLeaders_cmd(gclient_t *client, qboolean doTop, qboolean doWindow);
 
 void TVG_SendMatchInfo(gclient_t *client);
+void TVG_InitTVCmds(void);
 
 // tvg_referee.c
 qboolean TVG_Cmd_AuthRcon_f(gclient_t *client, tvcmd_reference_t *self);

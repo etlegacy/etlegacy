@@ -509,17 +509,21 @@ static void TVG_ModCheck(void)
 
 	trap_Cvar_VariableStringBuffer("fs_game", fs_game, sizeof(fs_game));
 
-	if (!Q_stricmp(fs_game, "etjump"))
+	if (!Q_stricmp(fs_game, "legacy"))
 	{
-		level.mod = ETJUMP_MOD;
+		level.mod = LEGACY;
+	}
+	else if (!Q_stricmp(fs_game, "etjump"))
+	{
+		level.mod = ETJUMP;
 	}
 	else if (!Q_stricmp(fs_game, "etpro"))
 	{
-		level.mod = ETPRO_MOD;
+		level.mod = ETPRO;
 	}
 	else
 	{
-		level.mod = LEGACY_MOD;
+		level.mod = UNKNOWN;
 	}
 }
 
@@ -558,6 +562,8 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	}
 
 	TVG_ModCheck();
+
+	TVG_InitTVCmds();
 
 	TVG_RegisterCvars();
 
