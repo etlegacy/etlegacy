@@ -185,7 +185,7 @@ void CG_SetChargebarIconColor(void)
  * @param[in] flags
  */
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor,
-                  const float *bgColor, const float *bdColor, float frac, int flags, qhandle_t icon)
+                  const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon)
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
 	float  x2 = x, y2 = y, w2 = w, h2 = h;

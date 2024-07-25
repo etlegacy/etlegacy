@@ -1808,7 +1808,7 @@ static void CG_HudEditorRender_Button(panel_button_t *button)
 		if (button->data[3])
 		{
 			vec4_t backG = { 1, 1, 1, 0.3f };
-			CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed, colorGreen, backG, backG, curValue, BAR_LERP_COLOR, -1);
+			CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed, colorGreen, backG, backG, curValue, 0.f, BAR_LERP_COLOR, -1);
 		}
 		else
 		{
@@ -2159,7 +2159,7 @@ static void CG_HudEditorColor_Render(panel_button_t *button)
 
 	button->rect.x = HUDEditorCenterX - (Ccg_WideX(BUTTON_WIDTH) * 0.5f) + HUDEDITOR_CONTROLS_SPACER_XY * 2;
 
-	CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorBlack, *color, backG, backG, offset, BAR_BORDER | BAR_LERP_COLOR, -1);
+	CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorBlack, *color, backG, backG, offset, 0.f, BAR_BORDER | BAR_LERP_COLOR, -1);
 }
 
 static void CG_HudEditor_Slider_Render(panel_button_t *button)
@@ -2185,7 +2185,7 @@ static void CG_HudEditor_Slider_Render(panel_button_t *button)
 
 	button->rect.x = HUDEditorCenterX - (Ccg_WideX(BUTTON_WIDTH) * 0.5f) + HUDEDITOR_CONTROLS_SPACER_XY * 2;
 
-	CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, sliderColor, sliderColor, backG, backG, offset, BAR_BORDER, -1);
+	CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, sliderColor, sliderColor, backG, backG, offset, 0.f, BAR_BORDER, -1);
 }
 
 static int QDECL CG_SortComponentByName(const void *a, const void *b)

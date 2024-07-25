@@ -467,7 +467,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 		if (curValue > 0.01f)
 		{
 			CG_FilledBar(comp->location.x, comp->location.y + comp->location.h + 4, comp->location.w, 8, colorRed, colorGreen,
-			             comp->colorBackground, comp->colorBorder, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR, -1);
+			             comp->colorBackground, comp->colorBorder, curValue, 0.f, BAR_BORDER_SMALL | BAR_LERP_COLOR, -1);
 		}
 	}
 }
@@ -533,7 +533,7 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 	}
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
-	             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, comp->style >> 1, -1);
+	             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->style >> 1, -1);
 }
 
 /**
@@ -562,7 +562,7 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 
 	flags |= BAR_LERP_COLOR;
 
-	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, flags, -1);
+	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
 }
 
 #ifdef FEATURE_EDV

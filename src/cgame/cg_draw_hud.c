@@ -878,7 +878,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH],
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], 0.f,
 	             style, cgs.media.hudHealthIcon);
 
 	trap_R_SetColor(NULL);
@@ -943,7 +943,7 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, comp->style, cgs.media.hudSprintIcon);
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->style, cgs.media.hudSprintIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -986,7 +986,7 @@ void CG_DrawBreathBar(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->style & BAR_LERP_COLOR) ? comp->colorMain : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, comp->style, cgs.media.waterHintShader);
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->style, cgs.media.waterHintShader);
 
 	trap_R_SetColor(NULL);
 }
@@ -1098,7 +1098,7 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, barFrac, style, cgs.media.hudPowerIcon);
+	             comp->colorBackground, comp->colorBorder, barFrac, needleFrac, style, cgs.media.hudPowerIcon);
 
 	trap_R_SetColor(NULL);
 }

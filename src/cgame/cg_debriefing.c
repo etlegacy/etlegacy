@@ -1134,7 +1134,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			}
 
 			CG_FilledBar(DB_MAPHISTORIC_X + cgs.wideXoffset, y - 8, 60, 10, (vec4_t) { 1.f, 0, 0, 0.85f }, (vec4_t) { 0, 1.f, 0, 0.85f },
-			             NULL, NULL, cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset] / (cgs.dbMapsHistoryCount / (float)cgs.dbMapMinAge),
+			             NULL, NULL, cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset] / (cgs.dbMapsHistoryCount / (float)cgs.dbMapMinAge), 0.f,
 			             BAR_LERP_COLOR | BAR_BGSPACING_X0Y0, -1);
 		}
 
