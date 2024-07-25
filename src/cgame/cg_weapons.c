@@ -205,6 +205,15 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 			VectorCopy(brass.origin, re->origin);
 
 			le->angles.trBase[0] = (rand() & 31) + 60;    // bullets should come out horizontal not vertical JPW NERVE
+
+			// XXX : 1st person offsets for guns with wonky 'tag_brass' tags
+			if (cent->currentState.weapon == WP_KAR98)
+			{
+				vec3_t right;
+
+				AngleVectors(cent->lerpAngles, NULL, right, NULL);
+				VectorMA(re->origin, 8.0, right, re->origin);
+			}
 		}
 		else
 		{
@@ -3097,6 +3106,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	team_t          team;
 	modelViewType_t modelViewType = ps ? W_FP_MODEL : W_TP_MODEL;
 	float           x, y;
+	vec3_t          right, up;
 
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
@@ -3107,7 +3117,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// don't draw weapon stuff when looking through a scope
 	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SCOPED)
 	{
-		if (isFirstPerson)
+		if (isFirstPerson && cg.zoomed)
 		{
 			return;
 		}
@@ -3485,7 +3495,41 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isFirstPerson)  // for now just do it on the first person weapons
 	{
-		if ((GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE)) && !(GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPABLE)))
+		if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, (WEAPON_TYPE_RIFLE | WEAPON_TYPE_SCOPABLE))
+		    || CHECKBITWISE(GetWeaponTableData(weaponNum)->type, (WEAPON_TYPE_RIFLE | WEAPON_TYPE_SCOPED)))
+		{
+			// add scope
+			barrel.hModel = weapon->modModels[0];
+
+			if (barrel.hModel)
+			{
+				CG_PositionEntityOnTag(&barrel, &gun, (weaponNum == WP_GARAND || weaponNum == WP_GARAND_SCOPE) ? "tag_scope2" : "tag_scope", 0, NULL);
+				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			}
+
+			// add silencer
+			barrel.hModel = weapon->modModels[1];
+
+			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
+
+			// XXX : readjust the silencer on the k43, as the 'tag_flash' tag is
+			// misaligned by default
+			if (weaponNum == WP_K43 || weaponNum == WP_K43_SCOPE)
+			{
+				AxisToAngles(barrel.axis, angles);
+
+				AngleVectors(angles, NULL, right, up);
+				VectorMA(barrel.origin, -0.50, right, barrel.origin);
+				VectorMA(barrel.origin, -0.1, up, barrel.origin);
+
+				angles[YAW] += 2.0;
+
+				AnglesToAxis(angles, barrel.axis);
+			}
+
+			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+		}
+		else if ((GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE)))
 		{
 			if ((cg.snap->ps.ammo[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammo[GetWeaponTableData(WP_M7)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_M7)->ammoIndex]))
 			{
@@ -3512,22 +3556,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					}
 				}
 			}
-		}
-		else if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, (WEAPON_TYPE_RIFLE | WEAPON_TYPE_SCOPABLE)))
-		{
-			barrel.hModel = weapon->modModels[0];
-
-			if (barrel.hModel)
-			{
-				CG_PositionEntityOnTag(&barrel, &gun, (weaponNum == WP_GARAND) ? "tag_scope2" : "tag_scope", 0, NULL);
-				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			}
-
-			barrel.hModel = weapon->modModels[1];
-			//if(barrel.hModel) {
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			//}
 		}
 	}
 	// 3rd person attachements
@@ -3629,6 +3657,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		switch (weaponNum)
 		{
+		case WP_KAR98:   // normal Kar98
+			flash_offset = 8.0f;
+			break;
+		case WP_K43:     // scoped Kar98
+		case WP_GARAND:  // scoped Garand
+		case WP_CARBINE: // normal Garand
+			flash_offset = 14.0f;
+			break;
 		case WP_FLAMETHROWER:
 			// adjust flamethrower muzzle according to cg_fov
 			flash_offset = (((cg.refdef.fov_y / 73.739784 /*90 fov*/) - 1.0) * -3) - 0.4f;
