@@ -1204,7 +1204,7 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 	// .25f
 	if (value3 >= 0)
 	{
-		Com_sprintf(buffer, sizeof(buffer), "%i|%i/%i", value3, value, value2);
+		Com_sprintf(buffer, sizeof(buffer), "%i:%i/%i", value3, value, value2);
 	}
 	else if (value2 >= 0)
 	{
