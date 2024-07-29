@@ -2864,6 +2864,18 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 
 	ws = BG_simpleWeaponState(ps->weaponstate);
 
+   // XXX : hack for mortar to reset firing animation - without this when
+   // holding down firing, the firing animation would only be played once when
+   // shooting continuously
+	if (
+		(CHECKBITWISE(GetWeaponTableData(ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
+		&& ps->weaponTime < 50 && ps->weaponTime > 10
+		&& ws == WEAPANIM_FIRING
+		)
+	{
+		ps->weapAnim = PM_IdleAnimForWeapon(ps->weapon);
+	}
+
 	// okay to early out here since we can never reload, fire and switch at the same time
 	if (ws == WSTATE_FIRE && !(cg_weapAnims.integer & WEAPANIM_FIRING))
 	{
