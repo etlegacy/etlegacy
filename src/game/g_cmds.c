@@ -626,14 +626,35 @@ float GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
 static const char *giveCmds[] =
 {
 	"all",
-	"skill",
-	"medal",
-	"health",
-	"weapons",
 	"ammo",
-	"allammo",
+	"health",
+	"hp",
 	"keys",
+	"medal",
+	"skill",
+	"weapon",
+	"weapons",
 };
+
+/**
+ * @brief Returns qtrue if passed 'cmdName' is a valid command
+ * @param[in] cmdName
+ */
+static qboolean Cmd_Give_f_Check(const char *cmdName)
+{
+	int i;
+
+	// check if we're issuing a valid give command first
+	for (i = 0; i < ARRAY_LEN(giveCmds); i++)
+	{
+		if (!Q_stricmp(giveCmds[i], cmdName))
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
 
 /**
  * @brief Give items to a client
@@ -647,7 +668,6 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	weapon_t weapon;
 	qboolean give_all;
 	int      cnum;
-	int      j;
 	int      amount       = 0;
 	qboolean isNoneAmount = qfalse;
 	int      i            = 1;
@@ -655,19 +675,10 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	trap_Argv(i, name, sizeof(name));
 
-	// check if we're issuing a valid give command first
-	for (j = 0; j < ARRAY_LEN(giveCmds); j++)
-	{
-		// strcmpn so this matches the behavior used to check the argument later
-		if (!Q_stricmpn(giveCmds[j], name, strlen(giveCmds[j])))
-		{
-			validGiveCmd = qtrue;
-			break;
-		}
-	}
-
-	// first argument wasn't a valid give command, try to find a targeted player, otherwise use command caller
-	if (!validGiveCmd)
+	// if first argument isn't a valid give command, try to find a targeted
+	// player instead...
+	validGiveCmd = Cmd_Give_f_Check(name);
+	if (Q_PrintStrlen(name) > 0 && !validGiveCmd)
 	{
 		cnum = G_ClientNumberFromString(ent, name);
 
@@ -676,9 +687,21 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 			// retrieved player ent
 			ent = cnum + g_entities;
 
-			// get the give argument
+			// check the next arg for give cmd
 			trap_Argv(++i, name, sizeof(name));
+			validGiveCmd = Cmd_Give_f_Check(name);
 		}
+	}
+
+	// ...if it's still invalid, abort
+	if (!validGiveCmd)
+	{
+		trap_SendServerCommand(ent - g_entities, va(
+								   "print \"usage: give [all|ammo|health|hp|keys|medal|skill|weapon(s)] [all|none|<amount>]\n"
+								   "or:    give ammo clip\n"
+								   "\n\""
+								   ));
+		return;
 	}
 
 	if (!ent || !ent->client)
@@ -961,16 +984,6 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	        G_FreeEntity( it_ent );
 	    }
 	}*/
-	// show usage
-	if (Q_stricmp(name, "") == 0)
-	{
-		trap_SendServerCommand(ent - g_entities, va(
-								   "print \"usage: give [all|ammo|health|hp|medal|skill|weapon(s)] [all|none|<amount>]\n"
-								   "or:    give ammo clip\n"
-								   "\n\""
-								   ));
-		return;
-	}
 }
 
 /**
