@@ -450,9 +450,18 @@ void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 
 float Q_acos(float c);
 
-int Q_rand(int *seed);
-float Q_random(int *seed);
-float Q_crandom(int *seed);
+/**
+ * @brief LCG
+ * @param x
+ * @return
+ */
+static inline int Q_LCG(int x)
+{
+	return (int)(69069U * x + 1U);
+}
+
+int Q_RandomInt(int *seed);
+float Q_RandomFloat(int *seed);
 
 #define random()    ((rand() & 0x7fff) / ((float)0x7fff))
 #define crandom()   (2.0f * (random() - 0.5f))

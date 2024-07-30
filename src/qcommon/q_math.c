@@ -194,36 +194,26 @@ vec3_t bytedirs[NUMVERTEXNORMALS] =
 //==============================================================
 
 /**
- * @brief Q_rand
+ * @brief random function producing ints with a passed seed
  * @param[in,out] seed
  * @return
  */
-int Q_rand(int *seed)
+int Q_RandomInt(int *seed)
 {
-	*seed = (int)(69069U * *seed + 1U);
+	*seed = Q_LCG(*seed);
 	return *seed;
 }
 
 /**
- * @brief Q_random
- * @param[in] seed
+ * @brief random function producing floats with a passed seed
+ * @param[in,out] seed
  * @return
  */
-float Q_random(int *seed)
+float Q_RandomFloat(int *seed)
 {
-	return (float)(Q_rand(seed) & 0xffff) / (float)0x10000;
+	*seed = Q_LCG(*seed);
+	return (float)(*seed & 0xffff) / (float)0x10000;
 }
-
-/**
- * @brief Q_crandom
- * @param[in] seed
- * @return
- */
-float Q_crandom(int *seed)
-{
-	return 2.0f * (Q_random(seed) - 0.5f);
-}
-
 
 //=======================================================
 
@@ -3270,20 +3260,20 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
 
 /**
  * @brief Q_ClosestMultiple
- * @param[in] n the number 
+ * @param[in] n the number
  * @param[in] x the multiple
  * @return closest multiple number
  */
 int Q_ClosestMultiple(int n, int x)
-{    
-    if (x > n)
-    {
-        return x;
-    }
-    
-    n = n + x * 0.5f; 
-    n = n - (n % x); 
-    return n; 
+{
+	if (x > n)
+	{
+		return x;
+	}
+
+	n = n + x * 0.5f;
+	n = n - (n % x);
+	return n;
 }
 
 /**
@@ -3291,10 +3281,10 @@ int Q_ClosestMultiple(int n, int x)
  * @param[in] n
  * @param[in] x
  * @param[in] digit
- * @return 
+ * @return
  */
 float Q_ClosestMultipleFloat(float n, float x, int decimal)
 {
-    float coeff = pow(10, decimal);
-    return Q_ClosestMultiple(n * coeff, x * coeff) / coeff;
+	float coeff = pow(10, decimal);
+	return Q_ClosestMultiple(n * coeff, x * coeff) / coeff;
 }
