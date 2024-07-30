@@ -2807,6 +2807,10 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.r43da       = RATIO43 * 1.0f / cgs.glconfig.windowAspect;  // (4/3) / aspectratio
 	cgs.wideXoffset = (cgs.glconfig.windowAspect > RATIO43) ? (640.0f * cgs.adr43 - 640.0f) * 0.5f : 0.0f;
 
+	// default to visible mouse cursor so that we have cursor on intermission,
+	// in case we never call event handling change during a match
+	cgDC.cursorVisible = qtrue;
+
 	// DEBUG
 	//CG_Printf("Screen[%f][%f]: as: %f   adr43: %f  r43da: %f off: %f\n", cgs.screenXScale, cgs.screenYScale, cgs.glconfig.windowAspect, cgs.adr43, cgs.r43da, cgs.wideXoffset);
 
