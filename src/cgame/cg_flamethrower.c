@@ -737,7 +737,7 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	rST[1]    = radius * 1.0f / 1.481f;
 	alphaChar = (unsigned char)(255.0f * alpha);
 
-	frameNum = (int)floor((double)(lifeFrac * NUM_FLAME_SPRITES));
+	frameNum = (int)floor((double)(lifeFrac * (NUM_FLAME_SPRITES-2)));
 	if (frameNum < 0)
 	{
 		frameNum = 0;
