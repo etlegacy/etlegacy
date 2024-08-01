@@ -1112,7 +1112,7 @@ void G_RunFlamechunk(gentity_t *ent)
 	// Adjust the size
 	if (ent->speed < FLAME_START_MAX_SIZE)
 	{
-		ent->speed += 10.f;
+		ent->speed = (level.time - ent->timestamp) / 3.8;
 
 		if (ent->speed > FLAME_START_MAX_SIZE)
 		{
