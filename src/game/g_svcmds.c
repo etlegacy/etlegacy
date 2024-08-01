@@ -1591,7 +1591,7 @@ static void Svcmd_Burn(void)
 			}
 
 			// FIXME: add mod param? mod_unknown instead of flamer
-			G_BurnMeGood(vic, vic, NULL);
+			G_BurnMeGood(vic, vic, NULL, qfalse);
 			count++;
 		}
 
@@ -1624,7 +1624,7 @@ static void Svcmd_Burn(void)
 	}
 
 	// FIXME: add mod param? mod_unknown instead of flamer
-	G_BurnMeGood(vic, vic, NULL);
+	G_BurnMeGood(vic, vic, NULL, qfalse);
 
 	CPx(-1, va("cp \"^7%s^7 is burned.\"", vic->client->pers.netname));
 	return;

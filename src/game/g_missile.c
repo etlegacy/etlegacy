@@ -966,7 +966,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 		}
 	}
 
-	G_BurnMeGood(self->parent, body, self);
+	G_BurnMeGood(self->parent, body, self, directhit);
 
 	if (self->count && self->parent->client)
 	{

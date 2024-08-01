@@ -3832,7 +3832,7 @@ FLAMETHROWER
  * @param[in,out] body
  * @param[in] chunk
  */
-void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
+void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk, qboolean directhit)
 {
 	vec3_t origin;
 
@@ -3853,7 +3853,13 @@ void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 	// yet another flamethrower damage model, trying to find a feels-good damage combo that isn't overpowered
 	if (body->lastBurnedFrameNumber != level.framenum)
 	{
-		G_Damage(body, self, self, vec3_origin, origin, GetWeaponTableData(WP_FLAMETHROWER)->damage, 0, MOD_FLAMETHROWER);
+		int damage = GetWeaponTableData(WP_FLAMETHROWER)->damage;
+
+		if (directhit) {
+			damage *= 2;
+		}
+
+		G_Damage(body, self, self, vec3_origin, origin, damage, 0, MOD_FLAMETHROWER);
 		body->lastBurnedFrameNumber = level.framenum;
 	}
 
@@ -3908,7 +3914,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 			if (trace_start[0] * trace_start[0] + trace_start[1] * trace_start[1] < 441)
 			{
 				// set self in flames
-				G_BurnMeGood(ent, ent, NULL);
+				G_BurnMeGood(ent, ent, NULL, qfalse);
 			}
 		}
 	}
