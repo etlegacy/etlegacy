@@ -461,7 +461,9 @@ struct gentity_s
 
 	char *spawnitem;
 
-	int flameQuota, flameQuotaTime, flameBurnEnt;
+	int flameQuota;                 ///< determines frequency and duration of dot burn damage
+	int flameQuotaTime;             ///< e.g. next time until flame chunks are allowed to cause damage again
+	int flameBurnEnt;               ///< entities offset of entity who caused the burn
 
 	int count2;
 

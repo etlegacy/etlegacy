@@ -3857,8 +3857,9 @@ void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 		body->lastBurnedFrameNumber = level.framenum;
 	}
 
-	// make em burn
-	if (body->client && (body->health <= 0 || body->flameQuota > 0)) // was > FLAME_THRESHOLD
+	// additionally, cause dot burn damage, by setting 'body->s.onFireEnd',
+	// which continuously causes damage via 'P_WorldEffects'
+	if (body->client && (body->health <= 0 || body->flameQuota > 0))
 	{
 		if (body->s.onFireEnd < level.time)
 		{

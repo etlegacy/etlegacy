@@ -955,8 +955,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 		return;
 	}
 
-	// now check the damageQuota to see if we should play a pain animation
-	// first reduce the current damageQuota with time
+	// reduce the current damageQuota with time
 	if (body->flameQuotaTime && body->flameQuota > 0)
 	{
 		body->flameQuota -= (int)(((float)(level.time - body->flameQuotaTime) / 1000) * 2.5f);

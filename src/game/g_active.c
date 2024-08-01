@@ -192,7 +192,10 @@ void P_WorldEffects(gentity_t *ent)
 		}
 	}
 
-	// check for burning from flamethrower - MP way
+	// check for dot burning from flamethrower - MP way
+	//
+	// NOTE : flame chunks themselves also cause damage additionally to the burn
+	// damage below via 'G_BurnMeGood'
 	if (ent->s.onFireEnd && ent->client)
 	{
 		if (level.time - ent->client->lastBurnTime >= MIN_BURN_INTERVAL)
