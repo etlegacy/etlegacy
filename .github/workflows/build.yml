@@ -690,7 +690,6 @@ jobs:
       - name: SignPath Win
         uses: signpath/github-action-submit-signing-request@v0.4
 #        if: ${{ steps.vars.outputs.hash_exists == '404' }}
-        if: startsWith(github.ref, 'refs/tags/v')
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
