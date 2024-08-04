@@ -668,7 +668,7 @@ jobs:
   sign:
     runs-on: ubuntu-20.04
     needs: [ version, win, win64 ]
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/sign'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/signpath'
     env:
       SIGNPATH_SIGNING_POLICY_SLUG: 'test-signing'
     steps:
