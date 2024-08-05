@@ -697,7 +697,7 @@ jobs:
           find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=eacan4jn14wt" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
-        if: ${{ steps.vars.outputs.hash_exists == '404' }} && needs.version.outputs.describe != needs.version.outputs.tag
+        if: ${{ steps.vars.outputs.hash_exists == '404' && needs.version.outputs.describe != needs.version.outputs.tag }}
         env:
           DISCORD_WEBHOOK: ${{ secrets.PUBLISH_DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@0.3.0
