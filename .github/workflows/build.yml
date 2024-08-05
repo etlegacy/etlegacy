@@ -685,7 +685,7 @@ jobs:
       - uses: actions/download-artifact@v4
 #        if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
-          path: packages
+          pattern: win*	
 
       - name: SignPath Win
         uses: signpath/github-action-submit-signing-request@v0.4
@@ -697,7 +697,7 @@ jobs:
            signing-policy-slug: '${{ env.SIGNPATH_SIGNING_POLICY_SLUG }}'
            github-artifact-id: '${{needs.win.outputs.win}}'
            wait-for-completion: true
-           output-artifact-directory: 'packages/win-packages'
+           output-artifact-directory: 'win-packages'
 #           parameters: |
 #             Version: ${{ toJSON(vars.version) }}
 #             Release_Tag: "v1.0"
@@ -712,10 +712,24 @@ jobs:
            signing-policy-slug: '${{ env.SIGNPATH_SIGNING_POLICY_SLUG }}'
            github-artifact-id: '${{needs.win64.outputs.win64}}'
            wait-for-completion: true
-           output-artifact-directory: 'packages/win64-packages'
+           output-artifact-directory: 'win64-packages'
 #           parameters: |
 #             Version: ${{ toJSON(vars.version) }}
 #             Release_Tag: "v1.0"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: win-packages
+          path: |
+            etlegacy-*-x86.exe
+            etlegacy-*-x86.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: win64-packages
+          path: |
+            etlegacy-*-x64.exe
+            etlegacy-*-x64.zip
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
