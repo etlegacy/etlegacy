@@ -20,7 +20,7 @@ jobs:
       - name: Get the version
         id: vars
         run: |
-          echo "tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+          echo "tag=$(date +%Y%m%d%H%M%S)" >> "$GITHUB_OUTPUT"
 
       - name: Build and push the latest Docker image
         run: |
