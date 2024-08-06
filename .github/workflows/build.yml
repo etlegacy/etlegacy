@@ -710,15 +710,15 @@ jobs:
         with:
           name: win-packages
           path: |
-            etlegacy-*-x86.exe
-            etlegacy-*-x86.zip
+            win-packages/etlegacy-*-x86.exe
+            win-packages/etlegacy-*-x86.zip
 
       - uses: actions/upload-artifact@v4
         with:
           name: win64-packages
           path: |
-            etlegacy-*-x64.exe
-            etlegacy-*-x64.zip
+            win64-packages/etlegacy-*-x64.exe
+            win64-packages/etlegacy-*-x64.zip
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
