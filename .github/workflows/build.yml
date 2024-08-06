@@ -668,7 +668,7 @@ jobs:
   sign:
     runs-on: ubuntu-20.04
     needs: [ version, win, win64 ]
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/signpath'
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     env:
       SIGNPATH_SIGNING_POLICY_SLUG: 'test-signing'
     steps:
@@ -677,19 +677,14 @@ jobs:
         run: |
           echo "hash_exists=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)" >> $GITHUB_OUTPUT
 
-      - name: Check for Tags/Release
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          echo "SIGNPATH_SIGNING_POLICY_SLUG=release-signing" >> "$GITHUB_ENV"
-
       - uses: actions/download-artifact@v4
-#        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
           pattern: win*	
 
       - name: SignPath Win
         uses: signpath/github-action-submit-signing-request@v0.4
-#        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -704,7 +699,7 @@ jobs:
 
       - name: SignPath Win64
         uses: signpath/github-action-submit-signing-request@v0.4
-#        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
