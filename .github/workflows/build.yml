@@ -533,6 +533,8 @@ jobs:
   win:
     runs-on: windows-2019
     needs: [ version, mod-merger ]
+    outputs:
+      win: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
@@ -561,6 +563,7 @@ jobs:
         run: cpack
 
       - uses: actions/upload-artifact@v4
+        id: artifact-upload-step
         with:
           name: win-packages
           path: |
@@ -570,6 +573,8 @@ jobs:
   win64:
     runs-on: windows-2019
     needs: [ version, mod-merger ]
+    outputs:
+      win64: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
@@ -598,6 +603,7 @@ jobs:
         run: cpack
 
       - uses: actions/upload-artifact@v4
+        id: artifact-upload-step
         with:
           name: win64-packages
           path: |
@@ -652,6 +658,68 @@ jobs:
           name: android-packages
           path: app/build/outputs/apk/release/etlegacy*.apk
 
+#    ____  _             ____       _   _     
+#   / ___|(_) __ _ _ __ |  _ \ __ _| |_| |__  
+#   \___ \| |/ _` | '_ \| |_) / _` | __| '_ \ 
+#    ___) | | (_| | | | |  __/ (_| | |_| | | |
+#   |____/|_|\__, |_| |_|_|   \__,_|\__|_| |_|
+#            |___/                            
+
+  sign:
+    runs-on: ubuntu-20.04
+    needs: [ version, win, win64 ]
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
+    env:
+      SIGNPATH_SIGNING_POLICY_SLUG: 'test-signing'
+    steps:
+      - name: Get version status
+        id: vars
+        run: |
+          echo "hash_exists=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)" >> $GITHUB_OUTPUT
+
+      - uses: actions/download-artifact@v4
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        with:
+          pattern: win*	
+
+      - name: SignPath Win
+        uses: signpath/github-action-submit-signing-request@v0.4
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        with:
+           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+           organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
+           project-slug: 'etlegacy'
+           signing-policy-slug: '${{ env.SIGNPATH_SIGNING_POLICY_SLUG }}'
+           github-artifact-id: '${{needs.win.outputs.win}}'
+           wait-for-completion: true
+           output-artifact-directory: 'win-packages'
+
+      - name: SignPath Win64
+        uses: signpath/github-action-submit-signing-request@v0.4
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        with:
+           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+           organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
+           project-slug: 'etlegacy'
+           signing-policy-slug: '${{ env.SIGNPATH_SIGNING_POLICY_SLUG }}'
+           github-artifact-id: '${{needs.win64.outputs.win64}}'
+           wait-for-completion: true
+           output-artifact-directory: 'win64-packages'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: win-packages
+          path: |
+            etlegacy-*-x86.exe
+            etlegacy-*-x86.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: win64-packages
+          path: |
+            etlegacy-*-x64.exe
+            etlegacy-*-x64.zip
+
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
 #  | |  | |  _ __   | |   ___     __ _    __| |     __ _   _ __     __| |   | |      | |   ___    __ _   _ __    _   _   _ __
@@ -663,7 +731,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-20.04
-    needs: [ version, lnx32, lnx64, osx, win, win64, lnx-aarch64, android ]
+    needs: [ version, sign, lnx32, lnx64, osx, lnx-aarch64, android ]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v4
