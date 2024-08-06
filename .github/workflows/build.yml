@@ -693,9 +693,6 @@ jobs:
            github-artifact-id: '${{needs.win.outputs.win}}'
            wait-for-completion: true
            output-artifact-directory: 'win-packages'
-#           parameters: |
-#             Version: ${{ toJSON(vars.version) }}
-#             Release_Tag: "v1.0"
 
       - name: SignPath Win64
         uses: signpath/github-action-submit-signing-request@v0.4
@@ -708,9 +705,6 @@ jobs:
            github-artifact-id: '${{needs.win64.outputs.win64}}'
            wait-for-completion: true
            output-artifact-directory: 'win64-packages'
-#           parameters: |
-#             Version: ${{ toJSON(vars.version) }}
-#             Release_Tag: "v1.0"
 
       - uses: actions/upload-artifact@v4
         with:
