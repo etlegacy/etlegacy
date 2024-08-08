@@ -3415,15 +3415,6 @@ static void PM_Weapon(void)
 	// if we have issues with water we know why ....
 	//pm->watertype = 0;
 
-	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
-	{
-		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)->clipIndex]);
-	}
-	else
-	{
-		akimboFire = qfalse;
-	}
-
 #ifdef DO_WEAPON_DBG
 	if (pm->ps->weaponstate != weaponstate_last)
 	{
@@ -3706,6 +3697,19 @@ static void PM_Weapon(void)
 				weaponChargeTime = pm->cmd.serverTime;
 			}
 		}
+	}
+
+	// decide which akimbo pistol to fire
+	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
+	{
+		akimboFire = BG_AkimboFireSequence(
+			pm->ps->weapon,
+			pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex],
+			pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)->clipIndex]);
+	}
+	else
+	{
+		akimboFire = qfalse;
 	}
 
 	// start the animation even if out of ammo
