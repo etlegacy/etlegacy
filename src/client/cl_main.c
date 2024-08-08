@@ -2596,7 +2596,7 @@ static void CL_FrameHandleVideo(int *msec)
  */
 void CL_Frame(int msec)
 {
-	int frameStart;
+	int frameStart = 0;
 
 	if (!com_cl_running->integer)
 	{
