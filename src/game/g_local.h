@@ -972,7 +972,7 @@ struct gclient_s
 	int lastKillTime;                       ///< for multiple kill rewards FIXME: implement this/make available to Lua
 
 	// timeResidual is used to handle events that happen every second
-	// like health / armor countdowns and regeneration
+	// like health countdowns and regeneration
 	int timeResidual;
 
 	float currentAimSpreadScale;

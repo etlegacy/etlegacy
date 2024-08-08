@@ -838,6 +838,17 @@ void ClientTimerActions(gentity_t *ent, int msec)
 {
 	gclient_t *client = ent->client;
 
+   // reset and pause client timer when we've reached maxhealth, such that once
+   // we take damage again, it will take a full second every time to re-heal
+	if (ent->health == client->ps.stats[STAT_MAX_HEALTH])
+	{
+		if (client->timeResidual != 0)
+		{
+			client->timeResidual = 0;
+		}
+		return;
+	}
+
 	client->timeResidual += msec;
 
 	while (client->timeResidual >= 1000)
