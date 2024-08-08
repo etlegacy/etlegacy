@@ -851,7 +851,7 @@ static void CL_ParseDemo(void)
 			cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
 			cl.oldServerTime   = cl.snap.serverTime;
 
-			clc.demo.timeBaseTime = cl.snap.serverTime;
+			clc.demo.timedemo.timeBaseTime = cl.snap.serverTime;
 		}
 		cl.oldFrameServerTime = cl.snap.serverTime;
 
@@ -1161,6 +1161,63 @@ void CL_DemoCleanUp(void)
 #endif
 }
 
+/**
+ * @brief CL_CompareFrametimes
+ */
+static int CL_CompareFrametimes(const void *a, const void *b)
+{
+	return (*(uint8_t *)a - *(uint8_t *)b);
+}
+
+/**
+ * @brief CL_TimedemoResults
+ */
+static void CL_TimedemoResults(void)
+{
+	int     time;
+	uint8_t sortedFrametimes[MAX_TIMEDEMO_FRAMES];
+	int     onePercentIdx, pointOnePercentIdx;
+	float   fps;
+	char    onePercent[8], pointOnePercent[8];
+
+	time = Sys_Milliseconds() - clc.demo.timedemo.timeStart;
+
+	if (time <= 0)
+	{
+		return;
+	}
+
+	fps = clc.demo.timedemo.timeFrames * 1000.0f / time;
+
+	Com_Memcpy(sortedFrametimes, clc.demo.timedemo.frametime, clc.demo.timedemo.timeFrames * sizeof(uint8_t));
+	qsort(sortedFrametimes, clc.demo.timedemo.timeFrames, sizeof(uint8_t), CL_CompareFrametimes);
+
+	onePercentIdx = (int)(0.01f * clc.demo.timedemo.timeFrames);
+
+	// make sure we have enough total frames to display 1% lows
+	if (onePercentIdx)
+	{
+		Com_sprintf(onePercent, sizeof(onePercent), "%3.2f", 1000.0f / sortedFrametimes[clc.demo.timedemo.timeFrames - 1 - onePercentIdx]);
+	}
+
+	pointOnePercentIdx = (int)(0.001f * clc.demo.timedemo.timeFrames);
+
+	// make sure we have enough total frames to display 0.1% lows
+	if (pointOnePercentIdx)
+	{
+		Com_sprintf(pointOnePercent, sizeof(pointOnePercent), "%3.2f", 1000.0f / sortedFrametimes[clc.demo.timedemo.timeFrames - 1 - pointOnePercentIdx]);
+	}
+
+	Com_FuncPrinf("\n----- Benchmark results -----\n");
+	Com_Printf("\n%-18s %3.2f sec\n%-18s %i\n%-18s %3.2f\n%-18s %s\n%-18s %s\n",
+	           "Time elapsed:", time / 1000.0f,
+	           "Total frames:", clc.demo.timedemo.timeFrames,
+	           "Average fps:", fps,
+	           "99th pct. min:", onePercentIdx ? onePercent : "--",
+	           "99.9th pct. min:", pointOnePercentIdx ? pointOnePercent : "--");
+	Com_Printf("\n-----------------------------\n\n");
+}
+
 
 /**
  * @brief CL_DemoCompleted
@@ -1173,14 +1230,7 @@ void CL_DemoCompleted(void)
 
 	if (cl_timedemo && cl_timedemo->integer)
 	{
-		int time;
-
-		time = Sys_Milliseconds() - clc.demo.timeStart;
-		if (time > 0)
-		{
-			Com_FuncPrinf("%i frames, %3.1f seconds: %3.1f fps\n", clc.demo.timeFrames,
-			              time / 1000.0, clc.demo.timeFrames * 1000.0 / time);
-		}
+		CL_TimedemoResults();
 	}
 
 	if (CL_VideoRecording())
@@ -1219,12 +1269,13 @@ void CL_DemoRun(void)
 	// each time it is played back
 	if (cl_timedemo->integer)
 	{
-		if (!clc.demo.timeStart)
+		if (!clc.demo.timedemo.timeStart)
 		{
-			clc.demo.timeStart = Sys_Milliseconds();
+			clc.demo.timedemo.timeStart = Sys_Milliseconds();
 		}
-		clc.demo.timeFrames++;
-		cl.serverTime = clc.demo.timeBaseTime + clc.demo.timeFrames * 50;
+
+		clc.demo.timedemo.timeFrames++;
+		cl.serverTime = clc.demo.timedemo.timeBaseTime + clc.demo.timedemo.timeFrames * 50;
 	}
 
 	if (cl_freezeDemo->integer)
