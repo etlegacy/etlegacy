@@ -61,8 +61,8 @@ jobs:
       - name: Change Owner of Container Working Directory
         run: |
           action_name=$(whoami)
-          action_group=$(groups $action_name | awk '{print $3}')
-          sudo chown $action_name:$action_group -R .
+          action_group=$(groups "$action_name" | awk '{print $3}')
+          sudo chown "${action_name}:${action_group}" -R .
 
       - name: Generate packages
         uses: addnab/docker-run-action@v3
@@ -93,8 +93,8 @@ jobs:
       - name: Change Owner of Container Working Directory
         run: |
           action_name=$(whoami)
-          action_group=$(groups $action_name | awk '{print $3}')
-          sudo chown $action_name:$action_group -R .
+          action_group=$(groups "$action_name" | awk '{print $3}')
+          sudo chown "${action_name}:${action_group}" -R .
 
       - name: Generate packages
         uses: addnab/docker-run-action@v3
@@ -219,12 +219,12 @@ jobs:
 
       - name: Build and Generate Package
         run: |
-          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           ./gradlew clean assembleDebug
           ls -R
 
       - name: Rename APK
         run: |
-          for FILE in ./app/build/outputs/apk/debug/*; do mv $FILE ${FILE%-*}.apk; done
+          for FILE in ./app/build/outputs/apk/debug/*; do mv "$FILE" "${FILE%-*}.apk"; done
           ls app/build/outputs/apk/debug
 

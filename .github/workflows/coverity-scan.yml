@@ -41,7 +41,7 @@ jobs:
 
       - name: Build with cov-build
         run: |
-          export PATH=`pwd`/cov-analysis-linux64/bin:$PATH
+          export PATH="${PWD}/cov-analysis-linux64/bin:${PATH}"
           cd build
           cov-build --dir cov-int make
 
@@ -52,10 +52,10 @@ jobs:
           tar -czvf etlegacy.tgz cov-int
           curl -k \
             --form project=etlegacy \
-            --form token=$TOKEN \
-            --form email=$EMAIL \
+            --form token="$TOKEN" \
+            --form email="$EMAIL" \
             --form file=@etlegacy.tgz \
-            --form version="${version}" \
+            --form version="$version" \
             --form description="development" \
             https://scan.coverity.com/builds?project=etlegacy%2Fetlegacy
         env:

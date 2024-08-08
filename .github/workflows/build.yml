@@ -128,7 +128,7 @@ jobs:
           CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
           CI_ETL_TAG: ${{needs.version.outputs.tag}}
         run: |
-          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           ./easybuild.sh build -RPIT -mod -ninja
 
       - uses: actions/upload-artifact@v4
@@ -153,6 +153,7 @@ jobs:
 
       - name: List dev tools
         run: |
+          # shellcheck disable=SC2010
           ls -la /Applications/ | grep Xcode
           ls -la /Library/Developer/CommandLineTools/SDKs/
           xcode-select --print-path
@@ -253,7 +254,7 @@ jobs:
 
       - name: Build
         run: |
-          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           ./gradlew clean assembleRelease
           ls -R
 
@@ -372,8 +373,8 @@ jobs:
       - name: Change Owner of Container Working Directory
         run: |
           action_name=$(whoami)
-          action_group=$(groups $action_name | awk '{print $3}')
-          sudo chown $action_name:$action_group -R .
+          action_group=$(groups "$action_name" | awk '{print $3}')
+          sudo chown "${action_name}:${action_group}" -R .
 
       - uses: actions/download-artifact@v4
         with:
@@ -420,8 +421,8 @@ jobs:
       - name: Change Owner of Container Working Directory
         run: |
           action_name=$(whoami)
-          action_group=$(groups $action_name | awk '{print $3}')
-          sudo chown $action_name:$action_group -R .
+          action_group=$(groups "$action_name" | awk '{print $3}')
+          sudo chown "${action_name}:${action_group}" -R .
 
       - uses: actions/download-artifact@v4
         with:
@@ -644,13 +645,13 @@ jobs:
 
       - name: Build and Generate Package
         run: |
-          git config --global --add safe.directory $GITHUB_WORKSPACE
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           ./gradlew clean assembleRelease
           ls -R
 
       - name: Rename APK
         run: |
-          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
+          for FILE in ./app/build/outputs/apk/release/*; do mv "$FILE" "${FILE%-*}.apk"; done
           ls app/build/outputs/apk/release
 
       - uses: actions/upload-artifact@v4
@@ -744,7 +745,7 @@ jobs:
       - name: Get version status
         id: vars
         run: |
-          echo "hash_exists=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)" >> $GITHUB_OUTPUT
+          echo "hash_exists=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/download-artifact@v4
         if: ${{ steps.vars.outputs.hash_exists == '404' }}
@@ -766,7 +767,7 @@ jobs:
           find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=eacan4jn14wt" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
-        if: ${{ steps.vars.outputs.hash_exists == '404' }} && needs.version.outputs.describe != needs.version.outputs.tag
+        if: ${{ steps.vars.outputs.hash_exists == '404' && needs.version.outputs.describe != needs.version.outputs.tag }}
         env:
           DISCORD_WEBHOOK: ${{ secrets.PUBLISH_DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@0.3.0
@@ -806,9 +807,9 @@ jobs:
       - name: Get the version
         id: vars
         run: |
-          tag_missing=$(docker manifest inspect etlegacy/server:$CI_ETL_DESCRIBE > /dev/null ; echo $?)
+          tag_missing=$(docker manifest inspect "etlegacy/server:${CI_ETL_DESCRIBE}" > /dev/null ; echo $?)
           echo "Current tag ${{needs.version.outputs.describe}} is missing from Docker: $tag_missing"
-          echo "tag_missing=$tag_missing" >> $GITHUB_OUTPUT
+          echo "tag_missing=$tag_missing" >> "$GITHUB_OUTPUT"
 
       # If we are on any build version then we create the latest-patch version
       - name: Build the server container
@@ -830,10 +831,10 @@ jobs:
         if: needs.version.outputs.describe == needs.version.outputs.tag && steps.vars.outputs.tag_missing == '1' && github.event_name != 'schedule'
         working-directory: build/package
         run: |
-          docker tag etlegacy/server:latest-patch etlegacy/server:$CI_ETL_DESCRIBE
-          docker tag etlegacy/server:latest-patch etlegacy/server:latest
-          docker push etlegacy/server:$CI_ETL_DESCRIBE
-          docker push etlegacy/server:latest
+          docker tag etlegacy/server:latest-patch "etlegacy/server:${CI_ETL_DESCRIBE}"
+          docker tag etlegacy/server:latest-patch "etlegacy/server:latest"
+          docker push "etlegacy/server:${CI_ETL_DESCRIBE}"
+          docker push "etlegacy/server:latest"
 
   cleanup:
     runs-on: ubuntu-20.04
