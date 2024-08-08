@@ -78,7 +78,7 @@ menuDef {
 	}
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close ingame_vote_map ; open ingame_vote )
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("^_BACK"), .3, 14, close ingame_vote_map ; open ingame_vote )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("OK"), .3, 14, uiScript voteMap ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_NONE } )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("OK"), .3, 14, uiScript refMap ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_REFEREE } )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("OK"), .3, 14, uiScript refMap ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_RCON } )
