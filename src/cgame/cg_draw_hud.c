@@ -51,7 +51,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(staminabar),         CG_DrawStaminaBar,                0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(breathbar),          CG_DrawBreathBar,                 0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} },
-	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle"} },
 	{ HUDF(healthtext),         CG_DrawPlayerHealth,              0.25f,  { "Dynamic Color", "Draw Suffix" } },
 	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
 	{ HUDF(ranktext),           CG_DrawRank,                      0.20f,  { 0 } },
@@ -183,7 +183,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->staminabar         = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 1.0f, 0.1f, 0.5f }, (vec4_t) { 1.0f, 0, 0.1f, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
 	hud->breathbar          = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 0.1f, 1.0f, 0.5f }, (vec4_t) { 1.0f, 0.1f, 0, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
 	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | (BAR_ICON << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
-	hud->weaponchargebar    = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 1.0, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0, 1.0f, 0.1f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
+	hud->weaponchargebar    = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON | BAR_NEEDLE, 100.f, (vec4_t) { 1.0, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0, 1.0f, 0.1f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
 	hud->healthtext         = CG_getComponent(47, 465, 57, 14, qtrue, 2, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
 	hud->xptext             = CG_getComponent(108, 465, 57, 14, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
 	hud->ranktext           = CG_getComponent(167, 465, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);    // disable
@@ -878,7 +878,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH],
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], 0.f,
 	             style, cgs.media.hudHealthIcon);
 
 	trap_R_SetColor(NULL);
@@ -943,7 +943,7 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, comp->style, cgs.media.hudSprintIcon);
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->style, cgs.media.hudSprintIcon);
 
 	trap_R_SetColor(NULL);
 }
@@ -986,9 +986,31 @@ void CG_DrawBreathBar(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->style & BAR_LERP_COLOR) ? comp->colorMain : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, comp->style, cgs.media.waterHintShader);
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->style, cgs.media.waterHintShader);
 
 	trap_R_SetColor(NULL);
+}
+
+/**
+ * @param[in]  weapon
+ * @param[in]  chargeTime
+ * @param[out] needleFrac
+ * @param[out] charge
+ */
+static void CG_CalcPowerState(const int weapon, const float chargeTime, float *needleFrac, qboolean *charge)
+{
+
+	int index = BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill,
+	                                GetWeaponTableData(weapon)->skillBased,
+	                                GetWeaponTableData(weapon)->chargeTimeSkill);
+
+	float coeff = GetWeaponTableData(weapon)->chargeTimeCoeff[index];
+	*needleFrac = coeff;
+
+	if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * coeff)
+	{
+		*charge = qfalse;
+	}
 }
 
 /**
@@ -997,7 +1019,7 @@ void CG_DrawBreathBar(hudComponent_t *comp)
  */
 void CG_DrawWeapRecharge(hudComponent_t *comp)
 {
-	float    barFrac, chargeTime;
+	float    barFrac, needleFrac = 0.f, chargeTime;
 	qboolean charge = qtrue;
 	vec4_t   color;
 	int      style = comp->style;
@@ -1037,35 +1059,70 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		break;
 	}
 
-	// display colored charge bar if charge bar isn't full enough
+	// Calculate power state
 	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
-		int index = BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill,
-		                                GetWeaponTableData(cg.predictedPlayerState.weapon)->skillBased,
-		                                GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeSkill);
-
-		float coeff = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[index];
-
-		if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * coeff)
-		{
-			charge = qfalse;
-		}
+		CG_CalcPowerState(cg.predictedPlayerState.weapon, chargeTime, &needleFrac, &charge);
 	}
 	else if ((cg.predictedPlayerState.eFlags & EF_ZOOMING || cg.predictedPlayerState.weapon == WP_BINOCULARS)
 	         && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 	{
-		int index = BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill,
-		                                GetWeaponTableData(WP_ARTY)->skillBased,
-		                                GetWeaponTableData(WP_ARTY)->chargeTimeSkill);
-
-		float coeff = GetWeaponTableData(WP_ARTY)->chargeTimeCoeff[index];
-
-		if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * coeff)
+		CG_CalcPowerState(WP_ARTY, chargeTime, &needleFrac, &charge);
+	}
+	else
+	{
+		switch (cgs.clientinfo[cg.snap->ps.clientNum].cls)
 		{
-			charge = qfalse;
+		case PC_SOLDIER:
+		{
+			if (COM_BitCheck(cg.snap->ps.weapons, WP_PANZERFAUST))
+			{
+				CG_CalcPowerState(WP_PANZERFAUST, chargeTime, &needleFrac, &charge);
+			}
+			else if (COM_BitCheck(cg.snap->ps.weapons, WP_BAZOOKA))
+			{
+				CG_CalcPowerState(WP_BAZOOKA, chargeTime, &needleFrac, &charge);
+			}
+			else if (COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR2))
+			{
+				CG_CalcPowerState(WP_MORTAR_SET, chargeTime, &needleFrac, &charge);
+			}
+			else if (COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR))
+			{
+				CG_CalcPowerState(WP_MORTAR2_SET, chargeTime, &needleFrac, &charge);
+			}
+		}
+		break;
+		case PC_MEDIC:
+			CG_CalcPowerState(WP_MEDKIT, chargeTime, &needleFrac, &charge);
+			break;
+		case PC_FIELDOPS:
+			CG_CalcPowerState(WP_ARTY, chargeTime, &needleFrac, &charge);
+			break;
+		case PC_COVERTOPS:
+			CG_CalcPowerState(WP_SATCHEL, chargeTime, &needleFrac, &charge);
+			break;
+		case PC_ENGINEER:
+			switch (cg.predictedPlayerState.weapon)
+			{
+			case WP_CARBINE:
+			case WP_KAR98:
+				CG_CalcPowerState(WP_GPG40, chargeTime, &needleFrac, &charge);
+				break;
+			case WP_COLT:
+			case WP_LUGER:
+			case WP_AKIMBO_COLT:
+			case WP_AKIMBO_LUGER:
+				if (COM_BitCheck(cg.snap->ps.weapons, WP_GPG40) || COM_BitCheck(cg.snap->ps.weapons, WP_M7))
+				{
+					CG_CalcPowerState(WP_GPG40, chargeTime, &needleFrac, &charge);
+				}
+				break;
+			}
 		}
 	}
 
+	// display colored charge bar if charge bar isn't full enough
 	barFrac = (cg.time - cg.snap->ps.classWeaponTime) / chargeTime; // FIXME: potential DIV 0 when charge times are set to 0!
 
 	if (barFrac > 1.0f)
@@ -1098,7 +1155,7 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, barFrac, style, cgs.media.hudPowerIcon);
+	             comp->colorBackground, comp->colorBorder, barFrac, needleFrac, style, cgs.media.hudPowerIcon);
 
 	trap_R_SetColor(NULL);
 }

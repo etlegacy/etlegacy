@@ -2304,7 +2304,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	}
 
 	CG_FilledBar(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
-	             Com_Clamp(0, 1.f, health / (float)maxHealth), style, -1);
+	             Com_Clamp(0, 1.f, health / (float)maxHealth), 0.f, style, -1);
 
 	trap_R_SetColor(NULL);
 }
@@ -4021,7 +4021,7 @@ void CG_DrawOnScreenBars(void)
 		}
 
 		CG_FilledBar(specBar->x, specBar->y, specBar->w, specBar->h, specBar->colorStart, specBar->colorEnd,
-		             specBar->colorBack, specBar->colorBack, specBar->fraction, BAR_BG, -1);
+		             specBar->colorBack, specBar->colorBack, specBar->fraction, 0.f, BAR_BG, -1);
 
 		// expect update next frame again
 		specBar->visible = qfalse;

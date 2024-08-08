@@ -109,7 +109,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
 	CG_FilledBar(topRowX + statusWidth, y + 1, comp->location.w - statusWidth - 1, height / 2 - 1.75f, comp->colorSecondary, comp->colorSecondary,
-	             comp->colorBackground, comp->colorBackground, fraction, BAR_BGSPACING_X0Y0, -1);
+	             comp->colorBackground, comp->colorBackground, fraction, 0.f, BAR_BGSPACING_X0Y0, -1);
 
 	// draw health
 	if (player->health > 0)
@@ -240,7 +240,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
 	CG_FilledBar(topRowX + 1, y + 1, comp->location.w - statusWidth - 1, height / 2 - 1.5f, comp->colorSecondary, comp->colorSecondary,
-	             comp->colorBackground, comp->colorBackground, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
+	             comp->colorBackground, comp->colorBackground, fraction, 0.f, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
 
 	topRowX += comp->location.w;
 
@@ -496,7 +496,7 @@ static void CG_DrawShoutcastPlayerChargebar(float x, float y, int width, int hei
 		color[3] = 0.25f + barFrac * 0.5f;
 	}
 
-	CG_FilledBar(x, y, width, height, color, NULL, bgColor, bgColor, barFrac, flags, -1);
+	CG_FilledBar(x, y, width, height, color, NULL, bgColor, bgColor, barFrac, 0.f, flags, -1);
 }
 
 /**
@@ -536,7 +536,7 @@ static void CG_DrawShoutcastPlayerStaminaBar(float x, float y, int width, int he
 		color[1] = frac;
 	}
 
-	CG_FilledBar(x, y, width, height, color, NULL, bgColor, bgColor, frac, flags, -1);
+	CG_FilledBar(x, y, width, height, color, NULL, bgColor, bgColor, frac, 0.f, flags, -1);
 }
 
 /**
