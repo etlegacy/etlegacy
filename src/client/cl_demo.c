@@ -1231,6 +1231,15 @@ void CL_DemoCompleted(void)
 	if (cl_timedemo && cl_timedemo->integer)
 	{
 		CL_TimedemoResults();
+
+		// reset timedemo only if benchmark command forcibly enabled it
+		if (cls.benchmarking && cls.resetTimedemoCvar)
+		{
+			Cvar_Set("timedemo", "0");
+		}
+
+		cls.benchmarking      = qfalse;
+		cls.resetTimedemoCvar = qfalse;
 	}
 
 	if (CL_VideoRecording())
@@ -1867,6 +1876,30 @@ void CL_PauseDemo_f(void)
 	Cvar_SetValue("cl_freezeDemo", !cl_freezeDemo->integer);
 }
 
+
+/**
+ * @brief CL_PauseDemo_f
+ * @brief Simple wrapper command for "timedemo 1; demo <demoname>"
+ */
+static void CL_StartBenchmark_f(void)
+{
+	if (Cmd_Argc() < 2)
+	{
+		Com_FuncPrinf("benchmark <demoname>\n");
+		return;
+	}
+
+	// enable timedemo if it isn't set already (and keep track if we changed the value, so we can restore it)
+	if (!Cvar_VariableIntegerValue("timedemo"))
+	{
+		Cvar_Set("timedemo", "1");
+		cls.resetTimedemoCvar = qtrue;
+	}
+
+	cls.benchmarking = qtrue;
+	Cbuf_ExecuteText(EXEC_APPEND, va("demo %s", Cmd_Argv(1)));
+}
+
 /**
  * @brief CL_DemoInit
  */
@@ -1889,6 +1922,8 @@ void CL_DemoInit(void)
 
 	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE_ND | CVAR_LATCH);
 #endif
+
+	Cmd_AddCommand("benchmark", CL_StartBenchmark_f, "Start a timedemo benchmark on given demo file.", CL_CompleteDemoName);
 }
 
 /**

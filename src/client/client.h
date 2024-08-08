@@ -435,6 +435,9 @@ typedef struct
 	clipboardCapture_t clipboard;
 
 	int cinematicHandle;
+
+	qboolean benchmarking;
+	qboolean resetTimedemoCvar;
 } clientStatic_t;
 
 extern clientStatic_t cls;
