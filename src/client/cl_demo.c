@@ -1174,10 +1174,10 @@ static int CL_CompareFrametimes(const void *a, const void *b)
  */
 static void CL_TimedemoResults(void)
 {
-	int     time;
+	int     i, time;
 	uint8_t sortedFrametimes[MAX_TIMEDEMO_FRAMES];
 	int     onePercentIdx, pointOnePercentIdx;
-	float   fps;
+	float   fps, minFps, maxFps;
 	char    onePercent[8], pointOnePercent[8];
 
 	time = Sys_Milliseconds() - clc.demo.timedemo.timeStart;
@@ -1191,6 +1191,19 @@ static void CL_TimedemoResults(void)
 
 	Com_Memcpy(sortedFrametimes, clc.demo.timedemo.frametime, clc.demo.timedemo.timeFrames * sizeof(uint8_t));
 	qsort(sortedFrametimes, clc.demo.timedemo.timeFrames, sizeof(uint8_t), CL_CompareFrametimes);
+
+	minFps = 1000.0f / sortedFrametimes[clc.demo.timedemo.timeFrames - 1];
+	maxFps = 0;
+
+	// filter out 0ms anomalies for maxfps
+	for (i = 0; i < clc.demo.timedemo.timeFrames; i++)
+	{
+		if (sortedFrametimes[i] != 0)
+		{
+			maxFps = 1000.0f / sortedFrametimes[i];
+			break;
+		}
+	}
 
 	onePercentIdx = (int)(0.01f * clc.demo.timedemo.timeFrames);
 
@@ -1209,9 +1222,11 @@ static void CL_TimedemoResults(void)
 	}
 
 	Com_FuncPrinf("\n----- Benchmark results -----\n");
-	Com_Printf("\n%-18s %3.2f sec\n%-18s %i\n%-18s %3.2f\n%-18s %s\n%-18s %s\n",
+	Com_Printf("\n%-18s %3.2f sec\n%-18s %i\n%-18s %3.2f\n%-18s %3.2f\n%-18s %3.2f\n%-18s %s\n%-18s %s\n",
 	           "Time elapsed:", time / 1000.0f,
 	           "Total frames:", clc.demo.timedemo.timeFrames,
+	           "Minimum fps:", minFps,
+	           "Maximum fps:", maxFps,
 	           "Average fps:", fps,
 	           "99th pct. min:", onePercentIdx ? onePercent : "--",
 	           "99.9th pct. min:", pointOnePercentIdx ? pointOnePercent : "--");
