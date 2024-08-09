@@ -1166,7 +1166,7 @@ void CL_DemoCleanUp(void)
  */
 static int CL_CompareFrametimes(const void *a, const void *b)
 {
-	return (*(uint8_t *)a - *(uint8_t *)b);
+	return (*(const uint16_t *)a - *(const uint16_t *)b);
 }
 
 /**
