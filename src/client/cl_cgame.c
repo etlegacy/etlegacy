@@ -1510,9 +1510,9 @@ void CL_FirstSnapshot(void)
 	cls.state = CA_ACTIVE;
 
 	// set the timedelta so we are exactly on this first frame
-	cl.baselineDelta      = cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
-	cl.oldServerTime      = cl.snap.serverTime;
-	clc.demo.timeBaseTime = cl.snap.serverTime;
+	cl.baselineDelta               = cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
+	cl.oldServerTime               = cl.snap.serverTime;
+	clc.demo.timedemo.timeBaseTime = cl.snap.serverTime;
 
 	// if this is the first frame of active play,
 	// execute the contents of activeAction now

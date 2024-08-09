@@ -195,6 +195,20 @@ extern clientActive_t cl;
 
 //==================================================================
 
+#define MAX_TIMEDEMO_FRAMES 262140
+
+/**
+ * @struct timedemo_t
+ * @brief Timedemo information
+ */
+typedef struct
+{
+	uint16_t frametime[MAX_TIMEDEMO_FRAMES];   ///< integer since frametimes aren't fractional
+	int timeFrames;                            ///< counter of rendered frames
+	int timeStart;                             ///< cls.realtime before first frame
+	int timeBaseTime;                          ///< each frame will be at this time + frameNum * 50
+} timedemo_t;
+
 /**
  * @struct demo_t
  * @brief Client demo information
@@ -209,9 +223,7 @@ typedef struct
 	qboolean firstFrameSkipped;
 	fileHandle_t file;
 
-	int timeFrames;                         ///< counter of rendered frames
-	int timeStart;                          ///< cls.realtime before first frame
-	int timeBaseTime;                       ///< each frame will be at this time + frameNum * 50
+	timedemo_t timedemo;
 } demo_t;
 
 /**
@@ -420,6 +432,9 @@ typedef struct
 	clipboardCapture_t clipboard;
 
 	int cinematicHandle;
+
+	qboolean benchmarking;
+	qboolean resetTimedemoCvar;
 } clientStatic_t;
 
 extern clientStatic_t cls;
