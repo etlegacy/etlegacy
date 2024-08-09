@@ -1174,11 +1174,11 @@ static int CL_CompareFrametimes(const void *a, const void *b)
  */
 static void CL_TimedemoResults(void)
 {
-	int     i, time;
-	uint8_t sortedFrametimes[MAX_TIMEDEMO_FRAMES];
-	int     onePercentIdx, pointOnePercentIdx;
-	float   fps, minFps, maxFps;
-	char    onePercent[8], pointOnePercent[8];
+	int      i, time;
+	uint16_t sortedFrametimes[MAX_TIMEDEMO_FRAMES];
+	int      onePercentIdx, pointOnePercentIdx;
+	float    fps, minFps, maxFps;
+	char     onePercent[8], pointOnePercent[8];
 
 	time = Sys_Milliseconds() - clc.demo.timedemo.timeStart;
 
@@ -1189,8 +1189,8 @@ static void CL_TimedemoResults(void)
 
 	fps = clc.demo.timedemo.timeFrames * 1000.0f / time;
 
-	Com_Memcpy(sortedFrametimes, clc.demo.timedemo.frametime, clc.demo.timedemo.timeFrames * sizeof(uint8_t));
-	qsort(sortedFrametimes, clc.demo.timedemo.timeFrames, sizeof(uint8_t), CL_CompareFrametimes);
+	Com_Memcpy(sortedFrametimes, clc.demo.timedemo.frametime, clc.demo.timedemo.timeFrames * sizeof(uint16_t));
+	qsort(sortedFrametimes, clc.demo.timedemo.timeFrames, sizeof(uint16_t), CL_CompareFrametimes);
 
 	minFps = 1000.0f / sortedFrametimes[clc.demo.timedemo.timeFrames - 1];
 	maxFps = 0;
