@@ -2675,7 +2675,7 @@ void CL_Frame(int msec)
 		// if this happens, it just means that we don't get the frametimes of the entire demo,
 		// we just drop the frametimes from the start and take average towards the end
 		// - 1 because timeFrames has already been incremented at this point in CL_SetCGameTime
-		clc.demo.timedemo.frametime[clc.demo.timedemo.timeFrames % MAX_TIMEDEMO_FRAMES] = Sys_Milliseconds() - frameStart;
+		clc.demo.timedemo.frametime[(clc.demo.timedemo.timeFrames - 1) % MAX_TIMEDEMO_FRAMES] = Sys_Milliseconds() - frameStart;
 	}
 }
 

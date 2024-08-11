@@ -1174,7 +1174,7 @@ static int CL_CompareFrametimes(const void *a, const void *b)
  */
 static void CL_TimedemoResults(void)
 {
-	int      i, time;
+	int      i, time, numFrames;
 	uint16_t sortedFrametimes[MAX_TIMEDEMO_FRAMES];
 	int      onePercentIdx, pointOnePercentIdx;
 	float    fps, minFps, maxFps;
@@ -1187,44 +1187,51 @@ static void CL_TimedemoResults(void)
 		return;
 	}
 
-	fps = clc.demo.timedemo.timeFrames * 1000.0f / time;
+	// timeFrames gets incremented before we get here, but we never have a chance to measure the frametime
+	// since the playback ends, therefore scrap the last frame entirely as it never gets stored
+	numFrames = clc.demo.timedemo.timeFrames - 1;
 
-	Com_Memcpy(sortedFrametimes, clc.demo.timedemo.frametime, clc.demo.timedemo.timeFrames * sizeof(uint16_t));
-	qsort(sortedFrametimes, clc.demo.timedemo.timeFrames, sizeof(uint16_t), CL_CompareFrametimes);
+	fps = numFrames * 1000.0f / time;
 
-	minFps = 1000.0f / sortedFrametimes[clc.demo.timedemo.timeFrames - 1];
-	maxFps = 0;
+	Com_Memcpy(sortedFrametimes, clc.demo.timedemo.frametime, numFrames * sizeof(uint16_t));
+	qsort(sortedFrametimes, numFrames, sizeof(uint16_t), CL_CompareFrametimes);
 
-	// filter out 0ms anomalies for maxfps
-	for (i = 0; i < clc.demo.timedemo.timeFrames; i++)
+	minFps = 1000.0f / sortedFrametimes[numFrames - 1];
+	maxFps = 1000.0f / sortedFrametimes[0];
+
+	// filter out potential 0ms anomalies for maxfps
+	if (sortedFrametimes[0] == 0)
 	{
-		if (sortedFrametimes[i] != 0)
+		for (i = 0; i < numFrames; i++)
 		{
-			maxFps = 1000.0f / sortedFrametimes[i];
-			break;
+			if (sortedFrametimes[i] != 0)
+			{
+				maxFps = 1000.0f / sortedFrametimes[i];
+				break;
+			}
 		}
 	}
 
-	onePercentIdx = (int)(0.01f * clc.demo.timedemo.timeFrames);
+	onePercentIdx = (int)(0.01f * numFrames);
 
 	// make sure we have enough total frames to display 1% lows
 	if (onePercentIdx)
 	{
-		Com_sprintf(onePercent, sizeof(onePercent), "%3.2f", 1000.0f / sortedFrametimes[clc.demo.timedemo.timeFrames - 1 - onePercentIdx]);
+		Com_sprintf(onePercent, sizeof(onePercent), "%3.2f", 1000.0f / sortedFrametimes[numFrames - 1 - onePercentIdx]);
 	}
 
-	pointOnePercentIdx = (int)(0.001f * clc.demo.timedemo.timeFrames);
+	pointOnePercentIdx = (int)(0.001f * numFrames);
 
 	// make sure we have enough total frames to display 0.1% lows
 	if (pointOnePercentIdx)
 	{
-		Com_sprintf(pointOnePercent, sizeof(pointOnePercent), "%3.2f", 1000.0f / sortedFrametimes[clc.demo.timedemo.timeFrames - 1 - pointOnePercentIdx]);
+		Com_sprintf(pointOnePercent, sizeof(pointOnePercent), "%3.2f", 1000.0f / sortedFrametimes[numFrames - 1 - pointOnePercentIdx]);
 	}
 
 	Com_FuncPrinf("\n----- Benchmark results -----\n");
 	Com_Printf("\n%-18s %3.2f sec\n%-18s %i\n%-18s %3.2f\n%-18s %3.2f\n%-18s %3.2f\n%-18s %s\n%-18s %s\n",
 	           "Time elapsed:", time / 1000.0f,
-	           "Total frames:", clc.demo.timedemo.timeFrames,
+	           "Total frames:", numFrames,
 	           "Minimum fps:", minFps,
 	           "Maximum fps:", maxFps,
 	           "Average fps:", fps,
