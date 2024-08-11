@@ -1248,10 +1248,12 @@ static void CL_TimedemoResults(void)
 
 	for (i = 0; i < numFrames; i++)
 	{
-		if (sortedFrametimes[i] <= desiredFrametime)
+		if (sortedFrametimes[i] > desiredFrametime)
 		{
-			numOptimalFrames++;
+			break;
 		}
+
+		numOptimalFrames++;
 	}
 
 	Com_FuncPrinf("\n----- Benchmark results -----\n");
