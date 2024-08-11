@@ -1166,8 +1166,8 @@ void CL_DemoCleanUp(void)
  */
 static int CL_CompareFrametimes(const void *a, const void *b)
 {
-	const uint16_t arg1 = *(uint16_t *)a;
-	const uint16_t arg2 = *(uint16_t *)b;
+	const uint16_t arg1 = *(const uint16_t *)a;
+	const uint16_t arg2 = *(const uint16_t *)b;
 
 	if (arg1 > arg2)
 	{
