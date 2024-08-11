@@ -1193,6 +1193,7 @@ static void CL_TimedemoResults(void)
 	int      onePercentIdx, pointOnePercentIdx;
 	float    fps, minFps, maxFps;
 	char     onePercent[8], pointOnePercent[8];
+	int      desiredFrametime, numOptimalFrames;
 
 	time = Sys_Milliseconds() - clc.demo.timedemo.timeStart;
 
@@ -1242,15 +1243,27 @@ static void CL_TimedemoResults(void)
 		Com_sprintf(pointOnePercent, sizeof(pointOnePercent), "%3.2f", 1000.0f / sortedFrametimes[numFrames - 1 - pointOnePercentIdx]);
 	}
 
+	desiredFrametime = 1000 / Cvar_VariableIntegerValue("com_maxfps");
+	numOptimalFrames = 0;
+
+	for (i = 0; i < numFrames; i++)
+	{
+		if (sortedFrametimes[i] <= desiredFrametime)
+		{
+			numOptimalFrames++;
+		}
+	}
+
 	Com_FuncPrinf("\n----- Benchmark results -----\n");
-	Com_Printf("\n%-18s %3.2f sec\n%-18s %i\n%-18s %3.2f\n%-18s %3.2f\n%-18s %3.2f\n%-18s %s\n%-18s %s\n",
+	Com_Printf("\n%-18s %3.2f sec\n%-18s %i\n%-18s %3.2f\n%-18s %3.2f\n%-18s %3.2f\n%-18s %s\n%-18s %s\n%-18s %3.2f pct\n",
 	           "Time elapsed:", time / 1000.0f,
 	           "Total frames:", numFrames,
 	           "Minimum fps:", minFps,
 	           "Maximum fps:", maxFps,
 	           "Average fps:", fps,
 	           "99th pct. min:", onePercentIdx ? onePercent : "--",
-	           "99.9th pct. min:", pointOnePercentIdx ? pointOnePercent : "--");
+	           "99.9th pct. min:", pointOnePercentIdx ? pointOnePercent : "--",
+	           "Stability:", (float)numOptimalFrames / (float)numFrames * 100.0f);
 	Com_Printf("\n-----------------------------\n\n");
 }
 
