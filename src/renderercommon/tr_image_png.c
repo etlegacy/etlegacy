@@ -2213,18 +2213,18 @@ void RE_SavePNG(const char *filename, int width, int height, byte *data, int pad
 
 	// Create the png image data from buffer
 	imageLength = (width * PNG_NumColourComponents_True + 1) * height;
-	imageData   = ri.Z_Malloc(imageLength);
+	imageData   = ri.Hunk_AllocateTempMemory(imageLength);
 
 	EncodeImageNonInterlaced8True(width, height, data, 3, padding, imageData);
 
 	// Compress the png image data
 	compressedDataLength = imageLength * 1.01f + 12;
-	compressedData       = ri.Z_Malloc(compressedDataLength);
+	compressedData       = ri.Hunk_AllocateTempMemory(compressedDataLength);
 
 	if (ri.zlib_compress(compressedData, &compressedDataLength, imageData, imageLength) != Z_OK)
 	{
-		ri.Free(compressedData);
-		ri.Free(imageData);
+		ri.Hunk_FreeTempMemory(compressedData);
+		ri.Hunk_FreeTempMemory(imageData);
 		Ren_Warning("RE_SavePNG: Failed to compress image data.\n");
 		return;
 	}
@@ -2270,8 +2270,8 @@ void RE_SavePNG(const char *filename, int width, int height, byte *data, int pad
 
 	// Free memory
 	ri.Hunk_FreeTempMemory(pngData);
-	ri.Free(compressedData);
-	ri.Free(imageData);
+	ri.Hunk_FreeTempMemory(compressedData);
+	ri.Hunk_FreeTempMemory(imageData);
 }
 
 #endif
