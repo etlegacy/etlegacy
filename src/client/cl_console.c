@@ -883,7 +883,7 @@ void Con_DrawNotify(void)
 				re.SetColor(g_color_table[currentColor]);
 			}
 
-			SCR_DrawSmallChar(cl_conXOffset->integer + (x + 1) * SMALLCHAR_WIDTH, v, text[x]);
+			SCR_DrawSmallChar(cl_conXOffset->integer + (x + 1) * smallCharWidth, v, text[x]);
 		}
 
 		v += smallCharHeight;
