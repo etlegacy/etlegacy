@@ -4870,8 +4870,6 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "LoadDemos") == 0)
 		{
-			// Reset the path
-			uiInfo.demos.path[0] = '\0';
 			UI_LoadDemos();
 		}
 		else if (Q_stricmp(name, "LoadMovies") == 0)
