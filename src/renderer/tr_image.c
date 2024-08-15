@@ -221,44 +221,39 @@ void R_ImageList_f(void)
 		texels += image->uploadWidth * image->uploadHeight;
 		Ren_Print("%4i: %4i %4i  %s   %d   ",
 		          i, image->uploadWidth, image->uploadHeight, yesno[image->mipmap], image->TMU);
+
 		switch (image->internalFormat)
 		{
-		case 1:
-			Ren_Print("I    ");
+		case GL_RGB:
+			Ren_Print("RGB   ");
 			break;
-		case 2:
-			Ren_Print("IA   ");
-			break;
-		case 3:
-			Ren_Print("RGB  ");
-			break;
-		case 4:
-			Ren_Print("RGBA ");
+		case GL_RGBA:
+			Ren_Print("RGBA  ");
 			break;
 		case GL_RGBA8:
-			Ren_Print("RGBA8");
+			Ren_Print("RGBA8 ");
 			break;
 		case GL_RGB8:
-			Ren_Print("RGB8");
+			Ren_Print("RGB8 ");
 			break;
 		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-			Ren_Print("DXT3 ");
+			Ren_Print("DXT3  ");
 			break;
 		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-			Ren_Print("DXT5 ");
+			Ren_Print("DXT5  ");
 			break;
 		case GL_RGB4_S3TC:
 		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-			Ren_Print("S3TC ");
+			Ren_Print("S3TC  ");
 			break;
 		case GL_RGBA4:
-			Ren_Print("RGBA4");
+			Ren_Print("RGBA4 ");
 			break;
 		case GL_RGB5:
-			Ren_Print("RGB5 ");
+			Ren_Print("RGB5  ");
 			break;
 		default:
-			Ren_Print("???? ");
+			Ren_Print("????  ");
 			break;
 		}
 
