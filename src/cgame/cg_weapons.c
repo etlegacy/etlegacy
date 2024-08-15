@@ -2864,9 +2864,9 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 
 	ws = BG_simpleWeaponState(ps->weaponstate);
 
-   // XXX : hack for mortar to reset firing animation - without this when
-   // holding down firing, the firing animation would only be played once when
-   // shooting continuously
+	// XXX : hack for mortar to reset firing animation - without this when
+	// holding down firing, the firing animation would only be played once when
+	// shooting continuously
 	if (
 		(CHECKBITWISE(GetWeaponTableData(ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		&& ps->weaponTime < 50 && ps->weaponTime > 10
@@ -3624,28 +3624,31 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// @XXX hardcode offset flash positions, to correct wrong official
 	// muzzle locations in some cases
 	{
-		vec3_t  forward;
-		float flash_offset = 0.0f;
+		vec3_t forward;
+		float  flash_offset = 0.0f;
 
-		switch (weaponNum) {
-			case WP_FLAMETHROWER:
-				// adjust flamethrower muzzle according to cg_fov
-				flash_offset = (((cg.refdef.fov_y / 73.739784 /*90 fov*/) - 1.0) * -3) - 0.4f;
+		switch (weaponNum)
+		{
+		case WP_FLAMETHROWER:
+			// adjust flamethrower muzzle according to cg_fov
+			flash_offset = (((cg.refdef.fov_y / 73.739784 /*90 fov*/) - 1.0) * -3) - 0.4f;
 
-				// pull the flame back slightly while raising
-				if ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_RAISE) {
-					flash_offset -= 0.5;
-				}
-				break;
-			default:
-				break;
+			// pull the flame back slightly while raising
+			if ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_RAISE)
+			{
+				flash_offset -= 0.5;
+			}
+			break;
+		default:
+			break;
 		}
 
-      if (flash_offset != 0.0f) {
-         AxisToAngles(flash.axis, angles);
-         AngleVectors(angles, forward, NULL, NULL);
-         VectorMA(flash.origin, flash_offset, forward, flash.origin);
-      }
+		if (flash_offset != 0.0f)
+		{
+			AxisToAngles(flash.axis, angles);
+			AngleVectors(angles, forward, NULL, NULL);
+			VectorMA(flash.origin, flash_offset, forward, flash.origin);
+		}
 	}
 
 	// store this position for other cgame elements to access
@@ -4753,7 +4756,8 @@ void CG_NextWeap(qboolean switchBanks)
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (GetWeaponTableData(curweap)->type & (WEAPON_TYPE_PISTOL | WEAPON_TYPE_RIFLE))
+	if (GetWeaponTableData(curweap)->type & (WEAPON_TYPE_PISTOL | WEAPON_TYPE_RIFLE)
+	    && !(GetWeaponTableData(curweap)->attributes & WEAPON_ATTRIBUT_AKIMBO))
 	{
 		num = GetWeaponTableData(curweap)->weapAlts;
 	}
@@ -4900,7 +4904,9 @@ void CG_PrevWeap(qboolean switchBanks)
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (((GetWeaponTableData(curweap)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(curweap)->attributes & WEAPON_ATTRIBUT_SILENCED))
+	if (((GetWeaponTableData(curweap)->type & WEAPON_TYPE_PISTOL)
+	     && ((GetWeaponTableData(curweap)->attributes & WEAPON_ATTRIBUT_SILENCED)
+	         && !(GetWeaponTableData(curweap)->attributes & WEAPON_ATTRIBUT_AKIMBO)))
 	    || GetWeaponTableData(curweap)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		num = GetWeaponTableData(curweap)->weapAlts;
