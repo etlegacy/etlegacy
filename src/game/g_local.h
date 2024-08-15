@@ -488,7 +488,7 @@ struct gentity_s
 	int lastHintCheckTime;
 	int voiceChatSquelch;
 	int voiceChatPreviousTime;
-	int lastBurnedFrameNumber;          ///< to fix FT instant-kill exploit
+	int lastBurnedFrameTime;          ///< last burn damage timestamp
 
 	entState_t entstate;
 	char *constages;
@@ -1739,7 +1739,7 @@ void Svcmd_ShuffleTeamsSR_f(qboolean restart);
 
 // g_weapon.c
 void FireWeapon(gentity_t *ent);
-void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk);
+void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk, qboolean directhit);
 
 void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted);
 void G_SendScore(gentity_t *ent);
@@ -2927,7 +2927,7 @@ void G_MapVoteInfoRead(void);
 #define VOTEF_DISP_CALLER           4   ///< append "(called by name)" in vote string
 
 void G_RailTrail(vec_t *start, vec_t *end, vec_t *color);
-void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index);
+void G_RailBox(const vec_t *origin, const vec_t *mins, const vec_t *maxs, const vec_t *color, int index);
 
 /**
  * @struct weapFireTable_s

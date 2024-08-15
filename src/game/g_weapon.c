@@ -3832,13 +3832,21 @@ FLAMETHROWER
  * @param[in,out] body
  * @param[in] chunk
  */
-void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
+void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk, const qboolean directhit)
 {
 	vec3_t origin;
 
+	// normalize burn dps
+	// direct hits every 50ms, indirect (chunk damage) every 100ms
+	if (level.time < body->lastBurnedFrameTime + (directhit ? DEFAULT_SV_FRAMETIME : FRAMETIME))
+	{
+		return;
+	}
+
 	// add the new damage
-	body->flameQuota    += 5;
-	body->flameQuotaTime = level.time;
+	body->flameQuota         += 5;
+	body->flameQuotaTime      = level.time;
+	body->lastBurnedFrameTime = level.time;
 
 	// fill in our own origin if we have no flamechunk
 	if (chunk != NULL)
@@ -3850,12 +3858,7 @@ void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 		VectorCopy(self->r.currentOrigin, origin);
 	}
 
-	// yet another flamethrower damage model, trying to find a feels-good damage combo that isn't overpowered
-	if (body->lastBurnedFrameNumber != level.framenum)
-	{
-		G_Damage(body, self, self, vec3_origin, origin, GetWeaponTableData(WP_FLAMETHROWER)->damage, 0, MOD_FLAMETHROWER);
-		body->lastBurnedFrameNumber = level.framenum;
-	}
+	G_Damage(body, self, self, vec3_origin, origin, GetWeaponTableData(WP_FLAMETHROWER)->damage, 0, MOD_FLAMETHROWER);
 
 	// make em burn
 	if (body->client && (body->health <= 0 || body->flameQuota > 0)) // was > FLAME_THRESHOLD
@@ -3908,7 +3911,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 			if (trace_start[0] * trace_start[0] + trace_start[1] * trace_start[1] < 441)
 			{
 				// set self in flames
-				G_BurnMeGood(ent, ent, NULL);
+				G_BurnMeGood(ent, ent, NULL, qtrue);
 			}
 		}
 	}

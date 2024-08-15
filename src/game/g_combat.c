@@ -1469,7 +1469,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_ENEMY_WEAPON, attacker->client->ps.weapon, qtrue);
 	}
 
-    take = MAX(damage, 0);
+	take = MAX(damage, 0);
 
 	// adrenaline junkie!
 	if (targ->client && targ->client->ps.powerups[PW_ADRENALINE])
@@ -1902,7 +1902,7 @@ void G_RailTrail(vec_t *start, vec_t *end, vec_t *color)
  * @param[in] color
  * @param[in] index
  */
-void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
+void G_RailBox(const vec_t *origin, const vec_t *mins, const vec_t *maxs, const vec_t *color, int index)
 {
 	vec3_t    b1;
 	vec3_t    b2;
