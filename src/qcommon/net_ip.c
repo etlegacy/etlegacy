@@ -249,14 +249,14 @@ static void NetadrToSockadr(netadr_t *a, struct sockaddr *s)
 		((struct sockaddr_in *)s)->sin_addr.s_addr = INADDR_BROADCAST;
 		break;
 	case NA_IP:
-		((struct sockaddr_in *)s)->sin_family      = AF_INET;
-		((struct sockaddr_in *)s)->sin_addr.s_addr = *(int *)&a->ip;
-		((struct sockaddr_in *)s)->sin_port        = a->port;
+		((struct sockaddr_in *)s)->sin_family = AF_INET;
+		Com_Memcpy(&((struct sockaddr_in *)s)->sin_addr.s_addr, a->ip, sizeof(a->ip));
+		((struct sockaddr_in *)s)->sin_port = a->port;
 		break;
 #ifdef FEATURE_IPV6
 	case NA_IP6:
-		((struct sockaddr_in6 *)s)->sin6_family   = AF_INET6;
-		((struct sockaddr_in6 *)s)->sin6_addr     = *((struct in6_addr *) &a->ip6);
+		((struct sockaddr_in6 *)s)->sin6_family = AF_INET6;
+		Com_Memcpy(&((struct sockaddr_in6 *)s)->sin6_addr, a->ip6, sizeof(a->ip6));
 		((struct sockaddr_in6 *)s)->sin6_port     = a->port;
 		((struct sockaddr_in6 *)s)->sin6_scope_id = a->scope_id;
 		break;
@@ -272,6 +272,7 @@ static void NetadrToSockadr(netadr_t *a, struct sockaddr *s)
 	}
 }
 
+
 /**
  * @brief SockadrToNetadr
  * @param[in] s
@@ -281,9 +282,9 @@ static void SockadrToNetadr(struct sockaddr *s, netadr_t *a)
 {
 	if (s->sa_family == AF_INET)
 	{
-		a->type        = NA_IP;
-		*(int *)&a->ip = ((struct sockaddr_in *)s)->sin_addr.s_addr;
-		a->port        = ((struct sockaddr_in *)s)->sin_port;
+		a->type = NA_IP;
+		Com_Memcpy(a->ip, &((struct sockaddr_in *)s)->sin_addr.s_addr, sizeof(a->ip));
+		a->port = ((struct sockaddr_in *)s)->sin_port;
 	}
 #ifdef FEATURE_IPV6
 	else if (s->sa_family == AF_INET6)
@@ -1306,7 +1307,7 @@ void NET_SetMulticast6(void)
 	if (!*net_mcast6addr->string || !Sys_StringToSockaddr(net_mcast6addr->string, (struct sockaddr *) &addr, sizeof(addr), AF_INET6))
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Incorrect multicast address given, "
-		           "please set cvar %s to a sane value.\n", net_mcast6addr->name);
+		                          "please set cvar %s to a sane value.\n", net_mcast6addr->name);
 
 		Cvar_SetValue(net_enabled->name, net_enabled->integer | NET_DISABLEMCAST);
 
