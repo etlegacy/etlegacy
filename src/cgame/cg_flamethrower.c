@@ -737,7 +737,11 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	rST[1]    = radius * 1.0f / 1.481f;
 	alphaChar = (unsigned char)(255.0f * alpha);
 
-	frameNum = (int)floor((double)(lifeFrac * NUM_FLAME_SPRITES));
+	// TODO: The 2 frame sprites fade out the flame sprite 
+	// This however leads to situations where you think the flame chunk 
+	// just disappeared but it is actually still there
+	// rework flame sprites one day so we could sort out those extra sprites
+	frameNum = (int)floor((double)(lifeFrac * (NUM_FLAME_SPRITES-2)));
 	if (frameNum < 0)
 	{
 		frameNum = 0;
