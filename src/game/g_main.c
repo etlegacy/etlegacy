@@ -3553,6 +3553,7 @@ void BeginIntermission(void)
 			level.mapvoteinfo[i].lastPlayed = -1;
 			level.sortedMaps[i]             = i;
 		}
+
 		for (i = level.mapVoteNumMaps; i < MAX_VOTE_MAPS; i++)
 		{
 			level.sortedMaps[i] = -1;
@@ -3569,6 +3570,7 @@ void BeginIntermission(void)
 				level.mapvoteinfo[i].lastPlayed = 0;
 				level.mapvoteinfo[i].timesPlayed++;
 			}
+
 			// played too recently?
 			if (level.mapvoteinfo[i].lastPlayed != -1 && level.mapvoteinfo[i].lastPlayed <= g_minMapAge.integer)
 			{
@@ -3608,7 +3610,10 @@ void BeginIntermission(void)
 			else
 			{
 				// not eligible for this draw after sorting
-				level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
+				if (level.mapvoteinfo[level.sortedMaps[i]].lastPlayed != -1)
+				{
+					level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
+				}
 			}
 		}
 	}
