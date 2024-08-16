@@ -3894,7 +3894,10 @@ void FS_AddGameDirectory(const char *path, const char *dir, qboolean addBase)
 		// Get top level directories (we'll filter them later since the Sys_ListFiles filtering is terrible)
 		pakdirs = Sys_ListFiles(curpath, "/", NULL, &numdirs, qfalse);
 
-		qsort(pakdirs, numdirs, sizeof(char *), paksort);
+		if (pakdirs)
+		{
+			qsort(pakdirs, numdirs, sizeof(char *), paksort);
+		}
 	}
 
 	pakfilesi = 0;
