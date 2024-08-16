@@ -747,6 +747,20 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	{
 		display = SDL_GetWindowDisplayIndex(main_window);
 	}
+	// try to determine display from last known window location
+	else if (r_windowLocation->string && r_windowLocation->string[0])
+	{
+		// the format for r_windowLocation is normally "displayIndex,x,y", so unless the user manually
+		// sets this to some weird value, this resolves just to the displayIndex value
+		display = Q_atoi(r_windowLocation->string);
+
+		// bogus value for r_windowLocation, default to display 0
+		if (display < 0 || display >= SDL_GetNumVideoDisplays())
+		{
+			Com_Printf("Cannot determine display to start on, falling back to default\n");
+			display = 0;
+		}
+	}
 
 	if (SDL_GetDesktopDisplayMode(display, &desktopMode) == 0)
 	{
