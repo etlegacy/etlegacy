@@ -1116,6 +1116,21 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 		if (cgs.dbMapMinAge)
 		{
+			float  frac = cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset] / (cgs.dbMapsHistoryCount / (float)cgs.dbMapMinAge);
+			vec4_t color;
+
+			// transition color from red (0%), yellow (50%), green (100%) depending of popularity
+			if (frac <= 0.5f)
+			{
+				// red to yellow
+				Vector4Set(color, 1.f, 1.f * (frac * 2.f), 0, 0.85f);
+			}
+			else
+			{
+				// yellow to green
+				Vector4Set(color, 1.f / ((frac - 0.5f) * 2.f), 1.f, 0, 0.85f);
+			}
+
 			if (i + cgs.dbMapVoteListOffset == cgs.dbMapLastPlayed)
 			{
 				// last played map in list
@@ -1133,9 +1148,10 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 				                  0, 30, 0, button->font->font);
 			}
 
-			CG_FilledBar(DB_MAPHISTORIC_X + cgs.wideXoffset, y - 8, 60, 10, (vec4_t) { 1.f, 0, 0, 0.85f }, (vec4_t) { 0, 1.f, 0, 0.85f },
-			             NULL, NULL, cgs.dbMapsHistoryList[i + cgs.dbMapVoteListOffset] / (cgs.dbMapsHistoryCount / (float)cgs.dbMapMinAge), 0.f,
-			             BAR_LERP_COLOR | BAR_BGSPACING_X0Y0, -1);
+			// display popularity bar
+			CG_FilledBar(DB_MAPHISTORIC_X + cgs.wideXoffset, y - 8, 60, 10, color, NULL,
+			             NULL, NULL, frac, 0.f,
+			             BAR_BGSPACING_X0Y0, -1);
 		}
 
 		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
