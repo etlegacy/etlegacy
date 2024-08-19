@@ -1935,9 +1935,9 @@ static unsigned int CL_ParseResponseServers(const netadr_t *from, msg_t *msg, ne
 
 static void CL_MarkBlockedServers()
 {
-	int          count = 0, i, j;
-	serverInfo_t *server;
-	netadr_t     *addr;
+	int            count = 0, i, j;
+	serverInfo_t   *server;
+	const netadr_t *addr;
 
 	// if the arrays are considered in a "reset" state then just skip
 	if (cls.numglobalservers == -1)

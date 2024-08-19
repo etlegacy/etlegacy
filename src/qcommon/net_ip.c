@@ -512,9 +512,10 @@ qboolean Sys_StringToAdr(const char *s, netadr_t *a, netadrtype_t family)
  */
 qboolean NET_CompareBaseAdrMask(const netadr_t *a, const netadr_t *b, int netmask)
 {
-	qboolean differed;
-	byte     cmpmask, *addra, *addrb;
-	int      curbyte;
+	qboolean   differed;
+	byte       cmpmask;
+	const byte *addra, *addrb;
+	int        curbyte;
 
 	if (a->type != b->type)
 	{
@@ -527,8 +528,8 @@ qboolean NET_CompareBaseAdrMask(const netadr_t *a, const netadr_t *b, int netmas
 		return qtrue;
 	case NA_IP:
 	{
-		addra = (byte *) &a->ip;
-		addrb = (byte *) &b->ip;
+		addra = (const byte *) &a->ip;
+		addrb = (const byte *) &b->ip;
 
 		if (netmask < 0 || netmask > 32)
 		{
@@ -539,8 +540,8 @@ qboolean NET_CompareBaseAdrMask(const netadr_t *a, const netadr_t *b, int netmas
 #ifdef FEATURE_IPV6
 	case NA_IP6:
 	{
-		addra = (byte *) &a->ip6;
-		addrb = (byte *) &b->ip6;
+		addra = (const byte *) &a->ip6;
+		addrb = (const byte *) &b->ip6;
 
 		if (netmask < 0 || netmask > 128)
 		{

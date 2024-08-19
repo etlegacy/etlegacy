@@ -1122,9 +1122,8 @@ static qboolean SV_CheckDRDoS(netadr_t from)
  * Shift down the remaining args. Redirect all printfs.
  *
  * @param[in] from
- * @param msg - unused
  */
-static void SVC_RemoteCommand(const netadr_t *from, msg_t *msg)
+static void SVC_RemoteCommand(const netadr_t *from)
 {
 	qboolean valid;
 	char     remaining[1024];
@@ -1282,7 +1281,7 @@ static void SV_ConnectionlessPacket(const netadr_t *from, msg_t *msg)
 	}
 	else if (!Q_stricmp(c, "rcon"))
 	{
-		SVC_RemoteCommand(from, msg);
+		SVC_RemoteCommand(from);
 	}
 	else if (!Q_stricmp(c, "disconnect"))
 	{
