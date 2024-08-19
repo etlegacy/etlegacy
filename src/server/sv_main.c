@@ -599,11 +599,11 @@ static long SVC_HashForAddress(const netadr_t *address)
 	{
 	case NA_IP:
 		ip   = address->ip;
-		size = 4;
+		size = sizeof(address->ip);
 		break;
 	case NA_IP6:
 		ip   = address->ip6;
-		size = 16;
+		size = sizeof(address->ip6);
 		break;
 	default:
 		break;
