@@ -2596,6 +2596,8 @@ static void CL_FrameHandleVideo(int *msec)
  */
 void CL_Frame(int msec)
 {
+	int frameStart = 0;
+
 	if (!com_cl_running->integer)
 	{
 		return;
@@ -2607,6 +2609,11 @@ void CL_Frame(int msec)
 		// if disconnected, bring up the menu
 		S_StopAllSounds();
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN);
+	}
+
+	if (clc.demo.playing && cl_timedemo && cl_timedemo->integer)
+	{
+		frameStart = Sys_Milliseconds();
 	}
 
 	CL_FrameHandleVideo(&msec);
@@ -2658,6 +2665,18 @@ void CL_Frame(int msec)
 	Con_RunConsole();
 
 	cls.framecount++;
+
+	// make sure we have a valid timedemo frame before storing the frametime,
+	// as the first frame of demo is skipped
+	if (clc.demo.playing && clc.demo.timedemo.timeFrames && cl_timedemo && cl_timedemo->integer)
+	{
+		// use circular buffer to store the frametimes - this might exceed the total number of frames
+		// on a *really* long demo (something like 3h+) but realistically that doesn't matter
+		// if this happens, it just means that we don't get the frametimes of the entire demo,
+		// we just drop the frametimes from the start and take average towards the end
+		// - 1 because timeFrames has already been incremented at this point in CL_SetCGameTime
+		clc.demo.timedemo.frametime[(clc.demo.timedemo.timeFrames - 1) % MAX_TIMEDEMO_FRAMES] = Sys_Milliseconds() - frameStart;
+	}
 }
 
 //============================================================================
