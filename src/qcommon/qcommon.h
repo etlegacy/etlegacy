@@ -220,17 +220,17 @@ void NET_Shutdown(void);
 void NET_Restart_f(void);
 //void NET_Config(qboolean enableNetworking);
 
-void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to);
-void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...);
-void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len);
+void NET_SendPacket(netsrc_t sock, int length, const void *data, const netadr_t *to);
+void QDECL NET_OutOfBandPrint(netsrc_t sock, const netadr_t *adr, const char *format, ...);
+void QDECL NET_OutOfBandData(netsrc_t sock, const netadr_t *adr, const char *format, int len);
 
-qboolean NET_CompareAdr(netadr_t a, netadr_t b);
-qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b);
-qboolean NET_IsLocalAddress(netadr_t adr);
+qboolean NET_CompareAdr(const netadr_t *a, const netadr_t *b);
+qboolean NET_CompareBaseAdr(const netadr_t *a, const netadr_t *b);
+qboolean NET_IsLocalAddress(const netadr_t *adr);
 qboolean NET_IsLocalAddressString(const char *address);
 qboolean NET_IsIPXAddress(const char *buf);
-const char *NET_AdrToString(netadr_t a);
-const char *NET_AdrToStringNoPort(netadr_t a);
+const char *NET_AdrToString(const netadr_t *a);
+const char *NET_AdrToStringNoPort(const netadr_t *a);
 int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 qboolean NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message);
 void NET_Sleep(int msec);
@@ -294,7 +294,7 @@ typedef struct
 } netchan_t;
 
 void Netchan_Init(int port);
-void Netchan_Setup(netsrc_t sock, netchan_t *chan, netadr_t adr, int qport);
+void Netchan_Setup(netsrc_t sock, netchan_t *chan, const netadr_t *adr, int qport);
 
 void Netchan_Transmit(netchan_t *chan, int length, const byte *data);
 void Netchan_TransmitNextFragment(netchan_t *chan);
@@ -1222,7 +1222,7 @@ void CL_MouseEvent(int dx, int dy, int time);
 
 void CL_JoystickEvent(int axis, int value, int time);
 
-void CL_PacketEvent(netadr_t from, msg_t *msg);
+void CL_PacketEvent(const netadr_t *from, msg_t *msg);
 
 void CL_ConsolePrint(char *txt);
 
@@ -1269,8 +1269,8 @@ void Com_CheckAutoUpdate(void);
 void Com_GetAutoUpdate(void);
 qboolean Com_CheckUpdateDownloads(void);
 qboolean Com_InitUpdateDownloads(void);
-qboolean Com_UpdatePacketEvent(netadr_t from);
-void Com_UpdateInfoPacket(netadr_t from);
+qboolean Com_UpdatePacketEvent(const netadr_t *from);
+void Com_UpdateInfoPacket(const netadr_t *from);
 void Com_CheckUpdateStarted(void);
 void Com_UpdateVarsClean(int flags);
 void Com_Update_f(void);
@@ -1311,7 +1311,7 @@ void SCR_DebugGraph(float value);     // FIXME: move logging to common?
 void SV_Init(void);
 void SV_Shutdown(const char *finalmsg);
 void SV_Frame(int msec);
-void SV_PacketEvent(netadr_t from, msg_t *msg);
+void SV_PacketEvent(const netadr_t *from, msg_t *msg);
 qboolean SV_GameCommand(void);
 int SV_FrameMsec();
 int SV_SendQueuedPackets();
@@ -1361,7 +1361,7 @@ typedef struct
 void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr);
 int Com_EventLoop(void);
 sysEvent_t Com_GetSystemEvent(void);
-void Com_RunAndTimeServerPacket(netadr_t *evFrom, msg_t *buf);
+void Com_RunAndTimeServerPacket(const netadr_t *evFrom, msg_t *buf);
 
 void Sys_Init(void);
 qboolean IN_IsNumLockDown(void);
@@ -1406,12 +1406,12 @@ void Sys_SnapVector(float *v);
 // the system console is shown when a dedicated server is running
 void Sys_DisplaySystemConsole(qboolean show);
 
-void Sys_SendPacket(int length, const void *data, netadr_t to);
+void Sys_SendPacket(int length, const void *data, const netadr_t *to);
 
 qboolean Sys_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 //Does NOT parse port numbers, only base addresses.
 
-qboolean Sys_IsLANAddress(netadr_t adr);
+qboolean Sys_IsLANAddress(const netadr_t *adr);
 void Sys_ShowIP(void);
 
 qboolean Sys_CheckCD(void);

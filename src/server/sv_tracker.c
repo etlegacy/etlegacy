@@ -73,7 +73,7 @@ void Tracker_Send(char *format, ...)
 	Q_vsnprintf(msg, sizeof(msg), format, argptr);
 	va_end(argptr);
 
-	NET_OutOfBandPrint(NS_SERVER, addr, "%s", msg);
+	NET_OutOfBandPrint(NS_SERVER, &addr, "%s", msg);
 }
 
 /**

@@ -2484,7 +2484,7 @@ sysEvent_t Com_GetEvent(void)
  * @param[in] evFrom
  * @param[in] buf
  */
-void Com_RunAndTimeServerPacket(netadr_t *evFrom, msg_t *buf)
+void Com_RunAndTimeServerPacket(const netadr_t *evFrom, msg_t *buf)
 {
 	int t1 = 0;
 
@@ -2493,7 +2493,7 @@ void Com_RunAndTimeServerPacket(netadr_t *evFrom, msg_t *buf)
 		t1 = Sys_Milliseconds();
 	}
 
-	SV_PacketEvent(*evFrom, buf);
+	SV_PacketEvent(evFrom, buf);
 
 	if (com_speeds->integer)
 	{
@@ -2533,7 +2533,7 @@ int Com_EventLoop(void)
 			// manually send packet events for the loopback channel
 			while (NET_GetLoopPacket(NS_CLIENT, &evFrom, &buf))
 			{
-				CL_PacketEvent(evFrom, &buf);
+				CL_PacketEvent(&evFrom, &buf);
 			}
 
 			while (NET_GetLoopPacket(NS_SERVER, &evFrom, &buf))
