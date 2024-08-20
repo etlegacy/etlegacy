@@ -140,17 +140,27 @@ qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte 
 		scale   = (float)columns / image->width;
 	}
 
-	// this prevent ResampleTexture to it the 2048 limit (2K)
-	// but the image can be cropped due to reaching the limit
-	// also, it prevents chewing too much memory which could
-	// increase loading time
-	if (columns > 2048)
+	// cap to max texture size to avoid ResampleTexture errors, and keep memory usage sane
+	if (columns > 2048 || rows > 2048)
 	{
-		columns = 2048;
-		scale   = (float)columns / image->width;
+		float ratio = (float)image->width / image->height;
+
+		if (columns > rows)
+		{
+			columns = 2048;
+			rows    = (int)(2048 / ratio);
+		}
+		else
+		{
+			rows    = 2048;
+			columns = (int)(2048 * ratio);
+		}
+
+		scale = (float)columns / image->width;
 	}
 
-	rows = MIN(rows, 2048);
+	columns = MIN(columns, 2048);
+	rows    = MIN(rows, 2048);
 
 	numPixels = columns * rows * 4;
 
