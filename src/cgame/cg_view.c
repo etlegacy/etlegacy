@@ -2163,6 +2163,138 @@ static void CG_DrawSpawnpoints(void)
 }
 
 /**
+ * @brief CG_PlayAnnoucement
+ */
+static void CG_PlayAnnoucement()
+{
+	static gamestate_t oldGamestate = -1;
+	qboolean announceAtWarmupStart  = qfalse;
+
+	if (cgs.gamestate != oldGamestate)
+	{
+		if (cgs.gamestate == GS_WARMUP_COUNTDOWN && oldGamestate == GS_WARMUP)
+		{
+			announceAtWarmupStart = qtrue;
+		}
+		oldGamestate = cgs.gamestate;
+	}
+
+	// warmup annoucement
+	if (cg.warmup > 0)
+	{
+		static int processedWarmupCount = -1;
+		int sec                         = (cg.warmup - cg.time) / 1000;
+		int warmupAnnounceSec           = announceAtWarmupStart ? sec : 10;
+
+		// process warmup actions
+		if (sec <= warmupAnnounceSec && processedWarmupCount != cg.warmupCount)
+		{
+			if (cg_announcer.integer)
+			{
+				trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
+			}
+
+			CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
+
+			if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
+			{
+				CG_autoRecord_f();
+			}
+
+			processedWarmupCount = cg.warmupCount;
+		}
+	}
+
+	// timelimit warnings
+	if (cgs.timelimit > 0 && cgs.gamestate == GS_PLAYING && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
+	{
+		int msec = cg.time - cgs.levelStartTime;
+
+		if (cgs.timelimit > 5 && !(cg.timelimitWarnings & 1) && (msec > (cgs.timelimit - 5) * 60000) &&
+		    (msec < (cgs.timelimit - 5) * 60000 + 1000)) // 60 * 1000
+		{
+			cg.timelimitWarnings |= 1;
+			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS)
+			{
+				if (cgs.media.fiveMinuteSound_g == -1)
+				{
+					CG_SoundPlaySoundScript(cg.fiveMinuteSound_g, NULL, -1, qtrue);
+				}
+				else if (cgs.media.fiveMinuteSound_g)
+				{
+					trap_S_StartLocalSound(cgs.media.fiveMinuteSound_g, CHAN_ANNOUNCER);
+				}
+			}
+			else if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
+			{
+				if (cgs.media.fiveMinuteSound_a == -1)
+				{
+					CG_SoundPlaySoundScript(cg.fiveMinuteSound_a, NULL, -1, qtrue);
+				}
+				else if (cgs.media.fiveMinuteSound_a)
+				{
+					trap_S_StartLocalSound(cgs.media.fiveMinuteSound_a, CHAN_ANNOUNCER);
+				}
+			}
+		}
+		if (cgs.timelimit > 2 && !(cg.timelimitWarnings & 2) && (msec > (cgs.timelimit - 2) * 60000) &&
+		    (msec < (cgs.timelimit - 2) * 60000 + 1000)) // 60 * 1000
+		{
+			cg.timelimitWarnings |= 2;
+			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS)
+			{
+				if (cgs.media.twoMinuteSound_g == -1)
+				{
+					CG_SoundPlaySoundScript(cg.twoMinuteSound_g, NULL, -1, qtrue);
+				}
+				else if (cgs.media.twoMinuteSound_g)
+				{
+					trap_S_StartLocalSound(cgs.media.twoMinuteSound_g, CHAN_ANNOUNCER);
+				}
+			}
+			else if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
+			{
+				if (cgs.media.twoMinuteSound_a == -1)
+				{
+					CG_SoundPlaySoundScript(cg.twoMinuteSound_a, NULL, -1, qtrue);
+				}
+				else if (cgs.media.twoMinuteSound_a)
+				{
+					trap_S_StartLocalSound(cgs.media.twoMinuteSound_a, CHAN_ANNOUNCER);
+				}
+			}
+		}
+		if (!(cg.timelimitWarnings & 4) && (msec > (cgs.timelimit) * 60000 - 30000) &&
+		    (msec < cgs.timelimit * 60000 - 29000)) // 60 * 1000
+		{
+			cg.timelimitWarnings |= 4;
+			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS)
+			{
+				if (cgs.media.thirtySecondSound_g == -1)
+				{
+					CG_SoundPlaySoundScript(cg.thirtySecondSound_g, NULL, -1, qtrue);
+				}
+				else if (cgs.media.thirtySecondSound_g)
+				{
+					trap_S_StartLocalSound(cgs.media.thirtySecondSound_g, CHAN_ANNOUNCER);
+				}
+			}
+			else if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
+			{
+				if (cgs.media.thirtySecondSound_a == -1)
+				{
+					CG_SoundPlaySoundScript(cg.thirtySecondSound_a, NULL, -1, qtrue);
+				}
+				else if (cgs.media.thirtySecondSound_a)
+				{
+					trap_S_StartLocalSound(cgs.media.thirtySecondSound_a, CHAN_ANNOUNCER);
+				}
+			}
+		}
+	}
+}
+
+/**
  * @brief Generates and draws a game scene and status information at the given time.
  * @param[in] serverTime
  * @param[in] demoPlayback
@@ -2288,6 +2420,10 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 	// update cg.predictedPlayerState
 	CG_PredictPlayerState();
+
+	DEBUGTIME
+
+	CG_PlayAnnoucement();
 
 	DEBUGTIME
 
