@@ -53,7 +53,7 @@ static struct
 {
 	char authToken[AUTH_TOKEN_SIZE];
 	char username[AUTH_USERNAME_SIZE];
-} authData = { { 0 } };
+} authData = { { 0 }, { 0 } };
 
 cvar_t *auth_server;
 cvar_t *sv_auth;
