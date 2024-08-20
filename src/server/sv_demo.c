@@ -1167,7 +1167,7 @@ static void SV_DemoStartPlayback(void)
 		else if (!Q_stricmp(key, "sv_fps"))
 		{
 			fps = Q_atoi(value);
-			if (sv_fps->integer != fps && sv_fps > 0)
+			if (sv_fps->integer != fps && fps > 0)
 			{
 				Cvar_SetValue("sv_fps", fps);
 			}
