@@ -2532,7 +2532,7 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 
 	BG_EvaluateTrajectory(&item->pos, atTime, origin, qfalse, item->effect2Time);
 
-	return (vec3_distance(ps->origin, origin) < 36);
+	return (vec3_distance(ps->origin, origin) < (ps->maxs[0] - ps->mins[0]));
 }
 
 /**
