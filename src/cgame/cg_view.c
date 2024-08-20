@@ -2163,9 +2163,9 @@ static void CG_DrawSpawnpoints(void)
 }
 
 /**
- * @brief CG_PlayAnnoucement
+ * @brief CG_PlayAnnouncement
  */
-static void CG_PlayAnnoucement()
+static void CG_PlayAnnouncement()
 {
 	static gamestate_t oldGamestate = -1;
 	qboolean announceAtWarmupStart  = qfalse;
@@ -2423,7 +2423,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 	DEBUGTIME
 
-	CG_PlayAnnoucement();
+	CG_PlayAnnouncement();
 
 	DEBUGTIME
 
