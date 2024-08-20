@@ -659,7 +659,8 @@ void CG_DemoClick(int key, qboolean down)
 				CG_ZoomOut_f();
 			}
 			return;
-		}       // Roll over into timescale changes
+		} // Roll over into timescale changes
+	// fall through
 	case K_KP_LEFTARROW:
 		if (!down && cg_timescale.value > 0.1f)
 		{
@@ -682,7 +683,8 @@ void CG_DemoClick(int key, qboolean down)
 				CG_ZoomIn_f();
 			}
 			return;
-		}       // Roll over into timescale changes
+		} // Roll over into timescale changes
+	// fall through
 	case K_KP_RIGHTARROW:
 		if (!down)
 		{

@@ -893,7 +893,8 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 				{
 					depthBits = 8;
 				}
-			case 3: // fall through
+            // fall through    
+			case 3: 
 				if (stencilBits == 24)
 				{
 					stencilBits = 16;

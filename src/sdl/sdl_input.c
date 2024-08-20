@@ -1548,7 +1548,7 @@ static void IN_ProcessEvents(void)
 #ifdef __ANDROID__
 			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qfalse : qtrue), 0, NULL);
 #else
-            Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
+			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
 #endif
 		}
 		break;
@@ -1611,6 +1611,7 @@ static void IN_ProcessEvents(void)
 					break;
 				}
 				IN_WindowFocusLost();
+			// fall through
 			case SDL_WINDOWEVENT_LEAVE:
 				Key_ClearStates();
 				Cvar_SetValue("com_unfocused", 1);
@@ -1624,6 +1625,7 @@ static void IN_ProcessEvents(void)
 					break;
 				}
 			}
+			// fall through
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			{
 				Cvar_SetValue("com_unfocused", 0);

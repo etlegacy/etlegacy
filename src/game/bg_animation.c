@@ -1407,7 +1407,8 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 		{
 			break;
 		}
-	// fall through for ANIM_BP_BOTH
+    // for ANIM_BP_BOTH
+	// fall through
 	case ANIM_BP_TORSO:
 		if ((ps->torsoTimer < 50) || force)
 		{

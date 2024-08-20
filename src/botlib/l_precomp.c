@@ -1969,6 +1969,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, int *intvalue,
 					negativevalue = 1;
 					break;
 				}
+				break;
 			}
 
 			case P_MUL:

@@ -557,9 +557,11 @@ void Com_UpdateVarsClean(int flags)
 		Cvar_Set("com_updatemessage", "");
 		Cvar_Set("com_updatefiles", "");
 		autoupdate.masterDataChecked = 0;
+	// fall through
 	case CLEAR_FLAGS:
 		autoupdate.updateChecked = qfalse;
 		autoupdate.forceUpdate   = qfalse;
+	// fall through
 	default:
 		autoupdate.updateStarted = qfalse;
 		break;
