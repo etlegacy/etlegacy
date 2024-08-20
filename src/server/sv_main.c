@@ -140,7 +140,7 @@ cvar_t *sv_etltv_delay;
 cvar_t *sv_etltv_shownet;
 cvar_t *sv_etltv_queue_ms;
 
-static void SVC_Status(netadr_t from, qboolean force);
+static void SVC_Status(const netadr_t *from, qboolean force);
 
 /*
 =============================================================================
@@ -375,7 +375,7 @@ void SV_MasterHeartbeat(const char *msg)
 
 				if (res)
 				{
-					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(adr[i][0]));
+					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(&adr[i][0]));
 				}
 				else
 				{
@@ -400,7 +400,7 @@ void SV_MasterHeartbeat(const char *msg)
 
 				if (res)
 				{
-					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(adr[i][1]));
+					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(&adr[i][1]));
 				}
 				else
 				{
@@ -427,13 +427,13 @@ void SV_MasterHeartbeat(const char *msg)
 
 		if ((netenabled & NET_ENABLEV4) && adr[i][0].type != NA_BAD)
 		{
-			NET_OutOfBandPrint(NS_SERVER, adr[i][0], "heartbeat %s\n", msg);
+			NET_OutOfBandPrint(NS_SERVER, &adr[i][0], "heartbeat %s\n", msg);
 		}
 
 #ifdef FEATURE_IPV6
 		if (netenabled & NET_ENABLEV6 && adr[i][1].type != NA_BAD)
 		{
-			NET_OutOfBandPrint(NS_SERVER, adr[i][1], "heartbeat %s\n", msg);
+			NET_OutOfBandPrint(NS_SERVER, &adr[i][1], "heartbeat %s\n", msg);
 		}
 #endif
 	}
@@ -493,7 +493,7 @@ void SV_MasterGameCompleteStatus()
 
 				if (res)
 				{
-					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(adr[i][0]));
+					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(&adr[i][0]));
 				}
 				else
 				{
@@ -518,7 +518,7 @@ void SV_MasterGameCompleteStatus()
 
 				if (res)
 				{
-					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(adr[i][1]));
+					Com_Printf("%s resolved to %s\n", master, NET_AdrToString(&adr[i][1]));
 				}
 				else
 				{
@@ -545,13 +545,13 @@ void SV_MasterGameCompleteStatus()
 
 		if ((netenabled & NET_ENABLEV4) && adr[i][0].type != NA_BAD)
 		{
-			SVC_Status(adr[i][0], qtrue);
+			SVC_Status(&adr[i][0], qtrue);
 		}
 
 #ifdef FEATURE_IPV6
 		if (netenabled & NET_ENABLEV6 && adr[i][1].type != NA_BAD)
 		{
-			SVC_Status(adr[i][1], qtrue);
+			SVC_Status(&adr[i][1], qtrue);
 		}
 #endif
 	}
@@ -588,18 +588,22 @@ leakyBucket_t        outboundLeakyBucket;
  * @param[in] address
  * @return
  */
-static long SVC_HashForAddress(netadr_t address)
+static long SVC_HashForAddress(const netadr_t *address)
 {
-	byte         *ip  = NULL;
+	const byte   *ip  = NULL;
 	size_t       size = 0;
 	unsigned int i;
 	long         hash = 0;
 
-	switch (address.type)
+	switch (address->type)
 	{
-	case NA_IP:  ip = address.ip;  size = 4;
+	case NA_IP:
+		ip   = address->ip;
+		size = sizeof(address->ip);
 		break;
-	case NA_IP6: ip = address.ip6; size = 16;
+	case NA_IP6:
+		ip   = address->ip6;
+		size = sizeof(address->ip6);
 		break;
 	default:
 		break;
@@ -629,7 +633,7 @@ static long SVC_HashForAddress(netadr_t address)
  * @param[in] period
  * @return
  */
-static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int period)
+static leakyBucket_t *SVC_BucketForAddress(const netadr_t *address, int burst, int period)
 {
 	leakyBucket_t *bucket = NULL;
 	int           i;
@@ -641,13 +645,13 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 		switch (bucket->type)
 		{
 		case NA_IP:
-			if (memcmp(bucket->ipv._4, address.ip, 4) == 0)
+			if (memcmp(bucket->ipv._4, address->ip, sizeof(address->ip)) == 0)
 			{
 				return bucket;
 			}
 			break;
 		case NA_IP6:
-			if (memcmp(bucket->ipv._6, address.ip6, 16) == 0)
+			if (memcmp(bucket->ipv._6, address->ip6, sizeof(address->ip6)) == 0)
 			{
 				return bucket;
 			}
@@ -689,12 +693,14 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 
 		if (bucket->type == NA_BAD)
 		{
-			bucket->type = address.type;
-			switch (address.type)
+			bucket->type = address->type;
+			switch (address->type)
 			{
-			case NA_IP:  Com_Memcpy(bucket->ipv._4, address.ip, 4);
+			case NA_IP:
+				Com_Memcpy(bucket->ipv._4, address->ip, sizeof(address->ip));
 				break;
-			case NA_IP6: Com_Memcpy(bucket->ipv._6, address.ip6, 16);
+			case NA_IP6:
+				Com_Memcpy(bucket->ipv._6, address->ip6, sizeof(address->ip6));
 				break;
 			default:
 				break;
@@ -777,7 +783,7 @@ qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period)
  *
  * @note  Don't call if sv_protect 1 (SVP_IOQ3) flag is not set!
  */
-qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
+qboolean SVC_RateLimitAddress(const netadr_t *from, int burst, int period)
 {
 	leakyBucket_t *bucket = SVC_BucketForAddress(from, burst, period);
 
@@ -793,7 +799,7 @@ qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
  * @param[in] from
  * @param[in] force toggle rate limit checks
  */
-static void SVC_Status(netadr_t from, qboolean force)
+static void SVC_Status(const netadr_t *from, qboolean force)
 {
 	char          player[1024];
 	char          status[MAX_MSGLEN];
@@ -868,7 +874,7 @@ static void SVC_Status(netadr_t from, qboolean force)
  *
  * @param[in] from
  */
-void SVC_Info(netadr_t from)
+static void SVC_Info(const netadr_t *from)
 {
 	int  i, clients = 0, humans = 0;
 	char *tmpString;
@@ -986,7 +992,7 @@ void SVC_Info(netadr_t from)
  */
 static void SV_FlushRedirect(char *outputbuf)
 {
-	NET_OutOfBandPrint(NS_SERVER, svs.redirectAddress, "print\n%s", outputbuf);
+	NET_OutOfBandPrint(NS_SERVER, &svs.redirectAddress, "print\n%s", outputbuf);
 }
 
 /**
@@ -1000,7 +1006,7 @@ static void SV_FlushRedirect(char *outputbuf)
  *
  * @note Don't call this if sv_protect 2 flag is not set!
  */
-qboolean SV_CheckDRDoS(netadr_t from)
+static qboolean SV_CheckDRDoS(netadr_t from)
 {
 	int        i;
 	int        globalCount;
@@ -1017,7 +1023,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 	// with a source address being a spoofed LAN address.  Even if that's not
 	// the case, sending packets to other hosts in the LAN is not a big deal.
 	// NA_LOOPBACK qualifies as a LAN address.
-	if (Sys_IsLANAddress(from))
+	if (Sys_IsLANAddress(&from))
 	{
 		return qfalse;
 	}
@@ -1070,7 +1076,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 				// first frame of a server's life.
 				globalCount++;
 			}
-			if (NET_CompareBaseAdr(from, receipt->adr))
+			if (NET_CompareBaseAdr(&from, &receipt->adr))
 			{
 				specificCount++;
 			}
@@ -1097,7 +1103,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 		if (lastSpecificLogTime + 1000 <= timeNow)   // Limit one log every second.
 		{
 			SV_WriteAttackLog(va("Possible DRDoS attack to address %s, ignoring getinfo/getstatus connectionless packet\n",
-			                     NET_AdrToString(exactFrom)));
+			                     NET_AdrToString(&exactFrom)));
 			lastSpecificLogTime = timeNow;
 		}
 
@@ -1116,9 +1122,8 @@ qboolean SV_CheckDRDoS(netadr_t from)
  * Shift down the remaining args. Redirect all printfs.
  *
  * @param[in] from
- * @param msg - unused
  */
-static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
+static void SVC_RemoteCommand(const netadr_t *from)
 {
 	qboolean valid;
 	char     remaining[1024];
@@ -1161,7 +1166,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	}
 
 	// start redirecting all print outputs to the packet
-	svs.redirectAddress = from;
+	svs.redirectAddress = *from;
 	/* FIXME: our rcon redirection could be improved. Big rcon commands such as status
 	          lead to sending out of band packets on every single call to Com_Printf
 	          which leads to client overflows (also a Q3 issue)
@@ -1209,7 +1214,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
  * @param[in] from
  * @param[in] msg
  */
-static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
+static void SV_ConnectionlessPacket(const netadr_t *from, msg_t *msg)
 {
 	char *s;
 	char *c;
@@ -1240,7 +1245,7 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 			return;
 		}
 
-		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
+		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(*from))
 		{
 			return;
 		}
@@ -1255,7 +1260,7 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 			return;
 		}
 
-		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
+		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(*from))
 		{
 			return;
 		}
@@ -1263,7 +1268,7 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	}
 	else if (!Q_stricmp(c, "getchallenge"))
 	{
-		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
+		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(*from))
 		{
 			return;
 		}
@@ -1276,7 +1281,7 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	}
 	else if (!Q_stricmp(c, "rcon"))
 	{
-		SVC_RemoteCommand(from, msg);
+		SVC_RemoteCommand(from);
 	}
 	else if (!Q_stricmp(c, "disconnect"))
 	{
@@ -1301,14 +1306,14 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
  * @param[in] from
  * @param[in] msg
  */
-void SV_PacketEvent(netadr_t from, msg_t *msg)
+void SV_PacketEvent(const netadr_t *from, msg_t *msg)
 {
 	int      i;
 	client_t *cl;
 	int      qport;
 
 #ifdef DEDICATED
-	if (NET_CompareAdr(from, svclc.serverAddress))
+	if (NET_CompareAdr(from, &svclc.serverAddress))
 	{
 		CL_PacketEvent(from, msg);
 		return;
@@ -1340,7 +1345,7 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 		{
 			continue;
 		}
-		if (!NET_CompareBaseAdr(from, cl->netchan.remoteAddress))
+		if (!NET_CompareBaseAdr(from, &cl->netchan.remoteAddress))
 		{
 			continue;
 		}
@@ -1354,10 +1359,10 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 		// the IP port can't be used to differentiate them, because
 		// some address translating routers periodically change UDP
 		// port assignments
-		if (cl->netchan.remoteAddress.port != from.port)
+		if (cl->netchan.remoteAddress.port != from->port)
 		{
 			Com_Printf("SV_PacketEvent: fixing up a translated port\n");
-			cl->netchan.remoteAddress.port = from.port;
+			cl->netchan.remoteAddress.port = from->port;
 		}
 
 		// make sure it is a valid, in sequence packet

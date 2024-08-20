@@ -92,12 +92,12 @@ void Netchan_Init(int port)
  * @param[in] adr
  * @param[in] qport
  */
-void Netchan_Setup(netsrc_t sock, netchan_t *chan, netadr_t adr, int qport)
+void Netchan_Setup(netsrc_t sock, netchan_t *chan, const netadr_t *adr, int qport)
 {
 	Com_Memset(chan, 0, sizeof(*chan));
 
 	chan->sock             = sock;
-	chan->remoteAddress    = adr;
+	chan->remoteAddress    = *adr;
 	chan->qport            = qport;
 	chan->incomingSequence = 0;
 	chan->outgoingSequence = 1;
@@ -136,7 +136,7 @@ void Netchan_TransmitNextFragment(netchan_t *chan)
 	MSG_WriteData(&send, chan->unsentBuffer + chan->unsentFragmentStart, fragmentLength);
 
 	// send the datagram
-	NET_SendPacket(chan->sock, send.cursize, send.data, chan->remoteAddress);
+	NET_SendPacket(chan->sock, send.cursize, send.data, &chan->remoteAddress);
 
 	// Store send time and size of this packet for rate control
 	chan->lastSentTime = Sys_Milliseconds();
@@ -210,7 +210,7 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data)
 	MSG_WriteData(&send, data, length);
 
 	// send the datagram
-	NET_SendPacket(chan->sock, send.cursize, send.data, chan->remoteAddress);
+	NET_SendPacket(chan->sock, send.cursize, send.data, &chan->remoteAddress);
 
 	// Store send time and size of this packet for rate control
 	chan->lastSentTime = Sys_Milliseconds();
@@ -300,7 +300,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		if (showdrop->integer || showpackets->integer)
 		{
 			Com_Printf("%s:Out of order packet %i at %i\n"
-			           , NET_AdrToString(chan->remoteAddress)
+			           , NET_AdrToString(&chan->remoteAddress)
 			           , sequence
 			           , chan->incomingSequence);
 		}
@@ -314,7 +314,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		if (showdrop->integer || showpackets->integer)
 		{
 			Com_Printf("%s:Dropped %i packets at %i\n"
-			           , NET_AdrToString(chan->remoteAddress)
+			           , NET_AdrToString(&chan->remoteAddress)
 			           , chan->dropped
 			           , sequence);
 		}
@@ -340,7 +340,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 			if (showdrop->integer || showpackets->integer)
 			{
 				Com_Printf("%s:Dropped a message fragment\n"
-				           , NET_AdrToString(chan->remoteAddress));
+				           , NET_AdrToString(&chan->remoteAddress));
 			}
 			// we can still keep the part that we have so far,
 			// so we don't need to clear chan->fragmentLength
@@ -354,7 +354,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 			if (showdrop->integer || showpackets->integer)
 			{
 				Com_Printf("%s:illegal fragment length\n"
-				           , NET_AdrToString(chan->remoteAddress));
+				           , NET_AdrToString(&chan->remoteAddress));
 			}
 			return qfalse;
 		}
@@ -373,7 +373,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		if (chan->fragmentLength > msg->maxsize)
 		{
 			Com_Printf("%s:fragmentLength %i > msg->maxsize\n"
-			           , NET_AdrToString(chan->remoteAddress),
+			           , NET_AdrToString(&chan->remoteAddress),
 			           chan->fragmentLength);
 			return qfalse;
 		}
@@ -474,9 +474,8 @@ qboolean NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message
  * @param[in] sock
  * @param[in] length
  * @param[in] data
- * @param to - unused
  */
-void NET_SendLoopPacket(netsrc_t sock, int length, const void *data, netadr_t to)
+void NET_SendLoopPacket(netsrc_t sock, int length, const void *data)
 {
 	int        i;
 	loopback_t *loop;
@@ -500,7 +499,8 @@ extern cvar_t *cl_packetdelay;
 #endif
 
 typedef struct delaybuf delaybuf_t;
-struct delaybuf {
+struct delaybuf
+{
 	netsrc_t sock;
 	int length;
 	char data[MAX_PACKETLEN];
@@ -523,14 +523,14 @@ static delaybuf_t *cl_delaybuf_tail = NULL;
  * @param[in] data
  * @param[in] to
  */
-void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
+void NET_SendPacket(netsrc_t sock, int length, const void *data, const netadr_t *to)
 {
 	// network debugging
 	if (sv_packetloss->integer || sv_packetdelay->integer
 #ifndef DEDICATED
-			|| cl_packetloss->integer || cl_packetdelay->integer
+	    || cl_packetloss->integer || cl_packetdelay->integer
 #endif
-	)
+	    )
 	{
 		int        packetloss, packetdelay;
 		delaybuf_t **delaybuf_head, **delaybuf_tail;
@@ -539,22 +539,22 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 		{
 #ifndef DEDICATED
 		case NS_CLIENT:
-			packetloss = cl_packetloss->integer;
-			packetdelay = cl_packetdelay->integer;
+			packetloss    = cl_packetloss->integer;
+			packetdelay   = cl_packetdelay->integer;
 			delaybuf_head = &cl_delaybuf_head;
 			delaybuf_tail = &cl_delaybuf_tail;
 			break;
 #endif
 		case NS_SERVER:
-			packetloss = sv_packetloss->integer;
-			packetdelay = sv_packetdelay->integer;
+			packetloss    = sv_packetloss->integer;
+			packetdelay   = sv_packetdelay->integer;
 			delaybuf_head = &sv_delaybuf_head;
 			delaybuf_tail = &sv_delaybuf_tail;
 			break;
 		default:
 			// shut up compiler for dedicated
-			packetloss = 0;
-			packetdelay = 0;
+			packetloss    = 0;
+			packetdelay   = 0;
 			delaybuf_head = NULL;
 			delaybuf_tail = NULL;
 			break;
@@ -574,7 +574,7 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 
 		if (packetdelay)
 		{
-			int curtime;
+			int        curtime;
 			delaybuf_t *buf, *nextbuf;
 
 			curtime = Sys_Milliseconds();
@@ -589,7 +589,7 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 
 				if (showpackets->integer)
 				{
-					Com_Printf( "delayed packet(%dms) %4i\n", buf->time - curtime, buf->length);
+					Com_Printf("delayed packet(%dms) %4i\n", buf->time - curtime, buf->length);
 				}
 
 				switch (buf->to.type)
@@ -598,15 +598,15 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 				case NA_BAD:
 					break;
 				case NA_LOOPBACK:
-					NET_SendLoopPacket(buf->sock, buf->length, buf->data, buf->to);
+					NET_SendLoopPacket(buf->sock, buf->length, buf->data);
 					break;
 				default:
-					Sys_SendPacket(buf->length, buf->data, buf->to);
+					Sys_SendPacket(buf->length, buf->data, &buf->to);
 					break;
 				}
 
 				// remove from queue
-				nextbuf = buf->next;
+				nextbuf        = buf->next;
 				*delaybuf_head = nextbuf;
 				if (!*delaybuf_head)
 				{
@@ -619,13 +619,13 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 			buf = (delaybuf_t *) Z_Malloc(sizeof(*buf));
 			if (!buf)
 			{
-				Com_Error(ERR_FATAL, "Couldn't allocate packet delay buffer\n" );
+				Com_Error(ERR_FATAL, "Couldn't allocate packet delay buffer\n");
 			}
 
-			buf->sock = sock;
+			buf->sock   = sock;
 			buf->length = length;
 			Com_Memcpy(buf->data, data, length);
-			buf->to = to;
+			buf->to   = *to;
 			buf->time = curtime;
 			buf->next = NULL;
 
@@ -649,16 +649,16 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 		Com_Printf("send packet %4i\n", length);
 	}
 
-	if (to.type == NA_LOOPBACK)
+	if (to->type == NA_LOOPBACK)
 	{
-		NET_SendLoopPacket(sock, length, data, to);
+		NET_SendLoopPacket(sock, length, data);
 		return;
 	}
-	if (to.type == NA_BOT)
+	if (to->type == NA_BOT)
 	{
 		return;
 	}
-	if (to.type == NA_BAD)
+	if (to->type == NA_BAD)
 	{
 		return;
 	}
@@ -672,7 +672,7 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
  * @param[in] adr
  * @param[in] format
  */
-void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...)
+void QDECL NET_OutOfBandPrint(netsrc_t sock, const netadr_t *adr, const char *format, ...)
 {
 	va_list argptr;
 	char    string[MAX_MSGLEN];
@@ -699,7 +699,7 @@ void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, .
  * @param[in] format
  * @param[in] len
  */
-void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len)
+void QDECL NET_OutOfBandData(netsrc_t sock, const netadr_t *adr, const char *format, int len)
 {
 	byte  string[MAX_MSGLEN * 2];
 	int   i;

@@ -569,7 +569,7 @@ struct leakyBucket_s
 #define MAX_HASHES          1024
 
 qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period);
-qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period);
+qboolean SVC_RateLimitAddress(const netadr_t *from, int burst, int period);
 extern leakyBucket_t outboundLeakyBucket;
 
 // sv_init.c
@@ -590,9 +590,9 @@ void SV_WriteAttackLog(const char *log);
 #endif
 
 // sv_client.c
-void SV_GetChallenge(netadr_t from);
-qboolean SV_CheckChallenge(netadr_t from);
-void SV_DirectConnect(netadr_t from);
+void SV_GetChallenge(const netadr_t *from);
+qboolean SV_CheckChallenge(const netadr_t *from);
+void SV_DirectConnect(const netadr_t *from);
 void SV_ExecuteClientMessage(client_t *cl, msg_t *msg);
 void SV_UserinfoChanged(client_t *cl);
 void SV_UpdateUserinfo_f(client_t *cl);
@@ -606,7 +606,7 @@ int SV_SendQueuedMessages(void);
 
 // sv_ccmds.c
 void SV_Heartbeat_f(void);
-qboolean SV_TempBanIsBanned(netadr_t address, char *guid);
+qboolean SV_TempBanIsBanned(const netadr_t *address, char *guid);
 void SV_TempBan(client_t *client, int length);
 void SV_UptimeReset(void);
 
@@ -987,10 +987,10 @@ int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps);
 void SV_CL_Frame(int frameMsec);
 void SV_CL_RunFrame(void);
 
-void SV_CL_ConnectionlessPacket(netadr_t from, msg_t *msg);
-void SV_CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg);
-void SV_CL_ServerInfoPacket(netadr_t from, msg_t *msg);
-void SV_CL_DisconnectPacket(netadr_t from);
+void SV_CL_ConnectionlessPacket(const netadr_t *from, msg_t *msg);
+void SV_CL_ServerInfoPacketCheck(const netadr_t *from, msg_t *msg);
+void SV_CL_ServerInfoPacket(const netadr_t *from, msg_t *msg);
+void SV_CL_DisconnectPacket(const netadr_t *from);
 
 // sv_cl_net_chan.c
 void SV_CL_Netchan_Transmit(netchan_t *chan, msg_t *msg);

@@ -452,7 +452,7 @@ void SV_TempBan(client_t *client, int length)
  * @param[in] guid
  * @return
  */
-qboolean SV_TempBanIsBanned(netadr_t address, char *guid)
+qboolean SV_TempBanIsBanned(const netadr_t *address, char *guid)
 {
 	int i;
 
@@ -460,7 +460,7 @@ qboolean SV_TempBanIsBanned(netadr_t address, char *guid)
 	{
 		if (svs.tempBans[i].endtime && svs.tempBans[i].endtime > svs.time)
 		{
-			if (NET_CompareBaseAdr(address, svs.tempBans[i].adr))
+			if (NET_CompareBaseAdr(address, &svs.tempBans[i].adr))
 			{
 				return qtrue;
 			}
@@ -545,7 +545,7 @@ static void SV_Status_f(void)
 			Com_Printf("%4i ", ping);
 		}
 
-		s = NET_AdrToString(cl->netchan.remoteAddress);
+		s = NET_AdrToString(&cl->netchan.remoteAddress);
 
 		// extend the name length by couting extra color characters to keep well formated output
 		maxNameLength = sizeof(cl->name) + (strlen(cl->name) - Q_PrintStrlen(cl->name)) + 1;

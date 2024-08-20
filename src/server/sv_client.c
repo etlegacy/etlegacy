@@ -53,7 +53,7 @@ static void SV_CloseDownload(client_t *cl);
  * the server with invalid connection IPs. With a challenge,
  * they must give a valid IP address.
  */
-void SV_GetChallenge(netadr_t from)
+void SV_GetChallenge(const netadr_t *from)
 {
 	int         i;
 	int         oldest;
@@ -92,7 +92,7 @@ void SV_GetChallenge(netadr_t from)
 	challenge = &svs.challenges[0];
 	for (i = 0 ; i < MAX_CHALLENGES ; i++, challenge++)
 	{
-		if (!challenge->connected && NET_CompareAdr(from, challenge->adr))
+		if (!challenge->connected && NET_CompareAdr(from, &challenge->adr))
 		{
 			break;
 		}
@@ -109,7 +109,7 @@ void SV_GetChallenge(netadr_t from)
 		challenge = &svs.challenges[oldest];
 
 		Com_RandomBytes(&challenge->challenge, sizeof(int32_t));
-		challenge->adr       = from;
+		challenge->adr       = *from;
 		challenge->firstTime = svs.time;
 		challenge->firstPing = 0;
 		challenge->time      = svs.time;
@@ -138,7 +138,7 @@ void SV_GetChallenge(netadr_t from)
  * So we let localhost connect since bots don't connect from SV_DirectConnect
  * where SV_isClientIPValidToConnect is done.
  */
-static qboolean SV_isClientIPValidToConnect(netadr_t from)
+static qboolean SV_isClientIPValidToConnect(const netadr_t *from)
 {
 	client_t *clientTmp;
 	int      count = 1;       // we count as the first one
@@ -170,7 +170,7 @@ static qboolean SV_isClientIPValidToConnect(netadr_t from)
 		}
 
 		// Don't compare the port - just the IP
-		if (NET_CompareBaseAdr(from, clientTmp->netchan.remoteAddress))
+		if (NET_CompareBaseAdr(from, &clientTmp->netchan.remoteAddress))
 		{
 			++count;
 			if (count > max)
@@ -192,7 +192,7 @@ static qboolean SV_isClientIPValidToConnect(netadr_t from)
  * @param[in] from
  * @param[in] userinfo
  */
-static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
+static qboolean SV_IsValidUserinfo(const netadr_t *from, const char *userinfo)
 {
 	// FIXME: add some logging in for admins? we only do developer prints when a client is filtered
 	int version;
@@ -265,7 +265,7 @@ static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
  * @param[in] from
  * @param[in] userinfo
  */
-static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
+static qboolean SV_isValidClient(const netadr_t *from, const char *userinfo)
 {
 	char *guid;
 
@@ -278,7 +278,7 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 	}
 
 	// server bots are always valid (with valid userinfo)
-	if (from.type == NA_BOT)
+	if (from->type == NA_BOT)
 	{
 		return qtrue;
 	}
@@ -316,7 +316,7 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 	return qtrue;
 }
 
-qboolean SV_CheckChallenge(netadr_t from)
+qboolean SV_CheckChallenge(const netadr_t *from)
 {
 	int i, challenge;
 
@@ -332,7 +332,7 @@ qboolean SV_CheckChallenge(netadr_t from)
 	{
 		for (i = 0; i < MAX_CHALLENGES; i++)
 		{
-			if (NET_CompareAdr(from, svs.challenges[i].adr))
+			if (NET_CompareAdr(from, &svs.challenges[i].adr))
 			{
 				if (challenge == svs.challenges[i].challenge && !svs.challenges[i].connected)
 				{
@@ -354,7 +354,7 @@ qboolean SV_CheckChallenge(netadr_t from)
  *
  * @param[in] from
  */
-void SV_DirectConnect(netadr_t from)
+void SV_DirectConnect(const netadr_t *from)
 {
 	char     userinfo[MAX_INFO_STRING];
 	int      i, count = 0;
@@ -411,8 +411,8 @@ void SV_DirectConnect(netadr_t from)
 		//continue;
 		//}
 
-		if (NET_CompareBaseAdr(from, cl->netchan.remoteAddress)
-		    && (cl->netchan.qport == qport || from.port == cl->netchan.remoteAddress.port))
+		if (NET_CompareBaseAdr(from, &cl->netchan.remoteAddress)
+		    && (cl->netchan.qport == qport || from->port == cl->netchan.remoteAddress.port))
 		{
 			if ((svs.time - cl->lastConnectTime) < sv_reconnectlimit->integer * 1000)
 			{
@@ -433,7 +433,7 @@ void SV_DirectConnect(netadr_t from)
 
 		for (i = 0 ; i < MAX_CHALLENGES ; i++)
 		{
-			if (NET_CompareAdr(from, svs.challenges[i].adr))
+			if (NET_CompareAdr(from, &svs.challenges[i].adr))
 			{
 				if (challenge == svs.challenges[i].challenge)
 				{
@@ -495,9 +495,9 @@ void SV_DirectConnect(netadr_t from)
 		{
 			continue;
 		}
-		if (NET_CompareBaseAdr(from, cl->netchan.remoteAddress)
+		if (NET_CompareBaseAdr(from, &cl->netchan.remoteAddress)
 		    && (cl->netchan.qport == qport
-		        || from.port == cl->netchan.remoteAddress.port)
+		        || from->port == cl->netchan.remoteAddress.port)
 		    && !cl->demoClient)
 		{
 			Com_Printf("%s:reconnect\n", NET_AdrToString(from));
@@ -767,7 +767,7 @@ void SV_DropClient(client_t *drop, const char *reason)
 
 		for (i = 0 ; i < MAX_CHALLENGES ; i++, challenge++)
 		{
-			if (NET_CompareAdr(drop->netchan.remoteAddress, challenge->adr))
+			if (NET_CompareAdr(&drop->netchan.remoteAddress, &challenge->adr))
 			{
 				challenge->connected = qfalse;
 				break;
@@ -1960,7 +1960,7 @@ void SV_UserinfoChanged(client_t *cl)
 
 	// if the client is on the same subnet as the server and we aren't running an
 	// internet public server, assume they don't need a rate choke
-	if (Sys_IsLANAddress(cl->netchan.remoteAddress) && com_dedicated->integer != 2 && sv_lanForceRate->integer == 1)
+	if (Sys_IsLANAddress(&cl->netchan.remoteAddress) && com_dedicated->integer != 2 && sv_lanForceRate->integer == 1)
 	{
 		cl->rate = 99999;   // lans should not rate limit
 	}
@@ -2032,9 +2032,9 @@ void SV_UserinfoChanged(client_t *cl)
 	// - modified to always keep this consistent, instead of only
 	// when "ip" is 0-length, so users can't supply their own IP
 	//Com_DPrintf("Maintain IP in userinfo for '%s'\n", cl->name);
-	if (!NET_IsLocalAddress(cl->netchan.remoteAddress))
+	if (!NET_IsLocalAddress(&cl->netchan.remoteAddress))
 	{
-		Info_SetValueForKey(cl->userinfo, "ip", NET_AdrToString(cl->netchan.remoteAddress));
+		Info_SetValueForKey(cl->userinfo, "ip", NET_AdrToString(&cl->netchan.remoteAddress));
 	}
 	else
 	{

@@ -79,7 +79,7 @@ void Com_CheckAutoUpdate(void)
 
 		if (res)
 		{
-			Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.autoupdateServer));
+			Com_Printf("resolved to %s\n", NET_AdrToString(&autoupdate.autoupdateServer));
 		}
 		else
 		{
@@ -106,7 +106,7 @@ void Com_CheckAutoUpdate(void)
 #else
 		NS_CLIENT
 #endif  // DEDICATED
-		, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
+		, &autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
 	autoupdate.updateChecked = qtrue;
 
@@ -188,7 +188,7 @@ void Com_GetAutoUpdate(void)
 	Com_Memcpy(&clc.serverAddress, &autoupdate.autoupdateServer, sizeof(netadr_t));
 
 	Com_DPrintf("%s resolved to %s\n", cls.servername,
-	            NET_AdrToString(clc.serverAddress));
+	            NET_AdrToString(&clc.serverAddress));
 
 	cls.state = CA_DISCONNECTED;
 	Cvar_Set("ui_connecting", "1");
@@ -363,7 +363,7 @@ qboolean Com_InitUpdateDownloads(void)
 #ifdef FEATURE_AUTOUPDATE
 	if (autoupdate.updateStarted
 #ifndef DEDICATED
-	    && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
+	    && NET_CompareAdr(&autoupdate.autoupdateServer, &clc.serverAddress)
 #endif
 	    )
 	{
@@ -440,12 +440,12 @@ qboolean Com_InitUpdateDownloads(void)
  * @param[in] from
  * @return
  */
-qboolean Com_UpdatePacketEvent(netadr_t from)
+qboolean Com_UpdatePacketEvent(const netadr_t *from)
 {
 #ifdef FEATURE_AUTOUPDATE
 	static qboolean autoupdateRedirected = qfalse;
 	// Update server doesn't understand netchan packets
-	if (NET_CompareAdr(autoupdate.autoupdateServer, from))
+	if (NET_CompareAdr(&autoupdate.autoupdateServer, from))
 	{
 		if (autoupdate.updateStarted && !autoupdateRedirected)
 		{
@@ -463,7 +463,7 @@ qboolean Com_UpdatePacketEvent(netadr_t from)
  * @brief Com_UpdateInfoPacket
  * @param[in] from
  */
-void Com_UpdateInfoPacket(netadr_t from)
+void Com_UpdateInfoPacket(const netadr_t *from)
 {
 	if (autoupdate.autoupdateServer.type == NA_BAD)
 	{
@@ -472,15 +472,15 @@ void Com_UpdateInfoPacket(netadr_t from)
 	}
 
 	Com_DPrintf("Update server resolved to %s\n",
-	            NET_AdrToString(autoupdate.autoupdateServer));
+	            NET_AdrToString(&autoupdate.autoupdateServer));
 
-	if (!NET_CompareAdr(from, autoupdate.autoupdateServer))
+	if (!NET_CompareAdr(from, &autoupdate.autoupdateServer))
 	{
 #ifdef DEDICATED
 		SV_WriteAttackLog(va("bad update info packet from %s\n", NET_AdrToString(from)));
 #else
 		Com_DPrintf("Com_UpdateInfoPacket: Ignoring packet from %s, because the update server is located at %s\n",
-		            NET_AdrToString(from), NET_AdrToString(autoupdate.autoupdateServer));
+		            NET_AdrToString(from), NET_AdrToString(&autoupdate.autoupdateServer));
 #endif
 		return;
 	}
@@ -531,7 +531,7 @@ void Com_CheckUpdateStarted(void)
 	// If we have completed a connection to the Auto-Update server...
 	if (autoupdate.updateChecked
 #ifndef DEDICATED
-	    && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
+	    && NET_CompareAdr(&autoupdate.autoupdateServer, &clc.serverAddress)
 #endif
 	    )
 	{

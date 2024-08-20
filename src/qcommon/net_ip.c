@@ -239,7 +239,7 @@ char *NET_ErrorString(void)
  * @param[in] a
  * @param[out] s
  */
-static void NetadrToSockadr(netadr_t *a, struct sockaddr *s)
+static void NetadrToSockadr(const netadr_t *a, struct sockaddr *s)
 {
 	switch (a->type)
 	{
@@ -510,25 +510,26 @@ qboolean Sys_StringToAdr(const char *s, netadr_t *a, netadrtype_t family)
  * @param[in] netmask
  * @return
  */
-qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
+qboolean NET_CompareBaseAdrMask(const netadr_t *a, const netadr_t *b, int netmask)
 {
-	qboolean differed;
-	byte     cmpmask, *addra, *addrb;
-	int      curbyte;
+	qboolean   differed;
+	byte       cmpmask;
+	const byte *addra, *addrb;
+	int        curbyte;
 
-	if (a.type != b.type)
+	if (a->type != b->type)
 	{
 		return qfalse;
 	}
 
-	switch (a.type)
+	switch (a->type)
 	{
 	case NA_LOOPBACK:
 		return qtrue;
 	case NA_IP:
 	{
-		addra = (byte *) &a.ip;
-		addrb = (byte *) &b.ip;
+		addra = (const byte *) &a->ip;
+		addrb = (const byte *) &b->ip;
 
 		if (netmask < 0 || netmask > 32)
 		{
@@ -539,8 +540,8 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 #ifdef FEATURE_IPV6
 	case NA_IP6:
 	{
-		addra = (byte *) &a.ip6;
-		addrb = (byte *) &b.ip6;
+		addra = (const byte *) &a->ip6;
+		addrb = (const byte *) &b->ip6;
 
 		if (netmask < 0 || netmask > 128)
 		{
@@ -550,7 +551,7 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 	break;
 #endif
 	default:
-		Com_Printf("NET_CompareBaseAdrMask: bad address type a: %i (b: %i, netmask: %i)\n", a.type, b.type, netmask);
+		Com_Printf("NET_CompareBaseAdrMask: bad address type a: %i (b: %i, netmask: %i)\n", a->type, b->type, netmask);
 		return qfalse;
 	}
 
@@ -598,7 +599,7 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
  * @param[in] b
  * @return
  */
-qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b)
+qboolean NET_CompareBaseAdr(const netadr_t *a, const netadr_t *b)
 {
 	return NET_CompareBaseAdrMask(a, b, -1);
 }
@@ -608,11 +609,11 @@ qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b)
  * @param[in] a
  * @return
  */
-const char *NET_AdrToStringNoPort(netadr_t a)
+const char *NET_AdrToStringNoPort(const netadr_t *a)
 {
 	static char s[NET_ADDRSTRMAXLEN];
 
-	switch (a.type)
+	switch (a->type)
 	{
 	case NA_LOOPBACK:
 		Com_sprintf(s, sizeof(s), "loopback");
@@ -621,7 +622,7 @@ const char *NET_AdrToStringNoPort(netadr_t a)
 		Com_sprintf(s, sizeof(s), "bot");
 		break;
 	case NA_IP:
-		Com_sprintf(s, sizeof(s), "%u.%u.%u.%u", a.ip[0], a.ip[1], a.ip[2], a.ip[3]);
+		Com_sprintf(s, sizeof(s), "%u.%u.%u.%u", a->ip[0], a->ip[1], a->ip[2], a->ip[3]);
 		break;
 #ifdef FEATURE_IPV6
 	case NA_IP6:
@@ -629,7 +630,7 @@ const char *NET_AdrToStringNoPort(netadr_t a)
 		struct sockaddr_storage sadr;
 
 		Com_Memset(&sadr, 0, sizeof(sadr));
-		NetadrToSockadr(&a, (struct sockaddr *) &sadr);
+		NetadrToSockadr(a, (struct sockaddr *) &sadr);
 		Sys_SockaddrToString(s, sizeof(s), (struct sockaddr *) &sadr);
 		break;
 	}
@@ -640,7 +641,7 @@ const char *NET_AdrToStringNoPort(netadr_t a)
 		Com_sprintf(s, sizeof(s), "invalid");
 		break;
 	default:
-		Com_Printf("NET_AdrToStringNoPort: Unknown address type: %i\n", a.type);
+		Com_Printf("NET_AdrToStringNoPort: Unknown address type: %i\n", a->type);
 		Com_sprintf(s, sizeof(s), "unknown");
 		break;
 	}
@@ -653,11 +654,11 @@ const char *NET_AdrToStringNoPort(netadr_t a)
  * @param[in] a
  * @return
  */
-const char *NET_AdrToString(netadr_t a)
+const char *NET_AdrToString(const netadr_t *a)
 {
 	static char s[NET_ADDRSTRMAXLEN_EXT];
 
-	switch (a.type)
+	switch (a->type)
 	{
 	case NA_LOOPBACK:
 		Com_sprintf(s, sizeof(s), "loopback");
@@ -666,11 +667,11 @@ const char *NET_AdrToString(netadr_t a)
 		Com_sprintf(s, sizeof(s), "bot");
 		break;
 	case NA_IP:
-		Com_sprintf(s, sizeof(s), "%u.%u.%u.%u:%hu", a.ip[0], a.ip[1], a.ip[2], a.ip[3], BigShort(a.port));
+		Com_sprintf(s, sizeof(s), "%u.%u.%u.%u:%hu", a->ip[0], a->ip[1], a->ip[2], a->ip[3], BigShort(a->port));
 		break;
 #ifdef FEATURE_IPV6
 	case NA_IP6:
-		Com_sprintf(s, sizeof(s), "[%s]:%hu", NET_AdrToStringNoPort(a), ntohs(a.port));
+		Com_sprintf(s, sizeof(s), "[%s]:%hu", NET_AdrToStringNoPort(a), ntohs(a->port));
 		break;
 #endif
 	case NA_BAD: // Invalid, unknown or non-applicable address type
@@ -678,7 +679,7 @@ const char *NET_AdrToString(netadr_t a)
 		Com_sprintf(s, sizeof(s), "invalid");
 		break;
 	default:
-		Com_Printf("NET_AdrToString: Unknown address type: %i\n", a.type);
+		Com_Printf("NET_AdrToString: Unknown address type: %i\n", a->type);
 		Com_sprintf(s, sizeof(s), "unknown");
 		break;
 	}
@@ -692,20 +693,20 @@ const char *NET_AdrToString(netadr_t a)
  * @param[in] b
  * @return
  */
-qboolean NET_CompareAdr(netadr_t a, netadr_t b)
+qboolean NET_CompareAdr(const netadr_t *a, const netadr_t *b)
 {
 	if (!NET_CompareBaseAdr(a, b))
 	{
 		return qfalse;
 	}
 
-	if (a.type == NA_IP
+	if (a->type == NA_IP
 #ifdef FEATURE_IPV6
-	    || a.type == NA_IP6
+	    || a->type == NA_IP6
 #endif
 	    )
 	{
-		if (a.port == b.port)
+		if (a->port == b->port)
 		{
 			return qtrue;
 		}
@@ -723,9 +724,9 @@ qboolean NET_CompareAdr(netadr_t a, netadr_t b)
  * @param[in] adr
  * @return
  */
-qboolean NET_IsLocalAddress(netadr_t adr)
+qboolean NET_IsLocalAddress(const netadr_t *adr)
 {
-	return adr.type == NA_LOOPBACK;
+	return adr->type == NA_LOOPBACK;
 }
 
 /**
@@ -795,7 +796,7 @@ qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message, fd_set *fdr)
 
 			if (ret >= net_message->maxsize)
 			{
-				Com_Printf("Oversize packet from %s\n", NET_AdrToString(*net_from));
+				Com_Printf("Oversize packet from %s\n", NET_AdrToString(net_from));
 				return qfalse;
 			}
 
@@ -826,7 +827,7 @@ qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message, fd_set *fdr)
 
 			if (ret >= net_message->maxsize)
 			{
-				Com_Printf("Oversize packet from %s\n", NET_AdrToString(*net_from));
+				Com_Printf("Oversize packet from %s\n", NET_AdrToString(net_from));
 				return qfalse;
 			}
 
@@ -856,7 +857,7 @@ qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message, fd_set *fdr)
 
 			if (ret >= net_message->maxsize)
 			{
-				Com_Printf("Oversize packet from %s\n", NET_AdrToString(*net_from));
+				Com_Printf("Oversize packet from %s\n", NET_AdrToString(net_from));
 				return qfalse;
 			}
 
@@ -879,43 +880,43 @@ static char socksBuf[4096];
  * @param[in] data
  * @param[in] to
  */
-void Sys_SendPacket(int length, const void *data, netadr_t to)
+void Sys_SendPacket(int length, const void *data, const netadr_t *to)
 {
 	int                     ret = SOCKET_ERROR;
 	struct sockaddr_storage addr;
 
-	if (to.type != NA_BROADCAST && to.type != NA_IP
+	if (to->type != NA_BROADCAST && to->type != NA_IP
 #ifdef FEATURE_IPV6
-	    && to.type != NA_IP6 && to.type != NA_MULTICAST6
+	    && to->type != NA_IP6 && to->type != NA_MULTICAST6
 #endif
 	    )
 	{
 		Com_Error(ERR_FATAL, "Sys_SendPacket: bad address type");
 	}
 
-	if ((ip_socket == INVALID_SOCKET && to.type == NA_IP) ||
-	    (ip_socket == INVALID_SOCKET && to.type == NA_BROADCAST))
+	if ((ip_socket == INVALID_SOCKET && to->type == NA_IP) ||
+	    (ip_socket == INVALID_SOCKET && to->type == NA_BROADCAST))
 	{
 		return;
 	}
 
 #ifdef FEATURE_IPV6
-	if ((ip6_socket == INVALID_SOCKET && to.type == NA_IP6) ||
-	    (ip6_socket == INVALID_SOCKET && to.type == NA_MULTICAST6))
+	if ((ip6_socket == INVALID_SOCKET && to->type == NA_IP6) ||
+	    (ip6_socket == INVALID_SOCKET && to->type == NA_MULTICAST6))
 	{
 		return;
 	}
 
-	if (to.type == NA_MULTICAST6 && (net_enabled->integer & NET_DISABLEMCAST))
+	if (to->type == NA_MULTICAST6 && (net_enabled->integer & NET_DISABLEMCAST))
 	{
 		return;
 	}
 #endif
 
 	Com_Memset(&addr, 0, sizeof(addr));
-	NetadrToSockadr(&to, (struct sockaddr *) &addr);
+	NetadrToSockadr(to, (struct sockaddr *) &addr);
 
-	if (usingSocks && to.type == NA_IP)
+	if (usingSocks && to->type == NA_IP)
 	{
 		socksBuf[0]            = 0; // reserved
 		socksBuf[1]            = 0;
@@ -950,7 +951,7 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 		}
 
 		// some PPP links do not allow broadcasts and return an error
-		if ((err == EADDRNOTAVAIL) && ((to.type == NA_BROADCAST)))
+		if ((err == EADDRNOTAVAIL) && ((to->type == NA_BROADCAST)))
 		{
 			return;
 		}
@@ -980,43 +981,43 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
  *
  * @todo docu IPv6
  */
-qboolean Sys_IsLANAddress(netadr_t adr)
+qboolean Sys_IsLANAddress(const netadr_t *adr)
 {
-	int      index, run, addrsize = 0;
-	qboolean differed;
-	byte     *compareadr = NULL, *comparemask = NULL, *compareip = NULL;
+	int        index, run, addrsize = 0;
+	qboolean   differed;
+	const byte *compareadr = NULL, *comparemask = NULL, *compareip = NULL;
 
-	switch (adr.type)
+	switch (adr->type)
 	{
 	case NA_LOOPBACK:
 		return qtrue;
 	case NA_IP:
 		// RFC1918:
-		if (adr.ip[0] == 10)
+		if (adr->ip[0] == 10)
 		{
 			return qtrue;
 		}
-		if (adr.ip[0] == 172 && (adr.ip[1] & 0xf0) == 16)
+		if (adr->ip[0] == 172 && (adr->ip[1] & 0xf0) == 16)
 		{
 			return qtrue;
 		}
-		if (adr.ip[0] == 192 && adr.ip[1] == 168)
+		if (adr->ip[0] == 192 && adr->ip[1] == 168)
 		{
 			return qtrue;
 		}
 
-		if (adr.ip[0] == 127)
+		if (adr->ip[0] == 127)
 		{
 			return qtrue;
 		}
 		break;
 	case NA_IP6:
 #ifdef FEATURE_IPV6
-		if (adr.ip6[0] == 0xfe && (adr.ip6[1] & 0xc0) == 0x80)
+		if (adr->ip6[0] == 0xfe && (adr->ip6[1] & 0xc0) == 0x80)
 		{
 			return qtrue;
 		}
-		if ((adr.ip6[0] & 0xfe) == 0xfc)
+		if ((adr->ip6[0] & 0xfe) == 0xfc)
 		{
 			return qtrue;
 		}
@@ -1031,15 +1032,15 @@ qboolean Sys_IsLANAddress(netadr_t adr)
 	// Now compare against the networks this computer is member of.
 	for (index = 0; index < numIP; index++)
 	{
-		if (localIP[index].type == adr.type)
+		if (localIP[index].type == adr->type)
 		{
-			if (adr.type == NA_IP)
+			if (adr->type == NA_IP)
 			{
 				compareip   = (byte *) &((struct sockaddr_in *) &localIP[index].addr)->sin_addr.s_addr;
 				comparemask = (byte *) &((struct sockaddr_in *) &localIP[index].netmask)->sin_addr.s_addr;
-				compareadr  = adr.ip;
+				compareadr  = adr->ip;
 
-				addrsize = sizeof(adr.ip);
+				addrsize = sizeof(adr->ip);
 			}
 			else
 			{
@@ -1048,9 +1049,9 @@ qboolean Sys_IsLANAddress(netadr_t adr)
 
 				compareip   = (byte *) &((struct sockaddr_in6 *) &localIP[index].addr)->sin6_addr;
 				comparemask = (byte *) &((struct sockaddr_in6 *) &localIP[index].netmask)->sin6_addr;
-				compareadr  = adr.ip6;
+				compareadr  = adr->ip6;
 
-				addrsize = sizeof(adr.ip6);
+				addrsize = sizeof(adr->ip6);
 #endif
 			}
 
@@ -2118,7 +2119,7 @@ void NET_Event(fd_set *fdr)
 			}
 			else
 			{
-				CL_PacketEvent(from, &netmsg);
+				CL_PacketEvent(&from, &netmsg);
 			}
 		}
 		else
