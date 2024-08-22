@@ -1285,7 +1285,7 @@ void CG_AddSmokeSprites(void)
 		// fadeout
 		if (smokesprite->dist > (radius * .5f * .8f))
 		{
-			color[3] = (byte)(smokesprite->colour[3] - smokesprite->colour[3] * ((smokesprite->dist - (radius * .5f * .8f)) / ((radius * .5f) - (radius * .5f * .8f)))) * 0xff;
+			color[3] = (byte)((smokesprite->colour[3] - smokesprite->colour[3] * ((smokesprite->dist - (radius * .5f * .8f)) / ((radius * .5f) - (radius * .5f * .8f)))) * 0xff);
 		}
 		else
 		{
