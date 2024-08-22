@@ -457,7 +457,7 @@ float Q_acos(float c);
  */
 static inline int Q_LCG(int x)
 {
-	return (int)(69069U * x + 1U);
+	return (int)((69069U * x + 1U) & 0x7FFFFFFF);
 }
 
 int Q_RandomInt(int *seed);
