@@ -3372,7 +3372,7 @@ void CG_UpdateFlamethrowerSounds(void);
 void CG_InitLocalEntities(void);
 localEntity_t *CG_AllocLocalEntity(void);
 localEntity_t *CG_FindLocalEntity(int index, int sideNum);
-void CG_AddLocalEntities(void);
+void CG_AddLocalEntities(qboolean master);
 void CG_DemoRewindFixLocalEntities(void);
 
 // cg_locations.c
