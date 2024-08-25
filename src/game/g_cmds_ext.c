@@ -137,7 +137,7 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "nostamina",      CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Nostamina_f,                     ":^7 Infinite stamina / charge power"                                                        },
 	{ "notarget",       CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Notarget_f,                      ":^7 ???"                                                                                    },
 	{ "notready",       CMD_USAGE_ANY_TIME,          qfalse,      qtrue,  G_ready_cmd,                         ":^7 Sets your status to ^5not ready^7 to start a match"                                     },
-	{ "obj",            CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SelectedObjective_f,             " <val>:^7 Selected Objective"                                                               },
+	{ "obj",            CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_SelectedObjective_f,             " <val>:^7 Selected Objective"                                                               },
 	{ "pause",          CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, G_pause_cmd,                         ":^7 Allows a team to pause a match"                                                         },
 	{ "players",        CMD_USAGE_ANY_TIME,          qtrue,       qtrue,  G_players_cmd,                       ":^7 Lists all active players and their IDs/information"                                     },
 	{ "rconAuth",       CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_AuthRcon_f,                      ":^7 Client authentication"                                                                  },

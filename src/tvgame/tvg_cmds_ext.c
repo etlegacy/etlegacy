@@ -101,7 +101,7 @@ static tvcmd_reference_t tvCommandInfo[] =
 	{ "setviewpos",   CMD_USAGE_NO_INTERMISSION,                 0,     MEDIUMCD,   0, qfalse, TVG_Cmd_SetViewpos_f,                    ALL,            " x y z pitch yaw roll useViewHeight(0/1):^7 Set the current player position and view angle" },
 	{ "noclip",       CMD_USAGE_NO_INTERMISSION,                 0,     NOCD,       0, qfalse, TVG_Cmd_Noclip_f,                        ALL,            ":^7 No clip"                                                                                },
 
-	{ "obj",          CMD_USAGE_NO_INTERMISSION,                 0,     NOCD,       0, qfalse, TVG_Cmd_SelectedObjective_f,             ALL,            " <val>:^7 Selected Objective"                                                               },
+	{ "obj",          CMD_USAGE_ANY_TIME,                        0,     NOCD,       0, qfalse, TVG_Cmd_SelectedObjective_f,             ALL,            " <val>:^7 Selected Objective"                                                               },
 
 	{ NULL,           CMD_USAGE_ANY_TIME,                        0,     NOCD,       0, qfalse, NULL,                                    0,              ""                                                                                           }
 };
