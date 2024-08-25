@@ -3070,9 +3070,6 @@ static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState
 	trap_R_AddRefEntityToScene(gun);
 }
 
-// TODO: move to top ?
-#define BARREL_SMOKE_TIME 1000
-
 /**
  * @brief Used for both the view weapon (ps is valid) and the world modelother character models (ps is NULL)
  * The main player will have this called for BOTH cases, so effects like light and
@@ -3680,11 +3677,12 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 			else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PANZER)
 			{
-				if (cg.time - cent->muzzleFlashTime < BARREL_SMOKE_TIME)
+				const int smoketime = (weaponNum == WP_BAZOOKA) ? 1910 : 1000;
+				if (cg.time - cent->muzzleFlashTime < smoketime)
 				{
 					if (!(rand() % 5))
 					{
-						float alpha = 1.0f - ((float)(cg.time - cent->muzzleFlashTime) / (float)BARREL_SMOKE_TIME);     // what fraction of BARREL_SMOKE_TIME are we at
+						float alpha = 1.0f - ((float)(cg.time - cent->muzzleFlashTime) / (float)smoketime);     // what fraction of smoketime are we at
 
 						alpha *= 0.25f;     // .25 max alpha
 						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
