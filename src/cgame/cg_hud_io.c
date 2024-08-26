@@ -46,6 +46,7 @@ typedef struct
 	qboolean calcAnchors;                               //< added in version 2
 	qboolean replaceNumberByName;                       //< added in version 3
 	char numberToNameTableReminder[MAXHUDS][MAX_QPATH]; //< added in version 3
+	qboolean shiftHealthBarDynamicColorStyle;           //< added in version 4
 } hudFileUpgrades_t;
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
@@ -1456,6 +1457,19 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		}
 	}
 
+	if (upgr->shiftHealthBarDynamicColorStyle)
+	{
+		// Ensure dynamic coloration style is applied due to insertion of needle style from bar
+		if (tmpHud->healthbar.style & BAR_NEEDLE)
+		{
+			tmpHud->healthbar.style |= (BAR_NEEDLE << 1);
+		}
+		else
+		{
+			tmpHud->healthbar.style |= BAR_NEEDLE;   // by default, needle will be active
+		}
+	}
+
 	if (upgr->calcAnchors)
 	{
 		CG_GenerateHudAnchors(tmpHud);
@@ -1507,6 +1521,9 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 	// fall through
 	case 2:         // 2.81.1 - no more number, used unique string name
 		ret->replaceNumberByName = qtrue;
+	// fall through
+	case 3:         // 2.82.1 - needle style has been added for health bar, requiring shifting Dynamic Color style value
+		ret->shiftHealthBarDynamicColorStyle = qtrue;
 		break;
 	default:
 		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);

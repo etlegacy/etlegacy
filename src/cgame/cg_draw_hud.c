@@ -50,7 +50,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(compass),            CG_DrawNewCompass,                0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw"} },
 	{ HUDF(staminabar),         CG_DrawStaminaBar,                0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(breathbar),          CG_DrawBreathBar,                 0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} },
+	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Dynamic Color"} },
 	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle"} },
 	{ HUDF(healthtext),         CG_DrawPlayerHealth,              0.25f,  { "Dynamic Color", "Draw Suffix" } },
 	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
@@ -75,7 +75,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(votetext),           CG_DrawVote,                      0.22f,  { "Complaint" } }, // FIXME: outside cg_draw_hud
 	{ HUDF(spectatortext),      CG_DrawSpectatorMessage,          0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(limbotext),          CG_DrawLimboMessage,              0.22f,  { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
-	{ HUDF(followtext),         CG_DrawFollow,                    0.22f,  { "No Countdown" } },           // FIXME: outside cg_draw_hud
+	{ HUDF(followtext),         CG_DrawFollow,                    0.22f,  { "No Countdown" } },// FIXME: outside cg_draw_hud
 	{ HUDF(demotext),           CG_DrawDemoMessage,               0.22f,  { "Details" } },
 	{ HUDF(missilecamera),      CG_DrawMissileCamera,             0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(sprinttext),         CG_DrawPlayerSprint,              0.25f,  { "Draw Suffix" } },
@@ -182,7 +182,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->compass            = CG_getComponent(SCREEN_WIDTH - 136, 0, 132, 132, qtrue, COMPASS_ITEM | COMPASS_SECONDARY_OBJECTIVES | COMPASS_PRIMARY_OBJECTIVES | COMPASS_DECOR | COMPASS_CARDINAL_POINTS, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 	hud->staminabar         = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 1.0f, 0.1f, 0.5f }, (vec4_t) { 1.0f, 0, 0.1f, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
 	hud->breathbar          = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 0.1f, 1.0f, 0.5f }, (vec4_t) { 1.0f, 0.1f, 0, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
-	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | (BAR_ICON << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
+	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | BAR_NEEDLE | (BAR_NEEDLE << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
 	hud->weaponchargebar    = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON | BAR_NEEDLE, 100.f, (vec4_t) { 1.0, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0, 1.0f, 0.1f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
 	hud->healthtext         = CG_getComponent(47, 465, 57, 14, qtrue, 2, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
 	hud->xptext             = CG_getComponent(108, 465, 57, 14, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
@@ -837,6 +837,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 {
 	vec4_t color;
 	int    style = comp->style;
+	float  frac  = 0.f;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -863,7 +864,32 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	if (comp->style & (BAR_ICON << 1))
+	// show extra bonus HP from medics in team
+	if (comp->style & (BAR_NEEDLE))
+	{
+		// compute max health with medics team bonus only
+		float maxHealth = cg.snap->ps.stats[STAT_MAX_HEALTH];
+
+		// remove medic class health bonus
+		if (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_MEDIC)
+		{
+			maxHealth /= 1.12f;
+		}
+
+		// remove battle sense skill health bonus
+		if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
+		{
+			maxHealth -= 15;
+		}
+
+		// no team medics health bonus, the needle is not displayed
+		if (maxHealth - DEFAULT_HEALTH > 0)
+		{
+			frac = (cg.snap->ps.stats[STAT_MAX_HEALTH] - (maxHealth - DEFAULT_HEALTH)) / cg.snap->ps.stats[STAT_MAX_HEALTH];
+		}
+	}
+
+	if (comp->style & (BAR_NEEDLE << 1))
 	{
 		Vector4Copy(comp->colorMain, color);
 		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
@@ -878,7 +904,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 
 	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], 0.f,
+	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], frac,
 	             style, cgs.media.hudHealthIcon);
 
 	trap_R_SetColor(NULL);
