@@ -3365,13 +3365,47 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 			if (barrel.hModel)
 			{
-				if (spunpart)
+				// XXX : Scoped garand's reload animation is missing a tag for
+				// the bullet-part of the magazine - so we reposition it via an
+				// offset from the mag ourselves
+				if (weaponNum == WP_GARAND && i == 5)
+				{
+					CG_PositionEntityOnTag(&barrel, parent, "tag_barrel4", 0, NULL);
+				}
+				else if (spunpart)
 				{
 					CG_PositionRotatedEntityOnTag(&barrel, parent, weapon->partModels[modelViewType][i].tagName);
 				}
 				else
 				{
 					CG_PositionEntityOnTag(&barrel, parent, weapon->partModels[modelViewType][i].tagName, 0, NULL);
+				}
+
+				// reposition clip-mag for covi rifle when reloading
+				if (weaponNum == WP_GARAND && (i == 3 || i == 5))
+				{
+					vec3_t forward, left, up;
+
+					AxisToAngles(barrel.axis, angles);
+					AngleVectors(angles, forward, up, left);
+
+					switch (i)
+					{
+					case 3:
+						VectorMA(barrel.origin, (-1.0) + (0.0), forward, barrel.origin);
+						VectorMA(barrel.origin, (0.7) + (0.0), left, barrel.origin);
+						VectorMA(barrel.origin, (-0.2) + (0.0), up, barrel.origin);
+						break;
+					case 5:
+						VectorMA(barrel.origin, (-1.0) + (0.7), forward, barrel.origin);
+						VectorMA(barrel.origin, (0.7) + (0.0), left, barrel.origin);
+						VectorMA(barrel.origin, (-0.2) + (0.4), up, barrel.origin);
+						break;
+					}
+
+					angles[YAW]   -= 1.0;
+					angles[PITCH] -= 8.0;
+					AnglesToAxis(angles, barrel.axis);
 				}
 
 				drawpart = CG_GetPartFramesFromWeap(cent, &barrel, parent, i, weapon);
@@ -3501,6 +3535,21 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			if (barrel.hModel)
 			{
 				CG_PositionEntityOnTag(&barrel, &gun, (weaponNum == WP_GARAND || weaponNum == WP_GARAND_SCOPE) ? "tag_scope2" : "tag_scope", 0, NULL);
+
+				// XXX : readjust the scope on the garand
+				if (weaponNum == WP_GARAND || weaponNum == WP_GARAND_SCOPE)
+				{
+					AxisToAngles(barrel.axis, angles);
+
+					AngleVectors(angles, NULL, right, up);
+					VectorMA(barrel.origin, 0.2, right, barrel.origin);
+					VectorMA(barrel.origin, 0.4, up, barrel.origin);
+
+					angles[YAW] += 3.5;
+
+					AnglesToAxis(angles, barrel.axis);
+				}
+
 				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 			}
 
@@ -3517,6 +3566,18 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				AngleVectors(angles, NULL, right, up);
 				VectorMA(barrel.origin, -0.50, right, barrel.origin);
+				VectorMA(barrel.origin, -0.1, up, barrel.origin);
+
+				angles[YAW] += 2.0;
+
+				AnglesToAxis(angles, barrel.axis);
+			}
+			else if (weaponNum == WP_GARAND || weaponNum == WP_GARAND_SCOPE)
+			{
+				AxisToAngles(barrel.axis, angles);
+
+				AngleVectors(angles, NULL, right, up);
+				VectorMA(barrel.origin, 0.0, right, barrel.origin);
 				VectorMA(barrel.origin, -0.1, up, barrel.origin);
 
 				angles[YAW] += 2.0;
