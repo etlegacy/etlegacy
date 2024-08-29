@@ -2729,11 +2729,15 @@ reload
 	}
 	weapons bazooka
 	{
-		torso reload_rifle
+		NOOP
 	}
 	weapons panzerfaust
 	{
-		torso reload_panzer
+		NOOP
+	}
+	weapons flamethrower
+	{
+		NOOP
 	}
 	weapons pistols, movetype idlecr
 	{
