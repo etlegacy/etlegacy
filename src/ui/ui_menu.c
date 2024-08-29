@@ -1408,7 +1408,8 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 		if (menu->items[i]->window.flags & WINDOW_MOUSEOVER)
 		{
 			item = menu->items[i];
-			if (!IS_EDITMODE(menu->items[i]))
+			// skip drawing expanded dropdown menus here so that they draw on top of everything
+			if (!(IS_EDITMODE(menu->items[i]) && item->type == ITEM_TYPE_COMBO))
 			{
 				Item_Paint(menu->items[i]);
 			}
@@ -1419,8 +1420,8 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 		}
 	}
 
-	// Draw the active item last and dont draw tooltop at this point..
-	if (item && IS_EDITMODE(item))
+	// now that everything else is drawn, draw any expanded dropdown menus, skipping tooltip draw
+	if (item && IS_EDITMODE(item) && item->type == ITEM_TYPE_COMBO)
 	{
 		Item_Paint(item);
 	}
