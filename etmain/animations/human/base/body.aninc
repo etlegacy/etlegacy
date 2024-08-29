@@ -209,7 +209,7 @@
 		// MOBILE MG 42
 		stand_mobilemg42	4361	19	19	10	0	0	0
 		firing_mobilemg42	4382	6	6	20	0	0	0
-		reload_mobilemg42	4390	30	0	18	0	0	0
+		reload_mobilemg42	4390	30	0	10	0	0	0
 		raise_mobilemg42	4425	5	0	15	0	0	0
 
 		// MORTAR
@@ -260,7 +260,7 @@
 		//Prone Mg42
 		prone_mg42_switch	4720	18	0	18	0	0	0
 		prone_mg42_fire		4740	4	4	25	0	0	0
-		prone_mg42_reload	4745	39	0	18	0	0	0
+		prone_mg42_reload	4745	39	0	13	0	0	0
 		prone_mg42_idle		4783	1	0	20	0	0	0
 
 		//Prone Panz0r FAUST
