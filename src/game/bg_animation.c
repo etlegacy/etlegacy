@@ -809,6 +809,11 @@ static void BG_ParseCommands(char **input, animScriptItem_t *scriptItem, animMod
 			Com_Memset(command, 0, sizeof(*command));
 		}
 
+      // skip adding NOOP commands altogether
+		if (!Q_stricmp(token, "NOOP")) {
+			continue;
+		}
+
 		command->bodyPart[partIndex] = BG_IndexForString(token, animBodyPartsStr, qtrue);
 		if (command->bodyPart[partIndex] > 0)
 		{
