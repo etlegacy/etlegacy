@@ -2871,6 +2871,14 @@ jump
 	{
 		both jump_nostep_1h
 	}
+	weapons dynamite weapon
+	{
+		both jump_1step_1h
+	}
+	firing
+	{
+		legs jump_1step_1h
+	}
 	default
 	{
 		both jump_1step_1h
@@ -2926,6 +2934,14 @@ jumpbk
 	weapons two_handed_weapons
 	{
 		both jump_nostep_1h
+	}
+	weapons dynamite weapon
+	{
+		both jump_1step_1h
+	}
+	firing
+	{
+		legs jump_1step_1h
 	}
 	default
 	{
