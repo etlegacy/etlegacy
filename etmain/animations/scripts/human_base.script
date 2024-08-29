@@ -2807,109 +2807,37 @@ reload
 
 jump
 {
+	weapons none, movetype run, reloading
+	{
+		legs jump_1step_1h
+	}
 	weapons none, movetype run
 	{
 		both jump_1step_1h
+	}
+	weapons none, reloading
+	{
+		legs jump_nostep_1h
 	}
 	weapons none
 	{
 		both jump_nostep_1h
 	}
+	weapons one_handed_weapons, movetype run, reloading
+	{
+		legs jump_1step_1h
+	}
 	weapons one_handed_weapons, movetype run
 	{
 		both jump_1step_1h
 	}
+	weapons one_handed_weapons, reloading
+	{
+		legs jump_nostep_1h
+	}
 	weapons one_handed_weapons
 	{
 		both jump_nostep_1h
-	}
-//	weapons rifles, movetype run
-//	{
-//		legs jump_1step_2h torso stand_rifle
-//	}
-//	weapons rifles
-//	{
-//		legs jump_nostep_1h torso stand_rifle
-//	}
-	weapons Scoped M1 Garand, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons Scoped M1 Garand
-	{
-		legs jump_nostep_1h
-	}
-	weapons FG 42 Paratroop Rifle, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons FG 42 Paratroop Rifle
-	{
-		legs jump_nostep_1h
-	}
-	weapons K43 Rifle, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons K43 Rifle
-	{
-		legs jump_nostep_1h
-	}
-	weapons gpg40, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons gpg40
-	{
-		legs jump_nostep_1h
-	}
-	weapons M7, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons M7
-	{
-		legs jump_nostep_1h
-	}
-	weapons m1 garand, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons m1 garand
-	{
-		legs jump_nostep_1h
-	}
-	weapons Scoped K43 Rifle, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons Scoped K43 Rifle
-	{
-		legs jump_nostep_1h
-	}
-	weapons K43 Rifle Scope, movetype run
-	{
-		legs jump_1step_2h torso stand_rifle
-	}
-	weapons K43 Rifle Scope
-	{
-		legs jump_nostep_1h torso stand_rifle
-	}
-	weapons M1 Garand Scope, movetype run
-	{
-		legs jump_1step_2h torso stand_rifle
-	}
-	weapons M1 Garand Scope
-	{
-		legs jump_nostep_1h torso stand_rifle
-	}
-	weapons FG 42 Paratroop Rifle Scope, movetype run
-	{
-		legs jump_1step_2h torso stand_rifle
-	}
-	weapons FG 42 Paratroop Rifle Scope
-	{
-		legs jump_nostep_1h torso stand_rifle
 	}
 	weapons bazooka, movetype run
 	{
@@ -2927,9 +2855,17 @@ jump
 	{
 		legs jump_nostep_1h torso stand_panzer
 	}
+	weapons two_handed_weapons, movetype run, reloading
+	{
+		legs jump_1step_2h
+	}
 	weapons two_handed_weapons, movetype run
 	{
 		both jump_1step_2h
+	}
+	weapons two_handed_weapons, reloading
+	{
+		legs jump_nostep_1h
 	}
 	weapons two_handed_weapons
 	{
@@ -2943,101 +2879,21 @@ jump
 
 jumpbk
 {
+	weapons one_handed_weapons, movetype run, reloading
+	{
+		legs jump_1step_1h
+	}
 	weapons one_handed_weapons, movetype run
 	{
 		both jump_1step_1h
 	}
+	weapons one_handed_weapons, reloading
+	{
+		legs jump_nostep_1h
+	}
 	weapons one_handed_weapons
 	{
 		both jump_nostep_1h
-	}
-//	weapons rifles, movetype run
-//	{
-//		legs jump_1step_2h torso stand_rifle
-//	}
-//	weapons rifles
-//	{
-//		legs jump_nostep_1h torso stand_rifle
-//	}
-	weapons Scoped M1 Garand, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons Scoped M1 Garand
-	{
-		legs jump_nostep_1h
-	}
-	weapons FG 42 Paratroop Rifle, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons FG 42 Paratroop Rifle
-	{
-		legs jump_nostep_1h
-	}
-	weapons K43 Rifle, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons K43 Rifle
-	{
-		legs jump_nostep_1h
-	}
-	weapons gpg40, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons gpg40
-	{
-		legs jump_nostep_1h
-	}
-	weapons M7, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons M7
-	{
-		legs jump_nostep_1h
-	}
-	weapons m1 garand, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons m1 garand
-	{
-		legs jump_nostep_1h
-	}
-	weapons Scoped K43 Rifle, movetype run
-	{
-		legs jump_1step_2h
-	}
-	weapons Scoped K43 Rifle
-	{
-		legs jump_nostep_1h
-	}
-	weapons K43 Rifle Scope, movetype run
-	{
-		legs jump_1step_2h torso stand_rifle
-	}
-	weapons K43 Rifle Scope
-	{
-		legs jump_nostep_1h torso stand_rifle
-	}
-	weapons M1 Garand Scope, movetype run
-	{
-		legs jump_1step_2h torso stand_rifle
-	}
-	weapons M1 Garand Scope
-	{
-		legs jump_nostep_1h torso stand_rifle
-	}
-	weapons FG 42 Paratroop Rifle Scope, movetype run
-	{
-		legs jump_1step_2h torso stand_rifle
-	}
-	weapons FG 42 Paratroop Rifle Scope
-	{
-		legs jump_nostep_1h torso stand_rifle
 	}
 	weapons bazooka, movetype run
 	{
@@ -3055,9 +2911,17 @@ jumpbk
 	{
 		legs jump_nostep_1h torso stand_panzer
 	}
+	weapons two_handed_weapons, movetype run, reloading
+	{
+		legs jump_1step_2h
+	}
 	weapons two_handed_weapons, movetype run
 	{
 		both jump_1step_2h
+	}
+	weapons two_handed_weapons, reloading
+	{
+		legs jump_nostep_1h
 	}
 	weapons two_handed_weapons
 	{
