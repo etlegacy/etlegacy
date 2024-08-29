@@ -2319,6 +2319,7 @@ typedef enum
 	ANIM_COND_GEN_BITFLAG,     ///< general bit flags (to save some space)
 	ANIM_COND_AISTATE,         ///< our current ai state (sometimes more convenient than creating a separate section)
 	ANIM_COND_SUICIDE,
+	ANIM_COND_RELOADING,
 
 	NUM_ANIM_CONDITIONS
 } scriptAnimConditions_t;
