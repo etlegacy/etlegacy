@@ -788,6 +788,8 @@ typedef struct soundSurfaceTable_s
 
 } soundSurfaceTable_t;
 
+extern const soundSurfaceTable_t soundSurfaceTable[W_MAX_SND_SURF];
+
 /**
  * @struct partModel_s
  * @typedef partModel_t
@@ -3253,7 +3255,18 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime);
 void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName, int startIndex, vec3_t *offset);
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName);
 
+// cg_weapons_io.c
+void CG_RegisterWeapon(int weaponNum, qboolean force);
+void CG_RegisterItemVisuals(int itemNum);
+
 // cg_weapons.c
+void CG_MachineGunEjectBrass(centity_t *cent);
+void CG_PanzerFaustEjectBrass(centity_t *cent);
+void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi);
+void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi);
+void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi);
+void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi);
+
 void CG_LastWeaponUsed_f(void);
 void CG_NextWeaponInBank_f(void);
 void CG_PrevWeaponInBank_f(void);
@@ -3266,9 +3279,6 @@ qboolean CG_WeaponSelectable(int weapon);
 
 void CG_FinishWeaponChange(int lastweap, int newweap);
 void CG_SetSniperZoom(int weapon);
-
-void CG_RegisterWeapon(int weaponNum, qboolean force);
-void CG_RegisterItemVisuals(int itemNum);
 
 void CG_FireWeapon(centity_t *cent);
 
