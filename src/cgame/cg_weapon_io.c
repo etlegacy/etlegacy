@@ -991,7 +991,7 @@ static qboolean CG_ParseWeaponImpactParticle(const char *filename, impactParticl
 		}
 		else if (!Q_stricmp(filename, &impactParticleTable[i].impactParticleName[0]))
 		{
-			*pImpactParticle = impactParticle = &impactParticleTable[i].impactParticle;
+			*pImpactParticle = &impactParticleTable[i].impactParticle;
 			return qtrue;
 		}
 	}
