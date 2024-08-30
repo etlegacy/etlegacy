@@ -1,3 +1,6 @@
+		// NOTE : unused animations are commented out, but retained for
+		//        reference purposes
+
 		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
 
 		// deaths -- do not change the order!
@@ -63,16 +66,16 @@
 
 		firing_crch_2h		2088	3	13	22	-1	0	0
 		firing_crch_1h		2102	14	14	22	-1	0	0
-		firing_run_2h		2117	13	13	22	-1	0	0
-		firing_run_1h		2131	12	12	22	-1	0	0
+		//firing_run_2h		2117	13	13	22	-1	0	0
+		//firing_run_1h		2131	12	12	22	-1	0	0
 		firing_bk_2h		2144	10	10	22	-1	0	0
-		firing_bk_1h		2155	12	12	22	-1	0	0
+		//firing_bk_1h		2155	12	12	22	-1	0	0
 		firing_crbk_1h		2168	13	13	22	-1	0	0
 		firing_crbk_2h		2182	15	15	22	-1	0	0
-		firing_strafe_2h_R	2198	11	11	22	-1	0	0
-		firing_strafe_2h_L	2210	9	9	22	-1	0	0
-		firing_strafe_1h_R	2220	9	9	22	-1	0	0
-		firing_strafe_1h_L	2230	9	9	22	-1	0	0
+		//firing_strafe_2h_R	2198	11	11	22	-1	0	0
+		//firing_strafe_2h_L	2210	9	9	22	-1	0	0
+		//firing_strafe_1h_R	2220	9	9	22	-1	0	0
+		//firing_strafe_1h_L	2230	9	9	22	-1	0	0
 
 		raise_machinegun	2240	13	0	20	0	0	0
 		stand_machinegun	2253	35	35	20	0	0	0
@@ -91,7 +94,7 @@
 		firing_pistolB_1	2551	12	0	30	0	50	0
 		firing_pistolB_2	2563	13	0	30	0	50	0
 
-		raise_rifle			2600	22	0	20	0	0	0
+		//raise_rifle			2600	22	0	20	0	0	0
 		stand_rifle			2623	12	12	5	0	0	0
 		firing_rifle		2636	22	0	20	0	0	0
 		reload_rifle		2659	42	0	30	0	0	0
@@ -109,8 +112,8 @@
 
 		stand_mg42			2863	1	1	15	0	0	0
 		firing_mg42			2865	6	0	15	0	0	0
-		turn_L_mg42			2872	16	16	30	0	0	0
-		turn_R_mg42			2889	16	16	15	0	0	0
+		//turn_L_mg42			2872	16	16	30	0	0	0
+		//turn_R_mg42			2889	16	16	15	0	0	0
 
 		raise_knife			2906	25	0	20	0	0	0
 		stand_knife			2932	16	16	10	0	0	0
@@ -130,7 +133,7 @@
 		swim_2h				3169	30	30	20	0	0	0
 		swim_1h				3200	33	33	20	0	0	0
 
-		turn_1h_R			3234	24	24	30	0	0	0
+		//turn_1h_R			3234	24	24	30	0	0	0
 		turn_machinegun_R	3259	19	19	40	0	0	0
 		turn_crch_R			3279	13	13	15	0	0	0
 		turn_crch_L			3293	13	13	15	0	0	0
@@ -142,9 +145,9 @@
 		raise_panzer		3420	13	0	20	0	0	0
 		stand_panzer		3434	31	31	20	0	0	0
 		firing_panzer		3469	17	17	20	0	0	0
-		reload_panzer		3487	33	0	20	0	0	0
+		//reload_panzer		3487	33	0	20	0	0	0
 
-		raise_binoculars	3525	10	0	20	0	0	0
+		//raise_binoculars	3525	10	0	20	0	0	0
 		firing_pliers		3540	20	0	20	0	0	0
 		firing_syringe		3565	20	0	20	0	0	0
 		raise_medpack		3590	10	0	20	0	0	0
@@ -162,9 +165,9 @@
 		firing_run_srifle	3820	13	13	22	-1	0	0
 		firing_bk_srifle	3840	10	10	22	-1	0	0
 		firing_srifle		3855	4	0	20	0	0	0
-		raise_srifle		3865	13	0	20	0	0	0
+		//raise_srifle		3865	13	0	20	0	0	0
 		stand_srifle		3885	35	35	20	0	0	0
-		reload_srifle		3925	43	0	20	0	0	0
+		//reload_srifle		3925	43	0	20	0	0	0
 
 		// AMBIENT
 		//tools				4040	75	75	15	0	0	0
@@ -213,7 +216,7 @@
 		raise_mobilemg42	4425	5	0	15	0	0	0
 
 		// MORTAR
-		mortar_reload		4784	12	0	15	0	0	0
+		//mortar_reload		4784	12	0	15	0	0	0
 		mortar_deployed		4795	5	5	2	0	0	0
 		mortar_fire			4800	13	0	15	0	0	0
 		//mortar_drop_dep	4813	5	0	15	0	0	0
@@ -247,9 +250,9 @@
 		prone_rifle_fire	4529	4	0	18	0	0	0
 		prone_rifle_reload	4532	40	0	18	0	0	0
 		prone_rifle_idle	4528	1	0	20	0	0	0
-		prone_rifle_sswitch	4704	6	0	18	0	0	0
-		prone_rifle_sidle	4705	1	0	20	0	0	0
-		prone_rifle_sfire	4710	3	0	18	0	0	0
+		//prone_rifle_sswitch	4704	6	0	18	0	0	0
+		//prone_rifle_sidle	4705	1	0	20	0	0	0
+		//prone_rifle_sfire	4710	3	0	18	0	0	0
 
 		//Prone Machine Gun
 		prone_mg_switch		4583	12	0	15	0	0	0
@@ -280,7 +283,7 @@
 		//Prone Knife
 		prone_knife_switch	4662	10	0	18	0	0	0
 		prone_knife_attack	4689	10	0	25	0	0	0
-		prone_knife_idle	4672	1	0	20	0	0	0
+		//prone_knife_idle	4672	1	0	20	0	0	0
 
 		//Prone Death
 		prone_die1		4573    10	0	20	0	0	0

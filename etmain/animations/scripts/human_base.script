@@ -43,9 +43,9 @@ set movetype proning = idleprone AND prone AND pronebk
 // ANIMATIONS
 //
 //	NOTE: scripts are chosen by first-come-first-serve basis. The first match
-//	found is the one used.
+//	      found is the one used.
 //
-// format:
+// FORMAT:
 //
 // state <state description>
 // {
@@ -60,45 +60,87 @@ set movetype proning = idleprone AND prone AND pronebk
 //		}
 //	}
 //
-//	legend:
+//	LEGEND:
 //
-//	<state description>: relaxed, alert, combat
+//	 NOTE: 'combat' is the only state used in Multiplayer, the rest are unused SP
+//	       remnants and not used.
+//	<state description>: relaxed, query, alert, combat
 //
-//	<movement type>: dead, idle, idlecr, walk, walkbk, walkcr, walkcrbk, run, runbk, straferight, strafeleft, turnright, turnleft
+//	<movement type> (see 'animMoveTypesStr'):
+//		idle
+//		idlecr
+//		walk
+//		walkbk
+//		walkcr
+//		walkcrbk
+//		run
+//		runbk
+//		swim
+//		swimbk
+//		straferight
+//		strafeleft
+//		turnright
+//		turnleft
+//		climbup
+//		climbdown
+//		fallen
+//		prone
+//		pronebk
+//		idleprone
+//		flailing
+//		radio
+//		radiocr
+//		radioprone
+//		dead
 //
-//	<condition type>: weapons, position, enemy_weapon, underwater, mounted, movetype, underhand, leaning
+//	<condition type> (see 'animConditionsStr'):
+//		weapons
+//		enemy_position
+//		enemy_weapon
+//		underwater
+//		mounted
+//		movetype
+//		underhand
+//		leaning
+//		impact_point
+//		crouching
+//		stunned
+//		firing
+//		short_reaction
+//		enemy_team
+//		parachute
+//		charging
+//		secondlife
+//		health_level
+//		flailing_type
+//		gen_bitflag
+//		aistate
+//		suicide
+//		reloading
 //
-//	<condition value>:
-//
+//	<condition value> (bool if unspecified):
 //		weapons: <see weapon pickup names>
-//		position: behind, infront, right, left
 //		enemy_weapon: <see weapon pickup names>
 //		underwater: <no values>
 //		mounted: MG42
 //		movetype: <see movement types>
+//		position: behind, infront, right, left
 //		underhand: <no values>
 //		leaning: right, left
-//
+//		impact_point: head, chest, gut, groin, shoulder_right, shoulder_left, knee_right, knee_left
+//		health_level: 1, 2, 3
 
 ANIMATIONS
 
-STATE RELAXED
-{
-}
-
-STATE ALERT
-{
-}
-
 STATE COMBAT
 {
-	dead	
+	dead
 	{
 		suicide
 		{
 			both dead_rifle_head_2
 		}
-	
+
 		default
 		{
 			both dead_machinegun_1
@@ -1689,7 +1731,7 @@ STATE COMBAT
 	{
 		default
 		{
-			torso stand_radio legs alert_crchidle_1h 
+			torso stand_radio legs alert_crchidle_1h
 		}
 	}
 	radioprone
@@ -3283,7 +3325,7 @@ undo_alt_weapon_mode_prone
 //canned_animations
 
 //==========================================================================
-// STATECHANGES
+// STATECHANGES (Unused in Multiplayer)
 //
 // format:
 //
