@@ -15,15 +15,15 @@ animgroup
 	animfile "animations/human/base/prone_pistol.mdx"
 	{
 		#include "animations/human/base/prone_pistol.aninc"
-	}	
+	}
 	animfile "animations/human/base/prone_rifle.mdx"
 	{
 		#include "animations/human/base/prone_rifle.aninc"
-	}	
+	}
 	animfile "animations/human/base/prone_dual_pistols.mdx"
 	{
 		#include "animations/human/base/prone_dual_pistols.aninc"
-	}		
+	}
 	animfile "animations/human/base/prone_mortar.mdx"
 	{
 		#include "animations/human/base/prone_mortar.aninc"

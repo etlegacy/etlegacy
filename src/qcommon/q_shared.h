@@ -1192,9 +1192,9 @@ typedef struct
  */
 typedef enum
 {
-	AISTATE_RELAXED,
-	AISTATE_QUERY,
-	AISTATE_ALERT,
+	AISTATE_RELAXED,  // unused, SP remnant
+	AISTATE_QUERY,    // unused, SP remnant
+	AISTATE_ALERT,    // unused, SP remnant
 	AISTATE_COMBAT,
 
 	MAX_AISTATES
