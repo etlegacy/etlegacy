@@ -984,7 +984,7 @@ qboolean IsHeadShot(gentity_t *targ, const vec3_t dir, const vec3_t point, means
 	gentity_t *traceEnt;
 
 	// can happen if et.G_Damage lua is called with a MOD that is an actual weapon
-	if (!point)
+	if (!point || !dir)
 	{
 		return qfalse;
 	}
@@ -1063,7 +1063,7 @@ qboolean IsLegShot(gentity_t *targ, const vec3_t dir, const vec3_t point, meansO
 	gentity_t *leg;
 
 	// can happen if et.G_Damage lua is called with a MOD that is an actual weapon
-	if (!point)
+	if (!point || !dir)
 	{
 		return qfalse;
 	}
