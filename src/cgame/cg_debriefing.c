@@ -673,26 +673,12 @@ static panel_button_t debriefPlayerPrestigeButton =
 {
 	NULL,
 	"^3COLLECT POINT",
-	{ 110,                            216,88, 16 },
+	{ 110,                            152,88, 16 },
 	{ 0,                              0,  0,  0, 0, 0, 0, 0},
-	NULL,                             // font
+	&debriefPlayerInfoFont,           // font
 	CG_Debriefing_PrestigeButton_KeyDown,// keyDown
 	NULL,                             // keyUp
 	CG_Debriefing_PrestigeButton_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t debriefPlayerPrestigeNote =
-{
-	NULL,
-	NULL,
-	{ 110,                            162,   0, 0 },
-	{ 0,                              0,     0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,           // font
-	NULL,                             // keyDown
-	NULL,                             // keyUp
-	CG_Debriefing_PlayerPrestige_Note,
 	NULL,
 	0
 };
@@ -755,7 +741,6 @@ static panel_button_t *debriefPanelButtons[] =
 #ifdef FEATURE_PRESTIGE
 	&debriefPlayerInfoPrestige,
 	&debriefPlayerPrestigeButton,
-	&debriefPlayerPrestigeNote,
 #endif
 	&debriefPlayerInfoHitRegions,
 	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader,  &debriefPlayerWeaponStatsKillsHeader,
@@ -2899,41 +2884,6 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button)
 	float  w;
 	vec4_t colorH, colorA, colorB, colorL;
 
-#ifdef FEATURE_PRESTIGE
-	int i, j, cnt = 0, skillMax;
-
-	// hide if we need to display prestige collection note
-	if (cgs.prestige && cgs.dbSelectedClient == cg.clientNum &&
-	    cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
-	{
-		// count the number of maxed out skills
-		for (i = 0; i < SK_NUM_SKILLS; i++)
-		{
-			skillMax = 0;
-
-			// check skill max level
-			for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
-			{
-				if (GetSkillTableData(i)->skillLevels[j] >= 0)
-				{
-					skillMax = j;
-					break;
-				}
-			}
-
-			if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
-			{
-				cnt++;
-			}
-		}
-
-		if (cnt >= SK_NUM_SKILLS)
-		{
-			return;
-		}
-	}
-#endif
-
 	w = CG_Text_Width_Ext("Head: ", button->font->scalex, 0, button->font->font);
 
 	// register hitregions only once (when required)
@@ -3033,56 +2983,6 @@ void CG_Debriefing_PlayerPrestige_Draw(panel_button_t *button)
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("^2%i", ci->prestige), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
-/**
- * @brief CG_Debriefing_PlayerPrestige_Note
- * @param[in] button
- */
-void CG_Debriefing_PlayerPrestige_Note(panel_button_t *button)
-{
-	int i, j, cnt = 0, skillMax, h;
-
-	if (!cgs.prestige || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF_CAMPAIGN)
-	{
-		return;
-	}
-
-	if (cgs.dbSelectedClient != cg.clientNum)
-	{
-		return;
-	}
-
-	// count the number of maxed out skills
-	for (i = 0; i < SK_NUM_SKILLS; i++)
-	{
-		skillMax = 0;
-
-		// check skill max level
-		for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
-		{
-			if (GetSkillTableData(i)->skillLevels[j] >= 0)
-			{
-				skillMax = j;
-				break;
-			}
-		}
-
-		if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
-		{
-			cnt++;
-		}
-	}
-
-	if (cnt < SK_NUM_SKILLS)
-	{
-		return;
-	}
-
-	h = CG_Text_Height_Ext("A", button->font->scalex, 0, button->font->font);
-
-	CG_DrawMultilineText(button->rect.x, button->rect.y, button->rect.w, button->font->scalex, button->font->scaley, button->font->colour,
-	                     CG_TranslateString("You may now collect\na prestige point.\n\nCollection resets\nskill levels."),
-	                     2 * h, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, button->font->font);
-}
 #endif
 
 /**
@@ -3495,6 +3395,9 @@ qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key)
 }
 
 #ifdef FEATURE_PRESTIGE
+
+static qboolean prestigeButtonConfirmation = qfalse;
+
 /**
  * @brief CG_Debriefing_PrestigeButton_KeyDown
  * @param button - unused
@@ -3535,6 +3438,14 @@ qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key)
 
 		if (cnt < SK_NUM_SKILLS)
 		{
+			return qfalse;
+		}
+
+		// on first clic on the button, display confirmation message
+		// then accept collecting on second clic
+		if (!prestigeButtonConfirmation)
+		{
+			prestigeButtonConfirmation = qtrue;
 			return qfalse;
 		}
 
@@ -3660,6 +3571,45 @@ void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button)
 	}
 
 	CG_PanelButtonsRender_Button(button);
+
+	// draw the note only if we focus the button
+	if (BG_CursorInRect(&button->rect))
+	{
+		float  h;
+		char   *text;
+		vec4_t *color;
+		vec4_t clrBdr = { 0.5f, 0.5f, 0.5f, 0.5f };
+		vec4_t clrBck = { 0.0f, 0.0f, 0.0f, 0.8f };
+
+		h = CG_Text_Height_Ext("A", button->font->scalex, 0, button->font->font);
+
+		// on first clic on the button, display confirmation message
+		// then accept collecting on second clic
+		if (prestigeButtonConfirmation)
+		{
+			CG_FillRect(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 5, clrBck);
+			CG_DrawRect_FixedBorder(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 5, 1, clrBdr);
+
+			text  = "Are you sure?\nClick again to confirm.";
+			color = &colorYellow;
+		}
+		else
+		{
+			CG_FillRect(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 11, clrBck);
+			CG_DrawRect_FixedBorder(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 11, 1, clrBdr);
+
+			text  = "You may now collect\na prestige point.\n\nCollection resets\nskill levels.";
+			color = &button->font->colour;
+		}
+
+		CG_DrawMultilineText(button->rect.x + button->rect.w + 20, button->rect.y, button->rect.w, button->font->scalex, button->font->scaley, *color,
+		                     CG_TranslateString(text),
+		                     2 * h, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, button->font->font);
+	}
+	else
+	{
+		prestigeButtonConfirmation = qfalse;
+	}
 }
 #endif
 
