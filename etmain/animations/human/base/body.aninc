@@ -125,7 +125,7 @@
 
 		jump_1step_2h		3111	11	0	20	0	0	0
 		jump_1step_1h		3131	11	0	20	0	0	0
-		jump_nostep_1h		3152	16	0	16	0	0	0
+		jump_nostep_1h		3154	7	0	12	0	0	0
 
 		swim_2h				3169	30	30	20	0	0	0
 		swim_1h				3200	33	33	20	0	0	0
