@@ -1125,7 +1125,6 @@ static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weapo
 	ent->backlerp = cent->lerpFrame.backlerp;
 }
 
-extern void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi);
 extern void CG_ScanForCrosshairMine(centity_t *cent);
 extern void CG_ScanForCrosshairDyna(centity_t *cent);
 
@@ -1181,11 +1180,11 @@ static void CG_Missile(centity_t *cent)
 	// add trails
 	if (cent->currentState.eType == ET_RAMJET)
 	{
-		CG_RocketTrail(cent, NULL);
+		CG_RocketTrail(cent);
 	}
 	else if (weapon->missileTrailFunc)
 	{
-		weapon->missileTrailFunc(cent, weapon);
+		weapon->missileTrailFunc(cent);
 	}
 
 	// add dynamic light

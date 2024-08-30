@@ -370,9 +370,8 @@ void CG_GetWindVector(vec3_t dir)
 /**
  * @brief LT/FOPS pyro for marking air strikes
  * @param[in,out] ent
- * @param wi - unused
  */
-void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
+void CG_PyroSmokeTrail(centity_t *ent)
 {
 	int    step;
 	vec3_t origin, lastPos, dir;
@@ -484,9 +483,8 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 /**
  * @brief New trail effects
  * @param[in,out] ent
- * @param wi - unused
  */
-void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
+void CG_RocketTrail(centity_t *ent)
 {
 	int           step = (ent->currentState.eType == ET_FLAMEBARREL) ? 30 : 10;
 	vec3_t        origin, lastPos;
@@ -556,9 +554,8 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 /**
  * @brief CG_DynamiteTrail
  * @param[in] ent
- * @param wi - unused
  */
-void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
+void CG_DynamiteTrail(centity_t *ent)
 {
 	vec3_t origin;
 	float  mult;
@@ -580,9 +577,8 @@ void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 /**
  * @brief CG_GrenadeTrail
  * @param[in,out] ent
- * @param wi - unused
  */
-void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
+void CG_GrenadeTrail(centity_t *ent)
 {
 	int           step = 15;  // nice and smooth curves
 	vec3_t        origin, lastPos;

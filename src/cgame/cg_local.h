@@ -976,7 +976,7 @@ typedef struct weaponInfo_s
 	sfxHandle_t missileSound;
 	weaponSounds_t missileFallSound;
 	weaponSounds_t missileBouncingSound[W_MAX_SND_SURF];
-	void (*missileTrailFunc)(centity_t *, const struct weaponInfo_s *wi);
+	void (*missileTrailFunc)(centity_t *);
 	float missileDlight;
 	vec3_t missileDlightColor;
 	int missileRenderfx;
@@ -3262,10 +3262,10 @@ void CG_RegisterItemVisuals(int itemNum);
 // cg_weapons.c
 void CG_MachineGunEjectBrass(centity_t *cent);
 void CG_PanzerFaustEjectBrass(centity_t *cent);
-void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi);
-void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi);
-void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi);
-void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi);
+void CG_PyroSmokeTrail(centity_t *ent);
+void CG_RocketTrail(centity_t *ent);
+void CG_DynamiteTrail(centity_t *ent);
+void CG_GrenadeTrail(centity_t *ent);
 
 void CG_LastWeaponUsed_f(void);
 void CG_NextWeaponInBank_f(void);
