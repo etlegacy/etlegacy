@@ -1516,7 +1516,7 @@ static qboolean CG_HudEditor_HudDropdown_KeyUp(panel_button_t *button, int key)
 
 				if (BG_CursorInRect(&rect))
 				{
-					trap_Cvar_Set("cg_altHud", hud->name);
+					trap_Cvar_Set(cgs.clientinfo[cg.clientNum].shoutcaster ? "cg_shoutcasterHud" : "cg_altHud", hud->name);
 					//cg_altHud.integer = hud->hudnumber;
 					CG_SetHud();
 
