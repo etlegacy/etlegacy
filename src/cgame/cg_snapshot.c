@@ -282,6 +282,10 @@ static void CG_TransitionSnapshot(void)
 		oldValid[cg.snap->entities[i].number] = qtrue;
 	}
 
+    // move nextSnap to snap and do the transitions
+    oldFrame = cg.snap;
+    cg.snap  = cg.nextSnap;
+
 	// check for MV updates from new snapshot info
 #ifdef FEATURE_MULTIVIEW
 	if (cg.snap->ps.powerups[PW_MVCLIENTLIST] != cg.mvClientList)
@@ -289,10 +293,6 @@ static void CG_TransitionSnapshot(void)
 		CG_mvProcessClientList();
 	}
 #endif
-
-	// move nextSnap to snap and do the transitions
-	oldFrame = cg.snap;
-	cg.snap  = cg.nextSnap;
 
 	if (cg.snap->ps.clientNum == cg.clientNum)
 	{
