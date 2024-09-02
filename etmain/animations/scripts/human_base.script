@@ -1564,13 +1564,13 @@ STATE COMBAT
 		{
 			legs prone_legs torso prone_mg_idle
 		}
-		weapons binoculars
-		{
-			legs prone_legs torso e_prone_binocs_idle
-		}
 		weapons binoculars, gen_bitflag zooming
 		{
 			legs prone_legs torso e_prone_binocs_lie
+		}
+		weapons binoculars
+		{
+			legs prone_legs torso e_prone_binocs_idle
 		}
 		weapons smokeGrenade
 		{
