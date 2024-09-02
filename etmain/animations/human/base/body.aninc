@@ -148,7 +148,7 @@
 		//reload_panzer		3487	33	0	20	0	0	0
 
 		//raise_binoculars	3525	10	0	20	0	0	0
-		firing_pliers		3540	20	0	20	0	0	0
+		firing_pliers		3540	19	19	20	0	0	0
 		firing_syringe		3565	20	0	20	0	0	0
 		raise_medpack		3590	10	0	20	0	0	0
 		stand_medpack		3605	30	30	20	0	0	0
