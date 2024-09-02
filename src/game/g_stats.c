@@ -574,6 +574,98 @@ void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod,
 	CalculateRanks();
 }
 
+#define MAX_PLAYERS_ASSIST_TO_REWARDS 4
+
+/**
+ * @brief G_AddKillAssistPoints
+ * @param[in] target
+ * @param[in] attacker
+ */
+void G_AddKillAssistPoints(gentity_t *target, gentity_t *attacker)
+{
+	unsigned int i;
+	int          bestPlayersAssistReward[MAX_PLAYERS_ASSIST_TO_REWARDS];
+	int          bestTotalDamagePoints[MAX_PLAYERS_ASSIST_TO_REWARDS];
+	qboolean     complaintSent = qfalse;
+
+	if (!target || !target->client)
+	{
+		return;
+	}
+
+	// init arrays to invalid values
+	for (i = 0; i < ARRAY_LEN(bestPlayersAssistReward); ++i)
+	{
+		bestPlayersAssistReward[i] = -1;
+		bestTotalDamagePoints[i]   = -1;
+	}
+
+	// find up to MAX_PLAYERS_ASSIST_TO_REWARDS players to rewards assist points
+	for (i = 0; i < ARRAY_LEN(target->client->damageReceivedFromPlayers); ++i)
+	{
+		// ignore damage received from seld and attacker (killer)
+		if (&g_entities[i] == target || &g_entities[i] == attacker)
+		{
+			continue;
+		}
+
+		// ensure we received damage from the parsed client slot and is from a team different
+		if (target->client->damageReceivedFromPlayers[i] > 0 && g_entities[i].client
+		    && g_entities[i].client->ps.teamNum != TEAM_SPECTATOR)
+		{
+			unsigned int j;
+
+			for (j = 0; j < ARRAY_LEN(bestPlayersAssistReward); ++j)
+			{
+				// free emplacement, use it
+				if (bestPlayersAssistReward[j] < 0)
+				{
+					bestPlayersAssistReward[j] = i;
+					bestTotalDamagePoints[j]   = target->client->damageReceivedFromPlayers[i];
+					break;
+				}
+
+				// check if the previous player deal less damage than the current parsed
+				if (bestTotalDamagePoints[j] < target->client->damageReceivedFromPlayers[i])
+				{
+					// "shift" the table to the right, so we can insert the new best player and erase lower ones
+					if (j < MAX_PLAYERS_ASSIST_TO_REWARDS - 1)
+					{
+						memmove(&bestPlayersAssistReward[j + 1], &bestPlayersAssistReward[j], sizeof(*bestPlayersAssistReward) * (ARRAY_LEN(bestPlayersAssistReward) - j - 1));
+						memmove(&bestTotalDamagePoints[j + 1], &bestTotalDamagePoints[j], sizeof(*bestTotalDamagePoints) * (ARRAY_LEN(bestTotalDamagePoints) - j - 1));
+					}
+
+					bestPlayersAssistReward[j] = i;
+					bestTotalDamagePoints[j]   = target->client->damageReceivedFromPlayers[i];
+					break;
+				}
+			}
+		}
+	}
+
+	// rewards assist points
+	for (i = 0; i < ARRAY_LEN(bestPlayersAssistReward); ++i)
+	{
+		if (bestPlayersAssistReward[i] < 0)
+		{
+			break;
+		}
+
+		// reward only opposite team
+		if (g_entities[i].client->ps.teamNum != target->client->ps.teamNum)
+		{
+			// rewards 2 points if damage more than half players health, otherwise 1 points
+			G_AddSkillPoints(&g_entities[bestPlayersAssistReward[i]], SK_BATTLE_SENSE, bestTotalDamagePoints[i] >= target->client->pers.maxHealth * 0.5f ? 2 : 1, "kill assist");
+			g_entities[bestPlayersAssistReward[i]].client->sess.kills_assists++;
+		}
+        else if (g_teambleedComplaint.integer >= 0 && !complaintSent && bestTotalDamagePoints[i] >= target->client->pers.maxHealth * (g_teambleedComplaint.integer / 100))      // allow complaint if too much teambleed has caused the death
+		{
+			// only one complaint for the highest team bleeder
+			complaintSent = G_CheckComplaint(target, &g_entities[i], &g_entities[i], target->client->damageReceivedFromPlayersMods[g_entities[i].s.number]);
+		}
+	}
+}
+
 /////// SKILL DEBUGGING ///////
 
 static fileHandle_t skillDebugLog = -1;
@@ -975,6 +1067,45 @@ void G_BuildEndgameStats(void)
 	{
 		best->hasaward = qtrue;
 		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.kills, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+
+	// highest assists - check kills assists, then damage given
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+
+		if (cl->sess.kills_assists <= 0)
+		{
+			continue;
+		}
+
+		if (!best || cl->sess.kills_assists > best->sess.kills_assists)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+		else if (cl->sess.kills_assists == best->sess.kills_assists && cl->sess.damage_given > best->sess.damage_given)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.kills_assists, best->sess.sessionTeam));
 	}
 	else
 	{
