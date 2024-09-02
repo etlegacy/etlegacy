@@ -26,6 +26,10 @@ set weapons rifles               = K43 Rifle AND gpg40 AND M7 AND m1 garand AND 
 set weapons throwables           = pineapple AND grenade AND Smoke Bomb
 set weapons throwables_underhand = dynamite weapon
 
+// weapons that the player should not hold in front of themselves as if they
+// could aim with them
+set weapons aimless = knives AND throwables AND throwables_underhand AND smokeGrenade AND Binoculars AND Landmine AND none
+
 set weapons one_handed_weapons   = Luger AND Colt AND Silenced Luger AND Silenced Colt
 set weapons two_handed_weapons   = MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mobile Browning AND MP34
 
@@ -173,21 +177,9 @@ STATE COMBAT
 		{
 			both stand_mg42
 		}
-		weapons none
-		{
-			both stand_grenade
-		}
 		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs stand_grenade
-		}
-		weapons Binoculars
-		{
-			both stand_grenade
-		}
-		weapons smokeGrenade
-		{
-			both stand_grenade
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
@@ -308,6 +300,10 @@ STATE COMBAT
 		{
 			both stand_machinegun
 		}
+		weapons aimless
+		{
+			both stand_grenade
+		}
 	}
 	idlecr
 	{
@@ -327,17 +323,9 @@ STATE COMBAT
 		{
 			legs alert_crchidle_2h torso satchel_remote_stand
 		}
-		weapons none
-		{
-			legs alert_crchidle_1h torso relaxed_idle_no
-		}
 		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs alert_crchidle_1h
-		}
-		weapons smokeGrenade AND binoculars
-		{
-			legs alert_crchidle_1h torso stand_grenade
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
@@ -346,10 +334,6 @@ STATE COMBAT
 		weapons Ammo Pack
 		{
 			legs alert_crchidle_1h torso stand_medpack
-		}
-		weapons Landmine
-		{
-			legs alert_crchidle_1h torso stand_grenade
 		}
 		weapons Satchel Charge
 		{
@@ -362,10 +346,6 @@ STATE COMBAT
 		weapons special
 		{
 			both alert_crchidle_1h
-		}
-		weapons knives
-		{
-			legs alert_crchidle_1h torso stand_knife
 		}
 		weapons one_handed_weapons
 		{
@@ -428,13 +408,13 @@ STATE COMBAT
 			legs alert_crchidle_1h torso  holding_grenadeA
 			legs alert_crchidle_1h torso  holding_grenadeB
 		}
-		weapons throwables AND throwables_underhand
-		{
-			legs alert_crchidle_1h torso stand_grenade
-		}
 		weapons akimbo_pistols
 		{
 			legs alert_crchidle_1h torso stand_akimbo
+		}
+		weapons aimless
+		{
+			legs alert_crchidle_1h torso stand_grenade
 		}
 		default
 		{
@@ -459,17 +439,9 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso satchel_remote_stand
 		}
-		weapons none
-		{
-			both relaxed_walk_1h_1
-		}
 		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs relaxed_walk_1h_1
-		}
-		weapons smokeGrenade AND binoculars
-		{
-			both relaxed_walk_1h_1
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
@@ -479,10 +451,6 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_medpack
 		}
-		weapons Landmine
-		{
-			both relaxed_walk_1h_1
-		}
 		weapons Satchel Charge
 		{
 			legs relaxed_walk_1h_1 torso stand_medpack
@@ -491,18 +459,10 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_medpack
 		}
-		weapons special
-		{
-			both relaxed_walk_1h_1
-		}
 		weapons throwables, gen_bitflag holding
 		{
 			legs relaxed_walk_1h_1 torso holding_grenadeA
 			legs relaxed_walk_1h_1 torso holding_grenadeB
-		}
-		weapons throwables AND throwables_underhand
-		{
-			both relaxed_walk_1h_1
 		}
 		weapons one_handed_weapons
 		{
@@ -564,6 +524,10 @@ STATE COMBAT
 		{
 			legs relaxed_walk_1h_1 torso stand_akimbo
 		}
+		weapons aimless
+		{
+			both relaxed_walk_1h_1
+		}
 		default
 		{
 			both relaxed_walk_1h_1
@@ -587,10 +551,6 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso satchel_remote_stand
 		}
-		weapons none
-		{
-			both alert_bk_1h
-		}
 		weapons one_handed_weapons
 		{
 			legs alert_bk_1h torso stand_pistolb
@@ -598,10 +558,6 @@ STATE COMBAT
 		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs alert_bk_1h
-		}
-		weapons smokeGrenade AND binoculars
-		{
-			both alert_bk_1h
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
@@ -611,10 +567,6 @@ STATE COMBAT
 		{
 			legs alert_bk_1h torso stand_medpack
 		}
-		weapons Landmine
-		{
-			both alert_bk_1h
-		}
 		weapons Satchel Charge
 		{
 			legs alert_bk_1h torso stand_medpack
@@ -623,18 +575,10 @@ STATE COMBAT
 		{
 			legs alert_bk_1h torso stand_medpack
 		}
-		weapons special
-		{
-			both alert_bk_1h
-		}
 		weapons throwables, gen_bitflag holding
 		{
 			legs alert_bk_1h torso holding_grenadeA
 			legs alert_bk_1h torso holding_grenadeB
-		}
-		weapons throwables AND throwables_underhand
-		{
-			both alert_bk_1h
 		}
 		weapons Scoped M1 Garand
 		{
@@ -692,6 +636,10 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso stand_akimbo
 		}
+		weapons aimless
+		{
+			both alert_bk_1h
+		}
 		default
 		{
 			both alert_bk_1h
@@ -715,21 +663,13 @@ STATE COMBAT
 		{
 			legs alert_crch_2h torso satchel_remote_stand
 		}
-		weapons none
-		{
-			both alert_crch_1h
-		}
 		weapons one_handed_weapons
 		{
 			both alert_crch_1h
 		}
-			weapons Binoculars, gen_bitflag zooming
+		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs alert_crch_1h
-		}
-		weapons smokeGrenade AND binoculars
-		{
-			both alert_crch_1h
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
@@ -738,10 +678,6 @@ STATE COMBAT
 		weapons Ammo Pack
 		{
 			legs alert_crch_2h torso stand_medpack
-		}
-		weapons Landmine
-		{
-			both alert_crch_1h
 		}
 		weapons Satchel Charge
 		{
@@ -820,6 +756,10 @@ STATE COMBAT
 		{
 			legs alert_crch_2h torso stand_akimbo
 		}
+		weapons aimless
+		{
+			both alert_crch_1h
+		}
 		default
 		{
 			both alert_crch_1h
@@ -844,10 +784,6 @@ STATE COMBAT
 		{
 			legs alert_crbk_2h torso satchel_remote_stand
 		}
-		weapons none
-		{
-			both alert_crbk_1h
-		}
 		weapons one_handed_weapons
 		{
 			both alert_crbk_1h
@@ -855,10 +791,6 @@ STATE COMBAT
 		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs alert_crbk_1h
-		}
-		weapons smokeGrenade AND binoculars
-		{
-			both alert_crbk_1h
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
@@ -868,10 +800,6 @@ STATE COMBAT
 		{
 			legs alert_crbk_2h torso stand_medpack
 		}
-		weapons Landmine
-		{
-			both alert_crbk_1h
-		}
 		weapons Satchel Charge
 		{
 			legs alert_crbk_2h torso stand_medpack
@@ -880,18 +808,10 @@ STATE COMBAT
 		{
 			legs alert_crbk_2h torso stand_medpack
 		}
-		weapons special
-		{
-			both alert_crbk_1h
-		}
 		weapons throwables, gen_bitflag holding
 		{
 			legs alert_crbk_1h torso holding_grenadeA
 			legs alert_crbk_1h torso holding_grenadeB
-		}
-		weapons throwables AND throwables_underhand
-		{
-			both alert_crbk_1h
 		}
 		weapons Scoped M1 Garand
 		{
@@ -949,6 +869,10 @@ STATE COMBAT
 		{
 			legs alert_crbk_2h torso stand_akimbo
 		}
+		weapons aimless
+		{
+			both alert_crbk_1h
+		}
 		default
 		{
 			both alert_crbk_2h
@@ -972,17 +896,9 @@ STATE COMBAT
 		{
 			legs alert_run_1h torso satchel_remote_stand
 		}
-		weapons none
-		{
-			both alert_run_no
-		}
 		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs alert_run_no
-		}
-		weapons smokeGrenade AND binoculars
-		{
-			both alert_run_no
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
@@ -991,10 +907,6 @@ STATE COMBAT
 		weapons Ammo Pack
 		{
 			both run_medpack
-		}
-		weapons Landmine
-		{
-			both alert_run_no
 		}
 		weapons Satchel Charge
 		{
@@ -1077,6 +989,10 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso stand_akimbo
 		}
+		weapons aimless
+		{
+			both alert_run_no
+		}
 		default
 		{
 			both alert_run_1h
@@ -1100,10 +1016,6 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso satchel_remote_stand
 		}
-		weapons none
-		{
-			both alert_bk_1h
-		}
 		weapons one_handed_weapons
 		{
 			legs alert_bk_1h torso stand_pistolb
@@ -1112,10 +1024,6 @@ STATE COMBAT
 		{
 			torso stand_binoculars legs alert_bk_1h
 		}
-		weapons smokeGrenade AND binoculars
-		{
-			both alert_bk_1h
-		}
 		weapons Syringe AND Adrenaline Syringe
 		{
 			legs alert_bk_1h
@@ -1123,10 +1031,6 @@ STATE COMBAT
 		weapons Ammo Pack
 		{
 			legs alert_bk_2h torso stand_medpack
-		}
-		weapons Landmine
-		{
-			both alert_bk_1h
 		}
 		weapons Satchel Charge
 		{
@@ -1137,10 +1041,6 @@ STATE COMBAT
 			legs alert_bk_2h torso stand_medpack
 		}
 		weapons special
-		{
-			both alert_bk_1h
-		}
-		weapons knives
 		{
 			both alert_bk_1h
 		}
@@ -1209,6 +1109,10 @@ STATE COMBAT
 		{
 			legs alert_bk_2h torso stand_akimbo
 		}
+		weapons aimless
+		{
+			both alert_bk_1h
+		}
 		default
 		{
 			both alert_bk_2h
@@ -1232,10 +1136,6 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso satchel_remote_stand
 		}
-		weapons none
-		{
-			both alert_run_no
-		}
 		weapons one_handed_weapons
 		{
 			legs alert_run_1h torso stand_pistolb
@@ -1244,10 +1144,6 @@ STATE COMBAT
 		{
 			torso stand_binoculars legs alert_run_1h
 		}
-		weapons smokeGrenade AND binoculars
-		{
-			both alert_run_no
-		}
 		weapons Syringe AND Adrenaline Syringe
 		{
 			both alert_run_1h
@@ -1255,10 +1151,6 @@ STATE COMBAT
 		weapons Ammo Pack
 		{
 			both run_medpack
-		}
-		weapons Landmine
-		{
-			both alert_run_no
 		}
 		weapons Satchel Charge
 		{
@@ -1276,10 +1168,6 @@ STATE COMBAT
 		{
 			legs alert_run_no torso holding_grenadeA
 			legs alert_run_no torso holding_grenadeB
-		}
-		weapons throwables AND throwables_underhand
-		{
-			both alert_run_no
 		}
 		weapons Scoped M1 Garand
 		{
@@ -1336,6 +1224,10 @@ STATE COMBAT
 		weapons akimbo_pistols
 		{
 			legs alert_run_2h torso stand_akimbo
+		}
+		weapons aimless
+		{
+			both alert_run_no
 		}
 		default
 		{
@@ -1360,10 +1252,6 @@ STATE COMBAT
 		{
 			legs alert_run_2h torso satchel_remote_stand
 		}
-		weapons none
-		{
-			both alert_run_no
-		}
 		weapons one_handed_weapons
 		{
 			legs alert_run_1h torso stand_pistolb
@@ -1371,10 +1259,6 @@ STATE COMBAT
 		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs alert_run_1h
-		}
-		weapons smokeGrenade AND binoculars
-		{
-			both alert_run_no
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
@@ -1384,10 +1268,6 @@ STATE COMBAT
 		{
 			both run_medpack
 		}
-		weapons Landmine
-		{
-			both alert_run_no
-		}
 		weapons Satchel Charge
 		{
 			both run_medpack
@@ -1396,18 +1276,10 @@ STATE COMBAT
 		{
 			both run_medpack
 		}
-		weapons special
-		{
-			both alert_run_1h
-		}
 		weapons throwables, gen_bitflag holding
 		{
 			legs alert_run_no torso holding_grenadeA
 			legs alert_run_no torso holding_grenadeB
-		}
-		weapons throwables AND throwables_underhand
-		{
-			both alert_run_no
 		}
 		weapons Scoped M1 Garand
 		{
@@ -1464,6 +1336,10 @@ STATE COMBAT
 		weapons akimbo_pistols
 		{
 			legs alert_run_2h torso stand_akimbo
+		}
+		weapons aimless
+		{
+			both alert_run_no
 		}
 		default
 		{
@@ -2675,10 +2551,6 @@ raiseweapon
 	{
 		torso raise_panzer
 	}
-	weapons knives
-	{
-		torso raise_knife
-	}
 	weapons pistols
 	{
 		torso raise_pistolA
@@ -2731,7 +2603,7 @@ raiseweapon
 	{
 		torso raise_sniper
 	}
-	weapons throwables AND throwables_underhand
+	weapons aimless
 	{
 		torso raise_grenade
 	}
