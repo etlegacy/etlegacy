@@ -1244,7 +1244,7 @@ STATE COMBAT
 		{
 			torso stand_binoculars legs alert_run_1h
 		}
-		weapons smokeGrenade and binoculars
+		weapons smokeGrenade AND binoculars
 		{
 			both alert_run_no
 		}
@@ -1368,13 +1368,13 @@ STATE COMBAT
 		{
 			legs alert_run_1h torso stand_pistolb
 		}
-		weapons smokeGrenade AND binoculars
-		{
-			both alert_run_no
-		}
 		weapons Binoculars, gen_bitflag zooming
 		{
 			torso stand_binoculars legs alert_run_1h
+		}
+		weapons smokeGrenade AND binoculars
+		{
+			both alert_run_no
 		}
 		weapons Syringe AND Adrenaline Syringe
 		{
