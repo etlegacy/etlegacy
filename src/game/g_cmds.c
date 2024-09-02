@@ -1520,13 +1520,18 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 		}
 	}
 
-	if (g_maxGameClients.integer > 0 && level.numNonSpectatorClients >= g_maxGameClients.integer)
+	oldTeam = client->sess.sessionTeam;
+
+	if (g_maxGameClients.integer > 0)
 	{
-		team = TEAM_SPECTATOR;
+		// don't force spectate on 'class' command - force team to spec only if we're trying to switch from spec to either team
+		if (oldTeam == TEAM_SPECTATOR && team != oldTeam && level.numNonSpectatorClients >= g_maxGameClients.integer)
+		{
+			team = TEAM_SPECTATOR;
+		}
 	}
 
 	// decide if we will allow the change
-	oldTeam = client->sess.sessionTeam;
 	if (team == oldTeam && team != TEAM_SPECTATOR)
 	{
 		return qfalse;
