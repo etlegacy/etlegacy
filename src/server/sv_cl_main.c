@@ -711,7 +711,7 @@ rescan:
 		// propagate disconnect message to chained tv server(s) and their client(s)
 		if (Cmd_Argc() >= 2)
 		{
-			SV_Shutdown(Cmd_Argv(1));
+			SV_Shutdown(va("Server Disconnected - %s", Cmd_Argv(1)));
 		}
 		else
 		{
