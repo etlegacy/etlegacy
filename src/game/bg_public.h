@@ -1755,6 +1755,7 @@ typedef struct animation_s
 	int initialLerp;               ///< msec to get to first frame
 	int moveSpeed;
 	int animBlend;                 ///< take this long to blend to next anim
+	int priority;
 
 	// derived
 	int duration;

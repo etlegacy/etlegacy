@@ -182,6 +182,11 @@ static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 		animation->flags |= ANIMFL_REVERSED;
 	}
 
+	if (!PC_Int_Parse(handle, &animation->priority))
+	{
+		return BG_RAG_ParseError(handle, "expected priority integer");
+	}
+
 	// calculate the duration
 	animation->duration = animation->initialLerp
 	                      + animation->frameLerp * animation->numFrames

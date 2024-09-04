@@ -1568,7 +1568,7 @@ STATE COMBAT
 		}
 		weapons panzerfaust
 		{
-			legs prone_legs torso prone_panzor_idle
+			legs prone_legs torso prone_panzer_idle
 		}
 		weapons machineguns
 		{
@@ -2329,7 +2329,7 @@ fireweaponprone
 	}
 	weapons panzerfaust
 	{
-		torso prone_panzor_idle
+		torso prone_panzer_idle
 	}
 	weapons throwables AND throwables_underhand
 	{
@@ -2461,7 +2461,7 @@ raiseweaponprone
 	}
 	weapons panzerfaust
 	{
-		torso prone_panzor_switch
+		torso prone_panzer_switch
 	}
 	weapons throwables AND throwables_underhand
 	{

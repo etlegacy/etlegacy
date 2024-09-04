@@ -811,8 +811,9 @@ static void BG_ParseCommands(char **input, animScriptItem_t *scriptItem, animMod
 			Com_Memset(command, 0, sizeof(*command));
 		}
 
-      // skip adding NOOP commands altogether
-		if (!Q_stricmp(token, "NOOP")) {
+		// skip adding NOOP commands altogether
+		if (!Q_stricmp(token, "NOOP"))
+		{
 			continue;
 		}
 
@@ -1393,7 +1394,9 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 	{
 	case ANIM_BP_BOTH:
 	case ANIM_BP_LEGS:
-		if ((ps->legsTimer < 50) || force)
+		if ((ps->legsTimer < 50)
+		    || force
+		    || (animModelInfo->animations[animNum]->priority > animModelInfo->animations[(ps->legsAnim & ~ANIM_TOGGLEBIT)]->priority))
 		{
 			if (!isContinue || !((ps->legsAnim & ~ANIM_TOGGLEBIT) == animNum))
 			{
@@ -1414,10 +1417,12 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 		{
 			break;
 		}
-    // for ANIM_BP_BOTH
+	// for ANIM_BP_BOTH
 	// fall through
 	case ANIM_BP_TORSO:
-		if ((ps->torsoTimer < 50) || force)
+		if ((ps->torsoTimer < 50)
+		    || force
+		    || (animModelInfo->animations[animNum]->priority > animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority))
 		{
 			if (!isContinue || !((ps->torsoAnim & ~ANIM_TOGGLEBIT) == animNum))
 			{
