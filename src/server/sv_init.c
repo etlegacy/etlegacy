@@ -98,13 +98,11 @@ void SV_SetConfigstring(int index, const char *val)
 	sv.configstrings[index]         = CopyString(val);
 	sv.configstringsmodified[index] = qtrue;
 
-#ifdef DEDICATED
 	if (svcls.isTVGame && svcls.state != CA_LOADING &&
 	    (index == CS_SERVERINFO || index == CS_WOLFINFO))
 	{
 		SV_CL_ConfigstringInfoChanged(index);
 	}
-#endif // DEDICATED
 
 	// save config strings to demo
 	if (sv.demoState == DS_RECORDING)
@@ -308,7 +306,6 @@ void SV_CreateBaseline(void)
 	sharedEntity_t *svent;
 	int            entnum;
 
-#ifdef DEDICATED
 	if (svcls.isTVGame)
 	{
 		for (entnum = 0; entnum < MAX_GENTITIES; entnum++)
@@ -323,7 +320,6 @@ void SV_CreateBaseline(void)
 			}
 		}
 	}
-#endif // DEDICATED
 
 	for (entnum = 1; entnum < sv.num_entities ; entnum++)
 	{
@@ -357,10 +353,8 @@ void SV_BoundMaxClients(int minimum)
 		Cvar_Set("sv_maxclients", va("%i", minimum));
 	}
 	else if (sv_maxclients->integer > MAX_CLIENTS
-#ifdef DEDICATED
 	         // no limit for etltv slave server
 	         && svcls.state <= CA_DISCONNECTED
-#endif // DEDICATED
 	         )
 	{
 		Cvar_Set("sv_maxclients", va("%i", MAX_CLIENTS));
@@ -872,9 +866,7 @@ void SV_SpawnServer(const char *server)
 
 					client        = &svs.clients[i];
 					client->state = CS_ACTIVE;
-#ifdef DEDICATED
 					if (!svcls.isTVGame)
-#endif // DEDICATED
 					{
 						ent             = SV_GentityNum(i);
 						ent->s.number   = i;
@@ -1312,12 +1304,10 @@ void SV_Shutdown(const char *finalmsg)
 		return;
 	}
 
-#ifdef DEDICATED
 	if (!svclc.demo.playing)
 	{
 		SV_CL_Disconnect();
 	}
-#endif
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	Cmd_RemoveCommand("irc_connect");

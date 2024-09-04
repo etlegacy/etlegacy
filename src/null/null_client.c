@@ -86,12 +86,21 @@ void CL_CharEvent(int key)
 {
 }
 
+extern void SV_CL_Disconnect(void);
+extern void SV_CL_FlushMemory(void);
+
 /**
  * @brief CL_Disconnect
  * @param showMainMenu - unused
  */
 void CL_Disconnect(qboolean showMainMenu)
 {
+	SV_CL_Disconnect();
+}
+
+void CL_FlushMemory(void)
+{
+	SV_CL_FlushMemory();
 }
 
 /**

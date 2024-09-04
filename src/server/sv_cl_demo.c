@@ -34,8 +34,6 @@
 
 #include "server.h"
 
-#ifdef DEDICATED
-
 /**
   * @brief Dumps the current net message, prefixed by the length
   * @param[in] msg
@@ -272,6 +270,7 @@ void SV_CL_NextDemo(void)
 	Com_Printf("SV_CL_NextDemo: %s\n", v);
 	if (!v[0])
 	{
+		Cvar_SetValue("sv_killserver", 1);
 		return;
 	}
 
@@ -385,7 +384,7 @@ void SV_CL_FastForward_f(void)
 {
 	int time;
 
-	if (Cmd_Argc() != 2)
+	if (Cmd_Argc() != 2 && Cmd_Argc() != 3)
 	{
 		Com_Printf("ff <seconds>\n");
 		return;
@@ -411,7 +410,7 @@ void SV_CL_PlayDemo_f(void)
 	char *demoFile;
 	int  nextDemoNo;
 
-	if (Cmd_Argc() != 2)
+	if (Cmd_Argc() != 2 && Cmd_Argc() != 3)
 	{
 		Com_Printf("demo <demoname>\n");
 		return;
@@ -462,6 +461,8 @@ void SV_CL_PlayDemo_f(void)
 
 	sv.time = svcl.serverTime;
 }
+
+#ifdef DEDICATED
 
 /**
  * @brief SV_CL_CompleteDemoName

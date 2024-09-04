@@ -38,15 +38,13 @@
 #include "sv_tracker.h"
 #endif
 
-serverStatic_t svs;                   // persistant server info
-server_t       sv;                    // local server
-#ifdef DEDICATED
+serverStatic_t       svs;             // persistant server info
+server_t             sv;              // local server
 svclientActive_t     svcl;
 svclientConnection_t svclc;
 svclientStatic_t     svcls;
 serverMessageQueue_t *svMsgQueueHead, *svMsgQueueTail;
-#endif // DEDICATED
-vm_t *gvm = NULL;                     // game virtual machine
+vm_t                 *gvm = NULL;     // game virtual machine
 
 cvar_t *sv_fps = NULL;          // time rate for running non-clients
 cvar_t *sv_timeout;             // seconds without any message
@@ -1596,12 +1594,10 @@ static qboolean SV_CheckPaused(void)
  */
 int SV_FrameMsec()
 {
-#ifdef DEDICATED
 	if (svcls.isTVGame)
 	{
 		return 8;
 	}
-#endif // DEDICATED
 
 	if (sv_fps)
 	{
@@ -1732,9 +1728,7 @@ void SV_Frame(int msec)
 	start           = Sys_Milliseconds();
 	svs.stats.idle += ( double )(start - end) / 1000;
 
-#ifdef DEDICATED
 	svcls.realtime += msec;
-#endif // DEDICATED
 
 	// the menu kills the server with this cvar
 	if (sv_killserver->integer)
@@ -1821,13 +1815,11 @@ void SV_Frame(int msec)
 		return;
 	}
 
-#ifdef DEDICATED
 	if (svcls.isTVGame)
 	{
 		SV_CL_Frame(frameMsec);
 	}
 	else
-#endif // DEDICATED
 	{
 		SV_Frame_Ext(frameMsec);
 	}

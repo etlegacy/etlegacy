@@ -598,9 +598,7 @@ gotnewcl:
 	*newcl    = temp;
 	clientNum = newcl - svs.clients;
 
-#ifdef DEDICATED
 	if (!svcls.isTVGame)
-#endif // DEDICATED
 	{
 		newcl->gentity            = SV_GentityNum(clientNum);
 		newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
@@ -679,12 +677,10 @@ gotnewcl:
 	{
 		int clients = sv_maxclients->integer;
 
-#ifdef DEDICATED
 		if (svcls.isTVGame)
 		{
 			clients = MAX_CLIENTS;
 		}
-#endif // DEDICATED
 
 		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t *) * PACKET_BACKUP);
 
@@ -917,13 +913,11 @@ void SV_SendClientGameState(client_t *client)
 
 	MSG_WriteByte(&msg, svc_EOF);
 
-#ifdef DEDICATED
 	if (svcls.isTVGame)
 	{
 		MSG_WriteLong(&msg, svclc.clientNum);
 	}
 	else
-#endif // DEDICATED
 	{
 		MSG_WriteLong(&msg, client - svs.clients);
 	}
