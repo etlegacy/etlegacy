@@ -209,6 +209,13 @@ static qboolean SV_IsValidUserinfo(const netadr_t *from, const char *userinfo)
 			return qfalse;
 		}
 
+		if (!com_dedicated->integer)
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Master must be a dedicated server.\n");
+			Com_DPrintf("    rejected ettv slave connection from %s because server is not dedicated.\n", NET_AdrToString(from));
+			return qfalse;
+		}
+
 		if (sv_etltv_maxslaves->integer <= 0)
 		{
 			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Master must reserve slots with sv_etltv_maxslaves.\n");
