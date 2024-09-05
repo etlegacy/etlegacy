@@ -273,10 +273,17 @@ jobs:
           path: '/root/.m2/repository/com/etlegacy/android/joystick/'
           if-no-files-found: error
 
-      - name: Build
+      - name: Build Release
+        if: github.repository == 'etlegacy/etlegacy'
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          ./gradlew clean assembleRelease
+          ./gradlew clean assembleRelease --stacktrace --info
+          ls -R
+      - name: Build Debug
+        if: github.repository != 'etlegacy/etlegacy'
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          ./gradlew clean assembleDebug --stacktrace --info
           ls -R
 
       - name: Upload arm64-v8a
@@ -284,8 +291,8 @@ jobs:
         with:
           name: android-arm64-mod
           path: |
-            app/build/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libcgame*.so
-            app/build/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libui*.so
+            app/build/intermediates/merged_native_libs/*/out/lib/arm64-v8a/libcgame*.so
+            app/build/intermediates/merged_native_libs/*/out/lib/arm64-v8a/libui*.so
           if-no-files-found: error
 
       - name: Upload x86
@@ -293,8 +300,8 @@ jobs:
         with:
           name: android-x86-mod
           path: |
-            app/build/intermediates/merged_native_libs/release/out/lib/x86/libcgame*.so
-            app/build/intermediates/merged_native_libs/release/out/lib/x86/libui*.so
+            app/build/intermediates/merged_native_libs/*/out/lib/x86/libcgame*.so
+            app/build/intermediates/merged_native_libs/*/out/lib/x86/libui*.so
           if-no-files-found: error
 
       - name: Upload x86_64
@@ -302,10 +309,9 @@ jobs:
         with:
           name: android-x86_64-mod
           path: |
-            app/build/intermediates/merged_native_libs/release/out/lib/x86_64/libcgame*.so
-            app/build/intermediates/merged_native_libs/release/out/lib/x86_64/libui*.so
+            app/build/intermediates/merged_native_libs/*/out/lib/x86_64/libcgame*.so
+            app/build/intermediates/merged_native_libs/*/out/lib/x86_64/libui*.so
           if-no-files-found: error
-
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
@@ -680,21 +686,28 @@ jobs:
         run: ls -R
         working-directory: app/src/main/assets
 
-      - name: Build and Generate Package
+      - name: Build Release and Generate Package
+        if: github.repository == 'etlegacy/etlegacy'
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          ./gradlew clean assembleRelease
+          ./gradlew clean assembleRelease --stacktrace --info
+          ls -R
+      - name: Build Debug and Generate Package
+        if: github.repository != 'etlegacy/etlegacy'
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          ./gradlew clean assembleDebug --stacktrace --info
           ls -R
 
       - name: Rename APK
         run: |
-          for FILE in ./app/build/outputs/apk/release/*; do mv "$FILE" "${FILE%-*}.apk"; done
-          ls app/build/outputs/apk/release
+          for FILE in ./app/build/outputs/apk/*/*; do mv "$FILE" "${FILE%-*}.apk"; done
+          ls -R app/build/outputs/apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: android-packages
-          path: app/build/outputs/apk/release/etlegacy*.apk
+          path: app/build/outputs/apk/*/etlegacy*.apk
           if-no-files-found: error
 
 #    ____  _             ____       _   _
