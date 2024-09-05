@@ -20,7 +20,7 @@ on:
 
 jobs:
 
-# Try to figure out the build version information only once
+  # Try to figure out the build version information only once
   version:
     runs-on: ubuntu-latest
     outputs:
@@ -78,11 +78,13 @@ jobs:
             build/legacy/ui*.so
             build/legacy/qagame*.so
             build/legacy/tvgame*.so
+          if-no-files-found: error
 
       - uses: actions/upload-artifact@v4
         with:
           name: incomplete-mod-pk3
           path: build/legacy/legacy_*.pk3
+          if-no-files-found: error
 
   lnx32-mod:
     runs-on: ubuntu-20.04
@@ -112,6 +114,7 @@ jobs:
             build/legacy/ui*.so
             build/legacy/qagame*.so
             build/legacy/tvgame*.so
+          if-no-files-found: error
 
   lnx-aarch64-mod:
     runs-on: ubuntu-20.04
@@ -139,6 +142,7 @@ jobs:
             build/legacy/ui*.so
             build/legacy/qagame*.so
             build/legacy/tvgame*.so
+          if-no-files-found: error
 
   osx-mod:
     runs-on: macos-12
@@ -177,6 +181,7 @@ jobs:
             build/legacy/ui_mac
             build/legacy/qagame_mac
             build/legacy/tvgame_mac
+          if-no-files-found: error
 
   win-mod:
     runs-on: windows-2019
@@ -202,6 +207,7 @@ jobs:
             build/legacy/ui*.dll
             build/legacy/qagame*.dll
             build/legacy/tvgame*.dll
+          if-no-files-found: error
 
   win64-mod:
     runs-on: windows-2019
@@ -227,6 +233,7 @@ jobs:
             build/legacy/ui*.dll
             build/legacy/qagame*.dll
             build/legacy/tvgame*.dll
+          if-no-files-found: error
 
   android-mod:
     runs-on: ubuntu-20.04
@@ -265,6 +272,7 @@ jobs:
           path: |
             app/build/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libcgame*.so
             app/build/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libui*.so
+          if-no-files-found: error
 
       - name: Upload x86
         uses: actions/upload-artifact@v4
@@ -273,6 +281,7 @@ jobs:
           path: |
             app/build/intermediates/merged_native_libs/release/out/lib/x86/libcgame*.so
             app/build/intermediates/merged_native_libs/release/out/lib/x86/libui*.so
+          if-no-files-found: error
 
       - name: Upload x86_64
         uses: actions/upload-artifact@v4
@@ -281,6 +290,7 @@ jobs:
           path: |
             app/build/intermediates/merged_native_libs/release/out/lib/x86_64/libcgame*.so
             app/build/intermediates/merged_native_libs/release/out/lib/x86_64/libui*.so
+          if-no-files-found: error
 
 
 #   __  __                                                          _
@@ -335,11 +345,13 @@ jobs:
         with:
           name: All-mods
           path: legacy_*.pk3
+          if-no-files-found: error
 
       - uses: actions/upload-artifact@v4
         with:
           name: mod-zip
           path: etlegacy-mod-*.zip
+          if-no-files-found: error
 
 #   ______   _                   _                            _
 #  |  ____| (_)                 | |                          | |
@@ -400,6 +412,7 @@ jobs:
           path: |
             build/etlegacy-*.tar.gz
             build/etlegacy-*.sh
+          if-no-files-found: error
 
   lnx32:
     runs-on: ubuntu-20.04
@@ -448,6 +461,7 @@ jobs:
           path: |
             build/etlegacy-*.tar.gz
             build/etlegacy-*.sh
+          if-no-files-found: error
 
   lnx-aarch64:
     runs-on: ubuntu-latest
@@ -486,6 +500,7 @@ jobs:
           path: |
             build/etlegacy-*.tar.gz
             build/etlegacy-*.sh
+          if-no-files-found: error
 
   osx:
     runs-on: macos-12
@@ -530,6 +545,7 @@ jobs:
           path: |
             build/etlegacy-*.tar.gz
             build/etlegacy-*.dmg
+          if-no-files-found: error
 
   win:
     runs-on: windows-2019
@@ -570,6 +586,7 @@ jobs:
           path: |
             build/etlegacy-*.exe
             build/etlegacy-*.zip
+          if-no-files-found: error
 
   win64:
     runs-on: windows-2019
@@ -610,6 +627,7 @@ jobs:
           path: |
             build/etlegacy-*.exe
             build/etlegacy-*.zip
+          if-no-files-found: error
 
   android:
     runs-on: ubuntu-20.04
@@ -658,6 +676,7 @@ jobs:
         with:
           name: android-packages
           path: app/build/outputs/apk/release/etlegacy*.apk
+          if-no-files-found: error
 
 #    ____  _             ____       _   _
 #   / ___|(_) __ _ _ __ |  _ \ __ _| |_| |__
@@ -714,6 +733,7 @@ jobs:
             win-packages/etlegacy-*-x86.exe
             win-packages/etlegacy-*-x86.zip
           overwrite: true
+          if-no-files-found: error
 
       - uses: actions/upload-artifact@v4
         with:
@@ -722,6 +742,7 @@ jobs:
             win64-packages/etlegacy-*-x64.exe
             win64-packages/etlegacy-*-x64.zip
           overwrite: true
+          if-no-files-found: error
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
