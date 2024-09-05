@@ -16,7 +16,7 @@ on:
 
 jobs:
 
-# Try to figure out the build version information only once
+  # Try to figure out the build version information only once
   version:
     runs-on: ubuntu-latest
     outputs:
@@ -38,7 +38,7 @@ jobs:
           echo "describe=$git_describe" >> "$GITHUB_OUTPUT"
           echo "tag=$git_tag" >> "$GITHUB_OUTPUT"
 
-# Run the build on all the current platforms
+  # Run the build on all the current platforms
   lnx64:
     runs-on: ubuntu-20.04
     needs: [ version ]
@@ -216,6 +216,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Build JoyStick Dependency
+        working-directory: ./app/libs/joystick
+        run: |
+          ./gradlew clean               --stacktrace --info
+          ./gradlew assembleRelease     --stacktrace --info
+          ./gradlew publishToMavenLocal --stacktrace --info
 
       - name: Build and Generate Package
         run: |
