@@ -659,12 +659,12 @@ jobs:
           name: android-packages
           path: app/build/outputs/apk/release/etlegacy*.apk
 
-#    ____  _             ____       _   _     
-#   / ___|(_) __ _ _ __ |  _ \ __ _| |_| |__  
-#   \___ \| |/ _` | '_ \| |_) / _` | __| '_ \ 
+#    ____  _             ____       _   _
+#   / ___|(_) __ _ _ __ |  _ \ __ _| |_| |__
+#   \___ \| |/ _` | '_ \| |_) / _` | __| '_ \
 #    ___) | | (_| | | | |  __/ (_| | |_| | | |
 #   |____/|_|\__, |_| |_|_|   \__,_|\__|_| |_|
-#            |___/                            
+#            |___/
 
   sign:
     runs-on: ubuntu-20.04
@@ -681,7 +681,7 @@ jobs:
       - uses: actions/download-artifact@v4
         if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
-          pattern: win*	
+          pattern: win*
 
       - name: SignPath Win
         uses: signpath/github-action-submit-signing-request@v0.4
