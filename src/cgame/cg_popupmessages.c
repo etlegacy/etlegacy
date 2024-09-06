@@ -972,18 +972,31 @@ static qboolean CG_DrawPMXPItems(hudComponent_t *comp, pmListItem_t *listItem, f
 	float  x = (comp->alignText == ITEM_ALIGN_RIGHT) ? comp->location.x + comp->location.w : comp->location.x;
 	char   buffer[256];
 	int    lineNumber = 1;
+	float  XPGained;
 	char   *XPGainNumber;
+	float  remainder;
 
 	if (!listItem)
 	{
 		return qfalse;
 	}
 
-	XPGainNumber = va(" %2.0fXP ", Q_atof(listItem->message));
-
 	Vector4Copy(comp->colorMain, colorText);
 	Vector4Copy(comp->colorSecondary, colorText2);
 	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
+
+	XPGained  = Q_atof(listItem->message);
+	remainder = fmodf(XPGained, 1);
+
+	// there are digits after decimal point, draw decimal
+	if (remainder)
+	{
+		XPGainNumber = va(" %2.1f XP ", XPGained);
+	}
+	else
+	{
+		XPGainNumber = va(" %2.0f XP ", XPGained);
+	}
 
 	// fadein
 //	t = listItem->time + time + fadeTime;
@@ -1055,14 +1068,30 @@ static qboolean CG_DrawPMXPItems(hudComponent_t *comp, pmListItem_t *listItem, f
 
 	if (comp->alignText == ITEM_ALIGN_RIGHT)
 	{
-		w  = CG_Text_Line_Width_Ext_Float(buffer, scale, &cgs.media.limboFont2);
+		w  = CG_Text_Line_Width_Ext_Float(XPGainNumber, scale, &cgs.media.limboFont1);
+		w += CG_Text_Line_Width_Ext_Float(listItem->message2, scale * 0.75f, &cgs.media.limboFont2);
 		x -= w;
 	}
 
-	CG_Text_Paint_Ext(x, *y - lineHeight * 0.25, scale, scale, colorText, XPGainNumber, 0, 0, comp->styleText, &cgs.media.limboFont1);
+	// fix miss alignment due to shorter . width
+	if (remainder)
+	{
+		if (comp->alignText == ITEM_ALIGN_RIGHT)
+		{
+			x += CG_Text_Line_Width_Ext_Float(".", scale, &cgs.media.limboFont1);
+			x -= CG_Text_Line_Width_Ext_Float("1", scale, &cgs.media.limboFont1);
+		}
+		else
+		{
+			x -= CG_Text_Line_Width_Ext_Float(".", scale, &cgs.media.limboFont1);
+			x += CG_Text_Line_Width_Ext_Float("1", scale, &cgs.media.limboFont1);
+		}
+	}
+
+	CG_Text_Paint_Ext(x, *y - lineHeight * 0.25f, scale, scale, colorText, XPGainNumber, 0, 0, comp->styleText, &cgs.media.limboFont1);
 	CG_Text_Paint_Ext(x + (lineNumber > 1 ? 0 : CG_Text_Width_Ext(XPGainNumber, scale, 0, &cgs.media.limboFont1)),
-	                  *y - lineHeight * 0.375 + (lineNumber == 1 ? 0 : lineHeight),
-	                  scale * 0.75, scale * 0.75, colorText2, listItem->message2, 0, 0, comp->styleText, &cgs.media.limboFont2);
+	                  *y - lineHeight * 0.375f + (lineNumber == 1 ? 0 : lineHeight),
+	                  scale * 0.75f, scale * 0.75f, colorText2, listItem->message2, 0, 0, comp->styleText, &cgs.media.limboFont2);
 
 	// next line
 	*y += scrollDown ? lineHeight * (lineNumber - 1) + lineHeight * 0.25f : -(lineHeight + lineHeight * 0.25f);
