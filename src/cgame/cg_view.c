@@ -2540,7 +2540,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 			DEBUGTIME
 
-			CG_AddLocalEntities();
+			CG_AddLocalEntities(qtrue);
 
 			DEBUGTIME
 

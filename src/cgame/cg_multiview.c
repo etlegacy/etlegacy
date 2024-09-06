@@ -729,7 +729,7 @@ void CG_mvDraw(cg_window_t *sw)
 		CG_AddPacketEntities();
 		CG_AddMarks();
 		CG_AddParticles();
-		CG_AddLocalEntities();
+		CG_AddLocalEntities(qfalse);
 
 		CG_AddSmokeSprites();
 		CG_AddAtmosphericEffects();

@@ -4697,7 +4697,7 @@ void CG_DrawMissileCamera(hudComponent_t *comp)
 		CG_AddPacketEntities();
 		CG_AddMarks();
 		CG_AddParticles();
-		CG_AddLocalEntities();
+		CG_AddLocalEntities(qfalse);
 		CG_AddSmokeSprites();
 		CG_AddAtmosphericEffects();
 		CG_AddFlameChunks();
