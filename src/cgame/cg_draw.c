@@ -2734,8 +2734,8 @@ void CG_DrawVote(hudComponent_t *comp)
 		case -1: str = CG_TranslateString("Your complaint has been filed"); break;
 		case -2: str = CG_TranslateString("Complaint dismissed"); break;
 		case -3: str = CG_TranslateString("Server Host cannot be complained against"); break;
-		case -4: str = CG_TranslateString(va("You were %s by the Server Host", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bleeded")); break;
-		case -5: str = CG_TranslateString(va("You were %s by a bot.", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bleeded")); break;
+		case -4: str = CG_TranslateString(va("You were %s by the Server Host", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
+		case -5: str = CG_TranslateString(va("You were %s by a bot.", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
 		default: break;
 
 		}
