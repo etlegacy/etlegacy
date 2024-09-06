@@ -1392,11 +1392,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
-	if (!ps && (cg.snap->ps.pm_flags & PMF_LADDER) && isPlayer)          // player on ladder
-	{
-		return;
-	}
-
 	if (ps && cg.clientNum != cg.snap->ps.clientNum)
 	{
 		// calculate mounted weapon angles if spectating client

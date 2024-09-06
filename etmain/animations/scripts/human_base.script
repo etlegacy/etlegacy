@@ -1510,6 +1510,11 @@ STATE COMBAT
 	}
 	climbup
 	{
+		weapons throwables, gen_bitflag holding
+		{
+			legs climb_up torso holding_grenadeA
+			legs climb_up torso holding_grenadeB
+		}
 		default
 		{
 			both climb_up
@@ -1517,6 +1522,11 @@ STATE COMBAT
 	}
 	climbdown
 	{
+		weapons throwables, gen_bitflag holding
+		{
+			legs climb_down torso holding_grenadeA
+			legs climb_down torso holding_grenadeB
+		}
 		default
 		{
 			both climb_down
