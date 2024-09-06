@@ -2769,7 +2769,8 @@ void CG_AltWeapon_f(void)
 #endif
 	    )
 	{
-		trap_SendConsoleCommand("followprev");
+		// XXX : TODO: Eventually replace with something better
+		trap_SendConsoleCommand("followprev\n");
 		return;
 	}
 
@@ -2816,6 +2817,7 @@ void CG_AltWeapon_f(void)
 
 		if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
 		{
+			// XXX : TODO: Eventually replace with something better
 			trap_SendConsoleCommand("-zoom\n");
 			cg.binocZoomTime = -cg.time;
 		}
@@ -2835,9 +2837,8 @@ void CG_AltWeapon_f(void)
 	{
 		if (cg_weapaltReloads.integer && GetWeaponTableData(cg.weaponSelect)->useClip)
 		{
-			//TODO: This is a horrible way of doing it but theres not other way atm.
-			trap_SendConsoleCommand("+reload\n");
-			trap_SendConsoleCommand("-reload\n");
+			// XXX : TODO: Eventually replace with something better
+			trap_SendConsoleCommand("+reload\n-reload\n");
 		}
 		// some alt vsays,
 		// 0 - disabled
@@ -2947,7 +2948,13 @@ void CG_AltWeapon_f(void)
 		{
 			if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
 			{
-				return;
+				if (cg_weapaltMgAutoProne.integer) {
+					// XXX : TODO: Eventually replace with something better
+					trap_SendConsoleCommand("+prone\n-prone\n");
+				} else {
+					return;
+				}
+
 			}
 		}
 		else // mortar
@@ -3010,9 +3017,8 @@ void CG_AltWeapon_f(void)
 	}
 	else if (cg_weapaltReloads.integer)
 	{
-		//TODO: This is a horrible way of doing it but theres not other way atm.
-		trap_SendConsoleCommand("+reload\n");
-		trap_SendConsoleCommand("-reload\n");
+		// XXX : TODO: Eventually replace with something better
+		trap_SendConsoleCommand("+reload\n-reload\n");
 	}
 }
 

@@ -2911,6 +2911,7 @@ extern vmCvar_t cg_simpleItemsScale;
 
 extern vmCvar_t cg_weapaltReloads;
 extern vmCvar_t cg_weapaltSwitches;
+extern vmCvar_t cg_weapaltMgAutoProne;
 
 extern vmCvar_t cg_sharetimerText;
 

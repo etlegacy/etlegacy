@@ -306,6 +306,7 @@ vmCvar_t cg_fireteamSprites;
 
 vmCvar_t cg_weapaltReloads;
 vmCvar_t cg_weapaltSwitches;
+vmCvar_t cg_weapaltMgAutoProne;
 
 vmCvar_t cg_sharetimerText;
 
@@ -590,6 +591,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupXPGainTime,          "cg_popupXPGainTime",          "200",         CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,           "cg_weapaltReloads",           "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,          "cg_weapaltSwitches",          "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_weapaltMgAutoProne,       "cg_weapaltMgAutoProne",       "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_sharetimerText,           "cg_sharetimerText",           "",            CVAR_ARCHIVE,                 0 },
 
 	// Fonts
