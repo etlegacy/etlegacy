@@ -231,18 +231,14 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 
 	ent = SV_SvEntityForGentity(gEnt);
 
-#ifdef DEDICATED
 	if (svcls.isTVGame && gEnt->s.solid == SOLID_BMODEL)
 	{
 		gEnt->r.bmodel = qtrue;
 	}
-#endif // DEDICATED
 
 	// sanity check for possible currentOrigin being reset bug
 	if (!gEnt->r.bmodel && vec3_compare(gEnt->r.currentOrigin, vec3_origin)
-#ifdef DEDICATED
 	    && !svcls.isTVGame
-#endif // DEDICATED
 	    )
 	{
 		// I've seen this warning a lot - let map makers know which entity is affected.
