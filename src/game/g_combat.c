@@ -259,7 +259,7 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
  */
 qboolean G_CheckComplaint(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, meansOfDeath_t meansOfDeath)
 {
-	// Complaint lodging
+	// Complaint logging
 	if (attacker != self && level.warmupTime <= 0 && g_gamestate.integer == GS_PLAYING)
 	{
 		if (attacker->client->pers.localClient)
@@ -284,7 +284,7 @@ qboolean G_CheckComplaint(gentity_t *self, gentity_t *inflictor, gentity_t *atta
 					    !((meansOfDeath == MOD_MORTAR || meansOfDeath == MOD_MORTAR2) && (g_disableComplaints.integer & TKFL_MORTAR)))
 					{
 						trap_SendServerCommand(self - g_entities, va("complaint %i", attacker->s.number));
-						if (meansOfDeath != MOD_DYNAMITE || !(inflictor->etpro_misc_1 & 1))   // do not allow complain when tked / tbleeded by dynamite on objective
+						if (meansOfDeath != MOD_DYNAMITE || !(inflictor->etpro_misc_1 & 1))   // do not allow complain when tked / tbed by dynamite on objective
 						{
 							self->client->pers.complaintClient  = attacker->s.clientNum;
 							self->client->pers.complaintEndTime = level.time + 20500;
@@ -1731,8 +1731,9 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		if (attacker)
 		{
 			targ->client->ps.persistant[PERS_ATTACKER]                       = attacker->s.number;
-			targ->client->damageReceivedFromPlayers[attacker->s.number]     += take;
-			targ->client->damageReceivedFromPlayersMods[attacker->s.number] += mod;
+			targ->client->dmgReceivedSts[attacker->s.number].damageReceived += take;
+			targ->client->dmgReceivedSts[attacker->s.number].mods            = mod;
+			targ->client->dmgReceivedSts[attacker->s.number].lastHitTime     = level.time;
 		}
 		else
 		{

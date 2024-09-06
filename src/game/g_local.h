@@ -917,6 +917,18 @@ typedef struct debrisChunk_s
 
 #define MAX_DEBRISCHUNKS        256
 
+/**
+ * @struct damageReceivedStats_s
+ * @typedef damageReceivedStats_t
+ * @brief Hold damage received by other players
+ */
+typedef struct damageReceivedStats_s
+{
+	int damageReceived;
+	int mods;
+	int lastHitTime;
+} damageReceivedStats_t;
+
 // ===================
 
 /**
@@ -1053,8 +1065,7 @@ struct gclient_s
 	int scoresCount;
 	char scores[MAX_SCORES_CMDS][MAX_STRING_CHARS];
 
-	int damageReceivedFromPlayers[MAX_CLIENTS];
-	int damageReceivedFromPlayersMods[MAX_CLIENTS];
+	damageReceivedStats_t dmgReceivedSts[MAX_CLIENTS];
 };
 
 /**
