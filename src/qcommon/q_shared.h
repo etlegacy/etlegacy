@@ -1606,8 +1606,8 @@ typedef struct entityState_s
 	int otherEntityNum2;
 
 	int groundEntityNum;    ///< ENTITYNUM_NONE when in air - otherwise the
-							///entity number of the entity it is atop, also see
-							///ENTITYNUM_WORLD
+	                        ///entity number of the entity it is atop, also see
+	                        ///ENTITYNUM_WORLD
 
 	int constantLight;      ///< r + (g<<8) + (b<<16) + (intensity<<24)
 	int dl_intensity;       ///< used for coronas
@@ -2089,6 +2089,7 @@ int ExtractInt(const char *src);
 
 int32_t Q_FloatToInt(float f);
 float Q_IntToFloat(int32_t i);
+qboolean Q_ParseInt(const char *src, int *out);
 
 #define PASSFLOAT(f) Q_FloatToInt((f))
 

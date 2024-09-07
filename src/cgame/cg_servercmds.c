@@ -2912,7 +2912,7 @@ static void CG_scores_cmd(void)
 
 	// if this is start of cmd reset the counter
 	// in case a player requested scores again before receiving end marker
-	if (Q_atoi(str))
+	if (Q_ParseInt(str, &i))
 	{
 		cgs.scoresCount = 0;
 		return;
