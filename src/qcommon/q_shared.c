@@ -3145,3 +3145,17 @@ float Q_IntToFloat(int32_t i)
 	fi.i = i;
 	return fi.f;
 }
+
+/**
+ * @brief Q_ParseInt Parse string to int and check if the string was numeric
+ * @param[in] src String to parse
+ * @param[in,out] out Parsed int
+ * @return qtrue if the src string is numeric
+ */
+qboolean Q_ParseInt(const char *src, int *out)
+{
+	char *end;
+
+	*out = (int)strtol(src, &end, 10);
+	return !*end;
+}
