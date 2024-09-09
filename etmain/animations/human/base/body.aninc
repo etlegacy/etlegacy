@@ -148,7 +148,7 @@
 
 		climb_up				2981	21	21	10	-1	0	0	8
 		climb_dis				3004	7	0	40	0	0	0	0
-		climb_start				2981	1	0	100	-1	1	0	8  // effectively disable
+		//climb_start				3035	46	0	20	0	0	0	8
 		climb_down				3082	28	28	12	-1	0	0	8
 
 		jump_1step_2h			3111	11	0	20	0	0	0	3

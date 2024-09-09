@@ -3005,14 +3005,6 @@ jumpbk
 	}
 }
 
-climbmount
-{
-	default
-	{
-		both climb_start
-	}
-}
-
 climbdismount
 {
 	default
