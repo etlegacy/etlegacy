@@ -155,8 +155,7 @@ android {
 }
 
 dependencies {
-	// FIXME: replace with our own version
-	api 'com.github.erz05:JoyStick:1.1.0'
+	api 'com.etlegacy.android:joystick:+'
 	// api 'com.etlegacy.android:joystick:1.1.1-SNAPSHOT'
 	implementation 'com.google.guava:guava:33.1.0-android'
 	implementation 'androidx.appcompat:appcompat:1.6.1'
