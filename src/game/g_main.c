@@ -5045,7 +5045,7 @@ void G_TagLinkEntity(gentity_t *ent, int msec)
  * @brief G_DrawEntBBox
  * @param ent
  *
- * @todo TODO: make this client side one day -> a loooooot of saved entities, and less brandwith
+ * @todo TODO: make this client side one day -> a loooooot of saved entities, and less bandwidth
  */
 void G_DrawEntBBox(gentity_t *ent)
 {

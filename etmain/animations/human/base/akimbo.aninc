@@ -9,8 +9,8 @@
 		//	|   				|   	|   |   |   |   |   |   <priority>
 		//	|   				|   	|   |   |   |   |   |   |
 
-		firing_akimbo			0		4	0	15	0	0	0	0
-		firing_akimbo2			4		4	0	15	0	0	0	0
-		raise_akimbo			53		4	0	15	0	0	0	0
+		firing_akimbo			0		4	0	15	0	0	0	15
+		firing_akimbo2			4		4	0	15	0	0	0	15
+		raise_akimbo			53		4	0	15	0	0	0	10
 		stand_akimbo			57		3	0	15	0	0	0	0
-		reload_akimbo			8		39	0	15	0	0	0	0
+		reload_akimbo			8		39	0	15	0	0	0	20

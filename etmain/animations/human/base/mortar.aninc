@@ -10,5 +10,5 @@
 		//	|   				|   	|   |   |   |   |   |   |
 
 		e_mortar_stand			0		10	10	6	0	0	0	0
-		e_mortar_raise			11		7	0	6	0	0	0	0
+		e_mortar_raise			11		7	0	6	0	0	0	10
 		e_mortar_run			19		10	10	15	0	0	0	0
