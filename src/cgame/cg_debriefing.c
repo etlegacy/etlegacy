@@ -50,8 +50,8 @@ static panel_button_text_t debriefPlayerHeadingSmallerFont =
 
 #define DB_RANK_X           213 + 4
 #define DB_NAME_X           DB_RANK_X + 28
-#define DB_TIME_X           DB_NAME_X + 150
-#define DB_KILLS_X          DB_TIME_X + 26
+#define DB_TIME_X           DB_NAME_X + 136
+#define DB_KILLS_X          DB_TIME_X + 30
 #define DB_KILLS_ASSISTS_X  DB_KILLS_X + 24
 #define DB_DEATHS_X         DB_KILLS_ASSISTS_X + 24
 #define DB_GIBS_X           DB_DEATHS_X + 24
@@ -3970,7 +3970,7 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Highest Experience Points",
 	"Most Highly Decorated",
 	"Highest Fragger",
-    "Highest Assist",
+	"Highest Assist",
 	"Highest Battle Sense",
 	"Best Engineer",
 	"Best Medic",
