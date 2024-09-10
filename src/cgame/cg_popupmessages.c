@@ -599,13 +599,13 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 		return;
 	}
 
-	if (cg_pmOldListXP)
-	{
-		listItem = cg_pmOldListXP;
-	}
-	else if (cg_pmWaitingListXP)
+	if (cg_pmWaitingListXP)
 	{
 		listItem = cg_pmWaitingListXP;
+	}
+	else if (cg_pmOldListXP)
+	{
+		listItem = cg_pmOldListXP;
 	}
 
 	// reason are similar, use previous message
