@@ -12,6 +12,7 @@ ET: Legacy ![Build status](https://github.com/etlegacy/etlegacy/workflows/ETLBui
 * Lua API: [https://etlegacy-lua-docs.readthedocs.io](https://etlegacy-lua-docs.readthedocs.io)
 * Translation: [https://www.transifex.com/etlegacy/etlegacy](https://www.transifex.com/etlegacy/etlegacy)
 * Contact: [#etlegacy](https://web.libera.chat/?channels=#etlegacy) on irc.libera.chat and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
+* SignPath: [etlegacy](https://signpath.org/projects/et_legacy/) on SignPath
 
 ## INTRODUCTION
 
@@ -31,6 +32,10 @@ See [CONTRIBUTING](CONTRIBUTING.md).
 ## SECURITY POLICY
 
 See [SECURITY](SECURITY.md).
+
+## CERTIFICATE SIGNING
+
+ET: Legacy Windows installers are now signed thx to [SignPath Foundation](https://signpath.org/)
 
 ## GENERAL NOTES
 
