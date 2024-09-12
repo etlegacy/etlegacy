@@ -5228,7 +5228,7 @@ void PmoveSingle(pmove_t *pmove)
 
 		// in air for too much time or run for too long
 		if ((pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500)
-		    || (!pm->pmext->airTime && pm->pmext->speedLimitTime && pm->cmd.serverTime > pm->pmext->speedLimitTime + 250))
+		    || (!pm->pmext->airTime && pm->pmext->speedLimitTime && pm->cmd.serverTime > pm->pmext->speedLimitTime + 125))
 		{
 			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 			pm->pmext->speedLimitTime = 0;
