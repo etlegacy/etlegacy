@@ -2366,9 +2366,12 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 				s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairEntNum));
 				break;
 			case ET_MISSILE:
-				s = va(CG_TranslateString("%s^*\'s %s"),
-				       CG_GetCrosshairNameString(comp, cg_entities[cg.crosshairEntNum].currentState.otherEntityNum),
-				       GetWeaponTableData(cg_entities[cg.crosshairEntNum].currentState.weapon)->className);
+				if (comp->style & 2)
+				{
+					s = va(CG_TranslateString("%s^*\'s %s"),
+					       CG_GetCrosshairNameString(comp, cg_entities[cg.crosshairEntNum].currentState.otherEntityNum),
+					       GetWeaponTableData(cg_entities[cg.crosshairEntNum].currentState.weapon)->className);
+				}
 				break;
 			default:
 				break;
