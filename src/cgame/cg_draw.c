@@ -2009,6 +2009,12 @@ void CG_CheckForCursorHints(void)
 	centity_t *tracent;
 	float     dist;
 
+	// Already check this frame
+	if (cg.snap->ps.serverCursorHint == cg.time)
+	{
+		return;
+	}
+
 	if (cg.renderingThirdPerson)
 	{
 		return;

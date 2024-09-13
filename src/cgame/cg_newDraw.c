@@ -473,6 +473,70 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 }
 
 /**
+ * @brief CG_DrawCursorHintText
+ * @param[in] comp
+ */
+void CG_DrawCursorHintText(hudComponent_t *comp)
+{
+	float      *color;
+	vec4_t     textColor;
+	const char *str;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.stats[STAT_HEALTH] <= 0)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	if (cg.generatingNoiseHud)
+	{
+		// simulate cursor hint
+		cg.cursorHintTime  = cg.time;
+		cg.cursorHintFade  = cg_drawHintFade.integer;
+		cg.cursorHintIcon  = HINT_BREAKABLE;
+		cg.cursorHintValue = 128.f;
+	}
+	else
+	{
+		CG_CheckForCursorHints();
+	}
+
+	// no value
+	if (!cg.cursorHintValue)
+	{
+		return;
+	}
+
+	// color
+	Vector4Copy(comp->colorMain, textColor);
+	color = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, textColor[3]);
+	if (!color)
+	{
+		trap_R_SetColor(NULL);
+		return;
+	}
+
+	str = va("%.0f%s", MIN((cg.cursorHintValue / 255.f) * 100, 100), (comp->style & 1) ? " %" : "");
+
+	textColor[3] = color[3];
+	CG_DrawCompText(comp, str, textColor, comp->styleText, &cgs.media.limboFont1);
+}
+
+/**
  * @brief CG_GetValue
  * @param ownerDraw - unused
  * @param type - unused
@@ -725,12 +789,12 @@ void CG_HudEditor_Cleanup(void)
 	int i;
 
 	CG_InitPM();
-	cg.bannerPrintTime     = 0;
-	cg.centerPrintTime     = 0;
-	cgs.voteTime           = 0;
-	cg.cursorHintTime      = 0;
+	cg.bannerPrintTime  = 0;
+	cg.centerPrintTime  = 0;
+	cgs.voteTime        = 0;
+	cg.cursorHintTime   = 0;
 	cg.crosshairEntTime = 0;
-	cg.oidPrintTime        = 0;
+	cg.oidPrintTime     = 0;
 
 	for (i = 0; i < cg_teamChatHeight.integer; i++)
 	{
