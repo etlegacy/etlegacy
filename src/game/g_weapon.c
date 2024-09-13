@@ -1785,14 +1785,7 @@ weapengineergoto2:
 					}
 
 					// crosshair mine owner id
-					if (g_misc.integer & G_MISC_CROSSHAIR_LANDMINE)
-					{
-						traceEnt->s.otherEntityNum = ent->s.number;
-					}
-					else
-					{
-						traceEnt->s.otherEntityNum = MAX_CLIENTS + 1;
-					}
+					traceEnt->s.otherEntityNum = ent->s.number;
 
 					traceEnt->r.snapshotCallback = qtrue;
 					traceEnt->r.contents         = 0; // (player can walk through)
@@ -2050,14 +2043,7 @@ weapengineergoto3:
 				traceEnt->s.effect1Time = level.time;
 
 				// dynamite crosshair ID
-				if (g_misc.integer & G_MISC_CROSSHAIR_DYNAMITE)
-				{
-					traceEnt->s.otherEntityNum = ent->s.number;
-				}
-				else
-				{
-					traceEnt->s.otherEntityNum = MAX_CLIENTS + 1;
-				}
+				traceEnt->s.otherEntityNum = ent->s.number;
 
 				// arm it
 				traceEnt->nextthink = level.time + 30000;
