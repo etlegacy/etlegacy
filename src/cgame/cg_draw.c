@@ -1960,7 +1960,7 @@ static void CG_ScanForCrosshairEntity()
 		}
 
 		// is a dynamite or landmine and server allow displaying owner name (g_misc cvar)
-		if ((cent->currentState.weapon == WP_DYNAMITE || cent->currentState.weapon == WP_LANDMINE)
+		if ((cent->currentState.weapon == WP_DYNAMITE || cent->currentState.weapon == WP_LANDMINE || cent->currentState.weapon == WP_SATCHEL)
 		    && cgs.clientinfo[cg.snap->ps.clientNum].team == cent->currentState.teamNum
 		    && cent->currentState.otherEntityNum < MAX_CLIENTS)
 		{
@@ -2370,7 +2370,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 				{
 					s = va(CG_TranslateString("%s^*\'s %s"),
 					       CG_GetCrosshairNameString(comp, cg_entities[cg.crosshairEntNum].currentState.otherEntityNum),
-					       GetWeaponTableData(cg_entities[cg.crosshairEntNum].currentState.weapon)->className);
+					       BG_GetItem(GetWeaponTableData(cg_entities[cg.crosshairEntNum].currentState.weapon)->item)->pickup_name);
 				}
 				break;
 			default:

@@ -1858,6 +1858,11 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 		// will try setting it when it settles
 		//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
 	}
+	else if (weapon == WP_SATCHEL)
+	{
+		// satchel crosshair ID
+		bolt->s.otherEntityNum = self->s.number;
+	}
 
 	return bolt;
 }

@@ -1176,6 +1176,8 @@ static void CG_Missile(centity_t *cent)
 	{
 		// use snap client number so that the detonator works right when spectating (#218)
 		cg.satchelCharge = cent;
+
+		CG_AddEntToCrosshairScanList(cent);
 	}
 	else if (s1->weapon == WP_ARTY && s1->otherEntityNum2 && s1->teamNum == cgs.clientinfo[cg.clientNum].team)
 	{
