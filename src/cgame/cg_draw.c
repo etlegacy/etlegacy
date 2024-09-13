@@ -1964,16 +1964,10 @@ static void CG_ScanForCrosshairEntity()
 		    && cgs.clientinfo[cg.snap->ps.clientNum].team == cent->currentState.teamNum
 		    && cent->currentState.otherEntityNum < MAX_CLIENTS)
 		{
-
-			/*if (Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
-			    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
-			    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)*/
-			{
-				// update the fade timer
-				cg.crosshairEntNum       = cent->currentState.number;
-				cg.crosshairEntTime      = cg.time;
-				cg.identifyClientRequest = cg.crosshairEntNum;
-			}
+			// update the fade timer
+			cg.crosshairEntNum       = cent->currentState.number;
+			cg.crosshairEntTime      = cg.time;
+			cg.identifyClientRequest = cg.crosshairEntNum;
 		}
 
 		return;
@@ -2297,6 +2291,12 @@ static const char *CG_GetCrosshairNameString(hudComponent_t *comp, int clientNum
 {
 	char colorized[MAX_NAME_LENGTH + 2] = { 0 };
 
+	// ensure the client is valid
+	if (!cgs.clientinfo[clientNum].infoValid)
+	{
+		return va("unknown");
+	}
+
 	if (comp->style & 1)
 	{
 		// Draw them with full colors
@@ -2305,6 +2305,7 @@ static const char *CG_GetCrosshairNameString(hudComponent_t *comp, int clientNum
 
 	// Draw them with a single color
 	Q_ColorizeString('*', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
+
 	return va("%s", colorized);
 }
 
