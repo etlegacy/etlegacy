@@ -1665,7 +1665,7 @@ static void CG_DrawNoShootIcon(hudComponent_t *comp)
 	}
 	else if (cg.crosshairClientNoShoot)
 	{
-		float *color = CG_FadeColor(cg.crosshairClientTime, cg_drawCrosshairFade.integer);
+		float *color = CG_FadeColor(cg.crosshairEntTime, cg_drawCrosshairFade.integer);
 
 		if (!color)
 		{
@@ -1847,136 +1847,163 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_ScanForCrosshairMine
- * @param[in] cent
- */
-void CG_ScanForCrosshairMine(centity_t *cent)
-{
-	trace_t trace;
-	vec3_t  start, end;
-
-	VectorCopy(cg.refdef.vieworg, start);
-	VectorMA(start, 512, cg.refdef.viewaxis[0], end);
-
-	CG_Trace(&trace, start, NULL, NULL, end, -1, MASK_SOLID);
-
-	if (Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
-	    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
-	    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
-	{
-		if (cent->currentState.otherEntityNum < MAX_CLIENTS)
-		{
-			cg.crosshairMine     = cent->currentState.otherEntityNum;
-			cg.crosshairMineTime = cg.time;
-		}
-	}
-}
-
-/**
- * @brief CG_ScanForCrosshairDyna
- * @details Mainly just a copy paste of CG_ScanForCrosshairMine
- * @param cent
- */
-void CG_ScanForCrosshairDyna(centity_t *cent)
-{
-	trace_t trace;
-	vec3_t  start, end;
-
-	VectorCopy(cg.refdef.vieworg, start);
-	VectorMA(start, 512, cg.refdef.viewaxis[0], end);
-
-	CG_Trace(&trace, start, NULL, NULL, end, -1, MASK_SOLID);
-
-	// pos.trBase is not the middle of the dyna, but due to different
-	// orientations relative to the map axis, this cannot be corrected in a
-	// simple way unfortunately
-	if (Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
-	    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
-	    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
-	{
-		if (cent->currentState.otherEntityNum < MAX_CLIENTS)
-		{
-			cg.crosshairDyna     = cent->currentState.otherEntityNum;
-			cg.crosshairDynaTime = cg.time;
-		}
-	}
-}
-
-/**
  * @brief Scan for any entities we're currently aiming at
- * @param[out] zChange
- * @param[out] hitClient
  */
-static void CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
+static void CG_ScanForCrosshairEntity()
 {
 	trace_t   trace;
-	vec3_t    start, end;
-	centity_t *cent;
+	vec3_t    end;
+	centity_t *cent = NULL;
 
-	// We haven't hit a client yet
-	*hitClient = qfalse;
-
-	VectorCopy(cg.refdef.vieworg, start);
-	VectorMA(start, MAX_TRACE, cg.refdef.viewaxis[0], end);
-
-	cg.crosshairClientNoShoot = qfalse;
-
-	CG_Trace(&trace, start, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
-
-	// How far up or down are we looking?
-	*zChange = trace.endpos[2] - start[2];
-
-	if (trace.entityNum >= MAX_CLIENTS)
+	// we already scan for something this frame
+	if (cg.crosshairEntTime == cg.time)
 	{
-		if (cg_entities[trace.entityNum].currentState.eFlags & EF_TAGCONNECT)
+		return;
+	}
+
+	// no crosshair, no scan
+	if (cg_drawCrosshair.integer < 0)
+	{
+		cg.crosshairEntsToScanCount = 0;
+		return;
+	}
+
+	if (cg.renderingThirdPerson)
+	{
+		cg.crosshairEntsToScanCount = 0;
+		return;
+	}
+
+	// Default: We're not looking at a client
+	cg.crosshairNotLookingAtClient = qtrue;
+	cg.crosshairClientNoShoot      = qfalse;
+
+	if (cg.renderingThirdPerson)
+	{
+		// track the medic we are locked on
+		if (cg.snap->ps.viewlocked == VIEWLOCK_MEDIC)
 		{
-			trace.entityNum = cg_entities[trace.entityNum].tagParent;
+			cg.crosshairEntNum             = cg.snap->ps.viewlocked_entNum;
+			cg.crosshairEntTime            = cg.time;
+			cg.identifyClientRequest       = cg.snap->ps.viewlocked_entNum;
+			cg.crosshairNotLookingAtClient = qfalse;
+		}
+
+		cg.crosshairEntsToScanCount = 0;
+
+		return;
+	}
+
+	if (cg.generatingNoiseHud)
+	{
+		// aim on self
+		cg.crosshairEntNum             = cg.snap->ps.clientNum;
+		cg.crosshairEntTime            = cg.time;
+		cg.identifyClientRequest       = cg.crosshairEntNum;
+		cg.crosshairNotLookingAtClient = qfalse;
+		cg.crosshairEntsToScanCount    = 0;
+
+		return;
+	}
+
+	VectorMA(cg.refdef.vieworg, 512, cg.refdef.viewaxis[0], end);
+
+	CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, -1);
+
+	if (trace.entityNum == ENTITYNUM_WORLD)
+	{
+		int i;
+		int closestDist = 256;
+
+		// find the closest entity from impact point
+		for (i = 0; i < cg.crosshairEntsToScanCount; ++i)
+		{
+			// pos.trBase is not the middle of the dyna, but due to different
+			// orientations relative to the map axis, this cannot be corrected in a
+			// simple way unfortunately
+			int dist = DistanceSquared(cg.crosshairEntsToScan[i]->currentState.pos.trBase, trace.endpos);
+
+			if (closestDist > dist)
+			{
+				closestDist = dist;
+				cent        = cg.crosshairEntsToScan[i];
+			}
+		}
+	}
+	else
+	{
+		cent = &cg_entities[trace.entityNum];
+	}
+
+	cg.crosshairEntsToScanCount = 0;
+
+	if (!cent)
+	{
+		return;
+	}
+
+	if (cent->currentState.number >= MAX_CLIENTS)
+	{
+		if (cent->currentState.eFlags & EF_TAGCONNECT)
+		{
+			cent = &cg_entities[cent->tagParent];
+
+			if (!cent)
+			{
+				return;
+			}
 		}
 
 		// is a tank with a healthbar
 		// this might have some side-effects, but none right now as the script_mover is the only one that sets effect1Time
-		if ((cg_entities[trace.entityNum].currentState.eType == ET_MOVER && cg_entities[trace.entityNum].currentState.effect1Time) ||
-		    cg_entities[trace.entityNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
+		if ((cent->currentState.eType == ET_MOVER && cent->currentState.effect1Time) ||
+		    cent->currentState.eType == ET_CONSTRUCTIBLE_MARKER)
 		{
 			// update the fade timer
-			cg.crosshairClientNum    = trace.entityNum;
-			cg.crosshairClientTime   = cg.time;
-			cg.identifyClientRequest = cg.crosshairClientNum;
+			cg.crosshairEntNum       = cent->currentState.number;
+			cg.crosshairEntTime      = cg.time;
+			cg.identifyClientRequest = cg.crosshairEntNum;
 		}
 
-		// Default: We're not looking at a client
-		cg.crosshairNotLookingAtClient = qtrue;
+		// is a dynamite or landmine and server allow displaying owner name (g_misc cvar)
+		if ((cent->currentState.weapon == WP_DYNAMITE || cent->currentState.weapon == WP_LANDMINE)
+		    && cgs.clientinfo[cg.snap->ps.clientNum].team == cent->currentState.teamNum
+		    && cent->currentState.otherEntityNum < MAX_CLIENTS)
+		{
+
+			/*if (Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
+			    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
+			    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)*/
+			{
+				// update the fade timer
+				cg.crosshairEntNum       = cent->currentState.number;
+				cg.crosshairEntTime      = cg.time;
+				cg.identifyClientRequest = cg.crosshairEntNum;
+			}
+		}
 
 		return;
 	}
 
-	cent = &cg_entities[trace.entityNum];
-
-	if (!cent || !cent->currentValid)
+	if (!cent->currentValid)
 	{
 		return;
 	}
-
-	// Reset the draw time for the SP crosshair
-	cg.crosshairSPClientTime = cg.time;
 
 	// Default: We're not looking at a client
 	cg.crosshairNotLookingAtClient = qfalse;
 
-	// We hit a client
-	*hitClient = qtrue;
-
 	// update the fade timer
-	cg.crosshairClientNum  = trace.entityNum;
-	cg.crosshairClientTime = cg.time;
-	if (cg.crosshairClientNum != cg.snap->ps.identifyClient && cg.crosshairClientNum != ENTITYNUM_WORLD)
+	cg.crosshairEntNum  = trace.entityNum;
+	cg.crosshairEntTime = cg.time;
+	if (cg.crosshairEntNum != cg.snap->ps.identifyClient)
 	{
-		cg.identifyClientRequest = cg.crosshairClientNum;
+		cg.identifyClientRequest = cg.crosshairEntNum;
 	}
 
 	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 	{
-		if (cgs.clientinfo[cg.crosshairClientNum].team == cgs.clientinfo[cg.clientNum].team)
+		if (cgs.clientinfo[cg.crosshairEntNum].team == cgs.clientinfo[cg.clientNum].team)
 		{
 			cg.crosshairClientNoShoot = qtrue;
 		}
@@ -2095,103 +2122,60 @@ void CG_CheckForCursorHints(void)
  */
 void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 {
-	float    *fadeColor;
-	vec4_t   bgcolor, bdcolor;
-	vec4_t   c, c2;
-	int      health, maxHealth;
-	float    zChange;
-	qboolean hitClient;
-	int      clientNum, class;
-	float    x = comp->location.x, w = comp->location.w;
-	int      style;
+	float  *fadeColor;
+	vec4_t bgcolor, bdcolor;
+	vec4_t c, c2;
+	int    health, maxHealth;
+	int    clientNum, class;
+	float  x = comp->location.x, w = comp->location.w;
+	int    style;
 
-	if (cg_drawCrosshair.integer < 0)
+	// scan the known entities to see if the crosshair is sighted on one
+	CG_ScanForCrosshairEntity();
+
+	// world-entity or no-entity
+	if (cg.crosshairEntNum >= ENTITYNUM_WORLD)
 	{
 		return;
-	}
-
-	if (cg.renderingThirdPerson)
-	{
-		return;
-	}
-
-	if (cg.crosshairDyna > -1 || cg.crosshairMine > -1)
-	{
-		if (CG_FadeColor(cg.crosshairDynaTime, cg_drawCrosshairFade.integer))
-		{
-			return;
-		}
-
-		cg.crosshairDyna = -1;
-	}
-
-	if (cg.crosshairMine > -1)
-	{
-		if (CG_FadeColor(cg.crosshairMineTime, cg_drawCrosshairFade.integer))
-		{
-			return;
-		}
-
-		cg.crosshairMine = -1;
-	}
-
-	if (cg.generatingNoiseHud)
-	{
-		// aim on self
-		cg.crosshairClientNum    = cg.snap->ps.clientNum;
-		cg.crosshairClientTime   = cg.time;
-		cg.identifyClientRequest = cg.crosshairClientNum;
-		hitClient                = qtrue;
-	}
-	else
-	{
-		// scan the known entities to see if the crosshair is sighted on one
-		CG_ScanForCrosshairEntity(&zChange, &hitClient);
-
-		// world-entity or no-entity
-		if (cg.crosshairClientNum < 0)
-		{
-			return;
-		}
 	}
 
 	// don't draw crosshair names in shoutcast mode
 	// shoutcasters can see tank and truck health
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster &&
-	    cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER)
+	    cg_entities[cg.crosshairEntNum].currentState.eType != ET_MOVER)
 	{
 		return;
 	}
 
 	// draw the name of the player being looked at
-	fadeColor = CG_FadeColor(cg.crosshairClientTime, cg_drawCrosshairFade.integer);
+	fadeColor = CG_FadeColor(cg.crosshairEntTime, cg_drawCrosshairFade.integer);
 
 	if (!fadeColor)
 	{
 		return;
 	}
 
-	if (cg.crosshairClientNum >= MAX_CLIENTS)
+	if (cg.crosshairNotLookingAtClient)
 	{
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			return;
 		}
 
-		if (cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER || !cg_entities[cg.crosshairClientNum].currentState.effect1Time)
+		if (cg_entities[cg.crosshairEntNum].currentState.eType != ET_MOVER || !cg_entities[cg.crosshairEntNum].currentState.effect1Time)
 		{
 			return;
 		}
 
-		health    = cg_entities[cg.crosshairClientNum].currentState.dl_intensity;
+		health    = cg_entities[cg.crosshairEntNum].currentState.dl_intensity;
 		maxHealth = 255;
 	}
 	else
 	{
 		// crosshair for disguised enemy
-		if (cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team)
+		if (cgs.clientinfo[cg.crosshairEntNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team)
 		{
-			if (!(cg_entities[cg.crosshairClientNum].currentState.powerups & (1 << PW_OPS_DISGUISED)) ||
+			if (!(cg_entities[cg.crosshairEntNum].currentState.powerups & (1 << PW_OPS_DISGUISED)) ||
 			    cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
 			{
 				return;
@@ -2202,14 +2186,14 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 				return;
 			}
 
-			clientNum = cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum;
-			class     = (cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7;
+			clientNum = cgs.clientinfo[cg.crosshairEntNum].disguiseClientNum;
+			class     = (cg_entities[cg.crosshairEntNum].currentState.powerups >> PW_OPS_CLASS_1) & 7;
 		}
 		// we only want to see players on our team
-		else if (!(cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team))
+		else if (!(cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.crosshairEntNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team))
 		{
-			clientNum = cg.crosshairClientNum;
-			class     = cgs.clientinfo[cg.crosshairClientNum].cls;
+			clientNum = cg.crosshairEntNum;
+			class     = cgs.clientinfo[cg.crosshairEntNum].cls;
 		}
 		else
 		{
@@ -2247,7 +2231,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		}
 
 		// set the health
-		if (cg.crosshairClientNum == cg.snap->ps.identifyClient)
+		if (cg.crosshairEntNum == cg.snap->ps.identifyClient)
 		{
 			health = cg.snap->ps.identifyClientHealth;
 
@@ -2263,10 +2247,10 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		{
 			// only team mate health is transmit in clientinfo, this cause a slight refresh delay for disguised ennemy
 			// until they are identified through crosshair check on game side, which is connection depend
-			health = cgs.clientinfo[cg.crosshairClientNum].health;
+			health = cgs.clientinfo[cg.crosshairEntNum].health;
 		}
 
-		maxHealth = CG_GetPlayerMaxHealth(cg.crosshairClientNum, cgs.clientinfo[cg.crosshairClientNum].cls, cgs.clientinfo[cg.crosshairClientNum].team);
+		maxHealth = CG_GetPlayerMaxHealth(cg.crosshairEntNum, cgs.clientinfo[cg.crosshairEntNum].cls, cgs.clientinfo[cg.crosshairEntNum].team);
 	}
 
 	// remove unecessary style for bar customization
@@ -2338,9 +2322,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 {
 	float      *color;
 	vec4_t     textColor;
-	const char *s = NULL;
-	float      zChange;
-	qboolean   hitClient;
+	const char *s        = NULL;
 	int        clientNum = -1;
 
 	if (cg_drawCrosshair.integer < 0)
@@ -2348,101 +2330,59 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.renderingThirdPerson)
-	{
-		return;
-	}
-
 	Vector4Copy(comp->colorMain, textColor);
 
-	// dyna > mine
-	if (cg.crosshairDyna > -1)
+	// scan the known entities to see if the crosshair is sighted on one
+	CG_ScanForCrosshairEntity();
+
+	// world-entity or no-entity
+	if (cg.crosshairEntNum >= ENTITYNUM_WORLD)
 	{
-		color = CG_FadeColor_Ext(cg.crosshairDynaTime, cg_drawCrosshairFade.integer, textColor[3]);
-
-		if (color)
-		{
-			textColor[3] = color[3];
-
-			s = va(CG_TranslateString("%s^*\'s dynamite"), CG_GetCrosshairNameString(comp, cg.crosshairDyna));
-
-			CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
-
-			return;
-		}
-
-		cg.crosshairDyna = -1;
-	}
-
-	// mine id's
-	if (cg.crosshairMine > -1)
-	{
-		color = CG_FadeColor_Ext(cg.crosshairMineTime, cg_drawCrosshairFade.integer, textColor[3]);
-
-		if (color)
-		{
-			textColor[3] = color[3];
-
-			s = va(CG_TranslateString("%s^*\'s mine"), CG_GetCrosshairNameString(comp, cg.crosshairMine));
-			CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
-		}
-
-		cg.crosshairMine = -1;
 		return;
 	}
 
-	if (cg.generatingNoiseHud)
-	{
-		// aim on self
-		cg.crosshairClientNum    = cg.snap->ps.clientNum;
-		cg.crosshairClientTime   = cg.time;
-		cg.identifyClientRequest = cg.crosshairClientNum;
-		hitClient                = qtrue;
-	}
-	else
-	{
-		// scan the known entities to see if the crosshair is sighted on one
-		CG_ScanForCrosshairEntity(&zChange, &hitClient);
+	color = CG_FadeColor_Ext(cg.crosshairEntTime, cg_drawCrosshairFade.integer, textColor[3]);
 
-		// world-entity or no-entity
-		if (cg.crosshairClientNum < 0)
-		{
-			return;
-		}
+	if (!color)
+	{
+		return;
 	}
 
 	// don't draw crosshair names in shoutcast mode
 	// shoutcasters can see tank and truck health
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster &&
-	    cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER)
+	    cg_entities[cg.crosshairEntNum].currentState.eType != ET_MOVER)
 	{
 		return;
 	}
 
-	if (cg.crosshairClientNum >= MAX_CLIENTS)
+	if (cg.crosshairNotLookingAtClient)
 	{
-		color = CG_FadeColor_Ext(cg.crosshairClientTime, cg_drawCrosshairFade.integer, textColor[3]);
-
-		if (!color)
-		{
-			return;
-		}
-
-		textColor[3] = color[3];
-
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_MOVER && cg_entities[cg.crosshairClientNum].currentState.effect1Time)
+			switch (cg_entities[cg.crosshairEntNum].currentState.eType)
 			{
-				s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairClientNum));
-			}
-			else if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
-			{
-				s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairClientNum));
+			case ET_MOVER:
+				if (cg_entities[cg.crosshairEntNum].currentState.effect1Time)
+				{
+					s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairEntNum));
+				}
+				break;
+			case ET_CONSTRUCTIBLE_MARKER:
+				s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairEntNum));
+				break;
+			case ET_MISSILE:
+				s = va(CG_TranslateString("%s^*\'s %s"),
+				       CG_GetCrosshairNameString(comp, cg_entities[cg.crosshairEntNum].currentState.otherEntityNum),
+				       GetWeaponTableData(cg_entities[cg.crosshairEntNum].currentState.weapon)->className);
+				break;
+			default:
+				break;
 			}
 
 			if (s && *s)
 			{
+				textColor[3] = color[3];
 				CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 			}
 		}
@@ -2450,9 +2390,9 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	}
 
 	// crosshair for disguised enemy
-	if (cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team)
+	if (cgs.clientinfo[cg.crosshairEntNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team)
 	{
-		if (!(cg_entities[cg.crosshairClientNum].currentState.powerups & (1 << PW_OPS_DISGUISED)) ||
+		if (!(cg_entities[cg.crosshairEntNum].currentState.powerups & (1 << PW_OPS_DISGUISED)) ||
 		    cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
 		{
 			return;
@@ -2460,7 +2400,7 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 		if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, SK_FIELDOPS_ENEMY_RECOGNITION) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
-			color = CG_FadeColor_Ext(cg.crosshairClientTime, cg_drawCrosshairFade.integer, textColor[3]);
+			color = CG_FadeColor_Ext(cg.crosshairEntTime, cg_drawCrosshairFade.integer, textColor[3]);
 
 			if (!color)
 			{
@@ -2474,24 +2414,17 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 			return;
 		}
 
-		clientNum = cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum;
+		clientNum = cgs.clientinfo[cg.crosshairEntNum].disguiseClientNum;
 	}
 	// we only want to see players on our team
-	else if (!(cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team))
+	else if (!(cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.crosshairEntNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team))
 	{
-		clientNum = cg.crosshairClientNum;
+		clientNum = cg.crosshairEntNum;
 	}
 
 	// draw the name of the player being looked at
 	if (clientNum != -1)
 	{
-		color = CG_FadeColor_Ext(cg.crosshairClientTime, cg_drawCrosshairFade.integer, textColor[3]);
-
-		if (!color)
-		{
-			return;
-		}
-
 		textColor[3] = color[3];
 
 		s = CG_GetCrosshairNameString(comp, clientNum);
@@ -2913,7 +2846,7 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 #endif
 		         ,
 		         va(CG_TranslateString("Press %s to open Limbo Menu"), !Q_stricmp(strKey, "(openlimbomenu)") ? "ESCAPE" : strKey),
-		         va(CG_TranslateString("Press %s to follow %s"), Binding_FromName("+attack"), cgs.clientinfo[cg.crosshairClientNum].name),
+		         va(CG_TranslateString("Press %s to follow %s"), Binding_FromName("+attack"), cgs.clientinfo[cg.crosshairEntNum].name),
 		         va(CG_TranslateString("^*Press %s to follow previous player"), Binding_FromName("weapalt"))
 #ifdef FEATURE_MULTIVIEW
 		         , strMV ? strMV : ""

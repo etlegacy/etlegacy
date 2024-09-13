@@ -729,7 +729,7 @@ void CG_HudEditor_Cleanup(void)
 	cg.centerPrintTime     = 0;
 	cgs.voteTime           = 0;
 	cg.cursorHintTime      = 0;
-	cg.crosshairClientTime = 0;
+	cg.crosshairEntTime = 0;
 	cg.oidPrintTime        = 0;
 
 	for (i = 0; i < cg_teamChatHeight.integer; i++)

@@ -1413,9 +1413,8 @@ static void CG_MapRestart(void)
 	cgs.complaintClient  = -1;
 	cgs.complaintEndTime = 0;
 
-	// init crosshairMine + Dyna
-	cg.crosshairMine = -1;
-	cg.crosshairDyna = -1;
+	// init crosshair scan list
+	cg.crosshairEntsToScanCount = 0;
 
 	// init objective indicator
 	cg.flagIndicator   = 0;

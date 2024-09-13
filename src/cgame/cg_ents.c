@@ -366,6 +366,15 @@ static void CG_EntityEffects(centity_t *cent)
 }
 
 /**
+ * @brief CG_AddEntToCrosshairScanList
+ * @param[in] cent
+ */
+static void CG_AddEntToCrosshairScanList(centity_t *cent)
+{
+	cg.crosshairEntsToScan[cg.crosshairEntsToScanCount++] = cent;
+}
+
+/**
  * @brief CG_General
  * @param[in,out] cent
  */
@@ -1125,9 +1134,6 @@ static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weapo
 	ent->backlerp = cent->lerpFrame.backlerp;
 }
 
-extern void CG_ScanForCrosshairMine(centity_t *cent);
-extern void CG_ScanForCrosshairDyna(centity_t *cent);
-
 /**
  * @brief CG_PlayerFloatText
  * @param[in] cent
@@ -1236,10 +1242,7 @@ static void CG_Missile(centity_t *cent)
 			BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity, qfalse, -1);
 			trap_S_AddLoopingSound(cent->lerpOrigin, velocity, weapon->spindownSound, 255, 0);
 
-			if (cgs.clientinfo[cg.snap->ps.clientNum].team == cent->currentState.teamNum)
-			{
-				CG_ScanForCrosshairDyna(cent);
-			}
+			CG_AddEntToCrosshairScanList(cent);
 
 			// add dynamite counter to floating string list
 			if (cgs.clientinfo[cg.clientNum].shoutcaster)
@@ -1346,16 +1349,8 @@ static void CG_Missile(centity_t *cent)
 			}
 			else
 			{
-				if (cgs.clientinfo[cg.clientNum].shoutcaster)
-				{
-					// shoutcasters can see team landmines
-					CG_DrawMineMarkerFlag(cent, &ent, weapon);
-				}
-				else
-				{
-					CG_DrawMineMarkerFlag(cent, &ent, weapon);
-					CG_ScanForCrosshairMine(cent);
-				}
+				CG_DrawMineMarkerFlag(cent, &ent, weapon);
+				CG_AddEntToCrosshairScanList(cent);
 			}
 		}
 

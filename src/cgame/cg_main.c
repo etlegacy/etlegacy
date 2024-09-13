@@ -908,11 +908,11 @@ void CG_setClientFlags(void)
  */
 int CG_CrosshairPlayer(void)
 {
-	if (cg.time > (cg.crosshairClientTime + 1000))
+	if (cg.time > (cg.crosshairEntTime + 1000))
 	{
 		return -1;
 	}
-	return cg.crosshairClientNum;
+	return cg.crosshairEntNum;
 }
 
 /**
@@ -3029,9 +3029,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_UpdateSvCvars();
 
 	CG_ParseModInfo();
-
-	cg.crosshairMine = -1;
-	cg.crosshairDyna = -1;
 
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 

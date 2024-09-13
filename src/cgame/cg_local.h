@@ -1271,19 +1271,13 @@ typedef struct
 	// kill timers for carnage reward
 	int lastKillTime;
 
-	// crosshair client-, mine-, dyna-ID
-	int crosshairClientNum;
-	int crosshairClientTime;
-	int crosshairMine;
-	int crosshairMineTime;
-	int crosshairDyna;
-	int crosshairDynaTime;
-
+	// crosshair
+	centity_t *crosshairEntsToScan[MAX_ENTITIES];
+	int crosshairEntsToScanCount;
+	int crosshairEntNum;
+	int crosshairEntTime;
 	qboolean crosshairNotLookingAtClient;
-	int crosshairSPClientTime;
-	int crosshairVerticalShift;
 	qboolean crosshairClientNoShoot;
-	qboolean crosshairTerrain;
 
 	int teamFirstBlood;                         ///< 0: allies 1: axis -1: nobody
 	int teamWonRounds[2];
