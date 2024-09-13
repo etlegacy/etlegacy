@@ -313,7 +313,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	{
 		// simulate cursor hint
 		cg.cursorHintTime  = cg.time;
-		cg.cursorHintFade  = 500;
+		cg.cursorHintFade  = cg_drawHintFade.integer;
 		cg.cursorHintIcon  = HINT_BREAKABLE;
 		cg.cursorHintValue = 128.f;
 	}

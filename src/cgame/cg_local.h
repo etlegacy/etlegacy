@@ -2733,6 +2733,7 @@ extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairFade;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_drawSpectatorNames;
+extern vmCvar_t cg_drawHintFade;
 extern vmCvar_t cg_useWeapsForZoom;
 extern vmCvar_t cg_weaponCycleDelay;
 extern vmCvar_t cg_cycleAllWeaps;

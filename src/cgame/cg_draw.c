@@ -2017,7 +2017,7 @@ void CG_CheckForCursorHints(void)
 	if (cg.snap->ps.serverCursorHint)      // server is dictating a cursor hint, use it.
 	{
 		cg.cursorHintTime  = cg.time;
-		cg.cursorHintFade  = 500;   // fade out time
+		cg.cursorHintFade  = cg_drawHintFade.integer;   // fade out time
 		cg.cursorHintIcon  = cg.snap->ps.serverCursorHint;
 		cg.cursorHintValue = cg.snap->ps.serverCursorHintVal;
 		return;
@@ -2044,7 +2044,7 @@ void CG_CheckForCursorHints(void)
 			{
 				cg.cursorHintIcon  = HINT_WATER;
 				cg.cursorHintTime  = cg.time;
-				cg.cursorHintFade  = 500;
+				cg.cursorHintFade  = cg_drawHintFade.integer;
 				cg.cursorHintValue = 0;
 			}
 		}
@@ -2069,7 +2069,7 @@ void CG_CheckForCursorHints(void)
 			{
 				cg.cursorHintIcon  = HINT_LADDER;
 				cg.cursorHintTime  = cg.time;
-				cg.cursorHintFade  = 500;
+				cg.cursorHintFade  = cg_drawHintFade.integer;
 				cg.cursorHintValue = 0;
 			}
 		}
