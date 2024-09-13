@@ -1868,12 +1868,6 @@ static void CG_ScanForCrosshairEntity()
 		return;
 	}
 
-	if (cg.renderingThirdPerson)
-	{
-		cg.crosshairEntsToScanCount = 0;
-		return;
-	}
-
 	// Default: We're not looking at a client
 	cg.crosshairNotLookingAtClient = qtrue;
 	cg.crosshairClientNoShoot      = qfalse;
