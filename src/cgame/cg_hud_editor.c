@@ -2565,6 +2565,10 @@ static void CG_HudEditor_ToggleGridScale(void)
 	}
 }
 
+/**
+ * @brief CG_HudEditor_GetGridScale
+ * @return
+ */
 static ID_INLINE float CG_HudEditor_GetGridScale(void)
 {
 	switch (gridScale)
@@ -2576,6 +2580,11 @@ static ID_INLINE float CG_HudEditor_GetGridScale(void)
 	}
 }
 
+/**
+ * @brief CG_HUDEditor_GridDrawSection2
+ * @param[in] step
+ * @param[in] size
+ */
 static void CG_HUDEditor_GridDrawSection2(float step, float size)
 {
 	float i, j;
@@ -2588,21 +2597,29 @@ static void CG_HUDEditor_GridDrawSection2(float step, float size)
 	}
 }
 
+/**
+ * @brief CG_HUDEditor_GridDrawSection
+ * @param[in] step
+ * @param[in] size
+ */
 static void CG_HUDEditor_GridDrawSection(float step, float size)
 {
-	float i;
+	float i = SCREEN_WIDTH_SAFE * step;
+	float j = SCREEN_HEIGHT_SAFE * step;
 
-	for (i = SCREEN_WIDTH_SAFE * step; i < SCREEN_WIDTH_SAFE; i += SCREEN_WIDTH_SAFE * step)
+	while (i < SCREEN_WIDTH_SAFE && j < SCREEN_HEIGHT_SAFE)
 	{
 		CG_FillRect(i, 0, size, SCREEN_HEIGHT_SAFE, (vec4_t) { 1, 1, 1, .5f });
-	}
+		CG_FillRect(0, j, SCREEN_WIDTH_SAFE, size, (vec4_t) { 1, 1, 1, .5f });
 
-	for (i = SCREEN_HEIGHT_SAFE * step; i < SCREEN_HEIGHT_SAFE; i += SCREEN_HEIGHT_SAFE * step)
-	{
-		CG_FillRect(0, i, SCREEN_WIDTH_SAFE, size, (vec4_t) { 1, 1, 1, .5f });
+		i += SCREEN_WIDTH_SAFE * step;
+		j += SCREEN_HEIGHT_SAFE * step;
 	}
 }
 
+/**
+ * @brief CG_HudEditor_GridDraw
+ */
 static void CG_HudEditor_GridDraw(void)
 {
 	float step = CG_HudEditor_GetGridScale();
@@ -2796,7 +2813,17 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		if (gridAlign)
 		{
 			float multiple = CG_HudEditor_GetGridScale();
-			float side     = (key == K_LEFTARROW || key == K_RIGHTARROW) ? SCREEN_WIDTH_SAFE : SCREEN_HEIGHT_SAFE;
+			float side;
+
+			if (key == K_LEFTARROW || key == K_RIGHTARROW)
+			{
+				// use 4:3 aspect ratio in case the size is changed
+				side = changeSize ? SCREEN_HEIGHT_SAFE : SCREEN_WIDTH_SAFE;
+			}
+			else
+			{
+				side = SCREEN_HEIGHT_SAFE;
+			}
 
 			offset = side * (multiple / (1 / multiple));
 		}
