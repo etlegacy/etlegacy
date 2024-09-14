@@ -249,7 +249,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	msg = buffer + Com_sprintf(buffer, sizeof(buffer), "%8i ", timestamp);
 
 	va_start(argptr, fmt);
-	bufferEnd = msg + Q_vsnprintf(msg, sizeof(buffer), fmt, argptr);
+	bufferEnd = msg + Q_vsnprintf(msg, sizeof(buffer) - (msg - buffer), fmt, argptr);
 	va_end(argptr);
 
 	if (rd_buffer)
