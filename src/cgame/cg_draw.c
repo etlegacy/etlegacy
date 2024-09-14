@@ -1902,7 +1902,7 @@ static void CG_ScanForCrosshairEntity()
 
 	VectorMA(cg.refdef.vieworg, 512, cg.refdef.viewaxis[0], end);
 
-	CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, -1);
+	CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, MASK_SOLID);
 
 	if (trace.entityNum == ENTITYNUM_WORLD)
 	{
