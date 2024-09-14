@@ -486,6 +486,7 @@ struct gentity_s
 	gentity_t *tankLink;
 
 	int lastHintCheckTime;
+	int lastTaskAchievedTime;
 	int voiceChatSquelch;
 	int voiceChatPreviousTime;
 	int lastBurnedFrameTime;          ///< last burn damage timestamp

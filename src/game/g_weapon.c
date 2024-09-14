@@ -1021,6 +1021,9 @@ static qboolean TryConstructing(gentity_t *ent, gentity_t *trigger)
 
 		if (constructible->s.angles2[0] >= 250)
 		{
+			// hint task completed
+			ent->lastTaskAchievedTime = level.time;
+
 			constructible->s.angles2[0] = 0;
 			HandleEntsThatBlockConstructible(ent, constructible, qtrue, qfalse);
 		}
@@ -1613,6 +1616,9 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 
 		if (traceEnt->health >= 255)
 		{
+			// hint task completed
+			ent->lastTaskAchievedTime = level.time;
+
 			traceEnt->s.frame = 0;
 
 			if (traceEnt->mg42BaseEnt > 0)
@@ -1784,6 +1790,9 @@ weapengineergoto2:
 						return NULL;
 					}
 
+					// hint task completed
+					ent->lastTaskAchievedTime = level.time;
+
 					// crosshair mine owner id
 					traceEnt->s.otherEntityNum = ent->s.number;
 
@@ -1827,6 +1836,9 @@ weapengineergoto3:
 					if (traceEnt->health >= 250)
 					{
 						mapEntityData_t *mEnt;
+
+						// hint task completed
+						ent->lastTaskAchievedTime = level.time;
 
 						//traceEnt->health = 255;
 						//traceEnt->think = G_FreeEntity;
@@ -1875,6 +1887,9 @@ weapengineergoto3:
 
 			if (traceEnt->health >= 250)
 			{
+				// hint task completed
+				ent->lastTaskAchievedTime = level.time;
+
 				traceEnt->health    = 255;
 				traceEnt->think     = G_FreeEntity;
 				traceEnt->nextthink = level.time + FRAMETIME;
@@ -2034,6 +2049,9 @@ weapengineergoto3:
 				{
 					return NULL;
 				}
+
+				// hint task completed
+				ent->lastTaskAchievedTime = level.time;
 
 				// don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
 				traceEnt->timestamp = level.time + 1000;
@@ -2265,6 +2283,9 @@ weapengineergoto3:
 					// TODO: Need some kind of event/announcement here
 
 					//Add_Ammo( ent, WP_DYNAMITE, 1, qtrue );
+
+					// hint task completed
+					ent->lastTaskAchievedTime = level.time;
 
 					traceEnt->think     = G_FreeEntity;
 					traceEnt->nextthink = level.time + FRAMETIME;

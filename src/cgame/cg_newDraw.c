@@ -404,6 +404,9 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	case HINT_RESTRICTED:
 		icon = cgs.media.friendShader;
 		break;
+	case HINT_COMPLETED:
+		icon = cgs.media.readyShader;
+		break;
 	case HINT_ACTIVATE:
 	case HINT_BAD_USER:
 	default:
