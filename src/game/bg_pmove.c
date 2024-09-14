@@ -1840,10 +1840,10 @@ static void PM_GroundTraceMissed(void)
  */
 static void PM_GroundTrace(void)
 {
- 	vec3_t       point;
- 	trace_t      trace;
- 	const vec3_t upwards = { 0.0f, 0.0f, 1.0f };
- 	float        upwardsdirection;
+	vec3_t       point;
+	trace_t      trace;
+	const vec3_t upwards = { 0.0f, 0.0f, 1.0f };
+	float        upwardsdirection;
 
 	point[0] = pm->ps->origin[0];
 	point[1] = pm->ps->origin[1];
@@ -2916,6 +2916,7 @@ static void PM_SwitchIfEmpty(void)
 	{
 		pm->ps->ammoclip[WP_SATCHEL_DET] = 1;
 		pm->ps->ammoclip[WP_SATCHEL]     = 0;
+		PM_BeginWeaponChange(WP_SATCHEL, WP_SATCHEL_DET, qfalse);
 	}
 
 	// force switching to rifle
