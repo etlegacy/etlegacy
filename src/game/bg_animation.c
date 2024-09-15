@@ -1373,13 +1373,14 @@ void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart)
  * @param[in] forceDuration
  * @param[in] setTimer
  * @param[in] isContinue
- * @param[in] force
+ * @param[in] force - deprecated : unused : remove in the future
  * @return
  */
-int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, animBodyPart_t bodyPart, int forceDuration, qboolean setTimer, qboolean isContinue, qboolean force)
+int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, animBodyPart_t bodyPart, int forceDuration, qboolean setTimer, qboolean isContinue, qboolean force /* deprecated : unused */)
 {
 	int      duration;
 	qboolean wasSet = qfalse;
+	int      currentPriority;
 
 	if (forceDuration)
 	{
@@ -1394,9 +1395,10 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 	{
 	case ANIM_BP_BOTH:
 	case ANIM_BP_LEGS:
+		currentPriority = animModelInfo->animations[(ps->legsAnim & ~ANIM_TOGGLEBIT)]->priority;
+
 		if ((ps->legsTimer < 50)
-		    || force
-		    || (animModelInfo->animations[animNum]->priority > animModelInfo->animations[(ps->legsAnim & ~ANIM_TOGGLEBIT)]->priority))
+		    || (animModelInfo->animations[animNum]->priority >= currentPriority))
 		{
 			if (!isContinue || !((ps->legsAnim & ~ANIM_TOGGLEBIT) == animNum))
 			{
@@ -1420,9 +1422,19 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 	// for ANIM_BP_BOTH
 	// fall through
 	case ANIM_BP_TORSO:
+		currentPriority = animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority;
+
+		// XXX : Stop pliers firing animation if you stop holding attack - would
+		//		 otherwise continue, despite the player not actually using them.
+		if (ps->weapon == WP_PLIERS
+		    && ps->weaponstate != WEAPON_FIRING
+		    && animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority >= 20 /* firing animation is currently playing */)
+		{
+			currentPriority = -1;
+		}
+
 		if ((ps->torsoTimer < 50)
-		    || force
-		    || (animModelInfo->animations[animNum]->priority > animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority))
+		    || (animModelInfo->animations[animNum]->priority >= currentPriority))
 		{
 			if (!isContinue || !((ps->torsoAnim & ~ANIM_TOGGLEBIT) == animNum))
 			{

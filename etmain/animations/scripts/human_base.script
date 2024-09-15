@@ -1493,7 +1493,7 @@ STATE COMBAT
 		}
 		weapons knives
 		{
-			legs prone_legs torso prone_knife_attack
+			legs prone_legs torso prone_knife_idle
 		}
 		weapons pistols
 		{
@@ -1773,7 +1773,7 @@ fireweapon
 // KNIVES
 	weapons knives
 	{
-		torso firing_knifeA
+		torso firing_knife
 	}
 // PISTOLS
 	weapons pistols, movetype straferight
