@@ -2833,11 +2833,11 @@ reload
 	}
 	weapons gpg40
 	{
-		torso reload_grenlauncher
+		NOOP
 	}
 	weapons M7
 	{
-		torso reload_grenlauncher
+		NOOP
 	}
 	weapons m1 garand
 	{
@@ -3182,19 +3182,19 @@ do_alt_weapon_mode
 {
 	weapons K43 Rifle
 	{
-		torso reload_grenlauncher
+		torso attach_grenlauncher
 	}
 	weapons m1 garand
 	{
-		torso reload_grenlauncher
+		torso attach_grenlauncher
 	}
 	weapons gpg40
 	{
-		torso reload_grenlauncher
+		torso attach_grenlauncher
 	}
 	weapons M7
 	{
-		torso reload_grenlauncher
+		torso attach_grenlauncher
 	}
 	weapons Luger
 	{
