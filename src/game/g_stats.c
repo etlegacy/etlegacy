@@ -651,7 +651,7 @@ void G_AddKillAssistPoints(gentity_t *target, gentity_t *attacker)
 		}
 
 		// reward only opposite team
-		if (ent->client->ps.teamNum != target->client->ps.teamNum)
+		if (ent->client->sess.sessionTeam != target->client->sess.sessionTeam)
 		{
 			// rewards from 0 to 3 points depending of the percentage of damage inflicted to player
 			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 3.f * MIN(1, dmgReceivedSts[i]->damageReceived / (float)target->client->pers.maxHealth), "kill assist");
