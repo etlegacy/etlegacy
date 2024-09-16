@@ -227,11 +227,11 @@
 		detach_silencer			4280	20	0	14	0	0	1	13
 
 		// GRENADE LAUNCER
-		reload_grenlauncher		4302	20	0	17	0	0	0	20  // also used for attaching
+		attach_grenlauncher		4303	19	0	9	0	0	0	20
 		stand_grenlauncher		4323	20	20	12	0	0	0	0
 		firing_grenlauncher		4344	5	0	20	0	0	0	15
 		raise_grenlauncher		4349	8	0	15	0	0	0	10
-		detach_grenlauncher		4302	20	0	17	0	0	1	13
+		detach_grenlauncher		4302	20	0	21	0	0	1	20
 
 		// MOBILE MG 42
 		stand_mobilemg42		4361	19	19	10	0	0	0	0
