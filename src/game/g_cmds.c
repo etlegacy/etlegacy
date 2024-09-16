@@ -4796,7 +4796,7 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand,
 		{
 			Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i %i %i %i",
 			                                    level.clients[i].sess.kills,
-			                                    level.clients[i].sess.kills_assists,
+			                                    level.clients[i].sess.kill_assists,
 			                                    level.clients[i].sess.deaths,
 			                                    level.clients[i].sess.gibs,
 			                                    level.clients[i].sess.self_kills,

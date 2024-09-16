@@ -658,7 +658,7 @@ typedef struct
 	int spec_invite;
 	int spec_team;
 	int kills;
-	int kills_assists;
+	int kill_assists;
 	int deaths;
 	int gibs;
 	int self_kills;

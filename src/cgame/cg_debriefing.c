@@ -3970,7 +3970,7 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Highest Experience Points",
 	"Most Highly Decorated",
 	"Highest Fragger",
-	"Highest Assist",
+	"Most Assist",
 	"Highest Battle Sense",
 	"Best Engineer",
 	"Best Medic",

@@ -655,7 +655,7 @@ void G_AddKillAssistPoints(gentity_t *target, gentity_t *attacker)
 		{
 			// rewards from 0 to 3 points depending of the percentage of damage inflicted to player
 			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 3.f * MIN(1, dmgReceivedSts[i]->damageReceived / (float)target->client->pers.maxHealth), "kill assist");
-			ent->client->sess.kills_assists++;
+			ent->client->sess.kill_assists++;
 			++rewardedPlayers;
 		}
 		else if (g_teambleedComplaint.integer >= 0 && !complaintSent && dmgReceivedSts[i]->damageReceived >= target->client->pers.maxHealth * (g_teambleedComplaint.integer / 100))      // allow complaint if too much teambleed has caused the death
@@ -1075,7 +1075,7 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
-	// highest assists - check kills assists, then damage given
+	// most assists - check kills assists, then damage given
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
@@ -1085,17 +1085,17 @@ void G_BuildEndgameStats(void)
 			continue;
 		}
 
-		if (cl->sess.kills_assists <= 0)
+		if (cl->sess.kill_assists <= 0)
 		{
 			continue;
 		}
 
-		if (!best || cl->sess.kills_assists > best->sess.kills_assists)
+		if (!best || cl->sess.kill_assists > best->sess.kill_assists)
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
 		}
-		else if (cl->sess.kills_assists == best->sess.kills_assists && cl->sess.damage_given > best->sess.damage_given)
+		else if (cl->sess.kill_assists == best->sess.kill_assists && cl->sess.damage_given > best->sess.damage_given)
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
@@ -1105,7 +1105,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.kills_assists, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.kill_assists, best->sess.sessionTeam));
 	}
 	else
 	{

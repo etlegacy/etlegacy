@@ -671,7 +671,7 @@ void G_deleteStats(int nClient)
 	cl->sess.deaths               = 0;
 	cl->sess.rounds               = 0;
 	cl->sess.kills                = 0;
-	cl->sess.kills_assists        = 0;
+	cl->sess.kill_assists        = 0;
 	cl->sess.gibs                 = 0;
 	cl->sess.self_kills           = 0;
 	cl->sess.team_kills           = 0;
@@ -875,7 +875,7 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_timel += cl->sess.time_allies;
 			tot_timep += cl->sess.time_played;
 			tot_kills += cl->sess.kills;
-			tot_killassists += cl->sess.kills_assists;
+			tot_killassists += cl->sess.kill_assists;
 			tot_deaths += cl->sess.deaths;
 			tot_gibs += cl->sess.gibs;
 			tot_sk += cl->sess.self_kills;
@@ -918,7 +918,7 @@ void G_printMatchInfo(gentity_t *ent)
 			                        ref,
 			                        time_eff,
 			                        cl->sess.kills,
-			                        cl->sess.kills_assists,
+			                        cl->sess.kill_assists,
 			                        cl->sess.deaths,
 			                        cl->sess.gibs,
 			                        cl->sess.self_kills,
