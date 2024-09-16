@@ -2948,10 +2948,17 @@ void CG_AltWeapon_f(void)
 		{
 			if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
 			{
-				if (cg_weapaltMgAutoProne.integer) {
+				if (cg_weapaltMgAutoProne.integer
+				    && cg.predictedPlayerState.groundEntityNum != ENTITYNUM_NONE       // not in air
+				    && !(cg.predictedPlayerState.pm_flags & PMF_LADDER)                // not on a ladder
+				    && !(cg.predictedPlayerState.stats[STAT_AIRLEFT] < HOLDBREATHTIME) // not underwater
+				    )
+				{
 					// XXX : TODO: Eventually replace with something better
 					trap_SendConsoleCommand("+prone\n-prone\n");
-				} else {
+				}
+				else
+				{
 					return;
 				}
 
