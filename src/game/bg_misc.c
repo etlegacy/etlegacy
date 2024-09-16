@@ -2529,10 +2529,14 @@ gitem_t *BG_FindItemForClassName(const char *className)
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime)
 {
 	vec3_t origin;
+	int    boxSide = ps->maxs[0] - ps->mins[0];
 
 	BG_EvaluateTrajectory(&item->pos, atTime, origin, qfalse, item->effect2Time);
 
-	return (vec3_distance(ps->origin, origin) < (ps->maxs[0] - ps->mins[0]));
+	// Check against cylinder
+	return !(vec2_dist(ps->origin, origin) < boxSide ||
+	         ps->origin[2] - origin[2] > boxSide ||
+	         ps->origin[2] - origin[2] < -boxSide);
 }
 
 /**

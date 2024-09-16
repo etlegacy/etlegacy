@@ -261,6 +261,13 @@ static ID_INLINE float vec2_length(const vec2_t v)
 // Subtract
 #define vec2_sub(a, b, c)      ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1])
 #define vec2_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); }
+static ID_INLINE float vec2_dist(vec2_t v1, vec2_t v2)
+{
+	vec3_t dir;
+
+	vec2_sub(v2, v1, dir);
+	return vec2_length(dir);
+}
 
 /************************************************************************/
 /* Vector 3                                                             */
