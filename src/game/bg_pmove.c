@@ -2163,8 +2163,29 @@ static void PM_Footsteps(void)
 	// in the air
 	if (pm->ps->groundEntityNum == ENTITYNUM_NONE)
 	{
-		if (pm->ps->pm_flags & PMF_LADDER)                 // on ladder
+		trace_t trace;
+		vec3_t  end;
+		if (pm->ps->pm_flags & PMF_LADDER) // on ladder
 		{
+			{ // check for peeking off the top from a ladder
+				vec3_t forward, right;
+				vec3_t viewPoint;
+
+				AngleVectors(pm->ps->viewangles, forward, right, NULL);
+				VectorCopy(pm->ps->origin, viewPoint);
+				viewPoint[2] += pm->ps->viewheight + 45;
+
+				VectorMA(viewPoint, 20, forward, end);
+
+				PM_TraceAll(&trace, viewPoint, end);
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_LADDER_PEEK, (!(trace.surfaceFlags & SURF_LADDER)), qtrue);
+				if (!(trace.surfaceFlags & SURF_LADDER))
+				{
+					BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
+				}
+			}
+
+
 			if (pm->ps->velocity[2] >= 0)
 			{
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_CLIMBUP, qtrue);

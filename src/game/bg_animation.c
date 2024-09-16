@@ -289,6 +289,7 @@ static animStringItem_t animConditionsStr[NUM_ANIM_CONDITIONS + 1] =
 	{ "AISTATE",        -1 },
 	{ "SUICIDE",        -1 },
 	{ "RELOADING",      -1 },
+	{ "LADDER_PEEK",    -1 },
 
 	{ NULL,             -1 },
 };
@@ -316,6 +317,7 @@ static animConditionTable_t animConditionsTable[NUM_ANIM_CONDITIONS] =
 	{ ANIM_CONDTYPE_VALUE,    animFlailTypeStr             },
 	{ ANIM_CONDTYPE_BITFLAGS, animGenBitFlagStr            },
 	{ ANIM_CONDTYPE_VALUE,    animAIStateStr               },
+	{ ANIM_CONDTYPE_VALUE,    NULL                         },
 	{ ANIM_CONDTYPE_VALUE,    NULL                         },
 	{ ANIM_CONDTYPE_VALUE,    NULL                         },
 };
