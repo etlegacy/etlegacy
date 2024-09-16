@@ -130,6 +130,7 @@ vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairFade;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
+vmCvar_t cg_drawHintFade;
 vmCvar_t cg_weaponCycleDelay;
 vmCvar_t cg_cycleAllWeaps;
 vmCvar_t cg_useWeapsForZoom;
@@ -306,6 +307,7 @@ vmCvar_t cg_fireteamSprites;
 
 vmCvar_t cg_weapaltReloads;
 vmCvar_t cg_weapaltSwitches;
+vmCvar_t cg_weapaltMgAutoProne;
 
 vmCvar_t cg_sharetimerText;
 
@@ -395,9 +397,10 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawStatus,               "cg_drawStatus",               "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                  "cg_drawFPS",                  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,            "cg_drawCrosshair",            "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCrosshairFade,        "cg_drawCrosshairFade",        "1000",        CVAR_ARCHIVE,                 0 },
+	{ &cg_drawCrosshairFade,        "cg_drawCrosshairFade",        "250",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,     "cg_drawCrosshairPickups",     "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,       "cg_drawSpectatorNames",       "2",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawHintFade,             "cg_drawHintFade",             "250",         CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,          "cg_useWeapsForZoom",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weaponCycleDelay,         "cg_weaponCycleDelay",         "150",         CVAR_ARCHIVE,                 0 },
 	{ &cg_cycleAllWeaps,            "cg_cycleAllWeaps",            "1",           CVAR_ARCHIVE,                 0 },
@@ -590,6 +593,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupXPGainTime,          "cg_popupXPGainTime",          "200",         CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,           "cg_weapaltReloads",           "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,          "cg_weapaltSwitches",          "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_weapaltMgAutoProne,       "cg_weapaltMgAutoProne",       "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_sharetimerText,           "cg_sharetimerText",           "",            CVAR_ARCHIVE,                 0 },
 
 	// Fonts
@@ -906,11 +910,11 @@ void CG_setClientFlags(void)
  */
 int CG_CrosshairPlayer(void)
 {
-	if (cg.time > (cg.crosshairClientTime + 1000))
+	if (cg.time > (cg.crosshairEntTime + 1000))
 	{
 		return -1;
 	}
-	return cg.crosshairClientNum;
+	return cg.crosshairEntNum;
 }
 
 /**
@@ -3027,9 +3031,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_UpdateSvCvars();
 
 	CG_ParseModInfo();
-
-	cg.crosshairMine = -1;
-	cg.crosshairDyna = -1;
 
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 

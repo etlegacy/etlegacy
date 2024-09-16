@@ -1,5 +1,14 @@
-		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+		//	<animation name>
+		//	|   				<first frame>
+		//	|   				|   	<length>
+		//	|   				|   	|   <looping>
+		//	|   				|   	|   |   <fps>
+		//	|   				|   	|   |   |   <move speed>
+		//	|   				|   	|   |   |   |   <transition>
+		//	|   				|   	|   |   |   |   |   <reversed>
+		//	|   				|   	|   |   |   |   |   |   <priority>
+		//	|   				|   	|   |   |   |   |   |   |
 
-		e_prone_binocs_rase	0	10	0	24	0	0	0
-		e_prone_binocs_idle	11	7	0	6	0	0	0
-		e_prone_binocs_lie	15	5	0	15	0	0	0
+		e_prone_binocs_rase		0		10	0	24	0	0	0	10
+		e_prone_binocs_idle		11		7	0	6	0	0	0	0
+		e_prone_binocs_lie		15		5	0	15	0	0	0	0

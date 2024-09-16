@@ -267,12 +267,10 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
-#ifdef DEDICATED
 	if (svclc.demo.playing)
 	{
 		svclc.demo.fastForwardTime = 0;
 	}
-#endif // DEDICATED
 
 	if (Cmd_Argc() > 1)
 	{
@@ -753,9 +751,7 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("killserver", SV_KillServer_f, "Kills the server.");
 	Cmd_AddCommand("cleartempbans", SV_TempBanClear_f, "Clears the temporary ban list.");
 
-#ifdef DEDICATED
 	Cmd_AddCommand("tv", SV_CL_Commands_f, "tv commands.");
-#endif
 
 	if (com_dedicated->integer)
 	{
@@ -774,7 +770,7 @@ void SV_AddOperatorCommands(void)
 
 #ifdef DEDICATED
 	SV_CL_DemoInit();
-#endif
+#endif // DEDICATED
 }
 
 /**

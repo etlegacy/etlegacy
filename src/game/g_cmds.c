@@ -3953,6 +3953,9 @@ qboolean Do_UniformStealing(gentity_t *ent, gentity_t *traceEnt)
 				{
 					if (BODY_VALUE(traceEnt) >= 250)
 					{
+						// hint task completed
+						ent->lastTaskAchievedTime = level.time;
+
 						traceEnt->nextthink = traceEnt->timestamp + BODY_TIME;
 
 						//BG_AnimScriptEvent( &ent->client->ps, ent->client->pers.character->animModelInfo, ANIM_ET_PICKUPGRENADE, qfalse, qtrue );

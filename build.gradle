@@ -15,13 +15,11 @@ buildscript {
 
 allprojects {
 	repositories {
+		mavenLocal()
 		google()
 		mavenCentral()
-		// FIXME: remove asap and use our own
 		jcenter()
-		// maven { url 'https://jitpack.io' }
 		// maven { url uri('https://maven.pkg.github.com/etlegacy/JoyStick') }
-		// mavenLocal()
 	}
 }
 

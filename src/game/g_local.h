@@ -486,6 +486,7 @@ struct gentity_s
 	gentity_t *tankLink;
 
 	int lastHintCheckTime;
+	int lastTaskAchievedTime;
 	int voiceChatSquelch;
 	int voiceChatPreviousTime;
 	int lastBurnedFrameTime;          ///< last burn damage timestamp
@@ -2933,11 +2934,7 @@ void G_MapVoteInfoWrite(void);
 void G_MapVoteInfoRead(void);
 
 // g_misc flags
-#define G_MISC_SHOVE_Z                 BIT(0)
-// BIT(1) unused
-// BIT(2) unused
-#define G_MISC_CROSSHAIR_DYNAMITE      BIT(3)
-#define G_MISC_CROSSHAIR_LANDMINE      BIT(4)
+#define G_MISC_SHOVE_Z  BIT(0)
 
 // g_voting flags
 #define VOTEF_USE_TOTAL_VOTERS      1   ///< use total voters instead of total players to decide if a vote passes

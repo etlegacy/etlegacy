@@ -1510,6 +1510,11 @@ STATE COMBAT
 	}
 	climbup
 	{
+		weapons throwables, gen_bitflag holding
+		{
+			legs climb_up torso holding_grenadeA
+			legs climb_up torso holding_grenadeB
+		}
 		default
 		{
 			both climb_up
@@ -1517,6 +1522,11 @@ STATE COMBAT
 	}
 	climbdown
 	{
+		weapons throwables, gen_bitflag holding
+		{
+			legs climb_down torso holding_grenadeA
+			legs climb_down torso holding_grenadeB
+		}
 		default
 		{
 			both climb_down
@@ -1558,19 +1568,19 @@ STATE COMBAT
 		}
 		weapons panzerfaust
 		{
-			legs prone_legs torso prone_panzor_idle
+			legs prone_legs torso prone_panzer_idle
 		}
 		weapons machineguns
 		{
 			legs prone_legs torso prone_mg_idle
 		}
-		weapons binoculars
-		{
-			legs prone_legs torso e_prone_binocs_idle
-		}
 		weapons binoculars, gen_bitflag zooming
 		{
 			legs prone_legs torso e_prone_binocs_lie
+		}
+		weapons binoculars
+		{
+			legs prone_legs torso e_prone_binocs_idle
 		}
 		weapons smokeGrenade
 		{
@@ -2319,7 +2329,7 @@ fireweaponprone
 	}
 	weapons panzerfaust
 	{
-		torso prone_panzor_idle
+		torso prone_panzer_idle
 	}
 	weapons throwables AND throwables_underhand
 	{
@@ -2451,7 +2461,7 @@ raiseweaponprone
 	}
 	weapons panzerfaust
 	{
-		torso prone_panzor_switch
+		torso prone_panzer_switch
 	}
 	weapons throwables AND throwables_underhand
 	{

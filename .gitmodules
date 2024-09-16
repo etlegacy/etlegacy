@@ -4,3 +4,9 @@
 	branch = master
 	ignore = dirty
 	shallow = true
+
+[submodule "app/libs/joystick"]
+	path = app/libs/joystick
+	url = ../../etlegacy/JoyStick.git
+	branch = master
+	ignore = dirty

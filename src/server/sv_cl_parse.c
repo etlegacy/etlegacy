@@ -34,9 +34,7 @@
 
 #include "server.h"
 
-#ifdef DEDICATED
-
-const char *svc_strings[32] =
+const char *sv_cl_strings[32] =
 {
 	"svc_bad",
 
@@ -1077,19 +1075,19 @@ void SV_CL_ParseServerMessage(msg_t *msg, int headerBytes)
 
 		if (sv_etltv_shownet->integer >= 2)
 		{
-			if (cmd < 0 || cmd > svc_ettv_currentstate) // MSG_ReadByte might return -1 and we can't access our svc_strings array ...
+			if (cmd < 0 || cmd > svc_ettv_currentstate) // MSG_ReadByte might return -1 and we can't access our sv_cl_strings array ...
 			{
 				Com_Printf("%3i:BAD BYTE %i\n", msg->readcount - 1, cmd); // -> ERR_DROP
 			}
 			else
 			{
-				if (!svc_strings[cmd])
+				if (!sv_cl_strings[cmd])
 				{
 					Com_Printf("%3i:BAD CMD %i\n", msg->readcount - 1, cmd);
 				}
 				else
 				{
-					SV_CL_SHOWNET(msg, svc_strings[cmd]);
+					SV_CL_SHOWNET(msg, sv_cl_strings[cmd]);
 				}
 			}
 		}
@@ -1370,5 +1368,3 @@ void SV_CL_ParseServerMessageIntoQueue(msg_t *msg, int headerBytes)
 
 	SV_CL_CopyMsg(&currentMessage->msg, msg, lastReadCount, lastReadBit);
 }
-
-#endif // DEDICATED

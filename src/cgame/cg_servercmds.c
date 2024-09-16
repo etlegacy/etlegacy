@@ -1413,9 +1413,8 @@ static void CG_MapRestart(void)
 	cgs.complaintClient  = -1;
 	cgs.complaintEndTime = 0;
 
-	// init crosshairMine + Dyna
-	cg.crosshairMine = -1;
-	cg.crosshairDyna = -1;
+	// init crosshair scan list
+	cg.crosshairEntsToScanCount = 0;
 
 	// init objective indicator
 	cg.flagIndicator   = 0;
@@ -2912,7 +2911,7 @@ static void CG_scores_cmd(void)
 
 	// if this is start of cmd reset the counter
 	// in case a player requested scores again before receiving end marker
-	if (Q_atoi(str))
+	if (Q_ParseInt(str, &i))
 	{
 		cgs.scoresCount = 0;
 		return;

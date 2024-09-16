@@ -712,7 +712,6 @@ qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 
 #define MAX_PARSE_ENTITIES  2048
 
-#ifdef DEDICATED
 
 #define SV_CL_MAXPACKETS 40
 
@@ -976,6 +975,7 @@ void SV_CL_AddReliableCommand(const char *cmd);
 void SV_CL_WritePacket(void);
 qboolean SV_CL_ReadyToSendPacket(void);
 void SV_CL_ClearState(void);
+void SV_CL_FlushMemory(void);
 void SV_CL_DownloadsComplete(void);
 void SV_CL_SendPureChecksums(int serverId);
 void SV_CL_InitTVGame(void);
@@ -993,9 +993,11 @@ void SV_CL_ServerInfoPacket(const netadr_t *from, msg_t *msg);
 void SV_CL_DisconnectPacket(const netadr_t *from);
 
 // sv_cl_net_chan.c
+#ifdef DEDICATED
 void SV_CL_Netchan_Transmit(netchan_t *chan, msg_t *msg);
 void SV_CL_Netchan_TransmitNextFragment(netchan_t *chan);
 qboolean SV_CL_Netchan_Process(netchan_t *chan, msg_t *msg);
+#endif
 
 // sv_cl_parse.c
 void SV_CL_ParseServerMessage(msg_t *msg, int headerBytes);
@@ -1018,13 +1020,14 @@ void SV_CL_ParseGamestateQueue(msg_t *msg);
 void SV_CL_DemoInit(void);
 void SV_CL_Record(const char *name);
 void SV_CL_StopRecord_f(void);
+void SV_CL_PlayDemo_f(void);
+void SV_CL_FastForward_f(void);
 void SV_CL_WriteDemoMessage(msg_t *msg, int headerBytes);
 void SV_CL_ReadDemoMessage(void);
 void SV_CL_DemoCompleted(void);
 void SV_CL_DemoCleanUp(void);
 void SV_CL_NextDemo(void);
 
-#endif // DEDICATED
 
 //============================================================
 

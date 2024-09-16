@@ -599,13 +599,13 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 		return;
 	}
 
-	if (cg_pmOldListXP)
-	{
-		listItem = cg_pmOldListXP;
-	}
-	else if (cg_pmWaitingListXP)
+	if (cg_pmWaitingListXP)
 	{
 		listItem = cg_pmWaitingListXP;
+	}
+	else if (cg_pmOldListXP)
+	{
+		listItem = cg_pmOldListXP;
 	}
 
 	// reason are similar, use previous message
@@ -819,8 +819,8 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 		// keep in buffer text until icon insertion
 		if (spacingStart && spacingStart != buffer)
 		{
-			etl_assert(spacingStart - buffer < sizeof(buffer) && spacingStart - buffer >= 0);
-			buffer[spacingStart - buffer] = '\0';
+			etl_assert(spacingStart - buffer + 1 < sizeof(buffer) && spacingStart - buffer + 1 >= 0);
+			buffer[spacingStart - buffer + 1] = '\0';
 
 			// determine on which line the icon should appear
 			for (i = 0; buffer[i]; ++i)

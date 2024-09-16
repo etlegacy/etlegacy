@@ -1101,6 +1101,15 @@ void G_CheckForCursorHints(gentity_t *ent)
 	hintType = ps->serverCursorHint = HINT_NONE;
 	hintVal  = ps->serverCursorHintVal = 0;
 
+	// force showing achievement for a few time
+	if (ent->lastTaskAchievedTime + 250 > level.time)
+	{
+		ps->serverCursorHint    = HINT_COMPLETED;
+		ps->serverCursorHintVal = 255;
+
+		return;
+	}
+
 	dist = VectorDistanceSquared(offset, tr->endpos);
 
 	if (zooming)
@@ -1566,6 +1575,11 @@ void G_CheckForCursorHints(gentity_t *ent)
 	{
 		ps->serverCursorHint    = hintType;
 		ps->serverCursorHintVal = hintVal;
+	}
+	else if (ent->lastTaskAchievedTime + 750 > level.time)
+	{
+		ps->serverCursorHint    = HINT_COMPLETED;
+		ps->serverCursorHintVal = 255;
 	}
 	// if hint is out of range or there is no hint then check for touchingTOI constructible hint
 	else if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER && hintType != HINT_CONSTRUCTIBLE)
@@ -5047,7 +5061,7 @@ void G_TagLinkEntity(gentity_t *ent, int msec)
  * @brief G_DrawEntBBox
  * @param ent
  *
- * @todo TODO: make this client side one day -> a loooooot of saved entities, and less brandwith
+ * @todo TODO: make this client side one day -> a loooooot of saved entities, and less bandwidth
  */
 void G_DrawEntBBox(gentity_t *ent)
 {

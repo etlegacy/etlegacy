@@ -1272,19 +1272,13 @@ typedef struct
 	// kill timers for carnage reward
 	int lastKillTime;
 
-	// crosshair client-, mine-, dyna-ID
-	int crosshairClientNum;
-	int crosshairClientTime;
-	int crosshairMine;
-	int crosshairMineTime;
-	int crosshairDyna;
-	int crosshairDynaTime;
-
+	// crosshair
+	centity_t *crosshairEntsToScan[MAX_ENTITIES];
+	int crosshairEntsToScanCount;
+	int crosshairEntNum;
+	int crosshairEntTime;
 	qboolean crosshairNotLookingAtClient;
-	int crosshairSPClientTime;
-	int crosshairVerticalShift;
 	qboolean crosshairClientNoShoot;
-	qboolean crosshairTerrain;
 
 	int teamFirstBlood;                         ///< 0: allies 1: axis -1: nobody
 	int teamWonRounds[2];
@@ -2740,6 +2734,7 @@ extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairFade;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_drawSpectatorNames;
+extern vmCvar_t cg_drawHintFade;
 extern vmCvar_t cg_useWeapsForZoom;
 extern vmCvar_t cg_weaponCycleDelay;
 extern vmCvar_t cg_cycleAllWeaps;
@@ -2912,6 +2907,7 @@ extern vmCvar_t cg_simpleItemsScale;
 
 extern vmCvar_t cg_weapaltReloads;
 extern vmCvar_t cg_weapaltSwitches;
+extern vmCvar_t cg_weapaltMgAutoProne;
 
 extern vmCvar_t cg_sharetimerText;
 
@@ -3383,7 +3379,7 @@ void CG_UpdateFlamethrowerSounds(void);
 void CG_InitLocalEntities(void);
 localEntity_t *CG_AllocLocalEntity(void);
 localEntity_t *CG_FindLocalEntity(int index, int sideNum);
-void CG_AddLocalEntities(void);
+void CG_AddLocalEntities(qboolean master);
 void CG_DemoRewindFixLocalEntities(void);
 
 // cg_locations.c
@@ -4259,7 +4255,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 57
+#define HUD_COMPONENTS_NUM 58
 
 typedef struct hudComponent_s
 {
@@ -4316,7 +4312,8 @@ typedef struct hudStructure_s
 	hudComponent_t hudhead;
 
 	hudComponent_t cursorhints;
-	hudComponent_t weaponstability;  // 20
+	hudComponent_t cursorhintstext; // 20
+	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
 
 	hudComponent_t roundtimer;
@@ -4327,8 +4324,8 @@ typedef struct hudStructure_s
 	hudComponent_t votetext;
 	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
-	hudComponent_t followtext;
-	hudComponent_t demotext;        // 30
+	hudComponent_t followtext;  // 30
+	hudComponent_t demotext;
 
 	hudComponent_t missilecamera;
 
@@ -4339,8 +4336,8 @@ typedef struct hudStructure_s
 	hudComponent_t snapshot;
 	hudComponent_t ping;
 	hudComponent_t speed;
-	hudComponent_t lagometer;
-	hudComponent_t disconnect;      // 40
+	hudComponent_t lagometer;       // 40
+	hudComponent_t disconnect;
 	hudComponent_t chat;
 	hudComponent_t spectatorstatus;
 	hudComponent_t pmitemsbig;
@@ -4349,8 +4346,8 @@ typedef struct hudStructure_s
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint;
 	hudComponent_t banner;
-	hudComponent_t crosshair;
-	hudComponent_t crosshairtext;   // 50
+	hudComponent_t crosshair;       // 50
+	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
 	hudComponent_t stats;
 	hudComponent_t xpgain;
@@ -4442,6 +4439,7 @@ void CG_DrawCenterString(hudComponent_t *comp);
 void CG_DrawBannerPrint(hudComponent_t *comp);
 void CG_DrawWeapStability(hudComponent_t *comp);
 void CG_DrawCursorhint(hudComponent_t *comp);
+void CG_DrawCursorHintText(hudComponent_t *comp);
 void CG_DrawCrosshair(hudComponent_t *comp);
 
 void CG_DrawPlayerStatusHead(hudComponent_t *comp);

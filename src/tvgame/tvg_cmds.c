@@ -1466,9 +1466,8 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 	{
 		int count;
 		token = strtok(NULL, " ");
-		count = Q_atoi(token);
 
-		if (count)
+		if (Q_ParseInt(token, &count))
 		{
 			level.cmds.scoresIndex = 0;
 			level.cmds.scoresCount = count < MAX_SCORES_CMDS ? count : MAX_SCORES_CMDS;

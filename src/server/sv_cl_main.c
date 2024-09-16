@@ -139,7 +139,7 @@ void SV_CL_Commands_f(void)
 
 	if (argc < 2)
 	{
-		Com_Printf("usage: tv <connect|disconnect> [-4|-6] server masterpassword privatepassword\n");
+		Com_Printf("usage: tv <connect|disconnect>\n");
 		return;
 	}
 
@@ -153,11 +153,35 @@ void SV_CL_Commands_f(void)
 	{
 		SV_CL_Disconnect();
 	}
-	else
+}
+#else
+/**
+* @brief SV_CL_Commands_f
+*/
+void SV_CL_Commands_f(void)
+{
+	char *cmd;
+	int  argc = Cmd_Argc();
+
+	if (argc < 2)
 	{
-		Com_Printf("usage: tv <connect|disconnect> [-4|-6] server masterpassword privatepassword\n");
+		Com_Printf("usage: tv <demo|ff>\n");
+		return;
+	}
+
+	cmd = Cmd_Argv(1);
+
+	if (!Q_stricmp(cmd, "demo"))
+	{
+		SV_CL_PlayDemo_f();
+	}
+	else if (!Q_stricmp(cmd, "ff"))
+	{
+		SV_CL_FastForward_f();
 	}
 }
+
+#endif // DEDICATED
 
 #define RETRANSMIT_TIMEOUT  3000
 
@@ -390,6 +414,7 @@ qboolean SV_CL_ReadyToSendPacket(void)
  */
 void SV_CL_WritePacket(void)
 {
+#ifdef DEDICATED
 	msg_t     buf;
 	byte      data[MAX_MSGLEN];
 	int       i;
@@ -473,6 +498,7 @@ void SV_CL_WritePacket(void)
 	{
 		SV_CL_Netchan_TransmitNextFragment(&svclc.netchan);
 	}
+#endif
 }
 
 /**
@@ -681,9 +707,18 @@ rescan:
 
 	if (!strcmp(cmd, "disconnect"))
 	{
-		// allow server to indicate why they were disconnected
-		Cbuf_AddText("tv disconnect\n");
-		return qtrue;
+		// this is a bit hacky solution (same code invoked twice) to properly
+		// propagate disconnect message to chained tv server(s) and their client(s)
+		if (Cmd_Argc() >= 2)
+		{
+			SV_Shutdown(va("Server Disconnected - %s", Cmd_Argv(1)));
+		}
+		else
+		{
+			SV_Shutdown("Server disconnected");
+		}
+
+		Com_Error(ERR_SERVERDISCONNECT, "Server disconnected");
 	}
 
 	if (!strcmp(cmd, "bcs0"))
@@ -801,7 +836,7 @@ void SV_CL_DownloadsComplete(void)
 	// this will also (re)load the UI
 	// if this is a local client then only the client part of the hunk
 	// will be cleared, note that this is done after the hunk mark has been set
-	CL_FlushMemory();
+	SV_CL_FlushMemory();
 
 	SV_CL_InitTVGame();
 
@@ -1247,6 +1282,8 @@ void SV_CL_ConnectionlessPacket(const netadr_t *from, msg_t *msg)
 	Com_DPrintf("Unknown connectionless packet command.\n");
 }
 
+#ifdef  DEDICATED
+
 /**
  * @brief A packet has arrived from the main event loop
  *
@@ -1333,12 +1370,12 @@ void CL_PacketEvent(const netadr_t *from, msg_t *msg)
 	}
 }
 
+#endif //  DEDICATED
+
 /**
- * @brief Called by CL_MapLoading, CL_Connect_f, CL_PlayDemo_f, and CL_ParseGamestate the only
- * ways a client gets into a game
- * Also called by Com_Error
+ * @brief SV_CL_FlushMemory
  */
-void CL_FlushMemory(void)
+void SV_CL_FlushMemory(void)
 {
 	if (svclc.demo.recording)
 	{
@@ -1596,5 +1633,3 @@ void SV_CL_Frame(int frameMsec)
 	// check user info buffer thingy
 	SV_CheckClientUserinfoTimer();
 }
-
-#endif // DEDICATED
