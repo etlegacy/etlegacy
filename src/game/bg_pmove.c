@@ -816,12 +816,12 @@ static qboolean PM_CheckJump(void)
 
 	if (pm->cmd.forwardmove >= 0)
 	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
 		pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
 	}
 	else
 	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
 		pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
 	}
 
@@ -1600,7 +1600,7 @@ static void PM_CrashLand(void)
 	{
 		if (pml.previous_velocity[2] < -220)
 		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_LAND, qfalse, qtrue);
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_LAND, qfalse);
 		}
 	}
 
@@ -1680,7 +1680,7 @@ static void PM_CrashLand(void)
 				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_50, PM_FootstepForSurface());
 				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
 			}
 		}
 		else if (delta > 58)
@@ -1692,7 +1692,7 @@ static void PM_CrashLand(void)
 				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_25, PM_FootstepForSurface());
 				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
 			}
 		}
 		else if (delta > 48)
@@ -1704,7 +1704,7 @@ static void PM_CrashLand(void)
 				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_15, PM_FootstepForSurface());
 				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
 			}
 		}
 		else if (delta > 38.75f)
@@ -1716,7 +1716,7 @@ static void PM_CrashLand(void)
 				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_10, PM_FootstepForSurface());
 				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
 			}
 		}
 		else if (delta > 7)
@@ -1812,12 +1812,12 @@ static void PM_GroundTraceMissed(void)
 		{
 			if (pm->cmd.forwardmove >= 0)
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
 				pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
 			}
 			else
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
 				pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
 			}
 		}
@@ -1909,12 +1909,12 @@ static void PM_GroundTrace(void)
 		{
 			if (pm->cmd.forwardmove >= 0)
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
 				pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
 			}
 			else
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
 				pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
 			}
 		}
@@ -2486,11 +2486,11 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 		// override current animation (so reloading after firing will work)
 		if (pm->ps->eFlags & EF_PRONE)
 		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RELOADPRONE, qfalse, qtrue);
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RELOADPRONE, qfalse);
 		}
 		else
 		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RELOAD, qfalse, qtrue);
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RELOAD, qfalse);
 		}
 	}
 
@@ -2593,11 +2593,11 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 
 				if (pm->ps->eFlags & EF_PRONE)
 				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE_PRONE, qfalse, qfalse);
+					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE_PRONE, qfalse);
 				}
 				else
 				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE, qfalse, qfalse);
+					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE, qfalse);
 				}
 
 				pm->ps->weaponTime += GetWeaponTableData(newWeapon)->altSwitchTimeTo;
@@ -2621,7 +2621,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		PM_StartWeaponAnim(WEAP_DROP);
 
 		// play an animation
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DROPWEAPON, qfalse, qfalse);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DROPWEAPON, qfalse);
 
 		pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->switchTimeBegin;            // dropping/raising usually takes 1/4 sec.
 	}
@@ -2709,11 +2709,11 @@ static void PM_FinishWeaponChange(void)
 
 			if (pm->ps->eFlags & EF_PRONE)
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE_PRONE, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE_PRONE, qfalse);
 			}
 			else
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE, qfalse);
 			}
 
 			pm->ps->weaponTime += GetWeaponTableData(newWeapon)->altSwitchTimeTo;
@@ -2724,11 +2724,11 @@ static void PM_FinishWeaponChange(void)
 
 			if (pm->ps->eFlags & EF_PRONE)
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DO_ALT_WEAPON_MODE_PRONE, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DO_ALT_WEAPON_MODE_PRONE, qfalse);
 			}
 			else
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DO_ALT_WEAPON_MODE, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DO_ALT_WEAPON_MODE, qfalse);
 			}
 
 			pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->altSwitchTimeFrom;
@@ -2740,11 +2740,11 @@ static void PM_FinishWeaponChange(void)
 
 		if (pm->ps->eFlags & EF_PRONE)
 		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPONPRONE, qfalse, qfalse);
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPONPRONE, qfalse);
 		}
 		else
 		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPON, qfalse, qfalse);
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPON, qfalse);
 		}
 
 		PM_StartWeaponAnim(WEAP_RAISE);
@@ -3220,13 +3220,13 @@ static qboolean PM_MountedFire(void)
 			PM_AddEvent(EV_FIRE_WEAPON_AAGUN);
 			pm->ps->weaponTime += AAGUN_RATE_OF_FIRE;
 
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse);
 			//pm->ps->viewlocked = VIEWLOCK_JITTER;     // this enable screen jitter when firing
 		}
 		else    // EF_MOUNTEDTANK | EF_MG42_ACTIVE
 		{
 			pm->ps->weaponTime += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse);
 
 			if (pm->ps->eFlags & EF_MG42_ACTIVE)
 			{
@@ -3300,12 +3300,12 @@ static qboolean PM_CheckGrenade()
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE,
-			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC);
 		}
 		else
 		{
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON,
-			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC);
 		}
 	}
 
@@ -3678,7 +3678,7 @@ static void PM_Weapon(void)
 			{
 				if ((pm->ps->weapon == WP_MEDKIT || pm->ps->weapon == WP_AMMO) && (pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE))
 				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
+					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue);
 				}
 
 				return;
@@ -3720,11 +3720,11 @@ static void PM_Weapon(void)
 		{
 			if (pm->ps->eFlags & EF_PRONE)
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse);
 			}
 			else
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse);
 			}
 		}
 	}
@@ -3747,11 +3747,11 @@ static void PM_Weapon(void)
 		{
 			if (pm->ps->eFlags & EF_PRONE)
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse);
 			}
 			else
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse);
 			}
 		}
 	}
@@ -3788,12 +3788,12 @@ static void PM_Weapon(void)
 			if (pm->ps->eFlags & EF_PRONE)
 			{
 				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2PRONE : ANIM_ET_FIREWEAPONPRONE,
-				                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+				                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC);
 			}
 			else
 			{
 				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2 : ANIM_ET_FIREWEAPON,
-				                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
+				                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC);
 			}
 		}
 	}
@@ -4786,13 +4786,13 @@ void PM_CheckLadderMove(void)
 	// if we have just dismounted the ladder at the top, play dismount
 	if (!pml.ladder && wasOnLadder && pm->ps->velocity[2] > 0)
 	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_CLIMB_DISMOUNT, qfalse, qfalse);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_CLIMB_DISMOUNT, qfalse);
 	}
 
 	// if we have just mounted the ladder
 	if (pml.ladder && !wasOnLadder && pm->ps->velocity[2] < 0)        // only play anim if going down ladder
 	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_CLIMB_MOUNT, qfalse, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_CLIMB_MOUNT, qfalse);
 	}
 }
 

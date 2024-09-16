@@ -3966,7 +3966,7 @@ qboolean Do_UniformStealing(gentity_t *ent, gentity_t *traceEnt)
 
 						traceEnt->nextthink = traceEnt->timestamp + BODY_TIME;
 
-						//BG_AnimScriptEvent( &ent->client->ps, ent->client->pers.character->animModelInfo, ANIM_ET_PICKUPGRENADE, qfalse, qtrue );
+						//BG_AnimScriptEvent( &ent->client->ps, ent->client->pers.character->animModelInfo, ANIM_ET_PICKUPGRENADE, qfalse);
 						//ent->client->ps.pm_flags |= PMF_TIME_LOCKPLAYER;
 						//ent->client->ps.pm_time = 2100;
 

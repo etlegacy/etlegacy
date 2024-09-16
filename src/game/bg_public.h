@@ -2620,7 +2620,7 @@ void BG_InitWeaponStrings(void);
 void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *scriptData, const char *filename, char *input);
 int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, scriptAnimMoveTypes_t movetype, qboolean isContinue);
 int BG_AnimScriptCannedAnimation(playerState_t *ps, animModelInfo_t *modelInfo);
-int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, scriptAnimEventTypes_t event, qboolean isContinue, qboolean force);
+int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, scriptAnimEventTypes_t event, qboolean isContinue);
 int BG_IndexForString(char *token, animStringItem_t *strings, qboolean allowFail);
 int BG_PlayAnimName(playerState_t *ps, animModelInfo_t *animModelInfo, char *animName, animBodyPart_t bodyPart, qboolean setTimer, qboolean isContinue, qboolean force);
 void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart);
