@@ -1373,13 +1373,13 @@ void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart)
  * @param[in] forceDuration
  * @param[in] setTimer
  * @param[in] isContinue
- * @param[in] force
  * @return
  */
-int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, animBodyPart_t bodyPart, int forceDuration, qboolean setTimer, qboolean isContinue, qboolean force)
+int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, animBodyPart_t bodyPart, int forceDuration, qboolean setTimer, qboolean isContinue)
 {
 	int      duration;
 	qboolean wasSet = qfalse;
+	int      currentPriority;
 
 	if (forceDuration)
 	{
@@ -1394,9 +1394,10 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 	{
 	case ANIM_BP_BOTH:
 	case ANIM_BP_LEGS:
+		currentPriority = animModelInfo->animations[(ps->legsAnim & ~ANIM_TOGGLEBIT)]->priority;
+
 		if ((ps->legsTimer < 50)
-		    || force
-		    || (animModelInfo->animations[animNum]->priority > animModelInfo->animations[(ps->legsAnim & ~ANIM_TOGGLEBIT)]->priority))
+		    || (animModelInfo->animations[animNum]->priority >= currentPriority))
 		{
 			if (!isContinue || !((ps->legsAnim & ~ANIM_TOGGLEBIT) == animNum))
 			{
@@ -1420,9 +1421,19 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 	// for ANIM_BP_BOTH
 	// fall through
 	case ANIM_BP_TORSO:
+		currentPriority = animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority;
+
+		// XXX : Stop pliers firing animation if you stop holding attack - would
+		//		 otherwise continue, despite the player not actually using them.
+		if (ps->weapon == WP_PLIERS
+		    && ps->weaponstate != WEAPON_FIRING
+		    && animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority >= 20 /* firing animation is currently playing */)
+		{
+			currentPriority = -1;
+		}
+
 		if ((ps->torsoTimer < 50)
-		    || force
-		    || (animModelInfo->animations[animNum]->priority > animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority))
+		    || (animModelInfo->animations[animNum]->priority >= currentPriority))
 		{
 			if (!isContinue || !((ps->torsoAnim & ~ANIM_TOGGLEBIT) == animNum))
 			{
@@ -1477,10 +1488,9 @@ int BG_PlayAnimName(playerState_t *ps, animModelInfo_t *animModelInfo, char *ani
  * @param[in] scriptCommand
  * @param[in] setTimer
  * @param[in] isContinue
- * @param[in] force
  * @return The duration of the animation, -1 if no anim was set
  */
-int BG_ExecuteCommand(playerState_t *ps, animModelInfo_t *animModelInfo, animScriptCommand_t *scriptCommand, qboolean setTimer, qboolean isContinue, qboolean force)
+int BG_ExecuteCommand(playerState_t *ps, animModelInfo_t *animModelInfo, animScriptCommand_t *scriptCommand, qboolean setTimer, qboolean isContinue)
 {
 	int      duration       = -1;
 	qboolean playedLegsAnim = qfalse;
@@ -1491,11 +1501,11 @@ int BG_ExecuteCommand(playerState_t *ps, animModelInfo_t *animModelInfo, animScr
 		// FIXME: how to sync torso/legs anims accounting for transition blends, etc
 		if (scriptCommand->bodyPart[0] == ANIM_BP_BOTH || scriptCommand->bodyPart[0] == ANIM_BP_LEGS)
 		{
-			playedLegsAnim = (qboolean)(BG_PlayAnim(ps, animModelInfo, scriptCommand->animIndex[0], (animBodyPart_t)scriptCommand->bodyPart[0], duration, setTimer, isContinue, force) > -1);
+			playedLegsAnim = (qboolean)(BG_PlayAnim(ps, animModelInfo, scriptCommand->animIndex[0], (animBodyPart_t)scriptCommand->bodyPart[0], duration, setTimer, isContinue) > -1);
 		}
 		else
 		{
-			BG_PlayAnim(ps, animModelInfo, scriptCommand->animIndex[0], (animBodyPart_t)scriptCommand->bodyPart[0], duration, setTimer, isContinue, force);
+			BG_PlayAnim(ps, animModelInfo, scriptCommand->animIndex[0], (animBodyPart_t)scriptCommand->bodyPart[0], duration, setTimer, isContinue);
 		}
 	}
 	if (scriptCommand->bodyPart[1])
@@ -1505,11 +1515,11 @@ int BG_ExecuteCommand(playerState_t *ps, animModelInfo_t *animModelInfo, animScr
 		// just play the animation for the torso
 		if (scriptCommand->bodyPart[1] == ANIM_BP_BOTH || scriptCommand->bodyPart[1] == ANIM_BP_LEGS)
 		{
-			playedLegsAnim = (qboolean)(BG_PlayAnim(ps, animModelInfo, scriptCommand->animIndex[1], (animBodyPart_t)scriptCommand->bodyPart[1], duration, setTimer, isContinue, force) > -1);
+			playedLegsAnim = (qboolean)(BG_PlayAnim(ps, animModelInfo, scriptCommand->animIndex[1], (animBodyPart_t)scriptCommand->bodyPart[1], duration, setTimer, isContinue) > -1);
 		}
 		else
 		{
-			BG_PlayAnim(ps, animModelInfo, scriptCommand->animIndex[1], (animBodyPart_t)scriptCommand->bodyPart[1], duration, setTimer, isContinue, force);
+			BG_PlayAnim(ps, animModelInfo, scriptCommand->animIndex[1], (animBodyPart_t)scriptCommand->bodyPart[1], duration, setTimer, isContinue);
 		}
 	}
 
@@ -1594,7 +1604,7 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 #endif
 
 	// run it
-	return (BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qfalse, isContinue, qfalse) != -1);
+	return (BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qfalse, isContinue) != -1);
 }
 
 /*
@@ -1646,10 +1656,9 @@ int BG_AnimScriptCannedAnimation(playerState_t *ps, animModelInfo_t *animModelIn
  * @param[in] animModelInfo
  * @param[in] event
  * @param[in] isContinue
- * @param[in] force
  * @return The duration in milliseconds that this model should be paused. -1 if no event found
  */
-int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, scriptAnimEventTypes_t event, qboolean isContinue, qboolean force)
+int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, scriptAnimEventTypes_t event, qboolean isContinue)
 {
 	animScript_t        *script;
 	animScriptItem_t    *scriptItem;
@@ -1703,7 +1712,7 @@ int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, script
 #endif
 
 	// run it
-	return BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qtrue, isContinue, force);
+	return BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qtrue, isContinue);
 }
 
 /**

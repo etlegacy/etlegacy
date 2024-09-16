@@ -742,7 +742,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, POSITION_BEHIND, qtrue);
 		}
 
-		self->client->ps.pm_time = BG_AnimScriptEvent(&self->client->ps, self->client->pers.character->animModelInfo, ANIM_ET_DEATH, qfalse, qtrue);
+		self->client->ps.pm_time = BG_AnimScriptEvent(&self->client->ps, self->client->pers.character->animModelInfo, ANIM_ET_DEATH, qfalse);
 
 		// record the death animation to be used later on by the corpse
 		self->client->torsoDeathAnim = self->client->ps.torsoAnim;
@@ -1568,7 +1568,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		hr = HR_HEAD;
 
 		//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_HEAD, qtrue);
-		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse);
 	}
 	else
 	{
@@ -1587,7 +1587,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 			}
 
 			//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse);
 		}
 		else if (IsArmShot(targ, attacker, point, mod))
 		{
@@ -1599,7 +1599,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 			}
 
 			//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_SHOULDER_RIGHT : IMPACTPOINT_SHOULDER_LEFT, qtrue);
-			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse);
 		}
 		else if (targ->client && targ->health > 0)
 		{
@@ -1617,7 +1617,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 				//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_STUNNED, 1, qtrue);
 			}
 
-			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+			//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse);
 		}
 	}
 
