@@ -2420,7 +2420,7 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points, const ch
 void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash);
 void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod, g_constructible_stats_t *constructibleStats);
 void G_AddKillAssistPoints(gentity_t *target, gentity_t *attacker);
-void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash);
+void G_LoseKillSkillPoints(gentity_t *tker, gentity_t *victim);
 
 void G_DebugOpenSkillLog(void);
 void G_DebugCloseSkillLog(void);

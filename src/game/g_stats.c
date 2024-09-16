@@ -476,22 +476,23 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points, const cha
 }
 
 /**
- * @brief Loose skill for evil tkers :E
- * @param[in] tker
- * @param[in] mod
- * @param hr - unused
- * @param splash - unused
+ * @brief Loose skill for evil tker / tbleder :E
+ * @param[in] agressor the evil
+ * @param[in] victim the pure
  */
-void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash)
+void G_LoseKillSkillPoints(gentity_t *agressor, gentity_t *victim)
 {
-	if (!tker->client)
+	if (!agressor->client || !victim->client)
 	{
 		return;
 	}
 
-	if (GetMODTableData(mod)->skillType < SK_NUM_SKILLS)
+	if (GetMODTableData(victim->deathType)->skillType < SK_NUM_SKILLS)
 	{
-		G_LoseSkillPoints(tker, GetMODTableData(mod)->skillType, GetMODTableData(mod)->defaultKillPoints, "Team Killing");
+		G_LoseSkillPoints(agressor,
+		                  GetMODTableData(victim->deathType)->skillType,
+		                  GetMODTableData(victim->deathType)->defaultKillPoints,
+		                  victim->client->ps.persistant[PERS_ATTACKER] == agressor->s.number ? "Team Killing" : "Team Bleeding");
 	}
 
 	// prepare scoreboard
