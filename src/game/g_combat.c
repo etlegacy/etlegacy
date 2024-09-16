@@ -251,6 +251,56 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 }
 
 /**
+ * @brief G_CheckComplaint
+ * @param[in] self
+ * @param[in] inflictor
+ * @param[in] attacker
+ * @param[in] meansOfDeath
+ */
+qboolean G_CheckComplaint(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, meansOfDeath_t meansOfDeath)
+{
+	// Complaint logging
+	if (attacker != self && level.warmupTime <= 0 && g_gamestate.integer == GS_PLAYING)
+	{
+		if (attacker->client->pers.localClient)
+		{
+			if (attacker->r.svFlags & SVF_BOT)
+			{
+				trap_SendServerCommand(self - g_entities, "complaint -5");
+			}
+			else
+			{
+				trap_SendServerCommand(self - g_entities, "complaint -4");
+			}
+		}
+		else
+		{
+			if (meansOfDeath != MOD_CRUSH_CONSTRUCTION && meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH && meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER)
+			{
+				if (g_complaintlimit.integer)
+				{
+					if (!(meansOfDeath == MOD_LANDMINE && (g_disableComplaints.integer & TKFL_MINES)) &&
+					    !((meansOfDeath == MOD_ARTY || meansOfDeath == MOD_AIRSTRIKE) && (g_disableComplaints.integer & TKFL_AIRSTRIKE)) &&
+					    !((meansOfDeath == MOD_MORTAR || meansOfDeath == MOD_MORTAR2) && (g_disableComplaints.integer & TKFL_MORTAR)))
+					{
+						trap_SendServerCommand(self - g_entities, va("complaint %i", attacker->s.number));
+						if (meansOfDeath != MOD_DYNAMITE || !(inflictor->etpro_misc_1 & 1))   // do not allow complain when tked / tbed by dynamite on objective
+						{
+							self->client->pers.complaintClient  = attacker->s.clientNum;
+							self->client->pers.complaintEndTime = level.time + 20500;
+
+							return qtrue;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief player_die
  * @param[in,out] self
  * @param[in] inflictor
@@ -544,41 +594,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		if (attacker == self || dieFromSameTeam)
 		{
-			// Complaint lodging
-			if (attacker != self && level.warmupTime <= 0 && g_gamestate.integer == GS_PLAYING)
-			{
-				if (attacker->client->pers.localClient)
-				{
-					if (attacker->r.svFlags & SVF_BOT)
-					{
-						trap_SendServerCommand(self - g_entities, "complaint -5");
-					}
-					else
-					{
-						trap_SendServerCommand(self - g_entities, "complaint -4");
-					}
-				}
-				else
-				{
-					if (meansOfDeath != MOD_CRUSH_CONSTRUCTION && meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH && meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER)
-					{
-						if (g_complaintlimit.integer)
-						{
-							if (!(meansOfDeath == MOD_LANDMINE && (g_disableComplaints.integer & TKFL_MINES)) &&
-							    !((meansOfDeath == MOD_ARTY || meansOfDeath == MOD_AIRSTRIKE) && (g_disableComplaints.integer & TKFL_AIRSTRIKE)) &&
-							    !((meansOfDeath == MOD_MORTAR || meansOfDeath == MOD_MORTAR2) && (g_disableComplaints.integer & TKFL_MORTAR)))
-							{
-								trap_SendServerCommand(self - g_entities, va("complaint %i", attacker->s.number));
-								if (meansOfDeath != MOD_DYNAMITE || !(inflictor->etpro_misc_1 & 1))   // do not allow complain when tked by dynamite on objective
-								{
-									self->client->pers.complaintClient  = attacker->s.clientNum;
-									self->client->pers.complaintEndTime = level.time + 20500;
-								}
-							}
-						}
-					}
-				}
-			}
+			G_CheckComplaint(self, inflictor, attacker, meansOfDeath);
 
 			// high penalty to offset medic heal
 			if (g_gametype.integer == GT_WOLF_LMS)
@@ -1714,7 +1730,10 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 	{
 		if (attacker)
 		{
-			targ->client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
+			targ->client->ps.persistant[PERS_ATTACKER]                       = attacker->s.number;
+			targ->client->dmgReceivedSts[attacker->s.number].damageReceived += take;
+			targ->client->dmgReceivedSts[attacker->s.number].mods            = mod;
+			targ->client->dmgReceivedSts[attacker->s.number].lastHitTime     = level.time;
 		}
 		else
 		{
@@ -1811,6 +1830,8 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 					{
 						G_AddKillSkillPoints(attacker, mod, hr, (dflags & DAMAGE_RADIUS));
 					}
+
+					G_AddKillAssistPoints(targ, attacker);
 				}
 
 				if (targ->health < -999)

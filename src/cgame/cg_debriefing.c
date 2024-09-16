@@ -48,17 +48,18 @@ static panel_button_text_t debriefPlayerHeadingSmallerFont =
 	&cgs.media.limboFont2,
 };
 
-#define DB_RANK_X      213 + 4
-#define DB_NAME_X      DB_RANK_X + 28
-#define DB_TIME_X      DB_NAME_X + 150
-#define DB_KILLS_X     DB_TIME_X + 30
-#define DB_DEATHS_X    DB_KILLS_X + 24
-#define DB_GIBS_X      DB_DEATHS_X + 24
-#define DB_SELFKILLS_X DB_GIBS_X + 24
-#define DB_TEAMKILLS_X DB_SELFKILLS_X + 24
-#define DB_TEAMGIBS_X  DB_TEAMKILLS_X + 24
-#define DB_XP_X        DB_TEAMGIBS_X + 24
-#define DH_HEADING_Y   60
+#define DB_RANK_X           213 + 4
+#define DB_NAME_X           DB_RANK_X + 28
+#define DB_TIME_X           DB_NAME_X + 136
+#define DB_KILLS_X          DB_TIME_X + 30
+#define DB_KILL_ASSISTS_X   DB_KILLS_X + 24
+#define DB_DEATHS_X         DB_KILL_ASSISTS_X + 24
+#define DB_GIBS_X           DB_DEATHS_X + 24
+#define DB_SELFKILLS_X      DB_GIBS_X + 24
+#define DB_TEAMKILLS_X      DB_SELFKILLS_X + 24
+#define DB_TEAMGIBS_X       DB_TEAMKILLS_X + 24
+#define DB_XP_X             DB_TEAMGIBS_X + 24
+#define DH_HEADING_Y        60
 
 #define DB_CHAT_PANEL_X 10.f
 #define DB_CHAT_PANEL_Y (SCREEN_HEIGHT - 122.f)
@@ -406,6 +407,20 @@ static panel_button_t debriefHeadingKills =
 	0
 };
 
+static panel_button_t debriefHeadingKillsAssists =
+{
+	NULL,
+	"Ast",
+	{ DB_KILL_ASSISTS_X,      DH_HEADING_Y,                 0, 0 },
+	{ 0,                       0,                            0, 0, 0, 0, 0, 0},
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
+	BG_PanelButtonsRender_Text,
+	NULL,
+	0
+};
+
 static panel_button_t debriefHeadingDeaths =
 {
 	NULL,
@@ -723,14 +738,16 @@ PLAYERHEADER_SKILLS(6);
 static panel_button_t *debriefPanelButtons[] =
 {
 	&debriefTitleWindow,
-	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
-	&debriefHeadingRank,            &debriefHeadingName,
-	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingGibs,                  &debriefHeadingSelfKills, &debriefHeadingTeamKills, &debriefHeadingTeamGibs,
-	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,
+	&debriefPlayerListWindow,           &debriefPlayerList,                    &debriefPlayerListScroll,
+	&debriefHeadingRank,                &debriefHeadingName,
+	&debriefHeadingTime,                &debriefHeadingXP,                     &debriefHeadingKills,                &debriefHeadingKillsAssists,
+	&debriefHeadingDeaths,              &debriefHeadingGibs,                   &debriefHeadingSelfKills,            &debriefHeadingTeamKills, &debriefHeadingTeamGibs,
+	&debriefPlayerInfoWindow,           &debriefPlayerInfoName,                &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,
+	&debriefPlayerInfoTime,             &debriefPlayerInfoXP,
 #ifdef FEATURE_RATING
 	&debriefPlayerInfoSR,
 #endif
-	&debriefPlayerInfoACC,          &debriefPlayerInfoHS,
+	&debriefPlayerInfoACC,              &debriefPlayerInfoHS,
 	&debriefPlayerInfoSkills0,
 	&debriefPlayerInfoSkills1,
 	&debriefPlayerInfoSkills2,
@@ -743,8 +760,9 @@ static panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerPrestigeButton,
 #endif
 	&debriefPlayerInfoHitRegions,
-	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader,  &debriefPlayerWeaponStatsKillsHeader,
-	&debriefPlayerWeaponStatsList,  &debriefPlayerWeaponStatsListScroll,
+	&debriefPlayerWeaponStatsHeader,    &debriefPlayerWeaponStatsNameHeader,   &debriefPlayerWeaponStatsShotsHeader,
+	&debriefPlayerWeaponStatsHitsHeader,&debriefPlayerWeaponStatsKillsHeader,
+	&debriefPlayerWeaponStatsList,      &debriefPlayerWeaponStatsListScroll,
 
 	NULL
 };
@@ -752,8 +770,9 @@ static panel_button_t *debriefPanelButtons[] =
 
 static panel_button_t *teamDebriefPanelButtons[] =
 {
-	&debriefTitleWindow,        &debriefMissionTitleWindow, &debriefMissionAwardsWindow, &debriefMissionImage,        &debriefMissionMaps, &debriefMissionAwardsList, &debriefMissionAwardsListScroll,
-	&debriefMissionStatsWindow, &debriefMissionStatsWinner, &debriefMissionStatsLoser,   &debriefMissionStatsHeaders,
+	&debriefTitleWindow,        &debriefMissionTitleWindow, &debriefMissionAwardsWindow,     &debriefMissionImage,
+	&debriefMissionMaps,        &debriefMissionAwardsList,  &debriefMissionAwardsListScroll,
+	&debriefMissionStatsWindow, &debriefMissionStatsWinner, &debriefMissionStatsLoser,       &debriefMissionStatsHeaders,
 	NULL
 };
 
@@ -2199,6 +2218,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 		if (cgs.dbPlayerKillsDeathsReceived)
 		{
 			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->kills), 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_KILL_ASSISTS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->killsAssists), 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->deaths), 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_GIBS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->gibs), 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_SELFKILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->selfKills), 0, 0, 0, button->font->font);
@@ -2208,6 +2228,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 		else
 		{
 			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_KILL_ASSISTS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_GIBS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_SELFKILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
@@ -2365,12 +2386,13 @@ void CG_Debriefing_ParsePlayerKillsDeaths(qboolean secondPart)
 
 	for (j = 0; i < max; i++, j++)
 	{
-		cgs.clientinfo[i].kills     = Q_atoi(CG_Argv((j * 6) + 1));
-		cgs.clientinfo[i].deaths    = Q_atoi(CG_Argv((j * 6) + 2));
-		cgs.clientinfo[i].gibs      = Q_atoi(CG_Argv((j * 6) + 3));
-		cgs.clientinfo[i].selfKills = Q_atoi(CG_Argv((j * 6) + 4));
-		cgs.clientinfo[i].teamKills = Q_atoi(CG_Argv((j * 6) + 5));
-		cgs.clientinfo[i].teamGibs  = Q_atoi(CG_Argv((j * 6) + 6));
+		cgs.clientinfo[i].kills        = Q_atoi(CG_Argv((j * 6) + 1));
+		cgs.clientinfo[i].killsAssists = Q_atoi(CG_Argv((j * 6) + 2));
+		cgs.clientinfo[i].deaths       = Q_atoi(CG_Argv((j * 6) + 3));
+		cgs.clientinfo[i].gibs         = Q_atoi(CG_Argv((j * 6) + 4));
+		cgs.clientinfo[i].selfKills    = Q_atoi(CG_Argv((j * 6) + 5));
+		cgs.clientinfo[i].teamKills    = Q_atoi(CG_Argv((j * 6) + 6));
+		cgs.clientinfo[i].teamGibs     = Q_atoi(CG_Argv((j * 6) + 7));
 	}
 	cgs.dbPlayerKillsDeathsReceived = qtrue;
 }
@@ -3948,6 +3970,7 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Highest Experience Points",
 	"Most Highly Decorated",
 	"Highest Fragger",
+	"Most Assists",
 	"Highest Battle Sense",
 	"Best Engineer",
 	"Best Medic",

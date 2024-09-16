@@ -2492,7 +2492,9 @@ void CG_DrawVote(hudComponent_t *comp)
 		CG_GetBindingKeyForVote(str1, str2);
 
 		str = va("%s\n%s",
-		         va(CG_TranslateString("File complaint against ^7%s^* for team-killing?"), cgs.clientinfo[cgs.complaintClient].name),
+		         va(CG_TranslateString("File complaint against ^7%s^* for %s?"),
+		            cgs.clientinfo[cgs.complaintClient].name,
+		            (cgs.complaintClient == CG_LastAttacker()) ? "team-killing" : "team-bleeding"),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
 		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
@@ -2669,8 +2671,8 @@ void CG_DrawVote(hudComponent_t *comp)
 		case -1: str = CG_TranslateString("Your complaint has been filed"); break;
 		case -2: str = CG_TranslateString("Complaint dismissed"); break;
 		case -3: str = CG_TranslateString("Server Host cannot be complained against"); break;
-		case -4: str = CG_TranslateString("You were team-killed by the Server Host"); break;
-		case -5: str = CG_TranslateString("You were team-killed by a bot."); break;
+		case -4: str = CG_TranslateString(va("You were %s by the Server Host", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
+		case -5: str = CG_TranslateString(va("You were %s by a bot.", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
 		default: break;
 
 		}

@@ -3541,7 +3541,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 			trap_SendServerCommand(ent->client->pers.complaintClient, va("cpm \"^1Warning^7: Complaint filed against you by %s^7. You have lost XP.\n\"", ent->client->pers.netname));    // ^*
 			trap_SendServerCommand(ent - g_entities, "complaint -1");
 
-			G_LoseKillSkillPoints(other, ent->sound2to1, ent->sound1to2, ent->sound2to3 ? qtrue : qfalse);
+			G_LoseKillSkillPoints(other, ent);
 		}
 		else
 		{
@@ -4802,7 +4802,14 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand,
 
 		if (g_entities[i].inuse)
 		{
-			Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i %i %i ", level.clients[i].sess.kills, level.clients[i].sess.deaths, level.clients[i].sess.gibs, level.clients[i].sess.self_kills, level.clients[i].sess.team_kills, level.clients[i].sess.team_gibs));
+			Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i %i %i %i",
+			                                    level.clients[i].sess.kills,
+			                                    level.clients[i].sess.kill_assists,
+			                                    level.clients[i].sess.deaths,
+			                                    level.clients[i].sess.gibs,
+			                                    level.clients[i].sess.self_kills,
+			                                    level.clients[i].sess.team_kills,
+			                                    level.clients[i].sess.team_gibs));
 		}
 		else
 		{

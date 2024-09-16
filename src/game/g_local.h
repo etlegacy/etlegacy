@@ -658,6 +658,7 @@ typedef struct
 	int spec_invite;
 	int spec_team;
 	int kills;
+	int kill_assists;
 	int deaths;
 	int gibs;
 	int self_kills;
@@ -917,6 +918,18 @@ typedef struct debrisChunk_s
 
 #define MAX_DEBRISCHUNKS        256
 
+/**
+ * @struct damageReceivedStats_s
+ * @typedef damageReceivedStats_t
+ * @brief Hold damage received by other players
+ */
+typedef struct damageReceivedStats_s
+{
+	int damageReceived;
+	int mods;
+	int lastHitTime;
+} damageReceivedStats_t;
+
 // ===================
 
 /**
@@ -1052,6 +1065,8 @@ struct gclient_s
 	int scoresIndex;
 	int scoresCount;
 	char scores[MAX_SCORES_CMDS][MAX_STRING_CHARS];
+
+	damageReceivedStats_t dmgReceivedSts[MAX_CLIENTS];
 };
 
 /**
@@ -1619,6 +1634,7 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 void TossWeapons(gentity_t *self);
 gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
 gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
+qboolean G_CheckComplaint(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, meansOfDeath_t meansOfDeath);
 
 // damage flags
 #define DAMAGE_RADIUS               0x00000001  ///< damage was indirect
@@ -1985,6 +2001,7 @@ extern vmCvar_t g_warmup;
 extern vmCvar_t voteFlags;
 
 extern vmCvar_t g_complaintlimit;           ///< number of complaints allowed before kick/ban
+extern vmCvar_t g_teambleedComplaint;       ///< max health minimum percentage required to consider damage as wanted team bleed (negative value = disable)
 extern vmCvar_t g_ipcomplaintlimit;
 extern vmCvar_t g_filtercams;
 extern vmCvar_t g_maxlives;                 ///< number of respawns allowed (0==infinite)
@@ -2402,7 +2419,8 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points, const cha
 void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points, const char *reason);
 void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash);
 void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod, g_constructible_stats_t *constructibleStats);
-void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash);
+void G_AddKillAssistPoints(gentity_t *target, gentity_t *attacker);
+void G_LoseKillSkillPoints(gentity_t *tker, gentity_t *victim);
 
 void G_DebugOpenSkillLog(void);
 void G_DebugCloseSkillLog(void);

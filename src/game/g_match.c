@@ -671,6 +671,7 @@ void G_deleteStats(int nClient)
 	cl->sess.deaths               = 0;
 	cl->sess.rounds               = 0;
 	cl->sess.kills                = 0;
+	cl->sess.kill_assists        = 0;
 	cl->sess.gibs                 = 0;
 	cl->sess.self_kills           = 0;
 	cl->sess.team_kills           = 0;
@@ -801,7 +802,7 @@ static ID_INLINE void G_SaveMatchInfo(gentity_t *ent, char *cmd)
 void G_printMatchInfo(gentity_t *ent)
 {
 	int       i, j, cnt = 0, eff, time_eff;
-	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
+	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_killassists, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
 	gclient_t *cl;
 	gentity_t *cl_ent;
 	char      *ref;
@@ -821,6 +822,7 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_timel = 0;
 		tot_timep = 0;
 		tot_kills = 0;
+		tot_killassists = 0;
 		tot_deaths = 0;
 		tot_gibs = 0;
 		tot_sk = 0;
@@ -834,11 +836,11 @@ void G_printMatchInfo(gentity_t *ent)
 
 		SMI("sc \"\n\"");
 #ifdef FEATURE_RATING
-		SMI("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score^8  Rating^5  Delta\n\"");
-		SMI("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
+		SMI("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Ast Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score^8  Rating^5  Delta\n\"");
+		SMI("sc \"^7----------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		SMI("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score\n\"");
-		SMI("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
+		SMI("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Ast Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score\n\"");
+		SMI("sc \"^7-------------------------------------------------------------------------------------------------------------\n\"");
 #endif
 
 		for (j = 0; j < level.numConnectedClients; j++)
@@ -873,6 +875,7 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_timel += cl->sess.time_allies;
 			tot_timep += cl->sess.time_played;
 			tot_kills += cl->sess.kills;
+			tot_killassists += cl->sess.kill_assists;
 			tot_deaths += cl->sess.deaths;
 			tot_gibs += cl->sess.gibs;
 			tot_sk += cl->sess.self_kills;
@@ -902,9 +905,9 @@ void G_printMatchInfo(gentity_t *ent)
 
 			cnt++;
 #ifdef FEATURE_RATING
-			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
+			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
-			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
 #endif
 			                        guid,
 			                        aTeams[i],
@@ -915,6 +918,7 @@ void G_printMatchInfo(gentity_t *ent)
 			                        ref,
 			                        time_eff,
 			                        cl->sess.kills,
+			                        cl->sess.kill_assists,
 			                        cl->sess.deaths,
 			                        cl->sess.gibs,
 			                        cl->sess.self_kills,
@@ -944,11 +948,11 @@ void G_printMatchInfo(gentity_t *ent)
 		time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
 
 #ifdef FEATURE_RATING
-		SMI("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
+		SMI("sc \"^7----------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		SMI("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
+		SMI("sc \"^7-------------------------------------------------------------------------------------------------------------\n\"");
 #endif
-		G_SaveMatchInfo(ent, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+		G_SaveMatchInfo(ent, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
 		                        "",
 		                        aTeams[i],
 		                        "Totals",
@@ -956,6 +960,7 @@ void G_printMatchInfo(gentity_t *ent)
 		                        tot_timel / 60000,
 		                        time_eff,
 		                        tot_kills,
+		                        tot_killassists,
 		                        tot_deaths,
 		                        tot_gibs,
 		                        tot_sk,
