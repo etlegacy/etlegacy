@@ -37,7 +37,7 @@
 
 		wounded_idle_1			173		144	144	20	0	0	0	0
 
-		revive					320		47	0	15	0	0	0	99
+		revive					320		47	0	22	0	0	0	9
 		stand_binoculars		370		57	57	15	0	0	0	0
 		stand_radio				430		110	110	15	0	0	0	0
 
