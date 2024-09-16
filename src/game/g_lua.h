@@ -167,6 +167,7 @@ qboolean G_LuaHook_WeaponFire(int clientNum, weapon_t weapon, gentity_t **pFired
 qboolean G_LuaHook_FixedMGFire(int clientNum);
 qboolean G_LuaHook_MountedMGFire(int clientNum);
 qboolean G_LuaHook_AAGunFire(int clientNum);
+const char *G_LuaHook_Chat(int sender, int receiver, const char *message, char *buffer, size_t bufsize);
 
 #endif // #ifndef INCLUDE_G_LUA_H
 

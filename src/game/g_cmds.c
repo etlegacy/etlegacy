@@ -2790,7 +2790,8 @@ void G_HQSay(gentity_t *other, int color, const char *name, const char *message)
  */
 void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize)
 {
-	char cmd[6];
+	char cmd[6], text[MAX_SAY_TEXT];
+	const char *replacedMessage;
 
 	if (!other || !other->inuse || !other->client)
 	{
@@ -2838,10 +2839,12 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 		{
 			Q_strncpyz(cmd, "tchat", sizeof(cmd));
 
+			replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
+
 			trap_SendServerCommand((int)(other - g_entities),
 			                       va("%s \"%c%c%s%s\" %i %i %i %i %i",
 			                          cmd,
-			                          Q_COLOR_ESCAPE, color, message,
+			                          Q_COLOR_ESCAPE, color, replacedMessage,
 			                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
 			                          (int)(ent - g_entities), localize,
 			                          (int)ent->s.pos.trBase[0],
@@ -2852,10 +2855,12 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 		{
 			Q_strncpyz(cmd, "chat", sizeof(cmd));
 
+			replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
+
 			trap_SendServerCommand((int)(other - g_entities),
 			                       va("%s \"%s%c%c%s%s\" %i %i",
 			                          cmd, name, Q_COLOR_ESCAPE, color,
-			                          message,
+			                          replacedMessage,
 			                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
 			                          (int)(ent - g_entities), localize));
 		}
@@ -2969,7 +2974,8 @@ void G_Say_f(gentity_t *ent, int mode /*, qboolean arg0*/)
  */
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum, int vsayNum, const char *customChat)
 {
-	char *cmd;
+	char *cmd, text[MAX_SAY_TEXT];
+	const char *replacedMessage;
 
 	if (!other)
 	{
@@ -3041,13 +3047,15 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 		return;
 	}
 
+	replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, customChat, text, sizeof(text));
+
 	if (mode == SAY_TEAM || mode == SAY_BUDDY)
 	{
-		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, customChat));
+		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, replacedMessage));
 	}
 	else
 	{
-		CPx(other - g_entities, va("%s %d %d %s %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, customChat));
+		CPx(other - g_entities, va("%s %d %d %s %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, replacedMessage));
 	}
 }
 
