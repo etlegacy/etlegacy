@@ -208,6 +208,57 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	return qtrue;
 }
 
+extern cvar_t *sv_fps;
+
+/**
+ * @brief CL_InterpolationCheckRange
+ */
+static void CL_InterpolationCheckRange(void)
+{
+	int snaps, updateRate, buffer;
+
+	if (!cl_interpolation->integer)
+	{
+		return;
+	}
+
+	snaps      = Cvar_VariableValue("snaps");
+	updateRate = snaps < sv_fps->integer ? 1000 / snaps : 1000 / sv_fps->integer;
+	buffer     = (FRAMETIME / 2) / updateRate - 1;
+
+	if (cl_interpolation->integer > buffer)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' is over allowed buffer (%d > %d), setting to %d\n", cl_interpolation->name, cl_interpolation->integer, buffer, buffer);
+		Cvar_SetValue(cl_interpolation->name, buffer);
+	}
+}
+
+/**
+ * @brief CL_SetSnapshotLerp
+ */
+void CL_SetSnapshotLerp(void)
+{
+	int i = 0, snapshotNumber = cl.snap.messageNum;
+
+	CL_InterpolationCheckRange();
+
+	while (i < cl_interpolation->integer)
+	{
+		if (cl.snapshots[--snapshotNumber & PACKET_MASK].valid)
+		{
+			i++;
+		}
+
+		// wrapped around
+		if (cl.snapshots[snapshotNumber & PACKET_MASK].messageNum == cl.snap.messageNum)
+		{
+			break;
+		}
+	}
+
+	cl.snapLerp = cl.snapshots[snapshotNumber & PACKET_MASK];
+}
+
 /**
  * @brief CL_SetUserCmdValue
  * @param[in] userCmdValue
@@ -1354,8 +1405,6 @@ int CL_FindIncrementThreshold(void)
 #define RESET_TIME  500
 #define HALVE_TIME  100
 
-extern cvar_t *sv_fps;
-
 /**
  * @brief Adjust the clients view of server time.
  *
@@ -1386,14 +1435,14 @@ void CL_AdjustTimeDelta(void)
 		return;
 	}
 
-	newDelta   = cl.snap.serverTime - cls.realtime;
+	newDelta   = cl.snapLerp.serverTime - cls.realtime;
 	deltaDelta = abs(newDelta - cl.serverTimeDelta);
 
 	if (deltaDelta > RESET_TIME)
 	{
 		cl.baselineDelta = cl.serverTimeDelta = newDelta;
-		cl.oldServerTime = cl.snap.serverTime;   // FIXME: is this a problem for cgame?
-		cl.serverTime    = cl.snap.serverTime;
+		cl.oldServerTime = cl.snapLerp.serverTime;   // FIXME: is this a problem for cgame?
+		cl.serverTime    = cl.snapLerp.serverTime;
 
 		if (cl_showTimeDelta->integer)
 		{
@@ -1443,8 +1492,8 @@ void CL_AdjustTimeDelta(void)
 				else
 				{
 					// must be done this way to avoid incorrect svFrameTime when on a slow client
-					svFrameTime = (cl.snapshots[(cl.snap.messageNum - 0) & PACKET_MASK].serverTime)
-					              - (cl.snapshots[(cl.snap.messageNum - 1) & PACKET_MASK].serverTime);
+					svFrameTime = (cl.snapshots[(cl.snapLerp.messageNum - 0) & PACKET_MASK].serverTime)
+					              - (cl.snapshots[(cl.snapLerp.messageNum - 1) & PACKET_MASK].serverTime);
 				}
 
 				// find the new threshold if not set or client/server frametime has changed
@@ -1454,7 +1503,7 @@ void CL_AdjustTimeDelta(void)
 				}
 
 				spareTime =
-					cl.snap.serverTime                    // server time
+					cl.snapLerp.serverTime                // server time
 					- (cls.realtime + cl.serverTimeDelta) // client time
 					- cl_extrapolationMargin->integer;    // margin time
 
@@ -1638,7 +1687,7 @@ void CL_SetCGameTime(void)
 		// so we will try and adjust back a bit when the next snapshot arrives
 
 		spareTime =
-			cl.snap.serverTime                     //server
+			cl.snapLerp.serverTime                 //server
 			- (cls.realtime + cl.serverTimeDelta); //client
 
 		if (spareTime <= cl_extrapolationMargin->integer)

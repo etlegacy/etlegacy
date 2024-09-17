@@ -581,6 +581,8 @@ void CL_ParseSnapshot(msg_t *msg)
 	}
 
 	cl.newSnapshots = qtrue;
+
+	CL_SetSnapshotLerp();
 }
 
 //=====================================================================

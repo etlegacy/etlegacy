@@ -125,6 +125,7 @@ typedef struct
 	                                        ///< to disconnect, preventing debugging breaks from
 	                                        ///< causing immediate disconnects on continue
 	clSnapshot_t snap;                      ///< latest received from server
+	clSnapshot_t snapLerp;                  ///< snap interpolated from
 
 	int serverTime;                         ///< may be paused during play
 	int oldServerTime;                      ///< to prevent time from flowing bakcwards
@@ -517,6 +518,8 @@ extern cvar_t *cl_defaultProfile;
 
 extern cvar_t *cl_consoleKeys;
 
+extern cvar_t *cl_interpolation;
+
 extern cvar_t *con_scale;
 
 //=================================================
@@ -881,6 +884,7 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
 qboolean CL_GetServerCommand(int serverCommandNumber);
 int CL_FindIncrementThreshold(void);
 void CL_AdjustTimeDelta(void);
+void CL_SetSnapshotLerp(void);
 
 // cl_ui.c
 
