@@ -2995,22 +2995,29 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 /**
  * @brief CG_LimboPanel_RenderCounter_RollTimeForButton
  * @param[in] button
+ * @param[in] value
  * @return
  */
-static float CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *button)
+static float CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *button, int value)
 {
 	switch (button->data[0])
 	{
 	case 0:     // class counts
 	case 1:     // team counts
+	case 2:     // xp
+	{
+		const float diff = abs(button->data[3] - value);
+		if (diff > 0)
+		{
+			return 100.f / (diff / 1.5);
+		}
 		return 100.f;
-
+	}
 	case 4:     // skills
 		return 1000.f;
-
 	case 6:     // stats
 	{
-		const int diff = abs(button->data[3] - CG_LimboPanel_RenderCounter_ValueForButton(button));
+		const int diff = abs(button->data[3] - value);
 		if (diff < 5)
 		{
 			return (diff == 0 ? 1000.f : 200.f / diff);
@@ -3018,9 +3025,8 @@ static float CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *butto
 
 		return 50.f;
 	}
-	case 5:     // clock
 	case 3:     // respawn time
-	case 2:     // xp
+	case 5:     // clock
 		return 50.f;
 	default:
 		break;
@@ -3335,9 +3341,9 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 	float     counter_rolltime;
 	int       num, value;
 
-	counter_rolltime = CG_LimboPanel_RenderCounter_RollTimeForButton(button);
-	num              = CG_LimboPanel_RenderCounter_NumRollers(button);
 	value            = CG_LimboPanel_RenderCounter_ValueForButton(button);
+	counter_rolltime = CG_LimboPanel_RenderCounter_RollTimeForButton(button, value);
+	num              = CG_LimboPanel_RenderCounter_NumRollers(button);
 
 	if (num > MAX_ROLLERS)
 	{
