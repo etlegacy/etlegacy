@@ -1727,7 +1727,7 @@ fireweapon
 // BAZOOKA
 	weapons bazooka
 	{
-		torso stand_rifle
+		torso firing_bazooka
 	}
 // PANZERFAUST
 	weapons panzerfaust, movetype walk AND turnleft AND turnright AND idlecr AND idle
@@ -2545,7 +2545,7 @@ raiseweapon
 	}
 	weapons bazooka
 	{
-		torso raise_machinegun
+		torso raise_bazooka
 	}
 	weapons panzerfaust
 	{
