@@ -632,7 +632,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_crosshairPulse,           "cg_crosshairPulse",           "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairHealth,          "cg_crosshairHealth",          "0",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_commandMapTime,           "cg_commandMapTime",           "250",         CVAR_ARCHIVE,                 0 },
+	{ &cg_commandMapTime,           "cg_commandMapTime",           "0",           CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
