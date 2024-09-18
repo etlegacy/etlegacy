@@ -398,6 +398,12 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		cg.weaponFireTime = 0;
 	}
 
+	// changing weapon resets muzzleFlashTime (stops generating smoke from one gun to the next)
+	if (ps->weapon != ops->weapon)
+	{
+		cg.predictedPlayerEntity.muzzleFlashTime = 0; // reset smoke generation
+	}
+
 	// damage events (player is getting wounded)
 	if (ps->damageEvent != ops->damageEvent && ps->damageCount)
 	{
