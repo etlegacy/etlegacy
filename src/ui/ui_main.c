@@ -1434,11 +1434,11 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 	handle = trap_PC_LoadSource(menuFile);
 	if (!handle)
 	{
-		trap_Error(va(S_COLOR_YELLOW "menu file not found: %s, using default\n", menuFile));
-		handle = trap_PC_LoadSource("ui/menus.txt");
+		Com_Printf(S_COLOR_YELLOW "menu file not found: %s, using default\n", menuFile);
+		handle = trap_PC_LoadSource(DEFAULT_MENU_FILE);
 		if (!handle)
 		{
-			trap_Error(S_COLOR_RED "default menu file not found: ui/menus.txt, unable to continue!\n");
+			trap_Error(va(S_COLOR_RED "default menu file not found: %s, unable to continue!\n", DEFAULT_MENU_FILE));
 		}
 	}
 
@@ -1497,7 +1497,7 @@ void UI_Load(void)
 
 	if (menuSet == NULL || menuSet[0] == '\0')
 	{
-		menuSet = "ui/menus.txt";
+		menuSet = DEFAULT_MENU_FILE;
 	}
 
 	String_Init();
@@ -8572,7 +8572,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	UI_InitMemory();
 	trap_PC_RemoveAllGlobalDefines();
 
-	trap_Cvar_Set("ui_menuFiles", "ui/menus.txt");   // we need to hardwire for wolfMP
+	trap_Cvar_Set("ui_menuFiles", DEFAULT_MENU_FILE);   // we need to hardwire for wolfMP
 
 	// cache redundant calculations
 	trap_GetGlconfig(&uiInfo.uiDC.glconfig);
@@ -8726,7 +8726,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 
 	UI_ParseGameInfo("gameinfo.txt");
 
-	UI_LoadMenus("ui/menus.txt", qfalse);
+	UI_LoadMenus(DEFAULT_MENU_FILE, qfalse);
 
 	Menus_CloseAll();
 
@@ -9248,7 +9248,7 @@ static cvarTable_t cvarTable[] =
 	{ &ui_selectedPlayer,                  "cg_selectedPlayer",                   "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_selectedPlayerName,              "cg_selectedPlayerName",               "",                           CVAR_ARCHIVE,                   0 },
 	{ &ui_netSource,                       "ui_netSource",                        "1",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_menuFiles,                       "ui_menuFiles",                        "ui/menus.txt",               CVAR_ARCHIVE,                   0 },
+	{ &ui_menuFiles,                       "ui_menuFiles",                        DEFAULT_MENU_FILE,            CVAR_ARCHIVE,                   0 },
 	{ &ui_gameType,                        "ui_gametype",                         "3",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_joinGameType,                    "ui_joinGametype",                     "-1",                         CVAR_ARCHIVE,                   0 },
 	{ &ui_netGameType,                     "ui_netGametype",                      "4",                          CVAR_ARCHIVE,                   0 }, // hardwired for now
