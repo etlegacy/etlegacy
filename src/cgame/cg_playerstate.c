@@ -155,8 +155,9 @@ void CG_Respawn(qboolean revived)
 	VectorClear(cg.predictedError);
 
 	// need to reset client-side weapon animations
-	cg.predictedPlayerState.weapAnim    = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;      // reset weapon animations
-	cg.predictedPlayerState.weaponstate = WEAPON_READY; // hmm, set this?  what to?
+	cg.predictedPlayerState.weapAnim         = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1; // reset weapon animations
+	cg.predictedPlayerState.weaponstate      = WEAPON_READY; // hmm, set this?  what to?
+	cg.predictedPlayerEntity.muzzleFlashTime = 0;  // reset weapon smoke
 
 	// display weapons available
 	cg.weaponSelectTime = cg.time;
