@@ -1867,6 +1867,7 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 {
 	char buffer[1024];
 	char *s, *p, *c, *ls = NULL;
+	char lastColorCode[3] = "";
 
 	Q_strncpyz(buffer, instr, 1024);
 	Com_Memset(instr, 0, size);
@@ -1876,18 +1877,29 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 
 	while (*p)
 	{
+		if (Q_IsColorString(p))
+		{
+			lastColorCode[0] = *p;
+			lastColorCode[1] = *(p + 1);
+			*c++             = *p++;
+			*c++             = *p++;
+			continue;
+		}
+
 		*c = *p++;
 
+		// store last space, to try not to break mid word
 		if (*c == ' ')
 		{
 			ls = c;
-		} // store last space, to try not to break mid word
+		}
 
 		c++;
 
 		if (*p == '\n')
 		{
 			s = c + 1;
+			Com_Memset(lastColorCode, 0, sizeof(lastColorCode));
 		}
 		else if (DC->textWidthExt(s, scale, 0, font) > w)
 		{
@@ -1901,6 +1913,16 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 				*c       = *(c - 1);
 				*(c - 1) = '\n';
 				s        = c++;
+			}
+
+			// re-apply the last color code after the forced line break,
+			// if we have a color code from previous line
+			if (lastColorCode[0] != 0)
+			{
+				memmove(s + 2, s, strlen(s) + 1);
+				*s       = lastColorCode[0];
+				*(s + 1) = lastColorCode[1];
+				c       += 2;
 			}
 
 			ls = NULL;
