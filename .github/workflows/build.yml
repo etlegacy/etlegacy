@@ -757,7 +757,7 @@ jobs:
 
       - name: SignPath Win Release
         uses: signpath/github-action-submit-signing-request@v0.4
-        if: ${{ steps.vars.outputs.hash_exists == '404' }} && startsWith(github.ref, 'refs/tags/v')
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && github.ref_type == 'tag'
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -769,7 +769,7 @@ jobs:
 
       - name: SignPath Win64 Release
         uses: signpath/github-action-submit-signing-request@v0.4
-        if: ${{ steps.vars.outputs.hash_exists == '404' }} && startsWith(github.ref, 'refs/tags/v')
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && github.ref_type == 'tag'
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
