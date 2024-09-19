@@ -952,9 +952,9 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 		if (cg.time > lf->frameTime)
 		{
 			lf->frameTime = cg.time;
-			if (cg_debugAnim.integer)
+			if (cg_debugAnim.integer > 3)
 			{
-				CG_Printf("Clamp lf->frameTime\n");
+				CG_Printf("CG_RunWeapLerpFrame: Clamp lf->frameTime\n");
 			}
 		}
 	}
