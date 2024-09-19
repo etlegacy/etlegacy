@@ -897,7 +897,7 @@ typedef struct
 	qboolean legsPitching;
 } clientMarker_t;
 
-#define MAX_CLIENT_MARKERS 17
+#define MAX_CLIENT_MARKERS 40
 
 #define FIELDOPS_SPECIAL_PICKUP_MOD 3   ///< Number of times (minus one for modulo) field ops must drop ammo before scoring a point
 #define MEDIC_SPECIAL_PICKUP_MOD    4   ///< Same thing for medic
