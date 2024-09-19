@@ -155,8 +155,9 @@ void CG_Respawn(qboolean revived)
 	VectorClear(cg.predictedError);
 
 	// need to reset client-side weapon animations
-	cg.predictedPlayerState.weapAnim    = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;      // reset weapon animations
-	cg.predictedPlayerState.weaponstate = WEAPON_READY; // hmm, set this?  what to?
+	cg.predictedPlayerState.weapAnim         = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1; // reset weapon animations
+	cg.predictedPlayerState.weaponstate      = WEAPON_READY; // hmm, set this?  what to?
+	cg.predictedPlayerEntity.muzzleFlashTime = 0;  // reset weapon smoke
 
 	// display weapons available
 	cg.weaponSelectTime = cg.time;
@@ -396,6 +397,12 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		}
 
 		cg.weaponFireTime = 0;
+	}
+
+	// changing weapon resets muzzleFlashTime (stops generating smoke from one gun to the next)
+	if (ps->weapon != ops->weapon)
+	{
+		cg.predictedPlayerEntity.muzzleFlashTime = 0; // reset smoke generation
 	}
 
 	// damage events (player is getting wounded)

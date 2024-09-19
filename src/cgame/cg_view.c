@@ -2306,11 +2306,12 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	int dbgCnt = 0;
 #endif
 
-	cg.oldTime      = cg.time;
-	cg.time         = serverTime;
-	cgDC.realTime   = cg.time;
-	cg.demoPlayback = demoPlayback;
-	cg.frametime    = cg.time - cg.oldTime;
+	cg.oldTime                  = cg.time;
+	cg.time                     = serverTime;
+	cgDC.realTime               = cg.time;
+	cg.demoPlayback             = demoPlayback;
+	cg.frametime                = cg.time - cg.oldTime;
+	cg.crosshairEntsToScanCount = 0;
 
 	if (cg.frametime < 0)
 	{

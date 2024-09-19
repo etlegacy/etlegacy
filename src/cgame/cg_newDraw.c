@@ -309,23 +309,11 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.generatingNoiseHud)
-	{
-		// simulate cursor hint
-		cg.cursorHintTime  = cg.time;
-		cg.cursorHintFade  = cg_drawHintFade.integer;
-		cg.cursorHintIcon  = HINT_BREAKABLE;
-		cg.cursorHintValue = 128.f;
-	}
-	else
-	{
-		CG_CheckForCursorHints();
-	}
-
 	switch (cg.cursorHintIcon)
 	{
 	case HINT_NONE:
 	case HINT_FORCENONE:
+	case HINT_COMPLETED:
 		icon = 0;
 		break;
 	case HINT_DOOR:
@@ -404,9 +392,6 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	case HINT_RESTRICTED:
 		icon = cgs.media.friendShader;
 		break;
-	case HINT_COMPLETED:
-		icon = cgs.media.readyShader;
-		break;
 	case HINT_ACTIVATE:
 	case HINT_BAD_USER:
 	default:
@@ -461,17 +446,53 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	CG_DrawPic(comp->location.x - halfscale, comp->location.y - halfscale, comp->location.w + scale, comp->location.h + scale, icon);
 
 	trap_R_SetColor(NULL);
+}
 
-	// draw status bar under the cursor hint
-	if (cg.cursorHintValue)
+/**
+ * @brief CG_DrawCursorHintBar
+ * @param[in] comp
+ */
+void CG_DrawCursorHintBar(hudComponent_t *comp)
+{
+	float  *color;
+	vec4_t textColor;
+	float  curValue;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
-		float curValue = (float)cg.cursorHintValue / 255.0f;
+		return;
+	}
 
-		if (curValue > 0.01f)
-		{
-			CG_FilledBar(comp->location.x, comp->location.y + comp->location.h + 4, comp->location.w, 8, colorRed, colorGreen,
-			             comp->colorBackground, comp->colorBorder, curValue, 0.f, BAR_BORDER_SMALL | BAR_LERP_COLOR, -1);
-		}
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.stats[STAT_HEALTH] <= 0)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	// color
+	Vector4Copy(comp->colorMain, textColor);
+	color = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, textColor[3]);
+	if (!color)
+	{
+		trap_R_SetColor(NULL);
+		return;
+	}
+
+	curValue = (float)cg.cursorHintValue / 255.0f;
+
+	if (curValue > 0.01f)
+	{
+		CG_FilledBar(comp->location.x, comp->location.y + comp->location.h, comp->location.w, comp->location.h, colorRed, colorGreen,
+		             comp->colorBackground, comp->colorBorder, curValue, 0.f, comp->style, -1);
 	}
 }
 
@@ -501,25 +522,6 @@ void CG_DrawCursorHintText(hudComponent_t *comp)
 	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
-	{
-		return;
-	}
-
-	if (cg.generatingNoiseHud)
-	{
-		// simulate cursor hint
-		cg.cursorHintTime  = cg.time;
-		cg.cursorHintFade  = cg_drawHintFade.integer;
-		cg.cursorHintIcon  = HINT_BREAKABLE;
-		cg.cursorHintValue = 128.f;
-	}
-	else
-	{
-		CG_CheckForCursorHints();
-	}
-
-	// no value
-	if (!cg.cursorHintValue)
 	{
 		return;
 	}

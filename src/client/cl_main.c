@@ -130,6 +130,8 @@ cvar_t *cl_packetdelay;
 
 cvar_t *cl_consoleKeys;
 
+cvar_t *cl_interpolation;
+
 clientActive_t     cl;
 clientConnection_t clc;
 clientStatic_t     cls;
@@ -3358,6 +3360,10 @@ void CL_Init(void)
 
 	// ~ and `, as keys and characters
 	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60", CVAR_ARCHIVE);
+
+	cl_interpolation = Cvar_GetAndDescribe("cl_interpolation", "0", CVAR_ARCHIVE,
+	                                       "Buffering server packets to smooth over packetloss/ping instability.\nValues 0-4 depending on 'sv_fps' and 'snaps'.\nSet to 0 for most responsive gameplay.");
+	Cvar_CheckRange(cl_interpolation, 0, 4, qtrue);
 
 	Cvar_Get("cg_drawNotifyText", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_quickMessageAlt", "1", CVAR_ARCHIVE);

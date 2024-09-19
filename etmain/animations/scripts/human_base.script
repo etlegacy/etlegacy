@@ -55,7 +55,7 @@ set movetype proning = idleprone AND prone AND pronebk
 // {
 //		<movement type>
 //		{
-//			[DEFAULT / <condition type> [<condition value>], ...]
+//			[default / <condition type> [<condition value>], ...]
 //			{
 //				<both/legs/torso> <animation> [sound <filename>]
 //				<both/legs/torso> <animation> [sound <filename>]
@@ -71,6 +71,7 @@ set movetype proning = idleprone AND prone AND pronebk
 //	<state description>: relaxed, query, alert, combat
 //
 //	<movement type> (see 'animMoveTypesStr'):
+//		dead
 //		idle
 //		idlecr
 //		walk
@@ -79,23 +80,21 @@ set movetype proning = idleprone AND prone AND pronebk
 //		walkcrbk
 //		run
 //		runbk
-//		swim
-//		swimbk
 //		straferight
 //		strafeleft
-//		turnright
-//		turnleft
+//		swim
+//		swimbk
 //		climbup
 //		climbdown
-//		fallen
+//		idleprone
 //		prone
 //		pronebk
-//		idleprone
-//		flailing
+//		turnright
+//		turnleft
+//		fallen
 //		radio
 //		radiocr
 //		radioprone
-//		dead
 //
 //	<condition type> (see 'animConditionsStr'):
 //		weapons
@@ -136,15 +135,15 @@ set movetype proning = idleprone AND prone AND pronebk
 
 ANIMATIONS
 
-STATE COMBAT
+state combat
 {
+
 	dead
 	{
 		suicide
 		{
 			both dead_rifle_head_2
 		}
-
 		default
 		{
 			both dead_machinegun_1
@@ -305,6 +304,7 @@ STATE COMBAT
 			both stand_grenade
 		}
 	}
+
 	idlecr
 	{
 		weapons Mortar AND Granatwerfer
@@ -421,6 +421,7 @@ STATE COMBAT
 			both alert_crchidle_1h
 		}
 	}
+
 	walk
 	{
 		weapons Mortar AND Granatwerfer
@@ -533,6 +534,7 @@ STATE COMBAT
 			both relaxed_walk_1h_1
 		}
 	}
+
 	walkbk
 	{
 		weapons Mortar AND Granatwerfer
@@ -645,6 +647,7 @@ STATE COMBAT
 			both alert_bk_1h
 		}
 	}
+
 	walkcr
 	{
 		weapons Mortar AND Granatwerfer
@@ -878,6 +881,7 @@ STATE COMBAT
 			both alert_crbk_2h
 		}
 	}
+
 	run
 	{
 		weapons Mortar AND Granatwerfer
@@ -998,6 +1002,7 @@ STATE COMBAT
 			both alert_run_1h
 		}
 	}
+
 	runbk
 	{
 		weapons Mortar AND Granatwerfer
@@ -1118,6 +1123,7 @@ STATE COMBAT
 			both alert_bk_2h
 		}
 	}
+
 	straferight
 	{
 		weapons Mortar AND Granatwerfer
@@ -1234,6 +1240,7 @@ STATE COMBAT
 			both alert_run_1h
 		}
 	}
+
 	strafeleft
 	{
 		weapons Mortar AND Granatwerfer
@@ -1346,6 +1353,7 @@ STATE COMBAT
 			both alert_run_1h
 		}
 	}
+
 	swim
 	{
 		weapons none
@@ -1365,6 +1373,7 @@ STATE COMBAT
 			both e_swim_1h
 		}
 	}
+
 	swimbk
 	{
 		weapons none
@@ -1384,6 +1393,7 @@ STATE COMBAT
 			both e_swim_1h
 		}
 	}
+
 	climbup
 	{
 		weapons throwables, gen_bitflag holding
@@ -1396,6 +1406,7 @@ STATE COMBAT
 			both climb_up
 		}
 	}
+
 	climbdown
 	{
 		weapons throwables, gen_bitflag holding
@@ -1408,6 +1419,7 @@ STATE COMBAT
 			both climb_down
 		}
 	}
+
 	idleprone
 	{
 		weapons Mounted Mortar AND Mounted Granatwerfer
@@ -1552,6 +1564,7 @@ STATE COMBAT
 			legs prone_legs torso Prone_Pistol_idle
 		}
 	}
+
 	prone
 	{
 		default
@@ -1559,6 +1572,7 @@ STATE COMBAT
 			both prone_crawl
 		}
 	}
+
 	pronebk
 	{
 		default
@@ -1581,8 +1595,8 @@ STATE COMBAT
 		{
 			legs turn_machinegun_R
 		}
-
 	}
+
 	turnleft
 	{
 		// - fixed movetype condition, so reenabled crouch
@@ -1613,6 +1627,7 @@ STATE COMBAT
 			both stand_radio
 		}
 	}
+
 	radiocr
 	{
 		default
@@ -1620,6 +1635,7 @@ STATE COMBAT
 			torso stand_radio legs alert_crchidle_1h
 		}
 	}
+
 	radioprone
 	{
 		default
@@ -1627,6 +1643,7 @@ STATE COMBAT
 			legs prone_legs torso prone_poke_idle
 		}
 	}
+
 }
 
 //==========================================================================
@@ -1636,7 +1653,7 @@ STATE COMBAT
 //
 // <event description>
 // {
-//		[DEFAULT / <condition type> [<condition value>], ...]
+//		[default / <condition type> [<condition value>], ...]
 //		{
 //			<both/legs/torso> <animation> [sound <filename>]
 //			<both/legs/torso> <animation> [sound <filename>]
@@ -1644,47 +1661,59 @@ STATE COMBAT
 //		}
 // }
 //
-// legend:
+// LEGEND:
 //
-// <event description>: death, pain, fireweapon, jump, jumpbk, land, dropweapon,
-//		raiseweapon, climbdismount, reload
+//	<event description>:
+//		fireweapon
+//		fireweapon2
+//		fireweaponprone
+//		fireweapon2prone
+//		raiseweaponprone
+//		reloadprone
+//		raiseweapon
+//		reload
+//		jump
+//		jumpbk
+//		climbdismount
+//		death
+//		revive
+//		nopower
+//		pain
+//		do_alt_weapon_mode
+//		undo_alt_weapon_mode
+//		do_alt_weapon_mode_prone
+//		undo_alt_weapon_mode_prone
 //
 //	NOTE: for gameplay anims (weapons firing, reload, etc) that show no legs movement
 //		only the torso should animation from here, leave the legs doing what their
 //		locomotive anims want them to do
-//
 
 EVENTS
 
 fireweapon
 {
 // ADRENALINE SYRINGE
-	weapons Adrenaline Syringe, movetype walk AND turnleft AND turnright AND idlecr AND idle AND crouching AND run AND swim AND backstep AND swimbk
+	weapons Adrenaline Syringe
 	{
 		torso self_inject
 	}
-// Mortar
 	weapons Mounted Mortar AND Mounted Granatwerfer
 	{
 		torso mortar_fire
 	}
-// SATCHEL CHARGE
 	weapons Satchel Charge
 	{
 		torso throw_underhand
 	}
-// SATCHEL CHARGE DETONATOR
 	weapons Satchel Charge Detonator
 	{
 		torso satchel_remote_fire
 	}
-// MG 42
 	mounted MG42
 	{
 		both firing_mg42
 	}
-// smokeGrenade
-	// - support overhand throws for airstrike tags
+	// support overhand throws for airstrike tags
 	weapons smokeGrenade, underhand
 	{
 		torso firing_grenadeB
@@ -1693,64 +1722,26 @@ fireweapon
 	{
 		torso firing_grenadeA
 	}
-// MEDICHEAL, AMMOPACK, LANDMINE
 	weapons medicheal AND Ammo Pack AND Landmine
 	{
 		torso throw_underhand
 	}
-// SPECIAL
 	weapons special
 	{
 		torso firing_pliers
-	}
-// SYRINGE
-	weapons Syringe, movetype walk AND turnleft AND turnright AND idlecr AND idle
-	{
-		torso firing_syringe
-	}
-	weapons Syringe, movetype crouching
-	{
-		torso firing_syringe
-	}
-	weapons Syringe, movetype run AND swim
-	{
-		torso firing_syringe
-	}
-	weapons Syringe, movetype backstep AND swimbk
-	{
-		torso firing_syringe
 	}
 	weapons Syringe
 	{
 		torso firing_syringe
 	}
-// BAZOOKA
 	weapons bazooka
 	{
-		torso stand_rifle
-	}
-// PANZERFAUST
-	weapons panzerfaust, movetype walk AND turnleft AND turnright AND idlecr AND idle
-	{
-		torso firing_panzer
-	}
-	weapons panzerfaust, movetype crouching
-	{
-		torso firing_panzer
-	}
-	weapons panzerfaust, movetype run AND swim
-	{
-		torso firing_panzer
-	}
-	weapons panzerfaust, movetype backstep AND swimbk
-	{
-		torso firing_panzer
+		torso firing_bazooka
 	}
 	weapons panzerfaust
 	{
 		torso firing_panzer
 	}
-// GRENADES
 	// support overhand throws for grenades
 	weapons throwables, underhand
 	{
@@ -1769,26 +1760,11 @@ fireweapon
 	{
 		torso throw_underhand
 	}
-
-// KNIVES
 	weapons knives
 	{
 		torso firing_knife
 	}
 // PISTOLS
-	weapons pistols, movetype straferight
-	{
-		torso firing_pistolB_1
-	}
-	weapons pistols, movetype strafeleft
-	{
-		torso firing_pistolB_1
-	}
-	weapons pistols, movetype walk AND turnleft AND turnright AND idlecr AND idle
-	{
-		torso firing_pistolB_1
-		torso firing_pistolB_2
-	}
 	weapons pistols, movetype walkcrbk
 	{
 		torso firing_crbk_1h
@@ -1797,47 +1773,10 @@ fireweapon
 	{
 		torso firing_crch_1h
 	}
-	weapons pistols, movetype run AND swim
-	{
-		torso firing_pistolB_1
-	}
-	weapons pistols, movetype backstep AND swimbk
-	{
-		torso firing_pistolB_1
-	}
 	weapons pistols
 	{
 		torso firing_pistolB_1
 		torso firing_pistolB_2
-	}
-// AKIMBO PISTOLS
-	weapons akimbo_pistols, movetype straferight
-	{
-		torso firing_akimbo
-	}
-	weapons akimbo_pistols, movetype strafeleft
-	{
-		torso firing_akimbo
-	}
-	weapons akimbo_pistols, movetype walk AND turnleft AND turnright AND idlecr AND idle
-	{
-		torso firing_akimbo
-	}
-	weapons akimbo_pistols, movetype walkcrbk
-	{
-		torso firing_akimbo	// FIXME
-	}
-	weapons akimbo_pistols, movetype crouching
-	{
-		torso firing_akimbo	// FIXME
-	}
-	weapons akimbo_pistols, movetype run AND swim
-	{
-		torso firing_akimbo
-	}
-	weapons akimbo_pistols, movetype backstep AND swimbk
-	{
-		torso firing_akimbo
 	}
 	weapons akimbo_pistols
 	{
@@ -2116,45 +2055,16 @@ fireweapon
 	}
 }
 
-//zoomin
-//{
-//	weapons binoculars
-//	{
-//		torso raise_binoculars
-//	}
-//}
+// zoomin
+// {
+// 	weapons binoculars
+// 	{
+// 		torso raise_binoculars
+// 	}
+// }
 
 fireweapon2
 {
-// AKIMBO PISTOLS
-	weapons akimbo_pistols, movetype straferight
-	{
-		torso firing_akimbo2
-	}
-	weapons akimbo_pistols, movetype strafeleft
-	{
-		torso firing_akimbo2
-	}
-	weapons akimbo_pistols, movetype walk AND turnleft AND turnright AND idlecr AND idle
-	{
-		torso firing_akimbo2
-	}
-	weapons akimbo_pistols, movetype walkcrbk
-	{
-		torso firing_akimbo2	// FIXME
-	}
-	weapons akimbo_pistols, movetype crouching
-	{
-		torso firing_akimbo2	// FIXME
-	}
-	weapons akimbo_pistols, movetype run AND swim
-	{
-		torso firing_akimbo2
-	}
-	weapons akimbo_pistols, movetype backstep AND swimbk
-	{
-		torso firing_akimbo2
-	}
 	weapons akimbo_pistols
 	{
 		torso firing_akimbo2
@@ -2195,9 +2105,13 @@ fireweaponprone
 	{
 		torso prone_poke_fire
 	}
-	weapons Syringe AND Adrenaline Syringe
+	weapons Syringe
 	{
-		torso prone_poke_fire
+		torso prone_syringe_attack
+	}
+	weapons Adrenaline Syringe
+	{
+		torso self_inject
 	}
 	weapons bazooka
 	{
@@ -2219,7 +2133,7 @@ fireweaponprone
 	{
 		torso prone_pistol_fire
 	}
-	weapons akimbo_pistols	// FIXedME
+	weapons akimbo_pistols
 	{
 		torso e_prone_pistols_fire
 	}
@@ -2235,6 +2149,7 @@ fireweaponprone
 	{
 		torso prone_mg_fire
 	}
+// RIFLES
 	weapons Scoped M1 Garand
 	{
 		torso prone_rifle_fire
@@ -2363,6 +2278,7 @@ raiseweaponprone
 	{
 		torso prone_mg_switch
 	}
+// RIFLES
 	weapons Scoped M1 Garand
 	{
 		torso prone_rifle_switch
@@ -2431,10 +2347,6 @@ reloadprone
 	{
 		torso prone_poke_switch
 	}
-	weapons Syringe AND Adrenaline Syringe
-	{
-		torso prone_poke_switch
-	}
 	weapons throwables AND throwables_underhand
 	{
 		torso prone_grenade_switch
@@ -2459,6 +2371,7 @@ reloadprone
 	{
 		torso prone_mg_reload
 	}
+// RIFLES
 	weapons Scoped M1 Garand
 	{
 		torso prone_rifle_reload
@@ -2521,7 +2434,7 @@ raiseweapon
 	}
 	weapons Syringe AND Adrenaline Syringe
 	{
-		torso raise_knife
+		NOOP
 	}
 	weapons Ammo Pack
 	{
@@ -2545,7 +2458,7 @@ raiseweapon
 	}
 	weapons bazooka
 	{
-		torso raise_machinegun
+		torso raise_bazooka
 	}
 	weapons panzerfaust
 	{
@@ -2567,6 +2480,7 @@ raiseweapon
 	{
 		torso raise_machinegun
 	}
+// RIFLES
 	weapons Scoped M1 Garand
 	{
 		torso raise_machinegun
@@ -2691,6 +2605,7 @@ reload
 	{
 		torso reload_machinegun
 	}
+// RIFLES
 	weapons Scoped M1 Garand
 	{
 		torso reload_machinegun
@@ -2885,13 +2800,12 @@ climbdismount
 	}
 }
 
-DEATH
+death
 {
 	movetype proning, suicide
 	{
 		both prone_die1
 	}
-
 	movetype crouching, suicide
 	{
 		both death_crouch
@@ -2935,7 +2849,6 @@ DEATH
 		both death_machinegun_2
 		both death_gut
 	}
-
 	default
 	{
 		both death_machinegun_1
@@ -3205,7 +3118,7 @@ undo_alt_weapon_mode_prone
 //
 // statechange <directionto> <state>
 // {
-//		[DEFAULT / <condition type> [<condition value>], ...]
+//		[default / <condition type> [<condition value>], ...]
 //		{
 //			<both/legs/torso> <animation> [sound <filename>]
 //			<both/legs/torso> <animation> [sound <filename>]

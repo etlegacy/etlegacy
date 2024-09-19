@@ -599,26 +599,31 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 		return;
 	}
 
-	if (cg_pmWaitingListXP)
+	// force stacking XP only if we are repairing or constructing something
+	if (!(CG_GetActiveHUD()->xpgain.style & POPUP_XPGAIN_NO_STACK)
+	    || !Q_stricmp(message2, "constructing") || !Q_stricmp(message2, "repairing"))
 	{
-		listItem = cg_pmWaitingListXP;
-	}
-	else if (cg_pmOldListXP)
-	{
-		listItem = cg_pmOldListXP;
-	}
-
-	// reason are similar, use previous message
-	if (listItem)
-	{
-		if (!Q_stricmp(listItem->message2, message2))
+		if (cg_pmWaitingListXP)
 		{
-			Q_strncpyz(listItem->message, va("%f", Q_atof(listItem->message) + Q_atof(message)), sizeof(cg_pmStackXP[0].message));
-			Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStackXP[0].message2));
+			listItem = cg_pmWaitingListXP;
+		}
+		else if (cg_pmOldListXP)
+		{
+			listItem = cg_pmOldListXP;
+		}
 
-			listItem->time = cg.time;
+		// reason are similar, use previous message
+		if (listItem)
+		{
+			if (!Q_stricmp(listItem->message2, message2))
+			{
+				Q_strncpyz(listItem->message, va("%f", Q_atof(listItem->message) + Q_atof(message)), sizeof(cg_pmStackXP[0].message));
+				Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStackXP[0].message2));
 
-			return;
+				listItem->time = cg.time;
+
+				return;
+			}
 		}
 	}
 
