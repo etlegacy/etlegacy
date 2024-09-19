@@ -1822,7 +1822,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_MG)
 		{
 			barrel.hModel = weapon->modModels[0];
-			barrel.frame  = GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SETTABLE;
+			barrel.frame = (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SET) ? 0 : 1;
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
