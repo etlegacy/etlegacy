@@ -174,7 +174,7 @@
 
 		//raise_binoculars		3525	10	0	20	0	0	0	10
 		firing_pliers			3540	19	19	20	0	50	0	20
-		firing_syringe			3565	20	0	20	0	0	0	20
+		firing_syringe			3570	15	0	60	0	0	0	20
 		raise_medpack			3590	10	0	20	0	0	0	10
 		stand_medpack			3605	30	30	20	0	0	0	0
 
@@ -307,6 +307,8 @@
 		prone_knife_switch		4662	10	0	18	0	0	0	10
 		prone_knife_attack		4689	10	0	25	0	0	0	20
 		prone_knife_idle		4672	1	0	20	0	0	0	0
+
+		prone_syringe_attack	4691	8	0	35	0	0	0	20
 
 		// Prone Death
 		prone_die1				4573    10	0	20	0	0	0	0

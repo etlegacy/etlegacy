@@ -654,9 +654,9 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 		if (cg.time > lf->frameTime)
 		{
 			lf->frameTime = cg.time;
-			if (cg_debugAnim.integer)
+			if (cg_debugAnim.integer > 3)
 			{
-				CG_Printf("Clamp lf->frameTime\n");
+				CG_Printf("CG_RunLerpFrame: Clamp lf->frameTime\n");
 			}
 		}
 	}
@@ -1088,7 +1088,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 
 			if (cg_debugAnim.integer > 3)
 			{
-				CG_Printf("Clamp lf->frameTime\n");
+				CG_Printf("CG_RunLerpFrameRate: Clamp lf->frameTime\n");
 			}
 		}
 		lf->oldAnimationNumber = lf->animationNumber;
@@ -1286,9 +1286,9 @@ void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimati
 		{
 			lf->frameTime = cg.time;
 
-			if (cg_debugAnim.integer)
+			if (cg_debugAnim.integer > 3)
 			{
-				CG_Printf("Clamp lf->frameTime\n");
+				CG_Printf("CG_RunLerpFrameRateCorpse: Clamp lf->frameTime\n");
 			}
 		}
 	}
