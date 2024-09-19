@@ -3139,7 +3139,6 @@ void CG_CenterPrint(const char *str);
 void CG_PriorityCenterPrint(const char *str, int priority);
 void CG_ObjectivePrint(const char *str);
 void CG_DrawActive(void);
-void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
 void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
@@ -4255,7 +4254,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 58
+#define HUD_COMPONENTS_NUM 59
 
 typedef struct hudComponent_s
 {
@@ -4312,7 +4311,8 @@ typedef struct hudStructure_s
 	hudComponent_t hudhead;
 
 	hudComponent_t cursorhints;
-	hudComponent_t cursorhintstext; // 20
+    hudComponent_t cursorhintsbar; // 20
+	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
 
@@ -4323,8 +4323,8 @@ typedef struct hudStructure_s
 
 	hudComponent_t votetext;
 	hudComponent_t spectatortext;
-	hudComponent_t limbotext;
-	hudComponent_t followtext;  // 30
+	hudComponent_t limbotext;   // 30
+	hudComponent_t followtext;  
 	hudComponent_t demotext;
 
 	hudComponent_t missilecamera;
@@ -4335,8 +4335,8 @@ typedef struct hudStructure_s
 	hudComponent_t fps;
 	hudComponent_t snapshot;
 	hudComponent_t ping;
-	hudComponent_t speed;
-	hudComponent_t lagometer;       // 40
+	hudComponent_t speed;   // 40
+	hudComponent_t lagometer;       
 	hudComponent_t disconnect;
 	hudComponent_t chat;
 	hudComponent_t spectatorstatus;
@@ -4345,8 +4345,8 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint;
-	hudComponent_t banner;
-	hudComponent_t crosshair;       // 50
+	hudComponent_t banner;  // 50
+	hudComponent_t crosshair;       
 	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
 	hudComponent_t stats;
@@ -4439,6 +4439,7 @@ void CG_DrawCenterString(hudComponent_t *comp);
 void CG_DrawBannerPrint(hudComponent_t *comp);
 void CG_DrawWeapStability(hudComponent_t *comp);
 void CG_DrawCursorhint(hudComponent_t *comp);
+void CG_DrawCursorHintBar(hudComponent_t *comp);
 void CG_DrawCursorHintText(hudComponent_t *comp);
 void CG_DrawCrosshair(hudComponent_t *comp);
 

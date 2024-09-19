@@ -1990,21 +1990,25 @@ static void CG_ScanForCrosshairEntity()
  * @brief CG_CheckForCursorHints
  * @note Concept in progress...
  */
-void CG_CheckForCursorHints(void)
+static void CG_CheckForCursorHints()
 {
 	trace_t   trace;
 	vec3_t    start, end;
 	centity_t *tracent;
 	float     dist;
 
-	// Already check this frame
-	if (cg.snap->ps.serverCursorHint == cg.time)
+	if (cg.renderingThirdPerson)
 	{
 		return;
 	}
 
-	if (cg.renderingThirdPerson)
+	if (cg.generatingNoiseHud)
 	{
+		// simulate cursor hint
+		cg.cursorHintTime  = cg.time;
+		cg.cursorHintFade  = cg_drawHintFade.integer;
+		cg.cursorHintIcon  = HINT_BREAKABLE;
+		cg.cursorHintValue = 128.f;
 		return;
 	}
 
@@ -4150,6 +4154,7 @@ static void CG_Draw2D(void)
 		{
 			// scan the known entities to see if the crosshair is sighted on one
 			CG_ScanForCrosshairEntity();
+			CG_CheckForCursorHints();
 
 			CG_DrawActiveHud();
 		}
