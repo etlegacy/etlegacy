@@ -2362,9 +2362,25 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 			case ET_MISSILE:
 				if (comp->style & 2 && VectorDistance(cg.refdef_current->vieworg, es->origin) < 512)
 				{
-					s = va(CG_TranslateString("%s^*\'s %s"),
-					       CG_GetCrosshairNameString(comp, es->otherEntityNum),
-					       !Q_stricmp(BG_GetItem(GetWeaponTableData(es->weapon)->item)->classname, "weapon_dynamite") ? "Dynamite" : "Landmine");
+					const char *weaponText;
+
+					switch (es->weapon)
+					{
+					case WP_DYNAMITE:
+						weaponText = "Dynamite";
+						break;
+					case WP_LANDMINE:
+						weaponText = "Landmine";
+						break;
+					case WP_SATCHEL:
+						weaponText = "Satchel Charge";
+						break;
+					default:
+						weaponText = "Unknown weapon";
+						break;
+					}
+
+					s = va(CG_TranslateString("%s^*\'s %s"), CG_GetCrosshairNameString(comp, es->otherEntityNum), weaponText);
 				}
 				break;
 			default:
