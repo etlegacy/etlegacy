@@ -731,10 +731,9 @@ jobs:
         with:
           pattern: win*
 
-      if: github.ref == 'refs/heads/master'
       - name: SignPath Win Snapshot
         uses: signpath/github-action-submit-signing-request@v0.4
-        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && github.ref == 'refs/heads/master'
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -744,10 +743,9 @@ jobs:
            wait-for-completion: true
            output-artifact-directory: 'win-packages'
 
-      if: github.ref == 'refs/heads/master'
       - name: SignPath Win64 Snapshot
         uses: signpath/github-action-submit-signing-request@v0.4
-        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && github.ref == 'refs/heads/master'
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -757,10 +755,9 @@ jobs:
            wait-for-completion: true
            output-artifact-directory: 'win64-packages'
 
-      if: startsWith(github.ref, 'refs/tags/v')
       - name: SignPath Win Release
         uses: signpath/github-action-submit-signing-request@v0.4
-        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && startsWith(github.ref, 'refs/tags/v')
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -770,10 +767,9 @@ jobs:
            wait-for-completion: true
            output-artifact-directory: 'win-packages'
 
-      if: startsWith(github.ref, 'refs/tags/v')
       - name: SignPath Win64 Release
         uses: signpath/github-action-submit-signing-request@v0.4
-        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && startsWith(github.ref, 'refs/tags/v')
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
