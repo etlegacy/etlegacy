@@ -1736,7 +1736,7 @@ fireweapon
 	}
 	weapons bazooka
 	{
-		torso stand_rifle
+		torso firing_bazooka
 	}
 	weapons panzerfaust
 	{
@@ -2458,7 +2458,7 @@ raiseweapon
 	}
 	weapons bazooka
 	{
-		torso raise_machinegun
+		torso raise_bazooka
 	}
 	weapons panzerfaust
 	{

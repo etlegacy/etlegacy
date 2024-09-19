@@ -167,10 +167,13 @@
 		//eng_hammer_firing		3380	13	13	15	0	0	0	20
 		//eng_construction		3395	11	11	15	0	0	0	0
 
-		raise_panzer			3420	13	0	20	0	0	0	10
+		raise_panzer			3425	8	0	20	0	0	0	10
 		stand_panzer			3434	31	31	20	0	0	0	0
-		firing_panzer			3469	17	17	20	0	0	0	20
+		firing_panzer			3470	16	0	22	0	0	0	20
 		//reload_panzer			3487	33	0	20	0	0	0	20
+
+		raise_bazooka			2243	10	0	20	0	0	0	10
+		firing_bazooka			2640	18	0	14	0	0	0	20
 
 		//raise_binoculars		3525	10	0	20	0	0	0	10
 		firing_pliers			3540	19	19	20	0	50	0	20
