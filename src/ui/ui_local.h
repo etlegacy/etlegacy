@@ -300,6 +300,8 @@ extern vec4_t text_color_disabled;
 extern vec4_t text_color_normal;
 extern vec4_t text_color_highlight;
 
+#define DEFAULT_MENU_FILE "ui/menus.txt"
+
 extern menuDef_t Menus[MAX_MENUS];      ///< defined menus
 extern int       menuCount;             ///< how many menus
 
