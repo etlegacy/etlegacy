@@ -1273,7 +1273,7 @@ typedef struct
 	int lastKillTime;
 
 	// crosshair
-	centity_t *crosshairEntsToScan[MAX_ENTITIES];
+	centity_t *crosshairEntsToScan[MAX_ENTITIES_IN_SNAPSHOT];
 	int crosshairEntsToScanCount;
 	int crosshairEntNum;
 	int crosshairEntTime;
@@ -4311,7 +4311,7 @@ typedef struct hudStructure_s
 	hudComponent_t hudhead;
 
 	hudComponent_t cursorhints;
-    hudComponent_t cursorhintsbar; // 20
+	hudComponent_t cursorhintsbar; // 20
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
@@ -4324,7 +4324,7 @@ typedef struct hudStructure_s
 	hudComponent_t votetext;
 	hudComponent_t spectatortext;
 	hudComponent_t limbotext;   // 30
-	hudComponent_t followtext;  
+	hudComponent_t followtext;
 	hudComponent_t demotext;
 
 	hudComponent_t missilecamera;
@@ -4336,7 +4336,7 @@ typedef struct hudStructure_s
 	hudComponent_t snapshot;
 	hudComponent_t ping;
 	hudComponent_t speed;   // 40
-	hudComponent_t lagometer;       
+	hudComponent_t lagometer;
 	hudComponent_t disconnect;
 	hudComponent_t chat;
 	hudComponent_t spectatorstatus;
@@ -4346,7 +4346,7 @@ typedef struct hudStructure_s
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint;
 	hudComponent_t banner;  // 50
-	hudComponent_t crosshair;       
+	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
 	hudComponent_t stats;

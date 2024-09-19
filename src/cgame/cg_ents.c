@@ -371,6 +371,12 @@ static void CG_EntityEffects(centity_t *cent)
  */
 static void CG_AddEntToCrosshairScanList(centity_t *cent)
 {
+	if (cg.crosshairEntsToScanCount > MAX_ENTITIES_IN_SNAPSHOT - 1)
+	{
+		CG_Printf(S_COLOR_YELLOW "%s: max crosshair entities reached!\n", __FUNCTION__);
+		return;
+	}
+
 	cg.crosshairEntsToScan[cg.crosshairEntsToScanCount++] = cent;
 }
 
