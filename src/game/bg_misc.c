@@ -2534,7 +2534,7 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 	BG_EvaluateTrajectory(&item->pos, atTime, origin, qfalse, item->effect2Time);
 
 	// Check against cylinder
-	return !(vec2_dist(ps->origin, origin) < boxSide ||
+	return !(vec2_dist(ps->origin, origin) > boxSide ||
 	         ps->origin[2] - origin[2] > boxSide ||
 	         ps->origin[2] - origin[2] < -boxSide);
 }
