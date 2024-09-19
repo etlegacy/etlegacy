@@ -1855,16 +1855,9 @@ static void CG_ScanForCrosshairEntity()
 	vec3_t    end;
 	centity_t *cent = NULL;
 
-	// we already scan for something this frame
-	if (cg.crosshairEntTime == cg.time)
-	{
-		return;
-	}
-
 	// no crosshair, no scan
 	if (cg_drawCrosshair.integer < 0)
 	{
-		cg.crosshairEntsToScanCount = 0;
 		return;
 	}
 
@@ -1883,8 +1876,6 @@ static void CG_ScanForCrosshairEntity()
 			cg.crosshairNotLookingAtClient = qfalse;
 		}
 
-		cg.crosshairEntsToScanCount = 0;
-
 		return;
 	}
 
@@ -1895,7 +1886,6 @@ static void CG_ScanForCrosshairEntity()
 		cg.crosshairEntTime            = cg.time;
 		cg.identifyClientRequest       = cg.crosshairEntNum;
 		cg.crosshairNotLookingAtClient = qfalse;
-		cg.crosshairEntsToScanCount    = 0;
 
 		return;
 	}
@@ -1928,8 +1918,6 @@ static void CG_ScanForCrosshairEntity()
 	{
 		cent = &cg_entities[trace.entityNum];
 	}
-
-	cg.crosshairEntsToScanCount = 0;
 
 	if (!cent)
 	{
@@ -2123,9 +2111,6 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	int    clientNum, class;
 	float  x = comp->location.x, w = comp->location.w;
 	int    style;
-
-	// scan the known entities to see if the crosshair is sighted on one
-	CG_ScanForCrosshairEntity();
 
 	// world-entity or no-entity
 	if (cg.crosshairEntNum >= ENTITYNUM_WORLD)
@@ -2331,17 +2316,13 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
-	Vector4Copy(comp->colorMain, textColor);
-
-	// scan the known entities to see if the crosshair is sighted on one
-	CG_ScanForCrosshairEntity();
-
 	// world-entity or no-entity
 	if (cg.crosshairEntNum >= ENTITYNUM_WORLD)
 	{
 		return;
 	}
 
+	Vector4Copy(comp->colorMain, textColor);
 	color = CG_FadeColor_Ext(cg.crosshairEntTime, cg_drawCrosshairFade.integer, textColor[3]);
 
 	if (!color)
@@ -4167,6 +4148,9 @@ static void CG_Draw2D(void)
 		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
 		{
+			// scan the known entities to see if the crosshair is sighted on one
+			CG_ScanForCrosshairEntity();
+
 			CG_DrawActiveHud();
 		}
 	}
