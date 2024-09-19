@@ -1659,7 +1659,7 @@ EVENTS
 fireweapon
 {
 // ADRENALINE SYRINGE
-	weapons Adrenaline Syringe, movetype walk AND turnleft AND turnright AND idlecr AND idle AND crouching AND run AND swim AND backstep AND swimbk
+	weapons Adrenaline Syringe
 	{
 		torso self_inject
 	}
@@ -2195,9 +2195,13 @@ fireweaponprone
 	{
 		torso prone_poke_fire
 	}
-	weapons Syringe AND Adrenaline Syringe
+	weapons Syringe
 	{
-		torso prone_poke_fire
+		torso prone_syringe_attack
+	}
+	weapons Adrenaline Syringe
+	{
+		torso self_inject
 	}
 	weapons bazooka
 	{
@@ -2431,10 +2435,6 @@ reloadprone
 	{
 		torso prone_poke_switch
 	}
-	weapons Syringe AND Adrenaline Syringe
-	{
-		torso prone_poke_switch
-	}
 	weapons throwables AND throwables_underhand
 	{
 		torso prone_grenade_switch
@@ -2521,7 +2521,7 @@ raiseweapon
 	}
 	weapons Syringe AND Adrenaline Syringe
 	{
-		torso raise_knife
+		NOOP
 	}
 	weapons Ammo Pack
 	{
