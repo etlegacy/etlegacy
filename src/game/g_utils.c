@@ -1036,6 +1036,27 @@ gentity_t *G_PopupMessage(popupMessageType_t type)
 
 //==============================================================================
 
+static void G_debugPrintEvent(gentity_t *ent, int event, int eventParm)
+{
+	// try to warn when an event got dropped
+	// TODO : add 'ent->s.oldEventSequence' so we can do the same for 'ent->s' ?
+	if (ent->client && (ent->client->ps.eventSequence >= (ent->client->ps.oldEventSequence + 3)))
+	{
+		Com_Printf("SEV: ^1DROP ^7time:%7i ent:%15p\n", level.time, ent);
+	}
+
+	Com_Printf("SEV: ADD  time:%7i ent:%15p event:%3i eventParm:%3i ", level.time, ent, event, eventParm);
+
+	if (event < EV_NONE || event >= EV_MAX_EVENTS)
+	{
+		Com_Printf("UNKNOWN\n");
+	}
+	else
+	{
+		Com_Printf("%s C(%d)\n", eventnames[event], (!ent->client) ? -1 : ent->client->ps.clientNum);
+	}
+}
+
 /**
  * @brief Use for non-pmove events that would also be predicted on the
  * client side: jumppads and item pickups
@@ -1050,6 +1071,10 @@ void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm)
 	if (!ent->client)
 	{
 		return;
+	}
+	if (g_debugEvents.integer > 0)
+	{
+		G_debugPrintEvent(ent, event, eventParm);
 	}
 	BG_AddPredictableEventToPlayerstate(event, eventParm, &ent->client->ps);
 }
@@ -1068,6 +1093,10 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 		return;
 	}
 
+	if (g_debugEvents.integer > 0)
+	{
+		G_debugPrintEvent(ent, event, eventParm);
+	}
 	// use the sequential event list
 	if (ent->client)
 	{
