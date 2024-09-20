@@ -65,9 +65,9 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(powerups),           CG_DrawPowerUps,                  0.19f,  { 0 } },
 	{ HUDF(objectives),         CG_DrawObjectiveStatus,           0.19f,  { 0 } },
 	{ HUDF(hudhead),            CG_DrawPlayerStatusHead,          0.19f,  { 0 } },
-	{ HUDF(cursorhints),        CG_DrawCursorhint,                0.19f,  { "Size Pulse",    "Strobe Pulse", "Alpha Pulse" } }, // FIXME: outside cg_draw_hud
+	{ HUDF(cursorhints),        CG_DrawCursorhint,                0.19f,  { "Size Pulse",    "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
 	{ HUDF(cursorhintsbar),     CG_DrawCursorHintBar,             0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },  // FIXME: outside cg_draw_hud
-	{ HUDF(cursorhintstext),    CG_DrawCursorHintText,            0.19f,  { "Draw Suffix" } },  // FIXME: outside cg_draw_hud
+	{ HUDF(cursorhintstext),    CG_DrawCursorHintText,            0.19f,  { "Draw Suffix" } },// FIXME: outside cg_draw_hud
 	{ HUDF(weaponstability),    CG_DrawWeapStability,             0.19f,  { "Always",        "Left",         "Center",         "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),          CG_DrawLivesLeft,                 0.19f,  { 0 } },
 	{ HUDF(roundtimer),         CG_DrawRoundTimer,                0.19f,  { "Simple" } },
@@ -97,7 +97,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(objectivetext),      CG_DrawObjectiveInfo,             0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(centerprint),        CG_DrawCenterString,              0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(banner),             CG_DrawBannerPrint,               0.23f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(crosshairtext),      CG_DrawCrosshairNames,            0.25f,  { "Full Color",    "Explosif Owner" } },// FIXME: outside cg_draw_hud
+	{ HUDF(crosshairtext),      CG_DrawCrosshairNames,            0.25f,  { "Full Color",    "Explosive Owner" } },// FIXME: outside cg_draw_hud
 	{ HUDF(crosshairbar),       CG_DrawCrosshairHealthBar,        0.25f,  { "Class",         "Rank",         "Prestige",       "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),              CG_DrawShoutcastPlayerStatus,     0.19f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(xpgain),             CG_DrawPMItemsXPGain,             0.22f,  { "Scroll Down",   "No Reason", "No Stack" } },// FIXME: outside cg_draw_hud

@@ -1890,7 +1890,7 @@ static void CG_ScanForCrosshairEntity()
 		return;
 	}
 
-	VectorMA(cg.refdef.vieworg, 512, cg.refdef.viewaxis[0], end);
+	VectorMA(cg.refdef.vieworg, MAX_TRACE, cg.refdef.viewaxis[0], end);
 
 	CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
 
@@ -2346,10 +2346,12 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	{
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			switch (cg_entities[cg.crosshairEntNum].currentState.eType)
+			entityState_t *es = &cg_entities[cg.crosshairEntNum].currentState;
+
+			switch (es->eType)
 			{
 			case ET_MOVER:
-				if (cg_entities[cg.crosshairEntNum].currentState.effect1Time)
+				if (es->effect1Time)
 				{
 					s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairEntNum));
 				}
@@ -2358,11 +2360,27 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 				s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairEntNum));
 				break;
 			case ET_MISSILE:
-				if (comp->style & 2)
+				if (comp->style & 2 && VectorDistance(cg.refdef_current->vieworg, es->origin) < 512)
 				{
-					s = va(CG_TranslateString("%s^*\'s %s"),
-					       CG_GetCrosshairNameString(comp, cg_entities[cg.crosshairEntNum].currentState.otherEntityNum),
-					       BG_GetItem(GetWeaponTableData(cg_entities[cg.crosshairEntNum].currentState.weapon)->item)->pickup_name);
+					const char *weaponText;
+
+					switch (es->weapon)
+					{
+					case WP_DYNAMITE:
+						weaponText = "Dynamite";
+						break;
+					case WP_LANDMINE:
+						weaponText = "Landmine";
+						break;
+					case WP_SATCHEL:
+						weaponText = "Satchel Charge";
+						break;
+					default:
+						weaponText = "Unknown weapon";
+						break;
+					}
+
+					s = va(CG_TranslateString("%s^*\'s %s"), CG_GetCrosshairNameString(comp, es->otherEntityNum), weaponText);
 				}
 				break;
 			default:
