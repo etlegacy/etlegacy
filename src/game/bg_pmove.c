@@ -2878,7 +2878,7 @@ void PM_CheckForReload(weapon_t weapon)
 static void PM_SwitchIfEmpty(void)
 {
 	// weapon here are explosives or syringe/adrenaline, if they are not --> return
-	if (!(GetWeaponTableData(pm->ps->weapon)->firingMode & (WEAPON_FIRING_MODE_ONE_SHOT | WEAPON_FIRING_MODE_THROWABLE)))
+	if (!(GetWeaponTableData(pm->ps->weapon)->firingMode & (WEAPON_FIRING_MODE_ONE_SHOT | WEAPON_FIRING_MODE_THROWABLE)) || pm->ps->weapon == WP_SATCHEL_DET)
 	{
 		return;
 	}
