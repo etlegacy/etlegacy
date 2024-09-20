@@ -48,6 +48,10 @@ void G_smvAdd_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 	int  pID;
 	char str[MAX_TOKEN_CHARS];
 
+	if (!g_multiview.integer)
+	{
+		return;
+	}
 
 	// Clients will always send pIDs
 	trap_Argv(1, str, sizeof(str));
@@ -82,6 +86,11 @@ void G_smvAdd_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 void G_smvAddTeam_cmd(gentity_t *ent, unsigned int dwCommand, int nTeam)
 {
 	int i, pID;
+
+	if (!g_multiview.integer)
+	{
+		return;
+	}
 
 	if (!G_allowFollow(ent, nTeam))
 	{
@@ -129,6 +138,11 @@ void G_smvDel_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 	int  pID;
 	char str[MAX_TOKEN_CHARS];
 
+	if (!g_multiview.integer)
+	{
+		return;
+	}
+
 	// Clients will always send pIDs
 	trap_Argv(1, str, sizeof(str));
 	pID = Q_atoi(str);
@@ -146,6 +160,11 @@ void G_smvDel_cmd(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void G_smvDisable_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 {
+	if (!g_multiview.integer)
+	{
+		return;
+	}
+
 	if (ent->client->pers.mvCount > 0)
 	{
 		G_smvRemoveInvalidClients(ent, TEAM_AXIS);
