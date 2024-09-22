@@ -1184,8 +1184,12 @@ static panel_button_t *limboPanelButtons[] =
 
 	&briefingButton,
 
-	&plusButton,              &plusButtonText,
-	&minusButton,             &minusButtonText,
+	// NOTE : these have been taken out, as they are messing up the minimap
+	//		  icons as well and serve little to not purpose in the command map
+	//		  to begin with - instead the icon default size should simply work
+	//		  out of the box
+	// &plusButton,              &plusButtonText,
+	// &minusButton,             &minusButtonText,
 
 	NULL,
 };
