@@ -2804,6 +2804,7 @@ extern vmCvar_t pmove_msec;
 
 extern vmCvar_t cg_timescale;
 
+extern vmCvar_t cg_spritesFollowHeads;
 extern vmCvar_t cg_voiceSpriteTime;
 
 extern vmCvar_t cg_gameType;
