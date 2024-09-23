@@ -2001,24 +2001,35 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 	ent.origin[2] += vPos[off];
 	VectorMA(ent.origin, hPos[off], right, ent.origin) ;
 
-	// Account for ducking
-	// FIXME: adjust origin for others
-	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
+	if ((cent->currentState.eFlags & EF_DEAD) && (cg_spritesFollowHeads.integer > 0))
 	{
-		if (cent->currentState.eFlags & EF_CROUCHING)
-		{
-			ent.origin[2] -= 18;
-		}
-		else if (cent->currentState.eFlags & EF_PRONE)
-		{
-			ent.origin[2] -= 45;
-		}
+		// "new-way" - trash any previously set Z coord and instead reset to a player's head
+		// as long as we're not dead
+		ent.origin[2] = cent->pe.headRefEnt.origin[2] + 20;
 	}
 	else
 	{
-		if (cent->currentState.animMovetype)
+		// "old-way" - use hardcoded Z coord dependent on player state
+
+		// Account for ducking
+		// FIXME: adjust origin for others
+		if (cent->currentState.clientNum == cg.snap->ps.clientNum)
 		{
-			ent.origin[2] -= 18;
+			if (cent->currentState.eFlags & EF_CROUCHING)
+			{
+				ent.origin[2] -= 18;
+			}
+			else if (cent->currentState.eFlags & EF_PRONE)
+			{
+				ent.origin[2] -= 45;
+			}
+		}
+		else
+		{
+			if (cent->currentState.animMovetype)
+			{
+				ent.origin[2] -= 18;
+			}
 		}
 	}
 

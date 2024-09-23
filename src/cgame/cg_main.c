@@ -207,6 +207,7 @@ vmCvar_t cg_messageType;
 
 vmCvar_t cg_timescale;
 
+vmCvar_t cg_spritesFollowHeads;
 vmCvar_t cg_voiceSpriteTime;
 
 vmCvar_t cg_drawNotifyText;
@@ -464,6 +465,7 @@ static cvarTable_t cvarTable[] =
 	{ &pmove_fixed,                 "pmove_fixed",                 "0",           CVAR_SYSTEMINFO,              0 },
 	{ &pmove_msec,                  "pmove_msec",                  "8",           CVAR_SYSTEMINFO,              0 },
 
+	{ &cg_spritesFollowHeads,       "cg_spritesFollowHeads",       "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_voiceSpriteTime,          "cg_voiceSpriteTime",          "6000",        CVAR_ARCHIVE,                 0 },
 
 	{ &cg_teamChatsOnly,            "cg_teamChatsOnly",            "0",           CVAR_ARCHIVE,                 0 },
