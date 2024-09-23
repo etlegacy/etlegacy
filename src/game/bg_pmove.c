@@ -5115,6 +5115,28 @@ void PmoveSingle(pmove_t *pmove)
 		pmove->cmd.upmove      = 0;
 	}
 
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
+	{
+		float speed = VectorLength(pm->ps->velocity);
+		float traj  = VectorLength(pml.previous_velocity) - speed;
+
+		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
+		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
+		if (traj < 0.1 && !pm->pmext->airTime && !pm->pmext->speedLimitTime && speed > 127
+		    && !pm->ps->weaponTime)
+		{
+			pm->pmext->speedLimitTime = pm->cmd.serverTime;
+		}
+
+		// in air for too much time or run for too long
+		if ((pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500)
+		    || (!pm->pmext->airTime && pm->pmext->speedLimitTime && pm->cmd.serverTime > pm->pmext->speedLimitTime + 125))
+		{
+			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
+			pm->pmext->speedLimitTime = 0;
+		}
+	}
+
 	// clear all pmove local vars
 	Com_Memset(&pml, 0, sizeof(pml));
 
@@ -5216,24 +5238,6 @@ void PmoveSingle(pmove_t *pmove)
 	if (pm->ps->pm_type == PM_DEAD)
 	{
 		PM_DeadMove();
-	}
-	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
-	{
-		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
-		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
-		if (!pm->pmext->airTime && !pm->pmext->speedLimitTime && VectorLength(pm->ps->velocity) > 127
-		    && !pm->ps->weaponTime)
-		{
-			pm->pmext->speedLimitTime = pm->cmd.serverTime;
-		}
-
-		// in air for too much time or run for too long
-		if ((pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500)
-		    || (!pm->pmext->airTime && pm->pmext->speedLimitTime && pm->cmd.serverTime > pm->pmext->speedLimitTime + 125))
-		{
-			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
-			pm->pmext->speedLimitTime = 0;
-		}
 	}
 	else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
 	{
