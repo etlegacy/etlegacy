@@ -314,7 +314,7 @@
 		prone_syringe_attack	4691	8	0	35		0	0	0	20
 
 		// Prone Death
-		//prone_die1			4573	10	0	20		0	0	0	0
+		prone_die1				4573	10	0	20		0	0	0	0
 
 		// Prone Legs
 		prone_legs				4594	1	0	20		0	0	0	0
