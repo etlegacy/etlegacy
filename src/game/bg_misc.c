@@ -4363,6 +4363,65 @@ qboolean PC_Point_Parse(int handle, vec2_t *c)
 }
 
 /**
+ * @brief Parses a pseudo decimal value (with 2 dec points) into a long - for
+ * determinism reasons.
+ * @param[in] handle
+ * @param[out] l
+ * @return
+ */
+qboolean PC_PseudDec_Parse(int handle, long *l)
+{
+	pc_token_t token;
+	uint8_t    pastDot = 0;
+	uint8_t    i;
+
+	if (!trap_PC_ReadToken(handle, &token))
+	{
+		return qfalse;
+	}
+
+	for (i = 0; i < strlen(token.string); ++i)
+	{
+		if (token.string[i] == '.')
+		{
+			pastDot = 1;
+			continue;
+		}
+
+		if (pastDot > 0)
+		{
+			token.string[i - 1] = token.string[i];
+			pastDot++;
+		}
+
+		etl_assert(pastDot <= 3);
+	}
+	if (pastDot < 1)
+	{
+		pastDot++;
+	}
+
+
+	if (pastDot > 1)
+	{
+		token.string[i - 1] = '\0';
+	}
+
+	*l = strtol(token.string, NULL, 0);
+	if (l == 0)
+	{
+		*l = 1;
+	}
+
+	for (i = 0; i < (3 - pastDot); ++i)
+	{
+		*l *= 10;
+	}
+
+	return qtrue;
+}
+
+/**
  * @brief PC_Int_Parse
  * @param[in] handle
  * @param[out] i

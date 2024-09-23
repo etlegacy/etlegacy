@@ -130,7 +130,8 @@ static qboolean BG_RAG_ParseError(int handle, const char *format, ...)
  */
 static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 {
-	int i;
+	int   i;
+	long l;
 
 	animation->flags = 0;
 
@@ -149,18 +150,17 @@ static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 		return BG_RAG_ParseError(handle, "expected looping integer");
 	}
 
-	if (!PC_Int_Parse(handle, &i))
+	if (!PC_PseudDec_Parse(handle, &l))
 	{
-		return BG_RAG_ParseError(handle, "expected fps integer");
+		return BG_RAG_ParseError(handle, "expected fps pseudo decimal");
 	}
 
-	if (i == 0)
-	{
-		i = 1;
+	if (l == 0) {
+		l = 100;
 	}
 
-	animation->frameLerp   = (int)(1000 / (float)i);
-	animation->initialLerp = (int)(1000 / (float)i);
+	animation->frameLerp   = (int)(100000 / l);
+	animation->initialLerp = (int)(100000 / l);
 
 	if (!PC_Int_Parse(handle, &animation->moveSpeed))
 	{

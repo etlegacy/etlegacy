@@ -2816,6 +2816,7 @@ qboolean PC_Color_Parse(int handle, vec4_t *c);
 qboolean PC_Vec_Parse(int handle, vec3_t *c);
 qboolean PC_Float_Parse(int handle, float *f);
 qboolean PC_Point_Parse(int handle, vec2_t *c);
+qboolean PC_PseudDec_Parse(int handle, long *l);
 
 /**
  * @enum uiMenuCommand_t
