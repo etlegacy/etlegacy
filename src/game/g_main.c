@@ -373,6 +373,7 @@ vmCvar_t g_stickyCharge;
 vmCvar_t g_xpSaver;
 
 vmCvar_t g_debugForSingleClient;
+vmCvar_t g_debugEvents;
 
 vmCvar_t g_suddenDeath;
 
@@ -661,6 +662,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugHitboxes,                   "g_debugHitboxes",                   "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_debugPlayerHitboxes,             "g_debugPlayerHitboxes",             "0",                          0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
 	{ &g_debugForSingleClient,            "g_debugForSingleClient",            "-1",                         0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
+	{ &g_debugEvents,                     "g_debugevents",                     "0",                         0,                                               0, qfalse, qfalse },
 
 	{ &g_corpses,                         "g_corpses",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 	{ &g_realHead,                        "g_realHead",                        "1",                          0,                                               0, qfalse, qfalse },

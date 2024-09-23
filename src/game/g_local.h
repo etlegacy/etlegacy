@@ -2233,6 +2233,7 @@ extern vmCvar_t g_stickyCharge;
 extern vmCvar_t g_xpSaver;
 
 extern vmCvar_t g_debugForSingleClient;
+extern vmCvar_t g_debugEvents;
 
 #define G_InactivityValue (g_inactivity.integer ? g_inactivity.integer : 60)
 #define G_SpectatorInactivityValue (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60)

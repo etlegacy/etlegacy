@@ -2015,7 +2015,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	if (cg_debugEvents.integer)
 	{
-		CG_Printf("time:%i ent:%3i  event:%3i ", cg.time, es->number, event);
+		CG_Printf("CEV: RECV time:%7i ent:%15i event:%3i eventParm:%3i ", cg.time, es->number, event, es->eventParm);
 
 		if (event < EV_NONE || event >= EV_MAX_EVENTS)
 		{
@@ -2023,7 +2023,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		else
 		{
-			CG_Printf("%s\n", eventnames[event]);
+			Com_Printf("%s C(%d)\n", eventnames[event], (es->clientNum < 0 || es->clientNum >= MAX_CLIENTS) ? -1 : es->clientNum);
 		}
 	}
 
