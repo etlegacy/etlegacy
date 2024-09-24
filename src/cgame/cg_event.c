@@ -199,6 +199,9 @@ static void CG_Obituary(entityState_t *ent)
 		CG_Error("CG_Obituary: target out of range\n");
 	}
 
+	// this happens alongside 'EV_STOPSTREAMINGSOUND', as it sometimes doesn't seem to get emitted
+	trap_S_StartSoundEx(NULL, target, CHAN_WEAPON, 0, SND_CUTOFF_ALL);  // kill weapon sound (could be reloading)
+
 	// no obituary message if changing teams
 	if (mod == MOD_SWITCHTEAM)
 	{
