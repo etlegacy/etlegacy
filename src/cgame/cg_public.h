@@ -288,6 +288,7 @@ typedef enum
 	CG_COMMAND_COMPLETE,
 
 	CG_CMDBACKUP_EXT,
+	CG_S_STOPSOUND,
 
 } cgameImport_t;
 

@@ -193,6 +193,7 @@ typedef struct
 	void (*StartLocalSound)(sfxHandle_t sfx, int channelNum, int volume);
 	void (*StartBackgroundTrack)(const char *intro, const char *loop, int fadeupTime);
 	void (*StopBackgroundTrack)(void);
+	void (*StopSounds)(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfxHandle, int flags);
 	float (*StartStreamingSound)(const char *intro, const char *loop, int entnum, int channel, int attenuation);
 	void (*StopEntStreamingSound)(int entNum);
 	void (*FadeStreamingSound)(float targetvol, int time, int ssNum);

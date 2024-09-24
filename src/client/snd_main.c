@@ -231,6 +231,20 @@ void S_StartSoundEx(vec3_t origin, int entNum, int entchannel,
 }
 
 /**
+ * @brief S_StopSounds
+ * @param[in] sfxHandle
+ * @param[in] channelNum
+ * @param[in] volume
+ */
+void S_StopSounds(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfxHandle, int flags)
+{
+	if (si.StopSounds)
+	{
+		si.StopSounds(origin, entnum, entchannel, sfxHandle, flags);
+	}
+}
+
+/**
  * @brief S_StartLocalSound
  * @param[in] sfxHandle
  * @param[in] channelNum

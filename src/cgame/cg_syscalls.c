@@ -533,6 +533,11 @@ void trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle
 #endif
 }
 
+void trap_S_StopSounds(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags)
+{
+	SystemCall(CG_S_STOPSOUND, origin, entityNum, entchannel, sfx, flags);
+}
+
 /**
  * @brief trap_S_StartSoundExVControl
  * @param[in] origin

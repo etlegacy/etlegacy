@@ -49,6 +49,7 @@ void S_Reload(void);
 // if origin is NULL, the sound will be dynamically sourced from the entity
 void S_StartSound(vec3_t origin, int entNum, int entchannel, sfxHandle_t sfxHandle, int volume);
 void S_StartSoundEx(vec3_t origin, int entNum, int entchannel, sfxHandle_t sfxHandle, int flags, int volume);
+void S_StopSounds(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfxHandle, int flags);
 void S_StartLocalSound(sfxHandle_t sfxHandle, int channelNum, int volume);
 
 void S_StartBackgroundTrack(const char *intro, const char *loop, int fadeUpTime);

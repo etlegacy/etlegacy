@@ -774,6 +774,55 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 }
 
 /**
+ * @brief Stops an already playing sound.
+ *
+ * @param[in] origin
+ * @param[in] entnum
+ * @param[in] entchannel
+ * @param[in] sfxHandle
+ * @param[in] flags
+ * @param[in] volume
+ */
+void S_Base_StopSounds(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfxHandle, int flags)
+{
+	int   i;
+	sfx_t *sfx;
+
+	sfx = &knownSfx[sfxHandle];
+
+	if (sfx->inMemory == qfalse)
+	{
+		S_memoryLoad(sfx);
+	}
+
+	if (s_show->integer == 1)
+	{
+		Com_Printf("S_Base_StopSounds: %i : %s\n", s_paintedtime, sfx->soundName);
+	}
+
+	// shut off other sounds on this channel if necessary
+	for (i = 0; i < MAX_CHANNELS ; i++)
+	{
+		if (entchannel == CHAN_AUTO)
+		{
+			if (s_channels[i].entnum == entnum)
+			{
+				s_channels[i].thesfx = NULL;
+				// S_ChannelFree(&s_channels[i]);
+			}
+		}
+		else
+		{
+			if (s_channels[i].entnum == entnum && s_channels[i].entchannel == entchannel)
+			{
+				s_channels[i].thesfx = NULL;
+				// S_ChannelFree(&s_channels[i]);
+			}
+		}
+	}
+}
+
+/**
  * @brief S_Base_StartSound
  * @param[in] origin
  * @param[in] entnum
@@ -2363,6 +2412,7 @@ qboolean S_Base_Init(soundInterface_t *si)
 	si->Reload                = S_Base_Reload;
 	si->StartSound            = S_Base_StartSound;
 	si->StartSoundEx          = S_Base_StartSoundEx;
+	si->StopSounds            = S_Base_StopSounds;
 	si->StartLocalSound       = S_Base_StartLocalSound;
 	si->StartBackgroundTrack  = S_Base_StartBackgroundTrack;
 	si->StopBackgroundTrack   = S_Base_StopBackgroundTrack;

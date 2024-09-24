@@ -3638,6 +3638,7 @@ void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t
 void trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int volume);
 void trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags);
 void trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume);
+void trap_S_StopSounds(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags);
 void trap_S_StopStreamingSound(int entityNum);    // usually AI.  character is talking and needs to be shut up /now/
 int trap_S_GetSoundLength(sfxHandle_t sfx);
 int trap_S_GetCurrentSoundTime(void);
