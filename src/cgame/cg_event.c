@@ -199,6 +199,8 @@ static void CG_Obituary(entityState_t *ent)
 		CG_Error("CG_Obituary: target out of range\n");
 	}
 
+	trap_S_StopSounds(NULL, target, CHAN_WEAPON, 0, 0);
+
 	// no obituary message if changing teams
 	if (mod == MOD_SWITCHTEAM)
 	{
