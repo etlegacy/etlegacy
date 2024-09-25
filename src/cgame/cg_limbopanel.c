@@ -578,7 +578,7 @@ static panel_button_t playerPrestigeIcon =
 static panel_button_t spawnPointText =
 {
 	NULL,
-	"AUTOSPAWN",
+	"AUTO SPAWNPOINT",
 	{ 150,                     392,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&spawnLimboFont,           /* font        */
