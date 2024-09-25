@@ -1285,7 +1285,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	team_t          team;
 	modelViewType_t modelViewType = ps ? W_FP_MODEL : W_TP_MODEL;
 	float           x, y;
-	vec3_t          right, up;
+	vec3_t          forward, right, up;
 
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
@@ -1858,10 +1858,25 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 
-			// the grenade - have to always enabled it, no means of telling if another person has a grenade loaded or not atm :/
-			//if( cg.snap->ps.weaponstate != WEAPON_FIRING && cg.snap->ps.weaponstate != WEAPON_RELOADING ) {
-			if (weaponNum == WP_M7 /*|| weaponNum == WP_CARBINE*/ && cent->firedTime == 0)
+			// render attached rifle grenade
+			if ((weaponNum == WP_M7 || weaponNum == WP_GPG40) && cent->firedTime == 0)
 			{
+				// scale the socketed KAR98 rifle grenade - as it's too big by
+				// default
+				if (weaponNum == WP_GPG40)
+				{
+					VectorScale(barrel.axis[0], 0.6, barrel.axis[0]);
+					VectorScale(barrel.axis[1], 0.6, barrel.axis[1]);
+					VectorScale(barrel.axis[2], 0.6, barrel.axis[2]);
+
+					// reposition origin to fit rescaled
+					AxisToAngles(barrel.axis, angles);
+					AngleVectors(angles, forward, right, up);
+
+					VectorMA(barrel.origin, 0.12, forward, barrel.origin);
+					VectorMA(barrel.origin, 0.15, right, barrel.origin);
+					VectorMA(barrel.origin, 0.3, up, barrel.origin);
+				}
 				barrel.hModel = weapon->missileModel;
 				CG_PositionEntityOnTag(&barrel, &barrel, "tag_prj", 0, NULL);
 				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
