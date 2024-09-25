@@ -63,8 +63,8 @@ static void CG_ResetEntity(centity_t *cent)
 	}
 
 	// reset a bunch of extra stuff
-	cent->muzzleFlashTime = 0;
-	cent->overheatTime    = 0;
+	cent->firedTime    = 0;
+	cent->overheatTime = 0;
 
 	cent->miscTime  = 0;
 	cent->soundTime = 0;
@@ -282,9 +282,9 @@ static void CG_TransitionSnapshot(void)
 		oldValid[cg.snap->entities[i].number] = qtrue;
 	}
 
-    // move nextSnap to snap and do the transitions
-    oldFrame = cg.snap;
-    cg.snap  = cg.nextSnap;
+	// move nextSnap to snap and do the transitions
+	oldFrame = cg.snap;
+	cg.snap  = cg.nextSnap;
 
 	// check for MV updates from new snapshot info
 #ifdef FEATURE_MULTIVIEW

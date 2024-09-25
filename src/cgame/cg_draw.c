@@ -1414,7 +1414,7 @@ static void CG_DrawMortarReticle(void)
 	fadeTime = 0;
 	if (CHECKBITWISE(GetWeaponTableData(cg.lastFiredWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && cg.mortarImpactTime >= -1)
 	{
-		fadeTime = cg.time - (cg.predictedPlayerEntity.muzzleFlashTime + 5000);
+		fadeTime = cg.time - (cg.predictedPlayerEntity.firedTime + 5000);
 
 		if (fadeTime < 3000)
 		{

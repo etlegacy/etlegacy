@@ -388,7 +388,7 @@ typedef struct centity_s
 	qboolean interpolate;           ///< true if next is valid to interpolate to
 	qboolean currentValid;          ///< true if cg.frame holds this entity
 
-	int muzzleFlashTime;            ///< move to playerEntity?
+	int firedTime;            ///< move to playerEntity?
 	int overheatTime;
 	int previousEvent;
 	int previousEventSequence;
