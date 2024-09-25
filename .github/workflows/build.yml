@@ -728,6 +728,7 @@ jobs:
 #            |___/
 
   sign:
+    if: github.repository == 'etlegacy/etlegacy'
     runs-on: ubuntu-20.04
     needs: [ version, win, win64 ]
     steps:
