@@ -1325,7 +1325,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			return;
 		}
 
-		if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
+		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
 			Com_Memset(&flash, 0, sizeof(flash));
 			flash.renderfx = RF_LIGHTING_ORIGIN;
@@ -1345,7 +1345,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// stationary heavy weapon (e.g. misc_mg42, misc_aagun) muzzle flash
 	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
-		if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
+		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
 			CG_MG42EFX(cent);
 		}
@@ -1822,7 +1822,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_MG)
 		{
 			barrel.hModel = weapon->modModels[0];
-			barrel.frame = (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SET) ? 0 : 1;
+			barrel.frame  = (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SET) ? 0 : 1;
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
@@ -1952,11 +1952,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PANZER)
 			{
 				const int smoketime = (weaponNum == WP_BAZOOKA) ? 1910 : 1000;
-				if (cg.time - cent->muzzleFlashTime < smoketime)
+				if (cg.time - cent->firedTime < smoketime)
 				{
 					if (!(rand() % 5))
 					{
-						float alpha = 1.0f - ((float)(cg.time - cent->muzzleFlashTime) / (float)smoketime);     // what fraction of smoketime are we at
+						float alpha = 1.0f - ((float)(cg.time - cent->firedTime) / (float)smoketime);     // what fraction of smoketime are we at
 
 						alpha *= 0.25f;     // .25 max alpha
 						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
@@ -1967,14 +1967,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
-			if (ps && !cg.renderingThirdPerson && cg.time - cent->muzzleFlashTime < 800)
+			if (ps && !cg.renderingThirdPerson && cg.time - cent->firedTime < 800)
 			{
 				CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 700, 16, 20, 30, .12f, 4.f);
 			}
 		}
 
 		// impulse flash
-		if (cg.time - cent->muzzleFlashTime > MUZZLE_FLASH_TIME)
+		if (cg.time - cent->firedTime > MUZZLE_FLASH_TIME)
 		{
 			// blue ignition flame if not firing flamer
 			if (weaponNum != WP_FLAMETHROWER)
@@ -1989,7 +1989,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (weaponNum == WP_STEN || weaponNum == WP_MP34)
 		{
-			if (cg.time - cent->muzzleFlashTime < 100)
+			if (cg.time - cent->firedTime < 100)
 			{
 				CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 500, 8, 20, 30, 0.25f, 8.f);
 			}
@@ -2005,7 +2005,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 
 		// changed this so the muzzle flash stays onscreen for long enough to be seen
-		if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
+		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
 			//if (firing) { // Ridah
 			trap_R_AddRefEntityToScene(&flash);
@@ -2206,7 +2206,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		gunoff[0] = 20;
 
-		if (cg.time - cg.predictedPlayerEntity.muzzleFlashTime < MUZZLE_FLASH_TIME)
+		if (cg.time - cg.predictedPlayerEntity.firedTime < MUZZLE_FLASH_TIME)
 		{
 			gunoff[0] += random() * 2.f;
 		}
@@ -2243,7 +2243,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		VectorCopy(flash.origin, cg.tankflashorg);
 
-		if (cg.time - cg.predictedPlayerEntity.muzzleFlashTime < MUZZLE_FLASH_TIME)
+		if (cg.time - cg.predictedPlayerEntity.firedTime < MUZZLE_FLASH_TIME)
 		{
 			trap_R_AddRefEntityToScene(&flash);
 		}
@@ -3912,11 +3912,11 @@ void CG_FireWeapon(centity_t *cent)
 
 		if (cg_muzzleFlash.integer)
 		{
-			cent->muzzleFlashTime = cg.time;
+			cent->firedTime = cg.time;
 		}
 		else
 		{
-			cent->muzzleFlashTime = 0;
+			cent->firedTime = 0;
 		}
 
 		return;
@@ -3953,11 +3953,11 @@ void CG_FireWeapon(centity_t *cent)
 	// append the flash to the weapon model
 	if (cg_muzzleFlash.integer)
 	{
-		cent->muzzleFlashTime = cg.time;
+		cent->firedTime = cg.time;
 	}
 	else
 	{
-		cent->muzzleFlashTime = 0;
+		cent->firedTime = 0;
 	}
 
 	// lightning gun only does this on initial press

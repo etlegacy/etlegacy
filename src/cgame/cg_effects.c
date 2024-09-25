@@ -1090,7 +1090,7 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 	{
 		cent->miscTime          = 0;
 		cent->lastFuseSparkTime = 0;    // last spawn time
-		cent->muzzleFlashTime   = 0;    // delta time
+		cent->firedTime         = 0; // delta time
 		cent->dl_atten          = 0;
 		return;
 	}
@@ -1141,9 +1141,9 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 
 		if (cg.oldTime && cent->lastFuseSparkTime != cg.time)
 		{
-			cent->muzzleFlashTime  += cg.frametime;
-			spritesNeeded           = cent->muzzleFlashTime / (int)spawnrate;
-			cent->muzzleFlashTime  -= (spawnrate * spritesNeeded);
+			cent->firedTime        += cg.frametime;
+			spritesNeeded           = cent->firedTime / (int)spawnrate;
+			cent->firedTime        -= (spawnrate * spritesNeeded);
 			cent->lastFuseSparkTime = cg.time;
 		}
 
