@@ -3913,7 +3913,7 @@ static void PM_Weapon(void)
 		{
 			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL))
 			{
-				pm->pmext->weapRecoilPitch *= .5f;
+				pm->pmext->weapRecoilPitch *= .75f;
 			}
 		}
 		else
@@ -3951,6 +3951,13 @@ static void PM_Weapon(void)
 	{
 		aimSpreadScaleAdd += rand() % 10;
 	}
+    
+    // covert ops received a reduction of 50% reduction in both recoil jump and weapon sway with Scoped Weapons ONLY
+    if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL)
+        && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
+    {
+        aimSpreadScaleAdd *= .5f;
+    }
 
 	// add the recoil amount to the aimSpreadScale
 	pm->ps->aimSpreadScaleFloat += 3.0 * aimSpreadScaleAdd;
@@ -3958,13 +3965,6 @@ static void PM_Weapon(void)
 	if (pm->ps->aimSpreadScaleFloat > AIMSPREAD_MAXSPREAD)
 	{
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
-	}
-
-	// covert ops received a reduction of 50% reduction in both recoil jump and weapon sway with Scoped Weapons ONLY
-	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL)
-	    && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
-	{
-		pm->ps->aimSpreadScaleFloat *= .5f;
 	}
 
 	pm->ps->aimSpreadScale = (int)(pm->ps->aimSpreadScaleFloat);
