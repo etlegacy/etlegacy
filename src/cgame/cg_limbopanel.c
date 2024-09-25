@@ -82,13 +82,13 @@ static panel_button_text_t titleLimboFont =
 //	&cgs.media.limboFont1,
 //};
 
-static panel_button_text_t titleLimboFontBigCenter =
-{
-	0.3f,                  0.3f,
-	{ 1.f,                 1.f,              1.f,  0.6f },
-	0,                     ITEM_ALIGN_CENTER,
-	&cgs.media.limboFont1,
-};
+// static panel_button_text_t titleLimboFontBigCenter =
+// {
+// 	0.3f,                  0.3f,
+// 	{ 1.f,                 1.f,              1.f,  0.6f },
+// 	0,                     ITEM_ALIGN_CENTER,
+// 	&cgs.media.limboFont1,
+// };
 
 static panel_button_text_t spawnLimboFont =
 {
@@ -1066,61 +1066,61 @@ static panel_button_t nameEdit =
 	0
 };
 
-static panel_button_t plusButton =
-{
-	NULL,
-	NULL,
-	{ 18,                     325,  18, 12 },
-	{ 12,                     0,    0,  0, 0, 0, 0, 0},
-	NULL,                     // font
-	CG_LimboPanel_PlusButton_KeyDown,// keyDown
-	NULL,                     // keyUp
-	CG_LimboPanel_Border_Draw,
-	NULL,
-	0
-};
+// static panel_button_t plusButton =
+// {
+// 	NULL,
+// 	NULL,
+// 	{ 18,                     325,  18, 12 },
+// 	{ 12,                     0,    0,  0, 0, 0, 0, 0},
+// 	NULL,                     // font
+// 	CG_LimboPanel_PlusButton_KeyDown,// keyDown
+// 	NULL,                     // keyUp
+// 	CG_LimboPanel_Border_Draw,
+// 	NULL,
+// 	0
+// };
 
-static panel_button_t plusButtonText =
-{
-	NULL,
-	"+",
-	{ 18,                      323,  18, 12 },
-	{ 12,                      0,    0,  0, 0, 0, 0, 0},
-	&titleLimboFontBigCenter,  // font
-	NULL,                      // keyDown
-	NULL,                      // keyUp
-	BG_PanelButtonsRender_Text,
-	NULL,
-	0
-};
+// static panel_button_t plusButtonText =
+// {
+// 	NULL,
+// 	"+",
+// 	{ 18,                      323,  18, 12 },
+// 	{ 12,                      0,    0,  0, 0, 0, 0, 0},
+// 	&titleLimboFontBigCenter,  // font
+// 	NULL,                      // keyDown
+// 	NULL,                      // keyUp
+// 	BG_PanelButtonsRender_Text,
+// 	NULL,
+// 	0
+// };
 
-static panel_button_t minusButton =
-{
-	NULL,
-	NULL,
-	{ 18,                     348,  18, 12 },
-	{ 12,                     0,    0,  0, 0, 0, 0, 0},
-	NULL,                     // font
-	CG_LimboPanel_MinusButton_KeyDown,// keyDown
-	NULL,                     // keyUp
-	CG_LimboPanel_Border_Draw,
-	NULL,
-	0
-};
+// static panel_button_t minusButton =
+// {
+// 	NULL,
+// 	NULL,
+// 	{ 18,                     348,  18, 12 },
+// 	{ 12,                     0,    0,  0, 0, 0, 0, 0},
+// 	NULL,                     // font
+// 	CG_LimboPanel_MinusButton_KeyDown,// keyDown
+// 	NULL,                     // keyUp
+// 	CG_LimboPanel_Border_Draw,
+// 	NULL,
+// 	0
+// };
 
-static panel_button_t minusButtonText =
-{
-	NULL,
-	"-",
-	{ 18,                      346,  18, 12 },
-	{ 12,                      0,    0,  0, 0, 0, 0, 0},
-	&titleLimboFontBigCenter,  // font
-	NULL,                      // keyDown
-	NULL,                      // keyUp
-	BG_PanelButtonsRender_Text,
-	NULL,
-	0
-};
+// static panel_button_t minusButtonText =
+// {
+// 	NULL,
+// 	"-",
+// 	{ 18,                      346,  18, 12 },
+// 	{ 12,                      0,    0,  0, 0, 0, 0, 0},
+// 	&titleLimboFontBigCenter,  // font
+// 	NULL,                      // keyDown
+// 	NULL,                      // keyUp
+// 	BG_PanelButtonsRender_Text,
+// 	NULL,
+// 	0
+// };
 
 static panel_button_t *limboPanelButtons[] =
 {
