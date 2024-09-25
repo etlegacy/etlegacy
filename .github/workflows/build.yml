@@ -346,12 +346,12 @@ jobs:
       - name: Merge mod files
         shell: bash
         run: |
-          zip -rvj legacy_*.pk3 platforms.manifest platforms/cgame* platforms/ui* platforms/libcgame* platforms/libui*
+          zip -rvj -MM legacy_*.pk3 platforms.manifest platforms/cgame* platforms/ui* platforms/libcgame* platforms/libui*
 
       - name: Create mod zip
         shell: bash
         run: |
-          zip -rvj etlegacy-mod-${{needs.version.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* platforms/tvgame*
+          zip -rvj -MM etlegacy-mod-${{needs.version.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* platforms/tvgame*
 
       - name: Remove old artifacts
         uses: geekyeggo/delete-artifact@v4
