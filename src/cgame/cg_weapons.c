@@ -1301,9 +1301,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			return;
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_GRENADE)
+	else if (ps && GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_GRENADE)
 	{
-		if (ps && !ps->ammoclip[weaponNum])
+		if (!ps->ammoclip[weaponNum])
 		{
 			return;
 		}
@@ -1314,6 +1314,60 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		if (ps->weaponstate == WEAPON_DROPPING && !ps->ammoclip[weaponNum])
 		{
 			return;
+		}
+	}
+	else  // hide some weapons 3P after usage, especially throwables - instead
+	      // of still holding them in a player's hand despite having thrown them
+	{
+		switch (weaponNum)
+		{
+		case WP_SATCHEL:
+			if ((cg.time > (cent->firedTime + 60)) && (cg.time < (cent->firedTime + 700)))
+			{
+				return;
+			}
+			break;
+		// TODO : hide when out of grenades (like with ps)
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+			if ((cg.time > (cent->firedTime + 80)) && (cg.time < (cent->firedTime + 700)))
+			{
+				return;
+			}
+			break;
+		case WP_MEDKIT:
+		case WP_AMMO:
+			if ((cg.time > (cent->firedTime + 60)) && (cg.time < (cent->firedTime + 700)))
+			{
+				return;
+			}
+			break;
+		case WP_DYNAMITE:
+			if ((cg.time > (cent->firedTime + 100)) && (cg.time < (cent->firedTime + 1900)))
+			{
+				return;
+			}
+			break;
+		case WP_LANDMINE:
+			if ((cg.time > (cent->firedTime + 80)) && (cg.time < (cent->firedTime + 700)))
+			{
+				return;
+			}
+			break;
+		case WP_SMOKE_BOMB:
+			if ((cg.time > (cent->firedTime + 100)) && (cg.time < (cent->firedTime + 1900)))
+			{
+				return;
+			}
+			break;
+		case WP_SMOKE_MARKER:
+			if ((cg.time > (cent->firedTime + 200)) && (cg.time < (cent->firedTime + 1900)))
+			{
+				return;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
