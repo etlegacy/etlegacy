@@ -286,13 +286,23 @@ jobs:
           ./gradlew clean assembleDebug --stacktrace --info
           ls -R
 
+      - name: Prepare artifacts
+        run: |
+          mv ./app/build/intermediates/merged_native_libs/*/out/lib/arm64-v8a/libcgame*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/out/lib/arm64-v8a/libui*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/out/lib/x86/libcgame*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/out/lib/x86/libui*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/out/lib/x86_64/libcgame*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/out/lib/x86_64/libui*.so .
+          ls -ltrah
+
       - name: Upload arm64-v8a
         uses: actions/upload-artifact@v4
         with:
           name: android-arm64-mod
           path: |
-            app/build/intermediates/merged_native_libs/*/out/lib/arm64-v8a/libcgame*.so
-            app/build/intermediates/merged_native_libs/*/out/lib/arm64-v8a/libui*.so
+            libcgame*arm64*.so
+            libui*arm64*.so
           if-no-files-found: error
 
       - name: Upload x86
@@ -300,8 +310,8 @@ jobs:
         with:
           name: android-x86-mod
           path: |
-            app/build/intermediates/merged_native_libs/*/out/lib/x86/libcgame*.so
-            app/build/intermediates/merged_native_libs/*/out/lib/x86/libui*.so
+            libcgame*i386.so
+            libui*i386.so
           if-no-files-found: error
 
       - name: Upload x86_64
@@ -309,8 +319,8 @@ jobs:
         with:
           name: android-x86_64-mod
           path: |
-            app/build/intermediates/merged_native_libs/*/out/lib/x86_64/libcgame*.so
-            app/build/intermediates/merged_native_libs/*/out/lib/x86_64/libui*.so
+            libcgame*x86_64.so
+            libui*x86_64.so
           if-no-files-found: error
 
 #   __  __                                                          _
