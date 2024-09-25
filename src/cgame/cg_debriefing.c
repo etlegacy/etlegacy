@@ -411,8 +411,8 @@ static panel_button_t debriefHeadingKillsAssists =
 {
 	NULL,
 	"Ast",
-	{ DB_KILL_ASSISTS_X,      DH_HEADING_Y,                 0, 0 },
-	{ 0,                       0,                            0, 0, 0, 0, 0, 0},
+	{ DB_KILL_ASSISTS_X,       DH_HEADING_Y,                0, 0 },
+	{ 0,                       0,                           0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    // font
 	NULL,                      // keyDown
 	NULL,                      // keyUp
@@ -2650,17 +2650,22 @@ void CG_Debriefing_ScrollGetBarRect(panel_button_t *button, rectDef_t *r)
 	r->x = button->rect.x;
 	r->w = button->rect.w;
 }
-
 /**
  * @brief CG_Debriefing_ScrollCheckOffset
  * @param[in] button
+ * @return 
  */
-void CG_Debriefing_ScrollCheckOffset(panel_button_t *button)
+static qboolean CG_Debriefing_ScrollCheckOffset(panel_button_t *button)
 {
 	int max    = CG_Debriefing_ScrollGetMax(button);
 	int cnt    = CG_Debriefing_ScrollGetCount(button);
 	int offset = CG_Debriefing_ScrollGetOffset(button);
 	int maxofs = MAX(0, cnt - max);
+
+	if (maxofs == 0)
+	{
+		return qfalse;
+	}
 
 	if (offset > maxofs)
 	{
@@ -2670,6 +2675,8 @@ void CG_Debriefing_ScrollCheckOffset(panel_button_t *button)
 	{
 		CG_Debriefing_ScrollSetOffset(button, 0);
 	}
+
+	return qtrue;
 }
 
 /**
@@ -2739,7 +2746,11 @@ void CG_Debriefing_Scrollbar_Draw(panel_button_t *button)
 	vec4_t    clr2 = { 0.f, 0.f, 0.f, .6f };
 	rectDef_t r;
 
-	CG_Debriefing_ScrollCheckOffset(button);
+	// don't draw the scrollbar if there not possible offset
+	if (!CG_Debriefing_ScrollCheckOffset(button))
+	{
+		return;
+	}
 
 	CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, clr2);
 	CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, colorMdGrey);
