@@ -1876,13 +1876,6 @@ static void PM_GroundTrace(void)
 		pml.groundPlane = qfalse;
 		pml.walking     = qfalse;
 
-		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
-		    && !pm->waterlevel && !(pm->ps->pm_flags & PMF_LADDER) && !pm->pmext->airTime)
-		{
-			pm->pmext->airTime        = pm->cmd.serverTime;
-			pm->pmext->speedLimitTime = 0;
-		}
-
 		return;
 	}
 
@@ -1972,7 +1965,6 @@ static void PM_GroundTrace(void)
 	}
 
 	pm->ps->groundEntityNum = trace.entityNum;
-	pm->pmext->airTime      = 0;
 	// don't reset the z velocity for slopes
 	//pm->ps->velocity[2] = 0;
 
@@ -3951,13 +3943,13 @@ static void PM_Weapon(void)
 	{
 		aimSpreadScaleAdd += rand() % 10;
 	}
-    
-    // covert ops received a reduction of 50% reduction in both recoil jump and weapon sway with Scoped Weapons ONLY
-    if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL)
-        && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
-    {
-        aimSpreadScaleAdd *= .5f;
-    }
+
+	// covert ops received a reduction of 50% reduction in both recoil jump and weapon sway with Scoped Weapons ONLY
+	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL)
+	    && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
+	{
+		aimSpreadScaleAdd *= .5f;
+	}
 
 	// add the recoil amount to the aimSpreadScale
 	pm->ps->aimSpreadScaleFloat += 3.0 * aimSpreadScaleAdd;
@@ -5115,28 +5107,6 @@ void PmoveSingle(pmove_t *pmove)
 		pmove->cmd.upmove      = 0;
 	}
 
-	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
-	{
-		float speed = VectorLength(pm->ps->velocity);
-		float traj  = VectorLength(pml.previous_velocity) - speed;
-
-		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
-		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
-		if (traj < 0.1 && !pm->pmext->airTime && !pm->pmext->speedLimitTime && speed > 127
-		    && !pm->ps->weaponTime)
-		{
-			pm->pmext->speedLimitTime = pm->cmd.serverTime;
-		}
-
-		// in air for too much time or run for too long
-		if ((pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500)
-		    || (!pm->pmext->airTime && pm->pmext->speedLimitTime && pm->cmd.serverTime > pm->pmext->speedLimitTime + 125))
-		{
-			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
-			pm->pmext->speedLimitTime = 0;
-		}
-	}
-
 	// clear all pmove local vars
 	Com_Memset(&pml, 0, sizeof(pml));
 
@@ -5247,6 +5217,15 @@ void PmoveSingle(pmove_t *pmove)
 #ifdef CGAMEDLL
 			cg.weaponSelect = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 #endif // CGAMEDLL
+		}
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
+	{
+		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
+		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
+		if (VectorLength(pm->ps->velocity) > 127)
+		{
+			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 		}
 	}
 	else if (pm->ps->weapon == WP_SATCHEL_DET)
