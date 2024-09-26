@@ -728,6 +728,7 @@ jobs:
 #            |___/
 
   sign:
+    if: github.repository == 'etlegacy/etlegacy'
     runs-on: ubuntu-20.04
     needs: [ version, win, win64 ]
     steps:
@@ -743,7 +744,7 @@ jobs:
 
       - name: SignPath Win Snapshot
         uses: signpath/github-action-submit-signing-request@v0.4
-        if: ${{ steps.vars.outputs.hash_exists == '404' }} && github.ref == 'refs/heads/master'
+        if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -755,7 +756,7 @@ jobs:
 
       - name: SignPath Win64 Snapshot
         uses: signpath/github-action-submit-signing-request@v0.4
-        if: ${{ steps.vars.outputs.hash_exists == '404' }} && github.ref == 'refs/heads/master'
+        if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
         with:
            api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
            organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
