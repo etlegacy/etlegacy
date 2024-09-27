@@ -1432,7 +1432,7 @@ static void CG_Missile(centity_t *cent)
 		}
 	}
 
-	if (cgs.sv_cheats && cent->currentState.clientNum == cg.predictedPlayerState.clientNum)
+	if ((cgs.sv_cheats || cg.demoPlayback) && cent->currentState.clientNum == cg.predictedPlayerState.clientNum)
 	{
 		if (cent->currentState.pos.trType != TR_STATIONARY)
 		{
