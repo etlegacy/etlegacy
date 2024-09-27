@@ -25,4 +25,9 @@ static qboolean CG_DemoVersionBelow(int major, int minor, int patch)
 
 void CG_DemoBackwardsCompatInit()
 {
+	if (CG_DemoVersionBelow(2, 83, 0))
+	{
+		Q_strncpyz(cg.demoBackwardsCompat.characterAnimationGroup, "animations/human_base_2_82_1.anim", sizeof(cg.demoBackwardsCompat.characterAnimationGroup));
+		Q_strncpyz(cg.demoBackwardsCompat.characterAnimationScript, "animations/scripts/human_base_2_82_1.script", sizeof(cg.demoBackwardsCompat.characterAnimationScript));
+	}
 }
