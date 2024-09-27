@@ -170,6 +170,10 @@ static qboolean S_ValidSoundInterface(soundInterface_t *si)
 	{
 		return qfalse;
 	}
+	if (!si->SoundsPause)
+	{
+		return qfalse;
+	}
 #ifdef USE_VOIP
 	if (!si->StartCapture)
 	{
@@ -604,6 +608,18 @@ int S_GetCurrentSoundTime(void)
 	else
 	{
 		return 0;
+	}
+}
+
+/**
+ * @brief S_SoundsPause Let sound system know to pause sounds
+ * @param[in] pause
+ */
+void S_SoundsPause(qboolean pause)
+{
+	if (si.SoundsPause)
+	{
+		si.SoundsPause(pause);
 	}
 }
 

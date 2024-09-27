@@ -3798,10 +3798,12 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_SysFlashWindow(int state);
 void trap_CommandComplete(const char *value);
 void trap_CmdBackup_Ext(void);
+void trap_MatchPaused(qboolean matchPaused);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 extern int dll_trap_CommandComplete;
 extern int dll_trap_CmdBackup_Ext;
+extern int dll_trap_MatchPaused;
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 

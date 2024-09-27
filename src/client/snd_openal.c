@@ -231,6 +231,15 @@ int S_AL_GetCurrentSoundTime(void)
 }
 
 /**
+ * @brief S_AL_SoundsPause For sound pausing
+ * @param[in] pause
+ */
+void S_AL_SoundsPause(qboolean pause)
+{
+
+}
+
+/**
  * @brief Find a free handle
  * @return
  */
@@ -3585,6 +3594,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 	si->GetVoiceAmplitude     = S_AL_GetVoiceAmplitude;
 	si->GetSoundLength        = S_AL_GetSoundLength;
 	si->GetCurrentSoundTime   = S_AL_GetCurrentSoundTime;
+	si->SoundsPause           = S_AL_SoundsPause;
 
 #ifdef USE_VOIP
 	si->StartCapture            = S_AL_StartCapture;

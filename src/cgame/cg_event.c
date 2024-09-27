@@ -2271,11 +2271,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		// IS_VALID_WEAPON(es->weapon) ?
 		if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_FASTER_RELOAD) && (GetWeaponTableData(es->weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD) && cg_weapons[es->weapon].reloadFastSound)
 		{
-			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadFastSound);
+			trap_S_StartSoundEx(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadFastSound, SND_PAUSABLE);
 		}
 		else if (cg_weapons[es->weapon].reloadSound)
 		{
-			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadSound);     // following sherman's SP fix, should allow killing reload sound when player dies
+			trap_S_StartSoundEx(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadSound, SND_PAUSABLE);     // following sherman's SP fix, should allow killing reload sound when player dies
 		}
 		break;
 	case EV_MG42_FIXED:

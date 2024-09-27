@@ -100,6 +100,8 @@ int S_GetVoiceAmplitude(int entNum);
 int S_GetSoundLength(sfxHandle_t sfxHandle);
 int S_GetCurrentSoundTime(void);
 
+void S_SoundsPause(qboolean matchPaused);
+
 #ifdef USE_VOIP
 void S_StartCapture(void);
 int S_AvailableCaptureSamples(void);
