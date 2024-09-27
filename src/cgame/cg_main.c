@@ -2869,6 +2869,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_ParseSysteminfo();
 	CG_ParseServerinfo();
+	CG_DemoBackwardsCompatInit();
 	CG_ParseWolfinfo();
 	CG_ParseServerToggles();
 

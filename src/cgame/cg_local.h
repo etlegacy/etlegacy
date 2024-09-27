@@ -1129,6 +1129,12 @@ typedef struct version_s
 
 void CG_ParseMapEntityInfo(int axis_number, int allied_number);
 
+typedef struct
+{
+	char characterAnimationGroup[MAX_QPATH];
+	char characterAnimationScript[MAX_QPATH];
+} demoBackwardsCompat_t;
+
 #define MAX_WEAP_BANKS_MP          10
 #define MAX_WEAPS_IN_BANK_MP       18
 #define MAX_WEAP_BANK_SWITCH_ORDER 4
@@ -1150,6 +1156,8 @@ typedef struct
 	qboolean demoPlayback;
 	demoPlayInfo_t *demoinfo;
 	version_t demoVersion;
+	demoBackwardsCompat_t demoBackwardsCompat;
+
 	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
@@ -4519,4 +4527,5 @@ float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHe
 
 void CG_DrawCursor(float x, float y);
 
+void CG_DemoBackwardsCompatInit();
 #endif // #ifndef INCLUDE_CG_LOCAL_H

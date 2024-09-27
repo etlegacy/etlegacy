@@ -450,6 +450,17 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 		return qfalse;  // the parser will provide the error message
 	}
 
+	// override for demo backwards compat
+	if (cg.demoBackwardsCompat.characterAnimationGroup[0] != '\0') {
+		CG_Printf("DEMOBACKWARDSCOMPAT: Loading animationGroup '%s'\n", cg.demoBackwardsCompat.characterAnimationGroup);
+		strcpy(characterDef.animationGroup, cg.demoBackwardsCompat.characterAnimationGroup);
+	}
+
+	if (cg.demoBackwardsCompat.characterAnimationScript[0] != '\0') {
+		CG_Printf("DEMOBACKWARDSCOMPAT: Loading animationScript '%s'\n", cg.demoBackwardsCompat.characterAnimationScript);
+		strcpy(characterDef.animationScript, cg.demoBackwardsCompat.characterAnimationScript);
+	}
+
 	// register mesh
 	if (!(character->mesh = trap_R_RegisterModel(characterDef.mesh)))
 	{
