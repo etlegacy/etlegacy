@@ -1515,6 +1515,10 @@ static qboolean S_ScanChannelStarts(void)
 			ch->startSample = s_paintedtime - ch->pauseOffset;
 			continue;
 		}
+		else
+		{
+			ch->pauseOffset = -1;
+		}
 
 		// if it is completely finished by now, clear it
 		if (ch->startSample + (ch->thesfx->soundLength) <= s_paintedtime)
