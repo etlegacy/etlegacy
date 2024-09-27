@@ -5225,7 +5225,8 @@ void PmoveSingle(pmove_t *pmove)
 		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
 		if (VectorLength(pm->ps->velocity) > 127)
 		{
-			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
+			//PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
+			pm->cmd.weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 		}
 	}
 	else if (pm->ps->weapon == WP_SATCHEL_DET)
