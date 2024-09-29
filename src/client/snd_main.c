@@ -170,7 +170,7 @@ static qboolean S_ValidSoundInterface(soundInterface_t *si)
 	{
 		return qfalse;
 	}
-	if (!si->SoundsPause)
+	if (!si->PauseSounds)
 	{
 		return qfalse;
 	}
@@ -612,14 +612,14 @@ int S_GetCurrentSoundTime(void)
 }
 
 /**
- * @brief S_SoundsPause Let sound system know to pause sounds
+ * @brief S_PauseSounds Let sound system know to pause sounds
  * @param[in] pause
  */
-void S_SoundsPause(qboolean pause)
+void S_PauseSounds(qboolean pause)
 {
-	if (si.SoundsPause)
+	if (si.PauseSounds)
 	{
-		si.SoundsPause(pause);
+		si.PauseSounds(pause);
 	}
 }
 

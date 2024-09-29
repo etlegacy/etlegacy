@@ -1126,7 +1126,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		cl.cmdMask   = CMD_MASK_ETL;
 		return 0;
 	case CG_MATCHPAUSED:
-		S_SoundsPause(args[1]);
+		S_PauseSounds(args[1]);
 		return 0;
 
 	default:

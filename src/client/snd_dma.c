@@ -59,7 +59,7 @@ int       numLoopChannels;
 
 static int      s_soundStarted;
 static qboolean s_soundMuted;
-static qboolean s_soundsPause;
+static qboolean s_soundsPaused;
 
 // sound fading
 static float    s_volStart, s_volTarget;
@@ -1472,9 +1472,9 @@ void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwa
  * @brief S_SoundsPaused
  * @return qtrue if sounds should be paused
  */
-static qboolean S_SoundsPaused(void)
+static ID_INLINE qboolean S_SoundsPaused(void)
 {
-	return (s_soundsPause || s_debugPause->integer);
+	return (s_soundsPaused || s_debugPause->integer);
 }
 
 /**
@@ -2290,12 +2290,12 @@ int S_Base_GetCurrentSoundTime(void)
 }
 
 /**
- * @brief S_Base_SoundsPause For sound pausing
+ * @brief S_Base_PauseSounds For sounds pausing
  * @param[in] pause
  */
-void S_Base_SoundsPause(qboolean pause)
+void S_Base_PauseSounds(qboolean pause)
 {
-	s_soundsPause = pause;
+	s_soundsPaused = pause;
 }
 
 /**
@@ -2428,7 +2428,7 @@ qboolean S_Base_Init(soundInterface_t *si)
 	si->GetVoiceAmplitude     = S_Base_GetVoiceAmplitude;
 	si->GetSoundLength        = S_Base_GetSoundLength;
 	si->GetCurrentSoundTime   = S_Base_GetCurrentSoundTime;
-	si->SoundsPause           = S_Base_SoundsPause;
+	si->PauseSounds           = S_Base_PauseSounds;
 
 #ifdef USE_VOIP
 	si->StartCapture            = S_Base_StartCapture;

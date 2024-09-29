@@ -218,7 +218,7 @@ typedef struct
 	int (*GetVoiceAmplitude)(int entityNum);
 	int (*GetSoundLength)(sfxHandle_t sfxHandle);
 	int (*GetCurrentSoundTime)(void);
-	void (*SoundsPause)(qboolean pause);
+	void (*PauseSounds)(qboolean pause);
 #ifdef USE_VOIP
 	void (*StartCapture)(void);
 	int (*AvailableCaptureSamples)(void);
