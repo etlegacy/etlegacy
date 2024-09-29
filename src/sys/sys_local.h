@@ -76,7 +76,7 @@ void Sys_PlatformExit(int code) _attribute((noreturn));
 #define Sys_PlatformExit(x) exit(x);
 #endif
 
-void Sys_SigHandler(int signal) _attribute((noreturn));
+void Sys_SigHandler(int signal);
 void Sys_ErrorDialog(const char *error);
 void Sys_AnsiColorPrint(const char *msg);
 

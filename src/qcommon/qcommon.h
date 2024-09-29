@@ -1383,6 +1383,7 @@ qboolean IN_IsNumLockDown(void);
 #endif
 
 qboolean Sys_DllExtension(const char *name);
+void Sys_Backtrace(int sig);
 
 char *Sys_GetCurrentUser(void);
 
