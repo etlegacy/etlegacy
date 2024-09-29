@@ -93,6 +93,7 @@ const char *hintStrings[HINT_NUM_HINTS] =
 	"HINT_RESTRICTED",
 
 	"HINT_BAD_USER",
+	"HINT_COMPLETED",
 };
 
 /*
