@@ -573,7 +573,6 @@ char *G_createStats(gentity_t *ent)
 		                                              ent->client->sess.team_damage_given,
 		                                              ent->client->sess.team_damage_received,
 		                                              ent->client->sess.gibs,
-													  // Added kill_assists
 					                                  ent->client->sess.kill_assists,
 		                                              ent->client->sess.self_kills,
 		                                              ent->client->sess.team_kills,
