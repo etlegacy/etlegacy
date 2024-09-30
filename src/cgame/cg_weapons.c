@@ -1497,6 +1497,28 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// }
 	//}
 
+	// fixup 3P landmine model (rotate, translate, rescale)
+	if (!ps && weaponNum == WP_LANDMINE)
+	{
+		// rotate
+		AxisToAngles(gun.axis, angles);
+
+		angles[YAW] += 270;
+		angles[PITCH] -= 20;
+
+		// translate
+		AngleVectors(angles, forward, right, up);
+
+		VectorMA(gun.origin, -4.0, forward, gun.origin);
+
+		// rescale
+		AnglesToAxis(angles, gun.axis);
+
+		VectorScale(gun.axis[0], 0.8, gun.axis[0]);
+		VectorScale(gun.axis[1], 0.8, gun.axis[1]);
+		VectorScale(gun.axis[2], 0.8, gun.axis[2]);
+	}
+
 	if (ps)
 	{
 		drawpart = CG_GetPartFramesFromWeap(cent, &gun, parent, W_MAX_PARTS, weapon);     // W_MAX_PARTS specifies this as the primary view model
