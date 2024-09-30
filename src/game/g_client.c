@@ -3649,7 +3649,12 @@ float ClientHitboxMaxZ(gentity_t *hitEnt)
 
 		return PRONE_BODYHEIGHT;
 	}
-	else if (hitEnt->client->ps.eFlags & EF_CROUCHING)
+	else if (
+		// crouching on the ground
+		(hitEnt->client->ps.eFlags & EF_CROUCHING && hitEnt->client->ps.groundEntityNum != ENTITYNUM_NONE)
+		// or is swimming
+		|| (hitEnt->legsFrame.animation->movetype & ((1 << ANIM_MT_SWIM) | (1 << ANIM_MT_SWIMBK)))
+		)
 	{
 		// Crouched hitbox height is calculated with head computed from G_BuildHead to stay right under head
 		if (hitEnt->client->tempHead)
