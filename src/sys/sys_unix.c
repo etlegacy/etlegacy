@@ -41,6 +41,7 @@
 #include "../qcommon/qcommon.h"
 #include "sys_local.h"
 
+#include <execinfo.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -1282,4 +1283,23 @@ qboolean Sys_DllExtension(const char *name)
 	}
 
 	return qfalse;
+}
+
+void Sys_Backtrace(int sig)
+{
+	void   *syms[32];
+	size_t size;
+
+	// Get the backtrace and write it to stderr
+	size = backtrace(syms, 32);
+	fprintf(stderr, "--- Report this to the project - START ---\n");
+	fprintf(stderr, "ERROR: Caught SIGSEGV(%d)\n", sig);
+	fprintf(stderr, "VERSION: %s (%s)\n", ETLEGACY_VERSION, ETLEGACY_VERSION_SHORT);
+	fprintf(stderr, "BTIME: %s\n", PRODUCT_BUILD_TIME);
+	fprintf(stderr, "BACKTRACE:\n");
+	backtrace_symbols_fd(syms, size, STDERR_FILENO);
+	fprintf(stderr, "--- Report this to the project -  END  ---\n");
+
+	signal(sig, SIG_DFL);
+	kill(getpid(), sig);
 }

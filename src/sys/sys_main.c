@@ -1011,6 +1011,15 @@ void Sys_SigHandler(int signal)
 	{
 		Sys_Exit(1);
 	}
+	else if (signal == SIGSEGV)
+	{
+#if defined(__linux__) && !defined(__ANDROID__)
+		Sys_Backtrace(signal);
+		// NOTE : must not exit here, otherwise OS might not create coredumps
+#else
+		Sys_Exit(signal);
+#endif
+	}
 	else
 	{
 		Sys_Exit(2);
