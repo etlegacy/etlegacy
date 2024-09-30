@@ -1730,10 +1730,14 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 	{
 		if (attacker)
 		{
-			targ->client->ps.persistant[PERS_ATTACKER]                       = attacker->s.number;
-			targ->client->dmgReceivedSts[attacker->s.number].damageReceived += take;
-			targ->client->dmgReceivedSts[attacker->s.number].mods            = mod;
-			targ->client->dmgReceivedSts[attacker->s.number].lastHitTime     = level.time;
+			targ->client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
+
+			if (attacker->client)
+			{
+				targ->client->dmgReceivedSts[attacker->s.number].damageReceived += take;
+				targ->client->dmgReceivedSts[attacker->s.number].mods            = mod;
+				targ->client->dmgReceivedSts[attacker->s.number].lastHitTime     = level.time;
+			}
 		}
 		else
 		{
