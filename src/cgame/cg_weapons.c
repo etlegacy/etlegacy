@@ -2061,7 +2061,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		{
 			if (cg_muzzleFlash.integer && cg.time - cent->firedTime < 100)
 			{
-				CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 500, 8, 20, 30, 0.25f, 8.f);
+				if (ps) {
+					CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 500, 8, 20, 30, 0.13f, 7.f);
+				} else {
+					CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 500, 8, 20, 30, 0.11f, 5.f);
+				}
 			}
 		}
 	}
@@ -5445,7 +5449,10 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, int targetEntityNum)
 				}
 				else        // (not flesh)
 				{
-					CG_DrawBulletTracer(start, end, sourceEntityNum);
+					if (weapon != WP_STEN && weapon != WP_MP34)
+					{
+						CG_DrawBulletTracer(start, end, sourceEntityNum);
+					}
 				}
 			}
 		}
