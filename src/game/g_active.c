@@ -475,9 +475,19 @@ void G_TouchTriggers(gentity_t *ent)
 		// so you don't have to actually contact its bounding box
 		if (hit->s.eType == ET_ITEM)
 		{
-			if (!BG_PlayerTouchesItem(&ent->client->ps, &hit->s, level.time))
+			if (hit->item && hit->item->giType == IT_TEAM)  // is a CTF flag / objective
 			{
-				continue;
+				if (!BG_PlayerTouchesObjective(&ent->client->ps, &hit->s, level.time))
+				{
+					continue;
+				}
+			}
+			else
+			{
+				if (!BG_PlayerTouchesItem(&ent->client->ps, &hit->s, level.time))
+				{
+					continue;
+				}
 			}
 		}
 		else
@@ -838,8 +848,8 @@ void ClientTimerActions(gentity_t *ent, int msec)
 {
 	gclient_t *client = ent->client;
 
-   // reset and pause client timer when we've reached maxhealth, such that once
-   // we take damage again, it will take a full second every time to re-heal
+	// reset and pause client timer when we've reached maxhealth, such that once
+	// we take damage again, it will take a full second every time to re-heal
 	if (ent->health == client->ps.stats[STAT_MAX_HEALTH])
 	{
 		if (client->timeResidual != 0)

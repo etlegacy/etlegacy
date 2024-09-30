@@ -2128,6 +2128,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 
+qboolean BG_PlayerTouchesObjective(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numOfClips);
