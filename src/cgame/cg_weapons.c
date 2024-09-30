@@ -2507,6 +2507,8 @@ qboolean CG_WeaponSelectable(int weapon)
 
 	if (!CG_WeaponHasAmmo((weapon_t)weapon))
 	{
+		// play no ammo sound if the weapon we tried to switch to is out of ammo
+		trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cg_weapons[weapon].noAmmoSound);
 		return qfalse;
 	}
 
