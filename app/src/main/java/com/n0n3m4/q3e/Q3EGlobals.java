@@ -6,8 +6,8 @@ import java.io.IOException;
 
 public final class Q3EGlobals
 {
-    public static final String CONST_PACKAGE_NAME = "com.karin.idTech4Amm";
-    public static final String CONST_APP_NAME     = "idTech4A++"; // "DIII4A++";
+    public static final String CONST_PACKAGE_NAME = "com.etlegacy.app";
+    public static final String CONST_APP_NAME     = "ET: Legacy"; // "DIII4A++";
 
     // log tag
     public static final String CONST_Q3E_LOG_TAG = "Q3E";
@@ -128,7 +128,7 @@ public final class Q3EGlobals
     public static final String LIB_ENGINE1_QUAKE    = "libidtech_quake.so"; // Quake 1
     public static final String LIB_ENGINE4_D3BFG    = "libRBDoom3BFG.so"; // Doom3-BFG
     public static final String LIB_ENGINE1_DOOM     = "libgzdoom.so"; // GZDOOM
-    public static final String LIB_ENGINE3_ETW      = "libidtech3_etw.so"; // ETW
+    public static final String LIB_ENGINE3_ETW      = "libetl.so"; // ETW
 
     // game config file
     public static final String CONFIG_FILE_DOOM3    = "DoomConfig.cfg"; // DOOM3

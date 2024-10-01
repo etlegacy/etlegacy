@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2012 n0n3m4
-	
+
     This file is part of Q3E.
 
     Q3E is free software: you can redistribute it and/or modify
@@ -47,6 +47,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.n0n3m4.q3e.device.Q3EMouseDevice;
 import com.n0n3m4.q3e.device.Q3EOuya;
 import com.n0n3m4.q3e.karin.KFDManager;
+import com.stericson.RootTools.BuildConfig;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
