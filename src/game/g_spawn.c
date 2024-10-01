@@ -801,6 +801,8 @@ gentity_t *G_SpawnGEntityFromSpawnVars(void)
 		G_ParseField(level.spawnVars[i][0], level.spawnVars[i][1], ent);
 	}
 
+	ent->classnameHash =  BG_StringHashValue(ent->classname);
+
 	// check for "notteam" / "notfree" flags
 	G_SpawnInt("notteam", "0", &i);
 	if (i)

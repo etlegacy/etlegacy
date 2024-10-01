@@ -475,7 +475,7 @@ void G_TouchTriggers(gentity_t *ent)
 		// so you don't have to actually contact its bounding box
 		if (hit->s.eType == ET_ITEM)
 		{
-			if (!Q_stricmp(hit->classname, "team_ctf_redflag") || !Q_stricmp(hit->classname, "team_ctf_blueflag"))
+			if (hit->classnameHash == CLASSNAME_HASH_TEAM_CTF_REDFLAG || hit->classnameHash == CLASSNAME_HASH_TEAM_CTF_BLUEFLAG)
 			{
 				if (!BG_PlayerTouchesObjective(&ent->client->ps, &hit->s, level.time))
 				{

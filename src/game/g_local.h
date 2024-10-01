@@ -307,6 +307,7 @@ struct gentity_s
 	vec3_t instantVelocity;         ///< per entity instantaneous velocity, set per frame
 
 	const char *classname;          ///< set in QuakeEd
+	long classnameHash;             ///< derived from classname
 	int spawnflags;                 ///< set in QuakeEd
 
 	qboolean neverFree;             ///< if true, FreeEntity will only unlink
@@ -2809,6 +2810,10 @@ void G_TempTraceIgnoreEntities(gentity_t *ent);
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 
 qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
+
+// ClassnameHashes
+#define CLASSNAME_HASH_TEAM_CTF_REDFLAG  209279
+#define CLASSNAME_HASH_TEAM_CTF_BLUEFLAG 223985
 
 // Spawnflags
 
