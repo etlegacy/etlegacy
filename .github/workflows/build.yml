@@ -259,20 +259,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build JoyStick Dependency
-        working-directory: ./app/libs/joystick
-        run: |
-          ./gradlew clean               --stacktrace --info
-          ./gradlew assembleRelease     --stacktrace --info
-          ./gradlew publishToMavenLocal --stacktrace --info
-
-      - name: Upload JoyStick Dependency Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-joystick-packages
-          path: '/root/.m2/repository/com/etlegacy/android/joystick/'
-          if-no-files-found: error
-
       - name: Build Release
         if: github.repository == 'etlegacy/etlegacy'
         run: |
@@ -680,12 +666,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-
-      - name: Download JoyStick Dependency Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-joystick-packages
-          path: '/root/.m2/repository/com/etlegacy/android/joystick/'
 
       - uses: actions/download-artifact@v4
         with:

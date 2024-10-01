@@ -1,10 +1,8 @@
 package com.etlegacy.app;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,13 +18,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
-import com.erz.joysticklibrary.JoyStick;
-import com.erz.joysticklibrary.JoyStick.JoyStickListener;
 import com.etlegacy.app.web.ETLDownload;
 
 import org.libsdl.app.*;
 
-public class ETLActivity extends SDLActivity implements JoyStickListener {
+public class ETLActivity extends SDLActivity {
 
 	static volatile boolean UiMenu = false;
 	ImageButton btn;
@@ -38,7 +34,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private ImageButton activateBtn;
 	private ImageButton altBtn;
 	private ImageButton crouchBtn;
-	private JoyStick moveJoystick;
 	private Handler handler;
 	private Runnable uiRunner;
 
@@ -198,8 +193,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		crouchBtn.setImageResource(R.drawable.ic_crouch);
 		crouchBtn.setBackgroundResource(0);
 
-		moveJoystick = new JoyStick(getApplicationContext());
-
 		handler = new Handler(Looper.getMainLooper());
 		uiRunner = () -> {
 			Log.d("LOOPPER", "Running");
@@ -214,7 +207,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	@SuppressLint("ClickableViewAccessibility")
 	private int runUI() {
 		if (!getUiMenu()) {
-			mLayout.removeView(moveJoystick);
 			etlLinearLayout.removeAllViews();
 			return 500;
 		}
@@ -414,11 +406,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		if (crouchBtn.getParent() == null)
 			etlLinearLayout.addView(crouchBtn, lp_crouch);
 
-		moveJoystick.setListener(ETLActivity.this);
-		moveJoystick.setPadColor(Color.TRANSPARENT);
-		moveJoystick.setButtonColor(Color.TRANSPARENT);
-		moveJoystick.setButtonRadiusScale(50);
-
 		RelativeLayout.LayoutParams joystick_layout = new RelativeLayout.LayoutParams(
 			400,
 			350);
@@ -426,9 +413,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		joystick_layout.addRule(RelativeLayout.ALIGN_LEFT);
 		joystick_layout.addRule(RelativeLayout.CENTER_VERTICAL);
 		joystick_layout.leftMargin = pxToDp(10);
-
-		if (moveJoystick.getParent() == null)
-			mLayout.addView(moveJoystick, joystick_layout);
 
 		return 2000;
 	}
@@ -450,82 +434,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			return true;
 		}
 		return super.onGenericMotionEvent(event);
-	}
-
-	@Override
-	public void onMove(JoyStick joyStick, double angle, double power, int direction) {
-
-		if (isAndroidTV() || isChromebook()) {
-			Log.d("MOVE", "Ignoring onMove, since the device not a mobile device");
-			return;
-		}
-
-		switch (direction) {
-			case JoyStick.DIRECTION_CENTER:
-				onNativeKeyUp(51);
-				onNativeKeyUp(32);
-				onNativeKeyUp(47);
-				onNativeKeyUp(29);
-				break;
-			case JoyStick.DIRECTION_UP:
-				onNativeKeyUp(32);
-				onNativeKeyUp(47);
-				onNativeKeyUp(29);
-				onNativeKeyDown(51);
-				break;
-			case JoyStick.DIRECTION_UP_RIGHT:
-				onNativeKeyUp(47);
-				onNativeKeyUp(29);
-				onNativeKeyDown(51);
-				onNativeKeyDown(32);
-				break;
-			case JoyStick.DIRECTION_RIGHT:
-				onNativeKeyUp(51);
-				onNativeKeyUp(47);
-				onNativeKeyUp(29);
-				onNativeKeyDown(32);
-				break;
-			case JoyStick.DIRECTION_RIGHT_DOWN:
-				onNativeKeyUp(51);
-				onNativeKeyUp(29);
-				onNativeKeyDown(32);
-				onNativeKeyDown(47);
-				break;
-			case JoyStick.DIRECTION_DOWN:
-				onNativeKeyUp(51);
-				onNativeKeyUp(32);
-				onNativeKeyUp(29);
-				onNativeKeyDown(47);
-				break;
-			case JoyStick.DIRECTION_DOWN_LEFT:
-				onNativeKeyUp(51);
-				onNativeKeyUp(32);
-				onNativeKeyDown(47);
-				onNativeKeyDown(29);
-				break;
-			case JoyStick.DIRECTION_LEFT:
-				onNativeKeyUp(51);
-				onNativeKeyUp(32);
-				onNativeKeyUp(47);
-				onNativeKeyDown(29);
-				break;
-			case JoyStick.DIRECTION_LEFT_UP:
-				onNativeKeyUp(32);
-				onNativeKeyUp(47);
-				onNativeKeyDown(29);
-				onNativeKeyDown(51);
-				break;
-		}
-	}
-
-	@Override
-	public void onTap() {
-
-	}
-
-	@Override
-	public void onDoubleTap() {
-
 	}
 
 	@Override

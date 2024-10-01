@@ -217,13 +217,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build JoyStick Dependency
-        working-directory: ./app/libs/joystick
-        run: |
-          ./gradlew clean               --stacktrace --info
-          ./gradlew assembleRelease     --stacktrace --info
-          ./gradlew publishToMavenLocal --stacktrace --info
-
       - name: Build and Generate Package
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
