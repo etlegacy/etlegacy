@@ -2519,8 +2519,32 @@ gitem_t *BG_FindItemForClassName(const char *className)
 }
 
 /**
+ * @brief Old Version of 'BG_PlayerTouchesItem' retained for intersect checking Objectives.
+ * @param[in] ps
+ * @param[in] item
+ * @param[in] atTime
+ * @return
+ */
+qboolean BG_PlayerTouchesObjective(playerState_t *ps, entityState_t *item, int atTime)
+{
+	vec3_t origin;
+
+	BG_EvaluateTrajectory(&item->pos, atTime, origin, qfalse, item->effect2Time);
+
+	// we are ignoring ducked differences here
+	return (ps->origin[0] - origin[0] > 36
+	        || ps->origin[0] - origin[0] < -36
+	        || ps->origin[1] - origin[1] > 36
+	        || ps->origin[1] - origin[1] < -36
+	        || ps->origin[2] - origin[2] > 36
+	        || ps->origin[2] - origin[2] < -36);
+}
+
+/**
  * @brief Items can be picked up without actually touching their physical bounds to make
- *        grabbing them easier
+ *        grabbing them easier.
+ *
+ *        New Version that checks in a cylinder instead of a box.
  * @param[in] ps
  * @param[in] item
  * @param[in] atTime
@@ -3776,7 +3800,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
  * [0]  = names      - rank name
  * [1]  = miniNames  - mini rank name
  * [2]  = soundNames - sound to play on rank promotion
- * 
+ *
  * @todo cgame only. move ?
  */
 ranktable_t rankTable[2][NUM_EXPERIENCE_LEVELS] =
