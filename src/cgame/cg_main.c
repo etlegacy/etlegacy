@@ -222,6 +222,8 @@ vmCvar_t cg_quickMessageAlt;
 vmCvar_t cg_redlimbotime;
 vmCvar_t cg_bluelimbotime;
 
+vmCvar_t cg_limboClassClickConfirm;
+
 vmCvar_t cg_antilag;
 
 vmCvar_t developer;
@@ -505,6 +507,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_gameType,                 "g_gametype",                  "0",           0,                            0 }, // communicated by systeminfo
 	{ &cg_bluelimbotime,            "",                            "30000",       0,                            0 }, // communicated by systeminfo
 	{ &cg_redlimbotime,             "",                            "30000",       0,                            0 }, // communicated by systeminfo
+	{ &cg_limboClassClickConfirm,   "cg_limboClassClickConfirm",   "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawNotifyText,           "cg_drawNotifyText",           "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_quickMessageAlt,          "cg_quickMessageAlt",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_antilag,                  "g_antilag",                   "1",           0,                            0 },
