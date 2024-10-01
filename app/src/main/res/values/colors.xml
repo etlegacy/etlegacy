@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+	<color name="toolbar_key_text_released">#FF313131</color>
+    <color name="toolbar_key_bg_released">#FFE4E7E9</color>
+    <color name="toolbar_key_text_pressed">#FFFFFFFF</color>
+    <color name="toolbar_key_bg_pressed">#FFD4D8DA</color>
+    <color name="toolbar_background">#FFEFF3FA</color>
+	<color name="theme_etw_main_color">#FFA7605A</color>
 </resources>

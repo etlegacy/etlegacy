@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingLeft="1dp"
+    android:paddingRight="1dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/theme"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Spinner
+            android:id="@+id/controls_theme_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:dropDownWidth="128dp"
+            android:layout_gravity="right|center_vertical"
+            android:spinnerMode="dropdown"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/controls_theme_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:divider="#FFFFFF"
+        android:dividerHeight="0.1dp"
+        android:dividerPadding="1dp"
+        android:overScrollMode="always"
+        />
+
+</LinearLayout>
+

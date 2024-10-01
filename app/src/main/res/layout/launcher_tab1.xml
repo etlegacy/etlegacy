@@ -1,0 +1,920 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myapp="http://schemas.android.com/apk/res/com.karin.idTech4Amm"
+    android:id="@+id/launcher_tab1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/lay_tab1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_cmdline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/commandline" />
+
+                <Switch
+                    android:id="@+id/readonly_command"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="false"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/edt_cmdline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:imeOptions="flagNoExtractUi"
+                android:textSize="16sp"
+                android:inputType="textNoSuggestions|textMultiLine"/>
+
+            <LinearLayout
+                android:id="@+id/temp_cmdline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edt_cmdline_temp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:textSize="16sp"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textNoSuggestions|textMultiLine" />
+
+                <Switch
+                    android:id="@+id/editable_temp_command"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="false"/>
+            </LinearLayout>
+            <!--<TextView
+                android:id="@+id/edt_cmdline_temp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF000000"
+                android:textSize="14sp"
+                android:visibility="gone"
+                />-->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_path"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="@string/game_working_directory" />
+
+            <TextView
+                android:id="@+id/show_directory_helper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="@string/tips"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom">
+
+                <EditText
+                    android:id="@+id/edt_path"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textNoSuggestions">
+
+                </EditText>
+
+                <Button
+                    android:id="@+id/launcher_tab1_game_data_chooser_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chooser"
+                    android:textAllCaps="false">
+
+                </Button>
+
+            </LinearLayout>
+
+            <com.karin.idTech4Amm.widget.Divider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                myapp:label="@string/_mod"
+                myapp:lineColor="@color/launcher_divider_color" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        android:id="@+id/launcher_fs_game"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/game_cvar_fs_game" />
+                    <TextView
+                        android:id="@+id/launcher_fs_game_cvar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="" />
+                    <TextView
+                        android:id="@+id/launcher_fs_game_subdir"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
+                        android:layout_gravity="center_vertical"
+                        android:text="" />
+                </LinearLayout>
+
+                <Switch
+                    android:id="@+id/collapse_mods"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:checked="false"/>
+            </LinearLayout>
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/mods_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/mods_container_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <RadioGroup
+                android:id="@+id/rg_fs_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_q4game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_preygame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_q1game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_q2game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_q3game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_rtcwgame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_tdmgame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_d3bfggame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_doomgame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/rg_fs_etwgame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+
+        <LinearLayout
+            android:id="@+id/mod_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom">
+
+                <CheckBox
+                    android:id="@+id/fs_game_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user_mod" />
+
+                <LinearLayout
+                    android:id="@+id/launcher_tab1_user_game_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom">
+
+                    <EditText
+                        android:id="@+id/edt_fs_game"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/input_your_mod_folder_name"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="textNoSuggestions"/>
+
+                    <Button
+                        android:id="@+id/launcher_tab1_game_mod_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chooser"
+                        android:textAllCaps="false"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dll_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/find_dll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/find_game_library_in_game_data_directory" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="0dp"
+                    android:text="@string/using_external_game_library"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/renderer_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Lighting -->
+                <com.karin.idTech4Amm.widget.Divider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    myapp:label="@string/lighting"
+                    myapp:lineColor="@color/launcher_divider_color" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:text="@string/light_model_cvar_harm_r_lightmodel" />
+
+                <RadioGroup
+                    android:id="@+id/rg_harm_r_lightingModel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/harm_r_lightModel_phong"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/phong" />
+
+                    <RadioButton
+                        android:id="@+id/harm_r_lightModel_blinn_phong"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/blinn_phong" />
+
+                    <RadioButton
+                        android:id="@+id/harm_r_lightModel_pbr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pbr" />
+
+                    <RadioButton
+                        android:id="@+id/harm_r_lightModel_ambient"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ambient" />
+
+                    <RadioButton
+                        android:id="@+id/harm_r_lightModel_nolighting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/nolighting" />
+
+                </RadioGroup>
+
+                <LinearLayout
+                    android:id="@+id/launcher_layout_specular_exponent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/specular_exponent_cvar_harm_r_specularexponent" />
+
+                    <EditText
+                        android:id="@+id/edt_harm_r_specularExponent"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/specular_exponent_in_interaction_light_model_default_is_4_0"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal|textNoSuggestions"
+                        android:text="3.0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/launcher_layout_specular_exponent_blinnphong"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/blinnphong_specular_exponent_cvar_harm_r_specularexponentblinnphong" />
+
+                    <EditText
+                        android:id="@+id/edt_harm_r_specularExponentBlinnPhong"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/blinnphong_specular_exponent"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal|textNoSuggestions"
+                        android:text="12.0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/launcher_layout_specular_exponent_pbr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/blinnphong_specular_exponent_cvar_harm_r_specularexponentpbr" />
+
+                    <EditText
+                        android:id="@+id/edt_harm_r_specularExponentPBR"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/pbr_specular_exponent"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal|textNoSuggestions"
+                        android:text="1.0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/launcher_layout_ambient_lighting_brightness"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/ambient_lighting_brightness_harm_r_ambientlightingbrightness" />
+
+                    <EditText
+                        android:id="@+id/edt_harm_r_ambientLightingBrightness"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/ambient_lighting_brightness"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal|textNoSuggestions"
+                        android:text="1.0" />
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/nolight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/disable_lighting" />
+
+                <!-- Shadow -->
+                <com.karin.idTech4Amm.widget.Divider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    myapp:label="@string/shadow"
+                    myapp:lineColor="@color/launcher_divider_color" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:text="@string/shadow_cvar_r_useShadowMapping" />
+
+                <RadioGroup
+                    android:id="@+id/rg_harm_r_shadow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rg_harm_r_shadow_stencil_volume"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/stencil_shadow" />
+
+                    <RadioButton
+                        android:id="@+id/rg_harm_r_shadow_mapping"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/shadow_mapping" />
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/shadow_mapping" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/launcher_layout_shadowMapAlpha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/shadow_mapping_alpha_harm_r_shadowmapalpha" />
+
+                        <EditText
+                            android:id="@+id/edt_harm_r_shadowMapAlpha"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/_0_1_default_0_5"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="numberDecimal|textNoSuggestions"
+                            android:text="1.0" />
+                    </LinearLayout>
+
+                    <CheckBox
+                        android:id="@+id/cb_perforatedShadow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/render_perforated_material_shadow_r_forceshadowmapsonalphatestedsurfaces" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/stencil_shadow" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:orientation="vertical">
+
+                    <CheckBox
+                        android:id="@+id/cb_stencilShadowSoft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/soft_stencil_shadow_only_opengles3_1_harm_r_stencilshadowsoft" />
+
+                    <CheckBox
+                        android:id="@+id/cb_stencilShadowTranslucent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/translucent_stencil_shadow" />
+
+                    <LinearLayout
+                        android:id="@+id/launcher_layout_stencilShadowAlpha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/stencil_shadow_alpha_harm_r_stencilshadowalpha" />
+
+                        <EditText
+                            android:id="@+id/edt_harm_r_stencilShadowAlpha"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/_0_1_default_0_5"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="numberDecimal|textNoSuggestions"
+                            android:text="1.0" />
+                    </LinearLayout>
+
+                    <CheckBox
+                        android:id="@+id/cb_stencilShadowCombine"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/combine_stencil_shadow_harm_r_stencilshadowcombine" />
+                </LinearLayout>
+
+                <!-- Render system -->
+                <com.karin.idTech4Amm.widget.Divider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    myapp:label="@string/renderer"
+                    myapp:lineColor="@color/launcher_divider_color" />
+
+                <CheckBox
+                    android:id="@+id/multithreading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/multi_threading" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:text="@string/clear_vertex_buffer_cvar_harm_r_clearvertexbuffer" />
+                <RadioGroup
+                    android:id="@+id/r_harmclearvertexbuffer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/r_harmclearvertexbuffer_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/don_t_clear_and_do_nothing" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/it_is_default_original_graphics_maybe_and_out_of_memory_lead_to_crash_with_flash_screen"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/r_harmclearvertexbuffer_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/force_clear_vertex_buffer_on_every_end_frame" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/if_graphics_out_of_memory_and_crash_suggest_to_force_clear_vertex_buffer"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/r_harmclearvertexbuffer_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/force_delete_vertex_buffer_on_every_end_frame" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/also_like_2nd_and_delete_vbo_handle_maybe_slower_but_memory_safer"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="12sp" />
+                </RadioGroup>
+
+                <LinearLayout
+                    android:id="@+id/launcher_layout_max_fps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/maximum_fps_limit_0_unlimited" />
+
+                    <EditText
+                        android:id="@+id/edt_harm_r_maxFps"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/limit_maximum_fps_default_is_0"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="number|textNoSuggestions"
+                        android:text="0" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:text="@string/automatic_setup_aspect_ratio_harm_r_autoaspectratio" />
+                <RadioGroup
+                    android:id="@+id/rg_r_autoAspectRatio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/rb_r_autoAspectRatio_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setup_cvar_r_aspectratio_manually" />
+
+                    <RadioButton
+                        android:id="@+id/rb_r_autoAspectRatio_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/force_setup_cvar_r_aspectratio_to_1_using_screen_real_aspect_ratio" />
+
+                    <RadioButton
+                        android:id="@+id/rb_r_autoAspectRatio_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/automatic_setup_cvar_r_aspectratio_to_0_1_2_convert_screen_aspect_ratio_to_4_3_16_9_16_10" />
+                </RadioGroup>
+
+                <!-- Image -->
+                <com.karin.idTech4Amm.widget.Divider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    myapp:label="@string/image"
+                    myapp:lineColor="@color/launcher_divider_color" />
+
+                <CheckBox
+                    android:id="@+id/usedxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/use_dxt_textures_tegra_only_others_no_effect" />
+
+                <CheckBox
+                    android:id="@+id/useetc1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/use_etc1_or_rgba4444_compression" />
+
+                <CheckBox
+                    android:id="@+id/useetc1cache"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/use_etc1_or_rgba4444_cache" />
+
+                <CheckBox
+                    android:id="@+id/image_useetc2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/use_etc2_compression" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sound_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.karin.idTech4Amm.widget.Divider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    myapp:label="@string/_sound"
+                    myapp:lineColor="@color/launcher_divider_color" />
+
+                <TextView
+                    android:id="@+id/launcher_s_driver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:text="@string/sound" />
+
+                <RadioGroup
+                    android:id="@+id/rg_s_driver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/s_driver_audiotrack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="AudioTrack" />
+
+                    <RadioButton
+                        android:id="@+id/s_driver_opensles"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OpenSLES" />
+
+                </RadioGroup>
+
+                <CheckBox
+                    android:id="@+id/cb_s_useOpenAL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/using_openal" />
+
+                <CheckBox
+                    android:id="@+id/cb_s_useEAXReverb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/using_efx_reverb" />
+            </LinearLayout>
+
+                <com.karin.idTech4Amm.widget.Divider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    myapp:label="@string/other"
+                    myapp:lineColor="@color/launcher_divider_color" />
+
+                <CheckBox
+                    android:id="@+id/skip_intro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/skip_intro" />
+                <CheckBox
+                    android:id="@+id/auto_quick_load"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/load_quicksave_when_start_game" />
+
+            <LinearLayout
+                android:id="@+id/extras_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/launcher_tab1_command_record"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="@string/command_record"
+                        android:textAllCaps="false" />
+
+                    <Button
+                        android:id="@+id/launcher_tab1_edit_cvar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="@string/edit_cvar"
+                        android:textAllCaps="false" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/launcher_tab1_edit_autoexec"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="@string/edit_autoexec_cfg"
+                        android:textAllCaps="false" />
+
+                    <Button
+                        android:id="@+id/launcher_tab1_edit_doomconfig"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="@string/edit_doomconfig_cfg"
+                        android:textAllCaps="false" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/other_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/launcher_tab1_game_lib_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="@string/gamelib"
+                        android:textAllCaps="false" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
+

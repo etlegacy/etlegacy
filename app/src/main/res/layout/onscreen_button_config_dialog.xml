@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+    android:padding="10dp"
+	android:orientation="vertical">
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:id="@+id/onscreen_button_config_dialog_type"
+        android:spinnerMode="dropdown"
+        android:entries="@array/onscreen_type_labels"/>
+
+	<LinearLayout
+        android:id="@+id/onscreen_button_config_dialog_button_hold_layout"
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:orientation="horizontal">
+
+		<TextView
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="center_vertical"
+            android:text="@string/toggle_key"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<CheckBox
+			android:id="@+id/onscreen_button_config_dialog_hold"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="right|center_vertical"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+        android:id="@+id/onscreen_button_config_dialog_button_style_layout"
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:orientation="horizontal">
+		<TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="center_vertical"
+            android:text="@string/touch_type"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+		<Spinner
+			android:id="@+id/onscreen_button_config_dialog_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:dropDownWidth="128dp"
+			android:layout_gravity="right|center_vertical"
+			android:spinnerMode="dropdown"
+			android:entries="@array/onscreen_button_style_labels"/>
+	</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/onscreen_button_config_dialog_slider_style_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/slider_type"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Spinner
+            android:id="@+id/onscreen_button_config_dialog_slider_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:dropDownWidth="128dp"
+            android:layout_gravity="right|center_vertical"
+            android:spinnerMode="dropdown"
+            android:entries="@array/onscreen_slider_style_labels"/>
+	</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/onscreen_button_config_dialog_key_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/key"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Spinner
+            android:id="@+id/onscreen_button_config_dialog_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:dropDownWidth="196dp"
+            android:layout_gravity="right|center_vertical"
+            android:spinnerMode="dropdown"
+            android:entries="@array/key_map_names"/>
+	</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/onscreen_button_config_dialog_key2_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/key_2"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Spinner
+            android:id="@+id/onscreen_button_config_dialog_key2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:dropDownWidth="196dp"
+            android:layout_gravity="right|center_vertical"
+            android:spinnerMode="dropdown"
+            android:entries="@array/key_map_names"/>
+	</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/onscreen_button_config_dialog_key3_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/key_3"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Spinner
+            android:id="@+id/onscreen_button_config_dialog_key3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:dropDownWidth="196dp"
+            android:layout_gravity="right|center_vertical"
+            android:spinnerMode="dropdown"
+            android:entries="@array/key_map_names"/>
+	</LinearLayout>
+
+</LinearLayout>
+

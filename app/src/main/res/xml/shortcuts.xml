@@ -1,0 +1,62 @@
+<shortcuts xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="shortcut_game"
+        android:enabled="true"
+        android:icon="@drawable/icon"
+        android:shortcutShortLabel="@string/app_name"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.RUN"
+            android:targetPackage="com.karin.idTech4Amm"
+            android:targetClass="com.n0n3m4.q3e.Q3EMain"
+            android:name="android.shortcut.conversation"/>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_prey"
+        android:enabled="true"
+        android:icon="@drawable/prey_icon"
+        android:shortcutShortLabel="@string/prey_2006"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.karin.idTech4Amm"
+            android:targetClass="com.n0n3m4.DIII4A.GameLauncher"
+            android:name="android.shortcut.conversation">
+            <extra android:name="game" android:value="prey2006"/>
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_q4"
+        android:enabled="true"
+        android:icon="@drawable/q4_icon"
+        android:shortcutShortLabel="@string/quake_4"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.karin.idTech4Amm"
+            android:targetClass="com.n0n3m4.DIII4A.GameLauncher"
+            android:name="android.shortcut.conversation">
+            <extra android:name="game" android:value="quake4"/>
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_d3"
+        android:enabled="true"
+        android:icon="@drawable/d3_icon"
+        android:shortcutShortLabel="@string/doom_3"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.karin.idTech4Amm"
+            android:targetClass="com.n0n3m4.DIII4A.GameLauncher"
+            android:name="android.shortcut.conversation">
+            <extra android:name="game" android:value="doom3"/>
+        </intent>
+    </shortcut>
+
+</shortcuts>

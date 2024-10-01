@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical">
+
+	<RelativeLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        >
+
+		<TextView
+			android:id="@+id/seek_bar_dialog_preference_layout_min"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:gravity="center_vertical|start"
+			android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
+			android:text="0"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:padding="5dp"/>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="5dp"
+        >
+            <TextView
+                android:id="@+id/seek_bar_dialog_preference_layout_progress"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="0"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000"/>
+            <TextView
+                android:id="@+id/seek_bar_dialog_preference_layout_suffix"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+        </LinearLayout>
+
+		<TextView
+			android:id="@+id/seek_bar_dialog_preference_layout_max"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:gravity="center_vertical|end"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:text="100"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:padding="5dp"/>
+	</RelativeLayout>
+
+    <SeekBar
+        android:id="@+id/seek_bar_dialog_preference_layout_seekbar"
+        android:layout_height="wrap_content"
+		android:layout_width="match_parent"/>
+
+</LinearLayout>
+

@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/onscreen_button_config_weapon_panel"
+        android:title="@string/weapon_panel"
+        android:showAsAction="ifRoom"/>
+    <item android:id="@+id/onscreen_button_config_reset"
+        android:title="@string/reset"
+        android:showAsAction="never"/>
+</menu>

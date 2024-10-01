@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/debug"
+>
+
+    <PreferenceCategory
+        android:key="debug"
+        android:title="@string/debug"
+    >
+        <com.karin.idTech4Amm.widget.SeekBarPreference
+            android:dialogTitle="@string/update_interval_second_0_disable"
+            android:key="harm_render_mem_status"
+            android:summary="@string/if_you_do_not_want_to_debug_memory_usage_status_please_do_not_check_it_because_it_is_a_taking_time_operation"
+            android:persistent="true"
+            app:max="120"
+            app:min="0"
+            app:suffix="(s)"
+            android:title="@string/render_memory_status_0_is_disable"
+            android:defaultValue="0"
+        />
+        <CheckBoxPreference
+            android:title="@string/no_handle_signals"
+            android:key="harm_no_handle_signals"
+            android:persistent="true"
+            android:defaultValue="false"
+            android:summary="@string/do_not_handle_signals"
+        />
+        <Preference
+            android:key="last_dalvik_crash_info"
+            android:title="@string/last_dalvik_crash_info"
+            android:summary="@string/last_dalvik_crash_info"
+            android:persistent="false"/>
+        <CheckBoxPreference
+            android:title="@string/load_local_engine_library"
+            android:key="harm_load_local_engine_lib"
+            android:persistent="true"
+            android:defaultValue="false"
+            android:summary="@string/load_local_engine_library"
+            />
+        <ListPreference
+            android:title="Event queue"
+            android:key="harm_event_queue"
+            android:persistent="true"
+            android:defaultValue="0"
+            android:summary="Choose event queue scheme"
+            android:entryValues="@array/event_queue_values"
+            android:entries="@array/event_queue_labels"
+            />
+        <Preference
+            android:key="get_pid"
+            android:title="@string/pid"
+            android:summary="@string/get_application_pid"
+            android:persistent="false"/>
+        <Preference
+            android:key="open_logcat"
+            android:title="@string/open_logcat"
+            android:summary="@string/view_logcat"
+            android:persistent="false"/>
+        <Preference
+            android:key="open_documentsui"
+            android:title="@string/open_documents"
+            android:summary="@string/open_system_file_browser"
+            android:persistent="false"/>
+    </PreferenceCategory>
+    
+</PreferenceScreen>

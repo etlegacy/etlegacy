@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/config_editor_menu_save"
+        android:title="@string/save"
+        android:showAsAction="always"/>
+    <item android:id="@+id/config_editor_menu_reload"
+        android:title="@string/reload"
+        android:showAsAction="never"/>
+</menu>

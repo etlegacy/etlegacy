@@ -34,7 +34,104 @@
     <!-- Allow access to bluetooth -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
-    <application
+	<!--android:debuggable="true"-->
+	<application
+		android:icon="@mipmap/ic_launcher"
+		android:largeHeap="true"
+		android:label="@string/app_name"
+		android:appCategory="game"
+		android:isGame="true"
+		android:requestLegacyExternalStorage="true"
+		android:preserveLegacyExternalStorage="true"
+		android:hasFragileUserData="true"
+		tools:ignore="HardcodedDebugMode,UnusedAttribute">
+		<activity
+			android:name="com.n0n3m4.DIII4A.GameLauncher"
+			android:label="@string/app_name"
+			android:windowSoftInputMode="stateHidden|stateUnchanged"
+			android:exported="true"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<meta-data android:name="android.app.shortcuts"
+				android:resource="@xml/shortcuts" />
+		</activity>
+		<activity android:label="@string/app_name"
+			android:screenOrientation="landscape"
+			android:launchMode="singleTask"
+			android:exported="true"
+			android:name="com.n0n3m4.q3e.Q3EMain"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+		</activity>
+		<activity android:label="@string/app_name"
+			android:screenOrientation="landscape"
+			android:launchMode="singleTask"
+			android:exported="true"
+			android:name="com.n0n3m4.q3e.Q3EUiConfig"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+		</activity>
+
+		<activity android:label="@string/config_editor_name"
+			android:launchMode="standard"
+			android:exported="true"
+			android:name="com.karin.idTech4Amm.ConfigEditorActivity"
+			android:windowSoftInputMode="stateHidden|stateUnchanged"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+		</activity>
+		<activity android:label="@string/key_config_page_name"
+			android:launchMode="standard"
+			android:exported="true"
+			android:name="com.karin.idTech4Amm.OnScreenButtonConfigActivity"
+			android:windowSoftInputMode="stateHidden|stateUnchanged"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+		</activity>
+		<activity android:label="Logcat"
+			android:launchMode="standard"
+			android:exported="true"
+			android:name="com.karin.idTech4Amm.LogcatActivity"
+			android:windowSoftInputMode="stateHidden|stateUnchanged"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+		</activity>
+
+		<provider
+			android:name="com.karin.idTech4Amm.AndroidDataDocumentsProvider"
+			android:authorities="com.karin.idTech4Amm.android.data.documents"
+			android:exported="true"
+			android:grantUriPermissions="true"
+			android:permission="android.permission.MANAGE_DOCUMENTS">
+			<intent-filter>
+				<action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+			</intent-filter>
+		</provider>
+
+		<provider
+			android:name="com.karin.idTech4Amm.DataUserDocumentsProvider"
+			android:authorities="com.karin.idTech4Amm.data.user.documents"
+			android:exported="true"
+			android:grantUriPermissions="true"
+			android:permission="android.permission.MANAGE_DOCUMENTS">
+			<intent-filter>
+				<action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+			</intent-filter>
+		</provider>
+
+		<provider
+			android:name="com.karin.idTech4Amm.DIII4ADocumentsProvider"
+			android:authorities="com.karin.idTech4Amm.diii4a.documents"
+			android:exported="true"
+			android:grantUriPermissions="true"
+			android:permission="android.permission.MANAGE_DOCUMENTS">
+			<intent-filter>
+				<action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+			</intent-filter>
+		</provider>
+
+	</application>
+
+	<!--THIS IS OLD-->
+    <!--<application
         android:allowBackup="true"
 		android:requestLegacyExternalStorage="true"
 		android:hardwareAccelerated="true"
@@ -50,12 +147,12 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-			<!-- Let Android know that we can handle some USB devices and should receive this event -->
+			&lt;!&ndash; Let Android know that we can handle some USB devices and should receive this event &ndash;&gt;
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
         </activity>
-        <!--Do not pass accelerometer data to the app internals-->
+        &lt;!&ndash;Do not pass accelerometer data to the app internals&ndash;&gt;
         <meta-data android:name="SDL_ENV.SDL_ACCELEROMETER_AS_JOYSTICK" android:value="0"/>
         <activity
             android:name=".ETLActivity"
@@ -67,6 +164,6 @@
 			android:preferMinimalPostProcessing="true"
             android:screenOrientation="sensorLandscape" >
         </activity>
-    </application>
+    </application>-->
 
 </manifest>

@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/logcat_menu_up"
+        android:title="@string/scroll_to_top"
+        android:showAsAction="always"/>
+    <item android:id="@+id/logcat_menu_down"
+        android:title="@string/scroll_to_bottom"
+        android:showAsAction="always"/>
+    <item android:id="@+id/logcat_menu_dump"
+        android:title="@string/save"
+        android:showAsAction="never"/>
+    <item android:id="@+id/logcat_menu_run"
+        android:title=""
+        android:showAsAction="never"/>
+    <item android:id="@+id/logcat_menu_scroll"
+        android:title=""
+        android:showAsAction="never"
+        android:checkable="true"
+        />
+    <item android:id="@+id/logcat_menu_clear"
+        android:title="@string/clear"
+        android:showAsAction="never"/>
+</menu>
