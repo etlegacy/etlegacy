@@ -2790,8 +2790,11 @@ void G_HQSay(gentity_t *other, int color, const char *name, const char *message)
  */
 void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize)
 {
-	char cmd[6], text[MAX_SAY_TEXT];
+	char cmd[6];
+#ifdef FEATURE_LUA
+	char       text[MAX_SAY_TEXT];
 	const char *replacedMessage;
+#endif
 
 	if (!other || !other->inuse || !other->client)
 	{
@@ -2809,67 +2812,78 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 	{
 		return;
 	}
-	else
+
+	if (mode == SAY_BUDDY)      // send only to people who have the sender on their buddy list
 	{
-		if (mode == SAY_BUDDY)      // send only to people who have the sender on their buddy list
+		if (ent->s.clientNum != other->s.clientNum)
 		{
-			if (ent->s.clientNum != other->s.clientNum)
+			fireteamData_t *ft1, *ft2;
+			if (!G_IsOnFireteam(other - g_entities, &ft1))
 			{
-				fireteamData_t *ft1, *ft2;
-				if (!G_IsOnFireteam(other - g_entities, &ft1))
-				{
-					return;
-				}
-				if (!G_IsOnFireteam(ent - g_entities, &ft2))
-				{
-					return;
-				}
-				if (ft1 != ft2)
-				{
-					return;
-				}
+				return;
+			}
+			if (!G_IsOnFireteam(ent - g_entities, &ft2))
+			{
+				return;
+			}
+			if (ft1 != ft2)
+			{
+				return;
 			}
 		}
+	}
 
-		if (COM_BitCheck(other->client->sess.ignoreClients, (ent - g_entities)))
-		{
-			//Q_strncpyz(cmd, "print", sizeof(cmd));
-		}
-		else if (mode == SAY_TEAM || mode == SAY_BUDDY)
-		{
-			Q_strncpyz(cmd, "tchat", sizeof(cmd));
+	if (COM_BitCheck(other->client->sess.ignoreClients, (ent - g_entities)))
+	{
+		//Q_strncpyz(cmd, "print", sizeof(cmd));
+	}
+	else if (mode == SAY_TEAM || mode == SAY_BUDDY)
+	{
+		Q_strncpyz(cmd, "tchat", sizeof(cmd));
 
-			replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
+#ifdef FEATURE_LUA
+		replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
+#endif
 
-			trap_SendServerCommand((int)(other - g_entities),
-			                       va("%s \"%c%c%s%s\" %i %i %i %i %i",
-			                          cmd,
-			                          Q_COLOR_ESCAPE, color, replacedMessage,
-			                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
-			                          (int)(ent - g_entities), localize,
-			                          (int)ent->s.pos.trBase[0],
-			                          (int)ent->s.pos.trBase[1],
-			                          (int)ent->s.pos.trBase[2]));
-		}
-		else
-		{
-			Q_strncpyz(cmd, "chat", sizeof(cmd));
+		trap_SendServerCommand((int)(other - g_entities),
+		                       va("%s \"%c%c%s%s\" %i %i %i %i %i",
+		                          cmd,
+		                          Q_COLOR_ESCAPE, color,
+#ifdef FEATURE_LUA
+		                          replacedMessage,
+#else
+		                          message,
+#endif
+		                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
+		                          (int)(ent - g_entities), localize,
+		                          (int)ent->s.pos.trBase[0],
+		                          (int)ent->s.pos.trBase[1],
+		                          (int)ent->s.pos.trBase[2]));
+	}
+	else
+	{
+		Q_strncpyz(cmd, "chat", sizeof(cmd));
 
-			replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
+#ifdef FEATURE_LUA
+		replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
+#endif
 
-			trap_SendServerCommand((int)(other - g_entities),
-			                       va("%s \"%s%c%c%s%s\" %i %i",
-			                          cmd, name, Q_COLOR_ESCAPE, color,
-			                          replacedMessage,
-			                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
-			                          (int)(ent - g_entities), localize));
-		}
+		trap_SendServerCommand((int)(other - g_entities),
+		                       va("%s \"%s%c%c%s%s\" %i %i",
+		                          cmd, name, Q_COLOR_ESCAPE, color,
+#ifdef FEATURE_LUA
+		                          replacedMessage,
+#else
+		                          message,
+#endif
+		                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
+		                          (int)(ent - g_entities), localize));
+	}
 
 #ifdef FEATURE_OMNIBOT
-		// Omni-bot: Tell the bot about the chat message
-		Bot_Event_ChatMessage(other - g_entities, ent, mode, message);
+	// Omni-bot: Tell the bot about the chat message
+	Bot_Event_ChatMessage(other - g_entities, ent, mode, message);
 #endif
-	}
 }
 
 /**
@@ -2974,8 +2988,11 @@ void G_Say_f(gentity_t *ent, int mode /*, qboolean arg0*/)
  */
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum, int vsayNum, const char *customChat)
 {
-	char *cmd, text[MAX_SAY_TEXT];
+	char *cmd;
+#ifdef FEATURE_LUA
+	char       text[MAX_SAY_TEXT];
 	const char *replacedMessage;
+#endif
 
 	if (!other)
 	{
@@ -3047,15 +3064,25 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 		return;
 	}
 
+#ifdef FEATURE_LUA
 	replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, customChat, text, sizeof(text));
+#endif
 
 	if (mode == SAY_TEAM || mode == SAY_BUDDY)
 	{
+#ifdef FEATURE_LUA
 		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, replacedMessage));
+#else
+		CPx(other - g_entities, va("%s %d %d %s %i %i %i %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, vsayNum, customChat));
+#endif
 	}
 	else
 	{
+#ifdef FEATURE_LUA
 		CPx(other - g_entities, va("%s %d %d %s %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, replacedMessage));
+#else
+		CPx(other - g_entities, va("%s %d %d %s %f %i \"%s\"", cmd, voiceonly, (int)(ent - g_entities), id, (double)randomNum, vsayNum, customChat));
+#endif
 	}
 }
 
