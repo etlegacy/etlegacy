@@ -56,7 +56,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
 	{ HUDF(ranktext),           CG_DrawRank,                      0.20f,  { 0 } },
 	{ HUDF(statsdisplay),       CG_DrawSkills,                    0.25f,  { "Column" } },
-	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash" } },
+	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash", "Dynamic Heat Color" } },
 	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 0.25f,  { "Dynamic Color" } },
 	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           0.20f,  { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row"} },// FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),      CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
@@ -190,7 +190,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->xptext             = CG_getComponent(108, 465, 57, 14, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
 	hud->ranktext           = CG_getComponent(167, 465, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);    // disable
 	hud->statsdisplay       = CG_getComponent(116, 394, 42, 70, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawSkills);
-	hud->weaponicon         = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
+	hud->weaponicon         = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1 | 2, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
 	hud->weaponammo         = CG_getComponent(SCREEN_WIDTH - 82, 458, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, CG_DrawAmmoCount);
 	hud->fireteam           = CG_getComponent(10, 10, 350, 100, qtrue, 1, 100.f, colorWhite, HUD_Background, qtrue, HUD_BackgroundAlt, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawFireTeamOverlay);
 	hud->popupmessages      = CG_getComponent(4, 245, 422, 96, qtrue, 64, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
@@ -1224,7 +1224,7 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 	}
 
 	// Draw weapon icon and overheat bar
-	CG_DrawWeapHeat(&comp->location, HUD_HORIZONTAL);
+	CG_DrawWeapHeat(&comp->location, HUD_HORIZONTAL, (comp->style & 2));
 
 	// weapon flash color
 	if (comp->style & 1)

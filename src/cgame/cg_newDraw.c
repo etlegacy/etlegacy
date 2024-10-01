@@ -609,10 +609,12 @@ void CG_DrawWeapStability(hudComponent_t *comp)
  * @brief CG_DrawWeapHeat
  * @param[in] rect
  * @param[in] align
+ * @param[in] dynamicColor
  */
-void CG_DrawWeapHeat(rectDef_t *rect, int align)
+void CG_DrawWeapHeat(rectDef_t *rect, int align, qboolean dynamicColor)
 {
 	static vec4_t color = { 1, 0, 0, 0.2f }, color2 = { 1, 0, 0, 0.5f };
+	static vec4_t dynColor = { 1, 1, 0, 0.3f }, dynColor2 = { 1, 0, 0, 0.7f };
 	int           flags = 0;
 
 	if (!(cg.snap->ps.curWeapHeat))
@@ -631,7 +633,11 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 
 	flags |= BAR_LERP_COLOR;
 
-	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
+	if (dynamicColor) {
+		CG_FilledBar(rect->x, rect->y, rect->w, rect->h, dynColor, dynColor2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
+	} else {
+		CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
+	}
 }
 
 #ifdef FEATURE_EDV
