@@ -1285,7 +1285,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	team_t          team;
 	modelViewType_t modelViewType = ps ? W_FP_MODEL : W_TP_MODEL;
 	float           x, y;
-	vec3_t          forward, right, up;
+	vec3_t          forward, left, right, up;
+	qboolean        shouldDrawMuzzleFlash = (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && ps && isFirstPerson));
 
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
@@ -1379,8 +1380,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			return;
 		}
 
-		// render mg_42 muzzle flash
-		if (cg_muzzleFlash.integer && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
+		// render mg_42 muzzle flash in 3P
+		if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
 			Com_Memset(&flash, 0, sizeof(flash));
 			flash.renderfx = RF_LIGHTING_ORIGIN;
@@ -1389,10 +1390,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			VectorCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.origin, flash.origin);
 			AxisCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.axis, flash.axis);
 
-			if (!(cg_muzzleFlash.integer == 2 && ps && isFirstPerson))
-			{
-				trap_R_AddRefEntityToScene(&flash);
-			}
+			trap_R_AddRefEntityToScene(&flash);
 
 			// add dynamic light
 			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
@@ -1403,12 +1401,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// stationary heavy weapon (e.g. misc_mg42, misc_aagun) muzzle flash
 	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
-		if (cg_muzzleFlash.integer && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
+		if (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && isPlayer) && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
-			if (!(cg_muzzleFlash.integer == 2 && ps && isFirstPerson))
-			{
-				CG_MG42EFX(cent);
-			}
+			CG_MG42EFX(cent);
 		}
 		return;
 	}
@@ -1985,8 +1980,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// @XXX hardcode offset flash positions, to correct wrong official
 	// muzzle locations in some cases
 	{
-		vec3_t forward;
-		float  flash_offset = 0.0f;
+		float flash_offset = 0.0f;
 
 		switch (weaponNum)
 		{
@@ -2006,6 +2000,19 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			if ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_RAISE)
 			{
 				flash_offset -= 0.5;
+			}
+			break;
+		case WP_MORTAR:
+		case WP_MORTAR2:
+		case WP_MORTAR_SET:
+		case WP_MORTAR2_SET:
+			if (!ps || cg.renderingThirdPerson)
+			{
+				AxisToAngles(flash.axis, angles);
+				AngleVectors(angles, forward, left, up);
+				VectorMA(flash.origin, 1.0, forward, flash.origin);
+				VectorMA(flash.origin, 8.5, left, flash.origin);
+				VectorMA(flash.origin, 9.0, up, flash.origin);
 			}
 			break;
 		default:
@@ -2050,17 +2057,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PANZER)
 			{
 				const int smoketime = (weaponNum == WP_BAZOOKA) ? 1910 : 1000;
-				if (cg_muzzleFlash.integer && cg.time - cent->firedTime < smoketime)
+				if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < smoketime)
 				{
-					if (!(cg_muzzleFlash.integer == 2 && ps && isFirstPerson))
+					if (!(rand() % 5))
 					{
-						if (!(rand() % 5))
-						{
-							float alpha = 1.0f - ((float)(cg.time - cent->firedTime) / (float)smoketime); // what fraction of smoketime are we at
+						float alpha = 1.0f - ((float)(cg.time - cent->firedTime) / (float)smoketime); // what fraction of smoketime are we at
 
-							alpha *= 0.25f; // .25 max alpha
-							CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
-						}
+						alpha *= 0.25f; // .25 max alpha
+						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
 					}
 				}
 			}
@@ -2068,17 +2072,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
-			if (ps && !cg.renderingThirdPerson && cg_muzzleFlash.integer && cg.time - cent->firedTime < 800)
+			if ((ps || !isFirstPerson) && shouldDrawMuzzleFlash && cg.time - cent->firedTime < 800)
 			{
-				if (!(cg_muzzleFlash.integer == 2 && ps && isFirstPerson))
-				{
-					CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 700, 16, 20, 30, .12f, 4.f);
-				}
+				CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 700, 16, 20, 30, .12f, 4.f);
 			}
 		}
 
 		// impulse flash
-		if (cg_muzzleFlash.integer && cg.time - cent->firedTime > MUZZLE_FLASH_TIME)
+		if (shouldDrawMuzzleFlash && cg.time - cent->firedTime > MUZZLE_FLASH_TIME)
 		{
 			// blue ignition flame if not firing flamer
 			if (weaponNum != WP_FLAMETHROWER)
@@ -2093,18 +2094,15 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (weaponNum == WP_STEN || weaponNum == WP_MP34)
 		{
-			if (cg_muzzleFlash.integer && cg.time - cent->firedTime < 100)
+			if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < 100)
 			{
-				if (!(cg_muzzleFlash.integer == 2 && ps && isFirstPerson))
+				if (ps)
 				{
-					if (ps)
-					{
-						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 500, 8, 20, 30, 0.13f, 7.f);
-					}
-					else
-					{
-						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 500, 8, 20, 30, 0.11f, 5.f);
-					}
+					CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 500, 8, 20, 30, 0.13f, 7.f);
+				}
+				else
+				{
+					CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 500, 8, 20, 30, 0.11f, 5.f);
 				}
 			}
 		}
@@ -2119,12 +2117,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 
 		// changed this so the muzzle flash stays onscreen for long enough to be seen
-		if (cg_muzzleFlash.integer && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
+		if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
-			if (!(cg_muzzleFlash.integer == 2 && ps && isFirstPerson))
-			{
-				trap_R_AddRefEntityToScene(&flash);
-			}
+			trap_R_AddRefEntityToScene(&flash);
 		}
 	}
 
@@ -2165,8 +2160,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 			if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
 			{
-				trap_R_AddLightToScene(muzzlePoint, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
-				                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
+				if (shouldDrawMuzzleFlash)
+				{
+					trap_R_AddLightToScene(muzzlePoint, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
+					                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
+				}
 			}
 		}
 		else
@@ -2322,7 +2320,8 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		gunoff[0] = 20;
 
-		if (cg_muzzleFlash.integer && cg.time - cg.predictedPlayerEntity.firedTime < MUZZLE_FLASH_TIME)
+		// jiggle the gun on firing
+		if (cg.time - cg.predictedPlayerEntity.firedTime < MUZZLE_FLASH_TIME)
 		{
 			gunoff[0] += random() * 2.f;
 		}
@@ -2359,12 +2358,12 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		VectorCopy(flash.origin, cg.tankflashorg);
 
-		if (cg_muzzleFlash.integer && cg.time - cg.predictedPlayerEntity.firedTime < MUZZLE_FLASH_TIME)
+		if (cg_muzzleFlash.integer == 1 && cg.time - cg.predictedPlayerEntity.firedTime < MUZZLE_FLASH_TIME)
 		{
-			if (!(cg_muzzleFlash.integer == 2 && ps))
-			{
-				trap_R_AddRefEntityToScene(&flash);
-			}
+			trap_R_AddRefEntityToScene(&flash);
+
+			// add dynamic light
+			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
 		}
 
 		return;
