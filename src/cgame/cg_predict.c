@@ -1114,6 +1114,12 @@ void CG_PredictPlayerState(void)
 
 	current = trap_GetCurrentCmdNumber();
 
+	// let server handle mounted MG42 cooldown since client doesn't know
+	// the heat values of each individual mounted gun in the map
+	// otherwise we fire excess overheat events when client exits and re-enters
+	// the gun, as the correct heat value is never assigned client side
+	cg.pmext.weapHeat[WP_DUMMY_MG42] = 0.0f;
+
 	// fill in the current cmd with the latest prediction from
 	// cg.pmext (#166)
 	Com_Memcpy(&oldpmext[current & cg.cmdMask], &cg.pmext, sizeof(pmoveExt_t));
