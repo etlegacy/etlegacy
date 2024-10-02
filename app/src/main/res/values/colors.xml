@@ -8,5 +8,17 @@
     <color name="toolbar_key_text_pressed">#FFFFFFFF</color>
     <color name="toolbar_key_bg_pressed">#FFD4D8DA</color>
     <color name="toolbar_background">#FFEFF3FA</color>
-	<color name="theme_etw_main_color">#FFA7605A</color>
+	
+	<color name="theme_doom3_main_color">#FF212121</color>
+    <color name="theme_quake4_main_color">#FF16492A</color>
+    <color name="theme_prey_main_color">#FF04ACFF</color>
+    <color name="theme_quake1_main_color">#FFCC7C3C</color>
+    <color name="theme_quake2_main_color">#FF363636</color>
+    <color name="theme_quake3_main_color">#FF614D44</color>
+    <color name="theme_rtcw_main_color">#FF330000</color>
+    <color name="theme_tdm_main_color">#FF763F20</color>
+    <color name="theme_d3bfg_main_color">#FFB54C13</color>
+    <color name="theme_gzdoom_main_color">#FF0C377A</color>
+    <color name="theme_etw_main_color">#FFA7605A</color>
+    <color name="launcher_divider_color">#FFCCCCCC</color>
 </resources>

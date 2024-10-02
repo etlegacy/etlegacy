@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2012 n0n3m4	
+	Copyright (C) 2012 n0n3m4
 	This file contains some code from kwaak3:
 	Copyright (C) 2010 Roderick Colenbrander
 
@@ -33,8 +33,8 @@
 
 #include "q3e.h"
 #include "eventqueue.h"
+#include "q3e_android.h"
 
-#include "doom3/neo/sys/android/sys_android.h"
 
 #define LOG_TAG "Q3E_JNI"
 
@@ -210,7 +210,7 @@ void initAudio(void *buffer, int size)
 	return (*env)->CallVoidMethod(env, q3eCallbackObj, android_initAudio, size);
 }
 
-//k NEW: 
+//k NEW:
 // if offset >= 0 and length > 0, only write.
 // if offset >= 0 and length < 0, length = -length, then write and flush.
 // If offset < 0 and length == 0, only flush.
@@ -334,12 +334,12 @@ JNIEXPORT void JNICALL Java_com_n0n3m4_q3e_Q3EJNI_setCallbackObject(JNIEnv *env,
     (*jVM)->GetEnv(jVM, (void**) &env, JNI_VERSION_1_4);
     q3eCallbackObj = (jobject)(*env)->NewGlobalRef(env, obj);
     q3eCallbackClass = (*env)->GetObjectClass(env, q3eCallbackObj);
-    
+
     android_initAudio = (*env)->GetMethodID(env,q3eCallbackClass,"init","(I)V");
     android_writeAudio = (*env)->GetMethodID(env,q3eCallbackClass,"writeAudio","(Ljava/nio/ByteBuffer;II)I");
 	android_setState = (*env)->GetMethodID(env,q3eCallbackClass,"setState","(I)V");
 	android_writeAudio_array = (*env)->GetMethodID(env,q3eCallbackClass, "writeAudio_array", "([BII)I");
-	
+
 	//k
 	android_PullEvent_method = (*env)->GetMethodID(env, q3eCallbackClass, "PullEvent", "(I)I");
 	android_GrabMouse_method = (*env)->GetMethodID(env, q3eCallbackClass, "GrabMouse", "(Z)V");
@@ -379,10 +379,10 @@ static int ParseCommandLine(char *cmdline, char **argv)
 	char *lastp = NULL;
 	int argc, last_argc;
 	argc = last_argc = 0;
-	for ( bufp = cmdline; *bufp; ) {		
+	for ( bufp = cmdline; *bufp; ) {
 		while ( isspace(*bufp) ) {
 			++bufp;
-		}		
+		}
 		if ( *bufp == '"' ) {
 			++bufp;
 			if ( *bufp ) {
@@ -390,7 +390,7 @@ static int ParseCommandLine(char *cmdline, char **argv)
 					argv[argc] = bufp;
 				}
 				++argc;
-			}			
+			}
 			while ( *bufp && ( *bufp != '"' || *lastp == '\\' ) ) {
 				lastp = bufp;
 				++bufp;
@@ -401,7 +401,7 @@ static int ParseCommandLine(char *cmdline, char **argv)
 					argv[argc] = bufp;
 				}
 				++argc;
-			}			
+			}
 			while ( *bufp && ! isspace(*bufp) ) {
 				++bufp;
 			}
@@ -413,9 +413,9 @@ static int ParseCommandLine(char *cmdline, char **argv)
 			++bufp;
 		}
 		if( argv && last_argc != argc ) {
-			UnEscapeQuotes( argv[last_argc] );	
+			UnEscapeQuotes( argv[last_argc] );
 		}
-		last_argc = argc;	
+		last_argc = argc;
 	}
 	if ( argv ) {
 		argv[argc] = NULL;
@@ -554,7 +554,7 @@ JNIEXPORT jboolean JNICALL Java_com_n0n3m4_q3e_Q3EJNI_init(JNIEnv *env, jclass c
 
 	if(usingNativeEventQueue)
     	Q3E_InitEventManager(onKeyEvent, onMotionEvent, onAnalog);
-    
+
     qmain(argc, argv);
 
 	LOGI("idTech4A++(arm%d) game data directory: %s\n", sizeof(void *) == 8 ? 64 : 32, game_data_dir);
@@ -587,19 +587,19 @@ JNIEXPORT void JNICALL Java_com_n0n3m4_q3e_Q3EJNI_sendMotionEvent(JNIEnv *env, j
 }
 
 JNIEXPORT void JNICALL Java_com_n0n3m4_q3e_Q3EJNI_vidRestart(JNIEnv *env, jclass c)
-{    
+{
 	vidRestart();
 }
 
 
 JNIEXPORT void JNICALL Java_com_n0n3m4_q3e_Q3EJNI_shutdown(JNIEnv *env, jclass c)
 {
-    if(qexit)  
+    if(qexit)
         qexit();
 }
 
 JNIEXPORT jboolean JNICALL Java_com_n0n3m4_q3e_Q3EJNI_Is64(JNIEnv *env, jclass c)
-{    
+{
     return sizeof(void *) == 8 ? JNI_TRUE : JNI_FALSE;
 }
 

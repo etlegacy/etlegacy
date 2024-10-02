@@ -62,7 +62,7 @@ android {
 					"-DFEATURE_AUTOUPDATE=OFF", "-DFEATURE_SSL=ON", "-DFEATURE_CURL=OFF",
 					"-DBUNDLED_OPENSSL=OFF", "-DBUNDLED_WOLFSSL=OFF", "-DFEATURE_AUTH=ON",
 					"-DBUILD_SERVER_MOD=OFF", "-DCMAKE_SKIP_INSTALL_RULES=OFF"
-				targets "etl", "ui", "cgame"
+				targets "etl", "ui", "cgame", "q3eloader"
 			}
 		}
 		ndk {
@@ -156,7 +156,7 @@ android {
 
 dependencies {
 	implementation 'com.google.guava:guava:33.1.0-android'
-	implementation 'androidx.appcompat:appcompat:1.7.0'
+	//implementation 'androidx.appcompat:appcompat:1.7.0'
 
 	implementation 'com.android.support:appcompat-v7:28.0.0'
 	implementation 'com.android.support:documentfile:28.0.0'

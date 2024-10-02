@@ -13,7 +13,7 @@ import android.provider.DocumentsContract.Root;
 import android.provider.DocumentsProvider;
 import android.webkit.MimeTypeMap;
 
-import com.karin.idTech4Amm.R;
+import com.etlegacy.app.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;

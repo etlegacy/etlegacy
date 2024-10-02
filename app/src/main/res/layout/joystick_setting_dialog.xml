@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+    android:padding="10dp"
+	android:orientation="vertical">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:orientation="horizontal"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+		>
+		<TextView
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="center_vertical"
+			android:text="@string/joystick_outer_range_radius_s_multiple_0_disable"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+		<EditText
+			android:id="@+id/launcher_tab2_joystick_release_range"
+			android:inputType="numberDecimal|textNoSuggestions"
+			android:ems="10"
+			android:hint="@string/radius_s_multiple"
+			android:imeOptions="flagNoExtractUi"
+			android:text="0.0"
+			android:layout_width="80dp"
+			android:layout_height="wrap_content"
+			android:layout_gravity="right|center_vertical"
+			android:autofillHints="" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="20dp"
+		android:paddingRight="10dp"
+		>
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:text="@string/enable_unfixed_joystick_the_range_is_joystick_allowed_to_start_pressing_if_less_than_1_0_using_joystick_s_radius"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:text="@string/disable_unfixed_joystick_the_range_is_joystick_valid_motion_area"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+	</LinearLayout>
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:orientation="vertical"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+		>
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:orientation="horizontal"
+			>
+			<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:layout_gravity="center_vertical"
+				android:text="@string/joystick_inner_dead_zone_radius_s_percentage_0_disable"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
+			<TextView
+				android:id="@+id/launcher_tab2_joystick_inner_dead_zone_label"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:text="10%"
+				android:textColor="#FF000000"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
+		</LinearLayout>
+
+		<SeekBar
+			android:id="@+id/launcher_tab2_joystick_inner_dead_zone"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:layout_marginBottom="5dp"
+			android:layout_gravity="right|center_vertical"
+			android:max="100"
+			android:progress="10"
+			/>
+	</LinearLayout>
+
+</LinearLayout>
+

@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/uiconfig_joystick_setting"
+        android:title="@string/joystick_setting"/>
+    <item android:id="@+id/uiconfig_menu_opacity"
+        android:title="@string/setup_all_opacity"/>
+    <item android:id="@+id/uiconfig_menu_size"
+        android:title="@string/setup_all_size"/>
+    <item android:id="@+id/reset_onscreen_controls_btn"
+        android:title="@string/reset_on_screen_controls"/>
+    <item android:id="@+id/uiconfig_grid"
+        android:title="@string/on_screen_buttons_position_unit"/>
+    <item android:id="@+id/uiconfig_save"
+        android:title="@string/save_all"/>
+    <item android:id="@+id/uiconfig_back"
+        android:title="@string/back"/>
+</menu>

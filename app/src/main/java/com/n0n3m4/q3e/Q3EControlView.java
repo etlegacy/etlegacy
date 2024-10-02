@@ -57,6 +57,8 @@ import com.n0n3m4.q3e.onscreen.Slider;
 import com.n0n3m4.q3e.onscreen.TouchListener;
 import com.n0n3m4.q3e.onscreen.UiLoader;
 
+import com.etlegacy.app.R;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;

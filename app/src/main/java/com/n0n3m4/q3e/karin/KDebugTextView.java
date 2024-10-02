@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class KDebugTextView extends androidx.appcompat.widget.AppCompatTextView {
+public class KDebugTextView extends android.support.v7.widget.AppCompatTextView {
     private MemDumpFunc m_memFunc = null;
 
     @SuppressLint("ResourceType")

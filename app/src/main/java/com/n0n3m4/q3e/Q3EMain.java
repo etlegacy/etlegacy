@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2012 n0n3m4
-	
+
     This file is part of Q3E.
 
     Q3E is free software: you can redistribute it and/or modify
@@ -35,6 +35,8 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.etlegacy.app.R;
+
 import com.n0n3m4.q3e.device.Q3EOuya;
 import com.n0n3m4.q3e.gl.Q3EGL;
 import com.n0n3m4.q3e.karin.KDebugTextView;
@@ -64,7 +66,7 @@ public class Q3EMain extends Activity
 
         gameHelper = new Q3EGameHelper();
         gameHelper.SetContext(this);
-        
+
         // setup fullscreen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 

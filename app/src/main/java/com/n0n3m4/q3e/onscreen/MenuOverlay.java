@@ -9,7 +9,7 @@ import android.view.View;
 import com.n0n3m4.q3e.Q3ELang;
 import com.n0n3m4.q3e.Q3EUiView;
 import com.n0n3m4.q3e.Q3EUtils;
-import com.n0n3m4.q3e.R;
+import com.etlegacy.app.R;
 import com.n0n3m4.q3e.gl.Q3EGL;
 import com.n0n3m4.q3e.karin.KResultRunnable;
 

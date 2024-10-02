@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:myapp="http://schemas.android.com/apk/res/com.karin.idTech4Amm"
+    xmlns:myapp="http://schemas.android.com/apk/res/com.etlegacy.app"
     android:id="@+id/launcher_tab1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -383,15 +383,6 @@
                         android:layout_gravity="center_vertical"
                         android:text="@string/specular_exponent_cvar_harm_r_specularexponent" />
 
-                    <EditText
-                        android:id="@+id/edt_harm_r_specularExponent"
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/specular_exponent_in_interaction_light_model_default_is_4_0"
-                        android:imeOptions="flagNoExtractUi"
-                        android:inputType="numberDecimal|textNoSuggestions"
-                        android:text="3.0" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -669,15 +660,6 @@
                         android:checked="true"
                         android:text="@string/force_delete_vertex_buffer_on_every_end_frame" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="32dp"
-                        android:layout_marginTop="0dp"
-                        android:layout_marginBottom="0dp"
-                        android:text="@string/also_like_2nd_and_delete_vbo_handle_maybe_slower_but_memory_safer"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textSize="12sp" />
                 </RadioGroup>
 
                 <LinearLayout
@@ -686,53 +668,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/maximum_fps_limit_0_unlimited" />
-
-                    <EditText
-                        android:id="@+id/edt_harm_r_maxFps"
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/limit_maximum_fps_default_is_0"
-                        android:imeOptions="flagNoExtractUi"
-                        android:inputType="number|textNoSuggestions"
-                        android:text="0" />
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:text="@string/automatic_setup_aspect_ratio_harm_r_autoaspectratio" />
                 <RadioGroup
                     android:id="@+id/rg_r_autoAspectRatio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
-                    <RadioButton
-                        android:id="@+id/rb_r_autoAspectRatio_0"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/setup_cvar_r_aspectratio_manually" />
-
-                    <RadioButton
-                        android:id="@+id/rb_r_autoAspectRatio_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/force_setup_cvar_r_aspectratio_to_1_using_screen_real_aspect_ratio" />
-
-                    <RadioButton
-                        android:id="@+id/rb_r_autoAspectRatio_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="@string/automatic_setup_cvar_r_aspectratio_to_0_1_2_convert_screen_aspect_ratio_to_4_3_16_9_16_10" />
                 </RadioGroup>
 
                 <!-- Image -->
@@ -741,30 +683,6 @@
                     android:layout_height="wrap_content"
                     myapp:label="@string/image"
                     myapp:lineColor="@color/launcher_divider_color" />
-
-                <CheckBox
-                    android:id="@+id/usedxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/use_dxt_textures_tegra_only_others_no_effect" />
-
-                <CheckBox
-                    android:id="@+id/useetc1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/use_etc1_or_rgba4444_compression" />
-
-                <CheckBox
-                    android:id="@+id/useetc1cache"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/use_etc1_or_rgba4444_cache" />
-
-                <CheckBox
-                    android:id="@+id/image_useetc2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/use_etc2_compression" />
 
             </LinearLayout>
 
@@ -815,11 +733,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/using_openal" />
 
-                <CheckBox
-                    android:id="@+id/cb_s_useEAXReverb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/using_efx_reverb" />
             </LinearLayout>
 
                 <com.karin.idTech4Amm.widget.Divider
@@ -833,7 +746,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/skip_intro" />
-                <CheckBox
+				<CheckBox
                     android:id="@+id/auto_quick_load"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -880,13 +793,6 @@
                         android:text="@string/edit_autoexec_cfg"
                         android:textAllCaps="false" />
 
-                    <Button
-                        android:id="@+id/launcher_tab1_edit_doomconfig"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:text="@string/edit_doomconfig_cfg"
-                        android:textAllCaps="false" />
                 </LinearLayout>
 
             </LinearLayout>

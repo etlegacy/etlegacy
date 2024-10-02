@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2012 n0n3m4
-	
+
     This file is part of Q3E.
 
     Q3E is free software: you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.etlegacy.app.R;
 import com.n0n3m4.q3e.onscreen.Q3EControls;
 
 public class Q3EUiConfig extends Activity

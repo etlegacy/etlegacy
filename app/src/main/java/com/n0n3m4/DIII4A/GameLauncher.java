@@ -365,10 +365,10 @@ public class GameLauncher extends Activity
 			{
 				EditFile("autoexec.cfg");
 			}
-			else if (id == R.id.launcher_tab1_edit_doomconfig)
+			/*else if (id == R.id.launcher_tab1_edit_doomconfig)
 			{
 				EditFile(Q3EUtils.q3ei.config_name);
-			}
+			}*/
 			else if (id == R.id.launcher_tab1_game_lib_button)
 			{
 				OpenGameLibChooser();
@@ -3009,9 +3009,9 @@ public class GameLauncher extends Activity
             edt_cmdline = findViewById(R.id.edt_cmdline);
             res_customlayout = findViewById(R.id.res_customlayout);
             nolight = findViewById(R.id.nolight);
-            useetc1cache = findViewById(R.id.useetc1cache);
+            /*useetc1cache = findViewById(R.id.useetc1cache);
             useetc1 = findViewById(R.id.useetc1);
-            usedxt = findViewById(R.id.usedxt);
+            usedxt = findViewById(R.id.usedxt);*/
             r_harmclearvertexbuffer = findViewById(R.id.r_harmclearvertexbuffer);
             rg_msaa = findViewById(R.id.rg_msaa);
             rg_color_bits = findViewById(R.id.rg_color_bits);
@@ -3030,10 +3030,10 @@ public class GameLauncher extends Activity
             res_x = findViewById(R.id.res_x);
             res_y = findViewById(R.id.res_y);
             launcher_tab1_edit_autoexec = findViewById(R.id.launcher_tab1_edit_autoexec);
-            launcher_tab1_edit_doomconfig = findViewById(R.id.launcher_tab1_edit_doomconfig);
+            //launcher_tab1_edit_doomconfig = findViewById(R.id.launcher_tab1_edit_doomconfig);
             launcher_tab1_game_data_chooser_button = findViewById(R.id.launcher_tab1_game_data_chooser_button);
             rg_curpos = findViewById(R.id.rg_curpos);
-            edt_harm_r_specularExponent = findViewById(R.id.edt_harm_r_specularExponent);
+            //edt_harm_r_specularExponent = findViewById(R.id.edt_harm_r_specularExponent);
             rg_harm_r_lightingModel = findViewById(R.id.rg_harm_r_lightingModel);
             onscreen_button_setting = findViewById(R.id.onscreen_button_setting);
             launcher_tab1_user_game_layout = findViewById(R.id.launcher_tab1_user_game_layout);
@@ -3057,7 +3057,7 @@ public class GameLauncher extends Activity
             tv_mprefs = findViewById(R.id.tv_mprefs);
             layout_mouse_device = findViewById(R.id.layout_mouse_device);
             find_dll = findViewById(R.id.find_dll);
-			edt_harm_r_maxFps = findViewById(R.id.edt_harm_r_maxFps);
+			//edt_harm_r_maxFps = findViewById(R.id.edt_harm_r_maxFps);
 			launcher_tab1_edit_cvar = findViewById(R.id.launcher_tab1_edit_cvar);
 			edt_cmdline_temp = findViewById(R.id.edt_cmdline_temp);
 			skip_intro = findViewById(R.id.skip_intro);
@@ -3066,7 +3066,7 @@ public class GameLauncher extends Activity
 			rg_harm_r_shadow = findViewById(R.id.rg_harm_r_shadow);
 			rg_opengl = findViewById(R.id.rg_opengl);
 			cb_s_useOpenAL = findViewById(R.id.cb_s_useOpenAL);
-			cb_s_useEAXReverb = findViewById(R.id.cb_s_useEAXReverb);
+			//cb_s_useEAXReverb = findViewById(R.id.cb_s_useEAXReverb);
 			readonly_command = findViewById(R.id.readonly_command);
 			cb_stencilShadowTranslucent = findViewById(R.id.cb_stencilShadowTranslucent);
 			editable_temp_command = findViewById(R.id.editable_temp_command);
@@ -3098,7 +3098,7 @@ public class GameLauncher extends Activity
 			tv_scale_current = findViewById(R.id.tv_scale_current);
 			res_scale_layout = findViewById(R.id.res_scale_layout);
 			launcher_tab1_command_record = findViewById(R.id.launcher_tab1_command_record);
-			image_useetc2 = findViewById(R.id.image_useetc2);
+			//image_useetc2 = findViewById(R.id.image_useetc2);
 			edt_harm_r_specularExponentBlinnPhong = findViewById(R.id.edt_harm_r_specularExponentBlinnPhong);
 			edt_harm_r_specularExponentPBR = findViewById(R.id.edt_harm_r_specularExponentPBR);
 			show_directory_helper = findViewById(R.id.show_directory_helper);

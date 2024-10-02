@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.etlegacy.app.R;
+
 import java.util.ArrayList;
 
 public class Q3EAd

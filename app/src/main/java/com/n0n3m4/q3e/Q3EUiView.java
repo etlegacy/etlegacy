@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2012 n0n3m4
-	
+
     This file is part of Q3E.
 
     Q3E is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import com.etlegacy.app.R;
 import com.n0n3m4.q3e.gl.Q3EGL;
 import com.n0n3m4.q3e.onscreen.Button;
 import com.n0n3m4.q3e.onscreen.Disc;
