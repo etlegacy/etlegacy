@@ -68,7 +68,7 @@ public enum Game
     GZDOOM_FREEDOOM2(Q3EGlobals.GAME_GZDOOM, "freedoom2.wad", "freedoom2.wad", "gzdoom", "", true, R.string.freedoom2_base),*/
 
     // Wolfenstein: Enemy Territory
-    ETW_BASE(Q3EGlobals.GAME_ETW, "etmain", "", "etwgame", "", false, R.string.etw_base),
+    ETW_BASE(Q3EGlobals.GAME_ETW, "legacy", "", "etwgame", "", false, R.string.etw_base),
     ;
 
     public final String  type; // game type: doom3/quake4/prey2006/......

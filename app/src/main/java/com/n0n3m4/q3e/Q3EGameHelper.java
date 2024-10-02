@@ -105,7 +105,7 @@ public class Q3EGameHelper
             String extraCommand = "";
             if(preferences.getBoolean(Q3EPreference.pref_harm_skip_intro, false) && (Q3EUtils.q3ei.IsIdTech4() || Q3EUtils.q3ei.IsIdTech3()/* || Q3EUtils.q3ei.IsTDMTech()*/))
             {
-                extraCommand += " +disconnect";
+                extraCommand += " +set com_introplayed 1";
             }
             if(preferences.getBoolean(Q3EPreference.pref_harm_auto_quick_load, false) && (Q3EUtils.q3ei.IsIdTech4() || Q3EUtils.q3ei.isRTCW))
             {

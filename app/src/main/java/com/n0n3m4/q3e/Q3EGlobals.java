@@ -195,7 +195,7 @@ public final class Q3EGlobals
     public static final String GAME_SUBDIR_QUAKE1  = "quake1";
     public static final String GAME_SUBDIR_DOOMBFG = "doom3bfg";
     public static final String GAME_SUBDIR_GZDOOM  = "gzdoom";
-    public static final String GAME_SUBDIR_ETW     = "etw";
+    public static final String GAME_SUBDIR_ETW     = "";
 
 /*
     public static final String[] QUAKE4_MAPS = {

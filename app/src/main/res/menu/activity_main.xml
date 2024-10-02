@@ -5,63 +5,11 @@
 	android:orderInCategory="100" />
     -->
 
-    <item
-        android:id="@+id/main_menu_game"
-        android:title=""
-        android:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/main_menu_game_doom3"
-                android:title="@string/doom_3"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_quake4"
-                android:title="@string/quake_4"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_prey"
-                android:title="@string/prey_2006"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_rtcw"
-                android:title="@string/rtcw"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_quake3"
-                android:title="@string/quake_3"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_quake2"
-                android:title="@string/quake_2"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_quake1"
-                android:title="@string/quake_1"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_doom3bfg"
-                android:title="@string/doom_3_bfg"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_tdm"
-                android:title="@string/tdm"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_doom"
-                android:title="@string/doom"
-                android:showAsAction="never"/>
-            <item
-                android:id="@+id/main_menu_game_etw"
-                android:title="@string/etw"
-                android:showAsAction="never"/>
-        </menu>
-    </item>
-    
-    <item
+	<item
         android:id="@+id/main_menu_settings"
         android:title="@string/settings"
         android:showAsAction="never"/>
-    
+
     <item
 		android:id="@+id/main_menu_changes"
         android:title="@string/changes"
@@ -118,7 +66,7 @@
                 android:showAsAction="never"/>
         </menu>
     </item>
-    
+
     <item
         android:id="@+id/main_menu_other_menu"
         android:title="@string/other"
@@ -138,7 +86,7 @@
                 android:showAsAction="never"/>
         </menu>
     </item>
-    
+
     <item
         android:id="@+id/main_menu_dev_menu"
         android:title="Dev"

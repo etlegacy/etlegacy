@@ -128,7 +128,7 @@ public final class TextHelper
         }
         return sb.toString();
     }
- 
+
 	public static CharSequence GetUpdateText(Context context)
 	{
         StringBuilder sb = new StringBuilder();
