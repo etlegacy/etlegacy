@@ -47,7 +47,6 @@
 		tools:ignore="HardcodedDebugMode,UnusedAttribute">
 		<activity
 			android:name="com.n0n3m4.DIII4A.GameLauncher"
-			android:label="@string/app_name"
 			android:windowSoftInputMode="stateHidden|stateUnchanged"
 			android:exported="true"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
@@ -56,14 +55,14 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:label="@string/app_name"
+		<activity
 			android:screenOrientation="landscape"
 			android:launchMode="singleTask"
 			android:exported="true"
 			android:name="com.n0n3m4.q3e.Q3EMain"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
 		</activity>
-		<activity android:label="@string/app_name"
+		<activity
 			android:screenOrientation="landscape"
 			android:launchMode="singleTask"
 			android:exported="true"
