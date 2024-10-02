@@ -96,7 +96,7 @@ public class Q3EGameHelper
 
             Q3EUtils.q3ei.InitDefaultsTable();
 
-            Q3EUtils.q3ei.default_path = Environment.getExternalStorageDirectory() + "/diii4a";
+            Q3EUtils.q3ei.default_path = Environment.getExternalStorageDirectory() + "/etlegacy";
 
             Q3EUtils.q3ei.SetupGame(preferences.getString(Q3EPreference.pref_harm_game, Q3EGlobals.GAME_DOOM3));
 
@@ -193,7 +193,7 @@ public class Q3EGameHelper
 
     private String FindDLL(String fs_game)
     {
-        String DLLPath = Q3EUtils.q3ei.GetGameDataDirectoryPath(fs_game); // /sdcard/diii4a/<fs_game>
+        String DLLPath = Q3EUtils.q3ei.GetGameDataDirectoryPath(fs_game); // /sdcard/etlegacy/<fs_game>
         String Suffix = "game" + Q3EGlobals.ARCH + ".so"; // gameaarch64.so(64) / gamearm.so(32)
         String[] guess = {
                 Suffix,

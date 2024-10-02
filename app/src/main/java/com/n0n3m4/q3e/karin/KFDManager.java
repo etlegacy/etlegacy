@@ -61,10 +61,10 @@ public final class KFDManager
         InitSearchPaths();
     }
 
-    // pref_datapath > /sdcard/Android/data > /data/user > /sdcard/diii4a > apk::/android_asset
+    // pref_datapath > /sdcard/Android/data > /data/user > /sdcard/etlegacy > apk::/android_asset
     private void InitSearchPaths()
     {
-        final String DefPath = Environment.getExternalStorageDirectory() + "/diii4a";
+        final String DefPath = Environment.getExternalStorageDirectory() + "/etlegacy";
         m_searchPaths.clear();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(m_context);
         final String[] Paths = {

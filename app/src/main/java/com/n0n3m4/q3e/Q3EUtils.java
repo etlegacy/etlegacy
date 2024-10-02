@@ -856,6 +856,6 @@ public class Q3EUtils
     {
         if(null == path)
             path = "";
-        return Q3EUtils.GetAppStoragePath(context, "/diii4a" + path);
+        return Q3EUtils.GetAppStoragePath(context, "/etlegacy" + path);
     }
 }

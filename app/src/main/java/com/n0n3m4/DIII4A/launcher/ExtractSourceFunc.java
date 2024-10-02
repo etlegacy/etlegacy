@@ -100,7 +100,7 @@ public final class ExtractSourceFunc extends GameLauncherFunc
         try
         {
             os = m_gameLauncher.getContentResolver().openOutputStream(uri);
-            is = m_gameLauncher.getAssets().open("source/DIII4A.source.tgz");
+            is = m_gameLauncher.getAssets().open("source/etlegacy.source.tgz");
             Q3EUtils.Copy(os, is);
             Toast_long(R.string.extract_file_success);
         }

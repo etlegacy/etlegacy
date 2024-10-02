@@ -48,9 +48,9 @@ public final class TextHelper
 
     public static CharSequence GetDialogMessage(String text)
     {
-        return USING_HTML ? Html.fromHtml(text) : text;      
+        return USING_HTML ? Html.fromHtml(text) : text;
     }
-    
+
     public static class ChangeLog
     {
         public String date;
@@ -110,7 +110,7 @@ public final class TextHelper
             return cl;
         }
 	}
-    
+
     public static String GenLinkText(String link, String name)
     {
         StringBuilder sb = new StringBuilder();
@@ -162,7 +162,7 @@ public final class TextHelper
         StringBuilder sb = new StringBuilder();
         final String[] HELPS = {
                 "Launch game: ",
-                " 1. Putting your PC game data files(external folder) to launcher setting `Game working directory`(default `/sdcard/diii4a`).",
+                " 1. Putting your PC game data files(external folder) to launcher setting `Game working directory`(default `/sdcard/etlegacy`).",
                 " 2. Click left icon or right game name text of launcher status bar for choosing game, and select game mod in tab `GENERAL`'s `Game`.",
                 " 3. Finally START GAME.",
                 null,
@@ -225,7 +225,7 @@ public final class TextHelper
             "If game running crash(white screen): ",
             " 1. Make sure to allow `WRITE_EXTERNAL_STORAGE` permission.",
             " 2. Make sure `Game working directory` is right.",
-            " 3. Uncheck 4th checkbox named `Use ETC1(or RGBA4444) cache` or clear ETC1 texture cache file manual on resource folder(exam: /sdcard/diii4a/(base/d3xp/d3le/cdoom/or...)/dds).",
+            " 3. Uncheck 4th checkbox named `Use ETC1(or RGBA4444) cache` or clear ETC1 texture cache file manual on resource folder(exam: /sdcard/etlegacy/(base/d3xp/d3le/cdoom/or...)/dds).",
             null,
             "If game is crash with flash-screen when playing a period of time: ",
             " 1. Out of graphics memory: `Clear vertex buffer` suggest to select 3rd or 2nd for clear vertex buffer every frame! If you select 1st, it will be same as original apk(ver 1.1.0 at 2013). It should work well on `Adreno` GPU of `Snapdragon`. More view in game, on DOOM3 console, cvar named `harm_r_clearVertexBuffer`.",
@@ -347,7 +347,7 @@ public final class TextHelper
                         "Add PBR interaction lighting model(" + TextHelper.GenLinkText("https://github.com/jmarshall23/idtech4_pbr", "jmarshall23's idtech4_pbr") + ")(setup cvar harm_r_lightingModel 3) in DOOM3/Quake4/Prey.",
                         "Fix large shake of player view with OpenAL in DOOM3/Quake4/Prey.",
                         "Add command history record manager in launcher.",
-                        "Add `/sdcard/Android/data/com.karin.idTech4Amm/files/diii4a` to game data search path(exclude Quake1), add current game data path tips.",
+                        "Add `/sdcard/Android/data/com.karin.idTech4Amm/files/etlegacy` to game data search path(exclude Quake1), add current game data path tips.",
                         "Optimize ETC1 compression texture cache in DOOM3/Quake4/Prey, add ETC2 compression texture support(cvar r_useETC2) in OpenGLES3.0.",
                         "Add launcher theme setting."
                 ),
@@ -603,7 +603,7 @@ public final class TextHelper
                              "On-screen buttons layer's resolution always same to device screen.",
                              "Add volume key map config(Enable `Map volume keys` to show it)."
                              ),
-                             
+
             ChangeLog.Create("2022-06-30", 11,
                              "Add `Hardcorps` mod library support, game path name is `hardcorps`, if play the mod, first suggest to close `Smooth joystick` in `Controls` tab panel, more view in `" + TextHelper.GenLinkText("https://www.moddb.com/mods/hardcorps", null) + "`.",
                              "In `Rivensin` mod, add bool Cvar `harm_pm_doubleJump` to enable double-jump(From `hardcorps` mod source code, default disabled).",
@@ -632,7 +632,7 @@ public final class TextHelper
                         "Add weapon on-screen button panel."
                 ),
 
-            ChangeLog.Create("2022-05-05", 7, 
+            ChangeLog.Create("2022-05-05", 7,
                              "Fix shadow clipped.",
                              "Fix sky box.",
                              "Fix fog and blend light.",
@@ -650,18 +650,18 @@ public final class TextHelper
                              "Add cvar `harm_r_shadowCarmackInverse` to change general Z-Fail stencil shadow or `Carmack-Inverse` Z-Fail stencil shadow.",
                              "Add `Back` key function setting, add 3-Click to exit."
                              ),
-                             
-        ChangeLog.Create("2020-08-25", 5, 
+
+        ChangeLog.Create("2020-08-25", 5,
                          "Fix video playing.",
                          "Choose game library when load other game mod, more view in `Help` menu."
                          ),
 
-        ChangeLog.Create("2020-08-21", 3, 
+        ChangeLog.Create("2020-08-21", 3,
                          "Fix game audio sound playing(Testing).",
                          "Add launcher orientation setting on `CONTROLS` tab."
                          ),
 
-        ChangeLog.Create("2020-08-17", 2, 
+        ChangeLog.Create("2020-08-17", 2,
                          "Uncheck 4 checkboxs, default value is 0(disabled).",
                          "Hide software keyboard when open launcher activity.",
                          "Check `WRITE_EXTERNAL_STORAGE` permission when start game or edit config file.",
@@ -671,7 +671,7 @@ public final class TextHelper
                          "Add `Help` menu."
                          ),
 
-        ChangeLog.Create("2020-07-20", 1, 
+        ChangeLog.Create("2020-07-20", 1,
                          "Compile `DOOM3:RoE` game library named `libd3xp`, game path name is `d3xp`, more view in `" + GenLinkText("https://store.steampowered.com/app/9070/DOOM_3_Resurrection_of_Evil/", null) + "`.",
                          "Compile `Classic DOOM3` game library named `libcdoom`, game path name is `cdoom`, more view in `" + GenLinkText("https://www.moddb.com/mods/classic-doom-3", null) + "`.",
                          "Compile `DOOM3-BFG:The lost mission` game library named `libd3le`, game path name is `d3le`, need `d3xp` resources(+set fs_game_base d3xp), more view in `" + GenLinkText("https://www.moddb.com/mods/the-lost-mission", null) + "`(now fix stack overflow when load model `models/mapobjects/hell/hellintro.lwo` of level `game/le_hell` map on Android).",
@@ -685,7 +685,7 @@ public final class TextHelper
                          "Add config file editor."
                          ),
     };
-    
+
         StringBuilder sb = new StringBuilder();
         final String endl = GetDialogMessageEndl();
         for(ChangeLog changeLog : CHANGES)
@@ -721,7 +721,7 @@ public final class TextHelper
         }
         return sb.toString();
     }
-    
+
     public static CharSequence GetCvarText()
     {
         StringBuilder sb = new StringBuilder();
@@ -737,7 +737,7 @@ public final class TextHelper
         }
         return GetDialogMessage(sb.toString());
     }
-    
+
 	private TextHelper() {}
 }
 

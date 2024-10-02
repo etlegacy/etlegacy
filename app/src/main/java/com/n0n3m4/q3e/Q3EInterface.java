@@ -61,7 +61,7 @@ public class Q3EInterface
 	public boolean isDOOM = false;
 	public boolean isETW = false;
 
-	public String default_path = Environment.getExternalStorageDirectory() + "/diii4a";
+	public String default_path = Environment.getExternalStorageDirectory() + "/etlegacy";
 
 	public String libname;
 	public String config_name;
@@ -84,7 +84,7 @@ public class Q3EInterface
 	public boolean joystick_unfixed = false;
 	public boolean joystick_smooth = true; // Q3EView::analog
 
-	public String app_storage_path = "/sdcard/diii4a";
+	public String app_storage_path = "/sdcard/etlegacy";
 
 	//RTCW4A:
 	/*

@@ -150,7 +150,7 @@ public class GameLauncher extends Activity
 	private ChooseCommandRecordFunc m_chooseCommandRecordFunc;
 	private DirectoryHelperFunc m_directoryHelperFunc;
 
-    public static final String default_gamedata = Environment.getExternalStorageDirectory() + "/diii4a";
+    public static final String default_gamedata = Environment.getExternalStorageDirectory() + "/etlegacy";
     private final ViewHolder V = new ViewHolder();
     private boolean m_cmdUpdateLock = false;
 	private String m_edtPathFocused = "";
