@@ -191,7 +191,7 @@ if(BUILD_CLIENT)
 	include(cmake/ETLBuildClient.cmake)
 
     if(ANDROID)
-        include(cmake/ETLQ3eloade.cmake)
+        include(cmake/ETLQ3eloader.cmake)
     endif()
 
 	#Since CMake 3.6 you are able to set the Visual Studio startup project
