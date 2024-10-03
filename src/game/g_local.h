@@ -976,6 +976,7 @@ struct gclient_s
 	int lasthurt_time;                      ///< level.time of last damage
 
 	// timers
+	int instantRespawnDelayTime;            ///< used to prevent dying and respawning all within the same server frame
 	int respawnTime;                        ///< can respawn when time > this, force after g_forcerespwan
 	int inactivityTime;                     ///< kick players when time > this
 	qboolean inactivityWarning;             ///< qtrue if the five seoond warning has been given
