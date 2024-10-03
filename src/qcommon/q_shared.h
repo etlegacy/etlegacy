@@ -466,6 +466,8 @@ typedef int clipHandle_t;
 
 #define DEFAULT_NAME "ETLegacyPlayer"
 
+extern char* GlobalGameTitle;
+
 /**
  * @enum messageStatus_t
  * @brief
