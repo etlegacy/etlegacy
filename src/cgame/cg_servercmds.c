@@ -613,6 +613,8 @@ void CG_ParseServerToggles(void)
 	value = Q_atoi(info);
 
 	cgs.matchPaused = (value & CV_SVS_PAUSE) ? qtrue : qfalse;
+
+	trap_MatchPaused(cgs.matchPaused);
 }
 
 /**

@@ -44,6 +44,7 @@ cvar_t *s_doppler;
 cvar_t *s_backend;
 cvar_t *s_muteWhenMinimized;
 cvar_t *s_muteWhenUnfocused;
+cvar_t *s_debugPause;
 
 static soundInterface_t si;
 
@@ -167,6 +168,10 @@ static qboolean S_ValidSoundInterface(soundInterface_t *si)
 		return qfalse;
 	}
 	if (!si->GetCurrentSoundTime)
+	{
+		return qfalse;
+	}
+	if (!si->PauseSounds)
 	{
 		return qfalse;
 	}
@@ -607,6 +612,18 @@ int S_GetCurrentSoundTime(void)
 	}
 }
 
+/**
+ * @brief S_PauseSounds Let sound system know to pause sounds
+ * @param[in] pause
+ */
+void S_PauseSounds(qboolean pause)
+{
+	if (si.PauseSounds)
+	{
+		si.PauseSounds(pause);
+	}
+}
+
 #ifdef USE_VOIP
 /**
  * @brief S_StartCapture
@@ -820,6 +837,7 @@ void S_Init(void)
 	s_backend           = Cvar_Get("s_backend", "", CVAR_ROM);
 	s_muteWhenMinimized = Cvar_Get("s_muteWhenMinimized", "1", CVAR_ARCHIVE);
 	s_muteWhenUnfocused = Cvar_Get("s_muteWhenUnfocused", "0", CVAR_ARCHIVE);
+	s_debugPause        = Cvar_Get("s_debugPause", "0", CVAR_CHEAT);
 
 	Cvar_CheckRange(s_volume, 0.0f, 1.0f, qfalse);
 	Cvar_CheckRange(s_musicVolume, 0.0f, 1.0f, qfalse);

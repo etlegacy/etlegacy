@@ -45,6 +45,7 @@ static ext_trap_keys_t cg_extensionTraps[] =
 	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
 	{ "trap_CommandComplete_Legacy", CG_COMMAND_COMPLETE, qfalse },
 	{ "trap_CmdBackup_Ext_Legacy",   CG_CMDBACKUP_EXT,    qfalse },
+	{ "trap_MatchPaused_Legacy",     CG_MATCHPAUSED,      qfalse },
 	{ NULL,                          -1,                  qfalse }
 };
 
@@ -1123,6 +1124,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_CMDBACKUP_EXT:
 		cl.cmdBackup = CMD_BACKUP_ETL;
 		cl.cmdMask   = CMD_MASK_ETL;
+		return 0;
+	case CG_MATCHPAUSED:
+		S_PauseSounds(args[1]);
 		return 0;
 
 	default:

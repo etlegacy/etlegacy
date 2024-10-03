@@ -162,6 +162,9 @@ typedef struct
 	sfx_t *thesfx;              ///< sfx structure
 	qboolean doppler;
 	int flags;
+
+	qboolean paused;            ///< is the sound paused
+	int pauseOffset;            ///< length of played sound untill paused, for calculating new startSample
 } channel_t;
 
 #define WAV_FORMAT_PCM      1
@@ -215,6 +218,7 @@ typedef struct
 	int (*GetVoiceAmplitude)(int entityNum);
 	int (*GetSoundLength)(sfxHandle_t sfxHandle);
 	int (*GetCurrentSoundTime)(void);
+	void (*PauseSounds)(qboolean pause);
 #ifdef USE_VOIP
 	void (*StartCapture)(void);
 	int (*AvailableCaptureSamples)(void);
@@ -292,6 +296,7 @@ extern cvar_t *s_volume;
 extern cvar_t *s_musicVolume;
 extern cvar_t *s_muted;
 extern cvar_t *s_doppler;
+extern cvar_t *s_debugPause;
 
 extern cvar_t *s_testsound;
 extern cvar_t *s_debugStreams;

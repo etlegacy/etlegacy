@@ -1972,3 +1972,14 @@ void trap_CmdBackup_Ext(void)
 		cg.cmdMask   = CMD_MASK;
 	}
 }
+
+/**
+ * @brief Extension for letting engine know if match is paused
+ */
+void trap_MatchPaused(qboolean matchPaused)
+{
+	if (dll_trap_MatchPaused)
+	{
+		SystemCall(dll_trap_MatchPaused, matchPaused);
+	}
+}

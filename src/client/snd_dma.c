@@ -59,6 +59,7 @@ int       numLoopChannels;
 
 static int      s_soundStarted;
 static qboolean s_soundMuted;
+static qboolean s_soundsPaused;
 
 // sound fading
 static float    s_volStart, s_volTarget;
@@ -771,6 +772,8 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 	ch->leftvol     = ch->master_vol;   // these will get calced at next spatialize
 	ch->rightvol    = ch->master_vol;   // unless the game isn't running
 	ch->doppler     = qfalse;
+	ch->paused      = qfalse;
+	ch->pauseOffset = -1;
 }
 
 /**
@@ -1465,6 +1468,15 @@ void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwa
 }
 
 /**
+ * @brief S_SoundsPaused
+ * @return qtrue if sounds should be paused
+ */
+static ID_INLINE qboolean S_SoundsPaused(void)
+{
+	return (s_soundsPaused || s_debugPause->integer);
+}
+
+/**
  * @brief S_ScanChannelStarts
  * @return qtrue if any new sounds were started since the last mix
  */
@@ -1488,6 +1500,23 @@ static qboolean S_ScanChannelStarts(void)
 			ch->startSample = s_paintedtime;
 			newSamples      = qtrue;
 			continue;
+		}
+
+		ch->paused = S_SoundsPaused() && (ch->flags & SND_PAUSABLE);
+
+		if (ch->paused)
+		{
+			if (ch->pauseOffset == -1)
+			{
+				ch->pauseOffset = s_paintedtime - ch->startSample;
+			}
+
+			ch->startSample = s_paintedtime - ch->pauseOffset;
+			continue;
+		}
+		else
+		{
+			ch->pauseOffset = -1;
 		}
 
 		// if it is completely finished by now, clear it
@@ -2260,6 +2289,15 @@ int S_Base_GetCurrentSoundTime(void)
 }
 
 /**
+ * @brief S_Base_PauseSounds For sounds pausing
+ * @param[in] pause
+ */
+void S_Base_PauseSounds(qboolean pause)
+{
+	s_soundsPaused = pause;
+}
+
+/**
  * @brief S_FreeOldestSound
  */
 void S_FreeOldestSound(void)
@@ -2388,6 +2426,7 @@ qboolean S_Base_Init(soundInterface_t *si)
 	si->GetVoiceAmplitude     = S_Base_GetVoiceAmplitude;
 	si->GetSoundLength        = S_Base_GetSoundLength;
 	si->GetCurrentSoundTime   = S_Base_GetCurrentSoundTime;
+	si->PauseSounds           = S_Base_PauseSounds;
 
 #ifdef USE_VOIP
 	si->StartCapture            = S_Base_StartCapture;

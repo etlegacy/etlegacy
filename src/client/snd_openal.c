@@ -64,6 +64,7 @@ static float    s_volStart, s_volTarget;
 static int      s_volTime1, s_volTime2;
 static float    s_volFadeFrac;
 static qboolean s_stopSounds;
+static qboolean s_soundsPaused;
 
 #define NUM_MUSIC_BUFFERS 4
 #define MUSIC_BUFFER_SIZE 4096
@@ -228,6 +229,15 @@ int S_AL_GetSoundLength(sfxHandle_t sfxHandle)
 int S_AL_GetCurrentSoundTime(void)
 {
 	return Sys_Milliseconds(); // FIXME: this causes looping sound issues -> 'S_GetSoundtime' + knownSfx[sfxHandle].info.rate; // FIXME: current handle & sound time
+}
+
+/**
+ * @brief S_AL_PauseSounds For sound pausing
+ * @param[in] pause
+ */
+void S_AL_PauseSounds(qboolean pause)
+{
+	s_soundsPaused = pause;
 }
 
 /**
@@ -705,6 +715,7 @@ typedef struct src_s
 
 	qboolean local;             // Is this local (relative to the cam)
 	float range;                // Maximum range the source is audible
+	int flags;
 } src_t;
 
 #ifdef __APPLE__
@@ -946,9 +957,11 @@ static void S_AL_SrcShutdown(void)
  * @param[in] channel
  * @param[in] local
  * @param[in] volume
+ * @param[in] range
+ * @param[in] flags
  */
 static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t priority,
-                          int entity, int channel, qboolean local, int volume, float range)
+                          int entity, int channel, qboolean local, int volume, float range, int flags)
 {
 	ALuint buffer;
 	src_t  *curSource;
@@ -987,6 +1000,7 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 	curSource->scaleGain    = s_alGain->value * s_volume->value * curSource->curGain;
 	curSource->local        = local;
 	curSource->range        = range;
+	curSource->flags        = flags;
 
 	// Set up OpenAL source
 	qalSourcei(curSource->alSource, AL_BUFFER, buffer);
@@ -1387,12 +1401,13 @@ static qboolean S_AL_CheckInput(int entityNum, sfxHandle_t sfx)
 }
 
 /**
- * @brief Play a local (non-spatialized) sound effect
+ * @brief S_AL_StartLocalSoundEx Play a local (non-spatialized) sound effect
  * @param[in] sfx
  * @param[in] channel
  * @param[in] volume
+ * @param[in] flags
  */
-static void S_AL_StartLocalSound(sfxHandle_t sfx, int channel, int volume)
+static void S_AL_StartLocalSoundEx(sfxHandle_t sfx, int channel, int volume, int flags)
 {
 	srcHandle_t src;
 
@@ -1410,11 +1425,22 @@ static void S_AL_StartLocalSound(sfxHandle_t sfx, int channel, int volume)
 	}
 
 	// Set up the effect
-	S_AL_SrcSetup(src, sfx, SRCPRI_LOCAL, -1, channel, qtrue, volume, s_alMaxDistance->value);
+	S_AL_SrcSetup(src, sfx, SRCPRI_LOCAL, -1, channel, qtrue, volume, s_alMaxDistance->value, flags);
 
 	// Start it playing
 	srcList[src].isPlaying = qtrue;
 	qalSourcePlay(srcList[src].alSource);
+}
+
+/**
+ * @brief S_AL_StartLocalSound Play a local (non-spatialized) sound effect
+ * @param[in] sfx
+ * @param[in] channel
+ * @param[in] volume
+ */
+static void S_AL_StartLocalSound(sfxHandle_t sfx, int channel, int volume)
+{
+	S_AL_StartLocalSoundEx(sfx, channel, volume, 0);
 }
 
 /**
@@ -1423,7 +1449,7 @@ static void S_AL_StartLocalSound(sfxHandle_t sfx, int channel, int volume)
  * @param[in] entnum
  * @param[in] entchannel
  * @param[in] sfx
- * @param flags - unused
+ * @param[in] flags
  * @param[in] volume
  */
 static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfx, int flags, int volume)
@@ -1450,7 +1476,7 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 
 		if (S_AL_HearingThroughEntity(entnum))
 		{
-			S_AL_StartLocalSound(sfx, entchannel, volume);
+			S_AL_StartLocalSoundEx(sfx, entchannel, volume, flags);
 			return;
 		}
 
@@ -1474,7 +1500,7 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 		return;
 	}
 
-	S_AL_SrcSetup(src, sfx, SRCPRI_ONESHOT, entnum, entchannel, qfalse, volume, s_alMaxDistance->value);
+	S_AL_SrcSetup(src, sfx, SRCPRI_ONESHOT, entnum, entchannel, qfalse, volume, s_alMaxDistance->value, flags);
 
 	curSource = &srcList[src];
 
@@ -1643,6 +1669,15 @@ static void S_AL_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity,
 }
 
 /**
+ * @brief S_AL_SoundsPaused
+ * @return qtrue if sounds should be paused
+ */
+static ID_INLINE qboolean S_AL_SoundsPaused(void)
+{
+	return (s_soundsPaused || s_debugPause->integer);
+}
+
+/**
  * @brief Update state (move things around, manage sources, and so on)
  */
 static void S_AL_SrcUpdate(void)
@@ -1702,7 +1737,7 @@ static void S_AL_SrcUpdate(void)
 				if (sent->startLoopingSound)
 				{
 					S_AL_SrcSetup(i, sent->loopSfx, sent->loopPriority,
-					              entityNum, -1, curSource->local, sent->volume, sent->range);
+					              entityNum, -1, curSource->local, sent->volume, sent->range, 0);
 					curSource->isLooping = qtrue;
 
 					knownSfx[curSource->sfx].loopCnt++;
@@ -1831,11 +1866,25 @@ static void S_AL_SrcUpdate(void)
 
 		// Check if it's done, and flag it
 		qalGetSourcei(curSource->alSource, AL_SOURCE_STATE, &state);
+
 		if (state == AL_STOPPED)
 		{
 			curSource->isPlaying = qfalse;
 			S_AL_SrcKill(i);
 			continue;
+		}
+
+		if (curSource->flags & SND_PAUSABLE)
+		{
+			if (S_AL_SoundsPaused())
+			{
+				qalSourcePause(curSource->alSource);
+				continue;
+			}
+			else if (state == AL_PAUSED)
+			{
+				qalSourcePlay(curSource->alSource);
+			}
 		}
 
 		// Query relativity of source, don't move if it's true
@@ -3585,6 +3634,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 	si->GetVoiceAmplitude     = S_AL_GetVoiceAmplitude;
 	si->GetSoundLength        = S_AL_GetSoundLength;
 	si->GetCurrentSoundTime   = S_AL_GetCurrentSoundTime;
+	si->PauseSounds           = S_AL_PauseSounds;
 
 #ifdef USE_VOIP
 	si->StartCapture            = S_AL_StartCapture;
