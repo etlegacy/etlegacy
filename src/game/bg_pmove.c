@@ -2174,6 +2174,26 @@ static void PM_Footsteps(void)
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_CLIMBDOWN, qtrue);
 			}
 		}
+		else // check for being midair
+		{
+			vec3_t up;
+
+			AngleVectors(pm->ps->viewangles, NULL, NULL, up);
+
+			VectorMA(pm->ps->origin, -25, up, end);
+
+			PM_TraceAll(&trace, pm->ps->origin, end);
+			if (trace.fraction == 1.0) // we're midair
+			{
+				// check for jumping forward first
+				if (!(pm->cmd.buttons & BUTTON_WALKING) /* running */ && pm->cmd.forwardmove > 0)
+				{
+					BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_JUMPFORWARD, qtrue);
+				}
+
+				BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_MIDAIR, qtrue);
+			}
+		}
 
 		return;
 	}
