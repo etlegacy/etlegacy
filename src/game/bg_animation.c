@@ -114,6 +114,9 @@ static animStringItem_t animMoveTypesStr[] =
 
 	{ "DEAD",         -1 },
 
+	{ "JUMP",         -1 },
+	{ "JUMPFORWARD",  -1 },
+
 	{ NULL,           -1 },
 };
 

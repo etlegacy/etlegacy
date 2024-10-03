@@ -763,6 +763,31 @@ static void PM_SetMovementDir(void)
 }
 
 /**
+ * @brief Plays a player's jump animation depending on direction.
+ */
+static void PM_PlayJumpAnim(void)
+{
+	if (pm->cmd.rightmove && !pm->cmd.forwardmove)  // strafe jumping
+	{
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_JUMP, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
+		pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
+	}
+	else if (!(pm->cmd.buttons & BUTTON_WALKING) /* not walking */ && pm->cmd.forwardmove > 0)  // forward run-jumping
+	{
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_JUMPFORWARD, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
+		pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
+	}
+	else  // backwards jumping
+	{
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_JUMP, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
+		pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
+	}
+}
+
+/**
  * @brief PM_CheckJump
  * @return
  */
@@ -814,16 +839,7 @@ static qboolean PM_CheckJump(void)
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	pm->ps->velocity[2]     = JUMP_VELOCITY;
 
-	if (pm->cmd.forwardmove >= 0)
-	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
-		pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
-	}
-	else
-	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
-		pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
-	}
+	PM_PlayJumpAnim();
 
 	return qtrue;
 }
@@ -1810,16 +1826,7 @@ static void PM_GroundTraceMissed(void)
 		PM_TraceAll(&trace, pm->ps->origin, point);
 		if (trace.fraction == 1.0f)
 		{
-			if (pm->cmd.forwardmove >= 0)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
-				pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
-				pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
-			}
+			PM_PlayJumpAnim();
 		}
 	}
 
@@ -1906,14 +1913,7 @@ static void PM_GroundTrace(void)
 		// such that the jump anim playback becomes reproducible/consistent
 		if (pm->waterlevel < 3 && (upwardsdirection >= 0.335f || upwardsdirection <= 0.0f) && !(pm->ps->pm_flags & PMF_LADDER))
 		{
-			if (pm->cmd.forwardmove >= 0)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
-			}
+			PM_PlayJumpAnim();
 		}
 
 		if (pm->cmd.forwardmove >= 0)
