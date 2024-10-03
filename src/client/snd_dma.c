@@ -91,7 +91,6 @@ cvar_t *s_show;
 cvar_t *s_mixahead;
 cvar_t *s_mixOffset;
 cvar_t *s_debugStreams;
-cvar_t *s_debugPause;
 
 static loopSound_t loopSounds[MAX_LOOP_SOUNDS];
 static vec3_t      entityPositions[MAX_GENTITIES];
