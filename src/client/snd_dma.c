@@ -2376,7 +2376,6 @@ qboolean S_Base_Init(soundInterface_t *si)
 	s_show         = Cvar_Get("s_show", "0", CVAR_CHEAT);
 	s_testsound    = Cvar_Get("s_testsound", "0", CVAR_CHEAT);
 	s_debugStreams = Cvar_Get("s_debugStreams", "0", CVAR_TEMP);
-	s_debugPause   = Cvar_Get("s_debugPause", "0", CVAR_CHEAT);
 
 	r = SNDDMA_Init();
 

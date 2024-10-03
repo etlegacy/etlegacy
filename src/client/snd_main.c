@@ -837,7 +837,7 @@ void S_Init(void)
 	s_backend           = Cvar_Get("s_backend", "", CVAR_ROM);
 	s_muteWhenMinimized = Cvar_Get("s_muteWhenMinimized", "1", CVAR_ARCHIVE);
 	s_muteWhenUnfocused = Cvar_Get("s_muteWhenUnfocused", "0", CVAR_ARCHIVE);
-	s_debugPause        = Cvar_Get("s_debugPause", "0", CVAR_ARCHIVE);
+	s_debugPause        = Cvar_Get("s_debugPause", "0", CVAR_CHEAT);
 
 	Cvar_CheckRange(s_volume, 0.0f, 1.0f, qfalse);
 	Cvar_CheckRange(s_musicVolume, 0.0f, 1.0f, qfalse);
