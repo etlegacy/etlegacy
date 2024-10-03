@@ -157,7 +157,12 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 		maxs = origin[2] - cent->lerpOrigin[2] - 6;
 		return (maxs < PRONE_BODYHEIGHT) ? PRONE_BODYHEIGHT : maxs;
 	}
-	else if (hitEnt->eFlags & EF_CROUCHING)
+	else if (
+		// crouching on the ground
+		(hitEnt->eFlags & EF_CROUCHING && hitEnt->groundEntityNum != ENTITYNUM_NONE)
+		// or is swimming
+		|| (cgs.clientinfo[hitEnt->clientNum].character->animModelInfo->animations[hitEnt->legsAnim & ~ANIM_TOGGLEBIT]->movetype & ((1 << ANIM_MT_SWIM) | (1 << ANIM_MT_SWIMBK)))
+		)
 	{
 		VectorCopy(cent->pe.headRefEnt.origin, origin);
 		VectorMA(origin, 6.5f, cent->pe.headRefEnt.axis[2], origin); // up
