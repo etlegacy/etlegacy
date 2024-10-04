@@ -1405,7 +1405,7 @@ void CL_Clip_f(void)
 
 	if (Cmd_Argc() < 2)
 	{
-		Com_Printf("Nothing to be put to the clipboard.");
+		Com_Printf("Nothing to be put to the clipboard.\n");
 		return;
 	}
 
@@ -1444,7 +1444,7 @@ void CL_Clip_f(void)
 		}
 
 		Com_Memset(cmdBuffer[i], 0, MAX_QPATH * sizeof(char));
-		Q_strncpyz(cmdBuffer[i], Cmd_Argv(i + 1), sizeof(cmdBuffer[i]));
+		Q_strncpyz(cmdBuffer[i], Cmd_Argv(i + 1), MAX_QPATH);
 	}
 
 	// Execute the command parts
@@ -3453,7 +3453,7 @@ void CL_Init(void)
 	//Cmd_AddCommand("add_fav", CL_AddFavServer_f, "Adds the current connected server to favorites.");
 
 	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
-	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.");
+	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.", CL_CompleteRcon);
 
 	Cmd_AddCommand("rebaseDrift", CL_RebaseDrift_f, "Resets the baselineDelta used for calculating drift.");
 
