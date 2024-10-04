@@ -1036,7 +1036,8 @@ int ScanAndLoadShaderFilesR1()
 	}
 
 	// build single large buffer
-	s_shaderTextR1    = (char *)ri.Hunk_Alloc(sum + numShaderFiles * 2, h_low);
+	size              = sum + numShaderFiles * 2;
+	s_shaderTextR1    = (char *)ri.Hunk_Alloc(size, h_low);
 	s_shaderTextR1[0] = '\0';
 	textEnd           = s_shaderTextR1;
 
@@ -1048,8 +1049,8 @@ int ScanAndLoadShaderFilesR1()
 			continue;
 		}
 
-		Q_strcat(textEnd, sizeof(textEnd), buffers[i]);
-		Q_strcat(textEnd, sizeof(textEnd), "\n");
+		Q_strcat(textEnd, size - strlen(textEnd), buffers[i]);
+		Q_strcat(textEnd, size - strlen(textEnd), "\n");
 		textEnd += strlen(textEnd);
 		ri.FS_FreeFile(buffers[i]);
 	}

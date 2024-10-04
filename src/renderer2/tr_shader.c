@@ -6302,7 +6302,8 @@ static void ScanAndLoadGuideFiles(void)
 			Ren_Drop("Couldn't load %s (single buffer)", filename);
 		}
 	}
-	s_guideText = (char *)ri.Hunk_Alloc(sum + numGuides * 2, h_low);
+    size = sum + numGuides * 2;
+	s_guideText = (char *)ri.Hunk_Alloc(size, h_low);
 
 	// load in reverse order, so doubled templates are overriden properly
 	for (i = numGuides - 1; i >= 0; i--)
@@ -6318,7 +6319,7 @@ static void ScanAndLoadGuideFiles(void)
 
 		Q_strcat(s_guideText, s_guideText, "\n");
 		p = &s_guideText[strlen(s_guideText)];
-        Q_strcat(s_guideText, sizeof(s_guideText), buffers[i]);
+        Q_strcat(s_guideText, size - strlen(s_guideText), buffers[i]);
 		ri.FS_FreeFile(buffers[i]);
 		buffers[i] = p;
 		COM_Compress(p);
