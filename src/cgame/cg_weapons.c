@@ -1317,8 +1317,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			return;
 		}
 	}
-	else  // hide some weapons 3P after usage, especially throwables - instead
-	      // of still holding them in a player's hand despite having thrown them
+	else if (!ps)  // hide some weapons 3P after usage, especially throwables - instead
+	// of still holding them in a player's hand despite having thrown them
 	{
 		switch (weaponNum)
 		{
