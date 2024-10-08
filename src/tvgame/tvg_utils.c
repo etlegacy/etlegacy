@@ -661,4 +661,27 @@ void TVG_TempTraceIgnorePlayersFromTeam(team_t team)
 	}
 }
 
+/**
+ * @brief Generate standard naming
+ * @return
+ */
+char *TVG_GenerateFilename(void)
+{
+	static char fullFilename[MAX_OSPATH];
+	char        prefix[MAX_QPATH];
+	qtime_t     ct;
+
+	trap_RealTime(&ct);
+	fullFilename[0] = '\0';
+	prefix[0]       = '\0';
+
+	Com_sprintf(fullFilename, sizeof(fullFilename), "%s%d-%02d-%02d-%02d%02d%02d-%s", prefix,
+	            1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
+	            ct.tm_hour, ct.tm_min, ct.tm_sec,
+	            level.rawmapname
+	            );
+
+	return fullFilename;
+}
+
 char bigTextBuffer[100000];

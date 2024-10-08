@@ -508,7 +508,7 @@ void SV_CL_InitTVGame(void)
 {
 	const char *info;
 	const char *mapname;
-	int        i, t1, t2;
+	int        t1, t2;
 
 	t1 = Sys_Milliseconds();
 
@@ -520,16 +520,6 @@ void SV_CL_InitTVGame(void)
 	svcls.state = CA_LOADING;
 
 	SV_SpawnServer(mapname);
-
-	for (i = 0; i < MAX_CONFIGSTRINGS; i++)
-	{
-		if (!svcl.gameState.stringOffsets[i] || i == CS_SYSTEMINFO)
-		{
-			continue;
-		}
-
-		SV_SetConfigstring(i, svcl.gameState.stringData + svcl.gameState.stringOffsets[i]);
-	}
 
 	// we will send a usercmd this frame, which
 	// will cause the server to send us the first snapshot
@@ -1409,7 +1399,7 @@ void SV_CL_ClearState(void)
  * @brief SV_CL_GetPlayerstate
  * @param[in] clientNum
  * @param[in,out] ps
- * @return
+ * @return qtrue if playerstate is valid
  */
 int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps)
 {
@@ -1431,18 +1421,20 @@ int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps)
 	if (clientNum == -1)
 	{
 		*ps = svcl.snap.ps;
+
+		return svcl.snap.valid;
 	}
 	else
 	{
 		if (!svcl.snap.playerstates[clientNum].valid)
 		{
-			return 0;
+			return qfalse;
 		}
 
 		*ps = svcl.snap.playerstates[clientNum].ps;
 	}
 
-	return 1;
+	return qtrue;
 }
 
 /**

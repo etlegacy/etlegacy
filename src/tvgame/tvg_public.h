@@ -221,13 +221,10 @@ typedef enum
 	G_SENDMESSAGE = 585,
 	G_MESSAGESTATUS,
 
-	G_ETTV_GetPlayerstate = 600,
+	TVG_GET_PLAYERSTATE = 600,
 
 	///< engine extensions padding
-	G_TRAP_GETVALUE = COM_TRAP_GETVALUE,
-
-	G_DEMOSUPPORT
-
+	G_TRAP_GETVALUE = COM_TRAP_GETVALUE
 } gameImport_t;
 
 

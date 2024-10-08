@@ -152,13 +152,17 @@ qboolean TVG_SpawnVector2DExt(const char *key, const char *defaultString, float 
 
 field_t fields[] =
 {
-	{ "classname", FOFS(classname), F_LSTRING,   0 },
-	{ "origin",    FOFS(s.origin),  F_VECTOR,    0 },
+	{ "classname",  FOFS(classname),  F_LSTRING,   0 },
+	{ "origin",     FOFS(s.origin),   F_VECTOR,    0 },
+	{ "spawnflags", FOFS(spawnflags), F_INT,       0 },
 
-	{ "angles",    FOFS(s.angles),  F_VECTOR,    0 },
-	{ "angle",     FOFS(s.angles),  F_ANGLEHACK, 0 },
+	{ "target",     FOFS(target),     F_LSTRING,   0 },
+	{ "targetname", FOFS(targetname), F_LSTRING,   0 },
 
-	{ NULL,        0,               F_IGNORE,    0 }
+	{ "angles",     FOFS(s.angles),   F_VECTOR,    0 },
+	{ "angle",      FOFS(s.angles),   F_ANGLEHACK, 0 },
+
+	{ NULL,         0,                F_IGNORE,    0 }
 };
 
 typedef struct
@@ -171,6 +175,8 @@ void SP_info_player_start(gentity_t *ent);
 void SP_info_player_checkpoint(gentity_t *ent);
 void SP_info_player_deathmatch(gentity_t *ent);
 void SP_info_player_intermission(gentity_t *ent);
+
+void SP_info_notnull(gentity_t *self);
 
 void SP_team_CTF_redspawn(gentity_t *ent);
 void SP_team_CTF_bluespawn(gentity_t *ent);
@@ -187,6 +193,8 @@ spawn_t spawns[] =
 	{ "info_player_checkpoint",   SP_info_player_checkpoint   },
 	{ "info_player_deathmatch",   SP_info_player_deathmatch   },
 	{ "info_player_intermission", SP_info_player_intermission },
+
+	{ "info_notnull",             SP_info_notnull             }, // use target_position instead
 
 	{ 0,                          0                           }
 };
