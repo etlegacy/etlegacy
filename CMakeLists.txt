@@ -148,7 +148,7 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER ${CMAKE_TARGETS_FOLDER})
 
 # Set language levels
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 99)  # engine is intentionally C99 while mods remain C90
 
 # Find and setup programs the build needs
 include(cmake/ETLPrograms.cmake)
