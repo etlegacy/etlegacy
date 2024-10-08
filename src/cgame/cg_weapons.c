@@ -53,6 +53,23 @@ weapon_t weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
 };
 
+static char* weapAnimNumberStr[] =
+{
+	"IDLE1",
+	"IDLE2",
+	"ATTACK1",
+	"ATTACK2",
+	"ATTACK_LASTSHOT",
+	"DROP",
+	"RAISE",
+	"RELOAD1",
+	"RELOAD2",
+	"RELOAD3",
+	"ALTSWITCHFROM",
+	"ALTSWITCHTO",
+	"DROP2",
+};
+
 /**
  * @brief CG_StartWeaponAnim
  * @param[in] anim
@@ -841,10 +858,10 @@ static void CG_SetWeapLerpFrameAnimation(weaponInfo_t *wi, lerpFrame_t *lf, int 
 	lf->animation     = anim;
 	lf->animationTime = lf->frameTime + anim->initialLerp;
 
-	if (cg_debugAnim.integer == 2)
-	{
-		CG_Printf("Weap Anim: %d\n", newAnimation);
-	}
+	// if (cg_debugAnim.integer == 2 || cg_debugAnim.integer == 3)
+	// {
+	// 	CG_Printf("Weap Anim: %d\n", newAnimation);
+	// }
 }
 
 /**
@@ -952,7 +969,7 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 		if (cg.time > lf->frameTime)
 		{
 			lf->frameTime = cg.time;
-			if (cg_debugAnim.integer > 3)
+			if (cg_debugAnim.integer == 2)
 			{
 				CG_Printf("CG_RunWeapLerpFrame: Clamp lf->frameTime\n");
 			}
@@ -1105,9 +1122,9 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
 	}
 
-	if (cg_debugAnim.integer == 3)
+	if ((cg_debugAnim.integer == 1 || cg_debugAnim.integer == 2) && !cg_thirdPerson.integer)
 	{
-		CG_Printf("oldframe: %d   frame: %d   backlerp: %f\n", cent->pe.weap.oldFrame, cent->pe.weap.frame, (double)cent->pe.weap.backlerp);
+		CG_Printf("anim-weapon: %02d anim: %15s oldframe: %03d frame: %03d backlerp: %05f\n", ps->weapon, weapAnimNumberStr[(cent->pe.weap.animationNumber & ~ANIM_TOGGLEBIT)], cent->pe.weap.oldFrame, cent->pe.weap.frame, (double)cent->pe.weap.backlerp);
 	}
 }
 
