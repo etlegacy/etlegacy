@@ -534,11 +534,13 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	// set some level globals
 	{
-		qboolean oldspawning = level.spawning;
+		qboolean    oldspawning  = level.spawning;
+		gamestate_t oldGamestate = level.gamestate;
 
 		Com_Memset(&level, 0, sizeof(level));
 
-		level.spawning = oldspawning;
+		level.spawning  = oldspawning;
+		level.gamestate = restart ? oldGamestate : GS_INITIALIZE;
 	}
 
 	TVG_ModCheck();
