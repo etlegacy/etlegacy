@@ -641,6 +641,72 @@ static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp
 }
 
 /**
+ * @brief CG_BackupHudFile
+ * @param[in] filename
+ * @param[in] upgrade - if true, the old file will be kept
+ * @return
+ */
+void CG_BackupHudFile(const char *filename, const qboolean upgrade)
+{
+	fileHandle_t tmp, backup;
+	byte         *buffer;
+	int          len;
+	qboolean     backupOk = qfalse;
+
+	len = trap_FS_FOpenFile(filename, &tmp, FS_READ);
+	if (len > 0)
+	{
+		char path[MAX_OSPATH];
+
+		CG_HudBackupFilePath(path, MAX_OSPATH);
+
+		buffer = Com_Allocate(len + 1);
+		if (!buffer)
+		{
+			trap_FS_FCloseFile(tmp);
+			CG_Error("CG_ReadHudsFromFile: Failed to allocate buffer\n");
+			return;
+		}
+
+		trap_FS_Read(buffer, len, tmp);
+		buffer[len] = 0;
+
+		if (trap_FS_FOpenFile(path, &backup, FS_WRITE) < 0)
+		{
+			CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to save huds backup to '%s'\n", path);
+		}
+		else
+		{
+			trap_FS_Write(buffer, len, backup);
+			trap_FS_FCloseFile(backup);
+			backupOk = qtrue;
+
+			if (upgrade)
+			{
+				CG_Printf(S_COLOR_CYAN "Upgrading HUD version, backed up old custom hud data to '%s'\n", path);
+			}
+			else
+			{
+				CG_Printf(S_COLOR_CYAN "Backed up users custom hud data to '%s'\n", path);
+			}
+		}
+
+		Com_Dealloc(buffer);
+	}
+
+	if (len >= 0)
+	{
+		trap_FS_FCloseFile(tmp);
+	}
+
+	if (!upgrade && backupOk)
+	{
+		trap_FS_Delete(filename);
+		CG_Printf(S_COLOR_RED "Removed users custom hud file due to invalid format '%s'\n", filename);
+	}
+}
+
+/**
  * @brief CG_WriteHudsToFile
  * @return
  */
@@ -652,6 +718,20 @@ qboolean CG_WriteHudsToFile()
 	const char    *hudFilePath;
 
 	hudFilePath = CG_HudFilePath();
+
+	// read the old HUD file first, so we can check if we're upgrading the HUD version
+	root = Q_FSReadJsonFrom(hudFilePath);
+
+	if (root)
+	{
+		const int oldVersion = Q_ReadIntValueJson(root, "version");
+
+		// backup old file in case we're upgrading to new version, so downgrading is easy for the user
+		if (oldVersion < CURRENT_HUD_JSON_VERSION)
+		{
+			CG_BackupHudFile(hudFilePath, qtrue);
+		}
+	}
 
 	root = cJSON_CreateObject();
 	if (!root)
@@ -1665,54 +1745,7 @@ void CG_ReadHudsFromFile(void)
 	{
 		// If the reading of the custom user hud file fails, then it's possible that the hud file is of "old" format
 		// back it up and then remove the file
-		fileHandle_t tmp, backup;
-		byte         *buffer;
-		int          len;
-		qboolean     backupOk = qfalse;
-
-		len = trap_FS_FOpenFile(hudFilePath, &tmp, FS_READ);
-		if (len > 0)
-		{
-			char path[MAX_OSPATH];
-
-			CG_HudBackupFilePath(path, MAX_OSPATH);
-
-			buffer = Com_Allocate(len + 1);
-			if (!buffer)
-			{
-				trap_FS_FCloseFile(tmp);
-				CG_Error("CG_ReadHudsFromFile: Failed to allocate buffer\n");
-				return;
-			}
-
-			trap_FS_Read(buffer, len, tmp);
-			buffer[len] = 0;
-
-			if (trap_FS_FOpenFile(path, &backup, FS_WRITE) < 0)
-			{
-				CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to save huds backup to '%s'\n", path);
-			}
-			else
-			{
-				trap_FS_Write(buffer, len, backup);
-				trap_FS_FCloseFile(backup);
-				backupOk = qtrue;
-				CG_Printf(S_COLOR_CYAN "Backed up users custom hud data to '%s'\n", path);
-			}
-
-			Com_Dealloc(buffer);
-		}
-
-		if (len >= 0)
-		{
-			trap_FS_FCloseFile(tmp);
-		}
-
-		if (backupOk)
-		{
-			trap_FS_Delete(hudFilePath);
-			CG_Printf(S_COLOR_RED "Removed users custom hud file due to invalid format '%s'\n", hudFilePath);
-		}
+		CG_BackupHudFile(hudFilePath, qfalse);
 	}
 
 	Com_Printf("...hud count: %i\n", hudData.count);
