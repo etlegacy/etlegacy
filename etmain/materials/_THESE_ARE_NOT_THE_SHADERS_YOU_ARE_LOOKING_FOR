@@ -1,0 +1,8 @@
+These look like they are the shaders you want, but they are most likely not.
+
+These shader files are WIP and only consumed by the WIP `RENDERER2` - and _NOT_
+by the default renderer that the game currently ships with.
+
+For the default renderer, only `/scripts/` matters.
+
+Have a great day!
