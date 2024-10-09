@@ -111,14 +111,6 @@ void SP_info_player_start(gentity_t *ent)
  */
 void SP_info_player_intermission(gentity_t *ent)
 {
-	if (ent->spawnflags < 0 || ent->spawnflags > 2)
-	{
-		Com_Printf("SP_info_player_intermission: incorrect spawnflag %d\n", ent->spawnflags);
-		return;
-	}
-
-	VectorCopy(ent->s.origin, level.intermission_origins[ent->spawnflags]);
-	VectorCopy(ent->s.angles, level.intermission_angles[ent->spawnflags]);
 }
 
 /**

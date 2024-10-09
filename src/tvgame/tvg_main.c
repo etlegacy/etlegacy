@@ -777,12 +777,33 @@ MAP CHANGING
 */
 
 /**
+ * @brief TVG_InitSpawnPoint
+ */
+static void TVG_InitSpawnPoint(gentity_t *ent, int index)
+{
+	gentity_t *target;
+	vec3_t    dir;
+
+	VectorCopy(ent->s.origin, level.intermission_origins[index]);
+	VectorCopy(ent->s.angles, level.intermission_angles[index]);
+
+	if (ent->target)
+	{
+		target = TVG_PickTarget(ent->target);
+		if (target)
+		{
+			VectorSubtract(target->s.origin, level.intermission_origins[index], dir);
+			vectoangles(dir, level.intermission_angles[index]);
+		}
+	}
+}
+
+/**
  * @brief TVG_InitSpawnPoints
  */
 void TVG_InitSpawnPoints(void)
 {
-	gentity_t *ent = NULL, *target;
-	vec3_t    dir;
+	gentity_t *ent = NULL;
 
 	ent = TVG_Find(NULL, FOFS(classname), "info_player_intermission");
 
@@ -795,19 +816,20 @@ void TVG_InitSpawnPoints(void)
 
 	while (ent)
 	{
-		if (ent->spawnflags >= 0 && ent->spawnflags <= 2)
+		if (!ent->spawnflags)
 		{
-			VectorCopy(ent->s.origin, level.intermission_origins[ent->spawnflags]);
-			VectorCopy(ent->s.angles, level.intermission_angles[ent->spawnflags]);
-
-			if (ent->target)
+			TVG_InitSpawnPoint(ent, 0);
+		}
+		else
+		{
+			if (ent->spawnflags & 1)
 			{
-				target = TVG_PickTarget(ent->target);
-				if (target)
-				{
-					VectorSubtract(target->s.origin, level.intermission_origins[ent->spawnflags], dir);
-					vectoangles(dir, level.intermission_angles[ent->spawnflags]);
-				}
+				TVG_InitSpawnPoint(ent, 1);
+			}
+
+			if (ent->spawnflags & 2)
+			{
+				TVG_InitSpawnPoint(ent, 2);
 			}
 		}
 
