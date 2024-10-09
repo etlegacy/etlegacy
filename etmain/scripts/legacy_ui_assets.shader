@@ -23,7 +23,7 @@ ui/assets/etl_logo
 	nomipmaps
 	nopicmip
 	{
-		map ui/assets/etl_logo.tga
+		clampmap ui/assets/etl_logo.tga
 		blendfunc blend
 	}
 }
@@ -33,7 +33,7 @@ ui/assets/etl_logo_ingame
 	nomipmaps
 	nopicmip
 	{
-		map ui/assets/etl_logo_ingame.tga
+		clampmap ui/assets/etl_logo_ingame.tga
 		blendfunc blend
 	}
 }
@@ -49,7 +49,7 @@ ui/assets/mp_ammo_blue
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_ammo_blue.tga
+		clampmap ui/assets/mp_ammo_blue.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -63,7 +63,7 @@ ui/assets/mp_ammo_red
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_ammo_red.tga
+		clampmap ui/assets/mp_ammo_red.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -77,7 +77,7 @@ ui/assets/mp_arrow_blue
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_arrow_blue.tga
+		clampmap ui/assets/mp_arrow_blue.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -91,7 +91,7 @@ ui/assets/mp_arrow_red
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_arrow_red.tga
+		clampmap ui/assets/mp_arrow_red.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -105,7 +105,7 @@ ui/assets/mp_gun_blue
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_gun_blue.tga
+		clampmap ui/assets/mp_gun_blue.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -119,7 +119,7 @@ ui/assets/mp_gun_red
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_gun_red.tga
+		clampmap ui/assets/mp_gun_red.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -133,7 +133,7 @@ ui/assets/mp_health_blue
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_health_blue.tga
+		clampmap ui/assets/mp_health_blue.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -147,7 +147,7 @@ ui/assets/mp_health_red
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_health_red.tga
+		clampmap ui/assets/mp_health_red.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -161,7 +161,7 @@ ui/assets/mp_player_highlight
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_player_highlight.tga
+		clampmap ui/assets/mp_player_highlight.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -175,7 +175,7 @@ ui/assets/mp_spy_blue
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_spy_blue.tga
+		clampmap ui/assets/mp_spy_blue.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -189,7 +189,7 @@ ui/assets/mp_spy_red
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_spy_red.tga
+		clampmap ui/assets/mp_spy_red.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -203,7 +203,7 @@ ui/assets/mp_wrench_blue
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_wrench_blue.tga
+		clampmap ui/assets/mp_wrench_blue.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -217,7 +217,7 @@ ui/assets/mp_wrench_red
 	nocompress
 	nomipmaps
 	{
-		map ui/assets/mp_wrench_red.tga
+		clampmap ui/assets/mp_wrench_red.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
