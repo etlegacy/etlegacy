@@ -1435,9 +1435,9 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 
 		// XXX : Stop pliers firing animation if you stop holding attack - would
 		//		 otherwise continue, despite the player not actually using them.
-		if (ps->weapon == WP_PLIERS
-		    && ps->weaponstate != WEAPON_FIRING
-		    && animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority >= 20 /* firing animation is currently playing */)
+		if (
+			animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->loopFrames == -1
+			&& ps->weaponstate != WEAPON_FIRING)
 		{
 			currentPriority = -1;
 		}

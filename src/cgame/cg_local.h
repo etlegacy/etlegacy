@@ -3306,6 +3306,8 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, int targetEntityNum)
 void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index);
 void CG_RailTrail2(const vec3_t color, const vec3_t start, const vec3_t end, int index, int sideNum);
 
+int CG_CalcLoopFrames(animation_t *anim);
+
 void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent);
 void CG_AddSoundWeapon(centity_t *cent);
