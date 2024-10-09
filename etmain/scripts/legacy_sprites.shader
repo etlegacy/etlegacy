@@ -12,7 +12,7 @@ sprites/undercover
 	nocompress
 	nopicmip
 	{
-		map sprites/undercover.tga
+		clampmap sprites/undercover.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -23,7 +23,7 @@ sprites/uniform_allied_hud
 	nocompress
 	nopicmip
 	{
-		map sprites/active_uniform_allied.tga
+		clampmap sprites/active_uniform_allied.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -34,7 +34,7 @@ sprites/uniform_axis_hud
 	nocompress
 	nopicmip
 	{
-		map sprites/active_uniform_axis.tga
+		clampmap sprites/active_uniform_axis.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -50,7 +50,7 @@ sprites/fireteam
 	nocompress
 	nopicmip
 	{
-		map sprites/fireteam.tga
+		clampmap sprites/fireteam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 		alphaGen vertex
@@ -68,7 +68,7 @@ sprites/ready
 	nomipmaps
 	nopicmip
 	{
-		map gfx/2d/ready.tga
+		clampmap gfx/2d/ready.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -83,7 +83,7 @@ sprites/authenticated
 	nomipmaps
 	nopicmip
 	{
-		map gfx/2d/authenticated.tga
+		clampmap gfx/2d/authenticated.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -99,7 +99,7 @@ sprites/greentick
 	nocompress
 	nopicmip
 	{
-		map sprites/greentick.tga
+		clampmap sprites/greentick.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -110,7 +110,7 @@ sprites/redcross
 	nocompress
 	nopicmip
 	{
-		map sprites/redcross.tga
+		clampmap sprites/redcross.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -121,7 +121,7 @@ sprites/voicechat_orange
 	nocompress
 	nopicmip
 	{
-		map sprites/voicechat_orange.tga
+		clampmap sprites/voicechat_orange.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -139,7 +139,7 @@ sprites/landmine_allied
 	nocompress
 	nomipmaps
 	{
-		map sprites/landmine_allied.tga
+		clampmap sprites/landmine_allied.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -153,7 +153,7 @@ sprites/landmine_axis
 	nocompress
 	nomipmaps
 	{
-		map sprites/landmine_axis.tga
+		clampmap sprites/landmine_axis.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -167,7 +167,7 @@ sprites/cm_medic_icon
 	nocompress
 	nomipmaps
 	{
-		map sprites/voicemedic.tga
+		clampmap sprites/voicemedic.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -181,7 +181,7 @@ sprites/cm_ammo_icon
 	nocompress
 	nomipmaps
 	{
-		map sprites/voiceammo.tga
+		clampmap sprites/voiceammo.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
@@ -195,7 +195,7 @@ sprites/cm_voicechat_icon
 	nocompress
 	nomipmaps
 	{
-		map sprites/voicechat.tga
+		clampmap sprites/voicechat.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
