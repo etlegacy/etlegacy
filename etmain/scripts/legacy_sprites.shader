@@ -202,4 +202,33 @@ sprites/cm_voicechat_icon
 		alphaGen vertex
 	}
 }
+
+sprites/objective_blue
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map sprites/objective_blue.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+sprites/objective_red
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map sprites/objective_red.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 //========================================//
