@@ -5017,10 +5017,12 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 
 		// does the field exist?..
 		for (i = 0; fields[i].name; ++i)
+		{
 			if (!Q_stricmp(fields[i].name, key))
 			{
 				break;
 			}
+		}
 		if (!fields[i].name)
 		{
 			G_Error("G_ScriptAction_Delete(): non-existing key \"%s\"", key);
@@ -5093,28 +5095,27 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 	// did we find any key/value pairs in the params at all?..
 	if (count == 0)
 	{
-		return qfalse;
+		return qtrue;
 	}
 
 	// now delete the entities that passed all tests..
-	for (i = MAX_GENTITIES - 1; i >= MAX_CLIENTS; i--)
+	for (i = ENTITYNUM_MAX_NORMAL - 1; i >= MAX_CLIENTS + BODY_QUEUE_SIZE; i--)
+	{
 		if (pass[i] == count)
 		{
 			deleted++;
 			G_Printf("G_ScriptAction_Delete(): \"%s\" entity %i removed (%s)\n", g_entities[i].classname, i, params);
 			G_FreeEntity(&g_entities[i]);
 		}
+	}
 
 	// did we actually delete any entity?..
-	if (deleted > 0)
-	{
-		return qtrue;
-	}
-	else
+	if (deleted == 0)
 	{
 		G_Printf("G_ScriptAction_Delete(): no entities found (%s)\n", params);
 	}
-	return qfalse;
+
+	return qtrue;
 }
 
 /**
