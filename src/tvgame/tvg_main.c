@@ -131,6 +131,7 @@ vmCvar_t team_riflegrenades;
 vmCvar_t g_fixedphysics;
 vmCvar_t g_fixedphysicsfps;
 vmCvar_t g_pronedelay;
+vmCvar_t g_debugAnim;
 
 vmCvar_t sv_fps;
 
@@ -221,6 +222,7 @@ tvcvarTable_t gameCvarTable[] =
 	{ &g_fixedphysics,          "g_fixedphysics",          "1",                          CVAR_ROM,                                    0, qfalse,},
 	{ &g_fixedphysicsfps,       "g_fixedphysicsfps",       "125",                        CVAR_ROM,                                    0, qfalse,},
 	{ &g_pronedelay,            "g_pronedelay",            "0",                          CVAR_ROM,                                    0, qfalse,},
+	{ &g_debugAnim,             "g_debugAnim",             "0",                          CVAR_ROM,                                    0, qfalse,},
 
 	{ &tvg_queue_ms,            "ettv_queue_ms",           "-1",                         CVAR_ROM,                                    0, qfalse,},
 };
