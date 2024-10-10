@@ -1021,14 +1021,50 @@ void SP_worldspawn(void)
  */
 void SP_func_fakebrush(gentity_t *ent)
 {
-	ent->s.eFlags |= EF_FAKEBMODEL;
+	if (!G_SpawnVector("origin", "0 0 0", ent->s.origin))
+	{
+		G_Error("'func_fakebrush' does not have an 'origin'\n");
+	}
+
+	if (!G_SpawnVector("mins", "0 0 0", ent->r.mins))
+	{
+		G_Error("'func_fakebrush' does not have 'mins'\n");
+	}
+
+	if (!G_SpawnVector("maxs", "0 0 0", ent->r.maxs))
+	{
+		G_Error("'func_fakebrush' does not have 'maxs'\n");
+	}
+
+	if (!G_SpawnInt("contents", "1", &ent->r.contents))
+	{
+		G_Error("'func_fakebrush' does not have 'contents'\n");
+	}
+
+	ent->clipmask = ent->r.contents;
+
 	G_SetOrigin(ent, ent->s.origin);
+	G_SetAngle(ent, ent->s.angles);
+
+	ent->s.eFlags |= EF_FAKEBMODEL;
 
 	// repurpose origin2 and angles2 for client prediction
 	VectorCopy(ent->r.mins, ent->s.origin2);
 	VectorCopy(ent->r.maxs, ent->s.angles2);
 
-	return;
+	trap_LinkEntity(ent);
+
+	// SV_LinkEntity only sets the entity to solid if entity has a bmodel
+	// or r.contents is either CONTENTS_SOLID or CONTENTS_BODY,
+	// so if we try to make a playerclip fakebrush, it won't have solid flag set and prediction is broken
+	if (ent->r.contents & CONTENTS_PLAYERCLIP && !ent->s.solid)
+	{
+		ent->s.solid = 1;
+
+		// also pass along contents so we can filter this out for stuff
+		// such as bullet traces, to avoid bullet marks on playerclip fakebrushes
+		ent->s.dmgFlags = ent->r.contents;
+	}
 }
 
 /**

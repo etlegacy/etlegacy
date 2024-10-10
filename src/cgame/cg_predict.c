@@ -221,7 +221,10 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 		}
 		else
 		{
-			if (ent->eFlags & EF_FAKEBMODEL)
+			// dmgFlags are set to r.contents if the fakebrush is playerclip,
+			// so only grab mins/maxs if we're doing a player trace (capsule), or if dmgFlags are not set (regular CONTENTS_SOLID),
+			// otherwise stuff like bullets and flame particles appear to collide with playerclip fakebrushes
+			if (ent->eFlags & EF_FAKEBMODEL && (capsule || !ent->dmgFlags))
 			{
 				// repurposed origin2 and angles2 to receive mins and maxs of func_fakebrush
 				VectorCopy(ent->origin2, bmins);
