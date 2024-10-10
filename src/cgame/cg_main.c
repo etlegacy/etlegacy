@@ -412,7 +412,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_gun_x,                    "cg_gunX",                     "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_y,                    "cg_gunY",                     "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_z,                    "cg_gunZ",                     "0",           CVAR_TEMP,                    0 },
-	{ &cg_centertime,               "cg_centertime",               "5",           CVAR_ARCHIVE,                 0 }, // changed from 3 to 5
+	{ &cg_centertime,               "cg_centertime",               "3",           CVAR_ARCHIVE,                 0 },
 	{ &cg_bobbing,                  "cg_bobbing",                  "0.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawEnvAwareness,         "cg_drawEnvAwareness",         "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawEnvAwarenessScale,    "cg_drawEnvAwarenessScale",    "0.80",        CVAR_ARCHIVE,                 0 },
