@@ -5219,6 +5219,7 @@ void PmoveSingle(pmove_t *pmove)
 #endif // CGAMEDLL
 		}
 	}
+#ifdef GAMEDLL
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
@@ -5229,6 +5230,7 @@ void PmoveSingle(pmove_t *pmove)
 			pm->cmd.weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 		}
 	}
+#endif
 	else if (pm->ps->weapon == WP_SATCHEL_DET)
 	{
 		if (!(pm->ps->ammoclip[WP_SATCHEL_DET]))
