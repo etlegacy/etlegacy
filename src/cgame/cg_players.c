@@ -573,9 +573,9 @@ static void CG_SetLerpFrameAnimation(centity_t *cent, clientInfo_t *ci, lerpFram
 	lf->animation     = anim;
 	lf->animationTime = lf->frameTime + anim->initialLerp;
 
-	if (cg_debugAnim.integer == 1)
+	if ((cg_debugAnim.integer == 1 || cg_debugAnim.integer == 2) && cg_thirdPerson.integer)
 	{
-		CG_Printf("Anim: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
+		CG_Printf("anim-player: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
 	}
 }
 
@@ -654,7 +654,7 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 		if (cg.time > lf->frameTime)
 		{
 			lf->frameTime = cg.time;
-			if (cg_debugAnim.integer > 3)
+			if (cg_debugAnim.integer == 2)
 			{
 				CG_Printf("CG_RunLerpFrame: Clamp lf->frameTime\n");
 			}
@@ -797,9 +797,9 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 		lf->frameModel    = anim->mdxFile;
 	}
 
-	if (cg_debugAnim.integer == 1) // extra debug info
+	if ((cg_debugAnim.integer == 1 || cg_debugAnim.integer == 2) && cg_thirdPerson.integer) // extra debug info
 	{
-		CG_Printf("Anim: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
+		CG_Printf("anim-player: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
 	}
 }
 
@@ -1086,7 +1086,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 				CG_RunLerpFrameRate(ci, lf, newAnimation, cent, recursion + 1);
 			}
 
-			if (cg_debugAnim.integer > 3)
+			if (cg_debugAnim.integer == 2)
 			{
 				CG_Printf("CG_RunLerpFrameRate: Clamp lf->frameTime\n");
 			}
@@ -1195,9 +1195,9 @@ void CG_SetLerpFrameAnimationRateCorpse(centity_t *cent, lerpFrame_t *lf, int ne
 	lf->frameTime     = cg.time - 1;
 	lf->animationTime = cg.time + rest - anim->duration;
 	lf->frameModel    = anim->mdxFile;
-	if (cg_debugAnim.integer)
+	if ((cg_debugAnim.integer == 1 || cg_debugAnim.integer == 2) && cg_thirdPerson.integer)
 	{
-		CG_Printf("Anim: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
+		CG_Printf("anim-player: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
 	}
 }
 
@@ -1286,7 +1286,7 @@ void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimati
 		{
 			lf->frameTime = cg.time;
 
-			if (cg_debugAnim.integer > 3)
+			if (cg_debugAnim.integer == 2)
 			{
 				CG_Printf("CG_RunLerpFrameRateCorpse: Clamp lf->frameTime\n");
 			}

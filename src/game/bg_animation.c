@@ -43,14 +43,16 @@
 // added because I need to check single/multiplayer instances and branch accordingly
 #ifdef CGAMEDLL
 extern vmCvar_t cg_gameType;
+extern vmCvar_t cg_debugAnim;
+#define DBGANIMS cg_debugAnim.integer
+#define DBGANIMS_PREF " [cg] "
 #endif
 #ifdef GAMEDLL
 extern vmCvar_t g_gametype;
+extern vmCvar_t g_debugAnim;
+#define DBGANIMS g_debugAnim.integer
+#define DBGANIMS_PREF " [sv] "
 #endif
-
-// debug defines, to prevent doing costly string cvar lookups
-//#define   DBGANIMS
-//#define   DBGANIMEVENTS
 
 // this is used globally within this file to reduce redundant params
 static animScriptData_t *globalScriptData = NULL;
@@ -1557,9 +1559,10 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 		return -1;
 	}
 
-#ifdef DBGANIMS
-	Com_Printf("script anim: cl %i, mt %s, ", ps->clientNum, animMoveTypesStr[movetype]);
-#endif
+	if (DBGANIMS == 3 || DBGANIMS == 5)
+	{
+		Com_Printf("anim-anims : "DBGANIMS_PREF " cl %i, mt %s, ", ps->clientNum, animMoveTypesStr[movetype].string);
+	}
 
 	// try finding a match in all states ABOVE the given state
 	while (!scriptItem && state < MAX_AISTATES)
@@ -1581,9 +1584,10 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 
 	if (!scriptItem)
 	{
-#ifdef DBGANIMS
-		Com_Printf("no valid conditions\n");
-#endif
+		if (DBGANIMS == 3 || DBGANIMS == 5)
+		{
+			Com_Printf("no valid conditions\n");
+		}
 		return -1;
 	}
 	// save this as our current movetype
@@ -1591,17 +1595,18 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 	// pick the correct animation for this character (animations must be constant for each character, otherwise they'll constantly change)
 	scriptCommand = &scriptItem->commands[ps->clientNum % scriptItem->numCommands];
 
-#ifdef DBGANIMS
-	if (scriptCommand->bodyPart[0])
+	if (DBGANIMS == 3 || DBGANIMS == 5)
 	{
-		Com_Printf("anim0 (%s): %s", animBodyPartsStr[scriptCommand->bodyPart[0]].string, animModelInfo->animations[scriptCommand->animIndex[0]]->name);
+		if (scriptCommand->bodyPart[0])
+		{
+			Com_Printf("anim0 (%s): %s", animBodyPartsStr[scriptCommand->bodyPart[0]].string, animModelInfo->animations[scriptCommand->animIndex[0]]->name);
+		}
+		if (scriptCommand->bodyPart[1])
+		{
+			Com_Printf("anim1 (%s): %s", animBodyPartsStr[scriptCommand->bodyPart[1]].string, animModelInfo->animations[scriptCommand->animIndex[1]]->name);
+		}
+		Com_Printf("\n");
 	}
-	if (scriptCommand->bodyPart[1])
-	{
-		Com_Printf("anim1 (%s): %s", animBodyPartsStr[scriptCommand->bodyPart[1]].string, animModelInfo->animations[scriptCommand->animIndex[1]]->name);
-	}
-	Com_Printf("\n");
-#endif
 
 	// run it
 	return (BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qfalse, isContinue) != -1);
@@ -1675,41 +1680,45 @@ int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, script
 		return -1;
 	}
 
-#ifdef DBGANIMEVENTS
-	Com_Printf("script event: cl %i, ev %s, ", ps->clientNum, animEventTypesStr[event]);
-#endif
+	if (DBGANIMS >= 4)
+	{
+		Com_Printf("anim-event :" DBGANIMS_PREF " cl %i, ev %s, ", ps->clientNum, animEventTypesStr[event].string);
+	}
 
 	script = &animModelInfo->scriptEvents[event];
 	if (!script->numItems)
 	{
-#ifdef DBGANIMEVENTS
-		Com_Printf("no entry\n");
-#endif
+		if (DBGANIMS >= 4)
+		{
+			Com_Printf("no entry\n");
+		}
 		return -1;
 	}
 	// find the first script item, that passes all the conditions for this event
 	scriptItem = BG_FirstValidItem(ps->clientNum, script);
 	if (!scriptItem)
 	{
-#ifdef DBGANIMEVENTS
-		Com_Printf("no valid conditions\n");
-#endif
+		if (DBGANIMS >= 4)
+		{
+			Com_Printf("no valid conditions\n");
+		}
 		return -1;
 	}
 	// pick a random command
 	scriptCommand = &scriptItem->commands[rand() % scriptItem->numCommands];
 
-#ifdef DBGANIMEVENTS
-	if (scriptCommand->bodyPart[0])
+	if (DBGANIMS >= 4)
 	{
-		Com_Printf("anim0 (%s): %s", animBodyPartsStr[scriptCommand->bodyPart[0]].string, animModelInfo->animations[scriptCommand->animIndex[0]]->name);
+		if (scriptCommand->bodyPart[0])
+		{
+			Com_Printf("anim0 (%s): %s", animBodyPartsStr[scriptCommand->bodyPart[0]].string, animModelInfo->animations[scriptCommand->animIndex[0]]->name);
+		}
+		if (scriptCommand->bodyPart[1])
+		{
+			Com_Printf("anim1 (%s): %s", animBodyPartsStr[scriptCommand->bodyPart[1]].string, animModelInfo->animations[scriptCommand->animIndex[1]]->name);
+		}
+		Com_Printf("\n");
 	}
-	if (scriptCommand->bodyPart[1])
-	{
-		Com_Printf("anim1 (%s): %s", animBodyPartsStr[scriptCommand->bodyPart[1]].string, animModelInfo->animations[scriptCommand->animIndex[1]]->name);
-	}
-	Com_Printf("\n");
-#endif
 
 	// run it
 	return BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qtrue, isContinue);
