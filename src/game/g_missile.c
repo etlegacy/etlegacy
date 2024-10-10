@@ -601,11 +601,12 @@ void G_RunMissile(gentity_t *ent)
 			}
 			return;
 		}
-		else if (!ent->count2 && BG_GetSkyHeightAtPoint(origin) - BG_GetGroundHeightAtPoint(origin) > 1024)
+
+		if (!ent->count2 && BG_GetSkyHeightAtPoint(origin) - BG_GetGroundHeightAtPoint(origin) > 1024)
 		{
 			ent->count2 = ent->r.currentOrigin[2] > origin[2];
 		}
-		else if ((ent->count2 == 1 || ent->count2 == 2) && !(ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF)))
+		else if ((ent->count2 == 1 || ent->count2 == 2) && (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_MORTAR || ent->s.weapon == WP_MAPMORTAR))
 		{
 			vec3_t  impactpos;
 			trace_t mortar_tr;
