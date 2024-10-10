@@ -22,22 +22,33 @@
 		//	|   				|   	|   |   |   	|   |   |   <priority>
 		//	|   				|   	|   |   |   	|   |   |   |
 
-		// DEATHS {{{ - do not change the order!
-		death_machinegun_1		0		32	0	20		0	0	0	99
-		dead_machinegun_1		31		1	1	20		0	0	0	99
-		//death_rifle_head_2	33		52	0	20		0	0	0	99
-		death_rifle_head_2		43		42	0	25		0	0	0	99
-		death_crouch			56		26	0	25		0	0	0	99
-		dead_rifle_head_2		84		1	1	20		0	0	0	99
-		death_machinegun_2		85		38	0	20		0	0	0	99
-		//dead_machinegun_2		122		1	1	20		0	0	0	99  // same as dead_machinegun_1
-		death_gut				130		41	0	20		0	0	0	99
-		//dead_gut				170		1	1	20		0	0	0	99  // same as dead_machinegun_1
-		// DEATHS }}} - do not change the order!
+		// FIXED_ORDER {{{
+		// XXX : NOTE : IMPORTANT
+		// the first frames of the the first animation defined in this file is
+		// treated special and used for at least 3 distinct cases:
+		//
+		//     1. the first initial frames when a player spawns, after which the
+		//        player lerps to whatever is defined in 'human_base.script'.
+		//
+		//     2. in some cases when a player dies and taps out immediately, the
+		//        very last frame of this animation is used for the corpse they
+		//        leave behind.
+		//
+		//     3. it can occur on the first few frames of a revive animation and
+		//        blends together with it
+		//
+		default_animation		0		32	0	20		0	0	0	0  // previously 'death_machinegun_1'
+		// FIXED_ORDER }}}
+
+		dead_corpse		 		31		1	1	20		0	0	0	99
+
+		death_general			9		23	0	21		0	0	0	99
+		death_crouch			11		21	0	13		0	0	0	99  // from 'death_general'
+		death_prone				13		19	0	11		0	0	0	99  // from 'death_general'
 
 		wounded_idle_1			173		144	144	20		0	0	0	0
 
-		revive					320		47	0	22		0	0	0	9
+		revive					320		47	0	22		0	0	0	11
 		stand_binoculars		370		57	57	15		0	0	0	0
 		stand_radio				430		110	110	15		0	0	0	0
 
@@ -312,9 +323,6 @@
 		prone_knife_idle		4672	1	0	20		0	0	0	0
 
 		prone_syringe_attack	4691	8	0	35		0	0	0	20
-
-		// Prone Death
-		prone_die1				4573	10	0	20		0	0	0	0
 
 		// Prone Legs
 		prone_legs				4594	1	0	20		0	0	0	0
