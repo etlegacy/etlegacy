@@ -696,7 +696,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case G_MESSAGESTATUS:
 		return SV_BinaryMessageStatus(args[1]);
 
-	case G_ETLTV_GETPLAYERSTATE:
+	case TVG_GET_PLAYERSTATE:
 		return SV_CL_GetPlayerstate(args[1], VMA(2));
 
 	case G_DEMOSUPPORT:
@@ -752,6 +752,19 @@ static void SV_InitGameVM(qboolean restart)
 	for (i = 0 ; i < sv_maxclients->integer ; i++)
 	{
 		svs.clients[i].gentity = NULL;
+	}
+
+	if (svcls.isTVGame && !restart)
+	{
+		for (i = 0; i < MAX_CONFIGSTRINGS; i++)
+		{
+			if (!svcl.gameState.stringOffsets[i] || i == CS_SYSTEMINFO)
+			{
+				continue;
+			}
+
+			SV_SetConfigstring(i, svcl.gameState.stringData + svcl.gameState.stringOffsets[i]);
+		}
 	}
 
 	// mark all extensions as inactive

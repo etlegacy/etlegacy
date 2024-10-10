@@ -108,10 +108,15 @@ void SP_info_player_start(gentity_t *ent)
 /**
  * @brief QUAKED info_player_intermission (1 0 1) (-16 -16 -24) (16 16 32) AXIS ALLIED
  * The intermission will be viewed from this point.  Target an info_notnull for the view direction.
- *
- * @param ent - unused
  */
 void SP_info_player_intermission(gentity_t *ent)
+{
+}
+
+/**
+ * @brief SP_info_notnull
+ */
+void SP_info_notnull(gentity_t *self)
 {
 }
 
@@ -220,8 +225,8 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
  */
 static void TVG_SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles)
 {
-	VectorCopy(level.intermission_origin, origin);
-	VectorCopy(level.intermission_angle, angles);
+	VectorCopy(level.intermission_origins[0], origin);
+	VectorCopy(level.intermission_angles[0], angles);
 }
 
 //======================================================================

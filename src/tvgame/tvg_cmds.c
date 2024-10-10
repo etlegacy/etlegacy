@@ -1347,6 +1347,64 @@ qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self)
 	return qtrue;
 }
 
+/**
+* @brief TVG_ParseWarmup
+*/
+static void TVG_ParseWarmup(void)
+{
+	char cs[MAX_STRING_CHARS];
+
+	trap_GetConfigstring(CS_WARMUP, cs, sizeof(cs));
+
+	if (level.gamestate != GS_WARMUP || level.warmup)
+	{
+		level.warmup = Q_atoi(cs);
+	}
+}
+
+/**
+* @brief TVG_ParseWolfinfo
+*/
+void TVG_ParseWolfinfo(void)
+{
+	char        cs[MAX_STRING_CHARS];
+	gamestate_t oldGamestate = level.gamestate;
+
+	trap_GetConfigstring(CS_WOLFINFO, cs, sizeof(cs));
+
+	level.gamestate = (gamestate_t)(atoi(Info_ValueForKey(cs, "gamestate")));
+
+	if (oldGamestate != GS_WARMUP_COUNTDOWN && level.gamestate == GS_WARMUP_COUNTDOWN)
+	{
+		TVG_ParseWarmup();
+	}
+}
+
+/**
+* @brief TVG_ConfigStringModified *NEVER* attempt sendig configstrings directly to client!
+*/
+static void TVG_ConfigStringModified(void)
+{
+	char cmd[MAX_TOKEN_CHARS];
+	int  num;
+
+	trap_Argv(1, cmd, sizeof(cmd));
+
+	num = Q_atoi(cmd);
+
+	switch (num)
+	{
+	case CS_WARMUP:
+		TVG_ParseWarmup();
+		break;
+	case CS_WOLFINFO:
+		TVG_ParseWolfinfo();
+		break;
+	default:
+		break;
+	}
+}
+
 #define ENTNFO_HASH         78985
 #define CS_HASH             25581
 #define TINFO_HASH          65811
@@ -1419,14 +1477,14 @@ qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self)
 #define HAS_TIMERUN_HASH  134442
 
 /**
-* @brief TVG_ClientCommandPassThrough This handles server commands (server responses to client commands)
-* @details ETTV Client connected to master changes messages to clientNum = -2
+* @brief TVG_MasterServerCommand This handles server commands (server responses to client commands)
+* @details TV Client connected to master changes messages to clientNum = -2
            if we detect that incoming cmd is a broadcast message we should immediately sent it (clientNum = -1).
-		   ETTV Server can send ClientCommands to master server too, for example requesting scores, stats etc.
+		   TV Server can send ClientCommands to master server too, for example requesting scores, stats etc.
 		   the response will come with clientNum -2 again
 * @param[in] cmd
 */
-static void TVG_ClientCommandPassThrough(char *cmd)
+static void TVG_MasterServerCommand(char *cmd)
 {
 	char passcmd[MAX_TOKEN_CHARS];
 	char *token;
@@ -1447,7 +1505,7 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		trap_SendServerCommand(-1, cmd);
 		return;
 	case CS_HASH:                         // "cs" = configstring - do not send
-		                                  // update will be created just before sending snapshot
+		TVG_ConfigStringModified();       // update will be created just before sending snapshot
 		return;
 	case TINFO_HASH:                      // "tinfo" = teamplayinfo
 		trap_SendServerCommand(-1, cmd);
@@ -1672,7 +1730,7 @@ static void TVG_ClientCommandPassThrough(char *cmd)
 		return;
 
 	default:
-		G_Printf("TVGAME: Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(token));
+		G_Printf("TVGAME: Unknown master server game command: %s [%lu]\n", cmd, BG_StringHashValue(token));
 		break;
 	}
 }
@@ -1697,7 +1755,7 @@ void TVG_ClientCommand(int clientNum)
 
 	if (clientNum == -2)
 	{
-		TVG_ClientCommandPassThrough(cmd);
+		TVG_MasterServerCommand(cmd);
 		return;
 	}
 
