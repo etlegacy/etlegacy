@@ -1303,10 +1303,9 @@ static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
 
 gentity_t *G_Lua_CreateEntity(char *params)
 {
-	gentity_t *create;
-	char      *token;
-	char      *p = params;
-	char      key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
+	char *token;
+	char *p = params;
+	char key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
 
 	level.numSpawnVars     = 0;
 	level.numSpawnVarChars = 0;
@@ -1349,17 +1348,8 @@ gentity_t *G_Lua_CreateEntity(char *params)
 
 		level.numSpawnVars++;
 	}
-	create = G_SpawnGEntityFromSpawnVars();
 
-	//create->classname = "lua_spawn"; // make additional param?
-
-	if (!create)  // don't link NULL ents
-	{
-		return NULL;
-	}
-
-	trap_LinkEntity(create);
-	return create;
+	return G_SpawnGEntityFromSpawnVars();
 }
 
 // entnum = _et_G_Lua_CreateEntity( params )
@@ -3895,8 +3885,8 @@ void G_LuaHook_SpawnEntitiesFromString()
  */
 const char *G_LuaHook_Chat(int sender, int receiver, const char *message, char *buffer, size_t bufsize)
 {
-	int      i;
-	lua_vm_t *vm;
+	int        i;
+	lua_vm_t   *vm;
 	const char *result, *newMessage;
 
 	newMessage = message;
@@ -3925,8 +3915,8 @@ const char *G_LuaHook_Chat(int sender, int receiver, const char *message, char *
 			}
 			// Return values
 			if (lua_isinteger(vm->L, -2) &&
-					lua_tointeger(vm->L, -2) != qfalse &&
-					lua_isstring(vm->L, -1))
+			    lua_tointeger(vm->L, -2) != qfalse &&
+			    lua_isstring(vm->L, -1))
 			{
 				result = luaL_checkstring(vm->L, -1);
 				Q_strncpyz(buffer, result, bufsize);

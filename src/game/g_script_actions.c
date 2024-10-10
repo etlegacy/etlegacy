@@ -5126,10 +5126,9 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
  */
 qboolean G_ScriptAction_Create(gentity_t *ent, char *params)
 {
-	gentity_t *create;
-	char      *token;
-	char      *p = params;
-	char      key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
+	char *token;
+	char *p = params;
+	char key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
 
 	level.numSpawnVars     = 0;
 	level.numSpawnVarChars = 0;
@@ -5169,13 +5168,7 @@ qboolean G_ScriptAction_Create(gentity_t *ent, char *params)
 
 		level.numSpawnVars++;
 	}
-	create = G_SpawnGEntityFromSpawnVars();
 
-	if (!create)
-	{
-		return qfalse; // don't link NULL ents
-	}
-
-	trap_LinkEntity(create);
+	G_SpawnGEntityFromSpawnVars();
 	return qtrue;
 }
