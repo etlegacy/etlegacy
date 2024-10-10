@@ -1781,7 +1781,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.commandCentreAlliedMineShader     = trap_R_RegisterShaderNoMip("sprites/landmine_allied");
 	cgs.media.commandCentreSpawnShader[0]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagaxis");
 	cgs.media.commandCentreSpawnShader[1]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagallied");
-	cgs.media.compassConstructShader            = trap_R_RegisterShaderNoMip("sprites/construct.tga");
+	cgs.media.compassConstructShader            = trap_R_RegisterShaderNoMip("sprites/legacy_construct");
 	cgs.media.blackmask                         = trap_R_RegisterShaderNoMip("images/blackmask"); // etpro icons support
 
 	cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags");
@@ -1791,7 +1791,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.compassShader           = trap_R_RegisterShaderNoMip("gfx/2d/compass.tga");
 	cgs.media.compassDirectionShader  = trap_R_RegisterShaderNoMip("gfx/2d/compassdirection");
 	cgs.media.compassCircleTickShader = trap_R_RegisterShaderNoMip("gfx/2d/compasscircletick");
-	cgs.media.buddyShader             = trap_R_RegisterShaderNoMip("sprites/buddy.tga");
+	cgs.media.buddyShader             = trap_R_RegisterShaderNoMip("sprites/legacy_buddy.tga");
 
 	for (i = 0 ; i < NUM_CROSSHAIRS ; i++)
 	{
@@ -1850,30 +1850,30 @@ static void CG_RegisterGraphics(void)
 	cgs.media.gibIntestine = trap_R_RegisterModel("models/gibs/intestine.md3");
 	cgs.media.gibChest     = trap_R_RegisterModel("models/gibs/skull.md3");
 
-	cgs.media.spawnInvincibleShader = trap_R_RegisterShader("sprites/shield");
-	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/skull");
-	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
-	cgs.media.disguisedShader       = trap_R_RegisterShader("sprites/undercover");
+	cgs.media.spawnInvincibleShader = trap_R_RegisterShader("sprites/legacy_shield");
+	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/legacy_skull");
+	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/legacy_medic_revive");
+	cgs.media.disguisedShader       = trap_R_RegisterShader("sprites/legacy_undercover");
 
-	cgs.media.constructShader = trap_R_RegisterShaderNoMip("sprites/construct");
-	cgs.media.destroyShader   = trap_R_RegisterShaderNoMip("sprites/destroy");
-	cgs.media.escortShader    = trap_R_RegisterShaderNoMip("sprites/escort");
-	cgs.media.attackShader    = trap_R_RegisterShaderNoMip("sprites/attack");
-	cgs.media.defendShader    = trap_R_RegisterShaderNoMip("sprites/defend");
-	cgs.media.regroupShader   = trap_R_RegisterShaderNoMip("sprites/regroup");
+	cgs.media.constructShader = trap_R_RegisterShaderNoMip("sprites/legacy_construct");
+	cgs.media.destroyShader   = trap_R_RegisterShaderNoMip("sprites/legacy_destroy");
+	cgs.media.escortShader    = trap_R_RegisterShaderNoMip("sprites/legacy_escort");
+	cgs.media.attackShader    = trap_R_RegisterShaderNoMip("sprites/legacy_attack");
+	cgs.media.defendShader    = trap_R_RegisterShaderNoMip("sprites/legacy_waypoint_defend");
+	cgs.media.regroupShader   = trap_R_RegisterShaderNoMip("sprites/legacy_waypoint_regroup");
 
-	cgs.media.voiceChatShader = trap_R_RegisterShader("sprites/voiceChat");
-	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
+	cgs.media.voiceChatShader = trap_R_RegisterShader("sprites/legacy_voicechat");
+	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/legacy_balloon3");
 
-	cgs.media.objectiveShader        = trap_R_RegisterShader("sprites/objective");
+	cgs.media.objectiveShader        = trap_R_RegisterShader("sprites/legacy_objective");
 	cgs.media.objectiveBlueShader    = trap_R_RegisterShaderNoMip("sprites/objective_blue");
 	cgs.media.objectiveRedShader     = trap_R_RegisterShaderNoMip("sprites/objective_red");
-	cgs.media.objectiveTeamShader    = trap_R_RegisterShaderNoMip("sprites/objective_team");
-	cgs.media.objectiveDroppedShader = trap_R_RegisterShaderNoMip("sprites/objective_dropped");
-	cgs.media.objectiveEnemyShader   = trap_R_RegisterShaderNoMip("sprites/objective_enemy");
-	cgs.media.objectiveBothTEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_te");
-	cgs.media.objectiveBothTDShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_td");
-	cgs.media.objectiveBothDEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_de");
+	cgs.media.objectiveTeamShader    = trap_R_RegisterShaderNoMip("sprites/legacy_objective_team");
+	cgs.media.objectiveDroppedShader = trap_R_RegisterShaderNoMip("sprites/legacy_objective_dropped");
+	cgs.media.objectiveEnemyShader   = trap_R_RegisterShaderNoMip("sprites/legacy_objective_enemy");
+	cgs.media.objectiveBothTEShader  = trap_R_RegisterShaderNoMip("sprites/legacy_objective_both_te");
+	cgs.media.objectiveBothTDShader  = trap_R_RegisterShaderNoMip("sprites/legacy_objective_both_td");
+	cgs.media.objectiveBothDEShader  = trap_R_RegisterShaderNoMip("sprites/legacy_objective_both_de");
 	cgs.media.objectiveSimpleIcon    = trap_R_RegisterShader("simpleicons/objective");
 	cgs.media.readyShader            = trap_R_RegisterShader("sprites/ready");
 #ifdef LEGACY_AUTH
@@ -2158,18 +2158,19 @@ static void CG_RegisterGraphics(void)
 	CG_InitPMGraphics();
 
 	// mounted gun on tank models
-	cgs.media.hMountedMG42Base = trap_R_RegisterModel("models/mapobjects/tanks_sd/mg42nestbase.md3");
-	cgs.media.hMountedMG42Nest = trap_R_RegisterModel("models/mapobjects/tanks_sd/mg42nest.md3");
-	cgs.media.hMountedMG42     = trap_R_RegisterModel("models/mapobjects/tanks_sd/mg42.md3");
-	cgs.media.hMountedBrowning = trap_R_RegisterModel("models/multiplayer/browning/thirdperson.md3");
+	cgs.media.hMountedMG42Base  = trap_R_RegisterModel("models/mapobjects/tanks_sd/mg42nestbase.md3");
+	cgs.media.hMountedMG42Nest  = trap_R_RegisterModel("models/mapobjects/tanks_sd/mg42nest.md3");
+	cgs.media.hMountedMG42      = trap_R_RegisterModel("models/mapobjects/tanks_sd/mg42.md3");
+	cgs.media.hMountedBrowning  = trap_R_RegisterModel("models/multiplayer/browning/thirdperson.md3");
+	cgs.media.hPanzerfaustNoTip = trap_R_RegisterModel("models/multiplayer/panzerfaust/multi_pf_notip.md3");
 
 	// FIXME: temp models
 	// these 1st p models are registered twice ... MG and browning use it ...
 	cgs.media.hMountedFPMG42     = trap_R_RegisterModel("models/multiplayer/mg42/v_mg42.md3");
 	cgs.media.hMountedFPBrowning = trap_R_RegisterModel("models/multiplayer/browning/tankmounted.md3");
 
-	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
-	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
+	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/legacy_voicemedic");
+	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/legacy_voiceammo");
 
 	CG_RegisterFonts();
 
