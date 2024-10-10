@@ -893,8 +893,8 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 				{
 					depthBits = 8;
 				}
-            // fall through    
-			case 3: 
+			// fall through
+			case 3:
 				if (stencilBits == 24)
 				{
 					stencilBits = 16;
@@ -982,7 +982,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		}
 
-		main_window = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y, glConfig->vidWidth, glConfig->vidHeight, flags | SDL_WINDOW_SHOWN);
+		main_window = SDL_CreateWindow(GlobalGameTitle, x, y, glConfig->vidWidth, glConfig->vidHeight, flags | SDL_WINDOW_SHOWN);
 
 		if (!main_window)
 		{
