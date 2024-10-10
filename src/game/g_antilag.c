@@ -152,6 +152,8 @@ void G_StoreClientPosition(gentity_t *ent)
 	ent->client->clientMarkers[top].pm_flags   = ent->client->ps.pm_flags;
 	ent->client->clientMarkers[top].viewheight = ent->client->ps.viewheight;
 
+	ent->client->clientMarkers[top].groundEntityNum = ent->client->ps.groundEntityNum;
+
 	// Torso Markers
 	ent->client->clientMarkers[top].torsoOldFrameModel = ent->torsoFrame.oldFrameModel;
 	ent->client->clientMarkers[top].torsoFrameModel    = ent->torsoFrame.frameModel;
@@ -163,6 +165,10 @@ void G_StoreClientPosition(gentity_t *ent)
 	ent->client->clientMarkers[top].torsoPitchAngle    = ent->torsoFrame.pitchAngle;
 	ent->client->clientMarkers[top].torsoYawing        = ent->torsoFrame.yawing;
 	ent->client->clientMarkers[top].torsoPitching      = ent->torsoFrame.pitching;
+	if (ent->torsoFrame.animation)
+	{
+		ent->client->clientMarkers[top].torsoAnimationMovetype = ent->torsoFrame.animation->movetype;
+	}
 
 	// Legs Markers
 	ent->client->clientMarkers[top].legsOldFrameModel = ent->legsFrame.oldFrameModel;
@@ -175,6 +181,10 @@ void G_StoreClientPosition(gentity_t *ent)
 	ent->client->clientMarkers[top].legsPitchAngle    = ent->legsFrame.pitchAngle;
 	ent->client->clientMarkers[top].legsYawing        = ent->legsFrame.yawing;
 	ent->client->clientMarkers[top].legsPitching      = ent->legsFrame.pitching;
+	if (ent->legsFrame.animation)
+	{
+		ent->client->clientMarkers[top].legsAnimationMovetype = ent->legsFrame.animation->movetype;
+	}
 }
 
 /**
@@ -235,6 +245,8 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 
 		ent->client->backupMarker.time = level.time;
 
+		ent->client->backupMarker.groundEntityNum = ent->client->ps.groundEntityNum;
+
 		// Torso Markers
 		ent->client->backupMarker.torsoOldFrameModel = ent->torsoFrame.oldFrameModel;
 		ent->client->backupMarker.torsoFrameModel    = ent->torsoFrame.frameModel;
@@ -246,6 +258,10 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		ent->client->backupMarker.torsoPitchAngle    = ent->torsoFrame.pitchAngle;
 		ent->client->backupMarker.torsoYawing        = ent->torsoFrame.yawing;
 		ent->client->backupMarker.torsoPitching      = ent->torsoFrame.pitching;
+		if (ent->torsoFrame.animation)
+		{
+			ent->client->backupMarker.torsoAnimationMovetype = ent->torsoFrame.animation->movetype;
+		}
 
 		// Legs Markers
 		ent->client->backupMarker.legsOldFrameModel = ent->legsFrame.oldFrameModel;
@@ -258,6 +274,10 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		ent->client->backupMarker.legsPitchAngle    = ent->legsFrame.pitchAngle;
 		ent->client->backupMarker.legsYawing        = ent->legsFrame.yawing;
 		ent->client->backupMarker.legsPitching      = ent->legsFrame.pitching;
+		if (ent->legsFrame.animation)
+		{
+			ent->client->backupMarker.legsAnimationMovetype = ent->legsFrame.animation->movetype;
+		}
 	}
 
 	// if we haven't wrapped back to the head, we've sandwiched, so
@@ -303,6 +323,8 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 			ent->client->ps.pm_flags   = ent->client->clientMarkers[j].pm_flags;
 			ent->client->ps.viewheight = ent->client->clientMarkers[j].viewheight;
 
+			ent->client->ps.groundEntityNum = ent->client->clientMarkers[j].groundEntityNum;
+
 			// Torso Markers
 			ent->torsoFrame.oldFrameModel = ent->client->clientMarkers[j].torsoOldFrameModel;
 			ent->torsoFrame.frameModel    = ent->client->clientMarkers[j].torsoFrameModel;
@@ -314,6 +336,10 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 			ent->torsoFrame.pitchAngle    = ent->client->clientMarkers[j].torsoPitchAngle;
 			ent->torsoFrame.yawing        = ent->client->clientMarkers[j].torsoYawing;
 			ent->torsoFrame.pitching      = ent->client->clientMarkers[j].torsoPitching;
+			if (ent->client->clientMarkers[j].torsoAnimationMovetype)
+			{
+				ent->torsoFrame.animation->movetype = ent->client->clientMarkers[j].torsoAnimationMovetype;
+			}
 
 			// Legs Markers
 			ent->legsFrame.oldFrameModel = ent->client->clientMarkers[j].legsOldFrameModel;
@@ -326,6 +352,10 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 			ent->legsFrame.pitchAngle    = ent->client->clientMarkers[j].legsPitchAngle;
 			ent->legsFrame.yawing        = ent->client->clientMarkers[j].legsYawing;
 			ent->legsFrame.pitching      = ent->client->clientMarkers[j].legsPitching;
+			if (ent->client->clientMarkers[j].legsAnimationMovetype)
+			{
+				ent->legsFrame.animation->movetype = ent->client->clientMarkers[j].legsAnimationMovetype;
+			}
 
 			// time stamp for BuildHead/Leg
 			ent->timeShiftTime = ent->client->clientMarkers[j].time;
@@ -336,6 +366,8 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 			ent->client->ps.eFlags     = ent->client->clientMarkers[i].eFlags;
 			ent->client->ps.pm_flags   = ent->client->clientMarkers[i].pm_flags;
 			ent->client->ps.viewheight = ent->client->clientMarkers[i].viewheight;
+
+			ent->client->ps.groundEntityNum = ent->client->clientMarkers[i].groundEntityNum;
 
 			// Torso Markers
 			ent->torsoFrame.oldFrameModel = ent->client->clientMarkers[i].torsoOldFrameModel;
@@ -348,6 +380,10 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 			ent->torsoFrame.pitchAngle    = ent->client->clientMarkers[i].torsoPitchAngle;
 			ent->torsoFrame.yawing        = ent->client->clientMarkers[i].torsoYawing;
 			ent->torsoFrame.pitching      = ent->client->clientMarkers[i].torsoPitching;
+			if (ent->client->clientMarkers[i].torsoAnimationMovetype)
+			{
+				ent->torsoFrame.animation->movetype = ent->client->clientMarkers[i].torsoAnimationMovetype;
+			}
 
 			// Legs Markers
 			ent->legsFrame.oldFrameModel = ent->client->clientMarkers[i].legsOldFrameModel;
@@ -360,6 +396,10 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 			ent->legsFrame.pitchAngle    = ent->client->clientMarkers[i].legsPitchAngle;
 			ent->legsFrame.yawing        = ent->client->clientMarkers[i].legsYawing;
 			ent->legsFrame.pitching      = ent->client->clientMarkers[i].legsPitching;
+			if (ent->client->clientMarkers[i].legsAnimationMovetype)
+			{
+				ent->legsFrame.animation->movetype = ent->client->clientMarkers[i].legsAnimationMovetype;
+			}
 
 			// time stamp for BuildHead/Leg
 			ent->timeShiftTime = ent->client->clientMarkers[i].time;
@@ -402,6 +442,8 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		ent->client->ps.pm_flags   = ent->client->clientMarkers[j].pm_flags;
 		ent->client->ps.viewheight = ent->client->clientMarkers[j].viewheight;
 
+		ent->client->ps.groundEntityNum = ent->client->clientMarkers[j].groundEntityNum;
+
 		// Torso Markers
 		ent->torsoFrame.oldFrameModel = ent->client->clientMarkers[j].torsoOldFrameModel;
 		ent->torsoFrame.frameModel    = ent->client->clientMarkers[j].torsoFrameModel;
@@ -413,6 +455,10 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		ent->torsoFrame.pitchAngle    = ent->client->clientMarkers[j].torsoPitchAngle;
 		ent->torsoFrame.yawing        = ent->client->clientMarkers[j].torsoYawing;
 		ent->torsoFrame.pitching      = ent->client->clientMarkers[j].torsoPitching;
+		if (ent->client->clientMarkers[j].torsoAnimationMovetype)
+		{
+			ent->torsoFrame.animation->movetype = ent->client->clientMarkers[j].torsoAnimationMovetype;
+		}
 
 		// Legs Markers
 		ent->legsFrame.oldFrameModel = ent->client->clientMarkers[j].legsOldFrameModel;
@@ -425,6 +471,10 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		ent->legsFrame.pitchAngle    = ent->client->clientMarkers[j].legsPitchAngle;
 		ent->legsFrame.yawing        = ent->client->clientMarkers[j].legsYawing;
 		ent->legsFrame.pitching      = ent->client->clientMarkers[j].legsPitching;
+		if (ent->client->clientMarkers[j].legsAnimationMovetype)
+		{
+			ent->legsFrame.animation->movetype = ent->client->clientMarkers[j].legsAnimationMovetype;
+		}
 
 		// time stamp for BuildHead/Leg
 		ent->timeShiftTime = ent->client->clientMarkers[j].time;
@@ -461,6 +511,7 @@ qboolean G_ReAdjustSingleClientPosition(gentity_t *ent)
 		ent->client->ps.pm_flags   = ent->client->backupMarker.pm_flags;
 		ent->client->ps.viewheight = ent->client->backupMarker.viewheight;
 
+		ent->client->ps.groundEntityNum = ent->client->backupMarker.groundEntityNum;
 
 		ent->client->backupMarker.time = 0;
 
@@ -475,6 +526,10 @@ qboolean G_ReAdjustSingleClientPosition(gentity_t *ent)
 		ent->torsoFrame.pitchAngle    = ent->client->backupMarker.torsoPitchAngle;
 		ent->torsoFrame.yawing        = ent->client->backupMarker.torsoYawing;
 		ent->torsoFrame.pitching      = ent->client->backupMarker.torsoPitching;
+		if (ent->client->backupMarker.torsoAnimationMovetype)
+		{
+			ent->torsoFrame.animation->movetype = ent->client->backupMarker.torsoAnimationMovetype;
+		}
 
 		// Legs Markers
 		ent->legsFrame.oldFrameModel = ent->client->backupMarker.legsOldFrameModel;
@@ -485,6 +540,10 @@ qboolean G_ReAdjustSingleClientPosition(gentity_t *ent)
 		ent->legsFrame.frameTime     = ent->client->backupMarker.legsFrameTime;
 		ent->legsFrame.yawAngle      = ent->client->backupMarker.legsYawAngle;
 		ent->legsFrame.pitchAngle    = ent->client->backupMarker.legsPitchAngle;
+		if (ent->client->backupMarker.legsAnimationMovetype)
+		{
+			ent->legsFrame.animation->movetype = ent->client->backupMarker.legsAnimationMovetype;
+		}
 
 		// time stamp for BuildHead/Leg
 		ent->timeShiftTime = 0;
@@ -563,9 +622,10 @@ void G_ResetMarkers(gentity_t *ent)
 		VectorCopy(ent->r.currentOrigin, ent->client->clientMarkers[i].origin);
 		ent->client->clientMarkers[i].time = time;
 		VectorCopy(ent->client->ps.viewangles, ent->client->clientMarkers[i].viewangles);
-		ent->client->clientMarkers[i].eFlags     = eFlags;
-		ent->client->clientMarkers[i].pm_flags   = ent->client->ps.pm_flags;
-		ent->client->clientMarkers[i].viewheight = ent->client->ps.viewheight;
+		ent->client->clientMarkers[i].eFlags          = eFlags;
+		ent->client->clientMarkers[i].pm_flags        = ent->client->ps.pm_flags;
+		ent->client->clientMarkers[i].viewheight      = ent->client->ps.viewheight;
+		ent->client->clientMarkers[i].groundEntityNum = ent->client->ps.groundEntityNum;
 
 		// Torso Markers
 		ent->client->clientMarkers[i].torsoOldFrameModel = ent->torsoFrame.oldFrameModel;
@@ -578,6 +638,10 @@ void G_ResetMarkers(gentity_t *ent)
 		ent->client->clientMarkers[i].torsoPitchAngle    = ent->torsoFrame.pitchAngle;
 		ent->client->clientMarkers[i].torsoYawing        = ent->torsoFrame.yawing;
 		ent->client->clientMarkers[i].torsoPitching      = ent->torsoFrame.pitching;
+		if (ent->torsoFrame.animation)
+		{
+			ent->client->clientMarkers[i].torsoAnimationMovetype = ent->torsoFrame.animation->movetype;
+		}
 
 		// Legs Markers
 		ent->client->clientMarkers[i].legsOldFrameModel = ent->legsFrame.oldFrameModel;
@@ -590,6 +654,10 @@ void G_ResetMarkers(gentity_t *ent)
 		ent->client->clientMarkers[i].legsPitchAngle    = ent->legsFrame.pitchAngle;
 		ent->client->clientMarkers[i].legsYawing        = ent->legsFrame.yawing;
 		ent->client->clientMarkers[i].legsPitching      = ent->legsFrame.pitching;
+		if (ent->legsFrame.animation)
+		{
+			ent->client->clientMarkers[i].legsAnimationMovetype = ent->legsFrame.animation->movetype;
+		}
 	}
 	// time stamp for BuildHead/Leg
 	ent->timeShiftTime = 0;
@@ -670,14 +738,14 @@ static int G_SwitchBodyPartEntity(gentity_t *ent)
 	return ent - g_entities;
 }
 
-#define POSITION_READJUST                       \
-	if (res != results->entityNum) {               \
-		VectorSubtract(end, start, dir);          \
-		VectorNormalizeFast(dir);             \
-                                    \
-		VectorMA(results->endpos, -1, dir, results->endpos);  \
-		results->entityNum = res;               \
-	}
+#define POSITION_READJUST                                      \
+		if (res != results->entityNum) {                         \
+			VectorSubtract(end, start, dir);                      \
+			VectorNormalizeFast(dir);                             \
+                                                               \
+			VectorMA(results->endpos, -1, dir, results->endpos);  \
+			results->entityNum = res;                             \
+		}
 
 /**
  * @brief Run a trace with players in historical positions.
