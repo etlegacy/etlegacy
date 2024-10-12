@@ -2766,6 +2766,7 @@ extern vmCvar_t cg_tracerSpeed;
 extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
+extern vmCvar_t cg_muzzleFlashDlight;
 extern vmCvar_t cg_muzzleFlashScale;
 extern vmCvar_t cg_drawEnvAwareness;
 extern vmCvar_t cg_drawEnvAwarenessScale;

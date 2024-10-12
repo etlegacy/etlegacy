@@ -53,7 +53,7 @@ weapon_t weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
 };
 
-static char* weapAnimNumberStr[] =
+static char *weapAnimNumberStr[] =
 {
 	"IDLE1",
 	"IDLE2",
@@ -1303,7 +1303,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	modelViewType_t modelViewType = ps ? W_FP_MODEL : W_TP_MODEL;
 	float           x, y;
 	vec3_t          forward, left, right, up;
-	qboolean        shouldDrawMuzzleFlash = (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && ps && isFirstPerson));
+	qboolean        shouldDrawMuzzleFlash       = (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && ps && isFirstPerson));
+	qboolean        shouldDrawMuzzleFlashDlight = ((shouldDrawMuzzleFlash && cg_muzzleFlashDlight.integer == 0) || (cg_muzzleFlashDlight.integer > 1 && !(cg_muzzleFlashDlight.integer == 3 && ps && isFirstPerson)));
 
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
@@ -1398,7 +1399,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 
 		// render mg_42 muzzle flash in 3P
-		if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
+		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
 			Com_Memset(&flash, 0, sizeof(flash));
 			flash.renderfx = RF_LIGHTING_ORIGIN;
@@ -1407,21 +1408,66 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			VectorCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.origin, flash.origin);
 			AxisCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.axis, flash.axis);
 
-			trap_R_AddRefEntityToScene(&flash);
+			if (shouldDrawMuzzleFlash)
+			{
+				trap_R_AddRefEntityToScene(&flash);
+			}
 
-			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
+			if (shouldDrawMuzzleFlashDlight)
+			{
+				trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
+			}
 		}
 		return;
 	}
 
-	// stationary heavy weapon (e.g. misc_mg42, misc_aagun) muzzle flash
+	// stationary mg42 weapon (misc_mg42)
 	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
-		if (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && isPlayer) && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
+		// muzzle flash
+		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
-			CG_MG42EFX(cent);
+			centity_t   *mg42;
+			int         num;
+			vec3_t      forward, point;
+			refEntity_t flash;
+
+			// find the mg42 we're attached to
+			for (num = 0 ; num < cg.snap->numEntities ; num++)
+			{
+				mg42 = &cg_entities[cg.snap->entities[num].number];
+
+				if (mg42->currentState.eType == ET_MG42_BARREL &&
+				    mg42->currentState.otherEntityNum == cent->currentState.number)
+				{
+					// found it, clamp behind gun
+					VectorCopy(mg42->currentState.pos.trBase, point);
+					//AngleVectors (mg42->s.apos.trBase, forward, NULL, NULL);
+					AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+					VectorMA(point, 40, forward, point);
+
+					Com_Memset(&flash, 0, sizeof(flash));
+					flash.renderfx = RF_LIGHTING_ORIGIN;
+					flash.hModel   = cgs.media.mg42muzzleflash;
+
+					VectorCopy(point, flash.origin);
+					AnglesToAxis(cent->lerpAngles, flash.axis);
+
+					if (shouldDrawMuzzleFlash)
+					{
+						trap_R_AddRefEntityToScene(&flash);
+					}
+
+					if (shouldDrawMuzzleFlashDlight)
+					{
+						trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
+					}
+					return;
+				}
+			}
 		}
+
+		// don't render player weapons while using stationary mg
 		return;
 	}
 
@@ -2095,10 +2141,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 		}
 
-		// impulse flash
-		if (shouldDrawMuzzleFlash && cg.time - cent->firedTime > MUZZLE_FLASH_TIME)
+		// impulse flash / dlight strobing
+		if (shouldDrawMuzzleFlashDlight && cg.time - cent->firedTime > MUZZLE_FLASH_TIME)
 		{
-			// blue ignition flame if not firing flamer
+			// continuous dlight when firing with flamethrower
 			if (weaponNum != WP_FLAMETHROWER)
 			{
 				return;
@@ -2182,13 +2228,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			// Flamethrower effect
 			CG_FlamethrowerFlame(cent, muzzlePoint, qtrue);
 
-			if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
+			if (shouldDrawMuzzleFlashDlight && weapon->flashDlightColor[0] != 0.f && weapon->flashDlightColor[1] != 0.f && weapon->flashDlightColor[2] != 0.f)
 			{
-				if (shouldDrawMuzzleFlash)
-				{
-					trap_R_AddLightToScene(muzzlePoint, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
-					                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
-				}
+				trap_R_AddLightToScene(muzzlePoint, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
+				                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
 			}
 		}
 		else
@@ -2382,12 +2425,19 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		VectorCopy(flash.origin, cg.tankflashorg);
 
-		if (cg_muzzleFlash.integer == 1 && cg.time - cg.predictedPlayerEntity.firedTime < MUZZLE_FLASH_TIME)
+		if (cg.time - cg.predictedPlayerEntity.firedTime < MUZZLE_FLASH_TIME)
 		{
-			trap_R_AddRefEntityToScene(&flash);
+			// should draw tank mounted mg muzzle flash
+			if (cg_muzzleFlash.integer == 1)
+			{
+				trap_R_AddRefEntityToScene(&flash);
+			}
 
-			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
+			// should draw tank mounted mg muzzle flash dlight
+			if ((cg_muzzleFlashDlight.integer > 1) || (cg_muzzleFlash.integer == 1 && cg_muzzleFlashDlight.integer == 0))
+			{
+				trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
+			}
 		}
 
 		return;
@@ -3913,40 +3963,6 @@ WEAPON EVENTS
  */
 void CG_MG42EFX(centity_t *cent)
 {
-	// complete overhaul of this one
-	centity_t   *mg42;
-	int         num;
-	vec3_t      forward, point;
-	refEntity_t flash;
-
-	// find the mg42 we're attached to
-	for (num = 0 ; num < cg.snap->numEntities ; num++)
-	{
-		mg42 = &cg_entities[cg.snap->entities[num].number];
-
-		if (mg42->currentState.eType == ET_MG42_BARREL &&
-		    mg42->currentState.otherEntityNum == cent->currentState.number)
-		{
-			// found it, clamp behind gun
-			VectorCopy(mg42->currentState.pos.trBase, point);
-			//AngleVectors (mg42->s.apos.trBase, forward, NULL, NULL);
-			AngleVectors(cent->lerpAngles, forward, NULL, NULL);
-			VectorMA(point, 40, forward, point);
-
-			Com_Memset(&flash, 0, sizeof(flash));
-			flash.renderfx = RF_LIGHTING_ORIGIN;
-			flash.hModel   = cgs.media.mg42muzzleflash;
-
-			VectorCopy(point, flash.origin);
-			AnglesToAxis(cent->lerpAngles, flash.axis);
-
-			trap_R_AddRefEntityToScene(&flash);
-
-			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
-			return;
-		}
-	}
 }
 
 /**

@@ -166,6 +166,7 @@ vmCvar_t cg_tracerSpeed;
 vmCvar_t cg_autoswitch;
 vmCvar_t cg_fov;
 vmCvar_t cg_muzzleFlash;
+vmCvar_t cg_muzzleFlashDlight;
 vmCvar_t cg_muzzleFlashScale;
 vmCvar_t cg_zoomStepSniper;
 vmCvar_t cg_zoomDefaultSniper;
@@ -390,6 +391,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_zoomStepSniper,           "cg_zoomStepSniper",           "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fov,                      "cg_fov",                      "90",          CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlash,              "cg_muzzleFlash",              "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_muzzleFlashDlight,        "cg_muzzleFlashDlight",        "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlashScale,         "cg_muzzleFlashScale",         "0.8",         CVAR_ARCHIVE,                 0 },
 	{ &cg_letterbox,                "cg_letterbox",                "0",           CVAR_TEMP,                    0 },
 	{ &cg_shadows,                  "cg_shadows",                  "0",           CVAR_ARCHIVE,                 0 },
