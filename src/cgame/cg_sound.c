@@ -464,7 +464,7 @@ static void CG_SoundLoadSoundFiles(void)
 
 	// scan for sound files ... file is must have!
 	Com_sprintf(filename, MAX_QPATH, "sound/scripts/filelist.txt");
-	len = trap_FS_FOpenFile(filename, &f, FS_READ);
+	len = CG_FOpenCompatFile(filename, &f, FS_READ);
 	if (len <= 0)
 	{
 		CG_Printf(S_COLOR_RED "ERROR CG_SoundLoadSoundFiles: No sound files found (filelist.txt not found in sound/scripts)\n");
@@ -508,7 +508,7 @@ static void CG_SoundLoadSoundFiles(void)
 		{
 			Com_sprintf(filename, sizeof(filename), "sound/scripts/%s", soundFiles[i]);
 			CG_Printf("...loading '%s'\n", filename);
-			len = trap_FS_FOpenFile(filename, &f, FS_READ);
+			len = CG_FOpenCompatFile(filename, &f, FS_READ);
 			if (len <= 0)
 			{
 				CG_Printf(S_COLOR_YELLOW "INFO: script sound file '%s' not found\n", filename);
@@ -603,7 +603,7 @@ qboolean CG_SaveSpeakersToScript(void)
 	fileHandle_t fh;
 	char         *s;
 
-	if (trap_FS_FOpenFile(va("sound/maps/%s.sps", cgs.rawmapname), &fh, FS_WRITE) < 0)
+	if (CG_FOpenCompatFile(va("sound/maps/%s.sps", cgs.rawmapname), &fh, FS_WRITE) < 0)
 	{
 		CG_Printf(S_COLOR_RED "ERROR CG_SaveSpeakersToScript: failed to save speakers to 'sound/maps/%s.sps'\n", cgs.rawmapname);
 		return qfalse;
