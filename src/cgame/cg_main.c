@@ -2824,6 +2824,10 @@ static ID_INLINE void CG_SetupExtensions(void)
  */
 void CG_DemoBackwardsCompatInit()
 {
+	if (CG_IsDemoVersionBelow(2, 83, 0))
+	{
+		Q_strncpyz(cg.demoBackwardsCompat.compatPath, "compat/2_82_1", sizeof(cg.demoBackwardsCompat.compatPath));
+	}
 }
 
 /**
