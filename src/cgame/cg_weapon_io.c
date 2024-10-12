@@ -53,7 +53,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 	fileHandle_t f;
 
 	// load the file
-	len = trap_FS_FOpenFile(filename, &f, FS_READ);
+	len = CG_FOpenCompatFile(filename, &f, FS_READ);
 
 	if (len <= 0)
 	{

@@ -35,6 +35,7 @@
 
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
+#include "bg_local.h"
 
 bg_character_t alliedClassCharacters[NUM_PLAYER_CLASSES];
 bg_character_t axisClassCharacters[NUM_PLAYER_CLASSES];

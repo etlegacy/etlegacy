@@ -55,7 +55,7 @@ static qboolean CG_ParseGibModels(const char *modelPath, bg_character_t *charact
 	Com_Memset(character->gibModels, 0, sizeof(character->gibModels));
 
 	// load the file
-	len = trap_FS_FOpenFile(va("%s.gibs", modelPath), &f, FS_READ);
+	len = CG_FOpenCompatFile(va("%s.gibs", modelPath), &f, FS_READ);
 	if (len <= 0)
 	{
 		CG_Printf("File %s.gibs not found\n", modelPath);
@@ -304,7 +304,7 @@ static qboolean CG_ParseAnimationFiles(bg_character_t *character, const char *an
 	CG_CalcMoveSpeeds(character);
 
 	// load the script file
-	len = trap_FS_FOpenFile(animationScript, &f, FS_READ);
+	len = CG_FOpenCompatFile(animationScript, &f, FS_READ);
 
 	if (len <= 0)
 	{

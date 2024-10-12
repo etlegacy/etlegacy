@@ -35,6 +35,7 @@
 
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
+#include "bg_local.h"
 
 #define MAX_ANIMPOOL_SIZE 5 * MAX_MODEL_ANIMATIONS
 
