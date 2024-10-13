@@ -76,7 +76,8 @@
 jmp_buf exit_game;
 #endif
 
-char *GlobalGameTitle = CLIENT_WINDOW_TITLE;
+char            *GlobalGameTitle    = CLIENT_WINDOW_TITLE;
+static qboolean GlobalStrictLoading = 0;
 
 static char binaryPath[MAX_OSPATH]  = { 0 };
 static char installPath[MAX_OSPATH] = { 0 };
@@ -594,6 +595,22 @@ void Sys_UnloadDll(void *dllHandle)
 }
 
 /**
+ * @brief
+ * Report a loading error and abort the engine if strict loading is enabled
+ */
+static void Sys_Loading_Err(const char *errMsg)
+{
+	if (!GlobalStrictLoading)
+	{
+		Com_Printf("%s", errMsg);
+	}
+	else
+	{
+		Com_Error(ERR_FATAL, "%s", errMsg);
+	}
+}
+
+/**
  * @brief First try to load library name from system library path,
  * from executable path, then fs_basepath.
  * @param[in] name
@@ -651,7 +668,7 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 
 			if (!dllhandle)
 			{
-				Com_Printf("Loading \"%s\" failed\n", name);
+				Sys_Loading_Err(va("Loading \"%s\" failed\n", name));
 			}
 		}
 	}
@@ -702,7 +719,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 			libHandle = Sys_LoadLibrary(fn);
 			if (!libHandle)
 			{
-				Com_Printf("failed: %s\n", Sys_LibraryError());
+				Sys_Loading_Err(va("failed: %s\n", Sys_LibraryError()));
 			}
 			else
 			{
@@ -711,7 +728,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		}
 		else
 		{
-			Com_Printf("failed (not a valid zip)\n");
+			Sys_Loading_Err(va("failed (not a valid zip)\n"));
 		}
 	}
 
@@ -724,7 +741,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		libHandle = Sys_LoadLibrary(fn);
 		if (!libHandle)
 		{
-			Com_Printf("failed: %s\n", Sys_LibraryError());
+			Sys_Loading_Err(va("failed: %s\n", Sys_LibraryError()));
 		}
 		else
 		{
@@ -743,7 +760,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		libHandle = Sys_LoadLibrary(fn);
 		if (!libHandle)
 		{
-			Com_Printf("failed: %s\n", Sys_LibraryError());
+			Sys_Loading_Err(va("failed: %s\n", Sys_LibraryError()));
 		}
 		else
 		{
@@ -764,7 +781,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 
 	if (!libHandle)
 	{
-		Com_Printf("failed: %s\n", Sys_LibraryError());
+		Sys_Loading_Err(va("failed: %s\n", Sys_LibraryError()));
 		return NULL;
 	}
 
@@ -846,7 +863,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 		if (!FS_CL_ExtractFromPakFile(homepath, gamedir, fname))
 		{
 			// no drama, we still check SEARCHPATH2
-			Com_Printf("Sys_LoadDll(%s/%s) failed to extract library from fs_homepath\n", gamedir, name);
+			Sys_Loading_Err(va("Sys_LoadDll(%s/%s) failed to extract library from fs_homepath\n", gamedir, name));
 		}
 		else
 		{
@@ -869,7 +886,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 		{
 			if (!FS_CL_ExtractFromPakFile(homepath, gamedir, fname))
 			{
-				Com_Printf("Sys_LoadDll(%s/%s) failed to extract library\n", gamedir, name);
+				Sys_Loading_Err(va("Sys_LoadDll(%s/%s) failed to extract library\n", gamedir, name));
 				return NULL;
 			}
 
@@ -894,7 +911,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 
 	if (!libHandle)
 	{
-		Com_Printf("Sys_LoadDll(%s/%s) failed to load library\n", gamedir, name);
+		Sys_Loading_Err(va("Sys_LoadDll(%s/%s) failed to load library\n", gamedir, name));
 		return NULL;
 	}
 
@@ -903,7 +920,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 
 	if (!*entryPoint || !dllEntry)
 	{
-		Com_Printf("Sys_LoadDll(%s/%s) failed to find vmMain function: %s\n", gamedir, name, Sys_LibraryError());
+		Sys_Loading_Err(va("Sys_LoadDll(%s/%s) failed to find vmMain function: %s\n", gamedir, name, Sys_LibraryError()));
 		Sys_UnloadLibrary(libHandle);
 
 		return NULL;
@@ -951,10 +968,11 @@ void Sys_ParseArgsShowHelpAndExit(int ret)
 #endif
 	        "\n"
 	        "Options:\n"
-	        "  -h, --help                 Show help and exit\n"
-	        "  -v, --version              Show version and exit\n"
+	        "  -h,  --help                 Show help and exit\n"
+	        "  -v,  --version              Show version and exit\n"
+	        "  -sl, --strict-loading       Aborts on the first loading failure (by default fallbacks to SEARCHPATH2)\n"
 #ifndef DEDICATED
-	        "  -t, --title <title>        Set the game window title\n"
+	        "  -t,  --title <title>        Set the game window title\n"
 #endif
 	        "\n"
 	        "Launch Options:\n"
@@ -1061,6 +1079,12 @@ void Sys_ParseArgs(int argc, char **argv)
 			argv[i - 1] = NULL;
 		}
 #endif
+		// --strict-loading -- aborts on the first loading failure (by default fallbacks to SEARCHPATH2)
+		else if (!strcmp(argv[i], "--strict-loading") ||
+		         !strcmp(argv[i], "-sl"))
+		{
+			GlobalStrictLoading = qtrue;
+		}
 		// let's try to catch some errors
 		else if (!strncmp(argv[i], "--", 2))
 		{
