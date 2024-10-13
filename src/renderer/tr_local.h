@@ -1573,6 +1573,8 @@ qhandle_t RE_RegisterModel(const char *name);
 qhandle_t RE_RegisterSkin(const char *name);
 void RE_Shutdown(qboolean destroyWindow);
 
+dshader_t *R_FindBspShaderByName(const char *name);
+
 qboolean R_GetEntityToken(char *buffer, size_t size);
 
 float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *pic_out);

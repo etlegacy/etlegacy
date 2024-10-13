@@ -1404,6 +1404,31 @@ void SetIteratorFog(void)
 	}
 }
 
+static qboolean DebugShaderSurfaceFlags(shaderCommands_t *input)
+{
+	// Debug draw shaders with a given Surface Flag
+	if (r_debugShaderSurfaceFlags->integer)
+	{
+		dshader_t *dsh;
+
+		dsh = R_FindBspShaderByName(input->shader->name);
+		if (dsh != NULL && dsh->surfaceFlags & strtoul(r_debugShaderSurfaceFlags->string, NULL, 0) /* XXX : needs to be parsed as unsigned */)
+		{
+			int j;
+			for (j = 0; j < input->numVertexes; j++)
+			{
+				input->svars.colors[j][0] = 0;
+				input->svars.colors[j][1] = 255;
+				input->svars.colors[j][2] = 0;
+				input->svars.colors[j][3] = 255;
+			}
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
 /**
  * @brief RB_IterateStagesGeneric
  * @param[in] input
@@ -1415,6 +1440,8 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 
 	for (stage = 0; stage < MAX_SHADER_STAGES; stage++)
 	{
+		qboolean skipRemainingStages = qfalse;
+
 		pStage = tess.xstages[stage];
 
 		if (!pStage)
@@ -1424,6 +1451,8 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 
 		ComputeColors(pStage);
 		ComputeTexCoords(pStage);
+
+		skipRemainingStages = DebugShaderSurfaceFlags(input);
 
 		if (!setArraysOnce)
 		{
@@ -1522,6 +1551,11 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 
 		// allow skipping out to show just lightmaps during development
 		if (r_lightMap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
+		{
+			break;
+		}
+
+		if (skipRemainingStages)
 		{
 			break;
 		}
@@ -1651,7 +1685,12 @@ void RB_StageIteratorVertexLitTexture(void)
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+	if (r_debugShaderSurfaceFlags->integer)
+	{
+		DebugShaderSurfaceFlags(input);
+	}
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
+
 	glTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][0]);
 	glVertexPointer(3, GL_FLOAT, 16, input->xyz);
 
@@ -1723,8 +1762,16 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	glShadeModel(GL_FLAT);
 #else
 	glEnableClientState(GL_COLOR_ARRAY);
-	glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.constantColor255);
+	if (r_debugShaderSurfaceFlags->integer && DebugShaderSurfaceFlags(input))
+	{
+		glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
+	}
+	else
+	{
+		glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.constantColor255);
+	}
 #endif
+
 
 	// select base stage
 	GL_SelectTexture(0);
