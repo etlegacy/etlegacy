@@ -2136,6 +2136,13 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// changed this so the muzzle flash stays onscreen for long enough to be seen
 		if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
+			float scale = Com_Clamp(0.5f, 1.0f, cg_muzzleFlashScale.value);
+
+			// scale the muzzle flash
+			VectorScale(flash.axis[0], scale, flash.axis[0]);
+			VectorScale(flash.axis[1], scale, flash.axis[1]);
+			VectorScale(flash.axis[2], scale, flash.axis[2]);
+
 			trap_R_AddRefEntityToScene(&flash);
 		}
 	}
