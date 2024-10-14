@@ -95,6 +95,18 @@ void UI_MouseEvent(int dx, int dy);
 void UI_Refresh(int realtime);
 qboolean _UI_IsFullscreen(void);
 
+static uiMenuCommand_t UI_AdjustedMenuCommand(const uiMenuCommand_t menutype)
+{
+	// UIMENU_WM_AUTOUPDATE is the only menu we need to adjust,
+	// as it's used in engine. Older versions have it set to 16.
+	if (uiInfo.etLegacyClient > 282010335 || menutype != 16)
+	{
+		return menutype;
+	}
+
+	return UIMENU_WM_AUTOUPDATE;
+}
+
 /**
  * @brief vmMain
  * This is the only way control passes into the module.
@@ -8846,7 +8858,7 @@ static uiMenuCommand_t menutype = UIMENU_NONE;
  */
 uiMenuCommand_t UI_GetActiveMenu(void)
 {
-	return menutype;
+	return UI_AdjustedMenuCommand(menutype);
 }
 
 /**
@@ -8862,12 +8874,12 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 	// enusure minumum menu data is cached
 	if (Menu_Count() > 0)
 	{
-		menutype = menu;
+		menutype = UI_AdjustedMenuCommand(menu);
 
 		// assume we want to draw cursor
 		uiInfo.uiDC.cursorVisible = qtrue;
 
-		switch (menu)
+		switch (menutype)
 		{
 		case UIMENU_NONE:
 			trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
