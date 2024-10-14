@@ -1876,6 +1876,12 @@ static void PM_GroundTrace(void)
 		pml.groundPlane = qfalse;
 		pml.walking     = qfalse;
 
+		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
+		    && !pm->waterlevel && !(pm->ps->pm_flags & PMF_LADDER) && !pm->pmext->airTime)
+		{
+			pm->pmext->airTime = pm->cmd.serverTime;
+		}
+
 		return;
 	}
 
@@ -1965,6 +1971,7 @@ static void PM_GroundTrace(void)
 	}
 
 	pm->ps->groundEntityNum = trace.entityNum;
+	pm->pmext->airTime      = 0;
 	// don't reset the z velocity for slopes
 	//pm->ps->velocity[2] = 0;
 
@@ -5226,7 +5233,9 @@ void PmoveSingle(pmove_t *pmove)
 	{
 		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
 		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
-		if (VectorLength(pm->ps->velocity) > 127)
+		// also consider falling from slope for a moment
+		if (((!pm->pmext->airTime || (pm->ps->pm_flags & PMF_JUMP_HELD)) && VectorLength(pm->ps->velocity) > 127)
+		    || (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500))
 		{
 			//PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 			pm->cmd.weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
