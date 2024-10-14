@@ -2635,4 +2635,12 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 	// let the client system know what our weapon, holdable item and zoom settings are
 	trap_SetUserCmdValue(cg.weaponSelect, cg.showGameView ? 0x01 : 0x00, cg.zoomSensitivity, cg.identifyClientRequest);
+
+	// execute 'cg_autoCmd'
+	if (cg_autoCmd.string[0] != '\0' && !cg.autoCmdExecuted)
+	{
+		Com_Printf("Executing cg_autoCmd: %s\n", cg_autoCmd.string);
+		trap_SendConsoleCommand(cg_autoCmd.string);
+		cg.autoCmdExecuted = qtrue;
+	}
 }
