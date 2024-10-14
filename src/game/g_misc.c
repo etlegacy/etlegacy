@@ -1127,6 +1127,7 @@ void aagun_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		owner->active                                  = qfalse;
 
 		other->client->pmext.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
+		other->client->ps.ammo[WP_DUMMY_MG42]        = ent->mg42weapHeat;
 		ent->backupWeaponTime                        = owner->client->ps.weaponTime;
 		owner->backupWeaponTime                      = owner->client->ps.weaponTime;
 	}
@@ -1750,6 +1751,7 @@ void mg42_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		owner->active                                  = qfalse;
 
 		other->client->pmext.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
+		other->client->ps.ammo[WP_DUMMY_MG42]        = ent->mg42weapHeat;
 		ent->backupWeaponTime                        = owner->client->ps.weaponTime;
 		owner->backupWeaponTime                      = owner->client->ps.weaponTime;
 	}

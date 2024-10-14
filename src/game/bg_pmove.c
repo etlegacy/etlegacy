@@ -2992,6 +2992,8 @@ void PM_CoolWeapons(void)
 {
 	weapon_t wp;
 
+	pm->pmext->weapHeat[WP_DUMMY_MG42] = (float)pm->ps->ammo[WP_DUMMY_MG42] + fmodf(pm->pmext->weapHeat[WP_DUMMY_MG42], 1);
+
 	for (wp = WP_KNIFE; wp < WP_NUM_WEAPONS; wp++)
 	{
 		// if the weapon can heat and you have the weapon
@@ -5344,6 +5346,7 @@ void PmoveSingle(pmove_t *pmove)
 	}
 
 	pm->ps->stats[STAT_SPRINTTIME] = pm->pmext->sprintTime;
+	pm->ps->ammo[WP_DUMMY_MG42]    = pm->pmext->weapHeat[WP_DUMMY_MG42];
 }
 
 /**
