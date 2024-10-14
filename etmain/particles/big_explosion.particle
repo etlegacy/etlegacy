@@ -6,44 +6,44 @@ weaponImpactParticleDef
 	//////////////////////////////////
 	// specific for water effect
 	//////////////////////////////////
-	
+
 	// ripple
 	waterRippleRadius		300			// radius size
 	waterRippleLifeTime		2000		// ms
-	
+
 	// splash
 	waterSplashDuration    1000			// ms
 	waterSplashLight       600
 	waterSplashLightColor  0.75 0.5 0.1
 	waterSplashIsSprite					// if this field is present, use water shader as sprite
-	
+
 	//////////////////////////////////
 	// particle effect
 	//////////////////////////////////
-	
+
 	// each surface supports up to 2 effects per surface type. available surface : default, far (non-sense), wood, metal, roof, gravel, glass, snow, water, flesh
-	
+
 	// water particle
 	particleEffect
 	{
 		particleEffectType	     "water"
 		particleEffectShader     "water_splash"
-		particleEffectSpeed	     400	
+		particleEffectSpeed	     400
 		particleEffectSpeedRand  200	// random coef for speed (0 -> disable)
-		particleEffectDuration   900 
-		particleEffectCount      15  
-		particleEffectRandScale  0.5 
-		particleEffectWidth      512 
-		particleEffectHeight     128 
+		particleEffectDuration   900
+		particleEffectCount      15
+		particleEffectRandScale  0.5
+		particleEffectWidth      512
+		particleEffectHeight     128
 		particleEffectAlpha      0.125
 	}
-	
+
 	// water particle
 	particleEffect
 	{
 		particleEffectType	     "water"
 		particleEffectShader     "water_splash"
-		particleEffectSpeed	     400	
+		particleEffectSpeed	     400
 		particleEffectSpeedRand  600		// random coef for speed (0 -> disable)
 		particleEffectDuration   1400
 		particleEffectCount      15
@@ -52,14 +52,14 @@ weaponImpactParticleDef
 		particleEffectHeight     512
 		particleEffectAlpha      0.125
 	}
-	
+
 	// grass particle
 	particleEffect
 	{
 		particleEffectType       "grass"
 		particleEffectShader     "dirt_splash"
-		particleEffectSpeed	     400	
-		particleEffectSpeedRand  200 
+		particleEffectSpeed	     400
+		particleEffectSpeedRand  200
 		particleEffectDuration   3000
 		particleEffectCount      10
 		particleEffectRandScale  0.5
@@ -67,14 +67,14 @@ weaponImpactParticleDef
 		particleEffectHeight     256
 		particleEffectAlpha      0.25
 	}
-	
+
 	// gravel particle
 	particleEffect
 	{
 		particleEffectType       "gravel"
 		particleEffectShader     "dirt_splash"
-		particleEffectSpeed	     400	
-		particleEffectSpeedRand  200 
+		particleEffectSpeed	     400
+		particleEffectSpeedRand  200
 		particleEffectDuration   3000
 		particleEffectCount      10
 		particleEffectRandScale  0.5
@@ -82,11 +82,11 @@ weaponImpactParticleDef
 		particleEffectHeight     256
 		particleEffectAlpha      0.25
 	}
-	
+
 	//////////////////////////////////
 	// particle explosion effect
 	//////////////////////////////////
-	
+
 	// main explosion (position on missile origin)
 	explosionShaderName    "explode1anim"	// if empty, no explosion
 	explosionDuration      1600
@@ -95,7 +95,7 @@ weaponImpactParticleDef
 	explosionSizeEnd       200
 	explosionSizeEndRand   400
 	explosionLightAnim	               // if this field is present, dligh the explosion
-	
+
 	// up to 4 extra effect
 	extraEffect
 	{
@@ -113,11 +113,11 @@ weaponImpactParticleDef
 		extraEffectSizeEndRand      120
 		//extraEffectLightAnim	          		// if this field is present, dligh the effect
 	}
-	
+
 	//////////////////////////////////
 	// debris effect
 	//////////////////////////////////
-	
+
 	// debris
 	debrisSpeed           400
 	debrisSpeedRand       200
@@ -126,5 +126,5 @@ weaponImpactParticleDef
 	debrisCount           5			  // minimum number of debris generate
 	debrisCountExtra      5			  // random extra debris
 	//debrisForBullet				  // if this field is present, play different effect for bullet impact
-	
+
 }

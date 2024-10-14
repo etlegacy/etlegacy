@@ -1,5 +1,5 @@
 // Light shader definitions for ET: Legacy renderer2
-// !!! This file is a copy of materials/legacy_r2.shader !!! 
+// !!! This file is a copy of materials/legacy_r2.shader !!!
 
 // It's required in CreateExternalShaders() function when r_materialscan 1 is set (which is current default)
 

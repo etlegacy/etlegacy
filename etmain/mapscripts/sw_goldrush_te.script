@@ -4,9 +4,9 @@ game_manager
 	spawn
 	{
 		remapshader "models/mapobjects/tanks_sd/mg42turret" "models/mapobjects/tanks_sd/mg42turret_2"
-		
+
 		remapshaderflush
-		
+
 		// Game rules
 		wm_axis_respawntime	30
 		wm_allied_respawntime	20
@@ -67,7 +67,7 @@ game_manager
 		setautospawn	"Allied Spawn"	1
 
 		accum 4 set 0 // have the Allies stolen the tank?
-	//	accum 2 bitset 0 // are allies past tank barrier? 
+	//	accum 2 bitset 0 // are allies past tank barrier?
 	//	accum 6 bitset 0 //is CP build by allies?
 
 		// start triggered loops on/off as required (eg: command post radio sounds)
@@ -701,12 +701,12 @@ tank
 
 		wm_teamvoiceannounce 1 "goldrush_allies_tank_barrier1"
 		// *---------------------------------------------------------------------------------*
-		
+
 
 		accum 1 bitset 2
 		followspline 0 spln26 65 wait length 32
 		accum 1 bitreset 2
-		
+
 		trigger self run_continue
 	}
 
@@ -857,7 +857,7 @@ tank
 		trigger self tracks_forward
 
 		alertentity bench
-		
+
 		accum 1 bitset 2
 		followspline 0 spln39 65 wait length 32
 		accum 1 bitreset 2
@@ -910,7 +910,7 @@ tank
 
 //	trigger self run_continue
 	}
-	
+
 
 // ===========================================================================================
 // ===========================================================================================
@@ -927,7 +927,7 @@ tank
 		trigger self stuck_check_scriptlockout
 		trigger self stuck_check_finished
 	}
-	
+
 	trigger stuck_check_finished
 	{
 		accum 3 abort_if_less_than 38
@@ -935,7 +935,7 @@ tank
 		accum 1 bitset 3
 
 		setstate tank_build invisible
-	
+
 		wm_removeteamvoiceannounce 1 "allies_hq_tank_damaged_axis"
 	}
 
@@ -3278,7 +3278,7 @@ allied_compost_built_model
 		// *---------------------------------------------------------------------------------*
 
 		wm_objective_status 6 0 2
-		wm_objective_status 6 1 1		
+		wm_objective_status 6 1 1
 	}
 
 	trigger disable_allied_features
@@ -3303,7 +3303,7 @@ allied_compost_built_model
 		// *---------------------------------------------------------------------------------*
 
 		wm_objective_status 6 0 0
-		wm_objective_status 6 1 0		
+		wm_objective_status 6 1 0
 	}
 }
 
@@ -3321,7 +3321,7 @@ cpblob
 	accum 2 inc 1
 	accum 2 trigger_if_equal 1 cpblob spawnunset
 	accum 2 trigger_if_equal 2 cpblob spawnset
-	}	
+	}
 
 	trigger allied_nospawn
 	{

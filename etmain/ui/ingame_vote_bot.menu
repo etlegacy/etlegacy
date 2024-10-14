@@ -25,7 +25,7 @@ menuDef {
 	WINDOW( "OMNI-BOT", 50)
 
 // notes: - this menu can be done more flexible but for this we have to add some ui code/cvars
-//          to run bot commands - for now it does the trick for listen server beginners to adjust 
+//          to run bot commands - for now it does the trick for listen server beginners to adjust
 //          some basic bot options
 
 	LABEL( 6, 32, .3*(WINDOW_WIDTH-12), 14, _("Bot count:"), .24, ITEM_ALIGN_LEFT, 0, 10 )
@@ -54,9 +54,9 @@ menuDef {
 
 	BUTTON( 6, 104, .33*(WINDOW_WIDTH-24), 14, _("AXIS BOTS"), .24, 11, exec "set g_teamForceBalance 0; bot balanceteams 0; bot botteam 1; bot humanteam 2; bot kickall" )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, 104, .34*(WINDOW_WIDTH-24), 14, _("ALLIED BOTS"), .24, 11, exec "set g_teamForceBalance 0; bot balanceteams 0; bot botteam 2; bot humanteam 1; bot kickall" )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, 104, .33*(WINDOW_WIDTH-24), 14, _("BALANCED"), .24, 11, exec "set g_teamForceBalance 1; bot balanceteams 1; bot botteam -1" )	
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, 104, .33*(WINDOW_WIDTH-24), 14, _("BALANCED"), .24, 11, exec "set g_teamForceBalance 1; bot balanceteams 1; bot botteam -1" )
 
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BOTS ON"), .3, 14, exec "set omnibot_enable 1" )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("BOTS OFF"), .3, 14, exec "bot minbots -1; bot maxbots -1;bot kickall;set omnibot_enable 0" )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close ingame_vote_bot ; open ingame_vote )	
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close ingame_vote_bot ; open ingame_vote )
 }

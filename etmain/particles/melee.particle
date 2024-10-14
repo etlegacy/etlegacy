@@ -6,29 +6,29 @@ weaponImpactParticleDef
 	//////////////////////////////////
 	// specific for water effect
 	//////////////////////////////////
-	
+
 	// ripple
 	waterRippleRadius		32			// radius size
 	waterRippleLifeTime		1000		// ms
-	
+
 	// splash
 	waterSplashDuration    250			// ms
 	waterSplashLight       0
 	waterSplashLightColor  1 1 0
 	//waterSplashIsSprite				// if this field is present, use water shader as sprite
-	
+
 	//////////////////////////////////
 	// particle effect
 	//////////////////////////////////
-	
+
 	// each surface supports up to 2 effects per surface type. available surface : default, far (non-sense), wood, metal, roof, gravel, glass, snow, water, flesh
-	
+
 	// water particle
 	particleEffect
 	{
 		particleEffectType	     "water"
 		particleEffectShader     "water_splash"
-		particleEffectSpeed	     190			
+		particleEffectSpeed	     190
 		particleEffectSpeedRand  0			// random coef for speed (0 -> disable)
 		particleEffectDuration   900
 		particleEffectCount      5
@@ -37,11 +37,11 @@ weaponImpactParticleDef
 		particleEffectHeight     16
 		particleEffectAlpha      0.125
 	}
-	
+
 	//////////////////////////////////
 	// particle explosion effect
 	//////////////////////////////////
-	
+
 	// main explosion (position on missile origin)
 	//explosionShaderName    "explode1anim"		// if empty, no explosion
 	//explosionDuration      700
@@ -50,7 +50,7 @@ weaponImpactParticleDef
 	//explosionSizeEnd       240
 	//explosionSizeEndRand   0
 	//explosionLightAnim	               		// if this field is present, dligh the explosion
-	
+
 	// up to 4 extra effects
 	//extraEffect
 	//{
@@ -68,18 +68,18 @@ weaponImpactParticleDef
 		//extraEffectSizeEndRand     0
 		//extraEffectLightAnim	               // if this field is present, dligh the effect
 	//}
-	
+
 	//////////////////////////////////
 	// debris effect
 	//////////////////////////////////
-	
+
 	// debris
 	debrisSpeed           20
 	debrisSpeedRand       0
 	debrisDuration        800
-	debrisDurationRand    0		  
+	debrisDurationRand    0
 	debrisCount           3			  // minimum number of debris generate
 	debrisCountExtra      6			  // random extra debris
 	debrisForBullet					  // if this field is present, play different effect for bullet impact
-	
+
 }

@@ -105,7 +105,7 @@ game_manager
 			spawnflags 2	// TEAM_ALLIES
 		}
 
-		
+
 		//mortis create new south beach spawns to work with malfunctioning TWO
 
 		create
@@ -345,7 +345,7 @@ allied_obj1 //Dummy ;)
 
 	death
 	{
-		
+
 	}
 }
 
@@ -383,8 +383,8 @@ allied_obj1_2 //Sea wall door breached.
 		wm_teamvoiceannounce 0 "sideentr_axis_breach"
 		wm_teamvoiceannounce 1 "sideentr_allies_breach"
 
-      		setstate axisteamdoor invisible 
-      		setstate axisteamdoor_toi invisible 
+      		setstate axisteamdoor invisible
+      		setstate axisteamdoor_toi invisible
 
 		trigger game_manager objective5
 	}
@@ -428,7 +428,7 @@ beach_flag
 		wm_removeteamvoiceannounce 0 "axis_bunker_defend"
 		wm_removeteamvoiceannounce 1 "allies_bunker_capture"
 
-		wait 400 
+		wait 400
 		setstate beach_flag_wobj default
 		//alertentity beach_flag_wobj
 	}
@@ -697,7 +697,7 @@ supplybunker_obj
 	}
 
 	trigger on
-	{               
+	{
 		setstate supplybunker_obj default
 		setstate supplybunker_spawn default
 	}
