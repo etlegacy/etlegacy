@@ -146,7 +146,7 @@ jobs:
           if-no-files-found: error
 
   osx-mod:
-    runs-on: macos-12
+    runs-on: macos-13
     needs: version
     steps:
       - uses: actions/checkout@v4
@@ -533,7 +533,7 @@ jobs:
           if-no-files-found: error
 
   osx:
-    runs-on: macos-12
+    runs-on: macos-13
     needs: [ version, mod-merger ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
