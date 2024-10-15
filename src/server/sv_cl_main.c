@@ -558,6 +558,10 @@ void SV_CL_ConfigstringModified(void)
 	int         len;
 
 	index = Q_atoi(Cmd_Argv(1));
+	if (svcls.isTVGame && index == CS_SVCVAR)
+	{
+		return;
+	}
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
 		Com_Error(ERR_DROP, "configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
