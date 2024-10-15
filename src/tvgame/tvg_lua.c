@@ -2738,7 +2738,6 @@ static void TVG_RegisterSurfaceConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, SURF_NODLIGHT);
 	lua_regconstinteger(vm->L, SURF_WOOD);
 	lua_regconstinteger(vm->L, SURF_GRASS);
-	lua_regconstinteger(vm->L, SURF_CERAMIC);
 	lua_regconstinteger(vm->L, SURF_GRAVEL);
 	lua_regconstinteger(vm->L, SURF_GLASS);
 	lua_regconstinteger(vm->L, SURF_SNOW);
