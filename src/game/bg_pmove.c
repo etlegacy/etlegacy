@@ -5351,11 +5351,11 @@ void PmoveSingle(pmove_t *pmove)
 	PM_GroundTrace();
 	PM_SetWaterLevel();
 
-	// weapons
-	PM_Weapon();
-
 	// footstep events / legs animations
 	PM_Footsteps();
+
+	// weapons
+	PM_Weapon();
 
 	// entering / leaving water splashes
 	PM_WaterEvents();

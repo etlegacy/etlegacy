@@ -1156,8 +1156,6 @@ void CG_PredictPlayerState(void)
 		cg.predictedPlayerState = cg.nextSnap->ps;
 		cg.physicsTime          = cg.nextSnap->serverTime;
 	}
-	else
-	{
 #endif
 	cg.predictedPlayerState = cg.snap->ps;
 	cg.physicsTime          = cg.snap->serverTime;
