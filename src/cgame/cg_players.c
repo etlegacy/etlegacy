@@ -2707,7 +2707,6 @@ void CG_AnimPlayerConditions(bg_character_t *character, centity_t *cent)
 
 	BG_UpdateConditionValue(es->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_UNUSED, qtrue);
 	BG_UpdateConditionValue(es->clientNum, ANIM_COND_STUNNED, 0, qtrue);
-	BG_UpdateConditionValue(es->clientNum, ANIM_COND_SUICIDE, 0, qtrue);
 }
 
 /**

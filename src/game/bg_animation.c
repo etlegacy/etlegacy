@@ -202,13 +202,14 @@ static animStringItem_t animConditionImpactPointsStr[] =
 	{ "SHOULDER_LEFT",  -1 },
 	{ "KNEE_RIGHT",     -1 },
 	{ "KNEE_LEFT",      -1 },
+	{ "LEGS",           -1 },
 
 	{ NULL,             -1 },
 };
 
 static animStringItem_t animEnemyTeamsStr[] =
 {
-	{ "NAZI",    -1 },
+	{ "AXIS",    -1 },
 	{ "ALLIES",  -1 },
 	{ "MONSTER", -1 },
 	{ "SPARE1",  -1 },

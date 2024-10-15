@@ -1115,6 +1115,10 @@ static qboolean hit_parse_hit(hit_t *hitModel, mdx_t *mdx, char **ptr)
 			{
 				hit->impactpoint = IMPACTPOINT_KNEE_LEFT;
 			}
+			else if (!Q_stricmp(token, "legs"))
+			{
+				hit->impactpoint = IMPACTPOINT_LEGS;
+			}
 			else
 			{
 				hit->impactpoint = Q_atoi(token);
