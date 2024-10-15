@@ -48,6 +48,10 @@
 #    include <unzip.h>
 #endif
 
+#ifdef __ANDROID__
+#include "../sdl//sdl_defs.h"
+#endif
+
 /*
 =============================================================================
 ET: Legacy (QUAKE3) FILESYSTEM
@@ -4544,17 +4548,33 @@ static void FS_Startup(const char *gameName)
 	}
 
 	// add search path elements in reverse priority order
+#ifdef __ANDROID__
+    const char *app_path = SDL_AndroidGetInternalStoragePath();
+	if(app_path && app_path[0]) {
+		FS_AddGameDirectory(app_path, gameName, qfalse);
+	}
+#endif
 	FS_AddBothGameDirectories(gameName);
 
 	// check for additional base game so mods can be based upon other mods
 	if (fs_basegame->string[0] && !Q_stricmp(gameName, BASEGAME) && Q_stricmp(fs_basegame->string, gameName))
 	{
+#ifdef __ANDROID__
+        if(app_path && app_path[0]) {
+			FS_AddGameDirectory(app_path, fs_basegame->string, qfalse);
+		}
+#endif
 		FS_AddBothGameDirectories(fs_basegame->string);
 	}
 
 	// check for additional game folder for mods
 	if (fs_gamedirvar->string[0] && !Q_stricmp(gameName, BASEGAME) && Q_stricmp(fs_gamedirvar->string, gameName))
 	{
+#ifdef __ANDROID__
+        if(app_path && app_path[0]) {
+			FS_AddGameDirectory(app_path, fs_gamedirvar->string, qfalse);
+		}
+#endif
 		FS_AddBothGameDirectories(fs_gamedirvar->string);
 	}
 
