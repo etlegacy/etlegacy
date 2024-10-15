@@ -145,6 +145,7 @@ animStringItem_t animEventTypesStr[] =
 	{ "RAISEWEAPONPRONE",           -1 },
 	{ "RELOADPRONE",                -1 },
 	{ "NOPOWER",                    -1 },
+	{ "ACTIVATE",                   -1 },
 
 	{ NULL,                         -1 },
 };
