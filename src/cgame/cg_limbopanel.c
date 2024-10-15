@@ -1671,7 +1671,17 @@ qboolean CG_LimboPanel_ClassButton_KeyDown(panel_button_t *button, int key)
 
 			CG_LimboPanel_RequestWeaponStats();
 
-			CG_LimboPanel_SendSetupMsg(qfalse);
+			// NOTE : It used to be the case that by default selecting a class
+			// automatically makes it take effect - this however means that you
+			// can't look up via limbo menu e.g. if a Soldier weapon is
+			// currently available without also switching to the Soldier class.
+			//
+			// This is by default now taken out, but can be re-enabled via
+			// 'cg_limboClassClickConfirm'.
+			if (cg_limboClassClickConfirm.integer)
+			{
+				CG_LimboPanel_SendSetupMsg(qfalse);
+			}
 		}
 
 		return qtrue;
@@ -3815,6 +3825,7 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
 		// confirm the current limbo selection
 		case K_ENTER:
 		case 'y':
+		case 'z':
 			CG_LimboPanel_OkButton_KeyDown(&okButton, K_MOUSE1);
 			break;
 		default:

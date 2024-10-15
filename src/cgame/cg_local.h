@@ -2816,6 +2816,8 @@ extern vmCvar_t cg_skybox;
 extern vmCvar_t cg_redlimbotime;
 extern vmCvar_t cg_bluelimbotime;
 
+extern vmCvar_t cg_limboClassClickConfirm;
+
 extern vmCvar_t cg_movespeed;
 
 extern vmCvar_t cg_drawNotifyText;
