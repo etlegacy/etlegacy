@@ -2756,6 +2756,7 @@ extern vmCvar_t cg_markTime;
 extern vmCvar_t cg_bloodPuff;
 extern vmCvar_t cg_brassTime;
 extern vmCvar_t cg_gun_frame;
+extern vmCvar_t cg_gunFov;
 extern vmCvar_t cg_gun_x;
 extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;
