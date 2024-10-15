@@ -523,7 +523,7 @@ void SV_CL_InitTVGame(void)
 
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++)
 	{
-		if (!svcl.gameState.stringOffsets[i] || i == CS_SYSTEMINFO)
+		if (!svcl.gameState.stringOffsets[i] || i == CS_SYSTEMINFO || i == CS_SVCVAR)
 		{
 			continue;
 		}
