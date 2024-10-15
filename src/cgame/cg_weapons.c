@@ -1657,6 +1657,17 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		CG_PositionRotatedEntityOnTag(&gun, parent, "tag_weapon");
 	}
+	else if (ps && !cg.renderingThirdPerson && CHECKBITWISE(GetWeaponTableData(cg.predictedPlayerState.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET)
+	         && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+	{
+		angles[ROLL]  = 0.0f;
+		angles[YAW]   = -.075f * AngleNormalize180(cg.pmext.mountedWeaponAngles[PITCH] - ps->viewangles[PITCH]);
+		angles[PITCH] = -.75f * AngleNormalize180(cg.pmext.mountedWeaponAngles[PITCH] - ps->viewangles[PITCH]);
+
+		AnglesToAxis(angles, gun.axis);
+
+		CG_PositionRotatedEntityOnTag(&gun, parent, "tag_weapon");
+	}
 	else if ((!ps || cg.renderingThirdPerson) && (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_MORTAR))
 	{
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
@@ -1829,6 +1840,16 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 					{
 						VectorMA(barrel.origin, .5f * angles[PITCH], cg.refdef_current->viewaxis[0], barrel.origin);
+					}
+				}
+				// realign heavymg tripod
+				else if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET)
+				         && (i == W_PART_2 || i == W_PART_3 || i == W_PART_4 || i == W_PART_5))
+				{
+					if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+					{
+						angles[PITCH] = AngleNormalize180(cg.pmext.mountedWeaponAngles[PITCH] - ps->viewangles[PITCH]);
+						VectorMA(barrel.origin, 0.6f * angles[PITCH], cg.refdef_current->viewaxis[2], barrel.origin);
 					}
 				}
 
