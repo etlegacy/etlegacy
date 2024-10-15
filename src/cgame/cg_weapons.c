@@ -134,7 +134,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	vec3_t        offset     = { 0, 0, 0 };
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
-	qboolean      isFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
+	qboolean      isSelfFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
 
 	if (cg_brassTime.integer <= 0)
 	{
@@ -159,7 +159,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		// adjust for the MG tank mounted
 		if ((cent->currentState.eFlags & EF_MOUNTEDTANK))
 		{
-			if (isFirstPerson)
+			if (isSelfFirstPerson)
 			{
 				refEntity_t brass;
 
@@ -204,7 +204,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		velocity[1] = -100 + 40 * crandom();
 		velocity[2] = 200 + 50 * random();
 
-		if (isFirstPerson)
+		if (isSelfFirstPerson)
 		{
 			refEntity_t brass;
 
@@ -239,7 +239,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		}
 	}
 
-	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE) || !isFirstPerson)
+	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE) || !isSelfFirstPerson)
 	{
 		vec3_t xoffset;
 
@@ -348,7 +348,7 @@ void CG_PanzerFaustEjectBrass(centity_t *cent)
 	AxisCopy(axisDefault, re->axis);
 
 	// make it bigger
-	le->sizeScale = 3.0f;
+	le->sizeScale = 2.5f;
 
 	re->hModel = cgs.media.panzerfaustBrassModel;
 
@@ -1247,22 +1247,6 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 }
 
 /**
- * @brief CG_FlamethrowerFlame
- * @param[in] cent
- * @param[in] origin
- */
-static void CG_FlamethrowerFlame(centity_t *cent, vec3_t origin, qboolean firing)
-{
-	if (cent->currentState.weapon != WP_FLAMETHROWER)
-	{
-		return;
-	}
-
-	CG_FireFlameChunks(cent, origin, cent->lerpAngles, 1.0, firing);
-	return;
-}
-
-/**
  * @brief CG_AddWeaponWithPowerups
  * @param[in] gun
  * @param powerups - unused
@@ -1291,53 +1275,244 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	refEntity_t     gun;
 	refEntity_t     barrel;
 	refEntity_t     flash;
+	qboolean        drawpart;
 	vec3_t          angles;
+	vec3_t          forward, left, right, up;
 	weapon_t        weaponNum = (weapon_t)cent->currentState.weapon;
 	weaponInfo_t    *weapon;
-	centity_t       *nonPredictedCent;
-	qboolean        drawpart;
-	qboolean        isPlayer      = cent->currentState.clientNum == cg.snap->ps.clientNum; // might as well have this check consistant throughout the routine
-	qboolean        isFirstPerson = isPlayer && !cg.renderingThirdPerson;
-	int             clientNum     = ps ? ps->clientNum : cent->currentState.clientNum;
-	team_t          team;
 	modelViewType_t modelViewType = ps ? W_FP_MODEL : W_TP_MODEL;
+	centity_t       *nonPredictedCent;
+	qboolean        isSelf            = cent->currentState.clientNum == cg.snap->ps.clientNum; // might as well have this check consistant throughout the routine
+	qboolean        isSelfFirstPerson = isSelf && !cg.renderingThirdPerson;
+	int             clientNum         = ps ? ps->clientNum : cent->currentState.clientNum;
+	team_t          team;
 	float           x, y;
-	vec3_t          forward, left, right, up;
-	qboolean        shouldDrawMuzzleFlash       = (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && ps && isFirstPerson));
-	qboolean        shouldDrawMuzzleFlashDlight = ((shouldDrawMuzzleFlash && cg_muzzleFlashDlight.integer == 0) || (cg_muzzleFlashDlight.integer > 1 && !(cg_muzzleFlashDlight.integer == 3 && ps && isFirstPerson)));
 
+	qboolean shouldDrawMuzzleFlash       = (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && ps && isSelfFirstPerson));
+	qboolean shouldDrawMuzzleFlashDlight = ((shouldDrawMuzzleFlash && cg_muzzleFlashDlight.integer == 0) || (cg_muzzleFlashDlight.integer > 1 && !(cg_muzzleFlashDlight.integer == 3 && ps && isSelfFirstPerson)));
+
+	// {{{ early returns
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
 	{
 		return;
 	}
-
 	// don't draw weapon stuff when looking through a scope
-	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SCOPED)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SCOPED)
 	{
-		if (isFirstPerson && cg.zoomed)
+		if (isSelfFirstPerson && cg.zoomed)
 		{
 			return;
 		}
 	}
-	else if (ps && GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_GRENADE)
+	// mounted tank mg
+	else if (cent->currentState.eFlags & EF_MOUNTEDTANK)
 	{
-		if (!ps->ammoclip[weaponNum])
+		// 1P case is handled in 'CG_AddViewWeapon' instead
+		if (isSelfFirstPerson)
 		{
 			return;
 		}
-	}
-	else if (ps && weaponNum == WP_PANZERFAUST)
-	{
-		// 1P - don't pull out another panzerfaust right after firing
-		if (ps->weaponstate == WEAPON_DROPPING && !ps->ammoclip[weaponNum])
+
+		// render only muzzle flash in 3P
+		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
 		{
-			return;
+			Com_Memset(&flash, 0, sizeof(flash));
+			flash.renderfx = RF_LIGHTING_ORIGIN;
+			flash.hModel   = cgs.media.mg42muzzleflash;
+
+			VectorCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.origin, flash.origin);
+			AxisCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.axis, flash.axis);
+
+			if (shouldDrawMuzzleFlash)
+			{
+				trap_R_AddRefEntityToScene(&flash);
+			}
+
+			if (shouldDrawMuzzleFlashDlight)
+			{
+				trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
+			}
+		}
+		return;
+	}
+	// stationary mg42 weapon (misc_mg42)
+	else if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
+	{
+		// muzzle flash
+		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
+		{
+			centity_t   *mg42;
+			int         num;
+			vec3_t      forward, point;
+			refEntity_t flash;
+
+			// find the mg42 we're attached to
+			for (num = 0 ; num < cg.snap->numEntities ; num++)
+			{
+				mg42 = &cg_entities[cg.snap->entities[num].number];
+
+				if (mg42->currentState.eType == ET_MG42_BARREL &&
+				    mg42->currentState.otherEntityNum == cent->currentState.number)
+				{
+					// found it, clamp behind gun
+					VectorCopy(mg42->currentState.pos.trBase, point);
+					//AngleVectors (mg42->s.apos.trBase, forward, NULL, NULL);
+					AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+					VectorMA(point, 40, forward, point);
+
+					Com_Memset(&flash, 0, sizeof(flash));
+					flash.renderfx = RF_LIGHTING_ORIGIN;
+					flash.hModel   = cgs.media.mg42muzzleflash;
+
+					VectorCopy(point, flash.origin);
+					AnglesToAxis(cent->lerpAngles, flash.axis);
+
+					if (shouldDrawMuzzleFlash)
+					{
+						trap_R_AddRefEntityToScene(&flash);
+					}
+
+					if (shouldDrawMuzzleFlashDlight)
+					{
+						trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
+					}
+					return;
+				}
+			}
+		}
+		// don't render player weapons while using stationary mg
+		return;
+	}
+	// 1P - hide some weapons sometimes, especially throwables after usage
+	else if (ps)
+	{
+		switch (weaponNum)
+		{
+		case WP_PANZERFAUST:
+			// don't show drop after attack
+			if (ps->weaponstate == WEAPON_DROPPING && !ps->ammoclip[weaponNum])
+			{
+				return;
+			}
+			break;
+		case WP_BAZOOKA:
+			// don't show too much of the dropping animation (can happen when quickswapping between 2 weapons)
+			if (ps->weaponstate == WEAPON_DROPPING && cg.predictedPlayerEntity.pe.weap.frame > 6)
+			{
+				return;
+			}
+			break;
+		case WP_MOBILE_BROWNING:
+		case WP_MOBILE_MG42:
+			// TODO : still sometimes blinks for a single frame when quickswapping - not perfect, therefore can be improved, but no pressing issue
+			// don't show too much of the dropping animation (can happen when quickswapping between 2 weapons)
+			if (ps->weaponstate == WEAPON_DROPPING && cg.predictedPlayerEntity.pe.weap.frame > 23)
+			{
+				return;
+			}
+			break;
+		case WP_DYNAMITE:
+			if (
+				// hide gun on max pullback
+				(cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerEntity.pe.weap.frame == 3)
+				// dont show drop after attack
+				|| (cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cent->firedTime > 0)
+				// dont show 2nd attack anim that's played for whatever reason
+				|| (cg.time < (cent->firedTime + 2000))
+				// don't show too much of the dropping animation (can happen when quickswapping between 2 weapons)
+				|| (ps->weaponstate == WEAPON_DROPPING && cg.predictedPlayerEntity.pe.weap.frame > 11)
+				)
+			{
+				return;
+			}
+			break;
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+			if (
+				// hide when out of ammo
+				!ps->ammoclip[weaponNum]
+				// hide gun on max pullback
+				|| (cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerEntity.pe.weap.frame == 3)
+				)
+			{
+				return;
+			}
+			break;
+		case WP_SMOKE_BOMB:
+			if (
+				// hide gun on max pullback
+				(cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerEntity.pe.weap.frame > 2)
+				// dont show neither 2nd superfluous attack nor drop after attack
+				|| ((cg.predictedPlayerState.weaponstate == WEAPON_FIRING || cg.predictedPlayerState.weaponstate == WEAPON_DROPPING) && cent->firedTime > 0)
+				)
+			{
+				return;
+			}
+			break;
+		case WP_SMOKE_MARKER:
+			if (
+				// hide gun on max pullback
+				(cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerEntity.pe.weap.frame > 1)
+				// dont show drop after attack
+				|| (cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cent->firedTime > 0)
+				)
+			{
+				return;
+			}
+			break;
+		case WP_LANDMINE:
+			if (
+				// dont show drop after attack
+				(cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cent->firedTime > 0)
+				)
+			{
+				return;
+			}
+			break;
+		case WP_SATCHEL:
+			// dont show drop after attack
+			if (cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cent->firedTime > 0 && cg.time - cent->firedTime < 600)
+			{
+				return;
+			}
+			break;
+		case WP_MEDKIT:
+		case WP_AMMO:
+			// hide gun model after throwing for a bit
+			if (cent->firedTime > 0  && cg.time - cent->firedTime > 75 && cg.time - cent->firedTime < 200)
+			{
+				return;
+			}
+			break;
+		default:
+			break;
 		}
 	}
-	else if (!ps)  // hide some weapons 3P after usage, especially throwables - instead
-	// of still holding them in a player's hand despite having thrown them
+	// 3P - hide some weapons sometimes, especially throwables after usage
+	else if (!ps || cg.renderingThirdPerson)
 	{
+		// hide weapons when crawling
+		if (cent->currentState.eFlags & EF_PRONE_MOVING)
+		{
+			switch (weaponNum)
+			{
+			// outlier: still show heavymgs while crawling - that's fine
+			case WP_MOBILE_MG42:
+			case WP_MOBILE_MG42_SET:
+			case WP_MOBILE_BROWNING:
+			case WP_MOBILE_BROWNING_SET:
+				break;
+			// hide all other weapons while crawling
+			default:
+				return;
+				break;
+			}
+		}
+
+		// hide throwables in 3P after usage for a bit
+		// (you're supposed to have thrown them, so show empty hands for a
+		// while)
 		switch (weaponNum)
 		{
 		case WP_SATCHEL:
@@ -1389,109 +1564,30 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			break;
 		}
 	}
-
-	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
-	{
-		// no weapon when on mg_42
-		if (isFirstPerson)
-		{
-			return;
-		}
-
-		// render mg_42 muzzle flash in 3P
-		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
-		{
-			Com_Memset(&flash, 0, sizeof(flash));
-			flash.renderfx = RF_LIGHTING_ORIGIN;
-			flash.hModel   = cgs.media.mg42muzzleflash;
-
-			VectorCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.origin, flash.origin);
-			AxisCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.axis, flash.axis);
-
-			if (shouldDrawMuzzleFlash)
-			{
-				trap_R_AddRefEntityToScene(&flash);
-			}
-
-			if (shouldDrawMuzzleFlashDlight)
-			{
-				trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
-			}
-		}
-		return;
-	}
-
-	// stationary mg42 weapon (misc_mg42)
-	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
-	{
-		// muzzle flash
-		if (cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
-		{
-			centity_t   *mg42;
-			int         num;
-			vec3_t      forward, point;
-			refEntity_t flash;
-
-			// find the mg42 we're attached to
-			for (num = 0 ; num < cg.snap->numEntities ; num++)
-			{
-				mg42 = &cg_entities[cg.snap->entities[num].number];
-
-				if (mg42->currentState.eType == ET_MG42_BARREL &&
-				    mg42->currentState.otherEntityNum == cent->currentState.number)
-				{
-					// found it, clamp behind gun
-					VectorCopy(mg42->currentState.pos.trBase, point);
-					//AngleVectors (mg42->s.apos.trBase, forward, NULL, NULL);
-					AngleVectors(cent->lerpAngles, forward, NULL, NULL);
-					VectorMA(point, 40, forward, point);
-
-					Com_Memset(&flash, 0, sizeof(flash));
-					flash.renderfx = RF_LIGHTING_ORIGIN;
-					flash.hModel   = cgs.media.mg42muzzleflash;
-
-					VectorCopy(point, flash.origin);
-					AnglesToAxis(cent->lerpAngles, flash.axis);
-
-					if (shouldDrawMuzzleFlash)
-					{
-						trap_R_AddRefEntityToScene(&flash);
-					}
-
-					if (shouldDrawMuzzleFlashDlight)
-					{
-						trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
-					}
-					return;
-				}
-			}
-		}
-
-		// don't render player weapons while using stationary mg
-		return;
-	}
-
-	if ((!ps || cg.renderingThirdPerson) && (cent->currentState.eFlags & EF_PRONE_MOVING))
-	{
-		return;
-	}
+	// }}} early returns
 
 	weapon = &cg_weapons[weaponNum];
 
-	// add the weapon
+	// {{{ add the gun model
 	Com_Memset(&gun, 0, sizeof(gun));
 	VectorCopy(parent->lightingOrigin, gun.lightingOrigin);
 	gun.shadowPlane = parent->shadowPlane;
 	gun.renderfx    = parent->renderfx;
+	gun.hModel      = weapon->weaponModel[modelViewType].model;
 
+	// no need to render a gun that has no model
+	if (!gun.hModel)
+	{
+		return;
+	}
+
+	// determine team dependent gun skins
 	team = ps ? (team_t)ps->persistant[PERS_TEAM] : cgs.clientinfo[cent->currentState.clientNum].team;
 
 	if ((weaponNum != WP_SATCHEL) && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
 		team = team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
 	}
-
-	gun.hModel = weapon->weaponModel[modelViewType].model;
 
 	if ((team == TEAM_AXIS) && weapon->weaponModel[modelViewType].skin[TEAM_AXIS])
 	{
@@ -1506,11 +1602,28 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		gun.customSkin = weapon->weaponModel[modelViewType].skin[0];   // if not loaded it's 0 so doesn't do any harm
 	}
 
-	if (!gun.hModel)
+	// upgraded fops ammobox shader
+	if (weaponNum == WP_AMMO)
 	{
-		return;
+		if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_SIGNALS, SK_FIELDOPS_RESOURCES))
+		{
+			gun.customShader = weapon->modModels[0];
+		}
+	}
+	// upgraded medic syringe shader
+	if (!ps)
+	{
+		if (weaponNum == WP_MEDIC_SYRINGE)
+		{
+			if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
+			{
+				gun.customShader = weapon->modModels[0];
+			}
+		}
 	}
 
+
+	// determine 'cg.pmext.mountedWeaponAngles' once switched to WEAPON_TYPE_SET
 	if (ps && cg.clientNum != cg.snap->ps.clientNum)
 	{
 		// calculate mounted weapon angles if spectating client
@@ -1532,6 +1645,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
+	// position 'tag_weapon'/'tag_weapon2'
 	if (ps && !cg.renderingThirdPerson && CHECKBITWISE(GetWeaponTableData(cg.predictedPlayerState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
 	    && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
@@ -1561,74 +1675,53 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// }
 	//}
 
-	// fixup 3P landmine model (rotate, translate, rescale)
-	if (!ps && weaponNum == WP_LANDMINE)
+	// modify gun rotation/position/size
+	if (!ps)
 	{
-		// rotate
-		AxisToAngles(gun.axis, angles);
-
-		angles[YAW]   += 270;
-		angles[PITCH] -= 20;
-
-		// translate
-		AngleVectors(angles, forward, right, up);
-
-		VectorMA(gun.origin, -4.0, forward, gun.origin);
-
-		// rescale
-		AnglesToAxis(angles, gun.axis);
-
-		VectorScale(gun.axis[0], 0.8, gun.axis[0]);
-		VectorScale(gun.axis[1], 0.8, gun.axis[1]);
-		VectorScale(gun.axis[2], 0.8, gun.axis[2]);
-	}
-
-	if (ps)
-	{
-		drawpart = CG_GetPartFramesFromWeap(cent, &gun, parent, W_MAX_PARTS, weapon);     // W_MAX_PARTS specifies this as the primary view model
-	}
-	else
-	{
-		drawpart = qtrue;
-	}
-
-	if (drawpart)
-	{
-		if (weaponNum == WP_AMMO)
+		switch (weaponNum)
 		{
-			if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_SIGNALS, SK_FIELDOPS_RESOURCES))
-			{
-				gun.customShader = weapon->modModels[0];
-			}
-		}
-
-		if (!ps)
+		// fixup 3P landmine model (rotate, translate, rescale)
+		case WP_LANDMINE:
 		{
-			if (weaponNum == WP_MEDIC_SYRINGE)
-			{
-				if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
-				{
-					gun.customShader = weapon->modModels[0];
-				}
-			}
-		}
+			// rotate
+			AxisToAngles(gun.axis, angles);
 
-		CG_AddWeaponWithPowerups(&gun, cent->currentState.powerups, ps, cent);
+			angles[YAW]   += 270;
+			angles[PITCH] -= 20;
+
+			// translate
+			AngleVectors(angles, forward, right, up);
+
+			VectorMA(gun.origin, -4.0, forward, gun.origin);
+
+			// rescale
+			AnglesToAxis(angles, gun.axis);
+
+			VectorScale(gun.axis[0], 0.8, gun.axis[0]);
+			VectorScale(gun.axis[1], 0.8, gun.axis[1]);
+			VectorScale(gun.axis[2], 0.8, gun.axis[2]);
+			break;
+		}
+		default:
+			break;
+		}
 	}
 
+	// add gun
+	trap_R_AddRefEntityToScene(&gun);
+	// and for akimbo add the gun to the other hand again
 	if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
-		// add to other hand as well
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
-		CG_AddWeaponWithPowerups(&gun, cent->currentState.powerups, ps, cent);
+		trap_R_AddRefEntityToScene(&gun);
 	}
-
+	// }}} add the gun model
+	// {{{ add barrel models
 	Com_Memset(&barrel, 0, sizeof(barrel));
 	VectorCopy(parent->lightingOrigin, barrel.lightingOrigin);
 	barrel.shadowPlane = parent->shadowPlane;
 	barrel.renderfx    = parent->renderfx;
 
-	// add barrels
 	// attach generic weapon parts to the first person weapon.
 	// if a barrel should be attached for third person, add it in the (!ps) section below
 	angles[YAW] = angles[PITCH] = 0;
@@ -1651,7 +1744,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			spunpart      = qfalse;
 			barrel.hModel = weapon->partModels[modelViewType][i].model;
 
-			if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
+			if (weaponNum == WP_PANZERFAUST && i == 1
+			    && ps->weaponstate == WEAPON_FIRING
+			    && cent->firedTime > 0 && cg.time - cent->firedTime > 700
+			    )
+			{
+				continue;
+			}
+			else if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 			{
 				if (i == W_PART_3)
 				{
@@ -1672,9 +1772,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					}
 				}
 			}
-			//else if (weaponNum == WP_MOBILE_MG42_SET || weaponNum == WP_MOBILE_BROWNING_SET)
-			//{
-			//}
 
 			if (spunpart)
 			{
@@ -1842,7 +1939,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// add the scope model to the rifle if you've got it
-	if (isFirstPerson)  // for now just do it on the first person weapons
+	if (isSelfFirstPerson)  // for now just do it on the first person weapons
 	{
 		if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, (WEAPON_TYPE_RIFLE | WEAPON_TYPE_SCOPABLE))
 		    || CHECKBITWISE(GetWeaponTableData(weaponNum)->type, (WEAPON_TYPE_RIFLE | WEAPON_TYPE_SCOPED)))
@@ -1983,6 +2080,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
 	}
+	// }}} add barrel models
 
 	// make sure we aren't looking at cg.predictedPlayerEntity for LG
 	nonPredictedCent = &cg_entities[cent->currentState.clientNum];
@@ -1995,7 +2093,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		nonPredictedCent = cent;
 	}
 
-	// add the flash
+	// store this position for other cgame elements to access
+	cent->pe.gunRefEnt      = gun;
+	cent->pe.gunRefEntFrame = cg.clientFrame;
+
+	// {{{ add the flash model & dynamic light
 	Com_Memset(&flash, 0, sizeof(flash));
 	VectorCopy(parent->lightingOrigin, flash.lightingOrigin);
 	flash.shadowPlane = parent->shadowPlane;
@@ -2008,7 +2110,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	angles[ROLL]  = crandom() * 10;
 	AnglesToAxis(angles, flash.axis);
 
-	if (/*isPlayer &&*/ GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO)
+	// position the flash
+	if (GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (!ps || cg.renderingThirdPerson)
 		{
@@ -2040,19 +2143,20 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		CG_PositionRotatedEntityOnTag(&flash, &gun, "tag_flash");
 	}
 
-	// @XXX hardcode offset flash positions, to correct wrong official
-	// muzzle locations in some cases
+	// XXX - hardcode offset flash positions, to correct wrong official muzzle
+	// locations in some cases
+	if (ps || isSelfFirstPerson)
 	{
 		float flash_offset = 0.0f;
 
 		switch (weaponNum)
 		{
-		case WP_KAR98:   // normal Kar98
+		case WP_KAR98:       // normal Kar98
 			flash_offset = 8.0f;
 			break;
-		case WP_K43:     // scoped Kar98
-		case WP_GARAND:  // scoped Garand
-		case WP_CARBINE: // normal Garand
+		case WP_K43:         // scoped Kar98
+		case WP_GARAND:      // scoped Garand
+		case WP_CARBINE:     // normal Garand
 			flash_offset = 14.0f;
 			break;
 		case WP_FLAMETHROWER:
@@ -2065,6 +2169,21 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				flash_offset -= 0.5;
 			}
 			break;
+		default:
+			break;
+		}
+
+		if (flash_offset != 0.0f)
+		{
+			AxisToAngles(flash.axis, angles);
+			AngleVectors(angles, forward, NULL, NULL);
+			VectorMA(flash.origin, flash_offset, forward, flash.origin);
+		}
+	}
+	else
+	{
+		switch (weaponNum)
+		{
 		case WP_MORTAR:
 		case WP_MORTAR2:
 		case WP_MORTAR_SET:
@@ -2081,81 +2200,24 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		default:
 			break;
 		}
-
-		if (flash_offset != 0.0f)
-		{
-			AxisToAngles(flash.axis, angles);
-			AngleVectors(angles, forward, NULL, NULL);
-			VectorMA(flash.origin, flash_offset, forward, flash.origin);
-		}
 	}
 
-	// store this position for other cgame elements to access
-	cent->pe.gunRefEnt      = gun;
-	cent->pe.gunRefEntFrame = cg.clientFrame;
-
-	if (weaponNum == WP_FLAMETHROWER && (nonPredictedCent->currentState.eFlags & EF_FIRING))
+	// add barrel smoke puffs for weapons that generate smoke
+	if (ps || !isSelfFirstPerson)
 	{
-		// continuous flash
-	}
-	else
-	{
-		// continuous smoke after firing
-		if (ps || !isFirstPerson)
+		// gun overheating smoke
+		if (GetWeaponTableData(weaponNum)->maxHeat
+		    && (cg.time - cent->overheatTime < 3000) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
 		{
-			if (GetWeaponTableData(weaponNum)->maxHeat)
+			if (!(rand() % 3))
 			{
-				// hot smoking gun
-				if ((cg.time - cent->overheatTime < 3000) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
-				{
-					if (!(rand() % 3))
-					{
-						float alpha = 1.0f - ((float)(cg.time - cent->overheatTime) / 3000.0f);
+				float alpha = 1.0f - ((float)(cg.time - cent->overheatTime) / 3000.0f);
 
-						alpha *= 0.25f;     // .25 max alpha
-						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
-					}
-				}
-			}
-			else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PANZER)
-			{
-				const int smoketime = (weaponNum == WP_BAZOOKA) ? 1910 : 1000;
-				if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < smoketime)
-				{
-					if (!(rand() % 5))
-					{
-						float alpha = 1.0f - ((float)(cg.time - cent->firedTime) / (float)smoketime); // what fraction of smoketime are we at
-
-						alpha *= 0.25f; // .25 max alpha
-						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
-					}
-				}
+				alpha *= 0.25f; // .25 max alpha
+				CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
 			}
 		}
-
-		if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
-		{
-			if ((ps || !isFirstPerson) && shouldDrawMuzzleFlash && cg.time - cent->firedTime < 800)
-			{
-				CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 700, 16, 20, 30, .12f, 4.f);
-			}
-		}
-
-		// impulse flash / dlight strobing
-		if (shouldDrawMuzzleFlashDlight && cg.time - cent->firedTime > MUZZLE_FLASH_TIME)
-		{
-			// continuous dlight when firing with flamethrower
-			if (weaponNum != WP_FLAMETHROWER)
-			{
-				return;
-			}
-		}
-	}
-
-	// weaps with barrel smoke
-	if (ps || !isFirstPerson)
-	{
-		if (weaponNum == WP_STEN || weaponNum == WP_MP34)
+		else if (weaponNum == WP_STEN || weaponNum == WP_MP34)
 		{
 			if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < 100)
 			{
@@ -2169,18 +2231,47 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				}
 			}
 		}
+		else if (
+			CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) &&
+			shouldDrawMuzzleFlash && cg.time - cent->firedTime < 800
+			)
+		{
+			CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 700, 16, 20, 30, .12f, 4.f);
+		}
+		else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PANZER)
+		{
+			const int smoketime = (weaponNum == WP_BAZOOKA) ? 1910 : 1000;
+			if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < smoketime)
+			{
+				if (!(rand() % 5))
+				{
+					float alpha = 1.0f - ((float)(cg.time - cent->firedTime) / (float)smoketime);     // what fraction of smoketime are we at
+
+					alpha *= 0.25f;     // .25 max alpha
+					CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
+				}
+			}
+		}
 	}
 
-	if (weaponNum != WP_FLAMETHROWER)     // hide the flash also for now
+	// add muzzle flash model
+	if (weaponNum != WP_FLAMETHROWER)
 	{
-		// weapons that don't need to go any further as they have no flash or light
+		// flash impulse/strobing for weapons that are not flamethrower
+		if (shouldDrawMuzzleFlashDlight && cg.time - cent->firedTime > MUZZLE_FLASH_TIME)
+		{
+			return;
+		}
+
+		// weapons that don't need to go any further as they have no flash and
+		// thus no dlight
 		if (!flash.hModel)
 		{
 			return;
 		}
 
 		// changed this so the muzzle flash stays onscreen for long enough to be seen
-		if (shouldDrawMuzzleFlash && cg.time - cent->firedTime < MUZZLE_FLASH_TIME)
+		if (shouldDrawMuzzleFlash && (cg.time - cent->firedTime < MUZZLE_FLASH_TIME))
 		{
 			float scale = Com_Clamp(0.5f, 1.0f, cg_muzzleFlashScale.value);
 
@@ -2193,23 +2284,22 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
-	if (ps || !isFirstPerson)
+	// add muzzle flash dlight
+	if (ps || !isSelfFirstPerson)
 	{
-		int muzzleContents;
-
 		// get contents to avoid lights in water etc - FIXME: this might be useful for other weapons too (move up?)
-		muzzleContents = CG_PointContents(flash.origin, -1);
-
-		if (muzzleContents & MASK_WATER)
+		if (CG_PointContents(flash.origin, -1) & MASK_WATER)
 		{
 			return;
 		}
 
 		// no flamethrower flame on prone moving or dead players, or during pause
-		if ((cent->currentState.eFlags & EF_FIRING) && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)) && !cgs.matchPaused)
+		if (!(weaponNum == WP_FLAMETHROWER && !(cent->currentState.eFlags & EF_FIRING))
+		    && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD))
+		    && !cgs.matchPaused)
 		{
 			trace_t trace;
-			vec3_t  muzzlePoint, angles, forward;
+			vec3_t  muzzlePoint;
 
 			VectorCopy(flash.origin, muzzlePoint);
 
@@ -2225,8 +2315,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				VectorCopy(trace.endpos, muzzlePoint);
 			}
 
-			// Flamethrower effect
-			CG_FlamethrowerFlame(cent, muzzlePoint, qtrue);
+			// add flamethrower flame chunks
+			if (cent->currentState.weapon == WP_FLAMETHROWER)
+			{
+				CG_FireFlameChunks(cent, muzzlePoint, cent->lerpAngles, 1.0, qtrue);
+			}
 
 			if (shouldDrawMuzzleFlashDlight && weapon->flashDlightColor[0] != 0.f && weapon->flashDlightColor[1] != 0.f && weapon->flashDlightColor[2] != 0.f)
 			{
@@ -2236,6 +2329,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 		else
 		{
+			// reset flamethrower flame chunk spline position tracking
 			if (weaponNum == WP_FLAMETHROWER)
 			{
 				vec3_t angles;
@@ -2255,6 +2349,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 		}
 	}
+	// }}} add the flash model & dynamic light
 }
 
 /**
@@ -2310,8 +2405,11 @@ void CG_AddViewWeapon(playerState_t *ps)
 			VectorMA(origin, -7, cg.refdef_current->viewaxis[1], origin);
 			VectorMA(origin, -4, cg.refdef_current->viewaxis[2], origin);
 
-			// Flamethrower effect
-			CG_FlamethrowerFlame(&cg.predictedPlayerEntity, origin, cg.predictedPlayerState.eFlags & EF_FIRING);
+			// add flamethrower flame chunks
+			if (cg.predictedPlayerEntity.currentState.weapon == WP_FLAMETHROWER)
+			{
+				CG_FireFlameChunks(&cg.predictedPlayerEntity, origin, cg.predictedPlayerEntity.lerpAngles, 1.0, cg.predictedPlayerState.eFlags & EF_FIRING);
+			}
 		}
 
 		if (cg.binocZoomTime)
@@ -2629,7 +2727,7 @@ qboolean CG_WeaponSelectable(int weapon)
 
 	if (!CG_WeaponHasAmmo((weapon_t)weapon))
 	{
-		// play no ammo sound if the weapon we tried to switch to is out of ammo
+		// play noAmmoSound if the weapon we tried to switch to is out of ammo
 		trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cg_weapons[weapon].noAmmoSound);
 		return qfalse;
 	}
