@@ -288,7 +288,7 @@ static animStringItem_t animConditionsStr[NUM_ANIM_CONDITIONS + 1] =
 	{ "GEN_BITFLAG",    -1 },
 	{ "AISTATE",        -1 },
 	{ "SUICIDE",        -1 },
-	{ "RELOADING",      -1 },
+	{ "FAST_RELOAD",    -1 },
 	{ "LADDER_PEEK",    -1 },
 
 	{ NULL,             -1 },
@@ -2011,7 +2011,7 @@ void BG_AnimUpdatePlayerStateConditions(pmove_t *pmove)
 	}
 
 	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_FIRING, (pmove->cmd.buttons & BUTTON_ATTACK), qtrue);
-	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_RELOADING, (pmove->ps->weaponstate == WEAPON_RELOADING), qtrue);
+	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_FAST_RELOAD, (BG_IsSkillAvailable(pmove->skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_FASTER_RELOAD) && GetWeaponTableData(pmove->ps->weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD), qtrue);
 
 	if (ps->pm_flags & PMF_FLAILING)
 	{
