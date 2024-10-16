@@ -2761,6 +2761,7 @@ extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;
 extern vmCvar_t cg_drawGun;
 extern vmCvar_t cg_weapAnims;
+extern vmCvar_t cg_weapBankCollisions;
 extern vmCvar_t cg_weapSwitchNoAmmoSounds;
 extern vmCvar_t cg_letterbox;
 extern vmCvar_t cg_tracerChance;
