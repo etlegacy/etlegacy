@@ -53,7 +53,7 @@ weapon_t weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
 };
 
-static char* weapAnimNumberStr[] =
+static char *weapAnimNumberStr[] =
 {
 	"IDLE1",
 	"IDLE2",
@@ -2574,13 +2574,21 @@ qboolean CG_WeaponSelectable(int weapon)
 	// check if the selected weapon is available
 	if (!(COM_BitCheck(cg.predictedPlayerState.weapons, weapon)))
 	{
+		// play no ammo sound if some weapons we tried to switch to are not available
+		if (cg_weapSwitchNoAmmoSounds.integer && (weapon == WP_GRENADE_LAUNCHER || weapon == WP_GRENADE_PINEAPPLE))
+		{
+			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cg_weapons[weapon].noAmmoSound);
+		}
 		return qfalse;
 	}
 
 	if (!CG_WeaponHasAmmo((weapon_t)weapon))
 	{
 		// play no ammo sound if the weapon we tried to switch to is out of ammo
-		trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cg_weapons[weapon].noAmmoSound);
+		if (cg_weapSwitchNoAmmoSounds.integer)
+		{
+			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cg_weapons[weapon].noAmmoSound);
+		}
 		return qfalse;
 	}
 
