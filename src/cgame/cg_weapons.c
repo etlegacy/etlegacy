@@ -3865,7 +3865,7 @@ void CG_WeaponBank_f(void)
 		return;
 	}
 
-	CG_WeaponIndex(cg.weaponSelect, &curbank, &curcycle);         // get bank/cycle of current weapon
+	CG_WeaponIndex(cg.weaponSelect, &curbank, &curcycle);  // get bank/cycle of current weapon
 
 	if (bank == curbank)
 	{
@@ -3879,6 +3879,88 @@ void CG_WeaponBank_f(void)
 		    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHTO)
 		{
 			return;
+		}
+	}
+
+	// disambiguate weapon bank collisions, by just unrolling the possibilities
+	if (!cg_weapBankCollisions.integer && (bank == 2 || bank == 3) && (COM_BitCheck(cg.snap->ps.weapons, WP_MP40) || COM_BitCheck(cg.snap->ps.weapons, WP_THOMPSON)))
+	{
+		// CASE1 : for having 2 SMGs - bank 2 will be your team's, bank 3 the other
+		if (COM_BitCheck(cg.snap->ps.weapons, WP_MP40) && COM_BitCheck(cg.snap->ps.weapons, WP_THOMPSON))
+		{
+			if (bank == 2)
+			{
+				CG_FinishWeaponChange(cg.weaponSelect, (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? WP_MP40 : WP_THOMPSON);
+				return;
+			}
+			else if (bank == 3)
+			{
+				CG_FinishWeaponChange(cg.weaponSelect, (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? WP_THOMPSON : WP_MP40);
+				return;
+			}
+		}
+		// CASE2 : for soldier case with SMG that would otherwise collide with
+		// whatever heavy weapon the player has in bank 3 bank 2 is your smg, bank
+		// 3 the heavy weapon
+		else if (COM_BitCheck(cg.snap->ps.weapons, WP_MOBILE_MG42)
+		         || COM_BitCheck(cg.snap->ps.weapons, WP_MOBILE_BROWNING)
+		         || COM_BitCheck(cg.snap->ps.weapons, WP_FLAMETHROWER)
+		         || COM_BitCheck(cg.snap->ps.weapons, WP_PANZERFAUST)
+		         || COM_BitCheck(cg.snap->ps.weapons, WP_BAZOOKA)
+		         || COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR2)
+		         || COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR))
+		{
+			if (bank == 2)
+			{
+				if (CG_WeaponSelectable(WP_MP40))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_MP40);
+					return;
+				}
+				else if (CG_WeaponSelectable(WP_THOMPSON))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_THOMPSON);
+					return;
+				}
+			}
+			else if (bank == 3)
+			{
+				if (CG_WeaponSelectable(WP_MOBILE_MG42))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_MOBILE_MG42);
+					return;
+				}
+				else if (CG_WeaponSelectable(WP_MOBILE_BROWNING))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_MOBILE_BROWNING);
+					return;
+				}
+				else if (CG_WeaponSelectable(WP_FLAMETHROWER))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_FLAMETHROWER);
+					return;
+				}
+				else if (CG_WeaponSelectable(WP_PANZERFAUST))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_PANZERFAUST);
+					return;
+				}
+				else if (CG_WeaponSelectable(WP_BAZOOKA))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_BAZOOKA);
+					return;
+				}
+				else if (CG_WeaponSelectable(WP_MORTAR2))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_MORTAR2);
+					return;
+				}
+				else if (CG_WeaponSelectable(WP_MORTAR))
+				{
+					CG_FinishWeaponChange(cg.weaponSelect, WP_MORTAR);
+					return;
+				}
+			}
 		}
 	}
 
