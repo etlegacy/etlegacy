@@ -1381,6 +1381,19 @@ void TVG_ParseWolfinfo(void)
 }
 
 /**
+* @brief TVG_ParseSvCvars
+*/
+void TVG_ParseSvCvars(void)
+{
+	if (!(level.mod & LEGACY))
+	{
+		return;
+	}
+
+	trap_SetConfigstring(CS_SVCVAR, "");
+}
+
+/**
 * @brief TVG_ConfigStringModified *NEVER* attempt sendig configstrings directly to client!
 */
 static void TVG_ConfigStringModified(void)
@@ -1394,6 +1407,9 @@ static void TVG_ConfigStringModified(void)
 
 	switch (num)
 	{
+	case CS_SVCVAR:
+		TVG_ParseSvCvars();
+		break;
 	case CS_WARMUP:
 		TVG_ParseWarmup();
 		break;

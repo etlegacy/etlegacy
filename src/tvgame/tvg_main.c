@@ -590,6 +590,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	G_LogPrintf("gametime: %s\n", timeFt);
 
 	TVG_ParseWolfinfo();
+	TVG_ParseSvCvars();
 
 	// initialize all entities for this game
 	Com_Memset(g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]));

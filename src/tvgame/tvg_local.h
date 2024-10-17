@@ -549,6 +549,7 @@ qboolean TVG_CommandsAutoUpdate(tvcmd_reference_t *tvcmd);
 qboolean TVG_ServerIsFloodProtected(void);
 
 void TVG_ParseWolfinfo(void);
+void TVG_ParseSvCvars(void);
 
 // tvg_utils.c
 int TVG_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
