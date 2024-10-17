@@ -138,6 +138,7 @@ cvar_t *r_overBrightBits;
 cvar_t *r_mapOverBrightBits;
 
 cvar_t *r_debugSurface;
+cvar_t *r_debugShaderSurfaceFlags;
 cvar_t *r_simpleMipMaps;
 
 cvar_t *r_showImages;
@@ -1158,8 +1159,50 @@ void R_Register(void)
 	r_showCluster     = ri.Cvar_Get("r_showcluster", "0", CVAR_CHEAT);
 	r_speeds          = ri.Cvar_Get("r_speeds", "0", CVAR_CHEAT);
 
-	r_logFile      = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
-	r_debugSurface = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
+	r_logFile                 = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
+	r_debugSurface            = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
+	r_debugShaderSurfaceFlags = ri.Cvar_Get("r_debugShaderSurfaceFlags", "0", CVAR_CHEAT);
+	ri.Cvar_SetDescription(r_debugShaderSurfaceFlags,
+	                       "Highlights any shader with passed SURF_* bitflag set.\n"
+	                       "\n"
+	                       "e.g. for highlighting SURF_LANDMINE shaders:\n"
+	                       "    /r_debugShaderSurfaceFlags 2147483648\n"
+	                       "\n"
+	                       "SURF_* as decimals for reference follow:\n"
+	                       "\n"
+	                       "SURF_NODAMAGE           1\n"
+	                       "SURF_SLICK              2\n"
+	                       "SURF_SKY                4\n"
+	                       "SURF_LADDER             8\n"
+	                       "SURF_NOIMPACT           16\n"
+	                       "SURF_NOMARKS            32\n"
+	                       "SURF_SPLASH             64\n"
+	                       "SURF_NODRAW             128\n"
+	                       "SURF_HINT               256\n"
+	                       "SURF_SKIP               512\n"
+	                       "SURF_NOLIGHTMAP         1024\n"
+	                       "SURF_POINTLIGHT         2048\n"
+	                       "SURF_METAL              4096\n"
+	                       "SURF_NOSTEPS            8192\n"
+	                       "SURF_NONSOLID           16384\n"
+	                       "SURF_LIGHTFILTER        32768\n"
+	                       "SURF_ALPHASHADOW        65536\n"
+	                       "SURF_NODLIGHT           131072\n"
+	                       "SURF_WOOD               262144\n"
+	                       "SURF_GRASS              524288\n"
+	                       "SURF_GRAVEL             1048576\n"
+	                       "SURF_GLASS              2097152\n"
+	                       "SURF_SNOW               4194304\n"
+	                       "SURF_ROOF               8388608\n"
+	                       "SURF_RUBBLE             16777216\n"
+	                       "SURF_CARPET             33554432\n"
+	                       "SURF_MONSTERSLICK       67108864\n"
+	                       "SURF_MONSLICK_W         134217728\n"
+	                       "SURF_MONSLICK_N         268435456\n"
+	                       "SURF_MONSLICK_E         536870912\n"
+	                       "SURF_MONSLICK_S         1073741824\n"
+	                       "SURF_LANDMINE           2147483648\n"
+	                       );
 	r_noBind       = ri.Cvar_Get("r_nobind", "0", CVAR_CHEAT);
 	r_showTris     = ri.Cvar_Get("r_showtris", "0", CVAR_CHEAT);
 	r_trisColor    = ri.Cvar_Get("r_trisColor", "1.0 1.0 1.0 1.0", CVAR_ARCHIVE_ND);

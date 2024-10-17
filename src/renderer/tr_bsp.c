@@ -2722,3 +2722,27 @@ void RE_LoadWorldMap(const char *name)
 
 	ri.FS_FreeFile(buffer);
 }
+
+/**
+ * @brief
+ * Finds a shader in the BSP Textures/Shaders Lump by name.
+ * see https://www.mralligator.com/q3/#Textures
+ * @return NULL if not found
+ */
+dshader_t *R_FindBspShaderByName(const char *name)
+{
+	int       i;
+	dshader_t *result;
+
+	// NOTE : Naive & slow implementation
+	for (i = 0; i < s_worldData.numShaders; ++i)
+	{
+		result = &s_worldData.shaders[i];
+		if (!Q_stricmp(result->shader, name))
+		{
+			return result;
+		}
+	}
+
+	return NULL;
+}
