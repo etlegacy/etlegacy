@@ -1894,15 +1894,21 @@ void CG_MovePlane(centity_t *cent)
 
 	ent.backlerp = cent->lerpFrame.backlerp;
 
+	// TODO : reenable the fade effect, the issue we have is that we failed to
+	// have solid airplanes that become transparent only after a certain time -
+	// either they would always be transparent and we could fade them more - or
+	// they were always solid - we chose the latter for now, but you could
+	// probably have both at a later point
+	//
 	// fade effect
-	if (cent->currentState.time)
-	{
-		ent.shaderRGBA[3] = (byte)(255.f * (float)(cent->currentState.time2 - cg.time) / (float)(cent->currentState.time2 - cent->currentState.time));
-	}
-	else
-	{
-		ent.shaderRGBA[3] = 255;
-	}
+	// if (cent->currentState.time)
+	// {
+	// 	ent.shaderRGBA[3] = (byte)(255.f * (float)(cent->currentState.time2 - cg.time) / (float)(cent->currentState.time2 - cent->currentState.time));
+	// }
+	// else
+	// {
+	// 	ent.shaderRGBA[3] = 255;
+	// }
 
 	if (cent->currentState.teamNum == TEAM_AXIS)
 	{
