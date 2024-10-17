@@ -1153,6 +1153,7 @@ typedef struct
 	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
+	qboolean autoCmdExecuted;				///< has 'cg_autoCmd' been executed yet
 
 	// there are only one or two snapshot_t that are relevent at a time
 	int latestSnapshotNum;                  ///< the number of snapshots the client system has received
@@ -2916,6 +2917,7 @@ extern vmCvar_t cg_weapaltMgAutoProne;
 extern vmCvar_t cg_sharetimerText;
 
 extern vmCvar_t cg_automapZoom;
+extern vmCvar_t cg_autoCmd;
 
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;

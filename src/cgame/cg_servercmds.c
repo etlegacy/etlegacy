@@ -1406,6 +1406,7 @@ static void CG_MapRestart(void)
 
 	Com_Memset(&cg.lastWeapSelInBank[0], 0, MAX_WEAP_BANKS_MP * sizeof(int)); // clear weapon bank selections
 
+	cg.autoCmdExecuted         = qfalse;
 	cg.numbufferedSoundScripts = 0;
 
 	cg.centerPrintTime = 0; // reset centerprint counter so previous messages don't re-appear
