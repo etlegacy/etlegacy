@@ -90,7 +90,7 @@
 #define SURF_NODLIGHT           0x00020000      ///< don't dlight even if solid (solid lava, skies)
 #define SURF_WOOD               0x00040000
 #define SURF_GRASS              0x00080000
-#define SURF_CERAMIC            0x40            ///< out of surf's, so replacing unused 'SURF_FLESH'
+// #define SURF_CERAMIC            0x40            ///< out of surf's, so replacing unused 'SURF_FLESH'
 #define SURF_GRAVEL             0x00100000
 #define SURF_GLASS              0x00200000      ///< out of surf's, so replacing unused 'SURF_SMGROUP'
 #define SURF_SNOW               0x00400000
