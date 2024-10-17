@@ -129,7 +129,7 @@ jobs:
         run: cpack
 
   osx:
-    runs-on: macos-12
+    runs-on: macos-13
     needs: [ version ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
