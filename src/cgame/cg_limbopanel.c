@@ -1395,6 +1395,21 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		team = cgs.clientinfo[cg.clientNum].team;
 	}
 
+	// if the secondary weapon wasn't manually set, we set the default weapon
+	// for it once again - this is specifically for the edge case that a soldier
+	// with the smg soldier skill switches to a heavywep - for that case, once
+	// the class switch happens, where SetDefaultWeapon is called first, the
+	// default primary slot is the SMG itself, that thus won't also be selected
+	// as the secondary weapon - doing it again here shortly before sending the
+	// team command however, makes sure that when a user never even switched to
+	// the secondary weapon slot, we SetDefaultWeapon again and as e.g. the
+	// heavywep would be already set in primary and the call successfully would
+	// return the SMG et voila
+	if (!cgs.ccManuallySetSecondaryWeapon)
+	{
+		CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
+	}
+
 	if (team == TEAM_SPECTATOR)
 	{
 		if (forceteam)
@@ -1558,6 +1573,7 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 
 			CG_LimboPanel_RequestWeaponStats();
 
+			cgs.ccManuallySetSecondaryWeapon = qfalse;
 			cgs.limboLoadoutModified = qtrue;
 		}
 
@@ -1671,6 +1687,7 @@ qboolean CG_LimboPanel_ClassButton_KeyDown(panel_button_t *button, int key)
 
 			CG_LimboPanel_RequestWeaponStats();
 
+			cgs.ccManuallySetSecondaryWeapon = qfalse;
 			CG_LimboPanel_SendSetupMsg(qfalse);
 		}
 
@@ -2487,6 +2504,11 @@ qboolean CG_LimboPanel_WeaponLights_KeyDown(panel_button_t *button, int key)
 		SOUND_SELECT;
 
 		cgs.ccSelectedWeaponSlot = button->data[0];
+
+		if (cgs.ccSelectedWeaponSlot == 0) {
+			cgs.ccManuallySetSecondaryWeapon = qtrue;
+		}
+
 		CG_LimboPanel_RequestWeaponStats();
 		return qtrue;
 	}
@@ -3815,6 +3837,7 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
 		// confirm the current limbo selection
 		case K_ENTER:
 		case 'y':
+		case 'z':
 			CG_LimboPanel_OkButton_KeyDown(&okButton, K_MOUSE1);
 			break;
 		default:

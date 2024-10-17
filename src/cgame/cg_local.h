@@ -2595,6 +2595,7 @@ typedef struct cgs_s
 	int ccSelectedClass;
 	weapon_t ccSelectedPrimaryWeapon;                   ///< Selected primary weapon from limbo panel
 	weapon_t ccSelectedSecondaryWeapon;                 ///< Selected secondary weapon from limbo panel
+	qboolean ccManuallySetSecondaryWeapon;
 	int ccWeaponShots;
 	int ccWeaponHits;
 	vec3_t ccPortalPos;
