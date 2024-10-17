@@ -2745,7 +2745,7 @@ void G_AirStrikeThink(gentity_t *ent)
 
 			VectorCopy(ent->r.currentAngles, angle);
 
-			angle[0] = AngleSubtract(angle[0], -(10 + crandom() * 10));
+			angle[0] = AngleSubtract(angle[0], -(15 + crandom() * 5));
 			VectorCopy(angle, bomb->r.currentAngles);
 			VectorCopy(angle, bomb->s.apos.trBase);
 		}

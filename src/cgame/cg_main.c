@@ -319,6 +319,7 @@ vmCvar_t cg_simpleItems;
 vmCvar_t cg_simpleItemsScale;
 
 vmCvar_t cg_automapZoom;
+vmCvar_t cg_autoCmd;
 
 vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
@@ -592,6 +593,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_simpleItems,              "cg_simpleItems",              "0",           CVAR_ARCHIVE,                 0 }, // Bugged atm
 	{ &cg_simpleItemsScale,         "cg_simpleItemsScale",         "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_automapZoom,              "cg_automapZoom",              "5.159",       CVAR_ARCHIVE,                 0 },
+	{ &cg_autoCmd,                  "cg_autoCmd",                  "",            CVAR_TEMP,                    0 },
 	{ &cg_popupFadeTime,            "cg_popupFadeTime",            "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_popupStayTime,            "cg_popupStayTime",            "2000",        CVAR_ARCHIVE,                 0 },
 	{ &cg_popupTime,                "cg_popupTime",                "0",           CVAR_ARCHIVE,                 0 },

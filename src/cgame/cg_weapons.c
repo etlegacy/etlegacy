@@ -1287,9 +1287,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	int             clientNum         = ps ? ps->clientNum : cent->currentState.clientNum;
 	team_t          team;
 	float           x, y;
-
-	qboolean shouldDrawMuzzleFlash       = (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && ps && isSelfFirstPerson));
-	qboolean shouldDrawMuzzleFlashDlight = ((shouldDrawMuzzleFlash && cg_muzzleFlashDlight.integer == 0) || (cg_muzzleFlashDlight.integer > 1 && !(cg_muzzleFlashDlight.integer == 3 && ps && isSelfFirstPerson)));
+	qboolean        shouldDrawMuzzleFlash       = (cg_muzzleFlash.integer && !(cg_muzzleFlash.integer == 2 && ps && isFirstPerson));
+	qboolean        shouldDrawMuzzleFlashDlight = ((shouldDrawMuzzleFlash && cg_muzzleFlashDlight.integer == 0) || (cg_muzzleFlashDlight.integer > 1 && !(cg_muzzleFlashDlight.integer == 3 && ps && isFirstPerson)));
 
 	// {{{ early returns
 	// don't draw any weapons when the binocs are up
