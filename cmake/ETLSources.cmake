@@ -100,13 +100,11 @@ FILE(GLOB QAGAME_SRC
 )
 
 FILE(GLOB TVGAME_SRC
-    "src/game/bg_*.c"
 	"src/game/g_strparse*"
 	"src/game/surfaceflags*"
 	"src/game/g_match_tokens.c"
 	"src/game/g_sha1.c"
 	"src/game/g_mem.c"
-	"src/game/g_character.c"
 	"src/tvgame/*.c"
 	"src/tvgame/*.h"
 	"src/qcommon/crypto/sha-1/sha1.c"

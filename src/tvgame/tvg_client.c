@@ -1127,9 +1127,14 @@ void TVG_ClientSpawn(gclient_t *client)
 	client->ps.crouchSpeedScale = 0.25f;
 	client->ps.weaponstate      = WEAPON_READY;
 
-	client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
-	client->ps.sprintExertTime        = 0;
-	client->ps.friction               = 1.0f;
+	if (level.mod & LEGACY)
+	{
+		client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
+	}
+
+	client->pmext.sprintTime   = SPRINTTIME;
+	client->ps.sprintExertTime = 0;
+	client->ps.friction        = 1.0f;
 
 	client->pmext.bAutoReload = qfalse;
 

@@ -1499,7 +1499,7 @@ static void TVG_MasterServerCommand(char *cmd)
 
 	token = strtok(passcmd, " ");
 
-	switch (BG_StringHashValue(token))
+	switch (TVG_StringHashValue(token))
 	{
 	case ENTNFO_HASH:                     // "entnfo" = teammapdata
 		trap_SendServerCommand(-1, cmd);
@@ -1730,7 +1730,7 @@ static void TVG_MasterServerCommand(char *cmd)
 		return;
 
 	default:
-		G_Printf("TVGAME: Unknown master server game command: %s [%lu]\n", cmd, BG_StringHashValue(token));
+		G_Printf("TVGAME: Unknown master server game command: %s [%lu]\n", cmd, TVG_StringHashValue(token));
 		break;
 	}
 }

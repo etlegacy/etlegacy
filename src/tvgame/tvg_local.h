@@ -464,9 +464,6 @@ typedef struct level_locals_s
 	vec3_t intermission_origin;
 	vec3_t intermission_angle;
 
-	/// player/AI model scripting (server repository)
-	animScriptData_t animScriptData;
-
 	qboolean fLocalHost;
 
 	qboolean mapcoordsValid;
@@ -577,6 +574,17 @@ void TVG_FreeEntity(gentity_t *ent);
 char *TVG_VecToStr(const vec3_t v);
 
 void TVG_AddEvent(gclient_t *client, int event, int eventParm);
+
+void TVG_ResetTempTraceIgnoreEnts(void);
+void TVG_TempTraceIgnoreEntity(gentity_t *ent);
+void TVG_TempTraceIgnoreBodies(void);
+void TVG_TempTraceIgnorePlayersAndBodies(void);
+void TVG_TempTraceIgnorePlayers(void);
+void TVG_TempTraceIgnorePlayersFromTeam(team_t team);
+
+char *TVG_GenerateFilename(void);
+
+long TVG_StringHashValue(const char *fname);
 
 /**
  * @struct mapVotePlayersCount_s
@@ -915,14 +923,8 @@ void TVG_UnMuteClient(void);
 extern const char *aTeams[TEAM_NUM_TEAMS];
 extern team_info  teamInfo[TEAM_NUM_TEAMS];
 
-void TVG_ResetTempTraceIgnoreEnts(void);
-void TVG_TempTraceIgnoreEntity(gentity_t *ent);
-void TVG_TempTraceIgnoreBodies(void);
-void TVG_TempTraceIgnorePlayersAndBodies(void);
-void TVG_TempTraceIgnorePlayers(void);
-void TVG_TempTraceIgnorePlayersFromTeam(team_t team);
-
-char *TVG_GenerateFilename(void);
+// tvg_pmove.c
+void TVG_Pmove(pmove_t *pmove);
 
 /**
  * @enum fieldtype_t

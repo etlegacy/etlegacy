@@ -120,7 +120,7 @@ void TVG_SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 		pm.pointcontents = trap_PointContents;
 		pm.activateLean  = client->pers.activateLean;
 
-		Pmove(&pm);
+		TVG_Pmove(&pm);
 
 		// Activate - made it a latched event (occurs on keydown only)
 		//if (client->latched_buttons & BUTTON_ACTIVATE)

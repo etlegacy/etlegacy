@@ -381,7 +381,7 @@ gentity_t *TVG_SpawnGEntityFromSpawnVars(void)
 
 	if (ent->targetname && *ent->targetname)
 	{
-		ent->targetnamehash = BG_StringHashValue(ent->targetname);
+		ent->targetnamehash = TVG_StringHashValue(ent->targetname);
 	}
 	else
 	{
@@ -513,8 +513,6 @@ void SP_worldspawn(void)
 	{
 		level.mapcoordsValid = qtrue;
 	}
-
-	BG_InitLocations(level.mapcoordsMins, level.mapcoordsMaxs);
 
 	TVG_SpawnString("spawnflags", "0", &s);
 	g_entities[ENTITYNUM_WORLD].spawnflags   = Q_atoi(s);

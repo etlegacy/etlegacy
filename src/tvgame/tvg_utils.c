@@ -270,9 +270,9 @@ gentity_t *TVG_FindByTargetname(gentity_t *from, const char *match)
 	gentity_t *max = &g_entities[level.num_entities];
 	int       hash;
 
-	hash = BG_StringHashValue(match);
+	hash = TVG_StringHashValue(match);
 
-	if (hash == -1) // if there is no name (not empty string!) BG_StringHashValue returns -1
+	if (hash == -1) // if there is no name (not empty string!) TVG_StringHashValue returns -1
 	{
 		G_Printf("TVG_FindByTargetname WARNING: invalid match pointer '%s' - run devmap & g_scriptdebug 1 to get more info about\n", match);
 		return NULL;
@@ -477,18 +477,7 @@ void TVG_FreeEntity(gentity_t *ent)
 	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
 	if (ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS)
 	{
-		// debug
-		if (g_developer.integer)
-		{
-			if (ent->s.eType >= ET_EVENTS)
-			{
-				G_DPrintf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", (int)(ent - g_entities), level.num_entities, ent->classname, eventnames[ent->s.eType - ET_EVENTS]);
-			}
-			else
-			{
-				G_DPrintf("^2%4i entity freed - num_entities: %4i - %s\n", (int)(ent - g_entities), level.num_entities, ent->classname);
-			}
-		}
+		G_DPrintf("^2%4i entity freed - num_entities: %4i - %s\n", (int)(ent - g_entities), level.num_entities, ent->classname);
 
 		// game entity is immediately available and a 'slot' will be reused
 		Com_Memset(ent, 0, sizeof(*ent));
@@ -680,6 +669,44 @@ char *TVG_GenerateFilename(void)
 	            );
 
 	return fullFilename;
+}
+
+/**
+ * @brief TVG_StringHashValue
+ * @param[in] fname
+ * @return A hash value for the given string
+ */
+long TVG_StringHashValue(const char *fname)
+{
+	int  i;
+	long hash;
+
+	if (!fname)
+	{
+		return -1;
+	}
+
+	hash = 0;
+	i    = 0;
+	while (fname[i] != '\0')
+	{
+		if (Q_isupper(fname[i]))
+		{
+			hash += (long)(fname[i] + ('a' - 'A')) * (i + 119);
+		}
+		else
+		{
+			hash += (long)(fname[i]) * (i + 119);
+		}
+
+		i++;
+	}
+	if (hash == -1)
+	{
+		hash = 0;   // never return -1
+		Com_Printf("TVG_StringHashValue WARNING: fname with empty string returning 0");
+	}
+	return hash;
 }
 
 char bigTextBuffer[100000];
