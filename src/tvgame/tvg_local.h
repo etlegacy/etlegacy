@@ -76,6 +76,10 @@
 #define ALLOW_ALLIED_TEAM       2
 #define ALLOW_DISGUISED_CVOPS   4
 
+// Autoaction values
+#define AA_DEMORECORD   BIT(0)
+#define AA_STATS        BIT(1)
+
 //============================================================================
 
 typedef struct gentity_s gentity_t;
@@ -432,12 +436,17 @@ typedef struct level_locals_s
 
 	int maxclients;                             ///< store latched cvars here that we want to get at often
 
+	int validFramenum;
 	int framenum;
 	int time;                                   ///< in msec
 	int previousTime;                           ///< so movers can back up when blocked
 	int frameTime;                              ///< time delta
 
 	int startTime;                              ///< level.time the map was started
+
+	gamestate_t gamestate;
+	int warmup;
+	int warmupCount;
 
 	int numConnectedClients;
 	int *sortedClients;
@@ -449,11 +458,11 @@ typedef struct level_locals_s
 	int numSpawnVarChars;
 	char spawnVarChars[MAX_SPAWN_VARS_CHARS];
 
-	vec3_t intermission_origin;                 ///< also used for spectator spawns
-	vec3_t intermission_angle;
+	vec3_t intermission_origins[3];             ///< 0 - spectator, 1 - axis, 2 - allies
+	vec3_t intermission_angles[3];
 
-	/// player/AI model scripting (server repository)
-	animScriptData_t animScriptData;
+	vec3_t intermission_origin;
+	vec3_t intermission_angle;
 
 	qboolean fLocalHost;
 
@@ -539,6 +548,9 @@ qboolean TVG_CommandsAutoUpdate(tvcmd_reference_t *tvcmd);
 
 qboolean TVG_ServerIsFloodProtected(void);
 
+void TVG_ParseWolfinfo(void);
+void TVG_ParseSvCvars(void);
+
 // tvg_utils.c
 int TVG_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
 void TVG_RemoveConfigstringIndex(const char *name, int start, int max);
@@ -563,6 +575,17 @@ void TVG_FreeEntity(gentity_t *ent);
 char *TVG_VecToStr(const vec3_t v);
 
 void TVG_AddEvent(gclient_t *client, int event, int eventParm);
+
+void TVG_ResetTempTraceIgnoreEnts(void);
+void TVG_TempTraceIgnoreEntity(gentity_t *ent);
+void TVG_TempTraceIgnoreBodies(void);
+void TVG_TempTraceIgnorePlayersAndBodies(void);
+void TVG_TempTraceIgnorePlayers(void);
+void TVG_TempTraceIgnorePlayersFromTeam(team_t team);
+
+char *TVG_GenerateFilename(void);
+
+long TVG_StringHashValue(const char *fname);
 
 /**
  * @struct mapVotePlayersCount_s
@@ -662,6 +685,7 @@ int TVG_MasterClientNumberFromString(gclient_t *to, char *s);
 char *ConcatArgs(int start);
 
 // tvg_main.c
+void TVG_InitSpawnPoints(void);
 void TVG_FindIntermissionPoint(void);
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
@@ -670,11 +694,9 @@ void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1,
 
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
-void trap_DemoSupport(const char *commands);
 extern int dll_com_trapGetValue;
-extern int dll_trap_DemoSupport;
 
-int trap_ETTV_GetPlayerstate(int clientNum, playerState_t *ps);
+qboolean trap_TVG_GetPlayerstate(int clientNum, playerState_t *ps);
 
 // tvg_client.c
 char *TVG_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
@@ -763,6 +785,7 @@ extern vmCvar_t sv_fps;
 extern vmCvar_t tvg_extendedNames;
 
 extern vmCvar_t tvg_queue_ms;
+extern vmCvar_t tvg_autoAction;
 
 #define TVG_InactivityValue (tvg_inactivity.integer ? tvg_inactivity.integer : 60)
 
@@ -901,12 +924,8 @@ void TVG_UnMuteClient(void);
 extern const char *aTeams[TEAM_NUM_TEAMS];
 extern team_info  teamInfo[TEAM_NUM_TEAMS];
 
-void TVG_ResetTempTraceIgnoreEnts(void);
-void TVG_TempTraceIgnoreEntity(gentity_t *ent);
-void TVG_TempTraceIgnoreBodies(void);
-void TVG_TempTraceIgnorePlayersAndBodies(void);
-void TVG_TempTraceIgnorePlayers(void);
-void TVG_TempTraceIgnorePlayersFromTeam(team_t team);
+// tvg_pmove.c
+void TVG_Pmove(pmove_t *pmove);
 
 /**
  * @enum fieldtype_t

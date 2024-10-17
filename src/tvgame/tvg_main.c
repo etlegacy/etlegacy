@@ -143,6 +143,7 @@ vmCvar_t tvg_floodLimit;
 vmCvar_t tvg_floodWait;
 
 vmCvar_t tvg_queue_ms;
+vmCvar_t tvg_autoAction;
 
 tvcvarTable_t gameCvarTable[] =
 {
@@ -224,7 +225,9 @@ tvcvarTable_t gameCvarTable[] =
 	{ &g_pronedelay,            "g_pronedelay",            "0",                          CVAR_ROM,                                    0, qfalse,},
 	{ &g_debugAnim,             "g_debugAnim",             "0",                          CVAR_ROM,                                    0, qfalse,},
 
+	// tvgame specific
 	{ &tvg_queue_ms,            "ettv_queue_ms",           "-1",                         CVAR_ROM,                                    0, qfalse,},
+	{ &tvg_autoAction,          "tvg_autoAction",          "2",                          CVAR_ARCHIVE,                                0, qfalse,},
 };
 
 /**
@@ -245,31 +248,10 @@ void TVG_ShutdownGame(int restart);
  */
 qboolean TVG_SnapshotCallback(int entityNum, int clientNum)
 {
-	//gentity_t *ent = &g_entities[entityNum];
-
-	//Com_Printf("callback entityNum: %d clientNum: %d\n", entityNum, clientNum);
-
-	//if (ent->s.eType == ET_MISSILE)
-	//{
-	//	if (ent->s.weapon == WP_LANDMINE)
-	//	{
-	//		return G_LandmineSnapshotCallback(entityNum, clientNum);
-	//	}
-	//}
-
-	//// don't send if out of range
-	//if (ent->s.eType == ET_EVENTS + EV_SHAKE)
-	//{
-	//	float len = VectorDistance(g_entities[clientNum].client->ps.origin, ent->s.pos.trBase);
-
-	//	return len <= ent->s.onFireStart;
-	//}
-
 	return qtrue;
 }
 
 int dll_com_trapGetValue;
-int dll_trap_DemoSupport;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -495,8 +477,6 @@ static ID_INLINE void TVG_SetupExtensions(void)
 	if (value[0])
 	{
 		dll_com_trapGetValue = Q_atoi(value);
-
-		TVG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
 	}
 }
 
@@ -548,19 +528,21 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	// mod version check
 	MOD_CHECK_ETLEGACY(etLegacyServer, serverVersion, level.etLegacyServer);
 
-	G_Printf("------- Game Initialization -------\n");
-	G_Printf("gamename: %s\n", MODNAME_TV);
+	G_Printf("------- TVGame Initialization -------\n");
+	G_Printf("gamenametv: %s\n", MODNAME_TV);
 	G_Printf("gamedate: %s\n", __DATE__);
 
 	srand(randomSeed);
 
 	// set some level globals
 	{
-		qboolean oldspawning = level.spawning;
+		qboolean    oldspawning  = level.spawning;
+		gamestate_t oldGamestate = level.gamestate;
 
 		Com_Memset(&level, 0, sizeof(level));
 
-		level.spawning = oldspawning;
+		level.spawning  = oldspawning;
+		level.gamestate = restart ? oldGamestate : GS_INITIALIZE;
 	}
 
 	TVG_ModCheck();
@@ -608,6 +590,9 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	G_LogPrintf("gametype: %s\n", gameNames[tvg_gametype.integer]);
 
 	G_LogPrintf("gametime: %s\n", timeFt);
+
+	TVG_ParseWolfinfo();
+	TVG_ParseSvCvars();
 
 	// initialize all entities for this game
 	Com_Memset(g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]));
@@ -660,7 +645,7 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	// parse the key/value pairs and spawn gentities
 	TVG_SpawnEntitiesFromString();
 
-	TVG_FindIntermissionPoint();
+	TVG_InitSpawnPoints();
 
 	for (i = 0; i < level.num_entities; i++)
 	{
@@ -670,14 +655,6 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 	level.num_entities = 0;
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
 	                    &level.clients[0].ps, sizeof(level.clients[0]));
-
-	BG_ClearAnimationPool();
-
-	BG_ClearCharacterPool();
-
-	BG_InitWeaponStrings();
-
-	G_RegisterPlayerClasses();
 
 #ifdef FEATURE_LUA
 	TVG_LuaHook_InitGame(levelTime, randomSeed, restart);
@@ -795,21 +772,91 @@ MAP CHANGING
 */
 
 /**
- * @brief This is also used for spectator spawns
+ * @brief TVG_InitSpawnPoint
+ */
+static void TVG_InitSpawnPoint(gentity_t *ent, int index)
+{
+	gentity_t *target;
+	vec3_t    dir;
+
+	VectorCopy(ent->s.origin, level.intermission_origins[index]);
+	VectorCopy(ent->s.angles, level.intermission_angles[index]);
+
+	if (ent->target)
+	{
+		target = TVG_PickTarget(ent->target);
+		if (target)
+		{
+			VectorSubtract(target->s.origin, level.intermission_origins[index], dir);
+			vectoangles(dir, level.intermission_angles[index]);
+		}
+	}
+}
+
+/**
+ * @brief TVG_InitSpawnPoints
+ */
+void TVG_InitSpawnPoints(void)
+{
+	gentity_t *ent = NULL;
+
+	ent = TVG_Find(NULL, FOFS(classname), "info_player_intermission");
+
+	// if info_player_intermission doesn't exist look for info_player_deathmatch
+	if (!ent)
+	{
+		SelectSpawnPoint(vec3_origin, level.intermission_origins[0], level.intermission_angles[0]);
+		return;
+	}
+
+	while (ent)
+	{
+		if (!ent->spawnflags)
+		{
+			TVG_InitSpawnPoint(ent, 0);
+		}
+		else
+		{
+			if (ent->spawnflags & 1)
+			{
+				TVG_InitSpawnPoint(ent, 1);
+			}
+
+			if (ent->spawnflags & 2)
+			{
+				TVG_InitSpawnPoint(ent, 2);
+			}
+		}
+
+		ent = TVG_Find(ent, FOFS(classname), "info_player_intermission");
+	}
+
+	TVG_FindIntermissionPoint();
+}
+
+/**
+ * @brief This is also used for spectator spawns,
+ *        only used at TVG_InitGame and superseded as soon as available by master playerstate,
+ *        the only reason this is needed is because of tvg_queue_ms delay
+ *        when there is no valid master playerstate for a long time
  */
 void TVG_FindIntermissionPoint(void)
 {
-	gentity_t *ent = NULL, *target;
-	vec3_t    dir;
-	char      cs[MAX_STRING_CHARS];
-	char      *buf;
-	int       winner;
+	char cs[MAX_STRING_CHARS];
+	int  winner;
+
+	// if the match hasn't ended yet, and we're just a spectator
+	if (!level.intermission)
+	{
+		VectorCopy(level.intermission_origins[0], level.intermission_origin);
+		VectorCopy(level.intermission_angles[0], level.intermission_angle);
+		return;
+	}
 
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-	buf    = Info_ValueForKey(cs, "w");
-	winner = Q_atoi(buf);
+	winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
-	// Change from scripting value for winner (0==AXIS, 1==ALLIES) to spawnflag value
+	// change from scripting value for winner (0==AXIS, 1==ALLIES) to spawnflag value
 	if (winner == 0)
 	{
 		winner = TEAM_AXIS;
@@ -819,36 +866,8 @@ void TVG_FindIntermissionPoint(void)
 		winner = TEAM_ALLIES;
 	}
 
-	ent = TVG_Find(NULL, FOFS(classname), "info_player_intermission");
-	while (ent)
-	{
-		if (ent->spawnflags & winner)
-		{
-			break;
-		}
-
-		ent = TVG_Find(ent, FOFS(classname), "info_player_intermission");
-	}
-
-	if (!ent) // the map creator forgot to put in an intermission point...
-	{
-		SelectSpawnPoint(vec3_origin, level.intermission_origin, level.intermission_angle);
-	}
-	else
-	{
-		VectorCopy(ent->s.origin, level.intermission_origin);
-		VectorCopy(ent->s.angles, level.intermission_angle);
-		// if it has a target, look towards it
-		if (ent->target)
-		{
-			target = TVG_PickTarget(ent->target);
-			if (target)
-			{
-				VectorSubtract(target->s.origin, level.intermission_origin, dir);
-				vectoangles(dir, level.intermission_angle);
-			}
-		}
-	}
+	VectorCopy(level.intermission_origins[winner], level.intermission_origin);
+	VectorCopy(level.intermission_angles[winner], level.intermission_angle);
 }
 
 /**
@@ -891,32 +910,92 @@ FUNCTIONS CALLED EVERY FRAME
 */
 
 /**
+ * @brief Dynamically names a demo and sets up the recording
+ */
+static void TVG_AutoRecord(void)
+{
+	trap_SendConsoleCommand(EXEC_APPEND, va("record %s\n", TVG_GenerateFilename()));
+}
+
+/**
+ * @brief TVG_AutoActions
+ */
+static void TVG_AutoActions(void)
+{
+	if ((tvg_autoAction.integer & AA_STATS) && level.lastCmdsUpdate + FRAMETIME <= level.time)
+	{
+		TVG_SendCommands();
+		level.lastCmdsUpdate = level.time;
+	}
+
+	if (level.warmup > 0)
+	{
+		static int processedWarmupCount = -1;
+		int        sec                  = (level.warmup - level.time) / 1000;
+		int        warmupAnnounceSec    = 10;
+
+		// process warmup actions
+		if (sec <= warmupAnnounceSec && processedWarmupCount != level.warmupCount)
+		{
+			if (tvg_autoAction.integer & AA_DEMORECORD)
+			{
+				TVG_AutoRecord();
+			}
+
+			processedWarmupCount = level.warmupCount;
+		}
+	}
+
+	// autorecord on late joins
+	if (level.validFramenum == 1 && level.gamestate == GS_PLAYING && (tvg_autoAction.integer & AA_DEMORECORD))
+	{
+		TVG_AutoRecord();
+	}
+}
+
+/**
  * @brief Advances the world
  * @param[in] levelTime
  */
 void TVG_RunFrame(int levelTime)
 {
-	char *queueMsg, *s = "";
-	int  i, queueSeconds;
+	char     *queueMsg, *s = "";
+	int      i;
+	int      oldPMType    = level.ettvMasterPs.pm_type;
+	int      queueSeconds = tvg_queue_ms.integer / 1000;
+	qboolean validFrame;
 
-	trap_ETTV_GetPlayerstate(-1, &level.ettvMasterPs);
+	level.framenum++;
+	level.previousTime = level.time;
+	level.time         = levelTime;
+	level.frameTime    = level.time - level.previousTime;
 
-	level.intermission          = level.ettvMasterPs.pm_type == PM_INTERMISSION;
 	level.numValidMasterClients = 0;
+	validFrame                  = trap_TVG_GetPlayerstate(-1, &level.ettvMasterPs);
 
-	for (i = 0; i < MAX_CLIENTS; i++)
+	if (validFrame)
 	{
-		level.ettvMasterClients[i].valid = trap_ETTV_GetPlayerstate(i, &level.ettvMasterClients[i].ps);
+		level.validFramenum++;
+		level.intermission = level.ettvMasterPs.pm_type == PM_INTERMISSION;
 
-		if (level.ettvMasterClients[i].valid)
+		for (i = 0; i < MAX_CLIENTS; i++)
 		{
-			level.validMasterClients[level.numValidMasterClients++] = i;
+			level.ettvMasterClients[i].valid = trap_TVG_GetPlayerstate(i, &level.ettvMasterClients[i].ps);
+
+			if (level.ettvMasterClients[i].valid)
+			{
+				level.validMasterClients[level.numValidMasterClients++] = i;
+			}
 		}
+
+		level.validMasterClients[level.numValidMasterClients++] = level.ettvMasterPs.clientNum;
 	}
 
-	level.validMasterClients[level.numValidMasterClients++] = level.ettvMasterPs.clientNum;
-
-	queueSeconds = tvg_queue_ms.integer / 1000;
+	if (!queueSeconds && validFrame && oldPMType != level.ettvMasterPs.pm_type)
+	{
+		VectorCopy(level.ettvMasterPs.origin, level.intermission_origin);
+		VectorCopy(level.ettvMasterPs.viewangles, level.intermission_angle);
+	}
 
 	if (queueSeconds != level.queueSeconds)
 	{
@@ -945,19 +1024,10 @@ void TVG_RunFrame(int levelTime)
 		}
 	}
 
-	level.framenum++;
-	level.previousTime = level.time;
-	level.time         = levelTime;
-	level.frameTime    = level.time - level.previousTime;
-
 	// get any cvar changes
 	TVG_UpdateCvars();
 
-	if (level.lastCmdsUpdate + 100 <= level.time)
-	{
-		TVG_SendCommands();
-		level.lastCmdsUpdate = level.time;
-	}
+	TVG_AutoActions();
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
