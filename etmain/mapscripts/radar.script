@@ -978,7 +978,7 @@ allied_radio_built_model
 		accum 2 abort_if_equal 1
 		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
 	}
-		
+
 	trigger enable_allied_features
 	{
 		// allies built it

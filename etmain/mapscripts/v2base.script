@@ -38,7 +38,7 @@ game_manager
 
 
 		accum 4 set 0    // Controls the flag
-		
+
 
 
 // Objectives
@@ -68,7 +68,7 @@ game_manager
 		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
 		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
 		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
-		
+
 
 	}
 	trigger objective1
@@ -81,7 +81,7 @@ game_manager
 	disablespeaker sirens
 	wm_announce "Allied team has transmitted the war documents!"
 	trigger game_manager checkgame
-	}	
+	}
 	trigger axis_object_stolen
 	{
 	wm_objective_status 1 1 1		// Allies have stolen the docs
@@ -106,7 +106,7 @@ game_manager
 		wm_announce	"Allies captures the Tower!"
 
 	}
-	
+
 	trigger axis_flag
 	{
 		wm_objective_status 4 0 1  // Obj4, Axis have captured the tower.
@@ -130,7 +130,7 @@ game_manager
 	wm_objective_status 3 0 2  // Obj3, Axis have lost the Base Wall.
 	wm_objective_status 3 1 1  // Obj3, Allies have destroyed the Base Wall.
 	wait 200
-	trigger game_manager checkgame	
+	trigger game_manager checkgame
 	}
 	trigger objective3
 	{
@@ -138,14 +138,14 @@ game_manager
 	wm_objective_status 5 0 2  // Obj3, Axis have lost the Storage Wall.
 	wm_objective_status 5 1 1  // Obj3, Allies have destroyed the Storage Wall.
 	wait 200
-	trigger game_manager checkgame	
+	trigger game_manager checkgame
 	}
 
 
 
 }
 basewall
-{	
+{
 	spawn
 	{
 	wait 200
@@ -159,7 +159,7 @@ basewall
 	}
 }
 storagewall
-{	
+{
 	spawn
 	{
 	wait 50
@@ -175,7 +175,7 @@ storagewall
 docsmarker
 {
 	spawn
-	{	
+	{
 	setstate docsmarker default
 	}
 	death
@@ -258,409 +258,409 @@ forward_spawn
 	}
 }
 
-axis_radio_destroyed 
-{ 
-   spawn 
-   { 
-      wait 400 
-      setstate axis_radio_destroyed invisible 
-      setstate axis_radio_destroyed_model invisible 
-   } 
+axis_radio_destroyed
+{
+   spawn
+   {
+      wait 400
+      setstate axis_radio_destroyed invisible
+      setstate axis_radio_destroyed_model invisible
+   }
 
-   trigger hide 
-   { 
-      setstate axis_radio_destroyed invisible 
-      setstate axis_radio_destroyed_model invisible 
-   } 
+   trigger hide
+   {
+      setstate axis_radio_destroyed invisible
+      setstate axis_radio_destroyed_model invisible
+   }
 
-   trigger show 
-   { 
-      accum 0 abort_if_equal 0 
-      setstate axis_radio_destroyed default 
-      setstate axis_radio_destroyed_model default 
-   } 
+   trigger show
+   {
+      accum 0 abort_if_equal 0
+      setstate axis_radio_destroyed default
+      setstate axis_radio_destroyed_model default
+   }
 
-   trigger enable 
-   { 
-      accum 0 set 1 
-   } 
-} 
+   trigger enable
+   {
+      accum 0 set 1
+   }
+}
 
-axis_radio_closed 
-{ 
-   trigger hide 
-   { 
-      setstate axis_radio_closed invisible 
-      setstate axis_radio_closed_model invisible 
-   } 
+axis_radio_closed
+{
+   trigger hide
+   {
+      setstate axis_radio_closed invisible
+      setstate axis_radio_closed_model invisible
+   }
 
-   trigger show 
-   { 
-      accum 0 abort_if_equal 1 
-      setstate axis_radio_closed default 
-      setstate axis_radio_closed_model default 
-   } 
+   trigger show
+   {
+      accum 0 abort_if_equal 1
+      setstate axis_radio_closed default
+      setstate axis_radio_closed_model default
+   }
 
-   trigger disable 
-   { 
-      accum 0 set 1 
-   } 
-} 
+   trigger disable
+   {
+      accum 0 set 1
+   }
+}
 
-axis_radio_built 
-{ 
-   spawn 
-   { 
-      wait 400 
+axis_radio_built
+{
+   spawn
+   {
+      wait 400
 
-      constructible_class 2 
+      constructible_class 2
 
-      trigger axis_radio_built setup 
-   } 
+      trigger axis_radio_built setup
+   }
 
-   trigger setup 
-   { 
-      setchargetimefactor 0 soldier 1 
-      setchargetimefactor 0 lieutenant 1 
-      setchargetimefactor 0 medic 1 
-      setchargetimefactor 0 engineer 1 
-      setchargetimefactor 0 covertops 1 
-      sethqstatus 0 0 
-   } 
+   trigger setup
+   {
+      setchargetimefactor 0 soldier 1
+      setchargetimefactor 0 lieutenant 1
+      setchargetimefactor 0 medic 1
+      setchargetimefactor 0 engineer 1
+      setchargetimefactor 0 covertops 1
+      sethqstatus 0 0
+   }
 
-   buildstart final 
-   { 
-      trigger axis_radio_built_model trans 
+   buildstart final
+   {
+      trigger axis_radio_built_model trans
 
-      trigger axis_radio_destroyed hide 
-      trigger axis_radio_closed    hide 
-   } 
+      trigger axis_radio_destroyed hide
+      trigger axis_radio_closed    hide
+   }
 
-   built final 
-   { 
-      trigger axis_radio_built_model show 
+   built final
+   {
+      trigger axis_radio_built_model show
 
-      trigger axis_radio_destroyed enable 
-      trigger axis_radio_closed    disable 
+      trigger axis_radio_destroyed enable
+      trigger axis_radio_closed    disable
 
-      trigger axis_radio_built_model enable_axis_features 
+      trigger axis_radio_built_model enable_axis_features
 
-      enablespeaker axis_compost_sound 
-   } 
+      enablespeaker axis_compost_sound
+   }
 
-   decayed final 
-   { 
-      trigger axis_radio_built_model hide 
+   decayed final
+   {
+      trigger axis_radio_built_model hide
 
-      trigger axis_radio_destroyed show 
-      trigger axis_radio_closed    show 
-   } 
+      trigger axis_radio_destroyed show
+      trigger axis_radio_closed    show
+   }
 
-   death 
-   { 
-      trigger axis_radio_built_model hide 
+   death
+   {
+      trigger axis_radio_built_model hide
 
-      trigger axis_radio_destroyed show 
+      trigger axis_radio_destroyed show
 
-      trigger axis_radio_built_model disable_axis_features 
+      trigger axis_radio_built_model disable_axis_features
 
-      disablespeaker axis_compost_sound 
-   } 
-} 
+      disablespeaker axis_compost_sound
+   }
+}
 
-axis_radio_built_model 
-{ 
-   spawn 
-   { 
-      wait 400 
-      setstate axis_radio_built_model invisible 
-   } 
+axis_radio_built_model
+{
+   spawn
+   {
+      wait 400
+      setstate axis_radio_built_model invisible
+   }
 
-   trigger show 
-   { 
-      setstate axis_radio_built_model default 
-   } 
+   trigger show
+   {
+      setstate axis_radio_built_model default
+   }
 
-   trigger hide 
-   { 
-      setstate axis_radio_built_model invisible 
-   } 
+   trigger hide
+   {
+      setstate axis_radio_built_model invisible
+   }
 
-   trigger trans 
-   { 
-      setstate axis_radio_built_model underconstruction 
-   } 
+   trigger trans
+   {
+      setstate axis_radio_built_model underconstruction
+   }
 
-   trigger enable_axis_features 
-   { 
-      setchargetimefactor 0 soldier 0.75 
-      setchargetimefactor 0 lieutenant 0.75 
-      setchargetimefactor 0 medic 0.75 
-      setchargetimefactor 0 engineer 0.75 
-      setchargetimefactor 0 covertops 0.75 
-      sethqstatus 0 1 
+   trigger enable_axis_features
+   {
+      setchargetimefactor 0 soldier 0.75
+      setchargetimefactor 0 lieutenant 0.75
+      setchargetimefactor 0 medic 0.75
+      setchargetimefactor 0 engineer 0.75
+      setchargetimefactor 0 covertops 0.75
+      sethqstatus 0 1
 
-      wm_announce   "Axis Command Post constructed. Charge speed increased!" 
+      wm_announce   "Axis Command Post constructed. Charge speed increased!"
 
-      // *----------------------------------- vo ------------------------------------------* 
-      wm_teamvoiceannounce 0 "axis_hq_compost_constructed" 
+      // *----------------------------------- vo ------------------------------------------*
+      wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
 
-      wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis" 
+      wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
 
-      wm_removeteamvoiceannounce 0 "axis_hq_compost_construct" 
-      // *----------------------------------- vo ------------------------------------------* 
+      wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+      // *----------------------------------- vo ------------------------------------------*
 
-      wm_objective_status 7 0 1 
-      wm_objective_status 7 1 0 
+      wm_objective_status 7 0 1
+      wm_objective_status 7 1 0
 
-   } 
+   }
 
-   trigger disable_axis_features 
-   { 
-      // Some kind of UI pop-up to alert players 
-      wm_announce   "Allied team has destroyed the Axis Command Post!" 
+   trigger disable_axis_features
+   {
+      // Some kind of UI pop-up to alert players
+      wm_announce   "Allied team has destroyed the Axis Command Post!"
 
-      // *----------------------------------- vo ------------------------------------------* 
-      wm_addteamvoiceannounce 0 "axis_hq_compost_construct" 
+      // *----------------------------------- vo ------------------------------------------*
+      wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
 
-      wm_teamvoiceannounce 0 "axis_hq_compost_damaged" 
-      // *----------------------------------- vo ------------------------------------------* 
+      wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+      // *----------------------------------- vo ------------------------------------------*
 
-      setchargetimefactor 0 soldier 1 
-      setchargetimefactor 0 lieutenant 1 
-      setchargetimefactor 0 medic 1 
-      setchargetimefactor 0 engineer 1 
-      setchargetimefactor 0 covertops 1 
-      sethqstatus 0 0 
+      setchargetimefactor 0 soldier 1
+      setchargetimefactor 0 lieutenant 1
+      setchargetimefactor 0 medic 1
+      setchargetimefactor 0 engineer 1
+      setchargetimefactor 0 covertops 1
+      sethqstatus 0 0
 
-      wm_objective_status 7 0 0 
-      wm_objective_status 7 1 1 
-   } 
+      wm_objective_status 7 0 0
+      wm_objective_status 7 1 1
+   }
 }
 
 
-allied_radio_destroyed 
-{ 
-   spawn 
-   { 
-      wait 400 
-      setstate allied_radio_destroyed invisible 
-      setstate allied_radio_destroyed_model invisible 
-   } 
+allied_radio_destroyed
+{
+   spawn
+   {
+      wait 400
+      setstate allied_radio_destroyed invisible
+      setstate allied_radio_destroyed_model invisible
+   }
 
-   trigger hide 
-   { 
-      setstate allied_radio_destroyed invisible 
-      setstate allied_radio_destroyed_model invisible 
-   } 
+   trigger hide
+   {
+      setstate allied_radio_destroyed invisible
+      setstate allied_radio_destroyed_model invisible
+   }
 
-   trigger show 
-   { 
-      accum 2 abort_if_equal 0 
-      setstate allied_radio_destroyed default 
-      setstate allied_radio_destroyed_model default 
-   } 
+   trigger show
+   {
+      accum 2 abort_if_equal 0
+      setstate allied_radio_destroyed default
+      setstate allied_radio_destroyed_model default
+   }
 
-   trigger enable 
-   { 
-      accum 2 set 1 
-   } 
-} 
+   trigger enable
+   {
+      accum 2 set 1
+   }
+}
 
-allied_radio_closed 
-{ 
-   trigger hide 
-   { 
-      setstate allied_radio_closed invisible 
-      setstate allied_radio_closed_model invisible 
-   } 
+allied_radio_closed
+{
+   trigger hide
+   {
+      setstate allied_radio_closed invisible
+      setstate allied_radio_closed_model invisible
+   }
 
-   trigger show 
-   { 
-      accum 2 abort_if_equal 1 
-      setstate allied_radio_closed default 
-      setstate allied_radio_closed_model default 
-   } 
+   trigger show
+   {
+      accum 2 abort_if_equal 1
+      setstate allied_radio_closed default
+      setstate allied_radio_closed_model default
+   }
 
-   trigger disable 
-   { 
-      accum 2 set 1 
-   } 
-} 
+   trigger disable
+   {
+      accum 2 set 1
+   }
+}
 
-allied_radio_built 
-{ 
-   spawn 
-   { 
-      wait 400 
+allied_radio_built
+{
+   spawn
+   {
+      wait 400
 
-      constructible_class 2 
+      constructible_class 2
 
-      trigger allied_radio_built setup 
-   } 
+      trigger allied_radio_built setup
+   }
 
-   trigger setup 
-   { 
-      setchargetimefactor 1 soldier 1 
-      setchargetimefactor 1 lieutenant 1 
-      setchargetimefactor 1 medic 1 
-      setchargetimefactor 1 engineer 1 
-      setchargetimefactor 1 covertops 1 
-      sethqstatus 1 0 
-   } 
+   trigger setup
+   {
+      setchargetimefactor 1 soldier 1
+      setchargetimefactor 1 lieutenant 1
+      setchargetimefactor 1 medic 1
+      setchargetimefactor 1 engineer 1
+      setchargetimefactor 1 covertops 1
+      sethqstatus 1 0
+   }
 
-   buildstart final 
-   { 
-      trigger allied_radio_built_model trans 
+   buildstart final
+   {
+      trigger allied_radio_built_model trans
 
-      trigger allied_radio_destroyed hide 
-      trigger allied_radio_closed    hide 
-   } 
+      trigger allied_radio_destroyed hide
+      trigger allied_radio_closed    hide
+   }
 
-   built final 
-   { 
-      trigger allied_radio_built_model show 
+   built final
+   {
+      trigger allied_radio_built_model show
 
-      trigger allied_radio_destroyed enable 
-      trigger allied_radio_closed    disable 
+      trigger allied_radio_destroyed enable
+      trigger allied_radio_closed    disable
 
-      trigger allied_radio_built_model enable_allied_features 
+      trigger allied_radio_built_model enable_allied_features
 
-      enablespeaker allied_compost_sound 
-   } 
+      enablespeaker allied_compost_sound
+   }
 
-   decayed final 
-   { 
-      trigger allied_radio_built_model hide 
+   decayed final
+   {
+      trigger allied_radio_built_model hide
 
-      trigger allied_radio_destroyed show 
-      trigger allied_radio_closed    show 
-   } 
+      trigger allied_radio_destroyed show
+      trigger allied_radio_closed    show
+   }
 
-   death 
-   { 
-      trigger allied_radio_built_model hide 
+   death
+   {
+      trigger allied_radio_built_model hide
 
-      trigger allied_radio_destroyed show 
+      trigger allied_radio_destroyed show
 
-      trigger allied_radio_built_model disable_allied_features 
+      trigger allied_radio_built_model disable_allied_features
 
-      disablespeaker allied_compost_sound 
-   } 
-} 
+      disablespeaker allied_compost_sound
+   }
+}
 
-allied_radio_built_model 
-{ 
-   spawn 
-   { 
-      wait 400 
-      setstate allied_radio_built_model invisible 
-   } 
+allied_radio_built_model
+{
+   spawn
+   {
+      wait 400
+      setstate allied_radio_built_model invisible
+   }
 
-   trigger show 
-   { 
-      setstate allied_radio_built_model default 
-   } 
+   trigger show
+   {
+      setstate allied_radio_built_model default
+   }
 
-   trigger hide 
-   { 
-      setstate allied_radio_built_model invisible 
-   } 
+   trigger hide
+   {
+      setstate allied_radio_built_model invisible
+   }
 
-   trigger trans 
-   { 
-      setstate allied_radio_built_model underconstruction 
-   } 
+   trigger trans
+   {
+      setstate allied_radio_built_model underconstruction
+   }
 
-   trigger enable_allied_features 
-   { 
-      setchargetimefactor 1 soldier 0.75 
-      setchargetimefactor 1 lieutenant 0.75 
-      setchargetimefactor 1 medic 0.75 
-      setchargetimefactor 1 engineer 0.75 
-      setchargetimefactor 1 covertops 0.75 
-      sethqstatus 1 1 
+   trigger enable_allied_features
+   {
+      setchargetimefactor 1 soldier 0.75
+      setchargetimefactor 1 lieutenant 0.75
+      setchargetimefactor 1 medic 0.75
+      setchargetimefactor 1 engineer 0.75
+      setchargetimefactor 1 covertops 0.75
+      sethqstatus 1 1
 
-      wm_announce   "Allied Command Post constructed. Charge speed increased!" 
+      wm_announce   "Allied Command Post constructed. Charge speed increased!"
 
-      // *----------------------------------- vo ------------------------------------------* 
-      wm_teamvoiceannounce 1 "allies_hq_compost_constructed" 
+      // *----------------------------------- vo ------------------------------------------*
+      wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
 
-      wm_teamvoiceannounce 0 "allies_hq_compost_constructed_axis" 
+      wm_teamvoiceannounce 0 "allies_hq_compost_constructed_axis"
 
-      wm_removeteamvoiceannounce 1 "allies_hq_compost_construct" 
-      // *----------------------------------- vo ------------------------------------------* 
+      wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+      // *----------------------------------- vo ------------------------------------------*
 
-      wm_objective_status 6 1 1 
-      wm_objective_status 6 0 0 
+      wm_objective_status 6 1 1
+      wm_objective_status 6 0 0
 
-   } 
+   }
 
-   trigger disable_allied_features 
-   { 
-      // Some kind of UI pop-up to alert players 
-      wm_announce   "Axis team has destroyed the Allied Command Post!" 
+   trigger disable_allied_features
+   {
+      // Some kind of UI pop-up to alert players
+      wm_announce   "Axis team has destroyed the Allied Command Post!"
 
-      // *----------------------------------- vo ------------------------------------------* 
-      wm_addteamvoiceannounce 1 "allies_hq_compost_construct" 
+      // *----------------------------------- vo ------------------------------------------*
+      wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
 
-      wm_teamvoiceannounce 1 "allies_hq_compost_damaged" 
-      // *----------------------------------- vo ------------------------------------------* 
+      wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+      // *----------------------------------- vo ------------------------------------------*
 
-      setchargetimefactor 1 soldier 1 
-      setchargetimefactor 1 lieutenant 1 
-      setchargetimefactor 1 medic 1 
-      setchargetimefactor 1 engineer 1 
-      setchargetimefactor 1 covertops 1 
-      sethqstatus 1 0 
+      setchargetimefactor 1 soldier 1
+      setchargetimefactor 1 lieutenant 1
+      setchargetimefactor 1 medic 1
+      setchargetimefactor 1 engineer 1
+      setchargetimefactor 1 covertops 1
+      sethqstatus 1 0
 
-      wm_objective_status 6 1 0 
-      wm_objective_status 6 0 1 
-   } 
-} 
-construction_script 
-{ 
-   spawn 
-   { 
-      wait 200 
-      constructible_class 2 
-      trigger self startup 
-   } 
+      wm_objective_status 6 1 0
+      wm_objective_status 6 0 1
+   }
+}
+construction_script
+{
+   spawn
+   {
+      wait 200
+      constructible_class 2
+      trigger self startup
+   }
 
-   buildstart final 
-   { 
-   } 
+   buildstart final
+   {
+   }
 
-   built final 
-   { 
-      setstate construction_extra default 
-      setstate construction_mg42  default 
-      setstate const_tower        invisible 
+   built final
+   {
+      setstate construction_extra default
+      setstate construction_mg42  default
+      setstate const_tower        invisible
 
-      // Some kind of UI pop-up to alert players 
-      wm_announce   "Allied team has constructed the Spawn MG42!" 
-   } 
+      // Some kind of UI pop-up to alert players
+      wm_announce   "Allied team has constructed the Spawn MG42!"
+   }
 
-   decayed final 
-   { 
-      trigger self startup 
-   } 
+   decayed final
+   {
+      trigger self startup
+   }
 
-   death 
-   { 
-      trigger self startup 
-      // Some kind of UI pop-up to alert players 
-      wm_announce   "Axis team has destroyed the Spawn MG42!" 
-   } 
+   death
+   {
+      trigger self startup
+      // Some kind of UI pop-up to alert players
+      wm_announce   "Axis team has destroyed the Spawn MG42!"
+   }
 
-   trigger startup 
-   { 
-      setstate construction_extra invisible 
-      setstate construction_mg42  invisible 
-      setstate const_tower        default 
-      repairmg42 construction_mg42 
-   } 
-} 
+   trigger startup
+   {
+      setstate construction_extra invisible
+      setstate construction_mg42  invisible
+      setstate const_tower        default
+      repairmg42 construction_mg42
+   }
+}
 allied_mg1_toi
 {
 	// First corner after crossing bridge - Barrel

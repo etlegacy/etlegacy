@@ -4,8 +4,8 @@ game_manager
 {
 	spawn
 	{
-	
-	
+
+
 		// Game rules
 		wm_axis_respawntime	30
 		wm_allied_respawntime	30
@@ -81,7 +81,7 @@ game_manager
 
 	trigger allies_transmit
 	{
-	        wm_announce "The Allies have transmitted the Supply Documents!" 
+	        wm_announce "The Allies have transmitted the Supply Documents!"
 		wm_setwinner 1
 		//wait 1500
 		wm_endround
@@ -89,10 +89,10 @@ game_manager
 
 	trigger main_door_destroyed
 	{
-		wm_announce "The Main Door has been breached!" 
+		wm_announce "The Main Door has been breached!"
 		wm_objective_status 2 1 1
 		wm_objective_status 2 0 2
-		
+
 		// *----------------------------------- vo ------------------------------------------*
 		wm_teamvoiceannounce 0 "frostbite_axis_entrance1_destroyed"
 		wm_teamvoiceannounce 1 "frostbite_allies_entrance1_destroyed"
@@ -104,7 +104,7 @@ game_manager
 
 	trigger storage_wall_destroyed
 	{
-		wm_announce "Storage Wall destroyed!" 
+		wm_announce "Storage Wall destroyed!"
 		wm_objective_status 3 1 1
 		wm_objective_status 3 0 2
 
@@ -119,14 +119,14 @@ game_manager
 
 	trigger service_door_destroyed
 	{
-		wm_announce "The Service Door has been breached!" 
+		wm_announce "The Service Door has been breached!"
 		wm_objective_status 4 1 1
 		wm_objective_status 4 0 2
-		
+
 		// *----------------------------------- vo ------------------------------------------*
 		wm_teamvoiceannounce 0 "axis_hq_objective_destroyed"
 		wm_teamvoiceannounce 1 "allies_hq_objective_destroyed"
-		// *---------------------------------------------------------------------------------*		
+		// *---------------------------------------------------------------------------------*
 	}
 
 }
@@ -278,21 +278,21 @@ storage_button
 
 docs
 {
-      trigger stolen 
-      { 
-         //wm_announce "Allies have stolen the Supply Documents!" 
-         setstate docs_cm_marker invisible 
-      } 
+      trigger stolen
+      {
+         //wm_announce "Allies have stolen the Supply Documents!"
+         setstate docs_cm_marker invisible
+      }
 
-      trigger returned 
-      { 
-         //wm_announce "Supply Documents returned!" 
-         setstate docs_cm_marker default 
-      } 
+      trigger returned
+      {
+         //wm_announce "Supply Documents returned!"
+         setstate docs_cm_marker default
+      }
 
-      trigger captured 
-      { 
-      } 
+      trigger captured
+      {
+      }
 }
 
 transmitter
@@ -394,8 +394,8 @@ spawnpost_damaged_model
 	{
 		accum 0 set 0
 		wait 200
-		setstate spawnpost_damaged invisible		
-		setstate spawnpost_damaged_model invisible		
+		setstate spawnpost_damaged invisible
+		setstate spawnpost_damaged_model invisible
 	}
 
 	trigger hide
@@ -468,7 +468,7 @@ spawnpost_built_model
 
 		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
 		wm_removeteamvoiceannounce 0 "frostbite_axis_entrances_defend"
-		wm_removeteamvoiceannounce 1 "frostbite_allies_entrances_destroy"		
+		wm_removeteamvoiceannounce 1 "frostbite_allies_entrances_destroy"
 		// *---------------------------------------------------------------------------------*
 	}
 
@@ -621,8 +621,8 @@ axis_compost_damaged_model
 	{
 		accum 0 set 0
 		wait 200
-		setstate axis_compost_damaged invisible		
-		setstate axis_compost_damaged_model invisible		
+		setstate axis_compost_damaged invisible
+		setstate axis_compost_damaged_model invisible
 	}
 
 	trigger hide
@@ -773,7 +773,7 @@ gramophone
 		accum 1 set 0
 		accum 2 set 0
 	}
-	
+
 	trigger damage_record
 	{
 		accum 1 set 1
@@ -799,13 +799,13 @@ gramophone
 		togglespeaker record_music_broken
 		accum 2 set 0
 	}
-	
+
 	trigger activate
 	{
 		trigger gramophone turn_off
 		trigger gramophone turn_on
 	}
-	
+
 	trigger turn_off
 	{
 		accum 2 abort_if_equal 0
@@ -814,7 +814,7 @@ gramophone
 		trigger gramophone original_off
 		trigger gramophone broken_off
 	}
-	
+
 	trigger original_off
 	{
 		accum 1 abort_if_equal 1
@@ -823,7 +823,7 @@ gramophone
 		togglespeaker record_music
 		togglespeaker record_scratch
 	}
-	
+
 	trigger broken_off
 	{
 		accum 1 abort_if_equal 0
@@ -840,7 +840,7 @@ gramophone
 		trigger gramophone original_on
 		trigger gramophone broken_on
 	}
-	
+
 	trigger original_on
 	{
 		accum 1 abort_if_equal 1
@@ -850,7 +850,7 @@ gramophone
 		wait 430
 		togglespeaker record_music
 	}
-	
+
 	trigger broken_on
 	{
 		accum 1 abort_if_equal 0
@@ -858,8 +858,8 @@ gramophone
 		trigger record_broken start
 		togglespeaker record_music_broken
 	}
-	
-	
+
+
 }
 
 
@@ -885,13 +885,13 @@ record
 	{
 		stoprotation
 	}
-	
+
 	death
 	{
 		trigger record stop
 		trigger gramophone damage_record
 	}
-	
+
 	built
 	{
 		trigger gramophone fix_record
@@ -914,7 +914,7 @@ record_broken
 	{
 		stoprotation
 	}
-	
+
 }
 
 
@@ -931,49 +931,49 @@ gramophone_toi
 // ============================================================================
 // Platform MG42 Nest
 // ============================================================================
-platformmg42_script 
-{ 
-   spawn 
-   { 
-      wait 200 
-      constructible_class 2 
-      trigger self startup 
-   } 
+platformmg42_script
+{
+   spawn
+   {
+      wait 200
+      constructible_class 2
+      trigger self startup
+   }
 
-   buildstart final 
-   { 
-   } 
+   buildstart final
+   {
+   }
 
-   built final 
-   { 
-      setstate platformmg42_sbags default 
-      setstate platformmg42 default 
-      setstate platformmg42_materials invisible 
+   built final
+   {
+      setstate platformmg42_sbags default
+      setstate platformmg42 default
+      setstate platformmg42_materials invisible
 
-      // Some kind of UI pop-up to alert players 
+      // Some kind of UI pop-up to alert players
 	wm_announce	"Axis team has constructed the Platform MG Nest!"
-   } 
+   }
 
-   decayed final 
-   { 
-      trigger self startup 
-   } 
+   decayed final
+   {
+      trigger self startup
+   }
 
-   death 
-   { 
-      trigger self startup 
-      // Some kind of UI pop-up to alert players 
+   death
+   {
+      trigger self startup
+      // Some kind of UI pop-up to alert players
 	wm_announce	"Allied team has destroyed the Platform MG Nest!"
-   } 
+   }
 
-   trigger startup 
-   { 
-      setstate platformmg42_sbags invisible 
-      setstate platformmg42 invisible 
-      setstate platformmg42_materials default 
-      repairmg42 platformmg42 
-   } 
-} 
+   trigger startup
+   {
+      setstate platformmg42_sbags invisible
+      setstate platformmg42 invisible
+      setstate platformmg42_materials default
+      repairmg42 platformmg42
+   }
+}
 
 
 

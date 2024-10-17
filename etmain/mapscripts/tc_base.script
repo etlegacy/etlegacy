@@ -45,7 +45,7 @@ game_manager
 		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
 		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
 		// *---------------------------------------------------------------------------------*
-		
+
 	}
 
 	trigger objective1

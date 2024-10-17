@@ -4,7 +4,7 @@ game_manager
 {
 spawn
 {
-	
+
 // Set scenario information
 wm_axis_respawntime 30
 wm_allied_respawntime 20
@@ -127,15 +127,15 @@ documents
     {
 	    wait 200
     }
-    trigger stolen 
+    trigger stolen
     {
-    	//when the objective is taken 
+    	//when the objective is taken
     	// Hide command map marker of docs at table
-    	setstate documents_CMM invisible 
+    	setstate documents_CMM invisible
 	}
 	trigger dropped
 	{
-		//when the player carrying the objective is killed 
+		//when the player carrying the objective is killed
 		// *----------------------------------- vo ------------------------------------------*
 		wm_teamvoiceannounce 1 "allies_hq_objective_lost"
 		// *---------------------------------------------------------------------------------*
@@ -145,11 +145,11 @@ documents
 		//when defending team touches the dropped objective
 		// Show command map marker of docs at table
 		setstate documents_CMM default
-	} 
+	}
 	trigger captured
 	{
-		//when the objective is delivered to its deliverypoint 
-		
+		//when the objective is delivered to its deliverypoint
+
 		// *----------------------------------- vo ------------------------------------------*
 		wm_teamvoiceannounce 0 "axis_hq_objective_lost"
 		wm_teamvoiceannounce 1 "allies_hq_objective_captured"
@@ -162,29 +162,29 @@ doorcontrols
 	spawn
 	{
 		wait 200
-		
+
 		constructible_class 3
 	}
 	death
 	{
 		wm_announce "The Doors are opening!!"
-		
+
 		trigger phasedoor1 move_up
 		trigger phasedoor2 move_up
-						
-		wm_objective_status 4 1 1		
+
+		wm_objective_status 4 1 1
 		wm_objective_status 4 0 2
 		// Open phase doors
-				
+
 		// *----------------------------------- vo ------------------------------------------*
 		wm_teamvoiceannounce 1 "allies_hq_objective_destroyed"
 
 		wm_removeteamvoiceannounce 0 "adlernest_axis_controls_defend"
 		wm_removeteamvoiceannounce 1 "adlernest_allies_controls_destroy"
-		
+
 		// "Construct the command post!" voice over, unless its already been done.
         globalaccum 6 abort_if_equal 1
-        		
+
 		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
 		// *---------------------------------------------------------------------------------*
 	}
@@ -197,7 +197,7 @@ phasedoor1
 		wait 200
 		gotomarker phasedoor1_pc2 1000
 	}
-	
+
 	trigger move_up
 	{
 		wait 500
@@ -217,7 +217,7 @@ phasedoor2
 		wait 200
 		gotomarker phasedoor2_pc2 1000
 	}
-	
+
 	trigger move_up
 	{
 		wait 500
@@ -236,12 +236,12 @@ maindoor_button
 	{
 		wait 200
 	}
-	
+
 	activate
-	{		
+	{
 		trigger maindoorr move_up
 		trigger maindoorl move_up
-		
+
 		trigger maindoorr move_down
 		trigger maindoorl move_down
 	}
@@ -254,13 +254,13 @@ maindoor_lever
 		wait 200
 		trigger maindoor_lever move_down
 	}
-	
+
 	trigger move_down
 	{
 		wait 200
 		faceangles 0 0 -1 750
 	}
-	
+
 	trigger move_up
 	{
 		wait 200
@@ -275,13 +275,13 @@ maindoor_lever1
 		wait 200
 		trigger maindoor_lever1 move_down
 	}
-	
+
 	trigger move_down
 	{
 		wait 200
 		faceangles -1 0 0 750
 	}
-	
+
 	trigger move_up
 	{
 		wait 200
@@ -296,7 +296,7 @@ maindoorr
 		wait 200
 		gotomarker maindoorr_pc2 1000
 	}
-	
+
 	trigger move_up
 	{
 		// open
@@ -305,12 +305,12 @@ maindoorr
 		accum 4 abort_if_equal 1
 		// set status working
 		accum 4 set 2
-		
+
 		trigger maindoor_lever move_up
 		trigger maindoor_lever1 move_up
 		wm_objective_status 5 1 1
 		wm_objective_status 5 0 0
-		
+
 		wait 500
 		playsound sound/movers/misc/big_gate1.wav
 		wait 400
@@ -321,7 +321,7 @@ maindoorr
 		// set status opened
 		accum 4 set 1
 	}
-	
+
 	trigger move_down
 	{
 		// close
@@ -330,12 +330,12 @@ maindoorr
 		accum 4 abort_if_equal 0
 		// set status working
 		accum 4 set 2
-		
+
 		trigger maindoor_lever move_down
 		trigger maindoor_lever1 move_down
 		wm_objective_status 5 1 0
 		wm_objective_status 5 0 1
-		
+
 		wait 500
 		playsound sound/movers/misc/big_gate1.wav
 		wait 400
@@ -355,7 +355,7 @@ maindoorl
 		wait 200
 		gotomarker maindoorl_pc2 1000
 	}
-	
+
 	trigger move_up
 	{
 		// open
@@ -364,9 +364,9 @@ maindoorl
 		accum 5 abort_if_equal 1
 		// set status working
 		accum 5 set 2
-		
+
 		wm_announce "Main blast door opening!"
-		
+
 		wait 500
 		playsound sound/movers/misc/big_gate1.wav
 		wait 400
@@ -377,7 +377,7 @@ maindoorl
 		// set status opened
 		accum 5 set 1
 	}
-	
+
 	trigger move_down
 	{
 		// close
@@ -386,9 +386,9 @@ maindoorl
 		accum 5 abort_if_equal 0
 		// set status working
 		accum 5 set 2
-		
+
 		wm_announce "Main blast door closing!"
-		
+
 		wait 500
 		playsound sound/movers/misc/big_gate1.wav
 		wait 400
@@ -417,12 +417,12 @@ allied_radio_built
       constructible_class 2
 
       trigger allied_radio_built setup
-      
-      disablespeaker allied_compost_sound    
+
+      disablespeaker allied_compost_sound
    }
 
    trigger setup
-   {     
+   {
       setchargetimefactor 1 soldier 1
       setchargetimefactor 1 lieutenant 1
       setchargetimefactor 1 medic 1
@@ -474,7 +474,7 @@ allied_radio_built_model
    {
       setstate allied_radio_built_model default
       setstate allied_radio_built default
-      
+
       setstate alliedhqradio_toi default
    }
 
@@ -489,13 +489,13 @@ allied_radio_built_model
    {
       setstate allied_radio_built_model underconstruction
       setstate allied_radio_built default
-      
+
       //setstate alliedhqradio_toi invisible
    }
 
    trigger enable_allied_features
    {
-	   
+
       setchargetimefactor 1 soldier 0.75
       setchargetimefactor 1 lieutenant 0.75
       setchargetimefactor 1 medic 0.75
@@ -504,12 +504,12 @@ allied_radio_built_model
       sethqstatus 1 1
 
       wm_announce   "Allied Command Post constructed. Charge speed increased!"
-      
+
       globalaccum 6 set 1
-            
+
       // *----------------------------------- vo ------------------------------------------*
       wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
-      
+
       wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
 
 	  wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
@@ -517,14 +517,14 @@ allied_radio_built_model
 
       wm_objective_status 3 0 2
       wm_objective_status 3 1 1
-      
+
       // ENABLE NEW SPAWN
       trigger cp_spawn_wobj on
-      
+
       // If first time, then set new spawn as default
       accum 3 abort_if_equal 1
-      accum 3 set 1      
-      
+      accum 3 set 1
+
       setautospawn    "CP Spawn"   1
    }
 
@@ -535,10 +535,10 @@ allied_radio_built_model
 
       //DISABLE NEW SPAWN
       trigger cp_spawn_wobj off
-      
+
       globalaccum 6 set 0
-      
-      // *----------------------------------- vo ------------------------------------------*    
+
+      // *----------------------------------- vo ------------------------------------------*
       wm_addteamvoiceannounce 1 "allies_hqt_compost_construc"
 
 	  wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
@@ -554,7 +554,7 @@ allied_radio_built_model
       wm_objective_status 3 0 0
       wm_objective_status 3 1 0
    }
-} 
+}
 
 neutral_radio_closed_model
 {
@@ -563,22 +563,22 @@ neutral_radio_closed_model
       wait 400
       //setstate neutral_radio_closed_model default
       trigger neutral_radio_closed_model show
-                  
+
       sethqstatus 0 0
 
       wm_objective_status 3 1 0
-      wm_objective_status 3 0 0     
-      
+      wm_objective_status 3 0 0
+
       //setstate alliedhqradio_toi default
       //setstate alliedhqradio_toi invisible
-      
+
    }
 
    trigger show
    {
       setstate neutral_radio_closed_model default
       //setstate neutral_radio_closed default
-      
+
       //setstate alliedhqradio_toi invisible
    }
 
@@ -587,13 +587,13 @@ neutral_radio_closed_model
       setstate neutral_radio_closed_model invisible
       //setstate neutral_radio_closed invisible
    }
-} 
+}
 
 neutral_radio_closed
 {
    spawn
    {
-      wait 400    
+      wait 400
    }
 }
 
@@ -604,7 +604,7 @@ cp_spawn_spawns
 	  wait 50
 	  setstate cp_spawn_spawns invisible
 	}
-} 
+}
 
 cp_spawn_wobj
 {
@@ -627,7 +627,7 @@ cp_spawn_wobj
 	  alertentity cp_spawn_spawns
       wm_announce "Allied Command Post spawn active!"
     }
-	trigger allied_capture 
+	trigger allied_capture
 	{
 		//
 	}
@@ -635,7 +635,7 @@ cp_spawn_wobj
     {
 	    //
     }
-} 
+}
 
 allied_spawn
 {
@@ -643,7 +643,7 @@ allied_spawn
 	{
 	  wait 200
 	}
-} 
+}
 
 allied_spawn_flag
 {
@@ -651,7 +651,7 @@ allied_spawn_flag
 	{
 	  wait 200
 	}
-	trigger allied_capture 
+	trigger allied_capture
 	{
 		//
 	}
@@ -659,7 +659,7 @@ allied_spawn_flag
     {
 	    //
     }
-} 
+}
 
 tank_turret
 {
@@ -667,7 +667,7 @@ tank_turret
 	{
 		wait 200
 	}
-	
+
 	trigger facewall
 	{
 		trigger tank_turret spin_start
@@ -676,7 +676,7 @@ tank_turret
 		trigger tank_turret spin_fire
 		alertentity sidewall
 	}
-	
+
 	trigger spin_fire
 	{
 		playsound sound/vehicles/tank/tank_fire.wav volume 560
@@ -705,7 +705,7 @@ sidewall
 		}
 		wait 200
 	}
-	
+
 	death
 	{
 		alertentity sidewall_explo

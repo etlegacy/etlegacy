@@ -91,7 +91,7 @@ game_manager
 	}
 
 	trigger checkgame
-	{ 
+	{
 		accum 2 abort_if_not_equal 1
 		wm_setwinner 0
 
@@ -255,47 +255,47 @@ forwardflag
 
 // torre
 
-construction_script 
-{ 
-   spawn 
-   { 
-      wait 200 
-      constructible_class 2 
-      trigger self startup 
-   } 
+construction_script
+{
+   spawn
+   {
+      wait 200
+      constructible_class 2
+      trigger self startup
+   }
 
-   buildstart final 
-   { 
-   } 
+   buildstart final
+   {
+   }
 
-   built final 
-   { 
-      setstate construction_mg42 default 
-      setstate construction_materials invisible 
+   built final
+   {
+      setstate construction_mg42 default
+      setstate construction_materials invisible
 
-      // Some kind of UI pop-up to alert players 
-      wm_announce   "^1Allied team has built the side MG!" 
-   } 
+      // Some kind of UI pop-up to alert players
+      wm_announce   "^1Allied team has built the side MG!"
+   }
 
-   decayed final 
-   { 
-      trigger self startup 
-   } 
+   decayed final
+   {
+      trigger self startup
+   }
 
-   death 
-   { 
-      trigger self startup 
-      // Some kind of UI pop-up to alert players 
-      wm_announce   "^1Axis team has destroyed the side MG!" 
-   } 
+   death
+   {
+      trigger self startup
+      // Some kind of UI pop-up to alert players
+      wm_announce   "^1Axis team has destroyed the side MG!"
+   }
 
-   trigger startup 
-   { 
-      setstate construction_mg42 invisible 
-      setstate construction_materials default 
-      repairmg42 construction_mg42 
-   } 
-} 
+   trigger startup
+   {
+      setstate construction_mg42 invisible
+      setstate construction_materials default
+      repairmg42 construction_mg42
+   }
+}
 
 // ================================================
 // AXIS CP
@@ -310,7 +310,7 @@ axis_cp_open
 		accum 0 set 0				// 0=CP Closed, 1=CP Damaged
 		constructible_class 2			// Dyno+Satchel
 
-		
+
 		trigger self disable_cp_features		// Default charge bar times
 		setstate axis_cp_closed invisible		// Hide closed CP clipbrush+model
 		setstate axis_cp_closed_model invisible
@@ -459,7 +459,7 @@ allied_cp_open
 		accum 0 set 0			// 0=CP Closed, 1=CP Damaged
 		constructible_class 2			// Dyno+Satchel
 
-		
+
 		trigger self disable_cp_features		// Default charge bar times
 		setstate allied_cp_closed default		// Hide closed CP clipbrush+model
 		setstate allied_cp_closed_model default

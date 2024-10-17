@@ -190,7 +190,7 @@ ReinforceOffense
 Affirmative
 {
 	sound/chat/allies/41a.wav	"Affirmative!"	sprites/greentick
-	sound/chat/allies/41b.wav	"Yes!"			sprites/greentick	
+	sound/chat/allies/41b.wav	"Yes!"			sprites/greentick
 	sound/chat/allies/41c.wav	"Yes!"			sprites/greentick
 }
 
@@ -520,7 +520,7 @@ FTCallArtillery
 	sound/chat/allies/942a.wav	"Call in artillery!"
 	sound/chat/allies/942b.wav	"Call in artillery!"
 }
- 
+
 FTResupplySquad
 {
 	sound/chat/allies/944a.wav	"Resupply the squad!"
