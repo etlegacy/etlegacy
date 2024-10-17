@@ -151,7 +151,7 @@ void SV_CL_Commands_f(void)
 	}
 	else if (!Q_stricmp(cmd, "disconnect"))
 	{
-		SV_CL_Disconnect();
+		SV_Shutdown("Server disconnected");
 	}
 }
 #else
