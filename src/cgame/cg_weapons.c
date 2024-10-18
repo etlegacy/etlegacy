@@ -2706,7 +2706,7 @@ static qboolean CG_WeaponHasAmmo(weapon_t weapon)
  * @param weapon - the weapon to check if selectable
  * @return qtrue if the weapon is selectable, else qfalse if not
  */
-qboolean CG_WeaponSelectable(int weapon)
+qboolean CG_WeaponSelectable(int weapon, qboolean playSound)
 {
 	// allow the player to unselect all weapons
 	//if(i == WP_NONE)
@@ -2721,13 +2721,21 @@ qboolean CG_WeaponSelectable(int weapon)
 	// check if the selected weapon is available
 	if (!(COM_BitCheck(cg.predictedPlayerState.weapons, weapon)))
 	{
+		// play no ammo sound if some weapons we tried to switch to are not available
+		if (playSound && cg_weapSwitchNoAmmoSounds.integer && (weapon == WP_GRENADE_LAUNCHER || weapon == WP_GRENADE_PINEAPPLE))
+		{
+			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cgs.media.noAmmoSound);
+		}
 		return qfalse;
 	}
 
 	if (!CG_WeaponHasAmmo((weapon_t)weapon))
 	{
 		// play noAmmoSound if the weapon we tried to switch to is out of ammo
-		trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cg_weapons[weapon].noAmmoSound);
+		if (playSound && cg_weapSwitchNoAmmoSounds.integer)
+		{
+			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cgs.media.noAmmoSound);
+		}
 		return qfalse;
 	}
 
@@ -3025,7 +3033,7 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 			}
 		}
 		// this fixes cg.switchbackWeapon=0 after very first spawn and switching weapon for the first time
-		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastWeapon)) // ensure last weapon is available
+		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastWeapon, qtrue)) // ensure last weapon is available
 		{
 			if (!(GetWeaponTableData(lastWeapon)->type & WEAPON_TYPE_SCOPED))
 			{
@@ -3309,7 +3317,7 @@ void CG_AltWeapon_f(void)
 
 	if ((!(GetWeaponTableData(GetWeaponTableData(cg.weaponSelect)->weapAlts)->type & WEAPON_TYPE_RIFLENADE) // allow alt switch (but for riflenade) even if out-of-ammo
 	     && (COM_BitCheck(cg.predictedPlayerState.weapons, GetWeaponTableData(cg.weaponSelect)->weapAlts)))      // and ensure the alt weapon is there
-	    || CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapAlts))                                       // or check if new weapon is valid (riflenade need ammo for switching to)
+	    || CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapAlts, qtrue))                                       // or check if new weapon is valid (riflenade need ammo for switching to)
 	{
 		CG_FinishWeaponChange(cg.weaponSelect, GetWeaponTableData(cg.weaponSelect)->weapAlts);
 	}
@@ -3364,14 +3372,14 @@ void CG_NextWeap(qboolean switchBanks)
 				}
 			}
 
-			if (CG_WeaponSelectable(num))
+			if (CG_WeaponSelectable(num, qtrue))
 			{
 				break;
 			}
 
 			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
-				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
 				{
 					num = GetWeaponTableData(num)->weapAlts;
 					break;
@@ -3415,14 +3423,14 @@ void CG_NextWeap(qboolean switchBanks)
 			//  continue;
 			//}
 
-			if (CG_WeaponSelectable(num))       // first entry in bank was selectable, no need to scan the bank
+			if (CG_WeaponSelectable(num, qtrue))       // first entry in bank was selectable, no need to scan the bank
 			{
 				break;
 			}
 
 			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
-				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
 				{
 					num = GetWeaponTableData(num)->weapAlts;
 					break;
@@ -3439,14 +3447,14 @@ void CG_NextWeap(qboolean switchBanks)
 				// continue;
 				//}
 
-				if (CG_WeaponSelectable(num))       // found selectable weapon
+				if (CG_WeaponSelectable(num, qtrue))       // found selectable weapon
 				{
 					break;
 				}
 
 				if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 				{
-					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
+					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
 					{
 						num = GetWeaponTableData(num)->weapAlts;
 						break;
@@ -3519,14 +3527,14 @@ void CG_PrevWeap(qboolean switchBanks)
 			//  continue;
 			//}
 
-			if (CG_WeaponSelectable(num))
+			if (CG_WeaponSelectable(num, qtrue))
 			{
 				break;
 			}
 
 			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
-				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
 				{
 					num = GetWeaponTableData(num)->weapAlts;
 					break;
@@ -3564,14 +3572,14 @@ void CG_PrevWeap(qboolean switchBanks)
 				continue;
 			}
 
-			if (CG_WeaponSelectable(num))       // first entry in bank was selectable, no need to scan the bank
+			if (CG_WeaponSelectable(num, qtrue))       // first entry in bank was selectable, no need to scan the bank
 			{
 				break;
 			}
 
 			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
-				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
 				{
 					num = GetWeaponTableData(num)->weapAlts;
 					break;
@@ -3584,14 +3592,14 @@ void CG_PrevWeap(qboolean switchBanks)
 			{
 				num = getPrevWeapInBank(newbank, j);
 
-				if (CG_WeaponSelectable(num))       // found selectable weapon
+				if (CG_WeaponSelectable(num, qtrue))       // found selectable weapon
 				{
 					break;
 				}
 
 				if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 				{
-					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
+					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
 					{
 						num = GetWeaponTableData(num)->weapAlts;
 						break;
@@ -3724,7 +3732,7 @@ void CG_LastWeaponUsed_f(void)
 		return;
 	}
 
-	if (CG_WeaponSelectable(cg.switchbackWeapon))
+	if (CG_WeaponSelectable(cg.switchbackWeapon, qtrue))
 	{
 		CG_FinishWeaponChange(cg.weaponSelect, cg.switchbackWeapon);
 	}
@@ -3902,14 +3910,14 @@ void CG_WeaponBank_f(void)
 	{
 		newWeapon = getNextWeapInBank(bank, cycle + i);
 
-		if (CG_WeaponSelectable(newWeapon))
+		if (CG_WeaponSelectable(newWeapon, qtrue))
 		{
 			break;
 		}
 
 		if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE)
 		{
-			if (CG_WeaponSelectable(GetWeaponTableData(newWeapon)->weapAlts))
+			if (CG_WeaponSelectable(GetWeaponTableData(newWeapon)->weapAlts, qtrue))
 			{
 				newWeapon = GetWeaponTableData(newWeapon)->weapAlts;
 				break;
@@ -3960,13 +3968,13 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 
 	if (allowForceSwitch)
 	{
-		if ((cg.weaponSelect == WP_LANDMINE || cg.weaponSelect == WP_DYNAMITE) && CG_WeaponSelectable(WP_PLIERS))
+		if ((cg.weaponSelect == WP_LANDMINE || cg.weaponSelect == WP_DYNAMITE) && CG_WeaponSelectable(WP_PLIERS, qfalse))
 		{
 			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
 			return;
 		}
 
-		if (cg.weaponSelect == WP_SATCHEL && CG_WeaponSelectable(WP_SATCHEL_DET))
+		if (cg.weaponSelect == WP_SATCHEL && CG_WeaponSelectable(WP_SATCHEL_DET, qfalse))
 		{
 			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_SATCHEL_DET);
 			return;
@@ -3984,7 +3992,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 			{
 				for (j = 0; j < MAX_WEAPS_IN_BANK_MP && weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]; j++)
 				{
-					if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]))
+					if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j], qfalse))
 					{
 						// make sure we don't reselect the panzer or bazooka
 						if ((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER) && (GetWeaponTableData(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j])->type & WEAPON_TYPE_PANZER))
@@ -4000,7 +4008,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 		}
 
 		// now try the opposite team's equivalent weap
-		if (CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapEquiv))
+		if (CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapEquiv, qfalse))
 		{
 			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, GetWeaponTableData(cg.weaponSelect)->weapEquiv);
 			return;
@@ -4017,7 +4025,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 			{
 				continue;
 			}
-			if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]))
+			if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j], qfalse))
 			{
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]);
 				return;

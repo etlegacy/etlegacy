@@ -155,6 +155,7 @@ vmCvar_t cg_brassTime;
 vmCvar_t cg_letterbox;
 vmCvar_t cg_drawGun;
 vmCvar_t cg_weapAnims;
+vmCvar_t cg_weapSwitchNoAmmoSounds;
 vmCvar_t cg_gun_frame;
 vmCvar_t cg_gun_x;
 vmCvar_t cg_gun_y;
@@ -387,6 +388,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_autoswitch,               "cg_autoswitch",               "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawGun,                  "cg_drawGun",                  "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapAnims,                "cg_weapAnims",                "15",          CVAR_ARCHIVE,                 0 },
+	{ &cg_weapSwitchNoAmmoSounds,   "cg_weapSwitchNoAmmoSounds",   "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_frame,                "cg_gun_frame",                "0",           CVAR_TEMP,                    0 },
 	{ &cg_zoomDefaultSniper,        "cg_zoomDefaultSniper",        "20",          CVAR_ARCHIVE,                 0 }, // changed per atvi req
 	{ &cg_zoomStepSniper,           "cg_zoomStepSniper",           "2",           CVAR_ARCHIVE,                 0 },
@@ -1452,6 +1454,7 @@ static void CG_RegisterSounds(void)
 		speaker->noise = trap_S_RegisterSound(speaker->filename, qfalse);
 	}
 
+	cgs.media.noAmmoSound      = trap_S_RegisterSound("sound/weapons/misc/fire_dry.wav", qfalse);
 	cgs.media.noFireUnderwater = trap_S_RegisterSound("sound/weapons/misc/fire_water.wav", qfalse);
 	cgs.media.selectSound      = trap_S_RegisterSound("sound/weapons/misc/change.wav", qfalse);
 	cgs.media.landHurt         = trap_S_RegisterSound("sound/player/land_hurt.wav", qfalse);

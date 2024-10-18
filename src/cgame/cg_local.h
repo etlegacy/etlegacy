@@ -1811,6 +1811,7 @@ typedef struct
 	qhandle_t axisUniformShader;
 
 	// sounds
+	sfxHandle_t noAmmoSound;
 	sfxHandle_t noFireUnderwater;
 	sfxHandle_t selectSound;
 	sfxHandle_t landHurt;
@@ -2760,6 +2761,7 @@ extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;
 extern vmCvar_t cg_drawGun;
 extern vmCvar_t cg_weapAnims;
+extern vmCvar_t cg_weapSwitchNoAmmoSounds;
 extern vmCvar_t cg_letterbox;
 extern vmCvar_t cg_tracerChance;
 extern vmCvar_t cg_tracerWidth;
@@ -3278,7 +3280,7 @@ void CG_NextWeapon_f(void);
 void CG_PrevWeapon_f(void);
 void CG_Weapon_f(void);
 void CG_WeaponBank_f(void);
-qboolean CG_WeaponSelectable(int weapon);
+qboolean CG_WeaponSelectable(int weapon, qboolean playSound);
 
 void CG_FinishWeaponChange(int lastweap, int newweap);
 void CG_SetSniperZoom(int weapon);
