@@ -356,6 +356,7 @@ vmCvar_t cg_shoutcastGrenadeTrail;
 vmCvar_t cg_activateLean;
 
 vmCvar_t cg_drawBreathPuffs;
+vmCvar_t cg_drawAirstrikePlanes;
 
 vmCvar_t cg_customFont1;
 vmCvar_t cg_customFont2;
@@ -618,7 +619,7 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_drawUnit,                 "cg_drawUnit",                 "0",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_visualEffects,            "cg_visualEffects",            "1",           CVAR_ARCHIVE,                 0 }, // Draw visual effects (i.e : airstrike plane, debris ...)
+	{ &cg_visualEffects,            "cg_visualEffects",            "1",           CVAR_ARCHIVE,                 0 }, // (e.g. : smoke, debris, ...)
 	{ &cg_bannerTime,               "cg_bannerTime",               "10000",       CVAR_ARCHIVE,                 0 },
 
 	{ &cg_shoutcastTeamNameRed,     "cg_shoutcastTeamNameRed",     "Axis",        CVAR_ARCHIVE,                 0 },
@@ -629,6 +630,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_activateLean,             "cg_activateLean",             "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawBreathPuffs,          "cg_drawBreathPuffs",          "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawAirstrikePlanes,      "cg_drawAirstrikePlanes",      "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawSpawnpoints,          "cg_drawSpawnpoints",          "0",           CVAR_ARCHIVE,                 0 },
 

@@ -2946,7 +2946,7 @@ extern vmCvar_t cg_quickchat;
 
 extern vmCvar_t cg_drawUnit;
 
-extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
+extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (e.g. smoke, debris, ...)
 extern vmCvar_t cg_bannerTime;
 
 extern vmCvar_t cg_shoutcastTeamNameRed;
@@ -2957,6 +2957,7 @@ extern vmCvar_t cg_shoutcastGrenadeTrail;
 extern vmCvar_t cg_activateLean;
 
 extern vmCvar_t cg_drawBreathPuffs;
+extern vmCvar_t cg_drawAirstrikePlanes;
 
 extern vmCvar_t cg_customFont1;
 extern vmCvar_t cg_customFont2;
