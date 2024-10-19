@@ -1294,6 +1294,13 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
 	{
+		// debug draw if artillery can be called in at the spot when self and
+		// using binocs as fops
+		if (cgs.sv_cheats && ps && isSelfFirstPerson && ps->stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
+		{
+			CG_DrawDebugArtillery(cent);
+		}
+
 		return;
 	}
 	// don't draw weapon stuff when looking through a scope

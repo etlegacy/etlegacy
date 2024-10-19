@@ -3139,6 +3139,7 @@ const char *CG_TranslateString(const char *string);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
+void CG_DrawDebugArtillery(centity_t * cent);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
@@ -3171,6 +3172,7 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
 void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
+void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4]);
 
 /**
  * @struct scrollText_s

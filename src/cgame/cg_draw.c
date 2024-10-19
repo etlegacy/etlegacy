@@ -2439,6 +2439,47 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	}
 }
 
+/**
+ * @brief
+ * Draw a sprite for where playerstate looks showing if artillery can be called
+ * in at the spot or not.
+ */
+void CG_DrawDebugArtillery(centity_t *cent)
+{
+	trace_t tr;
+	vec3_t  viewOrigin, viewTarget, skyTarget;
+	vec3_t  forward = { 0 };
+
+	AngleVectors(cg.predictedPlayerState.viewangles, forward, NULL, NULL);
+
+	VectorCopy(cg.predictedPlayerState.origin, viewOrigin);
+	viewOrigin[2] += cg.predictedPlayerState.viewheight;
+
+	VectorMA(viewOrigin, MAX_TRACE, forward, viewTarget);
+
+	CG_Trace(&tr, viewOrigin, NULL, NULL, viewTarget, cent->currentState.number, MASK_SHOT);
+	if (tr.surfaceFlags & SURF_NOIMPACT)
+	{
+		return;
+	}
+
+	VectorCopy(tr.endpos, viewTarget);
+	VectorCopy(tr.endpos, skyTarget);
+
+	skyTarget[2] = BG_GetSkyHeightAtPoint(viewTarget);
+
+	CG_Trace(&tr, tr.endpos, NULL, NULL, skyTarget, cent->currentState.number, MASK_SHOT);
+	if (tr.fraction < 1.0f && !(tr.surfaceFlags & SURF_NOIMPACT)) // was not SURF_SKY
+	{
+		CG_DrawSprite(tr.endpos, 6.66f, cgs.media.escortShader, (byte[]) { 255, 0, 0, 255 });
+		CG_DrawSprite(viewTarget, 6.66f, cgs.media.escortShader, (byte[]) { 255, 0, 0, 255 });
+	}
+	else
+	{
+		CG_DrawSprite(viewTarget, 6.66f, cgs.media.escortShader, NULL);
+	}
+}
+
 //==============================================================================
 
 /**
@@ -4422,6 +4463,48 @@ void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis)
 		re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
 		trap_R_AddRefEntityToScene(&re);
 	}
+}
+
+/**
+ * @brief Draw a sprite at a target location.
+ */
+void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4])
+{
+	refEntity_t ent;
+	Com_Memset(&ent, 0, sizeof(ent));
+
+	ent.reType = RT_SPRITE;
+	if (shader != 0)
+	{
+		ent.customShader = shader;
+	}
+	else
+	{
+		ent.customShader = cgs.media.escortShader;
+	}
+
+	ent.radius    = radius;
+	ent.renderfx  = 0;
+	ent.origin[0] = origin[0];
+	ent.origin[1] = origin[1];
+	ent.origin[2] = origin[2];
+
+	if (color != NULL && !(color[0] == 0 && color[1] == 0 && color[2] == 0 && color[3] == 0))
+	{
+		ent.shaderRGBA[0] = color[0];
+		ent.shaderRGBA[1] = color[1];
+		ent.shaderRGBA[2] = color[2];
+		ent.shaderRGBA[3] = color[3];
+	}
+	else
+	{
+		ent.shaderRGBA[0] = 255;
+		ent.shaderRGBA[1] = 255;
+		ent.shaderRGBA[2] = 255;
+		ent.shaderRGBA[3] = 255;
+	}
+
+	trap_R_AddRefEntityToScene(&ent);
 }
 
 /**
