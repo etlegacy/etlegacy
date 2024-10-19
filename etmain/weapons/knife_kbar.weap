@@ -69,6 +69,9 @@ weaponDef
 			alliedskin	"models/weapons2/knife_kbar/knife_allied.skin"
 			//flashModel	""
 
+			dynFov90 -4.5 3.0 0.0
+			dynFov120 2.0 -4.0 0.0
+
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
 			weaponLink

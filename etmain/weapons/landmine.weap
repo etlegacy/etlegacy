@@ -72,6 +72,9 @@ weaponDef
 		firstPerson {
 			model			"models/multiplayer/landmine/v_landmine.md3"
 			//flashModel	""
+
+			dynFov90 -4.0 6.0 0.0
+			dynFov120 -2.0 0.0 0.0
 		}
 
 		thirdPerson {

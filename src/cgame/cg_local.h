@@ -951,6 +951,9 @@ typedef struct weaponInfo_s
 	qhandle_t standModel;               ///< not drawn.  tags used for positioning weapons for pickup
 	qboolean droppedAnglesHack;
 
+	vec3_t dynFov90;
+	vec3_t dynFov120;
+
 	weaponModel_t weaponModel[W_NUM_TYPES];
 	partModel_t partModels[W_NUM_TYPES][W_MAX_PARTS];
 	qhandle_t flashModel[W_NUM_TYPES];
