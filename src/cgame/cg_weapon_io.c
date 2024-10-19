@@ -467,6 +467,20 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 				return qfalse;
 			}
 		}
+		else if (!Q_stricmp(token.string, "dynFov90"))
+		{
+			if (!PC_Vec_Parse(handle, &weaponInfo->dynFov90))
+			{
+				return CG_RW_ParseError(handle, "expected dynFov90 as up forward right");
+			}
+		}
+		else if (!Q_stricmp(token.string, "dynFov120"))
+		{
+			if (!PC_Vec_Parse(handle, &weaponInfo->dynFov120))
+			{
+				return CG_RW_ParseError(handle, "expected dynFov120 as up forward right");
+			}
+		}
 		else
 		{
 			return CG_RW_ParseError(handle, "unknown token '%s'", token.string);

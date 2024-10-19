@@ -77,6 +77,9 @@ weaponDef
 
 		firstPerson {
 			model		"models/multiplayer/smokegrenade/v_smokegrenade.md3"
+
+			dynFov90 -2.0 2.5 0.0
+			dynFov120 0.0 0.4 -1.5
 		}
 
 		thirdPerson {

@@ -51,6 +51,9 @@ weaponDef
 		firstPerson {
 			model			"models/multiplayer/ammopack/v_ammopack.md3"
 			//flashModel	""
+
+			dynFov90 -3.0 3.0 0.0
+			dynFov120 3.0 -9.5 -1.0
 		}
 
 		thirdPerson {
