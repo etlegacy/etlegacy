@@ -1909,13 +1909,20 @@ static void PM_GroundTrace(void)
 			if (pm->cmd.forwardmove >= 0)
 			{
 				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
-				pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
 			}
 			else
 			{
 				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
-				pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
 			}
+		}
+
+		if (pm->cmd.forwardmove >= 0)
+		{
+			pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
+		}
+		else
+		{
+			pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
 		}
 
 		pm->ps->groundEntityNum = ENTITYNUM_NONE;
