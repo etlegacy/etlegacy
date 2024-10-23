@@ -1635,7 +1635,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 	}
 	else
 	{
-		knockback = MIN(take, 200);
+		knockback = MIN(damage, 200);
 
 		if (dflags & DAMAGE_HALF_KNOCKBACK)
 		{
