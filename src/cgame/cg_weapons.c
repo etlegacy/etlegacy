@@ -1712,6 +1712,20 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
+		{
+			// rotate
+			AxisToAngles(gun.axis, angles);
+			angles[PITCH] += 3;
+			AnglesToAxis(angles, gun.axis);
+
+			// translate
+			AxisToAngles(gun.axis, angles);
+			AngleVectors(angles, forward, right, up);
+
+			VectorMA(gun.origin, -0.3f, forward, gun.origin);
+			VectorMA(gun.origin, 1.4f, right, gun.origin);
+			VectorMA(gun.origin, -0.3f, up, gun.origin);
+		}
 		trap_R_AddRefEntityToScene(&gun);
 	}
 	// }}} add the gun model
