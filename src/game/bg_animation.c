@@ -114,6 +114,10 @@ static animStringItem_t animMoveTypesStr[] =
 
 	{ "DEAD",         -1 },
 
+	{ "JUMP",         -1 },
+	{ "JUMPFORWARD",  -1 },
+	{ "MIDAIR",       -1 },
+
 	{ NULL,           -1 },
 };
 
@@ -141,6 +145,7 @@ animStringItem_t animEventTypesStr[] =
 	{ "RAISEWEAPONPRONE",           -1 },
 	{ "RELOADPRONE",                -1 },
 	{ "NOPOWER",                    -1 },
+	{ "ACTIVATE",                   -1 },
 
 	{ NULL,                         -1 },
 };
@@ -197,13 +202,14 @@ static animStringItem_t animConditionImpactPointsStr[] =
 	{ "SHOULDER_LEFT",  -1 },
 	{ "KNEE_RIGHT",     -1 },
 	{ "KNEE_LEFT",      -1 },
+	{ "LEGS",           -1 },
 
 	{ NULL,             -1 },
 };
 
 static animStringItem_t animEnemyTeamsStr[] =
 {
-	{ "NAZI",    -1 },
+	{ "AXIS",    -1 },
 	{ "ALLIES",  -1 },
 	{ "MONSTER", -1 },
 	{ "SPARE1",  -1 },
@@ -283,7 +289,8 @@ static animStringItem_t animConditionsStr[NUM_ANIM_CONDITIONS + 1] =
 	{ "GEN_BITFLAG",    -1 },
 	{ "AISTATE",        -1 },
 	{ "SUICIDE",        -1 },
-	{ "RELOADING",      -1 },
+	{ "FAST_RELOAD",    -1 },
+	{ "LADDER_PEEK",    -1 },
 
 	{ NULL,             -1 },
 };
@@ -311,6 +318,7 @@ static animConditionTable_t animConditionsTable[NUM_ANIM_CONDITIONS] =
 	{ ANIM_CONDTYPE_VALUE,    animFlailTypeStr             },
 	{ ANIM_CONDTYPE_BITFLAGS, animGenBitFlagStr            },
 	{ ANIM_CONDTYPE_VALUE,    animAIStateStr               },
+	{ ANIM_CONDTYPE_VALUE,    NULL                         },
 	{ ANIM_CONDTYPE_VALUE,    NULL                         },
 	{ ANIM_CONDTYPE_VALUE,    NULL                         },
 };
@@ -1427,9 +1435,9 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 
 		// XXX : Stop pliers firing animation if you stop holding attack - would
 		//		 otherwise continue, despite the player not actually using them.
-		if (ps->weapon == WP_PLIERS
-		    && ps->weaponstate != WEAPON_FIRING
-		    && animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->priority >= 20 /* firing animation is currently playing */)
+		if (
+			animModelInfo->animations[(ps->torsoAnim & ~ANIM_TOGGLEBIT)]->loopFrames == -1
+			&& ps->weaponstate != WEAPON_FIRING)
 		{
 			currentPriority = -1;
 		}
@@ -2004,7 +2012,7 @@ void BG_AnimUpdatePlayerStateConditions(pmove_t *pmove)
 	}
 
 	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_FIRING, (pmove->cmd.buttons & BUTTON_ATTACK), qtrue);
-	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_RELOADING, (pmove->ps->weaponstate == WEAPON_RELOADING), qtrue);
+	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_FAST_RELOAD, (BG_IsSkillAvailable(pmove->skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_FASTER_RELOAD) && GetWeaponTableData(pmove->ps->weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD), qtrue);
 
 	if (ps->pm_flags & PMF_FLAILING)
 	{

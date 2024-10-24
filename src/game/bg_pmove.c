@@ -763,6 +763,31 @@ static void PM_SetMovementDir(void)
 }
 
 /**
+ * @brief Plays a player's jump animation depending on direction.
+ */
+static void PM_PlayJumpAnim(void)
+{
+	if (pm->cmd.rightmove && !pm->cmd.forwardmove)  // strafe jumping
+	{
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_JUMP, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
+		pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
+	}
+	else if (!(pm->cmd.buttons & BUTTON_WALKING) /* not walking */ && pm->cmd.forwardmove > 0)  // forward run-jumping
+	{
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_JUMPFORWARD, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
+		pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
+	}
+	else  // backwards jumping
+	{
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_JUMP, qtrue);
+		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
+		pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
+	}
+}
+
+/**
  * @brief PM_CheckJump
  * @return
  */
@@ -814,16 +839,7 @@ static qboolean PM_CheckJump(void)
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	pm->ps->velocity[2]     = JUMP_VELOCITY;
 
-	if (pm->cmd.forwardmove >= 0)
-	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
-		pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
-	}
-	else
-	{
-		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
-		pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
-	}
+	PM_PlayJumpAnim();
 
 	return qtrue;
 }
@@ -1679,8 +1695,9 @@ static void PM_CrashLand(void)
 				pm->ps->pm_time   = 1000;
 				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_50, PM_FootstepForSurface());
-				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
+
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_LEGS, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
 			}
 		}
 		else if (delta > 58)
@@ -1691,8 +1708,9 @@ static void PM_CrashLand(void)
 				pm->ps->pm_time   = 250;
 				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_25, PM_FootstepForSurface());
-				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
+
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_LEGS, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
 			}
 		}
 		else if (delta > 48)
@@ -1703,8 +1721,9 @@ static void PM_CrashLand(void)
 				pm->ps->pm_time   = 1000;
 				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_15, PM_FootstepForSurface());
-				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
+
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_LEGS, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
 			}
 		}
 		else if (delta > 38.75f)
@@ -1715,8 +1734,9 @@ static void PM_CrashLand(void)
 				pm->ps->pm_time   = 1000;
 				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_10, PM_FootstepForSurface());
-				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
+
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_LEGS, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse);
 			}
 		}
 		else if (delta > 7)
@@ -1810,16 +1830,7 @@ static void PM_GroundTraceMissed(void)
 		PM_TraceAll(&trace, pm->ps->origin, point);
 		if (trace.fraction == 1.0f)
 		{
-			if (pm->cmd.forwardmove >= 0)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
-				pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
-				pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
-			}
+			PM_PlayJumpAnim();
 		}
 	}
 
@@ -1906,14 +1917,7 @@ static void PM_GroundTrace(void)
 		// such that the jump anim playback becomes reproducible/consistent
 		if (pm->waterlevel < 3 && (upwardsdirection >= 0.335f || upwardsdirection <= 0.0f) && !(pm->ps->pm_flags & PMF_LADDER))
 		{
-			if (pm->cmd.forwardmove >= 0)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse);
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse);
-			}
+			PM_PlayJumpAnim();
 		}
 
 		if (pm->cmd.forwardmove >= 0)
@@ -2163,8 +2167,29 @@ static void PM_Footsteps(void)
 	// in the air
 	if (pm->ps->groundEntityNum == ENTITYNUM_NONE)
 	{
-		if (pm->ps->pm_flags & PMF_LADDER)                 // on ladder
+		trace_t trace;
+		vec3_t  end;
+		if (pm->ps->pm_flags & PMF_LADDER) // on ladder
 		{
+			{ // check for peeking off the top from a ladder
+				vec3_t forward, right;
+				vec3_t viewPoint;
+
+				AngleVectors(pm->ps->viewangles, forward, right, NULL);
+				VectorCopy(pm->ps->origin, viewPoint);
+				viewPoint[2] += pm->ps->viewheight + 45;
+
+				VectorMA(viewPoint, 20, forward, end);
+
+				PM_TraceAll(&trace, viewPoint, end);
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_LADDER_PEEK, (!(trace.surfaceFlags & SURF_LADDER)), qtrue);
+				if (!(trace.surfaceFlags & SURF_LADDER))
+				{
+					BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
+				}
+			}
+
+
 			if (pm->ps->velocity[2] >= 0)
 			{
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_CLIMBUP, qtrue);
@@ -2172,6 +2197,26 @@ static void PM_Footsteps(void)
 			else
 			{
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_CLIMBDOWN, qtrue);
+			}
+		}
+		else // check for being midair
+		{
+			vec3_t up;
+
+			AngleVectors(pm->ps->viewangles, NULL, NULL, up);
+
+			VectorMA(pm->ps->origin, -25, up, end);
+
+			PM_TraceAll(&trace, pm->ps->origin, end);
+			if (trace.fraction == 1.0) // we're midair
+			{
+				// check for jumping forward first
+				if (!(pm->cmd.buttons & BUTTON_WALKING) /* running */ && pm->cmd.forwardmove > 0)
+				{
+					BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_JUMPFORWARD, qtrue);
+				}
+
+				BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_MIDAIR, qtrue);
 			}
 		}
 
@@ -5306,11 +5351,11 @@ void PmoveSingle(pmove_t *pmove)
 	PM_GroundTrace();
 	PM_SetWaterLevel();
 
-	// weapons
-	PM_Weapon();
-
 	// footstep events / legs animations
 	PM_Footsteps();
+
+	// weapons
+	PM_Weapon();
 
 	// entering / leaving water splashes
 	PM_WaterEvents();

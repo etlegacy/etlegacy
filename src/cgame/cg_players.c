@@ -579,6 +579,15 @@ static void CG_SetLerpFrameAnimation(centity_t *cent, clientInfo_t *ci, lerpFram
 	}
 }
 
+int CG_CalcLoopFrames(animation_t *anim)
+{
+	if (anim->loopFrames == -1)
+	{
+		return anim->numFrames;
+	}
+	return anim->loopFrames;
+}
+
 /**
  * @brief Sets cg.snap, cg.oldFrame, and cg.backlerp
  * cg.time should be between oldFrameTime and frameTime after exit
@@ -634,11 +643,12 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 		f *= speedScale;        // adjust for haste, etc
 		if (f >= anim->numFrames)
 		{
+			int loopFrames = CG_CalcLoopFrames(anim);
 			f -= anim->numFrames;
-			if (anim->loopFrames)
+			if (loopFrames)
 			{
-				f %= anim->loopFrames;
-				f += anim->numFrames - anim->loopFrames;
+				f %= loopFrames;
+				f += anim->numFrames - loopFrames;
 			}
 			else
 			{
@@ -736,7 +746,7 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 
 	if (newAnimation < 0 || newAnimation >= character->animModelInfo->numAnimations)
 	{
-		CG_Error("CG_SetLerpFrameAnimationRate: Bad animation number: %i\n", newAnimation);
+		CG_Error("CG_SetLerpFrameAnimationRate: Bad animation number: %i (numAnimations: %i)\n", newAnimation, character->animModelInfo->numAnimations);
 	}
 
 	anim = character->animModelInfo->animations[newAnimation];
@@ -799,7 +809,7 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 
 	if ((cg_debugAnim.integer == 1 || cg_debugAnim.integer == 2) && cg_thirdPerson.integer) // extra debug info
 	{
-		CG_Printf("anim-player: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
+		CG_Printf("anim-player: %i : %24s : %3d\n", newAnimation, character->animModelInfo->animations[newAnimation]->name, anim->movetype);
 	}
 }
 
@@ -1048,11 +1058,12 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		//f = ( lf->frameTime - lf->animationTime ) / anim->frameLerp;
 		if (f >= anim->numFrames)
 		{
+			int loopFrames = CG_CalcLoopFrames(anim);
 			f -= anim->numFrames;
-			if (anim->loopFrames)
+			if (loopFrames)
 			{
-				f %= anim->loopFrames;
-				f += anim->numFrames - anim->loopFrames;
+				f %= loopFrames;
+				f += anim->numFrames - loopFrames;
 			}
 			else
 			{
@@ -1266,11 +1277,12 @@ void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimati
 		f = (lf->frameTime - lf->animationTime) / anim->frameLerp;
 		if (f >= anim->numFrames)
 		{
+			int loopFrames = CG_CalcLoopFrames(anim);
 			f -= anim->numFrames;
-			if (anim->loopFrames)
+			if (loopFrames)
 			{
-				f %= anim->loopFrames;
-				f += anim->numFrames - anim->loopFrames;
+				f %= loopFrames;
+				f += anim->numFrames - loopFrames;
 			}
 			else
 			{
@@ -2707,7 +2719,6 @@ void CG_AnimPlayerConditions(bg_character_t *character, centity_t *cent)
 
 	BG_UpdateConditionValue(es->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_UNUSED, qtrue);
 	BG_UpdateConditionValue(es->clientNum, ANIM_COND_STUNNED, 0, qtrue);
-	BG_UpdateConditionValue(es->clientNum, ANIM_COND_SUICIDE, 0, qtrue);
 }
 
 /**
@@ -3455,11 +3466,12 @@ void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimatio
 		f *= speedScale;        // adjust for haste, etc
 		if (f >= anim->numFrames)
 		{
+			int loopFrames = CG_CalcLoopFrames(anim);
 			f -= anim->numFrames;
-			if (anim->loopFrames)
+			if (loopFrames)
 			{
-				f %= anim->loopFrames;
-				f += anim->numFrames - anim->loopFrames;
+				f %= loopFrames;
+				f += anim->numFrames - loopFrames;
 			}
 			else
 			{

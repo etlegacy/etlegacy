@@ -1115,6 +1115,10 @@ static qboolean hit_parse_hit(hit_t *hitModel, mdx_t *mdx, char **ptr)
 			{
 				hit->impactpoint = IMPACTPOINT_KNEE_LEFT;
 			}
+			else if (!Q_stricmp(token, "legs"))
+			{
+				hit->impactpoint = IMPACTPOINT_LEGS;
+			}
 			else
 			{
 				hit->impactpoint = Q_atoi(token);
@@ -2429,11 +2433,16 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 		//f = ( lf->frameTime - lf->animationTime ) / anim->frameLerp;
 		if (f >= anim->numFrames)
 		{
+			int loopFrames = anim->loopFrames;
+			if (anim->loopFrames == -1) {
+				loopFrames = anim->numFrames;
+			}
+
 			f -= anim->numFrames;
-			if (anim->loopFrames)
+			if (loopFrames)
 			{
-				f %= anim->loopFrames;
-				f += anim->numFrames - anim->loopFrames;
+				f %= loopFrames;
+				f += anim->numFrames - loopFrames;
 			}
 			else
 			{

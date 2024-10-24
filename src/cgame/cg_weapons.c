@@ -947,12 +947,13 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 
 		if (f >= anim->numFrames)
 		{
+			int loopFrames = CG_CalcLoopFrames(anim);
 			f -= anim->numFrames;
 
-			if (anim->loopFrames)
+			if (loopFrames)
 			{
-				f %= anim->loopFrames;
-				f += anim->numFrames - anim->loopFrames;
+				f %= loopFrames;
+				f += anim->numFrames - loopFrames;
 			}
 			else
 			{

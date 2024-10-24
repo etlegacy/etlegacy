@@ -1,43 +1,354 @@
 animgroup
 {
+	// NOTE : unused animations are commented out, but retained for
+	//        reference purposes
+
+	// Priorities by convention:
+	//     99 - death
+	//     20 - weapon firing/reload
+	//     13 - weapon holding (grenades)
+	//     10 - weapon raising
+	//      8 - movement climbing
+	//      5 - movement ground
+	//      3 - movement air/jumping
+	//      0 - idling / swimming / default
+
+	//	<animation name>
+	//	|						<first frame>
+	//	|   					|   	<length>
+	//	|   					|   	|   <looping>
+	//	|   					|   	|   |   <fps>
+	//	|   					|   	|   |   |   	<move speed>
+	//	|   					|   	|   |   |   	|   <transition>
+	//	|   					|   	|   |   |   	|   |   <reversed>
+	//	|   					|   	|   |   |   	|   |   |   <priority>
+	//	|   					|   	|   |   |   	|   |   |   |
+
 	animfile "animations/human/base/body.mdx"
 	{
-		#include "animations/human/base/body.aninc"
+		// FIXED_ORDER {{{
+		// XXX : NOTE : IMPORTANT
+		// the first frames of the the first animation defined in this file is
+		// treated special and used for at least 3 distinct cases:
+		//
+		//     1. the first initial frames when a player spawns, after which the
+		//        player lerps to whatever is defined in 'human_base.script'.
+		//
+		//     2. in some cases when a player dies and taps out immediately, the
+		//        very last frame of this animation is used for the corpse they
+		//        leave behind.
+		//
+		//     3. it can occur on the first few frames of a revive animation and
+		//        blends together with it.
+		//
+		default_animation		0		32	0	20		0	0	0	0  // previously 'death_machinegun_1'
+		// FIXED_ORDER }}}
+
+		dead_corpse		 		31		1	1	20		0	0	0	99
+
+		death_general			9		23	0	21		0	0	0	99
+		death_crouch			11		21	0	13		0	0	0	99  // from 'death_general'
+		death_prone				13		19	0	11		0	0	0	99  // from 'death_general'
+
+		wounded_idle_1			173		144	144	20		0	0	0	0
+
+		revive					320		47	0	22		0	0	0	11
+		idle_binoculars			370		57	57	15		0	0	0	20
+		stand_radio				430		110	110	15		0	0	0	10
+
+		relaxed_walk_1h_1		1438	19	19	22		-1	0	0	5
+		relaxed_walk_1h_bk_1	1438	19	19	22		-1	0	1	5
+
+		alert_run_2h			1880	13	13	22		-1	0	0	5
+		alert_run_1h			1894	12	12	22		-1	0	0	5
+		alert_run_no			1907	10	10	15		-1	0	0	5
+		alert_crch_2h			1918	13	13	22		-1	0	0	5
+		alert_crch_1h			1932	14	14	22		-1	0	0	5
+		alert_crchbk_1h			1932	14	14	22		-1	0	1	5
+		alert_crchidle_2h		1947	50	50	7		0	0	0	0
+		alert_crchidle_1h		1998	15	15	5		0	0	0	0
+		alert_bk_2h				1880	13	13	22		-5	0	1	5
+		// OG below - the above 'alert_bk_2h' has instead been replaced with a
+		//			  reversed 'alert_run_2h'
+		// alert_bk_2h			2014	10	10	22		-1	0	0	5
+		alert_bk_1h				2025	12	12	22		-1	0	0	5
+		alert_crbk_1h			2038	13	13	22		-1	0	0	5
+		alert_crbk_2h			2052	15	15	22		-1	0	0	5
+
+		// these are copies of 'alert_' animations above, reversed to just cause
+		// some frame jiggling
+		firing_alert_run_2h		1881	3	-1	25		0	100	1	20
+		firing_alert_run_bk_2h	1881	3	-1	25		0	100	0	20
+		firing_alert_crch_2h	1919	3	-1	25		0	100	1	20
+
+		firing_crch_2h			2088	2	0	40		0	0	0	20
+		firing_crch_1h_idle		2592	5	0	35		0	0	1	20
+		firing_bk_2h			2144	10	10	22		-1	0	0	20
+		firing_crbk_1h			2168	13	0	30		0	0	0	20
+		firing_crbk_2h			2182	3	-1	25		0	100	0	20
+
+		raise_machinegun		2248	3	0	100		0	0	0	20
+		raise_flamethrower		2245	6	0	40		0	0	0	20
+		prone_flamethrower_fire	4595	1	1	20		0	0	0	20
+		stand_machinegun		2253	35	35	20		0	0	0	0
+		firing_machinegun		2288	3	-1	25		0	100	0	20
+		reload_machinegun		2306	43	0	20		0	0	0	20
+		reload_machinegun_cr	2350	42	0	20		0	0	0	20
+		reload_machinegun_fast	2309	40	0	27.5	0	0	0	20
+
+		// reframed copies of 'reload_machinegun'
+		// TODO : these can probably be improved to better match sound in the future
+		reload_fg42				2309	40	0	21.5	0	0	0	20
+		reload_fg42_fast		2309	40	0	36.5	0	0	0	20
+		reload_sten				2310	39	0	13.4 	0	0	0	20
+		reload_sten_fast		2309	40	0	21.5 	0	0	0	20
+
+
+		raise_pistolA			2403	1	0	10		0	0	0	20
+		reload_pistol			2486	27	0	23.5	0	0	0	20
+		reload_pistol_fast		2486	27	0	42		0	0	0	20
+		stand_pistolB			2577	22	22	7		0	0	0	0
+		firing_pistol			2563	10	0	35		0	100	0	20
+		firing_pistolB_1		2554	9	0	14		0	50	0	20
+		firing_pistolB_2		2563	10	0	35		0	100	0	20
+
+		stand_rifle				2623	12	12	5		0	0	0	0
+		stand_scoped_rifle		2623	12	12	5		0	0	0	9
+		firing_rifle			2637	1	0	30		0	0	0	20
+		reload_rifle			2659	22	0	20		0	0	0	20
+
+		raise_grenade			2716	10	0	30		0	0	0	20
+		stand_grenade			2734	24	24	10		0	0	0	0
+		holding_grenadeB		2759	12	0	20		0	0	0	13
+		firing_grenadeB			2772	37	0	40		0	0	0	20
+		holding_grenadeA		2811	10	0	20		0	0	0	13
+
+		throw_underhand			2779	30	0	40		0	0	0	20
+		throw_overhand			2828	34	0	40		0	0	0	20
+		throw_underhand_dyn		2788    21	0	20		0	0	0	20
+		throw_underhand_instant	2788	21	0	25		0	0	0	20
+
+		firing_smoke_grenade	2837	25	0	40		0	0	0	20
+
+		raise_dynamite			2707	20	0	32		0	0	0	20
+
+		stand_mg42				2863	1	1	15		0	0	0	0
+		firing_mg42				2865	6	0	15		0	0	0	20
+
+		raise_knife				2911	20	0	20		0	0	0	20
+		stand_knife				2932	16	16	10		0	0	0	0
+		firing_knife			2960	7	0	40		0	50	0	20
+
+		climb_up				2981	21	21	9.5		-1	0	0	8
+		climb_dis				3004	7	0	40		0	0	0	0
+		climb_down				3082	28	28	12		-1	0	0	8
+
+		jump_1step_2h			3111	11	0	20		0	0	0	3
+		jump_1step_midair_2h	3121	1	0	5		0	0	0	2
+		midair_1step_rifles_2h	3112	1	0	5		0	0	0	2
+		jump_1step_fire_2h		3112	2	-1	15		0	100	0	20
+		jump_1step_1h			3131	11	0	20		0	0	0	3
+		jump_1step_bk_1h		3131	11	0	20		0	0	1	3
+		jump_nostep_1h			3155	6	0	12		0	0	0	3
+
+		swim_2h					3169	30	30	20		0	0	0	0
+		swim_1h					3200	33	33	20		0	0	0	0
+
+		turn_machinegun_R		3259	19	19	40		0	0	0	0
+		turn_crch_R				3279	13	13	15		0	0	0	0
+		turn_crch_L				3293	13	13	15		0	0	0	0
+
+		raise_panzer			3425	8	0	20		0	0	0	20
+		stand_panzer			3434	31	31	20		0	0	0	0
+		firing_panzer			3470	16	0	22		0	0	0	20
+
+		raise_bazooka			2243	10	0	20		0	0	0	20
+		reload_bazooka			2600	22	0	20		0	0	0	20
+		firing_bazooka			2640	18	0	14		0	0	0	20
+		firing_a_drop_bazooka	2600	21	0	9		0	0	1	20
+
+		firing_pliers			3540	19	-1	20		0	50	0	20
+		reload_syringe			2911	20	0	15		0	0	0	20
+		firing_syringe			3574	35	0	30		0	0	0	20
+		raise_medpack			3590	10	0	20		0	0	0	20
+		stand_medpack			3605	30	30	20		0	0	0	0
+
+		run_medpack				3640	12	12	20		0	0	0	0
+		raise_sniper			3660	5	0	20		0	0	0	20
+
+		fire_run_srifle			3668	1	-1	50		0	50	0	20
+		alert_run_srifle		3670	13	13	22		-1	0	0	5
+		alert_crch_srifle		3690	13	13	22		-1	0	0	5
+		alert_crchidle_srifle	3710	50	50	7		0	0	0	0
+		alert_bk_srifle			3765	10	10	22		-1	0	0	5
+		alert_crbk_srifle		3780	15	15	22		-1	0	0	5
+		firing_crch_srifle		3800	1	1	3		-1	0	0	8
+		firing_run_srifle		3820	3	0	22		1000	0	0	20
+		firing_bk_srifle		3840	10	10	22		-1	0	0	20
+		firing_srifle			3855	1	0	37		0	50	0	20
+		firing_fg42				3855	2	-1	37		0	100	0	20
+		stand_srifle			3885	35	35	20		0	0	0	0
+		fire_srifle				3972	1	-1	20		0	0	0	20
+
+		// SILENCER
+		attach_silencer			4280	20	0	28		0	0	0	20
+		detach_silencer			4280	20	0	20		0	0	1	20
+
+		// GRENADE LAUNCER
+		stand_grenlauncher		4323	20	20	12		0	0	0	0
+		firing_grenlauncher		4344	3	0	20		0	0	0	20
+		raise_grenlauncher		4356	1	0	100		0	0	0	20
+		attach_grenlauncher		4303	20	0	8.5		0	0	0	20
+		detach_grenlauncher		4302	20	0	21		0	0	1	20
+
+		// MOBILE MG 42
+		stand_mobilemg42		4361	19	19	10		0	0	0	0
+		firing_mobilemg42		4382	6	-1	20		0	0	0	20
+		// ↓ one above firing priority, otherwise for some reason breaks the animations - probably an error in the code
+		reload_mobilemg42		4390	30	0	10.1	0	0	0	21
+		raise_mobilemg42		4426	4	0	15		0	0	0	20
+		attach_mobilemg42		4303	20	0	8.5		0	0	0	22
+		detach_mobilemg42		4302	20	0	12.8	0	0	1	22
+
+		// MORTAR
+		mortar_deployed			4795	5	5	2		0	0	0	0
+		mortar_fire				4799	10	0	11		0	0	0	20
+
+		// SATCHEL
+		raise_satchel			3592	8	0	30		0	0	0	20
+		throw_satchel			2793    15	0	50		0	0	0	20
+		// SATCHEL CHARGE REMOTE
+		satchel_remote_raise	4828	4	0	15		0	0	0	20
+		satchel_remote_stand	4831	1	1	20		0	0	0	0
+		satchel_remote_fire		2791	15	0	23		0	0	1	20
+
+		// SELF INJECT 4870
+		self_inject				4848	16	0	15		0	0	0	20
+
+		// PRONE {{{
+		// Prone Movement
+		prone_crawl				4431	19	19	15		0	0	0	5
+		prone_crawl_bk			4431	19	19	15		0	0	1	5
+
+		// Prone Pistol
+		prone_pistol_switch		4450	6	0	15		0	0	0	20
+		prone_pistol_fire 		4464	1	0	20		0	0	0	20
+		prone_pistol_reload		4476	40	0	35		0	0	0	20
+		prone_pistol_freload	4476	40	0	63		0	0	0	20
+		Prone_Pistol_idle		4459	1	0	20		0	0	0	0
+
+		// Prone Rifle
+		prone_rifle_switch		4527	2	0	15		0	0	0	20
+		prone_rifle_fire		4529	2	0	30		0	0	0	20
+		prone_rifle_reload		4532	12	0	12		0	0	0	20 // @TODO improve
+		prone_rifle_idle		4528	1	0	20		0	0	0	0
+
+		// Prone Machine Gun
+		prone_mg_switch			4590	3	0	200		0	0	0	20
+		prone_mg_fire			4594	3	-1	20		0	0	0	20
+		prone_mg_reload			4599	31	0	14.5	0	0	0	20
+		prone_mg_reload_fast	4599	31	0	23		0	0	0	20
+		prone_mg_idle			4594	1	0	20		0	0	0	0
+
+		// Prone Mg42
+		prone_mg42_switch		4720	18	0	18		0	0	0	20
+		prone_mg42_fire			4740	4	-1	25		0	0	0	20
+		prone_mg42_reload		4745	39	0	13		0	0	0	21
+		prone_mg42_idle			4783	1	0	20		0	0	0	0
+
+		// Prone Panzerfaust
+		prone_panzer_raise		4657	5	0	12		0	0	1	10
+		prone_panzer_idle		4657	1	0	20		0	0	0	0
+		prone_baz_idle			4658	1	0	20		0	0	0	0
+		prone_baz_raise			4658	4	0	12		0	0	1	10
+
+		// Prone grenade
+		grenade_raise_proned	4647	2	0	18		0	0	0	10
+		throw_proned			4648	13	0	19		0	0	0	20
+		throw_proned_fast		4648	13	0	24		0	0	0	20
+		prone_grenade_idle		4649	1	0	20		0	0	0	0
+
+		// Prone Pokey
+		prone_poke_switch		4662	10	0	18		0	0	0	20
+		prone_poke_fire			4672	17	-1	20		0	0	0	20
+		prone_poke_idle			4672	1	0	20		0	0	0	0
+
+		// Prone Knife
+		prone_knife_switch		4662	10	0	18		0	0	0	20
+		prone_knife_attack		4689	10	0	25		0	0	0	20
+		prone_knife_idle		4672	1	0	20		0	0	0	0
+
+		prone_syringe_attack	4691	8	0	35		0	0	0	20
+
+		// Prone Legs
+		prone_legs				4594	1	0	20		0	0	0	0
+
+		open_door_1				3392	2	0	10		0	0	0	10
+		open_door_2				4416	17	0	10		0	0	0	10
+
+		break_legs				2787	13	0	50		0	0	0	9
+
+		satchel_remote_walk		1555	76	76	20		-1	0	0	5
 	}
 	animfile "animations/human/base/mortar.mdx"
 	{
-		#include "animations/human/base/mortar.aninc"
+		e_mortar_stand			0		10	10	6		0	0	0	0
+		e_mortar_raise			11		7	0	6		0	0	0	10
+		e_mortar_run			19		10	10	15		0	0	0	0
 	}
 	animfile "animations/human/base/akimbo.mdx"
 	{
-		#include "animations/human/base/akimbo.aninc"
+		firing_akimbo			1		3	0	15		0	0	0	20
+		firing_akimbo2			5		3	0	15		0	0	0	20
+		raise_akimbo			56		1	0	60		0	0	0	10
+		stand_akimbo			57		3	0	15		0	0	0	0
+		reload_akimbo			8		39	0	15.1	0	0	0	20
 	}
 	animfile "animations/human/base/prone_pistol.mdx"
 	{
-		#include "animations/human/base/prone_pistol.aninc"
+		e_prone_pistol_switch	10		1	0	24		0	0	0	10
+		e_prone_pistol_attach	69		20	0	34		0	0	0	20
+		e_prone_pistol_detach	69		20	0	27		0	0	1	20
 	}
 	animfile "animations/human/base/prone_rifle.mdx"
 	{
-		#include "animations/human/base/prone_rifle.aninc"
+		e_prone_rifle_altidle	57		1	1	24		0	0	0	0
+		e_prone_rifle_fire		12		4	0	15		0	0	0	20
+		e_prone_rifle_altfire	107		3	0	24		0	0	0	20
+		e_prone_rifle_attach	65		39	0	18.3	0	0	0	20
+		e_prone_rifle_detach	65		20	0	21		0	0	1	20
+		e_prone_rifle_snipe		54		7	0	18		0	0	0	10  // actually raiseweaponprone
+		e_prone_rifle_snipefire	58		3	0	18		0	0	0	20
+		e_prone_rifle_snipeidle	57		1	0	18		0	0	0	0
+		e_prone_heavymg_attach	84		20	0	20		0	0	0	22
+		e_prone_heavymg_detach	79		19	0	12		0	0	1	22
 	}
 	animfile "animations/human/base/prone_dual_pistols.mdx"
 	{
-		#include "animations/human/base/prone_dual_pistols.aninc"
+		e_prone_pistols_switch	0		6	0	24		0	0	0	10
+		e_prone_pistols_idle	6		1	1	24		0	0	0	0
+		e_prone_pistols_fire	11		2	0	15		0	0	0	20
+		e_prone_pistols_fire2	7		2	0	15		0	0	0	20
+		e_prone_pistols_reload	15		50	0	20.5	0	0	0	20
 	}
 	animfile "animations/human/base/prone_mortar.mdx"
 	{
-		#include "animations/human/base/prone_mortar.aninc"
+		e_prone_mortar_stand	5		1	1	24		0	0	0	0
+		e_prone_mortar_raise	0		5	0	24		0	0	0	0
 	}
 	animfile "animations/human/base/binocs.mdx"
 	{
-		#include "animations/human/base/binocs.aninc"
+		e_prone_binocs_rase		0		10	0	24		0	0	0	10
+		e_prone_binocs_idle		11		7	0	6		0	0	0	0
+		e_prone_binocs_lie		15		5	0	15		0	0	0	0
 	}
 	animfile "animations/human/base/no_juice.mdx"
 	{
-		#include "animations/human/base/no_juice.aninc"
+		e_no_juice				0		30	0	15		0	0	0	9
 	}
 	animfile "animations/human/base/swim.mdx"
 	{
-		#include "animations/human/base/swim.aninc"
+		e_swim_2h				0		30	30	20		0	0	0	0
+		e_swim_1h				31		33	33	20		0	0	0	0
 	}
 }

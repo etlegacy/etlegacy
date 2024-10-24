@@ -2244,6 +2244,10 @@ typedef enum
 
 	ANIM_MT_DEAD,
 
+	ANIM_MT_JUMP,
+	ANIM_MT_JUMPFORWARD,
+	ANIM_MT_MIDAIR,
+
 	NUM_ANIM_MOVETYPES
 } scriptAnimMoveTypes_t;
 
@@ -2275,6 +2279,7 @@ typedef enum
 	ANIM_ET_RAISEWEAPONPRONE,
 	ANIM_ET_RELOADPRONE,
 	ANIM_ET_NOPOWER,
+	ANIM_ET_ACTIVATE,
 
 	NUM_ANIM_EVENTTYPES
 } scriptAnimEventTypes_t;
@@ -2321,7 +2326,8 @@ typedef enum
 	ANIM_COND_GEN_BITFLAG,     ///< general bit flags (to save some space)
 	ANIM_COND_AISTATE,         ///< our current ai state (sometimes more convenient than creating a separate section)
 	ANIM_COND_SUICIDE,
-	ANIM_COND_RELOADING,
+	ANIM_COND_FAST_RELOAD,
+	ANIM_COND_LADDER_PEEK,
 
 	NUM_ANIM_CONDITIONS
 } scriptAnimConditions_t;
@@ -2489,6 +2495,7 @@ typedef enum
 	IMPACTPOINT_SHOULDER_LEFT,
 	IMPACTPOINT_KNEE_RIGHT,
 	IMPACTPOINT_KNEE_LEFT,
+	IMPACTPOINT_LEGS,
 
 	NUM_ANIM_COND_IMPACTPOINT
 } animScriptImpactPoint_t;
@@ -2809,6 +2816,7 @@ qboolean PC_Color_Parse(int handle, vec4_t *c);
 qboolean PC_Vec_Parse(int handle, vec3_t *c);
 qboolean PC_Float_Parse(int handle, float *f);
 qboolean PC_Point_Parse(int handle, vec2_t *c);
+qboolean PC_PseudDec_Parse(int handle, long *l);
 
 /**
  * @enum uiMenuCommand_t
