@@ -1129,6 +1129,11 @@ typedef struct version_s
 
 void CG_ParseMapEntityInfo(int axis_number, int allied_number);
 
+typedef struct
+{
+	char compatPath[MAX_OSPATH];
+} demoBackwardsCompat_t;
+
 #define MAX_WEAP_BANKS_MP          10
 #define MAX_WEAPS_IN_BANK_MP       18
 #define MAX_WEAP_BANK_SWITCH_ORDER 4
@@ -1150,6 +1155,8 @@ typedef struct
 	qboolean demoPlayback;
 	demoPlayInfo_t *demoinfo;
 	version_t demoVersion;
+	demoBackwardsCompat_t demoBackwardsCompat;
+
 	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
@@ -3052,7 +3059,7 @@ void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
 int CG_RoundTime(qtime_t *qtime);
-qboolean CG_IsVersionCompatible(version_t *current, version_t *minimum);
+qboolean CG_IsDemoVersionBelow(int major, int minor, int patch);
 
 void CG_HudEditor_Cleanup();
 
@@ -3064,6 +3071,9 @@ sfxHandle_t CG_GetGameSound(int index);
 void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 int CG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF);
+
+int CG_LoadCompatSource(const char *filename);
+int CG_FOpenCompatFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
 
 // cg_view.c
 void CG_TestModel_f(void);
@@ -4532,4 +4542,5 @@ float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHe
 
 void CG_DrawCursor(float x, float y);
 
+void CG_DemoBackwardsCompatInit();
 #endif // #ifndef INCLUDE_CG_LOCAL_H
