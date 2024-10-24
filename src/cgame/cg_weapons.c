@@ -2768,8 +2768,15 @@ qboolean CG_WeaponSelectable(int weapon, qboolean playSound)
 	// check if the selected weapon is available
 	if (!(COM_BitCheck(cg.predictedPlayerState.weapons, weapon)))
 	{
-		// play no ammo sound if some weapons we tried to switch to are not available
-		if (playSound && cg_weapSwitchNoAmmoSounds.integer && (weapon == WP_GRENADE_LAUNCHER || weapon == WP_GRENADE_PINEAPPLE))
+		// play noAmmoSound if we try to switch to empty grenades
+      //
+		// XXX : for some reason, when we use up all our grenades, the grenade
+		// iself becomes unavailable - we still want to play a noAmmoSound in
+		// that scenario tho - so we do the following:
+		if (playSound && cg_weapSwitchNoAmmoSounds.integer && (
+				(cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS && weapon == WP_GRENADE_LAUNCHER)
+				|| (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES && weapon == WP_GRENADE_PINEAPPLE)
+				))
 		{
 			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cgs.media.noAmmoSound);
 		}
@@ -2779,7 +2786,7 @@ qboolean CG_WeaponSelectable(int weapon, qboolean playSound)
 	if (!CG_WeaponHasAmmo((weapon_t)weapon))
 	{
 		// play noAmmoSound if the weapon we tried to switch to is out of ammo
-		if (playSound && cg_weapSwitchNoAmmoSounds.integer)
+		if (playSound && cg_weapSwitchNoAmmoSounds.integer && GetWeaponTableData(weapon)->useAmmo == qtrue)
 		{
 			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cgs.media.noAmmoSound);
 		}
