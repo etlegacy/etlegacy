@@ -3080,7 +3080,7 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 			}
 		}
 		// this fixes cg.switchbackWeapon=0 after very first spawn and switching weapon for the first time
-		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastWeapon, qtrue)) // ensure last weapon is available
+		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastWeapon, qfalse)) // ensure last weapon is available
 		{
 			if (!(GetWeaponTableData(lastWeapon)->type & WEAPON_TYPE_SCOPED))
 			{
@@ -3419,14 +3419,14 @@ void CG_NextWeap(qboolean switchBanks)
 				}
 			}
 
-			if (CG_WeaponSelectable(num, qtrue))
+			if (CG_WeaponSelectable(num, qfalse))
 			{
 				break;
 			}
 
 			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
-				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qfalse))
 				{
 					num = GetWeaponTableData(num)->weapAlts;
 					break;
@@ -3470,14 +3470,14 @@ void CG_NextWeap(qboolean switchBanks)
 			//  continue;
 			//}
 
-			if (CG_WeaponSelectable(num, qtrue))       // first entry in bank was selectable, no need to scan the bank
+			if (CG_WeaponSelectable(num, qfalse))       // first entry in bank was selectable, no need to scan the bank
 			{
 				break;
 			}
 
 			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
-				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qfalse))
 				{
 					num = GetWeaponTableData(num)->weapAlts;
 					break;
@@ -3494,14 +3494,14 @@ void CG_NextWeap(qboolean switchBanks)
 				// continue;
 				//}
 
-				if (CG_WeaponSelectable(num, qtrue))       // found selectable weapon
+				if (CG_WeaponSelectable(num, qfalse))       // found selectable weapon
 				{
 					break;
 				}
 
 				if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 				{
-					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
+					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qfalse))
 					{
 						num = GetWeaponTableData(num)->weapAlts;
 						break;
@@ -3574,14 +3574,14 @@ void CG_PrevWeap(qboolean switchBanks)
 			//  continue;
 			//}
 
-			if (CG_WeaponSelectable(num, qtrue))
+			if (CG_WeaponSelectable(num, qfalse))
 			{
 				break;
 			}
 
 			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
-				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qfalse))
 				{
 					num = GetWeaponTableData(num)->weapAlts;
 					break;
@@ -3619,14 +3619,14 @@ void CG_PrevWeap(qboolean switchBanks)
 				continue;
 			}
 
-			if (CG_WeaponSelectable(num, qtrue))       // first entry in bank was selectable, no need to scan the bank
+			if (CG_WeaponSelectable(num, qfalse))       // first entry in bank was selectable, no need to scan the bank
 			{
 				break;
 			}
 
 			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
-				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qfalse))
 				{
 					num = GetWeaponTableData(num)->weapAlts;
 					break;
@@ -3639,14 +3639,14 @@ void CG_PrevWeap(qboolean switchBanks)
 			{
 				num = getPrevWeapInBank(newbank, j);
 
-				if (CG_WeaponSelectable(num, qtrue))       // found selectable weapon
+				if (CG_WeaponSelectable(num, qfalse))       // found selectable weapon
 				{
 					break;
 				}
 
 				if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 				{
-					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qtrue))
+					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts, qfalse))
 					{
 						num = GetWeaponTableData(num)->weapAlts;
 						break;
@@ -3779,7 +3779,7 @@ void CG_LastWeaponUsed_f(void)
 		return;
 	}
 
-	if (CG_WeaponSelectable(cg.switchbackWeapon, qtrue))
+	if (CG_WeaponSelectable(cg.switchbackWeapon, qfalse))
 	{
 		CG_FinishWeaponChange(cg.weaponSelect, cg.switchbackWeapon);
 	}
