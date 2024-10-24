@@ -1682,17 +1682,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		// out the movement immediately
 		if (!targ->client->ps.pm_time)
 		{
-			int t = knockback * 2;
-
-			if (t < 50)
-			{
-				t = 50;
-			}
-			if (t > 200)
-			{
-				t = 200;
-			}
-			targ->client->ps.pm_time   = t;
+			targ->client->ps.pm_time   = Com_Clamp(50, 200, knockback * 2);
 			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 		}
 	}
