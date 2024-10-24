@@ -1531,54 +1531,6 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		}
 	}
 
-	// figure momentum add, even if the damage won't be taken
-	if (knockback && targ->client)
-	{
-		vec3_t kvel;
-		float  mass = 200;
-
-		VectorScale(dir, g_knockback.value * (float)knockback / mass, kvel);
-		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
-
-		// are we pushed? Do not count when already flying ...
-		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || GetMODTableData(mod)->isExplosive))
-		{
-			targ->client->pmext.shoved = qtrue;
-			targ->client->pmext.pusher = attacker - g_entities;
-		}
-
-		// MOD_ROCKET removed (now MOD_EXPLOSIVE) which is never targ == attacker
-		if (targ == attacker && !(mod != MOD_GRENADE &&
-		                          mod != MOD_GRENADE_LAUNCHER &&
-		                          mod != MOD_GRENADE_PINEAPPLE &&
-		                          mod != MOD_DYNAMITE
-		                          && mod != MOD_GPG40 // ?!
-		                          && mod != MOD_M7 // ?!
-		                          && mod != MOD_LANDMINE
-		                          ))
-		{
-			targ->client->ps.velocity[2] *= 0.25f;
-		}
-
-		// set the timer so that the other client can't cancel
-		// out the movement immediately
-		if (!targ->client->ps.pm_time)
-		{
-			int t = knockback * 2;
-
-			if (t < 50)
-			{
-				t = 50;
-			}
-			if (t > 200)
-			{
-				t = 200;
-			}
-			targ->client->ps.pm_time   = t;
-			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
-		}
-	}
-
 	// adrenaline junkie!
 	if (targ->client && targ->client->ps.powerups[PW_ADRENALINE])
 	{
@@ -1695,6 +1647,54 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		// re-adjust now because we are changing eFlags and pm_flags
 		// and doing it later would overwrite them
 		G_ReAdjustSingleClientPosition(targ);
+	}
+
+	// figure momentum add, even if the damage won't be taken
+	if (knockback && targ->client)
+	{
+		vec3_t kvel;
+		float  mass = 200;
+
+		VectorScale(dir, g_knockback.value * (float)knockback / mass, kvel);
+		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
+
+		// are we pushed? Do not count when already flying ...
+		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || GetMODTableData(mod)->isExplosive))
+		{
+			targ->client->pmext.shoved = qtrue;
+			targ->client->pmext.pusher = attacker - g_entities;
+		}
+
+		// MOD_ROCKET removed (now MOD_EXPLOSIVE) which is never targ == attacker
+		if (targ == attacker && !(mod != MOD_GRENADE &&
+		                          mod != MOD_GRENADE_LAUNCHER &&
+		                          mod != MOD_GRENADE_PINEAPPLE &&
+		                          mod != MOD_DYNAMITE
+		                          && mod != MOD_GPG40 // ?!
+		                          && mod != MOD_M7 // ?!
+		                          && mod != MOD_LANDMINE
+		                          ))
+		{
+			targ->client->ps.velocity[2] *= 0.25f;
+		}
+
+		// set the timer so that the other client can't cancel
+		// out the movement immediately
+		if (!targ->client->ps.pm_time)
+		{
+			int t = knockback * 2;
+
+			if (t < 50)
+			{
+				t = 50;
+			}
+			if (t > 200)
+			{
+				t = 200;
+			}
+			targ->client->ps.pm_time   = t;
+			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+		}
 	}
 
 #ifndef DEBUG_STATS
