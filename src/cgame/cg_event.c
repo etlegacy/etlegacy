@@ -2290,7 +2290,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (es->number == cg.snap->ps.clientNum)
 		{
-			if ((cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect))
+			if ((cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect, qfalse))
 			    || (GetWeaponTableData(es->weapon)->firingMode & (WEAPON_FIRING_MODE_ONE_SHOT | WEAPON_FIRING_MODE_THROWABLE)))
 			{
 				CG_OutOfAmmoChange(event == EV_NOAMMO);
