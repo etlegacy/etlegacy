@@ -51,6 +51,8 @@ weaponDef
 		firstPerson {
 			model			"models/weapons2/flamethrower/v_flamethrower.md3"
 			//flashModel	""
+			dynFov90 -1.0 3.0 1.0
+			dynFov120 5.0 -4.0 1.0
 		}
 
 		thirdPerson {

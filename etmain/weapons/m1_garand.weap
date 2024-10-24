@@ -79,6 +79,9 @@ weaponDef
 			alliedskin	"models/multiplayer/m1_garand/m1_garand_allied.skin"
 			flashModel	"models/multiplayer/m1_garand/v_m1_garand_flash.mdc"
 
+			dynFov90 -3.0 0.0 1.0
+			dynFov120 1.0 -4.0 1.0
+
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
 			weaponLink

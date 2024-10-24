@@ -49,6 +49,9 @@ weaponDef
 		firstPerson {
 			model			"models/multiplayer/medpack/v_medpack.md3"
 			//flashModel	""
+
+			dynFov90 -4.0 5.0 -2.0
+			dynFov120 -2.0 -4.0 -0.5
 		}
 
 		thirdPerson {
