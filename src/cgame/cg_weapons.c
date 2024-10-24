@@ -2416,10 +2416,14 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// draw all gun models (1)
 	// draw only melee weapon, syringe and pliers, and throwables (incl. grenades) (2)
 	if (!cg_drawGun.integer || (cg_drawGun.integer == 2
-	                            && GetWeaponTableData(ps->weapon)->type
-	                            && !(GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_GRENADE)
-	                            && !(GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_MELEE)
-	                            && !(GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_SYRINGUE)))
+	                            && (ps->eFlags & EF_MOUNTEDTANK
+	                                || (GetWeaponTableData(ps->weapon)->type
+	                                    && !(GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_GRENADE)
+	                                    && !(GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_MELEE)
+	                                    && !(GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_SYRINGUE))
+	                                )
+	                            )
+	    )
 	{
 		if (!BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 		{
