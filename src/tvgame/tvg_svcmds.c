@@ -512,10 +512,6 @@ void Svcmd_EntityList_f(void)
 		{
 			Q_strcat(line, sizeof(line), va("^3%-27s^7", enttypenames[check->s.eType]));
 		}
-		else
-		{
-			Q_strcat(line, sizeof(line), va("^2%-27s^7", eventnames[check->s.eType - ET_EVENTS]));
-		}
 
 		if (check->classname)
 		{

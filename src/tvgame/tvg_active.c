@@ -120,7 +120,7 @@ void TVG_SpectatorThink(gclient_t *client, usercmd_t *ucmd)
 		pm.pointcontents = trap_PointContents;
 		pm.activateLean  = client->pers.activateLean;
 
-		Pmove(&pm);
+		TVG_Pmove(&pm);
 
 		// Activate - made it a latched event (occurs on keydown only)
 		//if (client->latched_buttons & BUTTON_ACTIVATE)
@@ -374,7 +374,7 @@ void TVG_ClientThink(int clientNum)
  */
 void TVG_SpectatorClientEndFrame(gclient_t *client)
 {
-	if (level.intermission)
+	if (level.intermission && client->ps.pm_type != PM_INTERMISSION)
 	{
 		// take out of follow mode if needed
 		if (client->sess.spectatorState == SPECTATOR_FOLLOW)
@@ -383,8 +383,8 @@ void TVG_SpectatorClientEndFrame(gclient_t *client)
 		}
 
 		client->ps.pm_type = PM_INTERMISSION;
-		VectorCopy(level.ettvMasterPs.origin, client->ps.origin);
-		VectorCopy(level.ettvMasterPs.viewangles, client->ps.viewangles);
+		VectorCopy(level.intermission_origin, client->ps.origin);
+		VectorCopy(level.intermission_angle, client->ps.viewangles);
 	}
 
 	// if we are doing a chase cam or a remote view, grab the latest info

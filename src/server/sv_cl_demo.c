@@ -93,6 +93,12 @@ void SV_CL_Record_f(void)
 		return;
 	}
 
+	if (svclc.demo.playing)
+	{
+		Com_Printf("Cannot record while playing demo.\n");
+		return;
+	}
+
 	if (svcls.state != CA_ACTIVE)
 	{
 		Com_Printf("You must be in a level to record.\n");

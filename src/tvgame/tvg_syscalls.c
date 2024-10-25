@@ -812,23 +812,12 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key)
 }
 
 /**
-* @brief Extension for informing engine about demo support
-*       and (optional) which commands should be saved and send only per request during plaback (imitating server generating those)
-*
-* Example: gstats\\sgstats\\sc0\\score\\sc1\\score  (send -> what player requests, save -> what is send after that request)
-*            |        |      |     |     |     |
-*          save      send   save send   save  send
-*/
-void trap_DemoSupport(const char *commands)
+ * @brief trap_TVG_GetPlayerstate
+ * @param[in] clientNum
+ * @param[in,out] ps
+ * @return qtrue if playerstate is valid
+ */
+qboolean trap_TVG_GetPlayerstate(int clientNum, playerState_t *ps)
 {
-	if (dll_trap_DemoSupport)
-	{
-		SystemCall(dll_trap_DemoSupport, commands);
-	}
-}
-
-
-int trap_ETTV_GetPlayerstate(int clientNum, playerState_t *ps)
-{
-	return SystemCall(G_ETTV_GetPlayerstate, clientNum, ps);
+	return (qboolean)SystemCall(TVG_GET_PLAYERSTATE, clientNum, ps);
 }
