@@ -225,18 +225,19 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 			le->angles.trBase[0] = (rand() & 31) + 60;    // bullets should come out horizontal not vertical JPW NERVE
 
-			// XXX : 1st person offsets for guns with wonky 'tag_brass' tags
-			if (cent->currentState.weapon == WP_KAR98)
+			// apply first person brass offset
+			VectorCopy(cg_weapons[cent->currentState.weapon].firstPersonEjectBrassOffset, offset);
+			if (offset[0] != 0.0 || offset[1] != 0.0 || offset[2] != 0.0)
 			{
-				vec3_t right;
-
-				AngleVectors(cent->lerpAngles, NULL, right, NULL);
-				VectorMA(re->origin, 8.0, right, re->origin);
+				AngleVectors(cent->lerpAngles, forward, right, up);
+				VectorMA(re->origin, offset[0], forward, re->origin);
+				VectorMA(re->origin, offset[1], right, re->origin);
+				VectorMA(re->origin, offset[2], up, re->origin);
 			}
 		}
 		else
 		{
-			VectorCopy(cg_weapons[cent->currentState.weapon].ejectBrassOffset, offset);
+			VectorCopy(cg_weapons[cent->currentState.weapon].thirdPersonEjectBrassOffset, offset);
 			le->angles.trBase[0] = (rand() & 15) + 82;   // bullets should come out horizontal not vertical JPW NERVE
 		}
 	}
@@ -316,7 +317,7 @@ void CG_PanzerFaustEjectBrass(centity_t *cent)
 	float         waterScale = 1.0f;
 	vec3_t        v[3];
 
-	VectorCopy(cg_weapons[cent->currentState.weapon].ejectBrassOffset, offset);
+	VectorCopy(cg_weapons[cent->currentState.weapon].thirdPersonEjectBrassOffset, offset);
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
@@ -2876,7 +2877,7 @@ qboolean CG_WeaponSelectable(int weapon, qboolean playSound)
 	if (!(COM_BitCheck(cg.predictedPlayerState.weapons, weapon)))
 	{
 		// play noAmmoSound if we try to switch to empty grenades
-      //
+		//
 		// XXX : for some reason, when we use up all our grenades, the grenade
 		// iself becomes unavailable - we still want to play a noAmmoSound in
 		// that scenario tho - so we do the following:

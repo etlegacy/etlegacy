@@ -43,7 +43,6 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		ejectBrassOffset    16 -4 24
 
 		fireRecoil 2 1 0    // kick angle
 		adjustLean 1 1 2
@@ -78,6 +77,8 @@ weaponDef
 			axisskin	"models/multiplayer/kar98/kar98_axis.skin"
 			alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
 			flashModel	"models/multiplayer/kar98/v_kar98_flash.mdc"
+
+			ejectBrassOffset	20.0 14.0 -15.0
 
 			dynFov90 -4.0 5.0 1.5
 			dynFov120 1.0 -2.0 1.5
@@ -124,6 +125,8 @@ weaponDef
 		thirdPerson {
 			model			"models/multiplayer/kar98/kar98_gren_pickup.md3"
 			flashmodel		"models/multiplayer/kar98/kar98_3rd_flash.mdc"
+
+			ejectBrassOffset	16 -4 24
 		}
 	}
 }

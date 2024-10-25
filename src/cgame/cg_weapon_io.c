@@ -467,6 +467,20 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 				return qfalse;
 			}
 		}
+		else if (viewType == W_FP_MODEL && !Q_stricmp(token.string, "ejectBrassOffset"))
+		{
+			if (!PC_Vec_Parse(handle, &weaponInfo->firstPersonEjectBrassOffset))
+			{
+				return CG_RW_ParseError(handle, "expected ejectBrassOffset as forward left up");
+			}
+		}
+		else if (viewType == W_TP_MODEL && !Q_stricmp(token.string, "ejectBrassOffset"))
+		{
+			if (!PC_Vec_Parse(handle, &weaponInfo->thirdPersonEjectBrassOffset))
+			{
+				return CG_RW_ParseError(handle, "expected ejectBrassOffset as forward left up");
+			}
+		}
 		else if (!Q_stricmp(token.string, "dynFov90"))
 		{
 			if (!PC_Vec_Parse(handle, &weaponInfo->dynFov90))
@@ -1577,13 +1591,6 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			else if (!Q_stricmp(filename, "PanzerFaustEjectBrass"))
 			{
 				weaponInfo->ejectBrassFunc = CG_PanzerFaustEjectBrass;
-			}
-		}
-		else if (!Q_stricmp(token.string, "ejectBrassOffset"))
-		{
-			if (!PC_Vec_Parse(handle, &weaponInfo->ejectBrassOffset))
-			{
-				return CG_RW_ParseError(handle, "expected ejectBrassOffset as foward left up");
 			}
 		}
 		else if (!Q_stricmp(token.string, "fireRecoil"))
