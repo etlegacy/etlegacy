@@ -2381,8 +2381,9 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	// do the trick)
 	if (!cg.weaponSelect && cg.snap->ps.weapon)
 	{
-		cg.weaponSelect     = cg.snap->ps.weapon;
-		cg.weaponSelectTime = cg.time;
+		cg.weaponSelect             = cg.snap->ps.weapon;
+		cg.weaponSelectTime         = cg.time;
+		cg.weaponSelectDuringFiring = (cg.snap->ps.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 	}
 
 	// The very first frame

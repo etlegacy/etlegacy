@@ -1555,6 +1555,16 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				return;
 			}
 			break;
+		case WP_MEDIC_SYRINGE:
+			// don't draw the syringe twice when dropping after firing
+			if (
+				(cg_weapAnims.integer & WEAPANIM_FIRING)
+				&& ((cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cg.weaponSelectDuringFiring > 0) || (cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerEntity.pe.weap.frame > 18)) && cg.weaponSelect != WP_MEDIC_SYRINGE
+				)
+			{
+				return;
+			}
+			break;
 		case WP_MEDKIT:
 		case WP_AMMO:
 			if (
@@ -3252,8 +3262,9 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE) && (cg.pmext.silencedSideArm & 2))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE) && !(cg.pmext.silencedSideArm & 2)))
 		{
-			newWeapon       = GetWeaponTableData(newWeapon)->weapAlts;
-			cg.weaponSelect = newWeapon;
+			newWeapon                   = GetWeaponTableData(newWeapon)->weapAlts;
+			cg.weaponSelect             = newWeapon;
+			cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 		}
 	}
 
@@ -3326,7 +3337,8 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 		}
 	}
 
-	cg.weaponSelect = newWeapon;
+	cg.weaponSelect             = newWeapon;
+	cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 }
 
 extern pmove_t cg_pmove;

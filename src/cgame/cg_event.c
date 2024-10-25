@@ -461,7 +461,8 @@ static void CG_ItemPickup(int itemNum)
 		// we just drop current weapon
 		if (!COM_BitCheck(cg.snap->ps.weapons, cg.weaponSelect))
 		{
-			cg.weaponSelect = WP_NONE;
+			cg.weaponSelect             = WP_NONE;
+			cg.weaponSelectDuringFiring = (cg.snap->ps.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 		}
 
 		if (cg_autoswitch.integer && cg.predictedPlayerState.weaponstate != WEAPON_RELOADING)
@@ -479,14 +480,16 @@ static void CG_ItemPickup(int itemNum)
 				// no weap currently selected, always just select the new one
 				if (!cg.weaponSelect)
 				{
-					cg.weaponSelectTime = cg.time;
-					cg.weaponSelect     = itemid;
+					cg.weaponSelectTime         = cg.time;
+					cg.weaponSelect             = itemid;
+					cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 				}
 				// 1 - always switch to new weap
 				else if (cg_autoswitch.integer == 1)
 				{
-					cg.weaponSelectTime = cg.time;
-					cg.weaponSelect     = itemid;
+					cg.weaponSelectTime         = cg.time;
+					cg.weaponSelect             = itemid;
+					cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 				}
 				else
 				{
@@ -499,8 +502,9 @@ static void CG_ItemPickup(int itemNum)
 					{
 						if (!COM_BitCheck(cg.snap->ps.weapons, itemid))
 						{
-							cg.weaponSelectTime = cg.time;
-							cg.weaponSelect     = itemid;
+							cg.weaponSelectTime         = cg.time;
+							cg.weaponSelect             = itemid;
+							cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 						}
 					}
 
@@ -515,8 +519,9 @@ static void CG_ItemPickup(int itemNum)
 							{
 								if (wpbank_pickup > wpbank_cur)
 								{
-									cg.weaponSelectTime = cg.time;
-									cg.weaponSelect     = itemid;
+									cg.weaponSelectTime         = cg.time;
+									cg.weaponSelect             = itemid;
+									cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 								}
 							}
 						}

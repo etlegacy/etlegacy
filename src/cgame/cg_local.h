@@ -1214,6 +1214,7 @@ typedef struct
 
 	/// input state sent to server
 	int weaponSelect;
+	int weaponSelectDuringFiring;
 
 	/// auto rotating items
 	vec3_t autoAnglesSlow;
