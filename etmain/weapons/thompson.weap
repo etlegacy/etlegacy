@@ -76,6 +76,9 @@ weaponDef
 			model			"models/weapons2/thompson/v_thompson.md3"
 			flashModel		"models/weapons2/thompson/v_thompson_flash.mdc"
 
+			dynFov90 -3.0 3.5 0.0
+			dynFov120 2.5 -0.8 0.5
+
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
 			weaponLink

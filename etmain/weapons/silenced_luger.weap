@@ -75,6 +75,9 @@ weaponDef
 			model			"models/weapons2/silencer/v_silencer.md3"
 			//flashModel		"models/weapons2/luger/v_luger_flash.mdc"
 
+			dynFov90 0.0 6.0 2.0
+			dynFov120 5.0 -3.0 2.0
+
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
 			weaponLink

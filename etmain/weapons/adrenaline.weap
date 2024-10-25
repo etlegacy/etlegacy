@@ -54,6 +54,9 @@ weaponDef
 			alliedskin	"models/multiplayer/adrenaline/adrenaline_allied.skin"
 			//flashModel	""
 
+			dynFov90 -3.0 5.0 0.0
+			dynFov120 3.0 0.0 2.0
+
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
 			/*weaponLink
