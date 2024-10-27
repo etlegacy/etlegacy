@@ -79,8 +79,8 @@ weaponDef
 			model			"models/weapons2/grenade/v_grenade.md3"
 			//flashModel		""
 
-			dynFov90 0.85 -1.0 0.0
-			dynFov120 3.2 -7.0 0.0
+			dynFov90 -3.75 5.0 0.0
+			dynFov120 0.65 -5.0 0.0
 
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
