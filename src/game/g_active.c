@@ -516,32 +516,53 @@ void G_TouchTriggers(gentity_t *ent)
  */
 qboolean G_SpectatorAttackFollow(gentity_t *ent)
 {
-	trace_t       tr;
-	vec3_t        forward, right, up;
-	vec3_t        start, end;
-	vec3_t        mins, maxs;
-	static vec3_t enlargeMins = { -64.0f, -64.0f, -48.0f };
-	static vec3_t enlargeMaxs = { 64.0f, 64.0f, 0.0f };
+	int     i;
+	trace_t tr;
+	vec3_t  forward;
+	vec3_t  mins, maxs;
+
+	static float enlargeMins[3] = { -4.0f, -4.0f, -3.0f };
+	static float enlargeMaxs[3] = { 4.0f, 4.0f, 0.0f };
+
+	vec3_t start, end;
 
 	if (!ent->client)
 	{
 		return qfalse;
 	}
 
-	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	VectorCopy(ent->client->ps.origin, start);
 	VectorMA(start, MAX_TRACE, forward, end);
 
-	// enlarge the hitboxes, so spectators can easily click on them..
-	VectorCopy(ent->r.mins, mins);
-	VectorCopy(ent->r.maxs, maxs);
-	VectorAdd(mins, enlargeMins, mins);
-	VectorAdd(maxs, enlargeMaxs, maxs);
 	// also put the start-point a bit forward, so we don't start the trace in solid..
 	VectorMA(start, 75.0f, forward, start);
 
-	// trap_Trace(&tr, start, mins, maxs, end, ent->client->ps.clientNum, CONTENTS_BODY | CONTENTS_CORPSE);
-	G_HistoricalTrace(ent, &tr, start, mins, maxs, end, ent->s.number, CONTENTS_BODY | CONTENTS_CORPSE);
+	// let's do 4 traces with increasing "beam width" to prioritize the player
+	// we are directly looking at, but also allow some more fuzzy angles with
+	// decreasing priority
+	for (i = 0; i < 4; ++i)
+	{
+		if (i == 0)
+		{
+			G_HistoricalTrace(ent, &tr, start,
+			                  NULL, NULL,
+			                  end, ent->s.number, CONTENTS_BODY | CONTENTS_CORPSE);
+		}
+		else
+		{
+			VectorMA(ent->r.mins, pow(4, i), enlargeMins, mins);
+			VectorMA(ent->r.maxs, pow(4, i), enlargeMaxs, maxs);
+
+			G_HistoricalTrace(ent, &tr, start,
+			                  mins, maxs,
+			                  end, ent->s.number, CONTENTS_BODY | CONTENTS_CORPSE);
+		}
+
+		if ((&g_entities[tr.entityNum])->client != NULL)
+		{
+			break;
+		}
+	}
 
 	if ((&g_entities[tr.entityNum])->client)
 	{
@@ -649,7 +670,9 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	    client->sess.spectatorState != SPECTATOR_FOLLOW &&
 	    client->sess.sessionTeam == TEAM_SPECTATOR)        // don't do it if on a team
 	{
-		if (G_SpectatorAttackFollow(ent))
+		// if we are currently looking at a target, or we hold down the sprint
+		// key: don't cycle through next players
+		if (G_SpectatorAttackFollow(ent) || (ent->client->buttons & BUTTON_SPRINT))
 		{
 			return;
 		}
@@ -657,7 +680,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		{
 			// not clicked on a player?.. then follow next,
 			// to prevent constant traces done by server.
-			if (client->buttons & BUTTON_SPRINT)
+			if (client->buttons & BUTTON_WALKING)
 			{
 				Cmd_FollowCycle_f(ent, 1, qtrue);
 			}
@@ -667,13 +690,13 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 				Cmd_FollowCycle_f(ent, 1, qfalse);
 			}
 		}
-		// attack + sprint button cycles through non-bot/human players
+		// attack + walk button cycles through non-bot/human players
 		// attack button cycles through all players
 	}
 	else if ((client->buttons & BUTTON_ATTACK) && !(client->oldbuttons & BUTTON_ATTACK) &&
 	         !(client->buttons & BUTTON_ACTIVATE))
 	{
-		Cmd_FollowCycle_f(ent, 1, (client->buttons & BUTTON_SPRINT));
+		Cmd_FollowCycle_f(ent, 1, (client->buttons & BUTTON_WALKING));
 	}
 #ifdef ETLEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT
