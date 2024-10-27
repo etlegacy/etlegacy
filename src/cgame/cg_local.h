@@ -1325,6 +1325,7 @@ typedef struct
 	float damageX, damageY, damageValue;
 
 	int grenLastTime;
+	int lastReviveTime;
 
 	int switchbackWeapon;
 	int lastFiredWeapon;

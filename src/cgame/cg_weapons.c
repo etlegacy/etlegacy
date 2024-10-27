@@ -35,6 +35,8 @@
 
 #include "cg_local.h"
 
+#define SYRINGE_VISUAL_RECOVERY_TIME 650
+
 /**
  * @var weapBanksMultiPlayer
  * @brief The new loadout for WolfXP
@@ -1706,7 +1708,12 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (weaponNum == WP_MEDIC_SYRINGE)
 		{
-			if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
+
+			if (cg.lastReviveTime > 0 && cg.time - cg.lastReviveTime < SYRINGE_VISUAL_RECOVERY_TIME)
+			{
+				gun.customShader = weapon->modModels[1];
+			}
+			else if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 			{
 				gun.customShader = weapon->modModels[0];
 			}
@@ -2023,7 +2030,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 					if (weaponNum == WP_MEDIC_SYRINGE && i == W_PART_1)
 					{
-						if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
+						if (cg.lastReviveTime > 0 && cg.time - cg.lastReviveTime < SYRINGE_VISUAL_RECOVERY_TIME)
+						{
+							barrel.customShader = weapon->modModels[1];
+						}
+						else if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 						{
 							barrel.customShader = weapon->modModels[0];
 						}

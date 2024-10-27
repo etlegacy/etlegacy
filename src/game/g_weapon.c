@@ -330,8 +330,8 @@ void ReviveEntityEvent(gentity_t *reviver, gentity_t *revivee, int invulnEndTime
 
 /**
  * @brief Took this out of Weapon_Syringe so we can use it from other places
- * @param[in] ent
- * @param[in,out] traceEnt
+ * @param[in] ent - Syringe user
+ * @param[in,out] traceEnt - PM_DEAD target
  * @return
  */
 void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)

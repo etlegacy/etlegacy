@@ -2947,9 +2947,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_PLAYER_REVIVE:
 	{
-		// int reviver = es->clientNum;
+		int reviver = es->clientNum;
 		// int revivee = es->eventParm;
 		// int invulnEndTime = invulnEndTime;
+
+		if (reviver == cg.clientNum)
+		{
+			cg.lastReviveTime = cg.time;
+		}
 
 		// play sound
 		sfxHandle_t sound = CG_GetGameSound(GAMESOUND_MISC_REVIVE);

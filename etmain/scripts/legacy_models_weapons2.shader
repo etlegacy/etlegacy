@@ -224,3 +224,21 @@ models/weapons2/shells/m_shell
 	}
 }
 //========================================//
+
+//========================================//
+// Empty syringe model
+//========================================//
+models/multiplayer/syringe/0percent
+{
+	cull disable
+	{
+		map models/multiplayer/syringe/syringe.tga
+		blendfunc gl_src_alpha gl_one_minus_src_alpha
+		rgbgen lightingdiffuse
+	}
+	{
+		map models/multiplayer/syringe/syringe_reflections.tga
+		blendfunc gl_src_alpha gl_one_minus_src_alpha
+		rgbgen lightingdiffuse
+	}
+}
