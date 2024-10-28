@@ -835,6 +835,7 @@ static bind_t g_bindings[] =
 	{ "cycle cg_spawntimer_set 0 2147483647 1000", -1,              -1,  -1,              -1,  -1, -1, -1 },
 	{ "cycle cg_spawntimer_set 2147483647 0 1000", -1,              -1,  -1,              -1,  -1, -1, -1 },
 	{ "+zoom;+attack;-attack;-zoom",               -1,              -1,  -1,              -1,  -1, -1, -1 },
+	{ "edithud",                                   K_F7,            -1,  -1,              -1,  -1, -1, -1 },
 };
 
 static const int g_bindCount = sizeof(g_bindings) / sizeof(bind_t);
