@@ -747,6 +747,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 
 	if (HUDToDuplicate >= 0)
 	{
+		int attemptedSpot;
 		int hudNumber;
 
 		if (hudData.count == MAXHUDS)
@@ -761,7 +762,39 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 
 		CG_CloneHud(hud2, hud);
 
-		Q_strncpyz(hud2->name, va("%s_copy", hud->name), sizeof(hud2->name));
+		// determine a new name
+		for (attemptedSpot = 1; attemptedSpot < MAXHUDS; attemptedSpot++)
+		{
+			int      i;
+			qboolean collision = qfalse;
+
+			Q_strncpyz(hud2->name,
+			           (attemptedSpot == 1) ? va("%s_copy", hud->name) : va("%s_copy%d", hud->name, attemptedSpot),
+			           sizeof(hud2->name));
+
+			for (i = 0; i < hudData.count; i++)
+			{
+				hudStucture_t *otherHud = hudData.list[i];
+
+				if (!Q_stricmp(otherHud->name, hud2->name))
+				{
+					CG_Printf("Hud name clone collision with '%s', trying higher suffixes...\n", otherHud->name);
+					collision = qtrue;
+				}
+
+			}
+
+			if (!collision)
+			{
+				goto successfully_determined_new_name;
+			}
+		}
+
+		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: tried to create a new duplicate, but found no free spot\n");
+		return qfalse;
+
+successfully_determined_new_name:
+
 		Q_strncpyz(hud2->parent, hud->name, sizeof(hud2->parent));
 		hud2->parentNumber = hud->hudnumber;
 		hud2->hudnumber    = hudNumber;
