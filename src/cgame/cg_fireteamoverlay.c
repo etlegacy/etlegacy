@@ -428,20 +428,38 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	vec4_t textOrange               = { 1.0f, 0.6f, 0.0f, 1.0f }; // orange text for ping issues
 	vec4_t nameColor                = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	// early exits
+	if (
+		// we are a shoutcaster
+		cgs.clientinfo[cg.clientNum].shoutcaster
+		// or we are not on a fireteam
+		|| !CG_IsOnFireteam(cg.clientNum)
+		// or assign fireteam data, and early out if not on one
+		|| !(f = CG_IsOnFireteam(cg.clientNum))
+		)
 	{
-		return;
-	}
+		// XXX : TODO : we currently don't generate any noise for the
+		// fireteamoverlay, as it's pretty involved - so we do the minimum here,
+		// which is to just draw a box filling the component size, which also
+		// mentions this fact
+		if (cg.generatingNoiseHud)
+		{
+			const char *info = "Please join a real Fireteam!";
+			int        i     = 0;
 
-	if (!CG_IsOnFireteam(cg.clientNum))
-	{
-		return;
-	}
+			// draw the box
+			w = comp->location.w;
+			h = comp->location.h;
+			CG_FillRect(x, y, w, h * (i + 1), comp->colorBackground);
+			CG_DrawRect_FixedBorder(x, y, w, h * (i + 1), 1, comp->colorBorder);
+			CG_FillRect(x + 1, y + 1, w - 2, h - 1, comp->colorSecondary);
 
-	// assign fireteam data, and early out if not on one
-	if (!(f = CG_IsOnFireteam(cg.clientNum)))
-	{
+			// draw a text info on it
+			scale      = CG_ComputeScale(comp /* h, comp->scale, FONT_TEXT*/);
+			heighTitle = CG_Text_Height_Ext(info, scale, 0, FONT_HEADER);
+			CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) * 0.5), scale, scale, comp->colorMain, info, 0, 0, 0, FONT_TEXT);
+		}
+
 		return;
 	}
 
