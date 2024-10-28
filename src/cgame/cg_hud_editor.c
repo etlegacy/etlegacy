@@ -2815,6 +2815,18 @@ void CG_DrawHudEditor(void)
 	}
 }
 
+void CG_HudEditorReset()
+{
+	if (cg.generatingNoiseHud)
+	{
+		CG_HudEditor_Cleanup();
+		cg.generatingNoiseHud = qfalse;
+	}
+
+	cg.editingHud          = qfalse;
+	cg.fullScreenHudEditor = qfalse;
+}
+
 /**
 * @brief CG_HudEditor_KeyHandling
 * @param[in] key
