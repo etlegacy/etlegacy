@@ -2579,8 +2579,10 @@ static void CG_HudEditor_ToggleVisibility(void)
 	// otherwise toggle visibility of focused component
 	else
 	{
-		comp          = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
-		comp->visible = comp->visible ? qfalse : qtrue;
+		if (lastFocusComponent != NULL) {
+			comp          = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+			comp->visible = comp->visible ? qfalse : qtrue;
+		}
 	}
 
 }
