@@ -2822,6 +2822,18 @@ void CG_DrawHudEditor(void)
 */
 void CG_HudEditor_KeyHandling(int key, qboolean down)
 {
+	// close hud editor menu if any 'edithud' key binding is pressed again
+	if (down)
+	{
+		int b1, b2;
+		cgDC.getKeysForBinding("edithud", &b1, &b2);
+		if ((b1 != -1 && b1 == key) || (b2 != -1 && b2 == key))
+		{
+			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+			return;
+		}
+	}
+
 	if (BG_PanelButtonsKeyEvent(key, down, hudEditor))
 	{
 		return;
