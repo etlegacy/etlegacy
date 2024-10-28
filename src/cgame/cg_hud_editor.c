@@ -2478,38 +2478,41 @@ static void CG_HudEditor_HelpDraw(void)
 	{
 		static const helpType_t help[] =
 		{
-			{ "K_DOWN",              "move down by 1px"                  },
-			{ "K_LEFT",              "move left by 1px"                  },
-			{ "K_UP",                "move down by 1px"                  },
-			{ "K_RIGHT",             "move right by 1px"                 },
-			{ NULL,                  NULL                                },
-			{ "K_MWHEELDOWN",        "enlarge by 1px"                    },
-			{ "K_MWHEELUP",          "shrink by 1px"                     },
-			{ NULL,                  NULL                                },
-			{ "K_RCTRL / K_LCTRL",   "hold to move by 0.1px"             },
-			{ "K_RSHIFT / K_LSHIFT", "hold to move by 5px"               },
-			{ NULL,                  NULL                                },
+			{ "K_DOWN",              "move down by 1px"                      },
+			{ "K_LEFT",              "move left by 1px"                      },
+			{ "K_UP",                "move down by 1px"                      },
+			{ "K_RIGHT",             "move right by 1px"                     },
+			{ NULL,                  NULL                                    },
+			{ "K_MWHEELDOWN",        "enlarge by 1px"                        },
+			{ "K_MWHEELUP",          "shrink by 1px"                         },
+			{ NULL,                  NULL                                    },
+			{ "K_RCTRL / K_LCTRL",   "hold to move by 0.1px"                 },
+			{ "K_RSHIFT / K_LSHIFT", "hold to move by 5px"                   },
+			{ NULL,                  NULL                                    },
 #ifdef __APPLE__
-			{ "K_COMMAND",           "hold to resize"                    },
+			{ "K_COMMAND",           "hold to key resize / mwheel scale"     },
 #else
-			{ "K_RALT / K_LALT",     "hold to resize"                    },
+			{ "K_RALT / K_LALT",     "hold to key resize / mwheel scale"     },
 #endif
-			{ NULL,                  NULL                                },
-			{ "K_INS",               "move to center"                    },
-			{ "K_PGUP",              "move from bottom -> middle -> top" },
-			{ "K_PGDN",              "move from top -> middle -> bottom" },
-			{ "K_HOME",              "move from left -> middle -> right" },
-			{ "K_END",               "move from right -> middle -> left" },
-			{ NULL,                  NULL                                },
-			{ "l",                   "show layout visible -> all -> off" },
-			{ "h",                   "help on/off"                       },
-			{ "n",                   "noise generator on/off"            },
-			{ "f",                   "full screen on/off"                },
-			{ "a",                   "force grid alignment on/off"       },
-			{ NULL,                  NULL                                },
-			{ "o",                   "show micro grid on/off"            },
-			{ "c",                   "show grid OCD lvl 1/2/3"           },
-			{ "d",                   "scale grid .25/.125/.1"            },
+			{ NULL,                  NULL                                    },
+			{ "K_INS",               "move to center"                        },
+			{ "K_PGUP",              "move from bottom -> middle -> top"     },
+			{ "K_PGDN",              "move from top -> middle -> bottom"     },
+			{ "K_HOME",              "move from left -> middle -> right"     },
+			{ "K_END",               "move from right -> middle -> left"     },
+			{ NULL,                  NULL                                    },
+			{ "l",                   "show layout visible -> all -> off"     },
+			{ "h",                   "help on/off"                           },
+			{ "n",                   "noise generator on/off"                },
+			{ "f",                   "full screen on/off"                    },
+			{ "a",                   "force grid alignment on/off"           },
+			{ "t",                   "toggle showing only active component"  },
+			{ "v",                   "toggle visibility of active component" },
+			{ "SHIFT + CTRL + v",    "set all components visible"            },
+			{ NULL,                  NULL                                    },
+			{ "o",                   "show micro grid on/off"                },
+			{ "c",                   "show grid OCD lvl 1/2/3"               },
+			{ "d",                   "scale grid .25/.125/.1"                },
 		};
 
 		vec4_t bgColor;
@@ -2517,10 +2520,69 @@ static void CG_HudEditor_HelpDraw(void)
 		VectorCopy(colorDkGrey, bgColor);
 		bgColor[3] = .90f;
 
-		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.2f, SCREEN_HEIGHT * 0.4f, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
+		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.2f, SCREEN_HEIGHT * 0.15f, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
 		                  bgColor, colorBlack, colorDkGrey, colorBlack,
 		                  &hudEditorHeaderFont, &hudEditorTextFont);
 	}
+}
+
+static void CG_HudEditor_IncreaseSize(hudComponent_t *comp, float offset, qboolean changeSize)
+{
+	if (!changeSize)   // increase component
+	{
+		comp->location.x -= offset * .5f;
+		comp->location.y -= offset * .5f;
+		comp->location.w += offset;
+		comp->location.h += offset;
+	}
+	else     // increase text size
+	{
+		comp->scale += offset;
+	}
+}
+
+static void CG_HudEditor_DecreaseSize(hudComponent_t *comp, float offset, qboolean changeSize)
+{
+	if (!changeSize)   // decrease component
+	{
+		comp->location.x += offset * .5f;
+		comp->location.y += offset * .5f;
+		comp->location.w -= offset;
+		comp->location.h -= offset;
+	}
+	else     // decrease text size
+	{
+		comp->scale -= offset;
+	}
+}
+
+static void CG_HudEditor_ToggleFilterActiveComponent()
+{
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+	showOnlyHudComponent = (showOnlyHudComponent == NULL) ? comp : NULL;
+}
+
+static void CG_HudEditor_ToggleVisibility(void)
+{
+	hudComponent_t *comp;
+	// holding CTRL & SHIFT makes all component visible
+	if ((trap_Key_IsDown(K_RCTRL) || trap_Key_IsDown(K_LCTRL))
+	    && (trap_Key_IsDown(K_RSHIFT) || trap_Key_IsDown(K_LSHIFT)))
+	{
+		int i;
+		for (i = 0; i < HUD_COMPONENTS_NUM; i++)
+		{
+			comp          = hudData.active->components[i];
+			comp->visible = qtrue;
+		}
+	}
+	// otherwise toggle visibility of focused component
+	else
+	{
+		comp          = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+		comp->visible = comp->visible ? qfalse : qtrue;
+	}
+
 }
 
 /**
@@ -2761,6 +2823,8 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		case 'c': CG_HudEditor_ToggleGrid();               return;
 		case 'd': CG_HudEditor_ToggleGridScale();          return;
 		case 'a': CG_HudEditor_ToggleForceGridAlignment(); return;
+		case 't': CG_HudEditor_ToggleFilterActiveComponent(); return;
+		case 'v': CG_HudEditor_ToggleVisibility(); return;
 		default: break;
 		}
 	}
@@ -2883,9 +2947,9 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 			                                   0 : (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f); break;
 		case K_END:        comp->location.x = ((comp->location.x < (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f) ?
 			                                   (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f: Ccg_WideX(SCREEN_WIDTH) - comp->location.w); break;
-		case K_INS:        comp->location.x  = (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f; comp->location.y = (SCREEN_HEIGHT - comp->location.h) * .5f; break;
-		case K_MWHEELDOWN: comp->location.x -= offset * .5f; comp->location.y -= offset * .5f; comp->location.w += offset; comp->location.h += offset; break;
-		case K_MWHEELUP:   comp->location.x += offset * .5f; comp->location.y += offset * .5f; comp->location.w -= offset; comp->location.h -= offset; break;
+		case K_INS:        comp->location.x = (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) * .5f; comp->location.y = (SCREEN_HEIGHT - comp->location.h) * .5f; break;
+		case K_MWHEELDOWN: CG_HudEditor_DecreaseSize(comp, offset, changeSize); break;
+		case K_MWHEELUP: CG_HudEditor_IncreaseSize(comp, offset, changeSize); break;
 		default: return;
 		}
 

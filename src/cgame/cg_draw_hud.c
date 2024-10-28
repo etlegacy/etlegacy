@@ -37,6 +37,7 @@
 #include "cg_local.h"
 
 hudData_t hudData;
+hudComponent_t *showOnlyHudComponent = NULL;
 
 static lagometer_t lagometer;
 
@@ -4219,7 +4220,7 @@ void CG_DrawActiveHud(void)
 	{
 		comp = hudData.active->components[i];
 
-		if (comp && comp->visible && comp->draw)
+		if ((comp && comp->visible && comp->draw) && !(showOnlyHudComponent != NULL && showOnlyHudComponent != comp))
 		{
 			comp->draw(comp);
 		}
