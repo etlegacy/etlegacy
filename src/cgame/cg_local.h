@@ -4396,6 +4396,7 @@ typedef struct
 } hudData_t;
 
 extern hudData_t hudData;
+extern hudComponent_t *showOnlyHudComponent;
 
 typedef struct
 {
