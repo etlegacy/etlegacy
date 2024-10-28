@@ -1874,6 +1874,16 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					angles[YAW] += 1.5;
 					AnglesToAxis(angles, barrel.axis);
 				}
+				// reposition pineapple relative to hand (it hovered by default)
+				else if (weaponNum == WP_GRENADE_PINEAPPLE && i == 0)
+				{
+						AxisToAngles(barrel.axis, angles);
+						AngleVectors(angles, forward, up, left);
+
+						VectorMA(barrel.origin, -0.5f, /* actually backwards */ forward, barrel.origin);
+						VectorMA(barrel.origin, -0.4f, left, barrel.origin);
+						VectorMA(barrel.origin, 0.9f, up, barrel.origin);
+				}
 
 				drawpart = CG_GetPartFramesFromWeap(cent, &barrel, parent, i, weapon);
 
