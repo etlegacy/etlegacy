@@ -986,7 +986,8 @@ typedef struct weaponInfo_s
 	int missileRenderfx;
 
 	void (*ejectBrassFunc)(centity_t *);
-	vec3_t ejectBrassOffset;
+	vec3_t firstPersonEjectBrassOffset;
+	vec3_t thirdPersonEjectBrassOffset;
 
 	vec3_t fireRecoil;                  ///< kick angle
 	vec3_t adjustLean;

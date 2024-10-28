@@ -42,7 +42,6 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		ejectBrassOffset    24 -4 36
 
 		adjustLean 1 1 1
 
@@ -108,6 +107,8 @@ weaponDef
 		thirdPerson {
 			model			"models/weapons2/luger/ss_luger.mdc"
 			flashmodel		"models/weapons2/luger/luger_flash.mdc"
+
+			ejectBrassOffset	24 -4 36
 		}
 	}
 }

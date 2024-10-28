@@ -42,7 +42,6 @@ weaponDef
 		missileDlightColor	0.75 0.3 0.0
 
 		ejectBrassFunc		"PanzerFaustEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		ejectBrassOffset    -24 -4 24
 
 		adjustLean 1 1 1
 
@@ -107,6 +106,8 @@ weaponDef
 		thirdPerson {
 			model			"models/multiplayer/panzerfaust/multi_pf.md3"
 			flashmodel		"models/weapons2/panzerfaust/pf_flash.mdc"
+
+			ejectBrassOffset	-24 -4 24
 		}
 	}
 }

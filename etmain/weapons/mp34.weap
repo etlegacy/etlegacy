@@ -43,8 +43,6 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		ejectBrassOffset    16 -4 24
-		//brassmodel				"models/weapons2/shells/9mmshell.md3"
 
 		fireRecoil 0.3 0.6 0    // kick angle
 		adjustLean 1 1 1
@@ -78,6 +76,8 @@ weaponDef
 			model			"models/weapons2/mp34/v_mp34.md3"
 			//flashModel		"models/weapons2/sten/v_sten_flash.mdc"
 
+			ejectBrassOffset	15.0 11.0 -8.0
+
 			dynFov90 -3.0 3.2 0.0
 			dynFov120 0.5 -0.3 -1.0
 
@@ -106,6 +106,8 @@ weaponDef
 		thirdPerson {
 			model			"models/weapons2/mp34/mp34_3rd.md3"
 			//flashmodel		"models/weapons2/sten/sten_flash.mdc"
+
+			ejectBrassOffset	16 -4 24
 		}
 	}
 }

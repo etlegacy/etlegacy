@@ -42,7 +42,6 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		ejectBrassOffset    16 -4 24
 
 		adjustLean 1 1 1
 
@@ -123,6 +122,8 @@ weaponDef
 		thirdPerson {
 			model			"models/weapons2/colt/silenced.md3"
 			//flashmodel		"models/weapons2/colt/colt_flash.mdc"
+
+			ejectBrassOffset	16 -4 24
 		}
 	}
 }

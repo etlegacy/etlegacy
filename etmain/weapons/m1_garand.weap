@@ -43,7 +43,6 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		ejectBrassOffset    16 -4 24
 
 		fireRecoil 2 1 0    // kick angle
 		adjustLean 1 1 2
@@ -127,6 +126,8 @@ weaponDef
 			//model			"models/multiplayer/m1_garand/m1_garand_3rd.md3"
 			model			"models/multiplayer/m1_garand/m1_garand_gren_pickup.md3"
 			flashmodel		"models/multiplayer/m1_garand/m1_garand_3rd_flash.mdc"
+
+			ejectBrassOffset	16 -4 24
 		}
 	}
 }

@@ -38,7 +38,6 @@ weaponDef
 		missileDlightColor	1 0.7 0.5
 
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		//ejectBrassOffset  0 0 0
 
 		adjustLean 1 1 1
 
