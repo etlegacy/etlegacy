@@ -2575,30 +2575,26 @@ static void CG_PlayerSplash(centity_t *cent)
 void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entityState_t *es, const vec3_t fireRiseDir)
 {
 	refEntity_t backupRefEnt; //, parentEnt;
-	qboolean    onFire = qfalse;
-	float       alpha  = 0.0;
+	qboolean    onFire;
 
 	ent->entityNum = es->number;
+	backupRefEnt   = *ent;
 
-	/*  if (cent->pe.forceLOD) {
-	        ent->reFlags |= REFLAG_FORCE_LOD;
-	    }*/
+	onFire = CG_EntOnFire(&cg_entities[es->number]);
 
-	backupRefEnt = *ent;
-
-	if (CG_EntOnFire(&cg_entities[es->number]))
+	if (onFire)
 	{
 		ent->reFlags |= REFLAG_FORCE_LOD;
 	}
 
 	trap_R_AddRefEntityToScene(ent);
 
-	// FIXME: onFire is always true !
-	if (!onFire && CG_EntOnFire(&cg_entities[es->number]))
+	if (onFire)
 	{
-		float fireStart, fireEnd;
+		float fireStart;
+		float fireEnd;
+		float alpha;
 
-		onFire = qtrue;
 		// set the alpha
 		if (ent->entityNum == cg.snap->ps.clientNum)
 		{
@@ -2620,10 +2616,7 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entit
 				alpha = 1.0f;
 			}
 		}
-	}
 
-	if (onFire)
-	{
 		if (alpha < 0.0f)
 		{
 			alpha = 0.0f;
