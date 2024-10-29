@@ -4550,7 +4550,7 @@ void UI_Update(const char *name)
 			break;
 		}
 	}
-	else if (Q_stricmp(name, "ui_r_lodbias") == 0)
+	else if (Q_stricmp(name, "ui_r_lodscale") == 0)
 	{
 		switch (val)
 		{
@@ -4635,7 +4635,7 @@ void UI_ParseglPreset()
 {
 	// high preset
 	if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 4 &&
-	    (int)trap_Cvar_VariableValue("ui_r_lodbias") == 0 &&
+	    (int)trap_Cvar_VariableValue("ui_r_lodscale") == 0 &&
 	    (int)trap_Cvar_VariableValue("ui_r_colorbits") == 32 &&
 	    (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
 	    (int)trap_Cvar_VariableValue("ui_r_picmip") == 0 &&
@@ -4654,7 +4654,7 @@ void UI_ParseglPreset()
 	}
 	// normal preset
 	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 4 &&
-	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodscale") == 0 &&
 	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 0 &&
 	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
 	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 1 &&
@@ -4673,7 +4673,7 @@ void UI_ParseglPreset()
 	}
 	// fast preset
 	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 12 &&
-	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodscale") == 1 &&
 	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 0 &&
 	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
 	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 2 &&
@@ -4692,7 +4692,7 @@ void UI_ParseglPreset()
 	}
 	// fastest preset
 	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 20 &&
-	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 2 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodscale") == 2 &&
 	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 16 &&
 	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
 	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 3 &&
@@ -6057,7 +6057,7 @@ void UI_RunMenuScript(char **args)
 			float ui_r_intensity                      = trap_Cvar_VariableValue("r_intensity");
 			int   ui_r_mapoverbrightbits              = (int)(trap_Cvar_VariableValue("r_mapoverbrightbits"));
 			int   ui_r_overBrightBits                 = (int)(trap_Cvar_VariableValue("r_overBrightBits"));
-			int   ui_r_lodbias                        = (int)(trap_Cvar_VariableValue("r_lodbias"));
+			int   ui_r_lodscale                       = (int)(trap_Cvar_VariableValue("r_lodscale"));
 			int   ui_r_subdivisions                   = (int)(trap_Cvar_VariableValue("r_subdivisions"));
 			int   ui_r_picmip                         = (int)(trap_Cvar_VariableValue("r_picmip"));
 			int   ui_r_texturebits                    = (int)(trap_Cvar_VariableValue("r_texturebits"));
@@ -6102,7 +6102,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_centerwindow", va("%i", ui_r_centerwindow));
 			trap_Cvar_Set("ui_r_mapoverbrightbits", va("%i", ui_r_mapoverbrightbits));
 			trap_Cvar_Set("ui_r_overBrightBits", va("%i", ui_r_overBrightBits));
-			trap_Cvar_Set("ui_r_lodbias", va("%i", ui_r_lodbias));
+			trap_Cvar_Set("ui_r_lodscale", va("%i", ui_r_lodscale));
 			trap_Cvar_Set("ui_r_subdivisions", va("%i", ui_r_subdivisions));
 			trap_Cvar_Set("ui_r_picmip", va("%i", ui_r_picmip));
 			trap_Cvar_Set("ui_r_texturebits", va("%i", ui_r_texturebits));
@@ -6135,7 +6135,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_sensitivity", "");
 			trap_Cvar_Set("ui_r_colorbits", "");
 			trap_Cvar_Set("ui_r_fullscreen", "");
-			trap_Cvar_Set("ui_r_lodbias", "");
+			trap_Cvar_Set("ui_r_lodscale", "");
 			trap_Cvar_Set("ui_r_subdivisions", "");
 			trap_Cvar_Set("ui_r_picmip", "");
 			trap_Cvar_Set("ui_r_texturebits", "");
@@ -6172,7 +6172,7 @@ void UI_RunMenuScript(char **args)
 			float ui_r_intensity                      = trap_Cvar_VariableValue("ui_r_intensity");
 			int   ui_r_mapoverbrightbits              = (int)(trap_Cvar_VariableValue("ui_r_mapoverbrightbits"));
 			int   ui_r_overBrightBits                 = (int)(trap_Cvar_VariableValue("ui_r_overBrightBits"));
-			int   ui_r_lodbias                        = (int)(trap_Cvar_VariableValue("ui_r_lodbias"));
+			int   ui_r_lodscale                       = (int)(trap_Cvar_VariableValue("ui_r_lodscale"));
 			int   ui_r_subdivisions                   = (int)(trap_Cvar_VariableValue("ui_r_subdivisions"));
 			int   ui_r_picmip                         = (int)(trap_Cvar_VariableValue("ui_r_picmip"));
 			int   ui_r_texturebits                    = (int)(trap_Cvar_VariableValue("ui_r_texturebits"));
@@ -6224,7 +6224,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("r_intensity", va("%f", ui_r_intensity));
 			trap_Cvar_Set("r_mapoverbrightbits", va("%i", ui_r_mapoverbrightbits));
 			trap_Cvar_Set("r_overBrightBits", va("%i", ui_r_overBrightBits));
-			trap_Cvar_Set("r_lodbias", va("%i", ui_r_lodbias));
+			trap_Cvar_Set("r_lodscale", va("%i", ui_r_lodscale));
 			trap_Cvar_Set("r_subdivisions", va("%i", ui_r_subdivisions));
 			trap_Cvar_Set("r_picmip", va("%i", ui_r_picmip));
 			trap_Cvar_Set("r_texturebits", va("%i", ui_r_texturebits));
@@ -6256,7 +6256,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_intensity", "");
 			trap_Cvar_Set("ui_r_mapoverbrightbits", "");
 			trap_Cvar_Set("ui_r_overBrightBits", "");
-			trap_Cvar_Set("ui_r_lodbias", "");
+			trap_Cvar_Set("ui_r_lodscale", "");
 			trap_Cvar_Set("ui_r_subdivisions", "");
 			trap_Cvar_Set("ui_r_picmip", "");
 			trap_Cvar_Set("ui_r_texturebits", "");

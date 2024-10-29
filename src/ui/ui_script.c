@@ -633,7 +633,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int   ui_r_ext_multisample                = (int)(DC->getCVarValue("ui_r_ext_multisample"));
 				int   ui_r_ignorehwgamma                  = (int)(DC->getCVarValue("ui_r_ignorehwgamma"));
 				int   ui_r_picmip                         = (int)(DC->getCVarValue("ui_r_picmip"));
-				int   ui_r_lodbias                        = (int)(DC->getCVarValue("ui_r_lodbias"));
+				int   ui_r_lodscale                       = (int)(DC->getCVarValue("ui_r_lodscale"));
 				int   ui_s_initsound                      = (int)(DC->getCVarValue("ui_s_initsound"));
 				int   ui_s_khz                            = (int)(DC->getCVarValue("ui_s_khz"));
 				int   ui_s_sdlLevelSamps                  = (int)(DC->getCVarValue("ui_s_sdlLevelSamps"));
@@ -658,7 +658,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int   r_ext_multisample                = (int)(DC->getCVarValue("r_ext_multisample"));
 				int   r_picmip                         = (int)(DC->getCVarValue("r_picmip"));
 				int   r_ignorehwgamma                  = (int)(DC->getCVarValue("r_ignorehwgamma"));
-				int   r_lodbias                        = (int)(DC->getCVarValue("r_lodbias"));
+				int   r_lodscale                       = (int)(DC->getCVarValue("r_lodscale"));
 				int   s_initsound                      = (int)(DC->getCVarValue("s_initsound"));
 				int   s_khz                            = (int)(DC->getCVarValue("s_khz"));
 				int   s_sdlLevelSamps                  = (int)(DC->getCVarValue("s_sdlLevelSamps"));
@@ -688,7 +688,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_ext_multisample != r_ext_multisample ||
 				    ui_r_picmip != r_picmip ||
 				    ui_r_ignorehwgamma != r_ignorehwgamma ||
-				    ui_r_lodbias != r_lodbias ||
+				    ui_r_lodscale != r_lodscale ||
 				    ui_s_khz != s_khz ||
 				    ui_s_initsound != s_initsound ||
 				    ui_s_sdlLevelSamps != s_sdlLevelSamps ||
@@ -1276,7 +1276,9 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 			// the stupidest idea ever, let's just override the console, every ui element, user choice, etc
 			// nuking this
 			//DC->setOverstrikeMode(qtrue);
-		} else {
+		}
+		else
+		{
 			Com_Printf("Script_SetEditFocus: Can't find %s.\n", name);
 		}
 	}

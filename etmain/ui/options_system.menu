@@ -69,7 +69,7 @@ menuDef {
 	// add options 0 - disabled, 1 - single path, 2 - path
 	MULTIACTION(8, GRAPHICSADVANCED_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Lights:"), .2, 8, "ui_r_dynamiclight", cvarFloatList { "Disabled" 0 "Enabled (Single-pass)" 1 "Enabled (Multi-pass)" 2 }, uiScript glPreset, _("Enable dynamic lighting effects"))
 	// check this if ET supports same way
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodbias", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glPreset; uiScript update "r_lodbias", _("Set level of details bias"))
+	MULTIACTION(8, GRAPHICSADVANCED_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodscale", cvarFloatList { "Lowest" 0 "Medium" 5 "High" 20 }, uiScript glPreset; uiScript update "r_lodscale", _("Set level of details scale distance"))
 	MULTIACTION(8, GRAPHICSADVANCED_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Bits:"), .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset; uiScript update "r_colorbits", _("Set the number of bits for textures"))
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION(8, GRAPHICSADVANCED_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Filtering:"), .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glPreset, _("Set texture filtering mode"))
@@ -109,7 +109,7 @@ menuDef {
 	// add options 0 - disabled, 1 - single path, 2 - path
 	MULTIACTION(8, GRAPHICSADVANCED_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Lights:"), .2, 8, "ui_r_dynamiclight", cvarFloatList { "Disabled" 0 "Enabled (Single-pass)" 1 "Enabled (Multi-pass)" 2 }, uiScript glPreset, _("Enable dynamic lighting effects"))
 	// check this if ET supports same way
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodbias", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glPreset; uiScript update "r_lodbias", _("Set level of details bias"))
+	MULTIACTION(8, GRAPHICSADVANCED_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodscale", cvarFloatList { "Lowest" 0 "Medium" 5 "High" 20 }, uiScript glPreset; uiScript update "r_lodscale", _("Set level of details scale distance"))
 	MULTIACTION(8, GRAPHICSADVANCED_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Bits:"), .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset; uiScript update "r_texturebits", _("Set the number of bits for textures"))
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION(8, GRAPHICSADVANCED_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Filtering:"), .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glPreset, _("Set texture filtering mode"))
