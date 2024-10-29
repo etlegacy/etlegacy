@@ -439,4 +439,6 @@
 #define SCREEN_WIDTH            640
 #define SCREEN_HEIGHT           480
 
+#define HUD_EDITOR_SIZE_COEFF   1.28f
+
 #endif // #ifndef INCLUDE_MENUDEF_H

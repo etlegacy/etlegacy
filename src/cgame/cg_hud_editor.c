@@ -69,6 +69,8 @@
 #define HUDEDITOR_COLORSSTYLE_Y (HUDEDITOR_TEXT_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CATEGORY_SPACER_Y + \
 								 (INPUT_HEIGHT * 3) + HUDEDITOR_CONTROLS_SPACER_XY)
 
+#define HUDEDITOR_BOTTOM_Y (SCREEN_HEIGHT * HUD_EDITOR_SIZE_COEFF) - BUTTON_HEIGHT
+
 enum
 {
 	HUD_COLOR_SELECTION_MAIN,
@@ -137,6 +139,7 @@ static void CG_HudEditorHeight_Finish(panel_button_t *button);
 static void CG_HudEditorScale_Finish(panel_button_t *button);
 static qboolean CG_HudEditoColorSelection_KeyDown(panel_button_t *button, int key);
 static void CG_HudEditorRender_Button(panel_button_t *button);
+static void CG_HudEditorRender_HelpButton(panel_button_t *button);
 static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int key);
 static void CG_HudEditor_RenderCheckbox(panel_button_t *button);
 static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int key);
@@ -145,6 +148,7 @@ static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, i
 static qboolean CG_HudEditorAutoAdjust_CheckboxKeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorButton_KeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorButton_KeyUp(panel_button_t *button, int key);
+static qboolean CG_HudEditorHelpButton_KeyDown(panel_button_t *button, int key);
 static void CG_DrawHudEditor_ComponentLists(panel_button_t *button);
 static qboolean CG_HudEditor_ComponentLists_KeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditor_ComponentLists_KeyUp(panel_button_t *button, int key);
@@ -684,6 +688,20 @@ static panel_button_t hudEditorResetComp =
 	0
 };
 
+static panel_button_t hudEditorHelp =
+{
+	NULL,
+	"Toggle Help",
+	{ 0,                          HUDEDITOR_BOTTOM_Y,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 4) - 1, BUTTON_HEIGHT },
+	{ 0,                          0,         0,                                                           1, 0, 0, 0, 1 },
+	&hudEditorTextFont,           // font
+	CG_HudEditorHelpButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_HudEditorRender_HelpButton,
+	NULL,
+	0
+};
+
 static panel_button_t hudEditorWarningLabel =
 {
 	NULL,
@@ -724,6 +742,7 @@ static panel_button_t *hudEditor[] =
 	&hudEditorTextTitle,
 	&hudEditorSave,               &hudEditorClone,                   &hudEditorDelete,              &hudEditorResetComp,                &hudEditorWarningLabel,
 	&hudEditorComponentsList,     &hudEditorHudName,
+	&hudEditorHelp,
 
 	// Below here all components that should draw on top
 	&hudEditorAlignText,          &hudEditorStyleText,               &hudEditorHudDropdown,
@@ -1812,6 +1831,44 @@ static float CG_HudEditor_SetupButtonPosition(panel_button_t *button, float butt
 	return 0;
 }
 
+static void CG_HudEditorRender_HelpButton(panel_button_t *button)
+{
+	vec4_t clrBdr = { 0.1f, 0.1f, 0.1f, 0.5f };
+	vec4_t clrBck = { 0.45f, 0.34f, 0.53f, 0.4f };
+
+	vec4_t clrBck_hi = { 0.45f, 0.34f, 0.53f, 0.6f };
+	vec4_t clrTxt_hi = { 0.9f, 0.9f, 0.9f, 1.f };
+
+	rectDef_t *r;
+	qboolean  hilight;
+
+	// if default HUD, don't draw some component
+	if (!hudData.active->isEditable)
+	{
+		if (button == &hudEditorSave || button == &hudEditorDelete || button == &hudEditorResetComp)
+		{
+			return;
+		}
+	}
+
+	r       = &button->rect;
+	hilight = BG_CursorInRect(r);
+
+	CG_FillRect(r->x, r->y, r->w, r->h, hilight ? clrBck_hi : clrBck);
+	CG_DrawRect_FixedBorder(r->x, r->y, r->w, r->h, 1, clrBdr);
+
+	if (button->text)
+	{
+		float w;
+
+		w = CG_Text_Width_Ext(button->text, button->font->scalex, 0, button->font->font);
+
+		CG_Text_Paint_Ext(r->x + ((r->w + 2) - w) * 0.5f, r->y + r->h / 1.5, button->font->scalex, button->font->scaley, hilight ? clrTxt_hi : button->font->colour, button->text, button->font->align, 0, button->font->style, button->font->font);
+	}
+
+	trap_R_SetColor(NULL);
+}
+
 #define TIMER_KEYDOWN 500.f
 
 /**
@@ -2245,7 +2302,7 @@ void CG_HudEditorSetup(void)
 
 	// setup some useful coordinates for the side panel
 	HUDEditorX       = SCREEN_WIDTH_SAFE;
-	HUDEditorWidth   = (HUDEditorX * 1.28f) - HUDEditorX;
+	HUDEditorWidth   = (HUDEditorX * HUD_EDITOR_SIZE_COEFF) - HUDEditorX;
 	HUDEditorCenterX = HUDEditorX + (HUDEditorWidth * 0.5f);
 
 	for (i = 0, j = 0; hudComponentFields[i].name; i++, j++)
@@ -2454,7 +2511,7 @@ static void CG_DrawHudEditor_ToolTip(panel_button_t *button)
  * @var helpStatus
  * @details
  */
-static int helpStatus = SHOW_ON;
+static int helpStatus = SHOW_OFF;
 
 /**
  * @brief CG_HudEditor_ToggleShowLayout
@@ -2559,6 +2616,20 @@ static void CG_HudEditor_HelpDraw(void)
 	}
 }
 
+static qboolean CG_HudEditorHelpButton_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		SOUND_SELECT;
+
+		CG_HudEditor_ToggleHelp();
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
 static void CG_HudEditor_IncreaseSize(hudComponent_t *comp, float offset, qboolean changeSize)
 {
 	if (!changeSize)   // increase component
@@ -2612,7 +2683,8 @@ static void CG_HudEditor_ToggleVisibility(void)
 	// otherwise toggle visibility of focused component
 	else
 	{
-		if (lastFocusComponent != NULL) {
+		if (lastFocusComponent != NULL)
+		{
 			comp          = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
 			comp->visible = comp->visible ? qfalse : qtrue;
 		}

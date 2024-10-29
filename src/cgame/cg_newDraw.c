@@ -633,9 +633,12 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align, qboolean dynamicColor)
 
 	flags |= BAR_LERP_COLOR;
 
-	if (dynamicColor) {
+	if (dynamicColor)
+	{
 		CG_FilledBar(rect->x, rect->y, rect->w, rect->h, dynColor, dynColor2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
-	} else {
+	}
+	else
+	{
 		CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
 	}
 }
@@ -672,8 +675,8 @@ void CG_MouseEvent(int x, int y)
 		if (!cgs.demoCamera.renderingFreeCam)
 		{
 #endif
-		int hudEditorSafeX = SCREEN_WIDTH_SAFE * 1.28f;
-		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * 1.28f;
+		int hudEditorSafeX = SCREEN_WIDTH_SAFE * HUD_EDITOR_SIZE_COEFF;
+		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * HUD_EDITOR_SIZE_COEFF;
 
 		cgs.cursorX += x;
 		if (cg.editingHud && !cg.fullScreenHudEditor)
