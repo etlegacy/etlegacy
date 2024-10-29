@@ -72,6 +72,53 @@ static char *weapAnimNumberStr[] =
 
 static vec3_t forward, right, up;
 
+static void CG_Translate(refEntity_t *ref, double trnsl1, double trnsl2, double trnsl3)
+{
+	static vec3_t angles;
+	static vec3_t vec1, vec2, vec3;
+
+	// translate
+	AngleVectors(angles, vec1, vec2, vec3);
+
+	VectorMA(ref->origin, trnsl1, vec1, ref->origin);
+	VectorMA(ref->origin, trnsl2, vec2, ref->origin);
+	VectorMA(ref->origin, trnsl3, vec3, ref->origin);
+}
+
+static void CG_Transform(refEntity_t *ref, double scale, double trnsl1, double trnsl2, double trnsl3, double yaw, double roll, double pitch)
+{
+	static vec3_t angles;
+	static vec3_t vec1, vec2, vec3;
+
+	// scale
+	if (scale != 0.0 || scale != 1.0)
+	{
+		VectorScale(ref->axis[0], scale, ref->axis[0]);
+		VectorScale(ref->axis[1], scale, ref->axis[1]);
+		VectorScale(ref->axis[2], scale, ref->axis[2]);
+	}
+
+	// rotate
+	if (yaw != 0.0 || roll != 0.0 || pitch != 0.0)
+	{
+		AxisToAngles(ref->axis, angles);
+		angles[YAW]   += yaw;
+		angles[ROLL]  += roll;
+		angles[PITCH] += pitch;
+		AnglesToAxis(angles, ref->axis);
+	}
+
+	// translate
+	if (trnsl1 != 0.0 || trnsl2 != 0.0 || trnsl3 != 0.0)
+	{
+		AngleVectors(angles, vec1, vec2, vec3);
+
+		VectorMA(ref->origin, trnsl1, vec1, ref->origin);
+		VectorMA(ref->origin, trnsl2, vec2, ref->origin);
+		VectorMA(ref->origin, trnsl3, vec3, ref->origin);
+	}
+}
+
 /**
  * @brief CG_StartWeaponAnim
  * @param[in] anim
@@ -1874,15 +1921,17 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					angles[YAW] += 1.5;
 					AnglesToAxis(angles, barrel.axis);
 				}
+				// reposition dynamite relative to hand (it pierced the hand by default)
+				else if (weaponNum == WP_DYNAMITE && i == 0)
+				{
+					CG_Transform(&barrel, 0.9,
+					             0.6, 0.5, 1.4,
+					             13.0, 11.0, 18.0);
+				}
 				// reposition pineapple relative to hand (it hovered by default)
 				else if (weaponNum == WP_GRENADE_PINEAPPLE && i == 0)
 				{
-						AxisToAngles(barrel.axis, angles);
-						AngleVectors(angles, forward, up, left);
-
-						VectorMA(barrel.origin, -0.5f, /* actually backwards */ forward, barrel.origin);
-						VectorMA(barrel.origin, -0.4f, left, barrel.origin);
-						VectorMA(barrel.origin, 0.9f, up, barrel.origin);
+					CG_Translate(&barrel, -0.5, -0.4, 0.9);
 				}
 
 				drawpart = CG_GetPartFramesFromWeap(cent, &barrel, parent, i, weapon);
