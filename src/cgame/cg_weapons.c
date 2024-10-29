@@ -2432,7 +2432,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 /**
  * @brief
- * Applies per 'cg_fov' shifts of the hands axis when 'cg_gunFov 0'.
+ * Applies per 'cg_fov' shifts of the hands axis when 'cg_gunFovOffset 0'.
  */
 static void CG_ApplyViewWeaponShift(refEntity_t *hand, vec3_t shifts_90, vec3_t shifts_120)
 {
@@ -2469,13 +2469,13 @@ static void CG_ApplyViewWeaponShift(refEntity_t *hand, vec3_t shifts_90, vec3_t 
  * Applies hand axis modifier for each gun depending on 'cg_fov' according to 2
  * sets of references.
  */
-static void CG_ApplyETLDynamicGunFov(refEntity_t *hand, weapon_t weaponNum)
+static void CG_ApplyETLDynamicGunFovOffset(refEntity_t *hand, weapon_t weaponNum)
 {
 	// NOTE : these values were determined by finding 'up', 'forward' and 'right'
 	//		  shifts for each gun separately for 'cg_fov' 90 and 120 - along the
 	//		  following principles:
 	//
-	// 1. visibility - (as players are used to cg_gunFov 75 now, which
+	// 1. visibility - (as players are used to cg_gunFovOffset 75 now, which
 	//	  essentially removes a good chunk of all vanilla weapon models, they
 	//	  are used to good visibility, i.e. the gun model not taking up too much
 	//	  space) - neither the idle gun model nor reloading it should take up
@@ -2606,8 +2606,8 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// drop gun lower at higher fov
 	if (cg_fov.value >= 75)
 	{
-		fovOffset = -0.2f * (cg_fov.value - cg_gunFov.integer);
-		fovOffset = -0.2f * (cg_fov.value - (cg_gunFov.integer ? cg_gunFov.integer : 90 /* ETL dyn fov values were determined with 90 as reference */));
+		fovOffset = -0.2f * (cg_fov.value - cg_gunFovOffset.integer);
+		fovOffset = -0.2f * (cg_fov.value - (cg_gunFovOffset.integer ? cg_gunFovOffset.integer : 90 /* ETL dyn fov values were determined with 90 as reference */));
 	}
 	else
 	{
@@ -2773,12 +2773,12 @@ void CG_AddViewWeapon(playerState_t *ps)
 		}
 
 		// apply ETL dynamic gun fov
-		if (cg_gunFov.integer == 0)
+		if (cg_gunFovOffset.integer == 0)
 		{
 			AxisToAngles(hand->axis, angles);
 			AngleVectors(angles, forward, right, up);
 
-			CG_ApplyETLDynamicGunFov(hand, ps->weapon);
+			CG_ApplyETLDynamicGunFovOffset(hand, ps->weapon);
 		}
 
 		// add everything onto the hand
