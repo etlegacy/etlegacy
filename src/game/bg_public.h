@@ -1345,6 +1345,7 @@ typedef struct modtable_s
 	float hitRegionKillPoints[HR_NUM_HITREGIONS];   ///< g
 	qboolean hasHitRegion;                          ///< g
 	const char *debugReasonMsg;                     ///< g
+	unsigned int damagedState;                     ///< g
 	unsigned int indexWeaponStat;                   ///< g
 
 } modTable_t;

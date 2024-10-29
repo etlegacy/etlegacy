@@ -2732,6 +2732,7 @@ void CG_Player(centity_t *cent)
 	qboolean       usingBinocs = qfalse;
 	bg_character_t *character;
 	float          hilightIntensity = 0.f;
+	double         healthPct;
 
 	// if set to invisible, skip
 	if (cent->currentState.eFlags & EF_NODRAW)
@@ -2756,6 +2757,7 @@ void CG_Player(centity_t *cent)
 		return;
 	}
 
+	healthPct = (double)(ci->health) / (double)(CG_GetPlayerMaxHealth(ci->clientNum, ci->cls, ci->team));
 	character = CG_CharacterForClientinfo(ci, cent);
 
 	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
@@ -2982,6 +2984,10 @@ void CG_Player(centity_t *cent)
 		{
 			anim = HD_ATTACK_END;
 		}
+		else if (ci->team == cg.predictedPlayerState.teamNum && healthPct <= 0.50)
+		{
+			anim = HD_DAMAGED_IDLE3;
+		}
 		else
 		{
 			anim = HD_IDLE1;
@@ -2999,52 +3005,44 @@ void CG_Player(centity_t *cent)
 	// set blinking flag
 	CG_AddRefEntityWithPowerups(&head, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
 
-	// show bloody face depending on means of death
-	if (cent->currentState.eFlags & EF_DEAD)
+	// show blooded face
 	{
-		int damagedState = 2;
-		switch (ci->mod)
+		int damagedState = -1;
+		// show blooded face for teammates depending on their health
+		if (ci->team == cg.predictedPlayerState.teamNum)
 		{
-		case MOD_SUICIDE:
-			damagedState = 0;
-		case MOD_AKIMBO_COLT:
-		case MOD_AKIMBO_LUGER:
-		case MOD_AKIMBO_SILENCEDCOLT:
-		case MOD_AKIMBO_SILENCEDLUGER:
-		case MOD_BACKSTAB:
-		case MOD_COLT:
-		case MOD_FALLING:
-		case MOD_KNIFE:
-		case MOD_KNIFE_KABAR:
-		case MOD_LUGER:
-		case MOD_SILENCED_COLT:
-		case MOD_SILENCER:
-			damagedState = 1;
-		case MOD_AIRSTRIKE:
-		case MOD_ARTY:
-		case MOD_BAZOOKA:
-		case MOD_DYNAMITE:
-		case MOD_FLAMETHROWER:
-		case MOD_GPG40:
-		case MOD_GRENADE:
-		case MOD_GRENADE_LAUNCHER:
-		case MOD_GRENADE_PINEAPPLE:
-		case MOD_LANDMINE:
-		case MOD_M7:
-		case MOD_MAPMORTAR:
-		case MOD_MAPMORTAR_SPLASH:
-		case MOD_MORTAR2:
-		case MOD_MORTAR:
-		case MOD_SATCHEL:
-			damagedState = 3;
-			break;
-		default:
-			break;
+			if (cent->currentState.eFlags & EF_DEAD)
+			{
+				damagedState = 2;
+			}
+			else if (ci->health > 0)
+			{
+				if (healthPct <= 0.30)
+				{
+					damagedState = 2;
+				}
+				else if (healthPct <= 0.50)
+				{
+					damagedState = 1;
+				}
+				else if (healthPct <= 0.80)
+				{
+					damagedState = 0;
+				}
+			}
+		}
+		// show blooded face on enemies depending on their means of death
+		else if (cent->currentState.eFlags & EF_DEAD)
+		{
+			damagedState = GetMODTableData(ci->mod)->damagedState;
 		}
 
-		head.customShader = 0;
-		head.customSkin   = cgs.media.hudDamagedStates[damagedState];
-		trap_R_AddRefEntityToScene(&head);
+		if (damagedState >= 0)
+		{
+			head.customShader = 0;
+			head.customSkin   = cgs.media.hudDamagedStates[damagedState];
+			trap_R_AddRefEntityToScene(&head);
+		}
 	}
 
 	cent->pe.headRefEnt = head;
@@ -3217,6 +3215,8 @@ void CG_ResetPlayerEntity(centity_t *cent)
 {
 	if (!(cent->currentState.eFlags & EF_DEAD))
 	{
+		clientInfo_t *ci = &cgs.clientinfo[cent->currentState.clientNum];
+
 		CG_ClearLerpFrameRate(cent, &cgs.clientinfo[cent->currentState.clientNum], &cent->pe.legs, cent->currentState.legsAnim);
 		CG_ClearLerpFrame(cent, &cgs.clientinfo[cent->currentState.clientNum], &cent->pe.torso, cent->currentState.torsoAnim);
 
@@ -3231,6 +3231,8 @@ void CG_ResetPlayerEntity(centity_t *cent)
 		cent->pe.torso.yawing     = qfalse;
 		cent->pe.torso.pitchAngle = cent->rawAngles[PITCH];
 		cent->pe.torso.pitching   = qfalse;
+
+		ci->health = CG_GetPlayerMaxHealth(ci->clientNum, ci->cls, ci->team);
 	}
 
 	BG_EvaluateTrajectory(&cent->currentState.pos, cg.time, cent->lerpOrigin, qfalse, cent->currentState.effect2Time);
