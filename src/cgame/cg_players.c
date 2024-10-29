@@ -2999,6 +2999,54 @@ void CG_Player(centity_t *cent)
 	// set blinking flag
 	CG_AddRefEntityWithPowerups(&head, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
 
+	// show bloody face depending on means of death
+	if (cent->currentState.eFlags & EF_DEAD)
+	{
+		int damagedState = 2;
+		switch (ci->mod)
+		{
+		case MOD_SUICIDE:
+			damagedState = 0;
+		case MOD_AKIMBO_COLT:
+		case MOD_AKIMBO_LUGER:
+		case MOD_AKIMBO_SILENCEDCOLT:
+		case MOD_AKIMBO_SILENCEDLUGER:
+		case MOD_BACKSTAB:
+		case MOD_COLT:
+		case MOD_FALLING:
+		case MOD_KNIFE:
+		case MOD_KNIFE_KABAR:
+		case MOD_LUGER:
+		case MOD_SILENCED_COLT:
+		case MOD_SILENCER:
+			damagedState = 1;
+		case MOD_AIRSTRIKE:
+		case MOD_ARTY:
+		case MOD_BAZOOKA:
+		case MOD_DYNAMITE:
+		case MOD_FLAMETHROWER:
+		case MOD_GPG40:
+		case MOD_GRENADE:
+		case MOD_GRENADE_LAUNCHER:
+		case MOD_GRENADE_PINEAPPLE:
+		case MOD_LANDMINE:
+		case MOD_M7:
+		case MOD_MAPMORTAR:
+		case MOD_MAPMORTAR_SPLASH:
+		case MOD_MORTAR2:
+		case MOD_MORTAR:
+		case MOD_SATCHEL:
+			damagedState = 3;
+			break;
+		default:
+			break;
+		}
+
+		head.customShader = 0;
+		head.customSkin   = cgs.media.hudDamagedStates[damagedState];
+		trap_R_AddRefEntityToScene(&head);
+	}
+
 	cent->pe.headRefEnt = head;
 
 	// set the shadowplane for accessories

@@ -689,6 +689,7 @@ typedef struct clientInfo_s
 	int kills;
 	int killsAssists;
 	int deaths;
+	meansOfDeath_t mod;
 	int gibs;
 	int selfKills;
 	int teamKills;

@@ -210,6 +210,8 @@ static void CG_Obituary(entityState_t *ent)
 
 	ci = &cgs.clientinfo[target];
 
+	ci->mod = mod;
+
 	if (attacker < 0 || attacker >= MAX_CLIENTS)
 	{
 		attacker = ENTITYNUM_WORLD;
