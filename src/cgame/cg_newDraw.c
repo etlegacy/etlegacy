@@ -675,8 +675,8 @@ void CG_MouseEvent(int x, int y)
 		if (!cgs.demoCamera.renderingFreeCam)
 		{
 #endif
-		int hudEditorSafeX = SCREEN_WIDTH_SAFE * 1.28f;
-		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * 1.28f;
+		int hudEditorSafeX = SCREEN_WIDTH_SAFE * HUD_EDITOR_SIZE_COEFF;
+		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * HUD_EDITOR_SIZE_COEFF;
 
 		cgs.cursorX += x;
 		if (cg.editingHud && !cg.fullScreenHudEditor)
