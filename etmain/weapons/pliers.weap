@@ -53,8 +53,8 @@ weaponDef
 			alliedskin	"models/multiplayer/pliers/pliers_allied.skin"
 			//flashModel	""
 
-			dynFov90 -3.5 2.0 0.0
-			dynFov120 -7.8 0.0 6.0
+			dynFov90  -3.5 4.0 0.0
+			dynFov120 -5.5 0.0 6.0
 		}
 
 		thirdPerson {
