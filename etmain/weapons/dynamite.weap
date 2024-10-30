@@ -87,7 +87,7 @@ weaponDef
 
 		thirdPerson {
 			model		"models/multiplayer/dynamite/dynamite_3rd.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

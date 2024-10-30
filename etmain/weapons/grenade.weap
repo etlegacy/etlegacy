@@ -95,7 +95,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/grenade/ss_grenade.md3"
-			//flashmodel		""
+			//flashModel		""
 		}
 	}
 }

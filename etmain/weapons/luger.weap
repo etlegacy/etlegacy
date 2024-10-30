@@ -73,6 +73,7 @@ weaponDef
 		firstPerson {
 			model			"models/weapons2/luger/v_luger.mdc"
 			flashModel		"models/weapons2/luger/v_luger_flash.mdc"
+			flashScale 0.35
 
 			dynFov90 0.0 6.0 1.5
 			dynFov120 5.0 -3.0 1.5
@@ -106,7 +107,8 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/luger/ss_luger.mdc"
-			flashmodel		"models/weapons2/luger/luger_flash.mdc"
+			flashModel		"models/weapons2/luger/luger_flash.mdc"
+			flashScale 0.7
 
 			ejectBrassOffset	24 -4 36
 		}

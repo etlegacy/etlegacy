@@ -57,7 +57,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/multiplayer/ammopack/ammopack.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

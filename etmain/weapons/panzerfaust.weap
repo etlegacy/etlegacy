@@ -67,6 +67,7 @@ weaponDef
 		firstPerson {
 			model			"models/weapons2/panzerfaust/v_pf.md3"
 			flashModel		"models/weapons2/panzerfaust/v_pf_flash.mdc"
+			flashScale 1.50
 
 			dynFov90 -0.5 0.5 0.5
 			dynFov120 2.5 -3.0 0.5
@@ -105,7 +106,8 @@ weaponDef
 
 		thirdPerson {
 			model			"models/multiplayer/panzerfaust/multi_pf.md3"
-			flashmodel		"models/weapons2/panzerfaust/pf_flash.mdc"
+			flashModel		"models/weapons2/panzerfaust/pf_flash.mdc"
+			flashScale 1.00
 
 			ejectBrassOffset	-24 -4 24
 		}

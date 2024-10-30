@@ -75,6 +75,7 @@ weaponDef
 		firstPerson {
 			model			"models/weapons2/browning/v_brown30cal.md3"
 			flashModel		"models/multiplayer/mg42/v_mg42_flash.mdc"
+			flashScale 0.65
 
 			dynFov90 -3.0 6.0 -0.5
 			dynFov120 2.0 1.0 0.5
@@ -117,7 +118,8 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/browning/brown30cal_3rd.md3"
-			flashmodel		"models/multiplayer/mg42/mg42_3rd_flash.mdc"
+			flashModel		"models/multiplayer/mg42/mg42_3rd_flash.mdc"
+			flashScale 0.7
 
 			ejectBrassOffset	12 -4 24
 		}

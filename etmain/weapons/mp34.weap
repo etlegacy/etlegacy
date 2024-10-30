@@ -105,7 +105,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/mp34/mp34_3rd.md3"
-			//flashmodel		"models/weapons2/sten/sten_flash.mdc"
+			//flashModel		"models/weapons2/sten/sten_flash.mdc"
 
 			ejectBrassOffset	16 -4 24
 		}

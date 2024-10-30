@@ -85,7 +85,7 @@ weaponDef
 
 		thirdPerson {
 			model		"models/multiplayer/knife/knife.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

@@ -73,6 +73,7 @@ weaponDef
 		firstPerson {
 			model			"models/weapons2/colt/v_colt.mdc"
 			flashModel		"models/weapons2/colt/v_colt_flash.mdc"
+			flashScale 0.35
 
 			dynFov90 -2.0 6.0 1.5
 			dynFov120 3.0 -3.5 1.5
@@ -111,7 +112,8 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/colt/ss_colt.mdc"
-			flashmodel		"models/weapons2/colt/colt_flash.mdc"
+			flashModel		"models/weapons2/colt/colt_flash.mdc"
+			flashScale 0.7
 
 			ejectBrassOffset	24 -4 36
 		}

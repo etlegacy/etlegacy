@@ -126,7 +126,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/colt/silenced.md3"
-			//flashmodel		"models/weapons2/colt/colt_flash.mdc"
+			//flashModel		"models/weapons2/colt/colt_flash.mdc"
 
 			ejectBrassOffset	24 -4 36
 		}

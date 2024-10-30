@@ -83,7 +83,7 @@ weaponDef
 
 		thirdPerson {
 			model		"models/multiplayer/smokegrenade/smokegrenade.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

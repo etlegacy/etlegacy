@@ -112,7 +112,7 @@ weaponDef
 
 		thirdPerson {
 			model		"models/multiplayer/mortar/mortar_3rd.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

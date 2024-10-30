@@ -102,7 +102,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/sten/ss_sten.mdc"
-			//flashmodel		"models/weapons2/sten/sten_flash.mdc"
+			//flashModel		"models/weapons2/sten/sten_flash.mdc"
 
 			ejectBrassOffset	16 -4 24
 		}

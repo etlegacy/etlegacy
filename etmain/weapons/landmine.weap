@@ -78,7 +78,7 @@ weaponDef
 
 		thirdPerson {
 			model		"models/multiplayer/landmine/landmine.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

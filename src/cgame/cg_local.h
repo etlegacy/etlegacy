@@ -958,6 +958,7 @@ typedef struct weaponInfo_s
 	weaponModel_t weaponModel[W_NUM_TYPES];
 	partModel_t partModels[W_NUM_TYPES][W_MAX_PARTS];
 	qhandle_t flashModel[W_NUM_TYPES];
+	float flashScale[2];
 	qhandle_t modModels[6];             ///< like the scope for the rifles
 
 	vec3_t flashDlightColor;
@@ -2778,7 +2779,7 @@ extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
 extern vmCvar_t cg_muzzleFlashDlight;
-extern vmCvar_t cg_muzzleFlashScale;
+extern vmCvar_t cg_muzzleFlashOld;
 extern vmCvar_t cg_drawEnvAwareness;
 extern vmCvar_t cg_drawEnvAwarenessScale;
 extern vmCvar_t cg_drawEnvAwarenessIconSize;

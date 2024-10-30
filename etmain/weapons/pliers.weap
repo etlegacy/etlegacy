@@ -59,7 +59,7 @@ weaponDef
 
 		thirdPerson {
 			model		"models/multiplayer/pliers/pliers.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }
