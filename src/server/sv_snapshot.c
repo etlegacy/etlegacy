@@ -1407,7 +1407,6 @@ void SV_PrintNetworkOverhead_f(void)
 		Com_Printf("total compression:  %.2fx\n", compression);
 		Com_Printf("average bytes sent: %.2f\n", sentTotal / countTotal);
 		Com_Printf("=========================\n");
-
 	}
 }
 
