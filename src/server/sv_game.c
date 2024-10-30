@@ -47,8 +47,9 @@ botlib_export_t *botlib_export;
 
 static ext_trap_keys_t g_extensionTraps[] =
 {
-	{ "trap_DemoSupport_Legacy", G_DEMOSUPPORT, qfalse },
-	{ NULL,                      -1,            qfalse }
+	{ "trap_DemoSupport_Legacy",         G_DEMOSUPPORT,           qfalse },
+	{ "trap_SnapshotCallbackExt_Legacy", G_SNAPSHOT_CALLBACK_EXT, qfalse },
+	{ NULL,                              -1,                      qfalse }
 };
 
 /**
@@ -701,6 +702,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 
 	case G_DEMOSUPPORT:
 		SV_DemoSupport(VMA(1));
+		return 0;
+	case G_SNAPSHOT_CALLBACK_EXT:
+		sv.snapshotCallbackExt = qtrue;
 		return 0;
 
 	case G_TRAP_GETVALUE:

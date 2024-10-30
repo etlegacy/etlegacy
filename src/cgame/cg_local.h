@@ -706,11 +706,11 @@ typedef struct clientInfo_s
 #ifdef FEATURE_PRESTIGE
 	int prestige;
 #endif
-
-#ifdef FEATURE_MULTIVIEW
-	// per client MV ps info
+	int currentWeapon;
 	int ammo;
 	int ammoclip;
+#ifdef FEATURE_MULTIVIEW
+	// per client MV ps info
 	int chargeTime;
 	qboolean fCrewgun;
 	int cursorHint;
@@ -1157,7 +1157,7 @@ typedef struct
 	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
-	qboolean autoCmdExecuted;				///< has 'cg_autoCmd' been executed yet
+	qboolean autoCmdExecuted;               ///< has 'cg_autoCmd' been executed yet
 
 	// there are only one or two snapshot_t that are relevent at a time
 	int latestSnapshotNum;                  ///< the number of snapshots the client system has received
@@ -3148,7 +3148,7 @@ const char *CG_TranslateString(const char *string);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
-void CG_DrawDebugArtillery(centity_t * cent);
+void CG_DrawDebugArtillery(centity_t *cent);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
@@ -3268,6 +3268,7 @@ qboolean CG_AddCEntity_Filter(centity_t *cent);
 qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime);
 void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName, int startIndex, vec3_t *offset);
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName);
+void CG_EBS_Shoutcast(centity_t *cent);
 
 // cg_weapons_io.c
 void CG_RegisterWeapon(int weaponNum, qboolean force);
@@ -4395,7 +4396,7 @@ typedef struct
 	int count;
 } hudData_t;
 
-extern hudData_t hudData;
+extern hudData_t      hudData;
 extern hudComponent_t *showOnlyHudComponent;
 
 typedef struct

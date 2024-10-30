@@ -56,6 +56,78 @@ A normal server packet will look like:
 =============================================================================
 */
 
+#ifdef ETLEGACY_DEBUG
+
+// debugging code to evaluate network overhead
+// taken from cnq3 - thanks myT
+
+typedef struct netSliceOverhead_s
+{
+	uint64_t numBytesSent;
+	uint64_t numBytesWritten;
+	const char *name;
+	qboolean (*processCommand_f)(const char *cmd);
+	qboolean (*processEntity_f)(const entityState_t *ent);
+} netSliceOverhead_t;
+
+typedef struct netOverhead_s
+{
+	uint64_t numSent;
+	uint64_t numBytesSent; // total
+	netSliceOverhead_t slices[64];
+	int numSlices;
+} netOverhead_t;
+
+static netOverhead_t net_overhead;
+
+/**
+ * @brief SV_TrackEntityOverhead
+ * @param[in] offset
+ * @param[in] msg
+ * @param[in] ent
+ */
+static void SV_TrackEntityOverhead(int offset, const msg_t *msg, const entityState_t *ent)
+{
+	int i;
+
+	for (i = 0; i < net_overhead.numSlices; i++)
+	{
+		netSliceOverhead_t *ovh = &net_overhead.slices[i];
+
+		if (ovh->processEntity_f != NULL && ovh->processEntity_f(ent))
+		{
+			const int sent = (msg->bit - offset + 7) / 8;
+			ovh->numBytesSent    += sent;
+			ovh->numBytesWritten += sent; // don't care enough to track this
+		}
+	}
+}
+
+/**
+ * @brief SV_TrackCommandOverhead
+ * @param[in] offset
+ * @param[in] msg
+ * @param[in] cmd
+ */
+static void SV_TrackCommandOverhead(const int offset, const msg_t *msg, const char *cmd)
+{
+	int i;
+
+	for (i = 0; i < net_overhead.numSlices; i++)
+	{
+		netSliceOverhead_t *ovh = &net_overhead.slices[i];
+
+		if (ovh->processCommand_f != NULL && ovh->processCommand_f(cmd))
+		{
+			// don't forget the protocol headers and the string's null-terminator
+			ovh->numBytesSent    += (msg->bit - offset + 7) / 8;
+			ovh->numBytesWritten += 5 + strlen(cmd) + 1;
+		}
+	}
+}
+
+#endif
+
 /**
  * @brief Writes a delta update of an entityState_t list to the message.
  * @param[in] from
@@ -107,6 +179,9 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 
 		if (newnum == oldnum)
 		{
+#ifdef ETLEGACY_DEBUG
+			const int offset = msg->bit;
+#endif
 			messageSize = msg->cursize;
 
 			// delta update from old position
@@ -117,7 +192,9 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 			{
 				MSG_ETTV_WriteDeltaEntityShared(msg, oldSharedent, newSharedent, qtrue);
 			}
-
+#ifdef ETLEGACY_DEBUG
+			SV_TrackEntityOverhead(offset, msg, newent);
+#endif
 			oldindex++;
 			newindex++;
 			continue;
@@ -129,13 +206,18 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 			{
 				Com_Error(ERR_FATAL, "SV_EmitPacketEntities: MAX_GENTITIES exceeded");
 			}
-
+#ifdef ETLEGACY_DEBUG
+			const int offset = msg->bit;
+#endif
 			// this is a new entity, send it from the baseline
 			MSG_WriteDeltaEntity(msg, &sv.svEntities[newnum].baseline, newent, qtrue);
 			if (client->ettvClient)
 			{
 				MSG_ETTV_WriteDeltaEntityShared(msg, &sv.svEntities[newnum].baselineShared, newSharedent, qtrue);
 			}
+#ifdef ETLEGACY_DEBUG
+			SV_TrackEntityOverhead(offset, msg, newent);
+#endif
 			newindex++;
 			continue;
 		}
@@ -374,9 +456,15 @@ void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg)
 	// write any unacknowledged serverCommands
 	for (i = client->reliableAcknowledge + 1 ; i <= client->reliableSequence ; i++)
 	{
+#ifdef ETLEGACY_DEBUG
+		const int offset = msg->bit;
+#endif
 		MSG_WriteByte(msg, svc_serverCommand);
 		MSG_WriteLong(msg, i);
 		MSG_WriteString(msg, client->reliableCommands[i & (MAX_RELIABLE_COMMANDS - 1)]);
+#ifdef ETLEGACY_DEBUG
+		SV_TrackCommandOverhead(offset, msg, client->reliableCommands[i & (MAX_RELIABLE_COMMANDS - 1)]);
+#endif
 	}
 
 	client->reliableSent = client->reliableSequence;
@@ -430,7 +518,7 @@ static int QDECL SV_QsortEntityNumbers(const void *a, const void *b)
  * @param[in] gEnt
  * @param[in,out] eNums
  */
-static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sharedEntity_t *gEnt, snapshotEntityNumbers_t *eNums)
+static void SV_AddEntToSnapshot(client_t *cl, sharedEntity_t *clientEnt, svEntity_t *svEnt, sharedEntity_t *gEnt, snapshotEntityNumbers_t *eNums)
 {
 	// if we have already added this entity to this snapshot, don't add again
 	if (svEnt->snapshotCounter == sv.snapshotCounter)
@@ -448,7 +536,14 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
 
 	if (gEnt->r.snapshotCallback)
 	{
-		if (!(qboolean)(VM_Call(gvm, GAME_SNAPSHOT_CALLBACK, gEnt->s.number, clientEnt->s.number)))
+		if (sv.snapshotCallbackExt)
+		{
+			if (!(qboolean)(VM_Call(gvm, GAME_SNAPSHOT_CALLBACK_EXT, gEnt->s.number, clientEnt->s.number, cl - svs.clients)))
+			{
+				return;
+			}
+		}
+		else if (!(qboolean)(VM_Call(gvm, GAME_SNAPSHOT_CALLBACK, gEnt->s.number, clientEnt->s.number)))
 		{
 			return;
 		}
@@ -566,13 +661,13 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 		// broadcast entities are always sent
 		if (ent->r.svFlags & SVF_BROADCAST)
 		{
-			SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+			SV_AddEntToSnapshot(cl, playerEnt, svEnt, ent, eNums);
 			continue;
 		}
 
 		if (cl->ettvClient)
 		{
-			SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+			SV_AddEntToSnapshot(cl, playerEnt, svEnt, ent, eNums);
 			continue;
 		}
 
@@ -583,7 +678,7 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 		{
 			if (bitvector[svEnt->originCluster >> 3] & (1 << (svEnt->originCluster & 7)))
 			{
-				SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+				SV_AddEntToSnapshot(cl, playerEnt, svEnt, ent, eNums);
 			}
 
 			continue;
@@ -656,7 +751,7 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 					continue;
 				}
 
-				SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
+				SV_AddEntToSnapshot(cl, playerEnt, master, ment, eNums);
 			}
 
 			continue;   // master needs to be added, but not this dummy ent
@@ -707,7 +802,7 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 
 				if (ment->s.otherEntityNum == ent->s.number)
 				{
-					SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
+					SV_AddEntToSnapshot(cl, playerEnt, master, ment, eNums);
 				}
 			}
 
@@ -732,7 +827,7 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 				if (!SV_CanSee(frame->ps.clientNum, e))
 				{
 					SV_RandomizePos(frame->ps.clientNum, e);
-					SV_AddEntToSnapshot(client, svEnt, ent, eNums);
+					SV_AddEntToSnapshot(cl, client, svEnt, ent, eNums);
 					continue;
 				}
 			}
@@ -740,7 +835,7 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 #endif
 
 		// add it
-		SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+		SV_AddEntToSnapshot(cl, playerEnt, svEnt, ent, eNums);
 
 		// if its a portal entity, add everything visible from its camera position
 		if (ent->r.svFlags & SVF_PORTAL)
@@ -983,6 +1078,10 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client, qboolean parseEntities
 
 	// send the datagram
 	SV_Netchan_Transmit(client, msg);
+#ifdef ETLEGACY_DEBUG
+	net_overhead.numBytesSent += msg->cursize;
+	net_overhead.numSent++;
+#endif
 }
 
 /**
@@ -1249,3 +1348,103 @@ void SV_CheckClientUserinfoTimer(void)
 		}
 	}
 }
+
+#ifdef ETLEGACY_DEBUG
+
+/**
+ * @brief SV_PrintNetworkOverhead_f
+ */
+void SV_PrintNetworkOverhead_f(void)
+{
+	int i;
+
+	if (net_overhead.numBytesSent == 0)
+	{
+		return;
+	}
+
+	const double sentTotal  = net_overhead.numBytesSent;
+	const double countTotal = net_overhead.numSent;
+
+	double sentAll    = 0.0;
+	double writtenAll = 0.0;
+
+	Com_Printf("=========================\n");
+	for (i = 0; i < net_overhead.numSlices; i++)
+	{
+		const char   *name   = net_overhead.slices[i].name;
+		const double sent    = net_overhead.slices[i].numBytesSent;
+		const double written = net_overhead.slices[i].numBytesWritten;
+		sentAll    += sent;
+		writtenAll += written;
+		if (sent == 0.0)
+		{
+			Com_Printf("%s unused\n", name);
+			continue;
+		}
+
+		const float overhead    = sent / sentTotal;
+		const float compression = written / sent;
+		Com_Printf("%s overhead:    %.2f%%\n", name, overhead * 100.0f);
+		Com_Printf("%s compression: %.2fx\n", name, compression);
+	}
+
+	if (sentAll > 0.0)
+	{
+		const float overhead    = sentAll / sentTotal;
+		const float compression = writtenAll / sentAll;
+		Com_Printf("total overhead:     %.2f%%\n", overhead * 100.0f);
+		Com_Printf("total compression:  %.2fx\n", compression);
+		Com_Printf("average bytes sent: %.2f\n", sentTotal / countTotal);
+		Com_Printf("=========================\n");
+
+	}
+}
+
+/**
+ * @brief SV_ClearNetworkOverhead_f
+ */
+void SV_ClearNetworkOverhead_f(void)
+{
+	int i;
+
+	net_overhead.numBytesSent = 0;
+	for (i = 0; i < net_overhead.numSlices; i++)
+	{
+		net_overhead.slices[i].numBytesSent    = 0;
+		net_overhead.slices[i].numBytesWritten = 0;
+	}
+}
+
+static qboolean SV_OverheadIsTeamInfoCommand(const char *cmd)
+{
+	return !Q_stricmpn(cmd, "tinfo", 5);
+}
+
+static qboolean SV_OverheadIsEBSShoutcastEntity(const entityState_t *ent)
+{
+	return ent->eType == ET_EBS_SHOUTCAST;
+}
+
+static qboolean SV_OverheadIsPlayerEntity(const entityState_t *ent)
+{
+	return ent->eType == ET_PLAYER;
+}
+
+/**
+ * @brief SV_InitNetworkOverhead
+ */
+void SV_InitNetworkOverhead(void)
+{
+	net_overhead.slices[0].name             = "Team Info";
+	net_overhead.slices[0].processCommand_f = &SV_OverheadIsTeamInfoCommand;
+
+	net_overhead.slices[1].name            = "ET_EBS_SHOUTCAST";
+	net_overhead.slices[1].processEntity_f = &SV_OverheadIsEBSShoutcastEntity;
+
+	net_overhead.slices[2].name            = "ET_PLAYER";
+	net_overhead.slices[2].processEntity_f = &SV_OverheadIsPlayerEntity;
+	net_overhead.numSlices                 = 0;
+}
+
+#endif

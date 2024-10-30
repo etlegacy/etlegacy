@@ -35,6 +35,8 @@
 #include <limits.h>
 
 #include "g_local.h"
+#include "bg_ebs.h"
+#include "bg_b64.h"
 
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
@@ -2397,4 +2399,188 @@ void G_UpdateSpawnPointState(gentity_t *ent)
 	Info_SetValueForKey(cs, "t", va("%i", ent->count2));
 	trap_SetConfigstring(ent->count, cs);
 	G_UpdateSpawnPointStatePlayerCounts();
+}
+
+/**
+ * @brief G_EBS_ShoutcastCallback
+ * @param[in] clientNumReal
+ * @return
+ */
+qboolean G_EBS_ShoutcastCallback(int clientNumReal)
+{
+	gentity_t *ent = &g_entities[clientNumReal];
+
+	if (ent->client->sess.shoutcaster && ent->client->pers.connected == CON_CONNECTED)
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief G_EBS_ShoutcastWritePlayer
+ * @param[in] ent
+ * @param[in] ebs
+ */
+static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
+{
+	int health, weapon;
+
+	// if in LIMBO, don't show followee's health
+	if (ent->client->ps.pm_flags & PMF_LIMBO)
+	{
+		health = -1;
+	}
+	else
+	{
+		health = MAX(0, ent->client->ps.stats[STAT_HEALTH]);
+	}
+
+	// Note: this omits potential WP_MOBILE_BROWNING icon from drawing
+	weapon = BG_PlayerMounted(ent->client->ps.eFlags) ? WP_MOBILE_MG42 : ent->client->ps.weapon;
+
+	EBS_WriteBits(ebs, ent->s.number, 6);
+	EBS_WriteBitsWithSign(ebs, health, 9);
+	EBS_WriteBits(ebs, ent->client->ps.ammoclip[weapon], 8);
+	EBS_WriteBits(ebs, ent->client->ps.ammo[weapon], 8);
+	EBS_WriteBits(ebs, weapon, 6);
+	EBS_WriteBits(ebs, ent->s.powerups, 16);
+}
+
+#define EBS_SHOUTCAST_NEXT_THINK_TIME (level.time + level.frameTime)
+#define EBS_SHOUTCAST_VERSION_SIZE 4
+
+/**
+ * @brief G_EBS_ShoutcastThink write player(s) into the same entityBitStream fields
+ * @param[in] ent
+ */
+/*
+=============================
+<Header>
+4 version
+6 slotBits
+<6 player slots>
+6 clientNum
+9 health
+8 ammoClip
+8 ammo
+6 weapon
+16 powerups
+=============================
+*/
+void G_EBS_ShoutcastThink(gentity_t *ent)
+{
+	entityBitStream_t ebs;
+	gentity_t *playerEnt;
+	int i, j = 0, slotBits = 0, team = ent->key - 1;
+	static int playerSlots[2][6] = { { -1, -1, -1, -1, -1, -1 }, { -1, -1, -1, -1, -1, -1 } };
+	static uint64_t playerSlotsBits[2];
+	qboolean skipSlot;
+
+	ent->nextthink = EBS_SHOUTCAST_NEXT_THINK_TIME;
+
+	if (g_gametype.integer != GT_WOLF_STOPWATCH || !level.shoutcasters)
+	{
+		return;
+	}
+
+	EBS_InitWrite(&ebs, &ent->s, qfalse);
+	EBS_WriteBits(&ebs, 0, EBS_SHOUTCAST_VERSION_SIZE); // Version
+
+	// reserved for slotBits
+	EBS_Skip(&ebs, 6);
+
+	for (i = 0; i < 6; i++)
+	{
+		skipSlot = qtrue;
+
+		// if there is a player in this slot
+		if (playerSlots[team][i] != -1)
+		{
+			playerEnt = &g_entities[playerSlots[team][i]];
+
+			if (playerEnt->client->sess.sessionTeam == ent->key)
+			{
+				G_EBS_ShoutcastWritePlayer(playerEnt, &ebs);
+
+				slotBits |= BIT(i);
+				continue;
+			}
+			else
+			{
+				// player left free the slot
+				playerSlotsBits[team] &= ~(1ULL << playerSlots[team][i]);
+				playerSlots[team][i]   = -1;
+			}
+		}
+
+		// if slot wasn't taken or was freed try to add another player
+		for (; j < level.numTeamClients[team]; j++)
+		{
+			// if player already exists
+			if (playerSlotsBits[team] & (1ULL << level.teamClients[team][j]))
+			{
+				continue;
+			}
+
+			playerEnt = &g_entities[level.teamClients[team][j]];
+
+			// take the slot
+			playerSlotsBits[team] |= (1ULL << level.teamClients[team][j]);
+			playerSlots[team][i]   = level.teamClients[team][j];
+
+			G_EBS_ShoutcastWritePlayer(playerEnt, &ebs);
+
+			skipSlot  = qfalse;
+			slotBits |= BIT(i);
+			j++;
+			break;
+		}
+
+		if (skipSlot)
+		{
+			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE_V0);
+		}
+	}
+
+	// write slotBits indicating which slot is valid for read
+	EBS_InitWrite(&ebs, &ent->s, qfalse);
+	EBS_Skip(&ebs, EBS_SHOUTCAST_VERSION_SIZE);
+	EBS_WriteBits(&ebs, slotBits, 6);
+}
+
+/**
+ * @brief G_EBS_InitShoutcast
+ */
+void G_EBS_InitShoutcast(void)
+{
+	gentity_t *ent;
+	entityBitStream_t s;
+	int i;
+
+	if (!dll_trap_SnapshotCallbackExt)
+	{
+		return;
+	}
+
+#ifdef EBS_TESTS
+	EBS_RunTests();
+#endif
+
+	for (i = 0; i < 2; i++)
+	{
+		ent                     = G_Spawn();
+		ent->classname          = "EBS_Shoutcast";
+		ent->neverFree          = qtrue;
+		ent->s.eType            = ET_EBS_SHOUTCAST;
+		ent->key                = i + 1; // teamNum
+		ent->think              = G_EBS_ShoutcastThink;
+		ent->nextthink          = level.time + 1000;
+		ent->r.svFlags          = SVF_BROADCAST;
+		ent->r.linked           = qtrue;
+		ent->r.snapshotCallback = qtrue;
+
+		EBS_InitWrite(&s, &ent->s, qtrue);
+	}
 }

@@ -2992,6 +2992,11 @@ void CG_CheckEvents(centity_t *cent)
 {
 	int i, event;
 
+	if (cent->currentState.eType == ET_EBS_SHOUTCAST)
+	{
+		return;
+	}
+
 	// calculate the position at exactly the frame time
 	BG_EvaluateTrajectory(&cent->currentState.pos, cg.snap->serverTime, cent->lerpOrigin, qfalse, cent->currentState.effect2Time);
 	CG_SetEntitySoundPosition(cent);
