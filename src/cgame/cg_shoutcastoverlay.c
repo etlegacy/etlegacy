@@ -80,6 +80,7 @@ static int CG_GetPlayerCurrentWeapon(clientInfo_t *player)
 
 /**
  * @brief CG_ShoutcastPlayerAmmoValue get the current ammo and/or clip count of the holded weapon (if using ammo).
+ * @param[in] ci
  * @param[out] ammo - the number of ammo left (in the current clip if using clip)
  * @param[out] clips - the total ammount of ammo in all clips (if using clip)
  */
