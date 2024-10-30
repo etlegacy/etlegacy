@@ -2578,8 +2578,8 @@ void CG_EBS_Shoutcast(centity_t *cent)
 		ci        = &cgs.clientinfo[clientNum];
 
 		ci->health        = EBS_ReadBitsWithSign(&ebs, 9);
-		ci->ammoclip      = EBS_ReadBits(&ebs, 8);
-		ci->ammo          = EBS_ReadBits(&ebs, 8);
+		ci->ammoclip      = EBS_ReadBits(&ebs, 10);
+		ci->ammo          = EBS_ReadBits(&ebs, 10);
 		ci->currentWeapon = EBS_ReadBits(&ebs, 6);
 		ci->powerups      = EBS_ReadBits(&ebs, 16);
 	}

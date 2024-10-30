@@ -55,4 +55,4 @@ void        EBS_ValidateTestPayload(entityBitStream_t *ebs);
 #endif
 
 // ET_EBS_SHOUTCAST size of player info
-#define EBS_SHOUTCAST_PLAYER_SIZE_V0 (6 + 9 + 8 + 8 + 6 + 16)
+#define EBS_SHOUTCAST_PLAYER_SIZE_V0 (6 + 9 + 10 + 10 + 6 + 16)

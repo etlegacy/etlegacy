@@ -2442,8 +2442,8 @@ static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
 
 	EBS_WriteBits(ebs, ent->s.number, 6);
 	EBS_WriteBitsWithSign(ebs, health, 9);
-	EBS_WriteBits(ebs, ent->client->ps.ammoclip[weapon], 8);
-	EBS_WriteBits(ebs, ent->client->ps.ammo[weapon], 8);
+	EBS_WriteBits(ebs, ent->client->ps.ammoclip[weapon], 10);
+	EBS_WriteBits(ebs, ent->client->ps.ammo[weapon], 10);
 	EBS_WriteBits(ebs, weapon, 6);
 	EBS_WriteBits(ebs, ent->s.powerups, 16);
 }
