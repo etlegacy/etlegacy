@@ -2469,8 +2469,8 @@ static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
 <6 player slots>
 6 clientNum
 9 health
-8 ammoClip
-8 ammo
+10 ammoClip
+10 ammo
 6 weapon
 16 powerups
 =============================
