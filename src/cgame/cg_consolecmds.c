@@ -91,6 +91,12 @@ static void CG_Viewpos_f(void)
  */
 void CG_LimboMenu_f(void)
 {
+	// disallow opening the limbo menu on demoplayback
+	if (cg.demoPlayback)
+	{
+		return;
+	}
+
 	if (cg.showGameView)
 	{
 		CG_EventHandling(CGAME_EVENT_NONE, qfalse);

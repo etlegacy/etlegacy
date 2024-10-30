@@ -633,9 +633,12 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align, qboolean dynamicColor)
 
 	flags |= BAR_LERP_COLOR;
 
-	if (dynamicColor) {
+	if (dynamicColor)
+	{
 		CG_FilledBar(rect->x, rect->y, rect->w, rect->h, dynColor, dynColor2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
-	} else {
+	}
+	else
+	{
 		CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
 	}
 }
@@ -842,6 +845,7 @@ void CG_EventHandling(int type, qboolean fForced)
 		cgs.cursorUpdate    = cg.time + 10000;
 		cgs.timescaleUpdate = cg.time + 4000;
 		CG_ScoresUp_f();
+		CG_HudEditorReset();
 		break;
 
 	case CGAME_EVENT_SPEAKEREDITOR:
@@ -911,14 +915,7 @@ void CG_EventHandling(int type, qboolean fForced)
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
 		{
-			if (cg.generatingNoiseHud)
-			{
-				CG_HudEditor_Cleanup();
-				cg.generatingNoiseHud = qfalse;
-			}
-
-			cg.editingHud          = qfalse;
-			cg.fullScreenHudEditor = qfalse;
+			CG_HudEditorReset();
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{

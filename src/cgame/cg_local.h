@@ -4522,6 +4522,7 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete);
 void CG_HudEditorSetup(void);
 void CG_DrawHudEditor(void);
 void CG_HudEditor_KeyHandling(int key, qboolean down);
+void CG_HudEditorReset();
 void CG_HudEditorMouseMove_Handling(int x, int y);
 
 typedef struct
