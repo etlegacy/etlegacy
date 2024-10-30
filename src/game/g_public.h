@@ -228,7 +228,8 @@ typedef enum
 	///< engine extensions padding
 	G_TRAP_GETVALUE = COM_TRAP_GETVALUE,
 
-	G_DEMOSUPPORT
+	G_DEMOSUPPORT,
+	G_SNAPSHOT_CALLBACK_EXT
 
 } gameImport_t;
 
@@ -278,6 +279,7 @@ typedef enum
 	GAME_MESSAGERECEIVED = 14,      ///< ( int cno, const char *buf, int buflen, int commandTime );
 
 	GAME_DEMOSTATECHANGED,          ///< (demoState_t demoState, int demoClientsNum) // server demo playback
+	GAME_SNAPSHOT_CALLBACK_EXT,     ///< ( int entityNum, int clientNum, int clientNumReal ); // return qfalse if you don't want it to be added
 
 } gameExport_t;
 

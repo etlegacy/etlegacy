@@ -1231,6 +1231,8 @@ typedef struct level_locals_s
 	int numTeamClients[2];
 	int numVotingTeamClients[2];
 
+	int teamClients[2][MAX_CLIENTS];
+
 	// spawn variables
 	qboolean spawning;                          ///< the G_Spawn*() functions are valid
 	int numSpawnVars;
@@ -1391,6 +1393,8 @@ typedef struct level_locals_s
 	demoState_t demoState;     ///< server demo state
 	int demoClientsNum;        ///< number of reserved slots for demo clients
 	int demoClientBotNum;      ///< clientNum of bot that collects stats during recording, optional
+
+	uint64_t shoutcasters;     ///< clients bits of shoutcasters
 } level_locals_t;
 
 /**
@@ -1800,8 +1804,10 @@ void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1,
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_DemoSupport(const char *commands);
+void trap_SnapshotCallbackExt(void);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
+extern int dll_trap_SnapshotCallbackExt;
 
 // g_demo_legacy.c
 void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);
@@ -2709,6 +2715,10 @@ void CheckTeamStatus(void);
 int Pickup_Team(gentity_t *ent, gentity_t *other);
 void G_globalFlagIndicator(void);
 void G_clientFlagIndicator(gentity_t *ent);
+
+qboolean G_EBS_ShoutcastCallback(int clientNumReal);
+void G_EBS_ShoutcastThink(gentity_t *ent);
+void G_EBS_InitShoutcast(void);
 
 // g_vote.c
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);

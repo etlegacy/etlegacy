@@ -826,3 +826,14 @@ void trap_DemoSupport(const char *commands)
 		SystemCall(dll_trap_DemoSupport, commands);
 	}
 }
+
+/**
+* @brief trap_SnapshotCallbackExt Extension for informing engine about extended snapshot callback
+*/
+void trap_SnapshotCallbackExt(void)
+{
+	if (dll_trap_SnapshotCallbackExt)
+	{
+		SystemCall(dll_trap_SnapshotCallbackExt);
+	}
+}

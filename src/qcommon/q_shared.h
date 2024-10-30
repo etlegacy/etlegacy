@@ -1567,9 +1567,9 @@ typedef enum
 	//ET_LANDMINE_HINT,         ///< obsolete/unused (landmine hint for botsetgoalstate filter)
 	//ET_ATTRACTOR_HINT,        ///< obsolete/unused (attractor hint for botsetgoalstate filter)
 	//ET_SNIPER_HINT,           ///< obsolete/unused (sniper hint for botsetgoalstate filter)
-	//ET_LANDMINESPOT_HINT,     ///< obsolete/unused (landminespot hint for botsetgoalstate filter)
+	ET_EBS_SHOUTCAST = 58,      ///< replaced ET_LANDMINESPOT_HINT
 
-	ET_COMMANDMAP_MARKER = 59,
+	ET_COMMANDMAP_MARKER,
 
 	ET_WOLF_OBJECTIVE,
 

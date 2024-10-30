@@ -153,6 +153,7 @@ typedef struct
 	playerState_t demoPlayerStates[MAX_CLIENTS];
 
 	int lastAttackLogTime;                  ///< timestamp of latest attack log entry
+	qboolean snapshotCallbackExt;
 } server_t;
 
 /**
@@ -619,6 +620,12 @@ void SV_SendClientMessages(void);
 void SV_SendClientSnapshot(client_t *client);
 void SV_CheckClientUserinfoTimer(void);
 void SV_SendClientIdle(client_t *client);
+
+#ifdef ETLEGACY_DEBUG
+void SV_PrintNetworkOverhead_f(void);
+void SV_ClearNetworkOverhead_f(void);
+void SV_InitNetworkOverhead(void);
+#endif
 
 // sv_game.c
 int SV_NumForGentity(sharedEntity_t *ent);
