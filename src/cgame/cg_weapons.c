@@ -1822,6 +1822,15 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					continue;
 				}
 			}
+			// blend out the right hand of garand/m7 while attaching the rifle
+			// grenade to fix a shipped animation quirk where the hand would
+			// reappear on the bottom right at the last parts of the animation
+			else if (weaponNum == WP_M7)
+			{
+				if (i == 2 /* right hand */ && cg.predictedPlayerEntity.pe.weap.frame > 130 && cg.predictedPlayerEntity.pe.weap.frame < 136) {
+					continue;
+				}
+			}
 
 			spunpart      = qfalse;
 			barrel.hModel = weapon->partModels[modelViewType][i].model;
