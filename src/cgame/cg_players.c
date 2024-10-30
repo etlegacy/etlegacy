@@ -3528,7 +3528,7 @@ void CG_HudHeadAnimation(bg_character_t *ch, lerpFrame_t *lf, int *oldframe, int
 int CG_GetPlayerMaxHealth(int clientNum, int class, int team)
 {
 	int i;
-	int maxHealth = 100;
+	int maxHealth = DEFAULT_HEALTH;
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
 		if (!cgs.clientinfo[i].infoValid)
@@ -3555,7 +3555,7 @@ int CG_GetPlayerMaxHealth(int clientNum, int class, int team)
 		}
 	}
 
-	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
+	if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 	{
 		maxHealth += 15;
 	}
