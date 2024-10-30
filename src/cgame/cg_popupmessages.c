@@ -36,7 +36,7 @@
 
 #define NUM_PM_STACK           3
 #define NUM_PM_STACK_ITEMS     32
-#define NUM_PM_STACK_ITEMS_BIG 8 // we shouldn't need many of these
+#define NUM_PM_STACK_ITEMS_BIG 3 // we shouldn't need many of these
 #define NUM_PM_STACK_ITEMS_XP  32
 
 typedef struct pmStackItem_s pmListItem_t;
