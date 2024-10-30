@@ -367,6 +367,7 @@ vmCvar_t cg_customFont2;
 vmCvar_t cg_drawSpawnpoints;
 
 vmCvar_t cg_useCvarCrosshair;
+vmCvar_t cg_crosshairSVG;
 vmCvar_t cg_crosshairSize;
 vmCvar_t cg_crosshairAlpha;
 vmCvar_t cg_crosshairColor;
@@ -641,6 +642,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawSpawnpoints,          "cg_drawSpawnpoints",          "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_useCvarCrosshair,         "cg_useCvarCrosshair",         "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairSVG,             "cg_crosshairSVG",             "0",           CVAR_ARCHIVE | CVAR_LATCH,    0 },
 	{ &cg_crosshairSize,            "cg_crosshairSize",            "48",          CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairAlpha,           "cg_crosshairAlpha",           "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairColor,           "cg_crosshairColor",           "White",       CVAR_ARCHIVE,                 0 },
@@ -1810,8 +1812,8 @@ static void CG_RegisterGraphics(void)
 
 	for (i = 0 ; i < NUM_CROSSHAIRS ; i++)
 	{
-		cgs.media.crosshairShader[i] = trap_R_RegisterShader(va("gfx/2d/crosshair%c", 'a' + i));
-		cg.crosshairShaderAlt[i]     = trap_R_RegisterShader(va("gfx/2d/crosshair%c_alt", 'a' + i));
+		cgs.media.crosshairShader[i] = trap_R_RegisterShader(va("gfx/2d/crosshair%c%s", 'a' + i, cg_crosshairSVG.integer ? "_svg" : ""));
+		cg.crosshairShaderAlt[i]     = trap_R_RegisterShader(va("gfx/2d/crosshair%c_alt%s", 'a' + i, cg_crosshairSVG.integer ? "_svg" : ""));
 	}
 
 	for (i = 0 ; i < SK_NUM_SKILLS ; i++)
