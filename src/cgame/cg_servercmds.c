@@ -2352,6 +2352,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			int   team_dmg_given;
 			int   team_dmg_rcvd;
 			int   gibs;
+			int   assists;
 			int   selfKills;
 			int   teamKills;
 			int   teamGibs;
@@ -2364,6 +2365,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			team_dmg_given = Q_atoi(CG_Argv(iArg++));
 			team_dmg_rcvd  = Q_atoi(CG_Argv(iArg++));
 			gibs           = Q_atoi(CG_Argv(iArg++));
+			assists        = Q_atoi(CG_Argv(iArg++));
 			selfKills      = Q_atoi(CG_Argv(iArg++));
 			teamKills      = Q_atoi(CG_Argv(iArg++));
 			teamGibs       = Q_atoi(CG_Argv(iArg++));
@@ -2378,6 +2380,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			Q_strncpyz(gs->strExtra[3], va(CG_TranslateString("Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"), totKills, teamKills, (double)htRatio), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[4], va(CG_TranslateString("Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"), totDeaths, selfKills, (double)hsRatio), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[5], va(CG_TranslateString("Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"), gibs, teamGibs, (double)ptRatio), sizeof(gs->strExtra[0]));
+			Q_strncpyz(gs->strExtra[6], va(CG_TranslateString("               Assists:    %3d                      "), assists), sizeof(gs->strExtra[0]));
 		}
 	}
 
@@ -2558,6 +2561,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 		int   team_dmg_given;
 		int   team_dmg_rcvd;
 		int   gibs;
+		int   assists;
 		int   selfKills;
 		int   teamKills;
 		int   teamGibs;
@@ -2626,6 +2630,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 			team_dmg_given = Q_atoi(CG_Argv(iArg++));
 			team_dmg_rcvd  = Q_atoi(CG_Argv(iArg++));
 			gibs           = Q_atoi(CG_Argv(iArg++));
+			assists        = Q_atoi(CG_Argv(iArg++));
 			selfKills      = Q_atoi(CG_Argv(iArg++));
 			teamKills      = Q_atoi(CG_Argv(iArg++));
 			teamGibs       = Q_atoi(CG_Argv(iArg++));
@@ -2649,6 +2654,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 			txt_dump(va("^3Kills:  ^7%3d   ^3Team Kills: ^7%3d   ^3Accuracy:  ^7 %5.1f%%\n", totKills, teamKills, htRatio));
 			txt_dump(va("^3Deaths: ^7%3d   ^3Self Kills: ^7%3d   ^3Headshots: ^7 %5.1f%%\n", totDeaths, selfKills, hsRatio));
 			txt_dump(va("^3Gibs:   ^7%3d   ^3Team Gibs:  ^7%3d   ^3Playtime:  ^7 %5.1f%%\n", gibs, teamGibs, ptRatio));
+			txt_dump(va("                  ^3Assists:    ^7%3d                          \n", assists));
 		}
 	}
 

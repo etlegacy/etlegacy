@@ -2117,7 +2117,7 @@ typedef struct cg_weaponstats_s
 typedef struct
 {
 	char strWS[WS_MAX][MAX_STRING_TOKENS];
-	char strExtra[6][MAX_STRING_TOKENS];
+	char strExtra[7][MAX_STRING_TOKENS];
 	char strRank[MAX_STRING_TOKENS];
 	char strSkillz[SK_NUM_SKILLS][MAX_STRING_TOKENS];
 	int cWeapons;
