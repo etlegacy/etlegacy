@@ -43,7 +43,7 @@ typedef struct pmStackItem_s pmListItem_t;
 
 struct pmStackItem_s
 {
-	popupMessageType_t type;
+	int type;
 	qboolean inuse;
 	int time;
 	char message[128];
@@ -53,6 +53,7 @@ struct pmStackItem_s
 	int scaleShader;
 
 	vec3_t color;
+	int count;
 
 	pmListItem_t *next;
 	pmListItem_t *prev;
@@ -587,6 +588,7 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 {
 	pmListItem_t *listItem = NULL;
 	char         *end;
+	qboolean     forceStackingXp;
 
 	if (!message || !*message)
 	{
@@ -599,9 +601,12 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 		return;
 	}
 
+	// force stacking XP message values for certain XP gain
+	forceStackingXp = !Q_stricmp(message2, "constructing") || !Q_stricmp(message2, "repairing");
+
 	// force stacking XP only if we are repairing or constructing something
 	if (!(CG_GetActiveHUD()->xpgain.style & POPUP_XPGAIN_NO_STACK)
-	    || !Q_stricmp(message2, "constructing") || !Q_stricmp(message2, "repairing"))
+	    || forceStackingXp)
 	{
 		if (cg_pmWaitingListXP)
 		{
@@ -615,10 +620,23 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 		// reason are similar, use previous message
 		if (listItem)
 		{
-			if (!Q_stricmp(listItem->message2, message2))
+			if (strstr(listItem->message2, message2))
 			{
-				Q_strncpyz(listItem->message, va("%f", Q_atof(listItem->message) + Q_atof(message)), sizeof(cg_pmStackXP[0].message));
-				Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStackXP[0].message2));
+				if (forceStackingXp)
+				{
+					Q_strncpyz(listItem->message, va("%f", Q_atof(listItem->message) + Q_atof(message)), sizeof(cg_pmStackXP[0].message));
+					Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStackXP[0].message2));
+				}
+				else
+				{
+					// if the XP amount is different, stack it up
+					if (Q_stricmp(listItem->message, message))
+					{
+						Q_strncpyz(listItem->message, va("%f", Q_atof(listItem->message) + Q_atof(message)), sizeof(cg_pmStackXP[0].message));
+					}
+
+					Q_strncpyz(listItem->message2, va("%s (x%d)", message2, ++listItem->count), sizeof(cg_pmStackXP[0].message2));
+				}
 
 				listItem->time = cg.time;
 
@@ -645,7 +663,6 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 
 	listItem->inuse = qtrue;
 	listItem->type  = type;
-	VectorCopy(colorWhite, listItem->color);
 	Q_strncpyz(listItem->message, message, sizeof(cg_pmStackXP[0].message));
 
 	// print and THEN chop off the newline, as the console deals with newlines perfectly
@@ -665,6 +682,8 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 	{
 		return;
 	}
+
+	listItem->count = 1;
 
 	if (message2 && !(CG_GetActiveHUD()->xpgain.style & POPUP_XPGAIN_NO_REASON))
 	{
@@ -1052,7 +1071,6 @@ static qboolean CG_DrawPMXPItems(hudComponent_t *comp, pmListItem_t *listItem, f
 	if (listItem->shader > 0)
 	{
 		// colorize
-		VectorCopy(listItem->color, colorText);
 		trap_R_SetColor(colorText);
 
 		if (comp->alignText == ITEM_ALIGN_RIGHT)
@@ -1067,7 +1085,6 @@ static qboolean CG_DrawPMXPItems(hudComponent_t *comp, pmListItem_t *listItem, f
 		}
 
 		// decolorize
-		VectorCopy(colorWhite, colorText);
 		trap_R_SetColor(NULL);
 	}
 
