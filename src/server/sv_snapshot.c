@@ -1079,8 +1079,11 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client, qboolean parseEntities
 	// send the datagram
 	SV_Netchan_Transmit(client, msg);
 #ifdef ETLEGACY_DEBUG
-	net_overhead.numBytesSent += msg->cursize;
-	net_overhead.numSent++;
+	if (net_overhead.numSlices)
+	{
+		net_overhead.numBytesSent += msg->cursize;
+		net_overhead.numSent++;
+	}
 #endif
 }
 
@@ -1418,6 +1421,7 @@ void SV_ClearNetworkOverhead_f(void)
 	int i;
 
 	net_overhead.numBytesSent = 0;
+	net_overhead.numSent      = 0;
 	for (i = 0; i < net_overhead.numSlices; i++)
 	{
 		net_overhead.slices[i].numBytesSent    = 0;
