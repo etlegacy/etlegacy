@@ -3066,17 +3066,21 @@ float Com_RoundFloatWithNDecimal(float value, unsigned int decimalCount)
 }
 
 /**
- * @brief Shortens a values by thousands and keeping wanted decimal values (i.e  "4560000" to "4.56M")
+ * @brief Shortens a values by thousand, keeping wanted decimal values and sleepding at some
+ * @details (i.e) decimalCount = 2 splitAtIntCount = 3 : "4560000" to "4.56M"
+ * decimalCount = 1 splitAtIntCount = 4 : "7890" to "7890"
+ * decimalCount = 1 splitAtIntCount = 4 : "12340" to "12.3k"
  * @param[in] value The number to shorten
  * @param[in] decimalCount The number of decimal to be displayed
+ * @param[in] splitAtIntCount number of integer we want to start to split the value
  * @return Down scaled value string with suffixed unit
  */
-char *Com_ScaleNumberPerThousand(float value, unsigned int decimalCount)
+char *Com_ScaleNumberPerThousand(float value, unsigned int decimalCount, unsigned int splitAtIntCount)
 {
 	static const char *units[] = { "", "k", "M", "G", "T" };
 	unsigned int      i        = 0;
 
-	while (value > 1000 && i < ARRAY_LEN(units))
+	while (value > pow(10.f, splitAtIntCount) && i < ARRAY_LEN(units))
 	{
 		value /= 1000;
 		++i;

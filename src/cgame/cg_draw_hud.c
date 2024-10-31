@@ -1674,7 +1674,7 @@ void CG_DrawXP(hudComponent_t *comp)
 		clr = comp->colorMain;
 	}
 
-	str = va("%s%s", Com_ScaleNumberPerThousand((float) cg.snap->ps.stats[STAT_XP], 2), (comp->style & 1) ? " XP" : "");
+	str = va("%s%s", Com_ScaleNumberPerThousand((float) cg.snap->ps.stats[STAT_XP], 2, 4), (comp->style & 1) ? " XP" : "");
 
 	CG_DrawCompText(comp, str, clr, comp->styleText, &cgs.media.limboFont1);
 }

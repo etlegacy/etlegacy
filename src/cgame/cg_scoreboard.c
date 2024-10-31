@@ -600,7 +600,7 @@ static void WM_DrawClientScore_Score(int x, int y, float scaleX, float scaleY, c
 	else
 #endif
 	{
-		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, Com_ScaleNumberPerThousand((float) score->score, 2), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, Com_ScaleNumberPerThousand((float) score->score, 2, 4), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 }
 
