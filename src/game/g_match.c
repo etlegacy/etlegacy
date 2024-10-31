@@ -471,6 +471,7 @@ void G_createStatsJson(gentity_t *ent, void *target)
 	if (weapons)
 	{
 		tmp2 = cJSON_AddObjectToObject(tmp, "_shared");
+		cJSON_AddNumberToObject(tmp2, "kill_assists", ent->client->sess.kill_assists);
 		cJSON_AddNumberToObject(tmp2, "damage_given", ent->client->sess.damage_given);
 		cJSON_AddNumberToObject(tmp2, "damage_received", ent->client->sess.damage_received);
 		cJSON_AddNumberToObject(tmp2, "team_damage_given", ent->client->sess.team_damage_given);
@@ -573,7 +574,7 @@ char *G_createStats(gentity_t *ent)
 		                                              ent->client->sess.team_damage_given,
 		                                              ent->client->sess.team_damage_received,
 		                                              ent->client->sess.gibs,
-					                                  ent->client->sess.kill_assists,
+		                                              ent->client->sess.kill_assists,
 		                                              ent->client->sess.self_kills,
 		                                              ent->client->sess.team_kills,
 		                                              ent->client->sess.team_gibs,
@@ -672,7 +673,7 @@ void G_deleteStats(int nClient)
 	cl->sess.deaths               = 0;
 	cl->sess.rounds               = 0;
 	cl->sess.kills                = 0;
-	cl->sess.kill_assists        = 0;
+	cl->sess.kill_assists         = 0;
 	cl->sess.gibs                 = 0;
 	cl->sess.self_kills           = 0;
 	cl->sess.team_kills           = 0;
@@ -751,6 +752,7 @@ void G_parseStatsJson(void *object)
 
 		if (tmp)
 		{
+			cl->sess.kill_assists = Q_ReadIntValueJson(tmp, "kill_assists");
 			cl->sess.damage_given = Q_ReadIntValueJson(tmp, "damage_given");
 			cl->sess.damage_received = Q_ReadIntValueJson(tmp, "damage_received");
 			cl->sess.team_damage_given = Q_ReadIntValueJson(tmp, "team_damage_given");
