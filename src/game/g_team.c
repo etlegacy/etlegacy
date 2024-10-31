@@ -476,6 +476,12 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	int       team;
 	gclient_t *cl = other->client;
 
+	// Don't let them pickup winning stuff in warmup
+	if (g_gamestate.integer != GS_PLAYING)
+	{
+		return 0;
+	}
+
 	// figure out what team this flag is
 	if (strcmp(ent->classname, "team_CTF_redflag") == 0)
 	{

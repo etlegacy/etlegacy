@@ -740,23 +740,6 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	if (g_gamestate.integer == GS_PLAYING)
-	{
-		G_LogPrintf("Item: %i %s\n", other->s.number, ent->item->classname);
-	}
-	else
-	{
-		// Don't let them pickup winning stuff in warmup
-		if (ent->item->giType != IT_WEAPON &&
-		    ent->item->giType != IT_AMMO &&
-		    ent->item->giType != IT_HEALTH)
-		{
-			return;
-		}
-	}
-
-	//G_LogPrintf( "Calling item pickup function for %s\n", ent->item->classname );
-
 	// call the item-specific pickup function
 	switch (ent->item->giType)
 	{
@@ -773,11 +756,14 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	//G_LogPrintf( "Finished pickup function\n" );
-
 	if (!respawn)
 	{
 		return;
+	}
+
+	if (g_gamestate.integer == GS_PLAYING)
+	{
+		G_LogPrintf("Item: %i %s\n", other->s.number, ent->item->classname);
 	}
 
 	// play sounds
@@ -802,9 +788,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		te->s.eventParm = ent->s.modelindex;
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
-
-	//G_LogPrintf( "Firing item targets\n" );
-
+    
 	// fire item targets
 	G_UseTargets(ent, other);
 
