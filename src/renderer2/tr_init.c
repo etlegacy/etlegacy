@@ -1499,7 +1499,7 @@ void R_Register(void)
 	r_skipLightBuffer = ri.Cvar_Get("r_skipLightBuffer", "0", CVAR_CHEAT);
 
 	r_measureOverdraw = ri.Cvar_Get("r_measureOverdraw", "0", CVAR_CHEAT);
-	r_lodScale        = ri.Cvar_Get("r_lodScale", "5", CVAR_CHEAT);
+	r_lodScale        = ri.Cvar_Get("r_lodScale", "5", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_lodTest         = ri.Cvar_Get("r_lodTest", "0.5", CVAR_CHEAT);
 	r_noreFresh       = ri.Cvar_Get("r_norefresh", "0", CVAR_CHEAT);
 	r_drawEntities    = ri.Cvar_Get("r_drawentities", "1", CVAR_CHEAT);

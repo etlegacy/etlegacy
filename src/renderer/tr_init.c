@@ -1150,7 +1150,7 @@ void R_Register(void)
 	r_skipBackEnd = ri.Cvar_Get("r_skipBackEnd", "0", CVAR_CHEAT);
 
 	r_measureOverdraw = ri.Cvar_Get("r_measureOverdraw", "0", CVAR_CHEAT);
-	r_lodScale        = ri.Cvar_Get("r_lodscale", "5", CVAR_CHEAT);
+	r_lodScale        = ri.Cvar_Get("r_lodscale", "5", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_noreFresh       = ri.Cvar_Get("r_norefresh", "0", CVAR_CHEAT);
 	r_drawEntities    = ri.Cvar_Get("r_drawentities", "1", CVAR_CHEAT);
 	r_ignore          = ri.Cvar_Get("r_ignore", "1", CVAR_CHEAT);
