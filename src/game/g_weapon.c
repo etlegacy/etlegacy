@@ -2129,7 +2129,6 @@ weapengineergoto3:
 							pm->s.effect3Time = hit->s.teamNum;
 							pm->s.teamNum     = ent->client->sess.sessionTeam;
 
-							G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 
 #ifdef FEATURE_OMNIBOT
 							// notify omni-bot framework of planted dynamite
@@ -2151,6 +2150,8 @@ weapengineergoto3:
 							}
 							traceEnt->etpro_misc_1 |= 1;
 							traceEnt->etpro_misc_2  = hit->s.number;
+							
+							G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 						}
 						// i = num;
 						return NULL;     // bail out here because primary obj's take precendence over constructibles
@@ -2221,7 +2222,6 @@ weapengineergoto3:
 							pm->s.effect3Time = hit->parent->s.teamNum;
 							pm->s.teamNum     = ent->client->sess.sessionTeam;
 
-							G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 
 #ifdef FEATURE_OMNIBOT
 							// notify omni-bot framework of planted dynamite
@@ -2243,6 +2243,8 @@ weapengineergoto3:
 								G_DPrintf("dyno chaining: hit: %p\n", hit);
 							}
 							traceEnt->etpro_misc_1 |= 1;
+							
+							G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 						}
 						return NULL;
 					}
