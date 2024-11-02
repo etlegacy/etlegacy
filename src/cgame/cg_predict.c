@@ -102,6 +102,8 @@ void CG_BuildSolidList(void)
 			cg_triggerEntities[cg_numTriggerEntities] = cent;
 			cg_numTriggerEntities++;
 			break;
+		case ET_EBS_SHOUTCAST:
+			continue;
 		default:
 			break;
 		}

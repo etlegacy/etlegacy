@@ -753,6 +753,11 @@ void SV_AddOperatorCommands(void)
 
 	Cmd_AddCommand("tv", SV_CL_Commands_f, "tv commands.");
 
+#ifdef ETLEGACY_DEBUG
+	Cmd_AddCommand("net_overhead_print", SV_PrintNetworkOverhead_f, "Prints network overhead stats.");
+	Cmd_AddCommand("net_overhead_clear", SV_ClearNetworkOverhead_f, "Clears network overhead stats.");
+#endif
+
 	if (com_dedicated->integer)
 	{
 		Cmd_AddCommand("say", SV_ConSay_f, "Prints console messages on dedicated servers.");

@@ -774,6 +774,7 @@ void G_MakeShoutcaster(gentity_t *ent)
 		SetTeam(ent, "spectator", qtrue, -1, -1, qfalse);
 	}
 
+	level.shoutcasters           |= (1ULL << (ent - g_entities));
 	ent->client->sess.shoutcaster = 1;
 	ent->client->sess.spec_invite = TEAM_AXIS | TEAM_ALLIES;
 	AP(va("cp \"%s\n^3has become a shoutcaster\n\"", ent->client->pers.netname));
@@ -791,6 +792,7 @@ void G_RemoveShoutcaster(gentity_t *ent)
 		return;
 	}
 
+	level.shoutcasters           &= ~(1ULL << (ent - g_entities));
 	ent->client->sess.shoutcaster = 0;
 
 	if (!ent->client->sess.referee)    // don't remove referee's invitation

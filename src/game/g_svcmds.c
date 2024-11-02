@@ -557,7 +557,7 @@ const char *enttypenames[] =
 	"unused ent type",             // ET_LANDMINE_HINT
 	"unused ent type",             // ET_ATTRACTOR_HINT
 	"unused ent type",             // ET_SNIPER_HINT
-	"unused ent type",             // ET_LANDMINESPOT_HINT
+	"ET_EBS_SHOUTCAST",
 
 	"ET_COMMANDMAP_MARKER",
 

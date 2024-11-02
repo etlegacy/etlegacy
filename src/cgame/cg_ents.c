@@ -34,6 +34,7 @@
  */
 
 #include "cg_local.h"
+#include "../game/bg_ebs.h"
 
 /**
  * @brief Modifies the entities position and axis by the given
@@ -2543,6 +2544,48 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 }
 
 /**
+ * @brief CG_EBS_Shoutcast
+ * @param[in] cent
+ */
+void CG_EBS_Shoutcast(centity_t *cent)
+{
+	entityBitStream_t ebs;
+	clientInfo_t      *ci;
+	int               i, version, slotBits, clientNum;
+
+	// should never happen
+	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	EBS_InitRead(&ebs, &cent->currentState);
+
+	version = EBS_ReadBits(&ebs, 4);
+	etl_assert(version == 0);
+
+	slotBits = EBS_ReadBits(&ebs, 6);
+
+	for (i = 0; i < 6; i++)
+	{
+		if (!(slotBits & (BIT(i))))
+		{
+			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE_V0);
+			continue;
+		}
+
+		clientNum = EBS_ReadBits(&ebs, 6);
+		ci        = &cgs.clientinfo[clientNum];
+
+		ci->health        = EBS_ReadBitsWithSign(&ebs, 9);
+		ci->ammoclip      = EBS_ReadBits(&ebs, 10);
+		ci->ammo          = EBS_ReadBits(&ebs, 10);
+		ci->currentWeapon = EBS_ReadBits(&ebs, 6);
+		ci->powerups      = EBS_ReadBits(&ebs, 16);
+	}
+}
+
+/**
  * @brief CG_ProcessEntity
  * @param[in] cent
  * @note All case aren't handle
@@ -2980,6 +3023,12 @@ qboolean CG_AddCEntity_Filter(centity_t *cent)
 	    && cg.mvTotalClients < 2
 #endif
 	    )
+	{
+		return qtrue;
+	}
+
+	// processed in CG_TransitionEntity
+	if (cent->currentState.eType == ET_EBS_SHOUTCAST)
 	{
 		return qtrue;
 	}
