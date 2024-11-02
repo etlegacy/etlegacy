@@ -299,3 +299,376 @@ gfx/2d/crosshairp_alt
 	}
 }
 //========================================//
+
+
+//========================================//
+// SVG Crosshairs
+//========================================//
+
+gfx/2d/crosshaira_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshaira_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// nothing
+gfx/2d/crosshaira_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshaira_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairb_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairb_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairb_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairb_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairc_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairc_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairc_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairf_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshaird_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshaird_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshaird_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairf_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshaire_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshaire_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshaire_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairf_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairf_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairf_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// nothing
+gfx/2d/crosshairf_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairf_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairg_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairg_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairg_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairg_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairh_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairh_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairh_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairh_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairi_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairi_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairi_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairi_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairj_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairj_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairj_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairj_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairk_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairk_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// nothing
+gfx/2d/crosshairk_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshaira_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// slightly modified version of crosshair b so it centers
+gfx/2d/crosshairl_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairl_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// sharp center version of b_alt
+gfx/2d/crosshairl_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairl_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// copy of c
+gfx/2d/crosshairm_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairc_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// sharp version of b_alt
+gfx/2d/crosshairm_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairp_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// copy of d
+gfx/2d/crosshairn_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshaird_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// sharp version of d_alt
+gfx/2d/crosshairn_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairp_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// copy of e
+gfx/2d/crosshairo_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshaire_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// sharp version of e_alt
+gfx/2d/crosshairo_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairp_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+//sharp dot
+gfx/2d/crosshairp_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairp_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+// blurs even less, but artifacts at many sizes
+//		alphaFunc GT0
+		rgbGen vertex
+	}
+}
+
+// nothing
+gfx/2d/crosshairp_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairf_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+//========================================//
