@@ -425,6 +425,7 @@ void G_ExplodeMissile(gentity_t *ent)
 				{
 					if (ent->parent->client && hit->target_ent && GetMODTableData(MOD_DYNAMITE)->weaponClassForMOD >= hit->target_ent->constructibleStats.weaponclass)
 					{
+						G_LogPrintf("Objective_Destroyed: %d %s\n", (int)(ent->parent - g_entities), hit->track);
 						G_AddKillSkillPointsForDestruction(ent->parent, MOD_DYNAMITE, &hit->target_ent->constructibleStats);
 					}
 
