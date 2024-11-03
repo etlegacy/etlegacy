@@ -78,6 +78,7 @@ static void CG_Translate(refEntity_t *ref, double trnsl1, double trnsl2, double 
 	static vec3_t vec1, vec2, vec3;
 
 	// translate
+	AxisToAngles(ref->axis, angles);
 	AngleVectors(angles, vec1, vec2, vec3);
 
 	VectorMA(ref->origin, trnsl1, vec1, ref->origin);
@@ -98,24 +99,29 @@ static void CG_Transform(refEntity_t *ref, double scale, double trnsl1, double t
 		VectorScale(ref->axis[2], scale, ref->axis[2]);
 	}
 
-	// rotate
-	if (yaw != 0.0 || roll != 0.0 || pitch != 0.0)
+	if ((yaw != 0.0 || roll != 0.0 || pitch != 0.0)
+	    || (trnsl1 != 0.0 || trnsl2 != 0.0 || trnsl3 != 0.0))
 	{
 		AxisToAngles(ref->axis, angles);
-		angles[YAW]   += yaw;
-		angles[ROLL]  += roll;
-		angles[PITCH] += pitch;
-		AnglesToAxis(angles, ref->axis);
-	}
 
-	// translate
-	if (trnsl1 != 0.0 || trnsl2 != 0.0 || trnsl3 != 0.0)
-	{
-		AngleVectors(angles, vec1, vec2, vec3);
+		// rotate
+		if (yaw != 0.0 || roll != 0.0 || pitch != 0.0)
+		{
+			angles[YAW]   += yaw;
+			angles[ROLL]  += roll;
+			angles[PITCH] += pitch;
+			AnglesToAxis(angles, ref->axis);
+		}
 
-		VectorMA(ref->origin, trnsl1, vec1, ref->origin);
-		VectorMA(ref->origin, trnsl2, vec2, ref->origin);
-		VectorMA(ref->origin, trnsl3, vec3, ref->origin);
+		// translate
+		if (trnsl1 != 0.0 || trnsl2 != 0.0 || trnsl3 != 0.0)
+		{
+			AngleVectors(angles, vec1, vec2, vec3);
+
+			VectorMA(ref->origin, trnsl1, vec1, ref->origin);
+			VectorMA(ref->origin, trnsl2, vec2, ref->origin);
+			VectorMA(ref->origin, trnsl3, vec3, ref->origin);
+		}
 	}
 }
 
@@ -1827,7 +1833,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			// reappear on the bottom right at the last parts of the animation
 			else if (weaponNum == WP_M7)
 			{
-				if (i == 2 /* right hand */ && cg.predictedPlayerEntity.pe.weap.frame > 130 && cg.predictedPlayerEntity.pe.weap.frame < 136) {
+				if (i == 2 /* right hand */ && cg.predictedPlayerEntity.pe.weap.frame > 130 && cg.predictedPlayerEntity.pe.weap.frame < 136)
+				{
 					continue;
 				}
 			}
@@ -1940,7 +1947,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				// reposition pineapple relative to hand (it hovered by default)
 				else if (weaponNum == WP_GRENADE_PINEAPPLE && i == 0)
 				{
-					CG_Translate(&barrel, -0.5, -0.4, 0.9);
+					CG_Translate(&barrel, -0.5, 0.9, -0.4);
 				}
 
 				drawpart = CG_GetPartFramesFromWeap(cent, &barrel, parent, i, weapon);
