@@ -2491,6 +2491,12 @@ typedef struct cgs_s
 
 	clientInfo_t clientinfo[MAX_CLIENTS];
 
+	// colors
+	vec4_t compCrosshairDotOutlineColor;
+	vec4_t compCrosshairDotColor;
+	vec4_t compCrosshairCrossOutlineColor;
+	vec4_t compCrosshairCrossColor;
+
 	// teamchat width is *3 because of embedded color codes
 	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
 	int teamChatMsgTimes[TEAMCHAT_HEIGHT];
@@ -2981,6 +2987,22 @@ extern vmCvar_t cg_crosshairAlphaAlt;
 extern vmCvar_t cg_crosshairColorAlt;
 extern vmCvar_t cg_crosshairPulse;
 extern vmCvar_t cg_crosshairHealth;
+
+extern vmCvar_t cg_compCrosshair;
+extern vmCvar_t cg_compCrosshairDotWidth;
+extern vmCvar_t cg_compCrosshairDotColor;
+extern vmCvar_t cg_compCrosshairDotOutlineRounded;
+extern vmCvar_t cg_compCrosshairDotOutlineColor;
+extern vmCvar_t cg_compCrosshairDotOutlineWidth;
+extern vmCvar_t cg_compCrosshairCrossWidth;
+extern vmCvar_t cg_compCrosshairCrossLength;
+extern vmCvar_t cg_compCrosshairCrossGap;
+extern vmCvar_t cg_compCrosshairCrossSpreadDistance;
+extern vmCvar_t cg_compCrosshairCrossSpreadOTGCoef;
+extern vmCvar_t cg_compCrosshairCrossColor;
+extern vmCvar_t cg_compCrosshairCrossOutlineRounded;
+extern vmCvar_t cg_compCrosshairCrossOutlineColor;
+extern vmCvar_t cg_compCrosshairCrossOutlineWidth;
 
 extern vmCvar_t cg_commandMapTime;
 
@@ -4428,6 +4450,19 @@ hudStucture_t *CG_ReadSingleHudJsonFile(const char *filename);
 qboolean CG_WriteHudsToFile();
 qboolean CG_TryReadHudFromFile(const char *filename, qboolean isEditable);
 void CG_ReadHudsFromFile(void);
+
+// cg_compcrosshair.c
+void CG_DrawCompCrosshair();
+
+typedef enum
+{
+	COMPCROSSHAIR_NONE,
+	COMPCROSSHAIR_DOT_WITH_SMALLCROSS,
+	COMPCROSSHAIR_DOT,
+	COMPCROSSHAIR_SMALLCROSS,
+	COMPCROSSHAIR_FULLCROSS,
+	COMPCROSSHAIR_MAX,
+} compcrosshair_t;
 
 // cg_draw_hud.c
 hudStucture_t *CG_GetActiveHUD();

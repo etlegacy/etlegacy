@@ -1701,6 +1701,11 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 	float     x, y;
 	int       weapnum;
 
+	if (cg_compCrosshair.integer > COMPCROSSHAIR_NONE && cg_compCrosshair.integer < COMPCROSSHAIR_MAX)
+	{
+		return;
+	}
+
 	if (cg.snap->ps.stats[STAT_HEALTH] <= 0 && !(cg.snap->ps.pm_flags & PMF_FOLLOW) && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 	{
 		return;
@@ -4245,6 +4250,8 @@ static void CG_Draw2D(void)
 		// window updates
 		CG_windowDraw();
 	}
+
+	CG_DrawCompCrosshair();
 }
 
 /**
