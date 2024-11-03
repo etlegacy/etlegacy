@@ -1775,6 +1775,13 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 		return;
 	}
 
+	if (cg_customCrosshair.integer > CUSTOMCROSSHAIR_NONE && cg_customCrosshair.integer < CUSTOMCROSSHAIR_MAX)
+	{
+		CG_DrawCustomCrosshair();
+		CG_DrawNoShootIcon(comp);
+		return;
+	}
+
 	if (comp->showBackGround)
 	{
 		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
