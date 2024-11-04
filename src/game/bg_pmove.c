@@ -3366,6 +3366,8 @@ static qboolean PM_CheckGrenade()
 	return qfalse;
 }
 
+#define FPS_RECOIL_FACTOR 71
+
 /**
  * @brief PM_HandleRecoil
  */
@@ -3391,14 +3393,14 @@ static void PM_HandleRecoil(void)
 		{
 			if (pm->pmext->weapRecoilPitch > 0.f)
 			{
-				muzzlebounce[PITCH] -= pml.frametime * 100 * 2 * pm->pmext->weapRecoilPitch * cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
-				muzzlebounce[PITCH] -= pml.frametime * 100 * 0.25f * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= pml.frametime * FPS_RECOIL_FACTOR * 2 * pm->pmext->weapRecoilPitch * cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= pml.frametime * FPS_RECOIL_FACTOR * 0.25f * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 
 			if (pm->pmext->weapRecoilYaw > 0.f)
 			{
-				muzzlebounce[YAW] += pml.frametime * 100 * 0.5f * pm->pmext->weapRecoilYaw * cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
-				muzzlebounce[YAW] += pml.frametime * 100 * 0.5f * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += pml.frametime * FPS_RECOIL_FACTOR * 0.5f * pm->pmext->weapRecoilYaw * cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += pml.frametime * FPS_RECOIL_FACTOR * 0.5f * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 		}
 
