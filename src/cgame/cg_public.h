@@ -290,6 +290,8 @@ typedef enum
 	CG_CMDBACKUP_EXT,
 	CG_MATCHPAUSED,
 
+	CG_CVAR_SETDESCRIPTION,
+
 } cgameImport_t;
 
 /**

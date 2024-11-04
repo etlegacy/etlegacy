@@ -42,11 +42,12 @@
 
 static ext_trap_keys_t cg_extensionTraps[] =
 {
-	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
-	{ "trap_CommandComplete_Legacy", CG_COMMAND_COMPLETE, qfalse },
-	{ "trap_CmdBackup_Ext_Legacy",   CG_CMDBACKUP_EXT,    qfalse },
-	{ "trap_MatchPaused_Legacy",     CG_MATCHPAUSED,      qfalse },
-	{ NULL,                          -1,                  qfalse }
+	{ "trap_SysFlashWindow_Legacy",      CG_SYS_FLASH_WINDOW,    qfalse },
+	{ "trap_CommandComplete_Legacy",     CG_COMMAND_COMPLETE,    qfalse },
+	{ "trap_CmdBackup_Ext_Legacy",       CG_CMDBACKUP_EXT,       qfalse },
+	{ "trap_MatchPaused_Legacy",         CG_MATCHPAUSED,         qfalse },
+	{ "trap_Cvar_SetDescription_Legacy", CG_CVAR_SETDESCRIPTION, qfalse },
+	{ NULL,                              -1,                     qfalse }
 };
 
 extern botlib_export_t *botlib_export;
@@ -1128,7 +1129,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_MATCHPAUSED:
 		S_PauseSounds(args[1]);
 		return 0;
-
+	case CG_CVAR_SETDESCRIPTION:
+		Cvar_SetDescription_FromVmCvar(VMA(1), VMA(2));
+		return 0;
 	default:
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);
 		break;
