@@ -72,7 +72,7 @@ static char *weapAnimNumberStr[] =
 
 static vec3_t forward, right, up;
 
-static void CG_Translate(refEntity_t *ref, double trnsl1, double trnsl2, double trnsl3)
+static void CG_Translate(refEntity_t *ref, float trnsl1, float trnsl2, float trnsl3)
 {
 	static vec3_t angles;
 	static vec3_t vec1, vec2, vec3;
@@ -86,7 +86,14 @@ static void CG_Translate(refEntity_t *ref, double trnsl1, double trnsl2, double 
 	VectorMA(ref->origin, trnsl3, vec3, ref->origin);
 }
 
-static void CG_Transform(refEntity_t *ref, double scale, double trnsl1, double trnsl2, double trnsl3, double yaw, double roll, double pitch)
+static inline void CG_Scale(refEntity_t *ref, float scale)
+{
+	VectorScale(ref->axis[0], scale, ref->axis[0]);
+	VectorScale(ref->axis[1], scale, ref->axis[1]);
+	VectorScale(ref->axis[2], scale, ref->axis[2]);
+}
+
+static void CG_Transform(refEntity_t *ref, float scale, float trnsl1, float trnsl2, float trnsl3, float yaw, float roll, float pitch)
 {
 	static vec3_t angles;
 	static vec3_t vec1, vec2, vec3;
@@ -1387,6 +1394,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			VectorCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.origin, flash.origin);
 			AxisCopy(cg_entities[cg_entities[cent->currentState.number].tagParent].mountedMG42Flash.axis, flash.axis);
 
+			// Scale tank muzzle flash for 3P
+			CG_Scale(&flash, 0.85);
+
 			if (shouldDrawMuzzleFlash)
 			{
 				trap_R_AddRefEntityToScene(&flash);
@@ -1430,6 +1440,15 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 					VectorCopy(point, flash.origin);
 					AnglesToAxis(cent->lerpAngles, flash.axis);
+
+					if (ps || isSelfFirstPerson)
+					{
+						CG_Scale(&flash, 0.45);
+					}
+					else
+					{
+						CG_Scale(&flash, 0.9);
+					}
 
 					if (shouldDrawMuzzleFlash)
 					{
@@ -1824,6 +1843,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && (i == W_PART_4 || i == W_PART_5))
 			{
 				if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+				{
+					continue;
+				}
+			}
+			// blend out the right hand of garand after reloading
+			else if (weaponNum == WP_CARBINE)
+			{
+				if (i == 2 /* right hand */ && cg.predictedPlayerEntity.pe.weap.frame > 57 && cg.predictedPlayerEntity.pe.weap.frame < 65)
 				{
 					continue;
 				}
@@ -2416,12 +2443,26 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// changed this so the muzzle flash stays onscreen for long enough to be seen
 		if (shouldDrawMuzzleFlash && (cg.time - cent->firedTime < MUZZLE_FLASH_TIME))
 		{
-			float scale = Com_Clamp(0.5f, 1.0f, cg_muzzleFlashScale.value);
+			// scale the muzzle flash from weapon file
+			if (cg_muzzleFlashOld.integer == 0)
+			{
+				float scale = 0.0;
+				if (ps || isSelfFirstPerson)
+				{
+					scale = weapon->flashScale[W_FP_MODEL];
+				}
+				else
+				{
+					scale = weapon->flashScale[W_TP_MODEL];
+				}
 
-			// scale the muzzle flash
-			VectorScale(flash.axis[0], scale, flash.axis[0]);
-			VectorScale(flash.axis[1], scale, flash.axis[1]);
-			VectorScale(flash.axis[2], scale, flash.axis[2]);
+				if (scale != 0.0 && scale != 1.0)
+				{
+					VectorScale(flash.axis[0], scale, flash.axis[0]);
+					VectorScale(flash.axis[1], scale, flash.axis[1]);
+					VectorScale(flash.axis[2], scale, flash.axis[2]);
+				}
+			}
 
 			trap_R_AddRefEntityToScene(&flash);
 		}
@@ -2740,6 +2781,9 @@ void CG_AddViewWeapon(playerState_t *ps)
 		CG_PositionRotatedEntityOnTag(&flash, hand, "tag_flash");
 
 		VectorMA(flash.origin, 22, flash.axis[0], flash.origin);
+
+		// Scale tank muzzle flash for 1P
+		CG_Scale(&flash, 0.6);
 
 		VectorCopy(flash.origin, cg.tankflashorg);
 

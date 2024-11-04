@@ -79,6 +79,7 @@ weaponDef
 			axisskin	"models/multiplayer/m1_garand/m1_garand_axis.skin"
 			alliedskin	"models/multiplayer/m1_garand/m1_garand_allied.skin"
 			flashModel	"models/multiplayer/m1_garand/v_m1_garand_flash.mdc"
+			flashScale 0.6
 
 			dynFov90 -3.0 5.0 0.0
 			dynFov120 1.0 1.2 2.0
@@ -126,7 +127,8 @@ weaponDef
 
 		thirdPerson {
 			model			"models/multiplayer/m1_garand/m1_garand_3rd.md3"
-			flashmodel		"models/multiplayer/m1_garand/m1_garand_3rd_flash.mdc"
+			flashModel		"models/multiplayer/m1_garand/m1_garand_3rd_flash.mdc"
+			flashScale 1.0
 
 			ejectBrassOffset	16 -4 24
 		}

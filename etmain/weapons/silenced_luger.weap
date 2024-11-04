@@ -120,7 +120,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/silencer/silencer.md3"
-			//flashmodel		"models/weapons2/luger/luger_flash.mdc"
+			//flashModel		"models/weapons2/luger/luger_flash.mdc"
 
 			ejectBrassOffset	24 -4 36
 		}

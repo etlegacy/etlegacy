@@ -75,6 +75,7 @@ weaponDef
 		firstPerson {
 			model			"models/weapons2/fg42/v_fg42.mdc"
 			flashModel		"models/weapons2/fg42/v_fg42_flash.mdc"
+			flashScale 0.55
 
 			dynFov90 -3.0 3.0 0.0
 			dynFov120 0.0 -2.5 0.0
@@ -105,7 +106,8 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/fg42/fg42.md3"
-			flashmodel		"models/weapons2/fg42/fg42_flash.mdc"
+			flashModel		"models/weapons2/fg42/fg42_flash.mdc"
+			flashScale 0.8
 
 			ejectBrassOffset	16 -4 24
 

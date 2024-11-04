@@ -55,7 +55,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/multiplayer/medpack/medpack.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

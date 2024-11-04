@@ -87,7 +87,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/weapons2/bazooka/bazooka_3rd.md3"
-			flashmodel		"models/weapons2/panzerfaust/pf_flash.mdc"
+			flashModel		"models/weapons2/panzerfaust/pf_flash.mdc"
 
 			ejectBrassOffset	-24 -4 24
 		}

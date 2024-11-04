@@ -397,6 +397,7 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 {
 	pc_token_t token;
 	char       filename[MAX_QPATH];
+	float       value;
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{
@@ -459,6 +460,15 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 			}
 
 			weaponInfo->flashModel[viewType] = trap_R_RegisterModel(filename);
+		}
+		else if (!Q_stricmp(token.string, "flashScale"))
+		{
+			if (!PC_Float_Parse(handle, &value))
+			{
+				return CG_RW_ParseError(handle, "expected flashScale as float");
+			}
+
+			weaponInfo->flashScale[viewType] = value;
 		}
 		else if (!Q_stricmp(token.string, "weaponLink"))
 		{

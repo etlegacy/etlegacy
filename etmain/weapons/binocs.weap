@@ -54,7 +54,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/multiplayer/binocs/binocs.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

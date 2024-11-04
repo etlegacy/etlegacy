@@ -98,7 +98,7 @@ weaponDef
 			model			"models/multiplayer/satchel/satchel.md3"
 			axisskin		"models/multiplayer/satchel/satchel_axis.skin"
 			alliedskin		"models/multiplayer/satchel/satchel_allied.skin"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

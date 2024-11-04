@@ -77,7 +77,7 @@ weaponDef
 
 		thirdPerson {
 			model		"models/multiplayer/adrenaline/adrenaline.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

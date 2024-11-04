@@ -78,7 +78,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/multiplayer/satchel/radio.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }

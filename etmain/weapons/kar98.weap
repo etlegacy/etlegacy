@@ -77,6 +77,7 @@ weaponDef
 			axisskin	"models/multiplayer/kar98/kar98_axis.skin"
 			alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
 			flashModel	"models/multiplayer/kar98/v_kar98_flash.mdc"
+			flashScale 0.55
 
 			ejectBrassOffset	20.0 14.0 -15.0
 
@@ -124,7 +125,8 @@ weaponDef
 
 		thirdPerson {
 			model			"models/multiplayer/kar98/kar98_gren_pickup.md3"
-			flashmodel		"models/multiplayer/kar98/kar98_3rd_flash.mdc"
+			flashModel		"models/multiplayer/kar98/kar98_3rd_flash.mdc"
+			flashScale 0.8
 
 			ejectBrassOffset	16 -4 24
 		}

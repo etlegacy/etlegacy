@@ -67,7 +67,7 @@ weaponDef
 
 		thirdPerson {
 			model			"models/multiplayer/smokebomb/smokebomb.md3"
-			//flashmodel	""
+			//flashModel	""
 		}
 	}
 }
