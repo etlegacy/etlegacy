@@ -5280,20 +5280,30 @@ void PmoveSingle(pmove_t *pmove)
 #endif // CGAMEDLL
 		}
 	}
-#ifdef GAMEDLL
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
-		// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
-		// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
-		// also consider falling from slope for a moment
-		if (((!pm->pmext->airTime || (pm->ps->pm_flags & PMF_JUMP_HELD)) && VectorLength(pm->ps->velocity) > 127)
-		    || (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500))
+		if ((pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHFROM)
 		{
-			//PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
-			pm->cmd.weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
+			pm->pmext->switchToScopeTime = pm->cmd.serverTime;
+		}
+		else
+		{
+			// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
+			// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
+			// consider latency implementation from vanilla for quick scope shoot by simulating a 75 ping player lantency
+			// by adding 250ms extra spare time for shooting right after scoping
+			// also consider falling from slope for a moment
+			if (((!pm->pmext->airTime || (pm->ps->pm_flags & PMF_JUMP_HELD))
+			     && VectorLength(pm->ps->velocity) > 127 && pm->cmd.serverTime > pm->pmext->switchToScopeTime + 150)
+			    || (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500))
+			{
+				PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
+#ifdef CGAMEDLL
+				cg.weaponSelect = GetWeaponTableData(pm->ps->weapon)->weapAlts;
+#endif // CGAMEDLL
+			}
 		}
 	}
-#endif
 	else if (pm->ps->weapon == WP_SATCHEL_DET)
 	{
 		if (!(pm->ps->ammoclip[WP_SATCHEL_DET]))
