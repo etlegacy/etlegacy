@@ -949,7 +949,9 @@ void Cvar_Print(cvar_t *v)
 
 	if (v->description)
 	{
-		Com_Printf("%s\n", v->description);
+		Com_Printf(
+			"----------------------------------------------------------------------"
+			"\n%s\n", v->description);
 	}
 }
 
@@ -1737,6 +1739,21 @@ void Cvar_SetDescription(cvar_t *cv, const char *varDescription)
 		}
 		cv->description = CopyString(varDescription);
 	}
+}
+
+void Cvar_SetDescription_FromVmCvar(vmCvar_t *vmCvar, const char *varDescription)
+{
+	cvar_t *cv = NULL;
+	etl_assert(vmCvar);
+
+	if ((unsigned)vmCvar->handle >= cvar_numIndexes)
+	{
+		Com_Error(ERR_DROP, "Cvar_SetDescription_FromVmCvar: handle out of range");
+	}
+
+	cv = cvar_indexes + vmCvar->handle;
+
+	Cvar_SetDescription(cv, varDescription);
 }
 
 /**

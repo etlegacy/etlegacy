@@ -1983,3 +1983,14 @@ void trap_MatchPaused(qboolean matchPaused)
 		SystemCall(dll_trap_MatchPaused, matchPaused);
 	}
 }
+
+/**
+ * @brief Extension for setting the description of a vmCvar
+ */
+void trap_Cvar_SetDescription(vmCvar_t *vmCvar, const char *text)
+{
+	if (dll_trap_Cvar_SetDescription)
+	{
+		SystemCall(dll_trap_Cvar_SetDescription, vmCvar, text);
+	}
+}
