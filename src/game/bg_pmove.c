@@ -5290,11 +5290,11 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
 			// but don't unscope due to extra speed while in air, as we may just have slide a step or a slope
-			// consider latency implementation from vanilla for quick scope shoot by simulating a 75 ping player lantency
-			// by adding 250ms extra spare time for shooting right after scoping
+			// consider latency implementation from vanilla for quick scope shoot by simulating lantency
+			// by adding extra spare time for shooting right after scoping
 			// also consider falling from slope for a moment
 			if (((!pm->pmext->airTime || (pm->ps->pm_flags & PMF_JUMP_HELD))
-			     && VectorLength(pm->ps->velocity) > 127 && pm->cmd.serverTime > pm->pmext->switchToScopeTime + 150)
+			     && VectorLength(pm->ps->velocity) > 127 && pm->cmd.serverTime > pm->pmext->switchToScopeTime + 250)
 			    || (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500))
 			{
 				PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
