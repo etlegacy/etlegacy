@@ -1361,12 +1361,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 	// don't draw weapon stuff when looking through a scope
-	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SCOPED)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SCOPED
+	         && isSelfFirstPerson && cg.zoomed)
 	{
-		if (isSelfFirstPerson && cg.zoomed)
-		{
-			return;
-		}
+		return;
 	}
 	// mounted tank mg
 	else if (cent->currentState.eFlags & EF_MOUNTEDTANK)
