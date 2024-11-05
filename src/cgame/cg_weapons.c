@@ -1542,25 +1542,26 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 			break;
 		case WP_LANDMINE:
-			if (
-				// dont show drop after attack
-				(cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cent->firedTime > 0)
-				)
+			// dont show drop after attack
+			if ((cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cent->firedTime > 0))
 			{
 				return;
 			}
 			break;
 		case WP_SATCHEL:
 			// dont show drop after attack
-			if (cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cent->firedTime > 0 && cg.time - cent->firedTime < 600)
+			if ((cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cent->firedTime > 0 && cg.time - cent->firedTime < 600))
 			{
 				return;
 			}
 			break;
 		case WP_MEDKIT:
 		case WP_AMMO:
-			// hide gun model after throwing for a bit
-			if (cent->firedTime > 0  && cg.time - cent->firedTime > 75 && cg.time - cent->firedTime < 200)
+			if (
+				// hide gun model after throwing for a bit
+				(cg_weapAnims.integer & WEAPANIM_FIRING)
+				&& (cent->firedTime > 0  && cg.time - cent->firedTime > 75 && cg.time - cent->firedTime < 200)
+				)
 			{
 				return;
 			}
