@@ -1159,7 +1159,7 @@ typedef struct
 	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
-	qboolean autoCmdExecuted;				///< has 'cg_autoCmd' been executed yet
+	qboolean autoCmdExecuted;               ///< has 'cg_autoCmd' been executed yet
 
 	// there are only one or two snapshot_t that are relevent at a time
 	int latestSnapshotNum;                  ///< the number of snapshots the client system has received
@@ -2981,6 +2981,10 @@ extern vmCvar_t cg_crosshairAlphaAlt;
 extern vmCvar_t cg_crosshairColorAlt;
 extern vmCvar_t cg_crosshairPulse;
 extern vmCvar_t cg_crosshairHealth;
+extern vmCvar_t cg_crosshairX;
+extern vmCvar_t cg_crosshairY;
+extern vmCvar_t cg_crosshairScaleX;
+extern vmCvar_t cg_crosshairScaleY;
 
 extern vmCvar_t cg_commandMapTime;
 
@@ -3151,7 +3155,7 @@ const char *CG_TranslateString(const char *string);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
-void CG_DrawDebugArtillery(centity_t * cent);
+void CG_DrawDebugArtillery(centity_t *cent);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
@@ -4398,7 +4402,7 @@ typedef struct
 	int count;
 } hudData_t;
 
-extern hudData_t hudData;
+extern hudData_t      hudData;
 extern hudComponent_t *showOnlyHudComponent;
 
 typedef struct

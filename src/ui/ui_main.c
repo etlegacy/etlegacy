@@ -2942,19 +2942,21 @@ static void UI_DrawRedBlue(rectDef_t *rect, float scale, vec4_t color, int textS
  */
 static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 {
-	float size = ui_cg_crosshairSize.integer;
+	float sizeX = ui_cg_crosshairSize.value * ui_cg_crosshairScaleX.value;
+	float sizeY = ui_cg_crosshairSize.value * ui_cg_crosshairScaleY.value;
 
 	if (uiInfo.currentCrosshair < 0 || uiInfo.currentCrosshair >= NUM_CROSSHAIRS)
 	{
 		uiInfo.currentCrosshair = 0;
 	}
 
-	size = (rect->w / 96.0f) * ((size > 96.0f) ? 96.0f : ((size < 24.0f) ? 24.0f : size));
+	sizeX = (rect->w / 96.0f) * ((sizeX > 96.0f) ? 96.0f : ((sizeX < 24.0f) ? 24.0f : sizeX));
+	sizeY = (rect->w / 96.0f) * ((sizeY > 96.0f) ? 96.0f : ((sizeY < 24.0f) ? 24.0f : sizeY));
 
 	trap_R_SetColor(uiInfo.xhairColor);
-	UI_DrawHandlePic(rect->x + (rect->w - size) * 0.5f, rect->y + (rect->h - size) * 0.5f, size, size, uiInfo.uiDC.Assets.crosshairShader[uiInfo.currentCrosshair]);
+	UI_DrawHandlePic(rect->x + (rect->w - sizeX) * 0.5f, rect->y + (rect->h - sizeY) * 0.5f, sizeX, sizeY, uiInfo.uiDC.Assets.crosshairShader[uiInfo.currentCrosshair]);
 	trap_R_SetColor(uiInfo.xhairColorAlt);
-	UI_DrawHandlePic(rect->x + (rect->w - size) * 0.5f, rect->y + (rect->h - size) * 0.5f, size, size, uiInfo.uiDC.Assets.crosshairAltShader[uiInfo.currentCrosshair]);
+	UI_DrawHandlePic(rect->x + (rect->w - sizeX) * 0.5f, rect->y + (rect->h - sizeY) * 0.5f, sizeX, sizeY, uiInfo.uiDC.Assets.crosshairAltShader[uiInfo.currentCrosshair]);
 
 	trap_R_SetColor(NULL);
 }
@@ -9225,6 +9227,8 @@ vmCvar_t ui_cg_crosshairColorAlt;
 vmCvar_t ui_cg_crosshairAlpha;
 vmCvar_t ui_cg_crosshairAlphaAlt;
 vmCvar_t ui_cg_crosshairSize;
+vmCvar_t ui_cg_crosshairScaleX;
+vmCvar_t ui_cg_crosshairScaleY;
 
 vmCvar_t cl_bypassMouseInput;
 
@@ -9326,6 +9330,8 @@ static cvarTable_t cvarTable[] =
 	{ &ui_cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairScaleX,              "cg_crosshairScaleX",                  "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairScaleY,              "cg_crosshairScaleY",                  "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairHealth",                  "0",                          CVAR_ARCHIVE,                   0 },
 

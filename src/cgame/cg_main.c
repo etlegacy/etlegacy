@@ -375,6 +375,10 @@ vmCvar_t cg_crosshairAlphaAlt;
 vmCvar_t cg_crosshairColorAlt;
 vmCvar_t cg_crosshairPulse;
 vmCvar_t cg_crosshairHealth;
+vmCvar_t cg_crosshairX;
+vmCvar_t cg_crosshairY;
+vmCvar_t cg_crosshairScaleX;
+vmCvar_t cg_crosshairScaleY;
 
 vmCvar_t cg_commandMapTime;
 
@@ -650,6 +654,10 @@ static cvarTable_t cvarTable[] =
 	{ &cg_crosshairColorAlt,        "cg_crosshairColorAlt",        "White",       CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairPulse,           "cg_crosshairPulse",           "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairHealth,          "cg_crosshairHealth",          "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairX,               "cg_crosshairX",               "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairY,               "cg_crosshairY",               "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairScaleX,          "cg_crosshairScaleX",          "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairScaleY,          "cg_crosshairScaleY",          "1.0",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_commandMapTime,           "cg_commandMapTime",           "0",           CVAR_ARCHIVE,                 0 },
 };
@@ -692,7 +700,9 @@ void CG_RegisterCvars(void)
 			         && (cv->vmCvar == &cg_crosshairSize
 			             || cv->vmCvar == &cg_crosshairAlpha || cv->vmCvar == &cg_crosshairColor
 			             || cv->vmCvar == &cg_crosshairAlphaAlt || cv->vmCvar == &cg_crosshairColorAlt
-			             || cv->vmCvar == &cg_crosshairPulse || cv->vmCvar == &cg_crosshairHealth))
+			             || cv->vmCvar == &cg_crosshairPulse || cv->vmCvar == &cg_crosshairHealth
+			             || cv->vmCvar == &cg_crosshairX || cv->vmCvar == &cg_crosshairY
+			             || cv->vmCvar == &cg_crosshairScaleX || cv->vmCvar == &cg_crosshairScaleY))
 			{
 				// force usage of crosshair values
 				cv->modificationCount = -1;
@@ -781,7 +791,9 @@ void CG_UpdateCvars(void)
 				else if (cv->vmCvar == &cg_crosshairSize
 				         || cv->vmCvar == &cg_crosshairAlpha || cv->vmCvar == &cg_crosshairColor
 				         || cv->vmCvar == &cg_crosshairAlphaAlt || cv->vmCvar == &cg_crosshairColorAlt
-				         || cv->vmCvar == &cg_crosshairPulse || cv->vmCvar == &cg_crosshairHealth)
+				         || cv->vmCvar == &cg_crosshairPulse || cv->vmCvar == &cg_crosshairHealth
+				         || cv->vmCvar == &cg_crosshairX || cv->vmCvar == &cg_crosshairY
+				         || cv->vmCvar == &cg_crosshairScaleX || cv->vmCvar == &cg_crosshairScaleY)
 				{
 					if (cg.clientFrame == 0)
 					{

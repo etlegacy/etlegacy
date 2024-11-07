@@ -2973,22 +2973,56 @@ static void CG_EditHudComponentComplete(void)
 
 #define EDITCOMPONENT_CROSSHAIR_STRING "editcomponent crosshair"
 
-static void CG_CrosshairSize_f(void)
+static void CG_CrosshairSizePos_f(void)
 {
 	if (trap_Argc() > 1)
 	{
-		const char *token;
-
-		token = CG_Argv(1);
+		const char *token = CG_Argv(1);
 
 		if (Q_isanumber(token))
 		{
-			float size = Q_atof(token);
+			const float value = Q_atof(token);
 
-			CG_GetActiveHUD()->crosshair.location.x = (Ccg_WideX(SCREEN_WIDTH) - size) * .5f;
-			CG_GetActiveHUD()->crosshair.location.y = (SCREEN_HEIGHT - size) * .5f;
-			CG_GetActiveHUD()->crosshair.location.w = size;
-			CG_GetActiveHUD()->crosshair.location.h = size;
+			float sizeX = cg_crosshairSize.value;
+			float sizeY = cg_crosshairSize.value;
+
+			float scaleX = cg_crosshairScaleX.value;
+			float scaleY = cg_crosshairScaleY.value;
+
+			float offsetX = cg_crosshairX.value;
+			float offsetY = cg_crosshairY.value;
+
+			const char *cmd = CG_Argv(0);
+
+			if (!Q_stricmp(cmd, "cg_crosshairSize_f"))
+			{
+				sizeX = sizeY = value;
+			}
+			else if (!Q_stricmp(cmd, "cg_crosshairX_f"))
+			{
+				offsetX = value;
+			}
+			else if (!Q_stricmp(cmd, "cg_crosshairY_f"))
+			{
+				offsetY = value;
+			}
+			else if (!Q_stricmp(cmd, "cg_crosshairScaleX_f"))
+			{
+				scaleX = value;
+			}
+			else if (!Q_stricmp(cmd, "cg_crosshairScaleY_f"))
+			{
+				scaleY = value;
+			}
+
+			// always perform scaling no matter the command, so we get the correct final size
+			sizeX *= scaleX;
+			sizeY *= scaleY;
+
+			CG_GetActiveHUD()->crosshair.location.x = (Ccg_WideX(SCREEN_WIDTH) - sizeX + offsetX) * .5f;
+			CG_GetActiveHUD()->crosshair.location.y = (SCREEN_HEIGHT - sizeY + offsetY) * .5f;
+			CG_GetActiveHUD()->crosshair.location.w = sizeX;
+			CG_GetActiveHUD()->crosshair.location.h = sizeY;
 		}
 	}
 }
@@ -3213,13 +3247,17 @@ static consoleCommand_t commands[] =
 	{ "editcomponent",          CG_EditComponent_f        },
 
 	// TODO: Implement "alias" system and create those as customizable alias command
-	{ "cg_crosshairSize_f",     CG_CrosshairSize_f        },
+	{ "cg_crosshairSize_f",     CG_CrosshairSizePos_f     },
 	{ "cg_crosshairAlpha_f",    CG_CrosshairAlpha_f       },
 	{ "cg_crosshairColor_f",    CG_CrosshairColor_f       },
 	{ "cg_crosshairAlphaAlt_f", CG_CrosshairAlphaAlt_f    },
 	{ "cg_crosshairColorAlt_f", CG_CrosshairColorAlt_f    },
 	{ "cg_crosshairPulse_f",    CG_CrosshairPulse_f       },
 	{ "cg_crosshairHealth_f",   CG_CrosshairHealth_f      },
+	{ "cg_crosshairX_f",        CG_CrosshairSizePos_f     },
+	{ "cg_crosshairY_f",        CG_CrosshairSizePos_f     },
+	{ "cg_crosshairScaleX_f",   CG_CrosshairSizePos_f     },
+	{ "cg_crosshairScaleY_f",   CG_CrosshairSizePos_f     },
 
 	{ NULL,                     NULL                      }
 };
