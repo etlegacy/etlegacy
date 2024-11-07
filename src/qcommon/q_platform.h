@@ -396,16 +396,11 @@
 #error "DLL_EXT not defined"
 #endif
 
-// x86 or x64 platform detection
+// x86 platform?
 #if defined(_M_IX86) || defined(__i386__)
 #define ARCH_X86 1
-#define ARCH_X64 0
-#elif defined(__x86_64__) || defined(_WIN64) || defined(__WIN64__)
-#define ARCH_X86 0
-#define ARCH_X64 1
 #else
 #define ARCH_X86 0
-#define ARCH_X64 0
 #endif
 
 //endianness
