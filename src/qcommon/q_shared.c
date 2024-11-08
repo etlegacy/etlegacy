@@ -1812,9 +1812,10 @@ const char *Q_stristr(const char *s, const char *find)
 }
 
 /**
- * @brief Q_PrintStrlen
- * @param[in] string
- * @return
+ * @brief Count the stings length up to the first null byte
+ * @note This function does not handle UNICODE string!
+ * @param[in] string to print to the screen
+ * @return print length of string
  */
 int Q_PrintStrlen(const char *string)
 {
@@ -1834,6 +1835,10 @@ int Q_PrintStrlen(const char *string)
 		{
 			p += 2;
 			continue;
+		}
+		if (*p == Q_COLOR_ESCAPE && p[1] == Q_COLOR_ESCAPE)
+		{
+			++p;
 		}
 		p++;
 		len++;

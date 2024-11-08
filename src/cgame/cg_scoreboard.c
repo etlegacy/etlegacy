@@ -437,30 +437,6 @@ int SkillNumForClass(int classNum)
 	}
 }
 
-/**
- * @brief Real printable charater count
- * @param[in] str
- * @return
- */
-int CG_drawStrlen(const char *str)
-{
-	int cnt = 0;
-
-	while (*str)
-	{
-		if (Q_IsColorString(str))
-		{
-			str += 2;
-		}
-		else
-		{
-			cnt++;
-			str++;
-		}
-	}
-	return(cnt);
-}
-
 static void WM_DrawClientScore_Highlight(int x, int y, int rowHeight, float fade, const score_t *score)
 {
 	vec4_t hcolor;
@@ -661,7 +637,7 @@ static void WM_DrawClientScore_Spectator(int x, int y, float scaleX, float scale
 	CG_Text_Paint_Ext(x, y, scaleX, scaleY, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	maxchars -= CG_Text_Width_Ext(ci->name, scaleX, 0, FONT_TEXT);
 
-	WM_DrawClientScore_Medals(x + (CG_drawStrlen(ci->name) * 8 + 8), y, scaleX, scaleY, ci, maxchars);
+	WM_DrawClientScore_Medals(x + (Q_UTF8_PrintStrlen(ci->name) * 8 + 8), y, scaleX, scaleY, ci, maxchars);
 
 	x -= playerWidth;
 	x += INFO_PLAYER_WIDTH;
@@ -727,7 +703,7 @@ static void WM_DrawClientScore_Player(int x, int y, float scaleX, float scaleY, 
 	CG_Text_Paint_Ext(x, y, scaleX, scaleY, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	maxchars -= CG_Text_Width_Ext(ci->name, scaleX, 0, FONT_TEXT);
 
-	WM_DrawClientScore_Medals(x + (CG_drawStrlen(ci->name) * 8 + 8), y, scaleX, scaleY, ci, maxchars);
+	WM_DrawClientScore_Medals(x + (Q_UTF8_PrintStrlen(ci->name) * 8 + 8), y, scaleX, scaleY, ci, maxchars);
 
 	x -= playerWidth;
 	x += INFO_PLAYER_WIDTH;

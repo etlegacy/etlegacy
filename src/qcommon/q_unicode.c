@@ -280,6 +280,11 @@ size_t Q_UTF32_Strlen(const uint32_t *str, size_t len)
 	return l;
 }
 
+/**
+ * @brief Count the stings length up to the first null byte
+ * @param[in] string to print to the screen
+ * @return print length of string
+ */
 char *Q_UTF8_CharAt(char *str, size_t offset)
 {
 	int l = 0;
@@ -299,9 +304,9 @@ char *Q_UTF8_CharAt(char *str, size_t offset)
 }
 
 /**
- * @brief Q_UTF8_PrintStrlen2
- * @param[in] str
- * @param[in] length string length
+ * @brief Count the stings length up to the first null byte
+ * @param[in] str string to print to the screen
+ * @param[in] length max string length
  * @return
  */
 int Q_UTF8_PrintStrlenExt(const char *str, int length)
@@ -550,7 +555,7 @@ uint32_t Q_UTF8_CodePoint(const char *str)
 		return 0;
 	}
 
-	// Its an extended char
+	// It's an extended char
 	if (!Q_UTF8_ValidateSingle(str))
 	{
 		return (unsigned char)str[0];
@@ -807,8 +812,8 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
 
 /**
  * @brief Q_UTF8_ToUTF32
- * @param[in,out] string
- * @param[in] charArray
+ * @param[in] string
+ * @param[out] charArray
  * @param[out] outLen
  */
 void Q_UTF8_ToUTF32(const char *string, uint32_t *charArray, size_t *outLen)
@@ -819,11 +824,11 @@ void Q_UTF8_ToUTF32(const char *string, uint32_t *charArray, size_t *outLen)
 	// Quick and dirty UTF-8 to UTF-32 conversion
 	while (*c)
 	{
-		int utf32 = 0;
+		uint32_t utf32 = 0;
 
 		if ((*c & 0x80) == 0)
 		{
-			utf32 = *c++;
+			utf32 = (uint32_t)*c++;
 		}
 		else if ((*c & 0xE0) == 0xC0)    // 110x xxxx
 		{
@@ -967,6 +972,11 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 	int  l    = 0;
 	int  number;
 	char *buffer;
+
+	if (!str)
+	{
+		return 0;
+	}
 
 	while (*str)
 	{
