@@ -108,6 +108,11 @@ static inline void CG_TeleportPlayer(const vec3_t origin, const vec3_t angles, q
 		return;
 	}
 
+	if (origin == NULL || angles == NULL)
+	{
+		return;
+	}
+
 	trap_SendClientCommand(va("setviewpos %f %f %f %f %f %f %i",
 	                          origin[0], origin[1], origin[2],
 	                          angles[PITCH], angles[YAW], angles[ROLL],
