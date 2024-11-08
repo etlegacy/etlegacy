@@ -345,7 +345,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		weap = WP_KNIFE;
 		break;
 	default:
-		weap = GetMODTableData(meansOfDeath)->weaponIcon;
+		weap = GetMODTableData(meansOfDeath)->weapon;
 		break;
 	}
 

@@ -50,7 +50,7 @@ extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponShader, int *scaleShader, int style)
 {
 	// Get the related weapon from kill
-	weapon_t weap = IS_VALID_WEAPON(GetMODTableData(mod)->weaponIcon) ? GetMODTableData(mod)->weaponIcon : weapon;
+	weapon_t weap = IS_VALID_WEAPON(GetMODTableData(mod)->weapon) ? GetMODTableData(mod)->weapon : weapon;
 
 	// if weapon is still valid
 	if (IS_VALID_WEAPON(weap))

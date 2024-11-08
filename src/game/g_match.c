@@ -292,7 +292,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 	{
 		if (attacker && attacker->client)
 		{
-			weapon_t weap = GetMODTableData(mod)->weaponIcon;
+			weapon_t weap = GetMODTableData(mod)->weapon;
 
 			// don't count hits/shots for hitscan weapons
 			if (!GetWeaponTableData(weap)->splashDamage)
