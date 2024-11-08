@@ -1263,6 +1263,8 @@ CROSSHAIRS
 static void CG_DrawScopedReticle(void)
 {
 	int weapon;
+	int x = (cgs.glconfig.vidWidth / 2);
+	int y = (cgs.glconfig.vidHeight / 2);
 
 	// So that we will draw reticle
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
@@ -1279,6 +1281,8 @@ static void CG_DrawScopedReticle(void)
 		return;
 	}
 
+	// TODO : add support for ultra-widescreen / remove 16:9 assumption
+
 	// sides
 	CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
 	CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
@@ -1292,32 +1296,70 @@ static void CG_DrawScopedReticle(void)
 	if (weapon == WP_FG42_SCOPE)
 	{
 		// hairs
-		CG_FillRect(84 + cgs.wideXoffset, 239, 150, 3, colorBlack);     // left
-		CG_FillRect(234 + cgs.wideXoffset, 240, 173, 1, colorBlack);    // horiz center
-		CG_FillRect(407 + cgs.wideXoffset, 239, 150, 3, colorBlack);    // right
+		trap_R_SetColor(colorBlack);
 
+		// inside left
+		trap_R_DrawStretchPic((x - 1) * 0.80,
+		                      y - 1,
+		                      (x - 1) * 0.20, 2, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside left
+		trap_R_DrawStretchPic(0,
+		                      y - 2,
+		                      (x - 1) * 0.80, 4, 0, 0, 0, 1, cgs.media.whiteShader);
+		// inside right
+		trap_R_DrawStretchPic(x,
+		                      y - 1,
+		                      (x - 1) * 0.80, 2, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside right
+		trap_R_DrawStretchPic(cgs.glconfig.vidWidth - (x * 0.80),
+		                      y - 2,
+		                      (x - 1) * 0.80, 4, 0, 0, 0, 1, cgs.media.whiteShader);
+		// inside top
+		trap_R_DrawStretchPic(x - 2,
+		                      0,
+		                      4, (y - 1) * 0.65, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside top
+		trap_R_DrawStretchPic(x - 1,
+		                      ((y - 1) * 0.65),
+		                      2, (y - 1) * 0.35, 0, 0, 0, 1, cgs.media.whiteShader);
+		// inside bottom
+		trap_R_DrawStretchPic(x - 1,
+		                      y + 1,
+		                      2, (y - 1) * 0.35, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside bottom
+		trap_R_DrawStretchPic(x - 2,
+		                      y + 1 + ((y - 1) * 0.35),
+		                      4, (y - 1) * 0.65, 0, 0, 0, 1, cgs.media.whiteShader);
+		// center
+		trap_R_DrawStretchPic(x - 1,
+		                      y - 1,
+		                      2, 2, 0, 0, 0, 1, cgs.media.whiteShader);
 
-		CG_FillRect(319 + cgs.wideXoffset, 2, 3, 151, colorBlack);      // top center top
-		CG_FillRect(320 + cgs.wideXoffset, 153, 1, 114, colorBlack);    // top center bot
-
-		CG_FillRect(320 + cgs.wideXoffset, 241, 1, 87, colorBlack);     // bot center top
-		CG_FillRect(319 + cgs.wideXoffset, 327, 3, 151, colorBlack);    // bot center bot
+		trap_R_SetColor(NULL);
 	}
-	else if (weapon == WP_GARAND_SCOPE)
+	else if (weapon == WP_GARAND_SCOPE || weapon == WP_K43_SCOPE)
 	{
 		// hairs
-		CG_FillRect(84 + cgs.wideXoffset, 239, 177, 2, colorBlack);     // left
-		CG_FillRect(320 + cgs.wideXoffset, 242, 1, 58, colorBlack);     // center top
-		CG_FillRect(319 + cgs.wideXoffset, 300, 2, 178, colorBlack);    // center bot
-		CG_FillRect(380 + cgs.wideXoffset, 239, 177, 2, colorBlack);    // right
-	}
-	else if (weapon == WP_K43_SCOPE)
-	{
-		// hairs
-		CG_FillRect(84 + cgs.wideXoffset, 239, 177, 2, colorBlack);     // left
-		CG_FillRect(320 + cgs.wideXoffset, 242, 1, 58, colorBlack);     // center top
-		CG_FillRect(319 + cgs.wideXoffset, 300, 2, 178, colorBlack);    // center bot
-		CG_FillRect(380 + cgs.wideXoffset, 239, 177, 2, colorBlack);    // right
+		trap_R_SetColor(colorBlack);
+
+		// left
+		trap_R_DrawStretchPic(0,
+		                      y - 2,
+		                      (x * 0.85), 4, 0, 0, 0, 1, cgs.media.whiteShader);
+		// right
+		trap_R_DrawStretchPic(cgs.glconfig.vidWidth - (x * 0.85),
+		                      y - 2,
+		                      (x * 0.85), 4, 0, 0, 0, 1, cgs.media.whiteShader);
+		// inside bottom
+		trap_R_DrawStretchPic(x - 1,
+		                      y + 1,
+		                      2, (y - 1) * 0.25, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside bottom
+		trap_R_DrawStretchPic(x - 2,
+		                      y + 1 + ((y - 1) * 0.25),
+		                      4, (y - 1) * 0.75, 0, 0, 0, 1, cgs.media.whiteShader);
+
+		trap_R_SetColor(NULL);
 	}
 }
 
