@@ -461,7 +461,8 @@ static void CG_ItemPickup(int itemNum)
 		// we just drop current weapon
 		if (!COM_BitCheck(cg.snap->ps.weapons, cg.weaponSelect))
 		{
-			cg.weaponSelect = WP_NONE;
+			cg.weaponSelect             = WP_NONE;
+			cg.weaponSelectDuringFiring = (cg.snap->ps.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 		}
 
 		if (cg_autoswitch.integer && cg.predictedPlayerState.weaponstate != WEAPON_RELOADING)
@@ -479,14 +480,16 @@ static void CG_ItemPickup(int itemNum)
 				// no weap currently selected, always just select the new one
 				if (!cg.weaponSelect)
 				{
-					cg.weaponSelectTime = cg.time;
-					cg.weaponSelect     = itemid;
+					cg.weaponSelectTime         = cg.time;
+					cg.weaponSelect             = itemid;
+					cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 				}
 				// 1 - always switch to new weap
 				else if (cg_autoswitch.integer == 1)
 				{
-					cg.weaponSelectTime = cg.time;
-					cg.weaponSelect     = itemid;
+					cg.weaponSelectTime         = cg.time;
+					cg.weaponSelect             = itemid;
+					cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 				}
 				else
 				{
@@ -499,8 +502,9 @@ static void CG_ItemPickup(int itemNum)
 					{
 						if (!COM_BitCheck(cg.snap->ps.weapons, itemid))
 						{
-							cg.weaponSelectTime = cg.time;
-							cg.weaponSelect     = itemid;
+							cg.weaponSelectTime         = cg.time;
+							cg.weaponSelect             = itemid;
+							cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 						}
 					}
 
@@ -515,8 +519,9 @@ static void CG_ItemPickup(int itemNum)
 							{
 								if (wpbank_pickup > wpbank_cur)
 								{
-									cg.weaponSelectTime = cg.time;
-									cg.weaponSelect     = itemid;
+									cg.weaponSelectTime         = cg.time;
+									cg.weaponSelect             = itemid;
+									cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 								}
 							}
 						}
@@ -2940,6 +2945,25 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_PLAYER_HIT:
 		CG_PlayHitSound(es->clientNum, es->eventParm);
 		break;
+	case EV_PLAYER_REVIVE:
+	{
+		int reviver = es->clientNum;
+		// int revivee = es->eventParm;
+		// int invulnEndTime = invulnEndTime;
+
+		if (reviver == cg.clientNum)
+		{
+			cg.lastReviveTime = cg.time;
+		}
+
+		// play sound
+		sfxHandle_t sound = CG_GetGameSound(GAMESOUND_MISC_REVIVE);
+		if (sound)
+		{
+			trap_S_StartSoundVControl(es->origin, es->number, CHAN_VOICE, sound, 255);
+		}
+	}
+	break;
 	default:
 		if (cg.demoPlayback)
 		{

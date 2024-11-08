@@ -1221,6 +1221,7 @@ typedef struct
 
 	/// input state sent to server
 	int weaponSelect;
+	int weaponSelectDuringFiring;
 
 	/// auto rotating items
 	vec3_t autoAnglesSlow;
@@ -1331,6 +1332,7 @@ typedef struct
 	float damageX, damageY, damageValue;
 
 	int grenLastTime;
+	int lastReviveTime;
 
 	int switchbackWeapon;
 	int lastFiredWeapon;

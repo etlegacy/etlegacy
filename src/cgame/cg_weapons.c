@@ -35,6 +35,8 @@
 
 #include "cg_local.h"
 
+#define SYRINGE_VISUAL_RECOVERY_TIME 650
+
 /**
  * @var weapBanksMultiPlayer
  * @brief The new loadout for WolfXP
@@ -1555,6 +1557,16 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				return;
 			}
 			break;
+		case WP_MEDIC_SYRINGE:
+			// don't draw the syringe twice when dropping after firing
+			if (
+				(cg_weapAnims.integer & WEAPANIM_FIRING)
+				&& ((cg.predictedPlayerState.weaponstate == WEAPON_DROPPING && cg.weaponSelectDuringFiring > 0) || (cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerEntity.pe.weap.frame > 18)) && cg.weaponSelect != WP_MEDIC_SYRINGE
+				)
+			{
+				return;
+			}
+			break;
 		case WP_MEDKIT:
 		case WP_AMMO:
 			if (
@@ -1696,7 +1708,12 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (weaponNum == WP_MEDIC_SYRINGE)
 		{
-			if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
+
+			if (cg.lastReviveTime > 0 && cg.time - cg.lastReviveTime < SYRINGE_VISUAL_RECOVERY_TIME)
+			{
+				gun.customShader = weapon->modModels[1];
+			}
+			else if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 			{
 				gun.customShader = weapon->modModels[0];
 			}
@@ -2013,7 +2030,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 					if (weaponNum == WP_MEDIC_SYRINGE && i == W_PART_1)
 					{
-						if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
+						if (cg.lastReviveTime > 0 && cg.time - cg.lastReviveTime < SYRINGE_VISUAL_RECOVERY_TIME)
+						{
+							barrel.customShader = weapon->modModels[1];
+						}
+						else if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 						{
 							barrel.customShader = weapon->modModels[0];
 						}
@@ -3252,8 +3273,9 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE) && (cg.pmext.silencedSideArm & 2))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE) && !(cg.pmext.silencedSideArm & 2)))
 		{
-			newWeapon       = GetWeaponTableData(newWeapon)->weapAlts;
-			cg.weaponSelect = newWeapon;
+			newWeapon                   = GetWeaponTableData(newWeapon)->weapAlts;
+			cg.weaponSelect             = newWeapon;
+			cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 		}
 	}
 
@@ -3326,7 +3348,8 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 		}
 	}
 
-	cg.weaponSelect = newWeapon;
+	cg.weaponSelect             = newWeapon;
+	cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 }
 
 extern pmove_t cg_pmove;

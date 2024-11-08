@@ -5278,7 +5278,8 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 #ifdef CGAMEDLL
-			cg.weaponSelect = GetWeaponTableData(pm->ps->weapon)->weapAlts;
+			cg.weaponSelect             = GetWeaponTableData(pm->ps->weapon)->weapAlts;
+			cg.weaponSelectDuringFiring = (pm->ps->weaponstate == WEAPON_FIRING) ? cg.time : 0;
 #endif // CGAMEDLL
 		}
 	}
@@ -5312,7 +5313,8 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			PM_BeginWeaponChange(WP_SATCHEL_DET, WP_SATCHEL, qtrue);
 #ifdef CGAMEDLL
-			cg.weaponSelect = WP_SATCHEL;
+			cg.weaponSelect             = WP_SATCHEL;
+			cg.weaponSelectDuringFiring = (pm->ps->weaponstate == WEAPON_FIRING) ? cg.time : 0;
 #endif // CGAMEDLL
 		}
 	}

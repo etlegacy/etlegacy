@@ -505,6 +505,7 @@ void CG_mvTransitionPlayerState(playerState_t *ps)
 	ps->clientNum                         = pID;
 	ps->weapon                            = cent->currentState.weapon;
 	cg.weaponSelect                       = ps->weapon;
+	cg.weaponSelectDuringFiring           = (ps->weaponstate == WEAPON_FIRING) ? cg.time : 0;
 
 	cent->currentState.eType       = ET_PLAYER;
 	ps->eFlags                     = cent->currentState.eFlags;

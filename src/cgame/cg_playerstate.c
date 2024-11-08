@@ -166,7 +166,8 @@ void CG_Respawn(qboolean revived)
 	cg.cursorHintTime = 0;
 
 	// select the weapon the server says we are using
-	cg.weaponSelect = cg.snap->ps.weapon;
+	cg.weaponSelect             = cg.snap->ps.weapon;
+	cg.weaponSelectDuringFiring = (cg.snap->ps.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 
 	// clear even more things on respawn
 	cg.zoomedBinoc = qfalse;
@@ -428,7 +429,8 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 
 	if ((ps->pm_flags & PMF_RESPAWNED) && cg.weaponSelect != ps->weapon)
 	{
-		cg.weaponSelect = ps->weapon;
+		cg.weaponSelect             = ps->weapon;
+		cg.weaponSelectDuringFiring = (ps->weaponstate == WEAPON_FIRING) ? cg.time : 0;
 	}
 
 	if (cg.mapRestart)

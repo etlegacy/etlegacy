@@ -317,10 +317,21 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 #endif
 }
 
+void ReviveEntityEvent(gentity_t *reviver, gentity_t *revivee, int invulnEndTime)
+{
+	gentity_t *te;
+
+	te = G_TempEntity(revivee->r.currentOrigin, EV_PLAYER_REVIVE);
+
+	te->s.eventParm   = revivee->s.clientNum;
+	te->s.clientNum   = reviver->s.clientNum;
+	te->s.effect3Time = invulnEndTime;
+}
+
 /**
  * @brief Took this out of Weapon_Syringe so we can use it from other places
- * @param[in] ent
- * @param[in,out] traceEnt
+ * @param[in] ent - Syringe user
+ * @param[in,out] traceEnt - PM_DEAD target
  * @return
  */
 void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
@@ -328,6 +339,7 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	vec3_t  org;
 	trace_t tr;
 	int     healamt, headshot, oldclasstime = 0;
+	int     invulnEndTime;
 
 	// heal the dude
 	// copy some stuff out that we'll wanna restore
@@ -348,6 +360,7 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	oldclasstime = traceEnt->client->ps.classWeaponTime;
 
 	ClientSpawn(traceEnt, qtrue, qfalse, qtrue, qtrue);
+	invulnEndTime = traceEnt->client->ps.powerups[PW_INVULNERABLE];
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_Revived(traceEnt - g_entities, ent);
@@ -385,8 +398,7 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 
 	traceEnt->props_frame_state = ent->s.number;
 
-	// sound
-	G_Sound(traceEnt, GAMESOUND_MISC_REVIVE);
+	ReviveEntityEvent(ent, traceEnt, invulnEndTime);
 
 	traceEnt->client->pers.lastrevive_client = ent->s.clientNum;
 	traceEnt->client->pers.lasthealth_client = ent->s.clientNum;
@@ -2150,7 +2162,7 @@ weapengineergoto3:
 							}
 							traceEnt->etpro_misc_1 |= 1;
 							traceEnt->etpro_misc_2  = hit->s.number;
-							
+
 							G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 						}
 						// i = num;
@@ -2243,7 +2255,7 @@ weapengineergoto3:
 								G_DPrintf("dyno chaining: hit: %p\n", hit);
 							}
 							traceEnt->etpro_misc_1 |= 1;
-							
+
 							G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 						}
 						return NULL;
