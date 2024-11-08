@@ -38,6 +38,14 @@
 
 #include "bg_public.h"
 
+#ifdef CGAMEDLL
+// cgame uses a compatibility shim when loading files for backwards compatible demo playback
+extern int CG_LoadCompatSource(const char *filename);
+#define trap_PC_LoadSource CG_LoadCompatSource
+extern int CG_FOpenCompatFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
+#define trap_FS_FOpenFile CG_FOpenCompatFile
+#endif
+
 #define MIN_WALK_NORMAL 0.7f     ///< Can't walk on very steep slopes
 
 #define STEPSIZE        18

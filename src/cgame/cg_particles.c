@@ -136,7 +136,7 @@ static qboolean CG_ParsePatriclesConfig(void)
 	fileHandle_t f;
 
 	// load the file
-	len = trap_FS_FOpenFile(PARTICLES_CFG_NAME, &f, FS_READ);
+	len = CG_FOpenCompatFile(PARTICLES_CFG_NAME, &f, FS_READ);
 
 	if (len <= 0)
 	{

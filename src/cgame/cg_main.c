@@ -2712,6 +2712,52 @@ void CG_LoadHudMenu(void)
 }
 
 /**
+ * @brief
+ * Shim to load a path in a compatibility subdir first, before falling back to
+ * passed path.
+ */
+int CG_LoadCompatSource(const char *filename)
+{
+	if (cg.demoBackwardsCompat.compatPath[0] != '\0')
+	{
+		int res = trap_PC_LoadSource(va("%s%c%s", cg.demoBackwardsCompat.compatPath, PATH_SEP, filename));
+		if (res != 0)
+		{
+			if (developer.integer)
+			{
+				CG_Printf("CG_LoadCompatSource: %s\n", va("%s%c%s", cg.demoBackwardsCompat.compatPath, PATH_SEP, filename));
+			}
+			return res;
+		}
+	}
+
+	return trap_PC_LoadSource(filename);
+}
+
+/**
+ * @brief
+ * Shim to load a path in a compatibility subdir first, before falling back to
+ * passed path.
+ */
+int CG_FOpenCompatFile(const char *qpath, fileHandle_t *f, fsMode_t mode)
+{
+	if (cg.demoBackwardsCompat.compatPath[0] != '\0')
+	{
+		int res = trap_FS_FOpenFile(va("%s%c%s", cg.demoBackwardsCompat.compatPath, PATH_SEP, qpath), f, mode);
+		if (res != -1)
+		{
+			if (developer.integer)
+			{
+				CG_Printf("CG_FOpenCompatFile: %s\n", va("%s%c%s", cg.demoBackwardsCompat.compatPath, PATH_SEP, qpath));
+			}
+			return res;
+		}
+	}
+
+	return trap_FS_FOpenFile(qpath, f, mode);
+}
+
+/**
  * @brief CG_AssetCache
  */
 void CG_AssetCache(void)
@@ -2769,6 +2815,18 @@ static ID_INLINE void CG_SetupExtensions(void)
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CmdBackup_Ext, "trap_CmdBackup_Ext_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_MatchPaused, "trap_MatchPaused_Legacy");
+	}
+}
+
+/**
+ * @brief
+ * Initialize 'cg.demoBackwardsCompat'.
+ */
+void CG_DemoBackwardsCompatInit()
+{
+	if (CG_IsDemoVersionBelow(2, 83, 0))
+	{
+		Q_strncpyz(cg.demoBackwardsCompat.compatPath, "compat/2_82_1", sizeof(cg.demoBackwardsCompat.compatPath));
 	}
 }
 
@@ -2900,6 +2958,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_ParseSysteminfo();
 	CG_ParseServerinfo();
+	CG_DemoBackwardsCompatInit();
 	CG_ParseWolfinfo();
 	CG_ParseServerToggles();
 
@@ -3206,22 +3265,29 @@ int CG_RoundTime(qtime_t *qtime)
 }
 
 /**
- * @brief CG_IsVersionCompatible
- * @param[in] current
- * @param[in] minimum
- * @return
+ * @brief
+ * Checks if the ETL version of the demo that was recorded (which we are
+ * currently replaying) is below a passed version.
  */
-qboolean CG_IsVersionCompatible(version_t *current, version_t *minimum)
+qboolean CG_IsDemoVersionBelow(int major, int minor, int patch)
 {
-	if (current->major != minimum->major)
+	if (cg.demoVersion.major == 0 && cg.demoVersion.minor == 0 && cg.demoVersion.patch == 0)
 	{
-		return current->major > minimum->major;
+		return qfalse;
 	}
 
-	if (current->minor != minimum->minor)
+	if (cg.demoVersion.major < major)
 	{
-		return current->minor > minimum->minor;
+		return qtrue;
+	}
+	else if (cg.demoVersion.minor < minor)
+	{
+		return qtrue;
+	}
+	else if (cg.demoVersion.patch < patch)
+	{
+		return qtrue;
 	}
 
-	return current->patch >= minimum->patch;
+	return qfalse;
 }
