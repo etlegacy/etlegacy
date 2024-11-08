@@ -900,6 +900,94 @@ static int _et_GetCurrentWeapon(lua_State *L)
 	return 3;
 }
 
+static int _et_GetMethodOfDeathInfo(lua_State *L)
+{
+	modTable_t *mot;
+	int        index = 0, mod = (int)luaL_checkinteger(L, 1);
+
+	if (mod < 0 || mod >= MOD_NUM_MODS)
+	{
+		luaL_error(L, "\"mod\" is out of bounds: %d", mod);
+		lua_pushnil(L);
+		return 1;
+	}
+
+	mot = GetMODTableData(mod);
+
+	lua_newtable(L);
+	index = lua_gettop(L);
+
+	lua_pushstring(L, "weapon");
+	lua_pushinteger(L, mot->weapon);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "isHeadshot");
+	lua_pushboolean(L, mot->isHeadshot);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "isExplosive");
+	lua_pushboolean(L, mot->isExplosive);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "weaponClassForMOD");
+	lua_pushinteger(L, mot->weaponClassForMOD);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "obituaryKillMessage1");
+	lua_pushstring(L, mot->obituaryKillMessage1);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "obituaryKillMessage2");
+	lua_pushstring(L, mot->obituaryKillMessage2);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "obituarySelfKillMessage");
+	lua_pushstring(L, mot->obituarySelfKillMessage);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "obituaryNoAttackerMessage");
+	lua_pushstring(L, mot->obituaryNoAttackerMessage);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "modName");
+	lua_pushstring(L, mot->modName);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "indexWeaponStat");
+	lua_pushinteger(L, mot->indexWeaponStat);
+	lua_settable(L, -3);
+
+	return 1;
+}
+
+static int _et_GetWeaponInfo(lua_State *L)
+{
+	int weapon, index = 0;
+
+	weapon = (int)luaL_checkinteger(L, 1);
+
+	if (weapon < 0 || weapon >= WP_NUM_WEAPONS)
+	{
+		luaL_error(L, "\"weapon\" is out of bounds: %d", weapon);
+		lua_pushnil(L);
+		return 1;
+	}
+
+	weaponTable_t *wp = GetWeaponTableData(weapon);
+
+	lua_newtable(L);
+	index = lua_gettop(L);
+	lua_pushstring(L, "weapon");
+	lua_pushinteger(L, wp->weapon);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "desc");
+	lua_pushstring(L, wp->desc);
+	lua_settable(L, -3);
+
+	return 1;
+}
+
 // Entities
 // client entity fields
 static const gentity_field_t gclient_fields[] =
@@ -1281,8 +1369,17 @@ static void _et_gentity_settrajectory(lua_State *L, trajectory_t *traj)
 	lua_pop(L, 1);
 }
 
-static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
+static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws, int statsWeapon)
 {
+	int i;
+	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
+	{
+		if (weaponTable[i].indexWeaponStat == statsWeapon)
+		{
+			break;
+		}
+	}
+
 	lua_newtable(L);
 	lua_pushinteger(L, 1);
 	lua_pushinteger(L, ws->atts);
@@ -1298,6 +1395,10 @@ static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
 	lua_settable(L, -3);
 	lua_pushinteger(L, 5);
 	lua_pushinteger(L, ws->kills);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "weapon");
+	lua_pushinteger(L, i);
 	lua_settable(L, -3);
 }
 
@@ -1698,7 +1799,10 @@ static int et_gentity_get(lua_State *L)
 		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * (int)luaL_optinteger(L, 3, 0)))));
 		return 1;
 	case FIELD_WEAPONSTAT:
-		_et_gentity_getweaponstat(L, (weapon_stat_t *)(addr + (sizeof(weapon_stat_t) * (int)luaL_optinteger(L, 3, 0))));
+	{
+		int statwp = (int)luaL_optinteger(L, 3, 0);
+		_et_gentity_getweaponstat(L, (weapon_stat_t *)(addr + (sizeof(weapon_stat_t) * statwp)), statwp);
+	}
 		return 1;
 
 	}
@@ -2051,6 +2155,8 @@ static const luaL_Reg etlib[] =
 	{ "AddWeaponToPlayer",       _et_AddWeaponToPlayer       },
 	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },
 	{ "GetCurrentWeapon",        _et_GetCurrentWeapon        },
+	{ "GetMethodOfDeathInfo",    _et_GetMethodOfDeathInfo    },
+	{ "GetWeaponInfo",           _et_GetWeaponInfo           },
 	// Entities
 	{ "G_CreateEntity",          _et_G_Lua_CreateEntity      },
 	{ "G_DeleteEntity",          _et_G_Lua_DeleteEntity      },
@@ -2754,6 +2860,7 @@ static void registerConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, MAX_TAGCONNECTS);
 	lua_regconstinteger(vm->L, MAX_FIRETEAMS);
 	lua_regconstinteger(vm->L, MAX_MOTDLINES);
+	lua_regconstinteger(vm->L, WS_MAX);
 
 	// GS constants
 	lua_regconstinteger(vm->L, GS_INITIALIZE);

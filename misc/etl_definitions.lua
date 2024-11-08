@@ -11,6 +11,8 @@ function et.FindMod(vmnumber) end
 
 function et.IPCSend(vmnumber, message) end
 
+---Prints a message to the server console
+---@param message string Message to print
 function et.G_Print(message) end
 
 function et.G_LogPrint(message) end
@@ -146,7 +148,6 @@ function et.G_ShaderRemapFlush() end
 function et.G_SetGlobalFog(params) end
 
 function et.trap_Trace(trace, start, mins, maxs, endpos, entitynum, mask) end
-
 
 --- Callbacks
 --- LuaLS not super clear on how the callbacks should be defined for the parameters to be documented correctly
