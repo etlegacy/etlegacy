@@ -622,19 +622,15 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 		{
 			if (strstr(listItem->message2, message2))
 			{
-				if (forceStackingXp)
+				// if the XP amount is different, stack it up (mainly kill assist)
+				if (!(CG_GetActiveHUD()->xpgain.style & POPUP_XPGAIN_NO_XP_ADD_UP) || forceStackingXp || Q_stricmp(listItem->message, message))
 				{
 					Q_strncpyz(listItem->message, va("%f", Q_atof(listItem->message) + Q_atof(message)), sizeof(cg_pmStackXP[0].message));
-					Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStackXP[0].message2));
 				}
-				else
-				{
-					// if the XP amount is different, stack it up
-					if (Q_stricmp(listItem->message, message))
-					{
-						Q_strncpyz(listItem->message, va("%f", Q_atof(listItem->message) + Q_atof(message)), sizeof(cg_pmStackXP[0].message));
-					}
 
+				// don't display multiplicator for repairing or constructing
+				if (!forceStackingXp)
+				{
 					Q_strncpyz(listItem->message2, va("%s (x%d)", message2, ++listItem->count), sizeof(cg_pmStackXP[0].message2));
 				}
 
