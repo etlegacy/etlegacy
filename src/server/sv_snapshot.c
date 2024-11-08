@@ -671,6 +671,12 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 			continue;
 		}
 
+		if (cl->clientMask && ent->s.number < MAX_CLIENTS && (cl->clientMask & (1ULL << ent->s.number)))
+		{
+			SV_AddEntToSnapshot(cl, playerEnt, svEnt, ent, eNums);
+			continue;
+		}
+
 		bitvector = clientpvs;
 
 		// just check origin for being in pvs, ignore bmodel extents
@@ -938,6 +944,8 @@ static void SV_BuildClientSnapshot(client_t *client)
 #else
 	SV_AddEntitiesVisibleFromPoint(client, org, frame, &entityNumbers /*, qfalse, client->netchan.remoteAddress.type == NA_LOOPBACK*/);
 #endif
+
+	client->clientMask = 0;
 
 	// if there were portals visible, there may be out of order entities
 	// in the list which will need to be resorted for the delta compression
@@ -1360,6 +1368,22 @@ void SV_CheckClientUserinfoTimer(void)
 			SV_UpdateUserinfo_f(cl);
 		}
 	}
+}
+
+/**
+ * @brief SV_SetSnapshotClientMask
+ * @param[in] clientNum
+ * @param[in] mask1
+ * @param[in] mask2
+ */
+void SV_SetSnapshotClientMask(int clientNum, int mask1, int mask2)
+{
+	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
+	{
+		Com_Error(ERR_FATAL, "SV_SetSnapshotClientMask: invalid clientNum %d", clientNum);
+	}
+
+	svs.clients[clientNum].clientMask = (uint64_t)mask1 | ((uint64_t)mask2 << 32);
 }
 
 #ifdef ETLEGACY_DEBUG

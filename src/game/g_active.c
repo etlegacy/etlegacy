@@ -1775,6 +1775,24 @@ void SpectatorClientEndFrame(gentity_t *ent)
 	}
 #endif
 
+	if (ent->client->sess.shoutcaster && dll_trap_SetSnapshotClientMask)
+	{
+		int i, mask1 = 0, mask2 = 0;
+		for (i = 0; i < level.numPlayingClients; i++)
+		{
+			if (level.sortedClients[i] < 32)
+			{
+				mask1 |= BIT(level.sortedClients[i]);
+			}
+			else
+			{
+				mask2 |= BIT(level.sortedClients[i] - 32);
+			}
+		}
+
+		trap_SetSnapshotClientMask(ent - g_entities, mask1, mask2);
+	}
+
 	// do this to keep current xp of spectators up to date especially on first connect to get xpsave state in limbo
 	if (ent->client->sess.spectatorState == SPECTATOR_FREE)
 	{

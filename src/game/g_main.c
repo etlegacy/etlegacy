@@ -714,6 +714,7 @@ void G_ParsePlatformManifest(void);
 int dll_com_trapGetValue;
 int dll_trap_DemoSupport;
 int dll_trap_SnapshotCallbackExt;
+int dll_trap_SetSnapshotClientMask;
 
 /**
  * @brief G_SnapshotCallbackExt
@@ -2380,6 +2381,7 @@ static ID_INLINE void G_SetupExtensions(void)
 
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SnapshotCallbackExt, "trap_SnapshotCallbackExt_Legacy");
+		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SetSnapshotClientMask, "trap_SetSnapshotClientMask_Legacy");
 	}
 }
 

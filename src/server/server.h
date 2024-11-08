@@ -295,6 +295,8 @@ typedef struct client_s
 	int loginRequested;
 	login_status_t loginStatus;
 #endif
+
+	uint64_t clientMask;                    ///< always sent entities of those clients
 } client_t;
 
 //=============================================================================
@@ -620,6 +622,7 @@ void SV_SendClientMessages(void);
 void SV_SendClientSnapshot(client_t *client);
 void SV_CheckClientUserinfoTimer(void);
 void SV_SendClientIdle(client_t *client);
+void SV_SetSnapshotClientMask(int clientNum, int mask1, int mask2);
 
 #ifdef ETLEGACY_DEBUG
 void SV_PrintNetworkOverhead_f(void);

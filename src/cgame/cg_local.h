@@ -708,7 +708,6 @@ typedef struct clientInfo_s
 #ifdef FEATURE_PRESTIGE
 	int prestige;
 #endif
-	int currentWeapon;
 	int ammo;
 	int ammoclip;
 #ifdef FEATURE_MULTIVIEW

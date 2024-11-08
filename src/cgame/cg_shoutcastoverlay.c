@@ -49,12 +49,6 @@ static int CG_GetPlayerCurrentWeapon(clientInfo_t *player)
 {
 	int curWeap;
 
-	// backward compatibility
-	if (player->currentWeapon)
-	{
-		return player->currentWeapon;
-	}
-
 	if (cg_entities[player->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
 	{
 		if (IS_MOUNTED_TANK_BROWNING(player->clientNum))
@@ -79,6 +73,20 @@ static int CG_GetPlayerCurrentWeapon(clientInfo_t *player)
 }
 
 /**
+* @brief CG_GetPlayerPowerups
+* @param[in] player
+*/
+static int CG_GetPlayerPowerups(clientInfo_t *player)
+{
+	if (cg_entities[player->clientNum].currentValid)
+	{
+		return cg_entities[player->clientNum].currentState.powerups;
+	}
+
+	return player->powerups;
+}
+
+/**
  * @brief CG_ShoutcastPlayerAmmoValue get the current ammo and/or clip count of the holded weapon (if using ammo).
  * @param[in] ci
  * @param[out] ammo - the number of ammo left (in the current clip if using clip)
@@ -97,6 +105,11 @@ static void CG_ShoutcastPlayerAmmoValue(clientInfo_t *ci, int *ammo, int *clips)
 
 	// some weapons don't draw ammo count
 	if (!GetWeaponTableData(curWeap)->useAmmo)
+	{
+		return;
+	}
+
+	if (cg_entities[ci->clientNum].currentValid && BG_PlayerMounted(cg_entities[ci->clientNum].currentState.eFlags))
 	{
 		return;
 	}
@@ -148,7 +161,7 @@ static void CG_ShoutcastPlayerAmmoValue(clientInfo_t *ci, int *ammo, int *clips)
 static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t *player, float y, int index)
 {
 	int    curWeap, weapScale, textWidth, textHeight;
-	int    ammo, clip;
+	int    ammo, clip, powerups;
 	float  fraction;
 	float  statusWidth = comp->location.w / 5.f;
 	float  topRowX     = comp->location.x;
@@ -233,18 +246,19 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 	}
 
 	// draw powerups
+	powerups   = CG_GetPlayerPowerups(player);
 	bottomRowX = comp->location.x + comp->location.w;
-	if (player->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+	if (powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 	{
 		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.objectiveShader);
 		bottomRowX -= 14;
 	}
-	if (player->powerups & (1 << PW_OPS_DISGUISED))
+	if (powerups & (1 << PW_OPS_DISGUISED))
 	{
 		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, player->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 		bottomRowX -= 14;
 	}
-	if (player->powerups & (1 << PW_INVULNERABLE))
+	if (powerups & (1 << PW_INVULNERABLE))
 	{
 		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.spawnInvincibleShader);
 	}
@@ -301,7 +315,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo_t *player, float y, int index)
 {
 	int    curWeap, weapScale, textWidth, textHeight;
-	int    ammo, clip;
+	int    ammo, clip, powerups;
 	float  fraction;
 	float  statusWidth = comp->location.w / 5.f;
 	float  topRowX     = comp->location.x;
@@ -392,18 +406,19 @@ static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo
 	}
 
 	// draw powerups
+	powerups   = CG_GetPlayerPowerups(player);
 	bottomRowX = comp->location.x;
-	if (player->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+	if (powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 	{
 		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.objectiveShader);
 		bottomRowX += 14;
 	}
-	if (player->powerups & (1 << PW_OPS_DISGUISED))
+	if (powerups & (1 << PW_OPS_DISGUISED))
 	{
 		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, player->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 		bottomRowX += 14;
 	}
-	if (player->powerups & (1 << PW_INVULNERABLE))
+	if (powerups & (1 << PW_INVULNERABLE))
 	{
 		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.spawnInvincibleShader);
 	}

@@ -2551,7 +2551,7 @@ void CG_EBS_Shoutcast(centity_t *cent)
 {
 	entityBitStream_t ebs;
 	clientInfo_t      *ci;
-	int               i, version, slotBits, clientNum;
+	int               i, version, slotMask, clientNum;
 
 	// should never happen
 	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
@@ -2564,11 +2564,11 @@ void CG_EBS_Shoutcast(centity_t *cent)
 	version = EBS_ReadBits(&ebs, 4);
 	etl_assert(version == 0);
 
-	slotBits = EBS_ReadBits(&ebs, 6);
+	slotMask = EBS_ReadBits(&ebs, 6);
 
 	for (i = 0; i < 6; i++)
 	{
-		if (!(slotBits & (BIT(i))))
+		if (!(slotMask & (BIT(i))))
 		{
 			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE_V0);
 			continue;
@@ -2577,11 +2577,9 @@ void CG_EBS_Shoutcast(centity_t *cent)
 		clientNum = EBS_ReadBits(&ebs, 6);
 		ci        = &cgs.clientinfo[clientNum];
 
-		ci->health        = EBS_ReadBitsWithSign(&ebs, 9);
-		ci->ammoclip      = EBS_ReadBits(&ebs, 10);
-		ci->ammo          = EBS_ReadBits(&ebs, 10);
-		ci->currentWeapon = EBS_ReadBits(&ebs, 6);
-		ci->powerups      = EBS_ReadBits(&ebs, 16);
+		ci->health   = EBS_ReadBitsWithSign(&ebs, 9);
+		ci->ammoclip = EBS_ReadBits(&ebs, 10);
+		ci->ammo     = EBS_ReadBits(&ebs, 10);
 	}
 }
 

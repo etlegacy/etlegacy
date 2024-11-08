@@ -2431,7 +2431,7 @@ qboolean G_EBS_ShoutcastCallback(int clientNumReal)
  */
 static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
 {
-	int health, weapon;
+	int health;
 
 	// if in LIMBO, don't show followee's health
 	if (ent->client->ps.pm_flags & PMF_LIMBO)
@@ -2443,15 +2443,18 @@ static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
 		health = MAX(0, ent->client->ps.stats[STAT_HEALTH]);
 	}
 
-	// Note: this omits potential WP_MOBILE_BROWNING icon from drawing
-	weapon = BG_PlayerMounted(ent->client->ps.eFlags) ? WP_MOBILE_MG42 : ent->client->ps.weapon;
-
 	EBS_WriteBits(ebs, ent->s.number, 6);
 	EBS_WriteBitsWithSign(ebs, health, 9);
-	EBS_WriteBits(ebs, ent->client->ps.ammoclip[weapon], 10);
-	EBS_WriteBits(ebs, ent->client->ps.ammo[weapon], 10);
-	EBS_WriteBits(ebs, weapon, 6);
-	EBS_WriteBits(ebs, ent->s.powerups, 16);
+
+	if (!(ent->client->ps.pm_flags & PMF_FOLLOW))
+	{
+		EBS_WriteBits(ebs, ent->client->ps.ammoclip[ent->client->ps.weapon], 10);
+		EBS_WriteBits(ebs, ent->client->ps.ammo[ent->client->ps.weapon], 10);
+	}
+	else
+	{
+		EBS_Skip(ebs, 20);
+	}
 }
 
 #define EBS_SHOUTCAST_NEXT_THINK_TIME (level.time + level.frameTime)
@@ -2465,23 +2468,21 @@ static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
 =============================
 <Header>
 4 version
-6 slotBits
+6 slotMask
 <6 player slots>
 6 clientNum
 9 health
 10 ammoClip
 10 ammo
-6 weapon
-16 powerups
 =============================
 */
 void G_EBS_ShoutcastThink(gentity_t *ent)
 {
 	entityBitStream_t ebs;
 	gentity_t *playerEnt;
-	int i, j = 0, slotBits = 0, team = ent->key - 1;
+	int i, j = 0, slotMask = 0, team = ent->key - 1;
 	static int playerSlots[2][6] = { { -1, -1, -1, -1, -1, -1 }, { -1, -1, -1, -1, -1, -1 } };
-	static uint64_t playerSlotsBits[2];
+	static uint64_t playerSlotsMask[2];
 	qboolean skipSlot;
 
 	ent->nextthink = EBS_SHOUTCAST_NEXT_THINK_TIME;
@@ -2494,7 +2495,7 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 	EBS_InitWrite(&ebs, &ent->s, qfalse);
 	EBS_WriteBits(&ebs, 0, EBS_SHOUTCAST_VERSION_SIZE); // Version
 
-	// reserved for slotBits
+	// reserved for slotMask
 	EBS_Skip(&ebs, 6);
 
 	for (i = 0; i < 6; i++)
@@ -2510,13 +2511,13 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 			{
 				G_EBS_ShoutcastWritePlayer(playerEnt, &ebs);
 
-				slotBits |= BIT(i);
+				slotMask |= BIT(i);
 				continue;
 			}
 			else
 			{
 				// player left free the slot
-				playerSlotsBits[team] &= ~(1ULL << playerSlots[team][i]);
+				playerSlotsMask[team] &= ~(1ULL << playerSlots[team][i]);
 				playerSlots[team][i]   = -1;
 			}
 		}
@@ -2525,7 +2526,7 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 		for (; j < level.numTeamClients[team]; j++)
 		{
 			// if player already exists
-			if (playerSlotsBits[team] & (1ULL << level.teamClients[team][j]))
+			if (playerSlotsMask[team] & (1ULL << level.teamClients[team][j]))
 			{
 				continue;
 			}
@@ -2533,13 +2534,13 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 			playerEnt = &g_entities[level.teamClients[team][j]];
 
 			// take the slot
-			playerSlotsBits[team] |= (1ULL << level.teamClients[team][j]);
+			playerSlotsMask[team] |= (1ULL << level.teamClients[team][j]);
 			playerSlots[team][i]   = level.teamClients[team][j];
 
 			G_EBS_ShoutcastWritePlayer(playerEnt, &ebs);
 
 			skipSlot  = qfalse;
-			slotBits |= BIT(i);
+			slotMask |= BIT(i);
 			j++;
 			break;
 		}
@@ -2550,10 +2551,10 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 		}
 	}
 
-	// write slotBits indicating which slot is valid for read
+	// write slotMask indicating which slot is valid for read
 	EBS_InitWrite(&ebs, &ent->s, qfalse);
 	EBS_Skip(&ebs, EBS_SHOUTCAST_VERSION_SIZE);
-	EBS_WriteBits(&ebs, slotBits, 6);
+	EBS_WriteBits(&ebs, slotMask, 6);
 }
 
 /**
