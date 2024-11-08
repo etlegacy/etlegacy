@@ -302,6 +302,7 @@ void vec3_inv(vec3_t v);
 void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out);
 void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out);
 qboolean vec3_compare(const vec3_t v1, const vec3_t v2);
+qboolean vec4_compare(const vec4_t v1, const vec4_t v2);
 
 //FIXME: duplicate functions :D::D:D:D:D:
 float vec3_dist(vec3_t v1, vec3_t v2);
@@ -571,6 +572,7 @@ void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 #define Vector4Scale vec4_scale
 #define VectorRotate vec3_rotate
 #define VectorCompare vec3_compare
+#define Vector4Compare vec4_compare
 
 static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, float epsilon)
 {

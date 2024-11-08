@@ -1542,6 +1542,17 @@ qboolean vec3_compare(const vec3_t v1, const vec3_t v2)
 }
 
 /**
+ * @brief vec4_compare
+ * @param[in] v1
+ * @param[in] v2
+ * @return
+ */
+qboolean vec4_compare(const vec4_t v1, const vec4_t v2)
+{
+    return v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3];
+}
+
+/**
  * @brief vec3_norm
  * @param[in] v
  * @return

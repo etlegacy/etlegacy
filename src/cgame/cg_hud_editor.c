@@ -59,8 +59,8 @@
 
 #define HUDEDITOR_HUD_NAME_Y (HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 2) + (HUDEDITOR_CONTROLS_SPACER_XY * 2))
 
-#define HUDEDITOR_SIZEPOS_Y (HUDEDITOR_SELECTHUD_Y + BUTTON_HEIGHT + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 3) + \
-							 HUDEDITOR_CONTROLS_SPACER_XY + HUDEDITOR_CATEGORY_SPACER_Y)
+#define HUDEDITOR_SIZEPOS_Y (HUDEDITOR_SELECTHUD_Y + BUTTON_HEIGHT + HUDEDITOR_TITLE_SPACER_Y + (BUTTON_HEIGHT * 4) + \
+							 HUDEDITOR_CONTROLS_SPACER_XY * 2 + HUDEDITOR_CATEGORY_SPACER_Y)
 
 #define HUDEDITOR_TEXT_Y (HUDEDITOR_SIZEPOS_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CATEGORY_SPACER_Y + \
 						  (INPUT_HEIGHT * 2) + HUDEDITOR_CONTROLS_SPACER_XY)
@@ -129,6 +129,8 @@ static void CG_HudEditor_SetupTitleText(panel_button_t *button);
 static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorPanel_EditKeyUp(panel_button_t *button, int key);
 static qboolean CG_HudEditorPanel_KeyUp(panel_button_t *button, int key);
+static qboolean CG_HudEditor_ParentDropdown_KeyUp(panel_button_t *button, int key);
+static void CG_HudEditor_ParentRenderDropdown(panel_button_t *button);
 static void CG_HudEditor_RenderEditName(panel_button_t *button);
 static void CG_HudEditorName_Finish(panel_button_t *button);
 static void CG_HudEditor_RenderEdit(panel_button_t *button);
@@ -234,6 +236,20 @@ static panel_button_t hudEditorHudName =
 	CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEditName,
 	CG_HudEditorName_Finish,
+	0,
+};
+
+static panel_button_t hudEditorHudParent =
+{
+	NULL,
+	"hudeditor_parent",
+	{ 0,                              HUDEDITOR_HUD_NAME_Y + INPUT_HEIGHT + HUDEDITOR_CONTROLS_SPACER_XY,INPUT_WIDTH * 2.2f, INPUT_HEIGHT },
+	{ 0,                              0,                                                    0,                  0, 0, 0, 0, 1},
+	&hudEditorFont_Dropdown,          // font
+	CG_HudEditor_Dropdown_KeyDown,    // keyDown
+	CG_HudEditor_ParentDropdown_KeyUp,// keyUp
+	CG_HudEditor_ParentRenderDropdown,
+	NULL,
 	0,
 };
 
@@ -745,7 +761,7 @@ static panel_button_t *hudEditor[] =
 	&hudEditorHelp,
 
 	// Below here all components that should draw on top
-	&hudEditorAlignText,          &hudEditorStyleText,               &hudEditorHudDropdown,
+	&hudEditorAlignText,          &hudEditorStyleText,               &hudEditorHudParent,           &hudEditorHudDropdown,
 	NULL,
 };
 
@@ -1399,6 +1415,60 @@ static void CG_HudEditor_HudRenderDropdown(panel_button_t *button)
 	}
 }
 
+/**
+* @brief CG_HudEditor_ParentRenderDropdown
+* @param[in] button
+*/
+static void CG_HudEditor_ParentRenderDropdown(panel_button_t *button)
+{
+	const char *labelText  = "Parent: ";
+	float      textWidth   = CG_Text_Width_Ext(labelText, 0.3f, 0, button->font->font);
+	float      textHeight  = CG_Text_Height_Ext(labelText, 0.3f, 0, button->font->font);
+	float      totalWidth  = textWidth + button->rect.w;
+	float      textOffsetY = (BUTTON_HEIGHT - textHeight) * 0.5f;
+
+	button->rect.x = HUDEditorCenterX - (totalWidth * 0.5f);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + textHeight + textOffsetY, 0.3f, 0.3f,
+	                  colorWhite, labelText, 0, 0, button->font->style, button->font->font);
+
+	button->rect.x += textWidth;
+	CG_DropdownMainBox(button->rect.x, button->rect.y, button->rect.w, button->rect.h,
+	                   button->font->scalex, button->font->scaley, colorBlack, hudData.active->parentNumber >= 0 ? hudData.list[hudData.active->parentNumber]->name : "No Parent",
+	                   button == BG_PanelButtons_GetFocusButton(), button->font->colour, button->font->style, button->font->font);
+
+	if (button == BG_PanelButtons_GetFocusButton())
+	{
+		float  y = button->rect.y;
+		vec4_t colour;
+		int    i;
+
+		if (hudData.active->parentNumber != -1)
+		{
+			y = CG_DropdownBox(button->rect.x, y, button->rect.w, button->rect.h,
+			                   button->font->scalex, button->font->scaley, colorBlack, "No Parent", button == BG_PanelButtons_GetFocusButton(),
+			                   button->font->colour, button->font->style, button->font->font);
+		}
+
+		for (i = 0; i < hudData.count; i++)
+		{
+			hudStucture_t *hud = hudData.list[i];
+
+			if (hud->hudnumber == hudData.active->hudnumber)
+			{
+				continue;
+			}
+
+			y = CG_DropdownBox(button->rect.x, y, button->rect.w, button->rect.h,
+			                   button->font->scalex, button->font->scaley, colorBlack, hud->name, button == BG_PanelButtons_GetFocusButton(),
+			                   button->font->colour, button->font->style, button->font->font);
+		}
+
+		VectorCopy(colorBlack, colour);
+		colour[3] = 0.3f;
+		CG_DrawRect(button->rect.x, button->rect.y + button->rect.h, button->rect.w, y - button->rect.y, 1.0f, colour);
+	}
+}
+
 static const char *styleTextString[] =
 {
 	"NORMAL",
@@ -1571,6 +1641,197 @@ static qboolean CG_HudEditor_HudDropdown_KeyUp(panel_button_t *button, int key)
 					trap_Cvar_Set(cgs.clientinfo[cg.clientNum].shoutcaster ? "cg_shoutcasterHud" : "cg_altHud", hud->name);
 					//cg_altHud.integer = hud->hudnumber;
 					CG_SetHud();
+
+					if (lastFocusComponent)
+					{
+						CG_HudEditorUpdateFields(lastFocusComponent);
+					}
+
+					break;
+				}
+			}
+
+			BG_PanelButtons_SetFocusButton(NULL);
+
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief CG_HudEditor_ReplaceDefaultParent
+ * @param[in] newParentNumber
+ */
+static void CG_HudEditor_ReplaceDefaultParent(int newParentNumber)
+{
+    int i;
+	hudStucture_t *parenthud    = CG_GetHudByNumber(hudData.active->parentNumber);
+	hudStucture_t *newParenthud = CG_GetHudByNumber(newParentNumber);
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		int            locationChanged = qfalse;
+		hudComponent_t *comp           = (hudComponent_t *) ((char *) hudData.active + hudComponentFields[i].offset);
+		hudComponent_t *parentComp     = (hudComponent_t *) ((char *) parenthud + hudComponentFields[i].offset);
+		hudComponent_t *newParentComp  = (hudComponent_t *) ((char *) newParenthud + hudComponentFields[i].offset);
+        
+        if (hudComponentFields[i].isAlias)
+        {
+            continue;
+        }
+
+		if (comp->location.x == parentComp->location.x)
+		{
+			comp->location.x = newParentComp->location.x;
+			locationChanged  = qtrue;
+		}
+
+		if (comp->location.y == parentComp->location.y)
+		{
+			comp->location.y = newParentComp->location.y;
+			locationChanged  = qtrue;
+		}
+
+		if (comp->location.h == parentComp->location.h)
+		{
+			comp->location.h = newParentComp->location.h;
+			locationChanged  = qtrue;
+		}
+
+		if (comp->location.w == parentComp->location.w)
+		{
+			comp->location.w = newParentComp->location.w;
+			locationChanged  = qtrue;
+		}
+
+		if (comp->visible == parentComp->visible)
+		{
+			comp->visible = newParentComp->visible;
+		}
+
+		if (comp->style == parentComp->style)
+		{
+			comp->style = newParentComp->style;
+		}
+
+		if (comp->scale == parentComp->scale)
+		{
+			comp->scale = newParentComp->scale;
+		}
+
+		if (Vector4Compare(comp->colorMain, parentComp->colorMain))
+		{
+			Vector4Copy(newParentComp->colorMain, comp->colorMain);
+		}
+
+		if (Vector4Compare(comp->colorSecondary, parentComp->colorSecondary))
+		{
+			Vector4Copy(newParentComp->colorSecondary, comp->colorSecondary);
+		}
+
+		if (comp->showBackGround == parentComp->showBackGround)
+		{
+			comp->showBackGround = newParentComp->showBackGround;
+		}
+
+		if (Vector4Compare(comp->colorBackground, parentComp->colorBackground))
+		{
+			Vector4Copy(newParentComp->colorBackground, comp->colorBackground);
+		}
+
+		if (comp->showBorder == parentComp->showBorder)
+		{
+			comp->showBorder = newParentComp->showBorder;
+		}
+
+		if (Vector4Compare(comp->colorBorder, parentComp->colorBorder))
+		{
+			Vector4Copy(newParentComp->colorBorder, comp->colorBorder);
+		}
+
+		if (comp->styleText == parentComp->styleText)
+		{
+			comp->styleText = newParentComp->styleText;
+		}
+
+		if (comp->alignText == parentComp->alignText)
+		{
+			comp->alignText = newParentComp->alignText;
+		}
+
+		if (comp->autoAdjust == parentComp->autoAdjust)
+		{
+			comp->autoAdjust = newParentComp->autoAdjust;
+		}
+
+		if (locationChanged)
+		{
+			comp->anchorPoint        = newParentComp->anchorPoint;
+			comp->parentAnchor.point = newParentComp->parentAnchor.point;
+		}
+	}
+}
+
+/**
+* @brief CG_HudEditor_ParentDropdown_KeyUp
+* @param[in] button
+* @param[in] key
+* @return
+*/
+static qboolean CG_HudEditor_ParentDropdown_KeyUp(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		if (button == BG_PanelButtons_GetFocusButton())
+		{
+			rectDef_t rect;
+			int       i;
+
+			Com_Memcpy(&rect, &button->rect, sizeof(rect));
+
+			// Handle no parent case first
+			if (hudData.active->parentNumber != -1)
+			{
+				rect.y += button->rect.h;
+
+				if (BG_CursorInRect(&rect))
+				{
+					hudData.active->parentNumber = -1;
+					Com_Memset(hudData.active->parent, 0, sizeof(hudData.active->parent));
+
+					if (lastFocusComponent)
+					{
+						CG_HudEditorUpdateFields(lastFocusComponent);
+					}
+
+					BG_PanelButtons_SetFocusButton(NULL);
+
+					return qtrue;
+				}
+			}
+
+			for (i = 0; i < hudData.count; i++)
+			{
+				hudStucture_t *hud = hudData.list[i];
+
+				// ignore self hud
+				if (hud->hudnumber == hudData.active->hudnumber)
+				{
+					continue;
+				}
+
+				rect.y += button->rect.h;
+
+				if (BG_CursorInRect(&rect))
+				{
+                    if (hudData.active->parentNumber != -1)
+                    {
+                        CG_HudEditor_ReplaceDefaultParent(hud->hudnumber);
+                    }
+					hudData.active->parentNumber = hud->hudnumber;
+					Q_strncpyz(hudData.active->parent, hud->name, sizeof(hudData.active->parent));
 
 					if (lastFocusComponent)
 					{
