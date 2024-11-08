@@ -2945,6 +2945,20 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_PLAYER_HIT:
 		CG_PlayHitSound(es->clientNum, es->eventParm);
 		break;
+	case EV_PLAYER_REVIVE:
+	{
+		// int reviver = es->clientNum;
+		// int revivee = es->eventParm;
+		// int invulnEndTime = invulnEndTime;
+
+		// play sound
+		sfxHandle_t sound = CG_GetGameSound(GAMESOUND_MISC_REVIVE);
+		if (sound)
+		{
+			trap_S_StartSoundVControl(es->origin, es->number, CHAN_VOICE, sound, 255);
+		}
+	}
+	break;
 	default:
 		if (cg.demoPlayback)
 		{

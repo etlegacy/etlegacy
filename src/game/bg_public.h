@@ -1511,6 +1511,7 @@ typedef enum
 	EV_FLAG_INDICATOR, ///< 129 - objective indicator
 	EV_MISSILE_FALLING,///< 130
 	EV_PLAYER_HIT,     ///< 131 - hitsound event
+	EV_PLAYER_REVIVE,  ///< 132
 	EV_MAX_EVENTS      ///< 132 - just added as an 'endcap'
 } entity_event_t;
 
