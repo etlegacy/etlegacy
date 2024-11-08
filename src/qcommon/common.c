@@ -3404,6 +3404,17 @@ void Com_Frame(void)
 	// write config file if anything changed
 	Com_WriteConfiguration();
 
+	// if "viewlog" has been modified, show or hide the log console
+	if (com_viewlog->modified)
+	{
+		if (!com_dedicated->integer)
+		{
+			Win_ShowConsole(com_viewlog->integer, qfalse);
+		}
+
+		com_viewlog->modified = qfalse;
+	}
+
 	// main event loop
 	if (com_speeds->integer)
 	{
