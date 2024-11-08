@@ -1398,9 +1398,12 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 	}
 	else if (cJSON_IsFalse(tmp))
 	{
-		// No parent for this hud. Will not load defaults.
+		// No parent for this hud
+		// but fallback to default HUD if component isn't present in file
+		// (may happen if the file is edited manually)
 		tmpHud->parent[0]    = '\0';
 		tmpHud->parentNumber = -1;
+		parentHud            = CG_GetHudByNumber(0);
 	}
 	else
 	{
