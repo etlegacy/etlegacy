@@ -2466,6 +2466,7 @@ typedef struct cgs_s
 	char mapname[MAX_QPATH];
 	char rawmapname[MAX_QPATH];
 	float weaponRestrictions;
+	int proneDelay;
 
 	int voteTime;
 	int voteYes;

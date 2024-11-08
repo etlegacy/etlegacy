@@ -283,6 +283,7 @@ void CG_ParseServerinfo(void)
 	trap_Cvar_Set("g_bluelimbotime", Info_ValueForKey(info, "g_bluelimbotime"));
 	cg_bluelimbotime.integer = Q_atoi(Info_ValueForKey(info, "g_bluelimbotime"));
 	cgs.weaponRestrictions   = Q_atoi(Info_ValueForKey(info, "g_heavyWeaponRestriction")) * 0.01f;
+	cgs.proneDelay           = Q_atoi(Info_ValueForKey(info, "g_pronedelay"));
 
 	cgs.minclients = Q_atoi(Info_ValueForKey(info, "g_minGameClients")); //  overloaded for ready counts
 
