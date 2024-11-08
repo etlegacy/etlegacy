@@ -1086,7 +1086,7 @@ static void ComputeColors(shaderStage_t *pStage)
 			VectorSet(backEnd.currentEntity->e.fireRiseDir, 0, 0, 1);
 		}
 
-		if (backEnd.currentEntity->e.hModel)        // world surfaces dont have an axis
+		if (backEnd.currentEntity->e.hModel)        // world surfaces don't have an axis
 		{
 			VectorRotate(backEnd.currentEntity->e.fireRiseDir, backEnd.currentEntity->e.axis, worldUp);
 		}
