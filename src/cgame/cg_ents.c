@@ -781,19 +781,23 @@ static void CG_Item(centity_t *cent)
 
 		if (simpleItemShader)
 		{
+			axis_t viewInverted;
 			simpleItemScaleX *= Com_Clamp(0.25f, 1.5f, cg_simpleItemsScale.value);
 			simpleItemScaleY *= Com_Clamp(0.25f, 1.5f, cg_simpleItemsScale.value);
 			origin[2]        += SIMPLEITEM_ICON_SIZE * simpleItemScaleY / 2.f;
+			// we need to rotate view axis for the icon to face the camera instead of facing the world
+			axis_transpose(cg.refdef_current->viewaxis, viewInverted);
+
 			// build quad out of verts (inversed)
 			VectorSet(temp[0].xyz, 0, 1 * simpleItemScaleX, 1 * simpleItemScaleY);
 			VectorSet(temp[1].xyz, 0, -1 * simpleItemScaleX, 1 * simpleItemScaleY);
 			VectorSet(temp[2].xyz, 0, -1 * simpleItemScaleX, -1 * simpleItemScaleY);
 			VectorSet(temp[3].xyz, 0, 1 * simpleItemScaleX, -1 * simpleItemScaleY);
 			// face quad towards viewer
-			vec3_rotate(temp[0].xyz, cg.refdef_current->viewaxis, quad[0].xyz);
-			vec3_rotate(temp[1].xyz, cg.refdef_current->viewaxis, quad[1].xyz);
-			vec3_rotate(temp[2].xyz, cg.refdef_current->viewaxis, quad[2].xyz);
-			vec3_rotate(temp[3].xyz, cg.refdef_current->viewaxis, quad[3].xyz);
+			axis_rotate_point(viewInverted, temp[0].xyz, quad[0].xyz);
+			axis_rotate_point(viewInverted, temp[1].xyz, quad[1].xyz);
+			axis_rotate_point(viewInverted, temp[2].xyz, quad[2].xyz);
+			axis_rotate_point(viewInverted, temp[3].xyz, quad[3].xyz);
 			// position quad
 			VectorMA(origin, SIMPLEITEM_ICON_SIZE / 2, quad[0].xyz, quad[0].xyz);
 			VectorMA(origin, SIMPLEITEM_ICON_SIZE / 2, quad[1].xyz, quad[1].xyz);

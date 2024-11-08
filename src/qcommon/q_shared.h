@@ -424,9 +424,9 @@ typedef int clipHandle_t;
 #define STRARRAY_LEN(x)     (ARRAY_LEN(x) - 1)
 
 // angle indexes
-#define PITCH               0       ///< up / down
-#define YAW                 1       ///< left / right
-#define ROLL                2       ///< fall over
+#define PITCH               0       ///< up / down (positive pitch looks up)
+#define YAW                 1       ///< left / right (positive yaw looks right)
+#define ROLL                2       ///< fall over (positive roll falls to the left)
 
 // the game guarantees that no string from the network will ever
 // exceed MAX_STRING_CHARS
@@ -1128,9 +1128,6 @@ typedef enum
 ========================================================================
 */
 #define ANIM_BITS       10
-
-#define ANGLE2SHORT(x)  ((int)((x) * 65536 / 360) & 65535)
-#define SHORT2ANGLE(x)  ((x) * (360.0f / 65536))
 
 #define SNAPFLAG_RATE_DELAYED   1
 #define SNAPFLAG_NOT_ACTIVE     2   ///< snapshot used during connection and for zombies

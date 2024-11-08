@@ -1777,7 +1777,7 @@ void CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t e
 	if (rotated && trace.fraction != 1.0f)
 	{
 		// rotation of bmodel collision plane
-		mat3_transpose(matrix, transpose);
+		axis_transpose(matrix, transpose);
 		RotatePoint(trace.plane.normal, transpose);
 	}
 

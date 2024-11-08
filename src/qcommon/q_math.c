@@ -442,21 +442,6 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 }
 
 /**
- * @brief RotatePoint
- * @param[out] point
- * @param[in] matrix
- */
-void RotatePoint(vec3_t point, vec3_t matrix[3])
-{
-	vec3_t tvec;
-
-	VectorCopy(point, tvec);
-	point[0] = DotProduct(matrix[0], tvec);
-	point[1] = DotProduct(matrix[1], tvec);
-	point[2] = DotProduct(matrix[2], tvec);
-}
-
-/**
  * @brief RotatePointAroundVector
  * @param[out] dst
  * @param[in] dir
@@ -468,19 +453,11 @@ void RotatePoint(vec3_t point, vec3_t matrix[3])
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
                              float degrees)
 {
-	float  m[3][3];
-	float  im[3][3];
-	float  zrot[3][3];
-	float  tmpmat[3][3];
-	float  rot[3][3];
-	int    i;
+	axis_t m, im, zrot, tmpmat, rot;
 	vec3_t vr, vup, vf;
-	double rad;
+	float  si, co;
 
-	vf[0] = dir[0];
-	vf[1] = dir[1];
-	vf[2] = dir[2];
-
+	vec3_copy(dir, vf);
 	PerpendicularVector(vr, dir);
 	vec3_cross(vr, vf, vup);
 
@@ -496,7 +473,7 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
 	m[1][2] = vf[1];
 	m[2][2] = vf[2];
 
-	Com_Memcpy(im, m, sizeof(im));
+	axis_copy(m, im);
 
 	im[0][1] = m[1][0];
 	im[0][2] = m[2][0];
@@ -505,22 +482,17 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
 	im[2][0] = m[0][2];
 	im[2][1] = m[1][2];
 
-	Com_Memset(zrot, 0, sizeof(zrot));
-	zrot[0][0] = zrot[1][1] = zrot[2][2] = 1.0F;
+	axis_ident(zrot);
 
-	rad        = DEG2RAD(degrees);
-	zrot[0][0] = cos(rad);
-	zrot[0][1] = sin(rad);
-	zrot[1][0] = -sin(rad);
-	zrot[1][1] = cos(rad);
+	degrees_to_sin_cos(degrees, &si, &co);
+	zrot[0][0] = co;
+	zrot[0][1] = si;
+	zrot[1][0] = -si;
+	zrot[1][1] = co;
 
 	MatrixMultiply(m, zrot, tmpmat);
 	MatrixMultiply(tmpmat, im, rot);
-
-	for (i = 0; i < 3; i++)
-	{
-		dst[i] = rot[i][0] * point[0] + rot[i][1] * point[1] + rot[i][2] * point[2];
-	}
+	axis_rotate_point(rot, point, dst);
 }
 
 /*
@@ -598,17 +570,17 @@ void CreateRotationMatrix(const vec3_t angles, vec3_t matrix[3])
 
 /**
  * @brief vec3_to_angles
- * @param[in] value1
+ * @param[in] vec
  * @param[out] angles
  */
-void vec3_to_angles(const vec3_t value1, vec3_t angles)
+void vec3_to_angles(const vec3_t vec, vec3_t angles)
 {
 	float yaw, pitch;
 
-	if (value1[1] == 0.f && value1[0] == 0.f)
+	if (vec[1] == 0.f && vec[0] == 0.f)
 	{
 		yaw = 0;
-		if (value1[2] > 0)
+		if (vec[2] > 0)
 		{
 			pitch = 90;
 		}
@@ -621,11 +593,11 @@ void vec3_to_angles(const vec3_t value1, vec3_t angles)
 	{
 		float forward;
 
-		if (value1[0] != 0.f)
+		if (vec[0] != 0.f)
 		{
-			yaw = (atan2(value1[1], value1[0]) * 180 / M_PI);
+			yaw = (float) RAD2DEG(atan2(vec[1], vec[0]));
 		}
-		else if (value1[1] > 0)
+		else if (vec[1] > 0)
 		{
 			yaw = 90;
 		}
@@ -638,8 +610,8 @@ void vec3_to_angles(const vec3_t value1, vec3_t angles)
 			yaw += 360;
 		}
 
-		forward = sqrt(value1[0] * value1[0] + value1[1] * value1[1]);
-		pitch   = (atan2(value1[2], forward) * 180 / M_PI);
+		forward = (float) sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+		pitch   = (float) RAD2DEG(atan2(vec[2], forward));
 		if (pitch < 0)
 		{
 			pitch += 360;
@@ -656,20 +628,20 @@ void vec3_to_angles(const vec3_t value1, vec3_t angles)
  * @param[in] angles
  * @param[in,out] axis
  */
-void angles_to_axis(const vec3_t angles, vec3_t axis[3])
+void angles_to_axis(const vec3_t angles, axis_t axis)
 {
 	vec3_t right;
 
 	// angle vectors returns "right" instead of "y axis"
 	angles_vectors(angles, axis[0], right, axis[2]);
-	VectorSubtract(vec3_origin, right, axis[1]);
+	vec3_negate(right, axis[1]);
 }
 
 /**
- * @brief axis_clear
+ * @brief initialize an axis_t to identity matrix values
  * @param[out] axis
  */
-void axis_clear(axis_t axis)
+void axis_ident(axis_t axis)
 {
 	axis[0][0] = 1;
 	axis[0][1] = 0;
@@ -689,9 +661,9 @@ void axis_clear(axis_t axis)
  */
 void axis_copy(axis_t in, axis_t out)
 {
-	VectorCopy(in[0], out[0]);
-	VectorCopy(in[1], out[1]);
-	VectorCopy(in[2], out[2]);
+	vec3_copy(in[0], out[0]);
+	vec3_copy(in[1], out[1]);
+	vec3_copy(in[2], out[2]);
 }
 
 /**
@@ -723,7 +695,7 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
  * @brief Given a normalized forward vector, create two
  * other perpendicular vectors
  * @param[in] forward
- * @param[in,out] right
+ * @param[out] right
  * @param[out] up
  */
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
@@ -731,7 +703,7 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
 	float d;
 
 	// this rotate and negate guarantees a vector
-	// not colinear with the original
+	// not collinear with the original
 	right[1] = -forward[0];
 	right[2] = forward[1];
 	right[0] = forward[2];
@@ -740,32 +712,6 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
 	VectorMA(right, -d, forward, right);
 	vec3_norm(right);
 	vec3_cross(right, forward, up);
-}
-
-/**
- * @brief vec3_rotate
- * @param[in] in
- * @param[in] matrix
- * @param[out] out
- */
-void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
-{
-	out[0] = in[0] * matrix[0][0] + in[1] * matrix[1][0] + in[2] * matrix[2][0];
-	out[1] = in[0] * matrix[0][1] + in[1] * matrix[1][1] + in[2] * matrix[2][1];
-	out[2] = in[0] * matrix[0][2] + in[1] * matrix[1][2] + in[2] * matrix[2][2];
-}
-
-/**
-* @brief vec3_rotate2 uses DotProduct for the calculation, the resulting rotation is inverted
-* @param[in] in
-* @param[in] matrix
-* @param[out] out
-*/
-void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out)
-{
-	out[0] = DotProduct(in, matrix[0]);
-	out[1] = DotProduct(in, matrix[1]);
-	out[2] = DotProduct(in, matrix[2]);
 }
 
 //============================================================================
@@ -907,15 +853,15 @@ float angle_sub(float a1, float a2)
 
 /**
  * @brief angles_sub
- * @param[in] v1
- * @param[in] v2
- * @param[out] v3
+ * @param[in] minuend
+ * @param[in] subtrahend
+ * @param[out] difference
  */
-void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3)
+void angles_sub(const vec3_t minuend, const vec3_t subtrahend, vec3_t difference)
 {
-	v3[0] = angle_sub(v1[0], v2[0]);
-	v3[1] = angle_sub(v1[1], v2[1]);
-	v3[2] = angle_sub(v1[2], v2[2]);
+	difference[0] = angle_sub(minuend[0], subtrahend[0]);
+	difference[1] = angle_sub(minuend[1], subtrahend[1]);
+	difference[2] = angle_sub(minuend[2], subtrahend[2]);
 }
 
 /**
@@ -1525,6 +1471,15 @@ void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 	}
 }
 
+void vec2_rotate_around_point_self(const vec2_t origin, float angle, vec2_t point)
+{
+	float s = sin(DEG2RAD(angle));
+	float c = cos(DEG2RAD(angle));
+	point[0] = c * (point[0] - origin[0]) - s * (point[1] - origin[1]) + origin[0];
+	point[1] = s * (point[0] - origin[0]) + c * (point[1] - origin[1]) + origin[1];
+}
+
+
 /**
  * @brief vec3_compare
  * @param[in] v1
@@ -1549,7 +1504,7 @@ qboolean vec3_compare(const vec3_t v1, const vec3_t v2)
  */
 qboolean vec4_compare(const vec4_t v1, const vec4_t v2)
 {
-    return v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3];
+	return v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3];
 }
 
 /**
@@ -1826,37 +1781,46 @@ void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
  * @param[in] matrix
  * @param[out] transpose
  */
-void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3])
+void mat3_transpose(const mat3_t matrix, mat3_t transpose)
 {
-#if 0
-	int i, j;
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			transpose[i][j] = matrix[j][i];
-		}
-	}
-#else
-	transpose[0][0] = matrix[0][0];
-	transpose[0][1] = matrix[1][0];
-	transpose[0][2] = matrix[2][0];
-	transpose[1][0] = matrix[0][1];
-	transpose[1][1] = matrix[1][1];
-	transpose[1][2] = matrix[2][1];
-	transpose[2][0] = matrix[0][2];
-	transpose[2][1] = matrix[1][2];
-	transpose[2][2] = matrix[2][2];
-#endif
+	transpose[0] = matrix[0];
+	transpose[1] = matrix[3];
+	transpose[2] = matrix[6];
+	transpose[3] = matrix[1];
+	transpose[4] = matrix[4];
+	transpose[5] = matrix[7];
+	transpose[6] = matrix[2];
+	transpose[7] = matrix[5];
+	transpose[8] = matrix[8];
 }
 
 /**
- * @brief angles_vectors
- * @param[in] angles
- * @param[out] forward
- * @param[out] right
- * @param[out] up
+ * @brief mat3_compare
+ * @param[in] m1
+ * @param[in] m2
+ * @return
+ */
+qboolean mat3_compare(const mat3_t m1, const mat3_t m2)
+{
+	return (m1[0] == m2[0] && m1[3] == m2[3] && m1[6] == m2[6] &&
+	        m1[1] == m2[1] && m1[4] == m2[4] && m1[7] == m2[7] &&
+	        m1[2] == m2[2] && m1[5] == m2[5] && m1[8] == m2[8]);
+}
+
+void mat3_rotate_point(const mat3_t matrix, const vec3_t in, vec3_t out)
+{
+	out[0] = in[0] * matrix[0] + in[1] * matrix[3] + in[2] * matrix[6];
+	out[1] = in[0] * matrix[1] + in[1] * matrix[4] + in[2] * matrix[7];
+	out[2] = in[0] * matrix[2] + in[1] * matrix[5] + in[2] * matrix[8];
+}
+
+/**
+ * @brief angles_vectors returns the forward, right, and up vectors from the given angles.
+ * @bug This function is incorrect. The values are mapped like in a transposed 3x3 matrix. The correct function is angles_to_vectors.
+ * @param[in] angles euler angles to convert in degrees
+ * @param[out] forward actually backwards
+ * @param[out] right actually left
+ * @param[out] up actually down
  */
 void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 {
@@ -1896,12 +1860,72 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
 	}
 }
 
+void angles_to_vectors(const vec3_t angles, vec3_t forward, vec3_t left, vec3_t up)
+{
+	float sr, sp, sy, cr, cp, cy;
+
+	degrees_to_sin_cos(angles[YAW], &sy, &cy);
+	degrees_to_sin_cos(angles[PITCH], &sp, &cp);
+	degrees_to_sin_cos(angles[ROLL], &sr, &cr);
+
+	if (forward)
+	{
+		// front (x)
+		forward[0] = cp * cy;
+		forward[1] = sr * sp * cy + (cr * -sy);
+		forward[2] = cr * sp * cy + (-sr * -sy);
+	}
+
+	if (left)
+	{
+		// left (y)
+		left[0] = cp * sy;
+		left[1] = sr * sp * sy + cr * cy;
+		left[2] = cr * sp * sy + (-sr * cy);
+	}
+
+	if (up)
+	{
+		// up (z)
+		up[0] = -sp;
+		up[1] = sr * cp;
+		up[2] = cr * cp;
+	}
+}
+
 /**
- * @brief vec3_per
+ * Generates a rotation matrix from the given angles.
+ * Positive pitch looks up
+ * Positive yaw looks right
+ * Positive roll tilts left
+ * @param angles The angles to generate the matrix from
+ * @param matrix The matrix to store the result in
+ */
+void angles_to_mat3(const vec3_t angles, mat3_t matrix)
+{
+	angles_to_vectors(angles, matrix, &matrix[3], &matrix[6]);
+}
+
+void angles_to_quat(const vec3_t angles, quat_t quat)
+{
+	float sr, sp, sy, cr, cp, cy;
+
+	degrees_to_sin_cos(angles[YAW] * 0.5f, &sy, &cy);
+	degrees_to_sin_cos(angles[PITCH] * 0.5f, &sp, &cp);
+	degrees_to_sin_cos(angles[ROLL] * 0.5f, &sr, &cr);
+
+	quat[0] = sr * cp * cy - cr * sp * sy;
+	quat[1] = cr * sp * cy + sr * cp * sy;
+	quat[2] = cr * cp * sy - sr * sp * cy;
+	quat[3] = cr * cp * cy + sr * sp * sy;
+}
+
+/**
+ * @brief vec3_perpendicular
  * @param[in] src assumes is normalized
  * @param[out] dst
  */
-void vec3_per(const vec3_t src, vec3_t dst)
+void vec3_perpendicular(const vec3_t src, vec3_t dst)
 {
 	int    pos;
 	int    i;
@@ -2076,7 +2100,7 @@ float vec3_to_yawn(const vec3_t vec)
 	{
 		if (vec[PITCH] != 0.f)
 		{
-			yaw = (float)(atan2(vec[YAW], vec[PITCH]) * 180 / M_PI);
+			yaw = (float) RAD2DEG(atan2(vec[YAW], vec[PITCH]));
 		}
 		else if (vec[YAW] > 0)
 		{
@@ -2133,6 +2157,19 @@ void axis_to_angles(axis_t axis, vec3_t angles)
 	}
 
 	angles[ROLL] = -roll_angles[PITCH];
+}
+
+/**
+ * @brief Rotate a point around an axis (the idTech3 axis is transposed)
+ * @param axis rotation axis (transposed)
+ * @param point point to rotate
+ * @param out rotated point
+ */
+void axis_rotate_point(const axis_t axis, const vec3_t point, vec3_t out)
+{
+	out[0] = DotProduct(point, axis[0]);
+	out[1] = DotProduct(point, axis[1]);
+	out[2] = DotProduct(point, axis[2]);
 }
 
 /**
@@ -2327,7 +2364,6 @@ void quat_from_mat4(quat_t q, const mat4_t m)
 #endif
 }
 
-#ifdef BONE_HITTESTS
 /**
  * @brief quat_from_axis
  * @param[in] m
@@ -2344,7 +2380,6 @@ void quat_from_axis(const axis_t m, quat_t q)
 	q[1] = (m[2][0] - m[0][2]) / w4;
 	q[2] = (m[0][1] - m[1][0]) / w4;
 }
-#endif
 
 /**
  * @brief quat_from_angles
@@ -2357,11 +2392,29 @@ void quat_from_axis(const axis_t m, quat_t q)
  */
 void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll)
 {
-#if 1
+#if 0
 	mat4_t tmp;
 
 	mat4_from_angles(tmp, pitch, yaw, roll);
 	quat_from_mat4(q, tmp);
+#elif 1
+	float cr, cp, cy, sr, sp, sy, cpcy, spsy;
+
+	sp = (float)sin(DEG2RAD(pitch));
+	cp = (float)cos(DEG2RAD(pitch));
+
+	sy = (float)sin(DEG2RAD(yaw));
+	cy = (float)cos(DEG2RAD(yaw));
+
+	sr = (float)sin(DEG2RAD(roll));
+	cr = (float)cos(DEG2RAD(roll));
+
+	cpcy = cp * cy;
+	spsy = sp * sy;
+	q[0] = sr * cpcy - cr * spsy; // x
+	q[1] = cr * sp * cy + sr * cp * sy; // y
+	q[2] = cr * cp * sy - sr * sp * cy; // z
+	q[3] = cr * cpcy + sr * spsy; // w
 #else
 	static float sr, sp, sy, cr, cp, cy;
 
@@ -2419,12 +2472,202 @@ void quat_to_vec3_FRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up)
  * @param[in] q
  * @param[out] axis
  */
-void quat_to_axis(const quat_t q, vec3_t axis[3])
+void quat_to_axis(const quat_t q, axis_t axis)
 {
+#if 0
 	mat4_t tmp;
 
 	mat4_from_quat(tmp, q);
 	MatrixToVectorsFLU(tmp, axis[0], axis[1], axis[2]);
+#else
+	float x2, y2, z2, xx, xy, xz, yy, yz, zz, wx, wy, wz;
+
+	x2 = q[0] + q[0];
+	y2 = q[1] + q[1];
+	z2 = q[2] + q[2];
+	xx = q[0] * x2;
+	xy = q[0] * y2;
+	xz = q[0] * z2;
+	yy = q[1] * y2;
+	yz = q[1] * z2;
+	zz = q[2] * z2;
+	wx = q[3] * x2;
+	wy = q[3] * y2;
+	wz = q[3] * z2;
+
+	axis[0][0] = 1.0f - (yy + zz);
+	axis[1][0] = xy + wz;
+	axis[2][0] = xz - wy;
+
+	axis[0][1] = xy - wz;
+	axis[1][1] = 1.0f - (xx + zz);
+	axis[2][1] = yz + wx;
+
+	axis[0][2] = xz + wy;
+	axis[1][2] = yz - wx;
+	axis[2][2] = 1.0f - (xx + yy);
+#endif
+}
+
+void quat_to_mat3(const quat_t q, mat3_t matrix)
+{
+	float x2, y2, z2, xx, xy, xz, yy, yz, zz, wx, wy, wz;
+
+	x2 = q[0] + q[0];
+	y2 = q[1] + q[1];
+	z2 = q[2] + q[2];
+	xx = q[0] * x2;
+	xy = q[0] * y2;
+	xz = q[0] * z2;
+	yy = q[1] * y2;
+	yz = q[1] * z2;
+	zz = q[2] * z2;
+	wx = q[3] * x2;
+	wy = q[3] * y2;
+	wz = q[3] * z2;
+
+	matrix[0] = 1.0f - (yy + zz);
+	matrix[1] = xy + wz;
+	matrix[2] = xz - wy;
+
+	matrix[3] = xy - wz;
+	matrix[4] = 1.0f - (xx + zz);
+	matrix[5] = yz + wx;
+
+	matrix[6] = xz + wy;
+	matrix[7] = yz - wx;
+	matrix[8] = 1.0f - (xx + yy);
+}
+
+void quat_to_mat4(const quat_t q, mat4_t matrix)
+{
+#if 0
+	float x2, y2, z2, xx, xy, xz, yy, yz, zz, wx, wy, wz;
+
+	x2 = q[0] + q[0];
+	y2 = q[1] + q[1];
+	z2 = q[2] + q[2];
+	xx = q[0] * x2;
+	xy = q[0] * y2;
+	xz = q[0] * z2;
+	yy = q[1] * y2;
+	yz = q[1] * z2;
+	zz = q[2] * z2;
+	wx = q[3] * x2;
+	wy = q[3] * y2;
+	wz = q[3] * z2;
+
+	matrix[0] = 1.0f - (yy + zz);
+	matrix[1] = xy + wz;
+	matrix[2] = xz - wy;
+	matrix[3] = 0.0f;
+
+	matrix[4] = xy - wz;
+	matrix[5] = 1.0f - (xx + zz);
+	matrix[6] = yz + wx;
+	matrix[7] = 0.0f;
+
+	matrix[8]  = xz + wy;
+	matrix[9]  = yz - wx;
+	matrix[10] = 1.0f - (xx + yy);
+	matrix[11] = 0.0f;
+
+	matrix[12] = 0.0f;
+	matrix[13] = 0.0f;
+	matrix[14] = 0.0f;
+	matrix[15] = 1.0f;
+#else
+	/*
+	From Quaternion to Matrix and Back
+	February 27th 2005
+	J.M.P. van Waveren
+
+	http://www.intel.com/cd/ids/developer/asmo-na/eng/293748.htm
+	*/
+	float x2, y2, z2; //w2;
+	float yy2, xy2;
+	float xz2, yz2, zz2;
+	float wz2, wy2, wx2, xx2;
+
+	x2 = q[0] + q[0];
+	y2 = q[1] + q[1];
+	z2 = q[2] + q[2];
+	//w2 = q[3] + q[3];
+
+	yy2 = q[1] * y2;
+	xy2 = q[0] * y2;
+
+	xz2 = q[0] * z2;
+	yz2 = q[1] * z2;
+	zz2 = q[2] * z2;
+
+	wz2 = q[3] * z2;
+	wy2 = q[3] * y2;
+	wx2 = q[3] * x2;
+	xx2 = q[0] * x2;
+
+	matrix[0] = -yy2 - zz2 + 1.0f;
+	matrix[1] = xy2 + wz2;
+	matrix[2] = xz2 - wy2;
+
+	matrix[4] = xy2 - wz2;
+	matrix[5] = -xx2 - zz2 + 1.0f;
+	matrix[6] = yz2 + wx2;
+
+	matrix[8]  = xz2 + wy2;
+	matrix[9]  = yz2 - wx2;
+	matrix[10] = -xx2 - yy2 + 1.0f;
+
+	matrix[3]  = matrix[7] = matrix[11] = matrix[12] = matrix[13] = matrix[14] = 0;
+	matrix[15] = 1;
+#endif
+}
+
+void quat_to_angles(const quat_t q, vec3_t angles)
+{
+	float sqw, sqx, sqy, sqz, unit, test;
+
+	sqw  = q[3] * q[3];
+	sqx  = q[0] * q[0];
+	sqy  = q[1] * q[1];
+	sqz  = q[2] * q[2];
+	unit = sqx + sqy + sqz + sqw; // if normalised is one, otherwise is correction factor
+	test = q[0] * q[1] + q[2] * q[3];
+
+	// singularity at north pole
+	if (test > 0.499f * unit)
+	{
+		angles[PITCH] = RAD2DEG(M_PI / 2.0f);
+		angles[YAW]   = RAD2DEG(2.0f * atan2(q[0], q[3]));
+		angles[ROLL]  = RAD2DEG(0.0f);
+		return;
+	}
+
+	// singularity at south pole
+	if (test < -0.499f * unit)
+	{
+		angles[PITCH] = RAD2DEG(-M_PI / 2.0f);
+		angles[YAW]   = RAD2DEG(-2.0f * atan2(q[0], q[3]));
+		angles[ROLL]  = RAD2DEG(0.0f);
+		return;
+	}
+
+	angles[PITCH] = RAD2DEG(asin(2.0f * test / unit));
+	angles[YAW]   = RAD2DEG(atan2(2.0f * q[1] * q[3] - 2.0f * q[0] * q[2], sqx - sqy - sqz + sqw));
+	angles[ROLL]  = RAD2DEG(atan2(2.0f * q[0] * q[3] - 2.0f * q[1] * q[2], -sqx + sqy - sqz + sqw));
+
+}
+
+void QuatToAngles(const vec4_t q, vec3_t a)
+{
+	vec4_t q2;
+	q2[0]    = q[0] * q[0];
+	q2[1]    = q[1] * q[1];
+	q2[2]    = q[2] * q[2];
+	q2[3]    = q[3] * q[3];
+	a[ROLL]  = (180.0 / M_PI) * atan2(2 * (q[2] * q[3] + q[1] * q[0]), (-q2[1] - q2[2] + q2[3] + q2[0]));
+	a[PITCH] = (180.0 / M_PI) * asin(-2 * (q[1] * q[3] - q[2] * q[0]));
+	a[YAW]   = (180.0 / M_PI) * atan2(2 * (q[1] * q[2] + q[3] * q[0]), (q2[1] - q2[2] - q2[3] + q2[0]));
 }
 
 /**

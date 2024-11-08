@@ -629,8 +629,6 @@ static ID_INLINE void LocalVectorMA(vec3_t org, float dist, vec3_t vec, vec3_t o
 }
 */
 
-#define ANGLES_SHORT_TO_FLOAT(pf, sh)     { *(pf++) = SHORT2ANGLE(*(sh++)); *(pf++) = SHORT2ANGLE(*(sh++)); *(pf++) = SHORT2ANGLE(*(sh++)); }
-
 /**
  * @brief SLerp_Normal
  * @param[in] from
@@ -966,30 +964,6 @@ static ID_INLINE void Matrix4TransformVector(const vec4_t m[4], const vec3_t src
 }
 */
 
-/*
-===============================================================================
-3x3 Matrices
-===============================================================================
-*/
-
-/**
- * @brief Matrix3Transpose
- * @param[in] matrix
- * @param[out] transpose
- */
-static ID_INLINE void Matrix3Transpose(const vec3_t matrix[3], vec3_t transpose[3])
-{
-	int i, j;
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			transpose[i][j] = matrix[j][i];
-		}
-	}
-}
-
 /**
  * @brief R_CalcBone
  * @param[in] torsoParent
@@ -1034,20 +1008,20 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 	{
 		sh = (short *)cTBonePtr->angles;
 		pf = angles;
-		ANGLES_SHORT_TO_FLOAT(pf, sh);
+		angles_short_to_float(sh, pf);
 	}
 	else
 	{
 		sh = (short *)cBonePtr->angles;
 		pf = angles;
-		ANGLES_SHORT_TO_FLOAT(pf, sh);
+		angles_short_to_float(sh, pf);
 		if (isTorso)
 		{
 			int j;
 
 			sh = (short *)cTBonePtr->angles;
 			pf = tangles;
-			ANGLES_SHORT_TO_FLOAT(pf, sh);
+			angles_short_to_float(sh, pf);
 			// blend the angles together
 			for (j = 0; j < 3; j++)
 			{
@@ -1597,7 +1571,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 	boneInfo = (mdxBoneInfo_t *) ((byte *) mdxFrameHeader + mdxFrameHeader->ofsBones);
 	boneRefs = boneList;
 	//
-	Matrix3Transpose(refent->torsoAxis, torsoAxis);
+	axis_transpose(refent->torsoAxis, torsoAxis);
 
 	if (backlerp == 0.f && torsoBacklerp == 0.f)
 	{

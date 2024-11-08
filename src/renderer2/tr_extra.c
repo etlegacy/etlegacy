@@ -540,22 +540,22 @@ void MatrixTransformBounds(const mat4_t m, const vec3_t mins, const vec3_t maxs,
 	vec3_t tmins, tmaxs;
 	vec3_t tmp;
 
-	VectorMin(minx, maxx, tmins);
-	VectorMax(minx, maxx, tmaxs);
-	VectorAdd(tmins, c4, tmins);
-	VectorAdd(tmaxs, c4, tmaxs);
+	vec3_min(minx, maxx, tmins);
+	vec3_max(minx, maxx, tmaxs);
+	vec3_add(tmins, c4, tmins);
+	vec3_add(tmaxs, c4, tmaxs);
 
-	VectorMin(miny, maxy, tmp);
-	VectorAdd(tmp, tmins, tmins);
+	vec3_min(miny, maxy, tmp);
+	vec3_add(tmp, tmins, tmins);
 
-	VectorMax(miny, maxy, tmp);
-	VectorAdd(tmp, tmaxs, tmaxs);
+	vec3_max(miny, maxy, tmp);
+	vec3_add(tmp, tmaxs, tmaxs);
 
-	VectorMin(minz, maxz, tmp);
-	VectorAdd(tmp, tmins, omins);
+	vec3_min(minz, maxz, tmp);
+	vec3_add(tmp, tmins, omins);
 
-	VectorMax(minz, maxz, tmp);
-	VectorAdd(tmp, tmaxs, omaxs);
+	vec3_max(minz, maxz, tmp);
+	vec3_add(tmp, tmaxs, omaxs);
 }
 
 /**

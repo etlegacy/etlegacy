@@ -50,10 +50,6 @@ typedef vec_t mat3_t[9];
 typedef vec_t mat4_t[16];
 typedef vec_t quat_t[4];        // | x y z w |
 
-typedef int fixed4_t;
-typedef int fixed8_t;
-typedef int fixed16_t;
-
 #ifndef M_PI
 #define M_PI        3.14159265358979323846f // matches value in gcc v2 math.h
 #endif
@@ -269,6 +265,14 @@ static ID_INLINE float vec2_dist(vec2_t v1, vec2_t v2)
 	return vec2_length(dir);
 }
 
+/**
+ * @brief Rotates a given point around another point
+ * @param[in] origin origin point for for the rotation
+ * @param[in] angle used angle for rotation in degrees
+ * @param[in,out] point which is rotated
+ */
+void vec2_rotate_around_point_self(const vec2_t origin, float angle, vec2_t point);
+
 /************************************************************************/
 /* Vector 3                                                             */
 /************************************************************************/
@@ -299,8 +303,6 @@ void vec3_norm_fast(vec3_t v);      // does NOT return vector length, uses rsqrt
 vec_t vec3_norm2(const vec3_t v, vec3_t out);
 // Inverse
 void vec3_inv(vec3_t v);
-void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out);
-void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out);
 qboolean vec3_compare(const vec3_t v1, const vec3_t v2);
 qboolean vec4_compare(const vec4_t v1, const vec4_t v2);
 
@@ -312,16 +314,16 @@ float vec3_to_yawn(const vec3_t vec);
 void vec3_lerp(const vec3_t start, const vec3_t end, float frac, vec3_t out);
 
 // Perpendicular vector of source
-void vec3_per(const vec3_t src, vec3_t dst);
+void vec3_perpendicular(const vec3_t src, vec3_t dst);
 
-static ID_INLINE void VectorMin(const vec3_t a, const vec3_t b, vec3_t out)
+static ID_INLINE void vec3_min(const vec3_t a, const vec3_t b, vec3_t out)
 {
 	out[0] = a[0] < b[0] ? a[0] : b[0];
 	out[1] = a[1] < b[1] ? a[1] : b[1];
 	out[2] = a[2] < b[2] ? a[2] : b[2];
 }
 
-static ID_INLINE void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
+static ID_INLINE void vec3_max(const vec3_t a, const vec3_t b, vec3_t out)
 {
 	out[0] = a[0] > b[0] ? a[0] : b[0];
 	out[1] = a[1] > b[1] ? a[1] : b[1];
@@ -349,28 +351,54 @@ void quat_from_axis(const axis_t m, quat_t q);
 void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll);
 void quat_to_vec3_FLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up);
 void quat_to_vec3_FRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up);
-void quat_to_axis(const quat_t q, vec3_t axis[3]);
+void quat_to_axis(const quat_t q, axis_t axis);
+void quat_to_mat3(const quat_t q, mat3_t matrix);
+void quat_to_mat4(const quat_t q, mat4_t matrix);
+void quat_to_angles(const quat_t q, vec3_t angles);
 vec_t quat_norm(quat_t q);
 void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out);
 #define quat_set(q, x, y, z, w)  ((q)[0] = (x), (q)[1] = (y), (q)[2] = (z), (q)[3] = (w))
 #define quat_copy(a, b)       ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3])
 #define quat_compare(a, b)    ((a)[0] == (b)[0] && (a)[1] == (b)[1] && (a)[2] == (b)[2] && (a)[3] == (b)[3])
 
-/************************************************************************/
-/* Axis                                                                 */
-/************************************************************************/
-void axis_clear(axis_t axis);
-void axis_copy(axis_t in, axis_t out);
-void axis_to_angles(axis_t axis, vec3_t angles);
+static ID_INLINE void quat_identity(quat_t q)
+{
+	q[0] = q[1] = q[2] = 0;
+	q[3] = 1;
+}
+
+/**
+ * @brief Multiply a quaternion by a vector
+ * https://blog.molecular-matters.com/2013/05/24/a-faster-quaternion-vector-multiplication/
+ * @param q
+ * @param vec
+ * @param out
+ */
+static ID_INLINE void quat_mult_vec3(const quat_t q, const vec3_t vec, vec3_t out)
+{
+	vec3_t tmp, tmp2, tmp3;
+
+	vec3_cross(q, vec, tmp);
+	vec3_scale(tmp, 2, tmp);
+
+	vec3_scale(tmp, q[3], tmp2);
+	vec3_cross(q, tmp, tmp3);
+
+	vec3_add(tmp, tmp2, tmp2);
+	vec3_add(tmp2, tmp3, out);
+}
 
 /************************************************************************/
 /* Angle                                                                */
 /************************************************************************/
-void angles_to_axis(const vec3_t angles, vec3_t axis[3]);
+#define ANGLE2SHORT(x)  ((int)((x) * 65536 / 360) & 65535)
+#define SHORT2ANGLE(x)  ((x) * (360.0f / 65536))
+
+void angles_to_axis(const vec3_t angles, axis_t axis);
 float angle_mod(float a);
 float angle_lerp(float from, float to, float frac);
 float angle_sub(float a1, float a2);
-void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3);
+void angles_sub(const vec3_t minuend, const vec3_t subtrahend, vec3_t difference);
 
 static ID_INLINE void angles_lerp(const vec3_t from, const vec3_t to, float frac, vec3_t out)
 {
@@ -384,26 +412,198 @@ float angle_norm_360(float angle);
 float angle_norm_180(float angle);
 float angle_delta(float angle1, float angle2);
 void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
+void angles_to_mat3(const vec3_t angles, mat3_t matrix);
+void angles_to_quat(const vec3_t angles, quat_t quat);
+
+/**
+ * @brief Converts a short angles to a float angles
+ * @param[in] short_angles
+ * @param[out] angles
+ */
+static ID_INLINE void angles_short_to_float(const short *short_angles, float *angles)
+{
+	angles[0] = SHORT2ANGLE(short_angles[0]);
+	angles[1] = SHORT2ANGLE(short_angles[1]);
+	angles[2] = SHORT2ANGLE(short_angles[2]);
+}
 
 /************************************************************************/
-/* Matrix3x3                                                            */
+/* Axis3x3 (idTech axis row major matrices aka transposed)              */
+/*            | a11  a12  a13 |    Axis[0] = [ a11, a12, a13 ]          */
+/*            | a21  a22  a23 |    Axis[1] = [ a21, a22, a23 ]          */
+/*            | a31  a32  a33 |    Axis[2] = [ a31, a32, a33 ]          */
 /************************************************************************/
-#define mat3_mult(in1, in2, o)                                                                          \
-		o[0][0] = (in1)[0][0] * (in2)[0][0] + (in1)[0][1] * (in2)[1][0] + (in1)[0][2] * (in2)[2][0],        \
-		o[0][1] = (in1)[0][0] * (in2)[0][1] + (in1)[0][1] * (in2)[1][1] + (in1)[0][2] * (in2)[2][1],        \
-		o[0][2] = (in1)[0][0] * (in2)[0][2] + (in1)[0][1] * (in2)[1][2] + (in1)[0][2] * (in2)[2][2],        \
-		o[1][0] = (in1)[1][0] * (in2)[0][0] + (in1)[1][1] * (in2)[1][0] + (in1)[1][2] * (in2)[2][0],        \
-		o[1][1] = (in1)[1][0] * (in2)[0][1] + (in1)[1][1] * (in2)[1][1] + (in1)[1][2] * (in2)[2][1],        \
-		o[1][2] = (in1)[1][0] * (in2)[0][2] + (in1)[1][1] * (in2)[1][2] + (in1)[1][2] * (in2)[2][2],        \
-		o[2][0] = (in1)[2][0] * (in2)[0][0] + (in1)[2][1] * (in2)[1][0] + (in1)[2][2] * (in2)[2][0],        \
-		o[2][1] = (in1)[2][0] * (in2)[0][1] + (in1)[2][1] * (in2)[1][1] + (in1)[2][2] * (in2)[2][1],        \
-		o[2][2] = (in1)[2][0] * (in2)[0][2] + (in1)[2][1] * (in2)[1][2] + (in1)[2][2] * (in2)[2][2]
 
-void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3]);
+void axis_ident(axis_t axis);
+void axis_copy(axis_t in, axis_t out);
+void axis_to_angles(axis_t axis, vec3_t angles);
+void axis_rotate_point(const axis_t axis, const vec3_t point, vec3_t out);
+
+static ID_INLINE void axis_rotate_point_self(const axis_t axis, vec3_t point)
+{
+	vec3_t tmp;
+	vec3_copy(point, tmp);
+	axis_rotate_point(axis, tmp, point);
+}
+
+static ID_INLINE void axis_multiply(const axis_t in1, const axis_t in2, axis_t out)
+{
+	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
+	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1];
+	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] + in1[0][2] * in2[2][2];
+	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] + in1[1][2] * in2[2][0];
+	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] + in1[1][2] * in2[2][1];
+	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] + in1[1][2] * in2[2][2];
+	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] + in1[2][2] * in2[2][0];
+	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] + in1[2][2] * in2[2][1];
+	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
+}
+
+static ID_INLINE void axis_transpose(const axis_t in, axis_t out)
+{
+	out[0][0] = in[0][0];
+	out[0][1] = in[1][0];
+	out[0][2] = in[2][0];
+	out[1][0] = in[0][1];
+	out[1][1] = in[1][1];
+	out[1][2] = in[2][1];
+	out[2][0] = in[0][2];
+	out[2][1] = in[1][2];
+	out[2][2] = in[2][2];
+}
+
+static ID_INLINE void axis_transpose_self(axis_t in)
+{
+	axis_t tmp;
+	axis_copy(in, tmp);
+	axis_transpose(tmp, in);
+}
+
+/**
+ * @brief Converts an axis to 3x3 matrix
+ * @param[in] axis
+ * @param[out] matrix
+ */
+static ID_INLINE void axis_to_mat3(const axis_t axis, mat3_t matrix)
+{
+	matrix[0] = axis[0][0];
+	matrix[1] = axis[1][0];
+	matrix[2] = axis[2][0];
+	matrix[3] = axis[0][1];
+	matrix[4] = axis[1][1];
+	matrix[5] = axis[2][1];
+	matrix[6] = axis[0][2];
+	matrix[7] = axis[1][2];
+	matrix[8] = axis[2][2];
+}
 
 /************************************************************************/
-/* Matrix4x4                                                            */
+/* Matrix3x3 as float[9] in column major format (OpenGL def. uses this) */
+/*       | a11  a12  a13 |    Matrix3x3[0-3] = [ a11, a21, a31 ]        */
+/*       | a21  a22  a23 |    Matrix3x3[4-6] = [ a12, a22, a32 ]        */
+/*       | a31  a32  a33 |    Matrix3x3[7-9] = [ a13, a23, a33 ]        */
 /************************************************************************/
+
+static ID_INLINE void mat3_copy(const mat3_t in, mat3_t out)
+{
+	out[0] = in[0];
+	out[1] = in[1];
+	out[2] = in[2];
+	out[3] = in[3];
+	out[4] = in[4];
+	out[5] = in[5];
+	out[6] = in[6];
+	out[7] = in[7];
+	out[8] = in[8];
+}
+
+void mat3_transpose(const mat3_t matrix, mat3_t transpose);
+
+static ID_INLINE void mat3_transpose_self(mat3_t matrix)
+{
+	mat3_t tmp;
+	mat3_copy(matrix, tmp);
+	mat3_transpose(tmp, matrix);
+}
+
+qboolean mat3_compare(const mat3_t m1, const mat3_t m2);
+
+static ID_INLINE void mat3_multiply(const mat3_t m1, const mat3_t m2, mat3_t out)
+{
+	out[0] = m1[0] * m2[0] + m1[3] * m2[1] + m1[6] * m2[2];
+	out[3] = m1[0] * m2[3] + m1[3] * m2[4] + m1[6] * m2[5];
+	out[6] = m1[0] * m2[6] + m1[3] * m2[7] + m1[6] * m2[8];
+
+	out[1] = m1[1] * m2[0] + m1[4] * m2[1] + m1[7] * m2[2];
+	out[4] = m1[1] * m2[3] + m1[4] * m2[4] + m1[7] * m2[5];
+	out[7] = m1[1] * m2[6] + m1[4] * m2[7] + m1[7] * m2[8];
+
+	out[2] = m1[2] * m2[0] + m1[5] * m2[1] + m1[8] * m2[2];
+	out[5] = m1[2] * m2[3] + m1[5] * m2[4] + m1[8] * m2[5];
+	out[8] = m1[2] * m2[6] + m1[5] * m2[7] + m1[8] * m2[8];
+}
+
+static ID_INLINE void mat3_ident_self(mat3_t m)
+{
+	m[0] = 1;
+	m[1] = 0;
+	m[2] = 0;
+	m[3] = 0;
+	m[4] = 1;
+	m[5] = 0;
+	m[6] = 0;
+	m[7] = 0;
+	m[8] = 1;
+}
+
+void mat3_rotate_point(const mat3_t matrix, const vec3_t in, vec3_t out);
+
+static ID_INLINE void mat3_to_axis(const mat3_t matrix, axis_t axis)
+{
+	axis[0][0] = matrix[0];
+	axis[1][0] = matrix[1];
+	axis[2][0] = matrix[2];
+	axis[0][1] = matrix[3];
+	axis[1][1] = matrix[4];
+	axis[2][1] = matrix[5];
+	axis[0][2] = matrix[6];
+	axis[1][2] = matrix[7];
+	axis[2][2] = matrix[8];
+}
+
+/**
+ * @brief Converts a 3x3 matrix to 4x4 matrix
+ * @param matrix
+ * @param out
+ */
+static ID_INLINE void mat3_to_mat4(const mat3_t matrix, mat4_t out)
+{
+	out[0]  = matrix[0];
+	out[1]  = matrix[1];
+	out[2]  = matrix[2];
+	out[3]  = 0;
+	out[4]  = matrix[3];
+	out[5]  = matrix[4];
+	out[6]  = matrix[5];
+	out[7]  = 0;
+	out[8]  = matrix[6];
+	out[9]  = matrix[7];
+	out[10] = matrix[8];
+	out[11] = 0;
+	out[12] = 0;
+	out[13] = 0;
+	out[14] = 0;
+	out[15] = 1;
+}
+
+/************************************************************************/
+/* Matrix4x4 as float[16] in column major format                        */
+/*   | a11  a12  a13 a14 |  Matrix4x4[0-4]   = [ a11, a21, a31 a41 ]    */
+/*   | a21  a22  a23 a24 |  Matrix4x4[5-8]   = [ a12, a22, a32 a42 ]    */
+/*   | a31  a32  a33 a34 |  Matrix4x4[9-12]  = [ a13, a23, a33 a43 ]    */
+/*   | a41  a42  a43 a44 |  Matrix4x4[13-16] = [ a13, a23, a33 a44 ]    */
+/************************************************************************/
+
 qboolean mat4_compare(const mat4_t a, const mat4_t b);
 void mat4_copy(const mat4_t in, mat4_t out);
 void MatrixOrthogonalProjection(mat4_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearvec, vec_t farvec);
@@ -430,6 +630,19 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
 #define SinCos(rad, s, c)     \
 		(s) = sin((rad));     \
 		(c) = cos((rad));
+
+/**
+ * @brief Converts degrees to sin and cos
+ * @param[in] degree value in float degrees
+ * @param[out] s sine value
+ * @param[out] c cosine value
+ */
+static ID_INLINE void degrees_to_sin_cos(float degree, float *s, float *c)
+{
+	float rad = (float)DEG2RAD(degree);
+	*s = (float)sin((double)rad);
+	*c = (float)cos((double)rad);
+}
 
 #ifdef __LCC__
 #ifdef VectorCopy
@@ -479,7 +692,7 @@ int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, struct cplane_s *p);
 
 qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
-void RotatePoint(vec3_t point, vec3_t matrix[3]);
+#define RotatePoint(point, axis) axis_rotate_point_self((axis), (point))
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
 //void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin); // Unused.
 void RotateAroundDirection(vec3_t axis[3], float yaw);
@@ -522,7 +735,8 @@ float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2);
 #define VectorSubtractDP(a, b, c) ((c)[0] = (double)((a)[0] - (b)[0]), (c)[1] = (double)((a)[1] - (b)[1]), (c)[2] = (double)((a)[2] - (b)[2]))
 #define VectorAddDP(a, b, c)      ((c)[0] = (double)((a)[0] + (b)[0]), (c)[1] = (double)((a)[1] + (b)[1]), (c)[2] = (double)((a)[2] + (b)[2]))
 
-#define MatrixMultiply(in1, in2, o) mat3_mult(in1, in2, o)
+//@deprecated
+#define MatrixMultiply(in1, in2, o) axis_multiply(in1, in2, o)
 
 #else
 
@@ -570,7 +784,7 @@ void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 #define VectorNormalize2 vec3_norm2
 #define VectorInverse vec3_inv
 #define Vector4Scale vec4_scale
-#define VectorRotate vec3_rotate
+#define VectorRotate(point, axis, out) axis_rotate_point((axis), (point), (out))
 #define VectorCompare vec3_compare
 #define Vector4Compare vec4_compare
 
@@ -643,7 +857,7 @@ static ID_INLINE vec_t VectorNormalizeDP(vec3_t v)
 #define VectorDistance vec3_dist
 #define VectorDistanceSquared vec3_dist_squared
 
-#define AxisClear axis_clear
+#define AxisClear axis_ident
 #define AxisCopy axis_copy
 #define AxisToAngles axis_to_angles
 #define AnglesToAxis angles_to_axis
@@ -653,9 +867,9 @@ static ID_INLINE vec_t VectorNormalizeDP(vec3_t v)
 #define AngleNormalize180 angle_norm_180
 #define AngleDelta angle_delta
 
-#define TransposeMatrix mat3_transpose
+#define TransposeMatrix axis_transpose
 #define AngleVectors angles_vectors
-#define PerpendicularVector(out, src) vec3_per(src, out) // rotated the params to match the way other functions are written
+#define PerpendicularVector(out, src) vec3_perpendicular(src, out) // rotated the params to match the way other functions are written
 
 int Q_ClosestMultiple(int n, int x);
 float Q_ClosestMultipleFloat(float n, float x, int decimal);

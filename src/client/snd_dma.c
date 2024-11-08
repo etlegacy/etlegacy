@@ -548,12 +548,12 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 		vec3_t vec;
 		float  dist_fullvol = range * 0.064f;
 
-		// calculate stereo seperation and distance attenuation
-		VectorSubtract(origin, listener_origin, source_vec);
+		// calculate stereo separation and distance attenuation
+		vec3_sub(origin, listener_origin, source_vec);
 
 		dist  = vec3_norm(source_vec);
 		dist -= dist_fullvol;
-		if (dist < 0.0f || no_attenuation)
+		if (dist < 0.0f)
 		{
 			dist = 0.0f;           // close enough to be at full volume
 		}
@@ -562,7 +562,7 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 			dist /= range;
 		}
 
-		vec3_rotate2(source_vec, listener_axis, vec);
+		axis_rotate_point(listener_axis, source_vec, vec);
 
 		rscale = (float)(sqrt((double)(1.0f - vec[1])));
 		lscale = (float)(sqrt((double)(1.0f + vec[1])));
@@ -1429,10 +1429,8 @@ void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwa
 	}
 
 	listener_number = entnum;
-	VectorCopy(head, listener_origin);
-	VectorCopy(axis[0], listener_axis[0]);
-	VectorCopy(axis[1], listener_axis[1]);
-	VectorCopy(axis[2], listener_axis[2]);
+	vec3_copy(head, listener_origin);
+	axis_copy(axis, listener_axis);
 
 	// update spatialization for dynamic sounds
 	ch = s_channels;

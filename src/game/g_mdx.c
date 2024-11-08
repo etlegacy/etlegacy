@@ -150,6 +150,19 @@ void mdx_cleanup(void)
  */
 
 /**
+ * @brief axis_rotate_transposed
+ * @param[in] in
+ * @param[in] matrix
+ * @param[out] out
+ */
+static void axis_rotate_transposed(const vec3_t in, vec3_t matrix[3], vec3_t out)
+{
+	out[0] = in[0] * matrix[0][0] + in[1] * matrix[1][0] + in[2] * matrix[2][0];
+	out[1] = in[0] * matrix[0][1] + in[1] * matrix[1][1] + in[2] * matrix[2][1];
+	out[2] = in[0] * matrix[0][2] + in[1] * matrix[1][2] + in[2] * matrix[2][2];
+}
+
+/**
  * @brief MatrixWeight
  * @param[in] m
  * @param[in] weight
@@ -1332,9 +1345,11 @@ void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
 	char hitsfile[MAX_QPATH], *sep;
 	// zinx - mdx hits
 	Q_strncpyz(hitsfile, animationGroup, sizeof(hitsfile) - 4);
-	if ((sep = strrchr(hitsfile, '.'))) // FIXME: should abort on /'s
+	sep = strrchr(hitsfile, '.');
+	// FIXME: should abort on /'s
+	if (sep)
 	{
-		Q_strncpyz(sep, ".hit", sizeof(hitsfile) - (sep - sizeof(hitsfile));
+		Q_strncpyz(sep, ".hit", sizeof(hitsfile) - (sep - sizeof(hitsfile)));
 	}
 	else
 	{
@@ -1404,7 +1419,7 @@ static void mdx_calculate_bone(
 
 	// frame bone rotation
 	AnglesToAxisBroken(frameBone->offset_angles, axis);
-	vec3_rotate(tmp, axis, dest);
+	axis_rotate_transposed(tmp, axis, dest);
 }
 
 /**
@@ -1623,7 +1638,7 @@ static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t
 
 		// Rotate around torso_parent
 		VectorSubtract(origin, mdx_bones[boneFrameModel->torso_parent], tmp);
-		vec3_rotate(tmp, refent->torsoAxis, torso_origin);
+		axis_rotate_transposed(tmp, refent->torsoAxis, torso_origin);
 		VectorAdd(torso_origin, mdx_bones[boneFrameModel->torso_parent], torso_origin);
 
 		// Lerp torso-rotated point with non-rotated
@@ -1714,7 +1729,7 @@ static void mdx_tag_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t 
 	}
 
 	// Tag offset
-	vec3_rotate(tag->offset, tmpaxis, offset);
+	axis_rotate_transposed(tag->offset, tmpaxis, offset);
 	VectorAdd(origin, offset, origin);
 
 	// Tag axis
@@ -1783,7 +1798,7 @@ int trap_R_LerpTagNumber(orientation_t *tag, /*const*/ grefEntity_t *refent, int
 	mdx_calculate_bones_single(refent, bone);
 	mdx_bone_orientation(refent, bone, tag->origin, axis);
 
-	vec3_rotate(model->tags[tagNum].offset, axis, offset);
+	axis_rotate_transposed(model->tags[tagNum].offset, axis, offset);
 	VectorAdd(tag->origin, offset, tag->origin);
 
 	MatrixMultiply(model->tags[tagNum].axis, axis, tag->axis);
@@ -2434,7 +2449,8 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 		if (f >= anim->numFrames)
 		{
 			int loopFrames = anim->loopFrames;
-			if (anim->loopFrames == -1) {
+			if (anim->loopFrames == -1)
+			{
 				loopFrames = anim->numFrames;
 			}
 
@@ -2551,10 +2567,10 @@ static qboolean mdx_hit_warp(
 	// Un-rotate
 	TransposeMatrix(axis, unaxis);
 
-	vec3_rotate(unstart, unaxis, tmp);
+	axis_rotate_transposed(unstart, unaxis, tmp);
 	VectorCopy(tmp, unstart);
 
-	vec3_rotate(unend, unaxis, tmp);
+	axis_rotate_transposed(unend, unaxis, tmp);
 	VectorCopy(tmp, unend);
 
 	// Un-scale
