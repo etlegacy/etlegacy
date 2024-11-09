@@ -339,7 +339,14 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		int        i;
 		qboolean   enabled = qfalse;
 
-		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, va("^1%s ^0%s", MODNAME, ETLEGACY_VERSION), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
+		if (ETLEGACY_VERSION_IS_DEVELOPMENT_BUILD)
+		{
+			CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, va("^1%s ^8DEVELOPMENT BUILD", MODNAME), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
+		}
+		else
+		{
+			CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, va("^1%s ^0%s", MODNAME, ETLEGACY_VERSION), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
+		}
 
 		y   = 340;
 		str = Info_ValueForKey(buffer, "sv_hostname");

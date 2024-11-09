@@ -127,6 +127,23 @@ menuDef {
 	BUTTON( __WINDOW_WIDTH/2-100-16+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL "https://www.etlegacy.com" )
 #endif
 
+#ifdef NON_RELEASE_BUILD
+itemDef {
+	name "development_build_banner"
+	rect $evalint(__WINDOW_WIDTH-(2*WINDOW_X)-110) 0 110 13
+	text _("DEVELOPMENT BUILD")
+	textfont UI_FONT_ARIBLK_16
+	textscale   .19
+	textalignx  3
+	textaligny  10
+	style WINDOW_STYLE_FILLED
+	backcolor   1.00 0.34 0.00 .5
+	forecolor   0.90 0.90 0.90 1
+	visible     1
+	decoration
+}
+#endif
+
 // Version //
 LABEL( 2, 450, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
 

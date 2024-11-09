@@ -729,8 +729,8 @@ void CL_ConsolePrint(char *txt)
  */
 void Con_DrawVersion(void)
 {
-	int x, y, versionLen;
-
+	int               x, y, versionLen, envoiOffset = 1;
+	static const char *devBuild = NULL;
 	Q_strncpyz(con.version, Q3_VERSION, sizeof(con.version));
 	Q_strncpyz(con.date, __DATE__, sizeof(con.date));
 	Q_strncpyz(con.arch, CPUSTRING, sizeof(con.arch));
@@ -738,6 +738,16 @@ void Con_DrawVersion(void)
 	if (com_updateavailable->integer)
 	{
 		Q_strcat(con.version, sizeof(con.version), " ^2(UPDATE AVAILABLE)");
+	}
+
+	// Add DEVELOPMENTAL BUILD banner to console
+	if (devBuild == NULL && ETLEGACY_VERSION_IS_DEVELOPMENT_BUILD)
+	{
+		devBuild = "^8DEVELOPMENT BUILD";
+	}
+	if (devBuild != NULL)
+	{
+		envoiOffset = 2;
 	}
 
 #ifdef ETLEGACY_DEBUG
@@ -755,11 +765,17 @@ void Con_DrawVersion(void)
 	// just drop the version drawing completely so there's some space to write
 	if ((cls.glconfig.vidWidth / smallCharWidth - 2) * 0.66f > versionLen)
 	{
-		SCR_DrawSmallString(x - (versionLen * smallCharWidth), y - (1.25f * smallCharHeight), con.version, colorWhite, qfalse, qfalse);
+		SCR_DrawSmallString(x - (versionLen * smallCharWidth), y - (1.25f * smallCharHeight * envoiOffset), con.version, colorWhite, qfalse, qfalse);
 	}
 
-	SCR_DrawSmallString(x - (ARRAY_LEN(__DATE__) * smallCharWidth), y - (1.25f * (smallCharHeight * 2)), __DATE__, colorWhite, qfalse, qfalse);
-	SCR_DrawSmallString(x - ((Q_PrintStrlen(con.arch) + 1) * smallCharWidth), y - (1.25f * (smallCharHeight * 3)), con.arch, colorWhite, qfalse, qfalse);
+	SCR_DrawSmallString(x - (ARRAY_LEN(__DATE__) * smallCharWidth), y - (1.25f * (smallCharHeight * (envoiOffset + 1))), __DATE__, colorWhite, qfalse, qfalse);
+	SCR_DrawSmallString(x - ((Q_PrintStrlen(con.arch) + 1) * smallCharWidth), y - (1.25f * (smallCharHeight * (envoiOffset + 2))), con.arch, colorWhite, qfalse, qfalse);
+
+	if (devBuild != NULL)
+	{
+		int devBuildLen = Q_PrintStrlen(devBuild) + 1;
+		SCR_DrawSmallString(x - (devBuildLen * smallCharWidth), y - (1.25f * (smallCharHeight * (1))), devBuild, colorWhite, qfalse, qfalse);
+	}
 }
 
 /**

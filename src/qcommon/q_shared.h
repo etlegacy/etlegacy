@@ -68,6 +68,8 @@
 #define FAKE_VERSION            "ET 2.60b " CPUSTRING " May  8 2006"
 #endif
 
+#define ETLEGACY_VERSION_IS_DEVELOPMENT_BUILD (ETLEGACY_VERSION_INT % 10000 > 0 /* the last 4 digits ought to be 0 on release builds */)
+
 #ifdef DEDICATED
 #define CONFIG_NAME             "etconfig_server.cfg"
 #else
