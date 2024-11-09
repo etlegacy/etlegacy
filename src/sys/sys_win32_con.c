@@ -700,12 +700,22 @@ void Sys_CreateConsole(void)
 	RECT     rect;
 
 	const char *DEDCLASS = "ET: Legacy WinConsole";
+
+	char windowname[MAX_STRING_CHARS] = { 0 };
 #if defined (UPDATE_SERVER)
-	const char *WINDOWNAME = "ET: Legacy Update Server";
+	Q_strncpyz(windowname, "ET: Legacy Update Server", sizeof(windowname));
 #elif defined(DEDICATED)
-	const char *WINDOWNAME = "ET: Legacy Dedicated Server";
+	Q_strncpyz(windowname, "ET: Legacy Dedicated Server", sizeof(windowname));
 #else
-	const char *WINDOWNAME = "ET: Legacy Console";
+	// ↓ TODO : XXX : `GlobalGameTitle` here currently doesn't take effect,
+	// because it's not set early enough to have a non-empty value here
+	//
+	// in order to fix this, we need to deal with the fact that currently in
+	// 'sys_Main.c': 'Sys_PlatformInit' (which creates the Console) happens
+	// before 'Sys_ParseArgs' (which fills in GlobalGameTitle)
+	//
+	// see https://github.com/etlegacy/etlegacy/issues/2967
+	Com_sprintf(windowname, sizeof(windowname), "%s Console", GlobalGameTitle);
 #endif
 
 	int nHeight;
@@ -746,7 +756,7 @@ void Sys_CreateConsole(void)
 
 	s_wcd.hWnd = CreateWindowEx(0,
 	                            DEDCLASS,
-	                            WINDOWNAME,
+	                            windowname,
 	                            DEDSTYLE,
 	                            (swidth - 600) / 2, (sheight - 450) / 2, rect.right - rect.left + 1, rect.bottom - rect.top + 1,
 	                            NULL,
