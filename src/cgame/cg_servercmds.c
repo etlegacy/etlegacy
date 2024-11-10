@@ -200,6 +200,7 @@ static void CG_ParseTeamInfo(void)
  */
 static void CG_FillVersionInfo(version_t *version, char *versionStr, const char *delimiter)
 {
+	Com_Printf("Demo Version: %s\n", versionStr);
 	version->major = Q_atoi(strtok(versionStr, delimiter));
 	version->minor = Q_atoi(strtok(NULL, delimiter));
 	version->patch = Q_atoi(strtok(NULL, delimiter));
