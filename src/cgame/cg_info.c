@@ -2025,16 +2025,27 @@ void CG_SpecHelpDraw(void)
 {
 	if (cg.spechelpWindow != SHOW_OFF)
 	{
-		const helpType_t help[] =
+		static const helpType_t help[] =
 		{
-			{ "+zoom",    "hold for pointer"   },
-			{ "+attack",  "window move/resize" },
-			{ "+sprint",  "hold to resize"     },
-			{ "weapnext", "window on/off"      },
-			{ "weapprev", "swap w/main view"   },
-			{ NULL,       NULL                 },
-			{ "weapalt",  "swingcam toggle"    },
-			{ "spechelp", "help on/off"        },
+			{ "+attack",      "select a client view from list to main window"        },
+			{ NULL,           NULL                                                   },
+			{ "+sprint",      "hold to resize a window on mouse movement"            },
+			{ NULL,           NULL                                                   },
+			{ "weapprev",     "make a window for the client from list"               },
+			{ "weapnext",     "delete the window for the client from list or window" },
+			{ "weapalt",      "swap a window with main view from window"             },
+			{ NULL,           NULL                                                   },
+			{ "K_ENTER",      "toggle third person view"                             },
+			{ "K_UPARROW",    "decrease third person range"                          },
+			{ "K_DOWNARROW",  "increase third person range"                          },
+			{ "K_RIGHTARROW", "increase third person angle (rotate view on right)"   },
+			{ "K_LEFTARROW",  "decrease third person angle (rotate view on left)"    },
+			{ NULL,           NULL                                                   },
+			{ "K_TAB",        "hold to show score"                                   },
+			{ "K_F11",        "screenshot"                                           },
+			{ "K_F12",        "auto screenshot"                                      },
+			{ "spechelp",     "help on/off"                                          },
+			{ "m",            "close multiview"                                      },
 		}
 		;
 
