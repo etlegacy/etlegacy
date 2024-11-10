@@ -709,7 +709,7 @@ void CG_mvDraw(cg_window_t *sw)
 
 	trap_R_ClearScene();
 
-	if (sw == cg.mvCurrentMainview && cg.renderingThirdPerson)
+	if (sw == cg.mvCurrentMainview && cg_thirdPerson.integer)
 	{
 		cg.renderingThirdPerson = qtrue;
 		//VectorCopy(cent->lerpOrigin, refdef.vieworg);
