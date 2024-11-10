@@ -17,7 +17,7 @@ DEFINES
 set weapons knives         = Knife AND Ka-Bar
 set weapons pistols        = Luger AND Colt AND Silenced Luger AND Silenced Colt
 set weapons akimbo_pistols = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
-set weapons machineguns    = MP 40 AND Thompson AND Sten gun AND MP34
+set weapons machineguns    = MP 40 AND Thompson AND Sten gun AND MP34 AND FG 42 Paratroop Rifle
 set weapons rifles         = K43 Rifle AND gpg40 AND m1 garand AND M7 AND FG 42 Paratroop Rifle AND Scoped K43 Rifle AND K43 Rifle Scope AND Scoped M1 Garand AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope
 set weapons rgrifles       = K43 Rifle AND m1 garand AND gpg40 AND m7
 set weapons scopes         = K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope
@@ -418,10 +418,6 @@ state combat
 			legs alert_crchidle_1h torso stand_pistolB
 		}
 		weapons Scoped M1 Garand
-		{
-			both alert_crchidle_srifle
-		}
-		weapons FG 42 Paratroop Rifle
 		{
 			both alert_crchidle_srifle
 		}
@@ -1668,6 +1664,11 @@ fireweapon
 		torso firing_akimbo
 	}
 // MACHINEGUNS
+	// FG 42 Paratroop Rifle
+	weapons FG 42 Paratroop Rifle, movetype run AND runbk AND walk AND walkbk AND midair AND jumpforward
+	{
+		torso firing_fg42
+	}
 	weapons machineguns, movetype runbk
 	{
 		torso firing_alert_run_bk_2h
@@ -1696,15 +1697,7 @@ fireweapon
 	{
         torso firing_machinegun
 	}
-	// FG 42 Paratroop Rifle
-	weapons FG 42 Paratroop Rifle, movetype crouching
-	{
-		torso firing_crch_2h
-	}
-	weapons FG 42 Paratroop Rifle
-	{
-		torso firing_fg42
-	}
+// RIFLES
 	weapons gpg40 AND M7
 	{
 		torso firing_grenlauncher
