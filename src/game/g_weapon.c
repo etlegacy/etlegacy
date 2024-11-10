@@ -1113,12 +1113,14 @@ static qboolean TryConstructing(gentity_t *ent, gentity_t *trigger)
 		{
 			// call script
 			G_Script_ScriptEvent(constructible, "built", "final");
+			G_LogPrintf("Repair: %d\n", (int)(ent - g_entities));
 		}
 		else
 		{
 			if (constructible->grenadeFired == constructible->count2)
 			{
 				G_Script_ScriptEvent(constructible, "built", "final");
+				G_LogPrintf("Repair: %d\n", (int)(ent - g_entities));
 			}
 			else
 			{
