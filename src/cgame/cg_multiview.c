@@ -1183,36 +1183,28 @@ void CG_mv_KeyHandling(int key, qboolean down)
 	switch (key)
 	{
 	case K_TAB:
-		if (down)
-		{
-			CG_ScoresDown_f();
-		}
-		else
-		{
-			CG_ScoresUp_f();
-		}
-		return;
+        down ? CG_ScoresDown_f() : CG_ScoresUp_f();
+        break;
 	// Help info
 	case K_BACKSPACE:
 		if (!down)
 		{
-			// Dushan - fixed comiler warning
 			CG_toggleSpecHelp_f();
 		}
-		return;
+		break;
 	// Screenshot keys
 	case K_F11:
 		if (!down)
 		{
 			trap_SendConsoleCommand("screenshot");
 		}
-		return;
+		break;
 	case K_F12:
 		if (!down)
 		{
 			CG_autoScreenShot_f();
 		}
-		return;
+		break;
 	// Window controls
 	//case K_SHIFT:
 	case K_LCTRL:
@@ -1222,16 +1214,16 @@ void CG_mv_KeyHandling(int key, qboolean down)
 	//case K_CTRL:
 	case K_MOUSE4:
 		cgs.fResize = down;
-		return;
+		break;
 	case K_MOUSE1:
 		cgs.fSelect = down;
-		return;
+		break;
 	case K_MOUSE2:
 		if (!down)
 		{
 			CG_mvSwapViews_f(); // Swap the window with the main view
 		}
-		return;
+		break;
 	case K_INS:
 	case K_KP_PGUP:
 	case K_MWHEELDOWN:
@@ -1239,7 +1231,7 @@ void CG_mv_KeyHandling(int key, qboolean down)
 		{
 			CG_mvShowView_f();  // Make a window for the client
 		}
-		return;
+		break;
 	case K_DEL:
 	case K_KP_PGDN:
 	case K_MWHEELUP:
@@ -1247,31 +1239,31 @@ void CG_mv_KeyHandling(int key, qboolean down)
 		{
 			CG_mvHideView_f();  // Delete the window for the client
 		}
-		return;
+		break;
 	case K_MOUSE3:
 		if (!down)
 		{
 			CG_mvToggleView_f();    // Toggle a window for the client
 		}
-		return;
+		break;
 	case 'm':
 	case 'M':
 		if (!down)
 		{
 			CG_mvToggleAll_f();
 		}
-		return;
+		break;
 	case K_ESCAPE: // K_ESCAPE only fires on Key Up
 	case K_ESCAPE | K_CHAR_FLAG:
 		CG_mvToggleAll_f();
-		return;
+		break;
 	// Third-person controls
 	case K_ENTER:
 		if (!down)
 		{
 			trap_Cvar_Set("cg_thirdperson", ((cg_thirdPerson.integer == 0) ? "1" : "0"));
 		}
-		return;
+		break;
 	case K_UPARROW:
 		if (milli > cgs.thirdpersonUpdate)
 		{
@@ -1281,7 +1273,7 @@ void CG_mv_KeyHandling(int key, qboolean down)
 			range                -= ((range >= 4 * DEMO_RANGEDELTA) ? DEMO_RANGEDELTA : (range - DEMO_RANGEDELTA));
 			trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
 		}
-		return;
+		break;
 	case K_DOWNARROW:
 		if (milli > cgs.thirdpersonUpdate)
 		{
@@ -1291,7 +1283,7 @@ void CG_mv_KeyHandling(int key, qboolean down)
 			range                += ((range >= 120 * DEMO_RANGEDELTA) ? 0 : DEMO_RANGEDELTA);
 			trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
 		}
-		return;
+		break;
 	case K_RIGHTARROW:
 		if (milli > cgs.thirdpersonUpdate)
 		{
@@ -1304,7 +1296,7 @@ void CG_mv_KeyHandling(int key, qboolean down)
 			}
 			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
 		}
-		return;
+		break;
 	case K_LEFTARROW:
 		if (milli > cgs.thirdpersonUpdate)
 		{
@@ -1317,7 +1309,7 @@ void CG_mv_KeyHandling(int key, qboolean down)
 			}
 			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
 		}
-		return;
+		break;
 	}
 }
 
