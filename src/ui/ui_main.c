@@ -1424,6 +1424,12 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 	{
 		trap_PC_AddGlobalDefine("ETLEGACY");
 
+		// allow detecting non release builds (snapshots etc.)
+		if (ETLEGACY_VERSION_IS_DEVELOPMENT_BUILD)
+		{
+			trap_PC_AddGlobalDefine("NON_RELEASE_BUILD");
+		}
+
 		// if the client is older than the mod, then it makes sense that there has been a new release which the user has not installed
 		if (LEGACY_PATCH_CLAMP(uiInfo.etLegacyClient) < LEGACY_PATCH_CLAMP(ETLEGACY_VERSION_INT))
 		{
