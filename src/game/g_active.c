@@ -520,16 +520,17 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 	trace_t tr;
 	vec3_t  forward;
 	vec3_t  mins, maxs;
+	vec3_t  start, end;
 
 	static float enlargeMins[3] = { -4.0f, -4.0f, -3.0f };
 	static float enlargeMaxs[3] = { 4.0f, 4.0f, 0.0f };
-
-	vec3_t start, end;
 
 	if (!ent->client)
 	{
 		return qfalse;
 	}
+
+	AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
 
 	VectorCopy(ent->client->ps.origin, start);
 	VectorMA(start, MAX_TRACE, forward, end);
@@ -546,7 +547,7 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 		{
 			G_HistoricalTrace(ent, &tr, start,
 			                  NULL, NULL,
-			                  end, ent->s.number, CONTENTS_BODY | CONTENTS_CORPSE);
+			                  end, ent->s.number, CONTENTS_BODY);
 		}
 		else
 		{
@@ -555,7 +556,7 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 
 			G_HistoricalTrace(ent, &tr, start,
 			                  mins, maxs,
-			                  end, ent->s.number, CONTENTS_BODY | CONTENTS_CORPSE);
+			                  end, ent->s.number, CONTENTS_BODY);
 		}
 
 		if ((&g_entities[tr.entityNum])->client != NULL)
