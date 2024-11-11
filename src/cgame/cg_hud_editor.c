@@ -1666,7 +1666,7 @@ static qboolean CG_HudEditor_HudDropdown_KeyUp(panel_button_t *button, int key)
  */
 static void CG_HudEditor_ReplaceDefaultParent(int newParentNumber)
 {
-    int i;
+	int           i;
 	hudStucture_t *parenthud    = CG_GetHudByNumber(hudData.active->parentNumber);
 	hudStucture_t *newParenthud = CG_GetHudByNumber(newParentNumber);
 
@@ -1676,11 +1676,11 @@ static void CG_HudEditor_ReplaceDefaultParent(int newParentNumber)
 		hudComponent_t *comp           = (hudComponent_t *) ((char *) hudData.active + hudComponentFields[i].offset);
 		hudComponent_t *parentComp     = (hudComponent_t *) ((char *) parenthud + hudComponentFields[i].offset);
 		hudComponent_t *newParentComp  = (hudComponent_t *) ((char *) newParenthud + hudComponentFields[i].offset);
-        
-        if (hudComponentFields[i].isAlias)
-        {
-            continue;
-        }
+
+		if (hudComponentFields[i].isAlias)
+		{
+			continue;
+		}
 
 		if (comp->location.x == parentComp->location.x)
 		{
@@ -1826,10 +1826,10 @@ static qboolean CG_HudEditor_ParentDropdown_KeyUp(panel_button_t *button, int ke
 
 				if (BG_CursorInRect(&rect))
 				{
-                    if (hudData.active->parentNumber != -1)
-                    {
-                        CG_HudEditor_ReplaceDefaultParent(hud->hudnumber);
-                    }
+					if (hudData.active->parentNumber != -1)
+					{
+						CG_HudEditor_ReplaceDefaultParent(hud->hudnumber);
+					}
 					hudData.active->parentNumber = hud->hudnumber;
 					Q_strncpyz(hudData.active->parent, hud->name, sizeof(hudData.active->parent));
 
@@ -2923,8 +2923,11 @@ static void CG_HudEditor_DecreaseSize(hudComponent_t *comp, float offset, qboole
 
 static void CG_HudEditor_ToggleFilterActiveComponent()
 {
-	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
-	showOnlyHudComponent = (showOnlyHudComponent == NULL) ? comp : NULL;
+	if (lastFocusComponent != NULL)
+	{
+		hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+		showOnlyHudComponent = (showOnlyHudComponent == NULL) ? comp : NULL;
+	}
 }
 
 static void CG_HudEditor_ToggleVisibility(void)
