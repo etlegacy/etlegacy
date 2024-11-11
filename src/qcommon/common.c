@@ -2786,16 +2786,6 @@ static void Com_DetectAltivec(void)
 }
 #endif
 
-static qboolean Com_InitExecs()
-{
-	if (Q_stricmp(Cmd_Argv(0), "exec") && Q_stricmp(Cmd_Argv(0), "execq"))
-	{
-		return qfalse;
-	}
-	Cbuf_AddText(va("%s\n", Cmd_ArgsFrom(0)));
-	return qtrue;
-}
-
 /**
  * @brief Com_Init
  * @param[in] commandLine
@@ -2947,8 +2937,6 @@ void Com_Init(char *commandLine)
 #endif
 
 	Cbuf_AddText("exec autoexec.cfg\n");
-
-	Com_CommandLineCheck(&Com_InitExecs);
 
 	// reset crashed state
 	Cbuf_AddText("set com_crashed 0\n");
