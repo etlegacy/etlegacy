@@ -16,9 +16,24 @@ on:
 
 jobs:
 
+  # We can be picky of the code
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Check for valid formatting
+        run: |
+          sudo apt-get install -y install uncrustify
+          sh misc/check-pr.sh
+
   # Try to figure out the build version information only once
   version:
     runs-on: ubuntu-latest
+    needs: [ formatting ]
     outputs:
       describe: ${{ steps.git.outputs.describe }}
       tag: ${{ steps.git.outputs.tag }}
