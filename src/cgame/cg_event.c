@@ -2951,13 +2951,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		// int revivee = es->eventParm;
 		// int invulnEndTime = invulnEndTime;
 
+		sfxHandle_t sound = CG_GetGameSound(GAMESOUND_MISC_REVIVE);
+
 		if (reviver == cg.clientNum)
 		{
 			cg.lastReviveTime = cg.time;
 		}
 
 		// play sound
-		sfxHandle_t sound = CG_GetGameSound(GAMESOUND_MISC_REVIVE);
 		if (sound)
 		{
 			trap_S_StartSoundVControl(es->origin, es->number, CHAN_VOICE, sound, 255);
