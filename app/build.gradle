@@ -22,7 +22,7 @@ def getVersionLong() {
 	return out.toString().replace('\n','')
 }
 
-def getVersionShort() {
+static def getVersionShort() {
 	// use the CI provided version if available
 	if (System.getenv('CI_ETL_TAG') != null) {
 		def tagString = System.getenv('CI_ETL_TAG')

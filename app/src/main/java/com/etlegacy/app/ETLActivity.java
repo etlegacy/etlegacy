@@ -1,7 +1,6 @@
 package com.etlegacy.app;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -25,6 +24,9 @@ import com.erz.joysticklibrary.JoyStick.JoyStickListener;
 import com.etlegacy.app.web.ETLDownload;
 
 import org.libsdl.app.*;
+
+import java.nio.file.Paths;
+import java.util.Objects;
 
 public class ETLActivity extends SDLActivity implements JoyStickListener {
 
@@ -526,6 +528,13 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	@Override
 	public void onDoubleTap() {
 
+	}
+
+	@Override
+	protected String[] getArguments() {
+		return new String[]{
+			String.valueOf(Paths.get((Objects.requireNonNull(getExternalFilesDir(null)).toPath() + "/etlegacy"))),
+		};
 	}
 
 	@Override
