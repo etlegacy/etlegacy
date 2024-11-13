@@ -1,0 +1,8 @@
+/build/
+/out/
+/libs/**/
+
+*.png
+*.jpeg
+*.jpg
+*.svg
