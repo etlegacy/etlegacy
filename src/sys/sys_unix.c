@@ -461,7 +461,7 @@ qboolean Sys_Mkdir(const char *path)
 char *Sys_Cwd(void)
 {
 	static char cwd[MAX_OSPATH];
-
+#ifndef __ANDROID__
 	char *result = getcwd(cwd, sizeof(cwd) - 1);
 	if (result != cwd)
 	{
@@ -469,8 +469,11 @@ char *Sys_Cwd(void)
 	}
 
 	cwd[MAX_OSPATH - 1] = 0;
-
-	return cwd;
+#else
+    Q_strncpyz(cwd, SDL_AndroidGetExternalStoragePath(), sizeof(cwd));
+    Q_strcat(cwd, sizeof(homePath), "/etlegacy");
+#endif
+    return cwd;
 }
 
 /*
