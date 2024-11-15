@@ -3868,8 +3868,8 @@ void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk, const qboo
 
 	// add the new damage
 	body->flameQuota         += 5;
-	body->flameQuotaTime      = level.time;
-	body->lastBurnedFrameTime = level.time;
+	body->flameQuotaTime      = level.time - level.time % DEFAULT_SV_FRAMETIME;
+	body->lastBurnedFrameTime = level.time - level.time % DEFAULT_SV_FRAMETIME;
 
 	// fill in our own origin if we have no flamechunk
 	if (chunk != NULL)
