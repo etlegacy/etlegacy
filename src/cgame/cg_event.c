@@ -2959,6 +2959,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		// play sound
 		sound = CG_GetGameSound(GAMESOUND_MISC_REVIVE);
+
 		if (sound)
 		{
 			trap_S_StartSoundVControl(es->origin, es->number, CHAN_VOICE, sound, 255);

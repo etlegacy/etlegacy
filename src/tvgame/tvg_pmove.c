@@ -84,7 +84,7 @@ static void TVG_PM_UpdateViewAngles(playerState_t *ps, usercmd_t *cmd)
 {
 	short  temp;
 	int    i;
-	vec3_t oldViewAngles;
+	// vec3_t oldViewAngles;
 
 	if (ps->pm_type == PM_INTERMISSION || (ps->pm_flags & PMF_TIME_LOCKPLAYER))
 	{
@@ -95,7 +95,7 @@ static void TVG_PM_UpdateViewAngles(playerState_t *ps, usercmd_t *cmd)
 		return;     // no view changes at all
 	}
 
-	VectorCopy(ps->viewangles, oldViewAngles);
+	// VectorCopy(ps->viewangles, oldViewAngles);
 
 	// circularly clamp the angles with deltas
 	// - game-side delta_angles modifications are broken here if you exclude the ROLL calculation
@@ -764,9 +764,11 @@ static qboolean TVG_PM_SlideMove(qboolean gravity)
 static void TVG_PM_StepSlideMove(qboolean gravity)
 {
 	vec3_t  start_o, start_v;
-	vec3_t  down_o, down_v;
+	// vec3_t  down_o, down_v;
 	trace_t trace;
 	vec3_t  up, down;
+
+	float delta;
 
 	VectorCopy(pm->ps->origin, start_o);
 	VectorCopy(pm->ps->velocity, start_v);
@@ -826,8 +828,8 @@ static void TVG_PM_StepSlideMove(qboolean gravity)
 		return;
 	}
 
-	VectorCopy(pm->ps->origin, down_o);
-	VectorCopy(pm->ps->velocity, down_v);
+	// VectorCopy(pm->ps->origin, down_o);
+	// VectorCopy(pm->ps->velocity, down_v);
 
 	VectorCopy(start_o, up);
 	up[2] += STEPSIZE;
@@ -865,7 +867,7 @@ static void TVG_PM_StepSlideMove(qboolean gravity)
 	}
 
 	// use the step move
-	float delta = pm->ps->origin[2] - start_o[2];
+	delta = pm->ps->origin[2] - start_o[2];
 
 	if (delta > 2)
 	{
