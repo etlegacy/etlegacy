@@ -27,7 +27,7 @@ jobs:
 
       - name: Check for valid formatting
         run: |
-          sudo apt-get install -y install uncrustify
+          sudo apt-get install -y uncrustify
           sh misc/check-pr.sh
 
   # Try to figure out the build version information only once

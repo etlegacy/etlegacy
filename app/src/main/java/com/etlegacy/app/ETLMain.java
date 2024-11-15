@@ -1,17 +1,15 @@
 package com.etlegacy.app;
 
-import static android.os.Environment.getExternalStoragePublicDirectory;
-
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,20 +18,26 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.Manifest;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class ETLMain extends Activity {
+public class ETLMain extends AppCompatActivity {
 
 	private static final String PACK_TAG = "PK3";
-	private String[] PERMISSIONS;
 
 	/**
 	 * Shows ProgressBar
@@ -53,20 +57,73 @@ public class ETLMain extends Activity {
 		return asyncDialog;
 	}
 
-	private boolean hasPermissions(Context context, String... PERMISSIONS) {
+	public boolean checkStoragePermissions(){
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+			//Android is 11 (R) or above
+			return Environment.isExternalStorageManager();
+		}else {
+			//Below android 11
+			int write = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+			int read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+			int bluetooth = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH);
+			int internet = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
 
-		if (context != null && PERMISSIONS != null) {
+			return read == PackageManager.PERMISSION_GRANTED && write == PackageManager.PERMISSION_GRANTED && bluetooth == PackageManager.PERMISSION_GRANTED
+				&& internet == PackageManager.PERMISSION_GRANTED;
+		}
+	}
 
-			for (String permission: PERMISSIONS){
-
-				if (ActivityCompat.checkSelfPermission(context,permission) != PackageManager.PERMISSION_GRANTED) {
-					return false;
-				}
+	private void requestForStoragePermissions() {
+		//Android is 11 (R) or above
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+			try {
+				Intent intent = new Intent();
+				intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+				Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+				intent.setData(uri);
+				storageActivityResultLauncher.launch(intent);
+			}catch (Exception e){
+				Intent intent = new Intent();
+				intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+				storageActivityResultLauncher.launch(intent);
 			}
+		}else{
+			//Below android 11
+			ActivityCompat.requestPermissions(
+				this,
+				new String[]{
+					Manifest.permission.WRITE_EXTERNAL_STORAGE,
+					Manifest.permission.READ_EXTERNAL_STORAGE,
+					Manifest.permission.BLUETOOTH,
+					Manifest.permission.INTERNET
+				},
+				1
+			);
 		}
 
-		return true;
 	}
+
+	private final ActivityResultLauncher<Intent> storageActivityResultLauncher =
+		registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+			new ActivityResultCallback<ActivityResult>(){
+
+				@Override
+				public void onActivityResult(ActivityResult o) {
+					if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+						//Android is 11 (R) or above
+						if(Environment.isExternalStorageManager()){
+							//Manage External Storage Permissions Granted
+							Start();
+							Log.d("PERMISSION", "onActivityResult: Manage External Storage Permissions Granted");
+						}else{
+							Log.d("PERMISSION", "onActivityResult: Manage External Storage Permissions Denied");
+						}
+					}else{
+						//Below android 11
+						Start();
+					}
+				}
+			});
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -106,16 +163,6 @@ public class ETLMain extends Activity {
 		}
 	}
 
-	/**
-	 * Convert pixel metrics to dp
-	 *
-	 * @param px value of px to be converted
-	 * @return dp
-	 */
-	public static int pxToDp(int px) {
-		return (int) (px / Resources.getSystem().getDisplayMetrics().density);
-	}
-
 	public void Start() {
 		Path etmain = null;
 		Path legacy = null;
@@ -126,8 +173,8 @@ public class ETLMain extends Activity {
 		}
 
 		try {
-			etmain = Objects.requireNonNull(getExternalStoragePublicDirectory( Environment.DIRECTORY_DOCUMENTS + "/etlegacy/etmain")).toPath();
-			legacy = Objects.requireNonNull(getExternalStoragePublicDirectory( Environment.DIRECTORY_DOCUMENTS + "/etlegacy/legacy")).toPath();
+			etmain = Paths.get(Objects.requireNonNull(getExternalFilesDir(null)).toPath() + "/etlegacy/etmain");
+			legacy = Paths.get(Objects.requireNonNull(getExternalFilesDir(null)).toPath() + "/etlegacy/legacy");
 		} catch (Exception e) {
 			Log.e("ASSETS", "Could not fetch the external files directory", e);
 		}
@@ -204,16 +251,6 @@ public class ETLMain extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-			PERMISSIONS = new String[] {
-
-				Manifest.permission.WRITE_EXTERNAL_STORAGE,
-				Manifest.permission.READ_EXTERNAL_STORAGE,
-				Manifest.permission.BLUETOOTH,
-				Manifest.permission.INTERNET
-			};
-		}
-
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 							 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -235,9 +272,10 @@ public class ETLMain extends Activity {
 		etlLayout.addView(imageView, etlParams);
 		setContentView(etlLayout);
 
-		if (!hasPermissions(ETLMain.this,PERMISSIONS)) {
-			ActivityCompat.requestPermissions(ETLMain.this,PERMISSIONS,1);
-		}else {
+		if (!checkStoragePermissions()) {
+			requestForStoragePermissions();
+		}
+		else {
 			Start();
 		}
 

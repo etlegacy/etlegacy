@@ -1604,7 +1604,9 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		isblocked = IsBinaryMoverBlocked(ent, other, activator);
 	}
 
-	BG_AnimScriptEvent(&other->client->ps, other->client->pers.character->animModelInfo, ANIM_ET_ACTIVATE, qfalse);
+	if (other && other->client) {
+		BG_AnimScriptEvent(&other->client->ps, other->client->pers.character->animModelInfo, ANIM_ET_ACTIVATE, qfalse);
+	}
 
 	if (isblocked)
 	{

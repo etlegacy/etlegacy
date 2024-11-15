@@ -756,11 +756,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	fn = FS_BuildOSPath(base, gamedir, fname);
 	Com_Printf("Sys_LoadDll(%s)... ", fn);
 
-#ifndef __ANDROID__
 	libHandle = Sys_LoadLibrary(fn);
-#else
-	libHandle = Sys_LoadLibrary(fname);
-#endif
 
 	if (!libHandle)
 	{
@@ -1326,11 +1322,17 @@ int main(int argc, char **argv)
 		CFRelease(url);
 		CFRelease(url2);
 	}
+#elif __ANDROID__
+    Sys_SetBinaryPath(Sys_Dirname(Cmd_Argv(1)));
 #else
-	Sys_SetBinaryPath(Sys_Dirname(argv[0]));
+    Sys_SetBinaryPath(Sys_Dirname(argv[0]));
 #endif
 
-	Sys_SetDefaultInstallPath(DEFAULT_BASEDIR); // Sys_BinaryPath() by default
+#ifndef __ANDROID__
+    Sys_SetDefaultInstallPath(DEFAULT_BASEDIR); // Sys_BinaryPath() by default
+#else
+    Sys_SetDefaultInstallPath(Cmd_Argv(1)); // Sys_BinaryPath() by default
+#endif
 
 	// Concatenate the command line for passing to Com_Init
 	Sys_BuildCommandLine(argc, argv, commandLine, sizeof(commandLine));

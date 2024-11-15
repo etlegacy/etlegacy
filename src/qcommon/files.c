@@ -2669,7 +2669,7 @@ int FS_ReadFile(const char *qpath, void **buffer)
 	buf[len] = 0;
 	FS_FCloseFile(h);
 
-	// if we are journalling and it is a config file, write it to the journal file
+	// if we are journaling, and it is a config file, write it to the journal file
 	if (isConfig && com_journal && com_journal->integer == 1)
 	{
 		Com_DPrintf("Writing %s to journal file.\n", qpath);
