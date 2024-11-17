@@ -67,6 +67,75 @@
 #endif
 
 #ifdef __ANDROID__
+#include <jni.h>
+qboolean call_copyIntoAPPDirectory(JNIEnv* env, jobject javaObject, const char* filename) {
+    // Find the class of the Java object
+    jclass javaClass = (*env)->GetObjectClass(env, javaObject);
+    if (!javaClass) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find Java class.\n");
+        return qfalse;
+    }
+
+    // Get the method ID for the "copyIntoAPPDirectory" method
+    jmethodID methodID = (*env)->GetMethodID(env, javaClass, "copyIntoAPPDirectory", "(Ljava/lang/String;)Z");
+    if (!methodID) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find method copyIntoAPPDirectory.\n");
+        return qfalse;
+    }
+
+    // Convert the C string filename to a Java string
+    jstring javaFilename = (*env)->NewStringUTF(env, filename);
+    if (!javaFilename) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Java string.\n");
+        return qfalse;
+    }
+
+    // Call the Java method
+    jboolean result = (*env)->CallBooleanMethod(env, javaObject, methodID, javaFilename);
+
+    // Clean up local references
+    (*env)->DeleteLocalRef(env, javaFilename);
+
+    return result == JNI_TRUE;
+}
+
+qboolean invoke_copy_into_app_directory(const char* filename) {
+    JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
+
+    // Find the Java class containing the copyIntoAPPDirectory method
+    jclass javaClass = (*env)->FindClass(env, "com/etlegacy/app/ETLActivity"); // Replace with your actual Java class name
+    if (!javaClass) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find Java class.\n");
+        return qfalse;
+    }
+
+    // Get the constructor for the Java class
+    jmethodID constructor = (*env)->GetMethodID(env, javaClass, "<init>", "(Landroid/content/Context;)V");
+    if (!constructor) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find constructor.\n");
+        return qfalse;
+    }
+
+    // Get the application context (replace with a valid Context jobject)
+    jobject appContext = SDL_AndroidGetActivity(); // You need to pass a valid Android context object here
+
+    // Create an instance of the Java class
+    jobject javaObject = (*env)->NewObject(env, javaClass, constructor, appContext);
+    if (!javaObject) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Java object.\n");
+        return qfalse;
+    }
+
+    // Call the copyIntoAPPDirectory method
+    qboolean result = call_copyIntoAPPDirectory(env, javaObject, filename);
+
+    // Clean up local references
+    (*env)->DeleteLocalRef(env, javaObject);
+    (*env)->DeleteLocalRef(env, javaClass);
+
+    return result;
+}
+
 // Android must exit out of the main call..
 #define MAIN_MUST_RETURN
 #endif
@@ -756,7 +825,21 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	fn = FS_BuildOSPath(base, gamedir, fname);
 	Com_Printf("Sys_LoadDll(%s)... ", fn);
 
+#ifndef __ANDROID__
 	libHandle = Sys_LoadLibrary(fn);
+#else
+    if (invoke_copy_into_app_directory(fn))
+    {
+        char *path = NULL;
+        Q_strncpyz(path, SDL_AndroidGetInternalStoragePath(), sizeof(path));
+        Q_strcat(path, sizeof(path), fname);
+        libHandle = Sys_LoadLibrary(path);
+    }
+    else
+    {
+        libHandle = Sys_LoadLibrary(fname);
+    }
+#endif
 
 	if (!libHandle)
 	{
