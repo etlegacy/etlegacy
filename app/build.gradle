@@ -40,7 +40,7 @@ static def getVersionShort() {
 
 android {
 	namespace "com.etlegacy.app"
-	compileSdk 33
+	compileSdk 34
 	defaultConfig {
 		if (buildAsApplication) {
 			applicationId "com.etlegacy.app"
@@ -157,8 +157,8 @@ android {
 dependencies {
 	api 'com.etlegacy.android:joystick:+'
 	// api 'com.etlegacy.android:joystick:1.1.1-SNAPSHOT'
-	implementation 'com.google.guava:guava:33.1.0-android'
-	implementation 'androidx.appcompat:appcompat:1.6.1'
+	implementation 'androidx.appcompat:appcompat:1.7.0'
+	implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
 
 	testImplementation 'junit:junit:4.13.2'
 	androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.0'
