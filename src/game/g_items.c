@@ -788,7 +788,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		te->s.eventParm = ent->s.modelindex;
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
-    
+
 	// fire item targets
 	G_UseTargets(ent, other);
 
@@ -895,11 +895,14 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 		dropped->think                          = Team_DroppedFlagThink;
 		dropped->nextthink                      = level.time + 30000;
 
-		if (level.gameManager)
+		if (flag && flag->item)
 		{
-			G_Script_ScriptEvent(level.gameManager, "trigger", flag->item->giPowerUp == PW_REDFLAG ? "allied_object_dropped" : "axis_object_dropped");
+			if (level.gameManager)
+			{
+				G_Script_ScriptEvent(level.gameManager, "trigger", flag->item->giPowerUp == PW_REDFLAG ? "allied_object_dropped" : "axis_object_dropped");
+			}
+			G_Script_ScriptEvent(flag, "trigger", "dropped");
 		}
-		G_Script_ScriptEvent(flag, "trigger", "dropped");
 	}
 	else     // auto-remove after 30 seconds
 	{
