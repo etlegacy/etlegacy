@@ -65,7 +65,7 @@ qboolean stdinIsATTY;
 static char homePath[MAX_OSPATH] = { 0 };
 
 #ifdef  __ANDROID__
-static char *Sys_CdToExtStorage(void)
+char *Sys_CdToExtStorage(void)
 {
     JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
     jthrowable exception;

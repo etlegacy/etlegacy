@@ -103,7 +103,7 @@ qboolean invoke_copy_into_app_directory(const char* filename) {
     JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
 
     // Find the Java class containing the copyIntoAPPDirectory method
-    jclass javaClass = (*env)->FindClass(env, "com/etlegacy/app/ETLActivity"); // Replace with your actual Java class name
+    jclass javaClass = (*env)->FindClass(env, "com/etlegacy/app/CopyToInternal"); // Replace with your actual Java class name
     if (!javaClass) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find Java class.\n");
         return qfalse;
@@ -828,16 +828,21 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 #ifndef __ANDROID__
 	libHandle = Sys_LoadLibrary(fn);
 #else
-    if (invoke_copy_into_app_directory(fn))
+    char fnhomepath[MAX_OSPATH] = { 0 };
+
+    Q_strncpyz(fnhomepath, Sys_CdToExtStorage(), sizeof(fnhomepath));
+    Q_strcat(fnhomepath, sizeof(fnhomepath), "/Documents/etlegacy/");
+    Q_strcat(fnhomepath, sizeof(fnhomepath), gamedir);
+    Q_strcat(fnhomepath, sizeof(fnhomepath), "/");
+    Q_strcat(fnhomepath, sizeof(fnhomepath), fname);
+
+    if (invoke_copy_into_app_directory(fnhomepath))
     {
-        char *path = NULL;
+        char path[MAX_OSPATH] = { 0 };
         Q_strncpyz(path, SDL_AndroidGetInternalStoragePath(), sizeof(path));
+        Q_strcat(path, sizeof(path), "/");
         Q_strcat(path, sizeof(path), fname);
         libHandle = Sys_LoadLibrary(path);
-    }
-    else
-    {
-        libHandle = Sys_LoadLibrary(fname);
     }
 #endif
 
