@@ -736,11 +736,9 @@ extern vmCvar_t tvg_maxclients;               ///< allow this many total, includ
 
 extern vmCvar_t g_password;
 extern vmCvar_t sv_privatepassword;
-extern vmCvar_t g_debugBullets;
 
 extern vmCvar_t tvg_inactivity;
 extern vmCvar_t g_debugAlloc;
-extern vmCvar_t g_debugBullets;
 extern vmCvar_t tvg_motd;
 
 extern vmCvar_t tvg_voiceChatsAllowed;        ///< number before spam control
@@ -778,8 +776,6 @@ extern vmCvar_t tvg_voiceChatsAllowed;
 extern vmCvar_t tvg_protect;
 
 // misc
-extern vmCvar_t team_riflegrenades;
-
 extern vmCvar_t sv_fps;
 
 extern vmCvar_t tvg_extendedNames;

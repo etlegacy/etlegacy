@@ -473,7 +473,6 @@ void TVG_FreeEntity(gentity_t *ent)
 	// before all game entities did relax - now  ET_TEMPHEAD, ET_TEMPLEGS and ET_EVENTS no longer relax
 	// - fix: ET_TEMP* entities are linked for a short amount of time but have no ent->r.svFlags set
 	// - optimization: if events are freed EVENT_VALID_MSEC has already passed (keep in mind these are broadcasted)
-	// - when enabled g_debugHitboxes, g_debugPlayerHitboxes or g_debugbullets 3 we want visible trace effects - don't free immediately
 	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
 	if (ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS)
 	{
