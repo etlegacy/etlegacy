@@ -440,29 +440,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		return 2000;
 	}
 
-	public boolean copyIntoAPPDirectory(String filename) {
-		File appLibDir = getFilesDir();  // App-specific directory
-		File libFile = new File(appLibDir, filename.substring(filename.lastIndexOf("/")+1));
-		// Copy library to appLibDir
-		if (libFile.exists()) {
-			libFile.delete();
-			try (InputStream in = Files.newInputStream(Paths.get(filename));
-				 OutputStream out = Files.newOutputStream(libFile.toPath())) {
-				byte[] buffer = new byte[4096];
-				int len;
-				while ((len = in.read(buffer)) > 0) {
-					out.write(buffer, 0, len);
-				}
-				return true;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		//// Load the library from the app's directory
-		//System.load(libFile.getAbsolutePath());
-		return false;
-	}
-
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if (hasFocus) {
