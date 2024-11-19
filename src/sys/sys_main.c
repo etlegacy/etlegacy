@@ -1236,7 +1236,7 @@ void Sys_SigHandler(int signal)
 	}
 	else if (signal == SIGSEGV)
 	{
-#if defined(__linux__) && !defined(__ANDROID__)
+#if defined(__linux__) && defined(__ANDROID_API__) >= 33
 		Sys_Backtrace(signal);
 		// NOTE : must not exit here, otherwise OS might not create coredumps
 #else
