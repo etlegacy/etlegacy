@@ -40,14 +40,14 @@ static def getVersionShort() {
 
 android {
 	namespace "com.etlegacy.app"
-	compileSdk 34
+	compileSdk 35
 	defaultConfig {
 		if (buildAsApplication) {
 			applicationId "com.etlegacy.app"
 		}
 		minSdkVersion 26
-		//noinspection OldTargetApi
-		targetSdk 33
+		//noinspection EditedTargetSdkVersion
+		targetSdk 35
 		versionCode 1
 		versionName getVersionShort()
 		base {
