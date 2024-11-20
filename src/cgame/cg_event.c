@@ -465,65 +465,64 @@ static void CG_ItemPickup(int itemNum)
 			cg.weaponSelectDuringFiring = (cg.snap->ps.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 		}
 
-		if (cg_autoswitch.integer && cg.predictedPlayerState.weaponstate != WEAPON_RELOADING)
+		if (!cg_autoswitch.integer || cg.predictedPlayerState.weaponstate == WEAPON_RELOADING)
 		{
-			//  0 - "Off"
-			//  1 - "Always Switch"
-			//  2 - "If New"
-			//  3 - "If Better"
-			//  4 - "New or Better"
+			return;
+		}
 
-			// don't ever autoswitch to secondary fire weapons
-			// Leave autoswitch to secondary kar/carbine as they use alt ammo and arent zoomed: Note, not that it would do this anyway as it isnt in a bank....
-			if (!(GetWeaponTableData(itemid)->type & WEAPON_TYPE_SCOPED) && itemid != WP_AMMO)
+		// don't ever autoswitch to secondary fire weapons
+		// Leave autoswitch to secondary kar/carbine as they use alt ammo and aren't zoomed: Note, not that it would do this anyway as it isn't in a bank....
+		if (GetWeaponTableData(itemid)->type & WEAPON_TYPE_SCOPED ||
+		    (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_RIFLENADE && GetWeaponTableData(itemid)->type & WEAPON_TYPE_RIFLE) ||
+		    itemid == WP_AMMO)
+		{
+			return;
+		}
+
+		//  0 - "Off"
+		//  1 - "Always Switch"
+		//  2 - "If New"
+		//  3 - "If Better"
+		//  4 - "New or Better"
+
+		// no weap currently selected or cg_autoswitch 1 - always just select the new one
+		if (!cg.weaponSelect || cg_autoswitch.integer == 1)
+		{
+			cg.weaponSelectTime         = cg.time;
+			cg.weaponSelect             = itemid;
+			cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
+		}
+		else
+		{
+			// 2 - switch to weap if it's not already in the player's inventory (Wolf default)
+			// 4 - both 2 and 3
+
+			// FIXME:   this works fine for predicted pickups (when you walk over the weapon), but not for
+			//          manual pickups (activate item)
+			if (cg_autoswitch.integer == 2 || cg_autoswitch.integer == 4)
 			{
-				// no weap currently selected, always just select the new one
-				if (!cg.weaponSelect)
+				if (!COM_BitCheck(cg.snap->ps.weapons, itemid))
 				{
 					cg.weaponSelectTime         = cg.time;
 					cg.weaponSelect             = itemid;
 					cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 				}
-				// 1 - always switch to new weap
-				else if (cg_autoswitch.integer == 1)
-				{
-					cg.weaponSelectTime         = cg.time;
-					cg.weaponSelect             = itemid;
-					cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
-				}
-				else
-				{
-					// 2 - switch to weap if it's not already in the player's inventory (Wolf default)
-					// 4 - both 2 and 3
+			}
 
-					// FIXME:   this works fine for predicted pickups (when you walk over the weapon), but not for
-					//          manual pickups (activate item)
-					if (cg_autoswitch.integer == 2 || cg_autoswitch.integer == 4)
+			// 3 - switch to weap if it's in a bank greater than the current weap
+			// 4 - both 2 and 3
+			if (cg_autoswitch.integer == 3 || cg_autoswitch.integer == 4)
+			{
+				// switch away only if a primary weapon is selected (read: don't switch away if current weap is a secondary mode)
+				if (CG_WeaponIndex(cg.weaponSelect, &wpbank_cur, NULL))
+				{
+					if (CG_WeaponIndex(itemid, &wpbank_pickup, NULL))
 					{
-						if (!COM_BitCheck(cg.snap->ps.weapons, itemid))
+						if (wpbank_pickup > wpbank_cur)
 						{
 							cg.weaponSelectTime         = cg.time;
 							cg.weaponSelect             = itemid;
 							cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
-						}
-					}
-
-					// 3 - switch to weap if it's in a bank greater than the current weap
-					// 4 - both 2 and 3
-					if (cg_autoswitch.integer == 3 || cg_autoswitch.integer == 4)
-					{
-						// switch away only if a primary weapon is selected (read: don't switch away if current weap is a secondary mode)
-						if (CG_WeaponIndex(cg.weaponSelect, &wpbank_cur, NULL))
-						{
-							if (CG_WeaponIndex(itemid, &wpbank_pickup, NULL))
-							{
-								if (wpbank_pickup > wpbank_cur)
-								{
-									cg.weaponSelectTime         = cg.time;
-									cg.weaponSelect             = itemid;
-									cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
-								}
-							}
 						}
 					}
 				}
