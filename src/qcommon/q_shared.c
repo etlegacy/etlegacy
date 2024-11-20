@@ -2096,6 +2096,8 @@ int Q_ParseColor(const char *colString, float *outColor)
 		return qfalse;
 	}
 
+	outColor[3] = 1.0f;
+
 	// if there is a hex prefix
 	if (*s == '0' && (*(s + 1) == 'x' || *(s + 1) == 'X'))
 	{
