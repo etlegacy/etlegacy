@@ -1910,10 +1910,6 @@ static void CG_ScanForCrosshairEntity()
 		return;
 	}
 
-	// Default: We're not looking at a client
-	cg.crosshairNotLookingAtClient = qtrue;
-	cg.crosshairClientNoShoot      = qfalse;
-
 	if (cg.renderingThirdPerson)
 	{
 		// track the medic we are locked on
@@ -1994,6 +1990,10 @@ static void CG_ScanForCrosshairEntity()
 			cg.crosshairEntNum       = cent->currentState.number;
 			cg.crosshairEntTime      = cg.time;
 			cg.identifyClientRequest = cg.crosshairEntNum;
+
+			// We're not looking at a client
+			cg.crosshairNotLookingAtClient = qtrue;
+			cg.crosshairClientNoShoot      = qfalse;
 		}
 
 		// is a dynamite or landmine and server allow displaying owner name (g_misc cvar)
@@ -2005,6 +2005,10 @@ static void CG_ScanForCrosshairEntity()
 			cg.crosshairEntNum       = cent->currentState.number;
 			cg.crosshairEntTime      = cg.time;
 			cg.identifyClientRequest = cg.crosshairEntNum;
+
+			// We're not looking at a client
+			cg.crosshairNotLookingAtClient = qtrue;
+			cg.crosshairClientNoShoot      = qfalse;
 		}
 
 		return;
@@ -2015,8 +2019,8 @@ static void CG_ScanForCrosshairEntity()
 		return;
 	}
 
-	// Default: We're not looking at a client
 	cg.crosshairNotLookingAtClient = qfalse;
+	cg.crosshairClientNoShoot      = qfalse;
 
 	// update the fade timer
 	cg.crosshairEntNum  = trace.entityNum;
@@ -2028,10 +2032,7 @@ static void CG_ScanForCrosshairEntity()
 
 	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 	{
-		if (cgs.clientinfo[cg.crosshairEntNum].team == cgs.clientinfo[cg.clientNum].team)
-		{
-			cg.crosshairClientNoShoot = qtrue;
-		}
+		cg.crosshairClientNoShoot = cgs.clientinfo[cg.crosshairEntNum].team == cgs.clientinfo[cg.clientNum].team;
 	}
 }
 
