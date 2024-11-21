@@ -1389,12 +1389,14 @@ static void IN_WindowFocusLost()
 		// If according to the game flags we should minimize,
 		// then lets actually make sure and ask the windowing system for its opinion.
 		flags = SDL_GetWindowFlags(GLimp_MainWindow());
+#ifndef __ANDROID__
 		if (flags & SDL_WINDOW_FULLSCREEN && flags & SDL_WINDOW_SHOWN && !(flags & SDL_WINDOW_MINIMIZED) && flags & SDL_WINDOW_INPUT_GRABBED)
 		{
 			Com_DPrintf("SDL says we are good to go and call minimize.\n");
 			Cbuf_ExecuteText(EXEC_NOW, "minimize");
 		}
 		else
+#endif
 		{
 			Com_DPrintf("SDL did not think we should minimize, trashing event.\n");
 			SDL_RaiseWindow(mainScreen);
