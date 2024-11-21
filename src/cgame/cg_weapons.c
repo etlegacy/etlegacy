@@ -5922,7 +5922,7 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 }
 
 /**
- * @brief Renders bullet tracers if  tracer option is valid.
+ * @brief Renders bullet tracers if tracer option is valid.
  * @param[in] pstart
  * @param[in] pend
  * @param[in] sourceEntityNum
@@ -5930,12 +5930,12 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
  */
 void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum)
 {
-	if (cg_tracers.integer == 2 && sourceEntityNum != cg.clientNum)
+	if (cg_tracers.integer == 2 && sourceEntityNum != cg.snap->ps.clientNum)
 	{
 		return; // Only own tracers
 	}
 
-	if (cg_tracers.integer == 3 && sourceEntityNum == cg.clientNum)
+	if (cg_tracers.integer == 3 && sourceEntityNum == cg.snap->ps.clientNum)
 	{
 		return; // Only others tracers
 	}
