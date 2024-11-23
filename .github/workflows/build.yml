@@ -288,12 +288,12 @@ jobs:
 
       - name: Prepare artifacts
         run: |
-          mv ./app/build/intermediates/merged_native_libs/*/out/lib/arm64-v8a/libcgame*.so .
-          mv ./app/build/intermediates/merged_native_libs/*/out/lib/arm64-v8a/libui*.so .
-          mv ./app/build/intermediates/merged_native_libs/*/out/lib/x86/libcgame*.so .
-          mv ./app/build/intermediates/merged_native_libs/*/out/lib/x86/libui*.so .
-          mv ./app/build/intermediates/merged_native_libs/*/out/lib/x86_64/libcgame*.so .
-          mv ./app/build/intermediates/merged_native_libs/*/out/lib/x86_64/libui*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/mergeReleaseNativeLibs/out/lib/arm64-v8a/libcgame*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/mergeReleaseNativeLibs/out/lib/arm64-v8a/libui*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/mergeReleaseNativeLibs/out/lib/x86/libcgame*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/mergeReleaseNativeLibs/out/lib/x86/libui*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/mergeReleaseNativeLibs/out/lib/x86_64/libcgame*.so .
+          mv ./app/build/intermediates/merged_native_libs/*/mergeReleaseNativeLibs/out/lib/x86_64/libui*.so .
           ls -ltrah
 
       - name: Upload arm64-v8a
