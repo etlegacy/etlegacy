@@ -10,17 +10,20 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
-    <!-- Game controller support -->
-    <uses-feature
-        android:name="android.hardware.gamepad"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.usb.host"
-        android:required="false" />
-    <!-- External mouse input events -->
-    <uses-feature
-        android:name="android.hardware.type.pc"
-        android:required="false" />
+	<!-- Game controller support -->
+	<uses-feature
+		android:name="android.hardware.bluetooth"
+		android:required="false" />
+	<uses-feature
+		android:name="android.hardware.gamepad"
+		android:required="false" />
+	<uses-feature
+		android:name="android.hardware.usb.host"
+		android:required="false" />
+	<!-- External mouse input events -->
+	<uses-feature
+		android:name="android.hardware.type.pc"
+		android:required="false" />
     <!-- Allow access to internet -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Allow writing to external storage and reading from it -->
