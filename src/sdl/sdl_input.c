@@ -570,17 +570,19 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 	return key;
 }
 
+#define SIZE_EV 64
+
 /**
  * @brief IN_GobbleMotionEvents
  */
 static void IN_GobbleMotionEvents(void)
 {
-	SDL_Event dummy[1];
+    SDL_Event *dummy = Com_Allocate(SIZE_EV * sizeof(*dummy));
 
 	// Gobble any mouse motion events
 	SDL_PumpEvents();
-	while (SDL_PeepEvents(dummy, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0)
-		;
+    while (SDL_PeepEvents(dummy, SIZE_EV, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT))
+        ;
 }
 
 /**
