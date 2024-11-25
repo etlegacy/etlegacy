@@ -1341,6 +1341,10 @@ void R_Register(void)
 
 	r_collapseStages = ri.Cvar_Get("r_collapseStages", "1", CVAR_LATCH | CVAR_CHEAT);
 	r_picMip         = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
+<<<<<<< HEAD
+=======
+	ri.Cvar_CheckRange(r_picMip, 0, 8, qtrue);
+>>>>>>> 036e80d19 (Remove common graphic settings restriction.)
 	r_roundImagesDown      = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_colorMipLevels       = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
 	r_simpleMipMaps        = ri.Cvar_Get("r_simpleMipMaps", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
