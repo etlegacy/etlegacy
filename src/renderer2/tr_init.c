@@ -1341,7 +1341,6 @@ void R_Register(void)
 
 	r_collapseStages = ri.Cvar_Get("r_collapseStages", "1", CVAR_LATCH | CVAR_CHEAT);
 	r_picMip         = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_picMip, 0, 3, qtrue);
 	r_roundImagesDown      = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_colorMipLevels       = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
 	r_simpleMipMaps        = ri.Cvar_Get("r_simpleMipMaps", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
@@ -1374,11 +1373,7 @@ void R_Register(void)
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
 
-	ri.Cvar_CheckRange(r_overBrightBits, 0, 1, qtrue); // limit to overbrightbits 1 (sorry 1337 players)
-	ri.Cvar_CheckRange(r_mapOverBrightBits, 0, 3, qtrue);
-
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);
-	ri.Cvar_CheckRange(r_intensity, 0, 1.5, qfalse);
 
 	r_singleShader            = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_drawFoliage             = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT | CVAR_LATCH);
