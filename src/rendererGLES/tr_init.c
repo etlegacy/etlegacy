@@ -1020,10 +1020,7 @@ void R_Register(void)
 	r_extMaxAnisotropy            = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE_ND | CVAR_LATCH);
 
 	r_picMip = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);          // mod for DM and DK for id build.  was "1" - pushed back to 1
-<<<<<<< HEAD
-=======
 	ri.Cvar_CheckRange(r_picMip, 0, 8, qtrue);
->>>>>>> 036e80d19 (Remove common graphic settings restriction.)
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
 
 	r_colorMipLevels = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
@@ -1031,10 +1028,7 @@ void R_Register(void)
 	r_textureBits    = ri.Cvar_Get("r_texturebits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 
 	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);        // disable overbrightbits by default
-<<<<<<< HEAD
-=======
 	ri.Cvar_CheckRange(r_overBrightBits, 0, 1, qtrue); // limit to overbrightbits 1 (sorry 1337 players)
->>>>>>> 036e80d19 (Remove common graphic settings restriction.)
 	r_simpleMipMaps = ri.Cvar_Get("r_simpleMipMaps", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_uiFullScreen  = ri.Cvar_Get("r_uifullscreen", "0", 0);
 
@@ -1045,7 +1039,9 @@ void R_Register(void)
 
 	// temporary latched variables that can only change over a restart
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_ARCHIVE_ND | CVAR_LATCH);
+	ri.Cvar_CheckRange(r_mapOverBrightBits, 0, 3, qtrue);
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);
+	ri.Cvar_CheckRange(r_intensity, 0, 1.5, qfalse);
 	r_singleShader = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH);
 
 	// archived variables that can change at any time
