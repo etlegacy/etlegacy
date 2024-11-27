@@ -35,7 +35,7 @@
 
 #include "cg_local.h"
 
-static int x, y;
+static float x, y;
 
 static const float *cached_color = NULL;
 
@@ -113,8 +113,8 @@ void CG_DrawCustomCrosshair()
 	static float   crossGap, crossSpread;
 	static uint8_t outlineRounded;
 
-	x = (cgs.glconfig.vidWidth / 2);
-	y = (cgs.glconfig.vidHeight / 2);
+	x = (float)cgs.glconfig.vidWidth / 2 + cg_crosshairX.value;
+	y = (float)cgs.glconfig.vidHeight / 2 + cg_crosshairY.value;
 
 	crossSpread = CG_CustomCrosshairCalcSpread();
 	crossGap    = cg_customCrosshairCrossGap.value + crossSpread;
@@ -136,7 +136,8 @@ void CG_DrawCustomCrosshair()
 			bgColor          = cgs.customCrosshairDotOutlineColor;
 
 			// TODO : make rounded look proper > 1.0 outlineWidth as well
-			if (outlineWidth > 1.0) {
+			if (outlineWidth > 1.0)
+			{
 				outlineRounded = qfalse;
 			}
 
@@ -158,7 +159,8 @@ void CG_DrawCustomCrosshair()
 			bgColor          = cgs.customCrosshairCrossOutlineColor;
 
 			// TODO : make rounded look proper > 1.0 outlineWidth as well
-			if (outlineWidth > 1.0) {
+			if (outlineWidth > 1.0)
+			{
 				outlineRounded = qfalse;
 			}
 
@@ -199,7 +201,8 @@ void CG_DrawCustomCrosshair()
 		bgColor          = cgs.customCrosshairCrossOutlineColor;
 
 		// TODO : make rounded look proper > 1.0 outlineWidth as well
-		if (outlineWidth > 1.0) {
+		if (outlineWidth > 1.0)
+		{
 			outlineRounded = qfalse;
 		}
 
