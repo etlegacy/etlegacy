@@ -1303,9 +1303,10 @@ static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
 
 gentity_t *G_Lua_CreateEntity(char *params)
 {
-	char *token;
-	char *p = params;
-	char key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
+	gentity_t *create;
+	char      *token;
+	char      *p = params;
+	char      key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
 
 	level.numSpawnVars     = 0;
 	level.numSpawnVarChars = 0;
@@ -1349,7 +1350,15 @@ gentity_t *G_Lua_CreateEntity(char *params)
 		level.numSpawnVars++;
 	}
 
-	return G_SpawnGEntityFromSpawnVars();
+	create = G_SpawnGEntityFromSpawnVars();
+
+	if (!create)
+	{
+		return NULL;
+	}
+
+	trap_LinkEntity(create);
+	return create;
 }
 
 // entnum = _et_G_Lua_CreateEntity( params )
