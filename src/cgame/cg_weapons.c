@@ -1853,6 +1853,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		int      i;
 		qboolean spunpart;
+		int      anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
 
 		for (i = W_PART_1; i < W_MAX_PARTS; i++)
 		{
@@ -1863,20 +1864,68 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					continue;
 				}
 			}
-			// blend out the right hand of garand after reloading
-			else if (weaponNum == WP_CARBINE)
+			// BLEND OUT SOME HANDS
+			// blend out the right hand of PF when not reloading
+			else if (weaponNum == WP_PANZERFAUST)
 			{
-				if (i == 2 /* right hand */ && cg.predictedPlayerEntity.pe.weap.frame > 57 && cg.predictedPlayerEntity.pe.weap.frame < 65)
+				if (i == 4 /* right hand */ && (ps->weaponstate != WEAPON_DROPPING))
 				{
 					continue;
 				}
 			}
-			// blend out the right hand of garand/m7 while attaching the rifle
-			// grenade to fix a shipped animation quirk where the hand would
-			// reappear on the bottom right at the last parts of the animation
-			else if (weaponNum == WP_M7)
+			// blend out the left hand of pistols
+			else if (weaponNum == WP_COLT || weaponNum == WP_LUGER || weaponNum == WP_SILENCED_COLT || weaponNum == WP_SILENCER)
 			{
-				if (i == 2 /* right hand */ && cg.predictedPlayerEntity.pe.weap.frame > 130 && cg.predictedPlayerEntity.pe.weap.frame < 136)
+				if ((i == 3 /* left hand */ && (ps->weaponstate != WEAPON_RELOADING /* show only during reload */))
+				    || (weaponNum == WP_SILENCER && i == 5 /* excess normally out-of-view hand */)
+				    || (weaponNum == WP_SILENCED_COLT && i == 6 /* excess normally out-of-view hand */))
+				{
+					continue;
+				}
+			}
+			// blend out the right hand of garand
+			else if (weaponNum == WP_CARBINE || weaponNum == WP_KAR98)
+			{
+				if (i == 2 /* right hand */ && (
+						// for some frames, after reloading
+						(cg.predictedPlayerEntity.pe.weap.frame > 57 && cg.predictedPlayerEntity.pe.weap.frame < 65)
+						// for every animation other than reloading...
+						|| (ps->weaponstate != WEAPON_RELOADING
+						    // ...except detaching rg
+						    && (anim != WEAP_ALTSWITCHTO))
+						))
+				{
+					continue;
+				}
+			}
+			// blend out the right hand of garand/m7
+			else if (weaponNum == WP_M7 || weaponNum == WP_GPG40)
+			{
+				if (i == 2 /* right hand */ && (
+						// for some frames, while attaching the rifle grenade to fix
+						// a shipped animation quirk where the hand would reappear on
+						// the bottom right at the last parts of the animation
+						(cg.predictedPlayerEntity.pe.weap.frame > 130 && cg.predictedPlayerEntity.pe.weap.frame < 136)
+						// blend out, except when attaching rg
+						|| anim != WEAP_ALTSWITCHFROM))
+				{
+					continue;
+				}
+			}
+			// blend out the right hand of scoped rifles
+			else if (weaponNum == WP_K43 || weaponNum == WP_GARAND)
+			{
+				if (i == 2 /* right hand */ &&
+				    ((cg.predictedPlayerEntity.pe.weap.frame > 58 && cg.predictedPlayerEntity.pe.weap.frame < 65) || ps->weaponstate != WEAPON_RELOADING))
+				{
+					continue;
+				}
+			}
+			// blend out the hand and the mag of thompson instead of freezing at lowest point during reloading for a few frames
+			else if (weaponNum == WP_THOMPSON)
+			{
+				if ((i == 1 /* mag */ || i == 2 /* hand */)
+				    && (cg.predictedPlayerEntity.pe.weap.frame > 28 && cg.predictedPlayerEntity.pe.weap.frame < 32))
 				{
 					continue;
 				}

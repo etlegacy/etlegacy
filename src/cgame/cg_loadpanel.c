@@ -341,7 +341,9 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 
 		if (ETLEGACY_VERSION_IS_DEVELOPMENT_BUILD)
 		{
-			CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, va("^1%s ^8DEVELOPMENT BUILD", MODNAME), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
+			y = 317;
+			CG_Text_Paint_Centred_Ext(x, y, 0.18f, 0.18f, clr3, va("^1%s ^8DEVELOPMENT BUILD", MODNAME), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
+			CG_Text_Paint_Centred_Ext(x, y + 7, 0.16f, 0.16f, clr3, va("^0%s", ETLEGACY_VERSION), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
 		}
 		else
 		{
