@@ -473,7 +473,7 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if (!cg.cursorHintValue)
 	{
 		return;
 	}
@@ -521,7 +521,7 @@ void CG_DrawCursorHintText(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if (!cg.cursorHintValue)
 	{
 		return;
 	}
