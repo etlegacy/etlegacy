@@ -2032,9 +2032,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				// reposition dynamite relative to hand (it pierced the hand by default)
 				else if (weaponNum == WP_DYNAMITE && i == 0)
 				{
+					// FIXME : rotation doesn't work as expected on YAW / PITCH angle
 					CG_Transform(&barrel, 0.9,
 					             0.6, 0.5, 1.4,
-					             13.0, 11.0, 18.0);
+					             0 /*13.0*/, 11.0, 0 /*18.0*/);
 				}
 				// reposition pineapple relative to hand (it hovered by default)
 				else if (weaponNum == WP_GRENADE_PINEAPPLE && i == 0)
