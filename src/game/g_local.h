@@ -1073,6 +1073,8 @@ struct gclient_s
 	char scores[MAX_SCORES_CMDS][MAX_STRING_CHARS];
 
 	damageReceivedStats_t dmgReceivedSts[MAX_CLIENTS];
+
+	int isSpawnInvulnerability;
 };
 
 /**

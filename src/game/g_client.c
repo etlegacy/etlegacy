@@ -3203,6 +3203,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		{
 			client->ps.powerups[PW_INVULNERABLE] = level.time + 3000;
 		}
+
+		client->isSpawnInvulnerability = !revived;
 	}
 
 	// no need to update character for revive
