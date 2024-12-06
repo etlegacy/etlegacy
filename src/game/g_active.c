@@ -538,6 +538,8 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 	// also put the start-point a bit forward, so we don't start the trace in solid..
 	VectorMA(start, 75.0f, forward, start);
 
+	G_HistoricalTraceBegin(ent);
+
 	// let's do 4 traces with increasing "beam width" to prioritize the player
 	// we are directly looking at, but also allow some more fuzzy angles with
 	// decreasing priority
@@ -545,18 +547,18 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 	{
 		if (i == 0)
 		{
-			G_HistoricalTrace(ent, &tr, start,
-			                  NULL, NULL,
-			                  end, ent->s.number, CONTENTS_BODY);
+			G_Trace(ent, &tr, start,
+			        NULL, NULL,
+			        end, ent->s.number, CONTENTS_BODY);
 		}
 		else
 		{
 			VectorMA(ent->r.mins, pow(4, i), enlargeMins, mins);
 			VectorMA(ent->r.maxs, pow(4, i), enlargeMaxs, maxs);
 
-			G_HistoricalTrace(ent, &tr, start,
-			                  mins, maxs,
-			                  end, ent->s.number, CONTENTS_BODY);
+			G_Trace(ent, &tr, start,
+			        mins, maxs,
+			        end, ent->s.number, CONTENTS_BODY);
 		}
 
 		if ((&g_entities[tr.entityNum])->client != NULL)
@@ -564,6 +566,8 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 			break;
 		}
 	}
+
+	G_HistoricalTraceEnd(ent);
 
 	if ((&g_entities[tr.entityNum])->client)
 	{
