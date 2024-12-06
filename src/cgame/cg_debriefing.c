@@ -2386,13 +2386,13 @@ void CG_Debriefing_ParsePlayerKillsDeaths(qboolean secondPart)
 
 	for (j = 0; i < max; i++, j++)
 	{
-		cgs.clientinfo[i].kills        = Q_atoi(CG_Argv((j * 6) + 1));
-		cgs.clientinfo[i].killsAssists = Q_atoi(CG_Argv((j * 6) + 2));
-		cgs.clientinfo[i].deaths       = Q_atoi(CG_Argv((j * 6) + 3));
-		cgs.clientinfo[i].gibs         = Q_atoi(CG_Argv((j * 6) + 4));
-		cgs.clientinfo[i].selfKills    = Q_atoi(CG_Argv((j * 6) + 5));
-		cgs.clientinfo[i].teamKills    = Q_atoi(CG_Argv((j * 6) + 6));
-		cgs.clientinfo[i].teamGibs     = Q_atoi(CG_Argv((j * 6) + 7));
+		cgs.clientinfo[i].kills        = Q_atoi(CG_Argv((j * 7) + 1));
+		cgs.clientinfo[i].killsAssists = Q_atoi(CG_Argv((j * 7) + 2));
+		cgs.clientinfo[i].deaths       = Q_atoi(CG_Argv((j * 7) + 3));
+		cgs.clientinfo[i].gibs         = Q_atoi(CG_Argv((j * 7) + 4));
+		cgs.clientinfo[i].selfKills    = Q_atoi(CG_Argv((j * 7) + 5));
+		cgs.clientinfo[i].teamKills    = Q_atoi(CG_Argv((j * 7) + 6));
+		cgs.clientinfo[i].teamGibs     = Q_atoi(CG_Argv((j * 7) + 7));
 	}
 	cgs.dbPlayerKillsDeathsReceived = qtrue;
 }
