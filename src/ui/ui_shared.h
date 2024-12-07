@@ -125,7 +125,7 @@
 #define SLIDER_HEIGHT       10.0f    ///< 16.0
 #define SLIDER_THUMB_WIDTH  12.0f
 #define SLIDER_THUMB_HEIGHT 12.0f    ///< 20.0
-#define NUM_CROSSHAIRS      16
+#define NUM_CROSSHAIRS      20
 
 #define CURSOR_SIZE 32.0f
 
