@@ -2973,16 +2973,36 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_ReinfTimeEx
- * @param[in] team
+ * @brief CG_CalculateReinfTime
+ * @param period
+ * @param offset
  * @return
  */
 int CG_CalculateReinfTime(team_t team)
 {
-	int dwDeployTime;
+	int dwDeployTime = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
 
-	dwDeployTime = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
-	return (int)(1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) * 0.001f);
+	return CG_CalculateReinfTimeEx(dwDeployTime / 1000, -(cgs.aReinfOffset[team] - 1));
+}
+
+/**
+ * @brief CG_CalculateReinfTime
+ * @param[in] period
+ * @param[in] offset
+ * @return
+ */
+int CG_CalculateReinfTimeEx(int period, int offset)
+{
+    if (period > 0) // prevent division by 0 for weird cases like limbotime < 1000
+    {
+        int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
+    
+        int seconds     = msec / 1000;
+        int secondsThen = ((cgs.timelimit * 60000.f) - offset) / 1000;
+        return (period + (seconds - secondsThen) % period);
+    }
+    
+    return 0;
 }
 
 /**
