@@ -1,7 +1,13 @@
 # Structured changelog, human-readable.
 # Intended for player consumption, in one shape or form.
 
-upcoming: []
+upcoming:
+  - title: Fade in first-person weapon when being revived
+    categ: cgame
+    descr: |
+      When being revived, weapons now fade in from the bottom in a non-linear fashion.
+      Purely visual, does not affect hit detection.
+    optout: 'set `cg_gunReviveFadeIn` to `0` (default: `1`)'
 
 # TODO - add previous version history
 # v82.3.0: []

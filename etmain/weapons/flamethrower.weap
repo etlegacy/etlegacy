@@ -44,6 +44,7 @@ weaponDef
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 
 		adjustLean 1 1 2
+		reviveLowerHeight 3.75
 
 		//modModel 1		""
 
