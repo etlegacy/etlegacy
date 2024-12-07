@@ -44,6 +44,7 @@ weaponDef
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 
 		adjustLean 1 1 1
+		reviveLowerHeight 3.35
 
 		modModel 0		"models/multiplayer/syringe/100percent"
 		modModel 1		"models/multiplayer/syringe/0percent"
