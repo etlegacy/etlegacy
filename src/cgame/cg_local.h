@@ -994,6 +994,7 @@ typedef struct weaponInfo_s
 
 	vec3_t fireRecoil;                  ///< kick angle
 	vec3_t adjustLean;
+	float reviveLowerHeight;
 
 	sfxHandle_t readySound;             ///< an ambient sound the weapon makes when it's /not/ firing
 	sfxHandle_t firingSound;
@@ -1333,6 +1334,7 @@ typedef struct
 	float damageX, damageY, damageValue;
 
 	int grenLastTime;
+	int lastBeingRevivedTime;
 	int lastReviveTime;
 
 	int switchbackWeapon;
@@ -2780,6 +2782,7 @@ extern vmCvar_t cg_bloodPuff;
 extern vmCvar_t cg_brassTime;
 extern vmCvar_t cg_gun_frame;
 extern vmCvar_t cg_gunFovOffset;
+extern vmCvar_t cg_gunReviveFadeIn;
 extern vmCvar_t cg_gun_x;
 extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;

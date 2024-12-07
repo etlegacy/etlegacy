@@ -44,6 +44,7 @@ weaponDef
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 
 		adjustLean 1 1 1
+		reviveLowerHeight 3.9
 
 		impactDurationCoeff 1
 		impactMarkMaxRange  384	// -1 infinite

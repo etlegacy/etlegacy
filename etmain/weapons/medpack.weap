@@ -44,6 +44,7 @@ weaponDef
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 
 		adjustLean 1 1 1
+		reviveLowerHeight 3.4
 
 		firstPerson {
 			model			"models/multiplayer/medpack/v_medpack.md3"
