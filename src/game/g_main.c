@@ -115,6 +115,7 @@ vmCvar_t g_debugMove;
 vmCvar_t g_debugDamage;
 vmCvar_t g_debugAlloc;
 vmCvar_t g_debugBullets;
+vmCvar_t g_debugMissiles;
 vmCvar_t g_motd;
 #ifdef ALLOW_GSYNC
 vmCvar_t g_synchronousClients;
@@ -470,6 +471,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugDamage,                     "g_debugDamage",                     "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_debugAlloc,                      "g_debugAlloc",                      "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_debugBullets,                    "g_debugBullets",                    "0",                          0,                                               0, qfalse, qfalse },
+	{ &g_debugMissiles,                   "g_debugMissiles",                   "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_motd,                            "g_motd",                            "",                           CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 
 	{ &voteFlags,                         "voteFlags",                         "0",                          CVAR_TEMP | CVAR_ROM | CVAR_SERVERINFO,          0, qfalse, qfalse },

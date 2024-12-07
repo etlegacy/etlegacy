@@ -80,6 +80,10 @@ vmCvar_t tvg_cheats;
 
 vmCvar_t tvg_inactivity;
 vmCvar_t g_debugAlloc;
+
+vmCvar_t g_debugBullets;
+vmCvar_t g_debugMissiles;
+
 vmCvar_t tvg_motd;
 
 vmCvar_t tvg_currentRound;

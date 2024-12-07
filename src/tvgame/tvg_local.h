@@ -759,6 +759,9 @@ extern vmCvar_t tvg_maxclients;               ///< allow this many total, includ
 extern vmCvar_t g_password;
 extern vmCvar_t sv_privatepassword;
 
+extern vmCvar_t g_debugBullets;
+extern vmCvar_t g_debugMissiles;
+
 extern vmCvar_t tvg_inactivity;
 extern vmCvar_t g_debugAlloc;
 extern vmCvar_t tvg_motd;

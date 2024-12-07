@@ -2016,6 +2016,7 @@ extern vmCvar_t g_debugMove;
 extern vmCvar_t g_debugAlloc;
 extern vmCvar_t g_debugDamage;
 extern vmCvar_t g_debugBullets;
+extern vmCvar_t g_debugMissiles;
 #ifdef ALLOW_GSYNC
 extern vmCvar_t g_synchronousClients;
 #endif // ALLOW_GSYNC
