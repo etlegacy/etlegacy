@@ -115,7 +115,7 @@ menuDef {
 		rect        $evalfloat(6 + (SUBWINDOW_WIDTH_L)+6 + 12) $evalfloat(CROSSHAIR_Y + 66) 44 44
 		style WINDOW_STYLE_FILLED
 		ownerdraw UI_CROSSHAIR
-		backcolor   .4 .4 .4 .9
+		backcolor   .1 .1 .1 .9
 		border WINDOW_BORDER_FULL
 		bordercolor .6 .6 .6 1
 		visible     1
