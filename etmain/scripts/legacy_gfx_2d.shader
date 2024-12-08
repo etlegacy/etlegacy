@@ -671,4 +671,72 @@ gfx/2d/crosshairp_alt_svg
 		rgbGen vertex
 	}
 }
+
+gfx/2d/crosshairq_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairq_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairq_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairq_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairr_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairr_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairr_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairr_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// nothing
+gfx/2d/crosshairs_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairf_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// nothing
+gfx/2d/crosshairt_alt_svg
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairf_alt_svg.svg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
 //========================================//

@@ -354,6 +354,204 @@ gfx/2d/crosshairj_alt
 	}
 }
 
+gfx/2d/crosshairk
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairk.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairk_alt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairk_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairl
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairl.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairl_alt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairl_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairm
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairm.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairm_alt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairm_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairn
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairn.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairn_alt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairn_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairo
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairo.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairo_alt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairo_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairp
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairp.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairp_alt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairp_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairq
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairq.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairq_alt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairq_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairr
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairr.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairr_alt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairr_alt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairs
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairs.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/crosshairt
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/crosshairt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 gfx/2d/dangerhint
 {
 	nomipmaps
