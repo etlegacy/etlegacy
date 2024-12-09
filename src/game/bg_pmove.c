@@ -696,18 +696,6 @@ static float PM_CmdScale(usercmd_t *cmd)
 			}
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
-	{
-		// reduce move speed if weapon is scoped
-		if (pm->cmd.buttons & BUTTON_WALKING)
-		{
-			scale *= 0.75;
-		}
-		else
-		{
-			scale *= 0.5f;
-		}
-	}
 
 	return scale;
 }
@@ -5296,7 +5284,7 @@ void PmoveSingle(pmove_t *pmove)
 			// consider latency implementation from vanilla for quick scope shoot by simulating lantency
 			// by adding extra spare time for shooting right after scoping
 			// also consider falling from slope for a moment
-			if (((!pm->pmext->airTime || (pm->ps->pm_flags & PMF_JUMP_HELD))
+			if (((!pm->pmext->airTime || (pm->ps->pm_flags & PMF_JUMP_HELD)) && !(pm->cmd.buttons & BUTTON_WALKING)
 			     && VectorLength(pm->ps->velocity) > 127 && pm->cmd.serverTime > pm->pmext->switchToScopeTime + 250)
 			    || (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500))
 			{
