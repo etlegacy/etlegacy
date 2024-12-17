@@ -641,6 +641,9 @@ typedef struct clientInfo_s
 	char cleanname[MAX_NAME_LENGTH];
 	team_t team;
 
+	qboolean skipCharacterAnimationLerping;
+	int skipCharacterAnimationTime;
+
 	int botSkill;                   ///< OBSOLETE remove!
 	int score;                      ///< updated by score servercmds
 	vec3_t location;                ///< location (currentOrigin casted int values!) for team mode
@@ -1180,6 +1183,10 @@ typedef struct
 	snapshot_t *nextSnap;                   ///< cg.nextSnap->serverTime > cg.time, or NULL
 	snapshot_t activeSnapshots[2];
 
+	int followSnapServerTime;
+	int followClientNum;
+	int followSkipAnim;
+
 	float frameInterpolation;               ///< (float)( cg.time - cg.frame->serverTime ) / (cg.nextFrame->serverTime - cg.frame->serverTime)
 
 	qboolean thisFrameTeleport;
@@ -1328,6 +1335,7 @@ typedef struct
 	int weaponSelectTime;
 	int weaponAnimation;
 	int weaponAnimationTime;
+	qboolean weaponAnimationRefreshFromWeaponTime;
 
 	// blend blobs
 	viewDamage_t viewDamage[MAX_VIEWDAMAGE];
@@ -4553,6 +4561,7 @@ void CG_DrawCursorhint(hudComponent_t *comp);
 void CG_DrawCursorHintBar(hudComponent_t *comp);
 void CG_DrawCursorHintText(hudComponent_t *comp);
 void CG_DrawCrosshair(hudComponent_t *comp);
+int CG_CalcWeaponTimeDiff();
 
 void CG_DrawPlayerStatusHead(hudComponent_t *comp);
 void CG_DrawGunIcon(hudComponent_t *comp);

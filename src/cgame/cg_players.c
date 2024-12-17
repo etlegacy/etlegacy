@@ -621,6 +621,30 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 		return;
 	}
 
+	// if (cgs.clientinfo[cent->currentState.clientNum].skipCharacterAnimationLerping || qtrue)
+	// {
+	// 	animation_t *anim;
+	// 	Com_Printf("Ayo\n");
+
+	// 	cgs.clientinfo[cent->currentState.clientNum].skipCharacterAnimationLerping = qfalse;
+
+	// 	lf->oldFrame      = lf->frame;
+	// 	lf->oldFrameTime  = lf->frameTime;
+	// 	lf->oldFrameModel = lf->frameModel;
+
+	// 	anim = lf->animation;
+	// 	if (!anim || !anim->frameLerp)
+	// 	{
+	// 		CG_Printf("Warning: CG_RunLerpFrame w/o animation.\n");
+	// 		return;     // shouldn't happen
+	// 	}
+
+	// 	lf->frame      = anim->firstFrame + anim->numFrames;
+	// 	lf->frameModel = anim->mdxFile;
+
+	// 	return;
+	// }
+
 	// see if the animation sequence is switching
 	if (ci && (newAnimation != lf->animationNumber || !lf->animation))
 	{
@@ -821,6 +845,14 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 		lf->frameModel    = anim->mdxFile;
 	}
 
+	// never lerp into 'default_animation'
+	if (newAnimation == 0)
+	{
+		// Com_Printf("NEVER LERP DEFAULT_ANIMATION\n");
+		cgs.clientinfo[cent->currentState.clientNum].skipCharacterAnimationLerping = qtrue;
+		cgs.clientinfo[cent->currentState.clientNum].skipCharacterAnimationTime    = cg.time;
+	}
+
 	if ((cg_debugAnim.integer == 1 || cg_debugAnim.integer == 2) && cg_thirdPerson.integer) // extra debug info
 	{
 		CG_Printf("anim-player: %i : %24s : %3d\n", newAnimation, character->animModelInfo->animations[newAnimation]->name, anim->movetype);
@@ -876,7 +908,9 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	anim = lf->animation;
 
 	// force last frame for corpses
-	if (cent->currentState.eType == ET_CORPSE)
+	// if (cent->currentState.eType == ET_CORPSE)
+	if (cent->currentState.eType == ET_CORPSE || cgs.clientinfo[cent->currentState.clientNum].skipCharacterAnimationLerping)
+	// if (cent->currentState.eType == ET_CORPSE || (cg.followClientNum == cent->currentState.clientNum && cg.followSkipAnim))
 	{
 		lf->oldFrame      = lf->frame = anim->firstFrame + anim->numFrames - 1;
 		lf->oldFrameModel = lf->frameModel = anim->mdxFile;
@@ -1193,6 +1227,11 @@ void CG_SetLerpFrameAnimationRateCorpse(centity_t *cent, lerpFrame_t *lf, int ne
 		return;
 	}
 
+	// Com_Printf("D E A T H \n");
+	// cgs.clientinfo[cent->currentState.clientNum].skipCharacterAnimationLerping = qtrue;
+	// cg.followSkipAnim = qtrue;
+
+
 	lf->animationNumber = newAnimation;
 	newAnimation       &= ~ANIM_TOGGLEBIT;
 
@@ -1202,7 +1241,7 @@ void CG_SetLerpFrameAnimationRateCorpse(centity_t *cent, lerpFrame_t *lf, int ne
 	}
 
 	anim = character->animModelInfo->animations[newAnimation];
-	rest = cent->currentState.effect1Time - cg.time;    // duratiom of remaining animation
+	rest = cent->currentState.effect1Time - cg.time;    // duration of remaining animation
 
 	// make sure it is not out of anim
 	if (rest < 0)
@@ -1255,7 +1294,9 @@ void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimati
 	anim = lf->animation;
 
 	// animation time gone
-	if (cent->currentState.effect1Time < cg.time)
+	// if (cent->currentState.effect1Time < cg.time)
+	if (cent->currentState.effect1Time < cg.time || cgs.clientinfo[cent->currentState.clientNum].skipCharacterAnimationLerping)
+	// if (cent->currentState.effect1Time < cg.time || (cg.followClientNum == cent->currentState.clientNum && cg.followSkipAnim))
 	{
 		lf->oldFrame      = lf->frame = anim->firstFrame + anim->numFrames - 1;
 		lf->oldFrameModel = lf->frameModel = anim->mdxFile;

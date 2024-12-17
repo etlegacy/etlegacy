@@ -1098,6 +1098,7 @@ static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weapo
 
 	ent->origin[2]    += 8;
 	ent->oldorigin[2] += 8;
+	// ent->shaderRGBA[3] = 100;
 
 	// 20 frames
 	if (cg.time >= cent->lerpFrame.frameTime)

@@ -3321,7 +3321,7 @@ wake
 	cull none
 	nopicmip
 	nomipmaps
-	
+
 	// pass 1
 	{
 		clampmap sprites/wake.tga
@@ -3336,7 +3336,7 @@ wake
 		tcMod stretch sawtooth			0 1 0 0.4
 		alphaGen wave inversesawtooth	0 1 0 0.4
 	}
-	
+
 	// pass 2
 	{
 		clampmap sprites/wake.tga
@@ -3351,7 +3351,7 @@ wake
 		tcMod stretch sawtooth			0 1 0.33 0.5
 		alphaGen wave inversesawtooth	0 1 0.33 0.5
 	}
-	
+
 	// pass 3
 	{
 		clampmap sprites/wake.tga

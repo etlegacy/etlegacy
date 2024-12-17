@@ -3506,7 +3506,10 @@ void Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, 
 		waslinked                               = qtrue;
 	}
 
+
+	// source->r.svFlags |= SVF_CAPSULE;
 	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT);
+	// G_TraceCapsule(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT);
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (waslinked == qtrue)

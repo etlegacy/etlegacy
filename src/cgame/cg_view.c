@@ -2360,6 +2360,68 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	// set up cg.snap and possibly cg.nextSnap
 	CG_ProcessSnapshots();
 
+	{
+		int j;
+		for (j = 0; j < cgs.maxclients; j++)
+		{
+			int difft = cg.time - cgs.clientinfo[j].skipCharacterAnimationTime;
+			if (cgs.clientinfo[j].skipCharacterAnimationTime > 0 && difft > 0 & difft < 100)
+			{
+				// Com_Printf("AYO\n");
+				cgs.clientinfo[j].skipCharacterAnimationLerping = qtrue;
+			}
+			else
+			{
+				cgs.clientinfo[j].skipCharacterAnimationLerping = qfalse;
+			}
+		}
+	}
+
+	if (cg.snap)   // Follow Fixups
+	{
+		int newClientNum = cg.snap->ps.clientNum;
+		if (cg.followSnapServerTime != cg.snap->serverTime)
+		{
+			if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+			{
+				if (newClientNum != cg.followClientNum)
+				{
+					// centity_t *cent = &cg_entities[newClientNum];
+
+					// Com_Printf("NEW FOLLOW\n");
+
+					if (cg.snap->ps.pm_type == PM_DEAD)
+					{
+						// Com_Printf("RESET ANIM LERPING\n");
+						cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qtrue;
+						cg.followSkipAnim                                          = qtrue;
+					}
+
+					// if (cent && cent->client->ps.pm_type == PM_DEAD)
+					// {
+					// }
+					cg.weaponAnimationRefreshFromWeaponTime                    = qtrue;
+					cg.followClientNum = newClientNum;
+				}
+				else
+				{
+					cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qfalse;
+					cg.followSkipAnim                                          = qfalse;
+				}
+				// cg.followClientNum =
+			}
+			else
+			{
+				cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qfalse;
+				cg.followSkipAnim                                          = qfalse;
+				cg.followClientNum                                         = 0;
+			}
+
+			cg.followSnapServerTime = cg.snap->serverTime;
+		}
+
+	}
+
 	DEBUGTIME
 
 	// demo rewind happend, fix time based effects

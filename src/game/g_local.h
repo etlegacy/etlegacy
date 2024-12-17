@@ -1647,6 +1647,7 @@ void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t vec);
 qboolean CanDamage(gentity_t *targ, vec3_t origin);
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod);
 void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod, int *hitEventType);
+qboolean G_RadiusDamageOffset(trace_t *trace, float offset, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod);
 qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod);
 qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod, qboolean clientsonly);
 void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath);
@@ -2372,6 +2373,7 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 void G_HistoricalTraceBegin(gentity_t *ent);
 void G_HistoricalTraceEnd(gentity_t *ent);
 void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+void G_TraceCapsule(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 void G_PredictPmove(gentity_t *ent, float frametime);
 
 #define BODY_VALUE(ENT) ENT->watertype

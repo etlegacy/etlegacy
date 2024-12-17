@@ -1224,6 +1224,21 @@ void CG_PredictPlayerState(void)
 				{
 					returncode = CG_PredictionOk(&cg.predictedPlayerState, &cg.backupStates[i]);
 
+					// ignore death animations causing full repredictions
+					// Com_Printf("%d\n", cg.predictedPlayerState.torsoAnim);
+					if (returncode == 9 && (cg.predictedPlayerState.torsoAnim == 0 ||
+					                        cg.predictedPlayerState.torsoAnim == 1 ||
+					                        cg.predictedPlayerState.torsoAnim == 2 ||
+					                        cg.predictedPlayerState.torsoAnim == 3))
+					{
+						Com_Printf("Tried to retrigger a death anim\n");
+						returncode = 0;
+					}
+
+					// if (returncode == 9) {
+					//    returncode = 0;
+					// }
+
 					// make sure the state differences are acceptable
 
 					// too much change?

@@ -384,10 +384,11 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	localEntity_t *le;
 	refEntity_t   *re;
 
-	if (!cg_blood.integer || !cg_gibs.integer)
-	{
-		return;
-	}
+	// Com_Printf("Launch Gibs\n");
+	// if (!cg_gibs.integer)
+	// {
+	// 	return;
+	// }
 
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
@@ -578,7 +579,7 @@ int CG_GetOriginForTag(centity_t *cent, refEntity_t *parent, const char *tagName
  */
 void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 {
-	if (cg_blood.integer && cg_bloodTime.integer)
+	if (qtrue)
 	{
 		vec3_t         origin;
 		trace_t        trace;
@@ -645,6 +646,8 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 			"tag_head",
 			NULL
 		};
+
+		// Com_Printf("GIB PLAYER - INNER\n");
 
 		if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 		{

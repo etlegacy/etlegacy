@@ -943,6 +943,11 @@ void CG_ClearWeapLerpFrame(weaponInfo_t *wi, lerpFrame_t *lf, int animationNumbe
 	lf->oldFrameModel = lf->frameModel = lf->animation->mdxFile;
 }
 
+int CG_CalcWeaponTimeDiff()
+{
+
+}
+
 /**
  * @brief Sets cg.snap, cg.oldFrame, and cg.backlerp
  * cg.time should be between oldFrameTime and frameTime after exit
@@ -962,6 +967,17 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 		return;
 	}
 
+	// if (cg.followSkipAnim == qtrue || qtrue)
+	// {
+	// 	animation_t *anim = lf->animation;
+	// 	if (anim) {
+	// 		lf->oldFrame      = lf->frame = anim->firstFrame + anim->numFrames - 1;
+	// 		lf->oldFrameModel = lf->frameModel = anim->mdxFile;
+	// 		lf->backlerp      = 0;
+	// 	}
+	// 	return;
+	// }
+
 	// see if the animation sequence is switching
 	if (!lf->animation)
 	{
@@ -976,11 +992,30 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 		else
 		{
 			CG_SetWeapLerpFrameAnimation(wi, lf, newAnimation);
+
+			if (cg.weaponAnimationRefreshFromWeaponTime)
+			{
+				int         f;
+				animation_t *anim;
+				anim = lf->animation;
+
+
+				// f  = (lf->frameTime - lf->animationTime) / anim->frameLerp;
+				f = (cg.predictedPlayerState.weaponTime - lf->animationTime) / anim->frameLerp;
+				// Com_Printf("OH YE: %d\n", f);
+				// f  = (lf->frameTime - cg.predictedPlayerState.weaponTime) / anim->frameLerp;
+				lf->frame      = anim->firstFrame + f;
+				lf->frameModel = anim->mdxFile;
+				lf->frameTime  = cg.time + anim->frameLerp;
+
+				cg.weaponAnimationRefreshFromWeaponTime = qfalse;
+			}
 		}
 	}
 
 	// if we have passed the current frame, move it to
 	// oldFrame and calculate a new frame
+	// else
 	if (cg.time >= lf->frameTime)
 	{
 		int         f;
@@ -1029,7 +1064,8 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 			}
 		}
 
-		lf->frame      = anim->firstFrame + f;
+		lf->frame = anim->firstFrame + f;
+		// Com_Printf("NEW: %d\n", lf->frame);
 		lf->frameModel = anim->mdxFile;
 
 		if (cg.time > lf->frameTime)

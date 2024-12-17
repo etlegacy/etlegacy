@@ -589,6 +589,8 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	gclient_t *client       = ent->client;
 	gentity_t *crosshairEnt = &g_entities[ent->client->ps.identifyClient];
 
+	int oldClientnum = ent->client->sess.spectatorClient;
+
 	// sanity check - check .active in case the client sends us something completely bogus
 
 	if (crosshairEnt->inuse && crosshairEnt->client &&
@@ -680,7 +682,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		// key: don't cycle through next players
 		if (G_SpectatorAttackFollow(ent) || (ent->client->buttons & BUTTON_SPRINT))
 		{
-			return;
+			goto exit;
 		}
 		else
 		{
@@ -725,6 +727,25 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 #ifdef FEATURE_MULTIVIEW
 }
 #endif
+
+exit:
+	{
+		int clientNum = ent->client->sess.spectatorClient;
+		if (oldClientnum != clientNum)
+		{
+         // gentity_t *cent = &g_entities[clientNum];
+         // if (cent && cent->currentState.eType == ET_CORPSE)
+		 // Com_Printf("PM_TYPE: %d\n", cent->client->ps.pm_type);
+		 // if (cent && cent->client->ps.pm_type == PM_DEAD) {
+		 // }
+         // if (cent && cent->s.eType == ET_CORPSE)
+         // {
+			 // Com_Printf("a ghost\n");
+         // }
+
+		}
+		return;
+	}
 }
 
 /**

@@ -209,10 +209,12 @@ void LookAtKiller(gentity_t *self, gentity_t *inflictor, gentity_t *attacker)
  * @param[in,out] self
  * @param[in] killer
  */
+#include <signal.h>
 void GibEntity(gentity_t *self, int killer)
 {
 	gentity_t *other = &g_entities[killer];
 	vec3_t    dir;
+	gentity_t *te;
 
 	VectorClear(dir);
 	if (other->inuse)
@@ -228,10 +230,21 @@ void GibEntity(gentity_t *self, int killer)
 		}
 	}
 
+	// raise(SIGTRAP);
+	// Com_Printf("GibEntity - EVENT SEND\n");
 	G_AddEvent(self, EV_GIB_PLAYER, DirToByte(dir));
 	self->takedamage = qfalse;
 	self->s.eType    = ET_INVISIBLE;
 	self->r.contents = 0;
+
+
+	// {
+	// 	te = G_TempEntity(self->r.currentOrigin, EV_GIB_PLAYER);
+
+	// 	te->s.eventParm   = DirToByte(dir);
+	// 	te->s.clientNum   = self->s.clientNum;
+	// 	// te->s.effect3Time = invulnEndTime;
+	// }
 }
 
 /**
@@ -2172,6 +2185,37 @@ static int QDECL G_SortPlayersByDistance(const void *a, const void *b)
 	distB = VectorLength(vecB);
 
 	return distA - distB;
+}
+
+qboolean G_RadiusDamageOffset(trace_t *trace, float offset, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod)
+{
+	qboolean result;
+	vec3_t   offsetOrigin = { 0 };
+	// vec3_t   offsetOrigin = { 0 };
+	// vec3_t   *origin       = &trace->endpos;
+
+	vec3_t mins = { 0 };
+	vec3_t maxs = { 0 };
+
+	VectorCopy(trace->endpos, offsetOrigin);
+	VectorMA(offsetOrigin, offset, trace->plane.normal, offsetOrigin);
+
+	// VectorCopy(trace->endpos, offsetOrigin);
+	// VectorMA(offsetOrigin, 18, trace->plane.normal, offsetOrigin);
+
+	// if (g_debugMissiles.integer) {
+	// 	G_RailBox(trace->endpos, mins, maxs, colorRed, 99999);
+	// }
+	G_RailBox(trace->endpos, mins, maxs, colorRed, 99999);
+	G_RailBox(offsetOrigin, mins, maxs, colorBlue, 89999);
+
+	// result = G_RadiusDamage(trace->endpos, inflictor, attacker, damage, radius, ignore, mod);
+	result = G_RadiusDamage(offsetOrigin, inflictor, attacker, damage, radius, ignore, mod);
+	// if (())
+	// {
+	// }
+
+	return result;
 }
 
 /**
