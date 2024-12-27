@@ -46,6 +46,11 @@
 		<category>ActionGame</category>
 	</categories>
 
+  <branding>
+    <color type="primary" scheme_preference="light">#302429</color>
+    <color type="primary" scheme_preference="dark">#302429</color>
+  </branding>
+
 	<screenshots>
 		<screenshot type="default">
 			<image>https://mirror.etlegacy.com/metainfo/screen-ETL-001.jpg</image>
