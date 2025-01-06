@@ -1019,7 +1019,7 @@ void Key_SetBinding(int keynum, const char *binding)
  */
 char *Key_GetBinding(int keynum)
 {
-	if (keynum == -1)
+	if (keynum < 0 || keynum >= MAX_KEYS)
 	{
 		return "";
 	}
