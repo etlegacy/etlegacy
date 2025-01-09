@@ -228,6 +228,26 @@ void CG_BloodTrail(localEntity_t *le)
 	}
 }
 
+void CG_ProjectBloodDecal(vec3_t *points, float radius)
+{
+	// vec4_t projection, color;
+	vec4_t projection;
+	//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace->endpos, trace->plane.normal, random()*360,
+	//  1,1,1,1, qtrue, radius, qfalse, cg_bloodTime.integer * 1000 );
+#if 0
+	VectorSubtract(vec3_origin, trace->plane.normal, projection);
+	projection[3] = radius * 2.0f;
+	VectorMA(trace->endpos, -8.0f, projection, markOrigin);
+	CG_ImpactMark(cgs.media.bloodDotShaders[rand() % 5], markOrigin, projection, radius, random() * 360.0f, 1.0f, 1.0f, 1.0f, 1.0f, cg_bloodTime.integer * 1000);
+#else
+	VectorSet(projection, 0, 0, -1);
+	projection[3] = radius;
+	// Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
+	trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, points, projection, colorWhite,
+	                    cg_bloodTime.integer * 1000, (cg_bloodTime.integer * 1000) >> 4);
+#endif
+}
+
 /**
  * @brief CG_FragmentBounceMark
  * @param[in,out] le
@@ -242,22 +262,7 @@ void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace)
 		// don't drop too many blood marks
 		if (!(lastBloodMark > cg.time || lastBloodMark > cg.time - 100))
 		{
-			vec4_t projection, color;
-			int    radius = 16 + (rand() & 31);
-			//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace->endpos, trace->plane.normal, random()*360,
-			//  1,1,1,1, qtrue, radius, qfalse, cg_bloodTime.integer * 1000 );
-#if 0
-			VectorSubtract(vec3_origin, trace->plane.normal, projection);
-			projection[3] = radius * 2.0f;
-			VectorMA(trace->endpos, -8.0f, projection, markOrigin);
-			CG_ImpactMark(cgs.media.bloodDotShaders[rand() % 5], markOrigin, projection, radius, random() * 360.0f, 1.0f, 1.0f, 1.0f, 1.0f, cg_bloodTime.integer * 1000);
-#else
-			VectorSet(projection, 0, 0, -1);
-			projection[3] = radius;
-			Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
-			trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, (vec3_t *) trace->endpos, projection, color,
-			                    cg_bloodTime.integer * 1000, (cg_bloodTime.integer * 1000) >> 4);
-#endif
+			CG_ProjectBloodDecal((vec3_t *) trace->endpos, 16 + (rand() & 31));
 			lastBloodMark = cg.time;
 		}
 	}

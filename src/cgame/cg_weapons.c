@@ -5282,28 +5282,14 @@ static void CG_AddBloodSplat(vec3_t origin, vec3_t end, vec3_t dir)
 	if (cg_blood.integer && cg_bloodTime.integer && (lastBloodSpat > cg.time || lastBloodSpat < cg.time - 500))
 	{
 		vec3_t trend;
-		vec4_t projection;
 
 		VectorMA(end, 128, dir, trend);
 		trap_CM_BoxTrace(&trace, end, trend, NULL, NULL, 0, MASK_SHOT & ~CONTENTS_BODY);
 
 		if (trace.fraction < 1)
 		{
-			//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, trace.plane.normal, random()*360,
-			//  1,1,1,1, qtrue, 15+random()*20, qfalse, cg_bloodTime.integer * 1000 );
-#if 0
-			VectorSubtract(vec3_origin, dir, projection);
-			projection[3] = 64;
-			VectorMA(trace.endpos, -8.0f, projection, markOrigin);
-			CG_ImpactMark(cgs.media.bloodDotShaders[rand() % 5], markOrigin, projection, 15.0f + random() * 20.0f, 360.0f * random(),
-			              1.0f, 1.0f, 1.0f, 1.0f, cg_bloodTime.integer * 1000);
-#else
-			VectorSet(projection, 0, 0, -1);
-			projection[3] = 15.0f + random() * 20.0f;
+			CG_ProjectBloodDecal((vec3_t *) origin, 15.0f + random() * 20.0f);
 
-			trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, (vec3_t *) origin, projection, colorWhite,
-			                    cg_bloodTime.integer * 1000, (cg_bloodTime.integer * 1000) >> 4);
-#endif
 			lastBloodSpat = cg.time;
 		}
 		else if (lastBloodSpat < cg.time - 1000)
@@ -5315,21 +5301,7 @@ static void CG_AddBloodSplat(vec3_t origin, vec3_t end, vec3_t dir)
 
 			if (trace.fraction < 1)
 			{
-				//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, trace.plane.normal, random()*360,
-				//  1,1,1,1, qtrue, 15+random()*10, qfalse, cg_bloodTime.integer * 1000 );
-#if 0
-				VectorSubtract(vec3_origin, dir, projection);
-				projection[3] = 64;
-				VectorMA(trace.endpos, -8.0f, projection, markOrigin);
-				CG_ImpactMark(cgs.media.bloodDotShaders[rand() % 5], markOrigin, projection, 15.0f + random() * 10.0f, 360.0f * random(),
-				              1.0f, 1.0f, 1.0f, 1.0f, cg_bloodTime.integer * 1000);
-#else
-				VectorSet(projection, 0, 0, -1);
-				projection[3] = 15.0f + random() * 20.0f;
-
-				trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, (vec3_t *) origin, projection, colorWhite,
-				                    cg_bloodTime.integer * 1000, (cg_bloodTime.integer * 1000) >> 4);
-#endif
+				CG_ProjectBloodDecal((vec3_t *) origin, 15.0f + random() * 20.0f);
 				lastBloodSpat = cg.time;
 			}
 		}

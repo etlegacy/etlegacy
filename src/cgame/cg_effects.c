@@ -728,22 +728,8 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 			CG_Trace(&trace, playerOrigin, NULL, NULL, origin, -1, CONTENTS_SOLID);
 			if (trace.fraction < 1.0f)
 			{
-				//BG_GetMarkDir( velocity, trace.plane.normal, velocity );
-				//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, velocity, random()*360,
-				//	1,1,1,1, qtrue, 30, qfalse, cg_bloodTime.integer * 1000 );
-				#if 0
-				BG_GetMarkDir(velocity, trace.plane.normal, projection);
-				VectorSubtract(vec3_origin, projection, projection);
-				projection[3] = 64;
-				VectorMA(trace.endpos, -8.0f, projection, markOrigin);
-				CG_ImpactMark(cgs.media.bloodDotShaders[rand() % 5], markOrigin, projection, 30.0f, random() * 360.0f, 1.0f, 1.0f, 1.0f, 1.0f, cg_bloodTime.integer * 1000);
-				#else
-				VectorSet(projection, 0, 0, -1);
-				projection[3] = 30.0f;
-				Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
-				trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, (vec3_t *) trace.endpos, projection, color,
-				                    cg_bloodTime.integer * 1000, (cg_bloodTime.integer * 1000) >> 4);
-				#endif
+
+				CG_ProjectBloodDecal((vec3_t *)trace.endpos, 30.0f);
 
 				if (count++ > GIB_BLOOD_DOTS)
 				{
