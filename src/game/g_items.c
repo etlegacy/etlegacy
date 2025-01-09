@@ -817,6 +817,106 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	trap_LinkEntity(ent);
 }
 
+static void set_bbox(gitem_t *item, gentity_t *dropped)
+{
+	float n1, n2, n3, x1, x2, x3;
+	n1 = -ITEM_RADIUS;
+	n2 = -ITEM_RADIUS;
+	n3 = 0;
+	x1 = ITEM_RADIUS;
+	x2 = ITEM_RADIUS;
+	x3 = 2 * ITEM_RADIUS;
+
+	switch (item->giWeapon)
+	{
+	case WP_CARBINE:
+		x1 = 60;            // left
+		n1 = 15 * -1;       // right
+		n2 = 10 * -1;       // top
+		x2 = 10;            // bottom
+		break;
+	case WP_THOMPSON:
+		x1 = 18;            // left
+		n1 = 33 * -1;       // right
+		n2 = 10 * -1;       // top
+		x2 = 10;            // bottom
+		break;
+	///////////////////////////////////////////
+	case WP_MORTAR2:
+		x1 = 26;            // left
+		n1 = 22 * -1;       // right
+		n2 = 10 * -1;       // top
+		x2 = 10;            // bottom
+		break;
+	case WP_PANZERFAUST:
+		x1 = 22;            // left
+		n1 = 23 * -1;       // right
+		n2 = 10 * -1;       // top
+		x2 = 10;            // bottom
+		break;
+	case WP_MOBILE_MG42:
+		x1 = 42;            // left
+		n1 = 30 * -1;       // right
+		n2 = 10 * -1;       // top
+		x2 = 10;            // bottom
+		break;
+	case WP_MP40:
+		x1 = 24;            // left
+		n1 = 14 * -1;       // right
+		n2 = 10 * -1;       // top
+		x2 = 10;            // bottom
+		break;
+	case WP_K43:
+		x1 = 60;            // left
+		n1 = 17 * -1;       // right
+		n2 = 7 * -1;        // top
+		x2 = 7;         // bottom
+		break;
+	case WP_KAR98:
+		x1 = 65;            // left
+		n1 = 17 * -1;       // right
+		n2 = 7 * -1;        // top
+		x2 = 8;         // bottom
+		break;
+	case WP_FG42:
+		x1 = 42;            // left
+		n1 = 17 * -1;       // right
+		n2 = 10 * -1;       // top
+		x2 = 7;             // bottom
+		break;
+	case WP_MP34:
+		x1 = 34;            // left
+		n1 = 18 * -1;       // right
+		n2 = 10 * -1;       // top
+		x2 = 10;            // bottom
+		break;
+	default:
+		break;
+	}
+	// n2 += 20;
+
+	VectorSet(dropped->r.mins, n1, n2, n3);    // so items sit on the ground
+	VectorSet(dropped->r.maxs, x1, x2, x3);    // so items sit on the ground
+
+	// {
+	// 	vec3_t tmp;
+	// 	vec3_t axis[3];
+
+	// 	// tmp[1] = tmp[2] = 0;
+	// 	// tmp[0] = bone->parent_dist;
+	// 	AnglesToAxis(dropped->r.currentAngles, axis);
+
+	// 	// vec3_t        axis[3];
+
+	// 	// frame bone rotation
+	// 	// AnglesToAxisBroken(dropped->r.currentAngles, axis);
+	// 	VectorCopy(dropped->r.mins, tmp),
+	// 	vec3_rotate(tmp, axis, dropped->r.mins);
+	// 	VectorCopy(dropped->r.maxs, tmp),
+	// 	vec3_rotate(tmp, axis, dropped->r.maxs);
+	// }
+}
+
 /**
  * @brief Spawns an item and tosses it forward.
  * @param[in] item
@@ -831,6 +931,12 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	trace_t   tr;
 	vec3_t    vec, temp;
 
+	// set yaw to parent angles
+	// temp[PITCH] = 0;
+	// temp[YAW]   = g_entities[ownerNum].s.apos.trBase[YAW];
+	// temp[ROLL]  = 0;
+	// G_SetAngle(dropped, temp);
+
 	dropped->s.eType           = ET_ITEM;
 	dropped->s.modelindex      = item->id ; // store item number in modelindex
 	dropped->s.otherEntityNum2 = 1; // this is taking modelindex2's place for a dropped item
@@ -838,8 +944,12 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 
 	dropped->classname = item->classname;
 	dropped->item      = item;
-	VectorSet(dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);              // so items sit on the ground
-	VectorSet(dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, 2 * ITEM_RADIUS);    // so items sit on the ground
+	// TODO : SET ROTATED AND FUCK DUDE
+	set_bbox(item, dropped);
+	// VectorSet(dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);              // so items sit on the ground
+	// VectorSet(dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, 2 * ITEM_RADIUS);    // so items sit on the ground
+	// VectorSet(dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);              // so items sit on the ground
+	// VectorSet(dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, 2 * ITEM_RADIUS);    // so items sit on the ground
 	dropped->r.contents = CONTENTS_TRIGGER | CONTENTS_ITEM;
 
 	dropped->clipmask = CONTENTS_SOLID | CONTENTS_MISSILECLIP;      // fix for items falling through grates

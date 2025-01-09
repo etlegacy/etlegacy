@@ -1693,6 +1693,9 @@ typedef struct
 	qhandle_t defendShader;
 	qhandle_t regroupShader;
 
+	qhandle_t halfHealthInner;
+	qhandle_t halfHealthOuter;
+
 	qhandle_t viewBloodShader;
 	qhandle_t tracerShader;
 	qhandle_t crosshairShader[NUM_CROSSHAIRS];
@@ -3258,8 +3261,15 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 #define GIZMO_DEFAULT_RADIUS 32.f
 
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
+// <<<<<<< HEAD
+// void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis, qboolean drawTip);
+// void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4]);
+// =======
+// void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
+// void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4], int renderfx);
+// >>>>>>> 81ef11895 (WIP2)
 void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis, qboolean drawTip);
-void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4]);
+void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4], int renderfx);
 
 /**
  * @struct scrollText_s

@@ -627,7 +627,7 @@ void G_RunMissile(gentity_t *ent)
 				ent->count  = 0;
 				ent->count2 = 1;
 			}
-			return;
+			// return;
 		}
 
 		if (!ent->count2 && BG_GetSkyHeightAtPoint(origin) - BG_GetGroundHeightAtPoint(origin) > 1024)
@@ -638,6 +638,7 @@ void G_RunMissile(gentity_t *ent)
 		{
 			vec3_t  impactpos;
 			trace_t mortar_tr;
+			Com_Printf("%d - CHECK\n", level.time);
 
 			if (ent->count2 == 1)
 			{
@@ -649,8 +650,9 @@ void G_RunMissile(gentity_t *ent)
 				}
 				else
 				{
+					// TODO - if entity is out of map bounds then the sound will only played once it re-enteres FIX THIS!!!!!!!
 					VectorSubtract(origin, ent->r.currentOrigin, impactpos);
-					VectorMA(origin, 16, impactpos, impactpos);
+					VectorMA(origin, 34, impactpos, impactpos);
 
 					trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
 

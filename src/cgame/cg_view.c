@@ -1976,12 +1976,52 @@ static void CG_SetLastKeyCatcher(void)
 	cg.lastKeyCatcher = keyCatcher;
 }
 
+static void CG_SnapFollowFixups(void)
+{
+	int newClientNum = cg.snap->ps.clientNum;
+	if (cg.followSnapServerTime != cg.snap->serverTime)
+	{
+		if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+		{
+			if (newClientNum != cg.followClientNum)
+			{
+				// centity_t *cent = &cg_entities[newClientNum];
+				// Com_Printf("NEW FOLLOW\n");
+				if (cg.snap->ps.pm_type == PM_DEAD)
+				{
+					// Com_Printf("RESET ANIM LERPING\n");
+					cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qtrue;
+					cg.followSkipAnim                                          = qtrue;
+				}
+				// if (cent && cent->client->ps.pm_type == PM_DEAD)
+				// {
+				// }
+				cg.weaponAnimationRefreshFromWeaponTime = qtrue;
+				cg.followClientNum                      = newClientNum;
+			}
+			else
+			{
+				cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qfalse;
+				cg.followSkipAnim                                          = qfalse;
+			}
+			// cg.followClientNum =
+		}
+		else
+		{
+			cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qfalse;
+			cg.followSkipAnim                                          = qfalse;
+			cg.followClientNum                                         = 0;
+		}
+		cg.followSnapServerTime = cg.snap->serverTime;
+	}
+}
+
 /**
 * @brief CG_DemoRewindFixEffects fix time based event effects on demo rewind
 */
 static void CG_DemoRewindFixEffects(void)
 {
-	int i;
+		int i;
 
 	trap_GetGameState(&cgs.currentGameState);
 
@@ -2379,47 +2419,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 	if (cg.snap)   // Follow Fixups
 	{
-		int newClientNum = cg.snap->ps.clientNum;
-		if (cg.followSnapServerTime != cg.snap->serverTime)
-		{
-			if (cg.snap->ps.pm_flags & PMF_FOLLOW)
-			{
-				if (newClientNum != cg.followClientNum)
-				{
-					// centity_t *cent = &cg_entities[newClientNum];
-
-					// Com_Printf("NEW FOLLOW\n");
-
-					if (cg.snap->ps.pm_type == PM_DEAD)
-					{
-						// Com_Printf("RESET ANIM LERPING\n");
-						cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qtrue;
-						cg.followSkipAnim                                          = qtrue;
-					}
-
-					// if (cent && cent->client->ps.pm_type == PM_DEAD)
-					// {
-					// }
-					cg.weaponAnimationRefreshFromWeaponTime                    = qtrue;
-					cg.followClientNum = newClientNum;
-				}
-				else
-				{
-					cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qfalse;
-					cg.followSkipAnim                                          = qfalse;
-				}
-				// cg.followClientNum =
-			}
-			else
-			{
-				cgs.clientinfo[newClientNum].skipCharacterAnimationLerping = qfalse;
-				cg.followSkipAnim                                          = qfalse;
-				cg.followClientNum                                         = 0;
-			}
-
-			cg.followSnapServerTime = cg.snap->serverTime;
-		}
-
+		CG_SnapFollowFixups();
 	}
 
 	DEBUGTIME

@@ -2004,6 +2004,9 @@ static void CG_RegisterGraphics(void)
 	cgs.media.defendShader    = trap_R_RegisterShaderNoMip("sprites/defend");
 	cgs.media.regroupShader   = trap_R_RegisterShaderNoMip("sprites/regroup");
 
+	cgs.media.halfHealthInner = trap_R_RegisterShaderNoMip("sprites/halfhealth_inner");
+	cgs.media.halfHealthOuter = trap_R_RegisterShaderNoMip("sprites/halfhealth_outer");
+
 	cgs.media.voiceChatShader = trap_R_RegisterShader("sprites/voiceChat");
 	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
 

@@ -287,6 +287,12 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	temp.radius  = VectorLength(xyz);
 	temp.radius2 = temp.radius * temp.radius;
 
+	// /* frustum cull the projector (fixme: this uses a stale frustum!) */
+	// if (R_CullPointAndRadius(temp.center, temp.radius) == CULL_OUT)
+	// {
+	// 	return;
+	// }
+
 	// make the front plane
 	if (!PlaneFromPoints(temp.planes[0], dv[0].xyz, dv[1].xyz, dv[2].xyz))
 	{

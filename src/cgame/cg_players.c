@@ -2305,7 +2305,9 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++, NULL);
+		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++, (vec4_t) { 1.0, 1.0, 1.0, 1.0 });
+		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++, (vec4_t) { 1.0, 1.0, 1.0, 0.5 });
+		// CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++, NULL);
 	}
 
 	// If this client is a medic, draw a 'revive' icon over
@@ -2865,7 +2867,41 @@ void CG_Player(centity_t *cent)
 	}
 
 	healthPct = (double)(ci->health) / (double)(CG_GetPlayerMaxHealth(ci->clientNum, ci->cls, ci->team));
+	// healthPct = (double)(cg_entities[ci->clientNum].currentState.dl_intensity) / (double)(CG_GetPlayerMaxHealth(ci->clientNum, ci->cls, ci->team));
 	character = CG_CharacterForClientinfo(ci, cent);
+	// Com_Printf("> %d\n", cg_entities[clientNum].currentState.dl_intensity);
+
+	if (healthPct > 0.0f && healthPct < 0.49f)
+	{
+		vec3_t origin;
+		// VectorCopy(cent->lerpOrigin, origin);
+		VectorCopy(cent->pe.bodyRefEnt.origin, origin);
+		origin[2] += 16.0f;
+
+		// @TODO [X] right icon
+		// @TODO [ ] position well
+		// @TODO [ ] don't render through walls
+		// @TODO [ ] gradient from orange to red
+
+		{
+			trace_t trace;
+			vec3_t  end;
+
+			VectorMA(cent->pe.headRefEnt.origin, 6.0f, cent->pe.headRefEnt.axis[2], end);
+
+			CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID);
+
+			// don't draw player icons if we can't see their head
+			if (trace.fraction == 1.f || trace.entityNum == cent->currentState.number)
+			{
+				// CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, height, numIcons++, NULL);
+				// CG_DrawSprite(origin, 6.66f, cgs.media.halfHealthInner, (byte[]) { 255, 255, 255, 30 }, RF_DEPTHHACK);
+				CG_DrawSprite(origin, 6.0f, cgs.media.halfHealthInner, (byte[]) { 255, 255, 255, 30 }, RF_DEPTHHACK);
+				CG_DrawSprite(origin, 6.0f, cgs.media.halfHealthOuter, (byte[]) { 255, 0, 0, 30 }, RF_DEPTHHACK);
+			}
+		}
+
+	}
 
 	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
 	{

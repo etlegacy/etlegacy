@@ -2550,12 +2550,12 @@ void CG_DrawDebugArtillery(centity_t *cent)
 	CG_Trace(&tr, tr.endpos, NULL, NULL, skyTarget, cent->currentState.number, MASK_SHOT);
 	if (tr.fraction < 1.0f && !(tr.surfaceFlags & SURF_NOIMPACT)) // was not SURF_SKY
 	{
-		CG_DrawSprite(tr.endpos, 6.66f, cgs.media.escortShader, (byte[]) { 255, 0, 0, 255 });
-		CG_DrawSprite(viewTarget, 6.66f, cgs.media.escortShader, (byte[]) { 255, 0, 0, 255 });
+		CG_DrawSprite(tr.endpos, 6.66f, cgs.media.escortShader, (byte[]) { 255, 0, 0, 255 }, 0);
+		CG_DrawSprite(viewTarget, 6.66f, cgs.media.escortShader, (byte[]) { 255, 0, 0, 255 }, 0);
 	}
 	else
 	{
-		CG_DrawSprite(viewTarget, 6.66f, cgs.media.escortShader, NULL);
+		CG_DrawSprite(viewTarget, 6.66f, cgs.media.escortShader, NULL, 0);
 	}
 }
 
@@ -4562,7 +4562,7 @@ void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis, qboolea
 /**
  * @brief Draw a sprite at a target location.
  */
-void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4])
+void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4], int renderfx)
 {
 	refEntity_t ent;
 	Com_Memset(&ent, 0, sizeof(ent));
@@ -4578,7 +4578,7 @@ void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte col
 	}
 
 	ent.radius    = radius;
-	ent.renderfx  = 0;
+	ent.renderfx  = renderfx;
 	ent.origin[0] = origin[0];
 	ent.origin[1] = origin[1];
 	ent.origin[2] = origin[2];

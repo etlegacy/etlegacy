@@ -1801,6 +1801,7 @@ void CG_DrawPowerUps(hudComponent_t *comp)
 	else if (ps->powerups[PW_INVULNERABLE] && !(ps->pm_flags & PMF_LIMBO))       // spawn shield
 	{
 		CG_DrawPic(comp->location.x, comp->location.y, comp->location.w, comp->location.h, cgs.media.spawnInvincibleShader);
+		// CG_DrawPicST(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 0.0, 0.0, 1.0, 1.0, cgs.media.spawnInvincibleShader);
 	}
 }
 
