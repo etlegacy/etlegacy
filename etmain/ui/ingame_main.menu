@@ -6,9 +6,9 @@
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	160
 #ifdef OLD_CLIENT
-#define WINDOW_HEIGHT	248
-#else
 #define WINDOW_HEIGHT	224
+#else
+#define WINDOW_HEIGHT	200
 #endif
 #define GROUP_NAME		"grpIngameMain"
 
@@ -49,11 +49,10 @@ menuDef {
 		conditionalScript cg_ui_favorite 0
 		( "open popupRemoveFavorite" )
         ( "open popupAddFavorite" ), tooltip _("Set or unset this server as favorite") )
-	BUTTONEXT( 6, 152, WINDOW_WIDTH-12, 18, _("CREDITS"), .3, 14, close ingame_main ; open credits_etlegacy, tooltip _("Look at the legacy hall of fame") )
-	BUTTONEXT( 6, 176, WINDOW_WIDTH-12, 18, _("DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect, tooltip _("Disconnect your connection from current server") )
-	BUTTONEXT( 6, 200, WINDOW_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit, tooltip _("Don't press this. Be warned!") )
+	BUTTONEXT( 6, 152, WINDOW_WIDTH-12, 18, _("DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect, tooltip _("Disconnect your connection from current server") )
+	BUTTONEXT( 6, 176, WINDOW_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit, tooltip _("Don't press this. Be warned!") )
 #ifdef OLD_CLIENT
-	BUTTONEXT( 6, 224, WINDOW_WIDTH-12, 18, _("^1UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL "https://www.etlegacy.com", tooltip _("Upgrade!") )
+	BUTTONEXT( 6, 200, WINDOW_WIDTH-12, 18, _("^1UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL "https://www.etlegacy.com", tooltip _("Upgrade!") )
 #endif
 
 // Vanilla client warning //
@@ -73,18 +72,6 @@ menuDef {
 #ifdef OLD_CLIENT
 	itemDef {
 		name        "legacy_logo"
-		rect        15 244 128 64
-		style       WINDOW_STYLE_SHADER
-		background  "ui/assets/etl_logo"
-		forecolor   1 1 1 1
-		visible     1
-		decoration
-	}
-
-	LABEL( 60, 294, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
-#else
-	itemDef {
-		name        "legacy_logo"
 		rect        15 220 128 64
 		style       WINDOW_STYLE_SHADER
 		background  "ui/assets/etl_logo"
@@ -93,13 +80,25 @@ menuDef {
 		decoration
 	}
 
-	LABEL( 60, 270, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( 60, 274, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
+#else
+	itemDef {
+		name        "legacy_logo"
+		rect        15 196 128 64
+		style       WINDOW_STYLE_SHADER
+		background  "ui/assets/etl_logo"
+		forecolor   1 1 1 1
+		visible     1
+		decoration
+	}
+
+	LABEL( 60, 250, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
 #endif
 
 #ifdef NON_RELEASE_BUILD
 itemDef {
 	name "development_build_banner"
-	rect 60 280 110 13
+	rect 60 260 110 13
 	text _("DEVELOPMENT BUILD")
 	textfont UI_FONT_ARIBLK_16
 	textscale   .19
