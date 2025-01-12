@@ -921,8 +921,8 @@ void CG_AddBloodElements(localEntity_t *le)
 		                                    cgs.media.bloodTrailShader,
 		                                    le->refEntity.origin,
 		                                    200,
-		                                    1.0f - lifeFrac,  // start alpha
-		                                    1.0f - lifeFrac,  // end alpha
+		                                    0.6f - lifeFrac,  // start alpha
+		                                    0.6f - lifeFrac,  // end alpha
 		                                    3.0f,
 		                                    5.0f);
 

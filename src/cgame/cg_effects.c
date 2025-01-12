@@ -364,7 +364,7 @@ void CG_Bleed(vec3_t origin, int entityNum)
 			                  100,  // speed
 			                  450 + (int)(crandom() * 50),       // duration
 			                  2 + rand() % 2,     // count
-			                  0.1f);     // rand scale
+			                  0.01f);     // rand scale
 		}
 	}
 }
