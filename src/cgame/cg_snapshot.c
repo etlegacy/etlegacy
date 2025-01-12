@@ -306,6 +306,22 @@ static void CG_TransitionSnapshot(void)
 	BG_PlayerStateToEntityState(&cg.snap->ps, &cg_entities[cg.snap->ps.clientNum].currentState, cg.time, qfalse);
 	cg_entities[cg.snap->ps.clientNum].interpolate = qfalse;
 
+	// Also record 'ps.identifyClientHealth' (health of an alive team member
+	// you have your crosshair over) in 'cgs.clientinfo'.
+	//
+	// This is in addition to the passive health info we regularly get of all
+	// team members (for the Fireteam Window) - however 'identifyClientHealth'
+	// gets updated every snap, while the former gets updated only each second
+	// or somesuch.
+	{
+		int identifyClientNum = cg.snap->ps.identifyClient;
+		if (identifyClientNum != cg.predictedPlayerState.clientNum)
+		{
+			clientInfo_t *ci = &cgs.clientinfo[identifyClientNum];
+			ci->health = cg.snap->ps.identifyClientHealth;
+		}
+	}
+
 	for (i = 0 ; i < cg.snap->numEntities ; i++)
 	{
 		id = cg.snap->entities[i].number;
