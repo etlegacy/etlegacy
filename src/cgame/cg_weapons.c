@@ -5508,7 +5508,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 	sfx          = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, soundSurfaceIndex, qtrue);
 	sfx2         = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, W_SND_SURF_FAR, qfalse);
 	mark         = cg_weapons[weapon].impactMark[soundSurfaceIndex];
-	radius       = cg_weapons[weapon].impactMarkRadius + crandom();
+	radius       = cg_weapons[weapon].impactMarkRadius;
 	markDuration = cg_markTime.integer * cg_weapons[weapon].impactDurationCoeff;
 
 	// optimization, only spawn the bullet hole if we are close
