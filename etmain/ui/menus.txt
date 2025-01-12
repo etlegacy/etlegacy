@@ -89,4 +89,6 @@
 	loadMenu { "ui/ingame_tapout.menu" }
 	loadMenu { "ui/ingame_tapoutlms.menu" }
 	loadMenu { "ui/ingame_vote_bot.menu" }
+
+	loadMenu { "ui/changelog.menu" }
 }

@@ -205,7 +205,11 @@ void AssetCache(void)
 
 	for (n = 0; n < NUM_CROSSHAIRS; n++)
 	{
+// <<<<<<< HEAD
 		const qboolean useSVG = ui_cg_crosshairSVG.integer && DC->etLegacyClient;
+// =======
+//         const qboolean useSVG = ui_cg_crosshairSVG.integer && DC->etLegacyClient;
+// >>>>>>> a563e66ce (Chengelok)
 
 		uiInfo.uiDC.Assets.crosshairShader[n]    = trap_R_RegisterShaderNoMip(va("gfx/2d/crosshair%c%s", 'a' + n, useSVG ? "_svg" : ""));
 		uiInfo.uiDC.Assets.crosshairAltShader[n] = trap_R_RegisterShaderNoMip(va("gfx/2d/crosshair%c_alt%s", 'a' + n, useSVG ? "_svg" : ""));

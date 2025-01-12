@@ -112,6 +112,7 @@ menuDef {
 	BUTTON( 6, 152, MENU_WIDTH-12, 18, _("^_MODS"), .3, 14, close main ; open mods )
 	BUTTON( 6, 176, MENU_WIDTH-12, 18, _("CRE^_DITS"), .3, 14, close main ; open credits_etlegacy )
 	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("E^_XIT"), .3, 14, clearFocus ; open quit )
+	BUTTON( 6, 224, MENU_WIDTH-12, 18, _("^_CHANGELOG"), .3, 14, close main ; open changelog )
 
 // Vanilla or old Legacy client warning //
 #ifdef OLD_CLIENT
