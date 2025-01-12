@@ -435,7 +435,8 @@ typedef struct centity_s
 	int processedFrame;                 ///< frame we were last added to the scene
 
 	int voiceChatSprite;
-	int voiceChatSpriteTime;
+	int voiceChatSpriteTime;            ///< time when voice chat sprite expires
+	int voiceChatSpriteUninterruptible; ///< voice chat sprite can't be interrupted. e.g. healed up to Max Health on 'VoiceMedic'
 
 	// item highlighting
 	int highlightTime;

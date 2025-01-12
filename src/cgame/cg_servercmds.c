@@ -1792,31 +1792,36 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 	// don't show icons for the HQ (clientnum -1)
 	if (vchat->clientNum != -1)
 	{
-		// Show icon above head
+		centity_t    *cent;
+		clientInfo_t *ci;
+
 		if (vchat->clientNum == cg.snap->ps.clientNum)
 		{
-			cg.predictedPlayerEntity.voiceChatSprite = vchat->sprite;
-			if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
-			{
-				cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
-			}
-			else
-			{
-				cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
-			}
+			cent = &cg.predictedPlayerEntity;
 		}
 		else
 		{
-			cg_entities[vchat->clientNum].voiceChatSprite = vchat->sprite;
-			VectorCopy(vchat->origin, cg_entities[vchat->clientNum].lerpOrigin);
-			if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
+			cent = &cg_entities[vchat->clientNum];
+		}
+		ci = &cgs.clientinfo[cent->currentState.clientNum];
+
+		// Show icon above head
+		cent->voiceChatSpriteUninterruptible = qfalse;
+		cent->voiceChatSprite                = vchat->sprite;
+		if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
+		{
+			if (
+				vchat->sprite == cgs.media.medicIcon
+				&& (ci->health == CG_GetPlayerMaxHealth(ci->clientNum, ci->cls, ci->team)))
 			{
-				cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
+				cent->voiceChatSpriteUninterruptible = qtrue;
 			}
-			else
-			{
-				cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
-			}
+
+			cent->voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
+		}
+		else
+		{
+			cent->voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
 		}
 	}
 
