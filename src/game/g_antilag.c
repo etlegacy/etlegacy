@@ -738,15 +738,6 @@ static int G_SwitchBodyPartEntity(gentity_t *ent)
 	return ent - g_entities;
 }
 
-#define POSITION_READJUST                                      \
-		if (res != results->entityNum) {                         \
-			VectorSubtract(end, start, dir);                      \
-			VectorNormalizeFast(dir);                             \
-                                                               \
-			VectorMA(results->endpos, -1, dir, results->endpos);  \
-			results->entityNum = res;                             \
-		}
-
 /**
  * @brief Run a trace with players in historical positions.
  * @param[in] ent
@@ -888,7 +879,16 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	G_ResetClientHeight();
 
 	res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
-	POSITION_READJUST
+
+	// POSITION_READJUST
+	if (res != results->entityNum)
+	{
+		VectorSubtract(end, start, dir);
+		VectorNormalizeFast(dir);
+
+		VectorMA(results->endpos, -1, dir, results->endpos);
+		results->entityNum = res;
+	}
 
 	G_DettachBodyParts();
 }
