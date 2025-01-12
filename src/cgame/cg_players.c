@@ -2247,6 +2247,31 @@ static void CG_PlayerSprites(centity_t *cent)
 	// show voice chat signal so players know who's talking
 	if (cent->voiceChatSpriteTime > cg.time)
 	{
+		// SPECIAL CASE: Reset 'VoiceMedic' Request when MaxHealth has been reached
+		if ((cent->voiceChatSpriteTime > cg.time)
+		    && (cent->voiceChatSprite == cgs.media.medicIcon))
+		{
+			if (ci->health == CG_GetPlayerMaxHealth(ci->clientNum, ci->cls, ci->team))
+			{
+				if (!cent->voiceChatSpriteUninterruptible)
+				{
+					cent->voiceChatSpriteTime = cg.time;
+				}
+			}
+			else
+			{
+				// if health dips below MaxHealth while
+				// 'voiceChatSpriteUninterruptible' is true - reset it, such that
+				// the sprite will be cleared once we heal back up to MaxHealth
+				// again
+				if (cent->voiceChatSpriteUninterruptible)
+				{
+					cent->voiceChatSpriteUninterruptible = qfalse;
+				}
+
+			}
+		}
+
 		if (sameTeam)
 		{
 			CG_PlayerFloatSprite(cent, cent->voiceChatSprite, height, numIcons++, NULL);
