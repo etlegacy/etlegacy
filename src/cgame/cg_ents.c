@@ -662,7 +662,7 @@ static int CG_PlayerCanPickupWeapon(int clientNum, weapon_t weapon)
  */
 static inline void CG_ReduceEntityZFight(refEntity_t *ent, int entityNum)
 {
-	ent->origin[2] += ((entityNum % 100) * 0.001f);
+	ent->origin[2] += 0.2 - ((entityNum % 20) * 0.01f);
 }
 
 /**
