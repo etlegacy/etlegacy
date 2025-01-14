@@ -5113,6 +5113,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 	if (deleted == 0)
 	{
 		G_Printf("G_ScriptAction_Delete(): no entities found (%s)\n", params);
+		return qfalse;
 	}
 
 	return qtrue;
@@ -5172,11 +5173,12 @@ qboolean G_ScriptAction_Create(gentity_t *ent, char *params)
 
 	create = G_SpawnGEntityFromSpawnVars();
 
-	// link only if spawned successfully
-	if (create)
+	// don't link null entities
+	if (!create)
 	{
-		trap_LinkEntity(create);
+		return qfalse;
 	}
 
+	trap_LinkEntity(create);
 	return qtrue;
 }
