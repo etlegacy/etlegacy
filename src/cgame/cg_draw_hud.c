@@ -2874,10 +2874,14 @@ char *CG_SpawnTimerText()
 	{
 		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
-			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer : (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
-			if (period > 0) // prevent division by 0 for weird cases like limbotime < 1000
+			int st;
+			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer :
+			             (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
+
+			st = CG_CalculateReinfTimeEx(period, cg_spawnTimer_set.integer);
+			if (st)
 			{
-				return va("%i", CG_CalculateReinfTimeEx(period, cg_spawnTimer_set.integer));
+				return va("%i", st);
 			}
 		}
 	}

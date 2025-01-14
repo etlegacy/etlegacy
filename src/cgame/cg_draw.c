@@ -2974,8 +2974,7 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 
 /**
  * @brief CG_CalculateReinfTime
- * @param period
- * @param offset
+ * @param[in] team_t team
  * @return
  */
 int CG_CalculateReinfTime(team_t team)
@@ -2986,14 +2985,14 @@ int CG_CalculateReinfTime(team_t team)
 }
 
 /**
- * @brief CG_CalculateReinfTime
+ * @brief CG_CalculateReinfTimeEx
  * @param[in] period
  * @param[in] offset
  * @return
  */
 int CG_CalculateReinfTimeEx(int period, int offset)
 {
-    if (period > 0) // prevent division by 0 for weird cases like limbotime < 1000
+    if (period > 0) // prevent modulo by 0 for weird cases like limbotime < 1000
     {
         int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
     
