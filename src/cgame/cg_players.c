@@ -3034,7 +3034,7 @@ void CG_Player(centity_t *cent)
 	{
 		int damagedState = -1;
 		// show blooded face for teammates depending on their health
-		if (ci->team == cg.predictedPlayerState.teamNum)
+		if (ci->team == cg.predictedPlayerState.teamNum || cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 		{
 			if (cent->currentState.eFlags & EF_DEAD)
 			{
