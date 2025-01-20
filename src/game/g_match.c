@@ -287,6 +287,15 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 		return;
 	}
 
+	// ensure we take the weapon mod for backstab, as the weapon may differ
+	if (mod == MOD_BACKSTAB && attacker && attacker->client)
+	{
+		if (GetWeaponTableData(attacker->client->ps.weapon)->type & WEAPON_TYPE_MELEE)
+		{
+			mod = GetWeaponTableData(attacker->client->ps.weapon)->mod;
+		}
+	}
+
 	// Special hack for intentional gibbage
 	if (targ->health <= 0 && targ->client->ps.pm_type == PM_DEAD)
 	{
@@ -384,6 +393,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 	{
 		attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].hits++;
 	}
+
 	if (targ->health <= 0)
 	{
 		attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].kills++;
