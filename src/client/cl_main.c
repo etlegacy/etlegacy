@@ -3483,7 +3483,9 @@ void CL_Init(void)
 	I18N_Init();
 #endif
 
-#if defined(WIN32) && definded(_WIN64)
+#if defined(WIN32) || defined(_WIN64)
+	// According to the SDL 2.0.4 it was suppose to be 1ms by default
+	// Use SDL Set Hint to overwrite it
 	SDL_SetHint(SDL_HINT_TIMER_RESOLUTION, "1");
 #endif
 
