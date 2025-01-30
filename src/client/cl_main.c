@@ -3483,6 +3483,10 @@ void CL_Init(void)
 	I18N_Init();
 #endif
 
+#if defined(WIN32) && definded(_WIN64)
+	SDL_SetHint(SDL_HINT_TIMER_RESOLUTION, "1");
+#endif
+
 	// Initialize random number to be used in pairing of messages with replies
 	srand(Com_Milliseconds());
 
