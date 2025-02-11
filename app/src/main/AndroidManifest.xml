@@ -68,6 +68,10 @@
 			android:launchMode="singleInstance"
 			android:screenOrientation="sensorLandscape" >
         </activity>
+		<activity
+			android:name=".ManualPositionActivity"
+			android:theme="@style/TransparentTheme">
+		</activity>
     </application>
 
 </manifest>
