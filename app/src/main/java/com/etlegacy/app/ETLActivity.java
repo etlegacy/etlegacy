@@ -199,7 +199,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 		esc_btn = new ImageButton(this);
 		esc_btn.setId(View.generateViewId());
-		esc_btn.setImageResource(R.drawable.ic_crouch);
+		esc_btn.setImageResource(R.drawable.ic_escape);
 		esc_btn.setBackgroundColor(0x00000000);
 		if (BuildConfig.DEBUG)
 			esc_btn.setBackgroundResource(R.drawable.border_drawable);
