@@ -69,7 +69,7 @@
 			android:screenOrientation="sensorLandscape" >
         </activity>
 		<activity
-			android:name=".ManualPositionActivity"
+			android:name=".SetupUIPositionActivity"
 			android:theme="@style/TransparentTheme">
 		</activity>
     </application>
