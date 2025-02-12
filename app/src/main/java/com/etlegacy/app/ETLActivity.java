@@ -382,13 +382,11 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			final int pointerCount = event.getPointerCount();
 			int action = event.getActionMasked();
 			float x, y, p;
-			float mWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-			float mHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
 			switch (action) {
 				case MotionEvent.ACTION_DOWN: {
 					int pointerFingerId = event.getPointerId(0);
-					x = event.getX(0) / mWidth;
-					y = event.getY(0) / mHeight;
+					x = event.getX(0) / shootBtnData.width;
+					y = event.getY(0) / shootBtnData.height;
 					p = event.getPressure(0);
 
 					onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
@@ -398,8 +396,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 				case MotionEvent.ACTION_MOVE:
 					for (int i = 0; i < pointerCount; i++) {
 						int pointerFingerId = event.getPointerId(i);
-						x = event.getX(i) / mWidth;
-						y = event.getY(i) / mHeight;
+						x = event.getX(i) / shootBtnData.width;
+						y = event.getY(i) / shootBtnData.height;
 						p = event.getPressure(i);
 						onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
 					}
@@ -408,8 +406,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 				case MotionEvent.ACTION_CANCEL:
 					for (int i = 0; i < pointerCount; i++) {
 						int pointerFingerId = event.getPointerId(i);
-						x = event.getX(i) / mWidth;
-						y = event.getY(i) / mHeight;
+						x = event.getX(i) / shootBtnData.width;
+						y = event.getY(i) / shootBtnData.height;
 						p = event.getPressure(i);
 						onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
 					}
