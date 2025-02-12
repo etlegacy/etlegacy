@@ -255,12 +255,13 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 		moveJoystick = new JoyStick(getApplicationContext());
 		moveJoystick.setListener(ETLActivity.this);
-		moveJoystick.setPadColor(Color.WHITE);
+		moveJoystick.setPadColor(Color.TRANSPARENT);
 		moveJoystick.setButtonColor(Color.TRANSPARENT);
 		moveJoystick.setButtonRadiusScale(50);
-		if (BuildConfig.DEBUG)
+		if (BuildConfig.DEBUG) {
 			moveJoystick.setBackgroundResource(R.drawable.border_drawable);
-
+			moveJoystick.setPadColor(Color.WHITE);
+		}
 
 		// Define an array of views and their corresponding parameters
 		// setMargins(int left, int top, int right, int bottom)
@@ -378,40 +379,58 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		});
 
 		shootBtn.setOnTouchListener((v, event) -> {
-			final int touchDevId = event.getDeviceId();
+			int touchDevId = event.getDeviceId();
 			final int pointerCount = event.getPointerCount();
 			int action = event.getActionMasked();
-			float x, y, p;
+			int pointerFingerId;
+			int i = -1;
+			float x,y,p;
 			switch (action) {
-				case MotionEvent.ACTION_DOWN: {
-					int pointerFingerId = event.getPointerId(0);
-					x = event.getX(0) / shootBtnData.width;
-					y = event.getY(0) / shootBtnData.height;
-					p = event.getPressure(0);
-
-					onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+				case MotionEvent.ACTION_DOWN:
+					// Primary pointer up/down, the index is always zero
+					i = 0;
+					/* fallthrough */
+					pointerFingerId = event.getPointerId(i);
+					x = event.getX(i) / shootBtnData.width;
+					y = event.getY(i) / shootBtnData.height;
+					p = event.getPressure(i);
+					if (p > 1.0f) {
+						// may be larger than 1.0f on some devices
+						// see the documentation of getPressure(i)
+						p = 1.0f;
+					}
+					//SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
 					onNativeKeyDown(42);
-				}
-				break;
+					break;
 				case MotionEvent.ACTION_MOVE:
-					for (int i = 0; i < pointerCount; i++) {
-						int pointerFingerId = event.getPointerId(i);
+					for (i = 0; i < pointerCount; i++) {
+						pointerFingerId = event.getPointerId(i);
 						x = event.getX(i) / shootBtnData.width;
 						y = event.getY(i) / shootBtnData.height;
 						p = event.getPressure(i);
-						onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+						if (p > 1.0f) {
+							// may be larger than 1.0f on some devices
+							// see the documentation of getPressure(i)
+							p = 1.0f;
+						}
+						SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
 					}
 					break;
 				case MotionEvent.ACTION_UP:
 				case MotionEvent.ACTION_CANCEL:
-					for (int i = 0; i < pointerCount; i++) {
-						int pointerFingerId = event.getPointerId(i);
+					for (i = 0; i < pointerCount; i++) {
+						pointerFingerId = event.getPointerId(i);
 						x = event.getX(i) / shootBtnData.width;
 						y = event.getY(i) / shootBtnData.height;
 						p = event.getPressure(i);
-						onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
+						if (p > 1.0f) {
+							// may be larger than 1.0f on some devices
+							// see the documentation of getPressure(i)
+							p = 1.0f;
+						}
+						SDLActivity.onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
+						onNativeKeyUp(42);
 					}
-					onNativeKeyUp(42);
 					break;
 			}
 			return false;
