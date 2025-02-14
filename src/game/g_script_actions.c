@@ -5095,7 +5095,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 	// did we find any key/value pairs in the params at all?..
 	if (count == 0)
 	{
-		return qtrue;
+		return qfalse;
 	}
 
 	// now delete the entities that passed all tests..
