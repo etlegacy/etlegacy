@@ -1648,9 +1648,9 @@ static void CL_CheckForResend(void)
 	break;
 	case CA_CHALLENGING:
 	{
-		qboolean connectingThroghQwfwd = Info_ValueForKey(Cvar_InfoString(CVAR_USERINFO), "prx")[0] != 0;
-		// first get the server information, skip if connecting trhough qwfwd proxy
-		if (cls.challengeState == CA_CHALLENGING_INFO && !connectingThroghQwfwd)
+		qboolean connectingThroughQwfwd = Info_ValueForKey(Cvar_InfoString(CVAR_USERINFO), "prx")[0] != 0;
+		// first get the server information, skip if connecting through qwfwd proxy
+		if (cls.challengeState == CA_CHALLENGING_INFO && !connectingThroughQwfwd)
 		{
 			Com_sprintf(buffer, sizeof(buffer), "getinfo %i", clc.challenge);
 			NET_OutOfBandPrint(NS_CLIENT, &clc.serverAddress, buffer);
