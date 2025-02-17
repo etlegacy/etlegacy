@@ -235,21 +235,34 @@ qboolean TVG_ClientInactivityTimer(gclient_t *client)
 
 		secondsLeft = (client->inactivityTime + inactivity - level.time) / 1000;
 
-		// countdown expired..
-		if (secondsLeft <= 0)
+		if (client->inactivitySecondsLeft != secondsLeft)
 		{
-			CPx(client - level.clients, "cp \"^3Dropped for inactivity\n\"");
-		}
-		// display a message at 30 seconds, and countdown at last 10 ..
-		else if (secondsLeft <= 10 || secondsLeft == 30)
-		{
-			CPx(client - level.clients, va("cp \"^1%i ^3seconds until inactivity drop\n\"", secondsLeft));
+			client->inactivitySecondsLeft = secondsLeft;
+
+			// countdown expired..
+			if (secondsLeft <= 0)
+			{
+				CPx(client - level.clients, "cp \"^3Dropped for inactivity\n\"");
+			}
+			// display a message at 30 seconds, and countdown at last 10 ..
+			else if (secondsLeft <= 10 || secondsLeft == 30)
+			{
+				CPx(client - level.clients, va("cp \"^1%i ^3seconds until inactivity drop\n\"", secondsLeft));
+			}
 		}
 	}
 	else
 	{
 		G_Printf("Spectator dropped for inactivity: %s\n", client->pers.netname);
 		trap_DropClient(client - level.clients, "Dropped due to inactivity", 0);
+		return qfalse;
+	}
+
+	// sending a command to client could possibly lead to reliable command overflow
+	// which leads to client being kicked and it's data wiped, but the rest of the 'client think' and 'pmove' could happen after anyway
+	// which would be undefined behaviour that could be (and possibly is according to reports) leading to server crashes
+	if (client->pers.connected == CON_DISCONNECTED)
+	{
 		return qfalse;
 	}
 
