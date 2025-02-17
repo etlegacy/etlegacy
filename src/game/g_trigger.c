@@ -547,6 +547,11 @@ void hurt_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	int dflags;
 
+	if (level.match_pause != PAUSE_NONE)
+	{
+		return;
+	}
+
 	if (!other->takedamage)
 	{
 		return;
@@ -712,6 +717,11 @@ void heal_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	int       i, j, clientcount = 0;
 	gentity_t *touchClients[MAX_CLIENTS];
 	int       healvalue;
+
+	if (level.match_pause != PAUSE_NONE)
+	{
+		return;
+	}
 
 	Com_Memset(touchClients, 0, sizeof(gentity_t *) * MAX_CLIENTS);
 
@@ -936,6 +946,11 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	int       i, j, clientcount = 0, count;
 	gentity_t *touchClients[MAX_CLIENTS];
+
+	if (level.match_pause != PAUSE_NONE)
+	{
+		return;
+	}
 
 	Com_Memset(touchClients, 0, sizeof(gentity_t *) * MAX_CLIENTS);
 
