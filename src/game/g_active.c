@@ -571,8 +571,9 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 
 	if ((&g_entities[tr.entityNum])->client)
 	{
-		ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
-		ent->client->sess.spectatorClient = tr.entityNum;
+		ent->client->sess.spectatorState      = SPECTATOR_FOLLOW;
+		ent->client->sess.spectatorClient     = tr.entityNum;
+		ent->client->sess.userSpectatorClient = tr.entityNum;
 		return qtrue;
 	}
 	return qfalse;
@@ -687,12 +688,12 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 			// to prevent constant traces done by server.
 			if (client->buttons & BUTTON_WALKING)
 			{
-				Cmd_FollowCycle_f(ent, 1, qtrue);
+				Cmd_FollowCycle_f(ent, 1, qtrue, qfalse);
 			}
 			// no humans playing?.. then follow a bot
 			if (client->sess.spectatorState != SPECTATOR_FOLLOW)
 			{
-				Cmd_FollowCycle_f(ent, 1, qfalse);
+				Cmd_FollowCycle_f(ent, 1, qfalse, qfalse);
 			}
 		}
 		// attack + walk button cycles through non-bot/human players
@@ -701,7 +702,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	else if ((client->buttons & BUTTON_ATTACK) && !(client->oldbuttons & BUTTON_ATTACK) &&
 	         !(client->buttons & BUTTON_ACTIVATE))
 	{
-		Cmd_FollowCycle_f(ent, 1, (client->buttons & BUTTON_WALKING));
+		Cmd_FollowCycle_f(ent, 1, (client->buttons & BUTTON_WALKING), qfalse);
 	}
 #ifdef ETLEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT

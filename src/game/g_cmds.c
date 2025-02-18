@@ -2524,7 +2524,7 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value)
 			{
 				ent->client->sess.spec_team = team;
 				CP(va("print \"Spectator follow is now locked on the %s team.\n\"", aTeams[team]));
-				Cmd_FollowCycle_f(ent, 1, qfalse);
+				Cmd_FollowCycle_f(ent, 1, qfalse, qfalse);
 			}
 		}
 		else
@@ -2576,8 +2576,9 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
-	ent->client->sess.spectatorClient = cnum;
+	ent->client->sess.spectatorState      = SPECTATOR_FOLLOW;
+	ent->client->sess.spectatorClient     = cnum;
+	ent->client->sess.userSpectatorClient = cnum;
 }
 
 /**
@@ -2585,8 +2586,9 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value)
  * @param[in,out] ent
  * @param[in] dir
  * @param[in] skipBots
+ * @param[in] serverForced - was selection forced by server?
  */
-void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
+void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots, qboolean serverForced)
 {
 	int clientnum;
 
@@ -2658,6 +2660,12 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 		// this is good, we can use it
 		ent->client->sess.spectatorClient = clientnum;
 		ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
+
+		if (!serverForced)
+		{
+			ent->client->sess.userSpectatorClient = clientnum;
+		}
+
 		return;
 	}
 	while (clientnum != ent->client->sess.spectatorClient);
@@ -2673,7 +2681,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
  */
 void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	Cmd_FollowCycle_f(ent, 1, qfalse);
+	Cmd_FollowCycle_f(ent, 1, qfalse, qfalse);
 }
 
 /**
@@ -2684,28 +2692,29 @@ void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_FollowPrevious_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	Cmd_FollowCycle_f(ent, -1, qfalse);
+	Cmd_FollowCycle_f(ent, -1, qfalse, qfalse);
 }
 
 /**
  * @brief Try to follow the same client as last time (before getting killed)
  * @param[in] ent
+ * @param[in] spectatorClient
  */
-qboolean G_FollowSame(gentity_t *ent)
+qboolean G_FollowSame(gentity_t *ent, int spectatorClient)
 {
-	if (ent->client->sess.spectatorClient < 0 || ent->client->sess.spectatorClient >= level.maxclients)
+	if (spectatorClient < 0 || spectatorClient >= level.maxclients)
 	{
 		return qfalse;
 	}
 
 	// can only follow connected clients
-	if (level.clients[ent->client->sess.spectatorClient].pers.connected != CON_CONNECTED)
+	if (level.clients[spectatorClient].pers.connected != CON_CONNECTED)
 	{
 		return qfalse;
 	}
 
 	// can't follow another spectator
-	if (level.clients[ent->client->sess.spectatorClient].sess.sessionTeam == TEAM_SPECTATOR)
+	if (level.clients[spectatorClient].sess.sessionTeam == TEAM_SPECTATOR)
 	{
 		return qfalse;
 	}
@@ -2713,18 +2722,18 @@ qboolean G_FollowSame(gentity_t *ent)
 	// couple extra checks for limbo mode
 	if (ent->client->ps.pm_flags & PMF_LIMBO)
 	{
-		if (level.clients[ent->client->sess.spectatorClient].sess.sessionTeam != ent->client->sess.sessionTeam)
+		if (level.clients[spectatorClient].sess.sessionTeam != ent->client->sess.sessionTeam)
 		{
 			return qfalse;
 		}
 	}
 
-	if (level.clients[ent->client->sess.spectatorClient].ps.pm_flags & PMF_LIMBO)
+	if (level.clients[spectatorClient].ps.pm_flags & PMF_LIMBO)
 	{
 		return qfalse;
 	}
 
-	if (!G_desiredFollow(ent, level.clients[ent->client->sess.spectatorClient].sess.sessionTeam))
+	if (!G_desiredFollow(ent, level.clients[spectatorClient].sess.sessionTeam))
 	{
 		return qfalse;
 	}
