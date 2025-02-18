@@ -96,11 +96,11 @@ panel_button_t spawnpointsTopBorderInnerText =
 {
 	NULL,
 	NULL,
-	{ 15,                           141,  200, 12 },
-	{ 0,                            0,    0,   0, 0, 0, 0, 0},
-	&spawnpointsTitleFont,          // font
-	NULL,                           // keyDown
-	NULL,                           // keyUp
+	{ 15,                             141,  200, 12 },
+	{ 0,                              0,    0,   0, 0, 0, 0, 0},
+	&spawnpointsTitleFont,            // font
+	NULL,                             // keyDown
+	NULL,                             // keyUp
 	CG_Spawnpoints_MenuTitleText_Draw,
 	NULL,
 	0
@@ -110,11 +110,11 @@ panel_button_t spawnpointsMenuItemText =
 {
 	NULL,
 	NULL,
-	{ 16,                      153,  128, 12 },
-	{ 0,                       0,    0,   0, 0, 0, 0, 0},
-	&spawnpointsFont,          // font
-	NULL,                      // keyDown
-	NULL,                      // keyUp
+	{ 16,                        153,  128, 12 },
+	{ 0,                         0,    0,   0, 0, 0, 0, 0},
+	&spawnpointsFont,            // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_Spawnpoints_MenuText_Draw,
 	NULL,
 	0
@@ -235,6 +235,9 @@ qboolean CG_SpawnpointsCheckExecKey(int key, qboolean doaction)
 
 		if (doaction)
 		{
+			cgs.ccSelectedSpawnPoint = i;
+			cgs.ccRequestedObjective = -1;
+
 			trap_SendClientCommand(va("setspawnpt %i", i));
 			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 
