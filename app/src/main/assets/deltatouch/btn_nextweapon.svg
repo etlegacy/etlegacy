@@ -1,1 +1,22 @@
-<svg id="eCRZaqdiJwh1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 270.93333 270.93334" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" project-id="1734d3fa92b54d37baa12e80d907cc77" export-id="eb47819f0321448f938e4da1711b02d0" cached="false"><defs><linearGradient id="eCRZaqdiJwh2-fill" x1="0.5" y1="1.706802" x2="0.5" y2="-0.076244" spreadMethod="pad" gradientUnits="objectBoundingBox" gradientTransform="translate(0 0)"><stop id="eCRZaqdiJwh2-fill-0" offset="0%" stop-color="#000"/><stop id="eCRZaqdiJwh2-fill-1" offset="100%" stop-color="#fff"/></linearGradient></defs><path d="M136.266892,135.46667l64.688618,87.809309c-64.688615-34.27074-64.688618-34.257855-130.782552,0l66.093934-87.809309Z" transform="matrix(1.226146 0 0 1.278368-30.754878-93.835892)" fill="url(#eCRZaqdiJwh2-fill)" stroke="#fff"/><path d="M104.980803,192.285295c33.342147-12.258124,33.342147-12.961222,64.97022,0l4.163413,15.664646c-17.488259-12.093915-53.989667-13.307024-73.306094,0l4.172461-15.664646Z" transform="translate(-1.994724-25.564822)" fill="#7d7d7d" stroke="#fff"/></svg>
+<svg id="eCRZaqdiJwh1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 270.93333 270.93334" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
+  <defs>
+    <linearGradient id="eCRZaqdiJwh2-fill" x1="0.5" y1="1.706802" x2="0.5" y2="-0.076244" spreadMethod="pad" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#000"/>
+      <stop offset="100%" stop-color="#fff"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M136.266892,135.46667l64.688618,87.809309c-64.688615-34.27074-64.688618-34.257855-130.782552,0l66.093934-87.809309Z"
+        transform="matrix(1.226146 0 0 1.278368 -30.754878 -93.835892)" 
+        fill="url(#eCRZaqdiJwh2-fill)" 
+        stroke="#fff" 
+        stroke-width="1.5" 
+        vector-effect="non-scaling-stroke"/>
+
+  <path d="M104.980803,192.285295c33.342147-12.258124,33.342147-12.961222,64.97022,0l4.163413,15.664646c-17.488259-12.093915-53.989667-13.307024-73.306094,0l4.172461-15.664646Z"
+        transform="translate(-1.994724 -25.564822)" 
+        fill="#7d7d7d" 
+        stroke="#fff" 
+        stroke-width="1.5" 
+        vector-effect="non-scaling-stroke"/>
+</svg>
