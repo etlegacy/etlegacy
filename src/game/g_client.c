@@ -862,14 +862,15 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			TossWeapons(ent);
 		}
 
-		if (G_FollowSame(ent))
+		if (G_FollowSame(ent, ent->client->sess.userSpectatorClient))
 		{
-			ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
+			ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
+			ent->client->sess.spectatorClient = ent->client->sess.userSpectatorClient;
 		}
 		else
 		{
 			ent->client->sess.spectatorClient = startclient;
-			Cmd_FollowCycle_f(ent, 1, qfalse); // get fresh spectatorClient
+			Cmd_FollowCycle_f(ent, 1, qfalse, qtrue); // get fresh spectatorClient
 			if (ent->client->sess.spectatorClient == startclient)
 			{
 				// No one to follow, so just stay put
@@ -887,7 +888,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 
 			if ((cl->ps.pm_flags & PMF_LIMBO) && cl->sess.spectatorClient == ent - g_entities)
 			{
-				Cmd_FollowCycle_f(&g_entities[level.sortedClients[i]], 1, qfalse);
+				Cmd_FollowCycle_f(&g_entities[level.sortedClients[i]], 1, qfalse, qtrue);
 			}
 		}
 	}
@@ -3467,7 +3468,7 @@ void ClientDisconnect(int clientNum)
 		}
 		if ((flag->client->ps.pm_flags & PMF_LIMBO) && flag->client->sess.spectatorClient == clientNum)
 		{
-			Cmd_FollowCycle_f(flag, 1, qfalse);
+			Cmd_FollowCycle_f(flag, 1, qfalse, qtrue);
 		}
 	}
 
