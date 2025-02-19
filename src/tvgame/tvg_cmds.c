@@ -1470,62 +1470,53 @@ static qboolean TVG_ETPRO_EncodedBitStreamCommand(char *cmd)
 
 	switch (cmdNum)
 	{
-	case 0:
+	case ETPRO_ENCBS_ERROR:
 		G_DPrintf("TVG_ETPRO_EncodedBitStreamCommand error\n");
 		return qfalse;
 
 	// ETPro testing purposes only
-	case 1:
+	case ETPRO_ENCBS_SERVER_TEST:
 		return qtrue;
 
 	// ETPro testing purposes only
-	case 2:
+	case ETPRO_ENCBS_SERVER_AND_CLIENT_TEST:
 		trap_SendServerCommand(-1, cmd);
 		return qtrue;
 
 	// /score
-	case 3:
-	case 4:
+	case ETPRO_ENCBS_SCORE1:
+	case ETPRO_ENCBS_SCORE2:
 		TVG_SaveScore(cmd, qfalse);
 		return qtrue;
 
-	// tinfo
-	case 5:
+	case ETPRO_ENCBS_TINFO:
 		trap_SendServerCommand(-1, cmd);
 		return qtrue;
 
-	// popup message
-	case 6:
+	case ETPRO_ENCBS_POPUP_MESSAGE:
 		trap_SendServerCommand(-1, cmd);
 		return qtrue;
 
-	// entnfo - allies
-	case 7:
+	case ETPRO_ENCBS_ENTNFO_ALLIES:
 		return qtrue;
 
-	// entnfo - axis
-	case 8:
+	case ETPRO_ENCBS_ENTNFO_AXIS:
 		return qtrue;
 
-	// entnfo - spectator
-	case 9:
+	case ETPRO_ENCBS_ENTNFO_SPECTATOR:
 		trap_SendServerCommand(-1, cmd);
 		return qtrue;
 
-	// global team sound
-	case 10:
+	case ETPRO_ENCBS_GLOBAL_TEAM_SOUND:
 		return qtrue;
 
-	// stock text message
-	case 11:
+	case ETPRO_ENCBS_STOCK_TEXT_MESSAGE:
 		return qtrue;
 
-	// limbo update
-	case 12:
+	case ETPRO_ENCBS_LIMBO_UPDATE:
 		return qtrue;
 
-	// speaker state
-	case 13:
+	case ETPRO_ENCBS_SPEAKER_STATE:
 		return qtrue;
 
 	default:
