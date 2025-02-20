@@ -1438,7 +1438,7 @@ void CG_SetupDlightstyles(void)
 		cent   = &cg_entities[entnum];
 
 		token = COM_Parse(&str);     // stylestring
-		Q_strncpyz(cent->dl_stylestring, token, strlen(token));
+		Q_strncpyz(cent->dl_stylestring, token, sizeof(cent->dl_stylestring));
 
 		token             = COM_Parse(&str); // offset
 		cent->dl_frame    = Q_atoi(token);
