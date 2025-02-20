@@ -125,7 +125,6 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		Gson gson = new Gson();
 		String json = gson.toJson(componentMap);
-		Log.v("ETLActivity", "Saved JSON: " + json);
 		editor.putString(COMPONENT_MAP_KEY, json);
 		editor.apply();
 		Intent intent = new Intent("REFRESH_ACTION");
@@ -139,8 +138,7 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 		Type type = new TypeToken<HashMap<String, ComponentManager.ComponentData>>() {}.getType();
 		componentMap = gson.fromJson(json, type);
 		assert componentMap != null;
-		Log.v("ETLActivity", "Loaded JSON: " + json);
-		Log.v("ManualPositionActivity", "LoadComponentData: " + componentMap);
+		Log.v("SetupUIThemeActivity", "LoadComponentData: " + componentMap);
 	}
 
 	class SwipeGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -163,13 +161,11 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 	}
 
 	private void swipeLeft() {
-		Log.v("ManualPositionActivity", "swipeLeft: " + currentIndex);
 		currentIndex = (currentIndex + 1) % icons.length;
 		SaveComponentData();
 	}
 
 	private void swipeRight() {
-		Log.v("ManualPositionActivity", "swipeRight: " + currentIndex);
 		currentIndex = (currentIndex - 1 + icons.length) % icons.length;
 		SaveComponentData();
 	}
