@@ -102,6 +102,9 @@ android {
 	buildFeatures {
 		buildConfig = true
 	}
+	sourceSets {
+		main.res.srcDirs = ['src/main/res_deltatouch', 'src/main/res_tech4A++', 'src/main/res']
+	}
 
 	def generatedAssets = layout.buildDirectory.dir("generated/pk3/")
 	sourceSets.named('main') {
