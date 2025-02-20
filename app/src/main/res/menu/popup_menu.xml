@@ -6,6 +6,10 @@
 		android:title="Edit"
 		tools:ignore="HardcodedText" />
 	<item
+		android:id="@+id/theme"
+		android:title="Theme"
+		tools:ignore="HardcodedText" />
+	<item
 		android:id="@+id/delete"
 		android:title="Delete"
 		tools:ignore="HardcodedText" />

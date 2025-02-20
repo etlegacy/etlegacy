@@ -72,6 +72,10 @@
 			android:name=".SetupUIPositionActivity"
 			android:theme="@style/TransparentTheme">
 		</activity>
+		<activity
+			android:name=".SetupUIThemeActivity"
+			android:theme="@style/TransparentTheme">
+		</activity>
     </application>
 
 </manifest>

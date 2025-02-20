@@ -62,6 +62,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private JoyStick moveJoystick;
 	private Handler handler;
 	private Runnable uiRunner;
+	private Intent intent;
 
 	private int width;
 	private int height;
@@ -182,106 +183,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private void setupUI() {
 		RemoveLayout();
 
-		// Create ImageButtons
-		etl_console = new ImageButton(this);
-		etl_console.setId(View.generateViewId());
-		etl_console.setImageResource(R.drawable.ic_one_line);
-		etl_console.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			etl_console.setBackgroundResource(R.drawable.border_drawable);
-
-		btn = new ImageButton(this);
-		btn.setId(View.generateViewId());
-		btn.setImageResource(R.drawable.ic_keyboard);
-		btn.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			btn.setBackgroundResource(R.drawable.border_drawable);
-
-		esc_btn = new ImageButton(this);
-		esc_btn.setId(View.generateViewId());
-		esc_btn.setImageResource(R.drawable.ic_escape);
-		esc_btn.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			esc_btn.setBackgroundResource(R.drawable.border_drawable);
-
-		gears = new ImageButton(this);
-		gears.setId(View.generateViewId());
-		gears.setImageResource(R.drawable.gears);
-		gears.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			gears.setBackgroundResource(R.drawable.border_drawable);
-
-		shootBtn = new ImageButton(this);
-		shootBtn.setId(View.generateViewId());
-		shootBtn.setImageResource(R.drawable.ic_shoot);
-		shootBtn.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			shootBtn.setBackgroundResource(R.drawable.border_drawable);
-
-		reloadBtn = new ImageButton(this);
-		reloadBtn.setId(View.generateViewId());
-		reloadBtn.setImageResource(R.drawable.ic_reload);
-		reloadBtn.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			reloadBtn.setBackgroundResource(R.drawable.border_drawable);
-
-		jumpBtn = new ImageButton(this);
-		jumpBtn.setId(View.generateViewId());
-		jumpBtn.setImageResource(R.drawable.ic_jump);
-		jumpBtn.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			jumpBtn.setBackgroundResource(R.drawable.border_drawable);
-
-		activateBtn = new ImageButton(this);
-		activateBtn.setId(View.generateViewId());
-		activateBtn.setImageResource(R.drawable.ic_use);
-		activateBtn.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			activateBtn.setBackgroundResource(R.drawable.border_drawable);
-
-		altBtn = new ImageButton(this);
-		altBtn.setId(View.generateViewId());
-		altBtn.setImageResource(R.drawable.ic_alt);
-		altBtn.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			altBtn.setBackgroundResource(R.drawable.border_drawable);
-
-		crouchBtn = new ImageButton(this);
-		crouchBtn.setId(View.generateViewId());
-		crouchBtn.setImageResource(R.drawable.ic_crouch);
-		crouchBtn.setBackgroundColor(0x00000000);
-		if (BuildConfig.DEBUG)
-			crouchBtn.setBackgroundResource(R.drawable.border_drawable);
-
-		moveJoystick = new JoyStick(getApplicationContext());
-		moveJoystick.setListener(ETLActivity.this);
-		moveJoystick.setPadColor(Color.TRANSPARENT);
-		moveJoystick.setButtonColor(Color.TRANSPARENT);
-		moveJoystick.setButtonRadiusScale(50);
-		if (BuildConfig.DEBUG) {
-			moveJoystick.setBackgroundResource(R.drawable.border_drawable);
-			moveJoystick.setPadColor(Color.WHITE);
-		}
-
-		// Define an array of views and their corresponding parameters
-		// setMargins(int left, int top, int right, int bottom)
-		/*Object[][] viewsWithParams = {
-			{etl_console, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{0, 0, 0, 0}},
-			{btn, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{150, 0, 0, 0}},
-			{esc_btn, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{300, 0, 0, 0}},
-			{gears, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{450, 0, 0, 0}},
-			{shootBtn, 950, 600, Gravity.BOTTOM | Gravity.RIGHT, new int[]{1400, 300, 0, 0}},
-			{reloadBtn, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{600, 0, 0, 0}},
-			{jumpBtn, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{750, 0, 0, 0}},
-			{activateBtn, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{900, 0, 0, 0}},
-			{altBtn, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{1050, 0, 0, 0}},
-			{crouchBtn, 100, 100, Gravity.TOP | Gravity.LEFT, new int[]{1200, 0, 0, 0}},
-			{moveJoystick, 400, 400, Gravity.TOP | Gravity.LEFT, new int[]{100, 300, 0, 0}}
-		};*/
-
 		LoadDefaultComponentData();
 
-		// Example: Accessing data from the HashMap
 		ComponentManager.ComponentData etl_consoleData = defaultcomponentMap.get("etl_console");
 		ComponentManager.ComponentData btnData = defaultcomponentMap.get("btn");
 		ComponentManager.ComponentData esc_btnData = defaultcomponentMap.get("esc_btn");
@@ -306,18 +209,100 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		assert crouchBtnData != null;
 		assert moveJoystickData != null;
 
+		// Create ImageButtons
+		etl_console = new ImageButton(this);
+		etl_console.setId(View.generateViewId());
+		etl_console.setImageResource(etl_consoleData.resourceId);
+		etl_console.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			etl_console.setBackgroundResource(R.drawable.border_drawable);
+
+		btn = new ImageButton(this);
+		btn.setId(View.generateViewId());
+		btn.setImageResource(btnData.resourceId);
+		btn.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			btn.setBackgroundResource(R.drawable.border_drawable);
+
+		esc_btn = new ImageButton(this);
+		esc_btn.setId(View.generateViewId());
+		esc_btn.setImageResource(esc_btnData.resourceId);
+		esc_btn.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			esc_btn.setBackgroundResource(R.drawable.border_drawable);
+
+		gears = new ImageButton(this);
+		gears.setId(View.generateViewId());
+		gears.setImageResource(gearsData.resourceId);
+		gears.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			gears.setBackgroundResource(R.drawable.border_drawable);
+
+		shootBtn = new ImageButton(this);
+		shootBtn.setId(View.generateViewId());
+		shootBtn.setImageResource(shootBtnData.resourceId);
+		shootBtn.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			shootBtn.setBackgroundResource(R.drawable.border_drawable);
+
+		reloadBtn = new ImageButton(this);
+		reloadBtn.setId(View.generateViewId());
+		reloadBtn.setImageResource(reloadBtnData.resourceId);
+		reloadBtn.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			reloadBtn.setBackgroundResource(R.drawable.border_drawable);
+
+		jumpBtn = new ImageButton(this);
+		jumpBtn.setId(View.generateViewId());
+		jumpBtn.setImageResource(jumpBtnData.resourceId);
+		jumpBtn.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			jumpBtn.setBackgroundResource(R.drawable.border_drawable);
+
+		activateBtn = new ImageButton(this);
+		activateBtn.setId(View.generateViewId());
+		activateBtn.setImageResource(activateBtnData.resourceId);
+		activateBtn.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			activateBtn.setBackgroundResource(R.drawable.border_drawable);
+
+		altBtn = new ImageButton(this);
+		altBtn.setId(View.generateViewId());
+		altBtn.setImageResource(altBtnData.resourceId);
+		altBtn.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			altBtn.setBackgroundResource(R.drawable.border_drawable);
+
+		crouchBtn = new ImageButton(this);
+		crouchBtn.setId(View.generateViewId());
+		crouchBtn.setImageResource(crouchBtnData.resourceId);
+		crouchBtn.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			crouchBtn.setBackgroundResource(R.drawable.border_drawable);
+
+		moveJoystick = new JoyStick(getApplicationContext());
+		moveJoystick.setListener(ETLActivity.this);
+		moveJoystick.setBackgroundResource(moveJoystickData.resourceId);
+		moveJoystick.setPadColor(Color.TRANSPARENT);
+		moveJoystick.setButtonColor(Color.TRANSPARENT);
+		moveJoystick.setButtonRadiusScale(50);
+		if (BuildConfig.DEBUG) {
+			moveJoystick.setBackgroundResource(R.drawable.border_drawable);
+			moveJoystick.setPadColor(Color.WHITE);
+		}
+
 		Object[][] viewsWithParams = {
-			{etl_console, etl_consoleData.width, etl_consoleData.height, etl_consoleData.gravity, etl_consoleData.margins},
-			{btn, btnData.width, btnData.height, btnData.gravity, btnData.margins},
-			{esc_btn, esc_btnData.width, esc_btnData.height, esc_btnData.gravity, esc_btnData.margins},
-			{gears, gearsData.width, gearsData.height, gearsData.gravity, gearsData.margins},
-			{shootBtn, shootBtnData.width, shootBtnData.height, shootBtnData.gravity, shootBtnData.margins},
-			{reloadBtn, reloadBtnData.width, reloadBtnData.height, reloadBtnData.gravity, reloadBtnData.margins},
-			{jumpBtn, jumpBtnData.width, jumpBtnData.height, jumpBtnData.gravity, jumpBtnData.margins},
-			{activateBtn, activateBtnData.width, activateBtnData.height, activateBtnData.gravity, activateBtnData.margins},
-			{altBtn, altBtnData.width, altBtnData.height, altBtnData.gravity, altBtnData.margins},
-			{crouchBtn, crouchBtnData.width, crouchBtnData.height, crouchBtnData.gravity, crouchBtnData.margins},
-			{moveJoystick, moveJoystickData.width, moveJoystickData.height, moveJoystickData.gravity, moveJoystickData.margins}
+			{etl_console, etl_consoleData.width, etl_consoleData.height, etl_consoleData.gravity, etl_consoleData.margins, etl_consoleData.resourceId},
+			{btn, btnData.width, btnData.height, btnData.gravity, btnData.margins, btnData.resourceId},
+			{esc_btn, esc_btnData.width, esc_btnData.height, esc_btnData.gravity, esc_btnData.margins, esc_btnData.resourceId},
+			{gears, gearsData.width, gearsData.height, gearsData.gravity, gearsData.margins, gearsData.resourceId},
+			{shootBtn, shootBtnData.width, shootBtnData.height, shootBtnData.gravity, shootBtnData.margins, shootBtnData.resourceId},
+			{reloadBtn, reloadBtnData.width, reloadBtnData.height, reloadBtnData.gravity, reloadBtnData.margins, reloadBtnData.resourceId},
+			{jumpBtn, jumpBtnData.width, jumpBtnData.height, jumpBtnData.gravity, jumpBtnData.margins, jumpBtnData.resourceId},
+			{activateBtn, activateBtnData.width, activateBtnData.height, activateBtnData.gravity, activateBtnData.margins, activateBtnData.resourceId},
+			{altBtn, altBtnData.width, altBtnData.height, altBtnData.gravity, altBtnData.margins, altBtnData.resourceId},
+			{crouchBtn, crouchBtnData.width, crouchBtnData.height, crouchBtnData.gravity, crouchBtnData.margins, crouchBtnData.resourceId},
+			{moveJoystick, moveJoystickData.width, moveJoystickData.height, moveJoystickData.gravity, moveJoystickData.margins, moveJoystickData.resourceId}
 		};
 
 		// Iterate over the array to create and set LayoutParams
@@ -362,9 +347,14 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			popupMenu.setOnMenuItemClickListener(item -> {
 				switch (item.getItemId()) {
 					case R.id.edit:
-						Intent intent = new Intent(ETLActivity.this, SetupUIPositionActivity.class);
+						intent = new Intent(ETLActivity.this, SetupUIPositionActivity.class);
 						startActivityForResult(intent, 1);
 						Toast.makeText(this, "Opened UI Editor", Toast.LENGTH_SHORT).show();
+						return true;
+					case R.id.theme:
+						intent = new Intent(ETLActivity.this, SetupUIThemeActivity.class);
+						startActivityForResult(intent, 1);
+						Toast.makeText(this, "Opened Theme Editor", Toast.LENGTH_SHORT).show();
 						return true;
 					case R.id.delete:
 						DeleteComponentData();
@@ -514,17 +504,17 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			Log.v("ETLActivity", "LoadDefaultComponentData: " + defaultcomponentMap);
 			// If no data is found, initialize with default values
 			defaultcomponentMap = new HashMap<>();
-			defaultcomponentMap.put("etl_console", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{0, 0, 0, 0}));
-			defaultcomponentMap.put("btn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.1), 0, 0, 0}));
-			defaultcomponentMap.put("esc_btn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.2), 0, 0, 0}));
-			defaultcomponentMap.put("gears", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.55), 0, 0, 0}));
-			defaultcomponentMap.put("shootBtn", new ComponentManager.ComponentData(950, 600, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.6), (int)(height * 0.25), 0, 0}));
-			defaultcomponentMap.put("reloadBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 1.0), 0, 0, 0}));
-			defaultcomponentMap.put("jumpBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.55), (int)(height * 0.9), 0, 0}));
-			defaultcomponentMap.put("activateBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.1), (int)(height * 0.9), 0, 0}));
-			defaultcomponentMap.put("altBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.95), (int)(height * 0.9), 0, 0}));
-			defaultcomponentMap.put("crouchBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 1.0), (int)(height * 0.9), 0, 0}));
-			defaultcomponentMap.put("moveJoystick", new ComponentManager.ComponentData(400, 400, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.05), (int)(height * 0.3), 0, 0}));
+			defaultcomponentMap.put("etl_console", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{0, 0, 0, 0}, R.drawable.ic_one_line));
+			defaultcomponentMap.put("btn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.1), 0, 0, 0}, R.drawable.ic_keyboard));
+			defaultcomponentMap.put("esc_btn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.2), 0, 0, 0}, R.drawable.ic_escape));
+			defaultcomponentMap.put("gears", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.55), 0, 0, 0}, R.drawable.gears));
+			defaultcomponentMap.put("shootBtn", new ComponentManager.ComponentData(950, 600, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.6), (int)(height * 0.25), 0, 0}, R.drawable.ic_shoot));
+			defaultcomponentMap.put("reloadBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 1.0), 0, 0, 0}, R.drawable.ic_reload));
+			defaultcomponentMap.put("jumpBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.55), (int)(height * 0.9), 0, 0}, R.drawable.ic_jump));
+			defaultcomponentMap.put("activateBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.1), (int)(height * 0.9), 0, 0}, R.drawable.ic_use));
+			defaultcomponentMap.put("altBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.95), (int)(height * 0.9), 0, 0}, R.drawable.ic_alt));
+			defaultcomponentMap.put("crouchBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 1.0), (int)(height * 0.9), 0, 0}, R.drawable.ic_crouch));
+			defaultcomponentMap.put("moveJoystick", new ComponentManager.ComponentData(400, 400, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.05), (int)(height * 0.3), 0, 0}, 0));
 
 			SaveComponentData();
 		} else {

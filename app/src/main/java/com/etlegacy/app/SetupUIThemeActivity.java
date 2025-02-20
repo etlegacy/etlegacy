@@ -8,11 +8,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.Toast;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -22,17 +24,21 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.Objects;
 
-
-public class SetupUIPositionActivity extends AppCompatActivity {
+public class SetupUIThemeActivity extends AppCompatActivity {
 
 	private static final String PREFS_NAME = "ComponentPrefs";
 	private static final String COMPONENT_MAP_KEY = "componentMap";
 	private HashMap<String, ComponentManager.ComponentData> componentMap = new HashMap<>();
 
-	private View selectedView;
-	private float initialTouchX, initialTouchY;
-	private float viewInitialX, viewInitialY;
+	private int[][] icons = {
+		{R.drawable.ic_one_line, R.drawable.ic_keyboard, R.drawable.ic_escape, R.drawable.gears, R.drawable.ic_shoot, R.drawable.ic_reload, R.drawable.ic_jump, R.drawable.ic_use, R.drawable.ic_alt, R.drawable.ic_crouch, 0},
+		{R.drawable.deltatouch_btn_notepad, R.drawable.deltatouch_btn_keyboard, R.drawable.deltatouch_btn_escape, R.drawable.gears, R.drawable.deltatouch_btn_sht, R.drawable.deltatouch_btn_binocular, R.drawable.deltatouch_btn_jump, R.drawable.deltatouch_btn_activate, R.drawable.deltatouch_btn_ammo, R.drawable.deltatouch_btn_crouch, 0},
+		{R.drawable.tech4a_btn_notepad, R.drawable.tech4a_btn_keyboard, R.drawable.tech4a_btn_pause, R.drawable.gears, R.drawable.tech4a_btn_sht, R.drawable.tech4a_btn_reload, R.drawable.tech4a_btn_jump, R.drawable.tech4a_btn_a, R.drawable.tech4a_btn_altfire, R.drawable.tech4a_btn_crouch, 0}
+	};
+	private int currentIndex = 0;
+	private GestureDetector gestureDetector;
 
 	/**
 	 * Hide System UI
@@ -51,14 +57,27 @@ public class SetupUIPositionActivity extends AppCompatActivity {
 				| View.SYSTEM_UI_FLAG_FULLSCREEN);
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		int i = 0; // Index tracker
 
 		hideSystemUI();
 
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 		setContentView(R.layout.activity_ui_position);
+
+		gestureDetector = new GestureDetector(this, new SetupUIThemeActivity.SwipeGestureListener());
+
+		View theme_view = new View(this);
+		FrameLayout.LayoutParams theme_params = new FrameLayout.LayoutParams(
+			ViewGroup.LayoutParams.MATCH_PARENT,
+			ViewGroup.LayoutParams.MATCH_PARENT
+		);
+		theme_view.setLayoutParams(theme_params);
+		theme_view.setOnTouchListener((v, event) -> gestureDetector.onTouchEvent(event));
+		theme_view.setClickable(true);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -68,10 +87,12 @@ public class SetupUIPositionActivity extends AppCompatActivity {
 
 		FrameLayout rootLayout = findViewById(R.id.rootLayout);
 
+		rootLayout.addView(theme_view);
+
 		for (String key : componentMap.keySet()) {
 			ComponentManager.ComponentData componentData = componentMap.get(key);
 
-			View view = createMovableView(key);
+			ImageView imageview = new ImageView(this);;
 			assert componentData != null;
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
 				componentData.width,
@@ -85,74 +106,18 @@ public class SetupUIPositionActivity extends AppCompatActivity {
 				componentData.margins[3]
 			);
 
-			view.setLayoutParams(params);
-			rootLayout.addView(view);
-		}
-	}
-
-	private View createMovableView(String tag) {
-		View view = new View(this);
-		view.setBackgroundResource(R.drawable.border_drawable);
-		//view.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark, this.getTheme()));
-		view.setTag(tag);
-		view.setOnTouchListener(new View.OnTouchListener() {
-			@SuppressLint("ClickableViewAccessibility")
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN:
-						selectedView = v;
-						initialTouchX = event.getRawX();
-						initialTouchY = event.getRawY();
-						viewInitialX = v.getX();
-						viewInitialY = v.getY();
-						break;
-
-					case MotionEvent.ACTION_MOVE:
-						if (selectedView != null) {
-							float deltaX = event.getRawX() - initialTouchX;
-							float deltaY = event.getRawY() - initialTouchY;
-
-							selectedView.setX(viewInitialX + deltaX);
-							selectedView.setY(viewInitialY + deltaY);
-						}
-						break;
-
-					case MotionEvent.ACTION_UP:
-						if (selectedView != null) {
-							SaveComponentPosition(selectedView);
-							selectedView = null;
-						}
-						break;
-				}
-				return true;
+			// Ensure we don't go out of bounds
+			if (i < icons[currentIndex].length) {
+				int icon = icons[currentIndex][i];
+				componentData.resourceId = icon;
+				imageview.setImageResource(icon);
+				Log.v("SetupUIThemeActivity", "Assigned icon: " + icon + " to key: " + key);
 			}
-		});
 
-		return view;
-	}
-
-	private void SaveComponentPosition(View view) {
-		String tag = (String) view.getTag();
-		if (tag == null || !componentMap.containsKey(tag))
-			return;
-
-		int[] margins = new int[4];
-		margins[0] = (int) view.getX();
-		margins[1] = (int) view.getY();
-		margins[2] = 0; // Not using right margin
-		margins[3] = 0; // Not using bottom margin
-
-		ComponentManager.ComponentData updatedData = componentMap.get(tag);
-		assert updatedData != null;
-		updatedData.margins[0]= margins[0];
-		updatedData.margins[1]= margins[1];
-
-		componentMap.put(tag, updatedData);
-
-		SaveComponentData();
-
-		Toast.makeText(this, "Position saved for " + tag, Toast.LENGTH_SHORT).show();
+			imageview.setLayoutParams(params);
+			rootLayout.addView(imageview);
+			i++;
+		}
 	}
 
 	private void SaveComponentData() {
@@ -160,6 +125,7 @@ public class SetupUIPositionActivity extends AppCompatActivity {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		Gson gson = new Gson();
 		String json = gson.toJson(componentMap);
+		Log.v("ETLActivity", "Saved JSON: " + json);
 		editor.putString(COMPONENT_MAP_KEY, json);
 		editor.apply();
 		Intent intent = new Intent("REFRESH_ACTION");
@@ -173,7 +139,38 @@ public class SetupUIPositionActivity extends AppCompatActivity {
 		Type type = new TypeToken<HashMap<String, ComponentManager.ComponentData>>() {}.getType();
 		componentMap = gson.fromJson(json, type);
 		assert componentMap != null;
+		Log.v("ETLActivity", "Loaded JSON: " + json);
 		Log.v("ManualPositionActivity", "LoadComponentData: " + componentMap);
 	}
 
+	class SwipeGestureListener extends GestureDetector.SimpleOnGestureListener {
+		private static final int SWIPE_THRESHOLD = 100;
+		private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+			float diffX = e2.getX() - Objects.requireNonNull(e1).getX();
+			if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+				if (diffX > 0) {
+					swipeRight();
+				} else {
+					swipeLeft();
+				}
+				return true;
+			}
+			return false;
+		}
+	}
+
+	private void swipeLeft() {
+		Log.v("ManualPositionActivity", "swipeLeft: " + currentIndex);
+		currentIndex = (currentIndex + 1) % icons.length;
+		SaveComponentData();
+	}
+
+	private void swipeRight() {
+		Log.v("ManualPositionActivity", "swipeRight: " + currentIndex);
+		currentIndex = (currentIndex - 1 + icons.length) % icons.length;
+		SaveComponentData();
+	}
 }
