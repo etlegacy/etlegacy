@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -91,16 +90,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 			| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 			| View.SYSTEM_UI_FLAG_FULLSCREEN);
-	}
-
-	/**
-	 * Convert pixel metrics to dp
-	 *
-	 * @param px value of px to be converted
-	 * @return dp
-	 */
-	public static int pxToDp(int px) {
-		return (int) (px / Resources.getSystem().getDisplayMetrics().density);
 	}
 
 	@Override
