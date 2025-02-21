@@ -33,9 +33,10 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 	private HashMap<String, ComponentManager.ComponentData> componentMap = new HashMap<>();
 
 	private int[][] icons = {
-		{R.drawable.ic_one_line, R.drawable.ic_keyboard, R.drawable.ic_escape, R.drawable.gears, R.drawable.ic_shoot, R.drawable.ic_reload, R.drawable.ic_jump, R.drawable.ic_use, R.drawable.ic_alt, R.drawable.ic_crouch, 0},
-		{R.drawable.deltatouch_btn_notepad, R.drawable.deltatouch_btn_keyboard, R.drawable.deltatouch_btn_escape, R.drawable.gears, R.drawable.deltatouch_btn_sht, R.drawable.deltatouch_btn_binocular, R.drawable.deltatouch_btn_jump, R.drawable.deltatouch_btn_activate, R.drawable.deltatouch_btn_ammo, R.drawable.deltatouch_btn_crouch, 0},
-		{R.drawable.tech4a_btn_notepad, R.drawable.tech4a_btn_keyboard, R.drawable.tech4a_btn_pause, R.drawable.gears, R.drawable.tech4a_btn_sht, R.drawable.tech4a_btn_reload, R.drawable.tech4a_btn_jump, R.drawable.tech4a_btn_a, R.drawable.tech4a_btn_altfire, R.drawable.tech4a_btn_crouch, 0}
+		/* esc_btn jumpBtn etl_console reloadBtn shootBtn crouchBtn activateBtn moveJoystick btn gears altBtn */
+		{R.drawable.ic_escape,R.drawable.ic_jump, R.drawable.ic_one_line, R.drawable.ic_reload, R.drawable.ic_shoot, R.drawable.ic_crouch, R.drawable.ic_use, 0, R.drawable.ic_keyboard, R.drawable.gears, R.drawable.ic_alt},
+		{R.drawable.deltatouch_btn_escape, R.drawable.deltatouch_btn_jump, R.drawable.deltatouch_btn_notepad, 0, R.drawable.deltatouch_btn_sht, R.drawable.deltatouch_btn_crouch, R.drawable.deltatouch_btn_activate, 0, R.drawable.deltatouch_btn_keyboard, R.drawable.gears, 0},
+		{R.drawable.tech4a_btn_pause, R.drawable.tech4a_btn_jump, R.drawable.tech4a_btn_notepad, R.drawable.tech4a_btn_reload, R.drawable.tech4a_btn_sht, R.drawable.tech4a_btn_crouch, R.drawable.tech4a_btn_activate, 0, R.drawable.tech4a_btn_keyboard, R.drawable.gears, R.drawable.tech4a_btn_altfire}
 	};
 	private int currentIndex = 0;
 	private GestureDetector gestureDetector;
@@ -92,7 +93,7 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 		for (String key : componentMap.keySet()) {
 			ComponentManager.ComponentData componentData = componentMap.get(key);
 
-			ImageView imageview = new ImageView(this);;
+			ImageView imageview = new ImageView(this);
 			assert componentData != null;
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
 				componentData.width,
@@ -109,7 +110,6 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 			// Ensure we don't go out of bounds
 			if (i < icons[currentIndex].length) {
 				int icon = icons[currentIndex][i];
-				componentData.resourceId = icon;
 				imageview.setImageResource(icon);
 				Log.v("SetupUIThemeActivity", "Assigned icon: " + icon + " to key: " + key);
 			}
@@ -162,11 +162,22 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 
 	private void swipeLeft() {
 		currentIndex = (currentIndex + 1) % icons.length;
-		SaveComponentData();
+		changeTheme();
 	}
 
 	private void swipeRight() {
 		currentIndex = (currentIndex - 1 + icons.length) % icons.length;
+		changeTheme();
+	}
+
+	private void changeTheme() {
+		int i = 0;
+		for (String key : componentMap.keySet()) {
+			if (i < icons[currentIndex].length) {
+				int icon = icons[currentIndex][i];
+				componentMap.get(key).resourceId = icon;
+			}
+		}
 		SaveComponentData();
 	}
 }

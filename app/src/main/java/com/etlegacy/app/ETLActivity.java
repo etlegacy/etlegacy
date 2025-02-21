@@ -282,6 +282,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 		moveJoystick = new JoyStick(getApplicationContext());
 		moveJoystick.setListener(ETLActivity.this);
+		moveJoystick.setId(View.generateViewId());
 		moveJoystick.setBackgroundResource(moveJoystickData.resourceId);
 		moveJoystick.setPadColor(Color.TRANSPARENT);
 		moveJoystick.setButtonColor(Color.TRANSPARENT);
