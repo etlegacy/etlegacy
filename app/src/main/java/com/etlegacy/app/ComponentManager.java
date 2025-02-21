@@ -13,7 +13,7 @@ public class ComponentManager {
 	private Gson gson;
 
 	// Define the ComponentData class
-	static class ComponentData {
+	public static class ComponentData {
 		int width;
 		int height;
 		int gravity;

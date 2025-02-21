@@ -491,7 +491,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		defaultcomponentMap = gson.fromJson(json, type);
 
 		if (defaultcomponentMap == null) {
-			Log.v("ETLActivity", "LoadDefaultComponentData: " + defaultcomponentMap);
+			Log.v("ETLActivity", "LoadDefaultComponentData: " + null);
 			// If no data is found, initialize with default values
 			defaultcomponentMap = new HashMap<>();
 			defaultcomponentMap.put("etl_console", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{0, 0, 0, 0}, R.drawable.ic_one_line));
