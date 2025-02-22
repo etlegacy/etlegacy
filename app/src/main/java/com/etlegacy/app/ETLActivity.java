@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,14 +16,15 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
-import android.view.MenuInflater;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -329,34 +331,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			onNativeKeyUp(111);
 		});
 
-		gears.setOnClickListener(v -> {
-			PopupMenu popupMenu = new PopupMenu(this, gears); // Attach the menu to the gears button
-			MenuInflater inflater = popupMenu.getMenuInflater();
-			inflater.inflate(R.menu.popup_menu, popupMenu.getMenu()); // Inflate the menu resource
-
-			popupMenu.setOnMenuItemClickListener(item -> {
-				switch (item.getItemId()) {
-					case R.id.edit:
-						intent = new Intent(ETLActivity.this, SetupUIPositionActivity.class);
-						startActivityForResult(intent, 1);
-						Toast.makeText(this, "Opened UI Editor", Toast.LENGTH_SHORT).show();
-						return true;
-					case R.id.theme:
-						intent = new Intent(ETLActivity.this, SetupUIThemeActivity.class);
-						startActivityForResult(intent, 1);
-						Toast.makeText(this, "Opened Theme Editor", Toast.LENGTH_SHORT).show();
-						return true;
-					case R.id.delete:
-						DeleteComponentData();
-						Toast.makeText(this, "Deleted Saved Positions", Toast.LENGTH_SHORT).show();
-						return true;
-					default:
-						return false;
-				}
-			});
-
-			popupMenu.show();
-		});
+		gears.setOnClickListener(this::showPopupWindow);
 
 		shootBtn.setOnTouchListener((v, event) -> {
 			int touchDevId = event.getDeviceId();
@@ -479,6 +454,62 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			}
 		};
 		handler.post(uiRunner);
+	}
+
+	private void showPopupWindow(View anchorView) {
+		View popupView = LayoutInflater.from(this).inflate(R.layout.popup_menu_layout, null);
+
+		// Create PopupWindow with specific size
+		PopupWindow popupWindow = new PopupWindow(popupView,
+			WindowManager.LayoutParams.WRAP_CONTENT,
+			WindowManager.LayoutParams.WRAP_CONTENT,
+			true);
+
+		// Set background with rounded corners
+		popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+		popupWindow.setOutsideTouchable(true);
+		popupWindow.setElevation(10f);
+
+
+		// Show the popup window in the center of the screen
+		popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
+
+		// Dim background
+		dimBackground(0.5f);
+
+		// Handle item clicks
+		TextView ui_editor = popupView.findViewById(R.id.ui_editor);
+		TextView theme_editor = popupView.findViewById(R.id.theme_editor);
+		TextView delete = popupView.findViewById(R.id.delete);
+
+		ui_editor.setOnClickListener(v -> {
+			intent = new Intent(ETLActivity.this, SetupUIPositionActivity.class);
+			startActivityForResult(intent, 1);
+			Toast.makeText(this, "Opened UI Editor", Toast.LENGTH_SHORT).show();
+			popupWindow.dismiss();
+		});
+
+		theme_editor.setOnClickListener(v -> {
+			intent = new Intent(ETLActivity.this, SetupUIThemeActivity.class);
+			startActivityForResult(intent, 1);
+			Toast.makeText(this, "Opened Theme Editor", Toast.LENGTH_SHORT).show();
+			popupWindow.dismiss();
+		});
+
+		delete.setOnClickListener(v -> {
+			DeleteComponentData();
+			Toast.makeText(this, "Deleted Saved Positions", Toast.LENGTH_SHORT).show();
+			popupWindow.dismiss();
+		});
+
+		// Restore background when popup dismisses
+		popupWindow.setOnDismissListener(() -> dimBackground(1.0f));
+	}
+
+	private void dimBackground(float dimAmount) {
+		WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+		layoutParams.alpha = dimAmount;
+		getWindow().setAttributes(layoutParams);
 	}
 
 	@SuppressLint("RtlHardcoded")

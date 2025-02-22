@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="280dp"
+	android:layout_height="wrap_content"
+	android:background="@drawable/popup_background"
+	android:padding="12dp"
+	android:elevation="10dp">
+
+<TextView
+android:id="@+id/ui_editor"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:paddingVertical="12dp"
+android:gravity="center"
+android:text="Edit"
+android:textSize="18sp"
+android:textStyle="bold"
+android:textColor="@android:color/black"
+tools:ignore="HardcodedText" />
+
+<View
+android:layout_width="match_parent"
+android:layout_height="1dp"
+android:background="@android:color/darker_gray"
+android:layout_marginVertical="4dp" />
+
+<TextView
+android:id="@+id/theme_editor"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:paddingVertical="12dp"
+android:gravity="center"
+android:text="Theme"
+android:textSize="18sp"
+android:textStyle="bold"
+android:textColor="@android:color/black"
+tools:ignore="HardcodedText" />
+
+<View
+android:layout_width="match_parent"
+android:layout_height="1dp"
+android:background="@android:color/darker_gray"
+android:layout_marginVertical="4dp" />
+
+<TextView
+android:id="@+id/delete"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:paddingVertical="12dp"
+android:gravity="center"
+android:text="Delete"
+android:textSize="18sp"
+android:textStyle="bold"
+android:textColor="@android:color/holo_red_dark"
+tools:ignore="HardcodedText" />
+
+	</LinearLayout>
