@@ -33,10 +33,30 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 	private HashMap<String, ComponentManager.ComponentData> componentMap = new HashMap<>();
 
 	private final int[][] icons = {
-		/* esc_btn jumpBtn etl_console reloadBtn shootBtn crouchBtn activateBtn moveJoystick btn gears altBtn */
-		{R.drawable.ic_escape,R.drawable.ic_jump, R.drawable.ic_one_line, R.drawable.ic_reload, R.drawable.ic_shoot, R.drawable.ic_crouch, R.drawable.ic_use, 0, R.drawable.ic_keyboard, R.drawable.gears, R.drawable.ic_alt},
-		{R.drawable.deltatouch_btn_escape, R.drawable.deltatouch_btn_jump, R.drawable.deltatouch_btn_notepad, 0, R.drawable.deltatouch_btn_sht, R.drawable.deltatouch_btn_crouch, R.drawable.deltatouch_btn_activate, 0, R.drawable.deltatouch_btn_keyboard, R.drawable.gears, 0},
-		{R.drawable.tech4a_btn_pause, R.drawable.tech4a_btn_jump, R.drawable.tech4a_btn_notepad, R.drawable.tech4a_btn_reload, R.drawable.tech4a_btn_sht, R.drawable.tech4a_btn_crouch, R.drawable.tech4a_btn_activate, 0, R.drawable.tech4a_btn_keyboard, R.drawable.gears, R.drawable.tech4a_btn_altfire}
+		/* esc_btn                 jumpBtn              etl_console              reloadBtn                shootBtn */
+		{ R.drawable.ic_escape,    R.drawable.ic_jump,  R.drawable.ic_one_line,  R.drawable.ic_reload,    R.drawable.ic_shoot,
+			/* crouchBtn             activateBtn          moveJoystick             btn                      gears */
+			R.drawable.ic_crouch,    R.drawable.ic_use,   0,                       R.drawable.ic_keyboard,  R.drawable.gears,
+			/* altBtn */
+			R.drawable.ic_alt },
+
+		/* esc_btn                          jumpBtn                          etl_console */
+		{ R.drawable.deltatouch_btn_escape, R.drawable.deltatouch_btn_jump,  R.drawable.deltatouch_btn_notepad,
+			/* reloadBtn                      shootBtn                         crouchBtn */
+			R.drawable.deltatouch_btn_reload, R.drawable.deltatouch_btn_sht,   R.drawable.deltatouch_btn_crouch,
+			/* activateBtn                    moveJoystick                     btn */
+			R.drawable.deltatouch_btn_activate, 0,                             R.drawable.deltatouch_btn_keyboard,
+			/* gears                           altBtn */
+			R.drawable.gears,                   0 },
+
+		/* esc_btn                      jumpBtn                      etl_console */
+		{ R.drawable.tech4a_btn_pause,  R.drawable.tech4a_btn_jump,  R.drawable.tech4a_btn_notepad,
+			/* reloadBtn                  shootBtn                     crouchBtn */
+			R.drawable.tech4a_btn_reload, R.drawable.tech4a_btn_sht,   R.drawable.tech4a_btn_crouch,
+			/* activateBtn                moveJoystick                 btn */
+			R.drawable.tech4a_btn_activate, 0,                         R.drawable.tech4a_btn_keyboard,
+			/* gears                       altBtn */
+			R.drawable.gears,              R.drawable.tech4a_btn_altfire }
 	};
 	private int currentIndex = 0;
 	private GestureDetector gestureDetector;
