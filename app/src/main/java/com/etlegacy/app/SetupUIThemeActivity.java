@@ -176,6 +176,7 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 			if (i < icons[currentIndex].length) {
 				Objects.requireNonNull(componentMap.get(key)).resourceId = icons[currentIndex][i];
 			}
+			i++;
 		}
 		SaveComponentData();
 	}
