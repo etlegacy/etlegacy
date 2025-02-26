@@ -151,7 +151,8 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "score",          CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_Score_f,                         ":^7 Request current scoreboard information"                                                 },
 	{ "scores",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, G_scores_cmd,                        ":^7 Displays current match stat info"                                                       },
 	{ "setviewpos",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SetViewpos_f,                    " x y z pitch yaw roll useViewHeight(0/1):^7 Set the current player position and view angle" },
-	{ "setspawnpt",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SetSpawnPoint_f,                 " [majorSpawn] [minorSpawn]:^7 Select a spawn point"                                         },
+	{ "getspawnpt",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_GetSpawnPoint_f,                 ":^7 Get Selected Spawnpoint"                                         },
+	{ "setspawnpt",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_SetSpawnPoint_f,                 " [majorSpawn] [minorSpawn]:^7 Select a spawn point"                                                                },
 	{ "sgstats",        CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_sgStats_f,                       ""                                                                                           },
 
 	{ "showstats",      CMD_USAGE_ANY_TIME,          qtrue,       qfalse, G_PrintAccuracyLog,                  ":^7 Shows weapon accuracy stats"                                                            },

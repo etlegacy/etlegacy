@@ -3096,6 +3096,7 @@ void CG_AddToBannerPrint(const char *str)
 #define IMMAPLIST_HASH      120113
 #define IMMAPHISTORY_HASH   164261
 #define IMVOTETALLY_HASH    150058
+#define GETSPAWNPT_HASH     136054
 #define SETSPAWNPT_HASH     137482
 #define IMWA_HASH           51808
 #define IMWS_HASH           54004
@@ -3584,6 +3585,10 @@ static void CG_ServerCommand(void)
 		return;
 	case IMVOTETALLY_HASH: // MAPVOTE                      "imvotetally"
 		CG_parseMapVoteTally();
+		return;
+	case GETSPAWNPT_HASH: //  "getspawnpt"
+		cgs.ccSelectedSpawnPoint = Q_atoi(CG_Argv(1));
+		cgs.ccResolvedSpawnPoint = Q_atoi(CG_Argv(3));
 		return;
 	case SETSPAWNPT_HASH: //  "setspawnpt"
 		cgs.ccSelectedSpawnPoint = Q_atoi(CG_Argv(1)) + 1;

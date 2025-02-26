@@ -1733,6 +1733,7 @@ typedef struct
 	qhandle_t commandCentreAxisMineShader;
 	qhandle_t commandCentreAlliedMineShader;
 	qhandle_t commandCentreSpawnShader[2];
+	qhandle_t commandCentreSpawnShadow;
 	qhandle_t blackmask;
 
 	qhandle_t landmineHintShader;
@@ -2614,6 +2615,7 @@ typedef struct cgs_s
 	int ccSelectedLayer;
 	int ccSelectedObjective;
 	int ccSelectedSpawnPoint;
+	int ccResolvedSpawnPoint;
 	int ccSelectedTeam;                                 ///< ( 1 = ALLIES, 0 = AXIS )
 	int ccSelectedWeaponSlot;                           ///< ( 0 = secondary, 1 = primary)
 	int ccSelectedClass;
