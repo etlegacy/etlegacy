@@ -510,6 +510,7 @@ extern cvar_t *sv_etltv_clientname;
 extern cvar_t *sv_etltv_delay;
 extern cvar_t *sv_etltv_shownet;
 extern cvar_t *sv_etltv_queue_ms;
+extern cvar_t *sv_etltv_netblast;
 
 //===========================================================
 

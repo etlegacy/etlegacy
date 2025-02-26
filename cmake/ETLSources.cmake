@@ -100,6 +100,10 @@ FILE(GLOB QAGAME_SRC
 )
 
 FILE(GLOB TVGAME_SRC
+	"src/game/bg_b64.h"
+	"src/game/bg_b64.c"
+	"src/game/bg_ebs.h"
+	"src/game/bg_ebs.c"
 	"src/game/g_strparse*"
 	"src/game/surfaceflags*"
 	"src/game/g_match_tokens.c"
