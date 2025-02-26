@@ -2002,6 +2002,21 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	}
 }
 
+static void CG_DrawSpawnPointInfoFlag(int i, float size, vec2_t point)
+{
+	// render flag shadow if spawn point is the one that is currently resolved
+	if (i == cgs.ccResolvedSpawnPoint + 1)
+	{
+		float offsetSize = size * 1.3;
+
+		trap_R_SetColor((vec4_t) { 0.5, 0.8, 0.1, 0.85 });
+		CG_DrawPic(point[0] - FLAG_LEFTFRAC * offsetSize, point[1] - FLAG_TOPFRAC * offsetSize, offsetSize, offsetSize, cgs.media.commandCentreSpawnShadow);
+		trap_R_SetColor(NULL);
+	}
+
+	CG_DrawPic(point[0] - FLAG_LEFTFRAC * size, point[1] - FLAG_TOPFRAC * size, size, size, cgs.media.commandCentreSpawnShader[cg.spawnTeams[i] == TEAM_AXIS ? 0 : 1]);
+}
+
 /**
  * @brief CG_DrawSpawnPointInfo
  * @param[in] px
@@ -2132,7 +2147,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 					size *= cgs.ccZoomFactor;
 				}
 
-				CG_DrawPic(point[0] - FLAG_LEFTFRAC * size, point[1] - FLAG_TOPFRAC * size, size, size, cgs.media.commandCentreSpawnShader[cg.spawnTeams[i] == TEAM_AXIS ? 0 : 1]);
+				CG_DrawSpawnPointInfoFlag(i, size, point);
 			}
 		}
 		else if ((draw && i == expand) || (!expanded && BG_RectContainsPoint(point[0] - FLAGSIZE_NORMAL * 0.5f, point[1] - FLAGSIZE_NORMAL * 0.5f, FLAGSIZE_NORMAL, FLAGSIZE_NORMAL, cgDC.cursorx, cgDC.cursory)))
@@ -2154,7 +2169,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 					size *= cgs.ccZoomFactor;
 				}
 
-				CG_DrawPic(point[0] - FLAG_LEFTFRAC * size, point[1] - FLAG_TOPFRAC * size, size, size, cgs.media.commandCentreSpawnShader[cg.spawnTeams[i] == TEAM_AXIS ? 0 : 1]);
+				CG_DrawSpawnPointInfoFlag(i, size, point);
 			}
 			else
 			{
@@ -2189,7 +2204,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 					size *= cgs.ccZoomFactor;
 				}
 
-				CG_DrawPic(point[0] - FLAG_LEFTFRAC * size, point[1] - FLAG_TOPFRAC * size, size, size, cgs.media.commandCentreSpawnShader[cg.spawnTeams[i] == TEAM_AXIS ? 0 : 1]);
+				CG_DrawSpawnPointInfoFlag(i, size, point);
 
 				Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
 

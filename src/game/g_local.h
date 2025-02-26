@@ -1472,6 +1472,7 @@ void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_FollowPrevious_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_SetViewpos_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_GetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value);
 void StopFollowing(gentity_t *ent);
 void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState);

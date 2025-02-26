@@ -3349,6 +3349,7 @@ static const char *gameCommand[] =
 	//"score",      // used to updated score in debriefing and ingame score board. Not meant to be sent manually.
 	"scores",       // display the scores in console
 	"setviewpos",
+	// "getspawnpt",  // not meant to be set manually
 	"setspawnpt",
 	"sgstats",
 	"showstats",

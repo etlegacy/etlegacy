@@ -1879,6 +1879,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.commandCentreAlliedMineShader     = trap_R_RegisterShaderNoMip("sprites/landmine_allied");
 	cgs.media.commandCentreSpawnShader[0]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagaxis");
 	cgs.media.commandCentreSpawnShader[1]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagallied");
+	cgs.media.commandCentreSpawnShadow          = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagshadow");
 	cgs.media.compassConstructShader            = trap_R_RegisterShaderNoMip("sprites/construct.tga");
 	cgs.media.blackmask                         = trap_R_RegisterShaderNoMip("images/blackmask"); // etpro icons support
 
