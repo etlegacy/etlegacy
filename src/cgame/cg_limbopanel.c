@@ -3540,6 +3540,9 @@ void CG_LimboPanel_Setup(void)
 	trap_Cvar_VariableStringBuffer("name", buffer, 256);
 	trap_Cvar_Set("limboname", buffer);
 
+	// refresh resolved spawnpoint
+	trap_SendClientCommand("getspawnpt");
+
 	if (cgs.ccLayers)
 	{
 		cgs.ccSelectedLayer = CG_CurLayerForZ((int)cg.predictedPlayerEntity.lerpOrigin[2]);

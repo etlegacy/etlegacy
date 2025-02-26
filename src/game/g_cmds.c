@@ -4573,6 +4573,15 @@ void Cmd_Activate2_f(gentity_t *ent)
 	}
 }
 
+void Cmd_GetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	trap_SendServerCommand((int)(ent - g_entities), va("getspawnpt \"%d\" \"%d\" \"%d\"",
+	                                                   ent->client->sess.userSpawnPointValue,
+	                                                   ent->client->sess.userMinorSpawnPointValue,
+	                                                   ent->client->sess.resolvedSpawnPointIndex
+	                                                   ));
+}
+
 /**
  * @brief SetPlayerSpawn
  * @param[in,out] ent
@@ -4619,6 +4628,9 @@ void SetPlayerSpawn(gentity_t *ent, int majorSpawn, int minorSpawn, qboolean upd
 	{
 		trap_SendServerCommand((int)(ent - g_entities), va("print \"^9Spawning at '^2%s^9'.\n\"", spawnPointState->description));
 	}
+
+	// refresh stored client spawn point
+	Cmd_GetSpawnPoint_f(ent, 0, 0);
 }
 
 /**
