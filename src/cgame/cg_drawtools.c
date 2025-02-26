@@ -333,6 +333,11 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 				}
 			}
 
+			if (frac == 0.0)
+			{
+				trap_R_SetColor((vec4_t) { 0.6, 0.2, 0.2, 1.0 });
+			}
+
 			if (flags & BAR_LEFT)
 			{
 				CG_DrawPic(x2, y2 + h2 + offset, iconW, iconH, icon);
@@ -340,6 +345,11 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			else
 			{
 				CG_DrawPic(x2, y2 - w2 - offset, iconW, iconH, icon);
+			}
+
+			if (frac == 0.0)
+			{
+				trap_R_SetColor(NULL);
 			}
 		}
 	}
