@@ -719,6 +719,7 @@ typedef struct clientInfo_s
 #ifdef FEATURE_MULTIVIEW
 	// per client MV ps info
 	int chargeTime;
+	int invulnEndTime;
 	qboolean fCrewgun;
 	int cursorHint;
 	int grenadeTimeLeft;                ///< Actual time remaining

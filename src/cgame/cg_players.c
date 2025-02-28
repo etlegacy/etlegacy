@@ -2130,6 +2130,14 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 	ent.radius       = 6.66f;
 	ent.renderfx     = rf;
 
+	// fade out invulnerability shield player float icon when being revived
+	if (shader == cgs.media.spawnInvincibleShader && cgs.clientinfo[cent->currentState.clientNum].invulnEndTime)
+	{
+		int e = cgs.clientinfo[cent->currentState.clientNum].invulnEndTime;
+		ent.fadeStartTime = e - 1000 + 250;
+		ent.fadeEndTime   = e + 250;
+	}
+
 	if (color == NULL)
 	{
 		color = colorWhite;

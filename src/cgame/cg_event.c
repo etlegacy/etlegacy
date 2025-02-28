@@ -2956,7 +2956,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			cg.lastBeingRevivedTime = cg.time;
 		}
 
-		// int invulnEndTime = invulnEndTime;
+		cgs.clientinfo[revivee].invulnEndTime = es->effect3Time;
 
 		if (reviver == cg.clientNum)
 		{
