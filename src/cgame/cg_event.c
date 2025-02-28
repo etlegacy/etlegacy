@@ -2948,8 +2948,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	{
 		sfxHandle_t sound;
 		int         reviver = es->clientNum;
-		// int revivee = es->eventParm;
-		// int invulnEndTime = invulnEndTime;
+		int         revivee = es->eventParm;
+
+		cgs.clientinfo[revivee].invulnEndTime = es->effect3Time;
 
 		if (reviver == cg.clientNum)
 		{

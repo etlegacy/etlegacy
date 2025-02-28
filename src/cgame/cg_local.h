@@ -714,6 +714,7 @@ typedef struct clientInfo_s
 	int ammo;
 	int ammoclip;
 	int chargeTime;
+	int invulnEndTime;
 	qboolean fCrewgun;
 	int cursorHint;
 	int grenadeTimeLeft;                ///< Actual time remaining
