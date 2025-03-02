@@ -633,7 +633,8 @@ typedef struct
 	team_t sessionTeam;
 	int spectatorTime;                                  ///< for determining next-in-line to play
 	spectatorState_t spectatorState;
-	int spectatorClient;                                ///< for chasecam and follow mode
+	int spectatorClient;                                ///< resolved clientNum for chasecam and follow mode
+	int userSpectatorClient;                            ///< selected clientNum for chasecam and follow mode
 	int playerType;                                     ///< class
 	weapon_t playerWeapon;                              ///< primary weapon
 	weapon_t playerWeapon2;                             ///< secondary weapon
@@ -1476,8 +1477,8 @@ void StopFollowing(gentity_t *ent);
 void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState);
 qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, weapon_t w2, qboolean setweapons);
 void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updateclient);
-void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots);
-qboolean G_FollowSame(gentity_t *ent);
+void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots, qboolean serverForced);
+qboolean G_FollowSame(gentity_t *ent, int spectatorClient);
 qboolean G_ServerIsFloodProtected(void);
 
 #ifdef ETLEGACY_DEBUG

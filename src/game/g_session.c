@@ -74,6 +74,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	cJSON_AddNumberToObject(root, "spectatorTime", client->sess.spectatorTime);
 	cJSON_AddNumberToObject(root, "spectatorState", client->sess.spectatorState);
 	cJSON_AddNumberToObject(root, "spectatorClient", client->sess.spectatorClient);
+	cJSON_AddNumberToObject(root, "userSpectatorClient", client->sess.userSpectatorClient);
 	cJSON_AddNumberToObject(root, "playerType", client->sess.playerType);
 	cJSON_AddNumberToObject(root, "playerWeapon", client->sess.playerWeapon);
 	cJSON_AddNumberToObject(root, "playerWeapon2", client->sess.playerWeapon2);
@@ -352,20 +353,21 @@ void G_ReadSessionData(gclient_t *client)
 		}
 	}
 
-	client->sess.sessionTeam        = Q_ReadIntValueJson(root, "sessionTeam");
-	client->sess.spectatorTime      = Q_ReadIntValueJson(root, "spectatorTime");
-	client->sess.spectatorState     = Q_ReadIntValueJson(root, "spectatorState");
-	client->sess.spectatorClient    = Q_ReadIntValueJson(root, "spectatorClient");
-	client->sess.playerType         = Q_ReadIntValueJson(root, "playerType");
-	client->sess.playerWeapon       = Q_ReadIntValueJson(root, "playerWeapon");
-	client->sess.playerWeapon2      = Q_ReadIntValueJson(root, "playerWeapon2");
-	client->sess.latchPlayerType    = Q_ReadIntValueJson(root, "latchPlayerType");
-	client->sess.latchPlayerWeapon  = Q_ReadIntValueJson(root, "latchPlayerWeapon");
-	client->sess.latchPlayerWeapon2 = Q_ReadIntValueJson(root, "latchPlayerWeapon2");
-	client->sess.referee            = Q_ReadIntValueJson(root, "referee");
-	client->sess.shoutcaster        = Q_ReadIntValueJson(root, "shoutcaster");
-	client->sess.spec_invite        = Q_ReadIntValueJson(root, "spec_invite");
-	client->sess.spec_team          = Q_ReadIntValueJson(root, "spec_team");
+	client->sess.sessionTeam         = Q_ReadIntValueJson(root, "sessionTeam");
+	client->sess.spectatorTime       = Q_ReadIntValueJson(root, "spectatorTime");
+	client->sess.spectatorState      = Q_ReadIntValueJson(root, "spectatorState");
+	client->sess.spectatorClient     = Q_ReadIntValueJson(root, "spectatorClient");
+	client->sess.userSpectatorClient = Q_ReadIntValueJson(root, "userSpectatorClient");
+	client->sess.playerType          = Q_ReadIntValueJson(root, "playerType");
+	client->sess.playerWeapon        = Q_ReadIntValueJson(root, "playerWeapon");
+	client->sess.playerWeapon2       = Q_ReadIntValueJson(root, "playerWeapon2");
+	client->sess.latchPlayerType     = Q_ReadIntValueJson(root, "latchPlayerType");
+	client->sess.latchPlayerWeapon   = Q_ReadIntValueJson(root, "latchPlayerWeapon");
+	client->sess.latchPlayerWeapon2  = Q_ReadIntValueJson(root, "latchPlayerWeapon2");
+	client->sess.referee             = Q_ReadIntValueJson(root, "referee");
+	client->sess.shoutcaster         = Q_ReadIntValueJson(root, "shoutcaster");
+	client->sess.spec_invite         = Q_ReadIntValueJson(root, "spec_invite");
+	client->sess.spec_team           = Q_ReadIntValueJson(root, "spec_team");
 
 	if (restoreStats)
 	{
