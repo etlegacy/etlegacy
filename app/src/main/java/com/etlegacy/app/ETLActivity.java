@@ -68,6 +68,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private int width;
 	private int height;
 
+
+	public native void sendToC(float left, float top, float width, float height);
+
 	/**
 	 * Get an uiMenu boolean variable
 	 *
@@ -233,6 +236,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		shootBtn.setId(View.generateViewId());
 		shootBtn.setImageResource(shootBtnData.resourceId);
 		shootBtn.setBackgroundColor(0x00000000);
+		shootBtn.setClickable(false);
+		shootBtn.setFocusable(false);
 		if (BuildConfig.DEBUG)
 			shootBtn.setBackgroundResource(R.drawable.border_drawable);
 
@@ -333,63 +338,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 		gears.setOnClickListener(this::showPopupWindow);
 
-		shootBtn.setOnTouchListener((v, event) -> {
-			int touchDevId = event.getDeviceId();
-			final int pointerCount = event.getPointerCount();
-			int action = event.getActionMasked();
-			int pointerFingerId;
-			int i = -1;
-			float x,y,p;
-			switch (action) {
-				case MotionEvent.ACTION_DOWN:
-					// Primary pointer up/down, the index is always zero
-					i = 0;
-					/* fallthrough */
-					pointerFingerId = event.getPointerId(i);
-					x = event.getX(i) / shootBtnData.width;
-					y = event.getY(i) / shootBtnData.height;
-					p = event.getPressure(i);
-					if (p > 1.0f) {
-						// may be larger than 1.0f on some devices
-						// see the documentation of getPressure(i)
-						p = 1.0f;
-					}
-					//SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
-					onNativeKeyDown(42);
-					break;
-				case MotionEvent.ACTION_MOVE:
-					for (i = 0; i < pointerCount; i++) {
-						pointerFingerId = event.getPointerId(i);
-						x = event.getX(i) / shootBtnData.width;
-						y = event.getY(i) / shootBtnData.height;
-						p = event.getPressure(i);
-						if (p > 1.0f) {
-							// may be larger than 1.0f on some devices
-							// see the documentation of getPressure(i)
-							p = 1.0f;
-						}
-						SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
-					}
-					break;
-				case MotionEvent.ACTION_UP:
-				case MotionEvent.ACTION_CANCEL:
-					for (i = 0; i < pointerCount; i++) {
-						pointerFingerId = event.getPointerId(i);
-						x = event.getX(i) / shootBtnData.width;
-						y = event.getY(i) / shootBtnData.height;
-						p = event.getPressure(i);
-						if (p > 1.0f) {
-							// may be larger than 1.0f on some devices
-							// see the documentation of getPressure(i)
-							p = 1.0f;
-						}
-						SDLActivity.onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
-						onNativeKeyUp(42);
-					}
-					break;
-			}
-			return false;
-		});
+		// Send margins of the shootBtn to C
+		sendToC(shootBtnData.margins[0], shootBtnData.margins[1],  shootBtnData.margins[0] + shootBtnData.width,  shootBtnData.margins[1] + shootBtnData.height);
 
 		reloadBtn.setOnClickListener(v -> {
 			onNativeKeyDown(46);
@@ -587,10 +537,10 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	@SuppressLint("ClickableViewAccessibility")
 	private int runUI() {
 		if (!getUiMenu()) {
-			setViewVisibility(false, shootBtn, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick);
+			setViewVisibility(false, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick);
 			return 500;
 		}
-		setViewVisibility(true, shootBtn, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick);
+		setViewVisibility(true, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick);
 		return 2000;
 	}
 

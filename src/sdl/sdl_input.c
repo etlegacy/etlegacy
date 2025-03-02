@@ -67,6 +67,53 @@ SDL_Window *mainScreen    = NULL;
 // Try it. com_maxfps 1, press "forward", have fun.
 static int lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
 
+#ifdef __ANDROID__
+// Margin rectangle structure for the "shoot button" area
+typedef struct
+{
+	float left;
+	float top;
+	float right;
+	float bottom;
+} MarginRect;
+
+static MarginRect shootBtnRect = { 0 };
+
+// Structure to track single touch state
+typedef struct
+{
+	SDL_FingerID fingerId;
+	SDL_TouchID touchId;
+	float lastX;
+	float lastY;
+	qboolean active;        // Tracks if the button is pressed
+	qboolean firstFinger;   // Tracks if this is the first finger
+} TouchState;
+
+static TouchState touchState = { 0 };
+
+JNIEXPORT void JNICALL Java_com_etlegacy_app_ETLActivity_sendToC(JNIEnv *env, jobject obj, jfloat left, jfloat top, jfloat right, jfloat bottom)
+{
+	shootBtnRect.left   = (float) left;
+	shootBtnRect.top    = (float) top;
+	shootBtnRect.right  = (float) right;
+	shootBtnRect.bottom = (float) bottom;
+}
+
+// Check if touch coordinates are within margin_rect
+static qboolean IsTouchInMargin(float x, float y)
+{
+	// Convert normalized SDL coordinates (0.0 to 1.0) to pixel coordinates
+	float pixelX = x * cls.glconfig.vidWidth;
+	float pixelY = y * cls.glconfig.vidHeight;
+
+	return (pixelX >= shootBtnRect.left &&
+	        pixelX <= shootBtnRect.right &&
+	        pixelY >= shootBtnRect.top &&
+	        pixelY <= shootBtnRect.bottom);
+}
+#endif
+
 /**
  * @brief IN_GetClipboardData
  * @return
@@ -1517,6 +1564,64 @@ static void IN_ProcessEvents(void)
 				}
 			}
 			break;
+		case SDL_FINGERDOWN:
+			// Only process if no touch is active and this is the first finger
+			if (!touchState.firstFinger && SDL_GetNumTouchFingers(e.tfinger.touchId) == 1)
+			{
+				touchState.fingerId    = e.tfinger.fingerId;
+				touchState.touchId     = e.tfinger.touchId;
+				touchState.lastX       = e.tfinger.x;
+				touchState.lastY       = e.tfinger.y;
+				touchState.firstFinger = qtrue;
+
+				// Only activate button if inside margin
+				if (IsTouchInMargin(e.tfinger.x, e.tfinger.y))
+				{
+					touchState.active = qtrue;
+					Com_QueueEvent(e.tfinger.timestamp, SE_KEY, K_MOUSE1, qtrue, 0, NULL);
+				}
+			}
+			break;
+		case SDL_FINGERMOTION:
+			// Process motion if this is the first finger
+			if (touchState.firstFinger &&
+			    touchState.fingerId == e.tfinger.fingerId &&
+			    touchState.touchId == e.tfinger.touchId &&
+			    SDL_GetNumTouchFingers(e.tfinger.touchId) == 1)
+			{
+				// Calculate delta movement (inside or outside margin)
+				float dx = (e.tfinger.x - touchState.lastX) * cls.glconfig.vidWidth;
+				float dy = (e.tfinger.y - touchState.lastY) * cls.glconfig.vidHeight;
+
+				// Update last position
+				touchState.lastX = e.tfinger.x;
+				touchState.lastY = e.tfinger.y;
+
+				// Send movement event
+				Com_QueueEvent(e.tfinger.timestamp, SE_MOUSE, dx, dy, 0, NULL);
+			}
+			break;
+		case SDL_FINGERUP:
+			if (touchState.firstFinger &&
+			    touchState.fingerId == e.tfinger.fingerId &&
+			    touchState.touchId == e.tfinger.touchId)
+			{
+				if (touchState.active && IsTouchInMargin(e.tfinger.x, e.tfinger.y))
+				{
+					// Send button up event when lifting inside
+					Com_QueueEvent(e.tfinger.timestamp, SE_KEY, K_MOUSE1, qfalse, 0, NULL);
+				}
+				else if (touchState.active)
+				{
+					// Send button up event when lifting outside
+					Com_QueueEvent(e.tfinger.timestamp, SE_KEY, K_MOUSE1, qfalse, 0, NULL);
+				}
+
+				// Clear touch state
+				touchState.active      = qfalse;
+				touchState.firstFinger = qfalse;
+			}
+			break;
 		case SDL_MOUSEMOTION:
 			if (mouseActive)
 			{
@@ -1831,8 +1936,8 @@ void IN_Init(void)
 	// This set mouse input and touch to be handled separately
 	// SDL_SetHint(SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH, "1");
 	// This has been removed and replaced with those bellow in SDL 2.0.10
-	SDL_SetHint(SDL_HINT_MOUSE_TOUCH_EVENTS, "1");
-	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
+	SDL_SetHint(SDL_HINT_MOUSE_TOUCH_EVENTS, "0");
+	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0");
 	SDL_SetHint(SDL_HINT_ANDROID_TRAP_BACK_BUTTON, "1");
 #endif
 

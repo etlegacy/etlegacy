@@ -80,11 +80,7 @@
 #define RATIO43     (4.0f / 3.0f)   ///< 4:3 aspectratio is the default for this game engine ...
 #define RPRATIO43   (1 / RATIO43)   ///<
 
-#ifdef __ANDROID__
-#define CONFIG_NAME_DEFAULT      "default_android.cfg"
-#else
 #define CONFIG_NAME_DEFAULT      "default.cfg"         ///< if you change this adjust files.c - name ist still hard coded in pk3 checks
-#endif
 #define CONFIG_NAME_DEFAULT_LEFT "default_left.cfg"
 
 #define DEMOEXT "dm_"          ///< standard demo extension
