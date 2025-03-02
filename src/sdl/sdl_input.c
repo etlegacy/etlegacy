@@ -1564,6 +1564,7 @@ static void IN_ProcessEvents(void)
 				}
 			}
 			break;
+#ifdef __ANDROID__
 		case SDL_FINGERDOWN:
 			// Only process if no touch is active and this is the first finger
 			if (!touchState.firstFinger && SDL_GetNumTouchFingers(e.tfinger.touchId) == 1)
@@ -1622,6 +1623,7 @@ static void IN_ProcessEvents(void)
 				touchState.firstFinger = qfalse;
 			}
 			break;
+#endif
 		case SDL_MOUSEMOTION:
 			if (mouseActive)
 			{
