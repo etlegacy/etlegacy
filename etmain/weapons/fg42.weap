@@ -46,6 +46,7 @@ weaponDef
 
 		fireRecoil 0.3 0.6 0    // kick angle
 		adjustLean 1 1 1
+		reviveLowerHeight 4.5
 
 		//modModel 1		""
 

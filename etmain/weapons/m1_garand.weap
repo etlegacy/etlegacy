@@ -46,6 +46,7 @@ weaponDef
 
 		fireRecoil 2 1 0    // kick angle
 		adjustLean 1 1 2
+		reviveLowerHeight 7.5
 
 		modModel 0			"models/multiplayer/m1_garand/v_m1_garand_scope.md3"
 

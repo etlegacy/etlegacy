@@ -2889,6 +2889,20 @@ void CG_AddViewWeapon(playerState_t *ps)
 		gunoff[1] = cg_gun_y.value;
 		gunoff[2] = cg_gun_z.value;
 
+		// slowly raise gun from the bottom of the viewport when standing
+		// up/being revived
+		if ((cg_gunReviveFadeIn.value) && ((cg.lastBeingRevivedTime + 2000) >= cg.time))
+		{
+			double offset;
+			int    diff = (cg.lastBeingRevivedTime + 2000) - cg.time;
+
+			offset  = ((double)diff / 2000.0f);
+			offset *= (weapon->reviveLowerHeight) ? (weapon->reviveLowerHeight) : 4.5;
+			offset *= offset;
+
+			gunoff[2] -= offset;
+		}
+
 		VectorMA(hand->origin, gunoff[0], cg.refdef_current->viewaxis[0], hand->origin);
 		VectorMA(hand->origin, gunoff[1], cg.refdef_current->viewaxis[1], hand->origin);
 		VectorMA(hand->origin, (gunoff[2] + fovOffset), cg.refdef_current->viewaxis[2], hand->origin);
