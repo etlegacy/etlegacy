@@ -1877,8 +1877,12 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			else if (weaponNum == WP_COLT || weaponNum == WP_LUGER || weaponNum == WP_SILENCED_COLT || weaponNum == WP_SILENCER)
 			{
 				if ((i == 3 /* left hand */ && (ps->weaponstate != WEAPON_RELOADING /* show only during reload */))
-				    || (weaponNum == WP_SILENCER && i == 5 /* excess normally out-of-view hand */)
-				    || (weaponNum == WP_SILENCED_COLT && i == 6 /* excess normally out-of-view hand */))
+				    || (weaponNum == WP_SILENCER /* silenced luger */ && i == 5 /* extra hand with which to screw luger silencer */ && (cg.predictedPlayerEntity.pe.weap.frame < 55) /* hide it unless when actually screwing */)
+				    || (weaponNum == WP_SILENCED_COLT && i == 6 /* extra hand with which to screw colt silencer */ && (
+							(cg.predictedPlayerEntity.pe.weap.frame < 55 /* hide it unless when actually screwing */)
+							|| (cg.predictedPlayerEntity.pe.weap.frame > 79 && cg.predictedPlayerEntity.pe.weap.frame < 82 /* skip some bad tag pos that causes the hand to briefly pop on the left-hand-side of the view when screwing on the silencer */)
+							))
+				    )
 				{
 					continue;
 				}
