@@ -2065,7 +2065,7 @@ static void CG_SetSpawnPoint_f(void)
 
 	if (trap_Argc() < 2)
 	{
-		CG_Printf("^1setspawnpt needs at least 2 arguments\n");
+		CG_Printf("^1setspawnpt needs at least 1 argument\n");
 		return;
 	}
 
