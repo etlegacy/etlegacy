@@ -584,13 +584,13 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		trace_t        trace;
 		clientInfo_t   *ci;
 		bg_character_t *character;
-		vec4_t         projection;
+		// vec4_t         projection;
 		// BloodCloud
 		qboolean newjunction[MAXJUNCTIONS]    = { 0 };
 		vec3_t   junctionOrigin[MAXJUNCTIONS] = { 0 };
 		vec3_t   axis[3];
 
-		vec4_t      color;
+		// vec4_t      color;
 		vec3_t      velocity, dir, angles;
 		refEntity_t *re = &cent->pe.bodyRefEnt;
 		int         i, j, count = 0;
