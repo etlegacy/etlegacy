@@ -2,6 +2,13 @@
 # Intended for player consumption, in one shape or form.
 
 upcoming:
+  - title: Added 'cg_teamannouncer' CVAR to disable team announcer audio
+    categ: cgame
+    prio: low
+    descr: |
+      The 'cg_teamannouncer' CVAR has been added to disable team announcer radio audio.
+      Example: "Construct the command post!"
+
   - title: Fade in first-person weapon when being revived
     categ: cgame
     descr: |
