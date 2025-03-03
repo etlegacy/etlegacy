@@ -1574,7 +1574,7 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 			CG_LimboPanel_RequestWeaponStats();
 
 			cgs.ccManuallySetSecondaryWeapon = qfalse;
-			cgs.limboLoadoutModified = qtrue;
+			cgs.limboLoadoutModified         = qtrue;
 		}
 
 		return qtrue;
@@ -2515,7 +2515,8 @@ qboolean CG_LimboPanel_WeaponLights_KeyDown(panel_button_t *button, int key)
 
 		cgs.ccSelectedWeaponSlot = button->data[0];
 
-		if (cgs.ccSelectedWeaponSlot == 0) {
+		if (cgs.ccSelectedWeaponSlot == 0)
+		{
 			cgs.ccManuallySetSecondaryWeapon = qtrue;
 		}
 
