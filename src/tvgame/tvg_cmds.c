@@ -33,6 +33,8 @@
  */
 
 #include "tvg_local.h"
+#include "../game/bg_ebs.h"
+#include "../game/bg_b64.h"
 
 #ifdef FEATURE_LUA
 #include "tvg_lua.h"
@@ -1421,6 +1423,107 @@ static void TVG_ConfigStringModified(void)
 	}
 }
 
+/**
+* @brief TVG_SaveScore
+* @param[in] cmd
+* @param[in] secondPart
+*/
+static void TVG_SaveScore(char *cmd, qboolean secondPart)
+{
+	if (!secondPart)
+	{
+		Q_strncpyz(level.cmds.score[0], cmd, sizeof(level.cmds.score[0]));
+	}
+	else
+	{
+		Q_strncpyz(level.cmds.score[1], cmd, sizeof(level.cmds.score[0]));
+	}
+
+	level.cmds.scoreHasTwoParts = secondPart;
+}
+
+/**
+* @brief TVG_ETPRO_EncodedBitStreamCommand
+* @details commands are handled a bit differently than etpro, some of them like tinfo are never sent by tvgame
+*          etpro instead creates a new command (afaik it's /score cmd) and adds info like location and powerups to it
+* @param[in] cmd
+* @return
+*/
+static qboolean TVG_ETPRO_EncodedBitStreamCommand(char *cmd)
+{
+	unsigned char decodedCmd[MAX_STRING_CHARS];
+	bitStream_t   bs;
+	char          *encodedCmd;
+	int           cmdNum;
+
+	if (*cmd != '*' || !cmd[1])
+	{
+		return qfalse;
+	}
+
+	encodedCmd = cmd + 1;
+
+	BS_Init(&bs, decodedCmd, MAX_STRING_CHARS);
+	B64_DecodeBigEndian(decodedCmd, MAX_STRING_CHARS, encodedCmd, 0);
+
+	cmdNum = BS_Read(&bs, 8);
+
+	switch (cmdNum)
+	{
+	case ETPRO_ENCBS_ERROR:
+		G_DPrintf("TVG_ETPRO_EncodedBitStreamCommand error\n");
+		return qfalse;
+
+	// ETPro testing purposes only
+	case ETPRO_ENCBS_SERVER_TEST:
+		return qtrue;
+
+	// ETPro testing purposes only
+	case ETPRO_ENCBS_SERVER_AND_CLIENT_TEST:
+		trap_SendServerCommand(-1, cmd);
+		return qtrue;
+
+	// /score
+	case ETPRO_ENCBS_SCORE1:
+	case ETPRO_ENCBS_SCORE2:
+		TVG_SaveScore(cmd, qfalse);
+		return qtrue;
+
+	case ETPRO_ENCBS_TINFO:
+		trap_SendServerCommand(-1, cmd);
+		return qtrue;
+
+	case ETPRO_ENCBS_POPUP_MESSAGE:
+		trap_SendServerCommand(-1, cmd);
+		return qtrue;
+
+	case ETPRO_ENCBS_ENTNFO_ALLIES:
+		return qtrue;
+
+	case ETPRO_ENCBS_ENTNFO_AXIS:
+		return qtrue;
+
+	case ETPRO_ENCBS_ENTNFO_SPECTATOR:
+		trap_SendServerCommand(-1, cmd);
+		return qtrue;
+
+	case ETPRO_ENCBS_GLOBAL_TEAM_SOUND:
+		return qtrue;
+
+	case ETPRO_ENCBS_STOCK_TEXT_MESSAGE:
+		return qtrue;
+
+	case ETPRO_ENCBS_LIMBO_UPDATE:
+		return qtrue;
+
+	case ETPRO_ENCBS_SPEAKER_STATE:
+		return qtrue;
+
+	default:
+		return qfalse;
+	}
+}
+
 #define ENTNFO_HASH         78985
 #define CS_HASH             25581
 #define TINFO_HASH          65811
@@ -1488,54 +1591,62 @@ static void TVG_ConfigStringModified(void)
 #define IMPKD0_HASH 70433
 #define IMPKD1_HASH 70557
 
-// ETJUMP
+// ETJump
 #define GUID_REQUEST_HASH 161588
 #define HAS_TIMERUN_HASH  134442
+
+// ETPro
+#define ETPRO_CHAT_HASH 11781
+#define ETPRO_TCHAT_HASH 25684
 
 /**
 * @brief TVG_MasterServerCommand This handles server commands (server responses to client commands)
 * @details TV Client connected to master changes messages to clientNum = -2
-           if we detect that incoming cmd is a broadcast message we should immediately sent it (clientNum = -1).
-		   TV Server can send ClientCommands to master server too, for example requesting scores, stats etc.
-		   the response will come with clientNum -2 again
+           if we detect that incoming cmd is a broadcast message we should immediately send it (clientNum = -1).
+           TV Server can send ClientCommands to master server too, for example requesting scores, stats etc.
+           the response will come with clientNum -2 again
 * @param[in] cmd
 */
 static void TVG_MasterServerCommand(char *cmd)
 {
-	char passcmd[MAX_TOKEN_CHARS];
+	char tokenizedCmd[MAX_TOKEN_CHARS];
 	char *token;
 	int  clientNum = 0;
 
-	if (!cmd[0])
+	if (cmd && !*cmd)
 	{
 		return;
 	}
 
-	Q_strncpyz(passcmd, cmd, sizeof(passcmd));
+	Q_strncpyz(tokenizedCmd, cmd, sizeof(tokenizedCmd));
 
-	token = strtok(passcmd, " ");
+	token = strtok(tokenizedCmd, " ");
 
 	switch (TVG_StringHashValue(token))
 	{
 	case ENTNFO_HASH:                     // "entnfo" = teammapdata
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case CS_HASH:                         // "cs" = configstring - do not send
 		TVG_ConfigStringModified();       // update will be created just before sending snapshot
 		return;
+
 	case TINFO_HASH:                      // "tinfo" = teamplayinfo
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case SC0_HASH:                        // "sc0" = scoreboard (/score)
-		level.cmds.scoreHasTwoParts = qfalse;
-		Q_strncpyz(level.cmds.score[0], cmd, sizeof(level.cmds.score[0]));
+		TVG_SaveScore(cmd, qfalse);
 		return;
+
 	case SC1_HASH:                        // "sc1" = scoreboard (/score)
-		level.cmds.scoreHasTwoParts = qtrue;
-		Q_strncpyz(level.cmds.score[1], cmd, sizeof(level.cmds.score[0]));
+		TVG_SaveScore(cmd, qtrue);
 		return;
+
 	case WEAPONSTATS_HASH:                // "WeaponStats"
 		return;
+
 	case SC_HASH:                         // "sc" = /scores
 	{
 		int count;
@@ -1560,28 +1671,38 @@ static void TVG_MasterServerCommand(char *cmd)
 	case CPM_HASH:                        // "cpm"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case CP_HASH:                         // "cp"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case PRINT_HASH:                      // "print"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case CHAT_HASH:                       // "chat"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case VCHAT_HASH:                      // "chat"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	//case TCHAT_HASH:                                      // "tchat"
 	//	return;
+
 	//case VTCHAT_HASH:                                     // "vtchat"
 	//	return;
+
 	//case VBCHAT_HASH:                                     // "vbchat"
 	//	return;
+
 	//case GAMECHAT_HASH:                                   // "gamechat"
 	//	return;
+
 	//case VSCHAT_HASH:                                     // "vschat"
 	//	return;
+
 	// weapon stats parsing
 	case WS_HASH:                                           // "ws"
 		token     = strtok(NULL, " ");
@@ -1590,6 +1711,7 @@ static void TVG_MasterServerCommand(char *cmd)
 		level.cmds.infoStats[INFO_WS].valid[clientNum] = qtrue;
 		Q_strncpyz(level.cmds.infoStats[INFO_WS].data[clientNum], cmd, sizeof(level.cmds.infoStats[INFO_WS].data[0]));
 		return;
+
 	case WWS_HASH:                                          // "wws"
 		token     = strtok(NULL, " ");
 		clientNum = Q_atoi(token);
@@ -1597,6 +1719,7 @@ static void TVG_MasterServerCommand(char *cmd)
 		level.cmds.infoStats[INFO_WWS].valid[clientNum] = qtrue;
 		Q_strncpyz(level.cmds.infoStats[INFO_WWS].data[clientNum], cmd, sizeof(level.cmds.infoStats[INFO_WWS].data[0]));
 		return;
+
 	case GSTATS_HASH:                                       // "gstats"
 		token     = strtok(NULL, " ");
 		clientNum = Q_atoi(token);
@@ -1604,150 +1727,203 @@ static void TVG_MasterServerCommand(char *cmd)
 		level.cmds.infoStats[INFO_GSTATS].valid[clientNum] = qtrue;
 		Q_strncpyz(level.cmds.infoStats[INFO_GSTATS].data[clientNum], cmd, sizeof(level.cmds.infoStats[INFO_GSTATS].data[0]));
 		return;
+
 	//	// "topshots"-related commands
 	case ASTATS_HASH:                                       // "astats"
 		Q_strncpyz(level.cmds.astats, cmd, sizeof(level.cmds.astats));
 		return;
+
 	case ASTATSB_HASH:                                      // "astatsb"
 		Q_strncpyz(level.cmds.astatsb, cmd, sizeof(level.cmds.astatsb));
 		return;
+
 	case BSTATS_HASH:                                       // "bstats"
 		Q_strncpyz(level.cmds.bstats, cmd, sizeof(level.cmds.bstats));
 		return;
+
 	case BSTATSB_HASH:                                      // "bstatsb"
 		Q_strncpyz(level.cmds.bstatsb, cmd, sizeof(level.cmds.bstatsb));
 		return;
+
 	case WBSTATS_HASH:                                      // "wbstats"
 		Q_strncpyz(level.cmds.wbstats, cmd, sizeof(level.cmds.wbstats));
 		return;
+
 	//	// single weapon stat (requested weapon stats)
 	//case RWS_HASH:                                        // "rws"
 	//	return;
+
 	case MAP_RESTART_HASH:                                  // "map_restart"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	//case PORTALCAMPOS_HASH:                               // "portalcampos"
 	//	return;
+
 	//case REMAPSHADER_HASH:                                // "remapShader"
 	//	return;
+
 	//// ensure a file gets into a build (mainly for scripted music calls)
 	//case ADDTOBUILD_HASH:                                // "addToBuild"
 	//	return;
+
 	//// server sends this command when it's about to kill the current server, before the client can reconnect
 	case SPAWNSERVER_HASH:                                 // "spawnserver"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	//case APPLICATION_HASH:                               //  "application"
 	//	return;
+
 	//case INVITATION_HASH:                                // "invitation"
 	//	return;
+
 	//case PROPOSITION_HASH:                               // "proposition"
 	//	return;
+
 	//case AFT_HASH:                                       // "aft"
 	//	return;
+
 	//case AFTC_HASH:                                      // "aftc"
 	//	return;
+
 	//case AFTJ_HASH:                                      // "aftj"
 	//	return;
+
 	//	// Allow client to lodge a complaing
 	//case COMPLAINT_HASH:                                 // "complaint"
 	//	return;
+
 	//case REQFORCESPAWN_HASH:                             // "reqforcespawn"
 	//	return;
+
 	//case SDBG_HASH:                                      // "sdbg"
 	//	return;
+
 	case IMMAPLIST_HASH: // MAPVOTE                        "immaplist"
 		level.cmds.immaplistValid = qtrue;
 		Q_strncpyz(level.cmds.immaplist, cmd, sizeof(level.cmds.immaplist));
 		return;
+
 	case IMMAPHISTORY_HASH: // MAPVOTE                     "immaphistory"
 		level.cmds.immaphistoryValid = qtrue;
 		Q_strncpyz(level.cmds.immaphistory, cmd, sizeof(level.cmds.immaphistory));
 		return;
+
 	case IMVOTETALLY_HASH: // MAPVOTE                      "imvotetally"
 		level.cmds.imvotetallyValid = qtrue;
 		Q_strncpyz(level.cmds.imvotetally, cmd, sizeof(level.cmds.imvotetally));
 		return;
+
 	//case SETSPAWNPT_HASH: //  "setspawnpt"
 	//	return;
 	//	// debriefing server cmds
+
 	case IMWA_HASH:                                        // "imwa"
 		level.cmds.imwaValid = qtrue;
 		Q_strncpyz(level.cmds.imwa, cmd, sizeof(level.cmds.imwa));
 		return;
+
 	case IMWS_HASH:                                        // "imws"
 		level.cmds.waitingForIMWS                                       = qfalse;
 		level.cmds.infoStats[INFO_IMWS].valid[level.cmds.IMWSClientNum] = qtrue;
 		Q_strncpyz(level.cmds.infoStats[INFO_IMWS].data[level.cmds.IMWSClientNum], cmd, sizeof(level.cmds.infoStats[INFO_IMWS].data[0]));
 		return;
+
 	case IMPKD_HASH:                                       // "impkd"
 	case IMPKD0_HASH:                                      // "impkd0"
 		level.cmds.impkdValid = qtrue;
 		Q_strncpyz(level.cmds.impkd[0], cmd, sizeof(level.cmds.impkd[0]));
 		return;
+
 	case IMPKD1_HASH:                                      // "impkd1"
 		Q_strncpyz(level.cmds.impkd[1], cmd, sizeof(level.cmds.impkd[1]));
 		return;
+
 	case IMPT_HASH:                                        // "impt"
 		level.cmds.imptValid = qtrue;
 		Q_strncpyz(level.cmds.impt, cmd, sizeof(level.cmds.impt));
 		return;
+
 	// music loops \/
 	case MU_START_HASH:                                    // "mu_start" has optional parameter for fade-up time
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	// plays once then back to whatever the loop was \/
 	case MU_PLAY_HASH:                                     // "mu_play" has optional parameter for fade-up time
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case MU_STOP_HASH:                                     // "mu_stop" has optional parameter for fade-down time
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case MU_FADE_HASH:                                     // "mu_fade"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	case SND_FADE_HASH:                                    // "snd_fade"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	//case ROCKANDROLL_HASH:                               // "rockandroll"
 	//	return;
+
 	case BP_HASH: // "bp"
 		trap_SendServerCommand(-1, cmd);
 		return;
+
 	//case XPGAIN_HASH:                                    // "xpgain"
 	//	return;
+
 	case DISCONNECT_HASH:                                  // "disconnect"
 		trap_SendServerCommand(-1, cmd);
 		return;
 
-	// Legacy
+	///< Legacy
 	case IMSR_HASH:                                        // "imsr"
 		level.cmds.imsrValid = qtrue;
 		Q_strncpyz(level.cmds.imsr, cmd, sizeof(level.cmds.imsr));
 		return;
+
 	//case SR_HASH:                                        // "sr" - backward compatibility with 2.76 demos
 	//	return;
+
 	case SRA_HASH:                                         // "sra"
 		level.cmds.sraValid = qtrue;
 		Q_strncpyz(level.cmds.sra, cmd, sizeof(level.cmds.sra));
 		return;
+
 	case IMPR_HASH:                                        // "impr"
 		level.cmds.imprValid = qtrue;
 		Q_strncpyz(level.cmds.impr, cmd, sizeof(level.cmds.impr));
 		return;
+
 	case PR_HASH:                                          // "pr"
 		level.cmds.prValid = qtrue;
 		Q_strncpyz(level.cmds.pr, cmd, sizeof(level.cmds.pr));
 		return;
 
-	// ETJump
+	///< ETJump
 	case GUID_REQUEST_HASH:
 	case HAS_TIMERUN_HASH:
 		return;
 
+	///< ETPro
+	case ETPRO_CHAT_HASH:
+	case ETPRO_TCHAT_HASH:
+		trap_SendServerCommand(-1, cmd);
+		return;
+
 	default:
-		G_Printf("TVGAME: Unknown master server game command: %s [%lu]\n", cmd, TVG_StringHashValue(token));
-		break;
+		if ((level.mod & ETPRO) && TVG_ETPRO_EncodedBitStreamCommand(cmd))
+		{
+			return;
+		}
+
+		G_DPrintf("TVGAME: Unknown master server game command: %s [%lu]\n", cmd, TVG_StringHashValue(token));
+		return;
 	}
 }
 

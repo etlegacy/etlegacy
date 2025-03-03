@@ -1171,6 +1171,16 @@ void SV_SendClientMessages(void)
 		SV_SendClientSnapshot(c);
 		c->lastSnapshotTime = svs.time;
 		c->rateDelayed      = qfalse;
+
+		if (!c->ettvClient || !sv_etltv_netblast->integer)
+		{
+			continue;
+		}
+
+		while (c->netchan.unsentFragments)
+		{
+			SV_Netchan_TransmitNextFragment(c);
+		}
 	}
 
 	// net debugging

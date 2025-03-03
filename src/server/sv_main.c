@@ -137,6 +137,7 @@ cvar_t *sv_etltv_clientname;
 cvar_t *sv_etltv_delay;
 cvar_t *sv_etltv_shownet;
 cvar_t *sv_etltv_queue_ms;
+cvar_t *sv_etltv_netblast;
 
 static void SVC_Status(const netadr_t *from, qboolean force);
 

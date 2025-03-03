@@ -107,6 +107,28 @@ typedef enum
 } mods_t;
 
 /**
+ * @enum etpro_encbs_commands_t
+ * @brief
+ */
+typedef enum
+{
+	ETPRO_ENCBS_ERROR,
+	ETPRO_ENCBS_SERVER_TEST,
+	ETPRO_ENCBS_SERVER_AND_CLIENT_TEST,
+	ETPRO_ENCBS_SCORE1,
+	ETPRO_ENCBS_SCORE2,
+	ETPRO_ENCBS_TINFO,
+	ETPRO_ENCBS_POPUP_MESSAGE,
+	ETPRO_ENCBS_ENTNFO_ALLIES,
+	ETPRO_ENCBS_ENTNFO_AXIS,
+	ETPRO_ENCBS_ENTNFO_SPECTATOR,
+	ETPRO_ENCBS_GLOBAL_TEAM_SOUND,
+	ETPRO_ENCBS_STOCK_TEXT_MESSAGE,
+	ETPRO_ENCBS_LIMBO_UPDATE,
+	ETPRO_ENCBS_SPEAKER_STATE
+} etpro_encbs_commands_t;
+
+/**
 * @struct tvcmdUsageFlag_e
 * @typedef tvcmdUsageFlag_t
 */
@@ -736,11 +758,9 @@ extern vmCvar_t tvg_maxclients;               ///< allow this many total, includ
 
 extern vmCvar_t g_password;
 extern vmCvar_t sv_privatepassword;
-extern vmCvar_t g_debugBullets;
 
 extern vmCvar_t tvg_inactivity;
 extern vmCvar_t g_debugAlloc;
-extern vmCvar_t g_debugBullets;
 extern vmCvar_t tvg_motd;
 
 extern vmCvar_t tvg_voiceChatsAllowed;        ///< number before spam control
@@ -778,8 +798,6 @@ extern vmCvar_t tvg_voiceChatsAllowed;
 extern vmCvar_t tvg_protect;
 
 // misc
-extern vmCvar_t team_riflegrenades;
-
 extern vmCvar_t sv_fps;
 
 extern vmCvar_t tvg_extendedNames;
