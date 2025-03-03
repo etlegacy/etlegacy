@@ -42,8 +42,9 @@
  * @brief G_BounceMissile
  * @param[in,out] ent
  * @param[in] trace
+ * @return true if missile actually bounced, otherwise false
  */
-void G_BounceMissile(gentity_t *ent, trace_t *trace)
+qboolean G_BounceMissile(gentity_t *ent, trace_t *trace)
 {
 	vec3_t    velocity;
 	float     dot;
@@ -58,7 +59,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		if ((ent->nextthink - level.time) < 3250)
 		{
 			G_ExplodeMissile(ent);
-			return;
+			return qtrue;
 		}
 	}
 
@@ -67,6 +68,11 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
+
+	// bounces without any velocity do not constitute proper bounces
+	if (velocity[0] == 0.0 && velocity[1] == 0.0 && velocity[2] == 0.0) {
+		return qfalse;
+	}
 
 	// record this for mover pushing
 	if (trace->plane.normal[2] > 0.2f /*&& VectorLengthSquared( ent->s.pos.trDelta ) < Square(40)*/)
@@ -138,7 +144,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 				// explode one 750msecs after launchtime
 				ent->nextthink = level.time + (750 - (level.time + 4000 - ent->nextthink));
 			}
-			return;
+			return qtrue;
 		}
 	}
 
@@ -149,6 +155,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 	SnapVector(ent->s.pos.trBase);
 	ent->s.pos.trTime = level.time;
+	return qtrue;
 }
 
 /**
@@ -194,15 +201,15 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	// check for bounce
 	if ((!other->takedamage || !ent->damage) && (ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF)))
 	{
-		G_BounceMissile(ent, trace);
+		if (G_BounceMissile(ent, trace)) {
+			// sending bounce event for smoketrail is unnecessary
+			if (ent->s.weapon == WP_SMOKETRAIL)
+			{
+				return;
+			}
 
-		// sending bounce event for smoketrail is unnecessary
-		if (ent->s.weapon == WP_SMOKETRAIL)
-		{
-			return;
+			G_AddEvent(ent, EV_GRENADE_BOUNCE, BG_FootstepForSurface(trace->surfaceFlags));
 		}
-
-		G_AddEvent(ent, EV_GRENADE_BOUNCE, BG_FootstepForSurface(trace->surfaceFlags));
 
 		return;
 	}
