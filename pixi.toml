@@ -1,0 +1,16 @@
+[project]
+name = "etlegacy"
+authors = ["ET:Legacy Team"]
+version = "0.0.0"
+channels = [
+    "conda-forge",
+]
+
+platforms = ["linux-64", "osx-64"]  # TODO - support "win-64"
+
+[tasks]
+check-changes = { cmd = ["python", "./misc/check-changes.py"] }
+
+[dependencies]
+# check-changes
+"uncrustify"   = "0.78.1.*"
