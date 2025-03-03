@@ -46,6 +46,7 @@ weaponDef
 
 		fireRecoil 2 1 0    // kick angle
 		adjustLean 1 1 2
+		reviveLowerHeight 6
 
 		modModel 0			"models/multiplayer/kar98/v_kar98_scope.md3"
 

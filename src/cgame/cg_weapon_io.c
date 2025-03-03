@@ -1617,6 +1617,13 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected adjustLean as pitch yaw roll");
 			}
 		}
+		else if (!Q_stricmp(token.string, "reviveLowerHeight"))
+		{
+			if (!PC_Float_Parse(handle, &weaponInfo->reviveLowerHeight))
+			{
+				return CG_RW_ParseError(handle, "expected reviveLowerHeight value");
+			}
+		}
 		else if (!Q_stricmp(token.string, "impactDurationCoeff"))
 		{
 			if (!PC_Int_Parse(handle, &weaponInfo->impactDurationCoeff))

@@ -56,6 +56,7 @@ weaponDef
 		//modModel 1		""
 
 		adjustLean 1 1 1
+		reviveLowerHeight 2.6
 
 		impactDurationCoeff 3
 		impactMarkMaxRange  -1	// -1 infinite
