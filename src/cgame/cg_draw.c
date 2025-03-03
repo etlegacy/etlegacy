@@ -4265,6 +4265,13 @@ static void CG_Draw2D(void)
 			CG_ScanForCrosshairEntity();
 			CG_CheckForCursorHints();
 
+			// force drawing binoc & scope mask even if crosshair is invisible
+			if (!CG_GetActiveHUD()->crosshair.visible
+			    && (cg.zoomedBinoc || (cg.zoomed && !BG_PlayerMounted(cg.snap->ps.eFlags))))
+			{
+				CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
+			}
+
 			CG_DrawActiveHud();
 		}
 	}
