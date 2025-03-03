@@ -2577,7 +2577,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		snap = cg.snap;
 	}
 
-	if (((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || snap->ps.stats[STAT_HEALTH] <= 0) && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	if ((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !(snap->ps.pm_flags & PMF_FOLLOW) && !cgs.clientinfo[cg.clientNum].shoutcaster)
 #ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
 #endif
