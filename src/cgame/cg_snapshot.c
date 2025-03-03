@@ -314,8 +314,12 @@ static void CG_TransitionSnapshot(void)
 	// gets updated every snap, while the former gets updated only each second
 	// or somesuch.
 	{
-		int identifyClientNum = cg.snap->ps.identifyClient;
-		if (identifyClientNum != cg.predictedPlayerState.clientNum)
+		const int identifyClientNum = cg.snap->ps.identifyClient;
+
+		// this is transmitted as unsigned char so it can't be negative
+		// ClientThink_real sets this to -1 if crosshair client isn't a teammate,
+		// which wraps to 255, so ensure we don't try to read/write out of bounds
+		if (identifyClientNum < MAX_CLIENTS && identifyClientNum != cg.snap->ps.clientNum)
 		{
 			clientInfo_t *ci = &cgs.clientinfo[identifyClientNum];
 			ci->health = cg.snap->ps.identifyClientHealth;
@@ -344,7 +348,7 @@ static void CG_TransitionSnapshot(void)
 
 	cg.nextSnap = NULL;
 
-	// check for playerstate transition events and entities that need reset from oldFrame
+// check for playerstate transition events and entities that need reset from oldFrame
 	if (oldFrame)
 	{
 		// reset entity not valid in this frame but valid last frame.
