@@ -135,7 +135,7 @@ void IN_KeyDown(kbutton_t *b)
 
 	// save timestamp for partial frame summing
 	c           = Cmd_Argv(2);
-	b->downtime = Q_atoi(c);
+	b->downtime = strtoll(c, NULL, 10);
 
 	b->active     = qtrue;
 	b->wasPressed = qtrue;
@@ -147,9 +147,9 @@ void IN_KeyDown(kbutton_t *b)
  */
 void IN_KeyUp(kbutton_t *b)
 {
-	int      k;
-	char     *c;
-	unsigned uptime;
+	int     k;
+	char    *c;
+	int64_t uptime;
 
 	c = Cmd_Argv(1);
 	if (c[0])
@@ -185,7 +185,7 @@ void IN_KeyUp(kbutton_t *b)
 
 	// save timestamp for partial frame summing
 	c      = Cmd_Argv(2);
-	uptime = Q_atoi(c);
+	uptime = strtoll(c, NULL, 10);
 	if (uptime)
 	{
 		b->usec += uptime - b->downtime;
