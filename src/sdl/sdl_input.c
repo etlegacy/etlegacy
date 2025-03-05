@@ -65,7 +65,7 @@ SDL_Window *mainScreen    = NULL;
 // The engine simulates *the period from the last frame's beginning to the current frame's beginning* when it simulates the current frame.
 // It's not simulating "the next 1/60th or 1/125th" of a second. If you give it "now" as input timestamps, your inputs do not occur until the *next* simulated chunk of time.
 // Try it. com_maxfps 1, press "forward", have fun.
-static int lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
+static int64_t lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
 
 #ifdef __ANDROID__
 // Margin rectangle structure for the "shoot button" area
@@ -1816,7 +1816,7 @@ void IN_Frame(void)
 	qboolean cinematic = (cls.state == CA_CINEMATIC);
 
 	// Get the timestamp to give the next frame's input events (not the ones we're gathering right now, though)
-	int start = Sys_Milliseconds();
+	int64_t start = Sys_Microseconds();
 
 #ifdef __ANDROID__
 
