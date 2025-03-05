@@ -340,12 +340,12 @@ void SCR_DebugGraph(float value)
  */
 void SCR_DrawDebugGraph(void)
 {
-	int   a, x, y, w, i, h;
-	float v;
+	int   a, i;
+	float v, x, y, w, h = cl_graphheight->integer;
 
 	// draw the graph
-	w = cls.glconfig.vidWidth;
-	x = 0;
+	w = cls.glconfig.vidWidth < ARRAY_LEN(values) ? cls.glconfig.vidWidth : ARRAY_LEN(values);
+	x = (cls.glconfig.vidWidth / 2) - (w / 2);
 	y = cls.glconfig.vidHeight;
 	re.SetColor(g_color_table[0]);
 	re.DrawStretchPic(x, y - cl_graphheight->integer,
