@@ -1654,11 +1654,7 @@ static void IN_ProcessEvents(void)
 			default:                   b = K_AUX1 + (e.button.button - SDL_BUTTON_X2 + 1) % 16;
 				break;
 			}
-#ifdef __ANDROID__
-			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qfalse : qtrue), 0, NULL);
-#else
 			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
-#endif
 		}
 		break;
 		case SDL_MOUSEWHEEL:
