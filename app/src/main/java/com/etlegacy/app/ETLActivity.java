@@ -16,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +27,8 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -64,6 +67,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private Handler handler;
 	private Runnable uiRunner;
 	private Intent intent;
+	private OnBackInvokedCallback callback;
 
 	private int width;
 	private int height;
@@ -107,6 +111,23 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// Android 13+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			callback = new OnBackInvokedCallback() {
+				@Override
+				public void onBackInvoked() {
+					Log.d("ETLActivity", "onBackInvoked triggered");
+					SDLActivity.onNativeKeyDown(KeyEvent.KEYCODE_ESCAPE);
+					SDLActivity.onNativeKeyUp(KeyEvent.KEYCODE_ESCAPE);
+				}
+			};
+
+			getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+				OnBackInvokedDispatcher.PRIORITY_DEFAULT, callback
+			);
+
+		}
+
 		DisplayMetrics realMetrics = getResources().getDisplayMetrics();
 		width = realMetrics.widthPixels;
 		height = realMetrics.heightPixels;
@@ -122,6 +143,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		this.handler.removeCallbacks(uiRunner);
 		ETLDownload.instance().shutdownExecutor();
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshReceiver);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && callback != null) {
+			getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(callback);
+		}
 
 		super.onDestroy();
 
