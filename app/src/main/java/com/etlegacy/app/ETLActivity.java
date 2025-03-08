@@ -24,13 +24,17 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
@@ -64,6 +68,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private ImageButton altBtn;
 	private ImageButton crouchBtn;
 	private JoyStick moveJoystick;
+	private ImageButton toggleRecyclerButton;
+	private RecyclerView recyclerView;
+	private boolean isVisible = false;
 	private Handler handler;
 	private Runnable uiRunner;
 	private Intent intent;
@@ -195,6 +202,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		mLayout.removeView(altBtn);
 		mLayout.removeView(crouchBtn);
 		mLayout.removeView(moveJoystick);
+		mLayout.removeView(toggleRecyclerButton);
+		mLayout.removeView(recyclerView);
 	}
 
 	@SuppressLint({"ClickableViewAccessibility", "NonConstantResourceId"})
@@ -214,6 +223,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		ComponentManager.ComponentData altBtnData = defaultcomponentMap.get("altBtn");
 		ComponentManager.ComponentData crouchBtnData = defaultcomponentMap.get("crouchBtn");
 		ComponentManager.ComponentData moveJoystickData = defaultcomponentMap.get("moveJoystick");
+		ComponentManager.ComponentData toggleRecyclerButtonData = defaultcomponentMap.get("toggleRecyclerButton");
 
 		assert etl_consoleData != null;
 		assert btnData != null;
@@ -226,6 +236,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		assert altBtnData != null;
 		assert crouchBtnData != null;
 		assert moveJoystickData != null;
+		assert toggleRecyclerButtonData != null;
 
 		// Create ImageButtons
 		etl_console = new ImageButton(this);
@@ -312,6 +323,53 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			moveJoystick.setPadColor(Color.WHITE);
 		}
 
+		toggleRecyclerButton = new ImageButton(this);
+		toggleRecyclerButton.setId(View.generateViewId());
+		toggleRecyclerButton.setImageResource(toggleRecyclerButtonData.resourceId);
+		toggleRecyclerButton.setBackgroundColor(0x00000000);
+		if (BuildConfig.DEBUG)
+			toggleRecyclerButton.setBackgroundResource(R.drawable.border_drawable);
+
+		recyclerView = new RecyclerView(this);
+		recyclerView.setLayoutParams(new LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.MATCH_PARENT,
+			LinearLayout.LayoutParams.WRAP_CONTENT
+		));
+
+		LinearLayoutManager layoutManager = new LinearLayoutManager(
+			this,
+			LinearLayoutManager.HORIZONTAL,
+			false
+		);
+		recyclerView.setLayoutManager(layoutManager);
+
+		Integer[] imageList = new Integer[] {
+			R.drawable.deltatouch_btn_1,
+			R.drawable.deltatouch_btn_2,
+			R.drawable.deltatouch_btn_3,
+			R.drawable.deltatouch_btn_4,
+			R.drawable.deltatouch_btn_5,
+			R.drawable.deltatouch_btn_6,
+			R.drawable.deltatouch_btn_7,
+			R.drawable.deltatouch_btn_8,
+			R.drawable.deltatouch_btn_9,
+			R.drawable.deltatouch_btn_0
+		};
+
+		ImageAdapter adapter = new ImageAdapter(this, imageList, recyclerView);
+		recyclerView.setAdapter(adapter);
+		recyclerView.setVisibility(View.GONE);
+
+		RelativeLayout.LayoutParams recycle_params = new RelativeLayout.LayoutParams(
+			RelativeLayout.LayoutParams.WRAP_CONTENT,
+			RelativeLayout.LayoutParams.WRAP_CONTENT
+		);
+		recycle_params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		recycle_params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		recycle_params.bottomMargin = (int) (16 * getResources().getDisplayMetrics().density); // 16dp margin
+
+		recyclerView.setLayoutParams(recycle_params);
+
 		Object[][] viewsWithParams = {
 			{etl_console, etl_consoleData.width, etl_consoleData.height, etl_consoleData.gravity, etl_consoleData.margins, etl_consoleData.resourceId},
 			{btn, btnData.width, btnData.height, btnData.gravity, btnData.margins, btnData.resourceId},
@@ -323,7 +381,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			{activateBtn, activateBtnData.width, activateBtnData.height, activateBtnData.gravity, activateBtnData.margins, activateBtnData.resourceId},
 			{altBtn, altBtnData.width, altBtnData.height, altBtnData.gravity, altBtnData.margins, altBtnData.resourceId},
 			{crouchBtn, crouchBtnData.width, crouchBtnData.height, crouchBtnData.gravity, crouchBtnData.margins, crouchBtnData.resourceId},
-			{moveJoystick, moveJoystickData.width, moveJoystickData.height, moveJoystickData.gravity, moveJoystickData.margins, moveJoystickData.resourceId}
+			{moveJoystick, moveJoystickData.width, moveJoystickData.height, moveJoystickData.gravity, moveJoystickData.margins, moveJoystickData.resourceId},
+			{toggleRecyclerButton, toggleRecyclerButtonData.width, toggleRecyclerButtonData.height, toggleRecyclerButtonData.gravity, toggleRecyclerButtonData.margins, toggleRecyclerButtonData.resourceId}
 		};
 
 		// Iterate over the array to create and set LayoutParams
@@ -406,6 +465,16 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			return false;
 		});
 
+		// Toggle visibility on button click
+		toggleRecyclerButton.setOnClickListener(v -> {
+			if (isVisible) {
+				recyclerView.setVisibility(View.GONE);
+			} else {
+				recyclerView.setVisibility(View.VISIBLE);
+			}
+			isVisible = !isVisible;
+		});
+
 		// Add buttons to layout
 		mLayout.addView(etl_console);
 		mLayout.addView(btn);
@@ -418,6 +487,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		mLayout.addView(altBtn);
 		mLayout.addView(crouchBtn);
 		mLayout.addView(moveJoystick);
+		mLayout.addView(toggleRecyclerButton);
+		mLayout.addView(recyclerView);
 
 		handler = new Handler(Looper.getMainLooper());
 		uiRunner = () -> {
@@ -510,6 +581,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			defaultcomponentMap.put("altBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.95), (int)(height * 0.9), 0, 0}, R.drawable.ic_alt));
 			defaultcomponentMap.put("crouchBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 1.0), (int)(height * 0.9), 0, 0}, R.drawable.ic_crouch));
 			defaultcomponentMap.put("moveJoystick", new ComponentManager.ComponentData(400, 400, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.05), (int)(height * 0.3), 0, 0}, 0));
+			defaultcomponentMap.put("toggleRecyclerButton", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.05), (int)(height * 0.3), 0, 0}, android.R.drawable.ic_menu_agenda));
 
 			SaveComponentData();
 		} else {
@@ -561,10 +633,10 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	@SuppressLint("ClickableViewAccessibility")
 	private int runUI() {
 		if (!getUiMenu()) {
-			setViewVisibility(false, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick);
+			setViewVisibility(false, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
 			return 500;
 		}
-		setViewVisibility(true, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick);
+		setViewVisibility(true, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
 		return 2000;
 	}
 
