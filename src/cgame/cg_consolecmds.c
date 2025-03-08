@@ -2058,6 +2058,35 @@ static void CG_ListSpawnPoints_f(void)
 	}
 }
 
+static void CG_SetSpawnPoint_f(void)
+{
+	char buffer[32];
+	int  majorSpawn;
+
+	if (trap_Argc() < 2)
+	{
+		CG_Printf("^1setspawnpt needs at least 1 argument\n");
+		return;
+	}
+
+	trap_Args(buffer, sizeof(buffer));
+
+	majorSpawn = Q_atoi(buffer);
+
+	if (majorSpawn >= 0 && majorSpawn < cg.spawnCount)
+	{
+		cgs.ccSelectedSpawnPoint = majorSpawn;
+	}
+	else
+	{
+		cgs.ccSelectedSpawnPoint = 0;
+	}
+
+	cgs.ccRequestedObjective = -1;
+
+	trap_SendClientCommand(va("setspawnpt %s", buffer));
+}
+
 static void CG_Location_f(void)
 {
 	char token[MAX_TOKEN_CHARS];
@@ -3240,6 +3269,7 @@ static consoleCommand_t commands[] =
 	{ "oinfo",                  CG_PrintObjectiveInfo_f   },
 	{ "resetmaxspeed",          CG_ResetMaxSpeed_f        },
 	{ "listspawnpt",            CG_ListSpawnPoints_f      },
+	{ "setspawnpt",             CG_SetSpawnPoint_f        },
 
 	{ "loc",                    CG_Location_f             },
 	{ "camera",                 CG_Camera_f               },
