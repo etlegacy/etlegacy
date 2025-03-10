@@ -37,6 +37,9 @@
     <application
         android:allowBackup="true"
 		android:requestLegacyExternalStorage="true"
+		android:resizeableActivity="true"
+		android:launchMode="singleTask"
+		android:windowSoftInputMode="adjustResize"
 		android:hardwareAccelerated="true"
 		android:enableOnBackInvokedCallback="true"
 		android:usesCleartextTraffic="true"
@@ -67,7 +70,6 @@
 			android:configChanges="layoutDirection|locale|orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
 			android:largeHeap="true"
 			android:alwaysRetainTaskState="true"
-			android:launchMode="singleInstance"
 			android:screenOrientation="sensorLandscape" >
         </activity>
 		<activity
