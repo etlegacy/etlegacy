@@ -75,6 +75,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private Runnable uiRunner;
 	private Intent intent;
 	private OnBackInvokedCallback callback;
+	private KeyBindingsManager keyManager;
 
 	private int width;
 	private int height;
@@ -138,6 +139,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		DisplayMetrics realMetrics = getResources().getDisplayMetrics();
 		width = realMetrics.widthPixels;
 		height = realMetrics.heightPixels;
+
+		keyManager = new KeyBindingsManager();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -403,20 +406,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			((android.view.View) entry[0]).setLayoutParams(params);
 		}
 
-		// Add listeners
-		etl_console.setOnClickListener(v -> {
-			onNativeKeyDown(68);
-			onNativeKeyUp(68);
-		});
-
 		btn.setOnClickListener(v -> {
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-		});
-
-		esc_btn.setOnClickListener(v -> {
-			onNativeKeyDown(111);
-			onNativeKeyUp(111);
 		});
 
 		gears.setOnClickListener(this::showPopupWindow);
@@ -424,46 +416,16 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		// Send margins of the shootBtn to C
 		sendToC(shootBtnData.margins[0], shootBtnData.margins[1],  shootBtnData.margins[0] + shootBtnData.width,  shootBtnData.margins[1] + shootBtnData.height);
 
-		reloadBtn.setOnClickListener(v -> {
-			onNativeKeyDown(46);
-			onNativeKeyUp(46);
-		});
+		// Set key bindings
+		keyManager.bindClickListener(etl_console, "console");
+		keyManager.bindClickListener(esc_btn, "escape");
+		keyManager.bindClickListener(reloadBtn, "reload");
+		keyManager.bindTouchListener(jumpBtn, "jump");
+		keyManager.bindClickListener(activateBtn, "activate");
+		keyManager.bindClickListener(altBtn, "alt");
+		keyManager.bindTouchListener(crouchBtn, "crouch");
 
-		jumpBtn.setOnTouchListener((v, event) -> {
-			switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					onNativeKeyDown(62);
-					break;
-				case MotionEvent.ACTION_UP:
-				case MotionEvent.ACTION_CANCEL:
-					onNativeKeyUp(62);
-					break;
-			}
-			return false;
-		});
-
-		activateBtn.setOnClickListener(v -> {
-			onNativeKeyDown(34);
-			onNativeKeyUp(34);
-		});
-
-		altBtn.setOnClickListener(v -> {
-			onNativeKeyDown(30);
-			onNativeKeyUp(30);
-		});
-
-		crouchBtn.setOnTouchListener((v, event) -> {
-			switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					onNativeKeyDown(31);
-					break;
-				case MotionEvent.ACTION_UP:
-				case MotionEvent.ACTION_CANCEL:
-					onNativeKeyUp(31);
-					break;
-			}
-			return false;
-		});
+		keyManager.setKeyBinding("jump", KeyEvent.KEYCODE_SPACE); // Change jump to spacebar key code
 
 		// Toggle visibility on button click
 		toggleRecyclerButton.setOnClickListener(v -> {
