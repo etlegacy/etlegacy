@@ -2312,6 +2312,9 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	cg.demoPlayback             = demoPlayback;
 	cg.frametime                = cg.time - cg.oldTime;
 	cg.crosshairEntsToScanCount = 0;
+	
+	// Run anti-cheat detection
+	AC_RunDetection();
 
 	if (cg.frametime < 0)
 	{

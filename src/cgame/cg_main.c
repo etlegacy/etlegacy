@@ -34,6 +34,7 @@
  */
 
 #include "cg_local.h"
+#include "anticheat/ac_integrity.h"
 
 displayContextDef_t cgDC;
 
@@ -3195,6 +3196,9 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_UpdateSvCvars();
 
 	CG_ParseModInfo();
+
+	// Initialize anti-cheat detection
+	AC_InitIntegrityChecks();
 
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 
