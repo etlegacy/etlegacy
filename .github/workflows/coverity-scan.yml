@@ -16,7 +16,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
+          sudo apt-get install -y nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev libxext-dev
 
       - name: Checkout
         run: git clone --recurse-submodules --jobs 8 --branch master --depth 1 https://github.com/etlegacy/etlegacy .
