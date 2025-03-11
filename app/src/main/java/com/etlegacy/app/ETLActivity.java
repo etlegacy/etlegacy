@@ -121,13 +121,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 		// Android 13+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-			callback = new OnBackInvokedCallback() {
-				@Override
-				public void onBackInvoked() {
-					Log.d("ETLActivity", "onBackInvoked triggered");
-					SDLActivity.onNativeKeyDown(KeyEvent.KEYCODE_ESCAPE);
-					SDLActivity.onNativeKeyUp(KeyEvent.KEYCODE_ESCAPE);
-				}
+			callback = () -> {
+				SDLActivity.onNativeKeyDown(KeyEvent.KEYCODE_ESCAPE);
+				SDLActivity.onNativeKeyUp(KeyEvent.KEYCODE_ESCAPE);
 			};
 
 			getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
@@ -140,7 +136,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		width = realMetrics.widthPixels;
 		height = realMetrics.heightPixels;
 
-		keyManager = new KeyBindingsManager();
+		keyManager = new KeyBindingsManager(getApplicationContext());
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -417,15 +413,13 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		sendToC(shootBtnData.margins[0], shootBtnData.margins[1],  shootBtnData.margins[0] + shootBtnData.width,  shootBtnData.margins[1] + shootBtnData.height);
 
 		// Set key bindings
-		keyManager.bindClickListener(etl_console, "console");
-		keyManager.bindClickListener(esc_btn, "escape");
-		keyManager.bindClickListener(reloadBtn, "reload");
-		keyManager.bindTouchListener(jumpBtn, "jump");
-		keyManager.bindClickListener(activateBtn, "activate");
-		keyManager.bindClickListener(altBtn, "alt");
-		keyManager.bindTouchListener(crouchBtn, "crouch");
-
-		keyManager.setKeyBinding("jump", KeyEvent.KEYCODE_SPACE); // Change jump to spacebar key code
+		keyManager.bindClickListener(etl_console, "etl_console");
+		keyManager.bindClickListener(esc_btn, "esc_btn");
+		keyManager.bindClickListener(reloadBtn, "reloadBtn");
+		keyManager.bindTouchListener(jumpBtn, "jumpBtn");
+		keyManager.bindClickListener(activateBtn, "activateBtn");
+		keyManager.bindClickListener(altBtn, "altBtn");
+		keyManager.bindTouchListener(crouchBtn, "crouchBtn");
 
 		// Toggle visibility on button click
 		toggleRecyclerButton.setOnClickListener(v -> {
@@ -487,6 +481,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		// Handle item clicks
 		TextView ui_editor = popupView.findViewById(R.id.ui_editor);
 		TextView theme_editor = popupView.findViewById(R.id.theme_editor);
+		TextView binding_editor = popupView.findViewById(R.id.binding_editor);
 		TextView delete = popupView.findViewById(R.id.delete);
 
 		ui_editor.setOnClickListener(v -> {
@@ -500,6 +495,13 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			intent = new Intent(ETLActivity.this, SetupUIThemeActivity.class);
 			startActivityForResult(intent, 1);
 			Toast.makeText(this, "Opened Theme Editor", Toast.LENGTH_SHORT).show();
+			popupWindow.dismiss();
+		});
+
+		binding_editor.setOnClickListener(v -> {
+			intent = new Intent(ETLActivity.this, KeyBindingsActivity.class);
+			startActivityForResult(intent, 1);
+			Toast.makeText(this, "Opened Bind Editor", Toast.LENGTH_SHORT).show();
 			popupWindow.dismiss();
 		});
 

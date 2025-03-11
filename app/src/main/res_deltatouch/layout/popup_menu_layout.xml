@@ -39,6 +39,24 @@ android:textColor="@android:color/black"
 tools:ignore="HardcodedText" />
 
 <View
+	android:layout_width="match_parent"
+	android:layout_height="1dp"
+	android:background="@android:color/darker_gray"
+	android:layout_marginVertical="4dp" />
+
+<TextView
+	android:id="@+id/binding_editor"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingVertical="12dp"
+	android:gravity="center"
+	android:text="Binds"
+	android:textSize="18sp"
+	android:textStyle="bold"
+	android:textColor="@android:color/black"
+	tools:ignore="HardcodedText" />
+
+<View
 android:layout_width="match_parent"
 android:layout_height="1dp"
 android:background="@android:color/darker_gray"

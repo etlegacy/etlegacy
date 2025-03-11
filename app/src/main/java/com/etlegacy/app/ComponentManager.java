@@ -4,11 +4,11 @@ public class ComponentManager {
 
 	// Define the ComponentData class
 	public static class ComponentData {
-		int width;
-		int height;
-		int gravity;
-		int[] margins;
-		int resourceId;
+		public int width;
+		public int height;
+		public int gravity;
+		public int[] margins;
+		public int resourceId;
 
 		public ComponentData(int width, int height, int gravity, int[] margins, int resourceId) {
 			this.width = width;

@@ -80,6 +80,9 @@
 			android:name=".SetupUIThemeActivity"
 			android:theme="@style/TransparentTheme">
 		</activity>
+		<activity android:name=".KeyBindingsActivity"
+			android:theme="@style/TransparentTheme">
+		</activity>
     </application>
 
 </manifest>
