@@ -594,14 +594,20 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		Log.v("ETLActivity", "LoadComponentData: " + defaultcomponentMap.toString());
 	}
 
-	@SuppressLint("ClickableViewAccessibility")
 	private int runUI() {
-		if (!getUiMenu()) {
-			setViewVisibility(false, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
+		if (InputDeviceChecker.hasUSBMouseOrKeyboardConnected()) {
+			setViewVisibility(false, etl_console, btn, esc_btn, gears, shootBtn, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
 			return 500;
 		}
-		setViewVisibility(true, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
-		return 2000;
+		else {
+			if (!getUiMenu()) {
+				setViewVisibility(true, etl_console, btn, esc_btn, gears, shootBtn);
+				setViewVisibility(false, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
+				return 500;
+			}
+			setViewVisibility(true, etl_console, btn, esc_btn, gears, shootBtn, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
+			return 2000;
+		}
 	}
 
 	private void setViewVisibility(boolean isVisible, View... views) {
