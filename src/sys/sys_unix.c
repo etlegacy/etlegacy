@@ -67,60 +67,60 @@ static char homePath[MAX_OSPATH] = { 0 };
 #ifdef  __ANDROID__
 char *Sys_CdToExtStorage(void)
 {
-    JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
-    jthrowable exception;
-    const char *path;
+	JNIEnv     *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
+	jthrowable exception;
+	const char *path;
 
-    // Get File object for the external storage directory.
-    jclass classEnvironment = (*env)->FindClass(env, "android/os/Environment");
-    if (!classEnvironment)
-    {
-        return NULL;
-    }
-    jmethodID methodIDgetExternalStorageDirectory = (*env)->GetStaticMethodID(env, classEnvironment, "getExternalStorageDirectory", "()Ljava/io/File;"); // public static File getExternalStoragePublicDirectory ()
-    if (!methodIDgetExternalStorageDirectory)
-    {
-        return NULL;
-    }
-    jobject objectFile = (*env)->CallStaticObjectMethod(env, classEnvironment, methodIDgetExternalStorageDirectory);
-    exception = (*env)->ExceptionOccurred(env);
-    if (exception)
-    {
-        (*env)->ExceptionDescribe(env);
-        (*env)->ExceptionClear(env);
-    }
+	// Get File object for the external storage directory.
+	jclass classEnvironment = (*env)->FindClass(env, "android/os/Environment");
+	if (!classEnvironment)
+	{
+		return NULL;
+	}
+	jmethodID methodIDgetExternalStorageDirectory = (*env)->GetStaticMethodID(env, classEnvironment, "getExternalStorageDirectory", "()Ljava/io/File;"); // public static File getExternalStoragePublicDirectory ()
+	if (!methodIDgetExternalStorageDirectory)
+	{
+		return NULL;
+	}
+	jobject objectFile = (*env)->CallStaticObjectMethod(env, classEnvironment, methodIDgetExternalStorageDirectory);
+	exception = (*env)->ExceptionOccurred(env);
+	if (exception)
+	{
+		(*env)->ExceptionDescribe(env);
+		(*env)->ExceptionClear(env);
+	}
 
-    // Call method on File object to retrieve String object.
-    jclass classFile = (*env)->GetObjectClass(env, objectFile);
-    if (!classFile)
-    {
-        return NULL;
-    }
-    jmethodID methodIDgetAbsolutePath = (*env)->GetMethodID(env, classFile, "getAbsolutePath", "()Ljava/lang/String;");
-    if (!methodIDgetAbsolutePath)
-    {
-        return NULL;
-    }
-    jstring stringPath = (*env)->CallObjectMethod(env, objectFile, methodIDgetAbsolutePath);
-    exception = (*env)->ExceptionOccurred(env);
-    if (exception)
-    {
-        (*env)->ExceptionDescribe(env);
-        (*env)->ExceptionClear(env);
-    }
-    // Extract a C string from the String object, and chdir() to it.
-    const char *wpath3 = (*env)->GetStringUTFChars(env, stringPath, NULL);
-    if (chdir(wpath3) != 0)
-    {
-        fprintf(stderr, "Error: Unable to change working directory to %s.\n", wpath3);
-        perror(NULL);
-    }
+	// Call method on File object to retrieve String object.
+	jclass classFile = (*env)->GetObjectClass(env, objectFile);
+	if (!classFile)
+	{
+		return NULL;
+	}
+	jmethodID methodIDgetAbsolutePath = (*env)->GetMethodID(env, classFile, "getAbsolutePath", "()Ljava/lang/String;");
+	if (!methodIDgetAbsolutePath)
+	{
+		return NULL;
+	}
+	jstring stringPath = (*env)->CallObjectMethod(env, objectFile, methodIDgetAbsolutePath);
+	exception = (*env)->ExceptionOccurred(env);
+	if (exception)
+	{
+		(*env)->ExceptionDescribe(env);
+		(*env)->ExceptionClear(env);
+	}
+	// Extract a C string from the String object, and chdir() to it.
+	const char *wpath3 = (*env)->GetStringUTFChars(env, stringPath, NULL);
+	if (chdir(wpath3) != 0)
+	{
+		fprintf(stderr, "Error: Unable to change working directory to %s.\n", wpath3);
+		perror(NULL);
+	}
 
-    path = SDL_strdup(wpath3);
+	path = SDL_strdup(wpath3);
 
-    (*env)->ReleaseStringUTFChars(env, stringPath, wpath3);
+	(*env)->ReleaseStringUTFChars(env, stringPath, wpath3);
 
-    return path;
+	return path;
 }
 #endif
 
@@ -148,8 +148,8 @@ char *Sys_DefaultHomePath(void)
 #ifdef __ANDROID__
 		if (SDL_AndroidGetExternalStorageState())
 		{
-            Q_strncpyz(homePath, Sys_CdToExtStorage(), sizeof(homePath));
-            Q_strcat(homePath, sizeof(homePath), "/Documents/etlegacy");
+			Q_strncpyz(homePath, Sys_CdToExtStorage(), sizeof(homePath));
+			Q_strcat(homePath, sizeof(homePath), "/Documents/etlegacy");
 		}
 		else
 		{
@@ -267,6 +267,15 @@ int Sys_Milliseconds(void)
 	curtime = ((time.tv_sec * 1000) + (time.tv_nsec / 1000000)) - sys_timeBase;
 
 	return curtime;
+}
+
+/**
+ * @brief Sys_Microseconds
+ * @return
+ */
+int64_t Sys_Microseconds(void)
+{
+	return Sys_Milliseconds() * 1000;
 }
 
 /**
@@ -470,10 +479,10 @@ char *Sys_Cwd(void)
 
 	cwd[MAX_OSPATH - 1] = 0;
 #else
-    Q_strncpyz(cwd, SDL_AndroidGetExternalStoragePath(), sizeof(cwd));
-    Q_strcat(cwd, sizeof(homePath), "/etlegacy");
+	Q_strncpyz(cwd, SDL_AndroidGetExternalStoragePath(), sizeof(cwd));
+	Q_strcat(cwd, sizeof(homePath), "/etlegacy");
 #endif
-    return cwd;
+	return cwd;
 }
 
 /*
