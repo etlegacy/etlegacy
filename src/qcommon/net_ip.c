@@ -2167,7 +2167,7 @@ void NET_Sleep(int64_t usec)
 	if (highestfd == INVALID_SOCKET)
 	{
 		// windows ain't happy when select is called without valid FDs
-		SleepEx(usec * 1000, 0);
+		SleepEx(usec / 1000, 0);
 		return;
 	}
 #endif
