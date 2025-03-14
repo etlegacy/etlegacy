@@ -595,7 +595,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	}
 
 	private int runUI() {
-		if (InputDeviceChecker.hasUSBMouseOrKeyboardConnected()) {
+		if (InputDeviceChecker.hasUSBMouseOrKeyboardConnected() || InputDeviceChecker.hasBluetoothMouseOrKeyboardConnected()) {
 			setViewVisibility(false, etl_console, btn, esc_btn, gears, shootBtn, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
 			return 500;
 		}

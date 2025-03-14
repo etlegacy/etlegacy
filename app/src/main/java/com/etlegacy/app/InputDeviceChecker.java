@@ -1,6 +1,5 @@
 package com.etlegacy.app;
 
-import android.util.Log;
 import android.view.InputDevice;
 
 public class InputDeviceChecker {
@@ -27,6 +26,40 @@ public class InputDeviceChecker {
 					if (deviceName.contains("usb") ||
 						deviceName.contains("mouse") ||
 						deviceName.contains("keyboard")) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean hasBluetoothMouseOrKeyboardConnected() {
+		int[] deviceIds = InputDevice.getDeviceIds();
+		for (int id : deviceIds) {
+			InputDevice device = InputDevice.getDevice(id);
+			if (device != null) {
+				int sources = device.getSources();
+
+				// Check for mouse or keyboard sources
+				boolean isMouse = (sources & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE;
+				boolean isKeyboard = (sources & InputDevice.SOURCE_KEYBOARD) == InputDevice.SOURCE_KEYBOARD;
+
+				if ((isMouse || isKeyboard) &&
+					device.getId() > 0 &&          // Exclude virtual devices
+					!device.isVirtual() &&         // Exclude virtual keyboards
+					(sources & InputDevice.SOURCE_TOUCHSCREEN) != InputDevice.SOURCE_TOUCHSCREEN) { // Exclude touchscreens
+
+					String deviceName = device.getName().toLowerCase();
+					// Stricter Bluetooth detection
+					if ((deviceName.contains("bluetooth") || deviceName.contains("bt")) &&
+						// Exclude common Android internal input devices
+						!deviceName.contains("touch") &&
+						!deviceName.contains("virtual") &&
+						!deviceName.contains("input") && // Generic Android input
+						!deviceName.contains("synaptics") && // Common touchpad
+						!deviceName.contains("usb") &&   // Exclude USB devices
+						!deviceName.contains("hid")) {   // Generic HID interface
 						return true;
 					}
 				}
