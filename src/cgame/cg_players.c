@@ -346,7 +346,7 @@ void CG_NewClientInfo(int clientNum)
 
 		// Make sure primary class and primary weapons are correct for
 		// subsequent calls to CG_LimboPanel_SendSetupMsg
-		CG_LimboPanel_Setup();
+		CG_LimboPanel_SetWeapons();
 
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
