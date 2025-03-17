@@ -4081,6 +4081,7 @@ qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex);
 qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam);
 int CG_LimboPanel_FindFreeClass(team_t checkTeam);
 int CG_LimboPanel_GetWeaponNumberForPos(int pos);
+void CG_LimboPanel_SetWeapons();
 
 /**
  * @struct mapScissor_s

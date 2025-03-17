@@ -3525,14 +3525,54 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 }
 
 /**
+ * @brief CG_LimboPanel_SetWeapons
+ */
+void CG_LimboPanel_SetWeapons(void)
+{
+	const clientInfo_t *ci = &cgs.clientinfo[cg.clientNum];
+	int                i;
+
+	// if loadout is already set, no need to do anything
+	if (cgs.limboLoadoutSelected)
+	{
+		return;
+	}
+
+	// check selected team before selecting weapon to ensure it is properly set after next map / map restart
+	// and to check if the selected weapon is still valid and linked to the correct team
+	for (i = 0; i < 3; i++)
+	{
+		if (teamOrder[i] == ci->team)
+		{
+			cgs.ccSelectedTeam = i;
+		}
+	}
+
+	if (ci->team != TEAM_SPECTATOR)
+	{
+		cgs.ccSelectedClass = ci->cls;
+	}
+
+	CG_LimboPanel_SetSelectedWeaponNum(PRIMARY_SLOT, (weapon_t)cgs.clientinfo[cg.clientNum].latchedweapon);
+
+	if (!CG_LimboPanel_IsValidSelectedWeapon(PRIMARY_SLOT) || CG_LimboPanel_RealWeaponIsDisabled(cgs.ccSelectedPrimaryWeapon))
+	{
+		CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
+	}
+
+	if (!CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
+	{
+		CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
+	}
+}
+
+/**
  * @brief CG_LimboPanel_Setup
  */
 void CG_LimboPanel_Setup(void)
 {
 	panel_button_t *button;
 	panel_button_t **buttons = limboPanelButtons;
-	clientInfo_t   *ci       = &cgs.clientinfo[cg.clientNum];
-	int            i;
 	char           buffer[256];
 
 	cgs.limboLoadoutModified = qfalse;
@@ -3569,35 +3609,7 @@ void CG_LimboPanel_Setup(void)
 		}
 	}
 
-	if (!cgs.limboLoadoutSelected)
-	{
-		// check selected team before selecting weapon to ensure it is properly set after next map / map restart
-		// and to check if the selected weapon is still valid and linked to the correct team
-		for (i = 0; i < 3; i++)
-		{
-			if (teamOrder[i] == ci->team)
-			{
-				cgs.ccSelectedTeam = i;
-			}
-		}
-
-		if (ci->team != TEAM_SPECTATOR)
-		{
-			cgs.ccSelectedClass = ci->cls;
-		}
-
-		CG_LimboPanel_SetSelectedWeaponNum(PRIMARY_SLOT, (weapon_t)cgs.clientinfo[cg.clientNum].latchedweapon);
-
-		if (!CG_LimboPanel_IsValidSelectedWeapon(PRIMARY_SLOT) || CG_LimboPanel_RealWeaponIsDisabled(cgs.ccSelectedPrimaryWeapon))
-		{
-			CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
-		}
-
-		if (!CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
-		{
-			CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
-		}
-	}
+	CG_LimboPanel_SetWeapons();
 
 	cgs.ccRequestedObjective = cgs.ccSelectedObjective = CG_LimboPanel_GetMaxObjectives();
 	CG_LimboPanel_RequestObjective();
