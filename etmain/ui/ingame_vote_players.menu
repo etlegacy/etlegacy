@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	348
-#define WINDOW_HEIGHT	198
+#define WINDOW_HEIGHT	350
 #define GROUP_NAME		"grpIngameVotePlayers"
 
 // Players Vote Menu //
@@ -24,11 +24,11 @@ menuDef {
 // Window //
 	WINDOW( _("PLAYERS"), 68)
 
-// Map Selection //
+// Player Selection //
 	itemDef {
 		name			"playerList"
 		group			GROUP_NAME
-		rect			6 32 196 118
+		rect			6 32 196 290
 		type			ITEM_TYPE_LISTBOX
 		textfont		UI_FONT_COURBD_21
 		textscale		.2
