@@ -168,6 +168,7 @@ animgroup
 		firing_a_drop_bazooka	2600	21	0	9		0	0	1	20
 
 		firing_pliers			3540	19	-1	20		0	50	0	20
+		raise_syringe			2933	1	0	10		0	0	0	20
 		reload_syringe			2911	20	0	15		0	0	0	20
 		firing_syringe			3574	35	0	30		0	0	0	20
 		raise_medpack			3590	10	0	20		0	0	0	20
