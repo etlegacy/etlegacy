@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	252
-#define WINDOW_HEIGHT	180
+#define WINDOW_HEIGHT	350
 #define GROUP_NAME		"grpIngameVoteMap"
 
 // Map Vote Menu //
@@ -40,7 +40,7 @@ menuDef {
 	itemDef {
 		name			"mapList_maps"
 		group			GROUP_NAME
-		rect			6 48 240 102
+		rect			6 48 240 272
 		type			ITEM_TYPE_LISTBOX
 		textfont		UI_FONT_COURBD_21
 		textscale		.2
@@ -60,7 +60,7 @@ menuDef {
 	itemDef {
 		name			"mapList_campaigns"
 		group			GROUP_NAME
-		rect			6 32 240 118
+		rect			6 32 240 288
 		type			ITEM_TYPE_LISTBOX
 		textfont		UI_FONT_COURBD_21
 		textscale		.2
