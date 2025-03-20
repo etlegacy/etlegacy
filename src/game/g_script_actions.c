@@ -3782,6 +3782,7 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 	tent              = G_TempEntityNotLinked(EV_GLOBAL_TEAM_SOUND);
 	tent->s.teamNum   = team;
 	tent->s.eventParm = G_SoundIndex(token);
+	tent->s.density   = EV_GLOBAL_TEAM_SOUND;
 	tent->r.svFlags   = SVF_BROADCAST;
 
 #ifdef FEATURE_OMNIBOT
