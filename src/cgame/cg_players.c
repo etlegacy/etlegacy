@@ -3240,8 +3240,6 @@ void CG_ResetPlayerEntity(centity_t *cent)
 {
 	if (!(cent->currentState.eFlags & EF_DEAD))
 	{
-		clientInfo_t *ci = &cgs.clientinfo[cent->currentState.clientNum];
-
 		CG_ClearLerpFrameRate(cent, &cgs.clientinfo[cent->currentState.clientNum], &cent->pe.legs, cent->currentState.legsAnim);
 		CG_ClearLerpFrame(cent, &cgs.clientinfo[cent->currentState.clientNum], &cent->pe.torso, cent->currentState.torsoAnim);
 
@@ -3256,8 +3254,6 @@ void CG_ResetPlayerEntity(centity_t *cent)
 		cent->pe.torso.yawing     = qfalse;
 		cent->pe.torso.pitchAngle = cent->rawAngles[PITCH];
 		cent->pe.torso.pitching   = qfalse;
-
-		ci->health = CG_GetPlayerMaxHealth(ci->clientNum, ci->cls, ci->team);
 	}
 
 	BG_EvaluateTrajectory(&cent->currentState.pos, cg.time, cent->lerpOrigin, qfalse, cent->currentState.effect2Time);
