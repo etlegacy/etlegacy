@@ -2566,7 +2566,7 @@ void G_EBS_InitShoutcast(void)
 	entityBitStream_t s;
 	int i;
 
-	if (!dll_trap_SnapshotCallbackExt)
+	if (!dll_trap_SnapshotCallbackExt || !dll_trap_SnapshotSetClientMask)
 	{
 		return;
 	}
