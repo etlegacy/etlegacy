@@ -2254,7 +2254,7 @@ raiseweapon
 	}
 	weapons Syringe AND Adrenaline Syringe
 	{
-		NOOP
+		torso raise_syringe
 	}
 	weapons Landmine
 	{
