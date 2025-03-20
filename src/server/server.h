@@ -622,7 +622,7 @@ void SV_SendClientMessages(void);
 void SV_SendClientSnapshot(client_t *client);
 void SV_CheckClientUserinfoTimer(void);
 void SV_SendClientIdle(client_t *client);
-void SV_SetSnapshotClientMask(int clientNum, int mask1, int mask2);
+void SV_SnapshotSetClientMask(int clientNum, uint64_t mask);
 
 #ifdef ETLEGACY_DEBUG
 void SV_PrintNetworkOverhead_f(void);

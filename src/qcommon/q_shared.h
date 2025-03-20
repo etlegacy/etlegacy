@@ -464,7 +464,7 @@ typedef int clipHandle_t;
 
 #define DEFAULT_NAME "ETLegacyPlayer"
 
-extern char* GlobalGameTitle;
+extern char *GlobalGameTitle;
 
 /**
  * @enum messageStatus_t
@@ -2092,6 +2092,9 @@ int32_t Q_FloatToInt(float f);
 float Q_IntToFloat(int32_t i);
 qboolean Q_ParseInt(const char *src, int *out);
 
+uint64_t *Q_PointerToUInt64(uint64_t u64);
+
 #define PASSFLOAT(f) Q_FloatToInt((f))
+#define PASSUINT64(u64) Q_PointerToUInt64((u64))
 
 #endif  // #ifndef INCLUDE_Q_SHARED_H

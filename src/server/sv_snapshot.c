@@ -945,6 +945,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 	SV_AddEntitiesVisibleFromPoint(client, org, frame, &entityNumbers /*, qfalse, client->netchan.remoteAddress.type == NA_LOOPBACK*/);
 #endif
 
+	// clear the mask for next frame
 	client->clientMask = 0;
 
 	// if there were portals visible, there may be out of order entities
@@ -1371,19 +1372,18 @@ void SV_CheckClientUserinfoTimer(void)
 }
 
 /**
- * @brief SV_SetSnapshotClientMask
+ * @brief SV_SnapshotSetClientMask
  * @param[in] clientNum
- * @param[in] mask1
- * @param[in] mask2
+ * @param[in] mask
  */
-void SV_SetSnapshotClientMask(int clientNum, int mask1, int mask2)
+void SV_SnapshotSetClientMask(int clientNum, uint64_t mask)
 {
 	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 	{
-		Com_Error(ERR_FATAL, "SV_SetSnapshotClientMask: invalid clientNum %d", clientNum);
+		Com_Error(ERR_FATAL, "SV_SnapshotSetClientMask: invalid clientNum %d", clientNum);
 	}
 
-	svs.clients[clientNum].clientMask = (uint64_t)mask1 | ((uint64_t)mask2 << 32);
+	svs.clients[clientNum].clientMask = mask;
 }
 
 #ifdef ETLEGACY_DEBUG

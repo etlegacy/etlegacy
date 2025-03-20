@@ -839,16 +839,16 @@ void trap_SnapshotCallbackExt(void)
 }
 
 /**
-* @brief trap_SetSnapshotClientMask Extension for setting client mask for given clientNum
-*                                   mask1 0-31 mask2 32-63 clientNums
+* @brief Extension for setting client mask for given clientNum.
+*        Clients in the mask will be added to snapshot regardless of PVS.
+*        Mask is reset every server frame, so game needs to set it every frame.
 * @param[in] clientNum
-* @param[in] mask1
-* @param[in] mask2
+* @param[in] mask
 */
-void trap_SetSnapshotClientMask(int clientNum, int mask1, int mask2)
+void trap_SnapshotSetClientMask(int clientNum, uint64_t mask)
 {
-	if (dll_trap_SetSnapshotClientMask)
+	if (dll_trap_SnapshotSetClientMask)
 	{
-		SystemCall(dll_trap_SetSnapshotClientMask, clientNum, mask1, mask2);
+		SystemCall(dll_trap_SnapshotSetClientMask, clientNum, PASSUINT64(mask));
 	}
 }

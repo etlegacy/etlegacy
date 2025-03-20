@@ -3153,6 +3153,19 @@ float Q_IntToFloat(int32_t i)
 }
 
 /**
+ * @brief Q_PointerToUInt64 For communicating uint64_t values between modules
+ * @param[in] u64
+ * @return
+ */
+uint64_t *Q_PointerToUInt64(uint64_t u64)
+{
+	static uint64_t value = 0;
+
+	value = u64;
+	return &value;
+}
+
+/**
  * @brief Q_ParseInt Parse string to int and check if the string was numeric
  * @param[in] src String to parse
  * @param[in,out] out Parsed int

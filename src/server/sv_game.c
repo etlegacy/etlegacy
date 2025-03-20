@@ -49,7 +49,7 @@ static ext_trap_keys_t g_extensionTraps[] =
 {
 	{ "trap_DemoSupport_Legacy",           G_DEMOSUPPORT,            qfalse },
 	{ "trap_SnapshotCallbackExt_Legacy",   G_SNAPSHOT_CALLBACK_EXT,  qfalse },
-	{ "trap_SetSnapshotClientMask_Legacy", G_SETSNAPSHOT_CLIENTMASK, qfalse },
+	{ "trap_SnapshotSetClientMask_Legacy", G_SNAPSHOT_SETCLIENTMASK, qfalse },
 	{ NULL,                                -1,                       qfalse }
 };
 
@@ -712,8 +712,8 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		sv.snapshotCallbackExt = qtrue;
 		return 0;
 
-	case G_SETSNAPSHOT_CLIENTMASK:
-		SV_SetSnapshotClientMask(args[1], args[2], args[3]);
+	case G_SNAPSHOT_SETCLIENTMASK:
+		SV_SnapshotSetClientMask(args[1], VMU64(2));
 		return 0;
 
 	default:

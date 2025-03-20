@@ -556,6 +556,18 @@ static ID_INLINE float _vmf(intptr_t x)
 }
 #define VMF(x)  _vmf(args[x])
 
+static ID_INLINE uint64_t _vmu64(void *value)
+{
+	if (!value)
+	{
+		return 0;
+	}
+
+	return *(uint64_t *)value;
+}
+
+#define VMU64(x) _vmu64(VMA(x))
+
 typedef intptr_t (QDECL *VM_EntryPoint_t)(int, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
 
 /*

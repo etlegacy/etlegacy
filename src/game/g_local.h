@@ -1805,11 +1805,11 @@ void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1,
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_DemoSupport(const char *commands);
 void trap_SnapshotCallbackExt(void);
-void trap_SetSnapshotClientMask(int clientNum, int mask1, int mask2);
+void trap_SnapshotSetClientMask(int clientNum, uint64_t mask);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
 extern int dll_trap_SnapshotCallbackExt;
-extern int dll_trap_SetSnapshotClientMask;
+extern int dll_trap_SnapshotSetClientMask;
 
 // g_demo_legacy.c
 void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);
