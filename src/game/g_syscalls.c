@@ -828,7 +828,9 @@ void trap_DemoSupport(const char *commands)
 }
 
 /**
-* @brief trap_SnapshotCallbackExt Extension for informing engine about extended snapshot callback
+* @brief Extension for informing engine about extended snapshot callback.
+*        The default engine snapshot callback returns the followee clientNum.
+*        Instead of the clientNum of the follower.
 */
 void trap_SnapshotCallbackExt(void)
 {
