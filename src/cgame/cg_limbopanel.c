@@ -3525,9 +3525,9 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 }
 
 /**
- * @brief CG_LimboPanel_SetWeapons
+ * @brief CG_LimboPanel_SelectLoadout
  */
-void CG_LimboPanel_SetWeapons(void)
+void CG_LimboPanel_SelectLoadout(void)
 {
 	const clientInfo_t *ci = &cgs.clientinfo[cg.clientNum];
 	int                i;
@@ -3609,7 +3609,7 @@ void CG_LimboPanel_Setup(void)
 		}
 	}
 
-	CG_LimboPanel_SetWeapons();
+	CG_LimboPanel_SelectLoadout();
 
 	cgs.ccRequestedObjective = cgs.ccSelectedObjective = CG_LimboPanel_GetMaxObjectives();
 	CG_LimboPanel_RequestObjective();
