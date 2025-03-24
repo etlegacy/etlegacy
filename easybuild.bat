@@ -26,6 +26,7 @@ SET build_ssl=1
 SET build_auth=1
 SET wolf_ssl=0
 SET open_ssl=0
+SET generate_project=1
 
 If Defined FEATURE_SSL (
     SET build_ssl=!FEATURE_SSL!
@@ -53,6 +54,7 @@ IF NOT "%1"=="" (
 		ECHO ===============================
 		ECHO clean - clean up the build
 		ECHO build - run the build process
+		ECHO quickbuild - run the build process, without cleaning and regenerating project files
 		ECHO package - run the package process
 		ECHO install - install the game into the system
 		ECHO download - download assets
@@ -150,6 +152,7 @@ GOTO:EOF
 	set curvar=%~1
 	IF /I "!curvar!"=="clean" CALL:DOCLEAN
 	IF /I "!curvar!"=="build" CALL:DOBUILD
+	IF /I "!curvar!"=="quickbuild" CALL:DOQUICKBUILD
 	IF /I "!curvar!"=="install" CALL:DOINSTALL
 	IF /I "!curvar!"=="package" CALL:DOPACKAGE
 	IF /I "!curvar!"=="crust" GOTO:UNCRUSTCODE
@@ -266,9 +269,27 @@ GOTO:EOF
 	ETLEGACY.sln
 GOTO:EOF
 
+:DOQUICKBUILD
+	:: quickbuild
+	set generate_project=0
+	CALL :DOBUILD
+GOTO:EOF
+
 :DOBUILD
 	:: build
-	CALL:GENERATEPROJECT !build_dir! "!batloc!"
+	REM Handle generating project
+	REM (don't if 'quickbuild' and 'build' directory already exists)
+	if !generate_project!==0 (
+		if NOT EXIST !build_dir! (
+			set generate_project=1
+		) else (
+			CD !build_dir!
+		)
+	)
+	if !generate_project!==1 (
+		CALL:GENERATEPROJECT !build_dir! "!batloc!"
+	)
+
 	ECHO Building...
 	REM msbuild ETLEGACY.sln /target:CMake\ALL_BUILD /p:Configuration=%build_type%
 	cmake --build . --config %build_type% --parallel
