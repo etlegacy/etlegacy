@@ -35,6 +35,7 @@
 #include "client.h"
 #include "../qcommon/q_unicode.h"
 #include "../sdl/sdl_defs.h"
+#include "sun_include.h"
 
 /*
 key up events are sent even if in console mode
@@ -1305,6 +1306,9 @@ void CL_InitKeyCommands(void)
 }
 
 qboolean consoleButtonWasPressed = qfalse;
+\n//SunLight
+int old_r_shownormals = 5;
+
 
 qboolean CL_NumPadEvent(int key)
 {

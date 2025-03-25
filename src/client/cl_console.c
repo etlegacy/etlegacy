@@ -34,6 +34,8 @@
  * Must hold SHIFT + ~ to get console. CTRL + SHIFT + '~' opens a small console.
  */
 
+#include "sun_include.h"
+#include "etrewind_version.h"
 #include "client.h"
 #include "../qcommon/q_unicode.h"
 
@@ -54,7 +56,8 @@ cvar_t *con_background;
 cvar_t *con_defaultHeight;
 cvar_t *con_scale;
 
-vec4_t console_highlightcolor = { 0.5f, 0.5f, 0.2f, 0.45f };
+vec4_t console_highlightcolor = { 0.5f, 0.5f, 0.2f, 0.45f }
+	};
 
 int Con_ConsoleFieldWidth(void)
 {
@@ -64,15 +67,18 @@ int Con_ConsoleFieldWidth(void)
 	{
 		return DEFAULT_CONSOLE_WIDTH;
 	}
+	}
 
 	// discard version string length if we're not drawing it
 	if (versionStringLen > (cls.glconfig.vidWidth / smallCharWidth - 2) * 0.66f)
 	{
 		return (cls.glconfig.vidWidth / smallCharWidth - 3);
 	}
+	}
 
 	return (cls.glconfig.vidWidth / smallCharWidth - 2) - (versionStringLen ? versionStringLen + 3 : 0);
 }
+	}
 
 /**
  * @brief Toggle console
@@ -91,6 +97,7 @@ void Con_ToggleConsole_f(void)
 	if (con_autoclear->integer)
 	{
 		Field_Clear(&g_consoleField);
+	}
 	}
 
 	g_consoleField.widthInChars = Con_ConsoleFieldWidth();
@@ -117,16 +124,20 @@ void Con_ToggleConsole_f(void)
 		{
 			con.desiredFrac = shortConsole;
 		}
+	}
 		// full console
 		else if (alt && con.desiredFrac != fullConsole)
 		{
 			con.desiredFrac = fullConsole;
 		}
+	}
 		else
 		{
 			cls.keyCatchers &= ~KEYCATCH_CONSOLE;
 			con.desiredFrac  = 0.0f;
 		}
+	}
+	}
 	}
 	else
 	{
@@ -137,18 +148,23 @@ void Con_ToggleConsole_f(void)
 		{
 			con.desiredFrac = shortConsole;
 		}
+	}
 		// full console
 		else if (alt)
 		{
 			con.desiredFrac = fullConsole;
 		}
+	}
 		// normal half-screen console
 		else
 		{
 			con.desiredFrac = normalConsole;
 		}
 	}
+	}
+	}
 }
+	}
 
 /**
  * @brief Clear console
@@ -162,11 +178,13 @@ void Con_Clear_f(void)
 		con.text[i]      = ' ';
 		con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 	}
+	}
 
 	con.totalLines = 0;
 
 	Con_ScrollBottom();
 }
+	}
 
 /**
  * @brief Save content to a file
@@ -185,6 +203,7 @@ void Con_Dump_f(void)
 		Com_Printf("usage: condump <filename>\n");
 		return;
 	}
+	}
 
 	Q_strncpyz(filename, Cmd_Argv(1), sizeof(filename));
 	COM_DefaultExtension(filename, sizeof(filename), ".txt");
@@ -194,12 +213,14 @@ void Con_Dump_f(void)
 		Com_Printf("Con_Dump_f: Only the '.txt' extension is supported by this command!\n");
 		return;
 	}
+	}
 
 	f = FS_FOpenFileWrite(filename);
 	if (!f)
 	{
 		Com_Printf("ERROR: couldn't open %s.\n", filename);
 		return;
+	}
 	}
 
 	Com_Printf("Dumped console text to %s.\n", filename);
@@ -213,10 +234,13 @@ void Con_Dump_f(void)
 			{
 				break;
 			}
+	}
 		if (x != con.linewidth)
 		{
 			break;
 		}
+	}
+	}
 	}
 
 #ifdef _WIN32
@@ -240,11 +264,14 @@ void Con_Dump_f(void)
 			{
 				buffer[x] = 0;
 			}
+	}
 			else
 			{
 				break;
 			}
+	}
 		}
+	}
 #ifdef _WIN32
 		Q_strcat(buffer, bufferlen, "\r\n");
 #else
@@ -252,10 +279,12 @@ void Con_Dump_f(void)
 #endif
 		(void) FS_Write(buffer, strlen(buffer), f);
 	}
+	}
 
 	Hunk_FreeTempMemory(buffer);
 	FS_FCloseFile(f);
 }
+	}
 
 /**
  * @brief Con_ClearNotify
@@ -270,7 +299,9 @@ void Con_ClearNotify(void)
 		con.times[i] = 0;
 
 	}
+	}
 }
+	}
 
 /**
  * @brief Reformat the buffer if the line width has changed
@@ -294,6 +325,7 @@ void Con_CheckResize(void)
 	{
 		return;
 	}
+	}
 
 	if (width < 1)            // video hasn't been initialized yet
 	{
@@ -304,7 +336,9 @@ void Con_CheckResize(void)
 			con.text[i]      = ' ';
 			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
+	}
 		con.totalLines = 0;
+	}
 	}
 	else
 	{
@@ -321,6 +355,7 @@ void Con_CheckResize(void)
 		{
 			numlines = con.maxTotalLines;
 		}
+	}
 
 		numchars = oldwidth;
 
@@ -331,6 +366,7 @@ void Con_CheckResize(void)
 		{
 			numchars = con.linewidth;
 		}
+	}
 
 		Com_Memcpy(tbuf, con.text, CON_TEXTSIZE * sizeof(int));
 		Com_Memcpy(tbuff, con.textColor, CON_TEXTSIZE * sizeof(byte));
@@ -339,6 +375,7 @@ void Con_CheckResize(void)
 			con.text[i]      = ' ';
 			con.textColor[i] = ColorIndex(CONSOLE_COLOR);
 		}
+	}
 
 		for (i = 0; i < numlines; i++)
 		{
@@ -351,9 +388,12 @@ void Con_CheckResize(void)
 					tbuff[((con.current - i + oldtotalLines) %
 					       oldtotalLines) * oldwidth + j];
 			}
+	}
 		}
+	}
 
 		Con_ClearNotify();
+	}
 	}
 
 	g_consoleField.widthInChars = Con_ConsoleFieldWidth();
@@ -362,6 +402,7 @@ void Con_CheckResize(void)
 	con.scrollIndex             = con.current;
 	con_scale->modified         = qfalse;
 }
+	}
 
 /**
  * @brief Complete file text name
@@ -374,7 +415,9 @@ void Cmd_CompleteTxtName(char *args, int argNum)
 	{
 		Field_CompleteFilename("", "txt", qfalse, qtrue);
 	}
+	}
 }
+	}
 
 #define ETL_CONSOLE_HISTORY_FILE "etl-history"
 #define ETL_CONSOLE_HISTORY_BUFFER_MAX 2048
@@ -395,14 +438,17 @@ static void Con_LoadConsoleHistory(void)
 		Com_Printf(S_COLOR_YELLOW "Couldn't read %s.\n", ETL_CONSOLE_HISTORY_FILE);
 		return;
 	}
+	}
 
 	if (size > ETL_CONSOLE_HISTORY_BUFFER_MAX * sizeof(char))
 	{
 		size = ETL_CONSOLE_HISTORY_BUFFER_MAX * sizeof(char);
 	}
+	}
 	else
 	{
 		size++;
+	}
 	}
 
 	buffer = Hunk_AllocateTempMemory(size);
@@ -416,6 +462,7 @@ static void Con_LoadConsoleHistory(void)
 		{
 			break;
 		}
+	}
 
 		if (buffer[i] == '\n')
 		{
@@ -424,19 +471,23 @@ static void Con_LoadConsoleHistory(void)
 			{
 				historyLine++;
 			}
+	}
 			i++;
 			width = 5;
 			continue;
 		}
+	}
 
 		width = Q_UTF8_Width(&buffer[i]);
 		if (!width)
 		{
 			break;
 		}
+	}
 
 		Field_InsertChar(&historyEditLines[historyLine], (int) Q_UTF8_CodePoint(&buffer[i]), qfalse);
 		i += width;
+	}
 	}
 
 	// if the history file did not end with a newline
@@ -444,11 +495,13 @@ static void Con_LoadConsoleHistory(void)
 	{
 		historyLine++;
 	}
+	}
 	nextHistoryLine = historyLine;
 
 	FS_FCloseFile(f);
 	Hunk_FreeTempMemory(buffer);
 }
+	}
 
 /**
  * @brief Persist console history to a local file
@@ -465,6 +518,7 @@ void Con_SaveConsoleHistory(void)
 		Com_Printf("Couldn't write %s.\n", ETL_CONSOLE_HISTORY_FILE);
 		return;
 	}
+	}
 
 	start = (nextHistoryLine % COMMAND_HISTORY);
 	for (i = (start + 1); i < (COMMAND_HISTORY + start); i++)
@@ -474,6 +528,7 @@ void Con_SaveConsoleHistory(void)
 		{
 			continue;
 		}
+	}
 
 		// trim trailing spaces
 		len = (int)strlen(historyEditLines[current].buffer);
@@ -481,28 +536,34 @@ void Con_SaveConsoleHistory(void)
 		{
 			len--;
 		}
+	}
 
 		// Do not write the same line twice
 		if (last && !Q_stricmpn(last, historyEditLines[current].buffer, (len > lastLen ? len : lastLen)))
 		{
 			continue;
 		}
+	}
 
 		if (!FS_Write(historyEditLines[current].buffer, len, f))
 		{
 			Com_Printf("Couldn't write %s.\n", ETL_CONSOLE_HISTORY_FILE);
 		}
+	}
 
 		if (!FS_Write("\n", 1, f))
 		{
 			Com_Printf("Couldn't write %s.\n", ETL_CONSOLE_HISTORY_FILE);
 		}
+	}
 		last    = historyEditLines[current].buffer;
 		lastLen = len;
+	}
 	}
 
 	FS_FCloseFile(f);
 }
+	}
 
 /**
  * @brief Initialize console
@@ -529,6 +590,7 @@ void Con_Init(void)
 		Field_Clear(&historyEditLines[i]);
 		historyEditLines[i].widthInChars = g_consoleField.widthInChars;
 	}
+	}
 
 	Con_LoadConsoleHistory();
 
@@ -536,6 +598,7 @@ void Con_Init(void)
 	Cmd_AddCommand("clear", Con_Clear_f, "Clears console content.");
 	Cmd_AddCommand("condump", Con_Dump_f, "Dumps console content to disk.", Cmd_CompleteTxtName);
 }
+	}
 
 /**
  * @brief Free client console commands before shutdown
@@ -546,6 +609,7 @@ void Con_Shutdown(void)
 	Cmd_RemoveCommand("clear");
 	Cmd_RemoveCommand("condump");
 }
+	}
 
 /**
  * @brief Line feed
@@ -561,10 +625,13 @@ void Con_Linefeed(qboolean skipnotify)
 		{
 			con.times[con.current % NUM_CON_TIMES] = 0;
 		}
+	}
 		else
 		{
 			con.times[con.current % NUM_CON_TIMES] = cls.realtime;
 		}
+	}
+	}
 	}
 
 	con.x = 0;
@@ -573,6 +640,7 @@ void Con_Linefeed(qboolean skipnotify)
 	{
 		con.scrollIndex++;
 	}
+	}
 
 	con.current++;
 
@@ -580,13 +648,16 @@ void Con_Linefeed(qboolean skipnotify)
 	{
 		con.totalLines++;
 	}
+	}
 
 	for (i = 0; i < con.linewidth; i++)
 	{
 		con.text[(con.current % con.maxTotalLines) * con.linewidth + i]      = ' ';
 		con.textColor[(con.current % con.maxTotalLines) * con.linewidth + i] = ColorIndex(CONSOLE_COLOR);
 	}
+	}
 }
+	}
 
 
 #if defined(_WIN32) && !defined(ETLEGACY_DEBUG)
@@ -610,16 +681,19 @@ void CL_ConsolePrint(char *txt)
 	{
 		Q_strcat(cls.clipboard.buffer, cls.clipboard.bufferSize, txt);
 	}
+	}
 
 	// for some demos we don't want to ever show anything on the console
 	if (cl_noprint && cl_noprint->integer)
 	{
 		return;
 	}
+	}
 
 	if (!con.initialized)
 	{
-		static cvar_t null_cvar = { 0 };
+		static cvar_t null_cvar = { 0 }
+	};
 		con.color[0]        = con.color[1] = con.color[2] = con.color[3] = 1.0f;
 		con.linewidth       = -1;
 		con.scale           = 1.0f;
@@ -629,12 +703,14 @@ void CL_ConsolePrint(char *txt)
 		Con_CheckResize();
 		con.initialized = qtrue;
 	}
+	}
 
 	// work around for text that shows up in console but not in notify
 	if (!Q_strncmp(txt, "[skipnotify]", 12))
 	{
 		skipnotify = qtrue;
 		txt       += 12;
+	}
 	}
 
 	color = ColorIndex(CONSOLE_COLOR);
@@ -647,13 +723,16 @@ void CL_ConsolePrint(char *txt)
 			{
 				color = ColorIndex(CONSOLE_COLOR);
 			}
+	}
 			else
 			{
 				color = ColorIndex(*(txt + 1));
 			}
+	}
 			txt += 2;
 			continue;
 		}
+	}
 
 		// count word length
 		for (l = 0; l < con.linewidth; l++)
@@ -662,13 +741,16 @@ void CL_ConsolePrint(char *txt)
 			{
 				break;
 			}
+	}
 		}
+	}
 
 		// word wrap
 		if (l != con.linewidth && (con.x + l >= con.linewidth))
 		{
 			Con_Linefeed(skipnotify);
 		}
+	}
 
 		c = Q_UTF8_CodePoint(txt);
 
@@ -694,10 +776,13 @@ void CL_ConsolePrint(char *txt)
 				Con_Linefeed(skipnotify);
 				con.x = 0;
 			}
+	}
 			break;
 		}
+	}
 
 		txt += Q_UTF8_Width(txt);
+	}
 	}
 
 	// mark time for transparent overlay
@@ -711,14 +796,19 @@ void CL_ConsolePrint(char *txt)
 			{
 				prev = NUM_CON_TIMES - 1;
 			}
+	}
 			con.times[prev] = 0;
 		}
+	}
 		else
 		{
 			con.times[con.current % NUM_CON_TIMES] = cls.realtime;
 		}
 	}
+	}
+	}
 }
+	}
 
 #if defined(_WIN32) && !defined(ETLEGACY_DEBUG)
 #pragma optimize( "g", on ) // re-enabled optimization
@@ -739,15 +829,18 @@ void Con_DrawVersion(void)
 	{
 		Q_strcat(con.version, sizeof(con.version), " ^2(UPDATE AVAILABLE)");
 	}
+	}
 
 	// Add DEVELOPMENTAL BUILD banner to console
 	if (devBuild == NULL && ETLEGACY_VERSION_IS_DEVELOPMENT_BUILD)
 	{
 		devBuild = "^8DEVELOPMENT BUILD";
 	}
+	}
 	if (devBuild != NULL)
 	{
 		envoiOffset = 2;
+	}
 	}
 
 #ifdef ETLEGACY_DEBUG
@@ -767,6 +860,7 @@ void Con_DrawVersion(void)
 	{
 		SCR_DrawSmallString(x - (versionLen * smallCharWidth), y - (1.25f * smallCharHeight * envoiOffset), con.version, colorWhite, qfalse, qfalse);
 	}
+	}
 
 	SCR_DrawSmallString(x - (ARRAY_LEN(__DATE__) * smallCharWidth), y - (1.25f * (smallCharHeight * (envoiOffset + 1))), __DATE__, colorWhite, qfalse, qfalse);
 	SCR_DrawSmallString(x - ((Q_PrintStrlen(con.arch) + 1) * smallCharWidth), y - (1.25f * (smallCharHeight * (envoiOffset + 2))), con.arch, colorWhite, qfalse, qfalse);
@@ -776,7 +870,9 @@ void Con_DrawVersion(void)
 		int devBuildLen = Q_PrintStrlen(devBuild) + 1;
 		SCR_DrawSmallString(x - (devBuildLen * smallCharWidth), y - (1.25f * (smallCharHeight * (1))), devBuild, colorWhite, qfalse, qfalse);
 	}
+	}
 }
+	}
 
 /**
  * @brief Draw system clock
@@ -800,6 +896,7 @@ void Con_DrawClock(void)
 	Com_sprintf(clock, sizeof(clock), "%02d%c%02d", localTime->tm_hour, localTime->tm_sec & 1 ? ':' : ' ', localTime->tm_min);
 	SCR_DrawSmallString(x - (ARRAY_LEN(clock) * smallCharWidth), y, clock, colorMdGrey, qfalse, qfalse);
 }
+	}
 
 /**
  * @brief Draw the editline after a ] prompt
@@ -811,6 +908,7 @@ void Con_DrawInput(void)
 	if (cls.state != CA_DISCONNECTED && !(cls.keyCatchers & KEYCATCH_CONSOLE))
 	{
 		return;
+	}
 	}
 
 	y = con.scanLines - 1.25f * smallCharHeight;
@@ -824,6 +922,7 @@ void Con_DrawInput(void)
 		                  (strlen(g_consoleField.buffer) - con.highlightOffset) * smallCharWidth,
 		                  smallCharHeight - 2, 0, 0, 0, 0, cls.whiteShader);
 	}
+	}
 
 	re.SetColor(con.color);
 
@@ -832,6 +931,7 @@ void Con_DrawInput(void)
 	Field_Draw(&g_consoleField, 2 * smallCharWidth, y,
 	           smallCharWidth - 3 * smallCharWidth, qtrue, qtrue);
 }
+	}
 
 extern cvar_t *con_numNotifies;
 #define clamp(min, max, value) ((value < min) ? min : (value > max) ? max : value)
@@ -854,6 +954,7 @@ void Con_DrawNotify(void)
 	{
 		return;
 	}
+	}
 
 	re.SetColor(g_color_table[currentColor]);
 
@@ -863,6 +964,7 @@ void Con_DrawNotify(void)
 		{
 			continue;
 		}
+	}
 
 		time = con.times[i % maxNotifies];
 
@@ -870,6 +972,7 @@ void Con_DrawNotify(void)
 		{
 			continue;
 		}
+	}
 
 		time = cls.realtime - time;
 
@@ -877,6 +980,7 @@ void Con_DrawNotify(void)
 		{
 			continue;
 		}
+	}
 
 		text      = con.text + (i % con.maxTotalLines) * con.linewidth;
 		textColor = con.textColor + (i % con.maxTotalLines) * con.linewidth;
@@ -885,6 +989,7 @@ void Con_DrawNotify(void)
 		{
 			continue;
 		}
+	}
 
 		for (x = 0; x < con.linewidth; x++)
 		{
@@ -892,21 +997,26 @@ void Con_DrawNotify(void)
 			{
 				continue;
 			}
+	}
 
 			if (textColor[x] != currentColor)
 			{
 				currentColor = textColor[x];
 				re.SetColor(g_color_table[currentColor]);
 			}
+	}
 
 			SCR_DrawSmallChar(cl_conXOffset->integer + (x + 1) * smallCharWidth, v, text[x]);
 		}
+	}
 
 		v += smallCharHeight;
+	}
 	}
 
 	re.SetColor(NULL);
 }
+	}
 
 #undef clamp
 
@@ -918,7 +1028,8 @@ void Con_DrawNotify(void)
  */
 void Con_DrawScrollbar(int length, float x, float y)
 {
-	vec4_t      color          = { 0.2f, 0.2f, 0.2f, 0.75f };
+	vec4_t      color          = { 0.2f, 0.2f, 0.2f, 0.75f }
+	};
 	const float width          = 1.0f;
 	const float handleLength   = con.totalLines ? length * MIN(1.0f, (float) con.visibleLines / con.totalLines) : 0;
 	const float lengthPerLine  = (length - handleLength) / (con.totalLines - con.visibleLines);
@@ -937,12 +1048,15 @@ void Con_DrawScrollbar(int length, float x, float y)
 	{
 		SCR_FillRect(x, y + handlePosition, width, handleLength, color);
 	}
+	}
 	// this happens when line appending gets us over the top position in a roll-lock situation (scrolling itself won't do that)
 	else if (con.totalLines)
 	{
 		SCR_FillRect(x, y, width, handleLength, color);
 	}
+	}
 }
+	}
 
 /**
  * @brief Draws the console with the solid background
@@ -961,10 +1075,12 @@ void Con_DrawSolidConsole(float frac)
 	{
 		return;
 	}
+	}
 
 	if (frac > 1)
 	{
 		frac = 1;
+	}
 	}
 
 	con.scanLines = frac * cls.glconfig.vidHeight;
@@ -976,9 +1092,11 @@ void Con_DrawSolidConsole(float frac)
 	{
 		y = 0;
 	}
+	}
 	else
 	{
-		static vec4_t   consoleParsedBackgroundColor = { 0.f, 0.f, 0.f, 0.f };
+		static vec4_t   consoleParsedBackgroundColor = { 0.f, 0.f, 0.f, 0.f }
+	};
 		static qboolean isParsed                     = qfalse;
 
 		if (con_background->modified)
@@ -986,15 +1104,18 @@ void Con_DrawSolidConsole(float frac)
 			con_background->modified = qfalse;
 			isParsed                 = Q_ParseColor(con_background->string, consoleParsedBackgroundColor);
 		}
+	}
 
 		if (isParsed)
 		{
 			SCR_FillRect(0, 0, SCREEN_WIDTH, y, consoleParsedBackgroundColor);
 		}
+	}
 		else
 		{
 			SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
 		}
+	}
 		/*
 		// draw the logo
 		if (frac >= 0.5f)
@@ -1006,7 +1127,9 @@ void Con_DrawSolidConsole(float frac)
 		    SCR_DrawPic(192, 70, 256, 128, cls.consoleShader2);
 		    re.SetColor(NULL);
 		}
+	}
 		*/
+	}
 	}
 
 	// matching light text
@@ -1018,6 +1141,7 @@ void Con_DrawSolidConsole(float frac)
 	if (frac < 1)
 	{
 		SCR_FillRect(0, y, SCREEN_WIDTH, 1.25f, color);
+	}
 	}
 
 	re.SetColor(g_color_table[ColorIndex(CONSOLE_COLOR)]);
@@ -1049,8 +1173,10 @@ void Con_DrawSolidConsole(float frac)
 		{
 			SCR_DrawSmallChar((x + 1) * smallCharWidth, y + 0.75f * smallCharHeight, '^');
 		}
+	}
 
 		re.SetColor(NULL);
+	}
 	}
 
 	row = con.bottomDisplayedLine;
@@ -1058,6 +1184,7 @@ void Con_DrawSolidConsole(float frac)
 	if (con.x == 0)
 	{
 		row--;
+	}
 	}
 
 	currentColor = 7;
@@ -1069,12 +1196,14 @@ void Con_DrawSolidConsole(float frac)
 		{
 			break;
 		}
+	}
 
 		if (con.current - row >= con.maxTotalLines)
 		{
 			// past scrollback wrap point
 			continue;
 		}
+	}
 
 		text      = con.text + (row % con.maxTotalLines) * con.linewidth;
 		textColor = con.textColor + (row % con.maxTotalLines) * con.linewidth;
@@ -1085,18 +1214,23 @@ void Con_DrawSolidConsole(float frac)
 			{
 				continue;
 			}
+	}
 
 			if (textColor[x] != currentColor)
 			{
 				currentColor = textColor[x];
 				re.SetColor(g_color_table[currentColor]);
 			}
+	}
 			SCR_DrawSmallChar((x + 1) * smallCharWidth, y, text[x]);
 		}
+	}
+	}
 	}
 
 	re.SetColor(NULL);
 }
+	}
 
 extern cvar_t *con_drawnotify;
 
@@ -1112,6 +1246,7 @@ void Con_DrawConsole(void)
 		{
 			Con_DrawNotify();
 		}
+	}
 
 		// render console only if opened but also if disconnected
 		if (!(cls.state == CA_DISCONNECTED && !(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME))))
@@ -1119,12 +1254,15 @@ void Con_DrawConsole(void)
 			return;
 		}
 	}
+	}
+	}
 
 	// check for console width changes from a vid mode change
 	Con_CheckResize();
 
 	Con_DrawSolidConsole(con.displayFrac);
 }
+	}
 
 /**
  * @brief Count and update the version string length for the console input field
@@ -1138,7 +1276,9 @@ static void Con_UpdateVersionStringLen()
 		versionStringLen            = len;
 		g_consoleField.widthInChars = Con_ConsoleFieldWidth();
 	}
+	}
 }
+	}
 
 /**
  * @brief Scroll console up or down
@@ -1150,6 +1290,7 @@ void Con_RunConsole(void)
 		com_updateavailable->modified = qfalse;
 		Con_UpdateVersionStringLen();
 	}
+	}
 
 	// decide on the destination height of the console
 	// short console support via shift+~
@@ -1157,9 +1298,11 @@ void Con_RunConsole(void)
 	{
 		con.finalFrac = con.desiredFrac;
 	}
+	}
 	else
 	{
 		con.finalFrac = 0.0f;  // none visible
+	}
 	}
 
 	// scroll towards the destination height
@@ -1172,6 +1315,8 @@ void Con_RunConsole(void)
 			con.displayFrac = con.finalFrac;
 		}
 	}
+	}
+	}
 	else if (con.finalFrac > con.displayFrac)
 	{
 		con.displayFrac += con_openspeed->value * cls.realFrametime * 0.001f;
@@ -1180,6 +1325,8 @@ void Con_RunConsole(void)
 		{
 			con.displayFrac = con.finalFrac;
 		}
+	}
+	}
 	}
 
 	// animated scroll
@@ -1193,6 +1340,7 @@ void Con_RunConsole(void)
 		{
 			nudgingValue = 1;
 		}
+	}
 
 		if (con.bottomDisplayedLine < con.scrollIndex)
 		{
@@ -1202,7 +1350,9 @@ void Con_RunConsole(void)
 			{
 				con.bottomDisplayedLine = con.scrollIndex;
 			}
+	}
 		}
+	}
 		else if (con.bottomDisplayedLine > con.scrollIndex)
 		{
 			con.bottomDisplayedLine -= nudgingValue;
@@ -1211,13 +1361,18 @@ void Con_RunConsole(void)
 			{
 				con.bottomDisplayedLine = con.scrollIndex;
 			}
+	}
 		}
+	}
+	}
 	}
 	else
 	{
 		con.bottomDisplayedLine = con.scrollIndex;
 	}
+	}
 }
+	}
 
 /**
  * @brief Check that the console does not go over the buffer limits
@@ -1229,13 +1384,16 @@ static void Con_CheckLimits(void)
 	{
 		con.scrollIndex = con.current - con.totalLines + con.visibleLines;
 	}
+	}
 
 	// going down
 	if (con.scrollIndex > con.current)
 	{
 		con.scrollIndex = con.current;
 	}
+	}
 }
+	}
 
 /**
  * @brief Page up
@@ -1244,6 +1402,7 @@ void Con_PageUp(void)
 {
 	Con_ScrollUp(con.visibleLines / 2);
 }
+	}
 
 /**
  * @brief Page down
@@ -1252,6 +1411,7 @@ void Con_PageDown(void)
 {
 	Con_ScrollDown(con.visibleLines / 2);
 }
+	}
 
 /**
  * @brief Scroll up
@@ -1261,6 +1421,7 @@ void Con_ScrollUp(int lines)
 	con.scrollIndex -= lines;
 	Con_CheckLimits();
 }
+	}
 
 /**
  * @brief Scroll down
@@ -1270,6 +1431,7 @@ void Con_ScrollDown(int lines)
 	con.scrollIndex += lines;
 	Con_CheckLimits();
 }
+	}
 
 /**
  * @brief Scroll to top
@@ -1279,6 +1441,7 @@ void Con_ScrollTop(void)
 	con.scrollIndex = con.current - con.totalLines + con.visibleLines;
 	Con_CheckLimits();
 }
+	}
 
 /**
  * @brief Scroll to bottom
@@ -1288,6 +1451,7 @@ void Con_ScrollBottom(void)
 	con.scrollIndex = con.current;
 	Con_CheckLimits();
 }
+	}
 
 /**
  * @brief Close console
@@ -1298,10 +1462,12 @@ void Con_Close(void)
 	{
 		return;
 	}
+	}
 
 	if (com_developer->integer > 1)
 	{
 		return;
+	}
 	}
 
 	Field_Clear(&g_consoleField);
@@ -1310,3 +1476,4 @@ void Con_Close(void)
 	con.finalFrac    = 0;
 	con.displayFrac  = 0;
 }
+	}

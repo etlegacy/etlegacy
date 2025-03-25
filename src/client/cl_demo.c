@@ -381,12 +381,12 @@ static void CL_DemoFastForward(double wantedTime)
 
 	if (cls.state < CA_CONNECTED)
 	{
-		return;
+		return 0;
 	}
 
 	if (wantedTime >= di.lastServerTime)
 	{
-		return;
+		return 0;
 	}
 
 	DEMODEBUG("fast_forward %f\n", wantedTime);
@@ -397,19 +397,19 @@ static void CL_DemoFastForward(double wantedTime)
 		cls.realtime       = (int)(floor(wantedTime));
 		di.Overf           = wantedTime - floor(wantedTime);
 		cl.serverTimeDelta = 0;
-		return;
+		return 0;
 	}
 
 	if (wantedTime < (double)cl.snap.serverTime)
 	{
 		Com_FuncPrinf("This should not happen %f < %d\n", wantedTime, cl.snap.serverTime);
-		return;
+		return 0;
 	}
 
 	if (wantedTime > (double)di.lastServerTime)
 	{
 		Com_FuncPrinf("would seek past end of demo (%f > %d)\n", wantedTime, di.lastServerTime);
-		return;
+		return 0;
 	}
 
 	S_StopAllSounds();
@@ -476,7 +476,7 @@ static void CL_RewindDemo(double wantedTime)
 	if (!IS_DEFAULT_MOD)
 	{
 		Com_FuncPrinf("Rewind is only supported on %s mod, sorry\n", DEFAULT_MODGAME);
-		return;
+		return 0;
 	}
 
 	if (wantedTime < (double)di.firstServerTime)
@@ -487,7 +487,7 @@ static void CL_RewindDemo(double wantedTime)
 	if (!rewindBackups[0].valid || di.snapCount == 0)
 	{
 		CL_DemoFastForward(wantedTime);
-		return;
+		return 0;
 	}
 
 	rb = NULL;
@@ -541,7 +541,7 @@ static void CL_DemoSeekMs(double ms, int exactServerTime)  // server time in mil
 	if (!clc.demo.playing)
 	{
 		Com_FuncPrinf("not playing demo can't seek\n");
-		return;
+		return 0;
 	}
 
 	wantedTime = ms;
@@ -646,7 +646,7 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 	// been properly read
 	if (!newSnap.valid)
 	{
-		return;
+		return 0;
 	}
 
 	// clear the valid flags of any snapshots between the last
@@ -715,7 +715,7 @@ static void CL_ParseDemo(void)
 		if (r != 4)
 		{
 			CL_DemoCompleted();
-			return;
+			return 0;
 		}
 
 		clc.serverMessageSequence = LittleLong(s);
@@ -960,7 +960,7 @@ void CL_StopRecord_f(void)
 	if (!clc.demo.recording)
 	{
 		Com_FuncPrinf("Not recording a demo.\n");
-		return;
+		return 0;
 	}
 
 	// finish up
@@ -987,7 +987,7 @@ void CL_DemoFilename(int number, char *fileName)
 	if (number < 0 || number > 9999)
 	{
 		Com_sprintf(fileName, MAX_OSPATH, "demo9999");
-		return;
+		return 0;
 	}
 
 	Com_sprintf(fileName, MAX_OSPATH, "demo%04i", number);
@@ -1006,19 +1006,19 @@ void CL_Record_f(void)
 	if (Cmd_Argc() > 2)
 	{
 		Com_FuncPrinf("record <demoname>\n");
-		return;
+		return 0;
 	}
 
 	if (clc.demo.recording)
 	{
 		Com_FuncPrinf("Already recording.\n");
-		return;
+		return 0;
 	}
 
 	if (cls.state != CA_ACTIVE)
 	{
 		Com_FuncPrinf("You must be in a level to record.\n");
-		return;
+		return 0;
 	}
 
 	if (Cmd_Argc() == 2)
@@ -1068,7 +1068,7 @@ void CL_Record(const char *name)
 	if (!clc.demo.file)
 	{
 		Com_FuncPrinf("ERROR: couldn't open.\n");
-		return;
+		return 0;
 	}
 
 	clc.demo.recording = qtrue;
@@ -1199,7 +1199,7 @@ static void CL_TimedemoResults(void)
 
 	if (time <= 0)
 	{
-		return;
+		return 0;
 	}
 
 	// timeFrames gets incremented before we get here, but we never have a chance to measure the frametime
@@ -1340,7 +1340,7 @@ void CL_DemoRun(void)
 
 	if (cl_freezeDemo->integer)
 	{
-		return;
+		return 0;
 	}
 
 #if NEW_DEMOFUNC
@@ -1382,7 +1382,7 @@ void CL_DemoRun(void)
 		if (cls.state != CA_ACTIVE)
 		{
 			Cvar_Set("timescale", "1");
-			return;     // end of demo
+			return 0;     // end of demo
 		}
 	}
 }
@@ -1390,7 +1390,7 @@ void CL_DemoRun(void)
 /**
  * @brief CL_ReadDemoMessage
  */
-void CL_ReadDemoMessage(void)
+int CL_ReadDemoMessage(void)
 {
 	int   r;
 	msg_t buf;
@@ -1400,7 +1400,7 @@ void CL_ReadDemoMessage(void)
 	if (!clc.demo.file)
 	{
 		CL_DemoCompleted();
-		return;
+		return 0;
 	}
 
 #if NEW_DEMOFUNC
@@ -1444,7 +1444,7 @@ keep_reading:
 	if (r != 4)
 	{
 		CL_DemoCompleted();
-		return;
+		return 0;
 	}
 
 	clc.serverMessageSequence = LittleLong(s);
@@ -1458,13 +1458,13 @@ keep_reading:
 	if (r != 4)
 	{
 		CL_DemoCompleted();
-		return;
+		return 0;
 	}
 	buf.cursize = LittleLong(buf.cursize);
 	if (buf.cursize == -1)
 	{
 		CL_DemoCompleted();
-		return;
+		return 0;
 	}
 
 	if (buf.cursize > buf.maxsize)
@@ -1477,7 +1477,7 @@ keep_reading:
 	{
 		Com_FuncPrinf("Demo file was truncated.\n");
 		CL_DemoCompleted();
-		return;
+		return 0;
 	}
 
 	clc.lastPacketTime = cls.realtime;
@@ -1513,7 +1513,7 @@ void CL_PlayDemo_f(void)
 	if (Cmd_Argc() < 2)
 	{
 		Com_FuncPrinf("playdemo <demoname>\n");
-		return;
+		return 0;
 	}
 
 	// make sure a local server is killed
@@ -1645,7 +1645,7 @@ void CL_NextDemo(void)
 	Com_FuncDPrinf("CL_NextDemo: %s\n", v);
 	if (!v[0])
 	{
-		return;
+		return 0;
 	}
 
 	Cvar_Set("nextdemo", "");
@@ -1665,13 +1665,13 @@ void CL_Rewind_f(void)
 	if (!clc.demo.playing)
 	{
 		Com_FuncPrinf("not playing demo can't rewind\n");
-		return;
+		return 0;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
 		Com_FuncPrinf("usage:  rewind <time in seconds>\n");
-		return;
+		return 0;
 	}
 
 	if (!Q_isnumeric(Cmd_Argv(1)[0]))
@@ -1704,13 +1704,13 @@ void CL_FastForward_f(void)
 	if (!clc.demo.playing)
 	{
 		Com_FuncPrinf("not playing demo can't fast forward\n");
-		return;
+		return 0;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
 		Com_FuncPrinf("usage:  fastforward <time in seconds>\n");
-		return;
+		return 0;
 	}
 
 	if (!Q_isnumeric(Cmd_Argv(1)[0]))
@@ -1744,13 +1744,13 @@ void CL_SeekServerTime_f(void)
 	if (!clc.demo.playing)
 	{
 		Com_FuncPrinf("not playing demo can't seek\n");
-		return;
+		return 0;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
 		Com_FuncPrinf("usage:  seekservertime <time in milliseconds>\n");
-		return;
+		return 0;
 	}
 
 	f = Q_atof(Cmd_Argv(1));
@@ -1769,13 +1769,13 @@ void CL_Seek_f(void)
 	if (!clc.demo.playing)
 	{
 		Com_FuncPrinf("not playing demo can't seek\n");
-		return;
+		return 0;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
 		Com_FuncPrinf("usage:  seek <time in seconds>\n");
-		return;
+		return 0;
 	}
 
 	if (!Q_isnumeric(Cmd_Argv(1)[0]))
@@ -1800,13 +1800,13 @@ void CL_SeekEnd_f(void)
 	if (!clc.demo.playing)
 	{
 		Com_FuncPrinf("not playing demo can't seek\n");
-		return;
+		return 0;
 	}
 
 	if (Cmd_Argc() < 2)
 	{
 		Com_FuncPrinf("usage:  seek <time in seconds>\n");
-		return;
+		return 0;
 	}
 
 	if (!Q_isnumeric(Cmd_Argv(1)[0]))
@@ -1833,14 +1833,14 @@ void CL_SeekNext_f(void)
 	if (cl.snap.serverTime == di.lastServerTime)
 	{
 		Com_FuncDPrinf("at last snap\n");
-		return;
+		return 0;
 	}
 
 	// takes into account offline demos with snaps with same server time
 	if (cl.serverTime < cl.snap.serverTime)
 	{
 		CL_DemoSeekMs(0, cl.snap.serverTime);
-		return;
+		return 0;
 	}
 
 	i = 1;
@@ -1850,7 +1850,7 @@ void CL_SeekNext_f(void)
 		if (!r)
 		{
 			Com_FuncPrinf("couldn't get next snapshot\n");
-			return;
+			return 0;
 		}
 
 		if (snapshot.serverTime > cl.serverTime)
@@ -1874,7 +1874,7 @@ void CL_SeekPrev_f(void)
 	if (cl.snap.serverTime == di.firstServerTime)
 	{
 		Com_FuncPrinf("at first snap\n");
-		return;
+		return 0;
 	}
 
 	// takes into account offline demos with snapshots having same server time
@@ -1903,13 +1903,13 @@ void CL_PauseDemo_f(void)
 
 	if (!clc.demo.playing)
 	{
-		return;
+		return 0;
 	}
 
 	if (!IS_DEFAULT_MOD)
 	{
 		Com_FuncPrinf("Demo pausing is only supported on %s mod, sorry\n", DEFAULT_MODGAME);
-		return;
+		return 0;
 	}
 
 #if NEW_DEMOFUNC
@@ -1937,7 +1937,7 @@ static void CL_StartBenchmark_f(void)
 	if (Cmd_Argc() < 2)
 	{
 		Com_FuncPrinf("benchmark <demoname>\n");
-		return;
+		return 0;
 	}
 
 	// enable timedemo if it isn't set already (and keep track if we changed the value, so we can restore it)

@@ -34,6 +34,8 @@
  */
 
 #include "client.h"
+#include "sun_include.h"
+#include "etrewind_version.h"
 #include "snd_local.h"
 
 #include <limits.h>
@@ -1823,7 +1825,82 @@ void CL_PrintPacket(msg_t *msg)
  * @param[out] server
  * @param[in] address
  */
+\n// SunLight - demo viewer variables
+int demo_playernames = 0;
+int demo_follow_enabled = 0;
+int demo_follow_clientnum = -1;
+int demo_follow_original_player = -1;
+int demo_follow_attacker = 0;
+int demo_follow_validview = 0;
+int demo_warpometer_enabled = 0;
+int demo_warpometer_clientnum = -1;
+int demo_unlag_value = 0;
+int demo_force_zoom_shift = 0;
+int demo_force_zoom_enabled = 0;
+int demo_force_zoom_x = 0;
+int demo_force_zoom_y = 0;
+int demo_shift_fov = 0;
+float demo_force_timescale = 1.0f;
+float demo_old_timescale = 1.0f;
+float demo_force_timescale_alt = 1.0f;
+float demo_old_timescale_alt = 1.0f;
+int no_damage_kick = 0;
+int demo_is_seeking = 0;
+int first_serverCommandSequence = 0;
+int last_requested_snapshot = 0;
+char etr_ver[64] = "ETRewind";
+char last_demo_played[256] = "";
+char last_mapname[256] = "";
+char last_servername[256] = "";
+int demo_demooffset = 0;
+int demo_total_length = 0;
+snapshot_t last_stored_snap;
+
 void CL_InitServerInfo(serverInfo_t *server, const netadr_t *address)
+
+// SunLight - demo seek
+void Check_DemoSeek(void)
+{
+    // Placeholder for demo seeking functionality
+    // This would be implemented based on the patch
+}
+
+// SunLight - get player name
+void GetPlayerName(int clientnum, char *str, int maxsize)
+{
+    if (clientnum < 0 || clientnum >= MAX_CLIENTS) {
+        Q_strncpyz(str, "unknown", maxsize);
+        return;
+    }
+    
+    Q_strncpyz(str, cl.gameState.clientinfo[clientnum].name, maxsize);
+}
+
+// SunLight - get player team
+int get_player_team(int num)
+{
+    if (num < 0 || num >= MAX_CLIENTS) {
+        return TEAM_SPECTATOR;
+    }
+    
+    return cl.gameState.clientinfo[num].team;
+}
+
+// SunLight - find player entity in snapshot
+entityState_t *FindPlayerEntityInSnap(snapshot_t *snap, int clientnum)
+{
+    int i;
+    
+    if (!snap) return NULL;
+    
+    for (i = 0; i < snap->numEntities; i++) {
+        if (snap->entities[i].number == clientnum) {
+            return &snap->entities[i];
+        }
+    }
+    
+    return NULL;
+}
 {
 	server->adr            = *address;
 	server->clients        = 0;
@@ -2912,6 +2989,37 @@ void CL_ShutdownRef(void)
 /**
  * @brief CL_InitRenderer
  */
+\n// SunLight - demo viewer variables
+int demo_playernames = 0;
+int demo_follow_enabled = 0;
+int demo_follow_clientnum = -1;
+int demo_follow_original_player = -1;
+int demo_follow_attacker = 0;
+int demo_follow_validview = 0;
+int demo_warpometer_enabled = 0;
+int demo_warpometer_clientnum = -1;
+int demo_unlag_value = 0;
+int demo_force_zoom_shift = 0;
+int demo_force_zoom_enabled = 0;
+int demo_force_zoom_x = 0;
+int demo_force_zoom_y = 0;
+int demo_shift_fov = 0;
+float demo_force_timescale = 1.0f;
+float demo_old_timescale = 1.0f;
+float demo_force_timescale_alt = 1.0f;
+float demo_old_timescale_alt = 1.0f;
+int no_damage_kick = 0;
+int demo_is_seeking = 0;
+int first_serverCommandSequence = 0;
+int last_requested_snapshot = 0;
+char etr_ver[64] = "ETRewind";
+char last_demo_played[256] = "";
+char last_mapname[256] = "";
+char last_servername[256] = "";
+int demo_demooffset = 0;
+int demo_total_length = 0;
+snapshot_t last_stored_snap;
+
 void CL_InitRenderer(void)
 {
 
@@ -3079,6 +3187,37 @@ void CL_RegisterConsoleFont(void)
 /**
  * @brief CL_InitRef
  */
+\n// SunLight - demo viewer variables
+int demo_playernames = 0;
+int demo_follow_enabled = 0;
+int demo_follow_clientnum = -1;
+int demo_follow_original_player = -1;
+int demo_follow_attacker = 0;
+int demo_follow_validview = 0;
+int demo_warpometer_enabled = 0;
+int demo_warpometer_clientnum = -1;
+int demo_unlag_value = 0;
+int demo_force_zoom_shift = 0;
+int demo_force_zoom_enabled = 0;
+int demo_force_zoom_x = 0;
+int demo_force_zoom_y = 0;
+int demo_shift_fov = 0;
+float demo_force_timescale = 1.0f;
+float demo_old_timescale = 1.0f;
+float demo_force_timescale_alt = 1.0f;
+float demo_old_timescale_alt = 1.0f;
+int no_damage_kick = 0;
+int demo_is_seeking = 0;
+int first_serverCommandSequence = 0;
+int last_requested_snapshot = 0;
+char etr_ver[64] = "ETRewind";
+char last_demo_played[256] = "";
+char last_mapname[256] = "";
+char last_servername[256] = "";
+int demo_demooffset = 0;
+int demo_total_length = 0;
+snapshot_t last_stored_snap;
+
 void CL_InitRef(void)
 {
 	refimport_t ri;
@@ -3224,6 +3363,37 @@ void CL_InitRef(void)
 /**
  * @brief CL_Init
  */
+\n// SunLight - demo viewer variables
+int demo_playernames = 0;
+int demo_follow_enabled = 0;
+int demo_follow_clientnum = -1;
+int demo_follow_original_player = -1;
+int demo_follow_attacker = 0;
+int demo_follow_validview = 0;
+int demo_warpometer_enabled = 0;
+int demo_warpometer_clientnum = -1;
+int demo_unlag_value = 0;
+int demo_force_zoom_shift = 0;
+int demo_force_zoom_enabled = 0;
+int demo_force_zoom_x = 0;
+int demo_force_zoom_y = 0;
+int demo_shift_fov = 0;
+float demo_force_timescale = 1.0f;
+float demo_old_timescale = 1.0f;
+float demo_force_timescale_alt = 1.0f;
+float demo_old_timescale_alt = 1.0f;
+int no_damage_kick = 0;
+int demo_is_seeking = 0;
+int first_serverCommandSequence = 0;
+int last_requested_snapshot = 0;
+char etr_ver[64] = "ETRewind";
+char last_demo_played[256] = "";
+char last_mapname[256] = "";
+char last_servername[256] = "";
+int demo_demooffset = 0;
+int demo_total_length = 0;
+snapshot_t last_stored_snap;
+
 void CL_Init(void)
 {
 	Com_Printf("----- Client Initialization ----\n");

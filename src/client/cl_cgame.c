@@ -34,6 +34,8 @@
  */
 
 #include "client.h"
+#include "sun_include.h"
+#include "etrewind_version.h"
 #include "../sys/sys_local.h"
 #include "../botlib/botlib.h"
 
@@ -1612,6 +1614,9 @@ void CL_SetCGameTime(void)
 				clc.demo.firstFrameSkipped = qtrue;
 				return;
 			}
+\n		// SunLight - demo seek
+		if(clc.demoplaying) Check_DemoSeek();
+
 			CL_ReadDemoMessage();
 		}
 		if (cl.newSnapshots)
@@ -1740,6 +1745,1437 @@ void CL_SetCGameTime(void)
 		CL_DemoRun();
 	}
 }
++//###################################################
++// SunLight - mod and server infos
++
++int ModIs(const char *name)
++{
++	const char *info;
++	const char *modname;
++
++	info = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
++	modname = Info_ValueForKey( info, "fs_game" );
++
++	return (!strcmp(modname, name));
++}
++
++//###################################################
++// player names - SunLight
++void VectorRotateY(float * source, float angle, float * dest)
++{
++	float rad, s, c;
++
++	rad = (float) (angle * M_PI/180);
++	s = (float) sin(rad);
++	c = (float) cos(rad);
++
++	dest[0] = s*source[2] + c*source[0];
++	dest[1] = source[1];
++	dest[2] = c*source[2] - (s*source[0]);
++}
++
++void VectorRotateZ(float * source, float angle, float * dest)
++{
++	float rad, s, c;
++
++	rad = (float) (angle * M_PI/180);
++	s = (float) sin(rad);
++	c = (float) cos(rad);
++
++	dest[0] = c*source[0] - s*source[1];
++	dest[1] = s*source[0] + c*source[1];
++	dest[2] = source[2];
++}
++
++void Normalize_Angle_2(float * ang)
++{
++	while (*ang < -360.0f) *ang += 360.0f;
++	while (*ang > 360.0f)	*ang -= 360.0f;
++	if (*ang > 180.0f)	*ang -= 360.0f;
++	if (*ang < -180.0f)	*ang += 360.0f;
++}
++
++// World to screen: returns 1 if visible
++int WorldToScreenCoords(vec3_t origin, vec3_t axis, vec3_t worldCoord, int *x, int *y, refdef_t *rd)
++{
++	float tan_fovx, tan_fovy;
++	float anglex, angley;
++	float sx, sy;
++	vec3_t point_direct;
++	vec3_t angles_1;
++	vec3_t angles_2;
++	vec3_t vector_2;
++	vec3_t vector_3;
++
++	tan_fovx = tan( DEG2RAD( rd->fov_x ) * 0.5 );
++	tan_fovy = tan( DEG2RAD( rd->fov_y ) * 0.5 );
++
++	VectorSubtract(worldCoord, origin, point_direct);
++	VectorNormalize(axis);
++	vectoangles(axis, angles_1);
++
++	VectorRotateZ(point_direct, -angles_1[YAW], vector_2);
++	VectorRotateY(vector_2, -angles_1[PITCH], vector_3);
++
++	vectoangles(vector_3, angles_2);
++	anglex = angles_2[YAW];
++	Normalize_Angle_2(&anglex);
++
++	vector_3[1] = 0;
++	vectoangles(vector_3, angles_2);
++	angley = angles_2[PITCH];
++	Normalize_Angle_2(&angley);
++
++	if(anglex >= rd->fov_x/2) return 0;
++	if(anglex <= -rd->fov_x/2) return 0;
++	if(angley >= rd->fov_y/2) return 0;
++	if(angley <= -rd->fov_y/2) return 0;
++
++	anglex = tan(DEG2RAD(anglex));
++	sx = (float)(rd->width/2)-((float)(rd->width/2) * (anglex / tan_fovx));
++	if(sx < 0 || sx > rd->width) return 0;
++	*x = (int)sx;
++
++	angley = tan(DEG2RAD(angley));
++	sy = (float)(rd->height/2)+((float)(rd->height/2) * (angley / tan_fovy));
++	if(sy < 0 || sy > rd->height) return 0;
++	*y = (int)sy;
++
++	return 1;
++}
++
++void SCR_DrawChar2( int x, int y, float size, int ch ) {
++	int row, col;
++	float frow, fcol;
++	float ax, ay, aw, ah;
++
++	ch &= 255;
++
++	if ( ch == ' ' ) return;
++	if ( y < -size ) return;
++
++	ax = x;
++	ay = y;
++	aw = size;
++	ah = size;
++	SCR_AdjustFrom640( &ax, &ay, &aw, &ah );
++
++	row = ch >> 4;
++	col = ch & 15;
++
++	frow = row * 0.0625;
++	fcol = col * 0.0625;
++	size = 0.0625;
++
++	re.DrawStretchPic( ax, ay, aw, ah,
++					   fcol, frow,
++					   fcol + size, frow + size,
++					   cls.charSetShader );
++}
++
++void SCR_DrawStringExtNoShadow( int x, int y, float size, const char *string, float *setColor, qboolean forceColor )
++{
++	vec4_t color;
++	const char  *s;
++	int xx;
++
++	color[0] = color[1] = color[2] = 0;
++	color[3] = setColor[3];
++
++	s = string;
++	xx = x;
++	re.SetColor( setColor );
++	while ( *s ) {
++		if ( Q_IsColorString( s ) ) {
++			if ( !forceColor ) {
++				if ( *( s + 1 ) == COLOR_NULL ) {
++					memcpy( color, setColor, sizeof( color ) );
++				} else {
++					memcpy( color, g_color_table[ColorIndex( *( s + 1 ) )], sizeof( color ) );
++					color[3] = setColor[3];
++				}
++				color[3] = setColor[3];
++				re.SetColor( color );
++			}
++			s += 2;
++			continue;
++		}
++		SCR_DrawChar2( xx, y, size, *s );
++		xx += size;
++		s++;
++	}
++	re.SetColor( NULL );
++}
++
++qboolean CL_GetTag( int clientNum, char *tagname, orientation_t *or );
++void DrawPlayerName(refdef_t *rd, int clientnum, vec4_t color, qboolean force)
++{
++	int pos_x, pos_y;
++	vec3_t pos;
++	vec3_t temp;
++	vec3_t temp2;
++	char name[40];
++	orientation_t or;
++	float size;
++	float xscale = rd->width / 640.f;
++	float yscale = rd->height / 480.f;
++
++	if(CL_GetTag(clientnum, "tag_head", &or))
++	{
++		VectorCopy(rd->vieworg, temp);
++		VectorCopy(rd->viewaxis[0], temp2);
++		VectorCopy(or.origin, pos);
++		pos[2] += 20;
++
++		size = VectorDistance(temp, pos);
++		size = size / 700.f;
++		if(size > 1) size = 1;
++		size = ((1.0f-size) + 0.3) * 14;
++
++		if(WorldToScreenCoords(temp, temp2, pos, &pos_x, &pos_y, rd))
++		{
++			GetPlayerName(clientnum, name, 39);
++			SCR_DrawStringExtNoShadow((pos_x/xscale),
++				(pos_y/yscale)-(size/2),
++				size, name, color, force);
++		}
++	}
++}
++
++void DrawPlayerNames(refdef_t *rd)
++{
++	float color[4];
++	int i, team, team2;
++
++	color[0] = color[1] = color[2] = 1.0;
++	color[3] = 1.0;
++
++	if (demo_playernames > 1) team = get_player_team(last_stored_snap.ps.clientNum);
++
++	for (i = 0; i < MAX_CLIENTS; i++)
++	{
++		if (FindPlayerEntityInSnap(&last_stored_snap, i) == NULL) continue;
++		if (demo_playernames > 1)
++		{
++			team2 = get_player_team(i);
++			if((demo_playernames == 2) && (team2 == team)) continue;
++			if((demo_playernames == 3) && (team2 != team)) continue;
++		}
++
++		DrawPlayerName(rd, i, color, qfalse);
++	}
++}
++
++//###################################################
++// PLAYERPOV - SunLight
++void SunPStoENT(playerState_t *ps, entityState_t *s)
++{
++	int i;
++	qboolean noevents;
++
++	noevents = qfalse;
++	if ( ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR )
++	{
++		s->eType = ET_INVISIBLE;
++		noevents = qtrue;
++	} else if ( ps->stats[STAT_HEALTH] <= GIB_HEALTH )
++	{
++		s->eType = ET_INVISIBLE;
++		noevents = qtrue;
++	} else s->eType = ET_PLAYER;
++
++	s->number = ps->clientNum;
++
++	s->pos.trType = TR_INTERPOLATE;
++	VectorCopy( ps->origin, s->pos.trBase );
++	VectorCopy( ps->velocity, s->pos.trDelta);
++
++	s->apos.trType = TR_INTERPOLATE;
++	VectorCopy( ps->viewangles, s->apos.trBase );
++
++	if ( ps->movementDir > 128 ) {
++		s->angles2[YAW] = (float)ps->movementDir - 256;
++	} else {
++		s->angles2[YAW] = ps->movementDir;
++	}
++
++	s->legsAnim     = ps->legsAnim;
++	s->torsoAnim    = ps->torsoAnim;
++	s->clientNum    = ps->clientNum;
++
++	s->eFlags = ps->eFlags;
++
++	if (ps->eFlags & EF_DEAD) noevents = qtrue;
++	if ( ps->stats[STAT_HEALTH] <= 0 ) {
++		noevents = qtrue;
++		s->eFlags |= EF_DEAD;
++	} else {
++		s->eFlags &= ~EF_DEAD;
++	}
++
++	if ( ps->externalEvent ) {
++		s->event = ps->externalEvent;
++		s->eventParm = ps->externalEventParm;
++	} else if ( ps->entityEventSequence < ps->eventSequence ) {
++		int seq;
++
++		if ( ps->entityEventSequence < ps->eventSequence - MAX_EVENTS ) {
++			ps->entityEventSequence = ps->eventSequence - MAX_EVENTS;
++		}
++		seq = ps->entityEventSequence & ( MAX_EVENTS - 1 );
++		s->event = ps->events[ seq ] | ( ( ps->entityEventSequence & 3 ) << 8 );
++		s->eventParm = ps->eventParms[ seq ];
++		ps->entityEventSequence++;
++	}
++
++	for (i = 0; i < MAX_EVENTS; i++)
++	{
++		s->events[i] = EV_NONE;
++		s->eventParms[i] = 0;
++	}
++
++	if(noevents == qfalse)
++	{
++		for ( i = ps->oldEventSequence; i != ps->eventSequence; i++ ) {
++			s->events[s->eventSequence & ( MAX_EVENTS - 1 )] = ps->events[i & ( MAX_EVENTS - 1 )];
++			s->eventParms[s->eventSequence & ( MAX_EVENTS - 1 )] = ps->eventParms[i & ( MAX_EVENTS - 1 )];
++			s->eventSequence++;
++		}
++	} else {
++		s->event = EV_NONE;
++	}
++
++	s->weapon = ps->weapon;
++	s->groundEntityNum = ps->groundEntityNum;
++
++	s->powerups = 0;
++	for ( i = 0 ; i < MAX_POWERUPS ; i++ ) {
++		if ( ps->powerups[ i ] ) {
++			s->powerups |= 1 << i;
++		}
++	}
++
++	s->nextWeapon = ps->nextWeapon;
++//	s->loopSound = ps->loopSound;
++	s->teamNum = ps->teamNum;
++	s->aiState = ps->aiState;
++}
++
++void SunENTtoPS(entityState_t *s, playerState_t *ps)
++{
++	int i, val;
++	playerState_t ps2;
++	vec3_t playerMins = {-18, -18, -24};
++	vec3_t playerMaxs = {18, 18, 48};
++
++	memset(&ps2, 0, sizeof(playerState_t));
++
++	ps2.commandTime = cl.snap.serverTime;
++	ps2.pm_type = PM_NORMAL;
++	ps2.pm_time = ps->pm_time;
++	ps2.gravity = ps->gravity;
++	ps2.aiState = s->aiState;
++
++	for(i = 0;i < MAX_WEAPONS;i++) {
++		ps2.ammo[i] = 999;
++		ps2.ammoclip[i] = 999;
++		COM_BitSet(ps2.weapons, i); // like a 'give all', or silent will crash on EV_NOAMMO
++	}
++
++	ps2.clientNum = s->number;
++	ps2.eFlags = s->eFlags;
++	ps2.stats[STAT_HEALTH] = 100;
++
++	VectorCopy(playerMaxs, ps2.maxs);
++	VectorCopy(playerMins, ps2.mins);
++
++	ps2.crouchMaxZ = ps->crouchMaxZ;
++	ps2.crouchViewHeight = ps->crouchViewHeight;
++	ps2.standViewHeight = ps->standViewHeight;
++	ps2.deadViewHeight = ps->deadViewHeight;
++
++	ps2.viewheight = ps->standViewHeight;
++
++	if(s->eFlags & EF_CROUCHING) {
++		ps2.pm_flags |= PMF_DUCKED;
++		ps2.maxs[2] = ps->crouchMaxZ;
++		ps2.viewheight = ps->crouchViewHeight;
++	} else if((s->eFlags & EF_PRONE) || (s->eFlags & EF_PRONE_MOVING)) {
++		ps2.pm_flags |= PMF_DUCKED;
++		ps2.viewheight = PRONE_VIEWHEIGHT;
++	}
++
++	ps2.runSpeedScale = ps->runSpeedScale;
++	ps2.sprintSpeedScale = ps->sprintSpeedScale;
++	ps2.crouchSpeedScale = ps->crouchSpeedScale;
++
++	ps2.weaponstate = WEAPON_READY;
++	ps2.friction = 1.0;
++
++	VectorCopy(s->pos.trBase,ps2.origin);
++	VectorCopy(s->pos.trDelta,ps2.velocity);
++	VectorCopy(s->apos.trBase,ps2.viewangles);
++
++	ps2.teamNum = s->teamNum;
++	if(ModIs("jaymod")) ps2.persistant[1] = s->teamNum;
++	else
++	{
++		ps2.persistant[PERS_TEAM] = s->teamNum;
++		ps2.persistant[PERS_RESPAWNS_LEFT] = -1;
++	}
++
++	ps2.groundEntityNum = s->groundEntityNum;
++
++	for(i = 0;i < MAX_POWERUPS;i++) {
++		val = (s->powerups >> i) & 1;
++		ps2.powerups[i] = val;
++	}
++
++	ps2.weapon = s->weapon;
++	ps2.nextWeapon = s->nextWeapon;
++
++	ps2.externalEvent = s->event;
++	ps2.externalEventParm = s->eventParm;
++	ps2.externalEventTime = cl.snap.serverTime;
++
++	for(i = 0; i < MAX_EVENTS;i++)
++		ps2.events[i] = s->events[i];
++	ps2.eventSequence = s->eventSequence;
++	ps2.entityEventSequence = s->eventSequence;
++
++	ps2.pm_flags |= PMF_FOLLOW;
++
++	memcpy(ps, &ps2, sizeof(playerState_t));
++	return;
++}
++
++entityState_t * FindPlayerEntityInSnap(snapshot_t *snap, int clientnum)
++{
++	entityState_t *s;
++	int i;
++
++	s = NULL;
++	if((clientnum >= 0) && (clientnum < MAX_CLIENTS))
++	{
++		for (i = 0; i < snap->numEntities; i++)
++		{
++			s = &snap->entities[i];
++			if(s->eType!= ET_PLAYER) continue;
++			if(s->number == clientnum) break;
++		}
++
++		if(i == snap->numEntities) return NULL;
++		if(s->eFlags & EF_DEAD) return NULL;
++	}
++	return s;
++}
++
++int demo_follow_validview = 0;
++
++void PlayerPOV(snapshot_t *snap, int clientnum)
++{
++	playerState_t * ps;
++	playerState_t backup;
++	entityState_t *s;
++
++	s = NULL;
++	demo_follow_validview = 0;
++
++	ps = &snap->ps;
++	demo_follow_original_player = ps->clientNum;
++
++	s = FindPlayerEntityInSnap(snap, clientnum);
++	if(s == NULL) return;
++
++	memcpy(&backup, ps, sizeof(playerState_t));
++	SunENTtoPS(s, ps);
++
++	// checks if the original player is dead.
++	// if yes, the entity should be a corpse or removed altogether.
++	if (!( (backup.eFlags & EF_DEAD) || (backup.stats[STAT_HEALTH] <= 0) ))
++		SunPStoENT(&backup, s);
++
++	demo_follow_validview = 1;
++}
++
++
++//###################################################
++// DEMO 'WARPOMETER' - SunLight
++float warp_vel_ideal[WARPOMETER_BACKUP];
++float warp_vel_real[WARPOMETER_BACKUP];
++unsigned char warp_ground[WARPOMETER_BACKUP];
++int warp_graph_index = 0;
++
++void Set_Warpometer(snapshot_t *snap, snapshot_t *previous)
++{
++	float vel, idealvel;
++	vec3_t pos1;
++	vec3_t pos2;
++	entityState_t *ent1;
++	entityState_t *ent2;
++
++	if(snap->ps.clientNum != previous->ps.clientNum) return;
++
++	if(demo_warpometer_clientnum == previous->ps.clientNum)
++	{
++		VectorCopy(previous->ps.origin, pos1);
++		VectorCopy(snap->ps.origin, pos2);
++
++		pos1[2] = 0;
++		pos2[2] = 0;
++
++		vel = VectorDistance(pos1, pos2);
++
++		idealvel = sqrt(previous->ps.velocity[0]*previous->ps.velocity[0]+
++					previous->ps.velocity[1]*previous->ps.velocity[1]);
++
++		warp_vel_ideal[warp_graph_index&WARPOMETER_MASK] = idealvel/20;
++		warp_vel_real[warp_graph_index&WARPOMETER_MASK] = vel;
++		if(previous->ps.groundEntityNum != -1) warp_ground[warp_graph_index&WARPOMETER_MASK] = 1;
++		else warp_ground[warp_graph_index&WARPOMETER_MASK] = 0;
++
++		warp_graph_index ++;
++	} else
++	{
++		ent1 = FindPlayerEntityInSnap(previous, demo_warpometer_clientnum);
++		if(ent1 == NULL) return;
++		ent2 = FindPlayerEntityInSnap(snap, demo_warpometer_clientnum);
++		if(ent2 == NULL) return;
++
++		VectorCopy(ent1->pos.trBase, pos1);
++		VectorCopy(ent2->pos.trBase, pos2);
++
++		pos1[2] = 0;
++		pos2[2] = 0;
++
++		vel = VectorDistance(pos1, pos2);
++		idealvel = sqrt(ent1->pos.trDelta[0]*ent1->pos.trDelta[0]+
++					ent1->pos.trDelta[1]*ent1->pos.trDelta[1]);
++
++		warp_vel_ideal[warp_graph_index&WARPOMETER_MASK] = idealvel/20;
++		warp_vel_real[warp_graph_index&WARPOMETER_MASK] = vel;
++		if(ent1->groundEntityNum != -1) warp_ground[warp_graph_index&WARPOMETER_MASK] = 1;
++		else warp_ground[warp_graph_index&WARPOMETER_MASK] = 0;
++
++		warp_graph_index ++;
++	}
++}
++
++void Draw_Warpometer(void)
++{
++	float color[4];
++	char text[200];
++	char temp[33];
++	int i, pos;
++	float val;
++	float diff_total;
++	int samples;
++
++	float ground_diff;
++	int samples_ground;
++
++
++	color[0] = color[1] = color[2] = 0;
++	color[3] = 0.5f;
++	SCR_FillRect( SCREEN_WIDTH-256, 100, 256, SCREEN_HEIGHT-200, color );
++
++	color[0] = color[1] = 0;
++	color[2] = 1.0f;
++	color[3] = 1.0f;
++
++	for(i = 0;i < WARPOMETER_MASK;i++)
++	{
++		pos = warp_graph_index + WARPOMETER_MASK - i;
++		val = warp_vel_ideal[pos&WARPOMETER_MASK] * 2;
++		if (val > SCREEN_HEIGHT-200 - 30) val = SCREEN_HEIGHT-200 - 30;
++
++		SCR_FillRect( SCREEN_WIDTH-i-1, SCREEN_HEIGHT-val-105, 1, val, color );
++	}
++
++	color[0] = color[1] = 1.0f;
++	color[2] = 0;
++	color[3] = 0.75f;
++	for(i = 0;i < WARPOMETER_MASK;i++)
++	{
++		pos = warp_graph_index + WARPOMETER_MASK - i;
++		val = warp_vel_real[pos&WARPOMETER_MASK] * 2;
++		if (val > SCREEN_HEIGHT-200 - 30) val = SCREEN_HEIGHT-200 - 30;
++
++		SCR_FillRect( SCREEN_WIDTH-i-1, SCREEN_HEIGHT-val-105, 1, val, color );
++	}
++
++	diff_total = 0;
++	samples = 0;
++	ground_diff = 0;
++	samples_ground = 0;
++
++	for(i = 0;i < WARPOMETER_MASK;i++)
++	{
++		if(warp_vel_ideal[i] > 1)
++		{
++			val = (float)(warp_vel_real[i]-warp_vel_ideal[i]);
++			val = fabs(val) / (float)warp_vel_ideal[i];
++			diff_total += val;
++			samples++;
++		}
++
++		if(warp_ground[i] == 1)
++		{
++			if(warp_vel_real[i] >= warp_vel_ideal[i])
++			{
++				ground_diff += (warp_vel_real[i]-warp_vel_ideal[i]);
++				samples_ground++;
++			}
++		}
++	}
++
++	color[0] = color[1] = color[2] = 1.0f;
++	color[3] = 1.0f;
++
++	strcpy(text, "^3MOVEGRAPH:^7 ");
++	GetPlayerName(demo_warpometer_clientnum, temp, 32);
++	strcat(text, temp);
++	SCR_DrawStringExtNoShadow(SCREEN_WIDTH-256+3, 100+3, 8, text, color, qfalse);
++
++	if(samples != 0)
++	{
++		sprintf(text, "avg. diff:   %.2f%%", (diff_total*100)/(float)samples);
++		SCR_DrawStringExtNoShadow(SCREEN_WIDTH-256+3, 100+3+10, 8, text, color, qfalse);
++	}
++	if(samples_ground != 0)
++	{
++		sprintf(text, "ground diff: %.1f", ground_diff/(float)samples_ground);
++		SCR_DrawStringExtNoShadow(SCREEN_WIDTH-256+3, 100+3+20, 8, text, color, qfalse);
++	}
++}
++
++//###################################################
++// DEMO UNLAGGING - SunLight
++void UnlagLerpPos(vec3_t start, vec3_t end, float frac, vec3_t result)
++{
++	int i;
++	for(i=0;i<3;i++) result[i] = start[i] + frac * (end[i] - start[i]);
++}
++
++#define UNLAG_SNAPSHOT_BACKUP (0x0f+1)
++#define UNLAG_SNAPSHOT_MASK 0x0f
++snapshot_t unlag_snaps[UNLAG_SNAPSHOT_BACKUP];
++int snaps_stored = 0;
++snapshot_t last_stored_snap;
++
++void DemoUnlag(snapshot_t *snap)
++{
++	int old_snapnum;
++	int i,j, num_ent;
++	snapshot_t *old_snap;
++
++	if ( !clc.demoplaying ) return;
++	if (snap == NULL) return;
++
++	if(no_damage_kick)
++	{
++		snap->ps.damageEvent = 0;
++		snap->ps.damageCount = 0;
++	}
++
++	// changes pov before storing, this way it's possible to unlag that player as well
++	if(demo_follow_enabled)
++	{
++		if(demo_follow_attacker) {
++			if(ModIs("jaymod")) demo_follow_clientnum = snap->ps.persistant[3];
++			else demo_follow_clientnum = snap->ps.persistant[PERS_ATTACKER];
++
++			if(FindPlayerEntityInSnap(snap, demo_follow_clientnum) != NULL)
++				PlayerPOV(snap, demo_follow_clientnum);
++			else demo_follow_clientnum = -1;
++		} else	{
++			PlayerPOV(snap, demo_follow_clientnum);
++		}
++	}
++
++	memcpy( &unlag_snaps[snaps_stored & UNLAG_SNAPSHOT_MASK], snap, sizeof(snapshot_t) );
++	snaps_stored++;
++
++	// checks player movement before changing anything
++	if(demo_warpometer_enabled && (snaps_stored > 2))
++	{
++		snapshot_t * previous;
++
++		previous = &unlag_snaps[(snaps_stored-2) & UNLAG_SNAPSHOT_MASK];
++		Set_Warpometer(snap, previous);
++	}
++
++	if(demo_unlag_value == -1) // auto unlag from playerstate ping
++	{
++		int target_time, snap_num;
++		float frac;
++		snapshot_t *old_snap1, *old_snap2;
++		int time1, time2;
++		int ent_index1, ent_index2, k;
++
++		if(demo_follow_enabled) goto skip_unlag; // can't tell the ping of a player not in ps
++		target_time = snap->ps.commandTime-35; // sets to 35ms for best visuals, 50 is too much ahead
++
++		if(snaps_stored <= UNLAG_SNAPSHOT_BACKUP) goto skip_unlag;
++
++		for(snap_num = snaps_stored-1; // last stored
++			snap_num > snaps_stored-1-UNLAG_SNAPSHOT_BACKUP;
++			snap_num--)
++		{
++			if(unlag_snaps[snap_num & UNLAG_SNAPSHOT_MASK].serverTime <= target_time)
++				break;
++		}
++
++		if((snap_num <= snaps_stored-2) && (snap_num > snaps_stored-1-UNLAG_SNAPSHOT_BACKUP))
++		{
++			time1 = unlag_snaps[snap_num & UNLAG_SNAPSHOT_MASK].serverTime;
++			time2 = unlag_snaps[(snap_num+1) & UNLAG_SNAPSHOT_MASK].serverTime;
++			frac = (float)(target_time-time1)/(float)(time2-time1);
++
++			old_snap1 = &unlag_snaps[snap_num & UNLAG_SNAPSHOT_MASK];
++			old_snap2 = &unlag_snaps[(snap_num+1) & UNLAG_SNAPSHOT_MASK];
++
++			for(i=0;i<MAX_ENTITIES_IN_SNAPSHOT;i++)
++			{
++				if(snap->entities[i].eType != ET_PLAYER) continue;
++
++				num_ent = snap->entities[i].number;
++				if(num_ent == snap->ps.clientNum) continue;
++
++				ent_index1 = -1;
++				ent_index2 = -1;
++
++				// let's see if this player is present in both snaps
++				for(j=0;j<MAX_ENTITIES_IN_SNAPSHOT;j++)	{
++					if((old_snap1->entities[j].number == num_ent) &&
++						(old_snap1->entities[j].eType == snap->entities[i].eType))
++					{
++						ent_index1 = j;
++						break;
++					}
++				}
++
++				for(j=0;j<MAX_ENTITIES_IN_SNAPSHOT;j++)	{
++					if((old_snap2->entities[j].number == num_ent) &&
++						(old_snap2->entities[j].eType == snap->entities[i].eType))
++					{
++						ent_index2 = j;
++						break;
++					}
++				}
++
++				if((ent_index1 != -1) && (ent_index2 != -1))
++				{
++					snapshot_t *best;
++					int ent_index;
++
++					if (frac <= 0.5) {
++						best = old_snap1;
++						ent_index = ent_index1;
++					} else {
++						best = old_snap2;
++						ent_index = ent_index2;
++					}
++
++					VectorCopy(best->entities[ent_index].origin, snap->entities[i].origin);
++					VectorCopy(best->entities[ent_index].origin2, snap->entities[i].origin2);
++
++					VectorCopy(best->entities[ent_index].angles, snap->entities[i].angles);
++					VectorCopy(best->entities[ent_index].angles2, snap->entities[i].angles2);
++
++					snap->entities[i].groundEntityNum = best->entities[ent_index].groundEntityNum;
++					snap->entities[i].frame = best->entities[ent_index].frame;
++					snap->entities[i].solid = best->entities[ent_index].solid;
++
++					snap->entities[i].legsAnim = best->entities[ent_index].legsAnim;
++					snap->entities[i].torsoAnim = best->entities[ent_index].torsoAnim;
++					snap->entities[i].animMovetype = best->entities[ent_index].animMovetype;
++
++					if (frac <= 0.5) {
++						memcpy(&snap->entities[i],
++							&old_snap1->entities[ent_index1],
++							sizeof(entityState_t));
++					} else {
++						memcpy(&snap->entities[i],
++							&old_snap2->entities[ent_index2],
++							sizeof(entityState_t));
++					}
++
++					// and then lerps the position and angles
++					UnlagLerpPos(old_snap1->entities[ent_index1].pos.trBase,
++						old_snap2->entities[ent_index2].pos.trBase,
++						frac, snap->entities[i].pos.trBase);
++
++					for(k=0;k<3;k++)
++					{
++						snap->entities[i].apos.trBase[k] = LerpAngle(
++							old_snap1->entities[ent_index1].apos.trBase[k],
++							old_snap2->entities[ent_index2].apos.trBase[k],
++							frac);
++					}
++				}
++			} // for(i=0;i<MAX_ENTITIES_IN_SNAPSHOT;i++)
++		} // if(snap_num <= snaps_stored-2)
++	}
++	else
++	{
++		if(demo_unlag_value)
++		{
++			if((demo_unlag_value/50) + 2 > UNLAG_SNAPSHOT_BACKUP)
++				demo_unlag_value = (UNLAG_SNAPSHOT_BACKUP - 2) * 50;
++		}
++
++		if(demo_unlag_value && (snaps_stored > (demo_unlag_value/50) + 2))
++		{
++			old_snapnum = (snaps_stored - 2 - (demo_unlag_value/50)) &
++				UNLAG_SNAPSHOT_MASK;
++			old_snap = &unlag_snaps[old_snapnum];
++
++			// copies players position
++			for(i=0;i<MAX_ENTITIES_IN_SNAPSHOT;i++)
++			{
++				if((snap->entities[i].eType != ET_PLAYER) &&
++					(snap->entities[i].eType != ET_CORPSE))
++					continue;
++
++				num_ent = snap->entities[i].number;
++				if(num_ent == snap->ps.clientNum) continue;
++
++				// now finds the matching ent in the old snap, and if found, copies it
++				for(j=0;j<MAX_ENTITIES_IN_SNAPSHOT;j++)
++				{
++					if(old_snap->entities[j].number != num_ent) continue;
++					if(old_snap->entities[j].eType == snap->entities[i].eType)
++					{
++						memcpy(&snap->entities[i], &old_snap->entities[j],
++							sizeof(entityState_t));
++						break;
++					}
++				}
++			}
++		}
++	}
++skip_unlag:
++	snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
++	memcpy( &last_stored_snap, snap, sizeof(snapshot_t) );
++}
++
+ /*
+ ====================
+ CL_GetSnapshot
+ ====================
+ */
++
++extern int last_requested_snapshot; // SunLight - to keep track of how many snapshots ahead we are
++
+ qboolean    CL_GetSnapshot( int snapshotNumber, snapshot_t *snapshot ) {
+ 	clSnapshot_t    *clSnap;
+ 	int i, count;
+ 
++	// SunLight - don't send old snapshots for seeking
++	last_requested_snapshot = snapshotNumber;
++
++	if(clc.demoplaying)
++	{
++		int difference;
++
++		if(snapshotNumber < cl.snap.messageNum) // Avoids giving a snap to cgame
++		{
++			return qfalse;
++		}
++
++		difference = cl.snap.serverTime - (cl.serverTimeDelta+cls.realtime);
++		if(difference > 100)
++		{
++			if(demo_is_seeking) cls.realtime += difference; // only when seeking, otherwise laggy demos will skip
++		}
++	}
++
+ 	if ( snapshotNumber > cl.snap.messageNum ) {
+ 		Com_Error( ERR_DROP, "CL_GetSnapshot: snapshotNumber > cl.snapshot.messageNum" );
+ 	}
+ 
+ 	// FIXME: configstring changes and server commands!!!
+ 
++	// SunLight
++	DemoUnlag(snapshot);
++
+ 	return qtrue;
+ }
+ 
+ 		// when a demo record was started after the client got a whole bunch of
+ 		// reliable commands then the client never got those first reliable commands
+ 		if ( clc.demoplaying ) {
++			if(serverCommandNumber >= first_serverCommandSequence)
++			{
++				Com_Error( ERR_DROP,
++					"CL_GetServerCommand:\nA reliable command was cycled out! %d <= %d - %d, first=%d\n",
++					 serverCommandNumber, clc.serverCommandSequence, MAX_RELIABLE_COMMANDS,
++					first_serverCommandSequence);
++			}
+ 			return qfalse;
+ 		}
+ 		Com_Error( ERR_DROP, "CL_GetServerCommand: a reliable command was cycled out" );
+ 		re.SetGlobalFog( args[1], args[2], VMF( 3 ), VMF( 4 ), VMF( 5 ), VMF( 6 ) );
+ 		return 0;
+ 	case CG_R_RENDERSCENE:
+-		re.RenderScene( VMA( 1 ) );
++		{
++			// SunLight
++			refdef_t *rd;
++			rd = VMA(1);
++
++			if(clc.demoplaying && abs(cls.glconfig.vidWidth - rd->width) < 100)
++			{
++				if(demo_force_zoom_enabled)	{
++					float ratio = rd->fov_y / rd->fov_x;
++					rd->fov_x = demo_force_zoom_x;
++					rd->fov_y = (float)demo_force_zoom_y * ratio;
++				}
++				if(demo_force_zoom_shift) {
++					float ratio = rd->fov_y / rd->fov_x;
++					rd->fov_x = (float)demo_shift_fov;
++					rd->fov_y = (float)demo_shift_fov*ratio;
++				}
++			}
++
++			re.RenderScene(rd);
++
++			if(clc.demoplaying && demo_playernames &&
++				(abs(cls.glconfig.vidWidth - rd->width) < 100))
++				DrawPlayerNames(rd);
++			else if(demo_follow_validview) {
++				float color[4];
++				color[0] = color[1] = color[2] = 1.0;
++				color[3] = 1.0;
++				DrawPlayerName(rd, demo_follow_original_player, color, qfalse);
++			}
++
+ 		return 0;
++		}
+ 	case CG_R_SAVEVIEWPARMS:
+ 		re.SaveViewParms();
+ 		return 0;
+ CL_CGameRendering
+ =====================
+ */
+-void CL_CGameRendering( stereoFrame_t stereo ) {
+-/*	static int x = 0;
+-	if(!((++x) % 20)) {
+-		Com_Printf( "numtraces: %i\n", numtraces / 20 );
+-		numtraces = 0;
+-	} else {
+-	}*/
++
++void CL_CGameRendering( stereoFrame_t stereo )
++{
++	float xscale;
++	float yscale;
+ 
+ 	VM_Call( cgvm, CG_DRAW_ACTIVE_FRAME, cl.serverTime, stereo, clc.demoplaying );
++
++	// SunLight -- extra hud info
++	if(!demo_is_seeking)
++	{
++		xscale = cls.glconfig.vidWidth / 640.0;
++		yscale = cls.glconfig.vidHeight / 480.0;
++
++		if (clc.demoplaying)
++		{
++			float color[4];
++			char str[256];
++			char str2[256];
++			float w2, h2;
++			int textwidth;
++			int pos2;
++
++			// these are in 640 coords, while SMALLCHAR_WIDTH, etc. is in real res.
++			w2 = (SMALLCHAR_WIDTH+1) / xscale;
++			h2 = (SMALLCHAR_HEIGHT + 15) / yscale;
++
++			Q_strncpyz(str, etr_ver, 256);
++			Q_strcat(str, 256, " V");
++			Q_strcat(str, 256, ETREWIND_VERSION);
++
++			pos2 = (strlen(str) + 3);
++
++			if(cls.state == CA_ACTIVE)
++			{
++				if(demo_follow_enabled && demo_follow_validview &&
++					(demo_follow_clientnum != -1)) {
++					color[0] =  1.0f;
++					color[1] = color[2] = 0;
++					color[3] = 0.75f;
++				} else {
++					color[0] = color[1] = color[2] = 0;
++					color[3] = 0.5f;
++				}
++				SCR_FillRect( 0, 0, SCREEN_WIDTH, h2, color );
++
++				sprintf(str2, " - normals: %d - realview: %d", (int)Cvar_VariableValue("r_shownormals"), no_damage_kick);
++				Q_strcat(str, 256, str2);
++
++				if(demo_unlag_value == 0)
++				{
++					Q_strncpyz(str2, " - unlag:off", 256);
++				} else if(demo_unlag_value == -1) {
++					Q_strncpyz(str2, " - unlag:auto", 256);
++				} else
++				{
++					if((demo_unlag_value/50) + 2 > UNLAG_SNAPSHOT_BACKUP)
++						demo_unlag_value = (UNLAG_SNAPSHOT_BACKUP - 2) * 50;
++
++					if(snaps_stored > (demo_unlag_value/50) + 2)
++						sprintf(str2, " - unlag:%d", demo_unlag_value);
++					else
++						sprintf(str2, " - unlag:%d (buffering...)", demo_unlag_value);
++				}
++				Q_strcat(str, 256, str2);
++
++				sprintf(str2, " - svtime: %d", cl.serverTime);
++				Q_strcat(str, 256, str2);
++
++				if(demo_follow_enabled && demo_follow_validview && (demo_follow_clientnum != -1))
++					sprintf(str2, " ping:???");
++				else
++					sprintf(str2, " ping:%03d", last_stored_snap.ping);
++				Q_strcat(str, 256, str2);
++
++				if(demo_follow_enabled)
++				{
++					if(!demo_follow_attacker) {
++						if(demo_follow_validview) sprintf(str2, " - ^3follow player#%d^7", demo_follow_clientnum);
++						else sprintf(str2, " - follow #%d (n/a)", demo_follow_clientnum);
++					} else	{
++						if(demo_follow_clientnum != -1)	{
++							if(demo_follow_validview) sprintf(str2, " - followall: #%d", demo_follow_clientnum);
++							else Q_strncpyz(str2, " - followall: n/a", 256);
++						} else {
++							Q_strncpyz(str2, " - followall: n/a", 256);
++						}
++					}
++					Q_strcat(str, 256, str2);
++				}
++			} else
++			{
++				float x, y, w, h;
++				int width;
++
++				width = SMALLCHAR_WIDTH;
++				Q_strncpyz(str2, str, 256);
++				Q_CleanStr(str2);
++				width *= (strlen(str2) + 2);
++
++				color[0] = color[1] = color[2] = 0;
++				color[3] = 0.5;
++
++				x = 0;
++				y = 12+1 - SMALLCHAR_HEIGHT*0.5;
++				w = width;
++				h = SMALLCHAR_HEIGHT*2;
++
++				re.SetColor( color );
++				re.DrawStretchPic( x, y, w, h, 0, 0, 0, 0, cls.whiteShader );
++				re.SetColor( NULL );
++			}
++
++			//----------------- draws infotext
++			Q_strncpyz(str2, str, 256);
++			Q_CleanStr(str2);
++			textwidth = SMALLCHAR_WIDTH * (strlen(str2) + 2);
++			if(textwidth >= cls.glconfig.vidWidth) Q_strncpyz(str, &str[pos2], 256);
++
++			//----------------- demoname and map name
++			if(cls.state == CA_ACTIVE)
++			{
++				int width;
++				float perc;
++				const char * info;
++
++				info = cl.gameState.stringData + cl.gameState.stringOffsets[ CS_SERVERINFO ];
++
++				Q_strncpyz(last_demo_played, clc.demoName, 256);
++				Q_strncpyz(last_mapname, Info_ValueForKey(info, "mapname"), 256);
++				Q_strncpyz(last_servername, Info_ValueForKey(info, "sv_hostname"), 256);
++				Q_strcat(last_servername, 256, "^7, ");
++				Q_strcat(last_servername, 256, Info_ValueForKey(info, "gamename"));
++				Q_strcat(last_servername, 256, " ");
++				Q_strcat(last_servername, 256, Info_ValueForKey(info, "mod_version"));
++
++				if(demo_demooffset > demo_total_length) demo_total_length = FS_filelength(clc.demofile);
++				perc = ((float)demo_demooffset*100) / (float)demo_total_length;
++				sprintf(str2, "    demo:^3%s^7(%d%%) map:^3%s",
++					last_demo_played, (int)perc, last_mapname);
++				width = SMALLCHAR_WIDTH * (strlen(str2) + 1);
++
++				if(width + textwidth >= cls.glconfig.vidWidth)
++				{
++					float x, y, w, h;
++
++					w = width / xscale;
++					h = (SMALLCHAR_HEIGHT*1.5) / yscale;
++					x = SCREEN_WIDTH-w;
++					y = (SMALLCHAR_HEIGHT + 15) / yscale;
++
++					color[0] = color[1] = color[2] = 0;
++					color[3] = 0.5;
++					SCR_FillRect( x, y, w, h, color );
++
++					w = width - SMALLCHAR_WIDTH;
++					x = SCREEN_WIDTH * xscale-w;
++					y = (SMALLCHAR_HEIGHT + 15);
++
++					color[0] = color[1] = color[2] = 0;
++					color[3] = 0.8;
++					SCR_DrawSmallStringExt(x+2,y+2,str2,color,qtrue);
++
++					color[0] = color[1] = color[2] = 1.0;
++					color[3] = 1.0;
++					SCR_DrawSmallStringExt(x,y,str2,color,qfalse);
++				} else {
++					Q_strcat(str, 256, str2);
++				}
++			}
++
++			color[0] = color[1] = color[2] = 0;
++			color[3] = 0.8;
++			SCR_DrawSmallStringExt(SMALLCHAR_WIDTH+3,12+3,str,color,qtrue);
++
++			color[0] = color[1] = color[2] = 1.0;
++			color[3] = 1.0;
++			SCR_DrawSmallStringExt(SMALLCHAR_WIDTH+1,12+1,str,color,qfalse);
++		}
++
++		if((cls.state == CA_ACTIVE) && demo_warpometer_enabled && (snaps_stored > 2))
++		{
++			Draw_Warpometer();
++		}
++	}
++	//----------------------
++
+ 	VM_Debug( 0 );
+ }
+ 
+ CL_SetCGameTime
+ ==================
+ */
+-void CL_SetCGameTime( void ) {
++
++void CL_SetCGameTime( void )
++{
+ 	// getting a valid frame message ends the connection process
+ 	if ( cls.state != CA_ACTIVE ) {
+ 		if ( cls.state != CA_PRIMED ) {
+ 				clc.firstDemoFrameSkipped = qtrue;
+ 				return;
+ 			}
++
++			// SunLight - demo seek
++			if(clc.demoplaying) Check_DemoSeek();
+\n		// SunLight - demo seek
+		if(clc.demoplaying) Check_DemoSeek();
+
+ 			CL_ReadDemoMessage();
+ 		}
+ 		if ( cl.newSnapshots ) {
+ 			// do nothing?
+ 			CL_FirstSnapshot();
+ 		} else {
+-			Com_Error( ERR_DROP, "cl.snap.serverTime < cl.oldFrameServerTime" );
++			Com_Printf ("cl.snap.serverTime < cl.oldFrameServerTime\n" ); // SunLight
+ 		}
+ 	}
+ 	cl.oldFrameServerTime = cl.snap.serverTime;
+ 	while ( cl.serverTime >= cl.snap.serverTime ) {
+ 		// feed another messag, which should change
+ 		// the contents of cl.snap
++
++		// SunLight - demo seek
++		if(clc.demoplaying) Check_DemoSeek();
++
+\n		// SunLight - demo seek
+		if(clc.demoplaying) Check_DemoSeek();
+
+ 		CL_ReadDemoMessage();
++
+ 		if ( cls.state != CA_ACTIVE ) {
+ 			Cvar_Set( "timescale", "1" );
+ 			return;     // end of demo
+ // console.c
+ 
+ #include "client.h"
+-
++#include "sun_include.h"
++#include "etrewind_version.h"
+ 
+ int g_console_field_width = 78;
+ 
+ 
+ 	re.SetColor( g_color_table[ColorIndex( COLNSOLE_COLOR )] );
+ 
+-	i = strlen( Q3_VERSION );
++	{
++		char str[256];
+ 
+-	for ( x = 0 ; x < i ; x++ ) {
++		strcpy(str, etr_ver);
++		Q_CleanStr(str);
++		strcat(str, " V");
++		strcat(str, ETREWIND_VERSION);
++		strcat(str, ", ");
++		strcat(str, Q3_VERSION);
+ 
+-		SCR_DrawSmallChar( cls.glconfig.vidWidth - ( i - x ) * SMALLCHAR_WIDTH,
++		i = strlen( str);
+ 
+-						   ( lines - ( SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2 ) ), Q3_VERSION[x] );
++		for ( x = 0 ; x < i ; x++ )
++		{
++			SCR_DrawSmallChar( cls.glconfig.vidWidth - ( i - x ) * SMALLCHAR_WIDTH,
++				( lines - ( SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2 ) ), str[x] );
+ 
+ 	}
+-
++	}
+ 
+ 	// draw the text
+ 	con.vislines = lines;
+ void CL_Vid_Restart_f( void );
+ void CL_Snd_Restart_f( void );
+ void CL_NextDemo( void );
+-void CL_ReadDemoMessage( void );
++int CL_ReadDemoMessage( void ); // SunLight - was void
+ 
+ void CL_InitDownloads( void );
+ void CL_NextDownload( void );
+ */
+ 
+ #include "client.h"
++#include "sun_include.h"
+ 
+ /*
+ 
+ // fretn
+ qboolean consoleButtonWasPressed = qfalse;
+ 
++//SunLight
++int old_r_shownormals = 5;
++
+ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
+ 	char    *kb;
+ 	char cmd[1024];
+ 	if ( !key ) {
+ 		return;
+ 	}
++	if (key < 0 || key >= MAX_KEYS)
++	{
++		return; // -- SunLight fixes bug.
++	}
+ 
+ 	switch ( key ) {
+ 	case K_KP_PGUP:
+ 		}
+ 	}
+ 
+-#ifdef __linux__
+ 	if ( key == K_ENTER ) {
+ 		if ( down ) {
+ 			if ( keys[K_ALT].down ) {
+ 			}
+ 		}
+ 	}
+-#endif
++
++	// SunLight -- toggle shownormals, realview and other stuff
++	if ( clc.demoplaying )
++	{
++		if ( !( cls.keyCatchers & ( KEYCATCH_UI | KEYCATCH_CONSOLE ) ) )
++		{
++			if ( key == 's')
++			{
++				if ( down )
++				{
++					int current_normals;
++
++					current_normals = Cvar_VariableValue("r_shownormals");
++
++					if(current_normals) Cvar_Set( "r_shownormals", "0" );
++					else Cvar_Set( "r_shownormals", va( "%d", old_r_shownormals) );
++
++					old_r_shownormals = current_normals;
++				}
++			}
++			else if ( key == 'r')
++			{
++				if ( down ) no_damage_kick ^= 1;
++			}
++			else if ( key == 'n')
++			{
++				if ( down ) demo_playernames = (demo_playernames >= 1) ? 0 : 1;
++			} else if ( key == K_SHIFT)
++			{
++				if ( down ) demo_force_zoom_shift = 1;
++				else  demo_force_zoom_shift = 0;
++			}  else if ( key == K_CTRL)
++			{
++				if ( down ) {
++					float val = Cvar_VariableValue("timescale");
++					if (val != demo_force_timescale) demo_old_timescale = val;
++					Cvar_Set("timescale", va( "%f", demo_force_timescale ));
++				} else	{
++					Cvar_Set("timescale", va( "%f", demo_old_timescale ));
++				}
++			}  else if ( key == K_ALT)
++			{
++				if ( down )	{
++					float val = Cvar_VariableValue("timescale");
++					if (val != demo_force_timescale_alt) demo_old_timescale_alt = val;
++					Cvar_Set("timescale", va( "%f", demo_force_timescale_alt ));
++				} else {
++					Cvar_Set("timescale", va( "%f", demo_old_timescale_alt ));
++				}
++			} else if ( key == 'p')
++			{
++				if ( down ) {
++					float val = Cvar_VariableValue("timescale");
++					if (val == 0) {// unpause
++						if (demo_old_timescale != 0)
++							Cvar_Set("timescale", va( "%f", demo_old_timescale ));
++						else
++							Cvar_Set("timescale", "1");
++					} else { // pause
++						demo_old_timescale = val;
++						Cvar_Set("timescale", "0");
++						VM_Call( cgvm, CG_EVENT_HANDLING, CGAME_EVENT_DEMO );
++					}
++				}
++			} else if ( key == 'a')
++			{ // Automatic unlag, realview and shownormals
++				if ( down ) {
++					int team;
++
++					demo_unlag_value = -1; // auto unlag
++					no_damage_kick = 1;
++
++					// auto shownormals
++					old_r_shownormals = Cvar_VariableValue("r_shownormals");
++					team = get_player_team(last_stored_snap.ps.clientNum);
++					if(team == TEAM_AXIS) Cvar_Set( "r_shownormals", "7" );
++					else if(team == TEAM_ALLIES) Cvar_Set( "r_shownormals", "6" );
++				}
++			}
++
++
++		}
++	}
+ 
+ 	// console key is hardcoded, so the user can never unbind it
+ 	if ( key == '`' || key == '~' ) {
+ // cl_main.c  -- client main loop
+ 
+ #include "client.h"
++#include "sun_include.h"
++#include "etrewind_version.h"
+ #include <limits.h>
+ 
+ #include "snd_local.h" // fretn
+ 
+ }
+ 
++
++//-----------------------
++// SunLight -- extra stuff
++
++char etr_ver[] = "ET Demoview by SunLight";
++char last_demo_played[256];
++char last_mapname[256];
++char last_servername[256];
++
++void demo_show_lastdemo(void)
++{
++	Com_Printf(etr_ver);
++	Com_Printf("\n");
++	Com_Printf("Last demo played: %s\n", last_demo_played);
++	Com_Printf("map: %s\n", last_mapname);
++	Com_Printf("server: %s\n", last_servername);
++}
++
++int demo_playernames = 0;
++
++void demo_toggle_playernames(void)
++{
++	if ( Cmd_Argc() != 2 ) {
++		Com_Printf(etr_ver);
++		Com_Printf("\n");
++		Com_Printf("^7usage: demo_playernames [0 - 3]\n");
++		Com_Printf("^70 = off, 1 = on, 2 = enemies, 3 = team mates\n");
++		return;
++	}
++	if (!clc.demoplaying)
++	{
++		Com_Printf("^1you are not playing a demo...\n");
++		return;
++	}
++
++	demo_playernames = atoi(Cmd_Argv(1));
++}
++
++// timescale
++float demo_force_timescale = 0.5;
++float demo_old_timescale = 1;
++
++void demo_ctrl_timescale(void)
++{
++	if ( Cmd_Argc() < 2 ) {
++		Com_Printf(etr_ver);
++		Com_Printf("\n\n");
++		Com_Printf("^7usage: demo_ctrl_timescale [value]\n");
++		Com_Printf("\n^7current value: %.1f\n", demo_force_timescale);
++		return;
++	}
++
++	demo_force_timescale = atof(Cmd_Argv(1));
++	if (demo_force_timescale < 0.1) demo_force_timescale = 0.1;
++	else if (demo_force_timescale > 20) demo_force_timescale = 20;
++
++	Com_Printf("\n^7hold ctrl to change timescale to %.1f\n", demo_force_timescale);
++}
++
++float demo_force_timescale_alt = 5;
++float demo_old_timescale_alt = 1;
++
++void demo_alt_timescale(void)
++{
++	if ( Cmd_Argc() < 2 ) {
++		Com_Printf(etr_ver);
++		Com_Printf("\n\n");
++		Com_Printf("^7usage: demo_alt_timescale [value]\n");
++		Com_Printf("\n^7current value: %.1f\n", demo_force_timescale_alt);
++		return;
++	}
++
++	demo_force_timescale_alt = atof(Cmd_Argv(1));
++	if (demo_force_timescale_alt < 0.1) demo_force_timescale_alt = 0.1;
++	else if (demo_force_timescale_alt > 20) demo_force_timescale_alt = 20;
++
++	Com_Printf("\n^7hold alt to change timescale to %.1f\n", demo_force_timescale_alt);
++}
++
++// zoom
++int demo_shift_fov = 40;
++
++void demo_shift_zoomfov(void)
++{
++	if ( Cmd_Argc() < 2 ) {
++		Com_Printf(etr_ver);
++		Com_Printf("\n\n");
++		Com_Printf("^7usage: demo_shift_zoomfov [fov]\n");
++		Com_Printf("^7fov is in degrees like cg_fov, the smaller the fov the higher the zoom\n");
++		Com_Printf("\n^7current value: %d\n", demo_shift_fov);
++		return;
++	}
++
++	demo_shift_fov = atoi(Cmd_Argv(1));
 
 /*
  * @brief CL_GetTag
