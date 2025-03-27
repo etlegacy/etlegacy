@@ -38,7 +38,7 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 			/* crouchBtn             activateBtn          moveJoystick             btn                      gears */
 			R.drawable.ic_crouch,    R.drawable.ic_use,   0,                       R.drawable.ic_keyboard,  R.drawable.gears,
 			/* altBtn */
-			R.drawable.ic_alt, android.R.drawable.ic_menu_agenda },
+			R.drawable.ic_alt, R.drawable.keycap },
 
 		/* esc_btn                          jumpBtn                          etl_console */
 		{ R.drawable.deltatouch_btn_escape, R.drawable.deltatouch_btn_jump,  R.drawable.deltatouch_btn_notepad,
@@ -47,7 +47,7 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 			/* activateBtn                    moveJoystick                     btn */
 			R.drawable.deltatouch_btn_activate, 0,                             R.drawable.deltatouch_btn_keyboard,
 			/* gears                           altBtn */
-			R.drawable.gears,                   0, android.R.drawable.ic_menu_agenda },
+			R.drawable.gears,                   0, R.drawable.keycap },
 
 		/* esc_btn                      jumpBtn                      etl_console */
 		{ R.drawable.tech4a_btn_pause,  R.drawable.tech4a_btn_jump,  R.drawable.tech4a_btn_notepad,
@@ -56,7 +56,7 @@ public class SetupUIThemeActivity extends AppCompatActivity {
 			/* activateBtn                moveJoystick                 btn */
 			R.drawable.tech4a_btn_activate, 0,                         R.drawable.tech4a_btn_keyboard,
 			/* gears                       altBtn */
-			R.drawable.gears,              R.drawable.tech4a_btn_altfire, android.R.drawable.ic_menu_agenda }
+			R.drawable.gears,              R.drawable.tech4a_btn_altfire, R.drawable.keycap }
 	};
 	private int currentIndex = 0;
 	private GestureDetector gestureDetector;

@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -76,6 +77,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private Intent intent;
 	private OnBackInvokedCallback callback;
 	private KeyBindingsManager keyManager;
+	private CustomKeyboard customKeyboard;
+	private RelativeLayout keyboardLayout;
+	private boolean isKeyboardVisible = false;
 
 	private int width;
 	private int height;
@@ -119,6 +123,15 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+			WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+		Handler repeatHandler = new Handler();
+		customKeyboard = new CustomKeyboard(this, repeatHandler);
+		keyboardLayout = customKeyboard.createKeyboardLayout();
+		keyboardLayout.setVisibility(View.GONE);
+
 		// Android 13+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 			callback = () -> {
@@ -141,6 +154,29 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 		}
+	}
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			View v = getCurrentFocus();
+			if (v instanceof EditText) {
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				if (imm != null) {
+					imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+				}
+			}
+		}
+		return super.dispatchKeyEvent(event);
+	}
+
+	private void toggleKeyboard() {
+		if (isKeyboardVisible) {
+			keyboardLayout.setVisibility(View.GONE);
+		} else {
+			keyboardLayout.setVisibility(View.VISIBLE);
+		}
+		isKeyboardVisible = !isKeyboardVisible;
 	}
 
 	@Override
@@ -203,6 +239,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		mLayout.removeView(moveJoystick);
 		mLayout.removeView(toggleRecyclerButton);
 		mLayout.removeView(recyclerView);
+		mLayout.removeView(keyboardLayout);
 	}
 
 	@SuppressLint({"ClickableViewAccessibility", "NonConstantResourceId"})
@@ -402,10 +439,11 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			((android.view.View) entry[0]).setLayoutParams(params);
 		}
 
-		btn.setOnClickListener(v -> {
+		btn.setOnClickListener(v -> toggleKeyboard());
+		/*btn.setOnClickListener(v -> {
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-		});
+		});*/
 
 		gears.setOnClickListener(this::showPopupWindow);
 
@@ -445,6 +483,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		mLayout.addView(moveJoystick);
 		mLayout.addView(toggleRecyclerButton);
 		mLayout.addView(recyclerView);
+		mLayout.addView(keyboardLayout);
 
 		handler = new Handler(Looper.getMainLooper());
 		uiRunner = () -> {
@@ -545,7 +584,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			defaultcomponentMap.put("altBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.95), (int)(height * 0.9), 0, 0}, R.drawable.ic_alt));
 			defaultcomponentMap.put("crouchBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 1.0), (int)(height * 0.9), 0, 0}, R.drawable.ic_crouch));
 			defaultcomponentMap.put("moveJoystick", new ComponentManager.ComponentData(400, 400, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.05), (int)(height * 0.3), 0, 0}, 0));
-			defaultcomponentMap.put("toggleRecyclerButton", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.05), (int)(height * 0.3), 0, 0}, android.R.drawable.ic_menu_agenda));
+			defaultcomponentMap.put("toggleRecyclerButton", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.40), (int)(height * 0.9), 0, 0}, R.drawable.keycap));
 
 			SaveComponentData();
 		} else {
@@ -619,6 +658,10 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if (hasFocus) {
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (imm != null) {
+				imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+			}
 			hideSystemUI();
 		}
 		super.onWindowFocusChanged(hasFocus);
