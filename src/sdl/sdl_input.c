@@ -1480,6 +1480,9 @@ static void IN_ProcessEvents(void)
 			if ((key = IN_TranslateSDLToQ3Key(&e.key.keysym, qtrue)))
 			{
 				Com_QueueEvent(lasttime, SE_KEY, key, qtrue, 0, NULL);
+#ifdef __ANDROID__
+                Com_QueueEvent(lasttime, SE_CHAR, key, 0, 0, NULL);
+#endif
 				if (key == K_BACKSPACE)
 				{
 					// This was added to keep mod comp, mods do not check K_BACKSPACE but instead use char 8 which is backspace in ascii
