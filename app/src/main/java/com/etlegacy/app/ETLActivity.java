@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
+import com.etlegacy.app.keyboard.CustomKeyboard;
 import com.etlegacy.app.web.ETLDownload;
 
 import com.google.gson.Gson;
@@ -76,6 +77,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	private Intent intent;
 	private OnBackInvokedCallback callback;
 	private KeyBindingsManager keyManager;
+	private RelativeLayout keyboardLayout;
+	private boolean isKeyboardVisible = false;
 
 	private int width;
 	private int height;
@@ -119,6 +122,11 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Handler repeatHandler = new Handler();
+		CustomKeyboard customKeyboard = new CustomKeyboard(this, repeatHandler);
+		keyboardLayout = customKeyboard.createKeyboardLayout();
+		keyboardLayout.setVisibility(View.GONE);
+
 		// Android 13+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 			callback = () -> {
@@ -141,6 +149,15 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 			getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 		}
+	}
+
+	private void toggleKeyboard() {
+		if (isKeyboardVisible) {
+			keyboardLayout.setVisibility(View.GONE);
+		} else {
+			keyboardLayout.setVisibility(View.VISIBLE);
+		}
+		isKeyboardVisible = !isKeyboardVisible;
 	}
 
 	@Override
@@ -203,6 +220,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		mLayout.removeView(moveJoystick);
 		mLayout.removeView(toggleRecyclerButton);
 		mLayout.removeView(recyclerView);
+		mLayout.removeView(keyboardLayout);
 	}
 
 	@SuppressLint({"ClickableViewAccessibility", "NonConstantResourceId"})
@@ -407,6 +425,11 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 		});
 
+		btn.setOnLongClickListener(v -> {
+			toggleKeyboard();
+			return true;
+		});
+
 		gears.setOnClickListener(this::showPopupWindow);
 
 		// Send margins of the shootBtn to C
@@ -445,6 +468,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		mLayout.addView(moveJoystick);
 		mLayout.addView(toggleRecyclerButton);
 		mLayout.addView(recyclerView);
+		mLayout.addView(keyboardLayout);
 
 		handler = new Handler(Looper.getMainLooper());
 		uiRunner = () -> {
@@ -545,7 +569,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 			defaultcomponentMap.put("altBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.95), (int)(height * 0.9), 0, 0}, R.drawable.ic_alt));
 			defaultcomponentMap.put("crouchBtn", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 1.0), (int)(height * 0.9), 0, 0}, R.drawable.ic_crouch));
 			defaultcomponentMap.put("moveJoystick", new ComponentManager.ComponentData(400, 400, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.05), (int)(height * 0.3), 0, 0}, 0));
-			defaultcomponentMap.put("toggleRecyclerButton", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.05), (int)(height * 0.3), 0, 0}, android.R.drawable.ic_menu_agenda));
+			defaultcomponentMap.put("toggleRecyclerButton", new ComponentManager.ComponentData(100, 100, Gravity.TOP | Gravity.LEFT, new int[]{(int)(width * 0.40), (int)(height * 0.9), 0, 0}, R.drawable.keycap));
 
 			SaveComponentData();
 		} else {
