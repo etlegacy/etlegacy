@@ -39,12 +39,12 @@ public class CustomKeyboard {
 		layout.setLayoutParams(layoutParams);
 
 		String[][] keyRows = {
-			{"ctrl", "alt", "space", "alt", "ctrl"},
-			{"shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "shift"},
+			{"l-ctrl", "l-alt", "space", "r-alt", "r-ctrl"},
+			{"l-shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "r-shift"},
 			{"capslock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "enter"},
 			{"tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]"},
-			{"`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "\\", "back"},
-			{"esc", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12", "PgnUp", "PgnDn"}
+			{"`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "\\", "backspace"},
+			{"esc", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12", "Pgn-Up", "Pgn-Dn"}
 		};
 
 		int previousRowId = View.NO_ID;
@@ -71,7 +71,7 @@ public class CustomKeyboard {
 					0, dpToPx(30), 1.0f);
 				keyButton.setLayoutParams(buttonParams);
 				keyButton.setPadding(0, 0, 0, 0);
-				keyButton.setTextSize(11);
+				keyButton.setTextSize("backspace".equals(key) ? 10 : 12);
 				setupKeyTouchListener(keyButton, key);
 				rowLayout.addView(keyButton);
 			}
@@ -120,15 +120,28 @@ public class CustomKeyboard {
 			case "`": keyCode = KeyEvent.KEYCODE_GRAVE; break;
 			case "space": keyCode = KeyEvent.KEYCODE_SPACE; break;
 			case "enter": keyCode = KeyEvent.KEYCODE_ENTER; break;
-			case "shift": keyCode = KeyEvent.KEYCODE_SHIFT_LEFT; break;
-			case "ctrl": keyCode = KeyEvent.KEYCODE_CTRL_LEFT; break;
-			case "alt": keyCode = KeyEvent.KEYCODE_ALT_LEFT; break;
+			case ",": keyCode = KeyEvent.KEYCODE_COMMA; break;
+			case ".": keyCode = KeyEvent.KEYCODE_PERIOD; break;
+			case "/": keyCode = KeyEvent.KEYCODE_SLASH; break;
+			case ";": keyCode = KeyEvent.KEYCODE_SEMICOLON; break;
+			case "'": keyCode = KeyEvent.KEYCODE_APOSTROPHE; break;
+			case "\\": keyCode = KeyEvent.KEYCODE_BACKSLASH; break;
+			case "[": keyCode = KeyEvent.KEYCODE_LEFT_BRACKET; break;
+			case "]": keyCode = KeyEvent.KEYCODE_RIGHT_BRACKET; break;
+			case "-": keyCode = KeyEvent.KEYCODE_MINUS; break;
+			case "=": keyCode = KeyEvent.KEYCODE_EQUALS; break;
+			case "l-shift": keyCode = KeyEvent.KEYCODE_SHIFT_LEFT; break;
+			case "r-shift": keyCode = KeyEvent.KEYCODE_SHIFT_RIGHT; break;
+			case "l-ctrl": keyCode = KeyEvent.KEYCODE_CTRL_LEFT; break;
+			case "r-ctrl": keyCode = KeyEvent.KEYCODE_CTRL_RIGHT; break;
+			case "l-alt": keyCode = KeyEvent.KEYCODE_ALT_LEFT; break;
+			case "r-alt": keyCode = KeyEvent.KEYCODE_ALT_RIGHT; break;
 			case "tab": keyCode = KeyEvent.KEYCODE_TAB; break;
 			case "capslock": keyCode = KeyEvent.KEYCODE_CAPS_LOCK; break;
-			case "back": keyCode = KeyEvent.KEYCODE_DEL; break;
+			case "backspace": keyCode = KeyEvent.KEYCODE_DEL; break;
 			case "esc": keyCode = KeyEvent.KEYCODE_ESCAPE; break;
-			case "pgnup": keyCode = KeyEvent.KEYCODE_PAGE_UP; break;
-			case "pgndn": keyCode = KeyEvent.KEYCODE_PAGE_DOWN; break;
+			case "pgn-up": keyCode = KeyEvent.KEYCODE_PAGE_UP; break;
+			case "pgn-dn": keyCode = KeyEvent.KEYCODE_PAGE_DOWN; break;
 			case "f1": keyCode = KeyEvent.KEYCODE_F1; break;
 			case "f2": keyCode = KeyEvent.KEYCODE_F2; break;
 			case "f3": keyCode = KeyEvent.KEYCODE_F3; break;
