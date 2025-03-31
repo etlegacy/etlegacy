@@ -3132,6 +3132,7 @@ void CalculateRanks(void)
 	level.numHumanConnectedClients  = 0;
 	level.numNonSpectatorClients    = 0;
 	level.numPlayingClients         = 0;
+	level.playingClientsMask        = 0;
 	level.voteInfo.numVotingClients = 0;  // don't count bots
 
 	level.numFinalDead[0] = 0;
@@ -3182,6 +3183,8 @@ void CalculateRanks(void)
 					int teamIndex = level.clients[i].sess.sessionTeam == TEAM_AXIS ? 0 : 1;
 
 					level.numPlayingClients++;
+					level.playingClientsMask |= (1ULL << i);
+
 					if (!(g_entities[i].r.svFlags & SVF_BOT))
 					{
 						level.voteInfo.numVotingClients++;

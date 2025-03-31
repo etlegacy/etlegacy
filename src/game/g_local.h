@@ -1222,6 +1222,7 @@ typedef struct level_locals_s
 	int numHumanConnectedClients;
 	int numNonSpectatorClients;                 ///< includes connecting clients
 	int numPlayingClients;                      ///< connected, non-spectators
+	uint64_t playingClientsMask;                ///< connected, non-spectators, bitmask
 	int sortedClients[MAX_CLIENTS];             ///< sorted by score
 
 	int warmupModificationCount;                ///< for detecting if g_warmup is changed
