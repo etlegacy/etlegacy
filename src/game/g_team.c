@@ -832,6 +832,11 @@ void TeamplayInfoMessage(team_t team)
 	{
 		player = g_entities + level.sortedClients[i];
 
+		if (player->client->sess.shoutcaster && G_EBS_ShoutcastEnabled())
+		{
+			continue;
+		}
+
 		if (player->inuse && (player->client->sess.sessionTeam == team || player->client->sess.shoutcaster) && !(player->r.svFlags & SVF_BOT) && player->client->pers.connected == CON_CONNECTED)
 		{
 			trap_SendServerCommand(player - g_entities, tinfo);
@@ -2558,6 +2563,14 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 }
 
 /**
+ * @brief G_EBS_ShoutcastEnabled
+ */
+ID_INLINE qboolean G_EBS_ShoutcastEnabled(void)
+{
+	return dll_trap_SnapshotCallbackExt && dll_trap_SnapshotSetClientMask;
+}
+
+/**
  * @brief G_EBS_InitShoutcast
  */
 void G_EBS_InitShoutcast(void)
@@ -2566,7 +2579,7 @@ void G_EBS_InitShoutcast(void)
 	entityBitStream_t s;
 	int i;
 
-	if (!dll_trap_SnapshotCallbackExt || !dll_trap_SnapshotSetClientMask)
+	if (!G_EBS_ShoutcastEnabled())
 	{
 		return;
 	}
