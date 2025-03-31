@@ -2561,25 +2561,25 @@ void CG_EBS_Shoutcast(centity_t *cent)
 
 	EBS_InitRead(&ebs, &cent->currentState);
 
-	version = EBS_ReadBits(&ebs, 4);
+	version = EBS_ReadBits(&ebs, EBS_SHOUTCAST_VERSION_SIZE);
 	etl_assert(version == 0);
 
-	slotMask = EBS_ReadBits(&ebs, 6);
+	slotMask = EBS_ReadBits(&ebs, EBS_SHOUTCAST_SLOTMASK_SIZE);
 
 	for (i = 0; i < 6; i++)
 	{
 		if (!(slotMask & (BIT(i))))
 		{
-			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE_V0);
+			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE);
 			continue;
 		}
 
-		clientNum = EBS_ReadBits(&ebs, 6);
+		clientNum = EBS_ReadBits(&ebs, EBS_SHOUTCAST_CLIENTNUM_SIZE);
 		ci        = &cgs.clientinfo[clientNum];
 
-		ci->health   = EBS_ReadBitsWithSign(&ebs, 9);
-		ci->ammoclip = EBS_ReadBits(&ebs, 10);
-		ci->ammo     = EBS_ReadBits(&ebs, 10);
+		ci->health   = EBS_ReadBitsWithSign(&ebs, EBS_SHOUTCAST_HEALTH_SIZE);
+		ci->ammoclip = EBS_ReadBits(&ebs, EBS_SHOUTCAST_AMMOCLIP_SIZE);
+		ci->ammo     = EBS_ReadBits(&ebs, EBS_SHOUTCAST_AMMO_SIZE);
 	}
 }
 

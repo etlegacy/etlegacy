@@ -2448,22 +2448,21 @@ static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
 		health = MAX(0, ent->client->ps.stats[STAT_HEALTH]);
 	}
 
-	EBS_WriteBits(ebs, ent->s.number, 6);
-	EBS_WriteBitsWithSign(ebs, health, 9);
+	EBS_WriteBits(ebs, ent->s.number, EBS_SHOUTCAST_CLIENTNUM_SIZE);
+	EBS_WriteBitsWithSign(ebs, health, EBS_SHOUTCAST_HEALTH_SIZE);
 
 	if (!(ent->client->ps.pm_flags & PMF_FOLLOW))
 	{
-		EBS_WriteBits(ebs, ent->client->ps.ammoclip[ent->client->ps.weapon], 10);
-		EBS_WriteBits(ebs, ent->client->ps.ammo[ent->client->ps.weapon], 10);
+		EBS_WriteBits(ebs, ent->client->ps.ammoclip[ent->client->ps.weapon], EBS_SHOUTCAST_AMMOCLIP_SIZE);
+		EBS_WriteBits(ebs, ent->client->ps.ammo[ent->client->ps.weapon], EBS_SHOUTCAST_AMMO_SIZE);
 	}
 	else
 	{
-		EBS_Skip(ebs, 20);
+		EBS_Skip(ebs, EBS_SHOUTCAST_AMMOCLIP_SIZE + EBS_SHOUTCAST_AMMO_SIZE);
 	}
 }
 
 #define EBS_SHOUTCAST_NEXT_THINK_TIME (level.time + level.frameTime)
-#define EBS_SHOUTCAST_VERSION_SIZE 4
 
 /**
  * @brief G_EBS_ShoutcastThink write player(s) into the same entityBitStream fields
@@ -2501,7 +2500,7 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 	EBS_WriteBits(&ebs, 0, EBS_SHOUTCAST_VERSION_SIZE); // Version
 
 	// reserved for slotMask
-	EBS_Skip(&ebs, 6);
+	EBS_Skip(&ebs, EBS_SHOUTCAST_SLOTMASK_SIZE);
 
 	for (i = 0; i < 6; i++)
 	{
@@ -2552,14 +2551,14 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 
 		if (skipSlot)
 		{
-			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE_V0);
+			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE);
 		}
 	}
 
 	// write slotMask indicating which slot is valid for read
 	EBS_InitWrite(&ebs, &ent->s, qfalse);
 	EBS_Skip(&ebs, EBS_SHOUTCAST_VERSION_SIZE);
-	EBS_WriteBits(&ebs, slotMask, 6);
+	EBS_WriteBits(&ebs, slotMask, EBS_SHOUTCAST_SLOTMASK_SIZE);
 }
 
 /**
