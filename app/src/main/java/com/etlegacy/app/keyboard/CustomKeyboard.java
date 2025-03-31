@@ -68,7 +68,7 @@ public class CustomKeyboard {
 				keyButton.setBackgroundResource(R.drawable.popup_background);
 				keyButton.setTextColor(Color.WHITE);
 				LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
-					0, dpToPx(30), 1.0f);
+					0, dpToPx(32), 1.0f);
 				keyButton.setLayoutParams(buttonParams);
 				keyButton.setPadding(0, 0, 0, 0);
 				keyButton.setTextSize("backspace".equals(key) ? 10 : 12);
