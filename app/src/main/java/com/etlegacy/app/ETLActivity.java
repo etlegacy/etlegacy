@@ -49,7 +49,9 @@ import org.libsdl.app.*;
 import java.lang.reflect.Type;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class ETLActivity extends SDLActivity implements JoyStickListener {
 
@@ -156,7 +158,24 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		int keyCode = event.getKeyCode();
 		int action = event.getAction();
 
+		// Define special keys that need immediate key up after key down
+		Set<Integer> specialKeys = new HashSet<>();
+		specialKeys.add(KeyEvent.KEYCODE_ESCAPE);
+		specialKeys.add(KeyEvent.KEYCODE_GRAVE);
+		specialKeys.add(KeyEvent.KEYCODE_DEL);
+
+		// Add number keys (0-9)
+		for (int i = KeyEvent.KEYCODE_0; i <= KeyEvent.KEYCODE_9; i++) {
+			specialKeys.add(i);
+		}
+
+
 		if (action == KeyEvent.ACTION_DOWN) {
+			if (specialKeys.contains(keyCode)) {
+				onNativeKeyDown(keyCode);
+				onNativeKeyUp(keyCode);
+				return true;
+			}
 			onNativeKeyDown(keyCode);
 		} else if (action == KeyEvent.ACTION_UP) {
 			onNativeKeyUp(keyCode);
