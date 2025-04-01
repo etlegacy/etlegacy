@@ -151,6 +151,20 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		}
 	}
 
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		int keyCode = event.getKeyCode();
+		int action = event.getAction();
+
+		if (action == KeyEvent.ACTION_DOWN) {
+			onNativeKeyDown(keyCode);
+		} else if (action == KeyEvent.ACTION_UP) {
+			onNativeKeyUp(keyCode);
+		}
+
+		return super.dispatchKeyEvent(event);
+	}
+
 	private void toggleKeyboard() {
 		if (isKeyboardVisible) {
 			keyboardLayout.setVisibility(View.GONE);
@@ -620,10 +634,12 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 	private int runUI() {
 		if (InputDeviceChecker.hasUSBMouseOrKeyboardConnected() || InputDeviceChecker.hasBluetoothMouseOrKeyboardConnected()) {
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 			setViewVisibility(false, etl_console, btn, esc_btn, gears, shootBtn, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
 			return 500;
 		}
 		else {
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 			if (!getUiMenu()) {
 				setViewVisibility(true, etl_console, btn, esc_btn, gears, shootBtn);
 				setViewVisibility(false, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
