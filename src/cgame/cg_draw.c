@@ -1283,20 +1283,10 @@ static void CG_DrawScopedReticle(void)
 
 	// TODO : add support for ultra-widescreen / remove 16:9 assumption
 
-	// sides
-	CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
-	CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
-
-	// center
-	if (cgs.media.reticleShaderSimple)
+	if (cg_scopeReticleStyle.integer < 1 && weapon == WP_FG42_SCOPE || cg_scopeReticleStyle.integer == 1)
 	{
-		CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
-	}
-
-	if (weapon == WP_FG42_SCOPE)
-	{
-		// hairs
-		trap_R_SetColor(colorBlack);
+		// color
+		trap_R_SetColor(cgs.scopeReticleColor);
 
 		// inside left
 		trap_R_DrawStretchPic((x - 1) * 0.80,
@@ -1330,6 +1320,9 @@ static void CG_DrawScopedReticle(void)
 		trap_R_DrawStretchPic(x - 2,
 		                      y + 1 + ((y - 1) * 0.35),
 		                      4, (y - 1) * 0.65, 0, 0, 0, 1, cgs.media.whiteShader);
+
+		// center color
+		trap_R_SetColor(cgs.scopeReticleDotColor);
 		// center
 		trap_R_DrawStretchPic(x - 1,
 		                      y - 1,
@@ -1337,10 +1330,10 @@ static void CG_DrawScopedReticle(void)
 
 		trap_R_SetColor(NULL);
 	}
-	else if (weapon == WP_GARAND_SCOPE || weapon == WP_K43_SCOPE)
+	else if (cg_scopeReticleStyle.integer < 1 && weapon == WP_GARAND_SCOPE || cg_scopeReticleStyle.integer < 1 && weapon == WP_K43_SCOPE || cg_scopeReticleStyle.integer == 2)
 	{
-		// hairs
-		trap_R_SetColor(colorBlack);
+		// color
+		trap_R_SetColor(cgs.scopeReticleColor);
 
 		// left
 		trap_R_DrawStretchPic(0,
@@ -1359,7 +1352,40 @@ static void CG_DrawScopedReticle(void)
 		                      y + 1 + ((y - 1) * 0.25),
 		                      4, (y - 1) * 0.75, 0, 0, 0, 1, cgs.media.whiteShader);
 
+		// draw dot
+		if (cgs.scopeReticleDotColor != colorBlack)
+		{
+			// center color
+			trap_R_SetColor(cgs.scopeReticleDotColor);
+			// center
+			trap_R_DrawStretchPic(x - 1,
+			                      y - 1,
+			                      2, 2, 0, 0, 0, 1, cgs.media.whiteShader);
+		}
 		trap_R_SetColor(NULL);
+	}
+
+	else if (cg_scopeReticleStyle.integer > 2)
+	{
+		// center color
+		trap_R_SetColor(cgs.scopeReticleDotColor);
+
+		// center
+		trap_R_DrawStretchPic(x - 1,
+		                      y - 1,
+		                      2, 2, 0, 0, 0, 1, cgs.media.whiteShader);
+
+		trap_R_SetColor(NULL);
+	}
+
+	// sides
+	CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
+	CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
+
+	// center
+	if (cgs.media.reticleShaderSimple)
+	{
+		CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
 	}
 }
 
@@ -2995,12 +3021,12 @@ int CG_CalculateReinfTimeEx(int period, int offset)
     if (period > 0) // prevent modulo by 0 for weird cases like limbotime < 1000
     {
         int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
-    
+
         int seconds     = msec / 1000;
         int secondsThen = ((cgs.timelimit * 60000.f) - offset) / 1000;
         return (period + (seconds - secondsThen) % period);
     }
-    
+
     return 0;
 }
 
