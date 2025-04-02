@@ -86,8 +86,8 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponchargetext),   CG_DrawWeaponCharge,              0.25f,  { "Draw Suffix" } },
 	{ HUDF(fps),                CG_DrawFPS,                       0.19f,  { 0 } },
 	{ HUDF(snapshot),           CG_DrawSnapshot,                  0.19f,  { 0 } },
-	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { 0 } },
-	{ HUDF(speed),              CG_DrawSpeed,                     0.19f,  { "Max Speed" } },
+	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { "Draw Suffix" } },
+	{ HUDF(speed),              CG_DrawSpeed,                     0.19f,  { "Max Speed", "Draw Suffix" } },
 	{ HUDF(lagometer),          CG_DrawLagometer,                 0.19f,  { 0 } },
 	{ HUDF(disconnect),         CG_DrawDisconnect,                0.35f,  { "No Text" } },
 	{ HUDF(chat),               CG_DrawTeamInfo,                  0.20f,  { "No Team Flag" } },// FIXME: outside cg_draw_hud
@@ -2771,27 +2771,32 @@ void CG_DrawSpeed(hudComponent_t *comp)
 		lasttime = thistime;
 	}
 
-	switch (cg_drawUnit.integer)
+	if (comp->style & 2)
 	{
-	case 0:
-		// Units per second
-		s  = va("%.1f UPS", speed);
-		s2 = va("%.1f MAX", highestSpeed);
-		break;
-	case 1:
-		// Kilometers per hour
-		s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
-		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
-		break;
-	case 2:
-		// Miles per hour
-		s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
-		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
-		break;
-	default:
-		s  = "";
-		s2 = "";
-		break;
+		switch (cg_drawUnit.integer)
+		{
+		case 0:
+			// Units per second
+			s  = va("%.1f UPS", speed);
+			s2 = va("%.1f MAX", highestSpeed);
+			break;
+		case 1:
+			// Kilometers per hour
+			s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
+			s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
+			break;
+		case 2:
+			// Miles per hour
+			s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
+			s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
+			break;
+		}
+	}
+	else
+	{
+		// don't show units
+		s  = va("%.1f", speed);
+		s2 = va("%.1f", highestSpeed);
 	}
 
 	if (comp->style & 1)
@@ -3310,7 +3315,7 @@ void CG_DrawPing(hudComponent_t *comp)
 {
 	char *s;
 
-	s = va("Ping %d", cg.snap->ping < 999 ? cg.snap->ping : 999);
+	s = va(comp->style & 1 ? "Ping %d" : "%d", cg.snap->ping < 999 ? cg.snap->ping : 999);
 
 	CG_DrawCompText(comp, s, comp->colorMain, comp->styleText, &cgs.media.limboFont1);
 }
