@@ -2803,6 +2803,7 @@ void CG_DrawSpeed(hudComponent_t *comp)
 	case 2:
 		// Miles per hour
 		if (comp->style & 2)
+		{
 			s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
 			s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
 		}
@@ -2810,6 +2811,7 @@ void CG_DrawSpeed(hudComponent_t *comp)
 		{
 			s  = va("%.1f", (speed / SPEED_US_TO_MPH));
 			s2 = va("%.1f", (highestSpeed / SPEED_US_TO_MPH));
+		}
 		break;
 	default:
 		s  = "";
