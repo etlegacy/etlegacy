@@ -2771,32 +2771,50 @@ void CG_DrawSpeed(hudComponent_t *comp)
 		lasttime = thistime;
 	}
 
-	if (comp->style & 2)
+
+	switch (cg_drawUnit.integer)
 	{
-		switch (cg_drawUnit.integer)
+	case 0:
+		// Units per second
+		if (comp->style & 2)
 		{
-		case 0:
-			// Units per second
 			s  = va("%.1f UPS", speed);
 			s2 = va("%.1f MAX", highestSpeed);
-			break;
-		case 1:
-			// Kilometers per hour
+		}
+		else
+		{
+			s  = va("%.1f", speed);
+			s2 = va("%.1f", highestSpeed);
+		}
+		break;
+	case 1:
+		// Kilometers per hour
+		if (comp->style & 2)
+		{
 			s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
 			s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
-			break;
-		case 2:
-			// Miles per hour
+		}
+		else
+		{
+			s  = va("%.1f", (speed / SPEED_US_TO_KPH));
+			s2 = va("%.1f", (highestSpeed / SPEED_US_TO_KPH));
+		}
+		break;
+	case 2:
+		// Miles per hour
+		if (comp->style & 2)
 			s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
 			s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
-			break;
 		}
-	}
-	else
-	{
-		// don't show units
-		s  = va("%.1f", speed);
-		s2 = va("%.1f", highestSpeed);
+		else
+		{
+			s  = va("%.1f", (speed / SPEED_US_TO_MPH));
+			s2 = va("%.1f", (highestSpeed / SPEED_US_TO_MPH));
+		break;
+	default:
+		s  = "";
+		s2 = "";
+		break;
 	}
 
 	if (comp->style & 1)
