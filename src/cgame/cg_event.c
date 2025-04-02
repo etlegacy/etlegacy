@@ -2551,7 +2551,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	}
 	break;
 	case EV_GLOBAL_TEAM_SOUND:
-		if (cgs.clientinfo[cg.snap->ps.clientNum].team == es->teamNum)
+		if (!(cg_teamannouncer.integer == 0 && es->density == EV_GLOBAL_TEAM_SOUND) && cgs.clientinfo[cg.snap->ps.clientNum].team == es->teamNum)
 		{
 			CG_PlayGlobalSound(cent, es->eventParm);
 		}
@@ -2560,7 +2560,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		CG_PlayGlobalSound(cent, es->eventParm);
 		break;
 	case EV_GLOBAL_CLIENT_SOUND:
-		if (cg.snap->ps.clientNum == es->teamNum)
+		if (!(cg_teamannouncer.integer == 0 && es->density == EV_GLOBAL_TEAM_SOUND) && cg.snap->ps.clientNum == es->teamNum)
 		{
 			CG_PlayGlobalSound(cent, es->eventParm);
 		}
@@ -2948,9 +2948,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	{
 		sfxHandle_t sound;
 		int         reviver = es->clientNum;
-		int revivee = es->eventParm;
+		int         revivee = es->eventParm;
 
-		if (revivee == cg.clientNum) {
+		if (revivee == cg.clientNum)
+		{
 			cg.lastBeingRevivedTime = cg.time;
 		}
 
