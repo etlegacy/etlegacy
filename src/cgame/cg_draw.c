@@ -1353,7 +1353,7 @@ static void CG_DrawScopedReticle(void)
 		                      4, (y - 1) * 0.75, 0, 0, 0, 1, cgs.media.whiteShader);
 
 		// draw dot
-		if (cgs.scopeReticleDotColor != colorBlack)
+		if (cgs.scopeReticleDotColor != cgs.scopeReticleColor)
 		{
 			// center color
 			trap_R_SetColor(cgs.scopeReticleDotColor);
