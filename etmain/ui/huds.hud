@@ -147,9 +147,11 @@
 					"visible":	true
 				},
 				"ping":	{
+					"style":	1,
 					"visible":	true
 				},
 				"speed":	{
+					"style":	2,
 					"visible":	true
 				},
 				"lagometer":	{
