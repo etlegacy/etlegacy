@@ -57,7 +57,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
 	{ HUDF(ranktext),           CG_DrawRank,                      0.20f,  { 0 } },
 	{ HUDF(statsdisplay),       CG_DrawSkills,                    0.25f,  { "Column" } },
-	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash",    "Dynamic Heat Color" } },
+	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash",    "Dynamic Heat Color", 		   "Only Charge" } },
 	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 0.25f,  { "Dynamic Color" } },
 	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           0.20f,  { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row"} },// FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),      CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
@@ -220,8 +220,8 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->weaponchargetext   = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawWeaponCharge);
 	hud->fps                = CG_getComponent(SCREEN_WIDTH - 60, 184, 57, 14, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawFPS);
 	hud->snapshot           = CG_getComponent(SCREEN_WIDTH - 60, 305, 57, 38, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawSnapshot);
-	hud->ping               = CG_getComponent(SCREEN_WIDTH - 60, 200, 57, 14, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPing);
-	hud->speed              = CG_getComponent(SCREEN_WIDTH - 60, 275, 57, 14, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpeed);
+	hud->ping               = CG_getComponent(SCREEN_WIDTH - 60, 200, 57, 14, qfalse, 1, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPing);
+	hud->speed              = CG_getComponent(SCREEN_WIDTH - 60, 275, 57, 14, qfalse, 2, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpeed);
 	hud->lagometer          = CG_getComponent(SCREEN_WIDTH - 60, 216, 57, 57, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLagometer);
 	hud->disconnect         = CG_getComponent(SCREEN_WIDTH - 60, 216, 57, 57, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawDisconnect);
 	hud->chat               = CG_getComponent(165, 406, 364, 72, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.20f, CG_DrawTeamInfo);
@@ -1257,7 +1257,18 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 		Vector4Copy(comp->colorMain, color);
 	}
 
-	CG_DrawPlayerWeaponIcon(&comp->location, comp->alignText, &color);
+
+	if (comp->style & 4)
+	{
+		if (cg.predictedPlayerState.grenadeTimeLeft)
+		{
+			CG_DrawPlayerWeaponIcon(&comp->location, comp->alignText, &color);
+		}
+	}
+	else
+	{
+		CG_DrawPlayerWeaponIcon(&comp->location, comp->alignText, &color);
+	}
 }
 
 /**
