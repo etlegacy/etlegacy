@@ -665,7 +665,7 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 			continue;
 		}
 
-		if (cl->ettvClient)
+		if (cl->ettvClient || (svcls.isTVGame && ent->s.number < MAX_CLIENTS))
 		{
 			SV_AddEntToSnapshot(cl, playerEnt, svEnt, ent, eNums);
 			continue;
