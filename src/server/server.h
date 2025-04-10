@@ -296,7 +296,7 @@ typedef struct client_s
 	login_status_t loginStatus;
 #endif
 
-	uint64_t clientMask;                    ///< always sent entities of those clients
+	uint64_t clientMask;                    ///< always send entities of those clients
 } client_t;
 
 //=============================================================================
