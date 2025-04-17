@@ -1244,6 +1244,10 @@ void SV_Init(void)
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
 #endif
+
+#ifdef ETLEGACY_DEBUG
+	SV_InitNetworkOverhead();
+#endif
 }
 
 /**

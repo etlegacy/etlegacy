@@ -826,3 +826,31 @@ void trap_DemoSupport(const char *commands)
 		SystemCall(dll_trap_DemoSupport, commands);
 	}
 }
+
+/**
+* @brief Extension for informing engine about extended snapshot callback.
+*        The default engine snapshot callback returns the followee clientNum.
+*        Instead of the clientNum of the follower.
+*/
+void trap_SnapshotCallbackExt(void)
+{
+	if (dll_trap_SnapshotCallbackExt)
+	{
+		SystemCall(dll_trap_SnapshotCallbackExt);
+	}
+}
+
+/**
+* @brief Extension for setting client mask for given clientNum.
+*        Clients in the mask will be added to snapshot regardless of PVS.
+*        Mask is reset every server frame, so game needs to set it every frame.
+* @param[in] clientNum
+* @param[in] mask
+*/
+void trap_SnapshotSetClientMask(int clientNum, uint64_t mask)
+{
+	if (dll_trap_SnapshotSetClientMask)
+	{
+		SystemCall(dll_trap_SnapshotSetClientMask, clientNum, PASSUINT64(mask));
+	}
+}

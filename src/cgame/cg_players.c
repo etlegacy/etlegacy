@@ -196,6 +196,9 @@ void CG_NewClientInfo(int clientNum)
 	newInfo.fireteamData = ci->fireteamData;
 	newInfo.clientNum    = clientNum;
 	newInfo.selected     = ci->selected;
+	newInfo.ammo         = ci->ammo;
+	newInfo.ammoclip     = ci->ammoclip;
+	newInfo.powerups     = ci->powerups;
 
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
