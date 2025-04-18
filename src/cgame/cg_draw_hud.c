@@ -1105,7 +1105,6 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		switch (cgs.clientinfo[cg.snap->ps.clientNum].cls)
 		{
 		case PC_SOLDIER:
-		{
 			if (COM_BitCheck(cg.snap->ps.weapons, WP_PANZERFAUST))
 			{
 				CG_CalcPowerState(WP_PANZERFAUST, chargeTime, &needleFrac, &charge);
@@ -1122,8 +1121,7 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 			{
 				CG_CalcPowerState(WP_MORTAR2_SET, chargeTime, &needleFrac, &charge);
 			}
-		}
-		break;
+			break;
 		case PC_MEDIC:
 			CG_CalcPowerState(WP_MEDKIT, chargeTime, &needleFrac, &charge);
 			break;
@@ -1140,10 +1138,13 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 			case WP_KAR98:
 				CG_CalcPowerState(WP_GPG40, chargeTime, &needleFrac, &charge);
 				break;
-			case WP_COLT:
-			case WP_LUGER:
 			case WP_AKIMBO_COLT:
 			case WP_AKIMBO_LUGER:
+			case WP_COLT:
+			case WP_GRENADE_LAUNCHER:
+			case WP_GRENADE_PINEAPPLE:
+			case WP_LUGER:
+			case WP_PLIERS:
 				if (COM_BitCheck(cg.snap->ps.weapons, WP_GPG40) || COM_BitCheck(cg.snap->ps.weapons, WP_M7))
 				{
 					CG_CalcPowerState(WP_GPG40, chargeTime, &needleFrac, &charge);
