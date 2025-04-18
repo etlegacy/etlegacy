@@ -233,7 +233,7 @@ const char *NET_AdrToString(const netadr_t *a);
 const char *NET_AdrToStringNoPort(const netadr_t *a);
 int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 qboolean NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message);
-void NET_Sleep(int msec);
+void NET_Sleep(int64_t usec);
 
 /**
  * @def MAX_MSGLEN
@@ -1053,6 +1053,7 @@ void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, forma
 void Com_Quit_f(void) _attribute((noreturn));
 
 int Com_Milliseconds(void);     // will be journaled properly
+int64_t Com_Microseconds(void);
 unsigned int Com_BlockChecksum(const void *buffer, size_t length);
 unsigned int Com_BlockChecksumKey(void *buffer, int length, int key);
 char *Com_MD5FileETCompat(const char *fileName);
@@ -1122,9 +1123,10 @@ extern int time_game;
 extern int time_frontend;
 extern int time_backend;            // renderer backend time
 
-extern int com_frameTime;
-extern int com_expectedhunkusage;
-extern int com_hunkusedvalue;
+extern int     com_frameTime;
+extern int64_t com_frameTimeUS;
+extern int     com_expectedhunkusage;
+extern int     com_hunkusedvalue;
 
 extern qboolean com_errorEntered;
 
@@ -1361,7 +1363,7 @@ typedef enum
  */
 typedef struct
 {
-	int evTime;
+	int64_t evTime;
 	sysEventType_t evType;
 	int evValue, evValue2;
 	int evPtrLength;                ///< bytes of data pointed to by evPtr, for journaling
@@ -1370,8 +1372,8 @@ typedef struct
 
 
 #define MAX_JOYSTICK_AXIS 16
-void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr);
-int Com_EventLoop(void);
+void Com_QueueEvent(int64_t time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr);
+int64_t Com_EventLoop(void);
 sysEvent_t Com_GetSystemEvent(void);
 void Com_RunAndTimeServerPacket(const netadr_t *evFrom, msg_t *buf);
 
@@ -1409,6 +1411,7 @@ void Sys_Print(const char *msg);
 // Sys_Milliseconds should only be used for profiling purposes,
 // any game related timing information should come from event timestamps
 int Sys_Milliseconds(void);
+int64_t Sys_Microseconds(void);
 
 int Sys_PID(void);
 qboolean Sys_WritePIDFile(void);
