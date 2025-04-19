@@ -61,7 +61,7 @@ jobs:
 
   # Run the build on all the current platforms
   lnx64:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [ version ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
@@ -96,7 +96,7 @@ jobs:
             cpack
 
   lnx32:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [ version ]
     steps:
       - uses: actions/checkout@v4
@@ -220,7 +220,7 @@ jobs:
         run: cpack
 
   android:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
