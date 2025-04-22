@@ -3196,6 +3196,11 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_ParseModInfo();
 
+	if (demoPlayback)
+	{
+		CG_ParseDemoVersion();
+	}
+
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 
 #ifdef FEATURE_EDV
