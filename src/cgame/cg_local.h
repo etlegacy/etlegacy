@@ -3592,6 +3592,8 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 void CG_UpdateSvCvars(void);
 void CG_ResetVoiceSprites(qboolean revived);
 
+void CG_ParseDemoVersion(void);
+
 /**
  * @struct consoleCommand_t
  * @brief
