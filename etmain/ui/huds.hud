@@ -98,6 +98,19 @@
 						"component":	null
 					}
 				},
+				"weaponheatbar":	{
+					"rect":	{
+						"x":	-45,
+						"y":	-20,
+						"w":	60,
+						"h":	32
+					},
+					"anchor":	4,
+					"parent":	{
+						"anchor":	4,
+						"component":	null
+					}
+				},
 				"weaponammo":	{
 					"rect":	{
 						"x":	-45,
@@ -253,6 +266,19 @@
 						"component":	null
 					}
 				},
+				"weaponheatbar":{
+					"rect":	{
+						"x":	-28,
+						"y":	-20,
+						"w":	60,
+						"h":	32
+					},
+					"anchor":	4,
+					"parent":	{
+						"anchor":	4,
+						"component":	null
+					}
+				},
 				"weaponammo":	{
 					"rect":	{
 						"x":	-25,
@@ -324,6 +350,19 @@
 					}
 				},
 				"weaponicon":	{
+					"rect":	{
+						"x":	-45,
+						"y":	-20,
+						"w":	60,
+						"h":	32
+					},
+					"anchor":	4,
+					"parent":	{
+						"anchor":	4,
+						"component":	null
+					}
+				},
+				"weaponheatbar":{
 					"rect":	{
 						"x":	-45,
 						"y":	-20,
@@ -615,6 +654,19 @@
 					}
 				},
 				"weaponicon":	{
+					"rect":	{
+						"x":	49.70001220703125,
+						"y":	-92,
+						"w":	60,
+						"h":	32
+					},
+					"anchor":	6,
+					"parent":	{
+						"anchor":	5,
+						"component":	null
+					}
+				},
+				"weaponheatbar":{
 					"rect":	{
 						"x":	49.70001220703125,
 						"y":	-92,
@@ -1067,6 +1119,20 @@
 					"visible":	false
 				},
 				"weaponicon":	{
+					"rect":	{
+						"x":	-27.999984741210938,
+						"y":	-20,
+						"w":	60,
+						"h":	32
+					},
+					"visible":	false,
+					"anchor":	4,
+					"parent":	{
+						"anchor":	4,
+						"component":	null
+					}
+				},
+				"weaponheatbar":	{
 					"rect":	{
 						"x":	-27.999984741210938,
 						"y":	-20,

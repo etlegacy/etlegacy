@@ -57,7 +57,8 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
 	{ HUDF(ranktext),           CG_DrawRank,                      0.20f,  { 0 } },
 	{ HUDF(statsdisplay),       CG_DrawSkills,                    0.25f,  { "Column" } },
-	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash",    "Dynamic Heat Color", 		   "Only Charge" } },
+	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash",    "Only Ticking" } },
+	{ HUDF(weaponheatbar),      CG_DrawGunHeatBar,                0.19f,  { "Dynamic Heat Color" } },
 	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 0.25f,  { "Dynamic Color" } },
 	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           0.20f,  { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row"} },// FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),      CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
@@ -86,7 +87,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponchargetext),   CG_DrawWeaponCharge,              0.25f,  { "Draw Suffix" } },
 	{ HUDF(fps),                CG_DrawFPS,                       0.19f,  { 0 } },
 	{ HUDF(snapshot),           CG_DrawSnapshot,                  0.19f,  { 0 } },
-	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { "Draw Suffix" } },
+	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { "Draw Prefix" } },
 	{ HUDF(speed),              CG_DrawSpeed,                     0.19f,  { "Max Speed", "Draw Suffix" } },
 	{ HUDF(lagometer),          CG_DrawLagometer,                 0.19f,  { 0 } },
 	{ HUDF(disconnect),         CG_DrawDisconnect,                0.35f,  { "No Text" } },
@@ -192,6 +193,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->ranktext           = CG_getComponent(167, 465, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);    // disable
 	hud->statsdisplay       = CG_getComponent(116, 394, 42, 70, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawSkills);
 	hud->weaponicon         = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1 | 2, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
+	hud->weaponheatbar      = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunHeatBar);
 	hud->weaponammo         = CG_getComponent(SCREEN_WIDTH - 82, 458, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, CG_DrawAmmoCount);
 	hud->fireteam           = CG_getComponent(10, 10, 350, 100, qtrue, 1, 100.f, colorWhite, HUD_Background, qtrue, HUD_BackgroundAlt, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawFireTeamOverlay);
 	hud->popupmessages      = CG_getComponent(4, 245, 422, 96, qtrue, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
@@ -1224,9 +1226,6 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	// Draw weapon icon and overheat bar
-	CG_DrawWeapHeat(&comp->location, HUD_HORIZONTAL, (comp->style & 2));
-
 	// weapon flash color
 	if (comp->style & 1)
 	{
@@ -1257,8 +1256,8 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 		Vector4Copy(comp->colorMain, color);
 	}
 
-
-	if (comp->style & 4)
+	// grenade ticking condition
+	if (comp->style & 2)
 	{
 		if (cg.predictedPlayerState.grenadeTimeLeft)
 		{
@@ -1269,6 +1268,42 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 	{
 		CG_DrawPlayerWeaponIcon(&comp->location, comp->alignText, &color);
 	}
+}
+
+/**
+ * @brief CG_DrawGunHeatBar
+ * @param[in] location
+ */
+void CG_DrawGunHeatBar(hudComponent_t *comp)
+{
+	vec4_t color;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.stats[STAT_HEALTH] <= 0)
+	{
+		return;
+	}
+
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
+	CG_DrawWeapHeat(&comp->location, HUD_HORIZONTAL, (comp->style & 1));
 }
 
 /**
