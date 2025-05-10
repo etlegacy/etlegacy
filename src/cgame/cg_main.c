@@ -700,9 +700,9 @@ static cvarTable_t cvarTable[] =
 	{ &cg_customCrosshairCrossOutlineColor,   "cg_customCrosshairCrossOutlineColor",   "#000000E6",   CVAR_ARCHIVE,                 0 },
 	{ &cg_customCrosshairCrossOutlineWidth,   "cg_customCrosshairCrossOutlineWidth",   "1.0",         CVAR_ARCHIVE,                 0 },
 
-	{ &cg_scopeReticleStyle,   		  "cg_scopeReticleStyle",		   "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_scopeReticleColor,   		  "cg_scopeReticleColor",		   "#000000FF",   CVAR_ARCHIVE,                 0 },
-	{ &cg_scopeReticleDotColor,   		  "cg_scopeReticleDotColor",		   "#000000FF",   CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleStyle,                  "cg_scopeReticleStyle",                  "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleColor,                  "cg_scopeReticleColor",                  "#000000FF",   CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleDotColor,               "cg_scopeReticleDotColor",               "#000000FF",   CVAR_ARCHIVE,                 0 },
 
 	{ &cg_commandMapTime,                     "cg_commandMapTime",                     "0",           CVAR_ARCHIVE,                 0 },
 };
