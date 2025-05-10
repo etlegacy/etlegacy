@@ -88,7 +88,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(fps),                CG_DrawFPS,                       0.19f,  { 0 } },
 	{ HUDF(snapshot),           CG_DrawSnapshot,                  0.19f,  { 0 } },
 	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { "Draw Prefix" } },
-	{ HUDF(speed),              CG_DrawSpeed,                     0.19f,  { "Max Speed", "Draw Suffix" } },
+	{ HUDF(speed),              CG_DrawSpeed,                     0.19f,  { "Max Speed",     "Draw Suffix" } },
 	{ HUDF(lagometer),          CG_DrawLagometer,                 0.19f,  { 0 } },
 	{ HUDF(disconnect),         CG_DrawDisconnect,                0.35f,  { "No Text" } },
 	{ HUDF(chat),               CG_DrawTeamInfo,                  0.20f,  { "No Team Flag" } },// FIXME: outside cg_draw_hud
