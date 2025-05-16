@@ -43,102 +43,6 @@
 #endif
 
 /**
- * @brief OtherTeam
- * @param[in] team
- * @return
- *
- * @note Unused
- */
-int OtherTeam(int team)
-{
-	if (team == TEAM_AXIS)
-	{
-		return TEAM_ALLIES;
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		return TEAM_AXIS;
-	}
-	return team;
-}
-
-/**
- * @brief TeamName
- * @param[in] team
- * @return
- */
-const char *TeamName(int team)
-{
-	if (team == TEAM_AXIS)
-	{
-		return "RED";
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		return "BLUE";
-	}
-	else if (team == TEAM_SPECTATOR)
-	{
-		return "SPECTATOR";
-	}
-	return "FREE";
-}
-
-/**
- * @brief TeamColorString
- * @param[in] team
- * @return
- *
- * @note Unused
- */
-const char *TeamColorString(int team)
-{
-	if (team == TEAM_AXIS)
-	{
-		return S_COLOR_RED;
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		return S_COLOR_BLUE;
-	}
-	else if (team == TEAM_SPECTATOR)
-	{
-		return S_COLOR_YELLOW;
-	}
-	return S_COLOR_WHITE;
-}
-
-/**
- * @brief PrintMsg
- * @param ent
- * @param fmt
- *
- * @note NULL for everyone
- */
-void QDECL PrintMsg(gentity_t *ent, const char *fmt, ...)
-{
-	char    msg[1024];
-	va_list argptr;
-	char    *p;
-
-	// NOTE: if buffer overflow, it's more likely to corrupt stack and crash than do a proper G_Error?
-	va_start(argptr, fmt);
-	if (Q_vsnprintf(msg, sizeof(msg), fmt, argptr) > sizeof(msg))
-	{
-		G_Error("PrintMsg overrun\n");
-	}
-	va_end(argptr);
-
-	// double quotes are bad
-	while ((p = strchr(msg, '"')) != NULL)
-	{
-		*p = '\'';
-	}
-
-	trap_SendServerCommand(((ent == NULL) ? -1 : ent - g_entities), va("print \"%s\"", msg));
-}
-
-/**
  * @brief OnSameTeam
  * @param[in] ent1
  * @param[in] ent2
@@ -251,11 +155,11 @@ static void Team_FlagSound(gentity_t *ent, int team, teamFlagState_t state)
  */
 void Team_ReturnFlag(gentity_t *ent)
 {
-	int team = ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES;
+	int team = (ent->item->giPowerUp == PW_REDFLAG) ? TEAM_AXIS : TEAM_ALLIES;
 
 	Team_FlagSound(ent, team, TEAM_FLAG_STATE_RETURNED);
 	Team_ResetFlag(ent);
-	PrintMsg(NULL, "The %s flag has returned!\n", TeamName(team)); // FIXME: returns RED/BLUE flag ... change to Axis/Allies?
+	trap_SendServerCommand(-1, va("cp \"The %s flag has returned!\"", BG_TeamnameForNumber(team)));
 }
 
 /**
@@ -486,7 +390,7 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	}
 	else
 	{
-		PrintMsg(other, "Don't know what team the flag is on.\n");
+		trap_SendServerCommand(other - g_entities, "cp \"Don't know what team the flag is on.\"");
 		return PICKUP_INVALID;
 	}
 
@@ -1581,38 +1485,6 @@ void SP_team_WOLF_checkpoint(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 }
-
-/*
- * @brief Team_ClassForString
- * @param[in] string
- * @return
- *
- * @note Unused
-int Team_ClassForString(const char *string)
-{
-    if (!Q_stricmp(string, "soldier"))
-    {
-        return PC_SOLDIER;
-    }
-    else if (!Q_stricmp(string, "medic"))
-    {
-        return PC_MEDIC;
-    }
-    else if (!Q_stricmp(string, "engineer"))
-    {
-        return PC_ENGINEER;
-    }
-    else if (!Q_stricmp(string, "fieldops"))
-    {
-        return PC_FIELDOPS;
-    }
-    else if (!Q_stricmp(string, "covertops"))
-    {
-        return PC_COVERTOPS;
-    }
-    return -1;
-}
-*/
 
 const char *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^$Allies^7", "^2Spectators^7" };
 team_info  teamInfo[TEAM_NUM_TEAMS];
