@@ -184,7 +184,7 @@ void Team_ResetFlag(gentity_t *ent)
 	if (ent->flags & FL_DROPPED_ITEM)
 	{
 		Team_ResetFlag(&g_entities[ent->s.otherEntityNum]);
-		G_FreeEntity(ent);
+		ent->freeAfterEvent = qtrue;
 	}
 	else
 	{
@@ -290,7 +290,6 @@ void Team_DroppedFlagThink(gentity_t *ent)
 			G_Script_ScriptEvent(level.gameManager, "trigger", "allied_object_returned");
 		}
 	}
-	// Reset Flag will delete this entity
 }
 
 /**
@@ -351,10 +350,9 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 		// reward player for returning objective item
 		G_AddSkillPoints(other, SK_BATTLE_SENSE, 5.f, "objective returned");
 
-		//ResetFlag will remove this entity!  We must return zero
 		Team_ReturnFlagSound(ent, team);
 		Team_ResetFlag(ent);
-		return 0;
+		return -1;
 	}
 
 	// GT_WOLF doesn't support capturing the flag
