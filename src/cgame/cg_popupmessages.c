@@ -1225,9 +1225,9 @@ const char *CG_GetPMItemText(centity_t *cent)
 	case PM_OBJECTIVE:
 		switch (cent->currentState.density)
 		{
-		case 0:
+		case TEAM_FLAG_STATE_STOLEN:
 			return va(CG_TranslateString("%s have stolen %s!"), cent->currentState.effect2Time == TEAM_ALLIES ? CG_TranslateString("Allies") : CG_TranslateString("Axis"), CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
-		case 1:
+		case TEAM_FLAG_STATE_RETURNED:
 			return va(CG_TranslateString("%s have returned %s!"), cent->currentState.effect2Time == TEAM_ALLIES ? CG_TranslateString("Allies") : CG_TranslateString("Axis"), CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
 		}
 		break;
@@ -1325,7 +1325,7 @@ void CG_PlayPMItemSound(centity_t *cent)
 	case PM_OBJECTIVE:
 		switch (cent->currentState.density)
 		{
-		case 0:
+		case TEAM_FLAG_STATE_STOLEN:
 			if (cent->currentState.effect2Time == TEAM_AXIS)
 			{
 				CG_SoundPlaySoundScript("axis_hq_objective_taken", NULL, -1, qtrue);
@@ -1335,7 +1335,7 @@ void CG_PlayPMItemSound(centity_t *cent)
 				CG_SoundPlaySoundScript("allies_hq_objective_taken", NULL, -1, qtrue);
 			}
 			break;
-		case 1:
+		case TEAM_FLAG_STATE_RETURNED:
 			if (cent->currentState.effect2Time == TEAM_AXIS)
 			{
 				CG_SoundPlaySoundScript("axis_hq_objective_secure", NULL, -1, qtrue);

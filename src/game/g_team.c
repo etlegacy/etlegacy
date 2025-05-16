@@ -223,25 +223,26 @@ void Team_ResetFlag(gentity_t *ent)
 }
 
 /**
- * @brief Team_ReturnFlagSound
+ * @brief Team_FlagSound
  * @param[in] ent
  * @param[in] team
+ * @param[in] state 0 = stolen, 1 = returned
  */
-void Team_ReturnFlagSound(gentity_t *ent, int team)
+static void Team_FlagSound(gentity_t *ent, int team, teamFlagState_t state)
 {
 	// play powerup spawn sound to all clients
 	gentity_t *pm;
 
 	if (ent == NULL)
 	{
-		G_Printf("Warning: NULL passed to Team_ReturnFlagSound\n");
+		G_Printf(S_COLOR_YELLOW "WARNING: NULL passed to %s\n", __FUNCTION__);
 		return;
 	}
 
 	pm                = G_PopupMessage(PM_OBJECTIVE);
 	pm->s.effect3Time = G_StringIndex(ent->message);
 	pm->s.effect2Time = team;
-	pm->s.density     = 1; // 1 = returned
+	pm->s.density     = state;
 }
 
 /**
@@ -252,7 +253,7 @@ void Team_ReturnFlag(gentity_t *ent)
 {
 	int team = ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES;
 
-	Team_ReturnFlagSound(ent, team);
+	Team_FlagSound(ent, team, TEAM_FLAG_STATE_RETURNED);
 	Team_ResetFlag(ent);
 	PrintMsg(NULL, "The %s flag has returned!\n", TeamName(team)); // FIXME: returns RED/BLUE flag ... change to Axis/Allies?
 }
@@ -270,7 +271,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
 	{
 		G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
 
-		Team_ReturnFlagSound(ent, TEAM_AXIS);
+		Team_FlagSound(ent, TEAM_AXIS, TEAM_FLAG_STATE_RETURNED);
 		Team_ResetFlag(ent);
 
 		if (level.gameManager)
@@ -282,7 +283,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
 	{
 		G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
 
-		Team_ReturnFlagSound(ent, TEAM_ALLIES);
+		Team_FlagSound(ent, TEAM_ALLIES, TEAM_FLAG_STATE_RETURNED);
 		Team_ResetFlag(ent);
 
 		if (level.gameManager)
@@ -350,7 +351,7 @@ static int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 		// reward player for returning objective item
 		G_AddSkillPoints(other, SK_BATTLE_SENSE, 5.f, "objective returned");
 
-		Team_ReturnFlagSound(ent, team);
+		Team_FlagSound(ent, team, TEAM_FLAG_STATE_RETURNED);
 		Team_ResetFlag(ent);
 		return PICKUP_ACTIVATE;
 	}
@@ -379,11 +380,7 @@ static int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 
 	if (cl->sess.sessionTeam == TEAM_AXIS)
 	{
-		gentity_t *pm = G_PopupMessage(PM_OBJECTIVE);
-
-		pm->s.effect3Time = G_StringIndex(ent->message);
-		pm->s.effect2Time = TEAM_AXIS;
-		pm->s.density     = 0; // 0 = stolen
+		Team_FlagSound(ent, TEAM_AXIS, TEAM_FLAG_STATE_STOLEN);
 
 		if (level.gameManager)
 		{
@@ -396,11 +393,7 @@ static int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 	}
 	else
 	{
-		gentity_t *pm = G_PopupMessage(PM_OBJECTIVE);
-
-		pm->s.effect3Time = G_StringIndex(ent->message);
-		pm->s.effect2Time = TEAM_ALLIES;
-		pm->s.density     = 0; // 0 = stolen
+		Team_FlagSound(ent, TEAM_ALLIES, TEAM_FLAG_STATE_STOLEN);
 
 		if (level.gameManager)
 		{
