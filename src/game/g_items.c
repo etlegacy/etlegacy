@@ -45,18 +45,6 @@
 #include "g_etbot_interface.h"
 #endif
 
-#define RESPAWN_NEVER       -1
-#define RESPAWN_KEY          4
-#define RESPAWN_ARMOR        25
-#define RESPAWN_TEAM_WEAPON  30
-#define RESPAWN_HEALTH       35
-#define RESPAWN_AMMO         40
-#define RESPAWN_HOLDABLE     60
-#define RESPAWN_MEGAHEALTH   120
-#define RESPAWN_POWERUP      120
-#define RESPAWN_PARTIAL      998    // for multi-stage ammo/health
-#define RESPAWN_PARTIAL_DONE 999    // for multi-stage ammo/health
-
 /**
  * @brief Add the specified ammount of ammo into the clip.
  * @param[in,out] ps which player
@@ -484,7 +472,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				// add 1 clip of magic ammo for any two-handed weapon
 			}
 		}
-		return RESPAWN_NEVER;
+		return PICKUP_RESPAWN_NEVER;
 	}
 
 	quantity = ent->count;
@@ -510,13 +498,13 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 
 		if (level.time - other->client->dropWeaponTime < 1000)
 		{
-			return 0;
+			return PICKUP_INVALID;
 		}
 
 		// don't pick up when MG or mortar is set
 		if (GetWeaponTableData(other->client->ps.weapon)->type & WEAPON_TYPE_SET)
 		{
-			return 0;
+			return PICKUP_INVALID;
 		}
 
 		// see if we can pick it up
@@ -524,7 +512,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 
 		if (!canPickup)
 		{
-			return 0;
+			return PICKUP_INVALID;
 		}
 
 		if (other->client->sess.playerType == PC_SOLDIER && BG_IsSkillAvailable(other->client->sess.skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG))
@@ -586,7 +574,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	Bot_Event_AddWeapon(other->client->ps.clientNum, Bot_WeaponGameToBot(ent->item->giWeapon));
 #endif
 
-	return RESPAWN_NEVER;
+	return PICKUP_RESPAWN_NEVER;
 }
 
 /**
@@ -624,7 +612,7 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 	}
 #endif
 
-	return -1;
+	return PICKUP_RESPAWN_NEVER;
 }
 
 /**
@@ -756,6 +744,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
+	// item wasn't picked up
 	if (!respawn)
 	{
 		return;
@@ -788,7 +777,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		te->s.eventParm = ent->s.modelindex;
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
-    
+
 	// fire item targets
 	G_UseTargets(ent, other);
 
@@ -808,14 +797,14 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	// A negative respawn times means to never respawn this item (but don't
 	// delete it).  This is used by items that are respawned by third party
 	// events such as ctf flags
-	if (respawn <= 0)
+	if (respawn <= PICKUP_RESPAWN_NEVER)
 	{
 		ent->nextthink = 0;
 		ent->think     = 0;
 	}
 	else
 	{
-		ent->nextthink = level.time + respawn * 1000;
+		ent->nextthink = level.time + respawn;
 		ent->think     = RespawnItem;
 	}
 	trap_LinkEntity(ent);

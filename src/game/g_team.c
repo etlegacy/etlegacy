@@ -299,7 +299,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
  * @param[in] team
  * @return
  */
-int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
+static int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
 
@@ -352,11 +352,11 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 
 		Team_ReturnFlagSound(ent, team);
 		Team_ResetFlag(ent);
-		return -1;
+		return PICKUP_ACTIVATE;
 	}
 
 	// GT_WOLF doesn't support capturing the flag
-	return 0;
+	return PICKUP_INVALID;
 }
 
 /**
@@ -366,7 +366,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
  * @param[in] team
  * @return
  */
-int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
+static int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
 	gentity_t *tmp;
@@ -457,11 +457,11 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 
 	if (ent->s.density > 0)
 	{
-		return 1; // We have more flags to give out, spawn back quickly
+		return PICKUP_RESPAWN_TIME; // We have more flags to give out, spawn back quickly
 	}
 	else
 	{
-		return -1; // Do not respawn this automatically, but do delete it if it was FL_DROPPED
+		return PICKUP_RESPAWN_NEVER; // Do not respawn this automatically, but do delete it if it was FL_DROPPED
 	}
 }
 
@@ -479,7 +479,7 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	// Don't let them pickup winning stuff in warmup
 	if (g_gamestate.integer != GS_PLAYING)
 	{
-		return 0;
+		return PICKUP_INVALID;
 	}
 
 	// figure out what team this flag is
@@ -494,13 +494,13 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	else
 	{
 		PrintMsg(other, "Don't know what team the flag is on.\n");
-		return 0;
+		return PICKUP_INVALID;
 	}
 
 	// ensure we don't pick a dropped obj up right away
 	if (level.time - cl->dropObjectiveTime < 2000)
 	{
-		return 0;
+		return PICKUP_INVALID;
 	}
 
 	trap_SendServerCommand(other - g_entities, "cp \"You picked up the objective!\"");

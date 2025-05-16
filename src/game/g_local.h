@@ -716,6 +716,10 @@ typedef struct
 #define PICKUP_TOUCH    1   ///< pickup items when touched
 #define PICKUP_FORCE    2   ///< pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
 
+#define PICKUP_RESPAWN_NEVER -1     ///< picked up items will not trigger respawn item
+#define PICKUP_INVALID 0            ///< cannot pickup items
+#define PICKUP_RESPAWN_TIME  1000   ///< picked up items will trigger respawn item
+
 // zinx etpro antiwarp
 #define LAG_MAX_COMMANDS 512
 #define LAG_MAX_DELTA 25
