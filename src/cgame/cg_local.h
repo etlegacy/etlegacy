@@ -3229,7 +3229,7 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 #define GIZMO_DEFAULT_RADIUS 32.f
 
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
-void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
+void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis, qboolean drawTip);
 void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4]);
 
 /**
