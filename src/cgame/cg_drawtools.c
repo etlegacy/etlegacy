@@ -191,14 +191,13 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	float  x2 = x, x3 = x, y2 = y, y3 = y, w2 = w, h2 = h;
 	float  iconW, iconH;
 
-	if (frac > 1)
+	if (flags & BAR_CIRCULAR)
 	{
-		frac = 1.f;
+		CG_DrawCircle(x + w * .5f, y + h * .5f, w * 0.5f, h * 0.5f, startColor, endColor, bgColor, bdColor, frac, needleFrac, flags, icon);
+		return;
 	}
-	if (frac < 0)
-	{
-		frac = 0;
-	}
+
+	frac = Com_Clamp(0, 1.f, frac);
 
 	if ((flags & BAR_BG) && bgColor)       // BAR_BG set, and color specified, use specified bg color
 	{
@@ -399,6 +398,82 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			}
 		}
 	}
+}
+
+#define WHITE_SHADER_SIZE_COEFF 3.2f
+#define PI_PER_2 (M_PI * 2.f)
+
+/**
+ * @brief CG_DrawCircle
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] startColor
+ * @param[in] endColor
+ * @param[in] bgColor
+ * @param[in] bdColor
+ * @param[in] frac
+ * @param[in] needleFrac
+ * @param[in] flags
+ * @param[in] icon
+ */
+void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float *endColor,
+                   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon)
+{
+	int    i;
+	vec4_t colorAtPos;
+
+	// start at 0°
+	// BAR_LEFT mirror the circle
+	float startAngle     = M_PI_2 + DEG2RAD((flags & BAR_LEFT) ? cg_circleStartAngle.value : 360 - cg_circleStartAngle.value);
+	float numberOfSquare = ((MAX(w, h) * 2) * (1 / cg_circleThickness.value)) * cg_circleDensityPoint.value;
+	float size           = WHITE_SHADER_SIZE_COEFF / (1 / cg_circleThickness.value);
+	float slice          = ((PI_PER_2 - DEG2RAD(360 - cg_circleEndAngle.value)) / numberOfSquare) * ((flags & BAR_VERT) ? 1 : -1);     // BAR_VERT control circle direction
+
+	frac = Com_Clamp(0, 1.f, frac);
+
+	Vector4Scale(startColor, frac, colorAtPos);
+
+	for (i = 0; i <= numberOfSquare * frac; ++i)
+	{
+		// start at 0°
+		float theta = (slice * i - startAngle);
+
+		if ((flags & BAR_LERP_COLOR) && endColor)
+		{
+			Vector4Average(startColor, endColor, i / numberOfSquare, colorAtPos);
+		}
+
+		if (flags & BAR_BORDER)
+		{
+			trap_R_SetColor(bdColor);
+			CG_DrawRotatedPic(x + w * cosf(theta) + 0.5f, y + h * sinf(theta) + 0.5f, size, size, cgs.media.whiteShader, (theta + M_PI_4) / PI_PER_2);
+		}
+
+		trap_R_SetColor(colorAtPos);
+		CG_DrawRotatedPic(x + w * cosf(theta), y + h * sinf(theta), size, size, cgs.media.whiteShader, (theta + M_PI_4) / PI_PER_2);
+	}
+
+	if (flags & BAR_ICON && icon > -1)
+	{
+		int iconW = MIN(w, h) * 0.25;
+		int iconH = iconW;
+
+		if (icon == cgs.media.hudPowerIcon)
+		{
+			iconW *= .5f;
+
+			if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
+			{
+				CG_SetChargebarIconColor();
+			}
+		}
+
+		CG_DrawPic(x - iconW * 0.5, y - iconH * 0.5, iconW, iconH, icon);
+	}
+
+	trap_R_SetColor(NULL);
 }
 
 /**

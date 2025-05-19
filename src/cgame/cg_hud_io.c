@@ -47,6 +47,7 @@ typedef struct
 	qboolean replaceNumberByName;                       //< added in version 3
 	char numberToNameTableReminder[MAXHUDS][MAX_QPATH]; //< added in version 3
 	qboolean shiftHealthBarDynamicColorStyle;           //< added in version 4
+	qboolean shiftHealthBarDynamicColorStyle2;          //< added in version 5
 } hudFileUpgrades_t;
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
@@ -1553,6 +1554,25 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		}
 	}
 
+	if (upgr->shiftHealthBarDynamicColorStyle2)
+	{
+        // Ensure dynamic coloration style is applied due to insertion of needle style from bar
+        if (tmpHud->crosshairbar.style & BAR_CIRCULAR)
+        {
+            tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
+        }
+
+        tmpHud->healthbar.style & ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
+        
+		// Ensure dynamic coloration style is applied due to insertion of circular style from bar
+		if (tmpHud->healthbar.style & BAR_CIRCULAR)
+		{
+			tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
+		}
+
+		tmpHud->healthbar.style & ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
+	}
+
 	if (upgr->calcAnchors)
 	{
 		CG_GenerateHudAnchors(tmpHud);
@@ -1607,6 +1627,9 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 	// fall through
 	case 3:         // 2.82.1 - needle style has been added for health bar, requiring shifting Dynamic Color style value
 		ret->shiftHealthBarDynamicColorStyle = qtrue;
+	// fall through
+	case 4:         // 2.82.3 - circular style has been added for bar, requiring shifting Dynamic Color style value
+		ret->shiftHealthBarDynamicColorStyle2 = qtrue;
 		break;
 	default:
 		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);

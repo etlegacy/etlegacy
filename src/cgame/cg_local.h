@@ -2266,6 +2266,7 @@ enum
 	BAR_DECOR          = BIT(10),
 	BAR_ICON           = BIT(11),
 	BAR_NEEDLE         = BIT(12),
+	BAR_CIRCULAR       = BIT(13),
 };
 
 enum
@@ -3027,6 +3028,11 @@ extern vmCvar_t cg_customCrosshairCrossOutlineWidth;
 
 extern vmCvar_t cg_commandMapTime;
 
+extern vmCvar_t cg_circleDensityPoint;
+extern vmCvar_t cg_circleStartAngle;
+extern vmCvar_t cg_circleEndAngle;
+extern vmCvar_t cg_circleThickness;
+
 // local clock flags
 enum
 {
@@ -3173,6 +3179,9 @@ float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMs
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
 void CG_ColorForHealth(int health, vec4_t hcolor);
+
+void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float *endColor,
+                   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon);
 
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
@@ -4438,7 +4447,7 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 24
-#define CURRENT_HUD_JSON_VERSION 4
+#define CURRENT_HUD_JSON_VERSION 5
 #define DEFAULTHUD "ETmain"
 
 typedef struct

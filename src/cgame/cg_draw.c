@@ -1841,6 +1841,8 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 	x = comp->location.x + (comp->location.w - w) * .5f;
 	y = comp->location.y + (comp->location.h - h) * .5f;
 
+	trap_R_SetColor(colorWhite);
+
 	CG_AdjustFrom640(&x, &y, &w, &h);
 
 	// set color based on health
@@ -2289,7 +2291,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	// remove unecessary style for bar customization
 	style = (comp->style >> 3);
 
-	if (style & (BAR_ICON << 1))
+	if (style & (BAR_CIRCULAR << 1))
 	{
 		Vector4Copy(comp->colorMain, c);
 		CG_ColorForHealth(health, c);

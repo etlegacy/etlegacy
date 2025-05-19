@@ -49,10 +49,10 @@ const hudComponentFields_t hudComponentFields[] =
 {
 	{ HUDF(crosshair),          CG_DrawCrosshair,                 0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color",  "Dynamic Color Alt" } },         // FIXME: outside cg_draw_hud
 	{ HUDF(compass),            CG_DrawNewCompass,                0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw"} },
-	{ HUDF(staminabar),         CG_DrawStaminaBar,                0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(breathbar),          CG_DrawBreathBar,                 0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Dynamic Color"} },
-	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle"} },
+	{ HUDF(staminabar),         CG_DrawStaminaBar,                0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} },
+	{ HUDF(breathbar),          CG_DrawBreathBar,                 0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} },
+	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular", "Dynamic Color"} },
+	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} },
 	{ HUDF(healthtext),         CG_DrawPlayerHealth,              0.25f,  { "Dynamic Color", "Draw Suffix" } },
 	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
 	{ HUDF(ranktext),           CG_DrawRank,                      0.20f,  { 0 } },
@@ -67,9 +67,9 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(objectives),         CG_DrawObjectiveStatus,           0.19f,  { 0 } },
 	{ HUDF(hudhead),            CG_DrawPlayerStatusHead,          0.19f,  { 0 } },
 	{ HUDF(cursorhints),        CG_DrawCursorhint,                0.19f,  { "Size Pulse",    "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
-	{ HUDF(cursorhintsbar),     CG_DrawCursorHintBar,             0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },  // FIXME: outside cg_draw_hud
+	{ HUDF(cursorhintsbar),     CG_DrawCursorHintBar,             0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} },  // FIXME: outside cg_draw_hud
 	{ HUDF(cursorhintstext),    CG_DrawCursorHintText,            0.19f,  { "Draw Suffix" } },// FIXME: outside cg_draw_hud
-	{ HUDF(weaponstability),    CG_DrawWeapStability,             0.19f,  { "Always",        "Left",         "Center",         "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(weaponstability),    CG_DrawWeapStability,             0.19f,  { "Always",        "Left",         "Center",         "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),          CG_DrawLivesLeft,                 0.19f,  { 0 } },
 	{ HUDF(roundtimer),         CG_DrawRoundTimer,                0.19f,  { "Simple" } },
 	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              0.19f,  { 0 } },
@@ -99,7 +99,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(centerprint),        CG_DrawCenterString,              0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(banner),             CG_DrawBannerPrint,               0.23f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),      CG_DrawCrosshairNames,            0.25f,  { "Full Color",    "Explosive Owner" } },// FIXME: outside cg_draw_hud
-	{ HUDF(crosshairbar),       CG_DrawCrosshairHealthBar,        0.25f,  { "Class",         "Rank",         "Prestige",       "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(crosshairbar),       CG_DrawCrosshairHealthBar,        0.25f,  { "Class",         "Rank",         "Prestige",       "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),              CG_DrawShoutcastPlayerStatus,     0.19f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(xpgain),             CG_DrawPMItemsXPGain,             0.22f,  { "Scroll Down",   "No Reason",    "No Stack",       "No XP Add up"      } }, // FIXME: outside cg_draw_hud
 	{ HUDF(scPlayerListAxis),   CG_DrawShoutcastPlayerListAxis,   0.16f,  { 0 } },           // FIXME: outside cg_draw_hud
@@ -185,7 +185,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->compass            = CG_getComponent(SCREEN_WIDTH - 136, 0, 132, 132, qtrue, COMPASS_ITEM | COMPASS_SECONDARY_OBJECTIVES | COMPASS_PRIMARY_OBJECTIVES | COMPASS_DECOR | COMPASS_CARDINAL_POINTS, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 	hud->staminabar         = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 1.0f, 0.1f, 0.5f }, (vec4_t) { 1.0f, 0, 0.1f, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
 	hud->breathbar          = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 0.1f, 1.0f, 0.5f }, (vec4_t) { 1.0f, 0.1f, 0, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
-	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | BAR_NEEDLE | (BAR_NEEDLE << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
+	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | BAR_NEEDLE | (BAR_CIRCULAR << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
 	hud->weaponchargebar    = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON | BAR_NEEDLE, 100.f, (vec4_t) { 1.0, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0, 1.0f, 0.1f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
 	hud->healthtext         = CG_getComponent(47, 465, 57, 14, qtrue, 2, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
 	hud->xptext             = CG_getComponent(108, 465, 57, 14, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
@@ -894,7 +894,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 		}
 	}
 
-	if (comp->style & (BAR_NEEDLE << 1))
+	if (comp->style & (BAR_CIRCULAR << 1))
 	{
 		Vector4Copy(comp->colorMain, color);
 		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
