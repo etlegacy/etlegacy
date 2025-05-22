@@ -6236,6 +6236,7 @@ const char *_GetEntityName(gentity_t *_ent)
 
 			return name;
 		}
+		return "";
 	}
 	return nullptr;
 }
