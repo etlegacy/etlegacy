@@ -54,8 +54,10 @@ static int C_gentity_ptr_to_entNum(uintptr_t addr)
  */
 
 /**
- * @brief Registers a name for this Lua module
- * @lua et.RegisterModname( modname ) @endlua
+ * Registers a descriptive name for this mod.
+ *
+ * @lua_def_prototype et.RegisterModname(modname)
+ * @lua_def ---@param modname string the name to register the Lua module.
  */
 static int _et_RegisterModname(lua_State *L)
 {
@@ -73,9 +75,10 @@ static int _et_RegisterModname(lua_State *L)
 }
 
 /**
- * @brief Gets slot number assigned to this lua VM
- * @lua vmnumber = et.FindSelf() @endlua
- * @returns Slot number between 0 and #LUA_NUM_VM
+ * Returns the assigned Lua VM slot number.
+ *
+ * @lua_def_prototype et.FindSelf()
+ * @lua_def ---@return number vmnumber the returned slot number assigned to this Lua VM.
  */
 static int _et_FindSelf(lua_State *L)
 {
@@ -93,9 +96,12 @@ static int _et_FindSelf(lua_State *L)
 }
 
 /**
- * @brief Gets name of lua module at slot @p vmnumber and its signature hash
- * @lua modname, signature = et.FindMod( vmnumber ) @endlua
- * @returns VM name registered by _et_RegisterModname() and SHA-1 signature of the VM
+ * Returns the name and SHA1 signature for the mod loaded in a VM slot.
+ *
+ * @lua_def_prototype et.FindMod(vmnumber)
+ * @lua_def ---@param vmnumber number the VM slot number of the Lua module.
+ * @lua_def ---@return string? modname the returned registered module's name, nil if the VM slot is invalid.
+ * @lua_def ---@return string? signature the returned registered module's SHA-1 signature hash, nil if the VM slot is invalid.
  */
 static int _et_FindMod(lua_State *L)
 {
@@ -115,7 +121,18 @@ static int _et_FindMod(lua_State *L)
 	return 2;
 }
 
-// success = et.IPCSend( vmnumber, message )
+/**
+ * Sends a message string to the mod in the another VM slot.
+ *
+ * IMPORTANT: The mod receiving message must have an `et.IPCReceive` callback.
+ *
+ * NOTE: Data cannot be received and sent back in the same server frame.
+ *
+ * @lua_def_prototype et.IPCSend(vmnumber, message)
+ * @lua_def ---@param vmnumber number the VM slot number of the Lua module to send a message to.
+ * @lua_def ---@param message string the message to sent to the Lua module.
+ * @lua_def ---@return number success '1' if the message is sent successfully, '0' if it fails.
+ */
 static int _et_IPCSend(lua_State *L)
 {
 	int        vmnumber = (int)luaL_checkinteger(L, 1);
@@ -162,7 +179,13 @@ static int _et_IPCSend(lua_State *L)
 }
 
 // Printing
-// et.G_Print( text )
+
+/**
+ * Prints text to the server console.
+ *
+ * @lua_def_prototype et.G_Print(text)
+ * @lua_def ---@param text string the printed string.
+ */
 static int _et_G_Print(lua_State *L)
 {
 	char text[1024];
@@ -172,7 +195,12 @@ static int _et_G_Print(lua_State *L)
 	return 0;
 }
 
-// et.G_LogPrint( text )
+/**
+ * Prints text to the server console and writes it to the server log.
+ *
+ * @lua_def_prototype et.G_LogPrint(text)
+ * @lua_def ---@param text string the printed and logged string.
+ */
 static int _et_G_LogPrint(lua_State *L)
 {
 	char text[1024];
@@ -183,7 +211,14 @@ static int _et_G_LogPrint(lua_State *L)
 }
 
 // Argument Handling
-// args = et.ConcatArgs( index )
+
+/**
+ * Returns all arguments beginning concatenated into a single string.
+ *
+ * @lua_def_prototype et.ConcatArgs(index)
+ * @lua_def ---@param index number the index of the first argument in the concatenated string.
+ * @lua_def ---@return string args the returned concatenated string.
+ */
 static int _et_ConcatArgs(lua_State *L)
 {
 	int index = (int)luaL_checkinteger(L, 1);
@@ -192,14 +227,25 @@ static int _et_ConcatArgs(lua_State *L)
 	return 1;
 }
 
-// argcount = et.trap_Argc()
+/**
+ * Returns the number of command line arguments in the server command.
+ *
+ * @lua_def_prototype et.trap_Argc()
+ * @lua_def ---@return number argcount the returned count of arguments.
+ */
 static int _et_trap_Argc(lua_State *L)
 {
 	lua_pushinteger(L, trap_Argc());
 	return 1;
 }
 
-// arg = et.trap_Argv( argnum )
+/**
+ * Returns the contents of the command line argument.
+ *
+ * @lua_def_prototype et.trap_Argv(index)
+ * @lua_def ---@param index number the index of the argument to return.
+ * @lua_def ---@return string arg the returned argument.
+ */
 static int _et_trap_Argv(lua_State *L)
 {
 	char buff[MAX_STRING_CHARS];
@@ -210,8 +256,13 @@ static int _et_trap_Argv(lua_State *L)
 	return 1;
 }
 
-// Cvars
-// cvarvalue = et.trap_Cvar_Get( cvarname )
+/**
+ * Returns the value of the given cvar.
+ *
+ * @lua_def_prototype et.trap_Cvar_Get(name)
+ * @lua_def ---@param name string the name of the cvar.
+ * @lua_def ---@return string cvarvalue the returned string containing the value. If there is no cvar with the given name, the returning string has zero length.
+ */
 static int _et_trap_Cvar_Get(lua_State *L)
 {
 	char       buff[MAX_CVAR_VALUE_STRING];
@@ -222,7 +273,13 @@ static int _et_trap_Cvar_Get(lua_State *L)
 	return 1;
 }
 
-// et.trap_Cvar_Set( cvarname, cvarvalue )
+/**
+ * Sets value to a cvar.
+ *
+ * @lua_def_prototype et.trap_Cvar_Set(name, cvarvalue)
+ * @lua_def ---@param name string the name of the cvar to set.
+ * @lua_def ---@param cvarvalue string the new value for the cvar.
+ */
 static int _et_trap_Cvar_Set(lua_State *L)
 {
 	const char *cvarname  = luaL_checkstring(L, 1);
@@ -232,8 +289,13 @@ static int _et_trap_Cvar_Set(lua_State *L)
 	return 0;
 }
 
-// Config Strings
-// configstringvalue = et.trap_GetConfigstring( index )
+/**
+ * Returns content of the configstring index.
+ *
+ * @lua_def_prototype et.trap_GetConfigstring(index)
+ * @lua_def ---@param index number the index of the configstring. See `et.CS_` for possible values.
+ * @lua_def ---@return string configstring the returned string containing the full configstring.
+ */
 static int _et_trap_GetConfigstring(lua_State *L)
 {
 	char buff[MAX_STRING_CHARS];
@@ -244,7 +306,13 @@ static int _et_trap_GetConfigstring(lua_State *L)
 	return 1;
 }
 
-// et.trap_SetConfigstring( index, configstringvalue )
+/**
+ * Sets the full configstring.
+ *
+ * @lua_def_prototype et.trap_SetConfigstring(index, value)
+ * @lua_def ---@param index number the configstring index. See `et.CS_*` for possible values.
+ * @lua_def ---@return string value the full configstring to set.
+ */
 static int _et_trap_SetConfigstring(lua_State *L)
 {
 	int        index = (int)luaL_checkinteger(L, 1);
@@ -255,7 +323,14 @@ static int _et_trap_SetConfigstring(lua_State *L)
 }
 
 // Server
-// et.trap_SendConsoleCommand( when, command )
+
+/**
+ * Sends command to the server console.
+ *
+ * @lua_def_prototype et.trap_SendConsoleCommand(when, command)
+ * @lua_def ---@param when number tells when the command is executed. See `et.EXEC_*` for possible values.
+ * @lua_def ---@param command string the full command to execute.
+ */
 static int _et_trap_SendConsoleCommand(lua_State *L)
 {
 	int        when = (int)luaL_checkinteger(L, 1);
@@ -266,7 +341,17 @@ static int _et_trap_SendConsoleCommand(lua_State *L)
 }
 
 // Clients
-// et.trap_SendServerCommand( clientnum, command )
+
+
+/**
+ * Sends the command command to the client clientnum. If clientnum is `-1`, the command is broadcast to all clients.
+ *
+ * TIP: See `SendServerCommand()` for a detailed example usage of possible commands.
+ *
+ * @lua_def_prototype et.trap_SendServerCommand(clientnum, command)
+ * @lua_def ---@param clientnum number if clientnum is `-1`, the command is broadcast to all clients.
+ * @lua_def ---@param command string the full command to send.
+ */
 static int _et_trap_SendServerCommand(lua_State *L)
 {
 	int        clientnum = (int)luaL_checkinteger(L, 1);
@@ -276,7 +361,14 @@ static int _et_trap_SendServerCommand(lua_State *L)
 	return 0;
 }
 
-// et.trap_DropClient( clientnum, reason, ban_time )
+/**
+ * Disconnects client from the server.
+ *
+ * @lua_def_prototype et.trap_DropClient(clientnum, reason, bantime)
+ * @lua_def ---@param clientnum number the slot number of the client.
+ * @lua_def ---@param reason string the descriptive reason for the kick which is reported to the client.
+ * @lua_def ---@param bantime number the length of the ban in seconds.
+ */
 static int _et_trap_DropClient(lua_State *L)
 {
 	int        clientnum = (int)luaL_checkinteger(L, 1);
@@ -288,12 +380,15 @@ static int _et_trap_DropClient(lua_State *L)
 }
 
 /**
- * @brief Searches for one partial match with @p string, if one is found the clientnum
- *        is returned, if there is none or more than one match nil is returned.
- * @lua clientnum = et.ClientNumberFromString( string ) @endlua
- * @see ClientNumbersFromString()
+ * Searches for one partial match with passed 'string'.
+ *
+ * If one is found the 'clientNum' is returned, if there is none or more than
+ * one match 'nil' is returned.
+ *
+ * @lua_def_prototype et.ClientNumberFromString(string)
+ * @lua_def ---@param string string a pattern to match against client names.
+ * @lua_def ---@return number clientnum the returned client slot number if one match is found, otherwise **nil** is returned (none or more than one match).
  */
-// clientnum = et.ClientNumberFromString( string )
 static int _et_ClientNumberFromString(lua_State *L)
 {
 	const char *search = luaL_checkstring(L, 1);
@@ -311,7 +406,14 @@ static int _et_ClientNumberFromString(lua_State *L)
 	return 1;
 }
 
-// et.G_Say( clientNum, mode, text )
+/**
+ * Sends a chat command on behalf of client.
+ *
+ * @lua_def_prototype et.G_Say(clientNum, mode, text)
+ * @lua_def ---@param clientNum number the slot number of the client.
+ * @lua_def ---@param mode number the broadcast mode. See `et.SAY_* constants.
+ * @lua_def ---@param text string the chat text.
+ */
 static int _et_G_Say(lua_State *L)
 {
 	int        clientnum = (int)luaL_checkinteger(L, 1);
@@ -324,6 +426,15 @@ static int _et_G_Say(lua_State *L)
 
 // et.MutePlayer( clientnum, duration, reason )
 // duration is in seconds.
+
+/**
+ * Mutes the specified player.
+ *
+ * @lua_def_prototype et.MutePlayer(clientnum, duration, reason)
+ * @lua_def ---@param clientnum number the slot number of the client to mute.
+ * @lua_def ---@param duration number the optional duration of the mute in seconds.
+ * @lua_def ---@param reason string? the optional reason of the mute.
+ */
 static int _et_MutePlayer(lua_State *L)
 {
 	int        clientnum = (int)luaL_checkinteger(L, 1);
@@ -370,8 +481,12 @@ static int _et_MutePlayer(lua_State *L)
 	return 0;
 }
 
-// et.UnmutePlayer( clientnum )
-// added the output messages.
+/**
+ * Unmutes the specified player.
+ *
+ * @lua_def_prototype et.UnmutePlayer(clientnum)
+ * @lua_def ---@param clientnum number the slot number of the client to unmute.
+ */
 static int _et_UnmutePlayer(lua_State *L)
 {
 	int       clientnum = (int)luaL_checkinteger(L, 1);
@@ -392,7 +507,14 @@ static int _et_UnmutePlayer(lua_State *L)
 }
 
 // Userinfo
-// userinfo = et.trap_GetUserinfo( clientnum )
+
+/**
+ * Returns the userinfo string of a client.
+ *
+ * @lua_def_prototype et.trap_GetUserinfo(clientNum)
+ * @lua_def ---@param clientNum number the slot number of the client.
+ * @lua_def ---@return string userinfo the returned string of the specified client.
+ */
 static int _et_trap_GetUserinfo(lua_State *L)
 {
 	char buff[MAX_STRING_CHARS];
@@ -403,7 +525,15 @@ static int _et_trap_GetUserinfo(lua_State *L)
 	return 1;
 }
 
-// et.trap_SetUserinfo( clientnum, userinfo )
+/**
+ * Sets the userinfo string of the client to the specified userinfo.
+ *
+ * NOTE: The `et.ClientUserinfoChanged()` function must be called after this function for the changes to take effect.
+ *
+ * @lua_def_prototype et.trap_SetUserinfo(clientnum, userinfo)
+ * @lua_def ---@param clientnum number the slot number of the client.
+ * @lua_def ---@param userinfo string the userinfo string that replaces the current userinfo.
+ */
 static int _et_trap_SetUserinfo(lua_State *L)
 {
 	int        clientnum = (int)luaL_checkinteger(L, 1);
@@ -413,7 +543,13 @@ static int _et_trap_SetUserinfo(lua_State *L)
 	return 0;
 }
 
-// et.ClientUserinfoChanged( clientNum )
+/**
+ * Loads the new userinfo string of the client and sets the client settings to
+ * match it.
+ *
+ * @lua_def_prototype et.ClientUserinfoChanged(clientnum)
+ * @lua_def ---@param clientnum number the slot number of the client.
+ */
 static int _et_ClientUserinfoChanged(lua_State *L)
 {
 	int clientnum = (int)luaL_checkinteger(L, 1);
@@ -423,7 +559,15 @@ static int _et_ClientUserinfoChanged(lua_State *L)
 }
 
 // String Utility Functions
-// infostring = et.Info_RemoveKey( infostring, key )
+
+/**
+ * Removes a key and its associated value from an infostring.
+ *
+ * @lua_def_prototype et.Info_RemoveKey(infostring, key)
+ * @lua_def ---@param infostring string the infostring from which to remove the key.
+ * @lua_def ---@param key string the key to remove.
+ * @lua_def ---@return string newinfostring the returned modified infostring without the key.
+ */
 static int _et_Info_RemoveKey(lua_State *L)
 {
 	char       buff[MAX_INFO_STRING];
@@ -435,7 +579,15 @@ static int _et_Info_RemoveKey(lua_State *L)
 	return 1;
 }
 
-// infostring = et.Info_SetValueForKey( infostring, key, value )
+/**
+ * Sets a value in an infostring.
+ *
+ * @lua_def_prototype et.Info_SetValueForKey(infostring, key, value)
+ * @lua_def ---@param infostring string the original infostring.
+ * @lua_def ---@param key string the key to set.
+ * @lua_def ---@param value string the value to set to the key. If empty, the key is removed from the infostring.
+ * @lua_def ---@return string newinfostring the returned modified infostring.
+ */
 static int _et_Info_SetValueForKey(lua_State *L)
 {
 	char       buff[MAX_INFO_STRING];
@@ -448,7 +600,14 @@ static int _et_Info_SetValueForKey(lua_State *L)
 	return 1;
 }
 
-// keyvalue = et.Info_ValueForKey( infostring, key )
+/**
+ * Returns a value from an infostring.
+ *
+ * @lua_def_prototype et.Info_ValueForKey(infostring, key)
+ * @lua_def ---@param infostring string the infostring from where to search the key.
+ * @lua_def ---@param key string the key which value is returned.
+ * @lua_def ---@return string keyvalue the returned value from the searched key. If key is not present in the infostring, an empty string is returned.
+ */
 static int _et_Info_ValueForKey(lua_State *L)
 {
 	const char *infostring = luaL_checkstring(L, 1);
@@ -458,7 +617,13 @@ static int _et_Info_ValueForKey(lua_State *L)
 	return 1;
 }
 
-// cleanstring = et.Q_CleanStr( string )
+/**
+ * Returns string stripped of all color codes and special characters.
+ *
+ * @lua_def_prototype et.Q_CleanStr(string)
+ * @lua_def ---@param string string the string to clean.
+ * @lua_def ---@return string cleanstring the returned cleaned string.
+ */
 static int _et_Q_CleanStr(lua_State *L)
 {
 	char buff[MAX_STRING_CHARS];
@@ -470,7 +635,17 @@ static int _et_Q_CleanStr(lua_State *L)
 }
 
 // ET Filesystem
-// fd, len = et.trap_FS_FOpenFile( filename, mode )
+
+/**
+ * Opens a file in the local file system.
+ *
+ * @lua_def_prototype et.trap_FS_FOpenFile(filename, mode)
+ * @lua_def ---@param filename string the name of the file to open. The file is opened under the current working directory and absolute paths will not work.
+ * @lua_def ---@param mode number the access mode the file is opened. See `et.FS_*` for possible values.
+ * @lua_def ---@return number fd the returned descriptor of the file.
+ * @lua_def ---@return number len the returned length of the file, or `-1` if
+ * an error occured.
+ */
 static int _et_trap_FS_FOpenFile(lua_State *L)
 {
 	fileHandle_t fd;
@@ -484,7 +659,14 @@ static int _et_trap_FS_FOpenFile(lua_State *L)
 	return 2;
 }
 
-// filedata = et.trap_FS_Read( fd, count )
+/**
+ * Reads from an open file.
+ *
+ * @lua_def_prototype et.trap_FS_Read(fd, count)
+ * @lua_def ---@param fd number the descriptor of the file to read.
+ * @lua_def ---@param count number the amount of bytes to read.
+ * @lua_def ---@return string filedata the returned value that have the read bytes.
+ */
 static int _et_trap_FS_Read(lua_State *L)
 {
 	char         *filedata = "";
@@ -506,7 +688,15 @@ static int _et_trap_FS_Read(lua_State *L)
 	return 1;
 }
 
-// count = et.trap_FS_Write( filedata, count, fd )
+/**
+ * Writes at the end of an open file.
+ *
+ * @lua_def_prototype et.trap_FS_Write(filedata, count, fd)
+ * @lua_def ---@param filedata string a block of bytes to write.
+ * @lua_def ---@param count number the size of the block to write.
+ * @lua_def ---@param fd number the descriptor of the file.
+ * @lua_def ---@return number bytecount the returned amount of bytes written to the file.
+ */
 static int _et_trap_FS_Write(lua_State *L)
 {
 	const char *filedata = luaL_checkstring(L, 1);
@@ -517,7 +707,12 @@ static int _et_trap_FS_Write(lua_State *L)
 	return 1;
 }
 
-// et.trap_FS_FCloseFile( fd )
+/**
+ * Closes an opened file.
+ *
+ * @lua_def_prototype et.trap_FS_FCloseFile(fd)
+ * @lua_def ---@param fd number the descriptor of the opened file.
+ */
 static int _et_trap_FS_FCloseFile(lua_State *L)
 {
 	fileHandle_t fd = (int)luaL_checkinteger(L, 1);
@@ -525,7 +720,13 @@ static int _et_trap_FS_FCloseFile(lua_State *L)
 	return 0;
 }
 
-// et.trap_FS_Rename( oldname, newname )
+/**
+ * Renames a file in the local file system.
+ *
+ * @lua_def_prototype et.trap_FS_Rename(oldname, newname)
+ * @lua_def ---@param oldname string the name of the file to rename.
+ * @lua_def ---@param newname string the name the old file name is changed to.
+ */
 static int _et_trap_FS_Rename(lua_State *L)
 {
 	const char *oldname = luaL_checkstring(L, 1);
@@ -537,6 +738,15 @@ static int _et_trap_FS_Rename(lua_State *L)
 
 // filelist = et.trap_FS_GetFileList( dirname, fileextension )
 extern char bigTextBuffer[100000];
+
+/**
+ * Retrieves list of files from a directory.
+ *
+ * @lua_def_prototype et.trap_FS_GetFileList(dirname, fileextension)
+ * @lua_def ---@param dirname string the name of the directory.
+ * @lua_def ---@param fileextension string the file extension of file names to retrieve.
+ * @lua_def ---@return string[] filelist the returned array of file names strings.
+ */
 static int _et_trap_FS_GetFileList(lua_State *L)
 {
 	const char *dirname            = luaL_checkstring(L, 1);
@@ -563,7 +773,14 @@ static int _et_trap_FS_GetFileList(lua_State *L)
 }
 
 // Indexes
-// soundindex = et.G_SoundIndex( filename )
+
+/**
+ * Returns the index to the searched soundfile.
+ *
+ * @lua_def_prototype et.G_SoundIndex(filename)
+ * @lua_def ---@param filename string the sound file name that is searched.
+ * @lua_def ---@return number soundindex the returned string index that includes the filename or 0 if not found.
+ */
 static int _et_G_SoundIndex(lua_State *L)
 {
 	const char *filename = luaL_checkstring(L, 1);
@@ -572,7 +789,13 @@ static int _et_G_SoundIndex(lua_State *L)
 	return 1;
 }
 
-// modelindex = et.G_ModelIndex( filename )
+/**
+ * Returns the index to the searched model.
+ *
+ * @lua_def_prototype et.G_ModelIndex(filename)
+ * @lua_def ---@param filename string the name that is searched.
+ * @lua_def ---@return number modelindex the returned string index that included the filename or 0 if not found.
+ */
 static int _et_G_ModelIndex(lua_State *L)
 {
 	const char *filename = luaL_checkstring(L, 1);
@@ -582,7 +805,13 @@ static int _et_G_ModelIndex(lua_State *L)
 }
 
 // Sound
-// et.G_globalSound( sound )
+
+/**
+ * Plays a sound to all connected clients.
+ *
+ * @lua_def_prototype et.G_globalSound(sound)
+ * @lua_def ---@param sound string the name of the sound to play.
+ */
 static int _et_G_globalSound(lua_State *L)
 {
 	const char *sound = luaL_checkstring(L, 1);
@@ -591,7 +820,13 @@ static int _et_G_globalSound(lua_State *L)
 	return 0;
 }
 
-// et.G_Sound( entnum, soundindex )
+/**
+ * Plays a sound originating from position of an entity.
+ *
+ * @lua_def_prototype et.G_Sound(entnum, soundindex)
+ * @lua_def ---@param entnum number the number of the entity which position is used as the sound origin.
+ * @lua_def ---@param soundindex number the index of the sound that is played.
+ */
 static int _et_G_Sound(lua_State *L)
 {
 	int entnum     = (int)luaL_checkinteger(L, 1);
@@ -601,7 +836,14 @@ static int _et_G_Sound(lua_State *L)
 	return 0;
 }
 
-// et.G_ClientSound( clientnum, soundindex )
+/**
+ * Plays a sound originating from a client entity to the team members of that
+ * client.
+ *
+ * @lua_def_prototype et.G_ClientSound(clientnum, soundindex)
+ * @lua_def ---@param clientnum number the slot number of the connected player.
+ * @lua_def ---@param soundindex number the index to the sound to play.
+ */
 static int _et_G_ClientSound(lua_State *L)
 {
 	int clientnum  = (int)luaL_checkinteger(L, 1);
@@ -612,16 +854,27 @@ static int _et_G_ClientSound(lua_State *L)
 }
 
 // Miscellaneous {{{
-// milliseconds = et.trap_Milliseconds()
+
+/**
+ * Returns level time.
+ *
+ * @lua_def_prototype et.trap_Milliseconds()
+ * @lua_def ---@return number milliseconds the returned time in milliseconds.
+ */
 static int _et_trap_Milliseconds(lua_State *L)
 {
 	lua_pushinteger(L, trap_Milliseconds());
 	return 1;
 }
 
-// success = et.isBitSet(bit,value)
-// little helper for accessing bitmask values
-// if bit 'bit' is set in 'value', true is returned, else false
+/**
+ * Checks bit status of a bitmask value.
+ *
+ * @lua_def_prototype et.isBitSet(bit, value)
+ * @lua_def ---@param bit number the checked bit.
+ * @lua_def ---@param value number the bitmask value.
+ * @lua_def ---@return number success returns '1' if the bit is set in the bitmask value, and '0' if it is not.
+ */
 static int _et_isBitSet(lua_State *L)
 {
 	int b = (int)luaL_checkinteger(L, 1);
@@ -638,7 +891,17 @@ static int _et_isBitSet(lua_State *L)
 	return 1;
 }
 
-// et.G_Damage( target, inflictor, attacker, damage, dflags, mod )
+/**
+ * Damages target entity on behalf of the attacker entity.
+ *
+ * @lua_def_prototype et.G_Damage(target, inflictor, attacker, damage, dflags, mod)
+ * @lua_def ---@param target number The entity number to damage.
+ * @lua_def ---@param inflictor number The entity number that does the damage.
+ * @lua_def ---@param attacker number The entity number that causes the *inflictor* entity to cause damage to *target*.
+ * @lua_def ---@param damage number The amount of damage to inflict.
+ * @lua_def ---@param dflags number The type of damage to inflict. See `et.DAMAGE_*` for possible values.
+ * @lua_def ---@param mod number The means of death. See `et.MOD_*` constants for possible values.
+ */
 static int _et_G_Damage(lua_State *L)
 {
 	int            target    = (int)luaL_checkinteger(L, 1);
@@ -660,7 +923,15 @@ static int _et_G_Damage(lua_State *L)
 	return 0;
 }
 
-// et.G_AddSkillPoints( ent, skill, points )
+/**
+ * Adds points to the client's skill.
+ *
+ * @lua_def_prototype et.G_AddSkillPoints(clientNum, skill, points, reason)
+ * @lua_def ---@param clientNum number the slot number of the client.
+ * @lua_def ---@param skill number identifies the skill that the points are added to. See `et.SK_` for possible values.
+ * @lua_def ---@param points number the amount of points to add.
+ * @lua_def ---@param reason string a message advertised.
+ */
 static int _et_G_AddSkillPoints(lua_State *L)
 {
 	size_t     l;
@@ -673,7 +944,14 @@ static int _et_G_AddSkillPoints(lua_State *L)
 	return 0;
 }
 
-// et.G_LoseSkillPoints( ent, skill, points )
+/**
+ * Removes points to the client's skill.
+ *
+ * @lua_def_prototype et.G_LoseSkillPoints(clientNum, skill, points)
+ * @lua_def ---@param clientNum number the slot number of the client.
+ * @lua_def ---@param skill number specific skill to lose points for, see `et.SK_*`.
+ * @lua_def ---@param points number the amount of points to remove.
+ */
 static int _et_G_LoseSkillPoints(lua_State *L)
 {
 	size_t     l;
@@ -686,8 +964,14 @@ static int _et_G_LoseSkillPoints(lua_State *L)
 	return 0;
 }
 
-/*
- * et.G_XP_Set ( clientNum , xp, skill, add )
+/**
+ * Sets XP of the client.
+ *
+ * @lua_def_prototype et.G_XP_Set(clientNum , xp, skill, add)
+ * @lua_def ---@param clientNum number the slot number of the client.
+ * @lua_def ---@param xp number the number of XP points.
+ * @lua_def ---@param skill number specific skill to grant xp to, see `et.SK_*`.
+ * @lua_def ---@param add number if set to '1', the skill xp will be added to the current skill xp of the player - otherwise it will be (re-)set to 'xp'
  */
 static int _et_G_XP_Set(lua_State *L)
 {
@@ -757,9 +1041,10 @@ static int _et_G_XP_Set(lua_State *L)
 }
 
 /**
- * @brief Reset XP of the player in slot number @p clientNum
+ * Resets XP of the client.
  *
- * @lua et.G_ResetXP ( clientNum )
+ * @lua_def_prototype et.G_ResetXP(clientNum)
+ * @lua_def ---@param clientNum number the slot number of the client.
  */
 static int _et_G_ResetXP(lua_State *L)
 {
@@ -785,7 +1070,18 @@ static int _et_G_ResetXP(lua_State *L)
 	return 0;
 }
 
-// et.AddWeaponToPlayer( clientNum, weapon, ammo, ammoclip, setcurrent )
+/**
+ * Adds a weapon to a client.
+ *
+ * NOTE: Adding a weapon does not automatically add its associated alternate
+ * weapon.
+ *
+ * @lua_def_prototype et.AddWeaponToPlayer( clientNum, weapon, ammo, ammoclip, setcurrent )
+ * @lua_def ---@param clientNum number the slot number of the client.
+ * @lua_def ---@param weapon number the weapon to add. See `et.WP_* constants <constants.html#wp-constants>`__ for possible values.
+ * @lua_def ---@param ammo number the number of ammo to add.
+ * @lua_def ---@param ammoclip number the number of ammo clip to add.
+ */
 static int _et_AddWeaponToPlayer(lua_State *L)
 {
 	int       clientnum  = (int)luaL_checkinteger(L, 1);
@@ -823,7 +1119,15 @@ static int _et_AddWeaponToPlayer(lua_State *L)
 	return 1;
 }
 
-// et.RemoveWeaponFromPlayer( clientNum, weapon )
+/**
+ * Removes a weapon from a client.
+ *
+ * NOTE: Removing a weapon also removes its associated alternate weapon.
+ *
+ * @lua_def_prototype et.RemoveWeaponFromPlayer(clientNum, weapon)
+ * @lua_def ---@param clientNum number the slot number of the client.
+ * @lua_def ---@param weapon number the weapon to add. See `et.WP_* constants for possible values.
+ */
 static int _et_RemoveWeaponFromPlayer(lua_State *L)
 {
 	int       clientnum = (int)luaL_checkinteger(L, 1);
@@ -868,7 +1172,15 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 	return 1;
 }
 
-// et.GetCurrentWeapon( clientNum ) -> weapon, ammo, ammoclip
+/**
+ * Return weapon, ammo, ammoclip from a client.
+ *
+ * @lua_def_prototype et.GetCurrentWeapon(clientNum)
+ * @lua_def ---@param clientNum number the slot number of the client.
+ * @lua_def ---@return number weapon weapon number, see `et.WP_`.
+ * @lua_def ---@return number ammo current ammo.
+ * @lua_def ---@return number ammoclip current clip ammo.
+ */
 static int _et_GetCurrentWeapon(lua_State *L)
 {
 	gentity_t *ent;
@@ -1178,7 +1490,7 @@ static const gentity_field_t gentity_fields[] =
 };
 
 // gentity fields helper functions
-static gentity_field_t *_et_gentity_getfield(gentity_t *ent, char *fieldname)
+static gentity_field_t *_etH_gentity_getfield(gentity_t *ent, char *fieldname)
 {
 	int i;
 
@@ -1205,7 +1517,7 @@ static gentity_field_t *_et_gentity_getfield(gentity_t *ent, char *fieldname)
 	return 0;
 }
 
-static void _et_gentity_getvec3(lua_State *L, vec3_t vec3)
+static void _etH_gentity_getvec3(lua_State *L, vec3_t vec3)
 {
 	lua_newtable(L);
 	lua_pushnumber(L, vec3[0]);
@@ -1216,7 +1528,7 @@ static void _et_gentity_getvec3(lua_State *L, vec3_t vec3)
 	lua_rawseti(L, -2, 3);
 }
 
-static void _et_gentity_setvec3(lua_State *L, vec3_t *vec3)
+static void _etH_gentity_setvec3(lua_State *L, vec3_t *vec3)
 {
 	lua_pushnumber(L, 1);
 	lua_gettable(L, -2);
@@ -1232,7 +1544,7 @@ static void _et_gentity_setvec3(lua_State *L, vec3_t *vec3)
 	lua_pop(L, 1);
 }
 
-static void _et_gentity_gettrajectory(lua_State *L, trajectory_t *traj)
+static void _etH_gentity_gettrajectory(lua_State *L, trajectory_t *traj)
 {
 	int index;
 
@@ -1249,15 +1561,15 @@ static void _et_gentity_gettrajectory(lua_State *L, trajectory_t *traj)
 	lua_settable(L, -3);
 	lua_settop(L, index);
 	lua_pushstring(L, "trBase");
-	_et_gentity_getvec3(L, traj->trBase);
+	_etH_gentity_getvec3(L, traj->trBase);
 	lua_settable(L, -3);
 	lua_settop(L, index);
 	lua_pushstring(L, "trDelta");
-	_et_gentity_getvec3(L, traj->trDelta);
+	_etH_gentity_getvec3(L, traj->trDelta);
 	lua_settable(L, -3);
 }
 
-static void _et_gentity_settrajectory(lua_State *L, trajectory_t *traj)
+static void _etH_gentity_settrajectory(lua_State *L, trajectory_t *traj)
 {
 	lua_pushstring(L, "trType");
 	lua_gettable(L, -2);
@@ -1273,15 +1585,15 @@ static void _et_gentity_settrajectory(lua_State *L, trajectory_t *traj)
 	lua_pop(L, 1);
 	lua_pushstring(L, "trBase");
 	lua_gettable(L, -2);
-	_et_gentity_setvec3(L, (vec3_t *)traj->trBase);
+	_etH_gentity_setvec3(L, (vec3_t *)traj->trBase);
 	lua_pop(L, 1);
 	lua_pushstring(L, "trDelta");
 	lua_gettable(L, -2);
-	_et_gentity_setvec3(L, (vec3_t *)traj->trDelta);
+	_etH_gentity_setvec3(L, (vec3_t *)traj->trDelta);
 	lua_pop(L, 1);
 }
 
-static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
+static void _etH_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
 {
 	lua_newtable(L);
 	lua_pushinteger(L, 1);
@@ -1361,11 +1673,19 @@ gentity_t *G_Lua_CreateEntity(char *params)
 	return create;
 }
 
-// entnum = _et_G_Lua_CreateEntity( params )
-// This function expects same as G_ScriptAction_Create -  keys & values
-// see http://wolfwiki.anime.net/index.php/Map_scripting
-// was et.G_Spawn() before 2.75 (... and  did not work)
-static int _et_G_Lua_CreateEntity(lua_State *L)
+
+/**
+ * Creates a new entity.
+ *
+ * This function expects same as G_ScriptAction_Create -  keys & values
+ * see http://wolfwiki.anime.net/index.php/Map_scripting
+ * was et.G_Spawn() before 2.75 (... and  did not work)
+ *
+ * @lua_def_prototype et.G_CreateEntity(params)
+ * @lua_def ---@param params string mapscript parameters
+ * @lua_def ---@return number entnum the returned number of the new entity.
+ */
+static int _et_G_CreateEntity(lua_State *L)
 {
 	gentity_t *entnum;
 	char      *params = (char *)luaL_checkstring(L, 1); // make 2 params for classname?
@@ -1383,8 +1703,14 @@ static int _et_G_Lua_CreateEntity(lua_State *L)
 	return 1;
 }
 
-// _et_G_Lua_DeleteEntity( params )
-static int _et_G_Lua_DeleteEntity(lua_State *L)
+/**
+ * Deletes an entity.
+ *
+ * @lua_def_prototype et.G_DeleteEntity(params)
+ * @lua_def ---@param params string mapscript parameters
+ * @lua_def ---@return number deleted '1' if actual entities were deleted, '0' otherwise
+ */
+static int _et_G_DeleteEntity(lua_State *L)
 {
 	char *params = (char *)luaL_checkstring(L, 1);
 
@@ -1392,36 +1718,60 @@ static int _et_G_Lua_DeleteEntity(lua_State *L)
 	return 1;
 }
 
-// entnum = et.G_TempEntity( origin, event )
+/**
+ * Spawns a new temp entity to a location.
+ *
+ * @lua_def_prototype et.G_TempEntity(origin, event)
+ * @lua_def ---@param origin Vec3 the location the temp entity is placed.
+ * @lua_def ---@param event number the event type of the entity. See `Event types <misc.html#event-types>`__ for possible values.
+ * @lua_def ---@return number entnum the returned the number of the new entity.
+ */
 static int _et_G_TempEntity(lua_State *L)
 {
 	vec3_t origin;
 	int    event = (int)luaL_checkinteger(L, 2);
 
 	lua_pop(L, 1);
-	_et_gentity_setvec3(L, &origin);
+	_etH_gentity_setvec3(L, &origin);
 	lua_pushinteger(L, G_TempEntity(origin, event) - g_entities);
 	return 1;
 }
 
-// et.G_FreeEntity( entnum )
+/**
+ * Marks a given entity as free.
+ *
+ * @lua_def_prototype et.G_FreeEntity(entnum)
+ * @lua_def ---@param entnum number entity number of the entity to be freed.
+ */
 static int _et_G_FreeEntity(lua_State *L)
 {
 	int entnum = (int)luaL_checkinteger(L, 1);
 
 	G_FreeEntity(g_entities + entnum);
-	// a succesful LUA function has to return 1
 	return 1;
 }
 
-// et.G_EntitiesFree()
+/**
+ * Calculates all free entities.
+ *
+ * NOTE: Free client entities (slots) are not counted.
+ *
+ * @lua_def_prototype et.G_EntitiesFree()
+ * @lua_def ---@return number count the returned number of free entities.
+ */
 static int _et_G_EntitiesFree(lua_State *L)
 {
 	lua_pushinteger(L, G_EntitiesFree());
 	return 1;
 }
 
-// et.G_SetEntState( entnum, newstate )
+/**
+ * Sets an entity state.
+ *
+ * @lua_def_prototype et.G_SetEntState(entnum, newstate)
+ * @lua_def ---@param entnum number the entity number.
+ * @lua_def ---@param newstate number the new entity state.
+ */
 static int _et_G_SetEntState(lua_State *L)
 {
 	gentity_t  *ent;
@@ -1440,7 +1790,12 @@ static int _et_G_SetEntState(lua_State *L)
 	return 0;
 }
 
-// et.trap_LinkEntity( entnum )
+/**
+ * Links an entity.
+ *
+ * @lua_def_prototype et.trap_LinkEntity(entnum)
+ * @lua_def ---@param entnum number the entity number to link.
+ */
 static int _et_trap_LinkEntity(lua_State *L)
 {
 	int entnum = (int)luaL_checkinteger(L, 1);
@@ -1449,7 +1804,12 @@ static int _et_trap_LinkEntity(lua_State *L)
 	return 0;
 }
 
-// et.trap_UnlinkEntity( entnum )
+/**
+ * Unlinks an entity.
+ *
+ * @lua_def_prototype et.trap_UnlinkEntity(entnum)
+ * @lua_def ---@param entnum number the entity number to unlink.
+ */
 static int _et_trap_UnlinkEntity(lua_State *L)
 {
 	int entnum = (int)luaL_checkinteger(L, 1);
@@ -1458,18 +1818,27 @@ static int _et_trap_UnlinkEntity(lua_State *L)
 	return 0;
 }
 
-// spawnval = et.G_GetSpawnVar( entnum, key )
-// This function works with fields ( g_spawn.c @ 72 )
-//
-// Description:
-//   The mapper, using his map-editor, assigns spawnvars.
-//   Spawnvars, and their values, are represented in code as members of gentity_t.
-//   Spawnvar names can be different from the corresponding gentity_t membernames.
-//   For example the spawnvar "shortname" is used with trigger_objective_info entities in the map-editor,
-//    while in code the gentity_t membername is "message"..
-//   This function _et_G_GetSpawnVar() returns the value of a gentity_t member,
-//    where the argument is a spawnvar name.
-//   (the array called "fields" in g_spawn.c is a mapping of spawnvars<->members)
+/**
+ * Returns a value of a spawnVar.
+ *
+ * This function works with fields ( g_spawn.c @ 72 )
+ *
+ * Description:
+ *   The mapper, using his map-editor, assigns spawnvars.
+ *   Spawnvars, and their values, are represented in code as members of gentity_t.
+ *   Spawnvar names can be different from the corresponding gentity_t membernames.
+ *   For example the spawnvar "shortname" is used with trigger_objective_info entities in the map-editor,
+ *    while in code the gentity_t membername is "message"..
+ *   This function _et_G_GetSpawnVar() returns the value of a gentity_t member,
+ *    where the argument is a spawnvar name.
+ *   (the array called "fields" in g_spawn.c is a mapping of spawnvars<->members)
+ *
+ * @lua_def_prototype et.G_GetSpawnVar(entnum, key)
+ * @lua_def ---@param entnum number the entity number of the target.
+ * @lua_def ---@param key string the key for the value to return.
+ *
+ * @lua_def ---@return string|number|Vec3|nil spawnVal the returned spawn value.
+ */
 static int _et_G_GetSpawnVar(lua_State *L)
 {
 	gentity_t   *ent;
@@ -1524,7 +1893,7 @@ static int _et_G_GetSpawnVar(lua_State *L)
 		return 1;
 	case F_VECTOR:
 	case F_ANGLEHACK:
-		_et_gentity_getvec3(L, *(vec3_t *)((byte *)ent + ofs));
+		_etH_gentity_getvec3(L, *(vec3_t *)((byte *)ent + ofs));
 		return 1;
 	case F_ENTITY:
 	{
@@ -1551,8 +1920,16 @@ static int _et_G_GetSpawnVar(lua_State *L)
 	return 0;
 }
 
-// et.G_SetSpawnVar( entnum, key, value )
-// This function works with fields ( g_spawn.c @ 72 )
+/**
+ * Sets spawn value to an entity.
+ *
+ * This function works with fields ( g_spawn.c @ 72 )
+ *
+ * @lua_def_prototype et.G_SetSpawnVar(entnum, key, value)
+ * @lua_def ---@param entnum number the target entity.
+ * @lua_def ---@param key string the key for the value..
+ * @lua_def ---@param value string|number|Vec3 the new value for the key.
+ */
 static int _et_G_SetSpawnVar(lua_State *L)
 {
 	gentity_t   *ent;
@@ -1611,7 +1988,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
 		return 1;
 	case F_VECTOR:
 	case F_ANGLEHACK:
-		_et_gentity_setvec3(L, (vec3_t *)((byte *)ent + ofs));
+		_etH_gentity_setvec3(L, (vec3_t *)((byte *)ent + ofs));
 		return 1;
 	case F_ENTITY:
 		// pointer-fields are read-only..
@@ -1628,12 +2005,22 @@ static int _et_G_SetSpawnVar(lua_State *L)
 	return 0;
 }
 
-// variable = et.gentity_get( entnum, fieldname, array_index )
-static int et_gentity_get(lua_State *L)
+/**
+ * Returns a field value associated with an entity.
+ *
+ * NOTE: `arrayindex` is required when accessing array type fields. Array indexes start at 0.
+ *
+ * @lua_def_prototype et.gentity_get(entnum, fieldname, arrayindex)
+ * @lua_def ---@param entnum number the number of the entity.
+ * @lua_def ---@param fieldname string the name of the field to get.
+ * @lua_def ---@param arrayindex? number if present, specifies which element of an array entity field to get.
+ * @lua_def ---@return nil|string|number variable the returned field value. For NULL entities or clients, **nil** is returned.
+ */
+static int _et_gentity_get(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
-	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
+	gentity_field_t *field     = _etH_gentity_getfield(ent, (char *)fieldname);
 	uintptr_t       addr;
 
 	// break on invalid gentity field
@@ -1695,31 +2082,41 @@ static int et_gentity_get(lua_State *L)
 	}
 		return 1;
 	case FIELD_VEC3:
-		_et_gentity_getvec3(L, *(vec3_t *)addr);
+		_etH_gentity_getvec3(L, *(vec3_t *)addr);
 		return 1;
 	case FIELD_INT_ARRAY:
 		lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * (int)luaL_optinteger(L, 3, 0)))));
 		return 1;
 	case FIELD_TRAJECTORY:
-		_et_gentity_gettrajectory(L, (trajectory_t *)addr);
+		_etH_gentity_gettrajectory(L, (trajectory_t *)addr);
 		return 1;
 	case FIELD_FLOAT_ARRAY:
 		lua_pushnumber(L, (*(float *)(addr + (sizeof(int) * (int)luaL_optinteger(L, 3, 0)))));
 		return 1;
 	case FIELD_WEAPONSTAT:
-		_et_gentity_getweaponstat(L, (weapon_stat_t *)(addr + (sizeof(weapon_stat_t) * (int)luaL_optinteger(L, 3, 0))));
+		_etH_gentity_getweaponstat(L, (weapon_stat_t *)(addr + (sizeof(weapon_stat_t) * (int)luaL_optinteger(L, 3, 0))));
 		return 1;
 
 	}
 	return 0;
 }
 
-// et.gentity_set( entnum, fieldname, array_index, value )
-static int et_gentity_set(lua_State *L)
+/**
+ * Sets a value in an entity.
+ *
+ * @lua_def_prototype et.gentity_set(entnum, fieldname, entry1, entry2)
+ * @lua_def ---@param entnum number the entity number that is manipulated.
+ * @lua_def ---@param fieldname string the name of the field to manipulate.
+ * @lua_def ---@param entry1 number|string the value to set for scalar-types
+ * (string, number etc.), or the index to set for vector-types ([]number etc.).
+ * @lua_def ---@param entry2? number|string not used for scalar-types, the value
+ * to set for vector-types for the index previously passed
+ */
+static int _et_gentity_set(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
-	gentity_field_t *field     = _et_gentity_getfield(ent, (char *)fieldname);
+	gentity_field_t *field     = _etH_gentity_getfield(ent, (char *)fieldname);
 	uintptr_t       addr;
 	const char      *buffer;
 
@@ -1780,13 +2177,13 @@ static int et_gentity_set(lua_State *L)
 		// pointer-fields are read-only..
 		break;
 	case FIELD_VEC3:
-		_et_gentity_setvec3(L, (vec3_t *)addr);
+		_etH_gentity_setvec3(L, (vec3_t *)addr);
 		break;
 	case FIELD_INT_ARRAY:
 		*(int *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, 3))) = (int)luaL_checkinteger(L, 4);
 		break;
 	case FIELD_TRAJECTORY:
-		_et_gentity_settrajectory(L, (trajectory_t *)addr);
+		_etH_gentity_settrajectory(L, (trajectory_t *)addr);
 		break;
 	case FIELD_FLOAT_ARRAY:
 		*(float *)(addr + (sizeof(int) * (int)luaL_checkinteger(L, 3))) = luaL_checknumber(L, 4);
@@ -1798,7 +2195,14 @@ static int et_gentity_set(lua_State *L)
 	return 0;
 }
 
-// et.G_AddEvent( ent, event, eventparm )
+/**
+ * Adds an event to the entity event sequence.
+ *
+ * @lua_def_prototype et.G_AddEvent(ent, event, eventparm)
+ * @lua_def ---@param ent number the entity which event sequence is handled.
+ * @lua_def ---@param event number the event to add.
+ * @lua_def ---@param eventparm number optional parameter for the event.
+ */
 static int _et_G_AddEvent(lua_State *L)
 {
 	int ent       = (int)luaL_checkinteger(L, 1);
@@ -1809,7 +2213,14 @@ static int _et_G_AddEvent(lua_State *L)
 }
 
 // Shaders
-// et.G_ShaderRemap( oldShader, newShader )
+
+/**
+ * Remaps shader.
+ *
+ * @lua_def_prototype et.G_ShaderRemap(oldShader, newShader)
+ * @lua_def ---@param oldShader string the old shader.
+ * @lua_def ---@param newShader string the new shader.
+ */
 static int _et_G_ShaderRemap(lua_State *L)
 {
 	float      f          = level.time * 0.001;
@@ -1820,25 +2231,38 @@ static int _et_G_ShaderRemap(lua_State *L)
 	return 0;
 }
 
-// et.G_ResetRemappedShaders()
+/**
+ * Resets remapped shaders.
+ *
+ * @lua_def_prototype et.G_ResetRemappedShaders()
+ */
 static int _et_G_ResetRemappedShaders(lua_State *L)
 {
 	G_ResetRemappedShaders();
 	return 0;
 }
 
-// et.G_ShaderRemapFlush()
+/**
+ * Flushes remapped shaders.
+ *
+ * @lua_def_prototype et.G_ShaderRemapFlush()
+ */
 static int _et_G_ShaderRemapFlush(lua_State *L)
 {
 	trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
 	return 0;
 }
 
-// setglobalfog 0 <duration> <float:r> <float:g> <float:b> <float:depthForOpaque>
-// Changes the global fog in a map to a specific color and density.
-// setglobalfog 1 <duration>
-// Changes the global fog in a map.
-// et.G_SetGlobalFog( params )
+/**
+ * Sets global fog to a specific color and density.
+ *
+ * e.g.
+ * setglobalfog 0 <duration> <float:r> <float:g> <float:b> <float:depthForOpaque>
+ * setglobalfog 1 <duration>
+ *
+ * @lua_def_prototype et.G_SetGlobalFog(params)
+ * @lua_def ---@param params string all the parameters to be passed on packed into a string.
+ */
 static int _et_G_SetGlobalFog(lua_State *L)
 {
 	char *params = (char *)luaL_checkstring(L, 1);
@@ -1847,10 +2271,10 @@ static int _et_G_SetGlobalFog(lua_State *L)
 	return 1;
 }
 
-static void _et_getclipplane(lua_State *L, cplane_t *plane)
+static void _etH_getclipplane(lua_State *L, cplane_t *plane)
 {
 	lua_newtable(L);
-	_et_gentity_getvec3(L, plane->normal);
+	_etH_gentity_getvec3(L, plane->normal);
 	lua_setfield(L, -2, "normal");
 	lua_pushnumber(L, plane->dist);
 	lua_setfield(L, -2, "dist");
@@ -1866,7 +2290,7 @@ static void _et_getclipplane(lua_State *L, cplane_t *plane)
 	lua_setfield(L, -2, "pad");
 }
 
-static void _et_gettrace(lua_State *L, trace_t *tr)
+static void _etH_gettrace(lua_State *L, trace_t *tr)
 {
 	lua_newtable(L);
 	lua_pushboolean(L, tr->allsolid);
@@ -1875,9 +2299,9 @@ static void _et_gettrace(lua_State *L, trace_t *tr)
 	lua_setfield(L, -2, "startsolid");
 	lua_pushnumber(L, tr->fraction);
 	lua_setfield(L, -2, "fraction");
-	_et_gentity_getvec3(L, tr->endpos);
+	_etH_gentity_getvec3(L, tr->endpos);
 	lua_setfield(L, -2, "endpos");
-	_et_getclipplane(L, &tr->plane);
+	_etH_getclipplane(L, &tr->plane);
 	lua_setfield(L, -2, "plane");
 	lua_pushinteger(L, tr->surfaceFlags);
 	lua_setfield(L, -2, "surfaceFlags");
@@ -1892,13 +2316,23 @@ static vec3_t *_etH_toVec3(lua_State *L, int inx)
 	static vec3_t vec;
 
 	lua_pushvalue(L, inx);
-	_et_gentity_setvec3(L, &vec);
+	_etH_gentity_setvec3(L, &vec);
 	lua_pop(L, 1);
 
 	return &vec;
 }
 
-// et.trap_Trace( start, mins, maxs, end, entNum, mask )
+/**
+ * Traces an entity.
+ *
+ * @lua_def_prototype et.trap_Trace(start, mins, maxs, endPos, entNum, mask)
+ * @lua_def ---@param start Vec3 the starting position.
+ * @lua_def ---@param mins Vec3 the minimum point of the bounding box.
+ * @lua_def ---@param maxs Vec3 the maximum point of the bounding box.
+ * @lua_def ---@param endPos Vec3 the ending position.
+ * @lua_def ---@param entNum number the entity number that is being ignored by the trace function.
+ * @lua_def ---@param mask number the content mask.
+ */
 static int _et_trap_Trace(lua_State *L)
 {
 	trace_t tr;
@@ -1934,12 +2368,23 @@ static int _et_trap_Trace(lua_State *L)
 	mask   = luaL_checkinteger(L, 6);
 
 	trap_Trace(&tr, start, *minsPtr, *maxsPtr, end, entNum, mask);
-	_et_gettrace(L, &tr);
+	_etH_gettrace(L, &tr);
 
 	return 1;
 }
 
-// et.G_HistoricalTrace( ent, start, mins, maxs, end, entNum, mask )
+/**
+ * Runs a trace with players in historical positions.
+ *
+ * @lua_def_prototype et.G_HistoricalTrace(ent, start, mins, maxs, endPos, entNum, mask)
+ * @lua_def ---@param ent number the entity which trace history is handled.
+ * @lua_def ---@param start Vec3 the starting position.
+ * @lua_def ---@param mins Vec3 the minimum point of the bounding box.
+ * @lua_def ---@param maxs Vec3 the maximum point of the bounding box.
+ * @lua_def ---@param endPos Vec3 the ending position.
+ * @lua_def ---@param entNum number the entity number that is being ignored by the trace function.
+ * @lua_def ---@param mask number the content mask.
+ */
 static int _et_G_HistoricalTrace(lua_State *L)
 {
 	gentity_t *gent;
@@ -1987,7 +2432,7 @@ static int _et_G_HistoricalTrace(lua_State *L)
 	mask   = luaL_checkinteger(L, 7);
 
 	G_HistoricalTrace(gent, &tr, start, *minsPtr, *maxsPtr, end, entNum, mask);
-	_et_gettrace(L, &tr);
+	_etH_gettrace(L, &tr);
 
 	return 1;
 }
@@ -2061,8 +2506,8 @@ static const luaL_Reg etlib[] =
 	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },
 	{ "GetCurrentWeapon",        _et_GetCurrentWeapon        },
 	// Entities
-	{ "G_CreateEntity",          _et_G_Lua_CreateEntity      },
-	{ "G_DeleteEntity",          _et_G_Lua_DeleteEntity      },
+	{ "G_CreateEntity",          _et_G_CreateEntity          },
+	{ "G_DeleteEntity",          _et_G_DeleteEntity          },
 	{ "G_TempEntity",            _et_G_TempEntity            },
 	{ "G_FreeEntity",            _et_G_FreeEntity            },
 	{ "G_EntitiesFree",          _et_G_EntitiesFree          },
@@ -2071,8 +2516,8 @@ static const luaL_Reg etlib[] =
 	{ "trap_UnlinkEntity",       _et_trap_UnlinkEntity       },
 	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
 	{ "G_SetSpawnVar",           _et_G_SetSpawnVar           },
-	{ "gentity_get",             et_gentity_get              },
-	{ "gentity_set",             et_gentity_set              },
+	{ "gentity_get",             _et_gentity_get             },
+	{ "gentity_set",             _et_gentity_set             },
 	{ "G_AddEvent",              _et_G_AddEvent              },
 	// Shaders
 	{ "G_ShaderRemap",           _et_G_ShaderRemap           },
@@ -3083,9 +3528,27 @@ lua_vm_t *G_LuaGetVM(lua_State *L)
  * @{
  */
 
-/*
- * G_LuaHook_InitGame
- * et_InitGame( levelTime, randomSeed, restart ) callback
+/**
+ * Called when another module sends an `et.IPCSend()` message to this module.
+ *
+ * IMPORTANT: The sender module must be loaded earlier in the `lua_modules` cvar, otherwise the receiver module cannot find it.
+ *
+ * @lua_def_prototype et_IPCReceive(vmnumber, message)
+ * @lua_def ---@param vmnumber number the VM slot number of the sender.
+ * @lua_def ---@param message string the message sent.
+ */
+void G_LuaHook_IPCReceive(int vmnumber, const char *message)
+{
+	// XXX - implemented by mod, just for documentation purposes ...
+}
+
+/**
+ * Called when qagame initializes.
+ *
+ * @lua_def_prototype et_InitGame(levelTime, randomSeed, restart)
+ * @lua_def ---@param levelTime number the current level time in milliseconds.
+ * @lua_def ---@param randomSeed number a number that can be used to seed random number generators.
+ * @lua_def ---@param restart number indicates if et_InitGame() is being called due to a `map_restart` (1) or not (0).
  */
 void G_LuaHook_InitGame(int levelTime, int randomSeed, int restart)
 {
@@ -3119,9 +3582,11 @@ void G_LuaHook_InitGame(int levelTime, int randomSeed, int restart)
 	}
 }
 
-/*
- * G_LuaHook_ShutdownGame
- * et_ShutdownGame( restart )  callback
+/**
+ * Called when qagame shuts down.
+ *
+ * @lua_def_prototype et_ShutdownGame(restart)
+ * @lua_def ---@param restart number indicates if the shutdown is being called due to a `map_restart` (1) or not (0).
  */
 void G_LuaHook_ShutdownGame(int restart)
 {
@@ -3157,6 +3622,13 @@ void G_LuaHook_ShutdownGame(int restart)
  * G_LuaHook_RunFrame
  * et_RunFrame( levelTime )  callback
  */
+
+/**
+ * A Hook that is run every server frame.
+ *
+ * @lua_def_prototype et_RunFrame(levelTime)
+ * @lua_def ---@param levelTime number Level time of the server.
+ */
 void G_LuaHook_RunFrame(int levelTime)
 {
 	int      i;
@@ -3187,9 +3659,14 @@ void G_LuaHook_RunFrame(int levelTime)
 	}
 }
 
-/*
- * G_LuaHook_ClientConnect
- * rejectreason = et_ClientConnect( clientNum, firstTime, isBot ) callback
+/**
+ * Called when a client attempts to connect to the server.
+ *
+ * @lua_def_prototype et_ClientConnect(clientNum, firstTime, isBot)
+ * @lua_def ---@param clientNum number the client slot id.
+ * @lua_def ---@param firstTime number indicates if this is a new connection (1) or a reconnection (0).
+ * @lua_def ---@param isBot number indicates if the client is a bot (1) or not (0).
+ * @lua_def ---@return string|nil result 'nil' if mod accepts the connection, otherwise a string describing the reason the client connection was rejected
  */
 qboolean G_LuaHook_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot, char *reason)
 {
@@ -3232,9 +3709,11 @@ qboolean G_LuaHook_ClientConnect(int clientNum, qboolean firstTime, qboolean isB
 	return qfalse;
 }
 
-/*
- * G_LuaHook_ClientDisconnect
- * et_ClientDisconnect( clientNum ) callback
+/**
+ * Called when a client disconnects.
+ *
+ * @lua_def_prototype et_ClientDisconnect(clientNum)
+ * @lua_def ---@param clientNum number the client slot id.
  */
 void G_LuaHook_ClientDisconnect(int clientNum)
 {
@@ -3266,9 +3745,11 @@ void G_LuaHook_ClientDisconnect(int clientNum)
 	}
 }
 
-/*
- * G_LuaHook_ClientBegin
- * et_ClientBegin( clientNum ) callback
+/**
+ * Called when a client begins (becomes active, and enters the gameworld).
+ *
+ * @lua_def_prototype et_ClientBegin(clientNum)
+ * @lua_def ---@param clientNum number the client slot id.
  */
 void G_LuaHook_ClientBegin(int clientNum)
 {
@@ -3300,9 +3781,13 @@ void G_LuaHook_ClientBegin(int clientNum)
 	}
 }
 
-/*
- * G_LuaHook_ClientUserinfoChanged(int clientNum);
- * et_ClientUserinfoChanged( clientNum ) callback
+/**
+ * Called when a client's Userinfo string has changed.
+ *
+ * NOTE: This only gets called when the players `CS_PLAYERS` config string changes, rather than every time the userinfo changes. This only happens for a subset of userinfo fields.
+ *
+ * @lua_def_prototype et_ClientUserinfoChanged(clientNum)
+ * @lua_def ---@param clientNum number the client slot id.
  */
 void G_LuaHook_ClientUserinfoChanged(int clientNum)
 {
@@ -3334,9 +3819,14 @@ void G_LuaHook_ClientUserinfoChanged(int clientNum)
 	}
 }
 
-/*
- * G_LuaHook_ClientSpawn
- * et_ClientSpawn( clientNum, revived, teamChange, restoreHealth ) callback
+/**
+ * Called when a client is spawned.
+ *
+ * @lua_def_prototype et_ClientSpawn(clientNum, revived, teamChange, restoreHealth)
+ * @lua_def ---@param clientNum number the client slot id.
+ * @lua_def ---@param revived number indicates if the client was spawned by being revived (1) or not (0).
+ * @lua_def ---@param teamChange number indicates if the client changed team (1) or not (0).
+ * @lua_def ---@param restoreHealth number indicates if the player health bar is fully restored (1) or not (0).
  */
 void G_LuaHook_ClientSpawn(int clientNum, qboolean revived, qboolean teamChange, qboolean restoreHealth)
 {
@@ -3371,9 +3861,15 @@ void G_LuaHook_ClientSpawn(int clientNum, qboolean revived, qboolean teamChange,
 	}
 }
 
-/*
- * G_LuaHook_ClientCommand
- * intercepted = et_ClientCommand( clientNum, command ) callback
+/**
+ * Called when a command is received from a client.
+ *
+ * TIP: The actual command can be accessed through the argument handling functions.
+ *
+ * @lua_def_prototype et_ClientCommand(clientNum, command)
+ * @lua_def ---@param clientNum number the client slot id.
+ * @lua_def ---@param command string the command.
+ * @lua_def ---@return number result '1' if the command was intercepted by the mod, and '0' if the command was ignored and passed through to the server (and other mods in the chain).
  */
 qboolean G_LuaHook_ClientCommand(int clientNum, char *command)
 {
@@ -3417,9 +3913,14 @@ qboolean G_LuaHook_ClientCommand(int clientNum, char *command)
 	return qfalse;
 }
 
-/*
- * G_LuaHook_ConsoleCommand
- * intercepted = et_ConsoleCommand( command ) callback
+/**
+ * Called when a command is entered on the server console.
+ *
+ * TIP: The actual command can be accessed through the argument handling functions.
+ *
+ * @lua_def_prototype et_ConsoleCommand(command)
+ * @lua_def ---@param command string
+ * @lua_def ---@return number result returns 1 if the command was intercepted, and 0 if the command was ignored and passed through to the server (and other mods in the chain).
  */
 qboolean G_LuaHook_ConsoleCommand(char *command)
 {
@@ -3462,9 +3963,13 @@ qboolean G_LuaHook_ConsoleCommand(char *command)
 	return qfalse;
 }
 
-/*
- * G_LuaHook_UpgradeSkill
- * result = et_UpgradeSkill( cno, skill ) callback
+/**
+ * Called when a client gets a skill upgrade.
+ *
+ * @lua_def_prototype et_UpgradeSkill(clientNum, skill)
+ * @lua_def ---@param clientNum number the client slot.
+ * @lua_def ---@param skill number the skill number (see `et.SK_`).
+ * @lua_def ---@return number result returns -1 to override (abort) the qagame function, anything else to "passthrough". Callback may modify skills (or do anything else it wants) during passthrough.
  */
 qboolean G_LuaHook_UpgradeSkill(int cno, skillType_t skill)
 {
@@ -3508,9 +4013,13 @@ qboolean G_LuaHook_UpgradeSkill(int cno, skillType_t skill)
 	return qfalse;
 }
 
-/*
- * G_LuaHook_SetPlayerSkill
- * et_SetPlayerSkill( cno, skill ) callback
+/**
+ * Called when a client skill is set.
+ *
+ * @lua_def_prototype et_SetPlayerSkill(clientNum, skill)
+ * @lua_def ---@param clientNum number the client slot.
+ * @lua_def ---@param skill number the skill number (see `et.SK_`).
+ * @lua_def ---@return number result returns -1 to override (abort) the qagame function, anything else to "passthrough". Callback may modify skills (or do anything else it wants) during passthrough.
  */
 qboolean G_LuaHook_SetPlayerSkill(int cno, skillType_t skill)
 {
@@ -3561,9 +4070,14 @@ static luaPrintFunctions_t g_luaPrintFunctions[] =
 	{ GPRINT_ERROR,     "et_Error"  }
 };
 
-/*
- * G_LuaHook_Print
- * et_Print( text ) callback
+/**
+ * Called whenever the server or qagame prints a string to the console.
+ *
+ * WARNING: **DO NOT TRUST STRINGS OBTAINED IN THIS WAY!**
+ * WARNING: Text may contain a player name and their chat message, which makes it very easy to spoof.
+ *
+ * @lua_def_prototype et_Print(text)
+ * @lua_def ---@param text string
  */
 void G_LuaHook_Print(printMessageType_t category, char *text)
 {
@@ -3596,14 +4110,17 @@ void G_LuaHook_Print(printMessageType_t category, char *text)
 	}
 }
 
-/*
- * G_LuaHook_Obituary
- * (customObit) = et_Obituary( victim, killer, meansOfDeath ) callback
+/**
+ * Called whenever a player is killed.
  *
  * Different to ETPub which supports custom obituaries
- * this is 'ETPro like' implementation
+ * this is 'ETPro like' implementation.
+ *
+ * @lua_def_prototype et_Obituary(target, attacker, meansOfDeath)
+ * @lua_def ---@param target number the victim.
+ * @lua_def ---@param attacker number the killer.
+ * @lua_def ---@param meansOfDeath number the means of death (see `et.MOD_`).
  */
-// qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath, char *customObit)
 qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath)
 {
 	int      i;
@@ -3645,8 +4162,16 @@ qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath)
 	return qfalse;
 }
 
-// G_LuaHook_Damage
-// et_Damage( target, attacker, damage, dflags, mod)
+/**
+ * Called whenever a player gets damage.
+ *
+ * @lua_def_prototype et_Damage(target, attacker, damage, damageFlags, meansOfDeath)
+ * @lua_def ---@param target number the victim.
+ * @lua_def ---@param attacker number the killer.
+ * @lua_def ---@param damage number the amount of damage.
+ * @lua_def ---@param damageFlags number
+ * @lua_def ---@param meansOfDeath number the means of death. See `et.MOD_*` for possible values.
+ */
 qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, meansOfDeath_t mod)
 {
 	int      i;
@@ -3689,8 +4214,14 @@ qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, mean
 	return qfalse;
 }
 
-// G_LuaHook_WeaponFire
-// et_WeaponFire( clientNum, weapon )
+/**
+ * Called whenever a weapon is shot.
+ *
+ * @lua_def_prototype et_WeaponFire(clientNum, weapon)
+ * @lua_def ---@param clientNum number the client slot.
+ * @lua_def ---@param weapon number the weapon shot (see `et.WP_`).
+ * @lua_def ---@return number result returns 1 to override (abort) the qagame function, 0 to "passthrough". Callback may do anything it wants during passthrough.
+ */
 qboolean G_LuaHook_WeaponFire(int clientNum, weapon_t weapon, gentity_t **pFiredShot)
 {
 	int      i;
@@ -3737,8 +4268,13 @@ qboolean G_LuaHook_WeaponFire(int clientNum, weapon_t weapon, gentity_t **pFired
 	return qfalse;
 }
 
-// G_LuaHook_FixedMGFire
-// et_FixedMGFire( clientNum )
+/**
+ * Called whenever a fixed machine gun is shot.
+ *
+ * @lua_def_prototype et_FixedMGFire(clientNum)
+ * @lua_def ---@param clientNum number the client slot.
+ * @lua_def ---@return number result returns 1 to override (abort) the qagame function, 0 to "passthrough". Callback may do anything it wants during passthrough.
+ */
 qboolean G_LuaHook_FixedMGFire(int clientNum)
 {
 	int      i;
@@ -3776,8 +4312,13 @@ qboolean G_LuaHook_FixedMGFire(int clientNum)
 	return qfalse;
 }
 
-// G_LuaHook_MountedMGFire
-// et_MountedMGFire( clientNum )
+/**
+ * Called whenever a mounted machine gun is shot.
+ *
+ * @lua_def_prototype et_MountedMGFire(clientNum)
+ * @lua_def ---@param clientNum number the client slot.
+ * @lua_def ---@return number result returns 1 to override (abort) the qagame function, 0 to "passthrough". Callback may do anything it wants during passthrough.
+ */
 qboolean G_LuaHook_MountedMGFire(int clientNum)
 {
 	int      i;
@@ -3815,8 +4356,15 @@ qboolean G_LuaHook_MountedMGFire(int clientNum)
 	return qfalse;
 }
 
-// G_LuaHook_AAGunFire
-// et_AAGunFire( clientNum )
+/**
+ * Called whenever an anti-aircraft gun is shot.
+ *
+ * Returns '1' to override (abort) the qagame function, '0' to "passthrough". Callback may do anything it wants during passthrough.
+ *
+ * @lua_def_prototype et_AAGunFire(clientNum)
+ * @lua_def ---@param clientNum number the client slot.
+ * @lua_def ---@return number result returns '1' to override (abort) the qagame function, '0' to "passthrough". Callback may do anything it wants during passthrough.
+ */
 qboolean G_LuaHook_AAGunFire(int clientNum)
 {
 	int      i;
@@ -3854,9 +4402,10 @@ qboolean G_LuaHook_AAGunFire(int clientNum)
 	return qfalse;
 }
 
-/*
- * G_LuaHook_SpawnEntitiesFromString
- * et_SpawnEntitiesFromString()
+/**
+ * Called when an entity definition is parsed to spawn gentities.
+ *
+ * @lua_def_prototype et_SpawnEntitiesFromString()
  */
 void G_LuaHook_SpawnEntitiesFromString()
 {
@@ -3887,9 +4436,20 @@ void G_LuaHook_SpawnEntitiesFromString()
 	}
 }
 
-/*
- * G_LuaHook_Chat
- * et_Chat( sender, receiver, text ) callback
+/**
+ * Called whenever a player says/chats something.
+ *
+ * Return '1' as 1st return value to override the message with a string passed
+ * in 2nd return value.
+ *
+ * Otherwise passes the message through.
+ *
+ * @lua_def_prototype et_Chat(sender, receiver, message)
+ * @lua_def ---@param sender number
+ * @lua_def ---@param receiver number
+ * @lua_def ---@param message string
+ * @lua_def ---@return number override if set to '1' override the message with 'overrideMessage'
+ * @lua_def ---@return string overrideMessage
  */
 const char *G_LuaHook_Chat(int sender, int receiver, const char *message, char *buffer, size_t bufsize)
 {

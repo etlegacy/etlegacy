@@ -18,10 +18,15 @@ platforms = ["linux-64", "osx-64", "win-64"]
 [feature.validation.tasks]
 check-changes = { cmd = ["python", "./misc/check-changes.py"] }
 autoformat = { cmd = ["python", "./misc/autoformat.py"] }
-
 [feature.validation.dependencies]
 "uncrustify" = "0.78.1.*"
 "black"      = "25.1.0.*"
 
+[feature.libclang.tasks]
+regenerate-luals-definitions = { cmd = ["python", "./misc/regenerate-luals-definitions.py", "./src/game/g_lua.c"]}
+[feature.libclang.dependencies]
+"python-clang" = "20.1.5.*"
+
 [environments]
 validation = ["validation"]
+libclang = ["libclang"]
