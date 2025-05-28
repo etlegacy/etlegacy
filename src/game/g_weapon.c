@@ -326,6 +326,10 @@ void ReviveEntityEvent(gentity_t *reviver, gentity_t *revivee, int invulnEndTime
 	te->s.eventParm   = revivee->s.clientNum;
 	te->s.clientNum   = reviver->s.clientNum;
 	te->s.effect3Time = invulnEndTime;
+
+#ifdef FEATURE_LUA
+	G_LuaHook_Revive(revivee->s.clientNum, reviver->s.clientNum, invulnEndTime);
+#endif
 }
 
 /**
