@@ -3275,7 +3275,6 @@ void CG_Text_PaintChar(float x, float y, float width, float height, float scale,
 void CG_DrawWeapHeat(rectDef_t *rect, int align, qboolean dynamicColor);
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, int align, vec4_t *refcolor);
 int CG_CalculateReinfTime(team_t team);
-int CG_CalculateReinfTimeEx(int period, int offset);
 int CG_GetReinfTime(qboolean menu);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
