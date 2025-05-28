@@ -36,7 +36,7 @@
 
 #include "cg_local.h"
 
-hudData_t      hudData;
+hudData_t hudData;
 hudComponent_t *showOnlyHudComponent = NULL;
 
 static lagometer_t lagometer;
@@ -101,7 +101,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(crosshairtext),      CG_DrawCrosshairNames,            0.25f,  { "Full Color",    "Explosive Owner" } },// FIXME: outside cg_draw_hud
 	{ HUDF(crosshairbar),       CG_DrawCrosshairHealthBar,        0.25f,  { "Class",         "Rank",         "Prestige",       "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),              CG_DrawShoutcastPlayerStatus,     0.19f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(xpgain),             CG_DrawPMItemsXPGain,             0.22f,  { "Scroll Down",   "No Reason",    "No Stack",       "No XP Add up"      } }, // FIXME: outside cg_draw_hud
+	{ HUDF(xpgain),             CG_DrawPMItemsXPGain,             0.22f,  { "Scroll Down",   "No Reason",    "No Stack", "No XP Add up" } },   // FIXME: outside cg_draw_hud
 	{ HUDF(scPlayerListAxis),   CG_DrawShoutcastPlayerListAxis,   0.16f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(scPlayerListAllies), CG_DrawShoutcastPlayerListAllies, 0.16f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(scTeamNamesAxis),    CG_DrawShoutcastTeamNameAxis,     0.3f,   { 0 } },           // FIXME: outside cg_draw_hud
@@ -213,7 +213,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->spectatortext      = CG_getComponent(4, 160, 278, 38, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawSpectatorMessage);
 	hud->limbotext          = CG_getComponent(4, 124, 278, 38, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawLimboMessage);
 	hud->followtext         = CG_getComponent(4, 124, 278, 24, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawFollow);
-	hud->demotext           = CG_getComponent(10, 0, 57, 10, qtrue, 0, 100.f, (vec4_t) { 1, 0, 0, 0.5 }, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawDemoMessage);
+	hud->demotext           = CG_getComponent(10, 0, 57, 10, qtrue, 0, 100.f, (vec4_t){ 1, 0, 0, 0.5 }, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawDemoMessage);
 	hud->missilecamera      = CG_getComponent(4, 120, 160, 120, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawMissileCamera);
 	hud->sprinttext         = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerSprint);
 	hud->breathtext         = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawPlayerBreath);
@@ -2876,18 +2876,20 @@ void CG_DrawFPS(hudComponent_t *comp)
 */
 char *CG_SpawnTimerText()
 {
+	int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
+	int seconds;
+	int secondsThen;
+
 	if (cg_spawnTimer_set.integer != -1 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
-			int st;
-			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer :
-			             (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
-
-			st = CG_CalculateReinfTimeEx(period, cg_spawnTimer_set.integer);
-			if (st)
+			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer : (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
+			if (period > 0) // prevent division by 0 for weird cases like limbtotime < 1000
 			{
-				return va("%i", st);
+				seconds     = msec / 1000;
+				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
+				return va("%i", period + (seconds - secondsThen) % period);
 			}
 		}
 	}
