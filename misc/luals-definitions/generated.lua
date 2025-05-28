@@ -572,6 +572,13 @@ function et_Obituary(target, attacker, meansOfDeath) end
 ---@alias et_Print fun(text: string)
 function et_Print(text) end
 
+---Called whenever a player gets revived.
+---@param revivee number the one who got revived
+---@param reviver number the one who did the reviving
+---@param invulnEndTime number timestamp when the spawn shield/invulnerability ends
+---@alias et_Revive fun(revivee: number, reviver: number, invulnEndTime: number)
+function et_Revive(revivee, reviver, invulnEndTime) end
+
 ---A Hook that is run every server frame.
 ---@param levelTime number Level time of the server.
 ---@alias et_RunFrame fun(levelTime: number)
