@@ -4163,6 +4163,53 @@ qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath)
 }
 
 /**
+ * Called whenever a player gets revived.
+ *
+ * @lua_def_prototype et_Revive(revivee, reviver, invulnEndTime)
+ * @lua_def ---@param revivee number the one who got revived
+ * @lua_def ---@param reviver number the one who did the reviving
+ * @lua_def ---@param invulnEndTime number timestamp when the spawn shield/invulnerability ends
+ */
+qboolean G_LuaHook_Revive(int revivee, int reviver, int invulnEndTime)
+{
+	int      i;
+	lua_vm_t *vm;
+
+	for (i = 0; i < LUA_NUM_VM; i++)
+	{
+		vm = lVM[i];
+		if (vm)
+		{
+			if (vm->id < 0 /*|| vm->err*/)
+			{
+				continue;
+			}
+			if (!G_LuaGetNamedFunction(vm, "et_Revive"))
+			{
+				continue;
+			}
+			// Arguments
+			lua_pushinteger(vm->L, revivee);
+			lua_pushinteger(vm->L, reviver);
+			lua_pushinteger(vm->L, invulnEndTime);
+			// Call
+			if (!G_LuaCall(vm, "et_Revive", 3, 1))
+			{
+				continue;
+			}
+			// Return values
+			if (lua_tointeger(vm->L, -1) == 1)
+			{
+				lua_pop(vm->L, 1);
+				return qtrue;
+			}
+			lua_pop(vm->L, 1);
+		}
+	}
+	return qfalse;
+}
+
+/**
  * Called whenever a player gets damage.
  *
  * @lua_def_prototype et_Damage(target, attacker, damage, damageFlags, meansOfDeath)
