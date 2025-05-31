@@ -2934,6 +2934,51 @@ static void registerConfigstringConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_MAX);
 }
 
+static void registerEntityFlags(lua_vm_t *vm)
+{
+	lua_regconstinteger(vm->L, EF_NONE);
+	lua_regconstinteger(vm->L, EF_DEAD);
+	lua_regconstinteger(vm->L, EF_NONSOLID_BMODEL);
+	lua_regconstinteger(vm->L, EF_TELEPORT_BIT);
+	lua_regconstinteger(vm->L, EF_READY);
+
+	lua_regconstinteger(vm->L, EF_CROUCHING);
+	lua_regconstinteger(vm->L, EF_MG42_ACTIVE);
+	lua_regconstinteger(vm->L, EF_NODRAW);
+	lua_regconstinteger(vm->L, EF_FIRING);
+	lua_regconstinteger(vm->L, EF_INHERITSHADER);
+
+	lua_regconstinteger(vm->L, EF_SPINNING);
+	lua_regconstinteger(vm->L, EF_BREATH);
+	lua_regconstinteger(vm->L, EF_TALK);
+	lua_regconstinteger(vm->L, EF_CONNECTION);
+	lua_regconstinteger(vm->L, EF_SMOKINGBLACK);
+
+	lua_regconstinteger(vm->L, EF_HEADSHOT);
+	lua_regconstinteger(vm->L, EF_SMOKING);
+	lua_regconstinteger(vm->L, EF_OVERHEATING);
+	lua_regconstinteger(vm->L, EF_VOTED);
+	lua_regconstinteger(vm->L, EF_TAGCONNECT);
+	lua_regconstinteger(vm->L, EF_MOUNTEDTANK);
+
+	lua_regconstinteger(vm->L, EF_FAKEBMODEL);
+	lua_regconstinteger(vm->L, EF_PATH_LINK);
+	lua_regconstinteger(vm->L, EF_ZOOMING);
+	lua_regconstinteger(vm->L, EF_PRONE);
+
+	lua_regconstinteger(vm->L, EF_PRONE_MOVING);
+	lua_regconstinteger(vm->L, EF_VIEWING_CAMERA);
+	lua_regconstinteger(vm->L, EF_AAGUN_ACTIVE);
+	lua_regconstinteger(vm->L, EF_SPARE0);
+
+	lua_regconstinteger(vm->L, EF_SPARE1);
+	lua_regconstinteger(vm->L, EF_SPARE2);
+	lua_regconstinteger(vm->L, EF_BOUNCE);
+	lua_regconstinteger(vm->L, EF_BOUNCE_HALF);
+	lua_regconstinteger(vm->L, EF_MOVER_STOP);
+	lua_regconstinteger(vm->L, EF_MOVER_BLOCKED);
+}
+
 static void registerPowerupConstants(lua_vm_t *vm)
 {
 	lua_regconstinteger(vm->L, PW_NONE);
@@ -3275,6 +3320,7 @@ static void registerConstants(lua_vm_t *vm)
 
 	// cs, weapon and MOD constants
 	registerConfigstringConstants(vm);
+	registerEntityFlags(vm);
 	registerPowerupConstants(vm);
 	registerWeaponConstants(vm);
 	registerModConstants(vm);
