@@ -92,6 +92,7 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImages[PM_CONSTRUCTION] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_MINES]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_DEATH]        = trap_R_RegisterShaderNoMip("gfx/hud/pm_death");
+	cgs.media.pmImages[PM_DEATH_HEADSHOT] = trap_R_RegisterShaderNoMip("gfx/hud/pm_death_crack");
 	cgs.media.pmImages[PM_MESSAGE]      = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_OBJECTIVE]    = trap_R_RegisterShaderNoMip("sprites/objective");
 	cgs.media.pmImages[PM_DESTRUCTION]  = trap_R_RegisterShaderNoMip("sprites/voiceChat");
@@ -424,7 +425,7 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 	}
 
 	// do not write obituary popups into console - we'll get double kill-messages otherwise
-	if (type != PM_DEATH)
+	if (type != PM_DEATH && type != PM_DEATH_HEADSHOT)
 	{
 		trap_Print(va("%s\n", listItem->message)); // FIXME: translate this (does it makes sense?)
 	}
@@ -814,6 +815,19 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 		{
 			CG_DrawPic(x, *y - size, size, size, listItem->shader);
 			x += size;
+		}
+
+
+		if (listItem->type == PM_DEATH_HEADSHOT)
+		{
+			if (comp->alignText == ITEM_ALIGN_RIGHT)
+			{
+				CG_DrawPic(x, *y - size, size, size, cgs.media.pmImages[PM_DEATH_HEADSHOT]);
+			}
+			else
+			{
+				CG_DrawPic(x - size, *y - size, size, size, cgs.media.pmImages[PM_DEATH_HEADSHOT]);
+			}
 		}
 
 		// decolorize
