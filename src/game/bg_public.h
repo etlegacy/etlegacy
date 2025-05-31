@@ -3038,7 +3038,6 @@ typedef enum popupMessageType_e
 	PM_CONSTRUCTION,
 	PM_MINES,
 	PM_DEATH,
-	PM_DEATH_HEADSHOT,
 	PM_MESSAGE,
 	PM_OBJECTIVE,
 	PM_DESTRUCTION,
@@ -3047,6 +3046,7 @@ typedef enum popupMessageType_e
 	PM_HEALTHPICKUP,
 	PM_WEAPONPICKUP,
 	PM_CONNECT,
+	PM_DEATH_HEADSHOT,
 	PM_NUM_TYPES
 } popupMessageType_t;
 
