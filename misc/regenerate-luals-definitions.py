@@ -20,7 +20,7 @@ TEMPLATE_STANZA = (
 --               MANUAL CHANGES WILL BE LOST!
 --
 --        Timestamp : {datetime.now(timezone.utc).isoformat()}
---        Source    : https://github.com/etlegacy/etlegacy/blob/master/misc/luals-definitions/generated.lua
+--        Latest    : https://github.com/etlegacy/etlegacy/blob/master/misc/luals-definitions/generated.lua
 """
     + """
 ---@meta legacy
