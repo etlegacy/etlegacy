@@ -3232,14 +3232,14 @@ static void CG_SelectSpawn_f(void)
 			qboolean nameExclude = qfalse;
 
 			// Dirty hack for TEAM_FREE CP spawns
-			if (playerTeam == TEAM_ALLIES)
+			if (playerTeam == TEAM_ALLIES && spawnpoint->team == TEAM_FREE)
 			{
 				if (Q_stristr(spawnpoint->name, "Axis"))
 				{
 					nameExclude = qtrue;
 				}
 			}
-			else if (playerTeam == TEAM_AXIS)
+			else if (playerTeam == TEAM_AXIS && spawnpoint->team == TEAM_FREE)
 			{
 				if (Q_stristr(spawnpoint->name, "Allie"))
 				{
