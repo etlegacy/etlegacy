@@ -3204,7 +3204,8 @@ static void CG_SelectSpawn_f(void)
 
 	VectorCopy(cg.refdef_current->vieworg, playerOrigin);
 
-	for (i = 0; i < cg.numSpawnpointEnts; i++) {
+	for (i = 0; i < cg.numSpawnpointEnts; i++)
+	{
 		spawnpoint = &cgs.spawnpointEnt[i];
 
 		if (!trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin))
@@ -3248,7 +3249,8 @@ static void CG_SelectSpawn_f(void)
 
 			if (!nameExclude)
 			{
-				if (dist < closestMajorDist) {
+				if (dist < closestMajorDist)
+				{
 					closestMajorDist = dist;
 					bestMajorSpawn = spawnpoint;
 				}
