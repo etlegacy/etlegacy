@@ -3419,7 +3419,7 @@ static consoleCommand_t commands[] =
 	{ "resetmaxspeed",          CG_ResetMaxSpeed_f        },
 	{ "listspawnpt",            CG_ListSpawnPoints_f      },
 	{ "setspawnpt",             CG_SetSpawnPoint_f        },
-	{ "selectspawn",            CG_SelectSpawn_f        },
+	{ "selectclosestspawnpt",            CG_SelectSpawn_f        },
 
 	{ "loc",                    CG_Location_f             },
 	{ "camera",                 CG_Camera_f               },
