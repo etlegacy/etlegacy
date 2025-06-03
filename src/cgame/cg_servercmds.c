@@ -366,7 +366,7 @@ void CG_ParseSysteminfo(void)
 	if (!cgs.sv_fps)
 	{
 		// no way to know for sure, assume default
-		cgs.sv_fps = 20;
+		cgs.sv_fps = DEFAULT_SV_FPS;
 	}
 
 	cgs.sv_cheats = (atoi(Info_ValueForKey(info, "sv_cheats"))) ? qtrue : qfalse;

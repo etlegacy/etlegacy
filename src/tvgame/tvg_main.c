@@ -143,7 +143,7 @@ tvcvarTable_t gameCvarTable[] =
 	{ &tvg_cheats,              "sv_cheats",               "",                           0,                                           0, qfalse },
 	{ &tvg_dedicated,           "dedicated",               "0",                          0,                                           0, qfalse,},
 
-	{ &sv_fps,                  "sv_fps",                  "20",                         CVAR_SYSTEMINFO,                             0, qfalse,},
+	{ &sv_fps,                  "sv_fps",                  DEFAULT_SV_FPS_STR,           0,                                           0, qfalse,},
 	{ &pmove_fixed,             "pmove_fixed",             "0",                          CVAR_SYSTEMINFO | CVAR_ROM,                  0, qfalse,},
 	{ &pmove_msec,              "pmove_msec",              "8",                          CVAR_SYSTEMINFO | CVAR_ROM,                  0, qfalse,},
 
