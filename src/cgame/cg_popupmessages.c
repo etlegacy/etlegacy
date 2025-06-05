@@ -88,19 +88,19 @@ void CG_PMItemBigSound(pmListItem_t *item);
  */
 void CG_InitPMGraphics(void)
 {
-	cgs.media.pmImages[PM_DYNAMITE]     = trap_R_RegisterShaderNoMip("gfx/limbo/pm_dynamite");
-	cgs.media.pmImages[PM_CONSTRUCTION] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
-	cgs.media.pmImages[PM_MINES]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
-	cgs.media.pmImages[PM_DEATH]        = trap_R_RegisterShaderNoMip("gfx/hud/pm_death");
+	cgs.media.pmImages[PM_DYNAMITE]       = trap_R_RegisterShaderNoMip("gfx/limbo/pm_dynamite");
+	cgs.media.pmImages[PM_CONSTRUCTION]   = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_MINES]          = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_DEATH]          = trap_R_RegisterShaderNoMip("gfx/hud/pm_death");
 	cgs.media.pmImages[PM_DEATH_HEADSHOT] = trap_R_RegisterShaderNoMip("gfx/hud/pm_death_crack");
-	cgs.media.pmImages[PM_MESSAGE]      = trap_R_RegisterShaderNoMip("sprites/voiceChat");
-	cgs.media.pmImages[PM_OBJECTIVE]    = trap_R_RegisterShaderNoMip("sprites/objective");
-	cgs.media.pmImages[PM_DESTRUCTION]  = trap_R_RegisterShaderNoMip("sprites/voiceChat");
-	cgs.media.pmImages[PM_TEAM]         = trap_R_RegisterShaderNoMip("sprites/voiceChat");
-	cgs.media.pmImages[PM_AMMOPICKUP]   = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
-	cgs.media.pmImages[PM_HEALTHPICKUP] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
-	cgs.media.pmImages[PM_WEAPONPICKUP] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
-	cgs.media.pmImages[PM_CONNECT]      = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_MESSAGE]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_OBJECTIVE]      = trap_R_RegisterShaderNoMip("sprites/objective");
+	cgs.media.pmImages[PM_DESTRUCTION]    = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_TEAM]           = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_AMMOPICKUP]     = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
+	cgs.media.pmImages[PM_HEALTHPICKUP]   = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
+	cgs.media.pmImages[PM_WEAPONPICKUP]   = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_CONNECT]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 
 	cgs.media.pmImageAlliesConstruct = trap_R_RegisterShaderNoMip("gfx/hud/pm_constallied");
 	cgs.media.pmImageAxisConstruct   = trap_R_RegisterShaderNoMip("gfx/hud/pm_constaxis");
