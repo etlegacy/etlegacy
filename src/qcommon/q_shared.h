@@ -464,6 +464,12 @@ typedef int clipHandle_t;
 
 #define DEFAULT_NAME "ETLegacyPlayer"
 
+// these should never be changed
+#define DEFAULT_SV_FPS     20
+#define DEFAULT_SV_FPS_STR "20"
+// default server frametime at sv_fps 20, for framerate independent timings
+#define DEFAULT_SV_FRAMETIME 1000 / DEFAULT_SV_FPS
+
 extern char *GlobalGameTitle;
 
 /**
