@@ -2130,19 +2130,19 @@ void NET_Event(fd_set *fdr)
 }
 
 /**
- * @brief Sleeps usec or until something happens on the network
- * @param[in] usec
+ * @brief Sleeps msec or until something happens on the network
+ * @param[in] msec
  */
-void NET_Sleep(int64_t usec)
+void NET_Sleep(int msec)
 {
 	struct timeval timeout;
 	fd_set         fdset;
 	int            retval;
 	SOCKET         highestfd = INVALID_SOCKET;
 
-	if (usec < 0)
+	if (msec < 0)
 	{
-		usec = 0;
+		msec = 0;
 	}
 
 	FD_ZERO(&fdset);
@@ -2167,13 +2167,13 @@ void NET_Sleep(int64_t usec)
 	if (highestfd == INVALID_SOCKET)
 	{
 		// windows ain't happy when select is called without valid FDs
-		SleepEx(usec / 1000, 0);
+		SleepEx(msec, 0);
 		return;
 	}
 #endif
 
-	timeout.tv_sec  = usec / 1000000;
-	timeout.tv_usec = (usec % 1000000);
+	timeout.tv_sec  = msec / 1000;
+	timeout.tv_usec = (msec % 1000) * 1000;
 	retval          = select(highestfd + 1, &fdset, NULL, NULL, &timeout);
 
 	if (retval == SOCKET_ERROR)

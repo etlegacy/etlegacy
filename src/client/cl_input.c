@@ -35,9 +35,8 @@
 
 #include "client.h"
 
-double  frame_msec;
-int64_t frame_usec;
-int64_t old_com_frameTimeUS;
+unsigned frame_msec;
+int      old_com_frameTime;
 
 /*
 ===============================================================================
@@ -135,7 +134,7 @@ void IN_KeyDown(kbutton_t *b)
 
 	// save timestamp for partial frame summing
 	c           = Cmd_Argv(2);
-	b->downtime = strtoll(c, NULL, 10);
+	b->downtime = Q_atoi(c);
 
 	b->active     = qtrue;
 	b->wasPressed = qtrue;
@@ -147,9 +146,9 @@ void IN_KeyDown(kbutton_t *b)
  */
 void IN_KeyUp(kbutton_t *b)
 {
-	int     k;
-	char    *c;
-	int64_t uptime;
+	int      k;
+	char     *c;
+	unsigned uptime;
 
 	c = Cmd_Argv(1);
 	if (c[0])
@@ -185,14 +184,14 @@ void IN_KeyUp(kbutton_t *b)
 
 	// save timestamp for partial frame summing
 	c      = Cmd_Argv(2);
-	uptime = strtoll(c, NULL, 10);
+	uptime = Q_atoi(c);
 	if (uptime)
 	{
-		b->usec += uptime - b->downtime;
+		b->msec += uptime - b->downtime;
 	}
 	else
 	{
-		b->usec += frame_usec / 2;
+		b->msec += frame_msec / 2;
 	}
 
 	b->active = qfalse;
@@ -205,33 +204,33 @@ void IN_KeyUp(kbutton_t *b)
  */
 float CL_KeyState(kbutton_t *key)
 {
-	float   val;
-	int64_t usec = key->usec;
+	float val;
+	int   msec = key->msec;
 
-	key->usec = 0;
+	key->msec = 0;
 
 	if (key->active)
 	{
 		// still down
 		if (!key->downtime)
 		{
-			usec = com_frameTimeUS;
+			msec = com_frameTime;
 		}
 		else
 		{
-			usec += com_frameTimeUS - key->downtime;
+			msec += com_frameTime - key->downtime;
 		}
-		key->downtime = com_frameTimeUS;
+		key->downtime = com_frameTime;
 	}
 
 #if 0
-	if (usec)
+	if (msec)
 	{
-		Com_Printf("%i ", usec);
+		Com_Printf("%i ", msec);
 	}
 #endif
 
-	val = (float)usec / frame_usec;
+	val = (float)msec / frame_msec;
 	if (val < 0)
 	{
 		val = 0;
@@ -1172,25 +1171,22 @@ void CL_CreateNewCommands(void)
 		return;
 	}
 
-	frame_usec = com_frameTimeUS - old_com_frameTimeUS;
-	frame_msec = frame_usec / 1000.0;
+	frame_msec = com_frameTime - old_com_frameTime;
 
-	// force at least 1 usec frametime to avoid divide by 0 in CL_KeyState and CL_MouseMove
-	if (frame_usec < 1)
+	// force at least 1 msec frametime to avoid CL_KeyState returning
+	// bogus values resulting in #IND cl.viewangles[]
+	if (frame_msec < 1)
 	{
-		frame_usec = 1;
-		frame_msec = 0.001;
+		frame_msec = 1;
 	}
 
 	// if running less than 5fps, truncate the extra time to prevent
 	// unexpected moves after a hitch
-	if (frame_usec > 200000)
+	if (frame_msec > 200)
 	{
-		frame_usec = 200000;
-		frame_msec = 200.0;
+		frame_msec = 200;
 	}
-
-	old_com_frameTimeUS = com_frameTimeUS;
+	old_com_frameTime = com_frameTime;
 
 	// generate a command for this frame
 	cl.cmdNumber++;

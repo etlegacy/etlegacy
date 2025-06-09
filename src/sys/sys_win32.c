@@ -140,27 +140,7 @@ char *Sys_DefaultHomePath(void)
 	return homePath;
 }
 
-static LARGE_INTEGER sys_timeBase, sys_timeNow, sys_timeFrequency;
-
-/**
- * @brief Sys_Microseconds
- * @return
- */
-int64_t Sys_Microseconds(void)
-{
-	static qboolean initialized = qfalse;
-
-	if (!initialized)
-	{
-		QueryPerformanceFrequency(&sys_timeFrequency);
-		QueryPerformanceCounter(&sys_timeBase);
-		initialized = qtrue;
-	}
-
-	QueryPerformanceCounter(&sys_timeNow);
-
-	return ((sys_timeNow.QuadPart - sys_timeBase.QuadPart) * 1000000LL) / sys_timeFrequency.QuadPart;
-}
+int sys_timeBase;
 
 /**
  * @brief Sys_Milliseconds
@@ -168,7 +148,18 @@ int64_t Sys_Microseconds(void)
  */
 int Sys_Milliseconds(void)
 {
-	return Sys_Microseconds() / 1000;
+	int             sys_curtime;
+	static qboolean initialized = qfalse;
+
+	if (!initialized)
+	{
+		sys_timeBase = timeGetTime();
+		initialized  = qtrue;
+	}
+
+	sys_curtime = timeGetTime() - sys_timeBase;
+
+	return sys_curtime;
 }
 
 /**
