@@ -234,19 +234,36 @@ static clockid_t clockid = CLOCK_REALTIME;
  */
 int Sys_Milliseconds(void)
 {
-	return Sys_Microseconds() / 1000;
+	return (int)(Sys_Microseconds() / 1000LL);
 }
 
 /**
  * @brief Sys_Microseconds
- * @return
+ * @return current system time in microseconds since server/client was started
  */
 int64_t Sys_Microseconds(void)
 {
-	struct timeval curr;
-	gettimeofday(&curr, NULL);
+	static qboolean initialized = qfalse;
+	static int64_t timeBase_us = 0; 
 
-	return (int64_t)curr.tv_sec * 1000000LL + (int64_t)curr.tv_usec;
+	if (!initialized)
+	{
+		struct timespec ts;
+
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+
+		timeBase_us = (int64_t)ts.tv_sec * 1000000LL + (int64_t)ts.tv_nsec / 1000LL;
+		initialized = qtrue;
+
+		return 0;
+	}
+
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+
+	int64_t currentTime_us = (int64_t)ts.tv_sec * 1000000LL + (int64_t)ts.tv_nsec / 1000LL;
+
+	return currentTime_us - timeBase_us;
 }
 
 /**
