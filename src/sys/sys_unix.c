@@ -244,7 +244,7 @@ int Sys_Milliseconds(void)
 int64_t Sys_Microseconds(void)
 {
 	static qboolean initialized = qfalse;
-	static int64_t timeBase_us = 0; 
+	static int64_t  timeBase_us = 0; 
 
 	if (!initialized)
 	{
