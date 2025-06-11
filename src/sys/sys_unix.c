@@ -236,21 +236,16 @@ int64_t Sys_Microseconds(void)
 {
 	static qboolean initialized = qfalse;
 	static int64_t  timeBase_us = 0;
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
 
 	if (!initialized)
 	{
-		struct timespec ts;
-
-		clock_gettime(CLOCK_MONOTONIC, &ts);
-
 		timeBase_us = (int64_t)ts.tv_sec * 1000000LL + (int64_t)ts.tv_nsec / 1000LL;
 		initialized = qtrue;
 
 		return 0;
 	}
-
-	struct timespec ts;
-	clock_gettime(CLOCK_MONOTONIC, &ts);
 
 	int64_t currentTime_us = (int64_t)ts.tv_sec * 1000000LL + (int64_t)ts.tv_nsec / 1000LL;
 
