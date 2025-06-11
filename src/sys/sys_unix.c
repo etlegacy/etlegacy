@@ -219,15 +219,6 @@ void Sys_Chmod(const char *file, int mode)
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 }
 
-// Base time in ms
-static unsigned long long sys_timeBase = 0;
-
-// Current time in ms, using sys_timeBase as origin
-static unsigned long long curtime;
-
-// All systems with clock_gettime will have CLOCK_REALTIME
-static clockid_t clockid = CLOCK_REALTIME;
-
 /**
  * @brief Sys_Milliseconds
  * @return
@@ -244,7 +235,7 @@ int Sys_Milliseconds(void)
 int64_t Sys_Microseconds(void)
 {
 	static qboolean initialized = qfalse;
-	static int64_t  timeBase_us = 0; 
+	static int64_t  timeBase_us = 0;
 
 	if (!initialized)
 	{
