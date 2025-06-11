@@ -12,10 +12,10 @@ EXPLICITLY_IGNORED_WARNINGS = {
     "android": [],
     "lnx-aarch64": [
         # see https://github.com/etlegacy/etlegacy/issues/3102
-        [
-            "../src/qcommon/q_shared.c",
-            "warning: 'strncpy' specified bound depends on the length of the source argument [-Wstringop-overflow=]",
-        ],
+        # [
+        #     "../src/qcommon/q_shared.c",
+        #     "warning: 'strncpy' specified bound depends on the length of the source argument [-Wstringop-overflow=]",
+        # ],
     ],
     "lnx32": [
         # [
