@@ -6,38 +6,18 @@
 #|______|    |_|    |______|  \___|  \__, |  \__,_|  \___|  \__, |
 #                                     __/ |                  __/ |
 #                                    |___/                  |___/
-# 2024 Legacy team
-name: ETLBuildPR
+name: CI
 
 on:
   pull_request:
     branches: [ master ]
     types: [ opened, synchronize, reopened ]
+  push:
+    branches: [ master ]
 
 jobs:
-
-  # We can be picky of the code
-  check-changes:
+  pre-build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: false
-
-      - uses: prefix-dev/setup-pixi@v0.8.3
-        with:
-          pixi-version: v0.41.4
-          cache: true
-
-      - name: Check changes
-        run: |
-          pixi run check-changes --diff --github "origin/master"
-
-  # Try to figure out the build version information only once
-  version:
-    runs-on: ubuntu-latest
-    needs: [ check-changes ]
     outputs:
       describe: ${{ steps.git.outputs.describe }}
       tag: ${{ steps.git.outputs.tag }}
@@ -46,6 +26,16 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+
+      - uses: prefix-dev/setup-pixi@v0.8.3
+        with:
+          pixi-version: v0.41.4
+          cache: true
+
+      - name: Check changes
+        if: github.event_name == 'pull_request'
+        run: |
+          pixi run check-changes --diff --github "origin/master"
 
       - name: Fetch git version information
         id: git
@@ -60,7 +50,7 @@ jobs:
   # Run the build on all the current platforms
   lnx64:
     runs-on: ubuntu-22.04
-    needs: [ version ]
+    needs: [ pre-build ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
@@ -95,7 +85,7 @@ jobs:
 
   lnx32:
     runs-on: ubuntu-22.04
-    needs: [ version ]
+    needs: [ pre-build ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -127,7 +117,7 @@ jobs:
 
   lnx-aarch64:
     runs-on: ubuntu-latest
-    needs: [ version ]
+    needs: [ pre-build ]
     container:
       image: etlegacy/lnx-aarch64-build
     env:
@@ -149,7 +139,7 @@ jobs:
 
   osx:
     runs-on: macos-13
-    needs: [ version ]
+    needs: [ pre-build ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
@@ -177,7 +167,7 @@ jobs:
 
   win:
     runs-on: windows-2019
-    needs: [ version ]
+    needs: [ pre-build ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
@@ -198,7 +188,7 @@ jobs:
 
   win64:
     runs-on: windows-2019
-    needs: [ version ]
+    needs: [ pre-build ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
@@ -222,7 +212,7 @@ jobs:
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
       CI_ETL_TAG: ${{needs.version.outputs.tag}}
-    needs: [ version ]
+    needs: [ pre-build ]
     container:
       image: etlegacy/android-build
     steps:
