@@ -35,7 +35,7 @@ jobs:
       - name: Check changes
         if: github.event_name == 'pull_request'
         run: |
-          pixi run check-changes --diff --github "origin/master"
+          pixi run check-changes --github "origin/master"
 
       - name: Fetch git version information
         id: git
