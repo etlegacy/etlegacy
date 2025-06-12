@@ -10,7 +10,7 @@
 CMakeLists.txt.user
 etmain/ui/git_version.h
 /.cache
-.check-changes-master-branch
+.upstream-remote-branch
 
 #
 # OS specific
