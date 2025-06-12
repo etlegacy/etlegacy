@@ -89,6 +89,10 @@ def main(args):
 
     changed_files = get_changed_files(args.commit_hash)
 
+    if len(changed_files) < 1:
+        print("No changes found.")
+        quit(0)
+
     print("------------------------------------------")
 
     target_files = filter_target_files(changed_files)

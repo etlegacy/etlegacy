@@ -58,6 +58,8 @@ def get_commits(base_commit: Optional[str]) -> List[str]:
 
 
 def get_changed_files(commit_hash: str) -> set[str]:
+    print("Considering changes towards", f"'{commit_hash}' ...")
+
     changed_files = set()
 
     staged_unstaged_files = get_staged_unstaged_files()
