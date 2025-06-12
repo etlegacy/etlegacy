@@ -246,6 +246,7 @@ static frameBuffer_t *R_GetCurrentFBO(fboBinding binding)
 	}
 
 	Ren_Fatal("Invalid FBO id: %i\n", id);
+	return NULL; // this never get's hit at runtime but we do it to appease MSVC
 }
 
 byte *R_FBOReadPixels(frameBuffer_t *fb, size_t *offset, int *padlen)

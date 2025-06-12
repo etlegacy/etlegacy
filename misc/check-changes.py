@@ -11,34 +11,29 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Optional
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-SHOW_DIFF = False
+from etl_lib import (
+    get_changed_files,
+    CWD,
+    ROOT_DIR,
+    argparse_add_commit_param,
+    run_command,
+    rel_str,
+)
+
+HIDE_DETAIL = False
 
 
 @dataclass
 class Error:
     path: Path
     reason: str
-    diff: Optional[str] = None
+    detail: Optional[str] = None
 
     def __str__(self):
-        msg = f"> {self.path}\n| {self.reason}"
-        if self.diff and SHOW_DIFF:
-            msg += f"\n```\n{self.diff}\n```"
+        msg = f"{self.reason}"
+        if self.detail and not HIDE_DETAIL:
+            msg += f"\n```\n{self.detail}\n```"
         return msg
-
-
-def run_git_command(cmd: List[str]) -> List[str]:
-    result = subprocess.run(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True
-    )
-    return result.stdout.strip().splitlines()
-
-
-def get_changed_files(commit_hash: str) -> List[str]:
-    return run_git_command(
-        ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", commit_hash]
-    )
 
 
 def check_black(path: Path, errors: List[Error]):
@@ -54,7 +49,7 @@ def check_black(path: Path, errors: List[Error]):
                 Error(
                     path=path,
                     reason="Not formatted with black.",
-                    diff=result.stdout.strip() if SHOW_DIFF else None,
+                    detail=result.stdout.strip() if not HIDE_DETAIL else None,
                 )
             )
     except Exception as e:
@@ -78,16 +73,35 @@ def check_uncrustify(path: Path, errors: List[Error]):
             original = f.readlines()
 
         formatted = result.stdout.splitlines(keepends=True)
-        diff = list(
+        detail = list(
             difflib.unified_diff(
-                original, formatted, fromfile=str(path), tofile="uncrustified"
+                original, formatted, fromfile=rel_str(path), tofile=rel_str(path)
             )
         )
 
-        if diff:
-            errors.append(Error(path, "Not correctly uncrustified", "".join(diff)))
+        if detail:
+            errors.append(Error(path, "Not correctly uncrustified", "".join(detail)))
     except Exception as e:
         errors.append(Error(path, f"Failed to diff: {e}"))
+
+
+def check_sh(path: Path, errors: List[Error]):
+    result = subprocess.run(
+        ["shellcheck", str(path)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        errors.append(
+            Error(
+                path=path,
+                reason=f"Shellcheck failed",
+                detail=result.stdout.strip(),
+            )
+        )
+        return
 
 
 def check_tga(path: Path, errors: List[Error]):
@@ -117,51 +131,101 @@ def check_jpeg(path: Path, errors: List[Error]):
         errors.append(Error(path, f"Failed to check JPEG: {e}"))
 
 
-def check_commit(commit_hash: str) -> List[Error]:
+def check_yml(path: Path, errors: List[Error]):
+    result = run_command(["prettier", "--no-config", str(path)], check=False)
+
+    if result.returncode != 0:
+        errors.append(Error(path, f"Prettier failed: {result.stderr.strip()}"))
+        return
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            original = f.readlines()
+
+        formatted = result.stdout.splitlines(keepends=True)
+        detail = list(
+            difflib.unified_diff(
+                original, formatted, fromfile=rel_str(path), tofile=rel_str(path)
+            )
+        )
+
+        if detail:
+            errors.append(Error(path, "Not correctly prettied", "".join(detail)))
+    except Exception as e:
+        errors.append(Error(path, f"Failed to diff: {e}"))
+
+
+def check_file(path: Path) -> Optional[List[Error]]:
     errors = []
-    for file in get_changed_files(commit_hash):
-        path = ROOT_DIR / file
-        if not path.exists():
-            print(f"? Skipping missing: {file}")
-            continue
 
-        print(f"* {file}")
-        match path.suffix.lower():
-            case ".c" | ".h":
-                check_uncrustify(path, errors)
-            case ".tga":
-                check_tga(path, errors)
-            case ".jpg" | ".jpeg":
-                check_jpeg(path, errors)
-            case ".py":
-                check_black(path, errors)
+    if not path.exists():
+        print(f"☇ Skipping removed/missing: {path.relative_to(ROOT_DIR)}")
+        return None
 
+    match path.suffix.lower():
+        case ".c" | ".cpp" | ".glsl" | ".h":
+            check_uncrustify(path, errors)
+        case ".tga":
+            check_tga(path, errors)
+        case ".jpg" | ".jpeg":
+            check_jpeg(path, errors)
+        case ".py":
+            check_black(path, errors)
+        case ".sh":
+            check_sh(path, errors)
+        case ".yml" | ".yaml":
+            check_yml(path, errors)
     return errors
 
 
-def get_commits(base_commit: Optional[str]) -> List[str]:
-    if base_commit:
-        return run_git_command(["git", "rev-list", f"...{base_commit}"])
-    return [run_git_command(["git", "rev-parse", "HEAD"])[0]]
-
-
 def main(args):
-    global SHOW_DIFF
-    SHOW_DIFF = args.diff
+    global HIDE_DETAIL
+    HIDE_DETAIL = args.hide_details
+
+    # assemble files
+    changed_files = get_changed_files(args.commit_hash)
+
+    if len(changed_files) < 1:
+        print("No changes found.")
+        quit(0)
+
+    print("------------------------------------------")
+
+    failed_files = []
+    succeeded_files = []
+
+    # check assembled files for errors
+    for path in sorted(list(changed_files)):
+        relpath = path.relative_to(ROOT_DIR)
+        errors = check_file(path)
+        if errors == None:
+            pass
+        elif errors:
+            failed_files.append([relpath, errors])
+        else:
+            succeeded_files.append(relpath)
+
+    for relpath in succeeded_files:
+        print(f"✓ {relpath}")
 
     total_errors = 0
-    for i, commit in enumerate(get_commits(args.commit_hash)):
-        if i > 0:
-            print("======")
-        errors = check_commit(commit)
-        if errors:
-            print("------")
+    if len(failed_files) > 0:
+        print("------------------ERRORS------------------")
+
+        for relpath, errors in failed_files:
+            print(f"✗ {relpath}")
             for error in errors:
                 print(error, file=sys.stderr)
-            total_errors += len(errors)
+                if args.github:
+                    print(f"::error ::{error.path.relative_to(CWD)} - {error.reason}")
+                total_errors += 1
 
     if total_errors:
-        print(f"\nDetected {total_errors} issue(s)!")
+        msg = f"\nFailed {total_errors} check"
+        if total_errors > 1:
+            msg += "s"
+        msg += "!"
+        print(msg)
         sys.exit(1)
 
 
@@ -171,14 +235,21 @@ def cli():
     parser = argparse.ArgumentParser(
         description="Check files in commit(s) for formatting or asset issues."
     )
+
+    argparse_add_commit_param(parser)
+
     parser.add_argument(
-        "commit_hash", nargs="?", help="Compare with this commit (defaults to HEAD)"
+        "-hd",
+        "--hide-details",
+        dest="hide_details",
+        action="store_true",
+        help="Hide detailed output",
     )
     parser.add_argument(
-        "-d",
-        "--diff",
+        "-gh",
+        "--github",
         action="store_true",
-        help="Show unified diff output for uncrustify",
+        help="Print special messages that Github Actions integrates better for error reporting",
     )
     args = parser.parse_args()
     main(args)

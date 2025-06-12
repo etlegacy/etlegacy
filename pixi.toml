@@ -9,10 +9,12 @@ channels = [
 platforms = ["linux-64", "osx-64", "win-64"]
 
 [tasks]
+"collect-and-check-gh-build-logs" = { cmd = ["python", "./misc/collect-and-check-gh-build-logs.py"] }
 
 [dependencies]
 "python" = "3.13.3.*"
 "git" = "2.49.0.*"
+"requests" = "2.32.4.*"
 
 
 [feature.validation.tasks]
@@ -21,6 +23,8 @@ autoformat = { cmd = ["python", "./misc/autoformat.py"] }
 [feature.validation.dependencies]
 "uncrustify" = "0.78.1.*"
 "black"      = "25.1.0.*"
+"shellcheck" = "0.10.0.*"
+"prettier"   = "3.5.3.*"
 
 [feature.libclang.tasks]
 regenerate-luals-definitions = { cmd = ["python", "./misc/regenerate-luals-definitions.py", "./src/game/g_lua.c"]}

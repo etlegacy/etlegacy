@@ -4,7 +4,7 @@ name: AndroidBuildMachine
 on:
   push:
     paths:
-      - 'misc/docker/android.Dockerfile'
+      - "misc/docker/android.Dockerfile"
   workflow_dispatch:
 
 jobs:

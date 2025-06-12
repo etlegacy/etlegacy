@@ -1049,8 +1049,8 @@ void Com_BeginRedirect(char *buffer, size_t buffersize, void (*flush)(char *));
 void Com_EndRedirect(void);
 void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
-void Com_Quit_f(void) _attribute((noreturn));
+NORETURN_MSVC void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
+NORETURN_MSVC void Com_Quit_f(void) _attribute((noreturn));
 
 int Com_Milliseconds(void);     // will be journaled properly
 int64_t Com_Microseconds(void);
@@ -1401,8 +1401,8 @@ void Sys_Backtrace(int sig);
 
 char *Sys_GetCurrentUser(void);
 
-void QDECL Sys_Error(const char *error, ...) _attribute((noreturn, format(printf, 1, 2)));
-void Sys_Quit(void) _attribute((noreturn));
+NORETURN_MSVC void QDECL Sys_Error(const char *error, ...) _attribute((noreturn, format(printf, 1, 2)));
+NORETURN_MSVC void Sys_Quit(void) _attribute((noreturn));
 char *IN_GetClipboardData(void);       // note that this isn't journaled...
 void IN_SetClipboardData(const char *text);
 

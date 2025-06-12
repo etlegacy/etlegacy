@@ -33,6 +33,7 @@
   */
 
 #include "../qcommon/q_shared.h"
+#include "../qcommon/qcommon.h"
 #include "../sys/sys_win32.h"
 
 // Avoid needing to include win header that may not be available

@@ -711,7 +711,7 @@ char *Binding_FromName(const char *cvar);
 
 // ui_syscalls.c
 void trap_Print(const char *fmt);
-void trap_Error(const char *fmt) _attribute((noreturn));
+NORETURN_MSVC void trap_Error(const char *fmt) _attribute((noreturn));
 int trap_Milliseconds(void);
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
 void trap_Cvar_Update(vmCvar_t *vmCvar);

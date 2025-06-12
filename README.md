@@ -1,4 +1,5 @@
-ET: Legacy ![Build status](https://github.com/etlegacy/etlegacy/workflows/ETLBuild/badge.svg) [![etlegacy](https://snapcraft.io/etlegacy/badge.svg)](https://snapcraft.io/etlegacy) [![Analysis status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) ![CodeQL status](https://github.com/etlegacy/etlegacy/workflows/CodeQL/badge.svg) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
+ET: Legacy [![CI](https://github.com/etlegacy/etlegacy/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/etlegacy/etlegacy/actions/workflows/ci.yml?query=branch%3Amaster) [![ETLBuild](https://github.com/etlegacy/etlegacy/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/etlegacy/etlegacy/actions/workflows/build.yml) [![etlegacy](https://snapcraft.io/etlegacy/badge.svg)](https://snapcraft.io/etlegacy)  [![Analysis status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160)  
+[![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
 ==========
 
 *A second breath of life for Wolfenstein: Enemy Territory*
@@ -12,7 +13,7 @@ ET: Legacy ![Build status](https://github.com/etlegacy/etlegacy/workflows/ETLBui
 * Lua API: [https://etlegacy-lua-docs.readthedocs.io](https://etlegacy-lua-docs.readthedocs.io)
 * Translation: [https://www.transifex.com/etlegacy/etlegacy](https://www.transifex.com/etlegacy/etlegacy)
 * Contact: [#etlegacy](https://web.libera.chat/?channels=#etlegacy) on irc.libera.chat and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
-* SignPath: [etlegacy](https://signpath.org/projects/et_legacy/) on SignPath
+* SignPath: [etlegacy](https://signpath.org/projects/etlegacy/) on SignPath
 
 ## INTRODUCTION
 
@@ -35,7 +36,7 @@ See [SECURITY](SECURITY.md).
 
 ## CERTIFICATE SIGNING
 
-ET: Legacy Windows installers are now signed thx to [SignPath Foundation](https://signpath.org/)
+ET: Legacy Windows installers are now signed thanks to [SignPath Foundation](https://signpath.org/)
 
 ## GENERAL NOTES
 

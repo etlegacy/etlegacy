@@ -122,6 +122,13 @@
 #define UNUSED_VAR
 #endif
 
+// NOTE: that this can't be used for function pointers struct members
+#if defined(_MSC_VER)
+#define NORETURN_MSVC __declspec(noreturn)
+#else
+#define NORETURN_MSVC
+#endif
+
 #if (defined _MSC_VER) || (defined __MINGW32__) || (defined __MINGW64__)
 #define Q_EXPORT __declspec(dllexport)
 #elif (defined __SUNPRO_C)
@@ -914,7 +921,7 @@ qboolean Info_Validate(const char *s);
 qboolean Info_NextPair(const char **head, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
+NORETURN_MSVC void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
 
 void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 

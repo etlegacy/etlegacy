@@ -4,7 +4,7 @@ name: LinuxBuildMachine
 on:
   push:
     paths:
-      - 'misc/docker/build.Dockerfile'
+      - "misc/docker/build.Dockerfile"
   workflow_dispatch:
 
 jobs:

@@ -9,6 +9,10 @@
 
 #include "i18n_findlocale.h"
 
+#ifdef WIN32
+#define strdup _strdup
+#endif
+
 /**
  * @brief is_lcchar
  * @param[in] c

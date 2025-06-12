@@ -10,6 +10,7 @@
 CMakeLists.txt.user
 etmain/ui/git_version.h
 /.cache
+.upstream-remote-branch
 
 #
 # OS specific

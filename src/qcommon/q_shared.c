@@ -1589,8 +1589,18 @@ void Q_strncpyz(char *dest, const char *src, size_t destsize)
 		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1");
 	}
 
+#if defined(__aarch64__) && defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
+
 	strncpy(dest, src, destsize - 1);
 	dest[destsize - 1] = 0;
+
+#if defined(__aarch64__) && defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
+
 }
 
 /**
