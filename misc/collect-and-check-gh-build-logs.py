@@ -33,9 +33,21 @@ EXPLICITLY_IGNORED_WARNINGS = {
 ansi_escape = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 
 
+def wrangle_os_paths(arch: str, lst: list[str]):
+    if arch.startswith("win"):
+        return [x.replace("/", "\\") for x in lst]
+    else:
+        return lst
+
+
 def clean_and_process_file(arch: str, filename: str):
     pertinent_lines = []
     skipped_lines = []
+
+    # different archs report warnings differently (:
+    stanza = "warning:"
+    if arch.startswith("win"):
+        stanza = ": warning C"
 
     with open(filename, "r", encoding="utf-8", errors="replace") as f:
         for raw_line in f:
@@ -44,44 +56,59 @@ def clean_and_process_file(arch: str, filename: str):
             # Remove ANSI escape codes
             line = ansi_escape.sub("", line)
 
-            if not "warning:" in line:
+            if not stanza in line:
                 continue
 
             # Handle only game code
-            if (True and (not "src/tinygettext" in line)) and (
-                False
-                or ("etlegacy/src/" in line)
-                or ("src/botlib/" in line)
-                or ("src/cgame/" in line)
-                or ("src/client/" in line)
-                or ("src/db/" in line)
-                or ("src/game/" in line)
-                or ("src/irc/" in line)
-                or ("src/luacjson/" in line)
-                or ("src/luasql/" in line)
-                or ("src/null/" in line)
-                or ("src/Omnibot/" in line)
-                or ("src/qcommon/" in line)
-                or ("src/renderer/" in line)
-                or ("src/renderer2/" in line)
-                or ("src/renderer_vk/" in line)
-                or ("src/renderercommon/" in line)
-                or ("src/rendererGLES/" in line)
-                or ("src/sdl/" in line)
-                or ("src/server/" in line)
-                or ("src/sys/" in line)
-                or ("src/tests/" in line)
-                or ("src/tinygettext/" in line)
-                or ("src/tools/" in line)
-                or ("src/tvgame/" in line)
-                or ("src/ui/" in line)
+            if not any(
+                sub in line
+                for sub in wrangle_os_paths(
+                    arch,
+                    [
+                        "src/tinygettext",
+                    ],
+                )
+            ) and any(
+                sub in line
+                for sub in wrangle_os_paths(
+                    arch,
+                    [
+                        "etlegacy/src/",
+                        "src/botlib/",
+                        "src/cgame/",
+                        "src/client/",
+                        "src/db/",
+                        "src/game/",
+                        "src/irc/",
+                        "src/luacjson/",
+                        "src/luasql/",
+                        "src/null/",
+                        "src/Omnibot/",
+                        "src/qcommon/",
+                        "src/renderer/",
+                        "src/renderer2/",
+                        "src/renderer_vk/",
+                        "src/renderercommon/",
+                        "src/rendererGLES/",
+                        "src/sdl/",
+                        "src/server/",
+                        "src/sys/",
+                        "src/tests/",
+                        "src/tinygettext/",
+                        "src/tools/",
+                        "src/tvgame/",
+                        "src/ui/",
+                    ],
+                )
             ):
+                ## skip explicitly ignored warnings - TODO fixup for
+                ## Windows
                 # strip timestamp
                 parts = line.split(sep=" ", maxsplit=1)[1]
                 # split at 'warning:'
-                parts = parts.split(sep="warning:", maxsplit=1)
+                parts = parts.split(sep=stanza, maxsplit=1)
                 # reattach 'warning:' to rhs
-                msg = "warning:" + parts[1]
+                msg = stanza + parts[1]
                 msg = msg.strip()
                 # strip the line/col info
                 fpath = parts[0].rsplit(sep=":", maxsplit=3)[0]
@@ -178,14 +205,12 @@ def collect_logs():
     needs_list = EXPLICITLY_IGNORED_WARNINGS.keys()
 
     # Get required environment variables
-    repo = os.environ.get("GITHUB_REPOSITORY")
+    repo = os.environ.get("GITHUB_REPOSITORY") or "etlegacy/etlegacy"
     run_id = os.environ.get("GITHUB_RUN_ID")
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
 
-    if not (repo and run_id and token):
-        print(
-            "Missing GITHUB_REPOSITORY, GITHUB_RUN_ID, or token (GH_TOKEN or GITHUB_TOKEN)!"
-        )
+    if not (run_id and token):
+        print("Missing GITHUB_RUN_ID, or token (GH_TOKEN or GITHUB_TOKEN)!")
         sys.exit(1)
 
     api = "https://api.github.com"
