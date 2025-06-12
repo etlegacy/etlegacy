@@ -10,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 CWD = Path.cwd()
 
 
-def run_command(cmd: List[str]) -> subprocess.CompletedProcess:
+def run_command(cmd: List[str], check=True) -> subprocess.CompletedProcess:
     result = subprocess.run(
         cmd,
         stdout=subprocess.PIPE,
@@ -18,7 +18,7 @@ def run_command(cmd: List[str]) -> subprocess.CompletedProcess:
         text=True,
         check=False,
     )
-    if result.returncode:
+    if check and result.returncode:
         msg = f"$ {" ".join([str(x) for x in cmd])}\nreturncode: {result.returncode}"
         if result.stdout:
             msg += "\nstdout:\n" + result.stdout
@@ -94,3 +94,7 @@ def argparse_add_commit_param(parser):
 
 def rel(path: Path) -> Path:
     return path.relative_to(ROOT_DIR)
+
+
+def rel_str(path: Path) -> str:
+    return str(rel(path))

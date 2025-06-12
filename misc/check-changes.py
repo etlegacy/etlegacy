@@ -11,7 +11,14 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Optional
 
-from etl_lib import get_changed_files, CWD, ROOT_DIR, argparse_add_commit_param
+from etl_lib import (
+    get_changed_files,
+    CWD,
+    ROOT_DIR,
+    argparse_add_commit_param,
+    run_command,
+    rel_str,
+)
 
 HIDE_DETAIL = False
 
@@ -68,7 +75,7 @@ def check_uncrustify(path: Path, errors: List[Error]):
         formatted = result.stdout.splitlines(keepends=True)
         detail = list(
             difflib.unified_diff(
-                original, formatted, fromfile=str(path), tofile="uncrustified"
+                original, formatted, fromfile=rel_str(path), tofile=rel_str(path)
             )
         )
 
@@ -124,6 +131,30 @@ def check_jpeg(path: Path, errors: List[Error]):
         errors.append(Error(path, f"Failed to check JPEG: {e}"))
 
 
+def check_yml(path: Path, errors: List[Error]):
+    result = run_command(["prettier", "--no-config", str(path)], check=False)
+
+    if result.returncode != 0:
+        errors.append(Error(path, f"Prettier failed: {result.stderr.strip()}"))
+        return
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            original = f.readlines()
+
+        formatted = result.stdout.splitlines(keepends=True)
+        detail = list(
+            difflib.unified_diff(
+                original, formatted, fromfile=rel_str(path), tofile=rel_str(path)
+            )
+        )
+
+        if detail:
+            errors.append(Error(path, "Not correctly prettied", "".join(detail)))
+    except Exception as e:
+        errors.append(Error(path, f"Failed to diff: {e}"))
+
+
 def check_file(path: Path) -> Optional[List[Error]]:
     errors = []
 
@@ -142,6 +173,8 @@ def check_file(path: Path) -> Optional[List[Error]]:
             check_black(path, errors)
         case ".sh":
             check_sh(path, errors)
+        case ".yml" | ".yaml":
+            check_yml(path, errors)
     return errors
 
 

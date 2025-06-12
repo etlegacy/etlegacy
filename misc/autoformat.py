@@ -21,7 +21,7 @@ from etl_lib import (
 )
 
 # Constants
-INCLUDED_EXTS = {".c", ".cpp", ".glsl", ".h", ".py"}
+INCLUDED_EXTS = {".c", ".cpp", ".glsl", ".h", ".py", ".yml", ".yaml"}
 EXCLUDED_PATHS = [
     "src/Omnibot/",
     "src/game/g_etbot_interface.cpp",
@@ -79,6 +79,17 @@ def process_file(path) -> str:
             else:
                 run_command(["black", path])
                 return f"✿ Formatting {rel(path)} (Python)"
+
+        case ".yml" | ".yaml":
+            # Check if formatting would change anything
+            check_proc = run_command(
+                ["prettier", "--no-config", "--check", path], check=False
+            )
+            if check_proc.returncode == 0:
+                return f"✓ {rel(path)} (YAML already formatted)"
+            else:
+                run_command(["prettier", "--no-config", "--write", path])
+                return f"✿ Formatting {rel(path)} (YAML Prettier)"
 
         case _:
             return f"⏸ Skipping unsupported file type: {rel(path)}"
