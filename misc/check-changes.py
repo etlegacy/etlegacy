@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-SHOW_DIFF = False
+HIDE_DETAIL = False
 
 cwd = Path.cwd()
 
@@ -21,12 +21,12 @@ cwd = Path.cwd()
 class Error:
     path: Path
     reason: str
-    diff: Optional[str] = None
+    detail: Optional[str] = None
 
     def __str__(self):
         msg = f"{self.reason}"
-        if self.diff and SHOW_DIFF:
-            msg += f"\n```\n{self.diff}\n```"
+        if self.detail and not HIDE_DETAIL:
+            msg += f"\n```\n{self.detail}\n```"
         return msg
 
 
@@ -66,7 +66,7 @@ def check_black(path: Path, errors: List[Error]):
                 Error(
                     path=path,
                     reason="Not formatted with black.",
-                    diff=result.stdout.strip() if SHOW_DIFF else None,
+                    detail=result.stdout.strip() if SHOW_DIFF else None,
                 )
             )
     except Exception as e:
@@ -90,16 +90,35 @@ def check_uncrustify(path: Path, errors: List[Error]):
             original = f.readlines()
 
         formatted = result.stdout.splitlines(keepends=True)
-        diff = list(
+        detail = list(
             difflib.unified_diff(
                 original, formatted, fromfile=str(path), tofile="uncrustified"
             )
         )
 
-        if diff:
-            errors.append(Error(path, "Not correctly uncrustified", "".join(diff)))
+        if detail:
+            errors.append(Error(path, "Not correctly uncrustified", "".join(detail)))
     except Exception as e:
         errors.append(Error(path, f"Failed to diff: {e}"))
+
+
+def check_sh(path: Path, errors: List[Error]):
+    result = subprocess.run(
+        ["shellcheck", str(path)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        errors.append(
+            Error(
+                path=path,
+                reason=f"Shellcheck failed",
+                detail=result.stdout.strip(),
+            )
+        )
+        return
 
 
 def check_tga(path: Path, errors: List[Error]):
@@ -129,12 +148,12 @@ def check_jpeg(path: Path, errors: List[Error]):
         errors.append(Error(path, f"Failed to check JPEG: {e}"))
 
 
-def check_file(path: Path) -> List[Error]:
+def check_file(path: Path) -> Optional[List[Error]]:
     errors = []
 
     if not path.exists():
-        print(f"? Skipping missing: {path.relative_to(ROOT_DIR)}")
-        return []
+        print(f"☇ Skipping removed/missing: {path.relative_to(ROOT_DIR)}")
+        return None
 
     match path.suffix.lower():
         case ".c" | ".h":
@@ -145,6 +164,8 @@ def check_file(path: Path) -> List[Error]:
             check_jpeg(path, errors)
         case ".py":
             check_black(path, errors)
+        case ".sh":
+            check_sh(path, errors)
     return errors
 
 
@@ -155,8 +176,8 @@ def get_commits(base_commit: Optional[str]) -> List[str]:
 
 
 def main(args):
-    global SHOW_DIFF
-    SHOW_DIFF = args.diff
+    global HIDE_DETAIL
+    HIDE_DETAIL = args.hide_details
 
     print("Considering changes towards", f"'{args.commit_hash}' ...")
 
@@ -181,7 +202,9 @@ def main(args):
     for path in sorted(list(changed_files)):
         relpath = path.relative_to(ROOT_DIR)
         errors = check_file(path)
-        if errors:
+        if errors == None:
+            pass
+        elif errors:
             failed_files.append([relpath, errors])
         else:
             succeeded_files.append(relpath)
@@ -230,10 +253,11 @@ def cli():
         help="Compare with this commit (defaults to HEAD)",
     )
     parser.add_argument(
-        "-d",
-        "--diff",
+        "-hd",
+        "--hide-details",
+        dest="hide_details",
         action="store_true",
-        help="Show unified diff output for uncrustify",
+        help="Hide detailed output",
     )
     parser.add_argument(
         "-gh",
