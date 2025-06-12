@@ -149,8 +149,6 @@ def main(args):
     global HIDE_DETAIL
     HIDE_DETAIL = args.hide_details
 
-    print("Considering changes towards", f"'{args.commit_hash}' ...")
-
     # assemble files
     changed_files = get_changed_files(args.commit_hash)
 
