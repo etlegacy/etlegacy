@@ -151,7 +151,7 @@ def check_logs(args):
         found_logs_count += 1
         arch = (txt_file.split("job-logs-")[1]).split(".txt")[0]
 
-        is_android = "android" in txt_file
+        is_non_pertinent = "android" in txt_file or "win64" in txt_file
         pertinent_lines, skipped_lines = clean_and_process_file(arch, txt_file)
 
         if not args.show_skipped and len(pertinent_lines) <= 0:
@@ -159,8 +159,10 @@ def check_logs(args):
 
         # print("###", f"{arch:11}", txt_file, "- START {{{")
         print("###", f"{arch:11} - START", f"({txt_file})", "{{{")
-        if is_android:
-            print("# INFO - Android warnings are never pertinent for now ...")
+        if is_non_pertinent:
+            print(
+                f"# INFO - {arch.capitalize()} warnings are never pertinent for now ..."
+            )
         else:
             failed += len(pertinent_lines)
 
@@ -169,7 +171,7 @@ def check_logs(args):
             if args.github:
                 # strip timestamp
                 line = line.split(sep=" ", maxsplit=1)[1].strip()
-                if is_android:
+                if is_non_pertinent:
                     print(f"::warning ::{arch} - {line}")
                 else:
                     print(f"::error ::{arch} - {line}")
