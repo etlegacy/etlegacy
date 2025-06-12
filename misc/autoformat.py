@@ -11,6 +11,15 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from multiprocessing import cpu_count
 
+from etl_lib import (
+    get_changed_files,
+    CWD,
+    ROOT_DIR,
+    argparse_add_commit_param,
+    rel,
+    run_command,
+)
+
 # Constants
 INCLUDED_EXTS = {".c", ".cpp", ".glsl", ".h", ".py"}
 EXCLUDED_PATHS = [
@@ -20,56 +29,23 @@ EXCLUDED_PATHS = [
 ]
 
 
-def change_to_repo_root():
-    """Change working directory to the repository root."""
-    script_path = Path(__file__).resolve().parent
-    os.chdir(script_path.parent)
-
-
-def get_git_changed_files(rev=None):
-    """Get changed files from git diff."""
-    if rev:
-        print(f"Checking specific rev '{rev}'...")
-        cmd = ["git", "diff", "--name-only", f"{rev}..{rev}^1"]
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, check=True, text=True)
-        files = result.stdout.strip().splitlines()
-    else:
-        print("Checking staged and unstaged changes...")
-        staged = subprocess.check_output(
-            ["git", "diff", "--name-only", "--cached"], text=True
-        ).splitlines()
-        unstaged = subprocess.check_output(
-            ["git", "diff", "--name-only"], text=True
-        ).splitlines()
-        files = sorted(set(staged + unstaged))
-
-    # Fallback to previous commit if no staged changes
-    if not rev and not files:
-        print("No staged or unstaged files found, falling back to previous commit...")
-        cmd = ["git", "diff", "--name-only", "HEAD~1", "HEAD"]
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, check=True, text=True)
-        files = result.stdout.strip().splitlines()
-
-    return files
-
-
 def filter_target_files(files):
     """Filter out excluded files and non-target extensions."""
     filtered = []
     for path in files:
-        if any(path.startswith(excl) for excl in EXCLUDED_PATHS):
-            print(f"✋ {path}")
+        if any(path.is_relative_to(excl) for excl in [Path(p) for p in EXCLUDED_PATHS]):
+            print(f"⏸ {rel(path)}")
             continue
-        if Path(path).suffix in INCLUDED_EXTS:
+        if path.suffix in INCLUDED_EXTS:
             filtered.append(path)
         else:
-            print(f"✋ {path}")
+            print(f"⏸ {rel(path)}")
     return filtered
 
 
-def process_file(path):
+def process_file(path) -> str:
     """Run uncrustify for C/C++ files or black for Python files and rewrite the file if formatting changed."""
-    ext = Path(path).suffix
+    ext = path.suffix
 
     match ext:
         case ".c" | ".cpp" | ".glsl" | ".h":
@@ -85,11 +61,11 @@ def process_file(path):
             formatted = proc.stdout.decode("utf-8")
 
             if original != formatted:
-                print(f"✿ Formatting {path} (C/C++)")
                 with open(path, "w", encoding="utf-8", errors="ignore") as f:
                     f.write(formatted)
+                return f"✿ Formatting {rel(path)} (C/C++)"
             else:
-                print(f"✓ {path} (C/C++ already formatted)")
+                return f"✓ {rel(path)} (C/C++ already formatted)"
 
         case ".py":
             # Check if formatting would change anything
@@ -99,34 +75,68 @@ def process_file(path):
                 stderr=subprocess.PIPE,
             )
             if check_proc.returncode == 0:
-                print(f"✓ {path} (Python already formatted)")
+                return f"✓ {rel(path)} (Python already formatted)"
             else:
-                print(f"✿ Formatting {path} (Python)")
-                subprocess.run(["black", path], check=True)
+                run_command(["black", path])
+                return f"✿ Formatting {rel(path)} (Python)"
 
         case _:
-            print(f"✋ Skipping unsupported file type: {path}")
+            return f"⏸ Skipping unsupported file type: {rel(path)}"
 
 
-def main():
-    change_to_repo_root()
-    rev = sys.argv[1] if len(sys.argv) > 1 else None
-    changed_files = get_git_changed_files(rev)
+def main(args):
+    os.chdir(ROOT_DIR)
+
+    changed_files = get_changed_files(args.commit_hash)
+
+    print("------------------------------------------")
+
     target_files = filter_target_files(changed_files)
+
+    applied_format = []
+    alread_formatted = []
 
     had_errors = False
     with ThreadPoolExecutor(max_workers=cpu_count()) as executor:
         futures = {executor.submit(process_file, f): f for f in target_files}
         for future in as_completed(futures):
             try:
-                future.result()
+                result = future.result()
+                if result.startswith("✓"):
+                    alread_formatted.append(result)
+                elif result.startswith("✿"):
+                    applied_format.append(result)
+                elif result.startswith("⏸"):
+                    alread_formatted.append(result)
+                else:
+                    assert False, f"Unknown result: ${result}"
             except Exception as e:
                 print(f"❌ Error processing {futures[future]}: {e}", file=sys.stderr)
                 had_errors = True
+
+    for line in alread_formatted:
+        print(line)
+
+    if len(applied_format) > 0:
+        print("")
+        for line in applied_format:
+            print(line)
 
     if had_errors:
         sys.exit(1)
 
 
+def cli():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Autoformats your local changes so that they pass 'check-changes'."
+    )
+
+    argparse_add_commit_param(parser)
+    args = parser.parse_args()
+    main(args)
+
+
 if __name__ == "__main__":
-    main()
+    cli()

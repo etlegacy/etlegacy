@@ -11,10 +11,9 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Optional
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-HIDE_DETAIL = False
+from etl_lib import get_changed_files, CWD, ROOT_DIR, argparse_add_commit_param
 
-cwd = Path.cwd()
+HIDE_DETAIL = False
 
 
 @dataclass
@@ -30,29 +29,6 @@ class Error:
         return msg
 
 
-def run_git_command(cmd: List[str]) -> List[str]:
-    result = subprocess.run(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True
-    )
-    return result.stdout.strip().splitlines()
-
-
-def get_changed_files(commit_hash: str) -> List[Path]:
-    print("", commit_hash)
-    return [
-        ROOT_DIR / path
-        for path in run_git_command(
-            ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", commit_hash]
-        )
-    ]
-
-
-def get_staged_unstaged_files() -> List[Path]:
-    staged = run_git_command(["git", "diff", "--cached", "--name-only"])
-    unstaged = run_git_command(["git", "diff", "--name-only"])
-    return [ROOT_DIR / path for path in staged + unstaged]
-
-
 def check_black(path: Path, errors: List[Error]):
     try:
         result = subprocess.run(
@@ -66,7 +42,7 @@ def check_black(path: Path, errors: List[Error]):
                 Error(
                     path=path,
                     reason="Not formatted with black.",
-                    detail=result.stdout.strip() if SHOW_DIFF else None,
+                    detail=result.stdout.strip() if not HIDE_DETAIL else None,
                 )
             )
     except Exception as e:
@@ -156,7 +132,7 @@ def check_file(path: Path) -> Optional[List[Error]]:
         return None
 
     match path.suffix.lower():
-        case ".c" | ".h":
+        case ".c" | ".cpp" | ".glsl" | ".h":
             check_uncrustify(path, errors)
         case ".tga":
             check_tga(path, errors)
@@ -169,12 +145,6 @@ def check_file(path: Path) -> Optional[List[Error]]:
     return errors
 
 
-def get_commits(base_commit: Optional[str]) -> List[str]:
-    if base_commit:
-        return run_git_command(["git", "rev-list", f"...{base_commit}"])
-    return [run_git_command(["git", "rev-parse", "HEAD"])[0]]
-
-
 def main(args):
     global HIDE_DETAIL
     HIDE_DETAIL = args.hide_details
@@ -182,16 +152,7 @@ def main(args):
     print("Considering changes towards", f"'{args.commit_hash}' ...")
 
     # assemble files
-    changed_files = set()
-    total_errors = 0
-
-    staged_unstaged_files = get_staged_unstaged_files()
-    if staged_unstaged_files:
-        print(" picking up staged/unstaged files")
-        changed_files.update(staged_unstaged_files)
-
-    for i, commit in enumerate(get_commits(args.commit_hash)):
-        changed_files.update(get_changed_files(commit))
+    changed_files = get_changed_files(args.commit_hash)
 
     if len(changed_files) < 1:
         print("No changes found.")
@@ -216,6 +177,7 @@ def main(args):
     for relpath in succeeded_files:
         print(f"✓ {relpath}")
 
+    total_errors = 0
     if len(failed_files) > 0:
         print("------------------ERRORS------------------")
 
@@ -224,7 +186,7 @@ def main(args):
             for error in errors:
                 print(error, file=sys.stderr)
                 if args.github:
-                    print(f"::error ::{error.path.relative_to(cwd)} - {error.reason}")
+                    print(f"::error ::{error.path.relative_to(CWD)} - {error.reason}")
                 total_errors += 1
 
     if total_errors:
@@ -239,23 +201,12 @@ def main(args):
 def cli():
     import argparse
 
-    # optionally read default upstream_remote_branch from
-    # 'etlegacy/.check-changes-master-branch'
-    upstream_remote_branch = "origin/master"
-    upstream_remote_branch_path = ROOT_DIR / ".upstream-remote-branch"
-    if upstream_remote_branch_path.exists():
-        with open(upstream_remote_branch_path, "r", encoding="utf-8") as f:
-            upstream_remote_branch = f.read().strip()
-
     parser = argparse.ArgumentParser(
         description="Check files in commit(s) for formatting or asset issues."
     )
-    parser.add_argument(
-        "commit_hash",
-        default=upstream_remote_branch,
-        nargs="?",
-        help="Compare with this commit (defaults to HEAD)",
-    )
+
+    argparse_add_commit_param(parser)
+
     parser.add_argument(
         "-hd",
         "--hide-details",
