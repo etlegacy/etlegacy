@@ -193,6 +193,10 @@ def main(args):
     for i, commit in enumerate(get_commits(args.commit_hash)):
         changed_files.update(get_changed_files(commit))
 
+    if len(changed_files) < 1:
+        print("No changes found.")
+        quit(0)
+
     print("------------------------------------------")
 
     failed_files = []
