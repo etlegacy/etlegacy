@@ -17,9 +17,9 @@ jobs:
     strategy:
       matrix:
         platform:
-        - amd64
-        - arm64
-#        - i386
+          - amd64
+          - arm64
+    #        - i386
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
