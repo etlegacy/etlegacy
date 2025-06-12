@@ -23,6 +23,7 @@ autoformat = { cmd = ["python", "./misc/autoformat.py"] }
 [feature.validation.dependencies]
 "uncrustify" = "0.78.1.*"
 "black"      = "25.1.0.*"
+"shellcheck" = "0.10.0.*"
 
 [feature.libclang.tasks]
 regenerate-luals-definitions = { cmd = ["python", "./misc/regenerate-luals-definitions.py", "./src/game/g_lua.c"]}
