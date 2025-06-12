@@ -2551,7 +2551,7 @@ void CG_EBS_Shoutcast(centity_t *cent)
 {
 	entityBitStream_t ebs;
 	clientInfo_t      *ci;
-	int               i, __attribute__((unused)) version, slotMask, clientNum;
+	int               i, UNUSED_VAR version, slotMask, clientNum;
 
 	// should never happen
 	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
