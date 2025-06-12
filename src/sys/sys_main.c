@@ -68,72 +68,80 @@
 
 #ifdef __ANDROID__
 #include <jni.h>
-qboolean call_copyIntoAPPDirectory(JNIEnv* env, jobject javaObject, const char* filename) {
-    // Find the class of the Java object
-    jclass javaClass = (*env)->GetObjectClass(env, javaObject);
-    if (!javaClass) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find Java class.\n");
-        return qfalse;
-    }
+qboolean call_copyIntoAPPDirectory(JNIEnv *env, jobject javaObject, const char *filename)
+{
+	// Find the class of the Java object
+	jclass javaClass = (*env)->GetObjectClass(env, javaObject);
+	if (!javaClass)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find Java class.\n");
+		return qfalse;
+	}
 
-    // Get the method ID for the "copyIntoAPPDirectory" method
-    jmethodID methodID = (*env)->GetMethodID(env, javaClass, "copyIntoAPPDirectory", "(Ljava/lang/String;)Z");
-    if (!methodID) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find method copyIntoAPPDirectory.\n");
-        return qfalse;
-    }
+	// Get the method ID for the "copyIntoAPPDirectory" method
+	jmethodID methodID = (*env)->GetMethodID(env, javaClass, "copyIntoAPPDirectory", "(Ljava/lang/String;)Z");
+	if (!methodID)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find method copyIntoAPPDirectory.\n");
+		return qfalse;
+	}
 
-    // Convert the C string filename to a Java string
-    jstring javaFilename = (*env)->NewStringUTF(env, filename);
-    if (!javaFilename) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Java string.\n");
-        return qfalse;
-    }
+	// Convert the C string filename to a Java string
+	jstring javaFilename = (*env)->NewStringUTF(env, filename);
+	if (!javaFilename)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Java string.\n");
+		return qfalse;
+	}
 
-    // Call the Java method
-    jboolean result = (*env)->CallBooleanMethod(env, javaObject, methodID, javaFilename);
+	// Call the Java method
+	jboolean result = (*env)->CallBooleanMethod(env, javaObject, methodID, javaFilename);
 
-    // Clean up local references
-    (*env)->DeleteLocalRef(env, javaFilename);
+	// Clean up local references
+	(*env)->DeleteLocalRef(env, javaFilename);
 
-    return result == JNI_TRUE;
+	return result == JNI_TRUE;
 }
 
-qboolean invoke_copy_into_app_directory(const char* filename) {
-    JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
+qboolean invoke_copy_into_app_directory(const char *filename)
+{
+	JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
 
-    // Find the Java class containing the copyIntoAPPDirectory method
-    jclass javaClass = (*env)->FindClass(env, "com/etlegacy/app/CopyToInternal"); // Replace with your actual Java class name
-    if (!javaClass) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find Java class.\n");
-        return qfalse;
-    }
+	// Find the Java class containing the copyIntoAPPDirectory method
+	jclass javaClass = (*env)->FindClass(env, "com/etlegacy/app/CopyToInternal"); // Replace with your actual Java class name
+	if (!javaClass)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find Java class.\n");
+		return qfalse;
+	}
 
-    // Get the constructor for the Java class
-    jmethodID constructor = (*env)->GetMethodID(env, javaClass, "<init>", "(Landroid/content/Context;)V");
-    if (!constructor) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find constructor.\n");
-        return qfalse;
-    }
+	// Get the constructor for the Java class
+	jmethodID constructor = (*env)->GetMethodID(env, javaClass, "<init>", "(Landroid/content/Context;)V");
+	if (!constructor)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to find constructor.\n");
+		return qfalse;
+	}
 
-    // Get the application context (replace with a valid Context jobject)
-    jobject appContext = SDL_AndroidGetActivity(); // You need to pass a valid Android context object here
+	// Get the application context (replace with a valid Context jobject)
+	jobject appContext = SDL_AndroidGetActivity(); // You need to pass a valid Android context object here
 
-    // Create an instance of the Java class
-    jobject javaObject = (*env)->NewObject(env, javaClass, constructor, appContext);
-    if (!javaObject) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Java object.\n");
-        return qfalse;
-    }
+	// Create an instance of the Java class
+	jobject javaObject = (*env)->NewObject(env, javaClass, constructor, appContext);
+	if (!javaObject)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to create Java object.\n");
+		return qfalse;
+	}
 
-    // Call the copyIntoAPPDirectory method
-    qboolean result = call_copyIntoAPPDirectory(env, javaObject, filename);
+	// Call the copyIntoAPPDirectory method
+	qboolean result = call_copyIntoAPPDirectory(env, javaObject, filename);
 
-    // Clean up local references
-    (*env)->DeleteLocalRef(env, javaObject);
-    (*env)->DeleteLocalRef(env, javaClass);
+	// Clean up local references
+	(*env)->DeleteLocalRef(env, javaObject);
+	(*env)->DeleteLocalRef(env, javaClass);
 
-    return result;
+	return result;
 }
 
 // Android must exit out of the main call..
@@ -828,22 +836,22 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 #ifndef __ANDROID__
 	libHandle = Sys_LoadLibrary(fn);
 #else
-    char fnhomepath[MAX_OSPATH] = { 0 };
+	char fnhomepath[MAX_OSPATH] = { 0 };
 
-    Q_strncpyz(fnhomepath, Sys_CdToExtStorage(), sizeof(fnhomepath));
-    Q_strcat(fnhomepath, sizeof(fnhomepath), "/Documents/etlegacy/");
-    Q_strcat(fnhomepath, sizeof(fnhomepath), gamedir);
-    Q_strcat(fnhomepath, sizeof(fnhomepath), "/");
-    Q_strcat(fnhomepath, sizeof(fnhomepath), fname);
+	Q_strncpyz(fnhomepath, Sys_CdToExtStorage(), sizeof(fnhomepath));
+	Q_strcat(fnhomepath, sizeof(fnhomepath), "/Documents/etlegacy/");
+	Q_strcat(fnhomepath, sizeof(fnhomepath), gamedir);
+	Q_strcat(fnhomepath, sizeof(fnhomepath), "/");
+	Q_strcat(fnhomepath, sizeof(fnhomepath), fname);
 
-    if (invoke_copy_into_app_directory(fnhomepath))
-    {
-        char path[MAX_OSPATH] = { 0 };
-        Q_strncpyz(path, SDL_AndroidGetInternalStoragePath(), sizeof(path));
-        Q_strcat(path, sizeof(path), "/");
-        Q_strcat(path, sizeof(path), fname);
-        libHandle = Sys_LoadLibrary(path);
-    }
+	if (invoke_copy_into_app_directory(fnhomepath))
+	{
+		char path[MAX_OSPATH] = { 0 };
+		Q_strncpyz(path, SDL_AndroidGetInternalStoragePath(), sizeof(path));
+		Q_strcat(path, sizeof(path), "/");
+		Q_strcat(path, sizeof(path), fname);
+		libHandle = Sys_LoadLibrary(path);
+	}
 #endif
 
 	if (!libHandle)
@@ -1411,15 +1419,15 @@ int main(int argc, char **argv)
 		CFRelease(url2);
 	}
 #elif __ANDROID__
-    Sys_SetBinaryPath(Sys_Dirname(Cmd_Argv(1)));
+	Sys_SetBinaryPath(Sys_Dirname(Cmd_Argv(1)));
 #else
-    Sys_SetBinaryPath(Sys_Dirname(argv[0]));
+	Sys_SetBinaryPath(Sys_Dirname(argv[0]));
 #endif
 
 #ifndef __ANDROID__
-    Sys_SetDefaultInstallPath(DEFAULT_BASEDIR); // Sys_BinaryPath() by default
+	Sys_SetDefaultInstallPath(DEFAULT_BASEDIR); // Sys_BinaryPath() by default
 #else
-    Sys_SetDefaultInstallPath(Cmd_Argv(1)); // Sys_BinaryPath() by default
+	Sys_SetDefaultInstallPath(Cmd_Argv(1)); // Sys_BinaryPath() by default
 #endif
 
 	// Concatenate the command line for passing to Com_Init
