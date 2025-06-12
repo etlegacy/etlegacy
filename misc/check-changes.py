@@ -239,20 +239,20 @@ def main(args):
 def cli():
     import argparse
 
-    # optionally read default master_branch from
+    # optionally read default upstream_remote_branch from
     # 'etlegacy/.check-changes-master-branch'
-    master_branch = "origin/master"
-    master_branch_path = ROOT_DIR / ".check-changes-master-branch"
-    if master_branch_path.exists():
-        with open(master_branch_path, "r", encoding="utf-8") as f:
-            master_branch = f.read().strip()
+    upstream_remote_branch = "origin/master"
+    upstream_remote_branch_path = ROOT_DIR / ".upstream-remote-branch"
+    if upstream_remote_branch_path.exists():
+        with open(upstream_remote_branch_path, "r", encoding="utf-8") as f:
+            upstream_remote_branch = f.read().strip()
 
     parser = argparse.ArgumentParser(
         description="Check files in commit(s) for formatting or asset issues."
     )
     parser.add_argument(
         "commit_hash",
-        default=master_branch,
+        default=upstream_remote_branch,
         nargs="?",
         help="Compare with this commit (defaults to HEAD)",
     )
