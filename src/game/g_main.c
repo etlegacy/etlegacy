@@ -2954,7 +2954,7 @@ void QDECL Com_Error(int code, const char *error, ...)
 	G_Error("%s", text);
 }
 
-void QDECL Com_Error(int code, const char *error, ...) _attribute((format(printf, 2, 3)));
+NORETURN_MSVC void QDECL Com_Error(int code, const char *error, ...) _attribute((noreturn, format(printf, 2, 3)));
 
 /**
  * @brief Com_Printf

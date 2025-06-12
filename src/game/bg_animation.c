@@ -389,7 +389,7 @@ long BG_StringHashValue_Lwr(const char *fname)
  * @brief BG_AnimParseError
  * @param[in] msg
  */
-void _attribute((noreturn)) QDECL BG_AnimParseError(const char *msg, ...)
+NORETURN_MSVC void _attribute((noreturn)) QDECL BG_AnimParseError(const char *msg, ...)
 {
 	va_list argptr;
 	char    text[1024];

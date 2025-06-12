@@ -2630,7 +2630,7 @@ int64_t Com_Microseconds(void)
 /**
  * @brief Just throw a fatal error to test error shutdown procedures
  */
-static void _attribute((noreturn)) Com_Error_f(void)
+NORETURN_MSVC static void _attribute((noreturn)) Com_Error_f(void)
 {
 	if (Cmd_Argc() > 1)
 	{
