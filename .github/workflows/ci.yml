@@ -166,7 +166,7 @@ jobs:
         run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
 
   win:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: [ pre-build ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
@@ -187,7 +187,7 @@ jobs:
         run: cpack
 
   win64:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: [ pre-build ]
     env:
       CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
