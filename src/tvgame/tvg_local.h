@@ -712,7 +712,7 @@ void TVG_FindIntermissionPoint(void);
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1, 2)));
+NORETURN_MSVC void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1, 2)));
 
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
@@ -813,7 +813,7 @@ extern vmCvar_t tvg_floodLimit;
 extern vmCvar_t tvg_floodWait;
 
 void trap_Printf(const char *fmt);
-void trap_Error(const char *fmt) _attribute((noreturn));
+NORETURN_MSVC void trap_Error(const char *fmt) _attribute((noreturn));
 int trap_Milliseconds(void);
 int trap_Argc(void);
 void trap_Argv(int n, char *buffer, int bufferLength);

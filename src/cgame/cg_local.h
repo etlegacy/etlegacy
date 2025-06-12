@@ -3088,7 +3088,7 @@ void CG_LoadObjectiveData(void);
 
 void QDECL CG_Printf(const char *msg, ...) _attribute((format(printf, 1, 2)));
 void QDECL CG_DPrintf(const char *msg, ...) _attribute((format(printf, 1, 2)));
-void QDECL CG_Error(const char *msg, ...) _attribute((noreturn, format(printf, 1, 2)));
+NORETURN_MSVC void QDECL CG_Error(const char *msg, ...) _attribute((noreturn, format(printf, 1, 2)));
 
 void CG_StartMusic(void);
 void CG_QueueMusic(void);
@@ -3623,7 +3623,7 @@ void CG_ResetTimers(void);
 void trap_Print(const char *fmt);
 
 // abort the game
-void trap_Error(const char *fmt) _attribute((noreturn));
+NORETURN_MSVC void trap_Error(const char *fmt) _attribute((noreturn));
 
 // milliseconds should only be used for performance tuning, never
 // for anything game related.  Get time from the CG_DrawActiveFrame parameter
