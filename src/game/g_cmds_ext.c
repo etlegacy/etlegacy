@@ -179,6 +179,7 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "where",          CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_Where_f,                         ":^7 Show the current XYZ player position"                                                   },
 	{ "ws",             CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_WeaponStat_f,                    ":^7 Shows weapon stats"                                                                     },
 	{ "wstats",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_wStats_f,                        ""                                                                                           },
+	{ "debug_crash",    CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_Debug_Crash_f,                   "Deliberately cause a fatal process crash for debugging purposes."                           },
 	{ NULL,             CMD_USAGE_ANY_TIME,          qtrue,       qfalse, NULL,                                ""                                                                                           }
 };
 

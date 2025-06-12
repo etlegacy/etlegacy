@@ -534,6 +534,94 @@ void G_SendScore(gentity_t *ent)
 	trap_SendServerCommand(ent - g_entities, va("%s %i%s", startbuffer, count, buffer));
 }
 
+
+/**
+ * A function to either cause segfaults or stack overflows (: - useful for
+ * integration tests.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
+static void cmd_debug_crash(int crashType)
+{
+	static qboolean informed;
+	informed = qfalse;
+	if (!informed)
+	{
+		Com_Printf("debug_crash: Crash code confirmed, producing ");
+	}
+	switch (crashType)
+	{
+	case 1:     // segfault
+		if (!informed)
+		{
+			Com_Printf("a Segfault ...\n");
+			informed = qtrue;
+		}
+		while (qtrue)
+		{
+			int *ptr = NULL;
+			*ptr = random(); // ought to segfault
+		}
+		break;
+	case 2:     // stack overflow
+		if (!informed)
+		{
+			Com_Printf("a Stack Overflow ...\n");
+			informed = qtrue;
+		}
+		cmd_debug_crash(crashType);
+		break;
+	default:
+		Com_Printf("debug_crash: Unknown crashType: %d. Currently supported: {1: Segfault, 2: Stack Overflow}\n", crashType);
+		break;
+	}
+}
+#pragma GCC diagnostic pop
+
+/**
+ * @brief Deliberately produces a crash
+ */
+void Cmd_Debug_Crash_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	static int confirmCode = 0;
+	char       buffer[1024];
+	int        passedCode = 0;
+	int        crashType  = 0;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	trap_Argv(1, buffer, sizeof(buffer));
+	passedCode = Q_atoi(buffer);
+
+	trap_Argv(2, buffer, sizeof(buffer));
+	crashType = Q_atoi(buffer);
+
+	// randomly initialize a confirmCode that the user needs to manually pass
+	if (confirmCode == 0)
+	{
+		confirmCode = (int)(random() * INT_MAX);
+	}
+
+	if (passedCode == confirmCode)
+	{
+		cmd_debug_crash(crashType);
+	}
+	else
+	{
+		if (crashType == 0)
+		{
+			Com_Printf("debug_crash: confirm via calling this command again with: %d <crashType>\n             <crashType> is one of these integers: {1: Segfault, 2: Stack Overflow}\n", confirmCode);
+		}
+		else
+		{
+			Com_Printf("debug_crash: confirm via calling this command again with: %d %d\n", confirmCode, crashType);
+		}
+	}
+}
+
 /**
  * @brief Request current scoreboard information
  * @param[out] ent
