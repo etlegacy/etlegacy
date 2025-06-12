@@ -1,4 +1,5 @@
-ET: Legacy ![Build status](https://github.com/etlegacy/etlegacy/workflows/ETLBuild/badge.svg) [![etlegacy](https://snapcraft.io/etlegacy/badge.svg)](https://snapcraft.io/etlegacy) [![Analysis status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) ![CodeQL status](https://github.com/etlegacy/etlegacy/workflows/CodeQL/badge.svg) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
+ET: Legacy [![CI](https://github.com/etlegacy/etlegacy/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/etlegacy/etlegacy/actions/workflows/ci.yml) ![Build status](https://github.com/etlegacy/etlegacy/workflows/ETLBuild/badge.svg) [![etlegacy](https://snapcraft.io/etlegacy/badge.svg)](https://snapcraft.io/etlegacy)  [![Analysis status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160)  
+[![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
 ==========
 
 *A second breath of life for Wolfenstein: Enemy Territory*
