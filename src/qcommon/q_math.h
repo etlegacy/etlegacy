@@ -369,6 +369,7 @@ void axis_to_angles(axis_t axis, vec3_t angles);
 void angles_to_axis(const vec3_t angles, vec3_t axis[3]);
 float angle_mod(float a);
 float angle_lerp(float from, float to, float frac);
+float angle_lerp_max_delta(float from, float to, float frac, float max_delta);
 float angle_sub(float a1, float a2);
 void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3);
 
