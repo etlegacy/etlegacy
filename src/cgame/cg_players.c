@@ -1888,6 +1888,13 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		legsAngles[PITCH] += side;
 	}
 
+	// bend player bodies/corpses mid-flight according to vertical velocity
+	if ((cent->currentState.eFlags & EF_DEAD || cent->currentState.eType == ET_CORPSE /* downed or corpses */) &&
+	    (cent->currentState.pos.trType != TR_LINEAR /* don't bend bodies that are sinking into the ground */))
+	{
+		legsAngles[PITCH] += 60 * Com_Clamp(-1.0, 1.0, velocity[2]);
+	}
+
 	CG_PredictLean(cent, torsoAngles, headAngles);
 
 	// pain twitch
