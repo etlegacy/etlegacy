@@ -587,6 +587,7 @@ jobs:
 
   win:
     runs-on: windows-2022
+    needs: [version, mod-merger]
     outputs:
       win: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     env:
