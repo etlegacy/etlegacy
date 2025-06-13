@@ -870,6 +870,47 @@ float angle_lerp(float from, float to, float frac)
 }
 
 /**
+ * Returns 'from' moved towards 'to' by at most 'frac' and at most 'max_delta', as a shortest path angle in [0,360)
+ */
+float angle_lerp_max_delta(float from, float to, float frac, float max_delta)
+{
+	float result = to - from;
+
+	// Shortest signed delta in (-180, 180]
+	if (result > 180.0f)
+	{
+		result -= 360.0f;
+	}
+	else if (result < -180.0f)
+	{
+		result += 360.0f;
+	}
+
+	// Clamp step to +/-max_delta
+	result = result * frac;
+	if (result > max_delta)
+	{
+		result = max_delta;
+	}
+	else if (result < -max_delta)
+	{
+		result = -max_delta;
+	}
+
+	// Result with wrapping
+	result = from + result;
+	if (result < 0.0f)
+	{
+		result += 360.0f;
+	}
+	else if (result >= 360.0f)
+	{
+		result -= 360.0f;
+	}
+	return result;
+}
+
+/**
  * @brief vec3_lerp
  * @param[in] start
  * @param[in] end

@@ -1888,6 +1888,31 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		legsAngles[PITCH] += side;
 	}
 
+	if (
+		(cent->currentState.eFlags & EF_DEAD || cent->currentState.eType == ET_CORPSE /* downed or corpses */) &&
+		(cent->currentState.pos.trType != TR_LINEAR /* don't bend bodies that are sinking into the ground */)
+		)
+	{
+		float upVelocity = cent->lerpOrigin[2] - cent->lastLerpOrigin[2];
+
+		legsAngles[PITCH]  += 9 * upVelocity;
+		torsoAngles[PITCH] += -9 * upVelocity;
+
+		// lerp previous and current angles
+		if (cent->origin2[0] != 0)
+		{
+			float mult = (cent->currentState.groundEntityNum != ENTITYNUM_NONE /* falling to the ground makes everything snap quicker */)
+			        ? 4.5
+			        : 0.50;
+
+			legsAngles[PITCH]  = angle_lerp_max_delta(cent->origin2[0], legsAngles[PITCH], 0.15 * mult, 2.0 * mult);
+			torsoAngles[PITCH] = angle_lerp_max_delta(cent->origin2[1], torsoAngles[PITCH], 0.025 * mult, 2.0 * mult);
+		}
+
+		cent->origin2[0] = legsAngles[PITCH];
+		cent->origin2[1] = torsoAngles[PITCH];
+	}
+
 	CG_PredictLean(cent, torsoAngles, headAngles);
 
 	// pain twitch
@@ -3231,6 +3256,8 @@ void CG_Player(centity_t *cent)
 			CG_RailTrail(tv(1.0f, 0.0f, 0.0f), bodyMins, bodyMaxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 		}
 	}
+
+	VectorCopy(cent->lerpOrigin, cent->lastLerpOrigin);
 }
 
 //=====================================================================
