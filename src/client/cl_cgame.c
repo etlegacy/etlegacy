@@ -209,8 +209,6 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	return qtrue;
 }
 
-extern cvar_t *sv_fps;
-
 /**
  * @brief CL_InterpolationCheckRange
  */
@@ -224,7 +222,7 @@ static void CL_InterpolationCheckRange(void)
 	}
 
 	snaps      = Cvar_VariableValue("snaps");
-	updateRate = snaps < sv_fps->integer ? 1000 / snaps : 1000 / sv_fps->integer;
+	updateRate = snaps < cl.sv_fps ? 1000 / snaps : 1000 / cl.sv_fps;
 	buffer     = (FRAMETIME / 2) / updateRate - 1;
 
 	if (cl_interpolation->integer > buffer)
@@ -1491,7 +1489,7 @@ void CL_AdjustTimeDelta(void)
 
 				if (com_sv_running->integer)
 				{
-					svFrameTime = 1000 / sv_fps->integer;
+					svFrameTime = 1000 / cl.sv_fps;
 				}
 				else
 				{

@@ -190,6 +190,8 @@ typedef struct
 	qboolean corruptedTranslationFile;
 	char translationVersion[MAX_STRING_TOKENS];
 
+	int sv_fps;
+
 } clientActive_t;
 
 extern clientActive_t cl;

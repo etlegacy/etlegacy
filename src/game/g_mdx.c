@@ -1334,7 +1334,7 @@ void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
 	Q_strncpyz(hitsfile, animationGroup, sizeof(hitsfile) - 4);
 	if ((sep = strrchr(hitsfile, '.'))) // FIXME: should abort on /'s
 	{
-		Q_strncpyz(sep, ".hit", sizeof(hitsfile) - (sep - sizeof(hitsfile));
+		Q_strncpyz(sep, ".hit", sizeof(hitsfile) - (sep - sizeof(hitsfile)));
 	}
 	else
 	{
@@ -1877,7 +1877,7 @@ static void mdx_SwingAngles(float destination, float swingTolerance, float clamp
 	// swing towards the destination angle
 	if (swing >= 0)
 	{
-		move = 1000.f / trap_Cvar_VariableIntegerValue("sv_fps") * scale * speed;
+		move = 1000.f / sv_fps.integer * scale * speed;
 		if (move >= swing)
 		{
 			move      = swing;
@@ -1891,7 +1891,7 @@ static void mdx_SwingAngles(float destination, float swingTolerance, float clamp
 	}
 	else if (swing < 0)
 	{
-		move = 1000.f / trap_Cvar_VariableIntegerValue("sv_fps") * scale * -speed;
+		move = 1000.f / sv_fps.integer * scale * -speed;
 		if (move <= swing)
 		{
 			move      = swing;
@@ -2434,7 +2434,8 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 		if (f >= anim->numFrames)
 		{
 			int loopFrames = anim->loopFrames;
-			if (anim->loopFrames == -1) {
+			if (anim->loopFrames == -1)
+			{
 				loopFrames = anim->numFrames;
 			}
 
