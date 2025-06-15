@@ -396,12 +396,6 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 		return PICKUP_INVALID;
 	}
 
-	// ensure we don't pick a dropped obj up right away
-	if (level.time - cl->dropObjectiveTime < 2000)
-	{
-		return PICKUP_INVALID;
-	}
-
 	trap_SendServerCommand(other - g_entities, "cp \"You picked up the objective!\"");
 
 	// set timer
