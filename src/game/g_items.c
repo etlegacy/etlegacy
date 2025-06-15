@@ -728,6 +728,18 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
+	// ensure we don't pick a dropped obj up right away
+	// FIXME: this really should be in 'BG_CanItemBeGrabbed', but we'd need to store the drop timestamp somewhere
+	if (ent->item->giType == IT_TEAM && level.time - other->client->dropObjectiveTime < PICKUP_DROPPED_COOLDOWN)
+	{
+		return;
+	}
+
+	if (g_gamestate.integer == GS_PLAYING)
+	{
+		G_LogPrintf("Item: %i %s\n", other->s.number, ent->item->classname);
+	}
+
 	// call the item-specific pickup function
 	switch (ent->item->giType)
 	{
@@ -748,11 +760,6 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	if (!respawn)
 	{
 		return;
-	}
-
-	if (g_gamestate.integer == GS_PLAYING)
-	{
-		G_LogPrintf("Item: %i %s\n", other->s.number, ent->item->classname);
 	}
 
 	// play sounds
