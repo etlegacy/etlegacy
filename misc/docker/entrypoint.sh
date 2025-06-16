@@ -7,4 +7,4 @@ if [ -n "$FS_GAME" ]; then
     FS_GAME_PARAM="+set fs_game $FS_GAME"
 fi
 
-exec ./etlded +set fs_homepath /legacy/homepath $FS_GAME_PARAM +set g_protect 1 +exec etl_server.cfg
+exec ./etlded +set fs_homepath /legacy/homepath $FS_GAME_PARAM +exec etl_server.cfg
