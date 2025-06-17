@@ -52,7 +52,7 @@ jobs:
 
   lnx64-mod:
     runs-on: ubuntu-22.04
-    needs: version
+    needs: pre-build
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,12 +60,12 @@ jobs:
 
       - name: Build
         env:
-          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -64 -mod
@@ -88,7 +88,7 @@ jobs:
 
   lnx32-mod:
     runs-on: ubuntu-22.04
-    needs: version
+    needs: pre-build
     steps:
       - uses: actions/checkout@v4
         with:
@@ -96,12 +96,12 @@ jobs:
 
       - name: Build
         env:
-          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -mod
@@ -118,7 +118,7 @@ jobs:
 
   lnx-aarch64-mod:
     runs-on: ubuntu-22.04
-    needs: version
+    needs: pre-build
     container:
       image: etlegacy/lnx-aarch64-build
     steps:
@@ -128,8 +128,8 @@ jobs:
 
       - name: Build
         env:
-          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           ./easybuild.sh build -RPIT -mod -ninja
@@ -146,7 +146,7 @@ jobs:
 
   osx-mod:
     runs-on: macos-13
-    needs: version
+    needs: pre-build
     steps:
       - uses: actions/checkout@v4
         with:
@@ -167,8 +167,8 @@ jobs:
         env:
           SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
-          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
         shell: bash
         run: |
           ./easybuild.sh build -64 -mod --osx=10.10 --osx-arc="x86_64;arm64" -j
@@ -185,7 +185,7 @@ jobs:
 
   win-mod:
     runs-on: windows-2022
-    needs: version
+    needs: pre-build
     steps:
       - uses: actions/checkout@v4
         with:
@@ -194,8 +194,8 @@ jobs:
       - name: Build
         shell: cmd
         env:
-          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
         run: |
           call .\easybuild.bat build -mod
 
@@ -211,7 +211,7 @@ jobs:
 
   win64-mod:
     runs-on: windows-2022
-    needs: version
+    needs: pre-build
     steps:
       - uses: actions/checkout@v4
         with:
@@ -220,8 +220,8 @@ jobs:
       - name: Build
         shell: cmd
         env:
-          CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-          CI_ETL_TAG: ${{needs.version.outputs.tag}}
+          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
         run: |
           call .\easybuild.bat build -mod -64
 
@@ -237,13 +237,13 @@ jobs:
 
   android-mod:
     runs-on: ubuntu-22.04
-    needs: version
+    needs: pre-build
     env:
       SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
       SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
       SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     container:
       image: etlegacy/android-build
     steps:
@@ -336,7 +336,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
       [
-        version,
+        pre-build,
         lnx64-mod,
         lnx32-mod,
         osx-mod,
@@ -369,7 +369,7 @@ jobs:
       - name: Create mod zip
         shell: bash
         run: |
-          zip -rvj -MM etlegacy-mod-${{needs.version.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* platforms/tvgame*
+          zip -rvj -MM etlegacy-mod-${{needs.pre-build.outputs.describe}}.zip legacy_*.pk3 platforms/qagame* platforms/tvgame*
 
       - name: Remove old artifacts
         uses: geekyeggo/delete-artifact@v4
@@ -402,10 +402,10 @@ jobs:
   # Generate the final packages for Lnx, macOS, Windows and Android
   lnx64:
     runs-on: ubuntu-22.04
-    needs: [version, mod-merger]
+    needs: [pre-build, mod-merger]
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -415,7 +415,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -64
@@ -439,7 +439,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             cd build/
             cpack
@@ -454,7 +454,7 @@ jobs:
 
   lnx32:
     runs-on: ubuntu-22.04
-    needs: [version, mod-merger]
+    needs: [pre-build, mod-merger]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -464,7 +464,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -32
@@ -488,7 +488,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             cd build/
             cpack
@@ -503,12 +503,12 @@ jobs:
 
   lnx-aarch64:
     runs-on: ubuntu-latest
-    needs: [version, mod-merger]
+    needs: [pre-build, mod-merger]
     container:
       image: etlegacy/lnx-aarch64-build
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -542,10 +542,10 @@ jobs:
 
   osx:
     runs-on: macos-13
-    needs: [version, mod-merger]
+    needs: [pre-build, mod-merger]
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -587,12 +587,12 @@ jobs:
 
   win:
     runs-on: windows-2022
-    needs: [version, mod-merger]
+    needs: [pre-build, mod-merger]
     outputs:
       win: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -628,12 +628,12 @@ jobs:
 
   win64:
     runs-on: windows-2022
-    needs: [version, mod-merger]
+    needs: [pre-build, mod-merger]
     outputs:
       win64: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -673,9 +673,9 @@ jobs:
       SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
       SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
       SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
-    needs: [version, mod-merger]
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+    needs: [pre-build, mod-merger]
     container:
       image: etlegacy/android-build
     steps:
@@ -738,7 +738,7 @@ jobs:
   sign:
     if: github.repository == 'etlegacy/etlegacy'
     runs-on: ubuntu-22.04
-    needs: [version, win, win64]
+    needs: [pre-build, win, win64]
     steps:
       - name: Get version status
         id: vars
@@ -827,7 +827,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-22.04
-    needs: [version, sign, lnx32, lnx64, osx, lnx-aarch64, android]
+    needs: [pre-build, sign, lnx32, lnx64, osx, lnx-aarch64, android]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v4
@@ -860,21 +860,21 @@ jobs:
           find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=eacan4jn14wt" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
-        if: ${{ steps.vars.outputs.hash_exists == '404' && needs.version.outputs.describe != needs.version.outputs.tag }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' && needs.pre-build.outputs.describe != needs.pre-build.outputs.tag }}
         env:
           DISCORD_WEBHOOK: ${{ secrets.PUBLISH_DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@0.3.0
         with:
-          args: "<@&673533235887865879> Build from ETLegacy: ${{ needs.version.outputs.describe }} (${{ github.sha }}) has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
+          args: "<@&673533235887865879> Build from ETLegacy: ${{ needs.pre-build.outputs.describe }} (${{ github.sha }}) has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
 
   docker:
     runs-on: ubuntu-22.04
-    needs: [version, upload] # only upload to docker if the upload to the site was successfully completed
+    needs: [pre-build, upload] # only upload to docker if the upload to the site was successfully completed
     # only run on master
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -901,7 +901,7 @@ jobs:
         id: vars
         run: |
           tag_missing=$(docker manifest inspect "etlegacy/server:${CI_ETL_DESCRIBE}" > /dev/null ; echo $?)
-          echo "Current tag ${{needs.version.outputs.describe}} is missing from Docker: $tag_missing"
+          echo "Current tag ${{needs.pre-build.outputs.describe}} is missing from Docker: $tag_missing"
           echo "tag_missing=$tag_missing" >> "$GITHUB_OUTPUT"
 
       # If we are on any build version then we create the latest-patch version
@@ -921,7 +921,7 @@ jobs:
 
       # If we are on a release tag, then also create the 'latest' tag on docker hub
       - name: Build and push the latest Docker image
-        if: needs.version.outputs.describe == needs.version.outputs.tag && steps.vars.outputs.tag_missing == '1' && github.event_name != 'schedule'
+        if: needs.pre-build.outputs.describe == needs.pre-build.outputs.tag && steps.vars.outputs.tag_missing == '1' && github.event_name != 'schedule'
         working-directory: build/package
         run: |
           docker tag etlegacy/server:latest-patch "etlegacy/server:${CI_ETL_DESCRIBE}"
