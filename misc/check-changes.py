@@ -8,19 +8,27 @@ import sys
 import subprocess
 import difflib
 from pathlib import Path
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 from etl_lib import (
-    get_changed_files,
     CWD,
     ROOT_DIR,
     argparse_add_commit_param,
-    run_command,
+    get_changed_files,
+    get_current_git_branch,
     rel_str,
+    run_command,
 )
 
 HIDE_DETAIL = False
+
+
+@dataclass
+class State:
+    args: list[str] = field(default_factory=list)
+    failed_files: list[str] = field(default_factory=list)
+    succeeded_files: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -178,21 +186,15 @@ def check_file(path: Path) -> Optional[List[Error]]:
     return errors
 
 
-def main(args):
-    global HIDE_DETAIL
-    HIDE_DETAIL = args.hide_details
-
+def check_changes(state: State):
     # assemble files
-    changed_files = get_changed_files(args.commit_hash)
+    changed_files = get_changed_files(state.args.commit_hash)
 
     if len(changed_files) < 1:
         print("No changes found.")
-        quit(0)
+        return
 
     print("------------------------------------------")
-
-    failed_files = []
-    succeeded_files = []
 
     # check assembled files for errors
     for path in sorted(list(changed_files)):
@@ -201,23 +203,58 @@ def main(args):
         if errors == None:
             pass
         elif errors:
-            failed_files.append([relpath, errors])
+            state.failed_files.append([relpath, errors])
         else:
-            succeeded_files.append(relpath)
+            state.succeeded_files.append(relpath)
 
-    for relpath in succeeded_files:
+
+def check_global(state: State):
+    result = run_command(["actionlint"], check=False)
+
+    def check_global_actionlint():
+        path = "[actionlint]"
+        if result.returncode != 0:
+            state.failed_files.append(
+                [path, [Error(path, f"Actionlint failed:\n {result.stdout.strip()}")]]
+            )
+        else:
+            state.succeeded_files.append(path)
+
+    check_global_actionlint()
+
+
+def main(args):
+    global HIDE_DETAIL
+    HIDE_DETAIL = args.hide_details
+
+    state = State(args=args)
+
+    current_git_branch = get_current_git_branch()
+    skip_changes = args.commit_hash == current_git_branch
+
+    if not skip_changes:
+        check_changes(state)
+    else:
+        print("Skipping checking changes...")
+
+    check_global(state)
+
+    for relpath in state.succeeded_files:
         print(f"✓ {relpath}")
 
     total_errors = 0
-    if len(failed_files) > 0:
+    if len(state.failed_files) > 0:
         print("------------------ERRORS------------------")
 
-        for relpath, errors in failed_files:
+        for relpath, errors in state.failed_files:
             print(f"✗ {relpath}")
             for error in errors:
                 print(error, file=sys.stderr)
                 if args.github:
-                    print(f"::error ::{error.path.relative_to(CWD)} - {error.reason}")
+                    path = error.path
+                    if isinstance(path, Path):
+                        path = error.path.relative_to(CWD)
+                    print(f"::error ::{path} - {error.reason}")
                 total_errors += 1
 
     if total_errors:

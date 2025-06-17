@@ -51,6 +51,10 @@ def get_staged_unstaged_files() -> List[Path]:
     return [ROOT_DIR / path for path in staged + unstaged]
 
 
+def get_current_git_branch(path="."):
+    return run_git_command(["git", "-C", path, "rev-parse", "--abbrev-ref", "HEAD"])[0]
+
+
 def get_commits(base_commit: Optional[str]) -> List[str]:
     if base_commit:
         return run_git_command(["git", "rev-list", f"...{base_commit}"])
