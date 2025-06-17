@@ -888,6 +888,7 @@ jobs:
       - name: Setup folder
         working-directory: build/package
         run: cp ../../misc/docker/dedicated.Dockerfile ./Dockerfile
+          cp ../../misc/docker/entrypoint.sh ./entrypoint.sh
 
       - name: Package folder contents
         working-directory: build/package
