@@ -15,6 +15,11 @@ on:
   push:
     branches: [master]
 
+# cancel previous unfinished/running jobs in each separate branch
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pre-build:
     runs-on: ubuntu-latest
