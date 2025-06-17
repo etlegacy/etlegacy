@@ -33,7 +33,6 @@ jobs:
           cache: true
 
       - name: Check changes
-        if: github.event_name == 'pull_request'
         run: |
           pixi run check-changes --github "origin/master"
 
