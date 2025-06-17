@@ -20,7 +20,7 @@ on:
 
 jobs:
   # Try to figure out the build version information only once
-  version:
+  pre-build:
     runs-on: ubuntu-latest
     outputs:
       describe: ${{ steps.git.outputs.describe }}
@@ -943,3 +943,52 @@ jobs:
             incomplete-mod-pk3
             *-packages
             *-mod
+
+  ci-discord-notify-on-failure:
+    needs:
+      - pre-build
+
+      - lnx64-mod
+      - lnx32-mod
+      - lnx-aarch64-mod
+      - osx-mod
+      - win-mod
+      - win64-mod
+      - android-mod
+
+      - mod-merger
+
+      - lnx64
+      - lnx32
+      - lnx-aarch64
+      - osx
+      - win
+      - win64
+      - android
+
+      - sign
+
+      - upload
+      - docker
+      - cleanup
+    if: |
+      github.ref == 'refs/heads/master' &&
+      failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.LEGACY_CI_WEBHOOK }}
+          COMMIT_SHA: ${{ github.sha }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          DEVS_ROLE_ID: "260752921698762752"
+        run: |
+          RUN_URL="https://github.com/${REPO}/etlegacy/actions/runs/${RUN_ID}"
+
+          MESSAGE="❌ ETLBuild **[failed on commit](<${RUN_URL}>)** \`${COMMIT_SHA}\` <@&${DEVS_ROLE_ID}>"
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"$MESSAGE\", \"allowed_mentions\": {\"roles\": [\"$DEVS_ROLE_ID\"]}}" \
+               "$DISCORD_WEBHOOK"
