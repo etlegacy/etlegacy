@@ -1344,7 +1344,53 @@ static int Sys_GameLoop(void)
  */
 int main(int argc, char **argv)
 {
-	char commandLine[MAX_STRING_CHARS] = { 0 };
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    SDL_Surface *surface;
+    SDL_Event event;
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
+        return 3;
+    }
+
+    if (SDL_CreateWindowAndRenderer(320, 240, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
+        return 3;
+    }
+
+
+    SDL_SetWindowMouseGrab(window, SDL_TRUE);
+    SDL_SetHint("SDL_HINT_MOUSE_TOUCH_EVENTS", "1");
+    SDL_SetHint("SDL_HINT_TOUCH_MOUSE_EVENTS", "0");
+
+    while (1) {
+        SDL_PollEvent(&event);
+        if (event.type == SDL_QUIT) {
+            break;
+        }
+        switch (event.type) {
+            case SDL_MOUSEMOTION:
+                SDL_Log("TEST SDL_MOUSEMOTION");
+                break;
+            case SDL_FINGERMOTION:
+                SDL_Log("TEST SDL_FINGERMOTION");
+                break;
+            default:
+                break;
+        }
+        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+        SDL_RenderClear(renderer);
+        SDL_RenderPresent(renderer);
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+
+    SDL_Quit();
+
+    return 0;
+	/*char commandLine[MAX_STRING_CHARS] = { 0 };
 
 #ifdef MAIN_MUST_RETURN
 	// if we have not yet hit the main loop then we exit here on error
@@ -1465,5 +1511,5 @@ int main(int argc, char **argv)
 
 #endif
 
-	return Sys_GameLoop();
+	return Sys_GameLoop();*/
 }
