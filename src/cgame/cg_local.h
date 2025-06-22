@@ -4432,6 +4432,8 @@ typedef struct hudStructure_s
 	hudComponent_t scTeamNamesAxis;
 	hudComponent_t scTeamNamesAllies;
 
+	hudComponent_t weaponheatbar;
+
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
 
@@ -4535,6 +4537,7 @@ void CG_DrawCrosshair(hudComponent_t *comp);
 
 void CG_DrawPlayerStatusHead(hudComponent_t *comp);
 void CG_DrawGunIcon(hudComponent_t *comp);
+void CG_DrawGunHeatBar(hudComponent_t *comp);
 void CG_DrawAmmoCount(hudComponent_t *comp);
 void CG_DrawPowerUps(hudComponent_t *comp);
 void CG_DrawObjectiveStatus(hudComponent_t *comp);
