@@ -182,17 +182,23 @@ static ID_INLINE void CG_ColorObituaryEntName(clientInfo_t *ci, vec4_t color, ch
  */
 static void CG_Obituary(entityState_t *ent)
 {
-	qhandle_t      shader    = cgs.media.pmImages[PM_DEATH];
-	meansOfDeath_t mod       = (meansOfDeath_t)ent->eventParm;
-	int            target    = ent->otherEntityNum;
-	int            attacker  = ent->otherEntityNum2;
-	weapon_t       weapon    = (weapon_t)ent->weapon;
-	const char     *message  = NULL;
-	const char     *message2 = NULL;
-	char           targetName[MAX_NAME_LENGTH];
-	char           attackerName[MAX_NAME_LENGTH];
-	clientInfo_t   *ci, *ca;  // ca = attacker
-	int            i;
+	qhandle_t          shader    = cgs.media.pmImages[PM_DEATH];
+	meansOfDeath_t     mod       = (meansOfDeath_t)ent->eventParm;
+	popupMessageType_t deathType = PM_DEATH;
+	int                target    = ent->otherEntityNum;
+	int                attacker  = ent->otherEntityNum2;
+	weapon_t           weapon    = (weapon_t)ent->weapon;
+	const char         *message  = NULL;
+	const char         *message2 = NULL;
+	char               targetName[MAX_NAME_LENGTH];
+	char               attackerName[MAX_NAME_LENGTH];
+	clientInfo_t       *ci, *ca; // ca = attacker
+	int                i;
+
+	if (ent->loopSound == 1) // 1 indicates headshot kill
+	{
+		deathType = PM_DEATH_HEADSHOT;
+	}
 
 	if (target < 0 || target >= MAX_CLIENTS)
 	{
@@ -314,11 +320,11 @@ static void CG_Obituary(entityState_t *ent)
 
 				CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader, pmComp->style);
 
-				CG_AddPMItemEx(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, colorYellow, i);
+				CG_AddPMItemEx(deathType, targetName, " ", 0, weaponShader, scaleShader, colorYellow, i);
 			}
 			else
 			{
-				CG_AddPMItemEx(PM_DEATH, va("%s %s.", targetName, CG_TranslateString(message)), " ", shader, 0, 0, colorYellow, i);
+				CG_AddPMItemEx(deathType, va("%s %s.", targetName, CG_TranslateString(message)), " ", shader, 0, 0, colorYellow, i);
 			}
 
 			continue;
@@ -360,22 +366,22 @@ static void CG_Obituary(entityState_t *ent)
 
 					if (pmComp->style & POPUP_SWAP_VICTIM_KILLER)
 					{
-						CG_AddPMItemEx(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite), i);
+						CG_AddPMItemEx(deathType, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite), i);
 					}
 					else
 					{
-						CG_AddPMItemEx(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite), i);
+						CG_AddPMItemEx(deathType, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite), i);
 					}
 				}
 				else
 				{
 					if (ci->team == ca->team && !(pmComp->style & POPUP_FORCE_COLORS))
 					{
-						CG_AddPMItemEx(PM_DEATH, va("%s^1 %s^7 ", targetName, CG_TranslateString(message)), va("%s^1%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorRed, i);
+						CG_AddPMItemEx(deathType, va("%s^1 %s^7 ", targetName, CG_TranslateString(message)), va("%s^1%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorRed, i);
 					}
 					else
 					{
-						CG_AddPMItemEx(PM_DEATH, va("%s %s ", targetName, CG_TranslateString(message)), va("%s%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorWhite, i);
+						CG_AddPMItemEx(deathType, va("%s %s ", targetName, CG_TranslateString(message)), va("%s%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorWhite, i);
 					}
 				}
 
@@ -398,7 +404,7 @@ static void CG_Obituary(entityState_t *ent)
 	else
 	{
 		// we don't know what it was
-		CG_AddPMItem(PM_DEATH, va("%s ^7%s.", ci->name, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
+		CG_AddPMItem(deathType, va("%s ^7%s.", ci->name, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
 		trap_Print(va("^7%s ^7%s\n", ci->name, CG_TranslateString("died")));
 	}
 }
