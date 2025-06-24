@@ -217,7 +217,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		getMotionListener();
 		clipboardGetText();
 
-		setRelativeMouseEnabled(true);
+		setRelativeMouseEnabled(false);
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(refreshReceiver,
 			new IntentFilter("REFRESH_ACTION"));
