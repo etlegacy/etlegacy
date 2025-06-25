@@ -120,6 +120,20 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		finishAndRemoveTask();
 	}
 
+	public static boolean supportsRelativeMouse() {
+		int[] deviceIds = InputDevice.getDeviceIds();
+
+		for (int id : deviceIds) {
+			InputDevice device = InputDevice.getDevice(id);
+
+			if (device != null &&
+				(device.getSources() & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -216,8 +230,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		HIDDeviceManager.acquire(getContext());
 		getMotionListener();
 		clipboardGetText();
-
-		setRelativeMouseEnabled(false);
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(refreshReceiver,
 			new IntentFilter("REFRESH_ACTION"));
@@ -652,6 +664,13 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	}
 
 	private int runUI() {
+		if (supportsRelativeMouse()) {
+			Log.v("SDL", "Relative mouse input supported!");
+			setRelativeMouseEnabled(true);
+		} else {
+			Log.v("SDL", "Relative mouse input not supported.");
+			setRelativeMouseEnabled(false);
+		}
 		if (InputDeviceChecker.hasUSBMouseOrKeyboardConnected() || InputDeviceChecker.hasBluetoothMouseOrKeyboardConnected()) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 			setViewVisibility(false, etl_console, btn, esc_btn, gears, shootBtn, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
