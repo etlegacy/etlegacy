@@ -328,7 +328,7 @@ static int _et_trap_SetConfigstring(lua_State *L)
  * Sends command to the server console.
  *
  * @lua_def_prototype et.trap_SendConsoleCommand(when, command)
- * @lua_def ---@param when number tells when the command is executed. See `et.EXEC_*` for possible values.
+ * @lua_def ---@param when number tells when the command is executed. See `et.EXEC_*` for possible values - by default you probably want 'et.EXEC_APPEND'.
  * @lua_def ---@param command string the full command to execute.
  */
 static int _et_trap_SendConsoleCommand(lua_State *L)
@@ -513,7 +513,7 @@ static int _et_UnmutePlayer(lua_State *L)
  *
  * @lua_def_prototype et.trap_GetUserinfo(clientNum)
  * @lua_def ---@param clientNum number the slot number of the client.
- * @lua_def ---@return string userinfo the returned string of the specified client.
+ * @lua_def ---@return string userinfo the returned string of the specified client - empty string if no player connected.
  */
 static int _et_trap_GetUserinfo(lua_State *L)
 {
@@ -2014,7 +2014,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
  * @lua_def ---@param entnum number the number of the entity.
  * @lua_def ---@param fieldname string the name of the field to get.
  * @lua_def ---@param arrayindex? number if present, specifies which element of an array entity field to get.
- * @lua_def ---@return nil|string|number variable the returned field value. For NULL entities or clients, **nil** is returned.
+ * @lua_def ---@return nil|string|number|number[] value the returned field value. For NULL entities or clients, **nil** is returned.
  */
 static int _et_gentity_get(lua_State *L)
 {
@@ -2104,13 +2104,11 @@ static int _et_gentity_get(lua_State *L)
 /**
  * Sets a value in an entity.
  *
- * @lua_def_prototype et.gentity_set(entnum, fieldname, entry1, entry2)
+ * @lua_def_prototype et.gentity_set(entnum, fieldname, val1, val2)
  * @lua_def ---@param entnum number the entity number that is manipulated.
  * @lua_def ---@param fieldname string the name of the field to manipulate.
- * @lua_def ---@param entry1 number|string the value to set for scalar-types
- * (string, number etc.), or the index to set for vector-types ([]number etc.).
- * @lua_def ---@param entry2? number|string not used for scalar-types, the value
- * to set for vector-types for the index previously passed
+ * @lua_def ---@param val1 nil|string|number|number[] the value to be set - if 'val2' is set 'val1' becomes the index to be set for the vector-field and 'val2' the value to be set.
+ * @lua_def ---@param val2? nil|string|number if set, makes 'val1' the index of the vector-field and 'val2' the value of that index to be set.
  */
 static int _et_gentity_set(lua_State *L)
 {
