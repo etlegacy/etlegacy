@@ -669,13 +669,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 	}
 
 	private int runUI() {
-		if (supportsRelativeMouse()) {
-			Log.v("SDL", "Relative mouse input supported!");
-			setRelativeMouseEnabled(true);
-		} else {
-			Log.v("SDL", "Relative mouse input not supported.");
-			setRelativeMouseEnabled(false);
-		}
 		if (InputDeviceChecker.hasUSBMouseOrKeyboardConnected() || InputDeviceChecker.hasBluetoothMouseOrKeyboardConnected()) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 			setViewVisibility(false, etl_console, btn, esc_btn, gears, shootBtn, reloadBtn, jumpBtn, activateBtn, altBtn, crouchBtn, moveJoystick, toggleRecyclerButton);
