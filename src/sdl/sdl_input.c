@@ -683,16 +683,11 @@ static void IN_ActivateMouse(void)
 
 	if (!mouseActive)
 	{
-        if (SDL_GetRelativeMouseMode() != 0)
-        {
-            IN_GrabMouse(qtrue, qtrue);
-        }
-        else
-        {
-            IN_GrabMouse(qtrue, qfalse);
-        }
-#ifdef __ANDROID__
+#ifndef __ANDROID__
+		IN_GrabMouse(qtrue, qtrue);
+#else
         SDL_ShowCursor(qfalse);
+        IN_GrabMouse(qtrue, qfalse);
 #endif
 
 		IN_GobbleMotionEvents();
