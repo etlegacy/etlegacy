@@ -2431,6 +2431,46 @@ float *tv(float x, float y, float z)
 	return v;
 }
 
+/**
+ * @brief This is just a convenience function for printing vectors
+ * @param[in] v
+ * @return
+ */
+char *vtos(const vec3_t v)
+{
+	static int  index;
+	static char str[8][32];
+	char        *s;
+
+	// use an array so that multiple vtos won't collide
+	s     = str[index];
+	index = (index + 1) & 7;
+
+	Com_sprintf(s, 32, "(%i %i %i)", (int)v[0], (int)v[1], (int)v[2]);
+
+	return s;
+}
+
+/**
+ * @brief This is just a convenience function for printing vectors
+ * @param[in] v
+ * @return
+ */
+char *vtosf(const vec3_t v)
+{
+	static int  index;
+	static char str[8][64];
+	char        *s;
+
+	// use an array so that multiple vtosf won't collide
+	s     = str[index];
+	index = (index + 1) & 7;
+
+	Com_sprintf(s, 64, "(%f %f %f)", v[0], v[1], v[2]);
+
+	return s;
+}
+
 /*
 =====================================================================
   INFO STRINGS
