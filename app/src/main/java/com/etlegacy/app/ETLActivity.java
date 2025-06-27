@@ -120,25 +120,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 		finishAndRemoveTask();
 	}
 
-	public static boolean supportsRelativeMouse() {
-		int[] deviceIds = InputDevice.getDeviceIds();
-
-		for (int id : deviceIds) {
-			InputDevice device = InputDevice.getDevice(id);
-
-			if ((device.getSources() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE) {
-				// Check for relative axis support (X and Y)
-				boolean hasRelativeX = device.getMotionRange(MotionEvent.AXIS_RELATIVE_X) != null;
-				boolean hasRelativeY = device.getMotionRange(MotionEvent.AXIS_RELATIVE_Y) != null;
-
-				if (hasRelativeX && hasRelativeY) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
