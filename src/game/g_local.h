@@ -1569,8 +1569,6 @@ void G_ClientSound(gentity_t *ent, int soundIndex);
 
 void G_TouchTriggers(gentity_t *ent);
 
-char *vtos(const vec3_t v);
-
 void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm);
 void G_AddEvent(gentity_t *ent, int event, int eventParm);
 void G_SetOrigin(gentity_t *ent, vec3_t origin);

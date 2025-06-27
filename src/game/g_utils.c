@@ -727,26 +727,6 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator)
 }
 
 /**
- * @brief This is just a convenience function for printing vectors
- * @param[in] v
- * @return
- */
-char *vtos(const vec3_t v)
-{
-	static int  index;
-	static char str[8][32];
-	char        *s;
-
-	// use an array so that multiple vtos won't collide
-	s     = str[index];
-	index = (index + 1) & 7;
-
-	Com_sprintf(s, 32, "(%i %i %i)", (int)v[0], (int)v[1], (int)v[2]);
-
-	return s;
-}
-
-/**
  * @brief The editor only specifies a single value for angles (yaw),
  * but we have special constants to generate an up or down direction.
  * Angles will be cleared, because it is being used to represent a direction
