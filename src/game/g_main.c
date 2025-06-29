@@ -392,6 +392,7 @@ cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
 	{ &g_cheats,                          "sv_cheats",                         "",                           0,                                               0, qfalse, qfalse },
+	{ &sv_fps,                            "sv_fps",                            DEFAULT_SV_FPS_STR,           CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
 
 	// noset vars
 	{ NULL,                               "gamename",                          MODNAME,                      CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
@@ -669,7 +670,6 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_corpses,                         "g_corpses",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 	{ &g_realHead,                        "g_realHead",                        "1",                          0,                                               0, qfalse, qfalse },
-	{ &sv_fps,                            "sv_fps",                            "20",                         CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
 	{ &g_skipCorrection,                  "g_skipCorrection",                  "1",                          0,                                               0, qfalse, qfalse },
 	{ &g_extendedNames,                   "g_extendedNames",                   "1",                          0,                                               0, qfalse, qfalse },
 #ifdef FEATURE_RATING

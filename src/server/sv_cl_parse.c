@@ -101,6 +101,13 @@ void SV_CL_SystemInfoChanged(void)
 	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
 	// in some cases, outdated cp commands might get sent with this news serverId
 	svcl.serverId = Q_atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
+	svcl.sv_fps   = Q_atoi(Info_ValueForKey(systemInfo, "sv_fps"));
+
+	// fallback to default engine sv_fps
+	if (!svcl.sv_fps)
+	{
+		svcl.sv_fps = DEFAULT_SV_FPS;
+	}
 
 	// don't set any vars when playing a demo
 	if (svclc.demo.playing)

@@ -2017,7 +2017,7 @@ void SV_UserinfoChanged(client_t *cl)
 	}
 	else
 	{
-		i = 50; // 1000 / sv_fps->integer
+		i = DEFAULT_SV_FRAMETIME;
 	}
 
 	if (i != cl->snapshotMsec)
