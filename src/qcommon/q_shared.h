@@ -893,6 +893,8 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
 //=============================================
 
 float *tv(float x, float y, float z);
+char *vtos(const vec3_t v);
+char *vtosf(const vec3_t v);
 
 #define rc(x) va("%s^7", x) ///< shortcut for color reset after printing variable
 

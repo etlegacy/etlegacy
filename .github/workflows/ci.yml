@@ -15,6 +15,11 @@ on:
   push:
     branches: [master]
 
+# cancel previous unfinished/running jobs in each separate branch
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pre-build:
     runs-on: ubuntu-latest
@@ -33,7 +38,6 @@ jobs:
           cache: true
 
       - name: Check changes
-        if: github.event_name == 'pull_request'
         run: |
           pixi run check-changes --github "origin/master"
 
@@ -52,8 +56,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [pre-build]
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,7 +67,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -64
@@ -78,7 +82,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             cd build/
             cpack
@@ -95,7 +99,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             git config --global --add safe.directory /code
             ./easybuild.sh build -32
@@ -110,7 +114,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.version.outputs.describe}} -e CI_ETL_TAG=${{needs.version.outputs.tag}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
             cd build/
             cpack
@@ -121,8 +125,8 @@ jobs:
     container:
       image: etlegacy/lnx-aarch64-build
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -141,8 +145,8 @@ jobs:
     runs-on: macos-13
     needs: [pre-build]
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -169,8 +173,8 @@ jobs:
     runs-on: windows-2022
     needs: [pre-build]
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -190,8 +194,8 @@ jobs:
     runs-on: windows-2022
     needs: [pre-build]
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -210,8 +214,8 @@ jobs:
   android:
     runs-on: ubuntu-22.04
     env:
-      CI_ETL_DESCRIBE: ${{needs.version.outputs.describe}}
-      CI_ETL_TAG: ${{needs.version.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
     needs: [pre-build]
     container:
       image: etlegacy/android-build
@@ -301,7 +305,7 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           DEVS_ROLE_ID: "260752921698762752"
         run: |
-          RUN_URL="https://github.com/${REPO}/etlegacy/actions/runs/${RUN_ID}"
+          RUN_URL="https://github.com/${REPO}/actions/runs/${RUN_ID}"
 
           MESSAGE="❌ **[failed on commit](<${RUN_URL}>)** \`${COMMIT_SHA}\` <@&${DEVS_ROLE_ID}>"
 

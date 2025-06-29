@@ -2624,6 +2624,16 @@ qboolean ConsoleCommand(void)
 		G_LuaRestart();
 		return qtrue;
 	}
+	else if (!Q_stricmp(cmd, "lua_shutdown"))
+	{
+		G_LuaShutdown();
+		return qtrue;
+	}
+	else if (!Q_stricmp(cmd, "lua_init"))
+	{
+		G_LuaInit();
+		return qtrue;
+	}
 	else if (Q_stricmp(cmd, "lua_api") == 0)
 	{
 		G_LuaStackDump();

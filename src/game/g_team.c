@@ -88,7 +88,7 @@ void Team_ResetFlag(gentity_t *ent)
 	if (ent->flags & FL_DROPPED_ITEM)
 	{
 		Team_ResetFlag(&g_entities[ent->s.otherEntityNum]);
-		ent->freeAfterEvent = qtrue;
+		G_FreeEntity(ent);
 	}
 	else
 	{
@@ -195,6 +195,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
 			G_Script_ScriptEvent(level.gameManager, "trigger", "allied_object_returned");
 		}
 	}
+	// 'Team_ResetFlag' will delete this entity
 }
 
 /**
@@ -255,6 +256,7 @@ static int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 		// reward player for returning objective item
 		G_AddSkillPoints(other, SK_BATTLE_SENSE, 5.f, "objective returned");
 
+		// 'Team_ResetFlag' will remove this entity, we must return 0!
 		Team_FlagSound(ent, team, TEAM_FLAG_STATE_RETURNED);
 		Team_ResetFlag(ent);
 		return PICKUP_ACTIVATE;
@@ -391,12 +393,6 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	else
 	{
 		trap_SendServerCommand(other - g_entities, "cp \"Don't know what team the flag is on.\"");
-		return PICKUP_INVALID;
-	}
-
-	// ensure we don't pick a dropped obj up right away
-	if (level.time - cl->dropObjectiveTime < 2000)
-	{
 		return PICKUP_INVALID;
 	}
 
