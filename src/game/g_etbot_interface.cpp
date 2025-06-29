@@ -2527,32 +2527,32 @@ public:
 			const float fwd = DotProduct(forward, _input.m_MoveDir);
 			const float rght = DotProduct(right, _input.m_MoveDir);
 
-			cmd.forwardmove = (char)(fwd * fMaxSpeed);
-			cmd.rightmove = (char)(rght * fMaxSpeed);
+			cmd.forwardmove = (signed char)(fwd * fMaxSpeed);
+			cmd.rightmove = (signed char)(rght * fMaxSpeed);
 
 			if (_input.m_ButtonFlags.CheckFlag(BOT_BUTTON_FWD) || _input.m_ButtonFlags.CheckFlag(BOT_BUTTON_MOVEUP))
 			{
-				cmd.forwardmove = (char)fMaxSpeed;
+				cmd.forwardmove = (signed char)fMaxSpeed;
 			}
 			if (_input.m_ButtonFlags.CheckFlag(BOT_BUTTON_BACK) || _input.m_ButtonFlags.CheckFlag(BOT_BUTTON_MOVEDN))
 			{
-				cmd.forwardmove = (char)-fMaxSpeed;
+				cmd.forwardmove = (signed char)-fMaxSpeed;
 			}
 			if (_input.m_ButtonFlags.CheckFlag(BOT_BUTTON_RSTRAFE))
 			{
-				cmd.rightmove = (char)fMaxSpeed;
+				cmd.rightmove = (signed char)fMaxSpeed;
 			}
 			if (_input.m_ButtonFlags.CheckFlag(BOT_BUTTON_LSTRAFE))
 			{
-				cmd.rightmove = (char)-fMaxSpeed;
+				cmd.rightmove = (signed char)-fMaxSpeed;
 			}
 			if (_input.m_ButtonFlags.CheckFlag(BOT_BUTTON_JUMP))
 			{
-				cmd.upmove = (char)fMaxSpeed;
+				cmd.upmove = (signed char)fMaxSpeed;
 			}
 			if (_input.m_ButtonFlags.CheckFlag(BOT_BUTTON_CROUCH))
 			{
-				cmd.upmove = (char)-fMaxSpeed;
+				cmd.upmove = (signed char)-fMaxSpeed;
 			}
 		}
 		trap_BotUserCommand(_client, &cmd);
