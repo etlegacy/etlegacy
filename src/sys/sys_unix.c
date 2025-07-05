@@ -219,63 +219,39 @@ void Sys_Chmod(const char *file, int mode)
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 }
 
-// Base time in ms
-static unsigned long long sys_timeBase = 0;
-
-// Current time in ms, using sys_timeBase as origin
-static unsigned long long curtime;
-
-// All systems with clock_gettime will have CLOCK_REALTIME
-static clockid_t clockid = CLOCK_REALTIME;
-
 /**
  * @brief Sys_Milliseconds
- * @param[in]
- * @return current system time in ms since server/client was started
+ * @return
  */
 int Sys_Milliseconds(void)
 {
-	struct timespec time;
-
-	if (!sys_timeBase)
-	{
-		// Most systems with clock_gettime will have CLOCK_MONOTONIC
-		#ifdef CLOCK_MONOTONIC
-		if (clock_gettime(CLOCK_MONOTONIC, &time) == 0)
-		{
-			clockid = CLOCK_MONOTONIC;
-		}
-		else
-		{
-			Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC failed. Using CLOCK_REALTIME instead.\n");
-		}
-		#else
-		Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC not found. Using CLOCK_REALTIME instead.\n");
-		#endif
-
-		if (clock_gettime(clockid, &time) == -1)
-		{
-			Sys_Error("Sys_Milliseconds: clock_gettime failed: errno %d\n", errno);
-		}
-
-		sys_timeBase = (time.tv_sec * 1000) + (time.tv_nsec / 1000000);
-		return 0;
-	}
-
-	clock_gettime(clockid, &time);
-
-	curtime = ((time.tv_sec * 1000) + (time.tv_nsec / 1000000)) - sys_timeBase;
-
-	return curtime;
+	return (int)(Sys_Microseconds() / 1000LL);
 }
 
 /**
  * @brief Sys_Microseconds
- * @return
+ * @return current system time in microseconds since server/client was started
  */
 int64_t Sys_Microseconds(void)
 {
-	return Sys_Milliseconds() * 1000;
+	static qboolean initialized = qfalse;
+	static int64_t  timeBase_us = 0;
+	struct timespec ts;
+	int64_t         currentTime_us;
+
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+
+	if (!initialized)
+	{
+		timeBase_us = (int64_t)ts.tv_sec * 1000000LL + (int64_t)ts.tv_nsec / 1000LL;
+		initialized = qtrue;
+
+		return 0;
+	}
+
+	currentTime_us = (int64_t)ts.tv_sec * 1000000LL + (int64_t)ts.tv_nsec / 1000LL;
+
+	return currentTime_us - timeBase_us;
 }
 
 /**
