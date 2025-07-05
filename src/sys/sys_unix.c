@@ -237,7 +237,7 @@ int64_t Sys_Microseconds(void)
 	static qboolean initialized = qfalse;
 	static int64_t  timeBase_us = 0;
 	struct timespec ts;
-	int64_t currentTime_us;
+	int64_t         currentTime_us;
 
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 
