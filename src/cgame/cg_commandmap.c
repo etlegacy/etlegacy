@@ -1402,8 +1402,6 @@ qboolean CG_DisguiseMapCheck(mapEntityData_t *mEnt)
 	return qtrue;
 }
 
-static vec4_t clrBorderblend = { 0.f, 0.f, 0.f, 0.75f };
-
 /**
  * @brief CG_DrawMap
  * @param[in] x
@@ -1438,103 +1436,51 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 	if (scissor)
 	{
-		if (scissor->circular)
+		if (cg_dynamicIcons.integer)
 		{
-			if (cg_dynamicIcons.integer)
-			{
-				icon_size = cg_dynamicIconsSize.integer;
-			}
-			else
-			{
-				icon_size = AUTOMAP_PLAYER_ICON_SIZE;
-			}
-
-			if (scissor->br[0] >= scissor->tl[0])
-			{
-				float s0, s1, t0, t1;
-				float sc_x = x, sc_y = y, sc_w = w, sc_h = h;
-
-				CG_DrawPic(sc_x, sc_y, sc_w, sc_h, cgs.media.commandCentreAutomapMaskShader);
-
-				s0 = (scissor->tl[0]) / (w * scissor->zoomFactor);
-				s1 = (scissor->br[0]) / (w * scissor->zoomFactor);
-				t0 = (scissor->tl[1]) / (h * scissor->zoomFactor);
-				t1 = (scissor->br[1]) / (h * scissor->zoomFactor);
-
-				CG_AdjustFrom640(&sc_x, &sc_y, &sc_w, &sc_h);
-
-				if (cgs.ccLayers)
-				{
-					trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[cgs.ccSelectedLayer]);
-				}
-				else
-				{
-					trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[0]);
-				}
-			}
+			icon_size = cg_dynamicIconsSize.integer;
 		}
 		else
 		{
-			if (cg_dynamicIcons.integer)
+			icon_size = CG_IsShoutcaster() ? AUTOMAP_PLAYER_ICON_SIZE_SC : AUTOMAP_PLAYER_ICON_SIZE;
+		}
+
+		if (scissor->br[0] >= scissor->tl[0])
+		{
+			float s0, s1, t0, t1;
+			float sc_x = x, sc_y = y, sc_w = w, sc_h = h;
+
+			if (scissor->circular)
 			{
-				icon_size = cg_dynamicIconsSize.integer;
+				CG_DrawPic(sc_x, sc_y, sc_w, sc_h, cgs.media.commandCentreAutomapMaskShader);
 			}
 			else
 			{
-				icon_size = CG_IsShoutcaster() ? AUTOMAP_PLAYER_ICON_SIZE_SC : AUTOMAP_PLAYER_ICON_SIZE;
-			}
-
-			if (scissor->br[0] >= scissor->tl[0])
-			{
-				float s0, s1, t0, t1;
-				float sc_x = x, sc_y = y, sc_w = w, sc_h = h;
-
-				vec4_t color;
-
-				Vector4Set(color, 1.f, 1.f, 1.f, alpha);
-				trap_R_SetColor(color);
+				trap_R_SetColor((vec4_t) { 1.f, 1.f, 1.f, alpha });
 				CG_DrawPic(sc_x, sc_y, sc_w, sc_h, cgs.media.blackmask);
-
-				s0 = (scissor->tl[0]) / (w * scissor->zoomFactor);
-				s1 = (scissor->br[0]) / (w * scissor->zoomFactor);
-				t0 = (scissor->tl[1]) / (h * scissor->zoomFactor);
-				t1 = (scissor->br[1]) / (h * scissor->zoomFactor);
-
-				CG_AdjustFrom640(&sc_x, &sc_y, &sc_w, &sc_h);
-
-				if (cgs.ccLayers)
-				{
-					trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[cgs.ccSelectedLayer]);
-				}
-				else
-				{
-					trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[0]);
-				}
-
 				trap_R_SetColor(NULL);
-
-				CG_DrawRect_FixedBorder(x - 0.75f, y - 0.75f, w + 1.5f, h + 1.5f, 2, colorLtGrey);
 			}
+
+			s0 = (scissor->tl[0]) / (w * scissor->zoomFactor);
+			s1 = (scissor->br[0]) / (w * scissor->zoomFactor);
+			t0 = (scissor->tl[1]) / (h * scissor->zoomFactor);
+			t1 = (scissor->br[1]) / (h * scissor->zoomFactor);
+
+			CG_AdjustFrom640(&sc_x, &sc_y, &sc_w, &sc_h);
+
+			trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1,
+			                      cgs.media.commandCentreAutomapShader[cgs.ccLayers ? cgs.ccSelectedLayer : 0]);
 		}
 	}
 	else
 	{
-		vec4_t color;
-
 		icon_size = COMMANDMAP_PLAYER_ICON_SIZE;
 
-		Vector4Set(color, 1.f, 1.f, 1.f, alpha);
-		trap_R_SetColor(color);
+		trap_R_SetColor((vec4_t) { 1.f, 1.f, 1.f, alpha });
 		CG_DrawPic(x, y, w, h, cgs.media.blackmask);
 
-		if (cgs.ccLayers)
-		{
-			CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[cgs.ccSelectedLayer]);
-		}
-		else
-		{
-			CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[0]);
-		}
+		CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[cgs.ccLayers ? cgs.ccSelectedLayer : 0]);
+
 		trap_R_SetColor(NULL);
 
 		// Draw the grid
@@ -1543,7 +1489,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 	if (borderblend)
 	{
-		trap_R_SetColor(clrBorderblend);
+		trap_R_SetColor((vec4_t) { 0.f, 0.f, 0.f, 0.75f });
 		CG_DrawPic(x, y, w, h, cgs.media.limboBlendThingy);
 		trap_R_SetColor(NULL);
 	}
@@ -1569,9 +1515,6 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			{
 				continue;
 			}
-
-			CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
-			continue;
 		}
 
 		CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
@@ -1605,8 +1548,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	// draw spectator position and direction
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
-		vec2_t           icon_pos, icon_extends;
-		bg_playerclass_t *classInfo;
+		vec2_t icon_pos, icon_extends;
 
 		icon_extends[0] = 2 * icon_size;
 		icon_extends[1] = 2 * icon_size;
@@ -1615,20 +1557,15 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		{
 			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 			icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-		}
-		else
-		{
-			icon_extends[0] *= cgs.ccZoomFactor;
-			icon_extends[1] *= cgs.ccZoomFactor;
-		}
 
-		if (scissor)
-		{
 			icon_pos[0] = ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w * scissor->zoomFactor - scissor->tl[0] + x;
 			icon_pos[1] = ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * scissor->zoomFactor - scissor->tl[1] + y;
 		}
 		else
 		{
+			icon_extends[0] *= cgs.ccZoomFactor;
+			icon_extends[1] *= cgs.ccZoomFactor;
+
 			icon_pos[0] = x + ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
 			icon_pos[1] = y + ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h;
 		}
@@ -1642,7 +1579,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		else
 		{
 			// show only current player position to spectators
-			classInfo = CG_PlayerClassForClientinfo(&cgs.clientinfo[snap->ps.clientNum], &cg_entities[snap->ps.clientNum]);
+			bg_playerclass_t *classInfo = CG_PlayerClassForClientinfo(&cgs.clientinfo[snap->ps.clientNum], &cg_entities[snap->ps.clientNum]);
 
 			if (snap->ps.powerups[PW_OPS_DISGUISED])
 			{
@@ -1655,11 +1592,12 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			}
 			else if (snap->ps.eFlags & EF_DEAD && !(snap->ps.powerups[PW_INVULNERABLE]))
 			{
-				float  msec;
 				vec4_t reviveClr = { 1.f, 1.f, 1.f, 1.f };
 
 				if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || CG_IsShoutcaster())
 				{
+					float msec;
+
 					if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || (CG_IsShoutcaster() && mEnt->team == TEAM_AXIS))
 					{
 						msec = (cg_redlimbotime.integer - (cg.time % cg_redlimbotime.integer)) / (float)cg_redlimbotime.integer;
@@ -1691,7 +1629,8 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], classInfo->icon);
 			}
 
-			CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+			CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2,
+			                  classInfo->arrow, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 	}
 }
@@ -1941,10 +1880,39 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 			}
 			lastangle += anglespeed;
 
+			trap_R_SetColor(colorLtGrey);
 			CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8,
 			                  style & COMPASS_DECOR ? cgs.media.compass2Shader : cgs.media.compassCircleTickShader,
 			                  lastangle);
+			trap_R_SetColor(NULL);
 		}
+	}
+	else if ((style & COMPASS_CARDINAL_POINTS))   // square map
+	{
+        float        centerX   = x + (w * .5f);
+        float        centerY   = y + (h * .5f);
+        float        textScale = (w / 100) * 0.18f;
+        float        textHeight;
+        float        offsetX = (w / 100) * 3.f;
+        float        offsetY = (h / 100) * 3.f;
+        fontHelper_t *font   = &cgs.media.limboFont2;
+
+        CG_DrawRect_FixedBorder(x - 0.75f, y - 0.75f, w + 1.5f, h + 1.5f, 2, colorLtGrey);
+
+        // north
+        CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, "N", 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+
+        // south
+        textHeight = (float)CG_Text_Height_Ext("S", textScale, 0, font);
+        CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, "S", 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+
+        // east
+        textHeight = (float)CG_Text_Height_Ext("E", textScale, 0, font);
+        CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "E", 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+
+        // west
+        textHeight = (float)CG_Text_Height_Ext("W", textScale, 0, font);
+        CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "W", 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
 	}
 
 	for (i = 0; i < snap->numEntities; ++i)
@@ -1972,33 +1940,6 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor);
 			}
 		}
-	}
-
-	// draw compass points for square map
-	if (!mapScissor.circular && (style & COMPASS_CARDINAL_POINTS))
-	{
-		float        centerX   = x + (w * .5f);
-		float        centerY   = y + (h * .5f);
-		float        textScale = (w / 100) * 0.18f;
-		float        textHeight;
-		float        offsetX = (w / 100) * 3.f;
-		float        offsetY = (h / 100) * 3.f;
-		fontHelper_t font    = cgs.media.limboFont2;
-
-		// north
-		CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, "N", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
-
-		// south
-		textHeight = (float)CG_Text_Height_Ext("S", textScale, 0, &font);
-		CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, "S", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
-
-		// east
-		textHeight = (float)CG_Text_Height_Ext("E", textScale, 0, &font);
-		CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "E", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
-
-		// west
-		textHeight = (float)CG_Text_Height_Ext("W", textScale, 0, &font);
-		CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "W", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
 	}
 }
 
