@@ -828,8 +828,8 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 				icon_size *= CG_PlayerDistanceScaling(mEnt);
 			}
 
-			icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x - (icon_size * (scissor->zoomFactor / AUTOMAP_ZOOM));
-			icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y - (icon_size * (scissor->zoomFactor / AUTOMAP_ZOOM));
+			icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x;
+			icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y;
 
 			icon_extends[0] = 2 * icon_size * (scissor->zoomFactor / AUTOMAP_ZOOM);
 			icon_extends[1] = 2 * icon_size * (scissor->zoomFactor / AUTOMAP_ZOOM);
@@ -842,10 +842,10 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 		}
 		else
 		{
-			icon_pos[0]   = x + mEnt->transformed[0] - icon_size;
-			icon_pos[1]   = y + mEnt->transformed[1] - icon_size;
-			string_pos[0] = x + mEnt->transformed[0] + icon_size;
-			string_pos[1] = y + mEnt->transformed[1] + icon_size;
+			icon_pos[0]   = x + mEnt->transformed[0];
+			icon_pos[1]   = y + mEnt->transformed[1];
+			string_pos[0] = x + mEnt->transformed[0];
+			string_pos[1] = y + mEnt->transformed[1];
 
 			icon_extends[0] = 2 * icon_size;
 			icon_extends[1] = 2 * icon_size;
@@ -878,7 +878,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
-			CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccMedicIcon);
+			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.ccMedicIcon);
 		}
 		else
 		{
@@ -893,12 +893,12 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 					trap_R_SetColor(colorYellow);
 				}
 
-				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
 				trap_R_SetColor(NULL);
 
 				if (cg.predictedPlayerEntity.voiceChatSpriteTime > cg.time)
 				{
-					CG_DrawPic(icon_pos[0] + icon_extends[0], icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cg.predictedPlayerEntity.voiceChatSprite));
+					CG_DrawPic(icon_pos[0] + icon_extends[0] * 0.5f, icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cg.predictedPlayerEntity.voiceChatSprite));
 				}
 			}
 			else if (CG_IsOnSameFireteam(cg.clientNum, mEnt->data))
@@ -912,17 +912,17 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 					trap_R_SetColor(colorGreen);
 				}
 
-				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
 				trap_R_SetColor(NULL);
 
 				if (!scissor)
 				{
-					CG_Text_Paint_Ext(string_pos[0], string_pos[1], 0.2f, 0.2f, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+					CG_Text_Paint_Ext(string_pos[0] - icon_extends[0] * 0.5f, string_pos[1] - icon_extends[1] * 0.5f, 0.2f, 0.2f, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 
 				if (cent->voiceChatSpriteTime > cg.time)
 				{
-					CG_DrawPic(icon_pos[0] + icon_extends[0], icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cent->voiceChatSprite));
+					CG_DrawPic(icon_pos[0] + icon_extends[0] * 0.5f, icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cent->voiceChatSprite));
 				}
 			}
 			else if (ci->team == snap->ps.persistant[PERS_TEAM])
@@ -930,13 +930,13 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 				if (ci->selected)
 				{
 					trap_R_SetColor(colorRed);
-					CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
+					CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
 					trap_R_SetColor(NULL);
 				}
 
 				if (cent->voiceChatSpriteTime > cg.time)
 				{
-					CG_DrawPic(icon_pos[0] + icon_extends[0], icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cent->voiceChatSprite));
+					CG_DrawPic(icon_pos[0] + icon_extends[0] * 0.5f, icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cent->voiceChatSprite));
 				}
 			}
 
@@ -947,7 +947,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 				if (cg.snap->ps.stats[STAT_HEALTH] > 0)
 				{
 					trap_R_SetColor(colorYellow);
-					CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
+					CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
 				}
 				break;
 			}
@@ -959,19 +959,19 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 			// FIXME: the map entity ME_PLAYER_DISGUISED is never defined here, so this is a bit hackish
 			if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 			{
-				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], classInfo->icon);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], classInfo->icon);
 				if (ci->team == snap->ps.persistant[PERS_TEAM] || CG_IsShoutcaster())
 				{
-					CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.friendShader);
+					CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.friendShader);
 				}
 			}
 			else if (mEnt->type == ME_PLAYER_OBJECTIVE)
 			{
-				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.objectiveShader);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.objectiveShader);
 			}
 			else
 			{
-				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], classInfo->icon);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], classInfo->icon);
 			}
 
 			if (!pointTowardNorth)
@@ -979,18 +979,18 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 				if (cent - cg_entities == cg.clientNum)
 				{
 					// point always upper direction on self
-					CG_DrawRotatedPic(icon_pos[0] - 1, icon_pos[1] - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
+					CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
 					                  (0.5f + 90.f / 360.f));
 				}
 				else
 				{
-					CG_DrawRotatedPic(icon_pos[0] - 1, icon_pos[1] - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
+					CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
 					                  (0.5f - (mEnt->yaw - (cg.predictedPlayerState.viewangles[YAW] - 90) - 180.f) / 360.f));
 				}
 			}
 			else
 			{
-				CG_DrawRotatedPic(icon_pos[0] - 1, icon_pos[1] - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
+				CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
 				                  (0.5f - (mEnt->yaw - 180.f) / 360.f));
 			}
 		}
