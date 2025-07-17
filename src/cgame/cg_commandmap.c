@@ -1887,11 +1887,11 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	{
 		if (style & COMPASS_DECOR)
 		{
-			CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compassShader);
+			CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassShader);
 		}
 		else if (style & COMPASS_DIRECTION)
 		{
-			CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compassDirectionShader);
+			CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader);
 		}
 
 		if (style & COMPASS_CARDINAL_POINTS)
@@ -1899,8 +1899,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 			trap_R_SetColor(colorLtGrey);
 			if (style & COMPASS_POINT_TOWARD_NORTH)
 			{
-				CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8,
-				           style & COMPASS_DECOR ? cgs.media.compass2Shader : cgs.media.compassCircleTickShader);
+				CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, style & COMPASS_DECOR ? cgs.media.compass2Shader : cgs.media.compassCircleTickShader);
 			}
 			else
 			{
@@ -1917,9 +1916,14 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 				}
 				lastangle += anglespeed;
 
-				CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8,
-				                  style & COMPASS_DECOR ? cgs.media.compass2Shader : cgs.media.compassCircleTickShader,
-				                  lastangle);
+				if (style & COMPASS_DECOR)
+				{
+					CG_DrawRotatedPic(x - w * 0.1275, y - h * 0.1275, w * 1.255, h * 1.255, cgs.media.compass2Shader, lastangle);
+				}
+				else
+				{
+					CG_DrawRotatedPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassCircleTickShader, lastangle);
+				}
 			}
 			trap_R_SetColor(NULL);
 		}
