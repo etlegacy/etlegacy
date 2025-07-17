@@ -1958,11 +1958,11 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 					break;
 				}
 			}
-            
-            if (index >= 8)
-            {
-                index -= 8;
-            }
+
+			if (index >= 8)
+			{
+				index -= 8;
+			}
 		}
 
 		CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
@@ -1981,15 +1981,15 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 		{
 			index -= 8;
 		}
-        
-        textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
-        CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
-        
-        index += 2;
-        if (index >= 8)
-        {
-            index -= 8;
-        }
+
+		textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
+		CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+
+		index += 2;
+		if (index >= 8)
+		{
+			index -= 8;
+		}
 
 		textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
 		CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
