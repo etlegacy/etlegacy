@@ -952,6 +952,8 @@ typedef struct
 	entityState_t parseEntities[MAX_PARSE_ENTITIES];
 	entityShared_t parseEntitiesShared[MAX_PARSE_ENTITIES];
 
+	int sv_fps;
+
 } svclientActive_t;
 
 extern svclientActive_t svcl;
