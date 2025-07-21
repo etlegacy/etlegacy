@@ -640,6 +640,13 @@ void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 	item->window.flags &= ~(WINDOW_LB_LEFTARROW | WINDOW_LB_RIGHTARROW | WINDOW_LB_THUMB | WINDOW_LB_PGUP | WINDOW_LB_PGDN | WINDOW_LB_SOMEWHERE);
 	item->window.flags |= Item_ListBox_OverLB(item, x, y);
 
+	// prevent listbox selection changing if we're dragging the scrollbar and
+	// moving the cursor over the listbox
+	if (Menus_CaptureFuncActive())
+	{
+		return;
+	}
+
 	if (click)
 	{
 		if (item->window.flags & WINDOW_HORIZONTAL)
