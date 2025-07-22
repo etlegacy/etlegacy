@@ -1009,6 +1009,26 @@ static qboolean Menu_BindExecMode(int key)
 	return qfalse;
 }
 
+static qboolean Menu_HandleMouseESC(menuDef_t *menu, const int key, const qboolean down, itemDef_t *item)
+{
+	itemDef_t it;
+
+	if (!down || key != K_MOUSE2 || g_editingField || g_waitingForKey || !menu->onESC)
+	{
+		return qfalse;
+	}
+
+	if (item && Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory))
+	{
+		return qfalse;
+	}
+
+	it.parent = menu;
+	Item_RunScript(&it, NULL, menu->onESC);
+
+	return qtrue;
+}
+
 /**
  * @brief Menu_HandleKey
  * @param[in] menu
@@ -1070,6 +1090,20 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		return;
 	}
 
+	// get the item with focus
+	for (i = 0; i < menu->itemCount; i++)
+	{
+		if (menu->items[i]->window.flags & WINDOW_HASFOCUS)
+		{
+			item = menu->items[i];
+		}
+	}
+
+	if (Menu_HandleMouseESC(menu, key, down, item))
+	{
+		return;
+	}
+
 	// see if the mouse is within the window bounds and if so is this a mouse click
 	if (down && !(menu->window.flags & WINDOW_POPUP) && !Rect_ContainsPoint(&menu->window.rect, DC->cursorx, DC->cursory))
 	{
@@ -1081,15 +1115,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			Menus_HandleOOBClick(menu, key, down);
 			inHandleKey = qfalse;
 			return;
-		}
-	}
-
-	// get the item with focus
-	for (i = 0; i < menu->itemCount; i++)
-	{
-		if (menu->items[i]->window.flags & WINDOW_HASFOCUS)
-		{
-			item = menu->items[i];
 		}
 	}
 
