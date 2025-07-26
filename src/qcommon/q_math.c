@@ -3340,3 +3340,29 @@ float Q_ClosestMultipleFloat(float n, float x, int decimal)
 	float coeff = pow(10, decimal);
 	return Q_ClosestMultiple(n * coeff, x * coeff) / coeff;
 }
+
+/**
+ * @brief Rotate2DPointAroundPoint
+ * @param[in,out] point - the point to rotate
+ * @param[in] origin - the origin point to rotate around
+ * @param[in] theta - angle to rotate in degree
+ */
+void Rotate2DPointAroundPoint(vec2_t *point, const vec2_t *origin, float theta)
+{
+	double translatedX = (*point)[0] - (*origin)[0];
+	double translatedY = (*point)[1] - (*origin)[1];
+
+	if (theta < 0)
+	{
+		theta += 360;
+	}
+	else if (theta > 360)
+	{
+		theta -= 360;
+	}
+
+	theta = DEG2RAD(theta);
+
+	(*point)[0] = cosf(theta) * (translatedX) - sinf(theta) * (translatedY) + (*origin)[0];
+	(*point)[1] = sinf(theta) * (translatedX) + cosf(theta) * (translatedY) + (*origin)[1];
+}

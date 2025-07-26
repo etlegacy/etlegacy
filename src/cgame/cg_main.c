@@ -399,6 +399,12 @@ vmCvar_t cg_customCrosshairCrossOutlineRounded;
 vmCvar_t cg_customCrosshairCrossOutlineColor;
 vmCvar_t cg_customCrosshairCrossOutlineWidth;
 
+vmCvar_t cg_scopeReticleStyle;
+vmCvar_t cg_scopeReticleColor;
+vmCvar_t cg_scopeReticleDotColor;
+vmCvar_t cg_scopeReticleLineThickness;
+vmCvar_t cg_scopeReticleDotThickness;
+
 vmCvar_t cg_commandMapTime;
 
 typedef struct
@@ -696,6 +702,12 @@ static cvarTable_t cvarTable[] =
 	{ &cg_customCrosshairCrossOutlineColor,   "cg_customCrosshairCrossOutlineColor",   "#000000E6",   CVAR_ARCHIVE,                 0 },
 	{ &cg_customCrosshairCrossOutlineWidth,   "cg_customCrosshairCrossOutlineWidth",   "1.0",         CVAR_ARCHIVE,                 0 },
 
+	{ &cg_scopeReticleStyle,                  "cg_scopeReticleStyle",                  "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleColor,                  "cg_scopeReticleColor",                  "#000000FF",   CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleDotColor,               "cg_scopeReticleDotColor",               "#000000FF",   CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleLineThickness,          "cg_scopeReticleLineThickness",          "2.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleDotThickness,           "cg_scopeReticleDotThickness",           "2.0",         CVAR_ARCHIVE,                 0 },
+
 	{ &cg_commandMapTime,                     "cg_commandMapTime",                     "0",           CVAR_ARCHIVE,                 0 },
 };
 
@@ -723,6 +735,16 @@ static qboolean CG_RegisterOrUpdateCvars(cvarTable_t *cv)
 	else if (cv->vmCvar == &cg_customCrosshairCrossOutlineColor)
 	{
 		Q_ParseColor(cg_customCrosshairCrossOutlineColor.string, cgs.customCrosshairCrossOutlineColor);
+		return qtrue;
+	}
+	else if (cv->vmCvar == &cg_scopeReticleColor)
+	{
+		Q_ParseColor(cg_scopeReticleColor.string, cgs.scopeReticleColor);
+		return qtrue;
+	}
+	else if (cv->vmCvar == &cg_scopeReticleDotColor)
+	{
+		Q_ParseColor(cg_scopeReticleDotColor.string, cgs.scopeReticleDotColor);
 		return qtrue;
 	}
 	return qfalse;

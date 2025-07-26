@@ -1262,9 +1262,11 @@ CROSSHAIRS
  */
 static void CG_DrawScopedReticle(void)
 {
-	int weapon;
-	int x = (cgs.glconfig.vidWidth / 2);
-	int y = (cgs.glconfig.vidHeight / 2);
+	int   weapon;
+	int   x            = cgs.glconfig.vidWidth * 0.5;
+	int   y            = cgs.glconfig.vidHeight * 0.5;
+	float lineTickness = cg_scopeReticleLineThickness.value;
+	float dotTickness  = cg_scopeReticleDotThickness.value;
 
 	// So that we will draw reticle
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
@@ -1283,6 +1285,100 @@ static void CG_DrawScopedReticle(void)
 
 	// TODO : add support for ultra-widescreen / remove 16:9 assumption
 
+	if (cg_scopeReticleStyle.integer < 1 && weapon == WP_FG42_SCOPE || cg_scopeReticleStyle.integer == 1)
+	{
+		// color
+		trap_R_SetColor(cgs.scopeReticleColor);
+
+		// inside left
+		trap_R_DrawStretchPic((x - lineTickness * 0.5) * 0.80,
+		                      y - lineTickness * 0.5,
+		                      (x - lineTickness * 0.5) * 0.20, lineTickness, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside left
+		trap_R_DrawStretchPic(0,
+		                      y - lineTickness,
+		                      (x - lineTickness * 0.5) * 0.80, lineTickness * 2, 0, 0, 0, 1, cgs.media.whiteShader);
+		// inside right
+		trap_R_DrawStretchPic(x,
+		                      y - lineTickness * 0.5,
+		                      (x - lineTickness * 0.5) * 0.80, lineTickness, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside right
+		trap_R_DrawStretchPic(cgs.glconfig.vidWidth - (x * 0.80),
+		                      y - lineTickness,
+		                      (x - lineTickness * 0.5) * 0.80, lineTickness * 2, 0, 0, 0, 1, cgs.media.whiteShader);
+		// inside top
+		trap_R_DrawStretchPic(x - lineTickness,
+		                      0,
+		                      lineTickness * 2, (y - lineTickness * 0.5) * 0.65, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside top
+		trap_R_DrawStretchPic(x - lineTickness * 0.5,
+		                      ((y - lineTickness * 0.5) * 0.65),
+		                      lineTickness, (y - lineTickness * 0.5) * 0.35, 0, 0, 0, 1, cgs.media.whiteShader);
+		// inside bottom
+		trap_R_DrawStretchPic(x - lineTickness * 0.5,
+		                      y + lineTickness * 0.5,
+		                      lineTickness, (y - 1) * 0.35, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside bottom
+		trap_R_DrawStretchPic(x - lineTickness,
+		                      y + 1 + ((y - lineTickness * 0.5) * 0.35),
+		                      lineTickness * 2, (y - lineTickness * 0.5) * 0.65, 0, 0, 0, 1, cgs.media.whiteShader);
+
+		// center color
+		trap_R_SetColor(cgs.scopeReticleDotColor);
+		// center
+		trap_R_DrawStretchPic(x - dotTickness * 0.5,
+		                      y - dotTickness * 0.5,
+		                      dotTickness, dotTickness, 0, 0, 0, 1, cgs.media.whiteShader);
+
+		trap_R_SetColor(NULL);
+	}
+	else if (cg_scopeReticleStyle.integer < 1 && weapon == WP_GARAND_SCOPE || cg_scopeReticleStyle.integer < 1 && weapon == WP_K43_SCOPE || cg_scopeReticleStyle.integer == 2)
+	{
+		// color
+		trap_R_SetColor(cgs.scopeReticleColor);
+
+		// left
+		trap_R_DrawStretchPic(0,
+		                      y - lineTickness,
+		                      (x * 0.85), lineTickness * 2, 0, 0, 0, 1, cgs.media.whiteShader);
+		// right
+		trap_R_DrawStretchPic(cgs.glconfig.vidWidth - (x * 0.85),
+		                      y - lineTickness,
+		                      (x * 0.85), lineTickness * 2, 0, 0, 0, 1, cgs.media.whiteShader);
+		// inside bottom
+		trap_R_DrawStretchPic(x - lineTickness * 0.5,
+		                      y + lineTickness * 0.5,
+		                      lineTickness, (y - lineTickness * 0.5) * 0.25, 0, 0, 0, 1, cgs.media.whiteShader);
+		// outside bottom
+		trap_R_DrawStretchPic(x - lineTickness,
+		                      y + lineTickness * 0.5 + ((y - lineTickness * 0.5) * 0.25),
+		                      lineTickness * 2, (y - lineTickness * 0.5) * 0.75, 0, 0, 0, 1, cgs.media.whiteShader);
+
+		// draw dot
+		if (cgs.scopeReticleDotColor != cgs.scopeReticleColor)
+		{
+			// center color
+			trap_R_SetColor(cgs.scopeReticleDotColor);
+			// center
+			trap_R_DrawStretchPic(x - dotTickness * 0.5,
+			                      y - dotTickness * 0.5,
+			                      dotTickness, dotTickness, 0, 0, 0, 1, cgs.media.whiteShader);
+		}
+		trap_R_SetColor(NULL);
+	}
+	else if (cg_scopeReticleStyle.integer > 2)
+	{
+		// center color
+		trap_R_SetColor(cgs.scopeReticleDotColor);
+
+		// center
+		trap_R_DrawStretchPic(x - dotTickness * 0.5,
+		                      y - dotTickness * 0.5,
+		                      dotTickness, dotTickness, 0, 0, 0, 1, cgs.media.whiteShader);
+
+		trap_R_SetColor(NULL);
+	}
+
 	// sides
 	CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
 	CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
@@ -1291,75 +1387,6 @@ static void CG_DrawScopedReticle(void)
 	if (cgs.media.reticleShaderSimple)
 	{
 		CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
-	}
-
-	if (weapon == WP_FG42_SCOPE)
-	{
-		// hairs
-		trap_R_SetColor(colorBlack);
-
-		// inside left
-		trap_R_DrawStretchPic((x - 1) * 0.80,
-		                      y - 1,
-		                      (x - 1) * 0.20, 2, 0, 0, 0, 1, cgs.media.whiteShader);
-		// outside left
-		trap_R_DrawStretchPic(0,
-		                      y - 2,
-		                      (x - 1) * 0.80, 4, 0, 0, 0, 1, cgs.media.whiteShader);
-		// inside right
-		trap_R_DrawStretchPic(x,
-		                      y - 1,
-		                      (x - 1) * 0.80, 2, 0, 0, 0, 1, cgs.media.whiteShader);
-		// outside right
-		trap_R_DrawStretchPic(cgs.glconfig.vidWidth - (x * 0.80),
-		                      y - 2,
-		                      (x - 1) * 0.80, 4, 0, 0, 0, 1, cgs.media.whiteShader);
-		// inside top
-		trap_R_DrawStretchPic(x - 2,
-		                      0,
-		                      4, (y - 1) * 0.65, 0, 0, 0, 1, cgs.media.whiteShader);
-		// outside top
-		trap_R_DrawStretchPic(x - 1,
-		                      ((y - 1) * 0.65),
-		                      2, (y - 1) * 0.35, 0, 0, 0, 1, cgs.media.whiteShader);
-		// inside bottom
-		trap_R_DrawStretchPic(x - 1,
-		                      y + 1,
-		                      2, (y - 1) * 0.35, 0, 0, 0, 1, cgs.media.whiteShader);
-		// outside bottom
-		trap_R_DrawStretchPic(x - 2,
-		                      y + 1 + ((y - 1) * 0.35),
-		                      4, (y - 1) * 0.65, 0, 0, 0, 1, cgs.media.whiteShader);
-		// center
-		trap_R_DrawStretchPic(x - 1,
-		                      y - 1,
-		                      2, 2, 0, 0, 0, 1, cgs.media.whiteShader);
-
-		trap_R_SetColor(NULL);
-	}
-	else if (weapon == WP_GARAND_SCOPE || weapon == WP_K43_SCOPE)
-	{
-		// hairs
-		trap_R_SetColor(colorBlack);
-
-		// left
-		trap_R_DrawStretchPic(0,
-		                      y - 2,
-		                      (x * 0.85), 4, 0, 0, 0, 1, cgs.media.whiteShader);
-		// right
-		trap_R_DrawStretchPic(cgs.glconfig.vidWidth - (x * 0.85),
-		                      y - 2,
-		                      (x * 0.85), 4, 0, 0, 0, 1, cgs.media.whiteShader);
-		// inside bottom
-		trap_R_DrawStretchPic(x - 1,
-		                      y + 1,
-		                      2, (y - 1) * 0.25, 0, 0, 0, 1, cgs.media.whiteShader);
-		// outside bottom
-		trap_R_DrawStretchPic(x - 2,
-		                      y + 1 + ((y - 1) * 0.25),
-		                      4, (y - 1) * 0.75, 0, 0, 0, 1, cgs.media.whiteShader);
-
-		trap_R_SetColor(NULL);
 	}
 }
 
