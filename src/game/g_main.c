@@ -831,10 +831,10 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		ClientCommand(arg0);
 		return 0;
 	case GAME_RUN_FRAME:
-		G_RunFrame(arg0);
 #ifdef FEATURE_OMNIBOT
 		Bot_Interface_Update();
 #endif
+		G_RunFrame(arg0);
 		return 0;
 	case GAME_CONSOLE_COMMAND:
 		return ConsoleCommand();
