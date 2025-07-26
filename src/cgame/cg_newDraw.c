@@ -608,44 +608,6 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 	             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->style >> 1, -1);
 }
 
-/**
- * @brief CG_DrawWeapHeat
- * @param[in] rect
- * @param[in] align
- * @param[in] dynamicColor
- */
-void CG_DrawWeapHeat(rectDef_t *rect, int align, qboolean dynamicColor)
-{
-	static vec4_t color = { 1, 0, 0, 0.2f }, color2 = { 1, 0, 0, 0.5f };
-	static vec4_t dynColor = { 1, 1, 0, 0.3f }, dynColor2 = { 1, 0, 0, 0.7f };
-	int           flags = 0;
-
-	if (!(cg.snap->ps.curWeapHeat))
-	{
-		return;
-	}
-
-	if (align != HUD_HORIZONTAL)
-	{
-		flags |= BAR_VERT;   // BAR_VERT
-	}
-
-	flags |= BAR_LEFT;             // this is hardcoded now, but will be decided by the menu script
-	flags |= BAR_BG;               // draw the filled contrast box
-	//flags|=BAR_BGSPACING_X0Y5;   // different style
-
-	flags |= BAR_LERP_COLOR;
-
-	if (dynamicColor)
-	{
-		CG_FilledBar(rect->x, rect->y, rect->w, rect->h, dynColor, dynColor2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
-	}
-	else
-	{
-		CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, flags, -1);
-	}
-}
-
 #ifdef FEATURE_EDV
 int old_mouse_x_pos = 0, old_mouse_y_pos = 0;
 #endif
