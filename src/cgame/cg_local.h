@@ -2510,6 +2510,8 @@ typedef struct cgs_s
 	vec4_t customCrosshairDotColor;
 	vec4_t customCrosshairCrossOutlineColor;
 	vec4_t customCrosshairCrossColor;
+	vec4_t scopeReticleColor;
+	vec4_t scopeReticleDotColor;
 
 	// teamchat width is *3 because of embedded color codes
 	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
@@ -3025,6 +3027,12 @@ extern vmCvar_t cg_customCrosshairCrossColor;
 extern vmCvar_t cg_customCrosshairCrossOutlineRounded;
 extern vmCvar_t cg_customCrosshairCrossOutlineColor;
 extern vmCvar_t cg_customCrosshairCrossOutlineWidth;
+
+extern vmCvar_t cg_scopeReticleStyle;
+extern vmCvar_t cg_scopeReticleColor;
+extern vmCvar_t cg_scopeReticleDotColor;
+extern vmCvar_t cg_scopeReticleLineTickness;
+extern vmCvar_t cg_scopeReticleDotTickness;
 
 extern vmCvar_t cg_commandMapTime;
 
