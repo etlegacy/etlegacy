@@ -661,4 +661,6 @@ static ID_INLINE vec_t VectorNormalizeDP(vec3_t v)
 int Q_ClosestMultiple(int n, int x);
 float Q_ClosestMultipleFloat(float n, float x, int decimal);
 
+void Rotate2DPointAroundPoint(vec2_t *point, const vec2_t *origin, float theta);
+
 #endif
