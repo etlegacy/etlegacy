@@ -676,7 +676,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
  */
 ID_INLINE static void CG_RotateMapEntCoordinatePoint(float x, float y, float w, float h, vec2_t *point, float theta)
 {
-	Rotate2DPointAroundPoint(point, &(vec2_t) { x + w * 0.5, y + h * 0.5 }, theta);
+	Rotate2DPointAroundPoint(point, &(const vec2_t) { x + w * 0.5, y + h * 0.5 }, theta);
 }
 
 /**
@@ -851,8 +851,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 			icon_extends[1] = 2 * icon_size;
 		}
 
-		// don't rotate self
-		if (!pointTowardNorth && (cent - cg_entities != cg.clientNum))
+		if (!pointTowardNorth)
 		{
 			CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.predictedPlayerState.viewangles[YAW] - 90);
 		}
