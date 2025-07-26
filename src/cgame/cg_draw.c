@@ -1265,8 +1265,8 @@ static void CG_DrawScopedReticle(void)
 	int   weapon;
 	int   x            = cgs.glconfig.vidWidth * 0.5;
 	int   y            = cgs.glconfig.vidHeight * 0.5;
-	float lineTickness = cg_scopeReticleLineTickness.value;
-	float dotTickness  = cg_scopeReticleDotTickness.value;
+	float lineTickness = cg_scopeReticleLineThickness.value;
+	float dotTickness  = cg_scopeReticleDotThickness.value;
 
 	// So that we will draw reticle
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)

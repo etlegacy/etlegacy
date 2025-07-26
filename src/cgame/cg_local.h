@@ -3031,8 +3031,8 @@ extern vmCvar_t cg_customCrosshairCrossOutlineWidth;
 extern vmCvar_t cg_scopeReticleStyle;
 extern vmCvar_t cg_scopeReticleColor;
 extern vmCvar_t cg_scopeReticleDotColor;
-extern vmCvar_t cg_scopeReticleLineTickness;
-extern vmCvar_t cg_scopeReticleDotTickness;
+extern vmCvar_t cg_scopeReticleLineThickness;
+extern vmCvar_t cg_scopeReticleDotThickness;
 
 extern vmCvar_t cg_commandMapTime;
 
