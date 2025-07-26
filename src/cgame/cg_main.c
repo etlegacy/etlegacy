@@ -402,8 +402,8 @@ vmCvar_t cg_customCrosshairCrossOutlineWidth;
 vmCvar_t cg_scopeReticleStyle;
 vmCvar_t cg_scopeReticleColor;
 vmCvar_t cg_scopeReticleDotColor;
-vmCvar_t cg_scopeReticleLineTickness;
-vmCvar_t cg_scopeReticleDotTickness;
+vmCvar_t cg_scopeReticleLineThickness;
+vmCvar_t cg_scopeReticleDotThickness;
 
 vmCvar_t cg_commandMapTime;
 
@@ -710,8 +710,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_scopeReticleStyle,                  "cg_scopeReticleStyle",                  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_scopeReticleColor,                  "cg_scopeReticleColor",                  "#000000FF",   CVAR_ARCHIVE,                 0 },
 	{ &cg_scopeReticleDotColor,               "cg_scopeReticleDotColor",               "#000000FF",   CVAR_ARCHIVE,                 0 },
-	{ &cg_scopeReticleLineTickness,           "cg_scopeReticleLineTickness",           "2.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_scopeReticleDotTickness,            "cg_scopeReticleDotTickness",            "2.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleLineThickness,          "cg_scopeReticleLineThickness",          "2.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_scopeReticleDotThickness,           "cg_scopeReticleDotThickness",           "2.0",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_commandMapTime,                     "cg_commandMapTime",                     "0",           CVAR_ARCHIVE,                 0 },
 
