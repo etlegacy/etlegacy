@@ -2216,6 +2216,7 @@ enum
 	COMPASS_DIRECTION            = BIT(5),
 	COMPASS_CARDINAL_POINTS      = BIT(6),
 	COMPASS_ALWAYS_DRAW          = BIT(7),
+	COMPASS_POINT_TOWARD_NORTH   = BIT(8),
 };
 
 // Follow filters
@@ -4099,9 +4100,9 @@ typedef struct mapScissor_s
 } mapScissor_t;
 
 int CG_CurLayerForZ(int z);
-void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend);
-int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
-void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
+void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend, qboolean pointTowardNorth);
+int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand, qboolean pointTowardNorth);
+void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand, qboolean pointTowardNorth);
 void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
