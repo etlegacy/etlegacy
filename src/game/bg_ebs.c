@@ -312,8 +312,11 @@ int EBS_ReadBits(entityBitStream_t *ebs, int bitsLeftToRead)
 
 int EBS_ReadBitsWithSign(entityBitStream_t *ebs, int bitsLeftToRead)
 {
+	int sign;
+
 	etl_assert(bitsLeftToRead > 1);
-	const int sign = EBS_ReadBits(ebs, 1) ? -1 : 1;
+
+	sign = EBS_ReadBits(ebs, 1) ? -1 : 1;
 	return EBS_ReadBits(ebs, bitsLeftToRead - 1) * sign;
 }
 
@@ -498,11 +501,14 @@ void EBS_WriteTestPayload(entityBitStream_t *ebs)
 	// write the float data
 	for ( b = 0; b < ARRAY_LEN(entityFloatFields); ++b )
 	{
+		float data;
+
 		rawData[0] = rand();
 		rawData[1] = rand();
 		rawData[2] = rand();
 		rawData[3] = rand();
-		const float data = *(float *)rawData;
+
+		data = *(float *)rawData;
 		EBS_WriteFloat(ebs->es, b, data);
 	}
 }

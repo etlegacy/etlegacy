@@ -67,60 +67,60 @@ static char homePath[MAX_OSPATH] = { 0 };
 #ifdef  __ANDROID__
 char *Sys_CdToExtStorage(void)
 {
-    JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
-    jthrowable exception;
-    const char *path;
+	JNIEnv     *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
+	jthrowable exception;
+	const char *path;
 
-    // Get File object for the external storage directory.
-    jclass classEnvironment = (*env)->FindClass(env, "android/os/Environment");
-    if (!classEnvironment)
-    {
-        return NULL;
-    }
-    jmethodID methodIDgetExternalStorageDirectory = (*env)->GetStaticMethodID(env, classEnvironment, "getExternalStorageDirectory", "()Ljava/io/File;"); // public static File getExternalStoragePublicDirectory ()
-    if (!methodIDgetExternalStorageDirectory)
-    {
-        return NULL;
-    }
-    jobject objectFile = (*env)->CallStaticObjectMethod(env, classEnvironment, methodIDgetExternalStorageDirectory);
-    exception = (*env)->ExceptionOccurred(env);
-    if (exception)
-    {
-        (*env)->ExceptionDescribe(env);
-        (*env)->ExceptionClear(env);
-    }
+	// Get File object for the external storage directory.
+	jclass classEnvironment = (*env)->FindClass(env, "android/os/Environment");
+	if (!classEnvironment)
+	{
+		return NULL;
+	}
+	jmethodID methodIDgetExternalStorageDirectory = (*env)->GetStaticMethodID(env, classEnvironment, "getExternalStorageDirectory", "()Ljava/io/File;"); // public static File getExternalStoragePublicDirectory ()
+	if (!methodIDgetExternalStorageDirectory)
+	{
+		return NULL;
+	}
+	jobject objectFile = (*env)->CallStaticObjectMethod(env, classEnvironment, methodIDgetExternalStorageDirectory);
+	exception = (*env)->ExceptionOccurred(env);
+	if (exception)
+	{
+		(*env)->ExceptionDescribe(env);
+		(*env)->ExceptionClear(env);
+	}
 
-    // Call method on File object to retrieve String object.
-    jclass classFile = (*env)->GetObjectClass(env, objectFile);
-    if (!classFile)
-    {
-        return NULL;
-    }
-    jmethodID methodIDgetAbsolutePath = (*env)->GetMethodID(env, classFile, "getAbsolutePath", "()Ljava/lang/String;");
-    if (!methodIDgetAbsolutePath)
-    {
-        return NULL;
-    }
-    jstring stringPath = (*env)->CallObjectMethod(env, objectFile, methodIDgetAbsolutePath);
-    exception = (*env)->ExceptionOccurred(env);
-    if (exception)
-    {
-        (*env)->ExceptionDescribe(env);
-        (*env)->ExceptionClear(env);
-    }
-    // Extract a C string from the String object, and chdir() to it.
-    const char *wpath3 = (*env)->GetStringUTFChars(env, stringPath, NULL);
-    if (chdir(wpath3) != 0)
-    {
-        fprintf(stderr, "Error: Unable to change working directory to %s.\n", wpath3);
-        perror(NULL);
-    }
+	// Call method on File object to retrieve String object.
+	jclass classFile = (*env)->GetObjectClass(env, objectFile);
+	if (!classFile)
+	{
+		return NULL;
+	}
+	jmethodID methodIDgetAbsolutePath = (*env)->GetMethodID(env, classFile, "getAbsolutePath", "()Ljava/lang/String;");
+	if (!methodIDgetAbsolutePath)
+	{
+		return NULL;
+	}
+	jstring stringPath = (*env)->CallObjectMethod(env, objectFile, methodIDgetAbsolutePath);
+	exception = (*env)->ExceptionOccurred(env);
+	if (exception)
+	{
+		(*env)->ExceptionDescribe(env);
+		(*env)->ExceptionClear(env);
+	}
+	// Extract a C string from the String object, and chdir() to it.
+	const char *wpath3 = (*env)->GetStringUTFChars(env, stringPath, NULL);
+	if (chdir(wpath3) != 0)
+	{
+		fprintf(stderr, "Error: Unable to change working directory to %s.\n", wpath3);
+		perror(NULL);
+	}
 
-    path = SDL_strdup(wpath3);
+	path = SDL_strdup(wpath3);
 
-    (*env)->ReleaseStringUTFChars(env, stringPath, wpath3);
+	(*env)->ReleaseStringUTFChars(env, stringPath, wpath3);
 
-    return path;
+	return path;
 }
 #endif
 
@@ -148,8 +148,8 @@ char *Sys_DefaultHomePath(void)
 #ifdef __ANDROID__
 		if (SDL_AndroidGetExternalStorageState())
 		{
-            Q_strncpyz(homePath, Sys_CdToExtStorage(), sizeof(homePath));
-            Q_strcat(homePath, sizeof(homePath), "/Documents/etlegacy");
+			Q_strncpyz(homePath, Sys_CdToExtStorage(), sizeof(homePath));
+			Q_strcat(homePath, sizeof(homePath), "/Documents/etlegacy");
 		}
 		else
 		{
@@ -219,54 +219,39 @@ void Sys_Chmod(const char *file, int mode)
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 }
 
-// Base time in ms
-static unsigned long long sys_timeBase = 0;
-
-// Current time in ms, using sys_timeBase as origin
-static unsigned long long curtime;
-
-// All systems with clock_gettime will have CLOCK_REALTIME
-static clockid_t clockid = CLOCK_REALTIME;
-
 /**
  * @brief Sys_Milliseconds
- * @param[in]
- * @return current system time in ms since server/client was started
+ * @return
  */
 int Sys_Milliseconds(void)
 {
-	struct timespec time;
+	return (int)(Sys_Microseconds() / 1000LL);
+}
 
-	if (!sys_timeBase)
+/**
+ * @brief Sys_Microseconds
+ * @return current system time in microseconds since server/client was started
+ */
+int64_t Sys_Microseconds(void)
+{
+	static qboolean initialized = qfalse;
+	static int64_t  timeBase_us = 0;
+	struct timespec ts;
+	int64_t         currentTime_us;
+
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+
+	if (!initialized)
 	{
-		// Most systems with clock_gettime will have CLOCK_MONOTONIC
-		#ifdef CLOCK_MONOTONIC
-		if (clock_gettime(CLOCK_MONOTONIC, &time) == 0)
-		{
-			clockid = CLOCK_MONOTONIC;
-		}
-		else
-		{
-			Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC failed. Using CLOCK_REALTIME instead.\n");
-		}
-		#else
-		Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC not found. Using CLOCK_REALTIME instead.\n");
-		#endif
+		timeBase_us = (int64_t)ts.tv_sec * 1000000LL + (int64_t)ts.tv_nsec / 1000LL;
+		initialized = qtrue;
 
-		if (clock_gettime(clockid, &time) == -1)
-		{
-			Sys_Error("Sys_Milliseconds: clock_gettime failed: errno %d\n", errno);
-		}
-
-		sys_timeBase = (time.tv_sec * 1000) + (time.tv_nsec / 1000000);
 		return 0;
 	}
 
-	clock_gettime(clockid, &time);
+	currentTime_us = (int64_t)ts.tv_sec * 1000000LL + (int64_t)ts.tv_nsec / 1000LL;
 
-	curtime = ((time.tv_sec * 1000) + (time.tv_nsec / 1000000)) - sys_timeBase;
-
-	return curtime;
+	return currentTime_us - timeBase_us;
 }
 
 /**
@@ -470,10 +455,10 @@ char *Sys_Cwd(void)
 
 	cwd[MAX_OSPATH - 1] = 0;
 #else
-    Q_strncpyz(cwd, SDL_AndroidGetExternalStoragePath(), sizeof(cwd));
-    Q_strcat(cwd, sizeof(homePath), "/etlegacy");
+	Q_strncpyz(cwd, SDL_AndroidGetExternalStoragePath(), sizeof(cwd));
+	Q_strcat(cwd, sizeof(homePath), "/etlegacy");
 #endif
-    return cwd;
+	return cwd;
 }
 
 /*

@@ -1094,6 +1094,7 @@ void SV_Init(void)
 	sv_cheats   = Cvar_Get("sv_cheats", "1", CVAR_SYSTEMINFO | CVAR_ROM);
 	sv_serverid = Cvar_Get("sv_serverid", "0", CVAR_SYSTEMINFO | CVAR_ROM);
 	sv_pure     = Cvar_Get("sv_pure", "1", CVAR_SYSTEMINFO);
+	sv_fps      = Cvar_Get("sv_fps", DEFAULT_SV_FPS_STR, CVAR_SYSTEMINFO);
 	Cvar_Get("sv_paks", "", CVAR_SYSTEMINFO | CVAR_ROM);
 	Cvar_Get("sv_pakNames", "", CVAR_SYSTEMINFO | CVAR_ROM);
 	Cvar_Get("sv_referencedPaks", "", CVAR_SYSTEMINFO | CVAR_ROM);
@@ -1145,7 +1146,6 @@ void SV_Init(void)
 	// server vars
 	sv_rconPassword    = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	sv_privatePassword = Cvar_Get("sv_privatePassword", "", CVAR_TEMP);
-	sv_fps             = Cvar_Get("sv_fps", "20", CVAR_TEMP);
 	sv_timeout         = Cvar_Get("sv_timeout", "60", CVAR_TEMP); // used in game (also vid_restart)
 	sv_dl_timeout      = Cvar_Get("sv_dl_timeout", "300", CVAR_TEMP); // in between this time a client should download the biggest custom pk3
 	sv_zombietime      = Cvar_Get("sv_zombietime", "2", CVAR_TEMP);
@@ -1243,6 +1243,10 @@ void SV_Init(void)
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
+#endif
+
+#ifdef ETLEGACY_DEBUG
+	SV_InitNetworkOverhead();
 #endif
 }
 

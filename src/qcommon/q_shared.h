@@ -122,6 +122,13 @@
 #define UNUSED_VAR
 #endif
 
+// NOTE: that this can't be used for function pointers struct members
+#if defined(_MSC_VER)
+#define NORETURN_MSVC __declspec(noreturn)
+#else
+#define NORETURN_MSVC
+#endif
+
 #if (defined _MSC_VER) || (defined __MINGW32__) || (defined __MINGW64__)
 #define Q_EXPORT __declspec(dllexport)
 #elif (defined __SUNPRO_C)
@@ -464,7 +471,13 @@ typedef int clipHandle_t;
 
 #define DEFAULT_NAME "ETLegacyPlayer"
 
-extern char* GlobalGameTitle;
+// these should never be changed
+#define DEFAULT_SV_FPS     20
+#define DEFAULT_SV_FPS_STR "20"
+// default server frametime at sv_fps 20, for framerate independent timings
+#define DEFAULT_SV_FRAMETIME 1000 / DEFAULT_SV_FPS
+
+extern char *GlobalGameTitle;
 
 /**
  * @enum messageStatus_t
@@ -886,6 +899,8 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
 //=============================================
 
 float *tv(float x, float y, float z);
+char *vtos(const vec3_t v);
+char *vtosf(const vec3_t v);
 
 #define rc(x) va("%s^7", x) ///< shortcut for color reset after printing variable
 
@@ -914,7 +929,7 @@ qboolean Info_Validate(const char *s);
 qboolean Info_NextPair(const char **head, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
+NORETURN_MSVC void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
 
 void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
@@ -1567,9 +1582,9 @@ typedef enum
 	//ET_LANDMINE_HINT,         ///< obsolete/unused (landmine hint for botsetgoalstate filter)
 	//ET_ATTRACTOR_HINT,        ///< obsolete/unused (attractor hint for botsetgoalstate filter)
 	//ET_SNIPER_HINT,           ///< obsolete/unused (sniper hint for botsetgoalstate filter)
-	//ET_LANDMINESPOT_HINT,     ///< obsolete/unused (landminespot hint for botsetgoalstate filter)
+	ET_EBS_SHOUTCAST = 58,      ///< replaced ET_LANDMINESPOT_HINT
 
-	ET_COMMANDMAP_MARKER = 59,
+	ET_COMMANDMAP_MARKER,
 
 	ET_WOLF_OBJECTIVE,
 
@@ -2092,6 +2107,9 @@ int32_t Q_FloatToInt(float f);
 float Q_IntToFloat(int32_t i);
 qboolean Q_ParseInt(const char *src, int *out);
 
+uint64_t *Q_PointerToUInt64(uint64_t u64);
+
 #define PASSFLOAT(f) Q_FloatToInt((f))
+#define PASSUINT64(u64) Q_PointerToUInt64((u64))
 
 #endif  // #ifndef INCLUDE_Q_SHARED_H

@@ -190,6 +190,8 @@ typedef struct
 	qboolean corruptedTranslationFile;
 	char translationVersion[MAX_STRING_TOKENS];
 
+	int sv_fps;
+
 } clientActive_t;
 
 extern clientActive_t cl;
@@ -601,8 +603,8 @@ void CL_DemoShutdown(void);
 typedef struct
 {
 	int down[2];                ///< key nums holding it down
-	unsigned downtime;          ///< msec timestamp
-	unsigned msec;              ///< msec down this frame if both a down and up happened
+	int64_t downtime;           ///< usec timestamp
+	int64_t usec;               ///< usec down this frame if both a down and up happened
 	qboolean active;            ///< current state
 	qboolean wasPressed;        ///< set when down, not cleared when up
 } kbutton_t;

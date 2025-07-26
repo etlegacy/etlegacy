@@ -47,8 +47,10 @@ botlib_export_t *botlib_export;
 
 static ext_trap_keys_t g_extensionTraps[] =
 {
-	{ "trap_DemoSupport_Legacy", G_DEMOSUPPORT, qfalse },
-	{ NULL,                      -1,            qfalse }
+	{ "trap_DemoSupport_Legacy",           G_DEMOSUPPORT,            qfalse },
+	{ "trap_SnapshotCallbackExt_Legacy",   G_SNAPSHOT_CALLBACK_EXT,  qfalse },
+	{ "trap_SnapshotSetClientMask_Legacy", G_SNAPSHOT_SETCLIENTMASK, qfalse },
+	{ NULL,                                -1,                       qfalse }
 };
 
 /**
@@ -699,13 +701,20 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case TVG_GET_PLAYERSTATE:
 		return SV_CL_GetPlayerstate(args[1], VMA(2));
 
+	case G_TRAP_GETVALUE:
+		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
+
 	case G_DEMOSUPPORT:
 		SV_DemoSupport(VMA(1));
 		return 0;
 
-	case G_TRAP_GETVALUE:
-		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
+	case G_SNAPSHOT_CALLBACK_EXT:
+		sv.snapshotCallbackExt = qtrue;
+		return 0;
 
+	case G_SNAPSHOT_SETCLIENTMASK:
+		SV_SnapshotSetClientMask(args[1], VMU64(2));
+		return 0;
 
 	default:
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);

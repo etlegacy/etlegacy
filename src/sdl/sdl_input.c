@@ -65,7 +65,7 @@ SDL_Window *mainScreen    = NULL;
 // The engine simulates *the period from the last frame's beginning to the current frame's beginning* when it simulates the current frame.
 // It's not simulating "the next 1/60th or 1/125th" of a second. If you give it "now" as input timestamps, your inputs do not occur until the *next* simulated chunk of time.
 // Try it. com_maxfps 1, press "forward", have fun.
-static int lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
+static int64_t lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
 
 #ifdef __ANDROID__
 // Margin rectangle structure for the "shoot button" area
@@ -638,14 +638,14 @@ static void IN_GobbleMotionEvents(void)
 static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
 	static qboolean mouse_grabbed = qfalse, mouse_relative = qfalse;
-#if !defined(__ANDROID__) || __ANDROID_API__ > 23
+#if !defined(__ANDROID__) || (defined(__ANDROID__) && defined(__ANDROID_API__) > 23)
 	int relative_result = 0;
 #endif
 
 	if (relative == !mouse_relative)
 	{
 		SDL_ShowCursor(!relative);
-#if !defined(__ANDROID__) || __ANDROID_API__ > 23
+#if !defined(__ANDROID__) || (defined(__ANDROID__) && defined(__ANDROID_API__) > 23)
 		// On Android Phones with API <= 23 this is causing App to close since it could not
 		// set relative mouse location (Mouse location is always at top left side of screen)
 		if ((relative_result = SDL_SetRelativeMouseMode((SDL_bool)relative)) != 0)
@@ -683,6 +683,9 @@ static void IN_ActivateMouse(void)
 
 	if (!mouseActive)
 	{
+#ifdef __ANDROID__
+		SDL_ShowCursor(qfalse);
+#endif
 		IN_GrabMouse(qtrue, qtrue);
 
 		IN_GobbleMotionEvents();
@@ -1768,11 +1771,11 @@ static void IN_ProcessEvents(void)
 				{
 					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, fabs(e.caxis.value / 8000) * j_yaw->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, abs(e.caxis.value / 8000) * j_yaw->value, 0, NULL);
 					}
 					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, -fabs(e.caxis.value / 8000) * j_yaw->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, -abs(e.caxis.value / 8000) * j_yaw->value, 0, NULL);
 					}
 					else
 					{
@@ -1783,11 +1786,11 @@ static void IN_ProcessEvents(void)
 				{
 					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -fabs(e.caxis.value / 8000) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -abs(e.caxis.value / 8000) * j_pitch->value, 0, NULL);
 					}
 					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, fabs(e.caxis.value / 8000) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, abs(e.caxis.value / 8000) * j_pitch->value, 0, NULL);
 					}
 					else
 					{
@@ -1812,7 +1815,7 @@ void IN_Frame(void)
 	qboolean cinematic = (cls.state == CA_CINEMATIC);
 
 	// Get the timestamp to give the next frame's input events (not the ones we're gathering right now, though)
-	int start = Sys_Milliseconds();
+	int64_t start = Sys_Microseconds();
 
 #ifdef __ANDROID__
 

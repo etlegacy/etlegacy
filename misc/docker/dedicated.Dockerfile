@@ -11,6 +11,9 @@ RUN mv /legacy/server/etlded.$(arch) /legacy/server/etlded && mv /legacy/server/
 FROM debian:stable-slim
 RUN useradd -Ms /bin/bash legacy
 COPY --from=builder --chown=legacy:legacy /legacy /legacy/
+COPY --chown=legacy:legacy entrypoint.sh /legacy/server/entrypoint.sh
+RUN chmod +x /legacy/server/entrypoint.sh
+
 WORKDIR /legacy/server
 
 # This can be used to mount a path for files to be written like logiles, or config files
@@ -23,4 +26,4 @@ EXPOSE 27960/UDP
 
 USER legacy
 
-ENTRYPOINT ["./etlded", "+set","fs_homepath", "/legacy/homepath", "+set", "g_protect", "1", "+exec", "etl_server.cfg"]
+ENTRYPOINT ["./entrypoint.sh"]

@@ -68,7 +68,87 @@ static int CG_GetPlayerCurrentWeapon(clientInfo_t *player)
 	{
 		curWeap = cg_entities[player->clientNum].currentState.weapon;
 	}
+
 	return curWeap;
+}
+
+/**
+* @brief CG_GetPlayerPowerups
+* @param[in] player
+*/
+static int CG_GetPlayerPowerups(clientInfo_t *player)
+{
+	if (cg_entities[player->clientNum].currentValid)
+	{
+		return cg_entities[player->clientNum].currentState.powerups;
+	}
+
+	return player->powerups;
+}
+
+/**
+ * @brief CG_ShoutcastPlayerAmmoValue get the current ammo and/or clip count of the holded weapon (if using ammo).
+ * @param[in] ci
+ * @param[out] ammo - the number of ammo left (in the current clip if using clip)
+ * @param[out] clips - the total ammount of ammo in all clips (if using clip)
+ */
+static void CG_ShoutcastPlayerAmmoValue(clientInfo_t *ci, int *ammo, int *clips)
+{
+	int curWeap = CG_GetPlayerCurrentWeapon(ci);
+
+	*ammo = *clips = -1;
+
+	if (!IS_VALID_WEAPON(curWeap))
+	{
+		return;
+	}
+
+	// some weapons don't draw ammo count
+	if (!GetWeaponTableData(curWeap)->useAmmo)
+	{
+		return;
+	}
+
+	if (cg_entities[ci->clientNum].currentValid && BG_PlayerMounted(cg_entities[ci->clientNum].currentState.eFlags))
+	{
+		return;
+	}
+
+	// total ammo in clips, grenade launcher is not a clip weapon but show the clip anyway
+	if (GetWeaponTableData(curWeap)->useClip || (curWeap == WP_M7 || curWeap == WP_GPG40))
+	{
+		// current reserve
+		*clips = ci->ammo;
+
+		// current clip
+		*ammo = ci->ammoclip;
+	}
+	else
+	{
+		if (curWeap == WP_LANDMINE)
+		{
+			if (!cgs.gameManager)
+			{
+				*ammo = 0;
+			}
+			else
+			{
+				if (ci->team == TEAM_AXIS)
+				{
+					*ammo = cgs.gameManager->currentState.otherEntityNum;
+				}
+				else
+				{
+					*ammo = cgs.gameManager->currentState.otherEntityNum2;
+				}
+			}
+		}
+		else
+		{
+			// some weapons don't draw ammo clip count text
+			*ammo = ci->ammoclip + ci->ammo;
+		}
+	}
 }
 
 /**
@@ -81,6 +161,7 @@ static int CG_GetPlayerCurrentWeapon(clientInfo_t *player)
 static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t *player, float y, int index)
 {
 	int    curWeap, weapScale, textWidth, textHeight;
+	int    ammo, clip, powerups;
 	float  fraction;
 	float  statusWidth = comp->location.w / 5.f;
 	float  topRowX     = comp->location.x;
@@ -165,18 +246,19 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 	}
 
 	// draw powerups
+	powerups   = CG_GetPlayerPowerups(player);
 	bottomRowX = comp->location.x + comp->location.w;
-	if (player->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+	if (powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 	{
 		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.objectiveShader);
 		bottomRowX -= 14;
 	}
-	if (player->powerups & (1 << PW_OPS_DISGUISED))
+	if (powerups & (1 << PW_OPS_DISGUISED))
 	{
 		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, player->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 		bottomRowX -= 14;
 	}
-	if (player->powerups & (1 << PW_INVULNERABLE))
+	if (powerups & (1 << PW_INVULNERABLE))
 	{
 		CG_DrawPic(bottomRowX - 14, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.spawnInvincibleShader);
 	}
@@ -184,7 +266,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 	// draw weapon icon
 	curWeap    = CG_GetPlayerCurrentWeapon(player);
 	weapScale  = cg_weapons[curWeap].weaponIconScale * 10;
-	bottomRowX = comp->location.x + comp->location.w - 63;
+	bottomRowX = comp->location.x + comp->location.w - 73;
 
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIconScale == 1)
 	{
@@ -200,6 +282,27 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 	{
 		CG_DrawPic(bottomRowX, y + (height * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
 	}
+
+	// draw ammo count
+	CG_ShoutcastPlayerAmmoValue(player, &ammo, &clip);
+
+	if (ammo > 0 || clip > 0)
+	{
+		if (clip == -1)
+		{
+			text = va("%i", ammo);
+		}
+		else
+		{
+			text = va("%i/%i", ammo, clip);
+		}
+
+		// Note: if the ammo and clip are both 3 digits and there are 2 powerups being drawn they overlap,
+		// it should rarely happen (only mg/flamethrower with docs and shield, very unlikely scenario)
+		bottomRowX += weapScale + 3;
+		textHeight  = CG_Text_Height_Ext("9", 0.15f, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(bottomRowX, y + (height * 0.75f) + (textHeight * 0.5f), 0.15f, 0.15f, comp->colorMain, text, 0, 0, comp->styleText, FONT_TEXT);
+	}
 }
 
 /**
@@ -212,6 +315,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo_t *player, float y, int index)
 {
 	int    curWeap, weapScale, textWidth, textHeight;
+	int    ammo, clip, powerups;
 	float  fraction;
 	float  statusWidth = comp->location.w / 5.f;
 	float  topRowX     = comp->location.x;
@@ -302,34 +406,57 @@ static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo
 	}
 
 	// draw powerups
+	powerups   = CG_GetPlayerPowerups(player);
 	bottomRowX = comp->location.x;
-	if (player->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+	if (powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 	{
 		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.objectiveShader);
 		bottomRowX += 14;
 	}
-	if (player->powerups & (1 << PW_OPS_DISGUISED))
+	if (powerups & (1 << PW_OPS_DISGUISED))
 	{
 		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, player->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 		bottomRowX += 14;
 	}
-	if (player->powerups & (1 << PW_INVULNERABLE))
+	if (powerups & (1 << PW_INVULNERABLE))
 	{
 		CG_DrawPic(bottomRowX + 2, y + (height * 0.75f) - 6.5f, 12, 12, cgs.media.spawnInvincibleShader);
 	}
 
 	// draw weapon icon
-	curWeap   = CG_GetPlayerCurrentWeapon(player);
-	weapScale = cg_weapons[curWeap].weaponIconScale * 10;
+	curWeap    = CG_GetPlayerCurrentWeapon(player);
+	weapScale  = cg_weapons[curWeap].weaponIconScale * 10;
+	bottomRowX = comp->location.x + 53;
 
 	// note: WP_NONE is excluded
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 	{
-		CG_DrawPic(comp->location.x + 43, y + (height * 0.75f) - 5, weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
+		CG_DrawPic(bottomRowX, y + (height * 0.75f) - 5, weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
 	}
 	else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 	{
-		CG_DrawPic(comp->location.x + 43, y + (height * 0.75f) - 5, weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
+		CG_DrawPic(bottomRowX, y + (height * 0.75f) - 5, weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
+	}
+
+	// draw ammo count
+	CG_ShoutcastPlayerAmmoValue(player, &ammo, &clip);
+
+	if (ammo > 0 || clip > 0)
+	{
+		if (clip == -1)
+		{
+			text = va("%i", ammo);
+		}
+		else
+		{
+			text = va("%i/%i", ammo, clip);
+		}
+
+		// Note: if the ammo and clip are both 3 digits and there are 2 powerups being drawn they overlap,
+		// it should rarely happen (only mg/flamethrower with docs and shield, very unlikely scenario)
+		textHeight = CG_Text_Height_Ext("9", 0.15f, 0, FONT_TEXT);
+		textWidth  = CG_Text_Width_Ext(text, 0.15f, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(bottomRowX - textWidth - 2, y + (height * 0.75f) + (textHeight * 0.5f), 0.15f, 0.15f, comp->colorMain, text, 0, 0, comp->styleText, FONT_TEXT);
 	}
 }
 

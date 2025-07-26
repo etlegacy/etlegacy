@@ -1,221 +1,268 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Checks repository changes for consistency/validity.
 # Intended to be used for CI.
 #
-# REQUIRES: python uncrustify diff git
+# REQUIRES: python uncrustify git
 import os
-import subprocess
 import sys
-
+import subprocess
+import difflib
 from pathlib import Path
-
 from dataclasses import dataclass, field
-from typing import *
+from typing import List, Optional
 
-# TODO - run checks in parallel
-# TODO - skip vendored .c/.h files
-# TODO - also check uncommitted local changes - currently only checks changes of git commits
+from etl_lib import (
+    CWD,
+    ROOT_DIR,
+    argparse_add_commit_param,
+    get_changed_files,
+    get_current_git_branch,
+    rel_str,
+    run_command,
+)
 
-show_diff = False
-errors = []
+HIDE_DETAIL = False
 
-rootd = Path(os.path.realpath(__file__)).absolute().parent.parent
+
+@dataclass
+class State:
+    args: list[str] = field(default_factory=list)
+    failed_files: list[str] = field(default_factory=list)
+    succeeded_files: list[str] = field(default_factory=list)
 
 
 @dataclass
 class Error:
     path: Path
     reason: str
-    diff: str = None
+    detail: Optional[str] = None
 
     def __str__(self):
-        result = f"> {self.path}\n| {self.reason}"
-        if self.diff and show_diff:
-            result += f"\n```\n{self.diff}\n```"
-        return result
+        msg = f"{self.reason}"
+        if self.detail and not HIDE_DETAIL:
+            msg += f"\n```\n{self.detail}\n```"
+        return msg
 
 
-def get_changed_files(commit_hash):
-    """Returns a list of files changed in the given commit."""
+def check_black(path: Path, errors: List[Error]):
     try:
         result = subprocess.run(
-            ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", commit_hash],
+            ["black", "--check", "--diff", str(path)],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            check=True,
         )
-        files = result.stdout.strip().split("\n")
-        return files if files[0] else []
-    except subprocess.CalledProcessError as e:
-        raise Exception(f"Error running git command: {e}")
+        if result.returncode != 0:
+            errors.append(
+                Error(
+                    path=path,
+                    reason="Not formatted with black.",
+                    detail=result.stdout.strip() if not HIDE_DETAIL else None,
+                )
+            )
+    except Exception as e:
+        errors.append(Error(path, f"Failed to check with black: {e}"))
 
 
-def check_c_diff(path):
-    # TODO - use 'difflib' (for better win support?)
-    #
-    # start the first process
-    p1 = subprocess.Popen(
-        ["uncrustify", "-c", str(rootd.joinpath(Path("uncrustify.cfg"))), "-f", path],
+def check_uncrustify(path: Path, errors: List[Error]):
+    result = subprocess.run(
+        ["uncrustify", "-c", str(ROOT_DIR / "uncrustify.cfg"), "-f", str(path)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
     )
 
-    # start the second process, taking input from the first process
-    p2 = subprocess.Popen(
-        ["diff", path, "-"],
-        stdin=p1.stdout,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
+    if result.returncode != 0:
+        errors.append(Error(path, f"Uncrustify failed: {result.stderr.strip()}"))
+        return
 
-    # close the first process's stdout to allow p1 to receive a SIGPIPE if p2 exits
-    p1.stdout.close()
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            original = f.readlines()
 
-    # capture output and errors
-    stdout, stderr = p2.communicate()
-
-    if stdout != "":
-        errors.append(
-            Error(
-                path=path,
-                reason="Not correctly uncrustified!",
-                diff=stdout,
+        formatted = result.stdout.splitlines(keepends=True)
+        detail = list(
+            difflib.unified_diff(
+                original, formatted, fromfile=rel_str(path), tofile=rel_str(path)
             )
         )
 
-
-def check_tga(path):
-    # NOTE - unused, as 2.60b actually supports RLE TGA
-    # def check_rle(path):
-    #     # run ImageMagick's identify command to get metadata
-    #     result = subprocess.run(
-    #         ["identify", "-verbose", path],
-    #         capture_output=True,
-    #         text=True,
-    #         check=True,
-    #     )
-
-    #     # check if 'RLE' appears in the output
-    #     if "RLE" in result.stdout:
-    #         errors.append(
-    #             Error(
-    #                 path=path,
-    #                 reason="Detected an RLE-encoded TGA file, which is not supported by Vanilla ET.",
-    #             )
-    #         )
-
-    def check_origin(path):
-        with open(path, "rb") as file:
-            file.seek(16)  # Move to the 17th byte (zero-based index)
-            byte = file.read(1)  # Read one byte
-            if byte != b"\x20":
-                errors.append(
-                    Error(
-                        path=path,
-                        reason="TGA file does not have bottom-left field order, but top-left, which is not supported by Vanilla ET.",
-                    )
-                )
-
-    check_origin(path)
+        if detail:
+            errors.append(Error(path, "Not correctly uncrustified", "".join(detail)))
+    except Exception as e:
+        errors.append(Error(path, f"Failed to diff: {e}"))
 
 
-def check_jpg(path):
-    with open(path, "rb") as f:
-        data = f.read()
+def check_sh(path: Path, errors: List[Error]):
+    result = subprocess.run(
+        ["shellcheck", str(path)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
 
-    # Ensure the file starts with a JPEG SOI marker (0xFFD8)
-    if not data.startswith(b"\xff\xd8"):
+    if result.returncode != 0:
         errors.append(
             Error(
                 path=path,
-                reason="Not a valid JPEG file",
+                reason=f"Shellcheck failed",
+                detail=result.stdout.strip(),
             )
         )
         return
 
-    # Scan for Start of Scan (SOS) markers (0xFFDA)
-    sos_count = data.count(b"\xff\xda")
 
-    # Progressive JPEGs have multiple SOS markers
-    if sos_count > 1:
-        errors.append(
-            Error(
-                path=path,
-                reason="JPEG file seems to be progressive, which is not supported by Vanilla ET. ",
+def check_tga(path: Path, errors: List[Error]):
+    try:
+        with open(path, "rb") as f:
+            f.seek(16)
+            if f.read(1) != b"\x20":
+                errors.append(
+                    Error(
+                        path,
+                        "TGA file has top-left origin, but bottom-left is required.",
+                    )
+                )
+    except Exception as e:
+        errors.append(Error(path, f"Failed to check TGA origin: {e}"))
+
+
+def check_jpeg(path: Path, errors: List[Error]):
+    try:
+        with open(path, "rb") as f:
+            data = f.read()
+        if not data.startswith(b"\xff\xd8"):
+            errors.append(Error(path, "Not a valid JPEG file."))
+        elif data.count(b"\xff\xda") > 1:
+            errors.append(Error(path, "Progressive JPEG not supported."))
+    except Exception as e:
+        errors.append(Error(path, f"Failed to check JPEG: {e}"))
+
+
+def check_yml(path: Path, errors: List[Error]):
+    result = run_command(["prettier", "--no-config", str(path)], check=False)
+
+    if result.returncode != 0:
+        errors.append(Error(path, f"Prettier failed: {result.stderr.strip()}"))
+        return
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            original = f.readlines()
+
+        formatted = result.stdout.splitlines(keepends=True)
+        detail = list(
+            difflib.unified_diff(
+                original, formatted, fromfile=rel_str(path), tofile=rel_str(path)
             )
         )
 
+        if detail:
+            errors.append(Error(path, "Not correctly prettied", "".join(detail)))
+    except Exception as e:
+        errors.append(Error(path, f"Failed to diff: {e}"))
 
-def check_commit(commit_hash):
-    errors.clear()
-    changed_files = get_changed_files(commit_hash)
 
-    # check files
-    for changed_file in changed_files:
-        path = Path(changed_file)
+def check_file(path: Path) -> Optional[List[Error]]:
+    errors = []
 
-        if not path.exists():
-            print("? skipping missing: " + str(path))
-            continue
+    if not path.exists():
+        print(f"☇ Skipping removed/missing: {path.relative_to(ROOT_DIR)}")
+        return None
 
-        abspath = str(rootd.joinpath(path).absolute())
-        print("* " + str(path))
-        match path.suffix.lower():
-            case ".tga":
-                check_tga(abspath)
-            case ".jpg" | ".jpeg":
-                check_jpg(abspath)
-            case ".c" | ".h":
-                check_c_diff(abspath)
+    match path.suffix.lower():
+        case ".c" | ".cpp" | ".glsl" | ".h":
+            check_uncrustify(path, errors)
+        case ".tga":
+            check_tga(path, errors)
+        case ".jpg" | ".jpeg":
+            check_jpeg(path, errors)
+        case ".py":
+            check_black(path, errors)
+        case ".sh":
+            check_sh(path, errors)
+        case ".yml" | ".yaml":
+            check_yml(path, errors)
+    return errors
 
-    # summarize errors
-    if len(errors) > 0:
-        print("------")
-        for error in errors:
-            sys.stderr.write(str(error) + "\n")
 
-        return len(errors)
+def check_changes(state: State):
+    # assemble files
+    changed_files = get_changed_files(state.args.commit_hash)
 
-    return 0
+    if len(changed_files) < 1:
+        print("No changes found.")
+        return
+
+    print("------------------------------------------")
+
+    # check assembled files for errors
+    for path in sorted(list(changed_files)):
+        relpath = path.relative_to(ROOT_DIR)
+        errors = check_file(path)
+        if errors == None:
+            pass
+        elif errors:
+            state.failed_files.append([relpath, errors])
+        else:
+            state.succeeded_files.append(relpath)
+
+
+def check_global(state: State):
+    result = run_command(["actionlint"], check=False)
+
+    def check_global_actionlint():
+        path = "[actionlint]"
+        if result.returncode != 0:
+            state.failed_files.append(
+                [path, [Error(path, f"Actionlint failed:\n {result.stdout.strip()}")]]
+            )
+        else:
+            state.succeeded_files.append(path)
+
+    check_global_actionlint()
 
 
 def main(args):
-    if args.diff:
-        global show_diff
-        show_diff = True
+    global HIDE_DETAIL
+    HIDE_DETAIL = args.hide_details
 
-    commits = []
+    state = State(args=args)
 
-    # assemble commits
-    if not args.commit_hash:
-        commits.append(
-            subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
-        )
+    current_git_branch = get_current_git_branch()
+    skip_changes = args.commit_hash == current_git_branch
+
+    if not skip_changes:
+        check_changes(state)
     else:
-        import io
+        print("Skipping checking changes...")
 
-        lines = io.StringIO(
-            subprocess.check_output(
-                ["git", "rev-list", "..." + args.commit_hash]
-            ).decode()
-        )
-        for line in lines:
-            line = line.strip()
-            commits.append(line)
+    check_global(state)
 
-    # check commits
-    error_count = 0
-    for i, commit in enumerate(commits):
-        if i > 0:
-            print("======")
+    for relpath in state.succeeded_files:
+        print(f"✓ {relpath}")
 
-        error_count += check_commit(commit)
+    total_errors = 0
+    if len(state.failed_files) > 0:
+        print("------------------ERRORS------------------")
 
-    if error_count > 0:
-        print(f"\nDetected {error_count} errors !")
+        for relpath, errors in state.failed_files:
+            print(f"✗ {relpath}")
+            for error in errors:
+                print(error, file=sys.stderr)
+                if args.github:
+                    path = error.path
+                    if isinstance(path, Path):
+                        path = error.path.relative_to(CWD)
+                    print(f"::error ::{path} - {error.reason}")
+                total_errors += 1
+
+    if total_errors:
+        msg = f"\nFailed {total_errors} check"
+        if total_errors > 1:
+            msg += "s"
+        msg += "!"
+        print(msg)
         sys.exit(1)
 
 
@@ -223,25 +270,25 @@ def cli():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Check files between git commits for CI purposes."
+        description="Check files in commit(s) for formatting or asset issues."
     )
 
-    parser.add_argument(
-        "commit_hash",
-        type=str,
-        nargs="?",
-    )
+    argparse_add_commit_param(parser)
 
     parser.add_argument(
-        "-d",
-        "--diff",
-        dest="diff",
+        "-hd",
+        "--hide-details",
+        dest="hide_details",
         action="store_true",
-        help="Show diff of errors",
+        help="Hide detailed output",
     )
-
-    args = parser.parse_args(sys.argv[1:])
-
+    parser.add_argument(
+        "-gh",
+        "--github",
+        action="store_true",
+        help="Print special messages that Github Actions integrates better for error reporting",
+    )
+    args = parser.parse_args()
     main(args)
 
 

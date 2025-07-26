@@ -507,6 +507,14 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		ent->s.otherEntityNum2 = killer;
 		ent->r.svFlags         = SVF_BROADCAST; // send to everyone
 		ent->s.weapon          = weap;
+		if (self->sound1to2 == HR_HEAD)
+		{
+			ent->s.loopSound = 1; // 1 indicates headshot kill
+		}
+		else
+		{
+			ent->s.loopSound = 0; // 0 indicates not a headshot kill
+		}
 	}
 
 	self->enemy = attacker;

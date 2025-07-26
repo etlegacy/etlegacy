@@ -2078,7 +2078,7 @@ void CG_LimboPanel_RenderObjectiveBack(panel_button_t *button)
  */
 void CG_LimboPanel_RenderCommandMap(panel_button_t *button)
 {
-	CG_DrawMap(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.ccFilter, NULL, qtrue, 1.f, qtrue);
+	CG_DrawMap(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.ccFilter, NULL, qtrue, 1.f, qtrue, qtrue);
 	CG_CommandMap_DrawHighlightText();
 }
 

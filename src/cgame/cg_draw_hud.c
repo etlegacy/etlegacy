@@ -48,7 +48,7 @@ static lagometer_t lagometer;
 const hudComponentFields_t hudComponentFields[] =
 {
 	{ HUDF(crosshair),          CG_DrawCrosshair,                 0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color",  "Dynamic Color Alt" } },         // FIXME: outside cg_draw_hud
-	{ HUDF(compass),            CG_DrawNewCompass,                0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw"} },
+	{ HUDF(compass),            CG_DrawNewCompass,                0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw", "Point North"} },
 	{ HUDF(staminabar),         CG_DrawStaminaBar,                0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(breathbar),          CG_DrawBreathBar,                 0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
 	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Dynamic Color"} },
@@ -57,7 +57,8 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
 	{ HUDF(ranktext),           CG_DrawRank,                      0.20f,  { 0 } },
 	{ HUDF(statsdisplay),       CG_DrawSkills,                    0.25f,  { "Column" } },
-	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash",    "Dynamic Heat Color" } },
+    { HUDF(weaponheatbar),      CG_DrawGunHeatBar,                0.19f,  { "Dynamic Heat Color" } },
+	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash",    "Only Ticking" } },
 	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 0.25f,  { "Dynamic Color" } },
 	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           0.20f,  { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row"} },// FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),      CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
@@ -86,8 +87,8 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponchargetext),   CG_DrawWeaponCharge,              0.25f,  { "Draw Suffix" } },
 	{ HUDF(fps),                CG_DrawFPS,                       0.19f,  { 0 } },
 	{ HUDF(snapshot),           CG_DrawSnapshot,                  0.19f,  { 0 } },
-	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { 0 } },
-	{ HUDF(speed),              CG_DrawSpeed,                     0.19f,  { "Max Speed" } },
+	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { "Draw Prefix" } },
+	{ HUDF(speed),              CG_DrawSpeed,                     0.19f,  { "Max Speed",     "Draw Suffix" } },
 	{ HUDF(lagometer),          CG_DrawLagometer,                 0.19f,  { 0 } },
 	{ HUDF(disconnect),         CG_DrawDisconnect,                0.35f,  { "No Text" } },
 	{ HUDF(chat),               CG_DrawTeamInfo,                  0.20f,  { "No Team Flag" } },// FIXME: outside cg_draw_hud
@@ -191,7 +192,8 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->xptext             = CG_getComponent(108, 465, 57, 14, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
 	hud->ranktext           = CG_getComponent(167, 465, 57, 14, qfalse, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawRank);    // disable
 	hud->statsdisplay       = CG_getComponent(116, 394, 42, 70, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawSkills);
-	hud->weaponicon         = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1 | 2, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
+	hud->weaponheatbar      = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunHeatBar);
+	hud->weaponicon         = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawGunIcon);
 	hud->weaponammo         = CG_getComponent(SCREEN_WIDTH - 82, 458, 57, 14, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, CG_DrawAmmoCount);
 	hud->fireteam           = CG_getComponent(10, 10, 350, 100, qtrue, 1, 100.f, colorWhite, HUD_Background, qtrue, HUD_BackgroundAlt, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, CG_DrawFireTeamOverlay);
 	hud->popupmessages      = CG_getComponent(4, 245, 422, 96, qtrue, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
@@ -220,8 +222,8 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->weaponchargetext   = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, CG_DrawWeaponCharge);
 	hud->fps                = CG_getComponent(SCREEN_WIDTH - 60, 184, 57, 14, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawFPS);
 	hud->snapshot           = CG_getComponent(SCREEN_WIDTH - 60, 305, 57, 38, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, CG_DrawSnapshot);
-	hud->ping               = CG_getComponent(SCREEN_WIDTH - 60, 200, 57, 14, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPing);
-	hud->speed              = CG_getComponent(SCREEN_WIDTH - 60, 275, 57, 14, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpeed);
+	hud->ping               = CG_getComponent(SCREEN_WIDTH - 60, 200, 57, 14, qfalse, 1, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPing);
+	hud->speed              = CG_getComponent(SCREEN_WIDTH - 60, 275, 57, 14, qfalse, 2, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawSpeed);
 	hud->lagometer          = CG_getComponent(SCREEN_WIDTH - 60, 216, 57, 57, qfalse, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawLagometer);
 	hud->disconnect         = CG_getComponent(SCREEN_WIDTH - 60, 216, 57, 57, qtrue, 0, 100.f, colorWhite, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.35f, CG_DrawDisconnect);
 	hud->chat               = CG_getComponent(165, 406, 364, 72, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.20f, CG_DrawTeamInfo);
@@ -1105,7 +1107,6 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		switch (cgs.clientinfo[cg.snap->ps.clientNum].cls)
 		{
 		case PC_SOLDIER:
-		{
 			if (COM_BitCheck(cg.snap->ps.weapons, WP_PANZERFAUST))
 			{
 				CG_CalcPowerState(WP_PANZERFAUST, chargeTime, &needleFrac, &charge);
@@ -1122,8 +1123,7 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 			{
 				CG_CalcPowerState(WP_MORTAR2_SET, chargeTime, &needleFrac, &charge);
 			}
-		}
-		break;
+			break;
 		case PC_MEDIC:
 			CG_CalcPowerState(WP_MEDKIT, chargeTime, &needleFrac, &charge);
 			break;
@@ -1140,10 +1140,13 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 			case WP_KAR98:
 				CG_CalcPowerState(WP_GPG40, chargeTime, &needleFrac, &charge);
 				break;
-			case WP_COLT:
-			case WP_LUGER:
 			case WP_AKIMBO_COLT:
 			case WP_AKIMBO_LUGER:
+			case WP_COLT:
+			case WP_GRENADE_LAUNCHER:
+			case WP_GRENADE_PINEAPPLE:
+			case WP_LUGER:
+			case WP_PLIERS:
 				if (COM_BitCheck(cg.snap->ps.weapons, WP_GPG40) || COM_BitCheck(cg.snap->ps.weapons, WP_M7))
 				{
 					CG_CalcPowerState(WP_GPG40, chargeTime, &needleFrac, &charge);
@@ -1224,9 +1227,6 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	// Draw weapon icon and overheat bar
-	CG_DrawWeapHeat(&comp->location, HUD_HORIZONTAL, (comp->style & 2));
-
 	// weapon flash color
 	if (comp->style & 1)
 	{
@@ -1257,7 +1257,54 @@ void CG_DrawGunIcon(hudComponent_t *comp)
 		Vector4Copy(comp->colorMain, color);
 	}
 
-	CG_DrawPlayerWeaponIcon(&comp->location, comp->alignText, &color);
+	// grenade ticking condition
+	if (comp->style & 2)
+	{
+		if (cg.predictedPlayerState.grenadeTimeLeft)
+		{
+			CG_DrawPlayerWeaponIcon(&comp->location, comp->alignText, &color);
+		}
+	}
+	else
+	{
+		CG_DrawPlayerWeaponIcon(&comp->location, comp->alignText, &color);
+	}
+}
+
+/**
+ * @brief CG_DrawGunHeatBar
+ * @param[in] location
+ */
+void CG_DrawGunHeatBar(hudComponent_t *comp)
+{
+	vec4_t color;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.stats[STAT_HEALTH] <= 0)
+	{
+		return;
+	}
+
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
+	CG_DrawWeapHeat(&comp->location, HUD_HORIZONTAL, (comp->style & 1));
 }
 
 /**
@@ -2771,22 +2818,47 @@ void CG_DrawSpeed(hudComponent_t *comp)
 		lasttime = thistime;
 	}
 
+
 	switch (cg_drawUnit.integer)
 	{
 	case 0:
 		// Units per second
-		s  = va("%.1f UPS", speed);
-		s2 = va("%.1f MAX", highestSpeed);
+		if (comp->style & 2)
+		{
+			s  = va("%.1f UPS", speed);
+			s2 = va("%.1f MAX", highestSpeed);
+		}
+		else
+		{
+			s  = va("%.1f", speed);
+			s2 = va("%.1f", highestSpeed);
+		}
 		break;
 	case 1:
 		// Kilometers per hour
-		s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
-		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
+		if (comp->style & 2)
+		{
+			s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
+			s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
+		}
+		else
+		{
+			s  = va("%.1f", (speed / SPEED_US_TO_KPH));
+			s2 = va("%.1f", (highestSpeed / SPEED_US_TO_KPH));
+		}
 		break;
 	case 2:
 		// Miles per hour
-		s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
-		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
+		if (comp->style & 2)
+		{
+			s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
+			s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
+		}
+		else
+		{
+			s  = va("%.1f", (speed / SPEED_US_TO_MPH));
+			s2 = va("%.1f", (highestSpeed / SPEED_US_TO_MPH));
+		}
 		break;
 	default:
 		s  = "";
@@ -2875,18 +2947,20 @@ void CG_DrawFPS(hudComponent_t *comp)
 */
 char *CG_SpawnTimerText()
 {
+	int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
+	int seconds;
+	int secondsThen;
+
 	if (cg_spawnTimer_set.integer != -1 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
-			int st;
-			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer :
-			             (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
-
-			st = CG_CalculateReinfTimeEx(period, cg_spawnTimer_set.integer);
-			if (st)
+			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer : (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
+			if (period > 0) // prevent division by 0 for weird cases like limbtotime < 1000
 			{
-				return va("%i", st);
+				seconds     = msec / 1000;
+				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
+				return va("%i", period + (seconds - secondsThen) % period);
 			}
 		}
 	}
@@ -3310,7 +3384,7 @@ void CG_DrawPing(hudComponent_t *comp)
 {
 	char *s;
 
-	s = va("Ping %d", cg.snap->ping < 999 ? cg.snap->ping : 999);
+	s = va(comp->style & 1 ? "Ping %d" : "%d", cg.snap->ping < 999 ? cg.snap->ping : 999);
 
 	CG_DrawCompText(comp, s, comp->colorMain, comp->styleText, &cgs.media.limboFont1);
 }

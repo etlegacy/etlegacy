@@ -206,7 +206,7 @@ static void CG_FillVersionInfo(version_t *version, char *versionStr, const char 
 	version->patch = Q_atoi(strtok(NULL, delimiter));
 }
 
-static void CG_ParseDemoVersion(void)
+void CG_ParseDemoVersion(void)
 {
 	const char *serverInfoCS = CG_ConfigString(CS_SERVERINFO);
 	char       *versionStr   = Info_ValueForKey(serverInfoCS, "mod_version");
@@ -289,11 +289,6 @@ void CG_ParseServerinfo(void)
 
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
-
-	if (cg.demoPlayback)
-	{
-		CG_ParseDemoVersion();
-	}
 }
 
 /**
@@ -371,7 +366,7 @@ void CG_ParseSysteminfo(void)
 	if (!cgs.sv_fps)
 	{
 		// no way to know for sure, assume default
-		cgs.sv_fps = 20;
+		cgs.sv_fps = DEFAULT_SV_FPS;
 	}
 
 	cgs.sv_cheats = (atoi(Info_ValueForKey(info, "sv_cheats"))) ? qtrue : qfalse;

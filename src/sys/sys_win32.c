@@ -140,7 +140,27 @@ char *Sys_DefaultHomePath(void)
 	return homePath;
 }
 
-int sys_timeBase;
+static LARGE_INTEGER sys_timeBase, sys_timeNow, sys_timeFrequency;
+
+/**
+ * @brief Sys_Microseconds
+ * @return
+ */
+int64_t Sys_Microseconds(void)
+{
+	static qboolean initialized = qfalse;
+
+	if (!initialized)
+	{
+		QueryPerformanceFrequency(&sys_timeFrequency);
+		QueryPerformanceCounter(&sys_timeBase);
+		initialized = qtrue;
+	}
+
+	QueryPerformanceCounter(&sys_timeNow);
+
+	return ((sys_timeNow.QuadPart - sys_timeBase.QuadPart) * 1000000LL) / sys_timeFrequency.QuadPart;
+}
 
 /**
  * @brief Sys_Milliseconds
@@ -148,18 +168,7 @@ int sys_timeBase;
  */
 int Sys_Milliseconds(void)
 {
-	int             sys_curtime;
-	static qboolean initialized = qfalse;
-
-	if (!initialized)
-	{
-		sys_timeBase = timeGetTime();
-		initialized  = qtrue;
-	}
-
-	sys_curtime = timeGetTime() - sys_timeBase;
-
-	return sys_curtime;
+	return Sys_Microseconds() / 1000;
 }
 
 /**
@@ -1157,7 +1166,7 @@ void Sys_PlatformInit(void)
 	SetErrorMode(SEM_FAILCRITICALERRORS);
 }
 
-void _attribute((noreturn)) Sys_PlatformExit(int code)
+NORETURN_MSVC void _attribute((noreturn)) Sys_PlatformExit(int code)
 {
 #if defined(LEGACY_DUMP_MEMLEAKS)
 	_CrtDumpMemoryLeaks();

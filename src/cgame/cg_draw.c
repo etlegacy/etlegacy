@@ -3001,34 +3001,13 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 
 /**
  * @brief CG_CalculateReinfTime
- * @param[in] team_t team
+ * @param[in] team
  * @return
  */
 int CG_CalculateReinfTime(team_t team)
 {
 	int dwDeployTime = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
-
-	return CG_CalculateReinfTimeEx(dwDeployTime / 1000, -(cgs.aReinfOffset[team] - 1));
-}
-
-/**
- * @brief CG_CalculateReinfTimeEx
- * @param[in] period
- * @param[in] offset
- * @return
- */
-int CG_CalculateReinfTimeEx(int period, int offset)
-{
-	if (period > 0) // prevent modulo by 0 for weird cases like limbotime < 1000
-	{
-		int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
-
-		int seconds     = msec / 1000;
-		int secondsThen = ((cgs.timelimit * 60000.f) - offset) / 1000;
-		return (period + (seconds - secondsThen) % period);
-	}
-
-	return 0;
+	return (int)(1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) * 0.001f);
 }
 
 /**
@@ -4523,7 +4502,14 @@ void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int 
 	}
 }
 
-void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis)
+/**
+ * @brief CG_DrawMoveGizmo
+ * @param[in] origin
+ * @param[in] radius
+ * @param[in] activeAxis
+ * @param[in] withTip
+ */
+void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis, qboolean drawTip)
 {
 	int         j;
 	vec3_t      vec;
@@ -4554,17 +4540,20 @@ void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis)
 		VectorMA(origin, radius, vec, vec);
 		CG_AddLineToScene(origin, vec, colour);
 
-		Com_Memset(&re, 0, sizeof(re));
-		re.reType = RT_SPRITE;
-		VectorCopy(vec, re.origin);
-		VectorCopy(vec, re.oldorigin);
-		re.radius        = 3;
-		re.customShader  = cgs.media.waterBubbleShader;
-		re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
-		re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
-		re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
-		re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
-		trap_R_AddRefEntityToScene(&re);
+		if (drawTip)
+		{
+			Com_Memset(&re, 0, sizeof(re));
+			re.reType = RT_SPRITE;
+			VectorCopy(vec, re.origin);
+			VectorCopy(vec, re.oldorigin);
+			re.radius        = 3;
+			re.customShader  = cgs.media.waterBubbleShader;
+			re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
+			re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
+			re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
+			re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
+			trap_R_AddRefEntityToScene(&re);
+		}
 	}
 }
 

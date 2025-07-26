@@ -1775,6 +1775,11 @@ void SpectatorClientEndFrame(gentity_t *ent)
 	}
 #endif
 
+	if (ent->client->sess.shoutcaster)
+	{
+		trap_SnapshotSetClientMask(ent - g_entities, level.playingClientsMask);
+	}
+
 	// do this to keep current xp of spectators up to date especially on first connect to get xpsave state in limbo
 	if (ent->client->sess.spectatorState == SPECTATOR_FREE)
 	{

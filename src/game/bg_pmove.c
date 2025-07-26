@@ -3354,7 +3354,7 @@ static qboolean PM_CheckGrenade()
 	return qfalse;
 }
 
-#define FPS_RECOIL_FACTOR 71
+#define FPS_RECOIL_FACTOR 83
 
 /**
  * @brief PM_HandleRecoil

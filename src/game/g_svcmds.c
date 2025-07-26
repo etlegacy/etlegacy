@@ -557,7 +557,7 @@ const char *enttypenames[] =
 	"unused ent type",             // ET_LANDMINE_HINT
 	"unused ent type",             // ET_ATTRACTOR_HINT
 	"unused ent type",             // ET_SNIPER_HINT
-	"unused ent type",             // ET_LANDMINESPOT_HINT
+	"ET_EBS_SHOUTCAST",
 
 	"ET_COMMANDMAP_MARKER",
 
@@ -2622,6 +2622,16 @@ qboolean ConsoleCommand(void)
 	else if (!Q_stricmp(cmd, "lua_restart"))
 	{
 		G_LuaRestart();
+		return qtrue;
+	}
+	else if (!Q_stricmp(cmd, "lua_shutdown"))
+	{
+		G_LuaShutdown();
+		return qtrue;
+	}
+	else if (!Q_stricmp(cmd, "lua_init"))
+	{
+		G_LuaInit();
 		return qtrue;
 	}
 	else if (Q_stricmp(cmd, "lua_api") == 0)

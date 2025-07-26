@@ -35,106 +35,12 @@
 #include <limits.h>
 
 #include "g_local.h"
+#include "bg_ebs.h"
+#include "bg_b64.h"
 
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
-
-/**
- * @brief OtherTeam
- * @param[in] team
- * @return
- *
- * @note Unused
- */
-int OtherTeam(int team)
-{
-	if (team == TEAM_AXIS)
-	{
-		return TEAM_ALLIES;
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		return TEAM_AXIS;
-	}
-	return team;
-}
-
-/**
- * @brief TeamName
- * @param[in] team
- * @return
- */
-const char *TeamName(int team)
-{
-	if (team == TEAM_AXIS)
-	{
-		return "RED";
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		return "BLUE";
-	}
-	else if (team == TEAM_SPECTATOR)
-	{
-		return "SPECTATOR";
-	}
-	return "FREE";
-}
-
-/**
- * @brief TeamColorString
- * @param[in] team
- * @return
- *
- * @note Unused
- */
-const char *TeamColorString(int team)
-{
-	if (team == TEAM_AXIS)
-	{
-		return S_COLOR_RED;
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		return S_COLOR_BLUE;
-	}
-	else if (team == TEAM_SPECTATOR)
-	{
-		return S_COLOR_YELLOW;
-	}
-	return S_COLOR_WHITE;
-}
-
-/**
- * @brief PrintMsg
- * @param ent
- * @param fmt
- *
- * @note NULL for everyone
- */
-void QDECL PrintMsg(gentity_t *ent, const char *fmt, ...)
-{
-	char    msg[1024];
-	va_list argptr;
-	char    *p;
-
-	// NOTE: if buffer overflow, it's more likely to corrupt stack and crash than do a proper G_Error?
-	va_start(argptr, fmt);
-	if (Q_vsnprintf(msg, sizeof(msg), fmt, argptr) > sizeof(msg))
-	{
-		G_Error("PrintMsg overrun\n");
-	}
-	va_end(argptr);
-
-	// double quotes are bad
-	while ((p = strchr(msg, '"')) != NULL)
-	{
-		*p = '\'';
-	}
-
-	trap_SendServerCommand(((ent == NULL) ? -1 : ent - g_entities), va("print \"%s\"", msg));
-}
 
 /**
  * @brief OnSameTeam
@@ -221,25 +127,26 @@ void Team_ResetFlag(gentity_t *ent)
 }
 
 /**
- * @brief Team_ReturnFlagSound
+ * @brief Team_FlagSound
  * @param[in] ent
  * @param[in] team
+ * @param[in] state 0 = stolen, 1 = returned
  */
-void Team_ReturnFlagSound(gentity_t *ent, int team)
+static void Team_FlagSound(gentity_t *ent, int team, teamFlagState_t state)
 {
 	// play powerup spawn sound to all clients
 	gentity_t *pm;
 
 	if (ent == NULL)
 	{
-		G_Printf("Warning: NULL passed to Team_ReturnFlagSound\n");
+		G_Printf(S_COLOR_YELLOW "WARNING: NULL passed to %s\n", __FUNCTION__);
 		return;
 	}
 
 	pm                = G_PopupMessage(PM_OBJECTIVE);
 	pm->s.effect3Time = G_StringIndex(ent->message);
 	pm->s.effect2Time = team;
-	pm->s.density     = 1; // 1 = returned
+	pm->s.density     = state;
 }
 
 /**
@@ -248,11 +155,11 @@ void Team_ReturnFlagSound(gentity_t *ent, int team)
  */
 void Team_ReturnFlag(gentity_t *ent)
 {
-	int team = ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES;
+	int team = (ent->item->giPowerUp == PW_REDFLAG) ? TEAM_AXIS : TEAM_ALLIES;
 
-	Team_ReturnFlagSound(ent, team);
+	Team_FlagSound(ent, team, TEAM_FLAG_STATE_RETURNED);
 	Team_ResetFlag(ent);
-	PrintMsg(NULL, "The %s flag has returned!\n", TeamName(team)); // FIXME: returns RED/BLUE flag ... change to Axis/Allies?
+	trap_SendServerCommand(-1, va("cp \"The %s flag has returned!\"", BG_TeamnameForNumber(team)));
 }
 
 /**
@@ -268,7 +175,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
 	{
 		G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
 
-		Team_ReturnFlagSound(ent, TEAM_AXIS);
+		Team_FlagSound(ent, TEAM_AXIS, TEAM_FLAG_STATE_RETURNED);
 		Team_ResetFlag(ent);
 
 		if (level.gameManager)
@@ -280,7 +187,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
 	{
 		G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
 
-		Team_ReturnFlagSound(ent, TEAM_ALLIES);
+		Team_FlagSound(ent, TEAM_ALLIES, TEAM_FLAG_STATE_RETURNED);
 		Team_ResetFlag(ent);
 
 		if (level.gameManager)
@@ -288,7 +195,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
 			G_Script_ScriptEvent(level.gameManager, "trigger", "allied_object_returned");
 		}
 	}
-	// Reset Flag will delete this entity
+	// 'Team_ResetFlag' will delete this entity
 }
 
 /**
@@ -298,7 +205,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
  * @param[in] team
  * @return
  */
-int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
+static int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
 
@@ -349,14 +256,14 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 		// reward player for returning objective item
 		G_AddSkillPoints(other, SK_BATTLE_SENSE, 5.f, "objective returned");
 
-		//ResetFlag will remove this entity!  We must return zero
-		Team_ReturnFlagSound(ent, team);
+		// 'Team_ResetFlag' will remove this entity, we must return 0!
+		Team_FlagSound(ent, team, TEAM_FLAG_STATE_RETURNED);
 		Team_ResetFlag(ent);
-		return 0;
+		return PICKUP_ACTIVATE;
 	}
 
 	// GT_WOLF doesn't support capturing the flag
-	return 0;
+	return PICKUP_INVALID;
 }
 
 /**
@@ -366,7 +273,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
  * @param[in] team
  * @return
  */
-int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
+static int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
 	gentity_t *tmp;
@@ -379,11 +286,7 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 
 	if (cl->sess.sessionTeam == TEAM_AXIS)
 	{
-		gentity_t *pm = G_PopupMessage(PM_OBJECTIVE);
-
-		pm->s.effect3Time = G_StringIndex(ent->message);
-		pm->s.effect2Time = TEAM_AXIS;
-		pm->s.density     = 0; // 0 = stolen
+		Team_FlagSound(ent, TEAM_AXIS, TEAM_FLAG_STATE_STOLEN);
 
 		if (level.gameManager)
 		{
@@ -396,11 +299,7 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 	}
 	else
 	{
-		gentity_t *pm = G_PopupMessage(PM_OBJECTIVE);
-
-		pm->s.effect3Time = G_StringIndex(ent->message);
-		pm->s.effect2Time = TEAM_ALLIES;
-		pm->s.density     = 0; // 0 = stolen
+		Team_FlagSound(ent, TEAM_ALLIES, TEAM_FLAG_STATE_STOLEN);
 
 		if (level.gameManager)
 		{
@@ -457,11 +356,11 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 
 	if (ent->s.density > 0)
 	{
-		return 1; // We have more flags to give out, spawn back quickly
+		return PICKUP_RESPAWN_TIME; // We have more flags to give out, spawn back quickly
 	}
 	else
 	{
-		return -1; // Do not respawn this automatically, but do delete it if it was FL_DROPPED
+		return PICKUP_RESPAWN_NEVER; // Do not respawn this automatically, but do delete it if it was FL_DROPPED
 	}
 }
 
@@ -479,7 +378,7 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	// Don't let them pickup winning stuff in warmup
 	if (g_gamestate.integer != GS_PLAYING)
 	{
-		return 0;
+		return PICKUP_INVALID;
 	}
 
 	// figure out what team this flag is
@@ -493,14 +392,8 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	}
 	else
 	{
-		PrintMsg(other, "Don't know what team the flag is on.\n");
-		return 0;
-	}
-
-	// ensure we don't pick a dropped obj up right away
-	if (level.time - cl->dropObjectiveTime < 2000)
-	{
-		return 0;
+		trap_SendServerCommand(other - g_entities, "cp \"Don't know what team the flag is on.\"");
+		return PICKUP_INVALID;
 	}
 
 	trap_SendServerCommand(other - g_entities, "cp \"You picked up the objective!\"");
@@ -829,6 +722,11 @@ void TeamplayInfoMessage(team_t team)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		player = g_entities + level.sortedClients[i];
+
+		if (player->client->sess.shoutcaster && G_EBS_ShoutcastEnabled())
+		{
+			continue;
+		}
 
 		if (player->inuse && (player->client->sess.sessionTeam == team || player->client->sess.shoutcaster) && !(player->r.svFlags & SVF_BOT) && player->client->pers.connected == CON_CONNECTED)
 		{
@@ -1583,38 +1481,6 @@ void SP_team_WOLF_checkpoint(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 }
-
-/*
- * @brief Team_ClassForString
- * @param[in] string
- * @return
- *
- * @note Unused
-int Team_ClassForString(const char *string)
-{
-    if (!Q_stricmp(string, "soldier"))
-    {
-        return PC_SOLDIER;
-    }
-    else if (!Q_stricmp(string, "medic"))
-    {
-        return PC_MEDIC;
-    }
-    else if (!Q_stricmp(string, "engineer"))
-    {
-        return PC_ENGINEER;
-    }
-    else if (!Q_stricmp(string, "fieldops"))
-    {
-        return PC_FIELDOPS;
-    }
-    else if (!Q_stricmp(string, "covertops"))
-    {
-        return PC_COVERTOPS;
-    }
-    return -1;
-}
-*/
 
 const char *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^$Allies^7", "^2Spectators^7" };
 team_info  teamInfo[TEAM_NUM_TEAMS];
@@ -2403,4 +2269,196 @@ void G_UpdateSpawnPointState(gentity_t *ent)
 	Info_SetValueForKey(cs, "t", va("%i", ent->count2));
 	trap_SetConfigstring(ent->count, cs);
 	G_UpdateSpawnPointStatePlayerCounts();
+}
+
+/**
+ * @brief G_EBS_ShoutcastCallback
+ * @param[in] clientNumReal
+ * @return
+ */
+qboolean G_EBS_ShoutcastCallback(int clientNumReal)
+{
+	gentity_t *ent = &g_entities[clientNumReal];
+
+	if (ent->client->sess.shoutcaster && ent->client->pers.connected == CON_CONNECTED)
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief G_EBS_ShoutcastWritePlayer
+ * @param[in] ent
+ * @param[in] ebs
+ */
+static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
+{
+	int health;
+
+	// if in LIMBO, don't show followee's health
+	if (ent->client->ps.pm_flags & PMF_LIMBO)
+	{
+		health = -1;
+	}
+	else
+	{
+		health = MAX(0, ent->client->ps.stats[STAT_HEALTH]);
+	}
+
+	EBS_WriteBits(ebs, ent->s.number, EBS_SHOUTCAST_CLIENTNUM_SIZE);
+	EBS_WriteBitsWithSign(ebs, health, EBS_SHOUTCAST_HEALTH_SIZE);
+
+	if (!(ent->client->ps.pm_flags & PMF_FOLLOW))
+	{
+		EBS_WriteBits(ebs, ent->client->ps.ammoclip[ent->client->ps.weapon], EBS_SHOUTCAST_AMMOCLIP_SIZE);
+		EBS_WriteBits(ebs, ent->client->ps.ammo[ent->client->ps.weapon], EBS_SHOUTCAST_AMMO_SIZE);
+	}
+	else
+	{
+		EBS_Skip(ebs, EBS_SHOUTCAST_AMMOCLIP_SIZE + EBS_SHOUTCAST_AMMO_SIZE);
+	}
+}
+
+#define EBS_SHOUTCAST_NEXT_THINK_TIME (level.time + level.frameTime)
+
+/**
+ * @brief G_EBS_ShoutcastThink write player(s) into the same entityBitStream fields
+ * @param[in] ent
+ */
+/*
+=============================
+<Header>
+4 version
+6 slotMask
+<6 player slots>
+6 clientNum
+9 health
+10 ammoClip
+10 ammo
+=============================
+*/
+void G_EBS_ShoutcastThink(gentity_t *ent)
+{
+	entityBitStream_t ebs;
+	gentity_t *playerEnt;
+	int i, j = 0, slotMask = 0, team = ent->key - 1;
+	static int playerSlots[2][6] = { { -1, -1, -1, -1, -1, -1 }, { -1, -1, -1, -1, -1, -1 } };
+	static uint64_t playerSlotsMask[2];
+	qboolean skipSlot;
+
+	ent->nextthink = EBS_SHOUTCAST_NEXT_THINK_TIME;
+
+	if (g_gametype.integer != GT_WOLF_STOPWATCH || !level.shoutcasters)
+	{
+		return;
+	}
+
+	EBS_InitWrite(&ebs, &ent->s, qfalse);
+	EBS_WriteBits(&ebs, 0, EBS_SHOUTCAST_VERSION_SIZE); // Version
+
+	// reserved for slotMask
+	EBS_Skip(&ebs, EBS_SHOUTCAST_SLOTMASK_SIZE);
+
+	for (i = 0; i < 6; i++)
+	{
+		skipSlot = qtrue;
+
+		// if there is a player in this slot
+		if (playerSlots[team][i] != -1)
+		{
+			playerEnt = &g_entities[playerSlots[team][i]];
+
+			if (playerEnt->client->sess.sessionTeam == ent->key)
+			{
+				G_EBS_ShoutcastWritePlayer(playerEnt, &ebs);
+
+				slotMask |= BIT(i);
+				continue;
+			}
+			else
+			{
+				// player left free the slot
+				playerSlotsMask[team] &= ~(1ULL << playerSlots[team][i]);
+				playerSlots[team][i]   = -1;
+			}
+		}
+
+		// if slot wasn't taken or was freed try to add another player
+		for (; j < level.numTeamClients[team]; j++)
+		{
+			// if player already exists
+			if (playerSlotsMask[team] & (1ULL << level.teamClients[team][j]))
+			{
+				continue;
+			}
+
+			playerEnt = &g_entities[level.teamClients[team][j]];
+
+			// take the slot
+			playerSlotsMask[team] |= (1ULL << level.teamClients[team][j]);
+			playerSlots[team][i]   = level.teamClients[team][j];
+
+			G_EBS_ShoutcastWritePlayer(playerEnt, &ebs);
+
+			skipSlot  = qfalse;
+			slotMask |= BIT(i);
+			j++;
+			break;
+		}
+
+		if (skipSlot)
+		{
+			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE);
+		}
+	}
+
+	// write slotMask indicating which slot is valid for read
+	EBS_InitWrite(&ebs, &ent->s, qfalse);
+	EBS_Skip(&ebs, EBS_SHOUTCAST_VERSION_SIZE);
+	EBS_WriteBits(&ebs, slotMask, EBS_SHOUTCAST_SLOTMASK_SIZE);
+}
+
+/**
+ * @brief G_EBS_ShoutcastEnabled
+ */
+ID_INLINE qboolean G_EBS_ShoutcastEnabled(void)
+{
+	return dll_trap_SnapshotCallbackExt && dll_trap_SnapshotSetClientMask;
+}
+
+/**
+ * @brief G_EBS_InitShoutcast
+ */
+void G_EBS_InitShoutcast(void)
+{
+	gentity_t *ent;
+	entityBitStream_t s;
+	int i;
+
+	if (!G_EBS_ShoutcastEnabled())
+	{
+		return;
+	}
+
+#ifdef EBS_TESTS
+	EBS_RunTests();
+#endif
+
+	for (i = 0; i < 2; i++)
+	{
+		ent                     = G_Spawn();
+		ent->classname          = "EBS_Shoutcast";
+		ent->neverFree          = qtrue;
+		ent->s.eType            = ET_EBS_SHOUTCAST;
+		ent->key                = i + 1; // teamNum
+		ent->think              = G_EBS_ShoutcastThink;
+		ent->nextthink          = level.time + 1000;
+		ent->r.svFlags          = SVF_BROADCAST;
+		ent->r.linked           = qtrue;
+		ent->r.snapshotCallback = qtrue;
+
+		EBS_InitWrite(&s, &ent->s, qtrue);
+	}
 }

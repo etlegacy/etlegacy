@@ -10,6 +10,7 @@
 CMakeLists.txt.user
 etmain/ui/git_version.h
 /.cache
+.upstream-remote-branch
 
 #
 # OS specific
@@ -72,6 +73,7 @@ win_resource.aps
 !/easybuild.bat
 !/gradlew
 !/gradlew.bat
+!/misc/docker/entrypoint.sh
 
 node_modules/
 package.json

@@ -169,10 +169,11 @@ int time_game;
 int time_frontend;          // renderer frontend time
 int time_backend;           // renderer backend time
 
-int com_frameTime;
-int com_frameNumber;
-int com_expectedhunkusage;
-int com_hunkusedvalue;
+int     com_frameTime;
+int64_t com_frameTimeUS;
+int     com_frameNumber;
+int     com_expectedhunkusage;
+int     com_hunkusedvalue;
 
 qboolean com_errorEntered;
 qboolean com_fullyInitialized;
@@ -2285,7 +2286,7 @@ static int eventTail = 0;
  * @param[in] ptrLength
  * @param[in] ptr
  */
-void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr)
+void Com_QueueEvent(int64_t time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr)
 {
 	sysEvent_t *ev = &eventQueue[eventHead & MASK_QUEUED_EVENTS];
 
@@ -2359,7 +2360,7 @@ sysEvent_t Com_GetSystemEvent(void)
 
 	// create an empty event to return
 	Com_Memset(&ev, 0, sizeof(ev));
-	ev.evTime = Sys_Milliseconds();
+	ev.evTime = Sys_Microseconds();
 
 	return ev;
 }
@@ -2514,7 +2515,7 @@ extern qboolean consoleButtonWasPressed;
  * @brief Com_EventLoop
  * @return Last event time
  */
-int Com_EventLoop(void)
+int64_t Com_EventLoop(void)
 {
 	sysEvent_t ev;
 	netadr_t   evFrom;
@@ -2599,6 +2600,15 @@ int Com_EventLoop(void)
  */
 int Com_Milliseconds(void)
 {
+	return Com_Microseconds() / 1000;
+}
+
+/**
+ * @brief Com_Microseconds
+ * @return Sys_Microseconds
+ */
+int64_t Com_Microseconds(void)
+{
 	sysEvent_t ev;
 
 	// get events and push them until we get a null event with the current time
@@ -2620,7 +2630,7 @@ int Com_Milliseconds(void)
 /**
  * @brief Just throw a fatal error to test error shutdown procedures
  */
-static void _attribute((noreturn)) Com_Error_f(void)
+NORETURN_MSVC static void _attribute((noreturn)) Com_Error_f(void)
 {
 	if (Cmd_Argc() > 1)
 	{
@@ -3075,7 +3085,8 @@ void Com_Init(char *commandLine)
 	// set com_frameTime so that if a map is started on the
 	// command line it will still be able to count on com_frameTime
 	// being random enough for a serverid
-	com_frameTime = Com_Milliseconds();
+	com_frameTimeUS = Com_Microseconds();
+	com_frameTime   = com_frameTimeUS / 1000;
 
 	// add + commands from command line
 	if (!Com_AddStartupCommands())
@@ -3340,22 +3351,22 @@ static void Com_WatchDog(void)
 
 /**
  * @brief Com_TimeVal
- * @param[in] minMsec
+ * @param[in] minUsec
  * @return
  */
-int Com_TimeVal(int minMsec)
+int64_t Com_TimeVal(int64_t minUsec)
 {
-	int timeVal;
+	int64_t timeVal;
 
-	timeVal = Sys_Milliseconds() - com_frameTime;
+	timeVal = Sys_Microseconds() - com_frameTimeUS;
 
-	if (timeVal >= minMsec)
+	if (timeVal >= minUsec)
 	{
 		timeVal = 0;
 	}
 	else
 	{
-		timeVal = minMsec - timeVal;
+		timeVal = minUsec - timeVal;
 	}
 
 	return timeVal;
@@ -3366,14 +3377,14 @@ int Com_TimeVal(int minMsec)
  */
 void Com_Frame(void)
 {
-	int        msec, minMsec = 0;
-	int        timeVal, timeValSV;
-	static int lastTime = 0, bias = 0;
-	int        timeBeforeFirstEvents;
-	int        timeBeforeServer;
-	int        timeBeforeEvents;
-	int        timeBeforeClient;
-	int        timeAfter;
+	int            msec;
+	int64_t        timeVal, timeValSV, minUsec = 0;
+	static int64_t lastTime = 0, lastTimeUS = 0, bias = 0;
+	int            timeBeforeFirstEvents;
+	int            timeBeforeServer;
+	int            timeBeforeEvents;
+	int            timeBeforeClient;
+	int            timeAfter;
 
 	if (setjmp(abortframe))
 	{
@@ -3414,7 +3425,7 @@ void Com_Frame(void)
 	{
 		if (com_dedicated->integer)
 		{
-			minMsec = SV_FrameMsec();
+			minUsec = SV_FrameMsec() * 1000;
 		}
 		else
 		{
@@ -3426,11 +3437,11 @@ void Com_Frame(void)
 			{
 				if (com_maxfpsMinimized->integer < 0)  // default
 				{
-					minMsec = 100; // = 1000/10;
+					minUsec = 100000; // = 1000/10;
 				}
 				else if (com_maxfpsMinimized->integer > 0)
 				{
-					minMsec = 1000 / com_maxfpsMinimized->integer;
+					minUsec = 1000000 / com_maxfpsMinimized->integer;
 				}
 			}
 			else if (
@@ -3441,48 +3452,48 @@ void Com_Frame(void)
 			{
 				if (com_maxfpsUnfocused->integer < 0)  // default
 				{
-					minMsec = 1000 / (com_maxfps->integer / 2);
+					minUsec = 1000000 / (com_maxfps->integer / 2);
 				}
 				else if (com_maxfpsUnfocused->integer > 0)
 				{
-					minMsec = 1000 / com_maxfpsUnfocused->integer;
+					minUsec = 1000000 / com_maxfpsUnfocused->integer;
 				}
 			}
 			else if (com_maxfps->integer < 0)
 			{
-				minMsec = 1;
+				minUsec = 1000;
 			}
 
 			// fallback to com_maxfps
-			if (minMsec == 0)
+			if (minUsec == 0)
 			{
-				minMsec = 1000 / com_maxfps->integer;
+				minUsec = 1000000 / com_maxfps->integer;
 			}
 
-			timeVal = com_frameTime - lastTime;
-			bias   += timeVal - minMsec;
+			timeVal = com_frameTimeUS - lastTimeUS;
+			bias   += timeVal - minUsec;
 
-			if (bias > minMsec)
+			if (bias > minUsec)
 			{
-				bias = minMsec;
+				bias = minUsec;
 			}
 
-			// Adjust minMsec if previous frame took too long to render so
+			// Adjust minUsec if previous frame took too long to render so
 			// that framerate is stable at the requested value.
-			minMsec -= bias;
+			minUsec -= bias;
 		}
 	}
 	else
 	{
-		minMsec = 1;
+		minUsec = 1000;
 	}
 
 	do
 	{
 		if (com_sv_running->integer)
 		{
-			timeValSV = SV_SendQueuedPackets();
-			timeVal   = Com_TimeVal(minMsec);
+			timeValSV = SV_SendQueuedPackets() * 1000;
+			timeVal   = Com_TimeVal(minUsec);
 
 			if (timeValSV < timeVal)
 			{
@@ -3491,26 +3502,28 @@ void Com_Frame(void)
 		}
 		else
 		{
-			timeVal = Com_TimeVal(minMsec);
+			timeVal = Com_TimeVal(minUsec);
 		}
 
-		if (timeVal < 1)
+		if (timeVal < 1000)
 		{
 			NET_Sleep(0);
 		}
 		else
 		{
-			NET_Sleep(timeVal - 1);
+			NET_Sleep(timeVal - 1000);
 		}
 	}
-	while (Com_TimeVal(minMsec));
+	while (Com_TimeVal(minUsec));
 
 #ifndef DEDICATED
 	IN_Frame();
 #endif
 
-	lastTime      = com_frameTime;
-	com_frameTime = Com_EventLoop();
+	lastTimeUS      = com_frameTimeUS;
+	lastTime        = com_frameTime;
+	com_frameTimeUS = Com_EventLoop();
+	com_frameTime   = com_frameTimeUS / 1000;
 
 	msec = com_frameTime - lastTime;
 

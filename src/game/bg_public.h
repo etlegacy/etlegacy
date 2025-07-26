@@ -178,9 +178,6 @@ extern vec3_t playerHeadProneMaxs;
 #define SVF_SELF_PORTAL             0x00008000  ///< use self->origin2 as portal
 #define SVF_SELF_PORTAL_EXCLUSIVE   0x00010000  ///< use self->origin2 as portal and DONT add self->origin PVS ents
 
-// default server frametime at sv_fps 20, for framerate independent timings
-#define DEFAULT_SV_FRAMETIME 50
-
 /**
  * @struct svCvar_s
  * @typedef svCvar_t
@@ -2050,6 +2047,12 @@ qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
 
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, team_t teamNum);
 
+typedef enum teamFlagState_e
+{
+	TEAM_FLAG_STATE_STOLEN,
+	TEAM_FLAG_STATE_RETURNED
+} teamFlagState_t;
+
 // content masks
 #define MASK_ALL                (-1)
 #define MASK_SOLID              (CONTENTS_SOLID)
@@ -3040,6 +3043,7 @@ typedef enum popupMessageType_e
 	PM_HEALTHPICKUP,
 	PM_WEAPONPICKUP,
 	PM_CONNECT,
+	PM_DEATH_HEADSHOT,
 	PM_NUM_TYPES
 } popupMessageType_t;
 

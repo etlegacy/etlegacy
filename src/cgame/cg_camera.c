@@ -607,14 +607,14 @@ void CG_RenderCameraPoints(void)
 				if (!vec3_isClear(point->ctIn))
 				{
 					vec3_add(point->origin, point->ctIn, vec);
-					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1);
+					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1, qtrue);
 				}
 				else
 				{
 					vec3_sub(point->prev->origin, point->origin, vec);
 					vec3_norm(vec);
 					vec3_ma(point->origin, GIZMO_DEFAULT_RADIUS * 2, vec, vec);
-					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1);
+					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1, qtrue);
 				}
 			}
 
@@ -623,14 +623,14 @@ void CG_RenderCameraPoints(void)
 				if (!vec3_isClear(point->ctOut))
 				{
 					vec3_add(point->origin, point->ctOut, vec);
-					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1);
+					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1, qtrue);
 				}
 				else
 				{
 					vec3_sub(point->next->origin, point->origin, vec);
 					vec3_norm(vec);
 					vec3_ma(point->origin, GIZMO_DEFAULT_RADIUS * 2, vec, vec);
-					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1);
+					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1, qtrue);
 				}
 			}
 		}

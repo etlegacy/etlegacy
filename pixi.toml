@@ -6,11 +6,32 @@ channels = [
     "conda-forge",
 ]
 
-platforms = ["linux-64", "osx-64"]  # TODO - support "win-64"
+platforms = ["linux-64", "osx-64", "win-64"]
 
 [tasks]
-check-changes = { cmd = ["python", "./misc/check-changes.py"] }
+"collect-and-check-gh-build-logs" = { cmd = ["python", "./misc/collect-and-check-gh-build-logs.py"] }
 
 [dependencies]
-# check-changes
-"uncrustify"   = "0.78.1.*"
+"python" = "3.13.3.*"
+"git" = "2.49.0.*"
+"requests" = "2.32.4.*"
+
+
+[feature.validation.tasks]
+check-changes = { cmd = ["python", "./misc/check-changes.py"] }
+autoformat = { cmd = ["python", "./misc/autoformat.py"] }
+[feature.validation.dependencies]
+"uncrustify" = "0.78.1.*"
+"black"      = "25.1.0.*"
+"shellcheck" = "0.10.0.*"
+"prettier"   = "3.5.3.*"
+"actionlint"   = "1.7.7.*"
+
+[feature.libclang.tasks]
+regenerate-luals-definitions = { cmd = ["python", "./misc/regenerate-luals-definitions.py", "./src/game/g_lua.c"]}
+[feature.libclang.dependencies]
+"python-clang" = "20.1.5.*"
+
+[environments]
+validation = ["validation"]
+libclang = ["libclang"]

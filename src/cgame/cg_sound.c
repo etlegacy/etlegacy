@@ -749,7 +749,7 @@ static void CG_RenderScriptSpeakers(void)
 
 		if (editSpeakerActive && editSpeaker == speaker)
 		{
-			CG_DrawMoveGizmo(editSpeakerHandle.origin, GIZMO_DEFAULT_RADIUS, editSpeakerHandle.activeAxis);
+			CG_DrawMoveGizmo(editSpeakerHandle.origin, GIZMO_DEFAULT_RADIUS, editSpeakerHandle.activeAxis, qtrue);
 
 			if (trap_R_inPVS(cg.refdef_current->vieworg, speaker->origin))
 			{

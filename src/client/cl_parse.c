@@ -629,6 +629,13 @@ void CL_SystemInfoChanged(void)
 	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
 	// in some cases, outdated cp commands might get sent with this news serverId
 	cl.serverId = Q_atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
+	cl.sv_fps   = Q_atoi(Info_ValueForKey(systemInfo, "sv_fps"));
+
+	// fallback to default engine sv_fps
+	if (!cl.sv_fps)
+	{
+		cl.sv_fps = DEFAULT_SV_FPS;
+	}
 
 	Com_Memset(&entLastVisible, 0, sizeof(entLastVisible));
 

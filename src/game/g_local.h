@@ -716,6 +716,11 @@ typedef struct
 #define PICKUP_TOUCH    1   ///< pickup items when touched
 #define PICKUP_FORCE    2   ///< pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
 
+#define PICKUP_RESPAWN_NEVER (-1)      ///< picked up items will not trigger respawn item
+#define PICKUP_INVALID 0               ///< cannot pickup items
+#define PICKUP_RESPAWN_TIME  1000      ///< picked up items will trigger respawn item
+#define PICKUP_DROPPED_COOLDOWN 2000   ///< delay until objective can be picked up again after dropping
+
 // zinx etpro antiwarp
 #define LAG_MAX_COMMANDS 512
 #define LAG_MAX_DELTA 25
@@ -1222,6 +1227,7 @@ typedef struct level_locals_s
 	int numHumanConnectedClients;
 	int numNonSpectatorClients;                 ///< includes connecting clients
 	int numPlayingClients;                      ///< connected, non-spectators
+	uint64_t playingClientsMask;                ///< connected, non-spectators, bitmask
 	int sortedClients[MAX_CLIENTS];             ///< sorted by score
 
 	int warmupModificationCount;                ///< for detecting if g_warmup is changed
@@ -1230,6 +1236,8 @@ typedef struct level_locals_s
 	voteInfo_t voteInfo;
 	int numTeamClients[2];
 	int numVotingTeamClients[2];
+
+	int teamClients[2][MAX_CLIENTS];
 
 	// spawn variables
 	qboolean spawning;                          ///< the G_Spawn*() functions are valid
@@ -1391,6 +1399,8 @@ typedef struct level_locals_s
 	demoState_t demoState;     ///< server demo state
 	int demoClientsNum;        ///< number of reserved slots for demo clients
 	int demoClientBotNum;      ///< clientNum of bot that collects stats during recording, optional
+
+	uint64_t shoutcasters;     ///< clients bits of shoutcasters
 } level_locals_t;
 
 /**
@@ -1558,8 +1568,6 @@ int G_EntitiesFree(void);
 void G_ClientSound(gentity_t *ent, int soundIndex);
 
 void G_TouchTriggers(gentity_t *ent);
-
-char *vtos(const vec3_t v);
 
 void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm);
 void G_AddEvent(gentity_t *ent, int event, int eventParm);
@@ -1795,13 +1803,17 @@ void G_LogExit(const char *string);
 void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1, 2)));
+NORETURN_MSVC void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1, 2)));
 
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_DemoSupport(const char *commands);
+void trap_SnapshotCallbackExt(void);
+void trap_SnapshotSetClientMask(int clientNum, uint64_t mask);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
+extern int dll_trap_SnapshotCallbackExt;
+extern int dll_trap_SnapshotSetClientMask;
 
 // g_demo_legacy.c
 void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);
@@ -2279,7 +2291,7 @@ void GeoIP_close(void);
 extern GeoIP *gidb;
 
 void trap_Printf(const char *fmt);
-void trap_Error(const char *fmt) _attribute((noreturn));
+NORETURN_MSVC void trap_Error(const char *fmt) _attribute((noreturn));
 int trap_Milliseconds(void);
 int trap_Argc(void);
 void trap_Argv(int n, char *buffer, int bufferLength);
@@ -2709,6 +2721,11 @@ void CheckTeamStatus(void);
 int Pickup_Team(gentity_t *ent, gentity_t *other);
 void G_globalFlagIndicator(void);
 void G_clientFlagIndicator(gentity_t *ent);
+
+qboolean G_EBS_ShoutcastCallback(int clientNumReal);
+void G_EBS_ShoutcastThink(gentity_t *ent);
+void G_EBS_InitShoutcast(void);
+ID_INLINE qboolean G_EBS_ShoutcastEnabled(void);
 
 // g_vote.c
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);

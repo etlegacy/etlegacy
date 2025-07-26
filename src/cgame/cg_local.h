@@ -708,11 +708,10 @@ typedef struct clientInfo_s
 #ifdef FEATURE_PRESTIGE
 	int prestige;
 #endif
-
-#ifdef FEATURE_MULTIVIEW
-	// per client MV ps info
 	int ammo;
 	int ammoclip;
+#ifdef FEATURE_MULTIVIEW
+	// per client MV ps info
 	int chargeTime;
 	qboolean fCrewgun;
 	int cursorHint;
@@ -2217,6 +2216,7 @@ enum
 	COMPASS_DIRECTION            = BIT(5),
 	COMPASS_CARDINAL_POINTS      = BIT(6),
 	COMPASS_ALWAYS_DRAW          = BIT(7),
+	COMPASS_POINT_TOWARD_NORTH   = BIT(8),
 };
 
 // Follow filters
@@ -3097,7 +3097,7 @@ void CG_LoadObjectiveData(void);
 
 void QDECL CG_Printf(const char *msg, ...) _attribute((format(printf, 1, 2)));
 void QDECL CG_DPrintf(const char *msg, ...) _attribute((format(printf, 1, 2)));
-void QDECL CG_Error(const char *msg, ...) _attribute((noreturn, format(printf, 1, 2)));
+NORETURN_MSVC void QDECL CG_Error(const char *msg, ...) _attribute((noreturn, format(printf, 1, 2)));
 
 void CG_StartMusic(void);
 void CG_QueueMusic(void);
@@ -3238,7 +3238,7 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 #define GIZMO_DEFAULT_RADIUS 32.f
 
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
-void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
+void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis, qboolean drawTip);
 void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte color[4]);
 
 /**
@@ -3275,7 +3275,6 @@ void CG_Text_PaintChar(float x, float y, float width, float height, float scale,
 void CG_DrawWeapHeat(rectDef_t *rect, int align, qboolean dynamicColor);
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, int align, vec4_t *refcolor);
 int CG_CalculateReinfTime(team_t team);
-int CG_CalculateReinfTimeEx(int period, int offset);
 int CG_GetReinfTime(qboolean menu);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
@@ -3327,6 +3326,7 @@ qboolean CG_AddCEntity_Filter(centity_t *cent);
 qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime);
 void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName, int startIndex, vec3_t *offset);
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName);
+void CG_EBS_Shoutcast(centity_t *cent);
 
 // cg_weapons_io.c
 void CG_RegisterWeapon(int weaponNum, qboolean force);
@@ -3600,6 +3600,8 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 void CG_UpdateSvCvars(void);
 void CG_ResetVoiceSprites(qboolean revived);
 
+void CG_ParseDemoVersion(void);
+
 /**
  * @struct consoleCommand_t
  * @brief
@@ -3630,7 +3632,7 @@ void CG_ResetTimers(void);
 void trap_Print(const char *fmt);
 
 // abort the game
-void trap_Error(const char *fmt) _attribute((noreturn));
+NORETURN_MSVC void trap_Error(const char *fmt) _attribute((noreturn));
 
 // milliseconds should only be used for performance tuning, never
 // for anything game related.  Get time from the CG_DrawActiveFrame parameter
@@ -4106,9 +4108,9 @@ typedef struct mapScissor_s
 } mapScissor_t;
 
 int CG_CurLayerForZ(int z);
-void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend);
-int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
-void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
+void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend, qboolean pointTowardNorth);
+int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand, qboolean pointTowardNorth);
+void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand, qboolean pointTowardNorth);
 void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
@@ -4337,7 +4339,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 59
+#define HUD_COMPONENTS_NUM 60
 
 typedef struct hudComponent_s
 {
@@ -4383,7 +4385,8 @@ typedef struct hudStructure_s
 	hudComponent_t xptext;
 	hudComponent_t ranktext;
 	hudComponent_t statsdisplay;
-	hudComponent_t weaponicon;      // 10
+    hudComponent_t weaponheatbar;   // 10
+	hudComponent_t weaponicon;      
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
@@ -4393,8 +4396,8 @@ typedef struct hudStructure_s
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
 
-	hudComponent_t cursorhints;
-	hudComponent_t cursorhintsbar; // 20
+	hudComponent_t cursorhints; // 20
+	hudComponent_t cursorhintsbar; 
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
@@ -4405,8 +4408,8 @@ typedef struct hudStructure_s
 	hudComponent_t localtime;
 
 	hudComponent_t votetext;
-	hudComponent_t spectatortext;
-	hudComponent_t limbotext;   // 30
+	hudComponent_t spectatortext;   // 30
+	hudComponent_t limbotext;   
 	hudComponent_t followtext;
 	hudComponent_t demotext;
 
@@ -4417,8 +4420,8 @@ typedef struct hudStructure_s
 	hudComponent_t weaponchargetext;
 	hudComponent_t fps;
 	hudComponent_t snapshot;
-	hudComponent_t ping;
-	hudComponent_t speed;   // 40
+	hudComponent_t ping;    // 40
+	hudComponent_t speed;   
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
 	hudComponent_t chat;
@@ -4427,8 +4430,8 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptitle;
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
-	hudComponent_t centerprint;
-	hudComponent_t banner;  // 50
+	hudComponent_t centerprint; // 50
+	hudComponent_t banner;  
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
@@ -4437,7 +4440,7 @@ typedef struct hudStructure_s
 	hudComponent_t scPlayerListAxis;
 	hudComponent_t scPlayerListAllies;
 	hudComponent_t scTeamNamesAxis;
-	hudComponent_t scTeamNamesAllies;
+	hudComponent_t scTeamNamesAllies; // 60
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4542,6 +4545,7 @@ void CG_DrawCrosshair(hudComponent_t *comp);
 
 void CG_DrawPlayerStatusHead(hudComponent_t *comp);
 void CG_DrawGunIcon(hudComponent_t *comp);
+void CG_DrawGunHeatBar(hudComponent_t *comp);
 void CG_DrawAmmoCount(hudComponent_t *comp);
 void CG_DrawPowerUps(hudComponent_t *comp);
 void CG_DrawObjectiveStatus(hudComponent_t *comp);

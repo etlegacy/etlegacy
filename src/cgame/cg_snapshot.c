@@ -88,6 +88,19 @@ static void CG_ResetEntity(centity_t *cent)
  */
 static void CG_TransitionEntity(centity_t *cent)
 {
+	if (cent->nextState.eType == ET_EBS_SHOUTCAST)
+	{
+		if (!memcmp(&cent->currentState, &cent->nextState, sizeof(entityState_t)))
+		{
+			return;
+		}
+
+		cent->currentState = cent->nextState;
+
+		CG_EBS_Shoutcast(cent);
+		return;
+	}
+
 	// update the fireDir if it's on fire
 	if (CG_EntOnFire(cent))
 	{

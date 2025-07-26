@@ -392,6 +392,7 @@ cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
 	{ &g_cheats,                          "sv_cheats",                         "",                           0,                                               0, qfalse, qfalse },
+	{ &sv_fps,                            "sv_fps",                            DEFAULT_SV_FPS_STR,           CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
 
 	// noset vars
 	{ NULL,                               "gamename",                          MODNAME,                      CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
@@ -474,7 +475,7 @@ cvarTable_t gameCvarTable[] =
 	{ &voteFlags,                         "voteFlags",                         "0",                          CVAR_TEMP | CVAR_ROM | CVAR_SERVERINFO,          0, qfalse, qfalse },
 
 	{ &g_complaintlimit,                  "g_complaintlimit",                  "6",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-    { &g_teambleedComplaint,              "g_teambleedComplaint",              "50",                         CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_teambleedComplaint,              "g_teambleedComplaint",              "50",                         CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_ipcomplaintlimit,                "g_ipcomplaintlimit",                "3",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_filtercams,                      "g_filtercams",                      "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_maxlives,                        "g_maxlives",                        "0",                          CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO,     0, qtrue,  qfalse },
@@ -665,11 +666,10 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugPlayerHitboxes,             "g_debugPlayerHitboxes",             "0",                          0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
 	{ &g_debugForSingleClient,            "g_debugForSingleClient",            "-1",                         0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
 	{ &g_debugEvents,                     "g_debugevents",                     "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_debugAnim,                       "g_debuganim",                       "0",                          CVAR_CHEAT,                                               0, qfalse, qfalse },
+	{ &g_debugAnim,                       "g_debuganim",                       "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 
 	{ &g_corpses,                         "g_corpses",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 	{ &g_realHead,                        "g_realHead",                        "1",                          0,                                               0, qfalse, qfalse },
-	{ &sv_fps,                            "sv_fps",                            "20",                         CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
 	{ &g_skipCorrection,                  "g_skipCorrection",                  "1",                          0,                                               0, qfalse, qfalse },
 	{ &g_extendedNames,                   "g_extendedNames",                   "1",                          0,                                               0, qfalse, qfalse },
 #ifdef FEATURE_RATING
@@ -711,13 +711,19 @@ void G_ShutdownGame(int restart);
 void CheckExitRules(void);
 void G_ParsePlatformManifest(void);
 
+int dll_com_trapGetValue;
+int dll_trap_DemoSupport;
+int dll_trap_SnapshotCallbackExt;
+int dll_trap_SnapshotSetClientMask;
+
 /**
- * @brief G_SnapshotCallback
+ * @brief G_SnapshotCallbackExt
  * @param[in] entityNum
  * @param[in] clientNum
+ * @param[in] clientNumReal
  * @return
  */
-qboolean G_SnapshotCallback(int entityNum, int clientNum)
+static qboolean G_SnapshotCallbackExt(int entityNum, int clientNum, int clientNumReal)
 {
 	gentity_t *ent = &g_entities[entityNum];
 
@@ -737,11 +743,24 @@ qboolean G_SnapshotCallback(int entityNum, int clientNum)
 		return len <= ent->s.onFireStart;
 	}
 
+	if (ent->s.eType == ET_EBS_SHOUTCAST)
+	{
+		return G_EBS_ShoutcastCallback(clientNumReal);
+	}
+
 	return qtrue;
 }
 
-int dll_com_trapGetValue;
-int dll_trap_DemoSupport;
+/**
+ * @brief G_SnapshotCallback
+ * @param[in] entityNum
+ * @param[in] clientNum
+ * @return
+ */
+static qboolean G_SnapshotCallback(int entityNum, int clientNum)
+{
+	return G_SnapshotCallbackExt(entityNum, clientNum, -1);
+}
 
 /**
  * @brief This is the only way control passes into the module.
@@ -812,10 +831,10 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		ClientCommand(arg0);
 		return 0;
 	case GAME_RUN_FRAME:
-		G_RunFrame(arg0);
 #ifdef FEATURE_OMNIBOT
 		Bot_Interface_Update();
 #endif
+		G_RunFrame(arg0);
 		return 0;
 	case GAME_CONSOLE_COMMAND:
 		return ConsoleCommand();
@@ -826,6 +845,8 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_DEMOSTATECHANGED:
 		G_DemoStateChanged((demoState_t)arg0, arg1);
 		return 0;
+	case GAME_SNAPSHOT_CALLBACK_EXT:
+		return G_SnapshotCallbackExt(arg0, arg1, arg2);
 	default:
 		G_Printf("Bad game export type: %ld\n", (long int) command);
 		break;
@@ -2359,6 +2380,8 @@ static ID_INLINE void G_SetupExtensions(void)
 		dll_com_trapGetValue = Q_atoi(value);
 
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
+		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SnapshotCallbackExt, "trap_SnapshotCallbackExt_Legacy");
+		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SnapshotSetClientMask, "trap_SnapshotSetClientMask_Legacy");
 	}
 }
 
@@ -2436,6 +2459,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 
 	G_SetupExtensions();
 	trap_DemoSupport("gstats\\sgstats\\sc0\\score\\sc1\\score\\impt\\impt\\imsr\\imsr\\impr\\impr\\impkd0\\impkd\\impkd1\\impkd\\imwa\\imwa\\imws\\imws");
+	trap_SnapshotCallbackExt();
 
 	level.time            = levelTime;
 	level.startTime       = levelTime;
@@ -2812,6 +2836,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	// Match init work
 	G_loadMatchGame();
 
+	G_EBS_InitShoutcast();
+
 	GeoIP_open(); // GeoIP open/update
 
 #ifdef FEATURE_LUA
@@ -2928,7 +2954,7 @@ void QDECL Com_Error(int code, const char *error, ...)
 	G_Error("%s", text);
 }
 
-void QDECL Com_Error(int code, const char *error, ...) _attribute((format(printf, 2, 3)));
+NORETURN_MSVC void QDECL Com_Error(int code, const char *error, ...) _attribute((noreturn, format(printf, 2, 3)));
 
 /**
  * @brief Com_Printf
@@ -3106,6 +3132,7 @@ void CalculateRanks(void)
 	level.numHumanConnectedClients  = 0;
 	level.numNonSpectatorClients    = 0;
 	level.numPlayingClients         = 0;
+	level.playingClientsMask        = 0;
 	level.voteInfo.numVotingClients = 0;  // don't count bots
 
 	level.numFinalDead[0] = 0;
@@ -3113,6 +3140,8 @@ void CalculateRanks(void)
 
 	level.voteInfo.numVotingTeamClients[0] = 0;
 	level.voteInfo.numVotingTeamClients[1] = 0;
+
+	level.shoutcasters = 0;
 
 	for (i = 0; i < TEAM_NUM_TEAMS; i++)
 	{
@@ -3137,6 +3166,11 @@ void CalculateRanks(void)
 				++level.numHumanConnectedClients;
 			}
 
+			if (level.clients[i].sess.shoutcaster)
+			{
+				level.shoutcasters |= (1ULL << i);
+			}
+
 			if (team != TEAM_SPECTATOR)
 			{
 				level.numNonSpectatorClients++;
@@ -3149,6 +3183,8 @@ void CalculateRanks(void)
 					int teamIndex = level.clients[i].sess.sessionTeam == TEAM_AXIS ? 0 : 1;
 
 					level.numPlayingClients++;
+					level.playingClientsMask |= (1ULL << i);
+
 					if (!(g_entities[i].r.svFlags & SVF_BOT))
 					{
 						level.voteInfo.numVotingClients++;
@@ -3172,6 +3208,7 @@ void CalculateRanks(void)
 							}
 						}
 
+						level.teamClients[teamIndex][level.numTeamClients[teamIndex]] = i;
 						level.numTeamClients[teamIndex]++;
 						if (!(g_entities[i].r.svFlags & SVF_BOT))
 						{
@@ -5229,6 +5266,12 @@ void G_RunEntity(gentity_t *ent, int msec)
 
 	if (!ent->inuse)
 	{
+		return;
+	}
+
+	if (ent->s.eType == ET_EBS_SHOUTCAST)
+	{
+		G_RunThink(ent);
 		return;
 	}
 
