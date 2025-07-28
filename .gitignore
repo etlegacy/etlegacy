@@ -1,6 +1,7 @@
 #
 # Project specific
 #
+/legacy
 /build*/
 /project
 /obj
@@ -68,6 +69,9 @@ win_resource.aps
 /.vscode/
 *.code-workspace
 
+# Clangd
+compile_commands.json
+
 # Do not under any circumstances ignore these
 !/easybuild.sh
 !/easybuild.bat
@@ -75,6 +79,7 @@ win_resource.aps
 !/gradlew.bat
 !/misc/docker/entrypoint.sh
 
+# npm
 node_modules/
 package.json
 package-lock.json
@@ -89,3 +94,6 @@ build/
 gradle/
 /local.properties
 
+# Package Managers
+**/.pixi/
+**/__pycache__/
