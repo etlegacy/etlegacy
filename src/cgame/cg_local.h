@@ -4384,8 +4384,8 @@ typedef struct hudStructure_s
 	hudComponent_t xptext;
 	hudComponent_t ranktext;
 	hudComponent_t statsdisplay;
-    hudComponent_t weaponheatbar;   // 10
-	hudComponent_t weaponicon;      
+	hudComponent_t weaponheatbar;   // 10
+	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
@@ -4396,7 +4396,7 @@ typedef struct hudStructure_s
 	hudComponent_t hudhead;
 
 	hudComponent_t cursorhints; // 20
-	hudComponent_t cursorhintsbar; 
+	hudComponent_t cursorhintsbar;
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
@@ -4408,7 +4408,7 @@ typedef struct hudStructure_s
 
 	hudComponent_t votetext;
 	hudComponent_t spectatortext;   // 30
-	hudComponent_t limbotext;   
+	hudComponent_t limbotext;
 	hudComponent_t followtext;
 	hudComponent_t demotext;
 
@@ -4420,7 +4420,7 @@ typedef struct hudStructure_s
 	hudComponent_t fps;
 	hudComponent_t snapshot;
 	hudComponent_t ping;    // 40
-	hudComponent_t speed;   
+	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
 	hudComponent_t chat;
@@ -4430,7 +4430,7 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint; // 50
-	hudComponent_t banner;  
+	hudComponent_t banner;
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
