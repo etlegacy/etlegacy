@@ -1846,7 +1846,7 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 
 	if (cg_customCrosshair.integer > CUSTOMCROSSHAIR_NONE && cg_customCrosshair.integer < CUSTOMCROSSHAIR_MAX)
 	{
-		CG_DrawCustomCrosshair();
+		CG_DrawCustomCrosshair(GetWeaponTableData(weapnum)->spreadScale > 0);
 		CG_DrawNoShootIcon(comp);
 		return;
 	}

@@ -107,7 +107,7 @@ static float CG_CustomCrosshairCalcSpread()
 	return 0.0;
 }
 
-void CG_DrawCustomCrosshair()
+void CG_DrawCustomCrosshair(qboolean withSpread)
 {
 	static float   innerWidth, innerWidthOffset, outlineWidth, crossLength;
 	static float   crossGap, crossSpread;
@@ -116,8 +116,11 @@ void CG_DrawCustomCrosshair()
 	x = (float)cgs.glconfig.vidWidth / 2 + cg_crosshairX.value;
 	y = (float)cgs.glconfig.vidHeight / 2 + cg_crosshairY.value;
 
-	crossSpread = CG_CustomCrosshairCalcSpread();
-	crossGap    = cg_customCrosshairCrossGap.value + crossSpread;
+	if (withSpread)
+	{
+		crossSpread = CG_CustomCrosshairCalcSpread();
+		crossGap    = cg_customCrosshairCrossGap.value + crossSpread;
+	}
 
 	// draw dot and/or small cross
 	if (cg_customCrosshair.integer == CUSTOMCROSSHAIR_DOT_WITH_SMALLCROSS
@@ -148,7 +151,10 @@ void CG_DrawCustomCrosshair()
 		}
 
 		// draw small cross
-		if (cg_customCrosshair.integer == CUSTOMCROSSHAIR_DOT_WITH_SMALLCROSS || cg_customCrosshair.integer == CUSTOMCROSSHAIR_SMALLCROSS)
+		if (
+			(cg_customCrosshair.integer == CUSTOMCROSSHAIR_DOT_WITH_SMALLCROSS || cg_customCrosshair.integer == CUSTOMCROSSHAIR_SMALLCROSS) &&
+			withSpread
+			)
 		{
 			innerWidth       = cg_customCrosshairCrossWidth.value;
 			innerWidthOffset = innerWidth / 2;
