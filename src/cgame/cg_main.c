@@ -1857,7 +1857,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.notUsableHintShader     = trap_R_RegisterShader("gfx/2d/legacy_notUsableHint");
 	cgs.media.doorHintShader          = trap_R_RegisterShader("gfx/2d/doorHint");
 	cgs.media.doorRotateHintShader    = trap_R_RegisterShader("gfx/2d/doorRotateHint");             // TODO: no icon, add it ?
-	cgs.media.doorLockHintShader      = trap_R_RegisterShader("gfx/2d/lockedhint");
+	cgs.media.doorLockHintShader      = trap_R_RegisterShader("gfx/2d/legacy_lockedhint");
 	cgs.media.mg42HintShader          = trap_R_RegisterShader("gfx/2d/mg42Hint");                   // TODO: no icon, add it ?
 	cgs.media.breakableHintShader     = trap_R_RegisterShader("gfx/2d/legacy_breakableHint");
 	cgs.media.healthHintShader        = trap_R_RegisterShader("gfx/2d/legacy_healthHint");          // TODO: no icon, add it ?
