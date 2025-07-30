@@ -13,6 +13,11 @@ etmain/ui/git_version.h
 /.cache
 .upstream-remote-branch
 
+# External Dependencies
+legacy/omni-bot/
+legacy/omnibot-linux-latest.tar.gz
+legacy/wolfadmin.tar.gz
+
 #
 # OS specific
 #
