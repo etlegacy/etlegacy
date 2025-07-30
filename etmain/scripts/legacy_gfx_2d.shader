@@ -104,6 +104,17 @@ gfx/2d/legacy_buttonhint
 	}
 }
 
+gfx/2d/legacy_lockedhint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/lockedhint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 gfx/2d/legacy_weaponhint
 {
 	nomipmaps
