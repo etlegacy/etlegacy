@@ -4490,7 +4490,7 @@ qboolean CG_TryReadHudFromFile(const char *filename, qboolean isEditable);
 void CG_ReadHudsFromFile(void);
 
 // cg_customcrosshair.c
-void CG_DrawCustomCrosshair();
+void CG_DrawCustomCrosshair(qboolean withSpread);
 
 typedef enum
 {
