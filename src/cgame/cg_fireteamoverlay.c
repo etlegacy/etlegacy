@@ -33,7 +33,6 @@
  */
 
 #include "cg_local.h"
-#include "../game/g_local.h"
 
 static int sortedFireTeamClients[MAX_CLIENTS];
 
@@ -684,17 +683,6 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		trap_R_SetColor(iconColor);
 		CG_DrawPic(x, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 		x += iconsSize;
-		if (comp->style & BIT(5))
-		{
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, va("%i", ci->spawnpt), 0, 0, comp->styleText, FONT_TEXT);
-			x += spacing * 1;
-			if (comp->style & BIT(6) && ci->mspawnpt > 0)
-			{
-				char* mspawnpt = va(".%i", ci->mspawnpt);
-				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, mspawnpt, 0, 0, comp->styleText, FONT_TEXT);
-				x += spacing * 2;
-			}
-		}
 
 		if (comp->style & 1)
 		{
@@ -744,6 +732,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			//if (ci->rank > 0) CG_DrawPic( x, y, heightTextOffset, heightTextOffset, rankicons[ ci->rank ][  ci->team == TEAM_AXIS ? 1 : 0 ][0].shader );
 			//x += 14;
 			puwidth = 0;
+		}
+
+		if (comp->style & BIT(5))
+		{
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, va("%i", ci->spawnpt), 0, 0, comp->styleText, FONT_TEXT);
+			x += spacing;
 		}
 
 		x += spacing;
