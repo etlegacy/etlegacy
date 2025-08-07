@@ -314,6 +314,8 @@ vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
 vmCvar_t cg_fireteamSprites;
+vmCvar_t cg_fireteamSpritesColor;
+vmCvar_t cg_fireteamSpritesColorSelected;
 
 vmCvar_t cg_weapaltReloads;
 vmCvar_t cg_weapaltSwitches;
@@ -633,6 +635,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_fireteamNameMaxChars,               "cg_fireteamNameMaxChars",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,                  "cg_fireteamNameAlign",                  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamSprites,                    "cg_fireteamSprites",                    "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_fireteamSpritesColor,               "cg_fireteamSpritesColor",               "Green",       CVAR_ARCHIVE,                 0 },
+	{ &cg_fireteamSpritesColorSelected,       "cg_fireteamSpritesColorSelected",       "Red",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_simpleItems,                        "cg_simpleItems",                        "0",           CVAR_ARCHIVE,                 0 },           // Bugged atm
 	{ &cg_simpleItemsScale,                   "cg_simpleItemsScale",                   "1.0",         CVAR_ARCHIVE,                 0 },
@@ -757,6 +761,17 @@ static qboolean CG_RegisterOrUpdateCvars(cvarTable_t *cv)
 		Q_ParseColor(cg_scopeReticleDotColor.string, cgs.scopeReticleDotColor);
 		return qtrue;
 	}
+	else if (cv->vmCvar == &cg_fireteamSpritesColor)
+	{
+		Q_ParseColor(cg_fireteamSpritesColor.string, cgs.fireteamSpritesColor);
+		return qtrue;
+	}
+	else if (cv->vmCvar == &cg_fireteamSpritesColorSelected)
+	{
+		Q_ParseColor(cg_fireteamSpritesColorSelected.string, cgs.fireteamSpritesColorSelected);
+		return qtrue;
+	}
+
 	return qfalse;
 }
 
