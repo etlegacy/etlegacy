@@ -3492,7 +3492,7 @@ void Com_Frame(void)
 	{
 		if (com_sv_running->integer)
 		{
-			timeValSV = SV_SendQueuedPackets() * 1000;
+			timeValSV = (int64_t)SV_SendQueuedPackets() * 1000;
 			timeVal   = Com_TimeVal(minUsec);
 
 			if (timeValSV < timeVal)
