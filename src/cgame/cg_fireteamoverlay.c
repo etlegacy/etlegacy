@@ -734,6 +734,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			puwidth = 0;
 		}
 
+		if (comp->style & BIT(5))
+		{
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, va("%i", ci->spawnpt), 0, 0, comp->styleText, FONT_TEXT);
+			x += spacing;
+		}
+
 		x += spacing;
 
 		// draw the player's name

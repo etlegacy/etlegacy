@@ -649,6 +649,7 @@ typedef struct clientInfo_s
 	int breathPuffTime;
 	int cls;
 	int latchedcls;
+	int spawnpt;
 	int ping;
 
 	int rank;
