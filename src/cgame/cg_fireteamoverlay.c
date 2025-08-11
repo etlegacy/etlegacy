@@ -521,7 +521,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			}
 			if (comp->style & BIT(6))
 			{
-				spawnPtStr[i] = va("^7%s", Q_CleanStr(CG_GetLocationMsg(ci->clientNum, cgs.majorSpawnpointEnt[ci->spawnpt - 1].origin)));
+				spawnPtStr[i] = va("%s", Q_CleanStr(CG_GetLocationMsg(ci->clientNum, cgs.majorSpawnpointEnt[ci->spawnpt - 1].origin)));
 				if (cg_locationMaxChars.integer)
 				{
 					spawnwidth  = spacing;
@@ -842,8 +842,6 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		x += spacing;
 		float widthLocationLeft = w - (x - comp->location.x) - spacing;
 		float charWidth         = CG_Text_Width_Ext_Float("A", scale, 0, FONT_TEXT);
-
-		// paint
 		if (cg_locations.integer & LOC_FTEAM)
 		{
 			float locWidthLocationLeft = widthLocationLeft;
@@ -879,6 +877,22 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 		if (comp->style & BIT(5))
 		{
+			vec4_t *spawnPtColor;
+			float  timeDiff = cg.time - ci->spawnChangedTime;
+			if (timeDiff < 1500.0f)
+			{
+				float t = timeDiff / 1500.0f;
+				spawnPtColor = (vec4_t[]) { { colorOrange[0] + (colorWhite[0] - colorOrange[0]) * t,
+											  colorOrange[1] + (colorWhite[1] - colorOrange[1]) * t,
+											  colorOrange[2] + (colorWhite[2] - colorOrange[2]) * t,
+											  colorOrange[3] + (colorWhite[3] - colorOrange[3]) * t } };
+			}
+			else
+			{
+				spawnPtColor = colorWhite;
+			}
+
+
 			if (cg_locations.integer & LOC_FTEAM)
 			{
 				widthLocationLeft = widthLocationLeft / 2;
@@ -890,24 +904,24 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 				{
 					if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
 					{
-						CG_Text_Paint_RightAligned_Ext(x + widthLocationLeft, y + heightTextOffset, scale, scale, comp->colorMain, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
+						CG_Text_Paint_RightAligned_Ext(x + widthLocationLeft, y + heightTextOffset, scale, scale, spawnPtColor, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
 					}
 					else if (comp->alignText == ITEM_ALIGN_LEFT)
 					{
-						CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
+						CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, spawnPtColor, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
 					}
 					else    // center
 					{
-						CG_Text_Paint_Centred_Ext(x + widthLocationLeft * 0.5, y + heightTextOffset, scale, scale, comp->colorMain, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
+						CG_Text_Paint_Centred_Ext(x + widthLocationLeft * 0.5, y + heightTextOffset, scale, scale, spawnPtColor, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
 					}
 				}
 			}
 			else
 			{
-				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, Q_TruncateStr(spawnPtStr[i], 0), 0, 0, comp->styleText, FONT_TEXT);
+				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, *spawnPtColor, Q_TruncateStr(spawnPtStr[i], 0), 0, 0, comp->styleText, FONT_TEXT);
 				if (comp->style & BIT(7) && ci->mspawnpt > 0)
 				{
-					CG_Text_Paint_Ext(x + charWidth, y + heightTextOffset, scale / 1.5, scale / 1.5, comp->colorMain, va("%i", ci->mspawnpt), 0, 0, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_Ext(x + charWidth, y + heightTextOffset, scale / 1.5, scale / 1.5, *spawnPtColor, va("%i", ci->mspawnpt), 0, 0, comp->styleText, FONT_TEXT);
 				}
 
 			}

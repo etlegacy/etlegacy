@@ -496,6 +496,11 @@ void CG_NewClientInfo(int clientNum)
 		CG_ToggleShoutcasterMode(newInfo.shoutcaster);
 	}
 
+	if (newInfo.spawnpt != ci->spawnpt || newInfo.mspawnpt != ci->mspawnpt)
+	{
+		newInfo.spawnChangedTime = cg.time;
+	}
+
 	// passing the clientNum since that's all we need, and we
 	// can't calculate it properly from the clientinfo
 	CG_LoadClientInfo(clientNum);

@@ -651,6 +651,7 @@ typedef struct clientInfo_s
 	int latchedcls;
 	int spawnpt;
 	int mspawnpt;
+	int spawnChangedTime;
 	int ping;
 
 	int rank;
