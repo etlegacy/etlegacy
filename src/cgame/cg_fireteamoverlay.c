@@ -517,12 +517,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			spawnPtStr[i] = va("%i", ci->spawnpt);
 			if (comp->style & BIT(7) && cg.supportsMinorSpawnPoints == qtrue && ci->mspawnpt > 0)
 			{
-				char *mspawnpt = va("%i", ci->mspawnpt);
-				spawnPtStr[i] = va("%s%c", spawnPtStr[i], 0x2080 + mspawnpt[0]);
-				if (ci->mspawnpt > 9)
-				{
-					spawnPtStr[i] = va("%s%c", spawnPtStr[i], 0x2080 + mspawnpt[1]);
-				}
+				spawnPtStr[i] = va("%s%i", spawnPtStr[i], ci->mspawnpt);
 			}
 			if (comp->style & BIT(6))
 			{
@@ -909,7 +904,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			}
 			else
 			{
-				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, spawnPtStr[i], 0, 0, comp->styleText, FONT_TEXT);
+				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, Q_TruncateStr(spawnPtStr[i], 0), 0, 0, comp->styleText, FONT_TEXT);
+				if (comp->style & BIT(7) && ci->mspawnpt > 0)
+				{
+					CG_Text_Paint_Ext(x + charWidth, y + heightTextOffset, scale / 1.5, scale / 1.5, comp->colorMain, va("%i", ci->mspawnpt), 0, 0, comp->styleText, FONT_TEXT);
+				}
+
 			}
 		}
 	}
