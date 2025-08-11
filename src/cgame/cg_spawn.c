@@ -386,6 +386,10 @@ void CG_Spawnpoint(void)
 
 	CG_SpawnVector("origin", "0 0 0", spawnpoint->origin);
 	CG_SpawnInt("id", "", &spawnpoint->id);
+	if (spawnpoint->id != 0)
+	{
+		cg.supportsMinorSpawnPoints = qtrue;
+	}
 
 }
 
@@ -400,6 +404,7 @@ void SP_team_WOLF_objective(void)
 	CG_SpawnString("description", "WARNING: No objective description set", &desc);
 	Q_strncpyz(spawnpoint->name, desc, sizeof(spawnpoint->name));
 	CG_SpawnVector("origin", "0 0 0", spawnpoint->origin);
+	cgs.majorSpawnpointEnt[cg.numMajorSpawnpointEnts++] = *spawnpoint;
 }
 
 typedef struct
@@ -738,11 +743,13 @@ void SP_worldspawn(void)
 void CG_ParseEntitiesFromString(void)
 {
 	// allow calls to CG_Spawn*()
-	cg.spawning          = qtrue;
-	cg.numSpawnVars      = 0;
-	cg.numMiscGameModels = 0;
-	cg.numCoronas        = 0;
-	cg.numSpawnpointEnts = 0;
+	cg.spawning                 = qtrue;
+	cg.numSpawnVars             = 0;
+	cg.numMiscGameModels        = 0;
+	cg.numCoronas               = 0;
+	cg.numSpawnpointEnts        = 0;
+	cg.numMajorSpawnpointEnts   = 0;
+	cg.supportsMinorSpawnPoints = qfalse;
 
 	// the worldspawn is not an actual entity, but it still
 	// has a "spawn" function to perform any global setup

@@ -401,17 +401,19 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 {
 	float          x = comp->location.x;
 	float          y = comp->location.y;
-	float          locwidth, namewidth, weapIconWidthScale;
+	float          locwidth, namewidth, weapIconWidthScale, spawnwidth;
 	int            i, puwidth, lineX;
 	int            bestNameWidth          = -1;
 	int            bestLocWidth           = -1;
 	int            bestWeapIconWidthScale = -1;
+	int            bestSpawnWidth         = -1;
 	char           buffer[64];
 	float          w, computedWidth, h;
 	float          heighTitle, heightText, iconsSize, weaponIconSize, heightTextOffset, heightIconsOffset, heightWeaponIconOffset;
 	clientInfo_t   *ci = NULL;
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
+	char           *spawnPtStr[MAX_FIRETEAM_MEMBERS];
 	int            curWeap;
 	char           name[MAX_FIRETEAM_MEMBERS][MAX_NAME_LENGTH];
 	int            nameMaxLen;
@@ -510,6 +512,41 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			locwidth = 0;
 		}
 
+		if (comp->style & BIT(5))
+		{
+			spawnPtStr[i] = va("%i", ci->spawnpt);
+			if (comp->style & BIT(7) && cg.supportsMinorSpawnPoints == qtrue && ci->mspawnpt > 0)
+			{
+				char *mspawnpt = va("%i", ci->mspawnpt);
+				spawnPtStr[i] = va("%s%c", spawnPtStr[i], 0x2080 + mspawnpt[0]);
+				if (ci->mspawnpt > 9)
+				{
+					spawnPtStr[i] = va("%s%c", spawnPtStr[i], 0x2080 + mspawnpt[1]);
+				}
+			}
+			if (comp->style & BIT(6))
+			{
+				spawnPtStr[i] = va("^7%s", Q_CleanStr(CG_GetLocationMsg(ci->clientNum, cgs.majorSpawnpointEnt[ci->spawnpt - 1].origin)));
+				if (cg_locationMaxChars.integer)
+				{
+					spawnwidth  = spacing;
+					spawnwidth *= Com_Clamp(0, 128, cg_locationMaxChars.integer);     // 128 is max location length
+				}
+				else
+				{
+					spawnwidth = CG_Text_Width_Ext(spawnPtStr[i], scale, 0, FONT_TEXT);
+				}
+			}
+			else
+			{
+				spawnwidth = CG_Text_Width_Ext(spawnPtStr[i], scale, 0, FONT_TEXT);
+			}
+		}
+		else
+		{
+			spawnwidth = 0;
+		}
+
 		if (comp->style & BIT(2) || (comp->style & BIT(3) && (ci->health <= 0 || ci->ping >= 999)))
 		{
 			Q_strncpyz(name[i], ci->cleanname, sizeof(name[i]));
@@ -569,6 +606,11 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			bestLocWidth = locwidth;
 		}
 
+		if (spawnwidth > bestSpawnWidth)
+		{
+			bestSpawnWidth = spawnwidth;
+		}
+
 		if (weapIconWidthScale > bestWeapIconWidthScale)
 		{
 			bestWeapIconWidthScale = weapIconWidthScale;
@@ -590,7 +632,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	                + spacing * 2 + bestNameWidth                       // player name
 	                + bestWeapIconWidthScale * weaponIconSize + spacing // weapon icons
 	                + spacing * 3 + spacing                             // health points
-	                + bestLocWidth;                                     // location name
+	                + bestLocWidth                                      // location name
+	                + bestSpawnWidth;                                   // spawn location/point
 
 	// keep the best fit for the location text
 	w = MIN(computedWidth, comp->location.w);
@@ -734,12 +777,6 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			puwidth = 0;
 		}
 
-		if (comp->style & BIT(5))
-		{
-			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, va("%i", ci->spawnpt), 0, 0, comp->styleText, FONT_TEXT);
-			x += spacing;
-		}
-
 		x += spacing;
 
 		// draw the player's name
@@ -808,16 +845,30 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 		// set hard limit on width
 		x += spacing;
+		float widthLocationLeft = w - (x - comp->location.x) - spacing;
+		float charWidth         = CG_Text_Width_Ext_Float("A", scale, 0, FONT_TEXT);
+
+		// paint
 		if (cg_locations.integer & LOC_FTEAM)
 		{
-			float widthLocationLeft = w - (x - comp->location.x) - spacing;
-			int   lim               = widthLocationLeft / CG_Text_Width_Ext_Float("A", scale, 0, FONT_TEXT);
-
+			float locWidthLocationLeft = widthLocationLeft;
+			if (comp->style & BIT(5))
+			{
+				if (comp->style & BIT(6))
+				{
+					locWidthLocationLeft = (widthLocationLeft - spacing) / 2;
+				}
+				else
+				{
+					locWidthLocationLeft -= bestSpawnWidth + spacing;
+				}
+			}
+			int lim = locWidthLocationLeft / charWidth;
 			if (lim > 0)
 			{
 				if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
 				{
-					CG_Text_Paint_RightAligned_Ext(x + widthLocationLeft, y + heightTextOffset, scale, scale, comp->colorMain, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_RightAligned_Ext(x + locWidthLocationLeft, y + heightTextOffset, scale, scale, comp->colorMain, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
 				else if (comp->alignText == ITEM_ALIGN_LEFT)
 				{
@@ -825,8 +876,40 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 				}
 				else    // center
 				{
-					CG_Text_Paint_Centred_Ext(x + widthLocationLeft * 0.5, y + heightTextOffset, scale, scale, comp->colorMain, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_Centred_Ext(x + locWidthLocationLeft * 0.5, y + heightTextOffset, scale, scale, comp->colorMain, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
+				x += spacing;
+				x += locWidthLocationLeft;
+			}
+		}
+		if (comp->style & BIT(5))
+		{
+			if (cg_locations.integer & LOC_FTEAM)
+			{
+				widthLocationLeft = widthLocationLeft / 2;
+			}
+			if (comp->style & BIT(6))
+			{
+				int lim = widthLocationLeft / charWidth;
+				if (lim > 0)
+				{
+					if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
+					{
+						CG_Text_Paint_RightAligned_Ext(x + widthLocationLeft, y + heightTextOffset, scale, scale, comp->colorMain, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					}
+					else if (comp->alignText == ITEM_ALIGN_LEFT)
+					{
+						CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					}
+					else    // center
+					{
+						CG_Text_Paint_Centred_Ext(x + widthLocationLeft * 0.5, y + heightTextOffset, scale, scale, comp->colorMain, spawnPtStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					}
+				}
+			}
+			else
+			{
+				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, spawnPtStr[i], 0, 0, comp->styleText, FONT_TEXT);
 			}
 		}
 	}

@@ -222,8 +222,11 @@ void CG_NewClientInfo(int clientNum)
 	v                  = Info_ValueForKey(configstring, "lc");
 	newInfo.latchedcls = Q_atoi(v);
 
-	v                  = Info_ValueForKey(configstring, "sp");
+	v               = Info_ValueForKey(configstring, "sp");
 	newInfo.spawnpt = Q_atoi(v);
+
+	v                = Info_ValueForKey(configstring, "msp");
+	newInfo.mspawnpt = Q_atoi(v);
 
 	// rank
 	v            = Info_ValueForKey(configstring, "r");

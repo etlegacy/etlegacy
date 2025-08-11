@@ -2222,8 +2222,15 @@ void G_UpdateSpawnPointStatePlayerCounts()
 				continue;
 			}
 		}
-		playerCounts[resolvedSpawnPt]       += 1;
+		playerCounts[resolvedSpawnPt] += 1;
+		int oldResolvedSpawnPt = client->sess.resolvedSpawnPointIndex;
 		client->sess.resolvedSpawnPointIndex = resolvedSpawnPt;
+		if (oldResolvedSpawnPt != resolvedSpawnPt ||
+		    client->sess.userMinorSpawnPointValue != client->sess.previousUserMinorSpawnPointValue)
+		{
+			client->sess.previousUserMinorSpawnPointValue = client->sess.userMinorSpawnPointValue;
+			ClientUserinfoChanged(client - level.clients);
+		}
 	}
 	// update configstring, if necessary
 	for (i = 0; i < level.numSpawnPoints; i++)
