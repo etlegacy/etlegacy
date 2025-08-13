@@ -843,9 +843,10 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		float widthLocationLeft = w - (x - comp->location.x) - spacing;
 		float charWidth         = CG_Text_Width_Ext_Float("A", scale, 0, FONT_TEXT);
 		int   lim;
+		float locWidthLocationLeft;
 		if (cg_locations.integer & LOC_FTEAM)
 		{
-			float locWidthLocationLeft = widthLocationLeft;
+			locWidthLocationLeft = widthLocationLeft;
 			if (comp->style & BIT(5))
 			{
 				if (comp->style & BIT(6))
