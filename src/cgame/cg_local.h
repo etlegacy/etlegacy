@@ -1423,7 +1423,7 @@ typedef struct
 	int numSpawnpointEnts;
 	int numMajorSpawnpointEnts;
 
-	qboolean supportsMinorSpawnPoints;
+	qboolean hasMinorSpawnPoints;
 
 	qboolean showCampaignBriefing;
 	qboolean showGameView;
