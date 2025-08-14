@@ -372,8 +372,8 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 	if (ISVALIDCLIENTNUM(client) && cgs.clientLocation[client].lastLocation)
 	{
 		if (cgs.clientLocation[client].lastX == origin[0]
-		     && cgs.clientLocation[client].lastY == origin[1]
-		     && cgs.clientLocation[client].lastZ == origin[2])
+		    && cgs.clientLocation[client].lastY == origin[1]
+		    && cgs.clientLocation[client].lastZ == origin[2])
 		{
 			return &cgs.location[cgs.clientLocation[client].lastLocation];
 		}
@@ -476,7 +476,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 			if (cg_locationMaxChars.integer)
 			{
 				locMaxLen = Com_Clamp(0, 128, cg_locationMaxChars.integer); // 128 is max location length
-				locStr    = Q_TruncateStr(locStr, locMaxLen);
+				Q_TruncateStr(locStr, locMaxLen);
 			}
 		}
 
