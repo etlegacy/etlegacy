@@ -39,8 +39,9 @@ static float x, y;
 
 static const float *cached_color = NULL;
 
-static float *fgColor;
-static float *bgColor;
+static vec4_t dynamicColor;
+static float  *fgColor;
+static float  *bgColor;
 
 static inline void CG_CustomCrosshairSetColor(const float *color)
 {
@@ -135,8 +136,20 @@ void CG_DrawCustomCrosshair(qboolean withSpread)
 			outlineWidth     = cg_customCrosshairDotOutlineWidth.value;
 			crossLength      = cg_customCrosshairCrossLength.value;
 			outlineRounded   = cg_customCrosshairDotOutlineRounded.integer;
-			fgColor          = cgs.customCrosshairDotColor;
-			bgColor          = cgs.customCrosshairDotOutlineColor;
+
+			if (cg_customCrosshairDynamicColor.integer)
+			{
+				Vector4Copy(cgs.customCrosshairDotColor, dynamicColor);
+				CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
+				dynamicColor[3] = cgs.customCrosshairDotColor[3];
+				fgColor         = dynamicColor;
+			}
+			else
+			{
+				fgColor = cgs.customCrosshairDotColor;
+			}
+
+			bgColor = cgs.customCrosshairDotOutlineColor;
 
 			// TODO : make rounded look proper > 1.0 outlineWidth as well
 			if (outlineWidth > 1.0)
@@ -161,8 +174,20 @@ void CG_DrawCustomCrosshair(qboolean withSpread)
 			outlineWidth     = cg_customCrosshairCrossOutlineWidth.value;
 			outlineRounded   = cg_customCrosshairCrossOutlineRounded.integer;
 			crossLength      = cg_customCrosshairCrossLength.value;
-			fgColor          = cgs.customCrosshairCrossColor;
-			bgColor          = cgs.customCrosshairCrossOutlineColor;
+
+			if (cg_customCrosshairDynamicColor.integer)
+			{
+				Vector4Copy(cgs.customCrosshairCrossColor, dynamicColor);
+				CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
+				dynamicColor[3] = cgs.customCrosshairCrossColor[3];
+				fgColor         = dynamicColor;
+			}
+			else
+			{
+				fgColor = cgs.customCrosshairCrossColor;
+			}
+
+			bgColor = cgs.customCrosshairCrossOutlineColor;
 
 			// TODO : make rounded look proper > 1.0 outlineWidth as well
 			if (outlineWidth > 1.0)
@@ -203,8 +228,20 @@ void CG_DrawCustomCrosshair(qboolean withSpread)
 		outlineRounded   = cg_customCrosshairCrossOutlineRounded.integer;
 		outlineWidth     = cg_customCrosshairCrossOutlineWidth.value;
 		crossLength      = cg_customCrosshairCrossLength.value;
-		fgColor          = cgs.customCrosshairCrossColor;
-		bgColor          = cgs.customCrosshairCrossOutlineColor;
+
+		if (cg_customCrosshairDynamicColor.integer)
+		{
+			Vector4Copy(cgs.customCrosshairCrossColor, dynamicColor);
+			CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
+			dynamicColor[3] = cgs.customCrosshairCrossColor[3];
+			fgColor         = dynamicColor;
+		}
+		else
+		{
+			fgColor = cgs.customCrosshairCrossColor;
+		}
+
+		bgColor = cgs.customCrosshairCrossOutlineColor;
 
 		// TODO : make rounded look proper > 1.0 outlineWidth as well
 		if (outlineWidth > 1.0)
