@@ -649,6 +649,9 @@ typedef struct clientInfo_s
 	int breathPuffTime;
 	int cls;
 	int latchedcls;
+	int spawnpt;
+	int mspawnpt;
+	int spawnChangedTime;
 	int ping;
 
 	int rank;
@@ -1418,6 +1421,9 @@ typedef struct
 	int numMiscGameModels;
 	int numCoronas;
 	int numSpawnpointEnts;
+	int numMajorSpawnpointEnts;
+
+	qboolean hasMinorSpawnPoints;
 
 	qboolean showCampaignBriefing;
 	qboolean showGameView;
@@ -2613,6 +2619,7 @@ typedef struct cgs_s
 	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
 	cg_corona_t corona[MAX_GAMECORONAS];
 	cg_spawnpoint_t spawnpointEnt[MAX_GENTITIES];
+	cg_spawnpoint_t majorSpawnpointEnt[MAX_GENTITIES];
 
 	vec2_t ccMenuPos;
 	qboolean ccMenuShowing;

@@ -2191,7 +2191,7 @@ void G_UpdateSpawnPointStatePlayerCounts()
 		G_ResolveSpawnPointIndex(TEAM_AXIS,   level.axisAutoSpawn),
 		G_ResolveSpawnPointIndex(TEAM_ALLIES, level.alliesAutoSpawn)
 	};
-	int i, teamAutoSpawnPt, resolvedSpawnPt;
+	int i, teamAutoSpawnPt, resolvedSpawnPt, oldResolvedSpawnPt;
 	// check updates
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
@@ -2219,7 +2219,14 @@ void G_UpdateSpawnPointStatePlayerCounts()
 			}
 		}
 		playerCounts[resolvedSpawnPt]       += 1;
+		oldResolvedSpawnPt                   = client->sess.resolvedSpawnPointIndex;
 		client->sess.resolvedSpawnPointIndex = resolvedSpawnPt;
+		if (oldResolvedSpawnPt != resolvedSpawnPt ||
+		    client->sess.userMinorSpawnPointValue != client->sess.previousUserMinorSpawnPointValue)
+		{
+			client->sess.previousUserMinorSpawnPointValue = client->sess.userMinorSpawnPointValue;
+			ClientUserinfoChanged(client - level.clients);
+		}
 	}
 	// update configstring, if necessary
 	for (i = 0; i < level.numSpawnPoints; i++)
