@@ -347,9 +347,9 @@ void CG_AdjustAutomapZoom(int zoomIn)
 		automapZoom /= 1.2f;
 		// zoom value of 1 corresponds to the most zoomed out view. The whole map is displayed
 		// in the automap
-		if (automapZoom < 1)
+		if (automapZoom < M_SQRT2 * 0.5f)
 		{
-			automapZoom = 1;
+			automapZoom = M_SQRT2 * 0.5f;
 		}
 	}
 
@@ -1454,23 +1454,35 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		if (scissor->br[0] >= scissor->tl[0])
 		{
 			float s0, s1, t0, t1;
-			float sc_x = x, sc_y = y, sc_w = w, sc_h = h;
+			float sc_x, sc_y, sc_w, sc_h;
+			float mapSideSize;
+
+			mapSideSize = hypotf(w, h);
+			sc_w        = mapSideSize;
+			sc_x        = x - (sc_w - w) * 0.5f;
+			sc_h        = mapSideSize;
+			sc_y        = y - (sc_h - h) * 0.5f;
 
 			if (scissor->circular)
 			{
-				CG_DrawPic(sc_x, sc_y, sc_w, sc_h, cgs.media.commandCentreAutomapMaskShader);
+				CG_DrawPic(x, y, w, h, cgs.media.commandCentreAutomapMaskShader);
 			}
 			else
 			{
 				trap_R_SetColor((vec4_t) { 1.f, 1.f, 1.f, alpha });
-				CG_DrawPic(sc_x, sc_y, sc_w, sc_h, cgs.media.blackmask);
+				CG_DrawPic(x, y, w, h, cgs.media.blackmask);
 				trap_R_SetColor(NULL);
 			}
 
-			s0 = (scissor->tl[0]) / (w * scissor->zoomFactor);
-			s1 = (scissor->br[0]) / (w * scissor->zoomFactor);
-			t0 = (scissor->tl[1]) / (h * scissor->zoomFactor);
-			t1 = (scissor->br[1]) / (h * scissor->zoomFactor);
+			s0 = (scissor->tl[0]) / (sc_w * scissor->zoomFactor);
+			s1 = (scissor->br[0]) / (sc_w * scissor->zoomFactor);
+			t0 = (scissor->tl[1]) / (sc_h * scissor->zoomFactor);
+			t1 = (scissor->br[1]) / (sc_h * scissor->zoomFactor);
+
+			x = sc_x;
+			y = sc_y;
+			w = sc_w;
+			h = sc_h;
 
 			CG_AdjustFrom640(&sc_x, &sc_y, &sc_w, &sc_h);
 
@@ -1807,10 +1819,12 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	float        y;
 	float        w;
 	float        h;
+	float        wMap;
+	float        hMap;
 	float        angle;
 	float        diff;
-	mapScissor_t mapScissor;
 	vec2_t       automapTransformed;
+	mapScissor_t mapScissor;
 	snapshot_t   *snap;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
@@ -1821,8 +1835,6 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	{
 		snap = cg.snap;
 	}
-
-	Com_Memset(&mapScissor, 0, sizeof(mapScissor));
 
 	if (cgs.ccLayers)
 	{
@@ -1842,42 +1854,45 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	w    = basew - diff;
 	h    = baseh - diff;
 
+	Com_Memset(&mapScissor, 0, sizeof(mapScissor));
 	mapScissor.circular   = !(style & COMPASS_SQUARE);
 	mapScissor.zoomFactor = cg_automapZoom.value;
 
-	mapScissor.tl[0] = mapScissor.tl[1] = 0;
-	mapScissor.br[0] = mapScissor.br[1] = -1;
+	wMap = hMap = hypotf(w, h);
 
-	automapTransformed[0] = ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w * mapScissor.zoomFactor;
-	automapTransformed[1] = ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * mapScissor.zoomFactor;
+	automapTransformed[0] = ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * wMap * mapScissor.zoomFactor;
+	automapTransformed[1] = ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * hMap * mapScissor.zoomFactor;
 
 	// update clip region (for next drawing). clip region has a size kAutomap_width x kAutomap_height
 	// and it is after zooming is accounted for.
 
 	// first try to center the clip region around the player. then make sure the region
 	// stays within the world map.
-	mapScissor.tl[0] = automapTransformed[0] - w / 2;
-	if (mapScissor.tl[0] < 0)
+
+	mapScissor.tl[0] = automapTransformed[0] - wMap * 0.5f;
+	if (mapScissor.tl[0] < -(wMap * M_SQRT2 * 0.1f))
 	{
-		mapScissor.tl[0] = 0;
-	}
-	mapScissor.br[0] = mapScissor.tl[0] + w;
-	if (mapScissor.br[0] > (w * mapScissor.zoomFactor))
-	{
-		mapScissor.br[0] = w * mapScissor.zoomFactor;
-		mapScissor.tl[0] = mapScissor.br[0] - w;
+		mapScissor.tl[0] = -(wMap * M_SQRT2 * 0.1f);
 	}
 
-	mapScissor.tl[1] = automapTransformed[1] - h / 2;
-	if (mapScissor.tl[1] < 0)
+	mapScissor.br[0] = mapScissor.tl[0] + wMap;
+	if (mapScissor.br[0] > ((wMap * mapScissor.zoomFactor) + (wMap / M_SQRT2 * 0.2f)))
 	{
-		mapScissor.tl[1] = 0;
+		mapScissor.br[0] = (wMap * mapScissor.zoomFactor) + (wMap / M_SQRT2 * 0.2f);
+		mapScissor.tl[0] = mapScissor.br[0] - wMap ;
 	}
-	mapScissor.br[1] = mapScissor.tl[1] + h;
-	if (mapScissor.br[1] > (h * mapScissor.zoomFactor))
+
+	mapScissor.tl[1] = automapTransformed[1] - hMap * 0.5f;
+	if (mapScissor.tl[1] < -(hMap * M_SQRT2 * 0.1f))
 	{
-		mapScissor.br[1] = h * mapScissor.zoomFactor;
-		mapScissor.tl[1] = mapScissor.br[1] - h;
+		mapScissor.tl[1] = -(hMap * M_SQRT2 * 0.1f);
+	}
+
+	mapScissor.br[1] = mapScissor.tl[1] + hMap;
+	if (mapScissor.br[1] > ((hMap * mapScissor.zoomFactor) + (hMap / M_SQRT2 * 0.2f)))
+	{
+		mapScissor.br[1] = (hMap * mapScissor.zoomFactor) + (hMap / M_SQRT2 * 0.2f);
+		mapScissor.tl[1] = mapScissor.br[1] - hMap;
 	}
 
 	CG_DrawMap(x, y, w, h, cgs.ccFilter, &mapScissor, qfalse, 1.f, qfalse, style & COMPASS_POINT_TOWARD_NORTH);
