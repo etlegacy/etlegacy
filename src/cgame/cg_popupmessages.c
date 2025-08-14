@@ -345,6 +345,7 @@ qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter)
 	case PM_WEAPONPICKUP:
 		return filter & POPUP_FILTER_PICKUP;
 	case PM_DEATH:
+	case PM_DEATH_HEADSHOT:
 		return filter & POPUP_FILTER_DEATH;
 	default:
 		break;
