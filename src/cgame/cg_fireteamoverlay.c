@@ -524,7 +524,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		if (cg_fireteamNameMaxChars.integer)
 		{
 			nameMaxLen = Com_Clamp(0, MAX_NAME_LENGTH - 1, cg_fireteamNameMaxChars.integer);
-			Q_strncpyz(name[i], Q_TruncateStr(name[i], nameMaxLen), sizeof(name[i]));
+			Q_TruncateStr(name[i], nameMaxLen);
 
 			// if alignment is requested, keep a static width
 			if (cg_fireteamNameAlign.integer)
