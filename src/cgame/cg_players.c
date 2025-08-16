@@ -222,6 +222,12 @@ void CG_NewClientInfo(int clientNum)
 	v                  = Info_ValueForKey(configstring, "lc");
 	newInfo.latchedcls = Q_atoi(v);
 
+	v               = Info_ValueForKey(configstring, "sp");
+	newInfo.spawnpt = Q_atoi(v);
+
+	v                = Info_ValueForKey(configstring, "msp");
+	newInfo.mspawnpt = Q_atoi(v);
+
 	// rank
 	v            = Info_ValueForKey(configstring, "r");
 	newInfo.rank = Q_atoi(v);
@@ -488,6 +494,11 @@ void CG_NewClientInfo(int clientNum)
 		}
 
 		CG_ToggleShoutcasterMode(newInfo.shoutcaster);
+	}
+
+	if (newInfo.spawnpt != ci->spawnpt || newInfo.mspawnpt != ci->mspawnpt)
+	{
+		newInfo.spawnChangedTime = cg.time;
 	}
 
 	// passing the clientNum since that's all we need, and we
@@ -2328,7 +2339,8 @@ static void CG_PlayerSprites(centity_t *cent)
 			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)->membersNumber > 1) // don't display FT icon with only 1 member in FT
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
-				                     cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected ? colorRed : colorGreen);
+				                     cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected
+				                         ? cgs.fireteamSpritesColorSelected : cgs.fireteamSpritesColor);
 			}
 
 			// shoutcasters see undercover enemies
@@ -2343,7 +2355,8 @@ static void CG_PlayerSprites(centity_t *cent)
 	    && cg_fireteamSprites.integer)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
-		                     cgs.clientinfo[cent->currentState.number].selected ? colorRed : colorGreen);
+		                     cgs.clientinfo[cent->currentState.number].selected
+		                         ? cgs.fireteamSpritesColorSelected : cgs.fireteamSpritesColor);
 	}
 }
 

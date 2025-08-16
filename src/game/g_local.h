@@ -641,6 +641,7 @@ typedef struct
 	int userSpawnPointValue;                            ///< index of objective to spawn nearest to (returned from UI)
 	int userMinorSpawnPointValue;                       ///< index of minor spawnpoint to spawn nearest to
 	int resolvedSpawnPointIndex;                        ///< most possible objective to spawn nearest to
+	int previousUserMinorSpawnPointValue;               ///< keeps track if minor spawn changed since last time
 	int latchPlayerType;                                ///< latched class
 	weapon_t latchPlayerWeapon;                         ///< latched primary weapon
 	weapon_t latchPlayerWeapon2;                        ///< latched secondary weapon

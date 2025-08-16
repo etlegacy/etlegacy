@@ -1853,8 +1853,8 @@ int Q_PrintStrlen(const char *string)
 }
 
 /**
- * @brief Q_TruncateStr
- * @param[in] string
+ * @brief Truncates string to a given length, ignoring color codes
+ * @param[in,out] string
  * @param[in] limit
  * @return
  */
@@ -1862,21 +1862,21 @@ char *Q_TruncateStr(char *string, int limit)
 {
 	char *p;
 	char *s;
-	int  i, len;
+	int  i;
 
 	if (!string)
 	{
-		return 0;
+		return NULL;
 	}
 
-	len = Q_PrintStrlen(string);
-	if (len <= limit)
+	if (strlen(string) <= limit || Q_PrintStrlen(string) <= limit)
 	{
 		return string;
 	}
 
 	p = string;
 	s = string;
+
 	for (i = 0; i < limit; i++)
 	{
 		if (Q_IsColorString(p))
@@ -1886,13 +1886,12 @@ char *Q_TruncateStr(char *string, int limit)
 			i++;
 			continue;
 		}
+
 		p++;
 	}
 
-	limit++; // for null byte
 	s[limit] = '\0';
-
-	return s;
+	return string;
 }
 
 /**

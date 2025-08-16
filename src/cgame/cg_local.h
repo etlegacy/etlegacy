@@ -649,6 +649,9 @@ typedef struct clientInfo_s
 	int breathPuffTime;
 	int cls;
 	int latchedcls;
+	int spawnpt;
+	int mspawnpt;
+	int spawnChangedTime;
 	int ping;
 
 	int rank;
@@ -1418,6 +1421,9 @@ typedef struct
 	int numMiscGameModels;
 	int numCoronas;
 	int numSpawnpointEnts;
+	int numMajorSpawnpointEnts;
+
+	qboolean hasMinorSpawnPoints;
 
 	qboolean showCampaignBriefing;
 	qboolean showGameView;
@@ -2512,6 +2518,8 @@ typedef struct cgs_s
 	vec4_t customCrosshairCrossColor;
 	vec4_t scopeReticleColor;
 	vec4_t scopeReticleDotColor;
+	vec4_t fireteamSpritesColor;
+	vec4_t fireteamSpritesColorSelected;
 
 	// teamchat width is *3 because of embedded color codes
 	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
@@ -2611,6 +2619,7 @@ typedef struct cgs_s
 	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
 	cg_corona_t corona[MAX_GAMECORONAS];
 	cg_spawnpoint_t spawnpointEnt[MAX_GENTITIES];
+	cg_spawnpoint_t majorSpawnpointEnt[MAX_GENTITIES];
 
 	vec2_t ccMenuPos;
 	qboolean ccMenuShowing;
@@ -2943,6 +2952,8 @@ extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
 extern vmCvar_t cg_fireteamSprites;
+extern vmCvar_t cg_fireteamSpritesColor;
+extern vmCvar_t cg_fireteamSpritesColorSelected;
 
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
@@ -3027,6 +3038,7 @@ extern vmCvar_t cg_customCrosshairCrossColor;
 extern vmCvar_t cg_customCrosshairCrossOutlineRounded;
 extern vmCvar_t cg_customCrosshairCrossOutlineColor;
 extern vmCvar_t cg_customCrosshairCrossOutlineWidth;
+extern vmCvar_t cg_customCrosshairDynamicColor;
 
 extern vmCvar_t cg_scopeReticleStyle;
 extern vmCvar_t cg_scopeReticleColor;
@@ -4384,8 +4396,8 @@ typedef struct hudStructure_s
 	hudComponent_t xptext;
 	hudComponent_t ranktext;
 	hudComponent_t statsdisplay;
-    hudComponent_t weaponheatbar;   // 10
-	hudComponent_t weaponicon;      
+	hudComponent_t weaponheatbar;   // 10
+	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
@@ -4396,7 +4408,7 @@ typedef struct hudStructure_s
 	hudComponent_t hudhead;
 
 	hudComponent_t cursorhints; // 20
-	hudComponent_t cursorhintsbar; 
+	hudComponent_t cursorhintsbar;
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
@@ -4408,7 +4420,7 @@ typedef struct hudStructure_s
 
 	hudComponent_t votetext;
 	hudComponent_t spectatortext;   // 30
-	hudComponent_t limbotext;   
+	hudComponent_t limbotext;
 	hudComponent_t followtext;
 	hudComponent_t demotext;
 
@@ -4420,7 +4432,7 @@ typedef struct hudStructure_s
 	hudComponent_t fps;
 	hudComponent_t snapshot;
 	hudComponent_t ping;    // 40
-	hudComponent_t speed;   
+	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
 	hudComponent_t chat;
@@ -4430,7 +4442,7 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint; // 50
-	hudComponent_t banner;  
+	hudComponent_t banner;
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
@@ -4490,7 +4502,7 @@ qboolean CG_TryReadHudFromFile(const char *filename, qboolean isEditable);
 void CG_ReadHudsFromFile(void);
 
 // cg_customcrosshair.c
-void CG_DrawCustomCrosshair();
+void CG_DrawCustomCrosshair(qboolean withSpread);
 
 typedef enum
 {

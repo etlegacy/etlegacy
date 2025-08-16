@@ -906,7 +906,7 @@ void CG_ShaderStateChanged(void)
 			o = strstr(t, "@");
 			if (o)
 			{
-				Q_strncpyz(timeOffset, t, o - t);
+				Q_strncpyz(timeOffset, t, MIN(o - t + 1, sizeof(timeOffset)));
 				o++;
 				trap_R_RemapShader(cgs.gameShaderNames[atoi(originalShader)],
 				                   cgs.gameShaderNames[atoi(newShader)],

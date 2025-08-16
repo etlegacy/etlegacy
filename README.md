@@ -11,7 +11,7 @@ ET: Legacy [![CI](https://github.com/etlegacy/etlegacy/actions/workflows/ci.yml/
 * Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU?resourcekey=0-QYA6QCoHTcUQdnDm8-z0AQ&usp=sharing)
 * Documentation: [https://etlegacy.readthedocs.io/](https://etlegacy.readthedocs.io/)
 * Lua API: [https://etlegacy-lua-docs.readthedocs.io](https://etlegacy-lua-docs.readthedocs.io)
-* Translation: [https://www.transifex.com/etlegacy/etlegacy](https://www.transifex.com/etlegacy/etlegacy)
+* Translation: [https://app.transifex.com/etlegacy/etlegacy](https://app.transifex.com/etlegacy/etlegacy)
 * Contact: [#etlegacy](https://web.libera.chat/?channels=#etlegacy) on irc.libera.chat and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
 * SignPath: [etlegacy](https://signpath.org/projects/etlegacy/) on SignPath
 

@@ -1379,6 +1379,11 @@ void SV_CL_FlushMemory(void)
 		Hunk_Clear();
 		// clear collision map data
 		CM_ClearMap();
+
+		while (svMsgQueueHead)
+		{
+			SV_CL_FreeServerMessage();
+		}
 	}
 	else
 	{

@@ -1028,6 +1028,7 @@ int SV_CL_GetQueueTime(void);
 void SV_CL_ParseMessageQueue(void);
 void SV_CL_ParseServerMessageIntoQueue(msg_t *msg, int headerBytes);
 void SV_CL_ParseGamestateQueue(msg_t *msg);
+void SV_CL_FreeServerMessage(void);
 
 // sv_cl_demo.c
 void SV_CL_DemoInit(void);

@@ -39,8 +39,9 @@ static float x, y;
 
 static const float *cached_color = NULL;
 
-static float *fgColor;
-static float *bgColor;
+static vec4_t dynamicColor;
+static float  *fgColor;
+static float  *bgColor;
 
 static inline void CG_CustomCrosshairSetColor(const float *color)
 {
@@ -107,7 +108,7 @@ static float CG_CustomCrosshairCalcSpread()
 	return 0.0;
 }
 
-void CG_DrawCustomCrosshair()
+void CG_DrawCustomCrosshair(qboolean withSpread)
 {
 	static float   innerWidth, innerWidthOffset, outlineWidth, crossLength;
 	static float   crossGap, crossSpread;
@@ -116,8 +117,11 @@ void CG_DrawCustomCrosshair()
 	x = (float)cgs.glconfig.vidWidth / 2 + cg_crosshairX.value;
 	y = (float)cgs.glconfig.vidHeight / 2 + cg_crosshairY.value;
 
-	crossSpread = CG_CustomCrosshairCalcSpread();
-	crossGap    = cg_customCrosshairCrossGap.value + crossSpread;
+	if (withSpread)
+	{
+		crossSpread = CG_CustomCrosshairCalcSpread();
+		crossGap    = cg_customCrosshairCrossGap.value + crossSpread;
+	}
 
 	// draw dot and/or small cross
 	if (cg_customCrosshair.integer == CUSTOMCROSSHAIR_DOT_WITH_SMALLCROSS
@@ -132,8 +136,20 @@ void CG_DrawCustomCrosshair()
 			outlineWidth     = cg_customCrosshairDotOutlineWidth.value;
 			crossLength      = cg_customCrosshairCrossLength.value;
 			outlineRounded   = cg_customCrosshairDotOutlineRounded.integer;
-			fgColor          = cgs.customCrosshairDotColor;
-			bgColor          = cgs.customCrosshairDotOutlineColor;
+
+			if (cg_customCrosshairDynamicColor.integer)
+			{
+				Vector4Copy(cgs.customCrosshairDotColor, dynamicColor);
+				CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
+				dynamicColor[3] = cgs.customCrosshairDotColor[3];
+				fgColor         = dynamicColor;
+			}
+			else
+			{
+				fgColor = cgs.customCrosshairDotColor;
+			}
+
+			bgColor = cgs.customCrosshairDotOutlineColor;
 
 			// TODO : make rounded look proper > 1.0 outlineWidth as well
 			if (outlineWidth > 1.0)
@@ -148,15 +164,30 @@ void CG_DrawCustomCrosshair()
 		}
 
 		// draw small cross
-		if (cg_customCrosshair.integer == CUSTOMCROSSHAIR_DOT_WITH_SMALLCROSS || cg_customCrosshair.integer == CUSTOMCROSSHAIR_SMALLCROSS)
+		if (
+			(cg_customCrosshair.integer == CUSTOMCROSSHAIR_DOT_WITH_SMALLCROSS || cg_customCrosshair.integer == CUSTOMCROSSHAIR_SMALLCROSS) &&
+			withSpread
+			)
 		{
 			innerWidth       = cg_customCrosshairCrossWidth.value;
 			innerWidthOffset = innerWidth / 2;
 			outlineWidth     = cg_customCrosshairCrossOutlineWidth.value;
 			outlineRounded   = cg_customCrosshairCrossOutlineRounded.integer;
 			crossLength      = cg_customCrosshairCrossLength.value;
-			fgColor          = cgs.customCrosshairCrossColor;
-			bgColor          = cgs.customCrosshairCrossOutlineColor;
+
+			if (cg_customCrosshairDynamicColor.integer)
+			{
+				Vector4Copy(cgs.customCrosshairCrossColor, dynamicColor);
+				CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
+				dynamicColor[3] = cgs.customCrosshairCrossColor[3];
+				fgColor         = dynamicColor;
+			}
+			else
+			{
+				fgColor = cgs.customCrosshairCrossColor;
+			}
+
+			bgColor = cgs.customCrosshairCrossOutlineColor;
 
 			// TODO : make rounded look proper > 1.0 outlineWidth as well
 			if (outlineWidth > 1.0)
@@ -197,8 +228,20 @@ void CG_DrawCustomCrosshair()
 		outlineRounded   = cg_customCrosshairCrossOutlineRounded.integer;
 		outlineWidth     = cg_customCrosshairCrossOutlineWidth.value;
 		crossLength      = cg_customCrosshairCrossLength.value;
-		fgColor          = cgs.customCrosshairCrossColor;
-		bgColor          = cgs.customCrosshairCrossOutlineColor;
+
+		if (cg_customCrosshairDynamicColor.integer)
+		{
+			Vector4Copy(cgs.customCrosshairCrossColor, dynamicColor);
+			CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
+			dynamicColor[3] = cgs.customCrosshairCrossColor[3];
+			fgColor         = dynamicColor;
+		}
+		else
+		{
+			fgColor = cgs.customCrosshairCrossColor;
+		}
+
+		bgColor = cgs.customCrosshairCrossOutlineColor;
 
 		// TODO : make rounded look proper > 1.0 outlineWidth as well
 		if (outlineWidth > 1.0)

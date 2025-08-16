@@ -1285,6 +1285,7 @@ void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 	ent->flags                                  &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH]           = ent->health = 0;
 	ent->client->ps.persistant[PERS_HWEAPON_USE] = 0; // if using /kill while at MG42
+	ent->sound1to2                               = HR_NUM_HITREGIONS; // not a headshot kill
 
 	player_die(ent, ent, ent, (g_gamestate.integer == GS_PLAYING) ? 100000 : 135, MOD_SUICIDE);
 }
@@ -1580,6 +1581,7 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 			// Kill him (makes sure he loses flags, etc)
 			ent->flags                        &= ~FL_GODMODE;
 			ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
+			ent->sound1to2                     = HR_NUM_HITREGIONS;           // not a headshot kill
 			player_die(ent, ent, ent, 100000, MOD_SWITCHTEAM);
 		}
 	}

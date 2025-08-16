@@ -2663,6 +2663,86 @@ death
 	{
 		both death_crouch
 	}
+	enemy_weapon Granatwerfer
+	{
+		both death_general_fast
+	}
+	enemy_weapon Mounted Granatwerfer
+	{
+		both death_general_fast
+	}
+	enemy_weapon Mortar
+	{
+		both death_general_fast
+	}
+	enemy_weapon Mounted Mortar
+	{
+		both death_general_fast
+	}
+	enemy_weapon grenade
+	{
+		both death_general_fast
+	}
+	enemy_weapon pineapple
+	{
+		both death_general_fast
+	}
+	enemy_weapon Dynamite Weapon
+	{
+		both death_general_fast
+	}
+	enemy_weapon Landmine
+	{
+		both death_general_fast
+	}
+	enemy_weapon Satchel Charge
+	{
+		both death_general_fast
+	}
+	enemy_weapon panzerfaust
+	{
+		both death_general_fast
+	}
+	enemy_weapon bazooka
+	{
+		both death_general_fast
+	}
+	enemy_weapon gpg40
+	{
+		both death_general_fast
+	}
+	enemy_weapon M7
+	{
+		both death_general_fast
+	}
+	enemy_weapon smokeGrenade
+	{
+		both death_general_fast
+	}
+	enemy_weapon smokeTrail
+	{
+		both death_general_fast
+	}
+	enemy_weapon Smoke Bomb
+	{
+		both death_general_fast
+	}
+	enemy_weapon nopickup(WP_MAPMORTAR)
+	{
+		both death_general_fast
+	}
+	enemy_weapon Artillery
+	{
+		both death_general_fast
+	}
+	enemy_weapon Airstrike
+	{
+		both death_general_fast
+	}
+	enemy_weapon Binoculars
+	{
+		both death_general_fast
+	}
 	default
 	{
 		both death_general

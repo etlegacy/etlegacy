@@ -979,7 +979,6 @@ void SV_CL_ParseMessageQueue(void)
 		{
 			index = (i + svMsgQueueHead->serverCommandSequence) & (MAX_RELIABLE_COMMANDS - 1);
 			Q_strncpyz(svclc.serverCommands[index], svMsgQueueHead->serverCommands[i], sizeof(svclc.serverCommands[index]));
-			free(svMsgQueueHead->serverCommands[i]);
 		}
 
 		svclc.serverCommandSequence = svMsgQueueHead->numServerCommand + svMsgQueueHead->serverCommandSequence - 1;
@@ -993,20 +992,7 @@ void SV_CL_ParseMessageQueue(void)
 		}
 
 		SV_CL_ParseServerMessage(&svMsgQueueHead->msg, svMsgQueueHead->headerBytes);
-
-		if (svMsgQueueHead->next)
-		{
-			svMsgQueueHead = svMsgQueueHead->next;
-			free(svMsgQueueHead->prev->msg.data);
-			free(svMsgQueueHead->prev);
-			svMsgQueueHead->prev = NULL;
-		}
-		else
-		{
-			free(svMsgQueueHead->msg.data);
-			free(svMsgQueueHead);
-			svMsgQueueHead = NULL;
-		}
+		SV_CL_FreeServerMessage();
 	}
 }
 
@@ -1189,6 +1175,41 @@ static serverMessageQueue_t *SV_CL_NewMessage(void)
 }
 
 /**
+ * @brief SV_CL_FreeMessage
+ * @param[in] svMsg
+ */
+static void SV_CL_FreeMessage(serverMessageQueue_t *svMsg)
+{
+	int i;
+
+	for (i = 0; i < svMsg->numServerCommand; i++)
+	{
+		free(svMsg->serverCommands[i]);
+	}
+
+	free(svMsg->msg.data);
+	free(svMsg);
+}
+
+/**
+ * @brief SV_CL_FreeServerMessage
+ */
+void SV_CL_FreeServerMessage(void)
+{
+	if (svMsgQueueHead->next)
+	{
+		svMsgQueueHead = svMsgQueueHead->next;
+		SV_CL_FreeMessage(svMsgQueueHead->prev);
+		svMsgQueueHead->prev = NULL;
+	}
+	else
+	{
+		SV_CL_FreeMessage(svMsgQueueHead);
+		svMsgQueueHead = svMsgQueueTail = NULL;
+	}
+}
+
+/**
  * @brief SV_CL_CheckNewQueuedCommand for change in serverId
  * @param[in] cmd
  */
@@ -1249,7 +1270,7 @@ rescan:
  * @param[in] readCount
  * @param[in] bit
  */
-void SV_CL_CopyMsg(msg_t *dest, msg_t *src, int readCount, int bit)
+static void SV_CL_CopyMsg(msg_t *dest, msg_t *src, int readCount, int bit)
 {
 	byte *data;
 

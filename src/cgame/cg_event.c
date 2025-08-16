@@ -184,7 +184,7 @@ static void CG_Obituary(entityState_t *ent)
 {
 	qhandle_t          shader    = cgs.media.pmImages[PM_DEATH];
 	meansOfDeath_t     mod       = (meansOfDeath_t)ent->eventParm;
-	popupMessageType_t deathType = PM_DEATH;
+	popupMessageType_t deathType = ent->loopSound ? PM_DEATH_HEADSHOT : PM_DEATH;   // 1 indicates headshot kill
 	int                target    = ent->otherEntityNum;
 	int                attacker  = ent->otherEntityNum2;
 	weapon_t           weapon    = (weapon_t)ent->weapon;
@@ -194,11 +194,6 @@ static void CG_Obituary(entityState_t *ent)
 	char               attackerName[MAX_NAME_LENGTH];
 	clientInfo_t       *ci, *ca; // ca = attacker
 	int                i;
-
-	if (ent->loopSound == 1) // 1 indicates headshot kill
-	{
-		deathType = PM_DEATH_HEADSHOT;
-	}
 
 	if (target < 0 || target >= MAX_CLIENTS)
 	{
