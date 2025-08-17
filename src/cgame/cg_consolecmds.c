@@ -3144,6 +3144,177 @@ static void CG_CrosshairHealth_f(void)
 	}
 }
 
+static int CG_GetSelectableMajorSpawn(const char *targetName, team_t playerTeam)
+{
+	int i;
+
+	if (!targetName || targetName[0] == '\0')
+	{
+		return -1;
+	}
+
+	for (i = 0; i < cg.spawnCount; i++)
+	{
+		if (Q_stricmp(cg.spawnPoints[i], targetName) == 0)
+		{
+			team_t spawnTeam = (team_t)(cg.spawnTeams[i] & 0xF);
+
+			if (i != 0 && spawnTeam != playerTeam && spawnTeam != TEAM_FREE)
+			{
+				continue;
+			}
+
+			if (cg.spawnTeams[i] & 256)
+			{
+				continue;
+			}
+			return i;
+		}
+	}
+	return -1;
+}
+
+/**
+ * @brief Command to select the nearest visible or nearby minor spawnpoint
+ */
+static void CG_SelectSpawn_f(void)
+{
+	vec3_t          playerOrigin;
+	cg_spawnpoint_t *spawnpoint;
+	cg_spawnpoint_t *bestMinorSpawn  = NULL;
+	float           closestMinorDist = FLT_MAX;
+	const float     maxDistSq        = (1024.0f * 1024.0f);
+	int             i;
+	team_t          playerTeam;
+	qboolean        spawnSet = qfalse;
+
+	if (!cg.snap)
+	{
+		return;
+	}
+
+	playerTeam = cgs.clientinfo[cg.clientNum].team;
+
+	if (playerTeam != TEAM_AXIS && playerTeam != TEAM_ALLIES)
+	{
+		CG_Printf("You are not on a team.\n");
+		return;
+	}
+
+	VectorCopy(cg.refdef_current->vieworg, playerOrigin);
+
+	for (i = 0; i < cg.numSpawnpointEnts; i++)
+	{
+		spawnpoint = &cgs.spawnpointEnt[i];
+		if (spawnpoint->isMajor)
+		{
+			continue;
+		}
+
+		qboolean inPVS = trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin);
+		float    dist  = VectorDistanceSquared(playerOrigin, spawnpoint->origin);
+
+		if (!inPVS && dist > maxDistSq)
+		{
+			continue;
+		}
+		if (spawnpoint->team != playerTeam && spawnpoint->team != TEAM_FREE)
+		{
+			continue;
+		}
+
+		if (spawnpoint->id > 0 && dist < closestMinorDist)
+		{
+			closestMinorDist = dist;
+			bestMinorSpawn   = spawnpoint;
+		}
+	}
+
+	if (bestMinorSpawn)
+	{
+		cg_spawnpoint_t *parentMajorSpawn = NULL;
+		float           closestParentDist = FLT_MAX;
+
+		for (i = 0; i < cg.numMajorSpawnpointEnts; i++)
+		{
+			spawnpoint = &cgs.majorSpawnpointEnt[i];
+
+			if (CG_GetSelectableMajorSpawn(spawnpoint->name, playerTeam) == -1)
+			{
+				continue;
+			}
+
+			float dist = VectorDistanceSquared(bestMinorSpawn->origin, spawnpoint->origin);
+			if (dist < closestParentDist)
+			{
+				closestParentDist = dist;
+				parentMajorSpawn  = spawnpoint;
+			}
+		}
+
+		if (parentMajorSpawn)
+		{
+			float parentDistToPlayer = VectorDistanceSquared(playerOrigin, parentMajorSpawn->origin);
+
+			if (parentDistToPlayer <= maxDistSq)
+			{
+				int selectableMajorId = CG_GetSelectableMajorSpawn(parentMajorSpawn->name, playerTeam);
+				if (selectableMajorId != -1)
+				{
+					trap_SendConsoleCommand(va("setspawnpt %d %d\n", selectableMajorId, bestMinorSpawn->id));
+					CG_PriorityCenterPrint(CG_TranslateString(va("^7Spawning at ^3%s (%d) ^7- ^2 %d", cg.spawnPoints[selectableMajorId], selectableMajorId, bestMinorSpawn->id)), -1);
+					spawnSet = qtrue;
+				}
+			}
+		}
+	}
+	else
+	{
+		cg_spawnpoint_t *bestMajorSpawn  = NULL;
+		float           closestMajorDist = FLT_MAX;
+
+		for (i = 0; i < cg.numMajorSpawnpointEnts; i++)
+		{
+			spawnpoint = &cgs.majorSpawnpointEnt[i];
+
+			qboolean inPVS = trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin);
+			float    dist  = VectorDistanceSquared(playerOrigin, spawnpoint->origin);
+
+			if (!inPVS && dist > maxDistSq)
+			{
+				continue;
+			}
+
+			if (CG_GetSelectableMajorSpawn(spawnpoint->name, playerTeam) == -1)
+			{
+				continue;
+			}
+
+			if (dist < closestMajorDist)
+			{
+				closestMajorDist = dist;
+				bestMajorSpawn   = spawnpoint;
+			}
+		}
+
+		if (bestMajorSpawn)
+		{
+			int selectableMajorId = CG_GetSelectableMajorSpawn(bestMajorSpawn->name, playerTeam);
+			if (selectableMajorId != -1)
+			{
+				trap_SendConsoleCommand(va("setspawnpt %d\n", selectableMajorId));
+				CG_PriorityCenterPrint(CG_TranslateString(va("^7Spawning at ^3%s (%d)", cg.spawnPoints[selectableMajorId], selectableMajorId)), -1);
+				spawnSet = qtrue;
+			}
+		}
+	}
+
+	if (!spawnSet)
+	{
+		CG_PriorityCenterPrint("^1No valid spawnpoints nearby!\n", -1);
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",                CG_TestGun_f              },
