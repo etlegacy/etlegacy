@@ -751,7 +751,7 @@ jobs:
           pattern: win*
 
       - name: SignPath Win Snapshot
-        uses: signpath/github-action-submit-signing-request@v0.4
+        uses: signpath/github-action-submit-signing-request@v1.3
         if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
         with:
           api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
@@ -763,7 +763,7 @@ jobs:
           output-artifact-directory: "win-packages"
 
       - name: SignPath Win64 Snapshot
-        uses: signpath/github-action-submit-signing-request@v0.4
+        uses: signpath/github-action-submit-signing-request@v1.3
         if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
         with:
           api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
@@ -775,7 +775,7 @@ jobs:
           output-artifact-directory: "win64-packages"
 
       - name: SignPath Win Release
-        uses: signpath/github-action-submit-signing-request@v0.4
+        uses: signpath/github-action-submit-signing-request@v1.3
         if: github.ref_type == 'tag'
         with:
           api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
@@ -787,7 +787,7 @@ jobs:
           output-artifact-directory: "win-packages"
 
       - name: SignPath Win64 Release
-        uses: signpath/github-action-submit-signing-request@v0.4
+        uses: signpath/github-action-submit-signing-request@v1.3
         if: github.ref_type == 'tag'
         with:
           api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
