@@ -1704,6 +1704,7 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 					tent->s.eventParm    = level.commanderSounds[x][i].index - 1;
 					tent->s.teamNum      = clientNum;
 					tent->r.singleClient = clientNum;
+					tent->s.density      = EV_GLOBAL_TEAM_SOUND;
 					tent->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;
 				}
 			}
