@@ -3183,7 +3183,7 @@ static void CG_SelectSpawn_f(void)
 	cg_spawnpoint_t *spawnpoint;
 	cg_spawnpoint_t *bestMinorSpawn  = NULL;
 	float           closestMinorDist = FLT_MAX;
-	const float     maxDistSq        = (1024.0f * 1024.0f);
+	const float     maxDistSq        = (1536.0f * 1536.0f);
 	int             i;
 	team_t          playerTeam;
 	qboolean        spawnSet = qfalse;
@@ -3441,6 +3441,8 @@ static consoleCommand_t commands[] =
 	{ "resetmaxspeed",          CG_ResetMaxSpeed_f        },
 	{ "listspawnpt",            CG_ListSpawnPoints_f      },
 	{ "setspawnpt",             CG_SetSpawnPoint_f        },
+	{ "selectclosestspawnpt",   CG_SelectSpawn_f          },
+
 
 	{ "loc",                    CG_Location_f             },
 	{ "camera",                 CG_Camera_f               },
@@ -3552,6 +3554,7 @@ static const char *gameCommand[] =
 	"setviewpos",
 	// "getspawnpt",  // not meant to be set manually
 	"setspawnpt",
+	"selectclosestspawnpt",
 	"sgstats",
 	"showstats",
 	"specinvite",
