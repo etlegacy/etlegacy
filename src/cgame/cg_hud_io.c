@@ -47,6 +47,7 @@ typedef struct
 	qboolean replaceNumberByName;                       //< added in version 3
 	char numberToNameTableReminder[MAXHUDS][MAX_QPATH]; //< added in version 3
 	qboolean shiftHealthBarDynamicColorStyle;           //< added in version 4
+	qboolean replaceWeaponIconStyle;                    //< added in version 5
 } hudFileUpgrades_t;
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
@@ -1540,6 +1541,11 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		}
 	}
 
+	if (upgr->replaceWeaponIconStyle)
+	{
+		CLEARBIT(tmpHud->weaponicon.style, 1);
+	}
+
 	if (upgr->shiftHealthBarDynamicColorStyle)
 	{
 		// Ensure dynamic coloration style is applied due to insertion of needle style from bar
@@ -1607,6 +1613,9 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 	// fall through
 	case 3:         // 2.82.1 - needle style has been added for health bar, requiring shifting Dynamic Color style value
 		ret->shiftHealthBarDynamicColorStyle = qtrue;
+	// fall through
+	case 4:         // 2.84 - weapon icon dynamic health style replace by only ticking style due to split with weapon heat bar
+		ret->replaceWeaponIconStyle = qtrue;
 		break;
 	default:
 		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);
