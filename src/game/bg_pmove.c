@@ -5285,7 +5285,7 @@ void PmoveSingle(pmove_t *pmove)
 			// by adding extra spare time for shooting right after scoping
 			// also consider falling from slope for a moment
 			if (((!pm->pmext->airTime || (pm->ps->pm_flags & PMF_JUMP_HELD)) && !(pm->cmd.buttons & BUTTON_WALKING)
-			     && VectorLength(pm->ps->velocity) > 127 && pm->cmd.serverTime > pm->pmext->switchToScopeTime + 250)
+			     && VectorLength(pm->ps->velocity) > 127 && pm->cmd.serverTime > pm->pmext->switchToScopeTime + 175)
 			    || (pm->pmext->airTime && pm->cmd.serverTime > pm->pmext->airTime + 500))
 			{
 				PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
