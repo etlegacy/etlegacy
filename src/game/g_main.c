@@ -178,6 +178,8 @@ vmCvar_t g_fieldopsChargeTime;
 vmCvar_t g_soldierChargeTime;
 vmCvar_t g_covertopsChargeTime;
 
+vmCvar_t g_fixMissileExplosions;
+
 vmCvar_t g_antilag;
 
 vmCvar_t g_spectatorInactivity;
@@ -413,6 +415,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_soldierChargeTime,               "g_soldierChargeTime",               "20000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
 	{ &g_covertopsChargeTime,             "g_covertopsChargeTime",             "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
 	{ &g_landminetimeout,                 "g_landminetimeout",                 "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue  },
+
+	{ &g_fixMissileExplosions,            "g_fixMissileExplosions",            "0",                          CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
 
 	{ &g_oss,                             "g_oss",                             "0",                          CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 

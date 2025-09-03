@@ -2065,6 +2065,8 @@ extern vmCvar_t g_fieldopsChargeTime;
 extern vmCvar_t g_soldierChargeTime;
 extern vmCvar_t g_covertopsChargeTime;
 
+extern vmCvar_t g_fixMissileExplosions;
+
 extern vmCvar_t g_debugConstruct;
 extern vmCvar_t g_landminetimeout;
 

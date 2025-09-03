@@ -274,8 +274,15 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		// 	}
 		// }
 
-		G_RadiusDamageOffset(trace, 18, ent, ent->parent, ent->splashDamage, ent->splashRadius, other, ent->splashMethodOfDeath);
-		// G_RadiusDamage(trace->endpos, ent, ent->parent, ent->splashDamage, ent->splashRadius, other, ent->splashMethodOfDeath);
+		if (g_fixMissileExplosions.integer)
+		{
+			G_RadiusDamageOffset(trace, 18, ent, ent->parent, ent->splashDamage, ent->splashRadius, other, ent->splashMethodOfDeath);
+		}
+		else
+		{
+			G_RadiusDamage(trace->endpos, ent, ent->parent, ent->splashDamage, ent->splashRadius, other, ent->splashMethodOfDeath);
+		}
+
 	}
 
 	// the missile exploded right after being fired
