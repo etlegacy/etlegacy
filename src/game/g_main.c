@@ -326,6 +326,8 @@ vmCvar_t skill_covertops;
 vmCvar_t skill_battlesense;
 vmCvar_t skill_lightweapons;
 
+vmCvar_t g_rocketSpeed;
+
 vmCvar_t g_misc;
 
 vmCvar_t g_intermissionTime;
@@ -657,6 +659,7 @@ cvarTable_t gameCvarTable[] =
 	{ &skill_covertops,                   "skill_covertops",                   "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &skill_battlesense,                 "skill_battlesense",                 "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &skill_lightweapons,                "skill_lightweapons",                "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_rocketSpeed,                     "g_rocketSpeed",                     "2500",                       CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_misc,                            "g_misc",                            "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_intermissionTime,                "g_intermissionTime",                "60",                         0,                                               0, qfalse, qfalse },
 	{ &g_intermissionReadyPercent,        "g_intermissionReadyPercent",        "100",                        0,                                               0, qfalse, qfalse },

@@ -2216,6 +2216,8 @@ extern vmCvar_t skill_covertops;
 extern vmCvar_t skill_battlesense;
 extern vmCvar_t skill_lightweapons;
 
+extern vmCvar_t g_rocketSpeed;
+
 extern vmCvar_t g_misc;
 
 extern vmCvar_t g_intermissionTime;

@@ -3832,7 +3832,7 @@ gentity_t *weapon_antitank_fire(gentity_t *ent)
 	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
 	VectorCopy(forward, dir);
 	VectorNormalize(dir);
-	VectorScale(dir, 2500, dir);
+	VectorScale(dir, g_rocketSpeed.integer, dir);
 
 	rocket = fire_missile(ent, muzzleEffect, dir, ent->s.weapon);
 
