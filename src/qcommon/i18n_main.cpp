@@ -60,7 +60,7 @@ extern "C"
 tinygettext::DictionaryManager dictionary;
 tinygettext::DictionaryManager dictionary_mod;
 
-cvar_t      *cl_lang = NULL;
+cvar_t      *cl_lang      = NULL;
 cvar_t      *cl_langDebug = NULL;
 static char cl_lang_last[3];
 
@@ -81,9 +81,9 @@ class QInputbuf : public std::streambuf
 {
 private:
 	static const size_t BUFFER_SIZE = 8192;
-	fileHandle_t        fileHandle;
-	char                buffer[BUFFER_SIZE];
-	size_t              putBack;
+	fileHandle_t fileHandle;
+	char buffer[BUFFER_SIZE];
+	size_t putBack;
 public:
 	QInputbuf(const std::string& filename) : putBack(1)
 	{

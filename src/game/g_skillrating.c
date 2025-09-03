@@ -30,28 +30,28 @@
 #endif
 
 #define SRCHECK_SQLWRAP_TABLES "SELECT * FROM rating_users; " \
-	                           "SELECT * FROM rating_match; " \
-	                           "SELECT * FROM rating_maps;"
+							   "SELECT * FROM rating_match; " \
+							   "SELECT * FROM rating_maps;"
 #define SRCHECK_SQLWRAP_SCHEMA "SELECT guid, mu, sigma, created, updated FROM rating_users; " \
-	                           "SELECT guid, mu, sigma, time_axis, time_allies FROM rating_match; " \
-	                           "SELECT mapname, win_axis, win_allies FROM rating_maps;"
+							   "SELECT guid, mu, sigma, time_axis, time_allies FROM rating_match; " \
+							   "SELECT mapname, win_axis, win_allies FROM rating_maps;"
 #define SRMATCH_SQLWRAP_DELETE "DELETE FROM rating_match;"
 #define SRMATCH_SQLWRAP_SELECT "SELECT * FROM rating_match WHERE guid = '%s';"
 #define SRMATCH_SQLWRAP_INSERT "INSERT INTO rating_match " \
-	                           "(guid, mu, sigma, time_axis, time_allies) VALUES ('%s', '%f', '%f', '%i', '%i');"
+							   "(guid, mu, sigma, time_axis, time_allies) VALUES ('%s', '%f', '%f', '%i', '%i');"
 #define SRMATCH_SQLWRAP_UPDATE "UPDATE rating_match " \
-	                           "SET mu = '%f', sigma = '%f', time_axis = '%i', time_allies = '%i' WHERE guid = '%s';"
+							   "SET mu = '%f', sigma = '%f', time_axis = '%i', time_allies = '%i' WHERE guid = '%s';"
 #define SRUSERS_SQLWRAP_SELECT "SELECT * FROM rating_users WHERE guid = '%s';"
 #define SRUSERS_SQLWRAP_INSERT "INSERT INTO rating_users " \
-	                           "(guid, mu, sigma, created, updated) VALUES ('%s', '%f', '%f', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
+							   "(guid, mu, sigma, created, updated) VALUES ('%s', '%f', '%f', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
 #define SRUSERS_SQLWRAP_UPDATE "UPDATE rating_users " \
-	                           "SET mu = '%f', sigma = '%f', updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
+							   "SET mu = '%f', sigma = '%f', updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
 #define SRMATCH_SQLWRAP_TABLE  "SELECT * FROM rating_match;"
 #define SRMAPS_SQLWRAP_SELECT  "SELECT * FROM rating_maps WHERE mapname = '%s';"
 #define SRMAPS_SQLWRAP_INSERT  "INSERT INTO rating_maps " \
-	                           "(win_axis, win_allies, mapname) VALUES ('%i', '%i', '%s');"
+							   "(win_axis, win_allies, mapname) VALUES ('%i', '%i', '%s');"
 #define SRMAPS_SQLWRAP_UPDATE  "UPDATE rating_maps " \
-	                           "SET win_axis = win_axis + '%i', win_allies = win_allies + '%i' WHERE mapname = '%s';"
+							   "SET win_axis = win_axis + '%i', win_allies = win_allies + '%i' WHERE mapname = '%s';"
 
 // MU      25            - mean
 // SIGMA   MU / 3        - standard deviation
@@ -483,10 +483,10 @@ int G_SkillRatingSetUserRating(srData_t *sr_data)
  */
 void G_SkillRatingGetClientRating(gclient_t *cl)
 {
-	char         userinfo[MAX_INFO_STRING];
-	char         *guid;
-	int          clientNum;
-	srData_t     sr_data;
+	char     userinfo[MAX_INFO_STRING];
+	char     *guid;
+	int      clientNum;
+	srData_t sr_data;
 
 	// disable for these game types
 	if (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
@@ -524,8 +524,8 @@ void G_SkillRatingGetClientRating(gclient_t *cl)
 		}
 
 		// assign user data to session
-		cl->sess.mu          = sr_data.mu;
-		cl->sess.sigma       = sr_data.sigma;
+		cl->sess.mu    = sr_data.mu;
+		cl->sess.sigma = sr_data.sigma;
 
 		// ensure auto statsdump is correct
 		if (!level.intermissionQueued && !level.intermissiontime)
@@ -546,17 +546,17 @@ void G_SkillRatingGetClientRating(gclient_t *cl)
 		// retrieve rating from rating_match or rating_users table or set default values
 		switch (G_SkillRatingGetMatchRating(&sr_data))
 		{
-			case 1:
-				// error occurred
-				return;
-			case 2:
-				// data not found in rating_match
-				G_SkillRatingGetUserRating(&sr_data);
-				break;
-			case 0:
-				// data found
-			default:
-				break;
+		case 1:
+			// error occurred
+			return;
+		case 2:
+			// data not found in rating_match
+			G_SkillRatingGetUserRating(&sr_data);
+			break;
+		case 0:
+		// data found
+		default:
+			break;
 		}
 
 		// assign match data to session
@@ -578,10 +578,10 @@ void G_SkillRatingGetClientRating(gclient_t *cl)
  */
 void G_SkillRatingSetClientRating(gclient_t *cl)
 {
-	char         userinfo[MAX_INFO_STRING];
-	char         *guid;
-	int          clientNum;
-	srData_t     sr_data;
+	char     userinfo[MAX_INFO_STRING];
+	char     *guid;
+	int      clientNum;
+	srData_t sr_data;
 
 	// disable for these game types
 	if (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)

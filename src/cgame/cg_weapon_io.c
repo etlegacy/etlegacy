@@ -397,7 +397,7 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 {
 	pc_token_t token;
 	char       filename[MAX_QPATH];
-	float       value;
+	float      value;
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{

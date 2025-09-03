@@ -892,7 +892,7 @@ static ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 
 #define FUNCTABLE_SHIFT     (16 - FUNCTABLE_SIZE2)
 #define SIN_TABLE(i)      tr.sinTable[(i) >> FUNCTABLE_SHIFT];
-#define COS_TABLE(i)      tr.sinTable[(((i) >> FUNCTABLE_SHIFT) + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
+#define COS_TABLE(i)      tr.sinTable[(((i) >> FUNCTABLE_SHIFT) + (FUNCTABLE_SIZE / 4))&FUNCTABLE_MASK];
 
 /**
  * @brief LocalIngleVector
@@ -2203,7 +2203,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 				{
 					vec3_t        diff;
 					mdxBoneInfo_t *mdxBoneInfo =
-					    (mdxBoneInfo_t *) ((byte *) mdxHeader + mdxHeader->ofsBones + *boneRefs * sizeof(mdxBoneInfo_t));
+						(mdxBoneInfo_t *) ((byte *) mdxHeader + mdxHeader->ofsBones + *boneRefs * sizeof(mdxBoneInfo_t));
 					bonePtr = &bones[*boneRefs];
 
 					VectorSet(vec, 0.f, 0.f, 32.f);

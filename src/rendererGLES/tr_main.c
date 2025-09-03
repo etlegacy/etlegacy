@@ -433,19 +433,19 @@ void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const fl
 	for (i = 0 ; i < 4 ; i++)
 	{
 		eye[i] =
-		    src[0] * modelMatrix[i + 0 * 4] +
-		    src[1] * modelMatrix[i + 1 * 4] +
-		    src[2] * modelMatrix[i + 2 * 4] +
-		    1 * modelMatrix[i + 3 * 4];
+			src[0] * modelMatrix[i + 0 * 4] +
+			src[1] * modelMatrix[i + 1 * 4] +
+			src[2] * modelMatrix[i + 2 * 4] +
+			1 * modelMatrix[i + 3 * 4];
 	}
 
 	for (i = 0 ; i < 4 ; i++)
 	{
 		dst[i] =
-		    eye[0] * projectionMatrix[i + 0 * 4] +
-		    eye[1] * projectionMatrix[i + 1 * 4] +
-		    eye[2] * projectionMatrix[i + 2 * 4] +
-		    eye[3] * projectionMatrix[i + 3 * 4];
+			eye[0] * projectionMatrix[i + 0 * 4] +
+			eye[1] * projectionMatrix[i + 1 * 4] +
+			eye[2] * projectionMatrix[i + 2 * 4] +
+			eye[3] * projectionMatrix[i + 3 * 4];
 	}
 }
 
@@ -485,10 +485,10 @@ void myGlMultMatrix(const float *a, const float *b, float *out)
 		for (j = 0 ; j < 4 ; j++)
 		{
 			out[i * 4 + j] =
-			    a[i * 4 + 0] * b[0 * 4 + j]
-			    + a[i * 4 + 1] * b[1 * 4 + j]
-			    + a[i * 4 + 2] * b[2 * 4 + j]
-			    + a[i * 4 + 3] * b[3 * 4 + j];
+				a[i * 4 + 0] * b[0 * 4 + j]
+				+ a[i * 4 + 1] * b[1 * 4 + j]
+				+ a[i * 4 + 2] * b[2 * 4 + j]
+				+ a[i * 4 + 3] * b[3 * 4 + j];
 		}
 	}
 }
@@ -1780,15 +1780,15 @@ void R_DebugPolygon(int color, int numPoints, float *points)
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
 	// draw solid shade
-	glColor4f( color & 1, (color >> 1) & 1, (color >> 2) & 1, 1.0f );
-	glVertexPointer  ( 3, GL_FLOAT, 0, points );
-	glDrawArrays( GL_TRIANGLE_FAN, 0, numPoints );
+	glColor4f(color & 1, (color >> 1) & 1, (color >> 2) & 1, 1.0f);
+	glVertexPointer(3, GL_FLOAT, 0, points);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, numPoints);
 
 	// draw wireframe outline
 	glDepthRangef(0, 0);
-	glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-	glVertexPointer  ( 3, GL_FLOAT, 0, points );
-	glDrawArrays( GL_LINES, 0, numPoints );
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glVertexPointer(3, GL_FLOAT, 0, points);
+	glDrawArrays(GL_LINES, 0, numPoints);
 	glDepthRangef(0, 1);
 }
 

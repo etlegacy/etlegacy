@@ -33,7 +33,7 @@
 #define PRCHECK_SQLWRAP_SCHEMA "SELECT guid, prestige, streak, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated FROM prestige_users;"
 #define PRUSERS_SQLWRAP_SELECT "SELECT * FROM prestige_users WHERE guid = '%s';"
 #define PRUSERS_SQLWRAP_INSERT "INSERT INTO prestige_users " \
-	                           "(guid, prestige, streak, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated) VALUES ('%s', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
+							   "(guid, prestige, streak, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated) VALUES ('%s', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
 #define PRUSERS_SQLWRAP_UPDATE "UPDATE prestige_users SET prestige = '%i', streak = '%i', skill0 = '%i', skill1 = '%i', skill2 = '%i', skill3 = '%i', skill4 = '%i', skill5 = '%i', skill6 = '%i', updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
 
 /**

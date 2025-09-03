@@ -467,12 +467,12 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	//use a transformmatrix instead as it is faster
 	mat4_transform_vec3(tr.orientation.transformMatrix, bspModel->bounds[0], ent->worldBounds[0]);
 	mat4_transform_vec3(tr.orientation.transformMatrix, bspModel->bounds[1], ent->worldBounds[1]);
-		
+
 
 	VectorAdd(ent->worldBounds[0], ent->worldBounds[1], boundsCenter);
 	//rotate the "forcedorigin to be right?
-	VectorScale(boundsCenter,0.5, boundsCenter);
-	
+	VectorScale(boundsCenter, 0.5, boundsCenter);
+
 	// BSP inline models should always use vertex lighting
 	R_SetupEntityLighting(&tr.refdef, ent, boundsCenter);
 
@@ -755,7 +755,8 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 			node = node->children[1];
 			break;
 		}
-	} while (1);
+	}
+	while (1);
 
 
 	{
@@ -1145,8 +1146,8 @@ static void R_UpdateClusterSurfaces()
 			if (tr.world->numClusterVBOSurfaces[tr.visIndex] < tr.world->clusterVBOSurfaces[tr.visIndex].currentElements)
 			{
 				vboSurf =
-				    (srfVBOMesh_t *) Com_GrowListElement(&tr.world->clusterVBOSurfaces[tr.visIndex],
-				                                         tr.world->numClusterVBOSurfaces[tr.visIndex]);
+					(srfVBOMesh_t *) Com_GrowListElement(&tr.world->clusterVBOSurfaces[tr.visIndex],
+					                                     tr.world->numClusterVBOSurfaces[tr.visIndex]);
 				ibo = vboSurf->ibo;
 
 				/*

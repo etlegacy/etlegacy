@@ -376,9 +376,9 @@ static void MakeSkyVec(float s, float t, int axis, vec4_t outSt, vec4_t outXYZ)
 	}
 	// vanilla end
 
-	b[0]    = s * boxSize;
-	b[1]    = t * boxSize;
-	b[2]    = boxSize;
+	b[0] = s * boxSize;
+	b[1] = t * boxSize;
+	b[2] = boxSize;
 
 	for (j = 0; j < 3; j++)
 	{
@@ -439,7 +439,7 @@ static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][4];
  */
 static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs[2]) // uses WT_EDGE_CLAMP
 {
-    int             s, t;
+	int s, t;
 	int vertexStart = tess.numVertexes;
 	int tHeight     = maxs[1] - mins[1] + 1;
 	int sWidth      = maxs[0] - mins[0] + 1;
@@ -500,7 +500,7 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
  */
 static void DrawSkySideInner(struct image_s *image, const int mins[2], const int maxs[2])  // uses WT_REPEAT
 {
-    int s, t;
+	int s, t;
 	int vertexStart = tess.numVertexes;
 	int tHeight     = maxs[1] - mins[1] + 1;
 	int sWidth      = maxs[0] - mins[0] + 1;
@@ -689,9 +689,9 @@ static void DrawSkyBox(shader_t *shader, qboolean outerbox)
 			{
 				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
-				           i, 
-						   s_skyTexCoords[t][s], 
-						   s_skyPoints[t][s]);
+				           i,
+				           s_skyTexCoords[t][s],
+				           s_skyPoints[t][s]);
 			}
 		}
 
@@ -1094,11 +1094,11 @@ void Tess_StageIteratorSky(void)
 
 		DrawSkyBox(tess.surfaceShader, qfalse);
 	}
-	
+
 	// back to normal depth range
 	glDepthRange(0.0, 1.0);
 
 	// note that sky was drawn so we will draw a sun later
 	backEnd.skyRenderedThisView = qtrue;
-	backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
+	backEnd.refdef.rdflags     &= ~RDF_DRAWINGSKY;
 }

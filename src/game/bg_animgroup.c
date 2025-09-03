@@ -131,7 +131,7 @@ static qboolean BG_RAG_ParseError(int handle, const char *format, ...)
  */
 static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 {
-	int   i;
+	int  i;
 	long l;
 
 	animation->flags = 0;
@@ -156,7 +156,8 @@ static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 		return BG_RAG_ParseError(handle, "expected fps pseudo decimal");
 	}
 
-	if (l == 0) {
+	if (l == 0)
+	{
 		l = 100;
 	}
 

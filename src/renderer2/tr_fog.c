@@ -120,7 +120,7 @@ void RB_FogOn(void)
 		return;
 	}
 
-	if(r_uiFullScreen->integer)
+	if (r_uiFullScreen->integer)
 	{   // don't fog in the menu
 		RB_FogOff();
 		return;
@@ -281,7 +281,7 @@ void R_SetFrameFog(void)
 			VectorCopy(tr.world->globalTransEndFog, tr.world->fogs[tr.world->globalFog].shader->fogParms.color);
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.colorInt = ColorBytes4(tr.world->globalTransEndFog[0] * tr.identityLight,
 			                                                                            tr.world->globalTransEndFog[1] * tr.identityLight,
-				            tr.world->globalTransEndFog[2] * tr.identityLight, 1.0);
+			                                                                            tr.world->globalTransEndFog[2] * tr.identityLight, 1.0);
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque = tr.world->globalTransEndFog[3];
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale        = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8);
 

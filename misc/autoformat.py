@@ -25,7 +25,10 @@ INCLUDED_EXTS = {".c", ".cpp", ".h", ".py", ".yml", ".yaml"}
 EXCLUDED_PATHS = [
     "src/Omnibot/",
     "src/game/g_etbot_interface.cpp",
+    "src/luasql/",
     "src/qcommon/crypto/sha-1/",
+    "src/renderercommon/nanosvg/",
+    "src/tools/shdr/tinydir.h",
 ]
 
 

@@ -35,7 +35,7 @@
 
 #include "tr_local.h"
 
-#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + tess.shaderTime * (freq)) * FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
+#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + tess.shaderTime * (freq)) * FUNCTABLE_SIZE))&FUNCTABLE_MASK] * (amplitude))
 
 /**
  * @brief TableForFunc
@@ -492,7 +492,7 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 			off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
 
 			scale = WAVEVALUE(table, ds->deformationWave.base,
-				ds->deformationWave.amplitude, ds->deformationWave.phase + off, ds->deformationWave.frequency);
+			                  ds->deformationWave.amplitude, ds->deformationWave.phase + off, ds->deformationWave.frequency);
 
 			VectorScale(normal, scale, offset);
 
@@ -591,12 +591,12 @@ void RB_CalcDeformNormals(deformStage_t *ds)
 	{
 		scale = 0.98;
 		scale = R_NoiseGet4f(xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-				            tess.shaderTime * ds->deformationWave.frequency);
+		                     tess.shaderTime * ds->deformationWave.frequency);
 		normal[0] += ds->deformationWave.amplitude * scale;
 
 		scale = 0.98;
 		scale = R_NoiseGet4f(100 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-				             tess.shaderTime * ds->deformationWave.frequency);
+		                     tess.shaderTime * ds->deformationWave.frequency);
 		normal[1] += ds->deformationWave.amplitude * scale;
 
 		scale = 0.98;
@@ -966,7 +966,7 @@ static void Autosprite2Deform(void)
  */
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 {
-	if(shader->numDeforms)
+	if (shader->numDeforms)
 	{
 		if (shader->numDeforms > 1)
 		{
@@ -978,12 +978,12 @@ qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 
 			switch (ds->deformation)
 			{
-				case DEFORM_WAVE:
-				case DEFORM_BULGE:
-				case DEFORM_MOVE:
-					return qfalse;
-				default:
-					return qtrue;
+			case DEFORM_WAVE:
+			case DEFORM_BULGE:
+			case DEFORM_MOVE:
+				return qfalse;
+			default:
+				return qtrue;
 			}
 		}
 	}
@@ -1075,7 +1075,7 @@ TEX COORDS
  */
 void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 {
-	int   j;
+	int    j;
 	double x, y;
 
 	mat4_ident(matrix);
@@ -1118,8 +1118,8 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 			//see warbell and battery sky..
 			if (tess.surfaceShader->isSky)
 			{
-				x = bundle->texMods[j].scroll[0] * tess.shaderTime *0.5;
-				y = bundle->texMods[j].scroll[1] * tess.shaderTime *0.5;
+				x = bundle->texMods[j].scroll[0] * tess.shaderTime * 0.5;
+				y = bundle->texMods[j].scroll[1] * tess.shaderTime * 0.5;
 			}
 			else
 			{
