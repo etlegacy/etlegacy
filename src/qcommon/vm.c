@@ -456,7 +456,7 @@ void VM_Error(errorParm_t errorParm, const char *module, const char *filename)
 #if ARCH_X86
 	Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run.", module, filename));
 #else
-    Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run and that the mod is compatible with your platform.\n\nIf the issue persists, try a 32-bit client.", module, filename));
+	Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*exists in the mod's folder you're trying to run and that the mod is compatible with your platform.\n\nIf the issue persists, try a 32-bit client.", module, filename));
 #endif
 }
 

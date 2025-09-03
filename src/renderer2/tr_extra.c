@@ -523,10 +523,10 @@ void MatrixTransformBounds(const mat4_t m, const vec3_t mins, const vec3_t maxs,
 	vec3_t miny, maxy;
 	vec3_t minz, maxz;
 
-	const float* c1 = m;
-	const float* c2 = m + 4;
-	const float* c3 = m + 8;
-	const float* c4 = m + 12;
+	const float *c1 = m;
+	const float *c2 = m + 4;
+	const float *c3 = m + 8;
+	const float *c4 = m + 12;
 
 	VectorScale(c1, mins[0], minx);
 	VectorScale(c1, maxs[0], maxx);

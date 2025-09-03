@@ -85,7 +85,7 @@ GLint R_GetShaderProgramUniform(shaderProgram_t *program, const char *name)
 
 shaderProgram_t *R_CreateShaderProgram(const char *vert, const char *frag)
 {
-	GLint compiled;
+	GLint           compiled;
 	shaderProgram_t *program = R_FindAvailableShaderProgram();
 
 	if (!program)

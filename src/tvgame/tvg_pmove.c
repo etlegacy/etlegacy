@@ -82,8 +82,8 @@ static void TVG_PM_AddEvent(int newEvent)
  */
 static void TVG_PM_UpdateViewAngles(playerState_t *ps, usercmd_t *cmd)
 {
-	short  temp;
-	int    i;
+	short temp;
+	int   i;
 	// vec3_t oldViewAngles;
 
 	if (ps->pm_type == PM_INTERMISSION || (ps->pm_flags & PMF_TIME_LOCKPLAYER))
@@ -763,7 +763,7 @@ static qboolean TVG_PM_SlideMove(qboolean gravity)
  */
 static void TVG_PM_StepSlideMove(qboolean gravity)
 {
-	vec3_t  start_o, start_v;
+	vec3_t start_o, start_v;
 	// vec3_t  down_o, down_v;
 	trace_t trace;
 	vec3_t  up, down;

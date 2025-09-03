@@ -133,7 +133,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	vec4_t  eye, clip, normalized, window;
 	float   distBias = 512.0;
 	float   distLerp = 0.5;
-	float   d1       = 0.0f, d2 = 0.0f;
+	float   d1 = 0.0f, d2 = 0.0f;
 
 	backEnd.pc.c_flareAdds++;
 
@@ -407,9 +407,9 @@ void RB_TestFlare(flare_t *f)
  */
 void RB_RenderFlare(flare_t *f)
 {
-	float size, distance, intensity, factor;
+	float  size, distance, intensity, factor;
 	vec3_t color;
-	int	iColor[3];
+	int    iColor[3];
 
 	backEnd.pc.c_flareRenders++;
 

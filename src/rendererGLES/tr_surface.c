@@ -239,10 +239,10 @@ void RB_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, byte *color, floa
 	// constant color all the way around
 	// should this be identity and let the shader specify from entity?
 	*( unsigned int * ) &tess.vertexColors[ndx]                 =
-	    *( unsigned int * ) &tess.vertexColors[ndx + 1]         =
-	        *( unsigned int * ) &tess.vertexColors[ndx + 2]     =
-	            *( unsigned int * ) &tess.vertexColors[ndx + 3] =
-	                *( unsigned int * )color;
+		*( unsigned int * ) &tess.vertexColors[ndx + 1]         =
+			*( unsigned int * ) &tess.vertexColors[ndx + 2]     =
+				*( unsigned int * ) &tess.vertexColors[ndx + 3] =
+					*( unsigned int * )color;
 
 
 	tess.numVertexes += 4;
@@ -513,9 +513,9 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 			}
 
 			// set color
-			a        = alpha > 1.0f ? 255 : (int)(alpha * 255);
+			a = alpha > 1.0f ? 255 : (int)(alpha * 255);
 #ifdef Q3_BIG_ENDIAN // LBO 3/15/05. Byte-swap fix for Mac - alpha is in the LSB.
-			srcColor = (*((int*) instance->color) & 0xFFFFFF00) | (a & 0xff);
+			srcColor = (*((int *) instance->color) & 0xFFFFFF00) | (a & 0xff);
 #else
 			srcColor = (*((int *) instance->color) & 0xFFFFFF) | (a << 24);
 #endif
@@ -1335,7 +1335,7 @@ void RB_SurfaceFace(srfSurfaceFace_t *surf)
 	indices = ( unsigned * )((( char * ) surf) + surf->ofsIndices);
 
 	Bob         = tess.numVertexes;
-	tessIndexes = ( unsigned int * )( tess.indexes + tess.numIndexes);
+	tessIndexes = ( unsigned int * )(tess.indexes + tess.numIndexes);
 	for (i = surf->numIndices - 1 ; i >= 0  ; i--)
 	{
 		tessIndexes[i] = indices[i] + Bob;
@@ -1828,26 +1828,26 @@ void RB_SurfaceSkip(void *surf)
 	return;
 }
 
-void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *) =
+void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *) =
 {
-	(void (*)(void *))RB_SurfaceBad,               // SF_BAD,
-	(void (*)(void *))RB_SurfaceSkip,              // SF_SKIP,
-	(void (*)(void *))RB_SurfaceFace,              // SF_FACE,
-	(void (*)(void *))RB_SurfaceGrid,              // SF_GRID,
-	(void (*)(void *))RB_SurfaceTriangles,         // SF_TRIANGLES,
-	(void (*)(void *))RB_SurfaceFoliage,           // SF_FOLIAGE,
-	(void (*)(void *))RB_SurfacePolychain,         // SF_POLY,
-	(void (*)(void *))RB_SurfaceMesh,              // SF_MD3,
-	(void (*)(void *))RB_SurfaceCMesh,             // SF_MDC,
-	(void (*)(void *))RB_SurfaceAnim,              // SF_MDS,
-	(void (*)(void *))RB_MDM_SurfaceAnim,          // SF_MDM,
-	(void (*)(void *))RB_SurfaceFlare,             // SF_FLARE,
-	(void (*)(void *))RB_SurfaceEntity,            // SF_ENTITY
+	(void (*)(void *)) RB_SurfaceBad,               // SF_BAD,
+	(void (*)(void *)) RB_SurfaceSkip,              // SF_SKIP,
+	(void (*)(void *)) RB_SurfaceFace,              // SF_FACE,
+	(void (*)(void *)) RB_SurfaceGrid,              // SF_GRID,
+	(void (*)(void *)) RB_SurfaceTriangles,         // SF_TRIANGLES,
+	(void (*)(void *)) RB_SurfaceFoliage,           // SF_FOLIAGE,
+	(void (*)(void *)) RB_SurfacePolychain,         // SF_POLY,
+	(void (*)(void *)) RB_SurfaceMesh,              // SF_MD3,
+	(void (*)(void *)) RB_SurfaceCMesh,             // SF_MDC,
+	(void (*)(void *)) RB_SurfaceAnim,              // SF_MDS,
+	(void (*)(void *)) RB_MDM_SurfaceAnim,          // SF_MDM,
+	(void (*)(void *)) RB_SurfaceFlare,             // SF_FLARE,
+	(void (*)(void *)) RB_SurfaceEntity,            // SF_ENTITY
 #ifndef __ANDROID__
-	(void (*)(void *))RB_SurfaceDisplayList,       // SF_DISPLAY_LIST
+	(void (*)(void *)) RB_SurfaceDisplayList,       // SF_DISPLAY_LIST
 #else
-    NULL,                                          // NULL
+	NULL,                                          // NULL
 #endif
-	(void (*)(void *))RB_SurfacePolyBuffer,        // SF_POLYBUFFER
-	(void (*)(void *))RB_SurfaceDecal,             // SF_DECAL
+	(void (*)(void *)) RB_SurfacePolyBuffer,        // SF_POLYBUFFER
+	(void (*)(void *)) RB_SurfaceDecal,             // SF_DECAL
 };

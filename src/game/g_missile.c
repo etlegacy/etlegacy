@@ -70,7 +70,8 @@ qboolean G_BounceMissile(gentity_t *ent, trace_t *trace)
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
 	// bounces without any velocity do not constitute proper bounces
-	if (velocity[0] == 0.0 && velocity[1] == 0.0 && velocity[2] == 0.0) {
+	if (velocity[0] == 0.0 && velocity[1] == 0.0 && velocity[2] == 0.0)
+	{
 		return qfalse;
 	}
 
@@ -201,7 +202,8 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	// check for bounce
 	if ((!other->takedamage || !ent->damage) && (ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF)))
 	{
-		if (G_BounceMissile(ent, trace)) {
+		if (G_BounceMissile(ent, trace))
+		{
 			// sending bounce event for smoketrail is unnecessary
 			if (ent->s.weapon == WP_SMOKETRAIL)
 			{

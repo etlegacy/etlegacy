@@ -433,19 +433,19 @@ void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const fl
 	for (i = 0 ; i < 4 ; i++)
 	{
 		eye[i] =
-		    src[0] * modelMatrix[i + 0 * 4] +
-		    src[1] * modelMatrix[i + 1 * 4] +
-		    src[2] * modelMatrix[i + 2 * 4] +
-		    1 * modelMatrix[i + 3 * 4];
+			src[0] * modelMatrix[i + 0 * 4] +
+			src[1] * modelMatrix[i + 1 * 4] +
+			src[2] * modelMatrix[i + 2 * 4] +
+			1 * modelMatrix[i + 3 * 4];
 	}
 
 	for (i = 0 ; i < 4 ; i++)
 	{
 		dst[i] =
-		    eye[0] * projectionMatrix[i + 0 * 4] +
-		    eye[1] * projectionMatrix[i + 1 * 4] +
-		    eye[2] * projectionMatrix[i + 2 * 4] +
-		    eye[3] * projectionMatrix[i + 3 * 4];
+			eye[0] * projectionMatrix[i + 0 * 4] +
+			eye[1] * projectionMatrix[i + 1 * 4] +
+			eye[2] * projectionMatrix[i + 2 * 4] +
+			eye[3] * projectionMatrix[i + 3 * 4];
 	}
 }
 
@@ -485,10 +485,10 @@ void myGlMultMatrix(const float *a, const float *b, float *out)
 		for (j = 0 ; j < 4 ; j++)
 		{
 			out[i * 4 + j] =
-			    a[i * 4 + 0] * b[0 * 4 + j]
-			    + a[i * 4 + 1] * b[1 * 4 + j]
-			    + a[i * 4 + 2] * b[2 * 4 + j]
-			    + a[i * 4 + 3] * b[3 * 4 + j];
+				a[i * 4 + 0] * b[0 * 4 + j]
+				+ a[i * 4 + 1] * b[1 * 4 + j]
+				+ a[i * 4 + 2] * b[2 * 4 + j]
+				+ a[i * 4 + 3] * b[3 * 4 + j];
 		}
 	}
 }
@@ -1052,8 +1052,8 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
  * @return qtrue if it should be mirrored
  */
 static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, int entityNum,
-                                 orientation_t *surface, orientation_t *camera,
-                                 vec3_t pvsOrigin, qboolean *mirror)
+                                        orientation_t *surface, orientation_t *camera,
+                                        vec3_t pvsOrigin, qboolean *mirror)
 {
 	int           i;
 	cplane_t      originalPlane, plane;
