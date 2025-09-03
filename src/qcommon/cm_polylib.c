@@ -353,15 +353,15 @@ winding_t *ReverseWinding(winding_t *w)
 void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
                         vec_t epsilon, winding_t **front, winding_t **back)
 {
-	vec_t        dists[MAX_POINTS_ON_WINDING + 4] = { 0 };
-	int          sides[MAX_POINTS_ON_WINDING + 4] = { 0 };
-	int          counts[3]                        = { 0, 0, 0 };
-	int          i, j;
-	vec_t        *p1, *p2;
-	vec3_t       mid;
-	winding_t    *f, *b;
-	int          maxpts;
-	double       dot, d1, d2;
+	vec_t     dists[MAX_POINTS_ON_WINDING + 4] = { 0 };
+	int       sides[MAX_POINTS_ON_WINDING + 4] = { 0 };
+	int       counts[3]                        = { 0, 0, 0 };
+	int       i, j;
+	vec_t     *p1, *p2;
+	vec3_t    mid;
+	winding_t *f, *b;
+	int       maxpts;
+	double    dot, d1, d2;
 
 	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)
@@ -483,16 +483,16 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
  */
 void ChopWindingInPlace(winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon)
 {
-	winding_t    *in = *w;
-	vec_t        dists[MAX_POINTS_ON_WINDING + 4];
-	int          sides[MAX_POINTS_ON_WINDING + 4];
-	int          counts[3] = { 0, 0, 0 };
-	int          i, j;
-	vec_t        *p1, *p2;
-	vec3_t       mid;
-	winding_t    *f;
-	int          maxpts;
-	double       dot, d1, d2;
+	winding_t *in = *w;
+	vec_t     dists[MAX_POINTS_ON_WINDING + 4];
+	int       sides[MAX_POINTS_ON_WINDING + 4];
+	int       counts[3] = { 0, 0, 0 };
+	int       i, j;
+	vec_t     *p1, *p2;
+	vec3_t    mid;
+	winding_t *f;
+	int       maxpts;
+	double    dot, d1, d2;
 
 	Com_Memset(dists, 0, sizeof(dists));
 	Com_Memset(sides, 0, sizeof(sides));

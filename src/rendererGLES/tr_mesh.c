@@ -357,7 +357,7 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 	{
 		// low level of detail may be restricted to 1 frame (i.e player head)
 		// in this case, we assume the frame number differences is wanted
-                // because we don't want animation at far distance
+		// because we don't want animation at far distance
 		// skipped warning message
 		if (lod == 0 || tr.currentModel->model.md3[lod]->numFrames != 1)
 		{

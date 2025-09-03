@@ -235,18 +235,18 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 		dataOfs += sizeof(vec4_t);
 	}
 
-	vboSurf->vbo                     = R_CreateVBO(va("staticMDMMesh_VBO %i", vboSurfaces->currentElements), data, dataSize, VBO_USAGE_STATIC);
-	vboSurf->vbo->ofsXYZ             = 0;
-	vboSurf->vbo->ofsTexCoords       = ofsTexCoords;
-	vboSurf->vbo->ofsLightCoords     = ofsTexCoords;
-	vboSurf->vbo->ofsTangents        = ofsTangents;
-	vboSurf->vbo->ofsBinormals       = ofsBinormals;
-	vboSurf->vbo->ofsNormals         = ofsNormals;
-	vboSurf->vbo->ofsColors          = ofsNormals;
+	vboSurf->vbo                 = R_CreateVBO(va("staticMDMMesh_VBO %i", vboSurfaces->currentElements), data, dataSize, VBO_USAGE_STATIC);
+	vboSurf->vbo->ofsXYZ         = 0;
+	vboSurf->vbo->ofsTexCoords   = ofsTexCoords;
+	vboSurf->vbo->ofsLightCoords = ofsTexCoords;
+	vboSurf->vbo->ofsTangents    = ofsTangents;
+	vboSurf->vbo->ofsBinormals   = ofsBinormals;
+	vboSurf->vbo->ofsNormals     = ofsNormals;
+	vboSurf->vbo->ofsColors      = ofsNormals;
 	//vboSurf->vbo->ofsLightCoords     = 0; // not required anyway
 	//vboSurf->vbo->ofsLightDirections = 0; // not required anyway
-	vboSurf->vbo->ofsBoneIndexes     = ofsBoneIndexes;
-	vboSurf->vbo->ofsBoneWeights     = ofsBoneWeights;
+	vboSurf->vbo->ofsBoneIndexes = ofsBoneIndexes;
+	vboSurf->vbo->ofsBoneWeights = ofsBoneWeights;
 
 	// calculate LOD IBOs
 	lod = 0;

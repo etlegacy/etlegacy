@@ -460,11 +460,12 @@ void CMod_LoadBrushSides(lump_t *l)
  * @brief CMod_LoadCustomEntityString
  * @param[in] name
  */
-qboolean CMod_LoadCustomEntityString(const char* name) {
+qboolean CMod_LoadCustomEntityString(const char *name)
+{
 	fileHandle_t file;
-	int entFileLen = 0;
-	char* filename;
-	char noext[MAX_QPATH];
+	int          entFileLen = 0;
+	char         *filename;
+	char         noext[MAX_QPATH];
 
 	COM_StripExtension(name, noext, sizeof(noext));
 	filename = va("%s.ent", noext);
@@ -473,7 +474,7 @@ qboolean CMod_LoadCustomEntityString(const char* name) {
 
 	if (file && entFileLen > 0)
 	{
-		cm.entityString = (char*)Hunk_Alloc(entFileLen + 1, h_high);
+		cm.entityString = (char *)Hunk_Alloc(entFileLen + 1, h_high);
 		FS_Read(cm.entityString, entFileLen, file);
 		FS_FCloseFile(file);
 		cm.entityString[entFileLen] = '\0';
@@ -489,7 +490,7 @@ qboolean CMod_LoadCustomEntityString(const char* name) {
  * @param[in] l
  * @param[in] name
  */
-void CMod_LoadEntityString(lump_t *l, const char* name)
+void CMod_LoadEntityString(lump_t *l, const char *name)
 {
 	if (CMod_LoadCustomEntityString(name))
 	{

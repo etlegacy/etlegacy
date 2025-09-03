@@ -538,22 +538,22 @@ static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 			for (k = 0; k < 4; k++)
 			{
 				total =
-				    1 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
-				    1 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
+					1 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					2 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					2 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					1 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					2 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					4 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					4 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					2 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					2 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					4 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					4 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					2 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					1 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					2 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					2 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					1 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
 				outpix[k] = total / 36;
 			}
 		}
@@ -1027,9 +1027,9 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 	int        i, c;
 	const byte *scan;
 	GLenum     target;
-	GLenum     format               = GL_RGBA;
-	GLenum     internalFormat       = GL_RGB;
-	float      rMax                 = 0, gMax = 0, bMax = 0;
+	GLenum     format         = GL_RGBA;
+	GLenum     internalFormat = GL_RGB;
+	float      rMax = 0, gMax = 0, bMax = 0;
 	vec4_t     zeroClampBorder      = { 0, 0, 0, 1 };
 	vec4_t     alphaZeroClampBorder = { 0, 0, 0, 0 };
 
@@ -2076,10 +2076,10 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 		//qboolean   orgNameFailed = qfalse;
 		int i;
 		//const char *ext;
-		char filename[MAX_QPATH];
-		char *altName;
+		char     filename[MAX_QPATH];
+		char     *altName;
 		qboolean loaderRet = qfalse;
-		byte alphaByte;
+		byte     alphaByte;
 
 		// clear alpha of normalmaps for displacement mapping
 		if (*bits & IF_NORMALMAP)
@@ -2236,8 +2236,8 @@ void R_ImageCopyBack(image_t *image, int x, int y, int width, int height)
 image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName)
 {
 	image_t *image = NULL;
-	int     width  = 0, height = 0;
-	byte    *pic   = NULL;
+	int     width = 0, height = 0;
+	byte    *pic = NULL;
 	long    hash;
 	char    buffer[1024];
 	//char          ddsName[1024];
@@ -2328,7 +2328,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 		// FIXME !!!
 		// this will occure in mods for default light shaders until we add our material pk3 to the common search path
 		// or modders add the light shaders (and related images) to their mod.
-		// update: set to dev print - FIXME: there are more cases for some models on vanilla maps! 
+		// update: set to dev print - FIXME: there are more cases for some models on vanilla maps!
 		Ren_Developer("WARNING R_FindImageFile: can't load material '%s'\n", materialName);
 		return NULL;
 	}
@@ -2574,11 +2574,11 @@ void R_SubImageCpy(byte *dest, size_t destx, size_t desty, size_t destw, size_t 
  */
 image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName)
 {
-	int         i;
-	image_t     *image = NULL;
-	int         width  = 0, height = 0;
-	byte        *pic[6];
-	long        hash;
+	int     i;
+	image_t *image = NULL;
+	int     width = 0, height = 0;
+	byte    *pic[6];
+	long    hash;
 	//static char *openglSuffices[6] = { "px", "nx", "py", "ny", "pz", "nz" };
 
 	/*
@@ -2608,7 +2608,7 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	 */
 	int             firstImageWidth;  // some ET sky textures are not of same dimension (suffix dn/down/bottom in most cases to safe space)
 	int             firstImageHeight; // get dimensions from first image 'rt' and force this value for the cube map
-	char			fistFilename_p[1024]; // FIXME
+	char            fistFilename_p[1024]; // FIXME
 	static char     *quakeSuffices[6] = { "rt", "lf", "bk", "ft", "up", "dn" };
 	static qboolean quakeFlipX[6]     = { qtrue, qtrue, qfalse, qtrue, qtrue, qfalse };
 	static qboolean quakeFlipY[6]     = { qfalse, qfalse, qtrue, qfalse, qfalse, qtrue };
@@ -2989,8 +2989,8 @@ static void R_CreateAttenuationXYImage(void)
 		}
 	}
 	tr.attenuationXYImage =
-	    R_CreateImage("_attenuationXY", (byte *) data, ATTENUATION_XY_SIZE, ATTENUATION_XY_SIZE, IF_NOPICMIP, FT_LINEAR,
-	                  WT_EDGE_CLAMP);
+		R_CreateImage("_attenuationXY", (byte *) data, ATTENUATION_XY_SIZE, ATTENUATION_XY_SIZE, IF_NOPICMIP, FT_LINEAR,
+		              WT_EDGE_CLAMP);
 }
 
 /**
@@ -3189,18 +3189,18 @@ static void R_CreateDepthToColorFBOImages(void)
  */
 static void R_CreateDownScaleFBOImages(void)
 {
-	byte           *data;
-	int				width, height;
+	byte *data;
+	int  width, height;
 
 
 	if (glConfig2.textureNPOTAvailable)
 	{
-		width = glConfig.vidWidth * 0.25f;
+		width  = glConfig.vidWidth * 0.25f;
 		height = glConfig.vidHeight * 0.25f;
 	}
 	else
 	{
-		width = NearestPowerOfTwo(glConfig.vidWidth * 0.25f);
+		width  = NearestPowerOfTwo(glConfig.vidWidth * 0.25f);
 		height = NearestPowerOfTwo(glConfig.vidHeight * 0.25f);
 	}
 
@@ -3229,7 +3229,7 @@ static void R_CreateDownScaleFBOImages(void)
 #if 0
 
 	width = height = 16;
-	data = ri.Hunk_AllocateTempMemory(width * height * 4);
+	data  = ri.Hunk_AllocateTempMemory(width * height * 4);
 
 	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
 	{
@@ -3466,7 +3466,7 @@ void R_CreateBuiltinImages(void)
 			data[y][x][3] = 255;
 		}
 	}
-	
+
 	tr.SpecImage = R_CreateImage("_Spec", (byte *) data, 8, 8, IF_NOPICMIP, FT_LINEAR, WT_REPEAT);*/
 	// this is for depth rendering
 	// red

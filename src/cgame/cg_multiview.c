@@ -1183,8 +1183,8 @@ void CG_mv_KeyHandling(int key, qboolean down)
 	switch (key)
 	{
 	case K_TAB:
-        down ? CG_ScoresDown_f() : CG_ScoresUp_f();
-        break;
+		down ? CG_ScoresDown_f() : CG_ScoresUp_f();
+		break;
 	// Help info
 	case K_BACKSPACE:
 		if (!down)

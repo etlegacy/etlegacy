@@ -425,7 +425,7 @@ void Huff_offsetReceive(node_t *node, int *ch, byte *fin, int *offset, int maxof
 	{
 		if (bloc >= maxoffset)
 		{
-			*ch = 0;
+			*ch     = 0;
 			*offset = maxoffset + 1;
 			return;
 		}
@@ -623,7 +623,7 @@ void Huff_Compress(msg_t *mbuf, int offset)
 	for (i = 0; i < size; i++)
 	{
 		ch = buffer[i];
-		Huff_transmit(&huff, ch, seq, size<<3);  // Transmit symbol
+		Huff_transmit(&huff, ch, seq, size << 3);  // Transmit symbol
 		Huff_addRef(&huff, (byte)ch);   // Do update
 	}
 

@@ -92,7 +92,7 @@ const GLenum geometricRenderTargets[] =
 	GL_COLOR_ATTACHMENT3_EXT
 };
 
-int shadowMapResolutions[5] = { 2048, 1024, 512, 256, 128 };
+int shadowMapResolutions[5]    = { 2048, 1024, 512, 256, 128 };
 int sunShadowMapResolutions[5] = { 2048, 2048, 1024, 1024, 1024 };
 
 refimport_t ri;
@@ -1349,13 +1349,13 @@ static void SetFarClip(void)
 	}
 
 	tr.viewParms.zFar = sqrt(farthestCornerDistance);
-	
+
 	// add global q3/ET 'gl' fog 'wall'
 	if (r_wolfFog->integer && tr.world != NULL && tr.world->globalFog >= 0 && tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque < tr.viewParms.zFar)
 	{
 		tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
-	}			
-	
+	}
+
 	R_SetFrameFog();
 }
 
@@ -1374,11 +1374,11 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 
 	// dynamically compute far clip plane distance
 	SetFarClip();
-	   
-    
+
+
 	// set frustum planes (this happens here because of zfar manipulation)
 	R_SetupFrustum();
-	
+
     // set up projection matrix
 	zNear = tr.viewParms.zNear = r_zNear->value;
 
@@ -2624,7 +2624,7 @@ void R_AddLightInteractions()
 
 		if (light->isStatic)
 		{
-			if (!r_staticLight->integer || ((r_precomputedLighting->integer ||r_vertexLighting->integer) && light->noRadiosity))
+			if (!r_staticLight->integer || ((r_precomputedLighting->integer || r_vertexLighting->integer) && light->noRadiosity))
 			{
 				light->cull = CULL_OUT;
 				continue;

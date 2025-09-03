@@ -188,7 +188,7 @@ void MatrixTransformNormal2(const mat4_t m, vec3_t inout);
 
 void MatrixTransformPlane(const mat4_t m, const vec4_t in, vec4_t out);
 //void MatrixTransformPlane2(const mat4_t m, vec4_t inout);
-void MatrixTransformBounds( const mat4_t m, const vec3_t mins, const vec3_t maxs, vec3_t omins, vec3_t omaxs );
+void MatrixTransformBounds(const mat4_t m, const vec3_t mins, const vec3_t maxs, vec3_t omins, vec3_t omaxs);
 
 void MatrixPerspectiveProjectionFovXYInfiniteRH(mat4_t m, vec_t fovX, vec_t fovY, vec_t nearvec);
 void QuatTransformVector(const quat_t q, const vec3_t in, vec3_t out);

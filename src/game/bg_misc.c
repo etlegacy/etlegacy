@@ -2533,11 +2533,11 @@ qboolean BG_PlayerTouchesObjective(playerState_t *ps, entityState_t *item, int a
 
 	// we are ignoring ducked differences here
 	return !(ps->origin[0] - origin[0] > 36
-	        || ps->origin[0] - origin[0] < -36
-	        || ps->origin[1] - origin[1] > 36
-	        || ps->origin[1] - origin[1] < -36
-	        || ps->origin[2] - origin[2] > 36
-	        || ps->origin[2] - origin[2] < -36);
+	         || ps->origin[0] - origin[0] < -36
+	         || ps->origin[1] - origin[1] > 36
+	         || ps->origin[1] - origin[1] < -36
+	         || ps->origin[2] - origin[2] > 36
+	         || ps->origin[2] - origin[2] < -36);
 }
 
 /**

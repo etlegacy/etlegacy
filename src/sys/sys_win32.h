@@ -64,7 +64,7 @@ typedef struct
 extern WinVars_t g_wv;
 
 size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len);
-size_t Sys_StringToWideCharArray(const char* string, wchar_t *output, size_t len);
+size_t Sys_StringToWideCharArray(const char *string, wchar_t *output, size_t len);
 
 #ifdef USE_WINDOWS_CONSOLE
 void    Sys_CreateConsole(void);
