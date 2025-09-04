@@ -243,11 +243,13 @@ static void CG_Obituary(entityState_t *ent)
 				else
 				{
 					s = va("%s %s", CG_TranslateString("^1You killed teammate^7"), ci->name);
+					CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL_TEAM);
 				}
 			}
 			else
 			{
 				s = va("%s %s", CG_TranslateString("You killed"), ci->name);
+				CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL);
 			}
 
 			CG_PriorityCenterPrint(s, 1);
@@ -304,6 +306,11 @@ static void CG_Obituary(entityState_t *ent)
 		else if (attacker == target)
 		{
 			message = GetMODTableData(mod)->obituarySelfKillMessage;
+			// Suppress the self-kill iconfeed for explicit /kill suicides.
+			if (attacker == cg.snap->ps.clientNum && mod != MOD_SUICIDE)
+			{
+				CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL_SELF);
+			}
 		}
 
 		if (message)
