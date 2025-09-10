@@ -92,6 +92,7 @@ option(ENABLE_MULTI_BUILD		"Enable binary names to include arch"					ON)
 option(FORCE_STATIC_VCRT		"Force static MSVC runtime linking"						ON)
 option(ENABLE_SSE				"Enable Streaming SIMD Extensions"						OFF)
 option(FEATURE_AUTH				"Enable central authentication support"					ON)
+option(FEATURE_LUAJIT			"Build with LuaJIT instead of PUC Lua"					ON)
 
 cmake_dependent_option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"	ON "WIN32" OFF)
 
