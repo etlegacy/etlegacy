@@ -1407,16 +1407,16 @@ void SV_PrintNetworkOverhead_f(void)
 		const double sentTotal  = net_overhead.numBytesSent;
 		const double countTotal = net_overhead.numSent;
 
-		double sentAll	= 0.0;
+		double sentAll    = 0.0;
 		double writtenAll = 0.0;
 
 		Com_Printf("=========================\n");
 		for (i = 0; i < net_overhead.numSlices; i++)
 		{
 			const char   *name   = net_overhead.slices[i].name;
-			const double sent	= net_overhead.slices[i].numBytesSent;
+			const double sent    = net_overhead.slices[i].numBytesSent;
 			const double written = net_overhead.slices[i].numBytesWritten;
-			sentAll	+= sent;
+			sentAll    += sent;
 			writtenAll += written;
 			if (sent == 0.0)
 			{
@@ -1425,7 +1425,7 @@ void SV_PrintNetworkOverhead_f(void)
 			}
 
 			{
-				const float overhead	= sent / sentTotal;
+				const float overhead    = sent / sentTotal;
 				const float compression = written / sent;
 				Com_Printf("%s overhead:	%.2f%%\n", name, overhead * 100.0f);
 				Com_Printf("%s compression: %.2fx\n", name, compression);
@@ -1434,7 +1434,7 @@ void SV_PrintNetworkOverhead_f(void)
 
 		if (sentAll > 0.0)
 		{
-			const float overhead	= sentAll / sentTotal;
+			const float overhead    = sentAll / sentTotal;
 			const float compression = writtenAll / sentAll;
 			Com_Printf("total overhead:	 %.2f%%\n", overhead * 100.0f);
 			Com_Printf("total compression:  %.2fx\n", compression);
