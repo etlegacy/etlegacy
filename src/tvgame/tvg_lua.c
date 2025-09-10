@@ -17,6 +17,10 @@
 #include "../luasql/ls_sqlite3.c"
 #endif
 
+#ifdef FEATURE_LUAJIT
+#include "../luajit/compat.h"
+#endif
+
 extern field_t fields[];
 
 lua_vm_t *lVM[LUA_NUM_VM];
