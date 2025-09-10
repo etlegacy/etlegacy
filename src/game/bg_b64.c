@@ -133,8 +133,11 @@ void B64_Encode(char *out, int maxOutChars, const unsigned char *in, int inBits)
 	*nullTerm = '\0';
 }
 
+
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wchar-subscripts"
+#endif
 void B64_Decode(unsigned char *out, int maxOutBytes, const char *in, int inBitsReq)
 {
 	const int  inBytes      = (int)strlen(in);
@@ -196,7 +199,9 @@ void B64_DecodeBigEndian(unsigned char *out, int maxOutBytes, const char *in, in
 		out   += 3;
 	}
 }
+#if defined(__clang__)
 #pragma clang diagnostic pop
+#endif
 
 char B64_Char(int offset)
 {
