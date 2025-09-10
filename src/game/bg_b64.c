@@ -154,10 +154,10 @@ void B64_Decode(unsigned char *out, int maxOutBytes, const char *in, int inBitsR
 
 	for (i = 0; i < blocksToRead; ++i)
 	{
-		const int in0  = (in + 0) >= end ? 0 : (int)b64d[in[0]];
-		const int in1  = (in + 1) >= end ? 0 : (int)b64d[in[1]];
-		const int in2  = (in + 2) >= end ? 0 : (int)b64d[in[2]];
-		const int in3  = (in + 3) >= end ? 0 : (int)b64d[in[3]];
+		const int in0  = (in + 0) >= end ? 0 : (int)b64d[(unsigned char)in[0]];
+		const int in1  = (in + 1) >= end ? 0 : (int)b64d[(unsigned char)in[1]];
+		const int in2  = (in + 2) >= end ? 0 : (int)b64d[(unsigned char)in[2]];
+		const int in3  = (in + 3) >= end ? 0 : (int)b64d[(unsigned char)in[3]];
 		const int bits = (in3 << 18) | (in2 << 12) | (in1 << 6) | in0;
 
 		etl_assert((in0 | in1 | in2 | in3) < 64); // input sanity check
@@ -185,10 +185,10 @@ void B64_DecodeBigEndian(unsigned char *out, int maxOutBytes, const char *in, in
 
 	for (i = 0; i < blocksToRead; ++i)
 	{
-		const int in0  = (in + 0) >= end ? 0 : (int)b64d[in[0]];
-		const int in1  = (in + 1) >= end ? 0 : (int)b64d[in[1]];
-		const int in2  = (in + 2) >= end ? 0 : (int)b64d[in[2]];
-		const int in3  = (in + 3) >= end ? 0 : (int)b64d[in[3]];
+		const int in0  = (in + 0) >= end ? 0 : (int)b64d[(unsigned char)in[0]];
+		const int in1  = (in + 1) >= end ? 0 : (int)b64d[(unsigned char)in[1]];
+		const int in2  = (in + 2) >= end ? 0 : (int)b64d[(unsigned char)in[2]];
+		const int in3  = (in + 3) >= end ? 0 : (int)b64d[(unsigned char)in[3]];
 		const int bits = (in0 << 18) | (in1 << 12) | (in2 << 6) | in3;
 
 		etl_assert((in0 | in1 | in2 | in3) < 64); // input sanity check
