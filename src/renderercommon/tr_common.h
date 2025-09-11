@@ -38,6 +38,7 @@
 #include "../qcommon/q_shared.h"
 #include "tr_public.h"
 #include "iqm.h"
+#include "tr_common_cvars.h"
 
 extern refimport_t ri;
 
@@ -106,113 +107,7 @@ void R_DrawSplash(void);
 extern qboolean textureFilterAnisotropic;
 extern float    maxAnisotropy;
 
-// cvars used by both renderers
-
-extern cvar_t *r_flareSize;
-extern cvar_t *r_flareFade;
-
 #define FLARE_STDCOEFF "150"
-extern cvar_t *r_flareCoeff;
-
-extern cvar_t *r_railWidth;
-extern cvar_t *r_railSegmentLength;
-
-extern cvar_t *r_ignore;                        ///< used for debugging anything
-
-extern cvar_t *r_zNear;                         ///< near Z clip plane
-extern cvar_t *r_zFar;                          ///< far Z clip plane
-
-extern cvar_t *r_measureOverdraw;               ///< enables stencil buffer overdraw measurement
-
-extern cvar_t *r_lodBias;                       ///< push/pull LOD transitions
-extern cvar_t *r_lodScale;
-
-extern cvar_t *r_fastSky;                       ///< controls whether sky should be cleared or drawn
-extern cvar_t *r_drawSun;                       ///< controls drawing of sun quad
-                                                ///< "0" no sun
-                                                ///< "1" draw sun
-                                                ///< "2" also draw lens flare effect centered on sun
-extern cvar_t *r_dynamicLight;                  ///< dynamic lights enabled/disabled
-
-extern cvar_t *r_noreFresh;                     ///< bypasses the ref rendering
-extern cvar_t *r_drawEntities;                  ///< disable/enable entity rendering
-extern cvar_t *r_drawWorld;                     ///< disable/enable world rendering
-extern cvar_t *r_drawFoliage;                   ///< disable/enable foliage rendering
-extern cvar_t *r_speeds;                        ///< various levels of information display
-extern cvar_t *r_detailTextures;                ///< enables/disables detail texturing stages
-extern cvar_t *r_noVis;                         ///< disable/enable usage of PVS
-extern cvar_t *r_noCull;
-extern cvar_t *r_facePlaneCull;                 ///< enables culling of planar surfaces with back side test
-extern cvar_t *r_noCurves;
-extern cvar_t *r_showCluster;
-
-extern cvar_t *r_noBorder;                      ///< FIXME: use in sdl only !
-extern cvar_t *r_gamma;
-
-extern cvar_t *r_allowExtensions;               ///< global enable/disable of OpenGL extensions
-extern cvar_t *r_extCompressedTextures;         ///< these control use of specific extensions.  FIXME: not used in GLES ! move it ?
-extern cvar_t *r_extMultitexture;               ///< FIXME: not used in GLES ! move it ?
-extern cvar_t *r_extTextureEnvAdd;              ///< FIXME: not used in GLES ! move it ?
-
-extern cvar_t *r_extTextureFilterAnisotropic;   ///< FIXME: not used in GLES ! move it ?
-
-extern cvar_t *r_noBind;                        ///< turns off binding to appropriate textures
-extern cvar_t *r_singleShader;                  ///< make most world faces use default shader
-extern cvar_t *r_roundImagesDown;
-extern cvar_t *r_colorMipLevels;                ///< development aid to see texture mip usage
-extern cvar_t *r_picMip;                        ///< controls picmip values
-extern cvar_t *r_finish;
-extern cvar_t *r_drawBuffer;
-extern cvar_t *r_textureMode;
-extern cvar_t *r_offsetFactor;
-extern cvar_t *r_offsetUnits;
-
-extern cvar_t *r_uiFullScreen;                  ///< ui is running fullscreen
-
-extern cvar_t *r_logFile;                       ///< number of frames to emit GL logs
-extern cvar_t *r_showTris;                      ///< enables wireframe rendering of the world
-extern cvar_t *r_showSky;                       ///< forces sky in front of all surfaces
-extern cvar_t *r_clear;                         ///< force screen clear every frame
-
-extern cvar_t *r_shadows;                       ///< controls shadows: 0 = none, 1 = blur, 2 = stencil, 3 = black planar projection
-extern cvar_t *r_flares;                        ///< light flares
-
-extern cvar_t *r_portalSky;
-extern cvar_t *r_intensity;
-
-extern cvar_t *r_lockPvs;
-extern cvar_t *r_noportals;
-extern cvar_t *r_portalOnly;
-
-extern cvar_t *r_subDivisions;
-
-extern cvar_t *r_skipBackEnd;
-
-extern cvar_t *r_ignoreGLErrors;
-
-extern cvar_t *r_overBrightBits;
-extern cvar_t *r_mapOverBrightBits;
-
-extern cvar_t *r_debugSurface;
-extern cvar_t *r_debugShaderSurfaceFlags;
-extern cvar_t *r_simpleMipMaps;
-
-extern cvar_t *r_ambientScale;
-extern cvar_t *r_debugLight;
-extern cvar_t *r_showImages;
-extern cvar_t *r_debugSort;
-extern cvar_t *r_printShaders;
-//extern cvar_t *r_saveFontData;
-
-//extern cvar_t *r_screenshotFormat;            ///< FIXME: both!
-//extern cvar_t *r_screenshotJpegQuality;       ///< FIXME: both!
-
-extern cvar_t *r_maxPolys;
-extern cvar_t *r_maxPolyVerts;
-
-extern cvar_t *r_ext_multisample;
-
-extern cvar_t *r_scalesvg;
 
 /**
  * @enum renderSpeeds_t for r_speeds
