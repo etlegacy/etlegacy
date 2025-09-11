@@ -334,16 +334,48 @@ if(BUILD_MOD)
 	endif()
 
 	if(FEATURE_LUA)
-		if(NOT BUNDLED_LUA)
-			find_package(Lua 5.4 REQUIRED)
-			target_link_libraries(qagame_libraries INTERFACE ${LUA_LIBRARIES})
-			target_include_directories(qagame_libraries INTERFACE ${LUA_INCLUDE_DIR})
-			target_link_libraries(tvgame_libraries INTERFACE ${LUA_LIBRARIES})
-			target_include_directories(tvgame_libraries INTERFACE ${LUA_INCLUDE_DIR})
-		else() # BUNDLED_LUA
-			target_link_libraries(qagame_libraries INTERFACE bundled_lua_int)
-			target_link_libraries(tvgame_libraries INTERFACE bundled_lua_int)
+		if(FEATURE_LUAJIT)
+			if(BUNDLED_LUA)
+				message(FATAL_ERROR "FEATURE_LUAJIT=ON cannot be combined with BUNDLED_LUA. Disable BUNDLED_LUA to use system LuaJIT.")
+			endif()
+
+			# Try CONFIG package first (vcpkg/Homebrew often provide LuaJIT::LuaJIT)
+			find_package(LuaJIT QUIET CONFIG)
+
+			if(TARGET LuaJIT::LuaJIT)
+				set(LUAJIT_LIBRARIES LuaJIT::LuaJIT)
+				set(LUAJIT_INCLUDE_DIRS "")
+			else()
+				# Fall back to our module finder
+				find_package(LuaJIT REQUIRED)
+			endif()
+
+			# Link/include LuaJIT to both qagame/tvgame interface libraries
+			target_link_libraries(qagame_libraries INTERFACE ${LUAJIT_LIBRARIES})
+			target_include_directories(qagame_libraries INTERFACE ${LUAJIT_INCLUDE_DIRS})
+			target_link_libraries(tvgame_libraries INTERFACE ${LUAJIT_LIBRARIES})
+			target_include_directories(tvgame_libraries INTERFACE ${LUAJIT_INCLUDE_DIRS})
+
+			# 5.2 API shims for LuaJIT (for lua_pushglobaltable, LUA_OK, luaL_setfuncs, etc.)
+			target_compile_definitions(qagame_libraries INTERFACE FEATURE_LUAJIT LUAJIT_ENABLE_LUA52COMPAT)
+			target_compile_definitions(tvgame_libraries INTERFACE FEATURE_LUAJIT LUAJIT_ENABLE_LUA52COMPAT)
+
+		else()
+			if (NOT BUNDLED_LUA)
+				# Your existing PUC Lua path (kept intact)
+				find_package(Lua 5.4 REQUIRED)
+				target_link_libraries(qagame_libraries INTERFACE ${LUA_LIBRARIES})
+				target_include_directories(qagame_libraries INTERFACE ${LUA_INCLUDE_DIR})
+				target_link_libraries(tvgame_libraries INTERFACE ${LUA_LIBRARIES})
+				target_include_directories(tvgame_libraries INTERFACE ${LUA_INCLUDE_DIR})
+			else()
+				# Bundled (PUC) Lua as before
+				target_link_libraries(qagame_libraries INTERFACE bundled_lua_int)
+				target_link_libraries(tvgame_libraries INTERFACE bundled_lua_int)
+			endif()
 		endif()
+
+		# Keep the feature define as before
 		target_compile_definitions(qagame_libraries INTERFACE FEATURE_LUA)
 		target_compile_definitions(tvgame_libraries INTERFACE FEATURE_LUA)
 	endif()
