@@ -278,6 +278,19 @@ setup_sensible_defaults() {
 	if [[ $(uname -s) == "Darwin" ]]; then
 		CROSS_COMPILE32=0
 		x86_build=false
+
+		# Detect Apple Silicon (arm64) and set architecture accordingly
+		local arch
+		arch=$(uname -m)
+		if [[ "$arch" == "arm64" ]]; then
+			# Default to arm64 unless user overrides with --osx-arc
+			MACOS_ARCHITECTURES=${MACOS_ARCHITECTURES:-arm64}
+			einfo "Detected Apple Silicon (arm64). Defaulting to arm64 build."
+		else
+			# Default to x86_64 unless user overrides
+			MACOS_ARCHITECTURES=${MACOS_ARCHITECTURES:-x86_64}
+			einfo "Detected Intel Mac (x86_64). Defaulting to x86_64 build."
+		fi
 	fi
 }
 
@@ -524,7 +537,7 @@ generate_configuration() {
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
 		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-0}
-		CMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET:-10.12}
+		CMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET:-11.0} # Use 11.0 for Apple Silicon compatibility
 	fi
 
 	FEATURE_RENDERER1=${FEATURE_RENDERER1:-1}
@@ -642,9 +655,10 @@ generate_configuration() {
 			"-DINSTALL_DEFAULT_BASEDIR=./"
 		)
 		if [ -n "$MACOS_ARCHITECTURES" ]; then
-		cmake_args+=(
-			"-DCMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}"
-		)
+			cmake_args+=(
+				"-DCMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}"
+			)
+			einfo "Building for macOS architecture(s): ${MACOS_ARCHITECTURES}"
 		fi
 
 	else
