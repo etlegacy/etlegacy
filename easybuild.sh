@@ -274,22 +274,22 @@ print_startup() {
 }
 
 setup_sensible_defaults() {
-	# Default to 64 bit builds on OSX
-	if [[ $(uname -s) == "Darwin" ]]; then
-		CROSS_COMPILE32=0
-		x86_build=false
+    # Default to 64 bit builds on OSX
+    if [[ $(uname -s) == "Darwin" ]]; then
+        CROSS_COMPILE32=0
+        x86_build=false
 
-		# Detect Apple Silicon (arm64) and set architecture accordingly
-		if [[ "$PLATFORMARCH" == "arm64" ]]; then
-			# Default to arm64 unless user overrides with --osx-arc
-			MACOS_ARCHITECTURES=${MACOS_ARCHITECTURES:-arm64}
-			einfo "Detected Apple Silicon (arm64). Defaulting to arm64 build."
-		else
-			# Default to x86_64 unless user overrides
-			MACOS_ARCHITECTURES=${MACOS_ARCHITECTURES:-x86_64}
-			einfo "Detected Intel Mac (x86_64). Defaulting to x86_64 build."
-		fi
-	fi
+        # Detect Apple Silicon (arm64) and set architecture accordingly
+        if [[ "$PLATFORMARCH" == "arm64" ]]; then
+            # Default to arm64 unless user overrides with --osx-arc
+            MACOS_ARCHITECTURES=${MACOS_ARCHITECTURES:-arm64}
+            einfo "Detected Apple Silicon (arm64). Defaulting to arm64 build."
+        else
+            # Default to x86_64 unless user overrides
+            MACOS_ARCHITECTURES=${MACOS_ARCHITECTURES:-x86_64}
+            einfo "Detected Intel Mac (x86_64). Defaulting to x86_64 build."
+        fi
+    fi
 }
 
 parse_commandline() {
@@ -515,26 +515,26 @@ generate_configuration() {
     FEATURE_SSL=${FEATURE_SSL:-1}
     FEATURE_AUTH=${FEATURE_AUTH:-1}
 
-	if [ "$PLATFORM_IS_DARWIN" -ne 1 ]; then
-		BUNDLED_CURL=${BUNDLED_CURL:-1}
-		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-1}
-		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
-		BUNDLED_OPENAL=${BUNDLED_OPENAL:-1}
-	else
-		# If we are using the authentication system, default to the bundled curl for now (see bellow)
-		# On macos the system curl cause the request to fail when swapping get and post requests sometimes
-		# TODO: recheck the curl failure on macos after a system upgrade later 20204
-		if [ "$FEATURE_AUTH" -eq 1 ]; then
-			einfo "Authentication is enabled, defaulting to bundled curl"
-			BUNDLED_CURL=${BUNDLED_CURL:-1}
-		else
-			BUNDLED_CURL=${BUNDLED_CURL:-0}
-		fi
-		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
-		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
-		BUNDLED_OPENAL=${BUNDLED_OPENAL:-0}
-		CMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET:-11.0} # Use 11.0 for Apple Silicon compatibility
-	fi
+    if [ "$PLATFORM_IS_DARWIN" -ne 1 ]; then
+        BUNDLED_CURL=${BUNDLED_CURL:-1}
+        BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-1}
+        BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
+        BUNDLED_OPENAL=${BUNDLED_OPENAL:-1}
+    else
+        # If we are using the authentication system, default to the bundled curl for now (see bellow)
+        # On macos the system curl cause the request to fail when swapping get and post requests sometimes
+        # TODO: recheck the curl failure on macos after a system upgrade later 20204
+        if [ "$FEATURE_AUTH" -eq 1 ]; then
+            einfo "Authentication is enabled, defaulting to bundled curl"
+            BUNDLED_CURL=${BUNDLED_CURL:-1}
+        else
+            BUNDLED_CURL=${BUNDLED_CURL:-0}
+        fi
+        BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
+        BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
+        BUNDLED_OPENAL=${BUNDLED_OPENAL:-0}
+        CMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET:-11.0} # Use 11.0 for Apple Silicon compatibility
+    fi
 
     FEATURE_RENDERER1=${FEATURE_RENDERER1:-1}
     FEATURE_RENDERER2=${FEATURE_RENDERER2:-0}
@@ -638,24 +638,24 @@ generate_configuration() {
         )
     fi
 
-	if [ "${DEV}" != 1 ]; then
-	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
-		PREFIX=${INSTALL_PREFIX}
-		cmake_args+=(
-			"-DXCODE_SDK_PATH=${XCODE_SDK_PATH}"
-			"-DCMAKE_INSTALL_PREFIX=${PREFIX}"
-			"-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
-			"-DINSTALL_DEFAULT_MODDIR=./"
-			"-DINSTALL_DEFAULT_SHAREDIR=./"
-			"-DINSTALL_DEFAULT_BINDIR=./"
-			"-DINSTALL_DEFAULT_BASEDIR=./"
-		)
-		if [ -n "$MACOS_ARCHITECTURES" ]; then
-			cmake_args+=(
-				"-DCMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}"
-			)
-			einfo "Building for macOS architecture(s): ${MACOS_ARCHITECTURES}"
-		fi
+    if [ "${DEV}" != 1 ]; then
+        if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
+            PREFIX=${INSTALL_PREFIX}
+            cmake_args+=(
+                "-DXCODE_SDK_PATH=${XCODE_SDK_PATH}"
+                "-DCMAKE_INSTALL_PREFIX=${PREFIX}"
+                "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+                "-DINSTALL_DEFAULT_MODDIR=./"
+                "-DINSTALL_DEFAULT_SHAREDIR=./"
+                "-DINSTALL_DEFAULT_BINDIR=./"
+                "-DINSTALL_DEFAULT_BASEDIR=./"
+            )
+            if [ -n "$MACOS_ARCHITECTURES" ]; then
+                cmake_args+=(
+                    "-DCMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}"
+                )
+                einfo "Building for macOS architecture(s): ${MACOS_ARCHITECTURES}"
+            fi
 
         else
             PREFIX=${INSTALL_PREFIX}
