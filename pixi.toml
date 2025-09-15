@@ -28,6 +28,7 @@ check-changes = { cmd = ["python", "./misc/check-changes.py"] }
 [feature.validation.dependencies]
 "actionlint" = "1.7.7.*"
 "black"      = "25.1.0.*"
+"go-shfmt"   = "3.12.0.*"
 "prettier"   = "3.5.3.*"
 "shellcheck" = "0.10.0.*"
 "uncrustify" = "0.78.1.*"
