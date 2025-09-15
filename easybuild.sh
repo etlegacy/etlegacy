@@ -280,9 +280,7 @@ setup_sensible_defaults() {
 		x86_build=false
 
 		# Detect Apple Silicon (arm64) and set architecture accordingly
-		local arch
-		arch=$(uname -m)
-		if [[ "$arch" == "arm64" ]]; then
+		if [[ "$PLATFORMARCH" == "arm64" ]]; then
 			# Default to arm64 unless user overrides with --osx-arc
 			MACOS_ARCHITECTURES=${MACOS_ARCHITECTURES:-arm64}
 			einfo "Detected Apple Silicon (arm64). Defaulting to arm64 build."
