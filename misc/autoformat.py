@@ -21,7 +21,7 @@ from etl_lib import (
 )
 
 # Constants
-INCLUDED_EXTS = {".c", ".cpp", ".h", ".py", ".yml", ".yaml"}
+INCLUDED_EXTS = {".c", ".cpp", ".h", ".py", ".sh", ".yml", ".yaml"}
 EXCLUDED_PATHS = [
     "src/Omnibot/",
     "src/game/g_etbot_interface.cpp",
@@ -144,6 +144,18 @@ def process_file(path) -> str:
             else:
                 run_command(["black", str(path)])
                 return f"✿ Formatting {rel(path)} (Python)"
+        case ".sh":
+            # Check if formatting would change anything
+            check_proc = subprocess.run(
+                ["shfmt", "--diff", str(path)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            if check_proc.returncode == 0:
+                return f"✓ {rel(path)} (Shfmt already formatted)"
+            else:
+                run_command(["shfmt", "--write", str(path)])
+                return f"✿ Formatting {rel(path)} (Shfmt)"
         case ".yml" | ".yaml":
             # Check if formatting would change anything
             check_proc = run_command(

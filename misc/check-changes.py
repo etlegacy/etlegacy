@@ -94,6 +94,7 @@ def check_uncrustify(path: Path, errors: List[Error]):
 
 
 def check_sh(path: Path, errors: List[Error]):
+    # shellcheck
     result = subprocess.run(
         ["shellcheck", str(path)],
         stdout=subprocess.PIPE,
@@ -109,7 +110,23 @@ def check_sh(path: Path, errors: List[Error]):
                 detail=result.stdout.strip(),
             )
         )
-        return
+
+    # shfmt
+    result = subprocess.run(
+        ["shfmt", "--diff", str(path)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        errors.append(
+            Error(
+                path=path,
+                reason=f"Shfmt failed",
+                detail=result.stdout.strip(),
+            )
+        )
 
 
 def check_tga(path: Path, errors: List[Error]):

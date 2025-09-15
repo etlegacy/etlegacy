@@ -298,6 +298,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/charset-normalizer-3.4.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/click-8.2.1-pyh707e725_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/git-2.49.0-pl5321hc2ff736_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/go-shfmt-3.12.0-hfc2019e_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/h2-4.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/hpack-4.1.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/hyperframe-6.1.0-pyhd8ed1ab_0.conda
@@ -363,6 +364,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/click-8.2.1-pyh707e725_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/git-2.49.0-pl5321h3bb66fe_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/gmp-6.3.0-hf036a51_2.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/go-shfmt-3.12.0-hccc6df8_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/h2-4.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/hpack-4.1.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/hyperframe-6.1.0-pyhd8ed1ab_0.conda
@@ -420,6 +422,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/click-8.2.1-pyh7428d3b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/colorama-0.4.6-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/git-2.49.0-h57928b3_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/win-64/go-shfmt-3.12.0-h11686cb_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/h2-4.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/hpack-4.1.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/hyperframe-6.1.0-pyhd8ed1ab_0.conda
@@ -766,6 +769,29 @@ packages:
   license: GPL-2.0-or-later OR LGPL-3.0-or-later
   size: 428919
   timestamp: 1718981041839
+- conda: https://conda.anaconda.org/conda-forge/linux-64/go-shfmt-3.12.0-hfc2019e_0.conda
+  sha256: 544bb221c6e7777ecebe7029dbdbdc80aa78d80706f1c61e59a54ed0e8016f78
+  md5: b08ea765bdb39bbcb4120365dbd5fb45
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 1881695
+  timestamp: 1751843121118
+- conda: https://conda.anaconda.org/conda-forge/osx-64/go-shfmt-3.12.0-hccc6df8_0.conda
+  sha256: 79be63879607473d481f85d24f8ce10bfcca5b62d1f89e21f165c6c0aef943ef
+  md5: 55347eb6f22ce711892886dae5708faa
+  constrains:
+  - __osx >=10.12
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 1857426
+  timestamp: 1751843184511
+- conda: https://conda.anaconda.org/conda-forge/win-64/go-shfmt-3.12.0-h11686cb_0.conda
+  sha256: e8c1db209e4bdb9df4442891fe980fc83f5258b275f30d3ea37a80ea7272bf6b
+  md5: b047a40e7f2f107466d5a555eb6cde26
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 1895618
+  timestamp: 1751843138201
 - conda: https://conda.anaconda.org/conda-forge/noarch/h2-4.2.0-pyhd8ed1ab_0.conda
   sha256: 0aa1cdc67a9fe75ea95b5644b734a756200d6ec9d0dff66530aec3d1c1e9df75
   md5: b4754fb1bdcb70c8fd54f918301582c6
