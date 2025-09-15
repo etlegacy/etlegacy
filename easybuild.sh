@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # encoding: utf-8
-# shellcheck disable=SC2153,SC2181,SC2218
+# shellcheck disable=SC2153,SC2181,SC2218,SC1091
 
 # Made by the ET: Legacy team!
 # script checks for needed applications
