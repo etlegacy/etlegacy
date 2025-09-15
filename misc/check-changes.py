@@ -129,15 +129,25 @@ def check_sh(path: Path, errors: List[Error]):
         )
 
 
-def check_tga(path: Path, errors: List[Error]):
+def check_tga(path: Path, errors: List["Error"]):
     try:
         with open(path, "rb") as f:
-            f.seek(16)
-            if f.read(1) != b"\x20":
+            # TGA header is 18 bytes; image descriptor is the last byte (offset 17).
+            f.seek(17)
+            b = f.read(1)
+            if len(b) != 1:
+                raise ValueError(
+                    "File too small to be a valid TGA (missing image descriptor)."
+                )
+
+            image_descriptor = b[0]
+            top_left = (image_descriptor & 0x20) != 0  # bit 5 set => top-left origin
+
+            if top_left:
                 errors.append(
                     Error(
                         path,
-                        "TGA file has top-left origin, but bottom-left is required.",
+                        "TGA file has top-left origin; bottom-left is required.",
                     )
                 )
     except Exception as e:
