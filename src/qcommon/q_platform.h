@@ -202,6 +202,8 @@
 #undef idx64
 #define idx64 1
 #define ARCH_STRING "x86_64"
+#elif defined __loongarch64
+#define ARCH_STRING "loongarch64"
 #elif defined __powerpc64__
 #if BYTE_ORDER == BIG_ENDIAN
 #define ARCH_STRING "ppc64"
