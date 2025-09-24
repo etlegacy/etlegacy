@@ -14,9 +14,9 @@ def getVersionLong() {
 	}
 
 	def out = new ByteArrayOutputStream()
-	exec {
+	services.get(ExecOperations).exec {
 		executable = 'git'
-		args = ['describe', '--tags', '--abbrev=7']
+		args 'describe', '--tags', '--abbrev=7'
 		standardOutput = out
 	}
 	return out.toString().replace('\n','')
@@ -158,8 +158,7 @@ android {
 }
 
 dependencies {
-	api 'com.etlegacy.android:joystick:+'
-	// api 'com.etlegacy.android:joystick:1.1.1-SNAPSHOT'
+	api 'com.etlegacy.android:joystick:1.1.1-SNAPSHOT'
 	implementation 'androidx.appcompat:appcompat:1.7.1'
 	implementation 'com.google.code.gson:gson:2.13.2'
 	implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
