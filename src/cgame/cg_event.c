@@ -2973,7 +2973,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (reviver == cg.clientNum)
 		{
-			cg.lastReviveTime = cg.time;
+			cg.lastSyringeInjection = cg.time;
 		}
 
 		// play sound

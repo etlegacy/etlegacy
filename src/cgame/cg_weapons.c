@@ -1709,7 +1709,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		if (weaponNum == WP_MEDIC_SYRINGE)
 		{
 
-			if (cg.lastReviveTime > 0 && cg.time - cg.lastReviveTime < SYRINGE_VISUAL_RECOVERY_TIME)
+			if (cg.lastSyringeInjection > 0 && cg.time - cg.lastSyringeInjection < SYRINGE_VISUAL_RECOVERY_TIME)
 			{
 				gun.customShader = weapon->modModels[1];
 			}
@@ -2084,7 +2084,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 					if (weaponNum == WP_MEDIC_SYRINGE && i == W_PART_1)
 					{
-						if (cg.lastReviveTime > 0 && cg.time - cg.lastReviveTime < SYRINGE_VISUAL_RECOVERY_TIME)
+						if (cg.lastSyringeInjection > 0 && cg.time - cg.lastSyringeInjection < SYRINGE_VISUAL_RECOVERY_TIME)
 						{
 							barrel.customShader = weapon->modModels[1];
 						}
