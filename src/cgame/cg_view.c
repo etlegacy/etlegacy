@@ -2325,7 +2325,10 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	cg.time -= snapshotDelayTime;
 #endif // FAKELAG
 
-	CG_ProcessCvars();
+	if (!demoPlayback)
+	{
+		CG_ProcessCvars();
+	}
 
 #ifdef DEBUGTIME_ENABLED
 	CG_Printf("\n");
