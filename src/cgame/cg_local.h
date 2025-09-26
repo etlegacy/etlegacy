@@ -1352,7 +1352,7 @@ typedef struct
 
 	int grenLastTime;
 	int lastBeingRevivedTime;
-	int lastReviveTime;
+	int lastSyringeInjection;
 
 	int switchbackWeapon;
 	int lastFiredWeapon;
