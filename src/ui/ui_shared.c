@@ -176,7 +176,7 @@ static long hashForString(const char *str)
 
 	while (str[i] != '\0')
 	{
-		letter = (char)tolower(str[i]);
+		letter = (char)tolower((unsigned char)str[i]);
 		hash  += (long)(letter) * (i + 119);
 		i++;
 	}
