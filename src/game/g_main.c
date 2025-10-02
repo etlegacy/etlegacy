@@ -540,15 +540,20 @@ void G_CheckForCursorHints(gentity_t *ent)
 		// show medics a syringe if they can revive someone
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
-			if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC
-			    // reviving downed players
-			    && ((traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
-			        // optionally healing living players
-			        || (g_syringeHealing.integer == 1
-			            && traceEnt->client->ps.pm_type == PM_NORMAL
-			            && traceEnt->health <= (int)(traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.25f))))
+			if ((ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC
+			     // Reviving downed players.
+			     && ((traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
+			         // Optionally healing living players.
+			         || (g_syringeHealing.integer == 1
+			             && traceEnt->client->ps.pm_type == PM_NORMAL
+			             && traceEnt->health <= (int)(traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.25f))))
+			    // Legacy adrenaline path: show syringe hint for valid living teammates, except medics.
+			    || (ps->weapon == WP_MEDIC_ADRENALINE2
+			        && traceEnt->client->ps.pm_type != PM_DEAD
+			        && traceEnt->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC))
 			{
-				hintDist = CH_REVIVE_DIST;        // matches weapon_syringe in g_weapon.c
+				// Keep hint range aligned with the respective use path in g_weapon.c.
+				hintDist = (ps->weapon == WP_MEDIC_ADRENALINE2) ? CH_ACTIVATE_DIST : CH_REVIVE_DIST;
 				hintType = HINT_REVIVE;
 			}
 		}

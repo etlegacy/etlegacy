@@ -255,3 +255,28 @@ models/multiplayer/syringe/0percent
 		rgbgen lightingdiffuse
 	}
 }
+
+//========================================//
+// Adrenaline syringe model
+//========================================//
+models/multiplayer/syringe/adrenaline_legacy
+{
+	cull disable
+	{
+		map models/multiplayer/syringe/fluid2.tga
+		blendfunc blend
+		rgbgen lightingdiffuse
+		tcmod scale 4 6
+		tcmod scroll 0 -.8
+	}
+	{
+		map models/multiplayer/syringe/syringe.tga
+		blendfunc gl_src_alpha gl_one_minus_src_alpha
+		rgbgen lightingdiffuse
+	}
+	{
+		map models/multiplayer/syringe/syringe_reflections.tga
+		blendfunc gl_src_alpha gl_one_minus_src_alpha
+		rgbgen lightingdiffuse
+	}
+}

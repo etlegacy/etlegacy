@@ -731,6 +731,7 @@ void CG_RegisterGameSounds()
 	cgs.cachedSounds[GAMESOUND_MISC_VOTE]    = trap_S_RegisterSound("sound/misc/vote.wav", qfalse);
 	//cgs.cachedSounds[GAMESOUND_MISC_BANNED] = trap_S_RegisterSound("sound/osp/banned.wav", qfalse);
 	//cgs.cachedSounds[GAMESOUND_MISC_KICKED] = trap_S_RegisterSound("sound/osp/kicked.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_MISC_ADRENALINE] = trap_S_RegisterSound("sound/multiplayer/vo_adrenaline_inject.wav", qfalse);
 }
 
 /**
@@ -1173,6 +1174,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/skull");
 	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
 	cgs.media.medicReviveShader2    = trap_R_RegisterShader("sprites/medic_revive2");
+	cgs.media.adrenalineShader      = trap_R_RegisterShader("sprites/epinephrine");
 	cgs.media.disguisedShader       = trap_R_RegisterShader("sprites/undercover");
 
 	cgs.media.constructShader = trap_R_RegisterShaderNoMip("sprites/construct");

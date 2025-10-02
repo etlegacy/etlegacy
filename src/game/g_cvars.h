@@ -325,6 +325,8 @@ extern vmCvar_t g_floodWait;
 
 extern vmCvar_t g_etltv_flags;
 
+extern vmCvar_t g_legacyAdrenaline;
+
 void G_RegisterCvars(void);
 
 #endif  // #ifndef INCLUDE_G_CVARS_H

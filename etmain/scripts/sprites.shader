@@ -168,6 +168,17 @@ sprites/shield
 	}
 }
 
+sprites/epinephrine
+{
+	nocompress
+	nopicmip
+	{
+		clampmap sprites/epinephrine.png
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen vertex
+	}
+}
+
 sprites/skull
 {
 	nocompress

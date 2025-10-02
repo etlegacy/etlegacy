@@ -1370,6 +1370,12 @@ void SetWolfSpawnWeapons(gclient_t *client)
 				}
 			}
 
+			if ((g_legacyAdrenaline.integer == 1) && (classInfo->classMiscWeapons[i].weapon == WP_MEDIC_ADRENALINE))
+			{
+				AddWeaponToPlayer(client, WP_MEDIC_ADRENALINE2, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
+				continue;
+			}
+
 			// add each
 			AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
 		}
