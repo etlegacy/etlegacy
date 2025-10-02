@@ -908,8 +908,9 @@ typedef enum
 	WP_BAZOOKA,                ///< 53	Allied panzerfaust
 	WP_MP34,                   ///< 54	Axis Sten alternative
 	WP_AIRSTRIKE,              ///< 55
+	WP_MEDIC_ADRENALINE2,      ///< 56
 
-	WP_NUM_WEAPONS             ///< 56
+	WP_NUM_WEAPONS             ///< 57
 	///< NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -1502,14 +1503,15 @@ typedef enum
 	EV_POPUPMESSAGE,
 	EV_ARTYMESSAGE,
 	EV_AIRSTRIKEMESSAGE,
-	EV_MEDIC_CALL,     ///< end of vanilla events
-	EV_SHOVE_SOUND,    ///< 127 - ETL shove
-	EV_BODY_DP,        ///< 128
-	EV_FLAG_INDICATOR, ///< 129 - objective indicator
-	EV_MISSILE_FALLING,///< 130
-	EV_PLAYER_HIT,     ///< 131 - hitsound event
-	EV_PLAYER_REVIVE,  ///< 132
-	EV_MAX_EVENTS      ///< 132 - just added as an 'endcap'
+	EV_MEDIC_CALL,        ///< end of vanilla events
+	EV_SHOVE_SOUND,       ///< 127 - ETL shove
+	EV_BODY_DP,           ///< 128
+	EV_FLAG_INDICATOR,    ///< 129 - objective indicator
+	EV_MISSILE_FALLING,   ///< 130
+	EV_PLAYER_HIT,        ///< 131 - hitsound event
+	EV_PLAYER_REVIVE,     ///< 132
+	EV_PLAYER_ADRENALINE, ///< 133
+	EV_MAX_EVENTS         ///< 134 - just added as an 'endcap'
 } entity_event_t;
 
 extern const char *eventnames[EV_MAX_EVENTS];
@@ -1858,6 +1860,7 @@ typedef enum extWeaponStats_e
 	WS_K43,            ///< 25
 	WS_MP34,           ///< 26
 	WS_SYRINGE,        ///< 27
+	WS_ADRENALINE,     ///< 28
 
 	WS_MAX
 } extWeaponStats_t;
@@ -3139,6 +3142,8 @@ typedef enum
 	GAMESOUND_WORLD_CHAIRCREAK,    ///< "sound/world/chaircreak.wav"                     Common code
 	GAMESOUND_WORLD_MG_CONSTRUCTED,///< "sound/world/mg_constructed.wav"
 
+	GAMESOUND_MISC_ADRENALINE,     ///< "vo_adrenaline_inject.wav"                       Used by adrenaline needle
+	                               ///
 	GAMESOUND_MAX
 } gameSounds;
 

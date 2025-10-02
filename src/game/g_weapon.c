@@ -491,13 +491,7 @@ static qboolean G_TrySyringeHeal(gentity_t *healer, gentity_t *target, qboolean 
 	return qtrue;
 }
 
-/**
-* @brief Shoot the syringe, do the old lazarus bit
-*
-* @param[in,out] ent
-*
-*/
-gentity_t *Weapon_Syringe(gentity_t *ent)
+static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenaline)
 {
 	vec3_t    end;
 	trace_t   tr;
@@ -507,7 +501,14 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePointForActivate(ent, forward, right, up, muzzleTrace);
-	VectorMA(muzzleTrace, CH_REVIVE_DIST, forward, end);
+	if (isLegacyAdrenaline)
+	{
+		VectorMA(muzzleTrace, CH_ACTIVATE_DIST, forward, end);
+	}
+	else
+	{
+		VectorMA(muzzleTrace, CH_REVIVE_DIST, forward, end);
+	}
 
 	// right on top of intended revivee.
 	G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
@@ -517,11 +518,11 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	// revivable body) or block (hit a wall etc.).
 	for (i = 0; i < level.num_entities; i++)
 	{
+		VectorMA(muzzleTrace, 8, forward, end);
 		G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
 		if (tr.startsolid)
 		{
-			VectorMA(muzzleTrace, 8, forward, end);
 			trap_Trace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 		}
 
@@ -547,22 +548,60 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 
 	if (tr.fraction == 1.0f) // no hit
 	{
-		// give back ammo
-		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
-		return NULL;
+		qboolean foundAlt = qfalse;
+
+		vec3_t             mins, maxs;
+		const float        range           = isLegacyAdrenaline ? CH_ACTIVATE_DIST : CH_REVIVE_DIST;
+		static const float enlargeMins[3]  = { -4.0f, -4.0f, -3.0f };
+		static const float enlargeMaxs[3]  = { 4.0f, 4.0f, 0.0f };
+		static const float enlargeScale[4] = { 0.0f, 4.0f, 16.0f, 64.0f };
+
+		// Retry with a wider hull to make short-range syringe traces less brittle.
+		VectorMA(muzzleTrace, range, forward, end);
+		G_HistoricalTraceBegin(ent);
+
+		G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
+		G_TempTraceIgnoreBodies();
+
+		for (i = 0; i < 4; ++i)
+		{
+			if (i == 0)
+			{
+				G_Trace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+			}
+			else
+			{
+				VectorMA(ent->r.mins, enlargeScale[i], enlargeMins, mins);
+				VectorMA(ent->r.maxs, enlargeScale[i], enlargeMaxs, maxs);
+				G_Trace(ent, &tr, muzzleTrace, mins, maxs, end, ent->s.number, MASK_SHOT);
+			}
+
+			traceEnt = &g_entities[tr.entityNum];
+			if (traceEnt->client != NULL)
+			{
+				foundAlt = qtrue;
+				break;
+			}
+		}
+
+		G_HistoricalTraceEnd(ent);
+		G_ResetTempTraceIgnoreEnts();
+
+		if (!foundAlt)
+		{
+			goto GIVE_BACK_AMMO;
+		}
 	}
 
 	traceEnt = &g_entities[tr.entityNum];
 
 	if (!traceEnt->client)
 	{
-		// give back ammo
-		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
-		return NULL;
+		goto GIVE_BACK_AMMO;
 	}
 
 	// Optional syringe-heal logic for living teammates.
-	if (G_TrySyringeHeal(ent, traceEnt, &refundAmmo))
+	if (!isLegacyAdrenaline && G_TrySyringeHeal(ent, traceEnt, &refundAmmo))
 	{
 		if (refundAmmo)
 		{
@@ -571,13 +610,14 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 		return NULL;
 	}
 
-	if (traceEnt->client->ps.pm_type == PM_DEAD &&
+	if (!isLegacyAdrenaline &&
+	    traceEnt->client->ps.pm_type == PM_DEAD &&
 	    traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 	{
 		// moved all the revive stuff into its own function
 		ReviveEntity(ent, traceEnt);
 
-		// syringe "hit"
+		// register hit
 		if (g_gamestate.integer == GS_PLAYING)
 		{
 			ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
@@ -599,13 +639,64 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 			CalculateRanks();
 		}
 	}
+	else if (isLegacyAdrenaline &&
+	         traceEnt->client->ps.pm_type != PM_DEAD &&
+	         traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam &&
+	         traceEnt->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC
+	         )
+	{
+		const int adrenalineEndTime = level.time + 5000 + 750;
+		traceEnt->client->ps.powerups[PW_ADRENALINE] = adrenalineEndTime;
+
+		{
+			gentity_t *te;
+			te = G_TempEntity(traceEnt->r.currentOrigin, EV_PLAYER_ADRENALINE);
+
+			te->s.eventParm   = traceEnt->s.clientNum;
+			te->s.clientNum   = ent->s.clientNum;
+			te->s.effect3Time = adrenalineEndTime;
+		}
+
+		// register hit
+		if (g_gamestate.integer == GS_PLAYING)
+		{
+			ent->client->sess.aWeaponStats[WS_ADRENALINE].hits++;
+		}
+	}
 	else
 	{
-		// If the medicine wasn't used, give back the ammo
+		// If the medicine wasn't used, give back ammo once in the common path.
+		goto GIVE_BACK_AMMO;
+	}
+
+	goto EXIT;
+
+GIVE_BACK_AMMO:
+	if (isLegacyAdrenaline)
+	{
+		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_ADRENALINE2)->clipIndex] += 1;
+
+		ent->client->ps.classWeaponTime -= (GetWeaponTableData(ent->client->ps.weapon)->chargeTimeCoeff[0]) *
+		                                   (float)(level.medicChargeTime[ent->client->sess.sessionTeam - 1]);
+	}
+	else
+	{
 		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
 	}
 
+EXIT:
 	return NULL;
+}
+
+/**
+* @brief Shoot the syringe, do the old lazarus bit
+*
+* @param[in,out] ent
+*
+*/
+gentity_t *Weapon_Syringe(gentity_t *ent)
+{
+	return Weapon_Syringe_Shared(ent, qfalse);
 }
 
 /**
@@ -615,8 +706,16 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 gentity_t *Weapon_AdrenalineSyringe(gentity_t *ent)
 {
 	ent->client->ps.powerups[PW_ADRENALINE] = level.time + 10000;
-
 	return NULL;
+}
+
+/**
+ * @brief Hmmmm. Needles. With stuff in it. Woooo.
+ * @param[in,out] ent
+ */
+gentity_t *Weapon_AdrenalineSyringe2(gentity_t *ent)
+{
+	return Weapon_Syringe_Shared(ent, qtrue);
 }
 
 /**
@@ -4241,7 +4340,7 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 // *INDENT-OFF*
 weapFireTable_t weapFireTable[] =
 {
-    // weapon                  fire                         think                       free                eType                  eFlags                      svFlags                       content          trType          trTime                 boundingBox                                      hitBox                                           clipMask          nextThink  accuracy health timeStamp impactDamage
+    /// weapon                 fire                         think                       free                eType                  eFlags                      svFlags                       content          trType          trTime                 boundingBox                                      hitBox                                           clipMask          nextThink  accuracy health timeStamp impactDamage
     { WP_NONE,                 NULL,                        NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,         0,       0,     0,        0,           },
     { WP_KNIFE,                Weapon_Knife,                NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
     { WP_LUGER,                Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
@@ -4304,6 +4403,7 @@ weapFireTable_t weapFireTable[] =
     { WP_BAZOOKA,              weapon_antitank_fire,        G_ExplodeMissile,           NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      MISSILE_PRESTEP_TIME,  { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,     4,       0,     0,        999,         },
     { WP_MP34,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
     { WP_AIRSTRIKE,            NULL,                        NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      MISSILE_PRESTEP_TIME,  { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 0,         2,       0,     0,        20,          },
+    { WP_MEDIC_ADRENALINE2,    Weapon_AdrenalineSyringe2,   NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 };
 // *INDENT-ON*
 
