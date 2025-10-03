@@ -1668,7 +1668,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			}
 			else
 			{
-				CG_DrawRotatedPic(icon_pos[0] - 1, icon_pos[1] - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
+				CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
 				                  (0.5f + 90.f / 360.f));
 			}
 		}

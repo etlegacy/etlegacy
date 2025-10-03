@@ -7,7 +7,6 @@ upcoming:
     descr: |
       When being revived, weapons now fade in from the bottom in a non-linear fashion.
       Purely visual, does not affect hit detection.
-    optout: 'set `cg_gunReviveFadeIn` to `0` (default: `1`)'
-
+    optout: "set `cg_gunReviveFadeIn` to `0` (default: `1`)"
 # TODO - add previous version history
 # v82.3.0: []

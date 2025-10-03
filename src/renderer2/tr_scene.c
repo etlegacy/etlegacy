@@ -73,7 +73,7 @@ void R_InitNextFrame(void)
 	r_numLights       = 0;
 	r_firstSceneLight = 0;
 
-	r_numcoronas      = 0;
+	r_numcoronas       = 0;
 	r_firstSceneCorona = 0;
 
 	r_numEntities      = 0;
@@ -639,9 +639,9 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.refdef.time    = fd->time;
 	tr.refdef.rdflags = fd->rdflags;
 
-	if(fd->rdflags & RDF_SKYBOXPORTAL)
+	if (fd->rdflags & RDF_SKYBOXPORTAL)
 	{
-	    tr.world->hasSkyboxPortal = qtrue; // see int skyboxportal var tr_scene.c/r1
+		tr.world->hasSkyboxPortal = qtrue; // see int skyboxportal var tr_scene.c/r1
 	}
 
 	// copy the areamask data over and note if it has changed, which

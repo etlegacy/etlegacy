@@ -1247,16 +1247,16 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
  */
 static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 {
-	int               o, i;
-	int               numVerts = srf->numVerts;   // basic setup
-	vec4_t            distanceCull, distanceVector;
-	float             alpha = 1.0f, z, dist, fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
-	vec3_t            local;
-	float *xyz, *normal, *texCoords, *lightCoords, *color;
+	int    o, i;
+	int    numVerts = srf->numVerts;              // basic setup
+	vec4_t distanceCull, distanceVector;
+	float  alpha = 1.0f, z, dist, fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
+	vec3_t local;
+	float  *xyz, *normal, *texCoords, *lightCoords, *color;
 	//int               dlightBits;
 	foliageInstance_t *instance;
-	srfTriangle_t *tri;
-	srfVert_t     *dv;
+	srfTriangle_t     *tri;
+	srfVert_t         *dv;
 
 	if (r_vboFoliage->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
@@ -1266,7 +1266,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		R_BindIBO(srf->ibo);
 
 		tess.multiDrawIndexes[tess.multiDrawPrimitives] = (glIndex_t *)BUFFER_OFFSET(srf->firstTriangle * 3 * sizeof(glIndex_t));
-		tess.multiDrawCounts[tess.multiDrawPrimitives] = srf->numTriangles * 3 * srf->numInstances;
+		tess.multiDrawCounts[tess.multiDrawPrimitives]  = srf->numTriangles * 3 * srf->numInstances;
 
 		tess.multiDrawPrimitives++;
 		return;
@@ -1356,12 +1356,12 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 			tess.indexes[tess.numIndexes + i * 3 + 2] = tess.numVertexes + tri->indexes[2];
 		}
 
-		dv = srf->verts;
-		xyz = tess.xyz[tess.numVertexes];
-		normal = tess.normals[tess.numVertexes];
-		texCoords = tess.texCoords[tess.numVertexes];
+		dv          = srf->verts;
+		xyz         = tess.xyz[tess.numVertexes];
+		normal      = tess.normals[tess.numVertexes];
+		texCoords   = tess.texCoords[tess.numVertexes];
 		lightCoords = tess.lightCoords[tess.numVertexes];
-		color = tess.colors[tess.numVertexes];
+		color       = tess.colors[tess.numVertexes];
 
 		for (i = 0; i < srf->numVerts; i++, dv++, xyz += 4, normal += 4, texCoords += 4, lightCoords += 4, color += 4)
 		{
@@ -1394,7 +1394,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		}
 
 		// increment offsets
-		tess.numIndexes += srf->numTriangles * 3;
+		tess.numIndexes  += srf->numTriangles * 3;
 		tess.numVertexes += numVerts;
 	}
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_LIGHTCOORD;

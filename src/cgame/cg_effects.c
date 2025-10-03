@@ -729,7 +729,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 			if (trace.fraction < 1.0f)
 			{
 
-				CG_ProjectBloodDecal((vec3_t *)trace.endpos, 30.0f);
+				CG_ProjectBloodDecal((vec3_t *)trace.endpos, 10.0f);
 
 				if (count++ > GIB_BLOOD_DOTS)
 				{

@@ -366,7 +366,7 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 {
 	int              i, j;
 	int              numTriangles = 0;
-	int              w            = width - 1, h = height - 1;
+	int              w = width - 1, h = height - 1;
 	srfVert_t        *dv;
 	static srfVert_t ctrl2[MAX_GRID_SIZE * MAX_GRID_SIZE];
 
@@ -716,7 +716,7 @@ void R_FreeSurfaceGridMesh(srfGridMesh_t *grid)
  * @param[in] points
  * @return
  */
-srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE])
+srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE *MAX_PATCH_SIZE])
 {
 	int                  i, j, k, l;
 	srfVert_t            prev, next, mid;

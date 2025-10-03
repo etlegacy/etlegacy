@@ -2653,7 +2653,7 @@ void CG_Debriefing_ScrollGetBarRect(panel_button_t *button, rectDef_t *r)
 /**
  * @brief CG_Debriefing_ScrollCheckOffset
  * @param[in] button
- * @return 
+ * @return
  */
 static qboolean CG_Debriefing_ScrollCheckOffset(panel_button_t *button)
 {

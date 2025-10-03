@@ -75,17 +75,17 @@ VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_
 
 	Q_strncpyz(vbo->name, name, sizeof(vbo->name));
 
-	vbo->ofsXYZ             = 0;
-	vbo->ofsTexCoords       = 0;
-	vbo->ofsLightCoords     = 0;
-	vbo->ofsBinormals       = 0;
-	vbo->ofsTangents        = 0;
-	vbo->ofsNormals         = 0;
-	vbo->ofsColors          = 0;
+	vbo->ofsXYZ         = 0;
+	vbo->ofsTexCoords   = 0;
+	vbo->ofsLightCoords = 0;
+	vbo->ofsBinormals   = 0;
+	vbo->ofsTangents    = 0;
+	vbo->ofsNormals     = 0;
+	vbo->ofsColors      = 0;
 	//vbo->ofsPaintColors     = 0;
 	//vbo->ofsLightDirections = 0;
-	vbo->ofsBoneIndexes     = 0;
-	vbo->ofsBoneWeights     = 0;
+	vbo->ofsBoneIndexes = 0;
+	vbo->ofsBoneWeights = 0;
 
 	vbo->sizeXYZ       = 0;
 	vbo->sizeTangents  = 0;
@@ -157,17 +157,17 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 
 	Q_strncpyz(vbo->name, name, sizeof(vbo->name));
 
-	vbo->ofsXYZ             = 0;
-	vbo->ofsTexCoords       = 0;
-	vbo->ofsLightCoords     = 0;
-	vbo->ofsBinormals       = 0;
-	vbo->ofsTangents        = 0;
-	vbo->ofsNormals         = 0;
-	vbo->ofsColors          = 0;
+	vbo->ofsXYZ         = 0;
+	vbo->ofsTexCoords   = 0;
+	vbo->ofsLightCoords = 0;
+	vbo->ofsBinormals   = 0;
+	vbo->ofsTangents    = 0;
+	vbo->ofsNormals     = 0;
+	vbo->ofsColors      = 0;
 	//vbo->ofsPaintColors     = 0;
 	//vbo->ofsLightDirections = 0;
-	vbo->ofsBoneIndexes     = 0;
-	vbo->ofsBoneWeights     = 0;
+	vbo->ofsBoneIndexes = 0;
+	vbo->ofsBoneWeights = 0;
 
 	vbo->sizeXYZ       = 0;
 	vbo->sizeTangents  = 0;
@@ -194,16 +194,16 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	// 3-entry -> { memb[0], memb[1], memb[2], 1 }
 #define VERTEXSIZE(memb) (sizeof(verts->memb) / sizeof(verts->memb[0]))
 #define VERTEXCOPY(memb) \
-	do { \
-		vec_t *tmp = (vec_t *) (data + dataOfs); \
-		for (i = 0; i < numVertexes; i++) \
-		{ \
-			for (j = 0; j < VERTEXSIZE(memb); j++) { *tmp++ = verts[i].memb[j]; } \
-			if (VERTEXSIZE(memb) < 3) { *tmp++ = 0; } \
-			if (VERTEXSIZE(memb) < 4) { *tmp++ = 1; } \
-		} \
-		dataOfs += i * sizeof(vec4_t); \
-	} while (0)
+		do { \
+			vec_t *tmp = (vec_t *) (data + dataOfs); \
+			for (i = 0; i < numVertexes; i++) \
+			{ \
+				for (j = 0; j < VERTEXSIZE(memb); j++) { *tmp++ = verts[i].memb[j]; } \
+				if (VERTEXSIZE(memb) < 3) { *tmp++ = 0; } \
+				if (VERTEXSIZE(memb) < 4) { *tmp++ = 1; } \
+			} \
+			dataOfs += i * sizeof(vec4_t); \
+		} while (0)
 
 	if (stateBits & ATTR_POSITION)
 	{

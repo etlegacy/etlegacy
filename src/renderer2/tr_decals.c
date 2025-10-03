@@ -1024,7 +1024,7 @@ void R_CullDecalProjectors(void)
 		}
 		else
 		{
-			decalBits |= (1 << i);
+			decalBits         |= (1 << i);
 			numDecalProjectors = i + 1;
 		}
 	}

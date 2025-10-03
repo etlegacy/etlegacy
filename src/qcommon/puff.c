@@ -830,7 +830,7 @@ int32_t puff(uint8_t *dest,            /* pointer to destination pointer */
 			type = bits(&s, 2);         /* block type 0..3 */
 			err  = type == 0 ? stored(&s) :
 			       (type == 1 ? fixed(&s) :
-			       (type == 2 ? dynamic(&s) :
+			        (type == 2 ? dynamic(&s) :
 			         -1));              /* type == 3, invalid */
 			if (err != 0)
 			{

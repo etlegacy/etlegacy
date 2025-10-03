@@ -216,7 +216,7 @@ void encodeWavelet(sfx_t *sfx, short *packets)
 		{
 			sfx->soundData = newchunk;
 		}
-		else if(chunk)
+		else if (chunk)
 		{
 			chunk->next = newchunk;
 		}
@@ -302,7 +302,7 @@ void encodeMuLaw(sfx_t *sfx, short *packets)
 		{
 			sfx->soundData = newchunk;
 		}
-		else if(chunk)
+		else if (chunk)
 		{
 			chunk->next = newchunk;
 		}

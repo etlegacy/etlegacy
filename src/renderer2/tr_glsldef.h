@@ -51,9 +51,9 @@
 
 // These are not yet in use
 #if defined(SHADER_PROTO)
-#define SHADER_DEF(name) extern programInfo_t * name;
+#define SHADER_DEF(name) extern programInfo_t *name;
 #elif defined(SHADER_DECL)
-#define SHADER_DEF(name) programInfo_t * name;
+#define SHADER_DEF(name) programInfo_t *name;
 #elif defined(SHADER_COMP)
 #define SHADER_DEF(name) name = GLSL_GetShaderProgram(#name)
 #else

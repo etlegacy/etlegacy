@@ -276,7 +276,7 @@ static struct irc_user_t IRC_User;
 #define IRC_EVTF_SELF       0x00000100  ///< Event applies to current user
 
 #define IRC_EventType(evt) (evt & 0xff)
-#define IRC_EventIsSelf(evt) ((evt &IRC_EVTF_SELF) == IRC_EVTF_SELF)
+#define IRC_EventIsSelf(evt) ((evt & IRC_EVTF_SELF) == IRC_EVTF_SELF)
 #define IRC_MakeEvent(type, isself) (IRC_EVT_ ## type | ((isself) ? IRC_EVTF_SELF : 0))
 
 /*

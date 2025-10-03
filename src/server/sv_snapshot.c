@@ -142,6 +142,9 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 	int            oldnum, newnum;
 	int            from_num_entities;
 	int            messageSize;
+#ifdef ETLEGACY_DEBUG
+	int offset;
+#endif
 
 	// generate the delta update
 	if (!from)
@@ -207,7 +210,7 @@ static void SV_EmitPacketEntities(client_t *client, clientSnapshot_t *from, clie
 				Com_Error(ERR_FATAL, "SV_EmitPacketEntities: MAX_GENTITIES exceeded");
 			}
 #ifdef ETLEGACY_DEBUG
-			const int offset = msg->bit;
+			offset = msg->bit;
 #endif
 			// this is a new entity, send it from the baseline
 			MSG_WriteDeltaEntity(msg, &sv.svEntities[newnum].baseline, newent, qtrue);
@@ -1400,40 +1403,44 @@ void SV_PrintNetworkOverhead_f(void)
 		return;
 	}
 
-	const double sentTotal  = net_overhead.numBytesSent;
-	const double countTotal = net_overhead.numSent;
-
-	double sentAll    = 0.0;
-	double writtenAll = 0.0;
-
-	Com_Printf("=========================\n");
-	for (i = 0; i < net_overhead.numSlices; i++)
 	{
-		const char   *name   = net_overhead.slices[i].name;
-		const double sent    = net_overhead.slices[i].numBytesSent;
-		const double written = net_overhead.slices[i].numBytesWritten;
-		sentAll    += sent;
-		writtenAll += written;
-		if (sent == 0.0)
+		const double sentTotal  = net_overhead.numBytesSent;
+		const double countTotal = net_overhead.numSent;
+
+		double sentAll    = 0.0;
+		double writtenAll = 0.0;
+
+		Com_Printf("=========================\n");
+		for (i = 0; i < net_overhead.numSlices; i++)
 		{
-			Com_Printf("%s unused\n", name);
-			continue;
+			const char   *name   = net_overhead.slices[i].name;
+			const double sent    = net_overhead.slices[i].numBytesSent;
+			const double written = net_overhead.slices[i].numBytesWritten;
+			sentAll    += sent;
+			writtenAll += written;
+			if (sent == 0.0)
+			{
+				Com_Printf("%s unused\n", name);
+				continue;
+			}
+
+			{
+				const float overhead    = sent / sentTotal;
+				const float compression = written / sent;
+				Com_Printf("%s overhead:	%.2f%%\n", name, overhead * 100.0f);
+				Com_Printf("%s compression: %.2fx\n", name, compression);
+			}
 		}
 
-		const float overhead    = sent / sentTotal;
-		const float compression = written / sent;
-		Com_Printf("%s overhead:    %.2f%%\n", name, overhead * 100.0f);
-		Com_Printf("%s compression: %.2fx\n", name, compression);
-	}
-
-	if (sentAll > 0.0)
-	{
-		const float overhead    = sentAll / sentTotal;
-		const float compression = writtenAll / sentAll;
-		Com_Printf("total overhead:     %.2f%%\n", overhead * 100.0f);
-		Com_Printf("total compression:  %.2fx\n", compression);
-		Com_Printf("average bytes sent: %.2f\n", sentTotal / countTotal);
-		Com_Printf("=========================\n");
+		if (sentAll > 0.0)
+		{
+			const float overhead    = sentAll / sentTotal;
+			const float compression = writtenAll / sentAll;
+			Com_Printf("total overhead:	 %.2f%%\n", overhead * 100.0f);
+			Com_Printf("total compression:  %.2fx\n", compression);
+			Com_Printf("average bytes sent: %.2f\n", sentTotal / countTotal);
+			Com_Printf("=========================\n");
+		}
 	}
 }
 

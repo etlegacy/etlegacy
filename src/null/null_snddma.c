@@ -113,7 +113,7 @@ void S_ClearSoundBuffer(qboolean killStreaming)
 int S_GetSoundLength(sfxHandle_t sfxHandle)
 {
 	Com_Error(ERR_DROP, "null_snddma.c: S_GetSoundLength");
-	
+
 	return 0;
 }
 

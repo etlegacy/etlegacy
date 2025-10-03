@@ -34,11 +34,11 @@ struct CTDT
 	long priority;
 };
 
-extern const void(*__ctrslist[]) (void);
-extern const void(*__dtrslist[]) (void);
+extern const void        (*__ctrslist[]) (void);
+extern const void        (*__dtrslist[]) (void);
 extern const struct CTDT __ctdtlist[];
-static struct CTDT       *sort_ctdt(struct CTDT **last);
-static struct CTDT       *ctdt, *last_ctdt;
+static struct CTDT *sort_ctdt(struct CTDT **last);
+static struct CTDT *ctdt, *last_ctdt;
 
 struct FuncSeg
 {
@@ -57,7 +57,7 @@ void             *libnix_mempool                 = 0L;
 int              ThisRequiresConstructorHandling = 1;
 
 /* ANSI de/constructor handler */
-static void CallFuncArray(const void(*FuncArray[]) (void))
+static void CallFuncArray(const void (*FuncArray[]) (void))
 {
 	struct FuncSeg *seg;
 	int            i, num;
@@ -96,7 +96,7 @@ static struct CTDT *sort_ctdt(struct CTDT **last)
 	seg       = (struct FuncSeg *)(((IPTR)__ctdtlist) - sizeof(struct FuncSeg));
 	last_ctdt = (struct CTDT *)(((IPTR)seg) + seg->size);
 
-	qsort((struct CTDT *)__ctdtlist, (IPTR)(last_ctdt - __ctdtlist), sizeof(*__ctdtlist), (int (*)(const void *, const void *))comp_ctdt);
+	qsort((struct CTDT *)__ctdtlist, (IPTR)(last_ctdt - __ctdtlist), sizeof(*__ctdtlist), (int (*)(const void *, const void *)) comp_ctdt);
 
 	*last = last_ctdt;
 

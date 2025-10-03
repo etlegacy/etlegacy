@@ -2156,6 +2156,9 @@ static void CG_DrawSpawnpoints(void)
 			// draw id if the spawnpoint is assigned one
 			if (spawnpoint->id)
 			{
+				// offset this a bit more from the ground in case the spawnpoint is on an uneven ground,
+				// otherwise the text origin might be inside solid, which causes it to not draw
+				trace.endpos[2] += 8;
 				CG_AddOnScreenText(va("%i", spawnpoint->id), trace.endpos, qfalse);
 			}
 		}
@@ -2322,7 +2325,10 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	cg.time -= snapshotDelayTime;
 #endif // FAKELAG
 
-	CG_ProcessCvars();
+	if (!demoPlayback)
+	{
+		CG_ProcessCvars();
+	}
 
 #ifdef DEBUGTIME_ENABLED
 	CG_Printf("\n");

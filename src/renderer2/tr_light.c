@@ -326,7 +326,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
  */
 void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t forcedOrigin)
 {
-	vec3_t   lightOrigin;
+	vec3_t lightOrigin;
 	// lighting calculations
 	if (ent->lightingCalculated)
 	{
@@ -348,7 +348,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 
 	// if NOWORLDMODEL, only use dynamic lights (menu system, etc)
-	if (forcedOrigin ||tr.world && tr.world->lightGridData &&
+	if (forcedOrigin || tr.world && tr.world->lightGridData &&
 	    (!(refdef->rdflags & RDF_NOWORLDMODEL) ||
 	     ((refdef->rdflags & RDF_NOWORLDMODEL) && (ent->e.renderfx & RF_LIGHTING_ORIGIN))))
 	{
@@ -389,8 +389,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	{
 		VectorSet(ent->ambientLight, 0.96, 0.96, 0.96);      // allow a little room for flicker from directed light
 	}
-	
-	
+
+
 	// renormalize if necessary
 	if (ent->e.nonNormalizedAxes)
 	{
@@ -398,9 +398,9 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 	if (r_debugLight->integer)
 	{
-		 Ren_Print("amb: %f %f %f dir: %f %f %f\n",
-				 ent->ambientLight[0], ent->ambientLight[1], ent->ambientLight[2],
-				 ent->directedLight[0], ent->directedLight[1], ent->directedLight[2]);
+		Ren_Print("amb: %f %f %f dir: %f %f %f\n",
+		          ent->ambientLight[0], ent->ambientLight[1], ent->ambientLight[2],
+		          ent->directedLight[0], ent->directedLight[1], ent->directedLight[2]);
 	}
 }
 

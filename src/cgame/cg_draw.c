@@ -1285,7 +1285,10 @@ static void CG_DrawScopedReticle(void)
 
 	// TODO : add support for ultra-widescreen / remove 16:9 assumption
 
-	if (cg_scopeReticleStyle.integer < 1 && weapon == WP_FG42_SCOPE || cg_scopeReticleStyle.integer == 1)
+	if (
+		(cg_scopeReticleStyle.integer < 1 && weapon == WP_FG42_SCOPE) ||
+		(cg_scopeReticleStyle.integer == 1)
+		)
 	{
 		// color
 		trap_R_SetColor(cgs.scopeReticleColor);
@@ -1332,7 +1335,11 @@ static void CG_DrawScopedReticle(void)
 
 		trap_R_SetColor(NULL);
 	}
-	else if (cg_scopeReticleStyle.integer < 1 && weapon == WP_GARAND_SCOPE || cg_scopeReticleStyle.integer < 1 && weapon == WP_K43_SCOPE || cg_scopeReticleStyle.integer == 2)
+	else if (
+		(cg_scopeReticleStyle.integer < 1 && weapon == WP_GARAND_SCOPE) ||
+		(cg_scopeReticleStyle.integer < 1 && weapon == WP_K43_SCOPE) ||
+		(cg_scopeReticleStyle.integer == 2)
+		)
 	{
 		// color
 		trap_R_SetColor(cgs.scopeReticleColor);
