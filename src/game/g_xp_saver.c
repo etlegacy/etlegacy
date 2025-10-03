@@ -353,13 +353,13 @@ static int G_XPSaver_Write(xpData_t *xp_data)
 	{
 		sqlite3_finalize(sqlstmt);
 		sqlstmt = NULL;
-		result = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_INSERT, xp_data->guid), -1, &sqlstmt, NULL);
+		result  = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_INSERT, xp_data->guid), -1, &sqlstmt, NULL);
 	}
 	else if (result == SQLITE_ROW)
 	{
 		sqlite3_finalize(sqlstmt);
 		sqlstmt = NULL;
-		result = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_UPDATE, xp_data->guid), -1, &sqlstmt, NULL);
+		result  = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_UPDATE, xp_data->guid), -1, &sqlstmt, NULL);
 	}
 	else
 	{
