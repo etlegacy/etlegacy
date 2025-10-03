@@ -324,6 +324,7 @@ static int G_XPSaver_Write(xpData_t *xp_data)
 {
 	int          i;
 	int          result;
+	const char   *err;
 	sqlite3_stmt *sqlstmt;
 	int          buffer[SK_NUM_SKILLS * 2];
 	int          *pSkills;
@@ -350,11 +351,25 @@ static int G_XPSaver_Write(xpData_t *xp_data)
 
 	if (result == SQLITE_DONE)
 	{
+		sqlite3_finalize(sqlstmt);
+		sqlstmt = NULL;
 		result = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_INSERT, xp_data->guid), -1, &sqlstmt, NULL);
+	}
+	else if (result == SQLITE_ROW)
+	{
+		sqlite3_finalize(sqlstmt);
+		sqlstmt = NULL;
+		result = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_UPDATE, xp_data->guid), -1, &sqlstmt, NULL);
 	}
 	else
 	{
-		result = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_UPDATE, xp_data->guid), -1, &sqlstmt, NULL);
+		err = sqlite3_errmsg(level.database.db);
+		if (err)
+		{
+			G_Printf("^3%s (%i): failed: %s\n", __func__, __LINE__, err);
+		}
+		sqlite3_finalize(sqlstmt);
+		return 1;
 	}
 	assert_return(result == SQLITE_OK, 1, sqlite3_errmsg(level.database.db));
 
@@ -392,7 +407,7 @@ int G_XPSaver_Clear()
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_XPSaver_Clear: sqlite3_prepare failed: %s\n", err_msg);
+		G_Printf("G_XPSaver_Clear: sqlite3_exec failed: %s\n", err_msg);
 		sqlite3_free(err_msg);
 		return 1;
 	}
