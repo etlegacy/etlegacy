@@ -719,11 +719,6 @@ int G_Map_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 		}
 	}
 
-#ifdef FEATURE_DBMS
-	// deinitialize db
-	G_DB_DeInit();
-#endif
-
 	return G_OK;
 }
 
@@ -774,11 +769,6 @@ int G_Campaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 		trap_Cvar_VariableStringBuffer("nextcampaign", s, sizeof(s));
 		trap_SendConsoleCommand(EXEC_APPEND, va("campaign %s%s\n", level.voteInfo.vote_value, ((*s) ? va("; set nextcampaign \"%s\"", s) : "")));
 	}
-
-#ifdef FEATURE_DBMS
-	// deinitialize db
-	G_DB_DeInit();
-#endif
 
 	return G_OK;
 }
@@ -969,11 +959,6 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 			AP("cp \"^3*** Loading nextmap! ***\n\"");
 		}
 	}
-
-#ifdef FEATURE_DBMS
-	// deinitialize db
-	G_DB_DeInit();
-#endif
 
 	return G_OK;
 }
@@ -1893,11 +1878,6 @@ int G_NextCampaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextcampaign\n");
 		}
 	}
-
-#ifdef FEATURE_DBMS
-	// deinitialize db
-	G_DB_DeInit();
-#endif
 
 	return G_OK;
 }
