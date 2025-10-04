@@ -1560,7 +1560,8 @@ static void CG_Corona(centity_t *cent)
 {
 	float    r, g, b;
 	int      dli;
-	float    dot, dist;
+	float    dist;
+	float    fov;
 	vec3_t   dir;
 	qboolean behind = qfalse, toofar = qfalse;
 
@@ -1584,14 +1585,12 @@ static void CG_Corona(centity_t *cent)
 		toofar = qtrue;
 	}
 
-	dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
-	if (dot >= -0.6f)         // assumes ~90 deg fov - changed value to 0.6 (screen corner at 90 fov)
-	{
-		behind = qtrue;     // use the dot to at least do trivial removal of those behind you.
-	}
-	// yeah, I could calc side planes to clip against, but would that be worth it? (much better than dumb dot>= thing?)
 
-	//CG_Printf("dot: %f\n", dot);
+	fov = cosf((cg.refdef_current->fov_x / 2) * (float)(M_PI / 180));
+	if (DotProduct(dir, cg.refdef_current->viewaxis[0]) >= -fov)
+	{
+		behind = qtrue;
+	}
 
 	if (cg_coronas.integer == 2)       // if set to '2' trace everything
 	{
