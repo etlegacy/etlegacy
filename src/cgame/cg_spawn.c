@@ -207,7 +207,7 @@ void SP_info_train_spline_main(void)
 /**
  * @brief CG_corona
  */
-void CG_corona(void)
+void SP_corona(void)
 {
 	cg_corona_t *corona;
 	float       scale;
@@ -412,7 +412,7 @@ spawn_t spawns[] =
 
 	{ "trigger_objective_info",    SP_trigger_objective_info },
 	{ "misc_gamemodel",            SP_misc_gamemodel         },
-	{ "corona",                    CG_corona                 },
+	{ "corona",                    SP_corona                 },
 	{ "team_CTF_redspawn",         CG_Spawnpoint             },
 	{ "team_CTF_bluespawn",        CG_Spawnpoint             },
 	{ "team_WOLF_objective",       SP_team_WOLF_objective    },
