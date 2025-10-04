@@ -1554,6 +1554,7 @@ static void CG_Trap(centity_t *cent)
 
 /**
  * @brief CG_Corona
+ * @brief This handles server side coronas only
  * @param[in] cent
  */
 static void CG_Corona(centity_t *cent)
