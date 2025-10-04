@@ -4597,9 +4597,10 @@ void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte col
 }
 
 /**
- * @brief CG_Coronas
+ * @brief CG_DrawClientCoronas
+ * @brief Handles drawing client side coronas
  */
-void CG_Coronas(void)
+static void CG_DrawClientCoronas(void)
 {
 	if (cg_coronas.integer == 0)
 	{
@@ -4751,7 +4752,7 @@ void CG_DrawActive()
 	CG_ShakeCamera();
 	CG_PB_RenderPolyBuffers();
 	CG_DrawMiscGamemodels();
-	CG_Coronas();
+	CG_DrawClientCoronas();
 
 	if (!(cg.limboEndCinematicTime > cg.time && cg.showGameView))
 	{
@@ -4837,7 +4838,7 @@ void CG_DrawMissileCamera(hudComponent_t *comp)
 		CG_AddTrails();        // this must come last, so the trails dropped this frame get drawn
 		CG_PB_RenderPolyBuffers();
 		CG_DrawMiscGamemodels();
-		CG_Coronas();
+		CG_DrawClientCoronas();
 	}
 
 	refdef.time = cg.time;
