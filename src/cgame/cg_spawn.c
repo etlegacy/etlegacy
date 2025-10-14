@@ -207,10 +207,11 @@ void SP_info_train_spline_main(void)
 /**
  * @brief CG_corona
  */
-void CG_corona(void)
+void SP_corona(void)
 {
 	cg_corona_t *corona;
 	float       scale;
+	int         tmpColor;
 	vec3_t      color;
 	vec3_t      org;
 	char        *coronaStr;
@@ -232,7 +233,10 @@ void CG_corona(void)
 	VectorCopy(org, corona->org);
 
 	CG_SpawnFloat("scale", "1", &scale);
-	corona->scale = scale;
+	// 'scale' is networked as 10-bit integer for server-side coronas,
+	// so don't use more than 10 bits here either to match the size
+	corona->scale  = (int)(scale * 255) & 0x3FF;
+	corona->scale /= 255.0f;
 
 	if (!CG_SpawnVector("_color", "0 0 0", color))
 	{
@@ -242,7 +246,13 @@ void CG_corona(void)
 		}
 	}
 
-	VectorCopy(color, corona->color);
+	// replicate wrapping to match server side coronas - color values are transmitted as 8 bits, so values > 1.0 will wrap
+	VectorScale(color, 255, color);
+	tmpColor = (int)(color[0]) | (int)(color[1]) << 8 | (int)(color[2]) << 16;
+
+	corona->color[0] = (float)(tmpColor & 255) / 255.0f;
+	corona->color[1] = (float)((tmpColor >> 8) & 255) / 255.0f;
+	corona->color[2] = (float)((tmpColor >> 16) & 255) / 255.0f;
 
 	//CG_Printf("loaded corona %i \n", cg.numCoronas );
 }
@@ -402,7 +412,7 @@ spawn_t spawns[] =
 
 	{ "trigger_objective_info",    SP_trigger_objective_info },
 	{ "misc_gamemodel",            SP_misc_gamemodel         },
-	{ "corona",                    CG_corona                 },
+	{ "corona",                    SP_corona                 },
 	{ "team_CTF_redspawn",         CG_Spawnpoint             },
 	{ "team_CTF_bluespawn",        CG_Spawnpoint             },
 	{ "team_WOLF_objective",       SP_team_WOLF_objective    },
