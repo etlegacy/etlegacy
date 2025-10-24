@@ -1894,11 +1894,11 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 
 	VectorCopy(traceEnt->r.currentOrigin, origin);
 	SnapVector(origin);
-	VectorAdd(origin, traceEnt->r.mins, mins);
-	VectorAdd(origin, traceEnt->r.maxs, maxs);
+	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
+	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
 	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
-	VectorAdd(origin, traceEnt->r.mins, mins);
-	VectorAdd(origin, traceEnt->r.maxs, maxs);
+	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
+	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
 
 	for (i = 0 ; i < num ; i++)
 	{
@@ -1979,8 +1979,8 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	// made this the actual bounding box of dynamite instead of range, also must snap origin to line up properly
 	VectorCopy(traceEnt->r.currentOrigin, origin);
 	SnapVector(origin);
-	VectorAdd(origin, traceEnt->r.mins, mins);
-	VectorAdd(origin, traceEnt->r.maxs, maxs);
+	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
+	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
 	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
 
 	for (i = 0 ; i < num ; i++)
@@ -2211,8 +2211,8 @@ void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 
 	VectorCopy(traceEnt->r.currentOrigin, origin);
 	SnapVector(origin);
-	VectorAdd(origin, traceEnt->r.mins, mins);
-	VectorAdd(origin, traceEnt->r.maxs, maxs);
+	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
+	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
 	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
 
 	// don't report if not disarming *enemy* dynamite in field
