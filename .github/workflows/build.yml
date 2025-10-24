@@ -805,7 +805,7 @@ jobs:
             win-packages/etlegacy-*-x86.exe
             win-packages/etlegacy-*-x86.zip
           overwrite: true
-          if-no-files-found: warn
+          if-no-files-found: error
 
       - uses: actions/upload-artifact@v4
         with:
@@ -814,7 +814,7 @@ jobs:
             win64-packages/etlegacy-*-x64.exe
             win64-packages/etlegacy-*-x64.zip
           overwrite: true
-          if-no-files-found: warn
+          if-no-files-found: error
 
   #   _    _           _                       _                         _      _____   _
   #  | |  | |         | |                     | |                       | |    / ____| | |
