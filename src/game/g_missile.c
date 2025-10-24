@@ -394,8 +394,8 @@ void G_ExplodeMissile(gentity_t *ent)
 			ent->free = NULL; // no defused tidy up if we exploded
 
 			// made this the actual bounding box of dynamite instead of range
-			VectorAdd(ent->r.currentOrigin, ent->r.mins, mins);
-			VectorAdd(ent->r.currentOrigin, ent->r.maxs, maxs);
+			VectorAdd(ent->r.currentOrigin, GetWeaponFireTableData(ent->s.weapon)->hitBox[0], mins);
+			VectorAdd(ent->r.currentOrigin, GetWeaponFireTableData(ent->s.weapon)->hitBox[1], maxs);
 			num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
 
 			for (i = 0; i < num; i++)
