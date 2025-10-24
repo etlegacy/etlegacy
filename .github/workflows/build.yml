@@ -799,6 +799,7 @@ jobs:
           output-artifact-directory: "win64-packages"
 
       - uses: actions/upload-artifact@v4
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
           name: win-packages
           path: |
@@ -808,6 +809,7 @@ jobs:
           if-no-files-found: error
 
       - uses: actions/upload-artifact@v4
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
           name: win64-packages
           path: |
