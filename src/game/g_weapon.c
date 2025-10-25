@@ -1807,19 +1807,240 @@ void G_DisarmSatchel(gentity_t *traceEnt, gentity_t *ent)
 }
 
 /**
+ * @brief Ensure the dynamite isn't planted on friendly objective alone and return
+ * dynamitable objective if exist
+ * @param[in,out] traceEnt
+ * @param[in,out] ent
+ * @param[out] the dynamitable objective, otherwise NULL
+ * @return true if the dynamite can be armed, otherwise false
+ */
+qboolean G_CheckDynamitableObjective(gentity_t *traceEnt, gentity_t *ent, gentity_t **obj)
+{
+	int       entityList[MAX_GENTITIES];
+	gentity_t *hit;
+	vec3_t    org;
+	vec3_t    mins;
+	vec3_t    maxs;
+	int       i;
+	int       num;
+
+	qboolean friendlyObj = qfalse;
+
+	*obj = NULL;
+
+	// First, we check if the dynamite is touching an trigger objective around his hitbox
+	// either enemy or allies
+
+	VectorCopy(traceEnt->r.currentOrigin, org);
+	SnapVector(org);
+	VectorAdd(org, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
+	VectorAdd(org, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
+	num = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+	VectorAdd(org, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
+	VectorAdd(org, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
+
+	for (i = 0 ; i < num ; i++)
+	{
+		hit = &g_entities[entityList[i]];
+
+		if (!(hit->r.contents & CONTENTS_TRIGGER))
+		{
+			continue;
+		}
+
+		if (hit->s.eType != ET_OID_TRIGGER)
+		{
+			continue;
+		}
+
+		if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
+		{
+			continue;
+		}
+
+		// only if it targets a func_explosive
+		if (hit->target_ent && Q_stricmp(hit->target_ent->classname, "func_explosive"))
+		{
+			continue;
+		}
+
+		if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS)) ||
+		    ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)))
+		{
+			friendlyObj = qtrue;
+			continue;
+		}
+
+		// early return, we hit an enemy objective, so even if friendly one exist, allow planting the dynamite
+		if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)) ||
+		    ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS)))
+		{
+			// spawnflags 128 = disabled
+			if (!(hit->spawnflags & 128))
+			{
+				*obj = hit;
+				return qfalse;
+			}
+		}
+	}
+
+	// in case the dynamite is touching a friendly trigger ojective, deny planting the dynamite
+	if (friendlyObj)
+	{
+		G_FreeEntity(traceEnt);
+		trap_SendServerCommand(ent - g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
+		return qtrue;
+	}
+
+	// Second, try to figure if the dynamite blast radius is in range of friendly objective
+	// if so, we will deny planting the dynamite
+
+	VectorCopy(traceEnt->r.currentOrigin, org);
+	org[2] += 4;        // move out of ground
+
+	G_TempTraceIgnorePlayersAndBodies();
+	num = EntsThatRadiusCanDamage(org, traceEnt->splashRadius, entityList);
+	G_ResetTempTraceIgnoreEnts();
+
+	for (i = 0; i < num; i++)
+	{
+		hit = &g_entities[entityList[i]];
+
+		if (hit->s.eType != ET_CONSTRUCTIBLE)
+		{
+			continue;
+		}
+
+		// invulnerable
+		if ((hit->spawnflags & CONSTRUCTIBLE_INVULNERABLE) || (hit->parent && (hit->parent->spawnflags & 8)))
+		{
+			continue;
+		}
+
+		if (!G_ConstructionIsPartlyBuilt(hit))
+		{
+			continue;
+		}
+
+		// is it a friendly constructible, deny planting the dynamite
+		if (hit->s.teamNum == traceEnt->s.teamNum)
+		{
+			G_FreeEntity(traceEnt);
+			trap_SendServerCommand(ent - g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
+			return qtrue;
+		}
+
+		// not dynamite-able
+		if (hit->constructibleStats.weaponclass < 1)
+		{
+			continue;
+		}
+
+		if (!hit->parent)
+		{
+			continue;
+		}
+
+		*obj = hit;
+		break;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief G_DynamitePlantedAnnoucement
+ * @param[in] traceEnt the dynamite
+ * @param[in] ent the planter
+ * @param[in] hit the objective
+ */
+void G_DynamitePlantedAnnoucement(gentity_t *traceEnt, gentity_t *ent, gentity_t *hit)
+{
+	gentity_t *pm;
+#ifdef FEATURE_OMNIBOT
+	const char *Goalname = _GetEntityName(hit);
+
+	// notify omni-bot framework of planted dynamite
+	hit->numPlanted += 1;
+	Bot_AddDynamiteGoal(traceEnt, traceEnt->s.teamNum, va("%s_%i", Goalname, hit->numPlanted));
+#endif
+
+	pm                = G_PopupMessage(PM_DYNAMITE);
+	pm->s.effect2Time = 0;         // 0 = planted
+	pm->s.teamNum     = ent->client->sess.sessionTeam;
+
+	traceEnt->etpro_misc_1 |= 1;    // planted
+
+	G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
+
+	if (hit->s.eType == ET_OID_TRIGGER)
+	{
+		pm->s.effect3Time = hit->s.teamNum;
+
+		traceEnt->etpro_misc_2 = hit->s.number;
+
+		if (hit->spawnflags & AXIS_OBJECTIVE)
+		{
+			if (ent->client->sess.sessionTeam == TEAM_ALLIES)         // transfer score info if this is a bomb scoring objective
+			{
+				traceEnt->accuracy = hit->accuracy;
+			}
+		}
+		else if (hit->spawnflags & ALLIED_OBJECTIVE)
+		{
+			if (ent->client->sess.sessionTeam == TEAM_AXIS)         // dito other team
+			{
+				traceEnt->accuracy = hit->accuracy;
+			}
+		}
+
+		if (hit->spawnflags & OBJECTIVE_DESTROYED)
+		{
+			return;
+		}
+
+		if (traceEnt->parent && traceEnt->parent->client)
+		{
+			G_LogPrintf("Dynamite_Plant: %d %s\n", (int)(traceEnt->parent - g_entities), hit->track);
+		}
+	}
+	else // ET_CONSTRUCTIBLE
+	{
+		pm->s.effect3Time = hit->parent->s.teamNum;
+
+		if (hit->parent->spawnflags & OBJECTIVE_DESTROYED)
+		{
+			return;
+		}
+
+		if (traceEnt->parent && traceEnt->parent->client)
+		{
+			G_LogPrintf("Dynamite_Plant: %d %s\n", (int)(traceEnt->parent - g_entities), hit->parent->track);
+		}
+	}
+
+	// give explode score to guy who armed it
+	traceEnt->parent = ent;
+
+	// dyno chaining
+	traceEnt->onobjective = hit;
+	G_DPrintf("dyno chaining: hit: %p\n", hit);
+}
+
+/**
  * @brief G_ArmDynamite
- * @param[in,out] traceEnt the landmine to be armed
- * @param[in,out] ent arming the landmine
+ * @param[in,out] traceEnt the dynamite to be armed
+ * @param[in,out] ent arming the dynamite
  */
 void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 {
-	gentity_t *hit;
-	vec3_t    mins, maxs;
-	vec3_t    origin;
-	int       i, num;
-	int       touch[MAX_GENTITIES];
-	qboolean  friendlyObj = qfalse;
-	qboolean  enemyObj    = qfalse;
+	int       entityList[MAX_GENTITIES];
+	gentity_t *hit = NULL;
+	vec3_t    org;
+	vec3_t    mins;
+	vec3_t    maxs;
+	int       i;
+	int       num;
 
 	// Opposing team cannot accidentally arm it
 	if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
@@ -1830,6 +2051,13 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	if (level.suddenDeath)
 	{
 		G_PrintClientSpammyCenterPrint(ent - g_entities, "Too late to arm a dynamite.");
+		return;
+	}
+
+	// ensure we don't plant a dynamite on friendly obj
+	// and retrieved the enemy obj
+	if (G_CheckDynamitableObjective(traceEnt, ent, &hit))
+	{
 		return;
 	}
 
@@ -1848,112 +2076,13 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 		traceEnt->health += 7;
 	}
 
-	{
-		int    entityList[MAX_GENTITIES];
-		int    numListedEntities;
-		int    e;
-		vec3_t org;
-
-		VectorCopy(traceEnt->r.currentOrigin, org);
-		org[2] += 4;        // move out of ground
-
-		G_TempTraceIgnorePlayersAndBodies();
-		numListedEntities = EntsThatRadiusCanDamage(org, traceEnt->splashRadius, entityList);
-		G_ResetTempTraceIgnoreEnts();
-
-		for (e = 0; e < numListedEntities; e++)
-		{
-			hit = &g_entities[entityList[e]];
-
-			if (hit->s.eType != ET_CONSTRUCTIBLE)
-			{
-				continue;
-			}
-
-			// invulnerable
-			if ((hit->spawnflags & CONSTRUCTIBLE_INVULNERABLE) || (hit->parent && (hit->parent->spawnflags & 8)))
-			{
-				continue;
-			}
-
-			if (!G_ConstructionIsPartlyBuilt(hit))
-			{
-				continue;
-			}
-
-			// is it a friendly constructible
-			if (hit->s.teamNum == traceEnt->s.teamNum)
-			{
-				// G_FreeEntity( traceEnt );
-				// trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly construction!\" 1");
-				// return;
-				friendlyObj = qtrue;
-			}
-		}
-	}
-
-	VectorCopy(traceEnt->r.currentOrigin, origin);
-	SnapVector(origin);
-	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
-	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
-	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
-	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
-	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
-
-	for (i = 0 ; i < num ; i++)
-	{
-		hit = &g_entities[touch[i]];
-
-		if (!(hit->r.contents & CONTENTS_TRIGGER))
-		{
-			continue;
-		}
-
-		if (hit->s.eType == ET_OID_TRIGGER)
-		{
-			if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
-			{
-				continue;
-			}
-
-			// only if it targets a func_explosive
-			if (hit->target_ent && Q_stricmp(hit->target_ent->classname, "func_explosive"))
-			{
-				continue;
-			}
-
-			if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS)) ||
-			    ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)))
-			{
-				//G_FreeEntity( traceEnt );
-				//trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
-				//return;
-				friendlyObj = qtrue;
-			}
-
-			if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)) ||
-			    ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS)))
-			{
-				enemyObj = qtrue;
-			}
-		}
-	}
-
-	if (friendlyObj && !enemyObj)
-	{
-		G_FreeEntity(traceEnt);
-		trap_SendServerCommand(ent - g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
-		return;
-	}
-
-	if (traceEnt->health >= 250)
-	{
-		traceEnt->health = 255;
-	}
-	else
+	// not full, don't continue
+	if (traceEnt->health < 250)
 	{
 		return;
 	}
+
+	traceEnt->health = 255;
 
 	// hint task completed
 	ent->lastTaskAchievedTime = level.time;
@@ -1975,184 +2104,10 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	// moved down here to prevent two prints when dynamite IS near objective
 	trap_SendServerCommand(ent - g_entities, "cp \"Dynamite is now armed with a 30 second timer!\" 1");
 
-	// check if player is in trigger objective field
-	// made this the actual bounding box of dynamite instead of range, also must snap origin to line up properly
-	VectorCopy(traceEnt->r.currentOrigin, origin);
-	SnapVector(origin);
-	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
-	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
-	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
-
-	for (i = 0 ; i < num ; i++)
+	// not planted near objective, nothing to do more
+	if (hit)
 	{
-		hit = &g_entities[touch[i]];
-
-		if (!(hit->r.contents & CONTENTS_TRIGGER))
-		{
-			continue;
-		}
-		if (hit->s.eType == ET_OID_TRIGGER)
-		{
-			if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
-			{
-				continue;
-			}
-
-			// only if it targets a func_explosive
-			if (hit->target_ent && Q_stricmp(hit->target_ent->classname, "func_explosive"))
-			{
-				continue;
-			}
-
-			if (hit->spawnflags & AXIS_OBJECTIVE)
-			{
-				if (ent->client->sess.sessionTeam == TEAM_ALLIES)         // transfer score info if this is a bomb scoring objective
-				{
-					traceEnt->accuracy = hit->accuracy;
-				}
-			}
-			else if (hit->spawnflags & ALLIED_OBJECTIVE)
-			{
-				if (ent->client->sess.sessionTeam == TEAM_AXIS)         // dito other team
-				{
-					traceEnt->accuracy = hit->accuracy;
-				}
-			}
-
-			// spawnflags 128 = disabled
-			if (!(hit->spawnflags & 128) && (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)) ||
-			                                 ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS))))
-			{
-#ifdef FEATURE_OMNIBOT
-				const char *Goalname = _GetEntityName(hit);
-#endif
-				gentity_t *pm;
-
-				pm = G_PopupMessage(PM_DYNAMITE);
-
-				pm->s.effect2Time = 0;
-				pm->s.effect3Time = hit->s.teamNum;
-				pm->s.teamNum     = ent->client->sess.sessionTeam;
-
-
-#ifdef FEATURE_OMNIBOT \
-				// notify omni-bot framework of planted dynamite
-				hit->numPlanted += 1;
-				Bot_AddDynamiteGoal(traceEnt, traceEnt->s.teamNum, va("%s_%i", Goalname, hit->numPlanted));
-#endif
-
-				if (!(hit->spawnflags & OBJECTIVE_DESTROYED))
-				{
-					if (traceEnt->parent && traceEnt->parent->client)
-					{
-						G_LogPrintf("Dynamite_Plant: %d %s\n", (int)(traceEnt->parent - g_entities), hit->track);
-					}
-					traceEnt->parent = ent;     // give explode score to guy who armed it
-
-					// dyno chaining
-					traceEnt->onobjective = hit;
-					G_DPrintf("dyno chaining: hit: %p\n", hit);
-				}
-				traceEnt->etpro_misc_1 |= 1;
-				traceEnt->etpro_misc_2  = hit->s.number;
-
-				G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
-			}
-			// i = num;
-			return;     // bail out here because primary obj's take precendence over constructibles
-		}
-	}
-
-	// reordered this check so its AFTER the primary obj check
-	// - first see if the dynamite is planted near a constructable object that can be destroyed
-	{
-		int    entityList[MAX_GENTITIES];
-		int    numListedEntities;
-		int    e;
-		vec3_t org;
-
-		VectorCopy(traceEnt->r.currentOrigin, org);
-		org[2] += 4;        // move out of ground
-
-		G_TempTraceIgnorePlayersAndBodies();
-		numListedEntities = EntsThatRadiusCanDamage(org, traceEnt->splashRadius, entityList);
-		G_ResetTempTraceIgnoreEnts();
-
-		for (e = 0; e < numListedEntities; e++)
-		{
-			hit = &g_entities[entityList[e]];
-
-			if (hit->s.eType != ET_CONSTRUCTIBLE)
-			{
-				continue;
-			}
-
-			// invulnerable
-			if (hit->spawnflags & CONSTRUCTIBLE_INVULNERABLE)
-			{
-				continue;
-			}
-
-			if (!G_ConstructionIsPartlyBuilt(hit))
-			{
-				continue;
-			}
-
-			// is it a friendly constructible
-			if (hit->s.teamNum == traceEnt->s.teamNum)
-			{
-				// er, didnt we just pass this check earlier?
-				//G_FreeEntity( traceEnt );
-				//trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly construction!\" 1");
-				//return;
-				continue;
-			}
-
-			// not dynamite-able
-			if (hit->constructibleStats.weaponclass < 1)
-			{
-				continue;
-			}
-
-			if (hit->parent)
-			{
-#ifdef FEATURE_OMNIBOT
-				const char *Goalname = _GetEntityName(hit->parent);
-#endif
-				gentity_t *pm;
-
-				pm = G_PopupMessage(PM_DYNAMITE);
-
-				pm->s.effect2Time = 0;     // 0 = planted
-				pm->s.effect3Time = hit->parent->s.teamNum;
-				pm->s.teamNum     = ent->client->sess.sessionTeam;
-
-
-#ifdef FEATURE_OMNIBOT \
-				// notify omni-bot framework of planted dynamite
-				hit->numPlanted += 1;
-				Bot_AddDynamiteGoal(traceEnt, traceEnt->s.teamNum, va("%s_%i", Goalname, hit->numPlanted));
-#endif
-
-				if (!(hit->parent->spawnflags & OBJECTIVE_DESTROYED) &&
-				    hit->s.teamNum && hit->s.teamNum != ent->client->sess.sessionTeam)
-				{
-					if (traceEnt->parent && traceEnt->parent->client)
-					{
-						G_LogPrintf("Dynamite_Plant: %d %s\n", (int)(traceEnt->parent - g_entities), hit->parent->track);
-					}
-					traceEnt->parent = ent;     // give explode score to guy who armed it
-
-					// dyno chaining
-					traceEnt->onobjective = hit;
-					G_DPrintf("dyno chaining: hit: %p\n", hit);
-				}
-				traceEnt->etpro_misc_1 |= 1;
-
-				G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
-			}
-			return;
-		}
+		G_DynamitePlantedAnnoucement(traceEnt, ent, hit);
 	}
 }
 
@@ -2163,14 +2118,14 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
  */
 void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 {
+	int       entityList[MAX_GENTITIES];
+	vec3_t    org;
 	gentity_t *hit;
-	vec3_t    mins, maxs;
-	vec3_t    origin;
-	int       i, num;
-	int       touch[MAX_GENTITIES];
-	int       dynamiteDropTeam;
-	int       scored     = 0;
-	qboolean  defusedObj = qfalse;
+	vec3_t    mins;
+	vec3_t    maxs;
+	int       i;
+	int       num;
+	int       scored = 0;
 
 	if (traceEnt->timestamp > level.time)
 	{
@@ -2181,8 +2136,6 @@ void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	{
 		return;
 	}
-
-	dynamiteDropTeam = traceEnt->s.teamNum;     // set this here since we wack traceent later but want teamnum for scoring
 
 	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_PLIERS_DEXTERITY))
 	{
@@ -2201,7 +2154,8 @@ void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	}
 
 	traceEnt->health = 255;
-	// TODO: Need some kind of event/announcement here
+
+	trap_SendServerCommand(ent - g_entities, "cp \"Dynamite defused\" 1");
 
 	// hint task completed
 	ent->lastTaskAchievedTime = level.time;
@@ -2209,133 +2163,122 @@ void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	traceEnt->think     = G_FreeEntity;
 	traceEnt->nextthink = level.time + FRAMETIME;
 
-	VectorCopy(traceEnt->r.currentOrigin, origin);
-	SnapVector(origin);
-	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
-	VectorAdd(origin, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
-	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
-
 	// don't report if not disarming *enemy* dynamite in field
-	if (dynamiteDropTeam == ent->client->sess.sessionTeam)
+	if (traceEnt->s.teamNum == ent->client->sess.sessionTeam)
 	{
 		return;
 	}
 
+	VectorCopy(traceEnt->r.currentOrigin, org);
+	SnapVector(org);
+	VectorAdd(org, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[0], mins);
+	VectorAdd(org, GetWeaponFireTableData(traceEnt->s.weapon)->hitBox[1], maxs);
+	num = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+
 	for (i = 0 ; i < num ; i++)
 	{
-		hit = &g_entities[touch[i]];
+		gentity_t *pm;
+		hit = &g_entities[entityList[i]];
 
 		if (!(hit->r.contents & CONTENTS_TRIGGER))
 		{
 			continue;
 		}
 
-		if (hit->s.eType == ET_OID_TRIGGER)
+		if (hit->s.eType != ET_OID_TRIGGER)
 		{
-			gentity_t *pm;
-
-			if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
-			{
-				continue;
-			}
-
-			// spawnflags 128 = disabled (#309)
-			if (hit->spawnflags & 128)
-			{
-				continue;
-			}
-
-			// prevent plant/defuse exploit near a/h cabinets or non-destroyable locations (bank doors on goldrush)
-			if (!hit->target_ent || hit->target_ent->s.eType != ET_EXPLOSIVE)
-			{
-				continue;
-			}
-
-			if ((hit->spawnflags & (ent->client->sess.sessionTeam == TEAM_AXIS ? AXIS_OBJECTIVE : ALLIED_OBJECTIVE)) && (!scored))
-			{
-				G_LogPrintf("Dynamite_Diffuse: %d %s\n", (int)(ent - g_entities), hit->parent ? hit->parent->track : hit->track);
-				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
-				scored++;
-			}
-
-			if (hit->target_ent)
-			{
-				G_Script_ScriptEvent(hit->target_ent, "defused", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
-			}
-
-			pm = G_PopupMessage(PM_DYNAMITE);
-
-			pm->s.effect2Time = 1;     // 1 = defused
-			pm->s.effect3Time = hit->s.teamNum;
-			pm->s.teamNum     = ent->client->sess.sessionTeam;
-
-			defusedObj = qtrue;
+			continue;
 		}
-	}
 
-	// prevent multiple messages here
-	if (defusedObj)
-	{
+		if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
+		{
+			continue;
+		}
+
+		// spawnflags 128 = disabled (#309)
+		if (hit->spawnflags & 128)
+		{
+			continue;
+		}
+
+		// prevent plant/defuse exploit near a/h cabinets or non-destroyable locations (bank doors on goldrush)
+		if (!hit->target_ent || hit->target_ent->s.eType != ET_EXPLOSIVE)
+		{
+			continue;
+		}
+
+		if ((hit->spawnflags & (ent->client->sess.sessionTeam == TEAM_AXIS ? AXIS_OBJECTIVE : ALLIED_OBJECTIVE)) && (!scored))
+		{
+			G_LogPrintf("Dynamite_Diffuse: %d %s\n", (int)(ent - g_entities), hit->parent ? hit->parent->track : hit->track);
+			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
+			scored++;
+		}
+
+		if (hit->target_ent)
+		{
+			G_Script_ScriptEvent(hit->target_ent, "defused", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
+		}
+
+		pm = G_PopupMessage(PM_DYNAMITE);
+
+		pm->s.effect2Time = 1;     // 1 = defused
+		pm->s.effect3Time = hit->s.teamNum;
+		pm->s.teamNum     = ent->client->sess.sessionTeam;
+
+		// the dynamite has been defused
 		return;
 	}
 
 	// reordered this check so its AFTER the primary obj check
 	// - first see if the dynamite was planted near a constructable object that would have been destroyed
+
+	VectorCopy(traceEnt->r.currentOrigin, org);
+	org[2] += 4;        // move out of ground
+
+	G_TempTraceIgnorePlayersAndBodies();
+	num = EntsThatRadiusCanDamage(org, traceEnt->splashRadius, entityList);
+	G_ResetTempTraceIgnoreEnts();
+
+	for (i = 0; i < num; i++)
 	{
-		int    entityList[MAX_GENTITIES];
-		int    numListedEntities;
-		int    e;
-		vec3_t org;
+		gentity_t *pm;
+		hit = &g_entities[entityList[i]];
 
-		VectorCopy(traceEnt->r.currentOrigin, org);
-		org[2] += 4;        // move out of ground
-
-		G_TempTraceIgnorePlayersAndBodies();
-		numListedEntities = EntsThatRadiusCanDamage(org, traceEnt->splashRadius, entityList);
-		G_ResetTempTraceIgnoreEnts();
-
-		for (e = 0; e < numListedEntities; e++)
+		if (hit->s.eType != ET_CONSTRUCTIBLE)
 		{
-			gentity_t *pm;
-			hit = &g_entities[entityList[e]];
-
-			if (hit->s.eType != ET_CONSTRUCTIBLE)
-			{
-				continue;
-			}
-
-			// not completely build yet - NOTE: don't do this, in case someone places dynamite before construction is complete
-			//if( hit->s.angles2[0] < 255 )
-			//continue;
-
-			// invulnerable
-			if (hit->spawnflags & CONSTRUCTIBLE_INVULNERABLE)
-			{
-				continue;
-			}
-
-			// not dynamite-able
-			if (hit->constructibleStats.weaponclass < 1)
-			{
-				continue;
-			}
-
-			// we got something to destroy
-			if (hit->s.teamNum == ent->client->sess.sessionTeam && (!scored))
-			{
-				G_LogPrintf("Dynamite_Diffuse: %d %s\n", (int)(ent - g_entities), hit->parent ? hit->parent->track : hit->track);
-				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
-				scored++;
-			}
-
-			G_Script_ScriptEvent(hit, "defused", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
-
-			pm = G_PopupMessage(PM_DYNAMITE);
-
-			pm->s.effect2Time = 1;     // 1 = defused
-			pm->s.effect3Time = hit->parent->s.teamNum;
-			pm->s.teamNum     = ent->client->sess.sessionTeam;
+			continue;
 		}
+
+		// invulnerable
+		if (hit->spawnflags & CONSTRUCTIBLE_INVULNERABLE)
+		{
+			continue;
+		}
+
+		// not dynamite-able
+		if (hit->constructibleStats.weaponclass < 1)
+		{
+			continue;
+		}
+
+		// we got something to destroy
+		if (hit->s.teamNum == ent->client->sess.sessionTeam && (!scored))
+		{
+			G_LogPrintf("Dynamite_Diffuse: %d %s\n", (int)(ent - g_entities), hit->parent ? hit->parent->track : hit->track);
+			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
+			scored++;
+		}
+
+		G_Script_ScriptEvent(hit, "defused", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
+
+		pm = G_PopupMessage(PM_DYNAMITE);
+
+		pm->s.effect2Time = 1;     // 1 = defused
+		pm->s.effect3Time = hit->parent->s.teamNum;
+		pm->s.teamNum     = ent->client->sess.sessionTeam;
+
+		// the dynamite has been defused
+		break;
 	}
 }
 
@@ -2367,29 +2310,34 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	if (ent->client->touchingTOI)
 	{
 		ent->client->touchingTOI->r.linked = qfalse;
-		trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
+	}
+
+	trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
+
+	if (ent->client->touchingTOI)
+	{
 		ent->client->touchingTOI->r.linked = qtrue;
+	}
 
-		traceEnt = &g_entities[tr.entityNum];
+	traceEnt = &g_entities[tr.entityNum];
 
-		// ensure we are not targeting too far
-		if (VectorDistance(muzzleTrace, tr.endpos) > CH_BREAKABLE_DIST)
+	// ensure we are not targeting too far
+	if (VectorDistance(muzzleTrace, tr.endpos) > CH_BREAKABLE_DIST)
+	{
+		// in this case try to build client touching TOI which was ignored previously
+		if (ent->client->touchingTOI)
 		{
-			// in this case try to build client touching TOI which was ignored previously
-			if (ent->client->touchingTOI)
-			{
-				// might be constructible
-				TryConstructing(ent, ent->client->touchingTOI);
-			}
-			return NULL;
+			// might be constructible
+			TryConstructing(ent, ent->client->touchingTOI);
 		}
+		return NULL;
+	}
 
-		// identify the targeted ent
-		if (G_EmplacedGunIsRepairable(traceEnt, ent))
-		{
-			G_RepairEmplacedGun(traceEnt, ent);
-			return NULL;
-		}
+	// identify the targeted ent
+	if (G_EmplacedGunIsRepairable(traceEnt, ent))
+	{
+		G_RepairEmplacedGun(traceEnt, ent);
+		return NULL;
 	}
 
 	trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->client->ps.clientNum, MASK_SHOT);
