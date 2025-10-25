@@ -1563,71 +1563,74 @@ void trap_ItemTrace(gentity_t *ent, trace_t *results, const vec3_t start, const 
  */
 void G_RepairEmplacedGun(gentity_t *traceEnt, gentity_t *ent)
 {
+	int weaponTime = ent->client->ps.classWeaponTime;
+
 	// "Ammo" for this weapon is time based
-	if (ent->client->ps.classWeaponTime + level.engineerChargeTime[ent->client->sess.sessionTeam - 1] < level.time)
+	if (weaponTime + level.engineerChargeTime[ent->client->sess.sessionTeam - 1] < level.time)
 	{
-		ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
+		weaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 	}
 
 	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_STAMINA))
 	{
-		ent->client->ps.classWeaponTime += .66f * 150;
+		weaponTime += .66f * 150;
 	}
 	else
 	{
-		ent->client->ps.classWeaponTime += 150;
+		weaponTime += 150;
 	}
 
-	if (ent->client->ps.classWeaponTime > level.time)
+	// no enough stamina to repair the emplaced gun
+	if (weaponTime > level.time)
 	{
-		ent->client->ps.classWeaponTime = level.time;
 		return;     // Out of "ammo"
 	}
 
-	if (traceEnt->health >= 255)
+	ent->client->ps.classWeaponTime = weaponTime;
+
+	traceEnt->health += 3;
+
+	G_PrintClientSpammyCenterPrint(ent - g_entities, "Repairing MG 42...");
+
+	// constructible xp sharing - repairing an emplaced mg42
+	G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.03529f, "repairing");
+
+	// not yet fully repaired
+	if (traceEnt->health < 255)
 	{
-		// hint task completed
-		ent->lastTaskAchievedTime = level.time;
+		return;
+	}
 
-		traceEnt->s.frame = 0;
+	// hint task completed
+	ent->lastTaskAchievedTime = level.time;
 
-		if (traceEnt->mg42BaseEnt > 0)
-		{
-			g_entities[traceEnt->mg42BaseEnt].health     = MG42_MULTIPLAYER_HEALTH;
-			g_entities[traceEnt->mg42BaseEnt].takedamage = qtrue;
-			traceEnt->health                             = 0;
-		}
-		else
-		{
-			traceEnt->health = MG42_MULTIPLAYER_HEALTH;
-		}
+	traceEnt->s.frame = 0;
 
-		G_LogPrintf("Repair: %d\n", (int)(ent - g_entities));
-
-		if (traceEnt->sound3to2 != ent->client->sess.sessionTeam)
-		{
-			// constructible xp sharing - some lucky dood is going to get the last 0.00035 points and the repair bonus
-			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f, "repairing");
-		}
-
-		traceEnt->takedamage = qtrue;
-		traceEnt->s.eFlags  &= ~EF_SMOKING;
-
-		trap_SendServerCommand(ent - g_entities, "cp \"You have repaired the MG 42\" 1");
-
-		G_AddEvent(ent, EV_MG42_FIXED, 0);
+	if (traceEnt->mg42BaseEnt > 0)
+	{
+		g_entities[traceEnt->mg42BaseEnt].health     = MG42_MULTIPLAYER_HEALTH;
+		g_entities[traceEnt->mg42BaseEnt].takedamage = qtrue;
+		traceEnt->health                             = 0;
 	}
 	else
 	{
-		float xpperround = 0.03529f;
-
-		traceEnt->health += 3;
-
-		G_PrintClientSpammyCenterPrint(ent - g_entities, "Repairing MG 42...");
-
-		// constructible xp sharing - repairing an emplaced mg42
-		G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "repairing");
+		traceEnt->health = MG42_MULTIPLAYER_HEALTH;
 	}
+
+	G_LogPrintf("Repair: %d\n", (int)(ent - g_entities));
+
+	if (traceEnt->sound3to2 != ent->client->sess.sessionTeam)
+	{
+		// constructible xp sharing - some lucky dood is going to get the last 0.00035 points and the repair bonus
+		G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f, "repairing");
+	}
+
+	traceEnt->takedamage = qtrue;
+	traceEnt->s.eFlags  &= ~EF_SMOKING;
+
+	trap_SendServerCommand(ent - g_entities, "cp \"You have repaired the MG 42\" 1");
+
+	G_AddEvent(ent, EV_MG42_FIXED, 0);
 }
 
 /**
