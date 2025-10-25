@@ -1556,6 +1556,14 @@ void trap_ItemTrace(gentity_t *ent, trace_t *results, const vec3_t start, const 
 	G_ResetTempTraceRealHitBox();
 }
 
+#define PLIERS_TASK_COMPLETED 255
+#define EMPLACEDGUN_REPAIR_RATE 3
+#define LANDMINE_ARM_RATE 12
+#define LANDMINE_DISARM_RATE 3
+#define SATCHEL_DISARM_RATE 3
+#define DYNAMITE_ARM_RATE 7
+#define DYNAMITE_DISARM_RATE 3
+
 /**
  * @brief G_RepairEmplacedGun
  * @param traceEnt[in,out] the emplaced gun to repair
@@ -1588,7 +1596,7 @@ void G_RepairEmplacedGun(gentity_t *traceEnt, gentity_t *ent)
 
 	ent->client->ps.classWeaponTime = weaponTime;
 
-	traceEnt->health += 3;
+	traceEnt->health += EMPLACEDGUN_REPAIR_RATE;
 
 	G_PrintClientSpammyCenterPrint(ent - g_entities, "Repairing MG 42...");
 
@@ -1596,7 +1604,7 @@ void G_RepairEmplacedGun(gentity_t *traceEnt, gentity_t *ent)
 	G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.03529f, "repairing");
 
 	// not yet fully repaired
-	if (traceEnt->health < 255)
+	if (traceEnt->health < PLIERS_TASK_COMPLETED)
 	{
 		return;
 	}
@@ -1682,14 +1690,14 @@ void G_ArmLandmine(gentity_t *traceEnt, gentity_t *ent)
 	// give health until it is full, don't continue
 	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_STAMINA))
 	{
-		traceEnt->health += 24;
+		traceEnt->health += LANDMINE_ARM_RATE * 2;
 	}
 	else
 	{
-		traceEnt->health += 12;
+		traceEnt->health += LANDMINE_ARM_RATE;
 	}
 
-	if (traceEnt->health < 250)
+	if (traceEnt->health < PLIERS_TASK_COMPLETED)
 	{
 		return;
 	}
@@ -1729,23 +1737,23 @@ void G_DisarmLandmine(gentity_t *traceEnt, gentity_t *ent)
 		return;
 	}
 
-	if (traceEnt->health >= 250)     // have to do this so we don't score multiple times
+	if (traceEnt->health >= PLIERS_TASK_COMPLETED)     // have to do this so we don't score multiple times
 	{
 		return;
 	}
 
 	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_STAMINA))
 	{
-		traceEnt->health += 6;
+		traceEnt->health += LANDMINE_DISARM_RATE * 2;
 	}
 	else
 	{
-		traceEnt->health += 3;
+		traceEnt->health += LANDMINE_DISARM_RATE;
 	}
 
 	G_PrintClientSpammyCenterPrint(ent - g_entities, "Defusing landmine...");
 
-	if (traceEnt->health >= 250)
+	if (traceEnt->health >= PLIERS_TASK_COMPLETED)
 	{
 		mapEntityData_t *mEnt;
 
@@ -1783,22 +1791,22 @@ void G_DisarmLandmine(gentity_t *traceEnt, gentity_t *ent)
  */
 void G_DisarmSatchel(gentity_t *traceEnt, gentity_t *ent)
 {
-	if (traceEnt->health >= 250)     // have to do this so we don't score multiple times
+	if (traceEnt->health >= PLIERS_TASK_COMPLETED)     // have to do this so we don't score multiple times
 	{
 		return;
 	}
 
 	// give health until it is full, don't continue
-	traceEnt->health += 3;
+	traceEnt->health += SATCHEL_DISARM_RATE;
 
 	G_PrintClientSpammyCenterPrint(ent - g_entities, "Disarming satchel charge...");
 
-	if (traceEnt->health >= 250)
+	if (traceEnt->health >= PLIERS_TASK_COMPLETED)
 	{
 		// hint task completed
 		ent->lastTaskAchievedTime = level.time;
 
-		traceEnt->health    = 255;
+		traceEnt->health    = PLIERS_TASK_COMPLETED;
 		traceEnt->think     = G_FreeEntity;
 		traceEnt->nextthink = level.time + FRAMETIME;
 
@@ -2072,20 +2080,20 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	// Give health until it is full, don't continue
 	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_PLIERS_DEXTERITY))
 	{
-		traceEnt->health += 14;
+		traceEnt->health += DYNAMITE_ARM_RATE * 2;
 	}
 	else
 	{
-		traceEnt->health += 7;
+		traceEnt->health += DYNAMITE_ARM_RATE;
 	}
 
 	// not full, don't continue
-	if (traceEnt->health < 250)
+	if (traceEnt->health < PLIERS_TASK_COMPLETED)
 	{
 		return;
 	}
 
-	traceEnt->health = 255;
+	traceEnt->health = PLIERS_TASK_COMPLETED;
 
 	// hint task completed
 	ent->lastTaskAchievedTime = level.time;
@@ -2128,35 +2136,34 @@ void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	vec3_t    maxs;
 	int       i;
 	int       num;
-	int       scored = 0;
 
 	if (traceEnt->timestamp > level.time)
 	{
 		return;
 	}
 
-	if (traceEnt->health >= 248)         // have to do this so we don't score multiple times
+	if (traceEnt->health >= PLIERS_TASK_COMPLETED)         // have to do this so we don't score multiple times
 	{
 		return;
 	}
 
 	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_PLIERS_DEXTERITY))
 	{
-		traceEnt->health += 6;
+		traceEnt->health += DYNAMITE_DISARM_RATE * 2;
 	}
 	else
 	{
-		traceEnt->health += 3;
+		traceEnt->health += DYNAMITE_DISARM_RATE;
 	}
 
 	G_PrintClientSpammyCenterPrint(ent - g_entities, "Defusing dynamite...");
 
-	if (traceEnt->health < 248)
+	if (traceEnt->health < PLIERS_TASK_COMPLETED)
 	{
 		return;
 	}
 
-	traceEnt->health = 255;
+	traceEnt->health = PLIERS_TASK_COMPLETED;
 
 	trap_SendServerCommand(ent - g_entities, "cp \"Dynamite defused\" 1");
 
@@ -2210,11 +2217,10 @@ void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 			continue;
 		}
 
-		if ((hit->spawnflags & (ent->client->sess.sessionTeam == TEAM_AXIS ? AXIS_OBJECTIVE : ALLIED_OBJECTIVE)) && (!scored))
+		if (hit->spawnflags & (ent->client->sess.sessionTeam == TEAM_AXIS ? AXIS_OBJECTIVE : ALLIED_OBJECTIVE))
 		{
 			G_LogPrintf("Dynamite_Diffuse: %d %s\n", (int)(ent - g_entities), hit->parent ? hit->parent->track : hit->track);
 			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
-			scored++;
 		}
 
 		if (hit->target_ent)
@@ -2265,11 +2271,10 @@ void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 		}
 
 		// we got something to destroy
-		if (hit->s.teamNum == ent->client->sess.sessionTeam && (!scored))
+		if (hit->s.teamNum == ent->client->sess.sessionTeam)
 		{
 			G_LogPrintf("Dynamite_Diffuse: %d %s\n", (int)(ent - g_entities), hit->parent ? hit->parent->track : hit->track);
 			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing dynamite");
-			scored++;
 		}
 
 		G_Script_ScriptEvent(hit, "defused", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
