@@ -2045,13 +2045,7 @@ void G_DynamitePlantedAnnoucement(gentity_t *traceEnt, gentity_t *ent, gentity_t
  */
 void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 {
-	int       entityList[MAX_GENTITIES];
 	gentity_t *hit = NULL;
-	vec3_t    org;
-	vec3_t    mins;
-	vec3_t    maxs;
-	int       i;
-	int       num;
 
 	// Opposing team cannot accidentally arm it
 	if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
@@ -2298,7 +2292,7 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 {
 	trace_t   tr;
 	gentity_t *traceEnt;
-	vec3_t    end, origin;
+	vec3_t    end;
 
 	// Can't use pliers if using a mounted mg
 	if (ent->client->ps.persistant[PERS_HWEAPON_USE])
