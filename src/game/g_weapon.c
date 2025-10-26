@@ -1557,12 +1557,21 @@ void trap_ItemTrace(gentity_t *ent, trace_t *results, const vec3_t start, const 
 }
 
 #define PLIERS_TASK_COMPLETED 255
+/// emplaced gun
 #define EMPLACEDGUN_REPAIR_RATE 3
+#define EMPLACEDGUN_TASK_COMPLETED 255
+/// landmine
 #define LANDMINE_ARM_RATE 12
 #define LANDMINE_DISARM_RATE 3
+#define LANDMINE_TASK_COMPLETED 250
+/// satchel
 #define SATCHEL_DISARM_RATE 3
+#define SATCHEL_TASK_COMPLETED 250
+// dynamite
 #define DYNAMITE_ARM_RATE 7
+#define DYNAMITE_ARMED_COMPLETED 250
 #define DYNAMITE_DISARM_RATE 3
+#define DYNAMITE_DISARMED_COMPLETED 248
 
 /**
  * @brief G_RepairEmplacedGun
@@ -1604,7 +1613,7 @@ void G_RepairEmplacedGun(gentity_t *traceEnt, gentity_t *ent)
 	G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.03529f, "repairing");
 
 	// not yet fully repaired
-	if (traceEnt->health < PLIERS_TASK_COMPLETED)
+	if (traceEnt->health < EMPLACEDGUN_TASK_COMPLETED)
 	{
 		return;
 	}
@@ -1697,7 +1706,7 @@ void G_ArmLandmine(gentity_t *traceEnt, gentity_t *ent)
 		traceEnt->health += LANDMINE_ARM_RATE;
 	}
 
-	if (traceEnt->health < PLIERS_TASK_COMPLETED)
+	if (traceEnt->health < LANDMINE_TASK_COMPLETED)
 	{
 		return;
 	}
@@ -1737,7 +1746,7 @@ void G_DisarmLandmine(gentity_t *traceEnt, gentity_t *ent)
 		return;
 	}
 
-	if (traceEnt->health >= PLIERS_TASK_COMPLETED)     // have to do this so we don't score multiple times
+	if (traceEnt->health >= LANDMINE_TASK_COMPLETED)     // have to do this so we don't score multiple times
 	{
 		return;
 	}
@@ -1753,7 +1762,7 @@ void G_DisarmLandmine(gentity_t *traceEnt, gentity_t *ent)
 
 	G_PrintClientSpammyCenterPrint(ent - g_entities, "Defusing landmine...");
 
-	if (traceEnt->health >= PLIERS_TASK_COMPLETED)
+	if (traceEnt->health >= LANDMINE_TASK_COMPLETED)
 	{
 		mapEntityData_t *mEnt;
 
@@ -1801,7 +1810,7 @@ void G_DisarmSatchel(gentity_t *traceEnt, gentity_t *ent)
 
 	G_PrintClientSpammyCenterPrint(ent - g_entities, "Disarming satchel charge...");
 
-	if (traceEnt->health >= PLIERS_TASK_COMPLETED)
+	if (traceEnt->health >= SATCHEL_TASK_COMPLETED)
 	{
 		// hint task completed
 		ent->lastTaskAchievedTime = level.time;
@@ -1890,7 +1899,7 @@ qboolean G_CheckDynamitableObjective(gentity_t *traceEnt, gentity_t *ent, gentit
 			if (!(hit->spawnflags & 128))
 			{
 				*obj = hit;
-				return qfalse;
+				return qtrue;
 			}
 		}
 	}
@@ -1900,7 +1909,7 @@ qboolean G_CheckDynamitableObjective(gentity_t *traceEnt, gentity_t *ent, gentit
 	{
 		G_FreeEntity(traceEnt);
 		trap_SendServerCommand(ent - g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
-		return qtrue;
+		return qfalse;
 	}
 
 	// Second, try to figure if the dynamite blast radius is in range of friendly objective
@@ -1938,7 +1947,7 @@ qboolean G_CheckDynamitableObjective(gentity_t *traceEnt, gentity_t *ent, gentit
 		{
 			G_FreeEntity(traceEnt);
 			trap_SendServerCommand(ent - g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
-			return qtrue;
+			return qfalse;
 		}
 
 		// not dynamite-able
@@ -1956,7 +1965,7 @@ qboolean G_CheckDynamitableObjective(gentity_t *traceEnt, gentity_t *ent, gentit
 		break;
 	}
 
-	return qfalse;
+	return qtrue;
 }
 
 /**
@@ -2061,7 +2070,7 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 
 	// ensure we don't plant a dynamite on friendly obj
 	// and retrieved the enemy obj
-	if (G_CheckDynamitableObjective(traceEnt, ent, &hit))
+	if (!G_CheckDynamitableObjective(traceEnt, ent, &hit))
 	{
 		return;
 	}
@@ -2082,7 +2091,7 @@ void G_ArmDynamite(gentity_t *traceEnt, gentity_t *ent)
 	}
 
 	// not full, don't continue
-	if (traceEnt->health < PLIERS_TASK_COMPLETED)
+	if (traceEnt->health < DYNAMITE_ARMED_COMPLETED)
 	{
 		return;
 	}
@@ -2152,7 +2161,7 @@ void G_DisarmDynamite(gentity_t *traceEnt, gentity_t *ent)
 
 	G_PrintClientSpammyCenterPrint(ent - g_entities, "Defusing dynamite...");
 
-	if (traceEnt->health < PLIERS_TASK_COMPLETED)
+	if (traceEnt->health < DYNAMITE_DISARMED_COMPLETED)
 	{
 		return;
 	}
