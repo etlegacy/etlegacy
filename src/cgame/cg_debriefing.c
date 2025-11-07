@@ -802,8 +802,8 @@ static panel_button_t chatPanelText =
 {
 	NULL,
 	NULL,
-	{ DB_CHAT_PANEL_X + 4,     SCREEN_HEIGHT - 33,                   DB_CHAT_PANEL_WIDTH - 28, TEAMCHAT_HEIGHT },
-	{ 0,                       0,                                    0,                        0, 0, 0, 0, 0   },
+	{ DB_CHAT_PANEL_X + 4,     SCREEN_HEIGHT - 33,                   DB_CHAT_PANEL_WIDTH - 28, TEAMCHAT_INTERMISSION_CHAR_HEIGHT },
+	{ 0,                       0,                                    0,                        0, 0, 0, 0, 0                     },
 	NULL,                      // font
 	NULL,                      // keyDown
 	NULL,                      // keyUp

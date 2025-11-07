@@ -75,8 +75,10 @@
 #define NOTIFY_WIDTH        80
 #define NOTIFY_HEIGHT       5
 
-#define TEAMCHAT_WIDTH      70
-#define TEAMCHAT_HEIGHT     8
+#define TEAMCHAT_INTERMISSION_CHAR_WIDTH      78
+#define TEAMCHAT_INTERMISSION_CHAR_HEIGHT     8
+
+#define TEAMCHAT_MSG_MAX    128
 
 #define NUM_CROSSHAIRS      20
 
@@ -2523,9 +2525,9 @@ typedef struct cgs_s
 	vec4_t fireteamSpritesColorSelected;
 
 	// teamchat width is *3 because of embedded color codes
-	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
-	int teamChatMsgTimes[TEAMCHAT_HEIGHT];
-	team_t teamChatMsgTeams[TEAMCHAT_HEIGHT];
+	char teamChatMsgs[TEAMCHAT_MSG_MAX][MAX_STRING_CHARS];
+	int teamChatMsgTimes[TEAMCHAT_MSG_MAX];
+	team_t teamChatMsgTeams[TEAMCHAT_MSG_MAX];
 	int teamChatPos;
 	int teamLastChatPos;
 

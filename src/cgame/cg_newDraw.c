@@ -772,7 +772,7 @@ void CG_HudEditor_Cleanup(void)
 	cg.crosshairEntTime = 0;
 	cg.oidPrintTime     = 0;
 
-	for (i = 0; i < cg_teamChatHeight.integer; i++)
+	for (i = 0; i < TEAMCHAT_MSG_MAX; i++)
 	{
 		cgs.teamChatMsgTimes[i] = 0;
 	}

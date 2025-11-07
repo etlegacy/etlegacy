@@ -2001,7 +2001,7 @@ static void CG_DemoRewindFixEffects(void)
 	}
 
 	// clear message buffer
-	for (i = 0; i < TEAMCHAT_HEIGHT; i++)
+	for (i = 0; i < TEAMCHAT_MSG_MAX; i++)
 	{
 		if (cgs.teamChatMsgTimes[i] > cg.time)
 		{
