@@ -93,7 +93,6 @@ vmCvar_t cg_scopedSensitivityScaler;
 vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
 vmCvar_t cg_teamChatTime;
-vmCvar_t cg_teamChatHeight;
 vmCvar_t cg_teamChatMention;
 vmCvar_t cg_stats;
 vmCvar_t cg_buildScript;
@@ -411,7 +410,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_thirdPerson,                        "cg_thirdPerson",                        "0",           CVAR_CHEAT,                   0 },           // per atvi req
 	{ &cg_scopedSensitivityScaler,            "cg_scopedSensitivityScaler",            "0.6",         CVAR_ARCHIVE,                 0 },           // per atvi req
 	{ &cg_teamChatTime,                       "cg_teamChatTime",                       "8000",        CVAR_ARCHIVE,                 0 },
-	{ &cg_teamChatHeight,                     "cg_teamChatHeight",                     "8",           CVAR_ARCHIVE,                 0 },
 	{ &cg_teamChatMention,                    "cg_teamChatMention",                    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_coronafardist,                      "cg_coronafardist",                      "1536",        CVAR_ARCHIVE,                 0 },
 	{ &cg_coronas,                            "cg_coronas",                            "1",           CVAR_ARCHIVE,                 0 },

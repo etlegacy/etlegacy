@@ -1187,13 +1187,12 @@ static void CG_ConfigStringModified(void)
  */
 void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 {
-	int          len;
-	char         *p, *ls;
-	char         lastcolor;
-	int          chatHeight;
-	int          chatWidth;
-	float        scale;
-	fontHelper_t *font = &cgs.media.limboFont2;
+	int  len = 0;
+	char *p;
+	char *ls       = NULL;
+	char lastcolor = '7';
+	int  chatWidth;
+	int  chatHeight;
 
 	// -1 is sent when console is chatting
 	if (clientnum < -1 || clientnum >= MAX_CLIENTS) // FIXME: never return for console chat?
@@ -1201,34 +1200,35 @@ void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 		return;
 	}
 
-	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
-	{
-		chatHeight = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_HEIGHT : cg_teamChatHeight.integer;
-	}
-	else
-	{
-		chatHeight = TEAMCHAT_HEIGHT;
-	}
-
-	if (chatHeight <= 0 || cg_teamChatTime.integer <= 0) // FIXME: never return for console chat?
+	if (cg_teamChatTime.integer <= 0) // FIXME: never return for console chat?
 	{
 		// team chat disabled, dump into normal chat
 		cgs.teamChatPos = cgs.teamLastChatPos = 0;
 		return;
 	}
 
-	scale = CG_ComputeScale(&CG_GetActiveHUD()->chat /*CG_GetActiveHUD()->chat.location.h / ((cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) ? cg_teamChatHeight.integer : TEAMCHAT_HEIGHT), CG_GetActiveHUD()->chat.scale, &cgs.media.limboFont2*/);
+	if (cgs.gamestate == GS_INTERMISSION)
+	{
+		chatWidth  = TEAMCHAT_INTERMISSION_CHAR_WIDTH;
+		chatHeight = TEAMCHAT_INTERMISSION_CHAR_HEIGHT;
+	}
+	else
+	{
+		float        scale;
+		fontHelper_t *font = &cgs.media.limboFont2;
 
-	len       = 0;
-	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 8
-	                                               : (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
+		scale = CG_ComputeScale(&CG_GetActiveHUD()->chat);
+
+		chatWidth = (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * scale * 5.f) : 0))
+		            / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
+
+		chatHeight = MIN(CG_GetActiveHUD()->chat.location.h / (CG_Text_Height_Ext("A", scale, 0, font) * 1.75f),
+		                 TEAMCHAT_MSG_MAX);
+	}
 
 	p  = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
 
-	lastcolor = '7';
-
-	ls = NULL;
 	while (*str)
 	{
 		if (len > chatWidth - 1)

@@ -1018,25 +1018,13 @@ void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t
  */
 void CG_DrawTeamInfo(hudComponent_t *comp)
 {
-	int chatHeight = TEAMCHAT_HEIGHT;
-
-	// no need to adjust chat height for intermission here - CG_DrawTeamInfo is called from CG_Draw2D
-	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
-	{
-		chatHeight = cg_teamChatHeight.integer;
-	}
-
-	if (chatHeight <= 0)
-	{
-		return; // disabled
-	}
-
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
 		vec4_t       hcolor;
 		int          i, j;
 		float        alphapercent;
-		float        lineHeight = comp->location.h / chatHeight;
+		float        lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2) * 1.75f;
+		int          chatHeight = comp->location.h / lineHeight;
 		float        icon_width;
 		float        icon_height;
 		float        flagOffsetX = 0;
@@ -1118,7 +1106,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			}
 
 			// get the longest chat message on screen, use that for the width of chat background
-			for (j = 0; j < TEAMCHAT_HEIGHT; j++)
+			for (j = 0; j < chatHeight; j++)
 			{
 				chatWidthCur = CG_Text_Width_Ext(cgs.teamChatMsgs[j % chatHeight], scale, maxLineLength, &cgs.media.limboFont2);
 
