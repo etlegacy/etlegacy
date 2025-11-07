@@ -1781,16 +1781,16 @@ void CG_Debriefing_Startup(void)
 
 	trap_Cvar_Set("chattext", "");
 
-	if (Q_atoi(buf) == -1)
+	if (Q_atoi(buf) != -1)
 	{
-	}
-	else if (Q_atoi(buf))
-	{
-		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/allies_win.wav", qfalse), CHAN_LOCAL_SOUND);
-	}
-	else
-	{
-		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
+		if (Q_atoi(buf))
+		{
+			trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/allies_win.wav", qfalse), CHAN_LOCAL_SOUND);
+		}
+		else
+		{
+			trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
+		}
 	}
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
