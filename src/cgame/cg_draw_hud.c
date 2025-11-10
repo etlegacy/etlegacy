@@ -2964,7 +2964,7 @@ char *CG_SpawnTimerText()
 			{
 				seconds     = msec / 1000;
 				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
-				return va("%i", period + (seconds - secondsThen) % period);
+				return va("%02i", period + (seconds - secondsThen) % period);
 			}
 		}
 	}
@@ -2999,8 +2999,8 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 			limbotimeEnemy = cg_redlimbotime.integer;
 		}
 
-		*rt = va("%2.0i", limbotimeEnemy / 1000);
-		*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? va("%s", CG_TranslateString("WARMUP")) : va("%2.0i", limbotimeOwn / 1000);
+		*rt = va("%02i", limbotimeEnemy / 1000);
+		*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? va("%s", CG_TranslateString("WARMUP")) : va("%02i", limbotimeOwn / 1000);
 
 		// if hud editor is up, return qfalse since we want to see text style changes
 		return !cg.generatingNoiseHud;
@@ -3009,12 +3009,12 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 	{
 		if (cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			*s  = va("%2.0i", CG_CalculateReinfTime(TEAM_ALLIES));
-			*rt = va("%2.0i", CG_CalculateReinfTime(TEAM_AXIS));
+			*s  = va("%02i", CG_CalculateReinfTime(TEAM_ALLIES));
+			*rt = va("%02i", CG_CalculateReinfTime(TEAM_AXIS));
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
-			*s  = va("%2.0i", CG_GetReinfTime(qfalse));
+			*s  = va("%02i", CG_GetReinfTime(qfalse));
 			*rt = CG_SpawnTimerText();
 		}
 	}
@@ -3028,8 +3028,6 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 static char *CG_RoundTimerText()
 {
 	qtime_t qt;
-	char    *seconds;
-	char    *minutes;
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
@@ -3038,13 +3036,10 @@ static char *CG_RoundTimerText()
 
 	if (CG_RoundTime(&qt) < 0 && cgs.timelimit > 0.0f)
 	{
-		return "0:00"; // round ended
+		return "00:00"; // round ended
 	}
 
-	seconds = qt.tm_sec > 9 ? va("%i", qt.tm_sec) : va("0%i", qt.tm_sec);
-	minutes = qt.tm_min > 9 ? va("%i", qt.tm_min) : va("0%i", qt.tm_min);
-
-	return va("%s:%s", minutes, seconds);
+	return va("%02i:%02i", qt.tm_min, qt.tm_sec);
 }
 
 /**
