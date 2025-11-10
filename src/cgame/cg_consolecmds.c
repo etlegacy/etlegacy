@@ -1729,18 +1729,18 @@ static void CG_ShareTimer_f(void)
 
 		if (Q_stristr(text, nextSpawnText))
 		{
-			Q_strncpyz(text, Q_StrReplace(text, nextSpawnText, va("%i", nextSpawn)), sizeof(text));
+			Q_strncpyz(text, Q_StrReplace(text, nextSpawnText, va("%02i", nextSpawn)), sizeof(text));
 		}
 
 		if (Q_stristr(text, enemyLimbotimeText))
 		{
-			Q_strncpyz(text, Q_StrReplace(text, enemyLimbotimeText, va("%i", limboTime)), sizeof(text));
+			Q_strncpyz(text, Q_StrReplace(text, enemyLimbotimeText, va("%02i", limboTime)), sizeof(text));
 		}
 		trap_SendConsoleCommand(va("%s %s\n", cmd, text));
 	}
 	else
 	{
-		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i\n", cmd, limboTime, nextSpawn));
+		trap_SendConsoleCommand(va("%s Enemy spawns every %02i seconds: next at %02i\n", cmd, limboTime, nextSpawn));
 	}
 
 }
