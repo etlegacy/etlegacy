@@ -3315,6 +3315,7 @@ static void CG_ServerCommand(void)
 		char       *loc = NULL;
 		const char *s;
 		int        clientNum;
+		char       color;
 
 		clientNum = Q_atoi(CG_Argv(2));
 
@@ -3324,6 +3325,7 @@ static void CG_ServerCommand(void)
 
 		if (atoi(CG_Argv(3)))
 		{
+			// FIXME: disable server side for chat cmd (dead code)
 			s = CG_LocalizeServerCommand(CG_Argv(1));
 		}
 		else
@@ -3331,15 +3333,35 @@ static void CG_ServerCommand(void)
 			s = CG_Argv(1);
 		}
 
-		loc = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
+		color = s[1];
 
-		if (!loc || !*loc)
+		// if no location is set, don't add location to string and don't draw empty parenthesis
+		// skip the first 2 coloration char (team / buddy chat)
+		if (!Q_strncmp(&s[2], "[nol]", 5))
 		{
-			loc = "";
+			s = &s[7];
+		}
+		else
+		{
+			loc = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
+
+			if (!loc || !*loc)
+			{
+				// display empty location
+				loc = "";
+			}
 		}
 
 		// process locations and name
-		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s^3): %s", cgs.clientinfo[clientNum].name, loc, s);
+		if (loc)
+		{
+			Com_sprintf(text, sizeof(text), "(%s^7)^3(%s^3)^%c: %s", cgs.clientinfo[clientNum].name, loc, color, s);
+		}
+		else
+		{
+			Com_sprintf(text, sizeof(text), "(%s^7)^%c: %s", cgs.clientinfo[clientNum].name, color, s);
+		}
+
 		Q_UnescapeUnicodeInPlace(text, MAX_SAY_TEXT);
 
 #ifdef FEATURE_EDV
