@@ -1035,7 +1035,7 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
  */
 static qboolean CG_ParseHUD(int handle)
 {
-	int           i, componentOffset = 0;
+	int           i;
 	pc_token_t    token;
 	hudStucture_t *tempHud, *hud, *parentHud = NULL;
 	qboolean      loadDefaults = qtrue;
@@ -1084,7 +1084,6 @@ static qboolean CG_ParseHUD(int handle)
 		CG_setDefaultHudValues(tempHud);
 	}
 
-	componentOffset = 0;
 	while (qtrue)
 	{
 		if (!trap_PC_ReadToken(handle, &token))
@@ -1118,7 +1117,7 @@ static qboolean CG_ParseHUD(int handle)
 					CG_CloneHudComponent(parentHud, hudComponentFields[i].name, tempHud, component);
 				}
 
-				component->offset    = componentOffset++;
+				component->offset    = i;
 				component->hardScale = hudComponentFields[i].scale;
 				component->draw      = hudComponentFields[i].draw;
 				if (!CG_ParseHudComponent(handle, component))
@@ -1331,12 +1330,14 @@ static void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
  */
 static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, qboolean isEditable)
 {
-	unsigned int   i     = 0;
-	char           *name = NULL;
-	cJSON          *tmp = NULL, *comps = NULL, *comp = NULL;
-	hudComponent_t *component;
-	hudStucture_t  *tmpHud, *parentHud = NULL, *oldHud = NULL;
-	int            componentOffset = 0;
+	unsigned int  i;
+	char          *name;
+	cJSON         *tmp;
+	cJSON         *comps;
+	hudStucture_t *tmpHud;
+	hudStucture_t *parentHud = NULL;
+	hudStucture_t *oldHud;
+
 
 	// Sanity check. Only objects should be in the huds array.
 	if (!cJSON_IsObject(hud))
@@ -1458,8 +1459,8 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
-		component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
-		comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
+		hudComponent_t *component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
+		cJSON          *comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
 
 		if (parentHud)
 		{
@@ -1486,7 +1487,8 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		{
 			continue;
 		}
-		component->offset    = componentOffset++;
+
+		component->offset    = i;
 		component->hardScale = hudComponentFields[i].scale;
 		component->draw      = hudComponentFields[i].draw;
 		component->parsed    = qtrue;
