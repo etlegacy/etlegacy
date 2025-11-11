@@ -17,6 +17,10 @@
 #include "../luasql/ls_sqlite3.c"
 #endif
 
+#ifdef FEATURE_LUAJIT
+#include "../luajit/compat.h"
+#endif
+
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
