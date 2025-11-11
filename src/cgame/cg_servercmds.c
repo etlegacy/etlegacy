@@ -3281,11 +3281,22 @@ static void CG_ServerCommand(void)
 			clientNum = Q_atoi(CG_Argv(2));
 		}
 
-		if (atoi(CG_Argv(3)))
+		/*
+		// on demo under 2.84, localization bolean was transmitted to arg at index 3
+		// but it was always set to false
+		if (CG_IsDemoVersionBelow(2, 84, 0))
 		{
-			s = CG_LocalizeServerCommand(CG_Argv(1));
+		    //if (atoi(CG_Argv(3)))
+		    //{
+		    //    s = CG_LocalizeServerCommand(CG_Argv(1));
+		    //}
+		    //else
+		    {
+		        s = CG_Argv(1);
+		    }
 		}
 		else
+		*/
 		{
 			s = CG_Argv(1);
 		}
@@ -3319,9 +3330,32 @@ static void CG_ServerCommand(void)
 
 		clientNum = Q_atoi(CG_Argv(2));
 
-		origin[0] = Q_atoi(CG_Argv(4));
-		origin[1] = Q_atoi(CG_Argv(5));
-		origin[2] = Q_atoi(CG_Argv(6));
+		// on demo under 2.84, localization bolean was transmitted to arg at index 3
+		// but it was always set to false
+		if (CG_IsDemoVersionBelow(2, 84, 0))
+		{
+			origin[0] = Q_atoi(CG_Argv(4));
+			origin[1] = Q_atoi(CG_Argv(5));
+			origin[2] = Q_atoi(CG_Argv(6));
+
+			//if (atoi(CG_Argv(3)))
+			//{
+			//    s = CG_LocalizeServerCommand(CG_Argv(1));
+			//}
+			//else
+			{
+				s = CG_Argv(1);
+			}
+		}
+		else
+		{
+			origin[0] = Q_atoi(CG_Argv(3));
+			origin[1] = Q_atoi(CG_Argv(4));
+			origin[2] = Q_atoi(CG_Argv(5));
+			s         = CG_Argv(1);
+		}
+
+
 
 		if (atoi(CG_Argv(3)))
 		{
