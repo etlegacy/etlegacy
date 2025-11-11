@@ -44,6 +44,7 @@ static lagometer_t lagometer;
 /**
 * @var hudComponentFields
 * @brief for accessing hudStucture_t's fields in a loop
+* @note keep compass as last draw element, to ensure extended map is draw on top of all elements
 */
 const hudComponentFields_t hudComponentFields[] =
 {
@@ -107,6 +108,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(scPlayerListAllies), CG_DrawShoutcastPlayerListAllies, 0.16f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(scTeamNamesAxis),    CG_DrawShoutcastTeamNameAxis,     0.3f,   { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(scTeamNamesAllies),  CG_DrawShoutcastTeamNameAllies,   0.3f,   { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(compass),            CG_DrawNewCompass,                0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw", "Point North"} },
 	{ NULL,                     0,                                qfalse, NULL, 0.00f,{ 0 } },
 };
 
@@ -183,7 +185,6 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->hudnumber          = 0;
 	hud->name[0]            = '\0';
 	hud->crosshair          = CG_getComponent(SCREEN_WIDTH * .5f - 24, SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
-	hud->compass            = CG_getComponent(SCREEN_WIDTH - 136, 0, 132, 132, qtrue, COMPASS_ITEM | COMPASS_SECONDARY_OBJECTIVES | COMPASS_PRIMARY_OBJECTIVES | COMPASS_DECOR | COMPASS_CARDINAL_POINTS, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 	hud->staminabar         = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 1.0f, 0.1f, 0.5f }, (vec4_t) { 1.0f, 0, 0.1f, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
 	hud->breathbar          = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 0.1f, 1.0f, 0.5f }, (vec4_t) { 1.0f, 0.1f, 0, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
 	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | BAR_NEEDLE | (BAR_CIRCULAR << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
@@ -242,6 +243,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->scPlayerListAllies = CG_getComponent(SCREEN_WIDTH - 142 - 15, SCREEN_HEIGHT - 180, 142, 168, qfalse, 0, 100.f, colorWhite, (vec4_t) { 0.121f, 0.447f, 0.811f, 0.45f }, qtrue, (vec4_t) { 0.0f, 0.0f, 0.0f, 0.7f }, qfalse, (vec4_t) { 0.0f, 0.0f, 0.0f, 0.7f }, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_LEFT, qfalse, 0.16f, CG_DrawShoutcastPlayerListAllies);
 	hud->scTeamNamesAxis    = CG_getComponent(SCREEN_WIDTH * .5f - 190 - 30, 12, 190, 30, qfalse, 01, 100.f, colorWhite, colorBlack, qtrue, (vec4_t) { 0.749f, 0.129f, 0.129f, 0.45f }, qfalse, (vec4_t) { 0.0f, 0.0f, 0.0f, 0.7f }, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_LEFT, qfalse, 0.3f, CG_DrawShoutcastTeamNameAxis);
 	hud->scTeamNamesAllies  = CG_getComponent(SCREEN_WIDTH * .5f + 30, 12, 190, 30, qfalse, 0, 100.f, colorWhite, colorBlack, qtrue, (vec4_t) { 0.121f, 0.447f, 0.811f, 0.45f }, qfalse, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_LEFT, qfalse, 0.3f, CG_DrawShoutcastTeamNameAllies);
+	hud->compass            = CG_getComponent(SCREEN_WIDTH - 136, 0, 132, 132, qtrue, COMPASS_ITEM | COMPASS_SECONDARY_OBJECTIVES | COMPASS_PRIMARY_OBJECTIVES | COMPASS_DECOR | COMPASS_CARDINAL_POINTS, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawNewCompass);
 }
 
 /**
