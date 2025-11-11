@@ -4119,7 +4119,8 @@ typedef struct hudStructure_s
 	hudComponent_t xptext;
 	hudComponent_t ranktext;
 	hudComponent_t statsdisplay;
-	hudComponent_t weaponheatbar;   // 10
+	// 10
+	hudComponent_t weaponheatbar;
 	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
@@ -4129,33 +4130,31 @@ typedef struct hudStructure_s
 	hudComponent_t powerups;
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
-
-	hudComponent_t cursorhints; // 20
+	hudComponent_t cursorhints;
 	hudComponent_t cursorhintsbar;
+	// 20
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
-
 	hudComponent_t roundtimer;
 	hudComponent_t reinforcement;
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
-
 	hudComponent_t votetext;
-	hudComponent_t spectatortext;   // 30
+	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
+	// 30
 	hudComponent_t followtext;
 	hudComponent_t demotext;
-
 	hudComponent_t missilecamera;
-
 	hudComponent_t sprinttext;
 	hudComponent_t breathtext;
 	hudComponent_t weaponchargetext;
 	hudComponent_t fps;
 	hudComponent_t snapshot;
-	hudComponent_t ping;    // 40
+	hudComponent_t ping;
 	hudComponent_t speed;
+	// 40
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
 	hudComponent_t chat;
@@ -4164,8 +4163,9 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptitle;
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
-	hudComponent_t centerprint; // 50
+	hudComponent_t centerprint;
 	hudComponent_t banner;
+	// 50
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
@@ -4174,7 +4174,8 @@ typedef struct hudStructure_s
 	hudComponent_t scPlayerListAxis;
 	hudComponent_t scPlayerListAllies;
 	hudComponent_t scTeamNamesAxis;
-	hudComponent_t scTeamNamesAllies; // 60
+	// 60
+	hudComponent_t scTeamNamesAllies;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
