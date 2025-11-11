@@ -310,7 +310,7 @@ vmCvar_t cg_customCrosshairCrossColor;
 vmCvar_t cg_customCrosshairCrossOutlineRounded;
 vmCvar_t cg_customCrosshairCrossOutlineColor;
 vmCvar_t cg_customCrosshairCrossOutlineWidth;
-vmCvar_t cg_customCrosshairDynamicColor;
+vmCvar_t cg_customCrosshairHealth;
 
 vmCvar_t cg_scopeReticleStyle;
 vmCvar_t cg_scopeReticleColor;
@@ -615,7 +615,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_customCrosshairCrossOutlineRounded, "cg_customCrosshairCrossOutlineRounded", "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_customCrosshairCrossOutlineColor,   "cg_customCrosshairCrossOutlineColor",   "#000000E6",   CVAR_ARCHIVE,                 0 },
 	{ &cg_customCrosshairCrossOutlineWidth,   "cg_customCrosshairCrossOutlineWidth",   "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_customCrosshairDynamicColor,        "cg_customCrosshairDynamicColor",        "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_customCrosshairHealth,              "cg_customCrosshairHealth",              "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_scopeReticleStyle,                  "cg_scopeReticleStyle",                  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_scopeReticleColor,                  "cg_scopeReticleColor",                  "#000000FF",   CVAR_ARCHIVE,                 0 },
