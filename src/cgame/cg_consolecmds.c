@@ -3177,7 +3177,7 @@ static int CG_GetSelectableMajorSpawn(const char *targetName, team_t playerTeam)
 /**
  * @brief Command to select the nearest visible or nearby minor spawnpoint
  */
-static void CG_SelectSpawn_f(void)
+static void CG_SetClosestSpawn_f(void)
 {
 	vec3_t          playerOrigin;
 	cg_spawnpoint_t *spawnpoint;
@@ -3441,7 +3441,7 @@ static consoleCommand_t commands[] =
 	{ "resetmaxspeed",          CG_ResetMaxSpeed_f        },
 	{ "listspawnpt",            CG_ListSpawnPoints_f      },
 	{ "setspawnpt",             CG_SetSpawnPoint_f        },
-	{ "selectclosestspawnpt",   CG_SelectSpawn_f          },
+	{ "setclosestspawnpt",      CG_SetClosestSpawn_f      },
 
 
 	{ "loc",                    CG_Location_f             },
@@ -3554,7 +3554,7 @@ static const char *gameCommand[] =
 	"setviewpos",
 	// "getspawnpt",  // not meant to be set manually
 	"setspawnpt",
-	"selectclosestspawnpt",
+	"setclosestspawnpt",
 	"sgstats",
 	"showstats",
 	"specinvite",
