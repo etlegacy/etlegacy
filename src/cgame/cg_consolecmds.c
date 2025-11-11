@@ -3205,20 +3205,24 @@ static void CG_SetClosestSpawn_f(void)
 
 	for (i = 0; i < cg.numSpawnpointEnts; i++)
 	{
+		qboolean inPVS;
+		float    dist;
+
 		spawnpoint = &cgs.spawnpointEnt[i];
 		if (spawnpoint->isMajor)
 		{
 			continue;
 		}
 
-		qboolean inPVS = trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin);
-		float    dist  = VectorDistanceSquared(playerOrigin, spawnpoint->origin);
-
-		if (!inPVS && dist > maxDistSq)
+		if (spawnpoint->team != playerTeam && spawnpoint->team != TEAM_FREE)
 		{
 			continue;
 		}
-		if (spawnpoint->team != playerTeam && spawnpoint->team != TEAM_FREE)
+
+		inPVS = trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin);
+		dist  = VectorDistanceSquared(playerOrigin, spawnpoint->origin);
+
+		if (!inPVS && dist > maxDistSq)
 		{
 			continue;
 		}
@@ -3237,6 +3241,8 @@ static void CG_SetClosestSpawn_f(void)
 
 		for (i = 0; i < cg.numMajorSpawnpointEnts; i++)
 		{
+			float dist;
+
 			spawnpoint = &cgs.majorSpawnpointEnt[i];
 
 			if (CG_GetSelectableMajorSpawn(spawnpoint->name, playerTeam) == -1)
@@ -3244,7 +3250,7 @@ static void CG_SetClosestSpawn_f(void)
 				continue;
 			}
 
-			float dist = VectorDistanceSquared(bestMinorSpawn->origin, spawnpoint->origin);
+			dist = VectorDistanceSquared(bestMinorSpawn->origin, spawnpoint->origin);
 			if (dist < closestParentDist)
 			{
 				closestParentDist = dist;
@@ -3275,17 +3281,20 @@ static void CG_SetClosestSpawn_f(void)
 
 		for (i = 0; i < cg.numMajorSpawnpointEnts; i++)
 		{
+			qboolean inPVS;
+			float    dist;
+
 			spawnpoint = &cgs.majorSpawnpointEnt[i];
 
-			qboolean inPVS = trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin);
-			float    dist  = VectorDistanceSquared(playerOrigin, spawnpoint->origin);
-
-			if (!inPVS && dist > maxDistSq)
+			if (CG_GetSelectableMajorSpawn(spawnpoint->name, playerTeam) == -1)
 			{
 				continue;
 			}
 
-			if (CG_GetSelectableMajorSpawn(spawnpoint->name, playerTeam) == -1)
+			inPVS = trap_R_inPVS(cg.refdef_current->vieworg, spawnpoint->origin);
+			dist  = VectorDistanceSquared(playerOrigin, spawnpoint->origin);
+
+			if (!inPVS && dist > maxDistSq)
 			{
 				continue;
 			}
