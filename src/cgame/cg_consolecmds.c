@@ -3534,7 +3534,7 @@ static const char *gameCommand[] =
 	"kill",
 	"lock",
 	"mapvote",
-#ifdef FEATURE_MULTIVIE
+#ifdef FEATURE_MULTIVIEW
 	"mvadd",
 	"mvallies",
 	"mvaxis",
