@@ -2803,11 +2803,9 @@ void G_HQSay(gentity_t *other, int color, const char *name, const char *message)
  * @param[in] color
  * @param[in] name
  * @param[in] message
- * @param[in] localize
  */
-void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize)
+void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message)
 {
-	char cmd[6];
 #ifdef FEATURE_LUA
 	char       text[MAX_SAY_TEXT];
 	const char *replacedMessage;
@@ -2852,49 +2850,39 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 
 	if (COM_BitCheck(other->client->sess.ignoreClients, (ent - g_entities)))
 	{
-		//Q_strncpyz(cmd, "print", sizeof(cmd));
+		return;
 	}
-	else if (mode == SAY_TEAM || mode == SAY_BUDDY)
-	{
-		Q_strncpyz(cmd, "tchat", sizeof(cmd));
 
 #ifdef FEATURE_LUA
-		replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
+	replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
 #endif
 
+	if (mode == SAY_TEAM || mode == SAY_BUDDY)
+	{
 		trap_SendServerCommand((int)(other - g_entities),
-		                       va("%s \"%c%c%s%s\" %i %i %i %i %i",
-		                          cmd,
+		                       va("tchat \"%c%c%s\" %i %i %i %i",
 		                          Q_COLOR_ESCAPE, color,
 #ifdef FEATURE_LUA
 		                          replacedMessage,
 #else
 		                          message,
 #endif
-		                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
-		                          (int)(ent - g_entities), localize,
+		                          (int)(ent - g_entities),
 		                          (int)ent->s.pos.trBase[0],
 		                          (int)ent->s.pos.trBase[1],
 		                          (int)ent->s.pos.trBase[2]));
 	}
 	else
 	{
-		Q_strncpyz(cmd, "chat", sizeof(cmd));
-
-#ifdef FEATURE_LUA
-		replacedMessage = G_LuaHook_Chat(ent - g_entities, other - g_entities, message, text, sizeof(text));
-#endif
-
 		trap_SendServerCommand((int)(other - g_entities),
-		                       va("%s \"%s%c%c%s%s\" %i %i",
-		                          cmd, name, Q_COLOR_ESCAPE, color,
+		                       va("chat \"%s%c%c%s\" %i",
+		                          name, Q_COLOR_ESCAPE, color,
 #ifdef FEATURE_LUA
 		                          replacedMessage,
 #else
 		                          message,
 #endif
-		                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
-		                          (int)(ent - g_entities), localize));
+		                          (int)(ent - g_entities)));
 	}
 
 #ifdef FEATURE_OMNIBOT
@@ -2912,10 +2900,11 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
  */
 void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 {
-	int       j;
-	gentity_t *other;
-	int       color;
-	char      name[64];
+	int        j;
+	gentity_t  *other;
+	int        color;
+	char       name[64];
+	const char *cmd;
 	// don't let text be too long for malicious reasons
 	char text[MAX_SAY_TEXT];
 
@@ -2923,26 +2912,24 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 	{
 	default:
 	case SAY_ALL:
-		G_LogPrintf("say: ^7%s^7: ^2%s\n", ent->client->pers.netname, chatText);
-		Com_sprintf(name, sizeof(name), "%c%c%s%c%c: %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_GREEN);
+		cmd   = "say";
 		color = COLOR_GREEN;
 		break;
 	case SAY_BUDDY:
-		G_LogPrintf("saybuddy: ^7%s^7: ^3%s\n", ent->client->pers.netname, chatText);
-		Com_sprintf(name, sizeof(name), "[lof]%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_YELLOW);
+		cmd   = "saybuddy";
 		color = COLOR_YELLOW;
 		break;
 	case SAY_TEAM:
-		G_LogPrintf("sayteam: ^7%s^7: ^5%s\n", ent->client->pers.netname, chatText);
-		Com_sprintf(name, sizeof(name), "[lof]%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_CYAN);
+		cmd   = "sayteam";
 		color = COLOR_CYAN;
 		break;
 	case SAY_TEAMNL:
-		G_LogPrintf("sayteamnl: ^7%s^7: ^2%s\n", ent->client->pers.netname, chatText);
-		Com_sprintf(name, sizeof(name), "%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_CYAN);
+		cmd   = "sayteamnl";
 		color = COLOR_CYAN;
 		break;
 	}
+
+	G_LogPrintf("%s: ^7%s^7: ^%c%s\n", cmd, ent->client->pers.netname, color, chatText);
 
 	Q_strncpyz(text, chatText, sizeof(text));
 
@@ -2950,10 +2937,12 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 	{
 		if (!COM_BitCheck(target->client->sess.ignoreClients, ent - g_entities))
 		{
-			G_SayTo(ent, target, mode, color, name, text, qfalse);
+			G_SayTo(ent, target, mode, color, NULL, text);
 		}
 		return;
 	}
+
+	Com_sprintf(name, sizeof(name), "%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, color);
 
 	// echo the text to the console
 	if (g_dedicated.integer)
@@ -2967,7 +2956,7 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 		other = &g_entities[level.sortedClients[j]];
 		if (!COM_BitCheck(other->client->sess.ignoreClients, ent - g_entities))
 		{
-			G_SayTo(ent, other, mode, color, name, text, qfalse);
+			G_SayTo(ent, other, mode, color, name, text);
 		}
 	}
 }
