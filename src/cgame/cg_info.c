@@ -298,6 +298,12 @@ void CG_DemoClick(int key, qboolean down)
 {
 	int milli = trap_Milliseconds();
 
+	// we don't want these duplicate key presses
+	if (key & K_CHAR_FLAG)
+	{
+		return;
+	}
+
 	// Avoid active console keypress issues
 	if (!down && !cgs.fKeyPressed[key])
 	{
