@@ -2020,6 +2020,22 @@ static void CG_DemoRewindFixEffects(void)
 		}
 	}
 
+	for (i = 0; i < cg.snap->numEntities; i++)
+	{
+		centity_t *cent = &cg_entities[cg.snap->entities[i].number];
+
+		if (cent->currentState.number < MAX_CLIENTS)
+		{
+			continue;
+		}
+
+		// reset time for landmine flag
+		if (cent->currentState.weapon == WP_LANDMINE)
+		{
+			cent->lerpFrame.frameTime = cg.time;
+		}
+	}
+
 	CG_DemoRewindFixLocalEntities();
 
 	// lazy fix, ideally every time based event should be adjusted individually not simply deleted
