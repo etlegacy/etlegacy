@@ -454,6 +454,7 @@ static void CL_DemoFastForward(double wantedTime)
 
 	cl.serverTime      = (int)(floor(wantedTime));
 	cls.realtime       = (int)(floor(wantedTime));
+	clc.lastPacketTime = cls.realtime;
 	di.Overf           = wantedTime - floor(wantedTime);
 	cl.serverTimeDelta = 0;
 
