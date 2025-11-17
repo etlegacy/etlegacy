@@ -194,17 +194,17 @@ static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 
 		offset = offset / button->rect.w;
 		result = (int)(cg.demoinfo->firstTime + ((cg.demoinfo->lastTime - cg.demoinfo->firstTime) * offset));
-		trap_SendConsoleCommand(va("seekservertime %i", result));
+		trap_SendConsoleCommand(va("seekservertime %i\n", result));
 	}
 	break;
 	case 1:
-		trap_SendConsoleCommand("rewind 5");
+		trap_SendConsoleCommand("rewind 5\n");
 		break;
 	case 2:
-		trap_SendConsoleCommand("pausedemo");
+		trap_SendConsoleCommand("pausedemo\n");
 		break;
 	case 3:
-		trap_SendConsoleCommand("fastforward 5");
+		trap_SendConsoleCommand("fastforward 5\n");
 		break;
 	default:
 		break;
@@ -581,7 +581,7 @@ void CG_DemoClick(int key, qboolean down)
 	case K_SPACE: // most everyone's favorite jump key, :x
 		if (!down)
 		{
-			trap_SendConsoleCommand("pausedemo");
+			trap_SendConsoleCommand("pausedemo\n");
 		}
 		return;
 
@@ -753,7 +753,7 @@ void CG_DemoClick(int key, qboolean down)
 	case K_F11:
 		if (!down)
 		{
-			trap_SendConsoleCommand("screenshot");
+			trap_SendConsoleCommand("screenshot\n");
 		}
 		return;
 	case K_F12:
