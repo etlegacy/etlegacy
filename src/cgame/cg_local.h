@@ -3264,6 +3264,7 @@ void CG_ShowHelp_On(int *status);
 #ifdef FEATURE_MULTIVIEW
 qboolean CG_ViewingDraw(void);
 #endif
+void CG_DrawDemoOverlay(void);
 
 // cg_scoreboard.c
 qboolean CG_DrawScoreboard(void);
