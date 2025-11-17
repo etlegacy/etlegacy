@@ -54,6 +54,10 @@
 #define NEW_DEMOFUNC 1
 
 #if NEW_DEMOFUNC
+static int demoPauseTime = 0;
+#endif
+
+#if NEW_DEMOFUNC
 typedef struct
 {
 	int numSnaps;
@@ -454,6 +458,11 @@ static void CL_DemoFastForward(double wantedTime)
 	clc.lastPacketTime = cls.realtime;
 	di.Overf           = wantedTime - floor(wantedTime);
 	cl.serverTimeDelta = 0;
+
+	if (cl_freezeDemo->integer)
+	{
+		demoPauseTime = cls.realtime;
+	}
 
 	// TODO: fix this
 	//VM_Call(cgvm, CG_TIME_CHANGE, cl.serverTime, (int)(Overf * SUBTIME_RESOLUTION));
@@ -1895,10 +1904,6 @@ void CL_SeekPrev_f(void)
  */
 void CL_PauseDemo_f(void)
 {
-#if NEW_DEMOFUNC
-	static int pauseTime = 0;
-#endif
-
 	if (!clc.demo.playing)
 	{
 		return;
@@ -1913,12 +1918,11 @@ void CL_PauseDemo_f(void)
 #if NEW_DEMOFUNC
 	if (!cl_freezeDemo->integer)
 	{
-		pauseTime = cl.serverTime;
+		demoPauseTime = cls.realtime;
 	}
 	else
 	{
-		// TODO: this is just a hack, actually fix the cl_freezeDemo instead of this
-		CL_DemoSeekMs(0, pauseTime);
+		cls.realtime = demoPauseTime;
 	}
 #endif
 
