@@ -140,7 +140,7 @@ void CL_InitCvars()
 	cl_showServerCommands = Cvar_Get("cl_showServerCommands", "0", 0);
 	cl_showSend           = Cvar_Get("cl_showSend", "0", CVAR_TEMP);
 	cl_showTimeDelta      = Cvar_Get("cl_showTimeDelta", "0", CVAR_TEMP);
-	cl_freezeDemo         = Cvar_Get("cl_freezeDemo", "0", CVAR_TEMP);
+	cl_freezeDemo         = Cvar_Get("cl_freezeDemo", "0", CVAR_ROM);
 	rcon_client_password  = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	cl_activeAction       = Cvar_Get("activeAction", "", CVAR_TEMP);
 	cl_autorecord         = Cvar_Get("cl_autorecord", "0", CVAR_TEMP);
