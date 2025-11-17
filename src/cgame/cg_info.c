@@ -2073,6 +2073,14 @@ void CG_DrawOverlays(void)
 #ifdef FEATURE_MULTIVIEW
 	CG_SpecHelpDraw();
 #endif
+	CG_DrawDemoOverlay();
+}
+
+/**
+ * @brief CG_DrawDemoOverlay
+ */
+void CG_DrawDemoOverlay(void)
+{
 #ifdef FEATURE_EDV
 	if (cg.demoPlayback && cg_predefineddemokeys.integer)
 #else
