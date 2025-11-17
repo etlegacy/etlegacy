@@ -4221,6 +4221,7 @@ static void CG_Draw2D(void)
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		CG_DrawIntermission();
+		CG_DrawDemoOverlay();
 		return;
 	}
 
