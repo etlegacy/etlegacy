@@ -223,11 +223,9 @@ static qboolean HTTP_DetectServerIP(char *ipBuffer, int ipBufferSize)
 		return qtrue;
 	}
 
-	// Fallback to 0.0.0.0 which means clients will use their connection IP
-	// This is the recommended approach for most server setups as it works
-	// correctly even behind NAT or with multiple network interfaces
-	Q_strncpyz(ipBuffer, "0.0.0.0", ipBufferSize);
-	Com_DPrintf("HTTP: Using fallback IP: 0.0.0.0 (clients will use actual connection IP)\n");
+	// Fallback to 127.0.0.1
+	Q_strncpyz(ipBuffer, "127.0.0.1", ipBufferSize);
+	Com_DPrintf("HTTP: Using fallback IP: 127.0.0.1 (clients will use local IP)\n");
 	return qtrue;
 }
 
