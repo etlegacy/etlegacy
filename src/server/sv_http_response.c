@@ -48,7 +48,6 @@
 
 // External access to server state for bandwidth throttling
 extern httpServer_t httpServer;
-extern cvar_t       *sv_httpMaxBytesPerFrame;
 
 /**
  * @brief Get HTTP status text for status code

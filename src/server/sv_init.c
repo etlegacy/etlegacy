@@ -1203,6 +1203,13 @@ void SV_Init(void)
 	sv_wwwDlDisconnected = Cvar_Get("sv_wwwDlDisconnected", "0", CVAR_ARCHIVE);
 	sv_wwwFallbackURL    = Cvar_Get("sv_wwwFallbackURL", "", CVAR_ARCHIVE);
 
+	// HTTP server cvars
+	sv_httpEnable           = Cvar_Get("sv_httpEnable", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	sv_httpMaxClients       = Cvar_Get("sv_httpMaxClients", "16", CVAR_ARCHIVE);
+	sv_httpAutoConfig       = Cvar_Get("sv_httpAutoConfig", "1", CVAR_ARCHIVE);
+	sv_httpTimeout          = Cvar_Get("sv_httpTimeout", "30", CVAR_ARCHIVE);
+	sv_httpMaxBytesPerFrame = Cvar_Get("sv_httpMaxBytesPerFrame", "65536", CVAR_ARCHIVE);
+
 	sv_packetloss  = Cvar_Get("sv_packetloss", "0", CVAR_CHEAT);
 	sv_packetdelay = Cvar_Get("sv_packetdelay", "0", CVAR_CHEAT);
 
