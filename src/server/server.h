@@ -46,6 +46,10 @@
 	#include "../irc/irc_client.h"
 #endif
 
+#ifdef DEDICATED
+	#include "sv_http.h"
+#endif
+
 #define PERS_SCORE              0   ///< !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
 
 // advert control

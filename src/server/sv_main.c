@@ -38,6 +38,10 @@
 #include "sv_tracker.h"
 #endif
 
+#ifdef DEDICATED
+#include "sv_http.h"
+#endif
+
 serverStatic_t       svs;             // persistant server info
 server_t             sv;              // local server
 svclientActive_t     svcl;
@@ -1825,6 +1829,10 @@ void SV_Frame(int msec)
 			Com_Printf(S_COLOR_YELLOW "WARNING: Average frame time has reached a critical value of %ims\n", (int) svs.stats.avg);
 		}
 	}
+
+#ifdef DEDICATED
+	HTTP_Frame();
+#endif
 }
 
 /**

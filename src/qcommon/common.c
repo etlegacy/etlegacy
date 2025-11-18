@@ -3136,6 +3136,14 @@ void Com_Init(char *commandLine)
 	}
 #endif
 
+#ifdef DEDICATED
+	// Initialize embedded HTTP server after network initialization is complete
+	if (com_dedicated->integer)
+	{
+		HTTP_Init();
+	}
+#endif
+
 	com_fullyInitialized = qtrue;
 	Com_Printf("----- Common Initialized -------\n");
 }

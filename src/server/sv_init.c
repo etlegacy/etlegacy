@@ -38,6 +38,10 @@
 #include "sv_tracker.h"
 #endif
 
+#ifdef DEDICATED
+#include "sv_http.h"
+#endif
+
 // Attack log file is started when server is init (!= sv_running 1!)
 // we even log attacks when the server is waiting for rcon and doesn't run a map
 int attHandle = 0; // server attack log file handle
@@ -1360,6 +1364,10 @@ void SV_Shutdown(const char *finalmsg)
 
 	// disconnect any local clients
 	CL_Disconnect(qfalse);
+
+#ifdef DEDICATED
+	HTTP_Shutdown();
+#endif
 
 #ifdef FEATURE_TRACKER
 	Tracker_ServerStop();
