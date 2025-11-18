@@ -56,13 +56,6 @@ typedef int socklen_t;
 // Global HTTP server state
 httpServer_t httpServer; // Non-static for bandwidth throttling access
 
-// CVARs
-static cvar_t *sv_httpEnable;
-static cvar_t *sv_httpMaxClients;
-static cvar_t *sv_httpAutoConfig;
-static cvar_t *sv_httpTimeout;          // Connection timeout
-cvar_t        *sv_httpMaxBytesPerFrame; // Non-static for bandwidth throttling access
-
 /**
  * @brief Set socket to non-blocking mode
  * @param[in] sock Socket descriptor
@@ -259,25 +252,21 @@ qboolean HTTP_AutoConfigureBaseURL(void)
 	// Get sv_wwwBaseURL cvar
 	sv_wwwBaseURL = Cvar_Get("sv_wwwBaseURL", "", CVAR_ARCHIVE);
 
-	// Check if auto-configuration should be used
-	if (!sv_httpAutoConfig->integer)
-	{
-		// Auto-config disabled, check if manual URL is set
-		if (sv_wwwBaseURL && sv_wwwBaseURL->string[0])
-		{
-			Com_Printf("HTTP: Using manually configured sv_wwwBaseURL = %s\n", sv_wwwBaseURL->string);
-			return qtrue;
-		}
-		Com_DPrintf("HTTP: Auto-configuration disabled and no manual sv_wwwBaseURL set\n");
-		return qfalse;
-	}
-
-	// Auto-config enabled OR sv_wwwBaseURL is empty - proceed with auto-configuration
-	if (sv_wwwBaseURL && sv_wwwBaseURL->string[0] && !sv_httpAutoConfig->integer)
+	// If manual URL is set, use it (regardless of auto-config setting)
+	if (sv_wwwBaseURL && sv_wwwBaseURL->string[0])
 	{
 		Com_Printf("HTTP: Using manually configured sv_wwwBaseURL = %s\n", sv_wwwBaseURL->string);
 		return qtrue;
 	}
+
+	// No manual URL set - check if auto-configuration is enabled
+	if (!sv_httpAutoConfig->integer)
+	{
+		Com_DPrintf("HTTP: Auto-configuration disabled and no manual sv_wwwBaseURL set\n");
+		return qfalse;
+	}
+
+	// Auto-config enabled and sv_wwwBaseURL is empty - proceed with auto-configuration
 
 	// Detect server IP
 	if (!HTTP_DetectServerIP(ipAddress, sizeof(ipAddress)))
@@ -517,13 +506,7 @@ void HTTP_Init(void)
 	memset(&httpServer, 0, sizeof(httpServer));
 	httpServer.socket = INVALID_SOCKET;
 
-	// Register CVARs
-	sv_httpEnable     = Cvar_Get("sv_httpEnable", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	sv_httpMaxClients = Cvar_Get("sv_httpMaxClients", "16", CVAR_ARCHIVE);
-	sv_httpAutoConfig = Cvar_Get("sv_httpAutoConfig", "1", CVAR_ARCHIVE);
-	// Performance optimization CVARs
-	sv_httpTimeout          = Cvar_Get("sv_httpTimeout", "30", CVAR_ARCHIVE);
-	sv_httpMaxBytesPerFrame = Cvar_Get("sv_httpMaxBytesPerFrame", "65536", CVAR_ARCHIVE);
+	// CVARs are initialized in sv_init.c
 
 	// Check if HTTP server is enabled
 	if (!sv_httpEnable->integer)
