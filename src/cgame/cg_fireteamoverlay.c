@@ -913,7 +913,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			}
 			else
 			{
-				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, spawnPtColor, Q_TruncateStr(spawnPtStr[i], 0), 0, 0, comp->styleText, FONT_TEXT);
+				x -= spacing;
+				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, spawnPtColor, spawnPtStr[i], 0, 0, comp->styleText, FONT_TEXT);
 				if (comp->style & BIT(7) && ci->mspawnpt > 0) // minor spawn points
 				{
 					CG_Text_Paint_Ext(x + spacing, y + heightTextOffset, scale / 1.5, scale / 1.5, spawnPtColor, va("%i", ci->mspawnpt), 0, 0, comp->styleText, FONT_TEXT);
