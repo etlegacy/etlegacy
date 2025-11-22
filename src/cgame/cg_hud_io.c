@@ -49,6 +49,7 @@ typedef struct
 	qboolean shiftHealthBarDynamicColorStyle;           //< added in version 4
 	qboolean shiftHealthBarDynamicColorStyle2;          //< added in version 5
 	qboolean replaceWeaponIconStyle;                    //< added in version 5
+	qboolean addNoEchoToPopupmessageFilter;             //< added in version 5
 } hudFileUpgrades_t;
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
@@ -1549,6 +1550,32 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		CLEARBIT(tmpHud->weaponicon.style, 1);
 	}
 
+	if (upgr->addNoEchoToPopupmessageFilter)
+	{
+		int numPopUp;
+
+		// only 3 popupmessages were available
+		for (numPopUp = 0; numPopUp < 3; ++numPopUp)
+		{
+			hudComponent_t *comp = (hudComponent_t *)((byte *)&tmpHud->popupmessages + numPopUp * sizeof(hudComponent_t));
+			int            j;
+
+			for (j = 10; j > 5; --j)
+			{
+				if (CHECKBIT(comp->style, j - 1))
+				{
+					ENABLEBIT(comp->style, j);
+				}
+				else
+				{
+					CLEARBIT(comp->style, j);
+				}
+			}
+
+			CLEARBIT(comp->style, j);
+		}
+	}
+
 	if (upgr->shiftHealthBarDynamicColorStyle)
 	{
 		// Ensure dynamic coloration style is applied due to insertion of needle style from bar
@@ -1638,7 +1665,8 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 	// fall through    
 	case 4:         // 2.84 - weapon icon dynamic health style replace by only ticking style due to split with weapon heat bar
 					// - circular style has been added for bar, requiring shifting Dynamic Color style value
-		ret->replaceWeaponIconStyle           = qtrue;
+		ret->replaceWeaponIconStyle        = qtrue;
+		ret->addNoEchoToPopupmessageFilter = qtrue;
 		ret->shiftHealthBarDynamicColorStyle2 = qtrue;
 		break;
 	default:

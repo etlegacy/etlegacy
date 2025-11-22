@@ -101,6 +101,7 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImages[PM_HEALTHPICKUP]   = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
 	cgs.media.pmImages[PM_WEAPONPICKUP]   = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_CONNECT]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_ANNOUNCE]       = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 
 	cgs.media.pmImageAlliesConstruct = trap_R_RegisterShaderNoMip("gfx/hud/pm_constallied");
 	cgs.media.pmImageAxisConstruct   = trap_R_RegisterShaderNoMip("gfx/hud/pm_constaxis");
@@ -334,11 +335,13 @@ qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter)
 	case PM_TEAM:
 		return filter & POPUP_FILTER_TEAMJOIN;
 	case PM_MESSAGE:
+		return filter & POPUP_FILTER_ECHO;
 	case PM_DYNAMITE:
 	case PM_CONSTRUCTION:
 	case PM_MINES:
 	case PM_OBJECTIVE:
 	case PM_DESTRUCTION:
+	case PM_ANNOUNCE:
 		return filter & POPUP_FILTER_MISSION;
 	case PM_AMMOPICKUP:
 	case PM_HEALTHPICKUP:
