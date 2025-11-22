@@ -72,9 +72,9 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(cursorhintstext),    CG_DrawCursorHintText,            0.19f,  { "Draw Suffix" } },// FIXME: outside cg_draw_hud
 	{ HUDF(weaponstability),    CG_DrawWeapStability,             0.19f,  { "Always",        "Left",         "Center",         "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),          CG_DrawLivesLeft,                 0.19f,  { 0 } },
-	{ HUDF(roundtimer),         CG_DrawRoundTimer,                0.19f,  { "Simple" } },
-	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              0.19f,  { 0 } },
-	{ HUDF(spawntimer),         CG_DrawSpawnTimer,                0.19f,  { 0 } },
+	{ HUDF(roundtimer),         CG_DrawRoundTimer,                0.19f,  { "Simple",        "Double Digits" } },
+	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              0.19f,  { "Double Digits" } },
+	{ HUDF(spawntimer),         CG_DrawSpawnTimer,                0.19f,  { "Double Digits" } },
 	{ HUDF(localtime),          CG_DrawLocalTime,                 0.19f,  { "Second",        "12 Hours" } },
 	{ HUDF(votetext),           CG_DrawVote,                      0.22f,  { "Complaint" } }, // FIXME: outside cg_draw_hud
 	{ HUDF(spectatortext),      CG_DrawSpectatorMessage,          0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
@@ -2982,9 +2982,10 @@ char *CG_SpawnTimerText()
  * @brief CG_SpawnTimersText
  * @param[out] respawn
  * @param[out] spawntimer
+ * @param[in] isDoubleDigits
  * @return
  */
-static qboolean CG_SpawnTimersText(char **s, char **rt)
+static qboolean CG_SpawnTimersText(char **s, char **rt, qboolean isDoubleDigits)
 {
 	if (cgs.gamestate != GS_PLAYING)
 	{
@@ -3000,7 +3001,7 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 			limbotimeEnemy = cg_redlimbotime.integer;
 		}
 
-		*rt = va("%02i", limbotimeEnemy / 1000);
+		*rt = va(isDoubleDigits ? "%02i" : "%0i", limbotimeEnemy / 1000);
 		*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? va("%s", CG_TranslateString("WARMUP")) : va("%02i", limbotimeOwn / 1000);
 
 		// if hud editor is up, return qfalse since we want to see text style changes
@@ -3010,12 +3011,12 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 	{
 		if (cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			*s  = va("%02i", CG_CalculateReinfTime(TEAM_ALLIES));
-			*rt = va("%02i", CG_CalculateReinfTime(TEAM_AXIS));
+			*s  = va(isDoubleDigits ? "%02i" : "%0i", CG_CalculateReinfTime(TEAM_ALLIES));
+			*rt = va(isDoubleDigits ? "%02i" : "%0i", CG_CalculateReinfTime(TEAM_AXIS));
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
-			*s  = va("%02i", CG_GetReinfTime(qfalse));
+			*s  = va(isDoubleDigits ? "%02i" : "%0i", CG_GetReinfTime(qfalse));
 			*rt = CG_SpawnTimerText();
 		}
 	}
@@ -3104,7 +3105,7 @@ void CG_DrawRespawnTimer(hudComponent_t *comp)
 		return;
 	}
 
-	blink = CG_SpawnTimersText(&s, &rt);
+	blink = CG_SpawnTimersText(&s, &rt, comp->style & 1);
 
 	if (s)
 	{
@@ -3129,7 +3130,7 @@ void CG_DrawSpawnTimer(hudComponent_t *comp)
 	// note: pass reinforcement timer in as 's' to get the ENEMY reinforcement time
 	// FIXME: this should be refactored, this makes no sense... what even is 's'? and 'rt'?
 	//  spawntimer/reinforcement timer? but the function doesn't treat them as such...
-	blink = CG_SpawnTimersText(&s, &rt);
+	blink = CG_SpawnTimersText(&s, &rt, comp->style & 1);
 
 	if (s)
 	{
@@ -3151,7 +3152,7 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 		return;
 	}
 
-	blink = CG_SpawnTimersText(&s, &rt);
+	blink = CG_SpawnTimersText(&s, &rt, comp->style & 2);
 
 	mt = va("%s%s", "^*", CG_RoundTimerText());
 
