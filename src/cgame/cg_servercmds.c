@@ -3226,8 +3226,9 @@ static void CG_ServerCommand(void)
 		}
 		else
 		{
-			pmType = PM_MESSAGE;
+			pmType = iconnumber;
 		}
+        
 		CG_AddPMItem(pmType, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, colorWhite);
 		return;
 	}
