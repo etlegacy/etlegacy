@@ -4077,7 +4077,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 60
+#define HUD_COMPONENTS_NUM 61
 
 typedef struct hudComponent_s
 {
@@ -4131,12 +4131,13 @@ typedef struct hudStructure_s
 	hudComponent_t popupmessages;
 	hudComponent_t popupmessages2;
 	hudComponent_t popupmessages3;
+	hudComponent_t popupmessages4;
 	hudComponent_t powerups;
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
 	hudComponent_t cursorhints;
-	hudComponent_t cursorhintsbar;
 	// 20
+	hudComponent_t cursorhintsbar;
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
@@ -4146,8 +4147,8 @@ typedef struct hudStructure_s
 	hudComponent_t localtime;
 	hudComponent_t votetext;
 	hudComponent_t spectatortext;
-	hudComponent_t limbotext;
 	// 30
+	hudComponent_t limbotext;
 	hudComponent_t followtext;
 	hudComponent_t demotext;
 	hudComponent_t missilecamera;
@@ -4157,8 +4158,8 @@ typedef struct hudStructure_s
 	hudComponent_t fps;
 	hudComponent_t snapshot;
 	hudComponent_t ping;
-	hudComponent_t speed;
 	// 40
+	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
 	hudComponent_t chat;
@@ -4168,8 +4169,8 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint;
-	hudComponent_t banner;
 	// 50
+	hudComponent_t banner;
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
@@ -4177,8 +4178,8 @@ typedef struct hudStructure_s
 	hudComponent_t xpgain;
 	hudComponent_t scPlayerListAxis;
 	hudComponent_t scPlayerListAllies;
-	hudComponent_t scTeamNamesAxis;
 	// 60
+	hudComponent_t scTeamNamesAxis;
 	hudComponent_t scTeamNamesAllies;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];

@@ -45,6 +45,7 @@ static lagometer_t lagometer;
 * @var hudComponentFields
 * @brief for accessing hudStucture_t's fields in a loop
 * @note keep compass as last draw element, to ensure extended map is draw on top of all elements
+* @note keep popupmessages together and in increasing order (pop / pop2 / pop3 / ...)
 */
 const hudComponentFields_t hudComponentFields[] =
 {
@@ -65,6 +66,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(popupmessages),      CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages2),     CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages3),     CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+    { HUDF(popupmessages4),     CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(powerups),           CG_DrawPowerUps,                  0.19f,  { 0 } },
 	{ HUDF(objectives),         CG_DrawObjectiveStatus,           0.19f,  { 0 } },
 	{ HUDF(hudhead),            CG_DrawPlayerStatusHead,          0.19f,  { 0 } },
@@ -200,6 +202,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->popupmessages      = CG_getComponent(4, 245, 422, 96, qtrue, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
 	hud->popupmessages2     = CG_getComponent(4, 245, 422, 96, qfalse, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
 	hud->popupmessages3     = CG_getComponent(4, 245, 422, 96, qfalse, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
+    hud->popupmessages4     = CG_getComponent(4, 245, 422, 96, qfalse, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
 	hud->powerups           = CG_getComponent(SCREEN_WIDTH  - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPowerUps);
 	hud->objectives         = CG_getComponent(4, SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawObjectiveStatus);
 	hud->hudhead            = CG_getComponent(44, SCREEN_HEIGHT - 96, 62, 80, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerStatusHead);

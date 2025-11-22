@@ -34,7 +34,7 @@
 
 #include "cg_local.h"
 
-#define NUM_PM_STACK           3
+#define NUM_PM_STACK           4
 #define NUM_PM_STACK_ITEMS     32
 #define NUM_PM_STACK_ITEMS_BIG 3 // we shouldn't need many of these
 #define NUM_PM_STACK_ITEMS_XP  32
