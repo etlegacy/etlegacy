@@ -2357,7 +2357,11 @@ void ClientEndFrame(gentity_t *ent)
 	// run touch functions here too, so movers don't have to wait
 	// until the next ClientThink, which will be too late for some map
 	// scripts (railgun)
-	G_TouchTriggers(ent);
+	// Don't process triggers during pause to prevent damage from barbed wire, etc.
+	if (level.match_pause == PAUSE_NONE)
+	{
+		G_TouchTriggers(ent);
+	}
 
 	// run entity scripting
 	G_Script_ScriptRun(ent);
