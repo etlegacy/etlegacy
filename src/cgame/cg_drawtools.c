@@ -310,7 +310,15 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 
 		if (needleFrac > 0.f && flags & BAR_NEEDLE)
 		{
-			CG_FillRect(x3, y3 + (h * (1 - needleFrac)) + 0.0, w, 1.0, backgroundcolor);
+			if (flags & BAR_LEFT)
+			{
+				y3 += h * (1.0f - needleFrac);
+			}
+			else
+			{
+				y3 += h * needleFrac;
+			}
+			CG_FillRect(x3, y3, w, 1.0f, backgroundcolor);
 		}
 
 		if (flags & BAR_DECOR)
@@ -368,7 +376,15 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 
 		if (needleFrac > 0.f && flags & BAR_NEEDLE)
 		{
-			CG_FillRect(x3 + (w * (1 - needleFrac)) - 0.0, y3, 1.0, h, backgroundcolor);
+			if (flags & BAR_LEFT)
+			{
+				x3 += w * (1.0f - needleFrac);
+			}
+			else
+			{
+				x3 += w * needleFrac;
+			}
+			CG_FillRect(x3, y3, 1.0f, h, backgroundcolor);
 		}
 
 		if (flags & BAR_DECOR)
