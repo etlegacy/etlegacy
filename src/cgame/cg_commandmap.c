@@ -2031,12 +2031,14 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 
 		if (icon)
 		{
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor);
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor,
+			                   style & COMPASS_DRAW_ICONS_INSIDE);
 
 			// draw overlapping shader for disguised covops
 			if (icon == cgs.media.friendShader)
 			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor);
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor,
+				                   style & COMPASS_DRAW_ICONS_INSIDE);
 			}
 		}
 	}
@@ -2554,8 +2556,9 @@ void CG_CommandMap_DrawHighlightText(void)
 * @param[in] origin
 * @param[in] dest
 * @param[in] shader
+* @param[in] drawIconInside
 */
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor)
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, qboolean drawIconInside)
 {
 	float  iconx, icony, iconWidth, iconHeight, radius;
 	float  angle, len, diff;
@@ -2581,45 +2584,66 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 	if (scissor->circular)
 	{
-		w /= 2;
-		h /= 2;
+		w *= 0.5f;
+		h *= 0.5f;
 
 		iconx = x + w;
 		icony = y + h;
 
+		if (drawIconInside)
+		{
+			w -= baseSize * 2;
+			h -= baseSize * 2;
+		}
+
 		radius = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 
-		iconx = iconx + ((float)cos(angle) * radius);
-		icony = icony + ((float)sin(angle) * radius);
+		iconx += (float)cos(angle) * radius;
+		icony += (float)sin(angle) * radius;
 
-		iconx = iconx - (iconWidth - 4) / 2;
-		icony = icony - (iconHeight - 4) / 2;
+		iconx -= iconWidth * 0.5f;
+		icony -= iconHeight * 0.5f;
 	}
 	else
 	{
 		diff = w * 0.25f;
-		x    = x + (diff / 2);
-		y    = y + (diff / 2);
+		x    = x + (diff * 0.5f);
+		y    = y + (diff * 0.5f);
 		w    = w - diff;
 		h    = h - diff;
 
-		iconx = x + (w / 2);
-		icony = y + (h / 2);
+		iconx = x + (w * 0.5f);
+		icony = y + (h * 0.5f);
 
-		radius = (float)sqrt((w * w) + (h * h)) / 2.0f;
+		if (!drawIconInside)
+		{
+			w += baseSize * 2;
+			h += baseSize * 2;
+		}
 
-		iconx = iconx + ((float)cos(angle) * radius);
-		icony = icony + ((float)sin(angle) * radius);
+		radius = (float)sqrt((w * w) + (h * h)) * 0.5f;
+
+		iconx += (float)cos(angle) * radius;
+		icony += (float)sin(angle) * radius;
 
 		iconWidth  *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
 		iconHeight *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
 
-		iconx -= iconWidth / 2;
-		icony -= iconHeight / 2;
+		iconx -= iconWidth * 0.5f;
+		icony -= iconHeight * 0.5f;
 
-		// keep the icon from going outside map boundaries
-		iconx = Com_Clamp(x, x + w - iconWidth, iconx);
-		icony = Com_Clamp(y, y + h - iconHeight, icony);
+		if (drawIconInside)
+		{
+			// keep the icon from going outside map boundaries
+			iconx = Com_Clamp(x, x + w - iconWidth, iconx);
+			icony = Com_Clamp(y, y + h - iconHeight, icony);
+		}
+		else
+		{
+			// keep the icon from going outside comp boundaries
+			iconx = Com_Clamp(x - iconWidth, x + w - baseSize * 2.f, iconx);
+			icony = Com_Clamp(y - iconHeight, y + h - baseSize * 2.f, icony);
+		}
 	}
 
 	CG_DrawPic(iconx, icony, iconWidth, iconHeight, shader);

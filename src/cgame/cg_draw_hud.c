@@ -109,7 +109,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(scPlayerListAllies), CG_DrawShoutcastPlayerListAllies, 0.16f,  { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(scTeamNamesAxis),    CG_DrawShoutcastTeamNameAxis,     0.3f,   { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(scTeamNamesAllies),  CG_DrawShoutcastTeamNameAllies,   0.3f,   { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(compass),            CG_DrawNewCompass,                0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw", "Point North"} },
+	{ HUDF(compass),            CG_DrawNewCompass,                0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw", "Point North", "Icons Inside" } },
 	{ NULL,                     0,                                qfalse, NULL, 0.00f,{ 0 } },
 };
 
