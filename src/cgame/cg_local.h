@@ -2227,6 +2227,7 @@ enum
 	COMPASS_CARDINAL_POINTS      = BIT(6),
 	COMPASS_ALWAYS_DRAW          = BIT(7),
 	COMPASS_POINT_TOWARD_NORTH   = BIT(8),
+    COMPASS_DRAW_ICONS_INSIDE    = BIT(9),
 };
 
 // Follow filters
@@ -3856,7 +3857,7 @@ void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
 qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawItemObj, qboolean drawDynamic, char *name);
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor);
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, qboolean drawIconInside);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
