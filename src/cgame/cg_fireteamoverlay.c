@@ -420,6 +420,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	float          scale;
 	float          spacing;
 	float          widthLocationLeft;
+	float          minorSpawnTextScale;
 
 
 	// colors and fonts for overlays
@@ -468,6 +469,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	}
 
 	Com_Memset(locStr, 0, sizeof(char *) * MAX_FIRETEAM_MEMBERS);
+	Com_Memset(spawnPtStr, 0, sizeof(char *) * MAX_FIRETEAM_MEMBERS);
+
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		Com_Memset(name[i], 0, sizeof(char) * (MAX_NAME_LENGTH));
@@ -475,8 +478,9 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 	h = comp->location.h / (MAX_FIRETEAM_MEMBERS + 1);
 
-	scale   = CG_ComputeScale(comp /* h, comp->scale, FONT_TEXT*/);
-	spacing = CG_Text_Width_Ext_Float("_", scale, 0, FONT_TEXT);
+	scale               = CG_ComputeScale(comp /* h, comp->scale, FONT_TEXT*/);
+	spacing             = CG_Text_Width_Ext_Float("_", scale, 0, FONT_TEXT);
+	minorSpawnTextScale = scale / 1.5f;
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -514,16 +518,13 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			locwidth = 0;
 		}
 
-		if (comp->style & BIT(5))
+		if (comp->style & BIT(5) || comp->style & BIT(6))
 		{
-			spawnPtStr[i] = va("%i", ci->spawnpt);
-			if (comp->style & BIT(7) && cg.hasMinorSpawnPoints == qtrue && ci->mspawnpt > 0)
-			{
-				spawnPtStr[i] = va("%s%i", spawnPtStr[i], ci->mspawnpt);
-			}
+			// spawnpoint as a location string
 			if (comp->style & BIT(6))
 			{
 				spawnPtStr[i] = va("%s", Q_CleanStr(CG_GetLocationMsg(ci->clientNum, cgs.majorSpawnpointEnt[ci->spawnpt - 1].origin)));
+
 				if (cg_locationMaxChars.integer)
 				{
 					spawnwidth  = spacing;
@@ -534,9 +535,16 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 					spawnwidth = CG_Text_Width_Ext(spawnPtStr[i], scale, 0, FONT_TEXT);
 				}
 			}
+			// spawnpoint as number(s)
 			else
 			{
-				spawnwidth = CG_Text_Width_Ext(spawnPtStr[i], scale, 0, FONT_TEXT);
+				spawnwidth = CG_Text_Width_Ext(va("%i", ci->spawnpt), scale, 0, FONT_TEXT);
+
+				if (comp->style & BIT(7) && cg.hasMinorSpawnPoints && ci->mspawnpt > 0)
+				{
+					spawnwidth += CG_Text_Width_Ext(va("%i", ci->mspawnpt), minorSpawnTextScale, 0, FONT_TEXT);
+				}
+
 			}
 		}
 		else
@@ -629,7 +637,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	                + spacing * 2 + bestNameWidth                       // player name
 	                + bestWeapIconWidthScale * weaponIconSize + spacing // weapon icons
 	                + spacing * 3 + spacing                             // health points
-	                + bestLocWidth                                      // location name
+	                + bestLocWidth + spacing                            // location name
 	                + bestSpawnWidth;                                   // spawn location/point
 
 	// keep the best fit for the location text
@@ -846,7 +854,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		{
 			int   lim;
 			float locWidthLocationLeft = widthLocationLeft;
-			if (comp->style & BIT(5)) // spawn points
+
+			if (comp->style & BIT(5) || comp->style & BIT(6)) // spawn points
 			{
 				if (comp->style & BIT(6)) // spawn locations
 				{
@@ -857,7 +866,9 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 					locWidthLocationLeft -= bestSpawnWidth + spacing;
 				}
 			}
+
 			lim = locWidthLocationLeft / spacing;
+
 			if (lim > 0)
 			{
 				if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
@@ -876,7 +887,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 				x += locWidthLocationLeft;
 			}
 		}
-		if (comp->style & BIT(5)) // spawn points
+
+		if (comp->style & BIT(5) || comp->style & BIT(6)) // spawn points
 		{
 			const float timeDiff = cg.time - ci->spawnChangedTime;
 			vec4_t      spawnPtColor;
@@ -892,9 +904,11 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			{
 				widthLocationLeft = widthLocationLeft / 2;
 			}
+
 			if (comp->style & BIT(6)) // spawn locations
 			{
 				int lim = widthLocationLeft / spacing;
+
 				if (lim > 0)
 				{
 					if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
@@ -913,11 +927,11 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			}
 			else
 			{
-				x -= spacing;
-				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, spawnPtColor, spawnPtStr[i], 0, 0, comp->styleText, FONT_TEXT);
+				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, spawnPtColor, va("%i", ci->spawnpt), 0, 0, comp->styleText, FONT_TEXT);
+
 				if (comp->style & BIT(7) && ci->mspawnpt > 0) // minor spawn points
 				{
-					CG_Text_Paint_Ext(x + spacing, y + heightTextOffset, scale / 1.5, scale / 1.5, spawnPtColor, va("%i", ci->mspawnpt), 0, 0, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_Ext(x + spacing, y + heightTextOffset, minorSpawnTextScale, minorSpawnTextScale, spawnPtColor, va("%i", ci->mspawnpt), 0, 0, comp->styleText, FONT_TEXT);
 				}
 			}
 		}
