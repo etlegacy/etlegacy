@@ -478,6 +478,20 @@ gfx/limbo/cm_flagaxis
 	}
 }
 
+gfx/limbo/cm_flagshadow
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_flagshadow
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 gfx/limbo/cm_fuel
 {
 	nopicmip
