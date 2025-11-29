@@ -484,7 +484,7 @@ gfx/limbo/cm_flagshadow
 	nocompress
 	nomipmaps
 	{
-		map gfx/limbo/cm_flagshadow
+		map gfx/limbo/cm_flagshadow.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
