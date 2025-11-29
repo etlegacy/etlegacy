@@ -1,5 +1,5 @@
 {
-	"version":	3,
+	"version":	5,
 	"huds":	[{
 			"name":	"Alternate Hud 1",
 			"parent":	"ETmain",
@@ -528,28 +528,15 @@
 				"crosshair":	{
 					"style":	0
 				},
-				"compass":	{
-					"rect":	{
-						"x":	0,
-						"y":	3,
-						"w":	90,
-						"h":	90
-					},
-					"style":	3,
-					"anchor":	5,
-					"parent":	{
-						"anchor":	5,
-						"component":	null
-					}
-				},
 				"staminabar":	{
 					"rect":	{
-						"x":	-27.70001220703125,
-						"y":	-3,
+						"x":	-30.383331298828125,
+						"y":	-2.79998779296875,
 						"w":	12,
-						"h":	72
+						"h":	74
 					},
-					"style":	5,
+					"style":	197,
+					"showBorder":	true,
 					"anchor":	4,
 					"parent":	{
 						"anchor":	5,
@@ -558,12 +545,13 @@
 				},
 				"breathbar":	{
 					"rect":	{
-						"x":	-27.70001220703125,
-						"y":	-3,
+						"x":	-30.350006103515625,
+						"y":	-2.79998779296875,
 						"w":	12,
-						"h":	72
+						"h":	74
 					},
-					"style":	5,
+					"style":	197,
+					"showBorder":	true,
 					"anchor":	4,
 					"parent":	{
 						"anchor":	5,
@@ -572,13 +560,14 @@
 				},
 				"healthbar":	{
 					"rect":	{
-						"x":	42.79998779296875,
-						"y":	-3,
-						"w":	12,
-						"h":	72
+						"x":	0,
+						"y":	-79.20001220703125,
+						"w":	74,
+						"h":	12
 					},
-					"style":	5,
-					"anchor":	6,
+					"style":	4096,
+					"showBorder":	true,
+					"anchor":	5,
 					"parent":	{
 						"anchor":	5,
 						"component":	null
@@ -586,12 +575,13 @@
 				},
 				"weaponchargebar":	{
 					"rect":	{
-						"x":	32.29998779296875,
-						"y":	-3,
+						"x":	31.008316040039062,
+						"y":	-2.79998779296875,
 						"w":	12,
-						"h":	72
+						"h":	74
 					},
-					"style":	5,
+					"style":	4293,
+					"showBorder":	true,
 					"anchor":	6,
 					"parent":	{
 						"anchor":	5,
@@ -600,13 +590,12 @@
 				},
 				"healthtext":	{
 					"rect":	{
-						"x":	41,
-						"y":	-59,
+						"x":	0,
+						"y":	-91.600006103515625,
 						"w":	57,
 						"h":	14
 					},
-					"style":	1,
-					"anchor":	6,
+					"anchor":	5,
 					"parent":	{
 						"anchor":	5,
 						"component":	null
@@ -614,7 +603,7 @@
 				},
 				"xptext":	{
 					"rect":	{
-						"x":	-19.29998779296875,
+						"x":	-20.522552490234375,
 						"y":	-17,
 						"w":	58,
 						"h":	14
@@ -628,7 +617,7 @@
 				},
 				"ranktext":	{
 					"rect":	{
-						"x":	-19,
+						"x":	-20.522552490234375,
 						"y":	-1,
 						"w":	58,
 						"h":	14
@@ -653,9 +642,9 @@
 						"component":	null
 					}
 				},
-				"weaponicon":	{
+				"weaponheatbar":	{
 					"rect":	{
-						"x":	49.70001220703125,
+						"x":	49.700019836425781,
 						"y":	-92,
 						"w":	60,
 						"h":	32
@@ -666,7 +655,7 @@
 						"component":	null
 					}
 				},
-				"weaponheatbar":{
+				"weaponicon":	{
 					"rect":	{
 						"x":	49.70001220703125,
 						"y":	-92,
@@ -681,7 +670,7 @@
 				},
 				"weaponammo":	{
 					"rect":	{
-						"x":	50.399993896484375,
+						"x":	50.400009155273438,
 						"y":	-76,
 						"w":	57,
 						"h":	14
@@ -709,21 +698,60 @@
 				},
 				"popupmessages":	{
 					"rect":	{
-						"x":	4,
-						"y":	82,
-						"w":	284,
-						"h":	72
+						"x":	3.9750001430511475,
+						"y":	67.20001220703125,
+						"w":	345.60000610351562,
+						"h":	96
 					},
 					"anchor":	0,
 					"parent":	{
-						"anchor":	0,
+						"anchor":	7,
+						"component":	null
+					}
+				},
+				"popupmessages2":	{
+					"rect":	{
+						"x":	4.00000762939453,
+						"y":	67.20001220703125,
+						"w":	345.60000610351562,
+						"h":	96
+					},
+					"anchor":	0,
+					"parent":	{
+						"anchor":	7,
+						"component":	null
+					}
+				},
+				"popupmessages3":	{
+					"rect":	{
+						"x":	4.00000762939453,
+						"y":	67.20001220703125,
+						"w":	345.60000610351562,
+						"h":	96
+					},
+					"anchor":	0,
+					"parent":	{
+						"anchor":	7,
+						"component":	null
+					}
+				},
+				"popupmessages4":	{
+					"rect":	{
+						"x":	4.00000762939453,
+						"y":	67.20001220703125,
+						"w":	345.60000610351562,
+						"h":	96
+					},
+					"anchor":	0,
+					"parent":	{
+						"anchor":	7,
 						"component":	null
 					}
 				},
 				"powerups":	{
 					"rect":	{
-						"x":	26.399993896484375,
-						"y":	-91,
+						"x":	25.586494445800781,
+						"y":	-93.600006103515625,
 						"w":	36,
 						"h":	36
 					},
@@ -735,8 +763,8 @@
 				},
 				"objectives":	{
 					"rect":	{
-						"x":	-26.20001220703125,
-						"y":	-91,
+						"x":	-24.210525512695312,
+						"y":	-93.600006103515625,
 						"w":	36,
 						"h":	36
 					},
@@ -748,7 +776,7 @@
 				},
 				"hudhead":	{
 					"rect":	{
-						"x":	-28,
+						"x":	-68.7205352783203,
 						"y":	0,
 						"w":	62,
 						"h":	80
@@ -760,7 +788,30 @@
 					}
 				},
 				"cursorhints":	{
-					"style":	0
+					"rect":	{
+						"x":	57.5852279663086,
+						"y":	-24,
+						"w":	48,
+						"h":	48
+					},
+					"anchor":	6,
+					"parent":	{
+						"anchor":	5,
+						"component":	null
+					}
+				},
+				"cursorhintsbar":	{
+					"rect":	{
+						"x":	0,
+						"y":	67.20001220703125,
+						"w":	48,
+						"h":	8
+					},
+					"anchor":	1,
+					"parent":	{
+						"anchor":	8,
+						"component":	null
+					}
 				},
 				"weaponstability":	{
 					"rect":	{
@@ -776,17 +827,7 @@
 					}
 				},
 				"livesleft":	{
-					"rect":	{
-						"x":	4,
-						"y":	-96,
-						"w":	48,
-						"h":	24
-					},
-					"anchor":	6,
-					"parent":	{
-						"anchor":	6,
-						"component":	null
-					}
+					"visible":	false
 				},
 				"roundtimer":	{
 					"rect":	{
@@ -810,7 +851,6 @@
 						"w":	57,
 						"h":	14
 					},
-					"textAlign":	1,
 					"anchor":	0,
 					"parent":	{
 						"anchor":	8,
@@ -824,7 +864,6 @@
 						"w":	57,
 						"h":	14
 					},
-					"textAlign":	1,
 					"anchor":	2,
 					"parent":	{
 						"anchor":	8,
@@ -849,13 +888,12 @@
 				"votetext":	{
 					"rect":	{
 						"x":	4,
-						"y":	30,
+						"y":	4.399993896484375,
 						"w":	278,
 						"h":	28
 					},
 					"mainColor":	"ffffffff",
-					"secondaryColor":	"ffffffff",
-					"anchor":	0,
+					"anchor":	7,
 					"parent":	{
 						"anchor":	7,
 						"component":	null
@@ -864,8 +902,8 @@
 				"spectatortext":	{
 					"rect":	{
 						"x":	4,
-						"y":	15,
-						"w":	250,
+						"y":	48,
+						"w":	278.39999389648438,
 						"h":	38
 					},
 					"style":	1,
@@ -878,7 +916,7 @@
 				"limbotext":	{
 					"rect":	{
 						"x":	4,
-						"y":	15,
+						"y":	48,
 						"w":	278,
 						"h":	38
 					},
@@ -891,7 +929,7 @@
 				"followtext":	{
 					"rect":	{
 						"x":	4,
-						"y":	56,
+						"y":	86.4000015258789,
 						"w":	278,
 						"h":	24
 					},
@@ -918,7 +956,7 @@
 				"missilecamera":	{
 					"rect":	{
 						"x":	4,
-						"y":	28,
+						"y":	-12.800003051757812,
 						"w":	160,
 						"h":	112
 					},
@@ -931,12 +969,13 @@
 				},
 				"sprinttext":	{
 					"rect":	{
-						"x":	-20.5,
-						"y":	-75,
+						"x":	-27.659774780273438,
+						"y":	-77.20001220703125,
 						"w":	57,
 						"h":	14
 					},
-					"style":	1,
+					"visible":	true,
+					"style":	0,
 					"textAlign":	2,
 					"anchor":	4,
 					"parent":	{
@@ -946,12 +985,13 @@
 				},
 				"breathtext":	{
 					"rect":	{
-						"x":	-46,
-						"y":	-75,
+						"x":	-27.659774780273438,
+						"y":	-77.20001220703125,
 						"w":	57,
 						"h":	14
 					},
-					"style":	1,
+					"visible":	true,
+					"style":	0,
 					"anchor":	4,
 					"parent":	{
 						"anchor":	5,
@@ -960,13 +1000,13 @@
 				},
 				"weaponchargetext":	{
 					"rect":	{
-						"x":	25.5,
-						"y":	-76,
-						"w":	38,
+						"x":	27.086494445800781,
+						"y":	-77.20001220703125,
+						"w":	28.799999237060547,
 						"h":	14
 					},
-					"style":	1,
-					"textAlign":	0,
+					"visible":	true,
+					"style":	0,
 					"anchor":	6,
 					"parent":	{
 						"anchor":	5,
@@ -997,7 +1037,7 @@
 					"rect":	{
 						"x":	4,
 						"y":	-1,
-						"w":	364,
+						"w":	345.60000610351562,
 						"h":	72
 					},
 					"anchor":	6,
@@ -1006,11 +1046,24 @@
 						"component":	null
 					}
 				},
+				"pmitemsbig":	{
+					"rect":	{
+						"x":	-3.116546630859375,
+						"y":	52,
+						"w":	286,
+						"h":	57
+					},
+					"anchor":	2,
+					"parent":	{
+						"anchor":	3,
+						"component":	null
+					}
+				},
 				"warmuptext":	{
 					"rect":	{
 						"x":	4,
-						"y":	70,
-						"w":	300,
+						"y":	24,
+						"w":	307,
 						"h":	39
 					},
 					"anchor":	0,
@@ -1021,32 +1074,27 @@
 				},
 				"objectivetext":	{
 					"rect":	{
-						"x":	4,
-						"y":	-106,
-						"w":	300,
+						"x":	-6.016754150390625,
+						"y":	-108.79998779296875,
+						"w":	273.60000610351562,
 						"h":	16
 					},
-					"style":	1,
-					"showBackGround":	false,
-					"showBorder":	false,
-					"textAlign":	0,
-					"anchor":	6,
+					"anchor":	4,
 					"parent":	{
-						"anchor":	6,
+						"anchor":	4,
 						"component":	null
 					}
 				},
 				"centerprint":	{
 					"rect":	{
-						"x":	4,
-						"y":	-76,
-						"w":	300,
+						"x":	-2.9665374755859375,
+						"y":	-82.600006103515625,
+						"w":	286.20001220703125,
 						"h":	23
 					},
-					"textAlign":	0,
-					"anchor":	6,
+					"anchor":	4,
 					"parent":	{
-						"anchor":	6,
+						"anchor":	4,
 						"component":	null
 					}
 				},
@@ -1064,6 +1112,20 @@
 					"anchor":	5,
 					"parent":	{
 						"anchor":	8,
+						"component":	null
+					}
+				},
+				"compass":	{
+					"rect":	{
+						"x":	0,
+						"y":	9.800048828125,
+						"w":	100,
+						"h":	99.000015258789062
+					},
+					"style":	527,
+					"anchor":	5,
+					"parent":	{
+						"anchor":	5,
 						"component":	null
 					}
 				}
