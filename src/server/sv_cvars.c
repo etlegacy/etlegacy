@@ -77,6 +77,13 @@ cvar_t *sv_wwwBaseURL;          // base URL for redirect
 cvar_t *sv_wwwDlDisconnected;
 cvar_t *sv_wwwFallbackURL; // URL to send to if an http/ftp fails or is refused client side
 
+// HTTP server
+cvar_t *sv_httpEnable;           // enable/disable embedded HTTP server
+cvar_t *sv_httpMaxClients;       // maximum simultaneous HTTP client connections
+cvar_t *sv_httpAutoConfig;       // automatically configure sv_wwwBaseURL using detected IP
+cvar_t *sv_httpTimeout;          // connection timeout for idle HTTP clients (seconds)
+cvar_t *sv_httpMaxBytesPerFrame; // bandwidth throttling - max bytes per frame
+
 cvar_t *sv_cheats;
 cvar_t *sv_packetloss;
 cvar_t *sv_packetdelay;
