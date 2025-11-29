@@ -491,7 +491,7 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
 
 	if (curValue > 0.01f)
 	{
-		CG_FilledBar(comp->location.x, comp->location.y + comp->location.h, comp->location.w, comp->location.h, colorRed, colorGreen,
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, colorRed, colorGreen,
 		             comp->colorBackground, comp->colorBorder, curValue, 0.f, comp->style, -1);
 	}
 }
