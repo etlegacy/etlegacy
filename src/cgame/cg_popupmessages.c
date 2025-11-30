@@ -782,7 +782,7 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 	}
 
 	w = comp->location.w - size * 2;
-	CG_WordWrapString(buffer, CG_GetMaxCharsPerLine(buffer, scale, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
+	CG_WordWrapString(buffer, CG_MaxCharsForWidth(buffer, scale, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
 
 	// we reach the comp border, don't print the line
 	if (scrollDown)
@@ -1060,7 +1060,7 @@ static qboolean CG_DrawPMXPItems(hudComponent_t *comp, pmListItem_t *listItem, f
 	}
 
 	w = comp->location.w - size * 2;
-	CG_WordWrapString(buffer, CG_GetMaxCharsPerLine(buffer, scale * 0.75, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
+	CG_WordWrapString(buffer, CG_MaxCharsForWidth(buffer, scale * 0.75, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
 
 	// we reach the comp border, don't print the line
 	if (scrollDown)

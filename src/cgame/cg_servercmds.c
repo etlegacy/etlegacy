@@ -3043,7 +3043,7 @@ void CG_AddToBannerPrint(const char *str)
 	scale = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
 	w     = CG_GetActiveHUD()->banner.location.w;
 
-	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
+	maxLineChars = CG_MaxCharsForWidth(str, scale, &cgs.media.limboFont2, w);
 	CG_WordWrapString(str, maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint), NULL);
 	cg.bannerPrintTime = cg.time;
 }
@@ -3228,7 +3228,7 @@ static void CG_ServerCommand(void)
 		{
 			pmType = iconnumber;
 		}
-        
+
 		CG_AddPMItem(pmType, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, colorWhite);
 		return;
 	}
