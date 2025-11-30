@@ -475,7 +475,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 			// truncate location string if max chars is set
 			if (cg_locationMaxChars.integer)
 			{
-				locMaxLen = Com_Clamp(0, 128, cg_locationMaxChars.integer); // 128 is max location length
+				locMaxLen = Com_Clamp(0, MAX_LOC_LEN, cg_locationMaxChars.integer);
 				Q_TruncateStr(locStr, locMaxLen);
 			}
 		}
