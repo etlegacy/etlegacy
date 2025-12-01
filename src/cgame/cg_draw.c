@@ -180,6 +180,19 @@ int CG_Text_Width(const char *text, float scale, int limit)
  */
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
+	return (int)CG_Text_Height_Ext_Float(text, scale, limit, font);
+}
+
+/**
+ * @brief CG_Text_Height_Ext_Float
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @param[in] font
+ * @return
+ */
+float CG_Text_Height_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font)
+{
 	float max = 0;
 
 	if (text)
@@ -1206,7 +1219,7 @@ void CG_PriorityCenterPrint(const char *str, int priority)
 	scale = CG_ComputeScale(&CG_GetActiveHUD()->centerprint /*CG_GetActiveHUD()->centerprint.location.h, CG_GetActiveHUD()->centerprint.scale, &cgs.media.limboFont2*/);
 	w     = CG_GetActiveHUD()->centerprint.location.w;
 
-	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
+	maxLineChars = CG_MaxCharsForWidth(str, scale, &cgs.media.limboFont2, w);
 
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.centerPrint, sizeof(cg.centerPrint), NULL);
 	cg.centerPrintPriority = priority;
@@ -3752,7 +3765,7 @@ void CG_ObjectivePrint(const char *str)
 	scale = CG_ComputeScale(&CG_GetActiveHUD()->objectivetext /*CG_GetActiveHUD()->objectivetext.location.h, CG_GetActiveHUD()->objectivetext.scale, &cgs.media.limboFont2*/);
 	w     = CG_GetActiveHUD()->objectivetext.location.w;
 
-	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
+	maxLineChars = CG_MaxCharsForWidth(str, scale, &cgs.media.limboFont2, w);
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.oidPrint, sizeof(cg.oidPrint), NULL);
 	cg.oidPrintTime = cg.time;
 }

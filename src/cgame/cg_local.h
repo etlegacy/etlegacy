@@ -2227,7 +2227,7 @@ enum
 	COMPASS_CARDINAL_POINTS      = BIT(6),
 	COMPASS_ALWAYS_DRAW          = BIT(7),
 	COMPASS_POINT_TOWARD_NORTH   = BIT(8),
-    COMPASS_DRAW_ICONS_INSIDE    = BIT(9),
+	COMPASS_DRAW_ICONS_INSIDE    = BIT(9),
 };
 
 // Follow filters
@@ -2238,6 +2238,7 @@ enum
 
 /// Locations
 #define MAX_C_LOCATIONS 1024
+#define MAX_LOC_LEN 128
 
 // locations draw bits and cvar
 /*
@@ -2310,7 +2311,7 @@ typedef struct location_s
 {
 	int index;
 	vec3_t origin;
-	char message[128];
+	char message[MAX_LOC_LEN];
 } location_t;
 
 /**
@@ -2928,7 +2929,7 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
 void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, vec3_t origin);
 
-int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, float width);
+int CG_MaxCharsForWidth(const char *str, float textScale, fontHelper_t *font, float width);
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize, int *numLineOutput);
 // draws multiline strings
@@ -2968,6 +2969,7 @@ float CG_Text_Width_Ext_Float(const char *text, float scale, int limit, fontHelp
 float CG_Text_Line_Width_Ext_Float(const char *text, float scale, fontHelper_t *font);
 int CG_Text_Width(const char *text, float scale, int limit);
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font);
+float CG_Text_Height_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Height(const char *text, float scale, int limit);
 float CG_GetValue(int ownerDraw, int type);   // 'type' is relative or absolute (fractional-'0.5' or absolute- '50' health)
 qboolean CG_OwnerDrawVisible(int flags);
