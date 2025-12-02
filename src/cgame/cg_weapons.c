@@ -5339,7 +5339,7 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
 	vec3_t    tmpv, tmpv2;
 	int       i, headshot;
 	centity_t *cent  = &cg_entities[fleshEntityNum];
-	qhandle_t shader = !cg_blood.integer || (cent->currentState.powerups & (1 << PW_INVULNERABLE))
+	qhandle_t shader = ((!cg_bloodForcePuffsForDamage.integer) || (cent->currentState.powerups & (1 << PW_INVULNERABLE)))
 	    ? cgs.media.smokePuffShader
 	    : cgs.media.fleshSmokePuffShader;
 
