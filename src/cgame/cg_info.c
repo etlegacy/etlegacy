@@ -48,6 +48,11 @@
 #define FONT_SUBHEADER      &cgs.media.limboFont1_lo
 #define FONT_TEXT           &cgs.media.limboFont2
 
+#define BUTTON_SLIDER 0
+#define BUTTON_REWIND 1
+#define BUTTON_PLAY_PAUSE 2
+#define BUTTON_FASTFORWARD 3
+
 const vec4_t color_bg_title = COLOR_BG_TITLE;
 const vec4_t color_border1  = COLOR_BORDER;
 const vec4_t color_bg       = COLOR_BG_VIEW;
@@ -187,7 +192,7 @@ static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 
 	switch (button->data[0])
 	{
-	case 0:
+	case BUTTON_SLIDER:
 	{
 		int   result;
 		float offset = cgDC.cursorx - button->rect.x;
@@ -195,16 +200,23 @@ static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 		offset = offset / button->rect.w;
 		result = (int)(cg.demoinfo->firstTime + ((cg.demoinfo->lastTime - cg.demoinfo->firstTime) * offset));
 		trap_SendConsoleCommand(va("seekservertime %i\n", result));
+		cgs.cursorTimeout = result + 5000;
 	}
 	break;
-	case 1:
+	case BUTTON_REWIND:
+		// NOTE: unlike fast-forward/seek, we don't handle cursor timeout adjustment here.
+		// This is because when we rewind, 'CG_EventHandling' gets called once the rewind is complete,
+		// with 'cg.time 0' (as the playback effectively restarts), which sets the cursor timeout value to 10000.
+		// After that, we get a call to 'CG_DrawActiveFrame', where we actually fix-up the timestamp.
 		trap_SendConsoleCommand("rewind 5\n");
 		break;
-	case 2:
+	case BUTTON_PLAY_PAUSE:
 		trap_SendConsoleCommand("pausedemo\n");
 		break;
-	case 3:
+	case BUTTON_FASTFORWARD:
 		trap_SendConsoleCommand("fastforward 5\n");
+		// we're fast-forwarding 5s, so set the timeout 5s after that
+		cgs.cursorTimeout = cg.time + 10000;
 		break;
 	default:
 		break;
@@ -229,7 +241,7 @@ panel_button_t demoSliderButton =
 	NULL,
 	NULL,
 	{ 0,                       0,  0, 0 },
-	{ 0,                       0,  0, 0, 0, 0, 0, 0},
+	{ BUTTON_SLIDER,           0,  0, 0, 0, 0, 0, 0},
 	NULL,                      // font
 	CG_DemoControlButtonDown,  // keyDown
 	CG_DemoControlButtonUp,    // keyUp
@@ -243,7 +255,7 @@ panel_button_t demoRewindButton =
 	NULL,
 	"<<",
 	{ 0,                       0,  0, 0 },
-	{ 1,                       0,  0, 0, 0, 0, 0, 0},
+	{ BUTTON_REWIND,           0,  0, 0, 0, 0, 0, 0},
 	NULL,                      // font
 	CG_DemoControlButtonDown,  // keyDown
 	CG_DemoControlButtonUp,    // keyUp
@@ -257,7 +269,7 @@ panel_button_t demoPauseButton =
 	NULL,
 	"||",
 	{ 0,                       0,  0, 0 },
-	{ 2,                       0,  0, 0, 0, 0, 0, 0},
+	{ BUTTON_PLAY_PAUSE,       0,  0, 0, 0, 0, 0, 0},
 	NULL,                      // font
 	CG_DemoControlButtonDown,  // keyDown
 	CG_DemoControlButtonUp,    // keyUp
@@ -271,7 +283,7 @@ panel_button_t demoFFButton =
 	NULL,
 	">>",
 	{ 0,                       0,  0, 0 },
-	{ 3,                       0,  0, 0, 0, 0, 0, 0},
+	{ BUTTON_FASTFORWARD,      0,  0, 0, 0, 0, 0, 0},
 	NULL,                      // font
 	CG_DemoControlButtonDown,  // keyDown
 	CG_DemoControlButtonUp,    // keyUp
@@ -1722,7 +1734,7 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 	}
 	BG_PanelButtonsRender(demoControlButtons);
 
-	if (cg.time < cgs.cursorUpdate)
+	if (cg.time < cgs.cursorTimeout)
 	{
 		// render cursor
 		trap_R_SetColor(NULL);
