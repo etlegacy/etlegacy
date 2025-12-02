@@ -2609,7 +2609,7 @@ typedef struct cgs_s
 
 	int aviDemoRate;                                    ///< Demo playback recording
 	int aReinfOffset[TEAM_NUM_TEAMS];                   ///< Team reinforcement offsets
-	int cursorUpdate;                                   ///< Timeout for mouse pointer view
+	int cursorTimeout;                                  ///< Timestamp where mouse cursor disappears on demo/multiview
 	fileHandle_t dumpStatsFile;                         ///< File to dump stats
 	char *dumpStatsFileName;                            ///< Name of file to dump stats
 	int dumpStatsTime;                                  ///< Next stats command that comes back will be written to a logfile
