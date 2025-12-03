@@ -32,9 +32,9 @@ jobs:
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
         with:
-        # see https://github.com/tonistiigi/binfmt/issues/215
-        # also see: https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/2096782
-        image: 'tonistiigi/binfmt:master'
+          # see https://github.com/tonistiigi/binfmt/issues/215
+          # also see: https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/2096782
+          image: 'tonistiigi/binfmt:master'
       - name: Build SNAP
         uses: canonical/snapcraft-multiarch-action@v1.10.1
         id: snapcraft
