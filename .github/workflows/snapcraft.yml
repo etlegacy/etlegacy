@@ -38,9 +38,6 @@ jobs:
       - name: Build SNAP
         uses: canonical/snapcraft-multiarch-action@v1.10.1
         id: snapcraft
-        run: |
-          chmod -R 775 wrappers/etl wrappers/etlded
-          chmod +x wrappers/etl wrappers/etlded
         with:
           architecture: ${{ matrix.platform }}
       - name: Publish
