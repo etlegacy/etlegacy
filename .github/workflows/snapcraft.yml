@@ -40,7 +40,7 @@ jobs:
         id: snapcraft
         run: |
           chmod -R 775 wrappers/etl wrappers/etlded
-		  chmod +x wrappers/etl wrappers/etlded
+          chmod +x wrappers/etl wrappers/etlded
         with:
           architecture: ${{ matrix.platform }}
       - name: Publish
