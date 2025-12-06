@@ -2381,10 +2381,13 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 	DEBUGTIME
 
-	// demo rewind happend, fix time based effects
+	// demo rewind happened, fix time based effects
 	if (demoPlayback && cg.time - cg.oldTime < 0)
 	{
 		CG_DemoRewindFixEffects();
+
+		// reset cursor timeout
+		cgs.cursorTimeout = cg.time + 5000;
 	}
 
 	DEBUGTIME
