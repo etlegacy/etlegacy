@@ -25,9 +25,9 @@ jobs:
 
       - name: Setup
         run: |
-          apt update && apt install snapd
-          snap install snapcraft
-          snap install lxd
+          sudo apt update && apt install snapd
+          sudo snap install snapcraft
+          sudo snap install lxd
           usermod -a -G lxd $USER
       - name: Build SNAP
         run: |
