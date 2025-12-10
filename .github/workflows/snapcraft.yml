@@ -14,12 +14,6 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform:
-          - amd64
-    #      - arm64
-    #      - i386
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -29,17 +23,15 @@ jobs:
           repository: etlegacy/etlegacy-snap
           fetch-depth: 1
 
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          # see https://github.com/tonistiigi/binfmt/issues/215
-          # also see: https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/2096782
-          image: 'tonistiigi/binfmt:master'
+      - name: Setup
+        run: |
+        apt update && apt install snapd
+        snap install snapcraft
+        snap install lxd
+        usermod -a -G lxd $USER
       - name: Build SNAP
-        uses: canonical/snapcraft-multiarch-action@v1.10.1
-        id: snapcraft
-        with:
-          architecture: ${{ matrix.platform }}
+        run: |
+        snapcraft pack
       - name: Publish
         uses: snapcore/action-publish@v1.2.0
         env:
