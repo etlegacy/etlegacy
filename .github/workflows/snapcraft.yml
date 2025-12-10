@@ -29,16 +29,6 @@ jobs:
           repository: etlegacy/etlegacy-snap
           fetch-depth: 1
 
-      # Critical: install LXD properly so snapcraft can use it instead of slow multipass
-      - name: Install LXD
-        run: |
-          sudo apt update
-          sudo apt install -y lxd lxd-installer
-          sudo lxd init --auto --storage-backend=dir
-          sudo usermod -aG lxd $USER
-          newgrp lxd <<'EOF'
-          lxc version || true
-          EOF
       - name: Build SNAP
         uses: canonical/snapcraft-multiarch-action@v1.10.1
         id: snapcraft
