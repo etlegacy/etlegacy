@@ -27,7 +27,7 @@ jobs:
         run: |
           sudo apt update && sudo apt install snapd
           sudo snap install snapcraft --classic
-          sudo usermod -a -G lxd etlegacy
+          sudo usermod -a -G lxd $USER
       - uses: canonical/setup-lxd@main
         with:
           group: lxd
