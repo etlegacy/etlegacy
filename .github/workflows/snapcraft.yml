@@ -29,11 +29,6 @@ jobs:
           repository: etlegacy/etlegacy-snap
           fetch-depth: 1
 
-      - name: Install curl
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl
-
       - name: Build SNAP
         uses: canonical/snapcraft-multiarch-action@v1.10.1
         id: snapcraft
