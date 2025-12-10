@@ -28,7 +28,7 @@ jobs:
           sudo apt update && sudo apt install snapd
           sudo snap install snapcraft --classic
           sudo snap install lxd
-          usermod -a -G lxd $USER
+          sudo usermod -a -G lxd $USER
       - name: Build SNAP
         run: |
           snapcraft pack
