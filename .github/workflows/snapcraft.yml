@@ -24,12 +24,12 @@ jobs:
           fetch-depth: 1
 
       - name: Setup
-        uses: canonical/setup-lxd@main
-        with:
-          group: lxd
         run: |
           sudo apt update && sudo apt install snapd
           sudo snap install snapcraft --classic
+      - uses: canonical/setup-lxd@main
+        with:
+          group: lxd
       - name: Build SNAP
         run: |
           snapcraft pack
