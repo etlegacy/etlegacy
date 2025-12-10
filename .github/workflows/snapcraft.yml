@@ -25,13 +25,13 @@ jobs:
 
       - name: Setup
         run: |
-        apt update && apt install snapd
-        snap install snapcraft
-        snap install lxd
-        usermod -a -G lxd $USER
+          apt update && apt install snapd
+          snap install snapcraft
+          snap install lxd
+          usermod -a -G lxd $USER
       - name: Build SNAP
         run: |
-        snapcraft pack
+          snapcraft pack
       - name: Publish
         uses: snapcore/action-publish@v1.2.0
         env:
