@@ -113,13 +113,13 @@ qboolean HTTP_GetExternalIP(char *ipBuffer, int ipBufferSize)
 
 		// STUN request packet
 		Com_Memset(request, 0, sizeof(request));
-		*(unsigned short *)&request[0] = htons(0x0001); // Binding Request
-		*(unsigned short *)&request[2] = htons(0x0000); // Message Length
-		*(unsigned int *)&request[4]   = htonl(0x2112A442); // Magic Cookie
-		// Transaction ID (12 bytes) - can be random
+		*(unsigned short *)&request[0] = htons(0x0001);
+		*(unsigned short *)&request[2] = htons(0x0000);
+		*(unsigned int *)&request[4]   = htonl(0x2112A442);
+		unsigned int seed = Sys_Milliseconds();
 		for (j = 8; j < 20; j++)
 		{
-			request[j] = rand() & 0xFF;
+			request[j] = (rand() ^ (seed >> ((j - 8) % 4))) & 0xFF;
 		}
 
 		if (sendto(sock, (const char *)request, sizeof(request), 0, res->ai_addr, res->ai_addrlen) == SOCKET_ERROR)

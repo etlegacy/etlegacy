@@ -240,6 +240,7 @@ qboolean HTTP_AutoConfigureBaseURL(void)
 	cvar_t *sv_wwwBaseURL;
 	cvar_t *sv_wwwDownload;
 	int    port;
+	const char *protocol;
 
 	if (!httpServer.initialized || !httpServer.enabled)
 	{
@@ -281,8 +282,8 @@ qboolean HTTP_AutoConfigureBaseURL(void)
 		return qfalse;
 	}
 
-	// Build base URL
-	Com_sprintf(baseURL, sizeof(baseURL), "http://%s:%d", ipAddress, port);
+	protocol = "http";
+	Com_sprintf(baseURL, sizeof(baseURL), "%s://%s:%d", protocol, ipAddress, port);
 
 	// Set sv_wwwBaseURL cvar
 	Cvar_Set("sv_wwwBaseURL", baseURL);
@@ -421,7 +422,7 @@ void HTTP_TimeoutClients(void)
  */
 void HTTP_AcceptConnections(void)
 {
-	struct sockaddr_in clientAddr;
+	struct sockaddr_in clientAddr = {0};
 	socklen_t          addrLen;
 	int                clientSock;
 	httpClient_t       *client;
