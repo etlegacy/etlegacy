@@ -89,6 +89,13 @@ extern cvar_t *sv_wwwBaseURL;  ///< the base URL of all the files
 extern cvar_t *sv_wwwDlDisconnected;
 extern cvar_t *sv_wwwFallbackURL;
 
+/// HTTP server
+extern cvar_t *sv_httpEnable;           ///< enable/disable embedded HTTP server
+extern cvar_t *sv_httpMaxClients;       ///< maximum simultaneous HTTP client connections
+extern cvar_t *sv_httpAutoConfig;       ///< automatically configure sv_wwwBaseURL using detected IP
+extern cvar_t *sv_httpTimeout;          ///< connection timeout for idle HTTP clients (seconds)
+extern cvar_t *sv_httpMaxBytesPerFrame; ///< bandwidth throttling - max bytes per frame
+
 extern cvar_t *sv_cheats;
 extern cvar_t *sv_packetloss;
 extern cvar_t *sv_packetdelay;
