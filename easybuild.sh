@@ -11,6 +11,7 @@ _SRC=$(dirname -- "$(readlink -f -- "$0")")
 BUILDDIR="${BUILD_DIR:-${_SRC}/build}"
 SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
+CACHEDIR="${CACHE_DIR:-${_SRC}/.cache}"
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     MODMAIN="${HOME}/Library/Application Support/etlegacy/etmain"
@@ -63,8 +64,8 @@ cmake_args=()
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
-easy_keys=(clean build generate package install download crust release project updatelicense watch _watch help)
-easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress print_help)
+easy_keys=(clean build generate package install download crust release project updatelicense watch _watch cleancache help)
+easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress run_cleancache print_help)
 easy_count=$((${#easy_keys[*]} - 1))
 
 check_exit() {
@@ -716,6 +717,149 @@ handle_bundled_libs() {
     fi
 }
 
+# Cache management functions
+get_cache_hash() {
+    # Generate a hash based on:
+    # - Platform and architecture
+    # - Compiler versions
+    # - Build type (Debug/Release)
+    # - Bundled library configuration
+    # - libs submodule commit hash
+    local libs_commit=""
+    if [[ -e "${_SRC}/libs/.git" ]]; then
+        libs_commit=$(cd "${_SRC}/libs" && git rev-parse HEAD 2>/dev/null || echo "none")
+    fi
+
+    local config_string="${PLATFORMSYS}_${PLATFORMARCH}_${CC}_${CXX}_${RELEASE_TYPE}_"
+    config_string+="SDL${BUNDLED_SDL}_ZLIB${BUNDLED_ZLIB}_MINIZIP${BUNDLED_MINIZIP}_"
+    config_string+="JPEG${BUNDLED_JPEG}_CURL${BUNDLED_CURL}_LUA${BUNDLED_LUA}_"
+    config_string+="OGG${BUNDLED_OGG_VORBIS}_THEORA${BUNDLED_THEORA}_OPENAL${BUNDLED_OPENAL}_"
+    config_string+="GLEW${BUNDLED_GLEW}_FREETYPE${BUNDLED_FREETYPE}_PNG${BUNDLED_PNG}_"
+    config_string+="SQLITE${BUNDLED_SQLITE3}_OPENSSL${BUNDLED_OPENSSL}_WOLFSSL${BUNDLED_WOLFSSL}_"
+    config_string+="COMMIT_${libs_commit}"
+
+    echo -n "$config_string" | md5sum 2>/dev/null | cut -d' ' -f1 || echo -n "$config_string" | md5 2>/dev/null || echo "nocache"
+}
+
+check_libs_cache() {
+    local cache_hash="$1"
+    local cache_marker="${CACHEDIR}/libs_${cache_hash}.marker"
+
+    if [[ -f "${cache_marker}" ]]; then
+        einfo "Found cached dependencies with hash: ${cache_hash}"
+        return 0
+    fi
+    return 1
+}
+
+create_libs_cache() {
+    local cache_hash="$1"
+    local cache_dir="${CACHEDIR}/libs_${cache_hash}"
+    local cache_marker="${CACHEDIR}/libs_${cache_hash}.marker"
+
+    einfo "Creating dependency cache: ${cache_hash}"
+    mkdir -p "${cache_dir}"
+
+    cd "${BUILDDIR}"
+
+    # Cache all dependency-related directories from the build directory
+    # This includes: libs/, downloads/, legacy/ (for omnibot), etc.
+
+    # Cache ExternalProject build artifacts (use -a to preserve timestamps/permissions)
+    if [[ -d "libs" ]]; then
+        einfo "Caching build artifacts from libs/"
+        cp -a "libs" "${cache_dir}/" 2>/dev/null || true
+    fi
+
+    # Cache CMake's download directory
+    if [[ -d "downloads" ]]; then
+        einfo "Caching downloads/"
+        cp -a "downloads" "${cache_dir}/" 2>/dev/null || true
+    fi
+
+    # Cache legacy directory (contains omnibot downloads)
+    if [[ -d "legacy" ]]; then
+        einfo "Caching legacy/"
+        cp -a "legacy" "${cache_dir}/" 2>/dev/null || true
+    fi
+
+    # Cache etmain directory (may contain downloaded assets)
+    if [[ -d "etmain" ]]; then
+        einfo "Caching etmain/"
+        cp -a "etmain" "${cache_dir}/" 2>/dev/null || true
+    fi
+
+    # Cache CMakeFiles to preserve configuration
+    if [[ -d "CMakeFiles" ]]; then
+        einfo "Caching CMakeFiles/"
+        cp -a "CMakeFiles" "${cache_dir}/" 2>/dev/null || true
+    fi
+
+    # Cache CMake cache file
+    if [[ -f "CMakeCache.txt" ]]; then
+        cp -a "CMakeCache.txt" "${cache_dir}/" 2>/dev/null || true
+    fi
+
+    cd "${_SRC}"
+
+    # Create marker file
+    touch "${cache_marker}"
+    einfo "Cache created successfully"
+}
+
+restore_libs_cache() {
+    local cache_hash="$1"
+    local cache_dir="${CACHEDIR}/libs_${cache_hash}"
+
+    if [[ ! -d "${cache_dir}" ]]; then
+        return 1
+    fi
+
+    einfo "Restoring dependencies from cache: ${cache_hash}"
+
+    # Create build directory if it doesn't exist
+    mkdir -p "${BUILDDIR}"
+
+    cd "${BUILDDIR}"
+
+    # Restore all cached directories (use -a to preserve timestamps/permissions)
+
+    if [[ -d "${cache_dir}/libs" ]]; then
+        einfo "Restoring libs/"
+        cp -a "${cache_dir}/libs" . 2>/dev/null || true
+    fi
+
+    if [[ -d "${cache_dir}/downloads" ]]; then
+        einfo "Restoring downloads/"
+        cp -a "${cache_dir}/downloads" . 2>/dev/null || true
+    fi
+
+    if [[ -d "${cache_dir}/legacy" ]]; then
+        einfo "Restoring legacy/"
+        cp -a "${cache_dir}/legacy" . 2>/dev/null || true
+    fi
+
+    if [[ -d "${cache_dir}/etmain" ]]; then
+        einfo "Restoring etmain/"
+        cp -a "${cache_dir}/etmain" . 2>/dev/null || true
+    fi
+
+    if [[ -d "${cache_dir}/CMakeFiles" ]]; then
+        einfo "Restoring CMakeFiles/"
+        cp -a "${cache_dir}/CMakeFiles" . 2>/dev/null || true
+    fi
+
+    if [[ -f "${cache_dir}/CMakeCache.txt" ]]; then
+        einfo "Restoring CMakeCache.txt"
+        cp -a "${cache_dir}/CMakeCache.txt" . 2>/dev/null || true
+    fi
+
+    cd "${_SRC}"
+
+    einfo "Cache restored successfully"
+    return 0
+}
+
 run_clean() {
     einfo "Clean..."
     if [ -d "${BUILDDIR}" ]; then
@@ -781,6 +925,19 @@ run_clean() {
 }
 
 run_generate() {
+    # Check for cached dependencies before generating
+    # Accept optional cache_hash parameter to avoid recalculating
+    local cache_hash="${1:-}"
+    if [[ -z "$cache_hash" ]]; then
+        cache_hash=$(get_cache_hash)
+    fi
+
+    if check_libs_cache "$cache_hash"; then
+        restore_libs_cache "$cache_hash"
+    else
+        einfo "No cache found, dependencies will be built from scratch"
+    fi
+
     einfo "Generating makefiles: ${MAKEFILE_GENERATOR}..."
     mkdir -p "${BUILDDIR}"
     cd "${BUILDDIR}"
@@ -789,7 +946,18 @@ run_generate() {
 }
 
 run_build() {
-    run_generate
+    local cache_hash
+    cache_hash=$(get_cache_hash)
+    local cache_existed=0
+
+    # Check if we're using cache
+    if check_libs_cache "$cache_hash"; then
+        cache_existed=1
+    fi
+
+    # Pass cache_hash to run_generate to avoid recalculating
+    run_generate "$cache_hash"
+
     einfo "Build..."
     if [ -z "$CMD_ARGS" ]; then
         cmake --build . --config "$RELEASE_TYPE"
@@ -798,6 +966,11 @@ run_build() {
         cmake --build . --config "$RELEASE_TYPE" -- "${CMD_ARGS}"
     fi
     check_exit
+
+    # Create cache if build was successful and cache didn't exist
+    if [ $cache_existed -eq 0 ]; then
+        create_libs_cache "$cache_hash"
+    fi
 }
 
 set_osx_folder_icon_python() {
@@ -943,12 +1116,35 @@ run_watch() {
 }
 
 handle_download() {
-    if [ ! -f "$1" ]; then
-        if [ -f /usr/bin/curl ]; then
-            curl -O "${ETLEGACY_MIRROR}$1"
-        else
-            wget "${ETLEGACY_MIRROR}$1"
-        fi
+    local filename="$1"
+    local download_cache="${CACHEDIR}/downloads"
+
+    mkdir -p "${download_cache}"
+
+    # Check if file already exists in target location
+    if [ -f "${filename}" ]; then
+        einfo "File ${filename} already exists, skipping download"
+        return 0
+    fi
+
+    # Check if file exists in download cache
+    if [ -f "${download_cache}/${filename}" ]; then
+        einfo "Found ${filename} in download cache, copying..."
+        cp "${download_cache}/${filename}" "${filename}"
+        return 0
+    fi
+
+    # Download the file
+    einfo "Downloading ${filename}..."
+    if [ -f /usr/bin/curl ]; then
+        curl -o "${download_cache}/${filename}" "${ETLEGACY_MIRROR}${filename}"
+    else
+        wget -O "${download_cache}/${filename}" "${ETLEGACY_MIRROR}${filename}"
+    fi
+
+    # Copy from cache to target location
+    if [ -f "${download_cache}/${filename}" ]; then
+        cp "${download_cache}/${filename}" "${filename}"
     fi
 }
 
@@ -1006,20 +1202,34 @@ run_license_year_udpate() {
     sed -i "" -E "s/2012\-[0-9]{4}/2012-$(date '+%Y')/g" src/sys/win_resource.rc
 }
 
+run_cleancache() {
+    einfo "Cleaning cache..."
+    if [ -d "${CACHEDIR}" ]; then
+        local cache_size
+        cache_size=$(du -sh "${CACHEDIR}" 2>/dev/null | cut -f1)
+        einfo "Current cache size: ${cache_size}"
+        rm -rf "${CACHEDIR}"
+        einfo "Cache cleaned successfully"
+    else
+        einfo "No cache directory found"
+    fi
+}
+
 print_help() {
     ehead "ET: Legacy Easy Builder Help"
     ehead "==============================="
     ehead "clean - clean up the build"
-    ehead "build - run the build process"
+    ehead "build - run the build process (uses cached dependencies)"
     ehead "generate - generate the build files"
     ehead "package - run the package process"
     ehead "install - install the game into the system"
-    ehead "download - download assets"
+    ehead "download - download assets (cached in ${CACHEDIR}/downloads)"
     ehead "crust - run the uncrustify to the source"
     ehead "project - generate the project files for your platform"
     ehead "release - run the entire release process"
     ehead "updatelicense - update the lisence years for the current year"
     ehead "watch - watch for source code changes and recompile & run tests"
+    ehead "cleancache - remove all cached downloads and compiled dependencies"
     ehead "help - print this help"
     echo
     einfo "Properties"
@@ -1027,6 +1237,11 @@ print_help() {
     ehead "-noextra, -noupdate, -mod, -server, -ninja, -nopk3, -lsp"
     ehead "--build=*, --prefix=*, --osx=* --osx-arc=*"
     ehead "--silent -etpub -jaymod -nq"
+    echo
+    einfo "Caching"
+    ehead "Cache directory: ${CACHEDIR}"
+    ehead "Downloads and dependency compilations are automatically cached"
+    ehead "Use 'cleancache' to clear the cache if you encounter issues"
     echo
 }
 
