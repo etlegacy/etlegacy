@@ -39,6 +39,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/time.h>
 typedef int SOCKET;
 #define closesocket close
 #define INVALID_SOCKET -1
@@ -91,6 +92,7 @@ qboolean HTTP_GetExternalIP(char *ipBuffer, int ipBufferSize)
 		struct timeval          tv;
 		int                     len;
 		int                     j;
+		unsigned int            seed;
 
 		Com_Memset(&hints, 0, sizeof(hints));
 		hints.ai_family   = AF_INET;
@@ -116,7 +118,7 @@ qboolean HTTP_GetExternalIP(char *ipBuffer, int ipBufferSize)
 		*(unsigned short *)&request[0] = htons(0x0001);
 		*(unsigned short *)&request[2] = htons(0x0000);
 		*(unsigned int *)&request[4]   = htonl(0x2112A442);
-		unsigned int seed = Sys_Milliseconds();
+		seed = Sys_Milliseconds();
 		for (j = 8; j < 20; j++)
 		{
 			request[j] = (rand() ^ (seed >> ((j - 8) % 4))) & 0xFF;
