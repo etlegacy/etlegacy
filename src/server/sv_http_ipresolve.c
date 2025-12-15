@@ -91,8 +91,6 @@ qboolean HTTP_GetExternalIP(char *ipBuffer, int ipBufferSize)
 		socklen_t               fromlen;
 		struct timeval          tv;
 		int                     len;
-		int                     j;
-		unsigned int            seed;
 
 		Com_Memset(&hints, 0, sizeof(hints));
 		hints.ai_family   = AF_INET;
@@ -118,11 +116,8 @@ qboolean HTTP_GetExternalIP(char *ipBuffer, int ipBufferSize)
 		*(unsigned short *)&request[0] = htons(0x0001);
 		*(unsigned short *)&request[2] = htons(0x0000);
 		*(unsigned int *)&request[4]   = htonl(0x2112A442);
-		seed = Sys_Milliseconds();
-		for (j = 8; j < 20; j++)
-		{
-			request[j] = (rand() ^ (seed >> ((j - 8) % 4))) & 0xFF;
-		}
+		// Generate 12 random bytes for transaction ID (bytes 8-19)
+		Com_RandomBytes(&request[8], 12);
 
 		if (sendto(sock, (const char *)request, sizeof(request), 0, res->ai_addr, res->ai_addrlen) == SOCKET_ERROR)
 		{
