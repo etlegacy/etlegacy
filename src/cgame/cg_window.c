@@ -491,7 +491,7 @@ void CG_windowDraw(void)
 
 #ifdef FEATURE_MULTIVIEW
 	// Mouse cursor lays on top of everything
-	if (cg.mvTotalClients > 0 && cg.time < cgs.cursorUpdate && fAllowMV)
+	if (cg.mvTotalClients > 0 && cg.time < cgs.cursorTimeout && fAllowMV)
 	{
 		CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
 	}
