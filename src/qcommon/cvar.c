@@ -1842,6 +1842,41 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 }
 
 /**
+ * @brief Registers a VM cvar and attaches a description in a single call
+ * @param[in,out] vmCvar
+ * @param[in] varName
+ * @param[in] defaultValue
+ * @param[in] flags
+ * @param[in] description
+ * @param[in] validate - set to true to have the following args take effect
+ * @param[in] minVal
+ * @param[in] maxVal
+ * @param[in] shouldBeIntegral
+ */
+void Cvar_RegisterExt(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags, const char *description, qboolean validate, float minVal, float maxVal, qboolean shouldBeIntegral)
+{
+	cvar_t *cv;
+	Cvar_Register(vmCvar, varName, defaultValue, flags);
+
+	if (!description || !description[0])
+	{
+		return;
+	}
+
+	cv = Cvar_FindVar(varName);
+
+	if (cv)
+	{
+		Cvar_SetDescription(cv, description);
+	}
+
+	if (validate)
+	{
+		Cvar_CheckRange(cv, minVal, maxVal, shouldBeIntegral);
+	}
+}
+
+/**
  * @brief Updates an interpreted modules' version of a cvar
  * @param[in,out] vmCvar
  */

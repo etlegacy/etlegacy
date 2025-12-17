@@ -50,6 +50,7 @@ static ext_trap_keys_t g_extensionTraps[] =
 	{ "trap_DemoSupport_Legacy",           G_DEMOSUPPORT,            qfalse },
 	{ "trap_SnapshotCallbackExt_Legacy",   G_SNAPSHOT_CALLBACK_EXT,  qfalse },
 	{ "trap_SnapshotSetClientMask_Legacy", G_SNAPSHOT_SETCLIENTMASK, qfalse },
+	{ "trap_Cvar_RegisterExt_Legacy",      G_CVAR_REGISTER_EXT,      qfalse },
 	{ NULL,                                -1,                       qfalse }
 };
 
@@ -446,6 +447,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return Sys_Milliseconds();
 	case G_CVAR_REGISTER:
 		Cvar_Register(VMA(1), VMA(2), VMA(3), args[4]);
+		return 0;
+	case G_CVAR_REGISTER_EXT:
+		Cvar_RegisterExt(VMA(1), VMA(2), VMA(3), args[4], VMA(5), args[6], VMF(7), VMF(8), args[9]);
 		return 0;
 	case G_CVAR_UPDATE:
 		Cvar_Update(VMA(1));

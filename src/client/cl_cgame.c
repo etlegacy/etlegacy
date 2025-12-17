@@ -42,11 +42,12 @@
 
 static ext_trap_keys_t cg_extensionTraps[] =
 {
-	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
-	{ "trap_CommandComplete_Legacy", CG_COMMAND_COMPLETE, qfalse },
-	{ "trap_CmdBackup_Ext_Legacy",   CG_CMDBACKUP_EXT,    qfalse },
-	{ "trap_MatchPaused_Legacy",     CG_MATCHPAUSED,      qfalse },
-	{ NULL,                          -1,                  qfalse }
+	{ "trap_SysFlashWindow_Legacy",   CG_SYS_FLASH_WINDOW,  qfalse },
+	{ "trap_CommandComplete_Legacy",  CG_COMMAND_COMPLETE,  qfalse },
+	{ "trap_CmdBackup_Ext_Legacy",    CG_CMDBACKUP_EXT,     qfalse },
+	{ "trap_MatchPaused_Legacy",      CG_MATCHPAUSED,       qfalse },
+	{ "trap_Cvar_RegisterExt_Legacy", CG_CVAR_REGISTER_EXT, qfalse },
+	{ NULL,                           -1,                   qfalse }
 };
 
 extern botlib_export_t *botlib_export;
@@ -705,6 +706,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return Sys_Milliseconds();
 	case CG_CVAR_REGISTER:
 		Cvar_Register(VMA(1), VMA(2), VMA(3), args[4]);
+		return 0;
+	case CG_CVAR_REGISTER_EXT:
+		Cvar_RegisterExt(VMA(1), VMA(2), VMA(3), args[4], VMA(5), args[6], VMF(7), VMF(8), args[9]);
 		return 0;
 	case CG_CVAR_UPDATE:
 		Cvar_Update(VMA(1));
