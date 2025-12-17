@@ -30,7 +30,7 @@
  */
 /**
  * @file tvg_public.h
- * @brief TVGame module information visible to server (server.h includes this)
+ * @brief TVGame module information (stripped down version of 'g_public.h')
  */
 
 #ifndef INCLUDE_G_PUBLIC_H
@@ -168,7 +168,9 @@ typedef enum
 	///< perform an exact check against inline brush models of non-square shape
 
 /// @todo FIXME: precompiler macros for engine ?
-	G_BOT_ALLOCATE_CLIENT = 36, ///< ( int clientNum );
+// #ifdef FEATURE_OMNIBOT
+	G_BOT_ALLOCATE_CLIENT = 36, ///< ( int clientNum ); -  used by OmniBot
+// #endif
 
 	G_GET_USERCMD = 38, ///< ( int clientNum, usercmd_t *cmd )
 
@@ -225,7 +227,8 @@ typedef enum
 
 	///< engine extensions padding
 	G_TRAP_GETVALUE = COM_TRAP_GETVALUE,
-	G_CVAR_REGISTER_EXT
+
+	G_CVAR_REGISTER_EXT,
 } gameImport_t;
 
 
