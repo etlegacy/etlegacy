@@ -3380,6 +3380,7 @@ int trap_RealTime(qtime_t *qtime);
 
 // console variable interaction
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_RegisterExt(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags, const char *description, qboolean validate, float minVal, float maxVal, qboolean shouldBeIntegral);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
 void trap_Cvar_Set(const char *varName, const char *value);
 void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize);
@@ -3623,6 +3624,7 @@ extern int dll_trap_SysFlashWindow;
 extern int dll_trap_CommandComplete;
 extern int dll_trap_CmdBackup_Ext;
 extern int dll_trap_MatchPaused;
+extern int dll_trap_CvarRegisterExt;
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 

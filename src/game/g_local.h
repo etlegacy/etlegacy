@@ -1816,6 +1816,7 @@ extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
 extern int dll_trap_SnapshotCallbackExt;
 extern int dll_trap_SnapshotSetClientMask;
+extern int dll_trap_CvarRegisterExt;
 
 // g_demo_legacy.c
 void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);
@@ -2023,6 +2024,7 @@ void trap_FS_FCloseFile(fileHandle_t f);
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
 void trap_SendConsoleCommand(int exec_when, const char *text);
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_RegisterExt(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags, const char *description, qboolean validate, float minVal, float maxVal, qboolean shouldBeIntegral);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
 void trap_Cvar_Set(const char *varName, const char *value);
 int trap_Cvar_VariableIntegerValue(const char *varName);
