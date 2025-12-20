@@ -2267,14 +2267,21 @@ void UI_DrawGametypeDescription(rectDef_t *rect, float scale, vec4_t color, floa
 			newLineWidth = 0;
 			continue;
 		}
-		buff[len++] = *p++;
-
-		if (buff[len - 1] == 13)
+		if (len < sizeof(buff) - 1)
 		{
-			buff[len - 1] = ' ';
-		}
+			buff[len++] = *p++;
 
-		buff[len] = '\0';
+			if (buff[len - 1] == 13)
+			{
+				buff[len - 1] = ' ';
+			}
+
+			buff[len] = '\0';
+		}
+		else
+		{
+			p++;  // skip character but don't overflow buffer
+		}
 	}
 }
 
@@ -2389,14 +2396,21 @@ static void UI_DrawCampaignMapDescription(rectDef_t *rect, float scale, vec4_t c
 			newLineWidth = 0;
 			continue;
 		}
-		buff[len++] = *p++;
-
-		if (buff[len - 1] == 13)
+		if (len < sizeof(buff) - 1)
 		{
-			buff[len - 1] = ' ';
-		}
+			buff[len++] = *p++;
 
-		buff[len] = '\0';
+			if (buff[len - 1] == 13)
+			{
+				buff[len - 1] = ' ';
+			}
+
+			buff[len] = '\0';
+		}
+		else
+		{
+			p++;  // skip character but don't overflow buffer
+		}
 	}
 }
 
@@ -2591,14 +2605,21 @@ static void UI_DrawMissionBriefingObjectives(rectDef_t *rect, float scale, vec4_
 			newLineWidth = 0;
 			continue;
 		}
-		buff[len++] = *p++;
-
-		if (buff[len - 1] == 13)
+		if (len < sizeof(buff) - 1)
 		{
-			buff[len - 1] = ' ';
-		}
+			buff[len++] = *p++;
 
-		buff[len] = '\0';
+			if (buff[len - 1] == 13)
+			{
+				buff[len - 1] = ' ';
+			}
+
+			buff[len] = '\0';
+		}
+		else
+		{
+			p++;  // skip character but don't overflow buffer
+		}
 	}
 }
 
@@ -3338,9 +3359,9 @@ static void UI_ParseGLConfig(void)
 			uiInfo.glInfoLines[uiInfo.numGlInfoLines++] = eptr;
 		}
 
-		if (uiInfo.numGlInfoLines == GLINFO_LINES)
+		if (uiInfo.numGlInfoLines >= GLINFO_LINES - 4)
 		{
-			break;  // failsafe
+			break;  // failsafe - leave room for vendor, version, pixelformat and whiteline
 		}
 
 		while (*eptr && *eptr != ' ')

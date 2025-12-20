@@ -577,6 +577,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 	int                 flag;
 	int                 i;
 	size_t              extLen;
+	size_t              nameLen;
 	qboolean            invalid;
 
 	if (filter)
@@ -640,9 +641,11 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 
 		if ((!wantsubs && (flag ^ (findinfo.attrib & _A_SUBDIR))) || (wantsubs && (findinfo.attrib & _A_SUBDIR)))
 		{
+			nameLen = strlen(tmpFilename);
+
 			if (*extension)
 			{
-				if (strlen(tmpFilename) < extLen || Q_stricmp(tmpFilename + strlen(tmpFilename) - extLen, extension))
+				if (nameLen < extLen || Q_stricmp(tmpFilename + nameLen - extLen, extension))
 				{
 					continue; // didn't match
 				}
@@ -652,7 +655,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 			invalid = qfalse;
 			// note: this isn't done in Sys_ListFilteredFiles()
 
-			for (i = 0; i < strlen(tmpFilename); i++)
+			for (i = 0; i < nameLen; i++)
 			{
 				if (tmpFilename[i] <= 31 || tmpFilename[i] >= 127)
 				{

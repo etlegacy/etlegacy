@@ -160,8 +160,9 @@ float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *
 	if (r_lightMap->integer > 1)     // color code by intensity as development tool (FIXME: check range)
 	{
 		//double sumIntensity = 0;
-		float r, g, b, intensity;
-		float out[3] = { 0, 0, 0 };
+		float    r, g, b, intensity;
+		float    out[3] = { 0, 0, 0 };
+		qboolean inverted = (r_lightMap->integer == 3);
 
 		for (j = 0; j < width * height; j++)
 		{
@@ -187,7 +188,7 @@ float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *
 
 			HSVtoRGB(intensity, 1.00, 0.50, out);
 
-			if (r_lightMap->integer == 3)
+			if (inverted)
 			{
 				// Arnout: artists wanted the colours to be inversed
 				pic_out[j * 4 + 0] = (byte)(out[2] * 255);

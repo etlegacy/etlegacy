@@ -1161,9 +1161,15 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 	}
 
 	// display colored charge bar if charge bar isn't full enough
-	barFrac = (cg.time - cg.snap->ps.classWeaponTime) / chargeTime; // FIXME: potential DIV 0 when charge times are set to 0!
-
-	if (barFrac > 1.0f)
+	if (chargeTime > 0)
+	{
+		barFrac = (float)(cg.time - cg.snap->ps.classWeaponTime) / chargeTime;
+		if (barFrac > 1.0f)
+		{
+			barFrac = 1.0f;
+		}
+	}
+	else
 	{
 		barFrac = 1.0f;
 	}

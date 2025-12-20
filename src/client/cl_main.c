@@ -4299,25 +4299,7 @@ qboolean CL_UpdateVisiblePings_f(int source)
 						}
 					}
 
-					// FIXME: Dead code, this part is NEVER REACHED !
-					// j is never >= MAX_PINGREQUESTS due to previous "for" condition j = 0 and j < MAX_PINGREQUESTS
-					if (j >= MAX_PINGREQUESTS)
-					{
-						status = qtrue;
-						for (j = 0; j < MAX_PINGREQUESTS; j++)
-						{
-							if (!cl_pinglist[j].adr.port)
-							{
-								break;
-							}
-						}
-						Com_Memcpy(&cl_pinglist[j].adr, &server[i].adr, sizeof(netadr_t));
-						cl_pinglist[j].start = cls.realtime;
-						cl_pinglist[j].time  = 0;
-						NET_OutOfBandPrint(NS_CLIENT, &cl_pinglist[j].adr, "getinfo xxx");
-						slots++;
 					}
-				}
 				// if the server has a ping higher than cl_maxPing or
 				// the ping packet got lost
 				else if (server[i].ping == 0)

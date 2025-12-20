@@ -1023,7 +1023,10 @@ static void CG_HudEditor_RenderEdit(panel_button_t *button)
 	// FIXME: get proper names and adjust alignment after
 	// !!! NOTE !!!
 	// whitespace after : for spacing
-	Com_sprintf(label, sizeof(label), "%c: ", button->text[strlen(button->text) - 1]);
+	{
+		size_t len = strlen(button->text);
+		Com_sprintf(label, sizeof(label), "%c: ", len > 0 ? button->text[len - 1] : '?');
+	}
 
 	textWidth  = CG_Text_Width_Ext(label, button->font->scalex, 0, button->font->font);
 	textHeight = CG_Text_Height_Ext(label, button->font->scaley, 0, button->font->font);

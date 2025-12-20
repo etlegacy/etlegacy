@@ -282,6 +282,7 @@ static int R_ComputeFogNum(md3Header_t *header, trRefEntity_t *ent)
 	fog_t      *fog;
 	md3Frame_t *md3Frame;
 	vec3_t     localOrigin;
+	float      frameRadius;
 
 	if (tr.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
@@ -291,16 +292,18 @@ static int R_ComputeFogNum(md3Header_t *header, trRefEntity_t *ent)
 	// FIXME: non-normalized axis issues
 	md3Frame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.frame;
 	VectorAdd(ent->e.origin, md3Frame->localOrigin, localOrigin);
+	frameRadius = md3Frame->radius;
+
 	for (i = 1 ; i < tr.world->numfogs ; i++)
 	{
 		fog = &tr.world->fogs[i];
 		for (j = 0 ; j < 3 ; j++)
 		{
-			if (localOrigin[j] - md3Frame->radius >= fog->bounds[1][j])
+			if (localOrigin[j] - frameRadius >= fog->bounds[1][j])
 			{
 				break;
 			}
-			if (localOrigin[j] + md3Frame->radius <= fog->bounds[0][j])
+			if (localOrigin[j] + frameRadius <= fog->bounds[0][j])
 			{
 				break;
 			}

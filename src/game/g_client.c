@@ -1787,9 +1787,10 @@ void ClientUserinfoChanged(int clientNum)
 			if (!g_extendedNames.integer)
 			{
 				unsigned int i;
+				size_t       len = strlen(cs_value);
 
 				// Avoid ext. ASCII chars in the CS
-				for (i = 0; i < strlen(cs_value); ++i)
+				for (i = 0; i < len; ++i)
 				{
 					// extended ASCII chars have values between -128 and 0 (signed char) and the ASCII code flags are 0-31
 					if (cs_value[i] < 32)
@@ -2122,6 +2123,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	qboolean allowGeoIP = qtrue;
 	int      i, tv = 0;
 	int      protocol = 0;
+	size_t   nameLen;
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
@@ -2248,8 +2250,10 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	if (!g_extendedNames.integer)
 	{
+		nameLen = strlen(cs_name);
+
 		// Avoid ext. ASCII chars in the CS
-		for (i = 0; i < strlen(cs_name); ++i)
+		for (i = 0; i < nameLen; ++i)
 		{
 			// extended ASCII chars have values between -128 and 0 (signed char) and the ASCII code flags are 0-31
 			if (cs_name[i] < 32)
@@ -2999,6 +3003,10 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		Com_Memcpy(oldAmmo, client->ps.ammo, sizeof(int) * MAX_WEAPONS);
 		Com_Memcpy(oldAmmoclip, client->ps.ammoclip, sizeof(int) * MAX_WEAPONS);
 		Com_Memcpy(oldWeapons, client->ps.weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
+
+		// Debug: Log weapons bitfield before revive restoration
+		G_DPrintf("Revive DEBUG: Saving weapons - weapons[0]=%d weapons[1]=%d oldWeapon=%d\n",
+		          client->ps.weapons[0], client->ps.weapons[1], oldWeapon);
 	}
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
@@ -3222,9 +3230,17 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	if (revived)
 	{
+		// Debug: Log oldWeapons before restore
+		G_DPrintf("Revive DEBUG: Before restore - oldWeapons[0]=%d oldWeapons[1]=%d, current weapons[0]=%d weapons[1]=%d\n",
+		          oldWeapons[0], oldWeapons[1], client->ps.weapons[0], client->ps.weapons[1]);
+
 		Com_Memcpy(client->ps.ammo, oldAmmo, sizeof(int) * MAX_WEAPONS);
 		Com_Memcpy(client->ps.ammoclip, oldAmmoclip, sizeof(int) * MAX_WEAPONS);
 		Com_Memcpy(client->ps.weapons, oldWeapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
+
+		// Debug: Log weapons after restore
+		G_DPrintf("Revive DEBUG: After restore - weapons[0]=%d weapons[1]=%d\n",
+		          client->ps.weapons[0], client->ps.weapons[1]);
 
 		// if we were in the middle of switching to alt weapon switch to it
 		if (oldWeapon == GetWeaponTableData(oldNextWeapon)->weapAlts)
@@ -3252,6 +3268,10 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 			client->pmext.silencedSideArm = oldSilencedSideArm;
 		}
+
+		// Debug: Log final weapons state after revive
+		G_DPrintf("Revive DEBUG: Final state - weapons[0]=%d weapons[1]=%d ps.weapon=%d\n",
+		          client->ps.weapons[0], client->ps.weapons[1], client->ps.weapon);
 	}
 
 	// client has (almost) no say in weapon selection when spawning

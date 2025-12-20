@@ -116,7 +116,9 @@ shaderProgram_t *R_CreateShaderProgram(const char *vert, const char *frag)
 			compiler_log = (GLchar *) Com_Allocate(blen);
 
 			glGetInfoLogARB(program->vertexShader, blen, &slen, compiler_log);
-			Ren_Fatal("Failed to compile the gamma vertex shader reason: %s\n", compiler_log);
+			Ren_Print("Failed to compile the gamma vertex shader reason: %s\n", compiler_log);
+			Com_Dealloc(compiler_log);
+			Ren_Fatal("Failed to compile the gamma vertex shader\n");
 		}
 		else
 		{

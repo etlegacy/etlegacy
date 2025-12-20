@@ -401,7 +401,14 @@ bot_debugpoly_t *BotImport_GetFreeDebugPolygon(void)
  */
 void BotImport_DebugPolygonShow(int id, int color, int numPoints, vec3_t *points)
 {
-	bot_debugpoly_t *poly = &debugpolygons[id];
+	bot_debugpoly_t *poly;
+
+	if (id < 0 || id >= MAX_DEBUGPOLYS)
+	{
+		return;
+	}
+
+	poly = &debugpolygons[id];
 
 	poly->inuse     = qtrue;
 	poly->color     = color;
@@ -415,6 +422,11 @@ void BotImport_DebugPolygonShow(int id, int color, int numPoints, vec3_t *points
  */
 void BotImport_DebugPolygonDelete(int id)
 {
+	if (id < 0 || id >= MAX_DEBUGPOLYS)
+	{
+		return;
+	}
+
 	debugpolygons[id].inuse = qfalse;
 }
 

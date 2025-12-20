@@ -482,7 +482,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 
 		if ((cg_locations.integer & LOC_SHOWCOORDS) && locValid)
 		{
-			Q_strcat(locStr, 64, va(" ^3(%s)", BG_GetLocationString(origin[0], origin[1])));   // append a location
+			locStr = va("%s ^3(%s)", locStr, BG_GetLocationString(origin[0], origin[1]));
 		}
 	}
 	else
@@ -562,7 +562,7 @@ void CG_LoadLocations(void)
 			else if (fBuffer[p] == '*')
 			{
 				p++;
-				while (p < fLen && (fBuffer[p] != '*' && fBuffer[p + 1] != '/'))
+				while (p + 1 < fLen && !(fBuffer[p] == '*' && fBuffer[p + 1] == '/'))
 				{
 					p++;
 				}
@@ -573,7 +573,7 @@ void CG_LoadLocations(void)
 		while (p < fLen && (fBuffer[p] != '\n' && fBuffer[p] != '\r'))
 		{
 			// grab the x-coord
-			while (p < fLen && fBuffer[p] != ' ')
+			while (p < fLen && fBuffer[p] != ' ' && t < sizeof(temp) - 1)
 			{
 				temp[t++] = fBuffer[p++];
 			}
@@ -590,7 +590,7 @@ void CG_LoadLocations(void)
 			p++;
 
 			// grab the y-coord
-			while (p < fLen && fBuffer[p] != ' ')
+			while (p < fLen && fBuffer[p] != ' ' && t < sizeof(temp) - 1)
 			{
 				temp[t++] = fBuffer[p++];
 			}
@@ -607,7 +607,7 @@ void CG_LoadLocations(void)
 			p++;
 
 			// grab the z-coord
-			while (p < fLen && fBuffer[p] != ' ')
+			while (p < fLen && fBuffer[p] != ' ' && t < sizeof(temp) - 1)
 			{
 				temp[t++] = fBuffer[p++];
 			}
@@ -624,7 +624,7 @@ void CG_LoadLocations(void)
 			p++;
 
 			// grab the description
-			while (p < fLen && fBuffer[p] != '\n' && fBuffer[p] != '\r')
+			while (p < fLen && fBuffer[p] != '\n' && fBuffer[p] != '\r' && t < sizeof(temp) - 1)
 			{
 				// ignore quotation marks
 				if (fBuffer[p] != '\"')

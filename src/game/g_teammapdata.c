@@ -978,8 +978,7 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 		al_cnt++;
 	}
 
-	// Data setup
-	// FIXME: Find out why objective counts are reset to zero when a new player connects
+	// Data setup - counts may be zero if mapEntityData lists are empty on new player connect
 	if (ax_cnt > 0 || al_cnt > 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "entnfo %i %i", ax_cnt, al_cnt);

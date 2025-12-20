@@ -3580,11 +3580,6 @@ qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetWinner: Invalid team number\n");
 	}
 
-	if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		num = -1;   // FIXME: never read
-	}
-
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 
 	Info_SetValueForKey(cs, "w", token);
@@ -4592,7 +4587,8 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 		{
 			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
-		cvarValue |= (1 << Q_atoi(token));    // FIXME: cvarValue is never read
+		cvarValue |= (1 << Q_atoi(token));
+		trap_Cvar_Set(cvarName, va("%i", cvarValue));
 	}
 	else if (!Q_stricmp(lastToken, "bitreset"))
 	{
@@ -4600,7 +4596,8 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 		{
 			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
 		}
-		cvarValue &= ~(1 << Q_atoi(token));   // FIXME: cvarValue is never read
+		cvarValue &= ~(1 << Q_atoi(token));
+		trap_Cvar_Set(cvarName, va("%i", cvarValue));
 	}
 	else if (!Q_stricmp(lastToken, "abort_if_bitset"))
 	{
@@ -4632,7 +4629,8 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 		{
 			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
-		cvarValue = Q_atoi(token);    // FIXME: cvarValue is never read
+		cvarValue = Q_atoi(token);
+		trap_Cvar_Set(cvarName, va("%i", cvarValue));
 	}
 	else if (!Q_stricmp(lastToken, "random"))
 	{
@@ -4650,7 +4648,8 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 			G_Error("G_ScriptAction_Cvar: cvar %s requires a random parameter <> 0\n", lastToken);
 		}
 
-		cvarValue = rand() % randomValue;   // FIXME: cvarValue is never read
+		cvarValue = rand() % randomValue;
+		trap_Cvar_Set(cvarName, va("%i", cvarValue));
 	}
 	else if (!Q_stricmp(lastToken, "trigger_if_equal"))
 	{

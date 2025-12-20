@@ -456,7 +456,7 @@ char *Sys_Cwd(void)
 	cwd[MAX_OSPATH - 1] = 0;
 #else
 	Q_strncpyz(cwd, SDL_AndroidGetExternalStoragePath(), sizeof(cwd));
-	Q_strcat(cwd, sizeof(homePath), "/etlegacy");
+	Q_strcat(cwd, sizeof(cwd), "/etlegacy");
 #endif
 	return cwd;
 }
@@ -557,6 +557,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 	int           i;
 	struct stat   st;
 	int           extLen;
+	size_t        nameLen;
 	qboolean      invalid;
 
 	if (filter)
@@ -617,9 +618,11 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 			continue;
 		}
 
+		nameLen = strlen(d->d_name);
+
 		if (*extension)
 		{
-			if (strlen(d->d_name) < extLen || Q_stricmp(d->d_name + strlen(d->d_name) - extLen, extension))
+			if (nameLen < extLen || Q_stricmp(d->d_name + nameLen - extLen, extension))
 			{
 				continue; // didn't match
 			}
@@ -629,7 +632,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 		invalid = qfalse;
 		// note: this isn't done in Sys_ListFilteredFiles()
 
-		for (i = 0; i < strlen(d->d_name); i++)
+		for (i = 0; i < nameLen; i++)
 		{
 			if (d->d_name[i] <= 31 || d->d_name[i] >= 127)
 			{

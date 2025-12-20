@@ -801,7 +801,10 @@ void G_SendMatchInfo(gentity_t *ent)
  */
 static ID_INLINE void G_SaveMatchInfo(gentity_t *ent, char *cmd)
 {
-	Q_strncpyz(ent->client->scores[ent->client->scoresCount++], cmd, sizeof(ent->client->scores[0]));
+	if (ent->client->scoresCount < MAX_SCORES_CMDS)
+	{
+		Q_strncpyz(ent->client->scores[ent->client->scoresCount++], cmd, sizeof(ent->client->scores[0]));
+	}
 }
 
 #define SMI(cmd) G_SaveMatchInfo(ent, cmd)

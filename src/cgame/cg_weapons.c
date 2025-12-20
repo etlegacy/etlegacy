@@ -101,7 +101,7 @@ static void CG_Transform(refEntity_t *ref, float scale, float trnsl1, float trns
 	static vec3_t vec1, vec2, vec3;
 
 	// scale
-	if (scale != 0.0 || scale != 1.0)
+	if (scale != 0.0 && scale != 1.0)
 	{
 		VectorScale(ref->axis[0], scale, ref->axis[0]);
 		VectorScale(ref->axis[1], scale, ref->axis[1]);

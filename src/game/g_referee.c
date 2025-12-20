@@ -802,15 +802,20 @@ void G_RemoveShoutcaster(gentity_t *ent)
 		// unfollow player if team is spec locked
 		if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 		{
-			int spectatorClientTeam = level.clients[ent->client->sess.spectatorClient].sess.sessionTeam;
+			int specClient = ent->client->sess.spectatorClient;
 
-			if (spectatorClientTeam == TEAM_AXIS && teamInfo[TEAM_AXIS].spec_lock)
+			if (specClient >= 0 && specClient < level.maxclients)
 			{
-				StopFollowing(ent);
-			}
-			else if (spectatorClientTeam == TEAM_ALLIES && teamInfo[TEAM_ALLIES].spec_lock)
-			{
-				StopFollowing(ent);
+				int spectatorClientTeam = level.clients[specClient].sess.sessionTeam;
+
+				if (spectatorClientTeam == TEAM_AXIS && teamInfo[TEAM_AXIS].spec_lock)
+				{
+					StopFollowing(ent);
+				}
+				else if (spectatorClientTeam == TEAM_ALLIES && teamInfo[TEAM_ALLIES].spec_lock)
+				{
+					StopFollowing(ent);
+				}
 			}
 		}
 	}

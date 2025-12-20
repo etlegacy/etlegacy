@@ -4014,7 +4014,6 @@ void RB_RenderEntityOcclusionQueries()
 		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
 			backEnd.pc.c_occlusionQueriesResponseTime = ri.Milliseconds() - startTime;
-			startTime                                 = ri.Milliseconds();  // FIXME: never read
 		}
 
 		// go back to the world modelview matrix
@@ -4867,6 +4866,7 @@ static void RB_RenderDebugUtils()
 		vec4_t               tetraVerts[4];
 		static refSkeleton_t skeleton;
 		refSkeleton_t        *skel;
+		size_t               nameLen;
 
 		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
@@ -5024,7 +5024,8 @@ static void RB_RenderDebugUtils()
 							VectorSubtract(vec3_origin, left, left);
 						}
 
-						for (k = 0; k < strlen(skel->bones[j].name); k++)
+						nameLen = strlen(skel->bones[j].name);
+						for (k = 0; k < nameLen; k++)
 						{
 							int   ch;
 							int   row, col;

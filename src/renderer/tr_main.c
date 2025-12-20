@@ -722,9 +722,11 @@ void R_SetFrameFog(void)
 	}
 	else
 	{
-		// probably usually not necessary to copy the whole thing.
-		// potential FIXME: since this is the most common occurance, diff first and only set changes
-		Com_Memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
+		// Only copy if fog settings have actually changed (common case: no change)
+		if (Com_Memcmp(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t)) != 0)
+		{
+			Com_Memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
+		}
 	}
 
 	// shorten the far clip if the fog opaque distance is closer than the procedural farcip dist
@@ -843,9 +845,23 @@ static void SetFarClip(void)
 void R_SetupFrustum(void)
 {
 	int   i;
-	float ang = (float)(tr.viewParms.fovX / 180 * M_PI * 0.5);
-	float xs  = (float)(sin(ang));
-	float xc  = (float)(cos(ang));
+	float xs, xc, ys, yc;
+
+	// cache sin/cos for fovX - avoid recalculating when FOV unchanged
+	{
+		static float lastFovX = 0.0f;
+		static float cachedXs = 0.0f, cachedXc = 1.0f;
+
+		if (tr.viewParms.fovX != lastFovX)
+		{
+			float ang = (float)(tr.viewParms.fovX / 180 * M_PI * 0.5);
+			cachedXs = (float)(sin(ang));
+			cachedXc = (float)(cos(ang));
+			lastFovX = tr.viewParms.fovX;
+		}
+		xs = cachedXs;
+		xc = cachedXc;
+	}
 
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustum[0].normal);
 	VectorMA(tr.viewParms.frustum[0].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustum[0].normal);
@@ -853,15 +869,27 @@ void R_SetupFrustum(void)
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustum[1].normal);
 	VectorMA(tr.viewParms.frustum[1].normal, -xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustum[1].normal);
 
-	ang = (float)(tr.viewParms.fovY / 180 * M_PI * 0.5);
-	xs  = (float)(sin(ang));
-	xc  = (float)(cos(ang));
+	// cache sin/cos for fovY - avoid recalculating when FOV unchanged
+	{
+		static float lastFovY = 0.0f;
+		static float cachedYs = 0.0f, cachedYc = 1.0f;
 
-	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustum[2].normal);
-	VectorMA(tr.viewParms.frustum[2].normal, xc, tr.viewParms.orientation.axis[2], tr.viewParms.frustum[2].normal);
+		if (tr.viewParms.fovY != lastFovY)
+		{
+			float ang = (float)(tr.viewParms.fovY / 180 * M_PI * 0.5);
+			cachedYs = (float)(sin(ang));
+			cachedYc = (float)(cos(ang));
+			lastFovY = tr.viewParms.fovY;
+		}
+		ys = cachedYs;
+		yc = cachedYc;
+	}
 
-	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustum[3].normal);
-	VectorMA(tr.viewParms.frustum[3].normal, -xc, tr.viewParms.orientation.axis[2], tr.viewParms.frustum[3].normal);
+	VectorScale(tr.viewParms.orientation.axis[0], ys, tr.viewParms.frustum[2].normal);
+	VectorMA(tr.viewParms.frustum[2].normal, yc, tr.viewParms.orientation.axis[2], tr.viewParms.frustum[2].normal);
+
+	VectorScale(tr.viewParms.orientation.axis[0], ys, tr.viewParms.frustum[3].normal);
+	VectorMA(tr.viewParms.frustum[3].normal, -yc, tr.viewParms.orientation.axis[2], tr.viewParms.frustum[3].normal);
 
 	for (i = 0; i < 4; i++)
 	{
@@ -1192,7 +1220,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, int entityNum,
 static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 {
 	int           i;
-	cplane_t      originalPlane, plane;
+	cplane_t      originalPlane;
 	trRefEntity_t *e;
 	float         d;
 
@@ -1208,17 +1236,8 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 		// get the orientation of the entity
 		R_RotateForEntity(tr.currentEntity, &tr.viewParms, &tr.orientation);
 
-		// rotate the plane, but keep the non-rotated version for matching
-		// against the portalSurface entities
-		R_LocalNormalToWorld(originalPlane.normal, plane.normal);
-		plane.dist = originalPlane.dist + DotProduct(plane.normal, tr.orientation.origin);  // FIXME: plane is never read
-
 		// translate the original plane
 		originalPlane.dist = originalPlane.dist + DotProduct(originalPlane.normal, tr.orientation.origin);
-	}
-	else
-	{
-		plane = originalPlane;  // FIXME: never read
 	}
 
 	// locate the portal entity closest to this plane.

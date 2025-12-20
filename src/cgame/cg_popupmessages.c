@@ -423,9 +423,12 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[stackNum][0].message));
 
 	// print and THEN chop off the newline, as the console deals with newlines perfectly
-	if (listItem->message[strlen(listItem->message) - 1] == '\n')
 	{
-		listItem->message[strlen(listItem->message) - 1] = 0;
+		size_t len = strlen(listItem->message);
+		if (len > 0 && listItem->message[len - 1] == '\n')
+		{
+			listItem->message[len - 1] = 0;
+		}
 	}
 
 	// do not write obituary popups into console - we'll get double kill-messages otherwise
@@ -449,9 +452,12 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 	{
 		Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStack[stackNum][0].message2));
 
-		if (listItem->message[strlen(listItem->message2) - 1] == '\n')
 		{
-			listItem->message[strlen(listItem->message2) - 1] = 0;
+			size_t len = strlen(listItem->message2);
+			if (len > 0 && listItem->message2[len - 1] == '\n')
+			{
+				listItem->message2[len - 1] = 0;
+			}
 		}
 
 		while ((end = strchr(listItem->message2, '\n')))
@@ -667,9 +673,12 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 	Q_strncpyz(listItem->message, message, sizeof(cg_pmStackXP[0].message));
 
 	// print and THEN chop off the newline, as the console deals with newlines perfectly
-	if (listItem->message[strlen(listItem->message) - 1] == '\n')
 	{
-		listItem->message[strlen(listItem->message) - 1] = 0;
+		size_t len = strlen(listItem->message);
+		if (len > 0 && listItem->message[len - 1] == '\n')
+		{
+			listItem->message[len - 1] = 0;
+		}
 	}
 
 	// chop off the newline at the end if any
@@ -691,9 +700,9 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 		Q_strncpyz(listItem->message2, message2, sizeof(cg_pmStackXP[0].message2));
 
 		/*
-		if (listItem->message[strlen(listItem->message2) - 1] == '\n')
+		if (listItem->message2[strlen(listItem->message2) - 1] == '\n')
 		{
-			listItem->message[strlen(listItem->message2) - 1] = 0;
+			listItem->message2[strlen(listItem->message2) - 1] = 0;
 		}
 
 		while ((end = strchr(listItem->message2, '\n')))

@@ -431,6 +431,11 @@ void FreeMemory(void *ptr)
 {
 	unsigned long int *memid;
 
+	if (!ptr)
+	{
+		return;
+	}
+
 	memid = (unsigned long int *) ((char *) ptr - sizeof(unsigned long int));
 
 	if (*memid == MEM_ID)

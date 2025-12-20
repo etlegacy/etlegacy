@@ -1073,7 +1073,7 @@ static void _et_getusercmd(lua_State *L, usercmd_t *cmd)
 	lua_rawseti(L, -2, 1);
 	lua_pushinteger(L, cmd->angles[1]);
 	lua_rawseti(L, -2, 2);
-	lua_pushinteger(L, cmd->angles[1]);
+	lua_pushinteger(L, cmd->angles[2]);
 	lua_rawseti(L, -2, 3);
 	lua_setfield(L, -2, "angles");
 

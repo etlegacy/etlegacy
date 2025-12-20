@@ -1573,6 +1573,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 	else
 	{
 		int *collapseEnd;
+		glIndex_t *pIndexesStart = pIndexes;
 
 		pCollapse = collapse;
 		for (j = 0; j < render_count; pCollapse++, j++)
@@ -1592,21 +1593,20 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 			p1 = collapse[*(triangles++)];
 			p2 = collapse[*(triangles++)];
 
-			// FIXME
-			// note:  serious optimization opportunity here,
-			//  by sorting the triangles the following "continue"
-			//  could have been made into a "break" statement.
+			// Note: sorting triangles at load time would allow breaking early here,
+			// but that requires model format changes. For now, skip degenerate triangles.
 			if (p0 == p1 || p1 == p2 || p2 == p0)
 			{
 				continue;
 			}
 
-			*(pIndexes++)    = baseVertex + p0;
-			*(pIndexes++)    = baseVertex + p1;
-			*(pIndexes++)    = baseVertex + p2;
-			tess.numIndexes += 3;
+			*(pIndexes++) = baseVertex + p0;
+			*(pIndexes++) = baseVertex + p1;
+			*(pIndexes++) = baseVertex + p2;
 		}
 
+		// Batch update: calculate added indices from pointer difference
+		tess.numIndexes += (int)(pIndexes - pIndexesStart);
 		baseIndex = tess.numIndexes;
 	}
 

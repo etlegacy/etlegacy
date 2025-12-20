@@ -247,25 +247,24 @@ void RB_CalcDeformNormals(deformStage_t *ds)
 {
 	int    i;
 	double scale;
-	float  *xyz    = ( float * ) tess.xyz;
-	float  *normal = ( float * ) tess.normal;
+	double timeFreq  = tess.shaderTime * ds->deformationWave.frequency;
+	float  amplitude = ds->deformationWave.amplitude;
+	float  *xyz      = ( float * ) tess.xyz;
+	float  *normal   = ( float * ) tess.normal;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
 	{
 		scale = 0.98;
-		scale = R_NoiseGet4f(xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-		                     tess.shaderTime * ds->deformationWave.frequency);
-		normal[0] += ds->deformationWave.amplitude * scale;
+		scale = R_NoiseGet4f(xyz[0] * scale, xyz[1] * scale, xyz[2] * scale, timeFreq);
+		normal[0] += amplitude * scale;
 
 		scale = 0.98;
-		scale = R_NoiseGet4f(100 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-		                     tess.shaderTime * ds->deformationWave.frequency);
-		normal[1] += ds->deformationWave.amplitude * scale;
+		scale = R_NoiseGet4f(100 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale, timeFreq);
+		normal[1] += amplitude * scale;
 
 		scale = 0.98;
-		scale = R_NoiseGet4f(200 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-		                     tess.shaderTime * ds->deformationWave.frequency);
-		normal[2] += ds->deformationWave.amplitude * scale;
+		scale = R_NoiseGet4f(200 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale, timeFreq);
+		normal[2] += amplitude * scale;
 
 		VectorNormalizeFast(normal);
 	}
@@ -278,17 +277,19 @@ void RB_CalcDeformNormals(deformStage_t *ds)
 void RB_CalcBulgeVertexes(deformStage_t *ds)
 {
 	int         i;
-	const float *st     = ( const float * ) tess.texCoords[0];
-	float       *xyz    = ( float * ) tess.xyz;
-	float       *normal = ( float * ) tess.normal;
-	double      now     = backEnd.refdef.time * 0.001 * ds->bulgeSpeed;
+	const float *st         = ( const float * ) tess.texCoords[0];
+	float       *xyz        = ( float * ) tess.xyz;
+	float       *normal     = ( float * ) tess.normal;
+	double      now         = backEnd.refdef.time * 0.001 * ds->bulgeSpeed;
+	float       bulgeWidth  = ds->bulgeWidth;
+	float       bulgeHeight = ds->bulgeHeight;
 	int64_t     off;
 	float       scale;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4)
 	{
-		off   = (FUNCTABLE_SIZE / M_TAU_F) * (st[0] * ds->bulgeWidth + now);
-		scale = tr.sinTable[off & FUNCTABLE_MASK] * ds->bulgeHeight;
+		off   = (FUNCTABLE_SIZE / M_TAU_F) * (st[0] * bulgeWidth + now);
+		scale = tr.sinTable[off & FUNCTABLE_MASK] * bulgeHeight;
 
 		xyz[0] += normal[0] * scale;
 		xyz[1] += normal[1] * scale;
@@ -416,13 +417,15 @@ void GlobalVectorToLocal(const vec3_t in, vec3_t out)
  */
 static void AutospriteDeform(void)
 {
-	int    i;
-	int    oldVerts;
-	float  *xyz;
-	vec3_t mid, delta;
-	float  radius;
-	vec3_t left, up;
-	vec3_t leftDir, upDir;
+	int      i;
+	int      oldVerts;
+	float    *xyz;
+	vec3_t   mid, delta;
+	float    radius;
+	vec3_t   left, up;
+	vec3_t   leftDir, upDir;
+	qboolean needsAxisScale;
+	float    axisScale = 1.0f;
 
 	if (tess.numVertexes & 3)
 	{
@@ -448,6 +451,14 @@ static void AutospriteDeform(void)
 		VectorCopy(backEnd.viewParms.orientation.axis[2], upDir);
 	}
 
+	// cache entity axis scale outside loop
+	needsAxisScale = backEnd.currentEntity->e.nonNormalizedAxes;
+	if (needsAxisScale)
+	{
+		float axisLength = VectorLength(backEnd.currentEntity->e.axis[0]);
+		axisScale = (axisLength != 0.f) ? 1.0f / axisLength : 0.f;
+	}
+
 	for (i = 0 ; i < oldVerts ; i += 4)
 	{
 		// find the midpoint
@@ -469,21 +480,10 @@ static void AutospriteDeform(void)
 		}
 
 		// compensate for scale in the axes if necessary
-		if (backEnd.currentEntity->e.nonNormalizedAxes)
+		if (needsAxisScale)
 		{
-			float axisLength;
-
-			axisLength = VectorLength(backEnd.currentEntity->e.axis[0]);
-			if (axisLength == 0.f)
-			{
-				axisLength = 0;
-			}
-			else
-			{
-				axisLength = 1.0f / axisLength;
-			}
-			VectorScale(left, axisLength, left);
-			VectorScale(up, axisLength, up);
+			VectorScale(left, axisScale, left);
+			VectorScale(up, axisScale, up);
 		}
 
 		RB_AddQuadStamp(mid, left, up, tess.vertexColors[i]);
@@ -734,18 +734,20 @@ void RB_CalcColorFromOneMinusEntity(unsigned char *colors)
  */
 void RB_CalcAlphaFromEntity(unsigned char *colors)
 {
-	int i;
+	int           i;
+	unsigned char alpha;
 
 	if (!backEnd.currentEntity)
 	{
 		return;
 	}
 
+	alpha   = backEnd.currentEntity->e.shaderRGBA[3];
 	colors += 3;
 
 	for (i = 0; i < tess.numVertexes; i++, colors += 4)
 	{
-		*colors = backEnd.currentEntity->e.shaderRGBA[3];
+		*colors = alpha;
 	}
 }
 
@@ -755,18 +757,20 @@ void RB_CalcAlphaFromEntity(unsigned char *colors)
  */
 void RB_CalcAlphaFromOneMinusEntity(unsigned char *colors)
 {
-	int i;
+	int           i;
+	unsigned char invAlpha;
 
 	if (!backEnd.currentEntity)
 	{
 		return;
 	}
 
-	colors += 3;
+	invAlpha = 0xff - backEnd.currentEntity->e.shaderRGBA[3];
+	colors  += 3;
 
 	for (i = 0; i < tess.numVertexes; i++, colors += 4)
 	{
-		*colors = 0xff - backEnd.currentEntity->e.shaderRGBA[3];
+		*colors = invAlpha;
 	}
 }
 

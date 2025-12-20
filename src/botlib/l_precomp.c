@@ -432,8 +432,13 @@ int PC_MergeTokens(token_t *t1, token_t *t2)
 	// merging of two strings
 	if (t1->type == TT_STRING && t2->type == TT_STRING)
 	{
-		// remove trailing double quote
-		t1->string[strlen(t1->string) - 1] = '\0';
+		size_t len = strlen(t1->string);
+
+		if (len > 0)
+		{
+			// remove trailing double quote
+			t1->string[len - 1] = '\0';
+		}
 		// concat without leading double quote
 		Q_strcat(t1->string, sizeof(t1->string), &t2->string[1]);
 		return qtrue;
@@ -3028,7 +3033,12 @@ int PC_ReadToken(source_t *source, token_t *token)
 			{
 				if (newtoken.type == TT_STRING)
 				{
-					token->string[strlen(token->string) - 1] = '\0';
+					size_t len = strlen(token->string);
+
+					if (len > 0)
+					{
+						token->string[len - 1] = '\0';
+					}
 					if (strlen(token->string) + strlen(newtoken.string + 1) + 1 >= MAX_TOKEN)
 					{
 						SourceError(source, "string longer than MAX_TOKEN %d\n", MAX_TOKEN);
@@ -3655,7 +3665,14 @@ void PC_CheckOpenSourceHandles(void)
 	{
 		if (sourceFiles[i])
 		{
-			botimport.Print(PRT_ERROR, "file %s still open in precompiler\n", sourceFiles[i]->scriptstack->filename);
+			if (sourceFiles[i]->scriptstack)
+			{
+				botimport.Print(PRT_ERROR, "file %s still open in precompiler\n", sourceFiles[i]->scriptstack->filename);
+			}
+			else
+			{
+				botimport.Print(PRT_ERROR, "file (unknown) still open in precompiler\n");
+			}
 		}
 	}
 }

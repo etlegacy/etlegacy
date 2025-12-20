@@ -1443,65 +1443,72 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
  * @param[in] refent
  * @return
  *
- * @todo FIXME: optimization opportunity here, profile which values change most often and check for those first to get early outs
- *
- * Other way we could do this is doing a random memory probe, which in worst case scenario ends up being the memcmp? - BAD as only a few values are used
- *
- * Another solution: bones cache on an entity basis?
+ * @note Checks are ordered by likelihood of change for early exit optimization.
+ *       Frame values change most frequently (every animation tick), followed by
+ *       interpolation values, then model handles and flags which rarely change.
  */
 static qboolean R_BonesStillValid(const refEntity_t *refent)
 {
+	// Most likely to change: frame indices (change every animation tick)
+	if (lastBoneEntity.frame != refent->frame)
+	{
+		return qfalse;
+	}
+	if (lastBoneEntity.oldframe != refent->oldframe)
+	{
+		return qfalse;
+	}
+	if (lastBoneEntity.torsoFrame != refent->torsoFrame)
+	{
+		return qfalse;
+	}
+	if (lastBoneEntity.oldTorsoFrame != refent->oldTorsoFrame)
+	{
+		return qfalse;
+	}
+
+	// Interpolation values change frequently during animation blending
+	if (lastBoneEntity.backlerp != refent->backlerp)
+	{
+		return qfalse;
+	}
+	if (lastBoneEntity.torsoBacklerp != refent->torsoBacklerp)
+	{
+		return qfalse;
+	}
+
+	// Torso axis changes when character turns (less frequent than frames)
+	if (!VectorCompare(lastBoneEntity.torsoAxis[0], refent->torsoAxis[0]) ||
+	    !VectorCompare(lastBoneEntity.torsoAxis[1], refent->torsoAxis[1]) ||
+	    !VectorCompare(lastBoneEntity.torsoAxis[2], refent->torsoAxis[2]))
+	{
+		return qfalse;
+	}
+
+	// Model handles rarely change (only on model swap)
 	if (lastBoneEntity.hModel != refent->hModel)
 	{
 		return qfalse;
 	}
-	else if (lastBoneEntity.frame != refent->frame)
+	if (lastBoneEntity.frameModel != refent->frameModel)
 	{
 		return qfalse;
 	}
-	else if (lastBoneEntity.oldframe != refent->oldframe)
+	if (lastBoneEntity.oldframeModel != refent->oldframeModel)
 	{
 		return qfalse;
 	}
-	else if (lastBoneEntity.frameModel != refent->frameModel)
+	if (lastBoneEntity.torsoFrameModel != refent->torsoFrameModel)
 	{
 		return qfalse;
 	}
-	else if (lastBoneEntity.oldframeModel != refent->oldframeModel)
+	if (lastBoneEntity.oldTorsoFrameModel != refent->oldTorsoFrameModel)
 	{
 		return qfalse;
 	}
-	else if (lastBoneEntity.backlerp != refent->backlerp)
-	{
-		return qfalse;
-	}
-	else if (lastBoneEntity.torsoFrame != refent->torsoFrame)
-	{
-		return qfalse;
-	}
-	else if (lastBoneEntity.oldTorsoFrame != refent->oldTorsoFrame)
-	{
-		return qfalse;
-	}
-	else if (lastBoneEntity.torsoFrameModel != refent->torsoFrameModel)
-	{
-		return qfalse;
-	}
-	else if (lastBoneEntity.oldTorsoFrameModel != refent->oldTorsoFrameModel)
-	{
-		return qfalse;
-	}
-	else if (lastBoneEntity.torsoBacklerp != refent->torsoBacklerp)
-	{
-		return qfalse;
-	}
-	else if (lastBoneEntity.reFlags != refent->reFlags)
-	{
-		return qfalse;
-	}
-	else if (!VectorCompare(lastBoneEntity.torsoAxis[0], refent->torsoAxis[0]) ||
-	         !VectorCompare(lastBoneEntity.torsoAxis[1], refent->torsoAxis[1]) ||
-	         !VectorCompare(lastBoneEntity.torsoAxis[2], refent->torsoAxis[2]))
+
+	// Render flags very rarely change
+	if (lastBoneEntity.reFlags != refent->reFlags)
 	{
 		return qfalse;
 	}
@@ -1814,6 +1821,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 	else
 	{
 		int *collapseEnd;
+		glIndex_t *pIndexesStart = pIndexes;
 
 		pCollapse = collapse;
 		for (j = 0; j < render_count; pCollapse++, j++)
@@ -1833,21 +1841,20 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 			p1 = collapse[*(triangles++)];
 			p2 = collapse[*(triangles++)];
 
-			// FIXME
-			// note:  serious optimization opportunity here,
-			//  by sorting the triangles the following "continue"
-			//  could have been made into a "break" statement.
+			// Note: sorting triangles at load time would allow breaking early here,
+			// but that requires model format changes. For now, skip degenerate triangles.
 			if (p0 == p1 || p1 == p2 || p2 == p0)
 			{
 				continue;
 			}
 
-			*(pIndexes++)    = baseVertex + p0;
-			*(pIndexes++)    = baseVertex + p1;
-			*(pIndexes++)    = baseVertex + p2;
-			tess.numIndexes += 3;
+			*(pIndexes++) = baseVertex + p0;
+			*(pIndexes++) = baseVertex + p1;
+			*(pIndexes++) = baseVertex + p2;
 		}
 
+		// Batch update: calculate added indices from pointer difference
+		tess.numIndexes += (int)(pIndexes - pIndexesStart);
 		baseIndex = tess.numIndexes;
 	}
 

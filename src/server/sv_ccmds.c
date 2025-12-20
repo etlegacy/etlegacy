@@ -585,8 +585,14 @@ static void SV_ConSay_f(void)
 
 	if (*p == '"')
 	{
+		size_t len;
+
 		p++;
-		p[strlen(p) - 1] = '\0';
+		len = strlen(p);
+		if (len > 0)
+		{
+			p[len - 1] = '\0';
+		}
 	}
 
 	Q_strcat(text, sizeof(text), p);

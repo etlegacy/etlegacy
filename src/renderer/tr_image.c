@@ -1434,9 +1434,12 @@ void R_SetColorMappings(void)
 		s_gammatable[i] = ClampByte(inf);
 	}
 
-	for (i = 0 ; i < 256 ; i++)
 	{
-		s_intensitytable[i] = ClampByte((int)(i * r_intensity->value));
+		float intensity = r_intensity->value;
+		for (i = 0 ; i < 256 ; i++)
+		{
+			s_intensitytable[i] = ClampByte((int)(i * intensity));
+		}
 	}
 
 	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)

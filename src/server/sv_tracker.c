@@ -250,7 +250,12 @@ char *Tracker_createClientInfo(int clientNum)
 	{
 		playerClass = ps->stats[5];
 	}
-	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], playerClass, svs.clients[clientNum].name);
+	{
+		const char *pStr = Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P");
+		char        pVal = (clientNum < strlen(pStr)) ? pStr[clientNum] : '0';
+
+		return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], pVal, playerClass, svs.clients[clientNum].name);
+	}
 }
 
 /**
@@ -366,9 +371,13 @@ qboolean Tracker_catchServerCommand(int clientNum, char *msg)
 		return qfalse;
 	}
 
-	if (msg[strlen(msg) - 1] == '\n')
 	{
-		msg[strlen(msg) - 1] = '\0';
+		size_t msgLen = strlen(msg);
+
+		if (msgLen > 0 && msg[msgLen - 1] == '\n')
+		{
+			msg[msgLen - 1] = '\0';
+		}
 	}
 
 	if (!Q_strncmp("ws", msg, 2))
@@ -382,6 +391,13 @@ qboolean Tracker_catchServerCommand(int clientNum, char *msg)
 
 		slot = 0;
 		sscanf(msg, "ws %i", &slot);
+
+		// validate slot bounds before using as array index
+		if (slot < 0 || slot >= sv_maxclients->integer)
+		{
+			return qfalse;
+		}
+
 		Tracker_Send("%s\\%s", msg, Tracker_createClientInfo(slot));
 
 		return qtrue;

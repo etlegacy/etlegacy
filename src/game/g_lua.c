@@ -424,6 +424,12 @@ static int _et_G_Say(lua_State *L)
 	int        mode      = (int)luaL_checkinteger(L, 2);
 	const char *text     = luaL_checkstring(L, 3);
 
+	if (clientnum < 0 || clientnum >= MAX_GENTITIES)
+	{
+		luaL_error(L, "clientnum %d out of range", clientnum);
+		return 0;
+	}
+
 	G_Say(g_entities + clientnum, NULL, mode, text);
 	return 0;
 }
@@ -442,9 +448,17 @@ static int _et_G_Say(lua_State *L)
 static int _et_MutePlayer(lua_State *L)
 {
 	int        clientnum = (int)luaL_checkinteger(L, 1);
-	gentity_t  *ent      = g_entities + clientnum;
+	gentity_t  *ent;
 	int        duration  = (int)luaL_checkinteger(L, 2);
 	const char *reason   = luaL_optstring(L, 3, NULL);
+
+	if (clientnum < 0 || clientnum >= MAX_GENTITIES)
+	{
+		luaL_error(L, "clientnum %d out of range", clientnum);
+		return 0;
+	}
+
+	ent = g_entities + clientnum;
 
 	if (!ent->client)
 	{
@@ -836,6 +850,12 @@ static int _et_G_Sound(lua_State *L)
 	int entnum     = (int)luaL_checkinteger(L, 1);
 	int soundindex = (int)luaL_checkinteger(L, 2);
 
+	if (entnum < 0 || entnum >= MAX_GENTITIES)
+	{
+		luaL_error(L, "entity number %d out of range", entnum);
+		return 0;
+	}
+
 	G_Sound(g_entities + entnum, soundindex);
 	return 0;
 }
@@ -852,6 +872,12 @@ static int _et_G_ClientSound(lua_State *L)
 {
 	int clientnum  = (int)luaL_checkinteger(L, 1);
 	int soundindex = (int)luaL_checkinteger(L, 2);
+
+	if (clientnum < 0 || clientnum >= MAX_GENTITIES)
+	{
+		luaL_error(L, "clientnum %d out of range", clientnum);
+		return 0;
+	}
 
 	G_ClientSound(g_entities + clientnum, soundindex);
 	return 0;
@@ -915,6 +941,22 @@ static int _et_G_Damage(lua_State *L)
 	int            dflags    = (int)luaL_checkinteger(L, 5);
 	meansOfDeath_t mod       = (meansOfDeath_t)(luaL_checkinteger(L, 6));
 
+	if (target < 0 || target >= MAX_GENTITIES)
+	{
+		luaL_error(L, "target entity %d out of range", target);
+		return 0;
+	}
+	if (inflictor < 0 || inflictor >= MAX_GENTITIES)
+	{
+		luaL_error(L, "inflictor entity %d out of range", inflictor);
+		return 0;
+	}
+	if (attacker < 0 || attacker >= MAX_GENTITIES)
+	{
+		luaL_error(L, "attacker entity %d out of range", attacker);
+		return 0;
+	}
+
 	G_Damage(g_entities + target,
 	         g_entities + inflictor,
 	         g_entities + attacker,
@@ -939,11 +981,19 @@ static int _et_G_Damage(lua_State *L)
 static int _et_G_AddSkillPoints(lua_State *L)
 {
 	size_t     l;
-	gentity_t  *ent    = g_entities + (int)luaL_checkinteger(L, 1);
-	int        skill   = (int)luaL_checkinteger(L, 2);
-	float      points  = luaL_checknumber(L, 3);
+	int        entNum = (int)luaL_checkinteger(L, 1);
+	int        skill  = (int)luaL_checkinteger(L, 2);
+	float      points = luaL_checknumber(L, 3);
 	const char *reason = luaL_checklstring(L, 4, &l);
+	gentity_t  *ent;
 
+	if (entNum < 0 || entNum >= MAX_GENTITIES)
+	{
+		luaL_error(L, "entity number %d out of range", entNum);
+		return 0;
+	}
+
+	ent = g_entities + entNum;
 	G_AddSkillPoints(ent, skill, points, reason);
 	return 0;
 }
@@ -959,11 +1009,19 @@ static int _et_G_AddSkillPoints(lua_State *L)
 static int _et_G_LoseSkillPoints(lua_State *L)
 {
 	size_t     l;
-	gentity_t  *ent    = g_entities + (int)luaL_checkinteger(L, 1);
-	int        skill   = (int)luaL_checkinteger(L, 2);
-	float      points  = luaL_checknumber(L, 3);
+	int        entNum = (int)luaL_checkinteger(L, 1);
+	int        skill  = (int)luaL_checkinteger(L, 2);
+	float      points = luaL_checknumber(L, 3);
 	const char *reason = luaL_checklstring(L, 4, &l);
+	gentity_t  *ent;
 
+	if (entNum < 0 || entNum >= MAX_GENTITIES)
+	{
+		luaL_error(L, "entity number %d out of range", entNum);
+		return 0;
+	}
+
+	ent = g_entities + entNum;
 	G_LoseSkillPoints(ent, skill, points, reason);
 	return 0;
 }
@@ -2022,10 +2080,20 @@ static int _et_G_SetSpawnVar(lua_State *L)
  */
 static int _et_gentity_get(lua_State *L)
 {
-	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
+	int             entNum     = (int)luaL_checkinteger(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
-	gentity_field_t *field     = _etH_gentity_getfield(ent, (char *)fieldname);
+	gentity_t       *ent;
+	gentity_field_t *field;
 	uintptr_t       addr;
+
+	if (entNum < 0 || entNum >= MAX_GENTITIES)
+	{
+		luaL_error(L, "entity number %d out of range", entNum);
+		return 0;
+	}
+
+	ent   = g_entities + entNum;
+	field = _etH_gentity_getfield(ent, (char *)fieldname);
 
 	// break on invalid gentity field
 	if (!field)
@@ -2116,11 +2184,21 @@ static int _et_gentity_get(lua_State *L)
  */
 static int _et_gentity_set(lua_State *L)
 {
-	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
+	int              entNum    = (int)luaL_checkinteger(L, 1);
+	gentity_t       *ent;
 	const char      *fieldname = luaL_checkstring(L, 2);
-	gentity_field_t *field     = _etH_gentity_getfield(ent, (char *)fieldname);
-	uintptr_t       addr;
+	gentity_field_t *field;
+	uintptr_t        addr;
 	const char      *buffer;
+
+	if (entNum < 0 || entNum >= MAX_GENTITIES)
+	{
+		luaL_error(L, "entity number %d out of range", entNum);
+		return 0;
+	}
+
+	ent   = g_entities + entNum;
+	field = _etH_gentity_getfield(ent, (char *)fieldname);
 
 	// break on invalid gentity field
 	if (!field)

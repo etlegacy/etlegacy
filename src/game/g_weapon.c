@@ -144,8 +144,7 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 		}
 	}
 
-	// FIXME: should we keep this random add ?!
-	G_Damage(traceEnt, ent, ent, vec3_origin, tr.endpos, (damage + rand() % 5), 0, mod);
+	G_Damage(traceEnt, ent, ent, vec3_origin, tr.endpos, damage, 0, mod);
 
 	return NULL;
 }

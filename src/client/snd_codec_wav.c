@@ -187,6 +187,12 @@ static qboolean S_ReadRIFFHeader(fileHandle_t file, snd_info_t *info)
 		return qfalse;
 	}
 
+	if (info->channels < 1)
+	{
+		Com_Printf(S_COLOR_RED "ERROR: Invalid number of audio channels\n");
+		return qfalse;
+	}
+
 	info->width   = bits / 8;
 	info->dataofs = 0;
 

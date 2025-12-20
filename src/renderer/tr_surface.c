@@ -726,6 +726,7 @@ static void DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, const
 	int    spanWidth = r_railWidth->integer;
 	float  c, s;
 	float  scale;
+	byte   r, g, b;
 
 	if (numSegs > 1)
 	{
@@ -737,6 +738,11 @@ static void DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, const
 	}
 
 	scale = 0.25f;
+
+	// cache entity color outside loops
+	r = backEnd.currentEntity->e.shaderRGBA[0];
+	g = backEnd.currentEntity->e.shaderRGBA[1];
+	b = backEnd.currentEntity->e.shaderRGBA[2];
 
 	for (i = 0; i < 4; i++)
 	{
@@ -763,9 +769,9 @@ static void DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, const
 			VectorCopy(pos[j], tess.xyz[tess.numVertexes]);
 			tess.texCoords[tess.numVertexes][0][0] = (j < 2);
 			tess.texCoords[tess.numVertexes][0][1] = (j && j != 3);
-			tess.vertexColors[tess.numVertexes][0] = backEnd.currentEntity->e.shaderRGBA[0];
-			tess.vertexColors[tess.numVertexes][1] = backEnd.currentEntity->e.shaderRGBA[1];
-			tess.vertexColors[tess.numVertexes][2] = backEnd.currentEntity->e.shaderRGBA[2];
+			tess.vertexColors[tess.numVertexes][0] = r;
+			tess.vertexColors[tess.numVertexes][1] = g;
+			tess.vertexColors[tess.numVertexes][2] = b;
 			tess.numVertexes++;
 
 			VectorAdd(pos[j], dir, pos[j]);

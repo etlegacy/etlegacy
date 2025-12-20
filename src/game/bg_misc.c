@@ -4374,13 +4374,15 @@ qboolean PC_PseudDec_Parse(int handle, long *l)
 	pc_token_t token;
 	uint8_t    pastDot = 0;
 	uint8_t    i;
+	size_t     tokenLen;
 
 	if (!trap_PC_ReadToken(handle, &token))
 	{
 		return qfalse;
 	}
 
-	for (i = 0; i < strlen(token.string); ++i)
+	tokenLen = strlen(token.string);
+	for (i = 0; i < tokenLen; ++i)
 	{
 		if (token.string[i] == '.')
 		{

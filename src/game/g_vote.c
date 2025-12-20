@@ -513,8 +513,13 @@ int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 	else
 	{
 		// Kick a player
-		trap_SendConsoleCommand(EXEC_APPEND, va("clientkick %d\n", Q_atoi(level.voteInfo.vote_value)));
-		AP(va("cp \"%s\n^3has been kicked!\n\"", level.clients[atoi(level.voteInfo.vote_value)].pers.netname));
+		int clientNum = Q_atoi(level.voteInfo.vote_value);
+
+		trap_SendConsoleCommand(EXEC_APPEND, va("clientkick %d\n", clientNum));
+		if (clientNum >= 0 && clientNum < level.maxclients)
+		{
+			AP(va("cp \"%s\n^3has been kicked!\n\"", level.clients[clientNum].pers.netname));
+		}
 	}
 
 	return G_OK;
@@ -1023,18 +1028,27 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 	else
 	{
 		// Voting in a new referee
-		gclient_t *cl = &level.clients[atoi(level.voteInfo.vote_value)];
+		int clientNum = atoi(level.voteInfo.vote_value);
 
-		if (cl->pers.connected == CON_DISCONNECTED)
+		if (clientNum < 0 || clientNum >= level.maxclients)
 		{
-			AP("print \"Player left before becoming referee\n\"");
+			AP("print \"Invalid client for referee vote\n\"");
 		}
 		else
 		{
-			cl->sess.referee     = RL_REFEREE; // FIXME: Differentiate voted refs from passworded refs
-			cl->sess.spec_invite = TEAM_AXIS | TEAM_ALLIES;
-			AP(va("cp \"%s^7 is now a referee\n\"", cl->pers.netname));
-			ClientUserinfoChanged(atoi(level.voteInfo.vote_value));
+			gclient_t *cl = &level.clients[clientNum];
+
+			if (cl->pers.connected == CON_DISCONNECTED)
+			{
+				AP("print \"Player left before becoming referee\n\"");
+			}
+			else
+			{
+				cl->sess.referee     = RL_REFEREE; // FIXME: Differentiate voted refs from passworded refs
+				cl->sess.spec_invite = TEAM_AXIS | TEAM_ALLIES;
+				AP(va("cp \"%s^7 is now a referee\n\"", cl->pers.netname));
+				ClientUserinfoChanged(clientNum);
+			}
 		}
 	}
 	return G_OK;
@@ -1504,16 +1518,25 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	else
 	{
 		// Stripping of referee status
-		gclient_t *cl = &level.clients[atoi(level.voteInfo.vote_value)];
+		int clientNum = atoi(level.voteInfo.vote_value);
 
-		cl->sess.referee = RL_NONE;
-		// don't remove shoutcaster invitation
-		if (!cl->sess.shoutcaster)
+		if (clientNum < 0 || clientNum >= level.maxclients)
 		{
-			cl->sess.spec_invite = 0;
+			AP("print \"Invalid client for unreferee vote\n\"");
 		}
-		AP(va("cp \"%s^7\nis no longer a referee\n\"", cl->pers.netname));
-		ClientUserinfoChanged(atoi(level.voteInfo.vote_value));
+		else
+		{
+			gclient_t *cl = &level.clients[clientNum];
+
+			cl->sess.referee = RL_NONE;
+			// don't remove shoutcaster invitation
+			if (!cl->sess.shoutcaster)
+			{
+				cl->sess.spec_invite = 0;
+			}
+			AP(va("cp \"%s^7\nis no longer a referee\n\"", cl->pers.netname));
+			ClientUserinfoChanged(clientNum);
+		}
 	}
 
 	return G_OK;

@@ -327,8 +327,6 @@ static ID_INLINE void rgbe2float(float *red, float *green, float *blue, unsigned
 
     if (rgbe[3])    // nonzero pixel
     {
-        f = ldexp(1.0, rgbe[3] - (int)(128 + 8));   // FIXME: never read
-        //f = ldexp(1.0, rgbe[3] - 128) / 10.0;
         e = (rgbe[3] - 128) / 4.0f;
 
         // RB: exp2 not defined by MSVC

@@ -504,8 +504,6 @@ static void DrawSkyBox(shader_t *shader)
 	int sky_mins_subd[2], sky_maxs_subd[2];
 	int s, t;
 
-	Com_Memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
-
 	sky_min = 0;
 	sky_max = 1;
 
@@ -589,8 +587,6 @@ static void DrawSkyBoxInner(shader_t *shader)
 	int i;
 	int sky_mins_subd[2], sky_maxs_subd[2];
 	int s, t;
-
-	Com_Memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	for (i = 0 ; i < 6 ; i++)
 	{

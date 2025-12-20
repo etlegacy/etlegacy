@@ -645,8 +645,8 @@ void G_InitWorldSession(void)
 		j = 0;
 		if (p && *p)
 		{
-			c = p;
-			for (c = strchr(c, ' ') + 1; c && *c; )
+			c = strchr(p, ' ');
+			for (c = c ? c + 1 : NULL; c && *c; )
 			{
 				char str[8];
 				char *l = strchr(c, ' ');

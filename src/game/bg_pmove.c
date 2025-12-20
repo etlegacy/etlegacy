@@ -3172,10 +3172,9 @@ void PM_AdjustAimSpreadScale(void)
 		}
 
 		// take player movement into account (even if only for the scoped weapons)
-		// TODO: also check for jump/crouch and adjust accordingly
 		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 		{
-			for (i = 0; i < 2; i++)
+			for (i = 0; i < 3; i++)
 			{
 				viewchange += Q_fabs(pm->ps->velocity[i]);
 			}

@@ -607,6 +607,7 @@ void *Hunk_Alloc(size_t size, ha_pref preference);
 
 #define Com_Memset memset
 #define Com_Memcpy memcpy
+#define Com_Memcmp memcmp
 
 #define Com_Allocate malloc
 #define Com_Dealloc free

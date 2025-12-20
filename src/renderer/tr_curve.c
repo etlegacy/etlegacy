@@ -480,14 +480,15 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 				}
 			}
 
-			maxLen = sqrt(maxLen);
-
 			// if all the points are on the lines, remove the entire columns
-			if (maxLen < 0.1f)
+			// check squared distance (0.01 = 0.1^2) before computing sqrt
+			if (maxLen < 0.01f)
 			{
 				errorTable[dir][j + 1] = 999;
 				continue;
 			}
+
+			maxLen = sqrt(maxLen);
 
 			// see if we want to insert subdivided columns
 			if (width + 2 > MAX_GRID_SIZE)

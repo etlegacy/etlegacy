@@ -331,6 +331,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		return;
 	}
 
+	// Debug: Log weapons state at time of death
+	G_DPrintf("Death DEBUG: Player %d dying - weapons[0]=%d weapons[1]=%d weapon=%d pm_flags=%d\n",
+	          self->s.clientNum, self->client->ps.weapons[0], self->client->ps.weapons[1],
+	          self->client->ps.weapon, self->client->ps.pm_flags);
+
 	switch (meansOfDeath)
 	{
 	case MOD_FALLING:
@@ -712,7 +717,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	Com_Memset(self->client->ps.powerups, 0, sizeof(self->client->ps.powerups));
 
 	// never gib in a nodrop
-	// FIXME: contents is always 0 here
+	contents = trap_PointContents(self->r.currentOrigin, -1);
 	if (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP))
 	{
 		GibEntity(self, killer);

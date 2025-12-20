@@ -333,6 +333,7 @@ typedef struct
 	int zipFilePos;
 	int zipFileLen;
 	qboolean zipFile;
+	qboolean pipeFile;
 	char name[MAX_ZPATH];
 } fileHandleData_t;
 
@@ -1131,7 +1132,18 @@ void FS_FCloseFile(fileHandle_t f)
 	// we didn't find it as a pak, so close it as a unique file
 	if (fsh[f].handleFiles.file.o)
 	{
-		fclose(fsh[f].handleFiles.file.o);
+		if (fsh[f].pipeFile)
+		{
+#ifdef _WIN32
+			_pclose(fsh[f].handleFiles.file.o);
+#else
+			pclose(fsh[f].handleFiles.file.o);
+#endif
+		}
+		else
+		{
+			fclose(fsh[f].handleFiles.file.o);
+		}
 	}
 	Com_Memset(&fsh[f], 0, sizeof(fsh[f]));
 }
@@ -1310,6 +1322,7 @@ fileHandle_t FS_PipeOpenWrite(const char *cmd, const char *filename)
 	Q_strncpyz(fd->name, filename, sizeof(fd->name));
 	fd->handleSync = qfalse;
 	fd->zipFile    = qfalse;
+	fd->pipeFile   = qtrue;
 
 	return f;
 }
@@ -2763,6 +2776,7 @@ static pack_t *FS_LoadZipFile(const char *zipfile, const char *basename)
 	int             fs_numHeaderLongs = 0;
 	int             *fs_headerLongs;
 	char            *namePtr;
+	size_t          basenameLen;
 
 	uf  = FS_UnzOpen(zipfile);
 	err = unzGetGlobalInfo(uf, &gi);
@@ -2812,9 +2826,10 @@ static pack_t *FS_LoadZipFile(const char *zipfile, const char *basename)
 	Q_strncpyz(pack->pakBasename, basename, sizeof(pack->pakBasename));
 
 	// strip .pk3 if needed
-	if (strlen(pack->pakBasename) > 4 && !Q_stricmp(pack->pakBasename + strlen(pack->pakBasename) - 4, ".pk3"))
+	basenameLen = strlen(pack->pakBasename);
+	if (basenameLen > 4 && !Q_stricmp(pack->pakBasename + basenameLen - 4, ".pk3"))
 	{
-		pack->pakBasename[strlen(pack->pakBasename) - 4] = 0;
+		pack->pakBasename[basenameLen - 4] = 0;
 	}
 
 	pack->handle   = uf;

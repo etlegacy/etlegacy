@@ -1305,13 +1305,16 @@ char PS_NextWhiteSpaceChar(script_t *script)
  */
 void StripDoubleQuotes(char *string)
 {
+	size_t len;
+
 	if (*string == '\"')
 	{
 		memmove(string, string + 1, strlen(string));
 	}
-	if (string[strlen(string) - 1] == '\"')
+	len = strlen(string);
+	if (len > 0 && string[len - 1] == '\"')
 	{
-		string[strlen(string) - 1] = '\0';
+		string[len - 1] = '\0';
 	}
 }
 

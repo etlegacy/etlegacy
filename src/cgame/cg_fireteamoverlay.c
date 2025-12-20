@@ -416,7 +416,7 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 	{
 		if (!(f == CG_IsOnFireteam(sortedFireTeamClients[i])))
 		{
-			return NULL;
+			continue;
 		}
 
 		if (cnt == pos)

@@ -234,18 +234,18 @@ static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConf
 #endif
 
 	Com_sprintf(cmdBuffer, MAX_OSPATH, CMDP "%s" CMDP, fn);
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --install-dir " CMDP "%s" CMDP, Cvar_VariableString("fs_basepath"));
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --package-dir " CMDP "%s" CMDP, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL));
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --script " CMDP "%s" CMDP, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig));
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --wait " CMDP "%s" CMDP, Cvar_VariableString("com_pid"));
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --auto-close");
+	Q_strcat(cmdBuffer, MAX_OSPATH, va(" --install-dir " CMDP "%s" CMDP, Cvar_VariableString("fs_basepath")));
+	Q_strcat(cmdBuffer, MAX_OSPATH, va(" --package-dir " CMDP "%s" CMDP, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL)));
+	Q_strcat(cmdBuffer, MAX_OSPATH, va(" --script " CMDP "%s" CMDP, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig)));
+	Q_strcat(cmdBuffer, MAX_OSPATH, va(" --wait " CMDP "%s" CMDP, Cvar_VariableString("com_pid")));
+	Q_strcat(cmdBuffer, MAX_OSPATH, " --auto-close");
 
 #if defined(__APPLE__) && !defined(DEDICATED)
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP "ET Legacy.app" CMDP);
+	Q_strcat(cmdBuffer, MAX_OSPATH, " --execute " CMDP "ET Legacy.app" CMDP);
 #else
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP GAME_BINARY CMDP);
+	Q_strcat(cmdBuffer, MAX_OSPATH, " --execute " CMDP GAME_BINARY CMDP);
 #endif
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute-args " CMDP "%s" CMDP, Com_GetCommandLine());
+	Q_strcat(cmdBuffer, MAX_OSPATH, va(" --execute-args " CMDP "%s" CMDP, Com_GetCommandLine()));
 
 	Sys_StartProcess(cmdBuffer, qtrue);
 

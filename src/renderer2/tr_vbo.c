@@ -509,7 +509,7 @@ static void R_InitUnitCubeVBO()
 
 	if (glConfig.smpActive)
 	{
-		Ren_Fatal("R_InitUnitCubeVBO: FIXME SMP");
+		Ren_Warning("R_InitUnitCubeVBO: SMP active, VBO initialization may not be thread-safe\n");
 	}
 
 	tess.multiDrawPrimitives = 0;

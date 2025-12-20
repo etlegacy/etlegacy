@@ -2193,12 +2193,14 @@ void Svcmd_CSInfo_f(void)
 	char     *str        = NULL;
 	qboolean arg1        = (trap_Argc() > 1) ? qtrue : qfalse;
 	qboolean arg1numeric = qtrue;
+	size_t   valueLen;
 
 	valuestr[0] = 0;
 	if (arg1)
 	{
 		trap_Argv(1, valuestr, sizeof(valuestr));
-		for (i = 0; i < strlen(valuestr); i++)
+		valueLen = strlen(valuestr);
+		for (i = 0; i < valueLen; i++)
 		{
 			if (valuestr[i] < '0' || valuestr[i] > '9')
 			{

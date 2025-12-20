@@ -574,20 +574,11 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.refdef.areamaskModified = qfalse;
 	if (!(tr.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
-		int areaDiff;
-		int i;
-
-		// compare the area bits
-		areaDiff = 0;
-		for (i = 0; i < MAX_MAP_AREA_BYTES / 4; i++)
-		{
-			areaDiff                      |= ((int *)tr.refdef.areamask)[i] ^ ((int *)fd->areamask)[i];
-			((int *)tr.refdef.areamask)[i] = ((int *)fd->areamask)[i];
-		}
-
-		if (areaDiff)
+		// compare and copy area bits - only copy if different (common case: no change)
+		if (Com_Memcmp(tr.refdef.areamask, fd->areamask, MAX_MAP_AREA_BYTES) != 0)
 		{
 			// a door just opened or something
+			Com_Memcpy(tr.refdef.areamask, fd->areamask, MAX_MAP_AREA_BYTES);
 			tr.refdef.areamaskModified = qtrue;
 		}
 	}

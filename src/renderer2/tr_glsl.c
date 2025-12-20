@@ -157,11 +157,9 @@ int GLSL_GetMacroByName(const char *name)
 /**
  * @brief GLSL_GetAttribByName
  * @param[in] name
- * @return
- *
- * @todo FIXME: return -1 but type is unsigned !
+ * @return attribute value or -1 if not found
  */
-unsigned int GLSL_GetAttribByName(const char *name)
+int GLSL_GetAttribByName(const char *name)
 {
 	int i;
 
@@ -169,7 +167,7 @@ unsigned int GLSL_GetAttribByName(const char *name)
 	{
 		if (!Q_stricmp(name, attributeMap[i].name))
 		{
-			return attributeMap[i].attr;
+			return (int)attributeMap[i].attr;
 		}
 	}
 
@@ -294,7 +292,11 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 
 			while ((token = COM_ParseExt(text, qfalse))[0])
 			{
-				attribs |= GLSL_GetAttribByName(token);
+				int attr = GLSL_GetAttribByName(token);
+				if (attr >= 0)
+				{
+					attribs |= (unsigned int)attr;
+				}
 			}
 			def->attributes = attribs;
 		}

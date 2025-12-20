@@ -3894,8 +3894,9 @@ static void PrintCvarMatches(const char *s)
 static char *Field_FindFirstSeparator(char *s)
 {
 	unsigned int i;
+	size_t       len = strlen(s);
 
-	for (i = 0; i < strlen(s); i++)
+	for (i = 0; i < len; i++)
 	{
 		if (s[i] == ';')
 		{
@@ -4177,8 +4178,9 @@ static int Field_LastWhiteSpace(field_t *field)
 {
 	int      i = 0, lastSpace = 0;
 	qboolean insideQuotes = qfalse;
+	size_t   bufLen = strlen(field->buffer);
 
-	for (; i < strlen(field->buffer); i++)
+	for (; i < bufLen; i++)
 	{
 		if (field->buffer[i] == ' ' && !insideQuotes)
 		{

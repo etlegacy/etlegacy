@@ -353,9 +353,10 @@ unsigned int Com_DownloadFileSimple(const char *localName, const char *remoteNam
 
 static void checkDownloadName(char *filename)
 {
-	int i;
+	int    i;
+	size_t len = strlen(filename);
 
-	for (i = 0; i < strlen(filename); i++)
+	for (i = 0; i < len; i++)
 	{
 		if (filename[i] <= 31 || filename[i] >= 127)
 		{

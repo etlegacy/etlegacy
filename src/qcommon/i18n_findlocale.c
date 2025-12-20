@@ -47,6 +47,13 @@ static void lang_country_variant_from_envstring(const char *str, char **lang, ch
 		int  len = end - start;
 		char *s  = malloc(len + 1);
 
+		if (!s)
+		{
+			*lang    = NULL;
+			*country = NULL;
+			*variant = NULL;
+			return;
+		}
 		for (i = 0; i < len; ++i)
 		{
 			s[i] = tolower(str[start + i]);
@@ -76,6 +83,12 @@ static void lang_country_variant_from_envstring(const char *str, char **lang, ch
 		int  len = end - start;
 		char *s  = malloc(len + 1);
 
+		if (!s)
+		{
+			*country = NULL;
+			*variant = NULL;
+			return;
+		}
 		for (i = 0; i < len; ++i)
 		{
 			s[i] = toupper(str[start + i]);
@@ -105,6 +118,11 @@ static void lang_country_variant_from_envstring(const char *str, char **lang, ch
 		int  len = end - start;
 		char *s  = malloc(len + 1);
 
+		if (!s)
+		{
+			*variant = NULL;
+			return;
+		}
 		for (i = 0; i < len; ++i)
 		{
 			s[i] = str[start + i];
@@ -501,6 +519,12 @@ FL_Success FL_FindLocale(FL_Locale **locale)
 {
 	FL_Success success = FL_FAILED;
 	FL_Locale  *rtn    = malloc(sizeof(FL_Locale));
+
+	if (!rtn)
+	{
+		*locale = NULL;
+		return FL_FAILED;
+	}
 
 	rtn->lang    = NULL;
 	rtn->country = NULL;

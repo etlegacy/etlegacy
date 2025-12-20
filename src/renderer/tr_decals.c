@@ -122,8 +122,13 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 		lengths[i] = VectorNormalize2(vecs[i], axis[i]);
 
 	for (i = 0; i < 2; i++)
+	{
+		float recip = lengths[i] > 0.0f ? (1.0f / lengths[i]) : 0.0f;
 		for (j = 0; j < 3; j++)
-			texMat[i][j] = lengths[i] > 0.0f ? (axis[i][j] / lengths[i]) : 0.0f;
+		{
+			texMat[i][j] = axis[i][j] * recip;
+		}
+	}
 	texMat[0][3] = a->st[0] - DotProduct(pa, texMat[0]);
 	texMat[1][3] = a->st[1] - DotProduct(pa, texMat[1]);
 

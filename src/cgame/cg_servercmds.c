@@ -200,10 +200,18 @@ static void CG_ParseTeamInfo(void)
  */
 static void CG_FillVersionInfo(version_t *version, char *versionStr, const char *delimiter)
 {
+	char *token;
+
 	Com_Printf("Demo Version: %s\n", versionStr);
-	version->major = Q_atoi(strtok(versionStr, delimiter));
-	version->minor = Q_atoi(strtok(NULL, delimiter));
-	version->patch = Q_atoi(strtok(NULL, delimiter));
+
+	token          = strtok(versionStr, delimiter);
+	version->major = token ? Q_atoi(token) : 0;
+
+	token          = strtok(NULL, delimiter);
+	version->minor = token ? Q_atoi(token) : 0;
+
+	token          = strtok(NULL, delimiter);
+	version->patch = token ? Q_atoi(token) : 0;
 }
 
 void CG_ParseDemoVersion(void)
@@ -333,9 +341,17 @@ void CG_UpdateSvCvars(void)
 		cg.svCvars[i].mode = Q_atoi(token);
 
 		token = strtok(NULL, " ");
+		if (!token)
+		{
+			continue;
+		}
 		Q_strncpyz(cg.svCvars[i].cvarName, token, sizeof(cg.svCvars[0].cvarName));
 
 		token = strtok(NULL, " ");
+		if (!token)
+		{
+			continue;
+		}
 		Q_strncpyz(cg.svCvars[i].Val1, token, sizeof(cg.svCvars[0].Val1));
 
 		token = strtok(NULL, " ");
@@ -487,13 +503,21 @@ void CG_ParseOIDInfo(int num)
 	cs = Info_ValueForKey(info, "cia");
 	if (cs && *cs)
 	{
-		cgs.oidInfo[index].customimageallies = cgs.gameShaders[atoi(cs)];
+		int shaderIndex = atoi(cs);
+		if (shaderIndex >= 0 && shaderIndex < MAX_CS_SHADERS)
+		{
+			cgs.oidInfo[index].customimageallies = cgs.gameShaders[shaderIndex];
+		}
 	}
 
 	cs = Info_ValueForKey(info, "cix");
 	if (cs && *cs)
 	{
-		cgs.oidInfo[index].customimageaxis = cgs.gameShaders[atoi(cs)];
+		int shaderIndex = atoi(cs);
+		if (shaderIndex >= 0 && shaderIndex < MAX_CS_SHADERS)
+		{
+			cgs.oidInfo[index].customimageaxis = cgs.gameShaders[shaderIndex];
+		}
 	}
 
 	cs = Info_ValueForKey(info, "o");
@@ -906,11 +930,22 @@ void CG_ShaderStateChanged(void)
 			o = strstr(t, "@");
 			if (o)
 			{
+				int origIdx, newIdx;
+
 				Q_strncpyz(timeOffset, t, MIN(o - t + 1, sizeof(timeOffset)));
 				o++;
-				trap_R_RemapShader(cgs.gameShaderNames[atoi(originalShader)],
-				                   cgs.gameShaderNames[atoi(newShader)],
-				                   timeOffset);
+
+				origIdx = atoi(originalShader);
+				newIdx  = atoi(newShader);
+
+				// validate shader indices before using as array indices
+				if (origIdx >= 0 && origIdx < MAX_CS_SHADERS &&
+				    newIdx >= 0 && newIdx < MAX_CS_SHADERS)
+				{
+					trap_R_RemapShader(cgs.gameShaderNames[origIdx],
+					                   cgs.gameShaderNames[newIdx],
+					                   timeOffset);
+				}
 			}
 		}
 		else
@@ -2109,15 +2144,15 @@ const char *CG_LocalizeServerCommand(const char *buf)
 			// ensure a previous localize string has been found
 			if (prev)
 			{
+				Com_Memset(temp, 0, sizeof(temp));
+				Q_strncpyz(temp, buf + prev, i - prev + 1);
 				if (togloc)
 				{
-					Com_Memset(temp, 0, sizeof(temp));
-					Q_strncpyz(temp, buf + prev, i - prev + 1);
 					Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
 				}
 				else
 				{
-					strncat(token, buf + prev, i - prev);
+					Q_strcat(token, MAX_TOKEN_CHARS, temp);
 				}
 			}
 
@@ -2131,15 +2166,15 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	// ensure a previous localize string has been found
 	if (prev != i)
 	{
+		Com_Memset(temp, 0, sizeof(temp));
+		Q_strncpyz(temp, buf + prev, i - prev + 1);
 		if (togloc)
 		{
-			Com_Memset(temp, 0, sizeof(temp));
-			Q_strncpyz(temp, buf + prev, i - prev + 1);
 			Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
 		}
 		else
 		{
-			strncat(token, buf + prev, i - prev);
+			Q_strcat(token, MAX_TOKEN_CHARS, temp);
 		}
 	}
 

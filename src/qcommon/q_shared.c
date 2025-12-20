@@ -1345,8 +1345,9 @@ int Com_HexStrToInt(const char *str)
 	{
 		unsigned int i;
 		int          n = 0;
+		size_t       len = strlen(str);
 
-		for (i = 2; i < strlen(str); i++)
+		for (i = 2; i < len; i++)
 		{
 			char digit;
 
@@ -2254,7 +2255,6 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
 	if (!fname)
 	{
 		Com_Error(ERR_DROP, "Q_GenerateHashValue: null name");
-		return 0; // FIXME: never executed
 	}
 
 	while (fname[i] != '\0')
@@ -2917,8 +2917,9 @@ char *Q_StrReplace(char *haystack, const char *needle, const char *newVal)
 static qboolean Com_CharIsOneOfCharset(char c, const char *set)
 {
 	unsigned int i;
+	size_t       setLen = strlen(set);
 
-	for (i = 0; i < strlen(set); i++)
+	for (i = 0; i < setLen; i++)
 	{
 		if (set[i] == c)
 		{

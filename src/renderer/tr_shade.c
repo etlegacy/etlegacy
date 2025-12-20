@@ -411,8 +411,8 @@ static void DynamicLightSinglePass(void)
 		return;
 	}
 
-	// clear colors
-	Com_Memset(tess.svars.colors, 0, sizeof(tess.svars.colors));
+	// clear colors - only clear the bytes we'll actually use
+	Com_Memset(tess.svars.colors, 0, tess.numVertexes * sizeof(tess.svars.colors[0]));
 
 	// walk light list
 	for (l = 0; l < backEnd.refdef.num_dlights; l++)
@@ -447,8 +447,6 @@ static void DynamicLightSinglePass(void)
 		colors = tess.svars.colors[0];
 		for (i = 0; i < tess.numVertexes; i++, colors += 4)
 		{
-			backEnd.pc.c_dlightVertexes++;
-
 			// directional dlight, origin is a directional normal
 			if (dl->flags & REF_DIRECTED_DLIGHT)
 			{
@@ -460,21 +458,15 @@ static void DynamicLightSinglePass(void)
 				}
 				modulate += remainder;
 			}
-			// ball dlight
+			// ball dlight - calculate all distances first for better branch prediction
 			else
 			{
 				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i][0]);
-				if (dir[0] <= 0.0f)
-				{
-					continue;
-				}
 				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i][1]);
-				if (dir[1] <= 0.0f)
-				{
-					continue;
-				}
 				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i][2]);
-				if (dir[2] <= 0.0f)
+
+				// single branch instead of three sequential checks
+				if (dir[0] <= 0.0f || dir[1] <= 0.0f || dir[2] <= 0.0f)
 				{
 					continue;
 				}
@@ -500,6 +492,9 @@ static void DynamicLightSinglePass(void)
 			color     = colors[2] + (int)(floatColor[2] * modulate);
 			colors[2] = color > 255 ? 255 : (byte)color;
 		}
+
+		// batch performance counter update
+		backEnd.pc.c_dlightVertexes += tess.numVertexes;
 	}
 
 	// build a list of triangles that need light
@@ -591,8 +586,8 @@ static void DynamicLightPass_altivec(void)
 			continue;
 		}
 
-		// clear colors
-		Com_Memset(tess.svars.colors, 0, sizeof(tess.svars.colors));
+		// clear colors - only clear the bytes we'll actually use
+		Com_Memset(tess.svars.colors, 0, tess.numVertexes * sizeof(tess.svars.colors[0]));
 
 		// setup
 		dl                 = &backEnd.refdef.dlights[l];
@@ -624,8 +619,6 @@ static void DynamicLightPass_altivec(void)
 		colors = tess.svars.colors[0];
 		for (i = 0; i < tess.numVertexes; i++, colors += 4)
 		{
-			backEnd.pc.c_dlightVertexes++;
-
 			// directional dlight, origin is a directional normal
 			if (dl->flags & REF_DIRECTED_DLIGHT)
 			{
@@ -637,21 +630,15 @@ static void DynamicLightPass_altivec(void)
 				}
 				modulate += remainder;
 			}
-			// ball dlight
+			// ball dlight - calculate all distances first for better branch prediction
 			else
 			{
 				dir0 = radius - Q_fabs(origin0 - tess.xyz[i][0]);
-				if (dir0 <= 0.0f)
-				{
-					continue;
-				}
 				dir1 = radius - Q_fabs(origin1 - tess.xyz[i][1]);
-				if (dir1 <= 0.0f)
-				{
-					continue;
-				}
 				dir2 = radius - Q_fabs(origin2 - tess.xyz[i][2]);
-				if (dir2 <= 0.0f)
+
+				// single branch instead of three sequential checks
+				if (dir0 <= 0.0f || dir1 <= 0.0f || dir2 <= 0.0f)
 				{
 					continue;
 				}
@@ -679,6 +666,9 @@ static void DynamicLightPass_altivec(void)
 			colorChar   = vec_sel(colorChar, vSel, vSel);   // RGBARGBARGBARGBA replace alpha with 255
 			vec_ste((vector unsigned int)colorChar, 0, (unsigned int *)colors);   // store color
 		}
+
+		// batch performance counter update
+		backEnd.pc.c_dlightVertexes += tess.numVertexes;
 
 		// build a list of triangles that need light
 		intColors  = (int *) tess.svars.colors;
@@ -750,8 +740,8 @@ static void DynamicLightPass_scalar(void)
 			continue;
 		}
 
-		// clear colors
-		Com_Memset(tess.svars.colors, 0, sizeof(tess.svars.colors));
+		// clear colors - only clear the bytes we'll actually use
+		Com_Memset(tess.svars.colors, 0, tess.numVertexes * sizeof(tess.svars.colors[0]));
 
 		// setup
 		dl = &backEnd.refdef.dlights[l];
@@ -777,8 +767,6 @@ static void DynamicLightPass_scalar(void)
 		colors = tess.svars.colors[0];
 		for (i = 0; i < tess.numVertexes; i++, colors += 4)
 		{
-			backEnd.pc.c_dlightVertexes++;
-
 			// directional dlight, origin is a directional normal
 			if (dl->flags & REF_DIRECTED_DLIGHT)
 			{
@@ -790,21 +778,15 @@ static void DynamicLightPass_scalar(void)
 				}
 				modulate += remainder;
 			}
-			// ball dlight
+			// ball dlight - calculate all distances first for better branch prediction
 			else
 			{
 				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i][0]);
-				if (dir[0] <= 0.0f)
-				{
-					continue;
-				}
 				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i][1]);
-				if (dir[1] <= 0.0f)
-				{
-					continue;
-				}
 				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i][2]);
-				if (dir[2] <= 0.0f)
+
+				// single branch instead of three sequential checks
+				if (dir[0] <= 0.0f || dir[1] <= 0.0f || dir[2] <= 0.0f)
 				{
 					continue;
 				}
@@ -830,6 +812,9 @@ static void DynamicLightPass_scalar(void)
 			color     = (int)(floatColor[2] * modulate);
 			colors[2] = color > 255 ? 255 : (byte)color;
 		}
+
+		// batch performance counter update
+		backEnd.pc.c_dlightVertexes += tess.numVertexes;
 
 		// build a list of triangles that need light
 		intColors  = (int *) tess.svars.colors;
@@ -960,10 +945,11 @@ static void ComputeColors(shaderStage_t *pStage)
 	case CGEN_CONST:
 	{
 		int i;
+		int constColor = *(int *)pStage->constantColor;
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
-			*(int *)tess.svars.colors[i] = *(int *)pStage->constantColor;
+			*(int *)tess.svars.colors[i] = constColor;
 		}
 	}
 	break;
@@ -1012,11 +998,12 @@ static void ComputeColors(shaderStage_t *pStage)
 	case CGEN_FOG:
 	{
 		int   i;
-		fog_t *fog = tr.world->fogs + tess.fogNum;
+		fog_t *fog      = tr.world->fogs + tess.fogNum;
+		int   fogColorInt = fog->shader->fogParms.colorInt;
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
-			*( int * )&tess.svars.colors[i] = fog->shader->fogParms.colorInt;
+			*( int * )&tess.svars.colors[i] = fogColorInt;
 		}
 	}
 	break;
@@ -1054,11 +1041,12 @@ static void ComputeColors(shaderStage_t *pStage)
 	case AGEN_CONST:
 		if (pStage->rgbGen != CGEN_CONST)
 		{
-			int i;
+			int  i;
+			byte alpha = pStage->constantColor[3];
 
 			for (i = 0; i < tess.numVertexes; i++)
 			{
-				tess.svars.colors[i][3] = pStage->constantColor[3];
+				tess.svars.colors[i][3] = alpha;
 			}
 		}
 		break;
@@ -1194,28 +1182,31 @@ static void ComputeColors(shaderStage_t *pStage)
 	case AGEN_PORTAL:
 	{
 		unsigned char alpha;
-		float         len;
+		float         lenSquared;
 		vec3_t        v;
 		int           i;
+		float         portalRange        = tess.shader->portalRange;
+		float         portalRangeSquared = portalRange * portalRange;
+		float         invPortalRange     = 1.0f / portalRange;
+		vec3_t        viewOrigin;
+
+		VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
-			VectorSubtract(tess.xyz[i], backEnd.viewParms.orientation.origin, v);
-			len = VectorLength(v);
+			VectorSubtract(tess.xyz[i], viewOrigin, v);
+			lenSquared = DotProduct(v, v);
 
-			len /= tess.shader->portalRange;
-
-			if (len < 0)
-			{
-				alpha = 0;
-			}
-			else if (len > 1)
+			// fast path: if beyond portal range, full alpha (skip sqrt)
+			if (lenSquared >= portalRangeSquared)
 			{
 				alpha = 0xff;
 			}
 			else
 			{
-				alpha = len * 0xff;
+				// only compute sqrt when needed
+				float len = sqrt(lenSquared) * invPortalRange;
+				alpha = (unsigned char)(len * 0xff);
 			}
 
 			tess.svars.colors[i][3] = alpha;

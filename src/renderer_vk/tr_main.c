@@ -1192,7 +1192,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, int entityNum,
 static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 {
 	int           i;
-	cplane_t      originalPlane, plane;
+	cplane_t      originalPlane;
 	trRefEntity_t *e;
 	float         d;
 
@@ -1208,17 +1208,8 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 		// get the orientation of the entity
 		R_RotateForEntity(tr.currentEntity, &tr.viewParms, &tr.orientation);
 
-		// rotate the plane, but keep the non-rotated version for matching
-		// against the portalSurface entities
-		R_LocalNormalToWorld(originalPlane.normal, plane.normal);
-		plane.dist = originalPlane.dist + DotProduct(plane.normal, tr.orientation.origin);  // FIXME: plane is never read
-
 		// translate the original plane
 		originalPlane.dist = originalPlane.dist + DotProduct(originalPlane.normal, tr.orientation.origin);
-	}
-	else
-	{
-		plane = originalPlane;  // FIXME: never read
 	}
 
 	// locate the portal entity closest to this plane.

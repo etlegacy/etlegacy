@@ -1396,7 +1396,6 @@ void CL_InitUI(void)
 	if (v != UI_API_VERSION)
 	{
 		Com_Error(ERR_FATAL, "User Interface is version %d, expected %d", v, UI_API_VERSION);
-		//cls.uiStarted = qfalse; // FIXME: Never executed !
 	}
 
 	// init for this gamestate

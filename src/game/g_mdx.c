@@ -359,7 +359,13 @@ static int mdm_tag_lookup(const mdm_t *model, const char tagName[64]);
 static interntag_t *interntag_alloc(void)
 {
 	interntag_t *tag;
-	interntags = realloc(interntags, (interntag_count + 1) * sizeof(*interntags));
+	interntag_t *temp = realloc(interntags, (interntag_count + 1) * sizeof(*interntags));
+	if (!temp)
+	{
+		G_Error("interntag_alloc: failed to allocate memory");
+		return NULL;
+	}
+	interntags = temp;
 
 	tag              = &interntags[interntag_count++];
 	tag->tag.name[0] = '\0';
@@ -397,7 +403,15 @@ static int cachetag_cache(const char tagName[64])
 		}
 	}
 
-	cachetag_names = realloc(cachetag_names, (cachetag_count + 1) * sizeof(*cachetag_names));
+	{
+		char (*temp)[64] = realloc(cachetag_names, (cachetag_count + 1) * sizeof(*cachetag_names));
+		if (!temp)
+		{
+			G_Error("cachetag_cache: failed to allocate memory");
+			return -1;
+		}
+		cachetag_names = temp;
+	}
 	Q_strncpyz(&cachetag_names[cachetag_count][0], tagName, sizeof(*cachetag_names));
 	return (cachetag_count++);
 }
@@ -409,9 +423,15 @@ static int cachetag_cache(const char tagName[64])
  */
 static void mdm_cachetag_resize(mdm_t *model, int oldcount)
 {
-	int i;
+	int  i;
+	int *temp = realloc(model->cachetags, cachetag_count * sizeof(*model->cachetags));
 
-	model->cachetags = realloc(model->cachetags, cachetag_count * sizeof(*model->cachetags));
+	if (!temp)
+	{
+		G_Error("mdm_cachetag_resize: failed to allocate memory");
+		return;
+	}
+	model->cachetags = temp;
 	for (i = oldcount; i < cachetag_count; i++)
 	{
 		model->cachetags[i] = mdm_tag_lookup(model, cachetag_names[i]);
@@ -914,10 +934,17 @@ static qboolean hit_parse_hit(hit_t *hitModel, mdx_t *mdx, char **ptr)
 {
 	char            *token;
 	struct hit_area *hit;
+	struct hit_area *temp;
 	int             tagidx;
 	int             tag;
 
-	hitModel->hits = realloc(hitModel->hits, (hitModel->hit_count + 1) * sizeof(*hitModel->hits));
+	temp = realloc(hitModel->hits, (hitModel->hit_count + 1) * sizeof(*hitModel->hits));
+	if (!temp)
+	{
+		G_Printf(S_COLOR_RED "hit_parse_hit: failed to allocate memory\n");
+		return qfalse;
+	}
+	hitModel->hits = temp;
 	hit            = &hitModel->hits[hitModel->hit_count++];
 
 	for (tagidx = 0; tagidx < 2; tagidx++)
@@ -1334,7 +1361,7 @@ void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
 	Q_strncpyz(hitsfile, animationGroup, sizeof(hitsfile) - 4);
 	if ((sep = strrchr(hitsfile, '.'))) // FIXME: should abort on /'s
 	{
-		Q_strncpyz(sep, ".hit", sizeof(hitsfile) - (sep - sizeof(hitsfile)));
+		Q_strncpyz(sep, ".hit", sizeof(hitsfile) - (sep - hitsfile));
 	}
 	else
 	{
@@ -1353,7 +1380,8 @@ void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
  */
 qhandle_t mdx_RegisterHits(animModelInfo_t *animModelInfo, const char *filename)
 {
-	int i;
+	int    i;
+	hit_t *temp;
 
 	for (i = 0; i < hit_count; i++)
 	{
@@ -1364,7 +1392,14 @@ qhandle_t mdx_RegisterHits(animModelInfo_t *animModelInfo, const char *filename)
 	}
 
 	i    = hit_count++;
-	hits = realloc(hits, hit_count * sizeof(*hits));
+	temp = realloc(hits, hit_count * sizeof(*hits));
+	if (!temp)
+	{
+		hit_count--;
+		G_Printf(S_COLOR_RED "mdx_RegisterHits: failed to allocate memory\n");
+		return 0;
+	}
+	hits = temp;
 	Com_Memset(&hits[i], 0, sizeof(hits[i]));
 
 	if (hit_load(&hits[i], animModelInfo, filename) < 0)

@@ -148,7 +148,14 @@ void G_smvDel_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 	pID = Q_atoi(str);
 	if (!G_smvLocateEntityInMVList(ent, pID, qtrue))
 	{
-		CP(va("print \"[lof]** [lon]Client[lof] %s^7 [lon]is not currently viewed[lof]!\n\"", level.clients[pID].pers.netname));
+		if (pID >= 0 && pID < level.maxclients)
+		{
+			CP(va("print \"[lof]** [lon]Client[lof] %s^7 [lon]is not currently viewed[lof]!\n\"", level.clients[pID].pers.netname));
+		}
+		else
+		{
+			CP("print \"[lof]** [lon]Invalid client[lof]!\n\"");
+		}
 	}
 }
 
@@ -238,7 +245,7 @@ void G_smvAddView(gentity_t *ent, int pID)
 	trap_LinkEntity(v);
 
 	v->target_ent = &g_entities[pID];
-	v->TargetFlag = pID;
+	v->TargetFlag = i;
 	v->tagParent  = ent;
 
 	G_smvUpdateClientCSList(ent);

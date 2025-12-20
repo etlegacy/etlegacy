@@ -690,10 +690,18 @@ gotnewcl:
 		}
 
 		newcl->ettvClientFrame = Com_Allocate(sizeof(ettvClientSnapshot_t *) * PACKET_BACKUP);
+		if (!newcl->ettvClientFrame)
+		{
+			Com_Error(ERR_FATAL, "SV_DirectConnect: failed to allocate ettvClientFrame");
+		}
 
 		for (i = 0; i < PACKET_BACKUP; i++)
 		{
 			newcl->ettvClientFrame[i] = calloc(sizeof(ettvClientSnapshot_t), clients);
+			if (!newcl->ettvClientFrame[i])
+			{
+				Com_Error(ERR_FATAL, "SV_DirectConnect: failed to allocate ettvClientFrame[%d]", i);
+			}
 		}
 	}
 

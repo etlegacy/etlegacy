@@ -3823,7 +3823,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 	{
 		int pid = Q_atoi(level.voteInfo.vote_value);
 
-		if (!g_entities[pid].client)
+		if (pid < 0 || pid >= level.maxclients || !g_entities[pid].client)
 		{
 			return;
 		}

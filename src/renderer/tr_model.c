@@ -527,8 +527,6 @@ qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyz
 	int                i;
 	unsigned char      anorm;
 
-	i = sizeof(mdcXyzCompressed_t); // FIXME: never read
-
 	retval.ofsVec = 0;
 	for (i = 0; i < 3; i++)
 	{
@@ -2065,8 +2063,13 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	if (model->type == MOD_MESH)
 	{
 		// old MD3 style
-		// FIXME: retval is reassigned before used, does it was intended ?
 		retval = R_GetTag((byte *)model->model.md3[0], startFrame, tagName, startIndex, &start);
+		if (retval < 0 || !start)
+		{
+			AxisClear(tag->axis);
+			VectorClear(tag->origin);
+			return -1;
+		}
 		retval = R_GetTag((byte *)model->model.md3[0], endFrame, tagName, startIndex, &end);
 
 	}
@@ -2101,12 +2104,17 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 		// psuedo-compressed MDC tags
 		mdcTag_t *cstart, *cend;
 
-		// FIXME: retval is reassigned before used, does it was intended ?
 		retval = R_GetMDCTag((byte *)model->model.mdc[0], startFrame, tagName, startIndex, &cstart);
+		if (retval < 0 || !cstart)
+		{
+			AxisClear(tag->axis);
+			VectorClear(tag->origin);
+			return -1;
+		}
 		retval = R_GetMDCTag((byte *)model->model.mdc[0], endFrame, tagName, startIndex, &cend);
 
 		// uncompress the MDC tags into MD3 style tags
-		if (cstart && cend)
+		if (cend)
 		{
 			for (i = 0; i < 3; i++)
 			{

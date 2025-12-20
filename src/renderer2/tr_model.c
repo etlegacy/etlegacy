@@ -713,10 +713,15 @@ int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endF
 
 	start = end = NULL;
 
-	// FIXME: retval is reassigned before used, does it was intended ?
 	retval = R_GetTag(model->mdv[0], startFrame, tagName, 0, &start);
+	if (retval < 0 || !start)
+	{
+		AxisClear(tag->axis);
+		VectorClear(tag->origin);
+		return -1;
+	}
 	retval = R_GetTag(model->mdv[0], endFrame, tagName, 0, &end);
-	if (!start || !end)
+	if (retval < 0 || !end)
 	{
 		AxisClear(tag->axis);
 		VectorClear(tag->origin);
@@ -791,8 +796,13 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 	if (model->type == MOD_MESH)
 	{
 		// old MD3 style
-		// FIXME: retval is reassigned before used, does it was intended ?
 		retval = R_GetTag(model->mdv[0], startFrame, tagName, startIndex, &start);
+		if (retval < 0 || !start)
+		{
+			AxisClear(tag->axis);
+			VectorClear(tag->origin);
+			return -1;
+		}
 		retval = R_GetTag(model->mdv[0], endFrame, tagName, startIndex, &end);
 
 	}
