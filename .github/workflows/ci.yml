@@ -142,7 +142,7 @@ jobs:
         run: cpack
 
   osx:
-    runs-on: macos-13
+    runs-on: macos-14
     needs: [pre-build]
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
