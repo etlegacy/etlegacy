@@ -145,7 +145,7 @@ jobs:
           if-no-files-found: error
 
   osx-mod:
-    runs-on: macos-13
+    runs-on: macos-14
     needs: pre-build
     steps:
       - uses: actions/checkout@v4
@@ -541,7 +541,7 @@ jobs:
           if-no-files-found: error
 
   osx:
-    runs-on: macos-13
+    runs-on: macos-14
     needs: [pre-build, mod-merger]
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
