@@ -89,6 +89,9 @@ void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 static char translated_yes[4], translated_no[4];
 
+int dll_com_trapGetValue;
+int dll_trap_CvarRegisterExt;
+
 void UI_Init(int etLegacyClient, int clientVersion);
 void UI_Shutdown(void);
 void UI_KeyEvent(int key, qboolean down);
@@ -106,6 +109,34 @@ static uiMenuCommand_t UI_AdjustedMenuCommand(const uiMenuCommand_t menutype)
 	}
 
 	return UIMENU_WM_AUTOUPDATE;
+}
+
+static ID_INLINE void UI_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+{
+	if (trap_GetValue(value, valueSize, name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static void UI_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+		UI_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarRegisterExt, "trap_Cvar_RegisterExt_Legacy");
+	}
+	else
+	{
+		dll_trap_CvarRegisterExt = 0;
+	}
 }
 
 /**
@@ -8594,6 +8625,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	int x;
 	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
 
+	UI_SetupExtensions();
 	UI_RegisterCvars();
 	UI_InitMemory();
 	trap_PC_RemoveAllGlobalDefines();

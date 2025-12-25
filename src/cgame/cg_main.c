@@ -49,6 +49,7 @@ int dll_trap_SysFlashWindow;
 int dll_trap_CommandComplete;
 int dll_trap_CmdBackup_Ext;
 int dll_trap_MatchPaused;
+int dll_trap_CvarRegisterExt;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -2100,6 +2101,7 @@ static ID_INLINE void CG_SetupExtensions(void)
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CmdBackup_Ext, "trap_CmdBackup_Ext_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_MatchPaused, "trap_MatchPaused_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarRegisterExt, "trap_Cvar_RegisterExt_Legacy");
 	}
 }
 

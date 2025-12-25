@@ -187,6 +187,7 @@ typedef enum
 
 	///< engine extensions padding
 	UI_TRAP_GETVALUE = COM_TRAP_GETVALUE,
+	UI_CVAR_REGISTER_EXT,
 
 } uiImport_t;
 

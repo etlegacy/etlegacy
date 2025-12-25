@@ -93,6 +93,26 @@ void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defau
 }
 
 /**
+ * @brief trap_Cvar_RegisterExt
+ * @param[in] vmCvar
+ * @param[in] varName
+ * @param[in] defaultValue
+ * @param[in] flags
+ * @param[in] description
+ */
+void trap_Cvar_RegisterExt(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags, const char *description, qboolean validate, float minVal, float maxVal, qboolean shouldBeIntegral)
+{
+	if (dll_trap_CvarRegisterExt)
+	{
+		SystemCall(dll_trap_CvarRegisterExt, vmCvar, varName, defaultValue, flags, description, validate, minVal, maxVal, shouldBeIntegral);
+	}
+	else
+	{
+		trap_Cvar_Register(vmCvar, varName, defaultValue, flags);
+	}
+}
+
+/**
  * @brief trap_Cvar_Update
  * @param[in] vmCvar
  */

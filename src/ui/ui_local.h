@@ -644,6 +644,7 @@ void trap_Print(const char *fmt);
 NORETURN_MSVC void trap_Error(const char *fmt) _attribute((noreturn));
 int trap_Milliseconds(void);
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_RegisterExt(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags, const char *description, qboolean validate, float minVal, float maxVal, qboolean shouldBeIntegral);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
 void trap_Cvar_Set(const char *varName, const char *value);
 float trap_Cvar_VariableValue(const char *varName);
@@ -745,6 +746,11 @@ void trap_TranslateString(const char *fmt, char *buffer);
 
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);
+
+// extension interface
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+extern int dll_com_trapGetValue;
+extern int dll_trap_CvarRegisterExt;
 
 #define EDITFIELD_TEMP_CVAR         "ui_textfield_temp"
 

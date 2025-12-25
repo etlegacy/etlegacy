@@ -42,11 +42,17 @@
 
 extern botlib_export_t *botlib_export;
 
-#define TRAP_EXTENSIONS_LIST NULL
+#define TRAP_EXTENSIONS_LIST ui_extensionTraps
 #include "../qcommon/vm_ext.h"
 #include "json.h"
 
 vm_t *uivm;
+
+static ext_trap_keys_t ui_extensionTraps[] =
+{
+	{ "trap_Cvar_RegisterExt_Legacy", UI_CVAR_REGISTER_EXT, qfalse },
+	{ NULL,                           -1,                   qfalse }
+};
 
 /**
  * @brief GetClientState
@@ -1060,6 +1066,9 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return Sys_Milliseconds();
 	case UI_CVAR_REGISTER:
 		Cvar_Register(VMA(1), VMA(2), VMA(3), args[4]);
+		return 0;
+	case UI_CVAR_REGISTER_EXT:
+		Cvar_RegisterExt(VMA(1), VMA(2), VMA(3), args[4], VMA(5), args[6], VMF(7), VMF(8), args[9]);
 		return 0;
 	case UI_CVAR_UPDATE:
 		Cvar_Update(VMA(1));

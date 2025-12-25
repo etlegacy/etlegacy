@@ -224,7 +224,8 @@ typedef enum
 	TVG_GET_PLAYERSTATE = 600,
 
 	///< engine extensions padding
-	G_TRAP_GETVALUE = COM_TRAP_GETVALUE
+	G_TRAP_GETVALUE = COM_TRAP_GETVALUE,
+	G_CVAR_REGISTER_EXT
 } gameImport_t;
 
 

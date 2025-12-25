@@ -86,6 +86,26 @@ void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defau
 }
 
 /**
+ * @brief trap_Cvar_RegisterExt
+ * @param[in] vmCvar
+ * @param[in] varName
+ * @param[in] defaultValue
+ * @param[in] flags
+ * @param[in] description
+ */
+void trap_Cvar_RegisterExt(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, cvarFlags_t flags, const char *description, qboolean validate, float minVal, float maxVal, qboolean shouldBeIntegral)
+{
+	if (dll_trap_CvarRegisterExt)
+	{
+		SystemCall(dll_trap_CvarRegisterExt, vmCvar, varName, defaultValue, flags, description, validate, minVal, maxVal, shouldBeIntegral);
+	}
+	else
+	{
+		trap_Cvar_Register(vmCvar, varName, defaultValue, flags);
+	}
+}
+
+/**
  * @brief trap_Cvar_Update
  * @param[in] vmCvar
  */
@@ -1157,4 +1177,16 @@ void trap_openURL(const char *url)
 void trap_GetHunkData(int *hunkused, int *hunkexpected)
 {
 	SystemCall(UI_GETHUNKDATA, hunkused, hunkexpected);
+}
+
+/**
+ * @brief Entry point for optional engine extensions
+ * @param[out] value
+ * @param[in] valueSize
+ * @param[in] key
+ * @return
+ */
+qboolean trap_GetValue(char *value, int valueSize, const char *key)
+{
+	return (qboolean)(SystemCall(dll_com_trapGetValue, value, valueSize, key));
 }

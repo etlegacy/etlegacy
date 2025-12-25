@@ -237,6 +237,7 @@ qboolean TVG_SnapshotCallback(int entityNum, int clientNum)
 }
 
 int dll_com_trapGetValue;
+int dll_trap_CvarRegisterExt;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -462,6 +463,7 @@ static ID_INLINE void TVG_SetupExtensions(void)
 	if (value[0])
 	{
 		dll_com_trapGetValue = Q_atoi(value);
+		TVG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarRegisterExt, "trap_Cvar_RegisterExt_Legacy");
 	}
 }
 
@@ -534,13 +536,12 @@ void TVG_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer
 
 	TVG_InitTVCmds();
 
+	TVG_SetupExtensions();
 	TVG_RegisterCvars();
 
 	TVG_ProcessIPBans();
 
 	G_InitMemory();
-
-	TVG_SetupExtensions();
 
 	level.time      = levelTime;
 	level.startTime = levelTime;
