@@ -90,7 +90,6 @@ extern vmCvar_t ui_cg_crosshairAlphaAlt;
 extern vmCvar_t ui_cg_crosshairSize;
 extern vmCvar_t ui_cg_crosshairScaleX;
 extern vmCvar_t ui_cg_crosshairScaleY;
-extern vmCvar_t ui_cg_crosshairSVG;
 
 extern vmCvar_t cl_bypassMouseInput;
 

@@ -1110,10 +1110,8 @@ static void CG_RegisterGraphics(void)
 
 	for (i = 0 ; i < NUM_CROSSHAIRS ; i++)
 	{
-		const qboolean useSVG = cg_crosshairSVG.integer && cg.etLegacyClient;
-
-		cgs.media.crosshairShader[i] = trap_R_RegisterShader(va("gfx/2d/crosshair%c%s", 'a' + i, useSVG ? "_svg" : ""));
-		cg.crosshairShaderAlt[i]     = trap_R_RegisterShader(va("gfx/2d/crosshair%c_alt%s", 'a' + i, useSVG ? "_svg" : ""));
+		cgs.media.crosshairShader[i] = trap_R_RegisterShader(va("gfx/2d/crosshair%c", 'a' + i));
+		cg.crosshairShaderAlt[i]     = trap_R_RegisterShader(va("gfx/2d/crosshair%c_alt", 'a' + i));
 	}
 
 	for (i = 0 ; i < SK_NUM_SKILLS ; i++)
