@@ -278,7 +278,6 @@ extern vmCvar_t cg_customFont1;
 extern vmCvar_t cg_customFont2;
 
 extern vmCvar_t cg_drawSpawnpoints;
-extern vmCvar_t cg_crosshairSVG;
 extern vmCvar_t cg_crosshairSize;
 extern vmCvar_t cg_crosshairAlpha;
 extern vmCvar_t cg_crosshairColor;

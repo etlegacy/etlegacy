@@ -183,7 +183,6 @@ qboolean R_LoadJPG(imageData_t *data, byte **pic, int *width, int *height, byte 
 qboolean R_LoadPCX(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
 qboolean R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
 qboolean R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
-qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
 
 /*
 =============================================================

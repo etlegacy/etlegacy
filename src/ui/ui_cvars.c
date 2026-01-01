@@ -99,7 +99,6 @@ vmCvar_t ui_cg_crosshairAlphaAlt;
 vmCvar_t ui_cg_crosshairSize;
 vmCvar_t ui_cg_crosshairScaleX;
 vmCvar_t ui_cg_crosshairScaleY;
-vmCvar_t ui_cg_crosshairSVG;
 
 vmCvar_t cl_bypassMouseInput;
 
@@ -213,7 +212,6 @@ static cvarTable_t cvarTable[] =
 	{ &ui_cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairScaleX,              "cg_crosshairScaleX",                  "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairScaleY,              "cg_crosshairScaleY",                  "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_crosshairSVG,                 "cg_crosshairSVG",                     "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairHealth",                  "0",                          CVAR_ARCHIVE,                   0 },
 

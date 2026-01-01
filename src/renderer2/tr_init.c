@@ -298,8 +298,6 @@ cvar_t *r_materialScan;
 
 cvar_t *r_smoothNormals; // do another extra smoothing for normals to avoid flat shading
 
-cvar_t *r_scalesvg;
-
 /**
 * @brief This function is responsible for initializing a valid OpenGL subsystem.  This
 * is done by calling GLimp_Init (which gives us a working OGL subsystem) then
@@ -1642,9 +1640,6 @@ void R_Register(void)
 	r_materialScan = ri.Cvar_Get("r_materialScan", "3", CVAR_ARCHIVE_ND | CVAR_LATCH);
 
 	r_smoothNormals = ri.Cvar_Get("r_smoothNormals", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
-
-	r_scalesvg = ri.Cvar_Get("r_scalesvg", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_scalesvg, 0, 2, qtrue);
 
 	// make sure all the commands added here are also removed in R_Shutdown
 	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Prints the list of loaded images.", NULL);
