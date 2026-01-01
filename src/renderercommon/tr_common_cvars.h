@@ -139,6 +139,4 @@ extern cvar_t *r_maxPolyVerts;
 
 extern cvar_t *r_ext_multisample;
 
-extern cvar_t *r_scalesvg;
-
 #endif  // INCLUDE_TR_COMMON_CVARS_H

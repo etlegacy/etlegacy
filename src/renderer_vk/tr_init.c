@@ -171,8 +171,6 @@ cvar_t *r_gfxInfo;
 
 cvar_t *r_scale;
 
-cvar_t *r_scalesvg;
-
 /**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
  *
@@ -1181,9 +1179,6 @@ void R_Register(void)
 	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
 	r_scale = ri.Cvar_Get("r_scale", "1", CVAR_ARCHIVE | CVAR_LATCH);
-
-	r_scalesvg = ri.Cvar_Get("r_scalesvg", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_scalesvg, 0, 2, qtrue);
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
