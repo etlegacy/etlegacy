@@ -44,7 +44,6 @@ cvar_t *r_ext_multisample;
   */
 imageExtToLoaderMap_t imageLoaders[] =
 {
-	{ "svg",  R_LoadSVG },
 	{ "png",  R_LoadPNG },
 	{ "tga",  R_LoadTGA },
 	{ "jpg",  R_LoadJPG },
