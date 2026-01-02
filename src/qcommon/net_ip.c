@@ -32,6 +32,12 @@
  * @file net_ip.c
  */
 
+// Define feature test macros before any system includes
+#ifndef _WIN32
+#define _DEFAULT_SOURCE 1
+#define _BSD_SOURCE 1
+#endif
+
 #include "q_shared.h"
 #include "qcommon.h"
 
@@ -1113,7 +1119,7 @@ int NET_IPSocket(const char *net_interface, int port, int *err)
 {
 	SOCKET             newsocket;
 	struct sockaddr_in address;
-	u_long             _true = 1;
+	unsigned long      _true = 1;
 	int                i     = 1;
 
 	struct timeval timeout;
@@ -1209,7 +1215,7 @@ int NET_IP6Socket(const char *net_interface, int port, struct sockaddr_in6 *bind
 {
 	SOCKET              newsocket;
 	struct sockaddr_in6 address;
-	u_long              _true = 1;
+	unsigned long       _true = 1;
 
 	*err = 0;
 
