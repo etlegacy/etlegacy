@@ -46,8 +46,18 @@ static cvar_t *in_keyboardDebug = NULL;
 static cvar_t *in_mouse = NULL;
 static cvar_t *in_nograb;
 
-static qboolean mouseAvailable = qfalse;
-static qboolean mouseActive    = qfalse;
+static qboolean mouseAvailable     = qfalse;
+static qboolean mouseActive        = qfalse;
+static qboolean ui_hasMousePos     = qfalse;
+static int      ui_lastMouseX      = 0;
+static int      ui_lastMouseY      = 0;
+static qboolean ui_needs_sync      = qfalse;
+qboolean        in_uiMouseInternal = qfalse;
+static qboolean cg_hasMousePos     = qfalse;
+static int      cg_lastMouseX      = 0;
+static int      cg_lastMouseY      = 0;
+static qboolean cg_needs_sync      = qfalse;
+qboolean        in_cgMouseInternal = qfalse;
 
 static SDL_GameController *gamepad              = NULL;
 static SDL_Joystick       *stick                = NULL;
@@ -66,6 +76,99 @@ SDL_Window *mainScreen    = NULL;
 // It's not simulating "the next 1/60th or 1/125th" of a second. If you give it "now" as input timestamps, your inputs do not occur until the *next* simulated chunk of time.
 // Try it. com_maxfps 1, press "forward", have fun.
 static int64_t lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
+
+static void IN_GetUIMousePosition(int *uiX, int *uiY)
+{
+	int   winW  = 0;
+	int   winH  = 0;
+	int   mx    = 0;
+	int   my    = 0;
+	float scale = 1.0f;
+
+	if (!mainScreen)
+	{
+		*uiX = 0;
+		*uiY = 0;
+		return;
+	}
+
+	SDL_GetWindowSize(mainScreen, &winW, &winH);
+	SDL_GetMouseState(&mx, &my);
+	if (winH > 0)
+	{
+		scale = SCREEN_HEIGHT_F / (float)winH;
+	}
+
+	*uiX = (int)lroundf((float)mx * scale);
+	*uiY = (int)lroundf((float)my * scale);
+}
+
+static float IN_GetCGameCursorScale(void)
+{
+	float scale = 1.0f;
+
+	if (!cl_hudEditorMouseScale || cl_hudEditorMouseScale->value <= 0.0f)
+	{
+		return 1.0f;
+	}
+
+	scale = cl_hudEditorMouseScale->value;
+	if (scale < 0.1f)
+	{
+		scale = 0.1f;
+	}
+	else if (scale > 10.0f)
+	{
+		scale = 10.0f;
+	}
+
+	return scale;
+}
+
+static void IN_GetCGMousePosition(int *cgX, int *cgY)
+{
+	int   uiX   = 0;
+	int   uiY   = 0;
+	float scale = IN_GetCGameCursorScale();
+
+	IN_GetUIMousePosition(&uiX, &uiY);
+
+	if (scale == 1.0f)
+	{
+		*cgX = uiX;
+		*cgY = uiY;
+		return;
+	}
+
+	*cgX = (int)lroundf((float)uiX * scale);
+	*cgY = (int)lroundf((float)uiY * scale);
+}
+
+static void IN_SyncMousePosition(void (*getPos)(int *, int *), int *lastX, int *lastY, qboolean *hasPos, qboolean *needs_sync)
+{
+	int x = 0;
+	int y = 0;
+
+	getPos(&x, &y);
+
+	// Reset to a known origin before sending absolute coordinates.
+	Com_QueueEvent(lasttime, SE_MOUSE, -SCREEN_WIDTH * 4, -SCREEN_HEIGHT * 4, 0, NULL);
+	Com_QueueEvent(lasttime, SE_MOUSE, x, y, 0, NULL);
+	*lastX      = x;
+	*lastY      = y;
+	*hasPos     = qtrue;
+	*needs_sync = qfalse;
+}
+
+static void IN_SyncUIMousePosition(void)
+{
+	IN_SyncMousePosition(IN_GetUIMousePosition, &ui_lastMouseX, &ui_lastMouseY, &ui_hasMousePos, &ui_needs_sync);
+}
+
+static void IN_SyncCGMousePosition(void)
+{
+	IN_SyncMousePosition(IN_GetCGMousePosition, &cg_lastMouseX, &cg_lastMouseY, &cg_hasMousePos, &cg_needs_sync);
+}
 
 #ifdef __ANDROID__
 // Margin rectangle structure for the "shoot button" area
@@ -723,8 +826,8 @@ static void IN_DeactivateMouse(void)
 	}
 
 	// Always show the cursor when the mouse is disabled,
-	// but not when fullscreen
-	if (!cls.glconfig.isFullscreen)
+	// and force it on when UI is active (even in fullscreen).
+	if (!cls.glconfig.isFullscreen || (Key_GetCatcher() & KEYCATCH_UI))
 	{
 #if 0
 		if ((Key_GetCatcher() == KEYCATCH_UI) &&
@@ -1636,6 +1739,78 @@ static void IN_ProcessEvents(void)
 				}
 				Com_QueueEvent(lasttime, SE_MOUSE, e.motion.xrel, e.motion.yrel, 0, NULL);
 			}
+			else if (Key_GetCatcher() & KEYCATCH_UI)
+			{
+				int dx  = 0;
+				int dy  = 0;
+				int uiX = 0;
+				int uiY = 0;
+
+				IN_GetUIMousePosition(&uiX, &uiY);
+
+				if (ui_needs_sync)
+				{
+					// Force UI cursor to 0,0, then move to the OS cursor position.
+					Com_QueueEvent(lasttime, SE_MOUSE, -SCREEN_WIDTH * 4, -SCREEN_HEIGHT * 4, 0, NULL);
+					Com_QueueEvent(lasttime, SE_MOUSE, uiX, uiY, 0, NULL);
+					ui_needs_sync  = qfalse;
+					ui_lastMouseX  = uiX;
+					ui_lastMouseY  = uiY;
+					ui_hasMousePos = qtrue;
+					break;
+				}
+
+				if (ui_hasMousePos)
+				{
+					dx = uiX - ui_lastMouseX;
+					dy = uiY - ui_lastMouseY;
+				}
+
+				ui_lastMouseX  = uiX;
+				ui_lastMouseY  = uiY;
+				ui_hasMousePos = qtrue;
+
+				if (dx || dy)
+				{
+					Com_QueueEvent(lasttime, SE_MOUSE, dx, dy, 0, NULL);
+				}
+			}
+			else if ((Key_GetCatcher() & KEYCATCH_CGAME) && cl_bypassMouseInput && cl_bypassMouseInput->integer == 0)
+			{
+				int dx  = 0;
+				int dy  = 0;
+				int cgX = 0;
+				int cgY = 0;
+
+				IN_GetCGMousePosition(&cgX, &cgY);
+
+				if (cg_needs_sync)
+				{
+					// Force CG cursor to 0,0, then move to the OS cursor position.
+					Com_QueueEvent(lasttime, SE_MOUSE, -SCREEN_WIDTH * 4, -SCREEN_HEIGHT * 4, 0, NULL);
+					Com_QueueEvent(lasttime, SE_MOUSE, cgX, cgY, 0, NULL);
+					cg_needs_sync  = qfalse;
+					cg_lastMouseX  = cgX;
+					cg_lastMouseY  = cgY;
+					cg_hasMousePos = qtrue;
+					break;
+				}
+
+				if (cg_hasMousePos)
+				{
+					dx = cgX - cg_lastMouseX;
+					dy = cgY - cg_lastMouseY;
+				}
+
+				cg_lastMouseX  = cgX;
+				cg_lastMouseY  = cgY;
+				cg_hasMousePos = qtrue;
+
+				if (dx || dy)
+				{
+					Com_QueueEvent(lasttime, SE_MOUSE, dx, dy, 0, NULL);
+				}
+			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP:
@@ -1698,7 +1873,12 @@ static void IN_ProcessEvents(void)
 			switch (e.window.event)
 			{
 			case SDL_WINDOWEVENT_RESIZED:
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
 				IN_WindowResize(&e);
+				ui_hasMousePos = qfalse;
+				ui_needs_sync  = qtrue;
+				cg_hasMousePos = qfalse;
+				cg_needs_sync  = qtrue;
 				break;
 			case SDL_WINDOWEVENT_MINIMIZED:
 				Cvar_SetValue("com_minimized", 1);
@@ -1723,6 +1903,10 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_LEAVE:
 				Key_ClearStates();
 				Cvar_SetValue("com_unfocused", 1);
+				ui_hasMousePos = qfalse;
+				ui_needs_sync  = qtrue;
+				cg_hasMousePos = qfalse;
+				cg_needs_sync  = qtrue;
 				break;
 			case SDL_WINDOWEVENT_ENTER:
 			{
@@ -1737,6 +1921,10 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			{
 				Cvar_SetValue("com_unfocused", 0);
+				ui_hasMousePos = qfalse;
+				ui_needs_sync  = qtrue;
+				cg_hasMousePos = qfalse;
+				cg_needs_sync  = qtrue;
 				if (com_minimized->integer)
 				{
 					SDL_RestoreWindow(mainScreen);
@@ -1811,8 +1999,14 @@ static void IN_ProcessEvents(void)
 void IN_Frame(void)
 {
 	// If not DISCONNECTED (main menu), ACTIVE (in game) or CINEMATIC (playing video), we're loading
-	qboolean loading   = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
-	qboolean cinematic = (cls.state == CA_CINEMATIC);
+	qboolean        loading           = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
+	qboolean        cinematic         = (cls.state == CA_CINEMATIC);
+	qboolean        uiActive          = (Key_GetCatcher() & KEYCATCH_UI) ? qtrue : qfalse;
+	qboolean        cgActive          = (Key_GetCatcher() & KEYCATCH_CGAME) ? qtrue : qfalse;
+	static qboolean prevUiActive      = qfalse;
+	static qboolean prevCgActive      = qfalse;
+	static float    prevCgCursorScale = 1.0f;
+	static int      prevState         = -1;
 
 	// Get the timestamp to give the next frame's input events (not the ones we're gathering right now, though)
 	int64_t start = Sys_Microseconds();
@@ -1864,7 +2058,12 @@ void IN_Frame(void)
 
 #endif // __ANDROID__
 
-	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
+	if (uiActive || (cgActive && cl_bypassMouseInput && cl_bypassMouseInput->integer == 0))
+	{
+		// Use the OS cursor for menu interaction.
+		IN_DeactivateMouse();
+	}
+	else if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
 		// Console is down in windowed mode
 		IN_DeactivateMouse();
@@ -1898,7 +2097,52 @@ void IN_Frame(void)
 		Cbuf_AddText("vid_restart\n");
 	}
 
+	in_uiMouseInternal = (uiActive && !mouseActive) ? qtrue : qfalse;
+	in_cgMouseInternal = (cgActive && !mouseActive && cl_bypassMouseInput && cl_bypassMouseInput->integer == 0) ? qtrue : qfalse;
+
+	{
+		float cgCursorScale = IN_GetCGameCursorScale();
+
+		if (cgCursorScale != prevCgCursorScale)
+		{
+			prevCgCursorScale = cgCursorScale;
+			cg_hasMousePos    = qfalse;
+			cg_needs_sync     = qtrue;
+		}
+	}
 	IN_ProcessEvents();
+	if (uiActive && prevState != cls.state)
+	{
+		IN_SyncUIMousePosition();
+	}
+	if (cgActive && prevState != cls.state)
+	{
+		IN_SyncCGMousePosition();
+	}
+	if (prevUiActive != uiActive)
+	{
+		// Force a resync of absolute mouse position after UI state changes.
+		ui_hasMousePos = qfalse;
+		ui_needs_sync  = uiActive ? qtrue : qfalse;
+		if (uiActive)
+		{
+			IN_SyncUIMousePosition();
+		}
+		SDL_PumpEvents();
+		prevUiActive = uiActive;
+	}
+	if (prevCgActive != cgActive)
+	{
+		cg_hasMousePos = qfalse;
+		cg_needs_sync  = cgActive ? qtrue : qfalse;
+		if (cgActive)
+		{
+			IN_SyncCGMousePosition();
+		}
+		SDL_PumpEvents();
+		prevCgActive = cgActive;
+	}
+	prevState = cls.state;
 
 	// Store the timestamp for the next frame's input events
 	lasttime = start;

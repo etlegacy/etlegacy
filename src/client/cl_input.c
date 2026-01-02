@@ -688,6 +688,7 @@ cvar_t *cl_run;
 cvar_t *cl_anglespeedkey;
 cvar_t *cl_recoilPitch;
 cvar_t *cl_bypassMouseInput;
+cvar_t *cl_hudEditorMouseScale;
 cvar_t *cl_doubletapdelay;
 
 /**
@@ -840,6 +841,9 @@ static ID_INLINE void CL_MouseEventScale(int dx, int dy, float *mdx, float *mdy)
  * @param[in] dy
  * @param time - unused
  */
+extern qboolean in_uiMouseInternal;
+extern qboolean in_cgMouseInternal;
+
 void CL_MouseEvent(int dx, int dy, int time)
 {
 	float mdx, mdy;
@@ -851,6 +855,10 @@ void CL_MouseEvent(int dx, int dy, int time)
 		{
 			cl.mouseDx[cl.mouseIndex] += dx;
 			cl.mouseDy[cl.mouseIndex] += dy;
+		}
+		else if (in_uiMouseInternal)
+		{
+			VM_Call(uivm, UI_MOUSE_EVENT, dx, dy);
 		}
 		else
 		{
@@ -864,6 +872,10 @@ void CL_MouseEvent(int dx, int dy, int time)
 		{
 			cl.mouseDx[cl.mouseIndex] += dx;
 			cl.mouseDy[cl.mouseIndex] += dy;
+		}
+		else if (in_cgMouseInternal)
+		{
+			VM_Call(cgvm, CG_MOUSE_EVENT, dx, dy);
 		}
 		else
 		{
