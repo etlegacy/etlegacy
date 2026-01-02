@@ -1378,31 +1378,8 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 
 qboolean GLimp_SplashImage(qboolean (*LoadSplashImage)(const char *name, byte *data, unsigned int size, unsigned int width, unsigned int height, uint8_t bytes))
 {
-	qboolean result = qfalse;
-	byte     *data  = Com_Allocate(SPLASH_DATA_SIZE);
-
-	if (!data)
-	{
-		return qfalse;
-	}
-
-	if (!LoadSplashImage("splash.svg", (byte *)CLIENT_WINDOW_SPLASH_SVG, strlen(CLIENT_WINDOW_SPLASH_SVG) + 1, 0, 0, 0))
-	{
-
-		// decode splash image
-		SPLASH_IMAGE_RUN_LENGTH_DECODE(data,
-		                               CLIENT_WINDOW_SPLASH.rle_pixel_data,
-		                               CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
-		                               CLIENT_WINDOW_SPLASH.bytes_per_pixel);
-
-		result = LoadSplashImage(NULL, data, SPLASH_DATA_SIZE, CLIENT_WINDOW_SPLASH.width, CLIENT_WINDOW_SPLASH.height, CLIENT_WINDOW_SPLASH.bytes_per_pixel);
-	}
-	else
-	{
-		result = qtrue;
-	}
-
-	Com_Dealloc(data);
-
-	return result;
+	return LoadSplashImage("splash.png",
+	                       (byte *)SDL_CLIENT_WINDOW_SPLASH_PNG,
+	                       SDL_CLIENT_WINDOW_SPLASH_PNG_len,
+	                       0, 0, 0);
 }
