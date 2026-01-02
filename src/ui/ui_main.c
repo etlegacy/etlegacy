@@ -1040,10 +1040,7 @@ void UI_Refresh(int realtime)
 		// so it's just checking if the cursor should be visible or not.
 		// If cursor drawing is explicitly called somewhere else in UI, this should probably
 		// be refactored into a separate cursor drawing function (see CG_DrawCursor)
-		if ((cstate.connState <= CA_DISCONNECTED || cstate.connState >= CA_ACTIVE) && uiInfo.uiDC.cursorVisible)
-		{
-			UI_DrawHandlePic(uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory, CURSOR_SIZE, CURSOR_SIZE, uiInfo.uiDC.Assets.cursor);
-		}
+		// Custom cursor rendering is disabled; rely on the OS cursor instead.
 	}
 }
 
