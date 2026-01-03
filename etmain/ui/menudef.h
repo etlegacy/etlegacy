@@ -359,6 +359,11 @@
 #define UI_CAMPAIGNMAP4_TEXT        272
 #define UI_CAMPAIGNMAP5_TEXT        273
 #define UI_CAMPAIGNMAP6_TEXT        274
+#define UI_LASTSERVER_NAME          275
+#define UI_LASTSERVER_ADDRESS       276
+#define UI_LASTSERVER_MAP           277
+#define UI_LASTSERVER_PLAYERS       278
+#define UI_LASTSERVER_PING          279
 
 #define UI_GAMETYPEDESCRIPTION      280
 

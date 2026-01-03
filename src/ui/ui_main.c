@@ -74,6 +74,8 @@ static void UI_BuildServerStatus(qboolean force);
 static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2);
 static int UI_MapCountByGameType(qboolean singlePlayer);
 static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual);
+static const char *UI_LastServerFieldText(int ownerDraw);
+static void UI_UpdateLastServerPing(void);
 
 static void UI_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
 static void UI_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
@@ -1001,6 +1003,7 @@ void UI_Refresh(int realtime)
 	}
 
 	UI_UpdateCvars();
+	UI_UpdateLastServerPing();
 
 	if (trap_Cvar_VariableValue("ui_connecting") != 0.f)
 	{
@@ -2918,6 +2921,13 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 	case UI_SERVERREFRESHDATE:
 		s = UI_Cvar_VariableString(va("ui_lastServerRefresh_%i", ui_netSource.integer));
 		break;
+	case UI_LASTSERVER_NAME:
+	case UI_LASTSERVER_ADDRESS:
+	case UI_LASTSERVER_MAP:
+	case UI_LASTSERVER_PLAYERS:
+	case UI_LASTSERVER_PING:
+		s = UI_LastServerFieldText(ownerDraw);
+		break;
 	default:
 		break;
 	}
@@ -3096,6 +3106,102 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 		Q_strncpyz(buff, UI_Cvar_VariableString(va("ui_lastServerRefresh_%i", ui_netSource.integer)), 64);
 		Text_Paint(rect->x, rect->y, scale, color, va(__("Refresh Time: %s"), buff), 0, 0, textStyle);
 	}
+}
+
+/**
+ * @brief UI_LastServerFieldText
+ * @param[in] ownerDraw
+ * @return
+ */
+static const char *UI_LastServerFieldText(int ownerDraw)
+{
+	static char value[64];
+	const char  *info = uiInfo.lastServerStatusInfo;
+	const char  *address;
+	const char  *humans;
+	const char  *maxclients;
+	int         maxPing;
+
+	switch (ownerDraw)
+	{
+	case UI_LASTSERVER_NAME:
+		if (!uiInfo.lastServerOnline)
+		{
+			return "...";
+		}
+		if (!info[0])
+		{
+			return "...";
+		}
+		value[0] = '\0';
+		Q_strncpyz(value, Info_ValueForKey(info, "hostname"), sizeof(value));
+		return value[0] ? value : "...";
+	case UI_LASTSERVER_ADDRESS:
+		address = UI_Cvar_VariableString("ui_lastConnectedAddress");
+		return address[0] ? address : "...";
+	case UI_LASTSERVER_MAP:
+		if (!uiInfo.lastServerOnline)
+		{
+			return "...";
+		}
+		if (!info[0])
+		{
+			return "...";
+		}
+		value[0] = '\0';
+		Q_strncpyz(value, Info_ValueForKey(info, "mapname"), sizeof(value));
+		return value[0] ? value : "...";
+	case UI_LASTSERVER_PLAYERS:
+		if (!uiInfo.lastServerOnline)
+		{
+			return "...";
+		}
+		humans = Info_ValueForKey(info, "humans");
+		if (!humans[0])
+		{
+			humans = Info_ValueForKey(info, "clients");
+		}
+		maxclients = Info_ValueForKey(info, "sv_maxclients");
+		if (!humans[0])
+		{
+			return "...";
+		}
+		if (maxclients[0])
+		{
+			Com_sprintf(value, sizeof(value), "%s/%s", humans, maxclients);
+			return value;
+		}
+		return humans;
+	case UI_LASTSERVER_PING:
+		address = UI_Cvar_VariableString("ui_lastConnectedAddress");
+		if (!address[0])
+		{
+			return "...";
+		}
+
+		if (!uiInfo.lastServerOnline)
+		{
+			maxPing = (int)trap_Cvar_VariableValue("cl_maxPing");
+			if (uiInfo.lastServerPingFirstRequestTime &&
+			    uiInfo.uiDC.realTime - uiInfo.lastServerPingFirstRequestTime <= maxPing)
+			{
+				return "...";
+			}
+			return "offline";
+		}
+
+		if (uiInfo.lastServerPing > 0)
+		{
+			Com_sprintf(value, sizeof(value), "%i ms", uiInfo.lastServerPing);
+			return value;
+		}
+
+		return "...";
+	default:
+		break;
+	}
+
+	return "";
 }
 
 /**
@@ -3509,6 +3615,13 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 		break;
 	case UI_SERVERMOTD:
 		UI_DrawServerMOTD(&rect, scale, color);
+		break;
+	case UI_LASTSERVER_NAME:
+	case UI_LASTSERVER_ADDRESS:
+	case UI_LASTSERVER_MAP:
+	case UI_LASTSERVER_PLAYERS:
+	case UI_LASTSERVER_PING:
+		Text_Paint(rect.x, rect.y, scale, color, UI_LastServerFieldText(ownerDraw), 0, 0, textStyle);
 		break;
 	case UI_KEYBINDSTATUS:
 		UI_DrawKeyBindStatus(&rect, scale, color, textStyle, text_x, text_y);
@@ -4876,6 +4989,16 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("com_errorMessage", "");
 			trap_Cvar_Set("com_errorDiagnoseIP", "");
 			trap_Cvar_Set("com_missingFiles", "");
+		}
+		else if (Q_stricmp(name, "connectLastServer") == 0)
+		{
+			const char *address = UI_Cvar_VariableString("ui_lastConnectedAddress");
+
+			if (address[0])
+			{
+				trap_Cvar_Set("ui_connecting", "1");
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", address));
+			}
 		}
 		else if (Q_stricmp(name, "loadGameInfo") == 0)
 		{
@@ -7518,6 +7641,83 @@ static void UI_UpdatePendingPings(void)
 	trap_LAN_ResetPings(ui_netSource.integer);
 	uiInfo.serverStatus.refreshActive = qtrue;
 	uiInfo.serverStatus.refreshtime   = uiInfo.uiDC.realTime + 1000;
+}
+
+/**
+ * @brief UI_UpdateLastServerPing
+ */
+static void UI_UpdateLastServerPing(void)
+{
+	const char *address = UI_Cvar_VariableString("ui_lastConnectedAddress");
+	int        maxPing  = (int)trap_Cvar_VariableValue("cl_maxPing");
+	int        pingCount;
+	int        i;
+
+	if (!address[0])
+	{
+		uiInfo.lastServerAddress[0]           = '\0';
+		uiInfo.lastServerStatusInfo[0]        = '\0';
+		uiInfo.lastServerStatusRefresh        = 0;
+		uiInfo.lastServerPing                 = -1;
+		uiInfo.lastServerPingTime             = 0;
+		uiInfo.lastServerPingRequestTime      = 0;
+		uiInfo.lastServerPingFirstRequestTime = 0;
+		uiInfo.lastServerOnline               = qfalse;
+		return;
+	}
+
+	if (Q_stricmp(address, uiInfo.lastServerAddress) != 0)
+	{
+		Q_strncpyz(uiInfo.lastServerAddress, address, sizeof(uiInfo.lastServerAddress));
+		uiInfo.lastServerStatusInfo[0]        = '\0';
+		uiInfo.lastServerStatusRefresh        = 0;
+		uiInfo.lastServerPing                 = -1;
+		uiInfo.lastServerPingTime             = 0;
+		uiInfo.lastServerPingRequestTime      = 0;
+		uiInfo.lastServerPingFirstRequestTime = 0;
+		uiInfo.lastServerOnline               = qfalse;
+	}
+
+	if (uiInfo.uiDC.realTime - uiInfo.lastServerPingRequestTime > 2000)
+	{
+		if (!uiInfo.lastServerPingFirstRequestTime)
+		{
+			uiInfo.lastServerPingFirstRequestTime = uiInfo.uiDC.realTime;
+		}
+		uiInfo.lastServerPingRequestTime = uiInfo.uiDC.realTime;
+		trap_Cmd_ExecuteText(EXEC_APPEND, va("ping %s\n", address));
+	}
+
+	pingCount = trap_LAN_GetPingQueueCount();
+	for (i = 0; i < pingCount; i++)
+	{
+		char pingAddr[MAX_ADDRESSLENGTH];
+		int  pingtime;
+
+		trap_LAN_GetPing(i, pingAddr, sizeof(pingAddr), &pingtime);
+		if (Q_stricmp(pingAddr, address) != 0)
+		{
+			continue;
+		}
+
+		if (pingtime > 0)
+		{
+			uiInfo.lastServerPing     = pingtime;
+			uiInfo.lastServerPingTime = uiInfo.uiDC.realTime;
+			trap_LAN_GetPingInfo(i, uiInfo.lastServerStatusInfo, sizeof(uiInfo.lastServerStatusInfo));
+			uiInfo.lastServerStatusRefresh = uiInfo.uiDC.realTime;
+
+			trap_LAN_ClearPing(i);
+			uiInfo.lastServerOnline = (pingtime < maxPing) ? qtrue : qfalse;
+		}
+	}
+
+	if (!uiInfo.lastServerPingTime &&
+	    uiInfo.lastServerPingFirstRequestTime &&
+	    uiInfo.uiDC.realTime - uiInfo.lastServerPingFirstRequestTime > maxPing)
+	{
+		uiInfo.lastServerOnline = qfalse;
+	}
 }
 
 /**
