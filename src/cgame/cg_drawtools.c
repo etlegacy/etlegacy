@@ -1713,10 +1713,9 @@ float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHe
 
 void CG_DrawCursor(float x, float y)
 {
-	if (!cgDC.cursorVisible)
-	{
-		return;
-	}
+	(void)x;
+	(void)y;
 
-	CG_DrawPic(x, y, CURSOR_SIZE, CURSOR_SIZE, cgs.media.cursorIcon);
+	// Custom cursor rendering is disabled; rely on the OS cursor instead.
+	return;
 }
