@@ -36,6 +36,26 @@
 #include "ui_shared.h"
 #include "ui_local.h"
 
+static qboolean Item_IsPasswordField(const itemDef_t *item)
+{
+	if (!item || !item->cvar || !*item->cvar)
+	{
+		return qfalse;
+	}
+
+	if (!Q_stricmp(item->cvar, "password"))
+	{
+		return qtrue;
+	}
+
+	if (!Q_stricmp(item->cvar, "rconPassword") || !Q_stricmp(item->cvar, "rconpassword"))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
 /**
  * @brief Item_Tooltip_Initialize
  * @param[in,out] item
@@ -2624,6 +2644,8 @@ void Item_Text_Paint(itemDef_t *item)
 void Item_TextField_Paint(itemDef_t *item)
 {
 	char           buff[1024];
+	char           masked[1024];
+	const char     *drawBuff;
 	vec4_t         newColor;
 	int            offset;
 	int            text_len = 0; // screen length of the editfield text that will be printed
@@ -2646,6 +2668,25 @@ void Item_TextField_Paint(itemDef_t *item)
 		{
 			DC->getCVarString(item->cvar, buff, sizeof(buff));
 		}
+	}
+
+	drawBuff = buff;
+	if (Item_IsPasswordField(item))
+	{
+		size_t len = strlen(buff);
+		size_t i;
+
+		if (len >= sizeof(masked))
+		{
+			len = sizeof(masked) - 1;
+		}
+
+		for (i = 0; i < len; ++i)
+		{
+			masked[i] = '*';
+		}
+		masked[len] = '\0';
+		drawBuff    = masked;
 	}
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
@@ -2676,12 +2717,12 @@ void Item_TextField_Paint(itemDef_t *item)
 	do
 	{
 		field_offset++;
-		if (buff[editPtr->paintOffset + field_offset] == '\0')
+		if (drawBuff[editPtr->paintOffset + field_offset] == '\0')
 		{
 			break; // keep it safe
 		}
 
-		text_len = DC->textWidth(buff + editPtr->paintOffset + field_offset, item->textscale, 0);
+		text_len = DC->textWidth(drawBuff + editPtr->paintOffset + field_offset, item->textscale, 0);
 	}
 	while (text_len + item->textRect.x + item->textRect.w + offset > item->window.rect.x + item->window.rect.w);
 
@@ -2697,11 +2738,11 @@ void Item_TextField_Paint(itemDef_t *item)
 
 	if (IS_EDITMODE(item))
 	{
-		DC->drawTextWithCursor(item->textRect.x + item->textRect.w + offset + screen_offset, item->textRect.y, item->textscale, newColor, buff + editPtr->paintOffset + field_offset, item->cursorPos - editPtr->paintOffset - field_offset, (DC->getOverstrikeMode() ? "_" : "|"), editPtr->maxPaintChars, item->textStyle);
+		DC->drawTextWithCursor(item->textRect.x + item->textRect.w + offset + screen_offset, item->textRect.y, item->textscale, newColor, drawBuff + editPtr->paintOffset + field_offset, item->cursorPos - editPtr->paintOffset - field_offset, (DC->getOverstrikeMode() ? "_" : "|"), editPtr->maxPaintChars, item->textStyle);
 	}
 	else
 	{
-		DC->drawText(item->textRect.x + item->textRect.w + offset + screen_offset, item->textRect.y, item->textscale, newColor, buff + editPtr->paintOffset + field_offset, 0, editPtr->maxPaintChars, item->textStyle);
+		DC->drawText(item->textRect.x + item->textRect.w + offset + screen_offset, item->textRect.y, item->textscale, newColor, drawBuff + editPtr->paintOffset + field_offset, 0, editPtr->maxPaintChars, item->textStyle);
 	}
 }
 
