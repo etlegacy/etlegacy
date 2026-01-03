@@ -113,8 +113,8 @@ void R_DrawSplash(void)
 		return;
 	}
 
-	w = 512;
-	h = 512;
+	w = MIN(512, MIN(glConfig.vidWidth, glConfig.vidHeight));
+	h = w;
 
 	x = (glConfig.vidWidth  - w) * 0.5f;
 	y = (glConfig.vidHeight - h) * 0.5f;
