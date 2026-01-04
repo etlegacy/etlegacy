@@ -12,9 +12,9 @@
 #include "g_lua.h"
 
 #ifdef FEATURE_LUASQL
-#include "../luasql/luasql.h"
-#include "../luasql/luasql.c"
-#include "../luasql/ls_sqlite3.c"
+#include "../../vendor/luasql/luasql.h"
+#include "../../vendor/luasql/luasql.c"
+#include "../../vendor/luasql/ls_sqlite3.c"
 #endif
 
 #ifdef FEATURE_LUAJIT

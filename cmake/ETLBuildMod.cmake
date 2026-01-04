@@ -67,9 +67,9 @@ if(BUILD_SERVER_MOD)
 		endif()
 
 		FILE(GLOB LUASQL_SRC
-			"src/luasql/luasql.c"
-			"src/luasql/luasql.h"
-			"src/luasql/ls_sqlite3.c"
+			"vendor/luasql/luasql.c"
+			"vendor/luasql/luasql.h"
+			"vendor/luasql/ls_sqlite3.c"
 		)
 		set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
 	endif()
@@ -112,9 +112,9 @@ if(BUILD_SERVER_MOD)
 		endif()
 
 		FILE(GLOB LUASQL_SRC
-			"src/luasql/luasql.c"
-			"src/luasql/luasql.h"
-			"src/luasql/ls_sqlite3.c"
+			"vendor/luasql/luasql.c"
+			"vendor/luasql/luasql.h"
+			"vendor/luasql/ls_sqlite3.c"
 		)
 		set(TVGAME_SRC ${TVGAME_SRC} ${LUASQL_SRC})
 	endif()

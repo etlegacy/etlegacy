@@ -60,15 +60,7 @@ def clean_and_process_file(arch: str, filename: str):
                 continue
 
             # Handle only game code
-            if not any(
-                sub in line
-                for sub in wrangle_os_paths(
-                    arch,
-                    [
-                        "src/tinygettext",
-                    ],
-                )
-            ) and any(
+            if any(
                 sub in line
                 for sub in wrangle_os_paths(
                     arch,
@@ -81,23 +73,22 @@ def clean_and_process_file(arch: str, filename: str):
                         "src/game/",
                         "src/irc/",
                         "src/luacjson/",
-                        "src/luasql/",
                         "src/null/",
-                        "src/Omnibot/",
                         "src/qcommon/",
                         "src/renderer/",
                         "src/renderer2/",
+                        "src/rendererGLES/",
                         "src/renderer_vk/",
                         "src/renderercommon/",
-                        "src/rendererGLES/",
                         "src/sdl/",
                         "src/server/",
                         "src/sys/",
                         "src/tests/",
-                        "src/tinygettext/",
                         "src/tools/",
                         "src/tvgame/",
                         "src/ui/",
+                        "vendor/Omnibot/",
+                        "vendor/luasql/",
                     ],
                 )
             ):
