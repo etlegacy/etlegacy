@@ -5,8 +5,8 @@
 FILE(GLOB COMMON_SRC
 	"src/qcommon/*.c"
 	"src/qcommon/*.h"
-	"src/qcommon/crypto/sha-1/sha1.h"
-	"src/qcommon/crypto/sha-1/sha1.c"
+	"vendor/sha-1/sha1.h"
+	"vendor/sha-1/sha1.c"
 )
 
 FILE(GLOB COMMON_SRC_REMOVE
@@ -94,7 +94,7 @@ LIST(APPEND CGAME_SRC ${UI_SHARED})
 FILE(GLOB QAGAME_SRC
 	"src/game/*.c"
 	"src/game/*.h"
-	"src/qcommon/crypto/sha-1/sha1.c"
+	"vendor/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 )
@@ -111,7 +111,7 @@ FILE(GLOB TVGAME_SRC
 	"src/game/g_mem.c"
 	"src/tvgame/*.c"
 	"src/tvgame/*.h"
-	"src/qcommon/crypto/sha-1/sha1.c"
+	"vendor/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 )
@@ -168,6 +168,7 @@ SET(RENDERER_COMMON_VULKAN
 )
 
 LIST(REMOVE_ITEM RENDERER_COMMON ${RENDERER_COMMON_OPENGL} ${RENDERER_COMMON_VULKAN})
+list(FILTER RENDERER_COMMON EXCLUDE REGEX "tr_image_svg\\.c$")
 
 FILE(GLOB RENDERER_COMMON_DYNAMIC
 	"src/qcommon/q_shared.c"

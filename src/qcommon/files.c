@@ -38,7 +38,7 @@
 
 #include "q_shared.h"
 #include "qcommon.h"
-#include "crypto/sha-1/sha1.h"
+#include "../../vendor/sha-1/sha1.h"
 
 #ifdef BUNDLED_MINIZIP
 #    include "unzip.h"

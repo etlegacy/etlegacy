@@ -193,10 +193,6 @@ def check_yml(path: Path, errors: List[Error]):
 def check_file(path: Path) -> Optional[List[Error]]:
     errors = []
 
-    if not path.exists():
-        print(f"☇ Skipping removed/missing: {path.relative_to(ROOT_DIR)}")
-        return None
-
     match path.suffix.lower():
         case ".c" | ".cpp" | ".glsl" | ".h":
             check_uncrustify(path, errors)
@@ -226,6 +222,22 @@ def check_changes(state: State):
     # check assembled files for errors
     for path in sorted(list(changed_files)):
         relpath = path.relative_to(ROOT_DIR)
+
+        # ignore files below certain directories
+        if any(
+            relpath.parts[0] == x
+            for x in [
+                "libs",
+                "vendor",
+            ]
+        ):
+            print(f"☇ Skipping ignored: {path.relative_to(ROOT_DIR)}")
+            continue
+
+        if not path.exists():
+            print(f"☇ Skipping removed/missing: {path.relative_to(ROOT_DIR)}")
+            continue
+
         errors = check_file(path)
         if errors == None:
             pass

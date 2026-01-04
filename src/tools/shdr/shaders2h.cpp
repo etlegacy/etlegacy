@@ -37,7 +37,7 @@
 #include <string>
 #include <cstdarg>
 #include <vector>
-#include "tinydir.h"
+#include "../../../vendor/tinydir.h"
 
 using namespace std;
 
