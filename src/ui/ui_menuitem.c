@@ -48,7 +48,7 @@ static qboolean Item_IsPasswordField(const itemDef_t *item)
 		return qtrue;
 	}
 
-	if (!Q_stricmp(item->cvar, "rconPassword") || !Q_stricmp(item->cvar, "rconpassword"))
+	if (!Q_stricmp(item->cvar, "rconpassword"))
 	{
 		return qtrue;
 	}
