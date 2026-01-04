@@ -191,6 +191,12 @@ Be sure to set the CMake variables (see above) beforehand.
 
   * On some systems, CMake might have trouble locating 32-bit libraries and tries to use 64-bit ones when building 32-bit. This can be fixed by setting the following enviromental variables before running CMake (note: running easybuild takes care of this for you)
 
+  * If you are using X11 and experience:
+    * missing sound ( `SDL_Init( SDL_INIT_AUDIO )... FAILED (dsp: No such audio device)` in console):
+      * install  `libpulse-dev` (PulseAudio) or `libasound2-dev` (ALSA) package and rebuild the project.
+    * weird mouse acceleration input: 
+      * install `libxi-dev` package and rebuild the project.
+
 ```sh
 $ export CC="gcc -m32"
 $ export CXX="g++ -m32"
