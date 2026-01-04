@@ -35,13 +35,13 @@
 
 extern "C"
 {
-#include "g_etbot_interface.h"
+#include "../src/game/g_etbot_interface.h"
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 };
 
-#include "../Omnibot/Common/BotExports.h"
-#include "../Omnibot/ET/ET_Config.h"
-#include "../Omnibot/ET/ET_Messages.h"
+#include "Omnibot/Common/BotExports.h"
+#include "Omnibot/ET/ET_Config.h"
+#include "Omnibot/ET/ET_Messages.h"
 
 #define OMNIBOT_MIN_ENG 2
 #define OMNIBOT_MIN_MED 2
