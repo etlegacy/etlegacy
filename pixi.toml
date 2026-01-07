@@ -1,4 +1,4 @@
-[project]
+[workspace]
 authors = ["ET:Legacy Team"]
 channels = [
     "conda-forge",
@@ -18,7 +18,8 @@ platforms = ["linux-64", "osx-64", "win-64"]
 
 
 [feature.libclang.tasks]
-regenerate-luals-definitions = { cmd = ["python", "./misc/regenerate-luals-definitions.py", "./src/game/g_lua.c"]}
+"clang-regenerate-luals-definitions" = { cmd = ["python", "./misc/clang-regenerate-luals-definitions.py", "./src/game/g_lua.c"]}
+"clang-padding-report" = { cmd = ["python", "./misc/clang-padding-report.py"] }
 [feature.libclang.dependencies]
 "python-clang" = "20.1.5.*"
 
