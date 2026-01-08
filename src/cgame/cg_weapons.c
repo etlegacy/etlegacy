@@ -3334,7 +3334,7 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 
 	cg.mortarImpactTime = -2;
 
-	if (lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
+	if (cg_weapaltSwitches.integer && lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
 	{
 		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && (cg.pmext.silencedSideArm & 1))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && !(cg.pmext.silencedSideArm & 1))
@@ -4252,7 +4252,7 @@ void CG_WeaponBank_f(void)
 		// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
 		// until the animation is ended
 		// don't allow alt weapon switch till we have switched to selected weapon
-		if (!cg_weapaltSwitches.integer || cg.snap->ps.weapon != cg.weaponSelect ||
+		if (cg.snap->ps.weapon != cg.weaponSelect ||
 		    (cg.snap->ps.nextWeapon && cg.snap->ps.weapon != cg.snap->ps.nextWeapon) ||
 		    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHFROM ||
 		    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHTO)
@@ -4357,11 +4357,33 @@ void CG_WeaponBank_f(void)
 		{
 			cycle -= 1;
 		}
+		else
+		{
+			if (cycle + 1 >= MAX_WEAPS_IN_BANK_MP)
+			{
+				cycle = 0;
+			}
+			else
+			{
+				cycle += 1;
+			}
+		}
 	}
 
 	for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 	{
 		newWeapon = getNextWeapInBank(bank, cycle + i);
+
+		if (!cg_weapaltSwitches.integer && bank == curbank)
+		{
+			int curAlt = GetWeaponTableData(cg.weaponSelect)->weapAlts;
+			int newAlt = GetWeaponTableData(newWeapon)->weapAlts;
+
+			if ((curAlt && newWeapon == curAlt) || (newAlt && newAlt == cg.weaponSelect))
+			{
+				continue;
+			}
+		}
 
 		if (CG_WeaponSelectable(newWeapon, qtrue))
 		{
@@ -4370,7 +4392,7 @@ void CG_WeaponBank_f(void)
 
 		if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE)
 		{
-			if (CG_WeaponSelectable(GetWeaponTableData(newWeapon)->weapAlts, qtrue))
+			if (cg_weapaltSwitches.integer && CG_WeaponSelectable(GetWeaponTableData(newWeapon)->weapAlts, qtrue))
 			{
 				newWeapon = GetWeaponTableData(newWeapon)->weapAlts;
 				break;
