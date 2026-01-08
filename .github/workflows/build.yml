@@ -629,7 +629,7 @@ jobs:
           organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
           project-slug: "etlegacy"
           signing-policy-slug: "release-signing"
-          github-artifact-id: "${{steps.win-exe.outputs.artifact-id}}"
+          github-artifact-id: "${{needs.win.outputs.win}}"
           wait-for-completion: true
           output-artifact-directory: "win-exe"
 
@@ -691,7 +691,7 @@ jobs:
           organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
           project-slug: "etlegacy"
           signing-policy-slug: "release-signing"
-          github-artifact-id: "${{steps.win64-exe.outputs.artifact-id}}"
+          github-artifact-id: "${{needs.win64.outputs.win64}}"
           wait-for-completion: true
           output-artifact-directory: "win64-exe"
 
