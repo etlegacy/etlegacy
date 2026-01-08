@@ -7758,12 +7758,18 @@ static void UI_UpdatePendingPings(void)
 static void UI_UpdateLastServerPing(void)
 {
 	const char *address = UI_Cvar_VariableString("ui_lastConnectedAddress");
+	float      lastValid;
 	int        maxPing  = (int)trap_Cvar_VariableValue("cl_maxPing");
 	int        pingCount;
 	int        i;
 
+	lastValid = trap_Cvar_VariableValue("ui_lastConnectedValid");
 	if (!address[0])
 	{
+		if (lastValid != 0.f)
+		{
+			trap_Cvar_Set("ui_lastConnectedValid", "0");
+		}
 		uiInfo.lastServerAddress[0]           = '\0';
 		uiInfo.lastServerStatusInfo[0]        = '\0';
 		uiInfo.lastServerStatusRefresh        = 0;
@@ -7826,6 +7832,29 @@ static void UI_UpdateLastServerPing(void)
 	    uiInfo.uiDC.realTime - uiInfo.lastServerPingFirstRequestTime > maxPing)
 	{
 		uiInfo.lastServerOnline = qfalse;
+	}
+
+	{
+		qboolean pending = qfalse;
+
+		if (!uiInfo.lastServerOnline &&
+		    uiInfo.lastServerPingFirstRequestTime &&
+		    uiInfo.uiDC.realTime - uiInfo.lastServerPingFirstRequestTime <= maxPing)
+		{
+			pending = qtrue;
+		}
+
+		if (uiInfo.lastServerOnline || pending)
+		{
+			if (lastValid == 0.f)
+			{
+				trap_Cvar_Set("ui_lastConnectedValid", "1");
+			}
+		}
+		else if (lastValid != 0.f)
+		{
+			trap_Cvar_Set("ui_lastConnectedValid", "0");
+		}
 	}
 }
 
