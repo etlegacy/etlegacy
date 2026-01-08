@@ -1162,11 +1162,81 @@ static void CG_EntityFloatText(centity_t *cent, const char *text, int height)
  * @brief CG_Missile
  * @param[in] cent
  */
+static qboolean CG_LerpRifleGrenadeDir(centity_t *cent, vec3_t outDir)
+{
+	const int   stepMillis = 10;
+	const float stepFrac   = 0.1f;
+	vec3_t      velocity;
+	vec3_t      targetDir;
+	vec3_t      blended;
+	int         steps;
+	int         elapsed;
+	float       speed;
+
+	BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity, qfalse, cent->currentState.effect2Time);
+	speed = VectorNormalize2(velocity, targetDir);
+
+	if (cent->voiceChatSpriteTime != cent->currentState.pos.trTime)
+	{
+		cent->voiceChatSpriteTime = cent->currentState.pos.trTime;
+		cent->voiceChatSprite     = cg.time;
+		if (speed > 0.f)
+		{
+			VectorCopy(targetDir, cent->fireRiseDir);
+		}
+	}
+
+	if (speed <= 0.f)
+	{
+		if (VectorNormalize2(cent->fireRiseDir, outDir) > 0.f)
+		{
+			return qtrue;
+		}
+
+		return qfalse;
+	}
+
+	elapsed = cg.time - cent->voiceChatSprite;
+	if (elapsed < 0)
+	{
+		cent->voiceChatSprite = cg.time;
+		VectorCopy(cent->fireRiseDir, outDir);
+		return qtrue;
+	}
+	if (elapsed < stepMillis)
+	{
+		VectorCopy(cent->fireRiseDir, outDir);
+		return qtrue;
+	}
+
+	steps = elapsed / stepMillis;
+	if (steps > 20)
+	{
+		steps = 20;
+	}
+
+	while (steps-- > 0)
+	{
+		VectorScale(cent->fireRiseDir, 1.0f - stepFrac, blended);
+		VectorMA(blended, stepFrac, targetDir, blended);
+		if (VectorNormalize2(blended, cent->fireRiseDir) == 0.f)
+		{
+			VectorCopy(targetDir, cent->fireRiseDir);
+			break;
+		}
+	}
+
+	cent->voiceChatSprite = cg.time;
+	VectorCopy(cent->fireRiseDir, outDir);
+	return qtrue;
+}
+
 static void CG_Missile(centity_t *cent)
 {
 	refEntity_t        ent;
 	entityState_t      *s1 = &cent->currentState;
 	const weaponInfo_t *weapon;
+	qboolean           riflenadeAxis = qfalse;
 
 	if (s1->weapon > WP_NUM_WEAPONS)
 	{
@@ -1266,7 +1336,19 @@ static void CG_Missile(centity_t *cent)
 	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(cent->lerpOrigin, ent.oldorigin);
+
 	AnglesToAxis(cent->lerpAngles, ent.axis);
+
+	if (GetWeaponTableData(cent->currentState.weapon)->type & WEAPON_TYPE_RIFLENADE)
+	{
+		vec3_t dir;
+
+		if (CG_LerpRifleGrenadeDir(cent, dir))
+		{
+			VectorCopy(dir, ent.axis[0]);
+			riflenadeAxis = qtrue;
+		}
+	}
 
 	// flicker between two skins
 	ent.skinNum = cg.clientFrame & 1;
@@ -1424,7 +1506,7 @@ static void CG_Missile(centity_t *cent)
 			ent.axis[0][2] = 1;
 		}
 	}
-	else if (cent->lerpAngles[0] == 0.f && cent->lerpAngles[1] == 0.f && cent->lerpAngles[2] == 0.f)
+	else if (!riflenadeAxis && cent->lerpAngles[0] == 0.f && cent->lerpAngles[1] == 0.f && cent->lerpAngles[2] == 0.f)
 	{
 		// FIXME: anything to do/save for edv?
 		if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0.f)
