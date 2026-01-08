@@ -612,27 +612,6 @@ jobs:
         run: dir
         working-directory: build/legacy
 
-      - name: Upload Win etl.exe
-        uses: actions/upload-artifact@v4
-        id: artifact-upload-step
-        with:
-          name: win-exe
-          path: |
-            build/etl.exe
-          if-no-files-found: error
-
-      - name: SignPath Win Exe
-        uses: signpath/github-action-submit-signing-request@v1.3
-        if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
-        with:
-          api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
-          organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
-          project-slug: "etlegacy"
-          signing-policy-slug: "release-signing"
-          github-artifact-id: "${{needs.win.outputs.win}}"
-          wait-for-completion: true
-          output-artifact-directory: "win-exe"
-
       - name: Generate packages
         shell: cmd
         working-directory: build
@@ -673,27 +652,6 @@ jobs:
       - name: Display structure of downloaded files
         run: dir
         working-directory: build/legacy
-
-      - name: Upload Win64 etl.exe
-        uses: actions/upload-artifact@v4
-        id: artifact-upload-step
-        with:
-          name: win64-exe
-          path: |
-            build/etl.exe
-          if-no-files-found: error
-
-      - name: SignPath Win64 Exe
-        uses: signpath/github-action-submit-signing-request@v1.3
-        if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
-        with:
-          api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
-          organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
-          project-slug: "etlegacy"
-          signing-policy-slug: "release-signing"
-          github-artifact-id: "${{needs.win64.outputs.win64}}"
-          wait-for-completion: true
-          output-artifact-directory: "win64-exe"
 
       - name: Generate packages
         shell: cmd
