@@ -648,7 +648,7 @@ jobs:
         shell: cmd
         working-directory: build
         run: |
-          cp win-exe/etl.exe .
+          cp D:\a\etlegacy\etlegacy\win-exe\etl.exe .
           cpack
 
       - uses: actions/upload-artifact@v4
@@ -723,7 +723,7 @@ jobs:
         shell: cmd
         working-directory: build
         run: |
-          cp win64-exe/etl.exe .
+          cp D:\a\etlegacy\etlegacy\win64-exe\etl.exe .
           cpack
 
       - uses: actions/upload-artifact@v4
