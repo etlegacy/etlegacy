@@ -623,7 +623,6 @@ jobs:
 
       - name: SignPath Win Exe Snapshot
         uses: signpath/github-action-submit-signing-request@v1.3
-        if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
         with:
           api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
           organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
@@ -697,7 +696,6 @@ jobs:
 
       - name: SignPath Win64 Exe Snapshot
         uses: signpath/github-action-submit-signing-request@v1.3
-        if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
         with:
           api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
           organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
