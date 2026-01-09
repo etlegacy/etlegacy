@@ -1013,6 +1013,7 @@ jobs:
             incomplete-mod-pk3
             *-packages
             *-mod
+            *-exe
 
   ci-discord-notify-on-failure:
     needs:
