@@ -1070,7 +1070,7 @@ void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm)
  * @param[in] event
  * @param[in] eventParm
  */
-void G_AddEvent(gentity_t *ent, int event, int eventParm)
+void G_AddEvent(gentity_t *ent, net_uint8_t event, net_uint8_t eventParm)
 {
 	if (!event)
 	{
