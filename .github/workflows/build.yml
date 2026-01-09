@@ -647,7 +647,9 @@ jobs:
       - name: Generate packages
         shell: cmd
         working-directory: build
-        run: cpack
+        run: |
+          cp win-exe/etl.exe .
+          cpack
 
       - uses: actions/upload-artifact@v4
         id: artifact-upload-step
@@ -720,7 +722,9 @@ jobs:
       - name: Generate packages
         shell: cmd
         working-directory: build
-        run: cpack
+        run: |
+          cp win64-exe/etl.exe .
+          cpack
 
       - uses: actions/upload-artifact@v4
         id: artifact-upload-step
