@@ -2591,11 +2591,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	break;
 	case EV_GIB_PLAYER:
 	{
-		vec3_t dir;
+		vec3_t    dir;
+		centity_t *bodyCent = &cg_entities[es->otherEntityNum];
 
 		trap_S_StartSound(es->pos.trBase, -1, CHAN_AUTO, cgs.media.gibSound);
 		ByteToDir(es->eventParm, dir);
-		CG_GibPlayer(cent, cent->lerpOrigin, dir);
+		CG_GibPlayer(bodyCent, bodyCent->lerpOrigin, dir, es->effect3Time);
 	}
 	break;
 	// particles
