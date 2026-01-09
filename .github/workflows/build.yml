@@ -621,8 +621,21 @@ jobs:
             build/etl.exe
           if-no-files-found: error
 
-      - name: SignPath Win Exe
+      - name: SignPath Win Exe Snapshot
         uses: signpath/github-action-submit-signing-request@v1.3
+        if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
+        with:
+          api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
+          organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
+          project-slug: "etlegacy"
+          signing-policy-slug: "test-signing"
+          github-artifact-id: "${{steps.artifact-exe-upload-step.outputs.artifact-id}}"
+          wait-for-completion: true
+          output-artifact-directory: "win-exe"
+
+      - name: SignPath Win Exe Release
+        uses: signpath/github-action-submit-signing-request@v1.3
+        if: github.ref_type == 'tag'
         with:
           api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
           organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
@@ -682,8 +695,21 @@ jobs:
             build/etl.exe
           if-no-files-found: error
 
-      - name: SignPath Win64 Exe
+      - name: SignPath Win64 Exe Snapshot
         uses: signpath/github-action-submit-signing-request@v1.3
+        if: ${{ steps.vars.outputs.hash_exists == '404' && github.ref == 'refs/heads/master' }}
+        with:
+          api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
+          organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
+          project-slug: "etlegacy"
+          signing-policy-slug: "test-signing"
+          github-artifact-id: "${{steps.artifact-exe-upload-step.outputs.artifact-id}}"
+          wait-for-completion: true
+          output-artifact-directory: "win64-exe"
+
+      - name: SignPath Win64 Exe Release
+        uses: signpath/github-action-submit-signing-request@v1.3
+        if: github.ref_type == 'tag'
         with:
           api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
           organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
