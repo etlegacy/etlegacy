@@ -209,8 +209,9 @@ void LookAtKiller(gentity_t *self, gentity_t *inflictor, gentity_t *attacker)
  * @param[in,out] self
  * @param[in] killer
  */
-void GibEntity(gentity_t *self, int killer)
+void GibEntity(gentity_t *self, int killer, int damage)
 {
+	gentity_t *te;
 	gentity_t *other = &g_entities[killer];
 	vec3_t    dir;
 
@@ -228,10 +229,11 @@ void GibEntity(gentity_t *self, int killer)
 		}
 	}
 
-	G_AddEvent(self, EV_GIB_PLAYER, DirToByte(dir));
-	self->takedamage = qfalse;
-	self->s.eType    = ET_INVISIBLE;
-	self->r.contents = 0;
+	te = G_TempEntity(self->r.currentOrigin, EV_GIB_PLAYER);
+
+	te->s.otherEntityNum = self->s.clientNum;
+	te->s.eventParm      = DirToByte(dir);
+	te->s.effect3Time    = damage;
 }
 
 /**
@@ -246,7 +248,7 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 {
 	if (self->health <= GIB_HEALTH)
 	{
-		GibEntity(self, ENTITYNUM_WORLD);
+		GibEntity(self, ENTITYNUM_WORLD, damage);
 	}
 }
 
@@ -715,7 +717,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	// FIXME: contents is always 0 here
 	if (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP))
 	{
-		GibEntity(self, killer);
+		GibEntity(self, killer, damage);
 	}
 	else if (meansOfDeath != MOD_SWAP_PLACES)
 	{
@@ -1810,7 +1812,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 				}
 				if (targ->health <= GIB_HEALTH)
 				{
-					GibEntity(targ, 0);
+					GibEntity(targ, 0, damage);
 				}
 			}
 			else
