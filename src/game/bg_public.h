@@ -1821,9 +1821,6 @@ typedef enum
 	TEAM_NUM_TEAMS
 } team_t;
 
-/// Time between location updates
-#define TEAM_LOCATION_UPDATE_TIME       1000
-
 /**
  * @enum extWeaponStats_e
  * @typedef extWeaponStats_t
