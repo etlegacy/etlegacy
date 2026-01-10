@@ -965,6 +965,15 @@ void CG_EventHandling(int type, qboolean fForced)
 	{
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
+
+	if (type == CGAME_EVENT_HUDEDITOR)
+	{
+		trap_Cvar_Set("cl_hudEditorMouseScale", va("%f", cg.fullScreenHudEditor ? 1.0f : HUD_EDITOR_SIZE_COEFF));
+	}
+	else
+	{
+		trap_Cvar_Set("cl_hudEditorMouseScale", "1");
+	}
 }
 
 void CG_KeyEvent(int key, qboolean down)
