@@ -43,7 +43,7 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 {
 	if (!name && data)
 	{
-		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, data, width, height, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, data, width, height, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE);
 	}
 	else if (name && data)
 	{
@@ -72,11 +72,11 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 			}
 		}
 
-		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, pic, w, h, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, pic, w, h, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE);
 	}
 	else if (name)
 	{
-		splashImage = R_FindImageFile(name, qfalse, qfalse, GL_CLAMP_TO_EDGE, qfalse);
+		splashImage = R_FindImageFile(name, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE, qfalse);
 	}
 
 	if (!splashImage)
