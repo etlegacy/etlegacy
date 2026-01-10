@@ -229,11 +229,14 @@ void GibEntity(gentity_t *self, int killer, int damage)
 		}
 	}
 
-	te = G_TempEntity(self->r.currentOrigin, EV_GIB_PLAYER);
-
+	te                   = G_TempEntity(self->r.currentOrigin, EV_GIB_PLAYER);
 	te->s.otherEntityNum = self->s.clientNum;
 	te->s.eventParm      = DirToByte(dir);
 	te->s.effect3Time    = damage;
+
+	self->takedamage = qfalse;
+	self->s.eType    = ET_INVISIBLE;
+	self->r.contents = 0;
 }
 
 /**
