@@ -116,6 +116,7 @@ typedef struct image_s
 
 	qboolean mipmap;
 	qboolean allowPicmip;
+	int maxPicMip;
 	int wrapClampMode;              ///< GL_CLAMP or GL_REPEAT
 
 	int hash;                       ///< for fast building of the backupHash
@@ -501,6 +502,7 @@ typedef struct shader_s
 	qboolean polygonOffset;             ///< set for decals and other items that must be offset
 	qboolean noMipMaps;                 ///< for console fonts, 2D elements, etc.
 	qboolean noPicMip;                  ///< for images that must always be full resolution
+	int maxPicMip;                      ///< clamp picmip for this shader (-1 = no clamp)
 
 	fogPass_t fogPass;                  ///< draw a blended pass, possibly with depth test equals
 
@@ -1587,9 +1589,9 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 model_t *R_AllocModel(void);
 
 void R_Init(void);
-image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip, int glWrapClampMode, qboolean lightmap);
+image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip, int maxPicMip, int glWrapClampMode, qboolean lightmap);
 
-image_t *R_CreateImage(const char *name, const byte *pic, int width, int height, qboolean mipmap, qboolean allowPicmip, int wrapClampMode);
+image_t *R_CreateImage(const char *name, const byte *pic, int width, int height, qboolean mipmap, qboolean allowPicmip, int maxPicMip, int wrapClampMode);
 
 void R_SetColorMappings(void);
 void R_GammaCorrect(byte *buffer, int bufSize);

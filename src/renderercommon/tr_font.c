@@ -629,7 +629,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 			image = R_CreateImage(name, imageBuff, imageSize, imageSize, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 			h     = RE_RegisterShaderFromImage(name, image, qfalse);
 #else
-			image = R_CreateImage(name, imageBuff, imageSize, imageSize, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+			image = R_CreateImage(name, imageBuff, imageSize, imageSize, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE);
 			h     = RE_RegisterShaderFromImage(name, LIGHTMAP_2D, image, qfalse);
 #endif
 			for (j = lastStart; j < i; j++)
