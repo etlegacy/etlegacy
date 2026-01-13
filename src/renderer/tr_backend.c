@@ -914,7 +914,7 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 
 	if (!tr.scratchImage[client])
 	{
-		tr.scratchImage[client] = R_CreateImage(va("*scratch%i", client), data, cols, rows, qfalse, qtrue, GL_CLAMP_TO_EDGE);
+		tr.scratchImage[client] = R_CreateImage(va("*scratch%i", client), data, cols, rows, qfalse, qtrue, -1, GL_CLAMP_TO_EDGE);
 		dirty                   = qfalse;
 	}
 

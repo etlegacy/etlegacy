@@ -164,7 +164,7 @@ void R_InitGamma(void)
 	}
 
 	screenImage = R_CreateImage("screenBufferImage_skies", NULL, glConfig.vidWidth, glConfig.vidHeight, qfalse, qfalse,
-	                            GL_CLAMP_TO_EDGE);
+	                            -1, GL_CLAMP_TO_EDGE);
 
 	if (!screenImage)
 	{
