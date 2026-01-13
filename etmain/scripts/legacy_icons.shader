@@ -425,6 +425,7 @@ simpleicons/objective
 		map simpleicons/objective.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -435,6 +436,7 @@ simpleicons/medheal
 		map simpleicons/medheal.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -445,6 +447,7 @@ simpleicons/ammopack
 		map simpleicons/ammopack.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -455,6 +458,7 @@ simpleicons/bazooka
 		map simpleicons/bazooka.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -465,6 +469,7 @@ simpleicons/browning
 		map simpleicons/browning.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -476,6 +481,7 @@ simpleicons/carbine
 		map simpleicons/carbine.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -486,6 +492,7 @@ simpleicons/fg42
 		map simpleicons/fg42.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -496,6 +503,7 @@ simpleicons/flamethrower
 		map simpleicons/flamethrower.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -507,6 +515,7 @@ simpleicons/garand
 		map simpleicons/garand.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -518,6 +527,7 @@ simpleicons/k43
 		map simpleicons/k43.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -529,6 +539,7 @@ simpleicons/kar98
 		map simpleicons/kar98.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -539,6 +550,7 @@ simpleicons/mg42
 		map simpleicons/mg42.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -549,6 +561,7 @@ simpleicons/mortar
 		map simpleicons/mortar.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -559,6 +572,7 @@ simpleicons/mp34
 		map simpleicons/mp34.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -569,6 +583,7 @@ simpleicons/mp40
 		map simpleicons/mp40.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -579,6 +594,7 @@ simpleicons/panzerfaust
 		map simpleicons/panzerfaust.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -589,6 +605,7 @@ simpleicons/sten
 		map simpleicons/sten.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
@@ -599,6 +616,7 @@ simpleicons/thompson
 		map simpleicons/thompson.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 //========================================//
