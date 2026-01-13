@@ -561,6 +561,11 @@ static void CG_ZoomSway(void)
 		return;
 	}
 
+	if (cg.zoomedBinoc)        // no sway on binoculars
+	{
+		return;
+	}
+
 	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_AAGUN_ACTIVE))     // don't draw when on mg_42
 	{
 		return;
