@@ -420,7 +420,6 @@ icons/iconw_silencedakimbolugers_1_select
 //========================================//
 simpleicons/objective
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/objective.tga
@@ -431,7 +430,6 @@ simpleicons/objective
 
 simpleicons/medheal
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/medheal.tga
@@ -442,7 +440,6 @@ simpleicons/medheal
 
 simpleicons/ammopack
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/ammopack.tga
@@ -453,7 +450,6 @@ simpleicons/ammopack
 
 simpleicons/bazooka
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/bazooka.tga
@@ -464,7 +460,6 @@ simpleicons/bazooka
 
 simpleicons/browning
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/browning.tga
@@ -476,7 +471,6 @@ simpleicons/browning
 // Allied engineer rifle
 simpleicons/carbine
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/carbine.tga
@@ -487,7 +481,6 @@ simpleicons/carbine
 
 simpleicons/fg42
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/fg42.tga
@@ -498,7 +491,6 @@ simpleicons/fg42
 
 simpleicons/flamethrower
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/flamethrower.tga
@@ -510,7 +502,6 @@ simpleicons/flamethrower
 // Allied sniper
 simpleicons/garand
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/garand.tga
@@ -522,7 +513,6 @@ simpleicons/garand
 // Axis sniper
 simpleicons/k43
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/k43.tga
@@ -534,7 +524,6 @@ simpleicons/k43
 // Axis engineer rifle
 simpleicons/kar98
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/kar98.tga
@@ -545,7 +534,6 @@ simpleicons/kar98
 
 simpleicons/mg42
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/mg42.tga
@@ -556,7 +544,6 @@ simpleicons/mg42
 
 simpleicons/mortar
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/mortar.tga
@@ -567,7 +554,6 @@ simpleicons/mortar
 
 simpleicons/mp34
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/mp34.tga
@@ -578,7 +564,6 @@ simpleicons/mp34
 
 simpleicons/mp40
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/mp40.tga
@@ -589,7 +574,6 @@ simpleicons/mp40
 
 simpleicons/panzerfaust
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/panzerfaust.tga
@@ -600,7 +584,6 @@ simpleicons/panzerfaust
 
 simpleicons/sten
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/sten.tga
@@ -611,7 +594,6 @@ simpleicons/sten
 
 simpleicons/thompson
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/thompson.tga
