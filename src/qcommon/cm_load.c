@@ -598,6 +598,7 @@ void CMod_LoadPatches(lump_t *surfs, lump_t *verts)
 		shaderNum           = LittleLong(in->shaderNum);
 		patch->contents     = cm.shaders[shaderNum].contentFlags;
 		patch->surfaceFlags = cm.shaders[shaderNum].surfaceFlags;
+		patch->shaderNum    = shaderNum;
 
 		// create the internal facet structure
 		patch->pc = CM_GeneratePatchCollide(width, height, points, qtrue);

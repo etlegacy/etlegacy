@@ -112,6 +112,7 @@ typedef struct
 	int checkcount;                    ///< to avoid repeated testings
 	int surfaceFlags;
 	int contents;
+	int shaderNum;
 	struct patchCollide_s *pc;
 } cPatch_t;
 
@@ -222,6 +223,7 @@ typedef struct
 	qboolean isPoint;       ///< optimized case
 	trace_t trace;          ///< returned from trace call
 	sphere_t sphere;        ///< sphere for oriendted capsule collision
+	int shaderNum;
 
 	cplane_t tracePlane1;
 	cplane_t tracePlane2;
