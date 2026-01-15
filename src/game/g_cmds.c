@@ -5126,7 +5126,14 @@ void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
 			if (!level.limboCams[i].hasEnt)
 			{
 				VectorCopy(level.limboCams[i].origin, ent->s.origin2);
-				ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
+
+				// don't set during intermission, otherwise intermission camera breaks when limbo is opened,
+				// as we would no longer add entities from 'ps->origin' PVS to snapshots
+				if (!level.intermissiontime)
+				{
+					ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
+				}
+
 				trap_SendServerCommand(ent - g_entities, va("portalcampos %i %i %i %i %i %i %i %i", val - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
 
 				break;
@@ -5148,7 +5155,14 @@ void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
 		i = nearest;
 
 		VectorCopy(level.limboCams[i].origin, ent->s.origin2);
-		ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
+
+		// don't set during intermission, otherwise intermission camera breaks when limbo is opened,
+		// as we would no longer add entities from 'ps->origin' PVS to snapshots
+		if (!level.intermissiontime)
+		{
+			ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
+		}
+
 		trap_SendServerCommand(ent - g_entities, va("portalcampos %i %i %i %i %i %i %i %i", val - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
 	}
 }
