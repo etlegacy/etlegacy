@@ -2044,6 +2044,11 @@ typedef struct
 
 	qhandle_t spawnpointMarker;
 
+	qhandle_t demoPlay;
+	qhandle_t demoPause;
+	qhandle_t demoRewind;
+	qhandle_t demoFastForward;
+
 } cgMedia_t;
 
 /**
