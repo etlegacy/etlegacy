@@ -89,6 +89,83 @@ static struct
 	CURLM *multiHandle;     ///< main curl multi request handle
 } webSys = { qfalse, qfalse, NULL, 0, NULL };
 
+#ifdef ETLEGACY_DEBUG
+static void DL_MsgDump(const char *text, FILE *stream, unsigned char *ptr, size_t size)
+{
+	size_t       i;
+	size_t       c;
+	unsigned int width = 0x10;
+
+	fprintf(stream, "%s, %10.10ld bytes (0x%8.8lx)\n",
+	        text, (long)size, (long)size);
+
+	for (i = 0; i < size; i += width)
+	{
+		fprintf(stream, "%4.4lx: ", (long)i);
+
+		/* show hex to the left */
+		for (c = 0; c < width; c++)
+		{
+			if (i + c < size)
+			{
+				fprintf(stream, "%02x ", ptr[i + c]);
+			}
+			else
+			{
+				fputs("   ", stream);
+			}
+		}
+
+		/* show data on the right */
+		for (c = 0; (c < width) && (i + c < size); c++)
+		{
+			char x = (ptr[i + c] >= 0x20 && ptr[i + c] < 0x80) ? ptr[i + c] : '.';
+			fputc(x, stream);
+		}
+
+		fputc('\n', stream); /* newline */
+	}
+}
+
+static int DL_DebugFunction(CURL *handle, curl_infotype type, char *data, size_t size, void *clientp)
+{
+	const char *text;
+	(void)handle;
+	(void)clientp;
+
+	switch (type)
+	{
+	case CURLINFO_TEXT:
+		fputs("== Info: ", stderr);
+		fwrite(data, size, 1, stderr);
+	default:
+		return 0;
+
+	case CURLINFO_HEADER_OUT:
+		text = "=> Send header";
+		break;
+	case CURLINFO_DATA_OUT:
+		text = "=> Send data";
+		break;
+	case CURLINFO_SSL_DATA_OUT:
+		text = "=> Send SSL data";
+		break;
+	case CURLINFO_HEADER_IN:
+		text = "<= Recv header";
+		break;
+	case CURLINFO_DATA_IN:
+		text = "<= Recv data";
+		break;
+	case CURLINFO_SSL_DATA_IN:
+		text = "<= Recv SSL data";
+		break;
+	}
+
+	DL_MsgDump(text, stderr, (unsigned char *)data, size);
+	return 0;
+}
+#endif
+
 #if defined(FEATURE_SSL) && SSL_VERIFY
 static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 {
@@ -643,6 +720,11 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 
 	request->rawHandle = curl_easy_init();
 
+#ifdef ETLEGACY_DEBUG
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_DEBUGFUNCTION, DL_DebugFunction);
+	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_VERBOSE, 1L);
+#endif
+
 	request->data.buffer = Com_Allocate(GET_BUFFER_SIZE);
 	if (!request->data.buffer)
 	{
@@ -660,20 +742,29 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_PROGRESSDATA, (void *)request);
 	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_FORBID_REUSE, 1L);
 
-#ifdef ETLEGACY_DEBUG
-	ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_VERBOSE, 1L);
-#endif
-
 	if (upload)
 	{
 		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POST, 1L);
-		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READFUNCTION, DL_read_function);
+		// ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_CUSTOMREQUEST, "POST");
+		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_TCP_KEEPALIVE, 0L);
 		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READDATA, (void *)upload);
+		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READFUNCTION, DL_read_function);
+
+		if (upload->bufferSize > 0)
+		{
+			ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POSTFIELDSIZE, (curl_off_t)upload->bufferSize);
+			// ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_INFILESIZE, (curl_off_t)upload->bufferSize);
+		}
 
 		if (upload->contentType[0])
 		{
 			headers = curl_slist_append(headers, "Expect:");
 			headers = curl_slist_append(headers, va("Content-Type: %s", upload->contentType));
+		}
+		else
+		{
+			headers = curl_slist_append(headers, "Expect:");
+			headers = curl_slist_append(headers, "Content-Type: application/octet-stream");
 		}
 	}
 
