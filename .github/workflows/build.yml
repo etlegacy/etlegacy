@@ -40,9 +40,9 @@ jobs:
           ci_id=$(uuidgen)
           echo "Version info: $git_describe ?? $git_tag"
           {
-            describe=$git_describe
-            tag=$git_tag
-            uid=$ci_id
+            echo "describe=$git_describe"
+            echo "tag=$git_tag"
+            echo "uid=$ci_id"
           } >> "$GITHUB_OUTPUT"
 
   #   __  __               _                                                  _     _
