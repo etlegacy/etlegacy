@@ -430,9 +430,8 @@ parse_commandline() {
             FEATURE_PNG=0
 
             BUNDLED_SDL=0
-            # FIXME: this needs to be fixed in cmake, we do not want zlib or minizip if we are not building the client or server
-            BUNDLED_ZLIB=1
-            BUNDLED_MINIZIP=1
+            BUNDLED_ZLIB=0
+            BUNDLED_MINIZIP=0
             BUNDLED_JPEG=0
             BUNDLED_OGG_VORBIS=0
             BUNDLED_THEORA=0
@@ -449,7 +448,6 @@ parse_commandline() {
             FEATURE_RENDERER_GLES=0
             RENDERER_DYNAMIC=0
 
-            FEATURE_CURL=0
             FEATURE_OGG_VORBIS=0
             FEATURE_THEORA=0
             FEATURE_OPENAL=0
@@ -465,7 +463,6 @@ parse_commandline() {
             BUNDLED_GLEW=0
             BUNDLED_FREETYPE=0
             BUNDLED_PNG=0
-            BUNDLED_CURL=0
             BUNDLED_OPENAL=0
         elif [ "$var" = "-etpub" ]; then
             MODNAME="etpub"
