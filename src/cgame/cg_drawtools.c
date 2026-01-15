@@ -170,8 +170,6 @@ void CG_SetChargebarIconColor(void)
 	}
 }
 
-#define BAR_BORDERSIZE 2
-
 /**
  * @brief CG_FilledBar
  * @param[in] x

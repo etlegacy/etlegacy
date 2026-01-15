@@ -2268,6 +2268,8 @@ enum
 	LOC_SHOWDISTANCE = BIT(5)
 };
 
+#define BAR_BORDERSIZE 2
+
 enum
 {
 	BAR_LEFT       = BIT(0),
