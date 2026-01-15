@@ -887,7 +887,7 @@ void DL_DownloadLoop(void)
 		if (!result)
 		{
 			err = curl_easy_strerror(msg->data.result);
-			Com_Printf(S_COLOR_RED "DL_DownloadLoop: Error - request terminated with failure status '%s'\n", err);
+			Com_Printf(S_COLOR_RED "DL_DownloadLoop: Error - request terminated with failure status '%s' (%ld)\n", err, code);
 		}
 
 		while (*lst)
