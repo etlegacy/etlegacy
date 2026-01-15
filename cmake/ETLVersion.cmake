@@ -206,3 +206,12 @@ string(REPLACE "," "." ETL_CMAKE_PROD_VERSIONDOT ${ETL_CMAKE_PROD_VERSION})
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h" @ONLY)
 list(APPEND COMMON_SRC "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h")
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include) # git_version.h
+
+# if(DEFINED ENV{CI_ETL_UID})
+	# set(ETL_UID $ENV{CI_ETL_UID})
+	execute_process(COMMAND uuidgen
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+		OUTPUT_VARIABLE ETL_UID)
+	target_compile_definitions(engine_libraries INTERFACE ETLEGACY_VERSION_ID="${ETL_UID}")
+	target_compile_definitions(mod_libraries INTERFACE ETLEGACY_VERSION_ID="${ETL_UID}")
+# endif()
