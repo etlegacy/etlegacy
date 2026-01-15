@@ -49,16 +49,24 @@
 #define FONT_SUBHEADER      &cgs.media.limboFont1_lo
 #define FONT_TEXT           &cgs.media.limboFont2
 
-#define BUTTON_SLIDER 0
+#define DEMOUI_DATA_BUTTON_TYPE 0
+
+#define BUTTON_TICKER 0
 #define BUTTON_REWIND 1
 #define BUTTON_PLAY_PAUSE 2
 #define BUTTON_FASTFORWARD 3
+
+// emulates holding down key when using the ticker, set on key down, unset on key up
+#define DEMOUI_DATA_TICKER_HELD 1
+// the timestamp we want to seek to
+#define DEMOUI_DATA_TICKER_RESULT 2
 
 static const vec4_t color_bg_title     = COLOR_BG_TITLE;
 static const vec4_t color_border1      = COLOR_BORDER;
 static const vec4_t color_bg           = COLOR_BG_VIEW;
 static const vec4_t color_border       = COLOR_BORDER_VIEW;
 static const vec4_t color_button_hover = COLOR_BUTTON_HOVER;
+static const vec4_t color_bg_window    = COLOR_BG;
 
 static panel_button_text_t specHelpDrawHeader =
 {
@@ -152,13 +160,151 @@ void CG_DrawInformation(qboolean forcerefresh)
 	*/
 }
 
+static int CG_DemoTickerTime(qtime_t *qtime, const int msec)
+{
+	int seconds;
+	int mins;
+	int hours;
+	int tens;
+
+	seconds        = msec / 1000;
+	mins           = seconds / 60;
+	hours          = mins / 60;
+	seconds       -= mins * 60;
+	tens           = seconds / 10;
+	seconds       -= tens * 10;
+	seconds        = Q_atoi(va("%i%i", tens, seconds));
+	qtime->tm_sec  = seconds;
+	qtime->tm_min  = mins;
+	qtime->tm_hour = hours;
+
+	return msec;
+}
+
+static void CG_DemoTicker_SeekToTime(panel_button_t *button)
+{
+	// clear "held" status
+	button->data[DEMOUI_DATA_TICKER_HELD] = qfalse;
+
+	trap_SendConsoleCommand(va("seekservertime %i\n", button->data[DEMOUI_DATA_TICKER_RESULT]));
+	cgs.cursorTimeout = button->data[DEMOUI_DATA_TICKER_RESULT] + 5000;
+}
+
+static void CG_DemoTicker_DrawTooltip(const panel_button_t *button)
+{
+	int        current;
+	qtime_t    t;
+	float      timestampWidth, timestampHeight;
+	float      x;
+	const char *timestamp;
+
+	// clamp the cursor position used to determine time to be inside the rect
+	// we might call this while dragging the ticker, such that the cursor is
+	// outside the rect, which would break the time display
+	float cursorX = Com_Clamp(button->rect.x, button->rect.x + button->rect.w, cgDC.cursorx);
+	float offset  = cursorX - button->rect.x;
+	offset /= button->rect.w;
+	current = (int)((cg.demoinfo->lastTime - cg.demoinfo->firstTime) * offset);
+
+	CG_DemoTickerTime(&t, current);
+
+	timestamp       = va("%02i:%02i", t.tm_min, t.tm_sec);
+	timestampWidth  = CG_Text_Width_Ext_Float(timestamp, button->font->scalex, 0, button->font->font);
+	timestampHeight = CG_Text_Height_Ext_Float(timestamp, button->font->scaley, 0, button->font->font);
+
+	x = Com_Clamp(button->rect.x, button->rect.x + button->rect.w, cgDC.cursorx);
+
+	CG_FillRect(x - (timestampWidth * 1.5f), button->rect.y - button->rect.h - 2,
+	            timestampWidth * 1.5f, button->rect.h, color_bg_window);
+	CG_DrawRect(x - (timestampWidth * 1.5f), button->rect.y - button->rect.h - 2,
+	            timestampWidth * 1.5f, button->rect.h, 1, color_border);
+
+
+	CG_Text_Paint_Centred_Ext(x - ((timestampWidth * 1.5f) * 0.5f), button->rect.y - 2 - (timestampHeight * 0.5f),
+	                          button->font->scalex, button->font->scaley, button->font->colour,
+	                          timestamp, 0, 0, button->font->style, button->font->font);
+}
+
+static void CG_DrawDemoTicker(panel_button_t *button)
+{
+	// how far are we into the demo (0.0 - 1.0)
+	const float progression = ((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
+	vec4_t      barColor;
+	qtime_t     fullTime, currentTime;
+	float       textHeight;
+	const char  *tickerStr;
+
+	Vector4Copy(colorGreen, barColor);
+	barColor[3] = button->font->colour[3];
+
+	CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h,
+	             barColor, NULL, color_border1, color_border1,
+	             progression, 0.f, BAR_BG, -1);
+
+	CG_DemoTickerTime(&currentTime, cg.time - cg.demoinfo->firstTime);
+	CG_DemoTickerTime(&fullTime, cg.demoinfo->lastTime - cg.demoinfo->firstTime);
+	tickerStr  = va("%02i:%02i / %02i:%02i", currentTime.tm_min, currentTime.tm_sec, fullTime.tm_min, fullTime.tm_sec);
+	textHeight = CG_Text_Height_Ext_Float("00:00", button->font->scaley, 0, button->font->font);
+
+	CG_Text_Paint_RightAligned_Ext(button->rect.x + button->rect.w, button->rect.y + button->rect.h + textHeight + 3,
+	                               button->font->scalex, button->font->scaley,
+	                               button->font->colour, tickerStr, 0, 0, button->font->style, button->font->font);
+
+	if (BG_CursorInRect(&button->rect) || button->data[DEMOUI_DATA_TICKER_HELD])
+	{
+		if (button->data[DEMOUI_DATA_TICKER_HELD])
+		{
+			// create a shrinked rect that matches the colored part of the ticker,
+			// to align drawing properly (matches what 'CG_FilledBar' does drawing a bar with border)
+			const rectDef_t rect =
+			{
+				button->rect.x + BAR_BORDERSIZE,
+				button->rect.y + BAR_BORDERSIZE,
+				button->rect.w - (BAR_BORDERSIZE * 2),
+				button->rect.h - (BAR_BORDERSIZE * 2)
+			};
+
+			// shrink to match 'CG_FilledBar' drawing
+			const float currentTickerPos = rect.x + (rect.w * progression);
+			float       x, width;
+			float       cursorX = Com_Clamp(rect.x, rect.x + rect.w, cgDC.cursorx);
+			float       offset  = cursorX - rect.x;
+			offset /= rect.w;
+
+			// store here, so key up event know where to seek
+			// clamp to take into account small inaccuracies with dragging
+			button->data[DEMOUI_DATA_TICKER_RESULT] = Com_Clamp(cg.demoinfo->firstTime, cg.demoinfo->lastTime,
+			                                                    (int)(cg.demoinfo->firstTime + ((cg.demoinfo->lastTime - cg.demoinfo->firstTime) * offset)));
+
+			Vector4Copy(color_border1, barColor);
+			barColor[3] = 0.75f;
+
+			// seeking backwards
+			if (cgDC.cursorx < currentTickerPos)
+			{
+				x     = MAX(rect.x, cgDC.cursorx);
+				width = MIN(currentTickerPos - cgDC.cursorx, currentTickerPos - rect.x);
+			}
+			else     // seeking forwards
+			{
+				x     = currentTickerPos;
+				width = MIN(cgDC.cursorx - currentTickerPos, rect.x + rect.w - currentTickerPos);
+			}
+
+			CG_FillRect(x, rect.y, width, rect.h, barColor);
+		}
+
+		CG_DemoTicker_DrawTooltip(button);
+	}
+}
+
 /**
  * @brief CG_DemoControlButtonRender
  * @param[in] button
  */
 static void CG_DemoControlButtonRender(panel_button_t *button)
 {
-	if (button->data[0])
+	if (button->data[DEMOUI_DATA_BUTTON_TYPE] != BUTTON_TICKER)
 	{
 		const float iconSize = button->rect.h * 0.75f;
 		char        buf[2]; // 'cl_freezeDemo' is 'CVAR_ROM', engine will only ever set it to 0/1
@@ -193,16 +339,9 @@ static void CG_DemoControlButtonRender(panel_button_t *button)
 
 		trap_R_SetColor(NULL);
 	}
-	else
+	else // status ticker
 	{
-		float  demoStatus = ((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
-		vec4_t barColor;
-
-		Vector4Copy(colorGreen, barColor);
-		barColor[3] = button->font->colour[3];
-
-		//borderColor
-		CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, barColor, NULL, color_border1, color_border1, demoStatus, 0.f, BAR_BG, -1);
+		CG_DrawDemoTicker(button);
 	}
 }
 
@@ -219,23 +358,16 @@ static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 		return qfalse;
 	}
 
-	switch (button->data[0])
-	{
-	case BUTTON_SLIDER:
-	{
-		int   result;
-		float offset = cgDC.cursorx - button->rect.x;
-
-		offset = offset / button->rect.w;
-		result = (int)(cg.demoinfo->firstTime + ((cg.demoinfo->lastTime - cg.demoinfo->firstTime) * offset));
-		trap_SendConsoleCommand(va("seekservertime %i\n", result));
-		cgs.cursorTimeout = result + 5000;
-	}
-	break;
 	// NOTE: we must use console commands to play audio from the button clicks!
 	// using 'trap_S_StartLocalSound' does not work for ff/rewind reliably,
 	// because we're messing with time, which breaks the timestamp for local sounds
 	// (we set the timestamp to the current time, then ff/rewind on the next frame)
+	switch (button->data[DEMOUI_DATA_BUTTON_TYPE])
+	{
+	case BUTTON_TICKER:
+		// action is performed on key up, simulate drag event
+		button->data[DEMOUI_DATA_TICKER_HELD] = qtrue;
+		break;
 	case BUTTON_REWIND:
 		// NOTE: unlike fast-forward/seek, we don't handle cursor timeout adjustment here.
 		// This is because when we rewind, 'CG_EventHandling' gets called once the rewind is complete,
@@ -259,22 +391,50 @@ static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 
 /**
  * @brief CG_DemoControlButtonUp
- * @param button - unused
- * @param key - unused
- * @note This function is empty and return always qfalse
- * @return Always qfalse
+ * @param button
+ * @param key
+ * @return
  */
 static qboolean CG_DemoControlButtonUp(panel_button_t *button, int key)
 {
-	return qfalse;
+	// ticker is the only button (at the moment!) with a key up event
+	if (button->data[DEMOUI_DATA_BUTTON_TYPE] != BUTTON_TICKER)
+	{
+		return qfalse;
+	}
+
+	if (key != K_MOUSE1 && key != K_MOUSE2)
+	{
+		return qfalse;
+	}
+
+	CG_DemoTicker_SeekToTime(button);
+	return qtrue;
 }
 
-panel_button_t demoSliderButton =
+static qboolean CG_DemoTicker_OOBClick(panel_button_t *button, int key)
+{
+	if (key != K_MOUSE1 && key != K_MOUSE2)
+	{
+		return qfalse;
+	}
+
+	// not holding down
+	if (!button->data[DEMOUI_DATA_TICKER_HELD])
+	{
+		return qfalse;
+	}
+
+	CG_DemoTicker_SeekToTime(button);
+	return qtrue;
+}
+
+panel_button_t demoTickerButton =
 {
 	NULL,
 	NULL,
 	{ 0,                       0,  0, 0 },
-	{ BUTTON_SLIDER,           0,  0, 0, 0, 0, 0, 0},
+	{ BUTTON_TICKER,           0,  0, 0, 0, 0, 0, 0},
 	NULL,                      // font
 	CG_DemoControlButtonDown,  // keyDown
 	CG_DemoControlButtonUp,    // keyUp
@@ -327,7 +487,7 @@ panel_button_t demoFFButton =
 
 static panel_button_t *demoControlButtons[] =
 {
-	&demoSliderButton,
+	&demoTickerButton,
 	&demoRewindButton,
 	&demoPauseButton,
 	&demoFFButton,
@@ -361,8 +521,13 @@ void CG_DemoClick(int key, qboolean down)
 	{
 		return;
 	}
-
 #ifdef FEATURE_EDV
+// we might be dragging the demo ticker while our cursor is outside the rect
+	else if (!down && CG_DemoTicker_OOBClick(&demoTickerButton, key))
+	{
+		return;
+	}
+
 
 	cgs.demoCamera.factor = 5;
 
@@ -1742,8 +1907,8 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 	demoControlTxt.align = ITEM_ALIGN_LEFT;
 	demoControlTxt.font  = hFont;
 
-	CG_FillRect(x, y, w, 50, bgColor);
-	CG_DrawRect(x, y, w, 50, 1, borderColor);
+	CG_FillRect(x, y, w, 62, bgColor);
+	CG_DrawRect(x, y, w, 62, 1, borderColor);
 
 	y += 1;
 
@@ -1756,11 +1921,11 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 	{
 		if (i)
 		{
-			rect_set(demoControlButtons[i]->rect, (x + (i * (w / 4)) - 15), y + 30, 30, 15);
+			rect_set(demoControlButtons[i]->rect, (x + (i * (w / 4)) - 15), y + 42, 30, 15);
 		}
 		else
 		{
-			rect_set(demoControlButtons[i]->rect, x + 2, y + 15, w - 4, 12);
+			rect_set(demoControlButtons[i]->rect, x + 4, y + 15, w - 8, 12);
 		}
 
 		demoControlButtons[i]->font = &demoControlTxt;
