@@ -1577,6 +1577,11 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.spawnpointMarker = trap_R_RegisterShaderNoMip("textures/sfx/spawnpoint_marker");
 
+	cgs.media.demoPlay        = trap_R_RegisterShaderNoMip("gfx/2d/demo_controls_play");
+	cgs.media.demoPause       = trap_R_RegisterShaderNoMip("gfx/2d/demo_controls_pause");
+	cgs.media.demoRewind      = trap_R_RegisterShaderNoMip("gfx/2d/demo_controls_rewind");
+	cgs.media.demoFastForward = trap_R_RegisterShaderNoMip("gfx/2d/demo_controls_fastforward");
+
 	// NOTE: load smoke puff as last shader to always draw on top of other shaders
 	// because renderer order the draw depth level by register index
 	// i.e: this allow smoke grenade to hide players icons over head
