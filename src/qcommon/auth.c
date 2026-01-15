@@ -708,16 +708,19 @@ void Auth_Client_FetchResponse(const char *challenge)
 {
 	cJSON *root;
 	char  *json;
+	char  *info;
 
 	webUploadData_t *upload = NULL;
 
 	upload = Com_Allocate(sizeof(webUploadData_t));
 	Com_Memset(upload, 0, sizeof(webUploadData_t));
 
+	info = Cvar_InfoString(CVAR_USERINFO);
+	Info_RemoveKey(info, "password");
+
 	root = cJSON_CreateObject();
 	cJSON_AddStringToObject(root, "challenge", challenge);
-	cJSON_AddStringToObject(root, "guid", Cvar_VariableString("cl_guid"));
-	cJSON_AddStringToObject(root, "userinfo", Cvar_InfoString(CVAR_USERINFO));
+	cJSON_AddStringToObject(root, "userinfo", info);
 	json = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
 

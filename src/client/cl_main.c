@@ -3162,6 +3162,9 @@ void CL_Init(void)
 
 	CL_InitCvars();
 
+	#ifdef ETLEGACY_VERSION_ID
+	Cvar_Get("etl_bUUID", ETLEGACY_VERSION_ID, CVAR_USERINFO | CVAR_ROM | CVAR_NOTABCOMPLETE);
+	#endif
 	// register our commands
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f, "Executes a reliable server command.");
 	Cmd_AddCommand("configstrings", CL_Configstrings_f, "Prints configstrings.");
