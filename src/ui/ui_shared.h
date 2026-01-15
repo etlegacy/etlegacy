@@ -795,9 +795,9 @@ void RegisterSharedFonts(void);
 
 //A simple macro to check if a certain functionality is available in the engine version
 #ifdef CGAMEDLL
-#define IS_FUNC_SUPPORTED(x) (cg.etLegacyClient >= x)
+#define IS_FUNC_SUPPORTED(x) (cg.etLegacyClient >= (x))
 #else
-#define IS_FUNC_SUPPORTED(x) (uiInfo.etLegacyClient >= x)
+#define IS_FUNC_SUPPORTED(x) (uiInfo.etLegacyClient >= (x))
 #endif
 
 #define RegisterFont(fontName, pointSize, font) Q_UTF8_RegisterFont(fontName, pointSize, font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION), &trap_R_RegisterFont)

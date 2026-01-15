@@ -684,7 +684,6 @@ int trap_RealTime(qtime_t *qtime)
 void trap_SnapVector(float *v)
 {
 	SystemCall(G_SNAPVECTOR, v);
-	return;
 }
 
 /**
