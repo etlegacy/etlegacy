@@ -924,7 +924,7 @@ jobs:
       - name: Register version
         if: ${{ steps.vars.outputs.hash_exists == '404' }}
         run: |
-          curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -F"sha=${{ github.sha }}" -F"uid=${{needs.version.outputs.uid}}" -F"desc=${{needs.version.outputs.describe}}" ${{ secrets.LEGACY_VERSION_REGISTER_URL }}
+          curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -F"sha=${{ github.sha }}" -F"uid=${{needs.pre-build.outputs.uid}}" -F"desc=${{needs.pre-build.outputs.describe}}" ${{ secrets.LEGACY_VERSION_REGISTER_URL }}
 
       - name: Upload packages
         if: ${{ steps.vars.outputs.hash_exists == '404' }}
