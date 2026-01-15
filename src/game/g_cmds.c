@@ -4566,6 +4566,11 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 void Cmd_GetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
+	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
 	trap_SendServerCommand((int)(ent - g_entities), va("getspawnpt \"%d\" \"%d\" \"%d\"",
 	                                                   ent->client->sess.userSpawnPointValue,
 	                                                   ent->client->sess.userMinorSpawnPointValue,

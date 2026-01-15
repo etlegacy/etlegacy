@@ -1118,6 +1118,9 @@ typedef struct
 	team_t team;
 } mapEntityData_t;
 
+// limbo menu team order
+extern const team_t teamOrder[3];
+
 /**
  * @enum showView_t
  * @brief
@@ -2635,7 +2638,7 @@ typedef struct cgs_s
 	int ccSelectedObjective;
 	int ccSelectedSpawnPoint;
 	int ccResolvedSpawnPoint;
-	int ccSelectedTeam;                                 ///< ( 1 = ALLIES, 0 = AXIS )
+	int ccSelectedTeam;                                 ///< ( 0 = AXIS, 1 = ALLIES, 2 = SPECTATOR )
 	int ccSelectedWeaponSlot;                           ///< ( 0 = secondary, 1 = primary)
 	int ccSelectedClass;
 	weapon_t ccSelectedPrimaryWeapon;                   ///< Selected primary weapon from limbo panel
