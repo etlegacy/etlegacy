@@ -62,6 +62,7 @@ cvar_t *sv_auth;
 
 #define AUTH_CLIENT_LOGIN "/api/client/login"
 #define AUTH_CLIENT_CHALLENGE "/api/client/auth/challenge"
+#define AUTH_SERVER_LOGIN_TEST "/api/server/auth/test"
 #define AUTH_SERVER_CHALLENGE "/api/server/auth/challenge"
 #define AUTH_SERVER_VERIFY "/api/server/auth/verify"
 
@@ -199,7 +200,7 @@ static void Auth_WriteTokenToFile(const char *token)
 		return;
 	}
 
-	FS_Write(token, (int)strlen(token), f);
+	FS_Write(token, (int) strlen(token), f);
 	FS_FCloseFile(f);
 }
 
@@ -214,7 +215,7 @@ static void Auth_ClientLoginCallback(struct webRequest_s *request, webRequestRes
 		return;
 	}
 
-	root = cJSON_Parse((char *)request->data.buffer);
+	root = cJSON_Parse((char *) request->data.buffer);
 
 	if (cJSON_HasObjectItem(root, "token") && cJSON_HasObjectItem(root, "username"))
 	{
@@ -248,7 +249,7 @@ static void Auth_ClientLogin(const char *username, const char *password)
 	tmp = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
 	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
-	upload->buffer     = (byte *)tmp;
+	upload->buffer     = (byte *) tmp;
 	upload->bufferSize = strlen(tmp);
 
 	Web_CreateRequest(A_URL(AUTH_CLIENT_LOGIN), NULL, upload, NULL, &Auth_ClientLoginCallback, NULL);
@@ -264,7 +265,7 @@ static void Auth_ClientLoginTestCallback(struct webRequest_s *request, webReques
 		Com_Printf(S_COLOR_RED "Could not log in with token\n");
 	}
 
-	root = cJSON_Parse((char *)request->data.buffer);
+	root = cJSON_Parse((char *) request->data.buffer);
 
 	if (cJSON_HasObjectItem(root, "username"))
 	{
@@ -279,6 +280,64 @@ static void Auth_ClientLoginTestCallback(struct webRequest_s *request, webReques
 static void Auth_TestToken(void)
 {
 	Web_CreateRequest(A_URL(AUTH_CLIENT_LOGIN), authData.authToken, NULL, NULL, &Auth_ClientLoginTestCallback, NULL);
+}
+#else
+
+static void Auth_ServerLoginTestCallback(struct webRequest_s *request, webRequestResult requestResult)
+{
+	cJSON *root = NULL;
+
+	Auth_FreeUploadBuffer(request);
+
+	if (requestResult != REQUEST_OK)
+	{
+		Com_Printf(S_COLOR_RED "Could not log in with token\n");
+		return;
+	}
+
+	if (!request->data.buffer || !request->data.bufferSize)
+	{
+		Com_Printf(S_COLOR_RED "Could not log in with token. No data was sent from the master\n");
+		return;
+	}
+
+	root = cJSON_Parse((char *) request->data.buffer);
+
+	if (cJSON_HasObjectItem(root, "pong"))
+	{
+		if (strcmp(cJSON_GetStringValue(cJSON_GetObjectItem(root, "pong")), "bye") == 0)
+		{
+			Com_Printf("Authentication test was successful\n");
+		}
+		else
+		{
+			Com_Printf(S_COLOR_RED "Authentication test failed\n");
+		}
+
+	}
+	cJSON_free(root);
+}
+
+static void Auth_TestToken(void)
+{
+	cJSON *root;
+	char  *json;
+
+	webUploadData_t *upload = NULL;
+
+	upload = Com_Allocate(sizeof(webUploadData_t));
+	Com_Memset(upload, 0, sizeof(webUploadData_t));
+
+	root = cJSON_CreateObject();
+	cJSON_AddStringToObject(root, "ping", "hi");
+	json = cJSON_PrintUnformatted(root);
+	cJSON_free(root);
+
+	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
+	upload->buffer     = (byte *) json;
+	upload->bufferSize = strlen(json);
+
+	Web_CreateRequest(A_URL(AUTH_SERVER_LOGIN_TEST), authData.authToken, upload, NULL, &Auth_ServerLoginTestCallback, NULL);
 }
 #endif
 
@@ -467,7 +526,7 @@ static void Auth_ClientChallengeCallback(struct webRequest_s *request, webReques
 		return;
 	}
 
-	root = cJSON_Parse((char *)request->data.buffer);
+	root = cJSON_Parse((char *) request->data.buffer);
 
 	if (cJSON_HasObjectItem(root, "response"))
 	{
@@ -487,10 +546,12 @@ static void Auth_ServerChallengeCallback(struct webRequest_s *request, webReques
 
 	if (requestResult != REQUEST_OK)
 	{
+		client_t *client = request->userData;
+		Com_Printf("Server challenge request failed for user %s, due to %ld\n", client->name, request->httpCode);
 		return;
 	}
 
-	root = cJSON_Parse((char *)request->data.buffer);
+	root = cJSON_Parse((char *) request->data.buffer);
 
 	if (cJSON_HasObjectItem(root, "challenge"))
 	{
@@ -514,7 +575,7 @@ static void Auth_ServerVerifyCallback(struct webRequest_s *request, webRequestRe
 		return;
 	}
 
-	root = cJSON_Parse((char *)request->data.buffer);
+	root = cJSON_Parse((char *) request->data.buffer);
 
 	if (cJSON_HasObjectItem(root, "match"))
 	{
@@ -526,7 +587,7 @@ static void Auth_ServerVerifyCallback(struct webRequest_s *request, webRequestRe
 		tmp = cJSON_GetObjectItem(root, "userId");
 		if (cJSON_IsNumber(tmp))
 		{
-			id = (uint32_t)cJSON_GetNumberValue(tmp);
+			id = (uint32_t) cJSON_GetNumberValue(tmp);
 		}
 	}
 
@@ -537,7 +598,7 @@ static void Auth_ServerVerifyCallback(struct webRequest_s *request, webRequestRe
 
 void Auth_Server_ClientLogout(void *data, const char *username)
 {
-	client_t *client = (client_t *)data;
+	client_t *client = (client_t *) data;
 
 	if (client->loginStatus == LOGIN_CLIENT_LOGGED_IN)
 	{
@@ -573,10 +634,10 @@ void Auth_Server_VerifyResponse(void *data, const char *username, const char *ch
 	cJSON_free(root);
 
 	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
-	upload->buffer     = (byte *)json;
+	upload->buffer     = (byte *) json;
 	upload->bufferSize = strlen(json);
 
-	((client_t *)data)->loginStatus = LOGIN_SERVER_VERIFY;
+	((client_t *) data)->loginStatus = LOGIN_SERVER_VERIFY;
 
 	Web_CreateRequest(A_URL(AUTH_SERVER_VERIFY), authData.authToken, upload, data, &Auth_ServerVerifyCallback, NULL);
 }
@@ -590,7 +651,7 @@ void Auth_Server_FetchChallenge(void *data, const char *username)
 
 	if (data)
 	{
-		((client_t *)data)->loginStatus = LOGIN_SERVER_CHALLENGED;
+		((client_t *) data)->loginStatus = LOGIN_SERVER_CHALLENGED;
 	}
 	else
 	{
@@ -607,10 +668,11 @@ void Auth_Server_FetchChallenge(void *data, const char *username)
 	cJSON_free(root);
 
 	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
-	upload->buffer     = (byte *)json;
+	upload->buffer     = (byte *) json;
 	upload->bufferSize = strlen(json);
 
-	Web_CreateRequest(A_URL(AUTH_SERVER_CHALLENGE), authData.authToken, upload, data, &Auth_ServerChallengeCallback, NULL);
+	Web_CreateRequest(A_URL(AUTH_SERVER_CHALLENGE), authData.authToken, upload, data, &Auth_ServerChallengeCallback,
+	                  NULL);
 }
 
 void Auth_Server_RequestClientAuthentication(void *data)
@@ -655,14 +717,16 @@ void Auth_Client_FetchResponse(const char *challenge)
 	root = cJSON_CreateObject();
 	cJSON_AddStringToObject(root, "challenge", challenge);
 	cJSON_AddStringToObject(root, "guid", Cvar_VariableString("cl_guid"));
+	cJSON_AddStringToObject(root, "userinfo", Cvar_InfoString(CVAR_USERINFO));
 	json = cJSON_PrintUnformatted(root);
 	cJSON_free(root);
 
 	Q_strncpyz(upload->contentType, "application/json", sizeof(upload->contentType));
-	upload->buffer     = (byte *)json;
+	upload->buffer     = (byte *) json;
 	upload->bufferSize = strlen(json);
 
-	Web_CreateRequest(A_URL(AUTH_CLIENT_CHALLENGE), authData.authToken, upload, NULL, &Auth_ClientChallengeCallback, NULL);
+	Web_CreateRequest(A_URL(AUTH_CLIENT_CHALLENGE), authData.authToken, upload, NULL, &Auth_ClientChallengeCallback,
+	                  NULL);
 }
 #endif
 
@@ -699,6 +763,8 @@ void Auth_Init(void)
 #ifdef ETLEGACY_DEBUG
 	Cmd_AddCommand("authTest", Auth_TestToken, "Test auth token manually");
 #endif
+#else
+	Cmd_AddCommand("authTest", Auth_TestToken, "Test server auth token manually");
 #endif
 
 	Auth_ReadToken();
