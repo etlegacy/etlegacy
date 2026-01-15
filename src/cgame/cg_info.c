@@ -43,6 +43,7 @@
 #define COLOR_BORDER_TITLE  { 0.1f, 0.1f, 0.1f, 0.2f }
 #define COLOR_BORDER_VIEW   { 0.2f, 0.2f, 0.2f, 0.4f }
 #define COLOR_TEXT          { 0.6f, 0.6f, 0.6f, 1.0f }
+#define COLOR_BUTTON_HOVER  { 0.24f, 0.3f, 0.255f, 0.8f }
 
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_SUBHEADER      &cgs.media.limboFont1_lo
@@ -53,10 +54,11 @@
 #define BUTTON_PLAY_PAUSE 2
 #define BUTTON_FASTFORWARD 3
 
-const vec4_t color_bg_title = COLOR_BG_TITLE;
-const vec4_t color_border1  = COLOR_BORDER;
-const vec4_t color_bg       = COLOR_BG_VIEW;
-const vec4_t color_border   = COLOR_BORDER_VIEW;
+static const vec4_t color_bg_title     = COLOR_BG_TITLE;
+static const vec4_t color_border1      = COLOR_BORDER;
+static const vec4_t color_bg           = COLOR_BG_VIEW;
+static const vec4_t color_border       = COLOR_BORDER_VIEW;
+static const vec4_t color_button_hover = COLOR_BUTTON_HOVER;
 
 static panel_button_text_t specHelpDrawHeader =
 {
@@ -158,11 +160,38 @@ static void CG_DemoControlButtonRender(panel_button_t *button)
 {
 	if (button->data[0])
 	{
-		CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, color_bg_title);
-		CG_DrawRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, color_border);
-		//BG_PanelButtonsRender_Text(button);
+		const float iconSize = button->rect.h * 0.75f;
+		char        buf[2]; // 'cl_freezeDemo' is 'CVAR_ROM', engine will only ever set it to 0/1
+		qboolean    paused;
 
-		CG_Text_Paint_Ext(button->rect.x + button->rect.w * 0.4f, button->rect.y + button->rect.h * 0.7f, button->font->scalex, button->font->scaley, button->font->colour, button->text, 0.0f, 0, button->font->style, button->font->font);
+		trap_Cvar_VariableStringBuffer("cl_freezeDemo", buf, sizeof(buf));
+		paused = Q_atoi(buf);
+
+		CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, BG_CursorInRect(&button->rect) ? color_button_hover : color_bg_title);
+		CG_DrawRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, color_border);
+
+		switch (button->data[0])
+		{
+		case BUTTON_REWIND:
+			trap_R_SetColor(colorWhite);
+			CG_DrawPic(button->rect.x + (button->rect.w * 0.5f) - iconSize, button->rect.y + (button->rect.h * 0.5f) - (iconSize * 0.5f),
+			           iconSize * 2, iconSize, cgs.media.demoRewind);
+			break;
+		case BUTTON_PLAY_PAUSE:
+			trap_R_SetColor(colorWhite);
+			CG_DrawPic(button->rect.x + (button->rect.w * 0.5f) - (iconSize * 0.5f), button->rect.y + (button->rect.h * 0.5f) - (iconSize * 0.5f),
+			           iconSize, iconSize, paused ? cgs.media.demoPlay : cgs.media.demoPause);
+			break;
+		case BUTTON_FASTFORWARD:
+			trap_R_SetColor(colorWhite);
+			CG_DrawPic(button->rect.x + (button->rect.w * 0.5f) - iconSize, button->rect.y + (button->rect.h * 0.5f) - (iconSize * 0.5f),
+			           iconSize * 2, iconSize, cgs.media.demoFastForward);
+			break;
+		default:
+			break;
+		}
+
+		trap_R_SetColor(NULL);
 	}
 	else
 	{
@@ -203,18 +232,22 @@ static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 		cgs.cursorTimeout = result + 5000;
 	}
 	break;
+	// NOTE: we must use console commands to play audio from the button clicks!
+	// using 'trap_S_StartLocalSound' does not work for ff/rewind reliably,
+	// because we're messing with time, which breaks the timestamp for local sounds
+	// (we set the timestamp to the current time, then ff/rewind on the next frame)
 	case BUTTON_REWIND:
 		// NOTE: unlike fast-forward/seek, we don't handle cursor timeout adjustment here.
 		// This is because when we rewind, 'CG_EventHandling' gets called once the rewind is complete,
 		// with 'cg.time 0' (as the playback effectively restarts), which sets the cursor timeout value to 10000.
 		// After that, we get a call to 'CG_DrawActiveFrame', where we actually fix-up the timestamp.
-		trap_SendConsoleCommand("rewind 5\n");
+		trap_SendConsoleCommand("rewind 5; play sound/menu/filter.wav\n");
 		break;
 	case BUTTON_PLAY_PAUSE:
-		trap_SendConsoleCommand("pausedemo\n");
+		trap_SendConsoleCommand("pausedemo; play sound/menu/filter.wav\n");
 		break;
 	case BUTTON_FASTFORWARD:
-		trap_SendConsoleCommand("fastforward 5\n");
+		trap_SendConsoleCommand("fastforward 5; play sound/menu/filter.wav\n");
 		// we're fast-forwarding 5s, so set the timeout 5s after that
 		cgs.cursorTimeout = cg.time + 10000;
 		break;
@@ -253,7 +286,7 @@ panel_button_t demoSliderButton =
 panel_button_t demoRewindButton =
 {
 	NULL,
-	"<<",
+	NULL,
 	{ 0,                       0,  0, 0 },
 	{ BUTTON_REWIND,           0,  0, 0, 0, 0, 0, 0},
 	NULL,                      // font
@@ -267,7 +300,7 @@ panel_button_t demoRewindButton =
 panel_button_t demoPauseButton =
 {
 	NULL,
-	"||",
+	NULL,
 	{ 0,                       0,  0, 0 },
 	{ BUTTON_PLAY_PAUSE,       0,  0, 0, 0, 0, 0, 0},
 	NULL,                      // font
@@ -281,7 +314,7 @@ panel_button_t demoPauseButton =
 panel_button_t demoFFButton =
 {
 	NULL,
-	">>",
+	NULL,
 	{ 0,                       0,  0, 0 },
 	{ BUTTON_FASTFORWARD,      0,  0, 0, 0, 0, 0, 0},
 	NULL,                      // font
@@ -1705,8 +1738,8 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 	demoControlTxt.scalex = hScale;
 	demoControlTxt.scaley = hScaleY;
 	Vector4Copy(hdrColor, demoControlTxt.colour);
-	demoControlTxt.style = ITEM_ALIGN_CENTER;
-	demoControlTxt.align = 0;
+	demoControlTxt.style = ITEM_TEXTSTYLE_NORMAL;
+	demoControlTxt.align = ITEM_ALIGN_LEFT;
 	demoControlTxt.font  = hFont;
 
 	CG_FillRect(x, y, w, 50, bgColor);
