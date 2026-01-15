@@ -744,16 +744,27 @@ unsigned int Web_CreateRequest(const char *url, const char *authToken, webUpload
 
 	if (upload)
 	{
-		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POST, 1L);
-		// ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_CUSTOMREQUEST, "POST");
+		// ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POST, 1L);
+		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_CUSTOMREQUEST, "POST");
+		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_UPLOAD, 1L);
 		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_TCP_KEEPALIVE, 0L);
-		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READDATA, (void *)upload);
-		ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READFUNCTION, DL_read_function);
 
-		if (upload->bufferSize > 0)
+		if (upload->bufferSize > 0 && upload->bufferSize <  1024 && Q_stricmpn("application/json", upload->contentType, 16) == 0)
 		{
-			ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POSTFIELDSIZE, (curl_off_t)upload->bufferSize);
-			// ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_INFILESIZE, (curl_off_t)upload->bufferSize);
+			ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POSTFIELDS, upload->buffer);
+			if (upload->bufferSize > 0)
+			{
+				ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_POSTFIELDSIZE, (curl_off_t)upload->bufferSize);
+			}
+		}
+		else
+		{
+			ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READDATA, (void *)upload);
+			ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_READFUNCTION, DL_read_function);
+			if (upload->bufferSize > 0)
+			{
+				ETL_curl_easy_setopt(status, request->rawHandle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)upload->bufferSize);
+			}
 		}
 
 		if (upload->contentType[0])
