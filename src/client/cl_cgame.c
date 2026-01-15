@@ -40,6 +40,9 @@
 #define TRAP_EXTENSIONS_LIST cg_extensionTraps
 #include "../qcommon/vm_ext.h"
 
+static refdef_t cl_lastRefdef;
+static qboolean cl_hasRefdef;
+
 static ext_trap_keys_t cg_extensionTraps[] =
 {
 	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
@@ -53,6 +56,33 @@ extern botlib_export_t *botlib_export;
 
 void Key_GetBindingBuf(int keynum, char *buf, int buflen);
 void Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
+
+void CL_SetLastRefdef(const refdef_t *refdef)
+{
+	if (!refdef)
+	{
+		cl_hasRefdef = qfalse;
+		return;
+	}
+
+	if (refdef->rdflags & (RDF_SKYBOXPORTAL | RDF_DRAWINGSKY | RDF_NOWORLDMODEL))
+	{
+		return;
+	}
+
+	Com_Memcpy(&cl_lastRefdef, refdef, sizeof(cl_lastRefdef));
+	cl_hasRefdef = qtrue;
+}
+
+const refdef_t *CL_GetLastRefdef(void)
+{
+	if (!cl_hasRefdef)
+	{
+		return NULL;
+	}
+
+	return &cl_lastRefdef;
+}
 
 /**
  * @brief CL_GetGameState
@@ -897,6 +927,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		re.SetGlobalFog(args[1], args[2], VMF(3), VMF(4), VMF(5), VMF(6));
 		return 0;
 	case CG_R_RENDERSCENE:
+		CL_SetLastRefdef(VMA(1));
 		re.RenderScene(VMA(1));
 		return 0;
 	case CG_R_SAVEVIEWPARMS:

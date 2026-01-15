@@ -702,6 +702,8 @@ void Con_Close(void);
 
 void SCR_Init(void);
 void SCR_UpdateScreen(void);
+void CL_SetLastRefdef(const refdef_t *refdef);
+const refdef_t *CL_GetLastRefdef(void);
 
 void SCR_DebugGraph(float value);
 
