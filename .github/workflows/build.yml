@@ -39,9 +39,11 @@ jobs:
           git_tag=$(git describe --abbrev=0 2>/dev/null | awk '{$1=$1};1')
           ci_id=$(uuidgen)
           echo "Version info: $git_describe ?? $git_tag"
-          echo "describe=$git_describe" >> "$GITHUB_OUTPUT"
-          echo "tag=$git_tag" >> "$GITHUB_OUTPUT"
-          echo "uid=$ci_id" >> "$GITHUB_OUTPUT"
+          {
+            describe=$git_describe
+            tag=$git_tag
+            uid=$ci_id
+          } >> "$GITHUB_OUTPUT"
 
   #   __  __               _                                                  _     _
   #  |  \/  |             | |                                                | |   (_)
