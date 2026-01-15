@@ -2052,8 +2052,11 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
  */
 static void CG_DrawSpawnPointInfoFlag(int i, float size, vec2_t point)
 {
+	const team_t team = cgs.clientinfo[cg.clientNum].team;
+
 	// render flag shadow if spawn point is the one that is currently resolved
-	if (i == cgs.ccResolvedSpawnPoint + 1)
+	// skip drawing if we're spectating, or during intermission, as the data is wrong anyway
+	if (team != TEAM_SPECTATOR && teamOrder[cgs.ccSelectedTeam] == team && cg.snap->ps.pm_type != PM_INTERMISSION && i == cgs.ccResolvedSpawnPoint + 1)
 	{
 		float offsetSize = size * 1.3;
 
