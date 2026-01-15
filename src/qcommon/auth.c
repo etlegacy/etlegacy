@@ -350,7 +350,6 @@ static void Auth_Cmd_f(void)
 		if (*authData.authToken && *authData.username)
 		{
 			Auth_SendToServer("login %s", authData.username);
-			// Com_Printf("Already logged in\n");
 			return;
 		}
 
