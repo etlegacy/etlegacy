@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   pre-build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     outputs:
       describe: ${{ steps.git.outputs.describe }}
       tag: ${{ steps.git.outputs.tag }}
