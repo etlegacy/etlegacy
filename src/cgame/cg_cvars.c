@@ -319,6 +319,7 @@ vmCvar_t cg_scopeReticleLineThickness;
 vmCvar_t cg_scopeReticleDotThickness;
 
 vmCvar_t cg_commandMapTime;
+vmCvar_t in_osCursor;
 
 typedef struct
 {
@@ -381,6 +382,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_dynamicIconsMinScale,               "cg_dynamicIconsMinScale",               "0.5",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_autoactivate,                       "cg_autoactivate",                       "1",           CVAR_ARCHIVE,                 0 },
+	{ &in_osCursor,                           "in_osCursor",                           "1",           CVAR_ARCHIVE,                 0 },
 
 	// more fluid rotations
 	{ &cg_swingSpeed,                         "cg_swingSpeed",                         "0.1",         CVAR_ARCHIVE,                 0 },           // was 0.3 for Q3

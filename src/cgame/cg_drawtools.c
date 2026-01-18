@@ -1718,5 +1718,12 @@ void CG_DrawCursor(float x, float y)
 		return;
 	}
 
+	if (cg.etLegacyClient > 0 && trap_Cvar_VariableValue("in_osCursor") != 0.f)
+	{
+		// ET: Legacy engine renders the OS cursor; drawing here would duplicate it.
+		// Alternative: always draw software cursor and disable OS cursor in engine.
+		return;
+	}
+
 	CG_DrawPic(x, y, CURSOR_SIZE, CURSOR_SIZE, cgs.media.cursorIcon);
 }
