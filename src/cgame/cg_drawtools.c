@@ -1716,5 +1716,11 @@ void CG_DrawCursor(float x, float y)
 		return;
 	}
 
+	if (cg.etLegacyClient > 0)
+	{
+		// ET: Legacy engine renders the OS cursor.
+		return;
+	}
+
 	CG_DrawPic(x, y, CURSOR_SIZE, CURSOR_SIZE, cgs.media.cursorIcon);
 }

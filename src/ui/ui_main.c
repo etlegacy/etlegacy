@@ -1042,7 +1042,10 @@ void UI_Refresh(int realtime)
 		// be refactored into a separate cursor drawing function (see CG_DrawCursor)
 		if ((cstate.connState <= CA_DISCONNECTED || cstate.connState >= CA_ACTIVE) && uiInfo.uiDC.cursorVisible)
 		{
-			UI_DrawHandlePic(uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory, CURSOR_SIZE, CURSOR_SIZE, uiInfo.uiDC.Assets.cursor);
+			if (uiInfo.etLegacyClient <= 0)
+			{
+				UI_DrawHandlePic(uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory, CURSOR_SIZE, CURSOR_SIZE, uiInfo.uiDC.Assets.cursor);
+			}
 		}
 	}
 }
