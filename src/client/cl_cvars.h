@@ -90,7 +90,6 @@ extern cvar_t *cl_anglespeedkey;
 extern cvar_t *cl_recoilPitch;
 
 extern cvar_t *cl_bypassMouseInput;
-extern cvar_t *cl_hudEditorMouseScale;
 
 extern cvar_t *cl_doubletapdelay;
 

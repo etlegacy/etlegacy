@@ -688,7 +688,6 @@ cvar_t *cl_run;
 cvar_t *cl_anglespeedkey;
 cvar_t *cl_recoilPitch;
 cvar_t *cl_bypassMouseInput;
-cvar_t *cl_hudEditorMouseScale;
 cvar_t *cl_doubletapdelay;
 
 /**

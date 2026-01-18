@@ -103,45 +103,15 @@ static void IN_GetUIMousePosition(int *uiX, int *uiY)
 	*uiY = (int)lroundf((float)my * scale);
 }
 
-static float IN_GetCGameCursorScale(void)
-{
-	float scale = 1.0f;
-
-	if (!cl_hudEditorMouseScale || cl_hudEditorMouseScale->value <= 0.0f)
-	{
-		return 1.0f;
-	}
-
-	scale = cl_hudEditorMouseScale->value;
-	if (scale < 0.1f)
-	{
-		scale = 0.1f;
-	}
-	else if (scale > 10.0f)
-	{
-		scale = 10.0f;
-	}
-
-	return scale;
-}
-
 static void IN_GetCGMousePosition(int *cgX, int *cgY)
 {
-	int   uiX   = 0;
-	int   uiY   = 0;
-	float scale = IN_GetCGameCursorScale();
+	int uiX = 0;
+	int uiY = 0;
 
 	IN_GetUIMousePosition(&uiX, &uiY);
 
-	if (scale == 1.0f)
-	{
-		*cgX = uiX;
-		*cgY = uiY;
-		return;
-	}
-
-	*cgX = (int)lroundf((float)uiX * scale);
-	*cgY = (int)lroundf((float)uiY * scale);
+	*cgX = uiX;
+	*cgY = uiY;
 }
 
 static void IN_SyncMousePosition(void (*getPos)(int *, int *), int *lastX, int *lastY, qboolean *hasPos, qboolean *needs_sync)
@@ -2005,10 +1975,9 @@ void IN_Frame(void)
 	qboolean        cgActive          = (Key_GetCatcher() & KEYCATCH_CGAME) ? qtrue : qfalse;
 	qboolean        uiUsesOSCursor    = (uiActive && (!cl_bypassMouseInput || cl_bypassMouseInput->integer == 0)) ? qtrue : qfalse;
 	qboolean        cgUsesOSCursor    = (cgActive && cl_bypassMouseInput && cl_bypassMouseInput->integer == 0) ? qtrue : qfalse;
-	static qboolean prevUiActive      = qfalse;
-	static qboolean prevCgActive      = qfalse;
-	static float    prevCgCursorScale = 1.0f;
-	static int      prevState         = -1;
+	static qboolean prevUiActive = qfalse;
+	static qboolean prevCgActive = qfalse;
+	static int      prevState    = -1;
 
 	// Get the timestamp to give the next frame's input events (not the ones we're gathering right now, though)
 	int64_t start = Sys_Microseconds();
@@ -2102,16 +2071,6 @@ void IN_Frame(void)
 	in_uiMouseInternal = (uiActive && !mouseActive) ? qtrue : qfalse;
 	in_cgMouseInternal = (cgActive && !mouseActive && cl_bypassMouseInput && cl_bypassMouseInput->integer == 0) ? qtrue : qfalse;
 
-	{
-		float cgCursorScale = IN_GetCGameCursorScale();
-
-		if (cgCursorScale != prevCgCursorScale)
-		{
-			prevCgCursorScale = cgCursorScale;
-			cg_hasMousePos    = qfalse;
-			cg_needs_sync     = qtrue;
-		}
-	}
 	IN_ProcessEvents();
 	if (uiUsesOSCursor && uiActive && prevState != cls.state)
 	{

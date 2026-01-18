@@ -616,6 +616,10 @@ int old_mouse_x_pos = 0, old_mouse_y_pos = 0;
  */
 void CG_MouseEvent(int x, int y)
 {
+	static int      rawCursorX   = 0;
+	static int      rawCursorY   = 0;
+	static qboolean wasEditingHud = qfalse;
+
 	switch (cgs.eventHandling)
 	{
 	case CGAME_EVENT_DEMO:
@@ -640,7 +644,30 @@ void CG_MouseEvent(int x, int y)
 		int hudEditorSafeX = SCREEN_WIDTH_SAFE * HUD_EDITOR_SIZE_COEFF;
 		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * HUD_EDITOR_SIZE_COEFF;
 
-		cgs.cursorX += x;
+		if (cg.editingHud && !cg.fullScreenHudEditor)
+		{
+			if (!wasEditingHud)
+			{
+				rawCursorX = (int)((float)cgs.cursorX / HUD_EDITOR_SIZE_COEFF);
+				rawCursorY = (int)((float)cgs.cursorY / HUD_EDITOR_SIZE_COEFF);
+			}
+
+			rawCursorX += x;
+			rawCursorY += y;
+			rawCursorX = Com_Clamp(0, SCREEN_WIDTH_SAFE, rawCursorX);
+			rawCursorY = Com_Clamp(0, SCREEN_HEIGHT_SAFE, rawCursorY);
+
+			cgs.cursorX = (int)((float)rawCursorX * HUD_EDITOR_SIZE_COEFF);
+			cgs.cursorY = (int)((float)rawCursorY * HUD_EDITOR_SIZE_COEFF);
+		}
+		else
+		{
+			cgs.cursorX += x;
+			cgs.cursorY += y;
+			rawCursorX   = cgs.cursorX;
+			rawCursorY   = cgs.cursorY;
+		}
+
 		if (cg.editingHud && !cg.fullScreenHudEditor)
 		{
 			cgs.cursorX = Com_Clamp(0, hudEditorSafeX, cgs.cursorX);
@@ -650,7 +677,6 @@ void CG_MouseEvent(int x, int y)
 			cgs.cursorX = Com_Clamp(0, SCREEN_WIDTH_SAFE, cgs.cursorX);
 		}
 
-		cgs.cursorY += y;
 		if (cg.editingHud && !cg.fullScreenHudEditor)
 		{
 			cgs.cursorY = Com_Clamp(0, hudEditorSafeY, cgs.cursorY);
@@ -674,6 +700,7 @@ void CG_MouseEvent(int x, int y)
 		{
 			CG_HudEditorMouseMove_Handling(cgs.cursorX, cgs.cursorY);
 		}
+		wasEditingHud = (cg.editingHud && !cg.fullScreenHudEditor) ? qtrue : qfalse;
 #ifdef FEATURE_EDV
 	}
 	else
@@ -739,6 +766,9 @@ void CG_MouseEvent(int x, int y)
 #endif
 		break;
 	default:
+		wasEditingHud = qfalse;
+		rawCursorX    = cgs.cursorX;
+		rawCursorY    = cgs.cursorY;
 		if (cg.snap->ps.pm_type == PM_INTERMISSION)
 		{
 			CG_Debriefing_MouseEvent(x, y);
@@ -966,14 +996,6 @@ void CG_EventHandling(int type, qboolean fForced)
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
 
-	if (type == CGAME_EVENT_HUDEDITOR)
-	{
-		trap_Cvar_Set("cl_hudEditorMouseScale", va("%f", cg.fullScreenHudEditor ? 1.0f : HUD_EDITOR_SIZE_COEFF));
-	}
-	else
-	{
-		trap_Cvar_Set("cl_hudEditorMouseScale", "1");
-	}
 }
 
 void CG_KeyEvent(int key, qboolean down)
