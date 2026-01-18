@@ -35,10 +35,13 @@
 #ifndef INCLUDE_SDLDEF_H
 #define INCLUDE_SDLDEF_H
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_cpuinfo.h>
-#include <SDL2/SDL_syswm.h>
-#include <SDL2/SDL_video.h>
-#include <SDL2/SDL_loadso.h>
+#ifndef SDL_ENABLE_OLD_NAMES
+#define SDL_ENABLE_OLD_NAMES
+#endif
+
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_cpuinfo.h>
+#include <SDL3/SDL_video.h>
+#include <SDL3/SDL_loadso.h>
 
 #endif // #ifndef INCLUDE_SDLDEF_H
