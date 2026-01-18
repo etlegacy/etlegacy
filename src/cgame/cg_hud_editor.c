@@ -2818,6 +2818,7 @@ static void CG_HudEditor_ToggleNoiseGenerator(void)
 static void CG_HudEditor_ToggleFullScreen(void)
 {
 	cg.fullScreenHudEditor = !cg.fullScreenHudEditor;
+	trap_Cvar_Set("cl_hudEditorMouseScale", va("%f", cg.fullScreenHudEditor ? 1.0f : HUD_EDITOR_SIZE_COEFF));
 }
 
 /**
