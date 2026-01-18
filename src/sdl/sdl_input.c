@@ -2003,6 +2003,8 @@ void IN_Frame(void)
 	qboolean        cinematic         = (cls.state == CA_CINEMATIC);
 	qboolean        uiActive          = (Key_GetCatcher() & KEYCATCH_UI) ? qtrue : qfalse;
 	qboolean        cgActive          = (Key_GetCatcher() & KEYCATCH_CGAME) ? qtrue : qfalse;
+	qboolean        uiUsesOSCursor    = (uiActive && (!cl_bypassMouseInput || cl_bypassMouseInput->integer == 0)) ? qtrue : qfalse;
+	qboolean        cgUsesOSCursor    = (cgActive && cl_bypassMouseInput && cl_bypassMouseInput->integer == 0) ? qtrue : qfalse;
 	static qboolean prevUiActive      = qfalse;
 	static qboolean prevCgActive      = qfalse;
 	static float    prevCgCursorScale = 1.0f;
@@ -2058,9 +2060,9 @@ void IN_Frame(void)
 
 #endif // __ANDROID__
 
-	if (uiActive || (cgActive && cl_bypassMouseInput && cl_bypassMouseInput->integer == 0))
+	if (uiUsesOSCursor || cgUsesOSCursor)
 	{
-		// Use the OS cursor for menu interaction.
+		// Use the OS cursor for menu interaction unless bypassing mouse input.
 		IN_DeactivateMouse();
 	}
 	else if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
@@ -2111,11 +2113,11 @@ void IN_Frame(void)
 		}
 	}
 	IN_ProcessEvents();
-	if (uiActive && prevState != cls.state)
+	if (uiUsesOSCursor && uiActive && prevState != cls.state)
 	{
 		IN_SyncUIMousePosition();
 	}
-	if (cgActive && prevState != cls.state)
+	if (cgUsesOSCursor && cgActive && prevState != cls.state)
 	{
 		IN_SyncCGMousePosition();
 	}
@@ -2123,8 +2125,8 @@ void IN_Frame(void)
 	{
 		// Force a resync of absolute mouse position after UI state changes.
 		ui_hasMousePos = qfalse;
-		ui_needs_sync  = uiActive ? qtrue : qfalse;
-		if (uiActive)
+		ui_needs_sync  = (uiActive && uiUsesOSCursor) ? qtrue : qfalse;
+		if (uiActive && uiUsesOSCursor)
 		{
 			IN_SyncUIMousePosition();
 		}
@@ -2134,8 +2136,8 @@ void IN_Frame(void)
 	if (prevCgActive != cgActive)
 	{
 		cg_hasMousePos = qfalse;
-		cg_needs_sync  = cgActive ? qtrue : qfalse;
-		if (cgActive)
+		cg_needs_sync  = (cgActive && cgUsesOSCursor) ? qtrue : qfalse;
+		if (cgActive && cgUsesOSCursor)
 		{
 			IN_SyncCGMousePosition();
 		}
