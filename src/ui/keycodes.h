@@ -200,7 +200,7 @@ typedef enum
 	K_UNDO,
 
 	// Gamepad controls
-	// Ordered to match SDL2 game controller buttons and axes
+// Ordered to match SDL3 game controller buttons and axes
 	// Do not change this order without also changing IN_GamepadMove() in SDL_input.c
 	K_PAD0_A,
 	K_PAD0_B,

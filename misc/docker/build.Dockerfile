@@ -31,7 +31,7 @@ RUN	wget https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz && tar -xvzf m4-1.4.19.tar.
 RUN mkdir -p /opt/cmake && wget --no-check-certificate --quiet -O - https://cmake.org/files/v3.28/cmake-3.28.2-linux-x86_64.tar.gz | tar --strip-components=1 -xz -C /opt/cmake
 ENV PATH="/opt/cmake/bin:${PATH}"
 
-# SDL2 now requires a newer wayland version >= 1.18 (we still install the older packages for the dependencies) so remove the pre-installed one from the system and build new ones
+# SDL3 now requires a newer wayland version >= 1.18 (we still install the older packages for the dependencies) so remove the pre-installed one from the system and build new ones
 # compile 64 and 32 bit wayland
 RUN rpm -e --nodeps --allmatches libwayland-client libwayland-cursor libwayland-egl libwayland-server wayland-devel && \
     yum --assumeyes install libffi-devel expat-devel libxml2-devel && rm -rf /var/cache/yum && rm -rf /var/tmp/yum-* && \
