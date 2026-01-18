@@ -85,17 +85,18 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(NOT BUNDLED_SDL)
-		find_package(SDL2 2.0.8 REQUIRED)
-		target_link_libraries(client_libraries INTERFACE ${SDL2_LIBRARY})
-		target_include_directories(client_libraries INTERFACE ${SDL2_INCLUDE_DIR})
+		find_package(SDL3 3.2 REQUIRED)
+		target_link_libraries(client_libraries INTERFACE ${SDL3_LIBRARY})
+		target_include_directories(client_libraries INTERFACE ${SDL3_INCLUDE_DIR})
 	else() # BUNDLED_SDL
 		if(MINGW AND WIN32)
-			# We append the mingw32 library to the client list since SDL2Main requires it
+			# We append the mingw32 library to the client list for static SDL builds
 			target_link_libraries(client_libraries INTERFACE mingw32)
 		endif()
 		target_link_libraries(client_libraries INTERFACE bundled_sdl_int)
 		target_compile_definitions(client_libraries INTERFACE BUNDLED_SDL)
 	endif()
+	target_compile_definitions(client_libraries INTERFACE SDL_ENABLE_OLD_NAMES)
 	# for tinygettext (always force SDL icons -> less dependencies)
 	target_compile_definitions(client_libraries INTERFACE HAVE_SDL)
 
