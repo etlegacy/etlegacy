@@ -67,7 +67,7 @@ static char homePath[MAX_OSPATH] = { 0 };
 #ifdef  __ANDROID__
 char *Sys_CdToExtStorage(void)
 {
-	JNIEnv     *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
+	JNIEnv     *env = (JNIEnv *) SDL_GetAndroidJNIEnv();
 	jthrowable exception;
 	const char *path;
 
@@ -146,14 +146,16 @@ char *Sys_DefaultHomePath(void)
 		}
 
 #ifdef __ANDROID__
-		if (SDL_AndroidGetExternalStorageState())
+		if (SDL_GetAndroidExternalStorageState())
 		{
 			Q_strncpyz(homePath, Sys_CdToExtStorage(), sizeof(homePath));
 			Q_strcat(homePath, sizeof(homePath), "/Documents/etlegacy");
 		}
 		else
 		{
-			Q_strncpyz(homePath, SDL_AndroidGetInternalStoragePath(), sizeof(homePath));
+			Q_strncpyz(homePath,
+			           SDL_GetAndroidInternalStoragePath(),
+			           sizeof(homePath));
 			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
 		}
 #endif
@@ -455,7 +457,7 @@ char *Sys_Cwd(void)
 
 	cwd[MAX_OSPATH - 1] = 0;
 #else
-	Q_strncpyz(cwd, SDL_AndroidGetExternalStoragePath(), sizeof(cwd));
+	Q_strncpyz(cwd, SDL_GetAndroidExternalStoragePath(), sizeof(cwd));
 	Q_strcat(cwd, sizeof(homePath), "/etlegacy");
 #endif
 	return cwd;

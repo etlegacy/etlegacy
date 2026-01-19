@@ -23,7 +23,7 @@
 #include <string>
 
 #ifdef HAVE_SDL
-#  include "SDL2/SDL.h"
+#  include "SDL3/SDL.h"
 #else
 #  include <iconv.h>
 #endif

@@ -49,12 +49,12 @@ static cvar_t *in_nograb;
 static qboolean mouseAvailable = qfalse;
 static qboolean mouseActive    = qfalse;
 
-static SDL_GameController *gamepad              = NULL;
-static SDL_Joystick       *stick                = NULL;
-static cvar_t             *in_joystick          = NULL;
-static cvar_t             *in_joystickThreshold = NULL;
-static cvar_t             *in_joystickNo        = NULL;
-static cvar_t             *in_joystickUseAnalog = NULL;
+static SDL_Gamepad  *gamepad              = NULL;
+static SDL_Joystick *stick                = NULL;
+static cvar_t       *in_joystick          = NULL;
+static cvar_t       *in_joystickThreshold = NULL;
+static cvar_t       *in_joystickNo        = NULL;
+static cvar_t       *in_joystickUseAnalog = NULL;
 
 static int vidRestartTime = 0;
 SDL_Window *mainScreen    = NULL;
@@ -168,7 +168,7 @@ qboolean IN_IsNumLockDown(void)
 		return qtrue;
 	}
 #else
-	if (SDL_GetModState() & KMOD_NUM)
+	if (SDL_GetModState() & SDL_KMOD_NUM)
 	{
 		return qtrue;
 	}
@@ -183,7 +183,7 @@ qboolean IN_IsNumLockDown(void)
  * @param[in] key
  * @param[in] down
  */
-static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down)
+static void IN_PrintKey(const SDL_KeyboardEvent *keysym, keyNum_t key, qboolean down)
 {
 	if (down)
 	{
@@ -196,55 +196,51 @@ static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down)
 
 	Com_Printf("Scancode: 0x%02x(%s) Sym: 0x%02x(%s)",
 	           keysym->scancode, SDL_GetScancodeName(keysym->scancode),
-	           keysym->sym, SDL_GetKeyName(keysym->sym));
+	           keysym->key, SDL_GetKeyName(keysym->key));
 
-	if (keysym->mod & KMOD_LSHIFT)
+	if (keysym->mod & SDL_KMOD_LSHIFT)
 	{
 		Com_Printf(" KMOD_LSHIFT");
 	}
-	if (keysym->mod & KMOD_RSHIFT)
+	if (keysym->mod & SDL_KMOD_RSHIFT)
 	{
 		Com_Printf(" KMOD_RSHIFT");
 	}
-	if (keysym->mod & KMOD_LCTRL)
+	if (keysym->mod & SDL_KMOD_LCTRL)
 	{
 		Com_Printf(" KMOD_LCTRL");
 	}
-	if (keysym->mod & KMOD_RCTRL)
+	if (keysym->mod & SDL_KMOD_RCTRL)
 	{
 		Com_Printf(" KMOD_RCTRL");
 	}
-	if (keysym->mod & KMOD_LALT)
+	if (keysym->mod & SDL_KMOD_LALT)
 	{
 		Com_Printf(" KMOD_LALT");
 	}
-	if (keysym->mod & KMOD_RALT)
+	if (keysym->mod & SDL_KMOD_RALT)
 	{
 		Com_Printf(" KMOD_RALT");
 	}
-	if (keysym->mod & KMOD_LGUI)
+	if (keysym->mod & SDL_KMOD_LGUI)
 	{
 		Com_Printf(" KMOD_LGUI");
 	}
-	if (keysym->mod & KMOD_RGUI)
+	if (keysym->mod & SDL_KMOD_RGUI)
 	{
 		Com_Printf(" KMOD_RGUI");
 	}
-	if (keysym->mod & KMOD_NUM)
+	if (keysym->mod & SDL_KMOD_NUM)
 	{
 		Com_Printf(" KMOD_NUM");
 	}
-	if (keysym->mod & KMOD_CAPS)
+	if (keysym->mod & SDL_KMOD_CAPS)
 	{
 		Com_Printf(" KMOD_CAPS");
 	}
-	if (keysym->mod & KMOD_MODE)
+	if (keysym->mod & SDL_KMOD_MODE)
 	{
 		Com_Printf(" KMOD_MODE");
-	}
-	if (keysym->mod & KMOD_RESERVED)
-	{
-		Com_Printf(" KMOD_RESERVED");
 	}
 
 	Com_Printf(" Q:0x%02x(%s)\n", key, Key_KeynumToString(key));
@@ -373,18 +369,18 @@ static qboolean IN_IsConsoleKey(keyNum_t key, int character)
  * @param[in] down
  * @return
  */
-static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
+static keyNum_t IN_TranslateSDLToQ3Key(SDL_KeyboardEvent *keysym, qboolean down)
 {
 	keyNum_t key = 0;
 
-	if (keysym->sym >= SDLK_SPACE && keysym->sym < SDLK_DELETE)
+	if (keysym->key >= SDLK_SPACE && keysym->key < SDLK_DELETE)
 	{
 		// These happen to match the ASCII chars
-		key = (keyNum_t)keysym->sym;
+		key = (keyNum_t)keysym->key;
 	}
 	else
 	{
-		switch (keysym->sym)
+		switch (keysym->key)
 		{
 		// keypad
 		case SDLK_KP_0:
@@ -626,7 +622,7 @@ static void IN_GobbleMotionEvents(void)
 
 	// Gobble any mouse motion events
 	SDL_PumpEvents();
-	while (SDL_PeepEvents(dummy, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0)
+	while (SDL_PeepEvents(dummy, 1, SDL_GETEVENT, SDL_EVENT_MOUSE_MOTION, SDL_EVENT_MOUSE_MOTION) > 0)
 		;
 }
 
@@ -644,11 +640,18 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 
 	if (relative == !mouse_relative)
 	{
-		SDL_ShowCursor(!relative);
+		if (relative)
+		{
+			SDL_HideCursor();
+		}
+		else
+		{
+			SDL_ShowCursor();
+		}
 #if !defined(__ANDROID__) || (defined(__ANDROID__) && defined(__ANDROID_API__) > 23)
 		// On Android Phones with API <= 23 this is causing App to close since it could not
 		// set relative mouse location (Mouse location is always at top left side of screen)
-		if ((relative_result = SDL_SetRelativeMouseMode((SDL_bool)relative)) != 0)
+		if ((relative_result = SDL_SetWindowRelativeMouseMode(mainScreen, (bool)relative)) != 0)
 		{
 			// FIXME: this happens on some systems (IR4)
 			if (relative_result == -1)
@@ -666,7 +669,7 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 
 	if (grab == !mouse_grabbed)
 	{
-		SDL_SetWindowGrab(mainScreen, (SDL_bool)grab);
+		SDL_SetWindowMouseGrab(mainScreen, (bool)grab);
 		mouse_grabbed = grab;
 	}
 }
@@ -789,7 +792,7 @@ static int hat_keys[16] =
 
 struct
 {
-	qboolean buttons[SDL_CONTROLLER_BUTTON_MAX + 1];  // +1 because old max was 16, current SDL_CONTROLLER_BUTTON_MAX is 15
+	qboolean buttons[SDL_GAMEPAD_BUTTON_COUNT + 1];  // +1 because old max was 16, current SDL_CONTROLLER_BUTTON_MAX is 15
 	unsigned int oldaxes;
 	int oldaaxes[MAX_JOYSTICK_AXIS];
 	unsigned int oldhats;
@@ -806,13 +809,24 @@ void IN_PrintJoystickInfo_f(void)
 		return;
 	}
 
-	if (SDL_NumJoysticks() > 0)
+	if (SDL_HasJoystick())
 	{
-		Com_Printf("Joystick [%d] '%s' opened - %i devices available\n", in_joystickNo->integer, SDL_JoystickNameForIndex(in_joystickNo->integer), SDL_NumJoysticks());
-		Com_Printf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
-		Com_Printf("Hats:       %d\n", SDL_JoystickNumHats(stick));
-		Com_Printf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
-		Com_Printf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
+		int            count = 0;
+		SDL_JoystickID *ids  = NULL;
+		ids = SDL_GetJoysticks(&count);
+		if (!ids)
+		{
+			Com_Printf(S_COLOR_RED "Something went wrong while fetching Joystick info\n");
+			return;
+		}
+		SDL_free(ids);
+
+		Com_Printf("Joystick [%d] '%s' opened - %i devices available\n", in_joystickNo->integer, SDL_GetJoystickName(stick), count);
+		Com_Printf("Axes:       %d\n", SDL_GetNumJoystickAxes(stick));
+		Com_Printf("Hats:       %d\n", SDL_GetNumJoystickHats(stick));
+		Com_Printf("Buttons:    %d\n",
+		           SDL_GetNumJoystickButtons(stick));
+		Com_Printf("Balls:      %d\n", SDL_GetNumJoystickBalls(stick));
 		Com_Printf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
 		Com_Printf("Is Gamepad: %s\n", gamepad ? "Yes" : "No");
 	}
@@ -827,9 +841,9 @@ void IN_PrintJoystickInfo_f(void)
  */
 static void IN_InitJoystick(void)
 {
-	//int  i     = 0;
-	int total = 0;
-	//char buf[MAX_CVAR_VALUE_STRING] = "";
+	int            total = 0;
+	int            index = 0;
+	SDL_JoystickID *ids  = NULL;
 
 	Cmd_AddCommand("joystickInfo", IN_PrintJoystickInfo_f, "Prints joystick info."); // command is valid when in_joystick 0 is set
 
@@ -840,12 +854,12 @@ static void IN_InitJoystick(void)
 
 	if (gamepad != NULL)
 	{
-		SDL_GameControllerClose(gamepad);
+		SDL_CloseGamepad(gamepad);
 	}
 
 	if (stick != NULL)
 	{
-		SDL_JoystickClose(stick);
+		SDL_CloseJoystick(stick);
 	}
 
 	stick   = NULL;
@@ -861,16 +875,16 @@ static void IN_InitJoystick(void)
 		}
 	}
 
-	if (!SDL_WasInit(SDL_INIT_GAMECONTROLLER))
+	if (!SDL_WasInit(SDL_INIT_GAMEPAD))
 	{
-		if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0)
+		if (SDL_Init(SDL_INIT_GAMEPAD) != 0)
 		{
 			Com_Printf(S_COLOR_RED "Gamepad initialization failed: %s\n", SDL_GetError());
 			return;
 		}
 	}
 
-	total = SDL_NumJoysticks();
+	ids = SDL_GetJoysticks(&total);
 
 	// create list and build cvar to allow ui to select joystick
 	// FIXME: cvar availableJoysticks isn't used in our menus - add it?
@@ -889,7 +903,7 @@ static void IN_InitJoystick(void)
 
 	in_joystickUseAnalog = Cvar_Get("in_joystickUseAnalog", "0", CVAR_ARCHIVE);
 
-	stick = SDL_JoystickOpen(in_joystickNo->integer);
+	stick = SDL_OpenJoystick(in_joystickNo->integer);
 
 	if (stick == NULL)
 	{
@@ -897,13 +911,12 @@ static void IN_InitJoystick(void)
 		return;
 	}
 
-	if (SDL_IsGameController(in_joystickNo->integer))
-	{
-		gamepad = SDL_GameControllerOpen(in_joystickNo->integer);
-	}
+	index = MIN(total, MAX(0, in_joystickNo->integer));
 
-	SDL_JoystickEventState(SDL_QUERY);
-	SDL_GameControllerEventState(SDL_QUERY);
+	if (SDL_IsGamepad(ids[index]))
+	{
+		gamepad = SDL_OpenGamepad(in_joystickNo->integer);
+	}
 }
 
 /**
@@ -921,17 +934,17 @@ static void IN_ShutdownJoystick(void)
 
 	if (gamepad)
 	{
-		SDL_GameControllerClose(gamepad);
+		SDL_CloseGamepad(gamepad);
 		gamepad = NULL;
 	}
 
 	if (stick)
 	{
-		SDL_JoystickClose(stick);
+		SDL_CloseJoystick(stick);
 		stick = NULL;
 	}
 
-	SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+	SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
@@ -1009,18 +1022,21 @@ static void IN_GamepadMove(void)
 	int      translatedAxes[MAX_JOYSTICK_AXIS];
 	qboolean translatedAxesSet[MAX_JOYSTICK_AXIS];
 
-	SDL_GameControllerUpdate();
+	SDL_UpdateGamepads();
 
 	// check buttons
-	for (i = 0; i < SDL_CONTROLLER_BUTTON_MAX; i++)
+	for (i = 0; i < SDL_GAMEPAD_BUTTON_COUNT; i++)
 	{
-		qboolean pressed = SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_A + i);
+		qboolean pressed = SDL_GetGamepadButton(gamepad,
+		                                        SDL_GAMEPAD_BUTTON_SOUTH + i);
 		if (pressed != stick_state.buttons[i])
 		{
 #if SDL_VERSION_ATLEAST(2, 0, 16)
-			if (i >= SDL_CONTROLLER_BUTTON_MISC1)
+			if (i >= SDL_GAMEPAD_BUTTON_MISC1)
 			{
-				Com_QueueEvent(lasttime, SE_KEY, K_PAD0_MISC1 + i - SDL_CONTROLLER_BUTTON_MISC1, pressed, 0, NULL);
+				Com_QueueEvent(lasttime, SE_KEY,
+				               K_PAD0_MISC1 + i - SDL_GAMEPAD_BUTTON_MISC1,
+				               pressed, 0, NULL);
 			}
 			else
 #endif
@@ -1043,9 +1059,10 @@ static void IN_GamepadMove(void)
 	}
 
 	// check axes
-	for (i = 0; i < SDL_CONTROLLER_AXIS_MAX; i++)
+	for (i = 0; i < SDL_GAMEPAD_AXIS_COUNT; i++)
 	{
-		int axis    = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTX + i);
+		int axis = SDL_GetGamepadAxis(gamepad,
+		                              SDL_GAMEPAD_AXIS_LEFTX + i);
 		int oldAxis = stick_state.oldaaxes[i];
 
 		// Smoothly ramp from dead zone to maximum value
@@ -1060,8 +1077,8 @@ static void IN_GamepadMove(void)
 
 		if (axis != oldAxis)
 		{
-			const int negMap[SDL_CONTROLLER_AXIS_MAX] = { K_PAD0_LEFTSTICK_LEFT, K_PAD0_LEFTSTICK_UP, K_PAD0_RIGHTSTICK_LEFT, K_PAD0_RIGHTSTICK_UP, 0, 0 };
-			const int posMap[SDL_CONTROLLER_AXIS_MAX] = { K_PAD0_LEFTSTICK_RIGHT, K_PAD0_LEFTSTICK_DOWN, K_PAD0_RIGHTSTICK_RIGHT, K_PAD0_RIGHTSTICK_DOWN, K_PAD0_LEFTTRIGGER, K_PAD0_RIGHTTRIGGER };
+			const int negMap[SDL_GAMEPAD_AXIS_COUNT] = { K_PAD0_LEFTSTICK_LEFT, K_PAD0_LEFTSTICK_UP, K_PAD0_RIGHTSTICK_LEFT, K_PAD0_RIGHTSTICK_UP, 0, 0 };
+			const int posMap[SDL_GAMEPAD_AXIS_COUNT] = { K_PAD0_LEFTSTICK_RIGHT, K_PAD0_LEFTSTICK_DOWN, K_PAD0_RIGHTSTICK_RIGHT, K_PAD0_RIGHTSTICK_DOWN, K_PAD0_LEFTTRIGGER, K_PAD0_RIGHTTRIGGER };
 
 			qboolean posAnalog = qfalse, negAnalog = qfalse;
 			int      negKey = negMap[i];
@@ -1174,10 +1191,10 @@ static void IN_JoyMove(void)
 		return;
 	}
 
-	SDL_JoystickUpdate();
+	SDL_UpdateJoysticks();
 
 	// update the ball state.
-	total = SDL_JoystickNumBalls(stick);
+	total = SDL_GetNumJoystickBalls(stick);
 	if (total > 0)
 	{
 		int balldx = 0;
@@ -1190,7 +1207,7 @@ static void IN_JoyMove(void)
 			dx = 0;
 			dy = 0;
 
-			SDL_JoystickGetBall(stick, i, &dx, &dy);
+			SDL_GetJoystickBall(stick, i, &dx, &dy);
 			balldx += dx;
 			balldy += dy;
 		}
@@ -1211,7 +1228,7 @@ static void IN_JoyMove(void)
 	}
 
 	// now query the stick buttons...
-	total = SDL_JoystickNumButtons(stick);
+	total = SDL_GetNumJoystickButtons(stick);
 	if (total > 0)
 	{
 		if (total > ARRAY_LEN(stick_state.buttons))
@@ -1220,7 +1237,7 @@ static void IN_JoyMove(void)
 		}
 		for (i = 0; i < total; i++)
 		{
-			qboolean pressed = (SDL_JoystickGetButton(stick, i) != 0);
+			qboolean pressed = (SDL_GetJoystickButton(stick, i) != 0);
 
 			if (pressed != stick_state.buttons[i])
 			{
@@ -1231,7 +1248,7 @@ static void IN_JoyMove(void)
 	}
 
 	// look at the hats...
-	total = SDL_JoystickNumHats(stick);
+	total = SDL_GetNumJoystickHats(stick);
 	if (total > 0)
 	{
 		if (total > 4)
@@ -1240,7 +1257,7 @@ static void IN_JoyMove(void)
 		}
 		for (i = 0; i < total; i++)
 		{
-			((Uint8 *)&hats)[i] = SDL_JoystickGetHat(stick, i);
+			((Uint8 *)&hats)[i] = SDL_GetJoystickHat(stick, i);
 		}
 	}
 
@@ -1327,7 +1344,7 @@ static void IN_JoyMove(void)
 	stick_state.oldhats = hats;
 
 	// finally, look at the axes...
-	total = SDL_JoystickNumAxes(stick);
+	total = SDL_GetNumJoystickAxes(stick);
 	if (total > 0)
 	{
 		if (total > 16)
@@ -1336,7 +1353,7 @@ static void IN_JoyMove(void)
 		}
 		for (i = 0; i < total; i++)
 		{
-			Sint16 axis = SDL_JoystickGetAxis(stick, i);
+			Sint16 axis = SDL_GetJoystickAxis(stick, i);
 
 			if (in_joystickUseAnalog->integer)
 			{
@@ -1418,7 +1435,7 @@ static void IN_WindowResize(SDL_Event *e)
 static void IN_WindowMoved(SDL_Event *e)
 {
 	int displayIndex = 0;
-	displayIndex = SDL_GetWindowDisplayIndex(GLimp_MainWindow());
+	displayIndex = SDL_GetDisplayForWindow(GLimp_MainWindow());
 	if (displayIndex >= 0)
 	{
 		Cvar_Set("r_windowLocation", va("%d,%d,%d", displayIndex, e->window.data1, e->window.data2));
@@ -1440,7 +1457,7 @@ static void IN_WindowFocusLost()
 		// then lets actually make sure and ask the windowing system for its opinion.
 		flags = SDL_GetWindowFlags(GLimp_MainWindow());
 #ifndef __ANDROID__
-		if (flags & SDL_WINDOW_FULLSCREEN && flags & SDL_WINDOW_SHOWN && !(flags & SDL_WINDOW_MINIMIZED) && flags & SDL_WINDOW_INPUT_GRABBED)
+		if (flags & SDL_WINDOW_FULLSCREEN && flags & 0 && !(flags & SDL_WINDOW_MINIMIZED) && flags & SDL_WINDOW_MOUSE_GRABBED)
 		{
 			Com_DPrintf("SDL says we are good to go and call minimize.\n");
 			Cbuf_ExecuteText(EXEC_NOW, "minimize");
@@ -1474,13 +1491,13 @@ static void IN_ProcessEvents(void)
 	{
 		switch (e.type)
 		{
-		case SDL_KEYDOWN:
+		case SDL_EVENT_KEY_DOWN:
 			if (e.key.repeat && Key_GetCatcher() == 0)
 			{
 				break;
 			}
 
-			if ((key = IN_TranslateSDLToQ3Key(&e.key.keysym, qtrue)))
+			if ((key = IN_TranslateSDLToQ3Key(&e.key, qtrue)))
 			{
 				Com_QueueEvent(lasttime, SE_KEY, key, qtrue, 0, NULL);
 				if (key == K_BACKSPACE)
@@ -1507,14 +1524,14 @@ static void IN_ProcessEvents(void)
 			}
 			lastKeyDown = key;
 			break;
-		case SDL_KEYUP:
-			if ((key = IN_TranslateSDLToQ3Key(&e.key.keysym, qfalse)))
+		case SDL_EVENT_KEY_UP:
+			if ((key = IN_TranslateSDLToQ3Key(&e.key, qfalse)))
 			{
 				Com_QueueEvent(lasttime, SE_KEY, key, qfalse, 0, NULL);
 			}
 			lastKeyDown = 0;
 			break;
-		case SDL_TEXTINPUT:
+		case SDL_EVENT_TEXT_INPUT:
 			if (lastKeyDown != CONSOLE_KEY)
 			{
 				char *c = e.text.text;
@@ -1568,12 +1585,12 @@ static void IN_ProcessEvents(void)
 			}
 			break;
 #ifdef __ANDROID__
-		case SDL_FINGERDOWN:
+		case SDL_EVENT_FINGER_DOWN:
 			// Only process if no touch is active and this is the first finger
-			if (!touchState.firstFinger && SDL_GetNumTouchFingers(e.tfinger.touchId) == 1)
+			if (!touchState.firstFinger && SDL_GetNumTouchFingers(e.tfinger.touchID) == 1)
 			{
-				touchState.fingerId    = e.tfinger.fingerId;
-				touchState.touchId     = e.tfinger.touchId;
+				touchState.fingerId    = e.tfinger.fingerID;
+				touchState.touchId     = e.tfinger.touchID;
 				touchState.lastX       = e.tfinger.x;
 				touchState.lastY       = e.tfinger.y;
 				touchState.firstFinger = qtrue;
@@ -1586,12 +1603,12 @@ static void IN_ProcessEvents(void)
 				}
 			}
 			break;
-		case SDL_FINGERMOTION:
+		case SDL_EVENT_FINGER_MOTION:
 			// Process motion if this is the first finger
 			if (touchState.firstFinger &&
-			    touchState.fingerId == e.tfinger.fingerId &&
-			    touchState.touchId == e.tfinger.touchId &&
-			    SDL_GetNumTouchFingers(e.tfinger.touchId) == 1)
+			    touchState.fingerId == e.tfinger.fingerID &&
+			    touchState.touchId == e.tfinger.touchID &&
+			    SDL_GetNumTouchFingers(e.tfinger.touchID) == 1)
 			{
 				// Calculate delta movement (inside or outside margin)
 				float dx = (e.tfinger.x - touchState.lastX) * cls.glconfig.vidWidth;
@@ -1605,10 +1622,10 @@ static void IN_ProcessEvents(void)
 				Com_QueueEvent(e.tfinger.timestamp, SE_MOUSE, dx, dy, 0, NULL);
 			}
 			break;
-		case SDL_FINGERUP:
+		case SDL_EVENT_FINGER_UP:
 			if (touchState.firstFinger &&
-			    touchState.fingerId == e.tfinger.fingerId &&
-			    touchState.touchId == e.tfinger.touchId)
+			    touchState.fingerId == e.tfinger.fingerID &&
+			    touchState.touchId == e.tfinger.touchID)
 			{
 				if (touchState.active && IsTouchInMargin(e.tfinger.x, e.tfinger.y))
 				{
@@ -1627,7 +1644,7 @@ static void IN_ProcessEvents(void)
 			}
 			break;
 #endif
-		case SDL_MOUSEMOTION:
+		case SDL_EVENT_MOUSE_MOTION:
 			if (mouseActive)
 			{
 				if (!e.motion.xrel && !e.motion.yrel)
@@ -1637,8 +1654,8 @@ static void IN_ProcessEvents(void)
 				Com_QueueEvent(lasttime, SE_MOUSE, e.motion.xrel, e.motion.yrel, 0, NULL);
 			}
 			break;
-		case SDL_MOUSEBUTTONDOWN:
-		case SDL_MOUSEBUTTONUP:
+		case SDL_EVENT_MOUSE_BUTTON_DOWN:
+		case SDL_EVENT_MOUSE_BUTTON_UP:
 		{
 			int b;
 
@@ -1657,10 +1674,12 @@ static void IN_ProcessEvents(void)
 			default:                   b = K_AUX1 + (e.button.button - SDL_BUTTON_X2 + 1) % 16;
 				break;
 			}
-			Com_QueueEvent(lasttime, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
+			Com_QueueEvent(lasttime, SE_KEY, b,
+			               (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN ? qtrue : qfalse),
+			               0, NULL);
 		}
 		break;
-		case SDL_MOUSEWHEEL:
+		case SDL_EVENT_MOUSE_WHEEL:
 			if (e.wheel.y > 0)
 			{
 				Com_QueueEvent(lasttime, SE_KEY, K_MWHEELUP, qtrue, 0, NULL);
@@ -1673,84 +1692,79 @@ static void IN_ProcessEvents(void)
 			}
 
 			break;
-		case SDL_DROPFILE:
-			Com_Printf(S_COLOR_YELLOW "Drop file: %s received\n", e.drop.file);
+		case SDL_EVENT_DROP_FILE:
+			Com_Printf(S_COLOR_YELLOW "Drop file: %s received\n", e.drop.data);
 
-			if (!Q_strncmp(e.drop.file, "et://", 5))
+			if (!Q_strncmp(e.drop.data, "et://", 5))
 			{
-				Cbuf_AddText(va("connect \"%s\"", e.drop.file));
+				Cbuf_AddText(va("connect \"%s\"", e.drop.data));
 			}
-			else if (FS_IsDemoExt(e.drop.file, -1))
+			else if (FS_IsDemoExt(e.drop.data, -1))
 			{
 				char buffer[MAX_OSPATH];
 				Com_Memset(buffer, 0, sizeof(buffer));
-				Q_strncpyz(buffer, e.drop.file, sizeof(buffer));
+				Q_strncpyz(buffer, e.drop.data, sizeof(buffer));
 				COM_FixPath(buffer);
 				// Set the FS to "dirty" mode for the demo playback
 				Cbuf_AddText(va("demo dirty \"%s\"", buffer));
 			}
-			SDL_free(e.drop.file);
+			SDL_free(e.drop.data);
 			break;
-		case SDL_QUIT:
+		case SDL_EVENT_QUIT:
 			Cbuf_ExecuteText(EXEC_NOW, "quit Closed window\n");
 			break;
-		case SDL_WINDOWEVENT:
-			switch (e.window.event)
-			{
-			case SDL_WINDOWEVENT_RESIZED:
-				IN_WindowResize(&e);
-				break;
-			case SDL_WINDOWEVENT_MINIMIZED:
-				Cvar_SetValue("com_minimized", 1);
-				break;
-			case SDL_WINDOWEVENT_SHOWN:
-			case SDL_WINDOWEVENT_RESTORED:
-			case SDL_WINDOWEVENT_MAXIMIZED:
-				Cvar_SetValue("com_minimized", 0);
-				skipLost = qtrue;
-				break;
-			case SDL_WINDOWEVENT_FOCUS_LOST:
-				// When we are restoring a fullscreen window that is not the desktop resolution
-				// the desktop will resize and SDL will get restores & focus gained & focus lost in order.
-				// So.. to fix minimizing just after user re-selects the game, we will skip focus lost events
-				// for just a SINGLE frame!
-				if (skipLost)
-				{
-					break;
-				}
-				IN_WindowFocusLost();
-			// fall through
-			case SDL_WINDOWEVENT_LEAVE:
-				Key_ClearStates();
-				Cvar_SetValue("com_unfocused", 1);
-				break;
-			case SDL_WINDOWEVENT_ENTER:
-			{
-				Uint32 flags = SDL_GetWindowFlags(mainScreen);
-				// We might not have focus, just the user moving his mouse over things
-				if (!(flags & SDL_WINDOW_INPUT_FOCUS))
-				{
-					break;
-				}
-			}
-			// fall through
-			case SDL_WINDOWEVENT_FOCUS_GAINED:
-			{
-				Cvar_SetValue("com_unfocused", 0);
-				if (com_minimized->integer)
-				{
-					SDL_RestoreWindow(mainScreen);
-				}
-				SDL_RaiseWindow(mainScreen);
-			}
+		case SDL_EVENT_WINDOW_RESIZED:
+			IN_WindowResize(&e);
 			break;
-			case SDL_WINDOWEVENT_MOVED:
-				IN_WindowMoved(&e);
+		case SDL_EVENT_WINDOW_MINIMIZED:
+			Cvar_SetValue("com_minimized", 1);
+			break;
+		case SDL_EVENT_WINDOW_SHOWN:
+		case SDL_EVENT_WINDOW_RESTORED:
+		case SDL_EVENT_WINDOW_MAXIMIZED:
+			Cvar_SetValue("com_minimized", 0);
+			skipLost = qtrue;
+			break;
+		case SDL_EVENT_WINDOW_FOCUS_LOST:
+			// When we are restoring a fullscreen window that is not the desktop resolution
+			// the desktop will resize and SDL will get restores & focus gained & focus lost in order.
+			// So.. to fix minimizing just after user re-selects the game, we will skip focus lost events
+			// for just a SINGLE frame!
+			if (skipLost)
+			{
 				break;
 			}
+			IN_WindowFocusLost();
+		// fall through
+		case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+			Key_ClearStates();
+			Cvar_SetValue("com_unfocused", 1);
 			break;
-		case SDL_CONTROLLERAXISMOTION:
-			if (!e.caxis.axis && !e.caxis.value)
+		case SDL_EVENT_WINDOW_MOUSE_ENTER:
+		{
+			Uint32 flags = SDL_GetWindowFlags(mainScreen);
+			// We might not have focus, just the user moving his mouse over things
+			if (!(flags & SDL_WINDOW_INPUT_FOCUS))
+			{
+				break;
+			}
+		}
+		// fall through
+		case SDL_EVENT_WINDOW_FOCUS_GAINED:
+		{
+			Cvar_SetValue("com_unfocused", 0);
+			if (com_minimized->integer)
+			{
+				SDL_RestoreWindow(mainScreen);
+			}
+			SDL_RaiseWindow(mainScreen);
+		}
+		break;
+		case SDL_EVENT_WINDOW_MOVED:
+			IN_WindowMoved(&e);
+			break;
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+			if (!e.gaxis.axis && !e.gaxis.value)
 			{
 				break;
 			}
@@ -1767,30 +1781,38 @@ static void IN_ProcessEvents(void)
 				 * Com_QueueEvent(lasttime, SE_MOUSE, _x, _y, 0, NULL);
 				 * */
 
-				if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX)
+				if (e.gaxis.axis == SDL_GAMEPAD_AXIS_RIGHTX)
 				{
-					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
+					if (e.gaxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, abs(e.caxis.value / 8000) * j_yaw->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2,
+						               abs(e.gaxis.value / 8000) * j_yaw->value,
+						               0, NULL);
 					}
-					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 4))
+					else if (e.gaxis.value >= (SDL_JOYSTICK_AXIS_MAX / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, -abs(e.caxis.value / 8000) * j_yaw->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2,
+						               -abs(e.gaxis.value / 8000) * j_yaw->value,
+						               0, NULL);
 					}
 					else
 					{
 						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 2, 0, 0, NULL);
 					}
 				}
-				else if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY)
+				else if (e.gaxis.axis == SDL_GAMEPAD_AXIS_RIGHTY)
 				{
-					if (e.caxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
+					if (e.gaxis.value <= (SDL_JOYSTICK_AXIS_MIN / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, -abs(e.caxis.value / 8000) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3,
+						               -abs(e.gaxis.value / 8000) * j_pitch->value,
+						               0, NULL);
 					}
-					else if (e.caxis.value >= (SDL_JOYSTICK_AXIS_MAX / 4))
+					else if (e.gaxis.value >= (SDL_JOYSTICK_AXIS_MAX / 4))
 					{
-						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3, abs(e.caxis.value / 8000) * j_pitch->value, 0, NULL);
+						Com_QueueEvent(lasttime, SE_JOYSTICK_AXIS, 3,
+						               abs(e.gaxis.value / 8000) * j_pitch->value,
+						               0, NULL);
 					}
 					else
 					{
@@ -1820,14 +1842,14 @@ void IN_Frame(void)
 #ifdef __ANDROID__
 
 	clientJavainterface_t cjv;
-	cjv.env = (JNIEnv *) SDL_AndroidGetJNIEnv();
+	cjv.env = (JNIEnv *) SDL_GetAndroidJNIEnv();
 
 	if (cjv.env == NULL)
 	{
 		return;
 	}
 
-	cjv.activity = (jobject)SDL_AndroidGetActivity();
+	cjv.activity = (jobject) SDL_GetAndroidActivity();
 
 	if (cjv.activity == NULL)
 	{
@@ -1909,7 +1931,7 @@ void IN_Frame(void)
  */
 static void IN_InitKeyLockStates(void)
 {
-	unsigned const char *keystate = SDL_GetKeyboardState(NULL);
+	const bool *keystate = SDL_GetKeyboardState(NULL);
 
 	keys[K_SCROLLOCK].down  = keystate[SDL_SCANCODE_SCROLLLOCK];
 	keys[K_KP_NUMLOCK].down = keystate[SDL_SCANCODE_NUMLOCKCLEAR];
@@ -1921,7 +1943,7 @@ static void IN_InitKeyLockStates(void)
  */
 void IN_Init(void)
 {
-	int appState;
+	SDL_WindowFlags appState;
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
@@ -1945,29 +1967,16 @@ void IN_Init(void)
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_TEMP);
 
 	// mouse variables
+	// NOTE: in_mouse 2 support has been dropped (SDL3 no longer has the hint "SDL_HINT_MOUSE_RELATIVE_MODE_WARP")
 	in_mouse = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE | CVAR_LATCH);
-
-	if (in_mouse->integer == 2)
-	{
-		if (!SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE))
-		{
-			Com_Printf(S_COLOR_RED "Emulating non raw mouse input failed!\n");
-		}
-	}
-	else
-	{
-		if (!SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "0", SDL_HINT_OVERRIDE))
-		{
-			Com_Printf(S_COLOR_RED "Raw mouse input failed!\n");
-		}
-	}
 
 	in_nograb = Cvar_Get("in_nograb", "0", CVAR_ARCHIVE);
 
 	in_joystick          = Cvar_Get("in_joystick", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	in_joystickThreshold = Cvar_Get("in_joystickThreshold", "0.25", CVAR_ARCHIVE_ND);
 
-	SDL_StartTextInput();
+	// FIXME: text input should not be use all the time...?
+	SDL_StartTextInput(mainScreen);
 
 	mouseAvailable = (in_mouse->value != 0.f);
 	IN_DeactivateMouse();
@@ -1988,7 +1997,7 @@ void IN_Init(void)
  */
 void IN_Shutdown(void)
 {
-	SDL_StopTextInput();
+	SDL_StopTextInput(mainScreen);
 	Com_Printf("SDL input devices shut down.\n");
 
 	IN_DeactivateMouse();

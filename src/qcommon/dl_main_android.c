@@ -83,7 +83,7 @@ static jobject DL_HandleInit()
 		return androidSys.singleton;
 	}
 	// If the java code has not done the init, then just call it ourselves
-	JNIEnv    *env = androidSys.env = SDL_AndroidGetJNIEnv();
+	JNIEnv    *env = androidSys.env = SDL_GetAndroidJNIEnv();
 	jclass    cls  = androidSys.cls = (*env)->FindClass(env, "com/etlegacy/app/web/ETLDownload");
 	jmethodID id   = (*env)->GetStaticMethodID(env, cls, "instance", "()Lcom/etlegacy/app/web/ETLDownload;");
 	androidSys.singleton = (*env)->CallStaticObjectMethod(env, cls, id);
