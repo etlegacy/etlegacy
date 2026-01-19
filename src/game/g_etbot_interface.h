@@ -38,8 +38,8 @@
 
 //#define NO_BOT_SUPPORT
 
-#define OMNIBOT_MODNAME    MODNAME
-#define OMNIBOT_MODVERSION ETLEGACY_VERSION_SHORT
+#define OMNIBOT_MODNAME    etlegacy_modname
+#define OMNIBOT_MODVERSION etlegacy_version_short
 
 //////////////////////////////////////////////////////////////////////////
 /**

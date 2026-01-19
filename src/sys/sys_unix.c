@@ -1284,8 +1284,8 @@ void Sys_Backtrace(int sig)
 #endif
 	fprintf(stderr, "--- Report this to the project - START ---\n");
 	fprintf(stderr, "ERROR: Caught SIGSEGV(%d)\n", sig);
-	fprintf(stderr, "VERSION: %s (%s)\n", ETLEGACY_VERSION, ETLEGACY_VERSION_SHORT);
-	fprintf(stderr, "BTIME: %s\n", PRODUCT_BUILD_TIME);
+	fprintf(stderr, "VERSION: %s (%s)\n", etlegacy_version, etlegacy_version_short);
+	fprintf(stderr, "BTIME: %s\n", etlegacy_product_build_time);
 	fprintf(stderr, "BACKTRACE:\n");
 #ifndef __ANDROID__
 	backtrace_symbols_fd(syms, size, STDERR_FILENO);

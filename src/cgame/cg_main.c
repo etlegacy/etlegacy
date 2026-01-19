@@ -2138,7 +2138,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	//int startat = trap_Milliseconds();
 
-	Com_Printf(S_COLOR_MDGREY "Initializing %s cgame " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+	Com_Printf(S_COLOR_MDGREY "Initializing %s cgame " S_COLOR_GREEN "%s\n", etlegacy_modname, etlegacy_version);
 
 	// clean up the config backup if one exists
 	CG_RestoreProfile();
@@ -2300,7 +2300,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	}
 
 #if 0
-	trap_Cvar_Set("cg_legacyVersion", ETLEGACY_VERSION);
+	trap_Cvar_Set("cg_legacyVersion", etlegacy_version);
 #endif
 
 	s                  = CG_ConfigString(CS_LEVEL_START_TIME);

@@ -158,7 +158,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		int time = trap_Milliseconds();
-		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN "%s\n", etlegacy_modname, etlegacy_version);
 		G_ParsePlatformManifest();
 #ifdef FEATURE_OMNIBOT
 
@@ -1215,7 +1215,7 @@ void G_ServerCheck(void)
 {
 	if (!level.etLegacyServer)
 	{
-		G_Error("Error: %s does not support server version %s\n", MODNAME, FAKE_VERSION);
+		G_Error("Error: %s does not support server version %s\n", etlegacy_modname, FAKE_VERSION);
 	}
 }
 
@@ -1263,8 +1263,8 @@ void G_ClearMapXP(void)
 	trap_SetConfigstring(CS_AXIS_MAPS_XP, "");
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, "");
 
-	trap_Cvar_Set(va("%s_axismapxp0", MODNAME), "");
-	trap_Cvar_Set(va("%s_alliedmapxp0", MODNAME), "");
+	trap_Cvar_Set(va("%s_axismapxp0", etlegacy_modname), "");
+	trap_Cvar_Set(va("%s_alliedmapxp0", etlegacy_modname), "");
 }
 
 /**
@@ -1294,7 +1294,7 @@ void G_StoreMapXP(void)
 		{
 			Q_strcat(u, sizeof(u), "+");
 		}
-		trap_Cvar_Set(va("%s_axismapxp%i", MODNAME, j), u);
+		trap_Cvar_Set(va("%s_axismapxp%i", etlegacy_modname, j), u);
 		j++;
 		k = strcut(u, k, SNIPSIZE);
 	}
@@ -1316,7 +1316,7 @@ void G_StoreMapXP(void)
 		{
 			Q_strcat(u, sizeof(u), "+");
 		}
-		trap_Cvar_Set(va("%s_alliedmapxp%i", MODNAME, j), u);
+		trap_Cvar_Set(va("%s_alliedmapxp%i", etlegacy_modname, j), u);
 		j++;
 		k = strcut(u, k, SNIPSIZE);
 	}
@@ -1331,25 +1331,25 @@ void G_GetMapXP(void)
 	char s[MAX_STRING_CHARS];
 	char t[MAX_STRING_CHARS];
 
-	trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", MODNAME, j), s, sizeof(s));
+	trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", etlegacy_modname, j), s, sizeof(s));
 	// reassemble string...
 	while (strrchr(s, '+'))
 	{
 		j++;
 		*strrchr(s, '+') = (char)0;
-		trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", MODNAME, j), t, sizeof(t));
+		trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", etlegacy_modname, j), t, sizeof(t));
 		Q_strcat(s, sizeof(s), t);
 	}
 	trap_SetConfigstring(CS_AXIS_MAPS_XP, s);
 
 	j = 0;
-	trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", MODNAME, j), s, sizeof(s));
+	trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", etlegacy_modname, j), s, sizeof(s));
 	// reassemble string...
 	while (strrchr(s, '+'))
 	{
 		j++;
 		*strrchr(s, '+') = (char)0;
-		trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", MODNAME, j), t, sizeof(t));
+		trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", etlegacy_modname, j), t, sizeof(t));
 		Q_strcat(s, sizeof(s), t);
 	}
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
@@ -1404,7 +1404,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	G_ServerCheck();
 
 	G_Printf("------- Game Initialization -------\n");
-	G_Printf("gamename: %s\n", MODNAME);
+	G_Printf("gamename: %s\n", etlegacy_modname);
 	G_Printf("gamedate: %s\n", __DATE__);
 
 	srand(randomSeed);

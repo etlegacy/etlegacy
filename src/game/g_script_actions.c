@@ -3832,7 +3832,7 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 #endif
 
 	// log script wm_announce_icon actions
-	G_LogPrintf("%s announce: \"^7%s\"\n", MODNAME, token);
+	G_LogPrintf("%s announce: \"^7%s\"\n", etlegacy_modname, token);
 
 	return qtrue;
 }
@@ -3866,7 +3866,7 @@ qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 #endif
 
 	// log script wm_announce actions
-	G_LogPrintf("%s announce: \"^7%s\"\n", MODNAME, token);
+	G_LogPrintf("%s announce: \"^7%s\"\n", etlegacy_modname, token);
 
 	return qtrue;
 }
@@ -4903,7 +4903,7 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 
 		if (g_scriptDebug.integer)
 		{
-			G_Printf("etpro_ScriptAction_SetValues: %d : (%s) %s: set [%s] [%s] [%s]\n", level.time, ent->scriptName, MODNAME, ent->scriptName, key, value);
+			G_Printf("etpro_ScriptAction_SetValues: %d : (%s) %s: set [%s] [%s] [%s]\n", level.time, ent->scriptName, etlegacy_modname, ent->scriptName, key, value);
 		}
 
 		if (!Q_stricmp(key, "classname_nospawn"))
@@ -5156,7 +5156,7 @@ qboolean G_ScriptAction_Create(gentity_t *ent, char *params)
 		if (g_scriptDebug.integer)
 		{
 			G_Printf("%d : (%s) %s: set [%s] [%s] [%s]\n",
-			         level.time, ent->scriptName, MODNAME,
+			         level.time, ent->scriptName, etlegacy_modname,
 			         ent->scriptName, key, value);
 		}
 

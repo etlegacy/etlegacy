@@ -778,7 +778,7 @@ issues.
 
 // ET: Legacy specific - used by engine code
 #define BASEGAME        "etmain"
-#define DEFAULT_MODGAME MODNAME
+#define DEFAULT_MODGAME etlegacy_modname
 
 /**
  * @struct modHash
