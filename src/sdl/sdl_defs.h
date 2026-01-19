@@ -39,6 +39,5 @@
 #include <SDL3/SDL_cpuinfo.h>
 #include <SDL3/SDL_video.h>
 #include <SDL3/SDL_loadso.h>
-#include <SDL3/SDL_joystick.h>
 
 #endif // #ifndef INCLUDE_SDLDEF_H

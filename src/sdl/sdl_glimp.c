@@ -35,7 +35,7 @@
 #include "sdl_defs.h"
 
 #ifdef FEATURE_RENDERER_VULKAN
-#include <SDL2/SDL_vulkan.h>
+#include <SDL3/SDL_vulkan.h>
 #endif
 
 #include <stdarg.h>
@@ -47,13 +47,6 @@
 #include "../client/client.h"
 #include "sdl_icon.h"
 #include "sdl_splash.h"
-
-#ifdef __APPLE__
-#define MACOS_X_GAMMA_RESET_FIX
-#ifdef MACOS_X_GAMMA_RESET_FIX
-static int gammaResetTime = 0;
-#endif
-#endif // __APPLE__
 
 SDL_Window           *main_window  = NULL;
 static SDL_GLContext SDL_glContext = NULL;
@@ -413,10 +406,19 @@ void GLimp_Shutdown(void)
 
 	if (main_window)
 	{
-		int tmpX = SDL_WINDOWPOS_UNDEFINED, tmpY = SDL_WINDOWPOS_UNDEFINED;
-		int displayIndex = SDL_GetDisplayForWindow(main_window);
+		int           i, index = 0;
+		int           tmpX = SDL_WINDOWPOS_UNDEFINED, tmpY = SDL_WINDOWPOS_UNDEFINED;
+		SDL_DisplayID displayIndex = SDL_GetDisplayForWindow(main_window);
+		for (i = 0; i < displays.count; i++)
+		{
+			if (displays.ids[i] == displayIndex)
+			{
+				index = i;
+				break;
+			}
+		}
 		SDL_GetWindowPosition(main_window, &tmpX, &tmpY);
-		Cvar_Set("r_windowLocation", va("%d,%d,%d", displayIndex, tmpX, tmpY));
+		Cvar_Set("r_windowLocation", va("%d,%d,%d", index, tmpX, tmpY));
 
 		SDL_DestroyWindow(main_window);
 		main_window = NULL;
@@ -433,24 +435,22 @@ void GLimp_Shutdown(void)
  */
 static void GLimp_DetectAvailableModes(void)
 {
-	int                   i, j;
-	char                  buf[MAX_STRING_CHARS] = { 0 };
-	int                   numModes              = 0;
-	int                   count                 = 0;
-	SDL_DisplayID         display               = 0;
-	SDL_DisplayID         *displays;
-	const SDL_DisplayMode *displayMode;
-	SDL_DisplayMode       **modes;
+	int             i;
+	char            buf[MAX_STRING_CHARS] = { 0 };
+	int             numModes              = 0;
+	int             count                 = 0;
+	SDL_DisplayID   display               = 0;
+	SDL_DisplayMode **modes;
 
 	if (!main_window)
 	{
-		displays = SDL_GetDisplays(&count);
-		if (!displays)
+		SDL_DisplayID *displayList = SDL_GetDisplays(&count);
+		if (!displayList)
 		{
 			Com_Error(ERR_VID_FATAL, "There is no available display to open a game screen - %s", SDL_GetError());
 		}
 
-		display = displays[0];
+		display = displayList[0];
 	}
 	else
 	{
@@ -458,7 +458,6 @@ static void GLimp_DetectAvailableModes(void)
 		display = SDL_GetDisplayForWindow(main_window);
 	}
 
-	displayMode = SDL_GetDesktopDisplayMode(display);
 	if (!display)
 	{
 		Com_Printf(S_COLOR_YELLOW "Couldn't get desktop display mode, no resolutions detected - %s\n", SDL_GetError());
@@ -501,7 +500,7 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 	SDL_DisplayID display;
 	SDL_Rect      rect;
 	int           displayIndex = 0, tmpX = SDL_WINDOWPOS_UNDEFINED, tmpY = SDL_WINDOWPOS_UNDEFINED;
-	int           numDisplays = 0, i;
+	int           numDisplays = displays.count;
 
 	if (!r_windowLocation->string || !r_windowLocation->string[0])
 	{
@@ -519,7 +518,8 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 		return;
 	}
 
-	// We might be in headless mode, just ignore for now (xD)
+	// FIXME: if there are no displays, we should not be here at all
+	// When we are in headless mode we should not create a window!
 	if (numDisplays < 0)
 	{
 		numDisplays = 1;
@@ -580,7 +580,7 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 		return;
 	}
 
-	// Make sure we have at least half of the game screen visible on the display its supposed to be in
+	// Make sure we have at least half of the game screen visible on the display It's supposed to be in
 	if ((tmpX + (glConfig->windowWidth / 2)) > rect.x && (tmpX + (glConfig->windowWidth / 2)) < (rect.x + rect.w)
 	    && (tmpY + (glConfig->windowHeight / 2)) > rect.y && (tmpY + (glConfig->windowHeight / 2)) < (rect.y + rect.h))
 	{
@@ -639,11 +639,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	}
 
 	icon = SDL_CreateSurfaceFrom(CLIENT_WINDOW_ICON.width, CLIENT_WINDOW_ICON.height, SDL_PIXELFORMAT_RGBA32, (void *)CLIENT_WINDOW_ICON.pixel_data, CLIENT_WINDOW_ICON.bytes_per_pixel);
-#ifdef Q3_LITTLE_ENDIAN
-#else
-	0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
-#endif
-	;
 
 	// If a window exists, note its display index
 	if (main_window != NULL)
@@ -1093,8 +1088,6 @@ void GLimp_Init(glconfig_t *glConfig, const char *glConfigString)
 		Com_Printf("SDL version %d.%d.%d\n", SDL_VERSIONNUM_MAJOR(linked), SDL_VERSIONNUM_MINOR(linked), SDL_VERSIONNUM_MICRO(linked));
 	}
 
-	Glimp_InitDisplayList();
-
 	GLimp_InitCvars();
 
 	if (Cvar_VariableIntegerValue("com_abnormalExit"))
@@ -1191,32 +1184,8 @@ void GLimp_EndFrame(void)
 			IN_Restart();
 		}
 
-#ifdef MACOS_X_GAMMA_RESET_FIX
-		// OS X 10.9 has a bug where toggling in or out of fullscreen mode
-		// will cause the gamma to reset to the system default after an unknown
-		// short delay. This little fix simply causes the gamma to be reset
-		// again after a hopefully-long-enough-delay of 3 seconds.
-		// Radar 15961845
-		gammaResetTime = CL_ScaledMilliseconds() + 3000;
-#endif
 		r_fullscreen->modified = qfalse;
 	}
-
-#ifdef MACOS_X_GAMMA_RESET_FIX
-	if ((gammaResetTime != 0) && (gammaResetTime < CL_ScaledMilliseconds()))
-	{
-		// Circuitous way of resetting the gamma to its current value.
-		char old[6] = { 0 };
-		Q_strncpyz(old, va("%i", Cvar_VariableIntegerValue("r_gamma")), 5);
-		if (strlen(old))
-		{
-			Cvar_Set("r_gamma", "1");
-			Cvar_Set("r_gamma", old);
-		}
-
-		gammaResetTime = 0;
-	}
-#endif
 }
 
 /**

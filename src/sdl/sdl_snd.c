@@ -52,9 +52,8 @@ cvar_t *s_sdlMixSamps;
 cvar_t *s_sdlLevelSamps;
 
 /* The audio callback. All the magic happens here. */
-static int dmapos  = 0;
-static int dmasize = 0;
-// static SDL_AudioDeviceID device_id = 0;
+static int             dmapos  = 0;
+static int             dmasize = 0;
 static SDL_AudioStream *stream = NULL;
 
 /**
@@ -124,10 +123,7 @@ static struct
 {
 	Uint16 enumFormat;
 	char *stringFormat;
-
-}
-
-formatToStringTable[] =
+} formatToStringTable[] =
 {
 	{ SDL_AUDIO_U8,    "AUDIO_U8"     },
 	{ SDL_AUDIO_S8,    "AUDIO_S8"     },
@@ -253,6 +249,7 @@ qboolean SNDDMA_Init(void)
 	SDL_AudioSpec     desired;
 	SDL_AudioSpec     obtained;
 	SDL_AudioDeviceID *ids;
+	SDL_AudioDeviceID device;
 	const char        *driver_name;
 	const char        *device_name;
 	int               tmp;
@@ -279,7 +276,7 @@ qboolean SNDDMA_Init(void)
 
 	if (!SDL_WasInit(SDL_INIT_AUDIO))
 	{
-		if (SDL_Init(SDL_INIT_AUDIO) < 0)
+		if (!SDL_Init(SDL_INIT_AUDIO))
 		{
 			Com_Printf("FAILED (%s)\n", SDL_GetError());
 			return qfalse;
@@ -339,8 +336,9 @@ qboolean SNDDMA_Init(void)
 		//Reset the cvar just in case
 		Cvar_Set("s_device", "-1");
 	}
+	device = s_device->integer >= 0 ? ids[s_device->integer]:SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK;
 
-	stream = SDL_OpenAudioDeviceStream(s_device->integer >= 0 ? ids[s_device->integer]:SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &desired, SNDDMA_AudioCallbackSDL3TMPPort, NULL);
+	stream = SDL_OpenAudioDeviceStream(device, &desired, SNDDMA_AudioCallbackSDL3TMPPort, NULL);
 	if (stream == 0)
 	{
 		Com_Printf("SDL_OpenAudioDevice() failed: %s\n", SDL_GetError());
@@ -348,7 +346,8 @@ qboolean SNDDMA_Init(void)
 		return qfalse;
 	}
 
-	SDL_AudioDeviceID device = SDL_GetAudioStreamDevice(stream);
+	device = SDL_GetAudioStreamDevice(stream);
+	Com_Memset(&desired, '\0', sizeof(desired));
 	if (!SDL_GetAudioDeviceFormat(device, &obtained, &obtained_samples))
 	{
 		Com_Printf("SDL_GetAudioDeviceFormat() failed: %s\n", SDL_GetError());
@@ -367,7 +366,14 @@ qboolean SNDDMA_Init(void)
 	tmp = s_sdlMixSamps->value;
 	if (!tmp)
 	{
-		tmp = (obtained_samples * obtained.channels) * 10;
+		if (obtained_samples > 0)
+		{
+			tmp = (obtained_samples * obtained.channels) * 10;
+		}
+		else
+		{
+			tmp = SND_SamplesForFreq(obtained.freq, s_sdlLevelSamps->integer);
+		}
 	}
 
 	if (tmp & (tmp - 1))  // not a power of two? Seems to confuse something.
@@ -380,7 +386,7 @@ qboolean SNDDMA_Init(void)
 	}
 
 	dmapos               = 0;
-	dma.samplebits       = obtained.format & 0xFF; // first byte of format is bits.
+	dma.samplebits       = SDL_AUDIO_BITSIZE(obtained.format); // first byte of format is bits.
 	dma.channels         = obtained.channels;
 	dma.samples          = tmp;
 	dma.submission_chunk = 1;
@@ -395,7 +401,7 @@ qboolean SNDDMA_Init(void)
 	}
 
 	Com_Printf("Starting SDL audio callback...\n");
-	SDL_ResumeAudioDevice(device); // start callback.
+	SDL_ResumeAudioStreamDevice(stream);
 
 	Com_Printf("SDL audio initialized.\n");
 	snd_inited = qtrue;
@@ -417,7 +423,10 @@ int SNDDMA_GetDMAPos(void)
 void SNDDMA_Shutdown(void)
 {
 	Com_Printf("Closing SDL audio device...\n");
-	SDL_CloseAudioDevice(SDL_GetAudioStreamDevice(stream));
+	if (stream)
+	{
+		SDL_DestroyAudioStream(stream);
+	}
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 	Com_Dealloc(dma.buffer);
 	dma.buffer = NULL;
@@ -434,8 +443,10 @@ void SNDDMA_Shutdown(void)
  */
 void SNDDMA_Submit(void)
 {
-	// FIXME: needed?
-	// SDL_UnlockAudioDevice(device_id);
+	if (stream)
+	{
+		SDL_UnlockAudioStream(stream);
+	}
 }
 
 /**
@@ -443,6 +454,8 @@ void SNDDMA_Submit(void)
  */
 void SNDDMA_BeginPainting(void)
 {
-	// FIXME: needed?
-	// SDL_LockAudioDevice(device_id);
+	if (stream)
+	{
+		SDL_LockAudioStream(stream);
+	}
 }
