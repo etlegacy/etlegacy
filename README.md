@@ -283,7 +283,7 @@ Then brew the following packages in the terminal app:
 $ brew install cmake autoconf nasm automake libtool
 
 # Libraries if you do not wish to compile and use the provided sources (BUNDLED_LIBS)
-$ brew install glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft
+$ brew install glew sdl3 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft
 ```
 
 Alternative way to install the dependencies is to run

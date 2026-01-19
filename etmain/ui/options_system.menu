@@ -162,7 +162,7 @@ menuDef {
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 4), SUBWINDOW_OPTION_WIDTH_R, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Toggle the doppler effect"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 5), SUBWINDOW_OPTION_WIDTH_R, 10, _("Mute When Minimized:"), .2, 8, "s_muteWhenMinimized", _("Toggle audio mute when window is minimized"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 6), SUBWINDOW_OPTION_WIDTH_R, 10, _("Mute When Unfocused:"), .2, 8, "s_muteWhenUnfocused", _("Toggle audio mute when window is unfocused"))
-	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 7), SUBWINDOW_OPTION_WIDTH_R, 10, _("Sound System:"), .2, 8, "ui_s_initsound", cvarFloatList { "SDL2" 1 "OpenAL" 2 }, uiScript update "ui_s_initsound", _("Set the sound system backend"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 7), SUBWINDOW_OPTION_WIDTH_R, 10, _("Sound System:"), .2, 8, "ui_s_initsound", cvarFloatList { "SDL3" 1 "OpenAL" 2 }, uiScript update "ui_s_initsound", _("Set the sound system backend"))
 	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 8), SUBWINDOW_OPTION_WIDTH_R, 10, _("SDL Sample Count:"), .2, 8, "ui_s_sdlLevelSamps", cvarFloatList { "Default" 0 "Low" 1 "Very Low" 2 }, uiScript update "ui_s_sdlLevelSamps", _("Set SDL sample count. Lower values improve latency but might break audio.\nSet as low as possible, effects are highly dependant on hardware and SDL audio driver.\ns_sdlDevSamps must be set to 0 for this to work."))
 
 // Networking //
