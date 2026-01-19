@@ -205,10 +205,24 @@ if(BUILD_MOD_PK3)
 	# etmain
 	file(GLOB_RECURSE	ETMAIN_FILES			CONFIGURE_DEPENDS	"${CMAKE_CURRENT_SOURCE_DIR}/etmain/*")
 	file(GLOB			ETMAIN_FILES_SHALLOW	CONFIGURE_DEPENDS	"${CMAKE_CURRENT_SOURCE_DIR}/etmain/*")
+	set(ETMAIN_FILE_LIST_REL "")
 	foreach(FILE ${ETMAIN_FILES_SHALLOW})
 		file(RELATIVE_PATH REL "${CMAKE_CURRENT_SOURCE_DIR}/etmain" ${FILE})
 		list(APPEND ETMAIN_FILES_SHALLOW_REL ${REL})
 	endforeach()
+	foreach(FILE ${ETMAIN_FILES})
+		file(RELATIVE_PATH REL "${CMAKE_CURRENT_SOURCE_DIR}/etmain" ${FILE})
+		list(APPEND ETMAIN_FILE_LIST_REL ${REL})
+	endforeach()
+	list(SORT ETMAIN_FILE_LIST_REL)
+
+	# Record the full file list so removals can be detected without reacting to edits.
+	set(ETMAIN_FILE_LIST_CONTENT "")
+	foreach(REL ${ETMAIN_FILE_LIST_REL})
+		string(APPEND ETMAIN_FILE_LIST_CONTENT "${REL}\n")
+	endforeach()
+	set(ETMAIN_FILE_LIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/etl_etmain_file_list.txt")
+	file(GENERATE OUTPUT "${ETMAIN_FILE_LIST_FILE}" CONTENT "${ETMAIN_FILE_LIST_CONTENT}")
 
 	# Remove old legacy mod pk3 files from the build directory (useful for the development)
 	file(GLOB OLD_LEGACY_PK3_FILES "${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/${MODNAME}_*.pk3")
@@ -218,11 +232,32 @@ if(BUILD_MOD_PK3)
 		COMMAND_EXPAND_LISTS
 	)
 
+	# CMake's copy_directory won't remove stale files, so clear staged etmain only when it changes.
+	set(ETMAIN_PREV_LIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/etl_etmain_prev_list.txt")
+	set(ETMAIN_STAGE_DIR "${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}")
+	set(ETMAIN_CURRENT_LIST_FILE "${ETMAIN_FILE_LIST_FILE}")
+	set(ETMAIN_CLEAR_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/etl_clear_etmain.cmake")
+	configure_file(
+		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/ETLBuildModFileDeletionDetector.cmake.in"
+		"${ETMAIN_CLEAR_SCRIPT}"
+		@ONLY
+	)
+
+	# Only refresh staged etmain when etmain files (or their list) change.
+	set(ETMAIN_STAGE_STAMP "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/etl_etmain_stage.stamp")
+	add_custom_command(
+		OUTPUT "${ETMAIN_STAGE_STAMP}"
+		COMMAND ${CMAKE_COMMAND} -P "${ETMAIN_CLEAR_SCRIPT}"
+		COMMAND ${CMAKE_COMMAND} -E touch "${ETMAIN_STAGE_STAMP}"
+		DEPENDS "${ETMAIN_FILE_LIST_FILE}"
+		VERBATIM
+	)
+
 	add_custom_command(
 		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/${MODNAME}_${ETL_CMAKE_VERSION_SHORT}.pk3
 		COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/etmain ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}
 		COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/${MODNAME}_${ETL_CMAKE_VERSION_SHORT}.pk3 --format=zip $<TARGET_FILE_NAME:cgame> $<TARGET_FILE_NAME:ui> ${ETMAIN_FILES_SHALLOW_REL}
-		DEPENDS cgame ui ${ETMAIN_FILES} remove_old_pk3_files
+		DEPENDS cgame ui ${ETMAIN_FILES} remove_old_pk3_files "${ETMAIN_STAGE_STAMP}"
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/
 		VERBATIM
 	)
