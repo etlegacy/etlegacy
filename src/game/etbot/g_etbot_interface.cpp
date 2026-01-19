@@ -39,9 +39,9 @@ extern "C"
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 };
 
-#include "Omnibot/Common/BotExports.h"
-#include "Omnibot/ET/ET_Config.h"
-#include "Omnibot/ET/ET_Messages.h"
+#include "../../vendor/Omnibot/Common/BotExports.h"
+#include "../../vendor/Omnibot/ET/ET_Config.h"
+#include "../../vendor/Omnibot/ET/ET_Messages.h"
 
 #define OMNIBOT_MIN_ENG 2
 #define OMNIBOT_MIN_MED 2
