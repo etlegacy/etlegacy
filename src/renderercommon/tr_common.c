@@ -73,6 +73,103 @@ void R_PrintLongString(const char *string)
 	}
 }
 
+static char *R_SkipSimpleWhitespace(char *data)
+{
+	while (*data && *data <= ' ')
+	{
+		data++;
+	}
+
+	return data;
+}
+
+static void R_ParseMaxPicMipToken(const char *token, int *maxPicMip, const char *shaderName)
+{
+	int        value;
+	const char *name = (shaderName && shaderName[0]) ? shaderName : "<unknown>";
+
+	if (!token || !token[0])
+	{
+		Ren_Warning("WARNING: missing value for 'maxpicmip' in shader '%s'\n", name);
+		return;
+	}
+
+	value = Q_atoi(token);
+	if (value < 0)
+	{
+		*maxPicMip = -1;
+	}
+	else
+	{
+		*maxPicMip = Com_Clamp(0, 3, value);
+	}
+}
+
+qboolean R_ParseEtlDirective(char **text, int *maxPicMip, const char *shaderName, qboolean useParseExt2)
+{
+	char   *data;
+	char   *lineStart;
+	char   lineBuffer[MAX_STRING_CHARS];
+	char   *linePtr;
+	char   *token;
+	size_t lineLen;
+
+	if (!text || !*text || !maxPicMip)
+	{
+		return qfalse;
+	}
+
+	data = R_SkipSimpleWhitespace(*text);
+	if (data[0] != '/' || data[1] != '/' || data[2] != '/')
+	{
+		return qfalse;
+	}
+
+	lineStart = R_SkipSimpleWhitespace(data + 3);
+	lineLen   = 0;
+	while (lineStart[lineLen] && lineStart[lineLen] != '\n')
+	{
+		lineLen++;
+	}
+	if (lineLen >= sizeof(lineBuffer))
+	{
+		lineLen = sizeof(lineBuffer) - 1;
+	}
+	Com_Memcpy(lineBuffer, lineStart, lineLen);
+	lineBuffer[lineLen] = '\0';
+
+	linePtr = lineBuffer;
+	if (useParseExt2)
+	{
+		token = COM_ParseExt2(&linePtr, qfalse);
+	}
+	else
+	{
+		token = COM_ParseExt(&linePtr, qfalse);
+	}
+
+	if (token[0] && !Q_stricmp(token, "maxpicmip"))
+	{
+		if (useParseExt2)
+		{
+			token = COM_ParseExt2(&linePtr, qfalse);
+		}
+		else
+		{
+			token = COM_ParseExt(&linePtr, qfalse);
+		}
+		R_ParseMaxPicMipToken(token, maxPicMip, shaderName);
+	}
+
+	while (*data && *data != '\n')
+	{
+		data++;
+	}
+	*text = data;
+
+	return qtrue;
+}
+
 void R_RegisterCommon(void)
 {
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);

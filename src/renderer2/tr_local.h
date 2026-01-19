@@ -612,6 +612,7 @@ typedef struct image_s
 	uint32_t internalFormat;
 
 	uint32_t bits;
+	int maxPicMip;
 	filterType_t filterType;
 	wrapType_t wrapType;                    ///< GL_CLAMP or GL_REPEAT
 
@@ -1473,6 +1474,7 @@ typedef struct shader_s
 
 	qboolean uncompressed;
 	qboolean noPicMip;                  ///< for images that must always be full resolution
+	int maxPicMip;                      ///< clamp picmip for this shader (-1 = no clamp)
 	filterType_t filterType;            ///< for console fonts, 2D elements, etc.
 	wrapType_t wrapType;
 
@@ -4119,15 +4121,15 @@ int R_SumOfUsedImages(void);
 void R_ImageCopyBack(image_t *image, int x, int y, int width, int height);
 #define ImageCopyBackBuffer(image) R_ImageCopyBack(image, 0, 0, image->uploadWidth, image->uploadHeight)
 
-image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
-image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
+image_t *R_FindImageFile(const char *imageName, int bits, int maxPicMip, filterType_t filterType, wrapType_t wrapType, const char *materialName);
+image_t *R_FindCubeImage(const char *imageName, int bits, int maxPicMip, filterType_t filterType, wrapType_t wrapType, const char *materialName);
 
-image_t *R_CreateImage(const char *name, const byte *pic, int width, int height, int bits, filterType_t filterType,
+image_t *R_CreateImage(const char *name, const byte *pic, int width, int height, int bits, int maxPicMip, filterType_t filterType,
                        wrapType_t wrapType);
 
 image_t *R_CreateCubeImage(const char *name,
                            const byte *pic[6],
-                           int width, int height, int bits, filterType_t filterType, wrapType_t wrapType);
+                           int width, int height, int bits, int maxPicMip, filterType_t filterType, wrapType_t wrapType);
 
 image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable);
 void R_UploadImage(const byte **dataArray, int numData, image_t *image);
