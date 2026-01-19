@@ -60,62 +60,48 @@ static SDL_AudioStream *stream = NULL;
  * @brief SNDDMA_AudioCallback
  * @param userdata - unused
  * @param[in] stream
- * @param[in] len
+ * @param[in] additional_amount
+ * @param[in] total_amount
  */
-static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int len)
+static void SNDDMA_AudioCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount)
 {
-	int pos = (dmapos * (dma.samplebits / 8));
+	/* shouldn't happen, but just in case... */
+	if (!snd_inited || additional_amount <= 0)
+	{
+		return;
+	}
 
+	int pos = (dmapos * (dma.samplebits / 8));
 	if (pos >= dmasize)
 	{
 		dmapos = pos = 0;
 	}
 
-	if (!snd_inited)  /* shouldn't happen, but just in case... */
-	{
-		Com_Memset(stream, '\0', len);
-		return;
-	}
-	else
-	{
-		int tobufend = dmasize - pos;  /* bytes to buffer's end. */
-		int len1     = len;
-		int len2     = 0;
+	int tobufend = dmasize - pos;  /* bytes to buffer's end. */
+	int len1     = additional_amount;
+	int len2     = 0;
 
-		if (len1 > tobufend)
-		{
-			len1 = tobufend;
-			len2 = len - len1;
-		}
-		Com_Memcpy(stream, dma.buffer + pos, len1);
-		if (len2 <= 0)
-		{
-			dmapos += (len1 / (dma.samplebits / 8));
-		}
-		else  /* wraparound? */
-		{
-			Com_Memcpy(stream + len1, dma.buffer, len2);
-			dmapos = (len2 / (dma.samplebits / 8));
-		}
+	if (len1 > tobufend)
+	{
+		len1 = tobufend;
+		len2 = additional_amount - len1;
+	}
+
+	SDL_PutAudioStreamData(stream, dma.buffer + pos, len1);
+
+	if (len2 <= 0)
+	{
+		dmapos += (len1 / (dma.samplebits / 8));
+	}
+	else  /* wraparound? */
+	{
+		SDL_PutAudioStreamData(stream, dma.buffer, len2);
+		dmapos = (len2 / (dma.samplebits / 8));
 	}
 
 	if (dmapos >= dmasize)
 	{
 		dmapos = 0;
-	}
-}
-
-static void SNDDMA_AudioCallbackSDL3TMPPort(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount)
-{
-	if (additional_amount > 0)
-	{
-		Uint8 *data = SDL_stack_alloc(Uint8, additional_amount);
-		if (data)
-		{
-			SNDDMA_AudioCallback(userdata, data, additional_amount);
-			SDL_PutAudioStreamData(stream, data, additional_amount);
-			SDL_stack_free(data);
-		}
 	}
 }
 
@@ -304,9 +290,9 @@ qboolean SNDDMA_Init(void)
 		tmp = 16;
 	}
 
-	desired.freq = SNDDMA_KHzToHz(s_khz->integer); // desired freq expects Hz not kHz
-
-	desired.format = ((tmp == 16) ? SDL_AUDIO_S16 : SDL_AUDIO_U8);
+	desired.freq     = SNDDMA_KHzToHz(s_khz->integer); // desired freq expects Hz not kHz
+	desired.format   = ((tmp == 16) ? SDL_AUDIO_S16 : SDL_AUDIO_U8);
+	desired.channels = (int) s_sdlChannels->value;
 
 	// I dunno if this is the best idea, but I'll give it a try...
 	//  should probably check a cvar for this...
@@ -320,10 +306,8 @@ qboolean SNDDMA_Init(void)
 	}
 
 	SDL_SetHint(SDL_HINT_AUDIO_DEVICE_SAMPLE_FRAMES, va("%i", desired_samples));
-	desired.channels = (int) s_sdlChannels->value;
 
 	ids = SDL_GetAudioPlaybackDevices(&count);
-
 	if (s_device->integer >= 0 && s_device->integer < count)
 	{
 		device_name = SDL_GetAudioDeviceName(ids[s_device->integer]);
@@ -338,7 +322,7 @@ qboolean SNDDMA_Init(void)
 	}
 	device = s_device->integer >= 0 ? ids[s_device->integer]:SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK;
 
-	stream = SDL_OpenAudioDeviceStream(device, &desired, SNDDMA_AudioCallbackSDL3TMPPort, NULL);
+	stream = SDL_OpenAudioDeviceStream(device, &desired, SNDDMA_AudioCallback, NULL);
 	if (stream == 0)
 	{
 		Com_Printf("SDL_OpenAudioDevice() failed: %s\n", SDL_GetError());
