@@ -277,7 +277,7 @@ dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char 
 		break;
 	}
 
-	if (SDL_ShowMessageBox(&data, &buttonId) < 0)
+	if (!SDL_ShowMessageBox(&data, &buttonId))
 	{
 		Com_Printf(S_COLOR_RED "error displaying message box\n");
 		return DR_ERROR;

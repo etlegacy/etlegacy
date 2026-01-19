@@ -609,10 +609,10 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	int                   major, minor, contextVersion, samples;
 	int                   perChannelColorBits;
 	int                   colorBits, depthBits, stencilBits;
-	int                   i     = 0;
-	SDL_Surface           *icon = NULL;
-	const SDL_DisplayMode *desktopMode;
-	SDL_DisplayID         display = displays.ids[0];
+	int                   i            = 0;
+	SDL_Surface           *icon        = NULL;
+	const SDL_DisplayMode *desktopMode = NULL;
+	SDL_DisplayID         display      = displays.ids[0];
 	int                   x = SDL_WINDOWPOS_UNDEFINED, y = SDL_WINDOWPOS_UNDEFINED;
 
 	Uint32 flags = SDL_WINDOW_MOUSE_GRABBED;
@@ -638,7 +638,9 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
-	icon = SDL_CreateSurfaceFrom(CLIENT_WINDOW_ICON.width, CLIENT_WINDOW_ICON.height, SDL_PIXELFORMAT_RGBA32, (void *)CLIENT_WINDOW_ICON.pixel_data, CLIENT_WINDOW_ICON.bytes_per_pixel);
+	icon = SDL_CreateSurfaceFrom(CLIENT_WINDOW_ICON.width, CLIENT_WINDOW_ICON.height,
+	                             SDL_PIXELFORMAT_RGBA32, (void *)CLIENT_WINDOW_ICON.pixel_data,
+	                             CLIENT_WINDOW_ICON.bytes_per_pixel * CLIENT_WINDOW_ICON.width);
 
 	// If a window exists, note its display index
 	if (main_window != NULL)
@@ -673,7 +675,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	else
 	{
 		Com_Printf("Cannot estimate display aspect, assuming 1.333\n");
-		Com_Error(ERR_FATAL, "Cannot estimate display aspect: %s\n", SDL_GetError());
 	}
 
 	Com_Printf("...setting mode %d: ", mode);
@@ -681,7 +682,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	if (mode == -2)
 	{
 		// use desktop video resolution
-		if (desktopMode->h > 0)
+		if (desktopMode && desktopMode->h > 0)
 		{
 			glConfig->vidWidth  = desktopMode->w;
 			glConfig->vidHeight = desktopMode->h;
@@ -765,6 +766,12 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	for (i = 0; i < 16; i++)
 	{
 		int testColorBits, testDepthBits, testStencilBits;
+
+		if (main_window)
+		{
+			SDL_DestroyWindow(main_window);
+			main_window = NULL;
+		}
 
 		// 0 - default
 		// 1 - minus colorBits
@@ -884,38 +891,15 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		}
 
 		main_window = SDL_CreateWindow(GlobalGameTitle, glConfig->vidWidth, glConfig->vidHeight, flags);
-		if (x != SDL_WINDOWPOS_UNDEFINED && y != SDL_WINDOWPOS_UNDEFINED)
-		{
-			SDL_SetWindowPosition(main_window, x, y);
-		}
-
 		if (!main_window)
 		{
 			Com_Printf("SDL_CreateWindow failed: %s\n", SDL_GetError());
 			continue;
 		}
 
-		if (fullscreen)
+		if (x != SDL_WINDOWPOS_UNDEFINED && y != SDL_WINDOWPOS_UNDEFINED)
 		{
-			SDL_DisplayMode modeFullScreen;
-			Com_Memset(&modeFullScreen, 0, sizeof(SDL_DisplayMode));
-
-			switch (testColorBits)
-			{
-			case 16: modeFullScreen.format = SDL_PIXELFORMAT_RGB565; break;
-			case 24: modeFullScreen.format = SDL_PIXELFORMAT_RGB24;  break;
-			default: Com_Printf("SDL_SetWindowDisplayMode failed: testColorBits is %d, can't fullscreen\n", testColorBits); continue;
-			}
-
-			modeFullScreen.w            = glConfig->vidWidth;
-			modeFullScreen.h            = glConfig->vidHeight;
-			modeFullScreen.refresh_rate = glConfig->displayFrequency = r_displayRefresh->integer;
-
-			if (!SDL_SetWindowFullscreenMode(main_window, &modeFullScreen))
-			{
-				Com_Printf("SDL_SetWindowDisplayMode failed: %s\n", SDL_GetError());
-				continue;
-			}
+			SDL_SetWindowPosition(main_window, x, y);
 		}
 
 		SDL_SetWindowIcon(main_window, icon);
@@ -952,11 +936,13 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		if (!SDL_GL_MakeCurrent(main_window, SDL_glContext))
 		{
 			Com_Printf("SDL_GL_MakeCurrent failed: %s\n", SDL_GetError());
+			continue;
 		}
 
 		if (!SDL_GL_SetSwapInterval(r_swapInterval->integer))
 		{
 			Com_Printf("SDL_GL_SetSwapInterval failed: %s\n", SDL_GetError());
+			continue;
 		}
 
 		glConfig->colorBits   = testColorBits;
@@ -980,6 +966,39 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	{
 		Com_Printf("Too old OpenGL driver or hardware");
 		return RSERR_OLD_GL;
+	}
+
+	if (fullscreen)
+	{
+		SDL_DisplayID   displayId = SDL_GetDisplayForWindow(main_window);
+		SDL_DisplayMode fullscreenMode;
+		qboolean        modeSet     = qfalse;
+		float           refreshRate = (float)r_displayRefresh->integer;
+
+		if (r_mode->integer != -2)
+		{
+			if (SDL_GetClosestFullscreenDisplayMode(displayId, glConfig->vidWidth, glConfig->vidHeight, refreshRate, qfalse, &fullscreenMode))
+			{
+				modeSet = SDL_SetWindowFullscreenMode(main_window, &fullscreenMode);
+			}
+		}
+
+		if (!modeSet)
+		{
+			modeSet = SDL_SetWindowFullscreenMode(main_window, NULL);
+		}
+
+		if (!modeSet || !SDL_SetWindowFullscreen(main_window, qtrue))
+		{
+			Com_Printf("SDL_SetWindowFullscreen failed: %s\n", SDL_GetError());
+			return RSERR_INVALID_FULLSCREEN;
+		}
+
+		glConfig->isFullscreen = qtrue;
+	}
+	else
+	{
+		glConfig->isFullscreen = qfalse;
 	}
 
 	SDL_DestroySurface(icon);
