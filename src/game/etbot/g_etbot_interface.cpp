@@ -35,7 +35,7 @@
 
 extern "C"
 {
-#include "../src/game/g_etbot_interface.h"
+#include "../g_etbot_interface.h"
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 };
 
