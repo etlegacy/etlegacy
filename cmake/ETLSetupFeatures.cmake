@@ -89,6 +89,7 @@ if(BUILD_CLIENT)
 		target_link_libraries(client_libraries INTERFACE SDL3::SDL3)
 	else() # BUNDLED_SDL
 		if(MINGW AND WIN32)
+			# FIXME: check if this is still needed with SDL3!
 			# We append the mingw32 library to the client list since SDL2Main requires it
 			target_link_libraries(client_libraries INTERFACE mingw32)
 		endif()
