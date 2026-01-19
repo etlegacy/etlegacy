@@ -383,7 +383,7 @@ if(BUILD_MOD)
 	if(FEATURE_OMNIBOT)
 		target_compile_definitions(qagame_libraries INTERFACE FEATURE_OMNIBOT)
 		target_sources(qagame_libraries INTERFACE
-			"${PROJECT_SOURCE_DIR}/vendor/g_etbot_interface.cpp"
+			"${PROJECT_SOURCE_DIR}/src/game/etbot/g_etbot_interface.cpp"
 			"${PROJECT_SOURCE_DIR}/vendor/Omnibot/Common/BotLoadLibrary.cpp"
 		)
 	endif()
