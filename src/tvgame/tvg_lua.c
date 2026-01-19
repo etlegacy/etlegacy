@@ -18,7 +18,7 @@
 #endif
 
 #ifdef FEATURE_LUAJIT
-#include "../luajit/compat.h"
+#include "../game/luajit_compat.h"
 #endif
 
 extern field_t fields[];

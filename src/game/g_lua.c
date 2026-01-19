@@ -18,7 +18,7 @@
 #endif
 
 #ifdef FEATURE_LUAJIT
-#include "../luajit/compat.h"
+#include "luajit_compat.h"
 #endif
 
 #ifdef FEATURE_OMNIBOT
