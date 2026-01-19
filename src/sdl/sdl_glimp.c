@@ -136,7 +136,13 @@ static void Glimp_InitDisplayList(void)
 {
 	int           i;
 	SDL_DisplayID *ids = NULL;
+
 	ids = SDL_GetDisplays(&displays.count);
+	if (!ids)
+	{
+		Com_Error(ERR_FATAL, "Could not get display list: %s\n", SDL_GetError());
+	}
+
 	for (i = 0; i < displays.count; i++)
 	{
 		displays.ids[i] = ids[i];
@@ -649,13 +655,16 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	{
 		// the format for r_windowLocation is normally "displayIndex,x,y", so unless the user manually
 		// sets this to some weird value, this resolves just to the displayIndex value
-		display = Q_atoi(r_windowLocation->string);
+		int displayIndex = Q_atoi(r_windowLocation->string);
 
 		// bogus value for r_windowLocation, default to display 0
-		if (display < 0 || display >= displays.count)
+		if (displayIndex < 0 || displayIndex >= displays.count)
 		{
 			Com_Printf("Cannot determine display to start on, falling back to default\n");
-			display = 0;
+		}
+		else
+		{
+			display = displays.ids[displayIndex];
 		}
 	}
 
@@ -1019,10 +1028,7 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 			return qfalse;
 		}
 
-		// if (Q_stricmp(Info_ValueForKey(glConfigString, "renderer"), "software") == 0)
-		// {
-		// 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 0);
-		// }
+		Glimp_InitDisplayList();
 
 #ifdef FEATURE_RENDERER_VULKAN
 		if (Q_stricmp(Info_ValueForKey(glConfigString, "type"), "vulkan") == 0)

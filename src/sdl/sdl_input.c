@@ -635,7 +635,6 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
 	static qboolean mouse_grabbed = qfalse, mouse_relative = qfalse;
 #if !defined(__ANDROID__) || (defined(__ANDROID__) && defined(__ANDROID_API__) > 23)
-	int relative_result = 0;
 #endif
 
 	if (relative == !mouse_relative)
@@ -651,17 +650,9 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 #if !defined(__ANDROID__) || (defined(__ANDROID__) && defined(__ANDROID_API__) > 23)
 		// On Android Phones with API <= 23 this is causing App to close since it could not
 		// set relative mouse location (Mouse location is always at top left side of screen)
-		if ((relative_result = SDL_SetWindowRelativeMouseMode(mainScreen, (bool)relative)) != 0)
+		if (!SDL_SetWindowRelativeMouseMode(mainScreen, (bool)relative))
 		{
-			// FIXME: this happens on some systems (IR4)
-			if (relative_result == -1)
-			{
-				Com_Error(ERR_FATAL, "Setting relative mouse location fails (system not supported)\n");
-			}
-			else
-			{
-				Com_Error(ERR_FATAL, "Setting relative mouse location fails: %s\n", SDL_GetError());
-			}
+			Com_Error(ERR_FATAL, "Setting relative mouse location fails: %s\n", SDL_GetError());
 		}
 #endif
 		mouse_relative = relative;
@@ -868,7 +859,7 @@ static void IN_InitJoystick(void)
 
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
-		if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
+		if (!SDL_Init(SDL_INIT_JOYSTICK))
 		{
 			Com_Printf(S_COLOR_RED "Joystick initialization failed: %s\n", SDL_GetError());
 			return;
@@ -877,7 +868,7 @@ static void IN_InitJoystick(void)
 
 	if (!SDL_WasInit(SDL_INIT_GAMEPAD))
 	{
-		if (SDL_Init(SDL_INIT_GAMEPAD) != 0)
+		if (!SDL_Init(SDL_INIT_GAMEPAD))
 		{
 			Com_Printf(S_COLOR_RED "Gamepad initialization failed: %s\n", SDL_GetError());
 			return;
@@ -1534,7 +1525,7 @@ static void IN_ProcessEvents(void)
 		case SDL_EVENT_TEXT_INPUT:
 			if (lastKeyDown != CONSOLE_KEY)
 			{
-				char *c = e.text.text;
+				const unsigned char *c = (unsigned char *)e.text.text;
 
 				// Quick and dirty UTF-8 to UTF-32 conversion
 				while (*c)
@@ -1693,6 +1684,10 @@ static void IN_ProcessEvents(void)
 
 			break;
 		case SDL_EVENT_DROP_FILE:
+			if (!e.drop.data)
+			{
+				break;
+			}
 			Com_Printf(S_COLOR_YELLOW "Drop file: %s received\n", e.drop.data);
 
 			if (!Q_strncmp(e.drop.data, "et://", 5))
@@ -1708,7 +1703,6 @@ static void IN_ProcessEvents(void)
 				// Set the FS to "dirty" mode for the demo playback
 				Cbuf_AddText(va("demo dirty \"%s\"", buffer));
 			}
-			SDL_free(e.drop.data);
 			break;
 		case SDL_EVENT_QUIT:
 			Cbuf_ExecuteText(EXEC_NOW, "quit Closed window\n");
