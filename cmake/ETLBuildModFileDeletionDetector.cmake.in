@@ -1,0 +1,40 @@
+set(ETMAIN_STAGE_DIR "@ETMAIN_STAGE_DIR@")
+set(ETMAIN_CURRENT_LIST_FILE "@ETMAIN_CURRENT_LIST_FILE@")
+set(ETMAIN_PREV_LIST_FILE "@ETMAIN_PREV_LIST_FILE@")
+
+set(ETMAIN_PREV_LIST "")
+if(EXISTS "${ETMAIN_PREV_LIST_FILE}")
+	file(READ "${ETMAIN_PREV_LIST_FILE}" ETMAIN_PREV_CONTENT)
+	if(NOT ETMAIN_PREV_CONTENT STREQUAL "")
+		string(REPLACE "\n" ";" ETMAIN_PREV_LIST "${ETMAIN_PREV_CONTENT}")
+	endif()
+endif()
+
+set(ETMAIN_CURRENT_LIST "")
+if(EXISTS "${ETMAIN_CURRENT_LIST_FILE}")
+	file(READ "${ETMAIN_CURRENT_LIST_FILE}" ETMAIN_CURRENT_CONTENT)
+	if(NOT ETMAIN_CURRENT_CONTENT STREQUAL "")
+		string(REPLACE "\n" ";" ETMAIN_CURRENT_LIST "${ETMAIN_CURRENT_CONTENT}")
+	endif()
+else()
+	set(ETMAIN_CURRENT_CONTENT "")
+endif()
+
+# Only remove entries that disappeared from etmain.
+# Print a status message only when removals are detected.
+set(ETMAIN_REMOVED_FOUND FALSE)
+foreach(REL IN LISTS ETMAIN_PREV_LIST)
+	if(NOT REL STREQUAL "")
+		list(FIND ETMAIN_CURRENT_LIST "${REL}" ETMAIN_REL_INDEX)
+		if(ETMAIN_REL_INDEX EQUAL -1)
+			set(ETMAIN_REMOVED_FOUND TRUE)
+			file(REMOVE_RECURSE "${ETMAIN_STAGE_DIR}/${REL}")
+		endif()
+	endif()
+endforeach()
+
+if(ETMAIN_REMOVED_FOUND)
+	message(STATUS "Cleaned 'legacy' output due to 'etmain' file deletions.")
+endif()
+
+file(WRITE "${ETMAIN_PREV_LIST_FILE}" "${ETMAIN_CURRENT_CONTENT}")
