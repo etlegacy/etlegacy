@@ -1686,87 +1686,6 @@ static void ParseSurfaceParm(char **text)
 	}
 }
 
-static char *SkipSimpleWhitespace(char *data)
-{
-	while (*data && *data <= ' ')
-	{
-		data++;
-	}
-
-	return data;
-}
-
-static void ParseMaxPicMipToken(const char *token)
-{
-	int maxPicMip;
-
-	if (!token || !token[0])
-	{
-		Ren_Warning("WARNING: missing value for 'maxpicmip' in shader '%s'\n", shader.name);
-		return;
-	}
-
-	maxPicMip = Q_atoi(token);
-	if (maxPicMip < 0)
-	{
-		shader.maxPicMip = -1;
-	}
-	else
-	{
-		shader.maxPicMip = Com_Clamp(0, 3, maxPicMip);
-	}
-}
-
-static qboolean ParseEtlDirective(char **text)
-{
-	char   *data;
-	char   *lineStart;
-	char   lineBuffer[MAX_STRING_CHARS];
-	char   *linePtr;
-	char   *token;
-	size_t lineLen;
-
-	if (!text || !*text)
-	{
-		return qfalse;
-	}
-
-	data = SkipSimpleWhitespace(*text);
-	if (data[0] != '/' || data[1] != '/' || data[2] != '/')
-	{
-		return qfalse;
-	}
-
-	lineStart = SkipSimpleWhitespace(data + 3);
-	lineLen   = 0;
-	while (lineStart[lineLen] && lineStart[lineLen] != '\n')
-	{
-		lineLen++;
-	}
-	if (lineLen >= sizeof(lineBuffer))
-	{
-		lineLen = sizeof(lineBuffer) - 1;
-	}
-	Com_Memcpy(lineBuffer, lineStart, lineLen);
-	lineBuffer[lineLen] = '\0';
-
-	linePtr = lineBuffer;
-	token   = COM_ParseExt(&linePtr, qfalse);
-	if (token[0] && !Q_stricmp(token, "maxpicmip"))
-	{
-		token = COM_ParseExt(&linePtr, qfalse);
-		ParseMaxPicMipToken(token);
-	}
-
-	while (*data && *data != '\n')
-	{
-		data++;
-	}
-	*text = data;
-
-	return qtrue;
-}
-
 /**
  * @brief The current text pointer is at the explicit text definition of the
  * shader. Parse it into the global shader variable.
@@ -1791,7 +1710,7 @@ static qboolean ParseShader(char **text)
 
 	while (1)
 	{
-		if (ParseEtlDirective(text))
+		if (R_ParseEtlDirective(text, &shader.maxPicMip, shader.name, qfalse))
 		{
 			continue;
 		}
