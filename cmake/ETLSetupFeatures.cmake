@@ -85,7 +85,7 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(NOT BUNDLED_SDL)
-        find_package(SDL3 3.1.3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
+        find_package(SDL3 3.2.0 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 		target_link_libraries(client_libraries INTERFACE SDL3::SDL3)
 	else() # BUNDLED_SDL
 		if(MINGW AND WIN32)

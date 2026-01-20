@@ -114,14 +114,14 @@ static struct
 	char *stringFormat;
 } formatToStringTable[] =
 {
-	{ SDL_AUDIO_U8,    "AUDIO_U8"     },
-	{ SDL_AUDIO_S8,    "AUDIO_S8"     },
-	{ SDL_AUDIO_S16LE, "AUDIO_S16LSB" },
-	{ SDL_AUDIO_S16BE, "AUDIO_S16MSB" },
-	{ SDL_AUDIO_S32LE, "AUDIO_S32LSB" },
-	{ SDL_AUDIO_S32BE, "AUDIO_S32MSB" },
-	{ SDL_AUDIO_F32LE, "AUDIO_F32LSB" },
-	{ SDL_AUDIO_F32BE, "AUDIO_F32MSB" },
+	{ SDL_AUDIO_U8,    "SDL_AUDIO_U8"    },
+	{ SDL_AUDIO_S8,    "SDL_AUDIO_S8"    },
+	{ SDL_AUDIO_S16LE, "SDL_AUDIO_S16LE" },
+	{ SDL_AUDIO_S16BE, "SDL_AUDIO_S16BE" },
+	{ SDL_AUDIO_S32LE, "SDL_AUDIO_S32LE" },
+	{ SDL_AUDIO_S32BE, "SDL_AUDIO_S32BE" },
+	{ SDL_AUDIO_F32LE, "SDL_AUDIO_F32LE" },
+	{ SDL_AUDIO_F32BE, "SDL_AUDIO_F32BE" },
 };
 
 static int formatToStringTableSize = ARRAY_LEN(formatToStringTable);
@@ -131,7 +131,7 @@ static int formatToStringTableSize = ARRAY_LEN(formatToStringTable);
  * @param[in] str
  * @param[in] spec
  */
-static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
+static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec, const int samples)
 {
 	int  i;
 	char *fmt = NULL;
@@ -156,6 +156,7 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 	}
 
 	Com_Printf("  Freq:     %d\n", spec->freq);
+	Com_Printf("  Samples:  %d\n", samples);
 	Com_Printf("  Channels: %d\n", (int) spec->channels);
 }
 
@@ -164,6 +165,19 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
  */
 static int SNDDMA_KHzToHz(int khz)
 {
+	#if 1 //FIXME: SDL3 only supports 44/48kHz it seems, fix later
+	switch (khz)
+	{
+	case 11:
+	case 22:
+	case 44:
+		return 44100;
+	case 48:
+		return 48000;
+	default:
+		return 44100;
+	}
+	#else
 	switch (khz)
 	{
 	case 11:
@@ -177,6 +191,7 @@ static int SNDDMA_KHzToHz(int khz)
 	default:
 		return 22050; // default vanilla
 	}
+	#endif
 }
 
 /**
@@ -243,7 +258,7 @@ qboolean SNDDMA_Init(void)
 	const char        *device_name;
 	int               tmp;
 	int               count;
-	int               desired_samples, obtained_samples;
+	int               desired_samples, obtained_samples = 0;
 
 	if (snd_inited)
 	{
@@ -321,6 +336,10 @@ qboolean SNDDMA_Init(void)
 
 	device = s_device->integer >= 0 ? ids[s_device->integer]:SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK;
 
+	#ifdef ETLEGACY_DEBUG
+	SNDDMA_PrintAudiospec("Requested SDL_AudioSpec", &desired, desired_samples);
+	#endif
+
 	stream = SDL_OpenAudioDeviceStream(device, &desired, SNDDMA_AudioCallback, NULL);
 	if (stream == 0)
 	{
@@ -330,21 +349,18 @@ qboolean SNDDMA_Init(void)
 	}
 
 	device = SDL_GetAudioStreamDevice(stream);
-
 	if (device)
 	{
 		device_name = SDL_GetAudioDeviceName(device);
 		Com_Printf("Acquiring audio device: %s\n", device_name);
 	}
 
-	Com_Memset(&desired, '\0', sizeof(desired));
 	if (!SDL_GetAudioDeviceFormat(device, &obtained, &obtained_samples))
 	{
 		Com_Printf("SDL_GetAudioDeviceFormat() failed: %s\n", SDL_GetError());
 		return qfalse;
 	}
-
-	SNDDMA_PrintAudiospec("SDL_AudioSpec", &obtained);
+	SNDDMA_PrintAudiospec("SDL_AudioSpec", &obtained, obtained_samples);
 
 	// dma.samples needs to be big, or id's mixer will just refuse to
 	//  work at all; we need to keep it significantly bigger than the
@@ -362,14 +378,15 @@ qboolean SNDDMA_Init(void)
 		}
 		else
 		{
-			tmp = SND_SamplesForFreq(obtained.freq, s_sdlLevelSamps->integer);
+			tmp = SND_SamplesForFreq(obtained.freq, s_sdlLevelSamps->integer) * obtained.channels * 4;
 		}
 	}
 
 	if (tmp & (tmp - 1))  // not a power of two? Seems to confuse something.
 	{
 		int val = 1;
-		while (val < tmp)
+		Com_DPrintf("SDL audio DMA buffer size %d is not a power of two, adjusting...\n", tmp);
+		while (val <= tmp)
 			val <<= 1;
 
 		tmp = val;
