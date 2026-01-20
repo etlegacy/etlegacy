@@ -38,7 +38,7 @@
 
 #include "../qcommon/q_shared.h"
 #include "../renderercommon/tr_types.h"
-#include "keycodes.h"
+#include "../qcommon/keycodes.h"
 
 #include "../../etmain/ui/menudef.h"
 
