@@ -36,7 +36,7 @@
 #define INCLUDE_KEYS_H
 
 #include "../qcommon/qcommon.h"
-#include "../ui/keycodes.h"
+#include "../qcommon/keycodes.h"
 
 /**
  * @struct qkey_s
