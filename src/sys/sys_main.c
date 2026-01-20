@@ -1337,6 +1337,10 @@ static int Sys_GameLoop(void)
 	return return_code;
 }
 
+#if !defined (DEDICATED)
+#    include <SDL3/SDL_main.h>
+#endif
+
 /**
  * @brief SDL_main
  * @param[in] argc

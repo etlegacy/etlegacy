@@ -162,17 +162,10 @@ void IN_SetClipboardData(const char *text)
  */
 qboolean IN_IsNumLockDown(void)
 {
-#ifdef _WIN32
-	if (GetKeyState(VK_NUMLOCK) & 0x01)
-	{
-		return qtrue;
-	}
-#else
 	if (SDL_GetModState() & SDL_KMOD_NUM)
 	{
 		return qtrue;
 	}
-#endif
 
 	return qfalse;
 }
