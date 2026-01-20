@@ -1664,9 +1664,10 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 		ret->shiftHealthBarDynamicColorStyle = qtrue;
 	// fall through    
 	case 4:         // 2.84 - weapon icon dynamic health style replace by only ticking style due to split with weapon heat bar
-					// - circular style has been added for bar, requiring shifting Dynamic Color style value
 		ret->replaceWeaponIconStyle        = qtrue;
 		ret->addNoEchoToPopupmessageFilter = qtrue;
+	// fall through
+	case 5:         // 2.84 - circular style has been added for bar, requiring shifting Dynamic Color style value
 		ret->shiftHealthBarDynamicColorStyle2 = qtrue;
 		break;
 	default:

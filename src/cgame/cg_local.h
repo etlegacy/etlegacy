@@ -4202,7 +4202,7 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 24
-#define CURRENT_HUD_JSON_VERSION 5
+#define CURRENT_HUD_JSON_VERSION 6
 #define DEFAULTHUD "ETmain"
 
 typedef struct

@@ -315,6 +315,11 @@ extern vmCvar_t cg_scopeReticleDotThickness;
 
 extern vmCvar_t cg_commandMapTime;
 
+extern vmCvar_t cg_circleDensityPoint;
+extern vmCvar_t cg_circleStartAngle;  
+extern vmCvar_t cg_circleEndAngle;    
+extern vmCvar_t cg_circleThickness; 
+
 void CG_RegisterCvars(void);
 
 #endif  // #ifndef INCLUDE_CG_CVARS_H
