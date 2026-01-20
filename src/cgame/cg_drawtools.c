@@ -445,10 +445,17 @@ void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float 
 	float size           = WHITE_SHADER_SIZE_COEFF / (1 / cg_circleThickness.value);
 	float slice          = ((PI_PER_2 - DEG2RAD(360 - cg_circleEndAngle.value)) / numberOfSquare) * ((flags & BAR_VERT) ? 1 : -1);     // BAR_VERT control circle direction
 
+	// adjust circle position and size to ensure it doesn't go out of bound
+	x -= size * 0.5;
+	y -= size * 0.5;
+	w -= size * 0.5;
+	h -= size * 0.5;
+
 	frac = Com_Clamp(0, 1.f, frac);
 
 	Vector4Scale(startColor, frac, colorAtPos);
 
+	// draw each point of the circles
 	for (i = 0; i <= numberOfSquare * frac; ++i)
 	{
 		// start at 0°
@@ -469,11 +476,13 @@ void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float 
 		CG_DrawRotatedPic(x + w * cosf(theta), y + h * sinf(theta), size, size, cgs.media.whiteShader, (theta + M_PI_4) / PI_PER_2);
 	}
 
+	// handle icon draw in the circle center
 	if (flags & BAR_ICON && icon > -1)
 	{
 		int iconW = MIN(w, h) * 0.25;
 		int iconH = iconW;
 
+		// adjust icon for stamina draw
 		if (icon == cgs.media.hudPowerIcon)
 		{
 			iconW *= .5f;
