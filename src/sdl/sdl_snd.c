@@ -165,19 +165,6 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec, co
  */
 static int SNDDMA_KHzToHz(int khz)
 {
-	#if 1 //FIXME: SDL3 only supports 44/48kHz it seems, fix later
-	switch (khz)
-	{
-	case 11:
-	case 22:
-	case 44:
-		return 44100;
-	case 48:
-		return 48000;
-	default:
-		return 44100;
-	}
-	#else
 	switch (khz)
 	{
 	case 11:
@@ -191,7 +178,6 @@ static int SNDDMA_KHzToHz(int khz)
 	default:
 		return 22050; // default vanilla
 	}
-	#endif
 }
 
 /**
@@ -251,14 +237,13 @@ int SND_SamplesForFreq(int freq, int level)
 qboolean SNDDMA_Init(void)
 {
 	SDL_AudioSpec     desired;
-	SDL_AudioSpec     obtained;
 	SDL_AudioDeviceID *ids;
 	SDL_AudioDeviceID device;
 	const char        *driver_name;
 	const char        *device_name;
 	int               tmp;
 	int               count;
-	int               desired_samples, obtained_samples = 0;
+	int               desired_samples;
 
 	if (snd_inited)
 	{
@@ -299,8 +284,7 @@ qboolean SNDDMA_Init(void)
 		Com_Printf("SDL audio driver isn't initialized.\n");
 	}
 
-	Com_Memset(&desired, '\0', sizeof(desired));
-	Com_Memset(&obtained, '\0', sizeof(obtained));
+	Com_Memset(&desired, 0, sizeof(desired));
 
 	tmp = ((int) s_bits->value);
 	if ((tmp != 16) && (tmp != 8))
@@ -355,13 +339,6 @@ qboolean SNDDMA_Init(void)
 		Com_Printf("Acquiring audio device: %s\n", device_name);
 	}
 
-	if (!SDL_GetAudioDeviceFormat(device, &obtained, &obtained_samples))
-	{
-		Com_Printf("SDL_GetAudioDeviceFormat() failed: %s\n", SDL_GetError());
-		return qfalse;
-	}
-	SNDDMA_PrintAudiospec("SDL_AudioSpec", &obtained, obtained_samples);
-
 	// dma.samples needs to be big, or id's mixer will just refuse to
 	//  work at all; we need to keep it significantly bigger than the
 	//  amount of SDL callback samples, and just copy a little each time
@@ -372,13 +349,13 @@ qboolean SNDDMA_Init(void)
 	tmp = s_sdlMixSamps->value;
 	if (!tmp)
 	{
-		if (obtained_samples > 0)
+		if (desired_samples > 0)
 		{
-			tmp = (obtained_samples * obtained.channels) * 10;
+			tmp = (desired_samples * desired.channels) * 10;
 		}
 		else
 		{
-			tmp = SND_SamplesForFreq(obtained.freq, s_sdlLevelSamps->integer) * obtained.channels * 4;
+			tmp = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer) * desired.channels * 4;
 		}
 	}
 
@@ -393,11 +370,11 @@ qboolean SNDDMA_Init(void)
 	}
 
 	dmapos               = 0;
-	dma.samplebits       = SDL_AUDIO_BITSIZE(obtained.format); // first byte of format is bits.
-	dma.channels         = obtained.channels;
+	dma.samplebits       = SDL_AUDIO_BITSIZE(desired.format); // first byte of format is bits.
+	dma.channels         = desired.channels;
 	dma.samples          = tmp;
 	dma.submission_chunk = 1;
-	dma.speed            = obtained.freq;
+	dma.speed            = desired.freq;
 	dmasize              = (dma.samples * (dma.samplebits / 8));
 	dma.buffer           = calloc(1, dmasize);
 	if (!dma.buffer)
