@@ -308,18 +308,14 @@ qboolean SNDDMA_Init(void)
 	SDL_SetHint(SDL_HINT_AUDIO_DEVICE_SAMPLE_FRAMES, va("%i", desired_samples));
 
 	ids = SDL_GetAudioPlaybackDevices(&count);
-	if (s_device->integer >= 0 && s_device->integer < count)
-	{
-		device_name = SDL_GetAudioDeviceName(ids[s_device->integer]);
-		Com_Printf("Acquiring audio device: %s\n", device_name);
-	}
-	else
+	if (s_device->integer < 0 || s_device->integer >= count)
 	{
 		device_name = NULL;
 
 		//Reset the cvar just in case
 		Cvar_Set("s_device", "-1");
 	}
+
 	device = s_device->integer >= 0 ? ids[s_device->integer]:SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK;
 
 	stream = SDL_OpenAudioDeviceStream(device, &desired, SNDDMA_AudioCallback, NULL);
@@ -331,6 +327,13 @@ qboolean SNDDMA_Init(void)
 	}
 
 	device = SDL_GetAudioStreamDevice(stream);
+
+	if (device)
+	{
+		device_name = SDL_GetAudioDeviceName(device);
+		Com_Printf("Acquiring audio device: %s\n", device_name);
+	}
+
 	Com_Memset(&desired, '\0', sizeof(desired));
 	if (!SDL_GetAudioDeviceFormat(device, &obtained, &obtained_samples))
 	{

@@ -319,7 +319,7 @@ static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 */
 void GLimp_ModeList_f(void)
 {
-	int                   i, j, numModes = 0;
+	int                   i, numModes = 0;
 	const SDL_DisplayMode *displayMode;
 	SDL_DisplayMode       **modes;
 	SDL_DisplayID         display;
@@ -1028,13 +1028,6 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 		{
 			SDL_setenv_unsafe("SDL_VIDEODRIVER", r_sdlDriver->string, 0);
 		}
-
-#ifdef WIN32
-		// This hint must be set before initializing the video subsystem.
-		// The main purpose of declaring DPI awareness is to disable OS bitmap
-		// scaling of SDL windows on monitors with a DPI scale factor.
-		SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "system");
-#endif
 
 		if (!SDL_Init(SDL_INIT_VIDEO))
 		{

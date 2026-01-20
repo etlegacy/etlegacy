@@ -191,7 +191,7 @@ elseif(WIN32)
 	target_link_libraries(os_libraries INTERFACE wsock32 ws2_32 psapi winmm)
 
 	if(FEATURE_SSL)
-		target_link_libraries(os_libraries INTERFACE Crypt32)
+		target_link_libraries(os_libraries INTERFACE Crypt32 Secur32 Iphlpapi)
 	endif()
 
 	if(BUNDLED_SDL)
