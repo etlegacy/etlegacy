@@ -100,6 +100,8 @@ JNIEXPORT void JNICALL Java_com_etlegacy_app_ETLActivity_sendToC(JNIEnv *env, jo
 	shootBtnRect.bottom = (float) bottom;
 }
 
+int finger_count = 1;
+
 // Check if touch coordinates are within margin_rect
 static qboolean IsTouchInMargin(float x, float y)
 {
@@ -671,7 +673,7 @@ static void IN_ActivateMouse(void)
 	if (!mouseActive)
 	{
 #ifdef __ANDROID__
-		SDL_ShowCursor(qfalse);
+		SDL_ShowCursor();
 #endif
 		IN_GrabMouse(qtrue, qtrue);
 
@@ -1571,7 +1573,7 @@ static void IN_ProcessEvents(void)
 #ifdef __ANDROID__
 		case SDL_EVENT_FINGER_DOWN:
 			// Only process if no touch is active and this is the first finger
-			if (!touchState.firstFinger && SDL_GetNumTouchFingers(e.tfinger.touchID) == 1)
+			if (!touchState.firstFinger && SDL_GetTouchFingers(e.tfinger.touchID, &finger_count))
 			{
 				touchState.fingerId    = e.tfinger.fingerID;
 				touchState.touchId     = e.tfinger.touchID;
@@ -1592,7 +1594,7 @@ static void IN_ProcessEvents(void)
 			if (touchState.firstFinger &&
 			    touchState.fingerId == e.tfinger.fingerID &&
 			    touchState.touchId == e.tfinger.touchID &&
-			    SDL_GetNumTouchFingers(e.tfinger.touchID) == 1)
+			    SDL_GetTouchFingers(e.tfinger.touchID, &finger_count))
 			{
 				// Calculate delta movement (inside or outside margin)
 				float dx = (e.tfinger.x - touchState.lastX) * cls.glconfig.vidWidth;
