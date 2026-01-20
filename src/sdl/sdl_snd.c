@@ -65,6 +65,9 @@ static SDL_AudioStream *stream = NULL;
  */
 static void SNDDMA_AudioCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount)
 {
+	(void) userdata;
+	(void) total_amount;
+
 	/* shouldn't happen, but just in case... */
 	if (!snd_inited || additional_amount <= 0)
 	{

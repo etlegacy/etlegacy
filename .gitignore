@@ -3,6 +3,7 @@
 #
 /legacy
 /build*/
+/out/
 /project
 /obj
 /doc
