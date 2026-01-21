@@ -189,12 +189,6 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	float  x2 = x, x3 = x, y2 = y, y3 = y, w2 = w, h2 = h;
 	float  iconW, iconH;
 
-	if (flags & BAR_CIRCULAR)
-	{
-		CG_DrawCircle(x + w * .5f, y + h * .5f, w * 0.5f, h * 0.5f, startColor, endColor, bgColor, bdColor, frac, needleFrac, flags, icon);
-		return;
-	}
-
 	frac = Com_Clamp(0, 1.f, frac);
 
 	if ((flags & BAR_BG) && bgColor)       // BAR_BG set, and color specified, use specified bg color
@@ -431,25 +425,46 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
  * @param[in] needleFrac
  * @param[in] flags
  * @param[in] icon
+ * @param[in] density
+ * @param[in] start
+ * @param[in] end
+ * @param[in] thickness
  */
 void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float *endColor,
-                   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon)
+                   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon,
+                   float density, float start, float end, float thickness)
 {
 	int    i;
 	vec4_t colorAtPos;
+	float  startAngle;
+	float  numberOfSquare;
+	float  size;
+	float  slice;
+
+	// ensure density and tickness are valid
+	// otherwise div by 0 will happen
+	if (!density || !thickness)
+	{
+		return;
+	}
 
 	// start at 0°
 	// BAR_LEFT mirror the circle
-	float startAngle     = M_PI_2 + DEG2RAD((flags & BAR_LEFT) ? cg_circleStartAngle.value : 360 - cg_circleStartAngle.value);
-	float numberOfSquare = ((MAX(w, h) * 2) * (1 / cg_circleThickness.value)) * cg_circleDensityPoint.value;
-	float size           = WHITE_SHADER_SIZE_COEFF / (1 / cg_circleThickness.value);
-	float slice          = ((PI_PER_2 - DEG2RAD(360 - cg_circleEndAngle.value)) / numberOfSquare) * ((flags & BAR_VERT) ? 1 : -1);     // BAR_VERT control circle direction
+	startAngle     = M_PI_2 + DEG2RAD((flags & BAR_LEFT) ? start : 360 - start);
+	numberOfSquare = ((MAX(w, h) * 2) * (1 / thickness)) * density;
+	size           = WHITE_SHADER_SIZE_COEFF / (1 / thickness);
+	slice          = ((PI_PER_2 - DEG2RAD(360 - end)) / numberOfSquare) * ((flags & BAR_VERT) ? 1 : -1);     // BAR_VERT control circle direction
 
 	// adjust circle position and size to ensure it doesn't go out of bound
-	x -= size * 0.5;
-	y -= size * 0.5;
-	w -= size * 0.5;
-	h -= size * 0.5;
+	x += w * .5f;
+	y += h * .5f;
+	w *= 0.5f;
+	h *= 0.5f;
+
+	x -= size * 0.5f;
+	y -= size * 0.5f;
+	w -= size * 0.5f;
+	h -= size * 0.5f;
 
 	frac = Com_Clamp(0, 1.f, frac);
 

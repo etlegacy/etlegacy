@@ -529,6 +529,26 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 			cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
 		}
 
+		if (flags & BIT(13))
+		{
+			cJSON_AddNumberToObject(compObj, "circleDensityPoint", comp->circleDensityPoint);
+		}
+
+		if (flags & BIT(14))
+		{
+			cJSON_AddNumberToObject(compObj, "circleStartAngle", comp->circleStartAngle);
+		}
+
+		if (flags & BIT(15))
+		{
+			cJSON_AddNumberToObject(compObj, "circleEndAngle", comp->circleEndAngle);
+		}
+
+		if (flags & BIT(16))
+		{
+			cJSON_AddNumberToObject(compObj, "circleThickness", comp->circleThickness);
+		}
+
 		if (flags & BIT(0))
 		{
 			cJSON_AddNumberToObject(compObj, "anchor", comp->anchorPoint);
@@ -638,6 +658,26 @@ static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp
 	if (comp->autoAdjust != parentComp->autoAdjust)
 	{
 		flags |= BIT(12);
+	}
+
+	if (comp->circleDensityPoint != parentComp->circleDensityPoint)
+	{
+		flags |= BIT(13);
+	}
+
+	if (comp->circleStartAngle != parentComp->circleStartAngle)
+	{
+		flags |= BIT(13);
+	}
+
+	if (comp->circleEndAngle != parentComp->circleEndAngle)
+	{
+		flags |= BIT(13);
+	}
+
+	if (comp->circleThickness != parentComp->circleThickness)
+	{
+		flags |= BIT(13);
 	}
 
 	return flags;
@@ -1524,6 +1564,11 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
 		component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
 
+		component->circleDensityPoint = Q_ReadFloatValueJsonEx(comp, "circleDensityPoint", component->circleDensityPoint);
+		component->circleStartAngle   = Q_ReadFloatValueJsonEx(comp, "circleStartAngle", component->circleStartAngle);
+		component->circleEndAngle     = Q_ReadFloatValueJsonEx(comp, "circleEndAngle", component->circleEndAngle);
+		component->circleThickness    = Q_ReadFloatValueJsonEx(comp, "circleThickness", component->circleThickness);
+
 		component->anchorPoint = Q_ReadIntValueJsonEx(comp, "anchor", component->anchorPoint);
 		tmp                    = cJSON_GetObjectItem(comp, "parent");
 		if (tmp)
@@ -1591,14 +1636,14 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 
 	if (upgr->shiftHealthBarDynamicColorStyle2)
 	{
-        // Ensure dynamic coloration style is applied due to insertion of needle style from bar
-        if (tmpHud->crosshairbar.style & BAR_CIRCULAR)
-        {
-            tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
-        }
+		// Ensure dynamic coloration style is applied due to insertion of needle style from bar
+		if (tmpHud->crosshairbar.style & BAR_CIRCULAR)
+		{
+			tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
+		}
 
-        tmpHud->healthbar.style & ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
-        
+		tmpHud->healthbar.style & ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
+
 		// Ensure dynamic coloration style is applied due to insertion of circular style from bar
 		if (tmpHud->healthbar.style & BAR_CIRCULAR)
 		{

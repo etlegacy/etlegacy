@@ -320,11 +320,6 @@ vmCvar_t cg_scopeReticleDotThickness;
 
 vmCvar_t cg_commandMapTime;
 
-vmCvar_t cg_circleDensityPoint;
-vmCvar_t cg_circleStartAngle;
-vmCvar_t cg_circleEndAngle;
-vmCvar_t cg_circleThickness;
-
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -629,11 +624,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_scopeReticleDotThickness,           "cg_scopeReticleDotThickness",           "2.0",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_commandMapTime,                     "cg_commandMapTime",                     "0",           CVAR_ARCHIVE,                 0 },
-
-	{ &cg_circleDensityPoint,                 "cg_circleDensityPoint",                 "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_circleStartAngle,                   "cg_circleStartAngle",                   "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_circleEndAngle,                     "cg_circleEndAngle",                     "360",         CVAR_ARCHIVE,                 0 },
-	{ &cg_circleThickness,                    "cg_circleThickness",                    "0.5",         CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
