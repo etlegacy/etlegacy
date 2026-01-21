@@ -5364,6 +5364,7 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
 	qhandle_t shader = ((!cg_bloodForcePuffsForDamage.integer) || (cent->currentState.powerups & (1 << PW_INVULNERABLE)))
 	    ? cgs.media.smokePuffShader
 	    : cgs.media.fleshSmokePuffShader;
+	const qboolean isSelfFirstPerson = (cg.snap && ISVALIDCLIENTNUM(fleshEntityNum) && fleshEntityNum == cg.snap->ps.clientNum && !cg.renderingThirdPerson);
 
 	if (ISVALIDCLIENTNUM(fleshEntityNum) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
 	{
@@ -5377,7 +5378,7 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
 	VectorScale(dir, tmpf, tmpv);
 	VectorAdd(end, tmpv, origin);
 
-	if (cg_bloodPuff.integer)
+	if (cg_bloodPuff.integer && !isSelfFirstPerson)
 	{
 		// whee, got a bullet impact point projected to center body
 		CG_GetOriginForTag(cent, &cent->pe.headRefEnt, "tag_mouth", 0, tmpv, NULL);
