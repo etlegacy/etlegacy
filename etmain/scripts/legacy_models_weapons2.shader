@@ -8,7 +8,7 @@
 //========================================//
 models/weapons2/knife_kbar/knife_yd
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -33,7 +33,7 @@ models/weapons2/knife_kbar/knife_yd
 //========================================//
 models/weapons2/browning/browning
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -48,7 +48,7 @@ models/weapons2/browning/browning
 
 models/weapons2/browning/biped
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -63,7 +63,7 @@ models/weapons2/browning/biped
 
 models/weapons2/browning/barrel
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	cull none
 	{
 		map models/multiplayer/browning/barrel.tga
@@ -92,7 +92,7 @@ models/weapons2/browning/barrel
 //========================================//
 models/weapons2/bazooka/bazooka
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -112,7 +112,7 @@ models/weapons2/bazooka/bazooka
 
 models/weapons2/bazooka/bazookaTube
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -137,7 +137,7 @@ models/weapons2/bazooka/bazookaTube
 //========================================//
 models/multiplayer/mortar/mortar_ax
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -152,7 +152,7 @@ models/multiplayer/mortar/mortar_ax
 
 models/multiplayer/mortar/mortar_shell_ax
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map models/multiplayer/mortar/mortar_shell_ax.jpg
 		rgbGen lightingdiffuse
@@ -161,7 +161,7 @@ models/multiplayer/mortar/mortar_shell_ax
 
 models/multiplayer/mortar/mortar_sd
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -181,7 +181,7 @@ models/multiplayer/mortar/mortar_sd
 //========================================//
 models/weapons2/mp34/mp34
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	cull disable
 	{
 		map models/weapons2/mp34/mp34.tga
@@ -197,7 +197,7 @@ models/weapons2/mp34/mp34
 
 models/weapons2/mp34/mp34stock
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingDiffuse
@@ -223,7 +223,7 @@ models/weapons2/mp34/mp34stock
 //========================================//
 models/weapons2/shells/m_shell
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	{
 		map models/weapons2/shells/M_shell.jpg
 		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
@@ -242,7 +242,7 @@ models/weapons2/shells/m_shell
 //========================================//
 models/multiplayer/syringe/0percent
 {
-	/// maxpicmip 1
+	///etl/// maxpicmip 1
 	cull disable
 	{
 		map models/multiplayer/syringe/syringe.tga
