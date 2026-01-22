@@ -4240,8 +4240,8 @@ typedef struct
 	size_t offset;
 	qboolean isAlias;
 	void (*draw)(hudComponent_t *comp);
-	float scale;
 	hudComponentTypes_t type;
+	float scale;
 	char *styles[MAXSTYLES];
 
 } hudComponentFields_t;
