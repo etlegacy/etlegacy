@@ -1642,7 +1642,7 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 			tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
 		}
 
-		tmpHud->healthbar.style & ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
+		tmpHud->healthbar.style &= ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
 
 		// Ensure dynamic coloration style is applied due to insertion of circular style from bar
 		if (tmpHud->healthbar.style & BAR_CIRCULAR)
@@ -1650,7 +1650,7 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 			tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
 		}
 
-		tmpHud->healthbar.style & ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
+		tmpHud->healthbar.style &= ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
 	}
 
 	if (upgr->calcAnchors)
