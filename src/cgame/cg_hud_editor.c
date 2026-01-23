@@ -3321,41 +3321,45 @@ static void CG_HudEditor_HelpDraw(void)
 	{
 		static const helpType_t help[] =
 		{
-			{ "K_DOWN",              "move down by 1px"                      },
-			{ "K_LEFT",              "move left by 1px"                      },
-			{ "K_UP",                "move down by 1px"                      },
-			{ "K_RIGHT",             "move right by 1px"                     },
-			{ NULL,                  NULL                                    },
-			{ "K_MWHEELDOWN",        "enlarge by 1px"                        },
-			{ "K_MWHEELUP",          "shrink by 1px"                         },
-			{ NULL,                  NULL                                    },
-			{ "K_RCTRL / K_LCTRL",   "hold to move by 0.1px"                 },
-			{ "K_RSHIFT / K_LSHIFT", "hold to move by 5px"                   },
-			{ NULL,                  NULL                                    },
+			{ "K_DOWN",              "move down by 1px"                       },
+			{ "K_LEFT",              "move left by 1px"                       },
+			{ "K_UP",                "move down by 1px"                       },
+			{ "K_RIGHT",             "move right by 1px"                      },
+			{ NULL,                  NULL                                     },
+			{ "K_MWHEELDOWN",        "enlarge by 1px"                         },
+			{ "K_MWHEELUP",          "shrink by 1px"                          },
+			{ NULL,                  NULL                                     },
+			{ "K_RCTRL / K_LCTRL",   "hold to move by 0.1px"                  },
+			{ "K_RSHIFT / K_LSHIFT", "hold to move by 5px"                    },
+			{ NULL,                  NULL                                     },
 #ifdef __APPLE__
-			{ "K_COMMAND",           "hold to key resize / mwheel scale"     },
+			{ "K_COMMAND",           "hold to key resize / mwheel scale"      },
 #else
-			{ "K_RALT / K_LALT",     "hold to key resize / mwheel scale"     },
+			{ "K_RALT / K_LALT",     "hold to key resize / mwheel scale"      },
 #endif
-			{ NULL,                  NULL                                    },
-			{ "K_INS",               "move to center"                        },
-			{ "K_PGUP",              "move from bottom -> middle -> top"     },
-			{ "K_PGDN",              "move from top -> middle -> bottom"     },
-			{ "K_HOME",              "move from left -> middle -> right"     },
-			{ "K_END",               "move from right -> middle -> left"     },
-			{ NULL,                  NULL                                    },
-			{ "l",                   "show layout visible -> all -> off"     },
-			{ "h",                   "help on/off"                           },
-			{ "n",                   "noise generator on/off"                },
-			{ "f",                   "full screen on/off"                    },
-			{ "a",                   "force grid alignment on/off"           },
-			{ "t",                   "toggle showing only active component"  },
-			{ "v",                   "toggle visibility of active component" },
-			{ "SHIFT + CTRL + v",    "set all components visible"            },
-			{ NULL,                  NULL                                    },
-			{ "o",                   "show micro grid on/off"                },
-			{ "c",                   "show grid OCD lvl 1/2/3"               },
-			{ "d",                   "scale grid .25/.125/.1"                },
+			{ NULL,                  NULL                                     },
+			{ "K_INS",               "move to center"                         },
+			{ "K_PGUP",              "move from bottom -> middle -> top"      },
+			{ "K_PGDN",              "move from top -> middle -> bottom"      },
+			{ "K_HOME",              "move from left -> middle -> right"      },
+			{ "K_END",               "move from right -> middle -> left"      },
+			{ NULL,                  NULL                                     },
+			{ "s",                   "square a comp bound using longest side" },
+			{ "r",                   "rectangle a comp bound"                 },
+			{ "m",                   "mirror the width and height comp"       },
+			{ NULL,                  NULL                                     },
+			{ "l",                   "show layout visible -> all -> off"      },
+			{ "h",                   "help on/off"                            },
+			{ "n",                   "noise generator on/off"                 },
+			{ "f",                   "full screen on/off"                     },
+			{ "a",                   "force grid alignment on/off"            },
+			{ "t",                   "toggle showing only active component"   },
+			{ "v",                   "toggle visibility of active component"  },
+			{ "SHIFT + CTRL + v",    "set all components visible"             },
+			{ NULL,                  NULL                                     },
+			{ "o",                   "show micro grid on/off"                 },
+			{ "c",                   "show grid OCD lvl 1/2/3"                },
+			{ "d",                   "scale grid .25/.125/.1"                 },
 		};
 
 		vec4_t bgColor;
@@ -3566,7 +3570,6 @@ static void CG_HudEditor_GridDraw(void)
 	default: return;
 	}
 }
-
 
 /**
 * @brief CG_DrawHudEditor
@@ -3816,6 +3819,33 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		qboolean       gridAlign = forceGridAlignment && (showGrid || showMicroGrid);
 		float          offset;
 		float          *pValue = NULL;
+
+		// change the component shape to be a square by using the longest side
+		if (key == 's')
+		{
+			comp->location.w = comp->location.h = MAX(comp->location.w, comp->location.h);
+			return;
+		}
+		else if (key == 'r')    // change the component shape to be a rectable by using the 20% of the longest side
+		{
+			if (comp->location.w > comp->location.h)
+			{
+				comp->location.h = comp->location.w * 0.20f;
+			}
+			else
+			{
+				comp->location.w = comp->location.h * 0.20f;
+			}
+
+			return;
+		}
+		else if (key == 'm')    // mirror the width and the heigh
+		{
+			float tmp = comp->location.w;
+			comp->location.w = comp->location.h;
+			comp->location.h = tmp;
+			return;
+		}
 
 #ifdef __APPLE__
 		changeSize = trap_Key_IsDown(K_COMMAND);
