@@ -1689,7 +1689,7 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 	int          len, maxlen = 0;
 	int          w, h;
 	char         format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
-	char         *lines[32];
+	char         *lines[64];
 	int          tSpacing = 9;      // Should derive from CG_Text_Height_Ext
 	vec4_t       bgColor         ;
 	vec4_t       bgColorTitle    ;
