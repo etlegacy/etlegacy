@@ -49,68 +49,68 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(crosshair),          CG_DrawCrosshair,                 0.19f,  { "Pulse",         "Pulse Alt",    "Dynamic Color",  "Dynamic Color Alt" } },         // FIXME: outside cg_draw_hud
-	{ HUDF(staminabar),         CG_DrawStaminaBar,                0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(breathbar),          CG_DrawBreathBar,                 0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Dynamic Color"} },
-	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle"} },
-	{ HUDF(healthtext),         CG_DrawPlayerHealth,              0.25f,  { "Dynamic Color", "Draw Suffix" } },
-	{ HUDF(xptext),             CG_DrawXP,                        0.25f,  { "Draw Suffix" } },
-	{ HUDF(ranktext),           CG_DrawRank,                      0.20f,  { 0 } },
-	{ HUDF(statsdisplay),       CG_DrawSkills,                    0.25f,  { "Column" } },
-	{ HUDF(weaponheatbar),      CG_DrawGunHeatBar,                0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
-	{ HUDF(weaponicon),         CG_DrawGunIcon,                   0.19f,  { "Icon Flash",    "Only Ticking" } },
-	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 0.25f,  { "Dynamic Color" } },
-	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           0.20f,  { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row", "Spawn Point", "Spawn Point Location", "Minor Spawn Point"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages),      CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages2),     CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages3),     CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-    { HUDF(popupmessages4),     CG_DrawPM,                        0.22f,  { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(powerups),           CG_DrawPowerUps,                  0.19f,  { 0 } },
-	{ HUDF(objectives),         CG_DrawObjectiveStatus,           0.19f,  { 0 } },
-	{ HUDF(hudhead),            CG_DrawPlayerStatusHead,          0.19f,  { 0 } },
-	{ HUDF(cursorhints),        CG_DrawCursorhint,                0.19f,  { "Size Pulse",    "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
-	{ HUDF(cursorhintsbar),     CG_DrawCursorHintBar,             0.19f,  { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },  // FIXME: outside cg_draw_hud
-	{ HUDF(cursorhintstext),    CG_DrawCursorHintText,            0.19f,  { "Draw Suffix" } },// FIXME: outside cg_draw_hud
-	{ HUDF(weaponstability),    CG_DrawWeapStability,             0.19f,  { "Always",        "Left",         "Center",         "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(livesleft),          CG_DrawLivesLeft,                 0.19f,  { 0 } },
-	{ HUDF(roundtimer),         CG_DrawRoundTimer,                0.19f,  { "Simple",        "Double Digits" } },
-	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              0.19f,  { "Double Digits" } },
-	{ HUDF(spawntimer),         CG_DrawSpawnTimer,                0.19f,  { "Double Digits" } },
-	{ HUDF(localtime),          CG_DrawLocalTime,                 0.19f,  { "Second",        "12 Hours" } },
-	{ HUDF(votetext),           CG_DrawVote,                      0.22f,  { "Complaint" } }, // FIXME: outside cg_draw_hud
-	{ HUDF(spectatortext),      CG_DrawSpectatorMessage,          0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(limbotext),          CG_DrawLimboMessage,              0.22f,  { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
-	{ HUDF(followtext),         CG_DrawFollow,                    0.22f,  { "No Countdown" } },// FIXME: outside cg_draw_hud
-	{ HUDF(demotext),           CG_DrawDemoMessage,               0.22f,  { "Details" } },
-	{ HUDF(missilecamera),      CG_DrawMissileCamera,             0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(sprinttext),         CG_DrawPlayerSprint,              0.25f,  { "Draw Suffix" } },
-	{ HUDF(breathtext),         CG_DrawPlayerBreath,              0.25f,  { "Draw Suffix" } },
-	{ HUDF(weaponchargetext),   CG_DrawWeaponCharge,              0.25f,  { "Draw Suffix" } },
-	{ HUDF(fps),                CG_DrawFPS,                       0.19f,  { 0 } },
-	{ HUDF(snapshot),           CG_DrawSnapshot,                  0.19f,  { 0 } },
-	{ HUDF(ping),               CG_DrawPing,                      0.19f,  { "Draw Prefix" } },
-	{ HUDF(speed),              CG_DrawSpeed,                     0.19f,  { "Max Speed",     "Draw Suffix" } },
-	{ HUDF(lagometer),          CG_DrawLagometer,                 0.19f,  { 0 } },
-	{ HUDF(disconnect),         CG_DrawDisconnect,                0.35f,  { "No Text" } },
-	{ HUDF(chat),               CG_DrawTeamInfo,                  0.20f,  { "No Team Flag" } },// FIXME: outside cg_draw_hud
-	{ HUDF(spectatorstatus),    CG_DrawSpectator,                 0.35f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(pmitemsbig),         CG_DrawPMItemsBig,                0.22f,  { "No Skill",      "No Rank",      "No Prestige" } },// FIXME: outside cg_draw_hud
-	{ HUDF(warmuptitle),        CG_DrawWarmupTitle,               0.35f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(warmuptext),         CG_DrawWarmupText,                0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(objectivetext),      CG_DrawObjectiveInfo,             0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(centerprint),        CG_DrawCenterString,              0.22f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(banner),             CG_DrawBannerPrint,               0.23f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(crosshairtext),      CG_DrawCrosshairNames,            0.25f,  { "Full Color",    "Explosive Owner" } },// FIXME: outside cg_draw_hud
-	{ HUDF(crosshairbar),       CG_DrawCrosshairHealthBar,        0.25f,  { "Class",         "Rank",         "Prestige",       "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(stats),              CG_DrawShoutcastPlayerStatus,     0.19f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(xpgain),             CG_DrawPMItemsXPGain,             0.22f,  { "Scroll Down",   "No Reason",    "No Stack",       "No XP Add up"      } }, // FIXME: outside cg_draw_hud
-	{ HUDF(scPlayerListAxis),   CG_DrawShoutcastPlayerListAxis,   0.16f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(scPlayerListAllies), CG_DrawShoutcastPlayerListAllies, 0.16f,  { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(scTeamNamesAxis),    CG_DrawShoutcastTeamNameAxis,     0.3f,   { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(scTeamNamesAllies),  CG_DrawShoutcastTeamNameAllies,   0.3f,   { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(compass),            CG_DrawNewCompass,                0.19f,  { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw", "Point North", "Icons Inside" } },
-	{ NULL,                     0,                                qfalse, NULL, 0.00f,{ 0 } },
+	{ HUDF(crosshair),          CG_DrawCrosshair,                 HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Pulse",         "Pulse Alt",    "Dynamic Color",  "Dynamic Color Alt" } },         // FIXME: outside cg_draw_hud
+	{ HUDF(staminabar),         CG_DrawStaminaBar,                HUD_COMP_TYPE_BAR,       0.19f, { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} },
+	{ HUDF(breathbar),          CG_DrawBreathBar,                 HUD_COMP_TYPE_BAR,       0.19f, { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} },
+	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           HUD_COMP_TYPE_BAR,       0.19f, { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular", "Dynamic Color"} },
+	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              HUD_COMP_TYPE_BAR,       0.19f, { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular",} },
+	{ HUDF(healthtext),         CG_DrawPlayerHealth,              HUD_COMP_TYPE_TEXT,      0.25f, { "Dynamic Color", "Draw Suffix" } },
+	{ HUDF(xptext),             CG_DrawXP,                        HUD_COMP_TYPE_TEXT,      0.25f, { "Draw Suffix" } },
+	{ HUDF(ranktext),           CG_DrawRank,                      HUD_COMP_TYPE_TEXT,      0.20f, { 0 } },
+	{ HUDF(statsdisplay),       CG_DrawSkills,                    HUD_COMP_TYPE_SPECIFIC,  0.25f, { "Column" } },
+	{ HUDF(weaponheatbar),      CG_DrawGunHeatBar,                HUD_COMP_TYPE_BAR,       0.19f, { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon"} },
+	{ HUDF(weaponicon),         CG_DrawGunIcon,                   HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Icon Flash",    "Only Ticking" } },
+	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 HUD_COMP_TYPE_TEXT,      0.25f, { "Dynamic Color" } },
+	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           HUD_COMP_TYPE_SPECIFIC,  0.20f, { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row", "Spawn Point", "Spawn Point Location", "Minor Spawn Point"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages),      CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages2),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages3),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages4),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(powerups),           CG_DrawPowerUps,                  HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
+	{ HUDF(objectives),         CG_DrawObjectiveStatus,           HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
+	{ HUDF(hudhead),            CG_DrawPlayerStatusHead,          HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
+	{ HUDF(cursorhints),        CG_DrawCursorhint,                HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Size Pulse",    "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
+	{ HUDF(cursorhintsbar),     CG_DrawCursorHintBar,             HUD_COMP_TYPE_BAR,       0.19f, { "Left",          "Center",       "Vertical",       "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} },  // FIXME: outside cg_draw_hud
+	{ HUDF(cursorhintstext),    CG_DrawCursorHintText,            HUD_COMP_TYPE_TEXT,      0.19f, { "Draw Suffix" } },// FIXME: outside cg_draw_hud
+	{ HUDF(weaponstability),    CG_DrawWeapStability,             HUD_COMP_TYPE_BAR,       0.19f, { "Always",        "Left",         "Center",         "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(livesleft),          CG_DrawLivesLeft,                 HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
+	{ HUDF(roundtimer),         CG_DrawRoundTimer,                HUD_COMP_TYPE_TEXT,      0.19f, { "Simple",        "Double Digits" } },
+	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              HUD_COMP_TYPE_TEXT,      0.19f, { "Double Digits" } },
+	{ HUDF(spawntimer),         CG_DrawSpawnTimer,                HUD_COMP_TYPE_TEXT,      0.19f, { "Double Digits" } },
+	{ HUDF(localtime),          CG_DrawLocalTime,                 HUD_COMP_TYPE_TEXT,      0.19f, { "Second",        "12 Hours" } },
+	{ HUDF(votetext),           CG_DrawVote,                      HUD_COMP_TYPE_MULTITEXT, 0.22f, { "Complaint" } }, // FIXME: outside cg_draw_hud
+	{ HUDF(spectatortext),      CG_DrawSpectatorMessage,          HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(limbotext),          CG_DrawLimboMessage,              HUD_COMP_TYPE_MULTITEXT, 0.22f, { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
+	{ HUDF(followtext),         CG_DrawFollow,                    HUD_COMP_TYPE_SPECIFIC,  0.22f, { "No Countdown" } },// FIXME: outside cg_draw_hud
+	{ HUDF(demotext),           CG_DrawDemoMessage,               HUD_COMP_TYPE_TEXT,      0.22f, { "Details" } },
+	{ HUDF(missilecamera),      CG_DrawMissileCamera,             HUD_COMP_TYPE_SPECIFIC,  0.22f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(sprinttext),         CG_DrawPlayerSprint,              HUD_COMP_TYPE_TEXT,      0.25f, { "Draw Suffix" } },
+	{ HUDF(breathtext),         CG_DrawPlayerBreath,              HUD_COMP_TYPE_TEXT,      0.25f, { "Draw Suffix" } },
+	{ HUDF(weaponchargetext),   CG_DrawWeaponCharge,              HUD_COMP_TYPE_TEXT,      0.25f, { "Draw Suffix" } },
+	{ HUDF(fps),                CG_DrawFPS,                       HUD_COMP_TYPE_TEXT,      0.19f, { 0 } },
+	{ HUDF(snapshot),           CG_DrawSnapshot,                  HUD_COMP_TYPE_MULTITEXT, 0.19f, { 0 } },
+	{ HUDF(ping),               CG_DrawPing,                      HUD_COMP_TYPE_TEXT,      0.19f, { "Draw Prefix" } },
+	{ HUDF(speed),              CG_DrawSpeed,                     HUD_COMP_TYPE_MULTITEXT, 0.19f, { "Max Speed",     "Draw Suffix" } },
+	{ HUDF(lagometer),          CG_DrawLagometer,                 HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
+	{ HUDF(disconnect),         CG_DrawDisconnect,                HUD_COMP_TYPE_SPECIFIC,  0.35f, { "No Text" } },
+	{ HUDF(chat),               CG_DrawTeamInfo,                  HUD_COMP_TYPE_FEED,      0.20f, { "No Team Flag" } },// FIXME: outside cg_draw_hud
+	{ HUDF(spectatorstatus),    CG_DrawSpectator,                 HUD_COMP_TYPE_TEXT,      0.35f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(pmitemsbig),         CG_DrawPMItemsBig,                HUD_COMP_TYPE_FEED,      0.22f, { "No Skill",      "No Rank",      "No Prestige" } },// FIXME: outside cg_draw_hud
+	{ HUDF(warmuptitle),        CG_DrawWarmupTitle,               HUD_COMP_TYPE_TEXT,      0.35f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(warmuptext),         CG_DrawWarmupText,                HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(objectivetext),      CG_DrawObjectiveInfo,             HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(centerprint),        CG_DrawCenterString,              HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(banner),             CG_DrawBannerPrint,               HUD_COMP_TYPE_MULTITEXT, 0.23f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(crosshairtext),      CG_DrawCrosshairNames,            HUD_COMP_TYPE_TEXT,      0.25f, { "Full Color",    "Explosive Owner" } },// FIXME: outside cg_draw_hud
+	{ HUDF(crosshairbar),       CG_DrawCrosshairHealthBar,        HUD_COMP_TYPE_BAR,       0.25f, { "Class",         "Rank",         "Prestige",       "Left", "Center", "Vertical", "No Alpha", "Bar Bckgrnd", "X0 Y5", "X0 Y0", "Lerp Color", "Bar Border", "Border Tiny", "Decor", "Icon", "Needle", "Circular", "Dynamic Color"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(stats),              CG_DrawShoutcastPlayerStatus,     HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(xpgain),             CG_DrawPMItemsXPGain,             HUD_COMP_TYPE_FEED,      0.22f, { "Scroll Down",   "No Reason",    "No Stack",       "No XP Add up"      } }, // FIXME: outside cg_draw_hud
+	{ HUDF(scPlayerListAxis),   CG_DrawShoutcastPlayerListAxis,   HUD_COMP_TYPE_SPECIFIC,  0.16f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(scPlayerListAllies), CG_DrawShoutcastPlayerListAllies, HUD_COMP_TYPE_SPECIFIC,  0.16f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(scTeamNamesAxis),    CG_DrawShoutcastTeamNameAxis,     HUD_COMP_TYPE_SPECIFIC,  0.3f,  { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(scTeamNamesAllies),  CG_DrawShoutcastTeamNameAllies,   HUD_COMP_TYPE_SPECIFIC,  0.3f,  { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(compass),            CG_DrawNewCompass,                HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw", "Point North", "Icons Inside"} },
+	{ NULL,                     0,                                qfalse,                  NULL,  HUD_COMP_TYPE_MAX, 0.00f,{ 0 } },
 };
 
 /**
@@ -166,6 +166,11 @@ static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float
 	tmp.parsed     = qfalse;
 	tmp.draw       = draw;
 
+	tmp.circleDensityPoint = 1;
+	tmp.circleStartAngle   = 0;
+	tmp.circleEndAngle     = 360;
+	tmp.circleThickness    = 1;
+
 	return tmp;
 }
 
@@ -188,7 +193,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->crosshair          = CG_getComponent(SCREEN_WIDTH * .5f - 24, SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawCrosshair);
 	hud->staminabar         = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 1.0f, 0.1f, 0.5f }, (vec4_t) { 1.0f, 0, 0.1f, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawStaminaBar);
 	hud->breathbar          = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 0.1f, 1.0f, 0.5f }, (vec4_t) { 1.0f, 0.1f, 0, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawBreathBar);
-	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | BAR_NEEDLE | (BAR_NEEDLE << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
+	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | BAR_NEEDLE | (BAR_CIRCULAR << 1), 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerHealthBar);
 	hud->weaponchargebar    = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, BAR_LEFT | BAR_VERT | BAR_BG | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON | BAR_NEEDLE, 100.f, (vec4_t) { 1.0, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0, 1.0f, 0.1f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawWeapRecharge);
 	hud->healthtext         = CG_getComponent(47, 465, 57, 14, qtrue, 2, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawPlayerHealth);
 	hud->xptext             = CG_getComponent(108, 465, 57, 14, qtrue, 1, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.25f, CG_DrawXP);
@@ -201,7 +206,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->popupmessages      = CG_getComponent(4, 245, 422, 96, qtrue, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
 	hud->popupmessages2     = CG_getComponent(4, 245, 422, 96, qfalse, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
 	hud->popupmessages3     = CG_getComponent(4, 245, 422, 96, qfalse, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
-    hud->popupmessages4     = CG_getComponent(4, 245, 422, 96, qfalse, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
+	hud->popupmessages4     = CG_getComponent(4, 245, 422, 96, qfalse, 64, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, CG_DrawPM);
 	hud->powerups           = CG_getComponent(SCREEN_WIDTH  - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPowerUps);
 	hud->objectives         = CG_getComponent(4, SCREEN_HEIGHT - 136, 36, 36, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawObjectiveStatus);
 	hud->hudhead            = CG_getComponent(44, SCREEN_HEIGHT - 96, 62, 80, qtrue, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, CG_DrawPlayerStatusHead);
@@ -900,7 +905,7 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 		}
 	}
 
-	if (comp->style & (BAR_NEEDLE << 1))
+	if (comp->style & (BAR_CIRCULAR << 1))
 	{
 		Vector4Copy(comp->colorMain, color);
 		CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
@@ -913,10 +918,21 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 		Vector4Copy(comp->colorMain, color);
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-	             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], frac,
-	             style, cgs.media.hudHealthIcon);
+	if (style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		              (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
+		              comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], frac,
+		              style, cgs.media.hudHealthIcon,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
+		             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], frac,
+		             style, cgs.media.hudHealthIcon);
+	}
 
 	trap_R_SetColor(NULL);
 }
@@ -978,9 +994,19 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-	             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->style, cgs.media.hudSprintIcon);
+	if (comp->style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		              (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? color : NULL,
+		              comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->style, cgs.media.hudSprintIcon,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? color : NULL,
+		             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->style, cgs.media.hudSprintIcon);
+	}
 
 	trap_R_SetColor(NULL);
 }
@@ -1021,9 +1047,19 @@ void CG_DrawBreathBar(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-	             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->style & BAR_LERP_COLOR) ? comp->colorMain : NULL,
-	             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->style, cgs.media.waterHintShader);
+	if (comp->style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		              (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->style & BAR_LERP_COLOR) ? comp->colorMain : NULL,
+		              comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->style, cgs.media.waterHintShader,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->style & BAR_LERP_COLOR) ? comp->colorMain : NULL,
+		             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->style, cgs.media.waterHintShader);
+	}
 
 	trap_R_SetColor(NULL);
 }
@@ -1191,9 +1227,19 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-	             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
-	             comp->colorBackground, comp->colorBorder, barFrac, needleFrac, style, cgs.media.hudPowerIcon);
+	if (comp->style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		              (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
+		              comp->colorBackground, comp->colorBorder, barFrac, needleFrac, style, cgs.media.hudPowerIcon,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		             (style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (style & BAR_LERP_COLOR) ? color : NULL,
+		             comp->colorBackground, comp->colorBorder, barFrac, needleFrac, style, cgs.media.hudPowerIcon);
+	}
 
 	trap_R_SetColor(NULL);
 }
@@ -1311,8 +1357,17 @@ void CG_DrawGunHeatBar(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorMain, comp->colorSecondary,
-	             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, comp->style, -1);
+	if (comp->style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorMain, comp->colorSecondary,
+		              comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, comp->style, -1,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorMain, comp->colorSecondary,
+		             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, comp->style, -1);
+	}
 }
 
 /**

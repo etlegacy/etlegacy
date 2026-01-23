@@ -487,11 +487,26 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
 		return;
 	}
 
+	textColor[3] = *color;
+
 	curValue = (float)cg.cursorHintValue / 255.0f;
 
 	if (curValue > 0.01f)
 	{
-		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, colorRed, colorGreen,
+
+	}
+
+	if (comp->style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		              (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? textColor : NULL,
+		              comp->colorBackground, comp->colorBorder, curValue, 0.f, comp->style, -1,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? textColor : NULL,
 		             comp->colorBackground, comp->colorBorder, curValue, 0.f, comp->style, -1);
 	}
 }
@@ -601,8 +616,17 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 		return;
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
-	             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->style >> 1, -1);
+	if (comp->style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
+		              comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->style >> 1, -1,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
+		             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->style >> 1, -1);
+	}
 }
 
 #ifdef FEATURE_EDV

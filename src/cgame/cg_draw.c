@@ -1876,6 +1876,8 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 	x = comp->location.x + (comp->location.w - w) * .5f;
 	y = comp->location.y + (comp->location.h - h) * .5f;
 
+	trap_R_SetColor(colorWhite);
+
 	CG_AdjustFrom640(&x, &y, &w, &h);
 
 	// set color based on health
@@ -2324,7 +2326,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	// remove unecessary style for bar customization
 	style = (comp->style >> 3);
 
-	if (style & (BAR_ICON << 1))
+	if (style & (BAR_CIRCULAR << 1))
 	{
 		Vector4Copy(comp->colorMain, c);
 		CG_ColorForHealth(health, c);
@@ -2355,8 +2357,17 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, bdcolor);
 	}
 
-	CG_FilledBar(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
-	             Com_Clamp(0, 1.f, health / (float)maxHealth), 0.f, style, -1);
+	if (style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
+		              Com_Clamp(0, 1.f, health / (float)maxHealth), 0.f, style, -1,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
+		             Com_Clamp(0, 1.f, health / (float)maxHealth), 0.f, style, -1);
+	}
 
 	trap_R_SetColor(NULL);
 }

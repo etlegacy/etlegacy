@@ -2289,6 +2289,7 @@ enum
 	BAR_DECOR          = BIT(10),
 	BAR_ICON           = BIT(11),
 	BAR_NEEDLE         = BIT(12),
+	BAR_CIRCULAR       = BIT(13),
 };
 
 enum
@@ -2930,6 +2931,10 @@ float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMs
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
 void CG_ColorForHealth(int health, vec4_t hcolor);
+
+void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float *endColor,
+                   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon,
+                   float density, float start, float end, float thickness);
 
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
@@ -4065,6 +4070,16 @@ struct hudComponent_s;
 
 typedef enum
 {
+	HUD_COMP_TYPE_TEXT,
+	HUD_COMP_TYPE_MULTITEXT,
+	HUD_COMP_TYPE_BAR,
+	HUD_COMP_TYPE_FEED,
+	HUD_COMP_TYPE_SPECIFIC,
+	HUD_COMP_TYPE_MAX,
+} hudComponentTypes_t;
+
+typedef enum
+{
 	TOP    = BIT(0),
 	RIGHT  = BIT(1),
 	BOTTOM = BIT(2),
@@ -4115,6 +4130,12 @@ typedef struct hudComponent_s
 	float hardScale; ///< Runtime computed value
 	qboolean parsed; ///< Used to notify that the component has been setup via file
 	void (*draw)(struct hudComponent_s *comp);
+
+	// circle customization only
+	float circleDensityPoint;
+	float circleStartAngle;
+	float circleEndAngle;
+	float circleThickness;
 } hudComponent_t;
 
 typedef struct hudStructure_s
@@ -4200,7 +4221,7 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 24
-#define CURRENT_HUD_JSON_VERSION 5
+#define CURRENT_HUD_JSON_VERSION 6
 #define DEFAULTHUD "ETmain"
 
 typedef struct
@@ -4221,6 +4242,7 @@ typedef struct
 	size_t offset;
 	qboolean isAlias;
 	void (*draw)(hudComponent_t *comp);
+	hudComponentTypes_t type;
 	float scale;
 	char *styles[MAXSTYLES];
 
