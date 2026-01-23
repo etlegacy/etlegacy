@@ -630,6 +630,11 @@ static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0
 static qboolean           cvarsLoaded   = qfalse;
 void CG_setClientFlags(void);
 
+/**
+ * @brief CG_RegisterOrUpdateCvars
+ * @param[in] cv
+ * @return 
+ */
 static qboolean CG_RegisterOrUpdateCvars(cvarTable_t *cv)
 {
 	if (cv->vmCvar == &cg_customCrosshairDotColor)
