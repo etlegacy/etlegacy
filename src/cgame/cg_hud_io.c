@@ -1707,7 +1707,7 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 	// fall through
 	case 3:         // 2.82.1 - needle style has been added for health bar, requiring shifting Dynamic Color style value
 		ret->shiftHealthBarDynamicColorStyle = qtrue;
-	// fall through    
+	// fall through
 	case 4:         // 2.84 - weapon icon dynamic health style replace by only ticking style due to split with weapon heat bar
 		ret->replaceWeaponIconStyle        = qtrue;
 		ret->addNoEchoToPopupmessageFilter = qtrue;

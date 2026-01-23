@@ -237,9 +237,6 @@ elseif(WIN32)
 		# Should we always use this?
 		# add_definitions(-DC_ONLY)
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
-		
-		# enable predefined preprocessor macros for common math constants
-		add_definitions(-D_USE_MATH_DEFINES=1)
 	endif(MSVC)
 
 	if(MINGW)

@@ -409,8 +409,6 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 }
 
 #define WHITE_SHADER_SIZE_COEFF 3.2f
-#define PI_PER_2 (M_PI * 2.f)
-
 /**
  * @brief CG_DrawCircle
  * @param[in] x
@@ -453,7 +451,7 @@ void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float 
 	startAngle     = M_PI_2 + DEG2RAD((flags & BAR_LEFT) ? start : 360 - start);
 	numberOfSquare = ((MAX(w, h) * 2) * (1 / thickness)) * density;
 	size           = WHITE_SHADER_SIZE_COEFF / (1 / thickness);
-	slice          = ((PI_PER_2 - DEG2RAD(360 - end)) / numberOfSquare) * ((flags & BAR_VERT) ? 1 : -1);     // BAR_VERT control circle direction
+	slice          = ((M_TAU_F - DEG2RAD(360 - end)) / numberOfSquare) * ((flags & BAR_VERT) ? 1 : -1);     // BAR_VERT control circle direction
 
 	// adjust circle position and size to ensure it doesn't go out of bound
 	x += w * .5f;
@@ -484,11 +482,11 @@ void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float 
 		if (flags & BAR_BORDER)
 		{
 			trap_R_SetColor(bdColor);
-			CG_DrawRotatedPic(x + w * cosf(theta) + 0.5f, y + h * sinf(theta) + 0.5f, size, size, cgs.media.whiteShader, (theta + M_PI_4) / PI_PER_2);
+			CG_DrawRotatedPic(x + w * cosf(theta) + 0.5f, y + h * sinf(theta) + 0.5f, size, size, cgs.media.whiteShader, (theta + M_PI_4) / M_TAU_F);
 		}
 
 		trap_R_SetColor(colorAtPos);
-		CG_DrawRotatedPic(x + w * cosf(theta), y + h * sinf(theta), size, size, cgs.media.whiteShader, (theta + M_PI_4) / PI_PER_2);
+		CG_DrawRotatedPic(x + w * cosf(theta), y + h * sinf(theta), size, size, cgs.media.whiteShader, (theta + M_PI_4) / M_TAU_F);
 	}
 
 	// handle icon draw in the circle center
