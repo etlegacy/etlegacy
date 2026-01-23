@@ -107,12 +107,14 @@ static void R_ParseMaxPicMipToken(const char *token, int *maxPicMip, const char 
 
 qboolean R_ParseEtlDirective(char **text, int *maxPicMip, const char *shaderName, qboolean useParseExt2)
 {
-	char   *data;
-	char   *lineStart;
-	char   lineBuffer[MAX_STRING_CHARS];
-	char   *linePtr;
-	char   *token;
-	size_t lineLen;
+	static const char directivePrefix[]  = "///etl///";
+	const size_t      directivePrefixLen = sizeof(directivePrefix) - 1;
+	char              *data;
+	char              *lineStart;
+	char              lineBuffer[MAX_STRING_CHARS];
+	char              *linePtr;
+	char              *token;
+	size_t            lineLen;
 
 	if (!text || !*text || !maxPicMip)
 	{
@@ -120,12 +122,12 @@ qboolean R_ParseEtlDirective(char **text, int *maxPicMip, const char *shaderName
 	}
 
 	data = R_SkipSimpleWhitespace(*text);
-	if (data[0] != '/' || data[1] != '/' || data[2] != '/')
+	if (Q_strncmp(data, directivePrefix, directivePrefixLen))
 	{
 		return qfalse;
 	}
 
-	lineStart = R_SkipSimpleWhitespace(data + 3);
+	lineStart = R_SkipSimpleWhitespace(data + directivePrefixLen);
 	lineLen   = 0;
 	while (lineStart[lineLen] && lineStart[lineLen] != '\n')
 	{
