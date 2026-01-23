@@ -4129,11 +4129,17 @@ typedef struct hudComponent_s
 	qboolean parsed; ///< Used to notify that the component has been setup via file
 	void (*draw)(struct hudComponent_s *comp);
 
-	// circle customization only
+	// bar circle customization only
 	float circleDensityPoint;
 	float circleStartAngle;
 	float circleEndAngle;
 	float circleThickness;
+
+	// feed customization only
+	float feedTime;
+	float feedStayTime;
+	float feedFadeTime;
+
 } hudComponent_t;
 
 typedef struct hudStructure_s

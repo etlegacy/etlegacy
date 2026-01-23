@@ -437,6 +437,20 @@ static panel_button_t hudEditorBarButton =
 	0
 };
 
+static panel_button_t hudEditorFeedButton =
+{
+	NULL,
+	"Feed",
+	{ 0,                      HUDEDITOR_TAB_Y + BUTTON_HEIGHT + HUDEDITOR_CONTROLS_SPACER_XY,BUTTON_WIDTH * 1.5f, BUTTON_HEIGHT },
+	{ 0,                      0,                                                            0,                   5, 0, 0, 0, 1 },
+	&hudEditorTextFont,       // font
+	CG_HudEditoTabSelection_KeyDown,// keyDown
+	CG_HudEditorPanel_KeyUp,  // keyUp
+	CG_HudEditorRender_Button,
+	NULL,
+	0
+};
+
 static panel_button_t hudEditorColorSelectionMain =
 {
 	NULL,
@@ -763,6 +777,91 @@ static panel_button_t hudEditorCircleSliderEndAngle =
 	0
 };
 
+static panel_button_t hudEditorFeedTime =
+{
+	NULL,
+	"hudeditor_Time",
+	{ 0,                    HUDEDITOR_OPTION_Y,INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                    0,      0,           0, 0, 0, 0, 1},
+	&hudEditorTextFont,     // font
+	CG_HudEditor_EditKeyDown,// keyDown
+	CG_HudEditorPanel_EditKeyUp,// keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorEdit_Finish,
+	0
+};
+
+static panel_button_t hudEditorFeedTimeSlider =
+{
+	NULL,
+	"hudEditor_FeedTimeSlider",
+	{ 0,                       HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 1) + (HUDEDITOR_CONTROLS_SPACER_XY * 1),SLIDERS_WIDTH, SLIDERS_HEIGHT },
+	{ 0,                       0,                                                        0,             0, 1, 6000, 0, 1},
+	&hudEditorTextFont,        // font
+	CG_HudEditorColor_KeyDown, // keyDown
+	CG_HudEditorPanel_KeyUp,   // keyUp
+	CG_HudEditor_Slider_Render,
+	NULL,
+	0
+};
+
+static panel_button_t hudEditorFeedStayTime =
+{
+	NULL,
+	"hudeditor_Stay Time",
+	{ 0,                    HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 2) + (HUDEDITOR_CONTROLS_SPACER_XY * 2),INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                    0,                                                             0,           1, 0, 0, 0, 1},
+	&hudEditorTextFont,     // font
+	CG_HudEditor_EditKeyDown,// keyDown
+	CG_HudEditorPanel_EditKeyUp,// keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorEdit_Finish,
+	0
+};
+
+static panel_button_t hudEditorFeedStayTimeSlider =
+{
+	NULL,
+	"hudEditor_FeedStayTimeSlider",
+	{ 0,                           HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 3),SLIDERS_WIDTH, SLIDERS_HEIGHT },
+	{ 0,                           0,                                                    0,             0, 1, 6000, 0, 1},
+	&hudEditorTextFont,            // font
+	CG_HudEditorColor_KeyDown,     // keyDown
+	CG_HudEditorPanel_KeyUp,       // keyUp
+	CG_HudEditor_Slider_Render,
+	NULL,
+	0
+};
+
+
+static panel_button_t hudEditorFeedFadeTime =
+{
+	NULL,
+	"hudeditor_Fade Time",
+	{ 0,                    HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 4) + (HUDEDITOR_CONTROLS_SPACER_XY * 4),INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                    0,                                                             0,           2, 0, 0, 0, 1},
+	&hudEditorTextFont,     // font
+	CG_HudEditor_EditKeyDown,// keyDown
+	CG_HudEditorPanel_EditKeyUp,// keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorEdit_Finish,
+	0
+};
+
+static panel_button_t hudEditorFeedFadeTimeSlider =
+{
+	NULL,
+	"hudEditor_FeedFadeTimeSlider",
+	{ 0,                           HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 5) + (HUDEDITOR_CONTROLS_SPACER_XY * 5),SLIDERS_WIDTH, SLIDERS_HEIGHT },
+	{ 0,                           0,                                                    0,             0, 1, 6000, 0, 1},
+	&hudEditorTextFont,            // font
+	CG_HudEditorColor_KeyDown,     // keyDown
+	CG_HudEditorPanel_KeyUp,       // keyUp
+	CG_HudEditor_Slider_Render,
+	NULL,
+	0
+};
+
 static panel_button_t hudEditorCircleThickness =
 {
 	NULL,
@@ -892,7 +991,7 @@ static panel_button_t hudEditorComponentsList =
 static panel_button_t *hudEditor[] =
 {
 	&hudEditorSave,           &hudEditorClone,       &hudEditorDelete,      &hudEditorResetComp, &hudEditorWarningLabel,
-	&hudEditorFontButton,     &hudEditorColorButton, &hudEditorStyleButton, &hudEditorBarButton,
+	&hudEditorFontButton,     &hudEditorColorButton, &hudEditorStyleButton, &hudEditorBarButton, &hudEditorFeedButton,
 	&hudEditorComponentsList, &hudEditorHudName,
 	&hudEditorHelp,
 
@@ -928,6 +1027,14 @@ static panel_button_t *hudEditorBarTab[] =
 {
 	&hudEditorCircleDensity, &hudEditorCircleStartAngle,      &hudEditorCircleEndAngle,       &hudEditorCircleThickness,
 	&hudEditorCircleSliderD, &hudEditorCircleSliderStarAngle, &hudEditorCircleSliderEndAngle, &hudEditorCircleSliderThickness,
+	NULL,
+};
+
+static panel_button_t *hudEditorFeedTab[] =
+{
+	&hudEditorFeedTime,     &hudEditorFeedTimeSlider,
+	&hudEditorFeedStayTime, &hudEditorFeedStayTimeSlider,
+	&hudEditorFeedFadeTime, &hudEditorFeedFadeTimeSlider,
 	NULL,
 };
 
@@ -1095,7 +1202,9 @@ static void CG_HudEditor_SetupEditPosition(panel_button_t *button, float totalWi
 	         || button == &hudEditorColorBlue || button == &hudEditorColorAlpha
 	         || button == &hudEditorFontScale
 	         || button == &hudEditorCircleDensity || button == &hudEditorCircleStartAngle
-	         || button == &hudEditorCircleEndAngle || button == &hudEditorCircleThickness)
+	         || button == &hudEditorCircleEndAngle || button == &hudEditorCircleThickness
+	         || button == &hudEditorFeedTime || button == &hudEditorFeedStayTime
+	         || button == &hudEditorFeedFadeTime)
 	{
 		// centered
 		button->rect.x = HUDEditorCenterX + (HUDEditorWidth * 0.20f);
@@ -1304,6 +1413,18 @@ static void CG_HudEditorEdit_Finish(panel_button_t *button)
 	else if (button == &hudEditorCircleThickness)
 	{
 		optionValue = &comp->circleThickness;
+	}
+	else if (button == &hudEditorFeedTime)
+	{
+		optionValue = &comp->feedTime;
+	}
+	else if (button == &hudEditorFeedStayTime)
+	{
+		optionValue = &comp->feedStayTime;
+	}
+	else if (button == &hudEditorFeedFadeTime)
+	{
+		optionValue = &comp->feedFadeTime;
 	}
 	else
 	{
@@ -2310,7 +2431,7 @@ static float CG_HudEditor_SetupButtonPosition(panel_button_t *button, float butt
 	}
 	// righ align (2 buttons)
 	else if (button == &hudEditorColorSelectionSecondary || button == &hudEditorColorSelectionBorder
-	         || button == &hudEditorStyleButton || button == &hudEditorBarButton)
+	         || button == &hudEditorStyleButton || button == &hudEditorBarButton || button == &hudEditorFeedButton)
 	{
 		button->rect.x = HUDEditorCenterX + HUDEDITOR_CONTROLS_SPACER_XY * 2;
 	}
@@ -2386,14 +2507,22 @@ static void CG_HudEditorRender_Button(panel_button_t *button)
 			return;
 		}
 
-		// don't dispay font customization button if comp is a bar
+		// don't display font customization button if comp is a bar
 		if (button == &hudEditorFontButton && type == HUD_COMP_TYPE_BAR)
 		{
 			return;
 		}
+
+		// don't display feed customization if comp isn't a feed comp
+		if (button == &hudEditorFeedButton && type != HUD_COMP_TYPE_FEED)
+		{
+			return;
+		}
+
 	}
 	else if (button == &hudEditorBarButton || button == &hudEditorColorButton ||
-	         button == &hudEditorFontButton || button == &hudEditorStyleButton)
+	         button == &hudEditorFontButton || button == &hudEditorStyleButton ||
+	         button == &hudEditorFeedButton)
 	{
 		// don't display all customization button as no comp is selected
 		return;
@@ -2540,6 +2669,30 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->circleThickness);
 	trap_Cvar_Set("hudeditor_CircleSliderThickness", buffer);
 	hudEditorCircleSliderThickness.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.f", comp->feedTime);
+	trap_Cvar_Set("hudeditor_Time", buffer);
+	hudEditorFeedTime.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.f", comp->feedTime);
+	trap_Cvar_Set("hudeditor_FeedTimeSlider", buffer);
+	hudEditorFeedTimeSlider.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.f", comp->feedStayTime);
+	trap_Cvar_Set("hudeditor_Stay Time", buffer);
+	hudEditorFeedStayTime.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.f", comp->feedStayTime);
+	trap_Cvar_Set("hudeditor_FeedStayTimeSlider", buffer);
+	hudEditorFeedStayTimeSlider.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.f", comp->feedFadeTime);
+	trap_Cvar_Set("hudeditor_Fade Time", buffer);
+	hudEditorFeedFadeTime.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.f", comp->feedFadeTime);
+	trap_Cvar_Set("hudeditor_FeedFadeTimeSlider", buffer);
+	hudEditorFeedFadeTimeSlider.data[1] = button->data[0];
 
 	switch (elementColorSelection)
 	{
@@ -2823,6 +2976,18 @@ static void CG_HudEditor_Slider_Render(panel_button_t *button)
 	{
 		optionValue = &comp->circleThickness;
 	}
+	else if (button == &hudEditorFeedTimeSlider)
+	{
+		optionValue = &comp->feedTime;
+	}
+	else if (button == &hudEditorFeedStayTimeSlider)
+	{
+		optionValue = &comp->feedStayTime;
+	}
+	else if (button == &hudEditorFeedFadeTimeSlider)
+	{
+		optionValue = &comp->feedFadeTime;
+	}
 	else
 	{
 		return;
@@ -2923,6 +3088,7 @@ void CG_HudEditorSetup(void)
 		CG_HudEditorAdjustWidthSpread(hudEditorFontTab);
 		CG_HudEditorAdjustWidthSpread(hudEditorColorTab);
 		CG_HudEditorAdjustWidthSpread(hudEditorBarTab);
+		CG_HudEditorAdjustWidthSpread(hudEditorFeedTab);
 		wsAdjusted = qtrue;
 	}
 
@@ -3439,6 +3605,10 @@ void CG_DrawHudEditor(void)
 		{
 			tabToRender = hudEditorBarTab;
 		}
+		else if (lastButtonTabSelected == &hudEditorFeedButton)
+		{
+			tabToRender = hudEditorFeedTab;
+		}
 		else // default
 		{
 			tabToRender = hudEditorColorTab;
@@ -3602,6 +3772,11 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		return;
 	}
 
+	if (BG_PanelButtonsKeyEvent(key, down, hudEditorGenericTab))
+	{
+		return;
+	}
+
 	if (lastButtonTabSelected)
 	{
 		panel_button_t **tabSelected;
@@ -3617,6 +3792,10 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		else if (lastButtonTabSelected == &hudEditorBarButton)
 		{
 			tabSelected = hudEditorBarTab;
+		}
+		else if (lastButtonTabSelected == &hudEditorFeedButton)
+		{
+			tabSelected = hudEditorFeedTab;
 		}
 		else // default
 		{

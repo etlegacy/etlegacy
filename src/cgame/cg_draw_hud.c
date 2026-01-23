@@ -171,6 +171,10 @@ static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float
 	tmp.circleEndAngle     = 360;
 	tmp.circleThickness    = 1;
 
+	tmp.feedTime     = 200;
+	tmp.feedStayTime = 1000;
+	tmp.feedFadeTime = 250;
+
 	return tmp;
 }
 
