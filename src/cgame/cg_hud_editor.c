@@ -3599,6 +3599,30 @@ static void CG_HudEditor_GridDraw(void)
 	}
 }
 
+static panel_button_t ** CG_HudEditor_GetSelectedTab()
+{
+	if (lastButtonTabSelected == &hudEditorFontButton)
+	{
+		return hudEditorFontTab;
+	}
+	else if (lastButtonTabSelected == &hudEditorStyleButton)
+	{
+		return styleCheckBoxPanel;
+	}
+	else if (lastButtonTabSelected == &hudEditorBarButton)
+	{
+		return hudEditorBarTab;
+	}
+	else if (lastButtonTabSelected == &hudEditorFeedButton)
+	{
+		return hudEditorFeedTab;
+	}
+	else // default
+	{
+		return hudEditorColorTab;
+	}
+}
+
 /**
 * @brief CG_DrawHudEditor
 */
@@ -3610,7 +3634,6 @@ void CG_DrawHudEditor(void)
 	panel_button_t **buttons = hudComponentsPanel;
 	panel_button_t *button;
 	hudComponent_t *comp;
-	panel_button_t **tabToRender;
 
 	if (altHud != hudData.active->hudnumber)
 	{
@@ -3624,29 +3647,8 @@ void CG_DrawHudEditor(void)
 	// don't display customization option if no comp selected
 	if (lastFocusComponent)
 	{
-		if (lastButtonTabSelected == &hudEditorFontButton)
-		{
-			tabToRender = hudEditorFontTab;
-		}
-		else if (lastButtonTabSelected == &hudEditorStyleButton)
-		{
-			tabToRender = styleCheckBoxPanel;
-		}
-		else if (lastButtonTabSelected == &hudEditorBarButton)
-		{
-			tabToRender = hudEditorBarTab;
-		}
-		else if (lastButtonTabSelected == &hudEditorFeedButton)
-		{
-			tabToRender = hudEditorFeedTab;
-		}
-		else // default
-		{
-			tabToRender = hudEditorColorTab;
-		}
-
 		BG_PanelButtonsRender(hudEditorGenericTab);
-		BG_PanelButtonsRender(tabToRender);
+		BG_PanelButtonsRender(CG_HudEditor_GetSelectedTab());
 	}
 
 	BG_PanelButtonsRender(hudEditor);
@@ -3803,37 +3805,14 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		return;
 	}
 
-	if (BG_PanelButtonsKeyEvent(key, down, hudEditorGenericTab))
-	{
-		return;
-	}
-
 	if (lastButtonTabSelected)
 	{
-		panel_button_t **tabSelected;
-
-		if (lastButtonTabSelected == &hudEditorFontButton)
+		if (BG_PanelButtonsKeyEvent(key, down, hudEditorGenericTab))
 		{
-			tabSelected = hudEditorFontTab;
-		}
-		else if (lastButtonTabSelected == &hudEditorStyleButton)
-		{
-			tabSelected = styleCheckBoxPanel;
-		}
-		else if (lastButtonTabSelected == &hudEditorBarButton)
-		{
-			tabSelected = hudEditorBarTab;
-		}
-		else if (lastButtonTabSelected == &hudEditorFeedButton)
-		{
-			tabSelected = hudEditorFeedTab;
-		}
-		else // default
-		{
-			tabSelected = hudEditorColorTab;
+			return;
 		}
 
-		if (BG_PanelButtonsKeyEvent(key, down, tabSelected))
+		if (BG_PanelButtonsKeyEvent(key, down, CG_HudEditor_GetSelectedTab()))
 		{
 			return;
 		}
