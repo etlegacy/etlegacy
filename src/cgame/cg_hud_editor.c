@@ -2480,6 +2480,36 @@ static void CG_HudEditorRender_HelpButton(panel_button_t *button)
 #define TIMER_KEYDOWN 500.f
 
 /**
+ * @brief Ensure we may display the options button depending of the comp type
+ * @param[in] button
+ * @return
+ */
+static qboolean CG_HUDEditorCheckTabDisplayValidity(panel_button_t *button)
+{
+	const hudComponentTypes_t type = hudComponentFields[lastFocusComponent->data[0]].type;
+
+	// don't display bar customization button if comp isn't a bar
+	if (button == &hudEditorBarButton && type != HUD_COMP_TYPE_BAR)
+	{
+		return qfalse;
+	}
+
+	// don't display font customization button if comp is a bar
+	if (button == &hudEditorFontButton && type == HUD_COMP_TYPE_BAR)
+	{
+		return qfalse;
+	}
+
+	// don't display feed customization if comp isn't a feed comp
+	if (button == &hudEditorFeedButton && type != HUD_COMP_TYPE_FEED)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
  * @brief CG_PanelButtonsRender_Button
  * @param[in] CG_HudEditorRender_Button
  */
@@ -2499,26 +2529,10 @@ static void CG_HudEditorRender_Button(panel_button_t *button)
 
 	if (lastFocusComponent)
 	{
-		const hudComponentTypes_t type = hudComponentFields[lastFocusComponent->data[0]].type;
-
-		// don't display bar customization button if comp isn't a bar
-		if (button == &hudEditorBarButton && type != HUD_COMP_TYPE_BAR)
+		if (!CG_HUDEditorCheckTabDisplayValidity(button))
 		{
 			return;
 		}
-
-		// don't display font customization button if comp is a bar
-		if (button == &hudEditorFontButton && type == HUD_COMP_TYPE_BAR)
-		{
-			return;
-		}
-
-		// don't display feed customization if comp isn't a feed comp
-		if (button == &hudEditorFeedButton && type != HUD_COMP_TYPE_FEED)
-		{
-			return;
-		}
-
 	}
 	else if (button == &hudEditorBarButton || button == &hudEditorColorButton ||
 	         button == &hudEditorFontButton || button == &hudEditorStyleButton ||
@@ -2843,6 +2857,13 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 		else if (comp->visible || showLayout == HUD_SHOW_LAYOUT_ALL)
 		{
 			lastFocusComponent = button;
+
+			// ensure the newly selected comp use a valide tab option display
+			if (!CG_HUDEditorCheckTabDisplayValidity(lastButtonTabSelected))
+			{
+				lastButtonTabSelected = &hudEditorColorButton;
+			}
+
 			CG_HudEditorUpdateFields(lastFocusComponent);
 			BG_PanelButtons_SetFocusButton(NULL);
 			button->data[7] = 1;
@@ -3221,6 +3242,13 @@ static qboolean CG_HudEditor_ComponentLists_KeyUp(panel_button_t *button, int ke
 					lastFocusComponentMoved     = qfalse;
 					lastFocusComponent->data[7] = 1;
 					CG_HudEditorUpdateFields(parsedButton);
+
+					// ensure the newly selected comp use a valide tab option display
+					if (!CG_HUDEditorCheckTabDisplayValidity(lastButtonTabSelected))
+					{
+						lastButtonTabSelected = &hudEditorColorButton;
+					}
+
 					break;
 				}
 
