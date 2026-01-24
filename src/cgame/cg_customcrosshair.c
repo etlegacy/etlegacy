@@ -117,6 +117,12 @@ void CG_DrawCustomCrosshair(qboolean withSpread)
 	x = (float)cgs.glconfig.vidWidth / 2 + cg_crosshairX.value;
 	y = (float)cgs.glconfig.vidHeight / 2 + cg_crosshairY.value;
 
+	if (cg.editingHud)
+	{
+		x /= HUD_EDITOR_SIZE_COEFF;
+		y /= HUD_EDITOR_SIZE_COEFF;
+	}
+
 	if (withSpread)
 	{
 		crossSpread = CG_CustomCrosshairCalcSpread();
