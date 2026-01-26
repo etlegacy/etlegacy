@@ -1657,7 +1657,7 @@ typedef enum ETL_DEMO_EXTEND
  */
 typedef struct ETL_260B_NOEDIT entityState_s
 {
-	net_uint8_t number;             ///< entity index
+	net_uint10_t number;             ///< entity index
 	entityType_t eType;     ///< entityType_t
 	net_uint24_t eFlags;
 
