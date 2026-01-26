@@ -192,7 +192,7 @@ void CL_InitCvars()
 
 	cl_recoilPitch = Cvar_Get("cg_recoilPitch", "0", CVAR_ROM);
 
-	cl_bypassMouseInput = Cvar_Get("cl_bypassMouseInput", "0", 0);    //CVAR_ROM );
+	cl_bypassMouseInput = Cvar_Get("cl_bypassMouseInput", "0", 0); //CVAR_ROM );
 
 	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "0", CVAR_ARCHIVE_ND);    // double tap
 
