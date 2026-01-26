@@ -2125,6 +2125,7 @@ static void CG_DrawSpawnpoints(void)
 			if (trace.fraction == 1.0f)
 			{
 				VectorCopy(spawnpoint->origin, trace.endpos);
+				trace.endpos[2] += cg.snap->ps.mins[2];
 			}
 			else
 			{
