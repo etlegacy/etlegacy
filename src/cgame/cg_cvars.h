@@ -258,6 +258,8 @@ extern vmCvar_t cg_bannerTime;
 
 extern vmCvar_t cg_shoutcastTeamNameRed;
 extern vmCvar_t cg_shoutcastTeamNameBlue;
+extern vmCvar_t cg_shoutcastTeamScoreRed;
+extern vmCvar_t cg_shoutcastTeamScoreBlue;
 extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
 

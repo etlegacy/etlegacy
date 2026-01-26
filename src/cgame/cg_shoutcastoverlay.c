@@ -962,12 +962,15 @@ void CG_DrawShoutcastPlayerStatus(hudComponent_t *comp)
 /**
  * @brief CG_DrawShoutcastTeamNames
  * @param[in] comp
+ * @param[in] text
+ * @param[in] score
  */
-static void CG_DrawShoutcastTeamNames(hudComponent_t *comp, char *text)
+static void CG_DrawShoutcastTeamNames(hudComponent_t *comp, char *teamName, int score)
 {
 	int   textWidth;
 	int   textHeight;
 	float scale;
+	char  *text;
 
 	if (cgs.gamestats.show == SHOW_ON)
 	{
@@ -984,14 +987,32 @@ static void CG_DrawShoutcastTeamNames(hudComponent_t *comp, char *text)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 2, comp->colorBorder);
 	}
 
+	// display score with team name
+	if (comp->style & 1)
+	{
+		// swap score with team name
+		if (comp->style & 2)
+		{
+			text = va("%i %s", score, teamName);
+		}
+		else
+		{
+			text = va("%s %i", teamName, score);
+		}
+	}
+	else
+	{
+		text = teamName;
+	}
+
 	scale = CG_ComputeScale(comp);
 
 	// max width 174, limit 20 chars
 	textWidth  = MIN(CG_Text_Width_Ext(text, scale, 0, FONT_TEXT), 174);
 	textHeight = CG_Text_Height_Ext(text, scale, 0, FONT_TEXT);
 
-	CG_Text_Paint_Ext(comp->location.x + (comp->location.w / 2) - (textWidth / 2) + 1.35f, comp->location.y + (comp->location.h / 2) + (textHeight / 2) + 1.35f, scale, scale, comp->colorSecondary, text, 0, 20, comp->styleText, FONT_TEXT);
-	CG_Text_Paint_Ext(comp->location.x + (comp->location.w / 2) - (textWidth / 2), comp->location.y + (comp->location.h / 2) + (textHeight / 2), scale, scale, comp->colorMain, text, 0, 20, comp->styleText, FONT_TEXT);
+	CG_Text_Paint_Ext(comp->location.x + (comp->location.w * 0.5f) - (textWidth * 0.5f) + 1.35f, comp->location.y + (comp->location.h * 0.5f) + (textHeight * 0.5f) + 1.35f, scale, scale, comp->colorSecondary, text, 0, 20, comp->styleText, FONT_TEXT);
+	CG_Text_Paint_Ext(comp->location.x + (comp->location.w * 0.5f) - (textWidth * 0.5f), comp->location.y + (comp->location.h * 0.5f) + (textHeight * 0.5f), scale, scale, comp->colorMain, text, 0, 20, comp->styleText, FONT_TEXT);
 }
 
 /**
@@ -1012,7 +1033,8 @@ void CG_DrawShoutcastTeamNameAxis(hudComponent_t *comp)
 
 	// draw axis label
 	CG_DrawShoutcastTeamNames(comp, Q_PrintStrlen(cg_shoutcastTeamNameRed.string) > 0
-	                                    ? cg_shoutcastTeamNameRed.string : "Axis");
+	                                    ? cg_shoutcastTeamNameRed.string : "Axis",
+	                          cg_shoutcastTeamScoreRed.integer);
 }
 
 /**
@@ -1033,7 +1055,8 @@ void CG_DrawShoutcastTeamNameAllies(hudComponent_t *comp)
 
 	// draw allies label
 	CG_DrawShoutcastTeamNames(comp, Q_PrintStrlen(cg_shoutcastTeamNameBlue.string) > 0
-	                                    ? cg_shoutcastTeamNameBlue.string : "Allies");
+	                                    ? cg_shoutcastTeamNameBlue.string : "Allies",
+	                          cg_shoutcastTeamScoreBlue.integer);
 }
 
 /**

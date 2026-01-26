@@ -265,6 +265,8 @@ vmCvar_t cg_bannerTime;
 
 vmCvar_t cg_shoutcastTeamNameRed;
 vmCvar_t cg_shoutcastTeamNameBlue;
+vmCvar_t cg_shoutcastTeamScoreRed;
+vmCvar_t cg_shoutcastTeamScoreBlue;
 vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
 
@@ -567,6 +569,8 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_shoutcastTeamNameRed,               "cg_shoutcastTeamNameRed",               "Axis",        CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastTeamNameBlue,              "cg_shoutcastTeamNameBlue",              "Allies",      CVAR_ARCHIVE,                 0 },
+	{ &cg_shoutcastTeamScoreRed,              "cg_shoutcastTeamScoreRed",              "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_shoutcastTeamScoreBlue,             "cg_shoutcastTeamScoreBlue",             "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawHealth,                "cg_shoutcastDrawHealth",                "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastGrenadeTrail,              "cg_shoutcastGrenadeTrail",              "0",           CVAR_ARCHIVE,                 0 },
 
@@ -623,7 +627,7 @@ void CG_setClientFlags(void);
 /**
  * @brief CG_RegisterOrUpdateCvars
  * @param[in] cv
- * @return 
+ * @return
  */
 static qboolean CG_RegisterOrUpdateCvars(cvarTable_t *cv)
 {

@@ -106,6 +106,8 @@ vmCvar_t ui_serverBrowserSettings;
 
 vmCvar_t ui_cg_shoutcastTeamNameRed;
 vmCvar_t ui_cg_shoutcastTeamNameBlue;
+vmCvar_t ui_cg_shoutcastTeamScoreRed;
+vmCvar_t ui_cg_shoutcastTeamScoreBlue;
 vmCvar_t ui_cg_shoutcastDrawHealth;
 vmCvar_t ui_cg_shoutcastGrenadeTrail;
 
@@ -215,8 +217,10 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairHealth",                  "0",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_cg_shoutcastTeamNameRed,         "cg_shoutcastTeamNameRed",             "",                           CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamNameRed,         "cg_shoutcastTeamNameRed",             "Axis",                       CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "Allies",                     CVAR_ARCHIVE,                   0 },
+    { &ui_cg_shoutcastTeamScoreRed,        "cg_shoutcastTeamScoreRed",            "0",                          CVAR_ARCHIVE,                   0 },
+    { &ui_cg_shoutcastTeamScoreBlue,       "cg_shoutcastTeamScoreBlue",           "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
 
