@@ -438,6 +438,10 @@ void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float 
 	float  numberOfSquare;
 	float  size;
 	float  slice;
+	float  iconX;
+	float  iconY;
+	float  iconW;
+	float  iconH;
 
 	// ensure density and tickness are valid
 	// otherwise div by 0 will happen
@@ -458,6 +462,13 @@ void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float 
 	y += h * .5f;
 	w *= 0.5f;
 	h *= 0.5f;
+
+	// save the original size variables for icon drawing,
+	// we don't want the circle drawing affecting the icon drawing
+	iconX = x;
+	iconY = y;
+	iconW = w;
+	iconH = iconW;
 
 	x -= size * 0.5f;
 	y -= size * 0.5f;
@@ -492,8 +503,8 @@ void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float 
 	// handle icon draw in the circle center
 	if (flags & BAR_ICON && icon > -1)
 	{
-		int iconW = MIN(w, h) * 0.25;
-		int iconH = iconW;
+		iconW = MIN(iconW, iconH) * 0.25;
+		iconH = iconW;
 
 		// adjust icon for stamina draw
 		if (icon == cgs.media.hudPowerIcon)
@@ -506,7 +517,7 @@ void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float 
 			}
 		}
 
-		CG_DrawPic(x - iconW * 0.5, y - iconH * 0.5, iconW, iconH, icon);
+		CG_DrawPic(iconX - iconW * 0.5, iconY - iconH * 0.5, iconW, iconH, icon);
 	}
 
 	trap_R_SetColor(NULL);
