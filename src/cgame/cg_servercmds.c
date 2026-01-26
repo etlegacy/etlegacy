@@ -253,6 +253,84 @@ void CG_ParseDemoVersion(void)
 }
 
 /**
+ * @brief CG_RegisterLastConnectedCvars
+ */
+static void CG_RegisterLastConnectedCvars(void)
+{
+	trap_Cvar_Register(NULL, "ui_lastConnectedAddress", "", CVAR_ARCHIVE);
+	trap_Cvar_Register(NULL, "ui_lastConnectedMap", "", CVAR_ARCHIVE);
+	trap_Cvar_Register(NULL, "ui_lastConnectedClients", "", CVAR_ARCHIVE);
+	trap_Cvar_Register(NULL, "ui_lastConnectedHumans", "", CVAR_ARCHIVE);
+	trap_Cvar_Register(NULL, "ui_lastConnectedMaxClients", "", CVAR_ARCHIVE);
+	trap_Cvar_Register(NULL, "ui_lastConnectedValid", "0", CVAR_ARCHIVE);
+}
+
+/**
+ * @brief CG_UpdateLastConnectedInfo
+ */
+static void CG_UpdateLastConnectedInfo(void)
+{
+	const char *info;
+	const char *game;
+	const char *mapname;
+	const char *maxclients;
+	char       address[MAX_CVAR_VALUE_STRING];
+	int        i;
+	int        clients = 0;
+
+	if (cg.demoPlayback)
+	{
+		return;
+	}
+
+	info = CG_ConfigString(CS_SERVERINFO);
+	game = Info_ValueForKey(info, "game");
+	if (!game[0] || !Q_stristr(game, "legacy"))
+	{
+		return;
+	}
+
+	CG_RegisterLastConnectedCvars();
+
+	trap_Cvar_VariableStringBuffer("cl_currentServerIP", address, sizeof(address));
+	if (address[0])
+	{
+		trap_Cvar_Set("ui_lastConnectedAddress", address);
+		trap_Cvar_Set("ui_lastConnectedValid", "1");
+	}
+
+	mapname = Info_ValueForKey(info, "mapname");
+	if (mapname[0])
+	{
+		trap_Cvar_Set("ui_lastConnectedMap", mapname);
+	}
+	else
+	{
+		trap_Cvar_Set("ui_lastConnectedMap", "");
+	}
+
+	maxclients = Info_ValueForKey(info, "sv_maxclients");
+	if (maxclients[0])
+	{
+		trap_Cvar_Set("ui_lastConnectedMaxClients", maxclients);
+	}
+	else
+	{
+		trap_Cvar_Set("ui_lastConnectedMaxClients", "");
+	}
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (CG_ConfigString(CS_PLAYERS + i)[0])
+		{
+			clients++;
+		}
+	}
+	trap_Cvar_Set("ui_lastConnectedClients", va("%i", clients));
+	trap_Cvar_Set("ui_lastConnectedHumans", va("%i", clients));
+}
+
+/**
  * @brief This is called explicitly when the gamestate is first received,
  * and whenever the server updates any serverinfo flagged cvars
  */
@@ -289,6 +367,8 @@ void CG_ParseServerinfo(void)
 
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
+
+	CG_UpdateLastConnectedInfo();
 }
 
 /**
