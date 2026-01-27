@@ -209,6 +209,8 @@ vmCvar_t g_debugSkills;
 vmCvar_t g_heavyWeaponRestriction;
 vmCvar_t g_autoFireteams;
 
+vmCvar_t g_teamInfoUpdateRate;
+
 vmCvar_t g_nextmap;
 vmCvar_t g_nextcampaign;
 
@@ -557,6 +559,8 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_heavyWeaponRestriction,          "g_heavyWeaponRestriction",          "100",                        CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_autoFireteams,                   "g_autoFireteams",                   "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+
+	{ &g_teamInfoUpdateRate,              "g_teamInfoUpdateRate",              "1000",                       CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 
 	{ &g_nextmap,                         "nextmap",                           "",                           CVAR_TEMP,                                       0, qfalse, qfalse },
 	{ &g_nextcampaign,                    "nextcampaign",                      "",                           CVAR_TEMP,                                       0, qfalse, qfalse },

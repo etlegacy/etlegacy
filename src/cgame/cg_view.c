@@ -561,6 +561,11 @@ static void CG_ZoomSway(void)
 		return;
 	}
 
+	if (cg.zoomedBinoc)        // no sway on binoculars
+	{
+		return;
+	}
+
 	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_AAGUN_ACTIVE))     // don't draw when on mg_42
 	{
 		return;
@@ -2001,7 +2006,7 @@ static void CG_DemoRewindFixEffects(void)
 	}
 
 	// clear message buffer
-	for (i = 0; i < TEAMCHAT_HEIGHT; i++)
+	for (i = 0; i < TEAMCHAT_MSG_MAX; i++)
 	{
 		if (cgs.teamChatMsgTimes[i] > cg.time)
 		{
@@ -2017,6 +2022,22 @@ static void CG_DemoRewindFixEffects(void)
 		if (cg.viewDamage[i].damageTime > cg.time)
 		{
 			cg.viewDamage[i].damageTime = 0;
+		}
+	}
+
+	for (i = 0; i < cg.snap->numEntities; i++)
+	{
+		centity_t *cent = &cg_entities[cg.snap->entities[i].number];
+
+		if (cent->currentState.number < MAX_CLIENTS)
+		{
+			continue;
+		}
+
+		// reset time for landmine flag
+		if (cent->currentState.weapon == WP_LANDMINE)
+		{
+			cent->lerpFrame.frameTime = cg.time;
 		}
 	}
 
@@ -2104,6 +2125,7 @@ static void CG_DrawSpawnpoints(void)
 			if (trace.fraction == 1.0f)
 			{
 				VectorCopy(spawnpoint->origin, trace.endpos);
+				trace.endpos[2] += cg.snap->ps.mins[2];
 			}
 			else
 			{
@@ -2365,10 +2387,13 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 	DEBUGTIME
 
-	// demo rewind happend, fix time based effects
+	// demo rewind happened, fix time based effects
 	if (demoPlayback && cg.time - cg.oldTime < 0)
 	{
 		CG_DemoRewindFixEffects();
+
+		// reset cursor timeout
+		cgs.cursorTimeout = cg.time + 5000;
 	}
 
 	DEBUGTIME

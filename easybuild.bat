@@ -19,6 +19,9 @@ SET project_dir=!batloc!project
 
 SET build_64=0
 SET mod_only=0
+SET etpub=0
+SET jaymod=0
+SET nq=0
 SET use_autoupdate=1
 SET use_extra=1
 SET build_r2=0
@@ -65,7 +68,7 @@ IF NOT "%1"=="" (
 		ECHO help - print this help
 		ECHO.
 		ECHO Properties
-		ECHO -64, -debug, -mod, -noextra, -noupdate, -nor2, -nossl, -generator [generator], -toolset [version] -build_dir [dir]
+		ECHO -64, -debug, -mod, -etpub, -jaymod, -nq, -noextra, -noupdate, -nor2, -nossl, -generator [generator], -toolset [version] -build_dir [dir]
 		ECHO.
 		GOTO:EOF
 	) ELSE IF /I "%1"=="-64" (
@@ -80,6 +83,12 @@ IF NOT "%1"=="" (
 		SET build_auth=0
 	) ELSE IF /I "%1"=="-mod" (
 		SET mod_only=1
+	) ELSE IF /I "%1"=="-etpub" (
+		SET etpub=1
+	) ELSE IF /I "%1"=="-jaymod" (
+		SET jaymod=1
+	) ELSE IF /I "%1"=="-nq" (
+		SET nq=1
 	) ELSE IF /I "%1"=="-noupdate" (
 		SET use_autoupdate=0
 	) ELSE IF /I "%1"=="-no-update" (
@@ -414,6 +423,20 @@ GOTO :EOF
 		SET local_build_string=!local_build_string! ^
 		-DBUILD_CLIENT=0 ^
 		-DBUILD_SERVER=0
+	)
+
+	IF !etpub!==1 (
+		SET local_build_string=!local_build_string! ^
+		-DMODNAME="etpub" ^
+		-DMODURL="https://etpub.org"
+	) ELSE IF !jaymod!==1 (
+		SET local_build_string=!local_build_string! ^
+		-DMODNAME="jaymod" ^
+		-DMODURL="https://jaymod.clanfu.org"
+	) ELSE IF !nq!==1 (
+		SET local_build_string=!local_build_string! ^
+		-DMODNAME="nq" ^
+		-DMODURL="http://www.shitstorm.org"
 	)
 
 	ENDLOCAL&SET "%~1=%local_build_string%"

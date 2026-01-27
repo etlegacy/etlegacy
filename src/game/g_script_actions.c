@@ -3859,7 +3859,7 @@ qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_Announce: statement parameter required\n");
 	}
 
-	trap_SendServerCommand(-1, va("cpm \"%s\"", token));
+	trap_SendServerCommand(-1, va("cpm \"%s\" %i", token, PM_ANNOUNCE));
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(ent, NULL, token, "announce");

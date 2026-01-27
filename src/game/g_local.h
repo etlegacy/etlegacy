@@ -1783,7 +1783,7 @@ void G_SendScore(gentity_t *ent);
 
 // g_cmds.c
 void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText);
-void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
+void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message);   // removed static declaration so it would link
 void G_HQSay(gentity_t *other, int color, const char *name, const char *message);
 qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand);
 void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value);

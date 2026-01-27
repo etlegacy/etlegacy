@@ -751,3 +751,55 @@ gfx/2d/crosshairt_alt_svg
 	}
 }
 //========================================//
+
+
+//========================================//
+// Demo UI controls
+//========================================//
+
+gfx/2d/demo_controls_play
+{
+	nocompress
+	nopicmip
+	{
+		clampMap gfx/2d/demo_controls_play.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/demo_controls_pause
+{
+	nocompress
+	nopicmip
+	{
+		clampMap gfx/2d/demo_controls_pause.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/demo_controls_rewind
+{
+	nocompress
+	nopicmip
+	{
+		clampMap gfx/2d/demo_controls_seek.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+		tcMod transform -1 0 0 1 1 0
+	}
+}
+
+gfx/2d/demo_controls_fastforward
+{
+	nocompress
+	nopicmip
+	{
+		clampMap gfx/2d/demo_controls_seek.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+//========================================//

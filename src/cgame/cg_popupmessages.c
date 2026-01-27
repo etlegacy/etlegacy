@@ -34,7 +34,7 @@
 
 #include "cg_local.h"
 
-#define NUM_PM_STACK           3
+#define NUM_PM_STACK           4
 #define NUM_PM_STACK_ITEMS     32
 #define NUM_PM_STACK_ITEMS_BIG 3 // we shouldn't need many of these
 #define NUM_PM_STACK_ITEMS_XP  32
@@ -101,6 +101,7 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImages[PM_HEALTHPICKUP]   = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
 	cgs.media.pmImages[PM_WEAPONPICKUP]   = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_CONNECT]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_ANNOUNCE]       = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 
 	cgs.media.pmImageAlliesConstruct = trap_R_RegisterShaderNoMip("gfx/hud/pm_constallied");
 	cgs.media.pmImageAxisConstruct   = trap_R_RegisterShaderNoMip("gfx/hud/pm_constaxis");
@@ -140,16 +141,6 @@ void CG_InitPM(void)
 	cg_pmOldListXP     = NULL;
 	cg_pmWaitingListXP = NULL;
 }
-
-
-/*
-* These have been replaced by cvars
-* #define PM_FADETIME 2500
-* #define PM_WAITTIME 2000
-* #define PM_POPUP_TIME 1000
-*/
-
-#define PM_BIGPOPUP_TIME 2500
 
 /**
  * @brief CG_AddToListFront
@@ -260,15 +251,18 @@ void CG_UpdatePMList(pmListItem_t **waitingList, pmListItem_t **oldList, int tim
  */
 void CG_UpdatePMLists(void)
 {
-	int i;
+	int           i;
+	hudStucture_t *hud = CG_GetActiveHUD();
 
 	for (i = 0; i < NUM_PM_STACK; ++i)
 	{
-		CG_UpdatePMList(&cg_pmWaitingList[i], &cg_pmOldList[i], cg_popupTime.integer, cg_popupStayTime.integer, cg_popupFadeTime.integer);
+		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&hud->popupmessages + i * sizeof(hudComponent_t));
+
+		CG_UpdatePMList(&cg_pmWaitingList[i], &cg_pmOldList[i], pmComp->feedTime, pmComp->feedStayTime, pmComp->feedFadeTime);
 	}
 
-	CG_UpdatePMList(&cg_pmWaitingListXP, &cg_pmOldListXP, cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
-	CG_UpdatePMList(&cg_pmWaitingListBig, NULL, PM_BIGPOPUP_TIME, cg_popupStayTime.integer, cg_popupFadeTime.integer);   // TODO: cvar popup BIG ?
+	CG_UpdatePMList(&cg_pmWaitingListXP, &cg_pmOldListXP, hud->xpgain.feedTime, hud->xpgain.feedStayTime, hud->xpgain.feedFadeTime);
+	CG_UpdatePMList(&cg_pmWaitingListBig, NULL, hud->pmitemsbig.feedTime, hud->pmitemsbig.feedStayTime, hud->pmitemsbig.feedFadeTime);   // TODO: cvar popup BIG ?
 }
 
 /**
@@ -334,11 +328,13 @@ qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter)
 	case PM_TEAM:
 		return filter & POPUP_FILTER_TEAMJOIN;
 	case PM_MESSAGE:
+		return filter & POPUP_FILTER_ECHO;
 	case PM_DYNAMITE:
 	case PM_CONSTRUCTION:
 	case PM_MINES:
 	case PM_OBJECTIVE:
 	case PM_DESTRUCTION:
+	case PM_ANNOUNCE:
 		return filter & POPUP_FILTER_MISSION;
 	case PM_AMMOPICKUP:
 	case PM_HEALTHPICKUP:
@@ -779,7 +775,7 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 	}
 
 	w = comp->location.w - size * 2;
-	CG_WordWrapString(buffer, CG_GetMaxCharsPerLine(buffer, scale, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
+	CG_WordWrapString(buffer, CG_MaxCharsForWidth(buffer, scale, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
 
 	// we reach the comp border, don't print the line
 	if (scrollDown)
@@ -925,12 +921,12 @@ void CG_DrawPM(hudComponent_t *comp)
 	}
 
 	isScapeAvailable = CG_DrawPMItems(comp, cg_pmWaitingList[pmNum], &y, lineHeight, size, comp->style & POPUP_SCROLL_DOWN,
-	                                  cg_popupTime.integer, cg_popupStayTime.integer, cg_popupFadeTime.integer);
+	                                  comp->feedTime, comp->feedStayTime, comp->feedFadeTime);
 
 	for (listItem = cg_pmOldList[pmNum]; listItem && isScapeAvailable; listItem = listItem->next)
 	{
 		isScapeAvailable = CG_DrawPMItems(comp, listItem, &y, lineHeight, size, comp->style & POPUP_SCROLL_DOWN,
-		                                  cg_popupTime.integer, cg_popupStayTime.integer, cg_popupFadeTime.integer);
+		                                  comp->feedTime, comp->feedStayTime, comp->feedFadeTime);
 	}
 }
 
@@ -951,11 +947,11 @@ void CG_DrawPMItemsBig(hudComponent_t *comp)
 	Vector4Copy(comp->colorMain, colorText);
 	Vector4Copy(comp->colorBackground, colorBackground);
 	Vector4Copy(comp->colorBorder, colorBorder);
-	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + cg_popupStayTime.value;
+	t = cg_pmWaitingListBig->time + comp->feedTime + comp->feedStayTime;
 
 	if (cg.time > t)
 	{
-		float fade = cg_popupFadeTime.integer ? 1 - ((cg.time - t) / cg_popupFadeTime.value) : 0;
+		float fade = comp->feedFadeTime ? 1 - ((cg.time - t) / comp->feedFadeTime) : 0;
 
 		colorText[3]       *= fade;
 		colorBackground[3] *= fade;
@@ -1057,7 +1053,7 @@ static qboolean CG_DrawPMXPItems(hudComponent_t *comp, pmListItem_t *listItem, f
 	}
 
 	w = comp->location.w - size * 2;
-	CG_WordWrapString(buffer, CG_GetMaxCharsPerLine(buffer, scale * 0.75, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
+	CG_WordWrapString(buffer, CG_MaxCharsForWidth(buffer, scale * 0.75, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
 
 	// we reach the comp border, don't print the line
 	if (scrollDown)
@@ -1167,12 +1163,12 @@ void CG_DrawPMItemsXPGain(hudComponent_t *comp)
 	}
 
 	isScapeAvailable = CG_DrawPMXPItems(comp, cg_pmWaitingListXP, &y, lineHeight, size, comp->style & POPUP_XPGAIN_SCROLL_DOWN,
-	                                    cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
+	                                    comp->feedTime, comp->feedStayTime, comp->feedFadeTime);
 
 	for (listItem = cg_pmOldListXP; listItem && isScapeAvailable; listItem = listItem->next)
 	{
 		isScapeAvailable = CG_DrawPMXPItems(comp, listItem, &y, lineHeight, size, comp->style & POPUP_XPGAIN_SCROLL_DOWN,
-		                                    cg_popupXPGainTime.integer, cg_popupXPGainStayTime.integer, cg_popupXPGainFadeTime.integer);
+		                                    comp->feedTime, comp->feedStayTime, comp->feedFadeTime);
 	}
 }
 

@@ -456,4 +456,14 @@ float FloatSwap(const float *f);
 #define LL(x) x = LittleLong(x)
 #define LF(x) x = LittleFloat(x)
 
+#if defined(__clang__) && defined(__has_attribute)
+	#if  __has_attribute(annotate)
+		#define ETL_ANNOTATE(str) __attribute__((annotate(str)))
+	#else
+		#define ETL_ANNOTATE(str)
+	#endif
+#else
+	#define ETL_ANNOTATE(str)
+#endif
+
 #endif // #ifndef INCLUDE_Q_PLATFORM_H

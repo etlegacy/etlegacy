@@ -137,7 +137,7 @@ if(FEATURE_RENDERER2)
 	endif()
 
 	FILE(GLOB SHDR2H_SRC
-		"src/tools/shdr/*.*"
+		"src/renderer2/glsl/shdr/*.*"
 	)
 	add_executable(shdr2h ${SHDR2H_SRC})
 

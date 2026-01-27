@@ -576,7 +576,7 @@ int CG_GetOriginForTag(centity_t *cent, refEntity_t *parent, const char *tagName
  * @param[in] playerOrigin
  * @param[in] gdir
  */
-void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
+void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage)
 {
 	if (cg_blood.integer && cg_bloodTime.integer)
 	{

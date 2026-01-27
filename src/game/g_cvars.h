@@ -203,6 +203,8 @@ extern vmCvar_t g_debugSkills;
 extern vmCvar_t g_heavyWeaponRestriction;
 extern vmCvar_t g_autoFireteams;
 
+extern vmCvar_t g_teamInfoUpdateRate;
+
 extern vmCvar_t g_nextmap;
 extern vmCvar_t g_nextcampaign;
 

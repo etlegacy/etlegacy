@@ -1702,7 +1702,7 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 	{
 		CG_DPrintf("^2trap_R_RegisterShaderNoMip: register shader no mip: '%s'\n", name);
 	}
-	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShaderNpMip", name);
+	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShaderNoMip", name);
 	return handle;
 }
 

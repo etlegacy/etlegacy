@@ -6,7 +6,7 @@
  */
 #include "g_local.h"
 
-#include "../qcommon/crypto/sha-1/sha1.h"
+#include "../../vendor/sha-1/sha1.h"
 
 /**
  * @brief G_SHA1

@@ -1109,10 +1109,8 @@ static void CG_RegisterGraphics(void)
 
 	for (i = 0 ; i < NUM_CROSSHAIRS ; i++)
 	{
-		const qboolean useSVG = cg_crosshairSVG.integer && cg.etLegacyClient;
-
-		cgs.media.crosshairShader[i] = trap_R_RegisterShader(va("gfx/2d/crosshair%c%s", 'a' + i, useSVG ? "_svg" : ""));
-		cg.crosshairShaderAlt[i]     = trap_R_RegisterShader(va("gfx/2d/crosshair%c_alt%s", 'a' + i, useSVG ? "_svg" : ""));
+		cgs.media.crosshairShader[i] = trap_R_RegisterShader(va("gfx/2d/crosshair%c", 'a' + i));
+		cg.crosshairShaderAlt[i]     = trap_R_RegisterShader(va("gfx/2d/crosshair%c_alt", 'a' + i));
 	}
 
 	for (i = 0 ; i < SK_NUM_SKILLS ; i++)
@@ -1578,6 +1576,11 @@ static void CG_RegisterGraphics(void)
 	cgs.media.fireteamIcon = trap_R_RegisterShaderNoMip("sprites/fireteam");
 
 	cgs.media.spawnpointMarker = trap_R_RegisterShaderNoMip("textures/sfx/spawnpoint_marker");
+
+	cgs.media.demoPlay        = trap_R_RegisterShaderNoMip("gfx/2d/demo_controls_play");
+	cgs.media.demoPause       = trap_R_RegisterShaderNoMip("gfx/2d/demo_controls_pause");
+	cgs.media.demoRewind      = trap_R_RegisterShaderNoMip("gfx/2d/demo_controls_rewind");
+	cgs.media.demoFastForward = trap_R_RegisterShaderNoMip("gfx/2d/demo_controls_fastforward");
 
 	// NOTE: load smoke puff as last shader to always draw on top of other shaders
 	// because renderer order the draw depth level by register index

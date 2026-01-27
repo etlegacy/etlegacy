@@ -47,7 +47,9 @@ typedef struct
 	qboolean replaceNumberByName;                       //< added in version 3
 	char numberToNameTableReminder[MAXHUDS][MAX_QPATH]; //< added in version 3
 	qboolean shiftHealthBarDynamicColorStyle;           //< added in version 4
+	qboolean shiftHealthBarDynamicColorStyle2;          //< added in version 5
 	qboolean replaceWeaponIconStyle;                    //< added in version 5
+	qboolean addNoEchoToPopupmessageFilter;             //< added in version 5
 } hudFileUpgrades_t;
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
@@ -527,6 +529,26 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 			cJSON_AddNumberToObject(compObj, "autoAdjust", comp->autoAdjust);
 		}
 
+		if (flags & BIT(13))
+		{
+			cJSON_AddNumberToObject(compObj, "circleDensityPoint", comp->circleDensityPoint);
+		}
+
+		if (flags & BIT(14))
+		{
+			cJSON_AddNumberToObject(compObj, "circleStartAngle", comp->circleStartAngle);
+		}
+
+		if (flags & BIT(15))
+		{
+			cJSON_AddNumberToObject(compObj, "circleEndAngle", comp->circleEndAngle);
+		}
+
+		if (flags & BIT(16))
+		{
+			cJSON_AddNumberToObject(compObj, "circleThickness", comp->circleThickness);
+		}
+
 		if (flags & BIT(0))
 		{
 			cJSON_AddNumberToObject(compObj, "anchor", comp->anchorPoint);
@@ -636,6 +658,26 @@ static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp
 	if (comp->autoAdjust != parentComp->autoAdjust)
 	{
 		flags |= BIT(12);
+	}
+
+	if (comp->circleDensityPoint != parentComp->circleDensityPoint)
+	{
+		flags |= BIT(13);
+	}
+
+	if (comp->circleStartAngle != parentComp->circleStartAngle)
+	{
+		flags |= BIT(13);
+	}
+
+	if (comp->circleEndAngle != parentComp->circleEndAngle)
+	{
+		flags |= BIT(13);
+	}
+
+	if (comp->circleThickness != parentComp->circleThickness)
+	{
+		flags |= BIT(13);
 	}
 
 	return flags;
@@ -1035,7 +1077,7 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
  */
 static qboolean CG_ParseHUD(int handle)
 {
-	int           i, componentOffset = 0;
+	int           i;
 	pc_token_t    token;
 	hudStucture_t *tempHud, *hud, *parentHud = NULL;
 	qboolean      loadDefaults = qtrue;
@@ -1084,7 +1126,6 @@ static qboolean CG_ParseHUD(int handle)
 		CG_setDefaultHudValues(tempHud);
 	}
 
-	componentOffset = 0;
 	while (qtrue)
 	{
 		if (!trap_PC_ReadToken(handle, &token))
@@ -1118,7 +1159,7 @@ static qboolean CG_ParseHUD(int handle)
 					CG_CloneHudComponent(parentHud, hudComponentFields[i].name, tempHud, component);
 				}
 
-				component->offset    = componentOffset++;
+				component->offset    = i;
 				component->hardScale = hudComponentFields[i].scale;
 				component->draw      = hudComponentFields[i].draw;
 				if (!CG_ParseHudComponent(handle, component))
@@ -1331,12 +1372,14 @@ static void CG_HudParseColorObject(cJSON *object, vec_t *colorVec)
  */
 static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, qboolean isEditable)
 {
-	unsigned int   i     = 0;
-	char           *name = NULL;
-	cJSON          *tmp = NULL, *comps = NULL, *comp = NULL;
-	hudComponent_t *component;
-	hudStucture_t  *tmpHud, *parentHud = NULL, *oldHud = NULL;
-	int            componentOffset = 0;
+	unsigned int  i;
+	char          *name;
+	cJSON         *tmp;
+	cJSON         *comps;
+	hudStucture_t *tmpHud;
+	hudStucture_t *parentHud = NULL;
+	hudStucture_t *oldHud;
+
 
 	// Sanity check. Only objects should be in the huds array.
 	if (!cJSON_IsObject(hud))
@@ -1458,8 +1501,8 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
-		component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
-		comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
+		hudComponent_t *component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
+		cJSON          *comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
 
 		if (parentHud)
 		{
@@ -1486,7 +1529,8 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		{
 			continue;
 		}
-		component->offset    = componentOffset++;
+
+		component->offset    = i;
 		component->hardScale = hudComponentFields[i].scale;
 		component->draw      = hudComponentFields[i].draw;
 		component->parsed    = qtrue;
@@ -1520,6 +1564,11 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		component->alignText  = Q_ReadIntValueJsonEx(comp, "textAlign", component->alignText);
 		component->autoAdjust = Q_ReadIntValueJsonEx(comp, "autoAdjust", component->autoAdjust);
 
+		component->circleDensityPoint = Q_ReadFloatValueJsonEx(comp, "circleDensityPoint", component->circleDensityPoint);
+		component->circleStartAngle   = Q_ReadFloatValueJsonEx(comp, "circleStartAngle", component->circleStartAngle);
+		component->circleEndAngle     = Q_ReadFloatValueJsonEx(comp, "circleEndAngle", component->circleEndAngle);
+		component->circleThickness    = Q_ReadFloatValueJsonEx(comp, "circleThickness", component->circleThickness);
+
 		component->anchorPoint = Q_ReadIntValueJsonEx(comp, "anchor", component->anchorPoint);
 		tmp                    = cJSON_GetObjectItem(comp, "parent");
 		if (tmp)
@@ -1546,6 +1595,32 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		CLEARBIT(tmpHud->weaponicon.style, 1);
 	}
 
+	if (upgr->addNoEchoToPopupmessageFilter)
+	{
+		int numPopUp;
+
+		// only 3 popupmessages were available
+		for (numPopUp = 0; numPopUp < 3; ++numPopUp)
+		{
+			hudComponent_t *comp = (hudComponent_t *)((byte *)&tmpHud->popupmessages + numPopUp * sizeof(hudComponent_t));
+			int            j;
+
+			for (j = 10; j > 5; --j)
+			{
+				if (CHECKBIT(comp->style, j - 1))
+				{
+					ENABLEBIT(comp->style, j);
+				}
+				else
+				{
+					CLEARBIT(comp->style, j);
+				}
+			}
+
+			CLEARBIT(comp->style, j);
+		}
+	}
+
 	if (upgr->shiftHealthBarDynamicColorStyle)
 	{
 		// Ensure dynamic coloration style is applied due to insertion of needle style from bar
@@ -1557,6 +1632,25 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		{
 			tmpHud->healthbar.style |= BAR_NEEDLE;   // by default, needle will be active
 		}
+	}
+
+	if (upgr->shiftHealthBarDynamicColorStyle2)
+	{
+		// Ensure dynamic coloration style is applied due to insertion of needle style from bar
+		if (tmpHud->crosshairbar.style & BAR_CIRCULAR)
+		{
+			tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
+		}
+
+		tmpHud->healthbar.style &= ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
+
+		// Ensure dynamic coloration style is applied due to insertion of circular style from bar
+		if (tmpHud->healthbar.style & BAR_CIRCULAR)
+		{
+			tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
+		}
+
+		tmpHud->healthbar.style &= ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
 	}
 
 	if (upgr->calcAnchors)
@@ -1615,7 +1709,11 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 		ret->shiftHealthBarDynamicColorStyle = qtrue;
 	// fall through
 	case 4:         // 2.84 - weapon icon dynamic health style replace by only ticking style due to split with weapon heat bar
-		ret->replaceWeaponIconStyle = qtrue;
+		ret->replaceWeaponIconStyle        = qtrue;
+		ret->addNoEchoToPopupmessageFilter = qtrue;
+	// fall through
+	case 5:         // 2.84 - circular style has been added for bar, requiring shifting Dynamic Color style value
+		ret->shiftHealthBarDynamicColorStyle2 = qtrue;
 		break;
 	default:
 		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);

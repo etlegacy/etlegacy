@@ -180,6 +180,19 @@ int CG_Text_Width(const char *text, float scale, int limit)
  */
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
+	return (int)CG_Text_Height_Ext_Float(text, scale, limit, font);
+}
+
+/**
+ * @brief CG_Text_Height_Ext_Float
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @param[in] font
+ * @return
+ */
+float CG_Text_Height_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font)
+{
 	float max = 0;
 
 	if (text)
@@ -1018,25 +1031,13 @@ void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t
  */
 void CG_DrawTeamInfo(hudComponent_t *comp)
 {
-	int chatHeight = TEAMCHAT_HEIGHT;
-
-	// no need to adjust chat height for intermission here - CG_DrawTeamInfo is called from CG_Draw2D
-	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
-	{
-		chatHeight = cg_teamChatHeight.integer;
-	}
-
-	if (chatHeight <= 0)
-	{
-		return; // disabled
-	}
-
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
 		vec4_t       hcolor;
 		int          i, j;
 		float        alphapercent;
-		float        lineHeight = comp->location.h / chatHeight;
+		float        lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2) * 1.75f;
+		int          chatHeight = comp->location.h / lineHeight;
 		float        icon_width;
 		float        icon_height;
 		float        flagOffsetX = 0;
@@ -1118,7 +1119,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			}
 
 			// get the longest chat message on screen, use that for the width of chat background
-			for (j = 0; j < TEAMCHAT_HEIGHT; j++)
+			for (j = 0; j < chatHeight; j++)
 			{
 				chatWidthCur = CG_Text_Width_Ext(cgs.teamChatMsgs[j % chatHeight], scale, maxLineLength, &cgs.media.limboFont2);
 
@@ -1218,7 +1219,7 @@ void CG_PriorityCenterPrint(const char *str, int priority)
 	scale = CG_ComputeScale(&CG_GetActiveHUD()->centerprint /*CG_GetActiveHUD()->centerprint.location.h, CG_GetActiveHUD()->centerprint.scale, &cgs.media.limboFont2*/);
 	w     = CG_GetActiveHUD()->centerprint.location.w;
 
-	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
+	maxLineChars = CG_MaxCharsForWidth(str, scale, &cgs.media.limboFont2, w);
 
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.centerPrint, sizeof(cg.centerPrint), NULL);
 	cg.centerPrintPriority = priority;
@@ -1875,6 +1876,8 @@ void CG_DrawCrosshair(hudComponent_t *comp)
 	x = comp->location.x + (comp->location.w - w) * .5f;
 	y = comp->location.y + (comp->location.h - h) * .5f;
 
+	trap_R_SetColor(colorWhite);
+
 	CG_AdjustFrom640(&x, &y, &w, &h);
 
 	// set color based on health
@@ -2323,7 +2326,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	// remove unecessary style for bar customization
 	style = (comp->style >> 3);
 
-	if (style & (BAR_ICON << 1))
+	if (style & (BAR_CIRCULAR << 1))
 	{
 		Vector4Copy(comp->colorMain, c);
 		CG_ColorForHealth(health, c);
@@ -2354,8 +2357,17 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, bdcolor);
 	}
 
-	CG_FilledBar(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
-	             Com_Clamp(0, 1.f, health / (float)maxHealth), 0.f, style, -1);
+	if (style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
+		              Com_Clamp(0, 1.f, health / (float)maxHealth), 0.f, style, -1,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(x, comp->location.y, w, comp->location.h, (style & BAR_LERP_COLOR) ? c2 : c, (style & BAR_LERP_COLOR) ? c : NULL, bgcolor, bdcolor,
+		             Com_Clamp(0, 1.f, health / (float)maxHealth), 0.f, style, -1);
+	}
 
 	trap_R_SetColor(NULL);
 }
@@ -3762,7 +3774,7 @@ void CG_ObjectivePrint(const char *str)
 	scale = CG_ComputeScale(&CG_GetActiveHUD()->objectivetext /*CG_GetActiveHUD()->objectivetext.location.h, CG_GetActiveHUD()->objectivetext.scale, &cgs.media.limboFont2*/);
 	w     = CG_GetActiveHUD()->objectivetext.location.w;
 
-	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
+	maxLineChars = CG_MaxCharsForWidth(str, scale, &cgs.media.limboFont2, w);
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.oidPrint, sizeof(cg.oidPrint), NULL);
 	cg.oidPrintTime = cg.time;
 }
@@ -4231,6 +4243,7 @@ static void CG_Draw2D(void)
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		CG_DrawIntermission();
+		CG_DrawDemoOverlay();
 		return;
 	}
 
@@ -4607,9 +4620,10 @@ void CG_DrawSprite(const vec3_t origin, float radius, qhandle_t shader, byte col
 }
 
 /**
- * @brief CG_Coronas
+ * @brief CG_DrawClientCoronas
+ * @brief Handles drawing client side coronas
  */
-void CG_Coronas(void)
+static void CG_DrawClientCoronas(void)
 {
 	if (cg_coronas.integer == 0)
 	{
@@ -4761,7 +4775,7 @@ void CG_DrawActive()
 	CG_ShakeCamera();
 	CG_PB_RenderPolyBuffers();
 	CG_DrawMiscGamemodels();
-	CG_Coronas();
+	CG_DrawClientCoronas();
 
 	if (!(cg.limboEndCinematicTime > cg.time && cg.showGameView))
 	{
@@ -4847,7 +4861,7 @@ void CG_DrawMissileCamera(hudComponent_t *comp)
 		CG_AddTrails();        // this must come last, so the trails dropped this frame get drawn
 		CG_PB_RenderPolyBuffers();
 		CG_DrawMiscGamemodels();
-		CG_Coronas();
+		CG_DrawClientCoronas();
 	}
 
 	refdef.time = cg.time;

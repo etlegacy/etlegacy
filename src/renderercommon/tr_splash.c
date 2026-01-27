@@ -43,7 +43,7 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 {
 	if (!name && data)
 	{
-		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, data, width, height, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, data, width, height, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE);
 	}
 	else if (name && data)
 	{
@@ -72,11 +72,11 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 			}
 		}
 
-		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, pic, w, h, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, pic, w, h, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE);
 	}
 	else if (name)
 	{
-		splashImage = R_FindImageFile(name, qfalse, qfalse, GL_CLAMP_TO_EDGE, qfalse);
+		splashImage = R_FindImageFile(name, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE, qfalse);
 	}
 
 	if (!splashImage)
@@ -96,32 +96,6 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 	return qtrue;
 }
 
-static void R_Splash_AdjustFrom640(float *x, float *y, float *w, float *h)
-{
-	float xscale;
-	float yscale;
-
-	// scale for screen sizes
-	xscale = glConfig.vidWidth / 640.0f;
-	yscale = glConfig.vidHeight / 480.0f;
-	if (x)
-	{
-		*x *= xscale;
-	}
-	if (y)
-	{
-		*y *= yscale;
-	}
-	if (w)
-	{
-		*w *= xscale;
-	}
-	if (h)
-	{
-		*h *= yscale;
-	}
-}
-
 void R_InitSplash(void)
 {
 	if (!ri.GLimp_SplashImage(&LoadSplashImage))
@@ -133,20 +107,17 @@ void R_InitSplash(void)
 
 void R_DrawSplash(void)
 {
-	float tmp, x, y, w, h;
+	float x, y, w, h;
 	if (!splashImage)
 	{
 		return;
 	}
 
-	tmp = (float)splashImage->height / (float)splashImage->width;
-	w   = SCREEN_WIDTH_F * (glConfig.windowWidth > 1600 ? 0.2f : 0.4f);
-	h   = tmp * w;
+	w = MIN(512, MIN(glConfig.vidWidth, glConfig.vidHeight));
+	h = w;
 
-	x = SCREEN_WIDTH_F / 2 - w / 2;
-	y = SCREEN_HEIGHT_F / 2 - h / 2;
-
-	R_Splash_AdjustFrom640(&x, &y, &w, &h);
+	x = (glConfig.vidWidth  - w) * 0.5f;
+	y = (glConfig.vidHeight - h) * 0.5f;
 
 	RE_BeginFrame();
 	glClearColor(0.f, 0.f, 0.f, 1.f);

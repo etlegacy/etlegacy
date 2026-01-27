@@ -51,6 +51,11 @@ static cullType_t implicitCullType;
 static shader_t *hashTable[FILE_HASH_SIZE];
 #define generateHashValue(fname) Q_GenerateHashValue(fname, FILE_HASH_SIZE, qfalse, qtrue)
 
+static qboolean Shader_AllowPicmip(const shader_t *shader)
+{
+	return (!shader->noPicMip || shader->maxPicMip >= 0);
+}
+
 /**
  * @struct shaderStringPointer_s
  * @typedef shaderStringPointer_t
@@ -609,6 +614,11 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 
 	while (1)
 	{
+		if (R_ParseEtlDirective(text, &shader.maxPicMip, shader.name, qfalse))
+		{
+			continue;
+		}
+
 		token = COM_ParseExt(text, qtrue);
 		if (!token[0])
 		{
@@ -735,7 +745,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else
 			{
-				stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_REPEAT, qfalse);
+				stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, Shader_AllowPicmip(&shader), shader.maxPicMip, GL_REPEAT, qfalse);
 				if (!stage->bundle[0].image[0])
 				{
 					Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
@@ -753,7 +763,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				return qfalse;
 			}
 
-			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_CLAMP_TO_EDGE, qfalse);
+			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, Shader_AllowPicmip(&shader), shader.maxPicMip, GL_CLAMP_TO_EDGE, qfalse);
 			if (!stage->bundle[0].image[0])
 			{
 				Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
@@ -796,7 +806,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else
 			{
-				stage->bundle[0].image[0] = R_FindImageFile(token, qfalse, qfalse, GL_CLAMP_TO_EDGE, qtrue);
+				stage->bundle[0].image[0] = R_FindImageFile(token, qfalse, qfalse, shader.maxPicMip, GL_CLAMP_TO_EDGE, qtrue);
 				if (!stage->bundle[0].image[0])
 				{
 					Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
@@ -831,7 +841,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				num = stage->bundle[0].numImageAnimations;
 				if (num < MAX_IMAGE_ANIMATIONS)
 				{
-					stage->bundle[0].image[num] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_REPEAT, qfalse);
+					stage->bundle[0].image[num] = R_FindImageFile(token, !shader.noMipMaps, Shader_AllowPicmip(&shader), shader.maxPicMip, GL_REPEAT, qfalse);
 					if (!stage->bundle[0].image[num])
 					{
 						Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
@@ -1446,7 +1456,7 @@ static void ParseSkyParms(char **text)
 		{
 			Com_sprintf(pathname, sizeof(pathname), "%s_%s.tga", token, suf[i]);
 
-			shader.sky.outerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, GL_CLAMP_TO_EDGE, qfalse);
+			shader.sky.outerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, shader.maxPicMip, GL_CLAMP_TO_EDGE, qfalse);
 			if (!shader.sky.outerbox[i])
 			{
 				Ren_Warning("WARNING: could not find image '%s' for outer skybox in shader '%s'\n", pathname, shader.name);
@@ -1482,7 +1492,7 @@ static void ParseSkyParms(char **text)
 		{
 			Com_sprintf(pathname, sizeof(pathname), "%s_%s.tga", token, suf[i]);
 
-			shader.sky.innerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, GL_REPEAT, qfalse);
+			shader.sky.innerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, shader.maxPicMip, GL_REPEAT, qfalse);
 			if (!shader.sky.innerbox[i])
 			{
 				Ren_Warning("WARNING: could not find image '%s' for inner skybox in shader '%s'\n", pathname, shader.name);
@@ -3270,7 +3280,7 @@ void R_FindLightmap(int *lightmapIndex)
 
 	// attempt to load an external lightmap
 	Com_sprintf(fileName, sizeof(fileName), "%s/" EXTERNAL_LIGHTMAP, tr.worldDir, *lightmapIndex);
-	image = R_FindImageFile(fileName, qfalse, qfalse, GL_CLAMP_TO_EDGE, qtrue);
+	image = R_FindImageFile(fileName, qfalse, qfalse, shader.maxPicMip, GL_CLAMP_TO_EDGE, qtrue);
 	if (image == NULL)
 	{
 		*lightmapIndex = LIGHTMAP_BY_VERTEX;
@@ -3392,6 +3402,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	Com_Memset(&stages, 0, sizeof(stages));
 	Q_strncpyz(shader.name, strippedName, sizeof(shader.name));
 	shader.lightmapIndex = lightmapIndex;
+	shader.maxPicMip     = -1;
 	for (i = 0 ; i < MAX_SHADER_STAGES ; i++)
 	{
 		stages[i].bundle[0].texMods = texMods[i];
@@ -3455,7 +3466,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 
 	// if not defined in the in-memory shader descriptions,
 	// look for a single TGA, BMP, or PCX
-	image = R_FindImageFile(fileName, !shader.noMipMaps, !shader.noPicMip, mipRawImage ? GL_REPEAT : GL_CLAMP_TO_EDGE, qfalse);
+	image = R_FindImageFile(fileName, !shader.noMipMaps, Shader_AllowPicmip(&shader), shader.maxPicMip, mipRawImage ? GL_REPEAT : GL_CLAMP_TO_EDGE, qfalse);
 	if (!image)
 	{
 		Ren_Developer("WARNING: Couldn't find image for shader %s\n", name);
@@ -3505,6 +3516,7 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 	Com_Memset(&stages, 0, sizeof(stages));
 	Q_strncpyz(shader.name, name, sizeof(shader.name));
 	shader.lightmapIndex = lightmapIndex;
+	shader.maxPicMip     = -1;
 	for (i = 0 ; i < MAX_SHADER_STAGES ; i++)
 	{
 		stages[i].bundle[0].texMods = texMods[i];
@@ -3899,6 +3911,7 @@ static void CreateInternalShaders(void)
 	Q_strncpyz(shader.name, "<default>", sizeof(shader.name));
 
 	shader.lightmapIndex         = LIGHTMAP_NONE;
+	shader.maxPicMip             = -1;
 	stages[0].bundle[0].image[0] = tr.defaultImage;
 	stages[0].active             = qtrue;
 	stages[0].stateBits          = GLS_DEFAULT;

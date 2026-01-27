@@ -70,6 +70,18 @@
 
 #define ETLEGACY_VERSION_IS_DEVELOPMENT_BUILD (ETLEGACY_VERSION_INT % 10000 > 0 /* the last 4 digits ought to be 0 on release builds */)
 
+/** Adding/Removing/Changing-Order of it's contents will break backwards
+ * compatibility with 2.60b! */
+#define ETL_260B_NOEDIT ETL_ANNOTATE("ETL_260B_NOEDIT")
+
+/** Removing/Changing-Order of it's contents will break backwards compatibility
+ * with 2.60b, but extending it is allowed. */
+#define ETL_260B_NOEDIT_EXTEND ETL_ANNOTATE("ETL_260B_NOEDIT_EXTEND")
+
+/** Removing/Changing-Order of it's contents will break demo backwards
+ * compatibility, but extending it is allowed. */
+#define ETL_DEMO_EXTEND ETL_ANNOTATE("ETL_DEMO_EXTEND")
+
 #ifdef DEDICATED
 #define CONFIG_NAME             "etconfig_server.cfg"
 #else
@@ -1037,7 +1049,7 @@ typedef int cvarHandle_t;
  * @brief The modules that run in the virtual machine can't access the cvar_t directly,
  * so they must ask for structured updates
  */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	cvarHandle_t handle;
 	int modificationCount;
@@ -1078,7 +1090,7 @@ PlaneTypeForNormal
  *
  * @note !!! if this is changed, it must be changed in asm code too !!!
  */
-typedef struct cplane_s
+typedef struct ETL_260B_NOEDIT cplane_s
 {
 	vec3_t normal;
 	float dist;
@@ -1091,7 +1103,7 @@ typedef struct cplane_s
  * @struct trace_t
  * @brief A trace is returned when a box is swept through the world
  */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	qboolean allsolid;      ///< if true, plane is not valid
 	qboolean startsolid;    ///< if true, the initial point was in a solid area
@@ -1111,7 +1123,7 @@ typedef struct
 /**
  * @struct markFragment_t
  */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	int firstPoint;
 	int numPoints;
@@ -1120,7 +1132,7 @@ typedef struct
 /**
  * @struct orientation_t
  */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	vec3_t origin;
 	vec3_t axis[3];
@@ -1142,7 +1154,7 @@ typedef struct
  * channel 0 never willingly overrides
  * other channels will allways override a playing sound on that channel
  */
-typedef enum
+typedef enum ETL_260B_NOEDIT
 {
 	CHAN_AUTO,
 	CHAN_LOCAL,         ///< menu sounds, etc
@@ -1213,7 +1225,7 @@ typedef enum
  * @struct gameState_t
  * @brief
  */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	int stringOffsets[MAX_CONFIGSTRINGS];
 	char stringData[MAX_GAMESTATE_CHARS];
@@ -1224,7 +1236,7 @@ typedef struct
  * @struct aistateEnum_t
  * @brief
  */
-typedef enum
+typedef enum ETL_260B_NOEDIT
 {
 	AISTATE_RELAXED,  // unused, SP remnant
 	AISTATE_QUERY,    // unused, SP remnant
@@ -1291,7 +1303,7 @@ typedef enum
  * leanStopDebounceTime
  * weapHeat
  */
-typedef struct playerState_s
+typedef struct ETL_260B_NOEDIT playerState_s
 {
 	net_int32_t commandTime;            ///< cmd->serverTime of last executed command
 	net_uint8_t pm_type;                ///<
@@ -1465,7 +1477,7 @@ typedef struct playerState_s
  * @enum dtType_t
  * @brief doubleTap buttons - DT_NUM can be max 8
  */
-typedef enum
+typedef enum ETL_260B_NOEDIT
 {
 	DT_NONE,
 	DT_MOVELEFT,
@@ -1483,7 +1495,7 @@ typedef enum
  * @typedef usercmd_t
  * @brief usercmd_t is sent to the server each client frame
  */
-typedef struct usercmd_s
+typedef struct ETL_260B_NOEDIT usercmd_s
 {
 	int serverTime;
 	byte buttons;
@@ -1509,7 +1521,7 @@ typedef struct usercmd_s
  * @enum trType_t
  * @brief
  */
-typedef enum
+typedef enum ETL_260B_NOEDIT
 {
 	TR_STATIONARY,
 	TR_INTERPOLATE,             ///< non-parametric, but interpolate between snapshots
@@ -1530,7 +1542,7 @@ typedef enum
 /**
  * @struct trajectory_t
  */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	trType_t trType;
 	int trTime;
@@ -1542,7 +1554,7 @@ typedef struct
 /**
  * @enum entityType_t
  */
-typedef enum
+typedef enum ETL_DEMO_EXTEND
 {
 	ET_GENERAL = 0,
 	ET_PLAYER,
@@ -1621,6 +1633,8 @@ typedef enum
 
 	ET_WOLF_OBJECTIVE,
 
+	// ETL_260B_NOEDIT_EXTEND_END
+
 	ET_AIRSTRIKE_PLANE,
 
 	ET_EVENTS                   ///< any of the EV_* events can be added freestanding
@@ -1641,7 +1655,7 @@ typedef enum
  *
  * @note All fields in here must be 32 bits (or those within sub-structures)
  */
-typedef struct entityState_s
+typedef struct ETL_260B_NOEDIT entityState_s
 {
 	net_uint8_t number;             ///< entity index
 	entityType_t eType;     ///< entityType_t
@@ -1714,7 +1728,7 @@ typedef struct entityState_s
   *
   * @warning Don't add or remove fields to keep 2.60 compatibility
   */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	qboolean linked;                ///< qfalse if not in any good cluster
 	int linkcount;
@@ -1755,7 +1769,7 @@ typedef struct
  * @enum connstate_t
  * @brief
  */
-typedef enum
+typedef enum ETL_260B_NOEDIT
 {
 	CA_UNINITIALIZED,   ///< obsolete; not used anymore
 	CA_DISCONNECTED,    ///< not talking to a server
@@ -1773,7 +1787,7 @@ typedef enum
  * @enum challengeState_t
  * @brief CA_CHALLENGING substates
  */
-typedef enum
+typedef enum ETL_260B_NOEDIT
 {
 	CA_CHALLENGING_INFO,  ///< acquiring server info
 	CA_CHALLENGING_REQUEST ///< requesting connection
@@ -1793,7 +1807,7 @@ typedef enum
  * @struct glyphInfo_t
  * @brief
  */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	int height;       ///< number of scan lines
 	int top;          ///< top of glyph in buffer (horiBearingY + 1)
@@ -1814,7 +1828,7 @@ typedef struct
  * @struct fontInfo_t
  * @brief
  */
-typedef struct
+typedef struct ETL_260B_NOEDIT
 {
 	glyphInfo_t glyphs[GLYPHS_ASCII_PER_FONT];
 	float glyphScale;
@@ -1858,7 +1872,7 @@ typedef struct
  * @typedef qtime_t
  * @brief
  */
-typedef struct qtime_s
+typedef struct ETL_260B_NOEDIT qtime_s
 {
 	int tm_sec;     ///< seconds after the minute - [0,59]
 	int tm_min;     ///< minutes after the hour - [0,59]
@@ -1884,7 +1898,7 @@ typedef struct qtime_s
  * @struct e_status
  * @brief Cinematic states
  */
-typedef enum
+typedef enum ETL_260B_NOEDIT
 {
 	FMV_IDLE,
 	FMV_PLAY,       ///< play
@@ -1924,7 +1938,7 @@ typedef enum
  * @enum demoState_t
  * @brief server/game states
  */
-typedef enum
+typedef enum ETL_260B_NOEDIT
 {
 	GS_INITIALIZE = -1,
 	GS_PLAYING,

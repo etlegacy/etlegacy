@@ -54,6 +54,10 @@
 #define NEW_DEMOFUNC 1
 
 #if NEW_DEMOFUNC
+static int demoPauseTime = 0;
+#endif
+
+#if NEW_DEMOFUNC
 typedef struct
 {
 	int numSnaps;
@@ -416,30 +420,25 @@ static void CL_DemoFastForward(double wantedTime)
 
 	DEMODEBUG("fastfowarding from %f to %f\n", (double)cl.serverTime + di.Overf, wantedTime);
 
+	if (clc.lastExecutedServerCommand + 1 <= clc.serverCommandSequence - MAX_RELIABLE_COMMANDS ||
+	    clc.lastExecutedServerCommand == 0)
+	{
+		clc.lastExecutedServerCommand = clc.serverCommandSequence;
+	}
+
 	loopCount = 0;
 	cmd       = clc.lastExecutedServerCommand;
+
 	while ((double)cl.snap.serverTime <= wantedTime)
 	{
 		DEMODEBUG("Servertime: %d wanted time %lf\n", cl.snap.serverTime, wantedTime);
+
 		CL_ReadDemoMessage();
+
 		while (clc.lastExecutedServerCommand < clc.serverCommandSequence)
 		{
-			if (clc.lastExecutedServerCommand + 1 <= clc.serverCommandSequence - MAX_RELIABLE_COMMANDS)
-			{
-				if (cl.snap.serverTime <= di.firstServerTime)
-				{
-					clc.lastExecutedServerCommand = clc.serverCommandSequence - 1;
-					Com_FuncPrinf("setting clc.lastExecutedServerCommand %d (%d)\n", clc.lastExecutedServerCommand, loopCount);
-				}
-				else
-				{
-					Com_FuncDPrinf("FIXME %i  (%i) + 1 <= (%i) - MAX_RELIABLE_COMMANDS (%i)\n", clc.lastExecutedServerCommand, clc.serverCommandSequence, cl.snap.serverTime, di.firstServerTime);
-					break;
-				}
-			}
 			CL_GetServerCommand(clc.lastExecutedServerCommand + 1);
 		}
-		loopCount++;
 
 		// if we are about to go over command buffer let cgame execute them and then continue
 		if (cmd + MAX_RELIABLE_COMMANDS - 10 <= clc.lastExecutedServerCommand)
@@ -448,14 +447,22 @@ static void CL_DemoFastForward(double wantedTime)
 			S_StopAllSounds();
 			cmd = clc.lastExecutedServerCommand;
 		}
+
+		loopCount++;
 	}
 
 	DEMODEBUG("read %d demo messages, cl.snap.serverTime %d, wantedTime %f\n", loopCount, cl.snap.serverTime, wantedTime);
 
 	cl.serverTime      = (int)(floor(wantedTime));
 	cls.realtime       = (int)(floor(wantedTime));
+	clc.lastPacketTime = cls.realtime;
 	di.Overf           = wantedTime - floor(wantedTime);
 	cl.serverTimeDelta = 0;
+
+	if (cl_freezeDemo->integer)
+	{
+		demoPauseTime = cls.realtime;
+	}
 
 	// TODO: fix this
 	//VM_Call(cgvm, CG_TIME_CHANGE, cl.serverTime, (int)(Overf * SUBTIME_RESOLUTION));
@@ -1897,10 +1904,6 @@ void CL_SeekPrev_f(void)
  */
 void CL_PauseDemo_f(void)
 {
-#if NEW_DEMOFUNC
-	static int pauseTime = 0;
-#endif
-
 	if (!clc.demo.playing)
 	{
 		return;
@@ -1915,12 +1918,11 @@ void CL_PauseDemo_f(void)
 #if NEW_DEMOFUNC
 	if (!cl_freezeDemo->integer)
 	{
-		pauseTime = cl.serverTime;
+		demoPauseTime = cls.realtime;
 	}
 	else
 	{
-		// TODO: this is just a hack, actually fix the cl_freezeDemo instead of this
-		CL_DemoSeekMs(0, pauseTime);
+		cls.realtime = demoPauseTime;
 	}
 #endif
 

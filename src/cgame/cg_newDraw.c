@@ -487,11 +487,26 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
 		return;
 	}
 
+	textColor[3] = *color;
+
 	curValue = (float)cg.cursorHintValue / 255.0f;
 
 	if (curValue > 0.01f)
 	{
-		CG_FilledBar(comp->location.x, comp->location.y + comp->location.h, comp->location.w, comp->location.h, colorRed, colorGreen,
+
+	}
+
+	if (comp->style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		              (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? textColor : NULL,
+		              comp->colorBackground, comp->colorBorder, curValue, 0.f, comp->style, -1,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		             (comp->style & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->style & BAR_LERP_COLOR) ? textColor : NULL,
 		             comp->colorBackground, comp->colorBorder, curValue, 0.f, comp->style, -1);
 	}
 }
@@ -601,8 +616,17 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 		return;
 	}
 
-	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
-	             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->style >> 1, -1);
+	if (comp->style & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
+		              comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->style >> 1, -1,
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
+		             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->style >> 1, -1);
+	}
 }
 
 #ifdef FEATURE_EDV
@@ -622,7 +646,7 @@ void CG_MouseEvent(int x, int y)
 	case CGAME_EVENT_MULTIVIEW:
 		if (x != 0 || y != 0)
 		{
-			cgs.cursorUpdate = cg.time + 5000;
+			cgs.cursorTimeout = cg.time + 5000;
 		} // fall through
 	case CGAME_EVENT_SPEAKEREDITOR:
 	case CGAME_EVENT_CAMERAEDITOR:
@@ -772,7 +796,7 @@ void CG_HudEditor_Cleanup(void)
 	cg.crosshairEntTime = 0;
 	cg.oidPrintTime     = 0;
 
-	for (i = 0; i < cg_teamChatHeight.integer; i++)
+	for (i = 0; i < TEAMCHAT_MSG_MAX; i++)
 	{
 		cgs.teamChatMsgTimes[i] = 0;
 	}
@@ -804,7 +828,7 @@ void CG_EventHandling(int type, qboolean fForced)
 	case CGAME_EVENT_DEMO:
 		cgs.fResize         = qfalse;
 		cgs.fSelect         = qfalse;
-		cgs.cursorUpdate    = cg.time + 10000;
+		cgs.cursorTimeout   = cg.time + 10000;
 		cgs.timescaleUpdate = cg.time + 4000;
 		CG_ScoresUp_f();
 		CG_HudEditorReset();

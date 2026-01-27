@@ -420,203 +420,203 @@ icons/iconw_silencedakimbolugers_1_select
 //========================================//
 simpleicons/objective
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/objective.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/medheal
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/medheal.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/ammopack
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/ammopack.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/bazooka
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/bazooka.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/browning
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/browning.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 // Allied engineer rifle
 simpleicons/carbine
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/carbine.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/fg42
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/fg42.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/flamethrower
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/flamethrower.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 // Allied sniper
 simpleicons/garand
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/garand.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 // Axis sniper
 simpleicons/k43
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/k43.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 // Axis engineer rifle
 simpleicons/kar98
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/kar98.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/mg42
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/mg42.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/mortar
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/mortar.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/mp34
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/mp34.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/mp40
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/mp40.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/panzerfaust
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/panzerfaust.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/sten
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/sten.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 
 simpleicons/thompson
 {
-	nomipmaps
 	nopicmip
 	{
 		map simpleicons/thompson.tga
 		blendFunc blend
 		rgbGen vertex
+		depthFunc lequal
 	}
 }
 //========================================//

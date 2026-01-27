@@ -103,7 +103,6 @@ extern vmCvar_t cg_scopedSensitivityScaler;
 extern vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
 extern vmCvar_t cg_teamChatTime;
-extern vmCvar_t cg_teamChatHeight;
 extern vmCvar_t cg_teamChatMention;
 extern vmCvar_t cg_stats;
 extern vmCvar_t cg_coronafardist;
@@ -152,6 +151,7 @@ extern vmCvar_t cg_autoReload;
 extern vmCvar_t cg_bloodDamageBlend;
 extern vmCvar_t cg_bloodFlash;
 extern vmCvar_t cg_bloodFlashTime;
+extern vmCvar_t cg_bloodForcePuffsForDamage;
 extern vmCvar_t cg_noAmmoAutoSwitch;
 extern vmCvar_t cg_printObjectiveInfo;
 #ifdef FEATURE_MULTIVIEW
@@ -239,14 +239,6 @@ extern vmCvar_t cg_sharetimerText;
 extern vmCvar_t cg_automapZoom;
 extern vmCvar_t cg_autoCmd;
 
-extern vmCvar_t cg_popupFadeTime;
-extern vmCvar_t cg_popupStayTime;
-extern vmCvar_t cg_popupTime;
-
-extern vmCvar_t cg_popupXPGainFadeTime;
-extern vmCvar_t cg_popupXPGainStayTime;
-extern vmCvar_t cg_popupXPGainTime;
-
 extern vmCvar_t cg_fontScaleSP;
 
 // unlagged optimized prediction
@@ -266,6 +258,8 @@ extern vmCvar_t cg_bannerTime;
 
 extern vmCvar_t cg_shoutcastTeamNameRed;
 extern vmCvar_t cg_shoutcastTeamNameBlue;
+extern vmCvar_t cg_shoutcastTeamScoreRed;
+extern vmCvar_t cg_shoutcastTeamScoreBlue;
 extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
 
@@ -278,7 +272,6 @@ extern vmCvar_t cg_customFont1;
 extern vmCvar_t cg_customFont2;
 
 extern vmCvar_t cg_drawSpawnpoints;
-extern vmCvar_t cg_crosshairSVG;
 extern vmCvar_t cg_crosshairSize;
 extern vmCvar_t cg_crosshairAlpha;
 extern vmCvar_t cg_crosshairColor;
@@ -306,7 +299,7 @@ extern vmCvar_t cg_customCrosshairCrossColor;
 extern vmCvar_t cg_customCrosshairCrossOutlineRounded;
 extern vmCvar_t cg_customCrosshairCrossOutlineColor;
 extern vmCvar_t cg_customCrosshairCrossOutlineWidth;
-extern vmCvar_t cg_customCrosshairDynamicColor;
+extern vmCvar_t cg_customCrosshairHealth;
 
 extern vmCvar_t cg_scopeReticleStyle;
 extern vmCvar_t cg_scopeReticleColor;

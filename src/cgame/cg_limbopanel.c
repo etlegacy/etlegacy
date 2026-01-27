@@ -42,7 +42,7 @@
 
 void CG_DrawBorder(float x, float y, float w, float h, qboolean fill, qboolean drawMouseOver);
 
-static team_t teamOrder[3] =
+const team_t teamOrder[3] =
 {
 	TEAM_AXIS,
 	TEAM_ALLIES,
@@ -3580,8 +3580,11 @@ void CG_LimboPanel_Setup(void)
 	trap_Cvar_VariableStringBuffer("name", buffer, 256);
 	trap_Cvar_Set("limboname", buffer);
 
-	// refresh resolved spawnpoint
-	trap_SendClientCommand("getspawnpt");
+	// refresh resolved spawnpoint, unless we're on intermission or spectating
+	if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && cg.snap->ps.pm_type != PM_INTERMISSION)
+	{
+		trap_SendClientCommand("getspawnpt");
+	}
 
 	if (cgs.ccLayers)
 	{

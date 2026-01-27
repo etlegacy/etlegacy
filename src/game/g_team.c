@@ -740,7 +740,7 @@ void TeamplayInfoMessage(team_t team)
  */
 void CheckTeamStatus(void)
 {
-	if (level.time - level.lastTeamLocationTime > TEAM_LOCATION_UPDATE_TIME)
+	if (level.time - level.lastTeamLocationTime > g_teamInfoUpdateRate.integer)
 	{
 		int       i;
 		gentity_t *ent;

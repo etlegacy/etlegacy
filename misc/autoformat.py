@@ -23,12 +23,8 @@ from etl_lib import (
 # Constants
 INCLUDED_EXTS = {".c", ".cpp", ".h", ".py", ".sh", ".yml", ".yaml"}
 EXCLUDED_PATHS = [
-    "src/Omnibot/",
-    "src/game/g_etbot_interface.cpp",
-    "src/luasql/",
-    "src/qcommon/crypto/sha-1/",
-    "src/renderercommon/nanosvg/",
-    "src/tools/shdr/tinydir.h",
+    "libs/",
+    "vendor/",
 ]
 
 
@@ -186,6 +182,9 @@ def main(args):
             quit(0)
         print("------------------------------------------")
         target_files = filter_target_files(changed_files)
+
+    # filter removed files
+    target_files = [x for x in target_files if Path(x).exists()]
 
     applied_format = []
     alread_formatted = []

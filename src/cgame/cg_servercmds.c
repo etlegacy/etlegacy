@@ -1187,13 +1187,12 @@ static void CG_ConfigStringModified(void)
  */
 void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 {
-	int          len;
-	char         *p, *ls;
-	char         lastcolor;
-	int          chatHeight;
-	int          chatWidth;
-	float        scale;
-	fontHelper_t *font = &cgs.media.limboFont2;
+	int  len = 0;
+	char *p;
+	char *ls       = NULL;
+	char lastcolor = '7';
+	int  chatWidth;
+	int  chatHeight;
 
 	// -1 is sent when console is chatting
 	if (clientnum < -1 || clientnum >= MAX_CLIENTS) // FIXME: never return for console chat?
@@ -1201,34 +1200,35 @@ void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 		return;
 	}
 
-	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
-	{
-		chatHeight = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_HEIGHT : cg_teamChatHeight.integer;
-	}
-	else
-	{
-		chatHeight = TEAMCHAT_HEIGHT;
-	}
-
-	if (chatHeight <= 0 || cg_teamChatTime.integer <= 0) // FIXME: never return for console chat?
+	if (cg_teamChatTime.integer <= 0) // FIXME: never return for console chat?
 	{
 		// team chat disabled, dump into normal chat
 		cgs.teamChatPos = cgs.teamLastChatPos = 0;
 		return;
 	}
 
-	scale = CG_ComputeScale(&CG_GetActiveHUD()->chat /*CG_GetActiveHUD()->chat.location.h / ((cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) ? cg_teamChatHeight.integer : TEAMCHAT_HEIGHT), CG_GetActiveHUD()->chat.scale, &cgs.media.limboFont2*/);
+	if (cgs.gamestate == GS_INTERMISSION)
+	{
+		chatWidth  = TEAMCHAT_INTERMISSION_CHAR_WIDTH;
+		chatHeight = TEAMCHAT_INTERMISSION_CHAR_HEIGHT;
+	}
+	else
+	{
+		float        scale;
+		fontHelper_t *font = &cgs.media.limboFont2;
 
-	len       = 0;
-	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 8
-	                                               : (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
+		scale = CG_ComputeScale(&CG_GetActiveHUD()->chat);
+
+		chatWidth = (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * scale * 5.f) : 0))
+		            / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
+
+		chatHeight = MIN(CG_GetActiveHUD()->chat.location.h / (CG_Text_Height_Ext("A", scale, 0, font) * 1.75f),
+		                 TEAMCHAT_MSG_MAX);
+	}
 
 	p  = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
 
-	lastcolor = '7';
-
-	ls = NULL;
 	while (*str)
 	{
 		if (len > chatWidth - 1)
@@ -3043,7 +3043,7 @@ void CG_AddToBannerPrint(const char *str)
 	scale = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
 	w     = CG_GetActiveHUD()->banner.location.w;
 
-	maxLineChars = CG_GetMaxCharsPerLine(str, scale, &cgs.media.limboFont2, w);
+	maxLineChars = CG_MaxCharsForWidth(str, scale, &cgs.media.limboFont2, w);
 	CG_WordWrapString(str, maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint), NULL);
 	cg.bannerPrintTime = cg.time;
 }
@@ -3226,8 +3226,9 @@ static void CG_ServerCommand(void)
 		}
 		else
 		{
-			pmType = PM_MESSAGE;
+			pmType = iconnumber;
 		}
+
 		CG_AddPMItem(pmType, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, colorWhite);
 		return;
 	}
@@ -3281,11 +3282,22 @@ static void CG_ServerCommand(void)
 			clientNum = Q_atoi(CG_Argv(2));
 		}
 
-		if (atoi(CG_Argv(3)))
+		/*
+		// on demo under 2.84, localization bolean was transmitted to arg at index 3
+		// but it was always set to false
+		if (CG_IsDemoVersionBelow(2, 84, 0))
 		{
-			s = CG_LocalizeServerCommand(CG_Argv(1));
+		    //if (atoi(CG_Argv(3)))
+		    //{
+		    //    s = CG_LocalizeServerCommand(CG_Argv(1));
+		    //}
+		    //else
+		    {
+		        s = CG_Argv(1);
+		    }
 		}
 		else
+		*/
 		{
 			s = CG_Argv(1);
 		}
@@ -3315,15 +3327,40 @@ static void CG_ServerCommand(void)
 		char       *loc = NULL;
 		const char *s;
 		int        clientNum;
+		char       color;
 
 		clientNum = Q_atoi(CG_Argv(2));
 
-		origin[0] = Q_atoi(CG_Argv(4));
-		origin[1] = Q_atoi(CG_Argv(5));
-		origin[2] = Q_atoi(CG_Argv(6));
+		// on demo under 2.84, localization bolean was transmitted to arg at index 3
+		// but it was always set to false
+		if (CG_IsDemoVersionBelow(2, 84, 0))
+		{
+			origin[0] = Q_atoi(CG_Argv(4));
+			origin[1] = Q_atoi(CG_Argv(5));
+			origin[2] = Q_atoi(CG_Argv(6));
+
+			//if (atoi(CG_Argv(3)))
+			//{
+			//    s = CG_LocalizeServerCommand(CG_Argv(1));
+			//}
+			//else
+			{
+				s = CG_Argv(1);
+			}
+		}
+		else
+		{
+			origin[0] = Q_atoi(CG_Argv(3));
+			origin[1] = Q_atoi(CG_Argv(4));
+			origin[2] = Q_atoi(CG_Argv(5));
+			s         = CG_Argv(1);
+		}
+
+
 
 		if (atoi(CG_Argv(3)))
 		{
+			// FIXME: disable server side for chat cmd (dead code)
 			s = CG_LocalizeServerCommand(CG_Argv(1));
 		}
 		else
@@ -3331,15 +3368,35 @@ static void CG_ServerCommand(void)
 			s = CG_Argv(1);
 		}
 
-		loc = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
+		color = s[1];
 
-		if (!loc || !*loc)
+		// if no location is set, don't add location to string and don't draw empty parenthesis
+		// skip the first 2 coloration char (team / buddy chat)
+		if (!Q_strncmp(&s[2], "[nol]", 5))
 		{
-			loc = "";
+			s = &s[7];
+		}
+		else
+		{
+			loc = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
+
+			if (!loc || !*loc)
+			{
+				// display empty location
+				loc = "";
+			}
 		}
 
 		// process locations and name
-		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s^3): %s", cgs.clientinfo[clientNum].name, loc, s);
+		if (loc)
+		{
+			Com_sprintf(text, sizeof(text), "(%s^7)^3(%s^3)^%c: %s", cgs.clientinfo[clientNum].name, loc, color, s);
+		}
+		else
+		{
+			Com_sprintf(text, sizeof(text), "(%s^7)^%c: %s", cgs.clientinfo[clientNum].name, color, s);
+		}
+
 		Q_UnescapeUnicodeInPlace(text, MAX_SAY_TEXT);
 
 #ifdef FEATURE_EDV

@@ -38,10 +38,11 @@
 
 qboolean scr_initialized;           // ready to draw
 
-cvar_t *cl_timegraph;
-cvar_t *cl_graphheight;
-cvar_t *cl_graphscale;
-cvar_t *cl_graphshift;
+cvar_t        *cl_timegraph;
+cvar_t        *cl_graphheight;
+cvar_t        *cl_graphscale;
+cvar_t        *cl_graphshift;
+static cvar_t *r_debugShader;
 
 /**
  * @brief Adjusted for resolution and screen aspect ratio
@@ -376,8 +377,109 @@ void SCR_Init(void)
 	cl_graphheight = Cvar_Get("graphheight", "32", 0);
 	cl_graphscale  = Cvar_Get("graphscale", "1", 0);
 	cl_graphshift  = Cvar_Get("graphshift", "0", 0);
+	r_debugShader  = Cvar_Get("r_debugShader", "0", CVAR_CHEAT);
 
 	scr_initialized = qtrue;
+}
+
+static qboolean SCR_GetDebugShaderName(char *shaderName, int shaderNameSize)
+{
+	vec3_t       viewOrigin  = { 0 };
+	vec3_t       viewAxis[3] = { 0 };
+	trace_t      trace;
+	vec3_t       end;
+	int          i;
+	float        bestFrac = 1.0f;
+	char         bestName[MAX_QPATH];
+	char         entName[MAX_QPATH];
+	vec3_t       origin;
+	vec3_t       angles;
+	clipHandle_t cmodel;
+	trace_t      entTrace;
+
+	if (!r_debugShader || !r_debugShader->integer || !cl.snap.valid)
+	{
+		return qfalse;
+	}
+
+	// 'cl.cgameClientLerpOrigin' should contain the client view origin, but just in case a mod
+	// has removed the syscall that sets this, fall back to snapshot origin
+	if (!VectorCompare(cl.cgameClientLerpOrigin, vec3_origin))
+	{
+		VectorCopy(cl.cgameClientLerpOrigin, viewOrigin);
+	}
+	else
+	{
+		VectorCopy(cl.snap.ps.origin, viewOrigin);
+		viewOrigin[2] += (float)cl.snap.ps.viewheight;
+	}
+
+	bestName[0] = '\0';
+	AnglesToAxis(cl.snap.ps.viewangles, viewAxis);
+	VectorMA(viewOrigin, MAX_TRACE, viewAxis[0], end);
+
+	CM_BoxTrace(&trace, viewOrigin, end, NULL, NULL, 0, MASK_SHOT, qfalse);
+	if (trace.fraction < 1.0f)
+	{
+		CM_BoxTraceShaderName(bestName, sizeof(bestName), viewOrigin, end, NULL, NULL, 0, MASK_SHOT, qfalse);
+		if (bestName[0])
+		{
+			bestFrac = trace.fraction;
+		}
+	}
+
+	for (i = 0; i < cl.snap.numEntities; i++)
+	{
+		const entityState_t *ent = &cl.parseEntities[(cl.snap.parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
+
+		if (ent->solid != SOLID_BMODEL)
+		{
+			continue;
+		}
+
+		cmodel = CM_InlineModel(ent->modelindex);
+		VectorCopy(ent->apos.trBase, angles);
+		VectorCopy(ent->pos.trBase, origin);
+
+		CM_TransformedBoxTrace(&entTrace, viewOrigin, end, NULL, NULL, cmodel, MASK_SHOT, origin, angles, qfalse);
+		if (entTrace.fraction >= bestFrac)
+		{
+			continue;
+		}
+
+		CM_TransformedBoxTraceShaderName(entName, sizeof(entName), viewOrigin, end, NULL, NULL, cmodel, MASK_SHOT, origin, angles, qfalse);
+		if (!entName[0])
+		{
+			continue;
+		}
+
+		Q_strncpyz(bestName, entName, sizeof(bestName));
+		bestFrac = entTrace.fraction;
+	}
+
+	if (!bestName[0])
+	{
+		return qfalse;
+	}
+
+	Q_strncpyz(shaderName, bestName, shaderNameSize);
+	return qtrue;
+}
+
+static void SCR_DrawDebugShaderName(void)
+{
+	char shaderName[MAX_QPATH];
+	int  len;
+	int  x;
+
+	if (!SCR_GetDebugShaderName(shaderName, sizeof(shaderName)))
+	{
+		return;
+	}
+
+	len = Q_PrintStrlen(shaderName);
+	x   = ((cls.glconfig.vidWidth / 2) - (len * SMALLCHAR_WIDTH / 2));
+	SCR_DrawSmallString(x, (SMALLCHAR_HEIGHT), shaderName, colorWhite, qfalse, qfalse);
 }
 
 /**
@@ -427,6 +529,7 @@ void SCR_DrawScreenField(void)
 		case CA_PRIMED:
 			// draw the game information screen and loading progress
 			CL_CGameRendering();
+			SCR_DrawDebugShaderName();
 
 			// also draw the connection information, so it doesn't
 			// flash away too briefly on local or lan games
@@ -437,6 +540,7 @@ void SCR_DrawScreenField(void)
 		case CA_ACTIVE:
 			CL_CGameRendering();
 			SCR_DrawDemoRecording();
+			SCR_DrawDebugShaderName();
 			break;
 		}
 	}

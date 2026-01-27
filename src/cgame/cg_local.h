@@ -75,8 +75,10 @@
 #define NOTIFY_WIDTH        80
 #define NOTIFY_HEIGHT       5
 
-#define TEAMCHAT_WIDTH      70
-#define TEAMCHAT_HEIGHT     8
+#define TEAMCHAT_INTERMISSION_CHAR_WIDTH      78
+#define TEAMCHAT_INTERMISSION_CHAR_HEIGHT     8
+
+#define TEAMCHAT_MSG_MAX    128
 
 #define NUM_CROSSHAIRS      20
 
@@ -1116,6 +1118,9 @@ typedef struct
 	team_t team;
 } mapEntityData_t;
 
+// limbo menu team order
+extern const team_t teamOrder[3];
+
 /**
  * @enum showView_t
  * @brief
@@ -2042,6 +2047,11 @@ typedef struct
 
 	qhandle_t spawnpointMarker;
 
+	qhandle_t demoPlay;
+	qhandle_t demoPause;
+	qhandle_t demoRewind;
+	qhandle_t demoFastForward;
+
 } cgMedia_t;
 
 /**
@@ -2188,11 +2198,12 @@ enum
 	POPUP_FILTER_MISSION     = BIT(2),
 	POPUP_FILTER_PICKUP      = BIT(3),
 	POPUP_FILTER_DEATH       = BIT(4),
-	POPUP_WEAPON_ICON        = BIT(5),
-	POPUP_WEAPON_ICON_ALT    = BIT(6),
-	POPUP_SWAP_VICTIM_KILLER = BIT(7),
-	POPUP_FORCE_COLORS       = BIT(8),
-	POPUP_SCROLL_DOWN        = BIT(9),
+	POPUP_FILTER_ECHO        = BIT(5),
+	POPUP_WEAPON_ICON        = BIT(6),
+	POPUP_WEAPON_ICON_ALT    = BIT(7),
+	POPUP_SWAP_VICTIM_KILLER = BIT(8),
+	POPUP_FORCE_COLORS       = BIT(9),
+	POPUP_SCROLL_DOWN        = BIT(10),
 };
 
 // Big popup filters
@@ -2224,6 +2235,7 @@ enum
 	COMPASS_CARDINAL_POINTS      = BIT(6),
 	COMPASS_ALWAYS_DRAW          = BIT(7),
 	COMPASS_POINT_TOWARD_NORTH   = BIT(8),
+	COMPASS_DRAW_ICONS_INSIDE    = BIT(9),
 };
 
 // Follow filters
@@ -2234,6 +2246,7 @@ enum
 
 /// Locations
 #define MAX_C_LOCATIONS 1024
+#define MAX_LOC_LEN 128
 
 // locations draw bits and cvar
 /*
@@ -2258,6 +2271,8 @@ enum
 	LOC_SHOWDISTANCE = BIT(5)
 };
 
+#define BAR_BORDERSIZE 2
+
 enum
 {
 	BAR_LEFT       = BIT(0),
@@ -2274,6 +2289,7 @@ enum
 	BAR_DECOR          = BIT(10),
 	BAR_ICON           = BIT(11),
 	BAR_NEEDLE         = BIT(12),
+	BAR_CIRCULAR       = BIT(13),
 };
 
 enum
@@ -2305,7 +2321,7 @@ typedef struct location_s
 {
 	int index;
 	vec3_t origin;
-	char message[128];
+	char message[MAX_LOC_LEN];
 } location_t;
 
 /**
@@ -2523,9 +2539,9 @@ typedef struct cgs_s
 	vec4_t fireteamSpritesColorSelected;
 
 	// teamchat width is *3 because of embedded color codes
-	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
-	int teamChatMsgTimes[TEAMCHAT_HEIGHT];
-	team_t teamChatMsgTeams[TEAMCHAT_HEIGHT];
+	char teamChatMsgs[TEAMCHAT_MSG_MAX][MAX_STRING_CHARS];
+	int teamChatMsgTimes[TEAMCHAT_MSG_MAX];
+	team_t teamChatMsgTeams[TEAMCHAT_MSG_MAX];
 	int teamChatPos;
 	int teamLastChatPos;
 
@@ -2603,7 +2619,7 @@ typedef struct cgs_s
 
 	int aviDemoRate;                                    ///< Demo playback recording
 	int aReinfOffset[TEAM_NUM_TEAMS];                   ///< Team reinforcement offsets
-	int cursorUpdate;                                   ///< Timeout for mouse pointer view
+	int cursorTimeout;                                  ///< Timestamp where mouse cursor disappears on demo/multiview
 	fileHandle_t dumpStatsFile;                         ///< File to dump stats
 	char *dumpStatsFileName;                            ///< Name of file to dump stats
 	int dumpStatsTime;                                  ///< Next stats command that comes back will be written to a logfile
@@ -2630,7 +2646,7 @@ typedef struct cgs_s
 	int ccSelectedObjective;
 	int ccSelectedSpawnPoint;
 	int ccResolvedSpawnPoint;
-	int ccSelectedTeam;                                 ///< ( 1 = ALLIES, 0 = AXIS )
+	int ccSelectedTeam;                                 ///< ( 0 = AXIS, 1 = ALLIES, 2 = SPECTATOR )
 	int ccSelectedWeaponSlot;                           ///< ( 0 = secondary, 1 = primary)
 	int ccSelectedClass;
 	weapon_t ccSelectedPrimaryWeapon;                   ///< Selected primary weapon from limbo panel
@@ -2916,11 +2932,15 @@ float *CG_TeamColor(int team);
 void CG_TileClear(void);
 void CG_ColorForHealth(int health, vec4_t hcolor);
 
+void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float *endColor,
+                   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon,
+                   float density, float start, float end, float thickness);
+
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
 void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, vec3_t origin);
 
-int CG_GetMaxCharsPerLine(const char *str, float textScale, fontHelper_t *font, float width);
+int CG_MaxCharsForWidth(const char *str, float textScale, fontHelper_t *font, float width);
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize, int *numLineOutput);
 // draws multiline strings
@@ -2960,6 +2980,7 @@ float CG_Text_Width_Ext_Float(const char *text, float scale, int limit, fontHelp
 float CG_Text_Line_Width_Ext_Float(const char *text, float scale, fontHelper_t *font);
 int CG_Text_Width(const char *text, float scale, int limit);
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font);
+float CG_Text_Height_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Height(const char *text, float scale, int limit);
 float CG_GetValue(int ownerDraw, int type);   // 'type' is relative or absolute (fractional-'0.5' or absolute- '50' health)
 qboolean CG_OwnerDrawVisible(int flags);
@@ -3224,7 +3245,7 @@ localEntity_t *CG_SmokePuff(const vec3_t p,
 
 void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing);
 
-void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir);
+void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage);
 void CG_LoseHat(centity_t *cent, vec3_t dir);
 
 void CG_Bleed(vec3_t origin, int entityNum);
@@ -3261,6 +3282,7 @@ void CG_ShowHelp_On(int *status);
 #ifdef FEATURE_MULTIVIEW
 qboolean CG_ViewingDraw(void);
 #endif
+void CG_DrawDemoOverlay(void);
 
 // cg_scoreboard.c
 qboolean CG_DrawScoreboard(void);
@@ -3848,7 +3870,7 @@ void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
 qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawItemObj, qboolean drawDynamic, char *name);
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor);
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, qboolean drawIconInside);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
@@ -4046,6 +4068,16 @@ struct hudComponent_s;
 
 typedef enum
 {
+	HUD_COMP_TYPE_TEXT,
+	HUD_COMP_TYPE_MULTITEXT,
+	HUD_COMP_TYPE_BAR,
+	HUD_COMP_TYPE_FEED,
+	HUD_COMP_TYPE_SPECIFIC,
+	HUD_COMP_TYPE_MAX,
+} hudComponentTypes_t;
+
+typedef enum
+{
 	TOP    = BIT(0),
 	RIGHT  = BIT(1),
 	BOTTOM = BIT(2),
@@ -4071,7 +4103,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 60
+#define HUD_COMPONENTS_NUM 61
 
 typedef struct hudComponent_s
 {
@@ -4096,6 +4128,18 @@ typedef struct hudComponent_s
 	float hardScale; ///< Runtime computed value
 	qboolean parsed; ///< Used to notify that the component has been setup via file
 	void (*draw)(struct hudComponent_s *comp);
+
+	// bar circle customization only
+	float circleDensityPoint;
+	float circleStartAngle;
+	float circleEndAngle;
+	float circleThickness;
+
+	// feed customization only
+	float feedTime;
+	float feedStayTime;
+	float feedFadeTime;
+
 } hudComponent_t;
 
 typedef struct hudStructure_s
@@ -4117,42 +4161,42 @@ typedef struct hudStructure_s
 	hudComponent_t xptext;
 	hudComponent_t ranktext;
 	hudComponent_t statsdisplay;
-	hudComponent_t weaponheatbar;   // 10
+	// 10
+	hudComponent_t weaponheatbar;
 	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
 	hudComponent_t popupmessages2;
 	hudComponent_t popupmessages3;
+	hudComponent_t popupmessages4;
 	hudComponent_t powerups;
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
-
-	hudComponent_t cursorhints; // 20
+	hudComponent_t cursorhints;
+	// 20
 	hudComponent_t cursorhintsbar;
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
-
 	hudComponent_t roundtimer;
 	hudComponent_t reinforcement;
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
-
 	hudComponent_t votetext;
-	hudComponent_t spectatortext;   // 30
+	hudComponent_t spectatortext;
+	// 30
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
 	hudComponent_t demotext;
-
 	hudComponent_t missilecamera;
-
 	hudComponent_t sprinttext;
 	hudComponent_t breathtext;
 	hudComponent_t weaponchargetext;
 	hudComponent_t fps;
 	hudComponent_t snapshot;
-	hudComponent_t ping;    // 40
+	hudComponent_t ping;
+	// 40
 	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
@@ -4162,7 +4206,8 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptitle;
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
-	hudComponent_t centerprint; // 50
+	hudComponent_t centerprint;
+	// 50
 	hudComponent_t banner;
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
@@ -4171,15 +4216,16 @@ typedef struct hudStructure_s
 	hudComponent_t xpgain;
 	hudComponent_t scPlayerListAxis;
 	hudComponent_t scPlayerListAllies;
+	// 60
 	hudComponent_t scTeamNamesAxis;
-	hudComponent_t scTeamNamesAllies; // 60
+	hudComponent_t scTeamNamesAllies;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
 
 #define MAXHUDS 32
 #define MAXSTYLES 24
-#define CURRENT_HUD_JSON_VERSION 5
+#define CURRENT_HUD_JSON_VERSION 6
 #define DEFAULTHUD "ETmain"
 
 typedef struct
@@ -4200,6 +4246,7 @@ typedef struct
 	size_t offset;
 	qboolean isAlias;
 	void (*draw)(hudComponent_t *comp);
+	hudComponentTypes_t type;
 	float scale;
 	char *styles[MAXSTYLES];
 

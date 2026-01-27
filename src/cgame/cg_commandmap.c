@@ -789,7 +789,8 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 		if (cent - cg_entities == cg.clientNum)
 		{
 			// use our own lerp'ed origin
-			CG_ComputeMapEntCoordinate(mEnt, scissor, &cg.predictedPlayerEntity.lerpOrigin, &cg.predictedPlayerState.viewangles[YAW], w, h);
+			CG_ComputeMapEntCoordinate(mEnt, scissor, &cg.predictedPlayerEntity.lerpOrigin,
+			                           (cg.showGameView ? &cg.predictedPlayerState.viewangles[YAW] : &cg.refdefViewAngles[YAW]), w, h);
 		}
 		else if ((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && snap->ps.clientNum != cg.clientNum && cent - cg_entities == snap->ps.clientNum))
 		{
@@ -853,7 +854,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 
 		if (!pointTowardNorth)
 		{
-			CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.predictedPlayerState.viewangles[YAW] - 90);
+			CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.refdefViewAngles[YAW] - 90);
 		}
 
 		if (mEnt->type == ME_PLAYER_REVIVE && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
@@ -877,7 +878,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
-			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.ccMedicIcon);
+			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.medicReviveShader);
 		}
 		else
 		{
@@ -984,7 +985,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 				else
 				{
 					CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
-					                  (0.5f - (mEnt->yaw - (cg.predictedPlayerState.viewangles[YAW] - 90) - 180.f) / 360.f));
+					                  (0.5f - (mEnt->yaw - (cg.refdefViewAngles[YAW] - 90) - 180.f) / 360.f));
 				}
 			}
 			else
@@ -1189,7 +1190,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 
 			if (!pointTowardNorth)
 			{
-				CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.predictedPlayerState.viewangles[YAW] - 90);
+				CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.refdefViewAngles[YAW] - 90);
 			}
 
 			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], pic);
@@ -1255,7 +1256,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 
 			if (!pointTowardNorth)
 			{
-				CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.predictedPlayerState.viewangles[YAW] - 90);
+				CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.refdefViewAngles[YAW] - 90);
 			}
 
 			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], pic);
@@ -1297,7 +1298,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 
 			if (!pointTowardNorth)
 			{
-				CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.predictedPlayerState.viewangles[YAW] - 90);
+				CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.refdefViewAngles[YAW] - 90);
 			}
 
 			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], pic);
@@ -1363,7 +1364,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 
 		if (!pointTowardNorth)
 		{
-			CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.predictedPlayerState.viewangles[YAW] - 90);
+			CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.refdefViewAngles[YAW] - 90);
 		}
 
 		trap_R_SetColor(c_clr);
@@ -1495,7 +1496,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			{
 				trap_R_DrawRotatedPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1,
 				                      cgs.media.commandCentreAutomapShader[cgs.ccLayers ? cgs.ccSelectedLayer : 0],
-				                      (cg.predictedPlayerState.viewangles[YAW] - 180.f - 45.f) / 360.f);
+				                      (cg.refdefViewAngles[YAW] - 180.f - 45.f) / 360.f);
 			}
 		}
 	}
@@ -1599,14 +1600,14 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 		if (!pointTowardNorth)
 		{
-			CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.predictedPlayerState.viewangles[YAW] - 90);
+			CG_RotateMapEntCoordinatePoint(x, y, w, h, &icon_pos, cg.refdefViewAngles[YAW] - 90);
 		}
 
 		if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
 			// draw a arrow when free-spectating
 			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.cm_spec_icon);
-			CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, cgs.media.cm_arrow_spec, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+			CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, cgs.media.cm_arrow_spec, (0.5f - ((cg.showGameView ? cg.predictedPlayerState.viewangles[YAW] : cg.refdefViewAngles[YAW]) - 180.f) / 360.f));
 		}
 		else
 		{
@@ -1652,7 +1653,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 				}
 
 				trap_R_SetColor(reviveClr);
-				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f + 2, icon_pos[1] - icon_extends[1] * 0.5f + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.ccMedicIcon);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f + 2, icon_pos[1] - icon_extends[1] * 0.5f + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.medicReviveShader);
 				trap_R_SetColor(NULL);
 				return;
 			}
@@ -1664,7 +1665,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			if (pointTowardNorth)
 			{
 				CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2,
-				                  classInfo->arrow, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+				                  classInfo->arrow, (0.5f - ((cg.showGameView ? cg.predictedPlayerState.viewangles[YAW] : cg.refdefViewAngles[YAW]) - 180.f) / 360.f));
 			}
 			else
 			{
@@ -1920,7 +1921,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 				static float lastangle  = 0;
 				static float anglespeed = 0;
 
-				angle       = (cg.predictedPlayerState.viewangles[YAW] + 180.f) / 360.f - (0.125f);
+				angle       = (cg.refdefViewAngles[YAW] + 180.f) / 360.f - (0.125f);
 				diff        = AngleSubtract(angle * 360, lastangle * 360) / 360.f;
 				anglespeed /= 1.08f;
 				anglespeed += diff * 0.01f;
@@ -1958,7 +1959,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 
 		if (!(style & COMPASS_POINT_TOWARD_NORTH))
 		{
-			float angle = -(cg.predictedPlayerState.viewangles[YAW] - 180) - 90;
+			float angle = -(cg.refdefViewAngles[YAW] - 180) - 90;
 
 			if (angle < 0)
 			{
@@ -2030,12 +2031,14 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 
 		if (icon)
 		{
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor);
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor,
+			                   style & COMPASS_DRAW_ICONS_INSIDE);
 
 			// draw overlapping shader for disguised covops
 			if (icon == cgs.media.friendShader)
 			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor);
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor,
+				                   style & COMPASS_DRAW_ICONS_INSIDE);
 			}
 		}
 	}
@@ -2049,8 +2052,11 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
  */
 static void CG_DrawSpawnPointInfoFlag(int i, float size, vec2_t point)
 {
+	const team_t team = cgs.clientinfo[cg.clientNum].team;
+
 	// render flag shadow if spawn point is the one that is currently resolved
-	if (i == cgs.ccResolvedSpawnPoint + 1)
+	// skip drawing if we're spectating, or during intermission, as the data is wrong anyway
+	if (team != TEAM_SPECTATOR && teamOrder[cgs.ccSelectedTeam] == team && cg.snap->ps.pm_type != PM_INTERMISSION && i == cgs.ccResolvedSpawnPoint + 1)
 	{
 		float offsetSize = size * 1.3;
 
@@ -2171,7 +2177,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 
 		if (!pointTowardNorth)
 		{
-			CG_RotateMapEntCoordinatePoint(px, py, pw, ph, &point, cg.predictedPlayerState.viewangles[YAW] - 90);
+			CG_RotateMapEntCoordinatePoint(px, py, pw, ph, &point, cg.refdefViewAngles[YAW] - 90);
 		}
 
 		if (changetime != 0.f)
@@ -2388,7 +2394,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 
 				if (!pointTowardNorth)
 				{
-					CG_RotateMapEntCoordinatePoint(px, py, pw, ph, &point, cg.predictedPlayerState.viewangles[YAW] - 90);
+					CG_RotateMapEntCoordinatePoint(px, py, pw, ph, &point, cg.refdefViewAngles[YAW] - 90);
 				}
 
 				trap_R_SetColor(color);
@@ -2459,7 +2465,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 
 			if (!pointTowardNorth)
 			{
-				CG_RotateMapEntCoordinatePoint(px, py, pw, ph, &point, cg.predictedPlayerState.viewangles[YAW] - 90);
+				CG_RotateMapEntCoordinatePoint(px, py, pw, ph, &point, cg.refdefViewAngles[YAW] - 90);
 			}
 
 			trap_R_SetColor(color);
@@ -2553,8 +2559,9 @@ void CG_CommandMap_DrawHighlightText(void)
 * @param[in] origin
 * @param[in] dest
 * @param[in] shader
+* @param[in] drawIconInside
 */
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor)
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, qboolean drawIconInside)
 {
 	float  iconx, icony, iconWidth, iconHeight, radius;
 	float  angle, len, diff;
@@ -2571,7 +2578,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		return;
 	}
 
-	angles[YAW] = AngleSubtract(cg.predictedPlayerState.viewangles[YAW], angles[YAW]);
+	angles[YAW] = AngleSubtract(cg.refdefViewAngles[YAW], angles[YAW]);
 	angle       = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * M_TAU_F;
 
 	len        = 1 - MIN(1.f, len / 2000.f * dstScale);
@@ -2580,45 +2587,66 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 	if (scissor->circular)
 	{
-		w /= 2;
-		h /= 2;
+		w *= 0.5f;
+		h *= 0.5f;
 
 		iconx = x + w;
 		icony = y + h;
 
+		if (drawIconInside)
+		{
+			w -= baseSize * 2;
+			h -= baseSize * 2;
+		}
+
 		radius = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 
-		iconx = iconx + ((float)cos(angle) * radius);
-		icony = icony + ((float)sin(angle) * radius);
+		iconx += (float)cos(angle) * radius;
+		icony += (float)sin(angle) * radius;
 
-		iconx = iconx - (iconWidth - 4) / 2;
-		icony = icony - (iconHeight - 4) / 2;
+		iconx -= iconWidth * 0.5f;
+		icony -= iconHeight * 0.5f;
 	}
 	else
 	{
 		diff = w * 0.25f;
-		x    = x + (diff / 2);
-		y    = y + (diff / 2);
+		x    = x + (diff * 0.5f);
+		y    = y + (diff * 0.5f);
 		w    = w - diff;
 		h    = h - diff;
 
-		iconx = x + (w / 2);
-		icony = y + (h / 2);
+		iconx = x + (w * 0.5f);
+		icony = y + (h * 0.5f);
 
-		radius = (float)sqrt((w * w) + (h * h)) / 2.0f;
+		if (!drawIconInside)
+		{
+			w += baseSize * 2;
+			h += baseSize * 2;
+		}
 
-		iconx = iconx + ((float)cos(angle) * radius);
-		icony = icony + ((float)sin(angle) * radius);
+		radius = (float)sqrt((w * w) + (h * h)) * 0.5f;
+
+		iconx += (float)cos(angle) * radius;
+		icony += (float)sin(angle) * radius;
 
 		iconWidth  *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
 		iconHeight *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
 
-		iconx -= iconWidth / 2;
-		icony -= iconHeight / 2;
+		iconx -= iconWidth * 0.5f;
+		icony -= iconHeight * 0.5f;
 
-		// keep the icon from going outside map boundaries
-		iconx = Com_Clamp(x, x + w - iconWidth, iconx);
-		icony = Com_Clamp(y, y + h - iconHeight, icony);
+		if (drawIconInside)
+		{
+			// keep the icon from going outside map boundaries
+			iconx = Com_Clamp(x, x + w - iconWidth, iconx);
+			icony = Com_Clamp(y, y + h - iconHeight, icony);
+		}
+		else
+		{
+			// keep the icon from going outside comp boundaries
+			iconx = Com_Clamp(x - iconWidth, x + w - baseSize * 2.f, iconx);
+			icony = Com_Clamp(y - iconHeight, y + h - baseSize * 2.f, icony);
+		}
 	}
 
 	CG_DrawPic(iconx, icony, iconWidth, iconHeight, shader);

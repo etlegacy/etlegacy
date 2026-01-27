@@ -87,6 +87,7 @@ void R_RegisterCommon(void);
 
 void R_DoGLimpShutdown(void);
 void R_PrintLongString(const char *string);
+qboolean R_ParseEtlDirective(char **text, int *maxPicMip, const char *shaderName, qboolean useParseExt2);
 
 // font stuff
 void R_InitFreeType(void);
@@ -183,7 +184,6 @@ qboolean R_LoadJPG(imageData_t *data, byte **pic, int *width, int *height, byte 
 qboolean R_LoadPCX(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
 qboolean R_LoadPNG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
 qboolean R_LoadTGA(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
-qboolean R_LoadSVG(imageData_t *data, byte **pic, int *width, int *height, byte alphaByte);
 
 /*
 =============================================================

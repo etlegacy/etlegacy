@@ -430,9 +430,8 @@ parse_commandline() {
             FEATURE_PNG=0
 
             BUNDLED_SDL=0
-            # FIXME: this needs to be fixed in cmake, we do not want zlib or minizip if we are not building the client or server
-            BUNDLED_ZLIB=1
-            BUNDLED_MINIZIP=1
+            BUNDLED_ZLIB=0
+            BUNDLED_MINIZIP=0
             BUNDLED_JPEG=0
             BUNDLED_OGG_VORBIS=0
             BUNDLED_THEORA=0
@@ -449,7 +448,6 @@ parse_commandline() {
             FEATURE_RENDERER_GLES=0
             RENDERER_DYNAMIC=0
 
-            FEATURE_CURL=0
             FEATURE_OGG_VORBIS=0
             FEATURE_THEORA=0
             FEATURE_OPENAL=0
@@ -465,8 +463,16 @@ parse_commandline() {
             BUNDLED_GLEW=0
             BUNDLED_FREETYPE=0
             BUNDLED_PNG=0
-            BUNDLED_CURL=0
             BUNDLED_OPENAL=0
+        elif [ "$var" = "-etpub" ]; then
+            MODNAME="etpub"
+            MODURL="https://etpub.org"
+        elif [ "$var" = "-jaymod" ]; then
+            MODNAME="jaymod"
+            MODURL="https://jaymod.clanfu.org"
+        elif [ "$var" = "-nq" ]; then
+            MODNAME="nq"
+            MODURL="http://www.shitstorm.org"
         else
             # drop the script commands from the result
             for index in ${!easy_keys[*]}; do
@@ -575,6 +581,9 @@ generate_configuration() {
         INSTALL_OMNIBOT=0
     fi
 
+    MODNAME=${MODNAME:-legacy}
+    MODURL=${MODURL:-www.etlegacy.com}
+
     einfo "Configuring ET: Legacy..."
     cmake_args+=(
         "-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}"
@@ -630,6 +639,8 @@ generate_configuration() {
         "-DINSTALL_OMNIBOT=${INSTALL_OMNIBOT}"
         "-DINSTALL_GEOIP=${INSTALL_GEOIP}"
         "-DINSTALL_WOLFADMIN=${INSTALL_WOLFADMIN}"
+        "-DMODNAME=${MODNAME}"
+        "-DMODURL=${MODURL}"
     )
 
     if [ -n "$TOOLCHAIN_FILE" ]; then
@@ -1012,7 +1023,7 @@ print_help() {
     ehead "-64, -32, -debug, -clang, -lsp, -nodb -nor2, -nodynamic, -nossl, -systemlibs"
     ehead "-noextra, -noupdate, -mod, -server, -ninja, -nopk3, -lsp"
     ehead "--build=*, --prefix=*, --osx=* --osx-arc=*"
-    ehead "--silent"
+    ehead "--silent -etpub -jaymod -nq"
     echo
 }
 

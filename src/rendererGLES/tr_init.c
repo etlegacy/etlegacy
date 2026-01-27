@@ -168,8 +168,6 @@ cvar_t *r_maxPolyVerts;
 
 cvar_t *r_gfxInfo;
 
-cvar_t *r_scalesvg;
-
 /**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
  *
@@ -1139,9 +1137,6 @@ void R_Register(void)
 	ri.Cvar_CheckRange(r_maxPolyVerts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue);            // MIN_POLYVERTS was old static value
 
 	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
-
-	r_scalesvg = ri.Cvar_Get("r_scalesvg", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_scalesvg, 0, 2, qtrue);
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown

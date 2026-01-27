@@ -40,7 +40,7 @@
 #include "../qcommon/q_unicode.h"
 #include "../renderercommon/tr_types.h"
 #include "ui_public.h"
-#include "keycodes.h"
+#include "../qcommon/keycodes.h"
 #include "../game/bg_public.h"
 #include "ui_shared.h"
 

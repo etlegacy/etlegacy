@@ -137,7 +137,7 @@ void CG_DrawCustomCrosshair(qboolean withSpread)
 			crossLength      = cg_customCrosshairCrossLength.value;
 			outlineRounded   = cg_customCrosshairDotOutlineRounded.integer;
 
-			if (cg_customCrosshairDynamicColor.integer)
+			if (cg_customCrosshairHealth.integer)
 			{
 				Vector4Copy(cgs.customCrosshairDotColor, dynamicColor);
 				CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
@@ -175,7 +175,7 @@ void CG_DrawCustomCrosshair(qboolean withSpread)
 			outlineRounded   = cg_customCrosshairCrossOutlineRounded.integer;
 			crossLength      = cg_customCrosshairCrossLength.value;
 
-			if (cg_customCrosshairDynamicColor.integer)
+			if (cg_customCrosshairHealth.integer)
 			{
 				Vector4Copy(cgs.customCrosshairCrossColor, dynamicColor);
 				CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
@@ -229,7 +229,7 @@ void CG_DrawCustomCrosshair(qboolean withSpread)
 		outlineWidth     = cg_customCrosshairCrossOutlineWidth.value;
 		crossLength      = cg_customCrosshairCrossLength.value;
 
-		if (cg_customCrosshairDynamicColor.integer)
+		if (cg_customCrosshairHealth.integer)
 		{
 			Vector4Copy(cgs.customCrosshairCrossColor, dynamicColor);
 			CG_ColorForHealth(cg.snap->ps.stats[STAT_HEALTH], dynamicColor);
