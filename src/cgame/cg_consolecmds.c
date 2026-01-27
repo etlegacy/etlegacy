@@ -2695,6 +2695,9 @@ const hudComponentMembersFields_t hudComponentMembersFields[] =
 	{ HUDMF(circleStartAngle),   CG_SetFloatComponentFromCommand            },
 	{ HUDMF(circleEndAngle),     CG_SetFloatComponentFromCommand            },
 	{ HUDMF(circleThickness),    CG_SetFloatComponentFromCommand            },
+	{ HUDMF(feedTime),           CG_SetFloatComponentFromCommand            },
+	{ HUDMF(feedStayTime),       CG_SetFloatComponentFromCommand            },
+	{ HUDMF(feedFadeTime),       CG_SetFloatComponentFromCommand            },
 	{ NULL,                      0, NULL                                    },
 };
 

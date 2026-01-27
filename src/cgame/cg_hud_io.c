@@ -555,6 +555,21 @@ static cJSON *CG_CreateHudObject(hudStucture_t *hud)
 			cJSON_AddNumberToObject(compObj, "circleThickness", comp->circleThickness);
 		}
 
+		if (flags & BIT(18))
+		{
+			cJSON_AddNumberToObject(compObj, "feedTime", comp->feedTime);
+		}
+
+		if (flags & BIT(19))
+		{
+			cJSON_AddNumberToObject(compObj, "feedStayTime", comp->feedStayTime);
+		}
+
+		if (flags & BIT(20))
+		{
+			cJSON_AddNumberToObject(compObj, "feedFadeTime", comp->feedFadeTime);
+		}
+
 		if (flags & BIT(0))
 		{
 			cJSON_AddNumberToObject(compObj, "anchor", comp->anchorPoint);
@@ -689,6 +704,21 @@ static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp
 	if (comp->circleThickness != parentComp->circleThickness)
 	{
 		flags |= BIT(17);
+	}
+
+	if (comp->feedTime != parentComp->feedTime)
+	{
+		flags |= BIT(18);
+	}
+
+	if (comp->feedStayTime != parentComp->feedStayTime)
+	{
+		flags |= BIT(19);
+	}
+
+	if (comp->feedFadeTime != parentComp->feedFadeTime)
+	{
+		flags |= BIT(20);
 	}
 
 	return flags;
@@ -1580,6 +1610,10 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		component->circleStartAngle   = Q_ReadFloatValueJsonEx(comp, "circleStartAngle", component->circleStartAngle);
 		component->circleEndAngle     = Q_ReadFloatValueJsonEx(comp, "circleEndAngle", component->circleEndAngle);
 		component->circleThickness    = Q_ReadFloatValueJsonEx(comp, "circleThickness", component->circleThickness);
+
+		component->feedTime     = Q_ReadFloatValueJsonEx(comp, "feedTime", component->feedTime);
+		component->feedStayTime = Q_ReadFloatValueJsonEx(comp, "feedStayTime", component->feedStayTime);
+		component->feedFadeTime = Q_ReadFloatValueJsonEx(comp, "feedFadeTime", component->feedFadeTime);
 
 		component->anchorPoint = Q_ReadIntValueJsonEx(comp, "anchor", component->anchorPoint);
 		tmp                    = cJSON_GetObjectItem(comp, "parent");

@@ -2177,11 +2177,11 @@ static void CG_HudEditor_ReplaceDefaultParent(int newParentNumber)
 			comp->anchorPoint        = newParentComp->anchorPoint;
 			comp->parentAnchor.point = newParentComp->parentAnchor.point;
 		}
-        
-        if (comp->barStyle == parentComp->barStyle)
-        {
-            comp->barStyle = newParentComp->barStyle;
-        }
+
+		if (comp->barStyle == parentComp->barStyle)
+		{
+			comp->barStyle = newParentComp->barStyle;
+		}
 
 		if (comp->circleDensityPoint == parentComp->circleDensityPoint)
 		{
@@ -2201,6 +2201,21 @@ static void CG_HudEditor_ReplaceDefaultParent(int newParentNumber)
 		if (comp->circleThickness == parentComp->circleThickness)
 		{
 			comp->circleThickness = newParentComp->circleThickness;
+		}
+
+		if (comp->feedTime == parentComp->feedTime)
+		{
+			comp->feedTime = newParentComp->feedTime;
+		}
+
+		if (comp->feedStayTime == parentComp->feedStayTime)
+		{
+			comp->feedStayTime = newParentComp->feedStayTime;
+		}
+
+		if (comp->feedFadeTime == parentComp->feedFadeTime)
+		{
+			comp->feedFadeTime = newParentComp->feedFadeTime;
 		}
 	}
 }
