@@ -14,6 +14,7 @@ SET game_basepath=%USERPROFILE%\Documents\ETLegacy-Build
 SET modname=legacy
 SET build_type=Release
 SET batloc=%~dp0
+SET "batloc=%batloc:\=/%"
 SET build_dir=!batloc!build
 SET project_dir=!batloc!project
 
