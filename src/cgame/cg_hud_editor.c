@@ -101,6 +101,25 @@ typedef enum hudGridScale_e
 	HUD_GRID_SCALE_MAX,
 } hudGridScale_t;
 
+char *barFlagsString[BAR_MAX] =
+{
+	"Left",
+	"Center",
+	"Vertical",
+	"No Alpha",
+	"Bar Bckgrnd",
+	"X0 Y5",
+	"X0 Y0",
+	"Lerp Color",
+	"Bar Border",
+	"Border Tiny",
+	"Decor",
+	"Icon",
+	"Needle",
+	"Circular",
+	NULL,
+};
+
 float    HUDEditorX;
 float    HUDEditorWidth;
 float    HUDEditorCenterX;
@@ -146,6 +165,7 @@ static void CG_HudEditorRender_HelpButton(panel_button_t *button);
 static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int key);
 static void CG_HudEditor_RenderCheckbox(panel_button_t *button);
 static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int key);
+static qboolean CG_HudEditorBarStyle_CheckboxKeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditorAutoAdjust_CheckboxKeyDown(panel_button_t *button, int key);
@@ -777,6 +797,48 @@ static panel_button_t hudEditorCircleSliderEndAngle =
 	0
 };
 
+static panel_button_t hudEditorCircleThickness =
+{
+	NULL,
+	"hudeditor_Thickness",
+	{ 0,                    HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 6) + (HUDEDITOR_CONTROLS_SPACER_XY * 6),INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                    0,                                                             0,           3, 0, 0, 0, 1},
+	&hudEditorTextFont,     // font
+	CG_HudEditor_EditKeyDown,// keyDown
+	CG_HudEditorPanel_EditKeyUp,// keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorEdit_Finish,
+	0
+};
+
+static panel_button_t hudEditorCircleSliderThickness =
+{
+	NULL,
+	"hudeditor_CircleSliderThickness",
+	{ 0,                              HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 7) + (HUDEDITOR_CONTROLS_SPACER_XY * 7),SLIDERS_WIDTH, SLIDERS_HEIGHT },
+	{ 0,                              0,                                                 0,             0, 1, 8, 0, 1  },
+	&hudEditorTextFont,               // font
+	CG_HudEditorColor_KeyDown,        // keyDown
+	CG_HudEditorPanel_KeyUp,          // keyUp
+	CG_HudEditor_Slider_Render,
+	NULL,
+	0
+};
+
+static panel_button_t hudEditorBarStyle =
+{
+	NULL,
+	"Bar Style",
+	{ 0,                        HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 8) + (HUDEDITOR_CONTROLS_SPACER_XY * 8),CHECKBOX_SIZE, CHECKBOX_SIZE },
+	{ 0,                        0,                                                                       0,             0, 0, 0, 0, 1 },
+	&hudEditorTextFont,         // font
+	CG_HudEditorBarStyle_CheckboxKeyDown,// keyDown
+	CG_HudEditorPanel_KeyUp,    // keyUp
+	CG_HudEditor_RenderCheckbox,
+	NULL,
+	0
+};
+
 static panel_button_t hudEditorFeedTime =
 {
 	NULL,
@@ -857,34 +919,6 @@ static panel_button_t hudEditorFeedFadeTimeSlider =
 	&hudEditorTextFont,            // font
 	CG_HudEditorColor_KeyDown,     // keyDown
 	CG_HudEditorPanel_KeyUp,       // keyUp
-	CG_HudEditor_Slider_Render,
-	NULL,
-	0
-};
-
-static panel_button_t hudEditorCircleThickness =
-{
-	NULL,
-	"hudeditor_Thickness",
-	{ 0,                    HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 6) + (HUDEDITOR_CONTROLS_SPACER_XY * 6),INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                    0,                                                             0,           3, 0, 0, 0, 1},
-	&hudEditorTextFont,     // font
-	CG_HudEditor_EditKeyDown,// keyDown
-	CG_HudEditorPanel_EditKeyUp,// keyUp
-	CG_HudEditor_RenderEdit,
-	CG_HudEditorEdit_Finish,
-	0
-};
-
-static panel_button_t hudEditorCircleSliderThickness =
-{
-	NULL,
-	"hudeditor_CircleSliderThickness",
-	{ 0,                              HUDEDITOR_OPTION_Y + (SLIDERS_HEIGHT * 7) + (HUDEDITOR_CONTROLS_SPACER_XY * 7),SLIDERS_WIDTH, SLIDERS_HEIGHT },
-	{ 0,                              0,                                                 0,             0, 1, 8, 0, 1  },
-	&hudEditorTextFont,               // font
-	CG_HudEditorColor_KeyDown,        // keyDown
-	CG_HudEditorPanel_KeyUp,          // keyUp
 	CG_HudEditor_Slider_Render,
 	NULL,
 	0
@@ -1485,6 +1519,29 @@ static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int ke
 }
 
 /**
+* @brief CG_HudEditorBarStyle_CheckboxKeyDown
+* @param button
+*/
+static qboolean CG_HudEditorBarStyle_CheckboxKeyDown(panel_button_t *button, int key)
+{
+	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
+
+	if (!hudData.active->isEditable)
+	{
+		return qfalse;
+	}
+
+	comp->barStyle ^= button->data[3];
+	button->data[2] = !button->data[2];
+
+	BG_PanelButtons_SetFocusButton(NULL);
+
+	SOUND_FILTER;
+
+	return qtrue;
+}
+
+/**
 * @brief CG_HudEditorShowBackground_CheckboxKeyDown
 * @param button
 */
@@ -1577,7 +1634,7 @@ static void CG_HudEditor_SetupCheckBoxPosition(panel_button_t *button, float tot
 	{
 		button->rect.x = HUDEditorCenterX + (HUDEditorWidth * 0.5f) - CHECKBOX_SIZE * 1.5f;
 	}
-	else if (button == &hudEditorStyle)
+	else if (button == &hudEditorStyle || button == &hudEditorBarStyle)
 	{
 		button->rect.x = HUDEditorCenterX + (HUDEditorWidth * 0.5f) - CHECKBOX_SIZE * 1.5f;
 	}
@@ -1596,7 +1653,6 @@ static void CG_HudEditor_RenderCheckbox(panel_button_t *button)
 	float textOffsetY;
 	float scalex = button->font->scalex;
 
-	// FIXME: get proper names and adjust alignment after
 	Com_sprintf(labelText, sizeof(labelText), "%s ", button->text);
 
 	textWidth = CG_Text_Width_Ext(labelText, scalex, 0, button->font->font);
@@ -1628,8 +1684,8 @@ static panel_button_t styleCheckBox[MAXSTYLES];
 static panel_button_t *styleCheckBoxPanel[MAXSTYLES + 1];
 
 /**
-* @brief CG_HudEditor_CreateCheckboxStyle
-* @param[in] button
+* @brief CG_HudEditor_UpdateCheckboxStyle
+* @param[in] style
 */
 static void CG_HudEditor_UpdateCheckboxStyle(int style)
 {
@@ -1664,6 +1720,51 @@ static void CG_HudEditor_UpdateCheckboxStyle(int style)
 		styleCheckBox[i].data[3]   = BIT(i);
 
 		styleCheckBoxPanel[i] = &styleCheckBox[i];
+
+		// was odd number, shift to next line
+		if (i & 1)
+		{
+			rect.y += rect.h + HUDEDITOR_CONTROLS_SPACER_XY;
+		}
+	}
+}
+
+static panel_button_t barStyleCheckBox[BAR_MAX];
+static panel_button_t *barStyleCheckBoxPanel[BAR_MAX + 1];
+
+/**
+* @brief CG_HudEditor_UpdateCheckboxBarStyle
+* @param[in] style
+*/
+static void CG_HudEditor_UpdateCheckboxBarStyle(int style)
+{
+	int       i;
+	rectDef_t rect = hudEditorBarStyle.rect;
+
+	Com_Memset(barStyleCheckBox, 0, sizeof(barStyleCheckBox));
+	Com_Memset(barStyleCheckBoxPanel, 0, sizeof(barStyleCheckBoxPanel));
+
+	if (!lastFocusComponent || hudComponentFields[lastFocusComponent->data[0]].type != HUD_COMP_TYPE_BAR)
+	{
+		return;
+	}
+
+	for (i = 0; barFlagsString[i]; ++i)
+	{
+		// off number, shift X
+		rect.x = ((i & 1) ? HUDEditorCenterX : HUDEditorX) + (HUDEditorWidth * 0.5f) - CHECKBOX_SIZE * 1.5f;
+
+		barStyleCheckBox[i].text      = barFlagsString[i];
+		barStyleCheckBox[i].rect      = rect;
+		barStyleCheckBox[i].onKeyDown = hudEditorBarStyle.onKeyDown;
+		barStyleCheckBox[i].onKeyUp   = hudEditorBarStyle.onKeyUp;
+		barStyleCheckBox[i].onDraw    = hudEditorBarStyle.onDraw;
+		barStyleCheckBox[i].font      = hudEditorBarStyle.font;
+		barStyleCheckBox[i].data[1]   = lastFocusComponent->data[0];
+		barStyleCheckBox[i].data[2]   = style & BIT(i);
+		barStyleCheckBox[i].data[3]   = BIT(i);
+
+		barStyleCheckBoxPanel[i] = &barStyleCheckBox[i];
 
 		// was odd number, shift to next line
 		if (i & 1)
@@ -2076,6 +2177,11 @@ static void CG_HudEditor_ReplaceDefaultParent(int newParentNumber)
 			comp->anchorPoint        = newParentComp->anchorPoint;
 			comp->parentAnchor.point = newParentComp->parentAnchor.point;
 		}
+        
+        if (comp->barStyle == parentComp->barStyle)
+        {
+            comp->barStyle = newParentComp->barStyle;
+        }
 
 		if (comp->circleDensityPoint == parentComp->circleDensityPoint)
 		{
@@ -2745,6 +2851,7 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	hudEditorVisible.data[2] = comp->visible;
 
 	CG_HudEditor_UpdateCheckboxStyle(comp->style);
+	CG_HudEditor_UpdateCheckboxBarStyle(comp->barStyle);
 
 	hudEditorShowBackground.data[1] = button->data[0];
 	hudEditorShowBackground.data[2] = comp->showBackGround;
@@ -3128,6 +3235,10 @@ void CG_HudEditorSetup(void)
 	// clear style box
 	Com_Memset(styleCheckBox, 0, sizeof(styleCheckBox));
 	Com_Memset(styleCheckBoxPanel, 0, sizeof(styleCheckBoxPanel));
+
+	// clear bar style box
+	Com_Memset(barStyleCheckBox, 0, sizeof(barStyleCheckBox));
+	Com_Memset(barStyleCheckBoxPanel, 0, sizeof(barStyleCheckBoxPanel));
 
 	elementColorSelection = 0;
 }
@@ -3649,6 +3760,12 @@ void CG_DrawHudEditor(void)
 	{
 		BG_PanelButtonsRender(hudEditorGenericTab);
 		BG_PanelButtonsRender(CG_HudEditor_GetSelectedTab());
+
+		// FIXME: find a more elegant way to draw it
+		if (lastButtonTabSelected == &hudEditorBarButton)
+		{
+			BG_PanelButtonsRender(barStyleCheckBoxPanel);
+		}
 	}
 
 	BG_PanelButtonsRender(hudEditor);
@@ -3815,6 +3932,15 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		if (BG_PanelButtonsKeyEvent(key, down, CG_HudEditor_GetSelectedTab()))
 		{
 			return;
+		}
+
+		// FIXME: find a more elegant way to draw it
+		if (lastButtonTabSelected == &hudEditorBarButton)
+		{
+			if (BG_PanelButtonsKeyEvent(key, down, barStyleCheckBoxPanel))
+			{
+				return;
+			}
 		}
 	}
 

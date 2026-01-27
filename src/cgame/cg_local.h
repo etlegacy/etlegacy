@@ -2290,6 +2290,7 @@ enum
 	BAR_ICON           = BIT(11),
 	BAR_NEEDLE         = BIT(12),
 	BAR_CIRCULAR       = BIT(13),
+	BAR_MAX            = BIT(14),
 };
 
 enum
@@ -2300,6 +2301,8 @@ enum
 	GAMESTATS_DAMAGEGIVEN    = BIT(3),
 	GAMESTATS_DAMAGERECEIVED = BIT(4),
 };
+
+extern char *barFlagsString[BAR_MAX];
 
 /**
  * @struct objectives_t
@@ -2806,9 +2809,10 @@ enum
 // crosshair bar flags
 enum
 {
-	CROSSHAIR_BAR_CLASS    = BIT(0),
-	CROSSHAIR_BAR_RANK     = BIT(1),
-	CROSSHAIR_BAR_PRESTIGE = BIT(2),
+	CROSSHAIR_BAR_CLASS         = BIT(0),
+	CROSSHAIR_BAR_RANK          = BIT(1),
+	CROSSHAIR_BAR_PRESTIGE      = BIT(2),
+	CROSSHAIR_BAR_DYNAMIC_COLOR = BIT(3),
 };
 
 // projectile spawn effects at destination
@@ -4129,7 +4133,8 @@ typedef struct hudComponent_s
 	qboolean parsed; ///< Used to notify that the component has been setup via file
 	void (*draw)(struct hudComponent_s *comp);
 
-	// bar circle customization only
+	// bar customization only
+	int barStyle;
 	float circleDensityPoint;
 	float circleStartAngle;
 	float circleEndAngle;
@@ -4225,7 +4230,7 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 24
-#define CURRENT_HUD_JSON_VERSION 6
+#define CURRENT_HUD_JSON_VERSION 7
 #define DEFAULTHUD "ETmain"
 
 typedef struct

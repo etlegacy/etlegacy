@@ -2690,6 +2690,7 @@ const hudComponentMembersFields_t hudComponentMembersFields[] =
 	{ HUDMF(anchorPoint),        CG_SetAnchorPointFromCommand               },
 	{ "parentAnchorPoint",       offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, point), CG_SetAnchorPointFromCommand},
 	{ "parentAnchorComponent",   offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, parent), CG_SetAnchorParentComponentFromCommand},
+	{ HUDMF(barStyle),           CG_SetIntComponentFromCommand              },
 	{ HUDMF(circleDensityPoint), CG_SetFloatComponentFromCommand            },
 	{ HUDMF(circleStartAngle),   CG_SetFloatComponentFromCommand            },
 	{ HUDMF(circleEndAngle),     CG_SetFloatComponentFromCommand            },
@@ -2727,6 +2728,11 @@ static void CG_ShowEditComponentHelp()
 	CG_Printf("\n\nAvailable ^3<field> ^7:\n\n%s\n", str);
 }
 
+/**
+ * @brief CG_ShowEditComponentStyleHelp
+ * @param[in] compField
+ * @param[in] value
+ */
 static void CG_ShowEditComponentStyleHelp(const hudComponentFields_t *compField, int *value)
 {
 	int  i;
@@ -2735,6 +2741,29 @@ static void CG_ShowEditComponentStyleHelp(const hudComponentFields_t *compField,
 	for (i = 0; i < MAXSTYLES && compField->styles[i]; ++i)
 	{
 		str = va("%s%s%5d : %-16s%s", str ? str : "", ((*value) & 1 << i) ? "^2" : "^7", 1 << i, compField->styles[i], !((i + 1) % 3) ? "\n" : "    ");
+	}
+
+	if (str)
+	{
+		CG_Printf("Available ^3<style>^7 for %s :\n\n%s\n", compField->name, str);
+	}
+	else
+	{
+		CG_Printf("No ^3<style>^7 available for %s\n", compField->name);
+	}
+}
+
+/**
+ * @brief CG_ShowEditComponentBarStyleHelp
+ */
+static void CG_ShowEditComponentBarStyleHelp(const hudComponentFields_t *compField, int *value)
+{
+	int  i;
+	char *str = NULL;
+
+	for (i = 0; barFlagsString[i]; ++i)
+	{
+		str = va("%s%s%5d : %-16s%s", str ? str : "", ((*value) & 1 << i) ? "^2" : "^7", 1 << i, barFlagsString[i], !((i + 1) % 3) ? "\n" : "    ");
 	}
 
 	if (str)
@@ -2840,6 +2869,13 @@ static void CG_EditComponent_f(void)
 					if (!Q_stricmp(hudComponentMembersFields[j].name, "style"))
 					{
 						CG_ShowEditComponentStyleHelp(compField, (int *)((char *)comp + hudComponentMembersFields[j].offset));
+						return;
+					}
+
+					// display specific help for bar style
+					if (!Q_stricmp(hudComponentMembersFields[j].name, "barStyle"))
+					{
+						CG_ShowEditComponentBarStyleHelp(compField, (int *)((char *)comp + hudComponentMembersFields[j].offset));
 						return;
 					}
 

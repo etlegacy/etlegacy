@@ -2201,7 +2201,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	int    health, maxHealth;
 	int    clientNum, class;
 	float  x = comp->location.x, w = comp->location.w;
-	int    style;
+	int    style = comp->barStyle;
 
 	// world-entity or no-entity
 	if (cg.crosshairEntNum >= ENTITYNUM_WORLD)
@@ -2323,10 +2323,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		maxHealth = CG_GetPlayerMaxHealth(cg.crosshairEntNum, cgs.clientinfo[cg.crosshairEntNum].cls, cgs.clientinfo[cg.crosshairEntNum].team);
 	}
 
-	// remove unecessary style for bar customization
-	style = (comp->style >> 3);
-
-	if (style & (BAR_CIRCULAR << 1))
+	if (comp->style & CROSSHAIR_BAR_DYNAMIC_COLOR)
 	{
 		Vector4Copy(comp->colorMain, c);
 		CG_ColorForHealth(health, c);
