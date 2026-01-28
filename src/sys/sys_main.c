@@ -1025,7 +1025,7 @@ void Sys_ParseArgsDrawBanner(FILE *stream)
 #endif
 		        "    Version: %s\n"
 		        "\n",
-		        PRODUCT_VERSION_STR
+		        etlegacy_product_version_str
 		        );
 	}
 }
@@ -1132,13 +1132,13 @@ void Sys_ParseArgs(int argc, char **argv)
 		         !Q_stricmp(argv[i], "-v"))
 		{
 #ifdef DEDICATED
-			fprintf(stdout, Q3_VERSION " " CPUSTRING " dedicated server (%s)\n", __DATE__);
+			fprintf(stdout, "%s " CPUSTRING " dedicated server (%s)\n", q3_version, __DATE__);
 #else
-			fprintf(stdout, "Client: " ET_VERSION "\n");
+			fprintf(stdout, "Client: %s\n", et_version);
 			fprintf(stdout, "Masked as: " FAKE_VERSION "\n");
 #endif
-			fprintf(stdout, "Built: " PRODUCT_BUILD_TIME "\n");
-			fprintf(stdout, "Build features: " PRODUCT_BUILD_FEATURES "\n");
+			fprintf(stdout, "Built: %s\n", etlegacy_product_build_time);
+			fprintf(stdout, "Build features: %s\n", etlegacy_product_build_features);
 			Sys_Exit(0);
 		}
 #ifndef DEDICATED

@@ -362,7 +362,7 @@ cvarTable_t gameCvarTable[] =
 	{ &sv_fps,                            "sv_fps",                            DEFAULT_SV_FPS_STR,           CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
 
 	// noset vars
-	{ NULL,                               "gamename",                          MODNAME,                      CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
+	{ NULL,                               "gamename",                          etlegacy_modname,                      CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 	{ NULL,                               "gamedate",                          __DATE__,                     CVAR_ROM,                                        0, qfalse, qfalse },
 	{ &g_restarted,                       "g_restarted",                       "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
 	{ NULL,                               "sv_mapname",                        "",                           CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
@@ -525,7 +525,7 @@ cvarTable_t gameCvarTable[] =
 
 #ifdef FEATURE_OMNIBOT
 	// Omni-bot user defined path to load bot library from.
-	{ &g_OmniBotPath,                     "omnibot_path",                      MODNAME "/omni-bot",          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
+	{ &g_OmniBotPath,                     "omnibot_path",                      etlegacy_omnibot_modname,          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
 	{ &g_OmniBotEnable,                   "omnibot_enable",                    "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
 	{ &g_OmniBotPlaying,                  "omnibot_playing",                   "0",                          CVAR_SERVERINFO_NOUPDATE | CVAR_ROM,             0, qfalse, qfalse },
 	{ &g_OmniBotFlags,                    "omnibot_flags",                     "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
@@ -549,9 +549,9 @@ cvarTable_t gameCvarTable[] =
 	{ &g_currentCampaign,                 "g_currentCampaign",                 "",                           CVAR_WOLFINFO | CVAR_ROM,                        0, qfalse, qfalse },
 	{ &g_currentCampaignMap,              "g_currentCampaignMap",              "0",                          CVAR_WOLFINFO | CVAR_ROM,                        0, qfalse, qfalse },
 
-	{ &mod_version,                       "mod_version",                       ETLEGACY_VERSION,             CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
+	{ &mod_version,                       "mod_version",                       etlegacy_version,             CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 	// points to the URL for mod information, should not be modified by server admin
-	{ &mod_url,                           "mod_url",                           MODURL,                       CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
+	{ &mod_url,                           "mod_url",                           etlegacy_modurl,                       CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 	// configured by the server admin, points to the web pages for the server
 	{ &url,                               "URL",                               "",                           CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qfalse, qfalse },
 

@@ -1278,7 +1278,7 @@ void CL_InitCGame(void)
 	// use the lastExecutedServerCommand instead of the serverCommandSequence
 	// otherwise server commands sent just before a gamestate are dropped
 	// bani - added clc.playing, since some mods need this at init time, and drawactiveframe is too late for them
-	VM_Call(cgvm, CG_INIT, clc.serverMessageSequence, clc.lastExecutedServerCommand, clc.clientNum, clc.demo.playing, qtrue, (clc.demo.playing ? &dpi : 0), ETLEGACY_VERSION_INT);
+	VM_Call(cgvm, CG_INIT, clc.serverMessageSequence, clc.lastExecutedServerCommand, clc.clientNum, clc.demo.playing, qtrue, (clc.demo.playing ? &dpi : 0), etlegacy_version_int);
 
 	// reset any CVAR_CHEAT cvars registered by cgame
 	if (!clc.demo.playing && !cl_connectedToCheatServer)

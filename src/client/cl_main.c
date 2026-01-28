@@ -713,7 +713,7 @@ static void CL_RequestMotd(void)
 
 	info[0] = 0;
 	Info_SetValueForKey(info, "challenge", autoupdate.motdChallenge);
-	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
+	Info_SetValueForKey(info, "version", etlegacy_version_short);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
 
 	// ET: Legacy client only: collect gfx card info

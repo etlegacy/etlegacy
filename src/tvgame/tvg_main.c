@@ -159,9 +159,9 @@ tvcvarTable_t gameCvarTable[] =
 
 	{ &tvg_maxclients,          "sv_maxclients",           "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse },
 
-	{ &mod_version,             "mod_version",             ETLEGACY_VERSION,             CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
+	{ &mod_version,             "mod_version",             etlegacy_version,             CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
 	// points to the URL for mod information, should not be modified by server admin
-	{ &mod_url,                 "mod_url",                 MODURL,                       CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
+	{ &mod_url,                 "mod_url",                 etlegacy_modurl,                       CVAR_SERVERINFO | CVAR_ROM,                  0, qfalse,},
 	// configured by the server admin, points to the web pages for the server
 	{ &url,                     "URL",                     "",                           CVAR_SERVERINFO | CVAR_ARCHIVE,              0, qfalse,},
 
@@ -259,7 +259,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		int time = trap_Milliseconds();
-		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME_TV);
+		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN "%s\n", MODNAME_TV, etlegacy_version);
 		TVG_InitGame(arg0, arg1, arg2, arg3, arg4);
 		G_Printf("Game Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 	}

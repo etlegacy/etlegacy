@@ -747,7 +747,7 @@ static void SVC_Status(const netadr_t *from, qboolean force)
 	// echo back the parameter to status. so master servers can use it as a challenge
 	// to prevent timed spoofed reply packets that add ghost servers
 	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
-	Info_SetValueForKey(infostring, "version", ET_VERSION);
+	Info_SetValueForKey(infostring, "version", et_version);
 
 	status[0]    = 0;
 	statusLength = 0;
@@ -833,7 +833,7 @@ static void SVC_Info(const netadr_t *from)
 	// to prevent timed spoofed reply packets that add ghost servers
 	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
 
-	Info_SetValueForKey(infostring, "version", ET_VERSION);
+	Info_SetValueForKey(infostring, "version", et_version);
 	Info_SetValueForKey(infostring, "protocol", va("%i", PROTOCOL_VERSION));
 	Info_SetValueForKey(infostring, "hostname", sv_hostname->string);
 	Info_SetValueForKey(infostring, "serverload", va("%i", svs.serverLoad));

@@ -1432,7 +1432,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		}
 
 		// if the client is older than the mod, then it makes sense that there has been a new release which the user has not installed
-		if (LEGACY_PATCH_CLAMP(uiInfo.etLegacyClient) < LEGACY_PATCH_CLAMP(ETLEGACY_VERSION_INT))
+		if (LEGACY_PATCH_CLAMP(uiInfo.etLegacyClient) < LEGACY_PATCH_CLAMP(etlegacy_version_int))
 		{
 			trap_PC_AddGlobalDefine("OLD_CLIENT");
 		}
@@ -6614,7 +6614,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	if (len == 0)
 	{
-		Q_strncpyz(uiInfo.serverStatus.motd.text, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd.text));
+		Q_strncpyz(uiInfo.serverStatus.motd.text, va("ET: Legacy - Version: %s", etlegacy_version), sizeof(uiInfo.serverStatus.motd.text));
 		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	}
 	if (len != uiInfo.serverStatus.motd.length)
@@ -8590,7 +8590,7 @@ static void UI_RunCinematicFrame(int handle)
 void UI_Init(int etLegacyClient, int clientVersion)
 {
 	int x;
-	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN "%s\n", etlegacy_modname, etlegacy_version);
 
 	UI_RegisterCvars();
 	UI_InitMemory();

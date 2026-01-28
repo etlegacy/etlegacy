@@ -290,7 +290,7 @@ static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
 
 		if (i + 1 == SQL_DBMS_SCHEMA_VERSION)
 		{
-			sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i for %s', '%s', CURRENT_TIMESTAMP);", i + 1, i + 1, ET_VERSION, sql_Version_Statements[i]);
+			sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i for %s', '%s', CURRENT_TIMESTAMP);", i + 1, i + 1, et_version, sql_Version_Statements[i]);
 		}
 		else
 		{

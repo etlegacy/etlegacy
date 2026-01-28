@@ -731,7 +731,7 @@ void Con_DrawVersion(void)
 {
 	int               x, y, versionLen, envoiOffset = 1;
 	static const char *devBuild = NULL;
-	Q_strncpyz(con.version, Q3_VERSION, sizeof(con.version));
+	Q_strncpyz(con.version, q3_version, sizeof(con.version));
 	Q_strncpyz(con.date, __DATE__, sizeof(con.date));
 	Q_strncpyz(con.arch, CPUSTRING, sizeof(con.arch));
 

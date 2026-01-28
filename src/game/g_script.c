@@ -737,12 +737,12 @@ void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *para
 	{
 		if (!Q_stricmp(params, "stolen"))
 		{
-			G_LogPrintf("%s popup: ^7%s^7 stole \"%s\"\n", MODNAME,
+			G_LogPrintf("%s popup: ^7%s^7 stole \"%s\"\n", etlegacy_modname,
 			            Q_stricmp(ent->classname, "team_CTF_redflag") ? "axis" : "allies", ent->message);
 		}
 		else if (!Q_stricmp(params, "returned"))
 		{
-			G_LogPrintf("%s popup: ^7%s^7 returned \"%s\"\n", MODNAME,
+			G_LogPrintf("%s popup: ^7%s^7 returned \"%s\"\n", etlegacy_modname,
 			            Q_stricmp(ent->classname, "team_CTF_redflag") ? "allies" : "axis", ent->message);
 		}
 	}
@@ -764,7 +764,7 @@ void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *para
 		Bot_Util_SendTrigger(ent, NULL, va("Defused at %s.", ent->parent ? ent->parent->track : ent->track), eventStr);
 #endif
 		// log script defused actions
-		G_LogPrintf("%s popup: ^7%s^7 defused \"%s\"\n", MODNAME, params, ent->parent ? ent->parent->track : ent->track);
+		G_LogPrintf("%s popup: ^7%s^7 defused \"%s\"\n", etlegacy_modname, params, ent->parent ? ent->parent->track : ent->track);
 	}
 	else if (!Q_stricmp(eventStr, "dynamited"))
 	{
@@ -772,7 +772,7 @@ void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *para
 		Bot_Util_SendTrigger(ent, NULL, va("Planted at %s.", ent->parent ? ent->parent->track : ent->track), eventStr);
 #endif
 		// log script dynamited actions
-		G_LogPrintf("%s popup: ^7%s^7 planted \"%s\"\n", MODNAME, params, ent->parent ? ent->parent->track : ent->track);
+		G_LogPrintf("%s popup: ^7%s^7 planted \"%s\"\n", etlegacy_modname, params, ent->parent ? ent->parent->track : ent->track);
 	}
 #ifdef FEATURE_OMNIBOT
 	else if (!Q_stricmp(eventStr, "destroyed"))
