@@ -529,7 +529,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	int len;
 	int32_t magic;
 	char name_buffer[40];
-	char guid_str[MAX_GUID_LENGTH];
+	char guid_str[33];
 	const char *dot;
 	int32_t dummy;
 	float skill_float;
@@ -548,6 +548,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 		if (guid_len == MAX_GUID_LENGTH)
 		{
 			Com_Memcpy(guid_str, basename, 32);
+			guid_str[MAX_GUID_LENGTH] = '\0';
 			xp_data->guid = (const unsigned char*)strdup(guid_str);
 		}
 		else
