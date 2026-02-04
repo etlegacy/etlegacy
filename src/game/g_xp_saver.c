@@ -55,7 +55,7 @@ static int G_XPSaver_Read(xpData_t *xp_data);
 static int G_XPSaver_Write(xpData_t *xp_data);
 void G_XPList_Files(const char *directory);
 void G_XPImportAll_IntoDatabase();
-void G_XPCheck_Expiration(xpData_t* xp_data);
+void G_XPCheck_Expiration(xpData_t *xp_data);
 
 #define XP_FILE_MAGIC 0x0ACED00D  // Little-endian version of 0D D0 CE 0A
 #define NUM_FILES_BUFFER 262144
@@ -436,20 +436,20 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 	int          t, t2 = 0;
 	qtime_t      ct;
 	struct tm    tm;
-	
+
 	// Get the current time
 	trap_RealTime(&ct);
 
 	// Use the stdc mktime and struct tm to convert qtime_t
 	// Initialise our tm structure
-	tm.tm_sec = ct.tm_sec;
-	tm.tm_min = ct.tm_min;
-	tm.tm_hour = ct.tm_hour;
-	tm.tm_mday = ct.tm_mday;
-	tm.tm_mon = ct.tm_mon;
-	tm.tm_year = ct.tm_year;
-	tm.tm_wday = ct.tm_wday;
-	tm.tm_yday = ct.tm_yday;
+	tm.tm_sec   = ct.tm_sec;
+	tm.tm_min   = ct.tm_min;
+	tm.tm_hour  = ct.tm_hour;
+	tm.tm_mday  = ct.tm_mday;
+	tm.tm_mon   = ct.tm_mon;
+	tm.tm_year  = ct.tm_year;
+	tm.tm_wday  = ct.tm_wday;
+	tm.tm_yday  = ct.tm_yday;
 	tm.tm_isdst = ct.tm_isdst;
 	// Perform the conversion and return
 	t = (int) mktime(&tm);
@@ -460,27 +460,27 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 	}
 
 	result = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_SELECT, xp_data->guid), -1, &sqlstmt, NULL);
-	
+
 	result = sqlite3_step(sqlstmt);
 
 	if (result == SQLITE_ROW)
 	{
 		/* retrieve updated */
 		updated = (const char *)sqlite3_column_blob(sqlstmt, 4);
-		len = sqlite3_column_bytes(sqlstmt, 4);
+		len     = sqlite3_column_bytes(sqlstmt, 4);
 		if (updated && len == 19)
 		{
 			struct tm tm_old;
-			int y, m, d, hh, mm, ss;
+			int       y, m, d, hh, mm, ss;
 
 			if (Q_sscanf(updated, "%d-%d-%d %d:%d:%d", &y, &m, &d, &hh, &mm, &ss) == 6)
 			{
 				tm_old.tm_year = y - 1900;
-				tm_old.tm_mon = m - 1;
+				tm_old.tm_mon  = m - 1;
 				tm_old.tm_mday = d;
 				tm_old.tm_hour = hh;
-				tm_old.tm_min = mm;
-				tm_old.tm_sec = ss;
+				tm_old.tm_min  = mm;
+				tm_old.tm_sec  = ss;
 
 				t2 = (int)mktime(&tm_old);
 			}
@@ -499,7 +499,7 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 	}
 
 	result = sqlite3_finalize(sqlstmt);
-	
+
 	if (age > g_xpSaverMaxAge.integer)
 	{
 		Com_Memset(xp_data->skillpoints, 0, sizeof(xp_data->skillpoints));
@@ -523,21 +523,24 @@ void G_XPSaver_Convert()
  * @brief Parses the .xp file
  * @return 0 if successful, 1 otherwise.
  */
-int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
+int G_XPFile_Parse(const char *filepath, xpData_t *xp_data)
 {
 	fileHandle_t f;
-	int len;
-	int32_t magic;
-	char name_buffer[40];
-	char guid_str[33];
-	const char *dot;
-	int32_t dummy;
-	float skill_float;
-	int i;
+	int          len;
+	int32_t      magic;
+	char         name_buffer[40];
+	char         guid_str[33];
+	const char   *dot;
+	int32_t      dummy;
+	float        skill_float;
+	int          i;
 
 	// Extract GUID from filename
-	const char* basename = strrchr(filepath, '/');
-	if (!basename) basename = strrchr(filepath, '\\');
+	const char *basename = strrchr(filepath, '/');
+	if (!basename)
+	{
+		basename = strrchr(filepath, '\\');
+	}
 	basename = basename ? basename + 1 : filepath;
 
 	dot = strrchr(basename, '.');
@@ -549,7 +552,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 		{
 			Com_Memcpy(guid_str, basename, 32);
 			guid_str[MAX_GUID_LENGTH] = '\0';
-			xp_data->guid = (const unsigned char*)strdup(guid_str);
+			xp_data->guid             = (const unsigned char *)strdup(guid_str);
 		}
 		else
 		{
@@ -567,7 +570,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	if (len <= 0 || f == 0)
 	{
 		G_Printf("ParseXPFile: Could not open file: %s (len: %d)\n", filepath, len);
-		Com_Dealloc((void*)xp_data->guid);
+		Com_Dealloc((void *)xp_data->guid);
 		return 1;
 	}
 
@@ -576,7 +579,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	{
 		G_Printf("ParseXPFile: File too small: %s (size: %d)\n", filepath, len);
 		trap_FS_FCloseFile(f);
-		Com_Dealloc((void*)xp_data->guid);
+		Com_Dealloc((void *)xp_data->guid);
 		return 1;
 	}
 
@@ -587,7 +590,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	{
 		G_Printf("ParseXPFile: Invalid magic number in: %s (got: 0x%08X, expected: 0x%08X)\n", filepath, magic, XP_FILE_MAGIC);
 		trap_FS_FCloseFile(f);
-		Com_Dealloc((void*)xp_data->guid);
+		Com_Dealloc((void *)xp_data->guid);
 		return 1;
 	}
 
@@ -603,7 +606,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	{
 		trap_FS_Read(&skill_float, sizeof(float), f);
 		xp_data->skillpoints[i] = (int)skill_float;
-		xp_data->medals[i] = 0;  // .xp files don't contain medals
+		xp_data->medals[i]      = 0; // .xp files don't contain medals
 	}
 
 	trap_FS_FCloseFile(f);
@@ -617,10 +620,10 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
  */
 void G_XPList_Files(const char *directory)
 {
-	int numFiles, i, j;
-	char *fileList = NULL;
-	char *fileBuf = NULL;
-	char *filePtr;
+	int      numFiles, i, j;
+	char     *fileList = NULL;
+	char     *fileBuf  = NULL;
+	char     *filePtr;
 	xpData_t xp_data;
 
 	fileList = Com_Allocate(NUM_FILES_BUFFER);
@@ -656,10 +659,12 @@ void G_XPList_Files(const char *directory)
 	for (i = 0; i < numFiles; i++)
 	{
 		char filepath[MAX_QPATH];
-		int fileLen;
+		int  fileLen;
 
 		if (!filePtr || !*filePtr)
+		{
 			break;
+		}
 
 		fileLen = strlen(filePtr);
 
@@ -670,7 +675,7 @@ void G_XPList_Files(const char *directory)
 		// Process the file
 		if (G_XPFile_Parse(filepath, &xp_data) == 0)
 		{
-			// We assume we have all the players with GUIDS 
+			// We assume we have all the players with GUIDS
 			G_Printf(" GUID: %s\n", xp_data.guid);
 
 			G_Printf(" Skills: ");
@@ -680,7 +685,7 @@ void G_XPList_Files(const char *directory)
 			}
 			G_Printf("\n");
 
-			Com_Dealloc((void*)xp_data.guid);
+			Com_Dealloc((void *)xp_data.guid);
 		}
 
 		filePtr += fileLen + 1;
@@ -723,7 +728,7 @@ void G_XPImportAll_IntoDatabase()
 	for (i = 0; i < numFiles; i++)
 	{
 		char filepath[MAX_QPATH];
-		int fileLen = strlen(filePtr);
+		int  fileLen = strlen(filePtr);
 
 		Com_sprintf(filepath, sizeof(filepath), "%s/%s", xp_dir, filePtr);
 
@@ -734,7 +739,7 @@ void G_XPImportAll_IntoDatabase()
 				continue;
 			}
 
-			Com_Dealloc((void*)xp_data.guid);
+			Com_Dealloc((void *)xp_data.guid);
 		}
 		else
 		{
