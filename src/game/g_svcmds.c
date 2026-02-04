@@ -876,6 +876,25 @@ void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
 
 	if (fDoRestart)
 	{
+		if ((g_xpSaver.integer & XPSF_NR_MAPRESET))
+		{
+			for (i = 0; i < level.numConnectedClients; i++)
+			{
+				gentity_t *ent = &g_entities[level.sortedClients[i]];
+
+				if (!ent->inuse)
+				{
+					continue;
+				}
+
+				if ((g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) ||
+					g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF))
+				{
+					// record xp
+					G_XPSaver_Store(ent->client);
+				}
+			}
+		}
 		level.fResetStats = qtrue;
 		trap_SendConsoleCommand(EXEC_APPEND, "stoprecord\n");
 		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", ((g_gamestate.integer != GS_PLAYING) ? GS_RESET : GS_WARMUP)));

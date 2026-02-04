@@ -445,42 +445,83 @@ void G_ReadSessionData(gclient_t *client)
 		}
 	}
 
-	// likely there are more cases in which we don't want this
-	if (g_gametype.integer != GT_SINGLE_PLAYER &&
-	    g_gametype.integer != GT_COOP &&
-	    g_gametype.integer != GT_WOLF &&
-	    g_gametype.integer != GT_WOLF_STOPWATCH &&
-	    !(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current == 0  || level.newCampaign)) &&
-	    !(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer == 0))
+
+	if (!(g_xpSaver.integer & XPSF_ENABLE))
 	{
-		cJSON *restartObj = cJSON_GetObjectItem(root, "restart");
-
-		if (restartObj)
+		// likely there are more cases in which we don't want this
+		if (g_gametype.integer != GT_SINGLE_PLAYER &&
+			g_gametype.integer != GT_COOP &&
+			g_gametype.integer != GT_WOLF &&
+			g_gametype.integer != GT_WOLF_STOPWATCH &&
+			!(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)) &&
+			!(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer == 0))
 		{
-			cJSON *tmp, *tmp2;
+			cJSON *restartObj = cJSON_GetObjectItem(root, "restart");
 
-			i   = 0;
-			tmp = cJSON_GetObjectItem(restartObj, "skillpoints");
-			cJSON_ArrayForEach(tmp2, tmp)
+			if (restartObj)
 			{
-				if (i > SK_NUM_SKILLS)
+				cJSON *tmp, *tmp2;
+
+				i = 0;
+				tmp = cJSON_GetObjectItem(restartObj, "skillpoints");
+				cJSON_ArrayForEach(tmp2, tmp)
 				{
-					Q_JsonError("Invalid number of skills\n");
-					break;
+					if (i > SK_NUM_SKILLS)
+					{
+						Q_JsonError("Invalid number of skills\n");
+						break;
+					}
+					client->sess.skillpoints[i++] = (float)cJSON_GetNumberValue(tmp2);
 				}
-				client->sess.skillpoints[i++] = (float) cJSON_GetNumberValue(tmp2);
+
+				i = 0;
+				tmp = cJSON_GetObjectItem(restartObj, "medals");
+				cJSON_ArrayForEach(tmp2, tmp)
+				{
+					if (i > SK_NUM_SKILLS)
+					{
+						Q_JsonError("Invalid number of medals\n");
+						break;
+					}
+					client->sess.medals[i++] = (int)cJSON_GetNumberValue(tmp2);
+				}
 			}
+		}
+	}
+	else
+	{
+		if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) ||
+			g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF)
+		{
+			cJSON *restartObj = cJSON_GetObjectItem(root, "restart");
 
-			i   = 0;
-			tmp = cJSON_GetObjectItem(restartObj, "medals");
-			cJSON_ArrayForEach(tmp2, tmp)
+			if (restartObj)
 			{
-				if (i > SK_NUM_SKILLS)
+				cJSON *tmp, *tmp2;
+
+				i = 0;
+				tmp = cJSON_GetObjectItem(restartObj, "skillpoints");
+				cJSON_ArrayForEach(tmp2, tmp)
 				{
-					Q_JsonError("Invalid number of medals\n");
-					break;
+					if (i > SK_NUM_SKILLS)
+					{
+						Q_JsonError("Invalid number of skills\n");
+						break;
+					}
+					client->sess.skillpoints[i++] = (float)cJSON_GetNumberValue(tmp2);
 				}
-				client->sess.medals[i++] = (int) cJSON_GetNumberValue(tmp2);
+
+				i = 0;
+				tmp = cJSON_GetObjectItem(restartObj, "medals");
+				cJSON_ArrayForEach(tmp2, tmp)
+				{
+					if (i > SK_NUM_SKILLS)
+					{
+						Q_JsonError("Invalid number of medals\n");
+						break;
+					}
+					client->sess.medals[i++] = (int)cJSON_GetNumberValue(tmp2);
+				}
 			}
 		}
 	}

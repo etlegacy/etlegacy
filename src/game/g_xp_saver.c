@@ -53,6 +53,12 @@ typedef struct xpData_s
 
 static int G_XPSaver_Read(xpData_t *xp_data);
 static int G_XPSaver_Write(xpData_t *xp_data);
+void G_XPList_Files(const char *directory);
+void G_XPImportAll_IntoDatabase();
+void G_XPCheck_Expiration(xpData_t* xp_data);
+
+#define XP_FILE_MAGIC 0x0ACED00D  // Little-endian version of 0D D0 CE 0A
+#define NUM_FILES_BUFFER 262144
 
 #define XPCHECK_SQLWRAP_TABLES "SELECT * FROM xpsave_users;"
 #define XPCHECK_SQLWRAP_SCHEMA "SELECT guid, skills, medals, created, updated FROM xpsave_users;"
@@ -312,6 +318,8 @@ static int G_XPSaver_Read(xpData_t *xp_data)
 	result = sqlite3_finalize(sqlstmt);
 	assert_return(result == SQLITE_OK, 1, sqlite3_errmsg(level.database.db));
 
+	G_XPCheck_Expiration(xp_data);
+
 	return 0;
 }
 
@@ -413,4 +421,328 @@ int G_XPSaver_Clear()
 	}
 
 	return 0;
+}
+
+/**
+ * @brief Reset xp and medals for player
+ */
+void G_XPCheck_Expiration(xpData_t *xp_data)
+{
+	int          result;
+	const char   *err;
+	sqlite3_stmt *sqlstmt;
+	const char   *updated;
+	int          age = 0, len;
+	int          t, t2 = 0;
+	qtime_t      ct;
+	
+	// Get the current time
+	trap_RealTime(&ct);
+
+	// Use the stdc mktime and struct tm to convert qtime_t
+	struct tm tm;
+	// Initialise our tm structure
+	tm.tm_sec = ct.tm_sec;
+	tm.tm_min = ct.tm_min;
+	tm.tm_hour = ct.tm_hour;
+	tm.tm_mday = ct.tm_mday;
+	tm.tm_mon = ct.tm_mon;
+	tm.tm_year = ct.tm_year;
+	tm.tm_wday = ct.tm_wday;
+	tm.tm_yday = ct.tm_yday;
+	tm.tm_isdst = ct.tm_isdst;
+	// Perform the conversion and return
+	t = (int) mktime(&tm);
+
+	if (!level.database.initialized)
+	{
+		G_Printf("G_XPSaver_Read: access to non-initialized database\n");
+	}
+
+	result = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_SELECT, xp_data->guid), -1, &sqlstmt, NULL);
+	
+	result = sqlite3_step(sqlstmt);
+
+	if (result == SQLITE_ROW)
+	{
+		/* retrieve updated */
+		updated = (const char *)sqlite3_column_blob(sqlstmt, 4);
+		len = sqlite3_column_bytes(sqlstmt, 4);
+		if (updated && len == 19)
+		{
+			struct tm tm_old;
+			int y, m, d, hh, mm, ss;
+
+			if (sscanf(updated, "%d-%d-%d %d:%d:%d", &y, &m, &d, &hh, &mm, &ss) == 6)
+			{
+				tm_old.tm_year = y - 1900;
+				tm_old.tm_mon = m - 1;
+				tm_old.tm_mday = d;
+				tm_old.tm_hour = hh;
+				tm_old.tm_min = mm;
+				tm_old.tm_sec = ss;
+
+				t2 = (int)mktime(&tm_old);
+			}
+		}
+		age = t - t2;
+	}
+	// no entry found or other failure
+	else if (result != SQLITE_DONE)
+	{
+		err = sqlite3_errmsg(level.database.db);
+		if (err)
+		{
+			G_Printf("^3%s (%i): failed: %s\n", __func__, __LINE__, err);
+		}
+		sqlite3_finalize(sqlstmt);
+	}
+
+	result = sqlite3_finalize(sqlstmt);
+	
+	if (age > g_xpSaverMaxAge.integer)
+	{
+		Com_Memset(xp_data->skillpoints, 0, sizeof(xp_data->skillpoints));
+		Com_Memset(xp_data->medals, 0, sizeof(xp_data->medals));
+		G_XPSaver_Write(xp_data);
+	}
+
+}
+
+/**
+ * @brief Convert/Import any xp file into the database
+ * It can parse 3000 xp files
+ */
+void G_XPSaver_Convert()
+{
+	G_XPList_Files("xpsave");
+	G_XPImportAll_IntoDatabase();
+}
+
+/**
+ * @brief Parses the .xp file
+ * @return 0 if successful, 1 otherwise.
+ */
+int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
+{
+	fileHandle_t f;
+	int len;
+	int32_t magic;
+	char name_buffer[40];
+	float skill_float;
+	int i;
+
+	// Extract GUID from filename
+	const char* basename = strrchr(filepath, '/');
+	if (!basename) basename = strrchr(filepath, '\\');
+	basename = basename ? basename + 1 : filepath;
+
+	char guid_str[33];
+	const char* dot = strrchr(basename, '.');
+
+	if (dot && !Q_stricmp(dot, ".xp"))
+	{
+		size_t guid_len = dot - basename;
+		if (guid_len == MAX_GUID_LENGTH)
+		{
+			Com_Memcpy(guid_str, basename, 32);
+			guid_str[32] = '\0';
+			xp_data->guid = (const unsigned char*)strdup(guid_str);
+		}
+		else
+		{
+			G_Printf("ParseXPFile: Invalid GUID length in filename: %s\n", basename);
+			return 1;
+		}
+	}
+	else
+	{
+		G_Printf("ParseXPFile: Not an XP file: %s\n", basename);
+		return 1;
+	}
+
+	len = trap_FS_FOpenFile(filepath, &f, FS_READ);
+	if (len <= 0 || f == 0)
+	{
+		G_Printf("ParseXPFile: Could not open file: %s (len: %d)\n", filepath, len);
+		Com_Dealloc((void*)xp_data->guid);
+		return 1;
+	}
+
+	// Check file size (should be at least 76 bytes)
+	if (len < 0x4C)
+	{
+		G_Printf("ParseXPFile: File too small: %s (size: %d)\n", filepath, len);
+		trap_FS_FCloseFile(f);
+		Com_Dealloc((void*)xp_data->guid);
+		return 1;
+	}
+
+	// Read and verify magic number
+	trap_FS_Read(&magic, sizeof(int32_t), f);
+
+	if (magic != XP_FILE_MAGIC)
+	{
+		G_Printf("ParseXPFile: Invalid magic number in: %s (got: 0x%08X, expected: 0x%08X)\n", filepath, magic, XP_FILE_MAGIC);
+		trap_FS_FCloseFile(f);
+		Com_Dealloc((void*)xp_data->guid);
+		return 1;
+	}
+
+	// Skip version/flags (4 bytes) - FS_Read doesn't return bytes read count
+	// We need to read into a dummy buffer
+	int32_t dummy;
+	trap_FS_Read(&dummy, sizeof(int32_t), f);
+
+	// Read and skip player name (40 bytes)
+	trap_FS_Read(name_buffer, 40, f);
+
+	// Read skillpoints
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		trap_FS_Read(&skill_float, sizeof(float), f);
+		xp_data->skillpoints[i] = (int)skill_float;
+		xp_data->medals[i] = 0;  // .xp files don't contain medals
+	}
+
+	trap_FS_FCloseFile(f);
+
+	G_Printf("ParseXPFile: Successfully parsed %s\n", basename);
+	return 0;
+}
+
+/**
+ * @brief Prints content of .xp files into server console
+ */
+void G_XPList_Files(const char *directory)
+{
+	int numFiles, i;
+	char *fileList = NULL;
+	char *fileBuf = NULL;
+	char *filePtr;
+
+	fileList = Com_Allocate(NUM_FILES_BUFFER);
+	if (!fileList)
+	{
+		G_Printf("ERROR: Cannot allocate file list buffer (%d bytes)\n", NUM_FILES_BUFFER);
+		return;
+	}
+
+	fileBuf = Com_Allocate(NUM_FILES_BUFFER);
+	if (!fileBuf)
+	{
+		G_Printf("ERROR: Cannot allocate file buffer (%d bytes)\n", NUM_FILES_BUFFER);
+		Com_Dealloc(fileList);
+		return;
+	}
+
+	numFiles = trap_FS_GetFileList(directory, ".xp", fileList, NUM_FILES_BUFFER);
+
+	if (numFiles <= 0)
+	{
+		G_Printf("No XP files found in %s\n", directory);
+		Com_Dealloc(fileList);
+		Com_Dealloc(fileBuf);
+		return;
+	}
+
+	G_Printf("Found %d XP files in %s:\n", numFiles, directory);
+
+	Com_Memcpy(fileBuf, fileList, NUM_FILES_BUFFER);
+
+	filePtr = fileBuf;
+	for (i = 0; i < numFiles; i++)
+	{
+		char filepath[MAX_QPATH];
+		int fileLen;
+
+		if (!filePtr || !*filePtr)
+			break;
+
+		fileLen = strlen(filePtr);
+
+		Com_sprintf(filepath, sizeof(filepath), "%s/%s", directory, filePtr);
+
+		G_Printf(" [%d] %s\n", i + 1, filePtr);
+
+		// Process the file
+		xpData_t xp_data;
+		if (G_XPFile_Parse(filepath, &xp_data) == 0)
+		{
+			G_Printf(" GUID: %s\n", xp_data.guid ? xp_data.guid : "(null)");
+
+			G_Printf(" Skills: ");
+			for (int j = 0; j < SK_NUM_SKILLS; j++)
+			{
+				G_Printf("%d ", xp_data.skillpoints[j]);
+			}
+			G_Printf("\n");
+
+			Com_Dealloc((void*)xp_data.guid);
+		}
+
+		filePtr += fileLen + 1;
+	}
+
+	Com_Dealloc(fileList);
+	Com_Dealloc(fileBuf);
+}
+
+/**
+ * @brief Storage all the parsed .xp files into database
+ */
+void G_XPImportAll_IntoDatabase()
+{
+	const char* xp_dir = "xpsave";
+
+	G_Printf("=== Starting XP Import from %s ===\n", xp_dir);
+
+	int numFiles, i;
+	char *fileList = NULL;
+	char *filePtr;
+
+	fileList = Com_Allocate(NUM_FILES_BUFFER);
+	if (!fileList)
+	{
+		G_Printf("ERROR: Cannot allocate file list buffer (%d bytes)\n", NUM_FILES_BUFFER);
+		return;
+	}
+
+	numFiles = trap_FS_GetFileList(xp_dir, ".xp", fileList, NUM_FILES_BUFFER);
+
+	if (numFiles <= 0)
+	{
+		G_Printf("No XP files found\n");
+		Com_Dealloc(fileList);
+		return;
+	}
+
+	filePtr = fileList;
+	for (i = 0; i < numFiles; i++)
+	{
+		char filepath[MAX_QPATH];
+		int fileLen = strlen(filePtr);
+
+		Com_sprintf(filepath, sizeof(filepath), "%s/%s", xp_dir, filePtr);
+
+		xpData_t xp_data;
+		if (G_XPFile_Parse(filepath, &xp_data) == 0)
+		{
+			if (G_XPSaver_Write(&xp_data))
+			{
+				continue;
+			}
+
+			Com_Dealloc((void*)xp_data.guid);
+		}
+		else
+		{
+			G_Printf("Failed to parse: %s\n", filePtr);
+		}
+
+		filePtr += fileLen + 1;
+	}
+
+	Com_Dealloc(fileList);
+	G_Printf("=== Import Complete ===\n");
 }

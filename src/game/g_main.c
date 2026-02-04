@@ -1737,13 +1737,18 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 		}
 #endif
 
-		if (g_xpSaver.integer)
+		if (!(g_xpSaver.integer & XPSF_ENABLE))
 		{
 			G_Printf("^3WARNING: g_xpSaver changed to 0\n");
 			trap_Cvar_Set("g_xpSaver", "0");
 		}
 	}
 #endif
+
+	if ((g_xpSaver.integer & XPSF_CONVERT))
+	{
+		G_XPSaver_Convert();
+	}
 
 #ifdef FEATURE_RATING
 	if (g_skillRating.integer)
@@ -1762,9 +1767,20 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	}
 #endif
 
-	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	if ((g_xpSaver.integer & XPSF_ENABLE) && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
+		{
+			if (!(g_xpSaver.integer & XPSF_NR_EVER))
+			{
+				G_XPSaver_Clear();
+			}
+		}
+	}
+
+	if ((g_xpSaver.integer & XPSF_ENABLE) && (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF))
+	{
+		if (!(g_xpSaver.integer & XPSF_NR_EVER))
 		{
 			G_XPSaver_Clear();
 		}
@@ -2044,7 +2060,7 @@ int QDECL SortRanks(const void *a, const void *b)
 			totalXP[1] += cb->sess.skillpoints[i];
 		}
 
-		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
+		if (!(((g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF) && (g_xpSaver.integer & XPSF_ENABLE)) ||
 		      (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 		      (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
 		{
@@ -3001,7 +3017,8 @@ void G_LogExit(const char *string)
 		}
 	}
 #endif
-	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	if ((g_xpSaver.integer & XPSF_ENABLE) && (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) ||
+		g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF))
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
