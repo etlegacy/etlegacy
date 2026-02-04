@@ -473,7 +473,7 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 			struct tm tm_old;
 			int y, m, d, hh, mm, ss;
 
-			if (sscanf(updated, "%d-%d-%d %d:%d:%d", &y, &m, &d, &hh, &mm, &ss) == 6)
+			if (Q_sscanf(updated, "%d-%d-%d %d:%d:%d", &y, &m, &d, &hh, &mm, &ss) == 6)
 			{
 				tm_old.tm_year = y - 1900;
 				tm_old.tm_mon = m - 1;
