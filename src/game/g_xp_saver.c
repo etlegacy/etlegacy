@@ -435,12 +435,12 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 	int          age = 0, len;
 	int          t, t2 = 0;
 	qtime_t      ct;
+	struct tm    tm;
 	
 	// Get the current time
 	trap_RealTime(&ct);
 
 	// Use the stdc mktime and struct tm to convert qtime_t
-	struct tm tm;
 	// Initialise our tm structure
 	tm.tm_sec = ct.tm_sec;
 	tm.tm_min = ct.tm_min;
@@ -530,6 +530,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	int32_t magic;
 	char name_buffer[40];
 	char guid_str[MAX_GUID_LENGTH];
+	const char *dot;
 	int32_t dummy;
 	float skill_float;
 	int i;
@@ -539,7 +540,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	if (!basename) basename = strrchr(filepath, '\\');
 	basename = basename ? basename + 1 : filepath;
 
-	const char* dot = strrchr(basename, '.');
+	dot = strrchr(basename, '.');
 
 	if (dot && !Q_stricmp(dot, ".xp"))
 	{
@@ -697,6 +698,7 @@ void G_XPImportAll_IntoDatabase()
 	int        numFiles, i;
 	char       *fileList = NULL;
 	char       *filePtr;
+	xpData_t   xp_data;
 
 	G_Printf("=== Starting XP Import from %s ===\n", xp_dir);
 
@@ -724,7 +726,6 @@ void G_XPImportAll_IntoDatabase()
 
 		Com_sprintf(filepath, sizeof(filepath), "%s/%s", xp_dir, filePtr);
 
-		xpData_t xp_data;
 		if (G_XPFile_Parse(filepath, &xp_data) == 0)
 		{
 			if (G_XPSaver_Write(&xp_data))
