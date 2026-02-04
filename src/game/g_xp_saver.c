@@ -616,7 +616,7 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
  */
 void G_XPList_Files(const char *directory)
 {
-	int numFiles, i;
+	int numFiles, i, j;
 	char *fileList = NULL;
 	char *fileBuf = NULL;
 	char *filePtr;
@@ -672,7 +672,7 @@ void G_XPList_Files(const char *directory)
 			G_Printf(" GUID: %s\n", xp_data.guid ? xp_data.guid : "(null)");
 
 			G_Printf(" Skills: ");
-			for (int j = 0; j < SK_NUM_SKILLS; j++)
+			for (j = 0; j < SK_NUM_SKILLS; j++)
 			{
 				G_Printf("%d ", xp_data.skillpoints[j]);
 			}
