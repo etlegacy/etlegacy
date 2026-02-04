@@ -529,6 +529,8 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	int len;
 	int32_t magic;
 	char name_buffer[40];
+	char guid_str[MAX_GUID_LENGTH];
+	int32_t dummy;
 	float skill_float;
 	int i;
 
@@ -537,7 +539,6 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 	if (!basename) basename = strrchr(filepath, '\\');
 	basename = basename ? basename + 1 : filepath;
 
-	char guid_str[33];
 	const char* dot = strrchr(basename, '.');
 
 	if (dot && !Q_stricmp(dot, ".xp"))
@@ -546,7 +547,6 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 		if (guid_len == MAX_GUID_LENGTH)
 		{
 			Com_Memcpy(guid_str, basename, 32);
-			guid_str[32] = '\0';
 			xp_data->guid = (const unsigned char*)strdup(guid_str);
 		}
 		else
@@ -591,7 +591,6 @@ int G_XPFile_Parse(const char* filepath, xpData_t* xp_data)
 
 	// Skip version/flags (4 bytes) - FS_Read doesn't return bytes read count
 	// We need to read into a dummy buffer
-	int32_t dummy;
 	trap_FS_Read(&dummy, sizeof(int32_t), f);
 
 	// Read and skip player name (40 bytes)
@@ -620,6 +619,7 @@ void G_XPList_Files(const char *directory)
 	char *fileList = NULL;
 	char *fileBuf = NULL;
 	char *filePtr;
+	xpData_t xp_data;
 
 	fileList = Com_Allocate(NUM_FILES_BUFFER);
 	if (!fileList)
@@ -666,10 +666,10 @@ void G_XPList_Files(const char *directory)
 		G_Printf(" [%d] %s\n", i + 1, filePtr);
 
 		// Process the file
-		xpData_t xp_data;
 		if (G_XPFile_Parse(filepath, &xp_data) == 0)
 		{
-			G_Printf(" GUID: %s\n", xp_data.guid ? xp_data.guid : "(null)");
+			// We assume we have all the players with GUIDS 
+			G_Printf(" GUID: %s\n", xp_data.guid);
 
 			G_Printf(" Skills: ");
 			for (j = 0; j < SK_NUM_SKILLS; j++)
@@ -693,13 +693,12 @@ void G_XPList_Files(const char *directory)
  */
 void G_XPImportAll_IntoDatabase()
 {
-	const char* xp_dir = "xpsave";
+	const char *xp_dir = "xpsave";
+	int        numFiles, i;
+	char       *fileList = NULL;
+	char       *filePtr;
 
 	G_Printf("=== Starting XP Import from %s ===\n", xp_dir);
-
-	int numFiles, i;
-	char *fileList = NULL;
-	char *filePtr;
 
 	fileList = Com_Allocate(NUM_FILES_BUFFER);
 	if (!fileList)
