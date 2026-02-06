@@ -274,14 +274,7 @@ void I18N_SetLanguage(const char *language)
 	Com_Printf("Language set to %s\n", dictionary.get_language().get_name().c_str());
 	Com_sprintf(cl_lang_last, sizeof(cl_lang_last), "%s", language);
 
-	if (!Q_stricmp(cl_lang->string, "en"))
-	{
-		doTranslate = qfalse;
-	}
-	else
-	{
-		doTranslate = qtrue;
-	}
+	doTranslate = qtrue;
 
 	strings.clear();
 }
