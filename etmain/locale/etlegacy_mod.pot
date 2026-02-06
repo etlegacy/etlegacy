@@ -7938,3 +7938,31 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
 msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "EXIT"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "FAVORITE"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "HOST"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "PLAY"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "HUD EDITOR"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "OPEN HOME"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "SPLASH DAMAGE"
+msgstr ""

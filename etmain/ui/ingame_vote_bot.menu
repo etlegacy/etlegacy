@@ -29,12 +29,12 @@ menuDef {
 //          some basic bot options
 
 	LABEL( 6, 32, .3*(WINDOW_WIDTH-12), 14, _("Bot count:"), .24, ITEM_ALIGN_LEFT, 0, 10 )
-	BUTTON( 100, 32, .08*(WINDOW_WIDTH-12), 14, "8", .24, 11, exec "bot maxbots 8")
-	BUTTON( 135, 32, .08*(WINDOW_WIDTH-12), 14, "12", .24, 11, exec "bot maxbots 12")
-	BUTTON( 170, 32, .08*(WINDOW_WIDTH-12), 14, "16", .24, 11, exec "bot maxbots 16")
-	BUTTON( 205, 32, .08*(WINDOW_WIDTH-12), 14, "20", .24, 11, exec "bot maxbots 20")
-	BUTTON( 240, 32, .08*(WINDOW_WIDTH-12), 14, "24", .24, 11, exec "bot maxbots 24")
-	BUTTON( 275, 32, .08*(WINDOW_WIDTH-12), 14, "32", .24, 11, exec "bot maxbots 32")
+	BUTTON( 100, 32, .08*(WINDOW_WIDTH-12), 14, "^_8", .24, 11, exec "bot maxbots 8")
+	BUTTON( 135, 32, .08*(WINDOW_WIDTH-12), 14, "1^_2", .24, 11, exec "bot maxbots 12")
+	BUTTON( 170, 32, .08*(WINDOW_WIDTH-12), 14, "1^_6", .24, 11, exec "bot maxbots 16")
+	BUTTON( 205, 32, .08*(WINDOW_WIDTH-12), 14, "2^_0", .24, 11, exec "bot maxbots 20")
+	BUTTON( 240, 32, .08*(WINDOW_WIDTH-12), 14, "2^_4", .24, 11, exec "bot maxbots 24")
+	BUTTON( 275, 32, .08*(WINDOW_WIDTH-12), 14, "^_32", .24, 11, exec "bot maxbots 32")
 
 	LABEL( 6, 50, .3*(WINDOW_WIDTH-12), 14, _("Move skill:"), .24, ITEM_ALIGN_LEFT, 0, 10 )
 	BUTTON( 100, 50, .08*(WINDOW_WIDTH-12), 14, "M1", .24, 11, exec "bot moveskill 1")
