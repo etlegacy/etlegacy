@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Artem Vorotnikov <artem@vorotnikov.me>, 2014-2015
+# AHOHNMYC <lqwh2h2cwa@protonmail.com>, 2024
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:49+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>, 2014-2015\n"
+"Last-Translator: AHOHNMYC <lqwh2h2cwa@protonmail.com>, 2024\n"
 "Language-Team: Russian (http://app.transifex.com/etlegacy/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,16 +30,16 @@ msgid "MOUSE2"
 msgstr "МЫШЬ2"
 
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 msgid "No"
-msgstr ""
+msgstr "Нет"
 
 msgid "Ok"
-msgstr ""
+msgstr "ОК"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Отмена"
 
 msgid "SPACE"
 msgstr "ПРОБЕЛ"
