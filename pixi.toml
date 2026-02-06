@@ -10,7 +10,8 @@ platforms = ["linux-64", "osx-64", "win-64"]
 
 [tasks]
 "collect-and-check-gh-build-logs" = { cmd = ["python", "./misc/collect-and-check-gh-build-logs.py"] }
-"transifex-pull" = { cmd = ["python", "./misc/transifex-wrapper.py", "pull", "--force"] }
+"i18n-transifex-pull" = { cmd = ["python", "./misc/i18n-transifex-wrapper.py", "pull", "--force"] }
+"i18n-sync-pot-files" = { cmd = ["python", "./misc/i18n-sync-pot-files.py"] }
 
 [dependencies]
 "git" = "2.49.0.*"
