@@ -97,3 +97,4 @@ gradle/
 # Package Managers
 **/.pixi/
 **/__pycache__/
+/.transifex-wrapper/
