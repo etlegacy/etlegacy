@@ -127,7 +127,7 @@ msgstr ""
 #: etmain/ui/profile.menu:71 etmain/ui/profile_rename.menu:67
 #: etmain/ui/viewreplay.menu:58
 msgid "BACK"
-msgstr ""
+msgstr "^_BACK"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
@@ -261,7 +261,11 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
-msgstr ""
+msgstr "^_HALL OF FAME"
+
+#: etmain/ui/credits_etlegacy.menu:201
+msgid "SPLASH DAMAGE"
+msgstr "^_SPLASH DAMAGE"
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
@@ -433,7 +437,7 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:84 etmain/ui/vid_confirm.menu:86
 #: etmain/ui/vid_restart.menu:50 etmain/ui/viewreplay_delete.menu:53
 msgid "YES"
-msgstr ""
+msgstr "^_YES"
 
 #: etmain/ui/etlegacywebsite.menu:53 etmain/ui/etlegacywebsite.menu:55
 #: etmain/ui/hostgame_advanced_default.menu:127
@@ -446,7 +450,7 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:89 etmain/ui/vid_restart.menu:51
 #: etmain/ui/viewreplay_delete.menu:54
 msgid "NO"
-msgstr ""
+msgstr "^_NO"
 
 #: etmain/ui/hostgame_advanced_default.menu:123
 msgid "DEFAULT SERVER SETTINGS"
@@ -1005,12 +1009,12 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
-msgstr ""
+msgstr "^_EXTENDED"
 
 #: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
 #: etmain/ui/options_controls.menu:122
 msgid "DEFAULT"
-msgstr ""
+msgstr "^_DEFAULT"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:52
 msgid "START DEDICATED SERVER"
@@ -1049,7 +1053,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc_refrcon.menu:37
 #: etmain/ui/options_customise_hud.menu:126
 msgid "MISC"
-msgstr ""
+msgstr "M^_ISC"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Country Flags:"
@@ -1072,7 +1076,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
-msgstr ""
+msgstr "^_ADVANCED"
 
 #: etmain/ui/options_system.menu:54
 msgid "ADVANCED GRAPHICS"
@@ -1235,13 +1239,17 @@ msgstr ""
 msgid "DETAILS"
 msgstr ""
 
+#: etmain/ui/hostgame.menu:195
+msgid "ADVANCED"
+msgstr "^_ADVANCED"
+
 #: etmain/ui/hostgame.menu:196
 msgid "START SERVER"
-msgstr ""
+msgstr "^_START SERVER"
 
 #: etmain/ui/ingame_disconnect.menu:50 etmain/ui/ingame_main.menu:45
 msgid "DISCONNECT"
-msgstr ""
+msgstr "^_DISCONNECT"
 
 #: etmain/ui/ingame_disconnect.menu:51
 msgid "Do you want to disconnect"
@@ -1258,29 +1266,29 @@ msgstr ""
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
 msgid "VOTE"
-msgstr ""
+msgstr "^_VOTE"
 
 #: etmain/ui/ingame_main.menu:38 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
-msgstr ""
+msgstr "^_REFEREE"
 
 #: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
-msgstr ""
+msgstr "RCO^_N"
 
 #: etmain/ui/ingame_main.menu:40
 msgid "LIMBO MENU"
-msgstr ""
+msgstr "^_LIMBO MENU"
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
 msgid "SERVER INFO"
-msgstr ""
+msgstr "^_SERVER INFO"
 
 #: etmain/ui/ingame_main.menu:42 etmain/ui/main.menu:108
 #: etmain/ui/options.menu:29
 msgid "OPTIONS"
-msgstr ""
+msgstr "^_OPTIONS"
 
 #: etmain/ui/ingame_main.menu:43 etmain/ui/main.menu:111
 msgid "CREDITS"
@@ -1337,9 +1345,13 @@ msgstr ""
 msgid "REFRESH"
 msgstr ""
 
+#: etmain/ui/ingame_serverinfo.menu:77
+msgid "REFRESH"
+msgstr "^_REFRESH"
+
 #: etmain/ui/ingame_serverinfo.menu:78
-msgid "ADD FAVORITE"
-msgstr ""
+msgid "FAVORITE"
+msgstr "^_FAVORITE"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
@@ -1387,11 +1399,11 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:59
 msgid "BOTS ON"
-msgstr ""
+msgstr "BOTS O^_N"
 
 #: etmain/ui/ingame_vote_bot.menu:60
 msgid "BOTS OFF"
-msgstr ""
+msgstr "BOTS OF^_F"
 
 #: etmain/ui/ingame_vote_disabled.menu:51
 msgid "Voting is disabled"
@@ -1404,11 +1416,11 @@ msgstr ""
 #: etmain/ui/ingame_vote_map.menu:34 etmain/ui/ingame_vote_map.menu:37
 #: etmain/ui/ingame_vote.menu:88 etmain/ui/ingame_vote.menu:89
 msgid "MAPS"
-msgstr ""
+msgstr "M^_APS"
 
 #: etmain/ui/ingame_vote_map.menu:38
 msgid "CAMPAIGNS"
-msgstr ""
+msgstr "^_CAMPAIGNS"
 
 #: etmain/ui/ingame_vote_map.menu:82 etmain/ui/ingame_vote_map.menu:83
 #: etmain/ui/ingame_vote_map.menu:84 etmain/ui/ingame_vote_misc.menu:62
@@ -1417,28 +1429,32 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc_refrcon.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:78
 msgid "OK"
-msgstr ""
+msgstr "^_OK"
 
-#: etmain/ui/ingame_vote.menu:90 etmain/ui/ingame_vote.menu:91
-#: etmain/ui/ingame_vote_players.menu:25 src/cgame/cg_scoreboard.c:205
+#: src/cgame/cg_scoreboard.c:205
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:818
 #: src/cgame/cg_scoreboard.c:828 src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
 msgstr ""
 
+#: etmain/ui/ingame_vote.menu:90 etmain/ui/ingame_vote.menu:91
+#: etmain/ui/ingame_vote_players.menu:25
+msgid "PLAYERS"
+msgstr "^_PLAYERS"
+
 #: etmain/ui/ingame_vote.menu:92
 msgid "BOTS"
-msgstr ""
+msgstr "B^_OTS"
 
 #: etmain/ui/ingame_vote_misc.menu:41
 #: etmain/ui/ingame_vote_misc_refrcon.menu:40
 msgid "START MATCH"
-msgstr ""
+msgstr "^_START MATCH"
 
 #: etmain/ui/ingame_vote_misc.menu:42
 #: etmain/ui/ingame_vote_misc_refrcon.menu:41
 msgid "RESET MATCH"
-msgstr ""
+msgstr "^_RESET MATCH"
 
 #: etmain/ui/ingame_vote_misc.menu:43
 #: etmain/ui/ingame_vote_misc_refrcon.menu:42
@@ -1555,11 +1571,11 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
-msgstr ""
+msgstr "^_PAUSE"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:81
 msgid "UNPAUSE"
-msgstr ""
+msgstr "^_UNPAUSE"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:83
 msgid "LOCK TEAMS"
@@ -1580,12 +1596,12 @@ msgstr ""
 #: etmain/ui/ingame_vote_players.menu:49 etmain/ui/ingame_vote_players.menu:50
 #: etmain/ui/ingame_vote_players.menu:51 src/cgame/cg_fireteams.c:359
 msgid "KICK"
-msgstr ""
+msgstr "^_KICK"
 
 #: etmain/ui/ingame_vote_players.menu:52 etmain/ui/ingame_vote_players.menu:53
 #: etmain/ui/ingame_vote_players.menu:54
 msgid "MUTE"
-msgstr ""
+msgstr "^_MUTE"
 
 #: etmain/ui/ingame_vote_players.menu:55 etmain/ui/ingame_vote_players.menu:56
 #: etmain/ui/ingame_vote_players.menu:57
@@ -1673,6 +1689,34 @@ msgstr ""
 msgid "UPGRADE NOW"
 msgstr ""
 
+#: etmain/ui/main.menu:105
+msgid "PLAY"
+msgstr "^_PLAY"
+
+#: etmain/ui/main.menu:107
+msgid "HOST"
+msgstr "^_HOST"
+
+#: etmain/ui/main.menu:109
+msgid "REPLAYS"
+msgstr "^_REPLAYS"
+
+#: etmain/ui/main.menu:111
+msgid "PROFILE"
+msgstr "PRO^_FILE"
+
+#: etmain/ui/main.menu:112
+msgid "MODS"
+msgstr "^_MODS"
+
+#: etmain/ui/main.menu:113
+msgid "CREDITS"
+msgstr "CRE^_DITS"
+
+#: etmain/ui/main.menu:114
+msgid "EXIT"
+msgstr "E^_XIT"
+
 #: etmain/ui/main_quickconnect.menu:58
 msgid "CONNECT TO SERVER"
 msgstr ""
@@ -1698,7 +1742,7 @@ msgstr ""
 #: etmain/ui/main_quickconnect.menu:87
 #: etmain/ui/playonline_connecttoip.menu:67 etmain/ui/popup_password.menu:87
 msgid "CONNECT"
-msgstr ""
+msgstr "^_CONNECT"
 
 #: etmain/ui/mods.menu:50
 msgid "Select the modification to play"
@@ -1706,7 +1750,7 @@ msgstr ""
 
 #: etmain/ui/mods.menu:59
 msgid "LOAD MOD"
-msgstr ""
+msgstr "^_LOAD MOD"
 
 #: etmain/ui/options_clean.menu:30 etmain/ui/options.menu:37
 msgid "CLEAN"
@@ -1798,7 +1842,7 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:25 etmain/ui/options.menu:34
 msgid "CONTROLS"
-msgstr ""
+msgstr "^_CONTROLS"
 
 #: etmain/ui/options_controls.menu:32
 msgid "MOVE"
@@ -2085,7 +2129,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:29 etmain/ui/options.menu:32
 msgid "GAME"
-msgstr ""
+msgstr "^_GAME"
 
 #: etmain/ui/options_customise_game.menu:33 src/cgame/cg_scoreboard.c:205
 msgid "PLAYER"
@@ -2439,7 +2483,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
-msgstr ""
+msgstr "^_VIEW"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
@@ -3436,11 +3480,19 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:78 etmain/ui/options_system.menu:66
 msgid "APPLY"
-msgstr ""
+msgstr "^_APPLY"
 
 #: etmain/ui/options.menu:35 etmain/ui/options_system.menu:36
 msgid "SYSTEM"
-msgstr ""
+msgstr "^_SYSTEM"
+
+#: etmain/ui/options.menu:35
+msgid "HUD EDITOR"
+msgstr "^_HUD EDITOR"
+
+#: etmain/ui/options.menu:41
+msgid "OPEN HOME"
+msgstr "^_OPEN HOME"
 
 #: etmain/ui/options_system.menu:39
 msgid "AUDIO"
@@ -3570,7 +3622,7 @@ msgstr ""
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
-msgstr ""
+msgstr "^_CONNECT TO IP"
 
 #: etmain/ui/playonline_deletefavs.menu:50
 msgid "DELETE SERVER FAVOURITES"
@@ -3716,7 +3768,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
-msgstr ""
+msgstr "^_REFRESH LIST"
 
 #: etmain/ui/playonline.menu:194
 msgid "Refresh servers list"
@@ -3772,11 +3824,11 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
-msgstr ""
+msgstr "^_DELETE FAVS"
 
 #: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
 msgid "JOIN SERVER"
-msgstr ""
+msgstr "^_JOIN SERVER"
 
 #: etmain/ui/popup_autoupdate.menu:51
 msgid "UPDATE AVAILABLE"
@@ -3792,7 +3844,7 @@ msgstr ""
 #: etmain/ui/popup_errormessage_pb.menu:57
 #: etmain/ui/popup_serverredirect.menu:79
 msgid "RECONNECT"
-msgstr ""
+msgstr "^_RECONNECT"
 
 #: etmain/ui/popup_password.menu:73
 msgid "PASSWORD REQUIRED"
@@ -3911,7 +3963,7 @@ msgstr ""
 
 #: etmain/ui/profile.menu:63 etmain/ui/viewreplay.menu:59
 msgid "DELETE"
-msgstr ""
+msgstr "^_DELETE"
 
 #: etmain/ui/profile.menu:66 etmain/ui/profile_rename.menu:69
 msgid "RENAME"
@@ -3923,7 +3975,7 @@ msgstr ""
 
 #: etmain/ui/profile.menu:72
 msgid "SELECT PROFILE"
-msgstr ""
+msgstr "^_SELECT PROFILE"
 
 #: etmain/ui/profile_rename.menu:55
 msgid "RENAME PROFILE"
@@ -5640,6 +5692,10 @@ msgstr ""
 #: src/cgame/cg_consolecmds:1233
 msgid "You will spawn as an %s %s with a %s and %s."
 msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:242
+msgid "BACK"
+msgstr "^_BACK"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1THE TEAM"
