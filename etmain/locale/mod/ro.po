@@ -4,7 +4,7 @@
 # Translators:
 # Gavrila Adrian <schelerdo@gmail.com>, 2020-2021
 # Alexandru Matei <alexandrumatei639@gmail.com>, 2017
-# Gavrila Adrian <schelerdo@gmail.com>, 2021
+# Gavrila Adrian <schelerdo@gmail.com>, 2021,2024
 # Valentin <vwdvali29@gmail.com>, 2021
 msgid ""
 msgstr ""
@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: Valentin <vwdvali29@gmail.com>, 2021\n"
+"Last-Translator: Gavrila Adrian <schelerdo@gmail.com>, 2021,2024\n"
 "Language-Team: Romanian (http://app.transifex.com/etlegacy/etlegacy/language/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -213,15 +213,15 @@ msgstr "Fondator de proiect, codificare și management"
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
-msgstr ""
+msgstr "Codare, dezvoltare de mod și băiat rău"
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
-msgstr ""
+msgstr "Principalele ferestre de codare și redare"
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr ""
+msgstr "Site web, codare și scripturi"
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
@@ -269,55 +269,55 @@ msgstr ""
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
-msgstr ""
+msgstr "ET 2.60 Actualizare"
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr ""
+msgstr "ECHIPA DE DEZVOLTARE ET PRO"
 
 #: etmain/ui/credits_et260.menu:114
 msgid "MAC OS X PORT"
-msgstr ""
+msgstr "PORT MAC OS X"
 
 #: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
 msgid "Lead Programmer"
-msgstr ""
+msgstr "Programator principal"
 
 #: etmain/ui/credits_et260.menu:128
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr ""
+msgstr "Mac OS X este o marcă comercială a Apple Computer, Inc., înregistrată în S.U.A. și în alte țări."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET: LEGACY HALL OF FAME"
-msgstr ""
+msgstr "ET: LEGACY HALL OF FAME"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
-msgstr ""
+msgstr "Sfaturi, rapoarte de erori, patch-uri"
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
-msgstr ""
+msgstr "^1TRADUCERI"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
-msgstr ""
+msgstr "EXECUTIVE PRODUS DE ID SOFTWARE"
 
 #: etmain/ui/credits_idsoftware.menu:82
 msgid "Executive Producer"
-msgstr ""
+msgstr "Producător Executiv"
 
 #: etmain/ui/credits_idsoftware.menu:84
 msgid "Additional Programming"
-msgstr ""
+msgstr "Programare suplimentară"
 
 #: etmain/ui/credits_idsoftware.menu:87
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr ""
+msgstr "Wolfenstein: Enemy Territory este alimentat de tehnologia id Software Quake III Arena (TM)."
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
