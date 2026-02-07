@@ -84,6 +84,17 @@ menuDef {
     BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+76, SUBWINDOW_WIDTH, 10, _("Shift timer forward:"), .2, 8, "cycle cg_spawntimer_set 2147483647 0 1000", "Shifts enemy spawn timer 1 second forward" )
     BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+88, SUBWINDOW_WIDTH, 10, _("Request artillery:"), .2, 8, "+zoom;+attack;-attack;-zoom", "Request artillery with single button press." )
     BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+100, SUBWINDOW_WIDTH, 10, _("Toggle HUD Editor:"), .2, 8, "edithud", "Toggle open/close the HUD Editor." )
+    
+#define SHOUTCASTER_Y (MISC_Y + MISC_H + SUBWINDOW_Y_PADDING)
+#define SHOUTCASTER_H 100
+    SUBWINDOW(SUBWINDOWS_X2_START, SHOUTCASTER_Y, SUBWINDOW_HEADER_WIDTH, SHOUTCASTER_H, _("SHOUTCASTER") )
+    BIND(SUBWINDOWS_OPTION_X2_START, SHOUTCASTER_Y+16, SUBWINDOW_WIDTH, 10, _("Increase red score:"), .2, 8, "scPlusRedScore", "Increase by 1 the score in the shoutcaster red team name banner" )
+    BIND(SUBWINDOWS_OPTION_X2_START, SHOUTCASTER_Y+28, SUBWINDOW_WIDTH, 10, _("Decrease red score:"), .2, 8, "scMinusRedScore", "Decrease by 1 the score in the shoutcaster red team name banner" )
+    BIND(SUBWINDOWS_OPTION_X2_START, SHOUTCASTER_Y+40, SUBWINDOW_WIDTH, 10, _("Reset red score:"), .2, 8, "scResetRedScore", "Reset to 0 the score in the shoutcaster red team name banner" )
+    BIND(SUBWINDOWS_OPTION_X2_START, SHOUTCASTER_Y+52, SUBWINDOW_WIDTH, 10, _("Increase blue score:"), .2, 8, "scPlusBlueScore", "Increase by 1 the score in the shoutcaster blue team name banner" )
+    BIND(SUBWINDOWS_OPTION_X2_START, SHOUTCASTER_Y+64, SUBWINDOW_WIDTH, 10, _("Decrease blue score:"), .2, 8, "scMinusBlueScore", "Decrease by 1 the score in the shoutcaster blue team name banner" )
+    BIND(SUBWINDOWS_OPTION_X2_START, SHOUTCASTER_Y+76, SUBWINDOW_WIDTH, 10, _("Reset blue score:"), .2, 8, "scResetBlueScore", "Reset to 0 the score in the shoutcaster blue team name banner" )
+    BIND(SUBWINDOWS_OPTION_X2_START, SHOUTCASTER_Y+88, SUBWINDOW_WIDTH, 10, _("Swap teams name & score:"), .2, 8, "scSwapTeamLabels", "Swap the shoutcaster red <-> blue team banner name and score. Helpful on teams swap" )
 
 // Buttons //
 	BUTTON(SUBWINDOWS_X_START, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls )
