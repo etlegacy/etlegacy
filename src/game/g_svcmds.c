@@ -887,8 +887,12 @@ void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
 					continue;
 				}
 
-				if ((g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) ||
-					g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF))
+				if (
+					(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+					((g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+					(g_gametype.integer == GT_WOLF_MAPVOTE) ||
+					g_gametype.integer == GT_WOLF
+					)
 				{
 					// record xp
 					G_XPSaver_Store(ent->client);

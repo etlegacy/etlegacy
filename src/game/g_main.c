@@ -3017,8 +3017,14 @@ void G_LogExit(const char *string)
 		}
 	}
 #endif
-	if ((g_xpSaver.integer & XPSF_ENABLE) && (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) ||
-		g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF))
+	if (
+		(g_xpSaver.integer & XPSF_ENABLE) && (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			((g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE) ||
+			(g_gametype.integer == GT_WOLF)
+			)
+		)
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
 		{

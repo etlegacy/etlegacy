@@ -2484,8 +2484,14 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	}
 #endif
 
-	if (firstTime && (g_xpSaver.integer & XPSF_ENABLE) && (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH &&
-		!(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) || g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF))
+	if (
+		firstTime &&
+		(g_xpSaver.integer & XPSF_ENABLE) && (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			(g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF)
+			)
+		)
 	{
 		G_XPSaver_Load(client);
 
@@ -2495,8 +2501,15 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		}
 	}
 
-	if (!firstTime && (g_xpSaver.integer & XPSF_ENABLE) && (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH &&
-		!(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) || g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF))
+	if (
+		!firstTime &&
+		(g_xpSaver.integer & XPSF_ENABLE) && (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			((g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE) ||
+			(g_gametype.integer == GT_WOLF)
+			)
+		)
 	{
 		G_XPSaver_Load(client);
 
@@ -3443,8 +3456,15 @@ void ClientDisconnect(int clientNum)
 	}
 #endif
 
-	if ((g_xpSaver.integer & XPSF_ENABLE) && (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) ||
-		g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF) && !level.intermissiontime)
+	if (
+		(g_xpSaver.integer & XPSF_ENABLE) &&
+		!level.intermissiontime && (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			((g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE) ||
+			(g_gametype.integer == GT_WOLF)
+			)
+		)
 	{
 		G_XPSaver_Store(ent->client);
 	}
