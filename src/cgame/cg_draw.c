@@ -3127,6 +3127,7 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
  */
 void CG_DrawFollow(hudComponent_t *comp)
 {
+	float x = comp->location.x;
 	float y = comp->location.y;
 	float lineHeight;
 	float charHeight;
@@ -3238,8 +3239,24 @@ void CG_DrawFollow(hudComponent_t *comp)
 				}
 			}
 
-			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, comp->colorMain, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
+			if (comp->alignText != ITEM_ALIGN_LEFT)
+			{
+				// offset x position by calculting the total length width required to display text
+				float totalLengthOffset = comp->location.w - (CG_Text_Width_Ext(deploytime, scale, 0, &cgs.media.limboFont2));
+
+				if (comp->alignText == ITEM_ALIGN_RIGHT)
+				{
+					x += totalLengthOffset;
+				}
+				else
+				{
+					x += totalLengthOffset * 0.5f;
+				}
+			}
+
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
 			y += lineHeight;
+			x  = comp->location.x;
 		}
 
 		// Don't display if you're following yourself
@@ -3250,44 +3267,69 @@ void CG_DrawFollow(hudComponent_t *comp)
 			int        charWidth  = CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
 			int        startClass = CG_Text_Width_Ext(va("(%s", follow), scale, 0, &cgs.media.limboFont2) + charWidth;
 			int        startRank  = CG_Text_Width_Ext(w, scale, 0, &cgs.media.limboFont2) + lineHeight + 2 + 2 * charWidth;
-			int        endRank;
+			int        endRank    = cgs.clientinfo[cg.snap->ps.clientNum].rank > 0 ? lineHeight + 2 : -charWidth;
 
-			CG_DrawPic(comp->location.x + startClass, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+			if (comp->alignText != ITEM_ALIGN_LEFT)
+			{
+				// offset x position by calculting the total length width required to display text
+				float totalLengthOffset = comp->location.w - (startClass + startRank + endRank + CG_Text_Width_Ext(")", scale, 0, &cgs.media.limboFont2));
+
+				if (comp->alignText == ITEM_ALIGN_RIGHT)
+				{
+					x += totalLengthOffset;
+				}
+				else
+				{
+					x += totalLengthOffset * 0.5f;
+				}
+			}
+
+			CG_DrawPic(x + startClass, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
 			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 			{
-				CG_DrawPic(comp->location.x + startClass + startRank, y + heightIconsOffset, iconsSize, iconsSize, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
-				endRank = lineHeight + 2;
-			}
-			else
-			{
-				endRank = -charWidth;
+				CG_DrawPic(x + startClass + startRank, y + heightIconsOffset, iconsSize, iconsSize, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 			}
 
-			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, comp->colorMain, va("(%s", follow), 0, 0, comp->styleText, &cgs.media.limboFont2);
-			CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
-			CG_Text_Paint_Ext(comp->location.x + startClass + startRank + endRank, y + heightTextOffset, scale, scale, colorWhite, ")", 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, va("(%s", follow), 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x + startClass + startRank + endRank, y + heightTextOffset, scale, scale, colorWhite, ")", 0, 0, comp->styleText, &cgs.media.limboFont2);
 		}
 	}
 	else
 	{
-		const char *follow    = CG_TranslateString("Following");
-		char       *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
-		int        charWidth  = CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
-		int        startClass = CG_Text_Width_Ext(follow, scale, 0, &cgs.media.limboFont2) + charWidth;
+		const char *follow     = CG_TranslateString("Following");
+		char       *clientName = cgs.clientinfo[cg.snap->ps.clientNum].name;
+		int        charWidth   = CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
+		int        startClass  = CG_Text_Width_Ext(follow, scale, 0, &cgs.media.limboFont2) + charWidth;
 
-		CG_DrawPic(comp->location.x + startClass, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+		if (comp->alignText != ITEM_ALIGN_LEFT)
+		{
+			// offset x position by calculting the total length width required to display text + icon
+			float totalLengthOffset = comp->location.w - (startClass + iconsSize + charWidth + CG_Text_Width_Ext(clientName, scale, 0, &cgs.media.limboFont2));
+
+			if (comp->alignText == ITEM_ALIGN_RIGHT)
+			{
+				x += totalLengthOffset;
+			}
+			else
+			{
+				x += totalLengthOffset * 0.5f;
+			}
+		}
+
+		CG_DrawPic(x + startClass, y + heightIconsOffset, iconsSize, iconsSize, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 		{
 			int startRank;
 
-			startRank = CG_Text_Width_Ext(w, scale, 0, &cgs.media.limboFont2) + iconsSize + charWidth;
-			CG_DrawPic(comp->location.x + startClass + startRank, y + heightIconsOffset, iconsSize, iconsSize, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			startRank = CG_Text_Width_Ext(clientName, scale, 0, &cgs.media.limboFont2) + iconsSize + charWidth;
+			CG_DrawPic(x + startClass + startRank, y + heightIconsOffset, iconsSize, iconsSize, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
-		CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, comp->colorMain, follow, 0, 0, comp->styleText, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(comp->location.x + startClass + iconsSize + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorMain, follow, 0, 0, comp->styleText, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x + startClass + iconsSize + charWidth, y + heightTextOffset, scale, scale, colorWhite, clientName, 0, 0, comp->styleText, &cgs.media.limboFont2);
 	}
 }
 
