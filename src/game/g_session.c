@@ -490,8 +490,12 @@ void G_ReadSessionData(gclient_t *client)
 	}
 	else
 	{
-		if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH) ||
-		    g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF)
+		if (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			((g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE) ||
+			(g_gametype.integer == GT_WOLF)
+			)
 		{
 			cJSON *restartObj = cJSON_GetObjectItem(root, "restart");
 
