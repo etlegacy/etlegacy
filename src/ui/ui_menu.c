@@ -1083,8 +1083,9 @@ static qboolean Menu_HandleMouseESC(menuDef_t *menu, const int key, const qboole
  */
 void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 {
-	int       i;
-	itemDef_t *item = NULL;
+	int        i;
+	itemDef_t  *item             = NULL;
+	static int s_suppressEditKey = -1;  // suppress next matching char after accelerator-triggered focus
 
 	Menu_HandleMouseMove(menu, DC->cursorx, DC->cursory);       // fix for focus not resetting on unhidden buttons
 
@@ -1106,6 +1107,16 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 
 	if (g_editingField && down)
 	{
+		if (s_suppressEditKey != -1)
+		{
+			int baseKey = (key & K_CHAR_FLAG) ? (key & ~K_CHAR_FLAG) : key;
+			if (tolower(baseKey) == tolower(s_suppressEditKey))
+			{
+				s_suppressEditKey = -1;
+				return;
+			}
+		}
+
 		if (g_editItem->type == ITEM_TYPE_COMBO)
 		{
 			Item_Combo_HandleKey(g_editItem, key);
@@ -1197,6 +1208,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 				itemDef_t it;
 				it.parent = menu;
 				Item_RunScript(&it, NULL, menu->onKey[key]);
+				s_suppressEditKey = key;
 				return;
 			}
 		}
@@ -1215,6 +1227,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 				    && Item_EnableShowViaCvar(it, CVAR_SHOW))
 				{
 					Item_RunScript(it, NULL, it->onKey);
+					s_suppressEditKey = key;
 					return;
 				}
 			}
