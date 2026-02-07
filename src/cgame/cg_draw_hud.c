@@ -61,6 +61,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponheatbar),      CG_DrawGunHeatBar,                HUD_COMP_TYPE_BAR,       0.19f, { 0 } },
 	{ HUDF(weaponicon),         CG_DrawGunIcon,                   HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Icon Flash",    "Only Ticking" } },
 	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 HUD_COMP_TYPE_TEXT,      0.25f, { "Dynamic Color" } },
+	{ HUDF(clipbar),            CG_DrawClipBar,                   HUD_COMP_TYPE_BAR,       0.25f, { "Dynamic Color" } },
 	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           HUD_COMP_TYPE_SPECIFIC,  0.20f, { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row", "Spawn Point", "Spawn Point Location", "Minor Spawn Point"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),      CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages2),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
@@ -208,6 +209,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->weaponheatbar      = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 0, BAR_LEFT | BAR_BG | BAR_LERP_COLOR, 100.f, (vec4_t) { 1, 1, 0, 0.3f }, (vec4_t) { 1, 0, 0, 0.7f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawGunHeatBar);
 	hud->weaponicon         = CG_getComponent(SCREEN_WIDTH - 88, SCREEN_HEIGHT - 52, 60, 32, qtrue, 1, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawGunIcon);
 	hud->weaponammo         = CG_getComponent(SCREEN_WIDTH - 82, 458, 57, 14, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_RIGHT, qfalse, 0.25f, 0, 0, 0, CG_DrawAmmoCount);
+	hud->clipbar            = CG_getComponent(SCREEN_WIDTH - 30, SCREEN_HEIGHT - 92, 12, 72, qfalse, 0, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 1.0f, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0f, 0.0f, 0.0f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawClipBar);
 	hud->fireteam           = CG_getComponent(10, 10, 350, 100, qtrue, 1, 0, 100.f, colorWhite, HUD_Background, qtrue, HUD_BackgroundAlt, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.20f, 0, 0, 0, CG_DrawFireTeamOverlay);
 	hud->popupmessages      = CG_getComponent(4, 245, 422, 96, qtrue, 64, 0, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 0, 2000, 2500, CG_DrawPM);
 	hud->popupmessages2     = CG_getComponent(4, 245, 422, 96, qfalse, 64, 0, 89.7f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 0, 2000, 2500, CG_DrawPM);
@@ -669,15 +671,21 @@ void CG_DrawPlayerStatusHead(hudComponent_t *comp)
  * @param[out] ammo - the number of ammo left (in the current clip if using clip)
  * @param[out] clips - the total ammount of ammo in all clips (if using clip)
  * @param[out] akimboammo - the number of ammo left in the second pistol of akimbo (if using akimbo)
+ * @param[out] maxammo - the max ammo possible in a clip or max ammo reserve for non-clip weapon
  * @param[out] colorAmmo
  */
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/)
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, int *maxammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/)
 {
 	centity_t     *cent;
 	playerState_t *ps;
 	weapon_t      weap;
 
 	*ammo = *clips = *akimboammo = -1;
+
+	if (maxammo)
+	{
+		*maxammo = -1;
+	}
 
 	if (cg.snap->ps.clientNum == cg.clientNum)
 	{
@@ -720,6 +728,18 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAm
 		if (GetWeaponTableData(weap)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 		{
 			*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
+		}
+
+		if (maxammo)
+		{
+			if (weap == WP_M7 || weap == WP_GPG40)
+			{
+				*maxammo = BG_MaxAmmoForWeapon(weap, cgs.clientinfo[cent->currentState.clientNum].skill, cgs.clientinfo[cent->currentState.clientNum].cls);
+			}
+			else
+			{
+				*maxammo = GetWeaponTableData(weap)->maxClip * (*akimboammo != -1 ? 2 : 1);
+			}
 		}
 
 		if (colorAmmo)
@@ -799,6 +819,11 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAm
 			*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex] + cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
 
 			maxAmmo = BG_MaxAmmoForWeapon(weap, cgs.clientinfo[cent->currentState.clientNum].skill, cgs.clientinfo[cent->currentState.clientNum].cls);
+		}
+
+		if (maxammo)
+		{
+			*maxammo = maxAmmo;
 		}
 
 		if (colorAmmo)
@@ -1378,8 +1403,6 @@ void CG_DrawGunHeatBar(hudComponent_t *comp)
 
 /**
  * @brief CG_DrawAmmoCount
- * @param[in] x
- * @param[in] y
  */
 void CG_DrawAmmoCount(hudComponent_t *comp)
 {
@@ -1403,9 +1426,8 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 	}
 
 	// Draw ammo
-	CG_PlayerAmmoValue(&value, &value2, &value3, (comp->style & 1) ? &color : NULL);
+	CG_PlayerAmmoValue(&value, &value2, &value3, NULL, (comp->style & 1) ? &color : NULL);
 
-	// .25f
 	if (value3 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i:%i/%i", value3, value, value2);
@@ -1418,8 +1440,104 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i", value);
 	}
+	else
+	{
+		return;
+	}
 
 	CG_DrawCompText(comp, buffer, *color, comp->styleText, &cgs.media.limboFont1);
+}
+
+/**
+ * @brief CG_DrawClipBar
+ * @param[in] comp
+ */
+void CG_DrawClipBar(hudComponent_t *comp)
+{
+	int       value, value2, value3;
+	int       maxAmmo, curentClip = 0;
+	char      buffer[16] = { 0 };
+	vec4_t    *color     = &comp->colorMain;
+	int       barStyle   = comp->barStyle;
+	centity_t *cent;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.stats[STAT_HEALTH] <= 0)
+	{
+		return;
+	}
+
+	// Draw ammo
+	CG_PlayerAmmoValue(&value, &value2, &value3, &maxAmmo, (comp->style & 1) ? &color : NULL);
+
+	// can't find max ammo, don't draw anything
+	if (maxAmmo <= 0)
+	{
+		return;
+	}
+
+	// akimbo need to be add to total ammount
+	if (value3 >= 0)
+	{
+		value += value3;
+	}
+	else if (value < 0)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.clientNum == cg.clientNum)
+	{
+		cent = &cg.predictedPlayerEntity;
+	}
+	else
+	{
+		cent = &cg_entities[cg.snap->ps.clientNum];
+	}
+
+	// specific case for riflenade as they don't use clip field to indicate max ammo wepon
+	if (cent->currentState.weapon == WP_M7 || cent->currentState.weapon == WP_GPG40)
+	{
+		value = value2;
+	}
+
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
+	if (comp->style & 1)
+	{
+		barStyle &= ~BAR_LERP_COLOR;
+	}
+
+	if (comp->barStyle & BAR_CIRCULAR)
+	{
+		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		              (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : *color, (barStyle & BAR_LERP_COLOR) ? *color : NULL,
+		              comp->colorBackground, comp->colorBorder, (float)value / maxAmmo, 0.f, barStyle, cgs.media.skillPics[SK_SIGNALS],
+		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+	}
+	else
+	{
+		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+		             (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : *color, (barStyle & BAR_LERP_COLOR) ? *color : NULL,
+		             comp->colorBackground, comp->colorBorder, (float)value / maxAmmo, 0.f, barStyle, cgs.media.skillPics[SK_SIGNALS]);
+	}
 }
 
 /**

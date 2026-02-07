@@ -3035,7 +3035,7 @@ int CG_CalculateReinfTime(team_t team);
 int CG_GetReinfTime(qboolean menu);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/);
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, int *maxammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/);
 
 void CG_ToggleShoutcasterMode(int shoutcaster);
 void CG_ShoutcastCheckKeyCatcher(int keycatcher);
@@ -4107,7 +4107,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 61
+#define HUD_COMPONENTS_NUM 62
 
 typedef struct hudComponent_s
 {
@@ -4170,6 +4170,7 @@ typedef struct hudStructure_s
 	hudComponent_t weaponheatbar;
 	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
+    hudComponent_t clipbar;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
 	hudComponent_t popupmessages2;
@@ -4178,8 +4179,8 @@ typedef struct hudStructure_s
 	hudComponent_t powerups;
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
-	hudComponent_t cursorhints;
 	// 20
+    hudComponent_t cursorhints;
 	hudComponent_t cursorhintsbar;
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
@@ -4189,8 +4190,8 @@ typedef struct hudStructure_s
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
 	hudComponent_t votetext;
-	hudComponent_t spectatortext;
 	// 30
+    hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
 	hudComponent_t demotext;
@@ -4200,8 +4201,8 @@ typedef struct hudStructure_s
 	hudComponent_t weaponchargetext;
 	hudComponent_t fps;
 	hudComponent_t snapshot;
-	hudComponent_t ping;
 	// 40
+    hudComponent_t ping;
 	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
@@ -4211,8 +4212,8 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptitle;
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
-	hudComponent_t centerprint;
 	// 50
+    hudComponent_t centerprint;
 	hudComponent_t banner;
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
@@ -4220,8 +4221,8 @@ typedef struct hudStructure_s
 	hudComponent_t stats;
 	hudComponent_t xpgain;
 	hudComponent_t scPlayerListAxis;
-	hudComponent_t scPlayerListAllies;
 	// 60
+    hudComponent_t scPlayerListAllies;
 	hudComponent_t scTeamNamesAxis;
 	hudComponent_t scTeamNamesAllies;
 
@@ -4331,6 +4332,7 @@ void CG_DrawPlayerStatusHead(hudComponent_t *comp);
 void CG_DrawGunIcon(hudComponent_t *comp);
 void CG_DrawGunHeatBar(hudComponent_t *comp);
 void CG_DrawAmmoCount(hudComponent_t *comp);
+void CG_DrawClipBar(hudComponent_t *comp);
 void CG_DrawPowerUps(hudComponent_t *comp);
 void CG_DrawObjectiveStatus(hudComponent_t *comp);
 void CG_DrawPlayerHealthBar(hudComponent_t *comp);

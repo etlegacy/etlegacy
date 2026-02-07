@@ -820,7 +820,7 @@ void CG_DrawShoutcastPlayerStatus(hudComponent_t *comp)
 	CG_DrawShoutcastPlayerStaminaBar(statsBoxX + (statsBoxWidth / 2), statsBoxY + statsBoxHeight, statsBoxWidth / 2, 2, BAR_BG | BAR_BGSPACING_X0Y0, comp->colorBackground);
 
 	// draw ammo count
-	CG_PlayerAmmoValue(&ammo, &clip, &akimbo, NULL);
+	CG_PlayerAmmoValue(&ammo, &clip, &akimbo, NULL, NULL);
 
 	if (ammo > 0 || clip > 0)
 	{
