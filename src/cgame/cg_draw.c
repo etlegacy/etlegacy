@@ -3169,6 +3169,16 @@ void CG_DrawFollow(hudComponent_t *comp)
 	heightTextOffset  = (lineHeight + charHeight) * 0.5f;
 	heightIconsOffset = (lineHeight - iconsSize) * 0.5f;
 
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
 	// Spectators view teamflags
 	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
@@ -3190,16 +3200,6 @@ void CG_DrawFollow(hudComponent_t *comp)
 	if (cg.snap->ps.pm_flags & PMF_LIMBO)
 	{
 		char deploytime[128] = { 0 };
-
-		if (comp->showBackGround)
-		{
-			CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
-		}
-
-		if (comp->showBorder)
-		{
-			CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
-		}
 
 		if (cgs.gametype != GT_WOLF_LMS && !(comp->style & FOLLOW_NO_COUNTDOWN))
 		{
