@@ -19,7 +19,8 @@
 #define SUBWINDOW_WIDTH_R        (SUBWINDOW_HEADER_WIDTH_R - SUBWINDOWS_X_PADDING * 2)
 
 #define SUBWINDOWS_OPTION_X1_START (SUBWINDOWS_X_START + SUBWINDOWS_X_PADDING)
-#define SUBWINDOWS_OPTION_X2_START (SUBWINDOWS_X_START + SUBWINDOW_WIDTH_L + SUBWINDOWS_X_PADDING * 3)
+#define SUBWINDOWS_X2_START        (SUBWINDOWS_OPTION_X1_START + SUBWINDOW_WIDTH_L + SUBWINDOWS_X_PADDING * 4)
+#define SUBWINDOWS_OPTION_X2_START (SUBWINDOWS_X2_START + SUBWINDOWS_X_PADDING)
 
 // Customise View Menu //
 menuDef {
@@ -91,7 +92,7 @@ menuDef {
 // In-Game Display //
 #define DISPLAY_Y SUBWINDOWS_Y_START
 #define DISPLAY_H 160
-	SUBWINDOW(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y, SUBWINDOW_HEADER_WIDTH_R, DISPLAY_H, _("IN-GAME DISPLAY"))
+	SUBWINDOW(SUBWINDOWS_X2_START, DISPLAY_Y, SUBWINDOW_HEADER_WIDTH_R, DISPLAY_H, _("IN-GAME DISPLAY"))
 	YESNO(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 16, SUBWINDOW_WIDTH_R, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Toggle display of weapon flash when firing"))
 	MULTIACTION(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 28, SUBWINDOW_WIDTH_R, 10, _("Ejecting Brass:"), .2, 8, "cg_brasstime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, uiScript glPreset, _("Set the duration ejected bullet shells last for"))
 	MULTI(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 40, SUBWINDOW_WIDTH_R, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Toggle display of bullet tracers"))
@@ -110,7 +111,7 @@ menuDef {
 #define CROSSHAIR_Y (DISPLAY_Y + DISPLAY_H + SUBWINDOW_Y_PADDING)
 #define CROSSHAIR_H 125
 #define CROSSHAIR_X_OFFSET 66 
-	SUBWINDOW(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y, SUBWINDOW_HEADER_WIDTH_R, CROSSHAIR_H, _("CROSSHAIR"))
+	SUBWINDOW(SUBWINDOWS_X2_START, CROSSHAIR_Y, SUBWINDOW_HEADER_WIDTH_R, CROSSHAIR_H, _("CROSSHAIR"))
 	YESNO(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 16, SUBWINDOW_WIDTH_R, 10, _("Use Cvar Crosshair:"), .2, 8, "cg_useCvarCrosshair", _("Force usage of cvar value for crosshair on map load/reload"))
 	MULTI(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 28, SUBWINDOW_WIDTH_R, 10, _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, _("Set the size of the displayed crosshair"))
 	YESNO(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 40, SUBWINDOW_WIDTH_R, 10, _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggle crosshair spread sizing while moving/firing"))
@@ -148,7 +149,7 @@ menuDef {
 // Shoutcast //
 #define SHOUTCAST_Y (CROSSHAIR_Y + CROSSHAIR_H + SUBWINDOW_Y_PADDING)
 #define SHOUTCAST_H 76
-	SUBWINDOW(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y, SUBWINDOW_HEADER_WIDTH_R, SHOUTCAST_H, _("SHOUTCAST"))
+	SUBWINDOW(SUBWINDOWS_X2_START, SHOUTCAST_Y, SUBWINDOW_HEADER_WIDTH_R, SHOUTCAST_H, _("SHOUTCAST"))
 	MULTI(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 16, SUBWINDOW_WIDTH_R, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades"))
 	MULTI(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 28, SUBWINDOW_WIDTH_R, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them"))
 	EDITFIELD(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 40, SUBWINDOW_WIDTH_R, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)"))
@@ -156,5 +157,5 @@ menuDef {
 	MULTI(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 64, SUBWINDOW_WIDTH_R, 10, _("Spectator Names:"), .2, 8, "cg_drawSpectatorNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Display player names when spectating"))
 
 // Buttons //
-	BUTTON(6, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_hud ; open options)
+	BUTTON(SUBWINDOWS_X_START, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_hud ; open options)
 }
