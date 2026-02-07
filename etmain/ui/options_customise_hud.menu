@@ -8,20 +8,6 @@
 #define WINDOW_HEIGHT 448
 #define GROUP_NAME    "grpOptionsCustomiseHud"
 
-// Subwindows //
-#define SUBWINDOWS_X_PADDING     2
-#define SUBWINDOW_Y_PADDING      4
-#define SUBWINDOWS_X_START       6
-#define SUBWINDOWS_Y_START       32
-#define SUBWINDOW_HEADER_WIDTH_L (.50 * (WINDOW_WIDTH - 18))
-#define SUBWINDOW_HEADER_WIDTH_R (.50 * (WINDOW_WIDTH - 18))
-#define SUBWINDOW_WIDTH_L        (SUBWINDOW_HEADER_WIDTH_L - SUBWINDOWS_X_PADDING * 2)
-#define SUBWINDOW_WIDTH_R        (SUBWINDOW_HEADER_WIDTH_R - SUBWINDOWS_X_PADDING * 2)
-
-#define SUBWINDOWS_OPTION_X1_START (SUBWINDOWS_X_START + SUBWINDOWS_X_PADDING)
-#define SUBWINDOWS_X2_START        (SUBWINDOWS_OPTION_X1_START + SUBWINDOW_WIDTH_L + SUBWINDOWS_X_PADDING * 4)
-#define SUBWINDOWS_OPTION_X2_START (SUBWINDOWS_X2_START + SUBWINDOWS_X_PADDING)
-
 // Customise View Menu //
 menuDef {
 	name        "options_customise_hud"
@@ -39,88 +25,88 @@ menuDef {
 	WINDOW(_("VIEW"), 94)
 
 // Hud Display //
-#define HUD_Y SUBWINDOWS_Y_START
-#define HUD_H 88
-	SUBWINDOW(SUBWINDOWS_X_START, HUD_Y, SUBWINDOW_HEADER_WIDTH_L, HUD_H, _("HUD DISPLAY"))
-	MULTI(SUBWINDOWS_OPTION_X1_START, HUD_Y + 16, SUBWINDOW_WIDTH_L, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Coordinates Only" 0 "Fireteam Overlay" 1 "Team and Fireteam Chat" 2 "Chat + FT Overlay" 3 }, _("Display locations in fireteam"))
-	MULTI(SUBWINDOWS_OPTION_X1_START, HUD_Y + 28, SUBWINDOW_WIDTH_L, 10, _("Unit System:"), .2, 8, "cg_drawUnit", cvarFloatList { "Unit" 0 "Metric" 1 "Imperial" 2 }, _("Set unit system"))
-	MULTI(SUBWINDOWS_OPTION_X1_START, HUD_Y + 40, SUBWINDOW_WIDTH_L, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switch between different HUD"))
-	MULTI(SUBWINDOWS_OPTION_X1_START, HUD_Y + 52, SUBWINDOW_WIDTH_L, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7 }, _("Display objective icons on HUD"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, HUD_Y + 64, SUBWINDOW_WIDTH_L, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-	SLIDER(SUBWINDOWS_OPTION_X1_START, HUD_Y + 64, SUBWINDOW_WIDTH_L, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, HUD_Y + 76, (SUBWINDOW_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-	SLIDER(SUBWINDOWS_OPTION_X1_START, HUD_Y + 76, SUBWINDOW_WIDTH_L, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible"))
+#define HUD_Y SUBWINDOW_OPTION_Y_START
+#define HUD_H SUBWINDOW_OPTION_COMPUTE_H(6)
+	SUBWINDOW(SUBWINDOW_OPTION_X1_START, HUD_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, HUD_H, _("HUD DISPLAY"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SUBWINDOW_OPTION_Y_START, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Coordinates Only" 0 "Fireteam Overlay" 1 "Team and Fireteam Chat" 2 "Chat + FT Overlay" 3 }, _("Display locations in fireteam"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SUBWINDOW_OPTION_Y_START, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Unit System:"), .2, 8, "cg_drawUnit", cvarFloatList { "Unit" 0 "Metric" 1 "Imperial" 2 }, _("Set unit system"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SUBWINDOW_OPTION_Y_START, 3), SUBWINDOW_OPTION_WIDTH_L, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switch between different HUD"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SUBWINDOW_OPTION_Y_START, 4), SUBWINDOW_OPTION_WIDTH_L, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7 }, _("Display objective icons on HUD"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SUBWINDOW_OPTION_Y_START, 5), SUBWINDOW_OPTION_WIDTH_L, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SUBWINDOW_OPTION_Y_START, 5), SUBWINDOW_OPTION_WIDTH_L, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SUBWINDOW_OPTION_Y_START, 6), (SUBWINDOW_OPTION_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SUBWINDOW_OPTION_Y_START, 6), SUBWINDOW_OPTION_WIDTH_L, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible"))
 
 // Compass //
-#define COMPASS_Y (HUD_Y + HUD_H + SUBWINDOW_Y_PADDING)
-#define COMPASS_H 88
-	SUBWINDOW(SUBWINDOWS_X_START, COMPASS_Y, SUBWINDOW_HEADER_WIDTH_L, COMPASS_H, _("COMPASS"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 16, SUBWINDOW_WIDTH_L, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-	SLIDER(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 16, SUBWINDOW_WIDTH_L, 10, _("Auto Map Zoom:"), .2, 8, "cg_automapZoom" 5.159 1 7.43, _("Set Zoom Level Automatically When Map Loads"))
-	YESNO(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 28, SUBWINDOW_WIDTH_L, 10, _("Dynamic Icons:"), .2, 8, "cg_dynamicIcons", _("Adjust dynamicly icons size on compass"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 40, SUBWINDOW_WIDTH_L, 10, "cg_dynamicIconsDistance", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-	SLIDER(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 40, SUBWINDOW_WIDTH_L, 10, _("Dynamic Icons Distance:"), .2, 8, "cg_dynamicIconsDistance" 400 0 1000, _("Set the require distance between icon to start rescale"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 52, SUBWINDOW_WIDTH_L, 10, "cg_dynamicIconsSize", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-	SLIDER(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 52, SUBWINDOW_WIDTH_L, 10, _("Dynamic Icons Size:"), .2, 8, "cg_dynamicIconsSize" 20 0 100, _("Set the default icon size"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 64, SUBWINDOW_WIDTH_L, 10, "cg_dynamicIconsMaxScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-	SLIDER(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 64, SUBWINDOW_WIDTH_L, 10, _("Dynamic Icons Max Scale:"), .2, 8, "cg_dynamicIconsMaxScale" 1 0 1, _("Clamp the maximum icon rescale"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 76, SUBWINDOW_WIDTH_L, 10, "cg_dynamicIconsMinScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-	SLIDER(SUBWINDOWS_OPTION_X1_START, COMPASS_Y + 76, SUBWINDOW_WIDTH_L, 10, _("Dynamic Icons Min Scale:"), .2, 8, "cg_dynamicIconsMinScale" 0.5 0 1, _("Clamp the minimum icon rescale"))
+#define COMPASS_Y (HUD_Y + HUD_H + SUBWINDOW_OPTION_Y_PADDING)
+#define COMPASS_H SUBWINDOW_OPTION_COMPUTE_H(6)
+	SUBWINDOW(SUBWINDOW_OPTION_X1_START, COMPASS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, COMPASS_H, _("COMPASS"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Auto Map Zoom:"), .2, 8, "cg_automapZoom" 5.159 1 7.43, _("Set Zoom Level Automatically When Map Loads"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Icons:"), .2, 8, "cg_dynamicIcons", _("Adjust dynamicly icons size on compass"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 3), SUBWINDOW_OPTION_WIDTH_L, 10, "cg_dynamicIconsDistance", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 3), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Icons Distance:"), .2, 8, "cg_dynamicIconsDistance" 400 0 1000, _("Set the require distance between icon to start rescale"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 4), SUBWINDOW_OPTION_WIDTH_L, 10, "cg_dynamicIconsSize", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 4), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Icons Size:"), .2, 8, "cg_dynamicIconsSize" 20 0 100, _("Set the default icon size"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 5), SUBWINDOW_OPTION_WIDTH_L, 10, "cg_dynamicIconsMaxScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 5), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Icons Max Scale:"), .2, 8, "cg_dynamicIconsMaxScale" 1 0 1, _("Clamp the maximum icon rescale"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 6), SUBWINDOW_OPTION_WIDTH_L, 10, "cg_dynamicIconsMinScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(COMPASS_Y, 6), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Icons Min Scale:"), .2, 8, "cg_dynamicIconsMinScale" 0.5 0 1, _("Clamp the minimum icon rescale"))
 
 // Gun Display //
-#define WEAPON_Y (COMPASS_Y + COMPASS_H + SUBWINDOW_Y_PADDING)
-#define WEAPON_H 40
-	SUBWINDOW(SUBWINDOWS_X_START, WEAPON_Y, SUBWINDOW_HEADER_WIDTH_L, WEAPON_H, _("WEAPONS DISPLAY"))
-	MULTI(SUBWINDOWS_OPTION_X1_START, WEAPON_Y + 16, SUBWINDOW_WIDTH_L, 10, _("Draw Gun:"), .2, 8, "cg_drawGun", cvarFloatList { "Off" 0 "On" 1 "Hide Weapons Only" 2 }, _("Show gun model on-screen"))
-	MULTI(SUBWINDOWS_OPTION_X1_START, WEAPON_Y + 28, SUBWINDOW_WIDTH_L, 10, _("Weapon Animations:"), .2, 8, "cg_weapAnims", cvarFloatList { "None" 0 "Move" 1 "Firing" 2 "Reload" 4 "Switch" 8 "Move + Firing" 3 "Move + Reload" 5 "Move + Switch" 9 "Move + Firing + Reload" 7 "Move + Firing + Switch" 11 "Move + Reload + Switch" 13 "Firing + Reload" 6 "Firing + Switch" 10 "Firing + Reload + Switch" 14 "Reload + Switch" 12 "All" 15 }, _("Set which weapon animations to play"))
+#define WEAPON_Y (COMPASS_Y + COMPASS_H + SUBWINDOW_OPTION_Y_PADDING)
+#define WEAPON_H SUBWINDOW_OPTION_COMPUTE_H(2)
+	SUBWINDOW(SUBWINDOW_OPTION_X1_START, WEAPON_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, WEAPON_H, _("WEAPONS DISPLAY"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Draw Gun:"), .2, 8, "cg_drawGun", cvarFloatList { "Off" 0 "On" 1 "Hide Weapons Only" 2 }, _("Show gun model on-screen"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Weapon Animations:"), .2, 8, "cg_weapAnims", cvarFloatList { "None" 0 "Move" 1 "Firing" 2 "Reload" 4 "Switch" 8 "Move + Firing" 3 "Move + Reload" 5 "Move + Switch" 9 "Move + Firing + Reload" 7 "Move + Firing + Switch" 11 "Move + Reload + Switch" 13 "Firing + Reload" 6 "Firing + Switch" 10 "Firing + Reload + Switch" 14 "Reload + Switch" 12 "All" 15 }, _("Set which weapon animations to play"))
 
 // Items //
-#define ITEMS_Y (WEAPON_Y + WEAPON_H + SUBWINDOW_Y_PADDING)
-#define ITEMS_H 40
-	SUBWINDOW(SUBWINDOWS_X_START, ITEMS_Y, SUBWINDOW_HEADER_WIDTH_L, ITEMS_H, _("ITEMS"))
-	MULTI(SUBWINDOWS_OPTION_X1_START, ITEMS_Y + 16, SUBWINDOW_WIDTH_L, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", cvarFloatList { "No" 0 "Yes except objectives" 1 "Yes" 2 }, _("Draw simple items"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, ITEMS_Y + 28, SUBWINDOW_WIDTH_L, 10, "cg_simpleItemsScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-	SLIDER(SUBWINDOWS_OPTION_X1_START, ITEMS_Y + 28, SUBWINDOW_WIDTH_L, 10, _("Simple Items Scale:"), .2, 8, "cg_simpleItemsScale" 1.0 0.25 1.5, _("Set scale of simple items"))
+#define ITEMS_Y (WEAPON_Y + WEAPON_H + SUBWINDOW_OPTION_Y_PADDING)
+#define ITEMS_H SUBWINDOW_OPTION_COMPUTE_H(2)
+	SUBWINDOW(SUBWINDOW_OPTION_X1_START, ITEMS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, ITEMS_H, _("ITEMS"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(ITEMS_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", cvarFloatList { "No" 0 "Yes except objectives" 1 "Yes" 2 }, _("Draw simple items"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(ITEMS_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, "cg_simpleItemsScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(ITEMS_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Simple Items Scale:"), .2, 8, "cg_simpleItemsScale" 1.0 0.25 1.5, _("Set scale of simple items"))
 
 // Geolocation //
-#define GEOLOCATION_Y (ITEMS_Y + ITEMS_H + SUBWINDOW_Y_PADDING)
-#define GEOLOCATION_H 42
-	SUBWINDOW(SUBWINDOWS_X_START, GEOLOCATION_Y, SUBWINDOW_HEADER_WIDTH_L, GEOLOCATION_H, _("GEOLOCATION"))
-	YESNO(SUBWINDOWS_OPTION_X1_START, GEOLOCATION_Y + 16, SUBWINDOW_WIDTH_L, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Display players country flags in score board"))
-	YESNO(SUBWINDOWS_OPTION_X1_START, GEOLOCATION_Y + 28, SUBWINDOW_WIDTH_L, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Display your own location in score board"))
+#define GEOLOCATION_Y (ITEMS_Y + ITEMS_H + SUBWINDOW_OPTION_Y_PADDING)
+#define GEOLOCATION_H SUBWINDOW_OPTION_COMPUTE_H(2)
+	SUBWINDOW(SUBWINDOW_OPTION_X1_START, GEOLOCATION_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, GEOLOCATION_H, _("GEOLOCATION"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GEOLOCATION_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Display players country flags in score board"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GEOLOCATION_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Display your own location in score board"))
 
 // In-Game Display //
-#define DISPLAY_Y SUBWINDOWS_Y_START
-#define DISPLAY_H 160
-	SUBWINDOW(SUBWINDOWS_X2_START, DISPLAY_Y, SUBWINDOW_HEADER_WIDTH_R, DISPLAY_H, _("IN-GAME DISPLAY"))
-	YESNO(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 16, SUBWINDOW_WIDTH_R, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Toggle display of weapon flash when firing"))
-	MULTIACTION(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 28, SUBWINDOW_WIDTH_R, 10, _("Ejecting Brass:"), .2, 8, "cg_brasstime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, uiScript glPreset, _("Set the duration ejected bullet shells last for"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 40, SUBWINDOW_WIDTH_R, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Toggle display of bullet tracers"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 52, SUBWINDOW_WIDTH_R, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_R), 8)
-	SLIDER(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 52, SUBWINDOW_WIDTH_R, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 75 160, _("Set field of view"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 64, SUBWINDOW_WIDTH_R, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Set the maximum distance light corona is displayed"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 76, SUBWINDOW_WIDTH_R, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Set duration of bullet marks on walls"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 88, SUBWINDOW_WIDTH_R, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Set blood flash scale when receiving damage"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 100, SUBWINDOW_WIDTH_R, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Set blood splatter transparency when taking damage from other players"))
-	YESNO(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 112, SUBWINDOW_WIDTH_R, 10, _("Blood Puff:"), .2, 8, "cg_bloodPuff", _("Toggle showing blood puff effect when players are shot"))
-	YESNO(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 124, SUBWINDOW_WIDTH_R, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggle showing blood spurt effect when players are shot"))
-	YESNO(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 136, SUBWINDOW_WIDTH_R, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draw atmospheric effects (snow/rain) on-screen"))
-	YESNO(SUBWINDOWS_OPTION_X2_START, DISPLAY_Y + 148, SUBWINDOW_WIDTH_R, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draw additional visual effects (airstrike planes, debris)"))
+#define DISPLAY_Y SUBWINDOW_OPTION_Y_START
+#define DISPLAY_H SUBWINDOW_OPTION_COMPUTE_H(12)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, DISPLAY_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, DISPLAY_H, _("IN-GAME DISPLAY"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Toggle display of weapon flash when firing"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Ejecting Brass:"), .2, 8, "cg_brasstime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, uiScript glPreset, _("Set the duration ejected bullet shells last for"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Toggle display of bullet tracers"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 4), SUBWINDOW_OPTION_WIDTH_R, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 4), SUBWINDOW_OPTION_WIDTH_R, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 75 160, _("Set field of view"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 5), SUBWINDOW_OPTION_WIDTH_R, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Set the maximum distance light corona is displayed"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 6), SUBWINDOW_OPTION_WIDTH_R, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Set duration of bullet marks on walls"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 7), SUBWINDOW_OPTION_WIDTH_R, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Set blood flash scale when receiving damage"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 8), SUBWINDOW_OPTION_WIDTH_R, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Set blood splatter transparency when taking damage from other players"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 9), SUBWINDOW_OPTION_WIDTH_R, 10, _("Blood Puff:"), .2, 8, "cg_bloodPuff", _("Toggle showing blood puff effect when players are shot"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 10), SUBWINDOW_OPTION_WIDTH_R, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggle showing blood spurt effect when players are shot"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 11), SUBWINDOW_OPTION_WIDTH_R, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draw atmospheric effects (snow/rain) on-screen"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DISPLAY_Y, 12), SUBWINDOW_OPTION_WIDTH_R, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draw additional visual effects (airstrike planes, debris)"))
 
 // Crosshair //
-#define CROSSHAIR_Y (DISPLAY_Y + DISPLAY_H + SUBWINDOW_Y_PADDING)
-#define CROSSHAIR_H 125
-#define CROSSHAIR_X_OFFSET 66 
-	SUBWINDOW(SUBWINDOWS_X2_START, CROSSHAIR_Y, SUBWINDOW_HEADER_WIDTH_R, CROSSHAIR_H, _("CROSSHAIR"))
-	YESNO(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 16, SUBWINDOW_WIDTH_R, 10, _("Use Cvar Crosshair:"), .2, 8, "cg_useCvarCrosshair", _("Force usage of cvar value for crosshair on map load/reload"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 28, SUBWINDOW_WIDTH_R, 10, _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, _("Set the size of the displayed crosshair"))
-	YESNO(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 40, SUBWINDOW_WIDTH_R, 10, _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggle crosshair spread sizing while moving/firing"))
-	YESNO(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 52, SUBWINDOW_WIDTH_R, 10, _("Crosshair Health Info:"), .2, 8, "cg_crosshairHealth", _("Color the crosshair based on current health (override crosshair color settings)"))
+#define CROSSHAIR_Y (DISPLAY_Y + DISPLAY_H + SUBWINDOW_OPTION_Y_PADDING)
+#define CROSSHAIR_H SUBWINDOW_OPTION_COMPUTE_H(10)
+#define CROSSHAIR_X_OFFSET 66
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, CROSSHAIR_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, CROSSHAIR_H, _("CROSSHAIR"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Use Cvar Crosshair:"), .2, 8, "cg_useCvarCrosshair", _("Force usage of cvar value for crosshair on map load/reload"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, _("Set the size of the displayed crosshair"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggle crosshair spread sizing while moving/firing"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 4), SUBWINDOW_OPTION_WIDTH_R, 10, _("Crosshair Health Info:"), .2, 8, "cg_crosshairHealth", _("Color the crosshair based on current health (override crosshair color settings)"))
 
 	itemDef {
 		name        "crosshair_select"
 		group GROUP_NAME
-		rect        $evalfloat(SUBWINDOWS_OPTION_X2_START + 12) $evalfloat(CROSSHAIR_Y + CROSSHAIR_X_OFFSET) 44 44
+		rect        $evalfloat(SUBWINDOW_OPTION_X2_START + 12) $evalfloat(CROSSHAIR_Y + CROSSHAIR_X_OFFSET) 44 44
 		style WINDOW_STYLE_FILLED
 		ownerdraw UI_CROSSHAIR
 		backcolor   .1 .1 .1 .9
@@ -139,23 +125,23 @@ menuDef {
 		}
 	}
 
-	MULTI(SUBWINDOWS_OPTION_X2_START + CROSSHAIR_X_OFFSET, CROSSHAIR_Y + 64, SUBWINDOW_WIDTH_R - CROSSHAIR_X_OFFSET, 10, _("Primary Color:"), .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the primary crosshair"))
-	MULTI(SUBWINDOWS_OPTION_X2_START + CROSSHAIR_X_OFFSET, CROSSHAIR_Y + 76, SUBWINDOW_WIDTH_R - CROSSHAIR_X_OFFSET, 10, _("Secondary Color:"), .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the secondary crosshair"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 100, SUBWINDOW_WIDTH_R, 10, "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_R), 8)
-	SLIDER(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 100, SUBWINDOW_WIDTH_R, 10, _("Primary Alpha:"), .2, 8, "cg_crosshairAlpha" 1 0 1, _("Set the transparency level for the primary crosshair"))
-	CVARFLOATLABEL(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 112, SUBWINDOW_WIDTH_R, 10, "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_R), 8)
-	SLIDER(SUBWINDOWS_OPTION_X2_START, CROSSHAIR_Y + 112, SUBWINDOW_WIDTH_R, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair"))
+	MULTI(SUBWINDOW_OPTION_X2_START + CROSSHAIR_X_OFFSET, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 6), SUBWINDOW_OPTION_WIDTH_R - CROSSHAIR_X_OFFSET, 10, _("Primary Color:"), .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the primary crosshair"))
+	MULTI(SUBWINDOW_OPTION_X2_START + CROSSHAIR_X_OFFSET, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 7), SUBWINDOW_OPTION_WIDTH_R - CROSSHAIR_X_OFFSET, 10, _("Secondary Color:"), .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the secondary crosshair"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 9), SUBWINDOW_OPTION_WIDTH_R, 10, "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 9), SUBWINDOW_OPTION_WIDTH_R, 10, _("Primary Alpha:"), .2, 8, "cg_crosshairAlpha" 1 0 1, _("Set the transparency level for the primary crosshair"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 10), SUBWINDOW_OPTION_WIDTH_R, 10, "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CROSSHAIR_Y, 10), SUBWINDOW_OPTION_WIDTH_R, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair"))
 
 // Shoutcast //
-#define SHOUTCAST_Y (CROSSHAIR_Y + CROSSHAIR_H + SUBWINDOW_Y_PADDING)
-#define SHOUTCAST_H 76
-	SUBWINDOW(SUBWINDOWS_X2_START, SHOUTCAST_Y, SUBWINDOW_HEADER_WIDTH_R, SHOUTCAST_H, _("SHOUTCAST"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 16, SUBWINDOW_WIDTH_R, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 28, SUBWINDOW_WIDTH_R, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them"))
-	EDITFIELD(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 40, SUBWINDOW_WIDTH_R, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)"))
-	EDITFIELD(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 52, SUBWINDOW_WIDTH_R, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)"))
-	MULTI(SUBWINDOWS_OPTION_X2_START, SHOUTCAST_Y + 64, SUBWINDOW_WIDTH_R, 10, _("Spectator Names:"), .2, 8, "cg_drawSpectatorNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Display player names when spectating"))
+#define SHOUTCAST_Y (CROSSHAIR_Y + CROSSHAIR_H + SUBWINDOW_OPTION_Y_PADDING)
+#define SHOUTCAST_H SUBWINDOW_OPTION_COMPUTE_H(5)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, SHOUTCAST_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, SHOUTCAST_H, _("SHOUTCAST"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SHOUTCAST_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SHOUTCAST_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them"))
+	EDITFIELD(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SHOUTCAST_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)"))
+	EDITFIELD(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SHOUTCAST_Y, 4), SUBWINDOW_OPTION_WIDTH_R, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SHOUTCAST_Y, 5), SUBWINDOW_OPTION_WIDTH_R, 10, _("Spectator Names:"), .2, 8, "cg_drawSpectatorNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Display player names when spectating"))
 
 // Buttons //
-	BUTTON(SUBWINDOWS_X_START, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_hud ; open options)
+	BUTTON(SUBWINDOW_OPTION_X1_START, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_hud ; open options)
 }

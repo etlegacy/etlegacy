@@ -8,49 +8,39 @@
 #define WINDOW_HEIGHT   448
 #define GROUP_NAME      "grpOptionsSystem"
 
-// Subwindows //
-#define SUBWINDOWS_X_PADDING     2
-#define SUBWINDOW_Y_PADDING      4
-#define SUBWINDOWS_X_START       6
-#define SUBWINDOWS_Y_START       32
-#define SUBWINDOW_HEADER_WIDTH_L (.50 * (WINDOW_WIDTH - 18))
-#define SUBWINDOW_HEADER_WIDTH_R (.50 * (WINDOW_WIDTH - 18))
-#define SUBWINDOW_WIDTH_L        (SUBWINDOW_HEADER_WIDTH_L - SUBWINDOWS_X_PADDING * 2)
-#define SUBWINDOW_WIDTH_R        (SUBWINDOW_HEADER_WIDTH_R - SUBWINDOWS_X_PADDING * 2)
-
-#define SUBWINDOWS_OPTION_X1_START (SUBWINDOWS_X_START + SUBWINDOWS_X_PADDING)
-#define SUBWINDOWS_X2_START        (SUBWINDOWS_OPTION_X1_START + SUBWINDOW_WIDTH_L + SUBWINDOWS_X_PADDING * 4)
-#define SUBWINDOWS_OPTION_X2_START (SUBWINDOWS_X2_START + SUBWINDOWS_X_PADDING)
-
 menuDef {
 	name        "options_system_extended"
 	visible     0
 	fullscreen  0
-	rect        WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
-	style       WINDOW_STYLE_FILLED
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
 
-    onESC {
-        close options_system_extended ;
-        open options_system
-    }
+	onESC {
+		close options_system_extended ;
+		open  options_system
+	}
 
 	WINDOW(_("SYSTEM EXTENDED"), 150)
 
 // Simple graphics //
-#define CONSOLE_Y 32
-#define CONSOLE_H 80
-	SUBWINDOW(SUBWINDOWS_X_START, CONSOLE_Y, SUBWINDOW_HEADER_WIDTH_L, CONSOLE_H, _("CONSOLE"))
-    YESNO(SUBWINDOWS_OPTION_X1_START, CONSOLE_Y + 16, SUBWINDOW_WIDTH_L, 10, _("Auto Clear:"), .2, 8, "con_autoclear", _("Toggle persistent console input."))
+#define CONSOLE_Y SUBWINDOW_OPTION_Y_START
 #ifdef ETLEGACY
-    CVARFLOATLABEL(SUBWINDOWS_OPTION_X1_START, CONSOLE_Y + 28, SUBWINDOW_WIDTH_L, 10, "con_defaultHeight", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_WIDTH_L), 8)
-    SLIDER(SUBWINDOWS_OPTION_X1_START, CONSOLE_Y + 28, SUBWINDOW_WIDTH_L, 10, _("Default Height:"), .2, 8, "con_defaultHeight" 0.5 0 1, _("Specify custom console height ratio (0.0 to 1.0)."))
-    EDITFIELD(SUBWINDOWS_OPTION_X1_START, CONSOLE_Y + 40, SUBWINDOW_WIDTH_L, 10, _("Font Name:"), .2, 8, "con_fontName", 25, 18, _("Set the font console. Use listfonts commands in console to check available fonts."))
-    MULTI(SUBWINDOWS_OPTION_X1_START, CONSOLE_Y + 52, SUBWINDOW_WIDTH_L, 10, _("Open Speed:"), .2, 8, "con_openspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
-    EDITFIELD(SUBWINDOWS_OPTION_X1_START, CONSOLE_Y + 64, SUBWINDOW_WIDTH_L, 10, _("Background Color:"), .2, 8, "con_background", 25, 18, _("Specify the console background color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
+#define CONSOLE_H SUBWINDOW_OPTION_COMPUTE_H(5)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, CONSOLE_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, CONSOLE_H, _("CONSOLE"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(CONSOLE_Y, 1), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Auto Clear:"), .2, 8, "con_autoclear", _("Toggle persistent console input."))
+
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(CONSOLE_Y, 2), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, "con_defaultHeight", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(CONSOLE_Y, 2), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Default Height:"), .2, 8, "con_defaultHeight" 0.5 0 1, _("Specify custom console height ratio (0.0 to 1.0)."))
+	EDITFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(CONSOLE_Y, 3), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Font Name:"), .2, 8, "con_fontName", 25, 18, _("Set the font console. Use listfonts commands in console to check available fonts."))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(CONSOLE_Y, 4), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Open Speed:"), .2, 8, "con_openspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
+	EDITFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(CONSOLE_Y, 5), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Background Color:"), .2, 8, "con_background", 25, 18, _("Specify the console background color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
 #else
-    MULTI(SUBWINDOWS_OPTION_X1_START, CONSOLE_Y + 28, SUBWINDOW_WIDTH_L, 10, _("Open Speed:"), .2, 8, "scr_conspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
+#define CONSOLE_H SUBWINDOW_OPTION_COMPUTE_H(2)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, CONSOLE_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, CONSOLE_H, _("CONSOLE"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(CONSOLE_Y, 1), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Auto Clear:"), .2, 8, "con_autoclear", _("Toggle persistent console input."))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(CONSOLE_Y, 2), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Open Speed:"), .2, 8, "scr_conspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
 #endif
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_system_extended ; open options_system)
+	BUTTON(6, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_system_extended ; open options_system)
 }
