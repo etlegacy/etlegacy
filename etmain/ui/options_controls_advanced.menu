@@ -9,7 +9,16 @@
 #define GROUP_NAME		"grpOptionsControls"
 
 // Subwindows //
-#define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
+#define SUBWINDOWS_X_PADDING   2
+#define SUBWINDOW_Y_PADDING    4
+#define SUBWINDOWS_X_START     6
+#define SUBWINDOWS_Y_START     32
+#define SUBWINDOW_HEADER_WIDTH (.5 * (WINDOW_WIDTH - 18))
+#define SUBWINDOW_WIDTH        (SUBWINDOW_HEADER_WIDTH - SUBWINDOWS_X_PADDING * 2)
+
+#define SUBWINDOWS_OPTION_X1_START (SUBWINDOWS_X_START + SUBWINDOWS_X_PADDING)
+#define SUBWINDOWS_X2_START        (SUBWINDOWS_OPTION_X1_START + SUBWINDOW_WIDTH + SUBWINDOWS_X_PADDING * 4)
+#define SUBWINDOWS_OPTION_X2_START (SUBWINDOWS_X2_START + SUBWINDOWS_X_PADDING)
 
 // Controls Menu //
 menuDef {
@@ -28,50 +37,54 @@ menuDef {
 	WINDOW( _("CONTROLS: ADVANCED"), 90 )
 
 // Selection //
-#define SELECTION_Y 32
-	SUBWINDOW( 6, SELECTION_Y, (SUBWINDOW_WIDTH), 52, _("SELECTION MENUS" ))
-	BIND( 8, SELECTION_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Team selection:"), .2, 8, "teammenu", "Open team selection menu" )
-	BIND( 8, SELECTION_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Class selection:"), .2, 8, "classmenu", "Open class selection menu" )
-	BIND( 8, SELECTION_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Spawn selection:"), .2, 8, "spawnmenu", "Open spawn selection menu" )
+#define SELECTION_Y SUBWINDOWS_Y_START
+#define SELECTION_H 52
+	SUBWINDOW(SUBWINDOWS_X_START, SELECTION_Y, SUBWINDOW_HEADER_WIDTH, SELECTION_H, _("SELECTION MENUS" ))
+	BIND(SUBWINDOWS_OPTION_X1_START, SELECTION_Y+16, SUBWINDOW_WIDTH, 10, _("Team selection:"), .2, 8, "teammenu", "Open team selection menu" )
+	BIND(SUBWINDOWS_OPTION_X1_START, SELECTION_Y+28, SUBWINDOW_WIDTH, 10, _("Class selection:"), .2, 8, "classmenu", "Open class selection menu" )
+	BIND(SUBWINDOWS_OPTION_X1_START, SELECTION_Y+40, SUBWINDOW_WIDTH, 10, _("Spawn selection:"), .2, 8, "spawnmenu", "Open spawn selection menu" )
 
 // Fire-Teams //
-#define FIRETEAM_Y 90
-	SUBWINDOW( 6, FIRETEAM_Y, (SUBWINDOW_WIDTH), 148, _("FIRE-TEAMS" ))
-	BIND( 8, FIRETEAM_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Fire-Team Admin:"), .2, 8, "mp_fireteamadmin", "" )
-	BIND( 8, FIRETEAM_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Select All Members:"), .2, 8, "selectbuddy -2", "" )
-	BIND( 8, FIRETEAM_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Deselect All Members:"), .2, 8, "selectbuddy -1", "" )
-	BIND( 8, FIRETEAM_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #1:"), .2, 8, "selectbuddy 0", "" )
-	BIND( 8, FIRETEAM_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #2:"), .2, 8, "selectbuddy 1", "" )
-	BIND( 8, FIRETEAM_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #3:"), .2, 8, "selectbuddy 2", "" )
-	BIND( 8, FIRETEAM_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #4:"), .2, 8, "selectbuddy 3", "" )
-	BIND( 8, FIRETEAM_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #5:"), .2, 8, "selectbuddy 4", "" )
-	BIND( 8, FIRETEAM_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #6:"), .2, 8, "selectbuddy 5", "" )
-	BIND( 8, FIRETEAM_Y+124, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #7:"), .2, 8, "selectbuddy 6", "" )
-	BIND( 8, FIRETEAM_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #8:"), .2, 8, "selectbuddy 7", "" )
+#define FIRETEAM_Y (SELECTION_Y + SELECTION_H + SUBWINDOW_Y_PADDING)
+#define FIRETEAM_H 148
+	SUBWINDOW(SUBWINDOWS_X_START, FIRETEAM_Y, SUBWINDOW_HEADER_WIDTH, 148, _("FIRE-TEAMS" ))
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+16, SUBWINDOW_WIDTH, 10, _("Fire-Team Admin:"), .2, 8, "mp_fireteamadmin", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+28, SUBWINDOW_WIDTH, 10, _("Select All Members:"), .2, 8, "selectbuddy -2", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+40, SUBWINDOW_WIDTH, 10, _("Deselect All Members:"), .2, 8, "selectbuddy -1", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+52, SUBWINDOW_WIDTH, 10, _("Select Member #1:"), .2, 8, "selectbuddy 0", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+64, SUBWINDOW_WIDTH, 10, _("Select Member #2:"), .2, 8, "selectbuddy 1", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+76, SUBWINDOW_WIDTH, 10, _("Select Member #3:"), .2, 8, "selectbuddy 2", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+88, SUBWINDOW_WIDTH, 10, _("Select Member #4:"), .2, 8, "selectbuddy 3", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+100, SUBWINDOW_WIDTH, 10, _("Select Member #5:"), .2, 8, "selectbuddy 4", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+112, SUBWINDOW_WIDTH, 10, _("Select Member #6:"), .2, 8, "selectbuddy 5", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+124, SUBWINDOW_WIDTH, 10, _("Select Member #7:"), .2, 8, "selectbuddy 6", "" )
+	BIND(SUBWINDOWS_OPTION_X1_START, FIRETEAM_Y+136, SUBWINDOW_WIDTH, 10, _("Select Member #8:"), .2, 8, "selectbuddy 7", "" )
 
 // Joystick //
-#define JOYSTICK_Y 244
-	SUBWINDOW( 6, JOYSTICK_Y, (SUBWINDOW_WIDTH), 112, _("JOYSTICK") )
-	MULTI( 8, JOYSTICK_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Enable Joysticks:"), .2, 8, "in_joystick", cvarFloatList { "No" 0 "Yes" 1 }, _("Toggle joystick initialization (requires vid_restart)") )
-	EDITFIELD( 8, JOYSTICK_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Use Joystick #:"), .2, 8, "in_joystickNo", 64, 18, _("Specify active joystick") )
-	MULTI( 8, JOYSTICK_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Analog Joystick:"), .2, 8, "in_joystickUseAnalog", cvarFloatList { "No" 0 "Yes" 1 }, _("Toggle analog joystick") )
-	SLIDER( 8, JOYSTICK_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Forward-Back Sensitivity:"), .2, 8, "j_forward" 5 -15 15, _("Set joystick forward-back sensitivity") )
-	SLIDER( 8, JOYSTICK_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Left-Right Sensitivity:"), .2, 8, "j_side" 5 -15 15, _("Set joystick left-right sensitivity") )
-	SLIDER( 8, JOYSTICK_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Up-Down Sensitivity:"), .2, 8, "j_up" 5 -15 15, _("Set joystick up-down sensitivity") )
-	SLIDER( 8, JOYSTICK_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Pitch:"), .2, 8, "j_pitch" 5 -15 15, _("Set pitch sensitivity") )
-	SLIDER( 8, JOYSTICK_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Yaw:"), .2, 8, "j_yaw" 5 -15 15, _("Set yaw sensitivity") )
+#define JOYSTICK_Y (FIRETEAM_Y + FIRETEAM_H + SUBWINDOW_Y_PADDING)
+#define JOYSTICK_H 112
+	SUBWINDOW(SUBWINDOWS_X_START, JOYSTICK_Y, SUBWINDOW_HEADER_WIDTH, JOYSTICK_H, _("JOYSTICK") )
+	MULTI(SUBWINDOWS_OPTION_X1_START, JOYSTICK_Y+16, SUBWINDOW_WIDTH, 10, _("Enable Joysticks:"), .2, 8, "in_joystick", cvarFloatList { "No" 0 "Yes" 1 }, _("Toggle joystick initialization (requires vid_restart)") )
+	EDITFIELD(SUBWINDOWS_OPTION_X1_START, JOYSTICK_Y+28, SUBWINDOW_WIDTH, 10, _("Use Joystick #:"), .2, 8, "in_joystickNo", 64, 18, _("Specify active joystick") )
+	MULTI(SUBWINDOWS_OPTION_X1_START, JOYSTICK_Y+40, SUBWINDOW_WIDTH, 10, _("Analog Joystick:"), .2, 8, "in_joystickUseAnalog", cvarFloatList { "No" 0 "Yes" 1 }, _("Toggle analog joystick") )
+	SLIDER(SUBWINDOWS_OPTION_X1_START, JOYSTICK_Y+52, SUBWINDOW_WIDTH, 10, _("Forward-Back Sensitivity:"), .2, 8, "j_forward" 5 -15 15, _("Set joystick forward-back sensitivity") )
+	SLIDER(SUBWINDOWS_OPTION_X1_START, JOYSTICK_Y+64, SUBWINDOW_WIDTH, 10, _("Left-Right Sensitivity:"), .2, 8, "j_side" 5 -15 15, _("Set joystick left-right sensitivity") )
+	SLIDER(SUBWINDOWS_OPTION_X1_START, JOYSTICK_Y+76, SUBWINDOW_WIDTH, 10, _("Up-Down Sensitivity:"), .2, 8, "j_up" 5 -15 15, _("Set joystick up-down sensitivity") )
+	SLIDER(SUBWINDOWS_OPTION_X1_START, JOYSTICK_Y+88, SUBWINDOW_WIDTH, 10, _("Pitch:"), .2, 8, "j_pitch" 5 -15 15, _("Set pitch sensitivity") )
+	SLIDER(SUBWINDOWS_OPTION_X1_START, JOYSTICK_Y+100, SUBWINDOW_WIDTH, 10, _("Yaw:"), .2, 8, "j_yaw" 5 -15 15, _("Set yaw sensitivity") )
 
-#define MISC_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 112, _("MISC") )
-	MULTI( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Activate lean:"), .2, 8, "cg_activateLean", cvarFloatList { "No" 0 "Yes" 1 }, _("Lean while using the activate button") )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Enemy spawntimer reset:"), .2, 8, "timerReset", "Resets enemy spawntimer" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer:"), .2, 8, "sharetimer", "Share the next time the enemy spawns with your team according to your spawntimer" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer fireteam:"), .2, 8, "sharetimer_buddy", "Share the next time the enemy spawns with your fireteam according to your spawntimer" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Shift timer backward:"), .2, 8, "cycle cg_spawntimer_set 0 2147483647 1000", "Shifts enemy spawn timer 1 second backward" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Shift timer forward:"), .2, 8, "cycle cg_spawntimer_set 2147483647 0 1000", "Shifts enemy spawn timer 1 second forward" )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Request artillery:"), .2, 8, "+zoom;+attack;-attack;-zoom", "Request artillery with single button press." )
-    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Toggle HUD Editor:"), .2, 8, "edithud", "Toggle open/close the HUD Editor." )
+#define MISC_Y SUBWINDOWS_Y_START
+#define MISC_H 112
+	SUBWINDOW(SUBWINDOWS_X2_START, MISC_Y, SUBWINDOW_HEADER_WIDTH, MISC_H, _("MISC") )
+	MULTI(SUBWINDOWS_OPTION_X2_START, MISC_Y+16, SUBWINDOW_WIDTH, 10, _("Activate lean:"), .2, 8, "cg_activateLean", cvarFloatList { "No" 0 "Yes" 1 }, _("Lean while using the activate button") )
+    BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+28, SUBWINDOW_WIDTH, 10, _("Enemy spawntimer reset:"), .2, 8, "timerReset", "Resets enemy spawntimer" )
+    BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+40, SUBWINDOW_WIDTH, 10, _("Sharetimer:"), .2, 8, "sharetimer", "Share the next time the enemy spawns with your team according to your spawntimer" )
+    BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+52, SUBWINDOW_WIDTH, 10, _("Sharetimer fireteam:"), .2, 8, "sharetimer_buddy", "Share the next time the enemy spawns with your fireteam according to your spawntimer" )
+    BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+64, SUBWINDOW_WIDTH, 10, _("Shift timer backward:"), .2, 8, "cycle cg_spawntimer_set 0 2147483647 1000", "Shifts enemy spawn timer 1 second backward" )
+    BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+76, SUBWINDOW_WIDTH, 10, _("Shift timer forward:"), .2, 8, "cycle cg_spawntimer_set 2147483647 0 1000", "Shifts enemy spawn timer 1 second forward" )
+    BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+88, SUBWINDOW_WIDTH, 10, _("Request artillery:"), .2, 8, "+zoom;+attack;-attack;-zoom", "Request artillery with single button press." )
+    BIND(SUBWINDOWS_OPTION_X2_START, MISC_Y+100, SUBWINDOW_WIDTH, 10, _("Toggle HUD Editor:"), .2, 8, "edithud", "Toggle open/close the HUD Editor." )
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls )
+	BUTTON(SUBWINDOWS_X_START, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls )
 }
