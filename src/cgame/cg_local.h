@@ -1320,6 +1320,7 @@ typedef struct
 	int cursorHintTime;
 	int cursorHintFade;
 	int cursorHintValue;
+	qhandle_t lastUsedHintIcon;
 
 	// attacking player
 	int attackerTime;
