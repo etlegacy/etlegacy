@@ -3198,7 +3198,6 @@ static void CG_ServerCommand(void)
 		return;
 	case CPM_HASH:                        // "cpm"
 	{
-		int                iconnumber;
 		const char         *iconstring;
 		popupMessageType_t pmType;
 
@@ -3207,29 +3206,25 @@ static void CG_ServerCommand(void)
 		// catch no cpm icon param
 		if (!iconstring[0])
 		{
-			iconnumber = PM_MESSAGE; // default
+			pmType = PM_MESSAGE; // default
 		}
 		else
 		{
-			iconnumber = Q_atoi(iconstring);
+			pmType = Q_atoi(iconstring);
 		}
 
 		// only valid icon types
-		if (iconnumber < 0 || iconnumber >= PM_NUM_TYPES)
+		if (pmType < 0 || pmType >= PM_NUM_TYPES)
 		{
-			iconnumber = PM_MESSAGE;
+			pmType = PM_MESSAGE;
 		}
 
-		if (strstr(CG_Argv(1), " connected") || strstr(CG_Argv(1), " disconnected"))
+		if (strstr(CG_Argv(1), " disconnected"))
 		{
-			pmType = PM_CONNECT;
-		}
-		else
-		{
-			pmType = iconnumber;
+			pmType = PM_DISCONNECT;
 		}
 
-		CG_AddPMItem(pmType, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, colorWhite);
+		CG_AddPMItem(pmType, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[pmType], 0, 0, colorWhite);
 		return;
 	}
 	case CP_HASH:                         // "cp"

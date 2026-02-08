@@ -3042,6 +3042,7 @@ typedef enum popupMessageType_e
 	PM_CONNECT,
 	PM_DEATH_HEADSHOT,
 	PM_ANNOUNCE,
+	PM_DISCONNECT,
 	PM_NUM_TYPES
 } popupMessageType_t;
 

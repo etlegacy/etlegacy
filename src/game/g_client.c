@@ -2527,11 +2527,11 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		if ((g_countryflags.integer & CF_CONNECT) && client->sess.uci > 0 && client->sess.uci < MAX_COUNTRY_NUM && allowGeoIP)
 		{
-			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected from %s\n\"", client->pers.netname, country_name[client->sess.uci]));
+			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected from %s\n\" %i", client->pers.netname, country_name[client->sess.uci], PM_CONNECT));
 		}
 		else
 		{
-			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
+			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected\n\" %i", client->pers.netname, PM_CONNECT));
 		}
 	}
 
