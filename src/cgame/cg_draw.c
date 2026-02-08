@@ -1112,6 +1112,10 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 				{
 					flag = cgs.media.alliedFlag;
 				}
+				else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_SPECTATOR)
+				{
+					flag = cgs.media.pmImageSpecFlag;
+				}
 				else
 				{
 					flag = 0;
