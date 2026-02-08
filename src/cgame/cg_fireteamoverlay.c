@@ -547,7 +547,6 @@ static void CG_FTOverlay_StoreSpawnpointString(fireteamOverlay_t *fto, const int
 }
 
 #define HEALTH_TEXT_WIDTH (CG_Text_Width_Ext_Float("999", fto->textScale, 0, FONT_TEXT))
-#define HEALTH_BAR_WIDTH (fto->w * 0.15f)
 #define CLASS_ICON_ARROW_WIDTH (CG_Text_Width_Ext_Float("->", fto->textScale, 0, FONT_TEXT))
 // slightly wider than the icon size, to leave a bit of margin between the icon and name
 #define POWERUP_WIDTH (fto->iconSize * 1.25f)
@@ -824,7 +823,6 @@ static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, const hudComponent_t
 {
 	const int  health          = fto->ci->health;
 	const int  healthTextWidth = HEALTH_TEXT_WIDTH;
-	const int  healthBarWidth  = HEALTH_BAR_WIDTH;
 	int        maxHealth;
 	vec4_t     color;
 	const char *text;
@@ -878,11 +876,11 @@ static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, const hudComponent_t
 	{
 		maxHealth = CG_GetPlayerMaxHealth(fto->ci->clientNum, fto->ci->cls, fto->ci->team);
 
-		CG_FilledBar(fto->x, fto->y + fto->healthBarHeightOffset, healthBarWidth, fto->healthBarHeight,
+		CG_FilledBar(fto->x, fto->y + fto->healthBarHeightOffset, fto->healthBarWidth, fto->healthBarHeight,
 		             color, color,
 		             comp->colorBackground, color, health / (float)maxHealth, 0.f, BAR_BORDER_SMALL, -1);
 
-		fto->x += healthBarWidth + fto->spacerInner;
+		fto->x += fto->healthBarWidth + fto->spacerInner;
 	}
 }
 
