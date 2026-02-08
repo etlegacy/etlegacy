@@ -2244,6 +2244,21 @@ enum
 	FOLLOW_NO_COUNTDOWN = BIT(0),
 };
 
+// fireteam overlay
+enum
+{
+    FT_LATCHED_CLASS     = BIT(0),
+    FT_NO_HEADER         = BIT(1),
+    FT_COLORLESS_NAME    = BIT(2),
+    FT_STATUS_COLOR_NAME = BIT(3),
+    FT_STATUS_COLOR_ROW  = BIT(4),
+    FT_SPAWN_POINT       = BIT(5),
+    FT_SPAWN_POINT_LOC   = BIT(6),
+    FT_SPAWN_POINT_MINOR = BIT(7),
+    FT_SPAWN_HEALTH_TEXT = BIT(8),
+    FT_SPAWN_HEALTH_BAR  = BIT(9),
+};
+
 /// Locations
 #define MAX_C_LOCATIONS 1024
 #define MAX_LOC_LEN 128

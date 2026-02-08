@@ -39,17 +39,6 @@ static int sortedFireTeamClients[MAX_CLIENTS];
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_TEXT           &cgs.media.limboFont2
 
-// HUD editor flags
-// TODO: move these elsewhere (and probably rename)
-#define FT_LATCHED_CLASS        (BIT(0))
-#define FT_NO_HEADER            (BIT(1))
-#define FT_COLORLESS_NAME       (BIT(2))
-#define FT_STATUS_COLOR_NAME    (BIT(3))
-#define FT_STATUS_COLOR_ROW     (BIT(4))
-#define FT_SPAWN_POINT          (BIT(5))
-#define FT_SPAWN_POINT_LOC      (BIT(6))
-#define FT_SPAWN_POINT_MINOR    (BIT(7))
-
 typedef struct fireteamOverlay_s
 {
 	float x;
@@ -840,6 +829,11 @@ static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, const hudComponent_t
 	vec4_t     color;
 	const char *text;
 
+	if (!(comp->style & FT_SPAWN_HEALTH_TEXT) && !(comp->style & FT_SPAWN_HEALTH_BAR))
+	{
+		return;
+	}
+
 	if (health > FT_HEALTH_NORMAL)
 	{
 		Vector4Copy(comp->colorMain, color);
@@ -871,19 +865,25 @@ static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, const hudComponent_t
 		text = "0";
 	}
 
-	CG_Text_Paint_RightAligned_Ext(fto->x + healthTextWidth, fto->y + fto->textHeightOffset, fto->textScale, fto->textScale,
-	                               color, text, 0, 0, comp->styleText, FONT_TEXT);
+	if (comp->style & FT_SPAWN_HEALTH_TEXT)
+	{
+		CG_Text_Paint_RightAligned_Ext(fto->x + healthTextWidth, fto->y + fto->textHeightOffset, fto->textScale, fto->textScale,
+		                               color, text, 0, 0, comp->styleText, FONT_TEXT);
 
-	// always use static size, regardless of actual text being drawn
-	fto->x += healthTextWidth + fto->spacerInner;
+		// always use static size, regardless of actual text being drawn
+		fto->x += healthTextWidth + fto->spacerInner;
+	}
 
-	maxHealth = CG_GetPlayerMaxHealth(fto->ci->clientNum, fto->ci->cls, fto->ci->team);
+	if (comp->style & FT_SPAWN_HEALTH_BAR)
+	{
+		maxHealth = CG_GetPlayerMaxHealth(fto->ci->clientNum, fto->ci->cls, fto->ci->team);
 
-	CG_FilledBar(fto->x, fto->y + fto->healthBarHeightOffset, healthBarWidth, fto->healthBarHeight,
-	             color, color,
-	             comp->colorBackground, color, health / (float)maxHealth, 0.f, BAR_BORDER_SMALL, -1);
+		CG_FilledBar(fto->x, fto->y + fto->healthBarHeightOffset, healthBarWidth, fto->healthBarHeight,
+		             color, color,
+		             comp->colorBackground, color, health / (float)maxHealth, 0.f, BAR_BORDER_SMALL, -1);
 
-	fto->x += healthBarWidth + fto->spacerInner;
+		fto->x += healthBarWidth + fto->spacerInner;
+	}
 }
 
 void CG_FTOverlay_DrawLocation(fireteamOverlay_t *fto, const int row, hudComponent_t *comp)
@@ -1115,8 +1115,17 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 	fixedElementsWidth = fto->classIconWidth + fto->spacerInner
 	                     + fto->bestNameWidth + fto->spacerInner
-	                     + (fto->weaponIconSize * fto->bestWeaponIconWidthScale) + fto->spacerInner
-	                     + fto->healthTextWidth + fto->spacerInner + fto->healthBarWidth;
+	                     + (fto->weaponIconSize * fto->bestWeaponIconWidthScale);
+
+	if (comp->style & FT_SPAWN_HEALTH_TEXT)
+	{
+		fixedElementsWidth += fto->spacerInner + fto->healthTextWidth;
+	}
+
+	if (comp->style & FT_SPAWN_HEALTH_BAR)
+	{
+		fixedElementsWidth += fto->spacerInner + fto->healthBarWidth;
+	}
 
 	// Figure out the remaining space. This is a bit complicated with locations
 	// and spawnpoint being so complicated with their possible combinations,
