@@ -1668,6 +1668,9 @@ typedef struct
 	qhandle_t medicReviveShader;
 	qhandle_t disguisedShader;
 	qhandle_t voiceChatShader;
+	qhandle_t voiceChatOrangeShader;
+	qhandle_t greenTick;
+	qhandle_t redCross;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
 	qhandle_t objectiveBlueShader;
@@ -1914,9 +1917,15 @@ typedef struct
 	qhandle_t ccDestructIcon[3][2];
 	qhandle_t ccTankIcon;
 	qhandle_t skillPics[SK_NUM_SKILLS];
+	qhandle_t ccskillPics[SK_NUM_SKILLS];
+	qhandle_t ccGreenTick;
+	qhandle_t ccRedCross;
+	qhandle_t ccFriendShader;
 	qhandle_t ccMedicIcon;
+	qhandle_t ccMedicReviveShader;
 	qhandle_t ccAmmoIcon;
 	qhandle_t ccVoiceChatShader;
+	qhandle_t ccVoiceChatOrangeShader;
 #ifdef FEATURE_PRESTIGE
 	qhandle_t prestigePics[3];
 #endif
@@ -2247,16 +2256,16 @@ enum
 // fireteam overlay
 enum
 {
-    FT_LATCHED_CLASS     = BIT(0),
-    FT_NO_HEADER         = BIT(1),
-    FT_COLORLESS_NAME    = BIT(2),
-    FT_STATUS_COLOR_NAME = BIT(3),
-    FT_STATUS_COLOR_ROW  = BIT(4),
-    FT_SPAWN_POINT       = BIT(5),
-    FT_SPAWN_POINT_LOC   = BIT(6),
-    FT_SPAWN_POINT_MINOR = BIT(7),
-    FT_SPAWN_HEALTH_TEXT = BIT(8),
-    FT_SPAWN_HEALTH_BAR  = BIT(9),
+	FT_LATCHED_CLASS     = BIT(0),
+	FT_NO_HEADER         = BIT(1),
+	FT_COLORLESS_NAME    = BIT(2),
+	FT_STATUS_COLOR_NAME = BIT(3),
+	FT_STATUS_COLOR_ROW  = BIT(4),
+	FT_SPAWN_POINT       = BIT(5),
+	FT_SPAWN_POINT_LOC   = BIT(6),
+	FT_SPAWN_POINT_MINOR = BIT(7),
+	FT_SPAWN_HEALTH_TEXT = BIT(8),
+	FT_SPAWN_HEALTH_BAR  = BIT(9),
 };
 
 /// Locations
@@ -4185,7 +4194,7 @@ typedef struct hudStructure_s
 	hudComponent_t weaponheatbar;
 	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
-    hudComponent_t clipbar;
+	hudComponent_t clipbar;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
 	hudComponent_t popupmessages2;
@@ -4195,7 +4204,7 @@ typedef struct hudStructure_s
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
 	// 20
-    hudComponent_t cursorhints;
+	hudComponent_t cursorhints;
 	hudComponent_t cursorhintsbar;
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
@@ -4206,7 +4215,7 @@ typedef struct hudStructure_s
 	hudComponent_t localtime;
 	hudComponent_t votetext;
 	// 30
-    hudComponent_t spectatortext;
+	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
 	hudComponent_t demotext;
@@ -4217,7 +4226,7 @@ typedef struct hudStructure_s
 	hudComponent_t fps;
 	hudComponent_t snapshot;
 	// 40
-    hudComponent_t ping;
+	hudComponent_t ping;
 	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
@@ -4228,7 +4237,7 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
 	// 50
-    hudComponent_t centerprint;
+	hudComponent_t centerprint;
 	hudComponent_t banner;
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
@@ -4237,7 +4246,7 @@ typedef struct hudStructure_s
 	hudComponent_t xpgain;
 	hudComponent_t scPlayerListAxis;
 	// 60
-    hudComponent_t scPlayerListAllies;
+	hudComponent_t scPlayerListAllies;
 	hudComponent_t scTeamNamesAxis;
 	hudComponent_t scTeamNamesAllies;
 

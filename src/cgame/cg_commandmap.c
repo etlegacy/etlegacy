@@ -192,14 +192,64 @@ static int CG_GetVoiceChatForCommandMap(int voiceChat)
 		return cgs.media.ccVoiceChatShader;
 	}
 
+	if (voiceChat == cgs.media.voiceChatOrangeShader)
+	{
+		return cgs.media.ccVoiceChatOrangeShader;
+	}
+
+	if (voiceChat == cgs.media.greenTick)
+	{
+		return cgs.media.ccGreenTick;
+	}
+
+	if (voiceChat == cgs.media.redCross)
+	{
+		return cgs.media.ccRedCross;
+	}
+
+	if (voiceChat == cgs.media.friendShader)
+	{
+		return cgs.media.ccFriendShader;
+	}
+
 	if (voiceChat == cgs.media.medicIcon)
 	{
 		return cgs.media.ccMedicIcon;
 	}
 
+	if (voiceChat == cgs.media.medicReviveShader)
+	{
+		return cgs.media.ccMedicReviveShader;
+	}
+
 	if (voiceChat == cgs.media.ammoIcon)
 	{
 		return cgs.media.ccAmmoIcon;
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_EXPLOSIVES_AND_CONSTRUCTION])
+	{
+		return cgs.media.ccskillPics[SK_EXPLOSIVES_AND_CONSTRUCTION];
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_FIRST_AID])
+	{
+		return cgs.media.ccskillPics[SK_FIRST_AID];
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_SIGNALS])
+	{
+		return cgs.media.ccskillPics[SK_SIGNALS];
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_HEAVY_WEAPONS])
+	{
+		return cgs.media.ccskillPics[SK_HEAVY_WEAPONS];
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS])
+	{
+		return cgs.media.ccskillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS];
 	}
 
 	return voiceChat;

@@ -175,6 +175,20 @@ sprites/cm_medic_icon
 	}
 }
 
+sprites/cm_medic_revive
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		clampmap sprites/medic_revive.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 sprites/cm_ammo_icon
 {
 	nopicmip
@@ -203,6 +217,62 @@ sprites/cm_voicechat_icon
 	}
 }
 
+sprites/cm_voicechat_orange_icon
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		clampmap sprites/voicechat_orange.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+sprites/cm_greentick
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		clampmap sprites/greentick.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+sprites/cm_redcross
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		clampmap sprites/redcross.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+sprites/cm_friendlycross
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		clampmap gfx/2d/friendlycross.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 sprites/objective_blue
 {
 	nopicmip
@@ -224,6 +294,76 @@ sprites/objective_red
 	nomipmaps
 	{
 		map sprites/objective_red.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_ic_soldier
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/ic_soldier.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_ic_medic
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/ic_medic.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_ic_engineer
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/ic_engineer.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_ic_fieldops
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/ic_fieldops.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_ic_covertops
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/ic_covertops.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
