@@ -1455,10 +1455,9 @@ void CG_DrawAmmoCount(hudComponent_t *comp)
 void CG_DrawClipBar(hudComponent_t *comp)
 {
 	int       value, value2, value3;
-	int       maxAmmo, curentClip = 0;
-	char      buffer[16] = { 0 };
-	vec4_t    *color     = &comp->colorMain;
-	int       barStyle   = comp->barStyle;
+	int       maxAmmo  = 0;
+	vec4_t    *color   = &comp->colorMain;
+	int       barStyle = comp->barStyle;
 	centity_t *cent;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
