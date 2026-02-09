@@ -4,6 +4,7 @@
 /legacy
 /build*/
 /project
+/release
 /obj
 /doc
 /Makefile
