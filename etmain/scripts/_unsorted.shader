@@ -1024,6 +1024,7 @@ blacksmokeanim23
 blood_dot1
 {
 	polygonOffset
+	///etl/// maxpicmip 2
 	{
 		map sprites/blood_dot1.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1034,6 +1035,7 @@ blood_dot1
 blood_dot2
 {
 	polygonOffset
+	///etl/// maxpicmip 2
 	{
 		map sprites/blood_dot2.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1044,6 +1046,7 @@ blood_dot2
 blood_dot3
 {
 	polygonOffset
+	///etl/// maxpicmip 2
 	{
 		map sprites/blood_dot3.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1054,6 +1057,7 @@ blood_dot3
 blood_dot4
 {
 	polygonOffset
+	///etl/// maxpicmip 2
 	{
 		map sprites/blood_dot4.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1064,6 +1068,7 @@ blood_dot4
 blood_dot5
 {
 	polygonOffset
+	///etl/// maxpicmip 2
 	{
 		map sprites/blood_dot5.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
