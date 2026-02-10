@@ -117,9 +117,9 @@ static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *sciss
 	if (!scissor->circular)
 	{
 		if (mEnt->automapTransformed[0] < scissor->tl[0]
-		    || mEnt->automapTransformed[0] > scissor->br[0]
-		    || mEnt->automapTransformed[1] < scissor->tl[1]
-		    || mEnt->automapTransformed[1] > scissor->br[1])
+			|| mEnt->automapTransformed[0] > scissor->br[0]
+			|| mEnt->automapTransformed[1] < scissor->tl[1]
+			|| mEnt->automapTransformed[1] > scissor->br[1])
 		{
 			return qtrue;
 		}
@@ -153,9 +153,9 @@ static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor, vec2_
 	if (!scissor->circular)
 	{
 		if (vec[0] < scissor->tl[0]
-		    || vec[0] > scissor->br[0]
-		    || vec[1] < scissor->tl[1]
-		    || vec[1] > scissor->br[1])
+			|| vec[0] > scissor->br[0]
+			|| vec[1] < scissor->tl[1]
+			|| vec[1] > scissor->br[1])
 		{
 			return qtrue;
 		}
@@ -299,9 +299,9 @@ static float CG_PlayerDistanceScaling(mapEntityData_t *player)
 		mEntScale = &mapEntities[i];
 
 		if (mEntScale->type != ME_PLAYER &&
-		    mEntScale->type != ME_PLAYER_DISGUISED &&
-		    mEntScale->type != ME_PLAYER_OBJECTIVE &&
-		    mEntScale->type != ME_PLAYER_REVIVE)
+			mEntScale->type != ME_PLAYER_DISGUISED &&
+			mEntScale->type != ME_PLAYER_OBJECTIVE &&
+			mEntScale->type != ME_PLAYER_REVIVE)
 		{
 			continue;
 		}
@@ -781,7 +781,7 @@ static void CG_ComputeMapEntCoordinate(mapEntityData_t *mEnt, mapScissor_t *scis
  * @param[in] pointTowardNorth
  */
 static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor,
-                             qboolean interactive, snapshot_t *snap, int icon_size, qboolean pointTowardNorth)
+							 qboolean interactive, snapshot_t *snap, int icon_size, qboolean pointTowardNorth)
 {
 	int              j = 1;
 	qhandle_t        pic;
@@ -840,7 +840,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 		{
 			// use our own lerp'ed origin
 			CG_ComputeMapEntCoordinate(mEnt, scissor, &cg.predictedPlayerEntity.lerpOrigin,
-			                           (cg.showGameView ? &cg.predictedPlayerState.viewangles[YAW] : &cg.refdefViewAngles[YAW]), w, h);
+									   (cg.showGameView ? &cg.predictedPlayerState.viewangles[YAW] : &cg.refdefViewAngles[YAW]), w, h);
 		}
 		else if ((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && snap->ps.clientNum != cg.clientNum && cent - cg_entities == snap->ps.clientNum))
 		{
@@ -928,7 +928,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
-			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.medicReviveShader);
+			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.medicReviveShader2);
 		}
 		else
 		{
@@ -1030,18 +1030,18 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 				{
 					// point always upper direction on self
 					CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
-					                  (0.5f + 90.f / 360.f));
+									  (0.5f + 90.f / 360.f));
 				}
 				else
 				{
 					CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
-					                  (0.5f - (mEnt->yaw - (cg.refdefViewAngles[YAW] - 90) - 180.f) / 360.f));
+									  (0.5f - (mEnt->yaw - (cg.refdefViewAngles[YAW] - 90) - 180.f) / 360.f));
 				}
 			}
 			else
 			{
 				CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
-				                  (0.5f - (mEnt->yaw - 180.f) / 360.f));
+								  (0.5f - (mEnt->yaw - 180.f) / 360.f));
 			}
 		}
 		break;
@@ -1540,13 +1540,13 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			if (pointTowardNorth)
 			{
 				trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1,
-				                      cgs.media.commandCentreAutomapShader[cgs.ccLayers ? cgs.ccSelectedLayer : 0]);
+									  cgs.media.commandCentreAutomapShader[cgs.ccLayers ? cgs.ccSelectedLayer : 0]);
 			}
 			else
 			{
 				trap_R_DrawRotatedPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1,
-				                      cgs.media.commandCentreAutomapShader[cgs.ccLayers ? cgs.ccSelectedLayer : 0],
-				                      (cg.refdefViewAngles[YAW] - 180.f - 45.f) / 360.f);
+									  cgs.media.commandCentreAutomapShader[cgs.ccLayers ? cgs.ccSelectedLayer : 0],
+									  (cg.refdefViewAngles[YAW] - 180.f - 45.f) / 360.f);
 			}
 		}
 	}
@@ -1579,7 +1579,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	{
 		// spectators can see icons of both teams
 		if ((interactive && mEnt->team != RealTeam) ||
-		    (mEnt->team != snap->ps.persistant[PERS_TEAM] && snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR))
+			(mEnt->team != snap->ps.persistant[PERS_TEAM] && snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR))
 		{
 			if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
 			{
@@ -1587,9 +1587,9 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			}
 
 			if (mEnt->type != ME_PLAYER &&
-			    mEnt->type != ME_PLAYER_DISGUISED &&
-			    mEnt->type != ME_PLAYER_OBJECTIVE &&
-			    mEnt->type != ME_PLAYER_REVIVE)
+				mEnt->type != ME_PLAYER_DISGUISED &&
+				mEnt->type != ME_PLAYER_OBJECTIVE &&
+				mEnt->type != ME_PLAYER_REVIVE)
 			{
 				continue;
 			}
@@ -1613,9 +1613,9 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		}
 
 		if (mEnt->type != ME_PLAYER &&
-		    mEnt->type != ME_PLAYER_DISGUISED &&
-		    mEnt->type != ME_PLAYER_OBJECTIVE &&
-		    mEnt->type != ME_PLAYER_REVIVE)
+			mEnt->type != ME_PLAYER_DISGUISED &&
+			mEnt->type != ME_PLAYER_OBJECTIVE &&
+			mEnt->type != ME_PLAYER_REVIVE)
 		{
 			continue;
 		}
@@ -1703,7 +1703,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 				}
 
 				trap_R_SetColor(reviveClr);
-				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f + 2, icon_pos[1] - icon_extends[1] * 0.5f + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.medicReviveShader);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f + 2, icon_pos[1] - icon_extends[1] * 0.5f + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.medicReviveShader2);
 				trap_R_SetColor(NULL);
 				return;
 			}
@@ -1715,12 +1715,12 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			if (pointTowardNorth)
 			{
 				CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2,
-				                  classInfo->arrow, (0.5f - ((cg.showGameView ? cg.predictedPlayerState.viewangles[YAW] : cg.refdefViewAngles[YAW]) - 180.f) / 360.f));
+								  classInfo->arrow, (0.5f - ((cg.showGameView ? cg.predictedPlayerState.viewangles[YAW] : cg.refdefViewAngles[YAW]) - 180.f) / 360.f));
 			}
 			else
 			{
 				CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow,
-				                  (0.5f + 90.f / 360.f));
+								  (0.5f + 90.f / 360.f));
 			}
 		}
 	}
@@ -2076,19 +2076,19 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 		}
 
 		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, CG_GetActiveHUD()->compass.style & COMPASS_PRIMARY_OBJECTIVES,
-		                         CG_GetActiveHUD()->compass.style & COMPASS_SECONDARY_OBJECTIVES, CG_GetActiveHUD()->compass.style & COMPASS_ITEM,
-		                         qtrue, NULL);
+								 CG_GetActiveHUD()->compass.style & COMPASS_SECONDARY_OBJECTIVES, CG_GetActiveHUD()->compass.style & COMPASS_ITEM,
+								 qtrue, NULL);
 
 		if (icon)
 		{
 			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor,
-			                   style & COMPASS_DRAW_ICONS_INSIDE);
+							   style & COMPASS_DRAW_ICONS_INSIDE);
 
 			// draw overlapping shader for disguised covops
 			if (icon == cgs.media.friendShader)
 			{
 				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor,
-				                   style & COMPASS_DRAW_ICONS_INSIDE);
+								   style & COMPASS_DRAW_ICONS_INSIDE);
 			}
 		}
 	}
@@ -2158,8 +2158,8 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 		}
 
 		if (!(cg.spawnTeams[i] & 0xF) ||
-		    (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && cg.spawnTeams[i] != team) ||
-		    ((cg.spawnTeams[i] & 256) && changetime == 0.f))
+			(cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && cg.spawnTeams[i] != team) ||
+			((cg.spawnTeams[i] & 256) && changetime == 0.f))
 		{
 			continue;
 		}

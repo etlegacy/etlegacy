@@ -136,11 +136,11 @@ static int compIndex = 0;
  * @return
  */
 static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, int style, int barStyle,
-                                                float scale, const vec4_t colorMain, const vec4_t colorSecondary,
-                                                int showBackground, const vec4_t colorBackground,
-                                                int showBorder, const vec4_t colorBorder,
-                                                int styleText, int alignText, int autoAdjust, float hardScale,
-                                                float feedTime, float feedStayTime, float feedFadeTime, void (*draw)(hudComponent_t *comp))
+												float scale, const vec4_t colorMain, const vec4_t colorSecondary,
+												int showBackground, const vec4_t colorBackground,
+												int showBorder, const vec4_t colorBorder,
+												int styleText, int alignText, int autoAdjust, float hardScale,
+												float feedTime, float feedStayTime, float feedFadeTime, void (*draw)(hudComponent_t *comp))
 {
 	hudComponent_t tmp;
 	Com_Memset(&tmp, 0, sizeof(hudComponent_t));
@@ -563,7 +563,7 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 	}
 
 	CG_DrawMultilineText(comp->location.x + paddingW, y + ((h2 + h) * .5f) / lineNumber, comp->location.w - (paddingW * 2), scale, scale, color, str,
-	                     h2 / lineNumber, 0, 0, fontStyle, align, font);
+						 h2 / lineNumber, 0, 0, fontStyle, align, font);
 }
 
 /**
@@ -952,17 +952,17 @@ void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 	if (barStyle & BAR_CIRCULAR)
 	{
 		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		              (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (barStyle & BAR_LERP_COLOR) ? color : NULL,
-		              comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], frac,
-		              barStyle, cgs.media.hudHealthIcon,
-		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+					  (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (barStyle & BAR_LERP_COLOR) ? color : NULL,
+					  comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], frac,
+					  barStyle, cgs.media.hudHealthIcon,
+					  comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
 	}
 	else
 	{
 		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		             (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (barStyle & BAR_LERP_COLOR) ? color : NULL,
-		             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], frac,
-		             barStyle, cgs.media.hudHealthIcon);
+					 (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (barStyle & BAR_LERP_COLOR) ? color : NULL,
+					 comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH], frac,
+					 barStyle, cgs.media.hudHealthIcon);
 	}
 
 	trap_R_SetColor(NULL);
@@ -1028,15 +1028,15 @@ void CG_DrawStaminaBar(hudComponent_t *comp)
 	if (comp->barStyle & BAR_CIRCULAR)
 	{
 		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		              (comp->barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->barStyle & BAR_LERP_COLOR) ? color : NULL,
-		              comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->barStyle, cgs.media.hudSprintIcon,
-		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+					  (comp->barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->barStyle & BAR_LERP_COLOR) ? color : NULL,
+					  comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->barStyle, cgs.media.hudSprintIcon,
+					  comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
 	}
 	else
 	{
 		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		             (comp->barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->barStyle & BAR_LERP_COLOR) ? color : NULL,
-		             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->barStyle, cgs.media.hudSprintIcon);
+					 (comp->barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (comp->barStyle & BAR_LERP_COLOR) ? color : NULL,
+					 comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_SPRINTTIME] / SPRINTTIME, 0.f, comp->barStyle, cgs.media.hudSprintIcon);
 	}
 
 	trap_R_SetColor(NULL);
@@ -1081,15 +1081,15 @@ void CG_DrawBreathBar(hudComponent_t *comp)
 	if (comp->barStyle & BAR_CIRCULAR)
 	{
 		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		              (comp->barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->barStyle & BAR_LERP_COLOR) ? comp->colorMain : NULL,
-		              comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->barStyle, cgs.media.waterHintShader,
-		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+					  (comp->barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->barStyle & BAR_LERP_COLOR) ? comp->colorMain : NULL,
+					  comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->barStyle, cgs.media.waterHintShader,
+					  comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
 	}
 	else
 	{
 		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		             (comp->barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->barStyle & BAR_LERP_COLOR) ? comp->colorMain : NULL,
-		             comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->barStyle, cgs.media.waterHintShader);
+					 (comp->barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : comp->colorMain, (comp->barStyle & BAR_LERP_COLOR) ? comp->colorMain : NULL,
+					 comp->colorBackground, comp->colorBorder, cg.snap->ps.stats[STAT_AIRLEFT] / HOLDBREATHTIME, 0.f, comp->barStyle, cgs.media.waterHintShader);
 	}
 
 	trap_R_SetColor(NULL);
@@ -1105,8 +1105,8 @@ static void CG_CalcPowerState(const int weapon, const float chargeTime, float *n
 {
 
 	int index = BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill,
-	                                GetWeaponTableData(weapon)->skillBased,
-	                                GetWeaponTableData(weapon)->chargeTimeSkill);
+									GetWeaponTableData(weapon)->skillBased,
+									GetWeaponTableData(weapon)->chargeTimeSkill);
 
 	float coeff = GetWeaponTableData(weapon)->chargeTimeCoeff[index];
 	*needleFrac = coeff;
@@ -1169,7 +1169,7 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 		CG_CalcPowerState(cg.predictedPlayerState.weapon, chargeTime, &needleFrac, &charge);
 	}
 	else if ((cg.predictedPlayerState.eFlags & EF_ZOOMING || cg.predictedPlayerState.weapon == WP_BINOCULARS)
-	         && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+			 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 	{
 		CG_CalcPowerState(WP_ARTY, chargeTime, &needleFrac, &charge);
 	}
@@ -1261,15 +1261,15 @@ void CG_DrawWeapRecharge(hudComponent_t *comp)
 	if (barStyle & BAR_CIRCULAR)
 	{
 		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		              (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (barStyle & BAR_LERP_COLOR) ? color : NULL,
-		              comp->colorBackground, comp->colorBorder, barFrac, needleFrac, barStyle, cgs.media.hudPowerIcon,
-		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+					  (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (barStyle & BAR_LERP_COLOR) ? color : NULL,
+					  comp->colorBackground, comp->colorBorder, barFrac, needleFrac, barStyle, cgs.media.hudPowerIcon,
+					  comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
 	}
 	else
 	{
 		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		             (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (barStyle & BAR_LERP_COLOR) ? color : NULL,
-		             comp->colorBackground, comp->colorBorder, barFrac, needleFrac, barStyle, cgs.media.hudPowerIcon);
+					 (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : color, (barStyle & BAR_LERP_COLOR) ? color : NULL,
+					 comp->colorBackground, comp->colorBorder, barFrac, needleFrac, barStyle, cgs.media.hudPowerIcon);
 	}
 
 	trap_R_SetColor(NULL);
@@ -1391,13 +1391,13 @@ void CG_DrawGunHeatBar(hudComponent_t *comp)
 	if (comp->barStyle & BAR_CIRCULAR)
 	{
 		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorMain, comp->colorSecondary,
-		              comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, comp->barStyle, -1,
-		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+					  comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, comp->barStyle, -1,
+					  comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
 	}
 	else
 	{
 		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorMain, comp->colorSecondary,
-		             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, comp->barStyle, -1);
+					 comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.curWeapHeat / 255.0f, 0.f, comp->barStyle, -1);
 	}
 }
 
@@ -1527,15 +1527,15 @@ void CG_DrawClipBar(hudComponent_t *comp)
 	if (comp->barStyle & BAR_CIRCULAR)
 	{
 		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		              (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : *color, (barStyle & BAR_LERP_COLOR) ? *color : NULL,
-		              comp->colorBackground, comp->colorBorder, (float)value / maxAmmo, 0.f, barStyle, cgs.media.skillPics[SK_SIGNALS],
-		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
+					  (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : *color, (barStyle & BAR_LERP_COLOR) ? *color : NULL,
+					  comp->colorBackground, comp->colorBorder, (float)value / maxAmmo, 0.f, barStyle, cgs.media.skillPics[SK_SIGNALS],
+					  comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
 	}
 	else
 	{
 		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-		             (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : *color, (barStyle & BAR_LERP_COLOR) ? *color : NULL,
-		             comp->colorBackground, comp->colorBorder, (float)value / maxAmmo, 0.f, barStyle, cgs.media.skillPics[SK_SIGNALS]);
+					 (barStyle & BAR_LERP_COLOR) ? comp->colorSecondary : *color, (barStyle & BAR_LERP_COLOR) ? *color : NULL,
+					 comp->colorBackground, comp->colorBorder, (float)value / maxAmmo, 0.f, barStyle, cgs.media.skillPics[SK_SIGNALS]);
 	}
 }
 
@@ -2415,20 +2415,20 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 		if (ent->eFlags & EF_DEAD)
 		{
 			if (drawDynamic &&
-			    ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC &&
-			      cg.predictedPlayerState.stats[STAT_HEALTH] > 0 && ent->number == ent->clientNum && sameTeam) ||
-			     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
+				((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC &&
+				  cg.predictedPlayerState.stats[STAT_HEALTH] > 0 && ent->number == ent->clientNum && sameTeam) ||
+				 (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
 			{
-				return cgs.media.medicReviveShader;
+				return cgs.media.medicReviveShader2;
 			}
 
 			return 0;
 		}
 
 		if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
-		    (drawAllVoicesChat ||
-		     (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cent->voiceChatSprite == cgs.media.medicIcon) ||
-		     (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS && cent->voiceChatSprite == cgs.media.ammoIcon)))
+			(drawAllVoicesChat ||
+			 (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cent->voiceChatSprite == cgs.media.medicIcon) ||
+			 (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS && cent->voiceChatSprite == cgs.media.ammoIcon)))
 		{
 			// FIXME: not the best place to reset it
 			if (cgs.clientinfo[ent->clientNum].health <= 0)
@@ -2466,7 +2466,7 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 		if (drawItemObj && item && item->giType == IT_TEAM)
 		{
 			if ((item->giPowerUp == PW_BLUEFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
-			    || (item->giPowerUp == PW_REDFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+				|| (item->giPowerUp == PW_REDFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
 			{
 				return cgs.media.objectiveBlueShader;
 			}
@@ -2505,7 +2505,7 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 		{
 			// draw explosives if an engineer
 			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
-			    (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
+				(cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
 			{
 				if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
@@ -2596,7 +2596,7 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 		{
 			// FIXME: show only when relevant
 			if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
-			    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+				|| (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
 			{
 				return cgs.media.escortShader;
 			}
@@ -2817,9 +2817,9 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 
 	if ((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !(snap->ps.pm_flags & PMF_FOLLOW) && !cgs.clientinfo[cg.clientNum].shoutcaster)
 #ifdef FEATURE_MULTIVIEW
-	    || cg.mvTotalClients > 0
+		|| cg.mvTotalClients > 0
 #endif
-	    )
+		)
 	{
 		CG_DrawExpandedAutoMap();
 		return;
@@ -2828,7 +2828,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	if (cgs.autoMapExpanded)
 	{
 		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR
-		    && cg.time - cgs.autoMapExpandTime < 100.f * expandedMapFrac)
+			&& cg.time - cgs.autoMapExpandTime < 100.f * expandedMapFrac)
 		{
 			if (!(comp->style & COMPASS_ALWAYS_DRAW))
 			{
@@ -2848,8 +2848,8 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	else
 	{
 		if (cg.time - cgs.autoMapExpandTime <= 150.f * expandedMapFrac
-		    || (cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
-		        && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR))
+			|| (cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
+				&& cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR))
 		{
 			CG_DrawExpandedAutoMap();
 
@@ -2969,7 +2969,7 @@ static void CG_DrawStatsDebug(void)
 void CG_DrawSnapshot(hudComponent_t *comp)
 {
 	CG_DrawCompMultilineText(comp, va("t:%i\nsn:%i\ncmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence),
-	                         comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont1);
+							 comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont1);
 }
 
 /**
@@ -3480,8 +3480,8 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	}
 
 	cgs.sampledStat.avg = cgs.sampledStat.samplesTotalElpased > 0
-	                      ? (int) (cgs.sampledStat.count / (cgs.sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
-	                      : 0;
+						  ? (int) (cgs.sampledStat.count / (cgs.sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
+						  : 0;
 }
 
 /**
@@ -3519,7 +3519,7 @@ void CG_DrawDisconnect(hudComponent_t *comp)
 	cmdNum = trap_GetCurrentCmdNumber() - cg.cmdBackup + 1;
 	trap_GetUserCmd(cmdNum, &cmd);
 	if (cmd.serverTime <= cg.snap->ps.commandTime
-	    || cmd.serverTime > cg.time)        // special check for map_restart
+		|| cmd.serverTime > cg.time)        // special check for map_restart
 	{
 		return;
 	}
@@ -3716,9 +3716,9 @@ void CG_DrawLagometer(hudComponent_t *comp)
 
 	if (cg_nopredict.integer
 #ifdef ALLOW_GSYNC
-	    || cg_synchronousClients.integer
+		|| cg_synchronousClients.integer
 #endif // ALLOW_GSYNC
-	    )
+		)
 	{
 		CG_Text_Paint_Ext(ax, ay, scale * 1.75, scale * 1.75, colorWhite, "snc", 0, 0, comp->styleText, &cgs.media.limboFont2);
 	}
@@ -3815,13 +3815,13 @@ void CG_Hud_Setup(void)
 static void CG_PrintHudComponent(const char *name, hudComponent_t *comp)
 {
 	Com_Printf("%s location: X %.f Y %.f W %.f H %.f "
-	           "style %i visible: "
-	           "%i scale : %f "
-	           "color %.f %.f %.f %.f\n",
-	           name, comp->location.x, comp->location.y, comp->location.w, comp->location.h,
-	           comp->style, comp->visible,
-	           comp->scale,
-	           comp->colorMain[0], comp->colorMain[1], comp->colorMain[2], comp->colorMain[3]);
+			   "style %i visible: "
+			   "%i scale : %f "
+			   "color %.f %.f %.f %.f\n",
+			   name, comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+			   comp->style, comp->visible,
+			   comp->scale,
+			   comp->colorMain[0], comp->colorMain[1], comp->colorMain[2], comp->colorMain[3]);
 }
 
 /**
@@ -3885,9 +3885,9 @@ void CG_SetHud(void)
 	vmCvar_t hudCvar = cgs.clientinfo[cg.clientNum].shoutcaster ? cg_shoutcasterHud : cg_altHud;
 
 	if (hudCvar.modificationCount == modCount
-	    && hudData.active
-	    && hudData.active->active
-	    && cgs.clientinfo[cg.clientNum].shoutcaster == shoutcast)
+		&& hudData.active
+		&& hudData.active->active
+		&& cgs.clientinfo[cg.clientNum].shoutcaster == shoutcast)
 	{
 		return;
 	}

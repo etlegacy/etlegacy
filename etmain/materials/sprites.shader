@@ -68,6 +68,17 @@ sprites/medic_revive
 	}
 }
 
+sprites/medic_revive2
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/medicrevive2.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen vertex
+	}
+}
+
 sprites/objective
 {
 	nocompress

@@ -181,7 +181,7 @@ sprites/cm_medic_revive
 	nocompress
 	nomipmaps
 	{
-		clampmap sprites/medic_revive.tga
+		clampmap sprites/medicrevive2.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex
