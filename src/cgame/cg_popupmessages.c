@@ -422,12 +422,6 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 		listItem->message[strlen(listItem->message) - 1] = 0;
 	}
 
-	// do not write obituary popups into console - we'll get double kill-messages otherwise
-	if (type != PM_DEATH && type != PM_DEATH_HEADSHOT)
-	{
-		trap_Print(va("%s\n", listItem->message)); // FIXME: translate this (does it makes sense?)
-	}
-
 	// chop off the newline at the end if any
 	while ((end = strchr(listItem->message, '\n')))
 	{
@@ -495,6 +489,8 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 	{
 		CG_AddPMItemEx(type, message, message2, shader, weaponShader, scaleShader, color, i);
 	}
+
+	trap_Print(va("%s\n", message)); // FIXME: translate this (does it makes sense?)
 }
 
 /**
