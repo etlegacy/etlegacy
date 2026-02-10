@@ -13,6 +13,24 @@ set(ETL_ARCH_COUNT 1)
 
 add_library(os_libraries INTERFACE)
 
+# Always treat implicit function declarations as hard errors in C code.
+include(CheckCCompilerFlag)
+if(MSVC)
+	check_c_compiler_flag("/we4013" SUPPORT_ERROR_IMPLICIT_FUNCTION_DECLARATION)
+	if(SUPPORT_ERROR_IMPLICIT_FUNCTION_DECLARATION)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /we4013")
+	else()
+		message(FATAL_ERROR "Compiler ${CMAKE_C_COMPILER_ID} cannot enforce hard errors for implicit function declarations.")
+	endif()
+else()
+	check_c_compiler_flag("-Werror=implicit-function-declaration" SUPPORT_ERROR_IMPLICIT_FUNCTION_DECLARATION)
+	if(SUPPORT_ERROR_IMPLICIT_FUNCTION_DECLARATION)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror=implicit-function-declaration")
+	else()
+		message(FATAL_ERROR "Compiler ${CMAKE_C_COMPILER_ID} cannot enforce hard errors for implicit function declarations.")
+	endif()
+endif()
+
 # Enable specific C warnings
 if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wdeclaration-after-statement -Wunused-but-set-variable")
