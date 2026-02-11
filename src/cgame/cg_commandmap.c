@@ -854,8 +854,8 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 		}
 		else
 		{
-			// only see revivables for own team, unless shoutcaster
-			if (mEnt->type == ME_PLAYER_REVIVE && !CG_IsShoutcaster())
+			// only see revivables for own team, unless shoutcaster or in same fireteam
+			if (mEnt->type == ME_PLAYER_REVIVE && !CG_IsShoutcaster() && !CG_IsOnSameFireteam(cg.clientNum, mEnt->data))
 			{
 				return;
 			}
