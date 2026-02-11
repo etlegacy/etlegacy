@@ -1263,6 +1263,18 @@ msgstr ""
 msgid "MENU"
 msgstr ""
 
+#: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
+msgid "CHANGELOG"
+msgstr "CHANG^_ELOG"
+
+#: etmain/ui/changelog.menu:75
+msgid "OLDER"
+msgstr "^_OLDER >"
+
+#: etmain/ui/changelog.menu:76
+msgid "NEWER"
+msgstr "< ^_NEWER"
+
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
 msgid "VOTE"

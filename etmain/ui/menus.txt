@@ -54,6 +54,7 @@
 	loadMenu { "ui/popup_serverredirect.menu"}
 	loadMenu { "ui/popup_addfavorite.menu"}
 	loadMenu { "ui/popup_removefavorite.menu"}
+	loadMenu { "ui/changelog.menu" }
 
 	// video confirmation
 	loadMenu { "ui/vid_restart.menu" }

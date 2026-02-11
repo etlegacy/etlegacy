@@ -4924,6 +4924,18 @@ void UI_RunMenuScript(char **args)
 		{
 			UI_LoadMods();
 		}
+		else if (Q_stricmp(name, "ChangelogInit") == 0)
+		{
+			UI_ChangelogInit();
+		}
+		else if (Q_stricmp(name, "ChangelogNext") == 0)
+		{
+			UI_ChangelogNext();
+		}
+		else if (Q_stricmp(name, "ChangelogPrevious") == 0)
+		{
+			UI_ChangelogPrevious();
+		}
 		else if (Q_stricmp(name, "playMovie") == 0)
 		{
 			if (uiInfo.previewMovie >= 0)
@@ -7431,6 +7443,8 @@ static int UI_FeederCount(int feederID)
 		return uiInfo.serverStatus.numDisplayServers;
 	case FEEDER_SERVERSTATUS:
 		return uiInfo.serverStatusInfo.numLines;
+	case FEEDER_CHANGELOG:
+		return UI_ChangelogFeederCount();
 	case FEEDER_PLAYER_LIST:
 		if (uiInfo.uiDC.realTime > uiInfo.playerRefresh)
 		{
@@ -7953,6 +7967,15 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			}
 		}
 		break;
+	case FEEDER_CHANGELOG:
+	{
+		const char *lineText = UI_ChangelogFeederItemText(index, column);
+		if (lineText)
+		{
+			return lineText;
+		}
+	}
+	break;
 	case FEEDER_PLAYER_LIST:
 		if (index >= 0 && index < uiInfo.playerCount)
 		{
@@ -8132,6 +8155,10 @@ static void UI_FeederSelection(int feederID, int index)
 			trap_Cvar_Set("team_headmodel", va("*%s", uiInfo.characterList[index].name));
 			updateModel = qtrue;
 		}
+		break;
+	case FEEDER_CHANGELOG:
+		// Read-only feeder; line selection does not trigger additional behavior.
+		UI_ChangelogFeederSelection(index);
 		break;
 	case FEEDER_Q3HEADS:
 		if (index >= 0 && index < uiInfo.q3HeadCount)
