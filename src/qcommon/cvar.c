@@ -1917,6 +1917,7 @@ void Cvar_Init(void)
 	Cmd_AddCommand("reset", Cvar_Reset_f, "Resets a specific cvar.", Cvar_CompleteCvarName);
 	Cmd_AddCommand("unset", Cvar_Unset_f, "Unsets a userdefined cvar.", Cvar_CompleteCvarName);
 	Cmd_AddCommand("cvarlist", Cvar_List_f, "Prints a list of all cvars.");
+	Cmd_AddCommand("dumpcvars", Cvar_Dump_f, "Dumps all cvars and metadata to fs_basepath/cvardump.jsonl.");
 	Cmd_AddCommand("cvar_restart", Cvar_Restart_f, "Resets all cvars to their hardcoded values.");
 	Cmd_AddCommand("cvar_trim", Cvar_Trim_f, "Removes all user created cvars.");
 }
