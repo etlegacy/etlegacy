@@ -281,6 +281,14 @@ void UI_ListCampaigns_f(void);
 void UI_ListFavourites_f(void);
 void UI_RemoveAllFavourites_f(void);
 
+// ui_main_changelog.c
+void UI_ChangelogInit(void);
+void UI_ChangelogNext(void);
+void UI_ChangelogPrevious(void);
+int UI_ChangelogFeederCount(void);
+const char *UI_ChangelogFeederItemText(int index, int column);
+void UI_ChangelogFeederSelection(int index);
+
 #define GLINFO_LINES        256
 
 // ui_atoms.c
