@@ -377,6 +377,42 @@ int Item_ListBox_MaxScroll(itemDef_t *item)
 }
 
 /**
+ * @brief Return qtrue when the listbox needs a scrollbar to show all entries.
+ * @param[in] item
+ * @param[in] count Item count for the feeder backing this listbox.
+ * @return
+ */
+static qboolean Item_ListBox_NeedsScrollbar(itemDef_t *item, int count)
+{
+	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
+	int          visibleItems;
+
+	if (item->window.flags & WINDOW_HORIZONTAL)
+	{
+		if (listPtr->elementWidth <= 0.0f)
+		{
+			return qfalse;
+		}
+		visibleItems = (int)(item->window.rect.w / listPtr->elementWidth);
+	}
+	else
+	{
+		if (listPtr->elementHeight <= 0.0f)
+		{
+			return qfalse;
+		}
+		visibleItems = (int)(item->window.rect.h / listPtr->elementHeight);
+	}
+
+	if (visibleItems < 1)
+	{
+		visibleItems = 1;
+	}
+
+	return (count > visibleItems) ? qtrue : qfalse;
+}
+
+/**
  * @brief Item_ListBox_ThumbPosition
  * @param[in] item
  * @return
@@ -544,7 +580,15 @@ int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 {
 	rectDef_t r;
+	int       count;
 	int       thumbstart;
+
+	count = DC->feederCount(item->special);
+	if (!Item_ListBox_NeedsScrollbar(item, count))
+	{
+		// No scrolling required, so scrollbar controls are inactive.
+		return 0;
+	}
 
 	if (item->window.flags & WINDOW_HORIZONTAL)
 	{
@@ -655,7 +699,12 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 {
 	rectDef_t    r;
+	qboolean     hasScrollbar;
+	float        scrollbarWidth;
 	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
+
+	hasScrollbar   = Item_ListBox_NeedsScrollbar(item, DC->feederCount(item->special));
+	scrollbarWidth = hasScrollbar ? SCROLLBAR_SIZE : 0.0f;
 
 	item->window.flags &= ~(WINDOW_LB_LEFTARROW | WINDOW_LB_RIGHTARROW | WINDOW_LB_THUMB | WINDOW_LB_PGUP | WINDOW_LB_PGDN | WINDOW_LB_SOMEWHERE);
 	item->window.flags |= Item_ListBox_OverLB(item, x, y);
@@ -678,7 +727,7 @@ void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 				{
 					r.x = item->window.rect.x;
 					r.y = item->window.rect.y;
-					r.h = item->window.rect.h - SCROLLBAR_SIZE;
+					r.h = item->window.rect.h - scrollbarWidth;
 					r.w = item->window.rect.w - listPtr->drawPadding;
 					if (Rect_ContainsPointN(&r, x, y))
 					{
@@ -700,7 +749,7 @@ void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 		{
 			r.x = item->window.rect.x;
 			r.y = item->window.rect.y;
-			r.w = item->window.rect.w - SCROLLBAR_SIZE;
+			r.w = item->window.rect.w - scrollbarWidth;
 			r.h = item->window.rect.h - listPtr->drawPadding;
 			if (Rect_ContainsPointN(&r, x, y))
 			{
@@ -3399,7 +3448,8 @@ void Item_Model_Paint(itemDef_t *item)
 void Item_ListBox_Paint(itemDef_t *item)
 {
 	int          i;
-	float        x, y, size, count, thumb;
+	float        x, y, size, count, thumb, scrollbarWidth;
+	qboolean     showScrollbar;
 	qhandle_t    image;
 	qhandle_t    optionalImages[8];
 	int          numOptionalImages;
@@ -3417,30 +3467,35 @@ void Item_ListBox_Paint(itemDef_t *item)
 	// elements are enumerated from the DC and either text or image handles are acquired from the DC as well
 	// textscale is used to size the text, textalignx and textaligny are used to size image elements
 	// there is no clipping available so only the last completely visible item is painted
-	count = DC->feederCount(item->special);
+	count          = DC->feederCount(item->special);
+	showScrollbar  = Item_ListBox_NeedsScrollbar(item, (int)count);
+	scrollbarWidth = showScrollbar ? SCROLLBAR_SIZE : 0.0f;
 	// default is vertical if horizontal flag is not here
 	if (item->window.flags & WINDOW_HORIZONTAL)
 	{
-		// draw scrollbar in bottom of the window
-		// bar
-		x = fillRect.x + 1;
-		y = fillRect.y + fillRect.h - SCROLLBAR_SIZE - 1;
-		DC->setColor(item->scrollColor);
-		DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowLeft);
-		x   += SCROLLBAR_SIZE - 1;
-		size = fillRect.w - (SCROLLBAR_SIZE * 2);
-		DC->drawHandlePic(x, y, size + 1, SCROLLBAR_SIZE, DC->Assets.scrollBar);
-		x += size - 1;
-		DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowRight);
-		// thumb
-		thumb = Item_ListBox_ThumbDrawPosition(item);   //Item_ListBox_ThumbPosition(item);
-		if (thumb > x - SCROLLBAR_SIZE - 1)
+		if (showScrollbar)
 		{
-			thumb = x - SCROLLBAR_SIZE - 1;
-		}
+			// draw scrollbar in bottom of the window
+			// bar
+			x = fillRect.x + 1;
+			y = fillRect.y + fillRect.h - SCROLLBAR_SIZE - 1;
+			DC->setColor(item->scrollColor);
+			DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowLeft);
+			x   += SCROLLBAR_SIZE - 1;
+			size = fillRect.w - (SCROLLBAR_SIZE * 2);
+			DC->drawHandlePic(x, y, size + 1, SCROLLBAR_SIZE, DC->Assets.scrollBar);
+			x += size - 1;
+			DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowRight);
+			// thumb
+			thumb = Item_ListBox_ThumbDrawPosition(item);   //Item_ListBox_ThumbPosition(item);
+			if (thumb > x - SCROLLBAR_SIZE - 1)
+			{
+				thumb = x - SCROLLBAR_SIZE - 1;
+			}
 
-		DC->drawHandlePic(thumb, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
-		DC->setColor(NULL);
+			DC->drawHandlePic(thumb, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
+			DC->setColor(NULL);
+		}
 
 		listPtr->endPos = listPtr->startPos;
 		size            = fillRect.w - 2;
@@ -3480,27 +3535,30 @@ void Item_ListBox_Paint(itemDef_t *item)
 	}
 	else
 	{
-		// draw scrollbar to right side of the window
-		x = fillRect.x + fillRect.w - SCROLLBAR_SIZE - 1;
-		y = fillRect.y + 1;
-		DC->setColor(item->scrollColor);
-		DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowUp);
-		y += SCROLLBAR_SIZE - 1;
-
 		listPtr->endPos = listPtr->startPos;
-		size            = fillRect.h - (SCROLLBAR_SIZE * 2);
-		DC->drawHandlePic(x, y, SCROLLBAR_SIZE, size + 1, DC->Assets.scrollBar);
-		y += size - 1;
-		DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowDown);
-		// thumb
-		thumb = Item_ListBox_ThumbDrawPosition(item);
-		if (thumb > y - SCROLLBAR_SIZE - 1)
+		if (showScrollbar)
 		{
-			thumb = y - SCROLLBAR_SIZE - 1;
-		}
+			// draw scrollbar to right side of the window
+			x = fillRect.x + fillRect.w - SCROLLBAR_SIZE - 1;
+			y = fillRect.y + 1;
+			DC->setColor(item->scrollColor);
+			DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowUp);
+			y += SCROLLBAR_SIZE - 1;
 
-		DC->drawHandlePic(x, thumb, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
-		DC->setColor(NULL);
+			size = fillRect.h - (SCROLLBAR_SIZE * 2);
+			DC->drawHandlePic(x, y, SCROLLBAR_SIZE, size + 1, DC->Assets.scrollBar);
+			y += size - 1;
+			DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowDown);
+			// thumb
+			thumb = Item_ListBox_ThumbDrawPosition(item);
+			if (thumb > y - SCROLLBAR_SIZE - 1)
+			{
+				thumb = y - SCROLLBAR_SIZE - 1;
+			}
+
+			DC->drawHandlePic(x, thumb, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
+			DC->setColor(NULL);
+		}
 
 		// adjust size for item painting
 		size = fillRect.h /* - 2*/;
@@ -3593,7 +3651,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 
 				if (i == item->cursorPos)
 				{
-					DC->fillRect(x, y, fillRect.w - SCROLLBAR_SIZE - 2, listPtr->elementHeight /* - 1*/, item->window.outlineColor);
+					DC->fillRect(x, y, fillRect.w - scrollbarWidth - 2, listPtr->elementHeight /* - 1*/, item->window.outlineColor);
 				}
 
 				size -= listPtr->elementHeight;
