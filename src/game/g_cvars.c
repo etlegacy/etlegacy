@@ -873,7 +873,18 @@ void G_UpdateCvars(void)
 						trap_Cvar_Set(cv->cvarName, "33");
 					}
 				}
-				else if (cv->vmCvar == &team_maxSoldiers || cv->vmCvar == &team_maxMedics || cv->vmCvar == &team_maxEngineers || cv->vmCvar == &team_maxFieldops || cv->vmCvar == &team_maxCovertops || cv->vmCvar == &team_maxMortars || cv->vmCvar == &team_maxFlamers || cv->vmCvar == &team_maxMachineguns || cv->vmCvar == &team_maxRockets || cv->vmCvar == &team_maxRiflegrenades || cv->vmCvar == &team_maxplayers)
+				else if (cv->vmCvar == &team_maxSoldiers ||
+				         cv->vmCvar == &team_maxMedics ||
+				         cv->vmCvar == &team_maxEngineers ||
+				         cv->vmCvar == &team_maxFieldops ||
+				         cv->vmCvar == &team_maxCovertops ||
+				         cv->vmCvar == &team_maxMortars ||
+				         cv->vmCvar == &team_maxFlamers ||
+				         cv->vmCvar == &team_maxMachineguns ||
+				         cv->vmCvar == &team_maxRockets ||
+				         cv->vmCvar == &team_maxRiflegrenades ||
+				         cv->vmCvar == &team_maxLandmines ||
+				         cv->vmCvar == &team_maxplayers)
 				{
 					clsweaprestriction = qtrue;
 				}
