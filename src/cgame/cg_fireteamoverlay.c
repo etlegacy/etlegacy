@@ -303,21 +303,21 @@ fireteamData_t *CG_IsFireTeamLeader(int clientNum)
  *
 clientInfo_t *CG_ClientInfoForPosition(int pos, int max)
 {
-    int i, cnt = 0;
+	int i, cnt = 0;
 
-    for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
-    {
-        if (cg.clientNum != i && cgs.clientinfo[i].infoValid && !CG_IsOnFireteam(i) && cgs.clientinfo[cg.clientNum].team == cgs.clientinfo[i].team)
-        {
-            if (cnt == pos)
-            {
-                return &cgs.clientinfo[i];
-            }
-            cnt++;
-        }
-    }
+	for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
+	{
+		if (cg.clientNum != i && cgs.clientinfo[i].infoValid && !CG_IsOnFireteam(i) && cgs.clientinfo[cg.clientNum].team == cgs.clientinfo[i].team)
+		{
+			if (cnt == pos)
+			{
+				return &cgs.clientinfo[i];
+			}
+			cnt++;
+		}
+	}
 
-    return NULL;
+	return NULL;
 }
 */
 
@@ -331,21 +331,21 @@ clientInfo_t *CG_ClientInfoForPosition(int pos, int max)
  *
 fireteamData_t *CG_FireTeamForPosition(int pos, int max)
 {
-    int i, cnt = 0;
+	int i, cnt = 0;
 
-    for (i = 0; i < MAX_FIRETEAMS && cnt < max; i++)
-    {
-        if (cg.fireTeams[i].inuse && cgs.clientinfo[cg.fireTeams[i].leader].team == cgs.clientinfo[cg.clientNum].team)
-        {
-            if (cnt == pos)
-            {
-                return &cg.fireTeams[i];
-            }
-            cnt++;
-        }
-    }
+	for (i = 0; i < MAX_FIRETEAMS && cnt < max; i++)
+	{
+		if (cg.fireTeams[i].inuse && cgs.clientinfo[cg.fireTeams[i].leader].team == cgs.clientinfo[cg.clientNum].team)
+		{
+			if (cnt == pos)
+			{
+				return &cg.fireTeams[i];
+			}
+			cnt++;
+		}
+	}
 
-    return NULL;
+	return NULL;
 }
 */
 
@@ -359,32 +359,32 @@ fireteamData_t *CG_FireTeamForPosition(int pos, int max)
  *
 clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max)
 {
-    int            i, cnt = 0;
-    fireteamData_t *f = CG_IsOnFireteam(cg.clientNum);
+	int            i, cnt = 0;
+	fireteamData_t *f = CG_IsOnFireteam(cg.clientNum);
 
-    if (!f)
-    {
-        return NULL;
-    }
+	if (!f)
+	{
+		return NULL;
+	}
 
-    for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
-    {
-        if (cgs.clientinfo[i].infoValid && cgs.clientinfo[cg.clientNum].team == cgs.clientinfo[i].team)
-        {
-            if (!(f == CG_IsOnFireteam(i)))
-            {
-                continue;
-            }
+	for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
+	{
+		if (cgs.clientinfo[i].infoValid && cgs.clientinfo[cg.clientNum].team == cgs.clientinfo[i].team)
+		{
+			if (!(f == CG_IsOnFireteam(i)))
+			{
+				continue;
+			}
 
-            if (cnt == pos)
-            {
-                return &cgs.clientinfo[i];
-            }
-            cnt++;
-        }
-    }
+			if (cnt == pos)
+			{
+				return &cgs.clientinfo[i];
+			}
+			cnt++;
+		}
+	}
 
-    return NULL;
+	return NULL;
 }
 */
 
@@ -426,6 +426,7 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 typedef enum
 {
 	TIMEOUT,
+	INVULNERABLE,
 	WOUNDED,
 	DEAD,
 	NONE
@@ -433,6 +434,7 @@ typedef enum
 
 static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci);
 static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status);
+static vec4_t *CG_FireTeamHealthColor(clientInfo_t *ci, hudComponent_t *comp);
 
 static ID_INLINE int CG_FireTeamClientCurrentWeapon(clientInfo_t *ci)
 {
@@ -471,7 +473,7 @@ static void CG_FTOverlay_NoiseGen(fireteamOverlay_t *fto, hudComponent_t *comp)
 
 static void CG_FTOverlay_SetColors(fireteamOverlay_t *fto, const float alpha)
 {
-	Vector4Set(fto->selectedMemberColor, 0.5f, 0.5f, 0.2f, 0.3f);
+	Vector4Set(fto->selectedMemberColor, 1.0f, 1.0f, 0.0f, 1.0f);
 	Vector4Set(fto->iconColor, 1.0f, 1.0f, 1.0f, 1.0f);
 	Vector4Set(fto->iconColorAlt, 1.0f, 1.0f, 1.0f, 0.5f);
 	Vector4Set(fto->textWhite, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -588,13 +590,6 @@ static float CG_FTOverlay_NameWidth(fireteamOverlay_t *fto, const int row)
 	else
 	{
 		nameWidth = CG_Text_Width_Ext_Float(fto->name[row], fto->textScale, limit, FONT_TEXT);
-	}
-
-	// reserve more space if the player is holding an objective or is disguised,
-	// as that gets placed in front of the player's name, shifting it to right
-	if (fto->ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
-	{
-		nameWidth += POWERUP_WIDTH;
 	}
 
 	return nameWidth;
@@ -715,7 +710,8 @@ static void CG_FTOverlay_DrawHeader(fireteamOverlay_t *fto, hudComponent_t *comp
 
 static void CG_FTOverlay_DrawClassIcon(fireteamOverlay_t *fto, hudComponent_t *comp)
 {
-	trap_R_SetColor(fto->iconColor);
+	// use a different color for the class icon if current member is selected
+	trap_R_SetColor(fto->ci->selected ? fto->selectedMemberColor : fto->iconColor);
 	CG_DrawPic(fto->x, fto->y + fto->iconHeightOffset, fto->iconSize, fto->iconSize,
 	           cgs.media.skillPics[SkillNumForClass(fto->ci->cls)]);
 
@@ -748,38 +744,41 @@ static void CG_FTOverlay_DrawClassIcon(fireteamOverlay_t *fto, hudComponent_t *c
 
 static void CG_FTOverlay_DrawPowerupIcon(fireteamOverlay_t *fto)
 {
+	qhandle_t icon = -1;
+
+	// get the correct icon depending of player status
 	if (fto->ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 	{
-		trap_R_SetColor(fto->iconColor);
-		CG_DrawPic(fto->x, fto->y + fto->iconHeightOffset, fto->iconSize, fto->iconSize, cgs.media.objectiveShader);
-
-		fto->powerupWidth = POWERUP_WIDTH;
-		fto->x           += POWERUP_WIDTH;
+		icon = cgs.media.objectiveShader;
 	}
 	else if (fto->ci->powerups & (1 << PW_OPS_DISGUISED))
 	{
-		trap_R_SetColor(fto->iconColor);
-		CG_DrawPic(fto->x, fto->y + fto->iconHeightOffset, fto->iconSize, fto->iconSize,
-		           fto->ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
-
-		fto->powerupWidth = POWERUP_WIDTH;
-		fto->x           += POWERUP_WIDTH;
+		icon = fto->ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader;
 	}
-	else
+	else if (fto->ci->powerups & (1 << PW_INVULNERABLE))
 	{
-		fto->powerupWidth = 0;
+		icon = cgs.media.spawnInvincibleShader;
 	}
+	else if (fto->ci->health <= 0)
+	{
+		icon = fto->ci->health == 0 ? cgs.media.medicIcon : cgs.media.scoreEliminatedShader;
+	}
+
+	if (icon != -1)
+	{
+		trap_R_SetColor(fto->iconColor);
+		CG_DrawPic(fto->x, fto->y + fto->iconHeightOffset, fto->iconSize, fto->iconSize, icon);
+	}
+
+	fto->x += POWERUP_WIDTH;
 }
 
 static void CG_FTOverlay_DrawName(fireteamOverlay_t *fto, const int row, const hudComponent_t *comp)
 {
-	// first draw the icon for any powerups, as that influences the position of the name
-	CG_FTOverlay_DrawPowerupIcon(fto);
-
 	// right aligned?
 	if (cg_fireteamNameAlign.integer > 0)
 	{
-		CG_Text_Paint_RightAligned_Ext(fto->x + fto->bestNameWidth - fto->powerupWidth, fto->y + fto->textHeightOffset, fto->textScale, fto->textScale,
+		CG_Text_Paint_RightAligned_Ext(fto->x + fto->bestNameWidth, fto->y + fto->textHeightOffset, fto->textScale, fto->textScale,
 		                               fto->nameColor, fto->name[row], 0, 0, comp->styleText, FONT_TEXT);
 	}
 	else
@@ -788,9 +787,7 @@ static void CG_FTOverlay_DrawName(fireteamOverlay_t *fto, const int row, const h
 		                  fto->nameColor, fto->name[row], 0, 0, comp->styleText, FONT_TEXT);
 	}
 
-	// fto->bestNameWidth already accounts for potential obj/disguise icon for max width calculations,
-	// so subtract it here - otherwise we shift the position to the right too much
-	fto->x += fto->bestNameWidth - fto->powerupWidth + fto->spacerInner;
+	fto->x += fto->bestNameWidth + fto->spacerInner;
 }
 
 static void CG_FTOverlay_DrawWeaponIcon(fireteamOverlay_t *fto)
@@ -805,11 +802,13 @@ static void CG_FTOverlay_DrawWeaponIcon(fireteamOverlay_t *fto)
 
 		if (shader)
 		{
+			const float width = cg_weapons[fto->currentWeapon].weaponIconScale * fto->weaponIconSize;
+
 			trap_R_SetColor((cg_entities[fto->ci->clientNum].currentValid || fto->ci->clientNum == cg.clientNum)
 			       ? fto->iconColor
 			       : fto->iconColorAlt);
-			CG_DrawPic(fto->x, fto->y + fto->weaponIconHeightOffset,
-			           cg_weapons[fto->currentWeapon].weaponIconScale * fto->weaponIconSize, fto->weaponIconSize, shader);
+			CG_DrawPic(fto->x + (fto->bestWeaponIconWidthScale * fto->weaponIconSize - width) * 0.5f, fto->y + fto->weaponIconHeightOffset,
+			           width, fto->weaponIconSize, shader);
 		}
 	}
 
@@ -819,7 +818,7 @@ static void CG_FTOverlay_DrawWeaponIcon(fireteamOverlay_t *fto)
 #define FT_HEALTH_NORMAL 80
 #define FT_HEALTH_YELLOW 10
 
-static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, const hudComponent_t *comp)
+static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, hudComponent_t *comp)
 {
 	const int  health          = fto->ci->health;
 	const int  healthTextWidth = HEALTH_TEXT_WIDTH;
@@ -827,52 +826,24 @@ static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, const hudComponent_t
 	vec4_t     color;
 	const char *text;
 
-	if (!(comp->style & FT_SPAWN_HEALTH_TEXT) && !(comp->style & FT_SPAWN_HEALTH_BAR))
+	if (!(comp->style & FT_HEALTH_TEXT) && !(comp->style & FT_HEALTH_TEXT))
 	{
 		return;
 	}
 
-	if (health > FT_HEALTH_NORMAL)
-	{
-		Vector4Copy(comp->colorMain, color);
-		text = va("%i", health);
-	}
-	else if (health >= FT_HEALTH_YELLOW)
-	{
-		Vector4Copy(fto->textYellow, color);
-		text = va("%i", health);
-	}
-	else if (health > 0)
-	{
-		Vector4Copy(fto->textRed, color);
-		text = va("%i", health);
-	}
-	// wounded
-	else if (health == 0)
-	{
-		Vector4Copy((cg.time % 500) > 250 ? fto->textWhite : fto->textRed, color);
-		text = va("%s*%s%i",
-		          ((cg.time % 500) > 250) ? "^7" : "^1",
-		          ((cg.time % 500) > 250) ? "^1" : "^7",
-		          health);
-	}
-	// limbo (-1 health)
-	else
-	{
-		Vector4Copy(fto->textRed, color);
-		text = "0";
-	}
+	VectorCopy(*CG_FireTeamHealthColor(fto->ci, comp), color);
+	color[3] = comp->colorMain[3];
 
-	if (comp->style & FT_SPAWN_HEALTH_TEXT)
+	if (comp->style & FT_HEALTH_TEXT)
 	{
 		CG_Text_Paint_RightAligned_Ext(fto->x + healthTextWidth, fto->y + fto->textHeightOffset, fto->textScale, fto->textScale,
-		                               color, text, 0, 0, comp->styleText, FONT_TEXT);
+		                               color, va("%i", MAX(health, 0)), 0, 0, comp->styleText, FONT_TEXT);
 
 		// always use static size, regardless of actual text being drawn
 		fto->x += healthTextWidth + fto->spacerInner;
 	}
 
-	if (comp->style & FT_SPAWN_HEALTH_BAR)
+	if (comp->style & FT_MINI_HEALTH_BAR)
 	{
 		maxHealth = CG_GetPlayerMaxHealth(fto->ci->clientNum, fto->ci->cls, fto->ci->team);
 
@@ -1054,6 +1025,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	fto->spacerInner    = fto->textHeight * 1.5f;
 	fto->iconSize       = fto->textHeight * 2.0f;
 	fto->weaponIconSize = fto->textHeight * 2.0f;
+	fto->powerupWidth   = POWERUP_WIDTH;
 
 	fto->textHeightOffset       = (fto->h + fto->textHeight) * 0.5f;
 	fto->iconHeightOffset       = (fto->h - fto->iconSize) * 0.5f;
@@ -1112,15 +1084,15 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	fto->healthTextWidth = CG_FTOverlay_HealthTextWidth(fto);
 
 	fixedElementsWidth = fto->classIconWidth + fto->spacerInner
-	                     + fto->bestNameWidth + fto->spacerInner
+	                     + fto->powerupWidth + fto->bestNameWidth + fto->spacerInner
 	                     + (fto->weaponIconSize * fto->bestWeaponIconWidthScale);
 
-	if (comp->style & FT_SPAWN_HEALTH_TEXT)
+	if (comp->style & FT_HEALTH_TEXT)
 	{
 		fixedElementsWidth += fto->spacerInner + fto->healthTextWidth;
 	}
 
-	if (comp->style & FT_SPAWN_HEALTH_BAR)
+	if (comp->style & FT_MINI_HEALTH_BAR)
 	{
 		fixedElementsWidth += fto->spacerInner + fto->healthBarWidth;
 	}
@@ -1222,28 +1194,37 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			break;
 		}
 
-		if (comp->style & FT_STATUS_COLOR_NAME || comp->style & FT_STATUS_COLOR_ROW)
+		if (comp->style & FT_STATUS_COLOR_NAME)
 		{
 			fireteamMemberStatusEnum_t status = CG_FireTeamMemberStatus(fto->ci);
 			VectorCopy(*CG_FireTeamNameColor(status), fto->nameColor);
-
-			if (comp->style & FT_STATUS_COLOR_ROW && status != NONE)
-			{
-				vec4_t rowColor;
-				Vector4Copy(fto->nameColor, rowColor);
-				rowColor[3] = comp->colorBackground[3];
-
-				CG_FillRect(fto->x, fto->y, fto->w, fto->h, rowColor);
-			}
 		}
 		else
 		{
 			Vector4Copy(fto->textWhite, fto->nameColor);
 		}
 
-		if (fto->ci->selected)
+		if (comp->style & FT_STATUS_COLOR_ROW)
 		{
-			CG_FillRect(fto->x, fto->y, fto->w, fto->h, fto->selectedMemberColor);
+			const int health = fto->ci->health;
+			int       maxHealth;
+			vec4_t    color;
+
+			VectorCopy(*CG_FireTeamHealthColor(fto->ci, comp), color);
+			color[3] = comp->colorBackground[3];
+
+			maxHealth = CG_GetPlayerMaxHealth(fto->ci->clientNum, fto->ci->cls, fto->ci->team);
+
+			if (health <= 0)
+			{
+				CG_FillRect(fto->x + 1, fto->y + 1, fto->w - 2, fto->h - 2, color);
+			}
+			else
+			{
+				CG_FilledBar(fto->x, fto->y, fto->w, fto->h,
+				             color, color,
+				             comp->colorBackground, color, health / (float)maxHealth, 0.f, BAR_BORDER_SMALL, -1);
+			}
 		}
 
 		fto->x += fto->spacerOuter;
@@ -1258,6 +1239,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		// left to right, in the order that their draw functions are called.
 
 		CG_FTOverlay_DrawClassIcon(fto, comp);
+		CG_FTOverlay_DrawPowerupIcon(fto);
 		CG_FTOverlay_DrawName(fto, i, comp);
 		CG_FTOverlay_DrawWeaponIcon(fto);
 		CG_FTOverlay_DrawHealth(fto, comp);
@@ -1275,6 +1257,10 @@ static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci)
 	if (ci->ping >= 999)
 	{
 		return TIMEOUT;
+	}
+	else if (ci->powerups & (1 << PW_INVULNERABLE))
+	{
+		return INVULNERABLE;
 	}
 	else if (ci->health == 0)
 	{
@@ -1296,6 +1282,8 @@ static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
 	{
 	case TIMEOUT:
 		return &colorOrange;
+	case INVULNERABLE:
+		return &colorMdCyan;
 	case WOUNDED:
 		return &colorYellow;
 	case DEAD:
@@ -1306,6 +1294,34 @@ static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
 	}
 }
 
+static vec4_t * CG_FireTeamHealthColor(clientInfo_t *ci, hudComponent_t *comp)
+{
+	if (ci->powerups & (1 << PW_INVULNERABLE))
+	{
+		return &colorMdCyan;
+	}
+	else if (ci->health > FT_HEALTH_NORMAL)
+	{
+		return &comp->colorMain;
+	}
+	else if (ci->health >= FT_HEALTH_YELLOW)
+	{
+		return &colorYellow;
+	}
+	else if (ci->health > 0)
+	{
+		return &colorRed;
+	}
+	// wounded
+	else if (ci->health == 0)
+	{
+		return (cg.time % 500) > 250 ? &colorYellow : &colorRed;
+	}
+
+	// limbo (-1 health)
+	return &colorRed;
+}
+
 /*
  * @brief CG_FireteamGetBoxNeedsButtons
  * @return
@@ -1313,34 +1329,34 @@ static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
  *
 qboolean CG_FireteamGetBoxNeedsButtons(void)
 {
-    if (cgs.applicationEndTime > cg.time)
-    {
-        if (cgs.applicationClient < 0)
-        {
-            return qfalse;
-        }
-        return qtrue;
-    }
+	if (cgs.applicationEndTime > cg.time)
+	{
+		if (cgs.applicationClient < 0)
+		{
+			return qfalse;
+		}
+		return qtrue;
+	}
 
-    if (cgs.invitationEndTime > cg.time)
-    {
-        if (cgs.invitationClient < 0)
-        {
-            return qfalse;
-        }
-        return qtrue;
-    }
+	if (cgs.invitationEndTime > cg.time)
+	{
+		if (cgs.invitationClient < 0)
+		{
+			return qfalse;
+		}
+		return qtrue;
+	}
 
-    if (cgs.propositionEndTime > cg.time)
-    {
-        if (cgs.propositionClient < 0)
-        {
-            return qfalse;
-        }
-        return qtrue;
-    }
+	if (cgs.propositionEndTime > cg.time)
+	{
+		if (cgs.propositionClient < 0)
+		{
+			return qfalse;
+		}
+		return qtrue;
+	}
 
-    return qfalse;
+	return qfalse;
 }
 */
 
@@ -1351,97 +1367,97 @@ qboolean CG_FireteamGetBoxNeedsButtons(void)
  *
 const char *CG_FireteamGetBoxText(void)
 {
-    if (cgs.applicationEndTime > cg.time)
-    {
-        if (cgs.applicationClient == -1)
-        {
-            return "Sent";
-        }
+	if (cgs.applicationEndTime > cg.time)
+	{
+		if (cgs.applicationClient == -1)
+		{
+			return "Sent";
+		}
 
-        if (cgs.applicationClient == -2)
-        {
-            return "Failed";
-        }
+		if (cgs.applicationClient == -2)
+		{
+			return "Failed";
+		}
 
-        if (cgs.applicationClient == -3)
-        {
-            return "Accepted";
-        }
+		if (cgs.applicationClient == -3)
+		{
+			return "Accepted";
+		}
 
-        if (cgs.applicationClient == -4)
-        {
-            return "Sent";
-        }
+		if (cgs.applicationClient == -4)
+		{
+			return "Sent";
+		}
 
-        if (cgs.applicationClient < 0)
-        {
-            return NULL;
-        }
+		if (cgs.applicationClient < 0)
+		{
+			return NULL;
+		}
 
-        return va("Accept application from %s?", cgs.clientinfo[cgs.applicationClient].name);
-    }
+		return va("Accept application from %s?", cgs.clientinfo[cgs.applicationClient].name);
+	}
 
-    if (cgs.invitationEndTime > cg.time)
-    {
-        if (cgs.invitationClient == -1)
-        {
-            return "Sent";
-        }
+	if (cgs.invitationEndTime > cg.time)
+	{
+		if (cgs.invitationClient == -1)
+		{
+			return "Sent";
+		}
 
-        if (cgs.invitationClient == -2)
-        {
-            return "Failed";
-        }
+		if (cgs.invitationClient == -2)
+		{
+			return "Failed";
+		}
 
-        if (cgs.invitationClient == -3)
-        {
-            return "Accepted";
-        }
+		if (cgs.invitationClient == -3)
+		{
+			return "Accepted";
+		}
 
-        if (cgs.invitationClient == -4)
-        {
-            return "Sent";
-        }
+		if (cgs.invitationClient == -4)
+		{
+			return "Sent";
+		}
 
-        if (cgs.invitationClient < 0)
-        {
-            return NULL;
-        }
+		if (cgs.invitationClient < 0)
+		{
+			return NULL;
+		}
 
-        return va("Accept invitiation from %s?", cgs.clientinfo[cgs.invitationClient].name);
-    }
+		return va("Accept invitiation from %s?", cgs.clientinfo[cgs.invitationClient].name);
+	}
 
-    if (cgs.propositionEndTime > cg.time)
-    {
-        if (cgs.propositionClient == -1)
-        {
-            return "Sent";
-        }
+	if (cgs.propositionEndTime > cg.time)
+	{
+		if (cgs.propositionClient == -1)
+		{
+			return "Sent";
+		}
 
-        if (cgs.propositionClient == -2)
-        {
-            return "Failed";
-        }
+		if (cgs.propositionClient == -2)
+		{
+			return "Failed";
+		}
 
-        if (cgs.propositionClient == -3)
-        {
-            return "Accepted";
-        }
+		if (cgs.propositionClient == -3)
+		{
+			return "Accepted";
+		}
 
-        if (cgs.propositionClient == -4)
-        {
-            return "Sent";
-        }
+		if (cgs.propositionClient == -4)
+		{
+			return "Sent";
+		}
 
-        if (cgs.propositionClient < 0)
-        {
-            return NULL;
-        }
+		if (cgs.propositionClient < 0)
+		{
+			return NULL;
+		}
 
-        return va("Accept %s's proposition to invite %s to join your fireteam?", cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
-    }
+		return va("Accept %s's proposition to invite %s to join your fireteam?", cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
+	}
 
-    return NULL;
+	return NULL;
 }
 */
 
@@ -1464,8 +1480,8 @@ qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly)
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
 		/*      if( i == cgs.clientinfo ) {
-		            continue;
-		        }*/
+					continue;
+				}*/
 
 		if (!cgs.clientinfo[i].infoValid)
 		{
