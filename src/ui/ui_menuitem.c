@@ -36,6 +36,8 @@
 #include "ui_shared.h"
 #include "ui_local.h"
 
+#define SCROLLBAR_THUMB_MIN_SIZE 14
+
 static qboolean Item_IsPasswordField(const itemDef_t *item)
 {
 	if (!item || !item->cvar || !*item->cvar)
@@ -377,6 +379,165 @@ int Item_ListBox_MaxScroll(itemDef_t *item)
 }
 
 /**
+ * @brief Returns how many listbox items can be displayed at once.
+ * @param[in] item
+ * @return Number of visible items clamped to at least one.
+ */
+static int Item_ListBox_VisibleItems(itemDef_t *item)
+{
+	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
+	float        visibleSpan;
+	float        elementSpan;
+	int          visibleItems;
+
+	if (item->window.flags & WINDOW_HORIZONTAL)
+	{
+		visibleSpan = item->window.rect.w;
+		elementSpan = listPtr->elementWidth;
+	}
+	else
+	{
+		visibleSpan = item->window.rect.h;
+		elementSpan = listPtr->elementHeight;
+	}
+
+	if (elementSpan <= 0.0f)
+	{
+		return 1;
+	}
+
+	visibleItems = (int)(visibleSpan / elementSpan);
+	if (visibleItems < 1)
+	{
+		visibleItems = 1;
+	}
+
+	return visibleItems;
+}
+
+/**
+ * @brief Returns usable scrollbar track length, excluding arrows.
+ * @param[in] item
+ * @return Track size in pixels.
+ */
+static int Item_ListBox_ScrollTrackSize(itemDef_t *item)
+{
+	float size;
+
+	if (item->window.flags & WINDOW_HORIZONTAL)
+	{
+		size = item->window.rect.w - (SCROLLBAR_SIZE * 2) - 2;
+	}
+	else
+	{
+		size = item->window.rect.h - (SCROLLBAR_SIZE * 2) - 2;
+	}
+
+	if (size < 1.0f)
+	{
+		size = 1.0f;
+	}
+
+	return (int)size;
+}
+
+/**
+ * @brief Returns scrollbar thumb size proportionate to visible data.
+ * @param[in] item
+ * @param[in] count Number of items in the feeder.
+ * @return Thumb size in pixels.
+ */
+static int Item_ListBox_ThumbSize(itemDef_t *item, int count)
+{
+	int trackSize;
+	int visibleItems;
+	int thumbSize;
+
+	trackSize    = Item_ListBox_ScrollTrackSize(item);
+	visibleItems = Item_ListBox_VisibleItems(item);
+
+	if (count <= visibleItems)
+	{
+		return trackSize;
+	}
+
+	thumbSize = (trackSize * visibleItems) / count;
+	if (thumbSize < SCROLLBAR_THUMB_MIN_SIZE)
+	{
+		thumbSize = SCROLLBAR_THUMB_MIN_SIZE;
+	}
+	if (thumbSize > trackSize)
+	{
+		thumbSize = trackSize;
+	}
+
+	return thumbSize;
+}
+
+/**
+ * @brief Draws a non-scaled listbox scrollbar thumb using simple primitives.
+ * @param[in] item
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ */
+static void Item_ListBox_DrawThumb(itemDef_t *item, float x, float y, float w, float h)
+{
+	vec4_t thumbColor;
+	vec4_t backgroundColor;
+	vec4_t borderColor;
+	float  alpha;
+
+	// Build a stable thumb palette from the configured scrollbar color.
+	Vector4Copy(item->scrollColor, thumbColor);
+	alpha = (thumbColor[3] > 0.0f) ? thumbColor[3] : 1.0f;
+
+	thumbColor[0] = 0.5f;
+	thumbColor[1] = 0.5f;
+	thumbColor[2] = 0.5f;
+	thumbColor[3] = alpha;
+
+	backgroundColor[0] = 0.3f;
+	backgroundColor[1] = 0.3f;
+	backgroundColor[2] = 0.3f;
+	backgroundColor[3] = alpha;
+
+	Vector4Set(borderColor, 0.15f, 0.15f, 0.15f, alpha);
+
+	DC->fillRect(x, y, w, h, backgroundColor);
+	DC->drawRect(x, y, w, h, 1, borderColor);
+
+	// Add grip marks to keep the thumb readable at large sizes.
+	if (w > h)
+	{
+		float cx = x + w * 0.5f - 3.0f;
+		float gy = y + 3.0f;
+		float gh = h - 6.0f;
+
+		if (gh > 2.0f)
+		{
+			DC->fillRect(cx + 0.0f, gy, 1.0f, gh, borderColor);
+			DC->fillRect(cx + 3.0f, gy, 1.0f, gh, borderColor);
+			DC->fillRect(cx + 6.0f, gy, 1.0f, gh, borderColor);
+		}
+	}
+	else
+	{
+		float cy = y + h * 0.5f - 3.0f;
+		float gx = x + 3.0f;
+		float gw = w - 6.0f;
+
+		if (gw > 2.0f)
+		{
+			DC->fillRect(gx, cy + 0.0f, gw, 1.0f, borderColor);
+			DC->fillRect(gx, cy + 3.0f, gw, 1.0f, borderColor);
+			DC->fillRect(gx, cy + 6.0f, gw, 1.0f, borderColor);
+		}
+	}
+}
+
+/**
  * @brief Return qtrue when the listbox needs a scrollbar to show all entries.
  * @param[in] item
  * @param[in] count Item count for the feeder backing this listbox.
@@ -384,30 +545,9 @@ int Item_ListBox_MaxScroll(itemDef_t *item)
  */
 static qboolean Item_ListBox_NeedsScrollbar(itemDef_t *item, int count)
 {
-	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
-	int          visibleItems;
+	int visibleItems;
 
-	if (item->window.flags & WINDOW_HORIZONTAL)
-	{
-		if (listPtr->elementWidth <= 0.0f)
-		{
-			return qfalse;
-		}
-		visibleItems = (int)(item->window.rect.w / listPtr->elementWidth);
-	}
-	else
-	{
-		if (listPtr->elementHeight <= 0.0f)
-		{
-			return qfalse;
-		}
-		visibleItems = (int)(item->window.rect.h / listPtr->elementHeight);
-	}
-
-	if (visibleItems < 1)
-	{
-		visibleItems = 1;
-	}
+	visibleItems = Item_ListBox_VisibleItems(item);
 
 	return (count > visibleItems) ? qtrue : qfalse;
 }
@@ -419,16 +559,24 @@ static qboolean Item_ListBox_NeedsScrollbar(itemDef_t *item, int count)
  */
 int Item_ListBox_ThumbPosition(itemDef_t *item)
 {
-	float        max, pos, size;
+	float        max, pos;
+	int          trackSize;
+	int          thumbSize;
+	int          count;
+	int          trackStart;
 	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
 
-	max = Item_ListBox_MaxScroll(item);
+	max       = Item_ListBox_MaxScroll(item);
+	count     = DC->feederCount(item->special);
+	trackSize = Item_ListBox_ScrollTrackSize(item);
+	thumbSize = Item_ListBox_ThumbSize(item, count);
+
 	if (item->window.flags & WINDOW_HORIZONTAL)
 	{
-		size = item->window.rect.w - (SCROLLBAR_SIZE * 2) - 2;
+		trackStart = item->window.rect.x + 1 + SCROLLBAR_SIZE;
 		if (max > 0)
 		{
-			pos = (size - SCROLLBAR_SIZE) / max;
+			pos = (trackSize - thumbSize) / max;
 		}
 		else
 		{
@@ -436,14 +584,14 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
 		}
 
 		pos *= listPtr->startPos;
-		return item->window.rect.x + 1 + SCROLLBAR_SIZE + pos;
+		return trackStart + pos;
 	}
 	else
 	{
-		size = item->window.rect.h - (SCROLLBAR_SIZE * 2) - 2;
+		trackStart = item->window.rect.y + 1 + SCROLLBAR_SIZE;
 		if (max > 0)
 		{
-			pos = (size - SCROLLBAR_SIZE) / max;
+			pos = (trackSize - thumbSize) / max;
 		}
 		else
 		{
@@ -452,7 +600,7 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
 
 		pos *= listPtr->startPos;
 
-		return item->window.rect.y + 1 + SCROLLBAR_SIZE + pos;
+		return trackStart + pos;
 	}
 }
 
@@ -463,17 +611,21 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
  */
 int Item_ListBox_ThumbDrawPosition(itemDef_t *item)
 {
+	int count, trackSize, thumbSize, min, max;
+
+	count     = DC->feederCount(item->special);
+	trackSize = Item_ListBox_ScrollTrackSize(item);
+	thumbSize = Item_ListBox_ThumbSize(item, count);
+
 	if (itemCapture == item)
 	{
-		int min, max;
-
 		if (item->window.flags & WINDOW_HORIZONTAL)
 		{
 			min = item->window.rect.x + SCROLLBAR_SIZE + 1;
-			max = item->window.rect.x + item->window.rect.w - 2 * SCROLLBAR_SIZE - 1;
-			if (DC->cursorx >= min + SCROLLBAR_SIZE / 2 && DC->cursorx <= max + SCROLLBAR_SIZE / 2)
+			max = min + trackSize - thumbSize;
+			if (DC->cursorx >= min + thumbSize / 2 && DC->cursorx <= max + thumbSize / 2)
 			{
-				return DC->cursorx - SCROLLBAR_SIZE / 2;
+				return DC->cursorx - thumbSize / 2;
 			}
 			else
 			{
@@ -483,10 +635,10 @@ int Item_ListBox_ThumbDrawPosition(itemDef_t *item)
 		else
 		{
 			min = item->window.rect.y + SCROLLBAR_SIZE + 1;
-			max = item->window.rect.y + item->window.rect.h - 2 * SCROLLBAR_SIZE - 1;
-			if (DC->cursory >= min + SCROLLBAR_SIZE / 2 && DC->cursory <= max + SCROLLBAR_SIZE / 2)
+			max = min + trackSize - thumbSize;
+			if (DC->cursory >= min + thumbSize / 2 && DC->cursory <= max + thumbSize / 2)
 			{
-				return DC->cursory - SCROLLBAR_SIZE / 2;
+				return DC->cursory - thumbSize / 2;
 			}
 			else
 			{
@@ -582,6 +734,7 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 	rectDef_t r;
 	int       count;
 	int       thumbstart;
+	int       thumbsize;
 
 	count = DC->feederCount(item->special);
 	if (!Item_ListBox_NeedsScrollbar(item, count))
@@ -589,6 +742,7 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 		// No scrolling required, so scrollbar controls are inactive.
 		return 0;
 	}
+	thumbsize = Item_ListBox_ThumbSize(item, count);
 
 	if (item->window.flags & WINDOW_HORIZONTAL)
 	{
@@ -612,6 +766,8 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 		//thumbstart = Item_ListBox_ThumbPosition(item);
 		thumbstart = Item_ListBox_ThumbDrawPosition(item);
 		r.x        = thumbstart;
+		r.w        = thumbsize;
+		r.h        = SCROLLBAR_SIZE;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
 			return WINDOW_LB_THUMB;
@@ -624,8 +780,8 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 			return WINDOW_LB_PGUP;
 		}
 
-		r.x = thumbstart + SCROLLBAR_SIZE;
-		r.w = item->window.rect.x + item->window.rect.w - SCROLLBAR_SIZE;
+		r.x = thumbstart + thumbsize;
+		r.w = item->window.rect.x + item->window.rect.w - SCROLLBAR_SIZE - r.x;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
 			return WINDOW_LB_PGDN;
@@ -658,6 +814,8 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 		//thumbstart = Item_ListBox_ThumbPosition(item);
 		thumbstart = Item_ListBox_ThumbDrawPosition(item);
 		r.y        = thumbstart;
+		r.w        = SCROLLBAR_SIZE;
+		r.h        = thumbsize;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
 			return WINDOW_LB_THUMB;
@@ -670,8 +828,8 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 			return WINDOW_LB_PGUP;
 		}
 
-		r.y = thumbstart + SCROLLBAR_SIZE;
-		r.h = item->window.rect.y + item->window.rect.h - SCROLLBAR_SIZE;
+		r.y = thumbstart + thumbsize;
+		r.h = item->window.rect.y + item->window.rect.h - SCROLLBAR_SIZE - r.y;
 		if (Rect_ContainsPoint(&r, x, y))
 		{
 			return WINDOW_LB_PGDN;
@@ -1930,8 +2088,9 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 {
 	scrollInfo_t *si = (scrollInfo_t *)p;
 	rectDef_t    r;
-	int          pos, max;
+	int          pos, max, count, thumbSize, trackRange;
 	listBoxDef_t *listPtr = (listBoxDef_t *)si->item->typeData;
+	count = DC->feederCount(si->item->special);
 
 	if (si->item->window.flags & WINDOW_HORIZONTAL)
 	{
@@ -1940,13 +2099,22 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 			return;
 		}
 
-		r.x = si->item->window.rect.x + SCROLLBAR_SIZE + 1;
-		r.y = si->item->window.rect.y + si->item->window.rect.h - SCROLLBAR_SIZE - 1;
-		r.h = SCROLLBAR_SIZE;
-		r.w = si->item->window.rect.w - (SCROLLBAR_SIZE * 2) - 2;
-		max = Item_ListBox_MaxScroll(si->item);
+		r.x        = si->item->window.rect.x + SCROLLBAR_SIZE + 1;
+		r.y        = si->item->window.rect.y + si->item->window.rect.h - SCROLLBAR_SIZE - 1;
+		r.h        = SCROLLBAR_SIZE;
+		r.w        = si->item->window.rect.w - (SCROLLBAR_SIZE * 2) - 2;
+		max        = Item_ListBox_MaxScroll(si->item);
+		thumbSize  = Item_ListBox_ThumbSize(si->item, count);
+		trackRange = r.w - thumbSize;
 
-		pos = (DC->cursorx - r.x - SCROLLBAR_SIZE / 2) * max / (r.w - SCROLLBAR_SIZE);
+		if (trackRange > 0)
+		{
+			pos = (DC->cursorx - r.x - thumbSize / 2) * max / trackRange;
+		}
+		else
+		{
+			pos = 0;
+		}
 		if (pos < 0)
 		{
 			pos = 0;
@@ -1961,13 +2129,22 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 	}
 	else if (DC->cursory != si->yStart)
 	{
-		r.x = si->item->window.rect.x + si->item->window.rect.w - SCROLLBAR_SIZE - 1;
-		r.y = si->item->window.rect.y + SCROLLBAR_SIZE + 1;
-		r.h = si->item->window.rect.h - (SCROLLBAR_SIZE * 2) - 2;
-		r.w = SCROLLBAR_SIZE;
-		max = Item_ListBox_MaxScroll(si->item);
+		r.x        = si->item->window.rect.x + si->item->window.rect.w - SCROLLBAR_SIZE - 1;
+		r.y        = si->item->window.rect.y + SCROLLBAR_SIZE + 1;
+		r.h        = si->item->window.rect.h - (SCROLLBAR_SIZE * 2) - 2;
+		r.w        = SCROLLBAR_SIZE;
+		max        = Item_ListBox_MaxScroll(si->item);
+		thumbSize  = Item_ListBox_ThumbSize(si->item, count);
+		trackRange = r.h - thumbSize;
 		//
-		pos = (DC->cursory - r.y - SCROLLBAR_SIZE / 2) * max / (r.h - SCROLLBAR_SIZE);
+		if (trackRange > 0)
+		{
+			pos = (DC->cursory - r.y - thumbSize / 2) * max / trackRange;
+		}
+		else
+		{
+			pos = 0;
+		}
 		if (pos < 0)
 		{
 			pos = 0;
@@ -3449,6 +3626,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 {
 	int          i;
 	float        x, y, size, count, thumb, scrollbarWidth;
+	int          thumbSize;
 	qboolean     showScrollbar;
 	qhandle_t    image;
 	qhandle_t    optionalImages[8];
@@ -3463,13 +3641,14 @@ void Item_ListBox_Paint(itemDef_t *item)
 	fillRect.h -= 2 * item->window.borderSize;
 	}*/
 
-	// the listbox is horizontal or vertical and has a fixed size scroll bar going either direction
+	// the listbox is horizontal or vertical and uses a proportional scrollbar thumb
 	// elements are enumerated from the DC and either text or image handles are acquired from the DC as well
 	// textscale is used to size the text, textalignx and textaligny are used to size image elements
 	// there is no clipping available so only the last completely visible item is painted
 	count          = DC->feederCount(item->special);
 	showScrollbar  = Item_ListBox_NeedsScrollbar(item, (int)count);
 	scrollbarWidth = showScrollbar ? SCROLLBAR_SIZE : 0.0f;
+	thumbSize      = Item_ListBox_ThumbSize(item, (int)count);
 	// default is vertical if horizontal flag is not here
 	if (item->window.flags & WINDOW_HORIZONTAL)
 	{
@@ -3486,15 +3665,15 @@ void Item_ListBox_Paint(itemDef_t *item)
 			DC->drawHandlePic(x, y, size + 1, SCROLLBAR_SIZE, DC->Assets.scrollBar);
 			x += size - 1;
 			DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowRight);
+			DC->setColor(NULL);
 			// thumb
 			thumb = Item_ListBox_ThumbDrawPosition(item);   //Item_ListBox_ThumbPosition(item);
-			if (thumb > x - SCROLLBAR_SIZE - 1)
+			if (thumb > x - thumbSize - 1)
 			{
-				thumb = x - SCROLLBAR_SIZE - 1;
+				thumb = x - thumbSize - 1;
 			}
 
-			DC->drawHandlePic(thumb, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
-			DC->setColor(NULL);
+			Item_ListBox_DrawThumb(item, thumb, y, thumbSize, SCROLLBAR_SIZE);
 		}
 
 		listPtr->endPos = listPtr->startPos;
@@ -3549,15 +3728,15 @@ void Item_ListBox_Paint(itemDef_t *item)
 			DC->drawHandlePic(x, y, SCROLLBAR_SIZE, size + 1, DC->Assets.scrollBar);
 			y += size - 1;
 			DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowDown);
+			DC->setColor(NULL);
 			// thumb
 			thumb = Item_ListBox_ThumbDrawPosition(item);
-			if (thumb > y - SCROLLBAR_SIZE - 1)
+			if (thumb > y - thumbSize - 1)
 			{
-				thumb = y - SCROLLBAR_SIZE - 1;
+				thumb = y - thumbSize - 1;
 			}
 
-			DC->drawHandlePic(x, thumb, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
-			DC->setColor(NULL);
+			Item_ListBox_DrawThumb(item, x, thumb, SCROLLBAR_SIZE, thumbSize);
 		}
 
 		// adjust size for item painting
