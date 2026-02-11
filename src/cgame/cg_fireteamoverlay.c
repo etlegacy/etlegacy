@@ -824,7 +824,6 @@ static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, hudComponent_t *comp
 	const int  healthTextWidth = HEALTH_TEXT_WIDTH;
 	int        maxHealth;
 	vec4_t     color;
-	const char *text;
 
 	if (!(comp->style & FT_HEALTH_TEXT) && !(comp->style & FT_HEALTH_TEXT))
 	{
