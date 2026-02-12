@@ -1,0 +1,347 @@
+> ^7Note:^9 This release is also shipping OmniBot v0.86 and WolfAdmin v1.2.0
+
+^dEngine
+
+* Fixed MSG_WriteBits for bigger data
+* Updated libs to 
+  * cURL 7.63.0
+  * GLEW 2.1.0
+  * SDL 2.0.9
+  * OpenAL 1.19.1
+  * libogg 1.3.3
+  * libvorbis 1.3.6
+  * Freetype 2.9.1
+  * SQLite 3.26.0
+  * Jpeg-turbo 1.5.3
+  * zlib 1.2.11
+  * OpenSSL 1.1.0j
+  * latest tinygettext
+* Fixed lazy switching between renderers
+* Fixed IPv6 buffer & NET_AdrToString not returning port 
+* Fixed NET_AdrToString returning bad results for unusable address types
+* Added trap_SendMessage() syscalls return values
+* Fixed engine memory database, now enabled by default - ready to use by Lua scripts
+* Enabled IRC feature on the client and server side by default
+* Added Cvar_SetDescription and field description to cvar
+* Changed to a POSIX compliant way to get file length
+* Fixed command line variables not being set correctly 
+* Fixed pid file check
+* Fixed some compiling issues for NetBSD
+* Fixed possible buffer overflow in MSG_ReadBits/MSG_WriteBits (CVE-2017-11721)
+* Fixed unsigned types where wrapping arithmetic is intended
+* Fixed reading crash log when log wraps around buffer
+* Added security fixes
+* Changed cvarlist command to print default values as well 
+* Fixed exploit to bypass filename restrictions on Windows
+* Fixed VMs change engine latch cvars immediately
+* Fixed VMs being able to change CVAR_PROTECTED cvars
+* Dropped support for Windows XP and Vista (eol reached in 2014 and 2017,
+  respectively).
+* Fixed R_init() throws glGetError() = 0x500 (r1) on init
+* Added several descriptions for commands - see /cmdlist
+* Added status prints on net_restart
+* Fixed some evaluations of FS_FOpenFileRead return values
+* Fixed infinite while loop in CON_FlushIn
+* Fixed MSG_Read*String*() functions not being able to read last byte from message
+* Fixed missing address operator in cm_polylib.c,  avoid nullptr dereference.
+* Fixed signed bit operations in MSG_ReadBits
+* Added network debugging back (packetloss cvars)
+* Fixed entity enum types to match vanilla again
+
+^fClient
+
+* Fixed default font doesn't have cyrillic support
+* Fixed auto correction of s_khz  48 value
+* Fixed missing string issue on window displayed after crash
+* Changed renderers prefer MD3 files for models instead of MDC
+* Fixed client leaking memory
+* Renamed cvar joy_threshold to in_joystickThreshold
+* Fixed FS_CL_ExtractFromPakFile error case when file is not in path, better error
+  handling in Sys_LoadGameDll
+* Fixed black screen at launch due to socket timeout wait
+* Removed broken stereo mode
+* Fixed crash with Alt-Tab on Linux
+* Fixed undefined symbol: "_ZGVbN2vv___pow_finite" error on self compiled Linux build
+* Fixed pressing ESC then Backspace shuts down replays
+* Fixed ability to open .pk3 files as OpenAL drivers
+* Fixed IRC autoconnect
+* Fixed shader rotation at high level times
+* Fixed deprecated gethostbyname() to use getaddrinfo()
+* Added seperation of left and right Alt, Ctrl and shift keys
+* Fixed dropping the game when a cinematic file isn't available
+* Added more info prints for download & connect process
+* Fixed foliage color/alpha on big endian systems
+* Fixed vanilla ET MAX_DRAWSURFS value
+* Fixed populating  local servers when limit is reached
+* Fixed non Q3_BIG_ENDIAN ShaderForShaderNum()
+* Optimized coronas
+* Fixed VM_Create on UI FAILED issues when connecting to new mods
+* Fixed early key pressing exit the demo while playing the first frame
+* Fixed exiting demo no longer drop in error
+* Fixed videomaps not playing in game
+* Fixed client connecting to server with invalid chars in pk3 name 
+* Increased MAX_PART_MODELS to 7
+* Increased host name length from 36 to 72 characters (Legacy only)
+* Fixed firstSide values of fog brushes
+* Fixed shifting bits out of byte in tr_font.c
+* Fixed undefined behaviour due to shifting signed in snd_mem.c
+* Fixed not closing 0 length file and path seperator of description.txt 
+* Fixed unwanted  doppler effects
+* Added con_notify back
+* Fixed a crash caused by func_explosive
+* Changed r_showtris to exclude 2d
+* Fixed player shadows draining massive  FPS
+* Changed client default value for cvar rate to 25000 
+* Fixed reading vanilla demos - use ETL 2.75 to read older ETL demos
+
+^fRenderer2
+
+* Fixed shader parser issues
+* Fixed light shaders no longer using default shader
+* Fixed abort of shader parsing on unknown keyword warning
+* Fixed leaking memory
+* New folder 'materials' introduced for r2 material definition files
+  * Added processing of old definition files in 'scripts' path - if there is no r2
+    matrial available fallback to r1 definitions
+* Fixed skyparam image loading 
+* Fixed sky on maps with skyboxportal
+* Fixed fog
+* Fixed normal and specular image loading for map objects
+* Fixed shaders using normalzfade/dynamite glow effect
+* Fixed GLSL_SelectTexture selecting non existing textures
+* Fixed material using 'wave noise' parms
+* Added and fixed coronas
+* Fixed skipping the full shader when unknown shader params occure
+* Fixed some mod compatibility issues - we are forwarding all vanilla surface flags
+  again
+* Added and fixed foliage support
+* Fixed discolored shader issues (f.e. puddle on radar)
+* Added better lightmap by vertex support
+* Added vertex shader for lightVolume_omni
+* Fixed fog sorting issue
+* Fixed liquid shader
+* Fixed lightmaps for flares
+* Fixed glsl definition parser not setting initial uniform values (bloom/hdr renderer
+  fix)
+* Fixed firstSide values of fog brushes
+* Added extra smoothing for normals (experimental - mdc, md3, faces & meshes)
+* Added light interaction for foliage
+* Fixed construction shader not drawn
+* Fixed a crash caused by func_explosive
+* Added full support of DBS rendering/fixed normalmapping on lightmaps 
+* Added reflection mapping/fixed specular reflection for normal mapping
+
+^fServer
+
+* Invalid binary messages will no longer shut down the server - this is a mod issue
+* Fixed mover state for server side demo recordings
+* Added better autorecord hooks
+* Fixed clients using private slots when sv_privatePassword is unset
+* Fixed no longer sending a response to unknown clients
+* Fixed systeminfo command - it did actually print server info
+* Fixed listen server sending snapshots each client frame
+* Fixed possibly leaking buckets
+* Fixed exploit to reset player by sending wrong serverId
+* Added prevent using connect as an amplifier
+* Removed never used 'handicap' code
+* Fixed referencing pk3s with campaign files when gametype is not campaign to prevent
+  clients downloading these files on connect
+* Fixed download issues for http download and sv_wwwDlDisconnected 0
+
+^dMod
+
+* General rework of weapon code
+* Removed unused session var coach_team
+* Added players loose spawn shield upon firing as a new g_misc option 
+* Fixed skill rating not updating when specing
+* Fixed spectators can’t disable player names in game view
+* Fixed main debriefing stats not displayed when skill rating is disabled (also
+  causing intermission chat issues)
+* Fixed fireteam control doesn't work when NUMLOCK is enabled
+* Fixed opening fireteam panel stops your movement
+* Added UI option to set custom resolution in system menu
+* Changed  highest experience points award to display XP gained on the current map
+  only (unless in campaign mode)
+* Added missing talk/chat animation for players
+* Updated world flags (bots now use the UN flag)
+* Fixed fireteam chats available to non ft players
+* Added playtime statistics
+* Fixed client creating player lists each snapshot (multiview only)
+* Fixed script events
+* Fixed spectator speed boost too high
+* Fixed underwater jump movement
+* Fixed ability to run on water
+* Fixed limbopanel display map time in warmup instead of warmup countdown
+* Fixed tagent param  values of script_mover  ents behind 15 chars
+* Removed useless string comparisons at game start
+* Removed obsolete script action 'aiscriptname' 
+* Fixed edv issues/wrong rocket angles
+* Fixed non working custom icon of wm_announce_icon
+* Added custom icon to cpm console command
+* Changed cg_gunX/YZ are no longer cheat protected
+* Fixed UI vid_restart and rec_restart menus pointing to non existing menu when they
+  are closed
+* Fixed tons of Clang compiler warnings
+* Fixed playing 'fancy' medic scream for MOD_BACKSTAB kills
+* Fixed resetting some colors in cgame
+* Added UI joystick options to  advanced controls  menu
+* Removed obsolete cg_gun_fovscale cvar
+* Fixed ref commands for listen server console
+* Fixed spectator commandmap icon use mortar icon instead of a proper icon
+* Fixed disguised cover ops vsay subset visible to spectators
+* Removed disguised cover ops vsay visible in enemy team chat
+* Removed unused cg_stereoSeparation cvar
+* Fixed console prints for obituary messages
+* Added IRC settings to UI system menu
+* Changed double negative cg_noVoiceText and cg_noVoiceChat by cg_VoiceText and
+  cg_VoiceChat
+* Added MG repairing message
+* Fixed spawntimer displayed for spectator
+* Changed current map XPs or campaign XPs only displayed on HUD and scoreboard
+* Fixed UI edit and numeric fields not highlighted on mouse over
+* Added objective icon and disguised no-shoot icon on fireteam icon on compass
+* Fixed objective carrier disappearing from map when far away from player
+* Fixed limbo camera not initially updated
+* Expanded TrueSkill rating system for map bias and use internal SQLite database
+* Changed ranks are now tied to rating instead of skill levels and XPs when rating
+  system is enabled
+* Added Best Rating award
+* Fixed picking up weapon while reloading or overheating
+* Fixed Flame shader and Sten/MG/Browning smoke displayed on respawn
+* Fixed smoke grenade cannot break glass
+* Fixed model of landmines being planted not visible to spectators
+* Added landmines filter on limbo command map
+* Fixed oasis spawn counter
+* Added existing bug fixes in vanilla maps scripts
+* Fixed demo control keys
+* Added pm sound file for WA
+* Added players rotate on script movers
+* Added removal of items in front of movers (tanks etc) instead of being pushed
+  forward
+* Fixed EXPLOSIVE_INDICATOR not drawn on command map for opposite team
+* Fixed objectives not drawn on command map for opposite team
+* Fixed/changed wm_set_main_objective script command  (it does no longer expect a
+  number for objective - use the target trigger objective info name - see
+  oasis.script of pak3)
+  * Added 'oinfo' cgame cmd to display objective info
+* Fixed constructible priority order in trigger areas
+* Fixed profiles switching
+* Fixed some referee menu actions not working
+* Added ALT quick chat - see cg_quickchat cvar
+* Added GeoIP.dat
+* Added classmenu console command 
+* Added new spawnflag for SP_Shooter mortar
+* Fixed  weapon restriction wasn't counting set mortars
+* Fixed third person view axis using wrong weapon skin model
+* Fixed flamer dlights in water
+* Fixed precaching sounds
+* Fixed alpha channel for rank icons
+* Fixed some instances where weapon switch were allowed
+* Fixed switch weapon was allow while using binocular
+* Fixed fast binocular using while switching and prone moving
+* Fixed early switch when player was respawing
+* Fixed switchbackWeapon wasn't reset after respawn
+* Fixed switch back to scoped weapon with weaponlastused cmd was allow
+* Fixed scope reticle wasn't cleared on prone moving
+* Fixed zoom/unzoom effect when player is moving to fast with scope weapon and
+  binocular
+* Fixed alt weapon switch didn't lower speed move when prone moving
+* Fixed alt switch animation (riflenade / silencer ...)
+* Added a smoother effect when switching with alt weapon
+* Fixed spamming alt switch sound
+* Fixed hint for mountable entity was visible while using set weapon
+* Fixed using MG-Nest when firing with panzer
+* Fixed landmine team map data issue on team change
+* Added debug info for missing events (g_scriptDebug)
+* Fixed machine gun brass model wasn't used in first person view for weapon with
+  large bullet (MG, rifle ...)
+* Fixed brass weren't ejected on mounted tank MG
+* Fixed brass ejection position was incorrect in third person view
+* Fixed script G_ScriptAction_VoiceAnnounce implementation
+* Fixed equipped binoculars' animation when pressing "+attack" during "altweap"
+* Fixed sending unnecessary fire event when binocular is equipped and class is not
+  field ops 
+* Changed 9999 damage on crush/suicide/die/pushing to death with minimum damage
+  needed to gib
+* Added cg_drawspeed
+* Added more info prints when misc_model entity spawning fails
+* Fixed firing anim/sound was played when charge bar was too low for firing
+* Fixed auto reaload wasn't unscoping weapon when reloading
+* Fixed reloading akimbo wasn't possible when only the first bullet was fired
+* Fixed long host name with colored characters to be displayed in server list without
+  breaking the UI
+* Fixed CanDamage function
+* Fixed an invalid spectator state of team command
+* Fixed team follow1/2 not moving to intermission point after all players disconnect
+* Added colored mod name in mod menu
+* Fix antiwarp and slow medic regen issue with pmove_fixed 1
+* Added lagometer server frame rate
+* Rework item list (no more need to sort it by item type.)
+* Removed unused item "treasure" from item list
+* Removed duplicate item "weapon_medic_heal"  from item list
+* Removed obsolete/unused item type IT_ARMOR, IT_HOLDABLE, IT_KEY and IT_TREASURE
+* Removed obsolete/unused hint HINT_PLAYER, HINT_ALARM, HINT_TREASURE, HINT_CAUTION,
+  HINT_DANGER, HINT_SECRET, HINT_QUESTION, HINT_EXCLAMATION, HINT_CLIPBOARD,
+  HINT_ARMOR,HINT_INVENTORY, HINT_SCENARIC, HINT_EXIT, HINT_NOEXIT, HINT_PLYR_FRIEND,
+  HINT_PLYR_NEUTRAL, HINT_PLYR_ENEMY, HINT_PLYR_UNKNOWN and HINT_LOCKPICK
+* Changed fireteam name from NATO alphabet to historical alphabet (one set for each
+  team)
+* Fixed player model lights - body. head and acc were not synchronized
+* Added new MP34 weapon for axis covert ops instead of Sten
+* Fixed trigger_multiple spamming activate event/ignoring specified wait epair set in
+  the radiant
+* Added team-specific activate stages for multi_trigger
+* Fixed sound issues on fueldump/new sounds for axis when tank is  entering the
+  tunnel
+* Fixed "give skill" command wasn't giving the correct amount of skill points 
+* Fixed message range validity of "give skill" command
+* Removed reloadable weapon table
+* Changed storing ammo of non-clip weapons from ammo clip to ammo reserve
+* Added custom voice chats
+* Added CG_AddToNotify back
+* Fixed centerPrint and drawObjectiveInfo cut UTF-8 char and color printing
+* Fixed cg.hyperspace
+* Fixed limbomenu showing wrong weapon selected after map change
+* Fixed game configs not loaded
+* Fixed blurry hud weapon icons
+* Fixed map restart poll
+* Added print gametype at start
+* Fixed invalid gametypes set will no longer start the game
+* Fixed team Num abuse which was used to store dynamite/landmines states
+* Changed landmine checking callback frequency by enable it only when landmines are
+  planted and not spotted
+* Fixed fast weapon switching right after firing last bullet/missiles (much visible
+  with MG Set and Riflenade)
+* Added in weapons files (.weap) configurables values : noAmmoSound, limboWeaponCard,
+  ejectBrassOffset
+* Removed website button from in-game menu
+* Changed default browser servers sort by human players first (etl servers only)
+* Added display switch help text on scoreboard
+* Changed class restriction color to better differentiate with skill level 4
+  background
+* Fixed g_inactivity and g_spectatorInactivity timer
+* Added class selection menu in controls settings (default bind: P)
+* Fixed class and weapon restrictions check with /class command
+* Added g_stickycharge - controls when powerbar is restored or refilled
+* Added alternate switch sound from other player when they are switching alternate
+  weapons (i.e un/mount mortar/riflenade/silencer)
+
+* Lua
+  * Updated to Lua lib 5.3.5
+  * Updated to LuaSQL 2.3.5
+  * Fixed Lua sqlite3 memory database connections
+  * Fixed luaPath and luaCPath allowed strings possibly too short
+  * Added lua_restart command
+  * Added WP_MP34 and MOD_MP34 constants
+  * Added powerups constants
+
+For the logbook: 
+- In November 2016 coverity scan defect density < 0.18 has been reached. About 60
+  issues detected by coverity have been fixed during the last 12 months.
+- At the end of March 2017 we have reached defect density 0.10 with 46!!! outstanding
+  defects. In total 417 detected issues have been fixed!
+- At the end of July  2017 we have reached defect density 0.02 with 10!!! outstanding
+  defects. In total 468 detected issues have been fixed!
+- At start of October 2018 SGT Pepper managed RPI/ARM to fly with ET: L
+- At the end of December 2018 some very old major bugs have been fixed - this is the
+  best ET:  LEGACY release ever!

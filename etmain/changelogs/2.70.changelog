@@ -1,0 +1,38 @@
+2.70 is Linux and Windows only.
+
+^dEngine
+
+* Windows full installer
+* New ET:Legacy path structure
+  * ET:L now uses its own default fs_homepath home directory
+    *  *~/.etlwolf* on linux 
+    *  *<DOCUMENTS_FOLDER>\ETLWolf* on Windows 
+* Code clean up - unused code and cvars removal
+* Increased com_soundmegs (128MB) and com_soundmegs (160MB) default value 
+* Several exploit fixes
+* Fixed Invalid .PK3 files referenced
+* Fixed Linux r_depthbits crash
+* DRDoS protection see sv_protect
+* sv_timeout has been split - see sv_dl_timeout
+* Enabled translation support
+* Fixed memory leak
+* Print the full OpenGL extensions string
+* sv_advert introduced - controls server behaviour to 3rd parties
+* New game icon
+* Changed fs_game default to 'legacy'
+* ...
+
+^dMod
+
+* Code clean up - unused code and cvars removal
+* Several vanilla mod bug fixes (callvote exploit fix, remap shader fix ...)
+* Omni-Bot game and install support
+* Team chat flags have been added
+* Basic ingame translations for czech, danish, dutch, german and polish
+* Added Zinx's etpro antiwarp
+* Added forty's SP_func_fakebrush() function for fake brushes
+* UI serverbrowser filters non ET:Legacy compatible servers (ETPro & PB)
+* Menu additionals
+* Punkbuster references removed
+* Client side hitsounds
+* ...

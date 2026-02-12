@@ -1,0 +1,330 @@
+^7WIP^9
+
+^dEngine
+
+^fGeneral
+
+* Added etpro support ETLTV
+* Fixed etltv server message queue wasn't freed
+* Fixed off by one error in ^8Q_TruncateStr^9, which was causing some string to be
+  truncated
+* Added LuaJIT support
+* Removed SVG/NanoSVG suppport. Implementation was partially broken, thus discouraged
+  and caused a significant increase in loading times.
+* Rasterized embed SDL splash and shrink splash image < 512 res
+
+^fAndroid
+
+* Reworked UI Code
+* Added Options to Edit/Delete UI
+* UI Elements are now editable (Postitions and Scale of Buttons)
+* Removed handling of TouchEvents ^8shootBtn^9 in Java
+* All previous ^8shootBtn^9 TouchEvents has been moved to C side detect only margins
+  of shootBtn and do ^8MOUSE1^9 similiar to Beloko/diii4a ports
+* Added svg/xml files from deltatouch/diii4a png files
+* Added option to change themes via swipe gestures
+* Removed ^8default_android.cfg^9 this is now absolete
+* Added Custom Keyboard Extension (Long Press on Keyboard Button to show/hide it, so
+  far no text input allowed)
+* Physical Keyboard (USB) is now ^890%^9 working, no bluetooth keyboard tested.
+* Mouse input is now fully working (Non Relative Mode only, fix for Relative Mode is
+  mandatory)
+
+^fRaspberry PI
+
+^fMacOS
+
+^fUnix
+
+* Implemented ^8Sys_Microseconds^9 function
+
+^fWindows
+
+^dClient
+
+* Fixed ^8qwfwd^9 (QuakeWorld Forward) proxy compatibility which is a recommended
+  proxy for finding lower ping connection to QuakeWorld servers
+* Fixed demo timeout when rewinding
+* Fixed gamestate not updating on demo rewind in some cases
+* Allowed rewinding/fast-forwarding when demo is paused
+
+^dServer
+
+* Added server extension ^8trap_SnapshotCallbackExt^9 for new systemcalls
+  ^8G_SNAPSHOT_CALLBACK_EXT^9 and ^8GAME_SNAPSHOT_CALLBACK_EXT^9 (the default engine
+  snapshot callback returns the followee clientNum instead of the clientNum of the
+  follower). Without new snapshot callback it is impossible to send entities to
+  select few clients.
+* Added server extension ^8trap_SnapshotSetClientMask^9 for new systemcall
+  ^8G_SNAPSHOT_SETCLIENTMASK^9. Extension for setting client mask for given
+  clientNum. Clients in the mask will be added to snapshot regardless of PVS. Mask is
+  reset every server frame, so game needs to set it every frame.
+* Added new entity ^8ET_EBS_SHOUTCAST^9 replacing ^8ET_LANDMINESPOT_HINT^9, enabled
+  only if above engine extensions exist and on stopwatch gametype. Updates only if
+  there are present shoutcasters on server. Sends health, ammoclip, ammo.
+* ETLTV tv server now always broadcasts master client's client entities to viewers.
+* Added ^8net_overhead_print^9 and ^8net_overhead_clear^9 server commands to help
+  evaluating network overhead (debug builds only)
+* Changeed ^8sv_fps^9 cvar to ^8CVAR_SYSTEMINFO^9 so client(s) can tell what is the
+  exact server fps at all times
+* Changed ^8tvgame^9 and ^8game^9 modules register ^8CVAR_SYSTEMINFO^9 flag only in
+  case if engine doesn't have ^8sv_fps^9 cvar registered (if it exists they cannot
+  overwrite neither the value nor the flag of cvar)
+* Added extended functionality of XPSave ^8g_xpSaver^9 you can now use these
+
+  ^8#define XPSF_ENABLE              1  ///< enable XP Save on disconnect
+  ^8#define XPSF_NR_MAPRESET         2  ///< no reset on map restarts
+  ^8#define XPSF_NR_EVER             4  ///< no reset ever
+  ^8#define XPSF_WIPE_DUP_GUID       8  ///< call ClientDisconnect() on clients with
+  ^8the same GUID
+  ^8#define XPSF_DISABLE_STOPWATCH   16 ///< do not use xp-save when playing
+  ^8stopwatch
+  ^8#define XPSF_CONVERT             32 ///< if enabled the server tries to import
+  ^8old .xp format into etl database
+
+* Added ^8g_xpSaverMaxAge^9 to determine how long to keep saved xp, skillpoints and
+  medals of the player
+
+^dRenderer
+
+* Added ^8r_debugShader^9 cvar to display shader name by trace
+* Added ^8maxpicmip^9 directive to shader option to control picmip individually
+* Added ^8///etl///^9 directive to shader option so only ETL client can parse those
+  directives (ignored by 2.6b client)
+
+^dMod
+
+^fGeneral
+
+* Fixed ^8Backstab^9 with ^8Ka-Bar^9 was counting as ^8Knife^9 kill in stats
+* Disabled self-killing prevention on ^8sv_cheats 1^9 (dev mod)
+* Fixed incorrect player position at the start of intermission
+* Fixed excessive demo version prints
+* Added headshot obituaries
+* Fixed omnibot skipping ponctual event frame update (gibbing, ...)
+* Fixed emplaced gun repair was stucking stamina recovering when empty
+* Added "Dynamite defused" message on center print screen
+* Fixed multiple database lock issues on ^8XpSave^9 feature on
+* Added ^8setclosestspawnpt^9 command that automatically selects the minor (or major)
+  spawn closest to you.
+* Fixed landmines flag breaking on demo rewind
+* Fixed out of bound access in demo rewind (i.e causing visual glitches when 'W' key
+  got pressed on map sw_goldrush_te around the lighthouse after the tank passed the
+  tank barrier)
+* Fixed missing endline on send console command
+* Draw demo overlay/help window during intermission
+* Fixed multiview commands weren't displayed with console autocompletion
+* Fixed corpses floating 1u off ground when player died on ground
+* Fixed ^8cg_weapaltSwitches 0^9 wasn't working correctly
+* Fixed Gib Event to be received correctly on client side and not sink into oblivion
+  due to max event per entity received
+* Added ^8g_teamInfoUpdateRate^9 cvar to control ^8teaminfo^9 update rate. (Higher
+  rate generate more traffic network which can impact server performance)
+* Fixed intermission camera breaking when limbo menu is opened
+* Don't draw the selected spawnpoint indicator if we're spectating, have different
+  team selected, or intermission is active
+* Don't send ^8getspawnpt^9 during intermission, or if we're spectating, when limbo
+  menu is opened
+* Don't respond to ^8getspawnpt^9 commands from spectators
+* Added ^8cg_shoutcastTeamScoreRed^9 and ^8cg_shoutcastTeamScoreBlue^9 cvars to
+  display team score in shoutcaster team name comp
+* Added commands to handle teams score by increasing / decreasing / reset score and
+  swap team name/score values : ^8scPlusRedScore^9, ^8scMinusRedScore^9,
+  ^8scResetRedScore^9 , ^8scPlusBlueScore^9, ^8scMinusBlueScore^9,
+  ^8scResetBlueScore^9, ^8scSwapTeamLabels^9
+* Fixed ^8team_maxLandmines^9 not triggering a Config String update, showing
+  errornous landmines values
+
+^fStability & Performance
+
+* Fixed another incorrect return value in ^8G_ScriptAction_Delete^9
+* Improved ^8g_inactivity^9 and ^8tvg_inactivity^9 implementtion to prevent flooding
+  command
+* Fixed hurt/heal/ammo triggers during pause were activated
+* Fixed 0-velocity missile bouncing scenarios where issuing too much bouncing event
+* Fixed omnibot ^8GetEntityName^9 shall return empty name with of null value when ent
+  is valid
+* Fixed dynamite hitbox trigger detection when near TOI, which was smaller than
+  vanilla and would not trigger planted state on some objective
+* Improved pliers ticking usage server side (less computation)
+
+^fAudio
+
+^fGraphics
+
+* Fixed blooded face not showing for disguised player
+* Reset ^8VoiceMedic^9 Request icon once a player has been healed back up to Max
+  Health
+* Fixed ^8cg_gunFovOffset^9 "taking effect" below 90 - as this is assumed to be
+  "zooming in"
+* Added ^8cg_gunReviveFadeIn^9 cvar (default 1) to fade in 1st person weapon when
+  revived
+* Fixed 1st person hand silencer screw animation
+* Increased 1st person grenade charge animation time
+* Fixed NoJuice Animation continuing when switching to Syringe
+* Faster 3P death animations for explosives
+* Changed smoke textures on Low Texture Details
+* Fix tons of ^8nomipmaps^9 to ^8nopicmip^9 option on textures
+* Offsetted minor spawn ID's slightly off the ground
+* Fixed client side coronas not replicating wrapping behavior for color and scale
+  like server side coronas do, resulting in mismatched visuals for same parameters
+  depending on whether the corona was client or server sided
+* Fixed server side coronas culling too early from view on widescreen aspect ratios
+* Reduced blood puffs effect by reducing scale by 85% and opacity by 65% from the
+  original value
+* Added ^8cg_bloodForcePuffsForDamage^9 cvar. Default "1" - if enabled always shows
+  smoke puffs for shooting invulnerable players (spawn prot., rez shield) otherwise
+  always shows blood puffs.
+* Lerped rifle grenades to look nicer
+* Removed smoke/blood puffs for self in first person view
+* Fixed spawnpoint drawing position on fallback path
+
+^fUI
+
+* Displayed objective indicator when shoutcaster
+* Fixed fireteam health indicator on wounded players
+* Fixed needle draw for RG powerbar was missing when holding pliers and grenades
+* Fixed compass not drawing while wounded
+* Fixed scrollbar behavior as dragging scrollbar would stop at arbitrary points
+* Fixed Right Mouse Button outside of UI elements goes back to last focused UI
+  element
+* Added rotating map compass via ^8Point North^9 style option for compass
+* Fixed cardinal points alignment on compass
+* Added style option ^8suffix^9 to draw unit on ping and speed components
+* Added weapon heat bar component ^8weaponheatbar^9
+* Added style option ^8only ticking^9 to only draw weapon icon on cooking state
+* Added ^8cg_scopeReticleStyle^9 cvar :
+  * 0 - use default
+  * 1 - force cross
+  * 2 - force 3 posts (center dot will be drawn if of a different color)
+  * 3 - force center dot only
+* Added ^8cg_scopeReticleColor^9 cvar to color of the scope reticle
+* Added ^8cg_scopeReticleDotColor^9 cvar to color the scope reticle center dot
+* Added ^8cg_scopeReticleLineTickness^9 cvar to resize the scope reticle lines
+* Added ^8cg_scopeReticleDotTickness^9 cvar to resize the scope reticle center dot
+* Added  ^8cg_fireteamSpritesColor^9 cvar to color the fireteam sprite color
+* Added  ^8cg_fireteamSpritesColorSelected^9 cvar to color the fireteam sprite color
+  when buddy is selected
+* Added fireteam spawn point number in fireteam component
+* Added ^8cg_customCrosshairHealth^9 cvar to enable dynamic heal coloration with
+  custom crosshair
+* Removed ^8cg_teamChatHeight^9 cvar
+* Changed in-game chat maximum messages buffer from ^88^9 to ^8128^9
+* Added dynamic chat line number depending of height space
+* Changed compass draw order to be draw on top of all HUD elements
+* Fixed draw order from HUD loaded from files
+* Added ^8popupmessages4^9component
+* Added ^8double digits^9 style option to ^8spawntimer^9, ^8reinforcement^9,
+  ^8roundtimer^9 component
+* Added ^8No echo^9 filter option to popupmessage component, allowing filtering echo
+  message wich are not objective annoucement
+* Fixed needle bar placement in HUD for certain combinations
+* Fixed shader scripts for shadown flag icon ^8cm_flagshadow^9 so that its not drawn
+  outside of compass
+* Rework fireteam overlay (fixes and improvements) :
+  * Fixed general bad scaling/positioning of various elements due to usage of integer
+    size/positions, everything is now using floats to move/scale more accurately
+  * Fixed No header option always forcing minimum of 2 lines to be drawn even if
+    fireteam only contained 1 member
+  * Fixed locations/spawn point locations not cropping properly when comp max width
+    was reached, both are now equally cropped if max width is reached
+  * Fixed numeric spawn point display being too close to location string
+  * Fixed colorless name and status colored name not working correctly if player name
+    contained a caret
+  * Fixed powerup icon next to names drawing too much to the left, and using
+    hardcoded width offset instead of respecting text scaling option of the comp
+  * Fixed fireteam header ignoring comp text style options
+  * Fixed fireteam names ignoring comp text style options, unless names were
+    right-algined
+  * Added ability to draw names left-aligned with fixed width, by setting
+    cg_fireteamNameAlign -1
+* Masked password prompt text with '*' to protect from potential leak when sharing
+  screen
+* Moved the dev banner in main menu to be top centered
+* Removed ^8nomipmaps^9 for simple icons
+* Added the possibility to draw a bar as a circle add following customization
+  * Density    : Control the number of squares to be draw to complete the circle
+    depending of the thickness.
+  * Star Angle : The angle between 0 and 360 where the first point is draw on the
+    circle
+  * End Angle  : The angle between 0 and 360 relative to the start point pointing to
+    the last point to be draw on the circle
+  * Thickness  : The circle thickness in pixel
+* Added the possibility to control feed tempo time customization from editor : 
+  * Time      : Delay before showing the message
+  * Stay Time : Delay for displaying message before starting fading it
+  * Fade Time : Delay of fading effect before removing message
+* Removed ^8cg_popupFadeTime^9, ^8cg_popupStayTime^9, ^8cg_popupTime^9,
+  ^8cg_popupXPGainFadeTime^9, ^8cg_popupXPGainStayTime^9 and ^8cg_popupXPGainTime^9
+  cvars
+* Added ^8Show score^9 style to display the score with the team name on shoutcaster
+  team name comp
+* Added ^8Swap score^9 style to display the score first then the team name on
+  shoutcaster team name comp
+* Added text alignment to ^8followtext^9 component
+* Fixed border and background draw to ^8followtext^9 component
+* Added ^8clipbar^9 component, allowing showing remaining available ammo in clip or
+  in reserve in case of non clip weapon
+* Added mini health bar into fireteam overlay
+* Added ^8Health Text^9 and ^8Mini Health Bar^9 style toggle option for fireteam
+  overlay comp
+* Fixed some compass icons were draw outside border
+* Fixed desync between crosshair bar and hint icon
+* Fixed levelshot in loading menu was stretched
+* Added custom icons to player connect/disconnect in popupmessage feed
+* Added spectator flag icon for team chat spectator text message
+* Reworked status row style by displaying the health in bar, blinking on wounded
+  player (from yellow to red), red on dead/limbo, medium cyan when invinsible
+  (spawn/revived)
+* Added wounded, dead, invinsible icons status
+* Chaged icons status position to use a fixed column size, so member name will not be
+  moved on icons displayed
+* Centered weapon icon into the weapons icons column
+* Added medium cyan color to health text / mini bar when member is invinsible
+* Moved member selection from yellow background row color to class icon coloration
+* Displayed revivable bodies of fireteam members in command map even when they're
+  outside of pvs
+* Skiped single option menus in ^8classmenu^9 menu selection
+
+* HUD Editor
+  * Reworked the HUD with extra button to enable Tab customization depending of comp
+    nature.
+  * Added following feature binded to s / r / m keys (Thoses are helper to properly
+    shape text and bar comp): 
+    * s : shape the selected component bound into a square, using the longest side
+      for both side
+    * r : shape the selected component bound into a rectangle with proper ratio using
+      20% on the longest side for the smaller side
+    * m : mirror the width and height of the selected component bound
+  * Fixed ^8customcrosshair^9 positioning in HUD editor
+
+* Limbo changes : 
+  * Highlighted resolved / selected spawn point on map
+  * Fixed autospawn indicator not updating correctly
+
+* Menu changes:
+  * Increased Map/Player Callvote Menu height
+
+* Demo UI
+  * Fixed cursor timeout when interacting with demo UI
+  * Enhanced demo UI buttons : 
+    * Buttons now have proper graphics, rather than using '<', '||' and '>' strings
+    * Play/pause button now shows a pause or play icon, depending whether the
+      playback is paused or not
+    * Buttons now have a hover color, and audible feedback when clicked
+    * Current / end time of demo is now visible underneath the ticker
+    * The ticker now performs actions on key up rather than key down - this allows
+      dragging the ticker to a specific time, and then releasing mouse button
+    * Hovering over the ticker or dragging it now displays a tooltip, indicating the
+      timestamp at mouse cursor position
+
+^fWeapons
+
+* Fixed binocular and scope mask visibility in first person view
+* Fixed spawntimer desynchronisation between server and client (rounding error on
+  client side)
+* Fixed compass not drawing while wounded. By now, compass is now only hidden while
+  in free spec (excluding shoutcaster mode) or while using multiview
+* Increased FPS_RECOIL_FACTOR from 71 to 83 to balance the increased time window for
+  sprint + scope
+* Disabled zoom sway for binoculars

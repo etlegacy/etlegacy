@@ -1,0 +1,5 @@
+^dEngine
+
+* Added fix for libjpeg compatibility (originally written by Ilm) (broken in alpha2)
+* Windowed mode behaves better (but it is not noob-friendly yet)
+* Libraries are now all linked dynamically (Linux needs: libjpeg, libcurl, sdl)

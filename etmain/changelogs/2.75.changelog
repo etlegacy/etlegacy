@@ -1,0 +1,160 @@
+^dEngine
+
+* Fixed Cvar_Unset not notifying cvar_modifiedFlags
+* Fixed *nix systems buffer usage in Sys_RandomBytes
+* Added command descriptions
+* Fixed file handle leaking in unzip functions used by apple lib loader and ETL
+  updater
+* Added basic sqlite3 support 
+* Fixed some cases of FS_UnzipTo returning true when unzip failed
+* Allow to use zlib and minizip system libs
+* Fixed error handling of mod lib loading
+* Fixed registering of server pk3s with invalid chars in file name (no more allowed)
+* Fixed fs_homepath default value on Windows when 'My Documents' has been moved to
+  another drive
+
+^fClient
+
+* Enabled optional renderer2 *[experimental]*
+  * Added r2 compile glsl only when the program is really needed
+* Enabled optional OpenAL sound system with surround sound support
+* Updated libs to 
+  * GLEW 2.0
+  * Freetype 2.6.5
+  * OpenAL 1.17.2
+  * SDL 2.0.4
+  * latest tinygettext
+* Fixed gamma control in renderer1 by using GLSL shader
+* Fixed cut sound channels which are actually flagged to be cut
+* Fixed MAX_PATCH_PLANES error on some maps
+* Added the support of ogv (theora) videos
+* Fixed the ROQ support of HQ videos
+* Fixed lib loading issues on MAC clients (now loading .dylib when .bundle unzip
+  failed)
+* Fixed several OpenAL sound system issues
+* Added support for hidden 0x7f char to clean command
+* Fixed Hunk_Alloc size in R_InitSkins
+* Added joystick/input device code again *[experimental]*
+* Fixed demo recording 
+* Fixed www download issues when server uses redirect
+* Removed obsolete dingy filter on windows
+* Fixed console button
+* Removed unused cvars
+* Fixed rendererGLES QALIGN of vectors
+* Fixed error message for duplicate genuine paks on server
+* Fixed latency of input devices
+
+^fServer
+
+* Fixed build on FreeBSD
+* Fixed svdemo writing userinformation at the wrong place
+* Fixed leaking file handles in download code
+* Added sv_tracker cvar
+* Fixed div/0 in SV_RateMsec when com_timescale is set to 0
+
+^fMod
+
+* Fixed smoke grenade not triggering after player dies
+* Fixed MG gets stuck before reloading
+* Added weaponIconScale to *.weap files
+* Fixed allow medics max health from health cabinets
+* Fixed weapprevinbank and weapnextinbank issues for rifle
+* Added death animations
+* Added spectators statistics to match results table
+* Fixed CS_MULTI_MAPWINNER winner when surrending
+* Added cg_optimizePrediction - client optimized prediction
+* Fixed soldier level icon not displayed when using HW with any class
+* Fixed riflegrenade disappearing from the gun when you get revived
+* Fixed output and one player selection of 'new' console commands
+* Added throw console command to help players got stuck
+* Fixed noclip clients have a shadow
+* Added a warning for non available server models
+* Added time played percentage stats
+* Added reinforcement timer change color before tapout limit
+* Fixed callvote config cmd not showing description (3rd param '?')
+* Fixed callvote config cmd no longer initiating a vote when config file isn't
+  available
+* Fixed file handle leaking in preview and config file functions 
+* Fixed script logging
+* Fixed debriefing team xp for gametype map voting
+* Fixed storing team map xp for GT_WOLF_MAPVOTE
+* Fixed LMS team change with last life in warmup
+* Fixed spammy landmine spotted sounds
+* Fixed most of AA-gun issues - mappers should have a look at "misc_aagun"
+* Added special behaviour for players & corpses in front of a tank
+* Removed the short distance trick and make disguised name appears at all time
+* Fixed disguised enemy name not updated when victim changes player name 
+* Added spawnpoint autoselect button on limbo panel
+* Fixed full  health bar displayed after a teamkill
+* Fixed missing quick message shortcut in alternative voices menu
+* Fixed coverops don't loose their disguise if feet of target aren't in field of view
+* Added coverops ability to change disguise if they already have one
+* Fixed objective carrier map entity not removed from map when out of sight
+* Fixed killed teammates map entity not removed from map when going to limbo 
+* Fixed demo layout issues
+* Fixed individual weapons accuracy stats being over 100%
+* Changed map entity update rate is increased to every second
+* Fixed complain removal issue on client disconnection
+* Fixed self-adrenaline shader color not matching syringe color
+* Fixed fireteam privacy status update on client side
+* Fixed disguised enemy don't show fireteam icon if owner is in fireteam and selected
+* Fixed some issues with fireteam locations data
+* Added some sprite icons visible in spectator mode
+* Added intentional gibs and team gibs statistics
+* Removed disguised client rank from player configstrings
+* Added numerical values to awards screen
+* Added medals are also awarded in objective and mapvoting gametypes
+* Fixed awards don't take tie into account
+* Added best HS percentage, most gibs, most selfkill, most death and most time alive
+  awards
+* Fixed blinking map entities when players connect
+* Fixed scoreboard info not available in demos
+* Added tons of translations
+* Added new event message for MOD_TRIGGER_HURT
+* Fixed rcon/Lua chat and say command
+* Fixed allow_vote cvars in config files
+* Added missing polls to ui
+* Fixed MAX_STATIC_GAMEMODELS value too small for some maps
+* Added TrueSkill rating system *[experimental]*
+* Fixed connection interrupted message not shown when lagometer is disabled
+* Reactivated multi view *[experimental]*
+  * Added cvar g_multiview
+* Added cg_logfile to customize game menu
+* Fixed some misc gamemodels lerping all the time
+* Fixed construction sound is only played at start of constructions
+* Removed never working cgame cvars
+* Added show owner of team-landmine and -dynamite in crosshair as new g_misc options
+* Added rising smoke for arty and airstrike bombs
+* Added extended demo viewer code (freecam, weaponcam) from etpro
+* Added client side debug of player hitboxes
+* Added server side debug of entity BBoxes 
+* Fixed parser issues with invalid token (parsers are more strict) 
+* Fixed short rank names
+* Show profile info in main menu
+* Added lagometer antiwarp indicator
+* Fixed players are no longer allowed to push players using stationary MGs
+* Removed g_knifeonly - moved to Lua see AddWeaponToPlayer and RemoveWeaponFromPlayer
+* Fixed some issues with maxlives cvars set
+* Fixed knife kills always playing goat sound, MOD_BACKSTAB introduced
+* Fixed medic scream sound for gibbing mods - no need to play
+* Fixed unknown client game command causing sudden mouse movements
+* Fixed command map data not shown immediately
+* Fixed bots taking fireteam leadership
+* Fixed console end of match info not always printed
+* Added amount of headshots to "Top shots"
+* Lua
+  * Updated to Lua lib 5.3.3
+  * Added LuaSQL interface for SQLite3 support
+  * Added some Lua fields
+  * Added Lua script function G_SetEntState
+  * Fixed _et_XP_Set Lua interface float value for XP
+  * Added Lua script functions G_ShaderRemap, G_ResetRemappedShaders and
+    G_ShaderRemapFlush
+  * Added Lua hook SpawnEntitiesFromString 
+  * Added Lua script functions G_CreateEntity and G_DeleteEntity
+  * Fixed Lua G_EntitiesFree return value
+  * Added Lua script functions  AddWeaponToPlayer and RemoveWeaponFromPlayer
+  * Added Lua script functions G_SetGlobalFog
+
+For the logbook: In November 2015  coverity scan defect density < 0.25 has been
+reached (was 0.9 at the beginning of 2014). More than 300 issues are history.

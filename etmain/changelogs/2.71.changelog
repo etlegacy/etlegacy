@@ -1,0 +1,150 @@
+> The default fs_homepath value has been changed in RC4!
+
+^dEngine
+
+* Fixed crash in Q_strncpyz on OS X 10.9 Mavericks
+* Improved checks for a proper install
+* Changed default fs_homepath directory to etlegacy on all platforms
+* Updated unzip to 1.01h and zlib to 1.2.8
+* OS X: ability to load mod from dylibs
+* OS X: path to user's App Support directory for fs_hompath is not hardcoded anymore
+* Fixed translation support with dynamic linking
+* Fixed network shutdown on exit 
+* ET: Legacy process starts with high priority (Windows)
+* Fix FS_FOpenFileReadDir non-zero file handle when file not found
+* Improvement of the echo command which is now also enabled on the server side and
+  supports vstr arguments
+
+^fClient
+
+* Made the console look less Win3.1 ish (Windows)
+* Freetype now works properly. (People can use .tff or .otf fonts)
+* Enabled raw input on Windows resulting in smoother mouse movement (Windows 8.1 fix)
+* Language updates
+* r_noborder changed to latched cvar type (requires restart)
+* Sound code performance fix 
+* Fixed video and audio recording synchronization drift
+* Fixed duplicated config file created at first start
+* Colour code escaping with ^ fixed
+* Moved renderer2 to pure C (not released)
+* Added default ET ttf font files, used by default if built with FreeType support
+* Fixed a crash related to gamma setting/workaround for gamma reset bug in bundled
+  SDL, system one is still affected until this bug is patched upstream  (OS X)
+* Fixed several issues in IRC code (not released)
+* Buggy ET patch bevel axial plane optimization removed
+* com_maxfps is limited to max 333 fps now
+* Possible fix for queue overflows (Windows)
+* Renderer logging reworked
+* Fixed possible crash in S_PaintChannels
+* Build fix. iconv is included in libc starting from version 10.0 (not released,
+  FreeBSD)
+* Skip unhandled marksurfaces when calculating leaf bounds
+
+^fServer
+
+* Server shows real player count when private slots are used
+* Server side full demo recording (can replay the whole map with every players pow)
+
+^dMod
+
+* Improved in-game fonts rendering
+* Added spawnflag 1024 for script_movers (flamer damage only) - feature for mappers,
+  legacy mod only
+* Fixed weapon balance of static_pain function
+* Fixed gun not correctly scaled when using a fov greater than 90
+* Added prone delay
+* Added axis Granatwerfer
+* Added graphical obituaries display
+* Added additional icons type in popup messages
+* Fixed color codes issues in location display
+* Added crosshairname info display options
+* Added constructible XP sharing
+* Fixed dropped items not laying flush on inclined ground
+* Fixed zooming in effect when using binoculars 
+* Added icon over friendly disguised coverops to improve their visibility
+* Added scoreboard rank icons
+* Cmd entitylist shows event names for temp entities 
+* Added high resolution country flags for legacy clients
+* Fixed bubble hint icon not appearing consistently
+* Fixed damage falloff code
+* Adjusted hitboxes height, adjusted hitboxes for proning & dead players
+* Fixed start screen - displays proper size of clouds image
+* Fixed playing vanilla demos properly again
+* Fixed Forty's pmove_fixed and pmove_msec 
+* Fixed some issues with WP_NULL
+* Fixed coverops crosshair disguisename displayed with colors
+* Fixed colors displayed despite using uncoloured names
+* Added optional crosshair coloured names
+* Added additional crosshairs
+* Fixed fireteam window alignment
+* Fixed player stats - they are no longer deleted when setTeam is called
+* Clear client markers when teleporting players
+* Fixed bot votes, g_protect adjusted
+* Cmd /players doesn't change player names to lowercase anymore
+* Added allied bazooka weapon
+* Added separate statistics for new weapons, no longer log weapons as 'duplicate'
+* Fixed Browning not giving Heavy Weapon skill points
+* Bots no longer use private slots
+* Major gents performance fix
+* Fixed multiple votes on mapvoting system
+* Added objective carrier icon on the command map
+* Fixed weapon slot for silenced pistols
+* Added disguised coverops icon on the command map
+* Changed loadpanel and limbopanel black sides on widescreen to a more fitting green
+* Fixed statistics computed higher than 100%
+* Improved loading of the Omnibot library 
+* Added new server commands
+* Added update range cvars (skill_battlesense& skill_.....)
+* Fixed silenced pistol missing weapon bank
+* Fixed grenade launcher missing weapon bank
+* Added player name in killing message when following
+* Fixed gun stuck when reloading and proning forward
+* Fixed allied tank not generating Browning stats
+* Added switch to previous player while following
+* Fixed crash when cg_descriptiveText is set to 0
+* Fixed objective pick up sound broadcasted to everyone
+* Added disguised coverops icon in scoreboard
+* Added received team damage stats
+* Added used class icon for disguised covops client
+* Added in-game objectives popup window
+* Fixed played time ever increasing in debriefing screen
+* Added various statistics in debriefing screen, stats window and console output
+* Added bani's flamethrower exploit fix
+* Added cg_drawPing
+* Limbo cancel sound replaced by select sound
+* Fixed command map icons not displayed to spectators
+* Fixed some widescreen issues
+* Synced accum buffer sizes to be compatible with some maps
+* Fixed incorrect console prints
+* Added competitive configs to legacy
+* cg_popupTime has been removed
+* Adjusted sprite height when prone
+* Configstring slightly decreased
+* Server prints used OB version at the start
+* Fixed "falling to the ground" animations
+* Display snapshot time delta instead of ping during demo playback
+* Added rudimental referee bot menu for listen servers
+* Reset command map on team change
+* Mod also accepts most game sounds in .ogg format
+* Fixed /weaplastused cmd on first spawn and switching weapon for the first time
+* Fixed omnibot_enabled 0 and map_restart crash
+* Ignore corpses for bullet traces
+* cg_footsteps has been removed
+* Fixed buffer overflow in Omnibot PrintMessage function
+* Added 2 new spawnflags for trigger_multiple - see
+  "Legacy-engine-and-mod-info-for-mappers":http://dev.etlegacy.com/projects/etlegacy/
+  wiki/Mapping_and_Textures#Legacy-engine-and-mod-info-for-mappers
+* Added extended soundscript info at start
+* New server votings
+
+^dLua
+
+* Added xpsave script
+* Added private messages script
+* Added et_DPrint and et_Error hooks
+
+^dInstaller
+
+* Omni-Bot shortcut fixed (Windows only)
+
+... and various smaller adjustments. We have a new logo!

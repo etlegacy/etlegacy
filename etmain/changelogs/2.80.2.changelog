@@ -1,0 +1,68 @@
+^dEngine
+
+* Improved VM_Create errors so average user might have some idea on what's actually
+  wrong
+* Fixed certificate download issued upon game start was crashing the game
+* Fixed etconfig from overwriting init cvars
+
+^fGeneral
+
+^fAndroid
+
+^fMacOS
+
+^fUnix
+
+^fWindows
+
+^dClient
+
+^fGeneral
+
+* Added ^8con_defaultHeight^9 cvar for default console height by normalized
+  percentage of the screen (0 to 1)
+* Added seeking in console word by word by holding down CTRL and using arrow keys
+
+^fAudio backend
+
+^dServer
+
+^dRenderer
+
+* Fixed renderer loading on Wayland (due to a bug in upstream of GLEW)
+* Increased ^8r_displayRefresh^9 cvar range from ^8240^9 to ^8480^9 for 360Hz and
+  480Hz monitors
+* Changed ^8r_swapInterval^9 cvar to be latched as it requires ^8vid_restart^9
+
+^dMod
+
+^fGeneral
+
+* Disallowed shoving by holding down ^8+activate^9 key
+* Added ^8toggleRecord^9 command for in-game demo recording toggle binding
+* Removed ^8shoutcastmenu^9 console command (no longer needed). Pressing only F1-F12
+  keys will be enough to issue a follow command during shoutcast.
+
+^fStability & Performance
+
+* Changed handling of player events in client game to ensure predicted events aren't
+  played twice
+
+^fAudio
+
+* Fixed ^8vsays^9 not working on Steam 2.60b client
+
+^fGraphics
+
+* Added ^8cg_drawBreathPuffs^9 cvar for toggling breath puffs effect
+ 
+
+^fUI
+
+* Enhanced profile creation menus (various bug fixes and performance improvements)
+* Changed from white to yellow the bots ping column in scoreboard
+* Fixed long names overlapping in Roll of Honor and stats from debriefing screen
+* Fixed incorrect warning when starting a dedicated server via Host Game menu
+
+^fWeapons
+
