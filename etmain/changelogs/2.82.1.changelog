@@ -1,0 +1,112 @@
+^dEngine
+
+^fGeneral
+
+* Fixed the download cancellation state not being properly checked
+* Added 64+ players server support to ETLTV
+* Added chaining support to ETLTV
+* Reverted removal of ^8CL_GetTag^9
+
+^fAndroid
+
+* Touch Events generate Mouse Buttons Events only when released (does not affect
+  Buttons on UI) 
+* Changed ^8fs_homepath^9 to ExternalStoragePublicDirectory() inside Documents Dir
+  alike Beloko
+* Added Permission Requests for reading/writing into external storgage for Android 12
+  and lower
+
+^fRaspberry PI
+
+^fMacOS
+
+^fUnix
+
+^fWindows
+
+^dClient
+
+* Fixed client being stuck on loading screen after ^8kick^9 
+* Fixed dynamic shaders memory leak and crash on some systems
+* Don't clear keystate when toggling console, this breaks any +commands and vstr
+  scripts that use +commands whenever console is toggled
+
+^dServer
+
+^dRenderer
+
+* Made sure the render commands are properly aligned in memory
+* Forced ^8r_depthbits^9 range to 0-24 
+
+^dMod
+
+^fGeneral
+
+* Fixed ^8class^9 command 2nd weapon selection was always selecting best weapon
+* Fixed HUD conversion from V2 to V3 could failed if V2 HUD is duplicated name or
+  invalid parent
+* Fixed reload getting out of sync between client<->server when client is holding
+  ^8+reload^9 before revived
+* Increased objective XP reward
+  * 3 -> 5 pts Taking objective item
+  * 5 -> 5 pts Returning objective item
+  * 8 -> 10 pts Capturing objective item
+  * 2 -> 5 pts Capturing spawn flag (flag pole / checkpoint)
+  * 3 -> 5 pts Killing objective carrier
+  * 2 -> 3 pts Killing near TOI
+* Prevented gaining XP on self drop objective
+* Fixed crosshair alignment from center screen
+* Fixed crosshair blurrines effect when size was below 24px 
+
+^fStability & Performance
+
+* Fixed division by 0 in ^8CG_Cabinet^9 when entity is setup incorrectly
+
+^fAudio
+
+* Fixed artillery bomb falling sound not always playing
+* Removed ^8EV_GRENADE_BOUNCE^9 to artillery marker bombs (no sound played on bounce)
+
+^fGraphics
+
+* Fixed blood flash alpha value overflowing normalized range
+* Fixed issue with wrong calculation of fov for hiding coronas
+* Used correct fov for corona frustum culling, which culled coronas at the sides of
+  the screen too early on > 4:3 aspect ratio
+
+^fUI
+
+* Fixed ^8numericfield^9 keyhandler ignoring maxChars data
+* Fixed scoreboard and mapvote panels were displaying swapped ^8mapbias^9 team
+* Fix Shoutcaster Allies team name was using axis custom name
+* Fixed Shoutcaster Axis and Allies reinforcement time swap
+* Fixed various HUDs components size, position, colors, alignment ...
+
+^fWeapons
+
+* Changed ^8fireDelayTime^9 from ^8100ms^9 to ^80ms^9 for following weapons : 
+  * Flamethrower
+  * Scoped Garand
+  * Garand
+  * Scoped K43
+  * K43
+  * Mobile Browning set and unset
+  * Mobile MG42 set and unset
+  * FG42
+  * MP34
+  * Sten
+  * Akimbo Silenced Luger
+  * Akimbo Silenced Colt
+  * Akimbo Luger
+  * Akimbo Colt
+  * Silenced Luger
+  * Silenced Colt
+  * Colt
+  * Luger
+  * Thompson
+  * MP40
+* Fixed animations of ^8smgs^9, ^8pistols^9, ^8rifles^9, ^8mgs^9 when
+  ^8fireDelayTime^9 is set to ^80^9
+* Reduced mobile MG jiggle effect by half
+* Reduced mortar jiggle effect by quarter + add fade effect
+* Fixed FG42 1st person firing animation

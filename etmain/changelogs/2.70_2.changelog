@@ -1,0 +1,9 @@
+^dEngine
+
+* Jaymod 2.2.0 compatibility
+* Imported all the fixes from the "Project: Bug
+  Fix":http://games.chruker.dk/enemy_territory/modding_project_bugfix.php
+* Etkey is optionally downloaded from etkey.org (this will be replaced in the future)
+* Reverted change: ET:L uses ~/.etwolf as its home directory again
+* Other minor changes, for a complete list of changes "have a look
+  here":http://etlegacy.com/projects/etlegacy/repository/revisions

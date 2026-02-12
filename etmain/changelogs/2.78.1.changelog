@@ -1,0 +1,40 @@
+^dAndroid
+
+^dEngine
+
+^fClient
+
+* Adjusted Linux menu launcher to automatically start with the dedicated GPU instead
+  of iGPU
+* Fixed mouse focus issue due to HDPI scaling by temporarily reverting to SDL 2.0.14
+  (windows only)
+* Fixed raw input on Linux
+
+^fServer
+
+^fRenderer
+
+* Fixed brightness changing multiple times while loading map
+* Reintroduced support for r_overBrightBits
+* Added renderer scaling via r_scale (experimental, still has bugs)
+
+^dMod
+
+* Adjusted cg_simpleItems values (1 = Yes except objectives, 2 = Yes)
+* Added chat customizability options
+* Changed demo status message to a HUD element and simplified it by default
+* Added mission time in warmup on scoreboard and HUD
+* Added selective weapon animations display
+* Added delta time display in 2nd round of SW mode
+* Added cg_drawUnit to set unit system
+* Changed cg_drawspeed to work with cg_drawUnit
+* Added unit distances to objective awarness
+* Fixed demo grenadecam bind not being drawn
+* Fixed cursor hint position on ultra wide screen
+* Changed objective status icons and separated from powerups to lessen potential
+  confusion
+* Added UI warning for old ET:L clients
+* Fixed fireteam icon displayed upside-down in 2.60b client
+* Changed cg_drawEnvAwareness to draw only static objectives
+* Fixed activate when trace starts inside BBox
+* Changed BBox height to prevent player from getting stuck into the world

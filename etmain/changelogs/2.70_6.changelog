@@ -1,0 +1,6 @@
+^dEngine
+
+* ALT+TAB minimizes the game
+* Sound works now correctly on Windows and SDL is linked dynamically
+* Fixed key binding on international keyboards
+* Disabled OpenAL

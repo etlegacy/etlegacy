@@ -1,0 +1,297 @@
+> ^7Notes:^9 Unix binaries are now using different name such as ^8etl/etlded.x86^9
+and ^8etl/etlded.x86_64^9
+
+^dEngine
+
+^fGeneral
+
+* Added cJSON 1.7.15
+* Updated libs to:
+  * curl 7.68.0
+  * libpng 1.6.38
+  * SDL 2.24.1
+  * WolfSSL 5.5.3
+  * zlib 1.2.13
+* Allow loading loose ttf/otf fonts in pure mode
+* Fixed unfinished unicode encoding crashing clients
+* Added entry point for additional system calls without breaking compatbility with
+  other engines (from ETe)
+* Added extension system to flash window
+* Fixed precision in patch collide generation to avoid ^8"MAX_PATCH_PLANES"^9 errors
+  (from q3e/ETe)
+* Fixed ^8net_port^9 range by restricting it to RFC 793 specification
+* Fixed Splash Screen as work around for ^8SDL_GetWindowSurface^9 not working
+  properly
+* Don't allow ^8writeconfig^9 to write configs called ^8default.cfg^9,
+  ^8default_left.cfg^9 or ^8default_android.cfg^9
+* Added platforms manifest to the generated mod pk3 
+* Added support for JSON file parsing / writing
+* Added ^8fs_printOpen^9 command to dump a list of all open files
+* Allowed omitting default values from being written with writeconfig by specifying
+  ^8-nd^9 or ^8-no-defaults option^9
+* Fixed IPV6
+
+^fAndroid
+
+* Architecture ^8armeabi-v7a^9 is now completly removed thus old devices with this
+  architecture will not be supported from now on
+* Fixed issue with cutoff camera, app not being able to fill entire screen
+
+^fRaspberry PI
+
+* Change architecture from ^8armv7^9 to ^8aarch64^9 and as from now we only support
+  only this one
+* Added building of the packgages/installers into our GitHub pipeline
+
+^fMacOS
+
+* Fixes VM entry point for M1 processors by changing entry point from variadic to
+  fixed parameters due to architecture differences
+
+^fUnix
+
+^fWindows
+
+* Added x64 support
+* Added message about how fix issue with game not being abble to create directories
+  at freshly installed game (etc ...) due to Windows Security has Controlled folder
+  access enabled
+
+^dClient
+
+^fGeneral
+
+* Added ^8cl_extrapolationMargin^9 with a default value of ^81^9 and allowed range
+  ^80^9 to ^810^9 to reduce the client latency due to incorrect ^8serverTime^9 values
+  caused by automatic adjustments to ^8serverTimeDelta^9 on the client
+* Fixed ^8escape^9 key not sending a char event which avoid closing UI menu properly
+* Fixed console char set scaling when ^8r_scale^9 is used. (Only for vanilla renderer
+  since it's the only one with ^8r_scale^9 anyway).
+* Added ^8cgame_restart^9 commands for development purpose
+* Added command completion support for ^8cgame^9 command
+* Added the ISO keyboards ^8nonUSBackslash^9 key to the default console keys (for mac
+  user)
+* Made sure we only copy over the vanilla data from the glconfig struct 
+* Scaled ui mouse movement to match the window manager mouse movement
+* Fixed ^8[skipnotify]^9 text on console print
+* Added support for ttf ingame console fonts
+* Added a new default console font ^8(JetBrainsMono-SemiBold)^9 and an icon font for
+  the custom ET font icons
+
+^fAudio backend
+
+* Fixed SDL2 sounds were played at incorrect range distance, which lead to heard
+  sound closer or farther than expected.
+* Fixed OpenAl incorrect ambient and entity sounds volume
+* Fixed ^8s_volume^9 and ^8s_alGain^9 were not affecting volume on OpenAl
+
+^dServer
+
+* Fixed ^8sv_ipMaxClients^9 cvar incorrectly limiting the total amount of clients
+  allowed on server instead of max clients per IP
+* Added ^8sv_serverTimeReset^9 cvar for resetting ^8svs.time^9 on map change to avoid
+  various issues related to high server uptime
+* Fixed a typo in an error message printed when client fails a www download
+* Added ^8sv_userInfoFloodProtect^9 cvar to protect against userinfo flooding, so
+  ^8sv_floodProtect^9 can be off and server can still be protected against user info
+  flooding.
+* Blocked connection from IP with engine temp bans (exclude ports to fix issue with
+  clients changing net_port and reconnecting after a kick, circumventing temp ban)
+* Added ^82^9 digits for attacklog timestamps instead of ^81^9
+* Added ^8sv_protectLogInterval^9 to control time in milliseconds between attack log
+  entires (default 1000). Helps at keeping attack logs at reasonable sizes so they
+  don't get spammed 100+ lines per second when someone runs server scanning
+
+^dRenderer
+
+* Fixed wrong decal projectors being culled
+
+^dMod
+
+^fGeneral
+
+* Added HUD editor in-game allowing player to fully customize HUD components (more
+  info [[Customize HUD]])
+* Added ^8editcomponent^9 command allowing HUD customization with commands (more info
+  [[Customize HUD]])
+* Fixed collision issues with prone causing players to get stuck on walls and being
+  able to go through certain thin walls
+* Adjusted prone head collision box size to match head size to smooth out crawling on
+  uneven surfaces
+* Fixed prone rotation being severly limited while proning on non-axial surfaces
+* Extended ^8g_pronedelay^9 cvar with value ^82^9 - clients can't prone for ^8850ms^9
+  after jumping
+  * The cvar now acts as a bitmask value, so you can combine values ^81^9 and ^82^9
+* Fixed various graphical and camera bugs when rewinding demos
+* Fixed head bbox having no collision when lean key was released, allowing it to clip
+  through solids and use ^8+activate^9 in some scenarios
+* Separated handling for ^8class^9 command on server side so we can have ^8team^9
+  command flood protected, but allow ^8class^9 commands to bypass flood protection
+* Fixed dead players capturing flag
+* Fixed ^8ref^9 command not working on dedicated server
+* Changed map vote to 1 points for each vote in game type ^86 GT_WOLF_MAPVOTE^9
+* Fixed weapon charge getting reduced when underwater where weapon doesn't fire
+* Added window flashing on game init and match starting
+* Fixed ^8g_corpses^9 value to act as a boolean as it was initializing the body queue
+  but not put any corpses to it by setting it to negative value
+* Added option to visualize spawnpoints in the map with ^8cg_drawSpawnpoints^9.
+  Displays major spawnpoint name & number, and individual spawnpoints where players
+  spawn
+* Added ^8func_fakebrush^9 drawing with railbox when debugging by setting
+  ^8g_debugHitboxes func_fakebrush^9
+* Swapped the check for ^8PW_INVULNERABLE^9 to be on the victim (the client getting
+  shoved) rather than on the player doing the shove
+* Moved to JSON format following files :
+  * weapon stats
+  * huds
+  * mapvoteinfo
+* Removed cvar list after HUD rework : ^8cg_althudflags^9, ^8cg_chatalpha^9,
+  ^8cg_chatBackgroundAlpha^9, ^8cg_chatflags^9, ^8cg_chatLineWidth^9,
+  ^8cg_chatScale^9, ^8cg_chatShadow^9, ^8cg_chatY^9, ^8cg_chatX^9,
+  ^8cg_complaintPopUp ^9, ^8cg_crosshairAlphaAlt^9, ^8cg_crosshairColorAlt ^9,
+  ^8cg_crosshairAlpha^9, ^8cg_crosshairColor^9, ^8cg_crosshairHealth^9,
+  ^8cg_crosshairPulse^9, ^8cg_crosshairSize^9, ^8cg_crosshairX^9, ^8cg_crosshairY^9,
+  ^8cg_cursorHints^9, ^8cg_descriptiveText^9, ^8cg_drawBuddies^9, ^8cg_drawCompass^9,
+  ^8cg_drawCompassIcons^9, ^8cg_drawCrosshairInfo^9, ^8cg_drawCrosshairNames^9,
+  ^8cg_drawFireteamOverlay^9, ^8cg_drawFPS^9, ^8cg_drawPing^9,
+  ^8cg_drawReinforcementTime^9, ^8cg_drawRoundTimer^9, ^8cg_drawSnapshot^9,
+  ^8cg_drawSmallPopupIcons^9, ^8cg_drawSpreadScale^9, ^8cg_drawspeed^9,
+  ^8cg_drawTime^9, ^8cg_drawWeaponIconFlash ^9, ^8cg_fireteamAlpha^9,
+  ^8cg_fireteamBgAlpha^9, ^8cg_fireteamlatchedclass^9, ^8cg_fireteamLocationAlign^9,
+  ^8cg_fontScaleCN^9, ^8cg_fontScaleCP^9, ^8cg_fontScaleTP^9,
+  ^8cg_graphicObituaries^9, ^8cg_healthDynamicColor^9, ^8cg_lagometer^9,
+  ^8cg_popupBigFilter^9, ^8cg_popupFilter^9, ^8cg_popupShadow^9,
+  ^8cg_shoutcastDrawMinimap^9
+* Fixed ^8scores^9 command showing followed players xp counts in ^8stopwatch^9 game
+  mode
+* Added missing commands to gamecommand list
+* Added player shove events in server log ^8Shove: <attacker> <victim>^9
+
+^fStability & Performance
+
+* Fixed a bug in antiwarp code that caused players to warp when they had no user
+  input but still had velocity
+* Bots are no longer antiwarped
+* Fixed incorrect shader count for ^8blacksmokeanimb^9 causing error upon shader
+  registering
+* Fixed game pause behaviour wasn't consistent on various game elements
+* Reduced ^8LAG_MAX_DELTA^9 from ^875^9 to ^825^9 to smooth out lagging players
+* Fixed stamina prediction
+* Fixed ^8STAT_ANTIWARP_DELAY^9 causing full predictions to run when it's just
+  display information.
+* Fixed ^8STAT_AIRLEFT^9 prediction
+* Fixed ^8grenadeTimeLeft^9 firing prediction
+* Fixed bobcycle not being in sync between client/server in some cases which causes
+  client to miss predict footsteps.
+* Fixed crashland prediction (event EV_FALL*)
+* Fixed artillery prediction (weaponTime and event)
+* Fixed ^8nofatigue^9 prediction
+* Fixed viewheight calculation for other leaning players, which caused leaning to be
+  invisible to others depending on your location in the map
+* Fixed time played being counted during pause
+* Fixed free fireteams initalization producing runtime errors
+* Fixed rotation of smoke particles framerate dependency
+* Fixed potential crash in ^8trigger_multiple^9 activation
+* Fixed ^8pmove_fixed 1^9 with ^8g_antiwarp 1^9 and ^8cg_optimizePrediction 1^9
+
+^fAudio
+
+* Fixed missing hitsound when players reach lower health than ^8FORCE_LIMBO_HEALTH^9
+  without getting gibbed, causing the next hit that will gib them to not play the
+  hitsound
+
+^fGraphics
+
+* Fixed incorrect timings for voice chat sprites staying twice as long as expected
+* Medic and ammo request voice chat sprites are now cleared when client spawns/is
+  revived (medic sprite only)
+* Changed ^8cg_shadows^9 cvar default value from ^81^9 to ^80^9 and changed
+  ^8Normal^9 graphics preset to have shadows disabled, due to unreasonable
+  performance penalty they cause compared to the visual improvement
+* Fixed voice chat icons were not drawn if a player had ^8cg_voiceChats 0^9
+* Added back granular bobbing control
+* Changed ^8cg_bobbing^9 cvar from ^81^9 to ^80^9
+* Allowed changing ^8cg_swingSpeed^9 when cheats are disabled from range ^80.1^9 to
+  ^80.3^9
+ 
+
+^fUI
+
+* Minimap icons in ^8cg_drawCompass 2^9 are now positioned along the edges of the map
+  following the same viewangle-based logic as regular compass
+* Fixed incorrect levelshot in mapvote menu displaying for maps which client hadn't
+  downloaded
+* Fixed ^8preset_high_ui.cfg^9 automatically executing when entering system settings
+  menu
+* ^8+stats^9 display in Stopwatch mode after 2nd round now shows stats from the match
+  all they way up until a new game is started
+* Fixed drawing of several cursorhints, eliminating unwanted lines due to the texture
+  not being aligned properly
+* Increased (doubled) UI memory pool size for ^8x64^9 architecture, fixing cases
+  where UI would run out of memory on x64 but run fine on x86 due to different
+  pointer sizes
+* Added ^8cg_customFont1/2^9 cvars to change fonts
+* Added ^8listfonts^9 command to list available fonts, which includes "documentation"
+  on usage
+* Allowed executing regular binds from UI by holding down left/right shift
+* Fixed env awareness and compass showing enemy item objective
+* Changed bitmask values for ^8cg_drawCompassIcons^9 and ^8cg_drawEnvAwareness^9
+  cvars:
+  * 0 disabled
+  * 1 item flags objectives
+  * 2 Secondary objectives
+  * 4 Primary objectives
+* Fixed crosshairnames showing at the place where respawning teammate died
+* Fixed limbopanel roll animation
+* Changed map vote selection in debriefing with game type ^86 GT_WOLF_MAPVOTE^9 by
+  using
+  * Checbox side by side with map name
+  * Selecting map and click one more time to toogle the map vote
+* Changed voice chat icon for ^8Fire In The Hole^9 from blue color to orange
+* Fixed team chat flag wasn't drawing correct team
+* Added fall down icon for ^8MOD_FALLING^9 obituary
+* Improved text readability by scaling text shadow/outline based off text size
+* Added shadowed text for demo list
+* Prevent unwanted script execution binding by pressing shift key alone (^8K_LSHIFT^9
+  and ^8K_RSHIFT^9) from UI menu
+* Limit the bindings that are allowed to be executed from UI menu and do not allow
+  +/- actions or vstr that can contain those
+* Removed ^8ui_browserOssFilter^9 cvar
+* Added ^8ui_disableOssFilter^9 cvar for filtering server list depending of supported
+  mod by OS
+* Added center print text for letting know medic who they just revived
+* Enhanced map vote windows on ^8map vote^9 game type by adding map popularity and
+  history of last ^8333^9 played maps
+* Changed vote points from map vote game type from ^81, 2, 3^9 points to a unique
+  ^81^9 point per vote.
+* Added semitransparent color for fireteam weapon that is not updated
+* Added ^8red^9 font to teamkill cp message to easily identify it and avoid abusing
+  it by changing player color
+
+^fWeapons
+
+* Fixed zoom level for FG42 changing to incorrect value when trying to zoom in/out
+* Increased maximum zoom out level for scoped K43/Garand and binoculars from ^820^9
+  to ^832^9
+  * ^8cg_zoomDefaultSniper^9 cvar is now capped within this range (^832-4^9)
+* Knife backstabs now ignore both target and attacker view pitch, which previously
+  caused backstabs to fail if the target was looking up/down too much
+* Fixed flamethrower flame animation not showing if the animation started in solid
+* Increased FG42 scoped recoil pitch
+* Fixed alt weapon switch bug/exploit by not allowing switch till we have switched to
+  selected weapon
+* Fixed selected weapon at spawn/respawn
+* Fixed explosion hit registration being inconsistent by sorting players depending of
+  distance from the explosion origin in ascending order
+* Fixed corpses blocking flamethrower hit registration
+* Fixed allies riflenade impact sound volume (from ^864^9 to ^8127^9) & radius (from
+  ^81.5^9 to ^864^9)
+* Fixed calling artillery was playing gun shot sound in some cases
+* Fixed pliers hint and usage priority near TOI
+* Fixed arty/airstrike bombs potentially spawning indoors
+* Fixed missile collision issues with skyboxes
+* Fixed (reduced) charge time when dropping grenades on death
+* Reduced speed from ^8127^9 to ^880^9 (crouch speed) while player use scoped weapon
+  and standing
+* Added back unscoping weapon while in air more than ^8250^9 ms, allowing player to
+  walk on slope and stair without getting unscoped

@@ -1,0 +1,312 @@
+^dNew features
+
+* Minor optimizations in server and client engine for lower cpu usage.
+* Client can record game audio to a wav file.
+* wav_record starts recording
+* wav_stoprecord stops recording
+* cl_wavefilerecord 1 will start recording from the moment a demo is loaded.
+* "Unable to load an official pak file" now reports the pak filenames in the console.
+* Win32 and Linux sound cvars are now unified:
+* s_khz, s_bits, s_numchannels
+* s_khz is now a CVAR_LATCH.
+* Players can override unsafe cvars (e.g., from a crash) with com_ignorecrash 1
+* Server can give alternate messages to "server is full" by changing the cvar
+  sv_fullmsg
+* Server can redirect clients to other servers when full (e.g. sv_fullmsg
+  "ET://host.to.redirect.to:port")
+* Server will switch to GT_WOLF if "map" can't start a campaign.
+* /demo can now specify .dm_83 extension explicitly, and will try dm_83 and dm_84 if
+  extension isn’t specified.
+* Abbreviated snapshots are now sent when clients aren't fully connected. Saves
+  bandwidth on map rotations.
+* Client may move the demo recording statusline with cg_recording_statusline. 0 hides
+  it completely.
+* /buyNow, /singlePlayLink commands removed.
+* 'MODS' menu added.
+* Anisotropic texture filtering is now supported in renderer.
+* Enable with r_ext_texture_filter_anisotropic 1 and use r_textureAnisotropy to set
+  the filtering level.
+* cg_draw2D is no longer cheat protected.
+* Wounded freelook is now enabled (a la RTCW). It is also completely moved clientside
+  so there is no lag.
+* Vote string is now printed to console when vote is called.
+ 
+
+^fwin32 specific:
+
+* Client can clear the dedicated console with /clearviewlog
+* s_khz 44 now works.
+ 
+
+^fLinux specific:
+
+* Client can disable built-in mouse acceleration with in_dgamouse 2
+* r_swapInterval is now supported
+* Changed Linux key handling so ctrl/shift/alt/etc don't make a difference for -any-
+  keys, to match Windows® better.
+
+^dBug Fixes
+
+^fClass Specific:
+
+* Fixed wounded CovOps stealing uniforms if they were close enough.
+* Fixed incorrect Level 4 CovOps knife damage on wounded players.
+* Fixed disguised CovOps having laggy health to enemy team. 
+* Fixed Level 3 engineering using incorrect charge for landmines.
+* Fixed Field Ops incorrectly using medic charge time for ammo packs.
+
+^fGeneral:
+
+* Fixed http download crashes. 
+* Client now sends a UserAgent of ID_DOWNLOAD/2.0 libcurl/7.12.2 on downloads.
+* Client now sends a referrer of ET://server.IP.address:port on downloads.
+* Various server engine crashes fixed.
+* Spectators could sometimes move-partway-through-walls on connects.
+* Fixed issues with profile.pid (false "com_crashed" situations).
+* Clients would often get "disconnected for unknown reason" instead of a proper
+  disconnect message.
+* Fixed more than 10 maps in a campaign crashing the server.
+* Fixed skulls sometimes shown in scoreboard for live players.
+* Fixed campaign count being checked once per campaign.
+* Fixed incorrect first person tank muzzle origin for cg_drawgun 0.
+* Fixed players being able to "fire" flamethrower and tank gun simultaneously with
+  cg_drawgun 0.
+* Fixed players being switched to soldier class upon attaining level 4 lw/hw skill.
+* Fixed Referee menu expanding colors twice.
+* Fixed foreign keyboards inputting unsupported characters after opening console.
+* Fixed translations becoming incorrect if cl_language was -1 or 0.
+* Fixed powerups being laggy (e.g., objective powerup would take a few seconds to
+  show on hud).
+* Fixed silent landmines (e.g., landmines sometimes exploded without hearing the
+  trigger at all).
+* Fixed engine lowercasing all binds (e.g., bind a "say Hello" and then press a, it
+  would say “hello” in lowercase).
+* Fixed revive snapping players’ view around.
+* Fixed Players_Axis/Players_Allies getting too large and crashing server.
+* Fixed players "sticking" to each other in collisions.
+* Fixed dynamite on movers triggering objectives.
+* Fixed "configstring > max_configstrings" connect bug.
+* Fixed Satchel detonator work incorrectly when spectating.
+* Fixed the prediction error that occurs when a constructible is finished building.
+* Fixed prediction error when cratering.
+* Fixed anti-bunnyhop.
+* Fixed doubled events (e.g., double/triple misfiring while jumping or being hit).
+* Fixed pistol prediction (client could "fire" the pistol faster than it's supposed
+  to).
+* Fixed framerate dependency of mg42s.
+* Fixed tracemap generation breaking when there was a flat plane at lowest point in a
+  map.
+* Fixed players being randomly switched to spectator mode upon attaining level 4
+  skills.
+* Fixed Antilag (it was dependent on client fps, and headshots weren't delagged).
+* Fixed Timestamps in logs getting truncated.
+* Fixed renderer crashing with too many stretchpics (e.g., topshots and weaponstats
+  at the same time, if they were full).
+* Fixed players mysteriously sinking into the ground and cratering when bouncing off
+  specific map geometry.
+* Fixed engine improperly interpreting certain IP addresses as LAN addresses.
+* Fixed sign extension bug in console code that caused high ascii characters in the
+  console to be displayed in the wrong color.
+* Fixed artillery markers not being properly drawn on compass.
+* Fixed hostname being exactly 21 chars long with a period in position 9 being
+  treated as IPX.
+* Fixed overflow when more than MAX_GLOBAL_SERVERS are returned from the master.
+* Fixed Luger spread and pausing on last shot.
+* Fixed akimbo rapid fire exploit.
+* Fixed zoom exploit.
+* Fixed security hole allowing clients to override IP.
+* Fixed spectator/limbo cameras slowly 'drifting' and never reaching 0 velocity.
+* Fixed download redirection notices printing repeatedly in server console.
+* Fixed LMS not showing who drew first blood.
+* Fixed LMS not showing how many wins each team had.
+* Fixed problem that when players connected after a vote was called they got stuck
+  with a vote on their screen through the whole round.
+* Fixed the issue that when playing the Fuel Dump map you could plant the dynamite
+  and it would say, "base fortification" but actually destroy the Fuel Dump.
+* Fixed pmove and the game disagreeing about weapon charge usage.
+* Fixed radar dynamite bug (both sides could plant dynamite near the truck for no
+  apparent reason, and get XP for defusing it).
+* Fixed the problem that when all of your team's mines were in use, you couldn’t
+  disarm enemy landmines.
+* Fixed team landmine count being incorrect (you could plant 11 by triggering 10th
+  and planting 11th) and this broke the defusing team’s landmines.
+* Fixed mistaken dynamite announcements (announcement planting dynamite near goldrush
+  tank barrier 2, but it doesn’t get destroyed).
+* Fixed players blocking dynamite from destroying constructible objectives.
+* Fixed client losing prone state after packet loss.
+* Fixed winning team not winning when they eliminated opposition <3 sec before round
+  end, and then died themselves.
+* Fixed LMS not always ending when a team was eliminated.
+* Fixed switching weapon during pause.
+* Fixed akimbo weapons and deployed mobile MG42 ignoring cg_autoreload.
+* Fixed Maxlives adjuster on timelimit 0.
+* Fixed crosshair names randomly not working (tunnels in oasis, crypt in
+  resurrection).
+* Fixed g_{axies,allies}mapxp overflowing on long campaigns crashing the server.
+* Fixed static mg42s not hurting props (e.g., the mg42 outside allied spawn didn’t
+  damage the wooden fence).
+* Fixed incorrect 'complaint dismissed' message when player disconnects.
+* Fixed mg42s not being antilagged.
+* Fixed riflegrenade-through-teamdoor exploit.
+* Fixed intermission ready (match_readypercent now applies to intermissions).
+* Fixed intermission ready should not waiting on spectators.
+* Fixed large cg_errordecay values exploit.
+* Fixed CovOps landmine spotting.
+* Fixed knife not being antilagged.
+* Fixed players shooting themselves in the head when prone, firing through a
+  breakable (e.g., a window).
+* Fixed Medic viewlocking sometimes snapping to non-medics.
+* Fixed Oversize servercommands crashing client.
+* Fixed engine eating "//" in server commandlines.
+* Fixed Garand/K43 ammo exploit.
+* Fixed free ammo via spectators exploit.
+* Fixed Limbo'd players crashing servers via following carriers and disconnecting.
+* Fixed the distancefalloff bug (damage would drop, then suddenly increase with
+  distance).
+* Fixed "setu ch" crashing server.
+* Fixed CS_SYSTEMINFO exceeding 1024 getting truncated on map changes.
+* Fixed the prone -> invisible player (prone into wall) bug.
+* Fixed Ctrl-` for the mini-console.
+* Fixed the disguised name and normal name both being shown when moving the crosshair
+  over a disguised covert ops while spectating.
+* Fixed kick/mute/referee/etc. players with >32-character names.
+* Fixed weapon heat sometimes flashing back down to 0 when maxed out.
+* Fixed random lockups occurring when blood or debris is spawned.
+* Battery bunker now autoselects spawnpoint when captured.
+* Moving objects now predict a continuation rather than a stop (e.g., fixes jittery
+  tug on railgun).
+* Clients can no longer /userinfo and nuke their userinfo from the console.
+* Binoculars can no longer be used while using mounted mobile MG42 or mortar.
+* Removed "Killed by <name>" in endround scoreboard.
+* Removed unused cg_specswing cvar.
+* F13-F15 now works if the user's keyboard/X mapping sends them.
+* Capslock, kp_numlock, and kp_equals are all usable in Linux now.
+* Made some minor fixes to Linux keyhandling.
+
+^dChanges relevant for modders
+
+* NOTE FOR MOD USERS:  It is recommended that any user modifications that have been
+  installed to the Wolfenstein:  Enemy Territory directory be removed.
+These modifications are not supported by Activision® and may not be compatible with
+some of the fixes that are included with this patch.
+* The entire source tree is now -Wall -pedantic -std=c99 clean, removing all the
+  noise from the silly warnings so that useful warnings are actually noticed.
+No functional changes, except that HINT_CHAIR doesn't work at all now (where it
+worked before, but unreliably).
+* All printf-style varargs functions are now protected with GCC's __attribute__
+  extension, which should help catch printf parameter errors.
+* Added a 4th parameter to CG_INIT - qboolean demoPlayback - since some mods need
+  this at init time, and drawactiveframe is too late for them.
+* MAX_CVARS increased to 2048 from 1024, as ET is relatively close to the 1024 limit
+  with both client and server cvars.
+Enlarged FILE_HASH_SIZE to compensate for the enlarged cvar table size.
+* kick/ban code is now moved entirely into qagame, mods can choose to use the engine
+  banning system or the qagame one.
+#define USE_ENGINE_BANLIST qtrue, changing to qfalse makes use of the qagame ban
+system
+* Demo recording status has been moved entirely to cgame. See CG_DrawDemoRecording().
+* When PERS_HWEAPON_USE was set, the engine blocked the update of usercmd_t. This has
+  been fixed and the relevant code changed in pmove_fixed.c
+* FUI can now render models
+* cgame can synchronize rendering with trap_R_Finish if needed.
+* CG_SHUTDOWN is now called on /quit
+* MAX_GLOBAL_SERVER is now 4096
+* Significantly enlarged MAX_CMD_BUFFER (16k->128k)
+* Added better debug info for Info_*() infostring functions
+* The master server now supports filters for fs_game and gametype.
+* E.g. to request a list of protocol 84 servers with fs_game "etpro" and g_gametype
+  5,
+* ui_main would execute the following command:
+* globalservers 0 84 \game\etpro\gametype\5
+ 
+
+^fRendering to textures:
+
+* cgame may now render directly to a texture on the fly.
+* Use trap_R_GetTextureId() to retrieve a handle to an existing texture (tga/jpg).
+* Use trap_R_RenderToTexture( textureid, x, y, w, h ) to render into the texture.
+* Screen coordinates 0,0 for trap_R_RenderToTexture are at the lower left of the
+  screen.
+* You can get a list of textures the engine has loaded with /imagelist
+* Example code can be found in cg_limbopanel.c at the bottom of CG_DrawPlayerHead().
+ 
+
+^fDynamic shaders:
+
+* cgame may build shader scripts on the fly, via code.
+* Use trap_R_LoadDynamicShader( shadername, shadertext ) to load a new shader into
+  memory.
+* The loaded shader can then be referenced with trap_R_RegisterShader() and used as
+  if it were a normal shader.
+Combined with trap_R_RemapShader(), cgame can replace any shader.
+* trap_R_LoadDynamicShader( "shadername", NULL ) unloads the dynamic shader
+  "shadername".
+* trap_R_LoadDynamicShader( NULL, NULL ) unloads all dynamic shaders.
+* Example code can be found in cg_main.c, look for #ifdef TEST_API_DYNAMICSHADER
+ 
+
+^fRaw binary channel for client<->server:
+
+* cgame and qagame may now communicate using a raw binary stream.
+These messages are unreliable (like udp), and are sent only once per server frame.
+* qagame and cgame are responsible for managing retransmissions.
+* Sending a message overwrites the outgoing message buffer.
+* Once the message has been sent (unreliably), the message buffer is cleared.
+* The message is sent with trap_SendMessage, and its status can be read with
+  trap_MessageStatus.
+* When the cgame and/or qagame receive a message, they get a *_MESSAGERECEIVED event
+  to vmMain, which has a timestamp and the message that was sent during that
+  snapshot.
+ 
+void trap_SendMessage( /* server: int clientNum */, char *buf, int buflen );
+ clientNum: the client to send the message to (server only)
+ buf: the message to send
+ buflen: length of the message to send
+ 
+messageStatus_t trap_MessageStatus( /* server: int clientNum */ );
+ clientNum: the client whose buffer we want to check (server only)
+ returns MESSAGE_EMPTY on empty buffer
+ returns MESSAGE_WAITING when not yet sent (can be caused by rate limit)
+ returns MESSAGE_WAITING_OVERFLOW when the message would make
+             the packet too large to send
+ 
+*qagame*
+int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5,
+int arg6 );
+ command == GAME_MESSAGERECEIVED
+ (int)clientNum = arg0: clientNum message was received from
+ (char*)buffer = arg1: pointer to the message received (temporary)
+ (int)buflen = arg2: length of message received
+ (int)commandTime = arg3: timestamp of message (from client)
+ 
+*cgame*
+int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5,
+int arg6 );
+ command == CG_MESSAGERECEIVED
+ (char*)buffer = arg0: pointer to the message received (temporary)
+ (int)buflen = arg1: length of message received
+ (int)commandTime = arg2: timestamp of message (from server)
+ 
+Fixed the Com_BitSet() with ridiculous bit number in the anim condition code.
+buddyClients was not used, ignoreClients was too small and didn't use COM_Bit*
+functions.
+Fixed incorrect class determination in CG_PlayerClassForClientinfo().
+CG_AddPMItem failed on multi-line messages.
+ 
+
+^fLag and packet loss simulation:
+
+* Client and server may simulate packet loss and increased latency with new cvars.
+* These will only function when sv_cheats is 1.
+* Server uses the cvars sv_packetloss and sv_packetdelay.
+* Client uses the cvars cl_packetloss and cl_packetdelay.
+ 
+For example, to make the server simulate 200ms latency and 30% packetloss:
+sv_packetdelay 200
+sv_packetloss 30
+ 
+* These cvars only affect transmitted packets, not received packets.
+* To simulate packetloss and latency in both directions you need to set the cvars on
+  both client and server.
+ 
+Thanks to Chad Siedhoff and the Activision Visioneers for helping with this patch!

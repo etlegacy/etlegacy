@@ -1,0 +1,41 @@
+^dEngine
+
+* Enhanced installer for all platform
+* Added clipboard to console
+* Fixed compatibility with ETJump shared cvar
+* Fixed asset MD5 checksum failed pop-up during installation
+* Fixed load official pak file error when connecting to servers
+* Fixed infinite download loop when connecting to server
+* Fixed pack isolation with no pure servers
+* Added conversion for extended chars to utf-8 chars in output printing
+
+^fClient
+
+* Fixed Alt+Tab Minimiser doesn't work
+* Fixed console scrolling to bottom on map load working only on localhost
+* Fixed un-reset timeout after getinfo command was retrieved from server
+* Fixed issues with maximizing a window with a non desktop resolution
+
+^fServer
+
+^fRenderer
+
+* Fixed crash in RE_AddRefEntityToScene
+
+^dMod
+
+* Fixed bouncing entity velocity was too high
+* Fixed ready status disappearing
+* Fixed entities stuck inside construction point (now, player are crushed and items
+  deleted)
+* Fixed pushing players through solids
+* Fixed body and corpses hindered picking items
+* Fixed un-reset trace ignore cause trace issues
+* Fixed multi votes send on team change during intermission
+* Fixed shoving wounded players
+* Enhanced shoutcaster mod:
+
+  * Added culling for player spawn counts on minimap (When zoomed the text was
+    sometimes drawn outside of minimap)
+  * Fixed icons being drawn over minimap border
+  * Hided followed player overlay when topshots window is on

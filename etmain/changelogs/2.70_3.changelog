@@ -1,0 +1,8 @@
+^dEngine
+
+* ScreenshotJPEG command issue fixed (thanks acQu)
+* Morsik's patch for PB-compatible etkey combined with the old stuff
+* Very basic Visual Studio support
+* s_muteWhenMinimized set to 1 by default
+* ET: L now uses its own home directory (~/.etlegacy on linux)
+* Other minor changes

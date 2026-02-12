@@ -1,0 +1,124 @@
+^dEngine
+
+^fGeneral
+
+* Updated libs to:
+  * curl 7.87.0
+  * SDL 2.26.4
+* Fixed issue with ^8g_oss^9 not being set correctly, making 64bit mods not being
+  listed when using 64bit clients
+* Added web style ^8#^9 prefixed color strings support
+
+^fAndroid
+
+^fRaspberry PI
+
+* Fixed issue with wrong architecture naming
+* Fixed issue wih VM_DllSyscall stack calls
+
+^fMacOS
+
+^fUnix
+
+* Fixed included SDL2 not having Wayland support
+
+^fWindows
+
+* NSIS Installer will always overwrite ^8.exe's^9 by default 
+
+^dClient
+
+^fGeneral
+
+* Use json model data for fav servers
+* Moved ^8listfonts^9 command from legacy UI to client engine, since ^8con_fontName^9
+  can now be used on any mod, and the legacy-specific ^8cg_customFont1/2^9 require
+  ETL client anyway
+* Fixed sound bug (long stuttering sound) and cleared queued sounds (such as
+  announcers fe. FIGHT! sound) when rewinding/fastforwarding
+* Added support for server blocking by using sent list of servers blocked from Legacy
+  master and hiding malicious server in server browser
+* Removed ^8NONUSBACKSLASH^9 from the default console keys
+* Fixed zone memory leak on ^8/bind^9 command
+
+^fAudio backend
+
+* Fixed sound volume integer overflow
+
+^dServer
+
+^dRenderer
+
+* Fixed decals vertex modulation going out of range
+
+^dMod
+
+^fGeneral
+
+* Added ^8position^9 and ^8size^9 argument to ^8editcomponent^9 command
+* Added ^8editcomponent^9 command with ^8parentAnchorPoint^9 and
+  ^8parentAnchorComponent^9 option
+* Extended auto completion for ^8editcomponent^9 command
+* Fixed localization of server commands were gets truncated
+* Added ^8cg_useCvarCrosshair^9 cvar allowing forcing crosshair HUD comp at init,
+  ^81^9 by default
+* Added back ^8cg_useCvarCrosshair^9, ^8cg_crosshairSize^9, ^8cg_crosshairAlpha^9,
+  ^8cg_crosshairColor^9, ^8cg_crosshairAlphaAlt^9, ^8cg_crosshairColorAlt^9,
+  ^8cg_crosshairPulse^9, ^8cg_crosshairHealth^9 cvars
+* Added ^8cg_crosshairSize_f^9, ^8cg_crosshairAlpha_f^9, ^8cg_crosshairColor_f^9,
+  ^8cg_crosshairAlphaAlt_f^9, ^8cg_crosshairColorAlt_f^9, ^8cg_crosshairPulse_f^9,
+  ^8cg_crosshairHealth_f^9 commands
+* Fixed ^8editcomponent^9 command with coloration arguments
+* Fixed ^8editcomponent^9 style help was printing an error
+* Ignored bots count when using map vote pool depending of players count
+* Allowed referee command to use slot number for identify player
+
+^fStability & Performance
+
+* Fixed missing NULL terminated in ^8gameConsoleCommand^9 list causing memory
+  corruption
+* Removed ^8WBUTTON_ATTACK2^9 (+attack2) causing exploit issue
+* Fixed kick angles framerate dependency by matching 333 FPS kick angles behaviour
+* Remove unnecessary trace for water hitmark detection, causing unnecessary
+  recomputation of head BBox and extra trace
+* Fixed ^8func_fakebrush^9 prediction
+* Fixed ^8PMF_TIME_KNOCKBACK^9 never being set unless head was hit.
+
+^fAudio
+
+^fGraphics
+
+* Fixed atmospheric effects during match pause
+* Fixed missile incorrect visual explosion origin
+* Fixed flamethrower being invisible if player shoots it outside of PVS
+ 
+
+^fUI
+
+* Fixed issue when crosshairinfo name affected ^8to follow previous player^9 being
+  set to non default color
+* Fixed enemy spawn timer not being displayed
+* Added anchors support to HUD 
+* Added HUD name support, usable with ^8cg_althud^9 cvar
+* Fixed multi line string buffer HUD components centering
+* Added ^8No Text^9 style option to disable the ^8Connection interrupted^9 text from
+  ^8Disconnect^9 component
+* Added ^8No Header^9 style option to hide fireteam header
+* Added ^8Force Colors^9 style option to force player colors on the kill feed
+* Added extended system option menu for console ^8con_*^9 cvars
+* Fixed chargebar icon coloring for field ops
+* Moved ^8listfonts^9 command from legacy UI to client engine, since ^8con_fontName^9
+  can now be used on any mod, and the legacy-specific ^8cg_customFont1/2^9 require
+  ETL client anyway.
+* Fixed ^8timerSet^9 breaking ^8resetTimer^9 display
+* Added style custimization for compass, such as decor, cardinal point and direction
+  visibility toogle
+
+^fWeapons
+
+* Remove adding velocity of ground entity for missiles causing execive velocity add
+  while throwing
+* Added back default scoped movement to vanilla behaviour (full speed, unscope at 127
+  ups)
+* Moved alternate sniper speed to walk movement
+* Changed unscoping weapon while in air from ^8250^9 to ^8500^9 ms

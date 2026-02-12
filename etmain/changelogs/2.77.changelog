@@ -1,0 +1,432 @@
+> ^7Notes:^9 This release is also shipping OmniBot v0.87 and WolfAdmin v1.2.1
+
+> Legacy mod is now shipped in a unique ^8.pk3^9.
+
+> The vanilla ^8pak1.pk3^9 and ^8pak2.pk3^9 are now unneeded on the server side.
+
+^dEngine
+
+* Changed "wget" command name to "download"
+* Added com_downloadURL cvar to specify URL of download command
+* Added db schema updates depending on version
+* Updated to db schema V2
+* Added OSX quarantine administration
+* Removed obsolete curses support
+* Ensure swap-endiness functions compile to bswap instruction
+* Added timestamp in dedicated console and logs
+* Fixed incorrect packets and user movements encoding due to unstripped UTF8 commands
+  sent to 2.60b clients from the server if legacy mod was in use.
+* Fixed 1 byte overflow with packaged messages
+* Added upstream metainfo.xml for AppStream
+* Changed Windows default installation path (to avoid potential trademark issue)
+* Added Raspberry Pi support
+* Enabled IPV6 code by default
+* Fixed etconfig.cfg was no more created/loaded
+* Fixed files weren't created with 664 permissions (*nix only)
+* Updated libs to 
+  * cURL 7.68.0
+  * SDL 2.0.14
+    * Fixed NUMLOCK 5 status fails
+  * FreeType 2.10.2
+  * OpenSSL 1.1.1g
+  * libjpeg-turbo 2.0.4
+  * libpng 1.6.37
+  * libogg 1.3.4
+  * SQLite 3.32.1
+
+^fClient
+
+* Added cl_allowDownload 2 to stop all noise while downloading
+* Changed bindlist command to print free keys
+* Fixed vid_restart not reinitializing i18n when language is changed
+* Added central storage of favorites to have one source of favorites for all mods
+  available (optionally)
+* Replaced the splash screen on Windows by a logo in the loading screen for all
+  platforms
+* Fixed console flickering - r1 MAX_RENDER_COMMANDS increased
+* Added new download container system
+* Fixed timing issues when client is downloading or recording demos and window is
+  minimized or has no focus
+* Readded con_drawNotify() for easier debug
+* Added system clock in console
+* Removed /screenshotJPEG command (/screnshot now uses JPEG by default)
+* Increased r_displayRefresh range check to support 240Hz panels
+* Removed /clean command
+* Fixed SND_NOCUT, SND_OKTOCUT, SND_CUTOFF and SND_REQUESTCUT flags options were not
+  handle in start sound function
+* Added cursor management for edit text/field UI element
+* Check NUM LOCK status for CGAME input keys
+* Added engine version in userinfo
+* Added PNG output for screenshots
+* Fixed window location and display used not remembered
+* Removed anachronistic r_highQualityVideo cvar
+* Fixed OpenAL causing a crash when the file is missing
+* Fixed small and full console toggling
+* Allow setting multisample to 8x for increased visual quality
+* Fixed global vars for GCC 10 compatibility
+* Removed r_primitives
+* Fixed issue with not playing server demo at 1st try
+* Changed map filter field to server name filter field in server browser
+* Added private slots counter for server browser
+* Fixed VM_Create when player had utf-8 chars in their username (Windows)
+
+^fServer
+
+* Removed never used tracker feature
+* Fixed bots being affected by limit of sv_ipMaxClients value
+* Added mapvoteplayerscount.cfg file for filtering map depending of players count
+* Added invalid GUID check at client connection (sv_guidCheck)
+* Reduced warning spam from approaching cs limit
+
+^fRenderer2
+
+* Fixed bsp static light parser to match 'keeplight' ents
+
+^dMod
+
+* Fixed the formulas in BG_EvaluateTrajectoryDelta() (affects func_bobbing and
+  func_pendulum)
+* Added HUD indicators for invulnerability  and adrenaline usage
+* Fixed G_SKillRatingDB_DeInit error message printed in console at intermission
+* Fixed stopwatch not restarted after round end
+* Fixed medic/ammo pack were draining stamina without drop pack
+* Changed ui_serverRedirect cvar to ui_serverBrowserSettings (bitflag)
+* Fixed obvious phony servers hidden in browser by default
+* Fixed fov range check in shipped configs to take autofov into account
+* Added GeoIP privacy option with cg_allowGeoIP
+* Fixed SR scoreboard not default with g_SkillRating 1
+* Fixed SR scoreboard displayed in SW and LMS gametype modes
+* Changed g_mapscriptdirectory cvar default value to "mapscripts"
+* Added hit regions stats to debriefing view
+* Added most damage given award
+* Fixed overwriting of ammo count instead of adding at spawning (syringe)
+* Fixed throwing nade when leaning was no more possible
+* Fixed weapon alternative reload was not working anymore
+* Reworked artillery with visible shell and dropping from sky (Twice less ents and
+  used in shorter time)
+* Reworked airstrike with visible shell, visible plane and dropping shell from plane
+  (Twice less ents used)
+* Added visible Axis / Allies aircraft models for airstrike plane
+* Added WP_AIRSTRIKE / ITEM_WEAPON_AIRSTRIKE / airstrike.weap / bombs models has new
+  weapon for airstrike bomb
+* Added BG_GetTracemapSkyGroundFloor / BG_GetTracemapSkyGroundCeil getter (Lower /
+  Higher sky height)
+* Fixed public conf wouldn't reset correctly
+* Fixed animations for MP34
+* Added cg_visualEffects to turn visible / invisible visual effects (i.e airstrike
+  plane, debris ...)
+* Fixed smoke canister (aistrike) dealed too much damage (back from 400 to 140)
+* Changed MOD for smoke marker from MOD_AIRSTRIKE to MOD_SMOKEGRENADE
+* Display shield status on scoreboard
+* Fixed seizure inducing effect on trickjump map
+* Fixed MOD not always displayed due to temp entities not reset
+* Fixed fieldops charge bar color when quick zooming
+* Fixed autoscreenshot feature broken in MapVote gametype due to vote displayed first
+* Added mod_version static cvar
+* Fixed display of powerup in small scoreboard
+* Fixed real time SR win percentage not always displaying with lot of connected
+  clients
+* Added objective indicator
+* Fixed game log not always created on some platform (linux)
+* Added game time in server log
+* Fixed syringe ammo lost when used on a an alive teammate or a killed enemy 
+* Removed g_misc 2 option "medic syringe heal" (use the Lua script instead)
+* Fixed tapout reinforcement timer color when spectating
+* Fixed allowed chat length longer than server side limit
+* Fixed command map objective and flag icons displayed above players icons
+* Added vote status indicator in debriefing in mapVote mode
+* Changed limbo health value from -75 to -113 for better gameplay balance
+* Fixed unwanted weapon switch after picking weapon
+* Fixed unwanted grenade switch while leaning after swapping weapon
+* Fixed weird menu overlapping issues, mostly noticeable with customized menus
+* Fixed cg_teamChatsOnly filters Fireteam chat too
+* Fixed "throw" command only used throw flighing type. (fling, throw and launch
+  available)
+* Fixed respawn delayed and could be missed despite no death animation were being
+  played
+* Fixed latched cvars not being able to be changed immediately by the server leading
+  to various game management issues
+* Added in-game team selection menu
+* Added cg_announcer to toggle announcer voice on map start
+* Removed weird flying nade sound (sound backend issue)
+* Fixed multiple map votes possible by reconnecting in intermission
+* Fixed mapvote tally display when connecting while in intermission
+* Fixed missing default cvars configs
+* Added popup messages filter
+* Reworked airstrike and artillery per-minute limitations
+* Renamed team_airstrikeTime/team_artyTime to team_maxAirtrike/team_maxArtillery (no
+  more time based, but value per minutes)
+* Removed g_misc 4 option to combine  team_airstrikeTime and team_artyTime
+* Renamed team_maxMg42s/maxPanzers to generic team_maxMachineguns/team_maxRockets
+* Fixed cg_tracers 3
+* Added power icon colours to show airtrike and artillery availability
+* Removed dynamite tick sound and pulse icon
+* Improved server browser filter ergonomy
+* Fixed in-game UI favorite button to allow to remove favorite
+* Fixed server browser sort would alternate when opening Play Online again
+* Fixed prone hitbox height (was twice as high as desired!)
+* Added slightly lower hitbox when crouching in idle position
+* Improved debug hitbox code
+* Fixed no weapon on revive issue
+* Fixed riflenade disappearing for no reason
+* Fixed team spawn counter is visible in limbo panel when player has not joined team
+* Added genericity for impact mark/sound and make them customizable by surface from
+  weapon file
+* Improved weapon file parser for sound ressources
+* Added back water impact effect for missile (was unused)
+* Increased size of wounded hitbox for syringe
+* Increased compass size on alternate huds
+* Fixed rank display on alternate huds
+* Added popup filter for promotion upgrades
+* Removed g_misc 32 option "loose spawn protection" (use the Lua script instead)
+* Fixed fireteam health color indicator was not in sync with healthbar color
+* Changed simple items colour when not available to class
+* Added objectives as simple items too (use cg_simpleItems 2 to only use simple packs
+  and weapon)
+* Fixed shielded players could be pushed
+* Disabled vertical shoving by default (use g_misc 1 to enable)
+* Removed cg_useScreenshotJPEG cvar
+* Fixed players in limbo and heavy machine guns users would trigger g_inactivity
+* Moved eject brass offset (in first person) computation on fire event received. Was
+  computed each frame even no weapon fire. 
+* Added missileFallSound / missileBouncingSound / fireRecoil / adjustLean in weapon
+  file
+* Optimized landmine snapshot callback code
+* Fixed spawn shield displayed on HUD when still in limbo
+* Added shoutcaster mode
+* Added team_riflegrenade cvar for 3vs3 competition
+* Added average team ping display in scoreboard
+* Excluded heavy weapons and knives from accuracy stats computation
+* Fixed session stats always reset between rounds in StopWatch mode
+* Fixed grenade timer was reset while arty was used
+* Fixed fireteam chat fallback to team chat instead of global chat when not in a
+  fireteam
+* Fixed global chat not working in localhost
+* Fixed cg_teamChatOnly filters spectator team
+* Fixed compass hidden even when not overlapped by command map
+* Fixed allies rank displayed for spectator in debriefing
+* Added dropping objective ability
+* Added specific flag for bots on scoreboard
+* Fixed spawn count displayed out of command map borders (removed "Troops")
+* Fixed double countdown with g_inactivity
+* Fixed cg_wolfparticles 0 does not spawn the explosive trails
+* Added cg_drawGun 2 to only draw non-weapons and throwables
+* Fixed FG42 spread/sway was different (too low) from vanilla behaviour. Was adding
+  50% reducing  from lvl 3 covert-ops (vanilla behaviour) + 35% reducing from lvl 3
+  Light weapon (change from Legacy and keeped value).
+* Fixed covert ops received 50% reduction in both recoil jump and weapon sway with
+  ONLY Scoped Weapons (following the original documentation)
+* Added clearer simple items icons
+* Added percentage in map votes display
+* Added cg_simpleItems 2 option that displays 3D models for objectives
+* Fixed limboed clients not moved to intermission point
+* Added "nostamina" command
+* Added pain anims that are only played in idle state (visuals)
+* Added new death anims
+* Fixed spread bonus is now correctly applied only for the SMG weapons
+* Fixed mini compass showing player icons in wrong places
+* Fixed bug where OpenAL users could hear sounds from wrong position on certain maps
+* Fixed cg_simpleItems colors to improve visibility
+* Fixed cg_simpleItems weapon icons aspect ratio
+* Fixed debriefing was showing spawning place instead of appropriate portal cam
+* Fixed explosion shakes were missing
+* Added shakes from panzer/bazooka and mortar missile explosions
+* Fixed airstrike delay was shorter than it should
+* Fixed airstrike/artillery sounds are now properly played
+* Fixed spawn point counts on command map 
+* Added /listspawnpt command to shown available spawn points to use with /setspawnpt
+  command
+* Fixed cg_popupBigFilter had inverse behavior, which made skill upgrades not
+  displayed and played by default
+* Fixed upscaled debris effects of the broken props
+* Added secondary weapon to class menu selection
+* Fixed gibs are not drawn
+* Added dynamic spawn points selection menu
+* Removed g_countryFlag option to make bots use server location flag
+* Added fading effect on weapons disappearing
+* Added bouncing effect for items (weapons/pack/obj launched/dropped)
+* Fixed weapons reload faster animations
+* Fixed centerprint inserts awkward newlines
+* Fixed cabinets are not affected by cg_autoActivate 0
+* Fixed pick-up weapon when player doesn't have a primary weapon to drop
+* Removed required tapout when doing selfkill in warmup
+* Fixed cg_gibs cvar
+* Fixed wounded players waiting for revive didn't gib
+* Fixed chargebar status colour hard to differentiate when at low level
+* Fixed last bullet firing animation on Luger
+* Fixed alternative switch wasn't possible when weapon fire last bullet in
+  clip/reserve
+* Fixed force alternative switch with cg_noAmmoAutoSwitch 0
+* Fixed mortar out-of-ammo was playing spinup sound
+* Fixed out-of-ammo delayed weapon were playing EV_NOAMMO twice
+* Fixed no explosion effect on satchel suicide
+* Added cursor management in debriefing chat and limbo panel player name field
+* Fixed register images from debriefing were loaded each frame
+* Fixed soldiers incorrectly dropped primary weapon with SMG in secondary
+* Removed min/max cap on displayed skill rating values
+* Added map bias display in /statsdump
+* Added partial GUID in /players and /statsdump command
+* Fixed stats not correctly reset for slow connecters
+* Fixed SR time data retrieval after reconnect while playing
+* Fixed end of match stats not sent to non-following spectators
+* Added /specuninvite command
+* Added specinvite status in /players command
+* Fixed logged out shoutcaster not unfollowing locked teams
+* Fixed taken objective disappear when shuffling without restart
+* Fixed set weapon position displayed incorrectly to followers
+* Fixed team class HP bonus at first spawn
+* Added dynamic maximum health computation (depending of medics count in team)
+* Fixed on team swap/move weapon selection was lost
+* Fixed on team move class selection was lost
+* Fixed weapon selection in limbo panel was lost on team selection (axis <-> allies)
+* Fixed empty name display in award list when awarded players disconnect early
+* Added nickname autocompletion and highlight with @ in messages (f.e. @nickname)
+* Fixed phantom bullet tracers
+* Added team chat for spectator team
+* Fixed chat maximum length in intermission
+* Added colour for simpleItem of currently used weapon
+* Added cg_etVersion info display in /players command
+* Fixed mortar hud marker from fieldops artillery call was missing
+* Fixed pins were not displayed on map loading and debriefing
+* Fixed time played stats was incorrectly reset in 2nd round of stopwatch
+* Added gravity effect on corpse while player died and standing on ground
+* Added gravity pause for item and physic object. This allow ent falling again if
+  possible.
+* Fixed death animation was cut when the player was sent to the limbo
+* Fixed corpses were rotated by 90° when grounding
+* Added log shutdown reason
+* Fixed regression where on server disconnect ui wasn't reloaded
+* Added timestamp and game info in g_log file
+* Fixed possible client invalid when creating stats
+* Fixed objective indicator not reset when using multiple spawned items
+* Added EV_MISSILE_FALLING event. Used to played the missile falling sound
+* Changed skill rating rank levels to match a more realistic player base statistical
+  distribution
+* Fixed some 3D models partially disappear when talking
+* Added ANIMFL_RELOADINGANIM flags for reloading animation detection
+* Removed protocol, qport, challenge pairs from userinfo string once connection is
+  established
+* Added SR win probability in log and statsdump
+* Fixed prone player could rotate their head into solid
+* Fixed prone viewpoint horizontal axis
+* Fixed head/legs collision on steppable elements
+* Fixed killed players was stuck on ladder 
+* Added prestige feature that tracks players skill levels reset
+* Fixed weapons sanitization from team command
+* Added holding grenade animation and extend throwing animation
+* Fixed cursor hint icon and distance for HINT_BAD_USER and ET_ALARMBOX
+* Added bp command for banner print and UI time slider
+* Fixed restricted weapons can be picked up
+* Replaced fireteam icons by a unique simpler icon
+* Adjusted item position and angle when grounding on inclined plane
+* Removed follow1/follow2 commands
+* Fixed an old issue in antilag to improve hit detection
+* Fixed non working hitSounds UI options
+* Fixed revive icon not displayed to following spectator
+* Merged all cg_bob* cvars into cg_bobbing
+* Readded syringe stats
+* Fixed small scoreboard toggle to avoid overflow with many spectators
+* Lowered adrenaline and shield powerup icon priority on HUD
+* Fixed version string cut off in /players commands
+* Fixed dumpstats file not always created on *nix
+* Fixed windowed mode set without border in UI
+* Added better ready icon
+* Fixed kicking wrong player by using robuster client num
+* Fixed shoutcaster can't differentiate spotted landmines
+* Fixed shuffle team string leftover
+* Added prestige popups filter
+* Allow reading custom huds from a local file (hud.dat)
+* Fixed item stutter while stuck in solid
+* Fixed falling sound event timing
+* Added persistent xp save for campaign
+* Fixed g_voiceChatAllowed spam check time period
+* Added cointoss callvote
+* Added arty command map target display visible to entire team
+* Fixed total servers count in browser
+* Fixed inconsistencies between regular and small scoreboard
+* Fixed "give health" cmd with negative amount wasn't using damage function
+* Removed cg_wolfparticles cvar
+* Fixed axis uniform skin for first person view luger and m1 garand weapons models
+* Fixed undercover axis uniform for first person view weapons models
+* Added server version check for etlded
+* Removed vanilla pak1.pk3 and pak2.pk3 dependencies
+* Fixed uncoloured name not possible in spectator labels
+* Added fireteam icon always displayed
+* Fixed warmup vote ignored when countdown is too short by disabling voting during
+  warmup
+* Fixed revive icon displayed when followed player is not medic
+* Fixed ammo count when dropping ticking grenade when killed then revived
+* Reworked explosion effects
+* Fixed SR and PR rewards gained without playing time
+* Fixed broken cover ops line of sight computation
+* Fixed prepare sound announcement played too late
+* Fixed debris on explosion effects too large
+* Added WITHBITS and WITHOUTBITS support in cvar restriction
+* Fixed missing defusing team in logged popup message
+* Added dynamite chaining when in blast radius
+* Fixed sorting of browser when servers use leading spaces
+* Added color to fireteam icon of selected members
+* Fixed fireteam member icons not colored on command map
+* Fixed enemy wounded can block team wounded for revive
+* Fixed no tick sound when scoreboard is open
+* Fixed minimap icons flickering when near compass edge
+* Added intermission time to ready button
+* Fixed Dynamite, Landmines and Satchel Bounding Box to match their models (keep
+  hitbox as original BBox values)
+* Fixed distance triggers for pliers and activate action to match hint icon
+* Added display name of player to be followed on activate
+* Adjusted compass map icon tolerance
+* Added missing map icon shaders for some popular maps
+* Fixed phantom artillery marker at map start
+* Fixed fireteam icon of disguised enemy reveals him if he has same uniform as player
+* Improved reinforcement timer colors with a yellow-red gradient
+* Added hide map voting results while in progress until vote is send
+* Added gradient color to identify third most voted maps in progress
+* Improved vote timout result display
+* Used remaining countdown (warmup / timelimit) as vote time countdown
+* Fixed bounding box height for prone and dead position
+* Fixed player markers over head shines through Covert smoke
+* Fixed objectif marker over head reveals position of hiding player
+* Added map vote auto filtering by players count using mapvoteplayerscount.cfg
+* Fixed set mg crosshair discrepancy
+* Improved forcetapout of wounded players on /kill
+* Fixed permanently disabled buttons in vote menu
+* Fixed dead players can capture flags
+* Fixed newbie award computation for differential XPs only
+* Added visual vote indicator in main debriefing
+* Added map name and total map time on scoreboard
+* Added displaying player names over players in demo playback
+* Added separate cg_drawSpectatorNames cvar to display spectator labels
+* Added private slots display in server browser
+* Fixed missing players name in main intermission screen by scaling flag sizes with
+  playercount
+* Improved hitsounds latency by moving them to the event messages
+* Added special trail for grenade, rifle grenade andd smoke grenade for shoutcasters
+  (cg_shoutcastGrenadeTrail)
+* Added players names bind to demo menu player (EDV)
+* Added players health as floating text or health bar to shoutcaster
+  (cg_shoutcastDrawHealth)
+* Changed limbo times instead of warmup in reinforcement time HUD element
+* Improved spawn timer period by game
+* Added shoutcast overlay
+* Fixed dynamite armed on pause
+* Added option to set player position and pov
+* Hided vehicle healthbar when setdamagable 0
+
+* Lua
+  * Updated to Lua lib 5.4.0
+  * Updated to LuaSQL 2.5.0
+  * Fixed/removed static classname of Lua entity create/fixed possible crash
+  * Fixed Lua vm stack was uncontrollably growing after each hook callback call
+  * Added constants for gamestates, teams and skills
+  * Added WP_AIRSTRIKE constant
+  * Added ps.pm_type, ps.velocity, ps.viewangles, ps.viewheight, ps.leanf entity
+    fields available
+  * Added G_LuaHook_WeaponFire callback
+  * Added GetCurrentWeapon, trap_Trace, G_HistoricalTrace functions
+  * Added PM and STATS constants
+  * Added CONTENTS, SURF and MASK constants
+  * Added G_LuaHook_FixedMGFire,  G_LuaHook_MountedMGFire, G_LuaHook_AAGunFire
+    callbacks
+  * Renamed et_LuaSpawnEntitiesFromString callback to et_SpawnEntitiesFromString for
+    consistency

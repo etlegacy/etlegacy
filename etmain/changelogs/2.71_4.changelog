@@ -1,0 +1,87 @@
+^dEngine
+
+* New icon is now part of the binaries (Windows)
+* Fixed some code issues found by static analysis tools
+* '@modellist@' info extended 
+* Fixed doppler effect (panzer rocket sound fix)
+* SDL sound cvars changed to use genuine cvars (@s_sdlSpeed@ → @s_khz@, @s_sdlBits@ →
+  @s_bits@, @s_sdlChannels@ → @s_channel@)
+* Fixed openAL support; fixed changing music volume when using the DMA backend
+* Fixed va() function (reverted ioquake implementation back to 2.60b code)
+* Lighmap loading works again
+* Automatically append git revision to the version string
+* Code clean up & cvars removal
+* Wallhack prediction by Laszlo Menczel has been added
+* Slight fog bug fix
+* Added ncurses console
+* Separate log for server attacks and security related issues has been added - see
+  @sv_protectLog@
+* @echo@ command now works from scripts like autoexec.cfg and when disconnected from
+  a server
+* Sound module doesn't waste memory anymore
+* Memory leaks fixed
+* gameinfo.dat is no longer used
+* Clients receive message of the day (MOTD) from etlegacy.com
+* Increased limit of same sound at same time
+* Client checks for update on start
+* Unique M_SQRT2 & usage
+* Fixed client status bar after vid_restart
+* Fixed heartbeat - master server always received keep-alive packet from server even
+  it was quitting
+* Several translations have been added
+* Image loader client crash fix
+* Rework of developer 1 debug messages for asset loading
+* Fixed *nix ALSA sound (wasn't built in by accident)
+* AROS port code by BSzili
+* Client sound support of ogg vorbis files
+* serverinfo.dat is no longer used, now storing favourites in favinfo.dat (speeds up
+  vid_restart)
+* Fix for spoofed infoResponse packets
+* ET:L won't start when fs_homepath and fs_basepath point to the same path (dedicated
+  servers excluded)
+* Keypad fix for NUM pressed digits
+* Fixed an issue where Sys_LoadDll() fails
+* Ported ioquake3's .avi recorder code by Tim Angus
+* Fixed path seperator in /path cmd being not OS specific
+* Fixed wrong checksum calculation for 64bit
+
+^dMod
+
+* Fixed some code issues found by static analysis tools
+* Several model and animation issues fixed
+* Revive of gib models
+* More code clean up
+* Warning about two identical localisation strings fixed
+* Console commands playsound and playsound_env have been added. Note: Only ET: Legacy
+  clients will hear *.ogg sounds!
+* Lua support for game
+* Menu scripts extended
+* PM_Weapon() fix - don’t cool while in limbo
+* Map location override databases see cg_locations
+* Missing announcer for 'goat', 'prepare to fight' & 'fight'
+* Several sound fixes
+* Weapon stats fix
+* Code clean up & cvars removal
+* Credits Page
+* Debriefing team results headers use skill icons
+* Userinfocheck secured, based on combinedfixes.lua
+* Connection limit per IP added - see @g_ip_max_clients@
+* Some sound fixes
+* Fixed player die animation
+* ETPro like spawntimers
+* r_gamma is settable via options graphics menu
+* Drop packs on limbo death - @g_dropAmmo@ & @g_dropHealth@ introduced
+* Push players - see @g_shove@
+* Teleporter sound fix
+* Fixed a bug introduced with 2.70rc1 where clients leave prone with no weapon view
+* Client side log - see @cg_logFile@
+* ETPro style weapon icon flash - see @cg_drawWeaponIconFlash 2@
+* Gametype 6 map voting has been added
+* @g_campaigns@ cvar introduced
+* @g_maxTeamLandmines@ cvar introduced
+* ETPro like script actions create & delete
+* Visible leaning
+* New separate legacy mod cfg file - see etmain path
+* Updated Omni-Bot files & small bot fixes
+* Fixed 'exceeded MAX_MULTI_SPAWNTARGETS' error
+* Reset the remappedShaders data structure on map start

@@ -1,0 +1,32 @@
+> ET: L 2.73 wasn't published - see also 2.73
+
+^dEngine
+
+^fClient
+
+* Fixed s_musicVolume not independent from s_volume
+* Fixed low Commander sounds volume
+* Fixed language mix and UTF8 issues in mods 
+* Enabled optional renderer2 *[experimental]* (Linux only)
+* Fixed sharing favorites 32- & 64bit
+
+^fServer
+
+^dMod
+
+* Fixed debriefing stats
+* Fixed config vote buttons in UI
+* Fixed second stopwatch round not loading when changing gametype in-game
+* Fixed teleporters - working again
+* Added ping info for spectators on scoreboard
+* Fixed pmove_fixed enabled 1st person view MG control
+* Fixed tank weapon overheat sound
+* Removed unused OSP game points stats system
+* Fixed a Linux client crash
+* Updated Omni-bot library
+* Fixed config files
+* Added hitsound for gibbing
+* Added bodyshot sound if headshot sound is disabled
+* Fixed stamina bar not working when spectating
+* Fixed vote progression not displayed to spectators
+* Fixed missing browining icon shader

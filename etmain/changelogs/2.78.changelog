@@ -1,0 +1,126 @@
+^dAndroid
+
+* Enabled Relative Mouse by default when greater than Android 6.0.1 Version
+* Fixed Android Back Button breaking keyboard input
+* Fixed Legacy pk3 not being copied to internal storage of phone
+* Added Minimum Android Version to run a game (Android 5.0)
+* Support for armeabi-v7a and arm64-v8a
+* Initial support
+
+^dEngine
+
+* Fixed random crashes caused by non ascii characters
+* Fixed Sys_DestroyConsole was never call on quit
+* Updated libs to
+  * WolfSSL 4.8.1
+  * OpenSSL 1.1.1l
+  * libogg 1.3.5
+  * libvorbis 1.3.7
+  * SQLite 3.36.1
+  * SDL 2.0.16
+  * Latest tinygettext
+
+^fClient
+
+* Fixed opening of URL's on Android Devices
+* Fixed ui_r_intensity/ui_r_mapoverbrightbits/ui_r_overBrightBits/com_fps option from
+  UI trigger default config load
+* Fixed ui_r_intensity option from UI doesn't trigger vid_restart
+* Changed default IRC network to Libera.chat
+* Fixed player name buffer in CL_ServerStatusResponse
+* Added con_background cvar to set solid color for console background.
+* Fixed vanilla patch collision on 2.60b servers
+* OpenAL:
+  * Fixed source gain was too high
+  * Fixed minimal and maximum range source attenuation
+  * Changed attenuation model from Inverse (Doubling the distance halves the source
+    gain) to Linear
+* Changed default sound backend to SDL2
+
+^fServer
+
+^fRenderer
+
+* Fixed screenshots and video recording getting double gamma
+
+^dMod
+
+* Reworked server demo record (tons of fixes)
+* Demo listing in the UI supports subfolders
+* Auto demos and screenshots are now placed in subfolders based on the year and month
+* Fixed some translations getting nuked
+* Reworked HUD blood effects 
+* Added directional damage
+* Added cg_bloodFlashTime
+* Added teams chat icons directional on HUD (revive/medic/ammo/objective) 
+* Added cg_drawEnvAwareness
+* Fixed LogExit possibly triggered twice with adverse effects (such as Prestige
+  points autocollected)
+* Fixed adrenaline animation
+* Adjusted z velocity to emulate framerate-dependent behavior in g_fixedPhysics
+* Fixed map vote disable after regular vote
+* Fixed arty/airstrike impact timing to 750ms (vanilla)
+* Fixed arty/airstrike falling sounds wasn't played on some maps
+* Fixed arty/airstrike exploding inside room on some maps
+* Fixed arty/airstrike exploding in mid-air on some maps
+* Fixed arty/airstrike shells getting stuck on patch meshes
+* Fixed airstrike plane wasn't visible on some maps
+* Added objective indicator on HUD and compass
+* Adjusted prone rotation
+* Adjusted proning transition
+* Fixed target_remove_powerups not updating flag counters
+* Fixed ready state flag
+* Fixed hit region registering
+* Fixed wrong spreadscale when pitching or yawing across 0 degrees
+* Fixed 'players sticking to each other' prediction errors
+* Fixed flame chunck trajectory to be fps independent
+* Fixed steals disguises to be fps independent
+* Fixed muzzleTrace was snapped for nothing since it's not sent over network
+* Fixed lagometer with sv_fps different from 20
+* Made body hitbox height follow head animation
+* Fixed OID entity was ignored for construction box
+* Fixed player name buffer length is some location
+* Changed bad userinfo client drop timeout to 0
+* Fixed g_fixedphysics slope
+* Improved picking up weapon
+* Fixed 3rd person view by not applying zoom from weapon
+* Fixed skill rating score 0 displays as negative value
+* Added dynamite sudden death (g_suddendeath)
+* Fixed framerate dependence issues
+* Fixed skill levels -1 display
+* Removed entities optimization hack
+* Fixed unable to change follow when followed team went into limbo
+* Fixed scoped FG42 giving light weapons xp
+* Changed allowed FOV range to [75 - 160]
+* Fixed instant dynamite throw when switched to it and fire button is held down
+* Fixed overkill damage counting towards stats
+* Changed height of dead and wounded players bounding box (from 24 to 0)
+* Added cg_simpleItemsScale (range 0.25-1.5)
+* Fixed dynamite being thrown inadvertently in some case
+* Fixed FT weapon icons when player use tank/MG nest
+* Added fireteam name and location customization cvars
+* Fixed ammo not despawning after pickup for fieldop that changed class
+* Fixed trace failing when start point inside bbox
+* Fixed knife hits being blocked by corpses bbox
+* Fixed wounded players getting stuck in solids
+* Fixed items falling through some surfaces
+* Fixed corpses clipping to solids on suicide animation
+* Fixed corpses going underground when selfkilling mid-air
+* Fixed divide by 0 crash with g_heavyWeaponRestriction set to 0
+* Fixed dynamite chaining deleting non armed dynamites
+* Fixed dynamite chaining on multi-stage objs
+* Removed g_dynamiteChaining
+* Fixed axis soldier spawning with extra flamethrower ammo
+* Fixed client set firing flag while noclipping
+* Fixed rifle swapping to riflenade when out of ammo
+* Fixed antiwarp locking players in place on respawn forever on high pings
+* Improved stand suicides animation (slight faster)
+* Added crouch and prone suicide animations
+* Added g_dropObjDelay for delay time when dropping and picking obj back up
+* Changed crouch bbox height (slightly raise from 18 to 21)
+* Added creating/joining a fireteam automatic (g_autoFireteams 2)
+* Added vote cancel by caller
+
+* Lua
+  * Updated to Lua lib 5.4.3
+  * Updated to LuaSQL 2.6.0
