@@ -98,3 +98,10 @@ gradle/
 **/.pixi/
 **/__pycache__/
 /.transifex-wrapper/
+
+# Go
+.gocache
+.gomodcache
+
+# Misc
+/misc/changelog-markdown-converter/changelog-markdown-converter

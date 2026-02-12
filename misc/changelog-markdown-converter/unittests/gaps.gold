@@ -1,0 +1,13 @@
+^fUnix
+
+* Implemented ^8Sys_Microseconds^9 function
+
+^fWindows
+
+^dClient
+
+* Fixed ^8qwfwd^9 (QuakeWorld Forward) proxy compatibility which is a recommended
+  proxy for finding lower ping connection to QuakeWorld servers
+* Fixed demo timeout when rewinding
+* Fixed gamestate not updating on demo rewind in some cases
+* Allowed rewinding/fast-forwarding when demo is paused

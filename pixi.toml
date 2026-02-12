@@ -10,8 +10,8 @@ platforms = ["linux-64", "osx-64", "win-64"]
 
 [tasks]
 "collect-and-check-gh-build-logs" = { cmd = ["python", "./misc/collect-and-check-gh-build-logs.py"] }
-"i18n-transifex-pull" = { cmd = ["python", "./misc/i18n-transifex-wrapper.py", "pull", "--force"] }
 "i18n-sync-pot-files" = { cmd = ["python", "./misc/i18n-sync-pot-files.py"] }
+"i18n-transifex-pull" = { cmd = ["python", "./misc/i18n-transifex-wrapper.py", "pull", "--force"] }
 
 [dependencies]
 "git" = "2.49.0.*"
@@ -36,6 +36,12 @@ check-changes = { cmd = ["python", "./misc/check-changes.py"] }
 "shellcheck" = "0.10.0.*"
 "uncrustify" = "0.78.1.*"
 
+[feature.updatechangelogs.tasks]
+"update-changelogs" = { cmd = ["python", "./misc/update-changelog.py"] }
+[feature.updatechangelogs.dependencies]
+"go" = "1.26.0.*"
+
 [environments]
 libclang = ["libclang"]
 validation = ["validation"]
+updatechangelogs = ["updatechangelogs"]
