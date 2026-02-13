@@ -656,9 +656,9 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 				if (is_accelerator)
 				{
 					trap_R_SetColor(colorBlack);
-					UI_FillRect(x + (glyph->pitch * scalex),
+					UI_FillRect(x + (glyph->pitch * scalex * 1.2),
 					            y - yadj + (glyph->imageHeight * scaley) + 1.0,
-					            glyph->imageWidth * scalex, 0.6, newColor);
+					            glyph->imageWidth * scalex * 0.9, 0.5, newColor);
 					trap_R_SetColor(newColor);
 					is_accelerator = qfalse;
 				}
