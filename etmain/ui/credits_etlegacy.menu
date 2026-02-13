@@ -244,5 +244,5 @@ menuDef {
 	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_etlegacy ; open ingame_main )
 #endif
 	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("HALL OF FAME"), .3, 14, clearFocus ; open etlegacy_halloffame )
-	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("SPLASH DAMAGE"), .3, 14, close credits_etlegacy ; open credits_splashdamage )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("ATTRIBUTIONS"), .3, 14, close credits_etlegacy ; open credits_attributions )
 }
