@@ -7791,3 +7791,227 @@ msgstr ""
 
 msgid "RECORD"
 msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "ADD TO FAVORITES"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Balanced only..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "CHOOSE CLASS/WEAPON"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Duration of bullet marks on walls etc"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "ET Legacy Website"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid ""
+"ET: Legacy development is a collaborative effort done in an open, "
+"transparent and friendly manner. Anyone is welcome to join our efforts!"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Empty only..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Friendly fire..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Gibs:   %3d    Team Gibs:  %3d"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Map overbright bits:"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "NO SR SHUFFLE"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "NO XP SHUFFLE"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "No friendly fire..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "No password..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "No weapon limits..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Not empty..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Particles:"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid ""
+"Please choose your initial settings below. You can change these at any time "
+"and access more advanced options by visiting the Options Menu. Should more "
+"than one person wish to play Enemy Territory: Legacy, you can create "
+"additional profiles by visiting the Profiles Menu."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "PopUpTimeFade:"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "PopUpTimeStay:"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Requires password..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "SELECT WEAPONS"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "SR SHUFFLE"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Sets high quality video."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Sets the duration ejected bullet shells etc. last for"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid ""
+"Sets the limit of frames per second - keep the values between 20 and 333"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid ""
+"Specifies custom resolution height - requires custom resolution set .*Use on"
+" your own risk!"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid ""
+"Specifies custom resolution width - requires custom resolution set. *Use on "
+"your own risk!"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "The Intensity Of Textures (requires vid_restart)"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "The World Gets Brighter, But Paler (requires vid_restart)"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid ""
+"Toggles display of particle effects - e.g. explosions, some smoke effects"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Toggles showing blood spurt effect when player's are shot"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Unbalanced only..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Very Low"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Weapon limits..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Window mode:"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "With antilag..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "With humans..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "With max lives..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Without antilag..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Without humans..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "Without max lives..."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "XP SHUFFLE"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "server console. It will not be possible"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "to play the game on the host machine."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "EXIT"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "FAVORITE"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "HOST"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "PLAY"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "HUD EDITOR"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "OPEN HOME"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "SPLASH DAMAGE"
+msgstr ""
