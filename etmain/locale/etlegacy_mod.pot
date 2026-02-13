@@ -7966,3 +7966,15 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "SPLASH DAMAGE"
 msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "CHANGELOG"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "NEWER"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "OLDER"
+msgstr ""
