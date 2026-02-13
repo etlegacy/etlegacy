@@ -107,7 +107,7 @@ menuDef {
 	BUTTON( 6, 56, MENU_WIDTH-12, 18, _("HOST"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript loadArenas ; uiScript initHostGameFeatures ; open hostgame )
 #endif
 	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("REPLAYS"), .3, 14, close main ; open viewreplay )
-	LINE(1, 100.5, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
+	// LINE(1, 100.5, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
 	BUTTON( 6, 104, MENU_WIDTH-12, 18, _("OPTIONS"), .3, 14, close main ; open options )
 	LINE(1, 124.5, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
 	BUTTON( 6, 128, MENU_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
