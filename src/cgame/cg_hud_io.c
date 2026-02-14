@@ -1685,7 +1685,7 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		// Ensure dynamic coloration style is applied due to insertion of needle style from bar
 		if (tmpHud->crosshairbar.style & BAR_CIRCULAR << 2)
 		{
-			tmpHud->crosshairbar.style |= (BAR_CIRCULAR << 3);
+			tmpHud->crosshairbar.style |= (BAR_CIRCULAR << 4);
 		}
 
 		tmpHud->crosshairbar.style &= ~(BAR_CIRCULAR << 2);    // by default, circular bar will be desactivate
@@ -1758,7 +1758,7 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_CLASS);
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_RANK);
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_PRESTIGE);
-			if (tmpHud->crosshairbar.style & (BAR_CIRCULAR << 3))
+			if (tmpHud->crosshairbar.style & (BAR_CIRCULAR << 4))
 			{
 				tmp |= CROSSHAIR_BAR_DYNAMIC_COLOR;
 			}
