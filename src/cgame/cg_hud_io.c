@@ -1683,12 +1683,12 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 	if (upgr->shiftHealthBarDynamicColorStyle2)
 	{
 		// Ensure dynamic coloration style is applied due to insertion of needle style from bar
-		if (tmpHud->crosshairbar.style & BAR_CIRCULAR)
+		if (tmpHud->crosshairbar.style & BAR_CIRCULAR << 2)
 		{
-			tmpHud->healthbar.style |= (BAR_CIRCULAR << 1);
+			tmpHud->crosshairbar.style |= (BAR_CIRCULAR << 3);
 		}
 
-		tmpHud->healthbar.style &= ~BAR_CIRCULAR;    // by default, circular bar will be desactivate
+		tmpHud->crosshairbar.style &= ~(BAR_CIRCULAR << 2);    // by default, circular bar will be desactivate
 
 		// Ensure dynamic coloration style is applied due to insertion of circular style from bar
 		if (tmpHud->healthbar.style & BAR_CIRCULAR)
@@ -1735,9 +1735,12 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 
 		if (!parentHud || (tmpHud->healthbar.style != parentHud->healthbar.style))
 		{
-			tmpHud->healthbar.barStyle  = tmpHud->healthbar.style;
-			tmpHud->healthbar.barStyle &= ~(BAR_CIRCULAR << 1);   // remove dynamic coloration style from bar style
-			tmpHud->healthbar.style     = tmpHud->healthbar.style & (BAR_CIRCULAR << 1); // keep dynamic coloration style only
+			tmpHud->healthbar.barStyle = tmpHud->healthbar.style;
+			if (tmpHud->healthbar.style & (BAR_CIRCULAR << 1))
+			{
+				tmpHud->healthbar.style     = 1; // keep dynamic coloration style only
+				tmpHud->healthbar.barStyle &= ~(BAR_CIRCULAR << 1);   // remove dynamic coloration style from bar style
+			}
 		}
 
 		if (!parentHud || (tmpHud->weaponstability.style != parentHud->weaponstability.style))
@@ -1755,7 +1758,7 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_CLASS);
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_RANK);
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_PRESTIGE);
-			if (tmpHud->healthbar.style & (BAR_CIRCULAR << 1))
+			if (tmpHud->crosshairbar.style & (BAR_CIRCULAR << 3))
 			{
 				tmp |= CROSSHAIR_BAR_DYNAMIC_COLOR;
 			}
