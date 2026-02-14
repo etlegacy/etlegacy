@@ -1651,6 +1651,17 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 			hudComponent_t *comp = (hudComponent_t *)((byte *)&tmpHud->popupmessages + numPopUp * sizeof(hudComponent_t));
 			int            j;
 
+			// don't update style if inherit from parent which already upgrade it
+			if (parentHud)
+			{
+				hudComponent_t *compParent = (hudComponent_t *)((byte *)&parentHud->popupmessages + numPopUp * sizeof(hudComponent_t));
+
+				if (comp->style == compParent->style)
+				{
+					continue;
+				}
+			}
+
 			for (j = 10; j > 5; --j)
 			{
 				if (CHECKBIT(comp->style, j - 1))
