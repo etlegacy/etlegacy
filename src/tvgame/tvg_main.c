@@ -259,7 +259,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		int time = trap_Milliseconds();
-		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME_TV);
+		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN "%s\n", MODNAME_TV, ETLEGACY_VERSION);
 		TVG_InitGame(arg0, arg1, arg2, arg3, arg4);
 		G_Printf("Game Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 	}

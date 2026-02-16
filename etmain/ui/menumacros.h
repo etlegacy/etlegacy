@@ -31,7 +31,7 @@
  * @file menumacros.h
  */
 
-#include "ui/git_version.h"
+#include "ui/version_generated.h"
 
 #ifndef INCLUDE_MENUMACROS_H
 #define INCLUDE_MENUMACROS_H

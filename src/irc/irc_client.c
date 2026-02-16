@@ -1801,7 +1801,7 @@ static int CTCP_Version(qboolean is_channel, const char *argument)
 		return IRC_CMD_SUCCESS;
 	}
 
-	return IRC_Send("NOTICE %s :\001VERSION " Q3_VERSION "\001", IRC_String(pfx_nickOrServer));
+	return IRC_Send("NOTICE %s :\001VERSION %s\001", IRC_String(pfx_nickOrServer), Q3_VERSION);
 }
 
 /*--------------------------------------------------------------------------*/

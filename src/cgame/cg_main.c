@@ -202,7 +202,7 @@ void CG_setClientFlags(void)
 
 	cg.pmext.bAutoReload = (qboolean)(cg_autoReload.integer > 0);
 	trap_Cvar_Set("cg_uinfo", va("%d %d %d",
-								 // Client Flags
+	                             // Client Flags
 								 (
 									 ((cg_autoReload.integer > 0) ? CGF_AUTORELOAD : 0) |
 									 ((cg_autoAction.integer & AA_STATSDUMP) ? CGF_STATSDUMP : 0) |
@@ -210,13 +210,13 @@ void CG_setClientFlags(void)
 									 ((cg_predictItems.integer > 0) ? CGF_PREDICTITEMS : 0) |
 									 ((cg_activateLean.integer > 0) ? CGF_ACTIVATELEAN : 0)
 									 // Add more in here, as needed
-								 ),
+	                             ),
 
-								 // Timenudge
-								 int_cl_timenudge.integer,
-								 // MaxPackets
-								 int_cl_maxpackets.integer
-								 ));
+	                             // Timenudge
+	                             int_cl_timenudge.integer,
+	                             // MaxPackets
+	                             int_cl_maxpackets.integer
+	                             ));
 }
 
 /**
@@ -406,17 +406,17 @@ char *CG_generateFilename(void)
 	}
 
 	Com_sprintf(fullFilename, sizeof(fullFilename), "%s%d-%02d-%02d-%02d%02d%02d-%s%s", prefix,
-				1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
-				ct.tm_hour, ct.tm_min, ct.tm_sec,
-				Info_ValueForKey(pszServerInfo, "mapname"),
+	            1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
+	            ct.tm_hour, ct.tm_min, ct.tm_sec,
+	            Info_ValueForKey(pszServerInfo, "mapname"),
 #ifdef FEATURE_MULTIVIEW
-				(cg.mvTotalClients < 1) ?
+	            (cg.mvTotalClients < 1) ?
 #endif
-				""
+	            ""
 #ifdef FEATURE_MULTIVIEW
-			  : "-MVD"
+	          : "-MVD"
 #endif
-				);
+	            );
 
 	return fullFilename;
 }
@@ -980,21 +980,21 @@ static void CG_RegisterGraphics(void)
 	// replaces a fueldump texture with a dynamically generated one.
 #ifdef TEST_API_DYNAMICSHADER
 	trap_R_LoadDynamicShader("my_terrain1_2",
-							 "my_terrain1_2\n"
-							 "{\n"
-							 "    qer_editorimage textures/stone/mxsnow3.tga\n"
-							 "    q3map_baseshader textures/fueldump/terrain_base\n"
-							 "    {\n"
-							 "        map textures/stone/mxrock1aa.tga\n"
-							 "        rgbGen identity\n"
-							 "        tcgen environment\n"
-							 "    }\n"
-							 "    {\n"
-							 "        lightmap $lightmap\n"
-							 "        blendFunc GL_DST_COLOR GL_ZERO\n"
-							 "        rgbgen identity\n"
-							 "    }\n"
-							 "}\n");
+	                         "my_terrain1_2\n"
+	                         "{\n"
+	                         "    qer_editorimage textures/stone/mxsnow3.tga\n"
+	                         "    q3map_baseshader textures/fueldump/terrain_base\n"
+	                         "    {\n"
+	                         "        map textures/stone/mxrock1aa.tga\n"
+	                         "        rgbGen identity\n"
+	                         "        tcgen environment\n"
+	                         "    }\n"
+	                         "    {\n"
+	                         "        lightmap $lightmap\n"
+	                         "        blendFunc GL_DST_COLOR GL_ZERO\n"
+	                         "        rgbgen identity\n"
+	                         "    }\n"
+	                         "}\n");
 	trap_R_RegisterShader("my_terrain1_2");
 	trap_R_RemapShader("textures/fueldump/terrain1_2", "my_terrain1_2", "0");
 #endif
@@ -2156,7 +2156,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	//int startat = trap_Milliseconds();
 
-	Com_Printf(S_COLOR_MDGREY "Initializing %s cgame " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+	Com_Printf(S_COLOR_MDGREY "Initializing %s cgame " S_COLOR_GREEN "%s\n", MODNAME, ETLEGACY_VERSION);
 
 	// clean up the config backup if one exists
 	CG_RestoreProfile();
@@ -2518,9 +2518,9 @@ char *CG_GetRealTime(void)
 
 	trap_RealTime(&tm);
 	return va("%02i:%02i:%02i",
-			  tm.tm_hour,
-			  tm.tm_min,
-			  tm.tm_sec);
+	          tm.tm_hour,
+	          tm.tm_min,
+	          tm.tm_sec);
 }
 
 /**

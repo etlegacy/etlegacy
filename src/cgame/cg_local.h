@@ -1173,7 +1173,7 @@ typedef struct
 	version_t demoVersion;
 	demoBackwardsCompat_t demoBackwardsCompat;
 
-	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
+	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from version_generated.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
 	qboolean autoCmdExecuted;               ///< has 'cg_autoCmd' been executed yet
@@ -1609,7 +1609,7 @@ typedef struct
 
 	qboolean updateOldestValidCmd;                    ///< whenever snapshot transition happens save oldest valid command
 	int oldestValidCmd;                               ///< that will be used as a next starting point for prediction
-													  ///< instead of iterating through whole CMD_BACKUP array every frame
+	                                                  ///< instead of iterating through whole CMD_BACKUP array every frame
 
 	qboolean mapConfigLoaded; // qtrue if map-specific autoexec was loaded
 } cg_t;
@@ -2947,11 +2947,11 @@ void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader);
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor,
-				  const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon);
+                  const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon);
 void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
-						const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
+                        const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
 float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
-					 const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
+                     const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
 
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
 
@@ -2963,8 +2963,8 @@ void CG_TileClear(void);
 void CG_ColorForHealth(int health, vec4_t hcolor);
 
 void CG_DrawCircle(float x, float y, float w, float h, float *startColor, float *endColor,
-				   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon,
-				   float density, float start, float end, float thickness);
+                   const float *bgColor, const float *bdColor, float frac, float needleFrac, int flags, qhandle_t icon,
+                   float density, float start, float end, float thickness);
 
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
@@ -3171,8 +3171,8 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 void CG_InitMarkPolys(void);
 void CG_AddMarks(void);
 void CG_ImpactMark(qhandle_t markShader,
-				   vec3_t origin, vec4_t projection, float radius, float orientation,
-				   float r, float g, float b, float a, int lifeTime);
+                   vec3_t origin, vec4_t projection, float radius, float orientation,
+                   float r, float g, float b, float a, int lifeTime);
 
 // cg_particles.c
 void CG_ClearParticles(void);
@@ -3264,14 +3264,14 @@ void CG_LoadLocations(void);
 // cg_effects.c
 int CG_GetOriginForTag(centity_t *cent, refEntity_t *parent, const char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
 localEntity_t *CG_SmokePuff(const vec3_t p,
-							const vec3_t vel,
-							float radius,
-							float r, float g, float b, float a,
-							float duration,
-							int startTime,
-							int fadeInTime,
-							int leFlags,
-							qhandle_t hShader);
+                            const vec3_t vel,
+                            float radius,
+                            float r, float g, float b, float a,
+                            float duration,
+                            int startTime,
+                            int fadeInTime,
+                            int leFlags,
+                            qhandle_t hShader);
 
 void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing);
 
@@ -3281,7 +3281,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir);
 void CG_Bleed(vec3_t origin, int entityNum);
 
 localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
-								qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite);
+                                qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite);
 
 void CG_SparklerSparks(vec3_t origin, int count);
 void CG_ClearFlameChunks(void);
@@ -3471,26 +3471,26 @@ clipHandle_t trap_CM_TempCapsuleModel(const vec3_t mins, const vec3_t maxs);
 int trap_CM_PointContents(const vec3_t p, clipHandle_t model);
 int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles);
 void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-					  const vec3_t mins, const vec3_t maxs,
-					  clipHandle_t model, int brushmask);
+                      const vec3_t mins, const vec3_t maxs,
+                      clipHandle_t model, int brushmask);
 void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-								 const vec3_t mins, const vec3_t maxs,
-								 clipHandle_t model, int brushmask,
-								 const vec3_t origin, const vec3_t angles);
+                                 const vec3_t mins, const vec3_t maxs,
+                                 clipHandle_t model, int brushmask,
+                                 const vec3_t origin, const vec3_t angles);
 
 void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-						  const vec3_t mins, const vec3_t maxs,
-						  clipHandle_t model, int brushmask);
+                          const vec3_t mins, const vec3_t maxs,
+                          clipHandle_t model, int brushmask);
 void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-									 const vec3_t mins, const vec3_t maxs,
-									 clipHandle_t model, int brushmask,
-									 const vec3_t origin, const vec3_t angles);
+                                     const vec3_t mins, const vec3_t maxs,
+                                     clipHandle_t model, int brushmask,
+                                     const vec3_t origin, const vec3_t angles);
 
 // Returns the projection of a polygon onto the solid brushes in the world
 int trap_CM_MarkFragments(int numPoints, const vec3_t *points,
-						  const vec3_t projection,
-						  int maxPoints, vec3_t pointBuffer,
-						  int maxFragments, markFragment_t *fragmentBuffer);
+                          const vec3_t projection,
+                          int maxPoints, vec3_t pointBuffer,
+                          int maxFragments, markFragment_t *fragmentBuffer);
 
 // projects a decal onto brush model surfaces
 void trap_R_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime);
@@ -3556,9 +3556,9 @@ void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float 
 void trap_R_RenderScene(const refdef_t *fd);
 void trap_R_SetColor(const float *rgba);     // NULL = 1,1,1,1
 void trap_R_DrawStretchPic(float x, float y, float w, float h,
-						   float s1, float t1, float s2, float t2, qhandle_t hShader);
+                           float s1, float t1, float s2, float t2, qhandle_t hShader);
 void trap_R_DrawRotatedPic(float x, float y, float w, float h,
-						   float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
+                           float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
 void trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader);
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
@@ -4422,8 +4422,8 @@ typedef struct
 } helpType_t;
 
 void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const helpType_t *help, unsigned int cmdNumber,
-					   const vec4_t bgColor, const vec4_t borderColor, const vec4_t bgColorTitle, const vec4_t borderColorTitle,
-					   panel_button_text_t *fontHeader, panel_button_text_t *fontText);
+                       const vec4_t bgColor, const vec4_t borderColor, const vec4_t bgColorTitle, const vec4_t borderColorTitle,
+                       panel_button_text_t *fontHeader, panel_button_text_t *fontText);
 
 float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
 

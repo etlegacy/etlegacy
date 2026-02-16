@@ -200,12 +200,15 @@ list(JOIN ETL_COMPILE_FEATURES ", " ETL_COMPILE_FEATURES)
 message(VERBOSE "Enabled features: ${ETL_COMPILE_FEATURES}")
 
 # Mod version
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/etmain/ui/git_version.h" @ONLY)
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/etmain/ui")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/version_generated.h.in" "${CMAKE_CURRENT_BINARY_DIR}/etmain/ui/version_generated.h" @ONLY)
 # This is for NSIS
 string(REPLACE "," "." ETL_CMAKE_PROD_VERSIONDOT ${ETL_CMAKE_PROD_VERSION})
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h" @ONLY)
-list(APPEND COMMON_SRC "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h")
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/include) # git_version.h
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/version_generated.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/version_generated.h" @ONLY)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include) # version_generated.h
+
+target_compile_definitions(shared_libraries INTERFACE MODNAME="${MODNAME}")
+target_compile_definitions(shared_libraries INTERFACE MODURL="${MODURL}")
 
 # if(DEFINED ENV{CI_ETL_UID})
 	# set(ETL_UID $ENV{CI_ETL_UID})

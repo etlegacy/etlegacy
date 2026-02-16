@@ -441,7 +441,7 @@ def main(args):
             "./.pixi/envs/clang/lib/clang/20/include",
             "-isystem",
             "./.pixi/envs/clang/include/",
-            # for 'git_version.h'
+            # for build-generated version header
             "-I",
             "./etmain/ui/",
         ],
