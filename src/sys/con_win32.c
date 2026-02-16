@@ -289,9 +289,9 @@ void CON_Init(void)
 	qconsole_attrib = info.wAttributes;
 
 #ifdef DEDICATED
-	SetConsoleTitle(ET_VERSION " Dedicated Server Console");
+	SetConsoleTitle(va("%s Dedicated Server Console", ET_VERSION));
 #else
-	SetConsoleTitle(ET_VERSION " Client Console");
+	SetConsoleTitle(va("%s Client Console", ET_VERSION));
 #endif
 
 	// make cursor invisible

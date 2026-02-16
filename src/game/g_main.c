@@ -158,7 +158,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		int time = trap_Milliseconds();
-		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN "%s\n", MODNAME, ETLEGACY_VERSION);
 		G_ParsePlatformManifest();
 #ifdef FEATURE_OMNIBOT
 

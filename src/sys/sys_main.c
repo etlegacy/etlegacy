@@ -1132,13 +1132,13 @@ void Sys_ParseArgs(int argc, char **argv)
 		         !Q_stricmp(argv[i], "-v"))
 		{
 #ifdef DEDICATED
-			fprintf(stdout, Q3_VERSION " " CPUSTRING " dedicated server (%s)\n", __DATE__);
+			fprintf(stdout, "%s %s dedicated server (%s)\n", Q3_VERSION, CPUSTRING, __DATE__);
 #else
-			fprintf(stdout, "Client: " ET_VERSION "\n");
+			fprintf(stdout, "Client: %s\n", ET_VERSION);
 			fprintf(stdout, "Masked as: " FAKE_VERSION "\n");
 #endif
-			fprintf(stdout, "Built: " PRODUCT_BUILD_TIME "\n");
-			fprintf(stdout, "Build features: " PRODUCT_BUILD_FEATURES "\n");
+			fprintf(stdout, "Built: %s\n", PRODUCT_BUILD_TIME);
+			fprintf(stdout, "Build features: %s\n", PRODUCT_BUILD_FEATURES);
 			Sys_Exit(0);
 		}
 #ifndef DEDICATED
