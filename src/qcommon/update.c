@@ -56,6 +56,10 @@
 #define MIN_PACK_LEN 4
 
 autoupdate_t autoupdate;
+#ifdef FEATURE_AUTOUPDATE
+// Gate auto-update prompt so it is shown at most once per client session.
+static qboolean updatePromptShownThisSession = qfalse;
+#endif
 
 /**
  * @brief Com_CheckAutoUpdate
@@ -505,19 +509,24 @@ void Com_UpdateInfoPacket(const netadr_t *from)
 		}
 
 #ifdef FEATURE_AUTOUPDATE
+		if (!updatePromptShownThisSession)
+		{
 #ifndef DEDICATED
-		if (uivm)
-		{
-			uiMenuCommand_t currentMenu = (uiMenuCommand_t)(VM_Call(uivm, UI_GET_ACTIVE_MENU));
-			if (currentMenu != UIMENU_WM_AUTOUPDATE)
+			if (uivm)
 			{
-				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
+				uiMenuCommand_t currentMenu = (uiMenuCommand_t)(VM_Call(uivm, UI_GET_ACTIVE_MENU));
+				if (currentMenu != UIMENU_WM_AUTOUPDATE)
+				{
+					VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
+				}
 			}
-		}
-		else
+			else
 #endif
-		{
-			Com_Printf("%s ^1RUN UPDATE COMMAND TO UPDATE\n", com_updatemessage->string);
+			{
+				Com_Printf("%s ^1RUN UPDATE COMMAND TO UPDATE\n", com_updatemessage->string);
+			}
+
+			updatePromptShownThisSession = qtrue;
 		}
 #endif /* FEATURE_AUTOUPDATE */
 	}
