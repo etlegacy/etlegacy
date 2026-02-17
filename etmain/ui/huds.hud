@@ -1079,6 +1079,8 @@
 						"w":	273.60000610351562,
 						"h":	16
 					},
+					"showBackGround":	false,
+					"showBorder":	false,
 					"anchor":	4,
 					"parent":	{
 						"anchor":	4,
