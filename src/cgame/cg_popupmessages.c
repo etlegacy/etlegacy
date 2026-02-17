@@ -325,6 +325,7 @@ qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter)
 	switch (type)
 	{
 	case PM_CONNECT:
+	case PM_DISCONNECT:
 		return filter & POPUP_FILTER_CONNECT;
 	case PM_TEAM:
 		return filter & POPUP_FILTER_TEAMJOIN;
