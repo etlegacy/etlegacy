@@ -45,6 +45,24 @@
 
 extern vec3_t muzzleTrace;
 
+#define KNOCKBACK_EXPLOSION_AIR_MAX_MSEC 200
+#define KNOCKBACK_EXPLOSION_AIR_MAX_XY 96.0f
+#define KNOCKBACK_EXPLOSION_AIR_MAX_Z 64.0f
+
+/**
+ * @brief Clamp explosive knockback velocity to the displacement/time envelope.
+ * @param[in,out] ps
+ */
+static void G_ClampExplosiveKnockbackVelocity(playerState_t *ps)
+{
+	float maxXY = (KNOCKBACK_EXPLOSION_AIR_MAX_XY * 1000.0f) / (float)KNOCKBACK_EXPLOSION_AIR_MAX_MSEC;
+	float maxZ  = (KNOCKBACK_EXPLOSION_AIR_MAX_Z * 1000.0f) / (float)KNOCKBACK_EXPLOSION_AIR_MAX_MSEC;
+
+	ps->velocity[0] = Com_Clamp(-maxXY, maxXY, ps->velocity[0]);
+	ps->velocity[1] = Com_Clamp(-maxXY, maxXY, ps->velocity[1]);
+	ps->velocity[2] = Com_Clamp(-maxZ, maxZ, ps->velocity[2]);
+}
+
 /**
  * @brief Adds score to both the client and his team, only used for LMS
  * @param[in,out] ent
@@ -1682,6 +1700,11 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		                          ))
 		{
 			targ->client->ps.velocity[2] *= 0.25f;
+		}
+
+		if (GetMODTableData(mod)->isExplosive)
+		{
+			G_ClampExplosiveKnockbackVelocity(&targ->client->ps);
 		}
 
 		// set the timer so that the other client can't cancel
