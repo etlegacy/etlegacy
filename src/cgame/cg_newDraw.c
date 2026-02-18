@@ -798,7 +798,8 @@ void CG_HudEditor_Cleanup(void)
 
 	for (i = 0; i < TEAMCHAT_MSG_MAX; i++)
 	{
-		cgs.teamChatMsgTimes[i] = 0;
+		cgs.teamChatStartLine[i] = qfalse;
+		cgs.teamChatMsgTimes[i]  = 0;
 	}
 }
 

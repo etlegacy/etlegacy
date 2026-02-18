@@ -2012,7 +2012,8 @@ static void CG_DemoRewindFixEffects(void)
 		{
 			cgs.teamChatPos--;
 			cgs.teamLastChatPos--;
-			cgs.teamChatMsgTimes[i] = 0;
+			cgs.teamChatMsgTimes[i]  = 0;
+			cgs.teamChatStartLine[i] = 0;
 			Com_Memset(cgs.teamChatMsgs[i], 0, sizeof(cgs.teamChatMsgs[i]));
 		}
 	}

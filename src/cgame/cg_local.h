@@ -2568,6 +2568,7 @@ typedef struct cgs_s
 	vec4_t fireteamSpritesColorSelected;
 
 	// teamchat width is *3 because of embedded color codes
+	qboolean teamChatStartLine[TEAMCHAT_MSG_MAX];
 	char teamChatMsgs[TEAMCHAT_MSG_MAX][MAX_STRING_CHARS];
 	int teamChatMsgTimes[TEAMCHAT_MSG_MAX];
 	team_t teamChatMsgTeams[TEAMCHAT_MSG_MAX];

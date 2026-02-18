@@ -1133,14 +1133,15 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 				}
 			}
 
-			CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i) * lineHeight, chatWidthMax + flagOffsetX + 2, lineHeight, cgs.media.teamStatusBar); // +2 width for some padding at the end
+			// line background
+			CG_DrawPic(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i) * lineHeight, chatWidthMax + 2, lineHeight, cgs.media.teamStatusBar); // +2 width for some padding at the end
 
 			hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
 			hcolor[3] = comp->colorMain[3] * alphapercent;
 			trap_R_SetColor(hcolor);
 
-			// chat icons
-			if (flag)
+			// chat icons, draw it only on the first starting line text
+			if (flag && cgs.teamChatStartLine[i % chatHeight])
 			{
 				CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - icon_height, icon_width, icon_height, flag);
 			}
