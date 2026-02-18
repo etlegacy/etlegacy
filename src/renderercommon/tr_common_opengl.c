@@ -471,7 +471,7 @@ static void GLimp_InitExtensions(void)
 	glConfig.maxActiveTextures = 1;
 #ifdef FEATURE_RENDERER_GLES
 	GLint glint = 0;
-	glGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;
 
 	if (glConfig.maxActiveTextures > 1)
