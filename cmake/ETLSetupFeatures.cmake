@@ -73,9 +73,9 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(FEATURE_RENDERER_GLES)
-		find_package(GLES REQUIRED)
-		target_link_libraries(renderer_gles_libraries INTERFACE ${GLES_LIBRARY})
-		target_include_directories(renderer_gles_libraries INTERFACE ${GLES_INCLUDE_DIR})
+		find_package(GLES2 REQUIRED)
+		target_link_libraries(renderer_gles_libraries INTERFACE ${GLES2_LIBRARY})
+		target_include_directories(renderer_gles_libraries INTERFACE ${GLES2_INCLUDE_DIR})
 	endif()
 
 	if(FEATURE_RENDERER_VULKAN)
