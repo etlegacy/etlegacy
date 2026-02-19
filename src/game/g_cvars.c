@@ -442,7 +442,7 @@ cvarTable_t gameCvarTable[] =
 
 	{ &voteFlags,                         "voteFlags",                         "0",                          CVAR_TEMP | CVAR_ROM | CVAR_SERVERINFO,          0, qfalse, qfalse },
 
-	{ &g_complaintlimit,                  "g_complaintlimit",                  "6",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_complaintlimit,                  "g_complaintlimit",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_teambleedComplaint,              "g_teambleedComplaint",              "50",                         CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_ipcomplaintlimit,                "g_ipcomplaintlimit",                "3",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_filtercams,                      "g_filtercams",                      "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
