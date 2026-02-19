@@ -13,6 +13,7 @@
 #define ETL_BUILD_PRODUCT_VERSION_STR "@ETL_CMAKE_PROD_VERSION_STR@"
 #define ETL_BUILD_TIME "@ETL_CMAKE_BUILD_TIME@ UTC"
 #define ETL_BUILD_FEATURES "@ETL_COMPILE_FEATURES@"
+#define ETL_BUILD_VERSION_ID "@ETL_UID@"
 
 /* Legacy aliases retained for resources, menu scripts and existing code paths. */
 #ifndef ETLEGACY_VERSION
