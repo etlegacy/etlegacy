@@ -212,9 +212,7 @@ target_compile_definitions(shared_libraries INTERFACE MODURL="${MODURL}")
 
 # if(DEFINED ENV{CI_ETL_UID})
 	# set(ETL_UID $ENV{CI_ETL_UID})
-	execute_process(COMMAND uuidgen
-		OUTPUT_STRIP_TRAILING_WHITESPACE
-		OUTPUT_VARIABLE ETL_UID)
-	target_compile_definitions(engine_libraries INTERFACE ETLEGACY_VERSION_ID="${ETL_UID}")
-	target_compile_definitions(mod_libraries INTERFACE ETLEGACY_VERSION_ID="${ETL_UID}")
+execute_process(COMMAND uuidgen
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+	OUTPUT_VARIABLE ETL_UID)
 # endif()

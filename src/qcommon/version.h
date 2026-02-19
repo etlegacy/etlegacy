@@ -44,6 +44,7 @@ extern const char etlegacy_et_version[];
 extern const char etlegacy_product_version_str[];
 extern const char etlegacy_product_build_time[];
 extern const char etlegacy_product_build_features[];
+extern const char etlegacy_version_id[];
 
 #define ETLEGACY_VERSION                ((char *)etlegacy_version)
 #define ETLEGACY_VERSION_SHORT          ((char *)etlegacy_version_short)
@@ -53,6 +54,7 @@ extern const char etlegacy_product_build_features[];
 #define PRODUCT_VERSION_STR             ((char *)etlegacy_product_version_str)
 #define PRODUCT_BUILD_TIME              ((char *)etlegacy_product_build_time)
 #define PRODUCT_BUILD_FEATURES          ((char *)etlegacy_product_build_features)
+#define ETLEGACY_VERSION_ID             ((char *)etlegacy_version_id)
 #define ETLEGACY_VERSION_IS_DEVELOPMENT_BUILD (ETLEGACY_VERSION_INT % 10000 > 0 /* the last 4 digits ought to be 0 on release builds */)
 
 #endif
