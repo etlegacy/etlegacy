@@ -459,11 +459,23 @@ static void CG_ItemPickup(int itemNum)
 	// see if it should be the grabbed weapon
 	if (item->giType == IT_WEAPON)
 	{
+		qboolean selectedWeaponDropped = qfalse;
+
 		// we just drop current weapon
 		if (!COM_BitCheck(cg.snap->ps.weapons, cg.weaponSelect))
 		{
 			cg.weaponSelect             = WP_NONE;
 			cg.weaponSelectDuringFiring = (cg.snap->ps.weaponstate == WEAPON_FIRING) ? cg.time : 0;
+			selectedWeaponDropped       = qtrue;
+		}
+
+		// Keep a valid active weapon when a pickup replaces the currently selected one
+		// (for example MP40 -> Thompson swap). This must not depend on cg_autoswitch.
+		if (selectedWeaponDropped && itemid != WP_AMMO)
+		{
+			cg.weaponSelectTime         = cg.time;
+			cg.weaponSelect             = itemid;
+			cg.weaponSelectDuringFiring = (cg.predictedPlayerState.weaponstate == WEAPON_FIRING) ? cg.time : 0;
 		}
 
 		if (!cg_autoswitch.integer || cg.predictedPlayerState.weaponstate == WEAPON_RELOADING)
