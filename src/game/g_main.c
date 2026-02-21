@@ -1694,10 +1694,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	// set client fields on player ents
 	for (i = 0 ; i < level.maxclients ; i++)
 	{
-		g_entities[i].client                           = level.clients + i;
-		level.clients[i].sess.userSpawnPointValue      = 0;
-		level.clients[i].sess.userMinorSpawnPointValue = -1;
-		level.clients[i].sess.resolvedSpawnPointIndex  = 0;
+		g_entities[i].client                               = level.clients + i;
+		level.clients[i].sess.userSpawnPointValue          = 0;
+		level.clients[i].sess.userMinorSpawnPointValue     = -1;
+		level.clients[i].sess.resolvedSpawnPointIndex      = 0;
+		level.clients[i].sess.resolvedMinorSpawnPointIndex = -1;
 	}
 
 	// always leave room for the max number of clients,

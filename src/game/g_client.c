@@ -2094,7 +2094,7 @@ void ClientUserinfoChanged(int clientNum)
 	                   client->sess.playerType,
 	                   client->sess.latchPlayerType,
 	                   Com_Clamp(0, (level.numSpawnPoints - 1), ent->client->sess.resolvedSpawnPointIndex) + 1,
-	                   client->sess.userMinorSpawnPointValue,
+	                   client->sess.resolvedMinorSpawnPointIndex,
 	                   client->sess.rank,
 	                   medalStr,
 	                   skillStr
