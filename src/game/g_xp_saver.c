@@ -458,10 +458,16 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 
 	if (!level.database.initialized)
 	{
-		G_Printf("G_XPSaver_Read: access to non-initialized database\n");
+		G_Printf("G_XPCheck_Expiration: access to non-initialized database\n");
 	}
 
 	result = sqlite3_prepare(level.database.db, va(XPUSERS_SQLWRAP_SELECT, xp_data->guid), -1, &sqlstmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_XPCheck_Expiration: sqlite3_prepare failed\n");
+		return;
+	}
 
 	result = sqlite3_step(sqlstmt);
 
@@ -497,10 +503,7 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 		{
 			G_Printf("^3%s (%i): failed: %s\n", __func__, __LINE__, err);
 		}
-		sqlite3_finalize(sqlstmt);
 	}
-
-	result = sqlite3_finalize(sqlstmt);
 
 	if (age > g_xpSaverMaxAge.integer)
 	{
@@ -509,6 +512,12 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 		G_XPSaver_Write(xp_data);
 	}
 
+	result = sqlite3_finalize(sqlstmt);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_XPCheck_Expiration: sqlite3_finalize failed\n");
+	}
 }
 
 /**
