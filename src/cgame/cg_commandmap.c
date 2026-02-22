@@ -1863,7 +1863,7 @@ void CG_DrawExpandedAutoMap(void)
  * @param[in] w
  * @param[in] h
  */
-void CG_DrawCircleCompassCase(float x, float y, float w, float h, int style)
+static void CG_DrawCircleCompassCase(float x, float y, float w, float h, int style)
 {
 	static float lastangle  = 0;
 	static float anglespeed = 0;
@@ -1939,6 +1939,8 @@ void CG_DrawCircleCompassCase(float x, float y, float w, float h, int style)
 	}
 }
 
+#define CARDINAL_POINTS_NUMBER 8
+
 /**
  * @brief CG_DrawSquareCompassCase
  * @param[in] x
@@ -1947,36 +1949,44 @@ void CG_DrawCircleCompassCase(float x, float y, float w, float h, int style)
  * @param[in] h
  * @param[in] style
  */
-void CG_DrawSquareCompassCase(float x, float y, float w, float h, int style)
+static void CG_DrawSquareCompassCase(float x, float y, float w, float h, int style)
 {
 	if ((style & COMPASS_CARDINAL_POINTS))
 	{
 		float        centerX   = x + (w * .5f);
 		float        centerY   = y + (h * .5f);
-		float        textScale = (w / 100) * 0.18f;
-		float        textHeight;
-		float        offsetX            = (w / 100) * 3.f;
-		float        offsetY            = (h / 100) * 3.f;
-		fontHelper_t *font              = &cgs.media.limboFont2;
-		const char   *cardinalPoints[8] = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
-		int          index              = 0;
+		float        textScale = (w * .01) * 0.22f;
+		float        textPadding;
+		float        offsetX                                 = (w * .01) * 3.f;
+		float        offsetY                                 = (h * .01) * 3.f;
+		fontHelper_t *font                                   = &cgs.media.limboFont2;
+		const char   *cardinalPoints[CARDINAL_POINTS_NUMBER] = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+		int          index                                   = 0;
 
 		CG_DrawRect_FixedBorder(x - 0.75f, y - 0.75f, w + 1.5f, h + 1.5f, 2, colorLtGrey);
 
-		if (!(style & COMPASS_POINT_TOWARD_NORTH))
+		if (style & COMPASS_DIRECTION)
 		{
-			float angle = -(cg.refdefViewAngles[YAW] - 180) - 90;
-
-			if (angle < 0)
+			// keep the direction static in case the dynamic tick or dynamic map is on
+			if (style & COMPASS_DYNAMIC_DIRECTION && !(style & COMPASS_DYNAMIC_TICKS) && style & COMPASS_POINT_TOWARD_NORTH)
 			{
-				angle += 360;
+				CG_DrawRotatedPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader, (-cg.refdefViewAngles[YAW] - 45) / 360);
 			}
-			else if (angle > 360)
+			else
 			{
-				angle -= 360;
+				CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader);
 			}
+		}
 
-			for (index = 0; index < 8; ++index)
+		// force cardinals point to be aligned to direction in case dynamic map is on
+		if (style & COMPASS_DYNAMIC_TICKS || !(style & COMPASS_POINT_TOWARD_NORTH))
+		{
+			float angle = -cg.refdefViewAngles[YAW] + 90;
+
+			// keep angle between 0 <-> 360
+			angle = fmodf(angle, 360);
+
+			for (index = 0; index < CARDINAL_POINTS_NUMBER; ++index)
 			{
 				if (angle < 22.5f + (index * 45))
 				{
@@ -1984,40 +1994,29 @@ void CG_DrawSquareCompassCase(float x, float y, float w, float h, int style)
 				}
 			}
 
-			if (index >= 8)
-			{
-				index -= 8;
-			}
+			index %= CARDINAL_POINTS_NUMBER;
 		}
 
+		// Top
 		CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
 
-		index += 2;
-		if (index >= 8)
-		{
-			index -= 8;
-		}
+		index = (index + 2) % CARDINAL_POINTS_NUMBER;
 
-		textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
-		CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		// Right
+		textPadding = (float)CG_Text_Width_Ext(cardinalPoints[index], textScale, 0, font);
+		CG_Text_Paint_Ext(x + w + offsetX, centerY + (textPadding * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
 
-		index += 2;
-		if (index >= 8)
-		{
-			index -= 8;
-		}
+		index = (index + 2) % CARDINAL_POINTS_NUMBER;
 
-		textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
-		CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		// Bottom
+		textPadding = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
+		CG_Text_Paint_Centred_Ext(centerX, y + h + textPadding + offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
 
-		index += 2;
-		if (index >= 8)
-		{
-			index -= 8;
-		}
+		index = (index + 2) % CARDINAL_POINTS_NUMBER;
 
-		textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
-		CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		// Left
+		textPadding = (float)CG_Text_Width_Ext(cardinalPoints[index], textScale, 0, font);
+		CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textPadding * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
 	}
 }
 
@@ -2108,6 +2107,17 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	{
 		mapScissor.br[1] = (hMap * mapScissor.zoomFactor) + (hMap / M_SQRT2 * 0.2f);
 		mapScissor.tl[1] = mapScissor.br[1] - hMap;
+	}
+
+	// draw decor before map for squared compass as there is no mask on it
+	// FIXME: ugly, replace it by a better looking decor with mask, so
+	// it can be move into the draw square compass function
+	if (!mapScissor.circular)
+	{
+		if (style & COMPASS_DECOR)
+		{
+			CG_DrawPic(basex, basey, basew, baseh, cgs.media.limboObjectiveBack[2]);
+		}
 	}
 
 	// draw the base map
