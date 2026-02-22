@@ -432,8 +432,10 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 	const char   *err;
 	sqlite3_stmt *sqlstmt;
 	const char   *updated;
-	int          age = 0, len;
-	int          t, t2 = 0;
+	int          len;
+	time_t       age = 0;
+	time_t       t;
+	time_t       t2 = 0;
 	qtime_t      ct;
 	struct tm    tm;
 
@@ -452,7 +454,7 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 	tm.tm_yday  = ct.tm_yday;
 	tm.tm_isdst = ct.tm_isdst;
 	// Perform the conversion and return
-	t = (int) mktime(&tm);
+	t = mktime(&tm);
 
 	if (!level.database.initialized)
 	{
@@ -482,7 +484,7 @@ void G_XPCheck_Expiration(xpData_t *xp_data)
 				tm_old.tm_min  = mm;
 				tm_old.tm_sec  = ss;
 
-				t2 = (int)mktime(&tm_old);
+				t2 = mktime(&tm_old);
 			}
 		}
 		age = t - t2;
