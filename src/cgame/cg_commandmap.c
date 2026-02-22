@@ -1955,7 +1955,7 @@ static void CG_DrawSquareCompassCase(float x, float y, float w, float h, int sty
 	{
 		float        centerX   = x + (w * .5f);
 		float        centerY   = y + (h * .5f);
-		float        textScale = (w * .01) * 0.18f;
+		float        textScale = (w * .01) * 0.22f;
 		float        textPadding;
 		float        offsetX                                 = (w * .01) * 3.f;
 		float        offsetY                                 = (h * .01) * 3.f;
@@ -1965,7 +1965,21 @@ static void CG_DrawSquareCompassCase(float x, float y, float w, float h, int sty
 
 		CG_DrawRect_FixedBorder(x - 0.75f, y - 0.75f, w + 1.5f, h + 1.5f, 2, colorLtGrey);
 
-		if (!(style & COMPASS_POINT_TOWARD_NORTH))
+		if (style & COMPASS_DIRECTION)
+		{
+			// keep the direction static in case the dynamic tick or dynamic map is on
+			if (style & COMPASS_DYNAMIC_DIRECTION && !(style & COMPASS_DYNAMIC_TICKS) && style & COMPASS_POINT_TOWARD_NORTH)
+			{
+				CG_DrawRotatedPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader, (-cg.refdefViewAngles[YAW] - 45) / 360);
+			}
+			else
+			{
+				CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader);
+			}
+		}
+
+		// force cardinals point to be aligned to direction in case dynamic map is on
+		if (style & COMPASS_DYNAMIC_TICKS || !(style & COMPASS_POINT_TOWARD_NORTH))
 		{
 			float angle = -cg.refdefViewAngles[YAW] + 90;
 
@@ -2093,6 +2107,17 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	{
 		mapScissor.br[1] = (hMap * mapScissor.zoomFactor) + (hMap / M_SQRT2 * 0.2f);
 		mapScissor.tl[1] = mapScissor.br[1] - hMap;
+	}
+
+	// draw decor before map for squared compass as there is no mask on it
+	// FIXME: ugly, replace it by a better looking decor with mask, so
+	// it can be move into the draw square compass function
+	if (!mapScissor.circular)
+	{
+		if (style & COMPASS_DECOR)
+		{
+			CG_DrawPic(basex, basey, basew, baseh, cgs.media.limboObjectiveBack[2]);
+		}
 	}
 
 	// draw the base map
