@@ -736,6 +736,7 @@ void G_XPImportAll_IntoDatabase()
 		{
 			if (G_XPSaver_Write(&xp_data))
 			{
+				Com_Dealloc((void *)xp_data.guid);
 				continue;
 			}
 
