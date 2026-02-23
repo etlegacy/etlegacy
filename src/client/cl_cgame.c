@@ -221,14 +221,15 @@ static void CL_InterpolationCheckRange(void)
 		return;
 	}
 
-	snaps      = Cvar_VariableValue("snaps");
-	updateRate = snaps < cl.sv_fps ? 1000 / snaps : 1000 / cl.sv_fps;
+	snaps = (int)Cvar_VariableValue("snaps");
+
+	updateRate = snaps && (snaps < cl.sv_fps) ? 1000 / snaps : 1000 / cl.sv_fps;
 	buffer     = (FRAMETIME / 2) / updateRate - 1;
 
 	if (cl_interpolation->integer > buffer)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' is over allowed buffer (%d > %d), setting to %d\n", cl_interpolation->name, cl_interpolation->integer, buffer, buffer);
-		Cvar_SetValue(cl_interpolation->name, buffer);
+		Cvar_SetValue(cl_interpolation->name, (float)buffer);
 	}
 }
 
