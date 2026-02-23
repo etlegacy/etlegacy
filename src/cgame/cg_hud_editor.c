@@ -3754,8 +3754,9 @@ static panel_button_t ** CG_HudEditor_GetSelectedTab()
 */
 void CG_DrawHudEditor(void)
 {
-	static int altHud = -1;
-	qboolean   skip;
+	static const vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 1.0f };
+	static int          altHud         = -1;
+	qboolean            skip;
 
 	panel_button_t **buttons = hudComponentsPanel;
 	panel_button_t *button;
@@ -3766,6 +3767,10 @@ void CG_DrawHudEditor(void)
 		trap_Cvar_Set(hudEditorHudName.text, hudData.active->name);
 		altHud = hudData.active->hudnumber;
 	}
+
+	// draw background panals, otherwise HUD elements will draw behind panel elements and keep visible
+	CG_FillRect(HUDEditorX, 0, HUDEditorWidth, SCREEN_HEIGHT_SAFE * HUD_EDITOR_SIZE_COEFF, HUD_Background);
+	CG_FillRect(0, SCREEN_HEIGHT_SAFE, HUDEditorX, (SCREEN_HEIGHT_SAFE * HUD_EDITOR_SIZE_COEFF) - SCREEN_HEIGHT_SAFE, HUD_Background);
 
 	CG_HudEditor_GridDraw();
 	BG_PanelButtonsRender(hudComponentsPanel);
