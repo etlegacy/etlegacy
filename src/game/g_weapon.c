@@ -431,6 +431,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	vec3_t    end;
 	trace_t   tr;
 	gentity_t *traceEnt;
+	int       i;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePointForActivate(ent, forward, right, up, muzzleTrace);
@@ -439,14 +440,38 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	// right on top of intended revivee.
 	G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
 	G_TempTraceIgnoreBodies();
-	G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
-	G_ResetTempTraceIgnoreEnts();
 
-	if (tr.startsolid)
+	// Re-trace if we hit blocking deployables, otherwise either pass (hit a
+	// revivable body) or block (hit a wall etc.).
+	for (i = 0; i < level.num_entities; i++)
 	{
-		VectorMA(muzzleTrace, 8, forward, end);
-		trap_Trace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+		G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+
+		if (tr.startsolid)
+		{
+			VectorMA(muzzleTrace, 8, forward, end);
+			trap_Trace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+		}
+
+		if (tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_WORLD || tr.entityNum == ENTITYNUM_NONE)
+		{
+			break;
+		}
+
+		traceEnt = &g_entities[tr.entityNum];
+		if (traceEnt->s.eType == ET_MISSILE
+		    && (traceEnt->s.weapon == WP_SATCHEL
+		        || traceEnt->s.weapon == WP_DYNAMITE
+		        || traceEnt->s.weapon == WP_LANDMINE))
+		{
+			G_TempTraceIgnoreEntity(traceEnt);
+			continue;
+		}
+
+		break;
 	}
+
+	G_ResetTempTraceIgnoreEnts();
 
 	if (tr.fraction == 1.0f) // no hit
 	{
