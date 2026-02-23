@@ -207,6 +207,7 @@ extern vmCvar_t cl_wavefilename;
 extern vmCvar_t cl_waveoffset;
 
 extern vmCvar_t cg_announcer;
+extern vmCvar_t cg_reinforceTickTock;
 extern vmCvar_t cg_hitSounds;
 extern vmCvar_t cg_locations;
 extern vmCvar_t cg_locationMaxChars;
