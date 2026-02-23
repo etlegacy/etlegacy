@@ -208,6 +208,7 @@ vmCvar_t cl_wavefilename;
 vmCvar_t cl_waveoffset;
 
 vmCvar_t cg_announcer;
+vmCvar_t cg_reinforceTickTock;
 vmCvar_t cg_hitSounds;
 vmCvar_t cg_locations;
 vmCvar_t cg_locationMaxChars;
@@ -522,6 +523,7 @@ static cvarTable_t cvarTable[] =
 	{ &cl_waveoffset,                         "cl_waveoffset",                         "0",           CVAR_ROM,                     0 },
 
 	{ &cg_announcer,                          "cg_announcer",                          "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_reinforceTickTock,                  "cg_reinforceTickTock",                  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_hitSounds,                          "cg_hitSounds",                          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_locations,                          "cg_locations",                          "3",           CVAR_ARCHIVE,                 0 },
 	{ &cg_locationMaxChars,                   "cg_locationMaxChars",                   "0",           CVAR_ARCHIVE,                 0 },
