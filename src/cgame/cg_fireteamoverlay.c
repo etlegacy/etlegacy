@@ -761,7 +761,7 @@ static void CG_FTOverlay_DrawPowerupIcon(fireteamOverlay_t *fto)
 	}
 	else if (fto->ci->health <= 0)
 	{
-		icon = fto->ci->health == 0 ? cgs.media.medicIcon : cgs.media.scoreEliminatedShader;
+		icon = fto->ci->health == 0 ? cgs.media.medicReviveShader2 : cgs.media.scoreEliminatedShader;
 	}
 
 	if (icon != -1)
