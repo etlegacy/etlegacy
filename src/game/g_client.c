@@ -2947,6 +2947,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                oldAmmo[MAX_WEAPONS];                          // total amount of ammo
 	int                oldAmmoclip[MAX_WEAPONS];                      // ammo in clip
 	int                oldWeapons[MAX_WEAPONS / (sizeof(int) * 8)];   // 64 bits for weapons held
+	int                oldDeltaAngles[3];
 
 	client->pers.lastSpawnTime            = level.time;
 	client->pers.lastBattleSenseBonusTime = level.timeCurrent;
@@ -3027,6 +3028,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		oldWeapon          = client->ps.weapon;
 		oldNextWeapon      = client->ps.nextWeapon;
 		oldSilencedSideArm = client->pmext.silencedSideArm;
+
+		// Preserve pre-revive delta angles so revive freelook keeps the same view basis.
+		VectorCopy(client->ps.delta_angles, oldDeltaAngles);
 
 		Com_Memcpy(oldAmmo, client->ps.ammo, sizeof(int) * MAX_WEAPONS);
 		Com_Memcpy(oldAmmoclip, client->ps.ammoclip, sizeof(int) * MAX_WEAPONS);
@@ -3322,7 +3326,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		// we try to orient them in the freelook direction when revived
 		vec3_t newangle;
 
-		newangle[YAW]   = SHORT2ANGLE(ent->client->pers.cmd.angles[YAW] + ent->client->ps.delta_angles[YAW]);
+		// Use the pre-revive delta yaw because ClientSpawn cleared playerstate earlier.
+		newangle[YAW]   = SHORT2ANGLE(ent->client->pers.cmd.angles[YAW] + oldDeltaAngles[YAW]);
 		newangle[PITCH] = 0;
 		newangle[ROLL]  = 0;
 
