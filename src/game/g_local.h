@@ -853,6 +853,8 @@ typedef struct
 	int lastteambleed_client;
 	int lastteambleed_dmg;
 
+	vec3_t downedViewAngles;              ///< View angles captured when the player enters downed/dead state.
+
 	int savedClassWeaponTimeMed;
 	int savedClassWeaponTimeEng;
 	int savedClassWeaponTimeFop;

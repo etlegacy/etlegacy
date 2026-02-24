@@ -483,6 +483,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	G_addStats(self, attacker, damage, meansOfDeath);
 
 	self->client->ps.pm_type = PM_DEAD;
+	// Preserve the exact view direction at the moment the player gets downed.
+	// Revive logic uses this to restore orientation instead of freelook input.
+	VectorCopy(self->client->ps.viewangles, self->client->pers.downedViewAngles);
 
 	G_AddEvent(self, EV_STOPSTREAMINGSOUND, 0);
 

@@ -3319,14 +3319,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 	else
 	{
-		// we try to orient them in the freelook direction when revived
-		vec3_t newangle;
-
-		newangle[YAW]   = SHORT2ANGLE(ent->client->pers.cmd.angles[YAW] + ent->client->ps.delta_angles[YAW]);
-		newangle[PITCH] = 0;
-		newangle[ROLL]  = 0;
-
-		SetClientViewAngle(ent, newangle);
+		// Restore the view direction that was captured when the player was downed.
+		SetClientViewAngle(ent, ent->client->pers.downedViewAngles);
 	}
 
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
