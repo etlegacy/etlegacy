@@ -820,10 +820,10 @@ static void CG_FTOverlay_DrawWeaponIcon(fireteamOverlay_t *fto)
 
 static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, hudComponent_t *comp)
 {
-	const int  health          = fto->ci->health;
-	const int  healthTextWidth = HEALTH_TEXT_WIDTH;
-	int        maxHealth;
-	vec4_t     color;
+	const int health          = fto->ci->health;
+	const int healthTextWidth = HEALTH_TEXT_WIDTH;
+	int       maxHealth;
+	vec4_t    color;
 
 	if (!(comp->style & FT_HEALTH_TEXT) && !(comp->style & FT_MINI_HEALTH_BAR))
 	{
@@ -835,16 +835,16 @@ static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, hudComponent_t *comp
 
 	if (comp->style & FT_HEALTH_TEXT)
 	{
-        const char *asterisk;
+		const char *asterisk;
 
-        if (fto->ci->health == 0)
-        {
-            asterisk = va("*^%c", (cg.time % 500) > 250 ? '1' : '7');
-        }
-        else
-        {
-            asterisk = "";
-        }
+		if (fto->ci->health == 0)
+		{
+			asterisk = va("*^%c", (cg.time % 500) > 250 ? '1' : '7');
+		}
+		else
+		{
+			asterisk = "";
+		}
 
 		CG_Text_Paint_RightAligned_Ext(fto->x + healthTextWidth, fto->y + fto->textHeightOffset, fto->textScale, fto->textScale,
 		                               color, va("%s%i", asterisk, MAX(health, 0)), 0, 0, comp->styleText, FONT_TEXT);
@@ -1284,7 +1284,7 @@ static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci)
 		return DEAD;
 	}
 
-    return NONE;
+	return NONE;
 }
 
 static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
