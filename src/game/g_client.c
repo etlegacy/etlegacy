@@ -2943,6 +2943,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                savedPing;
 	int                savedTeam;
 	int                savedDeathTime;
+	vec3_t             revivedViewAngles;
 	int                oldWeapon, oldNextWeapon, oldSilencedSideArm;
 	int                oldAmmo[MAX_WEAPONS];                          // total amount of ammo
 	int                oldAmmoclip[MAX_WEAPONS];                      // ammo in clip
@@ -3024,6 +3025,18 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	if (revived)
 	{
+		// Preserve revive orientation before client state gets rebuilt.
+		if (client->ps.pm_type == PM_DEAD)
+		{
+			// Downed players revive facing the exact orientation captured on down.
+			VectorCopy(client->pers.downedViewAngles, revivedViewAngles);
+		}
+		else
+		{
+			// Alive players keep their current view unchanged when forced through revive.
+			VectorCopy(client->ps.viewangles, revivedViewAngles);
+		}
+
 		oldWeapon          = client->ps.weapon;
 		oldNextWeapon      = client->ps.nextWeapon;
 		oldSilencedSideArm = client->pmext.silencedSideArm;
@@ -3319,8 +3332,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 	else
 	{
-		// Restore the view direction that was captured when the player was downed.
-		SetClientViewAngle(ent, ent->client->pers.downedViewAngles);
+		// Revive preserves alive orientation and restores stored downed orientation for downed players.
+		SetClientViewAngle(ent, revivedViewAngles);
 	}
 
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
