@@ -40,6 +40,8 @@ vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairFade;
+vmCvar_t cg_crosshairHintsLinger;
+vmCvar_t cg_crosshairHintsAlpha;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
 vmCvar_t cg_cursorHintsLinger;
@@ -354,6 +356,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawFPS,                            "cg_drawFPS",                            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,                      "cg_drawCrosshair",                      "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairFade,                  "cg_drawCrosshairFade",                  "250",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairHintsLinger,               "cg_crosshairHintsLinger",               "100",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairHintsAlpha,                "cg_crosshairHintsAlpha",                "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,               "cg_drawCrosshairPickups",               "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,                 "cg_drawSpectatorNames",                 "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_cursorHintsLinger,                  "cg_cursorHintsLinger",                  "100",         CVAR_ARCHIVE,                 0 },

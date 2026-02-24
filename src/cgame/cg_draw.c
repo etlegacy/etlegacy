@@ -1747,7 +1747,9 @@ static void CG_DrawNoShootIcon(hudComponent_t *comp)
 	}
 	else if (cg.crosshairClientNoShoot)
 	{
-		float *color = CG_FadeColor(cg.crosshairEntTime, cg_drawCrosshairFade.integer);
+		// Keep hint timing/opacity independent from other crosshair fades.
+		float hintAlpha = Com_Clamp(0.f, 1.f, cg_crosshairHintsAlpha.value);
+		float *color    = CG_FadeColor_Ext(cg.crosshairEntTime, cg_crosshairHintsLinger.integer, hintAlpha);
 
 		if (!color)
 		{
