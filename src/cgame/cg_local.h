@@ -3336,7 +3336,7 @@ void CG_LoadRankIcons(void);
 
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
-char *CG_SpawnTimerText(void);
+char *CG_SpawnTimerText(qboolean isDoubleDigits);
 //oidInfo_t *CG_OIDInfoForEntityNum(int num);
 
 // cg_consolecmds.c

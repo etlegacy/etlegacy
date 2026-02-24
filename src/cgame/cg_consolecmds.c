@@ -1704,7 +1704,7 @@ static void CG_ShareTimer_f(void)
 	qtime_t ct;
 	char    *cmd, *stChar, text[MAX_SAY_TEXT];
 	int     st, limboTime, nextSpawn;
-	stChar = CG_SpawnTimerText();
+	stChar = CG_SpawnTimerText(qfalse);
 
 	if (stChar == NULL)
 	{
