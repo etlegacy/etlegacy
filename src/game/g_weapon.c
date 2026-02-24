@@ -421,6 +421,65 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 }
 
 /**
+ * @brief Try to heal a living teammate with a syringe when enabled by cvar.
+ * @param[in] healer
+ * @param[in,out] target
+ * @param[out] refundAmmo Set to qtrue when the syringe should be refunded.
+ * @return qtrue if syringe healing logic handled this target, qfalse otherwise.
+ */
+static qboolean G_TrySyringeHeal(gentity_t *healer, gentity_t *target, qboolean *refundAmmo)
+{
+	int maxHealth;
+	int healAmount;
+
+	*refundAmmo = qfalse;
+
+	// Keep stock ET behavior unless explicitly enabled.
+	if (g_syringeHealing.integer != 1)
+	{
+		return qfalse;
+	}
+
+	// Only living players are eligible for syringe healing.
+	if (!target->client || target->client->ps.pm_type != PM_NORMAL)
+	{
+		return qfalse;
+	}
+
+	// Invalid heal targets still consume the shot, so we refund here.
+	if (target->client->sess.sessionTeam != healer->client->sess.sessionTeam)
+	{
+		*refundAmmo = qtrue;
+		return qtrue;
+	}
+
+	maxHealth = target->client->ps.stats[STAT_MAX_HEALTH];
+	if (target->health > (int)(maxHealth * 0.25f))
+	{
+		*refundAmmo = qtrue;
+		return qtrue;
+	}
+
+	if (BG_IsSkillAvailable(healer->client->sess.skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
+	{
+		healAmount = maxHealth;
+	}
+	else
+	{
+		healAmount = (int)(maxHealth * 0.5f);
+	}
+
+	target->health                         = healAmount;
+	target->client->ps.stats[STAT_HEALTH]  = healAmount;
+	target->client->pers.lasthealth_client = healer->s.clientNum;
+
+	G_Sound(target, GAMESOUND_MISC_REVIVE);
+	G_AddSkillPoints(healer, SK_FIRST_AID, 2.f, "healing");
+
+	return qtrue;
+}
+
+/**
 * @brief Shoot the syringe, do the old lazarus bit
 *
 * @param[in,out] ent
@@ -432,6 +491,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	trace_t   tr;
 	gentity_t *traceEnt;
 	int       i;
+	qboolean  refundAmmo;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePointForActivate(ent, forward, right, up, muzzleTrace);
@@ -486,6 +546,16 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	{
 		// give back ammo
 		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
+		return NULL;
+	}
+
+	// Optional syringe-heal logic for living teammates.
+	if (G_TrySyringeHeal(ent, traceEnt, &refundAmmo))
+	{
+		if (refundAmmo)
+		{
+			ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
+		}
 		return NULL;
 	}
 

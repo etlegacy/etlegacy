@@ -100,6 +100,7 @@ vmCvar_t g_voiceChatsAllowed;
 vmCvar_t g_alliedmaxlives;
 vmCvar_t g_axismaxlives;
 vmCvar_t g_fastres;
+vmCvar_t g_syringeHealing;
 vmCvar_t g_enforcemaxlives;
 
 vmCvar_t g_needpass;
@@ -453,6 +454,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_alliedmaxlives,                  "g_alliedmaxlives",                  "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue,  qfalse },
 	{ &g_axismaxlives,                    "g_axismaxlives",                    "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue,  qfalse },
 	{ &g_fastres,                         "g_fastres",                         "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qtrue  },     // Fast Medic Resing
+	{ &g_syringeHealing,                  "g_syringeHealing",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qtrue  }, // Enable syringe healing on alive teammates
 	{ &g_enforcemaxlives,                 "g_enforcemaxlives",                 "1",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },     // Gestapo enforce maxlives stuff by temp banning
 
 	{ &g_developer,                       "developer",                         "0",                          CVAR_TEMP,                                       0, qfalse, qfalse },
