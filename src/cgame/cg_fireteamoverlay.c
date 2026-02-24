@@ -835,8 +835,19 @@ static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, hudComponent_t *comp
 
 	if (comp->style & FT_HEALTH_TEXT)
 	{
+        const char *asterisk;
+
+        if (fto->ci->health == 0)
+        {
+            asterisk = va("*^%c", (cg.time % 500) > 250 ? '1' : '7');
+        }
+        else
+        {
+            asterisk = "";
+        }
+
 		CG_Text_Paint_RightAligned_Ext(fto->x + healthTextWidth, fto->y + fto->textHeightOffset, fto->textScale, fto->textScale,
-		                               color, va("%i", MAX(health, 0)), 0, 0, comp->styleText, FONT_TEXT);
+		                               color, va("%s%i", asterisk, MAX(health, 0)), 0, 0, comp->styleText, FONT_TEXT);
 
 		// always use static size, regardless of actual text being drawn
 		fto->x += healthTextWidth + fto->spacerInner;
@@ -1314,7 +1325,7 @@ static vec4_t * CG_FireTeamHealthColor(clientInfo_t *ci, hudComponent_t *comp)
 	// wounded
 	else if (ci->health == 0)
 	{
-		return (cg.time % 500) > 250 ? &colorYellow : &colorRed;
+		return (cg.time % 500) > 250 ? &colorWhite : &colorRed;
 	}
 
 	// limbo (-1 health)
