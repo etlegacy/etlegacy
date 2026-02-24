@@ -1268,22 +1268,23 @@ static fireteamMemberStatusEnum_t CG_FireTeamMemberStatus(clientInfo_t *ci)
 	{
 		return TIMEOUT;
 	}
-	else if (ci->powerups & (1 << PW_INVULNERABLE))
+
+	if (ci->powerups & (1 << PW_INVULNERABLE))
 	{
 		return INVULNERABLE;
 	}
-	else if (ci->health == 0)
+
+	if (ci->health == 0)
 	{
 		return WOUNDED;
 	}
-	else if (ci->health < 0)
+
+	if (ci->health < 0)
 	{
 		return DEAD;
 	}
-	else
-	{
-		return NONE;
-	}
+
+    return NONE;
 }
 
 static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
@@ -1306,24 +1307,23 @@ static vec4_t * CG_FireTeamNameColor(fireteamMemberStatusEnum_t status)
 
 static vec4_t * CG_FireTeamHealthColor(clientInfo_t *ci, hudComponent_t *comp)
 {
-	if (ci->powerups & (1 << PW_INVULNERABLE))
-	{
-		return &colorMdCyan;
-	}
-	else if (ci->health > FT_HEALTH_NORMAL)
+	if (ci->health > FT_HEALTH_NORMAL)
 	{
 		return &comp->colorMain;
 	}
-	else if (ci->health >= FT_HEALTH_YELLOW)
+
+	if (ci->health >= FT_HEALTH_YELLOW)
 	{
 		return &colorYellow;
 	}
-	else if (ci->health > 0)
+
+	if (ci->health > 0)
 	{
 		return &colorRed;
 	}
+
 	// wounded
-	else if (ci->health == 0)
+	if (ci->health == 0)
 	{
 		return (cg.time % 500) > 250 ? &colorWhite : &colorRed;
 	}
