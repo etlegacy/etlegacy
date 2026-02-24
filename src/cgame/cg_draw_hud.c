@@ -3131,7 +3131,7 @@ void CG_DrawFPS(hudComponent_t *comp)
  * @brief CG_SpawnTimerText red colored spawn time text in reinforcement time HUD element.
  * @return red colored text or NULL when its not supposed to be rendered
 */
-char *CG_SpawnTimerText()
+char *CG_SpawnTimerText(qboolean isDoubleDigits)
 {
 	int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
 	int seconds;
@@ -3146,7 +3146,7 @@ char *CG_SpawnTimerText()
 			{
 				seconds     = msec / 1000;
 				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
-				return va("%02i", period + (seconds - secondsThen) % period);
+				return va(isDoubleDigits ? "%02i" : "%0i", period + (seconds - secondsThen) % period);
 			}
 		}
 	}
@@ -3183,7 +3183,7 @@ static qboolean CG_SpawnTimersText(char **s, char **rt, qboolean isDoubleDigits)
 		}
 
 		*rt = va(isDoubleDigits ? "%02i" : "%0i", limbotimeEnemy / 1000);
-		*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? va("%s", CG_TranslateString("WARMUP")) : va("%02i", limbotimeOwn / 1000);
+		*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? va("%s", CG_TranslateString("WARMUP")) : va(isDoubleDigits ? "%02i" : "%0i", limbotimeOwn / 1000);
 
 		// if hud editor is up, return qfalse since we want to see text style changes
 		return !cg.generatingNoiseHud;
@@ -3198,7 +3198,7 @@ static qboolean CG_SpawnTimersText(char **s, char **rt, qboolean isDoubleDigits)
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
 			*s  = va(isDoubleDigits ? "%02i" : "%0i", CG_GetReinfTime(qfalse));
-			*rt = CG_SpawnTimerText();
+			*rt = CG_SpawnTimerText(isDoubleDigits);
 		}
 	}
 	return qfalse;
