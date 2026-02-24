@@ -302,6 +302,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 {
 	float *color;
 	float scale = 0, halfscale = 0;
+	float hintAlpha;
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -405,7 +406,8 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	}
 
 	// color
-	color = CG_FadeColor(cg.cursorHintTime, cg.cursorHintFade);
+	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
+	color     = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, hintAlpha);
 	if (!color)
 	{
 		trap_R_SetColor(NULL);
@@ -457,6 +459,7 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
 	float  *color;
 	vec4_t textColor;
 	float  curValue;
+	float  hintAlpha;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -480,7 +483,8 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
 
 	// color
 	Vector4Copy(comp->colorMain, textColor);
-	color = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, textColor[3]);
+	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
+	color     = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, textColor[3] * hintAlpha);
 	if (!color)
 	{
 		trap_R_SetColor(NULL);
@@ -520,6 +524,7 @@ void CG_DrawCursorHintText(hudComponent_t *comp)
 	float      *color;
 	vec4_t     textColor;
 	const char *str;
+	float      hintAlpha;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -543,7 +548,8 @@ void CG_DrawCursorHintText(hudComponent_t *comp)
 
 	// color
 	Vector4Copy(comp->colorMain, textColor);
-	color = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, textColor[3]);
+	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
+	color     = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, textColor[3] * hintAlpha);
 	if (!color)
 	{
 		trap_R_SetColor(NULL);

@@ -42,7 +42,8 @@ vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairFade;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
-vmCvar_t cg_drawHintFade;
+vmCvar_t cg_cursorHintsLinger;
+vmCvar_t cg_cursorHintsAlpha;
 vmCvar_t cg_weaponCycleDelay;
 vmCvar_t cg_cycleAllWeaps;
 vmCvar_t cg_useWeapsForZoom;
@@ -355,7 +356,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawCrosshairFade,                  "cg_drawCrosshairFade",                  "250",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,               "cg_drawCrosshairPickups",               "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,                 "cg_drawSpectatorNames",                 "2",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawHintFade,                       "cg_drawHintFade",                       "250",         CVAR_ARCHIVE,                 0 },
+	{ &cg_cursorHintsLinger,                  "cg_cursorHintsLinger",                  "100",         CVAR_ARCHIVE,                 0 },
+	{ &cg_cursorHintsAlpha,                   "cg_cursorHintsAlpha",                   "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,                    "cg_useWeapsForZoom",                    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weaponCycleDelay,                   "cg_weaponCycleDelay",                   "150",         CVAR_ARCHIVE,                 0 },
 	{ &cg_cycleAllWeaps,                      "cg_cycleAllWeaps",                      "1",           CVAR_ARCHIVE,                 0 },
