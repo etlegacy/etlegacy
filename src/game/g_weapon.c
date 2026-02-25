@@ -340,10 +340,12 @@ void ReviveEntityEvent(gentity_t *reviver, gentity_t *revivee, int invulnEndTime
  */
 void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 {
-	vec3_t  org;
-	trace_t tr;
-	int     healamt, headshot, oldclasstime = 0;
-	int     invulnEndTime;
+	vec3_t   org;
+	vec3_t   legacyReviveAngles;
+	trace_t  tr;
+	int      healamt, headshot, oldclasstime = 0;
+	int      invulnEndTime;
+	qboolean useLegacyReviveAngles;
 
 	// heal the dude
 	// copy some stuff out that we'll wanna restore
@@ -363,7 +365,17 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	// keep class special weapon time to keep them from exploiting revives
 	oldclasstime = traceEnt->client->ps.classWeaponTime;
 
+	// Capture revive orientation before ClientSpawn rebuilds playerstate data.
+	useLegacyReviveAngles = G_LegacyRevive_GetReviveViewAngles(traceEnt, legacyReviveAngles);
+
 	ClientSpawn(traceEnt, qtrue, qfalse, qtrue, qtrue);
+
+	if (useLegacyReviveAngles)
+	{
+		// Preserve legacy downed/current look direction after revive spawn reinitialization.
+		SetClientViewAngle(traceEnt, legacyReviveAngles);
+	}
+
 	invulnEndTime = traceEnt->client->ps.powerups[PW_INVULNERABLE];
 
 #ifdef FEATURE_OMNIBOT
@@ -2495,6 +2507,12 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	}
 	else if (traceEnt->methodOfDeath == MOD_DYNAMITE)
 	{
+		// During the first-revive stand-up restriction, only dynamite plier interaction is blocked.
+		if (G_LegacyRevive_IsFirstReviveRestricted(ent))
+		{
+			return NULL;
+		}
+
 		// not armed
 		if (!traceEnt->s.effect1Time)
 		{

@@ -3394,6 +3394,12 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 {
 	const char *s = NULL, *s1 = NULL, *s2 = NULL;
 
+	if (cg.cursorHintIcon == HINT_NO_DARM_FIRST_REVIVE)
+	{
+		CG_DrawCompMultilineText(comp, "^9No ^zDynamite ^9Arm/Disarm\n^z1st^9 Revive per Spawn\n\n ", comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+		return;
+	}
+
 	if (!cg.warmup || cg.generatingNoiseHud)
 	{
 		if ((!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS) && !cg.generatingNoiseHud)

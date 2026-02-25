@@ -2121,8 +2121,9 @@ typedef enum
 
 	HINT_BAD_USER,              ///< invisible user with no target
 	HINT_COMPLETED,
+	HINT_NO_DARM_FIRST_REVIVE,  ///< first-revive restriction icon for explosive arm/disarm interactions
 
-	HINT_NUM_HINTS = 51,
+	HINT_NUM_HINTS = 52,
 } hintType_t;
 
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);

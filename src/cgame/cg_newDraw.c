@@ -393,6 +393,9 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 	case HINT_RESTRICTED:
 		cg.lastUsedHintIcon = cgs.media.friendShader;
 		break;
+	case HINT_NO_DARM_FIRST_REVIVE:
+		cg.lastUsedHintIcon = cgs.media.doorLockHintShader;
+		break;
 	case HINT_ACTIVATE:
 	case HINT_BAD_USER:
 	default:

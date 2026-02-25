@@ -1083,6 +1083,11 @@ struct gclient_s
 	damageReceivedStats_t dmgReceivedSts[MAX_CLIENTS];
 
 	int isSpawnInvulnerability;
+
+	// Legacy revive compatibility state.
+	vec3_t legacyDownedViewAngles;            ///< View direction at the moment player got downed.
+	qboolean legacyDownedViewAnglesValid;     ///< True when downed angles are valid for revive restore.
+	int legacyRevivesSinceRespawn;            ///< Number of revives since last full respawn.
 };
 
 /**
@@ -1739,6 +1744,10 @@ void respawn(gentity_t *ent);
 void BeginIntermission(void);
 void InitBodyQue(void);
 void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth, qboolean toggleTeleport);
+void G_LegacyRevive_RecordDownedViewAngles(gentity_t *ent);
+void G_LegacyRevive_OnClientSpawn(gentity_t *ent, qboolean revived);
+qboolean G_LegacyRevive_GetReviveViewAngles(gentity_t *ent, vec3_t outViewAngles);
+qboolean G_LegacyRevive_IsFirstReviveRestricted(gentity_t *ent);
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath);
 void AddKillScore(gentity_t *ent, int score);
 void CalculateRanks(void);

@@ -88,6 +88,7 @@ extern vmCvar_t g_alliedmaxlives;
 extern vmCvar_t g_axismaxlives;
 extern vmCvar_t g_fastres;                  ///< Fast medic res'ing
 extern vmCvar_t g_syringeHealing;           ///< Allow syringe healing for low-health teammates
+extern vmCvar_t g_legacyRevives;            ///< Enable ET:Legacy revive compatibility mode
 extern vmCvar_t g_enforcemaxlives;          ///< Temp ban with maxlives between rounds
 
 extern vmCvar_t g_needpass;
