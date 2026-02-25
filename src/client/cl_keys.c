@@ -847,13 +847,27 @@ void Console_Key(int key)
 	// console scrolling
 	if (key == K_PGUP || key == K_KP_PGUP)
 	{
-		Con_PageUp();
+		if (keys[K_RSHIFT].down || keys[K_LSHIFT].down)
+		{
+			Con_ScrollTop();
+		}
+		else
+		{
+			Con_PageUp();
+		}
 		return;
 	}
 
 	if (key == K_PGDN || key == K_KP_PGDN)
 	{
-		Con_PageDown();
+		if (keys[K_RSHIFT].down || keys[K_LSHIFT].down)
+		{
+			Con_ScrollBottom();
+		}
+		else
+		{
+			Con_PageDown();
+		}
 		return;
 	}
 
