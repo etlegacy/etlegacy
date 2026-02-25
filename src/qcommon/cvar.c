@@ -170,6 +170,48 @@ void Cvar_VariableStringBuffer(const char *var_name, char *buffer, size_t bufsiz
 }
 
 /**
+ * @brief Cvar_DefaultStringBuffer
+ * @param[in] var_name
+ * @param[out] buffer
+ * @param[in] bufsize
+ */
+void Cvar_DefaultStringBuffer(const char *var_name, char *buffer, size_t bufsize)
+{
+	cvar_t *var;
+
+	var = Cvar_FindVar(var_name);
+	if (!var || !var->resetString)
+	{
+		*buffer = 0;
+	}
+	else
+	{
+		Q_strncpyz(buffer, var->resetString, bufsize);
+	}
+}
+
+/**
+ * @brief Cvar_DescriptionStringBuffer
+ * @param[in] var_name
+ * @param[out] buffer
+ * @param[in] bufsize
+ */
+void Cvar_DescriptionStringBuffer(const char *var_name, char *buffer, size_t bufsize)
+{
+	cvar_t *var;
+
+	var = Cvar_FindVar(var_name);
+	if (!var || !var->description)
+	{
+		*buffer = 0;
+	}
+	else
+	{
+		Q_strncpyz(buffer, var->description, bufsize);
+	}
+}
+
+/**
  * @brief Cvar_LatchedVariableStringBuffer
  * @param[in] var_name
  * @param[out] buffer

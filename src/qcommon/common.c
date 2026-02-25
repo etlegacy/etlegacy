@@ -3877,12 +3877,28 @@ static void PrintMatches(const char *s)
  */
 static void PrintCvarMatches(const char *s)
 {
-	char value[TRUNCATE_LENGTH];
+	char defaultValue[TRUNCATE_LENGTH];
+	char truncatedValue[TRUNCATE_LENGTH];
+	char description[TRUNCATE_LENGTH];
+	char truncatedDescription[TRUNCATE_LENGTH];
 
 	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
-		Com_TruncateLongString(value, Cvar_VariableString(s));
-		Com_Printf("    ^9%s = \"^5%s^9\"\n", s, value);
+		// TAB completion shows the cvar default value and its description when available.
+		Cvar_DefaultStringBuffer(s, defaultValue, sizeof(defaultValue));
+		Cvar_DescriptionStringBuffer(s, description, sizeof(description));
+
+		Com_TruncateLongString(truncatedValue, defaultValue);
+		Com_TruncateLongString(truncatedDescription, description);
+
+		if (truncatedDescription[0])
+		{
+			Com_Printf("    ^9%s = \"^5%s^9\" - ^3%s\n", s, truncatedValue, truncatedDescription);
+		}
+		else
+		{
+			Com_Printf("    ^9%s = \"^5%s^9\"\n", s, truncatedValue);
+		}
 	}
 }
 
