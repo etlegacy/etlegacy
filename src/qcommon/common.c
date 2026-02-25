@@ -4264,6 +4264,54 @@ void Console_RemoveHighlighted(field_t *field, int *completionOffset)
 }
 
 /**
+ * @brief Console_GetSingleCompletedCvarName
+ * @param[in] field
+ * @param[out] cvarName
+ * @param[in] cvarNameSize
+ * @return
+ */
+static qboolean Console_GetSingleCompletedCvarName(const field_t *field, char *cvarName, size_t cvarNameSize)
+{
+	int len;
+	int i;
+	int tokenStart;
+	int tokenLen;
+
+	len = (int)strlen(field->buffer);
+	if (len < 2 || field->buffer[len - 1] != ' ')
+	{
+		return qfalse;
+	}
+
+	// We only treat "<command><space>" as a single-completion state.
+	for (i = 0; i < len - 1; i++)
+	{
+		if (field->buffer[i] == ' ')
+		{
+			return qfalse;
+		}
+	}
+
+	tokenStart = (field->buffer[0] == '/' || field->buffer[0] == '\\') ? 1 : 0;
+	tokenLen   = (len - 1) - tokenStart;
+	if (tokenLen <= 0)
+	{
+		return qfalse;
+	}
+
+	Q_strncpyz(cvarName, field->buffer + tokenStart, cvarNameSize);
+	if ((size_t)tokenLen < cvarNameSize)
+	{
+		cvarName[tokenLen] = '\0';
+	}
+	else
+	{
+		cvarName[cvarNameSize - 1] = '\0';
+	}
+	return qtrue;
+}
+
+/**
  * @brief Console_AutoComplete
  * @param[in,out] field
  * @param[in,out] completionOffset
@@ -4276,7 +4324,18 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 
 	if (!*completionOffset)
 	{
-		int completionArgument = 0;
+		char completedCvarName[MAX_TOKEN_CHARS];
+		int  completionArgument = 0;
+
+		// Always print cvar metadata when TAB is pressed on "/<cvar> " input.
+		if (Console_GetSingleCompletedCvarName(field, completedCvarName, sizeof(completedCvarName)) &&
+		    Cvar_Flags(completedCvarName) != CVAR_NONEXISTENT)
+		{
+			Q_strncpyz(shortestMatch, completedCvarName, sizeof(shortestMatch));
+			cvarMatchNameWidth = (int)strlen(completedCvarName);
+			PrintCvarMatches(completedCvarName);
+			return;
+		}
 
 		matchCount       = 0;
 		matchIndex       = 0;
