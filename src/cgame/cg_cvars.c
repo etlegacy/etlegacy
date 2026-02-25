@@ -368,7 +368,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_brassTime,                          "cg_brassTime",                          "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_markTime,                           "cg_markTime",                           "20000",       CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodPuff,                          "cg_bloodPuff",                          "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_gunReviveFadeIn,                    "cg_gunReviveFadeIn",                    "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_gunReviveFadeIn,                    "cg_gunReviveFadeIn",                    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gunFovOffset,                       "cg_gunFovOffset",                       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_x,                              "cg_gunX",                               "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_y,                              "cg_gunY",                               "0",           CVAR_TEMP,                    0 },
