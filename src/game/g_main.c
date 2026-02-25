@@ -931,23 +931,32 @@ void G_CheckForCursorHints(gentity_t *ent)
 				if (ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 				{
 					hintDist = CH_BREAKABLE_DIST;
-					hintType = HINT_DISARM;
-					hintVal  = checkEnt->health;            // also send health to client for visualization
-					if (hintVal > 255)
+					if (checkEnt->methodOfDeath == MOD_DYNAMITE && G_LegacyRevive_IsFirstReviveRestricted(ent))
 					{
-						hintVal = 255;
+						// During the first revive stand-up, only dynamite arm/disarm is blocked.
+						hintType = HINT_NO_DARM_FIRST_REVIVE;
+						hintVal  = 0;
+					}
+					else
+					{
+						hintType = HINT_DISARM;
+						hintVal  = checkEnt->health;            // also send health to client for visualization
+						if (hintVal > 255)
+						{
+							hintVal = 255;
+						}
 					}
 				}
 
 				// hint icon specified in entity (and proper contact was made, so hintType was set)
 				// first try the checkent...
-				if (checkEnt->s.dmgFlags && hintType)
+				if (hintType != HINT_NO_DARM_FIRST_REVIVE && checkEnt->s.dmgFlags && hintType)
 				{
 					hintType = checkEnt->s.dmgFlags;
 				}
 
 				// then the traceent
-				if (traceEnt->s.dmgFlags && hintType)
+				if (hintType != HINT_NO_DARM_FIRST_REVIVE && traceEnt->s.dmgFlags && hintType)
 				{
 					hintType = traceEnt->s.dmgFlags;
 				}
