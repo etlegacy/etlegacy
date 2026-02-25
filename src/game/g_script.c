@@ -280,10 +280,12 @@ void G_Script_ScriptLoad(void)
 	if (strlen(filename) > 0)
 	{
 		trap_Cvar_Register(&mapname, "g_scriptName", "", CVAR_CHEAT);
+		trap_Cvar_SetDescription("g_scriptName", "Override path/name for the current map script.");
 	}
 	else
 	{
 		trap_Cvar_Register(&mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM);
+		trap_Cvar_SetDescription("mapname", "Current map name reported by the server.");
 	}
 
 	if (g_mapScriptDirectory.string[0])

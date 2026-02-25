@@ -398,6 +398,7 @@ void TVG_RegisterCvars(void)
 {
 	int           i;
 	tvcvarTable_t *cv;
+	const char    *description;
 
 	G_Printf("%d cvars in use\n", gameCvarTableSize);
 
@@ -405,10 +406,15 @@ void TVG_RegisterCvars(void)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
 
-		// Descriptions are optional and only applied when the engine exposes the extension trap.
-		if (cv->description)
+		// Always provide a description for module cvars; use a generated fallback if needed.
+		description = cv->description;
+		if (!description)
 		{
-			trap_Cvar_SetDescription(cv->cvarName, cv->description);
+			description = va("No tvgame description provided for '%s'.", cv->cvarName);
+		}
+		if (cv->cvarName)
+		{
+			trap_Cvar_SetDescription(cv->cvarName, description);
 		}
 
 		if (cv->vmCvar)

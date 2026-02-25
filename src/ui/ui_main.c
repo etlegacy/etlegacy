@@ -8708,6 +8708,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	{
 		trap_Cvar_Register(&ui_customFont1, "cg_customFont1", "", CVAR_ARCHIVE);
 		trap_Cvar_Register(&ui_customFont2, "cg_customFont2", "", CVAR_ARCHIVE);
+		trap_Cvar_SetDescription("cg_customFont1", "Path to an optional custom UI/game font override.");
+		trap_Cvar_SetDescription("cg_customFont2", "Path to an optional secondary custom UI/game font override.");
 	}
 
 	Com_Memset(&uiInfo.demos, 0, sizeof(uiInfo.demos));

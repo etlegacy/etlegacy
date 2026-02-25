@@ -698,6 +698,7 @@ void CG_RegisterCvars(void)
 	unsigned int i;
 	cvarTable_t  *cv;
 	char         var[MAX_TOKEN_CHARS];
+	const char   *description;
 
 	CG_Printf("%d client cvars in use\n", cvarTableSize);
 
@@ -708,16 +709,23 @@ void CG_RegisterCvars(void)
 	{
 		trap_Cvar_Register(&cg_customFont1, "cg_customFont1", "", CVAR_ARCHIVE);
 		trap_Cvar_Register(&cg_customFont2, "cg_customFont2", "", CVAR_ARCHIVE);
+		trap_Cvar_SetDescription("cg_customFont1", "Path to an optional custom UI/game font override.");
+		trap_Cvar_SetDescription("cg_customFont2", "Path to an optional secondary custom UI/game font override.");
 	}
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
 
-		// Descriptions are optional and only applied when the engine exposes the extension trap.
-		if (cv->description)
+		// Always provide a description for module cvars; use a generated fallback if needed.
+		description = cv->description;
+		if (!description)
 		{
-			trap_Cvar_SetDescription(cv->cvarName, cv->description);
+			description = va("No cgame description provided for '%s'.", cv->cvarName);
+		}
+		if (cv->cvarName)
+		{
+			trap_Cvar_SetDescription(cv->cvarName, description);
 		}
 
 		if (cv->vmCvar != NULL)

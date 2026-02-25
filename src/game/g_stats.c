@@ -686,6 +686,7 @@ void G_DebugOpenSkillLog(void)
 	}
 
 	trap_Cvar_Register(&mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM);
+	trap_Cvar_SetDescription("mapname", "Current map name reported by the server.");
 
 	trap_RealTime(&ct);
 
