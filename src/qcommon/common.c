@@ -3872,7 +3872,7 @@ static void PrintMatches(const char *s)
 {
 	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
-		Com_Printf("    ^5%s\n", s);
+		Com_Printf("    ^9%s\n", s);
 	}
 }
 
@@ -3972,7 +3972,7 @@ static void PrintCvarMatches(const char *s)
 		Cvar_DefaultStringBuffer(s, defaultValue, sizeof(defaultValue));
 		Cvar_DescriptionStringBuffer(s, description, sizeof(description));
 
-		valueColor = !Q_stricmp(currentValue, defaultValue) ? "^5" : "^d";
+		valueColor = !Q_stricmp(currentValue, defaultValue) ? "^2" : "^3";
 
 		Com_TruncateLongString(truncatedCurrentValue, currentValue);
 		Com_TruncateLongString(truncatedDescription, description);
