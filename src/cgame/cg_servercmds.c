@@ -402,6 +402,7 @@ void CG_ParseModInfo(void)
 	cgs.fixedphysics    = Q_atoi(Info_ValueForKey(info, "fp"));
 	cgs.fixedphysicsfps = Q_atoi(Info_ValueForKey(info, "fpv"));
 	cgs.pronedelay      = Q_atoi(Info_ValueForKey(info, "pd"));
+	cgs.legacyRevives   = Q_atoi(Info_ValueForKey(info, "lr"));
 }
 
 /**
@@ -1256,6 +1257,7 @@ void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 			cgs.teamChatPos++;
 
 			cgs.teamChatStartLine[cgs.teamChatPos % chatHeight] = qfalse;
+
 			p    = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 			*p   = 0;
 			*p++ = Q_COLOR_ESCAPE;

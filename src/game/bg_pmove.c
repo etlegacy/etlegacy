@@ -54,15 +54,18 @@ typedef enum
 #define PM_FIXEDPHYSICS         cgs.fixedphysics
 #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
 #define PM_PRONEDELAY           cgs.pronedelay
+#define PM_LEGACYREVIVES        cgs.legacyRevives
 
 #else
 extern vmCvar_t g_fixedphysics;
 extern vmCvar_t g_fixedphysicsfps;
 extern vmCvar_t g_pronedelay;
+extern vmCvar_t g_legacyRevives;
 
 #define PM_FIXEDPHYSICS         g_fixedphysics.integer
 #define PM_FIXEDPHYSICSFPS      g_fixedphysicsfps.integer
 #define PM_PRONEDELAY           g_pronedelay.integer
+#define PM_LEGACYREVIVES        g_legacyRevives.integer
 
 #endif
 
@@ -895,6 +898,12 @@ static qboolean PM_CheckProne(void)
 	if (PM_PRONEDELAY & PRONEDELAY_TOGGLE)
 	{
 		pronedelay = 1750;
+	}
+
+	// Legacy revive mode forbids prone input during the stand-up time lock.
+	if (PM_LEGACYREVIVES && (pm->ps->pm_flags & PMF_TIME_LOCKPLAYER))
+	{
+		return qfalse;
 	}
 
 	if (!(pm->ps->eFlags & EF_PRONE))
@@ -2026,6 +2035,8 @@ static void PM_SetWaterLevel(void)
  */
 static void PM_CheckDuck(void)
 {
+	qboolean legacyReviveLock = qfalse;
+
 	// modified this for configurable bounding boxes
 	pm->mins[0] = pm->ps->mins[0];
 	pm->mins[1] = pm->ps->mins[1];
@@ -2042,9 +2053,17 @@ static void PM_CheckDuck(void)
 		return;
 	}
 
+	// Legacy revive mode forbids crouch input during the stand-up time lock.
+	if (PM_LEGACYREVIVES && (pm->ps->pm_flags & PMF_TIME_LOCKPLAYER))
+	{
+		legacyReviveLock = qtrue;
+	}
+
 	// duck
-	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER))
-	    || CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
+	if (!legacyReviveLock
+	    && ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER))
+	        || CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
+	    )
 	{
 		pm->ps->pm_flags |= PMF_DUCKED;
 	}

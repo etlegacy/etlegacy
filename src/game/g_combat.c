@@ -717,6 +717,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	self->client->limboDropWeapon = self->s.weapon; // store this so it can be dropped in limbo
 
+	// Keep the exact viewangles from the downed moment so legacy revive mode can restore them.
+	VectorCopy(self->client->ps.viewangles, self->client->downedViewAngles);
+
 	LookAtKiller(self, inflictor, attacker);
 	self->client->ps.viewangles[0] = 0;
 	self->client->ps.viewangles[2] = 0;

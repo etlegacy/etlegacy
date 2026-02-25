@@ -87,6 +87,7 @@ extern vmCvar_t g_voiceChatsAllowed;        ///< number before spam control
 extern vmCvar_t g_alliedmaxlives;
 extern vmCvar_t g_axismaxlives;
 extern vmCvar_t g_fastres;                  ///< Fast medic res'ing
+extern vmCvar_t g_legacyRevives;            ///< Always look at where you looked when being downed AND no crouch/prone during standup
 extern vmCvar_t g_syringeHealing;           ///< Allow syringe healing for low-health teammates
 extern vmCvar_t g_enforcemaxlives;          ///< Temp ban with maxlives between rounds
 

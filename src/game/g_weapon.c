@@ -340,16 +340,33 @@ void ReviveEntityEvent(gentity_t *reviver, gentity_t *revivee, int invulnEndTime
  */
 void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 {
-	vec3_t  org;
-	trace_t tr;
-	int     healamt, headshot, oldclasstime = 0;
-	int     invulnEndTime;
+	vec3_t   org;
+	vec3_t   reviveViewAngles;
+	trace_t  tr;
+	int      healamt, headshot, oldclasstime = 0;
+	int      invulnEndTime;
+	qboolean restoreLegacyAngles = qfalse;
 
 	// heal the dude
 	// copy some stuff out that we'll wanna restore
 	VectorCopy(traceEnt->client->ps.origin, org);
 
 	headshot = traceEnt->client->ps.eFlags & EF_HEADSHOT;
+
+	// Preserve the pre-revive facing so legacy mode can force deterministic orientation.
+	if (g_legacyRevives.integer)
+	{
+		if (traceEnt->client->ps.pm_type == PM_DEAD)
+		{
+			VectorCopy(traceEnt->client->downedViewAngles, reviveViewAngles);
+		}
+		else
+		{
+			VectorCopy(traceEnt->client->ps.viewangles, reviveViewAngles);
+		}
+
+		restoreLegacyAngles = qtrue;
+	}
 
 	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 	{
@@ -387,6 +404,11 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	VectorCopy(org, traceEnt->s.origin);
 	VectorCopy(org, traceEnt->r.currentOrigin);
 	VectorCopy(org, traceEnt->client->ps.origin);
+
+	if (restoreLegacyAngles)
+	{
+		SetClientViewAngle(traceEnt, reviveViewAngles);
+	}
 
 	trap_Trace(&tr, traceEnt->client->ps.origin, traceEnt->client->ps.mins, traceEnt->client->ps.maxs, traceEnt->client->ps.origin, traceEnt->s.number, MASK_PLAYERSOLID);
 	if (tr.allsolid)

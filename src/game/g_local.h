@@ -1055,6 +1055,7 @@ struct gclient_s
 	int deathAnimTime;                      ///< time when anim ends
 
 	int deathTime;                          ///< if we are dead, when did we die
+	vec3_t downedViewAngles;                ///< viewangles to restore on revive when legacy revive behavior is enabled
 
 	int disguiseClientNum;
 
