@@ -616,6 +616,60 @@ void Field_CharEvent(field_t *edit, int ch)
 		return;
 	}
 
+	if (ch == CTRL('u'))      // ctrl-u deletes the whole input line
+	{
+		Field_Clear(edit);
+		return;
+	}
+
+	if (ch == CTRL('w'))      // ctrl-w deletes the previous word
+	{
+		if (edit->cursor > 0)
+		{
+			int deleteStart = edit->cursor;
+			int offsetStart, offsetEnd;
+
+			// Drop trailing spaces directly left of the cursor first.
+			while (deleteStart > 0 && edit->buffer[deleteStart - 1] == ' ')
+			{
+				deleteStart--;
+			}
+
+			// Delete the previous non-space run.
+			while (deleteStart > 0 && edit->buffer[deleteStart - 1] != ' ')
+			{
+				deleteStart--;
+			}
+
+			// Remove leftover separator spaces to avoid trailing spaces.
+			while (deleteStart > 0 && edit->buffer[deleteStart - 1] == ' ')
+			{
+				deleteStart--;
+			}
+
+			// Preserve the leading command prefix for slash commands unless it is the only character.
+			if (deleteStart == 0 && edit->cursor > 1 && (edit->buffer[0] == '/' || edit->buffer[0] == '\\'))
+			{
+				deleteStart++;
+			}
+
+			if (deleteStart < edit->cursor)
+			{
+				offsetStart = Q_UTF8_ByteOffset(edit->buffer, deleteStart);
+				offsetEnd   = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
+
+				memmove(edit->buffer + offsetStart, edit->buffer + offsetEnd, len + 1 - offsetEnd);
+				edit->cursor = deleteStart;
+
+				if (edit->cursor < edit->scroll)
+				{
+					edit->scroll = edit->cursor;
+				}
+			}
+		}
+		return;
+	}
+
 	// ignore any other non printable chars
 	if (ch < 32)
 	{
