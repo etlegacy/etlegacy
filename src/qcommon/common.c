@@ -3801,6 +3801,7 @@ static char completionString[MAX_TOKEN_CHARS];
 static char shortestMatch[MAX_TOKEN_CHARS];
 static int  matchCount;
 static int  matchIndex;
+static int  cvarMatchNameWidth;
 /// field we are working on, passed to Field_AutoComplete(&g_consoleCommand for instance)
 static field_t *completionField;
 
@@ -3872,6 +3873,26 @@ static void PrintMatches(const char *s)
 }
 
 /**
+ * @brief FindCvarMatchNameWidth
+ * @param[in] s
+ */
+static void FindCvarMatchNameWidth(const char *s)
+{
+	int nameLen;
+
+	if (Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
+	{
+		return;
+	}
+
+	nameLen = (int)strlen(s);
+	if (nameLen > cvarMatchNameWidth)
+	{
+		cvarMatchNameWidth = nameLen;
+	}
+}
+
+/**
  * @brief PrintCvarMatches
  * @param[in] s
  */
@@ -3893,11 +3914,11 @@ static void PrintCvarMatches(const char *s)
 
 		if (truncatedDescription[0])
 		{
-			Com_Printf("    ^9%s = \"^5%s^9\" - ^7%s\n", s, truncatedValue, truncatedDescription);
+			Com_Printf("    ^9%-*s^9 = \"^5%s^9\" - ^z%s\n", cvarMatchNameWidth, s, truncatedValue, truncatedDescription);
 		}
 		else
 		{
-			Com_Printf("    ^9%s = \"^5%s^9\"\n", s, truncatedValue);
+			Com_Printf("    ^9%-*s^9 = \"^5%s^9\"\n", cvarMatchNameWidth, s, truncatedValue);
 		}
 	}
 }
@@ -4135,6 +4156,9 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 
 			if (doCvars)
 			{
+				// Align cvar completion output by padding names to the longest match.
+				cvarMatchNameWidth = 0;
+				Cvar_CommandCompletion(FindCvarMatchNameWidth);
 				Cvar_CommandCompletion(PrintCvarMatches);
 			}
 		}
