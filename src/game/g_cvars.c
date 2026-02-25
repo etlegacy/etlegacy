@@ -356,6 +356,7 @@ typedef struct
 	int modificationCount;          // for tracking changes
 	qboolean trackChange;           // track this variable, and announce if changed
 	qboolean fConfigReset;          // set this var to the default on a config reset
+	const char *description;
 } cvarTable_t;
 
 cvarTable_t gameCvarTable[] =
@@ -691,6 +692,13 @@ void G_RegisterCvars(void)
 	for (i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
+
+		// Descriptions are optional and only applied when the engine exposes the extension trap.
+		if (cv->description)
+		{
+			trap_Cvar_SetDescription(cv->cvarName, cv->description);
+		}
+
 		if (cv->vmCvar)
 		{
 			cv->modificationCount = cv->vmCvar->modificationCount;

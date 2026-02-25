@@ -122,6 +122,7 @@ typedef struct
 	const char *defaultString;
 	int cvarFlags;
 	int modificationCount;          // for tracking changes
+	const char *description;
 } cvarTable_t;
 
 static cvarTable_t cvarTable[] =
@@ -219,8 +220,8 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_cg_shoutcastTeamNameRed,         "cg_shoutcastTeamNameRed",             "Axis",                       CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "Allies",                     CVAR_ARCHIVE,                   0 },
-    { &ui_cg_shoutcastTeamScoreRed,        "cg_shoutcastTeamScoreRed",            "0",                          CVAR_ARCHIVE,                   0 },
-    { &ui_cg_shoutcastTeamScoreBlue,       "cg_shoutcastTeamScoreBlue",           "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamScoreRed,        "cg_shoutcastTeamScoreRed",            "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamScoreBlue,       "cg_shoutcastTeamScoreBlue",           "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
 
@@ -316,6 +317,13 @@ void UI_RegisterCvars(void)
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
+
+		// Descriptions are optional and only applied when the engine exposes the extension trap.
+		if (cv->description)
+		{
+			trap_Cvar_SetDescription(cv->cvarName, cv->description);
+		}
+
 		if (cv->vmCvar != NULL)
 		{
 			cv->modificationCount = cv->vmCvar->modificationCount;

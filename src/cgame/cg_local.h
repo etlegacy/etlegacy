@@ -3450,6 +3450,7 @@ int trap_RealTime(qtime_t *qtime);
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
 void trap_Cvar_Set(const char *varName, const char *value);
+void trap_Cvar_SetDescription(const char *varName, const char *description);
 void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize);
 void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize);
 
@@ -3691,6 +3692,7 @@ extern int dll_trap_SysFlashWindow;
 extern int dll_trap_CommandComplete;
 extern int dll_trap_CmdBackup_Ext;
 extern int dll_trap_MatchPaused;
+extern int dll_trap_Cvar_SetDescription;
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 

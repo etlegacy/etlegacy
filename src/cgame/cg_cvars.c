@@ -332,6 +332,7 @@ typedef struct
 	const char *defaultString;
 	int cvarFlags;
 	int modificationCount;
+	const char *description;
 } cvarTable_t;
 
 static cvarTable_t cvarTable[] =
@@ -712,6 +713,13 @@ void CG_RegisterCvars(void)
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
+
+		// Descriptions are optional and only applied when the engine exposes the extension trap.
+		if (cv->description)
+		{
+			trap_Cvar_SetDescription(cv->cvarName, cv->description);
+		}
+
 		if (cv->vmCvar != NULL)
 		{
 			// force the update to range check this cvar on first run

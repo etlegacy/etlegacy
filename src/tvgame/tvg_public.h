@@ -227,6 +227,7 @@ typedef enum
 
 	///< engine extensions padding
 	G_TRAP_GETVALUE = COM_TRAP_GETVALUE,
+	G_CVAR_SET_DESCRIPTION,
 } gameImport_t;
 
 

@@ -654,6 +654,7 @@ int trap_Milliseconds(void);
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
 void trap_Cvar_Set(const char *varName, const char *value);
+void trap_Cvar_SetDescription(const char *varName, const char *description);
 float trap_Cvar_VariableValue(const char *varName);
 void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize);
 void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize);
@@ -746,6 +747,11 @@ void trap_GetAutoUpdate(void);
 
 void trap_openURL(const char *url);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
+
+// extension interface
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+extern int dll_com_trapGetValue;
+extern int dll_trap_Cvar_SetDescription;
 
 // localization functions
 const char *UI_TranslateString(const char *string);

@@ -53,6 +53,7 @@ typedef struct
 	int cvarFlags;
 	int modificationCount;          // for tracking changes
 	qboolean trackChange;           // track this variable, and announce if changed
+	const char *description;
 } tvcvarTable_t;
 
 gentity_t g_entities[MAX_GENTITIES];
@@ -237,6 +238,7 @@ qboolean TVG_SnapshotCallback(int entityNum, int clientNum)
 }
 
 int dll_com_trapGetValue;
+int dll_trap_Cvar_SetDescription;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -402,6 +404,13 @@ void TVG_RegisterCvars(void)
 	for (i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
+
+		// Descriptions are optional and only applied when the engine exposes the extension trap.
+		if (cv->description)
+		{
+			trap_Cvar_SetDescription(cv->cvarName, cv->description);
+		}
+
 		if (cv->vmCvar)
 		{
 			cv->modificationCount = cv->vmCvar->modificationCount;
@@ -462,6 +471,7 @@ static ID_INLINE void TVG_SetupExtensions(void)
 	if (value[0])
 	{
 		dll_com_trapGetValue = Q_atoi(value);
+		TVG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_Cvar_SetDescription, "trap_Cvar_SetDescription_Legacy");
 	}
 }
 

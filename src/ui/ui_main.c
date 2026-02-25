@@ -37,6 +37,8 @@
 #include "ui_cvars.h"
 
 uiInfo_t uiInfo;
+int      dll_com_trapGetValue;
+int      dll_trap_Cvar_SetDescription;
 
 static const char *MonthAbbrev[] =
 {
@@ -106,6 +108,30 @@ static uiMenuCommand_t UI_AdjustedMenuCommand(const uiMenuCommand_t menutype)
 	}
 
 	return UIMENU_WM_AUTOUPDATE;
+}
+
+static ID_INLINE void UI_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+{
+	if (trap_GetValue(value, valueSize, name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void UI_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+		UI_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_Cvar_SetDescription, "trap_Cvar_SetDescription_Legacy");
+	}
 }
 
 /**
@@ -8638,6 +8664,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 {
 	int x;
 	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN "%s\n", MODNAME, ETLEGACY_VERSION);
+
+	UI_SetupExtensions();
 
 	UI_RegisterCvars();
 	UI_InitMemory();

@@ -203,6 +203,19 @@ void trap_Cvar_Set(const char *varName, const char *value)
 }
 
 /**
+ * @brief trap_Cvar_SetDescription
+ * @param[in] varName
+ * @param[in] description
+ */
+void trap_Cvar_SetDescription(const char *varName, const char *description)
+{
+	if (dll_trap_Cvar_SetDescription)
+	{
+		SystemCall(dll_trap_Cvar_SetDescription, varName, description);
+	}
+}
+
+/**
  * @brief trap_Cvar_VariableIntegerValue
  * @param[in] varName
  * @return

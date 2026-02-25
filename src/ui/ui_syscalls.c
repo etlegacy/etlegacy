@@ -105,6 +105,19 @@ void trap_Cvar_Set(const char *varName, const char *value)
 }
 
 /**
+ * @brief trap_Cvar_SetDescription
+ * @param[in] varName
+ * @param[in] description
+ */
+void trap_Cvar_SetDescription(const char *varName, const char *description)
+{
+	if (dll_trap_Cvar_SetDescription)
+	{
+		SystemCall(dll_trap_Cvar_SetDescription, varName, description);
+	}
+}
+
+/**
  * @brief trap_Cvar_VariableValue
  * @param[in] varName
  * @return
@@ -1157,4 +1170,18 @@ void trap_openURL(const char *url)
 void trap_GetHunkData(int *hunkused, int *hunkexpected)
 {
 	SystemCall(UI_GETHUNKDATA, hunkused, hunkexpected);
+}
+
+// extension interface
+
+/**
+ * @brief Entry point for additional system calls without breaking compatibility with other engines
+ * @param[out] value
+ * @param[in] valueSize
+ * @param[in] key
+ * @return
+ */
+qboolean trap_GetValue(char *value, int valueSize, const char *key)
+{
+	return (qboolean)(SystemCall(dll_com_trapGetValue, value, valueSize, key));
 }
