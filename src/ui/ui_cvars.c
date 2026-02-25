@@ -302,6 +302,70 @@ static cvarTable_t cvarTable[] =
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 
+/**
+ * @brief UI_GenerateCvarDescription
+ * @param[in] cv
+ * @return Generated concise description for a UI cvar table entry.
+ */
+static const char *UI_GenerateCvarDescription(const cvarTable_t *cv)
+{
+	const char *name;
+
+	if (!cv)
+	{
+		return "UI configuration setting.";
+	}
+
+	name = cv->cvarName;
+	if (!name || !name[0])
+	{
+		return "UI configuration setting.";
+	}
+
+	if (!Q_strncmp(name, "ui_browserShow", 13))
+	{
+		return va("Server browser filter toggle for '%s'.", name);
+	}
+	if (!Q_strncmp(name, "ui_browser", 10))
+	{
+		return va("Server browser setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "ui_", 3))
+	{
+		return va("Controls UI setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "cg_", 3))
+	{
+		return va("Mirrors cgame setting '%s' in the UI.", name);
+	}
+	if (!Q_strncmp(name, "g_", 2))
+	{
+		return va("Mirrors server setting '%s' in UI menus.", name);
+	}
+	if (!Q_strncmp(name, "vote_", 5))
+	{
+		return va("Controls vote-menu setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "match_", 6))
+	{
+		return va("Controls match setup setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "team_", 5))
+	{
+		return va("Controls team setup setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "cl_", 3))
+	{
+		return va("Mirrors local client setting '%s'.", name);
+	}
+	if (!Q_stricmp(name, "g_password") || !Q_stricmp(name, "refereePassword") || !Q_stricmp(name, "shoutcastPassword"))
+	{
+		return va("Stores password value for '%s'.", name);
+	}
+
+	return va("Controls '%s'.", name);
+}
+
 // Functions {{{1
 
 /**
@@ -319,13 +383,12 @@ void UI_RegisterCvars(void)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
 
-		// Always provide a description for module cvars; use a generated fallback if needed.
 		description = cv->description;
 		if (!description)
 		{
-			description = va("No ui description provided for '%s'.", cv->cvarName);
+			description = UI_GenerateCvarDescription(cv);
 		}
-		if (cv->cvarName)
+		if (cv->cvarName && cv->cvarName[0])
 		{
 			trap_Cvar_SetDescription(cv->cvarName, description);
 		}

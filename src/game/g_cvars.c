@@ -675,6 +675,102 @@ cvarTable_t gameCvarTable[] =
  */
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
+/**
+ * @brief G_GenerateCvarDescription
+ * @param[in] cv
+ * @return Generated concise description for a game cvar table entry.
+ */
+static const char *G_GenerateCvarDescription(const cvarTable_t *cv)
+{
+	const char *name;
+
+	if (!cv)
+	{
+		return "Server gameplay configuration setting.";
+	}
+
+	name = cv->cvarName;
+	if (!name || !name[0])
+	{
+		return "Server gameplay configuration setting.";
+	}
+
+	if (!Q_strncmp(name, "vote_allow_", 11))
+	{
+		return va("Allows vote option '%s'.", name + 11);
+	}
+	if (!Q_strncmp(name, "vote_", 5))
+	{
+		return va("Controls vote system setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "match_", 6))
+	{
+		return va("Controls match mode setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "team_max", 8))
+	{
+		return va("Sets team limit '%s'.", name);
+	}
+	if (!Q_strncmp(name, "team_", 5))
+	{
+		return va("Controls team gameplay setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "skill_", 6))
+	{
+		return va("Sets XP thresholds for '%s'.", name);
+	}
+	if (!Q_strncmp(name, "g_debug", 7))
+	{
+		return va("Enables debug behavior for '%s'.", name);
+	}
+	if (!Q_strncmp(name, "g_", 2))
+	{
+		return va("Controls server gameplay setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "sv_", 3))
+	{
+		return va("Controls server core setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "pmove_", 6))
+	{
+		return va("Controls movement sync setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "lua_", 4))
+	{
+		return va("Controls Lua module setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "omnibot_", 8))
+	{
+		return va("Controls Omni-bot setting '%s'.", name);
+	}
+	if (!Q_stricmp(name, "timelimit"))
+	{
+		return "Sets the map time limit in minutes.";
+	}
+	if (!Q_stricmp(name, "developer"))
+	{
+		return "Enables developer diagnostics and verbose debugging output.";
+	}
+	if (!Q_stricmp(name, "gamename"))
+	{
+		return "Publishes the game name in server info.";
+	}
+	if (!Q_stricmp(name, "gamedate"))
+	{
+		return "Publishes the build date in server info.";
+	}
+	if (!Q_stricmp(name, "P"))
+	{
+		return "Internal protected server info marker.";
+	}
+	if (strstr(name, "Password"))
+	{
+		return va("Stores credentials for '%s'.", name);
+	}
+
+	return va("Controls '%s'.", name);
+}
+
 // Functions {{{1
 
 /**
@@ -694,13 +790,12 @@ void G_RegisterCvars(void)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
 
-		// Always provide a description for module cvars; use a generated fallback if needed.
 		description = cv->description;
 		if (!description)
 		{
-			description = va("No game description provided for '%s'.", cv->cvarName);
+			description = G_GenerateCvarDescription(cv);
 		}
-		if (cv->cvarName)
+		if (cv->cvarName && cv->cvarName[0])
 		{
 			trap_Cvar_SetDescription(cv->cvarName, description);
 		}

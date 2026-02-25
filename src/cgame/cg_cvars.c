@@ -640,6 +640,103 @@ static qboolean           cvarsLoaded   = qfalse;
 void CG_setClientFlags(void);
 
 /**
+ * @brief CG_GenerateCvarDescription
+ * @param[in] cv
+ * @return Generated concise description for a cgame cvar table entry.
+ */
+static const char *CG_GenerateCvarDescription(const cvarTable_t *cv)
+{
+	const char *name;
+
+	if (!cv)
+	{
+		return "Client gameplay configuration setting.";
+	}
+
+	name = cv->cvarName;
+	if (!name || !name[0])
+	{
+		// These are systeminfo mirrors with an empty registration name in the table.
+		if (cv->vmCvar == &cg_bluelimbotime)
+		{
+			name = "g_bluelimbotime";
+		}
+		else if (cv->vmCvar == &cg_redlimbotime)
+		{
+			name = "g_redlimbotime";
+		}
+	}
+
+	if (!name || !name[0])
+	{
+		return "Client gameplay configuration setting.";
+	}
+
+	if (strstr(name, "Password"))
+	{
+		return va("Stores credentials for '%s'.", name);
+	}
+	if (strstr(name, "Color"))
+	{
+		return va("Sets the color used by '%s'.", name);
+	}
+	if (strstr(name, "Alpha"))
+	{
+		return va("Sets opacity-related behavior for '%s'.", name);
+	}
+	if (strstr(name, "Time") || strstr(name, "Delay") || strstr(name, "Timer") || strstr(name, "timeout"))
+	{
+		return va("Controls timing behavior for '%s'.", name);
+	}
+	if (!Q_strncmp(name, "cg_draw", 7))
+	{
+		return va("Toggles drawing behavior for '%s'.", name);
+	}
+	if (!Q_strncmp(name, "cg_debug", 8) || !Q_strncmp(name, "cg_show", 7))
+	{
+		return va("Enables debug output for '%s'.", name);
+	}
+	if (!Q_strncmp(name, "cg_", 3))
+	{
+		return va("Controls client gameplay setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "demo_", 5))
+	{
+		return va("Controls demo playback setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "mv_", 3))
+	{
+		return va("Controls multiview setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "cl_", 3))
+	{
+		return va("Mirrors local client setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "g_", 2))
+	{
+		return va("Mirrors server setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "pmove_", 6))
+	{
+		return va("Controls movement sync setting '%s'.", name);
+	}
+	if (!Q_strncmp(name, "auth_", 5))
+	{
+		return va("Controls authentication setting '%s'.", name);
+	}
+	if (!Q_stricmp(name, "developer"))
+	{
+		return "Enables developer diagnostics and verbose debugging output.";
+	}
+	if (!Q_stricmp(name, "timescale"))
+	{
+		return "Scales local simulation speed for client-side testing.";
+	}
+
+	return va("Controls '%s'.", name);
+}
+
+/**
  * @brief CG_RegisterOrUpdateCvars
  * @param[in] cv
  * @return
@@ -717,13 +814,12 @@ void CG_RegisterCvars(void)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
 
-		// Always provide a description for module cvars; use a generated fallback if needed.
 		description = cv->description;
 		if (!description)
 		{
-			description = va("No cgame description provided for '%s'.", cv->cvarName);
+			description = CG_GenerateCvarDescription(cv);
 		}
-		if (cv->cvarName)
+		if (cv->cvarName && cv->cvarName[0])
 		{
 			trap_Cvar_SetDescription(cv->cvarName, description);
 		}
