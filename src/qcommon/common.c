@@ -3893,7 +3893,7 @@ static void PrintCvarMatches(const char *s)
 
 		if (truncatedDescription[0])
 		{
-			Com_Printf("    ^9%s = \"^5%s^9\" - ^3%s\n", s, truncatedValue, truncatedDescription);
+			Com_Printf("    ^9%s = \"^5%s^9\" - ^7%s\n", s, truncatedValue, truncatedDescription);
 		}
 		else
 		{
