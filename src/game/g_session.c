@@ -734,7 +734,7 @@ void G_WriteSessionData(qboolean restart)
 	for (i = 0; !level.fResetStats && i < level.numConnectedClients; i++)
 	{
 		if ((g_gamestate.integer == GS_WARMUP_COUNTDOWN &&
-		     ((g_gametype.integer == GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 0) ||
+		     ((g_gametype.integer == GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 2) ||
 		      (g_gametype.integer != GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 1))))
 		{
 			level.fResetStats = qtrue;
