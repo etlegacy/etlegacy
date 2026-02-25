@@ -3898,27 +3898,32 @@ static void FindCvarMatchNameWidth(const char *s)
  */
 static void PrintCvarMatches(const char *s)
 {
-	char defaultValue[TRUNCATE_LENGTH];
-	char truncatedValue[TRUNCATE_LENGTH];
-	char description[TRUNCATE_LENGTH];
-	char truncatedDescription[TRUNCATE_LENGTH];
+	char       currentValue[TRUNCATE_LENGTH];
+	char       defaultValue[TRUNCATE_LENGTH];
+	char       truncatedCurrentValue[TRUNCATE_LENGTH];
+	char       description[TRUNCATE_LENGTH];
+	char       truncatedDescription[TRUNCATE_LENGTH];
+	const char *valueColor;
 
 	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
-		// TAB completion shows the cvar default value and its description when available.
+		// TAB completion shows current value, highlighted when it differs from default.
+		Cvar_VariableStringBuffer(s, currentValue, sizeof(currentValue));
 		Cvar_DefaultStringBuffer(s, defaultValue, sizeof(defaultValue));
 		Cvar_DescriptionStringBuffer(s, description, sizeof(description));
 
-		Com_TruncateLongString(truncatedValue, defaultValue);
+		valueColor = !Q_stricmp(currentValue, defaultValue) ? "^5" : "^d";
+
+		Com_TruncateLongString(truncatedCurrentValue, currentValue);
 		Com_TruncateLongString(truncatedDescription, description);
 
 		if (truncatedDescription[0])
 		{
-			Com_Printf("    ^9%-*s^9 = \"^5%s^9\" - ^z%s\n", cvarMatchNameWidth, s, truncatedValue, truncatedDescription);
+			Com_Printf("    ^9%-*s^9 = \"%s%s^9\" - ^z%s\n", cvarMatchNameWidth, s, valueColor, truncatedCurrentValue, truncatedDescription);
 		}
 		else
 		{
-			Com_Printf("    ^9%-*s^9 = \"^5%s^9\"\n", cvarMatchNameWidth, s, truncatedValue);
+			Com_Printf("    ^9%-*s^9 = \"%s%s^9\"\n", cvarMatchNameWidth, s, valueColor, truncatedCurrentValue);
 		}
 	}
 }
