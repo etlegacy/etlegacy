@@ -3797,13 +3797,17 @@ void Field_InsertChar(field_t *edit, int ch, qboolean overstrike)
 	}
 }
 
-static char completionString[MAX_TOKEN_CHARS];
-static char shortestMatch[MAX_TOKEN_CHARS];
-static int  matchCount;
-static int  matchIndex;
-static int  cvarMatchNameWidth;
+static char       completionString[MAX_TOKEN_CHARS];
+static char       shortestMatch[MAX_TOKEN_CHARS];
+static int        matchCount;
+static int        matchIndex;
+static int        cvarMatchNameWidth;
+static int        sortedCompletionMatchCount;
+static const char *sortedCompletionMatches[8192];
 /// field we are working on, passed to Field_AutoComplete(&g_consoleCommand for instance)
 static field_t *completionField;
+
+static void PrintCvarMatches(const char *s);
 
 /**
  * @brief FindMatches
@@ -3873,22 +3877,78 @@ static void PrintMatches(const char *s)
 }
 
 /**
- * @brief FindCvarMatchNameWidth
+ * @brief CollectSortedMatches
  * @param[in] s
  */
-static void FindCvarMatchNameWidth(const char *s)
+static void CollectSortedMatches(const char *s)
 {
-	int nameLen;
-
 	if (Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
 		return;
 	}
 
-	nameLen = (int)strlen(s);
-	if (nameLen > cvarMatchNameWidth)
+	if (sortedCompletionMatchCount < ARRAY_LEN(sortedCompletionMatches))
 	{
-		cvarMatchNameWidth = nameLen;
+		sortedCompletionMatches[sortedCompletionMatchCount++] = s;
+	}
+}
+
+/**
+ * @brief CompletionMatchCompare
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
+static int CompletionMatchCompare(const void *a, const void *b)
+{
+	const char *left  = *(const char * const *)a;
+	const char *right = *(const char * const *)b;
+	return Q_stricmp(left, right);
+}
+
+/**
+ * @brief PrintSortedCommandMatches
+ */
+static void PrintSortedCommandMatches(void)
+{
+	int i;
+
+	sortedCompletionMatchCount = 0;
+	Cmd_CommandCompletion(CollectSortedMatches);
+
+	qsort(sortedCompletionMatches, sortedCompletionMatchCount, sizeof(sortedCompletionMatches[0]), CompletionMatchCompare);
+
+	for (i = 0; i < sortedCompletionMatchCount; i++)
+	{
+		PrintMatches(sortedCompletionMatches[i]);
+	}
+}
+
+/**
+ * @brief PrintSortedCvarMatches
+ */
+static void PrintSortedCvarMatches(void)
+{
+	int i;
+
+	sortedCompletionMatchCount = 0;
+	cvarMatchNameWidth         = 0;
+	Cvar_CommandCompletion(CollectSortedMatches);
+
+	qsort(sortedCompletionMatches, sortedCompletionMatchCount, sizeof(sortedCompletionMatches[0]), CompletionMatchCompare);
+
+	for (i = 0; i < sortedCompletionMatchCount; i++)
+	{
+		int nameLen = (int)strlen(sortedCompletionMatches[i]);
+		if (nameLen > cvarMatchNameWidth)
+		{
+			cvarMatchNameWidth = nameLen;
+		}
+	}
+
+	for (i = 0; i < sortedCompletionMatchCount; i++)
+	{
+		PrintCvarMatches(sortedCompletionMatches[i]);
 	}
 }
 
@@ -4156,15 +4216,12 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 			// run through again, printing matches
 			if (doCommands)
 			{
-				Cmd_CommandCompletion(PrintMatches);
+				PrintSortedCommandMatches();
 			}
 
 			if (doCvars)
 			{
-				// Align cvar completion output by padding names to the longest match.
-				cvarMatchNameWidth = 0;
-				Cvar_CommandCompletion(FindCvarMatchNameWidth);
-				Cvar_CommandCompletion(PrintCvarMatches);
+				PrintSortedCvarMatches();
 			}
 		}
 	}
