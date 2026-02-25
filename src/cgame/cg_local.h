@@ -1200,6 +1200,7 @@ typedef struct
 	int physicsTime;                        ///< either cg.snap->time or cg.nextSnap->time
 
 	int timelimitWarnings;                  ///< 5 min, 1 min, overtime
+	int ownWaveTicktockLastReinfTime;      ///< last own reinforcement time seen for one-shot ticktock warning
 
 	qboolean mapRestart;                    ///< set on a map restart to set back the weapon
 
@@ -1873,6 +1874,10 @@ typedef struct
 	sfxHandle_t countFight;
 	sfxHandle_t countPrepare;
 	sfxHandle_t goatAxis;
+	sfxHandle_t reinforceTickSound;
+	sfxHandle_t reinforceTockSound;
+	sfxHandle_t reinforceTickLoudSound;
+	sfxHandle_t reinforceTockLoudSound;
 
 	// hitsounds
 	sfxHandle_t headShot;
@@ -2247,6 +2252,8 @@ enum
 	COMPASS_ALWAYS_DRAW          = BIT(7),
 	COMPASS_POINT_TOWARD_NORTH   = BIT(8),
 	COMPASS_DRAW_ICONS_INSIDE    = BIT(9),
+	COMPASS_DYNAMIC_TICKS        = BIT(10),
+	COMPASS_DYNAMIC_DIRECTION    = BIT(11),
 };
 
 // Follow filters
@@ -3329,7 +3336,7 @@ void CG_LoadRankIcons(void);
 
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
-char *CG_SpawnTimerText(void);
+char *CG_SpawnTimerText(qboolean isDoubleDigits);
 //oidInfo_t *CG_OIDInfoForEntityNum(int num);
 
 // cg_consolecmds.c
@@ -3901,7 +3908,7 @@ void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
 qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawItemObj, qboolean drawDynamic, char *name);
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, qboolean drawIconInside);
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, int style);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 

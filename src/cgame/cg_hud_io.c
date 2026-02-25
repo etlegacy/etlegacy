@@ -1740,7 +1740,7 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 
 		if (!parentHud || (tmpHud->cursorhintsbar.style != parentHud->cursorhintsbar.style))
 		{
-			tmpHud->cursorhintsbar.barStyle = tmpHud->healthbar.style;
+			tmpHud->cursorhintsbar.barStyle = tmpHud->cursorhintsbar.style;
 			tmpHud->cursorhintsbar.style    = 0;    // clear all
 		}
 

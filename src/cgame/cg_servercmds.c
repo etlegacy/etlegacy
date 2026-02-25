@@ -1283,7 +1283,7 @@ void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 	// console chat
 	if (clientnum == -1)
 	{
-		cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = TEAM_SPECTATOR;
+		cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = TEAM_FREE;
 	}
 	else
 	{

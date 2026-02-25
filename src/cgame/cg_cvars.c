@@ -40,9 +40,12 @@ vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairFade;
+vmCvar_t cg_crosshairHintsLinger;
+vmCvar_t cg_crosshairHintsAlpha;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
-vmCvar_t cg_drawHintFade;
+vmCvar_t cg_cursorHintsLinger;
+vmCvar_t cg_cursorHintsAlpha;
 vmCvar_t cg_weaponCycleDelay;
 vmCvar_t cg_cycleAllWeaps;
 vmCvar_t cg_useWeapsForZoom;
@@ -208,6 +211,7 @@ vmCvar_t cl_wavefilename;
 vmCvar_t cl_waveoffset;
 
 vmCvar_t cg_announcer;
+vmCvar_t cg_reinforceTickTock;
 vmCvar_t cg_hitSounds;
 vmCvar_t cg_locations;
 vmCvar_t cg_locationMaxChars;
@@ -352,16 +356,19 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawFPS,                            "cg_drawFPS",                            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,                      "cg_drawCrosshair",                      "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairFade,                  "cg_drawCrosshairFade",                  "250",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairHintsLinger,               "cg_crosshairHintsLinger",               "100",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairHintsAlpha,                "cg_crosshairHintsAlpha",                "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,               "cg_drawCrosshairPickups",               "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,                 "cg_drawSpectatorNames",                 "2",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawHintFade,                       "cg_drawHintFade",                       "250",         CVAR_ARCHIVE,                 0 },
+	{ &cg_cursorHintsLinger,                  "cg_cursorHintsLinger",                  "100",         CVAR_ARCHIVE,                 0 },
+	{ &cg_cursorHintsAlpha,                   "cg_cursorHintsAlpha",                   "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,                    "cg_useWeapsForZoom",                    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weaponCycleDelay,                   "cg_weaponCycleDelay",                   "150",         CVAR_ARCHIVE,                 0 },
 	{ &cg_cycleAllWeaps,                      "cg_cycleAllWeaps",                      "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_brassTime,                          "cg_brassTime",                          "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_markTime,                           "cg_markTime",                           "20000",       CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodPuff,                          "cg_bloodPuff",                          "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_gunReviveFadeIn,                    "cg_gunReviveFadeIn",                    "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_gunReviveFadeIn,                    "cg_gunReviveFadeIn",                    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gunFovOffset,                       "cg_gunFovOffset",                       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_x,                              "cg_gunX",                               "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_y,                              "cg_gunY",                               "0",           CVAR_TEMP,                    0 },
@@ -522,6 +529,7 @@ static cvarTable_t cvarTable[] =
 	{ &cl_waveoffset,                         "cl_waveoffset",                         "0",           CVAR_ROM,                     0 },
 
 	{ &cg_announcer,                          "cg_announcer",                          "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_reinforceTickTock,                  "cg_reinforceTickTock",                  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_hitSounds,                          "cg_hitSounds",                          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_locations,                          "cg_locations",                          "3",           CVAR_ARCHIVE,                 0 },
 	{ &cg_locationMaxChars,                   "cg_locationMaxChars",                   "0",           CVAR_ARCHIVE,                 0 },

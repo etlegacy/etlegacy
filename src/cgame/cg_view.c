@@ -2188,6 +2188,53 @@ static void CG_DrawSpawnpoints(void)
 	}
 }
 
+static ID_INLINE void CG_PlayAnnouncementTickTock()
+{
+	// Play ticktock sound based on own team wave timer.
+	if (cg_reinforceTickTock.integer
+	    && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR
+	    && cgs.gamestate == GS_PLAYING)
+	{
+		team_t ownTeam = cgs.clientinfo[cg.clientNum].team;
+		// Keep this offset local to warning sounds so HUD/other reinforcement timing remains unchanged.
+		int warningLeadMsec       = 100;
+		int dwDeployTime          = (ownTeam == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
+		int adjustedElapsed       = cgs.aReinfOffset[ownTeam] + (cg.time + warningLeadMsec) - cgs.levelStartTime;
+		int ownReinfTime          = (int)(1 + (dwDeployTime - (adjustedElapsed % dwDeployTime)) * 0.001f);
+		int triggerStartReinfTime = cg_reinforceTickTock.integer;
+		int sequenceIndex;
+		qboolean playTock;
+		qboolean playLoud;
+
+		// CG_CalculateReinfTime() returns 1 for the final full second before wave.
+		if (cg.ownWaveTicktockLastReinfTime != ownReinfTime
+		    && ownReinfTime >= 1
+		    && ownReinfTime <= triggerStartReinfTime)
+		{
+			// Build an index from the first warning second to the final warning second.
+			sequenceIndex = triggerStartReinfTime - ownReinfTime;
+			playTock      = (sequenceIndex & 1) ? qtrue : qfalse;
+			playLoud      = (ownReinfTime == 1) ? qtrue : qfalse;
+
+			if (playTock)
+			{
+				trap_S_StartLocalSound(playLoud ? cgs.media.reinforceTockLoudSound : cgs.media.reinforceTockSound, CHAN_LOCAL_SOUND);
+			}
+			else
+			{
+				trap_S_StartLocalSound(playLoud ? cgs.media.reinforceTickLoudSound : cgs.media.reinforceTickSound, CHAN_LOCAL_SOUND);
+			}
+		}
+
+		cg.ownWaveTicktockLastReinfTime = ownReinfTime;
+	}
+	else
+	{
+		// Reset outside active non-spectator play state so warning can trigger again when re-entering play.
+		cg.ownWaveTicktockLastReinfTime = -1;
+	}
+}
+
 /**
  * @brief CG_PlayAnnouncement
  */
@@ -2318,6 +2365,8 @@ static void CG_PlayAnnouncement()
 			}
 		}
 	}
+
+	CG_PlayAnnouncementTickTock();
 }
 
 /**

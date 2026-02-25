@@ -1747,7 +1747,9 @@ static void CG_DrawNoShootIcon(hudComponent_t *comp)
 	}
 	else if (cg.crosshairClientNoShoot)
 	{
-		float *color = CG_FadeColor(cg.crosshairEntTime, cg_drawCrosshairFade.integer);
+		// Keep hint timing/opacity independent from other crosshair fades.
+		float hintAlpha = Com_Clamp(0.f, 1.f, cg_crosshairHintsAlpha.value);
+		float *color    = CG_FadeColor_Ext(cg.crosshairEntTime, cg_crosshairHintsLinger.integer, hintAlpha);
 
 		if (!color)
 		{
@@ -2098,7 +2100,7 @@ static void CG_CheckForCursorHints()
 	{
 		// simulate cursor hint
 		cg.cursorHintTime  = cg.time;
-		cg.cursorHintFade  = cg_drawHintFade.integer;
+		cg.cursorHintFade  = cg_cursorHintsLinger.integer;
 		cg.cursorHintIcon  = HINT_BREAKABLE;
 		cg.cursorHintValue = 128.f;
 		return;
@@ -2107,7 +2109,7 @@ static void CG_CheckForCursorHints()
 	if (cg.snap->ps.serverCursorHint)      // server is dictating a cursor hint, use it.
 	{
 		cg.cursorHintTime  = cg.time;
-		cg.cursorHintFade  = cg_drawHintFade.integer;   // fade out time
+		cg.cursorHintFade  = cg_cursorHintsLinger.integer; // fade out time
 		cg.cursorHintIcon  = cg.snap->ps.serverCursorHint;
 		cg.cursorHintValue = cg.snap->ps.serverCursorHintVal;
 		return;
@@ -2134,7 +2136,7 @@ static void CG_CheckForCursorHints()
 			{
 				cg.cursorHintIcon  = HINT_WATER;
 				cg.cursorHintTime  = cg.time;
-				cg.cursorHintFade  = cg_drawHintFade.integer;
+				cg.cursorHintFade  = cg_cursorHintsLinger.integer;
 				cg.cursorHintValue = 0;
 			}
 		}
@@ -2159,7 +2161,7 @@ static void CG_CheckForCursorHints()
 			{
 				cg.cursorHintIcon  = HINT_LADDER;
 				cg.cursorHintTime  = cg.time;
-				cg.cursorHintFade  = cg_drawHintFade.integer;
+				cg.cursorHintFade  = cg_cursorHintsLinger.integer;
 				cg.cursorHintValue = 0;
 			}
 		}

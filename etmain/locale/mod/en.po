@@ -259,6 +259,10 @@ msgstr ""
 msgid "© 2012-2020 ET: Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
+#: etmain/ui/credits_etlegacy.menu
+msgid "ATTRIBUTIONS"
+msgstr "^_ATTRIBUTIONS"
+
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
 msgstr "^_HALL OF FAME"
