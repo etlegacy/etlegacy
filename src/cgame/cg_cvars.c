@@ -352,7 +352,7 @@ static cvarTable_t cvarTable[] =
 	//  { &cg_draw2D, "cg_draw2D", "1", CVAR_CHEAT }, // JPW NERVE changed per atvi req to prevent sniper rifle zoom cheats
 	{ &cg_draw2D,                             "cg_draw2D",                             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_railTrailTime,                      "cg_railTrailTime",                      "750",         CVAR_ARCHIVE,                 0 },
-	{ &cg_drawStatus,                         "cg_drawStatus",                         "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawStatus,                         "cg_drawStatus",                         "0",           CVAR_CHEAT,                   0 },
 	{ &cg_drawFPS,                            "cg_drawFPS",                            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,                      "cg_drawCrosshair",                      "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairFade,                  "cg_drawCrosshairFade",                  "250",         CVAR_ARCHIVE,                 0 },
