@@ -172,7 +172,7 @@ void CG_DrawCustomCrosshair(qboolean withSpread)
 		// draw small cross
 		if (
 			(cg_customCrosshair.integer == CUSTOMCROSSHAIR_DOT_WITH_SMALLCROSS || cg_customCrosshair.integer == CUSTOMCROSSHAIR_SMALLCROSS) &&
-			withSpread
+			(withSpread || (cg_customCrosshairCrossSpreadDistance.integer == 0))
 			)
 		{
 			innerWidth       = cg_customCrosshairCrossWidth.value;
