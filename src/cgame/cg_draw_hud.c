@@ -3071,12 +3071,12 @@ void CG_DrawSpeed(hudComponent_t *comp)
  */
 void CG_DrawFPS(hudComponent_t *comp)
 {
-	static int previousTimes[MAX_FPS_FRAMES];
-	static int previous;
-	static int index;
-	const char *s;
-	int        t;
-	int        frameTime;
+	static int          previousTimes[MAX_FPS_FRAMES];
+	static int          previous;
+	static unsigned int index;
+	const char          *s;
+	int                 t;
+	int                 frameTime;
 
 	t = trap_Milliseconds(); // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
 
