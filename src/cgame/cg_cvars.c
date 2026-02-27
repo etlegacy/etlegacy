@@ -82,6 +82,13 @@ vmCvar_t cg_tracerLength;
 vmCvar_t cg_tracerSpeed;
 vmCvar_t cg_autoswitch;
 vmCvar_t cg_fov;
+vmCvar_t cg_weapzoomFov;
+vmCvar_t cg_weapzoomInTimeMs;
+vmCvar_t cg_weapzoomOutTimeMs;
+vmCvar_t cg_weapzoomSensitivityScale;
+vmCvar_t cg_weapzoomSensitivityOverride;
+vmCvar_t cg_onWeapzoomStart;
+vmCvar_t cg_onWeapzoomEnd;
 vmCvar_t cg_muzzleFlash;
 vmCvar_t cg_muzzleFlashDlight;
 vmCvar_t cg_muzzleFlashOld;
@@ -338,6 +345,13 @@ static cvarTable_t cvarTable[] =
 	{ &cg_zoomDefaultSniper,                  "cg_zoomDefaultSniper",                  "20",          CVAR_ARCHIVE,                 0 }, // changed per atvi req
 	{ &cg_zoomStepSniper,                     "cg_zoomStepSniper",                     "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fov,                                "cg_fov",                                "90",          CVAR_ARCHIVE,                 0 },
+	{ &cg_weapzoomFov,                        "cg_weapzoomFov",                        "75",          CVAR_ARCHIVE,                 0 },
+	{ &cg_weapzoomInTimeMs,                   "cg_weapzoomInTimeMs",                   "100",         CVAR_ARCHIVE,                 0 },
+	{ &cg_weapzoomOutTimeMs,                  "cg_weapzoomOutTimeMs",                  "100",         CVAR_ARCHIVE,                 0 },
+	{ &cg_weapzoomSensitivityScale,           "cg_weapzoomSensitivityScale",           "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_weapzoomSensitivityOverride,        "cg_weapzoomSensitivityOverride",        "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_onWeapzoomStart,                    "cg_onWeapzoomStart",                    "",            CVAR_ARCHIVE,                 0 },
+	{ &cg_onWeapzoomEnd,                      "cg_onWeapzoomEnd",                      "",            CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlash,                        "cg_muzzleFlash",                        "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlashDlight,                  "cg_muzzleFlashDlight",                  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlashOld,                     "cg_muzzleFlashOld",                     "0",           CVAR_ARCHIVE,                 0 },
