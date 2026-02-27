@@ -121,9 +121,6 @@ vmCvar_t cg_gameType;
 vmCvar_t cg_bloodTime;
 vmCvar_t cg_skybox;
 
-// say, team say, etc.
-vmCvar_t cg_messageType;
-
 vmCvar_t cg_timescale;
 
 vmCvar_t cg_spritesFollowHeads;
@@ -390,9 +387,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_bloodTime,                          "cg_bloodTime",                          "120",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_skybox,                             "cg_skybox",                             "1",           CVAR_ARCHIVE,                 0 },
-
-	// say, team say, etc.
-	{ &cg_messageType,                        "cg_messageType",                        "1",           CVAR_TEMP,                    0 },
 
 	{ &cg_animSpeed,                          "cg_animspeed",                          "1",           CVAR_CHEAT,                   0 },
 	{ &cg_debugAnim,                          "cg_debuganim",                          "0",           CVAR_CHEAT,                   0 },
