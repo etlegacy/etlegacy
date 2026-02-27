@@ -537,15 +537,15 @@ static void CG_FTOverlay_StoreLocationString(fireteamOverlay_t *fto, const int r
 
 static void CG_FTOverlay_StoreSpawnpointString(fireteamOverlay_t *fto, const int row, const hudComponent_t *comp)
 {
+	char locMsg[MAX_LOC_LEN];
+
 	if (!(comp->style & FT_SPAWN_POINT_LOC))
 	{
 		return;
 	}
 
-	Q_strncpyz(fto->spawnPtStr[row],
-	           Q_CleanStr(CG_GetLocationMsg(fto->ci->clientNum, cgs.majorSpawnpointEnt[fto->ci->spawnpt - 1].origin)),
-	           sizeof(fto->spawnPtStr[row]));
-
+	Q_strncpyz(locMsg, CG_GetLocationMsg(fto->ci->clientNum, cgs.majorSpawnpointEnt[fto->ci->spawnpt - 1].origin), sizeof(locMsg));
+	Q_strncpyz(fto->spawnPtStr[row], Q_CleanStr(locMsg), sizeof(fto->spawnPtStr[row]));
 }
 
 #define HEALTH_TEXT_WIDTH (CG_Text_Width_Ext_Float("999", fto->textScale, 0, FONT_TEXT))
