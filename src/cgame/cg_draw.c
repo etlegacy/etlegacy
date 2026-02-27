@@ -1245,7 +1245,7 @@ void CG_DrawCenterString(hudComponent_t *comp)
 	}
 
 	Vector4Copy(comp->colorMain, textColor);
-	color = CG_FadeColor_Ext(cg.centerPrintTime, (int)(1000 * cg_centertime.value), textColor[3]);
+	color = CG_FadeColor_Ext(cg.centerPrintTime, cg_centertime.integer, textColor[3]);
 	if (!color)
 	{
 		cg.centerPrintTime     = 0;
