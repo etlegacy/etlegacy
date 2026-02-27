@@ -1251,6 +1251,13 @@ typedef struct
 	int zoomTime;
 	float zoomSensitivity;
 	float zoomval;
+	qboolean weapzoomActive;
+	qboolean weapzoomWasActive;
+	qboolean weapzoomStartValid;
+	int weapzoomTime;
+	float weapzoomStartFov;
+	float weapzoomCurrentFov;
+	float weapzoomLerp;
 
 	/// information screen text during loading
 	char infoScreenText[MAX_STRING_CHARS];
@@ -2941,6 +2948,14 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 static ID_INLINE void CG_AdjustRectFrom640(rectDef_t *rect)
 {
 	CG_AdjustFrom640(&rect->x, &rect->y, &rect->w, &rect->h);
+}
+static ID_INLINE qboolean CG_WeapzoomAllowed_f(void)
+{
+	return !(cg.zoomed || cg.zoomedBinoc || cg.zoomval != 0.f)
+	       && !(cg.snap->ps.persistant[PERS_HWEAPON_USE])
+	       && !(cg.snap->ps.eFlags & (EF_MG42_ACTIVE | EF_AAGUN_ACTIVE | EF_MOUNTEDTANK))
+	       && !((GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SET)
+	            && (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_MG));
 }
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent);

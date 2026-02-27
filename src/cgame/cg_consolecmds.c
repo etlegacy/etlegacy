@@ -87,6 +87,50 @@ static void CG_Viewpos_f(void)
 }
 
 /**
+ * @brief CG_WeapzoomDown_f
+ */
+static void CG_WeapzoomDown_f(void)
+{
+	if (!CG_WeapzoomAllowed_f())
+	{
+		return;
+	}
+
+	if (cg.weapzoomActive)
+	{
+		return;
+	}
+
+	cg.weapzoomActive = qtrue;
+}
+
+/**
+ * @brief CG_WeapzoomUp_f
+ */
+static void CG_WeapzoomUp_f(void)
+{
+	if (!cg.weapzoomActive)
+	{
+		return;
+	}
+
+	cg.weapzoomActive = qfalse;
+}
+
+/**
+ * @brief CG_ToggleWeapzoom_f
+ */
+static void CG_ToggleWeapzoom_f(void)
+{
+	if (!CG_WeapzoomAllowed_f())
+	{
+		return;
+	}
+
+	cg.weapzoomActive = !cg.weapzoomActive;
+}
+
+/**
  * @brief CG_LimboMenu_f
  */
 void CG_LimboMenu_f(void)
@@ -3460,6 +3504,9 @@ static consoleCommand_t commands[] =
 	{ "nextskin",               CG_TestModelNextSkin_f       },
 	{ "prevskin",               CG_TestModelPrevSkin_f       },
 	{ "viewpos",                CG_Viewpos_f                 },
+	{ "+weapzoom",              CG_WeapzoomDown_f            },
+	{ "-weapzoom",              CG_WeapzoomUp_f              },
+	{ "toggleweapzoom",         CG_ToggleWeapzoom_f          },
 	{ "+scores",                CG_ScoresDown_f              },
 	{ "-scores",                CG_ScoresUp_f                },
 	{ "zoomin",                 CG_ZoomIn_f                  },
