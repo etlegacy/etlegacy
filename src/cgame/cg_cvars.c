@@ -37,7 +37,6 @@ vmCvar_t cg_swingSpeed;
 vmCvar_t cg_shadows;
 vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
-vmCvar_t cg_drawFPS;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairFade;
 vmCvar_t cg_crosshairHintsLinger;
@@ -353,7 +352,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_draw2D,                             "cg_draw2D",                             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_railTrailTime,                      "cg_railTrailTime",                      "750",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawStatus,                         "cg_drawStatus",                         "0",           CVAR_CHEAT,                   0 },
-	{ &cg_drawFPS,                            "cg_drawFPS",                            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,                      "cg_drawCrosshair",                      "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairFade,                  "cg_drawCrosshairFade",                  "250",         CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairHintsLinger,               "cg_crosshairHintsLinger",               "100",         CVAR_ARCHIVE,                 0 },

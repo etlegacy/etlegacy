@@ -3074,48 +3074,32 @@ void CG_DrawFPS(hudComponent_t *comp)
 	static int previousTimes[MAX_FPS_FRAMES];
 	static int previous;
 	static int index;
-	static int oldSamples;
 	const char *s;
 	int        t;
 	int        frameTime;
-	int        samples = cg_drawFPS.integer;
 
 	t = trap_Milliseconds(); // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
 
 	frameTime = t - previous;
 	previous  = t;
 
-	if (samples < 4)
-	{
-		samples = 4;
-	}
-	if (samples > MAX_FPS_FRAMES)
-	{
-		samples = MAX_FPS_FRAMES;
-	}
-	if (samples != oldSamples)
-	{
-		index = 0;
-	}
-
-	oldSamples                     = samples;
-	previousTimes[index % samples] = frameTime;
+	previousTimes[index % MAX_FPS_FRAMES] = frameTime;
 	index++;
 
-	if (index > samples)
+	if (index > MAX_FPS_FRAMES)
 	{
 		int i, fps;
 		// average multiple frames together to smooth changes out a bit
 		int total = 0;
 
-		for (i = 0 ; i < samples ; ++i)
+		for (i = 0 ; i < MAX_FPS_FRAMES ; ++i)
 		{
 			total += previousTimes[i];
 		}
 
 		total = total ? total : 1;
 
-		fps = 1000 * samples / total;
+		fps = 1000 * MAX_FPS_FRAMES / total;
 
 		s = va("%i FPS", fps);
 	}

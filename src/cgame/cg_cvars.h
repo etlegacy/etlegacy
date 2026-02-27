@@ -41,7 +41,6 @@ extern vmCvar_t cg_swingSpeed;
 extern vmCvar_t cg_shadows;
 extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_draw2D;
-extern vmCvar_t cg_drawFPS;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairFade;
 extern vmCvar_t cg_crosshairHintsLinger;
