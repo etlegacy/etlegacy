@@ -2134,6 +2134,9 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 
+qboolean BG_PlayerTouchesBox(playerState_t *ps, entityState_t *item, int atTime, int sideLength);
+qboolean BG_PlayerTouchesCylender(playerState_t *ps, entityState_t *item, int atTime, int sideLength);
+
 qboolean BG_PlayerTouchesObjective(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
