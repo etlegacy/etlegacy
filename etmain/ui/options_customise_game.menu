@@ -88,13 +88,13 @@ menuDef {
 
 // Sounds //
 #define SOUND_Y (CHAT_Y + CHAT_H + SUBWINDOW_OPTION_Y_PADDING)
-#define SOUND_H SUBWINDOW_OPTION_COMPUTE_H(4)
+#define SOUND_H SUBWINDOW_OPTION_COMPUTE_H(5)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, SOUND_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, SOUND_H, _("SOUND"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 1), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Announcer:"), .2, 8, "cg_announcer", _("Play startup announcer voice"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 2), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game"))
-	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 3), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Team Voice chat:"), .2, 8, "cg_teamVoiceChatsOnly", _("Play only voice team chat in-game"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 3), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Team Voice chat:"), .2, 8, "cg_teamVoiceChatsOnly", _("Play only voice team chat in-game"))
 	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 4), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 3 "No Head Hit Sound" 5 "No Team Hit Sound" 9 }, _("Set hit sounds"))
-	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 3), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Reinforcement TickTock:"), .2, 8, "cg_reinforceTickTock", _("Play alternate tick/tock cadence during reinforcement countdown"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 5), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Reinforcement TickTock:"), .2, 8, "cg_reinforceTickTock", _("Play alternate tick/tock cadence during reinforcement countdown"))
 
 // Miscellaneous //
 #define MISC_Y (SOUND_Y + SOUND_H + SUBWINDOW_OPTION_Y_PADDING)
