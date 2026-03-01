@@ -255,6 +255,17 @@ void CG_UpdatePMLists(void)
 	int           i;
 	hudStucture_t *hud = CG_GetActiveHUD();
 
+	// This can happen if a 'CG_DRAW_ACTIVE_FRAME' call happens while 'CG_INIT'
+	// hasn't finished loading the HUD. Unsure if this is possible in a real scenario,
+	// but it's a reproducable crash when running with a debugger and breaking inside
+	// 'CG_Init' before the call to 'CG_AssetCache', and continuing execution.
+	// We don't need to do anything special here, just returning is fine,
+	// the HUD isn't even visible at this point as we're still in the loading screen.
+	if (!hud)
+	{
+		return;
+	}
+
 	for (i = 0; i < NUM_PM_STACK; ++i)
 	{
 		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&hud->popupmessages + i * sizeof(hudComponent_t));
