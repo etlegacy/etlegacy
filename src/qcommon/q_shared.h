@@ -932,6 +932,17 @@ static ID_INLINE qboolean Q_IsAcceleratorString(const char *p)
 /// removes color sequences from string
 char *Q_CleanStr(char *string);
 
+// escapes any color codes in a string so it can be printed "as is"
+// with the color determined by 'escapeColor'
+void Q_EscapeColorCodes(char *string, char escapeColor);
+
+// returns the padding required to reach 'targetPadding' for printf
+// formatting, when a string has color codes in it
+static ID_INLINE int Q_CountPaddingWithColor(const char *string, int targetPadding)
+{
+	return targetPadding + strlen(string) - Q_PrintStrlen(string);
+}
+
 /// removes color sequences from string using multiple passes
 void Q_StripColor(char *string);
 
