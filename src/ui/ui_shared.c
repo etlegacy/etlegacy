@@ -69,9 +69,9 @@ int      lastListBoxClickTime = 0;
 #endif
 #else
 #if ARCH_X86
-#define MEM_POOL_SIZE (2048 * 1024) // Arnout: was 1024
+#define MEM_POOL_SIZE (4096 * 1024) // Arnout: was 1024
 #else
-#define MEM_POOL_SIZE (4096 * 1024)
+#define MEM_POOL_SIZE (8192 * 1024)
 #endif
 #endif
 
