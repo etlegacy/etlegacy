@@ -981,7 +981,7 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
 /**
  * @brief UI_ShowPostGame
  */
-void UI_ShowPostGame()
+void UI_ShowPostGame(void)
 {
 	trap_Cvar_Set("cg_thirdPerson", "0");
 	trap_Cvar_Set("sv_killserver", "1");

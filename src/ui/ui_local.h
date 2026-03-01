@@ -267,7 +267,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset);
 void  UI_SetActiveMenu(uiMenuCommand_t menu);
 uiMenuCommand_t UI_GetActiveMenu(void);
 int UI_AdjustTimeByGame(int time);
-void UI_ShowPostGame();
+void UI_ShowPostGame(void);
 void UI_LoadArenas(void);
 void UI_LoadCampaigns(void);
 mapInfo *UI_FindMapInfoByMapname(const char *name);
