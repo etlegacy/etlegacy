@@ -454,7 +454,7 @@ void G_createStatsJson(gentity_t *ent, void *target)
 	// workaround to always hide previous map stats in warmup
 	// Stats will be cleared correctly when the match actually starts
 	if ((g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN) &&
-	    !(g_gametype.integer == GT_WOLF_STOPWATCH))
+	    !(g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_gametype.integer == GT_WOLF_CAMPAIGN))
 	{
 		return;
 	}
@@ -635,7 +635,7 @@ char *G_createStats(gentity_t *ent)
 	// workaround to always hide previous map stats in warmup
 	// Stats will be cleared correctly when the match actually starts
 	if ((g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN) &&
-	    !(g_gametype.integer == GT_WOLF_STOPWATCH))
+	    !(g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_gametype.integer == GT_WOLF_CAMPAIGN))
 	{
 		dwWeaponMask     = 0;
 		strWeapInfo[0]   = '\0';
@@ -712,7 +712,10 @@ void G_deleteStats(int nClient)
 	cl->sess.startskillpoints[SK_HEAVY_WEAPONS]                            = 0;
 	cl->sess.startskillpoints[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = 0;
 
-	Com_Memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
+	if (!(g_gametype.integer == GT_WOLF_CAMPAIGN && !level.newCampaign))
+	{
+		Com_Memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
+	}
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));
 }
 
@@ -747,11 +750,11 @@ void G_parseStatsJson(void *object)
 
 		if (tmp)
 		{
-			weaponsFound = qtrue;
-			cl->sess.aWeaponStats[i].hits = Q_ReadIntValueJson(tmp, "hits");
-			cl->sess.aWeaponStats[i].atts = Q_ReadIntValueJson(tmp, "atts");
-			cl->sess.aWeaponStats[i].kills = Q_ReadIntValueJson(tmp, "kills");
-			cl->sess.aWeaponStats[i].deaths = Q_ReadIntValueJson(tmp, "deaths");
+			weaponsFound                       = qtrue;
+			cl->sess.aWeaponStats[i].hits      = Q_ReadIntValueJson(tmp, "hits");
+			cl->sess.aWeaponStats[i].atts      = Q_ReadIntValueJson(tmp, "atts");
+			cl->sess.aWeaponStats[i].kills     = Q_ReadIntValueJson(tmp, "kills");
+			cl->sess.aWeaponStats[i].deaths    = Q_ReadIntValueJson(tmp, "deaths");
 			cl->sess.aWeaponStats[i].headshots = Q_ReadIntValueJson(tmp, "headshots");
 		}
 	}
@@ -762,10 +765,10 @@ void G_parseStatsJson(void *object)
 
 		if (tmp)
 		{
-			cl->sess.kill_assists = Q_ReadIntValueJson(tmp, "kill_assists");
-			cl->sess.damage_given = Q_ReadIntValueJson(tmp, "damage_given");
-			cl->sess.damage_received = Q_ReadIntValueJson(tmp, "damage_received");
-			cl->sess.team_damage_given = Q_ReadIntValueJson(tmp, "team_damage_given");
+			cl->sess.kill_assists         = Q_ReadIntValueJson(tmp, "kill_assists");
+			cl->sess.damage_given         = Q_ReadIntValueJson(tmp, "damage_given");
+			cl->sess.damage_received      = Q_ReadIntValueJson(tmp, "damage_received");
+			cl->sess.team_damage_given    = Q_ReadIntValueJson(tmp, "team_damage_given");
 			cl->sess.team_damage_received = Q_ReadIntValueJson(tmp, "team_damage_received");
 		}
 		else
@@ -821,6 +824,9 @@ void G_printMatchInfo(gentity_t *ent)
 	char      *ref;
 	char      guid[MAX_GUID_LENGTH + 1];
 	char      n2[MAX_STRING_CHARS];
+	int       namePadding;
+
+#define SCORES_NAME_MAX_LEN 15
 
 	ent->client->scoresIndex = ent->client->scoresCount = 0;
 
@@ -880,8 +886,10 @@ void G_printMatchInfo(gentity_t *ent)
 			}
 
 			Q_strncpyz(n2, cl->pers.netname, sizeof(n2));
+			Q_TruncateStr(n2, SCORES_NAME_MAX_LEN);
 			Q_CleanStr(n2);
-			n2[15] = 0;
+			Q_EscapeColorCodes(n2, '3');
+			namePadding = Q_CountPaddingWithColor(n2, SCORES_NAME_MAX_LEN);
 
 			ref = "^7";
 			tot_timex += cl->sess.time_axis;
@@ -918,14 +926,14 @@ void G_printMatchInfo(gentity_t *ent)
 
 			cnt++;
 #ifdef FEATURE_RATING
-			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
+			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-*s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
-			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-*s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
 #endif
 			                        guid,
 			                        aTeams[i],
 			                        ref,
-			                        n2,
+			                        namePadding, n2,
 			                        cl->sess.time_axis / 60000,
 			                        cl->sess.time_allies / 60000,
 			                        ref,
