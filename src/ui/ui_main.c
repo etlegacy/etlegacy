@@ -6848,13 +6848,25 @@ static void UI_BuildServerDisplayList(qboolean force)
 					continue;
 				}
 
-				humans = Q_atoi(Info_ValueForKey(info, "humans"));
+				clients = Q_atoi(Info_ValueForKey(info, "clients"));
+				humans  = Q_atoi(Info_ValueForKey(info, "humans"));
 
 				if ((humans == 0 && ui_browserShowHumans.integer == 1) ||
 				    (humans > 0 && ui_browserShowHumans.integer == 2))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
+				}
+
+				if (ui_browserShowHumans.integer == 3)
+				{
+					int bots = clients - humans;
+
+					if (bots > 0 || humans == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
 				}
 			}
 
