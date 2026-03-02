@@ -454,7 +454,7 @@ void G_clientFlagIndicator(gentity_t *ent)
  */
 gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int majorSpawn, int minorSpawn)
 {
-	gentity_t *spot;
+	gentity_t *spot, *fallbackSpot;
 	gentity_t *spots[MAX_TEAM_SPAWN_POINTS];
 	int       count, closest, spawnpoint = -1;
 	int       i = 0;
@@ -479,15 +479,9 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int majorSpawn
 	count = 0;
 
 	spot = NULL;
+	fallbackSpot = NULL;
 
-	while ((spot = G_Find(spot, FOFS(classname), classname)) != NULL)
-	{
-		// if this minor spawn is selected add that spot even if unavailable
-		if (spot->spawnId != minorSpawn && SpotWouldTelefrag(spot))
-		{
-			continue;
-		}
-
+	while (count < MAX_TEAM_SPAWN_POINTS && (spot = G_Find(spot, FOFS(classname), classname)) != NULL) {
 		// modified to allow initial spawnpoints to be disabled at gamestart
 		if (!(spot->spawnflags & 2))
 		{
@@ -500,38 +494,28 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int majorSpawn
 			continue;
 		}
 
+		// if this minor spawn is selected add that spot even if unavailable
+		if (spot->spawnId != minorSpawn && SpotWouldTelefrag(spot)) {
+			if (!fallbackSpot) {
+				fallbackSpot = spot; // even if this spot telefrags it's a spot
+			}
+			continue;
+		}
+
 		if (spot->spawnId == minorSpawn)
 		{
 			spawnpoint = count;
 		}
 
 		spots[count] = spot;
-		if (++count == MAX_TEAM_SPAWN_POINTS)
-		{
-			break;
-		}
+		count++;
 	}
 
 	if (!count)     // no spots that won't telefrag
 	{
-		spot = NULL;
-		while ((spot = G_Find(spot, FOFS(classname), classname)) != NULL)
-		{
-			// modified to allow initial spawnpoints to be disabled at gamestart
-			if (!(spot->spawnflags & 2))
-			{
-				continue;
-			}
-
-			// invisible entities can't be used for spawning
-			if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION)
-			{
-				continue;
-			}
-
-			return spot;
+		if (fallbackSpot != NULL) {
+			return fallbackSpot;
 		}
-
 		return G_Find(NULL, FOFS(classname), classname);
 	}
 
@@ -2104,31 +2088,76 @@ qboolean G_desiredFollow(gentity_t *ent, int nTeam)
 	return qfalse;
 }
 
+
+/**
+ * @brief Finds the closest active team spawn entity to the given origin.
+ * This code is inspired by an actual algorithm used to pick spawn blob.
+ * @param[in] team
+ * @param[in] origin Position to search from.
+ * @return Closest spawn entity, or NULL if none found.
+ */
+static gentity_t *G_FindClosestTeamSpawnEntity(team_t team, vec3_t origin, int minorSpawn) {
+	gentity_t *spot = NULL;
+	gentity_t *closest = NULL;
+	char *classname;
+	float shortest = MAX_MAP_SIZE * 2, tmp;
+	vec3_t target;
+
+	if (team == TEAM_AXIS) {
+		classname = "team_CTF_redspawn";
+	} else if (team == TEAM_ALLIES) {
+		classname = "team_CTF_bluespawn";
+	} else {
+		return NULL;
+	}
+
+	while ((spot = G_Find(spot, FOFS(classname), classname)) != NULL) {
+		if (spot->spawnId <= 0) {
+			continue;
+		}
+
+		if (!(spot->spawnflags & 2)) {
+			continue;
+		}
+
+		if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION) {
+			continue;
+		}
+
+		// this is weird but works same as an actual algorithm used to pick spawn blob
+		if (minorSpawn > 0 && spot->spawnId != minorSpawn) {
+			continue;
+		}
+
+		VectorSubtract(origin, spot->s.origin, target);
+		tmp = VectorLength(target);
+
+		if (tmp < shortest) {
+			shortest = tmp;
+			closest = spot;
+		}
+	}
+
+	return closest;
+}
+
+
 /**
  * @brief Finds suitable spawn point index for the given team.
  *        If player selected spawn point is invalid, tries to resolve it.
  * @param[in] team
- * @param[in] targetSpawnPt Player selected spawn point.
+ * @param[in] resolvedMinorSpawnPt minor spawn pt blob closest to player's selection.
  * @return Spawn point index or -1.
  */
-static int G_ResolveSpawnPointIndex(team_t team, int targetSpawnPt)
+static int G_ResolveSpawnPointIndex(team_t team, gentity_t *resolvedMinorSpawnPt)
 {
 	int i;
-	if (targetSpawnPt >= 0 && targetSpawnPt < level.numSpawnPoints)
-	{
-		int closestTeamSpawnPt;
-		float closestTeamSpawnPtDist;
-		spawnPointState_t *tagetSpawnPointState = &level.spawnPointStates[targetSpawnPt];
-		// if this spawn point is already owned by the team, no further actions necessary
-		if (tagetSpawnPointState->isActive && tagetSpawnPointState->team == team)
-		{
-			return targetSpawnPt;
-		}
-		// if target spawn point is owned by the opposite team,
-		// find closest team spawn point to the target.
-		// this works similar to an actual algorithm used to pick spawn blob.
-		// however, it might be inaccurate in some cases.
-		closestTeamSpawnPt     = -1;
+	int closestTeamSpawnPt;
+	float closestTeamSpawnPtDist;
+
+	if (resolvedMinorSpawnPt) {
+		// find major spawnpt closest to resolvedMinorSpawnPt
+		closestTeamSpawnPt = -1;
 		closestTeamSpawnPtDist = -1;
 		for (i = 0; i < level.numSpawnPoints; i++)
 		{
@@ -2139,7 +2168,7 @@ static int G_ResolveSpawnPointIndex(team_t team, int targetSpawnPt)
 			{
 				continue;
 			}
-			VectorSubtract(tagetSpawnPointState->origin, teamSpawnPointState->origin, diffVector);
+			VectorSubtract(resolvedMinorSpawnPt->s.origin, teamSpawnPointState->origin, diffVector);
 			distance = VectorLength(diffVector);
 			if ((closestTeamSpawnPtDist < 0) || (closestTeamSpawnPtDist > distance))
 			{
@@ -2160,6 +2189,25 @@ static int G_ResolveSpawnPointIndex(team_t team, int targetSpawnPt)
 	}
 	// found nothing
 	return -1;
+}
+
+/**
+ * @brief Finds suitable spawn point index for the given team.
+ *        If auto selected spawn point is invalid, fallback to standard resolving method.
+ * @param[in] team
+ * @param[in] targetSpawnPt Player selected spawn point.
+ * @return Spawn point index or -1.
+ */
+static int G_ResolveAutoSpawnPointIndex(team_t team, int targetSpawnPt) {
+	if (targetSpawnPt >= 0 && targetSpawnPt < level.numSpawnPoints) {
+		spawnPointState_t *targetSpawnPointState = &level.spawnPointStates[targetSpawnPt];
+		// if this spawn point is already owned by the team, no further actions necessary
+		if (targetSpawnPointState->isActive && targetSpawnPointState->team == team) {
+			return targetSpawnPt;
+		}
+	}
+	// fallback:
+	return G_ResolveSpawnPointIndex(team, NULL);
 }
 
 /**
@@ -2188,10 +2236,11 @@ void G_UpdateSpawnPointStatePlayerCounts()
 	gclient_t *client;
 	int resolvedAutoSpawnPts[2] =
 	{
-		G_ResolveSpawnPointIndex(TEAM_AXIS,   level.axisAutoSpawn),
-		G_ResolveSpawnPointIndex(TEAM_ALLIES, level.alliesAutoSpawn)
+		G_ResolveAutoSpawnPointIndex(TEAM_AXIS,   level.axisAutoSpawn),
+		G_ResolveAutoSpawnPointIndex(TEAM_ALLIES, level.alliesAutoSpawn)
 	};
 	int i, teamAutoSpawnPt, resolvedSpawnPt, oldResolvedSpawnPt;
+	gentity_t *resolvedMinorSpawnPt = NULL;
 	// check updates
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
@@ -2212,7 +2261,11 @@ void G_UpdateSpawnPointStatePlayerCounts()
 		if (level.spawnPointStates[resolvedSpawnPt].team != client->sess.sessionTeam ||
 		    level.spawnPointStates[resolvedSpawnPt].isActive != 1)
 		{
-			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, resolvedSpawnPt);
+			resolvedMinorSpawnPt = G_FindClosestTeamSpawnEntity(
+				client->sess.sessionTeam, level.spawnPointStates[resolvedSpawnPt].origin,
+				client->sess.userMinorSpawnPointValue);
+			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, resolvedMinorSpawnPt);
+
 			if (resolvedSpawnPt == -1)
 			{
 				continue;
@@ -2221,6 +2274,9 @@ void G_UpdateSpawnPointStatePlayerCounts()
 		playerCounts[resolvedSpawnPt]       += 1;
 		oldResolvedSpawnPt                   = client->sess.resolvedSpawnPointIndex;
 		client->sess.resolvedSpawnPointIndex = resolvedSpawnPt;
+		if (client->sess.userMinorSpawnPointValue <= 0) {
+			client->sess.userMinorSpawnPointValue = resolvedMinorSpawnPt ? resolvedMinorSpawnPt->spawnId : -1;
+		}
 		if (oldResolvedSpawnPt != resolvedSpawnPt ||
 		    client->sess.userMinorSpawnPointValue != client->sess.previousUserMinorSpawnPointValue)
 		{
