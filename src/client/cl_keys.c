@@ -791,6 +791,20 @@ void Console_Key(int key)
 	}
 
 	// console scrolling
+	if ((key == K_PGUP || key == K_KP_PGUP) && (keys[K_LSHIFT].down || keys[K_RSHIFT].down))
+	{
+		// Shift+PgUp performs an absolute jump to the oldest visible console line.
+		Con_ScrollTop();
+		return;
+	}
+
+	if ((key == K_PGDN || key == K_KP_PGDN) && (keys[K_LSHIFT].down || keys[K_RSHIFT].down))
+	{
+		// Shift+PgDn performs an absolute jump back to live console output.
+		Con_ScrollBottom();
+		return;
+	}
+
 	if (key == K_PGUP || key == K_KP_PGUP)
 	{
 		Con_PageUp();
