@@ -50,6 +50,8 @@ endmacro()
 function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 	set(DO_HASH "${_HASH}")
 	set(ETLEGACY_DO_DOWNLOAD FALSE)
+	set(ETLEGACY_DOWNLOAD_RETRIES 3)
+	set(ETLEGACY_DOWNLOAD_SLEEP_SECONDS 10)
 
 	if(NOT EXISTS "${_PATH}")
 		message(STATUS "Downloading ${_MSG} to ${_PATH}")
@@ -71,19 +73,45 @@ function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 	if(ETLEGACY_DO_DOWNLOAD)
 		message("Using download url: ${_URL}")
 
-		file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
-		list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
-		list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+		# Retry downloads to make transient network failures less disruptive.
+		set(STATUS_CODE -1)
+		set(ERROR_MESSAGE "unknown error")
+		foreach(_ATTEMPT RANGE 1 ${ETLEGACY_DOWNLOAD_RETRIES})
+			file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
+			list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+			list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+
+			if(${STATUS_CODE} EQUAL 0)
+				break()
+			endif()
+
+			if(_ATTEMPT LESS ETLEGACY_DOWNLOAD_RETRIES)
+				message(WARNING "Download attempt ${_ATTEMPT}/${ETLEGACY_DOWNLOAD_RETRIES} failed: ${ERROR_MESSAGE}. Retrying in ${ETLEGACY_DOWNLOAD_SLEEP_SECONDS}s.")
+				execute_process(COMMAND ${CMAKE_COMMAND} -E sleep ${ETLEGACY_DOWNLOAD_SLEEP_SECONDS})
+			endif()
+		endforeach()
 
 		if(NOT (${STATUS_CODE} EQUAL 0))
 			message(WARNING "Downgrading https to http, possible remote certificate issue: ${ERROR_MESSAGE}")
 			string(REPLACE "https://" "http://" _URL ${_URL})
 
-			file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
+			# Retry again after fallback to HTTP for hosts with TLS/certificate issues.
+			set(STATUS_CODE -1)
+			set(ERROR_MESSAGE "unknown error")
+			foreach(_ATTEMPT RANGE 1 ${ETLEGACY_DOWNLOAD_RETRIES})
+				file(DOWNLOAD ${_URL} "${_PATH}" SHOW_PROGRESS TIMEOUT 30 STATUS DOWNLOAD_STATUS)
+				list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
+				list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
 
-			# Separate the returned status code, and error message.
-			list(GET DOWNLOAD_STATUS 0 STATUS_CODE)
-			list(GET DOWNLOAD_STATUS 1 ERROR_MESSAGE)
+				if(${STATUS_CODE} EQUAL 0)
+					break()
+				endif()
+
+				if(_ATTEMPT LESS ETLEGACY_DOWNLOAD_RETRIES)
+					message(WARNING "HTTP download attempt ${_ATTEMPT}/${ETLEGACY_DOWNLOAD_RETRIES} failed: ${ERROR_MESSAGE}. Retrying in ${ETLEGACY_DOWNLOAD_SLEEP_SECONDS}s.")
+					execute_process(COMMAND ${CMAKE_COMMAND} -E sleep ${ETLEGACY_DOWNLOAD_SLEEP_SECONDS})
+				endif()
+			endforeach()
 
 			# Check if download was successful.
 			if(${STATUS_CODE} EQUAL 0)
