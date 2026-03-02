@@ -3875,10 +3875,15 @@ static void FindIndexMatch(const char *s)
  */
 static void PrintCvarMatchLine(const char *s)
 {
-	char value[TRUNCATE_LENGTH];
+	char       value[TRUNCATE_LENGTH];
+	char       *currentValue;
+	const char *valueColor;
 
-	Com_TruncateLongString(value, Cvar_VariableString(s));
-	Com_Printf("    ^9%-*s^9 = \"^5%s^9\"\n", cvarMatchMaxWidth, s, value);
+	currentValue = Cvar_VariableString(s);
+	valueColor   = !Q_stricmp(currentValue, Cvar_DefaultString(s)) ? "^2" : "^3";
+
+	Com_TruncateLongString(value, currentValue);
+	Com_Printf("    ^9%-*s^9 = \"%s%s^9\"\n", cvarMatchMaxWidth, s, valueColor, value);
 }
 
 /**
