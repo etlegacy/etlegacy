@@ -323,6 +323,57 @@ qboolean G_CheckComplaint(gentity_t *self, gentity_t *inflictor, gentity_t *atta
 	return qfalse;
 }
 
+#define RANGE_NEAREST_TOI 512
+
+/**
+ * @brief Find the closest OID trigger from player
+ * @param[in,out] ent Entity
+ */
+gentity_t *G_FindNearestTOI(gentity_t *ent)
+{
+	int           i, num;
+	int           touch[MAX_GENTITIES];
+	gentity_t     *hit = NULL;
+	vec3_t        mins;
+	vec3_t        maxs;
+	static vec3_t range = { RANGE_NEAREST_TOI, RANGE_NEAREST_TOI, RANGE_NEAREST_TOI };
+
+	if (!ent->client)
+	{
+		return hit;
+	}
+
+	VectorSubtract(ent->client->ps.origin, range, mins);
+	VectorAdd(ent->client->ps.origin, range, maxs);
+
+	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
+
+	for (i = 0; i < num; i++)
+	{
+		gentity_t *tmp = &g_entities[touch[i]];
+
+		if (tmp->s.eType != ET_OID_TRIGGER)
+		{
+			continue;
+		}
+
+		if (!BG_PlayerTouchesCylender(&ent->client->ps, &tmp->s, level.time, RANGE_NEAREST_TOI))
+		{
+			continue;
+		}
+
+		// does the new objective is closer from the player than the previous one ?
+		if (hit && VectorDistance(ent->client->ps.origin, tmp->s.origin) >= VectorDistance(ent->client->ps.origin, tmp->s.origin))
+		{
+			continue;
+		}
+
+		hit = tmp;
+	}
+
+	return hit;
+}
+
 /**
  * @brief player_die
  * @param[in,out] self
@@ -659,7 +710,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 	// reward attacker for killing player on TOI area
-	if (self->client->touchingTOI)
+	if (self->client->touchingTOI || G_FindNearestTOI(self))
 	{
 		if (attackerClient && !dieFromSameTeam)
 		{
