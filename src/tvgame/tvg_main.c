@@ -237,6 +237,7 @@ qboolean TVG_SnapshotCallback(int entityNum, int clientNum)
 }
 
 int dll_com_trapGetValue;
+int dll_trap_CvarSetDescription;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -462,6 +463,7 @@ static ID_INLINE void TVG_SetupExtensions(void)
 	if (value[0])
 	{
 		dll_com_trapGetValue = Q_atoi(value);
+		TVG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
 	}
 }
 
