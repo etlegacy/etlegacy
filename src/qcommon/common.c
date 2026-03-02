@@ -3802,6 +3802,15 @@ static char shortestMatch[MAX_TOKEN_CHARS];
 static int  matchCount;
 static int  matchIndex;
 static int  cvarMatchMaxWidth;
+#define MAX_COMPLETION_PRINT_MATCHES  2048  // MAX_CVARS
+typedef struct
+{
+	char text[MAX_TOKEN_CHARS];
+	qboolean isCvar;
+} completionPrintEntry_t;
+static completionPrintEntry_t completionPrintEntries[MAX_COMPLETION_PRINT_MATCHES];
+static int                    completionPrintEntryCount;
+static qboolean               completionCollectCvarSource;
 /// field we are working on, passed to Field_AutoComplete(&g_consoleCommand for instance)
 static field_t *completionField;
 
@@ -3861,18 +3870,6 @@ static void FindIndexMatch(const char *s)
 }
 
 /**
- * @brief PrintMatches
- * @param[in] s
- */
-static void PrintMatches(const char *s)
-{
-	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
-	{
-		Com_Printf("    ^5%s\n", s);
-	}
-}
-
-/**
  * @brief PrintCvarMatchLine
  * @param[in] s
  */
@@ -3885,36 +3882,101 @@ static void PrintCvarMatchLine(const char *s)
 }
 
 /**
- * @brief FindCvarMatchMaxWidth
+ * @brief PrintMatches
  * @param[in] s
  */
-static void FindCvarMatchMaxWidth(const char *s)
+static void PrintMatches(const char *s)
 {
-	int matchLength;
+	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
+	{
+		Com_Printf("    ^5%s\n", s);
+	}
+}
 
+/**
+ * @brief CompletionPrintSortComparator
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
+static int CompletionPrintSortComparator(const void *a, const void *b)
+{
+	const completionPrintEntry_t *entryA = (const completionPrintEntry_t *)a;
+	const completionPrintEntry_t *entryB = (const completionPrintEntry_t *)b;
+	int                          result;
+
+	result = Q_stricmp(entryA->text, entryB->text);
+	if (result != 0)
+	{
+		return result;
+	}
+
+	// Keep commands before cvar details when names collide.
+	return (int)entryA->isCvar - (int)entryB->isCvar;
+}
+
+/**
+ * @brief CompletionPrintReset
+ */
+static void CompletionPrintReset(void)
+{
+	completionPrintEntryCount   = 0;
+	cvarMatchMaxWidth           = 0;
+	completionCollectCvarSource = qfalse;
+}
+
+/**
+ * @brief CompletionPrintCollect
+ * @param[in] s
+ */
+static void CompletionPrintCollect(const char *s)
+{
 	if (Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
 		return;
 	}
 
-	matchLength = (int)strlen(s);
-
-	// Cache the widest cvar name so all '=' separators can be column aligned.
-	if (matchLength > cvarMatchMaxWidth)
+	if (completionPrintEntryCount >= MAX_COMPLETION_PRINT_MATCHES)
 	{
-		cvarMatchMaxWidth = matchLength;
+		return;
 	}
+
+	Q_strncpyz(completionPrintEntries[completionPrintEntryCount].text, s, sizeof(completionPrintEntries[completionPrintEntryCount].text));
+	completionPrintEntries[completionPrintEntryCount].isCvar = completionCollectCvarSource;
+
+	// Cache the widest cvar name so all '=' separators can be column aligned for cvar detail lines.
+	if (completionCollectCvarSource)
+	{
+		int matchLength = (int)strlen(s);
+		if (matchLength > cvarMatchMaxWidth)
+		{
+			cvarMatchMaxWidth = matchLength;
+		}
+	}
+
+	completionPrintEntryCount++;
 }
 
 /**
- * @brief PrintCvarMatches
- * @param[in] s
+ * @brief CompletionPrintSorted
+ * @param[in] printCvarDetails
  */
-static void PrintCvarMatches(const char *s)
+static void CompletionPrintSorted(qboolean printCvarDetails)
 {
-	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
+	int i;
+
+	qsort(completionPrintEntries, completionPrintEntryCount, sizeof(completionPrintEntries[0]), CompletionPrintSortComparator);
+
+	for (i = 0; i < completionPrintEntryCount; i++)
 	{
-		PrintCvarMatchLine(s);
+		if (printCvarDetails && completionPrintEntries[i].isCvar)
+		{
+			PrintCvarMatchLine(completionPrintEntries[i].text);
+		}
+		else
+		{
+			Com_Printf("    ^5%s\n", completionPrintEntries[i].text);
+		}
 	}
 }
 
@@ -3984,7 +4046,9 @@ void Field_CompleteKeyname(void)
 
 	if (!Field_Complete())
 	{
-		Key_KeynameCompletion(PrintMatches);
+		CompletionPrintReset();
+		Key_KeynameCompletion(CompletionPrintCollect);
+		CompletionPrintSorted(qfalse);
 	}
 }
 #endif // DEDICATED
@@ -4005,7 +4069,9 @@ void Field_CompleteFilenameMultiple(const char *dir, int numext, const char **ex
 
 	if (!Field_Complete())
 	{
-		FS_FilenameCompletion(dir, numext, ext, qfalse, PrintMatches, allowNonPureFilesOnDisk);
+		CompletionPrintReset();
+		FS_FilenameCompletion(dir, numext, ext, qfalse, CompletionPrintCollect, allowNonPureFilesOnDisk);
+		CompletionPrintSorted(qfalse);
 	}
 }
 
@@ -4026,7 +4092,9 @@ void Field_CompleteFilename(const char *dir, const char *ext, qboolean stripExt,
 
 	if (!Field_Complete())
 	{
-		FS_FilenameCompletion(dir, 1, tmp, stripExt, PrintMatches, allowNonPureFilesOnDisk);
+		CompletionPrintReset();
+		FS_FilenameCompletion(dir, 1, tmp, stripExt, CompletionPrintCollect, allowNonPureFilesOnDisk);
+		CompletionPrintSorted(qfalse);
 	}
 }
 
@@ -4161,18 +4229,22 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 
 		if (!Field_Complete())
 		{
-			// run through again, printing matches
+			// Run through again, collect matches, then print in alphabetical order.
+			CompletionPrintReset();
+
 			if (doCommands)
 			{
-				Cmd_CommandCompletion(PrintMatches);
+				completionCollectCvarSource = qfalse;
+				Cmd_CommandCompletion(CompletionPrintCollect);
 			}
 
 			if (doCvars)
 			{
-				cvarMatchMaxWidth = 0;
-				Cvar_CommandCompletion(FindCvarMatchMaxWidth);
-				Cvar_CommandCompletion(PrintCvarMatches);
+				completionCollectCvarSource = qtrue;
+				Cvar_CommandCompletion(CompletionPrintCollect);
 			}
+
+			CompletionPrintSorted(qtrue);
 		}
 	}
 }
