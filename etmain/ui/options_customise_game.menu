@@ -26,9 +26,12 @@ menuDef {
 
 // Player //
 #define PLAYER_Y SUBWINDOW_OPTION_Y_START
-#define PLAYER_H SUBWINDOW_OPTION_COMPUTE_H(1)
+#define PLAYER_H SUBWINDOW_OPTION_COMPUTE_H(4)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, PLAYER_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, PLAYER_H, _("PLAYER"))
 	EDITFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(PLAYER_Y, 1), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Player Alias:"), .2, 8, "name", 36, 18, _("Enter the name that you wish to be known by to others on servers"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(PLAYER_Y, 2), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Auto Pickup:"), .2, 8, "cg_autoactive", _("Toggle auto pickup items and weapons"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(PLAYER_Y, 3), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Instant Tapout:"), .2, 8, "cg_instanttapout", _("Toggle instant tap out on respawn happen"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(PLAYER_Y, 4), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Optimize Prediction:"), .2, 8, "cg_optimizePrediction", _("Toggle prediction optimization for a smoothness game experience"))
 
 // Physics //
 #define PHYSICS_Y (PLAYER_Y + PLAYER_H + SUBWINDOW_OPTION_Y_PADDING)
@@ -46,48 +49,64 @@ menuDef {
 
 // Weapons //
 #define WEAPONS_Y (MOVEMENT_Y + MOVEMENT_H + SUBWINDOW_OPTION_Y_PADDING)
-#define WEAPONS_H SUBWINDOW_OPTION_COMPUTE_H(4)
+#define WEAPONS_H SUBWINDOW_OPTION_COMPUTE_H(10)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, WEAPONS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, WEAPONS_H, _("WEAPONS"))
 	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 1), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Automatic Reload:"), .2, 8, "cg_autoReload", _("Automatically reload when ammunition clip runs out"))
-	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 2), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Autoswitch:"), .2, 8, "cg_noAmmoAutoSwitch", _("Automatically switch to a new weapon when out of ammunition"))
-	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 3), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Alt Weapon Reloads:"), .2, 8, "cg_weapaltReloads", _("Provide an alternative way to reload a weapon\nthat doesn't have weapon an alternative fire"))
-	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 4), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Alt Weapon Switches:"), .2, 8, "cg_weapaltSwitches", _("Provide an alternative way to use an alt weapon\nby pressing the respective weaponbank bind"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 2), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("No Ammo Auto Switch:"), .2, 8, "cg_noAmmoAutoSwitch", _("Automatically switch to a new weapon when out of ammunition"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 3), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("No Ammo Sounds Switch:"), .2, 8, "cg_weapSwitchNoAmmoSounds", _("Play a song when trying to switch to a weapon with no ammo out"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 4), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Alt Weapon Reloads:"), .2, 8, "cg_weapaltReloads", _("Provide an alternative way to reload a weapon\nthat doesn't have weapon an alternative fire"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 5), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Alt Weapon Switches:"), .2, 8, "cg_weapaltSwitches", _("Provide an alternative way to use an alt weapon\nby pressing the respective weaponbank bind"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 6), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Pickup Auto Switch:"), .2, 8, "cg_autoswitch", cvarFloatList { "Off" 0 "Always Switch" 1 "If New" 2 "If Better" 3 "New or Better" 4}, _("Automatically switch to a new weapon on picking weapon"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 7), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon Bank Collision:"), .2, 8, "cg_weapBankCollisions", _("Handle weapon bank collisions when multiple weapons\nuse the same bank number (e.g. Soldier with PF and SMG)"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 8), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, "cg_weaponCycleDelay", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_OPTION_WIDTH_L)-6), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 8), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon Cycle Delay:"), .2, 8, "cg_weaponCycleDelay" 150 0 500, _("Handle the minimum required time between banks selection to be issued"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 9), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Cycle All Weapons:"), .2, 8, "cg_cycleAllWeaps", _("Toggle the cycling to parse each weapons in bank before cycling another bank"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPONS_Y, 10), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("MG Auto Prone:"), .2, 8, "cg_weapaltMgAutoProne", _("Toggle automatic proning on deploying MG with alternative fire"))
 
 // Scope //
 #define SCOPE_Y (WEAPONS_Y + WEAPONS_H + SUBWINDOW_OPTION_Y_PADDING)
-#define SCOPE_H SUBWINDOW_OPTION_COMPUTE_H(3)
+#define SCOPE_H SUBWINDOW_OPTION_COMPUTE_H(4)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, SCOPE_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, SCOPE_H, _("SCOPE"))
 	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SCOPE_Y, 1), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Weapon Cycle for Zoom:"), .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Off" 0 "On (normal)" 1 "On (reverse)" 2 }, _("Weapon switch will zoom in and out while scoped, rather than switch weapons"))
 	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SCOPE_Y, 2), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Default Zoom Level:"), .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "All the way Out" 32 "Far" 24 "Near" 10 "All the Way In" 4 }, _("Set the default zoom level for scopes"))
 	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SCOPE_Y, 3), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Zoom Levels:"), .2, 8, "cg_zoomstepsniper", cvarFloatList { "7 Levels of Zoom" 4 "14 Levels of Zoom" 2 }, _("Specify the number of zoom levels"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SCOPE_Y, 4), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, "cg_weaponCycleDelay", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_OPTION_WIDTH_L)-6), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(SCOPE_Y, 4), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Sensitivity Scaler:"), .2, 8, "cg_scopedSensitivityScaler" .6 0 10, _("Set the scope movement sensitivity"))
 
 // Chat //
 #define CHAT_Y SUBWINDOW_OPTION_Y_START
-#define CHAT_H SUBWINDOW_OPTION_COMPUTE_H(5)
+#define CHAT_H SUBWINDOW_OPTION_COMPUTE_H(7)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, CHAT_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, CHAT_H, _("CHAT"))
 	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 1), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Quick Chat:"), .2, 8, "cg_quickChat", cvarFloatList { "Disabled" 0 "Team" 1 "Fireteam" 2 }, _("Specify receiver of quick radio messages"))
 	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 2), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Quick Chat Mode:"), .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, _("Use alpha or numeric keys to send radio messages"))
 	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 3), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Chat Icon Time:"), .2, 8, "cg_voiceSpriteTime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, _("Specify how long the chat icon appears above other players' heads"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 4), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Team chat only:"), .2, 8, "cg_teamChatsOnly", _("Play only team chat in-game"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 5), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Voice text:"), .2, 8, "cg_voiceText", _("Show voice text in-game"))
+    CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 6), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, "cg_teamChatTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_OPTION_WIDTH_L)-6), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 6), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Team Chat Time:"), .2, 8, "cg_teamChatTime" 8000 0 30000, _("Set the display duration of chat message"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CHAT_Y, 7), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Team Chat Mention:"), .2, 8, "cg_teamChatMention", _("Toggle chat name hilighting when @NAME is issuing in chat"))
 
 // Sounds //
 #define SOUND_Y (CHAT_Y + CHAT_H + SUBWINDOW_OPTION_Y_PADDING)
-#define SOUND_H SUBWINDOW_OPTION_COMPUTE_H(3)
+#define SOUND_H SUBWINDOW_OPTION_COMPUTE_H(5)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, SOUND_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, SOUND_H, _("SOUND"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 1), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Announcer:"), .2, 8, "cg_announcer", _("Play startup announcer voice"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 2), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game"))
-	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 3), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 3 "No Head Hit Sound" 5 "No Team Hit Sound" 9 }, _("Set hit sounds"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 3), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Team Voice chat:"), .2, 8, "cg_teamVoiceChatsOnly", _("Play only voice team chat in-game"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 4), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 3 "No Head Hit Sound" 5 "No Team Hit Sound" 9 }, _("Set hit sounds"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 5), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Reinforcement TickTock:"), .2, 8, "cg_reinforceTickTock", _("Play alternate tick/tock cadence during reinforcement countdown"))
 
 // Miscellaneous //
 #define MISC_Y (SOUND_Y + SOUND_H + SUBWINDOW_OPTION_Y_PADDING)
-#define MISC_H SUBWINDOW_OPTION_COMPUTE_H(5)
+#define MISC_H SUBWINDOW_OPTION_COMPUTE_H(7)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, MISC_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, MISC_H, _("MISCELLANEOUS"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 1), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo", _("Print important game messages to the console"))
-	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 2), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Auto-Action:"), .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, _("Perform automatic actions at the start or end of a round"))
-	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 3), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI"))
-	EDITFIELD(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 4), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Chat Log:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the chat log file (if empty logging is disabled)"))
-	EDITFIELD(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 5), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 18, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables."))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 2), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI"))
+	EDITFIELD(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 3), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Chat Log:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the chat log file (if empty logging is disabled)"))
+	EDITFIELD(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 4), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 18, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables."))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 5), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Limbo Class Click:"), .2, 8, "cg_limboClassClickConfirm", _("Toggle to stop Class Limbo Selection take effect immediately after selection"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 6), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Draw Notify Text:"), .2, 8, "cg_drawNotifyText", _("Print message starting by [cgnotify] to client"))
+	EDITFIELD(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 7), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Auto Command:"), .2, 8, "cg_autoCmd", 15, 13, _("Set a command to be executed on map start / restart"))
 
 // Buttons //
 	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_game ; open options)
