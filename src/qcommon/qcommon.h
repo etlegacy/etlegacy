@@ -721,6 +721,7 @@ int Cvar_VariableIntegerValue(const char *var_name);
 
 char *Cvar_VariableString(const char *var_name);
 char *Cvar_DefaultString(const char *var_name);
+const char *Cvar_VariableDescription(const char *var_name);
 void Cvar_VariableStringBuffer(const char *var_name, char *buffer, size_t bufsize);
 // returns an empty string if not defined
 void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, size_t bufsize);

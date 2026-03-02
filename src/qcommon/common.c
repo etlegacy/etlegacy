@@ -3802,6 +3802,7 @@ static char shortestMatch[MAX_TOKEN_CHARS];
 static int  matchCount;
 static int  matchIndex;
 static int  cvarMatchMaxWidth;
+#define CVAR_COMPLETION_DESCRIPTION_LIMIT  150
 #define MAX_COMPLETION_PRINT_MATCHES  2048  // MAX_CVARS
 typedef struct
 {
@@ -3876,14 +3877,73 @@ static void FindIndexMatch(const char *s)
 static void PrintCvarMatchLine(const char *s)
 {
 	char       value[TRUNCATE_LENGTH];
+	char       formattedDescription[CVAR_COMPLETION_DESCRIPTION_LIMIT + 4];
 	char       *currentValue;
+	const char *description;
 	const char *valueColor;
+	size_t     descriptionOut;
+	qboolean   descriptionTruncated;
 
 	currentValue = Cvar_VariableString(s);
+	description  = Cvar_VariableDescription(s);
 	valueColor   = !Q_stricmp(currentValue, Cvar_DefaultString(s)) ? "^2" : "^3";
 
+	// Strip newline characters and trim long cvar descriptions in completion output.
+	descriptionOut       = 0;
+	descriptionTruncated = qfalse;
+	while (description && *description)
+	{
+		char currentCharacter = *description++;
+
+		if (currentCharacter == '\n' || currentCharacter == '\r')
+		{
+			continue;
+		}
+
+		if (descriptionOut < CVAR_COMPLETION_DESCRIPTION_LIMIT)
+		{
+			formattedDescription[descriptionOut++] = currentCharacter;
+		}
+		else
+		{
+			descriptionTruncated = qtrue;
+			break;
+		}
+	}
+
+	if (!descriptionTruncated && descriptionOut == CVAR_COMPLETION_DESCRIPTION_LIMIT)
+	{
+		while (description && *description)
+		{
+			char currentCharacter = *description++;
+
+			if (currentCharacter != '\n' && currentCharacter != '\r')
+			{
+				descriptionTruncated = qtrue;
+				break;
+			}
+		}
+	}
+
+	if (descriptionTruncated)
+	{
+		formattedDescription[descriptionOut++] = '.';
+		formattedDescription[descriptionOut++] = '.';
+		formattedDescription[descriptionOut++] = '.';
+	}
+	formattedDescription[descriptionOut] = '\0';
+
 	Com_TruncateLongString(value, currentValue);
-	Com_Printf("    ^9%-*s^9 = \"%s%s^9\"\n", cvarMatchMaxWidth, s, valueColor, value);
+
+	// Print cvar descriptions in completion output when available.
+	if (formattedDescription[0] != '\0')
+	{
+		Com_Printf("    ^9%-*s^9 = \"%s%s^9\" - ^z%s\n", cvarMatchMaxWidth, s, valueColor, value, formattedDescription);
+	}
+	else
+	{
+		Com_Printf("    ^9%-*s^9 = \"%s%s^9\"\n", cvarMatchMaxWidth, s, valueColor, value);
+	}
 }
 
 /**
