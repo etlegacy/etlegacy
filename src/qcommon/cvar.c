@@ -1740,6 +1740,31 @@ void Cvar_SetDescription(cvar_t *cv, const char *varDescription)
 }
 
 /**
+ * @brief Cvar_SetDescriptionByName
+ * @param[in] varName
+ * @param[in] varDescription
+ * @return qtrue if a matching cvar exists and description was updated
+ */
+qboolean Cvar_SetDescriptionByName(const char *varName, const char *varDescription)
+{
+	cvar_t *cv;
+
+	if (!varName || !*varName || !varDescription || !*varDescription)
+	{
+		return qfalse;
+	}
+
+	cv = Cvar_FindVar(varName);
+	if (!cv)
+	{
+		return qfalse;
+	}
+
+	Cvar_SetDescription(cv, varDescription);
+	return qtrue;
+}
+
+/**
  * @brief Basically a slightly modified Cvar_Get for the interpreted modules
  *
  * @param[in,out] vmCvar

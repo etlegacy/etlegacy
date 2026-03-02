@@ -348,6 +348,7 @@ typedef struct itemDef_s
 	const char *onEnter;
 	const char *onPaste;
 
+	const char *rawTooltip;         ///< Tooltip text without parser-added cvar/cmd annotation
 	struct itemDef_s *toolTipData;  ///< Tag an item to this item for auto-help popups
 
 	/// ETL: checkbox for bitflags in an integer cvar. The value it has is the bitvalue (1,2,4,8 etc)

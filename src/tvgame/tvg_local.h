@@ -716,7 +716,9 @@ NORETURN_MSVC void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, for
 
 // extension interface
 qboolean trap_GetValue(char *value, int valueSize, const char *key);
+void trap_Cvar_SetDescription(const char *cvarName, const char *description);
 extern int dll_com_trapGetValue;
+extern int dll_trap_CvarSetDescription;
 
 qboolean trap_TVG_GetPlayerstate(int clientNum, playerState_t *ps);
 

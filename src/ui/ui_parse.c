@@ -2147,6 +2147,7 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 	}
 
 	translatedParsedText = DC->translateString(token.string);
+	item->rawTooltip     = String_Alloc(translatedParsedText);
 
 	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
 	{
