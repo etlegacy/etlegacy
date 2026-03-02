@@ -1263,7 +1263,6 @@ void CL_InitCGame(void)
 	info    = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SERVERINFO];
 	mapname = Info_ValueForKey(info, "mapname");
 	Com_sprintf(cl.mapname, sizeof(cl.mapname), "maps/%s.bsp", mapname);
-
 	// mark all extensions as inactive
 	VM_Ext_ResetActive();
 
@@ -1583,7 +1582,6 @@ void CL_FirstSnapshot(void)
 		DB_UpdateFavorite(cl_profile->string, cls.servername);
 	}
 #endif
-
 	if (cl_showTimeDelta->integer)
 	{
 		Com_Printf("^2(first snapshot | serverTimeDelta = %i)\n", cl.serverTimeDelta);

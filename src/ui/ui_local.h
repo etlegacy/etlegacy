@@ -580,6 +580,14 @@ typedef struct
 	char serverStatusAddress[MAX_ADDRESSLENGTH];
 	serverStatusInfo_t serverStatusInfo;
 	int nextServerStatusRefresh;
+	char lastServerAddress[MAX_ADDRESSLENGTH];
+	char lastServerStatusInfo[MAX_INFO_STRING];
+	int lastServerStatusRefresh;
+	int lastServerPing;
+	int lastServerPingTime;
+	int lastServerPingRequestTime;
+	int lastServerPingFirstRequestTime;
+	qboolean lastServerOnline;
 
 	int currentCrosshair;
 	int startPostGameTime;

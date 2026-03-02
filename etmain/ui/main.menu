@@ -9,6 +9,10 @@
 #define MENU_WIDTH		128
 #define MENU_HEIGHT		248
 #define GROUP_NAME		"grpMain"
+#define LASTSERVER_WIDTH	240
+#define LASTSERVER_HEIGHT	112
+#define LASTSERVER_X		WINDOW_WIDTH-LASTSERVER_WIDTH
+#define LASTSERVER_Y		0
 
 // Opener //
 menuDef {
@@ -97,6 +101,99 @@ menuDef {
 	//WINDOW( _("WELCOME"), 50 )
 	SUBWINDOW( 0, 0, MENU_WIDTH, MENU_HEIGHT, _("WELCOME") )
 	execKey "c" { close main ; open main_quickconnect }
+
+// Last server //
+	SUBWINDOW( LASTSERVER_X, LASTSERVER_Y, LASTSERVER_WIDTH, LASTSERVER_HEIGHT, _("LAST SERVER") )
+	LABEL( LASTSERVER_X+6, LASTSERVER_Y+18, 60, 10, _("Address:"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	itemDef {
+		name		"lastServerAddress"
+		group		GROUP_NAME
+		rect		$evalfloat(LASTSERVER_X+70) $evalfloat(LASTSERVER_Y+18) $evalfloat(LASTSERVER_WIDTH-76) 10
+		ownerDraw	UI_LASTSERVER_ADDRESS
+		textfont	UI_FONT_COURBD_21
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.2
+		textalign	ITEM_ALIGN_LEFT
+		textalignx	4
+		textaligny	8
+		forecolor	.9 .9 .9 1
+		visible		1
+		decoration
+	}
+
+	LABEL( LASTSERVER_X+6, LASTSERVER_Y+30, 60, 10, _("Ping:"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	itemDef {
+		name		"lastServerPing"
+		group		GROUP_NAME
+		rect		$evalfloat(LASTSERVER_X+70) $evalfloat(LASTSERVER_Y+30) $evalfloat(LASTSERVER_WIDTH-76) 10
+		ownerDraw	UI_LASTSERVER_PING
+		textfont	UI_FONT_COURBD_21
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.2
+		textalign	ITEM_ALIGN_LEFT
+		textalignx	4
+		textaligny	8
+		forecolor	.9 .9 .9 1
+		visible		1
+		decoration
+	}
+
+	LABEL( LASTSERVER_X+6, LASTSERVER_Y+42, 60, 10, _("Name:"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	itemDef {
+		name		"lastServerName"
+		group		GROUP_NAME
+		rect		$evalfloat(LASTSERVER_X+70) $evalfloat(LASTSERVER_Y+42) $evalfloat(LASTSERVER_WIDTH-76) 10
+		ownerDraw	UI_LASTSERVER_NAME
+		textfont	UI_FONT_COURBD_21
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.2
+		textalign	ITEM_ALIGN_LEFT
+		textalignx	4
+		textaligny	8
+		forecolor	.9 .9 .9 1
+		visible		1
+		decoration
+	}
+
+	LABEL( LASTSERVER_X+6, LASTSERVER_Y+54, 60, 10, _("Map:"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	itemDef {
+		name		"lastServerMap"
+		group		GROUP_NAME
+		rect		$evalfloat(LASTSERVER_X+70) $evalfloat(LASTSERVER_Y+54) $evalfloat(LASTSERVER_WIDTH-76) 10
+		ownerDraw	UI_LASTSERVER_MAP
+		textfont	UI_FONT_COURBD_21
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.2
+		textalign	ITEM_ALIGN_LEFT
+		textalignx	4
+		textaligny	8
+		forecolor	.9 .9 .9 1
+		visible		1
+		decoration
+	}
+
+	LABEL( LASTSERVER_X+6, LASTSERVER_Y+66, 60, 10, _("Players:"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	itemDef {
+		name		"lastServerHumans"
+		group		GROUP_NAME
+		rect		$evalfloat(LASTSERVER_X+70) $evalfloat(LASTSERVER_Y+66) $evalfloat(LASTSERVER_WIDTH-76) 10
+		ownerDraw	UI_LASTSERVER_PLAYERS
+		textfont	UI_FONT_COURBD_21
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.2
+		textalign	ITEM_ALIGN_LEFT
+		textalignx	4
+		textaligny	8
+		forecolor	.9 .9 .9 1
+		visible		1
+		decoration
+	}
+
+	BUTTONEXT( LASTSERVER_X+6, LASTSERVER_Y+88, LASTSERVER_WIDTH-12, 18, _("CONNECT"), .3, 14,
+		clearFocus ; close main ; close backgroundmusic ; close background_1 ; uiScript connectLastServer,
+		cvarTest "ui_lastConnectedValid"
+		enableCvar { 1 }
+	)
 
 // Active profile
 	CVARLABEL( 6+((MENU_WIDTH-12)/2), 18, MENU_WIDTH-12, 10, "cl_profile", .2, ITEM_ALIGN_CENTER, 0, 8 )
