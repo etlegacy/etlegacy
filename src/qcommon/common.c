@@ -3801,6 +3801,7 @@ static char completionString[MAX_TOKEN_CHARS];
 static char shortestMatch[MAX_TOKEN_CHARS];
 static int  matchCount;
 static int  matchIndex;
+static int  cvarMatchMaxWidth;
 /// field we are working on, passed to Field_AutoComplete(&g_consoleCommand for instance)
 static field_t *completionField;
 
@@ -3872,17 +3873,48 @@ static void PrintMatches(const char *s)
 }
 
 /**
+ * @brief PrintCvarMatchLine
+ * @param[in] s
+ */
+static void PrintCvarMatchLine(const char *s)
+{
+	char value[TRUNCATE_LENGTH];
+
+	Com_TruncateLongString(value, Cvar_VariableString(s));
+	Com_Printf("    ^9%-*s^9 = \"^5%s^9\"\n", cvarMatchMaxWidth, s, value);
+}
+
+/**
+ * @brief FindCvarMatchMaxWidth
+ * @param[in] s
+ */
+static void FindCvarMatchMaxWidth(const char *s)
+{
+	int matchLength;
+
+	if (Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
+	{
+		return;
+	}
+
+	matchLength = (int)strlen(s);
+
+	// Cache the widest cvar name so all '=' separators can be column aligned.
+	if (matchLength > cvarMatchMaxWidth)
+	{
+		cvarMatchMaxWidth = matchLength;
+	}
+}
+
+/**
  * @brief PrintCvarMatches
  * @param[in] s
  */
 static void PrintCvarMatches(const char *s)
 {
-	char value[TRUNCATE_LENGTH];
-
 	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
-		Com_TruncateLongString(value, Cvar_VariableString(s));
-		Com_Printf("    ^9%s = \"^5%s^9\"\n", s, value);
+		PrintCvarMatchLine(s);
 	}
 }
 
@@ -4006,17 +4038,21 @@ void Field_CompleteFilename(const char *dir, const char *ext, qboolean stripExt,
  */
 void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 {
-	int completionArgument = 0;
+	int      completionArgument = 0;
+	int      cmdArgc            = 0;
+	qboolean hasTrailingSpace   = qfalse;
 
 	// Skip leading whitespace and quotes
 	cmd = Com_SkipCharset(cmd, " \"");
 
 	Cmd_TokenizeStringIgnoreQuotes(cmd);
-	completionArgument = Cmd_Argc();
+	cmdArgc            = Cmd_Argc();
+	completionArgument = cmdArgc;
 
 	// If there is trailing whitespace on the cmd
 	if (*(cmd + strlen(cmd) - 1) == ' ')
 	{
+		hasTrailingSpace    = qtrue;
 		completionString[0] = 0;
 		completionArgument++;
 	}
@@ -4061,8 +4097,9 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 
 	if (completionArgument > 1)
 	{
-		const char *baseCmd = Cmd_Argv(0);
-		char       *p;
+		const char  *baseCmd = Cmd_Argv(0);
+		char        *p;
+		cvarFlags_t baseCmdFlags = CVAR_NONEXISTENT;
 
 #if defined(SLASH_COMMAND) && !defined(DEDICATED)
 		// This should always be true
@@ -4078,6 +4115,19 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 		}
 		else
 		{
+			if (hasTrailingSpace && cmdArgc == 1 && doCvars)
+			{
+				baseCmdFlags = Cvar_Flags(baseCmd);
+
+				// If TAB is pressed on a complete single cvar token, always print its formatted info line.
+				if (!(baseCmdFlags & CVAR_NONEXISTENT))
+				{
+					cvarMatchMaxWidth = (int)strlen(baseCmd);
+					PrintCvarMatchLine(baseCmd);
+					return;
+				}
+			}
+
 			Cmd_CompleteArgument(baseCmd, cmd, completionArgument);
 		}
 	}
@@ -4119,6 +4169,8 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 
 			if (doCvars)
 			{
+				cvarMatchMaxWidth = 0;
+				Cvar_CommandCompletion(FindCvarMatchMaxWidth);
 				Cvar_CommandCompletion(PrintCvarMatches);
 			}
 		}
