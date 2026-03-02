@@ -1484,6 +1484,7 @@ void Cmd_Notarget_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Debug_Crash_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_DropObjective_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_FollowPrevious_f(gentity_t *ent, unsigned int dwCommand, int value);
