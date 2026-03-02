@@ -3980,7 +3980,7 @@ static void CompletionPrintSorted(qboolean printCvarDetails)
 		}
 		else
 		{
-			Com_Printf("    ^5%s\n", completionPrintEntries[i].text);
+			Com_Printf("    ^m%s\n", completionPrintEntries[i].text);
 		}
 	}
 }
