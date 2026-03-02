@@ -755,6 +755,7 @@ char *Cvar_InfoString_Big(int bit);
 void Cvar_InfoStringBuffer(int bit, char *buff, size_t buffsize);
 void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 void Cvar_SetDescription(cvar_t *cv, const char *varDescription);
+qboolean Cvar_SetDescriptionByName(const char *varName, const char *varDescription);
 
 void Cvar_Restart(qboolean unsetVM);
 void Cvar_Restart_f(void);
