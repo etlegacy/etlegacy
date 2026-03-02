@@ -3546,7 +3546,8 @@ void CheckExitRules(void)
 				}
 				else
 				{
-					if (g_suddenDeath.integer && DynamiteOnObjective() && g_gametype.integer != GT_WOLF_STOPWATCH)
+					// sudden death is disabled on second round of stopwatch
+					if (g_suddenDeath.integer && (g_gametype.integer != GT_WOLF_STOPWATCH || g_currentRound.integer == 0) && DynamiteOnObjective())
 					{
 						level.suddenDeath = 1;
 						return;
