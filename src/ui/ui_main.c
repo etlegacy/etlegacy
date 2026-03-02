@@ -37,6 +37,8 @@
 #include "ui_cvars.h"
 
 uiInfo_t uiInfo;
+int      dll_com_trapGetValue;
+int      dll_trap_CvarSetDescription;
 
 static const char *MonthAbbrev[] =
 {
@@ -84,6 +86,7 @@ static int UI_CampaignCount(qboolean singlePlayer);
 qboolean UI_CheckExecKey(int key);
 
 static void UI_ParseGameInfo(const char *teamFile);
+static void UI_RegisterCvarDescriptionsFromTooltips(void);
 
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
@@ -95,6 +98,30 @@ void UI_KeyEvent(int key, qboolean down);
 void UI_MouseEvent(int dx, int dy);
 void UI_Refresh(int realtime);
 qboolean _UI_IsFullscreen(void);
+
+static ID_INLINE void UI_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+{
+	if (trap_GetValue(value, valueSize, name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void UI_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+		UI_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
+	}
+}
 
 static uiMenuCommand_t UI_AdjustedMenuCommand(const uiMenuCommand_t menutype)
 {
@@ -1553,6 +1580,32 @@ void UI_Load(void)
 	UI_LoadMenus(menuSet, qtrue);
 	Menus_CloseAll();
 	Menus_ActivateByName(lastName, qtrue);
+}
+
+/**
+ * @brief Backfill missing engine cvar descriptions from parsed UI tooltips.
+ */
+static void UI_RegisterCvarDescriptionsFromTooltips(void)
+{
+	int i;
+	int j;
+
+	for (i = 0; i < menuCount; i++)
+	{
+		menuDef_t *menu = &Menus[i];
+
+		for (j = 0; j < menu->itemCount; j++)
+		{
+			itemDef_t *item = menu->items[j];
+
+			if (!item || !item->cvar || !item->cvar[0] || !item->rawTooltip || !item->rawTooltip[0])
+			{
+				continue;
+			}
+
+			trap_Cvar_SetDescription(item->cvar, item->rawTooltip);
+		}
+	}
 }
 
 /**
@@ -8647,6 +8700,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	UI_RegisterCvars();
 	UI_InitMemory();
 	trap_PC_RemoveAllGlobalDefines();
+	UI_SetupExtensions();
 
 	trap_Cvar_Set("ui_menuFiles", DEFAULT_MENU_FILE);   // we need to hardwire for wolfMP
 
@@ -8803,6 +8857,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	UI_ParseGameInfo("gameinfo.txt");
 
 	UI_LoadMenus(DEFAULT_MENU_FILE, qfalse);
+	UI_RegisterCvarDescriptionsFromTooltips();
 
 	Menus_CloseAll();
 
