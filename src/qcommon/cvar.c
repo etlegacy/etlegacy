@@ -149,6 +149,23 @@ char *Cvar_VariableString(const char *var_name)
 }
 
 /**
+ * @brief Cvar_DefaultString
+ * @param[in] var_name
+ * @return
+ */
+char *Cvar_DefaultString(const char *var_name)
+{
+	cvar_t *var;
+
+	var = Cvar_FindVar(var_name);
+	if (!var)
+	{
+		return "";
+	}
+	return var->resetString;
+}
+
+/**
  * @brief Cvar_VariableStringBuffer
  * @param[in] var_name
  * @param[out] buffer
