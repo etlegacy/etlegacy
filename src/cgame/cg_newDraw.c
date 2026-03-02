@@ -649,6 +649,13 @@ int old_mouse_x_pos = 0, old_mouse_y_pos = 0;
  */
 void CG_MouseEvent(int x, int y)
 {
+	// Track raw (unscaled) cursor while the HUD editor is in scaled mode.
+	// This keeps the OS cursor aligned with the editor's coordinate system.
+	// Alternative: scale in the engine or send absolute OS coordinates into CGAME.
+	static int      rawCursorX    = 0;
+	static int      rawCursorY    = 0;
+	static qboolean wasEditingHud = qfalse;
+
 	switch (cgs.eventHandling)
 	{
 	case CGAME_EVENT_DEMO:
@@ -673,7 +680,37 @@ void CG_MouseEvent(int x, int y)
 		int hudEditorSafeX = SCREEN_WIDTH_SAFE * HUD_EDITOR_SIZE_COEFF;
 		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * HUD_EDITOR_SIZE_COEFF;
 
-		cgs.cursorX += x;
+		if (cg.editingHud && !cg.fullScreenHudEditor)
+		{
+			// Initialize raw cursor from the scaled cursor when toggling into editor mode.
+			// Alternative: store raw cursor globally and update it even outside editor.
+			if (!wasEditingHud)
+			{
+				rawCursorX = (int)((float)cgs.cursorX / HUD_EDITOR_SIZE_COEFF);
+				rawCursorY = (int)((float)cgs.cursorY / HUD_EDITOR_SIZE_COEFF);
+			}
+
+			// Apply unscaled deltas, then scale for the HUD editor's virtual space.
+			// This avoids losing reach to the side panel when the editor is scaled down.
+			// Alternative: keep deltas scaled and expand hit-testing regions instead.
+			rawCursorX += x;
+			rawCursorY += y;
+			rawCursorX  = Com_Clamp(0, SCREEN_WIDTH_SAFE, rawCursorX);
+			rawCursorY  = Com_Clamp(0, SCREEN_HEIGHT_SAFE, rawCursorY);
+
+			cgs.cursorX = (int)((float)rawCursorX * HUD_EDITOR_SIZE_COEFF);
+			cgs.cursorY = (int)((float)rawCursorY * HUD_EDITOR_SIZE_COEFF);
+		}
+		else
+		{
+			// Non-editor paths use standard relative deltas and keep raw cursor in sync.
+			// Alternative: always update rawCursorX/Y from OS absolute position.
+			cgs.cursorX += x;
+			cgs.cursorY += y;
+			rawCursorX   = cgs.cursorX;
+			rawCursorY   = cgs.cursorY;
+		}
+
 		if (cg.editingHud && !cg.fullScreenHudEditor)
 		{
 			cgs.cursorX = Com_Clamp(0, hudEditorSafeX, cgs.cursorX);
@@ -683,7 +720,6 @@ void CG_MouseEvent(int x, int y)
 			cgs.cursorX = Com_Clamp(0, SCREEN_WIDTH_SAFE, cgs.cursorX);
 		}
 
-		cgs.cursorY += y;
 		if (cg.editingHud && !cg.fullScreenHudEditor)
 		{
 			cgs.cursorY = Com_Clamp(0, hudEditorSafeY, cgs.cursorY);
@@ -707,6 +743,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			CG_HudEditorMouseMove_Handling(cgs.cursorX, cgs.cursorY);
 		}
+		// Remember editor scaling state for re-entry so raw cursor stays consistent.
+		// Alternative: reset raw cursor on every editor entry.
+		wasEditingHud = (cg.editingHud && !cg.fullScreenHudEditor) ? qtrue : qfalse;
 #ifdef FEATURE_EDV
 	}
 	else
@@ -772,6 +811,11 @@ void CG_MouseEvent(int x, int y)
 #endif
 		break;
 	default:
+		// Leaving editor handling: reset raw cursor to match current cursor.
+		// Alternative: preserve raw cursor across non-editor modes.
+		wasEditingHud = qfalse;
+		rawCursorX    = cgs.cursorX;
+		rawCursorY    = cgs.cursorY;
 		if (cg.snap->ps.pm_type == PM_INTERMISSION)
 		{
 			CG_Debriefing_MouseEvent(x, y);
@@ -999,6 +1043,7 @@ void CG_EventHandling(int type, qboolean fForced)
 	{
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
+
 }
 
 void CG_KeyEvent(int key, qboolean down)
