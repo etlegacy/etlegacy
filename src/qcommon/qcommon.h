@@ -746,6 +746,8 @@ void Cvar_WriteVariables(fileHandle_t f, qboolean nodefaults);
 // writes lines containing "set variable value" for all variables
 // with the archive flag set to true.
 
+void Cvar_Dump_f(void);
+
 void Cvar_Init(void);
 
 char *Cvar_InfoString(int bit);
