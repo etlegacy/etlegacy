@@ -1416,6 +1416,16 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 				if (item->type == ITEM_TYPE_TRICHECKBOX)
 				{
 					int curvalue;
+					int maxvalue = 2;
+
+					if (item->typeData)
+					{
+						multiDef_t *multiPtr = (multiDef_t *)item->typeData;
+						if (multiPtr->count > 0)
+						{
+							maxvalue = multiPtr->count - 1;
+						}
+					}
 
 					if (key == K_MOUSE2)
 					{
@@ -1426,13 +1436,13 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 						curvalue = (int)(DC->getCVarValue(item->cvar) + 1);
 					}
 
-					if (curvalue > 2)
+					if (curvalue > maxvalue)
 					{
 						curvalue = 0;
 					}
 					else if (curvalue < 0)
 					{
-						curvalue = 2;
+						curvalue = maxvalue;
 					}
 
 					DC->setCVar(item->cvar, va("%i", curvalue));
