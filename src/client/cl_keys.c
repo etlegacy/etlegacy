@@ -576,7 +576,7 @@ void Field_CharEvent(field_t *edit, int ch)
 		return;
 	}
 
-	if (ch == CTRL('c'))      // ctrl-c clears the field
+	if (ch == CTRL('c') || ch == CTRL('u'))      // ctrl-c/u clears the entire input line
 	{
 		Field_Clear(edit);
 		return;
