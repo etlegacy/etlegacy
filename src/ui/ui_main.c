@@ -1466,7 +1466,12 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 	// Show the UI a bit differently on mobile devices
 	trap_PC_AddGlobalDefine("ANDROID");
 #endif
-
+#ifdef FEATURE_MULTIVIEW
+	trap_PC_AddGlobalDefine("FEATURE_MULTIVIEW");
+#endif
+#ifdef FEATURE_MULTIVIEW
+	trap_PC_AddGlobalDefine("FEATURE_EDV");
+#endif
 	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640));
 	trap_PC_AddGlobalDefine("__WINDOW_HEIGHT 480");
 

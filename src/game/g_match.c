@@ -821,6 +821,9 @@ void G_printMatchInfo(gentity_t *ent)
 	char      *ref;
 	char      guid[MAX_GUID_LENGTH + 1];
 	char      n2[MAX_STRING_CHARS];
+	int       namePadding;
+
+#define SCORES_NAME_MAX_LEN 15
 
 	ent->client->scoresIndex = ent->client->scoresCount = 0;
 
@@ -880,8 +883,10 @@ void G_printMatchInfo(gentity_t *ent)
 			}
 
 			Q_strncpyz(n2, cl->pers.netname, sizeof(n2));
+			Q_TruncateStr(n2, SCORES_NAME_MAX_LEN);
 			Q_CleanStr(n2);
-			n2[15] = 0;
+			Q_EscapeColorCodes(n2, '3');
+			namePadding = Q_CountPaddingWithColor(n2, SCORES_NAME_MAX_LEN);
 
 			ref = "^7";
 			tot_timex += cl->sess.time_axis;
@@ -918,14 +923,14 @@ void G_printMatchInfo(gentity_t *ent)
 
 			cnt++;
 #ifdef FEATURE_RATING
-			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
+			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-*s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
-			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+			G_SaveMatchInfo(ent, va("sc \"%-9s %-14s %s%-*s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
 #endif
 			                        guid,
 			                        aTeams[i],
 			                        ref,
-			                        n2,
+			                        namePadding, n2,
 			                        cl->sess.time_axis / 60000,
 			                        cl->sess.time_allies / 60000,
 			                        ref,

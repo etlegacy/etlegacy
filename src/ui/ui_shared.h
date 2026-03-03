@@ -90,9 +90,9 @@
 #define TEXTFIELD(x) (x == ITEM_TYPE_EDITFIELD || x == ITEM_TYPE_NUMERICFIELD)
 
 #ifdef CGAME
-#define STRING_POOL_SIZE    128 * 1024
+#define STRING_POOL_SIZE    (256 * 1024)
 #else
-#define STRING_POOL_SIZE    384 * 1024
+#define STRING_POOL_SIZE    (516 * 1024)
 #endif
 
 #define MAX_EDITFIELD       256

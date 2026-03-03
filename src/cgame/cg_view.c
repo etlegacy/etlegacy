@@ -989,6 +989,7 @@ static int CG_CalcFov(void)
 	float        x;
 	int          contents;
 	float        fov_x = 0.0f, fov_y;
+	float        weapzoomLerp = 0.0f;
 	int          inwater;
 
 	CG_Zoom();
@@ -1089,6 +1090,90 @@ static int CG_CalcFov(void)
 		}
 	}
 
+	if (cg.predictedPlayerState.pm_type != PM_INTERMISSION && !cg.showGameView)
+	{
+		qboolean weapzoomAllowed = CG_WeapzoomAllowed_f();
+
+		if (!weapzoomAllowed)
+		{
+			cg.weapzoomStartValid = qfalse;
+		}
+		else
+		{
+			float weapzoomTarget = cg_weapzoomFov.value;
+			float weapzoomFrac   = 1.0f;
+
+			if (!developer.integer)
+			{
+				weapzoomTarget = Com_Clamp(75.0f, 160.0f, weapzoomTarget);
+			}
+
+			if (cg.weapzoomActive != cg.weapzoomWasActive)
+			{
+				cg.weapzoomStartFov   = cg.weapzoomActive ? fov_x : (cg.weapzoomCurrentFov > 0.0f ? cg.weapzoomCurrentFov : fov_x);
+				cg.weapzoomStartValid = qtrue;
+				cg.weapzoomTime       = cg.time;
+				cg.weapzoomWasActive  = cg.weapzoomActive;
+				weapzoomFrac          = 0.0f;
+
+				if (cg.weapzoomActive)
+				{
+					if (cg_onWeapzoomStart.string[0] != '\0')
+					{
+						trap_SendConsoleCommand(va("%s\n", cg_onWeapzoomStart.string));
+					}
+				}
+				else
+				{
+					if (cg_onWeapzoomEnd.string[0] != '\0')
+					{
+						trap_SendConsoleCommand(va("%s\n", cg_onWeapzoomEnd.string));
+					}
+				}
+			}
+
+			if (cg.weapzoomStartValid)
+			{
+				int weapzoomTimeMs = cg.weapzoomActive ? cg_weapzoomInTimeMs.integer : cg_weapzoomOutTimeMs.integer;
+
+				if (weapzoomTimeMs > 0)
+				{
+					weapzoomFrac = (float)(cg.time - cg.weapzoomTime) / (float)weapzoomTimeMs;
+					weapzoomFrac = Com_Clamp(0.0f, 1.0f, weapzoomFrac);
+				}
+
+				weapzoomLerp = cg.weapzoomActive ? weapzoomFrac : (1.0f - weapzoomFrac);
+				if (weapzoomFrac < 1.0f)
+				{
+					if (cg.weapzoomActive)
+					{
+						fov_x = cg.weapzoomStartFov + weapzoomFrac * (weapzoomTarget - cg.weapzoomStartFov);
+					}
+					else
+					{
+						fov_x = cg.weapzoomStartFov + weapzoomFrac * (fov_x - cg.weapzoomStartFov);
+					}
+
+					cg.weapzoomCurrentFov = fov_x;
+				}
+				else
+				{
+					if (cg.weapzoomActive)
+					{
+						fov_x                 = weapzoomTarget;
+						cg.weapzoomStartFov   = weapzoomTarget;
+						cg.weapzoomCurrentFov = weapzoomTarget;
+					}
+					else
+					{
+						cg.weapzoomStartValid = qfalse;
+						cg.weapzoomCurrentFov = fov_x;
+					}
+				}
+			}
+		}
+	}
+
 	if (cg.predictedPlayerState.pm_type == PM_INTERMISSION)
 	{
 		// if in intermission, use a fixed value
@@ -1161,6 +1246,39 @@ static int CG_CalcFov(void)
 	{
 		cg.zoomSensitivity = cg.refdef_current->fov_y / 75.0f;
 	}
+
+	if (weapzoomLerp > 0.0f)
+	{
+		float weapzoomScale    = cg_weapzoomSensitivityScale.value;
+		float weapzoomExplicit = cg_weapzoomSensitivityOverride.value;
+		float baseFov          = cg_fov.value;
+		float weapzoomFov      = (cg.weapzoomCurrentFov > 0.0f) ? cg.weapzoomCurrentFov : cg_weapzoomFov.value;
+		float fovScale         = 1.0f;
+		float targetScale      = 1.0f;
+
+		if (weapzoomScale < 0.0f)
+		{
+			weapzoomScale = 0.0f;
+		}
+
+		if (baseFov > 0.0f && weapzoomFov > 0.0f)
+		{
+			fovScale = tanf(DEG2RAD(weapzoomFov * 0.5f)) / tanf(DEG2RAD(baseFov * 0.5f));
+		}
+
+		if (weapzoomExplicit > 0.0f)
+		{
+			targetScale = weapzoomExplicit;
+		}
+		else
+		{
+			targetScale = weapzoomScale * fovScale;
+		}
+
+		cg.zoomSensitivity *= (1.0f + weapzoomLerp * (targetScale - 1.0f));
+	}
+
+	cg.weapzoomLerp = weapzoomLerp;
 
 	return inwater;
 }
