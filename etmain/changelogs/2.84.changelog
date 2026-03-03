@@ -134,10 +134,28 @@
   ^8scResetBlueScore^9, ^8scSwapTeamLabels^9
 * Fixed ^8team_maxLandmines^9 not triggering a Config String update, showing
   errornous landmines values
+* Fixed player XP overwriting in player stats creation
+* Fixed explosive launches for bodies by limiting the velocity especially in
+  chained/overlapping blast scenarios
+* Fixed SMG pickup selection drop with ^8cg_autoswitch 0^9, which never selected the
+  replacement pickup weapon, leaving the client with no active
+weapon selection until the player manually switched banks
+* Added ^8cg_reinforceTickTock^9 cvar, alternate tick/tock cadence during
+  reinforcement countdown
+* Added ^8g_legacyRevives^9 :
+  * When ^8g_legacyRevives^9 is 0, revive behavior remains unchanged to 2.60b.
+  * When g_legacyRevives is 1:
+    * Revived players are always reoriented to the view direction recorded when they
+      were downed.
+    * The first revive per respawn blocks all pliers interactions with dynamite and
+      gives visual feedback
+* Removed FPS sample rate cvar for measurement (^8cg_drawFPS^9) and hardcoding FPS
+  samples to ^8MAX_FPS_FRAMES^9 (500)
+* Removed extra newline from surrender vote message
 
 ^fStability & Performance
 
-* Fixed another incorrect return value in ^8G_ScriptAction_Delete^9
+* Fixed DEFINITIVELY ^8G_ScriptAction_Delete^9 behaviour
 * Improved ^8g_inactivity^9 and ^8tvg_inactivity^9 implementtion to prevent flooding
   command
 * Fixed hurt/heal/ammo triggers during pause were activated
@@ -150,6 +168,8 @@
 
 ^fAudio
 
+* Added click sound when selecting spawn in limbo
+
 ^fGraphics
 
 * Fixed blooded face not showing for disguised player
@@ -157,7 +177,7 @@
   Health
 * Fixed ^8cg_gunFovOffset^9 "taking effect" below 90 - as this is assumed to be
   "zooming in"
-* Added ^8cg_gunReviveFadeIn^9 cvar (default 1) to fade in 1st person weapon when
+* Added ^8cg_gunReviveFadeIn^9 cvar (default 0) to fade in 1st person weapon when
   revived
 * Fixed 1st person hand silencer screw animation
 * Increased 1st person grenade charge animation time
@@ -285,18 +305,36 @@
 * Displayed revivable bodies of fireteam members in command map even when they're
   outside of pvs
 * Skiped single option menus in ^8classmenu^9 menu selection
+* Displayed scroll bar in UI windows only when necessary
+* Changed chat flag icon to be displayed only on the first line starting the message
+* Added ^8dynamic ticks^9 and ^8dynamic direction^9 style option to compass component
+  * On static map :
+    * Can enable ^8dynamic tick^9 and ^8dynamic direction^9
+    * If dynamic ^8dynamic tick^9 is enable, ^8dynamic direction^9 is ignored
+  * On dynamic map ^8dynamic tick^9 and ^8dynamic direction^9 are ignored
+* Added compass direction icon to square compass
+* Added decor to square compass
+* Adjusted ^8crosshairbar^9 and ^8crosshairtext^9 position to be slighty upper, opens
+  up a lot of surrounding crosshair space
+* Added ^8cg_cursorhintsLinger^9 (replace ^8cg_drawHintFade^9) and
+  ^8cg_cursorhintsAlpha^9 cvars to customized hint timing and opacity
+* Added ^8cg_crosshairhintsLinger ^9 and ^8cg_crosshairhintsAlpha ^9 cvars to
+  customized no-shoot crosshair hint timing and opacity
+* Fixed name formatting for scores table if names contain ^8^^9 chars
 
 * HUD Editor
   * Reworked the HUD with extra button to enable Tab customization depending of comp
     nature.
-  * Added following feature binded to s / r / m keys (Thoses are helper to properly
-    shape text and bar comp): 
-    * s : shape the selected component bound into a square, using the longest side
-      for both side
-    * r : shape the selected component bound into a rectangle with proper ratio using
-      20% on the longest side for the smaller side
-    * m : mirror the width and height of the selected component bound
+  * Added following feature binded to ^8s^9 / ^8r^9 / ^8m^9 keys (Thoses are helper
+    to properly shape text and bar comp): 
+    * ^8s^9 : shape the selected component bound into a square, using the longest
+      side for both side
+    * ^8r^9 : shape the selected component bound into a rectangle with proper ratio
+      using 20% on the longest side for the smaller side
+    * ^8m^9 : mirror the width and height of the selected component bound
   * Fixed ^8customcrosshair^9 positioning in HUD editor
+  * Fixed an issue when HUD components are draw on right and bottom HUD Editor panel
+    they keep visible and generate visual noise into the panels
 
 * Limbo changes : 
   * Highlighted resolved / selected spawn point on map
@@ -304,6 +342,8 @@
 
 * Menu changes:
   * Increased Map/Player Callvote Menu height
+  * Added CHANGELOG menu
+  * Changed popup update appearance to be only displayed once per session
 
 * Demo UI
   * Fixed cursor timeout when interacting with demo UI
@@ -328,3 +368,4 @@
 * Increased FPS_RECOIL_FACTOR from 71 to 83 to balance the increased time window for
   sprint + scope
 * Disabled zoom sway for binoculars
+* Allowed syringe hits to pass through deployables (satchel / dynamite / landmine)
