@@ -92,7 +92,7 @@ void VertexSkinning_P_TBN(const vec4 inPosition,
 		binormal += (boneMatrix * vec4(inBinormal, 0.0)).xyz * boneWeight;
 		normal   += (boneMatrix * vec4(inNormal, 0.0)).xyz * boneWeight;
 	}
-	
+
 	tangent  = normalize(tangent);
 	binormal = normalize(binormal);
 	normal   = normalize(normal);

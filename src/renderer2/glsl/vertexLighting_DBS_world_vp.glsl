@@ -10,13 +10,13 @@ attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
 #endif // USE_NORMAL_MAPPING
 
-uniform mat4 u_DiffuseTextureMatrix;
-uniform mat4 u_ModelViewProjectionMatrix;
-uniform mat4 u_ModelMatrix;
+uniform mat4  u_DiffuseTextureMatrix;
+uniform mat4  u_ModelViewProjectionMatrix;
+uniform mat4  u_ModelMatrix;
 uniform float u_Time;
-uniform vec4 u_ColorModulate;
-uniform vec4 u_Color;
-uniform vec3 u_LightColor;
+uniform vec4  u_ColorModulate;
+uniform vec4  u_Color;
+uniform vec3  u_LightColor;
 #if defined(USE_NORMAL_MAPPING)
 uniform mat4 u_NormalTextureMatrix;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
@@ -27,14 +27,14 @@ uniform samplerCube u_EnvironmentMap1;
 uniform float       u_EnvironmentInterpolation;
 #endif // USE_REFLECTIONS
 #endif // USE_REFLECTIONS || USE_SPECULAR
-uniform vec3  u_LightDir;
+uniform vec3 u_LightDir;
 uniform vec3 u_ViewOrigin;
 #if defined(USE_PARALLAX_MAPPING)
 uniform float u_DepthScale;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec3 var_Position;
@@ -90,7 +90,7 @@ void main()
 #endif // USE_REFLECTIONS || USE_SPECULAR
 
 	// assign color
-	var_LightColor = attr_Color * u_ColorModulate + u_Color;
+	var_LightColor     = attr_Color * u_ColorModulate + u_Color;
 	var_LightDirection = -normalize(u_LightDir);
 
 	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);

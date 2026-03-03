@@ -11,15 +11,15 @@ attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
 #endif // USE_NORMAL_MAPPING
 
-uniform mat4 u_DiffuseTextureMatrix;
-uniform mat4 u_ModelMatrix;
-uniform mat4 u_ModelViewProjectionMatrix;
-uniform vec4 u_ColorModulate;
-uniform vec4 u_Color;
-uniform vec3 u_LightDir;
+uniform mat4  u_DiffuseTextureMatrix;
+uniform mat4  u_ModelMatrix;
+uniform mat4  u_ModelViewProjectionMatrix;
+uniform vec4  u_ColorModulate;
+uniform vec4  u_Color;
+uniform vec3  u_LightDir;
 uniform vec3  u_LightColor;
 uniform float u_Time;
-uniform vec3 u_ViewOrigin;
+uniform vec3  u_ViewOrigin;
 #if defined(USE_NORMAL_MAPPING)
 uniform mat4 u_NormalTextureMatrix;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
@@ -32,7 +32,7 @@ uniform float       u_EnvironmentInterpolation;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec3 var_Position;
@@ -113,7 +113,7 @@ void main()
 
 #if defined(USE_PARALLAX_MAPPING)
 //	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
-var_ViewOrigin2 = vec3(dot(var_ViewOrigin,tangent), dot(var_ViewOrigin,binormal), dot(var_ViewOrigin,var_Normal.xyz));
+	var_ViewOrigin2 = vec3(dot(var_ViewOrigin, tangent), dot(var_ViewOrigin, binormal), dot(var_ViewOrigin, var_Normal.xyz));
 //vec3 viewOrigin2 = var_ViewOrigin;
 	var_S = var_ViewOrigin2.xy / var_ViewOrigin2.z * u_DepthScale;
 #endif // USE_PARALLAX_MAPPING

@@ -7,12 +7,12 @@ attribute vec3 attr_Normal;
 attribute vec4 attr_BoneIndexes;
 attribute vec4 attr_BoneWeights;
 
-uniform int    u_VertexSkinning;
-uniform mat4   u_BoneMatrix[MAX_GLSL_BONES];
+uniform int  u_VertexSkinning;
+uniform mat4 u_BoneMatrix[MAX_GLSL_BONES];
 #endif
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
-uniform vec3  u_ViewOrigin;
+uniform vec3 u_ViewOrigin;
 
 varying vec3 var_Position;
 varying vec3 var_Normal;

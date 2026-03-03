@@ -19,10 +19,10 @@ attribute vec3 attr_Normal2;
 #endif // USE_VERTEX_ANIMATION
 
 #if defined(USE_ALPHA_TESTING)
-uniform mat4  u_ColorTextureMatrix;
+uniform mat4 u_ColorTextureMatrix;
 #endif // USE_ALPHA_TESTING
-uniform mat4  u_ModelMatrix;
-uniform mat4  u_ModelViewProjectionMatrix;
+uniform mat4 u_ModelMatrix;
+uniform mat4 u_ModelViewProjectionMatrix;
 #if defined(USE_VERTEX_ANIMATION)
 uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION

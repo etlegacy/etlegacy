@@ -16,7 +16,7 @@ uniform sampler2D u_LightMap;
 #if defined(USE_NORMAL_MAPPING)
 uniform sampler2D u_NormalMap;
 #if defined(USE_PARALLAX_MAPPING)
-uniform float     u_DepthScale;
+uniform float u_DepthScale;
 #endif // USE_PARALLAX_MAPPING
 //#if defined(USE_DELUXE_MAPPING)
 //uniform sampler2D u_DeluxeMap;
@@ -41,7 +41,7 @@ varying mat3 var_tangentMatrix;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 varying vec2 var_TexSpecular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
-varying vec3 var_LightDirection; 
+varying vec3 var_LightDirection;
 varying vec3 var_ViewOrigin; // position - vieworigin
 #if defined(USE_PARALLAX_MAPPING)
 varying vec2 var_S; // size and start position of search in texture space
@@ -65,7 +65,7 @@ void main()
 
 
 	// get the color from the lightmap
-	vec4 lightmapColor  = texture2D(u_LightMap, var_TexLight);
+	vec4 lightmapColor = texture2D(u_LightMap, var_TexLight);
 
 //#if defined(USE_DELUXE_MAPPING)
 //	//fixme: must be done when there IS a deluxemap. not when we want-to-see (show) deluxemaps (and just pass -some- normalmap as a substitude :S)
@@ -80,8 +80,8 @@ void main()
 
 #if defined(USE_NORMAL_MAPPING)
 
-	vec2 texDiffuse  = var_TexDiffuseNormal.st;
-	vec2 texNormal   = var_TexDiffuseNormal.pq;
+	vec2 texDiffuse = var_TexDiffuseNormal.st;
+	vec2 texNormal  = var_TexDiffuseNormal.pq;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	vec2 texSpecular = var_TexSpecular.st;
 #endif // USE_REFLECTIONS || USE_SPECULAR
@@ -95,12 +95,12 @@ void main()
 	// compute texcoords offset
 	vec2 texOffset = var_S * depth;
 #endif
-vec3 parallax = parallaxReliefMappingOffset(var_ViewOrigin, var_S, texNormal, u_NormalMap);
-vec2 texOffset = parallax.st;
-float parallaxHeight = parallax.z;
+	vec3  parallax       = parallaxReliefMappingOffset(var_ViewOrigin, var_S, texNormal, u_NormalMap);
+	vec2  texOffset      = parallax.st;
+	float parallaxHeight = parallax.z;
 
-	texDiffuse  -= texOffset;
-	texNormal   -= texOffset;
+	texDiffuse -= texOffset;
+	texNormal  -= texOffset;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	texSpecular -= texOffset;
 #endif // USE_REFLECTIONS || USE_SPECULAR
@@ -148,14 +148,14 @@ float parallaxHeight = parallax.z;
 	// compute the specular term (and reflections)
 	//! https://en.wikipedia.org/wiki/Specular_highlight
 #if defined(USE_SPECULAR) && !defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec4 map      = texture2D(u_SpecularMap, texSpecular);
 	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb;
 #elif defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec4 map      = texture2D(u_SpecularMap, texSpecular);
 	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * 0.07)
-					+ (computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb);
+	                + (computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb);
 #elif !defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec4 map      = texture2D(u_SpecularMap, texSpecular);
 	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * map.rgb * 0.07;
 #endif
 
@@ -171,11 +171,11 @@ float parallaxHeight = parallax.z;
 	color.rgb += specular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
-   
+
 	color *= lightmapColor; // we must blend using the lightmap.a
 
 #else // USE_NORMAL_MAPPING
-																  
+
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, var_TexDiffuseNormal.st);
 
