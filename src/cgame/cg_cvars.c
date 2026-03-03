@@ -465,7 +465,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_autoFolders,                        "cg_autoFolders",                        "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_autoAction,                         "cg_autoAction",                         "4",           CVAR_ARCHIVE,                 0 },
 	{ &cg_autoReload,                         "cg_autoReload",                         "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_bloodDamageBlend,                   "cg_bloodDamageBlend",                   "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_bloodDamageBlend,                   "cg_bloodDamageBlend",                   "0.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlash,                         "cg_bloodFlash",                         "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlashTime,                     "cg_bloodFlashTime",                     "1500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodForcePuffsForDamage,           "cg_bloodForcePuffsForDamage",           "1",           CVAR_ARCHIVE,                 0 },
@@ -513,7 +513,7 @@ static cvarTable_t cvarTable[] =
 	{ &int_sensitivity,                       "sensitivity",                           "5",           CVAR_ARCHIVE,                 0 },
 	{ &int_ui_blackout,                       "ui_blackout",                           "0",           CVAR_ROM,                     0 },
 
-	{ &cg_atmosphericEffects,                 "cg_atmosphericEffects",                 "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_atmosphericEffects,                 "cg_atmosphericEffects",                 "0",           CVAR_ARCHIVE,                 0 },
 	{ &authLevel,                             "authLevel",                             "0",           CVAR_TEMP | CVAR_ROM,         0 },
 
 	{ &cg_rconPassword,                       "auth_rconPassword",                     "",            CVAR_TEMP,                    0 },
