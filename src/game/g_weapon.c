@@ -491,26 +491,29 @@ static qboolean G_TrySyringeHeal(gentity_t *healer, gentity_t *target, qboolean 
 	return qtrue;
 }
 
-static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenaline)
+/**
+ * @brief Shared syringe/adrenaline trace acquisition used by weapon firing and cursorhints.
+ *
+ * @param[in,out] ent
+ * @param[in] forward
+ * @param[in] right
+ * @param[in] up
+ * @param[in] range Trace range in game units.
+ * @param[out] outTrace Final trace result for the chosen target.
+ * @param[out] outMuzzleTrace Trace start point.
+ * @param[out] outTarget Client target entity when found.
+ * @return qtrue when a client target was found, qfalse otherwise.
+ */
+qboolean G_FindSyringeLikeTraceTarget(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, float range, trace_t *outTrace, vec3_t outMuzzleTrace, gentity_t **outTarget)
 {
 	vec3_t    end;
 	trace_t   tr;
 	gentity_t *traceEnt;
 	int       i;
-	qboolean  refundAmmo;
 
-	AngleVectors(ent->client->ps.viewangles, forward, right, up);
-	CalcMuzzlePointForActivate(ent, forward, right, up, muzzleTrace);
-	if (isLegacyAdrenaline)
-	{
-		VectorMA(muzzleTrace, CH_ACTIVATE_DIST, forward, end);
-	}
-	else
-	{
-		VectorMA(muzzleTrace, CH_REVIVE_DIST, forward, end);
-	}
+	CalcMuzzlePointForActivate(ent, forward, right, up, outMuzzleTrace);
+	VectorMA(outMuzzleTrace, range, forward, end);
 
-	// right on top of intended revivee.
 	G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
 	G_TempTraceIgnoreBodies();
 
@@ -518,12 +521,12 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 	// revivable body) or block (hit a wall etc.).
 	for (i = 0; i < level.num_entities; i++)
 	{
-		VectorMA(muzzleTrace, 8, forward, end);
-		G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+		VectorMA(outMuzzleTrace, 8, forward, end);
+		G_HistoricalTrace(ent, &tr, outMuzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
 		if (tr.startsolid)
 		{
-			trap_Trace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+			trap_Trace(&tr, outMuzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 		}
 
 		if (tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_WORLD || tr.entityNum == ENTITYNUM_NONE)
@@ -546,18 +549,18 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 
 	G_ResetTempTraceIgnoreEnts();
 
-	if (tr.fraction == 1.0f) // no hit
+	// Run widened fallback not only on empty traces, but also when the short
+	// probe hits world geometry first.
+	if (tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_WORLD || tr.entityNum == ENTITYNUM_NONE)
 	{
-		qboolean foundAlt = qfalse;
-
+		qboolean           foundAlt = qfalse;
 		vec3_t             mins, maxs;
-		const float        range           = isLegacyAdrenaline ? CH_ACTIVATE_DIST : CH_REVIVE_DIST;
 		static const float enlargeMins[3]  = { -4.0f, -4.0f, -3.0f };
 		static const float enlargeMaxs[3]  = { 4.0f, 4.0f, 0.0f };
 		static const float enlargeScale[4] = { 0.0f, 4.0f, 16.0f, 64.0f };
 
 		// Retry with a wider hull to make short-range syringe traces less brittle.
-		VectorMA(muzzleTrace, range, forward, end);
+		VectorMA(outMuzzleTrace, range, forward, end);
 		G_HistoricalTraceBegin(ent);
 
 		G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
@@ -567,13 +570,13 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 		{
 			if (i == 0)
 			{
-				G_Trace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+				G_Trace(ent, &tr, outMuzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 			}
 			else
 			{
 				VectorMA(ent->r.mins, enlargeScale[i], enlargeMins, mins);
 				VectorMA(ent->r.maxs, enlargeScale[i], enlargeMaxs, maxs);
-				G_Trace(ent, &tr, muzzleTrace, mins, maxs, end, ent->s.number, MASK_SHOT);
+				G_Trace(ent, &tr, outMuzzleTrace, mins, maxs, end, ent->s.number, MASK_SHOT);
 			}
 
 			traceEnt = &g_entities[tr.entityNum];
@@ -589,13 +592,37 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 
 		if (!foundAlt)
 		{
-			goto GIVE_BACK_AMMO;
+			return qfalse;
 		}
 	}
 
 	traceEnt = &g_entities[tr.entityNum];
-
 	if (!traceEnt->client)
+	{
+		return qfalse;
+	}
+
+	*outTrace  = tr;
+	*outTarget = traceEnt;
+
+	return qtrue;
+}
+
+static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenaline)
+{
+	trace_t   tr;
+	gentity_t *traceEnt;
+	qboolean  refundAmmo;
+	qboolean  useActivateRangeTrace;
+	float     range;
+
+	AngleVectors(ent->client->ps.viewangles, forward, right, up);
+	// Syringe-heal against living teammates needs the same forgiving trace range
+	// as legacy adrenaline to stay reliable against movement.
+	useActivateRangeTrace = (qboolean)(isLegacyAdrenaline || g_syringeHealing.integer == 1);
+	range                 = useActivateRangeTrace ? CH_ACTIVATE_DIST : CH_REVIVE_DIST;
+
+	if (!G_FindSyringeLikeTraceTarget(ent, forward, right, up, range, &tr, muzzleTrace, &traceEnt))
 	{
 		goto GIVE_BACK_AMMO;
 	}
@@ -614,6 +641,13 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 	    traceEnt->client->ps.pm_type == PM_DEAD &&
 	    traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 	{
+		// Keep revive reach identical to stock syringe behavior even when
+		// syringe-healing enables longer living-target traces.
+		if (g_syringeHealing.integer == 1 && VectorDistanceSquared(muzzleTrace, tr.endpos) > Square(CH_REVIVE_DIST))
+		{
+			goto GIVE_BACK_AMMO;
+		}
+
 		// moved all the revive stuff into its own function
 		ReviveEntity(ent, traceEnt);
 
