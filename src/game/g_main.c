@@ -425,6 +425,70 @@ qboolean G_EmplacedGunIsRepairable(gentity_t *ent, gentity_t *other)
 }
 
 /**
+ * @brief Shared living-target eligibility for legacy adrenaline cursorhints.
+ * @param[in] ent
+ * @param[in] target
+ * @return qtrue when the target can receive legacy adrenaline.
+ */
+static qboolean G_IsLegacyAdrenalineHintTarget(const gentity_t *ent, const gentity_t *target)
+{
+	return (qboolean)(ent->client->ps.weapon == WP_MEDIC_ADRENALINE2
+	                  && target->client->sess.sessionTeam == ent->client->sess.sessionTeam
+	                  && target->client->ps.pm_type == PM_NORMAL
+	                  && target->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC);
+}
+
+/**
+ * @brief Shared living-target eligibility for syringe-healing cursorhints.
+ * @param[in] ent
+ * @param[in] target
+ * @return qtrue when the target can receive syringe healing.
+ */
+static qboolean G_IsSyringeHealingHintTarget(const gentity_t *ent, const gentity_t *target)
+{
+	if (ent->client->ps.weapon != WP_MEDIC_SYRINGE
+	    || ent->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC
+	    || g_syringeHealing.integer != 1)
+	{
+		return qfalse;
+	}
+
+	if (target->client->sess.sessionTeam != ent->client->sess.sessionTeam || target->client->ps.pm_type != PM_NORMAL)
+	{
+		return qfalse;
+	}
+
+	// Keep cursorhint eligibility aligned with G_TrySyringeHeal.
+	return (qboolean)(target->health < target->client->ps.stats[STAT_MAX_HEALTH]
+	                  && target->health <= (int)(target->client->ps.stats[STAT_MAX_HEALTH] * 0.25f));
+}
+
+/**
+ * @brief Shared moving-target trace lookup for legacy-adrenaline/syringe-heal hints.
+ *
+ * This mirrors Weapon_Syringe_Shared targeting behavior:
+ * deployable filtering plus widened fallback traces.
+ *
+ * @param[in,out] ent
+ * @param[in] forward
+ * @param[in] right
+ * @param[in] up
+ * @return Client target candidate, or NULL.
+ */
+static gentity_t *G_FindSyringeLikeHintTraceTarget(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up)
+{
+	vec3_t    muzzleTrace;
+	trace_t   tr;
+	gentity_t *traceEnt;
+	if (!G_FindSyringeLikeTraceTarget(ent, forward, right, up, CH_ACTIVATE_DIST, &tr, muzzleTrace, &traceEnt))
+	{
+		return NULL;
+	}
+
+	return traceEnt;
+}
+
+/**
  * @brief non-AI's check for cursor hint contacts
  *
  * @details server-side because there's info we want to show that the client
@@ -542,18 +606,26 @@ void G_CheckForCursorHints(gentity_t *ent)
 		{
 			if ((ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC
 			     // Reviving downed players.
-			     && ((traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
-			         // Optionally healing living players.
-			         || (g_syringeHealing.integer == 1
-			             && traceEnt->client->ps.pm_type == PM_NORMAL
-			             && traceEnt->health <= (int)(traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.25f))))
-			    // Legacy adrenaline path: show syringe hint for valid living teammates, except medics.
-			    || (ps->weapon == WP_MEDIC_ADRENALINE2
-			        && traceEnt->client->ps.pm_type != PM_DEAD
-			        && traceEnt->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC))
+			     && (traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO)))
+			    // Shared living-target syringe/adrenaline hint eligibility.
+			    || G_IsSyringeHealingHintTarget(ent, traceEnt)
+			    || G_IsLegacyAdrenalineHintTarget(ent, traceEnt))
 			{
-				// Keep hint range aligned with the respective use path in g_weapon.c.
-				hintDist = (ps->weapon == WP_MEDIC_ADRENALINE2) ? CH_ACTIVATE_DIST : CH_REVIVE_DIST;
+				// Revive uses CH_REVIVE_DIST; living syringe/adrenaline interactions use CH_ACTIVATE_DIST.
+				hintDist = (traceEnt->client->ps.pm_type == PM_DEAD) ? CH_REVIVE_DIST : CH_ACTIVATE_DIST;
+				hintType = HINT_REVIVE;
+			}
+		}
+
+		// Shared syringe/adrenaline moving-target fallback trace for cursorhints.
+		if (hintType != HINT_REVIVE)
+		{
+			gentity_t *hintTraceTarget = G_FindSyringeLikeHintTraceTarget(ent, forward, right, up);
+			if (hintTraceTarget
+			    && (G_IsSyringeHealingHintTarget(ent, hintTraceTarget)
+			        || G_IsLegacyAdrenalineHintTarget(ent, hintTraceTarget)))
+			{
+				hintDist = CH_ACTIVATE_DIST;
 				hintType = HINT_REVIVE;
 			}
 		}
