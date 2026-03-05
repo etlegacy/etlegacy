@@ -1733,6 +1733,7 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon);
 void CalcMuzzlePointForActivate(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 qboolean G_FindSyringeLikeTraceTarget(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, float range, trace_t *outTrace, vec3_t outMuzzleTrace, gentity_t **outTarget);
 int G_GetDefaultAdrenalineDuration(void);
+int G_GrantAdrenaline(gentity_t *injector, gentity_t *target, int durationMs);
 
 void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t velocity);
 void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t velocity);
