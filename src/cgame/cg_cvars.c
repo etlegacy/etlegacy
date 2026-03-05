@@ -39,11 +39,11 @@ vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairFade;
-vmCvar_t cg_crosshairHintsLinger;
+vmCvar_t cg_crosshairHintsFade;
 vmCvar_t cg_crosshairHintsAlpha;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
-vmCvar_t cg_cursorHintsLinger;
+vmCvar_t cg_cursorHintsFade;
 vmCvar_t cg_cursorHintsAlpha;
 vmCvar_t cg_weaponCycleDelay;
 vmCvar_t cg_cycleAllWeaps;
@@ -365,11 +365,11 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawStatus,                         "cg_drawStatus",                         "0",           CVAR_CHEAT,                   0 },
 	{ &cg_drawCrosshair,                      "cg_drawCrosshair",                      "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairFade,                  "cg_drawCrosshairFade",                  "250",         CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairHintsLinger,               "cg_crosshairHintsLinger",               "50",          CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairHintsFade,                 "cg_crosshairHintsFade",                 "50",          CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairHintsAlpha,                "cg_crosshairHintsAlpha",                "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,               "cg_drawCrosshairPickups",               "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,                 "cg_drawSpectatorNames",                 "2",           CVAR_ARCHIVE,                 0 },
-	{ &cg_cursorHintsLinger,                  "cg_cursorHintsLinger",                  "50",          CVAR_ARCHIVE,                 0 },
+	{ &cg_cursorHintsFade,                    "cg_cursorHintsFade",                    "50",          CVAR_ARCHIVE,                 0 },
 	{ &cg_cursorHintsAlpha,                   "cg_cursorHintsAlpha",                   "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,                    "cg_useWeapsForZoom",                    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weaponCycleDelay,                   "cg_weaponCycleDelay",                   "150",         CVAR_ARCHIVE,                 0 },
