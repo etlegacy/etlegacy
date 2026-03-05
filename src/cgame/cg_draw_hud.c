@@ -1972,7 +1972,7 @@ void CG_DrawPowerUps(hudComponent_t *comp)
 		// show the class to the client
 		CG_DrawPic(comp->location.x + 9, comp->location.y + 9, 18, 18, cgs.media.skillPics[BG_ClassSkillForClass((cg_entities[ps->clientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 	}
-	else if (ps->powerups[PW_ADRENALINE] > 0)       // adrenaline
+	else if (g_legacyAdrenaline.integer != 1 && ps->powerups[PW_ADRENALINE] > 0)       // adrenaline
 	{
 		vec4_t color = { 1.0, 0.0, 0.0, 1.0 };
 		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
