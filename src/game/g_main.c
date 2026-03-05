@@ -607,6 +607,8 @@ void G_CheckForCursorHints(gentity_t *ent)
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
 			if ((ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC
+			     // Legacy adrenaline syringe should not advertise revive on downed players.
+			     && ent->client->ps.weapon != WP_MEDIC_ADRENALINE2
 			     // Reviving downed players.
 			     && (traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO)))
 			    // Shared living-target syringe/adrenaline hint eligibility.
