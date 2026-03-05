@@ -492,6 +492,17 @@ static qboolean G_TrySyringeHeal(gentity_t *healer, gentity_t *target, qboolean 
 }
 
 /**
+ * @brief True when a client is carrying a team objective.
+ * @param[in] ent
+ * @return qtrue if objective carrier, qfalse otherwise.
+ */
+static qboolean G_IsObjectiveCarrier(const gentity_t *ent)
+{
+	return (qboolean)(ent && ent->client
+	                  && (ent->client->ps.powerups[PW_REDFLAG] || ent->client->ps.powerups[PW_BLUEFLAG]));
+}
+
+/**
  * @brief Shared syringe/adrenaline trace acquisition used by weapon firing and cursorhints.
  *
  * @param[in,out] ent
@@ -676,7 +687,8 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 	else if (isLegacyAdrenaline &&
 	         traceEnt->client->ps.pm_type != PM_DEAD &&
 	         traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam &&
-	         traceEnt->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC
+	         traceEnt->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC &&
+	         !G_IsObjectiveCarrier(traceEnt)
 	         )
 	{
 		const int adrenalineEndTime = level.time + 5000 + 750;
@@ -739,6 +751,11 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
  */
 gentity_t *Weapon_AdrenalineSyringe(gentity_t *ent)
 {
+	if (G_IsObjectiveCarrier(ent))
+	{
+		return NULL;
+	}
+
 	ent->client->ps.powerups[PW_ADRENALINE] = level.time + 10000;
 	return NULL;
 }

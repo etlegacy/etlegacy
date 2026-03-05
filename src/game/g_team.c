@@ -398,6 +398,9 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 
 	trap_SendServerCommand(other - g_entities, "cp \"You picked up the objective!\"");
 
+	// Carrying objectives should immediately cancel any active adrenaline effect.
+	cl->ps.powerups[PW_ADRENALINE] = 0;
+
 	// set timer
 	cl->pickObjectiveTime = level.time;
 

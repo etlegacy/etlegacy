@@ -435,6 +435,8 @@ static qboolean G_IsLegacyAdrenalineHintTarget(const gentity_t *ent, const genti
 	return (qboolean)(ent->client->ps.weapon == WP_MEDIC_ADRENALINE2
 	                  && target->client->sess.sessionTeam == ent->client->sess.sessionTeam
 	                  && target->client->ps.pm_type == PM_NORMAL
+	                  && !target->client->ps.powerups[PW_REDFLAG]
+	                  && !target->client->ps.powerups[PW_BLUEFLAG]
 	                  && target->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC);
 }
 
