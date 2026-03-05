@@ -1008,7 +1008,7 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
 /**
  * @brief UI_ShowPostGame
  */
-void UI_ShowPostGame()
+void UI_ShowPostGame(void)
 {
 	trap_Cvar_Set("cg_thirdPerson", "0");
 	trap_Cvar_Set("sv_killserver", "1");
@@ -8881,11 +8881,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	Q_strncpyz(translated_yes, DC->translateString("Yes"), sizeof(translated_yes));
 	Q_strncpyz(translated_no, DC->translateString("NO"), sizeof(translated_no));
 
-	trap_AddCommand("campaign");
-	trap_AddCommand("listcampaigns");
-
-	trap_AddCommand("listfavs");
-	trap_AddCommand("removefavs");
+	UI_InitConsoleCommand();
 }
 
 /**
@@ -9429,9 +9425,17 @@ static void UI_StartServerRefresh(qboolean full)
  */
 void UI_Campaign_f(void)
 {
-	char           str[MAX_TOKEN_CHARS];
-	int            i;
-	campaignInfo_t *campaign = NULL;
+	char            str[MAX_TOKEN_CHARS];
+	int             i;
+	campaignInfo_t  *campaign = NULL;
+	uiClientState_t cstate;
+
+	trap_GetClientState(&cstate);
+	if (cstate.connState != CA_DISCONNECTED)
+	{
+		Com_Printf("Cannot parse UI campaign while connected to a server\n");
+		return;
+	}
 
 	UI_LoadArenas();
 	UI_MapCountByGameType(qfalse);
@@ -9476,7 +9480,15 @@ void UI_Campaign_f(void)
  */
 void UI_ListCampaigns_f(void)
 {
-	int i, mpCampaigns = 0;
+	int             i, mpCampaigns = 0;
+	uiClientState_t cstate;
+
+	trap_GetClientState(&cstate);
+	if (cstate.connState != CA_DISCONNECTED)
+	{
+		Com_Printf("Cannot parse UI list campaign while connected to a server\n");
+		return;
+	}
 
 	UI_LoadArenas();
 	UI_MapCountByGameType(qfalse);
